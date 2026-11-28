@@ -2,7 +2,7 @@
 
 For a regular word equation $E$, any two equations of its Nielsen graph that are joined by a directed path are joined by one of length $O(|E|^{12})$. This polynomial bound is what places regular equations in NP.
 
-Let $E$ be a regular word equation over an alphabet of constants with at least two letters, let $G_E$ be its Nielsen graph (the equations reachable from $E$ by the Nielsen transformation relation $\Rightarrow_{NT}$, with an edge for each step), and let $\mathrm{diam}(G_E)$ be the maximum, over ordered pairs of vertices $(E_1, E_2)$ such that $E_2$ is reachable from $E_1$, of the length of a shortest directed path from $E_1$ to $E_2$; pairs without a path are ignored, so a graph that is not strongly connected does not get infinite diameter. Then
+Let $E$ be a regular word equation over an alphabet of constants with at least two letters, let $G_E$ be its Nielsen graph (the equations reachable from $E$ by the Nielsen transformation relation $\Rightarrow_{NT}$, with one labelled edge for each step; loops and parallel edges do not change shortest directed paths), and let $\mathrm{diam}(G_E)$ be the maximum, over ordered pairs of vertices $(E_1, E_2)$ such that $E_2$ is reachable from $E_1$, of the length of a shortest directed path from $E_1$ to $E_2$; pairs without a path are ignored, so a graph that is not strongly connected does not get infinite diameter. Then
 
 $$\mathrm{diam}(G_E) \in O(|E|^{12}),$$
 

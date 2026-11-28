@@ -9,6 +9,7 @@ Let the input be a regular word equation $E$ given by $\alpha = \beta$ over an a
 - [Quadratic, regular and regular-ordered word equations](restricted-classes-of-word-equations.md)
 - [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
 - [NP-complete decision problems](../../complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [Solution of a word equation](../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 

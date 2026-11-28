@@ -20,7 +20,7 @@ With $r = \lfloor\log_2(n/k)\rfloor$, split $k2^r \le n$ variables into $k$ grou
 ## Proof depends on
 
 - [Littlestone's Winnow mistake bound $\alpha k(\log_\alpha\theta + 1) + n/\theta$](winnow-mistake-bound.md)
-- [Natarajan dimension is at most the Littlestone dimension, which is at most the domain size](natarajan-vc-littlestone-dimension-comparisons.md)
+- [VC dimension is at most Littlestone dimension and mistake-bound comparisons](natarajan-vc-littlestone-dimension-comparisons.md)
 
 ## Sources
 

@@ -21,11 +21,11 @@ Restricting to nonerasing solutions does not change satisfiability: an equation 
 
 ## Proof depends on
 
-None.
+- [Occurring variable's image is no longer than the evaluated word](../../string-constraints-and-word-equations/ordinary-word-equations/length-le-eval-word-of-mem.md)
 
 ## Expansion
 
-The definitions and the reduction to nonerasing solutions (guess which variables are empty and delete them) are the source's. The remaining two remarks are elementary. Existence: the lengths $|\sigma(U)|$ of nonerasing solutions form a nonempty set of natural numbers, which has a least element. Finiteness: in a nonerasing solution with $|\sigma(U)| = |\sigma(V)| = N$, each occurring variable $X$ occurs in $U$ or in $V$, so $|\sigma(X)| \le N$, and over the finite alphabet $A$ there are finitely many such assignments.
+The definitions and the reduction to nonerasing solutions (guess which variables are empty and delete them) are the source's. The remaining two remarks are elementary. Existence: the lengths $|\sigma(U)|$ of nonerasing solutions form a nonempty set of natural numbers, which has a least element. Finiteness: in a nonerasing solution with $|\sigma(U)| = |\sigma(V)| = N$, each occurring variable $X$ occurs in $U$ or in $V$, so $|\sigma(X)| \le N$ because an occurring variable's image is no longer than the evaluated word, and over the finite alphabet $A$ there are finitely many such assignments.
 
 ## Sources
 

@@ -13,7 +13,7 @@ The following decision problem is undecidable. An instance consists of a finite 
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
 - [Commuting words are powers of a common word](commuting-words-are-powers-of-a-common-word.md)
-- [Systems of word equations reduce to one equation](../word-equation-algorithms/satisfiability/system-of-word-equations-to-one-equation.md)
+- [Systems of word equations over at least two letters reduce to one equation](../word-equation-algorithms/satisfiability/system-of-word-equations-to-one-equation.md)
 - [The halting problem is undecidable by multi-stack machines](../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
 - [The halting problem is recognizable by multi-stack machines](../../computability/halting-problem-and-rice-s-theorem/tm2-recognizable-halting.md)
 
@@ -32,7 +32,7 @@ The halting set for a fixed input is recognizable but undecidable, so by the Dav
 
 ## Sources
 
-- Laura Ciobanu, "Word Equations, Constraints, and Formal Languages", Developments in Language Theory (DLT 2024), LNCS 14791, 2024, <https://doi.org/10.1007/978-3-031-66159-4_1>; read as arXiv:2406.02160v1, Section 2 (single equation with linear exponent-sum or Parikh constraints undecidable in general, citing Büchi and Senger, Corollary 4; length constraints open).
+- Laura Ciobanu, "Word Equations, Constraints, and Formal Languages", Developments in Language Theory (DLT 2024), LNCS 14791, 2024, <https://doi.org/10.1007/978-3-031-66159-4_1>; read as arXiv:2406.02160v1, Section 2, problems (2) (WordEqn, EXP-SUM) and (3) (WordEqn, PARIKH), and the paragraph after the list of problems (undecidable in full generality, citing Büchi and Senger, Corollary 4; length constraints, problem (1), open). The published LNCS edition was not read.
 - Laura Ciobanu and Georg Zetzsche, "Slice closures of indexed languages and word equations with counting constraints", 39th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2024), 2024, <https://doi.org/10.1145/3661814.3662134>; read as arXiv:2405.07911v1, Section 4 (the counting-constraint problem is undecidable in full generality; length constraints open).
 - Joel D. Day, Vijay Ganesh, Paul He, Florin Manea and Dirk Nowotka, "The Satisfiability of Word Equations: Decidable and Undecidable Theories", Reachability Problems (RP 2018), LNCS 11123, pp. 15–29, 2018, <https://doi.org/10.1007/978-3-030-00250-3_2>, Lemma 1 (commutativity equation), Lemma 2 (conjunctions as one equation), Section 3.1 (unary encoding; $\mathrm{Only}_a$ and $\mathrm{Only}_b$ model multiplication, after Büchi and Senger).
 - Joel Day, Vijay Ganesh, Paul He, Florin Manea and Dirk Nowotka, "The Satisfiability of Extended Word Equations: The Boundary Between Decidability and Undecidability", arXiv:1802.00523v1, 2018 (extended version), Proposition 4.6 (equivalence of $Eq_a$ and $\mathrm{Only}_a$), Corollary 4.7 ($Eq_a$ and $Eq_b$), Corollary 4.8 ($Eq_a$ and length equality) and the remark after it (single predicate open).

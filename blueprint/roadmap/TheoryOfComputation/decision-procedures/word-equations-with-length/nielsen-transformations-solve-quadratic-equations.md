@@ -4,7 +4,7 @@ A quadratic word equation has a solution exactly when the trivial equation is re
 
 Let $A$ be a finite alphabet of constants, let $E$ be a quadratic word equation $\alpha = \beta$ over $A$ and a set of variables, and let $\Rightarrow_{NT}$ be the Nielsen transformation relation of Day and Manea. Solutions map variables to words in $A^*$, the empty word allowed.
 
-1. $E$ has a solution if and only if $E \Rightarrow_{NT}^* (\varepsilon = \varepsilon)$.
+1. If $A$ has at least two letters (the standing convention of Day and Manea), $E$ has a solution if and only if $E \Rightarrow_{NT}^* (\varepsilon = \varepsilon)$.
 2. The problem of deciding whether a given quadratic word equation has a solution is in PSPACE.
 3. The problem of deciding whether a given quadratic word equation with regular constraints, each given by an explicitly listed nondeterministic finite automaton, has a solution satisfying all constraints is in PSPACE.
 
@@ -16,6 +16,7 @@ Only membership in PSPACE is claimed; quadratic equations without constraints ar
 - [Quadratic, regular and regular-ordered word equations](restricted-classes-of-word-equations.md)
 - [Word equations with length and regular constraints](length-and-regular-constraints.md)
 - [Polynomial space for decision problems](../../complexity-classes/time-and-space-complexity-classes/pspace.md)
+- [Solution of a word equation](../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 

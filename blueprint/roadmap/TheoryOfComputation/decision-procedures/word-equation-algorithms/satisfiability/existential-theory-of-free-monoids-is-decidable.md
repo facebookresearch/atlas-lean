@@ -1,4 +1,4 @@
-# The existential theory of a free monoid with constants is decidable
+# The existential theory of a free monoid on at least two letters is decidable
 
 Whether a propositional combination of word equations and disequations with constants has a solution in a free monoid on at least two letters is decidable; equivalently, the existential theory of concatenation with constants is decidable.
 
@@ -12,7 +12,7 @@ Let $A$ be a finite alphabet with at least two letters. There is an algorithm th
 ## Proof depends on
 
 - [Elimination of a word disequation](disequation-elimination.md)
-- [Systems of word equations reduce to one equation](system-of-word-equations-to-one-equation.md)
+- [Systems of word equations over at least two letters reduce to one equation](system-of-word-equations-to-one-equation.md)
 - [Satisfiability of word equations is decidable](word-equation-satisfiability-is-decidable.md)
 
 ## Expansion

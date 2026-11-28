@@ -1,13 +1,14 @@
 # One-terminal word equations with length constraints are NP-complete
 
-If only one constant letter occurs in the equations, conjunctions and disjunctions of word equations together with linear length constraints have an NP-complete satisfiability problem, whatever the alphabet over which solutions are sought.
+If only one constant letter occurs in the equations, conjunctions and disjunctions of word equations together with linear length constraints have an NP-complete satisfiability problem over any alphabet with at least two letters.
 
-Let $A$ be a finite alphabet of constants, $a \in A$ one fixed letter, and $X$ a set of variables. Consider quantifier-free *positive* formulas built with $\wedge$ and $\vee$ from word equations $U = V$ with $U, V \in (X \cup \{a\})^*$, so that the same letter $a$ is the only constant occurring anywhere in the formula ($A$ may contain further letters), together with a set $\theta$ of linear length constraints, a system of linear equations with integer coefficients in the lengths $|x|$, written in binary. A solution is an assignment $h : X \to A^*$, empty words allowed, satisfying the formula and $\theta$. Deciding whether such a formula with length constraints has a solution in $A^*$ is NP-complete.
+Let $A$ be a finite alphabet of constants with at least two letters (the standing convention of the source), $a \in A$ one fixed letter, and $X$ a set of variables. Consider quantifier-free *positive* formulas built with $\wedge$ and $\vee$ from word equations $U = V$ with $U, V \in (X \cup \{a\})^*$, so that the same letter $a$ is the only constant occurring anywhere in the formula ($A$ may contain further letters), together with a set $\theta$ of linear length constraints, a system of linear equations with integer coefficients in the lengths $|x|$, written in binary. A solution is an assignment $h : X \to A^*$, empty words allowed, satisfying the formula and $\theta$. Deciding whether such a formula with length constraints has a solution in $A^*$ is NP-complete.
 
 ## Depends on
 
 - [Word equations with length and regular constraints](length-and-regular-constraints.md)
 - [NP-complete decision problems](../../complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [Solution of a word equation](../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 

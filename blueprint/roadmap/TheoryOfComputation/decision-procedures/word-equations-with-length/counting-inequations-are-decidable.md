@@ -11,6 +11,7 @@ The problem *word equations with rational constraints and counting inequations*,
 ## Depends on
 
 - [Word equations with length and regular constraints](length-and-regular-constraints.md)
+- [Solution of a word equation](../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 
@@ -23,5 +24,5 @@ The language $L = \{\mathrm{enc}(\sigma) : \sigma \text{ a solution}\}$ is an ED
 
 ## Sources
 
-- Laura Ciobanu and Georg Zetzsche, "Slice closures of indexed languages and word equations with counting constraints", 39th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2024), 2024, <https://doi.org/10.1145/3661814.3662134>; read as the authors' preprint arXiv:2405.07911v1: the counting-inequations theorem stated in Section 1 and proved in Section 4 (with the definitions of $\mathrm{enc}$, counting transducers and counting functions, the examples, and the proof via the EDT0L description of solution sets with rational constraints and the transduction $R_f$), the slice-closure theorem stated in Section 1 and proved in Section 3, and Section 2 (slices, Eilenberg–Schützenberger). The proceedings numbering (Theorem 5) is taken from the survey below and was not checked against the ACM edition.
+- Laura Ciobanu and Georg Zetzsche, "Slice closures of indexed languages and word equations with counting constraints", 39th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2024), 2024, <https://doi.org/10.1145/3661814.3662134>; read as the authors' preprint arXiv:2405.07911v1: Theorem 5 (statement in Section 1; proof in Section 4, with the definitions of $\mathrm{enc}$, counting transducers and counting functions and the transduction $R_f$), Example 4 (Section 1), Theorem 20 (Section 4: solution sets with rational constraints are EDT0L, after Ciobanu, Diekert and Elder), Theorem 1 (Section 1; proof in Section 3: slice closures of indexed languages are effectively semilinear), and Section 2 with Theorem 7 (every slice is semilinear, after Eilenberg and Schützenberger). The DLT 2024 survey below also cites the statement as Theorem 5 of the LICS paper; the ACM edition itself was not read.
 - Laura Ciobanu, "Word Equations, Constraints, and Formal Languages", Developments in Language Theory (DLT 2024), LNCS 14791, 2024, <https://doi.org/10.1007/978-3-031-66159-4_1>; arXiv:2406.02160v1, Section 2 (the statement, cited as Theorem 5 of the LICS paper; problem (WordEqn, INEQ)).

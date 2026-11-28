@@ -2,7 +2,7 @@
 
 A quadratic equation is k-ordered if both sides split into consecutive blocks over pairwise disjoint sets of at most k variables. For every fixed k, minimal solutions have length linear in the equation, and satisfiability is NP-complete.
 
-Let $k \ge 1$ be a fixed integer. A quadratic word equation $\alpha = \beta$ over an alphabet of constants $A$ is **$k$-ordered** if there are pairwise disjoint sets of variables $X_1, \dots, X_\ell$, each with $|X_i| \le k$, and words $\alpha_i, \beta_i \in (X_i \cup A)^*$ such that $\alpha = \alpha_1 \alpha_2 \cdots \alpha_\ell$ and $\beta = \beta_1 \beta_2 \cdots \beta_\ell$. The bound $k$ limits the number of variables in each block, not the total number of variables. Solutions map variables to possibly empty words over $A$; a solution $h$ is minimal if no solution $h'$ has $|h'(\alpha)| < |h(\alpha)|$.
+Let $k \ge 1$ be a fixed integer. Let $A$ be an alphabet of constants with at least two letters (the standing convention of the source; in the decision problem below $A$ is part of the input). A quadratic word equation $\alpha = \beta$ over $A$ is **$k$-ordered** if there are pairwise disjoint sets of variables $X_1, \dots, X_\ell$, each with $|X_i| \le k$, and words $\alpha_i, \beta_i \in (X_i \cup A)^*$ such that $\alpha = \alpha_1 \alpha_2 \cdots \alpha_\ell$ and $\beta = \beta_1 \beta_2 \cdots \beta_\ell$. The bound $k$ limits the number of variables in each block, not the total number of variables. Solutions map variables to possibly empty words over $A$; a solution $h$ is minimal if no solution $h'$ has $|h'(\alpha)| < |h(\alpha)|$. Minimality ranges over all solutions, erasing ones included, so it is not the [length-minimality](../word-equation-algorithms/minimal-solutions/length-minimal-solution.md) among nonerasing solutions used for general word equations.
 
 1. There is a constant $c_k$, depending only on $k$, such that every minimal solution $h$ of a $k$-ordered quadratic equation satisfies $|h(\alpha)| \le c_k \cdot |\alpha\beta|$; the source gives $c_k = 2^{2^{O(k^4)}}$.
 2. For each fixed $k$, the problem of deciding whether a given $k$-ordered quadratic word equation, with the alphabet of constants part of the input, has a solution is NP-complete.
@@ -13,6 +13,7 @@ No uniform statement is made when $k$ is part of the input: with $k$ unbounded e
 
 - [Quadratic, regular and regular-ordered word equations](restricted-classes-of-word-equations.md)
 - [NP-complete decision problems](../../complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [Solution of a word equation](../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 

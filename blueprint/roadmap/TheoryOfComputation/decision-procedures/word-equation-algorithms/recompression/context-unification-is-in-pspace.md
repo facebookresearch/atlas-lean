@@ -8,7 +8,7 @@ Let $\Sigma$ be a fixed finite signature containing a constant, with maximal ari
 1. never accepts an unsolvable equation, and
 2. for a solvable equation whose size-minimal solution has size $N$, accepts for suitable nondeterministic choices after $O(\log(N + 2))$ phases, while storing equations with $O(nk)$ symbols and using $O(n^2 k^2)$ additional bits.
 
-Consequently context unification over $\Sigma$ is in $\mathrm{PSPACE}$. The bounds are polynomial in $n$ and $k$. The only known general lower bound is NP-hardness, inherited from word equations, so this is not a completeness result.
+Consequently context unification over $\Sigma$ is in $\mathrm{PSPACE}$. The bounds are polynomial in $n$ and $k$. This is not a completeness result: the cited sources record NP-hardness, inherited from word equations, as the lower bound.
 
 
 ## Depends on

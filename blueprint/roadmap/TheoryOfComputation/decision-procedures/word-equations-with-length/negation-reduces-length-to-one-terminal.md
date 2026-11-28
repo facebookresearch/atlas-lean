@@ -7,6 +7,7 @@ Let $A$ be a finite alphabet of constants with $|A| \ge 2$ and $a \in A$. For ev
 ## Depends on
 
 - [Word equations with length and regular constraints](length-and-regular-constraints.md)
+- [Solution of a word equation](../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 

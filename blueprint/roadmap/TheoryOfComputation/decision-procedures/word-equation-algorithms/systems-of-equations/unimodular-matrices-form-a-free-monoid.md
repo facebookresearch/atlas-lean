@@ -12,7 +12,8 @@ The monoid morphism $\{a, b\}^* \to \mathrm{SL}(2, \mathbb{Z})$ with $a \mapsto 
 
 ## Depends on
 
-None.
+- [Ordinary word equation](../../string-constraints-and-word-equations/ordinary-word-equations/word-eq.md)
+- [Solution of a word equation](../../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 

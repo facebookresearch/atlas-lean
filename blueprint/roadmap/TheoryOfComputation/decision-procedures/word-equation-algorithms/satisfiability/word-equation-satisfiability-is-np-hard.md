@@ -1,14 +1,15 @@
 # Satisfiability of word equations is NP-hard
 
-
-Deciding whether a word equation with constants has a solution is NP-hard, already for systems over a one-letter alphabet and for single equations over a two-letter alphabet.
+Deciding whether a word equation with constants has a solution is NP-hard, already for systems over a one-letter alphabet and for single equations over a two-letter alphabet, with both sides of every equation nonempty.
 
 Each of the following decision problems on bitstrings is NP-hard, that is, every decision problem in NP has a polynomial-time many-one reduction to it; instances are encoded in the canonical way, with letters and variables written in binary.
 
-1. Given a finite system of word equations over the one-letter alphabet $\{a\}$, decide whether it has a solution $\sigma : \mathcal{X} \to a^*$.
-2. Given a single word equation over the two-letter alphabet $\{a, b\}$, decide whether it has a solution $\sigma : \mathcal{X} \to \{a, b\}^*$.
+1. Given a finite system of word equations over the one-letter alphabet $\{a\}$, each with two nonempty sides, decide whether it has a solution $\sigma : \mathcal{X} \to a^*$.
+2. Given a single word equation over the two-letter alphabet $\{a, b\}$ with two nonempty sides, decide whether it has a solution $\sigma : \mathcal{X} \to \{a, b\}^*$.
 
-Solutions may be erasing. NP-hardness is the best known lower bound for WordEquations, and membership in NP is open; the best known upper bound is [PSPACE](word-equation-satisfiability-in-pspace.md).
+Since these are restrictions, both problems stay NP-hard without the requirement that sides be nonempty.
+
+Solutions may be erasing. In the cited sources NP-hardness is the best lower bound for WordEquations and membership in NP is open; the best upper bound there is [nondeterministic linear space](word-equation-satisfiability-in-nondeterministic-linear-space.md), in particular [PSPACE](word-equation-satisfiability-in-pspace.md).
 
 
 ## Depends on
@@ -21,13 +22,13 @@ Solutions may be erasing. NP-hardness is the best known lower bound for WordEqua
 
 - [EXACT COVER BY 3-SETS is NP-complete](../../../np-completeness/set-systems-and-location/exact-cover-by-3-sets/exact-cover-by3-sets-np-complete.md)
 - [NP-hardness transfers along reductions](../../../np-completeness/satisfiability/3-satisfiability/np-hard-of-poly-many-one-red.md)
-- [Systems of word equations reduce to one equation](system-of-word-equations-to-one-equation.md)
+- [Systems of word equations over at least two letters reduce to one equation](system-of-word-equations-to-one-equation.md)
 
 ## Expansion
 
-The sources prove item 1 by observing that over a one-letter alphabet a solution is determined by the lengths $|\sigma(x)| \in \mathbb{N}$, so a system of unary word equations is a system of linear Diophantine equations over $\mathbb{N}$ with coefficients written in unary, and linear integer programming in this form is NP-hard; item 2 follows by the reduction of systems to one equation over two letters. Saarela states the unary problem in his convention that both sides of an equation are nonempty.
+The sources prove item 1 by observing that over a one-letter alphabet a solution is determined by the lengths $|\sigma(x)| \in \mathbb{N}$, so a system of unary word equations is a system of linear Diophantine equations over $\mathbb{N}$ with coefficients written in unary, and linear integer programming in this form is NP-hard; item 2 follows by the reduction of systems to one equation over two letters. Saarela states the unary problem in his convention that both sides of an equation are nonempty, so his statement is item 1 as given here.
 
-The proof given here is a direct alternative, not printed in the cited sources, which reduces from EXACT COVER BY 3-SETS and produces only equations with nonempty sides. Given an instance with a number $q$ and a list of candidate sets $C_1, \dots, C_r$, output the unsatisfiable equation $a = aa$ if the instance is not well formed or if $r < q$, since then no $q$ disjoint triples exist; output the empty system if $q = 0$. Otherwise $3q \le 3r$, so the universe $\{0, \dots, 3q - 1\}$ can be listed in polynomial time: take one variable $x_j$ per candidate set and, for every element $e$, the equation $x_{j_1} x_{j_2} \cdots x_{j_t} = a$, where $C_{j_1}, \dots, C_{j_t}$ are the candidate sets containing $e$, or $a = aa$ if there are none. Every solution, over $\{a\}$ or over $\{a, b\}$, gives each variable the value $\varepsilon$ or $a$, since its value is a factor of $a$ (every variable occurs, as a well-formed candidate set has three elements), and gives exactly one set containing each element the value $a$; hence solutions correspond to exact covers. The same system read over $\{a, b\}$ has the same solutions, and the reduction to one equation over $\{a, b\}$ yields item 2, with the empty system mapped to $a = a$. Composing with the NP-hardness of EXACT COVER BY 3-SETS gives both items.
+The proof given here is a direct alternative, not printed in the cited sources, which reduces from EXACT COVER BY 3-SETS and produces only equations with nonempty sides. Given an instance with a number $q$ and a list of candidate sets $C_1, \dots, C_r$, output the unsatisfiable equation $a = aa$ if the instance is not well formed or if $r < q$, since then no $q$ disjoint triples exist; output the empty system if $q = 0$. Otherwise $3q \le 3r$, so the universe $\{0, \dots, 3q - 1\}$ can be listed in polynomial time: take one variable $x_j$ per candidate set and, for every element $e$, the equation $x_{j_1} x_{j_2} \cdots x_{j_t} = a$, where $C_{j_1}, \dots, C_{j_t}$ are the candidate sets containing $e$, or $a = aa$ if there are none. Every solution, over $\{a\}$ or over $\{a, b\}$, gives each variable the value $\varepsilon$ or $a$, since its value is a factor of $a$ (every variable occurs, as a well-formed candidate set has three elements), and gives exactly one set containing each element the value $a$; hence solutions correspond to exact covers. The same system read over $\{a, b\}$ has the same solutions, and the reduction to one equation over $\{a, b\}$ yields item 2, with the empty system mapped to $a = a$; that reduction turns a nonempty system of equations with nonempty sides into one equation with nonempty sides. Composing with the NP-hardness of EXACT COVER BY 3-SETS gives both items.
 
 ## Sources
 

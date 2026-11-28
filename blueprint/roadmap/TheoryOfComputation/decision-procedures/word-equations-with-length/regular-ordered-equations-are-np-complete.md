@@ -9,6 +9,7 @@ Let the input be a regular-ordered word equation $\alpha = \beta$ with nonempty 
 - [Quadratic, regular and regular-ordered word equations](restricted-classes-of-word-equations.md)
 - [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
 - [NP-complete decision problems](../../complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [Solution of a word equation](../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 
@@ -26,4 +27,4 @@ which is strictly regular-ordered and has an arbitrary solution exactly when $\a
 
 ## Sources
 
-- Joel D. Day, Florin Manea and Dirk Nowotka, "The Hardness of Solving Simple Word Equations", 42nd International Symposium on Mathematical Foundations of Computer Science (MFCS 2017), LIPIcs 83, Article 18, pp. 18:1–18:14, 2017, <https://doi.org/10.4230/LIPIcs.MFCS.2017.18>, Abstract (hardness even when the sides contain exactly the same variables) and Section 1 (the reduction uses one occurrence of each variable per side, in the same order on both sides), Section 2 (nonempty sides, 3-PARTITION strongly NP-complete), Theorem 4 (NP-hardness), Problem 5 and Lemma 7 (REP), Definition 8 and Lemmas 9–11 (the equations and their correctness), Theorem 18 (membership in NP via Proposition 17), Section 6 (NP-completeness). The proofs of Lemmas 7 and 9 are in the appendix of the preprint arXiv:1702.07922v2.
+- Joel D. Day, Florin Manea and Dirk Nowotka, "The Hardness of Solving Simple Word Equations", 42nd International Symposium on Mathematical Foundations of Computer Science (MFCS 2017), LIPIcs 83, Article 18, pp. 18:1–18:14, 2017, <https://doi.org/10.4230/LIPIcs.MFCS.2017.18>, Abstract (hardness even when the sides contain exactly the same variables) and Section 1 (the reduction uses one occurrence of each variable per side, in the same order on both sides), Section 2 (nonempty sides, 3-PARTITION strongly NP-complete), Theorem 4 (NP-hardness), Problem 5 and Lemma 7 (REP), Definition 8 and Lemmas 9–11 (the equations and their correctness), Theorem 18 (membership in NP via Proposition 17), Section 6 (NP-completeness). The proofs of Lemmas 7 and 9 are in the appendix of the preprint arXiv:1702.07922v2, where these lemmas are numbered Lemma 4 and Lemma 6 (and Theorem 4 is Theorem 2).

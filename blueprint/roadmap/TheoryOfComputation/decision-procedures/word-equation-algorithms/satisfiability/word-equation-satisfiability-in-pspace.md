@@ -8,7 +8,7 @@ Let WordEquations be the decision problem: given a word equation $U = V$ with le
 1. there is a nondeterministic algorithm using $O(n \log n)$ bits of space that accepts exactly the satisfiable equations, and on every satisfiable equation some accepting run takes time polynomial in $n$ and $\log(N + 2)$, where $N$ is the least length $|\sigma(U)|$ of a solution;
 2. since $n \le m$, WordEquations lies in $\mathrm{NSPACE}(s)$ with $s(m) = m \log (m + 2)$, measured in the input length $m$, and hence in $\mathrm{PSPACE}$.
 
-Satisfiability does not change if solutions may use further letters, since such letters can be replaced by a fixed letter of $UV$, and an equation without letters is solved by sending every variable to the empty word. No lower bound beyond NP-hardness is known, so this is not a completeness result, and whether WordEquations lies in NP is open.
+Satisfiability does not change if solutions may use further letters, since such letters can be replaced by a fixed letter of $UV$, and an equation without letters is solved by sending every variable to the empty word. This is not a completeness result: the cited sources give no lower bound beyond NP-hardness and leave membership in NP open. The upper bound was later improved to [nondeterministic linear space](word-equation-satisfiability-in-nondeterministic-linear-space.md).
 
 
 ## Depends on

@@ -12,6 +12,7 @@ where RE is the class of recursively enumerable languages over $\Sigma$, and $\m
 
 - [Word equations with length and regular constraints](length-and-regular-constraints.md)
 - [Unrestricted grammars generate exactly the recursively enumerable languages](../../context-sensitive-languages/chomsky-hierarchy/unrestricted-grammars-generate-exactly-the.md)
+- [Solution of a word equation](../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 

@@ -20,7 +20,7 @@ values $\sigma(X)$ may be empty. The input size is $n = |UV| + |\Gamma|$.
 
 ## Depends on
 
-None.
+- [Ordinary word equation](../../string-constraints-and-word-equations/ordinary-word-equations/word-eq.md)
 
 ## Proof depends on
 

@@ -12,7 +12,7 @@ Let $A$ be a finite alphabet and $\mathcal{X}$ a finite set of variables. There 
 ## Proof depends on
 
 - [Satisfiability of word equations is in PSPACE](word-equation-satisfiability-in-pspace.md)
-- [Systems of word equations reduce to one equation](system-of-word-equations-to-one-equation.md)
+- [Systems of word equations over at least two letters reduce to one equation](system-of-word-equations-to-one-equation.md)
 
 ## Expansion
 

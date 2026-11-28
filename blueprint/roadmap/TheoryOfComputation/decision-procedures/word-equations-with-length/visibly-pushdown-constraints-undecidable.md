@@ -12,11 +12,12 @@ The pushdown alphabet is part of each instance; the statement is not about every
 
 - [Word equations with length and regular constraints](length-and-regular-constraints.md)
 - [Visibly pushdown automata and visibly pushdown languages](../../context-free-languages/visibly-pushdown-languages/visibly-pushdown-automata.md)
+- [Solution of a word equation](../string-constraints-and-word-equations/ordinary-word-equations/satisfies.md)
 
 ## Proof depends on
 
 - [Closure properties of visibly pushdown languages](../../context-free-languages/visibly-pushdown-languages/closure-properties-of-visibly-pushdown-languages.md)
-- [Systems of word equations reduce to one equation](../word-equation-algorithms/satisfiability/system-of-word-equations-to-one-equation.md)
+- [Systems of word equations over at least two letters reduce to one equation](../word-equation-algorithms/satisfiability/system-of-word-equations-to-one-equation.md)
 - [The halting problem is recognizable by multi-stack machines](../../computability/halting-problem-and-rice-s-theorem/tm2-recognizable-halting.md)
 - [The halting problem is undecidable by multi-stack machines](../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
 
