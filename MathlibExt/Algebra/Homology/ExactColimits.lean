@@ -15,6 +15,7 @@ public import Mathlib.Algebra.Homology.ShortComplex.ExactFunctor
 public import Mathlib.CategoryTheory.Limits.Preserves.Limits
 
 import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
+import Mathlib.CategoryTheory.Limits.FunctorCategory.Finite
 
 /-!
 # Homology of exact colimits
