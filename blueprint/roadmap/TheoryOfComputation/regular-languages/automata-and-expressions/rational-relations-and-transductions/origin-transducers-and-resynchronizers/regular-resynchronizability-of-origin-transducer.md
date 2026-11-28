@@ -6,8 +6,8 @@ up to some bounded regular resynchronizer; this holds already for one-way transd
 **Theorem (Kuperberg and Martens).** Given two-way nondeterministic transducers $T_1, T_2$, it is undecidable whether $T_1 \preceq T_2$, that is, whether some bounded
 regular resynchronizer $R$ satisfies $T_1 \subseteq R(T_2)$, in the sense of
 [origin semantics of transducers and bounded regular resynchronizers](origin-semantics-of-transducers-and-bounded-regu.md). The problem stays
-undecidable for one-way nondeterministic transducers, and also when $R$ ranges over any class of resynchronizers containing the $k$-shift
-resynchronizers $\gamma(x, y) = (y \le x \le y + k)$ for all $k$. For one-way nondeterministic transducers, it is also undecidable whether
+undecidable for one-way nondeterministic transducers, and also when $R$ ranges over any subclass of the bounded regular resynchronizers that contains the $k$-shift
+resynchronizers $\gamma(x, y) = (y \le x \le y + k)$ for every $k$ (Corollary 25). The upper restriction matters: the transducers of the reduction always satisfy classical inclusion, so the unbounded universal resynchronizer would witness containment on every instance. For one-way nondeterministic transducers, it is also undecidable whether
 $T_1 \sim T_2$.
 
 The relation $\preceq$ is decidable for unambiguous two-way transducers by earlier work, and for a fixed bounded resynchronizer
@@ -29,8 +29,8 @@ The proof reduces the bounded-tape problem: does a deterministic Turing machine 
 undecidable by a simple reduction from the halting problem. Encoding runs of the machine as in the domino game for the Post correspondence problem,
 one builds from the machine two one-way transducers $T_{\mathrm{down}}$ and $T_{\mathrm{up}}$ such that $T_{\mathrm{down}} \preceq T_{\mathrm{up}}$ holds exactly when
 the machine uses bounded tape; in that case a $k$-shift resynchronizer without parameters already works, which gives the restricted versions. For
-equivalence, replace $T_{\mathrm{down}}$ by $T_{\mathrm{down}} \cup T_{\mathrm{up}}$.
+equivalence, replace $T_{\mathrm{down}}$ by $T_{\mathrm{down}} \cup T_{\mathrm{up}}$. When the machine uses unbounded tape, the negative half of Theorem 24 applies Theorem 17 of the source: $T_1 \preceq T_2$ holds iff for some $k$ every origin graph of $T_1$ is matched by one of $T_2$ with the same input and output in which no position is traversed more than $k$ times, and the reduction produces pairs with arbitrarily many traversals of one position. A good expansion links pages for this characterization (Theorem 17) and for the undecidability of the bounded-tape problem on the empty input (Lemma 39 in Appendix A.7).
 
 ## Sources
 
-- D. Kuperberg and J. Martens, "Regular resynchronizability of origin transducers is undecidable", in *45th International Symposium on Mathematical Foundations of Computer Science (MFCS 2020)*, LIPIcs 170, paper 58, 2020, doi:10.4230/LIPIcs.MFCS.2020.58; read in arXiv:2002.07558v3: Theorem 20 in Section 5 with the remark after it, Corollary 25 (1NTs and shift resynchronizers), Theorem 26 (equivalence of 1NTs), Corollary 27 (rational resynchronizers), Lemma 39 in Appendix A.7 (BoundTape), and Theorem 10 (unambiguous transducers) recalled in Section 4, with the numbering of that version.
+- D. Kuperberg and J. Martens, "Regular resynchronizability of origin transducers is undecidable", in *45th International Symposium on Mathematical Foundations of Computer Science (MFCS 2020)*, LIPIcs 170, paper 58, 2020, doi:10.4230/LIPIcs.MFCS.2020.58; read in arXiv:2002.07558v3: Theorem 17 in Section 4, Theorem 20 in Section 5 with the remark after it, Theorem 24, Corollary 25 (1NTs and shift resynchronizers), Theorem 26 (equivalence of 1NTs), Corollary 27 (rational resynchronizers), Lemma 39 in Appendix A.7 (BoundTape), and Theorem 10 (unambiguous transducers) recalled in Section 4, with the numbering of that version.
