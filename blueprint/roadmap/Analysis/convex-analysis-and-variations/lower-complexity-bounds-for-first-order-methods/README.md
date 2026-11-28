@@ -13,6 +13,10 @@ How fast can any method that only queries gradients minimise a smooth convex fun
 - [Minimum of the worst function on the first $k$ coordinates](worst-function-ge-of-support.md)
 - [Minimum value of the worst function](worst-function-worst-minimizer.md)
 
+## Oracle model
+
+- [The black-box first-order oracle model](black-box-first-order-oracle-model.md)
+
 ## Related topics
 
 - [Accelerated gradient methods](../accelerated-gradient-methods/README.md): the methods whose rates match these bounds up to constants.

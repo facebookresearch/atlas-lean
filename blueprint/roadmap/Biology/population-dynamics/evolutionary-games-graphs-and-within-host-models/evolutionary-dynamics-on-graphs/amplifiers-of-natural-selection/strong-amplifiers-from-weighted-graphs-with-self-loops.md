@@ -1,10 +1,10 @@
 # Strong amplifiers from weighted graphs with self-loops
 
-**Theorem (Pavlogiannis–Tkadlec–Chatterjee–Nowak).** Fix $\varepsilon > 0$ and let $G_1, G_2, \dots$ be connected graphs with self-loops, $G_N$ having $N$ vertices and diameter at most $N^{1-\varepsilon}$. Then there is an explicit assignment of edge and self-loop weights to each $G_N$ such that the resulting weighted graphs form a strong amplifier for the birth–death Moran process under **both** uniform and temperature initialization (and hence under any mixture of the two): for every fixed $r > 1$,
+**Theorem (Pavlogiannis–Tkadlec–Chatterjee–Nowak).** Fix $\varepsilon > 0$ and $N_0 > 0$, and let $G_1, G_2, \dots$ be connected **undirected** unweighted graphs with a self-loop at **every** vertex ($u \in \mathrm{Nh}(u)$ for all vertices $u$, as the proof's Section 6.1 assumes), $G_N$ having $N$ vertices and diameter at most $N^{1-\varepsilon}$ for all $N > N_0$. Then there is an explicit assignment of nonnegative weights to the edges and self-loops of each $G_N$ such that the resulting weighted graphs form a strong amplifier for the birth–death Moran process under **both** uniform and temperature initialization (and hence under any mixture of the two): for every fixed $r > 1$,
 
 $$\rho(G_N, r, \mathrm U) \to 1 \quad\text{and}\quad \rho(G_N, r, \mathrm T) \to 1 \qquad (N \to \infty).$$
 
-Since an edge can be removed by giving it weight $0$, the result applies to sparse topologies such as stars, toroidal grids, sunflowers, wheels, concentric circles and trees.
+The theorem is stated only for undirected graphs, whose edge set is symmetric ($i \to j$ is an edge exactly when $j \to i$ is; Supplementary Note 1, Theorem 5); this positive construction is not claimed for directed input (the source's separate negative results are not stated here). Since an edge can be removed by giving it weight $0$, the result applies to sparse topologies such as stars, toroidal grids, sunflowers, wheels, concentric circles and trees, each with a self-loop added at every vertex, **provided** the family meets the diameter bound; a path, of diameter $N - 1$, does not.
 
 ## Depends on
 
@@ -16,4 +16,4 @@ The construction partitions the vertices into a **hub** and several **branches**
 
 ## Sources
 
-- A. Pavlogiannis, J. Tkadlec, K. Chatterjee and M. A. Nowak, "Construction of arbitrarily strong amplifiers of natural selection using evolutionary graph theory", Communications Biology 1 (2018), article 71, Results ("Construction of strong amplifiers") and Methods ("Construction of strong amplifiers"); full proof in Supplementary Note 1, Section 5, <https://doi.org/10.1038/s42003-018-0078-7>, PMCID PMC6123726.
+- A. Pavlogiannis, J. Tkadlec, K. Chatterjee and M. A. Nowak, "Construction of arbitrarily strong amplifiers of natural selection using evolutionary graph theory", Communications Biology 1 (2018), article 71, Results ("Construction of strong amplifiers") and Methods ("Construction of strong amplifiers"); Supplementary Note 1, Section 5, Theorem 5 (for unweighted, undirected graphs; full proof in the companion preprint arXiv:1802.02509), <https://doi.org/10.1038/s42003-018-0078-7>, PMCID PMC6123726.
