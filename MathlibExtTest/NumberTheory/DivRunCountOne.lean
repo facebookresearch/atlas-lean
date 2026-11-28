@@ -23,4 +23,14 @@ example : divRunCount 2 1 = 1980 := by
   rw [divRunCount_one]
   decide
 
+-- One constant controls the error at the smallest permitted bound and all larger bounds.
+example : ∃ K : ℝ, |1980 - 32 * 2 ^ 4 * Real.log 2| ≤ K * 2 ^ 4 ∧
+    ∀ B : ℕ, 3 ≤ B →
+      |(divRunCount B 1 : ℝ) - 32 * (B : ℝ) ^ 4 * Real.log B| ≤ K * (B : ℝ) ^ 4 := by
+  obtain ⟨K, hK⟩ := divRunCount_one_asymptotic
+  have hcount : divRunCount 2 1 = 1980 := by
+    rw [divRunCount_one]
+    decide
+  exact ⟨K, by simpa [hcount] using hK 2 (by decide), fun B hB => hK B (by omega)⟩
+
 end MetaMathlibExt
