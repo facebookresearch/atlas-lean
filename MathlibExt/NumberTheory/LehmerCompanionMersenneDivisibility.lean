@@ -23,11 +23,18 @@ $R=rX^2$ and $Q=qY^2$. The proof uses the seed $R/Q-2$ modulo $M_n$: it identifi
 companion terms with scaled Chebyshev evaluations and uses doubling to recover the Lucas–Lehmer
 iteration.
 
+For $n \ge 3$ odd and $M_n = 2^n - 1$ prime, the Jacobi criterion says that if $R,Q$ are integers,
+$D = R - 4Q$, and the Jacobi symbols of $DR$ and $QR$ at $M_n$ are both $-1$, then $M_n$ divides
+$\bar V_{2^{n-1}}(R,Q)$. This is Lemma 5, with the same conclusion for noncoprime $R,Q$: the symbol
+hypotheses already force $R$, $Q$ and $D$ to be nonzero modulo $M_n$. The Lean proof specializes
+`mersenne_dvd_lehmerV_of_diophantine` at $(r,d,q) = (R,D,Q)$ and $X = Y = Z = 1$.
+
 ## References
 
 * E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality Test*,
-  Journal of Integer Sequences **28** (2025), Article 25.2.5, pp. 1–26, §2 (recurrence (2) and
-  Theorem 6) and §3 (Lemma 7). <https://cs.uwaterloo.ca/journals/JIS/VOL28/Roettger/roettger15.pdf>
+  Journal of Integer Sequences **28** (2025), Article 25.2.5, pp. 1–26, §2 (recurrence (2),
+  Lemma 5 and Theorem 6) and §3 (Lemma 7).
+  <https://cs.uwaterloo.ca/journals/JIS/VOL28/Roettger/roettger15.pdf>
 * D. H. Lehmer, *An Extended Theory of Lucas' Functions*, Annals of Mathematics **31** (1930),
   pp. 419–448, §1 (Lehmer sequences) and Theorem 4.9 (the criterion behind Lemma 5).
 * The Lean proof uses `acceptableSeed_of_jacobi` from
@@ -226,5 +233,25 @@ public theorem mersenne_dvd_lehmerV_of_diophantine {n : ℕ} (hn : Odd n) (h3 : 
     lehmerV_even_eq_chebyshev R Q s hs]
   push_cast
   rw [chebyshev_eval_two_pow, hzero, mul_zero]
+
+/-- **Divisibility of Lehmer's companion sequence by a Mersenne prime.** Let $n \ge 3$ be an odd
+natural number such that $M_n = 2^n - 1$ is prime, let $R$ and $Q$ be integers, let
+$\bar V_k(R, Q)$ denote Lehmer's companion sequence, and put $D = R - 4Q$. If the Jacobi symbols
+$\left(\frac{DR}{M_n}\right)$ and $\left(\frac{QR}{M_n}\right)$ are both $-1$, then $M_n$
+divides $\bar V_{(M_n+1)/2}(R, Q) = \bar V_{2^{n-1}}(R, Q)$.
+
+Since $M_n$ is prime, these Jacobi symbols are Legendre symbols.
+
+Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Lemma 5. -/
+public theorem mersenne_dvd_lehmerV_of_jacobi {n : ℕ} (hn : Odd n) (h3 : 3 ≤ n)
+    (hp : (mersenne n).Prime) (R Q : ℤ)
+    (hDR : jacobiSym ((R - 4 * Q) * R) (mersenne n) = -1)
+    (hQR : jacobiSym (Q * R) (mersenne n) = -1) :
+    (mersenne n : ℤ) ∣ lehmerV R Q (2 ^ (n - 1)) := by
+  simpa only [one_pow, mul_one] using
+    mersenne_dvd_lehmerV_of_diophantine hn h3 hp R (R - 4 * Q) Q 1 1 1
+      (by simp) (by simp only [one_pow, mul_one]; ring)
+      (by simpa only [mul_comm R (R - 4 * Q)] using hDR) hQR
 
 end MetaMathlibExt
