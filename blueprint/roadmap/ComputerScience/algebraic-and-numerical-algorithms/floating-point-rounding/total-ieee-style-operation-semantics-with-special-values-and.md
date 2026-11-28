@@ -55,6 +55,6 @@ operation here returns only the flags it raises.
 
 ## Sources
 
-- IEEE Standard for Floating-Point Arithmetic, IEEE Std 754-2019, Clause 4.3.3 (the rounding-direction attributes an implementation shall provide). <https://doi.org/10.1109/IEEESTD.2019.8766229>
+- IEEE Standard for Floating-Point Arithmetic, IEEE Std 754-2019; Clause 4.3.3 for the rounding-direction attributes an implementation shall provide. <https://doi.org/10.1109/IEEESTD.2019.8766229>
 - What Every Computer Scientist Should Know About Floating-Point Arithmetic — D. Goldberg, ACM Computing Surveys 23(1), 1991, Sec. 2.2 Special Quantities, Sec. 2.3 Exceptions, Flags, and Trap Handlers, and Sec. 3.2.2 IEEE Standard ($x - x = +0$ and the negation of zero). <https://www.cs.tufts.edu/comp/40/docs/WhatEveryComputerScientistShouldKnowAboutFloatingPointArithmetic.pdf>
 - Verified Compilation of Floating-Point Computations — S. Boldo, J.-H. Jourdan, X. Leroy, G. Melquiond, Journal of Automated Reasoning 54(2), 2015, Sec. 5.1 (formats, signed zeros, infinities and NaN) and Sec. 5.2 (special cases first, then rounding with an exponent unbounded above, and the overflow result by rounding mode). <https://xavierleroy.org/publi/floating-point-compcert.pdf>
