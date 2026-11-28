@@ -127,19 +127,18 @@ abbrev endpointCofreeCounit :
 theorem endpointCofreeUnit_app (K : HomologicalComplex C c) :
     (endpointCofreeUnit C c).app K =
       endpointCofreeHom K K.X (fun i => 𝟙 (K.X i)) := by
-  calc
-    _ = (endpointCofreeAdjunction C c).homEquiv K ((forget C c).obj K) (𝟙 _) :=
-      ((endpointCofreeAdjunction C c).homEquiv_id K).symm
-    _ = _ :=
-      endpointCofreeAdjunction_homEquiv_apply C c K ((forget C c).obj K) (𝟙 _)
+  have h := (endpointCofreeAdjunction C c).homEquiv_id K
+  rw [endpointCofreeAdjunction_homEquiv_apply] at h
+  dsimp only [forget, GradedObject.categoryOfGradedObjects, CategoryTheory.pi] at h
+  exact h.symm
 
 /-- The first coefficient of the unit is the identity in every degree. -/
 @[reassoc (attr := simp)]
 theorem endpointCofreeUnit_fst (K : HomologicalComplex C c) (i : ι) :
     ((endpointCofreeUnit C c).app K).f i ≫
         endpointCofreeProjection (c := c) K.X i = 𝟙 (K.X i) := by
-  simpa only [endpointCofreeUnit_app, Functor.id_obj] using
-    endpointCofreeHom_fst K K.X (fun i => 𝟙 (K.X i)) i
+  rw [endpointCofreeUnit_app]
+  exact endpointCofreeHom_fst K K.X (fun i => 𝟙 (K.X i)) i
 
 /-- Along an outgoing edge, the second coefficient of the unit, identified with
 the next source term, is the source differential. -/
@@ -149,8 +148,9 @@ theorem endpointCofreeUnit_snd_of_rel (K : HomologicalComplex C c)
     (((endpointCofreeUnit C c).app K).f i ≫
         endpointCofreeSecondProjection (c := c) K.X i) ≫
         (endpointCofreeNextTermIso K.X hij).hom = K.d i j := by
-  simpa only [endpointCofreeUnit_app, Functor.id_obj, Category.comp_id] using
-    endpointCofreeHom_snd_of_rel K K.X (fun i => 𝟙 (K.X i)) hij
+  rw [endpointCofreeUnit_app]
+  exact (endpointCofreeHom_snd_of_rel K K.X (fun i => 𝟙 (K.X i)) hij).trans
+    (Category.comp_id _)
 
 /-- At an index without an outgoing edge, the second coefficient of the unit is
 the zero morphism to the optional zero term. -/
