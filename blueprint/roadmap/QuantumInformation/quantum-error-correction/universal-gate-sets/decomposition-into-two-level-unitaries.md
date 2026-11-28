@@ -1,7 +1,7 @@
 # Decomposition of a unitary into two-level unitaries
 
 For every $d \ge 0$ and every unitary $d \times d$ complex matrix $U$ there are a list $M_1, \dots, M_m$ of unitary matrices,
-each [two-level](../../../LinearAlgebra/not-yet-classified/two-level/is-two-level.md) on some pair of indices, with $m \le d(d-1)/2$, and complex numbers $\varphi_1, \dots, \varphi_d$
+each [two-level](../../../LinearAlgebra/matrix-decompositions/two-level-unitary-decomposition/is-two-level.md) on some pair of indices, with $m \le d(d-1)/2$, and complex numbers $\varphi_1, \dots, \varphi_d$
 with $|\varphi_k| = 1$, such that
 
 $$U = M_1 M_2 \cdots M_m \cdot \operatorname{diag}(\varphi_1, \dots, \varphi_d).$$
