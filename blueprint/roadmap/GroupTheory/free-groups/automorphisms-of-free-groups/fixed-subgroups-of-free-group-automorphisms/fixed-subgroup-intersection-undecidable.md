@@ -6,7 +6,7 @@ For a [group](../../../group-basics/group.md) $G$ and an endomorphism $\Phi$ of 
 
 **Theorem (Carvalho).** There is no algorithm that takes as input ranks $n, m$, an automorphism $\Phi \in \mathrm{Aut}(F_n \times F_m)$, given by the images of the standard generators as words, and a finitely generated subgroup $H \le F_n \times F_m$, given by a finite generating set of words, and decides whether $\mathrm{Fix}(\Phi) \cap H$ is trivial (Proposition 3.1 of the source).
 
-By contrast, the source gives an algorithm that decides, for two endomorphisms of $F_n \times F_m$ one of which is of the source's types VI or VII (which include all injective endomorphisms), whether their fixed subgroups intersect trivially (Theorem 3.3).
+By contrast, for ranks $m, n > 1$ (the source's convention is that free groups have rank at least $2$), the source gives an algorithm that decides, for two endomorphisms of $F_n \times F_m$ one of which is of the source's types VI or VII (which include all injective endomorphisms), whether their fixed subgroups intersect trivially (Theorem 3.3).
 
 ## Depends on
 

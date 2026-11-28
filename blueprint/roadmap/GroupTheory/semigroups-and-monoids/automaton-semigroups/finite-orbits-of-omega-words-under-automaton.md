@@ -2,18 +2,18 @@
 
 For some complete reversible automaton it is undecidable whether a given periodic infinite word has a finite orbit, and for complete reversible automata in general it is undecidable whether some infinite word has a finite orbit.
 
-Let $\mathcal T = (Q, \Sigma, \delta)$ range over complete and reversible S-automata (see [automaton semigroups, monoids and groups](automaton-semigroups.md)), and for $\alpha \in \Sigma^\omega$ let $Q^* \circ \alpha$ be its orbit under all products of states.
+Let $\mathcal T = (Q, \Sigma, \delta)$ range over complete and reversible S-automata (see [automaton semigroups and monoids](automaton-semigroups.md)), and for $\alpha \in \Sigma^\omega$ let $Q^* \circ \alpha$ be its orbit under all products of states.
 
 **Theorem (D'Angeli, Francoeur, Rodaro and Wächter).**
 
 1. There is a complete and reversible S-automaton $\mathcal T = (Q, \Sigma, \delta)$ for which it is undecidable, given $u \in \Sigma^+$, whether the orbit $Q^* \circ u^\omega$ of the periodic word $u^\omega$ is finite (Proposition 4.3).
 2. It is undecidable, given a complete and reversible S-automaton $\mathcal T = (Q, \Sigma, \delta)$, whether some $\alpha \in \Sigma^\omega$ has a finite orbit $Q^* \circ \alpha$ (Proposition 4.4).
 
-Whether some $\omega$-word has an infinite orbit is equivalent to infiniteness of the automaton semigroup, and so undecidable by Gillibert's theorem; the source calls item 2 a reciprocal problem to this finiteness problem in the reversible case. The source also shows that an automaton with an $\omega$-word of finite orbit has an ultimately periodic one (Proposition 4.1), though not always a periodic one (Proposition 4.2).
+For complete S-automata in general, whether some $\omega$-word has an infinite orbit is equivalent to infiniteness of the automaton semigroup, and so undecidable by Gillibert's theorem (Section 4 of the source). Within complete reversible automata the same question is equivalent to the finiteness problem for automaton groups, whose decidability is open; the source calls item 2 a reciprocal problem to this finiteness problem in the reversible case. The source also shows that an automaton with an $\omega$-word of finite orbit has an ultimately periodic one (Proposition 4.1), though not always a periodic one (Proposition 4.2).
 
 ## Depends on
 
-- [Automaton semigroups, monoids and groups](automaton-semigroups.md)
+- [Automaton semigroups and monoids](automaton-semigroups.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
