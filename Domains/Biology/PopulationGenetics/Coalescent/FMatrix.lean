@@ -1494,19 +1494,17 @@ theorem dist_metricSpaceDw₂OfIsochronous (g₁ g₂ : RankedGenealogy n 1) :
     metricSpaceDw₂OfIsochronous.dist g₁ g₂ = dw₂ g₁ g₂ :=
   dist_pseudoMetricSpaceDw₂ g₁ g₂
 
-end RankedGenealogy
+/-- **Proposition 2 for heterochronous genealogies** (Kim, Rosenberg and Palacios 2020): the
+statement that for `m ≥ 2` sampling events, `d₁ʷ` and `d₂ʷ` are the distances of metric space
+structures on ranked genealogies with `n` leaves and `m` sampling events.
 
-namespace RankedGenealogy
-
-/-- **The weighted distances are metrics on heterochronous ranked genealogies**: the source's
-Proposition 2 (Kim, Rosenberg and Palacios 2020) for `m ≥ 2` sampling events, that `d₁ʷ` and `d₂ʷ`
-are the distances of metric space structures on ranked genealogies with `n` leaves and `m`
-sampling events. Since they are the distances of pseudometric space structures
-(`pseudoMetricSpaceDw₁`, `pseudoMetricSpaceDw₂`), this holds exactly when two such genealogies with
-the same matrix `F ∘ W` on and below the diagonal are equal; `eq_of_weighted_eq` proves that when
-the diagonals of their F matrices agree, as they do for one sampling event. The source's proof (SI
-Appendix, section 2) recovers the change-point times from the first column of `F ∘ W`, which
-determines them only when a child of the root persists to the most recent interval. -/
+This is stated as a proposition, not asserted: the source's argument leaves the case `m ≥ 2` open.
+Since `d₁ʷ` and `d₂ʷ` are the distances of pseudometric space structures (`pseudoMetricSpaceDw₁`,
+`pseudoMetricSpaceDw₂`), the statement holds exactly when two such genealogies with the same matrix
+`F ∘ W` on and below the diagonal are equal; `eq_of_weighted_eq` proves that when the diagonals of
+their F matrices agree, as they do for one sampling event. The source's proof (SI Appendix,
+section 2) recovers the change-point times from the first column of `F ∘ W`, which determines them
+only when a child of the root persists to the most recent interval. -/
 def HeterochronousWeightedMetrics : Prop :=
   ∀ n m : ℕ, 2 ≤ m →
     (∃ M : MetricSpace (RankedGenealogy n m), ∀ g₁ g₂, M.dist g₁ g₂ = dw₁ g₁ g₂) ∧
