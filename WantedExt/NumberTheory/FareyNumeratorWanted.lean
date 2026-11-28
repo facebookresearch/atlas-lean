@@ -49,6 +49,7 @@ public import MathlibExt.NumberTheory.FareyNumerator
 public import MathlibExt.NumberTheory.FareyNumeratorFormula
 public import MathlibExt.NumberTheory.FareyNumeratorPeriod
 public import MathlibExt.NumberTheory.FareyNumeratorPrimePow
+public import MathlibExt.NumberTheory.FareyNumeratorSum
 
 set_option autoImplicit false
 
@@ -132,22 +133,6 @@ theorem_wanted fareyNumeratorCount_two_mul (h n : ℕ)
           (if h = 1 then 1 else 0) +
           ∑ d ∈ h.divisors,
             ArithmeticFunction.moebius d * (((n / d) % 2 : ℕ) : ℤ))
-
-/-- **Corollary 4**: for `0 < m < n`, the number of
-fractions of `F_n` with numerator at most `m` is
-`1 + n ∑_{h ≤ m} φ(h)/h - Φ(m)
-  - ∑_{h ≤ m} ∑_{d ∣ h} μ(d) {n/d}`.
-
-Source: Rogelio Tomás García, "Farey Fractions with
-Equal Numerators and the Rank of Unit Fractions",
-INTEGERS 24 (2024), Article A63, Corollary 4. -/
-theorem_wanted sum_fareyNumeratorCount (m n : ℕ)
-    (hm : 0 < m) (hmn : m < n) :
-    (∑ h ∈ Finset.Icc 1 m, (fareyNumeratorCount n h : ℚ)) =
-      1 + (n : ℚ) * ∑ h ∈ Finset.Icc 1 m, (Nat.totient h : ℚ) / h -
-        ∑ h ∈ Finset.Icc 1 m, (Nat.totient h : ℚ) -
-        ∑ h ∈ Finset.Icc 1 m, ∑ d ∈ h.divisors,
-          (ArithmeticFunction.moebius d : ℚ) * (((n % d : ℕ) : ℚ) / d)
 
 /-- **Corollary 5**: for `0 < h < n` and
 `0 < k < n/h` (written `k * h < n`),
