@@ -18,13 +18,9 @@ salesman problem", SIAM Journal on Computing 6(1) (1977), 76-83, doi:10.1137/020
 -/
 module
 
-public import Batteries.Data.List.Basic
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitGivenHamiltonianPathDefs
 
 @[expose] public section
 
@@ -55,37 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, and a Hamiltonian path
-as a list of vertices. -/
-abbrev HamiltonianCircuitGivenHamiltonianPathInstance := ℕ × List (ℕ × ℕ) × List ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : HamiltonianCircuitGivenHamiltonianPathInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: at least one vertex (a path has one), the edge list
-describes a simple graph (no duplicate edges in either orientation, no self-loops, endpoints in
-range), and the given list is a Hamiltonian path of it: it lists `n` distinct vertices, each
-`< n` (so every vertex exactly once), and consecutive entries are joined by an edge. -/
-def WellFormed (i : HamiltonianCircuitGivenHamiltonianPathInstance) : Prop :=
-  0 < i.1 ∧ (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.Nodup ∧ i.2.2.length = i.1 ∧ (∀ v ∈ i.2.2, v < i.1) ∧
-    i.2.2.IsChain (fun a b => (a, b) ∈ i.2.1 ∨ (b, a) ∈ i.2.1)
-
-/-- `G` has a Hamiltonian circuit. -/
-def HamiltonianCircuitGivenHamiltonianPathFeasible
-    (i : HamiltonianCircuitGivenHamiltonianPathInstance) : Prop :=
-  ∃ v : Fin i.1, ∃ p : (Graph i).Walk v v, p.IsHamiltonianCycle
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT given a Hamiltonian path as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitGivenHamiltonianPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCircuitGivenHamiltonianPathInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCircuitGivenHamiltonianPathFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT given a Hamiltonian path is NP-complete.** Source: Garey and Johnson
 (1979), [GT37]; Papadimitriou and Steiglitz (1977). -/

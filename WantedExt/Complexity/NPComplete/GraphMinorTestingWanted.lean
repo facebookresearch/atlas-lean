@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.Graph.GraphMinor
+public import CSLibExt.Complexity.NPComplete.GraphMinorTestingDefs
 
 @[expose] public section
 
@@ -61,40 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count and edge list of `G`, then the vertex count and edge list of
-`H`. -/
-abbrev GraphMinorTestingInstance := ℕ × List (ℕ × ℕ) × ℕ × List (ℕ × ℕ)
-
-/-- The graph `G` as a bundled finite graph on `Fin n`. -/
-def hostGraph (i : GraphMinorTestingInstance) : MetaMathlibExt.FinGraph where
-  V := Fin i.1
-  G := Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The graph `H` as a bundled finite graph on `Fin k`. -/
-def patternGraph (i : GraphMinorTestingInstance) : MetaMathlibExt.FinGraph where
-  V := Fin i.2.2.1
-  G := Cslib.Complexity.Karp.edgeGraph i.2.2.1 i.2.2.2
-
-/-- Well-formedness of an instance: both edge lists are simple undirected edge lists on their
-vertex sets (no duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : GraphMinorTestingInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (i.2.2.2.Nodup ∧ ∀ e ∈ i.2.2.2, e.1 < i.2.2.1 ∧ e.2 < i.2.2.1 ∧ e.1 ≠ e.2 ∧
-      (e.2, e.1) ∉ i.2.2.2)
-
-/-- `H` is a minor of `G`. -/
-def GraphMinorTestingFeasible (i : GraphMinorTestingInstance) : Prop :=
-  MetaMathlibExt.IsMinor (patternGraph i) (hostGraph i)
-
-open Classical in
-/-- GRAPH MINOR TESTING as a decision problem over bitstrings. -/
-noncomputable def graphMinorTestingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphMinorTestingInstance) x with
-  | some i => decide (WellFormed i ∧ GraphMinorTestingFeasible i)
-  | none => false
 
 /-- **GRAPH MINOR TESTING is NP-complete.** Source: Matoušek and Thomas (1992); Gima, Kumabe,
 Kurita, Okada and Otachi (2024), Section 1.2. -/

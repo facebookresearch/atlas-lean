@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import CSLibExt.Complexity.NPComplete.InducedSubgraphWithPropertyPiDefs
 
 @[expose] public section
 
@@ -66,61 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A graph property: a predicate on the simple graphs on `Fin m`, for each vertex count `m`. -/
-abbrev GraphProperty := ∀ m : ℕ, SimpleGraph (Fin m) → Prop
-
-/-- `Φ` is hereditary: whenever a graph has `Φ`, so does each of its induced subgraphs, in every
-numbering of its vertices (`G.comap f` for an injective `f : Fin m ↪ Fin n`). -/
-def IsHereditary (Φ : GraphProperty) : Prop :=
-  ∀ ⦃m n : ℕ⦄ (G : SimpleGraph (Fin n)) (f : Fin m ↪ Fin n), Φ n G → Φ m (G.comap f)
-
-/-- `Φ` is nontrivial: it holds for graphs of arbitrarily large size and fails for graphs of
-arbitrarily large size. -/
-def IsNontrivial (Φ : GraphProperty) : Prop :=
-  (∀ m, ∃ n, m ≤ n ∧ ∃ G : SimpleGraph (Fin n), Φ n G) ∧
-    ∀ m, ∃ n, m ≤ n ∧ ∃ G : SimpleGraph (Fin n), ¬ Φ n G
-
-/-- A simple edge list on `Fin n`: no duplicate edges in either orientation, no self-loops,
-endpoints in range. -/
-def SimpleEdgeList (n : ℕ) (es : List (ℕ × ℕ)) : Prop :=
-  es.Nodup ∧ ∀ e ∈ es, e.1 < n ∧ e.2 < n ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ es
-
-open Classical in
-/-- The property `Φ` as a decision problem over bitstrings: an encoded graph (vertex count and
-simple edge list) is a yes-instance when it has `Φ`. -/
-noncomputable def propertyDec (Φ : GraphProperty) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := ℕ × List (ℕ × ℕ)) x with
-  | some g => decide (SimpleEdgeList g.1 g.2 ∧ Φ g.1 (Cslib.Complexity.Karp.edgeGraph g.1 g.2))
-  | none => false
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev InducedSubgraphWithPropertyPiInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : InducedSubgraphWithPropertyPiInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`, and
-`0 < K ≤ |V|`. -/
-def WellFormed (i : InducedSubgraphWithPropertyPiInstance) : Prop :=
-  SimpleEdgeList i.1 i.2.1 ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some set of at least `K` vertices induces a subgraph with property `Φ`: for some `m ≥ K`
-and some injective `f : Fin m ↪ Fin n`, the subgraph induced by the range of `f` has `Φ`. -/
-def InducedSubgraphWithPropertyPiFeasible (Φ : GraphProperty)
-    (i : InducedSubgraphWithPropertyPiInstance) : Prop :=
-  ∃ m, i.2.2 ≤ m ∧ ∃ f : Fin m ↪ Fin i.1, Φ m ((Graph i).comap f)
-
-open Classical in
-/-- INDUCED SUBGRAPH WITH PROPERTY `Φ` as a decision problem over bitstrings. -/
-noncomputable def inducedSubgraphWithPropertyPiDec (Φ : GraphProperty) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InducedSubgraphWithPropertyPiInstance) x with
-  | some i => decide (WellFormed i ∧ InducedSubgraphWithPropertyPiFeasible Φ i)
-  | none => false
 
 /-- **INDUCED SUBGRAPH WITH PROPERTY Π is NP-complete** for every hereditary, nontrivial
 property `Π` that can be tested in polynomial time. Source: Garey and Johnson (1979), [GT21];

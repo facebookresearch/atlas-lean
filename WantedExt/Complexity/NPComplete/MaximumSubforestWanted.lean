@@ -23,13 +23,8 @@ isomorphism, used for membership in NP).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.InducedSubgraphWithPropertyPiWanted
+public import CSLibExt.Complexity.NPComplete.MaximumSubforestDefs
 
 @[expose] public section
 
@@ -74,35 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n` and edge list of the tree `G`, the trees of `H` (each a
-vertex count and an edge list), and the bound `K`. -/
-abbrev MaximumSubforestInstance :=
-  ℕ × List (ℕ × ℕ) × List (ℕ × List (ℕ × ℕ)) × ℕ
-
-/-- Well-formedness of an instance: `G` and every tree of `H` are simple graphs that are trees,
-and `0 < K`. -/
-def WellFormed (i : MaximumSubforestInstance) : Prop :=
-  SimpleEdgeList i.1 i.2.1 ∧ (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).IsTree ∧
-    (∀ T ∈ i.2.2.1, SimpleEdgeList T.1 T.2 ∧ (Cslib.Complexity.Karp.edgeGraph T.1 T.2).IsTree) ∧
-    0 < i.2.2.2
-
-/-- Some sublist `E'` of the edge list of `G`, of length at least `K`, spans a subgraph
-`(V, E')` containing no copy of a tree of `H`. The length counts list entries, so it is an edge
-count only for a simple edge list, which well-formedness checks. -/
-def MaximumSubforestFeasible (i : MaximumSubforestInstance) : Prop :=
-  ∃ E' : List (ℕ × ℕ), E'.Sublist i.2.1 ∧ i.2.2.2 ≤ E'.length ∧
-    ∀ T ∈ i.2.2.1,
-      (Cslib.Complexity.Karp.edgeGraph T.1 T.2).Free (Cslib.Complexity.Karp.edgeGraph i.1 E')
-
-open Classical in
-/-- MAXIMUM SUBFOREST as a decision problem over bitstrings. -/
-noncomputable def maximumSubforestDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumSubforestInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumSubforestFeasible i)
-  | none => false
 
 /-- **MAXIMUM SUBFOREST is NP-complete.** Source: Shamir and Tsur (1998), Section 1.1
 (hardness); membership in NP as in the module docstring. -/

@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaximumLeafSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.MaximumLeafSpanningTreePlanarMaxDegreeFourDefs
 
 @[expose] public section
 
@@ -67,25 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed MAXIMUM LEAF SPANNING TREE instance whose
-graph is planar with every degree at most 4, with `0 < K ≤ |V|`. -/
-def WellFormed (i : MaximumLeafSpanningTreeInstance) : Prop :=
-  MaximumLeafSpanningTree.WellFormed i ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).IsPlanar ∧
-      (∀ v, (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).degree v ≤ 4) ∧
-        0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- MAXIMUM LEAF SPANNING TREE on planar graphs of maximum degree 4 as a decision problem over
-bitstrings. -/
-noncomputable def maximumLeafSpanningTreePlanarMaxDegreeFourDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumLeafSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumLeafSpanningTreeFeasible i)
-  | none => false
 
 /-- **MAXIMUM LEAF SPANNING TREE on planar graphs of maximum degree 4 is NP-complete.** Source:
 Garey and Johnson (1979), [ND2]; Reich (2016). -/

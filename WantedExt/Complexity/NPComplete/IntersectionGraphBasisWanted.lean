@@ -23,11 +23,8 @@ Canadian Journal of Mathematics 18 (1966), 106-112, doi:10.4153/CJM-1966-014-3.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Finset.Lattice.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IntersectionGraphBasisDefs
 
 @[expose] public section
 
@@ -56,34 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, edge list over `Fin n`, and the bound `K`. -/
-abbrev IntersectionGraphBasisInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : IntersectionGraphBasisInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: a simple edge list (no duplicates in either orientation,
-no loops, endpoints `< n`), so its length is `|E|`, and `0 < K ≤ |E|`. -/
-def WellFormed (i : IntersectionGraphBasisInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- `G` is the intersection graph of subsets `S[v]` of a set of at most `K` elements: distinct
-vertices are adjacent iff their subsets intersect. -/
-def IntersectionGraphBasisFeasible (i : IntersectionGraphBasisInstance) : Prop :=
-  ∃ k ≤ i.2.2, ∃ S : Fin i.1 → Finset (Fin k),
-    ∀ u v, u ≠ v → ((Graph i).Adj u v ↔ (S u ∩ S v).Nonempty)
-
-open Classical in
-/-- INTERSECTION GRAPH BASIS as a decision problem over bitstrings. -/
-noncomputable def intersectionGraphBasisDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntersectionGraphBasisInstance) x with
-  | some i => decide (WellFormed i ∧ IntersectionGraphBasisFeasible i)
-  | none => false
 
 /-- **INTERSECTION GRAPH BASIS is NP-complete.** Source: Garey and Johnson (1979), [GT59];
 Kou, Stockmeyer and Wong (1978); Orlin (1977). -/

@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IsomorphicSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.IsomorphicSpanningTreeThreeStarDefs
 
 @[expose] public section
 
@@ -57,30 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The edges of the 3-star with `n` legs: for each `k < n`, the leg `0 - (3k + 1) - (3k + 2) -
-(3k + 3)`. -/
-def threeStarEdges (n : ℕ) : List (ℕ × ℕ) :=
-  (List.range n).flatMap fun k =>
-    [(0, 3 * k + 1), (3 * k + 1, 3 * k + 2), (3 * k + 2, 3 * k + 3)]
-
-/-- The 3-star with `n` legs as a `SimpleGraph (Fin (3n + 1))`. -/
-def threeStar (n : ℕ) : SimpleGraph (Fin (3 * n + 1)) :=
-  Cslib.Complexity.Karp.edgeGraph (3 * n + 1) (threeStarEdges n)
-
-/-- Well-formedness of an instance: the parent's (simple edge lists, `T` a tree), and `T` is
-isomorphic to a 3-star. -/
-def WellFormed (i : IsomorphicSpanningTreeInstance) : Prop :=
-  IsomorphicSpanningTree.WellFormed i ∧ ∃ n : ℕ, Nonempty (TreeGraph i ≃g threeStar n)
-
-open Classical in
-/-- ISOMORPHIC SPANNING TREE for 3-stars as a decision problem over bitstrings. -/
-noncomputable def isomorphicSpanningTreeThreeStarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IsomorphicSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ IsomorphicSpanningTreeFeasible i)
-  | none => false
 
 /-- **ISOMORPHIC SPANNING TREE is NP-complete for 3-stars.** Source: Garey and Johnson (1979),
 [ND8], comment (c) (Garey and Johnson, unpublished). -/

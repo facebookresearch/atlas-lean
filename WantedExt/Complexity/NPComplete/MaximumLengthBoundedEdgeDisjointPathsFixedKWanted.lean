@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.MengerEdge
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaximumLengthBoundedDisjointPathsWanted
+public import CSLibExt.Complexity.NPComplete.MaximumLengthBoundedEdgeDisjointPathsFixedKDefs
 
 @[expose] public section
 
@@ -62,30 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance for a fixed bound: vertex count `n` (vertices `0, ..., n - 1`), edge list,
-`s`, `t`, `J`. -/
-abbrev FixedBoundInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ × ℕ
-
-/-- The MAXIMUM LENGTH-BOUNDED DISJOINT PATHS instance given by `i` and the bound `K`. -/
-abbrev withBound (i : FixedBoundInstance) (K : ℕ) : MaximumLengthBoundedDisjointPathsInstance :=
-  (i.1, i.2.1, i.2.2.1, i.2.2.2.1, i.2.2.2.2, K)
-
-/-- There are `J` paths from `s` to `t` in `G`, pairwise sharing no edge, each with at most `K`
-edges. -/
-def EdgeDisjointFeasible (i : MaximumLengthBoundedDisjointPathsInstance) : Prop :=
-  ∃ (hs : i.2.2.1 < i.1) (ht : i.2.2.2.1 < i.1)
-    (paths : Fin i.2.2.2.2.1 → (Graph i).Path ⟨i.2.2.1, hs⟩ ⟨i.2.2.2.1, ht⟩),
-    IsEdgeDisjointSTPaths paths ∧ ∀ j, (paths j).val.length ≤ i.2.2.2.2.2
-
-open Classical in
-/-- MAXIMUM LENGTH-BOUNDED EDGE-DISJOINT PATHS with the bound fixed to `K`, as a decision
-problem over bitstrings. -/
-noncomputable def fixedBoundDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FixedBoundInstance) x with
-  | some i => decide (WellFormed (withBound i K) ∧ EdgeDisjointFeasible (withBound i K))
-  | none => false
 
 /-- **MAXIMUM LENGTH-BOUNDED EDGE-DISJOINT PATHS is NP-complete for every fixed `K ≥ 5`.**
 Source: Garey and Johnson (1979), [ND41], comment; Itai, Perl, and Shiloach (1982). -/

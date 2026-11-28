@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.StackerCraneWanted
+public import CSLibExt.Complexity.NPComplete.StackerCraneUnitLengthsDefs
 
 @[expose] public section
 
@@ -59,20 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed STACKER-CRANE instance in which every
-directed and every undirected edge has length `1`. -/
-def WellFormed (i : StackerCrane.StackerCraneInstance) : Prop :=
-  StackerCrane.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧ ∀ e ∈ i.2.2.1, e.2.2 = 1
-
-open Classical in
-/-- STACKER-CRANE with unit lengths as a decision problem over bitstrings. -/
-noncomputable def stackerCraneUnitLengthsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StackerCrane.StackerCraneInstance) x with
-  | some i => decide (WellFormed i ∧ StackerCrane.StackerCraneFeasible i)
-  | none => false
 
 /-- **STACKER-CRANE is NP-complete with unit lengths.** Source: Garey and Johnson (1979),
 [ND26], comment; Frederickson, Hecht, and Kim (1978). -/

@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Bioinformatics.Phylogenetics.Splits
+public import CSLibExt.Complexity.NPComplete.MaximumCompatibleBinaryCharactersDefs
 
 @[expose] public section
 
@@ -59,39 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of species, the columns of the character matrix (column `j`
-lists the states of character `j` on the species), and the bound `K`. -/
-abbrev MaximumCompatibleBinaryCharactersInstance := ℕ × List (List Bool) × ℕ
-
-/-- The characters of the instance, one per column. -/
-abbrev Character (i : MaximumCompatibleBinaryCharactersInstance) : Type := Fin i.2.1.length
-
-/-- Character `j` as a function from the species `Fin n` to states. -/
-def character (i : MaximumCompatibleBinaryCharactersInstance) (j : Character i) :
-    Fin i.1 → Bool :=
-  fun s => (i.2.1.get j).getD s false
-
-/-- Well-formedness of an instance: there are at least two species, and every column has one
-state per species. -/
-def WellFormed (i : MaximumCompatibleBinaryCharactersInstance) : Prop :=
-  2 ≤ i.1 ∧ ∀ col ∈ i.2.1, col.length = i.1
-
-/-- Some set of at least `K` characters, no two of which show all four gametes. -/
-def MaximumCompatibleBinaryCharactersFeasible
-    (i : MaximumCompatibleBinaryCharactersInstance) : Prop :=
-  ∃ S : Finset (Character i), i.2.2 ≤ S.card ∧
-    ∀ j ∈ S, ∀ k ∈ S, ¬ FourGametes (character i j) (character i k)
-
-open Classical in
-/-- MAXIMUM COMPATIBLE CHARACTER SET for binary characters as a decision problem over
-bitstrings. -/
-noncomputable def maximumCompatibleBinaryCharactersDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumCompatibleBinaryCharactersInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumCompatibleBinaryCharactersFeasible i)
-  | none => false
 
 /-- **MAXIMUM COMPATIBLE CHARACTER SET for binary characters is NP-complete.** Source: Day and
 Sankoff (1986); Estabrook, Johnson and McMorris (1976). -/

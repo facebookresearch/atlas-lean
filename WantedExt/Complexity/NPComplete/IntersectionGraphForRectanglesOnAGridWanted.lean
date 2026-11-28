@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Interval.Set.Basic
-public import WantedExt.Complexity.NPComplete.IntersectionGraphForSegmentsOnAGridWanted
+public import CSLibExt.Complexity.NPComplete.IntersectionGraphForRectanglesOnAGridDefs
 
 @[expose] public section
 
@@ -74,33 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The rectangle `[(x, y), (z, w)]`, given by its corners `((x, y), (z, w))`, lies on the
-`M × N` grid: `1 ≤ x ≤ z ≤ M` and `1 ≤ y ≤ w ≤ N`. -/
-def RectOnGrid (M N : ℕ) (ρ : (ℕ × ℕ) × (ℕ × ℕ)) : Prop :=
-  1 ≤ ρ.1.1 ∧ ρ.1.1 ≤ ρ.2.1 ∧ ρ.2.1 ≤ M ∧ 1 ≤ ρ.1.2 ∧ ρ.1.2 ≤ ρ.2.2 ∧ ρ.2.2 ≤ N
-
-/-- The points of the rectangle `[(x, y), (z, w)]` in the real plane: `[x, z] × [y, w]`. -/
-def rectPoints (ρ : (ℕ × ℕ) × (ℕ × ℕ)) : Set (ℝ × ℝ) :=
-  Set.Icc ((ρ.1.1 : ℝ), (ρ.1.2 : ℝ)) ((ρ.2.1 : ℝ), (ρ.2.2 : ℝ))
-
-/-- `G` is the intersection graph of a one-to-one assignment of rectangles on the `M × N` grid
-to its vertices. -/
-def IntersectionGraphForRectanglesOnAGridFeasible
-    (i : IntersectionGraphForSegmentsOnAGridInstance) : Prop :=
-  ∃ f : Fin i.1 → (ℕ × ℕ) × (ℕ × ℕ), Function.Injective f ∧
-    (∀ v, RectOnGrid i.2.2.1 i.2.2.2 (f v)) ∧
-    ∀ u v, u ≠ v → ((Graph i).Adj u v ↔ (rectPoints (f u) ∩ rectPoints (f v)).Nonempty)
-
-open Classical in
-/-- INTERSECTION GRAPH FOR RECTANGLES ON A GRID as a decision problem over bitstrings. -/
-noncomputable def intersectionGraphForRectanglesOnAGridDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntersectionGraphForSegmentsOnAGridInstance) x with
-  | some i => decide (IntersectionGraphForSegmentsOnAGrid.WellFormed i ∧
-      IntersectionGraphForRectanglesOnAGridFeasible i)
-  | none => false
 
 /-- **INTERSECTION GRAPH FOR RECTANGLES ON A GRID is NP-complete.** Source: Garey and Johnson
 (1979), [ND46], comment; Gavril (1977). -/

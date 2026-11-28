@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumBroadcastTimeWanted
+public import CSLibExt.Complexity.NPComplete.MinimumBroadcastTimeSingleOriginatorDefs
 
 @[expose] public section
 
@@ -58,19 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MINIMUM BROADCAST TIME instance whose base set
-`V₀` is a single vertex. -/
-def WellFormed (i : MinimumBroadcastTimeInstance) : Prop :=
-  MinimumBroadcastTime.WellFormed i ∧ i.2.2.1.length = 1
-
-open Classical in
-/-- MINIMUM BROADCAST TIME with a single originator as a decision problem over bitstrings. -/
-noncomputable def minimumBroadcastTimeSingleOriginatorDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MinimumBroadcastTimeInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumBroadcastTime.MinimumBroadcastTimeFeasible i)
-  | none => false
 
 /-- **MINIMUM BROADCAST TIME is NP-complete with a single originator.** Source: Garey and
 Johnson (1979), [ND49], comment; Slater, Cockayne and Hedetniemi (1981). -/

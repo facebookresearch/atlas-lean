@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.Graph.MaxFlowMinCut
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IntegralFlowHomologousArcsDefs
 
 @[expose] public section
 
@@ -58,51 +56,6 @@ reduction from every language in `NP`
 -/
 
 open MathlibExt.Combinatorics.Graph.MaxFlowMinCutWanted
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), arc records `(u, v, c)` (arc from
-`u` to `v` with capacity `c`), `s`, `t`, the requirement `R`, and the homologous pairs
-`((u, v), (u', v'))`. -/
-abbrev IntegralFlowHomologousArcsInstance :=
-  ℕ × List (ℕ × ℕ × ℕ) × ℕ × ℕ × ℕ × List ((ℕ × ℕ) × (ℕ × ℕ))
-
-/-- The arcs `(u, v)` of the arc records. -/
-def arcs (i : IntegralFlowHomologousArcsInstance) : List (ℕ × ℕ) :=
-  i.2.1.map fun a => (a.1, a.2.1)
-
-/-- The capacity `c(u, v)` of the arc from `u` to `v`, and `0` when there is no such arc. -/
-def capacity (i : IntegralFlowHomologousArcsInstance) (u v : ℕ) : ℕ :=
-  ((i.2.1.find? fun a => a.1 = u ∧ a.2.1 = v).map fun a => a.2.2).getD 0
-
-/-- Well-formedness of an instance: the arc records describe a directed graph on
-`0, ..., n - 1` (endpoints in range, no self-loops, no repeated arcs), every capacity is
-positive, `s` and `t` are vertices, the requirement `R` is positive, and both arcs of every
-homologous pair are arcs of the graph (`H ⊆ A × A`). -/
-def WellFormed (i : IntegralFlowHomologousArcsInstance) : Prop :=
-  ((arcs i).Nodup ∧ ∀ a ∈ arcs i, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2) ∧
-    (∀ a ∈ i.2.1, 0 < a.2.2) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ 0 < i.2.2.2.2.1 ∧
-    ∀ h ∈ i.2.2.2.2.2, h.1 ∈ arcs i ∧ h.2 ∈ arcs i
-
-/-- There is an integral flow `f` that is feasible for the arc capacities (it vanishes off the
-arcs, is at most the capacity on each arc, and is conserved at every vertex other than `s` and
-`t`), takes equal values on the two arcs of every homologous pair, and has net flow into `t`
-at least `R`. -/
-def IntegralFlowHomologousArcsFeasible (i : IntegralFlowHomologousArcsInstance) : Prop :=
-  ∃ (hs : i.2.2.1 < i.1) (ht : i.2.2.2.1 < i.1) (f : Fin i.1 → Fin i.1 → ℕ),
-    IsFeasibleFlow (fun u v : Fin i.1 => (capacity i u v : ℝ)) ⟨i.2.2.1, hs⟩ ⟨i.2.2.2.1, ht⟩
-        (fun u v => (f u v : ℝ)) ∧
-      (∀ h ∈ i.2.2.2.2.2, ∀ u v u' v' : Fin i.1,
-        ((u : ℕ), (v : ℕ)) = h.1 → ((u' : ℕ), (v' : ℕ)) = h.2 → f u v = f u' v') ∧
-      (i.2.2.2.2.1 : ℝ) ≤ (∑ u, (f u ⟨i.2.2.2.1, ht⟩ : ℝ)) - ∑ w, (f ⟨i.2.2.2.1, ht⟩ w : ℝ)
-
-open Classical in
-/-- INTEGRAL FLOW WITH HOMOLOGOUS ARCS as a decision problem over bitstrings. -/
-noncomputable def integralFlowHomologousArcsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntegralFlowHomologousArcsInstance) x with
-  | some i => decide (WellFormed i ∧ IntegralFlowHomologousArcsFeasible i)
-  | none => false
 
 /-- **INTEGRAL FLOW WITH HOMOLOGOUS ARCS is NP-complete.** Source: Garey and Johnson (1979),
 [ND35]; Sahni (1974). -/

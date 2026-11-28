@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.StackerCraneWanted
+public import CSLibExt.Complexity.NPComplete.StackerCranePathDefs
 
 @[expose] public section
 
@@ -61,26 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A walk, given as a list `c` of indices into `StackerCrane.moves i`, in which each move
-starts where the previous one ends, every directed edge (index `< |A|`) occurs, and the total
-length is at most `B`. A walk has a start vertex even when it has no moves, so `V` is
-nonempty (`0 < n`). -/
-def StackerCranePathFeasible (i : StackerCraneInstance) : Prop :=
-  0 < i.1 ∧ ∃ c : List (Fin (moves i).length),
-    (∀ j (h : j + 1 < c.length),
-      ((moves i)[c[j]]).2.1 = ((moves i)[c[j + 1]]).1) ∧
-    (∀ a : Fin (moves i).length, (a : ℕ) < i.2.1.length → a ∈ c) ∧
-    (c.map fun m => ((moves i)[m]).2.2).sum ≤ i.2.2.2
-
-open Classical in
-/-- STACKER-CRANE PATH as a decision problem over bitstrings. -/
-noncomputable def stackerCranePathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StackerCraneInstance) x with
-  | some i => decide (StackerCrane.WellFormed i ∧ StackerCranePathFeasible i)
-  | none => false
 
 /-- **STACKER-CRANE PATH is NP-complete.** Source: Garey and Johnson (1979), [ND26],
 comment. -/

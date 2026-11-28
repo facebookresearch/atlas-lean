@@ -26,11 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Operations
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitMaximalPlanarDefs
 
 @[expose] public section
 
@@ -70,22 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance (`0 < n`, simple
-edge list on `Fin n`) whose graph is maximal planar: planar, and adding an edge between any two
-distinct non-adjacent vertices gives a non-planar graph. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ (Graph i).IsPlanar ∧
-    ∀ u v : Fin i.1, u ≠ v → ¬ (Graph i).Adj u v → ¬ (Graph i ⊔ SimpleGraph.edge u v).IsPlanar
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on maximal planar graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitMaximalPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on maximal planar graphs is NP-complete.** Source: Wigderson (1982), as
 recorded by Chen (2003) and Chung, Leighton and Rosenberg (1987); Garey and Johnson (1979),

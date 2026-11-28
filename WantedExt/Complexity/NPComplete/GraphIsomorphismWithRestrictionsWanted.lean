@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.GraphIsomorphismWithRestrictionsDefs
 
 @[expose] public section
 
@@ -64,41 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge lists `E₁` and `E₂`, and the
-list `R` of forbidden pairs. -/
-abbrev GraphIsomorphismWithRestrictionsInstance := ℕ × List (ℕ × ℕ) × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- The first graph `X₁` as a `SimpleGraph (Fin n)`. -/
-def Graph₁ (i : GraphIsomorphismWithRestrictionsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The second graph `X₂` as a `SimpleGraph (Fin n)`. -/
-def Graph₂ (i : GraphIsomorphismWithRestrictionsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.2.1
-
-/-- Well-formedness of an instance: both edge lists describe simple graphs on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and every forbidden
-pair is a pair of vertices. -/
-def WellFormed (i : GraphIsomorphismWithRestrictionsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (i.2.2.1.Nodup ∧ ∀ e ∈ i.2.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.2.1) ∧
-    ∀ p ∈ i.2.2.2, p.1 < i.1 ∧ p.2 < i.1
-
-/-- There is an isomorphism from `X₁` to `X₂` that maps no vertex `v` to a vertex `w` with
-`(v, w) ∈ R`. -/
-def GraphIsomorphismWithRestrictionsFeasible
-    (i : GraphIsomorphismWithRestrictionsInstance) : Prop :=
-  ∃ π : Graph₁ i ≃g Graph₂ i, ∀ v : Fin i.1, ((v : ℕ), ((π v : Fin i.1) : ℕ)) ∉ i.2.2.2
-
-open Classical in
-/-- GRAPH ISOMORPHISM WITH RESTRICTIONS as a decision problem over bitstrings. -/
-noncomputable def graphIsomorphismWithRestrictionsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphIsomorphismWithRestrictionsInstance) x with
-  | some i => decide (WellFormed i ∧ GraphIsomorphismWithRestrictionsFeasible i)
-  | none => false
 
 /-- **GRAPH ISOMORPHISM WITH RESTRICTIONS is NP-complete.** Source: Lubiw (1981). -/
 public theorem_wanted graphIsomorphismWithRestrictions_npComplete :

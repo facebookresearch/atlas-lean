@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.Graph.MengerVertex
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MinMaxDisjointConnectingPathsDefs
 
 @[expose] public section
 
@@ -66,45 +63,6 @@ reduction from every language in `NP`
 -/
 
 open MathlibExt.Combinatorics.SimpleGraph.MengerVertexWanted
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), edge list with lengths
-`(u, v, l(u, v))`, `s`, `t`, and `K`. -/
-abbrev MinMaxDisjointConnectingPathsInstance := ℕ × List (ℕ × ℕ × ℕ) × ℕ × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MinMaxDisjointConnectingPathsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (i.2.1.map fun e => (e.1, e.2.1))
-
-/-- The length of an edge `e`: the length recorded for the list entry whose endpoints are the
-endpoints of `e` (unique under `WellFormed`). -/
-def edgeLength (i : MinMaxDisjointConnectingPathsInstance) (e : Sym2 (Fin i.1)) : ℕ :=
-  ((i.2.1.find? fun d => e.map Fin.val = s(d.1, d.2.1)).map fun d => d.2.2).getD 0
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), `s` and `t` are
-distinct vertices, and `K` is positive. -/
-def WellFormed (i : MinMaxDisjointConnectingPathsInstance) : Prop :=
-  ((i.2.1.map fun e => (e.1, e.2.1)).Nodup ∧
-    ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧
-      (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ i.2.2.1 ≠ i.2.2.2.1 ∧ 0 < i.2.2.2.2
-
-/-- There are two different paths from `s` to `t` in `G` sharing no vertex other than `s` and
-`t`, each of total length at most `K`. -/
-def MinMaxDisjointConnectingPathsFeasible (i : MinMaxDisjointConnectingPathsInstance) : Prop :=
-  ∃ (hs : i.2.2.1 < i.1) (ht : i.2.2.2.1 < i.1)
-    (paths : Fin 2 → (Graph i).Path ⟨i.2.2.1, hs⟩ ⟨i.2.2.2.1, ht⟩),
-    Function.Injective paths ∧ IsInternallyVertexDisjointSTPaths paths ∧
-      ∀ j, ((paths j).val.edges.map (edgeLength i)).sum ≤ i.2.2.2.2
-
-open Classical in
-/-- MINIMUM MAXIMUM DISJOINT CONNECTING PATHS as a decision problem over bitstrings. -/
-noncomputable def minMaxDisjointConnectingPathsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinMaxDisjointConnectingPathsInstance) x with
-  | some i => decide (WellFormed i ∧ MinMaxDisjointConnectingPathsFeasible i)
-  | none => false
 
 /-- **MINIMUM MAXIMUM DISJOINT CONNECTING PATHS is NP-complete.** Source: Crescenzi and Kann,
 MINIMUM MAXIMUM DISJOINT CONNECTING PATHS; Li, McCormick and Simchi-Levi (1990). -/

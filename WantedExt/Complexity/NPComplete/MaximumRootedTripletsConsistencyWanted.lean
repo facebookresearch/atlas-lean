@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Bioinformatics.Phylogenetics.Splits
+public import CSLibExt.Complexity.NPComplete.MaximumRootedTripletsConsistencyDefs
 
 @[expose] public section
 
@@ -60,33 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of species, the triplets `ab|c` as triples `(a, b, c)`, and the
-bound `K`. -/
-abbrev MaximumRootedTripletsConsistencyInstance := ℕ × List (ℕ × ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: there is at least one species, every triplet consists of
-three distinct species listed with `a < b`, and no triplet is listed twice. -/
-def WellFormed (i : MaximumRootedTripletsConsistencyInstance) : Prop :=
-  0 < i.1 ∧ (∀ t ∈ i.2.1, t.1 < t.2.1 ∧ t.2.1 < i.1 ∧ t.2.2 < i.1 ∧ t.2.2 ≠ t.1 ∧
-    t.2.2 ≠ t.2.1) ∧ i.2.1.Nodup
-
-/-- Some rooted tree with leaf set `X`, given by its hierarchy of clusters, is consistent with
-at least `K` of the triplets. -/
-def MaximumRootedTripletsConsistencyFeasible
-    (i : MaximumRootedTripletsConsistencyInstance) : Prop :=
-  ∃ H : Finset (Finset ℕ), IsHierarchy (Finset.range i.1) H ∧
-    ∃ R : List (ℕ × ℕ × ℕ), R.Sublist i.2.1 ∧ i.2.2 ≤ R.length ∧
-      ∀ t ∈ R, DisplaysTriplet H ⟨t.1, t.2.1, t.2.2⟩
-
-open Classical in
-/-- MAXIMUM ROOTED TRIPLETS CONSISTENCY as a decision problem over bitstrings. -/
-noncomputable def maximumRootedTripletsConsistencyDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumRootedTripletsConsistencyInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumRootedTripletsConsistencyFeasible i)
-  | none => false
 
 /-- **MAXIMUM ROOTED TRIPLETS CONSISTENCY is NP-complete.** Source: Jansson (2001); Bryant
 (1997); Wu (2004). -/

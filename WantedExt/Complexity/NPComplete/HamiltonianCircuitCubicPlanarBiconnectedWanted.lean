@@ -27,12 +27,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitCubicPlanarBiconnectedDefs
 
 @[expose] public section
 
@@ -70,23 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance (at least one
-vertex, simple edge list on `Fin n`) whose graph is 2-connected, cubic and planar. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ (Graph i).IsVertexConnected 2 ∧
-    (Graph i).IsRegularOfDegree 3 ∧ (Graph i).IsPlanar
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on 2-connected cubic planar graphs as a decision problem over
-bitstrings. -/
-noncomputable def hamiltonianCircuitCubicPlanarBiconnectedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on 2-connected cubic planar graphs is NP-complete.** Source: Garey,
 Johnson and Tarjan (1976); Garey and Johnson (1979), [GT37] (parent problem). -/

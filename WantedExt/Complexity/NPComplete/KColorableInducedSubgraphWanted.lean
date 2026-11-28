@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
-public import WantedExt.Complexity.NPComplete.InducedSubgraphWithPropertyPiWanted
+public import CSLibExt.Complexity.NPComplete.KColorableInducedSubgraphDefs
 
 @[expose] public section
 
@@ -67,17 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph property "`k`-colorable": a graph on `Fin m` has a coloring with at most `k`
-colors (`SimpleGraph.Colorable k`). -/
-def colorableProperty (k : ℕ) : InducedSubgraphWithPropertyPi.GraphProperty :=
-  fun _ G => G.Colorable k
-
-/-- K-COLORABLE INDUCED SUBGRAPH, for a fixed `k`, as a decision problem over bitstrings:
-INDUCED SUBGRAPH WITH PROPERTY Π for `Π` = `k`-colorable. -/
-noncomputable def kColorableInducedSubgraphDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem :=
-  InducedSubgraphWithPropertyPi.inducedSubgraphWithPropertyPiDec (colorableProperty k)
 
 /-- **K-COLORABLE INDUCED SUBGRAPH is NP-complete** for every fixed `k ≥ 1`. Source: Garey and
 Johnson (1979), [GT21]; Lewis and Yannakakis (1980); Crescenzi and Kann, MAXIMUM K-COLORABLE INDUCED

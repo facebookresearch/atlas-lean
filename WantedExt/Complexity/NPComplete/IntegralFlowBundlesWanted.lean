@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Order.Ring.Int
-public import Mathlib.Data.Fintype.Prod
+public import CSLibExt.Complexity.NPComplete.IntegralFlowBundlesDefs
 
 @[expose] public section
 
@@ -56,45 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), the arcs `(u, v)`, `s`, `t`, the
-bundles `(I_j, c_j)` (a list of arcs and its capacity), and the requirement `R`. -/
-abbrev IntegralFlowBundlesInstance :=
-  ℕ × List (ℕ × ℕ) × ℕ × ℕ × List (List (ℕ × ℕ) × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the arcs describe a directed graph on `0, ..., n - 1`
-(endpoints in range, no self-loops, no repeated arcs), `s` and `t` are vertices, every bundle
-consists of arcs and has a positive capacity, the bundles cover the arcs
-(`⋃_j I_j = A`), and the requirement `R` is positive. -/
-def WellFormed (i : IntegralFlowBundlesInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧
-    (∀ b ∈ i.2.2.2.2.1, (∀ a ∈ b.1, a ∈ i.2.1) ∧ 0 < b.2) ∧
-    (∀ a ∈ i.2.1, ∃ b ∈ i.2.2.2.2.1, a ∈ b.1) ∧
-    0 < i.2.2.2.2.2
-
-/-- The flow `∑_{a ∈ I} f(a)` on the arcs of the bundle `I`. -/
-def bundleFlow {n : ℕ} (I : List (ℕ × ℕ)) (f : Fin n → Fin n → ℕ) : ℕ :=
-  ∑ e ∈ Finset.univ.filter (fun e : Fin n × Fin n => ((e.1 : ℕ), (e.2 : ℕ)) ∈ I), f e.1 e.2
-
-/-- There is an integral flow `f` on the arcs, with flow at most `c_j` on each bundle `I_j`,
-conserved at every vertex other than `s` and `t`, whose net flow into `t` is at least `R`. -/
-def IntegralFlowBundlesFeasible (i : IntegralFlowBundlesInstance) : Prop :=
-  ∃ (hs : i.2.2.1 < i.1) (ht : i.2.2.2.1 < i.1) (f : Fin i.1 → Fin i.1 → ℕ),
-    (∀ u v : Fin i.1, ((u : ℕ), (v : ℕ)) ∉ i.2.1 → f u v = 0) ∧
-      (∀ b ∈ i.2.2.2.2.1, bundleFlow b.1 f ≤ b.2) ∧
-      (∀ v : Fin i.1, v ≠ ⟨i.2.2.1, hs⟩ → v ≠ ⟨i.2.2.2.1, ht⟩ →
-        ∑ u, f u v = ∑ w, f v w) ∧
-      (i.2.2.2.2.2 : ℤ) ≤ (∑ u, (f u ⟨i.2.2.2.1, ht⟩ : ℤ)) - ∑ w, (f ⟨i.2.2.2.1, ht⟩ w : ℤ)
-
-open Classical in
-/-- INTEGRAL FLOW WITH BUNDLES as a decision problem over bitstrings. -/
-noncomputable def integralFlowBundlesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntegralFlowBundlesInstance) x with
-  | some i => decide (WellFormed i ∧ IntegralFlowBundlesFeasible i)
-  | none => false
 
 /-- **INTEGRAL FLOW WITH BUNDLES is NP-complete.** Source: Garey and Johnson (1979), [ND36];
 Sahni (1974). -/

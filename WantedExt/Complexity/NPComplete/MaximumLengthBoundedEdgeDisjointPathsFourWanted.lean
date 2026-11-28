@@ -28,7 +28,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaximumLengthBoundedEdgeDisjointPathsFixedKWanted
+public import CSLibExt.Complexity.NPComplete.MaximumLengthBoundedEdgeDisjointPathsFixedKDefs
 
 @[expose] public section
 

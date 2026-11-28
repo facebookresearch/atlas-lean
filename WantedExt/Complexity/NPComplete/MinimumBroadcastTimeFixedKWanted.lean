@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumBroadcastTimeWanted
+public import CSLibExt.Complexity.NPComplete.MinimumBroadcastTimeFixedKDefs
 
 @[expose] public section
 
@@ -56,26 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list, and the base set `V₀` as a
-list of vertices; the time bound `K` is fixed. -/
-abbrev MinimumBroadcastTimeFixedKInstance := ℕ × List (ℕ × ℕ) × List ℕ
-
-/-- The [ND49] instance `(n, E, V₀, K)` of a graph with base set `(n, E, V₀)` and the fixed
-bound `K`. -/
-def withBound (K : ℕ) (i : MinimumBroadcastTimeFixedKInstance) :
-    MinimumBroadcastTime.MinimumBroadcastTimeInstance :=
-  (i.1, i.2.1, i.2.2, K)
-
-open Classical in
-/-- MINIMUM BROADCAST TIME for a fixed bound `K` as a decision problem over bitstrings. -/
-noncomputable def minimumBroadcastTimeFixedKDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumBroadcastTimeFixedKInstance) x with
-  | some i => decide (MinimumBroadcastTime.WellFormed (withBound K i) ∧
-      MinimumBroadcastTime.MinimumBroadcastTimeFeasible (withBound K i))
-  | none => false
 
 /-- **MINIMUM BROADCAST TIME is NP-complete for every fixed `K ≥ 4`.** Source: Garey and Johnson
 (1979), [ND49], comment (Garey and Johnson, unpublished). -/

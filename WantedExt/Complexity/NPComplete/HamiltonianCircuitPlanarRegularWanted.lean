@@ -26,11 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitPlanarRegularDefs
 
 @[expose] public section
 
@@ -68,21 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance for a fixed `k`: a well-formed HAMILTONIAN CIRCUIT instance
-(at least one vertex, simple edge list on `Fin n`) whose graph is planar and `k`-regular. -/
-def WellFormed (k : ℕ) (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ (Graph i).IsPlanar ∧ (Graph i).IsRegularOfDegree k
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on planar `k`-regular graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitPlanarRegularDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed k i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on planar `k`-regular graphs is NP-complete for `k = 4` and `k = 5`.**
 Source: Picouleau (1994); Garey and Johnson (1979), [GT37] (parent problem). -/
