@@ -1,20 +1,22 @@
 # Naive higher-order ghost state paradox
 
-Ghost state whose type mentions the type of propositions makes Iris inconsistent unless those occurrences are guarded by a later: with first-order agreement over propositions one can name a proposition asserting its own falsity.
+Ghost state whose type depends on the type of propositions can make Iris inconsistent, so some restriction on it is necessary: with first-order agreement over propositions one can name a proposition asserting its own falsity.
 
-Let $\mathrm{AG}_0(X)$ be the first-order agreement resource algebra on a set $X$: elements $\mathrm{ag}_0(x)$ and an invalid element, with $\mathrm{ag}_0(x) \cdot \mathrm{ag}_0(y) = \mathrm{ag}_0(x)$ if $x = y$ and invalid otherwise, $|\mathrm{ag}_0(x)| = \mathrm{ag}_0(x)$, and every $\mathrm{ag}_0(x)$ valid.
+Let $\mathrm{AG}_0(X)$ be the first-order agreement resource algebra on a set $X$: elements $\mathrm{ag}_0(x)$ and an invalid element, with $\mathrm{ag}_0(x) \cdot \mathrm{ag}_0(y) = \mathrm{ag}_0(x)$ if $x = y$ and every other composition (including any composition with the invalid element) invalid, $|\mathrm{ag}_0(x)| = \mathrm{ag}_0(x)$, and every $\mathrm{ag}_0(x)$ valid.
 
-**Theorem.** Suppose Iris is instantiated with a family of resource algebras, combined into the global ghost state of finite maps from ghost names, such that $\mathrm{AG}_0(\mathit{iProp})$ belongs to the family. Then the view shift $\mathrm{True} \Rrightarrow_{\mathcal{E}} \mathrm{False}$ is derivable.
+**Theorem.** Assume the construction of the [global ghost state](../iris-base-logic/global-ghost-state-and-ghost-ownership.md), finite maps from ghost names, can be instantiated with a family of resource algebras in which $\mathrm{AG}_0(\mathit{iProp})$ occurs. Then the view shift $\mathrm{True} \Rrightarrow_{\mathcal{E}} \mathrm{False}$ is derivable.
 
 ## Depends on
 
 - [Resource algebras](../resource-algebras.md)
 - [Fancy update modality](../invariants-and-logical-atomicity/fancy-update-modality.md)
+- [Global ghost state and ghost ownership](../iris-base-logic/global-ghost-state-and-ghost-ownership.md)
 
 ## Proof depends on
 
 - [Resource algebras](../resource-algebras.md)
 - [Fancy update modality](../invariants-and-logical-atomicity/fancy-update-modality.md)
+- [Global ghost state and ghost ownership](../iris-base-logic/global-ghost-state-and-ghost-ownership.md)
 
 ## Expansion
 

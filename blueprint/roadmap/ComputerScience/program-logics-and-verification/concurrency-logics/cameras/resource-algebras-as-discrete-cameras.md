@@ -2,13 +2,15 @@
 
 Every resource algebra is a camera, called discrete: give it the discrete OFE and make each element valid at all step indices or at none, according to its validity. Users who need no higher-order ghost state can work with resource algebras alone.
 
-**Lemma.** Let $(M, \mathcal{V}_{RA}, |\cdot|, \cdot)$ be a resource algebra. With the discrete OFE on $M$ and $\mathcal{V}(a) \triangleq \{ n \mid \mathcal{V}_{RA}(a) \}$, the tuple $(M, \mathcal{V}, |\cdot|, \cdot)$ is a camera, and every function between discrete OFEs is non-expansive.
+**Lemma.** Let $(M, \mathcal{V}_{RA}, |\cdot|, \cdot)$ be a resource algebra. With the discrete OFE on $M$ and $\mathcal{V}(a) \triangleq \{ n \mid \mathcal{V}_{RA}(a) \}$, the tuple $(M, \mathcal{V}, |\cdot|, \cdot)$ is a camera, and every function between discrete OFEs is non-expansive. For this camera and all $a \in M$, $B \subseteq M$, the camera frame-preserving update $a \rightsquigarrow B$ holds exactly when the resource-algebra frame-preserving update $a \rightsquigarrow B$ holds.
 
 ## Depends on
 
 - [Resource algebras](../resource-algebras.md)
 - [Cameras](cameras.md)
 - [Ordered families of equivalences](../step-indexed-foundations/ordered-families-of-equivalences.md)
+- [Frame-preserving updates in cameras](camera-frame-preserving-updates.md)
+- [Frame-preserving updates](../frame-preserving-updates.md)
 
 ## Proof depends on
 
@@ -16,11 +18,14 @@ Every resource algebra is a camera, called discrete: give it the discrete OFE an
 - [Cameras](cameras.md)
 - [Ordered families of equivalences](../step-indexed-foundations/ordered-families-of-equivalences.md)
 - [Non-expansive and contractive maps](../step-indexed-foundations/non-expansive-and-contractive-maps.md)
+- [Frame-preserving updates in cameras](camera-frame-preserving-updates.md)
+- [Frame-preserving updates](../frame-preserving-updates.md)
 
 ## Expansion
 
-On a discrete OFE every function is non-expansive, the extension axiom holds with $c_i = b_i$ because $n$-equality is equality, and validity is either every index or none, so the camera axioms reduce to the resource-algebra axioms.
+On a discrete OFE every function is non-expansive, the extension axiom holds with $c_i = b_i$ because $n$-equality is equality, and validity is either every index or none, so the camera axioms reduce to the resource-algebra axioms. For the updates: a frame valid at some index is valid at every index, so the step-indexed condition at any index is the resource-algebra condition.
 
 ## Sources
 
 - R. Jung, R. Krebbers, J.-H. Jourdan, A. Bizjak, L. Birkedal and D. Dreyer, "Iris from the ground up: a modular foundation for higher-order concurrent separation logic", *Journal of Functional Programming* 28, e20, 2018, open access <https://doi.org/10.1017/S0956796818000151> (version of record, Cambridge University Press), Section 4.4 (every RA can be trivially turned into a camera with the discrete OFE; functions between discrete OFEs are non-expansive).
+- Iris Team, "The Iris 3.1 documentation", technical documentation (not peer reviewed) that the JFP article cites as its appendix (Iris Team, 2017), version of April 29, 2019, <https://plv.mpi-sws.org/iris/appendix-3.1.pdf>, Section 2.4, the note after Definition 14 (for RAs the camera and the RA definitions of frame-preserving update coincide) and Definition 15 with its note (every RA is a discrete camera), supplementary.

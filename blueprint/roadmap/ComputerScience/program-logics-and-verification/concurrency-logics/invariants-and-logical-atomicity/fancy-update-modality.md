@@ -20,6 +20,7 @@ The modality satisfies: monotonicity; $\mathrm{True} \vdash {}^{\mathcal{E}_1}|\
 - [Basic update modality](../iris-base-logic/basic-update-modality.md)
 - [Except-0 modality and timeless propositions](../iris-base-logic/except-0-modality-and-timeless-propositions.md)
 - [Iris base logic](../iris-base-logic/iris-base-logic.md)
+- [Global ghost state and ghost ownership](../iris-base-logic/global-ghost-state-and-ghost-ownership.md)
 
 ## Proof depends on
 
@@ -27,6 +28,7 @@ The modality satisfies: monotonicity; $\mathrm{True} \vdash {}^{\mathcal{E}_1}|\
 - [Basic update modality](../iris-base-logic/basic-update-modality.md)
 - [Except-0 modality and timeless propositions](../iris-base-logic/except-0-modality-and-timeless-propositions.md)
 - [Iris base logic](../iris-base-logic/iris-base-logic.md)
+- [Global ghost state and ghost ownership](../iris-base-logic/global-ghost-state-and-ghost-ownership.md)
 
 ## Expansion
 

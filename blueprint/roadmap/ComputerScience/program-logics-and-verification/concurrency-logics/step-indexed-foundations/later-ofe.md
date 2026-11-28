@@ -11,10 +11,12 @@ $\blacktriangleright T$ is complete whenever $T$ is. In the Iris model the later
 ## Depends on
 
 - [Ordered families of equivalences](ordered-families-of-equivalences.md)
+- [Complete ordered families of equivalences](complete-ordered-families-of-equivalences.md)
 
 ## Proof depends on
 
 - [Ordered families of equivalences](ordered-families-of-equivalences.md)
+- [Complete ordered families of equivalences](complete-ordered-families-of-equivalences.md)
 
 ## Expansion
 
@@ -22,4 +24,4 @@ The relations are equivalences (total at index 0) that refine as $n$ grows, and 
 
 ## Sources
 
-- R. Jung, R. Krebbers, J.-H. Jourdan, A. Bizjak, L. Birkedal and D. Dreyer, "Iris from the ground up: a modular foundation for higher-order concurrent separation logic", *Journal of Functional Programming* 28, e20, 2018, open access <https://doi.org/10.1017/S0956796818000151> (version of record, Cambridge University Press), Section 4.2 and Figure 8 (later OFE), Section 4.6 (the later functor is locally contractive) and Section 4.7 (guarding recursive occurrences).
+- R. Jung, R. Krebbers, J.-H. Jourdan, A. Bizjak, L. Birkedal and D. Dreyer, "Iris from the ground up: a modular foundation for higher-order concurrent separation logic", *Journal of Functional Programming* 28, e20, 2018, open access <https://doi.org/10.1017/S0956796818000151> (version of record, Cambridge University Press), Section 4.2 and Figure 8 (later OFE; all OFEs discussed there, the later OFE included, are complete), Section 4.6 (the later functor is locally contractive) and Section 4.7 (guarding recursive occurrences).

@@ -12,7 +12,7 @@ The *discrete* OFE on a set $X$ takes $x \overset{n}{=} y$ iff $x = y$, for ever
 
 ## Depends on
 
-None.
+- [Equivalence relation](../../../../Order/ordered-sets/equivalence-relation.md)
 
 ## Proof depends on
 

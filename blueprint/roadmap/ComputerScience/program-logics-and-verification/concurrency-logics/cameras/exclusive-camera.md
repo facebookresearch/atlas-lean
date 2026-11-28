@@ -13,6 +13,7 @@ every composition equals $\mathsf{inv}$, $|\mathrm{ex}(x)| \triangleq \bot$ (no 
 - [Ordered families of equivalences](../step-indexed-foundations/ordered-families-of-equivalences.md)
 - [Cameras](cameras.md)
 - [Frame-preserving updates in cameras](camera-frame-preserving-updates.md)
+- [Resource algebras as discrete cameras](resource-algebras-as-discrete-cameras.md)
 
 ## Proof depends on
 

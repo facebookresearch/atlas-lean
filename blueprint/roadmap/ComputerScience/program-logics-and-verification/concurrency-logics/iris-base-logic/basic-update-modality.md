@@ -8,8 +8,6 @@ $$
 (\dot{|\!\Rrightarrow} P)(a) \triangleq \{ n \mid \forall m \le n,\ c.\ m \in \mathcal{V}(a \cdot c) \Rightarrow \exists b.\ m \in \mathcal{V}(b \cdot c) \land m \in P(b) \}.
 $$
 
-The *basic view shift* is $P \mathrel{\dot{\Rrightarrow}} Q \triangleq \square(P \mathrel{-\!\!\ast} \dot{|\!\Rrightarrow} Q)$ in the base logic.
-
 ## Depends on
 
 - [Uniform predicates](uniform-predicates.md)
@@ -25,4 +23,4 @@ The base logic's rules for this modality are UPD-MONO, UPD-INTRO, UPD-TRANS, UPD
 
 ## Sources
 
-- R. Jung, R. Krebbers, J.-H. Jourdan, A. Bizjak, L. Birkedal and D. Dreyer, "Iris from the ground up: a modular foundation for higher-order concurrent separation logic", *Journal of Functional Programming* 28, e20, 2018, open access <https://doi.org/10.1017/S0956796818000151> (version of record, Cambridge University Press), Section 5.4 (definition and intuition of the basic update modality and the basic view shift), Figure 10 (interpretation) and Figure 11 (UPD-MONO, UPD-INTRO, UPD-TRANS, UPD-FRAME, UPD-UPDATE).
+- R. Jung, R. Krebbers, J.-H. Jourdan, A. Bizjak, L. Birkedal and D. Dreyer, "Iris from the ground up: a modular foundation for higher-order concurrent separation logic", *Journal of Functional Programming* 28, e20, 2018, open access <https://doi.org/10.1017/S0956796818000151> (version of record, Cambridge University Press), Section 5.4 (definition and intuition of the basic update modality), Figure 10 (interpretation) and Figure 11 (UPD-MONO, UPD-INTRO, UPD-TRANS, UPD-FRAME, UPD-UPDATE).

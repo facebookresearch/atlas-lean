@@ -8,6 +8,7 @@ Let $T$ be an OFE. A *chain* is a sequence $(c_n)_{n \in \mathbb{N}}$ in $T$ wit
 
 - [Ordered families of equivalences](ordered-families-of-equivalences.md)
 - [Non-expansive and contractive maps](non-expansive-and-contractive-maps.md)
+- [Category](../../../../CategoryTheory/categories-and-functors/category.md)
 
 ## Proof depends on
 

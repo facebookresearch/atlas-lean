@@ -20,4 +20,4 @@ Fix $a$ and show by induction on $n$ that $n \in \mathcal{V}(a)$ and $n \in (\tr
 
 ## Sources
 
-- R. Jung, R. Krebbers, J.-H. Jourdan, A. Bizjak, L. Birkedal and D. Dreyer, "Iris from the ground up: a modular foundation for higher-order concurrent separation logic", *Journal of Functional Programming* 28, e20, 2018, open access <https://doi.org/10.1017/S0956796818000151> (version of record, Cambridge University Press), Section 5.5, Section 5.6 (Löb induction proved by induction on the step index), Figure 10 and Figure 11 (rule LÖB).
+- R. Jung, R. Krebbers, J.-H. Jourdan, A. Bizjak, L. Birkedal and D. Dreyer, "Iris from the ground up: a modular foundation for higher-order concurrent separation logic", *Journal of Functional Programming* 28, e20, 2018, open access <https://doi.org/10.1017/S0956796818000151> (version of record, Cambridge University Press), Section 5.5, Section 5.6 (Löb induction proved by induction on the step index), Figure 10 and Figure 11 (rule LÖB); the semantic statement is also the case of Theorem 3 (soundness of the semantic model) for the rule LÖB.
