@@ -9,3 +9,7 @@
 - [Soundness of rely-guarantee reasoning](soundness-of-rely-guarantee-reasoning.md)
 - [Trace model of rely-guarantee reasoning](trace-model-of-rely-guarantee-reasoning.md)
 - [Soundness of the Owicki–Gries proof method](soundness-of-the-owickigries-proof-method.md)
+- [Cameras and higher-order ghost state](cameras/README.md)
+- [Invariants and logical atomicity](invariants-and-logical-atomicity/README.md)
+- [Step-indexed foundations](step-indexed-foundations/README.md)
+- [The Iris base logic](iris-base-logic/README.md)
