@@ -6,4 +6,5 @@ Homology, cohomology and Tate cohomology of groups with coefficients in modules,
 - [Group homology and cohomology](group-homology-and-cohomology/README.md)
 - [Restriction, corestriction, inflation and Tate's theorem in group cohomology](restriction-corestriction-inflation-and-tate-s-theorem.md)
 - [Tate cohomology and the Herbrand quotient](tate-cohomology-and-the-herbrand-quotient/README.md)
+- [Vanishing of `H²` for `Γ₀(M)` when `6` is a unit](subsingleton-h2-gamma0.md)
 - [Cup products in Tate cohomology](cup-products-in-tate-cohomology.md)
