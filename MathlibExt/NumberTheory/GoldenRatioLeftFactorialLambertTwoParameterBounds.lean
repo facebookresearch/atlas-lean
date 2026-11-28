@@ -43,6 +43,41 @@ namespace MetaMathlibExt
 
 open Real
 
+/-- **Existence of the Lambert sequences.** Let $h(y) = y e^y$ be the Lambert map. For every
+natural number $n \ge 4$ and every real number $c$ with $0 < c \le 1$ there is a real number
+$a \ge n - 1$ with
+$$h\left(-\frac{a}{n-1}\right) = -\frac{1}{n-1} \, c^{1/(n-1)}.$$
+
+Equivalently, $a = -(n-1) \, W_{-1}\left(-\frac{1}{n-1} c^{1/(n-1)}\right)$, where $W_{-1}$ is the
+lower real branch of the Lambert W function. With $c = 4/7$ this is the paper's $a_n$, and with
+$c = 4/(7m)$ for an integer $m \ge 1$ it is the paper's $A_{n,m}$.
+
+Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
+Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
+Article 24.5.7, Section 3.1 (the lower branch `W₋₁` defining `a n` and `A n m`). -/
+public theorem exists_lambertSequence {n : ℕ} (hn : 4 ≤ n) {c : ℝ} (hc0 : 0 < c)
+    (hc1 : c ≤ 1) :
+    ∃ a : ℝ, (n : ℝ) - 1 ≤ a ∧
+      lambertMap (-a / ((n : ℝ) - 1)) = -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1)) := by
+  have hn' : (4 : ℝ) ≤ n := by exact_mod_cast hn
+  have hpos : (0 : ℝ) < (n : ℝ) - 1 := by linarith
+  have hcp : 0 < c ^ (1 / ((n : ℝ) - 1)) := Real.rpow_pos_of_pos hc0 _
+  have hcle : c ^ (1 / ((n : ℝ) - 1)) ≤ 1 := Real.rpow_le_one hc0.le hc1 (by positivity)
+  have he : (1 / 3 : ℝ) < Real.exp (-1) := by
+    rw [Real.exp_neg, lt_inv_comm₀ (by norm_num) (Real.exp_pos 1)]
+    have := Real.exp_one_lt_d9
+    norm_num at this ⊢
+    linarith
+  have hq : 1 / ((n : ℝ) - 1) ≤ 1 / 3 := by
+    rw [div_le_div_iff₀ hpos (by norm_num)]
+    linarith
+  obtain ⟨⟨y, hy⟩, hyx⟩ := (existsUnique_lambertMap_lower_preimage
+    (x := -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1)))
+    (by nlinarith [one_div_pos.2 hpos]) (by nlinarith [one_div_pos.2 hpos])).exists
+  refine ⟨-((n : ℝ) - 1) * y, by nlinarith, ?_⟩
+  rw [show -(-((n : ℝ) - 1) * y) / ((n : ℝ) - 1) = y by field_simp]
+  exact hyx
+
 /-- **Two-parameter Lambert bounds for the left factorial.** Let $n \ge 5$ and $m \ge 1$ be
 integers, let $!n = \sum_{k=0}^{n-1} k!$ be the left factorial, let
 $K_n(x) = \int_0^x e^{-t} \sum_{k=0}^{n-1} t^k \, dt$ be Kurepa's partial integral, let
@@ -77,24 +112,8 @@ public theorem kurepaPartialIntegral_lambertSequence_two_bounds (n m : ℕ)
     dsimp [c]
     gcongr
     linarith
-  have hinv : 1 / d < exp (-1) := by
-    rw [one_div, exp_neg, inv_lt_inv₀ hd (exp_pos 1)]
-    dsimp [d]
-    linarith [exp_one_lt_three]
-  have hlow : -exp (-1) < -(1 / d) * (4 / 7 : ℝ) ^ (1 / d) := by
-    have hroot := rpow_le_one (x := (4 / 7 : ℝ)) (by norm_num) (by norm_num)
-      (one_div_nonneg.mpr hd.le)
-    have h := mul_le_mul_of_nonpos_left hroot (neg_nonpos.mpr (one_div_nonneg.mpr hd.le))
-    simpa only [mul_one] using (neg_lt_neg hinv).trans_le (by simpa only [mul_one] using h)
-  have hneg : -(1 / d) * (4 / 7 : ℝ) ^ (1 / d) < 0 :=
-    mul_neg_of_neg_of_pos (neg_neg_of_pos (one_div_pos.mpr hd)) (rpow_pos_of_pos (by norm_num) _)
-  obtain ⟨⟨y, hy⟩, hyW⟩ := (existsUnique_lambertMap_lower_preimage hlow.le hneg).exists
-  let a : ℝ := -(d * y)
-  have ha : d ≤ a := by
-    dsimp [a]
-    nlinarith [mul_nonpos_of_nonneg_of_nonpos hd.le (by linarith : y + 1 ≤ 0)]
-  have haW : lambertMap (-a / d) = -(1 / d) * (4 / 7 : ℝ) ^ (1 / d) := by
-    rwa [show -a / d = y by dsimp [a]; rw [neg_neg, mul_comm, mul_div_cancel_right₀ _ hd.ne']]
+  obtain ⟨a, ha, haW⟩ := exists_lambertSequence (n := n) (by omega)
+    (c := 4 / 7) (by norm_num) (by norm_num)
   -- The smaller Lambert target magnitude puts `A` at least as far out on the lower branch.
   have htarget : -(1 / d) * (4 / 7 : ℝ) ^ (1 / d) ≤ -(1 / d) * c ^ (1 / d) :=
     mul_le_mul_of_nonpos_left (rpow_le_rpow hc₀.le hc (one_div_nonneg.mpr hd.le))

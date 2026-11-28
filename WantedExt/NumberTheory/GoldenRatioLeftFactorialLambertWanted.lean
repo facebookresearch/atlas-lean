@@ -109,41 +109,6 @@ public theorem_wanted ncard_floor_logb_goldenRatio_eq_alternatingSignFibonacci (
     (({n : ℕ | 1 ≤ n ∧ ⌊Real.logb goldenRatio n⌋₊ = m}.ncard : ℕ) : ℤ) =
       alternatingSignFibonacci m
 
-/-- **Existence of the Lambert sequences.** Let $h(y) = y e^y$ be the Lambert map. For every
-natural number $n \ge 4$ and every real number $c$ with $0 < c \le 1$ there is a real number
-$a \ge n - 1$ with
-$$h\left(-\frac{a}{n-1}\right) = -\frac{1}{n-1} \, c^{1/(n-1)}.$$
-
-Equivalently, $a = -(n-1) \, W_{-1}\left(-\frac{1}{n-1} c^{1/(n-1)}\right)$, where $W_{-1}$ is the
-lower real branch of the Lambert W function. With $c = 4/7$ this is the paper's $a_n$, and with
-$c = 4/(7m)$ for an integer $m \ge 1$ it is the paper's $A_{n,m}$.
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Section 3.1 (the lower branch `W₋₁` defining `a n` and `A n m`). -/
-public theorem exists_lambertSequence {n : ℕ} (hn : 4 ≤ n) {c : ℝ} (hc0 : 0 < c)
-    (hc1 : c ≤ 1) :
-    ∃ a : ℝ, (n : ℝ) - 1 ≤ a ∧
-      lambertMap (-a / ((n : ℝ) - 1)) = -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1)) := by
-  have hn' : (4 : ℝ) ≤ n := by exact_mod_cast hn
-  have hpos : (0 : ℝ) < (n : ℝ) - 1 := by linarith
-  have hcp : 0 < c ^ (1 / ((n : ℝ) - 1)) := Real.rpow_pos_of_pos hc0 _
-  have hcle : c ^ (1 / ((n : ℝ) - 1)) ≤ 1 := Real.rpow_le_one hc0.le hc1 (by positivity)
-  have he : (1 / 3 : ℝ) < Real.exp (-1) := by
-    rw [Real.exp_neg, lt_inv_comm₀ (by norm_num) (Real.exp_pos 1)]
-    have := Real.exp_one_lt_d9
-    norm_num at this ⊢
-    linarith
-  have hq : 1 / ((n : ℝ) - 1) ≤ 1 / 3 := by
-    rw [div_le_div_iff₀ hpos (by norm_num)]
-    linarith
-  obtain ⟨⟨y, hy⟩, hyx⟩ := (existsUnique_lambertMap_lower_preimage
-    (x := -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1)))
-    (by nlinarith [one_div_pos.2 hpos]) (by nlinarith [one_div_pos.2 hpos])).exists
-  refine ⟨-((n : ℝ) - 1) * y, by nlinarith, ?_⟩
-  rw [show -(-((n : ℝ) - 1) * y) / ((n : ℝ) - 1) = y by field_simp]
-  exact hyx
-
 /-- **The golden factorial exponent exceeds the Lambert sequence.** Let $n > 4$ be an integer, let
 $h(y) = y e^y$ be the Lambert map, and let $a$ be a real number with $a \ge n - 1$ and
 $$h\left(-\frac{a}{n-1}\right) = -\frac{1}{n-1}\left(\frac{4}{7}\right)^{1/(n-1)}.$$
