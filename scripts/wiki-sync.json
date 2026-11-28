@@ -118651,6 +118651,7 @@
 "WantedExt.Biology.Neuroscience.SpikeTriggeredAverageWanted.exists_spikeTriggeredAverage_not_parallel": "7b670b9cba053840",
 "WantedExt.Biology.Neuroscience.SpikeTriggeredAverageWanted.spikeTriggeredAverage": "108a40e553e4a8e7",
 "WantedExt.Biology.Neuroscience.SpikeTriggeredAverageWanted.tendsto_spikeTriggeredAverage": "3c7f7caf2e415d24",
+"WantedExt.Biology.PairwiseCompetitionWanted.selection_coefficient_pairwise_competition": "869e9751b8c22c18",
 "WantedExt.Biology.StatisticalGenetics.BerksonBiasWanted.admissionProb": "621448a58f35977f",
 "WantedExt.Biology.StatisticalGenetics.BerksonBiasWanted.admission_ratios": "9733e014d9f609f7",
 "WantedExt.Biology.StatisticalGenetics.BerksonBiasWanted.diseaseSetProb": "8b51b9911b8fdc94",
