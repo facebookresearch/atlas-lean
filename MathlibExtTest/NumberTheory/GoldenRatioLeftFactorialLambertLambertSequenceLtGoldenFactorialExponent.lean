@@ -10,12 +10,6 @@ module
 
 import Mathlib.Analysis.Complex.ExponentialBounds
 import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertLambertSequenceLtGoldenFactorialExponent
-import Mathlib.Analysis.SpecialFunctions.Log.Base
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Mathlib.Data.Set.Card
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-import Mathlib.NumberTheory.Real.GoldenRatio
-import MathlibExt.NumberTheory.GoldenRatioLambertSequence
 
 /-!
 # Tests for the Lambert sequence bound
