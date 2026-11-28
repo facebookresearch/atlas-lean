@@ -259,8 +259,8 @@
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "5178fa8fe316c9f599cedc6dfe3e455bc25ddd90462d01033ad1148a73746e0b",
-      "rationale": "Use canonical native exterior-degree and scalar-extension coordinates; remove the noncanonical local AddCommGroup instances without changing public maps or universes. Give precise mathematical coordinate/filtration docstrings, retaining all code tokens of that canonical implementation. Native verification pending. Use the native Submodule.quotientRel carrier explicitly for opaque filtration stages and return the canonical quotient-equivalence composition directly, resolving the tested HasQuotient elaboration failure without local additive-group constructions, changed maps, or new ring/module/universe hypotheses. Bind the native quotient and equal-submodule transport carrier parameters explicitly to the actual filtration stages, addressing the completed11417/11418 unresolved canonical additive-structure inference; preserve all native operations, maps, ring/module hypotheses and worlds, with no local group instance or budget override. Bind the same carrier and target piece explicitly in the native surjective-kernel equivalence and its mk formula.",
+      "published_sha256": "5d9d3960983932f3887dd368b29d945682268f2cfa7e4422f845cbfcd12cae69",
+      "rationale": "Use native exterior-degree and scalar-extension coordinates and canonical native quotient group/module structures for the adjacent-stage quotient aliases. Bind carriers, actual submodules, and tensor-piece targets explicitly in the quotient transports and representative formulas. Preserve the original filtration, mixed-injection order, maps, ring/module hypotheses, and independent universes. Mathematical source docstrings replace workflow prose. Backport and Native verification pending.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "62807779224eb1dd42d41bfe19eea64c1fe389e2e246ea6beefb02506b7837da"
     },
@@ -991,8 +991,8 @@
       "path": "MathlibExt/LinearAlgebra/TensorPower/EulerianRationalFamilyActions.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "d07b75c5271acce7153c9b27afe837a9261975c22d56e59353f1d66b9d34345e",
-      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice. Wrap source continuation lines at 100 columns while preserving the exact non-whitespace code and mathematical scope.",
+      "published_sha256": "d01f0ba91dc20c47979b424295ef225df9d46dca33c4d0d4a09973c32a7b1314",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice. Wrap source continuation lines at 100 columns while preserving the exact non-whitespace code and mathematical scope. Keep the complete at h tactic location on one line in the signed-shuffle convolution proof, preserving every nonwhitespace source character; this repairs the actual completed11417/11418 parser failure. Native verification pending.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "df25ba7521e785d1310167b07143aba309671f79bafe46f06c2170dac47ed3c4"
     },

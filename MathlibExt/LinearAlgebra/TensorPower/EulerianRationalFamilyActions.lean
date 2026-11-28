@@ -141,8 +141,8 @@ theorem rationalEulerianLambda_signedShuffleProduct_rat (p q : ℕ) (a : ℚ) :
   change (rationalPermutationAction (k := k) (V := V) (p + q) (Equiv.Perm.eulerianLambda (p + q)
     a)).comp
       (signedShuffleEnd (k := k) (V := V) p q) = (signedShuffleEnd (k := k) (V := V) p q).comp
-    (rationalPermutationAction (k := k) (V := V) (p + q) (Equiv.Perm.splitEulerianLambda p q a)) at
-      h
+    (rationalPermutationAction (k := k) (V := V) (p + q)
+      (Equiv.Perm.splitEulerianLambda p q a)) at h
   have hcomp := congrArg (fun f => f.comp
     (TensorPower.mulEquiv (R := k) (M := V) (n := p) (m := q)).toLinearMap) h
   simpa only [signedShuffleProduct, LinearMap.comp_assoc,
