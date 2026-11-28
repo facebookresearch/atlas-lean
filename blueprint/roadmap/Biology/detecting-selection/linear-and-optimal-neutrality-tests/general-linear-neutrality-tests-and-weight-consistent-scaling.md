@@ -16,7 +16,7 @@ $$\Omega_i^{(n)} = \Omega\!\left(\tfrac{i}{n}\right) - \frac{1}{n-1}\sum_{j=1}^{
 \quad\text{and}\quad
 \Omega_i^{(n)} = \frac{\omega(i/n)}{\sum_{j=1}^{n-1}\omega(j/n)} - \frac{\omega'(i/n)}{\sum_{j=1}^{n-1}\omega'(j/n)},$$
 
-which differ by $O(1/n)$ when $\Omega$ is bounded and piecewise continuous; for weights diverging like $1/f$ or faster (as with Watterson's estimator), only the second, normalized form avoids a dependence on the population-size cutoff. For example, Fay and Wu's $H$ corresponds to $\omega(f) = 1$, $\omega'(f) = 2f$, i.e. $\Omega(f) = 1 - 2f$.
+which differ by $O(1/n)$ when $\Omega$ is bounded and piecewise continuous; for weights diverging like $1/f$ or faster near $f=0$ or $f=1$ (as with Watterson's estimator), the normalization $\int_{1/N}^1\Omega(f)\,df$ depends strongly on the population-size cutoff $1/N$, so $\Omega$ itself must depend on $N$; when that dependence is a multiplicative factor in front of $\omega(f)$ or $\omega'(f)$ or both (for Watterson's estimator, $\omega'(f)=1/(f\log N)$), only the second, normalized form avoids a dependence on $N$, because its denominators cancel the factor while the subtracted mean in the first form does not. For example, Fay and Wu's $H$ corresponds to $\omega(f) = 1$, $\omega'(f) = 2f$, i.e. $\Omega(f) = 1 - 2f$.
 
 ## Depends on
 
@@ -29,4 +29,4 @@ Centredness follows by substituting $E(\xi_i) = \theta L/i$: the numerator has m
 
 ## Sources
 
-- S. E. Ramos-Onsins, G. Marmorini, G. Achaz and L. Ferretti, "A general framework for neutrality tests based on the site frequency spectrum", *Genes* 14 (2023), 1714, Section 1, Eq. (1), and Sections 2.1–2.2, Eqs. (3)–(11). <https://doi.org/10.3390/genes14091714> (PMC10531300)
+- S. E. Ramos-Onsins, G. Marmorini, G. Achaz and L. Ferretti, "A general framework for neutrality tests based on the site frequency spectrum", *Genes* 14 (2023), 1714, Section 1, Eq. (1), and Sections 2.1–2.2 (including Section 2.2.2 on divergent weights), Eqs. (3)–(11). <https://doi.org/10.3390/genes14091714> (PMC10531300)

@@ -18,7 +18,11 @@ $$\hat\tau_{\mathrm{ACW}} = \sum_{i=1}^N \delta_i\hat q_i\Big\{\frac{A_i\hat\Del
 
 **Theorem 4 (flexible nuisance models).** Under Assumptions 1-4, let $\pi_\delta(X;\hat\eta)$ and $\mu_{a,1}(X;\hat\beta_a)$ be general semiparametric fits with (C1) $\|\pi_\delta(X;\hat\eta) - \pi_\delta(X)\| = o_p(1)$ and $\|\mu_{a,1}(X;\hat\beta_a) - \mu_{a,1}(X)\| = o_p(1)$, and (C2) $\|\pi_\delta(X;\hat\eta) - \pi_\delta(X)\|\sum_{a=0}^1\|\mu_{a,1}(X;\hat\beta_a) - \mu_{a,1}(X)\| = o_p(n^{-1/2})$, in $L_2(P)$ norm. Then $\hat\tau_{\mathrm{ACW}}$ is consistent and attains $V_{\mathrm{eff}}$.
 
-**Lemma 1 (which covariates to calibrate).** For confounders $X_C$ (affecting trial participation and outcome), outcome-only predictors $X_O$ and participation-only instruments $X_I$, the first term $V_1^*$ of $V_{\mathrm{eff}}$ computed with $X^*$ satisfies $V_1^O \le V_1^C \le V_1^{C+I}$.
+**Lemma 1 (which covariates to calibrate).** Let $X_C$ be the confounders (affecting both trial participation and outcome), $X_O$ the outcome predictors, meaning all covariates predictive of the outcome, so that $X_O$ contains $X_C$ and $\pi_\delta(X_O) = \pi_\delta(X_C)$, and $X_I$ the instruments, which affect trial participation but not the outcome given $X_C$, so that $V\{Y(a) \mid X_C, X_I\} = V\{Y(a) \mid X_C\}$; all are subsets of the basis $g(X)$, and $X_{C+I} = X_C \cup X_I$. Then the first term of $V_{\mathrm{eff}}$ computed with $X^*$,
+
+$$V_1^* = E\Big[\frac{\delta}{\pi_\delta(X^*)^2}\Big\{\frac{V\{Y(1) \mid X^*, \delta\}}{\pi_A} + \frac{V\{Y(0) \mid X^*, \delta\}}{1-\pi_A}\Big\}\Big], \qquad * \in \{C, O, C+I\},$$
+
+satisfies $V_1^O \le V_1^C \le V_1^{C+I}$. Here $X_O$ is the full set of outcome predictors, confounders included, as in the proof (Web Appendix C.5, which starts from $\pi_\delta(X^O) = \pi_\delta(X^C)$ and $V\{Y(a) \mid X^O\} \le V\{Y(a) \mid X^C\}$) and in the simulation (Web Appendix E.1, where the outcome predictors $X_3, X_4, X_5$ include $X_3$, which also enters the sampling score); if $X_O$ omitted the confounders, that first step $\pi_\delta(X^O) = \pi_\delta(X^C)$ would fail.
 
 ## Expansion
 

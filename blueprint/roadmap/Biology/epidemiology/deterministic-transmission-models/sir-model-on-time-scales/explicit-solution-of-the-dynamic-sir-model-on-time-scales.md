@@ -16,11 +16,13 @@ where $N=x_0+y_0+z_0$, $\kappa=y_0/x_0$ and
 
 $$f(t)=\frac{(c-b)(t)}{1+b(t)\mu(t)},\qquad g(t)=\frac{b(t)\,\kappa}{e_f(t,t_0)+\kappa}.$$
 
-For $x_0,y_0>0$, $z_0\ge0$ the solution is nonnegative and $x+y+z\equiv N$.
+For $x_0,y_0>0$, $z_0\ge0$ one has $x+y+z\equiv N$, $x,y>0$ on all of $\mathbb T$ (since $f,g$ and hence $\ominus g$, $\ominus(f\oplus g)$ are positively regressive), and $z\ge z_0\ge0$ for $t\ge t_0$ because $z^\Delta=c\,y^\sigma\ge0$. Nonnegativity of $z$ is a forward-time statement: for $t<t_0$, $z$ can be negative; on $\mathbb T=\mathbb R$ with $z_0=0$ and $c>0$, $z(t)=-\int_t^{t_0}c\,y\,d\tau<0$.
 
 **Long-time behaviour** ($\mathbb T$ unbounded above).
 
-- If $\int_{t_0}^t f\,\Delta\tau\le l$ for some $l>0$ and all $t$, and $\int_{t_0}^\infty b\,\Delta\tau=\infty$, every solution converges to the extinction equilibrium $(0,0,N)$ (no susceptibles remain). In particular this holds when $b\equiv c$ and $\int b=\infty$.
+- If $\int_{t_0}^t f\,\Delta\tau\le l$ for some $l>0$ and all $t\ge t_0$, and $\int_{t_0}^\infty b\,\Delta\tau=\infty$, then $x(t)\to0$ (no susceptibles remain). If in addition $\int_{t_0}^t \ominus f\,\Delta\tau=\int_{t_0}^t\frac{(b-c)(\tau)}{1+c(\tau)\mu(\tau)}\,\Delta\tau\le l'$ for some $l'$ and all $t\ge t_0$, every solution converges to the extinction equilibrium $(0,0,N)$. In particular this holds when $b\equiv c$ (so $f\equiv0$) and $\int b=\infty$.
+
+(The source's Theorem 7 asserts convergence to $(0,0,N)$ under the first two conditions alone: "Under these conditions, all solutions of [the model] converge to the equilibrium $(0,0,N)$". Its proof shows $e_g(t,t_0)\to\infty$, hence $x\to0$, but then reads $y\to0$ off $y=\kappa\,e_{\ominus f}(t,t_0)\,x$ although $e_{\ominus f}=1/e_f$ is not bounded by the hypotheses. Counterexample: $\mathbb T=\mathbb R$, constant $b>0$ and $c\equiv0$ (or $c(t)=e^{-t}$ with $t_0\ge0$) satisfy both conditions, since $\int_{t_0}^t f\,d\tau\le e^{-t_0}$ and $\int b=\infty$; with $c\equiv0$ nobody recovers, so $x+y\equiv x_0+y_0$ and $y\to x_0+y_0>0$, and with $c=e^{-t}$, $z(\infty)\le z_0+(x_0+y_0)\int_{t_0}^\infty e^{-\tau}d\tau<N$, so again $y\not\to0$. The added bound on $\int\ominus f$ gives $e_{\ominus f}(t,t_0)\le e^{l'}$ by the same estimate $e_p\le\exp\int p$ for positively regressive $p$, hence $y\le\kappa e^{l'}x\to0$ and $z\to N$.)
 - If $b\le m f$ for some $m>0$ and $\int_{t_0}^\infty f\,\Delta\tau=\infty$, every solution converges to a disease-free equilibrium $(\alpha,0,N-\alpha)$ with $0<\alpha\le N$.
 
 ## Expansion
