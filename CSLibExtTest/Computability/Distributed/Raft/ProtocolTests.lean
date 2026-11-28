@@ -31,8 +31,9 @@ public import CSLibExt.Computability.Distributed.Raft.Protocol
   though the follower's log agrees with its own.
 * A conflicting entry is deleted: a server that recovers with an entry of term `1` replaces it by
   the entry of the leader of term `2`.
-* Crash and recovery: a server that voted in term `1`, then crashed and recovered, still refuses
-  its vote to another candidate of term `1`.
+* Crash and recovery: after a server votes in term `1`, crashes and recovers, it still records
+  its vote; given a term-`1` RequestVote from another candidate reporting a longer log, its
+  handler would refuse.
 * The single-server theorem for `Unit`.
 -/
 
@@ -108,7 +109,8 @@ example : (leader.handle ⟨2, 0, .appendEntries 0 0 0 [⟨0, 9⟩] 0⟩).2 =
 
 /-! ### A run of three servers -/
 
-/-- Receiving a message given by membership in the network. -/
+/-- Receiving a message given by membership in the network: the message is in flight (`hm`) and
+its receiver is up (`hup`). -/
 theorem step_receive {s : State (Fin 3) ℕ} {m : Message (Fin 3) ℕ} (hm : m ∈ s.network)
     (hup : (s.server m.dst).up) :
     Step s (.receive m) ⟨Function.update s.server m.dst ((s.server m.dst).handle m).1,
@@ -368,8 +370,9 @@ theorem exists_run_conflict :
 /-! ### Crash and recovery -/
 
 /-- **Votes survive crashes.** Server `1` votes for server `0` in term `1`, crashes and
-recovers; it is a follower of term `1` that still has voted for `0`, and it refuses its vote to
-server `2`, a candidate of term `1` with a longer log. -/
+recovers. After recovery, server `1` is a follower of term `1` and still records its vote for `0`.
+If given a term-`1` RequestVote from `2` reporting a longer log (last index `3`, last term `1`),
+its handler would refuse. -/
 theorem exists_run_crash :
     ∃ s : State (Fin 3) ℕ, lts.MTr State.init
         [.timeout 0, .receive (rv 1), .crash 1, .recover 1] s ∧

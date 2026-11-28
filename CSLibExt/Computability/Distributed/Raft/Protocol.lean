@@ -28,8 +28,9 @@ and of the network that connects its servers.
   recover (`recover`) as a follower with its persistent state, `currentTerm`, `votedFor` and its
   log. Steps are atomic, so persistent state reaches stable storage before any reply is sent.
 * *Messages:* the network is a multiset of messages in flight. Any message in flight may be
-  received next or much later (reordering, delay), and the network may lose a message (`drop`)
-  or duplicate one (`duplicate`). Messages are not corrupted.
+  received next, provided its receiver is up, or much later (reordering, delay); the network may
+  lose a message (`drop`) or duplicate one (`duplicate`) whether or not its receiver is up.
+  Messages are not corrupted.
 * *Clients:* a client request is an event that hands an arbitrary command to a leader. Replies
   to clients and the redirection of clients are not modelled.
 * *State machines:* applying an entry is the event `apply i n c`, server `i` applying the command
@@ -450,7 +451,8 @@ the servers together with the multiset of messages in flight, its labels are the
 and its transitions the steps (`Step`): election timeouts at any moment, elections, client
 requests, replication, commitment and application, the receipt of a message (`Server.handle`),
 the loss or duplication of a message by the network, and the crash and recovery of a server.
-Its executions start from `State.init`. -/
+We model initialized Raft runs by taking traces of `lts` from `State.init`; `lts` itself also
+admits traces from other states. -/
 def lts : Cslib.LTS (State S C) (Event S C) := ⟨Step⟩
 
 /-! ### Terms never decrease -/

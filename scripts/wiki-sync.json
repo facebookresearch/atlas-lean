@@ -25053,7 +25053,7 @@
 "Cslib.Distributed.Peterson.step": "790456169448c218",
 "Cslib.Distributed.Raft.currentTerm_le_of_mTr": "720a2ecf8a5d54fb",
 "Cslib.Distributed.Raft.exists_mTr_commit_of_subsingleton": "dbd05ebd90dd3273",
-"Cslib.Distributed.Raft.lts": "74416873a8906f3f",
+"Cslib.Distributed.Raft.lts": "ce22331d974cd405",
 "Cslib.Distributed.ReliableBroadcast.IsReliableBroadcast": "e37465e2c80a83a6",
 "Cslib.Distributed.ReliableBroadcast.diffusion_isReliableBroadcast": "e49b62e1f65565e6",
 "Cslib.Distributed.RotatingCoordinator.ArticleRun": "e81afe385f4e0aff",

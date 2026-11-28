@@ -1,6 +1,6 @@
 # The Raft consensus protocol
 
-Raft replicates a log of state-machine commands on a fixed finite cluster of servers. Servers fail by stopping and may later recover from stable storage; messages may be delayed, lost, duplicated or reordered. The protocol is a labelled transition system whose states consist of the state of every server and the multiset of messages in flight, and whose executions start from the state in which every server is in its initial state and no message is in flight. A *majority* is a set of more than half of the servers.
+Raft replicates a log of state-machine commands on a fixed finite cluster of servers. Servers fail by stopping and may later recover from stable storage; messages may be delayed, lost, duplicated or reordered. The protocol is a labelled transition system whose states consist of the state of every server and the multiset of messages in flight. Initialized Raft runs are its traces from the state in which every server is in its initial state and no message is in flight; the transition system itself also admits traces from other states. A *majority* is a set of more than half of the servers.
 
 Each server is up or crashed and keeps
 
@@ -26,7 +26,7 @@ The steps are as follows; every event of a server other than its recovery requir
   - *RequestVote response*: a candidate adds the sender to `votesGranted` if the response grants the vote and carries its `currentTerm`.
   - *AppendEntries response*: a leader, if the response carries its `currentTerm`, on success with match index $k$ sets the sender's `nextIndex` to $k + 1$ and its `matchIndex` to the larger of its `matchIndex` and $k$, and on failure decrements the sender's `nextIndex`, but not below $1$.
   - Every other response is ignored.
-- *Network*: a copy of a message in flight is lost, or a message in flight is duplicated. Since any message in flight may be received at any time, messages are also delayed and reordered.
+- *Network*: a copy of a message in flight is lost, or a message in flight is duplicated, whether or not its receiver is up. Since any message in flight may be received at any time its receiver is up, messages are also delayed and reordered.
 - *Crash and recovery*: a server crashes, keeping its persistent state while its volatile state takes its initial values, and a crashed server recovers.
 
 This is the protocol of Figure 2 without cluster membership changes or log compaction, with these conventions.
