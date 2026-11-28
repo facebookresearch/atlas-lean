@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleCounts
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleDerangements
+public import MathlibExt.Combinatorics.Enumerative.PermutationWordleFirstCorrectOne
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleFirstCorrectThree
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleLeftShift
 public import MathlibExt.NumberTheory.LucasSequence
@@ -44,21 +45,6 @@ public theorem_wanted permWordleCoeff_three_lt_cyclicShift (n : ℕ) (hn : 4 ≤
     (S : (m : ℕ) → Equiv.Perm (Fin m)) (hS : IsInductivePermWordleStrategy n S)
     (hne : S n ≠ finRotate n) :
     permWordleCoeff S n 3 < permWordleCoeff cyclicShiftStrategy n 3
-
-/-- **Three-guess solves of permutations with a fixed point.** Let $n \ge 4$ and let $S$ be a
-permutation Wordle strategy (a permutation $S[m]$ of $\{0, \dots, m-1\}$ for each $m$) with
-$S[m]$ equal to the cyclic shift $j \mapsto j + 1 \bmod m$ for every $m < n$. The number of
-permutations $\pi$ of $\{0, \dots, n-1\}$ that $S$ guesses in exactly three guesses and whose
-first guess (the identity) has a correct position, that is, $\pi$ has a fixed point, is
-$1 - 2^{n+1} + 3^n + n^2/2 + 5n/2 - n \cdot 2^n$.
-
-Source: Aurora Hiveley, *Experimenting with Permutation Wordle*, Journal of Integer Sequences 29
-(2026), Article 26.1.7, Theorem 10 (`jis-2026-26.1.7-thm-10`). -/
-public theorem_wanted card_solvedIn_three_firstCorrectAt_one (n : ℕ) (hn : 4 ≤ n)
-    (S : (m : ℕ) → Equiv.Perm (Fin m)) (hS : ∀ m < n, S m = finRotate m) :
-    (Nat.card {π : Equiv.Perm (Fin n) //
-        PermWordleSolvedIn S π 3 ∧ PermWordleFirstCorrectAt S π 1} : ℚ) =
-      1 - 2 ^ (n + 1) + 3 ^ n + (n : ℚ) ^ 2 / 2 + 5 * (n : ℚ) / 2 - n * 2 ^ n
 
 /-- **Three-guess solves of cyclic shift first correct at guess two.** For $n \ge 4$, the number
 of permutations $\pi$ of $\{0, \dots, n-1\}$ that the cyclic shift strategy guesses in exactly

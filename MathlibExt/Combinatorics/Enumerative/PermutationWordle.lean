@@ -27,6 +27,12 @@ permutes the entries on `I` by the strategy component `S |I|`. With
 `I = {i₀ < i₁ < ⋯ < i_{m-1}}`, the entry at `i_j` moves to `i_{S m j}`. Positions are zero-based,
 so the paper's one-line component `[2, 3, …, m, 1]` (cyclic shift) is `finRotate m`, and the
 paper's guess `γ_{r+1}` is `permWordleGuess S π r`.
+
+## References
+
+* Aurora Hiveley, *Experimenting with Permutation Wordle*, Journal of Integer Sequences 29
+  (2026), Article 26.1.7, pp. 1–16, Sections 2 and 4, Proposition 4 and Theorem 10. The
+  ordered-subset restriction formalizes the reduction in the proof of Theorem 10.
 -/
 
 namespace MetaMathlibExt
@@ -91,6 +97,34 @@ theorem permWordleNextGuess_of_eq {n : ℕ} (S : (m : ℕ) → Equiv.Perm (Fin m
     (π : Equiv.Perm (Fin n)) (g : Fin n → Fin n) (i : Fin n) (h : g i = π i) :
     permWordleNextGuess S π g i = g i := by
   simp [permWordleNextGuess, permuteAlong, h]
+
+/-- **One round on the ordered incorrect positions.** Let $S$ be a permutation Wordle strategy,
+$\pi$ a secret permutation of $\{0,\ldots,n-1\}$, and $g$ a current guess. If an increasing map $e$
+from $\{0,\ldots,m-1\}$ enumerates exactly the positions where $g$ disagrees with $\pi$, then the
+next guess has value $g(e(S[m]^{-1}(j)))$ at position $e(j)$ for every $0\le j<m$. -/
+theorem permWordleNextGuess_apply_orderEmbedding {m n : ℕ}
+    (S : (k : ℕ) → Equiv.Perm (Fin k)) (π : Equiv.Perm (Fin n)) (g : Fin n → Fin n)
+    (e : Fin m ↪o Fin n) (he : ∀ i, i ∈ Set.range e ↔ g i ≠ π i) (j : Fin m) :
+    permWordleNextGuess S π g (e j) = g (e ((S m).symm j)) := by
+  let I := Finset.univ.filter fun i => g i ≠ π i
+  have hm : Finset.univ.map e.toEmbedding = I := by
+    ext i
+    simpa [I, Finset.mem_map, Set.mem_range] using he i
+  have hc : I.card = m := by rw [← hm, Finset.card_map, Finset.card_univ, Fintype.card_fin]
+  have hE := Finset.orderEmbOfFin_unique hc
+    (fun i => Finset.mem_filter.mpr ⟨Finset.mem_univ _, (he _).mp ⟨i, rfl⟩⟩) e.strictMono
+  have atRank (k : ℕ) (hk : I.card = k) (i : Fin k) :
+      permWordleNextGuess S π g (I.orderEmbOfFin hk i) =
+        g (I.orderEmbOfFin hk ((S k).symm i)) := by
+    subst k
+    have hi := I.orderEmbOfFin_mem rfl i
+    have hsub : (⟨I.orderEmbOfFin rfl i, hi⟩ : I) = I.orderIsoOfFin rfl i := by
+      apply Subtype.ext
+      exact (I.coe_orderIsoOfFin_apply rfl i).symm
+    change permuteAlong I rfl (S I.card) g (I.orderEmbOfFin rfl i) = _
+    simp only [permuteAlong, dite_eq_left hi, hsub, OrderIso.symm_apply_apply,
+      Finset.coe_orderIsoOfFin_apply]
+  simpa only [hE] using atRank m hc j
 
 /-- **Guesses of permutation Wordle.** Let $S$ be a strategy, that is, a permutation $S_m$ of
 $\{0, \dots, m-1\}$ for every $m$, and let $\pi$ be a permutation of $\{0, \dots, n-1\}$. The
@@ -170,6 +204,107 @@ theorem permWordleSolvedIn_one_iff {n : ℕ} (S : (m : ℕ) → Equiv.Perm (Fin 
   constructor
   · intro h; ext i; simp [← h]
   · rintro rfl; rfl
+
+/-- **An exact solve needs only the last two guesses.** For every permutation Wordle strategy
+$S$, every secret permutation $\pi$ of $\{0,\ldots,n-1\}$, and every $r\ge 2$, the game ends in
+exactly $r$ guesses if and only if $\gamma_r=\pi$ and $\gamma_{r-1}\ne\pi$, where $\gamma_j$ is
+$S$'s $j$-th guess against $\pi$. -/
+theorem permWordleSolvedIn_succ_succ_iff {n : ℕ} (S : (m : ℕ) → Equiv.Perm (Fin m))
+    (π : Equiv.Perm (Fin n)) (j : ℕ) :
+    PermWordleSolvedIn S π (j + 2) ↔
+      permWordleGuess S π (j + 1) = ⇑π ∧ permWordleGuess S π j ≠ ⇑π := by
+  have lock (k : ℕ) (h : permWordleGuess S π k = ⇑π) :
+      permWordleGuess S π (k + 1) = ⇑π := by
+    rw [permWordleGuess_succ, h]
+    exact funext fun i => permWordleNextGuess_of_eq S π π i rfl
+  have persist {k l : ℕ} (hkl : k ≤ l) (h : permWordleGuess S π k = ⇑π) :
+      permWordleGuess S π l = ⇑π := by
+    induction hkl with
+    | refl => exact h
+    | step _ ih => exact lock _ ih
+  have hj : j + 2 - 1 = j + 1 := by omega
+  rw [PermWordleSolvedIn, hj, and_iff_right (by omega : 1 ≤ j + 2)]
+  exact and_congr_right fun _ => ⟨fun h => h j (Nat.lt_succ_self j),
+    fun h k hk he => h (persist (Nat.le_of_lt_succ hk) he)⟩
+
+private theorem guesses_extendDomain {n : ℕ} (I : Finset (Fin n))
+    (S T : (m : ℕ) → Equiv.Perm (Fin m)) (hST : ∀ m ≤ I.card, S m = T m)
+    (π : Equiv.Perm (Fin I.card)) :
+    let e := I.orderEmbOfFin rfl
+    let π' := π.extendDomain (I.orderIsoOfFin rfl).toEquiv
+    ∀ r, (∀ i, permWordleGuess S π' r (e i) = e (permWordleGuess T π r i)) ∧
+      ∀ i ∉ I, permWordleGuess S π' r i = i := by
+  intro e π' r
+  have hπ (i : Fin I.card) : π' (e i) = e (π i) := Equiv.Perm.extendDomain_apply_image ..
+  have hπout (i : Fin n) (hi : i ∉ I) : π' i = i :=
+    Equiv.Perm.extendDomain_apply_not_subtype _ _ hi
+  induction r with
+  | zero => exact ⟨fun _ => rfl, fun _ _ => rfl⟩
+  | succ r ih =>
+    let g := permWordleGuess T π r
+    let G := permWordleGuess S π' r
+    let J := Finset.univ.filter fun i => g i ≠ π i
+    let f := J.orderEmbOfFin rfl
+    have small (i : Fin I.card) : i ∈ Set.range f ↔ g i ≠ π i := by
+      simp [f, J, Finset.range_orderEmbOfFin]
+    have related (i : Fin I.card) : G (e i) = e (g i) := ih.1 i
+    have large (x : Fin n) : x ∈ Set.range (f.trans e) ↔ G x ≠ π' x := by
+      constructor
+      · rintro ⟨j, rfl⟩
+        change G (e (f j)) ≠ π' (e (f j))
+        rw [related, hπ]
+        exact e.injective.ne ((small _).mp ⟨j, rfl⟩)
+      · intro hx
+        have hxI : x ∈ I := by
+          by_contra h
+          exact hx ((ih.2 x h).trans (hπout x h).symm)
+        obtain ⟨i, rfl⟩ : x ∈ Set.range e := (I.range_orderEmbOfFin rfl).symm ▸ hxI
+        rw [related, hπ] at hx
+        obtain ⟨j, rfl⟩ := (small i).mpr (fun h => hx (congrArg e h))
+        exact ⟨j, rfl⟩
+    simp only [permWordleGuess_succ]
+    refine ⟨fun i => ?_, fun i hi => ?_⟩
+    · change permWordleNextGuess S π' G (e i) = e (permWordleNextGuess T π g i)
+      by_cases hi : g i = π i
+      · have hi' : G (e i) = π' (e i) := (related i).trans ((congrArg e hi).trans (hπ i).symm)
+        rw [permWordleNextGuess_of_eq S π' G (e i) hi', permWordleNextGuess_of_eq T π g i hi]
+        exact related i
+      · obtain ⟨j, rfl⟩ := (small i).mpr hi
+        have hc : J.card ≤ I.card := (Finset.card_filter_le _ _).trans_eq (Fintype.card_fin _)
+        change permWordleNextGuess S π' G ((f.trans e) j) = e (permWordleNextGuess T π g (f j))
+        rw [permWordleNextGuess_apply_orderEmbedding S π' G (f.trans e) large j,
+          permWordleNextGuess_apply_orderEmbedding T π g f small j, hST _ hc]
+        exact related _
+    · exact (permWordleNextGuess_of_eq S π' G i
+        ((ih.2 i hi).trans (hπout i hi).symm)).trans (ih.2 i hi)
+
+/-- **Restricting permutation Wordle to an ordered subset preserves the solve time.** Let $I$ be
+an $m$-element subset of $\{0,\ldots,n-1\}$ and identify $\{0,\ldots,m-1\}$ with $I$ in increasing
+order. Let $S,T$ be strategies with $S[k]=T[k]$ for all $0\le k\le m$. For a permutation $\pi$ of
+$\{0,\ldots,m-1\}$, let $\widetilde\pi$ act by $\pi$ on $I$ under this identification and fix every
+position outside $I$. For every $r\in\mathbb N$, $S$ solves $\widetilde\pi$ in exactly $r$ guesses
+if and only if $T$ solves $\pi$ in exactly $r$ guesses. -/
+theorem permWordleSolvedIn_extendDomain_iff {n : ℕ} (I : Finset (Fin n))
+    (S T : (m : ℕ) → Equiv.Perm (Fin m)) (hST : ∀ m ≤ I.card, S m = T m)
+    (π : Equiv.Perm (Fin I.card)) (r : ℕ) :
+    PermWordleSolvedIn S (π.extendDomain (I.orderIsoOfFin rfl).toEquiv) r ↔
+      PermWordleSolvedIn T π r := by
+  let e := I.orderEmbOfFin rfl
+  let π' := π.extendDomain (I.orderIsoOfFin rfl).toEquiv
+  have happly (j : ℕ) : permWordleGuess S π' j = ⇑π' ↔ permWordleGuess T π j = ⇑π := by
+    obtain ⟨hin, hout⟩ := guesses_extendDomain I S T hST π j
+    have hπ (i : Fin I.card) : π' (e i) = e (π i) := Equiv.Perm.extendDomain_apply_image ..
+    constructor
+    · intro h
+      exact funext fun i => e.injective ((hin i).symm.trans ((congrFun h (e i)).trans (hπ i)))
+    · intro h
+      funext i
+      by_cases hi : i ∈ I
+      · obtain ⟨j, rfl⟩ : i ∈ Set.range e := (I.range_orderEmbOfFin rfl).symm ▸ hi
+        exact (hin j).trans ((congrArg e (congrFun h j)).trans (hπ j).symm)
+      · exact (hout i hi).trans (Equiv.Perm.extendDomain_apply_not_subtype _ _ hi).symm
+  change PermWordleSolvedIn S π' r ↔ _
+  simp only [PermWordleSolvedIn, ne_eq, happly]
 
 /-- **Coefficients of the guess-count generating function.** For a strategy $S$ and natural
 numbers $n$ and $r$, the coefficient $[x^r] f_S(x)$ of the generating function of $S$ at length
