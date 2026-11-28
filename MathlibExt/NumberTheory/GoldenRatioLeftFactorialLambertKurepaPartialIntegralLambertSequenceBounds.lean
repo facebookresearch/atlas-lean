@@ -30,13 +30,21 @@ public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaParti
 /-!
 # Lambert bounds for the left factorial
 
-We prove `kurepaPartialIntegral_lambertSequence_bounds`: for `n ≥ 5`, Kurepa's partial
-integral at the Lambert sequence value `a` bounds the left factorial `!n` within an
-interval of length one.
+For a natural number `n ≥ 5`, let `a ≥ n - 1` be real with
+`lambertMap (-a / (n - 1)) = -(1 / (n - 1)) * (4 / 7) ^ (1 / (n - 1))`, with real division and
+exponentiation. The left factorial minus Kurepa's partial integral at `a` is strictly between
+`0` and `1`. The cutoff's exponential-power identity applies to any natural number `n > 1`,
+real `a`, and nonnegative target constant in place of `4 / 7`.
 
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7, Theorem 10 (`jis-2024-24.5.7-thm-10`).
+## References
+
+* Aleksandar Petojević, Marjana Gorjanac Ranitović, Dragan Rastovac, and Milinko Mandić,
+  *The Golden Ratio, Factorials, and the Lambert W Function*, Journal of Integer Sequences
+  27 (2024), Article 24.5.7, pp. 1–11, Equation (3), Theorem 10, and Section 3.3.
+* Đ. Kurepa, *On the left factorial function !n*, Mathematica Balkanica 1 (1971), pp. 147–153,
+  especially p. 151 for the integral representation.
+* The rescaled equation, cutoff identity and lower-branch comparison are from
+  `MathlibExt.Analysis.SpecialFunctions.LambertWFunction`.
 -/
 
 namespace MetaMathlibExt
@@ -46,56 +54,6 @@ open Set
 @[expose] public section
 
 end
-
-private lemma lambertMul (n : ℕ) (hn : 5 ≤ n) (a : ℝ)
-    (hW : lambertMap (-a / ((n : ℝ) - 1)) =
-      -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
-    a * Real.exp (-a / ((n : ℝ) - 1)) = (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1)) := by
-  have hn5 : (5 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hpos : (0 : ℝ) < (n : ℝ) - 1 := by linarith
-  have hd : ((n : ℝ) - 1) ≠ 0 := ne_of_gt hpos
-  have hW2 : ((-a / ((n : ℝ) - 1)) * Real.exp (-a / ((n : ℝ) - 1))) * (-((n : ℝ) - 1))
-      = ((-(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1)))) * (-((n : ℝ) - 1)) := by
-    unfold lambertMap at hW
-    rw [hW]
-  have hL : ((-a / ((n : ℝ) - 1)) * Real.exp (-a / ((n : ℝ) - 1))) * (-((n : ℝ) - 1))
-      = a * Real.exp (-a / ((n : ℝ) - 1)) := by
-    field_simp
-  have hR : ((-(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1)))) * (-((n : ℝ) - 1))
-      = (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1)) := by
-    field_simp
-  rw [hL, hR] at hW2
-  exact hW2
-
-private lemma cast_sub_one (n : ℕ) (hn1 : 1 ≤ n) :
-    (((n - 1 : ℕ)) : ℝ) = (n : ℝ) - 1 := by
-  rw [Nat.cast_sub hn1]
-  norm_num
-
-private lemma lambertPow (n : ℕ) (hn : 5 ≤ n) (a : ℝ)
-    (hW : lambertMap (-a / ((n : ℝ) - 1)) =
-      -(1 / ((n : ℝ) - 1)) * (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) :
-    a ^ (n - 1) * Real.exp (-a) = 4 / 7 := by
-  have hn1 : 1 ≤ n := by omega
-  have hn5 : (5 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-  have hpos : (0 : ℝ) < (n : ℝ) - 1 := by linarith
-  have hd : ((n : ℝ) - 1) ≠ 0 := ne_of_gt hpos
-  have hdcast := cast_sub_one n hn1
-  have hEq := lambertMul n hn a hW
-  have hEqn := congrArg (fun x : ℝ => x ^ (n - 1)) hEq
-  rw [mul_pow] at hEqn
-  have hexp : (Real.exp (-a / ((n : ℝ) - 1))) ^ (n - 1) = Real.exp (-a) := by
-    rw [← Real.exp_nat_mul]
-    congr 1
-    rw [hdcast]
-    field_simp
-  rw [hexp] at hEqn
-  have hcrhs : (((4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1))) ^ (n - 1)) = 4 / 7 := by
-    rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]
-    rw [show (1 / ((n : ℝ) - 1)) * (((n - 1 : ℕ)) : ℝ) = 1 by rw [hdcast]; field_simp]
-    exact Real.rpow_one _
-  rw [hcrhs] at hEqn
-  exact hEqn
 
 private lemma a_gt (n : ℕ) (hn : 5 ≤ n) (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
     (hW : lambertMap (-a / ((n : ℝ) - 1)) =
@@ -108,7 +66,7 @@ private lemma a_gt (n : ℕ) (hn : 5 ≤ n) (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
   · exfalso
     have hc1 : (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1)) ≤ 1 :=
       Real.rpow_le_one (by norm_num) (by norm_num) (by positivity)
-    have hEq := lambertMul n hn a hW
+    have hEq := (lambertMap_neg_div_eq_iff hd).mp hW
     rw [← hEq_a] at hEq
     rw [neg_div, div_self hd] at hEq
     have hepos : 0 < Real.exp (-1) := Real.exp_pos _
@@ -126,27 +84,11 @@ private lemma a_gt (n : ℕ) (hn : 5 ≤ n) (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
 
 private lemma uexp_strictAnti :
     StrictAntiOn (fun u : ℝ => u * Real.exp (-u)) (Ioi 1) := by
-  have hderiv : ∀ x : ℝ, HasDerivAt (fun u : ℝ => u * Real.exp (-u))
-      (1 * Real.exp (-x) + x * (Real.exp (-x) * -1)) x := by
-    intro x
-    have h1 : HasDerivAt (fun t : ℝ => -t) (-1) x := (hasDerivAt_id x).neg
-    have h2 : HasDerivAt (fun t : ℝ => Real.exp (-t)) (Real.exp (-x) * -1) x :=
-      (Real.hasDerivAt_exp (-x)).comp x h1
-    exact (hasDerivAt_id x).mul h2
-  apply strictAntiOn_of_deriv_neg (convex_Ioi _) _ _
-  · exact (continuous_id.mul (Real.continuous_exp.comp continuous_neg)).continuousOn
-  · intro x hx
-    rw [IsOpen.interior_eq isOpen_Ioi] at hx
-    have hx1 : (1 : ℝ) < x := hx
-    have hde : deriv (fun u : ℝ => u * Real.exp (-u)) x
-        = Real.exp (-x) * (1 - x) := by
-      have e := (hderiv x).deriv
-      have hrw : 1 * Real.exp (-x) + x * (Real.exp (-x) * -1)
-          = Real.exp (-x) * (1 - x) := by ring
-      rw [hrw] at e
-      exact e
-    rw [hde]
-    exact mul_neg_of_pos_of_neg (Real.exp_pos _) (by linarith)
+  intro u hu v hv huv
+  have hu' : -u ∈ Iic (-1 : ℝ) := neg_le_neg (Set.mem_Ioi.mp hu).le
+  have hv' : -v ∈ Iic (-1 : ℝ) := neg_le_neg (Set.mem_Ioi.mp hv).le
+  simpa only [lambertMap_apply, neg_mul, neg_lt_neg_iff] using
+    lambertMap_strictAntiOn_Iic hv' hu' (neg_lt_neg huv)
 
 private lemma a_ge_of_exp_bound (n : ℕ) (hn : 5 ≤ n) (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
     (hW : lambertMap (-a / ((n : ℝ) - 1)) =
@@ -159,7 +101,7 @@ private lemma a_ge_of_exp_bound (n : ℕ) (hn : 5 ≤ n) (a : ℝ) (ha : (n : �
   have hpos : (0 : ℝ) < (n : ℝ) - 1 := by linarith
   have hd : ((n : ℝ) - 1) ≠ 0 := ne_of_gt hpos
   have ha_gt := a_gt n hn a ha hW
-  have hEq := lambertMul n hn a hW
+  have hEq := (lambertMap_neg_div_eq_iff hd).mp hW
   by_contra hcon
   rw [not_le] at hcon
   have hu_mem : a / ((n : ℝ) - 1) ∈ Ioi (1 : ℝ) :=
@@ -363,7 +305,7 @@ private lemma term_le (n j : ℕ) (hn1 : 1 ≤ n) (hj : j ≤ n - 1) (a : ℝ) (
     exact_mod_cast Nat.factorial_ne_zero j
   rw [Nat.cast_div hdiv hj0] at hcast
   rw [Nat.cast_pow] at hcast
-  have hdcast : ((((n - 1 : ℕ))) : ℝ) = (n : ℝ) - 1 := cast_sub_one n hn1
+  have hdcast : ((((n - 1 : ℕ))) : ℝ) = (n : ℝ) - 1 := Nat.cast_pred hn1
   rw [hdcast] at hcast
   have hpos : (0 : ℝ) < a ^ (n - 1 - j) := pow_pos ha0 _
   have hle : ((((n - 1).factorial : ℕ) : ℝ) / ((j.factorial : ℕ) : ℝ))
@@ -443,7 +385,7 @@ private lemma hTF (n : ℕ) (hn : 9 ≤ n) :
   have g3 : ((n - 3).factorial : ℕ) = (n - 3) * (n - 4).factorial := by
     have e3 : (n - 4) + 1 = n - 3 := by omega
     rw [← e3, Nat.factorial_succ]
-  have c1 : ((((n - 1 : ℕ))) : ℝ) = (n : ℝ) - 1 := cast_sub_one n hn1
+  have c1 : ((((n - 1 : ℕ))) : ℝ) = (n : ℝ) - 1 := Nat.cast_pred hn1
   have c2 : ((((n - 2 : ℕ))) : ℝ) = (n : ℝ) - 2 := by
     rw [Nat.cast_sub (show 2 ≤ n by omega)]
     norm_num
@@ -563,7 +505,7 @@ private lemma hFinal9 (n : ℕ) (hn : 9 ≤ n) (a : ℝ) (ha : (n : ℝ) - 1 ≤
   have ha0 : (0 : ℝ) ≤ a := by linarith [ha, hn9]
   have ha0' : (0 : ℝ) < a := by linarith [ha, hn9]
   have ha_gt := a_gt n hn5 a ha hW
-  have hPow := lambertPow n hn5 a hW
+  have hPow := lambertCutoff_pow_mul_exp n (by omega) a (by norm_num) hW
   have ha3 := a_ge_three n hn8 a ha hW
   have hR0 := R_le_mul n a ha0
   have hP0 : a ^ (n - 1) ≠ 0 := pow_ne_zero _ ha0'.ne'
@@ -636,7 +578,7 @@ private lemma hFinal5 (a : ℝ) (ha : ((((5 : ℕ))) : ℝ) - 1 ≤ a)
   have haL : (19 / 2 : ℝ) ≤ a := a_ge_five a ha hW
   have ha0' : (0 : ℝ) < a := by linarith [haL]
   have hL0 : (0 : ℝ) < 19 / 2 := by norm_num
-  have hPow := lambertPow 5 (by norm_num) a hW
+  have hPow := lambertCutoff_pow_mul_exp 5 (by decide) a (by norm_num) hW
   have hPow4 : a ^ 4 * Real.exp (-a) = 4 / 7 := hPow
   have hR := sum_factorial_sub_kurepaPartialIntegral 5 a
   have hpoly : (∑ k ∈ Finset.range 5,
@@ -683,7 +625,7 @@ private lemma hFinal6 (a : ℝ) (ha : ((((6 : ℕ))) : ℝ) - 1 ≤ a)
   have haL : (12 : ℝ) ≤ a := a_ge_six a ha hW
   have ha0' : (0 : ℝ) < a := by linarith [haL]
   have hL0 : (0 : ℝ) < 12 := by norm_num
-  have hPow := lambertPow 6 (by norm_num) a hW
+  have hPow := lambertCutoff_pow_mul_exp 6 (by decide) a (by norm_num) hW
   have hPow5 : a ^ 5 * Real.exp (-a) = 4 / 7 := hPow
   have hR := sum_factorial_sub_kurepaPartialIntegral 6 a
   have hpoly : (∑ k ∈ Finset.range 6,
@@ -733,7 +675,7 @@ private lemma hFinal7 (a : ℝ) (ha : ((((7 : ℕ))) : ℝ) - 1 ≤ a)
   have haL : (29 / 2 : ℝ) ≤ a := a_ge_seven a ha hW
   have ha0' : (0 : ℝ) < a := by linarith [haL]
   have hL0 : (0 : ℝ) < 29 / 2 := by norm_num
-  have hPow := lambertPow 7 (by norm_num) a hW
+  have hPow := lambertCutoff_pow_mul_exp 7 (by decide) a (by norm_num) hW
   have hPow6 : a ^ 6 * Real.exp (-a) = 4 / 7 := hPow
   have hR := sum_factorial_sub_kurepaPartialIntegral 7 a
   have hpoly : (∑ k ∈ Finset.range 7,
@@ -793,7 +735,7 @@ private lemma hFinal8 (a : ℝ) (ha : ((((8 : ℕ))) : ℝ) - 1 ≤ a)
     exact a_ge_three 8 le_rfl a ha hW
   have ha0' : (0 : ℝ) < a := by linarith [haL]
   have hL0 : (0 : ℝ) < 21 := by norm_num
-  have hPow := lambertPow 8 (by norm_num) a hW
+  have hPow := lambertCutoff_pow_mul_exp 8 (by decide) a (by norm_num) hW
   have hPow7 : a ^ 7 * Real.exp (-a) = 4 / 7 := hPow
   have hR := sum_factorial_sub_kurepaPartialIntegral 8 a
   have hpoly : (∑ k ∈ Finset.range 8,

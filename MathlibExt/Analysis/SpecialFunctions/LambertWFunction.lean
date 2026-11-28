@@ -9,11 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
-# Lambert W function, principal real branch (Ouellet JIS VOL20, rank 320)
+# Lambert W function and its real branches
 
 Source contract, rank 320, lexical id `jis_term_6c376920fa7bc177f6acc4c7`,
 semantic id `jis_sem_4b8befd1d7e70075080d07cc`.
@@ -37,6 +39,22 @@ justify such a subtype-valued inverse.
 
 `existsUnique_lambertMap_lower_preimage` gives the matching characterization of the lower
 real branch `W₋₁`: every `x` with `-exp (-1) ≤ x < 0` has exactly one preimage `y ≤ -1`.
+The Lambert map is strictly decreasing on this branch, including its endpoint `y = -1`.
+For a natural number `n > 1` and a real target `c ≥ 0`, the equation
+`lambertMap (-a / (n - 1)) = -(1 / (n - 1)) * c ^ (1 / (n - 1))` for a real `a`
+implies the cutoff identity `a ^ (n - 1) * Real.exp (-a) = c`.
+
+## References
+
+* Vincent Ouellet, *On the Sum of the Reciprocals of the Middle Prime Factors of an Integer*,
+  Journal of Integer Sequences 20 (2017), Article 17.10.1, pp. 1–16, Definition 7.
+* Brian Drake, Ira M. Gessel, and Guoce Xin, *Three Proofs and a Generalization of the
+  Goulden-Litsyn-Shevelev Conjecture on a Sequence Arising in Algebraic Geometry*,
+  Journal of Integer Sequences 10 (2007), Article 07.3.7, pp. 1–11, Section 2.
+* Aleksandar Petojević, Marjana Gorjanac Ranitović, Dragan Rastovac, and Milinko Mandić,
+  *The Golden Ratio, Factorials, and the Lambert W Function*, Journal of Integer Sequences
+  27 (2024), Article 24.5.7, pp. 1–11, Section 2 (the lower real branch), Equation (3),
+  and Section 3.3 (Lambert cutoffs).
 -/
 
 namespace MetaMathlibExt
@@ -50,6 +68,41 @@ The inverse of $h$ restricted to $y > -1$ is the principal real branch of the La
 Source: Ouellet JIS VOL20 `ou2.tex` lines 426-432. -/
 public noncomputable def lambertMap (y : ℝ) : ℝ :=
   y * Real.exp y
+
+/-- **Evaluation of the Lambert map.** For every real $y$, the Lambert map has value $y e^y$. -/
+public theorem lambertMap_apply (y : ℝ) : lambertMap y = y * Real.exp y := by
+  rfl
+
+/-- **Rescaled Lambert equation.** For real numbers $a$, $z$, and $d \ne 0$,
+$h(-a/d) = -z/d$ for the Lambert map $h$ if and only if $a e^{-a/d} = z$. -/
+public theorem lambertMap_neg_div_eq_iff {a d z : ℝ} (hd : d ≠ 0) :
+    lambertMap (-a / d) = -(1 / d) * z ↔ a * Real.exp (-a / d) = z := by
+  rw [lambertMap_apply]
+  constructor
+  · intro h
+    field_simp [hd] at h
+    simpa only [neg_div, neg_inj] using h
+  · intro h
+    field_simp [hd]
+    simpa only [neg_div, neg_inj] using h
+
+/-- **Exponential-power identity for Lambert cutoffs.** For a natural number $n > 1$, a real
+constant $c \ge 0$, and a real number $a$, if the Lambert map $h(y)=ye^y$ satisfies
+$h(-a/(n-1)) = -(1/(n-1))c^{1/(n-1)}$, then $a^{n-1} e^{-a} = c$. -/
+public theorem lambertCutoff_pow_mul_exp (n : ℕ) (hn : 1 < n) (a : ℝ) {c : ℝ} (hc : 0 ≤ c)
+    (hW : lambertMap (-a / ((n : ℝ) - 1)) =
+      -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1))) :
+    a ^ (n - 1) * Real.exp (-a) = c := by
+  have hn' : (1 : ℝ) < n := by exact_mod_cast hn
+  have hd := (sub_pos.mpr hn').ne'
+  have hcast : ((n - 1 : ℕ) : ℝ) = (n : ℝ) - 1 := Nat.cast_pred (by omega)
+  have hmul := congrArg (· ^ (n - 1)) ((lambertMap_neg_div_eq_iff hd).mp hW)
+  have hexp : ((n - 1 : ℕ) : ℝ) * (-a / ((n : ℝ) - 1)) = -a := by
+    rw [hcast]
+    field_simp
+  rw [mul_pow, ← Real.exp_nat_mul, hexp, ← Real.rpow_mul_natCast hc, hcast,
+    one_div_mul_cancel hd, Real.rpow_one] at hmul
+  exact hmul
 
 /-- **Principal-branch preimages of the Lambert map.** Let $h(y) = y e^y$ be the Lambert map on
 the real numbers. Every real $x > -e^{-1}$ has exactly one preimage $y > -1$ under $h$, that is,
@@ -158,6 +211,21 @@ public theorem existsUnique_lambertMap_preimage (x : ℝ)
     refine ⟨⟨max x 0, hb_pos⟩, hb_symm, fun y hy => ?_⟩
     exact huniq_gen y ⟨max x 0, hb_pos⟩ hy hb_symm
 
+/-- **Antitonicity of the lower branch of the Lambert map.** The real Lambert map
+$y \mapsto y e^y$ is strictly decreasing on $(-\infty,-1]$. -/
+public theorem lambertMap_strictAntiOn_Iic : StrictAntiOn lambertMap (Set.Iic (-1 : ℝ)) := by
+  have hlam (y : ℝ) : HasDerivAt lambertMap (Real.exp y * (1 + y)) y := by
+    have h := (hasDerivAt_id y).mul (Real.hasDerivAt_exp y)
+    change HasDerivAt lambertMap (1 * Real.exp y + y * Real.exp y) y at h
+    rwa [show 1 * Real.exp y + y * Real.exp y = Real.exp y * (1 + y) by ring] at h
+  have hcont : Continuous lambertMap :=
+    continuous_iff_continuousAt.mpr fun y => (hlam y).continuousAt
+  refine strictAntiOn_of_deriv_neg (convex_Iic _) hcont.continuousOn ?_
+  intro y hy
+  rw [interior_Iic] at hy
+  rw [(hlam y).deriv]
+  exact mul_neg_of_pos_of_neg (Real.exp_pos y) (by linarith [show y < -1 from hy])
+
 /-- **Lower-branch preimages of the Lambert map.** Let $h(y) = y e^y$ be the Lambert map on the
 real numbers. Every real $x$ with $-e^{-1} \le x < 0$ has exactly one preimage $y \le -1$ under
 $h$, that is, there is exactly one real number $y \le -1$ with $y e^y = x$.
@@ -172,21 +240,7 @@ Article 24.5.7, Section 3.1 (the lower branch `W₋₁`). -/
 public theorem existsUnique_lambertMap_lower_preimage {x : ℝ}
     (hx1 : -Real.exp (-1) ≤ x) (hx0 : x < 0) :
     ∃! y : { y : ℝ // y ≤ -1 }, lambertMap y.val = x := by
-  have hlam : ∀ y : ℝ, HasDerivAt lambertMap (Real.exp y * (1 + y)) y := by
-    intro y
-    have h := (hasDerivAt_id y).mul (Real.hasDerivAt_exp y)
-    have e : 1 * Real.exp y + y * Real.exp y = Real.exp y * (1 + y) := by ring
-    change HasDerivAt lambertMap (1 * Real.exp y + y * Real.exp y) y at h
-    rw [e] at h
-    exact h
-  have hcont : Continuous lambertMap :=
-    continuous_iff_continuousAt.mpr fun y => (hlam y).continuousAt
-  have hanti : StrictAntiOn lambertMap (Set.Iic (-1 : ℝ)) := by
-    refine strictAntiOn_of_deriv_neg (convex_Iic _) hcont.continuousOn ?_
-    intro y hy
-    rw [interior_Iic] at hy
-    rw [(hlam y).deriv]
-    exact mul_neg_of_pos_of_neg (Real.exp_pos y) (by linarith [show y < -1 from hy])
+  have hcont : Continuous lambertMap := continuous_id.mul Real.continuous_exp
   have ht : Filter.Tendsto lambertMap Filter.atBot (nhds 0) := by
     have h2 : Filter.Tendsto (fun y : ℝ => -((-y) ^ 1 * Real.exp (-(-y)))) Filter.atBot
         (nhds (-0)) :=
@@ -202,7 +256,45 @@ public theorem existsUnique_lambertMap_lower_preimage {x : ℝ}
   obtain ⟨y, hy, hyx⟩ := intermediate_value_Icc' (show y₀ ⊓ -1 ≤ -1 from inf_le_right)
     hcont.continuousOn ⟨by rw [hl]; exact hx1, h1.1.le⟩
   refine ⟨⟨y, hy.2⟩, hyx, fun z hz => Subtype.ext ?_⟩
-  exact hanti.injOn z.property hy.2 (hz.trans hyx.symm)
+  exact lambertMap_strictAntiOn_Iic.injOn z.property hy.2 (hz.trans hyx.symm)
+
+/-- **Existence of the Lambert sequences.** Let $h(y) = y e^y$ be the Lambert map. For every
+natural number $n \ge 4$ and every real number $c$ with $0 < c \le 1$ there is a real number
+$a \ge n - 1$ with
+$$h\left(-\frac{a}{n-1}\right) = -\frac{1}{n-1} \, c^{1/(n-1)}.$$
+
+Equivalently, $a = -(n-1) \, W_{-1}\left(-\frac{1}{n-1} c^{1/(n-1)}\right)$, where $W_{-1}$ is the
+lower real branch of the Lambert W function. Allowing any real $c$ with $0 < c \le 1$
+generalizes the following cutoffs from the paper:
+
+* $c = 4/7$ gives $a_n$ for $n \ge 4$ (Section 2.1, Equation (3)).
+* $c = 4/(7m)$ gives $A_{n,m}$ for integers $n \ge 5$ and $m \ge 1$ (Section 3.3).
+
+Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
+Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
+Article 24.5.7. -/
+public theorem exists_lambertSequence {n : ℕ} (hn : 4 ≤ n) {c : ℝ} (hc0 : 0 < c)
+    (hc1 : c ≤ 1) :
+    ∃ a : ℝ, (n : ℝ) - 1 ≤ a ∧
+      lambertMap (-a / ((n : ℝ) - 1)) = -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1)) := by
+  have hn' : (4 : ℝ) ≤ n := by exact_mod_cast hn
+  have hpos : (0 : ℝ) < (n : ℝ) - 1 := by linarith
+  have hcp : 0 < c ^ (1 / ((n : ℝ) - 1)) := Real.rpow_pos_of_pos hc0 _
+  have hcle : c ^ (1 / ((n : ℝ) - 1)) ≤ 1 := Real.rpow_le_one hc0.le hc1 (by positivity)
+  have he : (1 / 3 : ℝ) < Real.exp (-1) := by
+    rw [Real.exp_neg, lt_inv_comm₀ (by norm_num) (Real.exp_pos 1)]
+    have := Real.exp_one_lt_d9
+    norm_num at this ⊢
+    linarith
+  have hq : 1 / ((n : ℝ) - 1) ≤ 1 / 3 := by
+    rw [div_le_div_iff₀ hpos (by norm_num)]
+    linarith
+  obtain ⟨⟨y, hy⟩, hyx⟩ := (existsUnique_lambertMap_lower_preimage
+    (x := -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1)))
+    (by nlinarith [one_div_pos.2 hpos]) (by nlinarith [one_div_pos.2 hpos])).exists
+  refine ⟨-((n : ℝ) - 1) * y, by nlinarith, ?_⟩
+  rw [show -(-((n : ℝ) - 1) * y) / ((n : ℝ) - 1) = y by field_simp]
+  exact hyx
 
 end
 
