@@ -11163,6 +11163,7 @@
   "MathlibExt/Combinatorics/Additive/ModularSchurNumberVanishing": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Modular Schur numbers"},
   "MathlibExt/Combinatorics/Additive/ModularSchurNumbers": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Modular Schur numbers"},
   "MathlibExt/Combinatorics/Additive/MonochromaticProgressionLargeDifference": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Monochromatic progressions with large common difference"},
+  "MathlibExt/Combinatorics/Additive/MonochromaticSquareSumErdosProblem439": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Monochromatic sums equal to perfect powers"},
   "MathlibExt/Combinatorics/Additive/NathansonMSTD": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Alternating sum- and difference-dominated sets"},
   "MathlibExt/Combinatorics/Additive/NathansonRestrictedSumset": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sumsets with at least r distinct terms"},
   "MathlibExt/Combinatorics/Additive/NoSmallSumDominantSet": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Minimum size of a sum-dominant set"},
