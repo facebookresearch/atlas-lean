@@ -44,11 +44,11 @@ example : 4 ∈ Set.range (ComplexShape.NatInitialInterval.upEmbedding 4).f :=
   (ComplexShape.NatInitialInterval.upEmbedding_range 4 4).2 le_rfl
 
 private abbrev M : ModuleCat.{0} ℤ := ModuleCat.of ℤ (ZMod 6)
-private def K : ChainComplex (ModuleCat.{0} ℤ) ℕ :=
+private abbrev K : ChainComplex (ModuleCat.{0} ℤ) ℕ :=
   ChainComplex.of (fun _ => M) (fun _ => 0) (by intro n; simp)
 
 private lemma endpoint : K.d 1 0 = 0 := by
-  simp [K, ChainComplex.of.d]
+  simp [K, ChainComplex.of.d] <;> rfl
 
 private def positiveHomologyComparison :
     (K.restriction ChainComplex.kernelTailEmbedding).homology 0 ≅ K.homology 1 :=
@@ -65,24 +65,24 @@ example :
 example :
     ((K.positiveStupidTruncInclusion endpoint).f 1).hom
       ((K.stupidTruncXIso ChainComplex.kernelTailEmbedding
-        (i := 0) (i' := 1) rfl).inv.hom (1 : ZMod 6)) = 1 := by
+        (i := 0) (i' := 1) rfl).inv.hom (1 : ZMod 6)) = (1 : ZMod 6) := by
   rw [K.positiveStupidTruncInclusion_f endpoint (i := 0) (i' := 1) rfl]
   change ((K.stupidTruncXIso ChainComplex.kernelTailEmbedding
     (i := 0) (i' := 1) rfl).inv ≫
       (K.stupidTruncXIso ChainComplex.kernelTailEmbedding
-        (i := 0) (i' := 1) rfl).hom).hom (1 : ZMod 6) = 1
+        (i := 0) (i' := 1) rfl).hom).hom (1 : ZMod 6) = (1 : ZMod 6)
   rw [Iso.inv_hom_id]
   rfl
 
-example : (1 : ZMod 6) ≠ 0 := by norm_num
+example : (1 : ZMod 6) ≠ 0 := by decide
 
 private abbrev Z : ModuleCat.{0} ℤ := ModuleCat.of ℤ ℤ
-private def P : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
+private abbrev P : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
   CochainComplex.of (fun _ => Z) (fun _ => 0) (by intro n; simp)
 
-private def three : Z ⟶ Z := ModuleCat.ofHom ((3 : ℤ) • (LinearMap.id : ℤ →ₗ[ℤ] ℤ))
-private def qDifferential (n : ℤ) : Z ⟶ Z := if n = 0 then three else 0
-private def Q : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
+private abbrev three : Z ⟶ Z := ModuleCat.ofHom ((3 : ℤ) • (LinearMap.id : ℤ →ₗ[ℤ] ℤ))
+private abbrev qDifferential (n : ℤ) : Z ⟶ Z := if n = 0 then three else 0
+private abbrev Q : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
   CochainComplex.of (fun _ => Z) qDifferential (by
     intro n
     by_cases hn : n = 0
@@ -90,7 +90,7 @@ private def Q : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
       simp [qDifferential]
     · simp [qDifferential, hn])
 
-example : (Q.d 0 1).hom (1 : ℤ) = 3 := by
+example : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := by
   norm_num [Q, CochainComplex.of_d, qDifferential, three]
 
 -- A genuine differential in the second factor acquires the minus sign at first degree one.
@@ -100,24 +100,31 @@ example :
       -CochainComplex.ModuleTensor.mkAt ℤ P Q 1 1 2 rfl (1 : ℤ) (3 : ℤ) := by
   have h := CochainComplex.ModuleTensor.d_mkAt ℤ P Q
     1 0 1 rfl (1 : ℤ) (1 : ℤ)
-  simpa [P, Q, CochainComplex.of_d, qDifferential, three,
-    CochainComplex.ModuleTensor.mkAt, TensorProduct.zero_tmul, Units.smul_def] using h
+  have hp : (P.d 1 2).hom (1 : ℤ) = 0 := by
+    simp [P, CochainComplex.of.d] <;> rfl
+  have hq : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := by
+    norm_num [Q, CochainComplex.of_d, qDifferential, three]
+  have hz : CochainComplex.ModuleTensor.mkAt ℤ P Q 2 0 2 rfl (0 : ℤ) (1 : ℤ) = 0 := by
+    simp [CochainComplex.ModuleTensor.mkAt, TensorProduct.zero_tmul]
+  simpa [hp, hq, hz, Units.smul_def] using h
 
-private def S : ShortComplex (CochainComplex (ModuleCat.{0} ℤ) ℤ) :=
+private abbrev S : ShortComplex (CochainComplex (ModuleCat.{0} ℤ) ℤ) :=
   ShortComplex.mk (𝟙 P) (0 : P ⟶ P) (by simp)
 
 example :
-    ((ShortComplex.π₁ : ShortComplex (ModuleCat.{0} ℤ) ⥤ ModuleCat.{0} ℤ).
-      mapHomologicalComplex (ComplexShape.up ℤ)).obj S.cochainFlip = P :=
+    ((ShortComplex.π₁ :
+      ShortComplex (ModuleCat.{0} ℤ) ⥤ ModuleCat.{0} ℤ).mapHomologicalComplex
+        (ComplexShape.up ℤ)).obj S.cochainFlip = P :=
   S.cochainFlip_π₁
 
 example :
-    ((ShortComplex.π₂ : ShortComplex (ModuleCat.{0} ℤ) ⥤ ModuleCat.{0} ℤ).
-      mapHomologicalComplex (ComplexShape.up ℤ)).obj S.cochainFlip = P :=
+    ((ShortComplex.π₂ :
+      ShortComplex (ModuleCat.{0} ℤ) ⥤ ModuleCat.{0} ℤ).mapHomologicalComplex
+        (ComplexShape.up ℤ)).obj S.cochainFlip = P :=
   S.cochainFlip_π₂
 
-example : ((S.cochainFlip).X 7).f.hom (1 : ℤ) = 1 := rfl
-example : ((S.cochainFlip).X 7).g.hom (1 : ℤ) = 0 := rfl
+example : ((S.cochainFlip).X 7).f.hom (1 : ℤ) = (1 : ℤ) := rfl
+example : ((S.cochainFlip).X 7).g.hom (1 : ℤ) = (0 : ℤ) := rfl
 
 -- The public transpose works for an arbitrary shape with only zero morphisms.
 example {C : Type*} [Category C] [HasZeroMorphisms C] {I : Type*} {c : ComplexShape I}
