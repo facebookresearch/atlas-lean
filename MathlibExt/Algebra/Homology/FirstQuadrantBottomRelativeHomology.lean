@@ -194,7 +194,23 @@ theorem horizontalBottomRelativeHomologyStageIso_hom
           (horizontalBottomMappingConeToStage K i) (-(n : ℤ)) ≫
         ((horizontalCompleteFilteredTotalComplex K i).extendHomologyIso
           ComplexShape.embeddingDownNat (by simp)).hom := by
-  simp [horizontalBottomRelativeHomologyStageIso, id, Iso.trans_hom, isoOfQuasiIsoAt_hom]
+  let M : CochainComplex C ℤ := CochainComplex.mappingCone
+    ((horizontalCompleteFiltrationCochainDiagram K).map (horizontalBottomToStageMap i))
+  let g : M ⟶ (horizontalCompleteFiltrationCochainDiagram K).obj i :=
+    horizontalBottomMappingConeToStage K i
+  letI : QuasiIso g := horizontalBottomMappingConeToStage_quasiIso K i
+  let eExtend : ((horizontalCompleteFiltrationCochainDiagram K).obj i).homology (-(n : ℤ)) ≅
+      (horizontalCompleteFilteredTotalComplex K i).homology n :=
+    (horizontalCompleteFilteredTotalComplex K i).extendHomologyIso
+      ComplexShape.embeddingDownNat (by simp)
+  have hCompose : (isoOfQuasiIsoAt g (-(n : ℤ)) ≪≫ eExtend).hom =
+      HomologicalComplex.homologyMap g (-(n : ℤ)) ≫ eExtend.hom :=
+    (Iso.trans_hom (isoOfQuasiIsoAt g (-(n : ℤ))) eExtend).trans
+      (congrArg (fun f => f ≫ eExtend.hom) (isoOfQuasiIsoAt_hom g (-(n : ℤ))))
+  simp [horizontalBottomRelativeHomologyStageIso, id]
+  exact congrArg
+    (fun f => (HomotopyCategory.homologyFunctorFactors C
+      (ComplexShape.up ℤ) (-(n : ℤ))).hom.app M ≫ f) hCompose
 
 /-- Let C be an abelian category in arbitrary universes and K a bicomplex of shape (down ℕ,down ℕ).
 Let G_i be its complete filtered total chain stage and F_i its cochain extension along n↦-n, for
