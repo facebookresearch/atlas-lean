@@ -2,9 +2,10 @@
 
 A finitely generated virtually nilpotent group has decidable domino problem if and only if it is virtually free, that is, virtually cyclic or finite; the same holds for groups whose center contains a non-trivial finitely generated torsion-free subgroup.
 
-For every finitely generated virtually nilpotent group $G$, the domino problem of $G$ is decidable if and only if $G$ is virtually free (Theorem 1.1 of the source).
+1. For every finitely generated virtually nilpotent group $G$, the domino problem of $G$ is decidable if and only if $G$ is virtually free (Theorem 1.1 of the source).
+2. For every finitely generated group $G$ whose center has a non-trivial, finitely generated, torsion-free subgroup, the domino problem of $G$ is decidable if and only if $G$ is virtually free (Theorem 1.2).
 
-The source proves the same equivalence for every finitely generated group $G$ whose center has a non-trivial, finitely generated, torsion-free subgroup (Theorem 1.2); for instance $\mathbb{Z} \times H$ satisfies this hypothesis for every finitely generated $H$. The source conjectures that a finitely generated group has decidable domino problem exactly when it is virtually free. By [Gromov's polynomial growth theorem](../growth-of-groups/virtually-nilpotent-of-has-polynomial-gr.md) and [its converse](../growth-of-groups/has-polynomial-growth-of-virtually-nilpo.md), the finitely generated virtually nilpotent groups are exactly the finitely generated groups of polynomial growth, which is the form of the source's title.
+Clause 2 applies, for instance, to $\mathbb{Z} \times H$ for every finitely generated $H$. The source conjectures that a finitely generated group has decidable domino problem exactly when it is virtually free. By [Gromov's polynomial growth theorem](../growth-of-groups/virtually-nilpotent-of-has-polynomial-gr.md) and [its converse](../growth-of-groups/has-polynomial-growth-of-virtually-nilpo.md), the finitely generated virtually nilpotent groups are exactly the finitely generated groups of polynomial growth, which is the form of the source's title.
 
 ## Depends on
 
@@ -20,7 +21,7 @@ The source proves the same equivalence for every finitely generated group $G$ wh
 
 ## Expansion
 
-If $G$ is not virtually free, the source finds a thick end in $G$ and, through an extension of a result of Halin, a structure resembling a half-grid; this reduces the domino problem of $\mathbb{Z}^2$ to that of $G$ (using Lemma 4.2 for groups with a central element of infinite order and Lemma 4.1 that undecidability passes from subgroups to the whole group). On finitely generated virtually free groups the domino problem is decidable, as the source recalls from work of Muller and Schupp and of Kuske and Lohrey; Halin's theorem, its extension and the decidability for virtually free groups have no pages here.
+If $G$ is not virtually free, the source finds a thick end in $G$ and, through an extension of a result of Halin, a structure resembling a half-grid; this reduces the domino problem of $\mathbb{Z}^2$ to that of $G$ (using Lemma 4.2 for groups with a central element of infinite order and Lemma 4.1 that undecidability passes from subgroups to the whole group). On finitely generated virtually free groups the domino problem is decidable, as the source recalls from work of Muller and Schupp and of Kuske and Lohrey; A good expansion links pages for Halin's theorem, its extension and the decidability for virtually free groups.
 
 ## Sources
 

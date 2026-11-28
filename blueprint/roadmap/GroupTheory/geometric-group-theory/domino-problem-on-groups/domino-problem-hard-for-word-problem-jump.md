@@ -8,12 +8,12 @@ $$
 X_{\le 1} = \{ x \in \{0, 1\}^G : x(g) = x(h) = 1 \Rightarrow g = h \}
 $$
 
-of configurations with at most one symbol $1$ is sofic, that is, the image of a subshift of finite type under a continuous map commuting with the translations. The origin-constrained domino problem is the set of pairs $(a, \mathcal{F})$ of a symbol $a$ and a finite set of forbidden patterns $\mathcal{F}$ such that no configuration of $X_{\mathcal{F}}$ has the symbol $a$ at the identity.
+of configurations with at most one symbol $1$ is sofic, that is, the image of a subshift of finite type under a continuous map commuting with the translations. Instances are given as on the [domino problem](domino-problem-of-a-group.md) page: a finite alphabet $\mathcal{A}$ and a finite set $C$ of pattern codings over it, with no promise that the codings are consistent. The origin-constrained domino problem is the set of triples $(\mathcal{A}, a, C)$ of such an instance and a symbol $a \in \mathcal{A}$ such that no configuration of $X_C$ has the symbol $a$ at the identity.
 
 Let $G$ be an infinite group with the special symbol property. Then (Theorem 3.7 of the source):
 
 1. the origin-constrained domino problem of $G \times \mathbb{Z}$ is $\mathrm{WP}(G)'$-hard;
-2. for every non-trivial finite group $H$, the domino problem $\mathrm{DP}((G \times \mathbb{Z}) * H)$, the set of finite pattern sets with empty subshift, is $\mathrm{WP}(G)'$-hard.
+2. for every non-trivial finite group $H$, the domino problem $\mathrm{DP}((G \times \mathbb{Z}) * H)$, the set of instances $(\mathcal{A}, C)$ with $X_C = \emptyset$, is $\mathrm{WP}(G)'$-hard.
 
 In particular these problems are undecidable for every infinite $G$ with the special symbol property; by Dahmani and Yaman, finitely generated free groups, finitely generated abelian groups, hyperbolic groups and poly-hyperbolic groups have it.
 
