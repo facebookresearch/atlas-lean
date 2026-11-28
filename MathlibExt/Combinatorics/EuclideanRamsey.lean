@@ -195,8 +195,9 @@ Source: Erdős, Graham, Montgomery, Rothschild, Spencer and Straus,
 [*Euclidean Ramsey theorems. I*](https://doi.org/10.1016/0097-3165(73)90011-3),
 Theorem 13; [indexed statement](https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/ComparatorChallenges/EuclideanRamseySpherical.lean#L19-L23). -/
 public theorem euclideanRamsey_configurations_cospherical {s d : ℕ}
-    (a : Fin s → EuclideanSpace ℝ (Fin d)) (_ha : Function.Injective a)
+    (a : Fin s → EuclideanSpace ℝ (Fin d)) (ha : Function.Injective a)
     (hRamsey : IsEuclideanRamsey a) : EuclideanGeometry.Cospherical (Set.range a) := by
+  have _ := ha
   cases s with
   | zero => simpa using (EuclideanGeometry.cospherical_empty (P := EuclideanSpace ℝ (Fin d)))
   | succ s =>
