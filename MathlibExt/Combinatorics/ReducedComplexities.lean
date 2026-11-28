@@ -19,7 +19,17 @@ public import MathlibExt.Combinatorics.InfiniteWord.ThueMorse
 # Reduced complexities for binary words
 
 For a nonempty word, `alternations_muWord` counts the alternations of its Thue–Morse image
-in terms of its length and its own alternations.
+in terms of its length and its own alternations. The even and odd indices of the regular
+paperfolding word follow the two recurrences `paperfoldingSeq_even` and `paperfoldingSeq_odd`.
+
+## References
+
+* John M. Campbell, James D. Currie, and Narad Rampersad,
+  [Reduced Complexities for Sequences Over Finite Alphabets](https://math.colgate.edu/~integers/aa34/aa34.pdf),
+  INTEGERS 26 (2026), Article A34, pp. 1–15, Sections 1 and 2.1 (paperfolding word and
+  Toeplitz construction) and Lemma 1 (alternations in the Thue–Morse image).
+* The proof of `paperfoldingSeq_even` is moved from the private lemma of the same name in
+  `MathlibExt.Combinatorics.PaperfoldingReducedComplexity`.
 -/
 
 @[expose] public section
@@ -55,6 +65,25 @@ $f_i = 0$ if $m \equiv 1 \pmod 4$ and $f_i = 1$ if $m \equiv 3 \pmod 4$. -/
 def paperfoldingSeq (i : ℕ) : Bool :=
   decide ((i + 1) / 2 ^ (Nat.factorization (i + 1) 2) % 4 ≠ 1)
 
+/-- **Paperfolding letters at even indices.** The zero-indexed letter at $2j$ is `true`
+exactly when $j$ is odd. -/
+theorem paperfoldingSeq_even (j : ℕ) :
+    paperfoldingSeq (2 * j) = decide (j % 2 = 1) := by
+  have h : (2 * j + 1).factorization 2 = 0 :=
+    Nat.factorization_eq_zero_of_remainder j (by decide)
+  rw [Bool.eq_iff_iff]
+  simp only [paperfoldingSeq, h, pow_zero, Nat.div_one, decide_eq_true_eq]
+  omega
+
+/-- **Paperfolding letters at odd indices.** The zero-indexed letter at $2j+1$ equals
+that at $j$, since $2j+2$ and $j+1$ have the same odd part. -/
+theorem paperfoldingSeq_odd (j : ℕ) : paperfoldingSeq (2 * j + 1) = paperfoldingSeq j := by
+  have h : (2 * (j + 1)).factorization 2 = (j + 1).factorization 2 + 1 := by
+    rw [Nat.factorization_mul (by decide) (Nat.succ_ne_zero j), Finsupp.add_apply,
+      Nat.prime_two.factorization_self, Nat.add_comm]
+  simp only [paperfoldingSeq, show 2 * j + 1 + 1 = 2 * (j + 1) by omega, h, pow_succ]
+  rw [Nat.mul_comm (2 ^ _) 2, Nat.mul_div_mul_left _ _ (by decide : 0 < 2)]
+
 /-- **Reduced factor complexity.** For a finite binary word $w$, let $\mathrm{red}(w)$ be the
 word obtained from $w$ by collapsing each run of equal letters to a single letter. For an
 infinite binary word $x = x_0 x_1 x_2 \cdots$ and a natural number $n$, the reduced factor
@@ -75,6 +104,36 @@ noncomputable def rhoAbRed (x : ℕ → Bool) (n : ℕ) : ℕ :=
     ((fun v => ((redWord (List.ofFn v)).length,
       (redWord (List.ofFn v)).count false)) ''
     InfiniteWord.factorSet x n)
+
+/-- **Reduced abelian complexity as a count over starting positions.** Count the distinct
+pairs of reduction length and number of zeros by taking the range over all factor starts. -/
+theorem rhoAbRed_eq_ncard_range (x : ℕ → Bool) (n : ℕ) :
+    rhoAbRed x n = (Set.range fun i =>
+      ((redWord (InfiniteWord.factorList x n i)).length,
+        (redWord (InfiniteWord.factorList x n i)).count false)).ncard := by
+  rw [rhoAbRed]
+  congr 1
+  ext p
+  constructor
+  · rintro ⟨v, hv, rfl⟩
+    obtain ⟨i, hi⟩ := (InfiniteWord.isFactor_iff_exists_factorList _ _).mp
+      ((InfiniteWord.isFactor_ofFn_iff_mem_factorSet v x).mpr hv)
+    rw [List.length_ofFn] at hi
+    exact ⟨i, congrArg (fun w => ((redWord w).length, (redWord w).count false)) hi⟩
+  · rintro ⟨i, rfl⟩
+    let w := InfiniteWord.factorList x n i
+    have hl : w.length = n := InfiniteWord.factorList_length x n i
+    let v : Fin n → Bool := fun j => w[j.val]'(by simpa only [hl] using j.isLt)
+    have hv : List.ofFn v = w := by
+      apply List.ext_getElem
+      · rw [List.length_ofFn, hl]
+      · intro j hj₁ hj₂
+        simp [v]
+    have hfactor : InfiniteWord.IsFactor (List.ofFn v) x := by
+      rw [hv, InfiniteWord.isFactor_iff_exists_factorList, hl]
+      exact ⟨i, rfl⟩
+    exact ⟨v, (InfiniteWord.isFactor_ofFn_iff_mem_factorSet v x).mp hfactor,
+      congrArg (fun u => ((redWord u).length, (redWord u).count false)) hv⟩
 
 /-- **Minimum number of alternations in Thue–Morse factors.** For a natural number $n$, $m_n$ is
 the least number of alternations (positions where two adjacent letters differ) among the
