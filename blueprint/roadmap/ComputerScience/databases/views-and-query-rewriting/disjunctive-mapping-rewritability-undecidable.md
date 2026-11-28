@@ -30,4 +30,3 @@ A good expansion links the undecidability of uniform boundedness of datalog prog
 ## Sources
 
 - Michel Leclère, Marie-Laure Mugnier and Guillaume Pérution-Kihli, "Query Rewriting with Disjunctive Existential Rules and Mappings", in *Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning (KR 2023)*, pp. 429–439, 2023, <https://doi.org/10.24963/kr.2023/42>; read in arXiv:2306.05973v1, <https://arxiv.org/abs/2306.05973v1>: Theorem 6 (Section 5) with its proof sketch and the full proof in the appendix of that version.
-- Haim Gaifman, Harry Mairson, Yehoshua Sagiv and Moshe Y. Vardi, "Undecidable optimization problems for database logic programs", *Journal of the ACM* 40(3):683–713, 1993, <https://doi.org/10.1145/174130.174142>, for the undecidability of uniform boundedness used in the proof (cited, not read).

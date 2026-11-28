@@ -8,7 +8,7 @@
 - [Finding small and complete rewritings of conjunctive queries is NP-complete](finding-small-and-complete-rewritings-is-np-complete.md)
 - [Complete rewriting is NP-complete even without repeated relation names](complete-rewriting-is-np-complete-without-repeated-relations.md)
 - [Complete rewriting over unary and binary views defined by unions of conjunctive queries is Π2p-complete](complete-rewriting-over-ucq-views-is-pi2p-complete.md)
-- [Disjunctive mapping rewritability is undecidable](disjunctive-mapping-rewritability-undecidable.md)
 - [Disjunctive mappings and UCQ rewritings over the source](disjunctive-mappings-and-source-rewritings.md)
+- [Disjunctive mapping rewritability is undecidable](disjunctive-mapping-rewritability-undecidable.md)
 - [First-order queries over unary conjunctive views](first-order-unary-conjunctive-view-queries.md)
 - [Satisfiability of first-order queries over unary conjunctive views with inequalities is undecidable](ucv-queries-with-inequality-views-undecidable.md)

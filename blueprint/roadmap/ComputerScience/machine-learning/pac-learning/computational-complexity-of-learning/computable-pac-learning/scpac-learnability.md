@@ -26,7 +26,7 @@ None.
 
 ## Expansion
 
-Sterkenburg shows that a hypothesis class is SCPAC learnable if and only if it has finite VC dimension and some algorithm implements empirical risk minimization for it (returns, for each sample, a hypothesis of $\mathcal{H}$ with least empirical error). The learner is proper: it outputs hypotheses in $\mathcal{H}$. The quantities $1/a$ and $1/b$ play the roles of $\epsilon$ and $\delta$ in the usual definition, restricted to reciprocals of positive integers so that $m_{\mathcal{H}}$ can be a computable function on natural numbers. The sufficient condition comes from Sauer's lemma, which bounds the sample complexity of uniform convergence by a computable function of the VC dimension alone.
+Sterkenburg shows that a nonempty hypothesis class is SCPAC learnable if and only if it has finite VC dimension and some algorithm implements empirical risk minimization for it (returns, for each sample, a hypothesis of $\mathcal{H}$ with least empirical error). The learner is proper: it outputs hypotheses in $\mathcal{H}$. The quantities $1/a$ and $1/b$ play the roles of $\epsilon$ and $\delta$ in the usual definition, restricted to reciprocals of positive integers so that $m_{\mathcal{H}}$ can be a computable function on natural numbers. The sufficient condition comes from Sauer's lemma, which bounds the sample complexity of uniform convergence by a computable function of the VC dimension and the accuracy and confidence parameters, the VC dimension being the only parameter that depends on the class.
 
 ## Sources
 

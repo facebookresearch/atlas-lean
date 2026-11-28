@@ -15,12 +15,14 @@ with $R_i \in \sigma$, free tuples $u_i$ of matching arity, and head variable $y
 Three extensions change the view bodies but keep the same first-order layer over the views:
 
 - *unary conjunctive$^{\neq}$ views* allow inequality atoms $x \neq y$ in the body;
-- *unary conjunctive$^{\neg}$ views* allow negated atoms in the body;
+- *unary conjunctive$^{\neg}$ views* allow safe negation in the body: negated atoms whose variables all occur in a positive relational atom of the same body (Section 5 of the source);
 - *unary conjunctive$^{\mathrm{rec}}$ views* allow a view to be defined by several rules, possibly recursive, read as least fixed points.
 
 ## Depends on
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Conjunctive queries with inequalities](../conjunctive-queries/conjunctive-queries-with-inequalities.md)
+- [Datalog programs and the immediate consequence operator](../datalog/datalog-programs-and-the-immediate-consequence-operator.md)
 
 ## Proof depends on
 
