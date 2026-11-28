@@ -18,7 +18,20 @@ $$\ell = \log\det(S_X - L_X) - \operatorname{tr}\big(\Sigma^n_X (S_X - L_X)\big)
 
 $$\min_{S, L}\ -\ell(S_X, L_X, S_{ZX}, L_{ZX}) + \lambda_n\big(\gamma \|S\|_1 + \|L\|_*\big) \quad \text{s.t. } S_X - L_X \succ 0,\ L_X \succeq 0,$$
 
-with $\|\cdot\|_1$ the entrywise $\ell_1$ norm and $\|\cdot\|_*$ the nuclear norm. The objective is jointly convex over a convex constraint set. Under rank-sparsity incoherence conditions on $(S^*, L^*)$ with $\gamma$ in a prescribed range and irrepresentability-type conditions on the Fisher information, with $\lambda_n$ of the prescribed order, the estimator recovers $(S^*, L^*)$ with high probability, and in the scaling regime where $S^*$ has degree of order $\log(p+m)^b$ and the number of latent factors is of order $p/\log(p+m)^{2b}$, roughly $n \gtrsim p \log(p+m)^{4b}$ samples suffice for $\max(\|\hat S - S^*\|_\infty/\gamma,\ \|\hat L - L^*\|_2) = o_P(1)$.
+with $\|\cdot\|_1$ the entrywise $\ell_1$ norm and $\|\cdot\|_*$ the nuclear norm. The objective is jointly convex over a convex constraint set. **Recovery (Theorem 1 of the source).** Write $\|\cdot\|_2$ for the largest singular value, $\psi_Z = \|\Sigma^n_Z\|_2$, $\psi^*_X = \|(S^*_X - L^*_X)^{-1}\|_2$, $\xi(T(L^*))$ and $\mu(\Omega(S^*))$ for the incoherence measures of the low-rank and sparse parts, and
+
+$$M = \max\Big(1,\ \frac{\psi_Z}{4\psi^*_X}\Big(1 + \sqrt{m/p}\Big)^2\Big), \qquad \lambda_n = \frac{Q_3}{\xi(T(L^*))}\sqrt{\frac{256\,(\psi^*_X)^2\,pM}{n}}.$$
+
+Assume rank-sparsity incoherence of $(S^*, L^*)$ with $\gamma$ in the prescribed range (Assumption 1) and irrepresentability-type conditions on the Fisher information (Assumption 2), and that
+
+- (a) the sample size satisfies $n \ge \frac{pM}{\xi(T(L^*))^4}\max\big(2,\ 256(\psi^*_X)^2/W^2\big)$, where $W>0$ is an explicit quantity depending on $\psi^*_X$, $\psi_Z$ and $\|S^*_{ZX} - L^*_{ZX}\|_2$;
+- (b) the minimum nonzero singular value $\sigma$ of $L^*$ and the minimum magnitude $\theta$ of a nonzero entry of $S^*$ satisfy $\sigma \ge Q_4\lambda_n/\xi(T(L^*))^2$ and $\theta \ge Q_5\lambda_n/\mu(\Omega(S^*))$.
+
+Here $Q_1,\dots,Q_6$ are constants defined in the source. Then, with probability at least $1 - \max\big(2e^{-pM},\ e^{-cpM}\big)$ for a constant $c>0$ depending on $\psi^*_X$ and $\psi_Z$ (explicit in the source), the estimator has $\operatorname{sign}(\hat S) = \operatorname{sign}(S^*)$, $\operatorname{rank}(\hat L) = \operatorname{rank}(L^*)$ and $\hat L_X \succeq 0$, and
+
+$$\max\Big(\tfrac1\gamma\|\hat S - S^*\|_\infty,\ \|\hat L - L^*\|_2\Big) \le \frac{Q_6\,\psi^*_X}{\xi(T(L^*))}\sqrt{\frac{pM}{n}}.$$
+
+In the scaling regime where $S^*$ has degree of order $\log(p+m)^b$ and the number of latent factors is of order $p/\log(p+m)^{2b}$, condition (a) amounts to $n \gtrsim p\,\log(p+m)^{4b}\,M$, which also gives $\max(\|\hat S - S^*\|_\infty/\gamma,\ \|\hat L - L^*\|_2) = o_P(1)$.
 
 ## Depends on
 

@@ -92,7 +92,10 @@ theorem ramCountdown_before_halt (n k : ℕ) (hk : k < 3 * n + 3) :
     change (ramExecN ramCountdown k ⟨1, n, (ramInit [n]).regs⟩).pc < 5
     exact countdown_loop_active n (ramInit [n]).regs k (by omega)
 
-/-- Exact instruction cost for every input and budget, with no padding. -/
+/-- For every input `n` and every `budget`, the countdown run's cost annotation is
+`(min budget (3 * n + 3), 0, 0)`: the time field counts the dispatched instructions, with no
+padding. Space and peak memory are not measured by this cost model (their fields are always `0`);
+the zeros do not report zero usage. -/
 theorem ramCountdown_cost (n budget : ℕ) :
     (ramExecNCost ramCountdown budget (ramInit [n])).time =
       ⟨min budget (3 * n + 3), 0, 0⟩ := by

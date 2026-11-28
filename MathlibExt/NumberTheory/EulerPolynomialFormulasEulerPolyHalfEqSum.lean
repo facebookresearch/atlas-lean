@@ -52,19 +52,6 @@ open Polynomial Finset
 
 namespace MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
 
--- equation lemmas for eulerAlpha
-private theorem eulerAlpha_zero : eulerAlpha 0 = 1 := rfl
-
-private theorem eulerAlpha_one : eulerAlpha 1 = 0 := rfl
-
-private theorem eulerAlpha_succ_succ (k : ℕ) :
-    eulerAlpha (k + 2) = -eulerAlpha (k + 1) - eulerAlpha k / 2 := rfl
-
-private theorem eulerAlpha_rec (k : ℕ) :
-    2 * eulerAlpha (k + 2) + 2 * eulerAlpha (k + 1) + eulerAlpha k = 0 := by
-  rw [eulerAlpha_succ_succ]
-  ring
-
 /-- The forward difference operator `Δ = T₁ - 1`. -/
 private noncomputable def fwdDiff : Module.End ℚ ℚ[X] :=
   (taylor (1 : ℚ) : Module.End ℚ ℚ[X]) - 1
