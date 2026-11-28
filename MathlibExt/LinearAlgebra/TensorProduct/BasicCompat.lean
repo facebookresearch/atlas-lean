@@ -15,7 +15,7 @@ Authors: Kenny Lau, Mario Carneiro
 module
 
 -- BACKPORT: Selected definitions from Mathlib PR #42860 head
-`4d9c97ac1bb4deb8ce8e6005aca99087372c2d77`,
+-- `4d9c97ac1bb4deb8ce8e6005aca99087372c2d77`,
 -- path `Mathlib/LinearAlgebra/TensorProduct/Basic.lean`,
 -- blob `61735e82d976a6d4f826ec81222eb056720b80a1`, authors Junyan Xu.
 -- See `BACKPORTS.md` for copied surface, adaptations, and upgrade-removal steps.
