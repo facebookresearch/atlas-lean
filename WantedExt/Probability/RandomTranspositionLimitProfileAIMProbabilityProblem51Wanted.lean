@@ -38,9 +38,10 @@ P(Poiss(b) = k)|`, with Mathlib's `poissonMeasure`.
 
 open Filter Topology ProbabilityTheory MathlibExt.Probability.SymmetricGroupRandomWalkShared
 
-/-- The step law of the random transposition shuffle on `n` cards: the transposition `(i j)` of a
-uniform pair `(i, j) ∈ Fin n × Fin n`, so the identity has probability `1/n` and each
-transposition probability `2/n²` (Diaconis-Shahshahani). -/
+/-- For `n > 0`, the step law of the random transposition shuffle on `n` cards: the transposition
+`(i j)` of a uniform pair `(i, j) ∈ Fin n × Fin n`, so the identity has probability `1/n` and each
+transposition probability `2/n²` (Diaconis-Shahshahani). For `n = 0`, `pairStepLaw` divides by
+`n² = 0`, so the function is `0`, not a law. -/
 noncomputable def randomTranspositionStep (n : ℕ) : Equiv.Perm (Fin n) → ℝ :=
   pairStepLaw fun ij => Equiv.swap ij.1 ij.2
 
