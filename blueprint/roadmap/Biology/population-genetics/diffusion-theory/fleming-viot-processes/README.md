@@ -21,3 +21,8 @@
 - [Moran particle system with bounded mutation on a compact type space](moran-particle-system-with-feller-mutation-on-a.md)
 - [Tightness of the Moran empirical-measure processes in the space of continuous paths](tightness-of-measure-valued-approximations-in-c.md)
 - [Uniform Aldous bounds for Moran empirical-measure projections](uniform-aldous-bounds-for-moran-empirical-measur.md)
+
+- [Fleming–Viot processes with varying population size](fleming-viot-processes-with-varying-population-size/README.md)
+- [Grapheme-valued Wright–Fisher diffusion](grapheme-valued-wright-fisher-diffusion/README.md)
+- [Smoothing distributions of measure-valued population diffusions](smoothing-distributions-of-measure-valued-population-diffusions/README.md)
+- [Lambda/Xi Fleming–Viot and Poisson–Dirichlet models](lambda-xi-fleming-viot-and-poisson-dirichlet-models/README.md)

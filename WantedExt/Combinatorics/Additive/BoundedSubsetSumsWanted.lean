@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Group.Pointwise.Finset.Scalar
 public import Mathlib.Data.Int.Interval
 public import MathlibExt.Combinatorics.AP.Basic
 public import MathlibExt.Combinatorics.Additive.BoundedSubsequenceSums
+public import MathlibExt.Combinatorics.Additive.BoundedSubsequenceSumsPositive
 public import MathlibExt.Combinatorics.Additive.YangChen
 
 /-!
@@ -231,28 +232,6 @@ public theorem_wanted boundedSubsetSums_inverse_mixedSign_zero (A : Finset ℤ) 
       ∃ d : ℤ, 0 < d ∧ A = d • Finset.Icc (-(n : ℤ)) p
 
 /-! ## Direct theorems for subsequence sums -/
-
-/-- **Lower bound for bounded subsequence sums of a positive sequence.** Let $k \ge 2$, let
-$t_1, \dots, t_k$ be positive integers, let $h = t_1 + \dots + t_k$, and let $\alpha, \beta$ be
-natural numbers with $1 \le \alpha$ and $\alpha + \beta \le h - 1$. Put
-$\bar r = (h - \alpha - \beta, t_1, \dots, t_k)$. For integers $0 < b_1 < \dots < b_k$, let
-$\mathcal{A}$ be the sequence in which $b_i$ occurs $t_i$ times. Then
-$|\Sigma^{\beta}_{\alpha}(\mathcal{A})| \ge L(\bar r, h - \beta)$ for all such $b$, and equality
-holds for some such $b$. Here $\Sigma^{\beta}_{\alpha}(\mathcal{A})$ is the set of sums of
-subsequences of $\mathcal{A}$ with at least $\alpha$ and at most $h - \beta$ terms, and $L$ is the
-Yang–Chen bound.
-
-Source: Raj Kumar Mistri, *Subset and Subsequence Sums with Bounded Numbers of Terms*, INTEGERS 24
-(2024), Article A116, Theorem 13 (`integers-2024-A116-thm-13`). -/
-public theorem_wanted card_boundedSubsequenceSums_ge_of_pos {k : ℕ} (hk : 2 ≤ k)
-    (t : Fin k → ℕ) (ht : ∀ i, 0 < t i) (h : ℕ) (hh : h = ∑ i, t i) (α β : ℕ) (hα : 1 ≤ α)
-    (hαβ : α + β + 1 ≤ h) :
-    (∀ b : Fin k → ℤ, StrictMono b → (∀ i, 0 < b i) →
-      yangChenBound (Fin.cons (h - α - β) t : Fin (k + 1) → ℕ) (h - β) ≤
-        (boundedSubsequenceSums α β (repetitionSequence b t)).card) ∧
-    ∃ b : Fin k → ℤ, StrictMono b ∧ (∀ i, 0 < b i) ∧
-      ((boundedSubsequenceSums α β (repetitionSequence b t)).card : ℤ) =
-        yangChenBound (Fin.cons (h - α - β) t : Fin (k + 1) → ℕ) (h - β)
 
 /-- **Lower bound for bounded subsequence sums of a nonnegative sequence containing zero.** Let
 $m \ge 1$, let $t_0, \dots, t_m$ be positive integers, let $h = t_0 + \dots + t_m$, and let

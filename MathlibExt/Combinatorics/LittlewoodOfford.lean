@@ -17,7 +17,8 @@ import Mathlib.Data.Nat.Choose.Central
 # The sharp Littlewood–Offord bound
 
 `littlewoodOffordSharpBound` bounds the number of signed sums in an open interval of length two
-by applying Sperner's theorem to the sets of positive summands.
+by applying Sperner's theorem to the sets of positive summands. The binomial estimate it uses,
+`mul_choose_half_sq_le_four_pow`, is public.
 -/
 
 public section
@@ -79,7 +80,10 @@ private lemma centralBinom_sq_bound (k : ℕ) : (2 * k + 1) * k.centralBinom ^ 2
       _ ≤ (k + 1) ^ 2 * 16 * 16 ^ k := Nat.mul_le_mul_left _ ih
       _ = _ := by rw [pow_succ]; ring
 
-private lemma middle_sq_bound (n : ℕ) : n * (n.choose (n / 2)) ^ 2 ≤ 4 ^ n := by
+/-- **Middle binomial coefficient bound.** For every natural number `n`,
+`n * (n.choose (n / 2)) ^ 2 ≤ 4 ^ n`; for `n ≥ 1` the middle binomial coefficient is therefore
+at most `2 ^ n / √n`. -/
+theorem mul_choose_half_sq_le_four_pow (n : ℕ) : n * (n.choose (n / 2)) ^ 2 ≤ 4 ^ n := by
   obtain ⟨k, rfl | rfl⟩ := Nat.even_or_odd' n
   · rw [show 2 * k / 2 = k by omega, ← Nat.centralBinom_eq_two_mul_choose, pow_mul]
     exact (Nat.mul_le_mul_right _ (Nat.le_succ _)).trans (centralBinom_sq_bound k)
@@ -121,7 +125,7 @@ theorem littlewoodOffordSharpBound :
   refine (Nat.cast_le.mpr hcount).trans ?_
   rw [one_mul, le_div_iff₀ (Real.sqrt_pos.mpr (by exact_mod_cast hn))]
   have hsq : (n : ℝ) * (n.choose (n / 2) : ℝ) ^ 2 ≤ (4 : ℝ) ^ n := by
-    exact_mod_cast middle_sq_bound n
+    exact_mod_cast mul_choose_half_sq_le_four_pow n
   apply le_of_pow_le_pow_left₀ (n := 2) (by decide) (by positivity)
   rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg _), mul_comm, pow_right_comm]
   simpa only [show (2 : ℝ) ^ 2 = 4 by norm_num] using hsq
