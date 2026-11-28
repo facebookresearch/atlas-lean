@@ -1,0 +1,39 @@
+# Finitely many branch points in characteristic zero
+
+Let $k$ be a field of characteristic $0$, and let $f \colon X \to Y$ be a finite morphism of
+curves over $k$, that is, of $k$-schemes that are proper, smooth of relative dimension $1$ and
+geometrically irreducible. Then there is a finite set $B$ of closed points of
+$Y$ such that $f$ is unramified over $Y \setminus B$, that is, the restriction $f^{-1}(Y \setminus
+B) \to Y \setminus B$ is unramified.
+
+## Depends on
+
+None among the pages.
+
+## Proof depends on
+
+Its proof uses the inputs listed under Expansion.
+
+## Expansion
+
+This node is still to be broken down. A good expansion states and links:
+
+- the finiteness of the extension of function fields $k(X)/k(Y)$ given by the finite dominant
+  morphism $f$, and its separability, as $k$ has characteristic $0$;
+- the equivalence, for a morphism of smooth curves, between the separability of $k(X)/k(Y)$ and
+  the existence of a nonempty open $U \subset X$ on which $f$ is étale (Stacks, Lemma 53.12.1);
+- the finiteness of the proper closed subset $X \setminus U$ of the irreducible curve $X$, and the
+  closedness of the images of its points under the finite morphism $f$, so that $B = f(X
+  \setminus U)$ is a finite set of closed points with $f^{-1}(Y \setminus B) \subset U$.
+
+## Sources
+
+- The Stacks project, Lemma 53.12.1 (Tag 0C1C), <https://stacks.math.columbia.edu/tag/0C1C>.
+- R. Vakil, *The Rising Sea: Foundations of Algebraic Geometry*, draft of October 21, 2025, <https://math.stanford.edu/~vakil/216blog/FOAGoct2125public.pdf>, §21.4, pp. 617–618: for a generically separable morphism of smooth varieties of
+  the same dimension, "We call the locus of non-smoothness (in $X$) the ramification locus, and its
+  image (in $Y$) the branch locus", and "Suppose now that $X$ and $Y$ are dimension 1. Then the
+  ramification locus is a finite set (ramification points) of $X$, and the branch locus is a finite
+  set (branch points) of $Y$"; Definition 21.4.1: "finite morphisms of integral schemes are
+  automatically separable in characteristic 0".
+- B. Köck, *Belyi's theorem revisited*, Beitr. Algebra Geom. 45 (2004), no. 1, 253–265, <https://www.emis.de/ft/11086>, proof of Theorem 3.3, p. 262, where the critical values of the chosen morphism
+  form the finite set to which Lemma 3.5 is applied.

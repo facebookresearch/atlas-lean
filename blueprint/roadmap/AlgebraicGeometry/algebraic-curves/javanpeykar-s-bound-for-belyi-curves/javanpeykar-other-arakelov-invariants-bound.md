@@ -21,7 +21,7 @@ which is [Javanpeykar's bound for the Faltings height of a Belyi curve](javanpey
 
 ## Proof depends on
 
-- [Belyi's theorem](belyi-s-theorem.md), so that $\deg_B(X)$ is the degree of a Belyi map
+- [Belyi's theorem](belyi-s-theorem-proof/belyi-s-theorem.md), so that $\deg_B(X)$ is the degree of a Belyi map
 - [Faltings' bounds for the self-intersection of the dualizing sheaf](../arakelov-invariants-of-curves/faltings-self-intersection-bounds.md), for $e(X) \ge 0$
 - [A non-Weierstrass point of bounded height on a Belyi curve](non-weierstrass-point-of-bounded-height.md)
 - [Bound for the Wronskian differential of a Belyi cover](wronskian-bound-for-belyi-covers.md)
