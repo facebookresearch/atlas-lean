@@ -258,6 +258,6 @@ theorem not_master_singleton :
     simp [conditionedLaw, hy]
   rw [hp, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_two,
     hq (unfire iso 0 ![1, 1]) (by decide), hq (unfire iso 1 ![1, 1]) (by decide)] at h11
-  norm_num [propensity, iso, κIso, Fin.prod_univ_two] at h11
+  norm_num [propensity, iso, κIso, Fin.prod_univ_two, ReactionNetwork.propensity] at h11
 
 end MathlibExtTest.Biology.Dynamics.StochasticCRNConditioned

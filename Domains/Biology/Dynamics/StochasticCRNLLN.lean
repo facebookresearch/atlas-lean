@@ -872,9 +872,10 @@ theorem massActionPropensity_eq_prod (G : ReactionNetwork S ρ) (κ : ρ → ℝ
     (z : S → ℕ) :
     massActionPropensity G κ N r z =
       N * κ r * ∏ s, ((z s).descFactorial (G.src r s) : ℝ) / (N : ℝ) ^ G.src r s := by
-  rw [massActionPropensity, SystemsBiology.propensity, ReactionNetwork.propensity, Finset.prod_div_distrib,
-    Finset.prod_pow_eq_pow_sum]
+  rw [massActionPropensity, SystemsBiology.propensity, ReactionNetwork.propensity,
+    Finset.prod_div_distrib, Finset.prod_pow_eq_pow_sum]
   ring
+
 omit [Fintype ρ] in
 /-- **Compatibility with `SystemsBiology.propensity`**: at system size `N = 1` the stochastic
 mass-action propensity is the falling-factorial propensity of `SystemsBiology`. -/

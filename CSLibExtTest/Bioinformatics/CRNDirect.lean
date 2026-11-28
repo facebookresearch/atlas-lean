@@ -95,8 +95,8 @@ theorem birth_tau_nonneg : 0 ≤ Real.log (1 / (1 / 2 : ℝ)) / 2 := by
   exact h.1
 
 #print axioms birth_propensity
-#print axioms propensity_nonneg
-#print axioms propensity_eq_zero_of_insufficient
+#print axioms ReactionNetwork.propensity_nonneg
+#print axioms ReactionNetwork.propensity_eq_zero_of_not_le
 #print axioms totalPropensity_eq_zero_iff
 #print axioms selectAux_some_pos
 #print axioms selectAux_mem
@@ -104,6 +104,7 @@ theorem birth_tau_nonneg : 0 ≤ Real.log (1 / (1 / 2 : ℝ)) / 2 := by
 #print axioms selectAux_some_of_le_total
 #print axioms step_some_sound
 #print axioms step_some_of_pos
+#print axioms step_eq_none_iff
 #print axioms step_none_of_empty
 #print axioms birth_fire_empty
 #print axioms birth_fire_zero
@@ -149,5 +150,33 @@ theorem step_boundary_selects_first (u1 : ℝ) :
   have hthresh : (1 / 2 : ℝ) * 2 = 1 := by norm_num
   rw [step_eq, boundary_total, hthresh, selectAux_boundary_first]
   simp [boundaryNet]
+
+/-- Signed rates `1` and `-1` on the two source-free reactions of `boundaryNet`. -/
+def signedK : Fin 2 → ℝ := fun i => if i = 0 then 1 else -1
+
+/-- With signed rates the total cancels to zero while reaction `0` has positive
+propensity, so `step` returns `none` at a state that is not absorbing; this is
+why `step_eq_none_iff` needs nonnegative rates. -/
+theorem signed_step_none (u1 u2 : ℝ) :
+    0 < boundaryNet.propensity signedK 0 (fun _ => 0) ∧
+      totalPropensity boundaryNet signedK [0, 1] (fun _ => 0) = 0 ∧
+      step boundaryNet signedK [0, 1] (fun _ => 0) u1 u2 = none := by
+  have h0 : boundaryNet.propensity signedK 0 (fun _ => 0) = 1 := by
+    unfold ReactionNetwork.propensity boundaryNet signedK
+    simp [Nat.descFactorial_zero]
+  have h1 : boundaryNet.propensity signedK 1 (fun _ => 0) = -1 := by
+    unfold ReactionNetwork.propensity boundaryNet signedK
+    simp [Nat.descFactorial_zero]
+  have htotal : totalPropensity boundaryNet signedK [0, 1] (fun _ => 0) = 0 := by
+    unfold totalPropensity
+    simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
+    rw [h0, h1]
+    norm_num
+  refine ⟨?_, htotal, ?_⟩
+  · rw [h0]
+    norm_num
+  · rw [step_eq, ite_eq_left htotal]
+
+#print axioms signed_step_none
 
 end Cslib.Bioinformatics.CRN

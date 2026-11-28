@@ -175,14 +175,7 @@ private noncomputable def residual (c : S → ℝ) (x z : S → ℕ) : ℝ :=
 omit [Fintype ρ] in
 /-- The propensity vanishes unless the source complex fits into the state. -/
 private theorem propensity_eq_zero {k : ρ → ℝ} {r : ρ} {x : S → ℕ} (h : ¬ N.src r ≤ x) :
-    propensity N k r x = 0 := by
-  obtain ⟨s, hs⟩ : ∃ s, x s < N.src r s := by
-    by_contra h'
-    push Not at h'
-    exact h h'
-  simp only [propensity, ReactionNetwork.propensity]
-  rw [Finset.prod_eq_zero (Finset.mem_univ s) (by simp [Nat.descFactorial_eq_zero_iff_lt.2 hs]),
-    mul_zero]
+    propensity N k r x = 0 := N.propensity_eq_zero_of_not_le h
 
 omit [Fintype ρ] in
 /-- The outflow term: `π(x) λ_r(x) = e^{-Σ c} · rate_r(c) · residual c x (src r)`. -/

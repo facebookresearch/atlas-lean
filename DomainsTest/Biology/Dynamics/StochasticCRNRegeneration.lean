@@ -93,11 +93,11 @@ theorem isComplexBalanced_birthDeath {k₁ k₂ : ℝ} (hk₂ : 0 < k₂) :
 
 theorem propensity_birth (k₁ k₂ : ℝ) (x : Unit → ℕ) :
     propensity birthDeath (kBD k₁ k₂) 0 x = k₁ := by
-  simp [propensity, kBD, birthDeath, st]
+  simp [propensity, kBD, birthDeath, st, ReactionNetwork.propensity]
 
 theorem propensity_death (k₁ k₂ : ℝ) (x : Unit → ℕ) :
     propensity birthDeath (kBD k₁ k₂) 1 x = k₂ * x () := by
-  simp [propensity, kBD, birthDeath, st]
+  simp [propensity, kBD, birthDeath, st, ReactionNetwork.propensity]
 
 /-- The molecule count `V(x) = x`. -/
 def countV : (Unit → ℕ) → ℝ≥0 := fun x => x ()
@@ -111,7 +111,7 @@ theorem generator_birthDeath_le {k₁ k₂ : ℝ} (hk₁ : 0 ≤ k₁) (hk₂ : 
   change propensity birthDeath (kBD k₁ k₂) 0 x * _ + propensity birthDeath (kBD k₁ k₂) 1 x * _ ≤ _
   rw [propensity_birth, propensity_death]
   have hb : ((countV (fire birthDeath 0 x) : ℝ≥0) : ℝ) = x () + 1 := by
-    simp [countV, fire, birthDeath, st]
+    simp [countV, fire, birthDeath, st, ReactionNetwork.fire]
   have hd : ((countV (fire birthDeath 1 x) : ℝ≥0) : ℝ) ≤ x () := by
     simp only [countV, fire, birthDeath]
     exact_mod_cast Nat.sub_le _ _
@@ -132,7 +132,7 @@ theorem reach_birthDeath {k₁ k₂ : ℝ} (hk₁ : 0 < k₁) (y : Unit → ℕ)
   | succ n ih =>
     refine ih.tail ⟨0, by rw [propensity_birth]; exact hk₁, ?_⟩
     funext u
-    simp [fire, birthDeath, st]
+    simp [fire, birthDeath, st, ReactionNetwork.fire]
 
 /-- **Birth–death: every hypothesis discharged, ergodicity follows.** For `k₁, k₂ > 0`, the
 stochastic mass-action chain of `∅ ⇌ A` returns to the empty state almost surely with finite mean
@@ -237,9 +237,9 @@ theorem generator_pureBirth_le {k : ℝ} (hk : 0 ≤ k) (x : Unit → ℕ) :
   simp only [StochasticCRN.generator, Fintype.univ_unit, Finset.sum_singleton, jump_massAction]
   change propensity pureBirth (fun _ => k) () x * _ ≤ _
   have hp : propensity pureBirth (fun _ => k) () x = k := by
-    simp [propensity, pureBirth, st]
+    simp [propensity, pureBirth, st, ReactionNetwork.propensity]
   have hb : ((countV (fire pureBirth () x) : ℝ≥0) : ℝ) = x () + 1 := by
-    simp [countV, fire, pureBirth, st]
+    simp [countV, fire, pureBirth, st, ReactionNetwork.fire]
   have hx : ((countV x : ℝ≥0) : ℝ) = x () := by simp [countV]
   rw [hp, hb, hx]
   linarith
@@ -261,9 +261,10 @@ theorem reach_pureBirth {k : ℝ} (hk : 0 < k) (y : Unit → ℕ) :
   induction y () with
   | zero => exact Relation.ReflTransGen.refl
   | succ n ih =>
-    refine ih.tail ⟨(), by simpa [propensity, pureBirth, st] using hk, ?_⟩
+    refine ih.tail ⟨(), by simpa [propensity, pureBirth, st,
+      ReactionNetwork.propensity] using hk, ?_⟩
     funext u
-    simp [fire, pureBirth, st]
+    simp [fire, pureBirth, st, ReactionNetwork.fire]
 
 /-! ### Autocatalysis `2A → 3A`: explosive from `x ≥ 2`, so no claim -/
 
@@ -289,13 +290,13 @@ theorem generator_autocat (k : ℝ) (hk : 0 ≤ k) (V : (Unit → ℕ) → ℝ) 
   simp only [StochasticCRN.generator, Fintype.univ_unit, Finset.sum_singleton, jump_massAction]
   change propensity autocat (fun _ => k) () (st (m + 2)) * _ = _
   have hfire : fire autocat () (st (m + 2)) = st (m + 3) := by
-    funext u; simp [fire, autocat, st]
+    funext u; simp [fire, autocat, st, ReactionNetwork.fire]
   have hd : ((m + 2).descFactorial 2 : ℝ) = (m + 2) * (m + 1) := by
     rw [Nat.descFactorial_succ, Nat.descFactorial_one]
     push_cast
     ring
   have hp : propensity autocat (fun _ => k) () (st (m + 2)) = k * ((m + 2) * (m + 1)) := by
-    simp only [propensity, autocat, st, Fintype.prod_unique]
+    simp only [propensity, autocat, st, Fintype.prod_unique, ReactionNetwork.propensity]
     rw [hd]
   rw [hfire, hp]
 

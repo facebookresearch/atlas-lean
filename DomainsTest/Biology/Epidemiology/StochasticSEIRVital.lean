@@ -79,13 +79,15 @@ example : rateBound 1 1 1 1 1 = 5 ∧ scaledRate 1 1 1 1 1 1 1 1 .infection = 1 
 example : StochasticCRNLLN.massActionPropensity network (rateConst 2 1 1 1) 10 .infection
     (vec4 6 0 3 0) = 18 / 5 := by
   norm_num [StochasticCRNLLN.massActionPropensity, SystemsBiology.propensity, prod_compartment,
-    sum_compartment, network, networkSrc, vec4, rateConst]
+    sum_compartment, network, networkSrc, vec4, rateConst,
+    ComplexBalanced.ReactionNetwork.propensity]
 
 /-- The mass-action birth propensity at `μ = 1/2`, `N = 10` is `μ N = 5`, in the empty state. -/
 example : StochasticCRNLLN.massActionPropensity network (rateConst 0 0 0 (1 / 2)) 10 .birth
     (vec4 0 0 0 0) = 5 := by
   norm_num [StochasticCRNLLN.massActionPropensity, SystemsBiology.propensity, prod_compartment,
-    sum_compartment, network, networkSrc, vec4, rateConst]
+    sum_compartment, network, networkSrc, vec4, rateConst,
+    ComplexBalanced.ReactionNetwork.propensity]
 
 /-- The jump sizes `‖ζ_c‖₁` are `1, 2, 2, 2, 1, 1, 1, 1`, summing to `11`. -/
 example : StochasticCRNLLN.stoichNorm network = 11 := by

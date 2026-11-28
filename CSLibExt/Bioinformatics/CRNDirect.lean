@@ -20,8 +20,6 @@ public import Mathlib.Algebra.Order.BigOperators.Group.List
 
 namespace Cslib.Bioinformatics.CRN
 
-open Classical
-
 open Finset
 
 open MathlibExt.Biology.Dynamics.ComplexBalanced
@@ -47,26 +45,9 @@ Propensities and firing updates are `ReactionNetwork.propensity` and
 `MathlibExt.Dynamics.PolynomialNetworks.StochasticMassAction` (the same
 constants the SystemsBiology development uses; Anderson-Craciun-Kurtz
 convention: the rate constant absorbs the factorial, so there is no division).
+Their basic facts, `ReactionNetwork.propensity_nonneg` and
+`ReactionNetwork.propensity_eq_zero_of_not_le`, come from the same shared module.
 -/
-
-theorem propensity_nonneg {S ρ : Type*} [Fintype S]
-    (N : ReactionNetwork S ρ) (k : ρ → ℝ) (hk : ∀ r, 0 ≤ k r)
-    (r : ρ) (x : S → ℕ) : 0 ≤ N.propensity k r x := by
-  unfold ReactionNetwork.propensity
-  exact mul_nonneg (hk r)
-    (Finset.prod_nonneg (fun s _ => Nat.cast_nonneg _))
-
-theorem propensity_eq_zero_of_insufficient {S ρ : Type*} [Fintype S]
-    (N : ReactionNetwork S ρ) (k : ρ → ℝ) (r : ρ) (x : S → ℕ)
-    (s : S) (h : x s < N.src r s) :
-    N.propensity k r x = 0 := by
-  unfold ReactionNetwork.propensity
-  have hfactor : ((x s).descFactorial (N.src r s) : ℝ) = 0 := by
-    rw [Nat.descFactorial_of_lt h, Nat.cast_zero]
-  have hprod :
-      (∏ t, ((x t).descFactorial (N.src r t) : ℝ)) = 0 :=
-    Finset.prod_eq_zero (Finset.mem_univ s) hfactor
-  rw [hprod, mul_zero]
 
 /-- Total propensity `a0`: sum of propensities over a finite reaction list. -/
 noncomputable def totalPropensity {S ρ : Type*} [Fintype S]
@@ -82,7 +63,7 @@ theorem totalPropensity_nonneg {S ρ : Type*} [Fintype S]
   | nil => simp
   | cons r rest ih =>
     simp only [List.map_cons, List.sum_cons]
-    exact add_nonneg (propensity_nonneg N k hk r x) ih
+    exact add_nonneg (N.propensity_nonneg hk r x) ih
 
 theorem totalPropensity_eq_zero_iff {S ρ : Type*} [Fintype S]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) (hk : ∀ r, 0 ≤ k r)
@@ -95,7 +76,7 @@ theorem totalPropensity_eq_zero_iff {S ρ : Type*} [Fintype S]
       intro y hy
       rw [List.mem_map] at hy
       obtain ⟨a, _, rfl⟩ := hy
-      exact propensity_nonneg N k hk a x
+      exact N.propensity_nonneg hk a x
     have hmem : N.propensity k r x ∈ rs.map (fun r => N.propensity k r x) := by
       rw [List.mem_map]
       exact ⟨r, hr, rfl⟩
@@ -219,9 +200,9 @@ theorem selectAux_some_of_le_total {S ρ : Type*} [Fintype S]
     ∃ r, selectAux N k rs x thresh = some r := by
   induction rs generalizing thresh with
   | nil =>
-    unfold totalPropensity at hle
-    simp at hle
     exfalso
+    have h0 : totalPropensity N k ([] : List ρ) x = 0 := by simp [totalPropensity]
+    rw [h0] at hle
     exact (not_lt_of_ge hle) hpos
   | cons head rest ih =>
     rw [selectAux_cons]
@@ -251,14 +232,19 @@ theorem selectAux_some_of_le_total {S ρ : Type*} [Fintype S]
           exact hlt
         · have hale : N.propensity k head x ≤ 0 := le_of_not_gt ha
           have h0 : N.propensity k head x = 0 :=
-            le_antisymm hale (propensity_nonneg N k hk head x)
+            le_antisymm hale (N.propensity_nonneg hk head x)
           rw [h0, sub_zero]
           exact hpos
       exact ih _ hpos2 hle2
 
 /-- Direct-method step as a function of uniforms `u1 u2`, with draw domains
-`0 < u1 ≤ 1` and `0 < u2 ≤ 1`: `none` when `a0 = 0` (absorbing). For
-nonnegative rates (`0 ≤ k r` for all `r`), a positive total gives
+`0 < u1 ≤ 1` and `0 < u2 ≤ 1`: `step` is `none` when the total weight `a0` is
+zero. For nonnegative rates (`0 ≤ k r` for all `r`), a zero total means every
+listed reaction has zero propensity (`totalPropensity_eq_zero_iff`), an
+absorbing state; with in-range draws `none` happens exactly there
+(`step_eq_none_iff`). For signed rates the total can cancel to zero while a
+listed reaction has positive propensity, so `none` then records only the zero
+total. For nonnegative rates (`0 ≤ k r` for all `r`), a positive total gives
 `(τ, r, N.fire r x)` with `τ = log (1 / u1) / a0` and `r` the first reaction
 whose cumulative propensity reaches `u2 * a0` (upper-inclusive inverse CDF).
 Out-of-range `u2` (nonnegative rates, positive total): `u2 ≤ 0` selects the
@@ -351,6 +337,30 @@ theorem step_some_of_pos {S ρ : Type*} [Fintype S]
     selectAux_some_of_le_total N k hk rs x _ hthresh_pos hthresh_le
   rw [hsel]
   exact ⟨_, _, rfl⟩
+
+/-- For nonnegative rates and `0 < u2 ≤ 1`, `step` is `none` exactly when
+every listed reaction has zero propensity, an absorbing state. -/
+theorem step_eq_none_iff {S ρ : Type*} [Fintype S]
+    (N : ReactionNetwork S ρ) (k : ρ → ℝ) (hk : ∀ r, 0 ≤ k r)
+    (rs : List ρ) (x : S → ℕ) (u1 u2 : ℝ) (h2a : 0 < u2) (h2b : u2 ≤ 1) :
+    step N k rs x u1 u2 = none ↔ ∀ r ∈ rs, N.propensity k r x = 0 := by
+  rw [step_eq]
+  constructor
+  · intro h
+    by_cases htotal : totalPropensity N k rs x = 0
+    · exact (totalPropensity_eq_zero_iff N k hk rs x).mp htotal
+    · have hpos : 0 < totalPropensity N k rs x :=
+        lt_of_le_of_ne (totalPropensity_nonneg N k hk rs x) (Ne.symm htotal)
+      have hle : u2 * totalPropensity N k rs x ≤ totalPropensity N k rs x :=
+        mul_le_of_le_one_left hpos.le h2b
+      obtain ⟨r, hr⟩ := selectAux_some_of_le_total N k hk rs x _
+        (mul_pos h2a hpos) hle
+      rw [ite_eq_right htotal] at h
+      simp [hr] at h
+  · intro h
+    have htotal : totalPropensity N k rs x = 0 :=
+      (totalPropensity_eq_zero_iff N k hk rs x).mpr h
+    rw [htotal, ite_eq_left rfl]
 
 /-- Absorbing: the empty reaction list never fires. -/
 theorem step_none_of_empty {S ρ : Type*} [Fintype S]
