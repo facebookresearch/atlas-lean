@@ -2,7 +2,7 @@
 
 If a $k$-ary predicate $P$ supports a $t$-wise uniform distribution on its satisfying assignments, $2 \le t < k$, then Sum-of-Squares of degree about $n/(\Delta^{2/(t-1)} \log \Delta)$ fails to refute a random instance of $\mathrm{CSP}(P^{\pm})$ with $\Delta n$ constraints; more generally SoS cannot $(\delta_P(t)+o(1))$-refute it.
 
-For a nontrivial predicate $P : \{0,1\}^k \to \{0,1\}$ (that is, $P^{-1}(1) \ne \varnothing$) let $P^{\pm}$ be the $2^k$ predicates obtained by negating inputs. A random instance of $\mathrm{CSP}(P^{\pm})$ with density $\Delta$ has $n$ variables and $m = \Delta n$ constraints, each a uniformly random member of $P^{\pm}$ on a uniformly random scope of $k$ distinct variables. A distribution on $\{0,1\}^k$ is **$t$-wise uniform** if its marginal on every $t$ coordinates is uniform. For $1 < t \le k$,
+For a nontrivial predicate $P : \{0,1\}^k \to \{0,1\}$ (meaning $P$ takes both values $0$ and $1$, i.e. $\varnothing \ne P^{-1}(1) \subsetneq \{0,1\}^k$) let $P^{\pm}$ be the $2^k$ predicates obtained by negating inputs. A random instance of $\mathrm{CSP}(P^{\pm})$ with density $\Delta$ has $n$ variables and $m = \Delta n$ constraints, each a uniformly random member of $P^{\pm}$ on a uniformly random scope of $k$ distinct variables. A distribution on $\{0,1\}^k$ is **$t$-wise uniform** if its marginal on every $t$ coordinates is uniform. For $1 < t \le k$,
 
 $$
 \delta_P(t) = \min \, d_{\mathrm{TV}}(\mu, \sigma)
@@ -18,7 +18,7 @@ $$
 
 The $(\tau - 1)$-wise uniformity hypothesis cannot be dropped: the 3-AND predicate has a single satisfying assignment, so it supports no pairwise uniform distribution, and at constant density two of its constraints conflict on a shared variable with high probability, giving a constant-degree refutation.
 
-**Theorem ($\delta$-refutation).** Let $P : \{0,1\}^k \to \{0,1\}$ be any nontrivial predicate ($P^{-1}(1) \ne \varnothing$), let $1 < t \le k$, let $0 < \beta < 1/2$, and let $\mathcal{I}$ be a random instance of $\mathrm{CSP}(P^{\pm})$ with $m = \Delta n$ constraints and $\Delta \ge 10$ (without assuming that $P$ supports a pairwise uniform distribution). Except with probability at most $\beta$, degree-$D$ SoS fails to $(\delta_P(t) + \epsilon)$-refute $\mathcal{I}$, where
+**Theorem ($\delta$-refutation).** Let $P : \{0,1\}^k \to \{0,1\}$ be any nontrivial predicate ($\varnothing \ne P^{-1}(1) \subsetneq \{0,1\}^k$), let $1 < t \le k$, let $0 < \beta < 1/2$, and let $\mathcal{I}$ be a random instance of $\mathrm{CSP}(P^{\pm})$ with $m = \Delta n$ constraints and $\Delta \ge 10$ (without assuming that $P$ supports a pairwise uniform distribution). Except with probability at most $\beta$, degree-$D$ SoS fails to $(\delta_P(t) + \epsilon)$-refute $\mathcal{I}$, where
 
 $$
 \epsilon = 2^{\frac{\log n}{2 \log \Delta}} \cdot \frac{1}{\sqrt{n}}, \qquad D = \frac{\beta^{O(1/t)}}{k \cdot 2^{O(k/t)}} \cdot \frac{n}{\Delta^{2/(t-1)} \log \Delta} .
