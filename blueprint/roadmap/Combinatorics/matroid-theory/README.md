@@ -11,6 +11,7 @@ Matroids and their invariants: algebraic matroids, Edmonds' intersection and par
 - [Matroid partition theorem](matroid-partition-theorem/README.md)
 - [Non-negative lines in weighted matroids](non-negative-lines-in-weighted-matroids/README.md)
 - [Rado's theorem on independent transversals](rado-s-theorem-on-independent-transversals/README.md)
+- [Representability of matroids](representability-of-matroids/README.md)
 
 A matroid has a ground set $E$, possibly infinite, contained in a fixed ambient set; finiteness is assumed where it is needed. The log-concavity results have two proofs that Huh's work connects: the Hodge
 theory of the Chow ring of a matroid (Adiprasito–Huh–Katz), and Lorentzian polynomials
