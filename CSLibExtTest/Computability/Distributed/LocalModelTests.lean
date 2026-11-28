@@ -20,24 +20,27 @@ public import Mathlib.Data.Fintype.EquivFin
 * Identifier assignments exist for every finite set of nodes when `c ≥ 1`; with `c = 1` the
   identifiers are a bijection onto `{1, …, n}`; with `c = 0` two nodes have none.
 * A `0`-round algorithm sees only its own identifier and input.
-* The run is stopped from outside after `t n` rounds: a node that counts rounds outputs `n` for
-  `t = id`, even on a graph with no edges.
-* Sending every neighbour the same message (`LocalAlgorithm.broadcast`) gives the same outputs,
-  also for an algorithm that sends each neighbour that neighbour's own identifier.
+* The run is stopped from outside after `t n` rounds: on every graph, a node that counts rounds
+  outputs `n` for `t = id` (`counterAlg_output`); `decide` checks it on the edgeless graph on
+  three nodes.
+* Run for one round on the path `0 - 1 - 2` with identifiers `1, 2, 3`, the broadcast form gives
+  the same outputs as `degreeAlg` and as an algorithm that sends each neighbour that neighbour's
+  own identifier (the general result is `LocalAlgorithm.broadcast_output`).
 * An example algorithm: in one round every node learns its degree, the number of messages it
   receives (`degreeAlg_output`); `decide` evaluates it on the path `0 - 1 - 2`.
-* Flooding the largest identifier: on the path `0 - 1 - 2 - 3`, after two rounds node `0` holds
-  the largest identifier of the nodes `0, 1, 2` and after three rounds that of all four.
+* Flooding the largest identifier: on the path `0 - 1 - 2 - 3` with identifiers `1, 2, 3, 4`,
+  after two rounds node `0` holds the largest identifier of the nodes `0, 1, 2` and after three
+  rounds that of all four.
 * Locality: changing the identifier of node `3` from `4` to `5`, with no inputs, does not change
   the output of a one-round algorithm at node `0` of the path `0 - 1 - 2 - 3`; and with the same
   identifier assignment and the same inputs in both runs, node `1` of that path and of the
   four-cycle gets the same output from any one-round algorithm, although the graphs differ.
-* Locality needs the neighbours of the centre: node `0` has different degrees on the path and on
-  the cycle.
+* The neighbours of the centre matter: run for one round with identifiers `1, 2, 3, 4`,
+  `degreeAlg` outputs `1` at node `0` of the path and `2` at node `0` of the four-cycle.
 * Edges between two boundary nodes are free: with the same identifier assignment and the same
   inputs in both runs, adding the edge `{0, 2}` to the path `0 - 1 - 2 - 3`, between two nodes at
-  distance one from node `1`, changes no one-round output at node `1`, although it changes the
-  degree of node `0`.
+  distance one from node `1`, changes no one-round output at node `1`; with identifiers
+  `1, 2, 3, 4`, the one-round output of `degreeAlg` at node `0` changes from `1` to `2`.
 -/
 
 @[expose] public section
