@@ -188,7 +188,8 @@ elements whose mixed coordinates of first degree below q are zero. For m, q : �
 associatedGraded R M N m q is F_m^q ⧸ nextStage R M N m q, the quotient of the current stage
 by the next stage viewed inside it. -/
 abbrev associatedGraded (m q : ℕ) :=
-  _root_.Quotient (Submodule.quotientRel (R := R) (nextStage R M N m q))
+  _root_.Quotient (Submodule.quotientRel (R := R) (M := filtration R M N m q)
+    (nextStage R M N m q))
 
 /-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
 elements whose mixed coordinates of first degree below q are zero. For q ≤ m, the coordinate
@@ -198,9 +199,13 @@ def associatedGradedEquiv (m q : ℕ) (hq : q ≤ m) :
     associatedGraded R M N m q ≃ₗ[R]
       (⋀[R]^q M) ⊗[R] (⋀[R]^(m - q) N) :=
   by
-    let eQ := Submodule.quotEquivOfEq (nextStage R M N m q)
+    let eQ := Submodule.quotEquivOfEq (R := R) (M := filtration R M N m q)
+      (nextStage R M N m q)
       (gradeProjection R M N m q hq).ker (gradeProjection_ker R M N m q hq).symm
-    let eP := (gradeProjection R M N m q hq).quotKerEquivOfSurjective
+    let eP := LinearMap.quotKerEquivOfSurjective (R := R)
+      (M := filtration R M N m q)
+      (M₂ := Piece R M N m (index m q hq))
+      (gradeProjection R M N m q hq)
       (gradeProjection_surjective R M N m q hq)
     let e := eQ.trans eP
     exact e
@@ -213,15 +218,23 @@ theorem associatedGradedEquiv_mk (m q : ℕ) (hq : q ≤ m)
     (z : filtration R M N m q) :
     associatedGradedEquiv R M N m q hq (Submodule.Quotient.mk z) =
       coordinate R M N m (index m q hq) z.val := by
-  let eQ := Submodule.quotEquivOfEq (nextStage R M N m q)
+  let eQ := Submodule.quotEquivOfEq (R := R) (M := filtration R M N m q)
+      (nextStage R M N m q)
     (gradeProjection R M N m q hq).ker (gradeProjection_ker R M N m q hq).symm
-  let eP := (gradeProjection R M N m q hq).quotKerEquivOfSurjective
+  let eP := LinearMap.quotKerEquivOfSurjective (R := R)
+    (M := filtration R M N m q)
+    (M₂ := Piece R M N m (index m q hq))
+    (gradeProjection R M N m q hq)
     (gradeProjection_surjective R M N m q hq)
   have hQ : eQ (Submodule.Quotient.mk z) = Submodule.Quotient.mk z :=
-    Submodule.quotEquivOfEq_mk (nextStage R M N m q)
+    Submodule.quotEquivOfEq_mk (R := R) (M := filtration R M N m q)
+      (nextStage R M N m q)
       (gradeProjection R M N m q hq).ker (gradeProjection_ker R M N m q hq).symm z
   have hP : eP (Submodule.Quotient.mk z) = gradeProjection R M N m q hq z :=
-    LinearMap.quotKerEquivOfSurjective_apply_mk (gradeProjection R M N m q hq)
+    LinearMap.quotKerEquivOfSurjective_apply_mk (R := R)
+      (M := filtration R M N m q)
+      (M₂ := Piece R M N m (index m q hq))
+      (gradeProjection R M N m q hq)
       (gradeProjection_surjective R M N m q hq) z
   change eP (eQ (Submodule.Quotient.mk z)) = gradeProjection R M N m q hq z
   exact (congrArg eP hQ).trans hP
@@ -288,7 +301,8 @@ theorem transportedGradeProjection_ker (m q : ℕ) (hq : q ≤ m) :
   rfl
 
 abbrev transportedAssociatedGraded (m q : ℕ) :=
-  _root_.Quotient (Submodule.quotientRel (R := R) (transportedNextStage R M N e m q))
+  _root_.Quotient (Submodule.quotientRel (R := R) (M := transportedFiltration R M N e m q)
+    (transportedNextStage R M N e m q))
 
 /-- Let R be a commutative ring and M and N R-modules. Let W be an R-module and e : W ≃ₗ[R] M × N
 a module decomposition. Write θ_m = ⋀^m e for its exterior-power equivalence. For q ≤ m, the
@@ -298,10 +312,14 @@ def transportedAssociatedGradedEquiv (m q : ℕ) (hq : q ≤ m) :
     transportedAssociatedGraded R M N e m q ≃ₗ[R]
       (⋀[R]^q M) ⊗[R] (⋀[R]^(m - q) N) :=
   by
-    let eQ := Submodule.quotEquivOfEq (transportedNextStage R M N e m q)
+    let eQ := Submodule.quotEquivOfEq (R := R) (M := transportedFiltration R M N e m q)
+      (transportedNextStage R M N e m q)
       (transportedGradeProjection R M N e m q hq).ker
       (transportedGradeProjection_ker R M N e m q hq).symm
-    let eP := (transportedGradeProjection R M N e m q hq).quotKerEquivOfSurjective
+    let eP := LinearMap.quotKerEquivOfSurjective (R := R)
+      (M := transportedFiltration R M N e m q)
+      (M₂ := Piece R M N m (index m q hq))
+      (transportedGradeProjection R M N e m q hq)
       (transportedGradeProjection_surjective R M N e m q hq)
     let eG := eQ.trans eP
     exact eG
@@ -321,17 +339,25 @@ theorem transportedAssociatedGradedEquiv_mk (m q : ℕ) (hq : q ≤ m)
     (z : transportedFiltration R M N e m q) :
     transportedAssociatedGradedEquiv R M N e m q hq (Submodule.Quotient.mk z) =
       transportedGradeProjection R M N e m q hq z := by
-  let eQ := Submodule.quotEquivOfEq (transportedNextStage R M N e m q)
+  let eQ := Submodule.quotEquivOfEq (R := R) (M := transportedFiltration R M N e m q)
+      (transportedNextStage R M N e m q)
     (transportedGradeProjection R M N e m q hq).ker
     (transportedGradeProjection_ker R M N e m q hq).symm
-  let eP := (transportedGradeProjection R M N e m q hq).quotKerEquivOfSurjective
+  let eP := LinearMap.quotKerEquivOfSurjective (R := R)
+    (M := transportedFiltration R M N e m q)
+    (M₂ := Piece R M N m (index m q hq))
+    (transportedGradeProjection R M N e m q hq)
     (transportedGradeProjection_surjective R M N e m q hq)
   have hQ : eQ (Submodule.Quotient.mk z) = Submodule.Quotient.mk z :=
-    Submodule.quotEquivOfEq_mk (transportedNextStage R M N e m q)
+    Submodule.quotEquivOfEq_mk (R := R) (M := transportedFiltration R M N e m q)
+      (transportedNextStage R M N e m q)
       (transportedGradeProjection R M N e m q hq).ker
       (transportedGradeProjection_ker R M N e m q hq).symm z
   have hP : eP (Submodule.Quotient.mk z) = transportedGradeProjection R M N e m q hq z :=
-    LinearMap.quotKerEquivOfSurjective_apply_mk (transportedGradeProjection R M N e m q hq)
+    LinearMap.quotKerEquivOfSurjective_apply_mk (R := R)
+      (M := transportedFiltration R M N e m q)
+      (M₂ := Piece R M N m (index m q hq))
+      (transportedGradeProjection R M N e m q hq)
       (transportedGradeProjection_surjective R M N e m q hq) z
   change eP (eQ (Submodule.Quotient.mk z)) = transportedGradeProjection R M N e m q hq z
   exact (congrArg eP hQ).trans hP
