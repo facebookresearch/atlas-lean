@@ -32,7 +32,7 @@ open Cslib.Complexity.Classes Cslib.Complexity.Classes.QMA
 #print axioms thresholdOp_amplify_complete
 #print axioms thresholdOp_one_submatrix
 
-/-- Boundary: at threshold `0` one block has weight `1`, not its parameter. -/
+/-- Example (one block, constant weight `1 / 3`, threshold `0`): the tail weight is `1`. -/
 theorem tailWeight_one_block_zero : tailWeight (fun _ : Fin 1 => (1 / 3 : ℝ)) 0 = 1 := by
   have hnonneg : ∀ x ∈ (Finset.univ : Finset (Fin 1 → Bool)),
       (0 : ℝ) ≤ acceptCount x := by
@@ -51,7 +51,7 @@ theorem tailWeight_one_block_zero : tailWeight (fun _ : Fin 1 => (1 / 3 : ℝ)) 
   norm_num
 #print axioms tailWeight_one_block_zero
 
-/-- Boundary: above one accepting block the weight is `0`. -/
+/-- Example (one block, constant weight `1 / 3`, threshold `2`): the tail weight is `0`. -/
 theorem tailWeight_one_block_two : tailWeight (fun _ : Fin 1 => (1 / 3 : ℝ)) 2 = 0 := by
   unfold tailWeight
   rw [Finset.sum_filter]
@@ -67,7 +67,8 @@ theorem tailWeight_one_block_two : tailWeight (fun _ : Fin 1 => (1 / 3 : ℝ)) 2
   · rfl
 #print axioms tailWeight_one_block_two
 
-/-- `k = 2`, `Q = 0`, `s = 0`, `T = 1`: every unit two-block vector, entangled or not, has
+/-- Example: `k = 2`, one-qubit blocks, `Q = 0`, `s = 0`, `T = 1`: every unit two-block vector,
+entangled or not, has
 threshold expectation at most `exp (-1)`. -/
 theorem thresholdAmplify_two_block_sound (Ψ : Fin (2 ^ (2 * 1)) → ℂ) (hΨ : sqNorm Ψ = 1) :
     (star Ψ ⬝ᵥ (thresholdOp 2 (0 : Matrix (Fin (2 ^ 1)) (Fin (2 ^ 1)) ℂ) 1 *ᵥ Ψ)).re ≤
@@ -88,8 +89,8 @@ theorem thresholdAmplify_two_block_sound (Ψ : Fin (2 ^ (2 * 1)) → ℂ) (hΨ :
   exact h
 #print axioms thresholdAmplify_two_block_sound
 
-/-- Promise `(2/3, 1/3)`, gap `1/3`, `p = 1`: `amplifyCount 1 3 = 18` copies at threshold `9` give
-soundness at most `1/2` against every unit `18`-block vector. -/
+/-- Example: one-qubit blocks, `Q = 0`, `(c, s) = (2/3, 1/3)`, `p = 1`: `amplifyCount 1 3 = 18`
+copies at threshold `9` give soundness at most `1/2` against every unit `18`-block vector. -/
 theorem thresholdAmplify_promise_sound (Ψ : Fin (2 ^ (amplifyCount 1 3 * 1)) → ℂ)
     (hΨ : sqNorm Ψ = 1) :
     (star Ψ ⬝ᵥ (thresholdOp (amplifyCount 1 3) (0 : Matrix (Fin (2 ^ 1)) (Fin (2 ^ 1)) ℂ)
@@ -112,7 +113,8 @@ theorem thresholdAmplify_promise_sound (Ψ : Fin (2 ^ (amplifyCount 1 3 * 1)) �
   simpa using h
 #print axioms thresholdAmplify_promise_sound
 
-/-- Same parameters: completeness at least `1/2` for the product witness. -/
+/-- Example: same parameters with `Q = 1`: every unit witness has product completeness at least
+`1/2`. -/
 theorem thresholdAmplify_promise_complete (ψ : Fin (2 ^ 1) → ℂ) (hψ : sqNorm ψ = 1) :
     1 / 2 ≤ (star (blockProd (fun _ : Fin (amplifyCount 1 3) => ψ)) ⬝ᵥ
       (thresholdOp (amplifyCount 1 3) (1 : Matrix (Fin (2 ^ 1)) (Fin (2 ^ 1)) ℂ)
@@ -149,7 +151,7 @@ theorem two_mul_le_amplifyCount_example :
   simpa using h
 #print axioms two_mul_le_amplifyCount_example
 
-/-- One block at threshold `1/2` of `Q = 0` acts as `0` entrywise. -/
+/-- Example: one one-qubit block with `Q = 0` at threshold `1 / 2` returns `Q` after reindexing. -/
 theorem thresholdOp_one_submatrix_apply (i j : Fin (2 ^ 1)) :
     ((thresholdOp 1 (0 : Matrix (Fin (2 ^ 1)) (Fin (2 ^ 1)) ℂ) (1 / 2)).submatrix
       (Fin.cast (by rw [Nat.one_mul]) : Fin (2 ^ 1) → Fin (2 ^ (1 * 1)))
@@ -160,7 +162,8 @@ theorem thresholdOp_one_submatrix_apply (i j : Fin (2 ^ 1)) :
   exact congrFun (congrFun h i) j
 #print axioms thresholdOp_one_submatrix_apply
 
-/-- The `k = 0`, `p = 0` soundness instance bounds every unit vector by `1`. -/
+/-- Example: the `k = 0`, `p = 0` instance with `Q = 0` and `c = s = 0` bounds every unit zero-
+block vector by `1`. -/
 theorem thresholdAmplify_zero_block_sound (Ψ : Fin (2 ^ (0 * 1)) → ℂ)
     (hΨ : sqNorm Ψ = 1) :
     (star Ψ ⬝ᵥ (thresholdOp 0 (0 : Matrix (Fin (2 ^ 1)) (Fin (2 ^ 1)) ℂ)

@@ -17,8 +17,12 @@ public import MathlibExt.Probability.BernoulliProductTail
 Exponential bounds for the threshold operator `thresholdOp k Q T` of an operator `0 ≤ Q ≤ 1`: the
 sum, over outcome strings with at least `T` accepting blocks, of block products of `Q` and
 `1 - Q`. Soundness holds for every unit `k`-block vector, entangled or not; completeness holds for
-the product witness `ψ ⊗ ⋯ ⊗ ψ`. At threshold `k (c + s) / 2` with `2 p ≤ k (c - s) ^ 2` both
-errors are at most `2⁻ᵖ`, and one block returns `Q`. The tails are Hoeffding's inequality for
+the product witness `ψ ⊗ ⋯ ⊗ ψ`. For `s ≤ c` and `2 p ≤ k (c - s) ^ 2`, the upper bound holds at
+threshold
+`k (c + s) / 2` whenever every unit one-block vector has expectation at most `s`, and the lower
+bound holds for one unit witness with expectation at least `c` and its tensor powers; both errors
+are at most `2⁻ᵖ`. One block at a threshold in `(0, 1]` returns `Q`, after reindexing. The tails
+are Hoeffding's inequality for
 independent Bernoulli coordinates with heterogeneous means.
 
 This file is about operators only: it states nothing about circuits, acceptance probabilities of a
@@ -179,8 +183,8 @@ private theorem amplify_exp_le_inv_two_pow {k p : ℕ} {d : ℝ}
         _ ≤ Real.exp ((k : ℝ) * d ^ 2 / 2) := hexple
     exact inv_anti₀ hpos hfinal
 
-/-- Number of repetitions `2 p q ^ 2`: enough for error `2⁻ᵖ` when the gap `c - s` is at least
-`1 / q` (`two_mul_le_amplifyCount_mul_sq`). -/
+/-- Number of repetitions `2 p q ^ 2`: enough for error `2⁻ᵖ` when `1 ≤ q (c - s)`
+(`two_mul_le_amplifyCount_mul_sq`). -/
 def amplifyCount (p q : ℕ) : ℕ := 2 * p * q ^ 2
 
 /-- If `1 ≤ q (c - s)`, then `k = amplifyCount p q` satisfies `2 p ≤ k (c - s) ^ 2`. -/
