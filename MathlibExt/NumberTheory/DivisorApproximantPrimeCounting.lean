@@ -20,23 +20,32 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 The exponential weights equal one on the divisors and are at most $e^{-nk}$ on the
 nondivisors. The total contribution of the nondivisors is therefore bounded by a
 geometric sum with ratio $e^{-n}$.
+
+Theorem 1 and Lemma 4 use the weight $(\pi/2)^2 k^2$, as in Equation (1).
+
+## References
+
+- Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
+  Divisor Counting Function*, INTEGERS 26 (2026), Article A46, pp. 1–17, Theorems 1 and 3
+  and Lemmas 1, 2 and 4.
 -/
 
 namespace MetaMathlibExt
 
 open Asymptotics Filter Finset
 
-set_option linter.unusedVariables false in
-/-- **Sine lower bound at non-divisors.** For all positive integers $k$ and $n$ with $k \nmid n$,
-$$\frac{\pi^2 k^2}{2} \sin^2\frac{n\pi}{k} \ge 1.$$
-In other words, $A(k, n) = \pi^2 k^2 / 2$ satisfies the hypothesis
-$A(k, n) \sin^2(n\pi/k) \ge 1$ of the exponential approximation of the divisibility indicator.
+/-- **Sine lower bound for the published weight.** For natural numbers $k$ and $n$ with
+$1 \le k$ and $k \nmid n$,
+
+$$(\pi/2)^2 k^2 \sin^2\frac{n\pi}{k} \ge 1.$$
+
+Unlike the statement in the source, this bound does not require $k \le n$.
 
 Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
 Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 4 (`integers-2026-A46-lem-4`). -/
-public theorem one_le_pi_sq_mul_sq_div_two_mul_sin_sq (k n : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) (hkn : ¬ k ∣ n) :
-    1 ≤ Real.pi ^ 2 * k ^ 2 / 2 * Real.sin (n * Real.pi / k) ^ 2 := by
+public theorem one_le_pi_div_two_sq_mul_sq_mul_sin_sq (k n : ℕ) (hk : 1 ≤ k)
+    (hkn : ¬ k ∣ n) :
+    1 ≤ (Real.pi / 2) ^ 2 * k ^ 2 * Real.sin (n * Real.pi / k) ^ 2 := by
   have hkR : (0 : ℝ) < k := by exact_mod_cast (show 0 < k by omega)
   let r := n % k
   have hr : 0 < r := Nat.pos_of_ne_zero (fun h => hkn (Nat.dvd_of_mod_eq_zero h))
@@ -77,9 +86,26 @@ public theorem one_le_pi_sq_mul_sq_div_two_mul_sin_sq (k n : ℕ) (hk : 1 ≤ k)
       (by norm_num : (0 : ℝ) ≤ 2).trans hscaled
     exact hscaled.trans (by simpa only [one_mul] using mul_le_mul_of_nonneg_right hπ hnonneg)
   calc
-    1 ≤ (2 : ℝ) ^ 2 / 2 := by norm_num
-    _ ≤ (Real.pi * ((k : ℝ) * Real.sin ((s : ℝ) * Real.pi / k))) ^ 2 / 2 :=
+    1 = (2 : ℝ) ^ 2 / 4 := by norm_num
+    _ ≤ (Real.pi * ((k : ℝ) * Real.sin ((s : ℝ) * Real.pi / k))) ^ 2 / 4 :=
       div_le_div_of_nonneg_right (pow_le_pow_left₀ (by norm_num) hp 2) (by norm_num)
+    _ = _ := by ring
+
+set_option linter.unusedVariables false in
+/-- **Sine lower bound at non-divisors.** For all positive integers $k$ and $n$ with $k \nmid n$,
+$$\frac{\pi^2 k^2}{2} \sin^2\frac{n\pi}{k} \ge 1.$$
+In other words, $A(k, n) = \pi^2 k^2 / 2$ satisfies the hypothesis
+$A(k, n) \sin^2(n\pi/k) \ge 1$ of the exponential approximation of the divisibility indicator.
+This follows from Lemma 4 with twice the weight.
+
+Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
+Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 4 (`integers-2026-A46-lem-4`). -/
+public theorem one_le_pi_sq_mul_sq_div_two_mul_sin_sq (k n : ℕ) (hk : 1 ≤ k)
+    (hn : 1 ≤ n) (hkn : ¬ k ∣ n) :
+    1 ≤ Real.pi ^ 2 * k ^ 2 / 2 * Real.sin (n * Real.pi / k) ^ 2 := by
+  have h := one_le_pi_div_two_sq_mul_sq_mul_sin_sq k n hk hkn
+  calc
+    1 ≤ 2 * ((Real.pi / 2) ^ 2 * k ^ 2 * Real.sin (n * Real.pi / k) ^ 2) := by linarith only [h]
     _ = _ := by ring
 
 /-- **Exponential approximation of the divisibility indicator.** Let $A$ be a real-valued
@@ -158,6 +184,30 @@ public theorem divisorCountApprox_sub_isBigO (A : ℕ → ℕ → ℝ)
   simp only [one_mul, Real.norm_eq_abs, hcount, ← sum_sub_distrib]
   exact (abs_sum_le_sum_abs _ _).trans
     ((sum_abs_exp_sub_indicator_lt A hA n hn).le.trans (le_abs_self _))
+
+/-- **Trigonometric approximation of the divisor-counting function.** For a natural number $k$
+let $\tau(k)$ be the number of positive divisors of $k$ and
+$$\tilde\tau(k) = \sum_{j=1}^{k} \exp\left(-(\pi/2)^2 k j^3 \sin^2\frac{k\pi}{j}\right).$$
+Then $\tilde\tau(k) - \tau(k) = O\left(\frac{1}{e^k - 1}\right)$ as $k \to \infty$.
+
+This is the exponential approximation of the divisor-counting function with
+$A(j, k) = (\pi/2)^2 j^2$.
+
+Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
+Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 1
+(`integers-2026-A46-thm-1`). -/
+public theorem divisorCountApprox_one_sub_isBigO :
+    (fun k : ℕ => ∑ j ∈ Icc 1 k,
+        Real.exp (-((Real.pi / 2) ^ 2 * k * j ^ 3 * Real.sin (k * Real.pi / j) ^ 2)) -
+        (k.divisors.card : ℝ)) =O[atTop] fun k : ℕ => 1 / (Real.exp k - 1) := by
+  convert divisorCountApprox_sub_isBigO (fun j _ => (Real.pi / 2) ^ 2 * (j : ℝ) ^ 2)
+    (fun j k hj _ hndvd => one_le_pi_div_two_sq_mul_sq_mul_sin_sq j k hj hndvd) using 1
+  funext k
+  congr 1
+  apply sum_congr rfl
+  intro j _
+  congr 1
+  ring
 
 /-- **Exponential approximation of the sum-of-divisors function.** Let $A$ be a real-valued
 function of two natural numbers such that $A(k, n) \sin^2(n\pi/k) \ge 1$ for all natural numbers

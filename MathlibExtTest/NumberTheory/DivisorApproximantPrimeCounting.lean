@@ -68,4 +68,28 @@ example :
 example : 1 ≤ Real.pi ^ 2 * (5 : ℝ) ^ 2 / 2 * Real.sin (4 * Real.pi / 5) ^ 2 :=
   one_le_pi_sq_mul_sq_div_two_mul_sin_sq 5 4 (by decide) (by decide) (by decide)
 
+-- The published weight gives the same bound at this residue, also without k ≤ n.
+example : 1 ≤ (Real.pi / 2) ^ 2 * (5 : ℝ) ^ 2 * Real.sin (4 * Real.pi / 5) ^ 2 :=
+  one_le_pi_div_two_sq_mul_sq_mul_sin_sq 5 4 (by decide) (by decide)
+
+example :
+    (fun k : ℕ => ∑ j ∈ Icc 1 k,
+        Real.exp (-((Real.pi / 2) ^ 2 * k * j ^ 3 * Real.sin (k * Real.pi / j) ^ 2)) -
+        (k.divisors.card : ℝ)) =O[atTop] fun k : ℕ => 1 / (Real.exp k - 1) :=
+  divisorCountApprox_one_sub_isBigO
+
+-- At k = 3, only the nondivisor 2 contributes to the error for the published coefficient.
+example :
+    (∑ j ∈ Icc 1 (3 : ℕ), Real.exp (-((Real.pi / 2) ^ 2 * 3 * j ^ 3 *
+      Real.sin (3 * Real.pi / j) ^ 2))) - ((3 : ℕ).divisors.card : ℝ) =
+      Real.exp (-(6 * Real.pi ^ 2)) := by
+  have hIcc : Icc 1 (3 : ℕ) = {1, 2, 3} := by decide
+  have hcard : (3 : ℕ).divisors.card = 2 := by decide
+  have hsin : Real.sin (3 * Real.pi / 2) = -1 := by
+    rw [show 3 * Real.pi / 2 = Real.pi / 2 + Real.pi by ring, Real.sin_add_pi, Real.sin_pi_div_two]
+  have hsin₁ : Real.sin (3 * Real.pi) = 0 := Real.sin_nat_mul_pi 3
+  have harg₃ : 3 * Real.pi / 3 = Real.pi := by ring
+  norm_num [hIcc, hcard, hsin, hsin₁, harg₃, Real.sin_pi]
+  ring_nf
+
 end MetaMathlibExt
