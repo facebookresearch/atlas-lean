@@ -9783,6 +9783,7 @@
   "MathlibExt/Analysis/AbsoluteValue/Nonarchimedean": {"to": "NumberTheory/p-adic-numbers", "title": "Absolute values on fields"},
   "MathlibExt/Analysis/AbsoluteValue/Rpow": {"to": "NumberTheory/p-adic-numbers", "title": "Absolute values on fields"},
   "MathlibExt/Analysis/Approximation/ChebyshevMinimax": {"to": "Analysis/approximation-theory", "title": "Minimax property of the Chebyshev polynomials"},
+  "MathlibExt/Analysis/Approximation/ChebyshevAnalytic": {"to": "Analysis/approximation-theory", "title": "Chebyshev series and interpolation"},
   "MathlibExt/Analysis/Approximation/ChebyshevLebesgue": {"to": "Analysis/approximation-theory", "title": "Chebyshev series and interpolation"},
   "MathlibExt/Analysis/Approximation/ChebyshevSeries": {"to": "Analysis/approximation-theory", "title": "Chebyshev series and interpolation"},
   "MathlibExt/Analysis/Approximation/Equioscillation": {"to": "Analysis/approximation-theory", "title": "Chebyshev equioscillation theorem"},
