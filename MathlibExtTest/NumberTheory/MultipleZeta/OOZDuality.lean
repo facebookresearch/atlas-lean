@@ -76,3 +76,78 @@ example : (∑ r ∈ Icc 1 6, coeff 4 (szQMZV (List.replicate r 1))) = 5 := by
   rw [sum_coeff_szQMZV_replicate_one_eq_card_partition (hN := by decide) (hR := by decide),
     card_partition_four]
   norm_num
+
+-- Compute the inverse coefficients independently, using (1 - q^m) times its inverse.
+private lemma coeff_inv_one_sub_pow_of_pos {m : ℕ} (hm : 0 < m) (a : ℕ) :
+    coeff a ((1 - X ^ m : ℚ⟦X⟧)⁻¹) = if m ∣ a then 1 else 0 := by
+  induction a using Nat.strong_induction_on with
+  | ind a ih =>
+    have hu := PowerSeries.mul_inv_cancel (1 - (X : ℚ⟦X⟧) ^ m) (by simp [hm.ne'])
+    have hc := congrArg (fun p : ℚ⟦X⟧ => coeff a p) hu
+    simp only [sub_mul, one_mul, map_sub, coeff_X_pow_mul', coeff_one] at hc
+    obtain rfl | ha := Nat.eq_zero_or_pos a
+    · simpa [hm.not_ge] using hc
+    · rw [ite_eq_right (Nat.ne_of_gt ha)] at hc
+      by_cases hma : m ≤ a
+      · rw [ite_eq_left hma, sub_eq_zero, ih (a - m) (by omega)] at hc
+        have hd : m ∣ a - m ↔ m ∣ a := by
+          constructor
+          · intro h
+            simpa only [Nat.sub_add_cancel hma] using Nat.dvd_add h (dvd_refl m)
+          · exact fun h => Nat.dvd_sub h (dvd_refl m)
+        simpa only [hd] using hc
+      · rw [ite_eq_right hma, sub_zero] at hc
+        rwa [ite_eq_right (fun h => hma (Nat.le_of_dvd ha h))]
+
+private lemma testIoo (M : ℕ) : Ioo 0 M = Ico 1 M := by
+  ext n
+  simp only [mem_Ioo, mem_Ico, Nat.succ_le_iff]
+
+private lemma coeff_weight_mul (a b n : ℕ) :
+    coeff n ((X ^ a * (1 - X ^ a)⁻¹) * (X ^ b * (1 - X ^ b)⁻¹) : ℚ⟦X⟧) =
+      if a + b ≤ n then
+        ∑ j ∈ range (n - (a + b) + 1),
+          coeff j ((1 - X ^ a : ℚ⟦X⟧)⁻¹) * coeff (n - (a + b) - j) ((1 - X ^ b : ℚ⟦X⟧)⁻¹)
+      else 0 := by
+  have he : (X ^ a * (1 - X ^ a)⁻¹) * (X ^ b * (1 - X ^ b)⁻¹) = X ^ (a + b) *
+      (((1 - X ^ a : ℚ⟦X⟧)⁻¹) * (1 - X ^ b)⁻¹) := by
+    rw [pow_add]
+    ac_rfl
+  rw [he, coeff_X_pow_mul', coeff_mul, Nat.sum_antidiagonal_eq_sum_range_succ_mk]
+
+example : coeff 0 (szQMZV []) = 1 ∧ coeff 1 (szQMZV []) = 0 := by
+  simp [szQMZV_nil, coeff_one]
+
+example : coeff 0 (szQMZV [2, 0]) = 0 := by
+  rw [coeff_szQMZV_eq_coeff_partial, szQMZVPartial_cons, show Ioo 0 1 = ∅ by decide]
+  simp
+
+-- The nonzero terms at q^6 have first sizes 2 and 3. Their contributions are 2 and 2.
+example : coeff 6 (szQMZV [2, 0]) = 4 := by
+  have hzero (M : ℕ) : szQMZVPartial [0] M = ((M - 1 : ℕ) : ℚ⟦X⟧) := by
+    simp [szQMZVPartial_cons, szQMZVPartial_nil]
+  rw [coeff_szQMZV_eq_coeff_partial, szQMZVPartial_cons, testIoo, sum_Ico_eq_sum_range, map_sum]
+  simp only [hzero, coeff_mul_natCast, pow_two, coeff_weight_mul]
+  norm_num [sum_range_succ, coeff_inv_one_sub_pow_of_pos]
+
+-- In the interior gap there is one choice for a chain 3 > a > 1 and two for 4 > a > 1.
+example : coeff 5 (szQMZV [1, 0, 1]) = 3 := by
+  simp only [coeff_szQMZV_eq_coeff_partial, szQMZVPartial_cons, szQMZVPartial_nil,
+    pow_zero, pow_one, one_mul, mul_one, testIoo, sum_Ico_eq_sum_range, mul_sum, map_sum,
+    coeff_weight_mul]
+  norm_num only [sum_range_succ, sum_range_zero, sum_empty, coeff_inv_one_sub_pow_of_pos,
+    Nat.dvd_zero, add_zero, zero_add, zero_mul, mul_zero, one_mul, mul_one]
+  norm_num
+
+-- The exported theorem is available without importing the old wanted module.
+example (N : ℕ) :
+    coeff N (szQMZV (szBlockIndex [(2, 2)])) =
+      ∑ mn ∈ (Fintype.piFinset fun _ : Fin 1 => range (N + 1)) ×ˢ
+          (Fintype.piFinset fun _ : Fin 1 => range (N + 1)) with
+          StrictAnti mn.1 ∧ (∀ j, 0 < mn.1 j) ∧ (∀ j, 0 < mn.2 j) ∧
+            ∑ j, mn.1 j * mn.2 j = N,
+        ∏ j : Fin 1, ((mn.2 j - 1).choose 1 : ℚ) *
+          ((mn.1 j - (if h : j.val + 1 < 1 then mn.1 ⟨j.val + 1, h⟩ else 0) - 1).choose 1 : ℚ) := by
+  simpa only [Nat.cast_mul, List.ofFn_succ, List.ofFn_zero, show (2 : ℕ) - 1 = 1 by decide] using
+    coeff_szQMZV_szBlockIndex_eq_sum_choose 1 (fun _ => 2) (fun _ => 2)
+      (fun _ => by decide) (fun _ => by decide) N

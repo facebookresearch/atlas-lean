@@ -70,33 +70,6 @@ public theorem szBlockIndex_cons (k d : ℕ) (kd : List (ℕ × ℕ)) :
     szBlockIndex ((k, d) :: kd) = k :: (List.replicate (d - 1) 0 ++ szBlockIndex kd) :=
   rfl
 
-/-- **Coefficients of Schlesinger–Zudilin qMZVs as sums of binomial products.** Let $r \ge 0$,
-and let $k_1, \dots, k_r$ and $d_1, \dots, d_r$ be positive integers. For every natural number
-$N$, the coefficient of $q^N$ in the Schlesinger–Zudilin qMZV
-$\zeta_q^{\mathrm{SZ}}(k_1, \{0\}^{d_1 - 1}, \dots, k_r, \{0\}^{d_r - 1})$, whose index lists each
-$k_j$ followed by $d_j - 1$ zeros, equals
-$$\sum \prod_{j=1}^{r} \binom{n_j - 1}{k_j - 1} \binom{m_j - m_{j+1} - 1}{d_j - 1},$$
-where the sum runs over all integers $m_1 > \dots > m_r > 0$ and $n_1, \dots, n_r \ge 1$ with
-$m_1 n_1 + \dots + m_r n_r = N$, and where $m_{r+1} = 0$.
-
-These are the coefficients of $X_1^{k_1 - 1} \cdots X_r^{k_r - 1} Y_1^{d_1 - 1} \cdots
-Y_r^{d_r - 1} q^N$ on both sides of the paper's identity expressing the generating series
-$s(X; Y)$ of these qMZVs as
-$\sum \prod_j (1 + X_j)^{n_j - 1} (1 + Y_j)^{m_j - m_{j+1} - 1} q^{m_j n_j}$.
-
-Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
-Article A6, Theorem 4 (`integers-2024-A6-thm-4`). -/
-public theorem_wanted coeff_szQMZV_szBlockIndex_eq_sum_choose (r : ℕ) (k d : Fin r → ℕ)
-    (hk : ∀ j, 1 ≤ k j) (hd : ∀ j, 1 ≤ d j) (N : ℕ) :
-    coeff N (szQMZV (szBlockIndex (List.ofFn fun j => (k j, d j)))) =
-      ∑ mn ∈ (Fintype.piFinset fun _ : Fin r => Finset.range (N + 1)) ×ˢ
-          (Fintype.piFinset fun _ : Fin r => Finset.range (N + 1)) with
-          StrictAnti mn.1 ∧ (∀ j, 0 < mn.1 j) ∧ (∀ j, 0 < mn.2 j) ∧
-            ∑ j, mn.1 j * mn.2 j = N,
-        ∏ j : Fin r, ((((mn.2 j - 1).choose (k j - 1)) *
-          ((mn.1 j - (if h : j.val + 1 < r then mn.1 ⟨j.val + 1, h⟩ else 0) - 1).choose
-            (d j - 1)) : ℕ) : ℚ)
-
 /-- **Class numbers of finite general linear groups via OOZ-qMZVs.** Let $K$ be a finite field
 with $c$ elements and, for $n \ge 0$, let $a_{n,K}$ be the number of conjugacy classes of
 $\mathrm{GL}_n(K)$, so that $a_{0,K} = 1$ because $\mathrm{GL}_0(K)$ is the trivial group. Write
