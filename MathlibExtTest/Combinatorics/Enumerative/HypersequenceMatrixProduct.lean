@@ -8,10 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
+import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumStirling
 import MathlibExt.Combinatorics.Enumerative.HypersequenceMatrixProduct
 
-/-! # Tests for the product of Parisse's hypersequence matrices -/
+/-! # Tests for the product and inverse of Parisse's hypersequence matrices -/
 
 open MetaMathlibExt
 
@@ -41,3 +43,21 @@ example :
 example :
     ∑ i ∈ Finset.range 1, (hyperseqB 0 0 i : ℂ) * alternatingBinomialPowerSum i 0 1 1 = 1 := by
   simpa using sum_hyperseqB_mul_hyperseqC 0 0 0
+
+-- Compute both products from the Stirling formulas on the leading four rows and columns at n = 0.
+-- This includes the diagonal 3! normalization and cancellation below the diagonal.
+example (j m : Fin 4) :
+    (∑ k ∈ Finset.range (j.val + 1), (hyperseqB 0 j k : ℂ) *
+      (alternatingBinomialPowerSum k m 1 1 / m.val.factorial)) = (if j = m then 1 else 0) ∧
+    (∑ k ∈ Finset.range (j.val + 1), alternatingBinomialPowerSum j k 1 1 / k.factorial *
+      (hyperseqB 0 k m : ℂ)) = (if j = m then 1 else 0) := by
+  have b (r s : ℕ) := (hyperseqB_zero_recurrence_stirling.2.2.2 r s).2
+  have c (r s : ℕ) := (alternatingBinomialPowerSum_special_values 1 1 r s).2.1
+  fin_cases j <;> fin_cases m <;>
+    norm_num [Finset.sum_range_succ, b, c, Nat.stirlingFirst, Nat.stirlingSecond, Nat.factorial]
+
+-- A client can use the reverse product at a nonzero shift without importing WantedExt.
+example :
+    ∑ k ∈ Finset.range 4, alternatingBinomialPowerSum 3 k 1 3 / k.factorial *
+      (hyperseqB 2 k 2 : ℂ) = 0 := by
+  simpa [show (2 : ℂ) + 1 = 3 by norm_num] using (hyperseqB_inv_eq_hyperseqC_div_factorial 2 3 2).2
