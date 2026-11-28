@@ -10,3 +10,6 @@
 - [Rao: sunflower bound via the converse of Shannon's source coding theorem](rao-sunflower-bound-via-coding.md)
 - [The robust sunflower bound is sharp up to lower-order terms](robust-sunflower-bound-is-sharp.md)
 - [Bell-Chueluecha-Warnke: sunflower bound O(r log l)^l](bell-chueluecha-warnke-sunflower-bound.md)
+- [Of Multiset apply event](of-multiset-apply-event.md)
+- [Uniform Occurrence Measure superset](uniform-occurrence-measure-superset.md)
+- [Is Rel Spread iff uniform Occurrence Measure](is-rel-spread-iff-uniform-occurrence-mea.md)

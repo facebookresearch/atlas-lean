@@ -147,3 +147,4 @@
 - [Compact coalescent histories](compact-coalescent-histories/README.md)
 - [Nested fragmentation processes](nested-fragmentation-processes/README.md)
 - [Nested Kingman coalescent](nested-kingman-coalescent/README.md)
+- [Coalescent histories of lodgepole species trees](coalescent-histories-of-lodgepole-species-trees/README.md)
