@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS AND UNIT TIMES, number of late jobs: definitions
-(`PMPM2|chains; pᵢ = 1|ΣUᵢ`) is NP-complete
+# TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS AND UNIT TIMES, number of late jobs
+(`PMPM2|chains; pᵢ = 1|ΣUᵢ`): definitions
 
 Source:
 P. Brucker, *Scheduling Algorithms*, 5th ed., Springer (2007), doi:10.1007/978-3-540-69516-5,

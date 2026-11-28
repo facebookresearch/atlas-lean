@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# MULTI-PURPOSE MACHINE FLOW SHOP WITH TWO MACHINES TO MINIMIZE TOTAL COMPLETION TIME: definitions
-# (`FMPM2||∑ Cᵢ`) is NP-complete
+# MULTI-PURPOSE MACHINE FLOW SHOP WITH TWO MACHINES TO MINIMIZE TOTAL COMPLETION TIME (`FMPM2||∑
+Cᵢ`): definitions
 
 Source:
 M. R. Garey, D. S. Johnson and R. Sethi, "The complexity of flowshop and jobshop scheduling",

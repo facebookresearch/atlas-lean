@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS AND UNIT TIMES, total tardiness: definitions
-(`PMPM2|chains;p_i=1|ΣT_i`) is NP-complete
+# TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS AND UNIT TIMES, total tardiness
+(`PMPM2|chains;p_i=1|ΣT_i`): definitions
 
 Source:
 J. Y.-T. Leung and G. H. Young, "Minimizing total tardiness on a single machine with

@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# F2;R1|p_ij=1;t_i;r_i|ΣC_i (two-machine unit flow shop, single transport robot, release dates,: definitions
-total completion time) is NP-complete
+# F2;R1|p_ij=1;t_i;r_i|ΣC_i (two-machine unit flow shop, single transport robot, release dates,
+total completion time): definitions
 
 Source:
 P. Brucker and S. Knust, *Complexity results for scheduling problems*, online classification,

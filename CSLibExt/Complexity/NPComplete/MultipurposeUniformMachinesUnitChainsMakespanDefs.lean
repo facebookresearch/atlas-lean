@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# MULTIPURPOSE-MACHINE UNIFORM PARALLEL MACHINE SCHEDULING `QMPM|chains;p_i=1|C_max` is: definitions
-# NP-complete
+# MULTIPURPOSE-MACHINE UNIFORM PARALLEL MACHINE SCHEDULING `QMPM|chains;p_i=1|C_max`: definitions
 
 Source:
 P. Brucker and S. Knust, *Complexity results for scheduling problems*, Universität Osnabrück,

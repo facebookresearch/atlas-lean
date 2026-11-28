@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# PRECEDENCE CONSTRAINED SCHEDULING with total completion time (`P|prec;p_i=1|ΣC_i`) is: definitions
-NP-complete
+# PRECEDENCE CONSTRAINED SCHEDULING with total completion time (`P|prec;p_i=1|ΣC_i`): definitions
 
 Source:
 J. K. Lenstra and A. H. G. Rinnooy Kan, "Complexity of scheduling under precedence

@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH UNIT-TIME CHAINS (PMPM2|chains;p_i=1|Σw_iC_i): definitions
-is NP-complete
+# TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH UNIT-TIME CHAINS (PMPM2|chains;p_i=1|Σw_iC_i):
+definitions
 
 Source:
 V. G. Timkovsky, "Identical parallel machines vs. unit-time shops and preemptions vs. chains in

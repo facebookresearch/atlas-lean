@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# F2|p_ij=1;t_j|Σw_jC_j (two-machine unit-time flow shop with transportation delays, total weighted: definitions
-completion time) is NP-complete
+# F2|p_ij=1;t_j|Σw_jC_j (two-machine unit-time flow shop with transportation delays, total weighted
+completion time): definitions
 
 Source:
 P. Brucker, T. C. E. Cheng, S. Knust and N. V. Shakhlevich, "Complexity results for flow-shop

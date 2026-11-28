@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO-MACHINE MPT OPEN SHOP, CHAINS, UNIT TIMES, WEIGHTED COMPLETION TIME: definitions
-(OMPT2|chains; p_ij = 1|Σw_iC_i) is NP-complete
+# TWO-MACHINE MPT OPEN SHOP, CHAINS, UNIT TIMES, WEIGHTED COMPLETION TIME (OMPT2|chains; p_ij =
+1|Σw_iC_i): definitions
 
 Source:
 V. G. Timkovsky, "Identical parallel machines vs. unit-time shops and preemptions vs. chains in

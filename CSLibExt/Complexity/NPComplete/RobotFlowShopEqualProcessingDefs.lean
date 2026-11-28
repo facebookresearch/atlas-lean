@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# F2;R1|p_ij=p;t_j|C_max (two-machine flow shop, single transport robot, equal processing times) is: definitions
-NP-complete
+# F2;R1|p_ij=p;t_j|C_max (two-machine flow shop, single transport robot, equal processing times):
+definitions
 
 Source:
 J. Hurink and S. Knust, "Makespan minimization for flow-shop problems with transportation

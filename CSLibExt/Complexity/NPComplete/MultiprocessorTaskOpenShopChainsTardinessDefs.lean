@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO-MACHINE MPT OPEN SHOP, CHAINS, UNIT TIMES, TOTAL TARDINESS (OMPT2|chains; p_ij = 1|ΣT_i) is: definitions
-NP-complete
+# TWO-MACHINE MPT OPEN SHOP, CHAINS, UNIT TIMES, TOTAL TARDINESS (OMPT2|chains; p_ij = 1|ΣT_i):
+definitions
 
 Source:
 V. G. Timkovsky, "Identical parallel machines vs. unit-time shops and preemptions vs. chains in

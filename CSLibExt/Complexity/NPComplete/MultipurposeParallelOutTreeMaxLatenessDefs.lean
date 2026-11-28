@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# MULTIPURPOSE-MACHINE PARALLEL SCHEDULING WITH OUT-TREE PRECEDENCE AND UNIT TIMES TO MINIMIZE: definitions
-MAXIMUM LATENESS is NP-complete
+# MULTIPURPOSE-MACHINE PARALLEL SCHEDULING WITH OUT-TREE PRECEDENCE AND UNIT TIMES TO MINIMIZE
+MAXIMUM LATENESS: definitions
 
 Source:
 P. Brucker, M. R. Garey and D. S. Johnson, "Scheduling equal-length tasks under treelike

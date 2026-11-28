@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# F2;R1|p_ij=1;t_i|ΣT_i (two-machine unit flow shop, single transport robot, total tardiness): definitions
-is NP-complete
+# F2;R1|p_ij=1;t_i|ΣT_i (two-machine unit flow shop, single transport robot, total tardiness):
+definitions
 
 Source:
 P. Brucker and S. Knust, *Complexity results for scheduling problems*, online classification,
