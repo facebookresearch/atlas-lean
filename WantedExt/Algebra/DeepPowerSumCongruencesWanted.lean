@@ -210,20 +210,6 @@ public theorem_wanted polyElemSymm_sub_mem_of_polyPowerSum_sub_mem {p : ℕ} [Fa
     (h : ∀ n, 1 ≤ n → n ≤ N → ∃ c ∈ I, polyPowerSum P n - polyPowerSum Q n = (n : A) * c) :
     ∀ n, 1 ≤ n → n ≤ N → polyElemSymm P n - polyElemSymm Q n ∈ I
 
-/-- **The generating function of the elementary symmetric polynomials.** Let $\sigma$ be a finite
-set of variables, and in $\mathbb{Q}[x_i : i \in \sigma]$ let $e_k$ be the $k$-th elementary
-symmetric polynomial and $p_n = \sum_{i \in \sigma} x_i^n$ the $n$-th power sum. Then, as formal
-power series in $t$ with coefficients in $\mathbb{Q}[x_i : i \in \sigma]$,
-$$\sum_{k \ge 0} e_k t^k = \exp\Big(\sum_{n \ge 1} \frac{(-1)^{n-1}}{n} p_n t^n\Big).$$
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Proposition 20 (`integers-2024-A46-prop-20`). -/
-public theorem_wanted exp_signedPowerSumSeries_eq_esymmSeries (σ : Type*) [Fintype σ] :
-    (PowerSeries.subst (PowerSeries.mk fun n => if n = 0 then 0 else
-        ((-1 : ℚ) ^ (n - 1) / n) • MvPolynomial.psum σ ℚ n) (PowerSeries.exp ℚ) :
-        PowerSeries (MvPolynomial σ ℚ)) =
-      PowerSeries.mk fun k => MvPolynomial.esymm σ ℚ k
-
 /-- **The Artin–Hasse exponential has $p$-integral coefficients.** Let $p$ be a prime and let
 $F(z) = \exp\big(\sum_{j \ge 0} z^{p^j} / p^j\big) \in \mathbb{Q}[[z]]$ be the Artin–Hasse
 exponential. For every $n \ge 0$, the coefficient of $z^n$ in $F$, written in lowest terms, has a

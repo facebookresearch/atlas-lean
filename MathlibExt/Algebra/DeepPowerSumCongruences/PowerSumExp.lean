@@ -16,10 +16,23 @@ import Mathlib.Combinatorics.Enumerative.Partition.GenFun
 import Mathlib.RingTheory.PowerSeries.Log
 
 /-!
-# Exponential of restricted power sums
+# Exponentials of power-sum series
 
-The exponential of the signed power-sum series restricted to a set of degrees is
-the generating function of the corresponding weighted partitions.
+For a finite set of variables over $\mathbb{Q}$ and a set $S \subseteq \mathbb{N}$ of degrees,
+the exponential of $\sum_{s \in S,\ s \ge 1} (-1)^{s-1} p_s t^s / s$ is the generating function
+of the corresponding weighted partitions. When all positive degrees are included, its coefficient
+at $t^k$ is the elementary symmetric polynomial $e_k$.
+
+The latter identity specializes Proposition 20 to finitely many variables by setting the remaining
+variables to zero. As in the paper, the generating series includes the constant term $e_0 = 1$.
+
+## References
+
+* Samuele Anni, Alexandru Ghitza and Anna Medvedovsky, *Elementary Symmetric Functions and Deep
+  Power-Sum Congruences*, INTEGERS 24 (2024), Article A46, pp. 1–26, §3.3, Propositions 19 and 20
+  and Corollary 21. The authors credit Ira Gessel for the restricted formulation of Proposition 19.
+* I. G. Macdonald, *Symmetric Functions and Hall Polynomials*, 2nd ed., Oxford University Press,
+  2015, Chapter I, §2, cited in §3.3 for the standard generating functions of symmetric functions.
 -/
 
 open Finset PowerSeries
@@ -274,6 +287,26 @@ private theorem coeff_prod_one_add_X (σ : Type*) [Fintype σ] (n : ℕ) :
   rw [prod_mul_distrib, ← map_prod, prod_const, coeff_C_mul_X_pow]
   simp only [eq_comm (a := n)]
 
+/-- **The generating function of the elementary symmetric polynomials.** Let $\sigma$ be a finite
+set of variables, and in $\mathbb{Q}[x_i : i \in \sigma]$ let $e_k$ be the $k$-th elementary
+symmetric polynomial and $p_n = \sum_{i \in \sigma} x_i^n$ the $n$-th power sum. Then, as formal
+power series in $t$ with coefficients in $\mathbb{Q}[x_i : i \in \sigma]$,
+$$\sum_{k \ge 0} e_k t^k = \exp\Big(\sum_{n \ge 1} \frac{(-1)^{n-1}}{n} p_n t^n\Big).$$
+
+Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
+Congruences*, INTEGERS 24 (2024), Article A46, Proposition 20 (`integers-2024-A46-prop-20`). -/
+public theorem exp_signedPowerSumSeries_eq_esymmSeries (σ : Type*) [Fintype σ] :
+    (PowerSeries.subst (PowerSeries.mk fun n => if n = 0 then 0 else
+        ((-1 : ℚ) ^ (n - 1) / n) • MvPolynomial.psum σ ℚ n) (PowerSeries.exp ℚ) :
+        PowerSeries (MvPolynomial σ ℚ)) =
+      PowerSeries.mk fun k => MvPolynomial.esymm σ ℚ k := by
+  have hprod := exp_signedPowerSumSeries_eq_prod σ
+  simp only [ne_eq, ite_not] at hprod
+  rw [hprod]
+  apply PowerSeries.ext
+  intro k
+  rw [coeff_prod_one_add_X, coeff_mk]
+
 /-- **Elementary symmetric polynomials in terms of power sums.** Let $\sigma$ be a finite set of
 variables, and in $\mathbb{Q}[x_i : i \in \sigma]$ let $e_n$ be the $n$-th elementary symmetric
 polynomial and $p_k = \sum_{i \in \sigma} x_i^k$ the $k$-th power sum. For a partition $\lambda$
@@ -292,7 +325,7 @@ public theorem esymm_eq_sum_partitions (σ : Type*) [Fintype σ] (n : ℕ) :
           ℕ) : ℚ)) • (l.parts.map (MvPolynomial.psum σ ℚ)).prod := by
   have h := congrArg (coeff (R := MvPolynomial σ ℚ) n)
     (exp_signedPowerSumSeries_eq_sum_partitions σ Set.univ)
-  simpa only [Set.mem_univ, true_and, implies_true, filter_true, coeff_mk,
-    exp_signedPowerSumSeries_eq_prod, coeff_prod_one_add_X] using h
+  simpa only [Set.mem_univ, true_and, implies_true, filter_true, ne_eq, ite_not,
+    exp_signedPowerSumSeries_eq_esymmSeries, coeff_mk] using h
 
 end MetaMathlibExt
