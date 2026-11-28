@@ -14,14 +14,21 @@ public import MathlibExt.CategoryTheory.HomologicalComplex.FunctorRelativeResolu
 /-!
 # Homotopy coherence of split relative-resolution comparisons
 
-Let `D` be preadditive with a zero object and kernels, `C`
-preadditive, and `U : D → C` additive. Relative comparisons into
-contractingly `U`-split augmented complexes, with the displayed
-kernels preserved by `U`, are unique up to chain homotopy.
-Identity comparisons are homotopic to identity, and comparison over
-a composite endpoint map is homotopic to the composite comparisons.
-Two termwise relative-projective split augmented complexes give a
-chain-homotopy equivalence preserving their augmentations.
+Let `D` be preadditive with a zero object and kernels, `C` preadditive,
+and `U : D → C` additive. Let `α : Q → X[0]` and `β : P → Y[0]`
+be chain augmentations. If every term of `Q` is `U`-relative-projective,
+`β` has a contracting splitting after `U`, and `U` preserves the kernel
+of `β₀` and every differential kernel of `P`, two maps `Q → P` lifting
+the same endpoint map `f : X → Y` are chain homotopic.
+
+For identity and composition coherence, the relevant source terms are
+relative-projective and the target augmentations have contracting splittings
+after `U`, with their augmentation and differential kernels preserved by `U`.
+
+For the homotopy equivalence, both complexes augment to the same object `X`,
+both have `U`-relative-projective terms and contracting splittings after `U`,
+and `U` preserves both sets of augmentation and differential kernels.
+The comparison maps over `𝟙 X` give an augmentation-preserving equivalence.
 -/
 
 @[expose] public section
@@ -51,7 +58,8 @@ def comparisonIdHomotopy (Q : ChainComplex D ℕ) (X : D)
     (by rw [Category.id_comp, Functor.map_id, Category.comp_id])
 
 /-- Let `D` be preadditive with a zero object and kernels, `C`
-preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → Y[0]`, `R → Z[0]` be chain augmentations,
+preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → Y[0]`, `R → Z[0]` be chain
+augmentations,
 with the augmentations of `P,R` contractingly split after `U`,
 all terms of `Q,P` `U`-relative-projective, and `U` preserving the
 augmentation and differential kernels of `P,R`. For `f : X → Y`, `g : Y → Z`, the two successive
@@ -73,10 +81,12 @@ theorem comparison_composite_augmentation (Q P R : ChainComplex D ℕ) (X Y Z : 
     Category.assoc, ← Functor.map_comp]
 
 /-- Let `D` be preadditive with a zero object and kernels, `C`
-preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → Y[0]`, `R → Z[0]` be chain augmentations,
+preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → Y[0]`, `R → Z[0]` be chain
+augmentations,
 with the augmentations of `P,R` contractingly split after `U`,
 all terms of `Q,P` `U`-relative-projective, and `U` preserving the
-augmentation and differential kernels of `P,R`. The comparison over `f ≫ g` is chain homotopic to the
+augmentation and differential kernels of `P,R`. The comparison over `f ≫ g` is chain homotopic to
+the
 comparison over `f` followed by the comparison over `g`. -/
 def comparisonCompHomotopy (Q P R : ChainComplex D ℕ) (X Y Z : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X)
@@ -97,7 +107,8 @@ def comparisonCompHomotopy (Q P R : ChainComplex D ℕ) (X Y Z : D)
 /-- Let `D` be preadditive with a zero object and kernels, `C`
 preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → X[0]` have contracting splittings
 after `U`, with all terms `U`-relative-projective and `U` preserving
-the augmentation and differential kernels of both complexes. The two comparison maps over `𝟙 X` form a chain-homotopy
+the augmentation and differential kernels of both complexes. The two comparison maps over `𝟙 X` form
+a chain-homotopy
 equivalence `Q ≃ P`. -/
 def comparisonHomotopyEquiv (Q P : ChainComplex D ℕ) (X : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj X)
@@ -120,7 +131,8 @@ def comparisonHomotopyEquiv (Q P : ChainComplex D ℕ) (X : D)
 /-- Let `D` be preadditive with a zero object and kernels, `C`
 preadditive, and `U : D → C` additive. Let `Q → X[0]`, `P → X[0]` have contracting splittings
 after `U`, with all terms `U`-relative-projective and `U` preserving
-the augmentation and differential kernels of both complexes. The forward map of the comparison homotopy equivalence
+the augmentation and differential kernels of both complexes. The forward map of the comparison
+homotopy equivalence
 satisfies `comparison ≫ β = α` as full chain-augmentation maps. -/
 theorem comparisonHomotopyEquiv_hom_augmentation (Q P : ChainComplex D ℕ) (X : D)
     (α : Q ⟶ (ChainComplex.single₀ D).obj X) (β : P ⟶ (ChainComplex.single₀ D).obj X)
