@@ -1,8 +1,8 @@
 # A finitely presented amenable group with unsolvable word problem has unsolvable word problem on every exponentially generic set
 
-If $G$ is a finitely presented amenable group with unsolvable word problem, then for every finite generating set no algorithm solves the word problem on an exponentially generic set of words.
+If $G$ is a finitely presented amenable group with unsolvable word problem, then for every finite generating set no partial algorithm that never gives a wrong answer solves the word problem on an exponentially generic set of words.
 
-Let $W$ be the set of words over a finite generating set of $G$ and $W_n$ the words of length at most $n$. A set $X \subseteq W$ is exponentially generic if $|X \cap W_n| / |W_n|$ tends to $1$ exponentially fast. If $G$ is a finitely presented amenable group with unsolvable word problem, then for any choice of finite generating set the word problem of $G$ is not solvable on any exponentially generic subset of $W$ (Theorem 2.3 of the source).
+Let $W$ be the set of words over a finite generating set of $G$ and $W_n$ the words of length at most $n$. A set $X \subseteq W$ is exponentially generic if $|X \cap W_n| / |W_n|$ tends to $1$ exponentially fast. A *partial algorithm* for the word problem takes a word $w \in W$ and never gives a wrong answer, on any input: when it halts, it either answers correctly whether $w = 1$ in $G$ or answers "don't know", and it may also fail to halt. The word problem of $G$ is *solvable on* $X \subseteq W$ if some partial algorithm halts with the correct answer on every $w \in X$. If $G$ is a finitely presented amenable group with unsolvable word problem, then for any choice of finite generating set the word problem of $G$ is not solvable on any exponentially generic subset of $W$ (Theorem 2.3 of the source).
 
 The source poses as an open problem the construction of a finitely presented group whose word problem is undecidable on every generic set of inputs.
 
@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-Suppose a correct partial algorithm $\mathcal{A}$ halts on an exponentially generic set $D$. Run $\mathcal{A}$ on all products $w v$ with $v$ enumerated among the words trivial in $G$ (possible since $G$ is finitely presented); if this halts for every $w$, the word problem is solvable. Otherwise some $w$ has $w v \notin D$ for every trivial $v$, so $W_n \setminus D$ contains $w V_{n - |w|}$, where $V_k$ is the set of trivial words of length $k$. Amenability gives $(|V_k| / |W_k|)^{1/k} \to 1$ along even $k$ (Kesten, Grigorchuk), which contradicts the exponential decay of $|W_n \setminus D| / |W_n|$. The Kesten–Grigorchuk cogrowth criterion for amenability has no page here. Finitely presented amenable groups with unsolvable word problem exist (Kharlampovich's solvable groups).
+Suppose a correct partial algorithm $\mathcal{A}$ halts on an exponentially generic set $D$. Run $\mathcal{A}$ on all products $w v$ with $v$ enumerated among the words trivial in $G$ (possible since $G$ is finitely presented); if this halts for every $w$, the word problem is solvable. Otherwise some $w$ has $w v \notin D$ for every trivial $v$, so $W_n \setminus D$ contains $w V_{n - |w|}$, where $V_k$ is the set of trivial words of length $k$. Amenability gives $(|V_k| / |W_k|)^{1/k} \to 1$ along even $k$ (Kesten, Grigorchuk), which contradicts the exponential decay of $|W_n \setminus D| / |W_n|$. A good expansion links a page for the Kesten–Grigorchuk cogrowth criterion for amenability. Finitely presented amenable groups with unsolvable word problem exist (Kharlampovich's solvable groups).
 
 ## Sources
 

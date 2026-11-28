@@ -4,7 +4,7 @@ For every large enough odd composite exponent $n$, the analogue of the Adian–R
 
 Let $\mathfrak{B}_n$ be the Burnside variety of all groups of exponent $n$ (groups in which $g^n = 1$ for every $g$). A group in $\mathfrak{B}_n$ is finitely presented relative to $\mathfrak{B}_n$ if it is the quotient of a finitely generated free Burnside group $\mathbf{B}(S, n) = F(S) / F(S)^n$ by the normal closure of a finite subset; a finite presentation $\langle S \mid R \rangle$ relative to $\mathfrak{B}_n$ defines the group $\langle S \mid R \rangle / \langle S \mid R \rangle^n$.
 
-There is a critical exponent $n_0$ such that the following holds for every odd integer $n > n_0$ that is not prime. Let $\mathcal{P}$ be a subclass of $\mathfrak{B}_n$ for which there are groups $G_+, G_- \in \mathfrak{B}_n$, finitely presented relative to $\mathfrak{B}_n$, such that
+There is a critical exponent $n_0$ such that the following holds for every odd integer $n \ge n_0$ that is not prime. Let $\mathcal{P}$ be a subclass of $\mathfrak{B}_n$ for which there are groups $G_+, G_- \in \mathfrak{B}_n$, finitely presented relative to $\mathfrak{B}_n$, such that
 
 1. $G_+$ belongs to $\mathcal{P}$, and
 2. no group of exponent $n$ containing $G_-$ as a subgroup belongs to $\mathcal{P}$.

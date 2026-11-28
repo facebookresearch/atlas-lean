@@ -1,4 +1,4 @@
-# Isomorphism of finitely generated subgroups is undecidable in groups containing a product of free groups
+# Isomorphism of finitely generated subgroups is undecidable in groups containing $F_2 \times F_2$
 
 If a finitely presented group $G$ contains a subgroup isomorphic to $F_2 \times F_2$, then no algorithm decides whether two finitely generated subgroups of $G$, given by finite generating sets, are isomorphic; this applies to mapping class groups of surfaces of sufficiently high complexity.
 

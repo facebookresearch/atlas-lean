@@ -21,7 +21,7 @@ None.
 
 ## Expansion
 
-Start from a group $Q$ of type $F_3$ with unsolvable word problem and apply the enhanced Rips construction to obtain $1 \to N \to \Gamma \to Q \to 1$ with $\Gamma$ torsion-free hyperbolic. For each word $w$ in the generators of $Q$ the authors build, inside $\hat{\Gamma}_1 \times \Gamma$, a finitely presented subgroup $\hat{P}_w$ extending the fiber product of the sequence, with explicit presentations obtained from the 1-2-3 Theorem; then $\hat{P}_w \cong \hat{P}_1$ exactly when $w = 1$ in $Q$. The case $w \ne 1$ is detected through the structure of centralizers of elements in HNN extensions. The groups of type $F_3$ with unsolvable word problem, the enhanced Rips construction and the 1-2-3 Theorem have no page here.
+Start from a group $Q$ of type $F_3$ with unsolvable word problem and apply the enhanced Rips construction to obtain $1 \to N \to \Gamma \to Q \to 1$ with $\Gamma$ torsion-free hyperbolic. For each word $w$ in the generators of $Q$ the authors build, inside $\hat{\Gamma}_1 \times \Gamma$, a finitely presented subgroup $\hat{P}_w$ extending the fiber product of the sequence, with explicit presentations obtained from the 1-2-3 Theorem; then $\hat{P}_w \cong \hat{P}_1$ exactly when $w = 1$ in $Q$. The case $w \ne 1$ is detected through the structure of centralizers of elements in HNN extensions. A good expansion links pages for the groups of type $F_3$ with unsolvable word problem, the enhanced Rips construction and the 1-2-3 Theorem.
 
 ## Sources
 

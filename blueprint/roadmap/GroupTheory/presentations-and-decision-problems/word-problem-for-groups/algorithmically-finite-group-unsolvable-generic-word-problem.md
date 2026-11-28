@@ -1,4 +1,4 @@
-# Infinite algorithmically finite groups have unsolvable generic word problem
+# Infinite finitely generated algorithmically finite groups have unsolvable generic word problem
 
 If $\Gamma$ is an infinite, finitely generated, algorithmically finite group (no algorithm lists infinitely many pairwise distinct elements), then its word problem is unsolvable on every generic set of words, for every finite generating set; Dehn monsters are the first computably presented examples.
 

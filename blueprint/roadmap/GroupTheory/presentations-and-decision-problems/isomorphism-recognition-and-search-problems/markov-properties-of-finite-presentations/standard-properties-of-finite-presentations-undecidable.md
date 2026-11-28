@@ -20,7 +20,7 @@ Conventions: each property is considered separately, and the input is an arbitra
 
 ## Expansion
 
-Each listed property is a Markov property. It holds for the trivial group, and it is inherited by finitely generated subgroups, in particular by finitely presented ones: subgroups of finite, abelian, nilpotent, solvable or torsion-free groups have the same property, subgroups of free groups are free (Nielsen–Schreier, which has no page here), and a finitely generated subgroup of a group with solvable word problem has solvable word problem. So a finitely presented group without the property, for example a nonabelian free group of rank $2$ for finiteness, abelianness, nilpotency and solvability, the group $\mathbb{Z}/2$ for freeness and torsion-freeness, and a group with unsolvable word problem for the last property, embeds in no group with it. The Adian–Rabin theorem then applies.
+Each listed property is a Markov property. It holds for the trivial group, and it is inherited by finitely generated subgroups, in particular by finitely presented ones: subgroups of finite, abelian, nilpotent, solvable or torsion-free groups have the same property, subgroups of free groups are free (the Nielsen–Schreier theorem), and a finitely generated subgroup of a group with solvable word problem has solvable word problem. So a finitely presented group without the property, for example a nonabelian free group of rank $2$ for finiteness, abelianness, nilpotency and solvability, the group $\mathbb{Z}/2$ for freeness and torsion-freeness, and a group with unsolvable word problem for the last property, embeds in no group with it. The Adian–Rabin theorem then applies.
 
 ## Sources
 

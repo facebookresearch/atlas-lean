@@ -1,4 +1,4 @@
-# Groups of piecewise affine permutations meeting the continuous ones in a group F(r, Λ, A) have hereditarily undecidable theory
+# Groups of piecewise affine permutations meeting the continuous ones in a group F(r, Λ, A) with Λ ≠ {1} have hereditarily undecidable theory
 
 The elementary theory of every Thompson group $F$, $T$, $V$, every Higman group $G_{n,r}$, and every group of piecewise affine permutations of an interval that meets the continuous ones in a group $F(r, \Lambda, A)$ with $\Lambda \ne \{1\}$, is hereditarily undecidable.
 

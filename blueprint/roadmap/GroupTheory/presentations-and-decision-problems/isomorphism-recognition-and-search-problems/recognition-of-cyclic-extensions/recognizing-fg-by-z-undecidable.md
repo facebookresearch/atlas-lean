@@ -21,7 +21,7 @@ Hence membership in the families of finitely presented-by-$\mathbb{Z}$ and of fi
 
 ## Expansion
 
-If $K$ is a finitely presented perfect group, then $K * \mathbb{Z}$ has Betti number $1$ and its unique base group is a free product of infinitely many copies of $K$, which is finitely generated (finitely presented, abelian, finite, free) exactly when $K$ is trivial. An algorithm for the theorem's problem would therefore decide triviality of finitely presented perfect groups, after first checking that the abelianization is trivial, contradicting the Adian–Rabin theorem. The statement on $\Sigma^1$ follows because $G$ is finitely generated-by-$\mathbb{Z}$ exactly when both rank-one characters with kernel $K$ lie in $\Sigma^1(G)$; this characterization of Bieri, Neumann and Strebel, and the invariant $\Sigma^1$ itself, have no page here.
+If $K$ is a finitely presented perfect group, then $K * \mathbb{Z}$ has Betti number $1$ and its unique base group is a free product of infinitely many copies of $K$, which is finitely generated (finitely presented, abelian, finite, free) exactly when $K$ is trivial. An algorithm for the theorem's problem would therefore decide triviality of finitely presented perfect groups, after first checking that the abelianization is trivial, contradicting the Adian–Rabin theorem. The statement on $\Sigma^1$ follows because $G$ is finitely generated-by-$\mathbb{Z}$ exactly when both rank-one characters with kernel $K$ lie in $\Sigma^1(G)$; a good expansion links pages for this characterization of Bieri, Neumann and Strebel and for the invariant $\Sigma^1$ itself.
 
 ## Sources
 

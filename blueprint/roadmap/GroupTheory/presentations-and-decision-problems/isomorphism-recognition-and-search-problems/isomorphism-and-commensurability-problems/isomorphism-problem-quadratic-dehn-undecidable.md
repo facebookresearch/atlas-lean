@@ -17,7 +17,7 @@ By contrast, the isomorphism problem is solvable for hyperbolic groups (Sela; Da
 
 ## Expansion
 
-The proof builds on the authors' construction of finitely presented groups with quadratic Dehn function from $S$-machines, as in their group with quadratic Dehn function and undecidable conjugacy problem. Starting from a Turing machine $M_0$ whose language of accepted input words is not recursive, the source builds finitely presented groups $G_k$ with quadratic Dehn function, one for each input word $\alpha_k$, such that $G_k$ is isomorphic to a fixed group $\bar G$ exactly when $M_0$ accepts $\alpha_k$ (Lemma 4.10 and the proof of Theorem 1.1). The $S$-machine construction and its lemmas have no page here.
+The proof builds on the authors' construction of finitely presented groups with quadratic Dehn function from $S$-machines, as in their group with quadratic Dehn function and undecidable conjugacy problem. Starting from a Turing machine $M_0$ whose language of accepted input words is not recursive, the source builds finitely presented groups $G_k$ with quadratic Dehn function, one for each input word $\alpha_k$, such that $G_k$ is isomorphic to a fixed group $\bar G$ exactly when $M_0$ accepts $\alpha_k$ (Lemma 4.10 and the proof of Theorem 1.1). A good expansion links pages for the $S$-machine construction and its lemmas.
 
 ## Sources
 
