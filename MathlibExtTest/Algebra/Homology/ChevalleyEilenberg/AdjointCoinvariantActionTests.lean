@@ -47,6 +47,7 @@ local instance : MonoidalCategory (ModuleCat ℤ) :=
   ModuleCat.UniverseTensor.monoidalCategory.{0,0} (R := ℤ)
 local instance : MonoidalPreadditive (ModuleCat ℤ) :=
   ModuleCat.UniverseTensor.monoidalPreadditive.{0,0} (R := ℤ)
+local instance : CategoryTheory.Linear ℤ (ModuleCat ℤ) := ModuleCat.instLinear
 local instance : MonoidalLinear ℤ (ModuleCat ℤ) :=
   ModuleCat.UniverseTensor.monoidalLinear.{0,0} (R := ℤ)
 local instance : MonoidalClosed (ModuleCat ℤ) :=
@@ -164,7 +165,7 @@ example : flipQ ≠ 𝟙 Q := by
 
 example : ((adjointCoinvariantComul ℤ Mat incl).f 1).hom identityClass ≠ 0 := by
   letI : ComonObj Q := adjointCoinvariantComonObj ℤ Mat incl
-  let T := HomologicalComplex.tensorHom (adjointCoinvariantCounit ℤ Mat incl) (𝟙 Q)
+  let T := (ComonObj.counit (X := Q)) ⊗ₘ (𝟙 Q)
   have h : adjointCoinvariantComul ℤ Mat incl ≫ T = (λ_ Q).inv := by
     simpa only [Category.id_comp] using ComonObj.counit_comul_hom (𝟙 Q)
   intro hz
