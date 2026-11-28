@@ -74,7 +74,11 @@ def PatternWellFormed (k : ℕ) (AH : List (ℕ × ℕ)) : Prop :=
   AH.Nodup ∧ ∀ a ∈ AH, a.1 < k ∧ a.2 < k ∧ a.1 ≠ a.2
 
 /-- An instance: vertex count `n` of `G` (vertices `0, ..., n - 1`), arc list of `G`, and the
-prescribed images `[m 0, ..., m (k - 1)]` of the pattern vertices. -/
+prescribed images `[m 0, ..., m (k - 1)]` of the pattern vertices. The raw type is any natural
+`n`, any list of natural pairs and an arbitrary list of natural image labels: repeated, loop and
+out-of-range arcs, and image lists of any length, with repeated labels or labels at least `n`,
+are representable; `WellFormed k` asks for distinct loopless arcs between vertices below `n` and
+for exactly `k` pairwise distinct images below `n`. -/
 abbrev FixedVertexDirectedSubgraphHomeomorphismInstance := ℕ × List (ℕ × ℕ) × List ℕ
 
 /-- Well-formedness of an instance for a pattern with `k` vertices: the arcs of `G` are distinct,
@@ -86,7 +90,10 @@ def WellFormed (k : ℕ) (i : FixedVertexDirectedSubgraphHomeomorphismInstance) 
 /-- `G` contains a subdivision of the pattern with arc list `AH` and branch vertices `m`: the
 `j`-th path is a directed path from `m u` to `m v` for the `j`-th arc `(u, v)` of `AH`, every
 prescribed vertex on it is one of its two ends, and two different paths share only prescribed
-vertices. -/
+vertices. A path is a nonempty list of distinct natural labels in which each consecutive pair is
+an entry of the arc list of `G` (`IsDirectedPath`). The vertex count `n` is not read, so labels
+are not checked against it here (under `WellFormed` every arc has both ends below `n`). The
+image `m u` is entry `u` of the image list, read as `0` past its end. -/
 def FixedVertexDirectedSubgraphHomeomorphismFeasible (AH : List (ℕ × ℕ))
     (i : FixedVertexDirectedSubgraphHomeomorphismInstance) : Prop :=
   ∃ paths : List (List ℕ),
@@ -96,7 +103,10 @@ def FixedVertexDirectedSubgraphHomeomorphismFeasible (AH : List (ℕ × ℕ))
 
 open Classical in
 /-- FIXED-VERTEX DIRECTED SUBGRAPH HOMEOMORPHISM for the pattern `(k, AH)`, as a decision problem
-over bitstrings. -/
+over bitstrings. It is defined for any natural `k` and any arc list `AH`: the pattern is not
+validated here (`PatternWellFormed` is a hypothesis of the theorem below, not part of the
+problem), and a bitstring is accepted when it decodes to an instance that is well formed for `k`
+and feasible for `AH`. -/
 noncomputable def fixedVertexDirectedSubgraphHomeomorphismDec (k : ℕ) (AH : List (ℕ × ℕ)) :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
