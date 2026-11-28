@@ -22,7 +22,7 @@ Let A be an associative unital ring, M an A-bimodule with commuting
 actions, and ι a finite index type with decidable equality.
 The coefficient matrix module Mat_ι(M) has actions
 (BX)_{ij}=∑_p B_{ip}•X_{pj},
-(XB)_{ij}=∑_q X_{iq}•B_{qj}.
+(XB)_{ij}=∑_q op(B_{qj}) • X_{iq}.
 The right action is represented over Mat_ι(A)ᵐᵒᵖ.
 For M=A these are the regular matrix multiplications.
 
@@ -42,7 +42,7 @@ Reference: C. A. Weibel, An Introduction to Homological Algebra, §9.5.
 noncomputable section
 
 open CategoryTheory
-open scoped BigOperators TensorProduct
+open scoped BigOperators TensorProduct Matrix.Module
 
 namespace ModuleCat.Algebra.Hochschild.Matrix.Coefficients
 
@@ -54,12 +54,14 @@ variable (A : Type v) [Ring A] (M : Type w) [AddCommGroup M]
 /-- Let A be a ring, M a left A-module and ι finite with
 decidable equality. The left Mat_ι(A)-action on Mat_ι(M) is
 (B•X)_{ij}=∑_p B_{ip}•X_{pj}. -/
+@[instance_reducible]
 def leftModule [Module A M] : Module (Matrix ι ι A) (Matrix ι ι M) :=
   Matrix.Module.matrixModule
 
 /-- Let A be a ring, M a right A-module and ι finite with
 decidable equality. The Mat_ι(A)ᵐᵒᵖ-action is
-(op B•X)_{ij}=∑_q X_{iq}•B_{qj}, using the right A-action. -/
+(op B•X)_{ij}=∑_q op(B_{qj}) • X_{iq}, using the right A-action. -/
+@[instance_reducible]
 def rightModule [Module Aᵐᵒᵖ M] : Module (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) := by
   letI rows : Module (Matrix ι ι Aᵐᵒᵖ) (Matrix ι ι M) := Matrix.Module.matrixModule
   letI transposed : Module (Matrix ι ι Aᵐᵒᵖ) (Matrix ι ι M) :=
@@ -150,12 +152,7 @@ theorem leftTower [Module A M] [IsScalarTower k A M] :
     letI : Module (Matrix ι ι A) (Matrix ι ι M) := leftModule A M ι
     IsScalarTower k (Matrix ι ι A) (Matrix ι ι M) := by
   let : Module (Matrix ι ι A) (Matrix ι ι M) := leftModule A M ι
-  apply IsScalarTower.of_algebraMap_smul
-  intro c X
-  ext i j
-  rw [left_smul_apply]
-  simp [Matrix.algebraMap_matrix_apply,
-    IsScalarTower.algebraMap_smul A]
+  infer_instance
 
 /-- Let k be commutative, A a k-algebra and M a right A-module
 with compatible k-action. For finite ι with decidable equality,
@@ -183,7 +180,7 @@ variable [Module A M] [Module Aᵐᵒᵖ M] [SMulCommClass A Aᵐᵒᵖ M]
 /-- For k commutative, a k-module M and any matrix index ι,
 the ground action on coefficient matrices is pointwise:
 (λ•X)_{ij}=λ•X_{ij}. -/
-local instance groundMatrixModule : Module k (Matrix ι ι M) := inferInstance
+scoped instance groundMatrixModule : Module k (Matrix ι ι M) := inferInstance
 /-- Let A be an associative unital ring, M an A-bimodule with
 commuting left and right actions, and ι a finite type with decidable
 equality.
@@ -191,7 +188,7 @@ Let k be commutative, A a k-algebra and the two actions on M
 compatible with its k-module structure.
 The left matrix actor is the row-product module
 (B•X)_{ij}=∑_p B_{ip}•X_{pj}. -/
-local instance actorLeftModule : Module (Matrix ι ι A) (Matrix ι ι M) := leftModule A M ι
+scoped instance actorLeftModule : Module (Matrix ι ι A) (Matrix ι ι M) := leftModule A M ι
 /-- Let A be an associative unital ring, M an A-bimodule with
 commuting left and right actions, and ι a finite type with decidable
 equality.
@@ -199,11 +196,16 @@ Let k be commutative, A a k-algebra and the two actions on M
 compatible with its k-module structure.
 The right matrix actor uses
 (op B•X)_{ij}=∑_q op(B_{qj})•X_{iq}. -/
-local instance actorRightModule : Module (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) := rightModule A M ι
-local instance : SMulCommClass (Matrix ι ι A) (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) :=
+scoped instance actorRightModule : Module (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) := rightModule A M ι
+scoped instance actorCommute :
+    SMulCommClass (Matrix ι ι A) (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) :=
   commute A M ι
-local instance : IsScalarTower k (Matrix ι ι A) (Matrix ι ι M) := leftTower A M ι k
-local instance : IsScalarTower k (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) := rightTower A M ι k
+scoped instance actorLeftTower : IsScalarTower k (Matrix ι ι A) (Matrix ι ι M) :=
+  leftTower A M ι k
+scoped instance actorRightTower : IsScalarTower k (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) :=
+  rightTower A M ι k
+
+open scoped ModuleCat.Algebra.Hochschild.Matrix.Coefficients
 
 /-- Let A be an associative unital ring, M an A-bimodule with
 commuting left and right actions, and ι a finite type with decidable
@@ -256,11 +258,11 @@ Let k be commutative, A a k-algebra and the two actions on M
 compatible with its k-module structure.
 The first face sends X⊗B_1⊗⋯⊗B_{n+1} to
 (XB_1)⊗B_2⊗⋯⊗B_{n+1}, where
-(XB_1)_{ij}=∑_q X_{iq}•(B_1)_{qj}. -/
+(XB_1)_{ij}=∑_q op((B_1)_{qj}) • X_{iq}. -/
 theorem face_first_tprod (n : ℕ) (X : Matrix ι ι M)
     (a : Fin (n + 1) → Matrix ι ι A) :
     (face A M ι k n 0).hom (X ⊗ₜ[k] PiTensorProduct.tprod k a) =
-      (fun i j => ∑ q : ι, MulOpposite.op (a 0 q j) • X i q) ⊗ₜ[k]
+      (Matrix.of fun i j => ∑ q : ι, MulOpposite.op (a 0 q j) • X i q) ⊗ₜ[k]
         PiTensorProduct.tprod k (ModuleCat.Algebra.Hochschild.hochschildDropFirst a) := by
   change (ModuleCat.Algebra.Hochschild.face k (Matrix ι ι A) (Matrix ι ι M) n 0).hom
     (X ⊗ₜ[k] PiTensorProduct.tprod k a) = _
@@ -295,7 +297,7 @@ The last face sends X⊗B_1⊗⋯⊗B_{n+1} to
 theorem face_last_tprod (n : ℕ) (X : Matrix ι ι M)
     (a : Fin (n + 1) → Matrix ι ι A) :
     (face A M ι k n (Fin.last (n + 1))).hom (X ⊗ₜ[k] PiTensorProduct.tprod k a) =
-      (fun i j => ∑ p : ι, a (Fin.last n) i p • X p j) ⊗ₜ[k]
+      (Matrix.of fun i j => ∑ p : ι, a (Fin.last n) i p • X p j) ⊗ₜ[k]
         PiTensorProduct.tprod k (ModuleCat.Algebra.Hochschild.hochschildDropLast a) := by
   change (ModuleCat.Algebra.Hochschild.face k (Matrix ι ι A) (Matrix ι ι M)
     n (Fin.last (n + 1))).hom (X ⊗ₜ[k] PiTensorProduct.tprod k a) = _

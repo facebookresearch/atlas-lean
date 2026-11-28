@@ -53,39 +53,22 @@ variable (k : Type u) [CommRing k] (ι : Type z)
 variable {A : Type v} [AddCommGroup A] [Module k A]
 variable {M : Type w} [AddCommGroup M] [Module k M]
 
-/-- Let k be commutative, M a k-module, ι any index type and b∈ι.
-The corner linear map sends m to the matrix having entry m at
-(b,b) and zero elsewhere. -/
-def cornerLinear (b : ι) : M →ₗ[k] Matrix ι ι M := by
-  classical
-  exact Matrix.singleLinearMap k b b
-
-open Classical in
-@[simp]
-theorem cornerLinear_apply (b : ι) (m : M) (i j : ι) :
-    cornerLinear k ι b m i j = if i = b then if j = b then m else 0 else 0 := by
-  classical
-  change Matrix.single b b m i j = _
-  rw [Matrix.single_apply, (eq_comm : b = i ↔ i = b),
-    (eq_comm : b = j ↔ j = b), ite_and]
-
 variable [Fintype ι]
 
-/-- For k commutative, M a k-module and finite ι, the k-linear
+/-- For k commutative, M a k-module and finite ι with decidable equality, the k-linear
 equivalence Mat_ι(k)⊗[k]M≃Mat_ι(M) sends U⊗m to the
 entrywise scalar matrix (U_{ij}•m). -/
-def matrixTensorEquiv : Matrix ι ι k ⊗[k] M ≃ₗ[k] Matrix ι ι M := by
-  classical
+def matrixTensorEquiv [DecidableEq ι] : Matrix ι ι k ⊗[k] M ≃ₗ[k] Matrix ι ι M := by
   exact (TensorProduct.comm k (Matrix ι ι k) M).trans
     ((TensorProduct.congr (LinearEquiv.refl k M) (Matrix.ofLinearEquiv k).symm).trans
       ((TensorProduct.piRight k k M (fun _ : ι => ι → k)).trans
         ((LinearEquiv.piCongrRight fun _ : ι =>
           TensorProduct.piScalarRight k k M ι).trans (Matrix.ofLinearEquiv k))))
 
-/-- For k commutative, M a k-module and finite ι, the finite
+/-- For k commutative, M a k-module and finite ι with decidable equality, the finite
 matrix tensor equivalence satisfies (U⊗m)_{ij}↦U_{ij}•m. -/
 @[simp]
-theorem matrixTensorEquiv_tmul (U : Matrix ι ι k) (m : M) (i j : ι) :
+theorem matrixTensorEquiv_tmul [DecidableEq ι] (U : Matrix ι ι k) (m : M) (i j : ι) :
     matrixTensorEquiv k ι (U ⊗ₜ[k] m) i j = U i j • m := by
   classical
   change TensorProduct.piScalarRight k k M ι
@@ -123,43 +106,48 @@ theorem generalizedTrace_tmul_tprod (n : ℕ) (m : Matrix ι ι M)
   simp only [generalizedTrace, LinearMap.sum_apply, TensorProduct.map_tmul,
     PiTensorProduct.map_tprod, Matrix.entryLinearMap_apply]
 
-/-- Let k be commutative, A,M k-modules, ι an index type and b∈ι.
+section Corner
+
+variable [DecidableEq ι]
+
+/-- Let k be commutative, A,M k-modules, ι have decidable equality and b∈ι.
 The corner tensor map applies the single-entry (b,b) inclusion to
 the coefficient and to all n tail factors. -/
 def cornerTensor (b : ι) (n : ℕ) :
     M ⊗[k] TensorPower k n A →ₗ[k]
       Matrix ι ι M ⊗[k] TensorPower k n (Matrix ι ι A) :=
-  TensorProduct.map (cornerLinear k ι b)
-    (PiTensorProduct.map fun _ : Fin n => cornerLinear k ι b)
+  TensorProduct.map (Matrix.singleLinearMap k b b)
+    (PiTensorProduct.map fun _ : Fin n => Matrix.singleLinearMap k b b)
 
 omit [Fintype ι] in
 @[simp]
 theorem cornerTensor_tmul_tprod (b : ι) (n : ℕ) (m : M) (a : Fin n → A) :
     cornerTensor k ι b n (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
-      cornerLinear k ι b m ⊗ₜ[k]
-        PiTensorProduct.tprod k (fun j => cornerLinear k ι b (a j)) := by
+      Matrix.singleLinearMap k b b m ⊗ₜ[k]
+        PiTensorProduct.tprod k (fun j => Matrix.singleLinearMap k b b (a j)) := by
   simp only [cornerTensor, TensorProduct.map_tmul, PiTensorProduct.map_tprod]
 omit [Fintype ι] in
-/-- Let k be commutative, A,M k-modules and b an index. In a
-corner-inserted tensor, each nonconstant closed index cycle has a
+/-- Let k be commutative, A,M k-modules, ι have decidable equality, and b be an index. In a
+corner-inserted tensor, each cycle other than the constant cycle at b has a
 zero entry, so its generalized-trace summand is zero. -/
 private theorem corner_summand_eq_zero (b : ι) (n : ℕ) (m : M) (a : Fin n → A)
     (γ : Fin (n + 1) → ι) (hγ : γ ≠ fun _ => b) :
-    cornerLinear k ι b m (γ 0) (γ 1) ⊗ₜ[k]
+    Matrix.singleLinearMap k b b m (γ 0) (γ 1) ⊗ₜ[k]
       PiTensorProduct.tprod k
-        (fun j => cornerLinear k ι b (a j) (γ j.succ) (γ (j.succ + 1))) = 0 := by
+        (fun j => Matrix.singleLinearMap k b b (a j) (γ j.succ) (γ (j.succ + 1))) = 0 := by
   classical
   have hn : ¬ ∀ j, γ j = b := fun h => hγ (funext h)
   obtain ⟨j, hj⟩ := not_forall.mp hn
   revert hj
   refine Fin.cases ?_ (fun j => ?_) j
   · intro hj
-    simp only [cornerLinear_apply, hj, ite_false, TensorProduct.zero_tmul]
+    simp only [Matrix.singleLinearMap_apply, Matrix.single_apply, eq_comm, ite_and, hj, ite_false,
+      TensorProduct.zero_tmul]
   · intro hj
     have hz :
-        (fun i : Fin n => cornerLinear k ι b (a i)
+        (fun i : Fin n => Matrix.singleLinearMap k b b (a i)
           (γ i.succ) (γ (i.succ + 1))) j = 0 := by
-      simp only [cornerLinear_apply, hj, ite_false]
+      simp only [Matrix.singleLinearMap_apply, Matrix.single_apply, eq_comm, ite_and, hj, ite_false]
     rw [(PiTensorProduct.tprod k).map_coord_zero j hz, TensorProduct.tmul_zero]
 
 /-- Let k be a commutative ring, A and M k-modules, and ι a finite
@@ -168,20 +156,20 @@ For b∈ι, generalized trace of the corner-inserted tensor
 E_{bb}(m)⊗E_{bb}(a_1)⊗⋯⊗E_{bb}(a_n) is m⊗a_1⊗⋯⊗a_n. -/
 theorem generalizedTrace_corner_tprod (b : ι) (n : ℕ) (m : M) (a : Fin n → A) :
     generalizedTrace k ι n
-      (cornerLinear k ι b m ⊗ₜ[k]
-        PiTensorProduct.tprod k (fun j => cornerLinear k ι b (a j))) =
+      (Matrix.singleLinearMap k b b m ⊗ₜ[k]
+        PiTensorProduct.tprod k (fun j => Matrix.singleLinearMap k b b (a j))) =
       m ⊗ₜ[k] PiTensorProduct.tprod k a := by
   classical
   rw [generalizedTrace_tmul_tprod]
   calc
-    _ = cornerLinear k ι b m b b ⊗ₜ[k]
-        PiTensorProduct.tprod k (fun j => cornerLinear k ι b (a j) b b) := by
+    _ = Matrix.singleLinearMap k b b m b b ⊗ₜ[k]
+        PiTensorProduct.tprod k (fun j => Matrix.singleLinearMap k b b (a j) b b) := by
       apply Finset.sum_eq_single (fun _ : Fin (n + 1) => b)
       · intro γ _ hγ
         exact corner_summand_eq_zero k ι b n m a γ hγ
       · simp
     _ = m ⊗ₜ[k] PiTensorProduct.tprod k a := by
-      simp only [cornerLinear_apply, ite_true]
+      simp only [Matrix.singleLinearMap_apply, Matrix.single_apply, eq_comm, ite_and, ite_true]
 
 /-- Let k be a commutative ring, A and M k-modules, and ι a finite
 index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.
@@ -201,6 +189,8 @@ theorem generalizedTrace_comp_cornerTensor (b : ι) (n : ℕ) :
       m ⊗ₜ[k] PiTensorProduct.tprod k a
   rw [cornerTensor_tmul_tprod]
   exact generalizedTrace_corner_tprod k ι b n m a
+
+end Corner
 
 /-- Let k be a commutative ring, A and M k-modules, and ι a finite
 index type. Set C_n(A,M)=M⊗[k]A^{⊗n}.

@@ -46,7 +46,7 @@ theorem induction {C : UniversalEnvelopingAlgebra R L → Prop}
     (add : ∀ a b, C a → C b → C (a + b))
     (a : UniversalEnvelopingAlgebra R L) : C a := by
   have hsurj : Function.Surjective (mkAlgHom R L) :=
-    fun a => Quotient.exists_rep a
+    RingCon.mkₐ_surjective (α := R) (UniversalEnvelopingAlgebra.ringCon R L)
   obtain ⟨t, rfl⟩ := hsurj a
   induction t using TensorAlgebra.induction with
   | algebraMap r =>
