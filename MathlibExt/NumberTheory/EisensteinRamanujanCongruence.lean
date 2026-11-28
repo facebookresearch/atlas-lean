@@ -8,17 +8,27 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
+public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.RingTheory.PowerSeries.PiTopology
 public import Mathlib.Topology.Instances.Rat
 import Mathlib.Combinatorics.Enumerative.Pentagonal.EulerFunction
+import Mathlib.LinearAlgebra.Matrix.Block
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
 import MathlibExt.NumberTheory.GeneralizedTau
 import MathlibExt.NumberTheory.ModularForms.QParamProduct
 
 /-!
-# Lu's one-term, two-term and three-term Eisenstein congruences
+# Lu's Eisenstein congruences
+
+For even weights $k \ge 12$ with $k \ne 14$, the coefficients of $G_k$ are congruent to those
+of a linear combination of $\Delta^i E_{k-12i}$, with multipliers determined by the coefficients
+of $q, \dots, q^m$, where $m$ is the dimension of the space of cusp forms. The modulus is the
+largest divisor of the absolute numerator of the constant term of $G_k$ coprime to the corresponding
+numerators at weights $k-12i$ for $1 \le i \le \lfloor k/12 \rfloor$ (using $1$ at weights $0$
+and $2$).
 
 In the six weights with a one-dimensional cusp space, the coefficients of the Eisenstein
 series are congruent to those of the discriminant times a normalized Eisenstein series.
@@ -31,16 +41,64 @@ powers of the discriminant and coefficients found by successive elimination.
 ## References
 
 * Qing Lu, *Explicit Congruences for Modular Forms of Higher Weights*, Journal of Integer
-  Sequences 29 (2026), Article 26.5.1, pp. 1–12, Theorem 1 and Corollaries 5, 6 and 7.
+  Sequences 29 (2026), Article 26.5.1, pp. 1–12, Theorem 1 and Corollaries 3, 5, 6 and 7.
 * B. Datskovsky and P. Guerzhoy, *On Ramanujan congruences for modular forms of integral and
   half-integral weights*, Proceedings of the American Mathematical Society 124 (1996),
   pp. 2283–2291, proof of Theorem 1 (the integral form subtracted from the Eisenstein series).
+* Fred Diamond and Jerry Shurman, *A First Course in Modular Forms*, Graduate Texts in
+  Mathematics 228, Springer-Verlag, 2005, Section 3.5 (level-one dimension formula).
 -/
 
 open PowerSeries
 open scoped PowerSeries.WithPiTopology
 
 namespace MetaMathlibExt
+
+private lemma coeff_two_mul_powerSeries {R : Type*} [CommRing R] (A B : R⟦X⟧) :
+    coeff 2 (A * B) = coeff 0 A * coeff 2 B + coeff 1 A * coeff 1 B + coeff 2 A * coeff 0 B := by
+  have h : Finset.antidiagonal 2 = {(0, 2), (1, 1), (2, 0)} := by decide
+  rw [coeff_mul, h]
+  simp [add_assoc]
+
+/-- Every natural power of Euler's pentagonal series has constant coefficient $1$. -/
+public lemma constantCoeff_pentagonalSeries_pow (R : Type*) [CommRing R] (m : ℕ) :
+    constantCoeff (pentagonalSeries R ^ m) = 1 := by
+  rw [map_pow, ← coeff_zero_eq_constantCoeff_apply,
+    show (0 : ℕ) = pentagonal 0 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
+  simp
+
+/-- The coefficient of $q$ in the $m$-th power of Euler's pentagonal series is $-m$. -/
+public lemma coeff_one_pentagonalSeries_pow (R : Type*) [CommRing R] (m : ℕ) :
+    coeff 1 (pentagonalSeries R ^ m) = -(m : R) := by
+  have h : coeff 1 (pentagonalSeries R) = -1 := by
+    rw [show (1 : ℕ) = pentagonal 1 by norm_num [pentagonal_def],
+      coeff_pentagonalSeries_pentagonal, Int.negOnePow_one]
+    simp
+  have h₀ : constantCoeff (pentagonalSeries R) = 1 := by
+    simpa only [pow_one] using constantCoeff_pentagonalSeries_pow R 1
+  rw [coeff_one_pow, h, h₀]
+  simp
+
+/-- The coefficient of $q^2$ in the $m$-th power of Euler's pentagonal series is
+$\binom{m}{2}-m$, with the subtraction taken in the coefficient ring. -/
+public lemma coeff_two_pentagonalSeries_pow (R : Type*) [CommRing R] (m : ℕ) :
+    coeff 2 (pentagonalSeries R ^ m) = (m.choose 2 : R) - (m : R) := by
+  have h₀ : coeff 0 (pentagonalSeries R) = 1 := by
+    simpa only [pow_one, ← coeff_zero_eq_constantCoeff_apply] using
+      constantCoeff_pentagonalSeries_pow R 1
+  have h₁ : coeff 1 (pentagonalSeries R) = -1 := by
+    simpa only [pow_one, Nat.cast_one] using coeff_one_pentagonalSeries_pow R 1
+  have h₂ : coeff 2 (pentagonalSeries R) = -1 := by
+    rw [show (2 : ℕ) = pentagonal (-1) by norm_num [pentagonal_def],
+      coeff_pentagonalSeries_pentagonal, Int.negOnePow_neg, Int.negOnePow_one]
+    simp
+  induction m with
+  | zero => simp [coeff_one]
+  | succ m ih =>
+    rw [pow_succ, coeff_two_mul_powerSeries, h₀, h₁, h₂, coeff_zero_eq_constantCoeff_apply,
+      constantCoeff_pentagonalSeries_pow, coeff_one_pentagonalSeries_pow, ih]
+    simp only [Nat.choose_succ_succ' m 1, Nat.choose_one_right, Nat.cast_add, Nat.cast_succ]
+    ring
 
 namespace eisenstein_congr_delta_mul_eisenstein_dim_one
 
@@ -263,54 +321,11 @@ private lemma coeff_cancelCoeff (j n : ℕ) (B A : ℚ⟦X⟧) :
   change coeff n (A - coeff j A • B) = _
   rw [map_sub, coeff_smul, smul_eq_mul]
 
-private lemma coeff_two_mul_rat (A B : ℚ⟦X⟧) :
-    coeff 2 (A * B) = coeff 0 A * coeff 2 B + coeff 1 A * coeff 1 B + coeff 2 A * coeff 0 B := by
-  have h : Finset.antidiagonal 2 = {(0, 2), (1, 1), (2, 0)} := by decide
-  rw [coeff_mul, h]
-  simp [add_assoc]
-
 private abbrev deltaRat : ℚ⟦X⟧ := deltaZ.map (Int.castRingHom ℚ)
 
 private abbrev deltaUnit : ℚ⟦X⟧ := pentagonalSeries ℚ ^ 24
 
 private lemma deltaRat_eq_X_mul : deltaRat = X * deltaUnit := map_deltaZ ℚ
-
-private lemma deltaUnit_coeff_zero : coeff 0 deltaUnit = 1 := by
-  have hp : coeff 0 (pentagonalSeries ℚ) = 1 := by
-    rw [show (0 : ℕ) = pentagonal 0 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
-    decide
-  rw [coeff_zero_eq_constantCoeff_apply, map_pow, ← coeff_zero_eq_constantCoeff_apply, hp, one_pow]
-
-private lemma deltaUnit_coeff_one_two : coeff 1 deltaUnit = -24 ∧ coeff 2 deltaUnit = 252 := by
-  let P := pentagonalSeries ℚ
-  have hp₀ : coeff 0 P = 1 := by
-    dsimp [P]
-    rw [show (0 : ℕ) = pentagonal 0 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
-    decide
-  have hp₁ : coeff 1 P = -1 := by
-    dsimp [P]
-    rw [show (1 : ℕ) = pentagonal 1 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
-    decide
-  have hp₂ : coeff 2 P = -1 := by
-    dsimp [P]
-    have h : (2 : ℕ) = pentagonal (-1) := by norm_num [pentagonal_def]
-    rw [h, coeff_pentagonalSeries_pentagonal]
-    decide
-  have hpow (m : ℕ) : coeff 1 (P ^ m) = -(m : ℚ) ∧
-      coeff 2 (P ^ m) = (m : ℚ) * ((m : ℚ) - 3) / 2 := by
-    induction m with
-    | zero => simp [coeff_one]
-    | succ m ih =>
-      have hm : coeff 0 (P ^ m) = 1 := by
-        rw [coeff_zero_eq_constantCoeff_apply, map_pow, ← coeff_zero_eq_constantCoeff_apply, hp₀,
-          one_pow]
-      rw [pow_succ, coeff_one_mul, coeff_two_mul_rat, ← coeff_zero_eq_constantCoeff_apply P,
-        ← coeff_zero_eq_constantCoeff_apply (P ^ m), hm, hp₀, hp₁, hp₂, ih.1, ih.2]
-      push_cast
-      constructor <;> ring
-  have h24 := hpow 24
-  norm_num at h24
-  exact h24
 
 private def eisensteinRat (w : ℕ) : ℚ⟦X⟧ := (sigma w 0)⁻¹ • PowerSeries.mk (sigma w)
 
@@ -337,7 +352,7 @@ private lemma coeff_basisRat_le (k i n : ℕ) (hn : n ≤ i)
     (hc : sigma (k - 12 * i) 0 ≠ 0) : coeff n (basisRat k i) = if n = i then 1 else 0 := by
   rcases hn.eq_or_lt with rfl | hn
   · rw [coeff_basisRat, ite_eq_left le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply,
-      map_mul, map_pow, ← coeff_zero_eq_constantCoeff_apply deltaUnit, deltaUnit_coeff_zero,
+      map_mul, map_pow, constantCoeff_pentagonalSeries_pow,
       ← coeff_zero_eq_constantCoeff_apply (eisensteinRat _), coeff_eisensteinRat, div_self hc]
     simp
   · simp [coeff_basisRat, hn.ne, not_le.mpr hn]
@@ -347,22 +362,29 @@ private lemma basisRat_first_coeffs {k : ℕ} (hk : 36 ≤ k)
     coeff 2 (basisRat k 1) = 1 / sigma (k - 12) 0 - 24 ∧
     coeff 3 (basisRat k 1) = 252 + (2 ^ (k - 13) - 23) / sigma (k - 12) 0 ∧
     coeff 3 (basisRat k 2) = 1 / sigma (k - 24) 0 - 48 := by
-  have h₁ := deltaUnit_coeff_one_two.1
-  have h₂ := deltaUnit_coeff_one_two.2
+  have h₁ : coeff 1 deltaUnit = -24 := coeff_one_pentagonalSeries_pow ℚ 24
+  have h₂ : coeff 2 deltaUnit = 252 := by
+    rw [coeff_two_pentagonalSeries_pow, show (24 : ℕ).choose 2 = 276 by decide]
+    norm_num
   have hw₁ : k - 12 ≠ 0 := by omega
   have hw₂ : k - 24 ≠ 0 := by omega
   have hE₁ : coeff 0 (eisensteinRat (k - 12)) = 1 := by simp [coeff_eisensteinRat, hs₁]
   have hE₂ : coeff 0 (eisensteinRat (k - 24)) = 1 := by simp [coeff_eisensteinRat, hs₂]
   have hD₂ : coeff 1 (deltaUnit ^ 2) = -48 := by
-    norm_num [coeff_one_pow, h₁, ← coeff_zero_eq_constantCoeff_apply, deltaUnit_coeff_zero]
+    change coeff 1 ((pentagonalSeries ℚ ^ 24) ^ 2) = -48
+    rw [← pow_mul, coeff_one_pentagonalSeries_pow]
+    norm_num
   have hD₀ : constantCoeff (deltaUnit ^ 2) = 1 := by
-    simp [← coeff_zero_eq_constantCoeff_apply deltaUnit, deltaUnit_coeff_zero]
+    change constantCoeff ((pentagonalSeries ℚ ^ 24) ^ 2) = 1
+    rw [← pow_mul, constantCoeff_pentagonalSeries_pow]
   constructor
-  · norm_num [coeff_basisRat, coeff_one_mul, ← coeff_zero_eq_constantCoeff_apply, h₁, hE₁,
-      deltaUnit_coeff_zero, coeff_eisensteinRat, sigma_one hw₁]
+  · norm_num [coeff_basisRat, coeff_one_mul, h₁, hE₁, constantCoeff_pentagonalSeries_pow,
+      ← coeff_zero_eq_constantCoeff_apply (eisensteinRat (k - 12)),
+      coeff_eisensteinRat, sigma_one hw₁]
     ring
   constructor
-  · norm_num [coeff_basisRat, coeff_two_mul_rat, h₁, h₂, hE₁, deltaUnit_coeff_zero,
+  · norm_num [coeff_basisRat, coeff_two_mul_powerSeries, h₁, h₂, hE₁,
+      coeff_zero_eq_constantCoeff_apply deltaUnit, constantCoeff_pentagonalSeries_pow,
       coeff_eisensteinRat, sigma_one hw₁, sigma_prime hw₁ Nat.prime_two,
       show k - 12 - 1 = k - 13 by omega]
     ring
@@ -634,20 +656,6 @@ private lemma coefficient_congruence_three (k : ℕ)
   rw [hEq, coeff_smul, smul_eq_mul, mul_comm, mul_div_assoc]
   exact (coprimeDenRing N).mul_mem hT hcN
 
-private lemma coeff_one_pentagonal : coeff 1 (pentagonalSeries ℤ) = -1 := by
-  have h1 : pentagonal 1 = 1 := by norm_num [pentagonal_def]
-  rw [← h1, coeff_pentagonalSeries_pentagonal]
-  decide
-
-private lemma const_pow_pentagonal (m : ℕ) :
-    constantCoeff (pentagonalSeries ℤ ^ m) = 1 := by
-  rw [map_pow, constantCoeff_pentagonalSeries_int, one_pow]
-
-private lemma coeff_one_pow_pentagonal (m : ℕ) :
-    coeff 1 (pentagonalSeries ℤ ^ m) = -(m : ℤ) := by
-  rw [coeff_one_pow, coeff_one_pentagonal, constantCoeff_pentagonalSeries_int, one_pow, mul_one,
-    mul_neg_one]
-
 private lemma deltaZ_sq_mul (Z : ℤ⟦X⟧) :
     deltaZ ^ 2 * Z = X * (X * (pentagonalSeries ℤ ^ 48 * Z)) := by
   change (X * pentagonalSeries ℤ ^ 24) ^ 2 * Z = _
@@ -793,8 +801,8 @@ private lemma eisenstein_two_step {k w₁ w₂ : ℕ} (hkw : k = 12 + w₁) (hw 
     simpa [coeff_zero_eq_constantCoeff_apply] using hZ₂
   have hA2 : coeff 2 (deltaZ * L_A) = coeff 1 L_A - 24 := by
     change coeff (1 + 1) ((X * pentagonalSeries ℤ ^ 24) * L_A) = _
-    rw [mul_assoc, coeff_succ_X_mul, coeff_one_mul, const_pow_pentagonal,
-      coeff_one_pow_pentagonal, hAc0]
+    rw [mul_assoc, coeff_succ_X_mul, coeff_one_mul, constantCoeff_pentagonalSeries_pow,
+      coeff_one_pentagonalSeries_pow, hAc0]
     push_cast
     ring
   have hs1 : sigma k 1 = 1 := sigma_one hk0
@@ -1121,5 +1129,301 @@ public theorem eisenstein_congr_delta_mul_eisenstein_dim_three (k : ℕ)
     rw [← hcoef]
     exact coefficient_congruence_three k hk N' hdiv hC n
   exact ⟨H, fun n _ => H n⟩
+
+section GeneralCongruence
+
+open UpperHalfPlane EisensteinSeries ModularForm
+open scoped MatrixGroups
+
+noncomputable section
+
+private lemma isRatExpansion_sum_smul {ι : Type*} {k : ℕ} (s : Finset ι)
+    (x : ι → ℚ) (B : ι → ℚ⟦X⟧) (hB : ∀ i, IsRatExpansion k (B i)) :
+    IsRatExpansion k (∑ i ∈ s, x i • B i) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => exact ⟨0, by simp [qExpansion_zero]⟩
+  | insert i s hi ih =>
+    rw [Finset.sum_insert hi, add_comm]
+    have hneg : (-x i) • B i = -(x i • B i) := neg_smul _ _
+    simpa only [hneg, sub_neg_eq_add] using ih.sub_smul (hB i) (-x i)
+
+-- With determinant one the inverse is an adjugate, so it stays in the same subring.
+private lemma inv_mem_subring_of_det_one {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (S : Subring ℚ) (C : Matrix ι ι ℚ) (hdet : C.det = 1) (hC : ∀ i j, C i j ∈ S)
+    (i j : ι) : C⁻¹ i j ∈ S := by
+  let D : Matrix ι ι S := fun i j => ⟨C i j, hC i j⟩
+  have hD : S.subtype.mapMatrix D = C := rfl
+  rw [Matrix.inv_def, hdet, Ring.inverse_one, one_smul, ← hD, ← RingHom.map_adjugate]
+  exact (D.adjugate i j).property
+
+-- As in `coefficient_congruence_three`, compare with an integral form and use
+-- `qExpansion_eq_zero_of_order` to identify the residual expansion.
+private lemma coefficient_congruence_general (k m N : ℕ) (hk : 12 ≤ k) (he : Even k)
+    (hkm : 12 * m ≤ k) (hw : k - 12 * m ∈ ({0, 4, 6, 8, 10, 14} : Finset ℕ))
+    (hinner : ∀ i : Fin m, k - 12 * (i.val + 1) = 0 ∨ 3 ≤ k - 12 * (i.val + 1))
+    (hd : N ∣ (sigma k 0).num.natAbs)
+    (hcop : ∀ i : Fin m, (sigma (k - 12 * (i.val + 1)) 0).num.natAbs.Coprime N)
+    (n : ℕ) :
+    let B (i : Fin m) := basisRat k (i.val + 1)
+    let C : Matrix (Fin m) (Fin m) ℚ := fun i j => coeff (j.val + 1) (B i)
+    let γ := Matrix.vecMul (fun j : Fin m => sigma k (j.val + 1)) C⁻¹
+    ((sigma k n - ∑ i : Fin m, γ i * coeff n (B i)) / N).den.Coprime N := by
+  intro B C γ
+  let w := k - 12 * m
+  have hwt : (k : ℤ) = (w : ℤ) + 12 * (m : ℤ) := by dsimp [w]; omega
+  obtain ⟨H, Z, hZ, hH, -⟩ := integral_eisenstein hw
+  obtain ⟨F₄, Z₄, hZ₄, hF₄, -⟩ := integral_eisenstein (w := 4) (by decide)
+  let L := (Z₄ ^ (3 * m) * Z).map (Int.castRingHom ℚ)
+  have hL : IsRatExpansion k L := by
+    refine ⟨ModularForm.mcast (by push_cast; omega) ((F₄.pow (3 * m)).mul H), ?_⟩
+    simp only [ModularForm.qExpansion_mcast, ModularForm.qExpansion_mul one_pos
+      one_mem_strictPeriods_SL, ModularForm.qExpansion_pow one_pos one_mem_strictPeriods_SL,
+      hF₄, hH, L, map_int_rat_complex, map_mul, map_pow]
+  have hL₀ : coeff 0 L = 1 := by
+    dsimp only [L]
+    rw [coeff_map, coeff_zero_eq_constantCoeff_apply, map_mul, map_pow,
+      ← coeff_zero_eq_constantCoeff_apply Z, ← coeff_zero_eq_constantCoeff_apply Z₄, hZ, hZ₄]
+    simp
+  have heven (i : Fin m) : Even (k - 12 * (i.val + 1)) := by
+    obtain ⟨t, ht⟩ := he
+    exact even_iff_two_dvd.mpr (by omega)
+  have hs (i : Fin m) : sigma (k - 12 * (i.val + 1)) 0 ≠ 0 := by
+    rcases hinner i with h | h
+    · simp [h, sigma]
+    · exact sigma_zero_ne h (heven i)
+  have hB (i : Fin m) : IsRatExpansion k (B i) := by
+    suffices ∃ F : ModularForm 𝒮ℒ (↑(k - 12 * (i.val + 1)) : ℤ),
+        qExpansion 1 F = (eisensteinRat (k - 12 * (i.val + 1))).map ratToComplex by
+      obtain ⟨F, hF⟩ := this
+      exact isRatExpansion_basis k (i.val + 1) (by have := i.isLt; omega) F hF
+    rcases hinner i with h | h
+    · rw [h]
+      refine ⟨(1 : ModularForm 𝒮ℒ 0), ?_⟩
+      rw [ModularForm.qExpansion_one]
+      ext j
+      simp [coeff_eisensteinRat, sigma, coeff_one]
+    · exact ⟨E h, qExpansion_eisensteinRat h (heven i)⟩
+  have htri (i : Fin m) (j : ℕ) (hj : j ≤ i.val + 1) :
+      coeff j (B i) = if j = i.val + 1 then 1 else 0 :=
+    coeff_basisRat_le k _ j hj (hs i)
+  have hB₀ (i : Fin m) : coeff 0 (B i) = 0 := by
+    rw [htri i 0 (by omega), ite_eq_right (by omega)]
+  have hdiag (i : Fin m) : coeff (i.val + 1) (B i) = 1 := by
+    rw [htri i _ le_rfl, ite_eq_left rfl]
+  have hdet : C.det = 1 := by
+    rw [Matrix.det_of_isUpperTriangular (show C.IsUpperTriangular from fun i j hij ↦ by
+      change coeff (j.val + 1) (B i) = 0
+      have h : j.val < i.val := hij
+      rw [htri i (j.val + 1) (by omega), ite_eq_right (by omega)])]
+    simp [C, hdiag]
+  let G := PowerSeries.mk (sigma k)
+  let A := G - sigma k 0 • L
+  let v (P : ℚ⟦X⟧) := Matrix.vecMul (fun j : Fin m => coeff (j.val + 1) P) C⁻¹
+  let T (P : ℚ⟦X⟧) := ∑ i : Fin m, v P i • B i
+  have hA : IsRatExpansion k A := (isRatExpansion_sigma (by omega) he).sub_smul hL _
+  obtain ⟨F, hF⟩ : IsRatExpansion k (A - T A) := by
+    simpa only [one_smul] using hA.sub_smul (isRatExpansion_sum_smul Finset.univ (v A) B hB) 1
+  have hunit : IsUnit C.det := by rw [hdet]; exact isUnit_one
+  have hrow : Matrix.vecMul (v A) C = fun j : Fin m => coeff (j.val + 1) A := by
+    dsimp only [v]
+    rw [Matrix.vecMul_vecMul, Matrix.nonsing_inv_mul _ hunit, Matrix.vecMul_one]
+  have hvanish (j : ℕ) (hj : j < m + 1) : coeff j (A - T A) = 0 := by
+    by_cases hj₀ : j = 0
+    · subst j
+      simp only [A, G, T, map_sub, map_sum, coeff_smul, smul_eq_mul, hL₀, hB₀, coeff_mk,
+        mul_one, mul_zero, Finset.sum_const_zero, sub_self]
+    · let i : Fin m := ⟨j - 1, by omega⟩
+      have hi : i.val + 1 = j := by dsimp [i]; omega
+      have h := congrFun hrow i
+      change Matrix.vecMul (v A) C i = coeff (i.val + 1) A at h
+      rw [Matrix.vecMul_apply_eq_sum] at h
+      simp only [C, hi] at h
+      simpa only [T, map_sub, map_sum, coeff_smul, smul_eq_mul] using sub_eq_zero.mpr h.symm
+  let F' := F.mcast hwt
+  have hF' : qExpansion 1 F' = (A - T A).map ratToComplex := by
+    simpa only [F', ModularForm.qExpansion_mcast] using hF
+  have hOrder : (m : ℕ∞) < (qExpansion 1 F').order := by
+    refine (ENat.natCast_lt_natCast.mpr (Nat.lt_succ_self m)).trans_le
+      (PowerSeries.nat_le_order _ _ ?_)
+    intro j hj
+    rw [hF', coeff_map, hvanish j hj, map_zero]
+  have hH₀ : coeff 0 (qExpansion 1 H) = 1 := by rw [hH, coeff_map, hZ, map_one]
+  have hr : Module.rank ℂ (ModularForm 𝒮ℒ (w : ℤ)) = 1 := by
+    suffices ∀ u : ℕ, u ∈ ({0, 4, 6, 8, 10, 14} : Finset ℕ) →
+        Module.rank ℂ (ModularForm 𝒮ℒ (u : ℤ)) = 1 from this w hw
+    intro u hu
+    have heu : Even u := by fin_cases hu <;> decide
+    rw [dimension_level_one u heu]
+    fin_cases hu <;> norm_num [Nat.modEq_iff_dvd]
+  have hEq : A = T A := sub_eq_zero.mp ((PowerSeries.map_eq_zero _ ratToComplex).mp
+    (hF'.symm.trans (qExpansion_eq_zero_of_order H hH₀ hr m F' hOrder)))
+  have hvA : v A = v G - sigma k 0 • v L := by
+    have h : (fun j : Fin m => coeff (j.val + 1) A) =
+        (fun j : Fin m => coeff (j.val + 1) G) - sigma k 0 • (fun j => coeff (j.val + 1) L) := by
+      funext j
+      simp only [A, map_sub, coeff_smul, Pi.sub_apply, Pi.smul_apply]
+    dsimp only [v]
+    rw [h, Matrix.sub_vecMul, Matrix.smul_vecMul]
+  have hTA : T A = T G - sigma k 0 • T L := by
+    simp only [T, hvA, Pi.sub_apply, Pi.smul_apply, smul_eq_mul, sub_smul, smul_smul,
+      Finset.sum_sub_distrib, Finset.smul_sum]
+  have hGL : G - T G = sigma k 0 • (L - T L) := by
+    calc
+      G - T G = (A - T A) + sigma k 0 • (L - T L) := by
+        rw [hTA, smul_sub]
+        dsimp only [A]
+        abel
+      _ = _ := by rw [sub_eq_zero.mpr hEq, zero_add]
+  let S := coprimeDenRing N
+  have hBmem (i : Fin m) (j : ℕ) : coeff j (B i) ∈ S :=
+    coeff_basisRat_mem_coprimeDenRing (hs i) (hcop i) j
+  have hvmem (i : Fin m) : v L i ∈ S := by
+    dsimp only [v]
+    rw [Matrix.vecMul_apply_eq_sum]
+    exact S.sum_mem fun j _ => S.mul_mem (coeff_map_int_mem_coprimeDenRing N _ _)
+      (inv_mem_subring_of_det_one S C hdet (fun i j => hBmem i (j.val + 1)) j i)
+  have hTmem : coeff n (L - T L) ∈ S := by
+    simp only [T, map_sub, map_sum, coeff_smul, smul_eq_mul]
+    exact S.sub_mem (coeff_map_int_mem_coprimeDenRing N _ _)
+      (S.sum_mem fun i _ => S.mul_mem (hvmem i) (hBmem i n))
+  have hcN : sigma k 0 / N ∈ S := by
+    change (sigma k 0 / N).den.Coprime N
+    simpa using coprime_den hd 1
+  have hcoeff : coeff n (G - T G) / N ∈ S := by
+    rw [hGL, coeff_smul, smul_eq_mul, mul_comm, mul_div_assoc]
+    exact S.mul_mem hTmem hcN
+  change (sigma k n - ∑ i : Fin m, γ i * coeff n (B i)) / N ∈ S
+  simpa only [G, T, v, γ, map_sub, map_sum, coeff_smul, smul_eq_mul, coeff_mk] using hcoeff
+
+end
+end GeneralCongruence
+
+/-- **Lu's congruence for the Eisenstein series $G_k$.** Let $k \ge 12$ be even with $k \ne 14$.
+For $w, n \in \mathbb{N}$ let $\sigma_{-1}(n)$ be $1$ if $n = 0$ and $0$ otherwise; for $w \ge 1$
+let $\sigma_{w-1}(0) = -B_w/(2w)$, where $B_w$ is the $w$-th Bernoulli number, and
+$\sigma_{w-1}(n) = \sum_{d \mid n} d^{w-1}$ for $n \ge 1$. In $\mathbb{Q}[[q]]$ let
+$G_w = \sum_{n \ge 0} \sigma_{w-1}(n) q^n$, let $E_w = G_w/\sigma_{w-1}(0)$ for even $w$, and let
+$\Delta = q \prod_{j \ge 1} (1 - q^j)^{24}$; for $i, n \in \mathbb{N}$ write $b_i(n)$ for the
+coefficient of $q^n$ in $\Delta^i E_{k-12i}$. Let $N_w = 1$ for $w \le 2$, let $N_w$ be the
+absolute value of the numerator of $\sigma_{w-1}(0)$ for $w \ge 3$, and let $N'_k$ be the largest
+divisor of $N_k$ that is coprime to $N_{k-12i}$ for every $1 \le i \le \lfloor k/12 \rfloor$. For
+rationals $x, y$ and a positive integer $N$, $x \equiv y \pmod{N}$ means that $(x - y)/N$ has
+denominator coprime to $N$. Let $m = \lfloor k/12 \rfloor - 1$ if
+$k \equiv 2 \pmod{12}$ and $m = \lfloor k/12 \rfloor$ otherwise, let $C$ be the $m \times m$ matrix
+$(b_i(j))_{1 \le i, j \le m}$, and let
+$(\gamma_1, \dots, \gamma_m) = (\sigma_{k-1}(1), \dots, \sigma_{k-1}(m))\, C^{-1}$. Then
+$\sigma_{k-1}(n) \equiv \sum_{i=1}^m \gamma_i b_i(n) \pmod{N'_k}$ for every $n \ge 0$, that is,
+$G_k \equiv \sum_{i=1}^m \gamma_i \Delta^i E_{k-12i} \pmod{N'_k}$ coefficientwise.
+
+Source: Qing Lu, *Explicit Congruences for Modular Forms of Higher Weights*, Journal of
+Integer Sequences 29 (2026), Article 26.5.1, Theorem 1 (`jis-2026-26.5.1-thm-1`). -/
+public theorem eisenstein_congr_sum_delta_pow_mul_eisenstein (k : ℕ) (hk : 12 ≤ k)
+    (hke : Even k) (hk14 : k ≠ 14) :
+    let σ₀ : ℕ → ℕ → ℚ := fun w n => if w = 0 then (if n = 0 then 1 else 0)
+      else if n = 0 then -bernoulli w / (2 * w) else (ArithmeticFunction.sigma (w - 1) n : ℚ)
+    let Δ : ℚ⟦X⟧ := X * ∏' j : ℕ, (1 - X ^ (j + 1)) ^ 24
+    let b : ℕ → ℕ → ℚ := fun i n =>
+      coeff n (Δ ^ i * PowerSeries.mk (σ₀ (k - 12 * i))) / σ₀ (k - 12 * i) 0
+    let Nw : ℕ → ℕ := fun w => if w ≤ 2 then 1 else (σ₀ w 0).num.natAbs
+    let N' : ℕ := ((Nat.divisors (Nw k)).filter fun d =>
+      ∀ i ∈ Finset.Icc 1 (k / 12), Nat.Coprime d (Nw (k - 12 * i))).sup id
+    let m : ℕ := if k % 12 = 2 then k / 12 - 1 else k / 12
+    let C : Matrix (Fin m) (Fin m) ℚ := fun i j => b (i.val + 1) (j.val + 1)
+    let γ : Fin m → ℚ := Matrix.vecMul (fun j => σ₀ k (j.val + 1)) C⁻¹
+    ∀ n : ℕ, ((σ₀ k n - ∑ i : Fin m, γ i * b (i.val + 1) n) / N').den.Coprime N' := by
+  intro σ₀ Δ b Nw N' m C γ n
+  have hNk : Nw k = (sigma k 0).num.natAbs := ite_eq_right (by omega)
+  have hpos : Nw k ≠ 0 := by simpa [hNk] using sigma_zero_ne (by omega : 3 ≤ k) hke
+  let s := (Nat.divisors (Nw k)).filter fun d =>
+    ∀ i ∈ Finset.Icc 1 (k / 12), Nat.Coprime d (Nw (k - 12 * i))
+  have hs : s.Nonempty := ⟨1, by simp [s, hpos]⟩
+  have hN : N' ∈ s := by
+    obtain ⟨d, hd, heq⟩ := Finset.sup_mem_of_nonempty (f := id) hs
+    change d = N' at heq
+    exact heq ▸ hd
+  obtain ⟨hd, hcop⟩ := Finset.mem_filter.mp hN
+  have hdiv : N' ∣ (sigma k 0).num.natAbs := hNk ▸ Nat.dvd_of_mem_divisors hd
+  obtain ⟨t, ht⟩ := hke
+  have hm : m ≤ k / 12 := by dsimp [m]; split_ifs <;> omega
+  have hm₂ (h : k % 12 = 2) : m + 1 = k / 12 := by
+    have h24 : 24 ≤ k := by
+      by_contra! hlt
+      exact hk14 (by omega)
+    dsimp [m]
+    rw [ite_eq_left h]
+    omega
+  have hw : k - 12 * m ∈ ({0, 4, 6, 8, 10, 14} : Finset ℕ) := by
+    simp only [Finset.mem_insert, Finset.mem_singleton]
+    by_cases h : k % 12 = 2
+    · have := hm₂ h
+      omega
+    · dsimp [m]
+      rw [ite_eq_right h]
+      omega
+  have hinner (i : Fin m) : k - 12 * (i.val + 1) = 0 ∨ 3 ≤ k - 12 * (i.val + 1) := by
+    have hi := i.isLt
+    dsimp [m] at hi
+    split_ifs at hi <;> omega
+  have hlocal (i : Fin m) : (sigma (k - 12 * (i.val + 1)) 0).num.natAbs.Coprime N' := by
+    rcases hinner i with h | h
+    · simp [h, sigma]
+    · have hNw : Nw (k - 12 * (i.val + 1)) = (sigma (k - 12 * (i.val + 1)) 0).num.natAbs :=
+        ite_eq_right (by omega)
+      rw [← hNw]
+      exact (hcop (i.val + 1) (Finset.mem_Icc.mpr ⟨by omega, by have := i.isLt; omega⟩)).symm
+  have hσ (w j : ℕ) : σ₀ w j = sigma w j := rfl
+  have hb (i j : ℕ) : b i j = coeff j (basisRat k i) := by
+    change coeff j (Δ ^ i * PowerSeries.mk (sigma (k - 12 * i))) / sigma (k - 12 * i) 0 = _
+    rw [show Δ = deltaRat from deltaZ_rat.symm, basisRat, eisensteinRat, mul_smul_comm,
+      coeff_smul, smul_eq_mul, div_eq_mul_inv]
+    exact mul_comm _ _
+  let D : Matrix (Fin m) (Fin m) ℚ := fun i j => coeff (j.val + 1) (basisRat k (i.val + 1))
+  have hC : C = D := funext fun i => funext fun j => hb _ _
+  have hγ : γ = Matrix.vecMul (fun j : Fin m => sigma k (j.val + 1)) D⁻¹ := by
+    simp only [γ, hC, hσ]
+  simpa only [hγ, hb, hσ, D] using
+    coefficient_congruence_general k m N' hk ⟨t, ht⟩ (by omega) hw hinner hdiv hlocal n
+
+/-- **Lu's congruence for the divisor sums $\sigma_{k-1}(n)$.** Let $k \ge 12$ be even with
+$k \ne 14$. For $w, n \in \mathbb{N}$ let $\sigma_{-1}(n)$ be $1$ if $n = 0$ and $0$ otherwise;
+for $w \ge 1$ let $\sigma_{w-1}(0) = -B_w/(2w)$, where $B_w$ is the $w$-th Bernoulli number, and
+$\sigma_{w-1}(n) = \sum_{d \mid n} d^{w-1}$ for $n \ge 1$. In $\mathbb{Q}[[q]]$ let
+$G_w = \sum_{n \ge 0} \sigma_{w-1}(n) q^n$ and $\Delta = q \prod_{j \ge 1} (1 - q^j)^{24}$, and
+for $i, n \in \mathbb{N}$ let $c_i(n)$ be the coefficient of $q^n$ in $\Delta^i G_{k-12i}$, that
+is, the additive convolution $(\tau^{*i} * \sigma_{k-12i-1})(n)$, where $\tau(n)$ is the
+coefficient of $q^n$ in $\Delta$. Let $N_w = 1$ for $w \le 2$, let $N_w$ be the absolute value of
+the numerator of $\sigma_{w-1}(0)$ for $w \ge 3$, and let $N'_k$ be the largest divisor of $N_k$
+that is coprime to $N_{k-12i}$ for every $1 \le i \le \lfloor k/12 \rfloor$. For rationals $x, y$
+and a positive integer $N$, $x \equiv y \pmod{N}$ means that $(x - y)/N$ has denominator coprime
+to $N$. Let $m = \lfloor k/12 \rfloor - 1$ if $k \equiv 2 \pmod{12}$ and
+$m = \lfloor k/12 \rfloor$ otherwise, let $C$ be the $m \times m$ matrix
+$\bigl(c_i(j)/\sigma_{k-12i-1}(0)\bigr)_{1 \le i, j \le m}$, and let
+$(\gamma_1, \dots, \gamma_m) = (\sigma_{k-1}(1), \dots, \sigma_{k-1}(m))\, C^{-1}$. Then for every
+$n \ge 1$, $\sigma_{k-1}(n) \equiv
+\sum_{i=1}^m \bigl(\gamma_i/\sigma_{k-12i-1}(0)\bigr)\, c_i(n) \pmod{N'_k}$.
+
+Source: Qing Lu, *Explicit Congruences for Modular Forms of Higher Weights*, Journal of
+Integer Sequences 29 (2026), Article 26.5.1, Corollary 3 (`jis-2026-26.5.1-cor-3`). -/
+public theorem sigma_congr_sum_tau_conv_sigma (k : ℕ) (hk : 12 ≤ k) (hke : Even k)
+    (hk14 : k ≠ 14) :
+    let σ₀ : ℕ → ℕ → ℚ := fun w n => if w = 0 then (if n = 0 then 1 else 0)
+      else if n = 0 then -bernoulli w / (2 * w) else (ArithmeticFunction.sigma (w - 1) n : ℚ)
+    let Δ : ℚ⟦X⟧ := X * ∏' j : ℕ, (1 - X ^ (j + 1)) ^ 24
+    let conv : ℕ → ℕ → ℚ := fun i n => coeff n (Δ ^ i * PowerSeries.mk (σ₀ (k - 12 * i)))
+    let Nw : ℕ → ℕ := fun w => if w ≤ 2 then 1 else (σ₀ w 0).num.natAbs
+    let N' : ℕ := ((Nat.divisors (Nw k)).filter fun d =>
+      ∀ i ∈ Finset.Icc 1 (k / 12), Nat.Coprime d (Nw (k - 12 * i))).sup id
+    let m : ℕ := if k % 12 = 2 then k / 12 - 1 else k / 12
+    let C : Matrix (Fin m) (Fin m) ℚ := fun i j =>
+      conv (i.val + 1) (j.val + 1) / σ₀ (k - 12 * (i.val + 1)) 0
+    let γ : Fin m → ℚ := Matrix.vecMul (fun j => σ₀ k (j.val + 1)) C⁻¹
+    ∀ n : ℕ, 1 ≤ n → ((σ₀ k n - ∑ i : Fin m,
+      γ i / σ₀ (k - 12 * (i.val + 1)) 0 * conv (i.val + 1) n) / N').den.Coprime N' := by
+  intro σ₀ Δ conv Nw N' m C γ n _
+  have h := eisenstein_congr_sum_delta_pow_mul_eisenstein k hk hke hk14 n
+  change ((σ₀ k n - ∑ i : Fin m,
+    γ i * (conv (i.val + 1) n / σ₀ (k - 12 * (i.val + 1)) 0)) / N').den.Coprime N' at h
+  simpa only [← mul_div_assoc, div_mul_eq_mul_div] using h
 
 end MetaMathlibExt
