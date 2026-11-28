@@ -1,6 +1,6 @@
 # Ancestry-adjusted linkage disequilibrium in structured populations
 
-Consider two biallelic sites $s, t$. In a homogeneous population with haplotype probability $p_{st}$ of carrying both reference alleles and marginal reference-allele probabilities $p_s, p_t$, the **standard LD** is $(D_{\mathrm{std}})_{st} = p_{st} - p_s p_t$, with squared correlation $(\rho^2_{\mathrm{std}})_{st} = (D_{\mathrm{std}})_{st}^2 / ((D_{\mathrm{std}})_{ss} (D_{\mathrm{std}})_{tt})$.
+Consider two biallelic sites $s, t$. In a homogeneous population with haplotype probability $p_{st}$ of carrying both reference alleles and marginal reference-allele probabilities $p_s, p_t$, the **standard LD** is $(D_{\mathrm{std}})_{st} = p_{st} - p_s p_t$, with squared correlation $(\rho^2_{\mathrm{std}})_{st} = (D_{\mathrm{std}})_{st}^2 / ((D_{\mathrm{std}})_{ss} (D_{\mathrm{std}})_{tt})$, defined only when both marginal variances $(D_{\mathrm{std}})_{ss} = p_s(1-p_s)$ and $(D_{\mathrm{std}})_{tt} = p_t(1-p_t)$ are nonzero.
 
 In a structured or admixed sample of $n$ diploid individuals, let individual $i$ have its own haplotype parameters $\mathbf{p}^i_{st} = (p^i_{st}, p^i_s, p^i_t)$, and let $G_{is}, G_{it} \in \{0, 1, 2\}$ be its reference-allele counts, each the sum of two independent, identically distributed parental haplotype contributions. Then $\operatorname{Cov}(G_{is}, G_{it} \mid \mathbf{p}^i_{st}) = 2(p^i_{st} - p^i_s p^i_t)$.
 
@@ -8,9 +8,9 @@ In a structured or admixed sample of $n$ diploid individuals, let individual $i$
 
 $$(D^n_{\mathrm{adj}})_{st} = \frac{1}{2n} \sum_{i=1}^{n} \operatorname{Cov}(G_{is}, G_{it} \mid \mathbf{p}^i_{st}) = \frac{1}{n} \sum_{i=1}^{n} \big(p^i_{st} - p^i_s p^i_t\big), \qquad (D_{\mathrm{adj}})_{st} = \tfrac12\, \mathbb{E}\big[\operatorname{Cov}(G_s, G_t \mid \mathbf{p}_{st})\big],$$
 
-where in the second the individual parameters $\mathbf{p}_{st}$ are drawn from a population distribution $P_{st}$. By the law of large numbers $(D^n_{\mathrm{adj}})_{st} \to (D_{\mathrm{adj}})_{st}$ as $n \to \infty$; if $P_{st}$ is degenerate (a homogeneous population), $D_{\mathrm{adj}} = D_{\mathrm{std}}$.
+where in the second the individual parameters $\mathbf{p}_{st}$ are drawn from a population distribution $P_{st}$. If the individuals' parameters $\mathbf{p}^1_{st}, \mathbf{p}^2_{st}, \dots$ are **independent** draws from $P_{st}$, then, since each summand $p^i_{st} - p^i_s p^i_t$ lies in $[-\tfrac14, \tfrac14]$, the $L^2$ weak law of large numbers gives $(D^n_{\mathrm{adj}})_{st} \to (D_{\mathrm{adj}})_{st}$ in probability as $n \to \infty$. A common marginal law alone is not enough: if one random draw from $P_{st}$ is given to every individual, the average stays equal to that draw's within-individual LD, which remains random as $n$ grows; if $P_{st}$ is degenerate (a homogeneous population), $D_{\mathrm{adj}} = D_{\mathrm{std}}$.
 
-**Theorem (generalizing Bercovich et al., Theorem 1).** Suppose the population is made of $k$ source sub-populations with standard LD $(D^{\ell}_{\mathrm{std}})_{st}$, $\ell = 1, \dots, k$. For a haplotype drawn from an individual with parameters $\mathbf{p}_{st}$, let $Z_s, Z_t \in \{1, \dots, k\}$ be the local ancestries of its alleles $A_s, A_t$ at $s$ and $t$, and assume that given $(Z_s, Z_t) = (\ell, \ell')$ the pair $(A_s, A_t)$ has the law of source $\ell$ at $s$ and source $\ell'$ at $t$, with independent alleles when $\ell \ne \ell'$. Let $w^{\ell}_{st} = P(Z_s = Z_t = \ell)$, let $q^{\ell}_s$ be the reference-allele frequency of source $\ell$ at $s$, and let
+**Theorem (generalizing Bercovich et al., Theorem 1).** Suppose the population is made of $k$ source sub-populations with standard LD $(D^{\ell}_{\mathrm{std}})_{st}$, $\ell = 1, \dots, k$. For a haplotype drawn from an individual with parameters $\mathbf{p}_{st}$, let $Z_s, Z_t \in \{1, \dots, k\}$ be the local ancestries of its alleles $A_s, A_t$ at $s$ and $t$, and assume that, conditionally on **both** the individual parameters $\mathbf{p}_{st}$ and the local ancestries $(Z_s, Z_t) = (\ell, \ell')$, the pair $(A_s, A_t)$ has the law of source $\ell$ at $s$ and source $\ell'$ at $t$, with independent alleles when $\ell \ne \ell'$ (so its conditional means are the source frequencies $q^{\ell}_s$ and $q^{\ell'}_t$ defined next). Let $w^{\ell}_{st} = P(Z_s = Z_t = \ell)$, let $q^{\ell}_s$ be the reference-allele frequency of source $\ell$ at $s$, and let
 
 $$C_{st} = \mathbb{E}\big[\operatorname{Cov}\big(q^{Z_s}_s, q^{Z_t}_t \,\big|\, \mathbf{p}_{st}\big)\big]$$
 
@@ -33,6 +33,7 @@ In that case, unlike $D_{\mathrm{std}}$ computed on the pooled sample, $D_{\math
 ## Proof depends on
 
 - [Tower property of conditional expectation](../../../Probability/foundations/conditional-expectation/tower-property/tower-property.md)
+- [L² weak law of large numbers](../../../Probability/laws-of-large-numbers/l2-weak-law-of-large-numbers/l2-weak-law.md)
 
 ## Expansion
 

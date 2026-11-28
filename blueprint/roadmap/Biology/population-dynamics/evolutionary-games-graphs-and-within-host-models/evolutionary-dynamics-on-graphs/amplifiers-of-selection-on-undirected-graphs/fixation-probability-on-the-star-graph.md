@@ -1,6 +1,6 @@
 # Fixation probability on the Star graph
 
-**Generalized Moran process on a graph.** Let $G_N = (V_N, E_N)$ be a connected undirected graph on $N$ vertices, each holding one individual. Mutants have fitness $r > 0$ and residents fitness $1$. In each step one individual is chosen to reproduce with probability proportional to fitness, and its offspring replaces a uniformly random neighbour of the reproducing vertex. Let $\rho(r, G_N)$ be the probability that a single mutant placed on a uniformly random vertex takes over the graph. For the complete graph (Clique) $K_N$, $\rho(r, K_N) = \dfrac{1 - r^{-1}}{1 - r^{-N}}$.
+**Generalized Moran process on a graph.** Let $G_N = (V_N, E_N)$ be a connected undirected graph on $N$ vertices, each holding one individual. Mutants have fitness $r > 0$ and residents fitness $1$. In each step one individual is chosen to reproduce with probability proportional to fitness, and its offspring replaces a uniformly random neighbour of the reproducing vertex. Let $\rho(r, G_N)$ be the probability that a single mutant placed on a uniformly random vertex takes over the graph. For the complete graph (Clique) $K_N$, $\rho(r, K_N) = \dfrac{1 - r^{-1}}{1 - r^{-N}}$ for $r \ne 1$, and in the neutral case $r = 1$ (where this quotient is $0/0$) $\rho(1, K_N) = 1/N$, the continuous extension of the quotient.
 
 **Star.** The Star $S_N$ has one centre joined to $N - 1$ leaves and no other edges. For $r \ne 1$, put
 
@@ -10,11 +10,13 @@ Then
 
 $$\rho(r, S_N) = \frac{N-1}{N}\cdot\frac{h_l - 1}{h_c\,h_l^{\,N-1} - 1} + \frac1N\cdot\frac{h_c - 1}{h_c\,h_l^{\,N-1} - 1},$$
 
-and for $r \ge 1$ and large $N$ (as in the source; for $0 < r < 1$ the ratio $\rho(r, S_N) / \frac{1 - r^{-2}}{1 - r^{-2N}}$ does not tend to $1$)
+In the neutral case $r = 1$ we have $h_c = h_l = 1$ and both quotients are $0/0$; there, by symmetry of uniform placement, $\rho(1, S_N) = 1/N$, which is also the limit of the formula as $r \to 1$.
 
-$$\rho(r, S_N) \simeq \frac{1 - r^{-2}}{1 - r^{-2N}},$$
+For fixed $r > 1$ (the source states this approximation for advantageous mutants; for $0 < r < 1$ the ratio below does not tend to $1$, and at $r = 1$ the right-hand side is $0/0$)
 
-matching the Clique formula with $r$ replaced by $r^2$. For $r > 1$ the Star therefore amplifies selection; in the limit $N \to \infty$ its fixation probability tends to $1 - r^{-2}$ instead of $1 - r^{-1}$.
+$$\frac{\rho(r, S_N)}{(1 - r^{-2})/(1 - r^{-2N})} \to 1 \qquad (N \to \infty),$$
+
+that is, $\rho(r, S_N) \simeq \frac{1 - r^{-2}}{1 - r^{-2N}}$, the Clique formula with $r$ replaced by $r^2$. For fixed $r > 1$ the Star therefore amplifies selection in the large-population limit: its fixation probability tends to $1 - r^{-2}$ instead of the Clique's $1 - r^{-1}$. This depends on size: $S_2 = K_2$, so at $N = 2$ the Star does not strictly amplify, while for example $\rho(2, S_3) = 7/12 > 4/7 = \rho(2, K_3)$.
 
 ## Depends on
 

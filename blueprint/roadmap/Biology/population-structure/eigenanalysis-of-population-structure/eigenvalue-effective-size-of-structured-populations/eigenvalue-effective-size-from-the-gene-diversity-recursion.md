@@ -18,23 +18,30 @@ Under these assumptions the subpopulation ancestry of two distinct genes before 
 **Gene diversity.** Let $H_t^{ij} = X_t^i(1 - X_t^j) + X_t^j(1 - X_t^i)$ be the probability that genes drawn from subpopulations $i$ and $j$ differ, and $\mathbf{H}_t = (\mathbb{E}_\pi H_t^{ij})_{i,j}$ the vector of predicted gene diversities.
 
 **Theorem.**
-1. Under the assumptions of the Setting, if $\mathbf{H}_t = A\,\mathbf{H}_{t-1}$ for a nonnegative $s^2 \times s^2$ matrix $A$, then $\lambda_3(P) = \lambda_{\max}(A) = \max_a \lambda_{\max}(A_{aa})$ over the irreducible diagonal blocks of a block lower-triangular form of $A$, and hence
+1. Under the assumptions of the Setting, suppose there is one nonnegative $s^2 \times s^2$ matrix $A$ such that $\mathbf{H}_t = A\,\mathbf{H}_{t-1}$ for all $t \ge 1$ and **every** initial distribution $\pi$ (equivalently, the one-step identity $\mathbb{E}[H_t^{ij} \mid X_{t-1} = x] = \sum_{k,l} A_{ij,kl}H^{kl}(x)$ for every state $x$). Then $\lambda_3(P) = \lambda_{\max}(A) = \max_a \lambda_{\max}(A_{aa})$ over the irreducible diagonal blocks of a block lower-triangular form of $A$, and hence
 
 $$N_{eE} = \frac{1}{2\,(1 - \lambda_{\max}(A))}.$$
 
-2. Under the population model above, such a recursion holds, with $Q = (Q_{ij,kl}) = \mathbb{E}(Q_t)$ the transition matrix of that ancestral Markov chain on pairs of subpopulations, where $Q_{t,ij,kl}$ is the probability, given $B_t$, that two distinct genes from $i$ and $j$ at time $t$ have parents in $k$ and $l$. Let $\nu_{ki}$ be the number of offspring in subpopulation $i$ of one gene of subpopulation $k$ in the previous generation, $V_{kii} = \mathbb{E}[\nu_{ki}(\nu_{ki} - 1)]$ and $V_{kij} = \mathbb{E}[\nu_{ki}\nu_{kj}]$ for $i \ne j$. The probability that two genes from $i$ and $j$ whose parents both lie in $k$ have the same parent is
+   The quantifier over initial laws matters: for the single initial law concentrated at a fixation state, $\mathbf{H}_t = 0$ for every $t$, so every nonnegative matrix satisfies the recursion for that law alone, and its spectral radius need not be $\lambda_3(P)$.
+
+2. Under the population model above, such a recursion holds, with $Q = (Q_{ij,kl}) = \mathbb{E}(Q_t)$ the transition matrix of that ancestral Markov chain on pairs of subpopulations, where $Q_{t,ij,kl}$ is the probability, given $B_t$, that two distinct genes from $i$ and $j$ at time $t$ have parents in $k$ and $l$. Let $\nu_{ki}$ be the number of offspring in subpopulation $i$ of one gene of subpopulation $k$ in the previous generation, $V_{kii} = \mathbb{E}[\nu_{ki}(\nu_{ki} - 1)]$ and $V_{kij} = \mathbb{E}[\nu_{ki}\nu_{kj}]$ for $i \ne j$. When $Q_{ij,kk} > 0$, the probability that two genes from $i$ and $j$ whose parents both lie in $k$ have the same parent is
 
 $$p_{ijk} = \Bigl(1 - \frac{1}{2Nu_i}\Bigr)^{-\mathbf{1}\{i=j\}} \frac{V_{kij}\,u_k}{2N u_i u_j Q_{ij,kk}},$$
 
 and the recursion holds with
 
-$$A_{ij,kl} = \Bigl(1 - \frac{1}{2Nu_i}\Bigr)^{\mathbf{1}\{i=j\}} \Bigl(\frac{1 - p_{ijk}}{1 - 1/(2Nu_k)}\Bigr)^{\mathbf{1}\{k=l\}} Q_{ij,kl}.$$
+$$A_{ij,kl} = \Bigl(1 - \frac{1}{2Nu_i}\Bigr)^{\mathbf{1}\{i=j\}} \Bigl(\frac{1 - p_{ijk}}{1 - 1/(2Nu_k)}\Bigr)^{\mathbf{1}\{k=l\}} Q_{ij,kl},$$
+
+where, when $Q_{ij,kk} = 0$, $p_{ijk}$ is left undefined and $A_{ij,kk} = 0$: no two genes from $i$ and $j$ then have both parents in $k$, so that transition contributes nothing. (Irreducibility of the single-lineage matrix $B$ does not make every parental pair $(k,k)$ possible in one generation, so this case can occur.)
 
 3. (Large populations.) Let $N \to \infty$ with $u$ and the migration matrices fixed and, for each $N$, the population model above and the assumptions of the Setting holding; put $\epsilon = 1/(2N^\beta)$ for a fixed $0 < \beta \le 1$, and let $A = A(\epsilon)$ and $Q = Q(\epsilon)$ be the matrices of item 2. Assume that
    - $Q(\epsilon) = Q(0) + \dot Q\,\epsilon + o(\epsilon)$ as $\epsilon \to 0$;
    - $Q(0)$ is the transition matrix of a Markov chain (not necessarily irreducible) with a unique equilibrium distribution $\rho(0) = (\rho_{ij}(0))$, the left eigenvector of its unique largest eigenvalue $1$;
    - the limits $\sigma_{ijk} = \lim_{N \to \infty} V_{kij}\,u_k^2 / \bigl((Nu_k)^{1-\beta} u_i u_j Q_{ij,kk}(0)\bigr)$ exist for all $i, j, k$;
-   - the largest eigenvalue $\lambda(\epsilon)$ of $A(\epsilon)$ and its left eigenvector $\rho(\epsilon)$ are differentiable at $\epsilon = 0$.
+   - the largest eigenvalue $\lambda(\epsilon)$ of $A(\epsilon)$ and its left eigenvector $\rho(\epsilon)$ are differentiable at $\epsilon = 0$;
+   - the first-order coalescence rate is nonzero: $\lambda(\epsilon) = 1 + \dot\lambda\,\epsilon + o(\epsilon)$ with $\dot\lambda < 0$, i.e. $C = -\dot\lambda > 0$ for the constant $C$ below.
+
+   The last condition is not implied by the others: in the one-deme Wright–Fisher model with $\beta = 1/2$ one has $Q = 1$, bounded offspring factorial moments, $\sigma_{111} = 0$ and $\lambda = 1 - 1/(2N) = 1 - 2\epsilon^2$, differentiable with constant eigenvector, so all the limits above exist, yet $C = 0$ and $N^\beta/C$ is undefined while $N_{eE} = N$. The source's discussion of its (68)–(69) treats $C$ as this nonzero rate.
 
    Then
 

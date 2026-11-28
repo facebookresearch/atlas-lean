@@ -4,7 +4,7 @@
 
 $$\int_{U_2} (1 \wedge \|w\|)\,\nu(dw) < \infty, \qquad \int_{U_2} \big(\|w\| \wedge \|w\|^2 + w_j\big)\,\mu_i(dw) < \infty \quad (i \ne j).$$
 
-Let $Z = X^{(1)} + X^{(2)}$ and $R = X^{(1)}/Z$. The pair $(R, Z)$ is Markov, but $R$ alone is not.
+Let $Z = X^{(1)} + X^{(2)}$ and $R = X^{(1)}/Z$. The pair $(R, Z)$ is Markov, but $R$ alone is not Markov in general.
 
 **Culling.** Fix a total mass $z > 0$ and levels $0 < \varepsilon < z < L$, and stop $(R, Z)$ at $\tau = \tau^-_\varepsilon \wedge \tau^+_L$, where $\tau^-_\varepsilon = \inf\{t \ge 0 : Z_t = \varepsilon\}$ and $\tau^+_L = \inf\{t \ge 0 : Z_t > L\}$. For $n \in \mathbb{N}$, let $\bar R^{(z,n)}$ be the pure-jump Markov process on $[0,1]$ whose holding times are independent $\mathrm{Exp}(n)$ random variables and whose jump kernel is
 
@@ -33,7 +33,7 @@ at each jump time, the stopped pair is run for time $1/n$ from the current frequ
 
     for $0 \le m < n$,
 
-    $$q_{nm} = \mathbf{1}_{\{m = n+1\}}\Big(\binom{n+1}{2}\frac2z(c_1 - c_2) - z(\gamma^1_n - \gamma^2_n)\Big) + n\theta_{m-n} \qquad (n < m \le n + \tilde m),$$
+    $$q_{nm} = \mathbf{1}_{\{m = n+1\}}\Big(\binom{n+1}{2}\frac2z(c_1 - c_2) - z(\gamma^1_n - \gamma^2_n)\Big) + n\theta_{m-n} \qquad (n < m \le n + (\tilde m \vee 1)),$$
 
     $$q_{n\dagger} = z\vartheta_{n,\mu} + \vartheta_{n,\nu} + n\frac{a^{(0)}_{22} + b_{21}(z) + \eta_2}{z},$$
 
@@ -41,7 +41,7 @@ at each jump time, the stopped pair is run for time $1/n$ from the current frequ
 
     $$\mathbb{E}_r\big[(R^{(z,r)}_t)^n\big] = \mathbb{E}_n\big[r^{N_t}\big], \qquad r^\dagger := 0.$$
 
-    (The source writes the condition for the rate to $\dagger$ as "$j = \dagger$", a typo for $m = \dagger$.)
+    Here $\theta_k = 0$ for $k > \tilde m$, since every indicator in its definition then vanishes. **Correction of the source's range.** The source's (4.5) prints the upward rates for $n < m \le n + \tilde m$. When every $b_{ij}$ is represented with degree bound $0$ ($\tilde m = 0$, constant interaction terms) that range is empty, so the $m = n+1$ term $\binom{n+1}{2}\frac2z(c_1 - c_2) - z(\gamma^1_n - \gamma^2_n)$ would be lost; but the source's own computation (4.1) gives, for $f(r) = r^n$, the contribution $\binom{n+1}{2}\frac2z(c_1 - c_2)(r^{n+1} - r^n)$, e.g. $S(r)f'(r) = 2(c_1 - c_2)(r^2 - r)/z$ at $n = 1$, which is nonzero for $0 < r < 1$ when $c_1 > c_2$. The range $n < m \le n + (\tilde m \vee 1)$ above keeps that transition, and it agrees with the source's whenever $\tilde m \ge 1$. (The source also writes the condition for the rate to $\dagger$ as "$j = \dagger$", a typo for $m = \dagger$.)
 3. *Large-population limit.* Suppose $\beta_{ij}(r) = \lim_{z\to\infty} b^{(z)}_{ij}(rz)/z$ exists uniformly on $[0,1]$ and is Lipschitz. Then for every $T > 0$, $\lim_{z\to\infty}\mathbb{E}\big[\sup_{t\le T}|R^{(z,r)}_t - R^{(\infty,r)}_t|^2\big] = 0$, where $R^{(\infty,r)}$ solves
 
     $$\dot R = \beta_{11}(R)(1-R) - \beta_{22}(1-R)R + \beta_{12}(1-R)(1-R) - \beta_{21}(R)R + (1-R)^2\!\int_{U_2} w_1\,\mu_2(dw) - R^2\!\int_{U_2} w_2\,\mu_1(dw),$$

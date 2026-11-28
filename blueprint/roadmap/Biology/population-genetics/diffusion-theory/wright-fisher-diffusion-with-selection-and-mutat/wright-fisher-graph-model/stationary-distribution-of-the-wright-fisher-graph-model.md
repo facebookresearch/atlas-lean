@@ -1,6 +1,6 @@
 # Stationary distribution of the Wright–Fisher graph model
 
-**Model.** Allelic types at a locus are the vertices $\mathcal V$ of a connected directed graph $\mathcal G = (\mathcal V, \mathcal E)$. A population of size $N$ is either monomorphic at a vertex $u$ (state $(u,u,0)$) or biallelic on an edge $\langle u,v\rangle$, with derived allele $v$ at frequency $y \in (0,1)$ (state $(u,v,y)$). From a monomorphic state $u$ a new mutant $v$ arises at rate proportional to $\lambda_{uv}$ (non-recurrent mutation, initial frequency $1/N$); while polymorphic, the frequency follows the Wright–Fisher diffusion with scaled directional selection coefficient $\gamma_{uv}$, generator $\tfrac12 y(1-y)\partial_y^2 + \gamma_{uv}y(1-y)\partial_y$, until it is absorbed at $u$ or $v$. Selection is directional and antisymmetric, $\gamma_{vu} = -\gamma_{uv}$. Fixation from frequency $1/N$ has probability $q_\gamma(1/N) = \omega_\gamma/N + O(N^{-2})$ with
+**Model.** Allelic types at a locus are the vertices $\mathcal V$ of a **finite** connected directed graph $\mathcal G = (\mathcal V, \mathcal E)$ (the source works "with a fixed, finite number of allelic types"; on an infinite graph cycle balance need not give an invariant probability, e.g. the symmetric nearest-neighbour chain on $\mathbb Z$ has constant, non-summable reversible weights). A population of size $N$ is either monomorphic at a vertex $u$ (state $(u,u,0)$) or biallelic on an edge $\langle u,v\rangle$, with derived allele $v$ at frequency $y \in (0,1)$ (state $(u,v,y)$). From a monomorphic state $u$ a new mutant $v$ arises at rate proportional to $\lambda_{uv}$ (non-recurrent mutation, initial frequency $1/N$); while polymorphic, the frequency follows the Wright–Fisher diffusion with scaled directional selection coefficient $\gamma_{uv}$, generator $\tfrac12 y(1-y)\partial_y^2 + \gamma_{uv}y(1-y)\partial_y$, until it is absorbed at $u$ or $v$. Selection is directional and antisymmetric, $\gamma_{vu} = -\gamma_{uv}$. Fixation from frequency $1/N$ has probability $q_\gamma(1/N) = \omega_\gamma/N + O(N^{-2})$ with
 
 $$\omega_\gamma = \frac{2\gamma}{1 - e^{-2\gamma}} \ (\gamma \ne 0), \qquad \omega_0 = 1,$$
 
@@ -14,18 +14,23 @@ Let $(\eta^{1/N}_u)$ and $(\eta_u)$ be the probability vectors with $\eta^{1/N}_
 
 $$\mu_N(u,v,y)\,dy = \frac{2\eta_u\lambda_{uv}}{\Omega'_N}\Big\{\frac{\omega_{\gamma_{uv}}\big(1 - e^{-2\gamma_{uv}(1-y)}\big)}{2\gamma_{uv}\,y(1-y)}\,\mathbf 1_{\{1/N<y<1\}} + (N - \omega_{\gamma_{uv}})\,\mathbf 1_{\{0<y<1/N\}}\Big\}dy,$$
 
-with normalization $\Omega'_N = \Omega_N + O(\ln N/N)$,
+where for $\gamma_{uv} = 0$ the first fraction is read as its limit $1/y$ (so the edge density is $1/y$ on $(1/N, 1)$ and the constant $N - 1$ on $(0, 1/N)$, up to the common factor), with normalization $\Omega'_N = \Omega_N + O(\ln N/N)$,
 
 $$\Omega_N = 1 + 2\sum_{u,v}\eta_u\lambda_{uv}\big(1 + \ln N + K_{\gamma_{uv}}\big), \qquad K_\gamma = \omega_\gamma\int_0^1(-\ln y)\big(e^{-2\gamma y} - e^{-2\gamma(1-y)}\big)dy.$$
 
-In the neutral case ($\gamma \equiv 0$) the polymorphic density reduces to the familiar $1/y$ site-frequency profile.
+In the neutral case ($\gamma \equiv 0$) the polymorphic density is $\frac{2\eta_u\lambda_{uv}}{\Omega'_N}\{y^{-1}\mathbf 1_{\{1/N<y<1\}} + (N-1)\mathbf 1_{\{0<y<1/N\}}\}$ (source, Remark 3): the familiar $1/y$ site-frequency profile above the entry frequency $1/N$, and a positive constant density below it.
 
-**Consequence for diversity.** Extended to $L$ loci with mutation parameters $\theta_{uv} = \lambda_{uv}L$, the effective mutation rate $\hat\theta_{\mathrm{eff}}$ satisfies $\theta_{\min}/(1 + 2L^{-1}(1+\ln N)\theta_{\min}) \le \hat\theta_{\mathrm{eff}} \le \hat\theta \le \theta_{\max}$. Let $X^j_\infty$ be the stationary state of locus $j = 1,\dots,L$ and $\mathcal X_\infty = \sum_{j=1}^L \delta_{X^j_\infty}$ the point measure collecting them, so $\langle\mathcal X_\infty, f\rangle = \sum_j f(X^j_\infty)$. Let $f \ge 0$ depend only on the frequency, $f(u,v,y) = f(y)$, with $f(0) = 0$ (monomorphic states contribute nothing) and a limit $f(0+) = \lim_{y\downarrow0} f(y)$. For homogeneous mutation $\theta$ the expected frequency spectrum then obeys $E_N\langle\mathcal X_\infty, f\rangle \le 2\theta\{f(0+) + \int_{1/N}^1 f(y)/y\,dy\}$: directional selection never increases genetic variation beyond its neutral level.
+**Consequence for diversity.** Extended to $L$ loci with mutation parameters $\theta_{uv} = \lambda_{uv}L$, the effective mutation rate $\hat\theta_{\mathrm{eff}}$ satisfies $\theta_{\min}/(1 + 2L^{-1}(1+\ln N)\theta_{\min}) \le \hat\theta_{\mathrm{eff}} \le \hat\theta \le \theta_{\max}$. Let $X^j_\infty$ be the stationary state of locus $j = 1,\dots,L$ and $\mathcal X_\infty = \sum_{j=1}^L \delta_{X^j_\infty}$ the point measure collecting them, so $\langle\mathcal X_\infty, f\rangle = \sum_j f(X^j_\infty)$. Let $f \ge 0$ depend only on the frequency, $f(u,v,y) = f(y)$, with $f(0) = 0$ (monomorphic states contribute nothing) and a limit $f(0+) = \lim_{y\downarrow0} f(y)$. Let $E_N$ be the expectation under the approximate distribution $\mu_N$ of the Theorem, summed over loci (the source's (21)), with each locus normalized by $\Omega^j_N$ in place of $\Omega'^j_N$ as in the source's proof of Theorem 2 (the two differ by a factor $1 + O(\ln N/N)$). For homogeneous mutation $\theta$,
+
+$$E_N\langle\mathcal X_\infty, f\rangle \le 2\theta\Big\{N\int_0^{1/N} f(y)\,dy + \int_{1/N}^1 \frac{f(y)}{y}\,dy\Big\},$$
+
+whatever the selection coefficients: directional selection does not raise this bound above its neutral form. **Difference from the source.** The source's (23) and Corollary 2 print $2\theta\{f(0+) + \int_{1/N}^1 f(y)/y\,dy\}$, replacing the entry-interval term $\int_0^{1/N}(N - \omega_{\gamma_{uv}})f(y)\,dy$ by $f(0+)$. That replacement is only an approximation as $N \to \infty$ (it uses $f(y) \to f(0+)$), not a finite-$N$ inequality: for a continuous $f \ge 0$ supported strictly inside $(0, 1/N)$ and positive on an interval, the source's right-hand side is $0$, while in the neutral case $E_N\langle\mathcal X_\infty, f\rangle > 0$ because the density on $(0, 1/N)$ is the positive constant $N - 1$ times $2\eta_u\lambda_{uv}/\Omega'_N$. The bound above keeps that interval; since $0 < \omega_\gamma$ and $f \ge 0$, $(N - \omega_\gamma)f \le Nf$ there, and the source's argument for $(1/N, 1)$ is unchanged.
 
 ## Depends on
 
 - [Backward generator of the Wright–Fisher diffusion with selection](../../wright-fisher-diffusion/generator.md)
 - [Kimura's fixation probability](../../wright-fisher-diffusion/kimura-fixation.md)
+- [Detailed balance](../../../../../Probability/markov-chains/finite-continuous-time-markov-chains/stationarity-and-detailed-balance-for-finite-con/is-detailed-balance.md)
 
 ## Proof depends on
 

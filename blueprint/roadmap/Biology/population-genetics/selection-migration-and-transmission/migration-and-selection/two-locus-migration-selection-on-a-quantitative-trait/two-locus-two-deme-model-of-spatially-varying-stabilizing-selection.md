@@ -10,7 +10,7 @@ $$\dot x_{i,\gamma} = x_{i,\gamma}\left(w_{i,\gamma} - \bar w_\gamma\right) - \e
 
 where $\eta_1 = \eta_4 = -\eta_2 = -\eta_3 = 1$ and $\gamma^*$ is the other deme. Selection is directional (haplotype fitnesses monotone in $G$ in each deme) if and only if $P \ge 1/(1+\kappa)$, and stabilizing otherwise.
 
-**Without migration** ($m = 0$), in a single deme of the haploid model:
+**Without migration** ($m = 0$), in a single deme of the haploid model with recombination rate $r > 0$ (the standing assumption of the source's Section 2.1 unless stated otherwise; the dynamics above are also defined at $r = 0$, but the claims below are not made there):
 
 1. the monomorphic equilibrium $M_{1,\alpha}$ (fixation of $AB$ in deme $\alpha$; by symmetry $M_{4,\beta}$) is globally asymptotically stable if and only if $P > 1/(1+\kappa)$;
 2. there is at most one internal equilibrium $F_\gamma$, and it is unstable whenever it exists;
@@ -19,7 +19,7 @@ where $\eta_1 = \eta_4 = -\eta_2 = -\eta_3 = 1$ and $\gamma^*$ is the other deme
 
 $$\hat D = \frac{r}{s}\frac{(1+\kappa)^2}{16\kappa} - \sqrt{\frac{1}{16} + \left(\frac{r}{s}\frac{(1+\kappa)^2}{16\kappa}\right)^2}.$$
 
-So a single panmictic haploid deme maintains no stable polymorphism. In the diploid model with $P = 0$, by contrast, single-locus polymorphisms with the major locus polymorphic, $\hat p = \tfrac12 \pm \kappa$ with locus $B$ fixed, can be stable.
+The bound $r > 0$ matters: at $r = P = 0$ this formula gives $\hat D = -\tfrac14$ with $\hat p = \hat q = \tfrac12$, i.e. $x_1 = x_4 = 0$ and $x_2 = x_3 = \tfrac12$, which is a boundary point, not an internal equilibrium. So, for $r > 0$, a single panmictic haploid deme maintains no stable polymorphism. In the diploid model with $P = 0$, by contrast, single-locus polymorphisms with the major locus polymorphic, $\hat p = \tfrac12 \pm \kappa$ with locus $B$ fixed, can be stable.
 
 ## Depends on
 
