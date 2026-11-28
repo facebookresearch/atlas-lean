@@ -15,6 +15,7 @@ On the decidable side, HyperPDA model checking for $\Sigma_1$ formulas is in EXP
 
 - [Kripke structures with initial states](kripke-structures-with-initial-states.md)
 - [HyperLTL](hyperltl.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

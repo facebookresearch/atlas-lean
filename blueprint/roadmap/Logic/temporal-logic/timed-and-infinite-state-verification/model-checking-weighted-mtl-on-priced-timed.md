@@ -2,7 +2,7 @@
 
 Model checking weighted MTL over priced timed automata is decidable for one clock and one stopwatch cost, but becomes undecidable as soon as the cost is general, a second clock is added, or a second stopwatch cost is added.
 
-**Theorem (Bouyer, Larsen and Markey).** The model-checking problem for [weighted MTL over priced timed automata](priced-timed-automata-and-weighted-mtl.md), whether a given automaton has a finite run from its initial state satisfying a given formula, is undecidable for each of the following classes of automata:
+**Theorem (Bouyer, Larsen and Markey).** The model-checking problem for [weighted MTL](weighted-mtl.md) over [priced timed automata](priced-timed-automata.md), whether a given automaton has a finite run from its initial state satisfying a given formula, is undecidable for each of the following classes of automata:
 
 1. one-clock priced timed automata with one cost variable (with arbitrary rates in $\mathbb{N}$);
 2. two-clock priced timed automata with one stopwatch cost;
@@ -12,7 +12,9 @@ The source proves that the problem is decidable for one-clock automata with one 
 
 ## Depends on
 
-- [Priced timed automata and weighted MTL](priced-timed-automata-and-weighted-mtl.md)
+- [Priced timed automata](priced-timed-automata.md)
+- [Weighted MTL](weighted-mtl.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,4 +26,4 @@ All three clauses reduce the halting problem for two-counter machines. For claus
 
 ## Sources
 
-- P. Bouyer, K. G. Larsen and N. Markey, "Model checking one-clock priced timed automata", *Logical Methods in Computer Science* 4(2), Paper 9, 2008, doi:10.2168/LMCS-4(2:9)2008; read as arXiv:0805.1457v2, <https://arxiv.org/abs/0805.1457v2>: the three theorems of the subsection "Undecidability Results" (one-clock automata with one cost, two-clock automata with one stopwatch cost, one-clock automata with two stopwatch costs) and their proofs, and the decidability theorem preceding them.
+- P. Bouyer, K. G. Larsen and N. Markey, "Model checking one-clock priced timed automata", *Logical Methods in Computer Science* 4(2), Paper 9, 2008, doi:10.2168/LMCS-4(2:9)2008; read as arXiv:0805.1457v2, <https://arxiv.org/abs/0805.1457v2>: Theorems 3.11, 3.17 and 3.18 in Section 3.3 (one-clock automata with one cost, two-clock automata with one stopwatch cost, one-clock automata with two stopwatch costs) and their proofs, and Theorem 3.4 (decidability for one clock and one stopwatch cost).

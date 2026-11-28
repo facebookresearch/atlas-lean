@@ -12,6 +12,7 @@
 - [Model checking State Clock Logic over interrupt timed automata is undecidable](state-clock-logic-over-interrupt-timed-automata.md)
 - [Model checking weighted MTL on priced timed automata is undecidable](model-checking-weighted-mtl-on-priced-timed.md)
 - [Nested metric temporal logic](nested-metric-temporal-logic.md)
-- [Priced timed automata and weighted MTL](priced-timed-automata-and-weighted-mtl.md)
 - [Reactive synthesis for MITL is undecidable, already on finite words](reactive-synthesis-for-mitl-is-undecidable.md)
 - [Satisfiability of future NMTL over finite timed words is undecidable](satisfiability-of-future-nmtl-over-finite-timed.md)
+- [Priced timed automata](priced-timed-automata.md)
+- [Weighted MTL](weighted-mtl.md)

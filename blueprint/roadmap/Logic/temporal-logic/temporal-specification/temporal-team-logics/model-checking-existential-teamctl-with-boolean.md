@@ -9,6 +9,7 @@ The source attributes the high undecidability to asynchronicity. Model checking 
 ## Depends on
 
 - [Temporal team logics with time evaluation functions](temporal-team-logics-with-time-evaluation.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

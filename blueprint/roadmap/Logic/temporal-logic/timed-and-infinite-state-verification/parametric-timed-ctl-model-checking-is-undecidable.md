@@ -12,7 +12,7 @@ The formulas produced use only the subscript $=$ in the timed until operators, a
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,4 +24,4 @@ Presburger arithmetic with divisibility, the first-order theory of $(\mathbb N;+
 
 ## Sources
 
-- V. Bruyère and J.-F. Raskin, "Real-time model-checking: parameters everywhere", *Logical Methods in Computer Science* 3(1), paper 7, 2007, doi:[10.2168/LMCS-3(1:7)2007](https://doi.org/10.2168/LMCS-3(1:7)2007); read in arXiv:cs/0701138v2 ([arXiv](https://arxiv.org/abs/cs/0701138v2)): the definitions of parametric timed automata and PTCTL in the section "Parameters Everywhere", and the undecidability theorem with its proof, its corollary and the remark on equality in the section "Decision Problems".
+- V. Bruyère and J.-F. Raskin, "Real-time model-checking: parameters everywhere", *Logical Methods in Computer Science* 3(1), paper 7, 2007, doi:[10.2168/LMCS-3(1:7)2007](https://doi.org/10.2168/LMCS-3(1:7)2007); read in arXiv:cs/0701138v2 ([arXiv](https://arxiv.org/abs/cs/0701138v2)): Definitions 2.2 to 2.5 (parametric timed automata and PTCTL) in Section 2, and Theorem 3.2 with its proof, Corollary 3.3, Remark 3.4 (equality) and Corollary 3.11 (the fragment F-PTCTL) in Section 3.

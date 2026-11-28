@@ -12,17 +12,18 @@ $$
 
 with $p$ an atomic proposition, ${\bowtie}\in\{>,\ge,=,\le,<\}$ and $a$ rational. $\rhd_{\bowtie a}\psi$ holds when the next time $\psi$ holds lies at a delay satisfying ${\bowtie}\,a$, and $\lhd_{\bowtie a}\psi$ when the last time $\psi$ held lies at a past delay satisfying ${\bowtie}\,a$. An ITA $\mathcal A$ satisfies $\varphi$ if every execution of $\mathcal A$ satisfies $\varphi$ at its initial position.
 
-**Theorem (Bérard, Haddad and Sassolas).** Model checking SCL over ITA is undecidable. Specifically, there exists a fixed SCL formula, using only the modalities $\mathsf U$ and $\lhd_{=a}$, such that checking whether a given ITA with $3$ levels satisfies it is undecidable.
+**Theorem (Bérard, Haddad and Sassolas).** Model checking SCL over ITA is undecidable. Specifically, there exists a fixed SCL formula, using only the modalities $\mathsf U$ and $\lhd_{=a}$, such that checking whether a given ITA with $3$ levels satisfies it is undecidable (Theorem 3 of the source).
 
 Model checking SCL over timed automata is PSPACE-complete, so the obstruction comes from the suspended clocks. The source also shows that reachability is undecidable for the product of an ITA with a timed automaton, and identifies fragments of timed CTL that are decidable over ITA.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
@@ -30,4 +31,4 @@ The reduction simulates a deterministic two-counter machine $\mathcal M$. One bu
 
 ## Sources
 
-- B. Bérard, S. Haddad and M. Sassolas, "Interrupt timed automata: verification and expressiveness", *Formal Methods in System Design* 40(1), pp. 41–87, 2012, doi:[10.1007/s10703-011-0140-2](https://doi.org/10.1007/s10703-011-0140-2); read in arXiv:1203.6453v1 ([arXiv](https://arxiv.org/abs/1203.6453v1)): the description of the model in the introduction and in the section on background, the reachability theorem of the section on its complexity, the definition of SCL and the undecidability theorem with its proof in the subsection "Undecidability of State Clock Logic", and the undecidability of reachability for ITA combined with timed automata.
+- B. Bérard, S. Haddad and M. Sassolas, "Interrupt timed automata: verification and expressiveness", *Formal Methods in System Design* 40(1), pp. 41–87, 2012, doi:[10.1007/s10703-011-0140-2](https://doi.org/10.1007/s10703-011-0140-2); read in arXiv:1203.6453v1 ([arXiv](https://arxiv.org/abs/1203.6453v1)): Definitions 1 and 2 (interrupt timed automata) in Section 2, Proposition 2 (decidability of reachability) in Section 3, Definition 8 (SCL) and Theorem 3 with its proof in Section 5.1, Theorems 4 and 5 (decidable fragments of timed CTL) in Section 5, and Theorem 7 (undecidability of reachability for ITA combined with timed automata) in Section 7.

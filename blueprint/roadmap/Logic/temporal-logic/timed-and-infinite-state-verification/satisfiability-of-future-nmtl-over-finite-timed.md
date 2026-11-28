@@ -9,6 +9,7 @@ For comparison: over infinite timed words satisfiability of future MTL is alread
 ## Depends on
 
 - [Nested metric temporal logic](nested-metric-temporal-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

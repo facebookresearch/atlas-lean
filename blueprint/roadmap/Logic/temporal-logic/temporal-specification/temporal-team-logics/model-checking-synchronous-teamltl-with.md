@@ -14,6 +14,7 @@ TeamLTL with Boolean negation is complete for third-order arithmetic (Lück), wh
 
 - [Formulas of linear temporal logic](../../linear-temporal-logic/formula.md)
 - [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

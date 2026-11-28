@@ -21,6 +21,7 @@ Alternation-free model checking is decidable, as is model checking with alternat
 
 - [HyperLTL](hyperltl.md)
 - [Timed words and timed languages](../../../TheoryOfComputation/omega-automata-and-games/timed-automata/timed-words-and-timed-languages.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
