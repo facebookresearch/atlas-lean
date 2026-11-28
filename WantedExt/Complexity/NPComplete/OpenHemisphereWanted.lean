@@ -65,7 +65,8 @@ def WellFormed (i : OpenHemisphereInstance) : Prop :=
   (∀ x ∈ i.2.1, x.length = i.1) ∧ (i.2.1.map fun x => x.map intOf).Nodup ∧
     0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
 
-/-- A rational `m`-tuple `y` with `x · y > 0` for at least `K` elements `x` of `X`. -/
+/-- A rational `m`-tuple `y` with `x · y > 0` for at least `K` entries `x` of the list `X`,
+counted with repetition; a coordinate missing from an entry reads as `0`. -/
 def OpenHemisphereFeasible (i : OpenHemisphereInstance) : Prop :=
   ∃ y : Fin i.1 → ℚ, i.2.2 ≤
     (i.2.1.filter fun x => 0 < ∑ j : Fin i.1, (intOf (x.getD j (0, 0)) : ℚ) * y j).length

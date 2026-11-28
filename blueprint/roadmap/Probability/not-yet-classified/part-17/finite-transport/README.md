@@ -1,0 +1,17 @@
+# Finite Transport
+
+- [Pushforward of a probability vector along a row-stochastic kernel](is-dist-vec-mul.md)
+- [Coupling of two weight vectors](is-coupling.md)
+- [Transport cost of a plan](transport-cost.md)
+- [Earthmover value](earthmover.md)
+- [Expectation gap of a score](bias.md)
+- [Total variation distance is nonnegative](tv-dist-nonneg.md)
+- [Triangle inequality for total variation distance](tv-dist-triangle.md)
+- [Event masses differ by at most the total variation distance](abs-event-sub-le-tv-dist.md)
+- [Total variation distance between probability vectors is at most `1`](tv-dist-le-one.md)
+- [Independent coupling](is-coupling-mul.md)
+- [Couplings of probability distributions exist](nonempty-coupling-subtype.md)
+- [Lower bounds for the earthmover value](le-earthmover.md)
+- [The earthmover value is at most the cost of any coupling](earthmover-le-transport-cost.md)
+- [Score-gap bound for one coupling](bias-le-transport-cost.md)
+- [Score-gap bound by the earthmover value](bias-le-earthmover.md)

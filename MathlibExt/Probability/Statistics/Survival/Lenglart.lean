@@ -111,10 +111,10 @@ section Lenglart
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
   {F : Filtration ℕ m0}
 
-/-- **Lenglart's domination inequality** (discrete time, predictable dominating process). Let
-`X` be nonnegative and adapted and `A` predictable (`A (k + 1)` is `F k`-measurable),
-nondecreasing, with `A 0 = 0`. If `X` is dominated by `A` up to `K`, `E X_τ ≤ E A_τ` for every
-stopping time `τ ≤ K`, then for `ε, η > 0`
+/-- **Lenglart's domination inequality** (discrete time, predictable dominating process). Let `X` be
+adapted and almost surely nonnegative and `A` predictable (`A (k + 1)` is `F k`-measurable), almost
+surely nondecreasing, with `A 0 = 0` almost surely. If `X` is dominated by `A` up to `K`,
+`E X_τ ≤ E A_τ` for every stopping time `τ ≤ K`, then for `ε, η > 0`
 `P(max_{k ≤ K} X_k ≥ ε) ≤ E[A_K ∧ η] / ε + P(A_K ≥ η)`. -/
 theorem measure_le_sup_le {X A : ℕ → Ω → ℝ} (K : ℕ)
     (hX : Adapted F X) (hA : ∀ k, Measurable[F k] (A (k + 1)))
@@ -197,7 +197,8 @@ theorem measure_le_sup_le {X A : ℕ → Ω → ℝ} (K : ℕ)
     _ ≤ _ := (measure_union_le _ _).trans (add_le_add hmarkov le_rfl)
 
 /-- **Lenglart's inequality for a Doob compensator.** If `A - X` is a submartingale, `X` is
-nonnegative and adapted with `X 0 = 0`, and `A` is predictable and nondecreasing with `A 0 = 0`,
+adapted and almost surely nonnegative with `X 0 = 0` almost surely, and `A` is predictable and
+almost surely nondecreasing with `A 0 = 0` almost surely,
 then `P(max_{k ≤ K} X_k ≥ ε) ≤ E[A_K ∧ η] / ε + P(A_K ≥ η)`. The domination hypothesis of
 `measure_le_sup_le` follows from the optional stopping theorem. -/
 theorem measure_le_sup_le_of_submartingale {X A : ℕ → Ω → ℝ} (K : ℕ)
@@ -286,7 +287,8 @@ theorem martingale_sq_sub_predictableQuadraticVariation {M : ℕ → Ω → ℝ}
     simp
 
 /-- **Lenglart's inequality for a martingale and its predictable quadratic variation**
-(maximal form). For a square-integrable martingale `M` with `M 0 = 0` and `ε, η > 0`,
+(maximal form). For a square-integrable martingale `M` with `M 0 = 0` almost surely and
+`ε, η > 0`,
 `P(max_{k ≤ K} |M_k| ≥ ε) ≤ η / ε² + P(⟨M⟩_K ≥ η)`. -/
 theorem measure_le_sup_abs_le_of_martingale {M : ℕ → Ω → ℝ} (K : ℕ)
     (hM : Martingale M F P) (hL2 : ∀ k, MemLp (M k) 2 P) (hM0 : ∀ᵐ ω ∂P, M 0 ω = 0)
@@ -350,7 +352,9 @@ end Lenglart
 noncomputable def limVar (s0 s1 s2 : ℝ) : ℝ := s2 / s0 - (s1 / s0) ^ 2
 
 /-- The deterministic information compensator `∑_{k < K} Δα_k v(s(0, k, b), s(1, k, b),
-s(2, k, b)) s(0, k, β₀)` built from deterministic limits `s j k b` of `S⁽ʲ⁾(b, k) / n`. -/
+s(2, k, b)) s(0, k, β₀)` for any real array `s` and real increments `Δα` (in applications, `s j k b`
+is the deterministic limit of `S⁽ʲ⁾(b, k) / n`); the quotients in `v` are `0` when `s(0, k, b) = 0`.
+-/
 noncomputable def detInfoCompensator (s : ℕ → ℕ → ℝ → ℝ) (dα : ℕ → ℝ) (β₀ b : ℝ) (K : ℕ) : ℝ :=
   ∑ k ∈ range K, dα k * limVar (s 0 k b) (s 1 k b) (s 2 k b) * s 0 k β₀
 
@@ -527,7 +531,7 @@ cumulative hazard). For deterministic `s n j k b` (the limit of `S⁽ʲ⁾(b, k)
 `r ≥ 0`, `κ > 0` and `Λ`:
 
 * `S⁽ʲ⁾(b, k) / n` is uniformly close to `s n j k b` over `k < K n` and `b ∈ [β₀ - r, β₀ + r]`,
-  in probability, for `j = 0, 1, 2`;
+  in `P`-measure (in probability when `P` is a probability measure), for `j = 0, 1, 2`;
 * `s n 0 k b ≥ κ` (the risk set does not empty out);
 * the cumulative baseline hazard over the grid is at most `Λ`;
 * the deterministic compensator `detInfoCompensator` converges to `i` uniformly on the
@@ -546,8 +550,8 @@ structure IsAndersenGillRegular (P : Measure Ω) (t : (n : ℕ) → Ω → Fin n
     |detInfoCompensator (s n) (dα n) β₀ b (K n) - i b| < ε
 
 /-- **The law of large numbers step.** Andersen–Gill regularity implies T159's hypothesis
-`hcomp`: the normalized information compensator converges to `i` uniformly in probability on
-`[β₀ - r, β₀ + r]`. -/
+`hcomp`: the normalized information compensator converges to `i` uniformly in `P`-measure on
+`[β₀ - r, β₀ + r]` (in probability when `P` is a probability measure). -/
 theorem tendsto_measure_exists_infoCompensator (h : IsCoxCountingProcess P F t d z dα β₀ B)
     {K : ℕ → ℕ} {r : ℝ} {s : ℕ → ℕ → ℕ → ℝ → ℝ} {κ Λ : ℝ} {i : ℝ → ℝ}
     (hAG : IsAndersenGillRegular P t z dα K β₀ r s κ Λ i) :
@@ -676,7 +680,8 @@ theorem tendsto_measure_exists_infoCompensator (h : IsCoxCountingProcess P F t d
   have := hn b hb
   linarith
 
-/-- The limit `i` of the compensator is Lipschitz on the interval, hence continuous at `β₀`. -/
+/-- For a positive radius `r > 0`, the limit `i` of the compensator is Lipschitz on the interval
+`[β₀ - r, β₀ + r]`, hence continuous at `β₀`. -/
 theorem continuousAt_of_isAndersenGillRegular [IsProbabilityMeasure P]
     (h : IsCoxCountingProcess P F t d z dα β₀ B)
     {K : ℕ → ℕ} {r : ℝ} {s : ℕ → ℕ → ℕ → ℝ → ℝ} {κ Λ : ℝ} {i : ℝ → ℝ}
@@ -701,10 +706,10 @@ variable {Ω : Type*} {m0 : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityM
   {d : (n : ℕ) → Ω → Fin n → Bool} {z : (n : ℕ) → Ω → Fin n → ℝ} {dα : ℕ → ℕ → ℝ} {β₀ B : ℝ}
   {K : ℕ → ℕ} {r : ℝ} {s : ℕ → ℕ → ℕ → ℝ → ℝ} {κ Λ : ℝ} {i : ℝ → ℝ} {v : NNReal}
 
-/-- **T145's limit hypotheses from counting-process conditions.** Under `IsCoxCountingProcess`,
-with every observed event on the grid steps `1, …, K n`, Andersen–Gill regularity on
-`[β₀ - r, β₀ + r]` with `r > 0` and `i β₀ = v` gives, for any `Z ~ N(0, v)`: the score CLT
-(`hscore`), the uniform information limit (`hinfo`) and continuity of `i` at `β₀` (`hi`). -/
+/-- **T145's limit hypotheses from counting-process conditions.** Under `IsCoxCountingProcess`, with
+every observed event time `1 ≤ tᵢ ≤ K n` (grid step `k` covers time `k + 1`), Andersen–Gill
+regularity on `[β₀ - r, β₀ + r]` with `r > 0` and `i β₀ = v` gives, for any `Z ~ N(0, v)`: the score
+CLT (`hscore`), the uniform information limit (`hinfo`) and continuity of `i` at `β₀` (`hi`). -/
 theorem andersenGill_hypotheses_of_isAndersenGillRegular
     (h : IsCoxCountingProcess P F t d z dα β₀ B)
     (hsupp : ∀ n ω i, d n ω i = true → 1 ≤ t n ω i ∧ t n ω i ≤ K n)

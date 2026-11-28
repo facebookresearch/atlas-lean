@@ -1,7 +1,7 @@
 # Odd-order Bonferroni lower bounds for the maximal alignment score
 
 Let `p` and `q` be
-[probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+[probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet, `s` a real score on pairs of letters, `m` and `n` natural numbers and
 `t ≥ 0`. For every natural number `r`, the [maximal ungapped alignment score](max-align-score.md)
 `M_{m,n}` of independent words of `m` and `n` independent letters with laws `p` and `q` satisfies

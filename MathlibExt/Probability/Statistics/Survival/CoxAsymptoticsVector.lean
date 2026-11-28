@@ -382,9 +382,10 @@ private lemma abs_sub_smul_le {S : Matrix (Fin p) (Fin p) ℝ} {η : ℝ} (hn : 
     show M j k - n * S j k = n * (M j k / n - S j k) by field_simp, abs_mul, abs_of_pos hn']
   exact mul_le_mul_of_nonneg_left (hM j k) hn'.le
 
-/-- **The score points inward on a sphere.** If `I(b) / n` is entrywise within `η` of a matrix
-`S` with `λ ‖h‖² ≤ hᵀ S h` on the ball `‖b - β₀‖ ≤ ε`, with `p² η ≤ λ / 2`, and
-`p ‖U(β₀)‖ < n λ ε / 2`, then `⟪U(β₀ + h), h⟫ < 0` whenever `‖h‖ = ε`. -/
+/-- **The score points inward on a sphere.** Let `S` satisfy `λ ‖h‖∞² ≤ hᵀ S h` for every `h`
+(`‖·‖` is the sup norm). If `I(b) / n` is entrywise within `η` of `S` on the closed sup-norm ball
+`‖b - β₀‖∞ ≤ ε`, with `p² η ≤ λ / 2`, and `p ‖U(β₀)‖∞ < n λ ε / 2`, then `⟪U(β₀ + h), h⟫ < 0`
+whenever `‖h‖∞ = ε`. -/
 theorem coxGradient_add_dotProduct_neg {β₀ : Fin p → ℝ} {S : Matrix (Fin p) (Fin p) ℝ}
     {lam ε η : ℝ} (hn : 0 < n) (hS : ∀ h : Fin p → ℝ, lam * ‖h‖ ^ 2 ≤ h ⬝ᵥ S *ᵥ h)
     (hη : 0 ≤ η) (hpη : (p : ℝ) ^ 2 * η ≤ lam / 2)
@@ -909,12 +910,12 @@ theorem tendstoInDistribution_coxMPLE_vector (hAG : AndersenGillVector P P' T δ
   exact (not_le.2 hlt) hω
 
 /-- **Asymptotic normality of the vector Cox estimator** (Andersen–Gill 1982, Theorem 3.3,
-`β ∈ ℝᵖ`). Let `βhat n` be a measurable maximizer of the log partial likelihood whenever one
-exists. Under the vector Andersen–Gill conditions, if the score limit is Gaussian,
-`Z ~ N(0, Σ)` with `Σ = info(β₀)` the limiting information matrix, then
-`√n (βhat n - β₀) ⟶ Σ⁻¹ Z` in distribution and `Σ⁻¹ Z ~ N(0, Σ⁻¹)`: the asymptotic covariance is
-the inverse of the information matrix. This file does not show that the full hypothesis set
-(the conditions together with a nondegenerate Gaussian score limit) is satisfiable. -/
+`β ∈ ℝᵖ`). Let `βhat n` be an almost-everywhere measurable maximizer of the log partial likelihood
+whenever one exists. Under the vector Andersen–Gill conditions, if the score limit is Gaussian,
+`Z ~ N(0, Σ)` with `Σ = info(β₀)` the limiting information matrix, then `√n (βhat n - β₀) ⟶ Σ⁻¹ Z`
+in distribution and `Σ⁻¹ Z ~ N(0, Σ⁻¹)`: the asymptotic covariance is the inverse of the information
+matrix. This file does not show that the full hypothesis set (the conditions together with a
+nondegenerate Gaussian score limit) is satisfiable. -/
 theorem tendstoInDistribution_coxMPLE_vector_gaussian
     (hAG : AndersenGillVector P P' T δ x β₀ Z info r)
     (hβhat : ∀ n ω, (∃ b, IsMaxOn (logPartialLikelihood (T n ω) (δ n ω) (x n ω)) Set.univ b) →

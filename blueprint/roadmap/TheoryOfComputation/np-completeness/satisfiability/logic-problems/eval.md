@@ -1,0 +1,3 @@
+# Real value of an MV-term under Łukasiewicz operations
+
+The real value of an MV-term under an assignment $\sigma$ of real numbers to the variables, computed with the operations of the standard MV-algebra: a variable $k$ has value $\sigma(k)$, the constants have values $0$ and $1$, $\neg a = 1 - a$, $a \oplus b = \min(1, a + b)$, $a \otimes b = \max(0, a + b - 1)$, $a \to b = \min(1, 1 - a + b)$, $a \wedge b = \min(a, b)$ and $a \vee b = \max(a, b)$. The assignment need not take values in $[0, 1]$: with $\sigma(0) = 2$ the variable $0$ has value $2$. The value is the usual one in the standard MV-algebra $[0, 1]$ when every $\sigma(k)$ lies in $[0, 1]$, as feasibility requires.

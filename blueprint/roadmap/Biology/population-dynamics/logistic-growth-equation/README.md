@@ -12,3 +12,8 @@
 - [Logistic transit time from $1/(2N)$ to $1 - 1/(2N)$](logistic-transit-time-two-n.md)
 - [Logistic solution is strictly increasing](strict-mono-logistic.md)
 - [Structural non-identifiability of logistic growth with harvesting](structural-non-identifiability-of-logistic-growth-with-harvesting.md)
+- [Beverton Holt](beverton-holt.md)
+- [Orbit](orbit.md)
+- [Global convergence of the autonomous Beverton–Holt equation](tendsto-orbit-const.md)
+- [First Cushing–Henson theorem](exists-unique-periodic-attractor.md)
+- [Second Cushing–Henson theorem](periodic-average-lt.md)

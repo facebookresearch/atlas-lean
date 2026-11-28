@@ -25,6 +25,7 @@
 - [Discrete Jordan Separation Variant](discrete-jordan-separation-variant/README.md)
 - [Far Dart Contour](far-dart-contour/README.md)
 - [Fieller Ratio](fieller-ratio/README.md)
+- [Finite Transport](finite-transport/README.md)
 - [Finite Witness Union Bound](finite-witness-union-bound/README.md)
 - [FKSharp Diff Ineq](fksharp-diff-ineq/README.md)
 - [Holley FKG](holley-fkg/README.md)

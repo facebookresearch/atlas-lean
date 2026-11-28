@@ -1,0 +1,3 @@
+# Consistency of Greenwood’s estimate
+
+Let subjects $Z_i = (T_i, C_i)$ take values in $\{0, \dots, k-1\}^2$, with observed cell $(\min(T_i, C_i), \mathbf 1\{T_i \le C_i\})$; let $p$ be the vector of cell probabilities, $\hat p_n$ the empirical cell proportions of the first $n$ subjects, $e_j = p(j, 1)$ and $Y_j = \sum_{l\ge j}(p(l, 1) + p(l, 0))$. Suppose the $Z_i$ are independent with the independent censoring law (independent $T \sim p_T$ and $C \sim p_C$), and $P(\min(T, C) \ge m) \ne 0$. If $S = P(T > m) \ne 0$, then almost surely $n\hat V_n(m) \to S^2\tau^2$, where $\hat V_n$ is Greenwood's variance estimate for the first $n$ subjects and $\tau^2 = \sum_{j\le m}e_j/(Y_j(Y_j - e_j))$ is the population Greenwood sum.

@@ -12,6 +12,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Fintype.BigOperators
 public import MathlibExt.InformationTheory.LogSum
+public import MathlibExt.Probability.FiniteDist
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -60,14 +61,11 @@ namespace Cslib.MachineLearning.LatentVariable.ExpectationMaximization
 
 open Real
 
+export MathlibExt.Probability.FiniteDist (IsDist)
+
 variable {Θ X Z : Type*} [Fintype Z]
 
 /-! ## Gibbs' inequality -/
-
-/-- **Probability distributions on a finite latent space.** A function $q : Z \to \mathbb{R}$ on a
-finite set $Z$ is a probability distribution when $q(z) \ge 0$ for every $z \in Z$ and
-$\sum_{z \in Z} q(z) = 1$. -/
-def IsDist (q : Z → ℝ) : Prop := (∀ z, 0 ≤ q z) ∧ ∑ z, q z = 1
 
 /-- **Gibbs' inequality (evidence lower bound form).** Let $Z$ be a finite set, let
 $p : Z \to \mathbb{R}$ satisfy $p(z) > 0$ for all $z$, and let $q$ be a probability distribution

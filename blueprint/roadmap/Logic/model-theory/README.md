@@ -24,3 +24,4 @@ Relations between formal theories and their structures: first-order languages of
 - [Locality and preservation in the finite](locality-and-preservation-in-the-finite/README.md)
 - [Undecidable theories of geometries and fields](undecidable-theories-of-geometries/README.md)
 - [Joint embedding for hereditary classes](joint-embedding-for-hereditary-classes/README.md)
+- [Ehrenfeucht–Fraïssé games on finite binary relations](ehrenfeucht-fra-ss-games-on-finite-binary-relati/README.md)

@@ -66,7 +66,7 @@ def WellFormed (i : SortingByTranspositionsInstance) : Prop :=
   2 ≤ i.1.length ∧ i.1.Perm (List.range i.1.length) ∧ i.1.getD 0 0 = 0 ∧
     i.1.getD (i.1.length - 1) 0 = i.1.length - 1
 
-/-- `d_t(π) ≤ k`: at most `k` transpositions `τ_{i,j,k}` (`0 < i < j < k ≤ n`), applied in
+/-- `d_t(π) ≤ k`: at most `k` transpositions `τ_{a,b,c}` (`0 < a < b < c ≤ n`), applied in
 order, turn `π` into the identity `[0, 1, …, n]`. -/
 def SortingByTranspositionsFeasible (i : SortingByTranspositionsInstance) : Prop :=
   ∃ ops : List (ℕ × ℕ × ℕ), ops.length ≤ i.2 ∧

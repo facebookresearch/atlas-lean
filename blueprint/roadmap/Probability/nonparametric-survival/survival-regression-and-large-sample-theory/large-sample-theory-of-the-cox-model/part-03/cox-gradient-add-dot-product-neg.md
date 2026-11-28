@@ -1,0 +1,3 @@
+# The Cox score points inward on a sphere
+
+For survival data with observed times $T_i$, event indicators $\delta_i$ and covariate vectors $x_i \in \mathbb{R}^p$, let $U(\beta)$ be the Cox score vector and $I(\beta)$ the observed information matrix. Let $n > 0$, $\lambda\|h\|_\infty^2 \le h^\top Sh$ for every $h \in \mathbb{R}^p$, $\eta \ge 0$ with $p^2\eta \le \lambda/2$, $I(b)/n$ entrywise within $\eta$ of $S$ on the closed ball $\|b - \beta_0\|_\infty \le \varepsilon$, and $p\|U(\beta_0)\|_\infty < n\lambda\varepsilon/2$. Then $\langle U(\beta_0 + h), h\rangle < 0$ whenever $\|h\|_\infty = \varepsilon$.

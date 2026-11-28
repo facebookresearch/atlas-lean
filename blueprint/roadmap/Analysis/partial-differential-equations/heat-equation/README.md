@@ -26,6 +26,7 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
 - [Single-mode solution of the Dirichlet heat equation](single-mode-solution-of-the-dirichlet-heat-equation.md)
 - [Uniqueness of the Gaussian heat solution in the exponential-growth class](eq-heat-solution-of-exp-growth.md)
 - [The Gaussian heat solution has exponential growth on every strip](heat-solution-has-exp-growth-on-strip.md)
+- [Fick diffusion](fick-diffusion/README.md)
 
 ## Related topics
 

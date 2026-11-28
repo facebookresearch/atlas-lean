@@ -159,8 +159,9 @@ theorem isCadlag_gridPathFun (τ : ℝ) (K : ℕ) (y : Fin K → ℝ) : IsCadlag
       exact ((isCadlag_stepInd τ _).continuous_comp (continuous_const_mul (y a))).add ih
   exact hsum Finset.univ
 
-/-- The **grid step path** in `D([0, τ])`: the càdlàg pure-jump path that starts at `0` and
-jumps by `y i` at the grid time `(i + 1) τ / K`. It embeds a discrete-time process observed on
+/-- The **grid step path** in `D([0, τ])`: for any real `τ`, the càdlàg pure-jump path
+`t ↦ ∑_{i < K} y i · 1{(i + 1) τ / K ≤ t}`; for `τ > 0` it starts at `0` and jumps by `y i` at
+the grid time `(i + 1) τ / K`. It embeds a discrete-time process observed on
 the grid `0, τ / K, 2 τ / K, …, τ` into continuous time. -/
 def gridPath (τ : ℝ) (K : ℕ) (y : Fin K → ℝ) : SkorokhodSpace τ :=
   SkorokhodSpace.mk (gridPathFun τ K y) (isCadlag_gridPathFun τ K y)
@@ -258,8 +259,8 @@ theorem naErrorIncrement_eq_naMartingaleIncrement {n : ℕ} {N Y : ℕ → Ω �
   linarith
 
 /-- The normalized **Nelson–Aalen error path** `t ↦ √n (Â(t) - (α(t) - α(0)))` in `D([0, τ])`,
-for a counting process observed on the grid with `K` steps of length `τ / K`
-(`naErrorPath_apply_gridTime`). -/
+for real processes `N` and `Y` (for instance a counting process and its at-risk process) on the
+grid with `K` steps of length `τ / K` (`naErrorPath_apply_gridTime`). -/
 def naErrorPath (τ : ℝ) (K n : ℕ) (N Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) (ω : Ω) : SkorokhodSpace τ :=
   gridPath τ K fun i => naErrorIncrement n N Y α i ω
 
@@ -349,10 +350,11 @@ private lemma covariance_congr_ae {X X' Y Y' : Ω' → ℝ} (hX : X =ᵐ[P'] X')
   exact integral_congr_ae (by filter_upwards [hX, hY] with ω h1 h2; rw [h1, h2])
 
 omit [IsProbabilityMeasure P] [IsProbabilityMeasure P'] in
-/-- **Covariance of the Gaussian-martingale limit.** If the paths of `Z` are a.s. those of the
-time-changed Brownian motion `t ↦ B (σ² t)` with a non-decreasing variance function `σ²`, then
-`Cov(Z s, Z t) = σ²(min s t)`. For the Nelson–Aalen estimator the classical variance function is
-`σ²(t) = ∫_0^t dΛ / y` (continuous `Λ`, limiting at-risk fraction `y`;
+/-- **Covariance of the Gaussian-martingale limit.** Let `B` have the finite-dimensional laws of
+standard Brownian motion (no path regularity is assumed), let `σ²` be a non-decreasing variance
+function, and let the continuous process `Z` satisfy, almost surely, `Z t = B (σ² t)` for all `t`
+simultaneously. Then `Cov(Z s, Z t) = σ²(min s t)`. For the Nelson–Aalen estimator the classical
+variance function is `σ²(t) = ∫_0^t dΛ / y` (continuous `Λ`, limiting at-risk fraction `y`;
 Andersen–Borgan–Gill–Keiding (1993), Theorem IV.1.2); that identification is not proved here. -/
 theorem covariance_timeChangedBrownian {τ : ℝ} {B : ℝ≥0 → Ω' → ℝ} (hB : IsPreBrownianReal B P')
     {σsq : Set.Icc (0 : ℝ) τ → ℝ≥0} (hσ : Monotone σsq) {Z : Ω' → C(Set.Icc (0 : ℝ) τ, ℝ)}
@@ -373,10 +375,10 @@ theorem hasLaw_timeChangedBrownian {τ : ℝ} {B : ℝ≥0 → Ω' → ℝ} (hB 
 /-- **Nelson–Aalen limit in `D([0, τ])`, Skorokhod J1 topology, conditional on the martingale
 CLT.** This is not a Nelson–Aalen functional CLT: the martingale-CLT conclusions are hypotheses.
 
-Setting: for each sample size `n`, a counting process `N n` and an at-risk process `Y n` are
-observed on the grid `0, τ / K n, 2 τ / K n, …, τ` of the supported horizon `[0, τ]`, with
-deterministic cumulative hazard `α n` on that grid. The error path is
-`√n (Â_n(t) - (α_n(t) - α_n(0)))` (`naErrorPath`, `naErrorPath_apply_gridTime`).
+Setting: for each sample size `n`, measurable real processes `N n` and `Y n` (in the application a
+counting process and its at-risk process) are observed on the grid `0, τ / K n, 2 τ / K n, …, τ` of
+the supported horizon `[0, τ]`, with deterministic cumulative hazard `α n` on that grid. The error
+path is `√n (Â_n(t) - (α_n(t) - α_n(0)))` (`naErrorPath`, `naErrorPath_apply_gridTime`).
 
 Hypotheses (the counting-process / martingale-CLT setup, taken explicitly):
 * `hsupp` (**supported horizon**): the probability that the risk set is empty at some grid step

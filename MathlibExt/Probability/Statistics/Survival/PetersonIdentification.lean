@@ -102,14 +102,17 @@ open scoped ENNReal
 
 /-! ### Observed-data functionals -/
 
-/-- The **at-risk mass** `P(X ≥ s)` of an observed-data law `P` on `ℝ × Bool`. -/
+/-- The **at-risk mass** `P([s, ∞) × univ)` of a measure `P` on `ℝ × Bool`; for the observed-data
+law of `(X, δ)` it is `P(X ≥ s)`. -/
 noncomputable def obsAtRisk (P : Measure (ℝ × Bool)) (s : ℝ) : ℝ≥0∞ := P (Ici s ×ˢ univ)
 
-/-- The **observed-failure sub-distribution** `A ↦ P(X ∈ A, δ = 1)` of an observed-data law. -/
+/-- The **observed-failure measure** `A ↦ P(A × {true})` of a measure `P` on `ℝ × Bool`; for an
+observed-data law it is the sub-distribution `A ↦ P(X ∈ A, δ = 1)`. -/
 noncomputable def obsFailMeasure (P : Measure (ℝ × Bool)) : Measure ℝ :=
   (P.restrict (univ ×ˢ {true})).map Prod.fst
 
-/-- The **at-risk set** `{s | P(X ≥ s) ≠ 0}` of an observed-data law. -/
+/-- The **at-risk set** `{s | P([s, ∞) × univ) ≠ 0}` of a measure `P` on `ℝ × Bool`; for an
+observed-data law it is `{s | P(X ≥ s) ≠ 0}`. -/
 def atRiskSet (P : Measure (ℝ × Bool)) : Set ℝ := {s | obsAtRisk P s ≠ 0}
 
 /-- The at-risk mass is antitone in `s`, hence measurable. -/
@@ -130,7 +133,9 @@ theorem obsFailMeasure_apply (P : Measure (ℝ × Bool)) {A : Set ℝ} (hA : Mea
   ext ⟨t, b⟩
   simp
 
-/-- **At-risk mass under independent censoring**: `P(X ≥ s) = F[s, ∞) G[s, ∞)`. -/
+/-- **At-risk mass under independent censoring**: for any measure `F` and an s-finite `G`, the
+mass of `[s, ∞) × univ` under `censoredObsLaw F G` is `F[s, ∞) G[s, ∞)` in `[0, ∞]` (with
+`0 * ∞ = 0`); for probability laws this is `P(X ≥ s) = F[s, ∞) G[s, ∞)`. -/
 theorem censoredObsLaw_apply_Ici_prod_univ (F G : Measure ℝ) [SFinite G] (s : ℝ) :
     censoredObsLaw F G (Ici s ×ˢ univ) = F (Ici s) * G (Ici s) := by
   have hpre : censoredObsMap ⁻¹' (Ici s ×ˢ univ) = Ici s ×ˢ Ici s := by
@@ -140,7 +145,9 @@ theorem censoredObsLaw_apply_Ici_prod_univ (F G : Measure ℝ) [SFinite G] (s : 
   rw [censoredObsLaw, Measure.map_apply measurable_censoredObsMap
     (measurableSet_Ici.prod MeasurableSet.univ), hpre, Measure.prod_prod]
 
-/-- **Observed failures under independent censoring**: `P(X ∈ ds, δ = 1) = G[s, ∞) dF(s)`. -/
+/-- **Observed failures under independent censoring**: for any measure `F` and an s-finite `G`,
+the observed-failure measure of `censoredObsLaw F G` is `G[s, ∞) dF(s)`; for probability laws this
+is `P(X ∈ ds, δ = 1) = G[s, ∞) dF(s)`. -/
 theorem obsFailMeasure_censoredObsLaw (F G : Measure ℝ) [SFinite G] :
     obsFailMeasure (censoredObsLaw F G) = F.withDensity fun t => G (Ici t) := by
   ext A hA
@@ -156,10 +163,12 @@ private lemma inv_eq_mul_inv_mul {a b : ℝ≥0∞} (ha0 : a ≠ 0) (hb0 : b ≠
 
 variable {F F' G G' : Measure ℝ}
 
-/-- **Peterson representation of the hazard.** If the observed-data law `P = censoredObsLaw F G`
-has `P(X ≥ h) ≠ 0`, then on `(-∞, h]` the hazard of `F` is the observed-failure
-sub-distribution divided by the at-risk mass: `dΛ(s) = P(X ∈ ds, δ = 1) / P(X ≥ s)`. The right
-side is a functional of `P` alone; the censoring law `G` does not enter. -/
+/-- **Peterson representation of the hazard.** For finite measures `F` and `G`, if the
+observed-data measure `P = censoredObsLaw F G` has at-risk mass `P([h, ∞) × univ) ≠ 0`, then on
+`(-∞, h]` the hazard measure of `F` is the observed-failure measure divided by the at-risk mass,
+`dΛ(s) = P(ds × {true}) / P([s, ∞) × univ)`; for probability laws this is
+`dΛ(s) = P(X ∈ ds, δ = 1) / P(X ≥ s)`. The right side is a functional of `P` alone; the censoring
+measure `G` does not enter. -/
 theorem hazardMeasure_restrict_Iic_eq_peterson [IsFiniteMeasure F] [IsFiniteMeasure G] {h : ℝ}
     (hh : obsAtRisk (censoredObsLaw F G) h ≠ 0) :
     (hazardMeasure F).restrict (Iic h) =
@@ -194,7 +203,8 @@ theorem hazardMeasure_restrict_Iic_eq_of_censoredObsLaw_eq_of_atRisk [IsFiniteMe
 
 /-! ### The hazard determines the law -/
 
-/-- `F A = ∫_A F[s, ∞) dΛ(s)`: a law is recovered from its hazard and its survival function. -/
+/-- `F A = ∫_A F[s, ∞) dΛ(s)`: a finite measure `F` is recovered from its hazard measure and its
+tail masses `F[s, ∞)`. -/
 theorem setLIntegral_measure_Ici_hazardMeasure (F : Measure ℝ) [IsFiniteMeasure F] {A : Set ℝ}
     (hA : MeasurableSet A) : ∫⁻ s in A, F (Ici s) ∂(hazardMeasure F) = F A := by
   rw [hazardMeasure, setLIntegral_withDensity_eq_setLIntegral_mul _
@@ -462,9 +472,11 @@ theorem restrict_atRiskSet_eq_of_censoredObsLaw_eq [IsProbabilityMeasure F]
     exact fun n => hIic _ (hn n)
 
 /-- **Parametric identification with a parameter-varying, unknown censoring law.** Let the
-failure-time law `F θ` depend on a parameter `θ`, and the censoring law `G θ η` depend on `θ` and
-a nuisance `η` in an arbitrary way. If `θ` is determined by the failure-time law on `(-∞, h]`
-and every model has `P(X ≥ h) ≠ 0`, then the observed-data law determines `θ`. -/
+failure-time probability law `F θ` depend on a parameter `θ`, and the finite censoring measure
+`G θ η` depend on `θ` and a nuisance `η` in an arbitrary way. If `θ` is determined by the
+restriction of `F θ` to `(-∞, h]` and every model's observed-data measure, the pushforward of
+`F θ ⊗ G θ η`, has at-risk mass `P([h, ∞) × univ) ≠ 0`, then the observed-data measure
+determines `θ`. -/
 theorem parameter_eq_of_censoredObsLaw_eq {Θ H : Type*} (F : Θ → Measure ℝ)
     (G : Θ → H → Measure ℝ) [∀ θ, IsProbabilityMeasure (F θ)]
     [∀ θ η, IsFiniteMeasure (G θ η)] {h : ℝ}

@@ -1,0 +1,3 @@
+# Allen's simple relations
+
+Allen's simple relation with code $r$ between pairs of reals $a = (a_1, a_2)$ and $b = (b_1, b_2)$, read as intervals $[a_1, a_2]$ and $[b_1, b_2]$: before ($a_2 < b_1$), after ($b_2 < a_1$), meets ($a_2 = b_1$), met-by ($b_2 = a_1$), overlaps ($a_1 < b_1 < a_2 < b_2$), overlapped-by ($b_1 < a_1 < b_2 < a_2$), starts ($a_1 = b_1$, $a_2 < b_2$), started-by ($a_1 = b_1$, $b_2 < a_2$), during ($b_1 < a_1$, $a_2 < b_2$), contains ($a_1 < b_1$, $b_2 < a_2$), finishes ($a_2 = b_2$, $b_1 < a_1$), finished-by ($a_2 = b_2$, $a_1 < b_1$) and equals ($a_1 = b_1$, $a_2 = b_2$) for $r = 0, \dots, 12$; other codes name no relation. The pairs are not required to have positive length; that is a condition of feasibility.

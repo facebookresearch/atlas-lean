@@ -38,4 +38,3 @@ for the Ising model.
 - [Random-cluster model](random-cluster-model/README.md)
 - [Mean-field spin glasses](spin-glasses/README.md)
 - [Nonequilibrium fluctuation relations](nonequilibrium-fluctuation-relations/README.md)
-- [Not yet classified](not-yet-classified/README.md)

@@ -276,8 +276,9 @@ theorem tendsto_coverage_cox_waldInterval {T : (n : ℕ) → Ω → Fin n → �
 
 /-! ### Simultaneous confidence bands on a finite time grid -/
 
-/-- The simultaneous Wald band on a finite grid `ι` of time points: the functions `f : ι → ℝ`
-with `f j ∈ waldInterval (est j) (se j) z` for every grid point `j` at once. -/
+/-- The simultaneous Wald band over an index type `ι` (any type; a finite grid of time points in
+the coverage theorems): the functions `f : ι → ℝ` with `f j ∈ waldInterval (est j) (se j) z` for
+every `j` at once. -/
 def gridBand {ι : Type*} (est se : ι → ℝ) (z : ℝ) : Set (ι → ℝ) :=
   {f | ∀ j, f j ∈ waldInterval (est j) (se j) z}
 

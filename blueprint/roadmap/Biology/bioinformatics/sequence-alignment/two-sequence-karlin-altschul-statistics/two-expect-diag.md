@@ -1,7 +1,7 @@
 # The scores along one diagonal form an iid pair-score sequence
 
 Let `p` and `q` be
-[probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+[probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet, `s` a real score on pairs of letters, `m` and `n` natural numbers, `d` an
 integer and `F` a real functional of score lists. For independent words of `m` and `n`
 independent letters with laws `p` and `q` ([two-sequence model](two-expect.md)), the expectation
