@@ -24,7 +24,7 @@ asks to compute $\mathbb{E}_{\mathcal{M}}(\mathcal{A})$ from $\mathcal{A}$ and $
 $\mathbb{D}_{\mathcal{M}, \mathcal{A}}(\lambda)$ from $\mathcal{A}$, $\mathcal{M}$ and a rational $\lambda$. Sum-automata are evaluated over
 terminating chains and LimAvg-automata over chains on infinite words.
 
-These values can be irrational, even transcendental, already for integer weights and the uniform distribution.
+The expected value may be $+\infty$: for a LimAvg-automaton exactly when the set of infinite words with no infinite run has positive probability (all infinite runs are accepting, but a word may have none), and for a Sum-automaton exactly when some finite word of positive probability has no accepting run; otherwise it lies between the minimal and the maximal weight, times the expected word length for Sum. These values can be irrational, even transcendental, already for integer weights and the uniform distribution.
 
 ## Depends on
 

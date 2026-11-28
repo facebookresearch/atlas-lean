@@ -8,8 +8,7 @@ deterministic $(\Sigma, B)$-wta $\mathcal{A}$, there is a crisp-deterministic $(
 $[\![\mathcal{B}]\!]^{\mathrm{i}} = [\![\mathcal{A}]\!]^{\mathrm{i}}$, in the sense of
 [weighted tree automata over strong bimonoids](weighted-tree-automata-over-strong-bimonoids.md).
 
-The ranked alphabet, the strong bimonoid and the automaton are all part of the input (the proof uses a strong bimonoid built
-from the instance). The problem stays undecidable for arbitrary (not necessarily bottom-up deterministic) wta, and for
+The ranked alphabet, the strong bimonoid and the automaton are all part of the input (Theorem 8.5 of the source). A computable strong bimonoid is an infinite object, so as an input it is given by programs that decide membership in $B$ and compute $\oplus$ and $\otimes$, and the weights of $\mathcal{A}$ by their codes. The undecidability already holds for the instances the reduction builds from a Mealy machine $\mathcal{M}$: a strong bimonoid $B_{\mathcal{M}}$ containing the transformation monoid of $\mathcal{M}$, given effectively by $\mathcal{M}$, and a bottom-up deterministic wta $\mathcal{A}_{\mathcal{M}}$ over it. The problem stays undecidable for arbitrary (not necessarily bottom-up deterministic) wta, and for
 weighted string automata. With the same reduction the source shows that it is undecidable whether the Nerode algebra of a
 bottom-up deterministic wta is finite, and whether such a wta has the finite order property (which guarantees a
 crisp-deterministic wta with the same run semantics).

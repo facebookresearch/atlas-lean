@@ -14,7 +14,7 @@ Let $\mathcal{A}$ range over nondeterministic [weighted automata evaluated over 
    even for the uniform probability measure.
 
 *Uncomputable* means that no Turing machine computes the quantity in any representation of numbers in which equality of two
-represented numbers is decidable. The source thus rules out exact computation even through representations of irrational numbers;
+represented numbers is decidable (the value $+\infty$ included). The proof (Theorem 7 of the source) is a Turing reduction from the quantitative universality problem for Sum-automata with weights $-1, 0, 1$ (is $\mathcal{A}(w) \le 0$ for every word $w$?); for the distribution it uses the threshold $\lambda = 0$. The source thus rules out exact computation even through representations of irrational numbers;
 for LimAvg-automata it gives approximation algorithms in exponential time instead.
 
 ## Depends on

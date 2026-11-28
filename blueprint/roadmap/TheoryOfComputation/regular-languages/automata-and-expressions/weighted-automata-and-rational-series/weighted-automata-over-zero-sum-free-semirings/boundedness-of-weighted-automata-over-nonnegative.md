@@ -2,7 +2,7 @@
 
 No algorithm decides whether a weighted automaton with nonnegative rational weights has bounded values; zero isolation, whether its values stay above some positive constant, is undecidable as well.
 
-Consider [weighted automata](../weighted-automata-over-a-semiring.md) over the semiring $(\mathbb Q_{\ge0},+,\cdot)$, each defining a function $\mathcal A:\Sigma^*\to\mathbb Q_{\ge0}$.
+Consider [weighted automata](../weighted-automata-over-a-semiring.md) over the semiring $(\mathbb Q_{\ge0},+,\cdot)$, each defining a function $\mathcal A:\Sigma^*\to\mathbb Q_{\ge0}$. An instance is a finite alphabet, a finite set of states and the initial, transition and final weights, each a nonnegative rational given as a fraction of integers; in the threshold problems the threshold $c$ is a nonnegative rational given the same way.
 
 **Theorem.** The following problems are undecidable for weighted automata over $(\mathbb Q_{\ge0},+,\cdot)$:
 1. (*boundedness*) is there a number $c$ with $\mathcal A(w)\le c$ for all $w\in\Sigma^*$?

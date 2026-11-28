@@ -9,7 +9,7 @@ bounded from above.
 1. (*equivalence*) given two $\mathbb{N}_\infty$-CCRA $\mathcal{C}, \mathcal{C}'$ over $A^*$, it is undecidable whether $\mathcal{C}(w) = \mathcal{C}'(w)$ for all $w \in A^*$;
 2. (*semilinearity*) given an $\mathbb{N}_\infty$-CCRA $\mathcal{C}$, it is undecidable whether its image $\mathcal{C}(A^*)$ is semilinear, that is, eventually periodic;
 3. (*upper boundedness*) given a weighted automaton $\mathcal{A}$ over $(\mathbb{Z}_\infty, \min, +)$, it is undecidable whether some $c \in \mathbb{Z}$ satisfies $\mathcal{A}(w) \le c$ for all
-   $w \in A^*$.
+   $w \in A^*$; here $\infty \le c$ is false, so a word with no accepting run violates every bound, as in the source's statement.
 
 Copyless cost register automata are a weak model, contained in the linearly ambiguous weighted automata. Since these problems are decidable for finitely
 ambiguous weighted automata, the source presents them as arguably the simplest generalization of deterministic weighted automata with undecidable

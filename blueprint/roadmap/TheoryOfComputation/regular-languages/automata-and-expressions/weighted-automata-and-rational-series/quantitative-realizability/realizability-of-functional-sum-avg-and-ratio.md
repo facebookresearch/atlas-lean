@@ -18,6 +18,7 @@ For deterministic $V$-automata the problem is decidable. The discounted-sum case
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

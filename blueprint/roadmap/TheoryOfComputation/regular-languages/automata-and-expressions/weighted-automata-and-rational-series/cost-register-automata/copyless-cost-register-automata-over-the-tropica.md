@@ -11,7 +11,7 @@ $$
 r_i \leftarrow \min\{ r_1 + m_{1,i},\ r_2 + m_{2,i},\ \dots,\ r_k + m_{k,i},\ m_{k+1,i} \} \qquad (i \in [k]),
 $$
 
-with constants $m_{j,i} \in \mathbb{K}$, all registers being updated simultaneously; each final state carries an output expression
+with constants $m_{j,i} \in \mathbb{K}$, all registers being updated simultaneously; as an input, an automaton is given by its finite tables, each constant written as an integer in binary or as $\infty$; each final state carries an output expression
 $\min\{r_1 + m_1, \dots, r_k + m_k, m_{k+1}\}$. The value $\mathcal{C}(w)$ of a word $w$ is $\infty$ if the underlying automaton rejects $w$, and otherwise the output
 expression of the final state evaluated after updating the registers along the unique run on $w$. The automaton is *copyless* ($\mathbb{K}$-CCRA) if every update
 satisfies $|\{ i : m_{j,i} \ne \infty \}| \le 1$ for each register $r_j$, so that the old value of each register influences at most one new value.

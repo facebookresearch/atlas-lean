@@ -2,7 +2,7 @@
 
 No algorithm decides whether the values of a copyless cost register automaton over the nonnegative rationals stay above some positive constant, although for copyless linear automata boundedness is decidable.
 
-**Theorem.** The zero isolation problem for [copyless cost register automata](copyless-cost-register-automata.md) over $(\mathbb Q_{\ge0},+,\cdot)$ is undecidable: there is no algorithm that, given such an automaton $\mathcal B$, decides whether there is a rational $c>0$ with $\mathcal B(w)\ge c$ for all words $w$.
+**Theorem.** The zero isolation problem for [copyless cost register automata](copyless-cost-register-automata.md) over $(\mathbb Q_{\ge0},+,\cdot)$ is undecidable: there is no algorithm that, given such an automaton $\mathcal B$, decides whether there is a rational $c>0$ with $\mathcal B(w)\ge c$ for all words $w$. The automaton is given by its finite tables, every constant in its initial values, final coefficients and update expressions being a nonnegative rational written as a fraction of integers.
 
 In contrast, the source shows that zero isolation is decidable, assuming Schanuel's conjecture, for stateless copyless linear automata with three registers in which every update has the form $x\leftarrow c\odot x\oplus d$, so that registers do not interact.
 

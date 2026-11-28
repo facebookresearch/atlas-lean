@@ -12,8 +12,7 @@ Watson–Crick complementation.
 states $I, F \subseteq Q$, and finitely many edges between states labeled by pairs $(u, v) \in \Sigma^* \times \Sigma^*$; it realizes the pairs $(x, y)$ obtained by
 concatenating the inputs and the outputs along a path from an initial to a final state, and $t(w)$ is the set of outputs on input $w$. For an antimorphic
 permutation $\theta$, the transducer is *$\theta$-input-preserving* if $\theta(w) \in t(w)$ for every nonempty word $w$, and *$\theta$-input-altering* if $\theta(w) \notin t(w)$ for
-every nonempty word $w$. Such transducers describe code properties: an input-altering transducer describes the property of languages $L$ in which no
-word is mapped to a different word of $L$, as for DNA codes avoiding unwanted hybridization.
+every nonempty word $w$. Such transducers describe code properties (for $\theta$ the identity): an input-altering transducer $t$ describes the property of the languages $L$ with $t(L) \cap L = \emptyset$, and an input-preserving transducer $t$ the property of the languages $L$ in which no word is mapped to a different word of $L$, that is, $w \notin t(L \setminus \{w\})$ for every $w \in L$; DNA codes avoiding unwanted hybridization are of this kind.
 
 ## Depends on
 

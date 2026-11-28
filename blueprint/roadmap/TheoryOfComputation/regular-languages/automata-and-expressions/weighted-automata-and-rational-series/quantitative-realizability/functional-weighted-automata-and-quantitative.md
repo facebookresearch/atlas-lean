@@ -20,7 +20,7 @@ to that value (and other words to an undefined value below every rational).
 $\dashv \in \Sigma_O$, and let the states of $A$ be split into $Q_O$ and $Q_I$ with $F \subseteq Q_I$ and transitions from
 $Q_O$ on letters of $\Sigma_O$ to $Q_I$ and from $Q_I$ on letters of $\Sigma_I$ to $Q_O$. In the *realizability game* the
 environment plays $i_0 \in \Sigma_I$, the controller answers $o_0 \in \Sigma_O$, and so on; the controller may end the play by
-playing $\dashv$. A controller strategy is *winning* for a threshold $\nu \ge 0$ if against every environment strategy the play
+playing $\dashv$. A controller strategy is *winning* for a rational threshold $\nu \ge 0$ if against every environment strategy the play
 is finite and its value $L_A$ exceeds $\nu$. The *quantitative language realizability problem* asks, given $A$ and $\nu$,
 whether the controller has a winning strategy.
 
