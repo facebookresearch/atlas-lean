@@ -48,10 +48,15 @@ def coordinateVector (i : Fin 2) (c : ℚ) : flag (i.val + 1) :=
 theorem lower_le_coordinate_ker (i : Fin 2) :
     (flag i.val).comap (flag (i.val + 1)).subtype ≤ (coordinate i).ker := by
   intro x hx
+  change (x : V) ∈ flag i.val at hx
+  change coordinate i x = 0
   fin_cases i
-  · have hx0 : (x : V) = 0 := by simpa [flag] using hx
-    simp [coordinate, hx0]
-  · simpa [flag, coordinate] using hx
+  · change (x : V) = 0 at hx
+    change (x : V) 0 = 0
+    exact congrFun hx 0
+  · change (x : V) 1 = 0 at hx
+    change (x : V) 1 = 0
+    exact hx
 
 def gradedCoordinate (i : Fin 2) : Graded i →ₗ[ℚ] ℚ :=
   ((flag i.val).comap (flag (i.val + 1)).subtype).liftQ
@@ -60,20 +65,25 @@ def gradedCoordinate (i : Fin 2) : Graded i →ₗ[ℚ] ℚ :=
 theorem gradedCoordinate_zero (i : Fin 2) :
     ∀ x : Graded i, gradedCoordinate i x = 0 → x = 0 := by
   intro x
-  refine Submodule.Quotient.induction_on x ?_
+  refine Submodule.Quotient.induction_on
+    ((flag i.val).comap (flag (i.val + 1)).subtype) x ?_
   intro v hv
   have hcoord : coordinate i v = 0 := by simpa [gradedCoordinate] using hv
-  apply (Submodule.Quotient.mk_eq_zero _).mpr
+  apply (Submodule.Quotient.mk_eq_zero
+    ((flag i.val).comap (flag (i.val + 1)).subtype)).mpr
+  change (v : V) ∈ flag i.val
   fin_cases i
-  · have h0 : (v : V) 0 = 0 := by simpa [coordinate] using hcoord
-    have h1 : (v : V) 1 = 0 := by simpa [flag] using v.property
+  · have h0 : (v : V) 0 = 0 := hcoord
+    have h1 : (v : V) 1 = 0 := v.property
     have hz : (v : V) = 0 := by
       funext j
       fin_cases j
       · exact h0
       · exact h1
-    simpa [flag] using hz
-  · simpa [flag, coordinate] using hcoord
+    change (v : V) = 0
+    exact hz
+  · change (v : V) 1 = 0
+    exact hcoord
 
 theorem gradedCoordinate_bijective (i : Fin 2) :
     Function.Bijective (gradedCoordinate i) := by
@@ -130,17 +140,20 @@ example (x : flag 0) : zeroBasis.repr x = 0 := by
   ext i
   exact Fin.elim0 i.1
 
--- This closes using the public castSucc simp rule, with a nonempty first grade.
+-- The public castSucc formula retains the nonempty first grade.
 example :
     ((secondBasis ⟨(0 : Fin 1).castSucc, 0⟩ : flag 2) : V) =
       (firstBasis ⟨(0 : Fin 1), 0⟩ : flag 1) := by
-  simp only [secondBasis, firstBasis, Module.Basis.ofFiltrationStage_castSucc]
+  simpa only [secondBasis, firstBasis] using
+    (Module.Basis.ofFiltrationStage_castSucc
+      flag rfl GradeIndex 1 flag_le gradedBasis (0 : Fin 1) (0 : Fin 1))
 
 -- Both grades are nonzero; the second test detects an incorrect chosen quotient.
 example (i : Fin 2) :
-    Submodule.Quotient.mk
-        (Module.Basis.ofFiltrationStageVector flag rfl GradeIndex 2 flag_le gradedBasis i 0) =
-      Submodule.Quotient.mk (coordinateVector i 1) := by
+    (Submodule.Quotient.mk
+        (Module.Basis.ofFiltrationStageVector flag rfl GradeIndex 2 flag_le gradedBasis i 0) :
+      Graded i) =
+      (Submodule.Quotient.mk (coordinateVector i 1) : Graded i) := by
   simp only [Module.Basis.ofFiltrationStageVector_mk, gradedBasis_apply]
 
 theorem first_vector :
@@ -152,10 +165,14 @@ theorem first_vector :
   have hz :
       ((Module.Basis.ofFiltrationStageVector flag rfl GradeIndex 2 flag_le gradedBasis 0 0 :
           flag 1) : V) - Pi.single 0 1 = 0 := by
-    simpa [flag, coordinateVector] using hmem
+    change
+      ((Module.Basis.ofFiltrationStageVector flag rfl GradeIndex 2 flag_le gradedBasis 0 0 :
+        flag 1) : V) - Pi.single 0 1 ∈ (⊥ : Submodule ℚ V) at hmem
+    exact Submodule.mem_bot.mp hmem
   simpa only [secondBasis, Module.Basis.ofFiltrationStageVector] using sub_eq_zero.mp hz
 
 example : ambientBasis ⟨(0 : Fin 2), 0⟩ = Pi.single 0 1 := by
-  simpa only [ambientBasis, Module.Basis.ofFiltration_apply, secondBasis] using first_vector
+  exact (Module.Basis.ofFiltration_apply
+    flag rfl GradeIndex 2 flag_le gradedBasis rfl ⟨(0 : Fin 2), (0 : Fin 1)⟩).trans first_vector
 
 end MathlibExtTest.FiniteFiltration
