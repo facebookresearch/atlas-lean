@@ -7,7 +7,7 @@ A set $X \subseteq \mathbb{N}^k$ is [semilinear](../../../../TheoryOfComputation
 - [Semilinear set of vectors](../../../../TheoryOfComputation/context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md)
 ## Proof depends on
 
-- [Quantifier elimination for Presburger arithmetic](../../../../Logic/model-theory/quantifier-elimination-for-presburger-arithmetic.md)
+- [Quantifier elimination for Presburger arithmetic](../../../../Logic/first-order-logic/quantifier-elimination-for-presburger-arithmetic/quantifier-elimination-for-presburger-arithmetic.md)
 
 ## Expansion
 

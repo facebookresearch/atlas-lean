@@ -17,4 +17,5 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Term rewriting](term-rewriting/README.md)
 - [Equational logic](equational-logic/README.md)
 - [Superposition](superposition/README.md)
-- [Herbrand's theorem](herbrand-s-theorem.md)
+- [Decidability of Presburger arithmetic](decidability-of-presburger-arithmetic/README.md)
+- [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic/README.md)

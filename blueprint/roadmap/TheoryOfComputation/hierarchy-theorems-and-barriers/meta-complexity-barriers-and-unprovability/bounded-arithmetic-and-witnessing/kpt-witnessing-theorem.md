@@ -25,7 +25,7 @@ None.
 
 ## Informally uses
 
-- [Herbrand's theorem](../../../../Logic/first-order-logic/herbrand-s-theorem.md)
+- [Herbrand's theorem](../../../../Logic/proof-theory/herbrand-s-theorem/herbrand-s-theorem.md)
 
 ## Sources
 
