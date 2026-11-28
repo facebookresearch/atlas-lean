@@ -18,4 +18,4 @@ Equivalently, the relation $q\to_F q'$, meaning that in some context a cell can 
 
 ## Sources
 
-- Nicolas Ollinger and Guillaume Theyssier, "Freezing, Bounded-Change and Convergent Cellular Automata", *Discrete Mathematics & Theoretical Computer Science* 24(1), 2022, paper 5734, doi:[10.46298/dmtcs.5734](https://doi.org/10.46298/dmtcs.5734); read in arXiv:1908.06751v4 ([arXiv](https://arxiv.org/abs/1908.06751v4)), whose numbering is used (separate counters for definitions, facts, examples and propositions): Definition 1 and Fact 1 in Section 2 (Main Definitions, with Examples), with Examples 1 to 3.
+- Nicolas Ollinger and Guillaume Theyssier, "Freezing, Bounded-Change and Convergent Cellular Automata", *Discrete Mathematics & Theoretical Computer Science* 24(1), 2022, paper 5734, doi:[10.46298/dmtcs.5734](https://doi.org/10.46298/dmtcs.5734); read in arXiv:1908.06751v4 ([arXiv](https://arxiv.org/abs/1908.06751v4)), whose numbering is used (separate counters for definitions, facts, examples and propositions): Definition 1 and Fact 1 in Section 2 (Main Definitions, with Examples), with Examples 1 to 4 (forest-fire models are mentioned in Example 4).

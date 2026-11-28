@@ -14,10 +14,11 @@ For the same classes the source states (Theorem 10) that finiteness, infinitenes
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Halting is undecidable](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The reduction is from Hilbert's tenth problem over the nonnegative integers, as Ibarra did for reversal-bounded multicounter machines. From a polynomial $p(x_1,\dots,x_n)$ with integer coefficients the source builds bounded languages $L_1(p)$ and $L_2(p)$, whose words encode values of the variables and of the monomials of $p$ by block lengths, so that a word exists iff $2^n\cdot p$, equivalently $p$, has a root in $\mathbb N^n$. Lemmas 7 and 8 show that $L_1(p)$ is accepted by a real-time $\mathrm{SC}(n)$-OCA and $L_2(p)$ by a real-time $\mathrm{MC}(\log n)$-OCA, both effectively constructed from $p$; emptiness of these automata would decide Hilbert's tenth problem.
+The reduction is from Hilbert's tenth problem over the nonnegative integers, as Ibarra did for reversal-bounded multicounter machines. From a polynomial $p(x_1,\dots,x_n)$ with integer coefficients the source builds bounded languages $L_1(p)$ and $L_2(p)$, whose words encode values of the variables and of the monomials of $p$ by block lengths, so that a word exists iff $2^n\cdot p$, equivalently $p$, has a root in $\mathbb N^n$. Lemmas 7 and 8 show that $L_1(p)$ is accepted by a real-time $\mathrm{SC}(n)$-OCA and $L_2(p)$ by a real-time $\mathrm{MC}(\log n)$-OCA, both effectively constructed from $p$; emptiness of these automata would decide Hilbert's tenth problem, which is undecidable because, by the DPRM theorem, every r.e. set, in particular the halting set, is Diophantine.
 
 ## Sources
 

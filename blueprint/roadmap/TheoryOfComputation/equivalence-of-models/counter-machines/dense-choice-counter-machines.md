@@ -21,9 +21,9 @@ used for all counters in one step, and a new $\delta$ is chosen at each step.
 **Variants.** A counter is *purely dense-choice* if its action is $\Delta$ in every transition, and a *purely-DCM* has only purely dense-choice
 counters; a DCM whose actions are all $1$ is an ordinary counter machine. For $k \in \mathbb{N}$, a *$k$-DCM* may use the guards $(x = i)$, $(x < i)$,
 $(x > i)$ and $\mathit{true}$ for $i \in [0, k]$, and its counters are called *$k$-testable*. A counter is *$b$-bounded* if its value stays at most $b$
-along every run, and *bounded* if it is $b$-bounded for some $b$.
+along every run from the initial configuration (defined below), and *bounded* if it is $b$-bounded for some $b$.
 
-**Problems.** A *run* is a finite sequence of transitions $(s_0, \mathbf{x}_0) \to \cdots \to (s_l, \mathbf{x}_l)$, $l \ge 0$; it is *accepting* if it ends in the final state $s_{\mathrm{fin}}$, whatever configuration it starts from. The *state reachability problem* asks, for a DCM (a finite object, its transitions carrying integer coefficients) and a control state $s$, whether $s$ occurs on some accepting run. No initial configuration is part of the input.
+**Problems.** To interpret a DCM one specifies an initial control state $s_{\mathrm{init}}$ and an initial valuation of the counters; as in the source's proof of Proposition 3.1, the initial configuration here is $(s_{\mathrm{init}}, \mathbf{0})$, every counter $0$. A *run* is a finite sequence of transitions $(s_0, \mathbf{x}_0) \to \cdots \to (s_l, \mathbf{x}_l)$, $l \ge 0$, from $(s_0, \mathbf{x}_0) = (s_{\mathrm{init}}, \mathbf{0})$; it is *accepting* if it ends in the final state $s_{\mathrm{fin}}$. The *state reachability problem* asks, for a DCM (a finite object, its transitions carrying integer coefficients) with its initial state $s_{\mathrm{init}}$ and a control state $s$, whether $s$ occurs on some accepting run from $(s_{\mathrm{init}}, \mathbf{0})$.
 
 ## Depends on
 

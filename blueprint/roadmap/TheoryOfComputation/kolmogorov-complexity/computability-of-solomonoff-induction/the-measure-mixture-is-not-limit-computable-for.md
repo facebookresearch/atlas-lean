@@ -34,7 +34,7 @@ $S$. The program $p_n$ outputs $1^{n+1}0$ and then, for $k = 0, 1, 2, \dots$, se
 more $0$ each time a search succeeds; so $p_n$ outputs the infinite string $1^{n+1}0^\infty$ exactly when $n \in A$. Define $U'$ by
 letting the input $1^{n+1}0$ run $p_n$, the input $00p$ run $U(p)$, and the input $01p$ run $U(p)$ with its output bitwise inverted;
 $U'$ is universal. Then $\overline{M}_{U'}(1^{n+1}0) - \overline{M}_{U'}(0^{n+1}1)$ equals $2^{-n-2}$ if $n \in A$ and $0$ otherwise,
-so a limit computation of $\overline{M}_{U'}$ would make $A$ limit computable.
+so a limit computation of $\overline{M}_{U'}$ would make $A$ limit computable. A good expansion adds a page for the existence of a $\Pi^0_2$ set that is not $\Delta^0_2$, the strictness of the arithmetical hierarchy at that level.
 
 ## Sources
 

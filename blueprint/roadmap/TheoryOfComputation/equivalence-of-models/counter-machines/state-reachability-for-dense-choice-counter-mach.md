@@ -23,10 +23,10 @@ definable in a decidable logic, and the cases of two and three purely dense-choi
 ## Expansion
 
 The proof adapts the simulation of Minsky machines by four purely dense-choice counters. Two counters store a value $\delta$ chosen once at
-the start of the computation, and the other two are changed only by $\pm\delta$, so an integer $k$ is encoded as $k\delta$. With $1$-bounded
+the start of the computation, and the other two are changed only by $\pm\delta$, so an integer $k$ is encoded as $k\delta$; all counters start at $0$ in the initial configuration $(s_{\mathrm{init}}, \mathbf{0})$. With $1$-bounded
 counters only values up to $\lfloor 1/\delta \rfloor$ can be encoded, but $\delta$ can be chosen arbitrarily small, and a run that chooses $\delta$
-too large crashes when a counter would exceed $1$. Since every halting computation of a two-counter machine uses bounded counter values,
-the final state is reachable exactly when the simulated machine halts.
+too large crashes when a counter would exceed $1$ (the source mentions, as one way to do this, resetting to the initial configuration so that $\delta$ can be chosen again). Since every halting computation of a two-counter machine uses bounded counter values,
+the final state is reachable exactly when the simulated machine halts. A good expansion adds a page for the simulation of two-counter machines by four purely dense-choice counters (Xie, Dang, Ibarra and San Pietro, CAV 2003), the construction the proof adapts.
 
 ## Sources
 

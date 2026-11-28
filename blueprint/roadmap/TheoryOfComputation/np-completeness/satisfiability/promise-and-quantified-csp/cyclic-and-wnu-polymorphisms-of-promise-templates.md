@@ -22,7 +22,7 @@ Having a cyclic polymorphism of some arity $n\ge2$ is equivalent to having one o
 
 ## Expansion
 
-The proof reduces from tiling problems (Propositions 4.2 and 5.3 of the source) with the same method as for the relaxation algorithms, without using that result: it is applied to minions defined by the corresponding minor conditions: the existence of cyclic or WNU elements of the relevant arities is expressed by primitive positive minor conditions, and the templates built from the grid or from growing triangular slices of the grid have such polymorphisms in the required arities iff the tiling instance is solvable, in the "every arity", "some arity", "all but finitely many" and "infinitely many" regimes respectively.
+The proof reduces from tiling problems (Propositions 4.2 and 5.3 of the source) with the same method as for the relaxation algorithms, without using that result: it is applied to minions defined by the corresponding minor conditions: the existence of cyclic or WNU elements of the relevant arities is expressed by primitive positive minor conditions, and the templates built from the grid or from growing triangular slices of the grid have such polymorphisms in the required arities iff the tiling instance is solvable, in the "every arity", "some arity", "all but finitely many" and "infinitely many" regimes respectively. A good expansion adds a page for the source's construction of templates whose polymorphism minion encodes homomorphisms from the grid (Sections 6 to 8), which this proof applies to the minions of cyclic and WNU operations.
 
 ## Sources
 

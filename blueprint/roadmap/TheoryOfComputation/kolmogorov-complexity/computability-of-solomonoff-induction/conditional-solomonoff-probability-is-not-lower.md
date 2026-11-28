@@ -31,7 +31,7 @@ By a result of Lattimore, Hutter and Gavane, there is an infinite string $z$ wit
 $\liminf_{t} M(z_{1:2t} \mid z_{<2t}) < 1$: $M$ does not learn that every even-numbered symbol repeats its predecessor. If
 $M(xy \mid x)$ were lower semicomputable, the semimeasure $\nu$ that predicts the odd-numbered symbols according to $M$ and puts
 probability $1$ on repeating them would be lower semicomputable, so $M \ge c\,\nu$ for some constant $c > 0$ by universal dominance.
-The chain rule then gives $c \le \prod_{k \le t} M(z_{1:2k} \mid z_{<2k})$ for all $t$, while the right-hand side tends to $0$.
+The chain rule then gives $c \le \prod_{k \le t} M(z_{1:2k} \mid z_{<2k})$ for all $t$, while the right-hand side tends to $0$. A good expansion adds pages for the result of Lattimore, Hutter and Gavane on the string $z$ and for the universal dominance of $M$ over lower semicomputable semimeasures.
 
 ## Sources
 
