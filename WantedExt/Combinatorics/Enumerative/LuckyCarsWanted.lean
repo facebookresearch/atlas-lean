@@ -47,6 +47,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.LuckyCarCountByCar
 public import MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
 public import MathlibExt.Combinatorics.Enumerative.LuckyCarPrescriptions
 public import MathlibExt.Combinatorics.Enumerative.LuckyCars
@@ -59,20 +60,6 @@ set_option autoImplicit false
 namespace MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
 
 open MetaMathlibExt Polynomial
-
-/-- **Generating polynomial of lucky cars.** For $n \in \mathbb{N}$ and $0 \le k \le n$, let $c_k$
-be the number of parking functions of length $n$ with exactly $k$ lucky cars. Then in
-$\mathbb{Q}[x]$,
-$$\frac{1}{n+1} \prod_{i=0}^{n-1} \bigl((n+1-i)x + i\bigr) = \sum_{k=0}^{n} c_k x^k.$$
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Corollary 5. -/
-theorem_wanted luckyGenPoly_eq_sum (n : ℕ) :
-    luckyGenPoly n =
-      ∑ k ∈ Finset.range (n + 1),
-        C ((Nat.card { f : Fin n → Fin n //
-          IsParkingFunction n f ∧ luckyCount f = k } : ℕ) : ℚ) *
-          X ^ k
 
 /-- **Boundary values of lucky-car counts (Lemma 9).** Let $n \ge 1$, number the cars and spots
 $0, \dots, n-1$, and let $q_n(i, j)$ be the number of parking functions of length $n$ in which
@@ -100,20 +87,6 @@ theorem_wanted q_boundary_values (n : ℕ) (hn : 1 ≤ n)
       (q n i ⟨0, hn⟩ : ℚ) =
         ((n + 1 : ℚ)) ^ ((n : ℤ) - i.val - 2) *
           ((n : ℚ)) ^ ((i.val : ℤ) - 1) * (2 * n - i.val)
-
-/-- **Number of parking functions in which a given car is lucky.** Number cars and spots
-$0, \dots, n-1$, and let $q_n(i, j)$ be the number of parking functions of length $n$ in which
-car $i$ prefers spot $j$ and parks there. Then for every $n$ and every car $i < n$,
-$$\sum_{j=0}^{n-1} q_n(i, j) = (n + 1 - i)(n + 1)^{n-2},$$
-an identity in $\mathbb{Q}$ (for $n = 1$ the exponent is $-1$). The left side is the number of
-parking functions of length $n$ in which car $i$ is lucky; in the paper's one-based numbering
-the count for the $i$-th car is $(n + 2 - i)(n + 1)^{n-2}$.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Corollary 10. -/
-theorem_wanted sum_q_eq (n : ℕ) (i : Fin n) :
-    (∑ j : Fin n, (q n i j : ℚ)) =
-      (n + 1 - i.val : ℚ) * ((n + 1 : ℚ)) ^ ((n : ℤ) - 2)
 
 /-- **Number of parking functions in which the second spot is lucky.** Number cars and spots
 $0, \dots, n-1$, and let $q_n(i, j)$ be the number of parking functions of length $n$ in which

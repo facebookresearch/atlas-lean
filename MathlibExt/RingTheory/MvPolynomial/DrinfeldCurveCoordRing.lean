@@ -99,7 +99,7 @@ private theorem irreducible_rev (m : ℕ) :
     rw [Ideal.mem_span_singleton]
     simp only [coeff_add, coeff_sub, coeff_X_pow, coeff_C_mul, coeff_C]
     have h1 : n ≠ m + 2 := by omega
-    rw [if_neg h1, zero_sub]
+    rw [ite_eq_right h1, zero_sub]
     refine dvd_add (dvd_neg.mpr (dvd_mul_of_dvd_left (dvd_pow_self y (by omega)) _)) ?_
     split_ifs
     · exact dvd_rfl
@@ -148,11 +148,11 @@ private theorem irreducible_rel (m : ℕ) :
   have hdeg : F.natDegree = m + 2 := by
     rw [hF_def]
     compute_degree!
-    all_goals (rw [if_neg (by omega), sub_zero]; exact hy0)
+    all_goals (rw [ite_eq_right (by omega), sub_zero]; exact hy0)
   have h0 : F.coeff 0 ≠ 0 := by
     rw [hF_def]
     simp only [coeff_add, coeff_sub, coeff_C_mul, coeff_X_pow, coeff_X, coeff_one]
-    rw [if_neg (by omega : (0 : ℕ) ≠ m + 2)]
+    rw [ite_eq_right (by omega : (0 : ℕ) ≠ m + 2)]
     simp
   refine irreducible_of_reverse h0 ?_
   have hrev : F.reverse

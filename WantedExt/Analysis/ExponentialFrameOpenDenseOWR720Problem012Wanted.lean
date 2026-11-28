@@ -27,8 +27,9 @@ namespace MathlibExt.Analysis.ExponentialFrameOpenDenseOWR720Problem012Wanted
 
 /-!
 Source: H. Führ, A reproducing kernel without (?) discretization, in Mini-Workshop: Wavelets and
-Frames, Oberwolfach Reports 1 (2004), no. 10, p. 532, Question, DOI 10.4171/OWR/2004/10.
-UnsolvedMath record UM-30000044 (`OWR-720-012`), dataset ulamai/UnsolvedMath v1.8.0.
+Frames, Oberwolfach Reports 1 (2004), no. 1 (Report 10/2004), p. 532, Question, DOI
+10.4171/OWR/2004/10. UnsolvedMath record UM-30000044 (`OWR-720-012`), dataset ulamai/UnsolvedMath
+v1.8.0.
 
 The source asks whether, for `H = H_A`, some `Γ ⊂ ℝ` and `η ∈ H` give a frame of `Γ`-shifts (a tight
 frame even?), and notes that the problem 'can also be phrased as follows: Does there exist a frame
@@ -40,8 +41,11 @@ of exponentials for `L²(A)`?' The second phrasing is formalized: `{e^{iλt} : �
 open MeasureTheory
 
 /-- The exponentials `t ↦ e^{iλt}`, `λ ∈ Λ`, form a frame in `L²(A)`: there are `0 < a ≤ b` with
-`a ‖f‖² ≤ ∑_{λ ∈ Λ} |⟨f, e_λ⟩|² ≤ b ‖f‖²` for every `f ∈ L²(A)`, where
-`⟨f, e_λ⟩ = ∫_A f(t) e^{-iλt} dt` (the sum is taken in `[0, ∞]`). -/
+`a ‖f‖² ≤ ∑_{λ ∈ Λ} |∫_A f(t) e^{-iλt} dt|² ≤ b ‖f‖²` for every `f ∈ L²(A)` (the sum is taken in
+`[0, ∞]`). The inner integral is a Bochner integral, `0` when `f(t) e^{-iλt}` is not integrable on
+`A`. When `A` has finite measure it is the `L²(A)` inner product `⟨f, e_λ⟩` with `e_λ(t) = e^{iλt}`,
+and these are the usual frame inequalities; for an arbitrary `A` they need not be inner products (on
+`A = ℝ` no exponential lies in `L²(ℝ)`). -/
 def IsExponentialFrame (A Λ : Set ℝ) : Prop :=
   ∃ a b : ℝ, 0 < a ∧ a ≤ b ∧ ∀ f : ℝ → ℂ, MemLp f 2 (volume.restrict A) →
     ENNReal.ofReal a * ∫⁻ t in A, (‖f t‖₊ : ENNReal) ^ 2 ≤
@@ -58,12 +62,12 @@ def openDenseExponentialFrame : Prop :=
 Resolved true: Nitzan, Olevskii and Ulanovskii (Theorem 1) prove that `L²(S)` has a frame of
 exponentials `{e^{iλt} : λ ∈ Λ}`, `Λ` discrete, for every set `S ⊆ ℝ` of finite measure, in
 particular for every open dense `A` of finite measure. Source: H. Führ, A reproducing kernel without
-(?) discretization, in Mini-Workshop: Wavelets and Frames, Oberwolfach Reports 1 (2004), no. 10, p.
-532, Question, DOI 10.4171/OWR/2004/10; resolution: S. Nitzan, A. Olevskii and A. Ulanovskii,
-Exponential frames on unbounded sets, Proc. Amer. Math. Soc. 144 (2016), no. 1, 109-118, DOI
-10.1090/proc/12868, arXiv:1410.5693, Theorem 1: there are positive constants c, C such that for
-every set S ⊂ ℝ of finite measure there is a discrete set Λ ⊂ ℝ such that {exp(iλt), λ ∈ Λ} is a
-frame in L²(S) with frame bounds c|S| and C|S|, https://arxiv.org/abs/1410.5693.
+(?) discretization, in Mini-Workshop: Wavelets and Frames, Oberwolfach Reports 1 (2004),
+no. 1 (Report 10/2004), p. 532, Question, DOI 10.4171/OWR/2004/10; resolution: S. Nitzan, A.
+Olevskii and A. Ulanovskii, Exponential frames on unbounded sets, Proc. Amer. Math. Soc. 144 (2016),
+no. 1, 109-118, DOI 10.1090/proc/12868, arXiv:1410.5693, Theorem 1: there are positive constants c,
+C such that for every set S ⊂ ℝ of finite measure there is a discrete set Λ ⊂ ℝ such that {exp(iλt),
+λ ∈ Λ} is a frame in L²(S) with frame bounds c|S| and C|S|, https://arxiv.org/abs/1410.5693.
 -/
 public theorem_wanted openDenseExponentialFrame_holds : openDenseExponentialFrame
 

@@ -1,0 +1,16 @@
+# Reimer Compression Marginals
+
+- [Fwt insert mul](fwt-insert-mul.md)
+- [Fwt le erase](fwt-le-erase.md)
+- [Fwt le insert](fwt-le-insert.md)
+- [Mem of erase not Mem](mem-of-erase-not-mem.md)
+- [Not Mem of compress not Mem](not-mem-of-compress-not-mem.md)
+- [Fmarg le up Compression](fmarg-le-up-compression.md)
+- [Fmarg le double Compress](fmarg-le-double-compress.md)
+- [Iter Double Compress](iter-double-compress.md)
+- [Iter Double Compress card](iter-double-compress-card.md)
+- [Fmarg le iter Double Compress](fmarg-le-iter-double-compress.md)
+- [Fmarg le down Compression satisfiable](fmarg-le-down-compression-satisfiable.md)
+- [Fmarg le double Compress symm](fmarg-le-double-compress-symm.md)
+- [Fmarg double Compress symm eq](fmarg-double-compress-symm-eq.md)
+- [Wdpairs le iter Double Compress of symm](wdpairs-le-iter-double-compress-of-symm.md)

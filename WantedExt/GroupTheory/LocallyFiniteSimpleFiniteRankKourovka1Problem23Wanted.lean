@@ -18,7 +18,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Finset.Card
 public import Mathlib.GroupTheory.Subgroup.Simple
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 

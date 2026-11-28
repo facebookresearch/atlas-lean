@@ -26,27 +26,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Representation count of the reduced triangular triple at a shifted Frobenius number.** For a
-natural number $r$ write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$
-and put $s = k(k+1) + i$. Let $N_s = 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and
-$N_s = 6\lfloor(\sqrt{4s+5} - 1)/2\rfloor - 3$ if $n$ is odd, and suppose $n > N_s$. For even $n$
-let $(x_s, y_s) = (i, 2(k - i))$ if $i \le k$ and $(x_s, y_s) = (i - k - 1, 4k - 2i + 3)$ if
-$i > k$; for odd $n$ let $(x_s, y_s) = (2i, k - i)$ if $i \le k$ and
-$(x_s, y_s) = (2(i - k) - 1, 2k - i + 1)$ if $i > k$. Put $d_1 = \gcd(t_{n+1}, t_{n+2})$,
-$a = t_{n+1}/d_1$ and $b = t_{n+2}/d_1$. If $g$ is the generalized Frobenius number
-$g(a, b; x_s)$, then the number of representations of $g + y_s t_n$ by $(t_n, a, b)$ is $s$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Lemma 5 (`integers-2026-A63-lem-5`). -/
-public theorem_wanted frobeniusRepCount_triangular_reduced_at_pair_frobenius (n k i : ℕ)
-    (hi : i ≤ 2 * k + 1) (hn : triangularFrobeniusBound n (k * (k + 1) + i) < n) :
-    let t : ℕ → ℕ := fun j => j * (j + 1) / 2
-    let d₁ := Nat.gcd (t (n + 1)) (t (n + 2))
-    ∀ g₂ : ℤ, IsGenFrobeniusNumber ![t (n + 1) / d₁, t (n + 2) / d₁]
-        (triangularFrobeniusX n k i) g₂ →
-      frobeniusRepCount ![t n, t (n + 1) / d₁, t (n + 2) / d₁]
-          (g₂ + triangularFrobeniusY n k i * t n) = k * (k + 1) + i
-
 /-- **Generalized Frobenius numbers of three consecutive triangular numbers.** For a natural number
 $j$ write $t_j = j(j+1)/2$. Let $n$ and $s$ be natural numbers, let $r = \lfloor\sqrt{s}\rfloor$,
 let $\delta_s = 1$ if $s \ge r^2 + r$ and $\delta_s = 0$ otherwise, and put
@@ -116,31 +95,6 @@ public theorem_wanted isGenFrobeniusNumber_triangularTriple_of_xy (n k i : ℕ)
     ∃ g : ℤ, IsGenFrobeniusNumber (triangularTriple n) (k * (k + 1) + i) g ∧
       4 * (g + 1) = (n + 1) * (n + 2) *
         (if Even n then (2 * x + y + 3) * n + 6 * x else (x + 2 * y + 3) * n + 3 * (x - 1))
-
-/-- **Generalized Frobenius numbers of the reduced triangular triple.** For a natural number $r$
-write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$ and put
-$s = k(k+1) + i$. Let $N_s = 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and
-$N_s = 6\lfloor(\sqrt{4s+5} - 1)/2\rfloor - 3$ if $n$ is odd, and suppose $n > N_s$. For even $n$
-let $(x_s, y_s) = (i, 2(k - i))$ if $i \le k$ and $(x_s, y_s) = (i - k - 1, 4k - 2i + 3)$ if
-$i > k$; for odd $n$ let $(x_s, y_s) = (2i, k - i)$ if $i \le k$ and
-$(x_s, y_s) = (2(i - k) - 1, 2k - i + 1)$ if $i > k$. Put $d_1 = \gcd(t_{n+1}, t_{n+2})$,
-$a = t_{n+1}/d_1$ and $b = t_{n+2}/d_1$. Then $(x_s + 1)ab - a - b$ is the generalized Frobenius
-number $g(a, b; x_s)$, and $(x_s + 1)ab - b - a + y_s t_n$ is the generalized Frobenius number
-$g(t_n, a, b; s)$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Theorem 4 (`integers-2026-A63-thm-4`). -/
-public theorem_wanted isGenFrobeniusNumber_triangular_reduced (n k i : ℕ) (hi : i ≤ 2 * k + 1)
-    (hn : triangularFrobeniusBound n (k * (k + 1) + i) < n) :
-    let t : ℕ → ℕ := fun j => j * (j + 1) / 2
-    let d₁ := Nat.gcd (t (n + 1)) (t (n + 2))
-    let a : ℤ := (t (n + 1) / d₁ : ℕ)
-    let b : ℤ := (t (n + 2) / d₁ : ℕ)
-    let x : ℤ := triangularFrobeniusX n k i
-    IsGenFrobeniusNumber ![t (n + 1) / d₁, t (n + 2) / d₁] (triangularFrobeniusX n k i)
-        ((x + 1) * a * b - a - b) ∧
-      IsGenFrobeniusNumber ![t n, t (n + 1) / d₁, t (n + 2) / d₁] (k * (k + 1) + i)
-        ((x + 1) * a * b - b - a + triangularFrobeniusY n k i * t n)
 
 /-- **Explicit generalized Frobenius numbers of triangular triples at levels 11 to 20.** For a
 natural number $r$ write $t_r = r(r+1)/2$. For a natural number $n$, a natural number $s$ and an

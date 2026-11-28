@@ -28,7 +28,7 @@ public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 
 @[expose] public section
 
@@ -50,7 +50,7 @@ Brucker's multi-purpose machine model (*Scheduling Algorithms*, Chapter 10): eve
 `μᵢ ⊆ {M₁, …, M_m}` and is processed by exactly one machine of `μᵢ`, each machine processing at most
 one job at a time; with single-operation jobs and identical machines this is `PMPM`. An instance is
 an MPM job-shop instance (`MPMJobShopInstance` and `MPMWellFormed` of
-`MultiPurposeJobShopThreeJobsWanted`: the number `m = 2` of machines, numbered `1, 2`, the jobs as
+`MultiPurposeJobShopThreeJobsDefs`: the number `m = 2` of machines, numbered `1, 2`, the jobs as
 lists of operations `(pᵢ, μᵢ)` with nonempty machine sets, and the bound `K`) in which every job has
 exactly one operation, as in `MultipurposeParallelTwoMachinesUnitChainsMakespanWanted`
 (`PMPM2|chains; pᵢ = 1|C_max`), together with the list of release dates, one per job. A schedule is

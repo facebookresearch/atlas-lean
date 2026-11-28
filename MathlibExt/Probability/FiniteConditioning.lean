@@ -60,8 +60,10 @@ noncomputable def cellMean {α C : Type*} [Fintype α] [DecidableEq C] (p : α �
     (Y : α → ℝ) (c : C) : ℝ :=
   (∑ x ∈ univ.filter (fun x => G x = c), p x * Y x) / cellMass p G c
 
-/-- The within-cell variance `Var(Y | G = c) = E[(Y - E[Y | G = c]) ^ 2 | G = c]`; `0` on a
-cell of mass `0`. -/
+/-- The weighted sum `∑ x ∈ {G = c}, p x * (Y x - cellMean p G Y c) ^ 2` divided by
+`cellMass p G c`; `0` on a cell of mass `0`. For nonnegative weights `p` and a cell of positive
+mass it is the within-cell variance `Var(Y | G = c) = E[(Y - E[Y | G = c]) ^ 2 | G = c]`; with
+negative weights it can be negative. -/
 noncomputable def cellVar {α C : Type*} [Fintype α] [DecidableEq C] (p : α → ℝ) (G : α → C)
     (Y : α → ℝ) (c : C) : ℝ :=
   (∑ x ∈ univ.filter (fun x => G x = c), p x * (Y x - cellMean p G Y c) ^ 2) / cellMass p G c

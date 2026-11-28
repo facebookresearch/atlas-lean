@@ -1,0 +1,17 @@
+# The primal barrier graph and the rotated cut hypothesis
+
+- [Pdc barrier Graph Primal](pdc-barrier-graph-primal.md)
+- [Pdc rot90 adj dual](pdc-rot90-adj-dual.md)
+- [Pdc rot90 Hom](pdc-rot90-hom.md)
+- [Pdc rot90 Inv adj primal](pdc-rot90-inv-adj-primal.md)
+- [Pdc rot90 Inv Hom](pdc-rot90-inv-hom.md)
+- [Pdc rot90 Iso](pdc-rot90-iso.md)
+- [Pdc Primal Barrier Connects](pdc-primal-barrier-connects.md)
+- [Pdc rotated Dual Vertical Crossing of primal Connects](pdc-rotated-dual-vertical-crossing-of-pr.md)
+- [Pdc dual Barrier walk of primal Walk](pdc-dual-barrier-walk-of-primal-walk.md)
+- [Pdc share at inside](pdc-share-at-inside.md)
+- [Pdc share at outside](pdc-share-at-outside.md)
+- [Pdc all Closed left Reach x0](pdc-all-closed-left-reach-x0.md)
+- [Pdc all Closed no H](pdc-all-closed-no-h.md)
+- [Pdc all Closed right Side isolated](pdc-all-closed-right-side-isolated.md)
+- [Pdc all Closed not Dual Cut Connects Rot](pdc-all-closed-not-dual-cut-connects-rot.md)
