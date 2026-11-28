@@ -18,3 +18,4 @@ the recognizable tree languages, so its theory S2S is decidable (Rabin's tree th
 - [Monadic second-order formulas over the binary tree and tree automata](mso-formulas-over-the-binary-tree-and-tree-automata.md)
 - [Rabin's tree theorem](rabin-s-tree-theorem.md)
 - [Weakly definable tree languages](weakly-definable-tree-languages.md)
+- [Emptiness of universal co-Büchi tree automata with qualitative semantics is undecidable](universal-co-buchi-tree-automata-with-qualitative.md)

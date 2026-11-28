@@ -12,7 +12,7 @@ public import MathlibExt.MeasureTheory.OptimalTransport.Wasserstein
 public import Mathlib.Probability.IdentDistrib
 import Mathlib.Probability.StrongLaw
 import Mathlib.MeasureTheory.Measure.Portmanteau
-import MathlibExt.Probability.SkorokhodRepresentation
+import MathlibExt.MeasureTheory.OptimalTransport.WassersteinConvergence
 
 /-!
 # Almost sure convergence of the empirical law in the Mallows metric
@@ -25,7 +25,7 @@ public section
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped ENNReal NNReal
-open MathlibExt.MeasureTheory.OptimalTransport.KantorovichWanted (IsCoupling)
+open MathlibExt.MeasureTheory.WassersteinWanted (tendsto_wasserstein_iff)
 open MathlibExt.MeasureTheory.OptimalTransport.Wasserstein
 
 namespace MathlibExt.Probability.Statistics.BootstrapWanted
@@ -82,114 +82,6 @@ private theorem empirical_weak_tendsto {Ω E : Type*} [MeasurableSpace Ω] {P : 
   · rintro _ ⟨t, rfl⟩
     exact hω t
 
-/-- A varying integrable bound suffices in dominated convergence if its integral also converges.
-We clip the unused part of the bound at its pointwise limit. -/
-private theorem lintegral_tendsto_zero {α : Type*} [MeasurableSpace α] {Q : Measure α}
-    {d b : ℕ → α → ℝ≥0∞} {a : α → ℝ≥0∞}
-    (hd : ∀ n, Measurable (d n)) (hb : ∀ n, Measurable (b n)) (ha : Measurable a)
-    (hle : ∀ n x, d n x ≤ b n x) (hfin : ∫⁻ x, a x ∂Q ≠ ∞)
-    (hdlim : ∀ᵐ x ∂Q, Tendsto (fun n => d n x) atTop (𝓝 0))
-    (hblim : ∀ᵐ x ∂Q, Tendsto (fun n => b n x) atTop (𝓝 (a x)))
-    (hbint : Tendsto (fun n => ∫⁻ x, b n x ∂Q) atTop (𝓝 (∫⁻ x, a x ∂Q))) :
-    Tendsto (fun n => ∫⁻ x, d n x ∂Q) atTop (𝓝 0) := by
-  let g (n : ℕ) (x : α) := min (a x) (b n x - d n x)
-  have hg n : Measurable (g n) := ha.min ((hb n).sub (hd n))
-  have hga n x : g n x ≤ a x := min_le_left _ _
-  have hgint : Tendsto (fun n => ∫⁻ x, g n x ∂Q) atTop (𝓝 (∫⁻ x, a x ∂Q)) := by
-    apply tendsto_lintegral_of_dominated_convergence a hg (fun n => ae_of_all _ (hga n)) hfin
-    filter_upwards [hdlim, hblim] with x hx hy
-    simpa [g] using (tendsto_const_nhds (x := a x)).min
-      (ENNReal.Tendsto.sub hy hx (.inr ENNReal.zero_ne_top))
-  apply tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
-    (show Tendsto (fun n => (∫⁻ x, b n x ∂Q) - ∫⁻ x, g n x ∂Q) atTop (𝓝 0) by
-      simpa using ENNReal.Tendsto.sub hbint hgint (.inl hfin))
-    (Eventually.of_forall fun _ => bot_le)
-  refine Eventually.of_forall fun n => ENNReal.le_sub_of_add_le_left
-    (ne_top_of_le_ne_top hfin (lintegral_mono (hga n))) ?_
-  rw [← lintegral_add_left (hg n)]
-  exact lintegral_mono fun x => (add_le_add_left (min_le_right _ _) _).trans_eq
-    (tsub_add_cancel_of_le (hle n x))
-
-/-- Use a Skorokhod coupling for the weak limit. Its distance cost tends to zero pointwise,
-and its moment bound has convergent integrals. -/
-private theorem wasserstein_tendsto_of_moments {E : Type*} [NormedAddCommGroup E]
-    [CompleteSpace E] [SecondCountableTopology E] [MeasurableSpace E] [BorelSpace E]
-    {p : ℝ} (hp : 1 ≤ p) (ν : ℕ → ProbabilityMeasure E) (μ : ProbabilityMeasure E)
-    (hweak : Tendsto ν atTop (𝓝 μ)) (hfin : ∫⁻ x, ‖x‖ₑ ^ p ∂(μ : Measure E) < ∞)
-    (hmom : Tendsto (fun n => ∫⁻ x, ‖x‖ₑ ^ p ∂(ν n : Measure E)) atTop
-      (𝓝 (∫⁻ x, ‖x‖ₑ ^ p ∂(μ : Measure E)))) :
-    Tendsto (fun n => wasserstein p (ν n) μ) atTop (𝓝 0) := by
-  have hp0 : 0 < p := zero_lt_one.trans_le hp
-  let Q := volume.restrict (Set.Icc (0 : ℝ) 1)
-  obtain ⟨Y, Z, hY, hZ, hν, hμ, hlim⟩ :=
-    SkorokhodRepresentationWanted.skorokhod_representation ν μ hweak
-  let m (x : E) := ‖x‖ₑ ^ p
-  have hm : Measurable m := measurable_eNorm.pow_const _
-  let c : ℝ≥0∞ := 2 ^ (p - 1)
-  have hc : c ≠ ∞ := by
-    dsimp [c]
-    finiteness
-  let d (n : ℕ) (x : ℝ) := edist (Y n x) (Z x) ^ p
-  let b (n : ℕ) (x : ℝ) := c * (m (Y n x) + m (Z x))
-  let a (x : ℝ) := c * (m (Z x) + m (Z x))
-  have ha : Measurable a := ((hm.comp hZ).add (hm.comp hZ)).const_mul _
-  have hb n : Measurable (b n) := ((hm.comp (hY n)).add (hm.comp hZ)).const_mul _
-  have hd n : Measurable (d n) := ((hY n).edist hZ).pow_const _
-  have hd_le n x : d n x ≤ b n x := by
-    refine (ENNReal.rpow_le_rpow ?_ hp0.le).trans
-      (ENNReal.rpow_add_le_mul_rpow_add_rpow ‖Y n x‖ₑ ‖Z x‖ₑ hp)
-    simpa only [edist_comm 0 (Z x), edist_zero_right] using edist_triangle (Y n x) 0 (Z x)
-  have intZ : ∫⁻ x, m (Z x) ∂Q = ∫⁻ x, m x ∂(μ : Measure E) := by
-    rw [← hμ, lintegral_map hm hZ]
-  have intY n : ∫⁻ x, m (Y n x) ∂Q = ∫⁻ x, m x ∂(ν n : Measure E) := by
-    rw [← hν, lintegral_map hm (hY n)]
-  have intA : ∫⁻ x, a x ∂Q = c * ((∫⁻ x, m x ∂(μ : Measure E)) +
-      ∫⁻ x, m x ∂(μ : Measure E)) := by
-    dsimp only [a]
-    rw [lintegral_const_mul' _ _ hc,
-      lintegral_add_left (f := fun x => m (Z x)) (hm.comp hZ), intZ]
-  have intB n : ∫⁻ x, b n x ∂Q = c * ((∫⁻ x, m x ∂(ν n : Measure E)) +
-      ∫⁻ x, m x ∂(μ : Measure E)) := by
-    dsimp only [b]
-    rw [lintegral_const_mul' _ _ hc,
-      lintegral_add_left (f := fun x => m (Y n x)) (hm.comp (hY n)), intY, intZ]
-  have hcost : Tendsto (fun n => ∫⁻ x, d n x ∂Q) atTop (𝓝 0) := by
-    apply lintegral_tendsto_zero hd hb ha hd_le
-    · rw [intA]
-      exact ENNReal.mul_ne_top hc (ENNReal.add_ne_top.mpr ⟨hfin.ne, hfin.ne⟩)
-    · filter_upwards [hlim] with x hx
-      simpa only [Function.comp_def, d, edist_self, ENNReal.zero_rpow_of_pos hp0] using
-        (ENNReal.continuous_rpow_const (y := p)).continuousAt.tendsto.comp
-          (hx.edist (tendsto_const_nhds (x := Z x)))
-    · filter_upwards [hlim] with x hx
-      have hy : Tendsto (fun n => m (Y n x)) atTop (𝓝 (m (Z x))) :=
-        (ENNReal.continuous_rpow_const.comp continuous_eNorm).continuousAt.tendsto.comp hx
-      exact ENNReal.Tendsto.const_mul (hy.add tendsto_const_nhds) (.inr hc)
-    · simp only [intB, intA]
-      exact ENNReal.Tendsto.const_mul (hmom.add tendsto_const_nhds) (.inr hc)
-  have hQ : IsProbabilityMeasure Q := ⟨by simp [Q]⟩
-  apply tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds
-    (show Tendsto (fun n => (∫⁻ x, d n x ∂Q) ^ (1 / p)) atTop (𝓝 0) by
-      simpa only [Function.comp_def, ENNReal.zero_rpow_of_pos (one_div_pos.mpr hp0)] using
-        (ENNReal.continuous_rpow_const (y := 1 / p)).continuousAt.tendsto.comp hcost)
-    (Eventually.of_forall fun _ => bot_le)
-  refine Eventually.of_forall fun n => ?_
-  let pair (x : ℝ) := (Y n x, Z x)
-  have hpair : Measurable pair := (hY n).prodMk hZ
-  let π : ProbabilityMeasure (E × E) := ⟨Q.map pair, inferInstance⟩
-  have hπ : IsCoupling (ν n) μ π := by
-    constructor
-    · change _ = (Q.map pair).map Prod.fst
-      rw [Measure.map_map measurable_fst hpair]
-      exact (hν n).symm
-    · change _ = (Q.map pair).map Prod.snd
-      rw [Measure.map_map measurable_snd hpair]
-      exact hμ.symm
-  have H := wasserstein_le_of_isCoupling hp0.le hπ
-  change _ ≤ (∫⁻ z : E × E, edist z.1 z.2 ^ p ∂Q.map pair) ^ (1 / p) at H
-  rw [lintegral_map ((measurable_fst.edist measurable_snd).pow_const _) hpair] at H
-  exact H
-
 /-- **Almost sure convergence of the empirical law in the Mallows metric** (P. J. Bickel and
 D. A. Freedman, *Ann. Statist.* 9 (1981), Lemma 8.4, and (2.1) for `p = 2` on the line). Let
 `E` be a separable Banach space, `1 ≤ p < ∞`, and `X₀, X₁, …` i.i.d. `E`-valued with law
@@ -222,10 +114,14 @@ theorem tendsto_wasserstein_empirical {Ω E : Type*} [MeasurableSpace Ω] {P : M
     (integrable_toReal_of_lintegral_ne_top hm.aemeasurable hmom.ne)
   simp only [hreal] at hmoment
   filter_upwards [hweak, hmoment] with ω hω hωm
-  apply wasserstein_tendsto_of_moments hp _ μ hω hmom
-  refine (ENNReal.tendsto_toReal_iff (fun n => ?_) hmom.ne).mp hωm
-  rw [hF, lintegral_smul_measure, lintegral_finsetSum_measure]
-  simp only [lintegral_dirac, smul_eq_mul]
-  exact ENNReal.mul_ne_top (by simp) (ENNReal.sum_ne_top.mpr fun i _ => hmfin (X i ω))
+  have hfinite n : (∫⁻ x, m x ∂(F n ω : Measure E)) ≠ ∞ := by
+    rw [hF, lintegral_smul_measure, lintegral_finsetSum_measure]
+    simp only [lintegral_dirac, smul_eq_mul]
+    exact ENNReal.mul_ne_top (by simp) (ENNReal.sum_ne_top.mpr fun i _ => hmfin (X i ω))
+  have hmoment := (ENNReal.tendsto_toReal_iff hfinite hmom.ne).mp hωm
+  exact (tendsto_wasserstein_iff hp (0 : E) (fun n => F n ω) μ
+    (by simpa only [edist_zero_left, m, eNorm_eq_nnNorm] using fun n => (hfinite n).lt_top)
+    (by simpa only [edist_zero_left, eNorm_eq_nnNorm] using hmom)).2
+      ⟨hω, by simpa only [edist_zero_left, m, eNorm_eq_nnNorm] using hmoment⟩
 
 end MathlibExt.Probability.Statistics.BootstrapWanted
