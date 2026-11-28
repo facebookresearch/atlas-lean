@@ -34,14 +34,15 @@ noncomputable section
 open CategoryTheory Limits
 universe w w' v u t
 
-namespace HomologicalComplex
+namespace CategoryTheory.HasExactColimitsOfShape
+
 variable {J : Type w} [Category.{w'} J] {C : Type u} [Category.{v} C] [Abelian C]
-  {ι : Type t} {c : ComplexShape ι} [HasColimitsOfShape J C]
+  [HasColimitsOfShape J C]
 
 -- Keep this implication explicit, since the converse is a native typeclass instance.
 /-- In an abelian category C with J-shaped colimits, preservation of short-complex homology
 by colim implies exactness of those colimits. -/
-theorem hasExactColimitsOfShape_of_colim_preservesHomology
+theorem of_colim_preservesHomology
     [(colim (J := J) (C := C)).PreservesHomology] :
     HasExactColimitsOfShape J C where
   preservesFiniteLimits := by
@@ -50,6 +51,14 @@ theorem hasExactColimitsOfShape_of_colim_preservesHomology
     let _ : (colim (J := J) (C := C)).Additive :=
       preservesFiniteColimits_le_additiveFunctor (J ⥤ C) C _ (by infer_instance)
     exact Functor.preservesFiniteLimits_of_preservesHomology (colim (J := J) (C := C))
+
+
+end CategoryTheory.HasExactColimitsOfShape
+
+namespace HomologicalComplex
+variable {J : Type w} [Category.{w'} J] {C : Type u} [Category.{v} C] [Abelian C]
+  {ι : Type t} {c : ComplexShape ι} [HasColimitsOfShape J C]
+
 
 variable [HasExactColimitsOfShape J C]
 
@@ -66,23 +75,30 @@ abbrev homologyColimitIso (K : J ⥤ HomologicalComplex C c) (i : ι) :
     (colimit K).homology i ≅ colimit (K ⋙ homologyFunctor C c i) :=
   preservesColimitIso (homologyFunctor C c i) K
 
-/-- Homology of a diagram injection followed by the comparison is its homology-diagram injection. -/
-abbrev map_ι_comp_homologyColimitIso_hom
+/-- Let C be abelian with exact J-shaped colimits, and K a J-indexed diagram of
+complexes of any shape. In degree i, homology of the injection from K(j), followed
+by the homology-colimit comparison, is the injection from H_i(K(j)) into its colimit. -/
+@[reassoc (attr := simp)]
+theorem map_ι_comp_homologyColimitIso_hom
     (K : J ⥤ HomologicalComplex C c) (i : ι) (j : J) :
     (homologyFunctor C c i).map (colimit.ι K j) ≫ (homologyColimitIso K i).hom =
       colimit.ι (K ⋙ homologyFunctor C c i) j :=
   ι_preservesColimitIso_hom (G := homologyFunctor C c i) (F := K) j
 
-/-- A homology-diagram injection followed by the inverse comparison is homology of the injection. -/
-abbrev ι_comp_homologyColimitIso_inv
+/-- Let C be abelian with exact J-shaped colimits, and K a J-indexed diagram of
+complexes of any shape. In degree i, the injection of H_i(K(j)) into the colimit,
+followed by the inverse homology-colimit comparison, is homology of the injection K(j). -/
+@[reassoc (attr := simp)]
+theorem ι_comp_homologyColimitIso_inv
     (K : J ⥤ HomologicalComplex C c) (i : ι) (j : J) :
     colimit.ι (K ⋙ homologyFunctor C c i) j ≫ (homologyColimitIso K i).inv =
       (homologyFunctor C c i).map (colimit.ι K j) :=
   ι_preservesColimitIso_inv (G := homologyFunctor C c i) (F := K) j
 
-/-- The inverse comparison colim Hᵢ(K) → Hᵢ(colim K) is induced by applying homology
-to the colimit injections of K. -/
-abbrev homologyColimitIso_inv_eq_colimit_post
+/-- Let C be abelian with exact J-shaped colimits, and K a J-indexed diagram of
+complexes of any shape. The inverse comparison colim H_i(K) → H_i(colim K)
+is the colimit map induced by applying degree-i homology to every diagram injection. -/
+theorem homologyColimitIso_inv_eq_colimit_post
     (K : J ⥤ HomologicalComplex C c) (i : ι) :
     (homologyColimitIso K i).inv = colimit.post K (homologyFunctor C c i) := rfl
 
