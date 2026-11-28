@@ -68,4 +68,14 @@ example : smithRemoteness branchGame (5 : ℕ) = 4 := by
     Finset.image_insert, Finset.image_singleton, r1, r3]
   decide
 
+-- The terminal position is a P-position, and the position that moves only to it is not.
+example : IsP branchGame (0 : ℕ) := by
+  apply (even_smithRemoteness_iff_isP branchGame (0 : ℕ)).mp
+  rw [r0]
+  decide
+
+example : ¬ IsP branchGame (1 : ℕ) := by
+  rw [← even_smithRemoteness_iff_isP branchGame (1 : ℕ), r1]
+  decide
+
 end MetaMathlibExt.SpragueGrundy

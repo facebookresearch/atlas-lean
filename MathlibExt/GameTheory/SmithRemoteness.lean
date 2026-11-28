@@ -15,10 +15,20 @@ public import MathlibExt.GameTheory.SpragueGrundy
 /-!
 # Smith's remoteness function
 
-Smith's remoteness of a position of a finite impartial game (`SpragueGrundy.ImpartialGame`):
-the length of play when the winner hurries and the loser delays. It is `0` at terminal
-positions; otherwise one more than the least even remoteness of an option, if some option has
-even remoteness, and one more than the largest remoteness of an option otherwise.
+Smith's remoteness is the length of play when the winner hurries and the loser delays. We
+consider finitely branching normal-play impartial games (`SpragueGrundy.ImpartialGame`) with
+a natural-number rank that strictly decreases on every move. Remoteness is `0` at terminal
+positions; otherwise it is one more than the least even remoteness of an option, if some option
+has even remoteness, and one more than the largest remoteness of an option otherwise. A position
+is a P-position exactly when its remoteness is even.
+
+## References
+
+* C. A. B. Smith, *Graphs and composite games*, Journal of Combinatorial Theory 1 (1966),
+  pp. 51–81.
+* Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi,
+  *On Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
+  pp. 1–21, Sections 1.3 and 1.7.
 -/
 
 @[expose] public section
@@ -71,5 +81,39 @@ theorem smithRemoteness_of_moves_eq_empty (G : ImpartialGame) (p : G.Pos)
     (h : G.moves p = ∅) : smithRemoteness G p = 0 := by
   rw [smithRemoteness_eq]
   simp [h]
+
+/-- **Even remoteness characterizes P-positions.** In a finitely branching normal-play impartial
+game $G$ with a natural-number rank that strictly decreases on every move, a position $p$ is a
+P-position if and only if its Smith remoteness $R(p)$ is even.
+
+Source: C. A. B. Smith, *Graphs and composite games*, J. Combin. Theory 1 (1966), 51–81; as
+recalled in Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
+Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
+Section 1.3. -/
+theorem even_smithRemoteness_iff_isP (G : ImpartialGame) (p : G.Pos) :
+    Even (smithRemoteness G p) ↔ IsP G p := by
+  classical
+  induction p using (wfRel G).induction with
+  | h p ih =>
+    let values := (G.moves p).image (smithRemoteness G)
+    have hfilter : ¬ (values.filter Even).Nonempty ↔ IsP G p := by
+      rw [isP_iff]
+      constructor
+      · intro he q hq hp
+        exact he ⟨_, Finset.mem_filter.mpr
+          ⟨Finset.mem_image_of_mem _ hq, (ih q hq).mpr hp⟩⟩
+      · rintro hp ⟨v, hv⟩
+        obtain ⟨hv, hev⟩ := Finset.mem_filter.mp hv
+        obtain ⟨q, hq, rfl⟩ := Finset.mem_image.mp hv
+        exact hp q hq ((ih q hq).mp hev)
+    rw [← hfilter, smithRemoteness_eq]
+    split_ifs with he hne
+    · have hmin := (Finset.mem_filter.mp (Finset.min'_mem _ he)).2
+      exact iff_of_false (Nat.not_even_iff_odd.mpr ((by decide : Odd 1).add_even hmin))
+        (not_not_intro he)
+    · have hodd : Odd (values.max' hne) := Nat.not_even_iff_odd.mp fun h =>
+        he ⟨_, Finset.mem_filter.mpr ⟨Finset.max'_mem _ hne, h⟩⟩
+      exact iff_of_true ((by decide : Odd 1).add_odd hodd) he
+    · exact iff_of_true (by decide) he
 
 end MetaMathlibExt.SpragueGrundy

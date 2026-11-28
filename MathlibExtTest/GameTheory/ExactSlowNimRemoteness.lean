@@ -164,4 +164,31 @@ example : IsExactSlowNimCritical 2 2 ![2, 0, 2] ∧ ¬ IsExactSlowNimCritical 2 
     (show (![1, 0, 3] : Fin 3 → ℕ) ≠ slowANimAfter ![2, 1, 3] (Finset.univ.erase 0) by
       decide) ((hcrit _ (by decide)).1 h)⟩
 
+-- The classification includes the one-pile-per-move case.
+example : SpragueGrundy.IsP (slowANimGame 2 {1}) ![1, 1] := by
+  apply (exactSlowNim_odd_isP_iff (by decide) ![1, 1] (by decide)).2
+  exact ⟨2, by decide, by decide, by decide⟩
+
+-- The paper's example (3, 5, 5) meets the criterion with m = 6.
+example : SpragueGrundy.IsP (slowANimGame 3 {2}) ![3, 5, 5] := by
+  apply (exactSlowNim_odd_isP_iff (by decide) ![3, 5, 5] (by decide)).2
+  exact ⟨6, by decide, by decide, by decide⟩
+
+-- The total of (1, 1, 7) forces m = 4, but the largest pile is too large.
+example : ¬ SpragueGrundy.IsP (slowANimGame 3 {2}) ![1, 1, 7] := by
+  intro hp
+  obtain ⟨m, hsum, hlt, -⟩ :=
+    (exactSlowNim_odd_isP_iff (by decide) ![1, 1, 7] (by decide)).1 hp
+  rw [show (∑ i : Fin 3, (![1, 1, 7] : Fin 3 → ℕ) i) = 9 by decide] at hsum
+  have hlarge : 7 < m := hlt 2
+  omega
+
+-- The total of (5, 5, 5) forces m = 7, which is not even.
+example : ¬ SpragueGrundy.IsP (slowANimGame 3 {2}) ![5, 5, 5] := by
+  intro hp
+  obtain ⟨m, hsum, -, hm⟩ :=
+    (exactSlowNim_odd_isP_iff (by decide) ![5, 5, 5] (by decide)).1 hp
+  rw [show (∑ i : Fin 3, (![5, 5, 5] : Fin 3 → ℕ) i) = 15 by decide] at hsum
+  exact (by decide : ¬ Even 7) ((show m = 7 by omega) ▸ hm)
+
 end MetaMathlibExt
