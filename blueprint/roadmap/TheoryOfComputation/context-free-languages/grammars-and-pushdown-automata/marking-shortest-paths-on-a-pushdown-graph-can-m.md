@@ -15,7 +15,7 @@ edges that decrease the rank by one may be marked and every configuration of $W$
 **Theorem.** There is a pushdown automaton $\mathcal{P}$ such that every well-formed marking of $G_{\mathcal{P}}$, in particular the full marking $\widetilde{G}_{\mathcal{P}}$, has an undecidable MSO theory.
 
 Consequently, for this $\mathcal{P}$ no well-formed marking of $G_{\mathcal{P}}$ is itself a pushdown graph, and there is a pushdown reachability game in which marking the moves of any attractor strategy, or of any
-sub-strategy of one, gives a graph with an undecidable MSO theory. The winning strategies built by the classical constructions for pushdown games are therefore not attractor strategies.
+sub-strategy of one, gives a graph with an undecidable MSO theory (Corollaries 1 and 2 of the source). On this witness game, therefore, the winning strategies built by the classical constructions for pushdown games, whose markings remain pushdown graphs, are not attractor strategies.
 
 ## Depends on
 
@@ -29,10 +29,10 @@ sub-strategy of one, gives a graph with an undecidable MSO theory. The winning s
 
 ## Expansion
 
-The stack alphabet of $\mathcal{P}$ consists of triples in $\{1, 2, 3\}^2 \times \{2\}$, and a stack encodes the three sums $(k_1, k_2, k_3)$ of its components, hence a pair of counters $(k_1 - k_3, k_2 - k_3)$; in its first mode
+The stack alphabet of $\mathcal{P}$ consists of the triples in $\{1, 2, 3\}^2 \times \{2\}$ together with $\bot$, and a stack encodes the three sums $(k_1, k_2, k_3)$ of its components, hence a pair of counters $(k_1 - k_3, k_2 - k_3)$; in its first mode
 $\mathcal{P}$ pushes any triple, which increments, decrements or keeps each counter. In its second mode it pops the stack through states $p_1, p_2, p_3$ at speeds that depend on the chosen component, so the marked
-edges toward these states, which indicate the fastest ways to a final configuration, reveal which of $k_1, k_2, k_3$ are equal. An MSO sentence can then test the counters for zero and simulate any two-counter machine,
-so it holds in the marked graph exactly when the machine halts. For arbitrary well-formed markings, the construction restricts attention to configurations with even sums, where equalities can still be detected. A good expansion links a page defining monadic second-order logic over edge-labelled graphs and the decidability of a structure's MSO theory (Section 2.2 of the source); the existing MSO pages are over words, infinite words and trees.
+edges toward these states, which indicate fastest ways to a final configuration, identify the minima among $k_1, k_2, k_3$; a tie that is not a minimum, as $k_1 = k_3$ with $k_2 < k_1$, is exposed by first following a path of pushes of $(2, 3, 2)$, which raises $k_2$ above the others. An MSO sentence can then test the counters for zero and simulate any two-counter machine,
+so it holds in the marked graph exactly when the machine halts. For arbitrary well-formed markings, the construction restricts attention to configurations with even sums, where equalities can still be detected. A good expansion links a page defining monadic second-order logic over edge-labelled graphs and the decidability of a structure's MSO theory (Section 2.2 of the source).
 
 ## Sources
 

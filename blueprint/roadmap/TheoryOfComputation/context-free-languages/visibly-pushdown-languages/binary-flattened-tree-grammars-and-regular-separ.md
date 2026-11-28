@@ -4,7 +4,7 @@ Binary flattened tree grammars are context-free grammars that generate the brack
 of visibly pushdown language.
 
 A *binary flattened tree grammar* (BFG) over $\Sigma$ is a [context-free grammar](../grammars-and-pushdown-automata/context-free-languages.md)
-whose terminals are $\Sigma \cup \{\langle, \rangle\}$, with an opening and a closing bracket, and every production of which has one of the forms
+whose terminals are $\Sigma \cup \{\langle, \rangle\}$, with an opening bracket $\langle$ and a closing bracket $\rangle$ that are distinct and do not belong to $\Sigma$, and every production of which has one of the forms
 
 $$
 N \to t, \qquad N \to \langle\,\rangle, \qquad N \to \langle N_1 N_2 \rangle ,

@@ -9,25 +9,27 @@ $L(G_2) \cap R = \emptyset$ (Theorem 2.4 of the source).
 
 Equivalently, regular separability is undecidable for disjoint languages given by visibly pushdown automata or by flattened tree automata:
 making the nesting structure visible helps Turing machines, but not finite automata on words. As a consequence the source answers a question of
-Alur: it is undecidable, given two regular languages $L_1, L_2$ of nested words, whether some regular word language $R$ over the tagged alphabet
+Alur: it is undecidable, given two regular languages $L_1, L_2$ of [nested words](nested-words-and-nested-word-automata.md), represented as words over the tagged alphabet, whether some regular word language $R$ over the tagged alphabet
 has $R \cap L_1 = L_2$, since disjoint $L_1, L_2$ are separable exactly when $L_2$ is such a restriction of $L_1 \cup L_2$.
 
 ## Depends on
 
 - [Binary flattened tree grammars](binary-flattened-tree-grammars-and-regular-separ.md)
 - [Visibly pushdown automata and visibly pushdown languages](visibly-pushdown-automata.md)
+- [Nested words and nested word automata](nested-words-and-nested-word-automata.md)
 - [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-None.
+- [The halting problem is undecidable](../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
+- [Chomsky normal form theorem](../grammars-and-pushdown-automata/chomsky-normal-form/exists-chomsky-normal-form.md)
 
 ## Expansion
 
-The proof reduces separability of [context-free languages](../grammars-and-pushdown-automata/context-free-languages.md), undecidable by encoding the computations of a Turing machine as two context-free
-languages that are separable exactly when the machine halts, which reduces the [halting problem](../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md) (Hunt; Szymanski). From grammars $G_1, G_2$ in Chomsky normal form it builds
+A good expansion links a page for the undecidability of separability of disjoint context-free languages (Problem 2.2 of the source), which the proof reduces: given context-free grammars $G_1, G_2$ with $L(G_1) \cap L(G_2) = \emptyset$, are their languages separable by a regular language? It is undecidable by encoding the computations of a Turing machine as two context-free
+languages that are separable exactly when the machine halts, which reduces the [halting problem](../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md) (Hunt; Szymanski). One may assume that neither $L(G_i)$ contains the empty word or a word of length $1$, and that $G_1, G_2$ are in Chomsky normal form. From such grammars it builds
 BFGs $G'_1, G'_2$: each production $N \to N_1 N_2$ becomes $N' \to \langle N'_1 N'_2 \rangle$, terminal productions are kept, and extra productions
-$X' \to \langle E' X' \rangle$ and $X' \to \langle X' E' \rangle$ let subtrees of a filler nonterminal $E'$ be inserted anywhere. A pumping argument
+$X' \to \langle E' X' \rangle$ and $X' \to \langle X' E' \rangle$ for every nonterminal $X$ let subtrees of a filler nonterminal $E'$ be inserted anywhere; $E'$ has its own productions $E' \to \langle\,\rangle$ and $E' \to \langle E' E' \rangle$, so it generates exactly the bracket words of binary trees with empty leaves (equations (1)–(6) of the source). Erasing the brackets maps $L(G'_i)$ onto $L(G_i)$. A pumping argument
 over the syntactic semigroup of a separating regular language shows that a finite automaton cannot use the brackets to recover the derivation
 structure, so $G'_1$ and $G'_2$ are separable exactly when $G_1$ and $G_2$ are.
 
