@@ -13,7 +13,7 @@ The same holds with the identity constant added (Theorem 12 of the source, signa
 
 ## Proof depends on
 
-- [Validity of first-order sentences is undecidable](../../../../TheoryOfComputation/undecidable-problems/validity-of-first-order-sentences-is-undecidable.md)
+- [The prefix class ∀∃∀ with one binary relation is undecidable](../../undecidable-prefix-classes/the-prefix-class-forall-exists-forall-is.md)
 
 ## Expansion
 
@@ -24,4 +24,4 @@ The conference version stated (Ax.1) and (Ax.2) in a form for which Proposition 
 ## Sources
 
 - Y. Nakamura, "The Undecidability of FO3 and the Calculus of Relations with Just One Binary Relation", in *Logic and Its Applications (ICLA 2019)*, Lecture Notes in Computer Science 11600, Springer, 2019, pp. 108–120, <https://doi.org/10.1007/978-3-662-58771-3_11>; numbers from the corrected long version arXiv:2610.35770v1, <https://arxiv.org/abs/2610.35770v1>: Theorem 17, with Lemmas 5, 7, 9, 11 and 16, Theorem 12, Corollary 14, Theorem 19, and the correction remark at the end of Section 3.
-- E. Börger, E. Grädel and Y. Gurevich, *The Classical Decision Problem*, Perspectives in Mathematical Logic, Springer, 1997, <https://doi.org/10.1007/978-3-642-59207-2>: Theorem 3.1.9 (the $\forall\exists\forall$ class is a conservative reduction class); not read directly here: this clause rests on its statement in the arXiv copy of the first source above (Lemma 1).
+- E. Börger, E. Grädel and Y. Gurevich, *The Classical Decision Problem*, Perspectives in Mathematical Logic, Springer, 1997, doi:[10.1007/978-3-642-59207-2](https://doi.org/10.1007/978-3-642-59207-2), read in the authors' copy at <https://web.eecs.umich.edu/~gurevich/Books/00.pdf>: Theorem 3.1.9 (the Kahr–Moore–Wang class $[\forall\exists\forall, (0, \omega)]$ is a conservative reduction class), also stated as Lemma 1 of the first source.

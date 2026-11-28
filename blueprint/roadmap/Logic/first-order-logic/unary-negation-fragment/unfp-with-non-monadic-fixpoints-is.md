@@ -2,7 +2,7 @@
 
 Unary negation fixpoint logic is decidable with monadic fixpoints, but allowing fixpoint operators of higher arity makes satisfiability and finite satisfiability undecidable.
 
-**Theorem (ten Cate and Segoufin).** The extension of [unary negation fixpoint logic](unary-negation-fragment-and-fixpoint-logic.md) UNFP with non-monadic least fixpoint operators has an undecidable satisfiability problem, both over arbitrary structures and over finite structures.
+**Theorem (ten Cate and Segoufin).** The extension of [unary negation fixpoint logic](unary-negation-fragment-and-fixpoint-logic.md) UNFP with non-monadic least fixpoint operators $[\mathrm{LFP}_{X, \bar{x}}\, \varphi](\bar{y})$, $X$ of arity $|\bar{x}|$ occurring only positively in $\varphi$ and $\varphi$ without first-order parameters, has an undecidable satisfiability problem, both over arbitrary structures and over finite structures.
 
 By contrast, satisfiability and finite satisfiability for UNFP itself are decidable and 2ExpTime-complete. The guarded fragment stays decidable even with guarded fixpoints of any arity.
 
@@ -13,7 +13,7 @@ By contrast, satisfiability and finite satisfiability for UNFP itself are decida
 
 ## Proof depends on
 
-None.
+- [Containment of Datalog queries is undecidable](../../../ComputerScience/databases/datalog/containment-of-datalog-queries-is-undecidable.md)
 
 ## Expansion
 

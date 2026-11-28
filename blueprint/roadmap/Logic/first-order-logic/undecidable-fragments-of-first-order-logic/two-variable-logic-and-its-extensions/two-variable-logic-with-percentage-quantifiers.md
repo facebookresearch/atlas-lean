@@ -18,12 +18,12 @@ By contrast, finite satisfiability is decidable for $\mathrm{GF}^2_{\mathrm{pres
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
-- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+- [Some multi-stack machine has an undecidable halting set](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/exists-not-tm2-decidable-tm2-halts-on.md)
 - [The three-variable guarded fragment with one functional relation is undecidable](../guarded-and-fluted-fragments/three-variable-guarded-fragment-with-one.md)
 
 ## Expansion
 
-*Part 1.* The proof reduces a simpler form of Hilbert's tenth problem: given a system of equations $u = 1$, $u = v + w$ and $u = v \cdot w$ over pairwise distinct variables, is there a solution in $\mathbb N$ (Definition 2)? Its undecidability follows from the Davis–Putnam–Robinson–Matiyasevich theorem applied to the halting set. Each variable becomes a unary predicate whose number of elements is its value. If exactly half of the elements satisfy $\mathit{Half}$, $R$ implies $\mathit{Half}$ and $J$ implies $\neg\mathit{Half}$, then $\exists^{=50\%} x\,((\mathit{Half}(x) \wedge \neg R(x)) \vee J(x))$ expresses $|R| = |J|$; equicardinality, together with backward-functional binary relations expressible in this way, encodes addition and multiplication of cardinalities. Replacing $\exists^{=50\%} x$ by a local quantifier along a relation forced to be universal gives the local version.
+*Part 1.* The proof reduces a simpler form of Hilbert's tenth problem: given a system of equations $u = 1$, $u = v + w$ and $u = v \cdot w$ over pairwise distinct variables, is there a solution in $\mathbb N$ (Definition 2)? Its undecidability follows from the Davis–Putnam–Robinson–Matiyasevich theorem applied to the halting set of such a machine, which is recursively enumerable and undecidable. Each variable becomes a unary predicate whose number of elements is its value. If exactly half of the elements satisfy $\mathit{Half}$, $R$ implies $\mathit{Half}$ and $J$ implies $\neg\mathit{Half}$, then $\exists^{=50\%} x\,((\mathit{Half}(x) \wedge \neg R(x)) \vee J(x))$ expresses $|R| = |J|$; equicardinality, together with backward-functional binary relations expressible in this way, encodes addition and multiplication of cardinalities. Replacing $\exists^{=50\%} x$ by a local quantifier along a relation forced to be universal gives the local version.
 
 *Part 2.* By reduction from finite satisfiability of the three-variable guarded fragment with a functional relation, which is undecidable (Grädel, as cited before Theorem 9 of the source), it suffices to express functionality of a relation with local percentage quantifiers, using the same equicardinality trick.
 

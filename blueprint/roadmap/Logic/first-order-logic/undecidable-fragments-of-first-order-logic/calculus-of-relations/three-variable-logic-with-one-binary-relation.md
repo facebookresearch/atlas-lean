@@ -17,7 +17,7 @@ This is the least undecidable case along both of its restrictions: monadic first
 
 ## Expansion
 
-Each term $t$ over $\langle \cdot, {}^-, \cup\rangle$ in the single character $a$ translates into a formula $G(t, i, j)$ of three-variable logic with free variables $x_i, x_j$ defining the relation $[\![t]\!]_M$ in every model (Lemma 3 of the source, after Tarski); when $t$ does not contain the identity constant $1$, the formula contains no equality. An equation $t = u$ is then valid (finitely valid) exactly when $\forall x_1 \forall x_2\,(G(t, 1, 2) \leftrightarrow G(u, 1, 2))$ is, so the undecidability of the one-character calculus of relations transfers.
+Each term $t$ over $\langle \cdot, {}^-, \cup\rangle$ in the single character $a$ translates into a formula $G(t, i, j)$ of three-variable logic with free variables $x_i, x_j$ defining the relation $[\![t]\!]_M$ in every model (Lemma 3 of the source, after Tarski); when $t$ does not contain the identity constant $1$, the formula contains no equality. An equation $t = u$ is then valid (finitely valid) exactly when $\forall x_1 \forall x_2\,(G(t, 1, 2) \leftrightarrow G(u, 1, 2))$ is, so the undecidability of the one-character calculus of relations transfers. A good expansion links a page for this translation (Lemma 3 of the source), which the proof uses.
 
 ## Sources
 

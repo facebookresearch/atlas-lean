@@ -2,12 +2,13 @@
 
 Finite satisfiability is undecidable for two-variable logic with counting over structures with two linear orders, arbitrarily many unary predicates and two further binary predicates.
 
-**Theorem (Charatonik and Witkowski).** The finite satisfiability problem for [C²](two-variable-logic-and-its-counting-extension.md) over signatures with two binary symbols $<_1$, $<_2$ interpreted as linear orders, any number of unary symbols and any number of further binary symbols is undecidable. It remains undecidable when at most two further binary symbols are allowed (the logic $\mathrm{C}^2(*, 2, \{<_1, <_2\})$).
+**Theorem (Charatonik and Witkowski).** The finite satisfiability problem for [C²](two-variable-logic-and-its-counting-extension.md) over signatures with two binary symbols $<_1$, $<_2$ interpreted as strict linear orders (the source writes a linear order as the relation $<$), any number of unary symbols and any number of further binary symbols is undecidable. It remains undecidable when at most two further binary symbols are allowed (the logic $\mathrm{C}^2(*, 2, \{<_1, <_2\})$).
 
 In contrast, the same paper shows that with one linear order and its successor, and no other binary symbols, finite satisfiability of C² is NEXPTIME-complete, and that with one linear order and one more binary symbol it is decidable and as hard as emptiness of multicounter automata.
 
 ## Depends on
 
+- [Strict total order](../../../../Order/ordered-sets/strict-total-orders/strict-total-order.md)
 - [Two-variable logic and its counting extension](two-variable-logic-and-its-counting-extension.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

@@ -16,11 +16,11 @@ The source proves that the entailment problem for positive Horn sentences is dec
 
 ## Proof depends on
 
-- [Validity of first-order sentences is undecidable](../../../TheoryOfComputation/undecidable-problems/validity-of-first-order-sentences-is-undecidable.md)
+- [The prefix class ∀∃∀ with one binary relation is undecidable](../undecidable-prefix-classes/the-prefix-class-forall-exists-forall-is.md)
 
 ## Expansion
 
-The reduction is from satisfiability of equality-free first-order sentences to the dual question "is $\varphi \wedge \neg\psi$ satisfiable?". For a sentence $\varphi$ with relation symbols $R_1, \dots, R_r$, add fresh symbols $S_1, \dots, S_r$ of the same arities, meant to denote the complements of the $R_i$. Push negations of $\varphi$ to the atoms and replace each $\neg R_i$ by $S_i$, obtaining a positive $\varphi'$. Let $\theta_1 = \bigwedge_i \forall \bar{x}\,(S_i(\bar{x}) \vee R_i(\bar{x}))$ and $\psi = \bigvee_i \exists \bar{x}\,(S_i(\bar{x}) \wedge R_i(\bar{x}))$. Then $\varphi$ is satisfiable iff $\varphi' \wedge \theta_1 \wedge \neg\psi$ is satisfiable, i.e. iff $\varphi' \wedge \theta_1$ does not entail $\psi$, and both sentences are positive and equality-free.
+The reduction is from satisfiability of equality-free first-order sentences to the dual question "is $\varphi \wedge \neg\psi$ satisfiable?". For a sentence $\varphi$ with relation symbols $R_1, \dots, R_r$, add fresh symbols $S_1, \dots, S_r$ of the same arities, meant to denote the complements of the $R_i$. Push negations of $\varphi$ to the atoms and replace each $\neg R_i$ by $S_i$, obtaining a positive $\varphi'$. Let $\theta_1 = \bigwedge_i \forall \bar{x}\,(S_i(\bar{x}) \vee R_i(\bar{x}))$ and $\psi = \bigvee_i \exists \bar{x}\,(S_i(\bar{x}) \wedge R_i(\bar{x}))$. Then $\varphi$ is satisfiable iff $\varphi' \wedge \theta_1 \wedge \neg\psi$ is satisfiable, i.e. iff $\varphi' \wedge \theta_1$ does not entail $\psi$, and both sentences are positive and equality-free. Satisfiability of equality-free relational sentences is undecidable, already for the prefix class ∀∃∀ with one binary relation.
 
 ## Sources
 

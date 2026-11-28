@@ -23,7 +23,7 @@ None.
 
 ## Expansion
 
-For each first-order sentence $\varphi$ one constructs an $\mathrm{LTL}^{\mathrm{FO}}$ sentence $\psi$ that is satisfiable iff $\varphi$ has a finite model (Lemma 1, proved in the appendix of the source): a fresh uninterpreted operator $d$ marks the finite domain, quantifiers are relativized to it, and a trace with a single event, listing the tuples of each predicate and the elements of $d$, witnesses a finite model. Finite satisfiability of first-order logic is undecidable by Trakhtenbrot's theorem, which gives the result.
+For each first-order sentence $\varphi$ one constructs an $\mathrm{LTL}^{\mathrm{FO}}$ sentence $\psi$ that is satisfiable iff $\varphi$ has a finite model (Lemma 1, proved in the appendix of the source): a fresh uninterpreted operator $d$ marks the finite domain, quantifiers are relativized to it, and a trace with a single event, listing the tuples of each predicate and the elements of $d$, witnesses a finite model. Finite satisfiability of first-order logic is undecidable by Trakhtenbrot's theorem, which gives the result. A good expansion links Trakhtenbrot's theorem and a page for Lemma 1.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 The general one-dimensional fragment $\mathrm{GF}_1$ consists of the first-order formulas built from unary atoms by Booleans and by existential quantification of blocks of variables that leaves at most one variable free, the quantified matrix being a Boolean combination of atoms and of $\mathrm{GF}_1$ formulas.
 
-Fix a relational vocabulary $\tau$. The set of $\tau$-formulas of $\mathrm{GF}_1$ is the smallest set $\mathcal{F}$ such that:
+Fix a relational vocabulary $\tau$; the language has no equality symbol, so $x = y$ is not a $\tau$-atom. The set of $\tau$-formulas of $\mathrm{GF}_1$ is the smallest set $\mathcal{F}$ such that:
 
 1. every unary $\tau$-atom is in $\mathcal{F}$, and $\top, \bot \in \mathcal{F}$;
 2. $\mathcal{F}$ is closed under $\neg$ and $\wedge$;
@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-$\mathrm{UF}_1$ contains the two-variable fragment of first-order logic and the polyadic modal logics with Boolean combinations of accessibility relations; $\mathrm{GF}_1$ drops the uniformity condition and so can relate a variable to several others by different binary atoms in one quantified block, which is what tilings need.
+The equality-free two-variable fragment of first-order logic embeds into $\mathrm{UF}_1$, as do and the polyadic modal logics with Boolean combinations of accessibility relations; $\mathrm{GF}_1$ drops the uniformity condition and so can relate a variable to several others by different binary atoms in one quantified block, which is what tilings need.
 
 ## Sources
 

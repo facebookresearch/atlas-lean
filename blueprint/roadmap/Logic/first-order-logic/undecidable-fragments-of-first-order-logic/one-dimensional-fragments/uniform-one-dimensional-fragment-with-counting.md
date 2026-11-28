@@ -1,13 +1,13 @@
 # Satisfiability of the uniform one-dimensional fragment with counting is undecidable
 
-Adding counting quantifiers to the uniform one-dimensional fragment of first-order logic with equality makes satisfiability $\Pi^0_1$-complete and finite satisfiability $\Sigma^0_1$-complete, although the fragment without counting is NEXPTIME-complete.
+Adding counting quantifiers to the uniform one-dimensional fragment of first-order logic with equality makes satisfiability $\Pi^0_1$-complete and finite satisfiability $\Sigma^0_1$-complete, under computable many-one reductions, although the fragment without counting is NEXPTIME-complete.
 
 **Setting (Kieroński and Kuusisto).** The *uniform one-dimensional fragment* $\mathrm{UF}_1^{=}$ over a relational vocabulary $\tau$ is the smallest set of formulas containing the unary $\tau$-atoms (atoms with one free variable), the identity atoms $x = y$, $\top$ and $\bot$, closed under $\neg$ and $\wedge$, and under the following quantification rule: for variables $X = \{x_0, \dots, x_k\}$, a finite set $U$ of fragment formulas with free variables in $X$, a set $V \subseteq X$ and a finite set $F$ of $\tau$-atoms whose variables are exactly $V$ (a *$V$-uniform* set), and a Boolean combination $\varphi$ of formulas in $U \cup F$, both $\exists x_1 \cdots \exists x_k\, \varphi$ and $\exists x_0 \cdots \exists x_k\, \varphi$ are in the fragment. Thus every quantifier block leaves at most one variable free (one-dimensionality), and all atoms with two or more variables in a block use the same variables (uniformity). The extension $\mathrm{UFC}_1^{=}$ also allows the counting quantifiers $\exists^{\geq k}$, $\exists^{\leq k}$ and $\exists^{= k}$ in place of $\exists$. The satisfiability problem asks whether a given sentence has a model, and finite satisfiability whether it has a finite model.
 
 **Theorem (Kieroński and Kuusisto).**
 
-1. The satisfiability problem of $\mathrm{UFC}_1^{=}$ is $\Pi^0_1$-complete (Theorem 5.2 of arXiv:1409.0731v1).
-2. The finite satisfiability problem of $\mathrm{UFC}_1^{=}$ is $\Sigma^0_1$-complete (Theorem 5.3 of arXiv:1409.0731v1).
+1. The satisfiability problem of $\mathrm{UFC}_1^{=}$ is $\Pi^0_1$-complete under computable many-one reductions (Theorem 5.2 of arXiv:1409.0731v1).
+2. The finite satisfiability problem of $\mathrm{UFC}_1^{=}$ is $\Sigma^0_1$-complete under computable many-one reductions (Theorem 5.3 of arXiv:1409.0731v1).
 
 In contrast, satisfiability and finite satisfiability of $\mathrm{UF}_1^{=}$ itself are NEXPTIME-complete (Section 3 of the source), as is two-variable logic with counting quantifiers $\mathrm{FOC}^2$, as the source recalls. Dropping uniformity instead, the general one-dimensional fragment already has undecidable satisfiability (Hella and Kuusisto).
 

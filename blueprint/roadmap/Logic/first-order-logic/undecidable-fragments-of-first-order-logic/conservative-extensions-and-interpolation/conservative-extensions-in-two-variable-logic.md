@@ -12,11 +12,11 @@ In every fragment of first-order logic that contains two-variable logic FO², it
 
 ## Proof depends on
 
-- [The tiling problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
+None.
 
 ## Expansion
 
-The proof reduces a tiling problem that asks for a tiling of some rectangle, of any size, whose borders carry designated tiles; the reduction is given in the appendix of the source. A complete expansion links the undecidability of this bordered rectangle tiling problem, a variant of the tiling problem.
+The proof reduces a tiling problem that asks for a tiling of some rectangle, of any size, whose borders carry designated tiles; the reduction is given in the appendix of the source. A complete expansion links the undecidability of this bordered rectangle tiling problem (Definition 18 of the source), a variant of the tiling problem of the plane, which the proof does not use.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 Dropping the uniformity condition from the one-dimensional fragment of first-order logic makes satisfiability undecidable: the general one-dimensional fragment $\mathrm{GF}_1$ has an undecidable satisfiability problem, in fact a $\Pi^0_1$-complete one.
 
-**Theorem (Hella and Kuusisto).** The satisfiability problem for the [general one-dimensional fragment](general-one-dimensional-fragment.md) $\mathrm{GF}_1$, whether a given $\mathrm{GF}_1$ sentence over a finite relational vocabulary has a model, is undecidable. It is $\Pi^0_1$-complete: it lies in $\Pi^0_1$ because $\mathrm{GF}_1$ is a fragment of first-order logic, whose unsatisfiable sentences are recursively enumerable, and it is $\Pi^0_1$-hard.
+**Theorem (Hella and Kuusisto).** The satisfiability problem for the [general one-dimensional fragment](general-one-dimensional-fragment.md) $\mathrm{GF}_1$, whether a given $\mathrm{GF}_1$ sentence over a finite relational vocabulary has a model, is undecidable. It is $\Pi^0_1$-complete under computable many-one reductions: it lies in $\Pi^0_1$ because $\mathrm{GF}_1$ is a fragment of first-order logic, whose unsatisfiable sentences are recursively enumerable, and it is $\Pi^0_1$-hard.
 
 The uniform one-dimensional fragment $\mathrm{UF}_1$, which differs only by the uniformity condition, has a decidable satisfiability problem. The source shows likewise that lifting the other restriction, one-dimensionality, by passing to the strongly uniform two-dimensional fragment $\mathrm{SUF}_2$ gives a $\Pi^0_1$-complete problem.
 

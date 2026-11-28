@@ -16,7 +16,7 @@ $$
 [\mathrm{LFP}_{X,x}\, \varphi(X, \bar{X}, x)]\,(y),
 $$
 
-where $X$ occurs only positively in $\varphi$ and $\varphi$ has no free first-order variable other than $x$. Its semantics is that of least fixpoint logic: $y$ satisfies the formula when it belongs to the least fixpoint of the monotone map $A \mapsto \{a : \varphi(A, \bar{X}, a)\}$. In the extension with *non-monadic* fixpoints, the fixpoint variable may have any arity.
+where $X$ occurs only positively in $\varphi$ and $\varphi$ has no free first-order variable other than $x$. Its semantics is that of least fixpoint logic: $y$ satisfies the formula when it belongs to the least fixpoint of the monotone map $A \mapsto \{a : \varphi(A, \bar{X}, a)\}$. In the extension with *non-monadic* fixpoints, the operator is $[\mathrm{LFP}_{X, \bar{x}}\, \varphi](\bar{y})$ with $X$ a relation variable of arity $|\bar{x}|$ occurring only positively in $\varphi$, and $\varphi$ with no free first-order variables other than $\bar{x}$.
 
 A fragment of first-order logic is a *conservative reduction class* if there is a computable map from arbitrary first-order formulas to formulas of the fragment that preserves satisfiability and finite satisfiability.
 
