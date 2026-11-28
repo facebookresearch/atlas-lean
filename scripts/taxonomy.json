@@ -12239,6 +12239,7 @@
   "MathlibExt/Computability/TuringMachine/Translation/TM2ToTM0": {"to": "TheoryOfComputation/turing-machines/single-tape", "title": "Simulating multi-stack machines on a single tape"},
   "MathlibExt/Computability/TuringRecursive": {"to": "TheoryOfComputation/equivalence-of-models", "title": "Equivalence of Turing machines and recursive functions"},
   "MathlibExt/Computability/YaoMinimax": {"to": "TheoryOfComputation/randomized-and-quantum-complexity", "title": "Yao's minimax principle"},
+  "MathlibExt/ControlTheory/DiscreteGronwall": {"to": "Analysis/control-theory", "title": "Discrete-time systems and safety"},
   "MathlibExt/ControlTheory/StateSpace/SISO": {"to": "Analysis/control-theory", "title": "Single-input single-output linear systems"},
   "MathlibExt/Data/BitEncoding": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Fixed-width binary encodings"},
   "MathlibExt/Data/BitVec/BinaryPolynomialArithmetic": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Binary polynomial arithmetic on bitvectors"},
