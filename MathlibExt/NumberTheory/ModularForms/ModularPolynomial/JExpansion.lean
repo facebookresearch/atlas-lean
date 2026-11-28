@@ -387,7 +387,16 @@ private lemma qExpansion_Dq' : qExpansion 1 Dq = dedekindEtaUnit.map (Int.castRi
     PowerSeries.map_X] at hmul
   exact (mul_left_cancel₀ PowerSeries.X_ne_zero hmul).symm
 
-private lemma qExpansion_E4_eq_map_eisenstein4 : qExpansion 1 ⇑ModularForm.E₄ =
+/-- **The `q`-expansion of `E₄` has integer coefficients.** The `q`-expansion
+(`UpperHalfPlane.qExpansion 1`) of the weight-`4` Eisenstein series `ModularForm.E₄` is the image
+in `ℂ⟦X⟧` of the integer power series `ModularCurve.eisenstein4 = 1 + 240 ∑_{n ≥ 1} σ₃(n) Xⁿ`,
+whose constant term is `1` (`ModularCurve.constantCoeff_eisenstein4`).
+
+Source: Andrew V. Sutherland, *18.783 Elliptic Curves*, lecture notes, MIT, Fall 2025,
+Lecture 19, Lemma 19.5, p. 3: "g₂(τ) = (4π⁴/3)(1 + 240 ∑_{n=1}^∞ σ₃(n)qⁿ)", with
+"σₖ(n) = ∑_{d|n} dᵏ" and "q = e^{2πiτ}"; the normalization `g₂ = (4π⁴/3) E₄` is not proved
+here. -/
+theorem qExpansion_E4_eq_map_eisenstein4 : qExpansion 1 ⇑ModularForm.E₄ =
     PowerSeries.map (Int.castRingHom ℂ) eisenstein4 := by
   ext m
   rw [EisensteinSeries.E_qExpansion_coeff _ ⟨2, rfl⟩ m, PowerSeries.coeff_map, eisenstein4,
@@ -398,6 +407,52 @@ private lemma qExpansion_E4_eq_map_eisenstein4 : qExpansion 1 ⇑ModularForm.E�
       ArithmeticFunction.sigma_apply]
     simp only [eq_intCast, Int.cast_mul, Int.cast_ofNat, Int.cast_sum, Int.cast_pow,
       Int.cast_natCast]
+    push_cast
+    ring
+
+/-- The integer power series `1 - 504 ∑_{n ≥ 1} σ₅(n) Xⁿ`, where `σ₅(n) = ∑_{d ∣ n} d⁵`; it is
+the `q`-expansion of `ModularForm.E₆` (`ModularCurve.qExpansion_E6_eq_map_eisenstein6`).
+
+Source: Andrew V. Sutherland, *18.783 Elliptic Curves*, lecture notes, MIT, Fall 2025,
+Lecture 19, Lemma 19.5, p. 3: "g₃(τ) = (8π⁶/27)(1 − 504 ∑_{n=1}^∞ σ₅(n)qⁿ)". -/
+def eisenstein6 : PowerSeries ℤ :=
+  PowerSeries.mk fun n => if n = 0 then 1 else -504 * ∑ d ∈ n.divisors, (d : ℤ) ^ 5
+
+/-- The constant term of `ModularCurve.eisenstein6` is `1`.
+
+Source: Andrew V. Sutherland, *18.783 Elliptic Curves*, lecture notes, MIT, Fall 2025,
+Lecture 19, Lemma 19.5, p. 3 (the constant term `1` of
+"1 − 504 ∑_{n=1}^∞ σ₅(n)qⁿ"). -/
+@[simp]
+theorem constantCoeff_eisenstein6 : PowerSeries.constantCoeff eisenstein6 = 1 := by
+  rw [← PowerSeries.coeff_zero_eq_constantCoeff]
+  simp [eisenstein6]
+
+private lemma bernoulli_six : bernoulli 6 = 1 / 42 := by
+  have h5 : bernoulli' 5 = 0 := bernoulli'_eq_zero_of_odd (by decide) (by norm_num)
+  rw [bernoulli_eq_bernoulli'_of_ne_one (by decide), bernoulli'_def]
+  norm_num [Finset.sum_range_succ, bernoulli'_zero, bernoulli'_one, bernoulli'_two,
+    bernoulli'_three, bernoulli'_four, h5, Nat.choose]
+
+/-- **The `q`-expansion of `E₆` has integer coefficients.** The `q`-expansion
+(`UpperHalfPlane.qExpansion 1`) of the weight-`6` Eisenstein series `ModularForm.E₆` is the image
+in `ℂ⟦X⟧` of the integer power series `ModularCurve.eisenstein6 = 1 - 504 ∑_{n ≥ 1} σ₅(n) Xⁿ`,
+whose constant term is `1` (`ModularCurve.constantCoeff_eisenstein6`).
+
+Source: Andrew V. Sutherland, *18.783 Elliptic Curves*, lecture notes, MIT, Fall 2025,
+Lecture 19, Lemma 19.5, p. 3: "g₃(τ) = (8π⁶/27)(1 − 504 ∑_{n=1}^∞ σ₅(n)qⁿ)", with
+"σₖ(n) = ∑_{d|n} dᵏ" and "q = e^{2πiτ}"; the normalization `g₃ = (8π⁶/27) E₆` is not proved
+here. -/
+theorem qExpansion_E6_eq_map_eisenstein6 : qExpansion 1 ⇑ModularForm.E₆ =
+    PowerSeries.map (Int.castRingHom ℂ) eisenstein6 := by
+  ext m
+  rw [EisensteinSeries.E_qExpansion_coeff _ ⟨3, rfl⟩ m, PowerSeries.coeff_map, eisenstein6,
+    PowerSeries.coeff_mk]
+  split_ifs with hm
+  · simp
+  · rw [bernoulli_six, ArithmeticFunction.sigma_apply]
+    simp only [eq_intCast, Int.cast_mul, Int.cast_neg, Int.cast_ofNat, Int.cast_sum,
+      Int.cast_pow, Int.cast_natCast]
     push_cast
     ring
 
