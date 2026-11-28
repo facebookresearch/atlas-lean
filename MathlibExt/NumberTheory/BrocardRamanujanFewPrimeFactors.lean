@@ -43,7 +43,7 @@ open Nat
 namespace MetaMathlibExt
 
 /-- A nonzero divisor of `n!` with at most `r` distinct prime factors is at most `(2 ^ r) ^ n`. -/
-private theorem le_pow_of_dvd_factorial_of_primeFactors_card_le {n y r : ℕ}
+public theorem le_pow_of_dvd_factorial_of_primeFactors_card_le {n y r : ℕ}
     (hy : y ≠ 0) (hdvd : y ∣ n !) (hcard : y.primeFactors.card ≤ r) : y ≤ (2 ^ r) ^ n := by
   have hfactor (p : ℕ) (hp : p ∈ y.primeFactors) : p ^ y.factorization p ≤ 2 ^ n := by
     have hprime := prime_of_mem_primeFactors hp
