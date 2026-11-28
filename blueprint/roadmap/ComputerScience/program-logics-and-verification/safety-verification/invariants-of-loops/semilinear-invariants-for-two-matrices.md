@@ -17,7 +17,7 @@ None.
 
 ## Expansion
 
-The proof first shows undecidability for robust instances, in which the target is not in the closure of the reachable set, by a reduction from the infinite Post correspondence problem ($\omega$-PCP) with nine pairs. Robustness means closedness of the invariant is no longer needed. The nine matrices of small dimension are then packed into two matrices of larger dimension, by the same construction that turns the nine $3 \times 3$ matrices of the [closed case](closed-semilinear-invariants-nine-3x3-matrices.md) into two $27 \times 27$ matrices. The infinite Post correspondence problem has no page here.
+The proof first shows undecidability for robust instances, in which the target is not in the closure of the reachable set, by a reduction from the infinite Post correspondence problem ($\omega$-PCP) with nine pairs. Robustness means closedness of the invariant is no longer needed. The nine matrices of small dimension are then packed into two matrices of larger dimension, by the same construction that turns the nine $3 \times 3$ matrices of the [closed case](closed-semilinear-invariants-nine-3x3-matrices.md) into two $27 \times 27$ matrices. A good expansion links a page for the undecidability of the infinite Post correspondence problem.
 
 ## Sources
 

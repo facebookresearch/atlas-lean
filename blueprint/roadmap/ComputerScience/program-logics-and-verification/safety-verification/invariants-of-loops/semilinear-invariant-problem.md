@@ -2,9 +2,9 @@
 
 An instance consists of square matrices $A_1, \dots, A_k$ and two points $x, y$. A semilinear separating invariant is a semilinear set that contains $x$, is mapped into itself by every $A_i$, and avoids $y$. The problem asks whether one exists; it is the Monniaux problem for affine programs without guards.
 
-**Semilinear sets.** A subset of $\mathbb{R}^d$ (or $\mathbb{C}^d$) is *semilinear* if it is a finite union of polyhedra, equivalently the solution set of a Boolean combination of linear inequalities.
+**Semilinear sets.** A subset of $\mathbb{R}^d$ is *semilinear* if it is the set of real solutions of a finite Boolean combination of linear inequalities with algebraic coefficients, equivalently a finite union of polyhedra, each a finite intersection of half-spaces $\{z : u \cdot z \bowtie a\}$ with $u \in (\mathbb{A} \cap \mathbb{R})^d$, $a \in \mathbb{A} \cap \mathbb{R}$ and ${\bowtie} \in \{\ge, >\}$. Subsets of $\mathbb{C}^d$ are treated by identifying $\mathbb{C}^d$ with $\mathbb{R}^{2d}$.
 
-**Definition (Fijalkow, Lefaucheux, Ohlmann, Ouaknine, Pouly and Worrell).** An instance of the *semilinear invariant problem* is a finite list of square matrices $A_1, \dots, A_k \in \mathbb{A}^{d \times d}$ and two points $x, y \in \mathbb{A}^d$, where $\mathbb{A}$ is the field of algebraic numbers. A semilinear set $\mathcal{I}$ is a *separating invariant* for the instance if
+**Definition (Fijalkow, Lefaucheux, Ohlmann, Ouaknine, Pouly and Worrell).** An instance of the *semilinear invariant problem* is a finite list of square matrices $A_1, \dots, A_k \in \mathbb{A}^{d \times d}$ and two points $x, y \in \mathbb{A}^d$, where $\mathbb{A}$ is the field of algebraic numbers, each given by its minimal polynomial over $\mathbb{Z}$ together with a numerical approximation (for instance a rational isolating box) precise enough to single out that root. A semilinear set $\mathcal{I}$ is a *separating invariant* for the instance if
 
 1. $x \in \mathcal{I}$;
 2. $A_i \mathcal{I} \subseteq \mathcal{I}$ for every $i \le k$;

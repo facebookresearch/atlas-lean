@@ -2,13 +2,13 @@
 
 The logic PHL quantifies over schedulers of a Markov decision process and over paths of the induced Markov chains, and compares probabilities of LTL properties under the chosen schedulers. Its model checking problem is undecidable, already for formulas with existential scheduler quantifiers followed by universal path quantifiers and one probabilistic constraint.
 
-**Setting (Dimitrova, Finkbeiner and Torfah).** An MDP $M = (S, \mathit{Act}, P, \iota, \mathit{AP}, L)$ has finitely many states and actions, transition probabilities $P(s, a, \cdot)$, an initial distribution and a labeling with atomic propositions; a scheduler maps finite histories to distributions over enabled actions and induces a Markov chain. PHL formulas over scheduler variables $\sigma$ and path variables $\pi : \sigma$ (a path of the chain induced by $\sigma$) are
+**Setting (Dimitrova, Finkbeiner and Torfah).** An MDP $M = (S, \mathit{Act}, P, \iota, \mathit{AP}, L)$ has finitely many states and actions, transition probabilities $P(s, a, \cdot)$ with $\sum_{s'} P(s, a, s') \in \{0, 1\}$ (the action $a$ is disabled in $s$ when the sum is $0$), an initial distribution and a labeling with atomic propositions; a scheduler maps finite histories to distributions over the actions enabled in the last state and induces a Markov chain. PHL formulas over scheduler variables $\sigma$ and path variables $\pi : \sigma$ (a path of the chain induced by $\sigma$) are
 
 $$
 \Phi ::= \forall \sigma.\, \Phi \mid \Phi \wedge \Phi \mid \neg \Phi \mid \psi \mid E \bowtie c,
 $$
 
-where $\psi$ is a HyperCTL$^*$ formula over atoms $a_\pi$, built with $\wedge$, $\neg$, next, until and path quantifiers $\forall \pi : \sigma$; $E ::= \mathbb{P}(\varphi) \mid E + E \mid c \cdot E$ is a probability expression over LTL formulas $\varphi$ with atoms $a_\sigma$; $c \in \mathbb{Q}$ and $\bowtie$ is a comparison. The model checking problem asks, given a finite MDP and a closed well-formed PHL formula, whether the MDP satisfies it.
+where $\psi$ is a HyperCTL$^*$ formula over atoms $a_\pi$, built with $\wedge$, $\neg$, next, until and path quantifiers $\forall \pi : \sigma$; $E ::= \mathbb{P}(\varphi) \mid E + E \mid c \cdot E$ is a probability expression over LTL formulas $\varphi$ with atoms $a_\sigma$; $c \in \mathbb{Q}$ and $\bowtie$ is a comparison. The model checking problem asks, given a finite MDP with rational transition probabilities and initial distribution and a closed well-formed PHL formula with rational constants, whether the MDP satisfies it.
 
 **Theorem (Dimitrova, Finkbeiner and Torfah).** The model checking problem for PHL is undecidable. It remains undecidable for formulas of the form
 

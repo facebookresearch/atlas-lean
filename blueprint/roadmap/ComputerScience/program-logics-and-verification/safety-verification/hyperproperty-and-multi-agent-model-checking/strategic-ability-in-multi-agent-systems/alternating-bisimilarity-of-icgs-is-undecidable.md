@@ -12,7 +12,7 @@ A *partial strategy* for agent $i$ is a partial map $\sigma$ from histories to a
 
 $R$ is an *$A$-bisimulation* if both $R$ and its converse are simulations for $A$, and $\mathcal{G}$ and $\mathcal{G}'$ are *$A$-bisimilar* if some $A$-bisimulation relates their initial states. $A$-bisimilar iCGS satisfy the same ATL* formulas whose only coalition is $A$, under the objective, subjective and common-knowledge semantics with perfect recall (Theorem 1 of the copy read).
 
-**Theorem (Belardinelli, Dima, Malvone and Tiplea).** The problem of checking whether two iCGS $\mathcal{G}_1$ and $\mathcal{G}_2$ defined on the same set $Ag$ of agents are $A$-bisimilar, for some set $A \subseteq Ag$ of agents, is undecidable.
+**Theorem (Belardinelli, Dima, Malvone and Tiplea).** The problem of checking whether two finite iCGS $\mathcal{G}_1$ and $\mathcal{G}_2$ (finitely many states, given explicitly) defined on the same set $Ag$ of agents are $A$-bisimilar, for some set $A \subseteq Ag$ of agents, is undecidable.
 
 The proof gives undecidability already for finite iCGS with three agents and the coalition $A = \{1, 2\}$.
 

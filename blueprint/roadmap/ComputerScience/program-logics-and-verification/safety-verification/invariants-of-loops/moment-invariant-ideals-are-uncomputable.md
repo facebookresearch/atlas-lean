@@ -2,7 +2,7 @@
 
 For guarded probabilistic loops with affine updates, no algorithm computes a basis of the moment invariant ideal of order $\ell$, for any fixed order $\ell \ge 1$. The reduction is from the Post correspondence problem and needs only affine invariants.
 
-**Theorem (Müllner, Moosbrugger and Kovács).** Fix a positive integer $\ell$. There is no algorithm that, given a guarded probabilistic loop with affine updates (rational coefficients, rational probabilities, equality or inequality guards), outputs a finite basis of its moment invariant ideal $\mathbb{I}^{\le \ell}$.
+**Theorem (Müllner, Moosbrugger and Kovács).** Fix a positive integer $\ell$. There is no algorithm that, given a guarded probabilistic loop with affine updates (finitely many transitions, rational coefficients, rational probabilities, guards that are Boolean combinations of affine equalities and inequalities), outputs a finite basis of its moment invariant ideal $\mathbb{I}^{\le \ell}$. The loops built by the proof use the guards $x = y \wedge x > 0$ and $x \ne y \vee x \le 0$, integer updates and the probabilities $1$ and $1/N$; since membership in an ideal with a given basis is decidable, such an algorithm would decide whether $\mathbb{E}[t] \in \mathbb{I}^{\le \ell}$, which holds exactly when the encoded Post correspondence instance has no solution.
 
 ## Depends on
 
