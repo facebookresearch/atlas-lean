@@ -40,7 +40,8 @@ local instance : Module (DirectSum ℕ (fun _ : ℕ => ℤ))
 example : GradedAlgebra (DirectSum.algebraInternalGrade ℤ GF) := inferInstance
 
 example : SetLike.GradedSMul (DirectSum.algebraInternalGrade ℤ GF)
-    (DirectSum.internalGrade ℤ ℕ GF) := inferInstance
+    (DirectSum.internalGrade ℤ ℕ GF) := by
+  exact DirectSum.algebraInternalGradeGradedSMul ℤ GF GF
 
 example :
     DirectSum.of GF 1 (3 : ℤ) • DirectSum.of GF 2 (2 : ℤ) ∈
@@ -48,7 +49,8 @@ example :
       DirectSum.of GF 1 (3 : ℤ) • DirectSum.of GF 2 (2 : ℤ) =
         DirectSum.of GF 3 (6 : ℤ) := by
   letI : SetLike.GradedSMul (DirectSum.algebraInternalGrade ℤ GF)
-      (DirectSum.internalGrade ℤ ℕ GF) := inferInstance
+      (DirectSum.internalGrade ℤ ℕ GF) :=
+    DirectSum.algebraInternalGradeGradedSMul ℤ GF GF
   constructor
   · have hx : DirectSum.of GF 1 (3 : ℤ) ∈ DirectSum.algebraInternalGrade ℤ GF 1 :=
       (DirectSum.mem_algebraInternalGrade_iff ℤ GF _ 1).mpr ⟨3, rfl⟩
