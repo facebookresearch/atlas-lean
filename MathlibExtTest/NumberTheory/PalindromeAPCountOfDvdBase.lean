@@ -12,6 +12,14 @@ import MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase
 
 namespace MetaMathlibExt
 
+-- For m = 322 in base five, the leading half is 32 and the reflection is 323.
+example : palindromicHalfCopy 5 87 = 88 ∧ 87 / (5 : ℕ) = 17 := by decide +kernel
+
+example : palindromicHalfCopy 5 87 = 88 ∧ 87 / (5 : ℕ) = 17 := by
+  have hd : (Nat.digits 5 87).length = 2 + 1 := by decide
+  have h := div_pow_half_eq_sum_digits (b := 5) (m := 87) (k := 2) (by decide) hd
+  exact ⟨(palindromicHalfCopy_eq_ofDigits 5 87).trans (by decide), h.trans (by decide)⟩
+
 -- In base six the bounds are 241 and 242. The final prefix contributes only at 242,
 -- and only in the class of its leading digit, represented here by 5 modulo 3.
 example : palindromeAPCount 6 97 3 0 = 2 ∧ palindromeAPCount 6 97 3 5 = 8 ∧

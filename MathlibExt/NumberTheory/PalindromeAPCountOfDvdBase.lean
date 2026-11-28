@@ -11,6 +11,7 @@ module
 public import MathlibExt.NumberTheory.PalindromesArithmeticProgressions
 import Mathlib.Data.Int.CardIntervalMod
 import Mathlib.Data.List.GetD
+import MathlibExt.Data.Nat.Digits.Div
 
 /-!
 # Palindromes modulo a divisor of the base
@@ -119,38 +120,25 @@ private theorem reflectDigits_eq_self {l : List ℕ} (hp : l.Palindrome) : refle
   · rw [max_eq_left h]
   · rw [max_eq_right (by omega), ← getD_palindrome hp hj]
 
-private theorem halfCopy_ofDigits (b m : ℕ) :
-    palindromicHalfCopy b m = Nat.ofDigits b (reflectDigits (b.digits m)) := by
+end palindromeAPCount_of_dvd_base
+
+open palindromeAPCount_of_dvd_base in
+/-- The palindromic half copy is the value of the leading half with its reflection appended
+on the right, without repeating the center. The lists passed to `Nat.ofDigits` are little-endian. -/
+public theorem palindromicHalfCopy_eq_ofDigits (b m : ℕ) :
+    palindromicHalfCopy b m = Nat.ofDigits b
+      (((b.digits m).drop ((b.digits m).length / 2 + (b.digits m).length % 2)).reverse ++
+        (b.digits m).drop ((b.digits m).length / 2)) := by
+  change _ = Nat.ofDigits b (reflectDigits (b.digits m))
   rw [palindromicHalfCopy, ofDigits_sum, reflectDigits_length]
   exact sum_congr rfl fun _ hi => by rw [reflectDigits_getD _ (mem_range.mp hi)]
 
-/-- The palindromic half copy is the value of the leading half with its reflection appended
-on the right, without repeating the center. The lists passed to `Nat.ofDigits` are little-endian. -/
-public theorem halfCopy_eq_ofDigits (b m : ℕ) :
-    palindromicHalfCopy b m = Nat.ofDigits b
-      (((b.digits m).drop ((b.digits m).length / 2 + (b.digits m).length % 2)).reverse ++
-        (b.digits m).drop ((b.digits m).length / 2)) :=
-  halfCopy_ofDigits b m
-
-private theorem last_drop_ne_zero (b n t : ℕ) (h : (b.digits n).drop t ≠ []) :
-    ((b.digits n).drop t).getLast h ≠ 0 := by
-  have hn : n ≠ 0 := by
-    intro hn
-    simp [hn] at h
-  have H := Nat.getLast_digit_ne_zero b hn
-  have he : (b.digits n).take t ++ (b.digits n).drop t = b.digits n := List.take_append_drop ..
-  simpa only [← List.getLast_append_of_right_ne_nil ((b.digits n).take t) _ h, he] using H
-
-/-- In base `b ≥ 2`, division by `b ^ t` drops the `t` least significant digits. -/
-public theorem digits_drop_div {b : ℕ} (hb : 2 ≤ b) (n t : ℕ) :
-    b.digits (n / b ^ t) = (b.digits n).drop t := by
-  rw [Nat.self_div_pow_eq_ofDigits_drop _ _ hb]
-  exact Nat.digits_ofDigits b hb _ (fun _ hx => Nat.digits_lt_base hb (List.mem_of_mem_drop hx))
-    (last_drop_ne_zero b n t)
+namespace palindromeAPCount_of_dvd_base
 
 private theorem digits_halfCopy {b : ℕ} (hb : 2 ≤ b) (m : ℕ) :
     b.digits (palindromicHalfCopy b m) = reflectDigits (b.digits m) := by
-  rw [halfCopy_ofDigits]
+  rw [palindromicHalfCopy_eq_ofDigits]
+  change b.digits (Nat.ofDigits b (reflectDigits (b.digits m))) = _
   apply Nat.digits_ofDigits b hb
   · intro x hx
     rcases List.mem_append.mp hx with h | h
@@ -165,7 +153,14 @@ private theorem digits_halfCopy {b : ℕ} (hb : 2 ≤ b) (m : ℕ) :
       apply List.length_eq_zero_iff.mp
       rw [reflectDigits_length]
       omega
-    exact (List.getLast_append_of_right_ne_nil _ _ hd).symm ▸ last_drop_ne_zero b m _ hd
+    have hd' := Nat.digits_div_pow hb m ((b.digits m).length / 2)
+    have hq : m / b ^ ((b.digits m).length / 2) ≠ 0 := by
+      intro hq
+      simp [hq, hd] at hd'
+    change (((b.digits m).drop ((b.digits m).length / 2 + (b.digits m).length % 2)).reverse ++
+      (b.digits m).drop ((b.digits m).length / 2)).getLast hn ≠ 0
+    rw [List.getLast_append_of_right_ne_nil _ _ hd]
+    simpa only [hd'] using Nat.getLast_digit_ne_zero b hq
 
 private theorem halfCopy_prefix {b : ℕ} (hb : 2 ≤ b) (m : ℕ) :
     palindromicHalfCopy b m / b ^ ((b.digits m).length / 2) =
@@ -181,15 +176,17 @@ private theorem halfCopy_prefix {b : ℕ} (hb : 2 ≤ b) (m : ℕ) :
 
 private theorem halfCopy_eq_self {b n : ℕ} (hp : (b.digits n).Palindrome) :
     palindromicHalfCopy b n = n := by
-  rw [halfCopy_ofDigits, reflectDigits_eq_self hp, Nat.ofDigits_digits]
+  rw [palindromicHalfCopy_eq_ofDigits]
+  change Nat.ofDigits b (reflectDigits (b.digits n)) = n
+  rw [reflectDigits_eq_self hp, Nat.ofDigits_digits]
 
 private theorem halfCopy_eq_of_prefix {b x y : ℕ} (hb : 2 ≤ b)
     (hlen : (b.digits x).length = (b.digits y).length)
     (h : x / b ^ ((b.digits x).length / 2) = y / b ^ ((b.digits y).length / 2)) :
     palindromicHalfCopy b x = palindromicHalfCopy b y := by
   have hd := congrArg (Nat.digits b) h
-  simp only [digits_drop_div hb, hlen] at hd
-  simp only [halfCopy_ofDigits, reflectDigits, ← List.drop_drop, hlen, hd]
+  simp only [Nat.digits_div_pow hb, hlen] at hd
+  simp only [palindromicHalfCopy_eq_ofDigits, ← List.drop_drop, hlen, hd]
 
 private theorem length_digits_eq {b n k : ℕ} (hb : 2 ≤ b) (hn : n ≠ 0) :
     (b.digits n).length = k + 1 ↔ b ^ k ≤ n ∧ n < b ^ (k + 1) := by
@@ -205,7 +202,7 @@ private theorem leading_digit {b n k : ℕ} (hb : 2 ≤ b) (hn : n ≠ 0)
   have hhi : n / b ^ k < b := (Nat.div_lt_iff_lt_mul hb').mpr (by
     simpa only [pow_succ', Nat.succ_eq_add_one] using h.2)
   have hd : (b.digits n).drop k = [n / b ^ k] := by
-    rw [← digits_drop_div hb, Nat.digits_of_lt b _ hlo.ne' hhi]
+    rw [← Nat.digits_div_pow hb, Nat.digits_of_lt b _ hlo.ne' hhi]
   have hl : k < (b.digits n).length := by omega
   rw [List.getD_eq_getElem _ 0 hl]
   have hi : 0 < ((b.digits n).drop k).length := by simp [hk]
@@ -452,9 +449,14 @@ private theorem count_by_leading_digit {b m k q r : ℕ} (hb : 2 ≤ b) (hq : q 
     prefix_card hb hq hm hm',
     prefix_partial hw hwh _ _ _ (by split <;> decide), hlead, add_assoc]
 
-/-- If `b ≥ 2` and `m` has `k + 1` base-`b` digits, the leading half, including a center if
-present, is the weighted sum of the first `k / 2 + 1` digits in most-significant-first order. -/
-public theorem prefix_as_sum {b m k : ℕ} (hb : 2 ≤ b) (hk : (b.digits m).length = k + 1) :
+end palindromeAPCount_of_dvd_base
+
+open palindromeAPCount_of_dvd_base in
+/-- If `b ≥ 2` and `m` has `k + 1` base-`b` digits, dividing `m` by `b ^ ((k + 1) / 2)`
+gives the value of the first `k / 2 + 1` digits. Counting from the most significant end,
+digit `k - i` contributes its value times `b ^ (k / 2 - i)`. -/
+public theorem div_pow_half_eq_sum_digits {b m k : ℕ} (hb : 2 ≤ b)
+    (hk : (b.digits m).length = k + 1) :
     (m / b ^ ((k + 1) / 2) : ℕ) =
       ∑ i ∈ range (k / 2 + 1), (b.digits m).getD (k - i) 0 * b ^ (k / 2 - i) := by
   let d := (k + 1) / 2
@@ -477,6 +479,8 @@ public theorem prefix_as_sum {b m k : ℕ} (hb : 2 ≤ b) (hk : (b.digits m).len
     dsimp [d]
     omega
   rw [he]
+
+namespace palindromeAPCount_of_dvd_base
 
 private theorem short_geometric {b : ℕ} (hb : 2 ≤ b) (k : ℕ) :
     ∑ j ∈ range k, (b : ℚ) ^ (j / 2) =
@@ -613,7 +617,7 @@ public theorem palindromeAPCount_of_dvd_base {b m q : ℕ} (hb : 2 ≤ b) (hm : 
   have htail : ((m / b ^ ((k + 1) / 2) % b ^ (k / 2) : ℕ) : ℚ) = S := by
     have hprefix : ((m / b ^ ((k + 1) / 2) : ℕ) : ℚ) = (a k : ℚ) * (b : ℚ) ^ (k / 2) + S := by
       rw [← hs]
-      exact_mod_cast prefix_as_sum hb hlen
+      exact_mod_cast div_pow_half_eq_sum_digits hb hlen
     have H := congrArg (fun n : ℕ => (n : ℚ))
       (Nat.div_add_mod (m / b ^ ((k + 1) / 2)) (b ^ (k / 2)))
     push_cast only [Nat.cast_add, Nat.cast_mul, Nat.cast_pow] at H

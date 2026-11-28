@@ -24,13 +24,6 @@ import Mathlib.Tactic.Ring
 When the base is `1` modulo the modulus, the distribution of tail digit sums is uniform apart
 from a single extra count in the zero residue class. We prove this by adjoining one digit at a
 time, then sum over the leading interval. The leading coordinate need not be less than the base.
-
-## References
-
-* Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Phakhinkon Napp Phunphayap and
-  Prapanpong Pongsriiam, *Exact Formulas for the Number of Palindromes in Certain Arithmetic
-  Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, pp. 1–29,
-  Definition 3 and Lemmas 4 and 5.
 -/
 
 namespace MetaMathlibExt
@@ -57,17 +50,10 @@ open Finset
 private def digitTails (b n : ℕ) : Finset (Fin n → ℕ) :=
   Fintype.piFinset fun _ => range b
 
-/-- The rational indicator that `s` is congruent to `r` modulo the natural number `q`. -/
-public def residueIndicator (q : ℕ) (r s : ℤ) : ℚ :=
+private def residueIndicator (q : ℕ) (r s : ℤ) : ℚ :=
   if s ≡ r [ZMOD q] then 1 else 0
 
-/-- The residue indicator is `1` when the integer congruence holds and `0` otherwise. -/
-public theorem residueIndicator_eq (q : ℕ) (r s : ℤ) :
-    residueIndicator q r s = if s ≡ r [ZMOD q] then 1 else 0 := by
-  rw [residueIndicator]
-
-/-- To count `s + t` in residue `r` modulo `q`, test `t` in residue `r - s` instead. -/
-public theorem residueIndicator_add (q : ℕ) (r s t : ℤ) :
+private theorem residueIndicator_add (q : ℕ) (r s t : ℤ) :
     residueIndicator q r (s + t) = residueIndicator q (r - s) t := by
   have h : s + t ≡ r [ZMOD q] ↔ t ≡ r - s [ZMOD q] := by
     have hr : s + (r - s) = r := by omega
@@ -87,9 +73,7 @@ private theorem residueIndicator_zero (q : ℕ) (r : ℤ) :
     residueIndicator q r 0 = (if r ≡ 0 [ZMOD q] then 1 else 0) := by
   simp only [residueIndicator, Int.modEq_comm (a := 0)]
 
-/-- For `q > 0`, the count of integers in `[0, a)` congruent to `r` modulo `q` is `a / q`
-using natural division, plus one if the least residue of `r` is in the final incomplete block. -/
-public theorem sum_residueIndicator_range (a : ℕ) {q : ℕ} (hq : 0 < q) (r : ℤ) :
+private theorem sum_residueIndicator_range (a : ℕ) {q : ℕ} (hq : 0 < q) (r : ℤ) :
     ∑ i ∈ range a, residueIndicator q r i =
       (↑(a / q) : ℚ) + (if r % q < ((a % q : ℕ) : ℤ) then 1 else 0) := by
   let u := (r % q).toNat
@@ -107,9 +91,8 @@ public theorem sum_residueIndicator_range (a : ℕ) {q : ℕ} (hq : 0 < q) (r : 
       simp [Nat.count_eq_card_filter_range, sum_const, nsmul_eq_mul]
     _ = _ := by rw [Nat.count_modEq_card a hq, Nat.cast_add]; simp [hlt, apply_ite]
 
-/-- For `b ≥ 1`, `q > 0` and `b ≡ 1 [MOD q]`, the interval `[0, b)` has complete residue
-blocks followed by one last point in the zero residue class. -/
-public theorem sum_residueIndicator_base {b q : ℕ} (hb : 1 ≤ b) (hq : 0 < q)
+-- The last point of [0,b) is a multiple of q, and the preceding points form complete blocks.
+private theorem sum_residueIndicator_base {b q : ℕ} (hb : 1 ≤ b) (hq : 0 < q)
     (hbq : b ≡ 1 [MOD q]) (r : ℤ) :
     ∑ i ∈ range b, residueIndicator q r i = ((b : ℚ) - 1) / q + residueIndicator q r 0 := by
   have hd := (Nat.modEq_iff_dvd' hb).mp hbq.symm
