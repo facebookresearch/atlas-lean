@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Floor.Div
 public import Mathlib.Order.Lattice.Nat
 public import MathlibExt.Combinatorics.Additive.WeightedDavenportInterval
+public import MathlibExt.Combinatorics.Additive.WeightedDavenportInitialInterval
 public import MathlibExt.Combinatorics.Additive.WeightedDavenportPrimePow
 public import MathlibExt.Combinatorics.Additive.WeightedDavenportZModProdSelf
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
@@ -70,28 +71,6 @@ public theorem_wanted weightedDavenport_one_pi_zmod_prime_pow (p r : ℕ) (hp : 
     (e : Fin r → ℕ) (he : ∀ i, 1 ≤ e i) :
     weightedDavenport {1} ((i : Fin r) → ZMod (p ^ e i)) =
       ((1 + ∑ i, (p ^ e i - 1) : ℕ) : ℕ∞)
-
-/-- **Weight sets with weighted Davenport constant $m$ on $\mathbb{Z}/n\mathbb{Z}$.** Let
-$n \ge 2$ be a natural number and $m \ge 2$ a divisor of $n$. Every finite set $A$ of natural
-numbers with $n/m \in A \subseteq \{1, \dots, \lceil n/(m-1) \rceil - 1\}$ has $A$-weighted
-Davenport constant $D_A(\mathbb{Z}/n\mathbb{Z}) = m$.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Theorem 5 (`integers-2026-A89-thm-5`). -/
-public theorem_wanted weightedDavenport_zmod_of_dvd (m n : ℕ) (hm : 2 ≤ m) (hn : 2 ≤ n)
-    (hdvd : m ∣ n) (A : Finset ℕ) (hmem : n / m ∈ A)
-    (hsub : A ⊆ Finset.Icc 1 (n ⌈/⌉ (m - 1) - 1)) :
-    weightedDavenport A (ZMod n) = ((m : ℕ) : ℕ∞)
-
-/-- **Weighted Davenport constant of $\mathbb{Z}/n\mathbb{Z}$ for the weights $\{1, \dots, r\}$.**
-Let $n$ and $r$ be natural numbers with $1 < r < n$ and let $A = \{1, \dots, r\}$. Then the
-$A$-weighted Davenport constant of $\mathbb{Z}/n\mathbb{Z}$ is
-$D_A(\mathbb{Z}/n\mathbb{Z}) = \lceil n/r \rceil$.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Corollary 1, first part (`integers-2026-A89-cor-1`). -/
-public theorem_wanted weightedDavenport_zmod_Icc (n r : ℕ) (hr : 1 < r) (hrn : r < n) :
-    weightedDavenport (Finset.Icc 1 r) (ZMod n) = ((n ⌈/⌉ r : ℕ) : ℕ∞)
 
 /-- **Weight sets with prescribed weighted Davenport constant on
 $\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}$, divisible case.** Let $n \ge 2$ and

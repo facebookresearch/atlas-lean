@@ -34,6 +34,7 @@
 - [Orders of second coordinates in perfect $m$-covers](exists-snd-add-order-of-of-is-perfect-mc.md)
 - [Odd combinations of disjoint parts of a perfect cover](odd-combinations-inter-of-is-perfect-cov.md)
 - [Odd combinations are closed under odd multiples](zsmul-mem-odd-combinations.md)
+- [Cover count after prepending an entry](cover-count-cons.md)
 - [Distinct subset sums from the odd-combination condition](cover-count-le-one-of-not-mem-odd-combin.md)
 - [Perfect covers containing a perfect cover of a subgroup](card-perfect-cover-superset-subgroup.md)
 - [Elements of order two among odd combinations of part of a perfect cover](not-exists-unique-add-order-of-two-mem-o.md)

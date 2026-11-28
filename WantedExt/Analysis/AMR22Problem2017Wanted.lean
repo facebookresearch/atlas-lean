@@ -35,11 +35,16 @@ noncomputable def maxModulus (f : ℂ → ℂ) (r : ℝ) : ℝ :=
 noncomputable def logMaxModulus (f : ℂ → ℂ) (r : ℝ) : ℝ :=
   Real.log (maxModulus f r)
 
-/-- First-order operator `r d/dr` applied to `g` at `r`. -/
+/-- First-order operator `r d/dr` applied to `g` at `r`, with Mathlib's total `deriv`: the
+derivative is taken to be `0` at a radius where `g` is not differentiable. -/
 noncomputable def theta (g : ℝ → ℝ) (r : ℝ) : ℝ :=
   r * deriv g r
 
-/-- Hayman function `b(r) = (r d/dr)^2 log M(r, f)`. -/
+/-- Hayman function `b(r) = (r d/dr)^2 log M(r, f)`. Both derivatives are total (see `theta`): at a
+radius where the function being differentiated has no derivative, its derivative is taken to be
+`0`, so `b(r)` is defined for every real `r`. Wherever `log M(·, f)` is twice differentiable on a
+neighbourhood of `r`, `b(r)` is the classical value; at the other radii it is the value this
+convention produces, and those radii are not excluded from `haymanLimsup`. -/
 noncomputable def haymanB (f : ℂ → ℂ) (r : ℝ) : ℝ :=
   theta (fun s => theta (logMaxModulus f) s) r
 
@@ -56,8 +61,10 @@ def haymanBound : Prop :=
     ∀ f : ℂ → ℂ, Differentiable ℂ f → Complex.IsTranscendental f →
       haymanLimsup f ≥ (A : EReal)
 
-/-- Historical best-constant conjecture: the correct constant is `1 / 4`.
-The source's Update 2.17 records that Kjellberg disproved this conjecture. -/
+/-- The lower bound with the conjectured constant `1 / 4`: every transcendental entire `f` has
+`limsup b(r) ≥ 1 / 4`, the limsup taken in the extended reals. It does not assert that `1 / 4`
+cannot be replaced by a larger constant (the historical claim that `1 / 4` is the best constant).
+The source's Update 2.17 records that Kjellberg disproved this lower bound. -/
 def conjecture : Prop :=
   ∀ f : ℂ → ℂ, Differentiable ℂ f → Complex.IsTranscendental f →
     haymanLimsup f ≥ ((1 / 4 : ℝ) : EReal)

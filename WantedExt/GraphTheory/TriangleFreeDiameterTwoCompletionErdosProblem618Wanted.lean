@@ -52,16 +52,21 @@ def diameterTwoCompletionSubquadratic : Prop :=
       (diameterTwoCompletionCost G : ℝ) ≤ ε * n ^ 2
 
 /--
-Resolved true: Alon (Theorem 1.2) proved that a triangle-free graph on `n` vertices with maximum
-degree at most `c √n` can be made triangle-free of diameter `2` by adding at most `2.5 c n²` edges,
-for `n` large and `c` in a range containing every fixed `c ∈ (0, 1/2]`; take `c = min(ε / 2.5,
-1/2)`. erdosproblems.com/618 lists the problem as proved. Source: T. F. Bloom, Erdős Problems,
-Problem #618, https://www.erdosproblems.com/618 (status PROVED (LEAN)); resolution: N. Alon,
-Triangle-free graphs of diameter 2, note (Princeton), Theorem 1.2: a triangle-free graph on n
-vertices with maximum degree at most c √n becomes triangle-free of diameter 2 after adding at most
-2.5 c n² edges, for n large and c = c(n) in a range containing every fixed c ∈ (0, 1/2];
-erdosproblems.com/618: Alon's note solves the problem (essentially identical to Problem 134),
-https://web.math.princeton.edu/~nalon/PDFS/remark1901.pdf.
+Resolved true: Alon (Problems and results in Extremal Combinatorics – V, Theorem 3.2 in the
+preprint cited below; also Theorem 1.2 of his note Triangle-free graphs of diameter 2) proved that
+a triangle-free graph on `n` vertices with maximum degree at most `c √n` can be made triangle-free
+of diameter `2` by adding at most `2.5 c n²` edges, for `n` large and every fixed `c` with
+`0 < c ≤ 1/10`; take `c = min(ε / 2.5, 1/10)`. erdosproblems.com/618 lists the problem as proved
+(Lean). Source: T. F. Bloom, Erdős Problems, Problem #618, https://www.erdosproblems.com/618
+(status PROVED (LEAN)); resolution: N. Alon, Problems and results in Extremal Combinatorics – V,
+preprint, https://web.math.princeton.edu/~nalon/PDFS/sum280.pdf, Theorem 3.2: a triangle-free
+graph on n vertices with maximum degree at most c √n becomes triangle-free of diameter 2 after
+adding at most 2.5 c n² edges, for n large and 0 < c ≤ 1/10; see also N. Alon, Triangle-free
+graphs of diameter 2, note (Princeton), Theorem 1.2,
+https://web.math.princeton.edu/~nalon/PDFS/remark1901.pdf; erdosproblems.com/618: Alon's note
+solves the problem (essentially identical to Problem 134); formal proof: plby/lean-proofs at
+commit 8822f7ddef30fadbd92e1c6ab4ed897af356af5e, src/latest/ErdosProblems/Erdos618.lean, line 47
+(`erdos_618`).
 -/
 public theorem_wanted diameterTwoCompletionSubquadratic_holds : diameterTwoCompletionSubquadratic
 

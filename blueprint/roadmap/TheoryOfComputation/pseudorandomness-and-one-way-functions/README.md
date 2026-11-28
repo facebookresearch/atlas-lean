@@ -14,6 +14,13 @@ Complexity-theoretic foundations of cryptography and derandomization: one-way fu
 - [Pseudoentropy Pairs and Holenstein's Generator Construction](pseudoentropy-pairs-and-holenstein-construction/README.md)
 - [Space-Bounded and Small-Bias Generators](space-bounded-and-small-bias-generators/README.md)
 - [Transformations and Separations of One-Way Functions](one-way-function-transformations/README.md)
+- [Instance-Wise Hardness versus Randomness](instance-wise-hardness-versus-randomness/README.md)
+- [Microcrypt and Quantum One-Wayness](microcrypt-and-quantum-one-wayness/README.md)
+- [Non-Malleable Extraction, Logarithmic Min-Entropy and Explicit Ramsey Graphs](non-malleable-extraction-and-explicit-ramsey-graphs/README.md)
+- [Pseudorandom Quantum States and Unitaries](pseudorandom-quantum-states-and-unitaries/README.md)
+- [Weighted PRGs and Derandomization of Small Space](weighted-prgs-and-space-derandomization/README.md)
+- [Worst-Case and Meta-Complexity Characterizations of One-Way Functions](worst-case-characterizations-of-one-way-functions/README.md)
+- [Cryptographic and Quantum Meta-Complexity](cryptographic-meta-complexity/README.md)
 
 ## Related topics
 
