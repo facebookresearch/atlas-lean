@@ -22,3 +22,14 @@ example : palindromeAPCount 4 16 3 2 = 2 ∧ palindromeAPCount 4 17 3 2 = 3 := b
 example : palindromeAPCount 4 33 3 1 = 3 ∧ palindromeAPCount 4 34 3 1 = 4 := by decide
 
 example : palindromeAPCount 4 34 1 0 = 11 := by decide
+
+-- Below the reflected cutoff 88, the two prefix counts include two copies of zero.
+example : Nat.count (fun x => 2 * x ≡ 0 [MOD 4]) 5 = 3 ∧
+    Nat.count (fun x => 2 * (x / 5) + x % 5 ≡ 0 [MOD 4]) 17 = 5 ∧
+    palindromeAPCount 5 87 4 0 = 6 := by decide
+
+example : palindromeAPCount 5 87 4 0 + 2 = 8 := by
+  have hd : (Nat.digits 5 87).length = 2 + 1 := by decide
+  have h := palindromeAPCount_eq_prefix_counts (b := 5) (m := 87) (q := 4) (r := 0)
+    (by decide) hd (by decide) (by decide)
+  exact h.trans (by decide)

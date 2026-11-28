@@ -10,9 +10,12 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.List.Palindrome
+public import Mathlib.Data.Nat.Count
 public import Mathlib.Data.Nat.Digits.Lemmas
 import Mathlib.Data.Int.CardIntervalMod
 import Mathlib.Tactic.IntervalCases
+import MathlibExt.Data.Nat.Digits.Div
+import MathlibExt.Data.Nat.ModEq
 
 /-!
 # Palindromes in arithmetic progressions
@@ -25,6 +28,13 @@ A palindrome with leading half `h` is congruent to `2 * h` for even digit length
 The latter sequence skips one integer at each multiple of the base. Counting the even prefixes,
 the interval spanned by the odd prefixes, and its skipped values gives three interval counts.
 Each has discrepancy at most one, and the skipped interval is empty below the square of the base.
+
+## References
+
+* Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Phakhinkon Napp Phunphayap and
+  Prapanpong Pongsriiam, *Exact Formulas for the Number of Palindromes in Certain Arithmetic
+  Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, pp. 1–29,
+  Section 1, Lemma 2(ii), and Corollaries 11 and 12.
 -/
 
 namespace MetaMathlibExt
@@ -222,20 +232,6 @@ private theorem residue_error {q : ℕ} (hq : 0 < q) (r n : ℕ) :
   simpa only [Rat.cast_abs, Rat.cast_sub, Rat.cast_natCast, Rat.cast_div, Rat.cast_one] using
     (Rat.cast_le (K := ℝ)).mpr H
 
-private theorem double_iff {q : ℕ} (hq : Odd q) (x r : ℕ) :
-    2 * x ≡ r [MOD q] ↔ x ≡ ((q + 1) / 2) * r [MOD q] := by
-  let u := (q + 1) / 2
-  have hu : u * 2 ≡ 1 [MOD q] := by
-    have h : u * 2 = 1 + q := by obtain ⟨k, hk⟩ := hq; dsimp [u]; omega
-    rw [h, Nat.add_modulus_modEq_iff]
-  constructor
-  · intro h
-    exact (by simpa [mul_assoc] using hu.symm.mul_right x :
-      x ≡ u * (2 * x) [MOD q]).trans (h.mul_left u)
-  · intro h
-    apply (h.mul_left 2).trans
-    simpa [u, mul_left_comm, mul_assoc, mul_comm] using hu.mul_right r
-
 -- As the odd prefix h advances, h + h / b skips one value each time h crosses a multiple
 -- of b. Adding one to the skipped value gives (b + 1) times the new quotient.
 private theorem odd_count_with_skips {b q : ℕ} (hbq : b ≡ 1 [MOD q]) (r n : ℕ) :
@@ -270,7 +266,7 @@ private theorem odd_count {b q : ℕ} (hq : Odd q) (hbq : b ≡ 1 [MOD q]) (r n 
     countTo n (fun h => h + h / b ≡ r [MOD q]) +
         residueCount q (((q + 1) / 2) * (r + 1)) (n / b) =
       residueCount q r (n + n / b) := by
-  simpa only [double_iff hq, residueCount] using odd_count_with_skips hbq r n
+  simpa only [Nat.two_mul_modEq_iff_of_odd hq, residueCount] using odd_count_with_skips hbq r n
 
 private theorem count_identity {b q : ℕ} (hb : 2 ≤ b) (hq : Odd q) (hbq : b ≡ 1 [MOD q])
     (m r : ℕ) :
@@ -283,7 +279,7 @@ private theorem count_identity {b q : ℕ} (hb : 2 ≤ b) (hq : Odd q) (hbq : b 
   rw [count_split hb, add_assoc]
   have he (h : ℕ) : mirror b 0 h ≡ r [MOD q] ↔ h ≡ ((q + 1) / 2) * r [MOD q] := by
     have H : mirror b 0 h ≡ 2 * h [MOD q] := by simpa [two_mul] using mirror_modEq hb hbq 0 h
-    rw [← double_iff hq]
+    rw [← Nat.two_mul_modEq_iff_of_odd hq]
     exact ⟨H.symm.trans, H.trans⟩
   have ho (h : ℕ) : mirror b 1 h ≡ r [MOD q] ↔ h + h / b ≡ r [MOD q] := by
     have H : mirror b 1 h ≡ h + h / b [MOD q] := by simpa using mirror_modEq hb hbq 1 h
@@ -330,6 +326,106 @@ private theorem cutoff_base_pow {b k e : ℕ} (hb : 2 ≤ b) (hk : 1 ≤ k) (he 
     simp only [List.length_append, List.length_reverse, List.length_drop]
     omega
   exact le_antisymm ((hcut _).mp le_rfl) ((hcut _).mpr le_rfl)
+
+-- The lower mirrored digits occupy strictly less than one unit of the leading half.
+private theorem mirror_bounds {b : ℕ} (hb : 2 ≤ b) (e x : ℕ) :
+    b ^ ((b.digits x).length - e) * x ≤ mirror b e x ∧
+      mirror b e x < b ^ ((b.digits x).length - e) * (x + 1) := by
+  let low := ((b.digits x).drop e).reverse
+  have hl : low.length = (b.digits x).length - e := by simp [low]
+  have hlt : Nat.ofDigits b low < b ^ low.length :=
+    Nat.ofDigits_lt_base_pow_length hb fun _ hi =>
+      Nat.digits_lt_base hb (List.mem_of_mem_drop (List.mem_reverse.mp hi))
+  rw [← hl, mirror]
+  change _ ≤ Nat.ofDigits b (low ++ b.digits x) ∧ Nat.ofDigits b (low ++ b.digits x) < _
+  rw [Nat.ofDigits_append, Nat.ofDigits_digits, Nat.mul_succ]
+  exact ⟨Nat.le_add_left _ _, by omega⟩
+
+private theorem active_cutoff {b m k : ℕ} (hb : 2 ≤ b) (hk : (b.digits m).length = k + 1) :
+    let H := m / b ^ ((k + 1) / 2)
+    let e := (k + 1) % 2
+    cutoff b e m + 1 = H + (if mirror b e H ≤ m then 1 else 0) := by
+  dsimp only
+  let t := (k + 1) / 2
+  let e := (k + 1) % 2
+  let H := m / b ^ t
+  have hlen : (b.digits H).length - e = t := by
+    simp only [H, Nat.digits_div_pow hb, List.length_drop, hk, e, t]
+    omega
+  have ht : 0 < b ^ t := by positivity
+  have hlo : H * b ^ t ≤ m := Nat.div_mul_le_self _ _
+  have hhi : m < (H + 1) * b ^ t := (Nat.div_lt_iff_lt_mul ht).mp (Nat.lt_succ_self H)
+  have below (x : ℕ) (hx : x < H) : x ≤ cutoff b e m := by
+    apply (le_cutoff hb).mpr
+    have hlen' : (b.digits x).length - e ≤ t := hlen ▸
+      Nat.sub_le_sub_right (Nat.le_length_digits_le b x H hx.le) e
+    calc
+      mirror b e x ≤ b ^ ((b.digits x).length - e) * (x + 1) := (mirror_bounds hb e x).2.le
+      _ ≤ b ^ t * H := Nat.mul_le_mul (Nat.pow_le_pow_right (by omega) hlen') (by omega)
+      _ ≤ m := by rwa [mul_comm]
+  have above (x : ℕ) (hx : H < x) : ¬ x ≤ cutoff b e m := by
+    rw [le_cutoff hb]
+    have hlen' : t ≤ (b.digits x).length - e := hlen ▸
+      Nat.sub_le_sub_right (Nat.le_length_digits_le b H x hx.le) e
+    apply not_le_of_gt
+    calc
+      m < (H + 1) * b ^ t := hhi
+      _ ≤ b ^ ((b.digits x).length - e) * x := by
+        rw [mul_comm (H + 1)]
+        exact Nat.mul_le_mul (Nat.pow_le_pow_right (by omega) hlen') (by omega)
+      _ ≤ mirror b e x := (mirror_bounds hb e x).1
+  change cutoff b e m + 1 = H + (if mirror b e H ≤ m then 1 else 0)
+  have hup : cutoff b e m ≤ H := by
+    by_contra! h
+    exact above _ h le_rfl
+  by_cases h : mirror b e H ≤ m
+  · have hd : H ≤ cutoff b e m := (le_cutoff hb).mpr h
+    simp [h, le_antisymm hup hd]
+  · have hne : ¬ H ≤ cutoff b e m := by rwa [le_cutoff hb]
+    have hd := below (H - 1) (by omega)
+    simp only [h, ite_false, add_zero]
+    omega
+
+private theorem inactive_cutoff {b m k : ℕ} (hb : 2 ≤ b) (hk : (b.digits m).length = k + 1) :
+    cutoff b (k % 2) m + 1 = b ^ ((k + 1) / 2) := by
+  have hlt : m < b ^ (k + 1) := (Nat.digits_length_le_iff hb m).mp hk.le
+  have hmono : Monotone (cutoff b (k % 2)) := fun _ _ h =>
+    (le_cutoff hb).mpr (((le_cutoff hb).mp le_rfl).trans h)
+  have he : k % 2 ≤ 1 := by omega
+  have hupper := hmono hlt.le
+  rw [cutoff_base_pow hb (by omega) he, show (k + 1 + k % 2) / 2 = (k + 1) / 2 by omega]
+    at hupper
+  have hpos : 0 < b ^ ((k + 1) / 2) := by positivity
+  by_cases hz : k = 0
+  · simp [hz] at hupper ⊢
+    omega
+  · have hle : b ^ k ≤ m := (Nat.lt_digits_length_iff hb m).mp (by rw [hk]; omega)
+    have hlower := hmono hle
+    rw [cutoff_base_pow hb (by omega) he, show (k + k % 2) / 2 = (k + 1) / 2 by omega]
+      at hlower
+    omega
+
+private theorem mirror_center_modEq {b q : ℕ} (hb : 2 ≤ b) (hbq : b ≡ 1 [MOD q]) (x : ℕ) :
+    mirror b 1 x ≡ 2 * (x / b) + x % b [MOD q] := by
+  have h : mirror b 1 x ≡ x + x / b [MOD q] := by simpa using mirror_modEq hb hbq 1 x
+  have hx : x ≡ x / b + x % b [MOD q] := by
+    calc
+      x = b * (x / b) + x % b := (Nat.div_add_mod x b).symm
+      _ ≡ x / b + x % b [MOD q] := by simpa using (hbq.mul_right (x / b)).add_right (x % b)
+  simpa only [two_mul, add_right_comm] using h.trans (hx.add_right (x / b))
+
+private theorem mirror_zero_modEq {b q : ℕ} (hb : 2 ≤ b) (hbq : b ≡ 1 [MOD q]) (x : ℕ) :
+    mirror b 0 x ≡ 2 * x [MOD q] := by
+  simpa [two_mul] using mirror_modEq hb hbq 0 x
+
+private theorem count_mirror_range (n : ℕ) (p : ℕ → Prop) [DecidablePred p] :
+    Nat.count p (n + 1) = countTo n p + if p 0 then 1 else 0 := by
+  have h : range (n + 1) = insert 0 (Ioc 0 n) := by
+    ext x
+    simp only [mem_range, mem_insert, mem_Ioc]
+    omega
+  rw [Nat.count_eq_card_filter_range, h, filter_insert]
+  by_cases hp : p 0 <;> simp [hp, countTo]
 
 end abs_palindromeAPCount_sub_le
 
@@ -437,5 +533,85 @@ public theorem abs_palindromeAPCount_sub_le {b q r : ℕ} (hb : 2 ≤ b) (hq : O
     constructor <;> linarith
 
 end
+
+open abs_palindromeAPCount_sub_le Finset in
+/-- **Counting palindromes by leading halves.**
+
+For a base `b ≥ 2`, a bound `m` with `k + 1` base-`b` digits, and a residue `r < q`
+with `b ≡ 1 [MOD q]`, the palindrome count splits into two counts of leading halves.
+Write `P = b ^ ((k + 1) / 2)` and `H = m / P`. The upper bounds are exclusive: the prefixes
+for even digit length run below `H` if `k` is odd and below `P` otherwise; those for odd digit
+length use the other bound. Their residue tests are `2 * x ≡ r [MOD q]` and
+`2 * (x / b) + x % b ≡ r [MOD q]`, respectively. Subtract the two zero prefixes when `r = 0`.
+The last prefix `H` contributes separately if its reflection `C` fits below or at `m` and
+passes the residue test for its digit length. -/
+public theorem palindromeAPCount_eq_prefix_counts {b m q r k : ℕ} (hb : 2 ≤ b)
+    (hk : (b.digits m).length = k + 1) (hr : r < q) (hbq : b ≡ 1 [MOD q]) :
+    let P := b ^ ((k + 1) / 2)
+    let H := m / P
+    let ds := b.digits m
+    let C := Nat.ofDigits b
+      ((ds.drop (ds.length / 2 + ds.length % 2)).reverse ++ ds.drop (ds.length / 2))
+    palindromeAPCount b m q r + (if r = 0 then 2 else 0) =
+      Nat.count (fun x => 2 * x ≡ r [MOD q]) (if Odd k then H else P) +
+      Nat.count (fun x => 2 * (x / b) + x % b ≡ r [MOD q]) (if Odd k then P else H) +
+      (if C ≤ m ∧ (if Odd k then 2 * H else 2 * (H / b) + H % b) ≡ r [MOD q]
+        then 1 else 0) := by
+  dsimp only
+  let P := b ^ ((k + 1) / 2)
+  let H := m / P
+  let e := (k + 1) % 2
+  let C := Nat.ofDigits b
+    (((b.digits m).drop ((b.digits m).length / 2 + (b.digits m).length % 2)).reverse ++
+      (b.digits m).drop ((b.digits m).length / 2))
+  change _ = Nat.count (fun x => 2 * x ≡ r [MOD q]) (if Odd k then H else P) +
+    Nat.count (fun x => 2 * (x / b) + x % b ≡ r [MOD q]) (if Odd k then P else H) +
+    (if C ≤ m ∧ (if Odd k then 2 * H else 2 * (H / b) + H % b) ≡ r [MOD q] then 1 else 0)
+  have hcopy : mirror b e H = C := by
+    simp only [C, mirror, H, P, e, Nat.digits_div_pow hb, List.drop_drop, hk]
+  have hz (e' : ℕ) : (if mirror b e' 0 ≡ r [MOD q] then 1 else 0) =
+      (if r = 0 then 1 else 0 : ℕ) := by
+    simp [mirror, Nat.ModEq, Nat.mod_eq_of_lt hr, eq_comm]
+  have hsum (e' : ℕ) := count_mirror_range (cutoff b e' m) (fun x => mirror b e' x ≡ r [MOD q])
+  have hinactive := inactive_cutoff hb hk
+  change cutoff b (k % 2) m + 1 = P at hinactive
+  have hactive := active_cutoff hb hk
+  change cutoff b e m + 1 = H + (if mirror b e H ≤ m then 1 else 0) at hactive
+  have hsplit : Nat.count (fun x => mirror b e x ≡ r [MOD q]) (cutoff b e m + 1) =
+      Nat.count (fun x => mirror b e x ≡ r [MOD q]) H +
+        (if C ≤ m ∧ mirror b e H ≡ r [MOD q] then 1 else 0) := by
+    rw [hactive, hcopy]
+    by_cases hc : C ≤ m
+    · simp [hc, Nat.count_succ, hcopy]
+    · simp [hc]
+  have he (x : ℕ) : (mirror b 0 x ≡ r [MOD q]) ↔ (2 * x ≡ r [MOD q]) :=
+    ⟨(mirror_zero_modEq hb hbq x).symm.trans, (mirror_zero_modEq hb hbq x).trans⟩
+  have ho (x : ℕ) : (mirror b 1 x ≡ r [MOD q]) ↔ (2 * (x / b) + x % b ≡ r [MOD q]) :=
+    ⟨(mirror_center_modEq hb hbq x).symm.trans, (mirror_center_modEq hb hbq x).trans⟩
+  have hz₂ : (if r = 0 then 2 else 0 : ℕ) =
+      (if r = 0 then 1 else 0) + (if r = 0 then 1 else 0) := by
+    split <;> decide
+  rw [count_split hb, hz₂]
+  by_cases hk' : Odd k
+  · have hp := Nat.odd_iff.mp hk'
+    have hp' : e = 0 := by dsimp [e]; omega
+    rw [hp', hsum, hz] at hsplit
+    simp only [he] at hsplit
+    rw [hp] at hinactive
+    have J := hsum 1
+    rw [hinactive, hz] at J
+    simp only [ho] at J
+    simp only [he, ho, hk', ite_true]
+    omega
+  · have hp := Nat.even_iff.mp (Nat.not_odd_iff_even.mp hk')
+    have hp' : e = 1 := by dsimp [e]; omega
+    rw [hp', hsum, hz] at hsplit
+    simp only [ho] at hsplit
+    rw [hp] at hinactive
+    have J := hsum 0
+    rw [hinactive, hz] at J
+    simp only [he] at J
+    simp only [he, ho, hk', ite_false]
+    omega
 
 end MetaMathlibExt

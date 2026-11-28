@@ -15,8 +15,8 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.Int.CardIntervalMod
 import Mathlib.Tactic.Ring
+import MathlibExt.Data.Int.CardIntervalMod
 
 /-!
 # Digit-sum congruence counts
@@ -24,6 +24,13 @@ import Mathlib.Tactic.Ring
 When the base is `1` modulo the modulus, the distribution of tail digit sums is uniform apart
 from a single extra count in the zero residue class. We prove this by adjoining one digit at a
 time, then sum over the leading interval. The leading coordinate need not be less than the base.
+
+## References
+
+* Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Phakhinkon Napp Phunphayap and
+  Prapanpong Pongsriiam, *Exact Formulas for the Number of Palindromes in Certain Arithmetic
+  Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, pp. 1–29,
+  Definition 3 and Lemmas 4 and 5.
 -/
 
 namespace MetaMathlibExt
@@ -76,20 +83,14 @@ private theorem residueIndicator_zero (q : ℕ) (r : ℤ) :
 private theorem sum_residueIndicator_range (a : ℕ) {q : ℕ} (hq : 0 < q) (r : ℤ) :
     ∑ i ∈ range a, residueIndicator q r i =
       (↑(a / q) : ℚ) + (if r % q < ((a % q : ℕ) : ℤ) then 1 else 0) := by
-  let u := (r % q).toNat
-  have hu : (u : ℤ) = r % q := Int.toNat_of_nonneg (Int.emod_nonneg _ (by exact_mod_cast hq.ne'))
-  have hmod (i : ℕ) : (i : ℤ) ≡ r [ZMOD q] ↔ i ≡ u [MOD q] := by
-    rw [← Int.natCast_modEq_iff, hu]
-    exact ⟨fun h => h.trans (Int.mod_modEq r q).symm, fun h => h.trans (Int.mod_modEq r q)⟩
-  have hlt : (u % q < a % q) ↔ r % q < ((a % q : ℕ) : ℤ) := by
-    rw [← Int.ofNat_lt, Int.natCast_emod, hu, Int.emod_emod]
   calc
-    _ = ∑ i ∈ (range a).filter (fun i => i ≡ u [MOD q]), (1 : ℚ) := by
+    _ = ∑ i ∈ (range a).filter (fun i : ℕ => (i : ℤ) ≡ r [ZMOD q]), (1 : ℚ) := by
       rw [sum_filter]
-      simp only [residueIndicator, hmod]
-    _ = (Nat.count (fun i => i ≡ u [MOD q]) a : ℚ) := by
+      rfl
+    _ = (Nat.count (fun i : ℕ => (i : ℤ) ≡ r [ZMOD q]) a : ℚ) := by
       simp [Nat.count_eq_card_filter_range, sum_const, nsmul_eq_mul]
-    _ = _ := by rw [Nat.count_modEq_card a hq, Nat.cast_add]; simp [hlt, apply_ite]
+    _ = _ := by rw [Nat.count_intModEq_card hq, Nat.cast_add]; simp only [Nat.cast_ite,
+      Nat.cast_one, Nat.cast_zero]
 
 -- The last point of [0,b) is a multiple of q, and the preceding points form complete blocks.
 private theorem sum_residueIndicator_base {b q : ℕ} (hb : 1 ≤ b) (hq : 0 < q)
