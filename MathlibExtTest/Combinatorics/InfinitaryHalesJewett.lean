@@ -164,4 +164,32 @@ example {C : Set (FreeSemigroup ℕ)} (hC : IsCSet C) :
     List.length_append, List.length_cons, List.length_nil] at hlength
   omega
 
+-- The same two nonconsecutive words give both the product and the sum, with independent letters.
+example {D : Set (FreeSemigroup Bool)} (hD : IsCSet D) :
+    ∃ w : ℕ → FreeSemigroup (Bool ⊕ Fin 1),
+      (∀ a b : Bool, FreeSemigroup.map (Sum.elim id fun _ => a) (w 0) *
+        FreeSemigroup.map (Sum.elim id fun _ => b) (w 2) ∈ D) ∧
+      ∃ H : Finset ℕ, H.Nonempty ∧
+        ((w 0).head :: (w 0).tail).countP Sum.isRight +
+          ((w 2).head :: (w 2).tail).countP Sum.isRight = ∑ j ∈ H, 3 ^ j := by
+  obtain ⟨w, _, hw, hsum⟩ := exists_variableWords_prod_mem_sum_count_mem_finiteSums_of_isCSet
+    (fun _ => Finset.univ) monotone_const (fun a => ⟨0, Finset.mem_univ a⟩) hD
+    (fun j => 3 ^ j) (fun _ => Nat.pow_pos (by decide))
+  have hm : StrictMono (fun j : Fin 2 => 2 * j.val) :=
+    fun _ _ h => Nat.mul_lt_mul_of_pos_left h (by decide)
+  refine ⟨w, fun a b => ?_, ?_⟩
+  · simpa [List.ofFn_succ] using hw 1 _ (Fin.cons a fun _ => b) hm (fun _ => Finset.mem_univ _)
+  · simpa using hsum {0, 2} (by simp)
+
+-- An empty first level imposes no substitution constraint, but still has a nonempty count sum.
+example {D : Set (FreeSemigroup ℕ)} (hD : IsCSet D) :
+    ∃ w : FreeSemigroup (ℕ ⊕ Fin 1), 2 ≤ (w.head :: w.tail).countP Sum.isRight := by
+  obtain ⟨w, _, _, hsum⟩ := exists_variableWords_prod_mem_sum_count_mem_finiteSums_of_isCSet
+    Finset.range Finset.range_mono (fun a => ⟨a + 1, Finset.mem_range.mpr (Nat.lt_succ_self a)⟩)
+    hD (fun _ => 2) (fun _ => by decide)
+  obtain ⟨H, hH, he⟩ := hsum {0} (Finset.singleton_nonempty _)
+  have he' : ((w 0).head :: (w 0).tail).countP Sum.isRight = H.card * 2 := by simpa using he
+  have := Finset.card_pos.mpr hH
+  exact ⟨w 0, by omega⟩
+
 end MetaMathlibExt.InfinitaryHalesJewettTest
