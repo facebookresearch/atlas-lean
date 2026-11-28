@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.HBCFirstElementBounds
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCHalfPrimeProductBounds
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectMinFac
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectHBCAdmissible
+public import MathlibExt.NumberTheory.ArithmeticFunction.HBCThreeQuarterProductBound
 
 namespace MetaMathlibExt
 
@@ -132,22 +133,6 @@ public theorem_wanted hbcAdmissible_exists_prefix_le_and_prod_le (a d k : ℕ) (
           ∏ i ∈ Finset.Icc 1 κ', n i < ∏ i ∈ Finset.Icc 1 κ', (y i : ℝ)) →
         a * ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
           (if κ = k then (d : ℝ) else 1) * (ακ κ ^ 2 ^ k - ακ κ ^ 2 ^ (k - 1))
-
-/-- **Stone's $d^{3/4}$ product bound for HBC-admissible tuples.** Let $a$ and $d$ be coprime
-positive integers, let $k \ge 2$, and let $y_1 < y_2 < \dots < y_k$ be positive integers with
-$\prod_{i=1}^{k} (1 - 1/y_i) \le a/(a + d) < \prod_{i=1}^{k-1} (1 - 1/y_i)$ and
-$y_1 \ne \lfloor 1 + (a + d)/d \rfloor$. Put $\beta = (a + d)/d^{3/4}$. Then
-$a \prod_{i=1}^{k} y_i \le \beta^{2^k} - \beta^{2^{k-1}}$.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Corollary 2. -/
-public theorem_wanted hbcAdmissible_prod_le_of_ne_floor (a d k : ℕ) (ha : 0 < a) (hd : 0 < d)
-    (hcop : Nat.Coprime a d) (hk : 2 ≤ k) (y : ℕ → ℕ) (hy0 : 0 < y 1) (hmono : ∀ i, 1 ≤ i → i < k → y i < y (i + 1))
-    (hle : ∏ i ∈ Finset.Icc 1 k, (1 - 1 / (y i : ℝ)) ≤ (a : ℝ) / (a + d))
-    (hlt : (a : ℝ) / (a + d) < ∏ i ∈ Finset.Icc 1 (k - 1), (1 - 1 / (y i : ℝ)))
-    (hy1 : y 1 ≠ ⌊1 + ((a : ℝ) + d) / d⌋₊) :
-    a * ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
-      ((a + d) / (d : ℝ) ^ ((3 : ℝ) / 4)) ^ 2 ^ k - ((a + d) / (d : ℝ) ^ ((3 : ℝ) / 4)) ^ 2 ^ (k - 1)
 
 /-- **Product bound for HBC-admissible tuples at $7/10$.** Let $k \ge 3$ and let
 $y_1 < y_2 < \dots < y_k$ be positive integers with
