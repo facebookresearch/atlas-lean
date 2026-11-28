@@ -38,7 +38,14 @@ analytic continuation is intended. -/
 public noncomputable def rogersDilog (x : ℝ) : ℝ :=
   li2PowerSeries x + log x * log (1 - x) / 2
 
-/-- The defining power-series formula for the Rogers dilogarithm. -/
+/-- For real $x$, the totalized formula for the Rogers dilogarithm is
+
+$$
+L(x) = \sum_{n=0}^{\infty} \frac{x^{n+1}}{(n+1)^2} + \frac{1}{2}\log x\,\log(1-x).
+$$
+
+On $[0, 1]$ this agrees with the usual Rogers dilogarithm, using Lean's $\log 0 = 0$
+at the endpoints. -/
 public theorem rogersDilog_eq_tsum_add_log_mul_log (x : ℝ) :
     rogersDilog x = (∑' n : ℕ, x ^ (n + 1) / ((n : ℝ) + 1) ^ 2) +
       log x * log (1 - x) / 2 := by
@@ -55,7 +62,7 @@ public theorem rogersDilog_nonneg {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) : 0 ≤
 @[simp]
 public theorem rogersDilog_zero : rogersDilog 0 = 0 := by simp [rogersDilog, li2PowerSeries_zero]
 
-/-- The reflection identity for the Rogers dilogarithm on `[0, 1]`. -/
+/-- For $0 \le x \le 1$, the Rogers dilogarithm satisfies $L(x) + L(1-x) = \pi^2/6$. -/
 public theorem rogersDilog_reflection {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) :
     rogersDilog x + rogersDilog (1 - x) = π ^ 2 / 6 := by
   rcases hx.1.eq_or_lt with rfl | hx₀
@@ -96,11 +103,14 @@ private lemma one_sub_step {x y : ℝ} (hd : 1 - x * y ≠ 0) :
   ring
 
 private lemma mul_mem {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y ∈ Ioo (0 : ℝ) 1) :
-    x * y ∈ Ioo (0 : ℝ) 1 :=
-  ⟨mul_pos hx.1 hy.1, (mul_lt_of_lt_one_right hx.1 hy.2).trans hx.2⟩
+    x * y ∈ Ioo (0 : ℝ) 1 := by
+  simpa only [Ioo.coe_mul] using (((⟨x, hx⟩ : Ioo (0 : ℝ) 1) * ⟨y, hy⟩).2)
 
-private lemma step_mem {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y ∈ Ioo (0 : ℝ) 1) :
-    step x y ∈ Ioo (0 : ℝ) 1 := by
+/-- If $0 < x, y < 1$, the argument $x(1-y)/(1-xy)$ of Abel's five-term relation
+also lies in $(0, 1)$. -/
+public theorem abel_five_term_arg_mem_Ioo {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1)
+    (hy : y ∈ Ioo (0 : ℝ) 1) : x * (1 - y) / (1 - x * y) ∈ Ioo (0 : ℝ) 1 := by
+  change step x y ∈ Ioo (0 : ℝ) 1
   have hd := sub_pos.mpr (mul_mem hx hy).2
   refine ⟨div_pos (mul_pos hx.1 (sub_pos.mpr hy.2)) hd, sub_pos.mp ?_⟩
   rw [one_sub_step hd.ne']
@@ -120,9 +130,11 @@ private lemma fiveTerm_deriv {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y �
   have hu := ((hasDerivAt_id' x).mul_const (1 - y)).div hden hd
   have hv := (((hasDerivAt_id' x).const_sub 1).const_mul y).div
     (((hasDerivAt_id' x).const_mul y).const_sub 1) (by simpa only [mul_comm y x] using hd)
+  have hu_mem : step x y ∈ Ioo (0 : ℝ) 1 := abel_five_term_arg_mem_Ioo hx hy
+  have hv_mem : step y x ∈ Ioo (0 : ℝ) 1 := abel_five_term_arg_mem_Ioo hy hx
   refine ((((hasDerivAt_rogersDilog hx).sub ((hasDerivAt_rogersDilog hxy).comp x hprod)).sub
-    ((hasDerivAt_rogersDilog (step_mem hx hy)).comp x hu)).sub
-      ((hasDerivAt_rogersDilog (step_mem hy hx)).comp x hv)).congr_deriv ?_
+    ((hasDerivAt_rogersDilog hu_mem).comp x hu)).sub
+      ((hasDerivAt_rogersDilog hv_mem).comp x hv)).congr_deriv ?_
   rw [one_sub_step hd, one_sub_step (by rwa [mul_comm y x]), step, step, mul_comm y x]
   rw [log_div hdx hd, log_div hdy hd, log_div (mul_ne_zero hx.1.ne' hdy) hd,
     log_div (mul_ne_zero hy.1.ne' hdx) hd, log_mul hx.1.ne' hy.1.ne',
@@ -130,7 +142,13 @@ private lemma fiveTerm_deriv {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y �
   field_simp [hx.1.ne', hy.1.ne', hdx, hdy, hd]
   ring
 
-/-- Abel's five-term relation for the Rogers dilogarithm at two arguments in `(0, 1)`. -/
+/-- Abel's five-term relation for the Rogers dilogarithm $L$: for $0 < x, y < 1$,
+
+$$
+L(x) + L(y) = L(xy) + L\left(\frac{x(1-y)}{1-xy}\right)
+  + L\left(\frac{y(1-x)}{1-yx}\right).
+$$
+-/
 public theorem rogersDilog_five_term {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y ∈ Ioo (0 : ℝ) 1) :
     rogersDilog x + rogersDilog y = rogersDilog (x * y) +
       rogersDilog (x * (1 - y) / (1 - x * y)) + rogersDilog (y * (1 - x) / (1 - y * x)) := by
@@ -158,8 +176,9 @@ public theorem rogersDilog_five_term {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (h
   have hc : ContinuousOn F (Icc 0 x) :=
     (((continuousOn_rogersDilog.mono (Icc_subset_Icc_right hx.2.le)).sub
       (compL (continuousOn_id.mul continuousOn_const) (by simp) (fun _ hz => mul_mem hz hy))).sub
-      (compL hu (by simp [step]) (fun _ hz => step_mem hz hy))).sub
-      (compL hv (by simpa [step] using Ioo_subset_Icc_self hy) (fun _ hz => step_mem hy hz))
+      (compL hu (by simp [step]) (fun _ hz => abel_five_term_arg_mem_Ioo hz hy))).sub
+      (compL hv (by simpa [step] using Ioo_subset_Icc_self hy)
+        (fun _ hz => abel_five_term_arg_mem_Ioo hy hz))
   obtain ⟨c, hc', he⟩ := exists_hasDerivAt_eq_slope F (fun _ => 0) hx.1 hc
     (fun z hz => fiveTerm_deriv ⟨hz.1, hz.2.trans hx.2⟩ hy)
   have heq := (div_eq_zero_iff.mp he.symm).resolve_right (by simpa using hx.1.ne')

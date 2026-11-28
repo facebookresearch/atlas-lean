@@ -36,6 +36,13 @@ example : Tendsto rogersDilog (𝓝[Icc 0 1] 1) (𝓝 (π ^ 2 / 6)) := by
   rw [← h1]
   exact (continuousOn_rogersDilog 1 (by norm_num [mem_Icc])).tendsto
 
+-- The first fractional argument at 1/2 and 2/3 is exactly 1/4 and stays in the domain.
+example : let u : ℝ := (1 / 2) * (1 - 2 / 3) / (1 - (1 / 2) * (2 / 3))
+    u = 1 / 4 ∧ u ∈ Ioo 0 1 := by
+  dsimp only
+  exact ⟨by norm_num, abel_five_term_arg_mem_Ioo (by norm_num [mem_Ioo])
+    (by norm_num [mem_Ioo])⟩
+
 -- For unequal arguments 1/2 and 2/3, the product is 1/3 and the two new
 -- arguments are 1/4 and 1/2. The repeated midpoint term cancels.
 example : rogersDilog (2 / 3) = rogersDilog (1 / 3) + rogersDilog (1 / 4) := by

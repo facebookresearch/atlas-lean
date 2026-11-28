@@ -69,12 +69,10 @@ public theorem rogersDilog_hoorfarQi_series {p q : ℕ} (hp : 0 < p) (hq : 0 < q
     ⟨mul_pos hβ₀ (pow_pos hθ₀ _),
       (mul_le_of_le_one_right hβ₀.le (pow_le_one₀ hθ₀.le hθ₁.le)).trans_lt hβ₁⟩
   have hmul {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y ∈ Ioo (0 : ℝ) 1) :
-      x * y ∈ Ioo (0 : ℝ) 1 :=
-    ⟨mul_pos hx.1 hy.1, (mul_lt_of_lt_one_right hx.1 hy.2).trans hx.2⟩
-  have hXa {t : ℝ} (ht : t ∈ Ioo (0 : ℝ) 1) : X t ∈ Ioo (0 : ℝ) 1 := by
-    have hd := sub_pos.mpr (hmul ht ha).2
-    refine ⟨div_pos (mul_pos ht.1 (sub_pos.mpr ha.2)) hd, (div_lt_one hd).2 ?_⟩
-    nlinarith only [ht.2]
+      x * y ∈ Ioo (0 : ℝ) 1 := by
+    simpa only [Ioo.coe_mul] using (((⟨x, hx⟩ : Ioo (0 : ℝ) 1) * ⟨y, hy⟩).2)
+  have hXa {t : ℝ} (ht : t ∈ Ioo (0 : ℝ) 1) : X t ∈ Ioo (0 : ℝ) 1 :=
+    abel_five_term_arg_mem_Ioo ht ha
   have hYb {t : ℝ} (ht : t ∈ Ioo (0 : ℝ) 1) : Y t ∈ Ioo (0 : ℝ) 1 := by
     have hd := sub_pos.mpr (hmul ht hb).2
     exact ⟨div_pos (sub_pos.mpr hb.2) hd,

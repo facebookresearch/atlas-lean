@@ -39,20 +39,15 @@ private lemma hasSum_products {X Y : ℕ → ℝ} {r : ℝ} (hr : r ∈ Ioo (0 :
     (rec : ∀ n, X (n + 1) = step (X n) (Y n) ∧ Y (n + 1) = step (Y n) (X n))
     (limX : Tendsto X atTop (𝓝 (1 - r))) (limY : Tendsto Y atTop (𝓝 0)) :
     HasSum (fun n => rogersDilog (X n * Y n)) (rogersDilog r) := by
-  have step_in_interval {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y ∈ Ioo (0 : ℝ) 1) :
-      step x y ∈ Ioo (0 : ℝ) 1 := by
-    have hd := sub_pos.mpr ((mul_lt_of_lt_one_right hx.1 hy.2).trans hx.2)
-    refine ⟨div_pos (mul_pos hx.1 (sub_pos.mpr hy.2)) hd, (div_lt_one hd).2 ?_⟩
-    nlinarith only [hx.2]
   have mem (n : ℕ) : X n ∈ Ioo (0 : ℝ) 1 ∧ Y n ∈ Ioo (0 : ℝ) 1 := by
     induction n with
     | zero => exact ⟨hX, hY ▸ ⟨sub_pos.mpr hX.2, sub_lt_self _ hX.1⟩⟩
     | succ n ih =>
       rw [(rec n).1, (rec n).2]
-      exact ⟨step_in_interval ih.1 ih.2, step_in_interval ih.2 ih.1⟩
-  apply (hasSum_iff_tendsto_nat_of_nonneg (fun n => rogersDilog_nonneg
-    ⟨mul_pos (mem n).1.1 (mem n).2.1,
-      (mul_lt_of_lt_one_right (mem n).1.1 (mem n).2.2).trans (mem n).1.2⟩) _).2
+      exact ⟨abel_five_term_arg_mem_Ioo ih.1 ih.2, abel_five_term_arg_mem_Ioo ih.2 ih.1⟩
+  apply (hasSum_iff_tendsto_nat_of_nonneg (fun n => rogersDilog_nonneg (by
+    simpa only [Ioo.coe_mul] using
+      (((⟨X n, (mem n).1⟩ : Ioo (0 : ℝ) 1) * ⟨Y n, (mem n).2⟩).2))) _).2
   have sum_range (n : ℕ) : ∑ k ∈ Finset.range n, rogersDilog (X k * Y k) =
       π ^ 2 / 6 - (rogersDilog (X n) + rogersDilog (Y n)) := by
     induction n with

@@ -55,7 +55,8 @@ an analytic continuation (`tsum` gives `0` where the series is not summable). -/
 noncomputable def li2PowerSeries (z : ℝ) : ℝ :=
   ∑' n : ℕ, z ^ (n + 1) / (((n + 1 : ℕ)) : ℝ) ^ 2
 
-/-- The dilogarithm power series with its denominator written using real addition. -/
+/-- With the denominator written using real addition, the totalized dilogarithm power series at
+`z : ℝ` is $\sum_{n=0}^{\infty} z^{n+1}/(n+1)^2$. -/
 theorem li2PowerSeries_eq_tsum (z : ℝ) :
     li2PowerSeries z = ∑' n : ℕ, z ^ (n + 1) / ((n : ℝ) + 1) ^ 2 := by
   simp only [li2PowerSeries, Nat.cast_add, Nat.cast_one]
