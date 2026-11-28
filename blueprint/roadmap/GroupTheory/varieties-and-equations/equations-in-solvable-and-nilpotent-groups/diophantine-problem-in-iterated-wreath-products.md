@@ -10,7 +10,7 @@ For groups $A$ and $B$, let $B \wr A$ be the restricted wreath product $\big(\bi
 2. If $A_1, \dots, A_k$, $k \ge 2$, are nontrivial free abelian groups of finite rank, then the Diophantine problem in $\mathrm{IWP}_R(A_k, \dots, A_1)$ is undecidable (Theorem 4.3).
 3. If the Diophantine problem in a group $H$ is undecidable, then it is undecidable in $K \wr H$ whenever $K$ is abelian, and whenever $K$ is finite and $H$ is torsion-free (Theorem 3.1).
 
-The case $m = n = 1$ of clause 1 is the undecidability of [systems of equations in $\mathbb{Z} \wr \mathbb{Z}$](systems-of-equations-undecidable-z-wr-z.md), also proved by Dong. The source recalls that the full first-order theory of a finitely generated solvable group is decidable exactly when the group is virtually abelian (Ershov, Romanovskii, Noskov); the Diophantine problem concerns only finite systems of equations with constants.
+The case $m = n = 1$ of clause 1 is the undecidability of [systems of equations in $\mathbb{Z} \wr \mathbb{Z}$](systems-of-equations-undecidable-z-wr-z.md), first proved by Myasnikov and Romanovskii (stated as the undecidability of the universal theory with constants) and also by Dong, with a different argument. The source recalls that the full first-order theory of a finitely generated solvable group is decidable exactly when the group is virtually abelian (Ershov, Romanovskii, Noskov); the Diophantine problem concerns only finite systems of equations with constants.
 
 ## Depends on
 

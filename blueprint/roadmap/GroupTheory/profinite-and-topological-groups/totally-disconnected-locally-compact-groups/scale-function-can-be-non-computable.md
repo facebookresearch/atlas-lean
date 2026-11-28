@@ -12,6 +12,7 @@ In particular the scale function of $G$ is not computable for this presentation,
 
 - [Group](../../group-basics/group.md)
 - [Topological group](../../../Topology/topological-groups/topological-group.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
