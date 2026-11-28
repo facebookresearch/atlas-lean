@@ -10,7 +10,6 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Data.Nat.Nth
 public import Mathlib.Order.LiminfLimsup
 public import MathlibExt.Combinatorics.InfiniteWord.GutkovskiyFloor
 public import MathlibExt.Combinatorics.InfiniteWord.GutkovskiyModTwo

@@ -279,16 +279,22 @@ Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*,
 public noncomputable def kimberlingZeroPosition (n : ℕ) : ℕ :=
   if n = 0 then 0 else Nat.nth (fun i ↦ kimberlingWord i = false) (n - 1) + 1
 
-/-- If the letter at zero-based index `i` is a one and the preceding prefix contains `n` ones,
-then the one-based position of the `(n + 1)`-st one is `i + 1`. -/
+/-- **Locating a one of Kimberling's word by counting.** Let $k = k_1 k_2 k_3 \cdots$ be
+Kimberling's word, the infinite fixed point beginning with $1$ of the morphism $1 \mapsto 110$,
+$0 \mapsto 11$. For $j \ge 1$, let $A_j$ be the position (counted from $1$) of the $j$-th $1$
+in $k$. For $i, n \ge 0$, if $k_{i+1} = 1$ and the first $i$ letters contain exactly $n$ ones,
+then $A_{n+1} = i + 1$. The prefix at $i = 0$ is empty. -/
 public theorem kimberlingOnePosition_eq_succ_of_count {n i : ℕ} (hi : kimberlingWord i = true)
     (hc : Nat.count (fun j ↦ kimberlingWord j = true) i = n) :
     kimberlingOnePosition (n + 1) = i + 1 := by
   simp only [kimberlingOnePosition, Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel]
   rw [← hc, Nat.nth_count hi]
 
-/-- If the letter at zero-based index `i` is a zero and the preceding prefix contains `n` zeros,
-then the one-based position of the `(n + 1)`-st zero is `i + 1`. -/
+/-- **Locating a zero of Kimberling's word by counting.** Let $k = k_1 k_2 k_3 \cdots$ be
+Kimberling's word, the infinite fixed point beginning with $1$ of the morphism $1 \mapsto 110$,
+$0 \mapsto 11$. For $j \ge 1$, let $B_j$ be the position (counted from $1$) of the $j$-th $0$
+in $k$. For $i, n \ge 0$, if $k_{i+1} = 0$ and the first $i$ letters contain exactly $n$ zeros,
+then $B_{n+1} = i + 1$. The prefix at $i = 0$ is empty. -/
 public theorem kimberlingZeroPosition_eq_succ_of_count {n i : ℕ} (hi : kimberlingWord i = false)
     (hc : Nat.count (fun j ↦ kimberlingWord j = false) i = n) :
     kimberlingZeroPosition (n + 1) = i + 1 := by
@@ -481,8 +487,11 @@ public theorem kimberlingOnePosition_kimberlingZeroPosition {n : ℕ} (hn : 1 �
 
 end Positions
 
-/-- **The Kimberling position identity at index zero.** With the conventions $A_0 = B_0 = 0$,
-the equality branch of the identity holds at $n = 0$: $A_{B_0} = A_0 + B_0 = 0$.
+/-- **The Kimberling position identity at index zero.** Let $k = k_1 k_2 k_3 \cdots$ be
+Kimberling's word, the infinite fixed point beginning with $1$ of the morphism $1 \mapsto 110$,
+$0 \mapsto 11$. For $n \ge 1$, let $A_n$ and $B_n$ be the positions (counted from $1$) of the
+$n$-th $1$ and the $n$-th $0$ in $k$, respectively. With $A_0 = B_0 = 0$ by convention, we have
+$A_{B_0} = A_0 + B_0 = 0$. This is the second alternative of Theorem 3 at $n = 0$.
 
 Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
 (2024), Article A51, Theorem 3 and Table 3. -/
