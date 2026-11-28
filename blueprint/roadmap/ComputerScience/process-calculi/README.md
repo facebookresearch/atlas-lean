@@ -22,3 +22,6 @@ Algebraic models of concurrent processes: labelled transition systems and their 
 - [π-calculus](calculus/README.md)
 - [Late bisimulation in the π-calculus](late-bisimulation-in-the-pi-calculus/README.md)
 - [Process algebra laws](process-algebra-laws/README.md)
+- [Choreographies](choreographies/README.md)
+- [Hierarchical terms of the pi-calculus](hierarchical-pi-calculus-terms/README.md)
+- [Logical equivalence for mobile ambients is undecidable](logical-equivalence-for-mobile-ambients.md)

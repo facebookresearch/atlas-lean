@@ -59,11 +59,8 @@ example : ∃ d r : Fin 1 ⊕ Fin 2 → ℕ,
         simp [coconutTree, SimpleGraph.fromRel_adj, d, r]
     · intro g hg
       exact Nat.dvd_one.mp (hg (.inr 0))
-  have h : IsSmoothCoconut 1 2 d r := (ha.isSmoothCoconut_iff (by decide)).mpr ⟨by decide, by
-    intro i j hij
-    have heq : j = i := Subsingleton.elim _ _
-    subst j
-    exact (lt_irrefl i hij).elim⟩
+  have hm := (ha.coconut_tfae.out 1 3).mp (by decide)
+  have h : IsSmoothCoconut 1 2 d r := (ha.isSmoothCoconut_iff (by decide)).mpr ⟨by decide, hm⟩
   have hcenter : d (.inl 0) ≤ 1 := h.center_le_one_of_two (by decide)
   refine ⟨d, r, h, hcenter, Nat.le_of_not_gt ?_⟩
   intro hsum
@@ -87,3 +84,22 @@ example : ∃ d r : Fin 2 ⊕ Fin 3 → ℕ,
       exact Nat.dvd_one.mp (hg (.inr 0))
   refine ⟨d, r, h, (h.one_lt_center_iff (by decide)).mp (by decide), ?_⟩
   exact (h.1.isSmoothCoconut_iff (by decide)).mp h |>.2 (show (0 : Fin 2) < 1 by decide)
+
+-- The gaps can increase even when the central d-label is one.
+example : ∃ d r : Fin 3 ⊕ Fin 3 → ℕ,
+    IsArithmeticalStructure (coconutTree 3 3) d r ∧ d (.inl 2) = 1 ∧
+      StrictMono (fun i : Fin 3 => r (.inl i)) ∧
+      (r (.inl 1) : ℤ) - r (.inl 0) ≤ (r (.inl 2) : ℤ) - r (.inl 1) := by
+  let d : Fin 3 ⊕ Fin 3 → ℕ := Sum.elim ![2, 3, 1] (fun _ => 5)
+  let r : Fin 3 ⊕ Fin 3 → ℕ := Sum.elim ![1, 2, 5] (fun _ => 1)
+  have h : IsArithmeticalStructure (coconutTree 3 3) d r := by
+    refine ⟨by decide, by decide, ?_, fun g hg => Nat.dvd_one.mp (hg (.inr 0))⟩
+    intro v
+    classical
+    rw [finsum_mem_def, finsum_eq_sum_of_fintype, Fintype.sum_sum_type]
+    rcases v with i | i <;> fin_cases i <;>
+      simp [Fin.sum_univ_three, Set.indicator_apply, coconutTree, SimpleGraph.fromRel_adj, d, r]
+  have hd : ∀ i : Fin 3, i.val + 1 < 3 → 2 ≤ d (.inl i) := by decide
+  refine ⟨d, r, h, rfl, (h.coconut_tfae.out 1 3).mp hd, ?_⟩
+  have hgaps := (h.coconut_tfae.out 1 2).mp hd
+  exact hgaps.2 0 (by decide)

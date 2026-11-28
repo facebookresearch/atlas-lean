@@ -1,0 +1,15 @@
+# Flows on arc networks
+
+- [Incidence matrix times an arc vector is net inflow](incidence-mul-vec.md)
+- [Node sum of an incidence transfer is zero](sum-incidence-matrix-mul-vec-eq-zero.md)
+- [Endpoint-pair aggregation of an arc function](aggregate.md)
+- [Feasible flow on an arc network](is-arc-feasible.md)
+- [Flow value of an aggregated arc vector](flow-value-aggregate-eq-neg-mul-vec.md)
+- [Proportional lift of an endpoint-pair flow to the arcs](proportional-lift.md)
+- [Proportional lift aggregates back to the flow](aggregate-proportional-lift.md)
+- [Proportional lift preserves flow value](flow-value-proportional-lift.md)
+- [Cut capacity of aggregated arc capacities](cut-capacity-aggregate-eq-sum-leaving.md)
+- [Max-flow min-cut theorem for arc networks](arc-max-flow-min-cut.md)
+- [Stock-level arc balance](stock-level-arc-balance.md)
+- [Arc flows aggregate to a feasible flow](is-feasible-flow-aggregate.md)
+- [Proportional lift of a feasible flow is arc-feasible](is-arc-feasible-proportional-lift.md)
