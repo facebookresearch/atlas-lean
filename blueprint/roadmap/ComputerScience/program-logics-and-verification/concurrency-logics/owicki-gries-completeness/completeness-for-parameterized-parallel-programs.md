@@ -8,13 +8,14 @@ $$\vdash_{\mathcal{F}} \Big\{\bigcap_{i=1}^{n} P(i, n)\Big\}\ \Vert_{i=1}^{n} S(
 
 A parameterized triple $\{P(n)\}\,\Vert_{i=1}^{n} S(i, n)\,\{Q(n)\}$ is *valid*, $\models_{\mathcal{F}}$, if $\models \{P(n)\}\,\Vert_{i=1}^{n} S(i, n)\,\{Q(n)\}$ holds in the sense of partial correctness for every $n$.
 
-**Theorem (semantic completeness).** Take assertions to be sets of states. If $\models_{\mathcal{F}} \{P(n)\}\,\Vert_{i=1}^{n} S(i, n)\,\{Q(n)\}$, then there is an annotation $A$ of the history-instrumented components $S^\ast(i, n)$, assigning to each control point a set of states depending on $n$ and $i$, such that $\vdash_{\mathcal{F}} \{P(n)\}\ z := \lceil\,\rceil;\ \Vert_{i=1}^{n} A(S^\ast(i, n))\ \{Q(n)\}$; deleting the auxiliary variable $z$ gives $\vdash_{\mathcal{F}} \{P(n)\}\,\Vert_{i=1}^{n} S(i, n)\,\{Q(n)\}$.
+**Theorem (semantic completeness).** Take assertions to be sets of states. If $\models_{\mathcal{F}} \{P(n)\}\,\Vert_{i=1}^{n} S(i, n)\,\{Q(n)\}$, then there is an annotation $A$ of the history-instrumented components $S^\ast(i, n)$, instrumented as in [reachability annotations give interference-free proof outlines](reachability-annotations-are-interference-free.md), assigning to each control point a set of states depending on $n$ and $i$, such that $\vdash_{\mathcal{F}} \{P(n)\}\ z := \lceil\,\rceil;\ \Vert_{i=1}^{n} A(S^\ast(i, n))\ \{Q(n)\}$; deleting the auxiliary variable $z$ gives $\vdash_{\mathcal{F}} \{P(n)\}\,\Vert_{i=1}^{n} S(i, n)\,\{Q(n)\}$.
 
 Completeness of $\mathcal{O}$ gives, for each $n$ separately, some proof outlines; the theorem gives one uniform family, instantiated by the value of $n$.
 
 ## Depends on
 
 - [Owicki–Gries proof system with auxiliary variables](owicki-gries-system-with-auxiliary-variables.md)
+- [Reachability annotations give interference-free proof outlines](reachability-annotations-are-interference-free.md)
 
 ## Proof depends on
 

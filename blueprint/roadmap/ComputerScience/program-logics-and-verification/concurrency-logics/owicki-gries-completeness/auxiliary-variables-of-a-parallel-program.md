@@ -8,7 +8,7 @@ Consider while programs with atomic regions and top-level parallel composition: 
 
 $S_A$ is the program obtained from $S$ by deleting every assignment to a variable of $A$, using $\mathbf{skip}$ where a statement becomes empty.
 
-Auxiliary variables are ordinary program variables of $S$: they are assigned during runs and appear in the states the assertions of a proof outline describe. They are not the logical (specification) variables that a Hoare triple may use to name initial values, which no program assigns. Whether a variable is auxiliary depends on the program: a variable read by a guard is never auxiliary, and the empty set is a set of auxiliary variables of every program.
+Auxiliary variables are ordinary program variables of $S$: they may be assigned during a run and appear in the states the assertions of a proof outline describe. They are not the logical (specification) variables that a Hoare triple may use to name initial values, which no program assigns. Whether a variable is auxiliary depends on the program: a variable read by a guard is never auxiliary, and the empty set is a set of auxiliary variables of every program.
 
 ## Depends on
 

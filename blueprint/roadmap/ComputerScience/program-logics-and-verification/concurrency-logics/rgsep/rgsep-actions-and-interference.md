@@ -27,10 +27,10 @@ None.
 
 ## Expansion
 
-The equivalence in the last item (stability under a set of actions is stability under each action) is Lemma 2 of the CONCUR paper. A development needs the separation-logic assertion language with logical variables and its satisfaction relation over the chosen separation algebra.
+The equivalence in the last item (stability under a set of actions is stability under each action) is Lemma 2 of the CONCUR paper and the second part of Lemma 13 of the thesis. A development needs the separation-logic assertion language with logical variables and its satisfaction relation over the chosen separation algebra.
 
 ## Sources
 
 - V. Vafeiadis and M. Parkinson, "A marriage of rely/guarantee and separation logic", *CONCUR 2007 – Concurrency Theory*, LNCS 4703, Springer, 2007, pp. 256–271, <https://doi.org/10.1007/978-3-540-74407-8_18>, author copy <https://www.mpi-sws.org/~viktor/papers/concur2007-marriage.pdf>: Section 2.1 (semantics of $\ast$), Section 3.1 (actions and their meaning, rely and guarantee as sets of actions), Section 3.2 (Definition 1 and Lemma 2), Section 3.4 (ownership transfer), Section 3.5 (Definition 4) and Section 5 (abstract heaps as a partial commutative cancellative monoid).
-- V. Vafeiadis, *Modular fine-grained concurrency verification*, PhD thesis, University of Cambridge, Technical Report UCAM-CL-TR-726, July 2008, <https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-726.pdf>: Section 3.1.2 (action semantics with the explicit existential quantification over the interpretation, the Increment example, Definition 11) and Section 3.1.3 (Definition 12, stability). The conference paper and the 2007 report print the action relation with the interpretation $i$ left free.
+- V. Vafeiadis, *Modular fine-grained concurrency verification*, PhD thesis, University of Cambridge, Technical Report UCAM-CL-TR-726, July 2008, <https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-726.pdf>: Section 3.1.2 (action semantics with the explicit existential quantification over the interpretation, the Increment example, Definition 11) and Section 3.1.3 (Definition 12, stability, and Lemma 13). The conference paper and the 2007 report print the action relation with the interpretation $i$ left free.
 - V. Vafeiadis and M. Parkinson, *A marriage of rely/guarantee and separation logic*, Technical Report UCAM-CL-TR-687, University of Cambridge Computer Laboratory, June 2007, <https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-687.pdf>: Sections 3.1, 3.2 (Definition 1, Lemma 3) and 3.5 (Definition 8).

@@ -2,7 +2,7 @@
 
 Even for parallel programs whose components share no changed variables, Hoare's rules with the disjoint-parallelism rule cannot derive the valid triple $\{x = y\}\,[x := x + 1 \parallel y := y + 1]\,\{x = y\}$; an auxiliary variable recording the common initial value yields a derivation.
 
-A *disjoint parallel program* $[S_1 \parallel \dots \parallel S_n]$, $n \ge 2$, has while-program components with $\mathrm{change}(S_i) \cap \mathrm{var}(S_j) = \emptyset$ for all $i \ne j$, where $\mathrm{var}(S)$ is the set of variables occurring in $S$ and $\mathrm{change}(S)$ the set of variables on the left of an assignment in $S$; its semantics is interleaving. Let $\mathrm{PW}$ be the proof system for while programs (skip, assignment, sequencing, conditional, loop and consequence, the implications of consequence being valid formulas of a first-order assertion language). The *disjoint-parallelism rule* PDJ is: from $\{p_i\}\,S_i\,\{q_i\}$ for $i = 1, \dots, n$ infer
+A *disjoint parallel program* $[S_1 \parallel \dots \parallel S_n]$, $n \ge 2$, has while-program components with $\mathrm{change}(S_i) \cap \mathrm{var}(S_j) = \emptyset$ for all $i \ne j$, where $\mathrm{var}(S)$ is the set of variables occurring in $S$ and $\mathrm{change}(S)$ the set of variables on the left of an assignment in $S$; its semantics is interleaving. Let $\mathrm{PW}$ be the proof system for while programs (skip, assignment, sequencing, conditional, loop and consequence, the implications of consequence being formulas of a first-order language of integer arithmetic true in the standard structure of the integers, over which program variables range). The *disjoint-parallelism rule* PDJ is: from $\{p_i\}\,S_i\,\{q_i\}$ for $i = 1, \dots, n$ infer
 
 $$\Big\{\bigwedge_{i=1}^{n} p_i\Big\}\,[S_1 \parallel \dots \parallel S_n]\,\Big\{\bigwedge_{i=1}^{n} q_i\Big\},$$
 
@@ -22,7 +22,7 @@ With the [auxiliary-variable rule](owicki-gries-system-with-auxiliary-variables.
 
 ## Expansion
 
-The source's proof: a derivation must apply PDJ to proofs of $\{p_1\}\,x := x + 1\,\{q_1\}$ and $\{p_2\}\,y := y + 1\,\{q_2\}$ and then consequence, so $x = y \to p_1 \wedge p_2$ and $q_1 \wedge q_2 \to x = y$ are valid. From $p_1 \to q_1[x := x + 1]$ and the validity of $p_1[x := y]$ it follows that $q_1[x := y + 1]$ is valid, and the source then instantiates $y$ to $x - 1$ to conclude that $q_1$ is valid; likewise $q_2$, contradicting $q_1 \wedge q_2 \to x = y$. A development needs the syntax of disjoint parallel programs and the side conditions of PDJ.
+The source's proof: a derivation must apply PDJ to proofs of $\{p_1\}\,x := x + 1\,\{q_1\}$ and $\{p_2\}\,y := y + 1\,\{q_2\}$ and then consequence, so $x = y \to p_1 \wedge p_2$ and $q_1 \wedge q_2 \to x = y$ are valid. From $p_1 \to q_1[x := x + 1]$ and the validity of $p_1[x := y]$ it follows that $q_1[x := y + 1]$ is valid, and the source then instantiates $y$ to $x - 1$ to conclude that $q_1$ is valid; likewise $q_2$, contradicting $q_1 \wedge q_2 \to x = y$. The source states no interpretation explicitly; this argument uses the substitution of $x - 1$ and that $x = y$ is not valid, which the integer interpretation fixed above provides. A development needs the syntax of disjoint parallel programs and the side conditions of PDJ.
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Reachability annotations give interference-free proof outlines
 
-For a valid triple about a parallel program, add a history variable recording every atomic action, and annotate each control point of each component with the set of states reachable there. These annotations form locally correct, interference-free proof outlines whose pre- and postconditions match the triple.
+For a valid triple about a parallel program, add a history variable that records each assignment outside atomic bodies and each nontrivial await body, but no Boolean evaluation, and annotate each control point of each component with the set of states reachable there. These annotations form locally correct, interference-free proof outlines whose pre- and postconditions match the triple.
 
 Use the programs, [auxiliary variables](auxiliary-variables-of-a-parallel-program.md) and the proof outlines and interference freedom of the [Owicki–Gries proof system](owicki-gries-system-with-auxiliary-variables.md), with assertions taken semantically as sets of states. As in the source, program variables range over $\mathbb{N}$; a finite sequence $a_1, \dots, a_k$ is coded by a natural number $\lceil a_1, \dots, a_k \rceil$, with $\lceil\,\rceil$ the empty sequence and $a \frown c$ the code of $a$ extended by $c$, both computable.
 

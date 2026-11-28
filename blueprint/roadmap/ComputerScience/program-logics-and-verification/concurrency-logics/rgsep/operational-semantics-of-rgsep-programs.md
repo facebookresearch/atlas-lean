@@ -1,23 +1,24 @@
-# Operational semantics of RGSep programs over structured heaps
+# Operational semantics of RGSep programs over structured states
 
-RGSep programs run on structured heaps that split the heap into the thread's local part, the shared part and the other threads' part. Primitive commands act on the local part only, atomic blocks merge local and shared state, and environment steps change the shared and environment parts within a rely relation.
+RGSep programs run on structured states that split the heap into the thread's local part and the shared part. Primitive commands act on the local part only, atomic blocks merge local and shared state and split it again by their annotation, and environment steps change the shared part within a rely relation.
 
-Let $(M, \uplus, \emptyset)$ be a [separation algebra](../../separation-logic-metatheory/abstract-separation-logic/separation-algebras.md) of abstract heaps. A *structured heap* is a triple $\sigma = (l, s, o) \in M^3$ with $l \uplus s \uplus o$ defined: the thread's local heap, the shared heap and the other threads' local heaps. Primitive commands are relations $A \subseteq M \times M$ such that (1) if $A(l_1 \uplus l, l_2)$ then either $l_2 = l \uplus l_2'$ for some $l_2'$ with $A(l_1, l_2')$, or no $l'$ has $A(l_1, l')$; and (2) if no $l_2$ has $A(l_1 \uplus l, l_2)$, then no $l_2$ has $A(l_1, l_2)$. Boolean tests are maps $b : M \to \{\mathrm{true}, \mathrm{false}, \mathrm{fault}\}$ such that whenever $b(l_1 \uplus l) = v$, either $b(l_1) = v$ or $b(l_1) = \mathrm{fault}$.
+Use the commands, primitive commands and annotated atomic blocks $\langle C \rangle_{P \rightsquigarrow Q}$ of [RGSep proof rules](rgsep-proof-rules.md), over the separation algebra $(M, \uplus, \emptyset)$. A *structured state* is a pair $\sigma = (l, s)$ of a local heap $l$ and a shared heap $s$ with $l \uplus s$ defined, and $(l_1, s) \uplus (l_2, s) = (l_1 \uplus l_2, s)$, undefined for different shared parts. For precise $P$ and $Q$, the *oracle* is the partial function
 
-Atomic blocks carry a [precise](../../separation-logic-metatheory/abstract-separation-logic/precise-predicates.md) annotation $Q$, written $\mathbf{atomic}_Q\ (b)\ \{C\}$. For a relation $R$ on heaps, the reduction $(C, \sigma) \xrightarrow{R}_{\lambda} \mathit{Config}$, with label $\lambda = p$ for a program step and $\lambda = e$ for an environment step, and $\mathit{Config}$ either $\mathrm{fault}$ or a pair $(C', \sigma')$, includes:
+$$\mathrm{oracle}_{P \rightsquigarrow Q}(s, l) = (l', s_0 \uplus s_2) \quad \text{if } s = s_1 \uplus s_0,\ s_1 \models_{SL} P,\ l = l' \uplus s_0 \uplus s_2 \text{ and } s_2 \models_{SL} Q,$$
 
-- a primitive command $A$ steps from $(l, s, o)$ to $(\mathbf{skip}, (l', s, o))$ if $A(l, l')$ and $(l', s, o)$ is a structured heap, and to $\mathrm{fault}$ if no $l'$ has $A(l, l')$;
-- an environment step $(C, (l, s, o)) \xrightarrow{R}_{e} (C, (l, s', o'))$ whenever $(s, s') \in R$ and $(l, s', o')$ is a structured heap;
-- $\mathbf{atomic}_Q\ (b)\ \{C\}$ steps from $(l, s, o)$ by merging $l_1 = l \uplus s$, requiring $b(l_1)$, running $C$ to $\mathbf{skip}$ from $(l_1, \emptyset, o)$ under the rely $\mathrm{Emp}$ that allows no interference, reaching some $(l_2, \emptyset, o')$, and splitting $l_2 = l' \uplus s'$ with $s'$ satisfying $Q$, to reach $(\mathbf{skip}, (l', s', o'))$; it faults if $b(l_1)$ faults, the body faults, or no such splitting exists;
-- parallel composition interleaves the program steps of its components, $\mathbf{skip} \parallel \mathbf{skip}$ steps to $\mathbf{skip}$, and sequencing, conditionals and loops step as usual, faults propagating.
+undefined if there are no such $s_1, s_0, s_2, l'$; precision makes them unique. For a relation $R$ on $M$, a configuration is $\mathrm{fault}$ or a pair $(C, \sigma)$, and $(C, \sigma) \xrightarrow{R}_{\lambda} \mathit{Config}$, with label $\lambda = p$ for a program step and $\lambda = e$ for an environment step, is the least relation closed under:
 
-Commands are those of the [RGSep proof rules](rgsep-proof-rules.md), with heap commands given by primitive commands.
+- *atomic blocks*: if $(C, (l \uplus s, \emptyset))$ reaches $(\mathbf{skip}, (l_2, \emptyset))$ in zero or more steps with the empty rely, then $\langle C \rangle_{P \rightsquigarrow Q}$ steps by a program step from $(l, s)$ to $(\mathbf{skip}, (l', s'))$ if $\mathrm{oracle}_{P \rightsquigarrow Q}(s, l_2) = (l', s')$, and to $\mathrm{fault}$ if it is undefined; if $(C, (l \uplus s, \emptyset))$ reaches $\mathrm{fault}$ with the empty rely, the block steps to $\mathrm{fault}$;
+- *primitive commands*: $c$ steps from $(l, s)$ to $(\mathbf{skip}, (l', s))$ if $c(l, l')$ and $l' \uplus s$ is defined, and to $\mathrm{fault}$ if $c$ faults at $l$;
+- *environment*: $(C, (l, s)) \xrightarrow{R}_{e} (C, (l, s'))$ whenever $(s, s') \in R$ and $l \uplus s'$ is defined;
+- *control*: $\mathbf{skip} ; C$ steps to $C$; $C ; C'$ steps to $C_1 ; C'$ when $C$ steps to $C_1$; $C_1 + C_2$ steps to $C_1$ and to $C_2$; $C^\ast$ steps to $\mathbf{skip} + (C ; C^\ast)$; $\mathbf{skip} \parallel \mathbf{skip}$ steps to $\mathbf{skip}$; $C_1 \parallel C_2$ steps when either component does; and a fault of $C$ makes $C ; C_2$, $C \parallel C_2$ and $C_2 \parallel C$ fault. These are program steps that leave the state unchanged, except those inherited from a component's step.
+
+An atomic block whose body has no terminating and no faulting run with the empty rely has no transition; in particular a diverging body is not a splitting fault.
 
 ## Depends on
 
-- [Separation algebras](../../separation-logic-metatheory/abstract-separation-logic/separation-algebras.md)
-- [Precise predicates](../../separation-logic-metatheory/abstract-separation-logic/precise-predicates.md)
 - [RGSep proof rules](rgsep-proof-rules.md)
+- [Precise predicates](../../separation-logic-metatheory/abstract-separation-logic/precise-predicates.md)
 
 ## Proof depends on
 
@@ -25,9 +26,9 @@ None.
 
 ## Expansion
 
-The two conditions on primitive commands are the relational form of the locality of abstract separation logic's [local actions](../../separation-logic-metatheory/abstract-separation-logic/local-actions.md). A development fixes the full reduction rules (Figure 5 of the technical report), including the three faulting rules for atomic blocks, and the composition of structured heaps, $(l_1, s, o_1) \uplus (l_2, s, o_2) = (l_1 \uplus l_2, s, o)$ when $o_1 = l_2 \uplus o$ and $o_2 = l_1 \uplus o$.
+Ignoring the split of the state gives the plain interleaving semantics of the language. Precision of the annotation is what makes the oracle a function. The conference paper and its report use a three-component state with the other threads' heaps and annotate atomic blocks by a single precise postcondition; the thesis's two-component formulation is the one used with the rules and validity here.
 
 ## Sources
 
-- V. Vafeiadis and M. Parkinson, "A marriage of rely/guarantee and separation logic", *CONCUR 2007 – Concurrency Theory*, LNCS 4703, Springer, 2007, pp. 256–271, <https://doi.org/10.1007/978-3-540-74407-8_18>, author copy <https://www.mpi-sws.org/~viktor/papers/concur2007-marriage.pdf>: Section 5 (Definition 5, structured heaps; Definition 6, primitive commands and boolean tests; Fig. 4, abridged operational semantics; footnote 7, precise assertions).
-- V. Vafeiadis and M. Parkinson, *A marriage of rely/guarantee and separation logic*, Technical Report UCAM-CL-TR-687, University of Cambridge Computer Laboratory, June 2007, <https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-687.pdf>: Section 5 (Definitions 13–17 and Figure 5, full operational semantics).
+- V. Vafeiadis, *Modular fine-grained concurrency verification*, PhD thesis, University of Cambridge, Technical Report UCAM-CL-TR-726, July 2008, <https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-726.pdf>: Section 2.2 (Figure 2.1 and the discussion of atomic blocks with diverging bodies) and Section 3.2 (Figure 3.2, Definitions 16 and 17, the oracle and the explanation of the rules for atomic blocks, primitive commands and environment steps).
+- V. Vafeiadis and M. Parkinson, "A marriage of rely/guarantee and separation logic", *CONCUR 2007 – Concurrency Theory*, LNCS 4703, Springer, 2007, pp. 256–271, <https://doi.org/10.1007/978-3-540-74407-8_18>, author copy <https://www.mpi-sws.org/~viktor/papers/concur2007-marriage.pdf>: Section 5 (Definitions 5 and 6, Fig. 4: the three-component variant).
