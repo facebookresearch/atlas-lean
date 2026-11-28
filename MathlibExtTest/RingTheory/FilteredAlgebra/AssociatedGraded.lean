@@ -14,7 +14,6 @@ module
 
 public import MathlibExt.RingTheory.FilteredAlgebra.AssociatedGraded
 public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Omega
 
 /-!
 # A concrete associated-graded algebra and a nonunital additive client
