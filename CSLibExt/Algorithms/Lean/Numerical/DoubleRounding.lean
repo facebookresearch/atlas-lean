@@ -39,8 +39,9 @@ each operation either is exact at `p'` bits or stays far enough from the midpoin
   Roux's Table II also allows the alternative condition `2q' ≤ q - 4p - 2`, which is not covered
   here.
 * `innocuous_double_rounding`: these results, with the x87 example, counterexamples showing that
-  each bound on `p'` is optimal (after Roux's Remarks 11, 21, 26 and 30, which give them for
-  `p = 4`), and one showing that the conditions on `q'` cannot simply be dropped.
+  the bounds on `p'` are optimal for `p ≥ 2` (`±` and `/`), `p ≥ 4` (`×`) and `p ≥ 1` (`√`)
+  (after Roux's Remarks 11, 21, 26 and 30, which give them for `p = 4`), and one showing that the
+  conditions on `q'` cannot simply be dropped.
 
 ## Cost model
 
@@ -869,11 +870,16 @@ private theorem flIn_flIn_sub (hp : 1 ≤ p) {p' : ℕ} (hp' : 2 * p + 1 ≤ p')
 
 /-- **Innocuous double rounding of products with gradual underflow.** Let $K$ be a linearly ordered
 field with a floor function, let $p$ and $p' \ge 2p$ be natural numbers and let $q$, $q'$ and
-$q_{\max}$ be integers with $q' \le 2q$. Write $\mathrm{fl}_{p,q}$ for rounding to nearest, ties to
+$q_{\max}$ be integers with $q' \le 2q$. Write
+$\mathrm{fl}_{p,q}(z) = \operatorname{rne}(z / 2^e) \cdot 2^e$ with
+$e = \max(\lfloor \log_2 |z| \rfloor - (p - 1), q)$, where $\operatorname{rne}$ rounds to the
+nearest integer with ties to the even one; for $p \ge 1$, this is rounding to nearest, ties to
 even, with $p$-bit significands, gradual underflow below the least exponent $q$ and unbounded
 exponent. For all numbers $x, y \in K$ of the binary format with $p$-bit significands and
 last-place exponents in $[q, q_{\max}]$,
-$\mathrm{fl}_{p,q}(\mathrm{fl}_{p',q'}(xy)) = \mathrm{fl}_{p,q}(xy)$. -/
+$\mathrm{fl}_{p,q}(\mathrm{fl}_{p',q'}(xy)) = \mathrm{fl}_{p,q}(xy)$.
+
+For $p = 0$ the format holds only $0$, so $x = y = 0$ and both sides are $0$. -/
 theorem flIn_flIn_mul {p' : ℕ} (hp' : 2 * p ≤ p') {q q' qmax : ℤ}
     (hq : q' ≤ 2 * q) {x y : K} (hx : IsFloatIn p q qmax x) (hy : IsFloatIn p q qmax y) :
     flIn p q (flIn p' q' (x * y)) = flIn p q (x * y) := by

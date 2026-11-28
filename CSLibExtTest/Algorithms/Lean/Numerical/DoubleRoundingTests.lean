@@ -25,12 +25,12 @@ Executed fixtures over `ℚ`:
   21 and 30), and those of the general families: the sum and quotient families for
   `p = 2, 3, 5, 8` and the product family for `p = 5, 6, 9`.
 * Exhaustively for `p = 3`, all pairs of floats with significands below `8` in absolute value and
-  exponents in `[-3, 3]`: double rounding through `p' = 7` bits is innocuous for `+` and `-`, and
-  through `p' = 6` bits for `×` and `/`.
+  exponents in `[-3, 3]`, zero included (so `x / 0 = 0` is exercised too): double rounding
+  through `p' = 7` bits is innocuous for `+` and `-`, and through `p' = 6` bits for `×` and `/`.
 * Gradual underflow, exhaustively for `p = 2`, `q = 0`, `q' = -4`, all pairs of format numbers
-  with exponents in `[0, 4]`: double rounding through `flIn 5 (-4)` for `+` and `-`, and through
-  `flIn 4 (-4)` for `×` and `/`, is innocuous; with `q' = q = 0` the quotient `16 / 3` is a
-  counterexample.
+  with exponents in `[0, 4]`, zero included: double rounding through `flIn 5 (-4)` for `+` and
+  `-`, and through `flIn 4 (-4)` for `×` and `/`, is innocuous; with `q' = q = 0` the quotient
+  `16 / 3` is a counterexample.
 
 Closed checks instantiate the theorems for binary64 and binary32.
 -/
@@ -75,9 +75,9 @@ private meta def checkDiffers (label : String) (p p' : ℕ) (z : ℚ) : IO Unit 
 
 /-! Exhaustive checks of innocuous double rounding -/
 
-/-- The floats `m 2^e` with `0 < |m| < 2^p` and `e` in `[e₀, e₀ + n)`. -/
+/-- Zero and the floats `m 2^e` with `0 < |m| < 2^p` and `e` in `[e₀, e₀ + n)`. -/
 private meta def floats (p : ℕ) (e₀ : ℤ) (n : ℕ) : List ℚ := Id.run do
-  let mut xs : List ℚ := []
+  let mut xs : List ℚ := [0]
   for m in [1:2 ^ p] do
     for i in [0:n] do
       let v : ℚ := (m : ℚ) * (2 : ℚ) ^ (e₀ + i)
