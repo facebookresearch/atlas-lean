@@ -1,0 +1,3 @@
+# Omitted-variable formula for any short least-squares fit
+
+Let $x, z, y$ be finite real samples with $S_{xx} = \sum_i(x_i - \bar x)^2 \ne 0$, write $\hat b(x, w) = S_{xw}/S_{xx}$, with $S_{xw} = \sum_i(x_i - \bar x)(w_i - \bar w)$, for the least-squares slope of a sample $w$ on $x$, and let $\theta = (\theta_0, \theta_1, \theta_2)$ solve the normal equations $L^\top L\theta = L^\top y$ of the long regression of $y$ on $(1, x, z)$, where $L$ is the design matrix with rows $(1, x_i, z_i)$. If $\varphi = (\varphi_0, \varphi_1)$ solves the normal equations of the short regression of $y$ on $(1, x)$, then $\varphi_1 = \theta_1 + \theta_2\,\hat b(x, z)$.

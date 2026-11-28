@@ -57,6 +57,7 @@ Topics added since this subject's fields were last revised.
 - [Orbit Tail Winding Witness](orbit-tail-winding-witness/README.md)
 - [Orbit Winding Rev Match](orbit-winding-rev-match/README.md)
 - [Orbit Winding Separates](orbit-winding-separates/README.md)
+- [Macaulay Pow](macaulay-pow/README.md)
 - [Path Cuts](path-cuts/README.md)
 - [Path Intervals](path-intervals/README.md)
 - [Path Position Functor](path-position-functor/README.md)
@@ -96,3 +97,4 @@ Topics added since this subject's fields were last revised.
 - [Hall's condition for the equal-label relation](hall-equal-fiber-iff-card-fibers.md)
 - [Cycle Length](walk-split-dist.md)
 - [Tree Exterior Amalgam](tree-exterior-amalgam-separated.md)
+- [Macaulay's bound for monomial shadows](card-le-macaulay-pow-card-of-forall-sub.md)
