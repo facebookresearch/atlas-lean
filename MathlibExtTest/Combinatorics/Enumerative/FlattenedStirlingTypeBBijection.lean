@@ -102,4 +102,56 @@ example : ∃ P : Finpartition (Finset.Icc (-((1 : ℕ) : ℤ)) (1 : ℕ)),
     rw [isStirlingPermutation_iff]
     decide)
 
+-- The second partition in Buck et al.'s Example 2 has Adler labels 1 and 2.
+private def twoLabelPartition : Finpartition (Finset.Icc (-((4 : ℕ) : ℤ)) (4 : ℕ)) where
+  parts := {{0}, {1}, {-1}, {2, 3, -4}, {-2, -3, 4}}
+  supIndep := by rw [Finset.supIndep_iff_disjoint_erase]; decide
+  sup_parts := by decide
+  bot_notMem := by decide
+
+private def twoLabelWord : Fin (2 * (4 + 1)) → ℕ := ![1, 1, 2, 2, 5, 5, 3, 4, 4, 3]
+
+private theorem twoLabelPartition_typeB : IsTypeBSetPartition twoLabelPartition := by
+  apply isTypeBSetPartition_iff.mpr
+  refine ⟨by decide, {0}, ⟨by decide, by decide⟩, ?_⟩
+  rintro b ⟨hb, hs⟩
+  simp only [twoLabelPartition, Finset.mem_insert, Finset.mem_singleton] at hb
+  rcases hb with rfl | rfl | rfl | rfl | rfl
+  · rfl
+  all_goals revert hs; decide
+
+private theorem twoLabelPartition_word : typeBFlattenedWord twoLabelPartition = twoLabelWord := by
+  have hz : typeBShift ((twoLabelPartition.part 0).filter (0 ≤ ·)) = {1} := by decide
+  have hl : adlerBlockLabels twoLabelPartition = {1, 2} := by decide
+  have hls : ({1, 2} : Finset ℤ).sort (· ≤ ·) = [1, 2] := by
+    apply (Finset.sortedLT_sort _).eq_of_mem_iff (by decide)
+    simp
+  have hn₁ : typeBShift ((twoLabelPartition.part 1).filter (· < 0)) = ∅ := by decide
+  have hp₁ : typeBShift ((twoLabelPartition.part 1).filter (0 < ·)) = {2} := by decide
+  have hn₂ : typeBShift ((twoLabelPartition.part 2).filter (· < 0)) = {5} := by decide
+  have hp₂ : typeBShift ((twoLabelPartition.part 2).filter (0 < ·)) = {3, 4} := by decide
+  have hps : ({3, 4} : Finset ℕ).sort (· ≤ ·) = [3, 4] := by
+    apply (Finset.sortedLT_sort _).eq_of_mem_iff (by decide)
+    simp
+  have he : doubledWord ∅ = [] := by simp [doubledWord_eq_flatMap]
+  apply word_eq_of_list (l := [1, 1, 2, 2, 5, 5, 3, 4, 4, 3]) _ (by decide)
+  simp [typeBFlattenedWordList_eq, hz, hl, hls, hn₁, hp₁, hn₂, hp₂, he,
+    wrappedWord_singleton, doubledWord_singleton, wrappedWord_eq_of_sort_eq hps]
+
+-- The two descents both land on 3, even though the two nonzero labels differ.
+example : Finset.univ.filter (wordRunStart twoLabelWord) = {0, 6, 9} := by decide
+
+private theorem twoLabelWord_preimage : ∃ P : Finpartition (Finset.Icc (-((4 : ℕ) : ℤ)) (4 : ℕ)),
+    IsTypeBSetPartition P ∧ typeBFlattenedWord P = twoLabelWord :=
+  (bijOn_typeBFlattenedWord 4).surjOn (a := twoLabelWord) (by
+    change IsStirlingPermutation 5 twoLabelWord ∧ IsFlattenedWord twoLabelWord
+    rw [isStirlingPermutation_iff]
+    decide)
+
+-- The preimage supplied by surjectivity is exactly the partition from Example 2.
+example : Classical.choose twoLabelWord_preimage = twoLabelPartition := by
+  obtain ⟨hP, hword⟩ := Classical.choose_spec twoLabelWord_preimage
+  exact (bijOn_typeBFlattenedWord 4).injOn hP twoLabelPartition_typeB
+    (hword.trans twoLabelPartition_word.symm)
+
 end MetaMathlibExt.bijOn_typeBFlattenedWord
