@@ -22,3 +22,7 @@
 - [Polynomial time on multi-tape machines](p.md)
 - [Polynomial space on multi-tape machines](pspace.md)
 - [P is contained in PSPACE](p-subset-pspace.md)
+
+## Contents
+
+- [Finite multitape computations with full-tape binary output](finite-multitape-word-computations.md)

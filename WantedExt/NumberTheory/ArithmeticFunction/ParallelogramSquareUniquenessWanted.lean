@@ -17,6 +17,8 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniq
 public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativePrimeThreeModFour
 public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativePrimeOneModFour
 public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativeFiveKAddThree
+public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativeKSqAddOne
+public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessMain
 
 /-!
 # Parallelogram uniqueness of square numbers for multiplicative functions
@@ -31,20 +33,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open ArithmeticFunction
-
-/-- **Parallelogram uniqueness of squares for multiplicative functions.** Let $f$ be a
-complex-valued multiplicative arithmetic function
-(so $f(0) = 0$) such that $f(m^2 + n^2) + f(m^2 - n^2) = 2f(m^2) + 2f(n^2)$ for all integers
-$m > n \ge 1$, and suppose $f(4) \ne 0$. Then $f(n) = n^2$ for every natural number $n$.
-
-Source: Poo-Sung Park, *On the Parallelogram Uniqueness of Square Numbers for Multiplicative
-Functions*, INTEGERS 24 (2024), Article A108, Theorem 1 (`integers-2024-A108-thm-1`). -/
-public theorem_wanted multiplicative_parallelogram_squares_eq_sq (f : ArithmeticFunction ℂ)
-    (hf : f.IsMultiplicative)
-    (hpar : ∀ m n : ℕ, 0 < n → n < m →
-      f (m ^ 2 + n ^ 2) + f (m ^ 2 - n ^ 2) = 2 * f (m ^ 2) + 2 * f (n ^ 2))
-    (h4 : f 4 ≠ 0) :
-    ∀ n : ℕ, f n = (n : ℂ) ^ 2
 
 /-- **Multiplicative parallelogram solutions vanishing at 4.** Let $f$ be a complex-valued
 multiplicative arithmetic function
@@ -82,49 +70,6 @@ public theorem_wanted parallelogram_multiplicative_two_pow (f : ArithmeticFuncti
       f (m ^ 2 + n ^ 2) + f (m ^ 2 - n ^ 2) = 2 * f (m ^ 2) + 2 * f (n ^ 2)) :
     (f 4 = 0 → ∀ r : ℕ, 2 ≤ r → f (2 ^ r) = 0) ∧
       (f 4 ≠ 0 → ∀ r : ℕ, 1 ≤ r → f (2 ^ r) = (2 : ℂ) ^ (2 * r))
-
-/-- **Parallelogram induction: the values at k² + 1 and 4k² + 1.**
-Let $f$ be a complex-valued multiplicative arithmetic function
-(so $f(0) = 0$) such that $f(m^2 + n^2) + f(m^2 - n^2) = 2f(m^2) + 2f(n^2)$ for all integers
-$m > n \ge 1$.
-Let $p$ be a prime such that $f(q^s) = q^{2s}$ for every prime $q < p$ and every integer
-$s \ge 1$.
-If $p = 4k - 1$ for a natural number $k$, then $f(k^2 + 1) = (k^2 + 1)^2$ and
-$f(4k^2 + 1) = (4k^2 + 1)^2$.
-
-Source: Poo-Sung Park, *On the Parallelogram Uniqueness of Square Numbers for Multiplicative
-Functions*, INTEGERS 24 (2024), Article A108, Lemma 3 (`integers-2024-A108-lem-3`). -/
-public theorem_wanted parallelogram_multiplicative_k_sq_add_one (f : ArithmeticFunction ℂ)
-    (hf : f.IsMultiplicative)
-    (hpar : ∀ m n : ℕ, 0 < n → n < m →
-      f (m ^ 2 + n ^ 2) + f (m ^ 2 - n ^ 2) = 2 * f (m ^ 2) + 2 * f (n ^ 2))
-    {p : ℕ} (hp : p.Prime)
-    (hind : ∀ q s : ℕ, q.Prime → q < p → 1 ≤ s → f (q ^ s) = (q : ℂ) ^ (2 * s))
-    {k : ℕ} (hpk : p = 4 * k - 1) :
-    f (k ^ 2 + 1) = ((k ^ 2 + 1 : ℕ) : ℂ) ^ 2 ∧ f (4 * k ^ 2 + 1) = ((4 * k ^ 2 + 1 : ℕ) : ℂ) ^ 2
-
-/-- **Parallelogram induction: odd prime powers.**
-Let $f$ be a complex-valued multiplicative arithmetic function
-(so $f(0) = 0$) such that $f(m^2 + n^2) + f(m^2 - n^2) = 2f(m^2) + 2f(n^2)$ for all integers
-$m > n \ge 1$.
-Let $p$ be a prime such that $f(q^s) = q^{2s}$ for every prime $q < p$ and every integer
-$s \ge 1$.
-If $p$ is odd and $f(p) = p^2$, then $f(p^r) = p^{2r}$ for every integer $r \ge 2$.
-
-The hypothesis $p \ne 2$ is needed: the function with $f(n) = 0$ if $4 \mid n$, $f(n) = 4$ if
-$n \equiv 2 \pmod 4$ and $f(n) = 1$ otherwise satisfies the hypotheses for $p = 2$, but
-$f(4) = 0$.
-
-Source: Poo-Sung Park, *On the Parallelogram Uniqueness of Square Numbers for Multiplicative
-Functions*, INTEGERS 24 (2024), Article A108, Theorem 4 (`integers-2024-A108-thm-4`). -/
-public theorem_wanted parallelogram_multiplicative_prime_pow (f : ArithmeticFunction ℂ)
-    (hf : f.IsMultiplicative)
-    (hpar : ∀ m n : ℕ, 0 < n → n < m →
-      f (m ^ 2 + n ^ 2) + f (m ^ 2 - n ^ 2) = 2 * f (m ^ 2) + 2 * f (n ^ 2))
-    {p : ℕ} (hp : p.Prime)
-    (hind : ∀ q s : ℕ, q.Prime → q < p → 1 ≤ s → f (q ^ s) = (q : ℂ) ^ (2 * s))
-    (hp2 : p ≠ 2) (hfp : f p = (p : ℂ) ^ 2) :
-    ∀ r : ℕ, 2 ≤ r → f (p ^ r) = (p : ℂ) ^ (2 * r)
 
 end
 

@@ -13,3 +13,7 @@
 - [Three-step self-avoiding walks on the honeycomb lattice](walk-count-three.md)
 - [Six-step self-avoiding walks on the honeycomb lattice](walk-count-six.md)
 - [The connective constant of the honeycomb lattice](honeycomb-connective-constant.md)
+- [Critical honeycomb strip mass and horizontal displacement moment](critical-honeycomb-strip-mass-and-displacement.md)
+- [Summability of critical honeycomb bridge lengths in a strip and corridor](honeycomb-bridge-and-corridor-summability.md)
+- [Critical mass of strict honeycomb bridges to free terminal ports](critical-strict-honeycomb-bridge-mass.md)
+- [Existence of forced honeycomb self-avoiding-walk free energy](forced-honeycomb-walk-free-energy-limit.md)

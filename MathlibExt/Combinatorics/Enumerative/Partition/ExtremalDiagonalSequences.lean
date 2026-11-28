@@ -29,6 +29,21 @@ that ends at `L` and whose steps go up by at most one. Conversely, every such ar
 that multiset comes from exactly one partition of the class. Deleting the smallest letter `a`
 leaves a word of the same kind; the deleted letters stand in blocks immediately before the
 letters `a + 1`, so the word is recovered from the shorter word and the sizes of the blocks.
+When the number of parts is the staircase height, the zero rows form a fixed suffix, and
+removing it leaves an arrangement with one fewer copy of each letter and no prescribed ending.
+
+For a diagonal normal form of staircase height `q ≥ 1` with arbitrary natural multiplicities
+`s₁, …, s_q` after the staircase, capping each at two preserves the size of the diagonal class.
+In the binomial product, deleting a copy from three equal consecutive heights removes a unit
+factor.
+
+## References
+
+* Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*, INTEGERS 25
+  (2025), Article A60, pp. 1–17. Corollary 3 (p. 5), Proposition 8 (p. 10), Theorem 1 (p. 12),
+  and Corollary 6 (5) (p. 13).
+* The staircase sum uses the same reduction to `Finset.sum_range_id` as `staircase_sum` in
+  `MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionMexSum`.
 -/
 
 namespace MetaMathlibExt
@@ -671,6 +686,88 @@ private theorem ncard_words (r : ℕ) : ∀ (a : ℕ) (c : ℕ → ℕ), (∀ m 
     obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero (hc (a + 1) (by simp)).ne'
     rw [hk, ncard_comps k (c a), mul_comm, show c a + (k + 1) - 1 = c a + k by omega]
 
+-- Unlike `words`, these arrangements have no prescribed last letter.
+private def freeWords (F : Multiset ℕ) : Set (List ℕ) :=
+  {w | (w : Multiset ℕ) = F ∧ Vn w}
+
+-- A sentinel `a + 1` makes a trailing run of `a`s peel just like the other runs.
+private theorem ncard_freeWords_eq_words (a : ℕ) (F : Multiset ℕ) (hF : ∀ x ∈ F, a ≤ x) :
+    (freeWords F).ncard = (words (F + {a + 1}) (a + 1)).ncard := by
+  apply Set.ncard_congr (fun w _ => w ++ [a + 1])
+  · rintro w ⟨hcoe, hv⟩
+    refine ⟨by rw [← Multiset.coe_add, hcoe, Multiset.coe_singleton], ?_, by simp⟩
+    apply hv.append (by simp)
+    intro x hx y hy
+    have hxF : x ∈ F := hcoe ▸ Multiset.mem_coe.mpr (List.mem_of_mem_getLast? hx)
+    have := hF x hxF
+    simp only [List.head?_cons, Option.mem_def, Option.some.injEq] at hy
+    omega
+  · intro u v _ _ h
+    exact (List.append_left_inj _).mp h
+  · rintro w ⟨hcoe, hv, hlast⟩
+    obtain ⟨u, rfl⟩ := List.getLast?_eq_some_iff.mp hlast
+    rw [← Multiset.coe_add, Multiset.coe_singleton, add_left_inj] at hcoe
+    exact ⟨u, ⟨hcoe, hv.left_of_append⟩, rfl⟩
+
+private theorem ncard_freeWords (r : ℕ) : ∀ (a : ℕ) (b : ℕ → ℕ),
+    (freeWords (∑ m ∈ Icc a (a + r), Multiset.replicate (b m) m)).ncard =
+      ∏ m ∈ Ico a (a + r), (b m + b (m + 1)).choose (b m) := by
+  induction r with
+  | zero =>
+    intro a b
+    simp only [Nat.add_zero, Icc_self, sum_singleton, Ico_self, prod_empty]
+    have h : freeWords (Multiset.replicate (b a) a) = {List.replicate (b a) a} := by
+      ext w
+      simp only [freeWords, Set.mem_ofPred_eq, Set.mem_singleton_iff]
+      constructor
+      · rintro ⟨hcoe, _⟩
+        rw [← Multiset.coe_replicate, Multiset.coe_eq_coe] at hcoe
+        exact List.perm_replicate.mp hcoe
+      · rintro rfl
+        refine ⟨Multiset.coe_replicate _ _, List.isChain_iff_getElem.mpr fun i hi => ?_⟩
+        simp
+    rw [h, Set.ncard_singleton]
+  | succ r ih =>
+    intro a b
+    have hIcc : Icc a (a + (r + 1)) = insert a (Icc (a + 1) (a + 1 + r)) := by
+      ext m
+      simp only [mem_insert, mem_Icc]
+      omega
+    have hIco : Ico a (a + (r + 1)) = insert a (Ico (a + 1) (a + 1 + r)) := by
+      ext m
+      simp only [mem_insert, mem_Ico]
+      omega
+    let F := ∑ m ∈ Icc (a + 1) (a + 1 + r), Multiset.replicate (b m) m
+    have hF : ∀ x ∈ F, a + 1 ≤ x := by
+      intro x hx
+      obtain ⟨m, hm, hxm⟩ := Multiset.mem_sum.mp hx
+      rw [Multiset.eq_of_mem_replicate hxm]
+      exact (mem_Icc.mp hm).1
+    have hcount : F.count (a + 1) = b (a + 1) := by
+      dsimp only [F]
+      rw [Multiset.count_sum', sum_eq_single (a + 1)]
+      · simp
+      · intro m _ hm
+        rw [Multiset.count_replicate, ite_eq_right hm]
+      · intro h
+        exact absurd (by simp : a + 1 ∈ Icc (a + 1) (a + 1 + r)) h
+    have hall : ∀ x ∈ Multiset.replicate (b a) a + F, a ≤ x := by
+      intro x hx
+      rcases Multiset.mem_add.mp hx with hx | hx
+      · rw [Multiset.eq_of_mem_replicate hx]
+      · exact (hF x hx).trans' (Nat.le_succ a)
+    have hsentinel : ∀ x ∈ F + {a + 1}, a + 1 ≤ x := by
+      intro x hx
+      rcases Multiset.mem_add.mp hx with hx | hx
+      · exact hF x hx
+      · rw [Multiset.mem_singleton.mp hx]
+    rw [hIcc, sum_insert (by simp), hIco, prod_insert (by simp)]
+    change (freeWords (Multiset.replicate (b a) a + F)).ncard = _
+    rw [ncard_freeWords_eq_words a _ hall, add_assoc, ncard_words_peel a (b a) _ _ le_rfl hsentinel,
+      ← ncard_freeWords_eq_words a F (fun x hx => (hF x hx).trans' (Nat.le_succ a)),
+      Multiset.count_add, hcount, Multiset.count_singleton_self, ncard_comps, mul_comm]
+    rw [ih a.succ b]
+
 /-! ### From partitions to words -/
 
 open YoungDiagram
@@ -849,9 +946,10 @@ private theorem mem_diagonalClass_iff {n : ℕ} {p β : Nat.Partition n} :
 
 -- The partitions in the class of `p` correspond to the words with the letters of
 -- `rowEnds p L` that end at `L`.
-private theorem card_diagonalClass_eq_ncard_words {n : ℕ} (p : Nat.Partition n) (L : ℕ)
+private theorem rowEnds_bijOn {n : ℕ} (p : Nat.Partition n) (L : ℕ)
     (hL' : diagonalSequence p.parts (L + 1) = 0) :
-    (diagonalClass p).card = (words (rowEnds p L) L).ncard := by
+    Set.BijOn (fun β => rowEnds β L) (↑(diagonalClass p) : Set (Nat.Partition n))
+      (words (rowEnds p L) L) := by
   have hfit : ∀ {β : Nat.Partition n}, β ∈ diagonalClass p →
       ∀ i, L ≤ i → (ofPartition β).rowLen i = 0 := by
     intro β hβ i hi
@@ -859,15 +957,14 @@ private theorem card_diagonalClass_eq_ncard_words {n : ℕ} (p : Nat.Partition n
     exact rowLen_eq_zero_of_diagonalSequence (by rw [hβ]; exact hL') hi
   have hfitp : ∀ i, L ≤ i → (ofPartition p).rowLen i = 0 :=
     fun i hi => rowLen_eq_zero_of_diagonalSequence hL' hi
-  rw [← Set.ncard_coe_finset]
-  apply Set.ncard_congr (fun β _ => rowEnds β L)
+  refine ⟨?_, ?_, ?_⟩
   · intro β hβ
     have hβ' := mem_diagonalClass_iff.mp hβ
     refine ⟨eq_of_countP_le fun k => ?_, vn_rowEnds β L, ?_⟩
     · rw [countP_rowEnds β L (fun i hi => hfit hβ i hi.le),
         countP_rowEnds p L (fun i hi => hfitp i hi.le), hβ']
     · rw [getLast?_rowEnds, hfit hβ L le_rfl, Nat.zero_add]
-  · intro β γ hβ hγ h
+  · intro β hβ γ hγ h
     have hrow : ∀ i, (ofPartition β).rowLen i = (ofPartition γ).rowLen i := by
       intro i
       by_cases hi : i ≤ L
@@ -960,6 +1057,12 @@ private theorem card_diagonalClass_eq_ncard_words {n : ℕ} (p : Nat.Partition n
     rw [hends, hcoe] at h1
     omega
 
+private theorem card_diagonalClass_eq_ncard_words {n : ℕ} (p : Nat.Partition n) (L : ℕ)
+    (hL' : diagonalSequence p.parts (L + 1) = 0) :
+    (diagonalClass p).card = (words (rowEnds p L) L).ncard := by
+  rw [← Set.ncard_coe_finset]
+  exact (rowEnds_bijOn p L hL').ncard_eq
+
 private theorem getLast?_cons_of_ne_nil {y : ℕ} {ys : List ℕ} (h : ys ≠ []) :
     (y :: ys).getLast? = ys.getLast? := by
   rw [List.getLast?_cons]
@@ -989,34 +1092,23 @@ private theorem mem_of_le_of_le {m top : ℕ} : ∀ {w : List ℕ} {x : ℕ}, Vn
       exact List.mem_cons_of_mem _ (mem_of_le_of_le (List.isChain_cons.mp hv).2 hx
         (by rw [← getLast?_cons_of_ne_nil hne]; exact hlast) hxm hmt)
 
-end card_diagonalClass_eq_prod_choose
+private theorem staircase_le_last {n : ℕ} {p : Nat.Partition n} {q L : ℕ}
+    (hq : ∀ j ∈ Icc 1 q, diagonalSequence p.parts j = j)
+    (hL' : diagonalSequence p.parts (L + 1) = 0) : q ≤ L := by
+  by_contra h
+  have := hq (L + 1) (mem_Icc.mpr ⟨by omega, by omega⟩)
+  omega
 
-open card_diagonalClass_eq_prod_choose YoungDiagram Finset in
-/-- **Number of partitions with a given diagonal sequence.** Let $\alpha$ be a partition of $n$
-with diagonal sequence $\delta(\alpha) = (d_j)_{j \ge 1}$, set $d_0 = 0$, and let $q, L \ge 0$ be
-integers with $d_j = j$ for all $1 \le j \le q$, $d_{q+1} \ne q + 1$, $d_L \ne 0$ and
-$d_{L+1} = 0$. Put $b_i = \max(d_i - d_{i+1}, 0)$. Then the number of partitions of $n$ whose
-diagonal sequence equals $\delta(\alpha)$ is
-$$\prod_{i=q}^{L-1} \binom{b_i + b_{i+1} + 1}{b_i + 1}.$$
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Theorem 1. -/
-public theorem card_diagonalClass_eq_prod_choose {n : ℕ} (p : Nat.Partition n) (q L : ℕ)
-    (hq : ∀ j ∈ Finset.Icc 1 q, diagonalSequence p.parts j = j)
+-- Each letter on the decreasing side occurs once more than the drop of the diagonal sequence.
+private theorem rowEnds_eq_sum_replicate {n : ℕ} (p : Nat.Partition n) (q L : ℕ)
+    (hq : ∀ j ∈ Icc 1 q, diagonalSequence p.parts j = j)
     (hq' : diagonalSequence p.parts (q + 1) ≠ q + 1) (hL : diagonalSequence p.parts L ≠ 0)
     (hL' : diagonalSequence p.parts (L + 1) = 0) :
-    (diagonalClass p).card =
-      ∏ i ∈ Finset.Ico q L,
-        ((diagonalSequence p.parts i - diagonalSequence p.parts (i + 1)) +
-            (diagonalSequence p.parts (i + 1) - diagonalSequence p.parts (i + 2)) + 1).choose
-          (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1) + 1) := by
-  -- The vanishing next diagonal bounds all nonzero rows.
+    (rowEnds p L : Multiset ℕ) = ∑ m ∈ Icc q L, Multiset.replicate
+      (diagonalSequence p.parts m - diagonalSequence p.parts (m + 1) + 1) m := by
   have hfitp : ∀ i, L ≤ i → (ofPartition p).rowLen i = 0 :=
     fun i hi => rowLen_eq_zero_of_diagonalSequence hL' hi
-  have hqL : q ≤ L := by
-    by_contra h
-    have := hq (L + 1) (mem_Icc.mpr ⟨by omega, by omega⟩)
-    omega
+  have hqL := staircase_le_last hq hL'
   -- Every letter of the word of `p` lies between `q` and `L`.
   have hmem : ∀ x ∈ rowEnds p L, q ≤ x ∧ x ≤ L := by
     intro x hx
@@ -1057,20 +1149,156 @@ public theorem card_diagonalClass_eq_prod_choose {n : ℕ} (p : Nat.Partition n)
     have h2 : 0 < (rowEnds p L : Multiset ℕ).count m :=
       Multiset.count_pos.mpr (Multiset.mem_coe.mpr hin)
     omega
-  have hF : (rowEnds p L : Multiset ℕ) = ∑ m ∈ Icc q L, Multiset.replicate
-      (diagonalSequence p.parts m - diagonalSequence p.parts (m + 1) + 1) m := by
-    ext m
-    rw [Multiset.count_sum']
-    by_cases hm : m ∈ Icc q L
-    · rw [sum_eq_single m (fun j _ hj => by rw [Multiset.count_replicate, ite_eq_right hj])
-        (fun h => absurd hm h), Multiset.count_replicate_self, hcount m (mem_Icc.mp hm).2]
-      have := hanti m hm
+  ext m
+  rw [Multiset.count_sum']
+  by_cases hm : m ∈ Icc q L
+  · rw [sum_eq_single m (fun j _ hj => by rw [Multiset.count_replicate, ite_eq_right hj])
+      (fun h => absurd hm h), Multiset.count_replicate_self, hcount m (mem_Icc.mp hm).2]
+    have := hanti m hm
+    omega
+  · rw [sum_eq_zero (fun j hj => by
+      rw [Multiset.count_replicate, ite_eq_right (by rintro rfl; exact hm hj)])]
+    rw [Multiset.count_eq_zero, Multiset.mem_coe]
+    intro hin
+    exact hm (mem_Icc.mpr (hmem m hin))
+
+private theorem colLen_zero_eq_card_parts {n : ℕ} (β : Nat.Partition n) :
+    (ofPartition β).colLen 0 = β.parts.card := by
+  rw [← length_rowLens, ← coe_rowLens, Multiset.coe_card]
+
+private theorem le_card_parts_of_staircase {n : ℕ} {β : Nat.Partition n} {q : ℕ}
+    (hq : ∀ j ∈ Icc 1 q, diagonalSequence β.parts j = j) : q ≤ β.parts.card := by
+  by_contra! h
+  have hd := hq q (mem_Icc.mpr ⟨by omega, le_rfl⟩)
+  rw [diagonalSequence_eq] at hd
+  have hrow := filter_card_eq (hd.trans (card_range q).symm) β.parts.card (mem_range.mpr h)
+  rw [rowLen_eq_zero (colLen_zero_eq_card_parts β).le, Nat.zero_add] at hrow
+  omega
+
+-- The zero rows contribute the fixed suffix `q, q + 1, …, L`.
+private theorem drop_rowEnds_eq_range_iff {n : ℕ} (β : Nat.Partition n) {q L : ℕ} (hqL : q ≤ L) :
+    (rowEnds β L).drop q = List.range' q (L + 1 - q) ↔ β.parts.card ≤ q := by
+  constructor
+  · intro h
+    have hi : q < (rowEnds β L).length := by rw [length_rowEnds]; omega
+    have hhead := congrArg List.head? h
+    rw [List.drop_eq_getElem_cons hi, List.head?_cons, List.head?_range',
+      ite_eq_right (by omega), Option.some.injEq, getElem_rowEnds] at hhead
+    by_contra! hc
+    have hpos := mem_iff_lt_rowLen.mp
+      (mem_iff_lt_colLen.mpr (by simpa only [colLen_zero_eq_card_parts] using hc) :
+        (q, 0) ∈ ofPartition β)
+    omega
+  · intro h
+    apply List.ext_getElem (by rw [List.length_drop, length_rowEnds, List.length_range'])
+    intro i _ _
+    rw [List.getElem_drop, getElem_rowEnds, List.getElem_range'_1,
+      rowLen_eq_zero (by rw [colLen_zero_eq_card_parts]; omega), Nat.zero_add]
+
+-- Removing the fixed suffix subtracts one copy of each letter between `q` and `L`.
+private theorem card_diagonalClass_filter_eq_ncard_freeWords {n : ℕ} (p : Nat.Partition n)
+    (q L : ℕ) (hq : ∀ j ∈ Icc 1 q, diagonalSequence p.parts j = j)
+    (hq' : diagonalSequence p.parts (q + 1) ≠ q + 1) (hL : diagonalSequence p.parts L ≠ 0)
+    (hL' : diagonalSequence p.parts (L + 1) = 0) :
+    ((diagonalClass p).filter fun β => β.parts.card = q).card =
+      (freeWords (∑ m ∈ Icc q L, Multiset.replicate
+        (diagonalSequence p.parts m - diagonalSequence p.parts (m + 1)) m)).ncard := by
+  have hqL := staircase_le_last hq hL'
+  let F := ∑ m ∈ Icc q L, Multiset.replicate
+    (diagonalSequence p.parts m - diagonalSequence p.parts (m + 1)) m
+  let t := List.range' q (L + 1 - q)
+  have ht : (t : Multiset ℕ) = (Icc q L).val := by
+    have heq : t.toFinset = Icc q L := by
+      ext m
+      simp only [t, List.mem_toFinset, List.mem_range', Nat.one_mul, mem_Icc]
+      exact ⟨fun ⟨i, _, _⟩ => by omega, fun h => ⟨m - q, by omega, by omega⟩⟩
+    rw [← heq, List.toFinset_val, List.dedup_eq_self.mpr (by simp [t, List.nodup_range'])]
+  have hF : (rowEnds p L : Multiset ℕ) = F + t := by
+    rw [rowEnds_eq_sum_replicate p q L hq hq' hL hL', ht, ← sum_multiset_singleton]
+    simp only [F, Multiset.replicate_add, Multiset.replicate_one, sum_add_distrib]
+  have hlenF : F.card = q := by
+    have h := congrArg Multiset.card hF
+    simp only [Multiset.coe_card, length_rowEnds, Multiset.card_add, t, List.length_range'] at h
+    omega
+  have hsplit (β : Nat.Partition n) (hβ : β.parts.card ≤ q) :
+      (rowEnds β L).take q ++ t = rowEnds β L := by
+    change (rowEnds β L).take q ++ List.range' q (L + 1 - q) = rowEnds β L
+    rw [← (drop_rowEnds_eq_range_iff β hqL).mpr hβ, List.take_append_drop]
+  have hb := rowEnds_bijOn p L hL'
+  rw [← Set.ncard_coe_finset]
+  change _ = (freeWords F).ncard
+  apply Set.ncard_congr (fun β _ => (rowEnds β L).take q)
+  · intro β hβ
+    obtain ⟨hβ, hcard⟩ := mem_filter.mp hβ
+    obtain ⟨hcoe, hv, _⟩ := hb.mapsTo hβ
+    have he := congrArg (fun w : List ℕ => (w : Multiset ℕ)) (hsplit β hcard.le)
+    rw [← Multiset.coe_add, hcoe, hF, add_left_inj] at he
+    exact ⟨he, hv.take q⟩
+  · intro β γ hβ hγ heq
+    obtain ⟨hβ, hβq⟩ := mem_filter.mp hβ
+    obtain ⟨hγ, hγq⟩ := mem_filter.mp hγ
+    apply hb.injOn hβ hγ
+    change rowEnds β L = rowEnds γ L
+    rw [← hsplit β hβq.le, ← hsplit γ hγq.le, heq]
+  · rintro u ⟨hu, hv⟩
+    have hlen : u.length = q := by rw [← Multiset.coe_card, hu, hlenF]
+    have htlast : t.getLast? = some L := by
+      rw [List.getLast?_eq_getElem?, show t.length - 1 = L - q by simp [t]; omega,
+        List.getElem?_eq_getElem (by simp [t]; omega)]
+      simp only [t, List.getElem_range'_1]
+      congr 1
       omega
-    · rw [sum_eq_zero (fun j hj => by
-        rw [Multiset.count_replicate, ite_eq_right (by rintro rfl; exact hm hj)])]
-      rw [Multiset.count_eq_zero, Multiset.mem_coe]
-      intro hin
-      exact hm (mem_Icc.mpr (hmem m hin))
+    have htchain : Vn t := by
+      apply List.isChain_iff_getElem.mpr
+      intro i _
+      simp only [t, List.getElem_range'_1]
+      omega
+    have hchain : Vn (u ++ t) := by
+      apply hv.append htchain
+      intro x hx y hy
+      have hxF : x ∈ F := hu ▸ Multiset.mem_coe.mpr (List.mem_of_mem_getLast? hx)
+      obtain ⟨m, hm, hxm⟩ := Multiset.mem_sum.mp hxF
+      have hxm := Multiset.eq_of_mem_replicate hxm
+      have hhead : t.head? = some q := by
+        change (List.range' q (L + 1 - q)).head? = some q
+        rw [List.head?_range', ite_eq_right (by omega)]
+      rw [hhead] at hy
+      simp only [Option.mem_def, Option.some.injEq] at hy
+      have := (mem_Icc.mp hm).1
+      omega
+    obtain ⟨β, hβ, hends⟩ := hb.surjOn (a := u ++ t)
+      ⟨by rw [← Multiset.coe_add, hu, hF], hchain, by simp [List.getLast?_append, htlast]⟩
+    change rowEnds β L = u ++ t at hends
+    have hle : β.parts.card ≤ q := (drop_rowEnds_eq_range_iff β hqL).mp (by
+      rw [hends, List.drop_left' hlen])
+    have hge : q ≤ β.parts.card := le_card_parts_of_staircase (by
+      rw [mem_diagonalClass_iff.mp hβ]
+      exact hq)
+    exact ⟨β, mem_filter.mpr ⟨hβ, le_antisymm hle hge⟩, by rw [hends, List.take_left' hlen]⟩
+
+end card_diagonalClass_eq_prod_choose
+
+open card_diagonalClass_eq_prod_choose Finset in
+/-- **Number of partitions with a given diagonal sequence.** Let $\alpha$ be a partition of $n$
+with diagonal sequence $\delta(\alpha) = (d_j)_{j \ge 1}$, set $d_0 = 0$, and let $q, L \ge 0$ be
+integers with $d_j = j$ for all $1 \le j \le q$, $d_{q+1} \ne q + 1$, $d_L \ne 0$ and
+$d_{L+1} = 0$. Put $b_i = \max(d_i - d_{i+1}, 0)$. Then the number of partitions of $n$ whose
+diagonal sequence equals $\delta(\alpha)$ is
+$$\prod_{i=q}^{L-1} \binom{b_i + b_{i+1} + 1}{b_i + 1}.$$
+
+Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
+INTEGERS 25 (2025), Article A60, Theorem 1. -/
+public theorem card_diagonalClass_eq_prod_choose {n : ℕ} (p : Nat.Partition n) (q L : ℕ)
+    (hq : ∀ j ∈ Finset.Icc 1 q, diagonalSequence p.parts j = j)
+    (hq' : diagonalSequence p.parts (q + 1) ≠ q + 1) (hL : diagonalSequence p.parts L ≠ 0)
+    (hL' : diagonalSequence p.parts (L + 1) = 0) :
+    (diagonalClass p).card =
+      ∏ i ∈ Finset.Ico q L,
+        ((diagonalSequence p.parts i - diagonalSequence p.parts (i + 1)) +
+            (diagonalSequence p.parts (i + 1) - diagonalSequence p.parts (i + 2)) + 1).choose
+          (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1) + 1) := by
+  have hqL := staircase_le_last hq hL'
+  have hF := rowEnds_eq_sum_replicate p q L hq hq' hL hL'
   have hwords := ncard_words (L - q) q
     (fun m => diagonalSequence p.parts m - diagonalSequence p.parts (m + 1) + 1)
     (fun m _ => Nat.succ_pos _)
@@ -1081,5 +1309,199 @@ public theorem card_diagonalClass_eq_prod_choose {n : ℕ} (p : Nat.Partition n)
   rw [show i + 1 + 1 = i + 2 from rfl]
   congr 1
   omega
+
+open card_diagonalClass_eq_prod_choose Finset in
+/-- **Partitions in a diagonal class with as many parts as the initial staircase.** Let $\alpha$
+be a partition of $n$ with diagonal sequence $\delta(\alpha) = (d_j)_{j \ge 1}$, set $d_0 = 0$,
+and let $q, L \ge 0$ be integers with $d_j = j$ for all $1 \le j \le q$, $d_{q+1} \ne q + 1$,
+$d_L \ne 0$ and $d_{L+1} = 0$. Put $b_i = \max(d_i - d_{i+1}, 0)$. Then the number of partitions
+of $n$ with exactly $q$ parts whose diagonal sequence equals $\delta(\alpha)$ is
+$$\prod_{i=q}^{L-1} \binom{b_i + b_{i+1}}{b_i}.$$
+
+Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
+INTEGERS 25 (2025), Article A60, Proposition 8. -/
+public theorem card_diagonalClass_filter_card_parts_eq_q {n : ℕ} (p : Nat.Partition n)
+    (q L : ℕ) (hq : ∀ j ∈ Finset.Icc 1 q, diagonalSequence p.parts j = j)
+    (hq' : diagonalSequence p.parts (q + 1) ≠ q + 1) (hL : diagonalSequence p.parts L ≠ 0)
+    (hL' : diagonalSequence p.parts (L + 1) = 0) :
+    ((diagonalClass p).filter fun β => β.parts.card = q).card =
+      ∏ i ∈ Finset.Ico q L,
+        ((diagonalSequence p.parts i - diagonalSequence p.parts (i + 1)) +
+            (diagonalSequence p.parts (i + 1) - diagonalSequence p.parts (i + 2))).choose
+          (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1)) := by
+  rw [card_diagonalClass_filter_eq_ncard_freeWords p q L hq hq' hL hL']
+  have h := ncard_freeWords (L - q) q
+    (fun i => diagonalSequence p.parts i - diagonalSequence p.parts (i + 1))
+  rw [Nat.add_sub_of_le (staircase_le_last hq hL')] at h
+  exact h
+
+namespace card_diagonalClassOf_min_two
+
+open Finset diagonalSequence_max_eq_min_and_multiset
+
+-- Start at the last staircase entry. The default 0 accounts for the final drop to zero.
+private def tailWeight (l : List ℕ) : ℕ :=
+  ∏ i ∈ range (l.length - 1),
+    let a := l.getD i 0 - l.getD (i + 1) 0
+    let b := l.getD (i + 1) 0 - l.getD (i + 2) 0
+    (a + b + 1).choose (a + 1)
+
+private theorem tailWeight_cons_cons (a b : ℕ) (l : List ℕ) :
+    tailWeight (a :: b :: l) =
+      ((a - b) + (b - l.getD 0 0) + 1).choose (a - b + 1) * tailWeight (b :: l) := by
+  unfold tailWeight
+  rw [show (a :: b :: l).length - 1 = ((b :: l).length - 1) + 1 by simp,
+    prod_range_succ', mul_comm]
+  rfl
+
+-- Removing one of three equal entries deletes the factor for two consecutive zero drops.
+private theorem tailWeight_triple (pre suf : List ℕ) (x : ℕ) :
+    tailWeight (pre ++ x :: x :: x :: suf) = tailWeight (pre ++ x :: x :: suf) := by
+  induction pre with
+  | nil =>
+    simp only [List.nil_append, tailWeight_cons_cons, List.getD_cons_zero, Nat.sub_self,
+      Nat.zero_add, Nat.choose_self, one_mul]
+  | cons a pre ih =>
+    cases pre with
+    | nil =>
+      simp only [List.cons_append, List.nil_append] at ih ⊢
+      rw [tailWeight_cons_cons a, tailWeight_cons_cons a, ih]
+      simp only [List.getD_cons_zero]
+    | cons b pre =>
+      simp only [List.cons_append] at ih ⊢
+      rw [tailWeight_cons_cons a, tailWeight_cons_cons a, ih]
+      cases pre <;> rfl
+
+private theorem tailWeight_replicate_min_two (pre suf : List ℕ) (x k : ℕ) :
+    tailWeight (pre ++ List.replicate k x ++ suf) =
+      tailWeight (pre ++ List.replicate (min k 2) x ++ suf) := by
+  by_cases hk : k ≤ 2
+  · rw [min_eq_left hk]
+  have hk' : 2 ≤ k := by omega
+  rw [min_eq_right hk']
+  clear hk
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le hk'
+  clear hk'
+  induction m with
+  | zero => rfl
+  | succ m ih =>
+    rw [← ih, show 2 + (m + 1) = m + 3 by omega, show 2 + m = m + 2 by omega]
+    simpa only [List.replicate_succ, List.cons_append, List.append_assoc] using
+      tailWeight_triple pre (List.replicate m x ++ suf) x
+
+private theorem tailWeight_blocks_min_two (q : ℕ) (s : ℕ → ℕ) (pre : List ℕ) :
+    tailWeight (pre ++ blocks q s) = tailWeight (pre ++ blocks q (fun j => min (s j) 2)) := by
+  induction q generalizing pre with
+  | zero => rfl
+  | succ q ih =>
+    simp only [blocks_succ, ← List.append_assoc]
+    rw [tailWeight_replicate_min_two, ih]
+
+private theorem sum_blocks (q : ℕ) (s : ℕ → ℕ) :
+    (blocks q s).sum = ∑ j ∈ Icc 1 q, j * s j := by
+  induction q with
+  | zero => simp [blocks]
+  | succ q ih =>
+    rw [blocks_succ, List.sum_append, List.sum_const_nat, ih,
+      sum_Icc_succ_top (by omega : 1 ≤ q + 1), Nat.mul_comm (s (q + 1)), Nat.add_comm]
+
+private theorem card_eq_tailWeight (q : ℕ) (s : ℕ → ℕ) :
+    (diagonalClassOf ((q + 1) * (q + 2) / 2 + ∑ j ∈ Icc 1 (q + 1), j * s j)
+      (diagonalOfList (diagonalNormalForm (q + 1) s))).card =
+        tailWeight ((q + 1) :: blocks (q + 1) s) := by
+  have hpos (x : ℕ) (hx : x ∈ diagonalMinPartition (q + 1) s) : 0 < x := by
+    unfold diagonalMinPartition at hx
+    obtain ⟨j, _, hxj⟩ := List.mem_flatMap.mp hx
+    rw [(List.mem_replicate.mp hxj).2]
+    exact Nat.succ_pos _
+  have hsum : (diagonalMinPartition (q + 1) s).sum =
+      (q + 1) * (q + 2) / 2 + ∑ j ∈ Icc 1 (q + 1), j * s j := by
+    change (blocks (q + 1) (fun j => s j + 1)).sum = _
+    rw [sum_blocks]
+    conv_lhs => simp only [Nat.mul_add, Nat.mul_one, sum_add_distrib]
+    have htri : ∑ j ∈ Icc 1 (q + 1), j = (q + 1) * (q + 2) / 2 := by
+      simpa [sum_range_id, Ico_add_one_right_eq_Icc, Nat.mul_comm] using
+        (sum_range_eq_add_Ico id (Nat.zero_lt_succ (q + 1))).symm
+    rw [htri, Nat.add_comm]
+  let p : Nat.Partition ((q + 1) * (q + 2) / 2 + ∑ j ∈ Icc 1 (q + 1), j * s j) :=
+    { parts := ↑(diagonalMinPartition (q + 1) s)
+      parts_pos := fun hx => hpos _ (Multiset.mem_coe.mp hx)
+      parts_sum := by simpa using hsum }
+  obtain ⟨_, hd, hparts⟩ := diagonalSequence_max_eq_min_and_multiset (q + 1) s
+  change diagonalSequence p.parts = _ at hd
+  have hclass : diagonalClassOf _ (diagonalOfList (diagonalNormalForm (q + 1) s)) =
+      diagonalClass p := by
+    rw [← hd]
+    rfl
+  have hsplit : diagonalNormalForm (q + 1) s =
+      List.range' 1 q ++ ((q + 1) :: blocks (q + 1) s) := by
+    change List.range' 1 (q + 1) ++ blocks (q + 1) s = _
+    rw [List.range'_concat]
+    simp [List.append_assoc, Nat.add_comm]
+  let L := (diagonalNormalForm (q + 1) s).length
+  have hlen : L - (q + 1) = ((q + 1) :: blocks (q + 1) s).length - 1 := by
+    simp only [L, hsplit, List.length_append, List.length_range', List.length_cons]
+    omega
+  have hget (i : ℕ) : diagonalOfList (diagonalNormalForm (q + 1) s) (q + 1 + i) =
+      ((q + 1) :: blocks (q + 1) s).getD i 0 := by
+    rw [diagonalOfList, hsplit]
+    change ((0 :: List.range' 1 q) ++ _).getD _ _ = _
+    rw [List.getD_append_right _ _ _ _ (by simp)]
+    simp
+  have hstair (j : ℕ) (hj : j ∈ Icc 1 (q + 1)) : diagonalSequence p.parts j = j := by
+    rw [hd]
+    obtain ⟨hj₁, hj₂⟩ := mem_Icc.mp hj
+    have hlo := (le_normalForm (q + 1) s j j hj₁).mpr ⟨le_rfl, hj₂, by omega⟩
+    by_contra hne
+    have hhi : j + 1 ≤ diagonalOfList (diagonalNormalForm (q + 1) s) j := by omega
+    have := (le_normalForm (q + 1) s (j + 1) j (by omega)).mp hhi
+    omega
+  have hnext : diagonalSequence p.parts (q + 1 + 1) ≠ q + 1 + 1 := by
+    rw [hd]
+    intro heq
+    have hle : q + 1 + 1 ≤ diagonalOfList (diagonalNormalForm (q + 1) s) (q + 1 + 1) :=
+      heq.ge
+    have := (le_normalForm (q + 1) s _ _ (by omega)).mp hle
+    omega
+  have hlast : diagonalSequence p.parts L ≠ 0 := by
+    rw [hd, diagonalOfList]
+    have hL : 0 < L := by simp [L, hsplit]
+    obtain ⟨m, hm⟩ := Nat.exists_eq_succ_of_ne_zero hL.ne'
+    have hm' : m < (diagonalNormalForm (q + 1) s).length := by omega
+    rw [hm, List.getD_cons_succ, List.getD_eq_getElem _ _ hm']
+    have hmem := List.getElem_mem hm'
+    rw [← Multiset.mem_coe, hparts] at hmem
+    exact (hpos _ (Multiset.mem_coe.mp hmem)).ne'
+  have hend : diagonalSequence p.parts (L + 1) = 0 := by
+    rw [hd, diagonalOfList, List.getD_cons_succ]
+    exact List.getD_eq_default _ _ le_rfl
+  rw [hclass, card_diagonalClass_eq_prod_choose p (q + 1) L hstair hnext hlast hend, hd,
+    prod_Ico_eq_prod_range, hlen, tailWeight]
+  apply prod_congr rfl
+  intro i _
+  rw [Nat.add_assoc (q + 1) i 1, Nat.add_assoc (q + 1) i 2]
+  simp only [hget]
+
+end card_diagonalClassOf_min_two
+
+open card_diagonalClassOf_min_two diagonalSequence_max_eq_min_and_multiset in
+/-- **Capping the multiplicities of a diagonal sequence at two.** For $m \ge 0$ and a sequence
+$s = (s_1, s_2, \dots)$ of natural numbers, let $d(m, s)$ be the sequence
+$(1, 2, \dots, m, m^{(s_m)}, (m-1)^{(s_{m-1})}, \dots, 1^{(s_1)})$ followed by zeros, where
+$v^{(r)}$ means $r$ copies of $v$, and let $n(m, s) = m(m+1)/2 + \sum_{j=1}^{m} j s_j$. Let
+$q \ge 1$ and $\sigma_j = \min(s_j, 2)$ for all $j$. Then the number of partitions of $n(q, s)$
+with diagonal sequence $d(q, s)$ equals the number of partitions of $n(q, \sigma)$ with diagonal
+sequence $d(q, \sigma)$.
+
+Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
+INTEGERS 25 (2025), Article A60, Corollary 6 (5). -/
+public theorem card_diagonalClassOf_min_two (q : ℕ) (hq : 1 ≤ q) (s : ℕ → ℕ) :
+    (diagonalClassOf (q * (q + 1) / 2 + ∑ j ∈ Finset.Icc 1 q, j * s j)
+        (diagonalOfList (diagonalNormalForm q s))).card =
+      (diagonalClassOf (q * (q + 1) / 2 + ∑ j ∈ Finset.Icc 1 q, j * min (s j) 2)
+        (diagonalOfList (diagonalNormalForm q fun j => min (s j) 2))).card := by
+  obtain ⟨q, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : q ≠ 0)
+  rw [card_eq_tailWeight, card_eq_tailWeight]
+  exact tailWeight_blocks_min_two (q + 1) s [q + 1]
 
 end MetaMathlibExt

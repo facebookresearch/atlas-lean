@@ -96,6 +96,7 @@ jobs:
             scripts/pages_packing.js
             scripts/pages_size.sh
             scripts/cards.py
+            scripts/card_moves.py
             scripts/test_generate_wiki_navigation.py
             scripts/test_generate_wiki_docstrings.py
             scripts/test_sync_wiki.py
@@ -151,15 +152,16 @@ jobs:
             # The wiki, whose pages, annotations and site inputs the build checks,
             # and what only a PR's build can check, since main's runs have
             # no base commit and check Mathlib source links without failing: the
-            # import map and the card move ledger, which its checks compare with
-            # the base commit's, the moves and card retirements of the wiki's
-            # pages and annotations since the base, which the card check
-            # compares with the move ledger, and the wiki's Mathlib source links,
-            # which must match their declarations' titles
-            # (docs/mathgraph-import.md#the-map, docs/cards.md#move-ledger,
-            # docs/mathlib-pages.md).
+            # import map and the card move ledger (its frozen file and its
+            # fragments), which its checks compare with the base commit's, the
+            # moves and card retirements of the wiki's pages and annotations
+            # since the base, which the card check compares with the move
+            # ledger, and the wiki's Mathlib source links, which must match
+            # their declarations' titles (docs/mathgraph-import.md#the-map,
+            # docs/cards.md#move-ledger, docs/mathlib-pages.md).
             scripts/mathgraph-map.jsonl
             scripts/card-moves.jsonl
+            scripts/card-moves.d/**
             blueprint/**
         run: |
           set -euo pipefail
@@ -433,6 +435,7 @@ jobs:
           mkdir -p "$installer_dir"
           curl --fail --silent --show-error --location \
             --proto '=https' --tlsv1.2 \
+            --retry 5 --retry-all-errors --retry-delay 10 --connect-timeout 30 \
             https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
             --output "$archive"
           echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
@@ -630,6 +633,27 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      # The nodes still to expand (docs/BLUEPRINT.md, Nodes still to expand), from the index the render wrote, with
+      # tasks.json's commit and date, so that `next_task.py --graph` can check that both come from one build
+      # (CONTRIBUTING.md, Picking a task). A failure leaves no graph-tasks.json, which only `--graph` needs.
+      - name: List the nodes still to expand
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          jq --compact-output --slurpfile tasks build/tasks.json \
+            'if .schema != "autoform-dag-search/v1" or (.nodes | type) != "array"
+                or any(.nodes[]; type != "object" or (.kind | type) != "string" or (.status | type) != "string")
+             then error("the index is not autoform-dag-search/v1 with a kind and a status for each node") else . end
+             | {schema: "atlas-graph-tasks/v1", commit: $tasks[0].commit, commit_date: $tasks[0].commit_date,
+                nodes: [.nodes[] | select(.kind == "node" and .status == "not_ready")
+                        | {node_id: .id, title: .title,
+                           page: (if (.route | type) == "string" then .route | ltrimstr("../") else null end)}]}
+             | if any(.nodes[]; (.node_id | type) != "string" or (.node_id | test("\\S") | not))
+                  or (.nodes | map(.node_id) | unique | length) != (.nodes | length)
+               then error("the index marks a node to expand without an id, or one id twice") else . end' \
+            site-src/dependencies/index.json > build/graph-tasks.json.part
+          mv build/graph-tasks.json.part site-src/graph-tasks.json
+
       - name: Build the Markdown site
         run: >-
           uvx --from mkdocs==1.6.1
@@ -641,6 +665,40 @@ jobs:
 
       - name: Check routes, anchors, and article cards
         run: python scripts/check_blueprint_site.py site-src site
+
+      # The card pages hook keeps the move ledger's old addresses
+      # (docs/cards.md#reading); when it cannot, it only says why, and MkDocs
+      # builds the site without them. So whenever the ledger has a row, the
+      # site must have the hook's table of them, javascripts/atlas-card-moves.js,
+      # starting with the line the hook writes first (a file of that name from
+      # the theme would not), and the site source none (the hook would keep
+      # nothing rather than replace it): else the job fails here, before the
+      # site is kept, packed or uploaded, so nothing is published and the last
+      # published site stays. A pull request's build fails alike, before the
+      # pull request merges.
+      - name: Check that the site keeps the moved addresses
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          table=javascripts/atlas-card-moves.js
+          # The table's first line, as the hook writes it (moves_script).
+          header='/* Written by hooks/card_pages.py from scripts/card-moves.jsonl. An explorer link #node=<old address> is'
+          refuse() {
+            echo "::error title=Moved addresses not kept::$1, so this build keeps no moved address: nothing is published, and the last published site stays. See the card_pages hook's lines in the log of the step Build the Markdown site."
+            exit 1
+          }
+          # The ledger is the frozen file, which must exist, and its fragments,
+          # if any; a blank line is no row.
+          [[ -f scripts/card-moves.jsonl ]] || refuse "There is no scripts/card-moves.jsonl"
+          fragments=(scripts/card-moves.d/*.jsonl)
+          if (( ${#fragments[@]} == 0 )) && ! grep -q '[^[:space:]]' scripts/card-moves.jsonl; then
+            echo "The move ledger has no row: there is no moved address to keep."
+            exit 0
+          fi
+          [[ ! -e "site-src/$table" ]] || refuse "The site source has a $table of its own"
+          [[ -f "site/$table" && "$(head -n 1 "site/$table")" == "$header" ]] ||
+            refuse "The move ledger has rows, but the site has no $table written by the card_pages hook"
+          echo "The site has the card_pages hook's $table: it keeps the moved addresses."
 
       - name: Keep dependency diagnostics
         if: always()
@@ -765,6 +823,7 @@ jobs:
           mkdir -p "$installer_dir"
           curl --fail --silent --show-error --location \
             --proto '=https' --tlsv1.2 \
+            --retry 5 --retry-all-errors --retry-delay 10 --connect-timeout 30 \
             https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
             --output "$archive"
           echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
@@ -1061,9 +1120,11 @@ jobs:
           --with markdown==3.10.3
           python -m unittest scripts.test_cards
 
-      # The move ledger only grows, and every address that changed since the
-      # base commit needs its row: the check reads the base commit's ledger and
-      # annotations. A scheduled or manual build of main has no base; its
+      # The move ledger's frozen file and the fragments the base commit has
+      # stay as they are, and every address that changed since the base commit
+      # needs its row in a fragment the base does not have: the check reads the
+      # base commit's ledger, its frozen file and its folder of fragments, and
+      # its annotations. A scheduled or manual build of main has no base; its
       # ledger was checked when it merged.
       - name: Read the move ledger and annotations the base commit published
         env:
@@ -1071,19 +1132,22 @@ jobs:
         run: |
           set -euo pipefail
           [[ -n "$BASE" ]] || exit 0
-          mkdir -p build/base
+          mkdir -p build/base/scripts
           git fetch --no-tags --depth=1 origin "$BASE"
-          if git cat-file -e "$BASE:scripts/card-moves.jsonl" 2>/dev/null; then
-            git show "$BASE:scripts/card-moves.jsonl" > build/base-card-moves.jsonl
-          else
-            : > build/base-card-moves.jsonl
+          # A base whose frozen file cannot be read stops the check: it is no
+          # empty ledger. The folder of fragments may be absent at an older
+          # base; a tree Git cannot read stops the step too.
+          git show "$BASE:scripts/card-moves.jsonl" > build/base/scripts/card-moves.jsonl
+          fragments="$(git ls-tree "$BASE" -- scripts/card-moves.d)"
+          if [[ -n "$fragments" ]]; then
+            git archive "$BASE" scripts/card-moves.d | tar -x -C build/base
           fi
           git archive "$BASE" blueprint/links | tar -x -C build/base
           # Git's renames are the evidence of a move whose page had no id.
           git -c diff.renameLimit=0 diff --name-status -M "$BASE" HEAD -- blueprint/roadmap \
             > build/base-renames.tsv
           {
-            echo "BASE_LEDGER=build/base-card-moves.jsonl"
+            echo "BASE_LEDGER=build/base/scripts"
             echo "BASE_LINKS=build/base/blueprint/links"
             echo "BASE_RENAMES=build/base-renames.tsv"
           } >> "$GITHUB_ENV"

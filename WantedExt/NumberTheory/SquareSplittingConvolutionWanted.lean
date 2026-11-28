@@ -18,33 +18,17 @@ public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitDivisorCountLSeries
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusFormula
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitConvCommRingAxioms
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitTotientFormula
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitConvInverseOfIsMultiplicative
 public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitMoebiusSupportDensity
+public import MathlibExt.NumberTheory.SquareSplittingConvolutionSquareSplitTotientSumAsymptotic
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Filter Topology Asymptotics
-
-/-- **Ring axioms for the square-splitting convolution.** For all complex arithmetic functions
-$f$, $g$ and $h$, the square-splitting convolution $\star$ satisfies $f \star g = g \star f$,
-$(f \star g) \star h = f \star (g \star h)$, $f \star (g + h) = f \star g + f \star h$ and
-$\varepsilon \star f = f$, where $\varepsilon$ is the arithmetic function with $\varepsilon(1) = 1$
-and $\varepsilon(n) = 0$ for $n \ne 1$.
-
-With pointwise addition, these identities make the complex arithmetic functions a commutative ring
-under $\star$ with identity $\varepsilon$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 2
-(`integers-2026-A56-thm-2`). -/
-public theorem_wanted squareSplitConv_commRing_axioms (f g h : ArithmeticFunction ℂ) :
-    squareSplitConv f g = squareSplitConv g f ∧
-      squareSplitConv (squareSplitConv f g) h = squareSplitConv f (squareSplitConv g h) ∧
-      squareSplitConv f (g + h) = squareSplitConv f g + squareSplitConv f h ∧
-      squareSplitConv 1 f = f
 
 /-- **Square-splitting convolution as a bivariate Dirichlet convolution.** Let $\star$ be the
 square-splitting convolution. For all complex arithmetic functions $f$ and $g$, every squarefree
@@ -69,28 +53,6 @@ public theorem_wanted squareSplitConv_bivariate_iso :
           f (u₁ * v₁ ^ 2) * g ((u / u₁) * (v / v₁) ^ 2)) ∧
     ∀ F : ℕ → ℕ → ℂ, ∃! f : ArithmeticFunction ℂ,
       ∀ u v, Squarefree u → 0 < v → f (u * v ^ 2) = F u v
-
-/-- **Average order of the square-splitting totient function.** Let $A(n)$ be the set of
-square-splitting divisors of $n$, and let $\varphi_\star$ be any integer-valued arithmetic function
-with $\sum_{d \in A(n)} \varphi_\star(d) = n$ for every $n \ge 1$. Then the product
-$M = \prod_p \left(1 - \frac{1}{p^2} + \frac{(p-1)^2}{p^5}\right)$ converges absolutely, that is,
-$\sum_p \left|\frac{(p-1)^2}{p^5} - \frac{1}{p^2}\right| < \infty$, and for every
-$0 < \varepsilon < 1/2$,
-$$\sum_{1 \le n \le x} \varphi_\star(n) = \frac{M}{2}\,x^2 + O(x^{1+\varepsilon})
-\quad (x \to \infty).$$
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 8
-(`integers-2026-A56-thm-8`). -/
-public theorem_wanted squareSplitTotient_sum_asymptotic (φ : ArithmeticFunction ℤ)
-    (hφ : ∀ n ≠ 0, ∑ d ∈ squareSplitDivisors n, φ d = n) :
-    Summable (fun p : Nat.Primes =>
-      |-(1 / ((p : ℕ) : ℝ) ^ 2) + (((p : ℕ) : ℝ) - 1) ^ 2 / ((p : ℕ) : ℝ) ^ 5|) ∧
-    ∀ ε : ℝ, 0 < ε → ε < 1 / 2 →
-      (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (φ n : ℝ) -
-        (∏' p : Nat.Primes,
-          (1 - 1 / ((p : ℕ) : ℝ) ^ 2 + (((p : ℕ) : ℝ) - 1) ^ 2 / ((p : ℕ) : ℝ) ^ 5)) / 2 * x ^ 2)
-        =O[atTop] fun x => x ^ (1 + ε)
 
 /-- **Partial-sum asymptotics for a Riemann zeta quotient times a Dirichlet series.** Let
 $f, g : \mathbb{N} \to \mathbb{C}$ and let $\sigma_0 < 1/2$ be a real number. Suppose that the

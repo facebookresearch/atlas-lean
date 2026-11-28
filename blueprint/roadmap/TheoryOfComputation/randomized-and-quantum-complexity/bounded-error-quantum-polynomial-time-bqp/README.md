@@ -25,11 +25,12 @@
 - [Positive gap and acceptance above one half](path-pair-gap-pos-iff.md)
 - [BQP form of the sign lemma](exists-path-pair-gap-of-mem-bqp.md)
 - [BPP is contained in BQP](bpp-subset-bqp.md)
-
 - [Gottesman–Knill theorem](gottesmanknill-theorem.md)
 - [Polynomial-time uniform generator of gate approximants](polynomial-time-uniform-generator-of-gate-approximants.md)
 - [Certified rational approximation of cos/sin(2 pi / 2^k) and 1/sqrt 2](certified-rational-approximation-of-cos-sin-and-1-sqrt-2.md)
-- [Pauli group, Clifford group and stabilizer states](pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Pauli group on $n$ qubits](pauli-group-on-n-qubits.md)
+- [The Clifford group on $n$ qubits](clifford-group-on-n-qubits.md)
+- [Stabilizer groups and stabilizer states](stabilizer-groups-and-stabilizer-states.md)
 - [Exactly unitary Gaussian-rational approximations of 1- and 2-qubit gates](exactly-unitary-gaussian-rational-approximations-of-1-and-2.md)
 - [Exact Gaussian-rational Toffoli and multi-controlled NOT decompositions](exact-2-local-gaussian-rational-toffoli-and-multi-controlled.md)
 - [Snapping approximate values to exact Gaussian-rational unitaries](snapping-approximate-values-to-exact-gaussian-rational-unita.md)
@@ -38,7 +39,16 @@
 - [Bridge between circuit state vectors and density-operator state models](bridge-between-circuit-state-vectors-and-density-operators.md)
 - [Polynomial-time languages are in BQP with error zero](polynomial-time-languages-are-in-bqp-with-error-zero.md)
 - [Gaussian-rational gates of the exact Toffoli decomposition](gaussian-rational-gates-of-the-exact-toffoli-decomposition.md)
+- [Verifiable Quantum Advantage from Random Oracles](unstructured-verifiable-quantum-advantage/README.md)
+- [Witness-Preserving QMA Amplification, QCMA and Black-Box Groups](witness-preserving-amplification-and-black-box-groups/README.md)
+- [Repeated measurement of an isometry on entangled inputs](tensor-power-isometry-entangled-inputs.md)
 
 ## Related topics
 
 - [Bounded-error probabilistic classes RP and BPP](../bounded-error-probabilistic-classes-rp-and-bpp/README.md): the classical counterpart, contained in BQP.
+- [Block tensor products and product eigenbases](block-tensor-products-and-product-eigenbases/README.md)
+- [Exact Gaussian-rational quantum gates](exact-gaussian-rational-quantum-gates/README.md)
+- [Gate relabeling at the encoding level](gate-relabeling-at-the-encoding-level/README.md)
+- [Matrix-level Pauli basis changes for exact gates](matrix-level-pauli-basis-changes-for-exact-gates/README.md)
+- [Threshold operator: spectral identities](threshold-operator-spectral-identities/README.md)
+- [Well-formed gates are those with ordered qubits and a unitary matrix](q-gate-well-formed-iff.md)
