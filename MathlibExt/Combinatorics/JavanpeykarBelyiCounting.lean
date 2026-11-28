@@ -29,9 +29,9 @@ been turned into numbers. This file proves those counting steps, with the geomet
   `Javanpeykar.three_le_degree_of_riemannHurwitz`: the Riemann–Hurwitz count behind
   "g ≤ deg π" (Lemma 3.2.2, p. 106) and "deg π ≥ 3" when `g ≥ 1` (proof of Proposition 3.5.1,
   p. 112), for a map ramified only above three points;
-* `Finset.exists_mem_notMem_of_card_lt_mul`: if `F i`, for `i ∈ I`, are pairwise disjoint finite
-  sets with at least `d` elements each and `#W < #I * d`, then some `F i` has an element outside
-  `W`;
+* `Finset.exists_mem_notMem_of_card_lt_mul`: if `I` is a finite set of indices, the `F i`, for
+  `i ∈ I`, are pairwise disjoint finite sets with at least `d` elements each, and `W` is a finite
+  set with `#W < #I * d`, then some `F i` has an element outside `W`;
 * `Javanpeykar.exists_mem_fiber_notMem_of_card_le`: the instance of the previous item used in the
   proof of Theorem 4.5.2, p. 123, "Since the number of Weierstrass points on Y is at most g³ − g,
   there exists an integer 1 ≤ i ≤ (deg π)² such that the fibre π⁻¹(aᵢ) contains a
@@ -44,9 +44,10 @@ set_option autoImplicit false
 
 namespace Finset
 
-/-- **A pairwise disjoint family has a point outside a small set.** Let `F i`, for `i ∈ I`, be
-pairwise disjoint finite sets with at least `d` elements each, and let `W` be a finite set with
-fewer than `#I * d` elements. Then some `F i` with `i ∈ I` has an element outside `W`.
+/-- **A pairwise disjoint family has a point outside a small set.** Let `I` be a finite set of
+indices, let `d` be a natural number, let the `F i` for `i ∈ I` be pairwise disjoint finite sets
+with at least `d` elements each, and let `W` be a finite set with fewer than `#I * d` elements.
+Then some `F i` with `i ∈ I` has an element outside `W`.
 
 The union of the `F i` has at least `#I * d` elements, so it is not contained in `W`. -/
 theorem exists_mem_notMem_of_card_lt_mul {ι α : Type*} {I : Finset ι} {F : ι → Finset α}
@@ -69,10 +70,10 @@ namespace Javanpeykar
 open Finset
 
 /-- **The Riemann–Hurwitz count for a map ramified above three points.** Let `ι` be a finite
-type (the points of a curve `Y` above the three branch points `0`, `1`, `∞`), `b : ι → Fin 3` a
-surjection (the branch point below each of them; it is surjective because every fibre is
+type (the points of a curve `Y` above the three marked values `0`, `1`, `∞`), `b : ι → Fin 3` a
+surjection (the marked value below each of them; it is surjective because every fibre is
 nonempty), and `e : ι → ℕ` (the ramification indices), with `∑_{b y = t} e y = d` for each of the
-three branch points `t`. If the Riemann–Hurwitz equation
+three marked values `t`. If the Riemann–Hurwitz equation
 `2 g - 2 = -2 d + ∑_y (e y - 1)` holds in `ℤ`, then `2 g + 1 ≤ d`.
 
 The sum `∑_y (e y - 1)` is `3 d - n` with `n ≥ 3` the number of points above `0`, `1`, `∞`, so
@@ -97,9 +98,11 @@ theorem two_mul_add_one_le_of_riemannHurwitz {ι : Type*} [Fintype ι] {b : ι �
   have : (2 * g + 1 : ℤ) ≤ d := by linarith
   exact_mod_cast this
 
-/-- **`g ≤ deg π` for a map ramified above three points.** Under the hypotheses of
-`Javanpeykar.two_mul_add_one_le_of_riemannHurwitz` (the Riemann–Hurwitz equation for a map of
-degree `d` from a curve of genus `g`, ramified only above three points), `g ≤ d`.
+/-- **`g ≤ deg π` for a map ramified above three points.** Let `ι` be a finite type,
+`b : ι → Fin 3` a surjection and `e : ι → ℕ` with `∑_{b y = t} e y = d` for each `t : Fin 3`,
+and suppose that `2 g - 2 = -2 d + ∑_y (e y - 1)` in `ℤ` (the Riemann–Hurwitz equation for a map
+of degree `d` from a curve of genus `g`, ramified only above three points, as in
+`Javanpeykar.two_mul_add_one_le_of_riemannHurwitz`). Then `g ≤ d`.
 
 Source: A. Javanpeykar, *Polynomial bounds for Arakelov invariants of Belyi curves*, Algebra
 Number Theory 8 (2014), Lemma 3.2.2, p. 106: "Let π : Y → X(2) be a Belyi cover with Y of genus
@@ -112,10 +115,11 @@ theorem genus_le_degree_of_riemannHurwitz {ι : Type*} [Fintype ι] {b : ι → 
   have := two_mul_add_one_le_of_riemannHurwitz hb hfib hRH
   omega
 
-/-- **`deg π ≥ 3` in positive genus.** Under the hypotheses of
-`Javanpeykar.two_mul_add_one_le_of_riemannHurwitz` (the Riemann–Hurwitz equation for a map of
-degree `d` from a curve of genus `g`, ramified only above three points), if `1 ≤ g` then
-`3 ≤ d`.
+/-- **`deg π ≥ 3` in positive genus.** Let `ι` be a finite type, `b : ι → Fin 3` a surjection
+and `e : ι → ℕ` with `∑_{b y = t} e y = d` for each `t : Fin 3`, and suppose that
+`2 g - 2 = -2 d + ∑_y (e y - 1)` in `ℤ` (the Riemann–Hurwitz equation for a map of degree `d`
+from a curve of genus `g`, ramified only above three points, as in
+`Javanpeykar.two_mul_add_one_le_of_riemannHurwitz`). If `1 ≤ g`, then `3 ≤ d`.
 
 Source: A. Javanpeykar, *Polynomial bounds for Arakelov invariants of Belyi curves*, Algebra
 Number Theory 8 (2014), proof of Proposition 3.5.1, p. 112: "Since g ≥ 1 and π : Y → X(2) is a

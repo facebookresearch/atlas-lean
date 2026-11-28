@@ -41,7 +41,6 @@ Number Theory 8 (2014), Lemma 2.4.4 and its proof, p. 101, which states the boun
 of genus `g` as "the slightly stronger lower bound h_Fal(X) ≥ −log(√2 π)g". -/
 theorem half_mul_log_two_mul_pi_sq (g : ℝ) :
     g / 2 * Real.log (2 * π ^ 2) = g * Real.log (Real.sqrt 2 * π) := by
-  have h2 : (0 : ℝ) < Real.sqrt 2 := by positivity
   have hsq : (Real.sqrt 2 * π) ^ 2 = 2 * π ^ 2 := by
     rw [mul_pow, Real.sq_sqrt (by norm_num)]
   rw [← hsq, Real.log_pow]
