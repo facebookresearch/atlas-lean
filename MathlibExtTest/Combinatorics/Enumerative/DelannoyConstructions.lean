@@ -111,4 +111,22 @@ example (m : ℕ) : (2 : ℤ) ∣ seededArray 2 m 0 + seededArray 2 m 1 := by
     (fun _ _ => rfl) 2 (by decide) (fun _ => rfl) m 0
   exact h.dvd_iff.mpr (by decide)
 
+local notation "H" => (fun S : ℕ → ℕ → ℤ => fun m n => S m n + S m (n + 1))
+
+-- With zero seed index, three sums give a sharp uniform factor of eight.
+example : (∀ m n, (8 : ℤ) ∣ H^[3] (seededArray 0) m n) ∧
+    ∃ m n, ¬ (16 : ℤ) ∣ H^[3] (seededArray 0) m n :=
+  delannoyArray_binomial_seeds_two_pow_dvd (seededArray 0) (fun _ _ => rfl) 0 3
+    (by decide) (fun _ => rfl)
+
+-- For positive seed index, the origin need not witness sharpness.
+example : (4 : ℤ) ∣ H^[2] (seededArray 1) 0 0 ∧
+    ¬ (4 : ℤ) ∣ H^[2] (seededArray 1) 1 0 := by decide
+
+-- Three extra sums give a uniform factor of eight, but not sixteen.
+example : (∀ m n, (8 : ℤ) ∣ H^[5] (seededArray 2) m n) ∧
+    ∃ m n, ¬ (16 : ℤ) ∣ H^[5] (seededArray 2) m n :=
+  delannoyArray_binomial_seeds_two_pow_dvd (seededArray 2) (fun _ _ => rfl) 2 3
+    (by decide) (fun _ => rfl)
+
 end MetaMathlibExt.DelannoyConstructions
