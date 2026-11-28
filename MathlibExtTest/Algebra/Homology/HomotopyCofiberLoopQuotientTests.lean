@@ -34,6 +34,7 @@ namespace MathlibExtTest.HomotopyCofiberLoopQuotient
 private abbrev R := ZMod 16
 private abbrev M := ModuleCat.of R R
 private abbrev loop := ComplexShape.refl PUnit
+local instance : DecidableRel loop.Rel := fun i j => (inferInstance : Decidable (i = j))
 private abbrev u : PUnit := PUnit.unit
 local instance : HasFiniteBiproducts (ModuleCat R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat R)
@@ -59,6 +60,7 @@ private def multiply (a : R) : K ⟶ K where
     apply ModuleCat.hom_ext
     apply LinearMap.ext
     intro x
+    change R at x
     change (4 : R) * (a * x) = a * (4 * x)
     ring
 private abbrev phi := multiply 5
@@ -70,6 +72,7 @@ private def H : Homotopy (phi ≫ minus) (minus ≫ phi) where
     apply ModuleCat.hom_ext
     apply LinearMap.ext
     intro x
+    change R at x
     change (-1 : R) * (5 * x) = 2 * (4 * x) + 4 * (2 * x) + 5 * (-1 * x)
     have h : (-1 : R) * 5 = 2 * 4 + 4 * 2 + 5 * (-1) := by decide
     calc
@@ -94,7 +97,7 @@ private lemma homotopy_block : mapCoordinates =
     · simp only [mapCoordinates, Category.assoc, inl_XIsoBiprod_inv_assoc,
         inlX_mapOfHomotopy_assoc, add_comp, inrX_XIsoBiprod_hom_assoc,
         inlX_XIsoBiprod_hom_assoc, biprod.inl_desc_assoc, biprod.lift_fst,
-        biprod.inr_fst, biprod.inl_fst, comp_zero, comp_id, add_zero, zero_add]
+        biprod.inr_fst, biprod.inl_fst, comp_zero, Category.comp_id, add_zero, zero_add]
       rfl
     · simp only [mapCoordinates, Category.assoc, inr_XIsoBiprod_inv_assoc,
         inrX_mapOfHomotopy_assoc, inrX_XIsoBiprod_hom_assoc,
@@ -103,11 +106,11 @@ private lemma homotopy_block : mapCoordinates =
     · simp only [mapCoordinates, Category.assoc, inl_XIsoBiprod_inv_assoc,
         inlX_mapOfHomotopy_assoc, add_comp, inrX_XIsoBiprod_hom_assoc,
         inlX_XIsoBiprod_hom_assoc, biprod.inl_desc_assoc, biprod.lift_snd,
-        biprod.inr_snd, biprod.inl_snd, comp_zero, comp_id, zero_add, add_zero]
+        biprod.inr_snd, biprod.inl_snd, comp_zero, Category.comp_id, zero_add, add_zero]
       rfl
     · simp only [mapCoordinates, Category.assoc, inr_XIsoBiprod_inv_assoc,
         inrX_mapOfHomotopy_assoc, inrX_XIsoBiprod_hom_assoc,
-        biprod.inr_desc_assoc, biprod.lift_snd, biprod.inr_snd, comp_id]
+        biprod.inr_desc_assoc, biprod.lift_snd, biprod.inr_snd, Category.comp_id]
       rfl
 private def diagonalInput : M ⟶ M ⊞ M := biprod.lift (𝟙 M) (𝟙 M)
 private def firstValue (f : M ⊞ M ⟶ M ⊞ M) : R :=
