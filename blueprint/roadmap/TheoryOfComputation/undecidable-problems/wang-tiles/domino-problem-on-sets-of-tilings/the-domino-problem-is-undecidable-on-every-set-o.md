@@ -23,6 +23,8 @@ tilings. The theorem assumes only that $X$ is nonempty and has finite local comp
 
 - [The tiling problem is undecidable](../the-tiling-problem-is-undecidable.md)
 - [Halting is undecidable](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+- [Every recognizable predicate many-one reduces to the halting set](../../../degrees-and-hierarchies/completeness-of-the-halting-set/many-one-reducible-halting-set.md)
+- [Σ₁ is the class of recursively enumerable predicates](../../../degrees-and-hierarchies/arithmetical-hierarchy/sigma-one-eq-re.md)
 
 ## Expansion
 
@@ -30,7 +32,7 @@ For item 1, the proof reduces the nearest-neighbor domino problem on $\mathbb{Z}
 structure on any tiling of $X$, a coherent family of paths that behaves, up to quasi-isometry, like the square grid, and the colors of the $\mathbb{Z}^2$ instance are carried along it;
 a valid labeled tiling over $X$ exists exactly when the $\mathbb{Z}^2$ instance has a valid configuration. For item 2, a shapeset fails to have finite local complexity exactly when
 some tiling has a shear line in the direction of a side of a shape, which places the problem in $\Sigma^0_1$; hardness reduces the halting problem using a purely geometric version of
-the Robinson tiles modified by Gurevich and Koryakov, which tile periodically when the encoded machine halts and otherwise admit tilings with a sliding shear line.
+the Robinson tiles modified by Gurevich and Koryakov, which tile periodically when the encoded machine halts and otherwise admit tilings with a sliding shear line (Lemma 24); the semi-algorithm of Lemma 23 gives membership. The $\Pi^0_1$-hardness of item 1 comes from the $\Pi^0_1$-completeness of the classical domino problem (Berger; Theorem 2 of the source), which the linked tiling page does not state: it gives only undecidability. A complete expansion links a page for that completeness.
 
 ## Sources
 

@@ -9,7 +9,7 @@ the map $f \mapsto \tau(f \cdot x)$ differs from $\pi$; for Cayley graphs this i
 
 **Theorem (Bartholdi).**
 
-1. The domino problem is undecidable on the *long range graph*, with vertex set $\mathbb{Z}$, edges between $n$ and $n + 1$ for all $n$, a loop at $0$, and for all $m \in \mathbb{Z}$ and $s \in \mathbb{N}$ an edge between $2^s(2m - 1)$ and $2^s(2m + 1)$. (Theorem B of the source). It is the Schreier graph of a self-similar group of linear activity growth: in the transducer generating that group, the number of paths of length $n$ ending at a non-trivial state grows linearly in $n$ (§1.2 of the source).
+1. The domino problem is undecidable on the *long range graph*: the Schreier graph of $A = \{t, u\}$ acting on $\mathbb{Z}$, where $t$ connects $n$ to $n + 1$ for all $n$, and $u$ connects $2^s(2m - 1)$ to $2^s(2m + 1)$ for all $m \in \mathbb{Z}$ and $s \in \mathbb{N}$ and fixes $0$, giving a loop at $0$ (§5.1 and Theorem B of the source). It is the Schreier graph of a self-similar group of linear activity growth: in the transducer generating that group, the number of paths of length $n$ ending at a non-trivial state grows linearly in $n$ (§1.2 of the source).
 2. The domino problem is undecidable on the *Barbieri–Sablik $H$-graph*, a subgraph of the half-plane in which some edges are replaced by loops (Theorem C).
 3. For a substitution $s$ on the square grid, the domino problem on the self-similar structure of $s$ (tilings of the grid in which adjacency is enforced only between black squares of the colorings defined by iterating $s$) is undecidable when $s$ contains an *isthmus*,
    a configuration of blocks forming at least two strips in one direction and one in another; this answers a question of Barbieri and Sablik (Theorem 1.1).
