@@ -107,10 +107,14 @@ private instance : IsMonHom p₁ := p₁Mon.isMonHom_hom
 private lemma p₀_eq_fst : p₀ = (prod.fst : A ⟶ I) := by
   simp [p₀, p₀Mon, unitProduct, Mon.limitCone, Cone.postcompose,
     pairComp, diagramIsoPair, mapPairIso]
+  change (prod.fst : A ⟶ I) ≫ 𝟙 I = prod.fst
+  exact Category.comp_id _
 
 private lemma p₁_eq_snd : p₁ = (prod.snd : A ⟶ I) := by
   simp [p₁, p₁Mon, unitProduct, Mon.limitCone, Cone.postcompose,
     pairComp, diagramIsoPair, mapPairIso]
+  change (prod.snd : A ⟶ I) ≫ 𝟙 I = prod.snd
+  exact Category.comp_id _
 
 private abbrev ι₀ : I ⟶ C :=
   ((unitProduct Hᵒᵖ).cone.π.app ⟨WalkingPair.left⟩).hom.unop
@@ -128,16 +132,18 @@ private lemma first_zero : ι₀ ≫ scalarMap = 0 := by
     (prod.lift_fst (0 : I ⟶ A).op secondScalar.op)
 
 private lemma scalar_first_zero : scalarMap ≫ p₀ = 0 := by
-  apply Quiver.Hom.op_inj
-  rw [op_comp]
-  dsimp only [scalarMap]
-  rw [Quiver.Hom.op_unop]
-  apply prod.hom_ext
-  · simp only [Category.assoc, prod.lift_fst, comp_zero, zero_comp]
-  · simp only [Category.assoc, prod.lift_snd, zero_comp]
-    change (secondScalar ≫ p₀).op = 0
-    rw [p₀_eq_fst]
-    simp [secondScalar]
+  have h : p₀.op ≫ prod.lift (0 : I ⟶ A).op secondScalar.op = 0 := by
+    apply prod.hom_ext
+    · simp [Category.assoc]
+    · rw [Category.assoc, prod.lift_snd]
+      change (secondScalar ≫ p₀).op = 0
+      have hz : secondScalar ≫ p₀ = 0 := by
+        rw [p₀_eq_fst]
+        change prod.lift (0 : I ⟶ I) ((2 : ℤ) • 𝟙 I) ≫ prod.fst = 0
+        exact prod.lift_fst _ _
+      exact congrArg (fun f : I ⟶ I => f.op) hz
+  change (p₀.op ≫ prod.lift (0 : I ⟶ A).op secondScalar.op).unop = 0
+  exact congrArg (fun f : op A ⟶ op I ⨯ op I => f.unop) h
 
 private lemma second_coordinate : ι₁ ≫ scalarMap ≫ p₁ = (2 : ℤ) • 𝟙 I := by
   have hs : ι₁ ≫ scalarMap = secondScalar := by
@@ -146,7 +152,8 @@ private lemma second_coordinate : ι₁ ≫ scalarMap ≫ p₁ = (2 : ℤ) • �
       (prod.lift_snd (0 : I ⟶ A).op secondScalar.op)
   rw [← Category.assoc, hs]
   rw [p₁_eq_snd]
-  simp [secondScalar]
+  change prod.lift (0 : I ⟶ I) ((2 : ℤ) • 𝟙 I) ≫ prod.snd = (2 : ℤ) • 𝟙 I
+  exact prod.lift_snd _ _
 
 example : CochainComplex.IsReducedCochain ι₀ p₀ scalarCochain := by
   constructor
