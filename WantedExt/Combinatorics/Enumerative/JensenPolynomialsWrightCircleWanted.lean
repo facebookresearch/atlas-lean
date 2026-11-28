@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
@@ -48,33 +47,6 @@ public theorem_wanted integral_exp_div_one_sub_exp_sub_eq_log_Gamma {N : ℝ} (h
           (1 / 2 - 1 / N) * Real.exp (-x) / x) =
       Real.log (Real.Gamma (1 / N)) + (1 / 2 - 1 / N) * Real.log (1 / N) -
         1 / 2 * Real.log (2 * Real.pi)
-
-/-- **Eventual hyperbolicity for colored partitions.** Let $r \ge 1$ and $d \ge 1$ be integers. For
-$m \in \mathbb{N}$ let
-$$
-C_r(m) = \sum_{m_1 + \dots + m_r = m} p(m_1) \cdots p(m_r)
-$$
-be the number of $r$-colored partitions of $m$, where the sum runs over all $r$-tuples of natural
-numbers with sum $m$ and $p$ is the partition function. Then for all sufficiently large $n$ the
-Jensen polynomial $J^{d,n}(X) = \sum_{j=0}^{d} \binom{d}{j} C_r(n + j) X^j$ is hyperbolic: the
-number of its real roots, counted with multiplicity, equals its degree.
-
-In the source, $C_r(n)$ is the coefficient of $q^{tn}$ in $1/(q^t; q^t)_\infty^r$ for any
-$t \ge 1$; the source also proves a Hermite-limit statement and higher order Turán inequalities,
-which are not part of this statement.
-
-Source: Jashan Bal, Fern Haraldson, Joshua Males and Ian Thompson, *Jensen Polynomials Associated
-with Wright's Circle Method: Hyperbolicity and Turán Inequalities*, INTEGERS 25 (2025),
-Article A36, Theorem 3, part 1 (`integers-2025-A36-thm-3`). -/
-public theorem_wanted eventually_jensen_hyperbolic_coloredPartitions {r : ℕ} (hr : 1 ≤ r)
-    {d : ℕ} (hd : 1 ≤ d) :
-    ∀ᶠ n in atTop,
-      (∑ j ∈ Finset.range (d + 1), C ((d.choose j : ℝ) *
-          ((∑ x ∈ Finset.Nat.antidiagonalTuple r (n + j),
-            ∏ i, Fintype.card (Nat.Partition (x i)) : ℕ) : ℝ)) * X ^ j).roots.card =
-        (∑ j ∈ Finset.range (d + 1), C ((d.choose j : ℝ) *
-          ((∑ x ∈ Finset.Nat.antidiagonalTuple r (n + j),
-            ∏ i, Fintype.card (Nat.Partition (x i)) : ℕ) : ℝ)) * X ^ j).natDegree
 
 open scoped Classical in
 /-- **Eventual hyperbolicity for partitions into parts $\equiv a \pmod{p}$.** Let $p$ be a prime,
