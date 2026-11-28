@@ -18,3 +18,4 @@ Register (URM), counter and RAM machines, and theorems that Turing machines and 
 - [Recognizable predicates are recognizable by multi-tape machines](tm2-recognizable-implies-multi-tape-reco.md)
 - [Every partial recursive function is URM-computable](partrec-to-urm.md)
 - [RAM machines compute exactly the computable predicates](ram-decidable-iff-computable-pred.md)
+- [P systems with array insertion](p-systems-with-array-insertion/README.md)

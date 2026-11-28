@@ -16,3 +16,5 @@ Algorithms deciding questions about finite automata, regular expressions and con
 - [Satisfiability modulo theories](satisfiability-modulo-theories/README.md)
 - [Decidability of Büchi arithmetic](decidability-of-b-chi-arithmetic/README.md)
 - [Decidability of WS1S](ws1s-decidable.md)
+- [Word equation algorithms](word-equation-algorithms/README.md)
+- [Word equations with length and regular constraints](word-equations-with-length/README.md)
