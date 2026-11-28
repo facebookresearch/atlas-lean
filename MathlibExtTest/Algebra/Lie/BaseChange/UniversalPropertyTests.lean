@@ -57,11 +57,17 @@ private lemma f_e01 : f e01 = Matrix.single 0 1 (1 : S) := by
   change e01.map (algebraMap ℤ S) = Matrix.single 0 1 (1 : S)
   ext i j
   simp only [e01, Matrix.map_apply, Matrix.single_apply, apply_ite, map_one, map_zero]
+  by_cases hij : (0 : Fin 2) = i ∧ (1 : Fin 2) = j
+  · simp only [if_pos hij]
+  · simp only [if_neg hij]
 
 private lemma f_e10 : f e10 = Matrix.single 1 0 (1 : S) := by
   change e10.map (algebraMap ℤ S) = Matrix.single 1 0 (1 : S)
   ext i j
   simp only [e10, Matrix.map_apply, Matrix.single_apply, apply_ite, map_one, map_zero]
+  by_cases hij : (1 : Fin 2) = i ∧ (0 : Fin 2) = j
+  · simp only [if_pos hij]
+  · simp only [if_neg hij]
 
 private lemma F_entry01 (s : S) : F (s ⊗ₜ[ℤ] e01) 0 1 = s := by
   rw [LieHom.liftBaseChange_tmul, f_e01]
@@ -90,10 +96,11 @@ private lemma targetSwap_f_e01 : targetSwap (f e01) = f e10 := by
 example : ¬ Module.Flat ℤ S := by
   intro h
   letI : Module.Flat ℤ S := h
-  have hinj : Function.Injective (algebraMap ℤ S) := FaithfulSMul.algebraMap_injective ℤ S
-  have hzero : algebraMap ℤ S (6 : ℤ) = algebraMap ℤ S 0 := by norm_num
-  have hbad : (6 : ℤ) = 0 := hinj hzero
-  norm_num at hbad
+  letI : Module.IsTorsionFree ℤ S := Module.Flat.isTorsionFree
+  have hzero : (6 : ℤ) • (1 : S) = 0 := by decide
+  have hbad : (1 : S) = 0 :=
+    (smul_eq_zero.mp hzero).resolve_left (by decide : (6 : ℤ) ≠ 0)
+  exact (by decide : (1 : S) ≠ 0) hbad
 
 example : F x 0 1 = 5 := F_entry01 5
 
@@ -119,13 +126,13 @@ example : F ⁅(1 : S) ⊗ₜ[ℤ] e01, (1 : S) ⊗ₜ[ℤ] e10⁆ 0 0 = 1 ∧
     F ⁅(1 : S) ⊗ₜ[ℤ] e01, (1 : S) ⊗ₜ[ℤ] e10⁆ 1 1 = 5 := by
   simp only [F.map_lie, LieHom.liftBaseChange_tmul, one_smul, f_e01, f_e10,
     LieRing.of_associative_ring_bracket]
-  norm_num [Matrix.single_mul_single_same, Matrix.single_apply]
+  norm_num [Matrix.single_mul_single_same, Matrix.single_apply] <;> decide
 
 example : F ⁅(2 : S) ⊗ₜ[ℤ] e01, (3 : S) ⊗ₜ[ℤ] e10⁆ = 0 ∧
     F ((2 : S) ⊗ₜ[ℤ] e01) ≠ 0 ∧ F ((3 : S) ⊗ₜ[ℤ] e10) ≠ 0 := by
   refine ⟨?_, ?_, ?_⟩
   · rw [LieAlgebra.ExtendScalars.bracket_tmul]
-    have hscalar : (2 : S) * 3 = 0 := by norm_num
+    have hscalar : (2 : S) * 3 = 0 := by decide
     rw [hscalar, TensorProduct.zero_tmul, map_zero]
   · intro h
     have hv := congrArg (fun n : N => n 0 1) h
@@ -142,7 +149,8 @@ example : (LieHom.liftBaseChange ℤ S (f.comp sourceSwap)) x 1 0 = 5 ∧
   have hvalue : (LieHom.liftBaseChange ℤ S (f.comp sourceSwap)) x 1 0 = 5 := by
     rw [LieHom.liftBaseChange_tmul, LieHom.comp_apply, sourceSwap_e01, f_e10]
     norm_num [Matrix.smul_apply, Matrix.single_apply]
-  exact ⟨hvalue, by rw [← hsquare]; exact hvalue⟩
+  have he := congrArg (fun n : N => n (1 : Fin 2) 0) hsquare
+  exact ⟨hvalue, he.symm.trans hvalue⟩
 
 example : targetSwap (F x) 1 0 = 5 ∧
     (LieHom.liftBaseChange ℤ S ((LieHom.restrictScalars ℤ S targetSwap).comp f)) x 1 0 = 5 := by
@@ -150,6 +158,7 @@ example : targetSwap (F x) 1 0 = 5 ∧
   have hvalue : targetSwap (F x) 1 0 = 5 := by
     rw [LieHom.liftBaseChange_tmul, map_smul, targetSwap_f_e01, f_e10]
     norm_num [Matrix.smul_apply, Matrix.single_apply]
-  exact ⟨hvalue, by rw [← hsquare]; exact hvalue⟩
+  have he := congrArg (fun n : N => n (1 : Fin 2) 0) hsquare
+  exact ⟨hvalue, he.symm.trans hvalue⟩
 
 end MathlibExtTest.LieBaseChangeUniversalProperty

@@ -14,6 +14,7 @@ module
 
 import MathlibExt.RingTheory.HopfAlgebra.Hom
 import Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra
+import Mathlib.RingTheory.Bialgebra.Primitive
 import Mathlib.Algebra.Group.ULift
 import Mathlib.Data.ZMod.Basic
 meta import Mathlib.Tactic.NormNum
@@ -62,7 +63,7 @@ private lemma F_antipode_x :
     MonoidAlgebra.antipode_single, CommSemiring.antipode_eq_id, LinearMap.id_apply]
   rfl
 
-example : (2 : R) * 3 = 0 ∧ (2 : R) ≠ 0 ∧ (3 : R) ≠ 0 := by norm_num
+example : (2 : R) * 3 = 0 ∧ (2 : R) ≠ 0 ∧ (3 : R) ≠ 0 := by decide
 
 example : double (Multiplicative.ofAdd 1) =
     (ULift.up (Multiplicative.ofAdd 2) : H) := by rfl
@@ -83,17 +84,22 @@ example : F (HopfAlgebra.antipode R x) ≠ 0 := by
   intro h
   have hc := congrArg (fun z : B => z.coeff (ULift.up (Multiplicative.ofAdd (-2)))) h
   rw [F_antipode_x, MonoidAlgebra.coeff_single, Finsupp.single_eq_same] at hc
-  norm_num at hc
+  change (2 : R) = 0 at hc
+  exact (by decide : (2 : R) ≠ 0) hc
 
 example : x * y = 0 ∧ x ≠ 0 ∧ y ≠ 0 := by
   refine ⟨?_, ?_, ?_⟩
-  · norm_num [x, y, MonoidAlgebra.single_mul_single]
+  · norm_num [x, y, MonoidAlgebra.single_mul_single] <;> decide
   · intro h
     have hc := congrArg (fun z : A => z.coeff (Multiplicative.ofAdd 1)) h
-    norm_num [x] at hc
+    simp only [x, MonoidAlgebra.coeff_single, Finsupp.single_eq_same] at hc
+    change (2 : R) = 0 at hc
+    exact (by decide : (2 : R) ≠ 0) hc
   · intro h
     have hc := congrArg (fun z : A => z.coeff (Multiplicative.ofAdd 1)) h
-    norm_num [y] at hc
+    simp only [y, MonoidAlgebra.coeff_single, Finsupp.single_eq_same] at hc
+    change (3 : R) = 0 at hc
+    exact (by decide : (3 : R) ≠ 0) hc
 
 example : ¬ Bialgebra.IsPrimitiveElem R x := by
   intro h
@@ -101,7 +107,7 @@ example : ¬ Bialgebra.IsPrimitiveElem R x := by
   simp only [x, MonoidAlgebra.counit_single] at hc
   change Bialgebra.counitAlgHom R R (2 : R) = 0 at hc
   rw [Bialgebra.counitAlgHom_self, AlgHom.id_apply] at hc
-  norm_num at hc
+  exact (by decide : (2 : R) ≠ 0) hc
 
 example : (F (HopfAlgebra.antipode R x)).coeff
     (ULift.up (Multiplicative.ofAdd 2)) = 0 := by

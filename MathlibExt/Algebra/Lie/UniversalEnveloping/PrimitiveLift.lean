@@ -257,7 +257,9 @@ theorem primitiveCounit_comp_map_ιPrimitive :
   rw [← liftPrimitive_comp_map, LieHom.id_comp]
   have h := (liftPrimitiveEquiv R L (UniversalEnvelopingAlgebra R L)).right_inv
     (BialgHom.id R (UniversalEnvelopingAlgebra R L))
-  simpa only [restrictPrimitive, BialgHom.primitiveLieMap_id, LieHom.id_comp] using h
+  change liftPrimitive R (restrictPrimitive R (BialgHom.id R
+    (UniversalEnvelopingAlgebra R L))) = BialgHom.id R (UniversalEnvelopingAlgebra R L) at h
+  simpa only [restrictPrimitive, BialgHom.primitiveLieMap_id, LieHom.id_comp] using! h
 
 end Triangle
 

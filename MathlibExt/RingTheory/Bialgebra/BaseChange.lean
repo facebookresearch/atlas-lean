@@ -168,7 +168,12 @@ theorem cancelBaseChange_naturality
           (Bialgebra.TensorProduct.map (BialgHom.id S S) f)) x)) x ?_ ?_ ?_
   · simp only [map_zero]
   · intro t y
-    refine TensorProduct.induction_on y ?_ ?_ ?_
+    refine _root_.TensorProduct.induction_on
+      (motive := fun y : S ⊗[R] A =>
+        (Bialgebra.TensorProduct.map (BialgHom.id T T) f)
+            (cancelBaseChange R S T A (t ⊗ₜ[S] y)) =
+          cancelBaseChange R S T B ((Bialgebra.TensorProduct.map (BialgHom.id T T)
+            (Bialgebra.TensorProduct.map (BialgHom.id S S) f)) (t ⊗ₜ[S] y))) y ?_ ?_ ?_
     · simp only [TensorProduct.tmul_zero, map_zero]
     · intro s a
       simp only [Bialgebra.TensorProduct.map_tmul, BialgHom.id_apply, cancelBaseChange_tmul]
