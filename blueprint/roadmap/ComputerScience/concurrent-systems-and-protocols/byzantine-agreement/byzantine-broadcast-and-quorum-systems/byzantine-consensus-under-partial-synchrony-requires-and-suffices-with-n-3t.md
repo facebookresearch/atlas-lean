@@ -1,10 +1,10 @@
 # Byzantine consensus under partial synchrony requires and suffices with n > 3t
 
-In the basic round model of partial synchrony (arbitrary message loss before an unknown global stabilization round, reliable delivery among correct processes afterwards), deterministic unauthenticated Byzantine consensus with agreement, strong validity on correct inputs and termination is solvable if and only if $n > 3t$ (or $n \le 1$). For $n > 3t$ a rotating-coordinator protocol with view locking and quorums of size $n - t$ is safe in every run, regardless of synchrony, and every correct process decides by the end of the first view that starts after stabilization and has a correct coordinator, hence within $t + 1$ views after stabilization.
+In the basic round model of partial synchrony (arbitrary message loss before an unknown global stabilization round GST, reliable delivery among correct processes from GST on), for $n \ge 3t + 1$ Dwork, Lynch and Stockmeyer's Algorithm 3 solves deterministic unauthenticated Byzantine consensus with consistency, strong unanimity and termination for an arbitrary value domain (Theorem 3.3). It runs in trying phases owned in rotation by the processes, with value locking, Srikanth–Toueg broadcast, proposals backed by $n - t$ accepted lists and decisions on $2t + 1$ acknowledgments, and all correct processes decide by round $\mathrm{GST} + 6(n + 1)$ (the bound stated after Theorem 3.3). Conversely, for $2 \le n \le 3t$ no $t$-resilient consensus protocol achieves weak unanimity for binary values when communication is partially synchronous, even with authentication and synchronous processors (Theorem 4.4), so the minimum number of processes for $t$-resilient unauthenticated Byzantine consensus under partial synchrony is $3t + 1$ (Table I).
 
 ## Proof sketch
 
-Safety: any two quorums of size $n - t$ share a correct process when $n > 3t$, so a locked value blocks conflicting decisions in later views. Liveness: after stabilization, a view with a correct coordinator completes. Impossibility for $n \le 3t$ follows by partitioning into three groups and using message loss before stabilization to simulate the synchronous covering argument.
+Safety: a decision rests on $2t + 1$ acknowledgments, so at least $t + 1$ correct processes lock the decided value, and since a proposal needs $n - t$ processes to find its value acceptable, no conflicting value can be proposed in a later phase. Liveness: the trying phase of a correct owner that follows a lock-release phase, both at or after GST, ends in a decision. Impossibility for $n \le 3t$ partitions the processes into three groups of at most $t$ and delays messages between two of them past the decision times of two runs in which the third group is faulty or dead.
 
 ## Depends on
 
@@ -19,4 +19,4 @@ Safety: any two quorums of size $n - t$ share a correct process when $n > 3t$, s
 
 ## Sources
 
-- Cynthia Dwork, Nancy Lynch and Larry Stockmeyer, "Consensus in the Presence of Partial Synchrony", Journal of the ACM, 1988.
+- Cynthia Dwork, Nancy Lynch and Larry Stockmeyer, "Consensus in the Presence of Partial Synchrony", Journal of the ACM 35(2), 1988, Table I, §3.2.3 (Algorithm 3, Theorem 3.3), Theorem 4.4.

@@ -1174,7 +1174,7 @@ def link_plan(base: str, head: str, bodies: dict[int, str], taxonomy: dict, inde
             why += ("; " + (f"#{numbers[0]} adds" if len(numbers) == 1 else f"{numbered(numbers)} add")
                     + " no candidate the batch would give a page")
         # Every reason names the pull requests that name the page.
-        if not any(re.search(rf"#{number}\b", why) for number in numbers):
+        if not any(re.search(rf"#{number}\b", re.sub(r"`[^`]*`", "", why)) for number in numbers):
             why = f"{numbered(numbers)} name{'s' if len(numbers) == 1 else ''} it; {why}"
         if candidates or vanished:
             plan.left.append((article, page, why, candidates))
@@ -1500,6 +1500,37 @@ def reason_kind(why: str) -> str:
     return re.sub(r"\b\d+\b", "N", why).replace("`", "")
 
 
+# Short names for the reasons a planned page is left for an editor (link_plan), each found by a phrase that only its
+# reason holds, for the short form of that list (describe). A reason may hold more than one, as one that several pull
+# requests name says why its page is kept too; one that holds none is given by its kind (reason_kind).
+LEFT_KINDS = (("does not choose between them", "several pull requests name it"),
+              ("is a node still to expand", "a node still to expand"),
+              ("back: relinking it", "it holds a declaration back"),
+              ("records no kind", "it records no kind"),
+              ("records the kind `instance`", "it records the kind instance"),
+              ("its folder page does not list it", "its folder page does not list it"),
+              ("its row holds more than", "its row holds more than its kind, counterparts and seed"),
+              ("Autoform cannot read", "Autoform cannot read it"),
+              ("own dependency sections link", "its own dependency sections link pages"),
+              ("cannot drop its own dependency sections", "its dependency sections cannot be cut as Autoform reads them"),
+              ("is gone or deprecated on `main` now", "its one candidate is gone or deprecated"),
+              ("documented declarations in its topic", "several candidates in its topic"),
+              ("right in a field's folder", "it sits right in a field's folder"),
+              ("only elsewhere", "its candidates are all outside its topic"),
+              ("may also state another page", "its one candidate may state another page"),
+              ("no row the batch can write credits", "no row the batch can write credits its candidate"))
+
+
+def left_line(page: str, why: str, names: list[str]) -> str:
+    """The line of the short form of the planned pages left for an editor (describe) for *page*, left for *why*, with
+    *names* given no page: the page, the pull requests that name it (outside code, *why* names them all, as link_plan
+    gives every reason), the short names of its reason (LEFT_KINDS) and how many declarations it gives no page."""
+    numbers = dict.fromkeys(int(number) for number in re.findall(r"#(\d+)\b", re.sub(r"`[^`]*`", "", why)))
+    kind = ("; ".join(label for phrase, label in LEFT_KINDS if phrase in why)
+            or reason_kind(re.sub(r"^#\d+(?:, #\d+)* names? it; ", "", why)))
+    return f"- `{page}`, {numbered(list(numbers))}: {kind}" + (f"; {len(names)} given no page" if names else "")
+
+
 def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dict,
              sections: dict[str, list[str]], links: LinkPlan | None = None, full: bool = False) -> str:
     """A description for the batch's pull request, in Markdown. Every value in it is the repository's, a description's
@@ -1507,7 +1538,9 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
 
     While the description would pass BODY_LIMIT characters, which fits GitHub's limit with room to spare, the list
     whose short form saves the most gives way to it, one list at a time: how many entries the list holds, and a pointer
-    to `verify`, which prints the description with every list in full (*full*)."""
+    to `verify`, which prints the description with every list in full (*full*). The planned pages left for an editor,
+    the only record of the declarations a batch withholds, give way last, once no other list can, and only to a line a
+    page (left_line)."""
     links = links or LinkPlan()
     missing = report.get("missing", [])
     modules: dict[str, int] = {}
@@ -1535,11 +1568,12 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
     # Each list: its lines in full, and the lines that stand for it in a description too long for GitHub.
     parts: list[tuple[list[str], list[str]]] = []
 
-    def part(title: str, intro: list[str], body: list[str], short: str | None) -> None:
-        """A list, which gives way to *short*, or never if None."""
+    def part(title: str, intro: list[str], body: list[str], short: str | list[str], last: bool = False) -> None:
+        """A list, which gives way to *short*: a line, which the pointer to `verify` follows, or lines of their own;
+        once no other list can, if *last*."""
         heading = [f"### {title}", ""]
-        whole = heading + intro + body + [""]
-        parts.append((whole, whole if short is None else heading + [f"{short} {pointer}", ""]))
+        parts.append((heading + intro + body + [""],
+                      heading + (short if isinstance(short, list) else [f"{short} {pointer}"]) + [""], last))
 
     if plan.added:
         part("Placements", [], ["| Module | Field | Topic | From |", "| --- | --- | --- | --- |"]
@@ -1559,16 +1593,22 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
              f"#{link.number}'s `Graph:` line: `{link.page}`" for link in links.links],
             f"{len(links.links)} planned pages linked, too many to list here; compare each with its declaration:")
     if links.left:
-        intro = ["A merged pull request's `Graph:` line names each of these planned pages, and the batch cannot tell "
-                 "which declaration states it: it links none, and gives no page to the declarations listed, which may "
-                 "state it. An editor links the page to the one that does, in a graph pull request; a batch made after "
-                 "it with `--base` set to this one's base gives the others their pages. Until then, a later batch may "
-                 "link the page to a later pull request's declaration, and those listed here then get their pages only "
-                 "from such a batch ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)):", ""]
-        # Never given way: the only record of which declarations a batch withholds, and for which page.
-        part("Planned pages left for an editor", intro,
+        def intro(shown: str, end: str) -> list[str]:
+            return [f"A merged pull request's `Graph:` line names each of these planned pages, and the batch cannot "
+                    f"tell which declaration states it: it links none, and gives no page to the declarations {shown}, "
+                    "which may state it. An editor links the page to the one that does, in a graph pull request; a batch "
+                    "made after it with `--base` set to this one's base gives the others their pages. Until then, a "
+                    "later batch may link the page to a later pull request's declaration, and those "
+                    f"{shown} here then get their pages only from such a batch "
+                    f"([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)){end}", ""]
+
+        # Given way last, and then to a line a page: the list is the only record of what the batch withholds.
+        part("Planned pages left for an editor", intro("listed", ":"),
              [f"- `{article}` (`{page}`): {why}" + ("; given no page: " + ", ".join(f"`{name}`" for name in names)
-                                                   if names else "") for article, page, why, names in links.left], None)
+                                                   if names else "") for article, page, why, names in links.left],
+             intro("counted", ". A line a page gives the pull requests that name it, the short names of its reason and "
+                              f"how many declarations it gives no page, too many to name here: {pointer}")
+             + [left_line(page, why, names) for _, page, why, names in links.left], last=True)
     if plan.unplaced:
         part("New modules left unplaced", [
             "Nothing placed them: they had no `Place:` line and took no placed module's declarations, or the notes "
@@ -1623,14 +1663,14 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
             f"- `python3 scripts/graph_batch.py verify {commit}`, from a checkout of `main` that has `{head}`: the "
             "taxonomy is main's with the placement plan applied, and the scoped check finds the wiki in step, "
             "exactly what the sync writes" + (" once the planned pages above are linked" if links.links else "") + "."]
-    chosen = [whole for whole, _ in parts]
+    chosen = [whole for whole, _, _ in parts]
     while not full and len("\n".join(lines + [line for block in chosen for line in block] + tail)) >= BODY_LIMIT:
-        # The list whose short form saves the most, the earlier one on a tie.
-        savings = [(len("\n".join(chosen[index])) - len("\n".join(short)), -index)
-                   for index, (_, short) in enumerate(parts) if chosen[index] is not short]
-        if not savings or max(savings)[0] <= 0:
+        # The list whose short form saves the most, the earlier one on a tie; a last one only once no other can.
+        savings = [(not last, len("\n".join(chosen[index])) - len("\n".join(short)), -index)
+                   for index, (_, short, last) in enumerate(parts) if chosen[index] is not short]
+        if not (savings := [saving for saving in savings if saving[1] > 0]):
             break
-        chosen[-max(savings)[1]] = parts[-max(savings)[1]][1]
+        chosen[-max(savings)[2]] = parts[-max(savings)[2]][1]
     return "\n".join(lines + [line for block in chosen for line in block] + tail) + "\n"
 
 

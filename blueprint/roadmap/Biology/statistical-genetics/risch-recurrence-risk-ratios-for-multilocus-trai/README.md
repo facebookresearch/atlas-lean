@@ -8,3 +8,4 @@
 - [Under a multiplicative model `λ - 1` more than halves per degree](prod-sub-one-ge-two-mul.md)
 - [Family-history risk with competing risks](family-history-risk-with-competing-risks/README.md)
 - [Genetic susceptibility from twin concordance](genetic-susceptibility-from-twin-concordance/README.md)
+- [Familial relative risk explained under a log-additive model](familial-relative-risk-explained-under-a-log-additive-model.md)

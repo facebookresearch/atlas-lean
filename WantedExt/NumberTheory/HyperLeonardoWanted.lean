@@ -12,9 +12,10 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.NumberTheory.HyperLeonardo
+public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
+public import MathlibExt.NumberTheory.HyperLeonardoHyperFibonacci
 public import MathlibExt.NumberTheory.LeonardoLogBalanced
 public import WantedExt.NumberTheory.GenLeonardoWanted
-public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
 
 /-!
 # Hyper-Leonardo numbers
@@ -68,16 +69,6 @@ public theorem_wanted hyperLeonardo_recurrence (r : ℕ) :
         ∑ j ∈ Finset.Ico 1 r, (j * (n + r - j).choose (r - j) : ℕ)) ∧
     hyperLeonardo r 0 = 1 ∧ hyperLeonardo r 1 = r + 1
 
-/-- **Recurrence across consecutive orders of hyper-Leonardo numbers.** For all natural numbers
-$r \ge 1$ and $n \ge 1$, the hyper-Leonardo numbers $Le^{(r)}_n$ satisfy
-$Le^{(r)}_n = Le^{(r)}_{n-1} + Le^{(r-1)}_n$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 3, Equation (4)
-(`integers-2026-A48-prop-3`). -/
-public theorem_wanted hyperLeonardo_succ_succ (r n : ℕ) :
-    hyperLeonardo (r + 1) (n + 1) = hyperLeonardo (r + 1) n + hyperLeonardo r (n + 1)
-
 /-- **The convolution of log-concave sequences is log-concave.** Let $(x_n)_{n \ge 0}$ and
 $(y_n)_{n \ge 0}$ be sequences of positive real numbers that are log-concave, that is,
 $x_{j-1} x_{j+1} \le x_j^2$ and $y_{j-1} y_{j+1} \le y_j^2$ for every $j \ge 1$. Let
@@ -95,16 +86,6 @@ public theorem_wanted logConcave_convolution (x y : ℕ → ℝ) (hx : ∀ n, 0 
     (∑ k ∈ Finset.range j, x k * y (j - 1 - k)) *
         (∑ k ∈ Finset.range (j + 2), x k * y (j + 1 - k)) ≤
       (∑ k ∈ Finset.range (j + 1), x k * y (j - k)) ^ 2
-
-/-- **Hyper-Leonardo numbers in terms of hyper-Fibonacci numbers.** For all natural numbers $r$
-and $n$, the hyper-Leonardo number $\mathrm{Le}^{(r)}_n$ and the hyper-Fibonacci number
-$F^{(r)}_{n+1}$ satisfy $\mathrm{Le}^{(r)}_n = 2F^{(r)}_{n+1} - \binom{n+r}{r}$ as integers.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 6, Equation (9)
-(`integers-2026-A48-prop-6`). -/
-public theorem_wanted hyperLeonardo_eq_hyperFibonacci (r n : ℕ) :
-    hyperLeonardo r n = 2 * (hyperFibonacci r (n + 1) : ℤ) - ((n + r).choose r : ℕ)
 
 /-- **Log-convexity and log-concavity of the Leonardo numbers.** Let $Le_n$ be the Leonardo
 numbers ($Le_0 = Le_1 = 1$ and $Le_{n+2} = Le_{n+1} + Le_n + 1$). Then

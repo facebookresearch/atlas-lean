@@ -15,6 +15,8 @@ public import MathlibExt.NumberTheory.ErdosMinimumOverlapMoser
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapQuarter
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS1956FiveTwelfthsHolds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundMRS1956PointFourHolds
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundErdosUnpublishedFourNinthsHolds
+public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantLowerBoundScherkUnpublished1955Holds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantUpperBoundYKLBMWKCZGS2026TTTDiscoverHolds
 public import MathlibExt.NumberTheory.ErdosMinimumOverlapConstantLowerBoundS1958Holds
 
@@ -88,12 +90,6 @@ Source: Ye et al. 2026 (SimpleTES); Optimization Problems, Constant 1b. -/
 def upperBound_YLTLYSTYLLGDHZSWZSHMELCZX2026_SimpleTES : Prop :=
   C₁ᵦ ≤ (380868 : ℝ) / 1000000
 
-/-- **Scherk's lower bound for the minimum-overlap constant (statement).** The statement that the
-continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $1 - 1/\sqrt{2} \le C_{1b}$.
-
-Source: Scherk, unpublished 1955; Optimization Problems, Constant 1b. -/
-def lowerBound_Scherk_unpublished_1955 : Prop := 1 - 1 / Real.sqrt 2 ≤ C₁ᵦ
-
 /-- **White's lower bound for the minimum-overlap constant (statement).** The statement that the
 continuous Erdős minimum-overlap constant $C_{1b}$ satisfies $0.379005 \le C_{1b}$, where
 $0.379005$ is the exact rational number $379005/1000000$.
@@ -121,13 +117,6 @@ universal asymptotic lower bound $c$ satisfies $c \le C_{1b}$.
 Source: Haugland 2016 and the uniform partition clause of Optimization Problems 1b. -/
 public theorem_wanted continuousDiscreteAsymptoticCharacterization_holds :
   continuousDiscreteAsymptoticCharacterization
-
-/-- **Erdős's unpublished upper bound $4/9$ for the minimum-overlap constant.** The continuous
-Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 4/9$.
-
-Source: Erdős, unpublished, recorded by Optimization Problems 1b. -/
-public theorem_wanted upperBound_Erdos_unpublished_fourNinths_holds :
-  upperBound_Erdos_unpublished_fourNinths
 
 /-- **Haugland's unpublished 1993 upper bound for the minimum-overlap constant.** The continuous
 Erdős minimum-overlap constant $C_{1b}$ satisfies $C_{1b} \le 0.385694$.
@@ -161,13 +150,6 @@ Erdős minimum-overlap constant $C_{1b}$ is at most $0.380868$.
 Source: Ye et al. 2026 and Optimization Problems 1b. -/
 public theorem_wanted upperBound_YLTLYSTYLLGDHZSWZSHMELCZX2026_SimpleTES_holds :
   upperBound_YLTLYSTYLLGDHZSWZSHMELCZX2026_SimpleTES
-
-/-- **Scherk's lower bound for the minimum-overlap constant.** The continuous Erdős
-minimum-overlap constant $C_{1b}$ satisfies $1 - 1/\sqrt{2} \le C_{1b}$.
-
-Source: Scherk, unpublished 1955, recorded by Optimization Problems 1b. -/
-public theorem_wanted lowerBound_Scherk_unpublished_1955_holds :
-  lowerBound_Scherk_unpublished_1955
 
 /-- **White's lower bound for the minimum-overlap constant.** The continuous Erdős minimum-overlap
 constant $C_{1b}$ satisfies $0.379005 \le C_{1b}$.
