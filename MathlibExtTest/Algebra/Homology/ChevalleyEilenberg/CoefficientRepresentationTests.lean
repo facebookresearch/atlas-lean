@@ -49,12 +49,16 @@ local instance : LieRingModule Mat ℤ where
   lie_add _ _ _ := by simp
   leibniz_lie _ _ _ := by simp
 local instance : LieModule ℤ Mat ℤ where
-  smul_lie _ _ _ := by simp
-  lie_smul _ _ _ := by simp
+  smul_lie r _ _ := by
+    change (0 : ℤ) = r • (0 : ℤ)
+    exact (smul_zero r).symm
+  lie_smul r _ _ := by
+    change (0 : ℤ) = r • (0 : ℤ)
+    exact (smul_zero r).symm
 local instance : LieModule.IsTrivial Mat ℤ := ⟨fun _ _ => rfl⟩
 
 private def traceMap : Mat →ₗ⁅ℤ,Mat⁆ ℤ where
-  __ := Matrix.traceLinearMap (Fin 2) ℤ
+  toLinearMap := Matrix.traceLinearMap (Fin 2) ℤ ℤ
   map_lie' {x m} := by
     change Matrix.trace (x * m - m * x) = 0
     rw [Matrix.trace_sub, Matrix.trace_mul_comm, sub_self]
@@ -113,7 +117,7 @@ example : LieModuleCat.UniversalEnveloping.representation ℤ Mat M
 example : (LieModuleCat.UniversalEnveloping.unitIso ℤ Mat M).hom e10 = e10 :=
   LieModuleCat.UniversalEnveloping.unitIso_hom_apply ℤ Mat M e10
 
-private def categoryDouble : M ⟶ M := LieModuleCat.ofHom doubled
+private def categoryDouble : M ⟶ M := LieModuleCat.ofHom ℤ Mat (X := M) (Y := M) doubled
 example : (LieModuleCat.UniversalEnveloping.representMap ℤ Mat categoryDouble).hom e10 =
     (2 : ℤ) • e10 :=
   (LieModuleCat.UniversalEnveloping.representMap_apply ℤ Mat categoryDouble e10).trans rfl
@@ -137,7 +141,12 @@ private def collapseCoefficient : T →ₗ⁅ℤ,Mat⁆ LieModuleCat.restrictObj
     rfl
 example : coefficientLieAmbientMap ℤ Mat (0 : Mat →ₗ⁅ℤ⁆ Mat) T T collapseCoefficient
     (ExteriorAlgebra.ι ℤ e01 ⊗ₜ[ℤ] (1 : ℤ)) = 0 := by
-  rw [coefficientLieAmbientMap_tmul]
+  have h := coefficientLieAmbientMap_tmul ℤ Mat (0 : Mat →ₗ⁅ℤ⁆ Mat) T T
+    collapseCoefficient (ExteriorAlgebra.ι ℤ e01) (show T from (1 : ℤ))
+  refine h.trans ?_
+  change ExteriorAlgebra.map (0 : Mat →ₗ[ℤ] Mat) (ExteriorAlgebra.ι ℤ e01) ⊗ₜ[ℤ]
+    collapseCoefficient (show T from (1 : ℤ)) = 0
+  rw [ExteriorAlgebra.map_apply_ι]
   simp
 
 private abbrev canonical := (canonicalChainData ℤ Mat).complex
@@ -147,6 +156,10 @@ example : ((ChainData.ofComplexIso ℤ Mat canonical signedCoordinates).hom.f 1)
     (exteriorPower.ιMulti ℤ 1 (fun _ => e01)) =
       -exteriorPower.ιMulti ℤ 1 (fun _ => e01) := by
   rw [ChainData.ofComplexIso_hom_f]
-  simp [signedCoordinates]
+  change ((-1 : ℤ) • (𝟙 (chainObject ℤ Mat 1))).hom
+    (exteriorPower.ιMulti ℤ 1 (fun _ => e01)) =
+      -exteriorPower.ιMulti ℤ 1 (fun _ => e01)
+  rw [neg_one_zsmul, ModuleCat.hom_neg, ModuleCat.hom_id,
+    LinearMap.neg_apply, LinearMap.id_apply]
 
 end MathlibExtTest.CoefficientRepresentation
