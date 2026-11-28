@@ -1,4 +1,4 @@
-# Mod p counting principles need linear polynomial calculus degree in characteristic $q \nmid p$
+# Mod p counting principles need linear polynomial calculus degree in characteristic $q$ coprime to $p$
 
 Over a field of characteristic $q$ with $q \nmid p$, and over the ring $\mathbb{Z}_q$ when $p$ and $q$ are relatively prime, every polynomial calculus refutation of the mod $p$ counting principle needs degree linear in $n$, while over $\mathbb{Z}_p$ (the field $\mathbb{F}_p$ when $p$ is prime) constant degree suffices: a linear degree gap between characteristics.
 
