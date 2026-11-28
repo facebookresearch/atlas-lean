@@ -114,14 +114,22 @@ abbrev U : ModuleCat ℤ ⥤ ModuleCat ℤ := 𝟭 _
 /-- The integer complex concentrated in degree zero. -/
 abbrev Q : ChainComplex (ModuleCat ℤ) ℕ := (ChainComplex.single₀ (ModuleCat ℤ)).obj Z
 
+/-- The native degree-zero identification after identity restriction. -/
+private abbrev mappedZeroIso : U.obj (Q.X 0) ≅ U.obj Z :=
+  U.mapIso (HomologicalComplex.singleObjXSelf (ComplexShape.down ℕ) 0 Z)
+
 /-- Its identity augmentation has an actual contracting splitting. -/
 def splitting : Functor.AugmentationSplit U Q Z (𝟙 Q) where
-  section_ := 𝟙 Z
+  section_ := mappedZeroIso.inv
   s _ := 0
-  section_comp := by simp
+  section_comp := by
+    change mappedZeroIso.inv ≫ mappedZeroIso.hom = 𝟙 (U.obj Z)
+    exact mappedZeroIso.inv_hom_id
   zero := by
-    change (𝟙 Z) ≫ (𝟙 Z) + (0 : Z ⟶ Q.X 1) ≫ 0 = 𝟙 Z
-    rw [Category.id_comp, Limits.zero_comp, add_zero]
+    change mappedZeroIso.hom ≫ mappedZeroIso.inv +
+      (0 : U.obj (Q.X 0) ⟶ U.obj (Q.X 1)) ≫ U.map (Q.d 1 0) = 𝟙 (U.obj (Q.X 0))
+    rw [Limits.zero_comp, add_zero]
+    exact mappedZeroIso.hom_inv_id
   succ n := by
     have hz : IsZero (Q.X (n + 1)) :=
       HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 0 Z (n + 1) (by simp)
