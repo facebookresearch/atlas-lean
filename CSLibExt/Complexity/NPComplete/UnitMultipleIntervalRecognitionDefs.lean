@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# UNIT d-INTERVAL GRAPH RECOGNITION is NP-complete for every fixed d ≥ 2: definitions
+# UNIT d-INTERVAL GRAPH RECOGNITION: definitions
 
 Source:
 V. Ardévol Martínez, R. Rizzi, F. Sikora and S. Vialette, "Recognizing unit multiple interval
