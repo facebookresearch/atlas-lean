@@ -16,14 +16,16 @@ import Mathlib.Algebra.Category.ModuleCat.Monoidal.Symmetric
 import Mathlib.Data.ZMod.Basic
 
 /-!
-# Exact finite limits and braiding on different complex axes
+# Infinite exact products and braiding on different complex axes
 
-Finite products of integer modules are exact, so homology preserves their
-limits by instance resolution from the actual module-category AB4* structure.
-A chain direction indexed by natural numbers and a cyclic cochain direction
-indexed by ZMod2 both have nonzero integer coefficients. The native bicomplex
-braiding swaps the factors of the pure tensor 2 ⊗ 3 in cell (2,1), and its
-inverse recovers the original factors. The two axes retain their shapes.
+Finite-product preservation of homology follows from additivity. For the
+infinite shape Discrete ℕ, the module category's AB4* structure supplies exact
+products and hence a homology-preserving limit functor. The general homology
+limit instance then applies to this genuinely infinite shape.
+
+The rank-one tensor formulas do not detect the swap, since 2 ⊗ 3 = 3 ⊗ 2 over ℤ.
+The rank-two off-diagonal basis tensor does: its two coordinates interchange
+under the actual bicomplex braiding, while both complex axes keep their shapes.
 -/
 
 noncomputable section
@@ -37,6 +39,12 @@ private abbrev C := ModuleCat.{0} ℤ
 
 example : PreservesLimitsOfShape (Discrete (Fin 2))
     (homologyFunctor C (ComplexShape.down ℕ) 0) := inferInstance
+
+example : PreservesLimitsOfShape (Discrete ℕ)
+    (homologyFunctor C (ComplexShape.down ℕ) 0) := by
+  have : (lim (J := Discrete ℕ) (C := C)).PreservesHomology := inferInstance
+  exact homologyFunctor_preservesLimitsOfShape
+    (C := C) (J := Discrete ℕ) (c := ComplexShape.down ℕ) 0
 
 private def integerComplex {ι : Type} (c : ComplexShape ι) : HomologicalComplex C c where
   X _ := ModuleCat.of ℤ ℤ

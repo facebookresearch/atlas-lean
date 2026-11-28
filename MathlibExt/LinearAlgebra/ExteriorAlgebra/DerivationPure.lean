@@ -16,7 +16,8 @@ public import Mathlib.LinearAlgebra.Alternating.Uncurry.Fin
 # Exterior derivations on pure words
 
 For a commutative ring R, an R-module M and g ∈ End_R(M), the induced degree-zero derivation
-acts on x₀∧…∧xₙ₋₁ by summing the words in which one xᵢ is replaced by g(xᵢ). No sign occurs
+acts on the n+1 factors x₀∧…∧xₙ by summing the words in which one xᵢ is replaced by g(xᵢ).
+No sign occurs
 while that factor remains in its position.
 
 Moving the modified factor to the first position gives the equivalent formula ∑ᵢ(-1)^i

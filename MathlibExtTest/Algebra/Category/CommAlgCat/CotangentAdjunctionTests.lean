@@ -78,7 +78,7 @@ private def dx : CommAlgCat.CotangentDerivations ℤ A point coefficients := by
 
 private lemma dx_X :
     CommAlgCat.cotangentDerivationValue ℤ A point coefficients dx (MvPolynomial.X 0) = 1 := by
-  letI := IsScalarTower.of_compHom ℤ P coefficients
+  let := IsScalarTower.of_compHom ℤ P coefficients
   change (MvPolynomial.mkDerivation ℤ (fun _ : Fin 1 => (1 : coefficients)))
     (MvPolynomial.X 0) = 1
   exact MvPolynomial.mkDerivation_X ℤ (fun _ : Fin 1 => (1 : coefficients)) (0 : Fin 1)
