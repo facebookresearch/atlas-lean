@@ -33,107 +33,7 @@ namespace MetaMathlibExt
 namespace bergman_lucas_even_add
 
 open BasePhiConjugate
-
-private theorem pow_add_prev (i : ℤ) : φ ^ i + φ ^ (i - 1) = φ ^ (i + 1) := by
-  rw [show i = (i - 1) + 1 by omega, show i - 1 + 1 - 1 = i - 1 by omega,
-    show i - 1 + 1 + 1 = (i - 1) + 2 by omega, zpow_add₀ Real.goldenRatio_ne_zero,
-    zpow_add₀ Real.goldenRatio_ne_zero (i - 1) 2, zpow_one, zpow_ofNat, Real.goldenRatio_sq]
-  ring
-
-private theorem value_insert {S : Finset ℤ} {i : ℤ} (hi : i ∉ S) :
-    basePhiValue (insert i S) = φ ^ i + basePhiValue S :=
-  Finset.sum_insert hi
-
-private theorem value_lt_of_spacing (S : Finset ℤ) (g : ℤ) (hg : g = 1 ∨ g = 2)
-    (hgap : ∀ i ∈ S, ∀ j ∈ S, i < j → i + g ≤ j) (k : ℤ) (hk : ∀ i ∈ S, i < k) :
-    basePhiValue S < φ ^ (k + 2 - g) := by
-  induction S using Finset.strongInductionOn generalizing k
-  rename_i S ih
-  by_cases hS : S.Nonempty
-  · let m := S.max' hS
-    have hm : m ∈ S := Finset.max'_mem _ _
-    have hrest := ih (S.erase m) (Finset.erase_ssubset hm)
-      (fun i hi j hj hij => hgap i (Finset.mem_of_mem_erase hi) j
-        (Finset.mem_of_mem_erase hj) hij) (m + 1 - g) (by
-      intro i hi
-      have hiS := Finset.mem_of_mem_erase hi
-      have him : i < m :=
-        lt_of_le_of_ne (Finset.le_max' S i hiS) (Finset.ne_of_mem_erase hi)
-      have := hgap i hiS m hm him
-      omega)
-    have heq : basePhiValue S = φ ^ m + basePhiValue (S.erase m) := by
-      rw [← value_insert (Finset.notMem_erase m S), Finset.insert_erase hm]
-    have hm' := hk m hm
-    rw [heq]
-    rcases hg with rfl | rfl
-    · have h₁ : m + 1 - 1 + 2 - 1 = m + 1 := by omega
-      rw [h₁] at hrest
-      calc
-        _ < φ ^ (m + 1) + φ ^ m := by linarith
-        _ = φ ^ (m + 2) := by
-          simpa only [show m + 1 - 1 = m by omega, show m + 1 + 1 = m + 2 by omega]
-            using pow_add_prev (m + 1)
-        _ ≤ _ := zpow_le_zpow_right₀ Real.one_lt_goldenRatio.le (by omega)
-    · have h₂ : m + 1 - 2 + 2 - 2 = m - 1 := by omega
-      rw [h₂] at hrest
-      calc
-        _ < φ ^ m + φ ^ (m - 1) := by linarith
-        _ = φ ^ (m + 1) := pow_add_prev m
-        _ ≤ _ := zpow_le_zpow_right₀ Real.one_lt_goldenRatio.le (by omega)
-  · rw [Finset.not_nonempty_iff_eq_empty.mp hS, basePhiValue_empty]
-    exact zpow_pos Real.goldenRatio_pos _
-
-private theorem bergman_value_lt {S : Finset ℤ} (hS : IsBergmanExpansion S)
-    {k : ℤ} (hk : ∀ i ∈ S, i < k) : basePhiValue S < φ ^ k := by
-  simpa using value_lt_of_spacing S 2 (Or.inr rfl) (by
-    intro i hi j hj hij
-    have hn := hS i hi
-    by_contra! h
-    obtain rfl : j = i + 1 := by omega
-    exact hn hj) k hk
-
-private theorem value_pow_le_of_mem {S : Finset ℤ} {i : ℤ} (hi : i ∈ S) :
-    φ ^ i ≤ basePhiValue S :=
-  Finset.single_le_sum (fun j _ => (zpow_pos Real.goldenRatio_pos j).le) hi
-
-private theorem bergman_eq_of_value_eq {S T : Finset ℤ}
-    (hS : IsBergmanExpansion S) (hT : IsBergmanExpansion T)
-    (hval : basePhiValue S = basePhiValue T) : S = T := by
-  classical
-  by_contra hne
-  let D := (S \ T) ∪ (T \ S)
-  have hD : D.Nonempty := by
-    by_contra h
-    apply hne
-    ext i
-    have hni : i ∉ D := fun hi => h ⟨i, hi⟩
-    simp only [D, Finset.mem_union, Finset.mem_sdiff] at hni
-    tauto
-  let k := D.max' hD
-  have hk : k ∈ D := Finset.max'_mem _ _
-  have hdiff : basePhiValue (S \ T) = basePhiValue (T \ S) := by
-    have hs := Finset.sum_sdiff (s₁ := S ∩ T) (s₂ := S) (f := fun i : ℤ => φ ^ i)
-      Finset.inter_subset_left
-    have ht := Finset.sum_sdiff (s₁ := S ∩ T) (s₂ := T) (f := fun i : ℤ => φ ^ i)
-      Finset.inter_subset_right
-    rw [Finset.sdiff_inter_self_left] at hs
-    rw [Finset.sdiff_inter_self_right] at ht
-    unfold basePhiValue at *
-    linarith
-  have impossible {A B : Finset ℤ} (hAB : A ∪ B = D)
-      (hA : k ∈ A) (hB : k ∉ B) (hBerg : IsBergmanExpansion B)
-      (hval : basePhiValue A = basePhiValue B) : False := by
-    have hlt := bergman_value_lt hBerg (k := k) (by
-      intro i hi
-      have hle := Finset.le_max' D i (hAB ▸ Finset.mem_union_right A hi)
-      exact lt_of_le_of_ne hle fun h => hB (h ▸ hi))
-    exact hlt.not_ge (hval ▸ value_pow_le_of_mem hA)
-  rcases Finset.mem_union.mp hk with h | h
-  · exact impossible rfl h (fun h' => (Finset.mem_sdiff.mp h').2 (Finset.mem_sdiff.mp h).1)
-      (fun i hi hj => hT i (Finset.mem_sdiff.mp hi).1 (Finset.mem_sdiff.mp hj).1) hdiff
-  · exact impossible (Finset.union_comm ..) h
-      (fun h' => (Finset.mem_sdiff.mp h').2 (Finset.mem_sdiff.mp h).1)
-      (fun i hi hj => hS i (Finset.mem_sdiff.mp hi).1 (Finset.mem_sdiff.mp hj).1) hdiff.symm
+open BasePhiRepresentations (value_pow_le_of_mem)
 
 private theorem lucas_lt_pow {n : ℕ} (hn : 1 ≤ n) :
     (lucasNumber (2 * n - 1) : ℝ) < φ ^ ((2 * n - 1 : ℕ) : ℤ) := by
@@ -293,9 +193,8 @@ public theorem bergman_lucas_even_add (n k : ℕ) (hn : 1 ≤ n)
     have hnotA' : (2 : ℤ) * (n : ℤ) ∉ insert (-(2 * (n : ℤ))) S := by
       simp only [Finset.mem_insert, not_or]
       exact ⟨by omega, hnotA⟩
-    rw [bergman_lucas_even_add.value_insert hnotA',
-      bergman_lucas_even_add.value_insert hnotB, hSk, ← add_assoc,
-      BasePhiLucasPowers.pair_value, hTN]
+    rw [basePhiValue_eq_sum, Finset.sum_insert hnotA', Finset.sum_insert hnotB,
+      ← basePhiValue_eq_sum S, hSk, ← add_assoc, BasePhiLucasPowers.pair_value, hTN]
     norm_cast
   have hberg : IsBergmanExpansion
       (insert (2 * (n : ℤ)) (insert (-(2 * (n : ℤ))) S)) := by
@@ -324,7 +223,7 @@ public theorem bergman_lucas_even_add (n k : ℕ) (hn : 1 ≤ n)
         have := hlb _ hmem
         omega
       · exact hS i hiS
-  have heq := bergman_lucas_even_add.bergman_eq_of_value_eq hberg hT hval
+  have heq := BasePhiRepresentations.bergman_eq_of_value_eq hberg hT hval
   exact heq.symm
 
 

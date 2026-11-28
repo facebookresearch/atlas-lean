@@ -189,13 +189,12 @@ private theorem eq_splice {S E T : Finset ℤ} {a t : ℤ} (ha : a ∈ S) (ht : 
     · rcases hsep (i + 1) hj i hi with h | h <;> omega
     · exact hS i (hsub hi) (hsub hj)
   have hsplit : basePhiValue I + φ ^ t + φ ^ a = basePhiValue S := by
-    unfold I basePhiValue
+    simp only [I, basePhiValue_eq_sum]
     rw [Finset.sum_erase_add _ _ (Finset.mem_erase.mpr ⟨hat.symm, ht⟩),
       Finset.sum_erase_add _ _ ha]
   apply bergman_eq_of_value_eq hT hb
-  change basePhiValue T = ∑ i ∈ E ∪ I, φ ^ i
-  rw [Finset.sum_union hd]
-  change basePhiValue T = basePhiValue E + basePhiValue I
+  rw [basePhiValue_eq_sum (E ∪ I), Finset.sum_union hd, ← basePhiValue_eq_sum E,
+    ← basePhiValue_eq_sum I]
   linarith
 
 end bergman_lucas_odd_add
@@ -272,8 +271,8 @@ public theorem bergman_lucas_odd_add (n : ℕ) (hn : 2 ≤ n) :
       omega
     · rw [hSN, hTN]
       push_cast
-      unfold basePhiValue
-      rw [Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; omega),
+      rw [basePhiValue_eq_sum,
+        Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; omega),
         Finset.sum_pair (by omega)]
       have hlo := pow_add_prev (a - 1)
       have hlo' := pow_add_prev a
@@ -305,8 +304,8 @@ public theorem bergman_lucas_odd_add (n : ℕ) (hn : 2 ≤ n) :
       omega
     · rw [hSN, hTN]
       push_cast
-      unfold basePhiValue
-      rw [Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; omega),
+      rw [basePhiValue_eq_sum,
+        Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; omega),
         Finset.sum_pair (by omega)]
       have hlo := pow_add_prev (a - 1)
       rw [show a - 1 - 1 = a - 2 by omega, sub_add_cancel] at hlo
@@ -332,8 +331,8 @@ public theorem bergman_lucas_odd_add (n : ℕ) (hn : 2 ≤ n) :
       omega
     · rw [hSN, hTN]
       push_cast
-      unfold basePhiValue
-      rw [Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; omega),
+      rw [basePhiValue_eq_sum,
+        Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; omega),
         Finset.sum_insert (by simp only [Finset.mem_insert, Finset.mem_singleton]; omega),
         Finset.sum_pair (by omega)]
       have hlo := pow_add_prev (a - 1)

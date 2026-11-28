@@ -66,10 +66,10 @@ example : ∃ b : ℤ, ({5, -1, -3, -6} : Finset ℤ) =
     {b, b + 3, b + 7 + 4} ∪ ({-1} : Finset ℤ).image (· + (b - (-4) + 2)) := by
   obtain ⟨_, h3, h5, h1n, _, h3n, h4n, h6n⟩ := golden_zpow_examples
   have hS : basePhiValue {3, -1, -4} = 5 := by
-    rw [basePhiValue, Finset.sum_insert (by decide), Finset.sum_pair (by decide), h3, h1n, h4n]
+    rw [basePhiValue_eq_sum, Finset.sum_insert (by decide), Finset.sum_pair (by decide), h3, h1n, h4n]
     ring
   have hT : basePhiValue {5, -1, -3, -6} = 12 := by
-    rw [basePhiValue, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    rw [basePhiValue_eq_sum, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_pair (by decide), h5, h1n, h3n, h6n]
     ring
   have h := (bergman_lucas_odd_add 2 (by decide)).1 1 (by decide) (by decide)
@@ -84,10 +84,10 @@ example : ∃ b : ℤ, ({5, 3, 1, -6} : Finset ℤ) =
     {b, b + 7 + 2, b + 7 + 4} ∪ ({1} : Finset ℤ).image (· + (b - (-4) + 2)) := by
   obtain ⟨_, h3, h5, _, _, _, h4n, h6n⟩ := golden_zpow_examples
   have hS : basePhiValue {3, 1, -4} = 6 := by
-    rw [basePhiValue, Finset.sum_insert (by decide), Finset.sum_pair (by decide), h3, zpow_one, h4n]
+    rw [basePhiValue_eq_sum, Finset.sum_insert (by decide), Finset.sum_pair (by decide), h3, zpow_one, h4n]
     ring
   have hT : basePhiValue {5, 3, 1, -6} = 17 := by
-    rw [basePhiValue, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    rw [basePhiValue_eq_sum, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_pair (by decide), h5, h3, zpow_one, h6n]
     ring
   have h := (bergman_lucas_odd_add 2 (by decide)).2.1 2 (by decide) (by decide)
@@ -101,10 +101,10 @@ example : ∃ b : ℤ, ({5, 3, 1, -6} : Finset ℤ) =
 example : ∃ b : ℤ, ({5, 2, -3, -6} : Finset ℤ) = {b, b + 3, b + 4 + 4, b + 4 + 7} := by
   obtain ⟨h2, _, h5, _, h2n, h3n, _, h6n⟩ := golden_zpow_examples
   have hS : basePhiValue {2, -2} = 3 := by
-    rw [basePhiValue, Finset.sum_pair (by decide), h2, h2n]
+    rw [basePhiValue_eq_sum, Finset.sum_pair (by decide), h2, h2n]
     ring
   have hT : basePhiValue {5, 2, -3, -6} = 14 := by
-    rw [basePhiValue, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    rw [basePhiValue_eq_sum, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
       Finset.sum_pair (by decide), h5, h2, h3n, h6n]
     ring
   have h := (bergman_lucas_odd_add 2 (by decide)).2.2 0 (by decide)

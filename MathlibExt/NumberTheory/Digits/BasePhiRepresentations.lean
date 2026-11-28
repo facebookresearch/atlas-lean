@@ -42,6 +42,10 @@ representation). -/
 noncomputable def basePhiValue (S : Finset ℤ) : ℝ :=
   ∑ i ∈ S, φ ^ i
 
+/-- The value of a finite base phi expansion is the sum of the golden-ratio powers at its
+occupied positions. -/
+lemma basePhiValue_eq_sum (S : Finset ℤ) : basePhiValue S = ∑ i ∈ S, φ ^ i := rfl
+
 /-- **Bergman expansions.** Encode a finite base phi expansion with digits $0$ and $1$ by the
 finite set $S \subseteq \mathbb{Z}$ of positions of its digits $1$. The expansion is a Bergman
 expansion when no two digits $1$ are adjacent, that is, $i + 1 \notin S$ for every $i \in S$.

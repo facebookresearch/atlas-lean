@@ -24,7 +24,7 @@ sum of the golden-ratio powers at that index and its negative.
 ## References
 
 * Michel Dekking and Ad van Loon, *Counting Base Phi Representations*, The Fibonacci Quarterly
-  62 (2024), no. 2, 112–124, Section 4, Example 3, for the even-index identity.
+  62 (2024), no. 2, 112–124, Section 4, Example 4, for the even-index identity.
 * The bounds use `cb_lucas_binet` from `MathlibExt.NumberTheory.ChurchBicknellFibonacciConvolution`.
 -/
 
