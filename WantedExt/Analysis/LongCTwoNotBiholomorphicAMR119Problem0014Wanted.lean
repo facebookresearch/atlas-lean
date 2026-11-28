@@ -10,8 +10,8 @@ LICENSE file in the root directory of this source tree.
 # A long ℂ² which is not biholomorphic to ℂ² (SCV problem list, Problem 4.3.3)
 
 Several Complex Variables Problem List, Problem 4.3.3: is "long" `ℂ²` biholomorphic to `ℂ²`? (A
-complex manifold is a long `ℂ²` if it is the union of proper subsets that are biholomorphic to
-`ℂ²`.)
+complex manifold is a long `ℂ²` if it is the union of an increasing sequence of proper open
+subsets, each biholomorphic to `ℂ²`.)
 -/
 
 module
