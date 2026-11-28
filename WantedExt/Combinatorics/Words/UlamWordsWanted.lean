@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.Theta
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import MathlibExt.Combinatorics.Words.UlamWords
+public import MathlibExt.Combinatorics.Words.UlamWordsSierpinski
 
 /-!
 # Ulam words — wishlist
@@ -63,19 +63,6 @@ Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 public theorem_wanted isUlamWord_zeros_one_zero_one_zeros_iff (a b : ℕ) (hab : 2 ≤ a + b) :
     IsUlamWord (List.replicate a false ++ [true, false, true] ++ List.replicate b false) ↔
       (a + b) % 2 = 1
-
-/-- **Ulam words made of ones followed by zeros.** For natural numbers $x$ and $y$ with
-$1 \le y \le x$, the word $1^y 0^{x-y}$ ($y$ ones followed by $x - y$ zeros) is an Ulam word if
-and only if $(x, y) = (1, 1)$ or $(x, y)$ belongs to the discrete Sierpiński triangle
-$\mathcal{S}$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 9
-(precise form of Theorem 3). -/
-public theorem_wanted isUlamWord_ones_zeros_iff_mem_discreteSierpinski (x y : ℕ) (hy : 1 ≤ y)
-    (hyx : y ≤ x) :
-    IsUlamWord (List.replicate y true ++ List.replicate (x - y) false) ↔
-      (x, y) = (1, 1) ∨ (x, y) ∈ discreteSierpinski
 
 /-- **Padding the word 10101 with zeros.** For natural numbers $a$ and $b$ with $a + b \ge 1$, the
 word $0^a 10101 0^b$ ($a$ zeros, then $10101$, then $b$ zeros) is an Ulam word if and only if $a$

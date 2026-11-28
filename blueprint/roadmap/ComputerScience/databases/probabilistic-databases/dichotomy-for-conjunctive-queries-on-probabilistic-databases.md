@@ -13,7 +13,7 @@ unsound (Appendix A of the journal manuscript) and is not used here.
 - [Hierarchical conjunctive queries](hierarchical-conjunctive-queries.md)
 - [$\#P$-complete functions](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/sharp-pcomplete.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
-- [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
+- [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 - [Dichotomy for unions of conjunctive queries on tuple-independent probabilistic databases](dichotomy-for-ucqs-on-probabilistic-databases.md)
 
 ## Proof depends on

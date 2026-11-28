@@ -16,8 +16,10 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.LucasnomialSum
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.LucasTetrahedralRecurrence
 public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.LucasPolytopicNumberHasSumInvLucasBracketMulSucc
+public import MathlibExt.NumberTheory.LucasPolytopicNumberEvenLambertSeries
 
 /-!
 # Simplicial `d`-polytopic numbers on Lucas sequences
@@ -122,18 +124,6 @@ public theorem_wanted sum_cubes_specializations (n : ℕ) :
       ∑ k ∈ Finset.Icc 1 n, q ^ (2 * (n - k)) * ((1 - q ^ (2 * k)) / (1 - q ^ 2)) *
           ((1 - q ^ k) / (1 - q)) ^ 2 =
         ((1 - q ^ (n + 1)) * (1 - q ^ n) / ((1 - q) * (1 - q ^ 2))) ^ 2
-
-/-- **Recurrence for the Lucas tetrahedral numbers.** Let $(s, t)$ be nondegenerate Lucas
-parameters, and write $\{n\}_{s,t}$ for the Lucas brackets and $\binom{n}{k}_{s,t}$ for the
-Lucasnomial coefficients. For every natural number $n$,
-$$\binom{n+3}{3}_{s,t} = st\binom{n+2}{3}_{s,t} + \{n+1\}_{s,t}\binom{n+2}{2}_{s,t}.$$
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Theorem 7
-(`jis-2025-25.5.6-thm-7`). -/
-public theorem_wanted lucasTetrahedral_recurrence (P : LucasParameters) (n : ℕ) :
-    lucasnomial P (n + 3) 3 =
-      P.s * P.t * lucasnomial P (n + 2) 3 + lucasBracket P (n + 1) * lucasnomial P (n + 2) 2
 
 /-- **Lucas derivative.** For real numbers $\varphi$ and $\varphi'$, the Lucas derivative
 $D_{\varphi,\varphi'}$ sends a function $f : \mathbb{R} \to \mathbb{R}$ to the function whose
@@ -258,27 +248,6 @@ public theorem_wanted lucasTriangular_sq_generatingFunction (P : LucasParameters
         PowerSeries.C (lucasBracket P 3 * φ ^ 3 * φ' ^ 3) * PowerSeries.X ^ 3 +
         PowerSeries.C (lucasBracket P 3 * φ ^ 7 * φ' ^ 3 - lucasBracket P 4 * φ ^ 6 * φ' ^ 3) *
           PowerSeries.X ^ 4
-
-/-- **Even-index Lucas-bracket series as Lambert series.** Let $(s, t)$ be nondegenerate Lucas
-parameters with $s > 0$ and $s^2 + 4t > 0$, write $\{n\}_{s,t}$ for the Lucas brackets, let
-$\varphi' = (s - \sqrt{s^2 + 4t})/2$ and let $L(x) = \sum_{n \ge 1} x^n/(1 - x^n)$ be the Lambert
-series. Then the series $\sum_{n \ge 1} t^n/\{2n\}_{s,t}$ converges absolutely, and its sum is
-$\sqrt{s^2 + 4t}\,\bigl(L(\varphi'^2/t) - L(\varphi'^4/t^2)\bigr)$.
-
-The hypotheses make $\varphi'$ real with $|\varphi'| < (s + \sqrt{s^2 + 4t})/2$, so both Lambert
-arguments lie in $(-1, 1)$.
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Theorem 11
-(`jis-2025-25.5.6-thm-11`). -/
-public theorem_wanted hasSum_pow_div_lucasBracket_two_mul (P : LucasParameters) (hs : 0 < P.s)
-    (hdisc : 0 < P.s ^ 2 + 4 * P.t) :
-    HasSum (fun n : ℕ => P.t ^ (n + 1) / lucasBracket P (2 * (n + 1)))
-      (Real.sqrt (P.s ^ 2 + 4 * P.t) *
-        ((∑' n : ℕ, (((P.s - Real.sqrt (P.s ^ 2 + 4 * P.t)) / 2) ^ 2 / P.t) ^ (n + 1) /
-            (1 - (((P.s - Real.sqrt (P.s ^ 2 + 4 * P.t)) / 2) ^ 2 / P.t) ^ (n + 1))) -
-          ∑' n : ℕ, (((P.s - Real.sqrt (P.s ^ 2 + 4 * P.t)) / 2) ^ 4 / P.t ^ 2) ^ (n + 1) /
-            (1 - (((P.s - Real.sqrt (P.s ^ 2 + 4 * P.t)) / 2) ^ 4 / P.t ^ 2) ^ (n + 1))))
 
 end
 

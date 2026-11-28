@@ -1,5 +1,9 @@
 # Golden ratio base
 
+- [Integer powers of the golden ratio](pow-repr.md)
+- [Conjugate sum of a base phi expansion](conj-sum-eq.md)
+- [Normalized conjugate sum of a Bergman expansion](conj-factor-gt.md)
+- [Even powers of the conjugate golden ratio](even-pow-eq.md)
 - [Value of a base phi expansion](base-phi-value.md)
 - [Bergman expansions](is-bergman-expansion.md)
 - [Golden mean flips](is-golden-mean-flip.md)
