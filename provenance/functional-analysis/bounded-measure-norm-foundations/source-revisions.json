@@ -1,0 +1,25 @@
+{
+  "source_transport_commit": "0259e7550bcadd16b2e4d51ad0133e28b71eb4e2",
+  "original_Main_preimage": "8f5dcbd0e64dd9fe3178e9304642e4fd657d2b55",
+  "original_libraries": [
+    "MathlibExt",
+    "MathlibExtTest"
+  ],
+  "source_original_container": "provenance/functional-analysis/bounded-measure-norm-foundations/source-originals.jsonl",
+  "container_records": 10,
+  "container_sha256": "cd8866900f07f1017fad261512b8132818c4af818a0080604764ee183bd68d82",
+  "source_original_encoding": "literal JSON UTF-8 strings, no base64 or compression",
+  "all_original_source_byte_SHA_roundtrips_verified": true,
+  "current_Lean_payload_lines": 1986,
+  "production_files": 9,
+  "consumer_lines": 71,
+  "native_Lean": "leanprover/lean4:v4.36.0",
+  "native_Mathlib": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+  "original14_PASS_receipt_sha256": "801c51cae3b55362e00889c5e82158faaff2c4429fb47ea8f96992a924f3d0fe",
+  "repaired4_PASS_receipt_sha256": "689dd650130285f1ba33d803f2ff8546de975a222f868d749db49e02fc8cac4b",
+  "repaired4_logs_empty": true,
+  "current9_sources_and71_line_consumer_native_PASS": true,
+  "source_history_and_credit_preserved_in_records": true,
+  "original_stack_aggregate_copies_retained_until_replacement_PRs_complete": true,
+  "canonical_repaired_source_commit_pending_Root_commit": true
+}
