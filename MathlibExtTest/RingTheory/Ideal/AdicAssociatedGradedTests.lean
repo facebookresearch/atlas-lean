@@ -62,7 +62,7 @@ example : (3 : ℤ) • I3.adicSymbol 1 x3 = 0 := by
       apply (Submodule.Quotient.mk_eq_zero
         (I3 • ⊤ : Submodule ℤ (I3 ^ 1 : Ideal ℤ))).mpr
       apply (Submodule.mem_smul_top_iff (I := I3) (I3 ^ 1 : Ideal ℤ) _).mpr
-      have h : (((3 : ℤ) • x3 : I3 ^ 1) : ℤ) ∈ I3 ^ 2 := by
+      have h : (((3 : ℤ) • x3 : (I3 ^ 1 : Ideal ℤ)) : ℤ) ∈ I3 ^ 2 := by
         norm_num [x3, I3, Ideal.span_singleton_pow, Ideal.mem_span_singleton]
       simpa only [Ideal.smul_eq_mul, pow_succ'] using h
 
