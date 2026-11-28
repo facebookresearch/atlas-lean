@@ -10,3 +10,6 @@ Post-quantum public-key encryption: lattice problems and Gaussians, trapdoors, R
 - [ML-KEM (Kyber)](ml-kem/README.md)
 - [Code-Based and Lattice-Based Post-Quantum Schemes](code-and-lattice-based-schemes/README.md)
 - [Hamming Quasi-Cyclic (HQC) Encryption](hqc-encryption/README.md)
+- [Concrete attacks on LWE](concrete-lwe-attacks/README.md)
+- [Machine-learning attacks on LWE](machine-learning-attacks-on-lwe/README.md)
+- [Small and sparse LWE secrets](small-and-sparse-secret-lwe/README.md)
