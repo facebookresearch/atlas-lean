@@ -448,9 +448,9 @@ theorem controlledGate_wellFormed (U : Matrix (Fin 2) (Fin 2) GRat)
     QGateWellFormed N (controlledGate U c t) := by
   unfold controlledGate
   by_cases h : c < t
-  · rw [if_pos h]
+  · rw [ite_eq_left h]
     exact qGateWellFormed_ctrlLow U hU h htN
-  · rw [if_neg h]
+  · rw [ite_eq_right h]
     have htc : t < c := by omega
     exact qGateWellFormed_ctrlHigh U hU htc hcN
 
@@ -500,6 +500,6 @@ theorem omegaH_eq_smul_hadamard :
   fin_cases i <;> fin_cases j <;>
     simp [complexOfGRatMatrix, omegaH, hadamard, toComplex_gaussRatEnc,
       exp_pi_div_four_I, Complex.ext_iff] <;>
-    ((first | rw [div_mul_div_comm, hsq] | skip); norm_num)
+    ((first | rw [div_mul_div_comm, hsq]); norm_num)
 
 end Cslib.Complexity.Classes.QuantumGates

@@ -16,8 +16,9 @@ public import MathlibExt.RingTheory.WittVector.FractionRingValuation
 Let `p` be a prime and `k` a perfect field of characteristic `p`. An isocrystal over `k` in the
 sense of Mathlib (`WittVector.Isocrystal p k V`) is a vector space `V` over
 `K₀ = K(p, k) = W(k)[1/p]` with a bijective `φ(p, k)`-semilinear map `Φ(p, k)`, where `φ(p, k)`
-is the absolute Frobenius of `K(p, k)`; it is a `φ`-module in the sense of Fontaine–Ouyang,
-that is, a `(φ, N)`-module with `N = 0` (`WittVector.Isocrystal.toPhiNModule`). The `p`-adic
+is the absolute Frobenius of `K(p, k)`; if `V` is finite-dimensional, it is a `φ`-module in the
+sense of Fontaine–Ouyang, that is, a `(φ, N)`-module with `N = 0`
+(`WittVector.Isocrystal.toPhiNModule`). The `p`-adic
 valuation `WittVector.FractionRing.addValuation p k` of `K(p, k)` is invariant under `φ(p, k)` and
 normalized by `v p = 1`, so the results on `(φ, N)`-modules apply with this valuation. For
 instance the Newton number of the standard one-dimensional isocrystal of slope `m` is `m`, so the

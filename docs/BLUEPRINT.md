@@ -13,8 +13,8 @@ What a PR may change in the graph, and how to expand a node, is in
 - `blueprint/links/`: literature-links annotations associating articles with
   Lean declarations, stable article IDs, and navigation metadata.
 - `scripts/taxonomy.json` and `blueprint/atlas.json`: subject organization.
-- Card records in `blueprint/links/` and `scripts/card-moves.jsonl`: the cards readers navigate by,
-  and the addresses moves retire ([cards.md](cards.md)).
+- Card records in `blueprint/links/`, and the move ledger, `scripts/card-moves.jsonl` and the fragments of
+  `scripts/card-moves.d/`: the cards readers navigate by, and the addresses moves retire ([cards.md](cards.md)).
 - `scripts/mathgraph-map.jsonl`: the mathgraph results imported and the page
   each was written at ([mathgraph-import.md](mathgraph-import.md#the-map)).
 - Lean sources: declaration kinds and statement/proof status.
@@ -41,8 +41,8 @@ and docstring changes should be reviewed with the sync report below.
 
 These rules apply to any PR that changes the graph: `blueprint/roadmap/`,
 `blueprint/links/`, `blueprint/atlas.json`, `blueprint/coverage/`,
-`scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl` or
-`scripts/mathgraph-map.jsonl`. They add only what ATLAS
+`scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`,
+`scripts/card-moves.d/` or `scripts/mathgraph-map.jsonl`. They add only what ATLAS
 needs to AutoformBot's
 [blueprint format](https://github.com/facebookresearch/autoform-bot/blob/b1fe52ba726bb675d9c974203fce427fe4927ff9/autoform_cli/reference/blueprint-format.md),
 at the commit in `.github/autoform-ref`; where ATLAS needs something the
@@ -160,7 +160,7 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 - **Moving a module or folder changes `scripts/taxonomy.json` in the same
   PR,** or the next sync and the next generated layout follow the old place.
   See [Moving a page](#moving-a-page). Moving pages into a card inside their
-  topic is not a taxonomy change; it is recorded in `scripts/card-moves.jsonl`
+  topic is not a taxonomy change; it is recorded in the move ledger
   ([Cards](#cards)). A Lean pull request that moves a module's declarations to
   a new module leaves this to the next
   [graph-sync batch](#graph-sync-batches), which gives the new module their
@@ -200,10 +200,13 @@ Do not edit generated counts or add another `Library navigation` section.
   links; elsewhere a card links another card's main statement. Every card
   edge is derived from the statements, with witnesses, which keeps the card
   map honest about what uses what.
-- **A move that retires an address goes into `scripts/card-moves.jsonl`,**
-  and a page gets an `id` before it moves; so does the retirement of a card or
-  of a statement page, with what replaces it. `scripts/cards.py check` must
-  pass.
+- **A move that retires an address goes into a new fragment of the move
+  ledger,** `scripts/card-moves.d/<stamp>-<slug>.jsonl`, which
+  `python scripts/card_moves.py new-moves <slug>` starts; one fragment holds a PR's
+  rows, in the order they happened, and a page gets an `id` before it moves; so
+  does the retirement of a card or of a statement page, with what replaces it.
+  Never edit `scripts/card-moves.jsonl`, which is frozen, or a merged fragment
+  ([cards.md](cards.md#move-ledger)). `scripts/cards.py check` must pass.
 - **A planned page may record its counterparts,** the Mathlib or ATLAS
   declarations that state its result or a close form, with how each compares
   ([cards.md](cards.md#counterparts)). Each is verified clause by clause against
@@ -273,17 +276,18 @@ Move it with `autoform move`, which rewrites the links. In the same PR, change
 module or folder, list the page on its new folder page, and, across subjects,
 move its annotation to the new subject's links file, which `autoform move` does
 not do. A move into a card inside the page's topic leaves the taxonomy as it is;
-record it in `scripts/card-moves.jsonl` instead ([Cards](#cards)).
+record it in the PR's fragment of the move ledger instead ([Cards](#cards)).
 
 #### Expanding a node
 
 1. Add the new pages beside the node and list them on the folder page. Move
    the node's prose and sources to the folder page or the new pages.
-2. Delete the node's page and annotation, and append the retirement row to
-   `scripts/card-moves.jsonl`, `{"statement": "<its id>", "page": "<its
-   path>", "replaced_by": "<the id of the new page or folder page a reader
-   should go to>"}` ([cards.md](cards.md#move-ledger)), so that its address
-   keeps leading somewhere and its id is never reused. Repoint every link to
+2. Delete the node's page and annotation, and add the retirement row to the
+   PR's fragment of the move ledger (`python scripts/card_moves.py new-moves
+   <slug>` starts one), `{"statement": "<its id>", "page": "<its path>",
+   "replaced_by": "<the id of the new page or folder page a reader should go
+   to>"}` ([cards.md](cards.md#move-ledger)), so that its address keeps
+   leading somewhere and its id is never reused. Repoint every link to
    it, under `## Depends on`, `## Proof depends on` or `## Informally uses`, to
    the new pages that link actually needs. `autoform check` fails on a link
    left under the first two but only warns under `## Informally uses`.
@@ -521,10 +525,13 @@ python scripts/sync_wiki.py declarations
 Run this deliberately after Lean updates, review its additions, and commit
 only the editorial/source changes. It creates pages for new documented
 non-deprecated declarations, preserves existing article prose, and reports
-removed declarations and changed docstrings. It never places a new page in a
+removed declarations and changed docstrings. Those pages include the ones of the
+declarations a graph-sync batch withheld for a planned page still waiting for an
+editor ([Graph-sync batches](#graph-sync-batches)): link those planned pages
+first, or leave what it writes for them out. It never places a new page in a
 card or below one: such a page goes to the card's parent folder and is listed
 as unassigned, for an editor to place in a card, and no new page takes the name
-of a folder or an address `scripts/card-moves.jsonl` records. It also refreshes
+of a folder or an address the move ledger records. It also refreshes
 the source-derived area catalog and coverage metadata without replacing article
 prose. A row the build refuses ([Mathlib-credited
 pages](#mathlib-credited-pages)), such as a flagged row that also names a
@@ -629,7 +636,9 @@ the Lean merged into `main` since the last batch. For each documented
 declaration merged without a page it adds the page and its annotation row and
 lists the page on its folder page; it writes the docstring digests the scoped
 sync writes; it places new modules in `scripts/taxonomy.json` and drops the
-places of modules that are gone. One batch is open at a time, made on a fresh
+places of modules that are gone; and it links a planned page that a merged
+pull request's `Graph:` line names to that pull request's one candidate for it,
+when it has exactly one. One batch is open at a time, made on a fresh
 `main` every one or two hours by whoever runs the batches. So `main`'s graph
 trails its Lean by about one batch, plus the batch's review and queue time;
 the site, built from `main` once a day, can trail `main` by up to a day more.
@@ -643,7 +652,7 @@ python3 scripts/graph_batch.py make --body ../batch.md
 `make` runs on a clean checkout, with Autoform installed as for the sync, and
 reads the merged pull requests' descriptions and GitHub's rendering of them
 with `gh`, logged in (`--bodies FILE` gives them as JSON instead; a description
-given without its rendering places nothing). Write the description outside the
+given unrendered places or links nothing). Write the description outside the
 checkout, as above: a file left in it stops the next `make`. It starts from
 the commit the last batch brought the graph up to, which that batch's commit
 names in a `Graph-sync-through:` trailer (`python3 scripts/graph_batch.py
@@ -668,9 +677,13 @@ later one, which would skip Lean. Then it:
    without pages;
 2. drops the placement of each module that no longer exists, as a file or as a
    folder;
-3. runs the scoped sync over every Lean change since the base, on `main`'s wiki
-   and baseline: from a local commit that has `main`'s tree but the base's Lean;
-4. commits all of it as one commit on top of `main`, with `Graph-sync-base:`
+3. links the planned pages that the merged pull requests' `Graph:` lines name,
+   where it can tell which declaration states each, and withholds the pages of
+   the declarations that may state one it cannot link (below);
+4. runs the scoped sync over every Lean change since the base, on `main`'s wiki
+   and baseline with those links, withholding those pages: from a local commit
+   that has `main`'s tree, with the links, but the base's Lean;
+5. commits all of it as one commit on top of `main`, with `Graph-sync-base:`
    and `Graph-sync-through:` trailers, and checks that commit as `verify` does.
 
 When the sync stops, nothing is committed. If it stops on something `main`
@@ -693,17 +706,101 @@ merge, as untrusted text: only those that GitHub's rendering of the
 description shows as lines of plain text in a top-level paragraph, not in a
 code block, a list, a quotation, a table or a `<details>`, and none of a
 description edited after its pull request merged, which no review of the merge
-saw. A line it leaves out gets a note.
+saw. A line it leaves out gets a note, unless a code block or a comment holds
+it.
 
-A batch's description has `Graph: batch` and names no issue
-([Graph PRs](../CONTRIBUTING.md#graph-prs)). `--body FILE` writes it: the
-placements, each with where it comes from; the placements dropped; the new modules left unplaced,
-and the changed ones that get no pages, in a folder with no subject; what
-`make` left for an editor (lines it could not follow, modules it could not
-place); the sync's own items for an editor, such as part-list lines its refresh
-replaced; and the pages whose declaration's docstring changed while no pull
-request recorded its digest. Push the commit to a branch of its own and open
-the pull request with that description.
+A pull request's `Graph:` line lists the article ids of the pages it proves,
+fixes or extends ([Say how a pull request touches the
+graph](../CONTRIBUTING.md#say-how-a-pull-request-touches-the-graph)), and a Lean
+pull request may not link a planned page itself. `make` reads those ids after
+the merge as it reads `Place:` lines, and a line it leaves out gets a note, as
+does a merged pull request whose description it does not have. For an id that
+names a planned page of `main`, a page whose row has no Lean link, each pull
+request that names it has as candidates the documented declarations its merge
+adds, documents, makes public or undeprecates, compared with the merge's first
+parent, whose sort fits the kind the page records: a theorem or a lemma for
+`theorem` or `lemma`, a definition for any other kind. A candidate is in the
+page's module or topic when the taxonomy, as the batch writes it, places the
+candidate's module, by the module's own entry or its folder's, in the topic
+whose folder holds the page, in it or in a part, a card or any folder within it;
+a page right in a field's folder is in no topic here, as any topic of the field
+could have put it there. The batch links the page when exactly one pull request
+names it and exactly one of that pull request's candidates is in the page's
+module or topic, which the batch would give a page and which may state no other
+page a `Graph:` line names. It links no node still to expand, which an editor
+expands or links ([Expanding a node](#expanding-a-node)); no page that holds a
+declaration back; none that records no kind, as it cannot tell which sort of
+declaration states it (a card's main statement, say, must be a definition or a
+result, as its card says); none that records the kind `instance`, as an instance
+gets no page and so is never a candidate; none whose own `## Depends on` or
+`## Proof depends on` links any page, as the declaration's Lean must record the
+page's prerequisites ([Writing pages](#writing-pages), "Leave no gaps") and the
+batch cannot tell whether it does; none whose dependency sections Autoform
+cannot read, or that the batch cannot drop exactly as Autoform reads them, such
+as one under a heading in another case; none that its folder page does not list;
+none whose row holds more than its subject, its id, its kind, its counterparts
+and its seed (`seed`); and none when no row it can write credits the candidate,
+as when the links folder's defaults credit otherwise. Linking writes what a
+linked page needs, as an editor would ([Writing pages](#writing-pages)): the
+page's row gets the Lean link the sync gives a row it writes, and loses the kind
+and the counterparts a linked row does not carry; the page keeps its article id
+and its text, and loses its own `## Depends on` and `## Proof depends on`, which
+link nothing then and which `lean-facts` writes for a linked page from the Lean.
+The sync then gives the declaration no page of its own and writes its docstring
+digest.
+
+When the batch cannot tell, it links nothing, and of the candidates it would
+give a page it gives none to those in the page's module or topic, or to any of
+them if none is there, of each pull request that names the page: it passes them
+to the sync's `--withhold`, which records their docstring digests as it does a
+held declaration's. Nothing in the wiki records that they were withheld: the
+batch's description lists the page and those declarations for an editor, or how
+many there are when it is too long, and `verify` on the batch prints them all.
+The editor links the page to the one that states it, in a graph pull request,
+and a batch made after that with `--base` set to the base of the batch that
+withheld them gives the others their pages, as the page is no longer planned.
+When the one candidate in the page's topic is gone or deprecated on `main` by
+then, as a later pull request in the batch renamed it, the batch links nothing
+either: it lists the page for an editor and withholds what the pull requests
+that took the candidate away added to its module, in the page's topic and of its
+sort, one of which may be what it became. Until the editor does, a later batch,
+which sees only the pull requests merged after its own base, may link the page
+to a later pull request's one candidate in its topic: the declarations withheld
+before then get their pages only from such a batch. If none of them states the
+page, a graph pull request runs
+`python3 scripts/sync_wiki.py declarations --base <that base>` and keeps only
+what it writes for them. A run over the whole project, or from an older base,
+writes their pages too, with those of every other documented declaration that
+has none ([Maintaining articles](#maintaining-articles)): before it, link the
+pages still waiting for an editor, or leave out what it writes for their
+declarations. A planned page named with no candidate the batch would give a
+page, and any id that names no planned page or that several rows have, changes
+nothing, and the description lists it; the ids of pages linked already, the most
+common, it lists by the pull request that names them.
+
+A batch's description has `Graph: batch` and names no issue ([Graph
+PRs](../CONTRIBUTING.md#graph-prs)). `--body FILE` writes it: the placements,
+each with where it comes from; the placements dropped; the planned pages linked,
+each with its declaration, the kind the page recorded, the declaration's own and
+the pull request whose `Graph:` line names it ("linked `af_…` (kind `k`) to
+`Decl` (a Lean `kw`), from #N's `Graph:` line: `page`", then the targets of the
+dependency sections the page loses); the planned pages left for an editor, each
+with why, the pull requests that name it and the declarations given no page; the
+new modules left unplaced, and the changed ones that get no pages, in a folder
+with no subject; what `make` left for an editor (lines it could not follow,
+modules it could not place); the sync's own items for an editor, such as
+part-list lines its refresh replaced; the pages whose declaration's docstring
+changed while no pull request recorded its digest; and the other pages `Graph:`
+lines name, left as they are. GitHub takes a description of at most 65,536
+characters: while this one would pass 60,000, the list whose short form saves
+the most gives way to it, one list at a time, which says how many entries the
+list holds and that `verify` prints them all. The planned pages left for an
+editor give way last, once no other list can, and only to a line a page, with
+the pull requests that name it, the short names of its reason and how many
+declarations it withholds, whose names `verify` prints: that list is the only
+record of the declarations a batch withholds, so no page is left out of it. Push
+the commit to a branch of its own and open the pull request with that
+description.
 
 `python3 scripts/graph_batch.py verify <commit>`, run from an up-to-date
 checkout of `main` (it refuses to run from the batch itself, whose checkout's
@@ -717,14 +814,18 @@ and exactly what `make` writes:
 - a base no later than where the last batch before it ended;
 - its taxonomy `main`'s with the placements `make` computes applied, byte for
   byte;
-- its wiki in step, with changes that are exactly what the scoped sync writes,
-  fresh article ids aside (the `--check` above).
+- its wiki in step, with changes that are exactly what the scoped sync writes
+  once the planned pages `make` links are linked, withholding the declarations
+  it withholds, fresh article ids aside (the `--check` above). `verify` reads
+  the `Graph:` lines again and links the pages itself, so a batch whose links
+  differ fails.
 
 From a newer `main`, it also checks that the batch still merges cleanly into
 it, placing each module once, and that the scoped check finds nothing the
 merge breaks, such as a second page for one declaration. Then it runs the sync
-as `make` does and prints the description it recomputes (`--body FILE` writes
-it too).
+as `make` does and prints the description it recomputes, every list in full;
+`--body FILE` writes the description as `make` writes it, its longest lists
+given as counts when it would be too long for GitHub.
 
 The batch's reviewer runs `verify` on the exact head, from `main`:
 
@@ -736,12 +837,23 @@ python3 scripts/graph_batch.py verify <head commit>
 
 and reads what it prints, not the pull request's description, which whoever
 opens the pull request can edit: the placements and where each comes from, the
-placements dropped, the notes, the sync's items for an editor and the pages to
-check. The pages are the sync's, made from docstrings that the Lean pull
-requests' reviews covered. For each page under "Pages to check", the reviewer
-compares the page with its declaration's new docstring, and opens a
-page-problem issue for one that no longer matches: once the batch writes the
-new digest, no sync reports that page again.
+placements dropped, the planned pages linked and those left for an editor, the
+notes, the sync's items for an editor and the pages to check. The pages are the
+sync's, made from docstrings that the Lean pull requests' reviews covered. For
+each page under "Pages to check", the reviewer compares the page with its
+declaration's new docstring, and opens a page-problem issue for one that no
+longer matches: once the batch writes the new digest, no sync reports that page
+again. Each planned page the batch links is compared with its declaration as any
+linked page is ([Writing pages](#writing-pages)), starting with the kind the
+page recorded and the declaration's own, which the description gives. A link to
+a declaration that does not state the page is a finding: close the batch, and
+before the next batch, fix `main` in a graph pull request: link the page to the
+declaration that states it, or give the declaration its page, as the sync from
+the batch's base writes it (above), so that it is no candidate any more. A link
+to the declaration that states the page, whose page only needs restating to
+match it (dropping a hypothesis the declaration does without, say), is no reason
+to close the batch: open a page-problem issue for the page, as for a page to
+check.
 
 A batch is never updated. When `verify`, run from an up-to-date `main`, fails,
 or when the merge queue removes the batch, close it and make the next one from
@@ -868,7 +980,10 @@ page is kept small. Readers with JavaScript browse with the explorer, which
 hides Material's header, sidebars and footer; the theme's layout serves readers
 without JavaScript and the explorer's fallback. `theme/partials/nav.html` lists
 Home, the sections above the page, the page's siblings and its own entries;
-each folder page lists its children too. `hooks/trim_pages.py` publishes the
+each folder page lists its children too. In a folder of more than 50 entries, a
+page's sidebar lists only the 50 entries around it, then a link to the folder
+page, which lists them all, so that a page's sidebar stops growing with its
+folder. `hooks/trim_pages.py` publishes the
 renderer's notices for moved explorer URLs as bare redirects and collapses the
 theme's indentation, `hooks/title_only_search.py` keeps one title record per
 page in the search index, and `hooks/card_pages.py` shows each card on its
@@ -902,8 +1017,9 @@ Autoform leave its directory out of the Lean source index. It also lets it run
 when the PR changes the wiki (`blueprint/`), whose pages, annotations and site
 inputs it builds and checks, or one of the two ledgers its checks compare with
 the PR's base commit, the import map `scripts/mathgraph-map.jsonl`
-([The map](mathgraph-import.md#the-map)) and the card move ledger
-`scripts/card-moves.jsonl` ([Move ledger](cards.md#move-ledger)). Only a PR's
+([The map](mathgraph-import.md#the-map)) and the card move ledger,
+`scripts/card-moves.jsonl` and the fragments of `scripts/card-moves.d/`
+([Move ledger](cards.md#move-ledger)). Only a PR's
 build checks the wiki's moves and card retirements since that base against the
 move ledger, and fails on a Mathlib source link that disagrees with its title:
 `main`'s runs have no base commit and report such a link without failing
@@ -920,10 +1036,22 @@ changes only Lean library files those tests do not read, provenance and
 documentation skips them too: `scripts/ci_scope.py` lists the four Lean modules
 and the document the tests read besides the graph's data and their own code.
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
-than a failure, CI's `check the graph` checks the graph as committed,
-`Graph sync` checks every PR's declarations, and `main`'s daily build checks the
-whole wiki, its site and its cards as they stand, a failure there being fixed on
-`main`.
+than a failure, CI's `check the graph` checks the graph as committed and, on
+every PR and merge group, the move ledger's integrity
+([Move ledger](cards.md#move-ledger)), `Graph sync` checks every PR's
+declarations, and `main`'s daily build checks the whole wiki, its site and its
+cards as they stand, a failure there being fixed on `main`. The ledger step,
+`scripts/card_moves.py check --base` against the commit the merge commit or
+group was made from, is there because fragments, with distinct names, merge
+without the shared end-of-file conflict of one file, so that only this step
+sees them together before they merge. It reads the ledger's files and Git
+tree-entry metadata (names, modes and types) for regular roadmap `README.md`
+files, not page contents, and nothing else: it fails on rows that break a rule
+among them, an edited frozen file, an edited merged fragment or new fragments
+that interact. Whether each move ends at a live page of its article is the wiki
+job's ledger step's (`scripts/cards.py moves`), and whether every move since the
+base has its row stays `check the cards`'s; neither gates a merge. A push to
+main checks the combined ledger alone.
 With write access, build and check a branch before it merges with
 `gh workflow run blueprint-pages.yml --ref <branch>`, or pick the branch under
 **Run workflow**: the run builds the branch as a run of `main` does, without a
