@@ -30,6 +30,7 @@ Topics added since this subject's fields were last revised.
 - [Projective Northcott](projective-northcott/README.md)
 - [Rational Strong Approximation](rational-strong-approximation/README.md)
 - [Root Height Bound](root-height-bound/README.md)
+- [Semilocal Coinduced](semilocal-coinduced/README.md)
 - [Sigma Adelic Action](sigma-adelic-action/README.md)
 - [Supersingular JSet](supersingular-jset/README.md)
 - [Symmetry](symmetry/README.md)
