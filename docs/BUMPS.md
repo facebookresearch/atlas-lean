@@ -74,6 +74,11 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    ([Say how a pull request touches the graph](../CONTRIBUTING.md#say-how-a-pull-request-touches-the-graph),
    [Mathlib-credited pages](BLUEPRINT.md#mathlib-credited-pages)).
 
+   If the bump changes `lean-toolchain` and agitate has a commit for the new
+   toolchain, point `AGITATE_COMMIT` in `.github/workflows/linters.yml` at it in
+   one of those later commits; until then the advisory `mathlib linters` job
+   warns and skips its unused-imports check.
+
 4. **Keep it close to main.** Merge main in, never rebase, so the first commit
    stays exactly what `pinned_bump.py` produced:
 

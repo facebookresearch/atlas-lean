@@ -1,0 +1,235 @@
+#!/usr/bin/env python3
+"""Run the linter checks end to end on a probe module, with Lean.
+
+.github/workflows/linters.yml runs this when a pull request changes the checks
+or the toolchain pins. It needs a checkout with the Mathlib cache fetched, and
+for the unused-imports check a built agitate in $AGITATE_DIR (without one, that
+check is skipped, and the script says so). It commits a probe module with known
+findings, and a `module` probe with an unused import, on top of HEAD, builds
+them as CI does, runs each check against HEAD, then commits a second change that
+only documents an existing probe declaration, builds it and runs the checks
+against the first commit. It then moves HEAD back and deletes the probes,
+leaving the working tree as it was.
+
+    python3 scripts/linters_self_test.py      # in GitHub Actions, or with --local
+
+Exit 0 if every check reports what it should, 1 otherwise.
+"""
+
+from __future__ import annotations
+
+import argparse
+import os
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+from lean_changes import inert
+
+ROOT = Path(__file__).resolve().parent.parent
+SCRIPTS = Path(__file__).resolve().parent
+PROBE = Path("MathlibExt/LintersSelfTestProbe.lean")
+# A `module` file as well, so that agitate runs with the module flags too; the first commit adds
+# it, with an import that it does not use.
+MODULE_PROBE = Path("MathlibExt/LintersSelfTestModuleProbe.lean")
+MODULE_PROBE_TEXT = """\
+module
+
+import Mathlib.Tactic.Ring
+
+/-! Module probe of scripts/linters_self_test.py, which deletes it again. -/
+
+/-- Needs nothing from its import. -/
+public theorem lintersModuleProbe : True := trivial
+"""
+# The files that the self-test creates, and deletes again.
+PROBES = (PROBE, MODULE_PROBE)
+
+LONG = "a + b = b + a ∧ a * b = b * a ∧ a + 0 = a ∧ b + 0 = b ∧ a * 1 = a ∧ b * 1 = b"
+PROBE_TEXT = f"""\
+import Mathlib.Tactic.Ring
+
+/-! Probe module of scripts/linters_self_test.py, which deletes it again. -/
+
+theorem lintersProbeLong (a b : Nat) : {LONG} := by
+  refine ⟨Nat.add_comm a b, Nat.mul_comm a b, ?_, ?_, ?_, ?_⟩
+  ·
+    simp
+  · simp
+  · simp
+  · simp
+
+theorem lintersProbeSemicolon : True := by trivial ; done
+
+def lintersProbeNoDoc (n : Nat) (m : Nat) : Nat := n + 1
+
+def lintersProbeUnused (n : Nat) (m : Nat) : Nat := n + 1
+
+theorem lintersProbeSimpArg (a b : Nat) : a + b = b + a := by
+  simp [Nat.add_comm, Nat.mul_comm]
+
+theorem lintersProbeNew : True := trivial
+
+@[deprecated lintersProbeNew (since := "2026-11-26")]
+theorem lintersProbeOld : True := trivial
+
+theorem lintersProbeUsesOld : True := lintersProbeOld
+
+@[deprecated lintersProbeOld (since := "2026-11-27")]
+theorem lintersProbeOlder : True := trivial
+
+def lintersProbeLetFun : Nat := let_fun x := 1; x
+
+syntax (name := lintersProbeOldSyntax) "linters_probe_old_syntax" : term
+
+macro_rules
+  | `(linters_probe_old_syntax) => `(0)
+
+deprecated_syntax lintersProbeOldSyntax "write 0" (since := "2026-11-27")
+
+def lintersProbeUsesSyntax : Nat := linters_probe_old_syntax
+"""
+# Only documents an existing declaration, whose unused argument stays.
+DOCUMENTED = PROBE_TEXT.replace("def lintersProbeUnused",
+                                "/-- Adds one to `n`. -/\ndef lintersProbeUnused")
+
+# Each check, and patterns its output must match after the first and the second commit.
+EXPECTED = {
+    "check_syntax_linters.py": ([r"linter\.style\.longLine", r"linter\.style\.cdot",
+                                 r"linter\.unusedSimpArgs",
+                                 r"linter\.deprecated: `lintersProbeOld` has been deprecated",
+                                 r"linter\.deprecated\.deprecatedTarget: `lintersProbeOld` is "
+                                 r"itself deprecated",
+                                 r"linter\.deprecated: `let_fun` has been deprecated",
+                                 r"linter\.deprecated\.syntax: syntax 'lintersProbeOldSyntax' has "
+                                 r"been deprecated"],
+                                [r"No linter or deprecation warning on the added lines"]),
+    "check_text_linters.py": ([r"space before a semicolon"],
+                              [r"No text-lint error on the added lines"]),
+    # The second commit's docstring starts the range of `lintersProbeUnused`, whose unused
+    # argument runLinter still reports there; the check keeps it out.
+    "check_env_linters.py": ([r"docBlame: lintersProbeNoDoc", r"unusedArguments: lintersProbeNoDoc",
+                              r"unusedArguments: lintersProbeUnused"],
+                             [r" 0 on declarations the change adds, [1-9]\d* on declarations it "
+                              r"keeps", r"No environment-linter finding on the added declarations"]),
+    # Nothing records that the probe needs Mathlib.Tactic.Ring for Mathlib's linters.
+    "check_unused_imports.py": ([r"LintersSelfTestProbe\.lean:1: unused import[^:]*: agitate "
+                                 r"finds `import Mathlib\.Tactic\.Ring` unused here",
+                                 r"LintersSelfTestModuleProbe\.lean:3: unused import[^:]*: "
+                                 r"agitate finds `import Mathlib\.Tactic\.Ring` unused here"],
+                                [r"No changed Lean file of the production libraries adds an import"]),
+}
+# Patterns that the output must match exactly once after the first commit: a warning that a
+# linter logs is in both the lint log and the build log.
+ONCE = {
+    "check_syntax_linters.py": [r"`let_fun` has been deprecated",
+                                r"syntax 'lintersProbeOldSyntax' has been deprecated"],
+}
+# Exit codes after the first and the second commit.
+EXIT_CODES = (1, 0)
+GIT = ["git", "-c", "user.name=linters self-test", "-c", "user.email=self-test@invalid"]
+
+
+def git(*args: str) -> str:
+    return subprocess.run([*GIT, *args], cwd=ROOT, check=True, capture_output=True,
+                          text=True).stdout.strip()
+
+
+def reserve(paths: tuple[Path, ...]) -> bool:
+    """Create each of `paths`, empty and new, so that the probes never write through a file or
+    a link already there; `False`, creating none, if one is there."""
+    created: list[Path] = []
+    for path in paths:
+        try:
+            (ROOT / path).open("x").close()
+        except FileExistsError:
+            for done in created:
+                (ROOT / done).unlink()
+            return False
+        created.append(path)
+    return True
+
+
+def commit(text: str, message: str, module_text: str | None = None) -> str:
+    """Commit the probe module, and the `module` probe too if `module_text` is given."""
+    (ROOT / PROBE).write_text(text, encoding="utf-8")
+    paths = [str(PROBE)]
+    if module_text is not None:
+        (ROOT / MODULE_PROBE).write_text(module_text, encoding="utf-8")
+        paths.append(str(MODULE_PROBE))
+    git("add", "--", *paths)
+    git("commit", "-q", "--no-verify", "-m", message, "--", *paths)
+    return git("rev-parse", "HEAD")
+
+
+def child_env() -> dict[str, str]:
+    """The checks' environment: as outside GitHub Actions, so that the probe's findings annotate
+    nothing and never reach the job's summary."""
+    env = {key: value for key, value in os.environ.items() if key != "GITHUB_STEP_SUMMARY"}
+    env["GITHUB_ACTIONS"] = "false"
+    return env
+
+
+def run_checks(base: str, round_: int) -> bool:
+    # Build first, as CI does, so that the checks read the build's replayed log, not a fresh one.
+    build = subprocess.run([sys.executable, str(SCRIPTS / "lean_changes.py"), "build",
+                            "--base", base],
+                           cwd=ROOT, capture_output=True, text=True, env=child_env())
+    if build.returncode != 0:
+        print(inert(f"FAIL lean_changes.py build (round {round_ + 1}): exit {build.returncode}\n"
+                    f"{build.stdout}{build.stderr}"))
+        return False
+    ok = True
+    for script, expected in EXPECTED.items():
+        if script == "check_unused_imports.py" and not os.environ.get("AGITATE_DIR"):
+            print(f"skipped {script} (round {round_ + 1}): AGITATE_DIR names no agitate build")
+            continue
+        result = subprocess.run([sys.executable, str(SCRIPTS / script), "--base", base],
+                                cwd=ROOT, capture_output=True, text=True, env=child_env())
+        output = result.stdout + result.stderr
+        want_code = EXIT_CODES[round_]
+        missing = [pattern for pattern in expected[round_] if not re.search(pattern, output)]
+        missing += [f"{pattern} (once)" for pattern in ONCE.get(script, []) if round_ == 0
+                    and len(re.findall(pattern, output)) != 1]
+        if result.returncode != want_code or missing:
+            ok = False
+            print(inert(f"FAIL {script} (round {round_ + 1}): exit {result.returncode}, wanted "
+                        f"{want_code}; missing {missing}\n{output}"))
+        else:
+            print(f"ok {script} (round {round_ + 1}): exit {result.returncode}")
+    return ok
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--local", action="store_true",
+                        help="run outside GitHub Actions (it commits and then moves HEAD back)")
+    args = parser.parse_args()
+    if os.environ.get("GITHUB_ACTIONS") != "true" and not args.local:
+        parser.error("this commits to the checkout; pass --local to run it outside GitHub Actions")
+    if git("diff", "--cached", "--name-only"):
+        print("Changes are staged; not running.", file=sys.stderr)
+        return 1
+    start = git("rev-parse", "HEAD")
+    if not reserve(PROBES):
+        print(f"A file or link is at {' or '.join(map(str, PROBES))}; not running.",
+              file=sys.stderr)
+        return 1
+    try:
+        first = commit(PROBE_TEXT, "linters self-test: probe modules", MODULE_PROBE_TEXT)
+        ok = run_checks(start, 0)
+        commit(DOCUMENTED, "linters self-test: document an existing declaration")
+        ok = run_checks(first, 1) and ok
+    finally:
+        git("reset", "-q", "--soft", start)
+        git("rm", "-q", "--cached", "--ignore-unmatch", "--", *map(str, PROBES))
+        for probe in PROBES:
+            (ROOT / probe).unlink(missing_ok=True)
+    print("The checks report what they should." if ok else "A check reported something else.")
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
