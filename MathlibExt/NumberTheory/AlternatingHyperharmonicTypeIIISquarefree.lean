@@ -946,7 +946,8 @@ private theorem count_eq_card_Icc {k : ℕ} (x : ℕ) :
 private theorem count_le_almostPrimeCounting {k : ℕ} (x : ℕ) :
     Nat.count (fun t => Squarefree t ∧ t.primeFactors.card = k) (x + 1) ≤
       almostPrimeCounting k x := by
-  rw [count_eq_card_Icc, almostPrimeCounting]
+  rw [count_eq_card_Icc, almostPrimeCounting_eq_card_filter,
+    ← show Icc 1 x = Ioc 0 x from Icc_succ_left_eq_Ioc 0 x]
   refine card_le_card fun t ht => ?_
   simp only [mem_filter] at ht ⊢
   exact ⟨ht.1, isAlmostPrime_of_sqfree ht.2⟩
@@ -990,7 +991,8 @@ private theorem card_nonsqfree_le (k x : ℕ) :
       rw [← hm.2.2, ArithmeticFunction.cardFactors_apply]
       exact List.toFinset_card_le _
     _ = (k - 1) * almostPrimeCounting (k - 1) x := by
-      rw [sum_const, smul_eq_mul, mul_comm, almostPrimeCounting, hB]
+      rw [sum_const, smul_eq_mul, mul_comm, almostPrimeCounting_eq_card_filter,
+        ← show Icc 1 x = Ioc 0 x from Icc_succ_left_eq_Ioc 0 x, hB]
 
 private theorem almostPrimeCounting_le {k : ℕ} (x : ℕ) :
     almostPrimeCounting k x ≤
@@ -999,7 +1001,7 @@ private theorem almostPrimeCounting_le {k : ℕ} (x : ℕ) :
   classical
   rw [count_eq_card_Icc]
   refine le_trans ?_ (add_le_add_right (card_nonsqfree_le k x) _)
-  rw [almostPrimeCounting]
+  rw [almostPrimeCounting_eq_card_filter, ← show Icc 1 x = Ioc 0 x from Icc_succ_left_eq_Ioc 0 x]
   rw [← card_filter_add_card_filter_not (s := {n ∈ Icc 1 x | Nat.IsAlmostPrime k n})
     (p := Squarefree)]
   refine add_le_add (card_le_card fun t ht => ?_) (card_le_card fun t ht => ?_)

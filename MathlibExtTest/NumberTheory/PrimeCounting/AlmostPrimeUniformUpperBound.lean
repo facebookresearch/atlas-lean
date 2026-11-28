@@ -48,9 +48,17 @@ example : almostPrimeCounting 2 ⌊(21 / 2 : ℝ)⌋₊ = 4 := by
     almostPrimeCounting_eq_card_filter]
   decide +kernel
 
-example : almostPrimeCounting 3 ⌊(55 / 2 : ℝ)⌋₊ = 5 := by
+private theorem count_three_at_55_div_two : almostPrimeCounting 3 ⌊(55 / 2 : ℝ)⌋₊ = 5 := by
   rw [show ⌊(55 / 2 : ℝ)⌋₊ = 27 by exact (Nat.floor_eq_iff (by norm_num)).2 (by norm_num),
     almostPrimeCounting_eq_card_filter]
   decide +kernel
+
+-- Apply the uniform bound at a cutoff with a positive, independently computed count.
+example : ∃ C : ℝ, 5 ≤ C * 4 * (55 / 2) * Real.log (55 / 2) := by
+  obtain ⟨C, hC⟩ := almostPrime_count_le_erdos_sarkozy
+  refine ⟨C, ?_⟩
+  have h4 : (2 : ℝ) ^ 4 / 2 ^ (2 : ℕ) = 4 := by norm_num
+  simpa only [Nat.reduceAdd, count_three_at_55_div_two, Nat.cast_ofNat, h4] using
+    hC 2 (by decide) (55 / 2) (by norm_num)
 
 end MetaMathlibExt

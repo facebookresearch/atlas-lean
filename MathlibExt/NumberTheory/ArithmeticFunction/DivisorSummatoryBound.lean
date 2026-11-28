@@ -33,7 +33,7 @@ namespace MetaMathlibExt
 
 open Finset in
 /-- The sum of the numbers of positive divisors of `1, …, N` is at most `N * (1 + log N)`. -/
-public theorem sum_tau_le (N : ℕ) :
+public theorem sum_card_divisors_le (N : ℕ) :
     ∑ n ∈ Finset.Icc 1 N, ((n.divisors.card : ℕ) : ℝ)
       ≤ (N : ℝ) * (1 + Real.log N) := by
   have h : ∑ n ∈ Icc 1 N, n.divisors.card = ∑ d ∈ Icc 1 N, N / d := by

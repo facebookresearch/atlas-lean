@@ -359,7 +359,7 @@ private theorem card_large_le {x : ℝ} {N M : ℕ} {Y : ℝ}
     apply Finset.sum_le_sum_of_subset_of_nonneg hsub2
     intro n _ _
     positivity
-  have hle3 := sum_tau_le N
+  have hle3 := sum_card_divisors_le N
   have hNle : (N : ℝ) ≤ x := by rw [hN]; exact Nat.floor_le hx0.le
   have hNpos : (0 : ℝ) < (N : ℝ) := by
     have h2x : (2 : ℝ) ≤ x := le_of_lt hx2

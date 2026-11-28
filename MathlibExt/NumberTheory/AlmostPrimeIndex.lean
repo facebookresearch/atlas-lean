@@ -96,12 +96,14 @@ private lemma enum_strictMono {k : ℕ} (hk : 1 ≤ k) : StrictMono (enum k) := 
 private lemma count_enum {k : ℕ} (hk : 1 ≤ k) (i : ℕ) :
     almostPrimeCounting k (enum k i) = i := by
   cases i with
-  | zero => simp [enum, almostPrimeCounting]
+  | zero => simp [enum, almostPrimeCounting_eq_card_filter]
   | succ i =>
     change almostPrimeCounting k (Nat.nth _ i) = i + 1
     rw [← Nat.count_nth_succ_of_infinite (infinite_almostPrimes hk) i,
       Nat.count_eq_card_filter_range]
-    unfold almostPrimeCounting
+    rw [almostPrimeCounting_eq_card_filter,
+      ← show Finset.Icc 1 (Nat.nth (Nat.IsAlmostPrime k) i) =
+          Finset.Ioc 0 (Nat.nth (Nat.IsAlmostPrime k) i) from Finset.Icc_succ_left_eq_Ioc 0 _]
     congr 1
     ext n
     simp only [Finset.mem_filter, Finset.mem_Icc, Finset.mem_range]

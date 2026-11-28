@@ -8,7 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.NumberTheory.PrimeCounting.LandauAlmostPrimeAsymptotic
+public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.NumberTheory.PrimeCounting.AlmostPrimeCounting
 import Mathlib.Analysis.PSeries
 import Mathlib.NumberTheory.EulerProduct.Basic
 import Mathlib.Tactic.Linarith
@@ -222,7 +224,7 @@ private theorem oddWeight_sum_le (N : ℕ) :
       rw [show kernelTerm n * ((N : ℝ) * (1 + Real.log N)) =
           oddKernel n * ((N : ℝ) / n * (1 + Real.log N)) by unfold kernelTerm; ring]
       apply mul_le_mul_of_nonneg_left _ (oddKernel_nonneg n)
-      have hτ := sum_tau_le (N / n)
+      have hτ := sum_card_divisors_le (N / n)
       rw [show Icc 1 (N / n) = Ioc 0 (N / n) from Icc_add_one_left_eq_Ioc 0 _] at hτ
       simpa only [sigma_zero_apply] using hτ.trans (quotient_log_mul_le hn)
     _ = (∑ n ∈ Ioc 0 N, kernelTerm n) * ((N : ℝ) * (1 + Real.log N)) := Finset.sum_mul .. |>.symm

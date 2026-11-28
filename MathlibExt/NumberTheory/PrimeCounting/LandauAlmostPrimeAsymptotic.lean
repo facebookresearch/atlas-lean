@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.NumberTheory.AlmostPrime
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.NumberTheory.PrimeCounting.AlmostPrimeCounting
 import Mathlib.Algebra.IsPrimePow
 import Mathlib.Algebra.Order.Field.GeomSum
 import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
@@ -41,28 +42,6 @@ attribute [local instance] Classical.propDecidable
 
 @[expose] public section
 
-
-open Classical in
-/-- **Counting almost primes.** For natural numbers $k$ and $x$, $\pi_k(x)$ is the number of
-integers $n$ with $1 \le n \le x$ that have exactly $k$ prime factors, counted with multiplicity.
-This is the counting function in Landau's theorem on almost primes.
-
-Source: Rafael Jakimczuk, "Functions of Slow Increase and Integer Sequences,"
-Journal of Integer Sequences 13 (2010),
-`https://cs.uwaterloo.ca/journals/JIS/VOL13/Jakimczuk/jakimczuk8.tex`,
-lines 451-453, file SHA256
-`b4a7154095398fc4a1729bef9ec80c4005190c1d9ad1dd585fbd2fcdd1eae8d7`, text SHA256
-`4af87d665e5485d49e794b3927864d50a1162127411c1427d0f1a379b50b2065`,
-module `WantedExt.NumberTheory.PrimeCounting.LandauAlmostPrimeAsymptoticWanted`. -/
-noncomputable def almostPrimeCounting (k x : ℕ) : ℕ :=
-  ((Finset.Icc 1 x).filter (fun n => Nat.IsAlmostPrime k n)).card
-
-/-- The count of `k`-almost primes up to `x` is the cardinality of the filter on `(0, x]`
-selecting integers with exactly `k` prime factors, counted with multiplicity. -/
-theorem almostPrimeCounting_eq_card_filter (k x : ℕ) :
-    almostPrimeCounting k x = ((Finset.Ioc 0 x).filter (Nat.IsAlmostPrime k)).card := by
-  have hIcc : Finset.Icc 1 x = Finset.Ioc 0 x := Finset.Icc_succ_left_eq_Ioc 0 x
-  rw [almostPrimeCounting, hIcc]
 
 open Classical in
 /-- Sum of `1 / p` over primes `p ∈ [1, N]`. -/
@@ -1792,8 +1771,9 @@ private theorem lapCountingMulLogSubLe (k N : ℕ) :
   have htau : ((almostPrimeCounting (k + 1) N : ℕ):ℝ) * Real.log ((N:ℕ):ℝ)
       = ∑ m ∈ (Finset.Icc 1 N).filter (fun m => Nat.IsAlmostPrime (k + 1) m),
         Real.log ((N:ℕ):ℝ) := by
-    unfold almostPrimeCounting
-    rw [Finset.sum_const, nsmul_eq_mul]
+    rw [almostPrimeCounting_eq_card_filter,
+      ← show Finset.Icc 1 N = Finset.Ioc 0 N from Finset.Icc_succ_left_eq_Ioc 0 N,
+      Finset.sum_const, nsmul_eq_mul]
   have hdiff : ((almostPrimeCounting (k + 1) N : ℕ):ℝ) * Real.log ((N:ℕ):ℝ)
       - (∑ m ∈ (Finset.Icc 1 N).filter (fun m => Nat.IsAlmostPrime (k + 1) m),
         ∑ p ∈ m.primeFactors, Real.log ((p:ℕ):ℝ))
@@ -2040,8 +2020,9 @@ public theorem landau_almostPrimeCounting_isEquivalent (k : ℕ) (hk : 1 ≤ k) 
           exact ⟨by omega, hmp⟩
         · rintro ⟨hmN, hmP⟩
           exact ⟨⟨hmP.one_le, by omega⟩, Nat.isAlmostPrime_one_iff.mpr hmP⟩
-      unfold almostPrimeCounting
-      rw [e1, Nat.count_eq_card_filter_range, hset]
+      rw [almostPrimeCounting_eq_card_filter,
+        ← show Finset.Icc 1 N = Finset.Ioc 0 N from Finset.Icc_succ_left_eq_Ioc 0 N,
+        e1, Nat.count_eq_card_filter_range, hset]
     have eA : (fun x : ℕ => ((almostPrimeCounting 1 x : ℕ):ℝ))
         = (fun x : ℕ => ((Nat.primeCounting x : ℕ):ℝ)) := by
       funext N
