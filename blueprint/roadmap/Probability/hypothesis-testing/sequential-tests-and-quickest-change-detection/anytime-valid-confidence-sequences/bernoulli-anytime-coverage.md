@@ -1,0 +1,3 @@
+# Anytime-valid confidence sequence for a Bernoulli parameter
+
+Let $p_0 \in (0, 1)$ and, for each $\theta \in (0, 1)$, let $\mu_\theta$ be a probability measure under which the strongly measurable observations $X_0, X_1, \dots$ are independent Bernoulli($\theta$). Let $\Lambda^\theta_n = \prod_{i \le n}\ell(p_0; X_i)/\ell(\theta; X_i)$ be the likelihood-ratio process against the reference $p_0$, where $\ell(p; 1) = p$, $\ell(p; 0) = 1 - p$ and $\ell(p; x) = 0$ for any other value $x$. For $\alpha \in (0, 1)$ let $C_n = \{\theta \in (0, 1) : \Lambda^\theta_n < 1/\alpha\}$. Then for every $\theta \in (0, 1)$, $\mu_\theta(\theta \in C_n \text{ for all } n) \ge 1 - \alpha$.

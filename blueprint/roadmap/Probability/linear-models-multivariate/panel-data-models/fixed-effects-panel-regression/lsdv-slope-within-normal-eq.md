@@ -1,0 +1,3 @@
+# Dummy-variable regression implies the within normal equations
+
+Let $g : \iota \to G$ assign the observations of a finite set $\iota$ to finitely many groups, with group means $\bar y_h$. Let $D$ be the group-dummy matrix ($D_{ih} = 1$ if $g(i) = h$, else $0$), $X$ a real $\iota \times \pi$ regressor matrix, $y \in \mathbb{R}^\iota$, and $\ddot y_i = y_i - \bar y_{g(i)}$, $\ddot X_{ij} = X_{ij} - \bar X_{g(i), j}$ the within transformations. If $(\alpha, \beta)$ satisfies $D^\top(y - D\alpha - X\beta) = 0$ and $X^\top(y - D\alpha - X\beta) = 0$, then $\ddot X^\top\ddot X\beta = \ddot X^\top\ddot y$.
