@@ -11825,6 +11825,7 @@
   "MathlibExt/Combinatorics/Sequences/SymmetricUnimodalProducts": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Unimodal and log-concave sequences"},
   "MathlibExt/Combinatorics/Sequences/ThrowbackFrequency": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Throwback sequences"},
   "MathlibExt/Combinatorics/Sequences/ThrowbackLeaderTime": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Throwback sequences"},
+  "MathlibExt/Combinatorics/Sequences/ThrowbackPeriodicity": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Throwback sequences"},
   "MathlibExt/Combinatorics/Sequences/ThrowbackPerfectMixing": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Throwback sequences"},
   "MathlibExt/Combinatorics/Sequences/ThrowbackRecurrence": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Throwback sequences"},
   "MathlibExt/Combinatorics/Sequences/ThrowbackSequences": {"to": "Combinatorics/combinatorics-on-words/self-describing-sequences", "title": "Throwback sequences"},

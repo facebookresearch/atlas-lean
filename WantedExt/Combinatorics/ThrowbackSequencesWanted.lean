@@ -14,6 +14,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.Combinatorics.Sequences.ThrowbackFrequency
 public import MathlibExt.Combinatorics.Sequences.ThrowbackLeaderTime
+public import MathlibExt.Combinatorics.Sequences.ThrowbackPeriodicity
 public import MathlibExt.Combinatorics.Sequences.ThrowbackPerfectMixing
 public import MathlibExt.Combinatorics.Sequences.ThrowbackRecurrence
 public import MathlibExt.Combinatorics.Sequences.ThrowbackUniformRecurrence
@@ -58,18 +59,6 @@ public theorem_wanted throwbackSequence_limiting_frequency (X : ℕ → ℕ) (hX
           if w ∈ Set.range X then
             ((w : ℝ) - Set.ncard {i | X i < w}) / ((w : ℝ) - Set.ncard {i | X i < w} + 1)
           else 1))
-
-/-- **Partial placement sequences are periodic.** Let $X = (x_0, x_1, \dots)$ be a strictly
-increasing sequence of positive integers and let $n \ge 0$. Then the partial placement sequence
-$P_n(X)$ is periodic: there is an integer $p > 0$ such that for every position
-$z \in \mathbb{Z}$, the positions $z + p$ and $z$ of $P_n(X)$ are either both empty or hold the
-same term.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Lemma 6 (`jis-2025-25.5.1-lem-6`). -/
-public theorem_wanted partialPlacement_periodic (X : ℕ → ℕ) (hX : StrictMono X)
-    (hX0 : 0 < X 0) (n : ℕ) :
-    ∃ p : ℤ, 0 < p ∧ ∀ z, partialPlacement X n (z + p) = partialPlacement X n z
 
 /-- **Minimal complete blocks of partial placements match configurations.** Let
 $X = (x_0, x_1, \dots)$ be a strictly increasing sequence of positive integers, let $\tau$ be
