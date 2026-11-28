@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicPrimeMul
 public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicPrimitiveDivisor
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.LargeZsigmondyPrimesHomogenizedCyclotomicMemIcc
+public import MathlibExt.NumberTheory.LargeZsigmondyPrimesEqSubOneOfNotIsLargeZsigmondyPrime
 public import MathlibExt.NumberTheory.LargeZsigmondyPrimesHomogenizedCyclotomicPrimePowMul
 
 /-!
@@ -39,18 +40,6 @@ A Zsigmondy prime for `(a, b, n)` is a primitive prime divisor of `aⁿ - bⁿ`
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Large Zsigmondy prime.** Let $a$, $b$, $n$ and $p$ be natural numbers. Then $p$ is a large
-Zsigmondy prime for $(a, b, n)$ when $p$ is a primitive prime divisor of the term $a^n - b^n$ of
-the integer sequence $(a^m - b^m)_{m \ge 0}$, that is, $n \ge 1$, $p$ is prime, $p$ divides
-$a^n - b^n$ and $p$ divides no $a^m - b^m$ with $1 \le m < n$, and moreover $p^2$ divides
-$a^n - b^n$ or $p > n + 1$.
-
-Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Section 1
-(definition after Theorem 1). -/
-def IsLargeZsigmondyPrime (a b n p : ℕ) : Prop :=
-  IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - (b : ℤ) ^ m) n p ∧
-    ((p : ℤ) ^ 2 ∣ (a : ℤ) ^ n - (b : ℤ) ^ n ∨ n + 1 < p)
 
 /-- **$7$ is a large Zsigmondy prime for $(2, 1, 3)$.** The prime $7$ is a large Zsigmondy prime
 for $(a, b, n) = (2, 1, 3)$: it divides $2^3 - 1 = 7$, divides neither $2^1 - 1$ nor $2^2 - 1$,
@@ -117,18 +106,6 @@ theorem_wanted prime_dvd_homogenizedCyclotomic_cases {a b n p k : ℕ} (hb : 0 <
         IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - (b : ℤ) ^ m) n p) ∨
       (p ∈ n.primeFactors ∧ (∀ r ∈ n.primeFactors, r ≤ p) ∧ 2 < p ∧
         (∃ β, 1 ≤ β ∧ n = p ^ β * k) ∧ padicValInt p (homogenizedCyclotomic n a b) = 1)
-
-/-- **A Zsigmondy prime $q$ that is not large satisfies $n = q - 1$.** Let $a > b$ be coprime
-positive integers and let $n \ge 2$. If $q$ is a primitive prime divisor of the term $a^n - b^n$
-of the integer sequence $(a^m - b^m)_{m \ge 0}$ and $q$ is not a large Zsigmondy prime for
-$(a, b, n)$, then $n = q - 1$.
-
-Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 6. -/
-theorem_wanted eq_sub_one_of_not_isLargeZsigmondyPrime {a b n q : ℕ} (hb : 0 < b)
-    (hba : b < a) (hcop : a.Coprime b) (hn : 2 ≤ n)
-    (hq : IntegerSequence.IsPrimitivePrimeDivisor (fun m => (a : ℤ) ^ m - (b : ℤ) ^ m) n q)
-    (hql : ¬ IsLargeZsigmondyPrime a b n q) :
-    n = q - 1
 
 /-- **A size criterion for a large Zsigmondy prime.** Let $a$ and $b$ be distinct coprime
 positive integers and let $n \ge 3$. If $(n + 1) q < \Phi_n(a, b)$ for every prime factor $q$ of
