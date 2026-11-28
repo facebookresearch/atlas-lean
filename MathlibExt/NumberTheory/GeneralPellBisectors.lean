@@ -452,10 +452,15 @@ theorem negPell_succ (d n : ℕ) :
       negPellG d (n + 1) = negPellF d n * negPellFundY d + negPellG d n * negPellFundX d := by
   simp [negPellF, negPellG, pow_succ]
 
-/-- **Addition of indices in the negative Pell sequences.** For every natural number $d$ and
-natural indices $i, j$, the coordinates of the power at index $i+j$ are obtained by multiplying
-those at $i$ and $j$ in $\mathbb{Z}[\sqrt d]$. The identities apply even when the negative Pell
-sequences use the zero base because no solution exists.
+/-- **Addition of indices in the negative Pell sequences.** Let $d$ be a natural number, let
+$(X, Y)$ be the solution of $x^2 - d y^2 = -1$ in natural numbers with least positive $Y$, with
+$X = Y = 0$ if there is none, and define integers $f_n, g_n$ by
+$(X + Y\sqrt{d})^n = f_n + g_n\sqrt{d}$, computed formally with $(\sqrt{d})^2 = d$. Then for all
+natural numbers $i, j$,
+
+$$f_{i+j} = f_i f_j + d g_i g_j, \qquad g_{i+j} = f_i g_j + g_i f_j.$$
+
+The source assumes that $d > 1$ is square-free and that a solution exists; neither is needed.
 
 Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
 Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 6(a), equations (27) and (28). -/
@@ -583,11 +588,14 @@ private theorem growth {d : ℕ} (hd : 1 < d)
 
 end negPellG_le_negPellF
 
-/-- **Signed norm of a negative Pell power.** If $d$ is a natural number and
-$x^2 - d y^2 = -1$ has an integer solution, the coordinates of the $n$-th power of the
-fundamental solution satisfy $f_n^2 - d g_n^2 = (-1)^n$ for every natural number $n$.
-The fundamental solution has the least positive second coordinate and a nonnegative first
-coordinate. The identity also holds at $d = 1$, where the fundamental solution is $(0, 1)$.
+/-- **Signed norm of a negative Pell power.** Let $d$ be a natural number for which
+$x^2 - d y^2 = -1$ has an integer solution. Let $(X, Y)$ be its solution with $X \ge 0$ and $Y$
+least positive. For each natural number $n$, define integers $f_n, g_n$ by
+$(X + Y\sqrt{d})^n = f_n + g_n\sqrt{d}$, computed formally with $(\sqrt{d})^2 = d$. Then
+
+$$f_n^2 - d g_n^2 = (-1)^n.$$
+
+The identity also holds at $d = 1$, where $(X, Y) = (0, 1)$.
 
 Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
 Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, equation (24). -/
