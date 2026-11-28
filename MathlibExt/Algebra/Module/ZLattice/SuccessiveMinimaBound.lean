@@ -23,10 +23,10 @@ minimum `Λ(L)` and covolume `vol(L)` (`ZLattice.firstMinimum`, `ZLattice.lastMi
 
 the second inequality of Gaudron and Rémond's Lemme 3.1 in *Polarisations et isogénies*.
 
-The proof is direct and does not use Minkowski's theorem on successive minima. Let `V` be the
-span of the vectors of `L` of norm `< Λ(L)`, a proper subspace, and `k = dim V < n`. Minkowski's
-convex body theorem, applied to a box with sides `2a` along an orthonormal basis of `V` and `2b`
-along an orthonormal basis of its orthogonal complement, for `a < λ(L) / √n` and
+The proof is direct and does not use Minkowski's theorem on successive minima. For `n > 0`, let
+`V` be the span of the vectors of `L` of norm `< Λ(L)`, a proper subspace, and `k = dim V < n`.
+Minkowski's convex body theorem, applied to a box with sides `2a` along an orthonormal basis of
+`V` and `2b` along an orthonormal basis of its orthogonal complement, for `a < λ(L) / √n` and
 `b < Λ(L) / √n`, gives `λ(L) ^ k Λ(L) ^ (n - k) ≤ √n ^ n vol(L)`; then `λ(L) ≤ Λ(L)`.
 -/
 
@@ -63,7 +63,8 @@ theorem lastMinimum_le {L : Submodule ℤ E} {r : ℝ} (hr : 0 < r) (ω : Fin (f
   csInf_le ⟨0, fun _ hs ↦ hs.1.le⟩ ⟨hr, ω, hω, hωL⟩
 
 omit [MeasurableSpace E] [BorelSpace E] in
-/-- A lattice $L$ in a space of positive dimension has $\lambda(L) \le \Lambda(L)$. -/
+/-- A lattice $L$ in a finite-dimensional real inner product space of positive dimension has
+$\lambda(L) \le \Lambda(L)$. -/
 theorem firstMinimum_le_lastMinimum (L : Submodule ℤ E) [DiscreteTopology L] [IsZLattice ℝ L]
     (hn : 0 < finrank ℝ E) : firstMinimum L ≤ lastMinimum L := by
   have hcard : Fintype.card (Free.ChooseBasisIndex ℤ L) = finrank ℝ E := by
@@ -82,8 +83,8 @@ theorem firstMinimum_le_lastMinimum (L : Submodule ℤ E) [DiscreteTopology L] [
     exact (firstMinimum_le_norm (hωL i₀).1 (hω.ne_zero i₀)).trans (hωL i₀).2
 
 omit [MeasurableSpace E] [BorelSpace E] in
-/-- In a space of positive dimension, the vectors of $L$ of norm less than $\Lambda(L)$ span a
-proper subspace. -/
+/-- In a finite-dimensional real inner product space of positive dimension, the vectors of a
+$\mathbb{Z}$-submodule $L$ of norm less than $\Lambda(L)$ span a proper subspace. -/
 theorem span_norm_lt_lastMinimum_ne_top (L : Submodule ℤ E) (hn : 0 < finrank ℝ E) :
     Submodule.span ℝ {x : E | x ∈ L ∧ ‖x‖ < lastMinimum L} ≠ ⊤ := by
   intro hspan
@@ -107,13 +108,15 @@ inequality). Let $E$ be a Euclidean space of dimension $n$ and $L \subset E$ a l
 discrete $\mathbb{Z}$-submodule that spans $E$. Let $\lambda(L)$ be its first minimum,
 $\Lambda(L)$ its last minimum and $\operatorname{vol}(L)$ its covolume, for the Haar measure of
 $E$ given by an orthonormal basis. Then
+
 $$\lambda(L)^{n-1}\, \Lambda(L) \le \sqrt{n}^{\,n} \operatorname{vol}(L).$$
+
 For $n = 0$ the exponent $n - 1$ is the natural-number subtraction $0$, $\Lambda(L) = 0$, and the
 inequality reads $0 \le \operatorname{vol}(L)$.
 
 Gaudron and Rémond take this from Martinet's form of Minkowski's second theorem with the bound
-$\gamma_n \le n$ for Hermite's constant. The proof here is direct: with $V$ the span of the
-vectors of $L$ of norm less than $\Lambda(L)$, a proper subspace of dimension $k < n$,
+$\gamma_n \le n$ for Hermite's constant. The proof here is direct: for $n > 0$, with $V$ the
+span of the vectors of $L$ of norm less than $\Lambda(L)$, a proper subspace of dimension $k < n$,
 Minkowski's convex body theorem for a box with half-sides $a < \lambda(L)/\sqrt n$ along an
 orthonormal basis of $V$ and $b < \Lambda(L)/\sqrt n$ along an orthonormal basis of
 $V^\perp$ gives $\lambda(L)^k \Lambda(L)^{n-k} \le \sqrt{n}^{\,n} \operatorname{vol}(L)$, and
