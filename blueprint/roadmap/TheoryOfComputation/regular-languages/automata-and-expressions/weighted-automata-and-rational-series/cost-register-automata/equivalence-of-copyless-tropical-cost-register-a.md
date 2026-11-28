@@ -31,7 +31,7 @@ equivalence.
 The proofs simulate vector addition systems with states and zero tests, whose state reachability is undecidable even when at most one run reaches the
 state. Using repeated minima, a copyless automaton checks a run of the counter machine encoded in the input: its output takes a designated minimal value
 exactly on encodings of correct runs reaching the target state. Changing the output function to $\min\{r_1 + 1, \dots, r_k + 1\}$ over the check registers changes the
-value exactly on correct runs, which gives equivalence. For upper boundedness, the simulating automaton is converted into an equivalent weighted automaton
+value exactly on correct runs, which gives equivalence. For upper boundedness, the simulating automaton, made total by a weight-$0$ branch on the complement of its regular domain, is converted into an equivalent weighted automaton
 that outputs $1$ exactly on correct runs and nonpositive values otherwise, and a new letter iterates it, so the iterated automaton is bounded exactly when no
 correct run exists.
 

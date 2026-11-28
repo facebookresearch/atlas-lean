@@ -1,4 +1,4 @@
-# Copyless cost register automata over the tropical semirings
+# Copyless linear cost register automata over the tropical semirings
 
 A tropical cost register automaton is a deterministic automaton whose registers, holding integers or infinity, are updated by minima of
 registers plus constants; it is copyless when each register's old value flows into at most one new register value.
@@ -16,12 +16,15 @@ $\min\{r_1 + m_1, \dots, r_k + m_k, m_{k+1}\}$. The value $\mathcal{C}(w)$ of a 
 expression of the final state evaluated after updating the registers along the unique run on $w$. The automaton is *copyless* ($\mathbb{K}$-CCRA) if every update
 satisfies $|\{ i : m_{j,i} \ne \infty \}| \le 1$ for each register $r_j$, so that the old value of each register influences at most one new value.
 
+These automata are, up to final states and the constant in the output expression, the copyless linear [cost register automata](copyless-cost-register-automata.md) over $(\mathbb{K}, \min, +)$: every update is a minimum of registers plus constants, never a sum of two registers.
+
 A *weighted automaton* over $\mathbb{K}$ is a nondeterministic automaton with weights in $\mathbb{K}$ on its transitions, an initial weight and final weights; the value of
 a word is the minimum, over accepting runs, of the sum of the weights, and $\infty$ if there is none. Every $\mathbb{K}$-CCRA is equivalent to a linearly ambiguous
-weighted automaton over $\mathbb{K}$.
+weighted automaton over $\mathbb{K}$ (Corollary 1 of the source).
 
 ## Depends on
 
+- [Copyless cost register automata](copyless-cost-register-automata.md)
 - [Weighted automata over a semiring](../weighted-automata-over-a-semiring.md)
 - [Semirings and formal power series on a free monoid](../semirings-and-formal-power-series.md)
 

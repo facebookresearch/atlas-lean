@@ -9,7 +9,7 @@ output $\theta(w)$ on every input $w$, nor whether it never can.
 1. It is undecidable whether a given transducer is $\theta$-input-preserving.
 2. It is undecidable whether a given transducer is $\theta$-input-altering, already for one-state transducers.
 
-As a consequence, for every such $\theta$ it is undecidable, given a transducer $t$, whether the empty language is maximal for the strict property $S_{\theta,t}$ of the languages $L$ with $\theta(L) \cap t(L) = \varnothing$, since $\emptyset$ is maximal for it exactly when $t$ is $\theta$-input-preserving. By contrast, for the weak property $W_{\theta,t}$ of the source, satisfaction is decidable: given a regular language $L$, a transducer $t$ and an antimorphic involution $\theta$, it can be decided whether $L$ satisfies $W_{\theta,t}$.
+As a consequence, for every such $\theta$ it is undecidable, given a transducer $t$, whether the empty language is maximal for the strict property $S_{\theta,t}$ of the languages $L$ with $\theta(L) \cap t(L) = \varnothing$, since $\emptyset$ is maximal for it exactly when $t$ is $\theta$-input-preserving. By contrast, for the weak property $W_{\theta,t}$ of the languages $L$ with $\theta(w) \notin t(L \setminus \{w\})$ for every $w \in L$ (Definition 5 of the source), satisfaction is decidable: given a regular language $L$, a transducer $t$ and an antimorphic involution $\theta$, it can be decided whether $L$ satisfies $W_{\theta,t}$.
 
 ## Depends on
 
@@ -19,7 +19,7 @@ As a consequence, for every such $\theta$ it is undecidable, given a transducer 
 ## Proof depends on
 
 - [The Post correspondence problem is undecidable](../../../../undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
-- [The θ-Post correspondence problem is undecidable for every antimorphic permutation](the-post-correspondence-problem-is-undecidable-f.md)
+- [The θ-Post correspondence problem is undecidable for every antimorphic permutation](theta-post-correspondence-problem-is-undecidable.md)
 
 ## Expansion
 

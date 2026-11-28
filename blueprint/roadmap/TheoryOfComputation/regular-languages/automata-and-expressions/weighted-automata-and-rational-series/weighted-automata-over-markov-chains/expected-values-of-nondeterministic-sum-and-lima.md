@@ -34,7 +34,7 @@ finite word has positive probability, so $\mathcal{A}$ is universal exactly when
 value, build $\mathcal{A}'$ with $\mathcal{A}'(w) = \min(\mathcal{A}(w), 0)$; then $\mathcal{A}$ is universal exactly when
 $\mathbb{E}(\mathcal{A}) = \mathbb{E}(\mathcal{A}')$. For LimAvg, connect the accepting states of $\mathcal{A}$ and $\mathcal{A}'$ back to
 their initial states by weight-$0$ transitions on a new letter; almost every infinite word then has value $\mathbb{E}(\mathcal{A})$,
-respectively $\mathbb{E}(\mathcal{A}')$, and the same comparison applies.
+respectively $\mathbb{E}(\mathcal{A}')$, and the same comparison applies. A good expansion links a page for the undecidability of quantitative universality of Sum-automata with weights $-1$, $0$ and $1$ (Krob; Almagor, Boker and Kupferman).
 
 ## Sources
 

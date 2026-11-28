@@ -28,7 +28,7 @@ error (a zero test passed on a nonzero counter, a decrement of a zero counter, a
 instructions). For each cheat signal a gadget of the automaton counts the relevant counter with weights so that a faithful
 run receives a positive value and a run with the signalled error a negative one; the gadgets are arranged so that the
 automaton stays functional. The controller wins iff it can spell an accepting run of the machine and stop, that is, iff the
-machine halts. An Avg-automaton becomes a Ratio-automaton by replacing each weight $w$ by $(w, 1)$.
+machine halts. An Avg-automaton becomes a Ratio-automaton by replacing each weight $w$ by $(w + K, 1)$ and the threshold $\nu$ by $\nu + K$, where $K$ makes every weight nonnegative (the gadgets use the weight $-1$, so $K = 1$); this shift raises every Avg value by exactly $K$ and keeps Ratio weights natural, as the definition requires. Besides the linked results, a good expansion links a page for the correctness and functionality of the cheat gadgets (Section 5.1 of the source).
 
 ## Sources
 

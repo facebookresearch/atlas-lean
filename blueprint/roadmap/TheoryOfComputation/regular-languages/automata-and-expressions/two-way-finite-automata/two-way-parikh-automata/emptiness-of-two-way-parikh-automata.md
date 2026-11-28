@@ -6,7 +6,7 @@ A *two-way Parikh automaton* of dimension $d$ over $\Sigma$ is a triple $P=(A,\l
 
 **Theorem (Filiot, Guha and Mazzocchi).** The emptiness problem for two-way nondeterministic Parikh automata is undecidable (Theorem 4.1 of arXiv:1907.09362v1).
 
-By contrast, emptiness is PSPACE-complete for deterministic and for bounded-visit two-way Parikh automata, and NP-complete for $k$-visit ones with $k$ fixed (one-way Parikh automata being the case $k=1$); two-way deterministic Parikh automata are effectively equivalent to unambiguous one-way ones, and their inclusion, universality and equivalence problems are coNEXPTIME-complete, while these problems are undecidable for one-way nondeterministic Parikh automata (Klaedtke and Rueß).
+By contrast, emptiness is PSPACE-complete for deterministic and for bounded-visit two-way Parikh automata, and non-emptiness is NP-complete for $k$-visit ones with $k$ fixed, so emptiness is coNP-complete there (one-way Parikh automata being the case $k=1$); two-way deterministic Parikh automata are effectively equivalent to unambiguous one-way ones, and their inclusion, universality and equivalence problems are coNEXPTIME-complete, while these problems are undecidable for one-way nondeterministic Parikh automata (Klaedtke and Rueß).
 
 ## Depends on
 
@@ -15,6 +15,7 @@ By contrast, emptiness is PSPACE-complete for deterministic and for bounded-visi
 
 ## Proof depends on
 
+- [Some multi-stack machine has an undecidable halting set](../../../../computability/halting-problem-and-rice-s-theorem/exists-not-tm2-decidable-tm2-halts-on.md)
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../../undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
 
 ## Expansion

@@ -10,9 +10,9 @@ Watson–Crick complementation.
 
 **Transducers.** Here a *transducer* is a tuple $t = (Q, \Sigma, E, I, F)$ with input and output alphabet $\Sigma$, a finite set $Q$ of states, initial and final
 states $I, F \subseteq Q$, and finitely many edges between states labeled by pairs $(u, v) \in \Sigma^* \times \Sigma^*$; it realizes the pairs $(x, y)$ obtained by
-concatenating the inputs and the outputs along a path from an initial to a final state, and $t(w)$ is the set of outputs on input $w$. For an antimorphic
+concatenating the inputs and the outputs along a path from an initial to a final state, and $t(w)$ is the set of outputs on input $w$. For a morphic or antimorphic
 permutation $\theta$, the transducer is *$\theta$-input-preserving* if $\theta(w) \in t(w)$ for every nonempty word $w$, and *$\theta$-input-altering* if $\theta(w) \notin t(w)$ for
-every nonempty word $w$. Such transducers describe code properties (for $\theta$ the identity): an input-altering transducer $t$ describes the property of the languages $L$ with $t(L) \cap L = \emptyset$, and an input-preserving transducer $t$ the property of the languages $L$ in which no word is mapped to a different word of $L$, that is, $w \notin t(L \setminus \{w\})$ for every $w \in L$; DNA codes avoiding unwanted hybridization are of this kind.
+every nonempty word $w$. For $\theta$ the identity, extended morphically to the identity map on words, these are the classical input-preserving and input-altering transducers, which describe code properties: an input-altering transducer $t$ describes the property of the languages $L$ with $t(L) \cap L = \emptyset$, and an input-preserving transducer $t$ the property of the languages $L$ in which no word is mapped to a different word of $L$, that is, $w \notin t(L \setminus \{w\})$ for every $w \in L$. Properties of DNA codes, such as avoiding unwanted hybridization, are in general not of this kind (Proposition 8 of the source); they need the $\theta$-transducer properties of Definition 5, in which $\theta(w)$ takes the place of $w$.
 
 ## Depends on
 
