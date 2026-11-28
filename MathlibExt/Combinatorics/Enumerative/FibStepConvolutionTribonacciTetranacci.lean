@@ -10,11 +10,12 @@ module
 
 public import MathlibExt.Combinatorics.Enumerative.FibStepConvolution
 import all MathlibExt.Combinatorics.Enumerative.FibStepConvolution
-import Mathlib.Algebra.BigOperators.NatAntidiagonal
-import Mathlib.Tactic.LinearCombination
 
 /-!
 # Tribonacci–tetranacci convolution
+
+The consecutive-order coefficient identity from `FibStepConvolution` gives the
+tribonacci–tetranacci convolution at order three.
 
 ## References
 
@@ -28,8 +29,6 @@ import Mathlib.Tactic.LinearCombination
 
 namespace MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted
 
-open PowerSeries
-
 /-- **Convolution of the Fibonacci 3-step and 4-step numbers.** Let $T_j$ and $Q_j$ be the
 Fibonacci $3$-step and $4$-step numbers, where the Fibonacci $k$-step numbers start $0, 1$ and
 each later term is the sum of the $k$ terms before it (terms of negative index being $0$). For
@@ -42,13 +41,7 @@ Convolution Sums Involving Fibonacci `m`-Step Numbers",
 Corollary 2. -/
 public theorem sum_trib_mul_tetra (n : ℕ) :
     ∑ j ∈ Finset.range (n + 1), fibStep 3 j * fibStep 4 (n - j) =
-      fibStep 4 (n + 3) - fibStep 3 (n + 3) := by
-  have hg : X ^ 3 * (fibStepGF 3 * fibStepGF 4) = fibStepGF 4 - fibStepGF 3 := by
-    linear_combination fibStepGF_sub_succ 3
-  have hc := congrArg (coeff (n + 3) (R := ℚ)) hg
-  rw [coeff_X_pow_mul] at hc
-  simp only [coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk, map_sub,
-    fibStepGF, coeff_mk] at hc
-  exact_mod_cast hc
+      fibStep 4 (n + 3) - fibStep 3 (n + 3) :=
+  sum_fibStep_mul_succ_eq_sub 3 n
 
 end MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted
