@@ -10,6 +10,31 @@ module
 
 import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndex
 
+-- Compute the index and the geometric expression independently at exponent zero.
+example : (3 ^ 0 : ℕ).abundancyIndex = 1 ∧
+    (3 : ℚ) / (3 - 1) * (1 - 1 / 3 ^ (0 + 1 : ℕ)) = 1 := by
+  decide +kernel
+
+-- Both empty products give one, without an application of multiplicativity.
+example (f : Bool → ℕ) : (∏ i ∈ (∅ : Finset Bool), f i).abundancyIndex = 1 ∧
+    (∏ i ∈ (∅ : Finset Bool), (f i).abundancyIndex) = 1 := by
+  simp only [Finset.prod_empty]
+  decide +kernel
+
+-- Independently compute the index of six and the product of its factor indices.
+example : (2 * 3 : ℕ).abundancyIndex = 2 ∧
+    (2 : ℕ).abundancyIndex * (3 : ℕ).abundancyIndex = 2 := by
+  decide +kernel
+
+-- The lower bound is attained at one.
+example : (1 : ℕ).abundancyIndex = 1 := by
+  decide +kernel
+
+-- The index of nine and the successor expression at three both give 13/9.
+example : (3 ^ (1 + 1) : ℕ).abundancyIndex = 13 / 9 ∧
+    (3 ^ 1 : ℕ).abundancyIndex + 1 / (3 : ℚ) ^ (1 + 1) = 13 / 9 := by
+  decide +kernel
+
 -- The geometric formula includes exponent zero.
 example : (3 ^ 0 : ℕ).abundancyIndex = 1 := by
   rw [Nat.abundancyIndex_prime_pow_eq 3 0 (by decide)]

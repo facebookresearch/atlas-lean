@@ -28,6 +28,8 @@ is given by a geometric sum, yielding a formula for the change between consecuti
 * The prime-power proofs adapt arguments from `MathlibExt.NumberTheory.PrimitiveNondeficient`
   and `MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv`, respectively the
   geometric formula `abundancyIndex_prime_pow_eq` and `abundancyIndex_prime_pow_succ`.
+* Coprime multiplicativity adapts the private `abundancyIndex_mul_of_coprime` from
+  `MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv`.
 -/
 
 open scoped Function
