@@ -78,7 +78,7 @@ abbrev homologyColimitIso (K : J ⥤ HomologicalComplex C c) (i : ι) :
 /-- Let C be abelian with exact J-shaped colimits, and K a J-indexed diagram of
 complexes of any shape. In degree i, homology of the injection from K(j), followed
 by the homology-colimit comparison, is the injection from H_i(K(j)) into its colimit. -/
-@[reassoc (attr := simp)]
+@[reassoc]
 theorem map_ι_comp_homologyColimitIso_hom
     (K : J ⥤ HomologicalComplex C c) (i : ι) (j : J) :
     (homologyFunctor C c i).map (colimit.ι K j) ≫ (homologyColimitIso K i).hom =
