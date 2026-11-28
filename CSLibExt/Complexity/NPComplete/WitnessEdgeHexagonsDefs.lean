@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# WITNESS PUZZLES WITH EDGE HEXAGONS are NP-complete: definitions
+# WITNESS PUZZLES WITH EDGE HEXAGONS: definitions
 
 Source:
 Z. Abel, J. Bosboom, M. Coulombe, E. D. Demaine, L. Hamilton, A. Hesterberg, J. Kopinsky,
