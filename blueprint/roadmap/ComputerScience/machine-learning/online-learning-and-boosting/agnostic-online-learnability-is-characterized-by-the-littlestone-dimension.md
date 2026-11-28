@@ -12,6 +12,7 @@ bound for infinite dimension, which holds for every learner at every horizon.
 ## Depends on
 
 - [Online classification protocol, mistakes and regret](online-classification-protocol-mistakes-and-regret.md)
+- [The Littlestone dimension is the optimal mistake bound](the-littlestone-dimension-is-the-optimal-mistake-bound.md)
 
 ## Proof depends on
 
