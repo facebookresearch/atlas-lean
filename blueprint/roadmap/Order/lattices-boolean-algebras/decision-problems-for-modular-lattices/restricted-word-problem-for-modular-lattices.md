@@ -15,6 +15,7 @@ Equivalently, for $\mathcal{C}$ the class of all modular lattices, there is a fi
 
 - [Modular lattice](../modular-lattice.md)
 - [Submodule](submodule.md)
+- [Finite-dimensional vector space](../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/dimension/finite-dimensional.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

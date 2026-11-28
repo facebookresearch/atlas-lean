@@ -2,7 +2,7 @@
 
 There is a modular ortholattice with three generators and finitely many defining relations whose word problem is unsolvable; the source remarks that the construction works in every variety of modular ortholattices containing the orthocomplemented projective geometries of dimension 14.
 
-An *ortholattice* is a bounded lattice $(L; \vee, \wedge, 0, 1)$ with an operation $x \mapsto x'$ satisfying $x \vee x' = 1$, $x \wedge x' = 0$, $(x \vee y)' = x' \wedge y'$, $(x \wedge y)' = x' \vee y'$ and $x'' = x$; it is a *modular ortholattice* if its lattice reduct is a [modular lattice](../modular-lattice.md). The subspace lattice of a finite-dimensional vector space with an anisotropic hermitian form, with $U' = U^\perp$, is an example. For a variety $\mathcal{V}$ of such algebras, a *finite presentation* $(G, \mathrm{Rel})$ is a finite set $G$ of generators and a finite set $\mathrm{Rel}$ of equations between terms in $G$; the algebra it *presents* in $\mathcal{V}$ is the free algebra on $G$ in $\mathcal{V}$ modulo $\mathrm{Rel}$, and its *word problem* asks, given an equation between terms in $G$, whether it holds in that algebra.
+An *ortholattice* is a bounded lattice $(L; \vee, \wedge, 0, 1)$ with an operation $x \mapsto x'$ satisfying $x \vee x' = 1$, $x \wedge x' = 0$, $(x \vee y)' = x' \wedge y'$, $(x \wedge y)' = x' \vee y'$ and $x'' = x$; it is a *modular ortholattice* if its lattice reduct is a [modular lattice](../modular-lattice.md). The [subspace lattice](submodule.md) of a finite-dimensional vector space with an anisotropic hermitian form, with $U' = U^\perp$, is an example. For a variety $\mathcal{V}$ of such algebras, a *finite presentation* $(G, \mathrm{Rel})$ is a finite set $G$ of generators and a finite set $\mathrm{Rel}$ of equations between terms in $G$; the algebra it *presents* in $\mathcal{V}$ is the free algebra on $G$ in $\mathcal{V}$ modulo $\mathrm{Rel}$, and its *word problem* asks, given an equation between terms in $G$, whether it holds in that algebra.
 
 **Theorem (Roddy).** There is a finitely presented modular ortholattice with three generators whose word problem is unsolvable.
 
@@ -11,7 +11,6 @@ Conventions: two-generated modular ortholattices have solvable word problem, sin
 ## Depends on
 
 - [Modular lattice](../modular-lattice.md)
-- [Submodule](submodule.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

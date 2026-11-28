@@ -12,6 +12,7 @@ The number of generators of the presentation can be reduced to $5$. In particula
 
 - [Modular lattice](../modular-lattice.md)
 - [Submodule](submodule.md)
+- [Finite-dimensional vector space](../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/dimension/finite-dimensional.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

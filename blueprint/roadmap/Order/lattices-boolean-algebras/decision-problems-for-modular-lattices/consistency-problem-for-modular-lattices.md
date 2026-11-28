@@ -17,6 +17,7 @@ This applies to the class of all modular lattices, to the class of all finite mo
 
 - [Modular lattice](../modular-lattice.md)
 - [Submodule](submodule.md)
+- [Finite-dimensional vector space](../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/dimension/finite-dimensional.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
