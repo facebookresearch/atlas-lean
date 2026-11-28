@@ -83,8 +83,11 @@ def ACEquiv {ar : List ℕ} (acs : List ℕ) {β : Type} (s t : (lang ar).Term �
       R (f.apply₂ u v) (f.apply₂ v u)) →
     R s t
 
-/-- An instance: the arities of the function symbols, the indices of the AC symbols, the number
-of variables `|V|`, and the token lists of the pattern `s` and of the subject `t`. -/
+/-- An instance: a list of natural arities of the function symbols, a list of natural indices
+of the AC symbols, a number `|V|` of pattern variables, and the raw token lists of the pattern
+`s` and of the subject `t`. The token lists need not parse and may be empty or refer to
+undeclared symbols or variables, and an AC index need not name a binary symbol; these
+conditions, and that the subject `t` is a ground term, belong to `WellFormed`. -/
 abbrev ACMatchingInstance := List ℕ × List ℕ × ℕ × List (ℕ × ℕ) × List (ℕ × ℕ)
 
 /-- Well-formedness of an instance: every AC symbol is a binary symbol, `s` is a term with

@@ -66,8 +66,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the arities of the function symbols of `C`, the number `|U|` of variables, the
-token lists of `E₁, ..., Eₘ` and the token lists of `F₁, ..., Fₙ`. -/
+/-- An instance: a list of natural arities (the function symbols of `C`), a number `|U|`, and
+two lists of raw token lists (each a list of natural pairs), read as the terms `E₁, ..., Eₘ`
+and `F₁, ..., Fₙ`. A token list may be empty or fail to parse; which term it represents is
+defined only when parsing succeeds. Successful parsing and the symbol and variable bounds
+belong to `WellFormed`. -/
 abbrev FirstOrderSubsumptionInstance :=
   List ℕ × ℕ × List (List (ℕ × ℕ)) × List (List (ℕ × ℕ))
 

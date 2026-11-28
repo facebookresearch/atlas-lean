@@ -72,8 +72,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the arities `ar` of the function symbols, the number of variables `|V|`, the
-equations of `E` as pairs of token lists, and the token lists of `s` and `t`. -/
+/-- An instance: a list `ar` of natural arities, a number `|V|`, a list of pairs of raw token
+lists (read as the equations of `E`; a list of pairs, not a set) and two raw token lists, read
+as the terms `s` and `t`. A token list may be empty or fail to parse; which term or equation
+it represents is defined only when parsing succeeds. Successful parsing and the symbol and
+variable bounds belong to `WellFormed`. -/
 abbrev RigidEUnificationInstance :=
   List ℕ × ℕ × List (List (ℕ × ℕ) × List (ℕ × ℕ)) × List (ℕ × ℕ) × List (ℕ × ℕ)
 

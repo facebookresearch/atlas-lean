@@ -57,9 +57,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `|S|` of sentences (sentences `0, ..., |S| - 1`), the true sentences
-`T`, the implication relation `R` (pairs `(A, s)`, the premises `A` as a list), and the bound
-`K`. -/
+/-- An instance: a number `|S|`, a list `T` of natural sentence labels (the true sentences), a
+list `R` of pairs `(A, s)` of a list `A` of premise labels and a conclusion label `s` (the
+implication relation), and a bound `K`. The labels are raw: with `|S| = 0` the list `T` can
+still store the label `7`. That every label is a sentence below `|S|` and that `0 < K ≤ |S|`
+belong to `WellFormed`. -/
 abbrev MinimumAxiomSetInstance := ℕ × List ℕ × List (List ℕ × ℕ) × ℕ
 
 /-- Well-formedness of an instance: every true sentence, premise and conclusion is a sentence

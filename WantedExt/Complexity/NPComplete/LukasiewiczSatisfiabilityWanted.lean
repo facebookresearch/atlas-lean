@@ -92,7 +92,9 @@ noncomputable def eval (σ : ℕ → ℝ) : MVTerm → ℝ
   | .wedge φ ψ => min (eval σ φ) (eval σ ψ)
   | .vee φ ψ => max (eval σ φ) (eval σ ψ)
 
-/-- An instance: the formula as a postfix token list. -/
+/-- An instance: a raw list of natural tokens, read as the postfix token list of a formula. A
+token list may be empty or fail to parse; which formula it represents is defined only when
+parsing succeeds, and successful parsing is part of `WellFormed`. -/
 abbrev LukasiewiczSatisfiabilityInstance := List ℕ
 
 /-- Apply the binary connective with token code `c` (`1`-`5`: `⊕`, `⊗`, `→`, `∧`, `∨`). -/

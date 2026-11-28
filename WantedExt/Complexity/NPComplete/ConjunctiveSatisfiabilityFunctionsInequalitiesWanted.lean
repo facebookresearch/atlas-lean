@@ -61,8 +61,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A term node `(kind, (a, b), args)`: a variable (`kind = 0`), an integer constant `a - b`
-(`kind = 1`), or the function symbol `a` applied to earlier nodes `args` (`kind = 2`). -/
+/-- A term node `(kind, (a, b), args)`: a natural tag, a pair of natural numbers and a list of
+natural node indices. In the intended reading it is the variable `a` (`kind = 0`), the integer
+constant `a - b` (`kind = 1`), or the function symbol `a` applied to the earlier nodes `args`
+(`kind = 2`). The type also holds a node with tag `3`, or one whose arguments refer to a later
+index; legal tags, backward references and arities belong to `WellFormed`. -/
 abbrev TermNode := ℕ × (ℕ × ℕ) × List ℕ
 
 /-- A literal `(r, l, l')`: the terms at nodes `l` and `l'` related by `≤`, `>`, `=`, `≠` for

@@ -61,7 +61,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the formula as a postfix token list. -/
+/-- An instance: a raw list of natural tokens, read as the postfix token list of a formula. A
+token list may be empty or fail to parse; which formula it represents is defined only when
+parsing succeeds, and successful parsing is part of `WellFormed`. -/
 abbrev LTLEventuallySatisfiabilityInstance := List ℕ
 
 /-- Read a postfix token list onto a stack of formulas: `0` pops `g` and `f` and pushes

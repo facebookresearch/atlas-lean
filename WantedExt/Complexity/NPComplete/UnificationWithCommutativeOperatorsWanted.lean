@@ -86,8 +86,11 @@ def tokens {k : ℕ} : Term (Fin k) → List (ℕ × ℕ)
   | .const c => [(1, c.val)]
   | .node l r => (2, 0) :: (tokens l ++ tokens r)
 
-/-- An instance: the number of variables `|V|` (variables `0, ..., |V| - 1`), the number of
-constants `|C|` (constants `Fin |C|`), and the pairs `(eᵢ, fᵢ)` as prefix token lists. -/
+/-- An instance: numbers `|V|` and `|C|` and a list of pairs of raw token lists, read as the
+prefix encodings of the expression pairs `(eᵢ, fᵢ)` over the variables `0, ..., |V| - 1` and
+the constants `Fin |C|`. A token list may be empty or fail to parse; which expression pair it
+represents is defined only when parsing succeeds. Successful parsing and the variable and
+constant bounds belong to `WellFormed`. -/
 abbrev UnificationWithCommutativeOperatorsInstance :=
   ℕ × ℕ × List (List (ℕ × ℕ) × List (ℕ × ℕ))
 

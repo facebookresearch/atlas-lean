@@ -83,8 +83,12 @@ def parse (toks : List (ℕ × ℕ)) : Option BoolExpr :=
   | some [E] => some E
   | _ => none
 
-/-- An instance: the number `n` of variables `u₀, …, u_{n-1}`, the connective codes of `B`, and
-the postfix token list of `E`. -/
+/-- An instance: a number `n`, a list `B` of natural connective codes and a raw token list (a
+list of natural pairs), read as the postfix encoding of an expression `E` over
+`u₀, …, u_{n-1}`. A token list may be empty or fail to parse; which expression it represents is
+defined only when parsing succeeds. That every code is below `16`, that the tokens parse, that
+every variable token is below `n` and that every connective of the expression is in `B` belong
+to `WellFormed`. -/
 abbrev SatisfiabilityOfBooleanExpressionsInstance := ℕ × List ℕ × List (ℕ × ℕ)
 
 /-- Well-formedness of an instance: every code in `B` names one of the 16 binary connectives,

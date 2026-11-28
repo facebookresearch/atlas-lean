@@ -52,9 +52,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `n` of variables (variables `0, ..., n - 1`), and one triple
-`(kᵢ, Rᵢ, Cᵢ)` per index `i`: the arity `kᵢ`, the relation `Rᵢ` as the list of its tuples, and
-the collection `Cᵢ` of `kᵢ`-tuples of variables. -/
+/-- An instance: a number `n` of variables and a list of triples `(kᵢ, Rᵢ, Cᵢ)`: a number `kᵢ`,
+a list `Rᵢ` of Boolean lists, read as the tuples of a relation, and a list `Cᵢ` of lists of
+natural variable labels. Nothing in the type ties the rows of `Rᵢ` or the members of `Cᵢ` to
+length `kᵢ`, or the labels to `n`: positive arities, these lengths and the variable bound
+belong to `WellFormed`. -/
 abbrev GeneralizedSatisfiabilityInstance := ℕ × List (ℕ × List (List Bool) × List (List ℕ))
 
 /-- Well-formedness of an instance: every arity `kᵢ` is positive, every tuple of `Rᵢ` has length
