@@ -9,6 +9,7 @@
 - [An odd harmonic series for $\pi^2/6$ and a Catalan–harmonic series for $8 - 2\pi^2/3$](tsum-odd-harmonic-div-and-catalan-mul-ha.md)
 - [A Catalan series weighted by harmonic numbers of complex argument](tsum-catalan-mul-harmonic-div-four-pow-m.md)
 - [Digamma evaluation of the $(2n+1)$-weighted Catalan series with binomial denominators](tsum-odd-mul-catalan-div-four-pow-mul-bi.md)
+- [Summable odd mul catalan div four pow mul binom](summable-odd-mul-catalan-div-four-pow-mu.md)
 - [Catalan series over powers of $4$ equal to $4\ln 2$ and $4\ln 2 - 2$](tsum-odd-mul-catalan-div-four-pow-specia.md)
 - [Digamma evaluation of the $n$-weighted Catalan series with binomial denominators](tsum-nat-mul-catalan-div-four-pow-mul-bi.md)
 - [Adegoke–Frontczak series with odd weights, Catalan numbers and harmonic numbers](tsum-odd-mul-catalan-mul-harmonic-div-fo.md)
