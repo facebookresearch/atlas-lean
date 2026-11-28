@@ -14,7 +14,7 @@ $$
 
 2. $\forall^9 \exists^{32}$ over $\mathbb{Q}$ is undecidable: no algorithm decides, for $f \in \mathbb{Z}[x_1, \dots, x_9, y_1, \dots, y_{32}]$, whether $\forall x_1 \cdots \forall x_9\, \exists y_1 \cdots \exists y_{32}\, [f = 0]$ holds over $\mathbb{Q}$; also $\exists^9 \forall^{32} \exists$ and $\exists^{10} \forall^{31} \exists$ over $\mathbb{Q}$ are undecidable (Theorem 1.3).
 
-Julia Robinson defined $\mathbb{Z}$ in $\mathbb{Q}$ by a first-order formula and Poonen by a $\forall^2 \exists^7$ formula; Koenigsmann proved that $\mathbb{Q} \setminus \mathbb{Z}$ is Diophantine over $\mathbb{Q}$, with between 400 and 500 unknowns, and Daans reduced the number to $50$, as the source recalls.
+Julia Robinson defined $\mathbb{Z}$ in $\mathbb{Q}$ by a first-order formula and Poonen by a $\forall^2 \exists^7$ formula; Koenigsmann proved that $\mathbb{Q} \setminus \mathbb{Z}$ is Diophantine over $\mathbb{Q}$ (see [Koenigsmann: $\mathbb{Q} \setminus \mathbb{Z}$ is a Diophantine subset of $\mathbb{Q}$](../../../Logic/model-theory/defining-the-integers-in-the-rationals/is-diophantine-set-compl-range-int-cast.md), which does not bound the number of unknowns), with between 400 and 500 unknowns, and Daans reduced the number to $50$, as the source recalls.
 
 ## Depends on
 
@@ -25,7 +25,7 @@ Julia Robinson defined $\mathbb{Z}$ in $\mathbb{Q}$ by a first-order formula and
 
 ## Proof depends on
 
-None.
+- [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
 
 ## Expansion
 

@@ -30,5 +30,5 @@ By Poonen's criterion, it suffices to find, for the number field $K$, an ellipti
 
 ## Sources
 
-- Peter Koymans and Carlo Pagano, *Hilbert's tenth problem for finitely generated rings*, Notices Amer. Math. Soc. 73 (2026), no. 6, https://doi.org/10.1090/noti3339, read in the copy arXiv:2602.04468v1: clause 2 is Theorem 1.1 and clause 1 is Theorem 6.1 there, both presented as established results; Eisenträger's reduction and the definitions of finitely generated rings and orders are in its Section 4.
-- Peter Koymans and Carlo Pagano, *Hilbert's tenth problem via additive combinatorics*, J. Amer. Math. Soc. 40 (2026), no. 1, 195–234, https://doi.org/10.1090/jams/1081, the original proof, cited for attribution; the statement rests on the survey above, whose copy was read.
+- Peter Koymans and Carlo Pagano, *Hilbert's tenth problem for finitely generated rings*, Notices Amer. Math. Soc. 73 (2026), no. 6, 428–435, https://doi.org/10.1090/noti3339, read in the copy arXiv:2602.04468v1: clause 2 is Theorem 1.1 and clause 1 is Theorem 6.1 there, both presented as established results; Eisenträger's reduction and the definitions of finitely generated rings and orders are in its Section 4.
+- Peter Koymans and Carlo Pagano, *Hilbert's tenth problem via additive combinatorics*, J. Amer. Math. Soc. 40 (2027), no. 1, 195–234, https://doi.org/10.1090/jams/1081, the original proof, cited for attribution; the statement rests on the survey above, whose copy was read.

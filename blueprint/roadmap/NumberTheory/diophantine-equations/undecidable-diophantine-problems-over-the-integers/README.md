@@ -1,6 +1,6 @@
 # Undecidable Diophantine problems over the integers
 
-Undecidability of Hilbert's tenth problem over the integers restricted to few unknowns and bounded degree, and of Diophantine problems over arithmetic structures on the natural numbers.
+Undecidability of Hilbert's tenth problem with few unknowns and bounded degree over the integers, the natural numbers and the Gaussian integers, and of Diophantine sentences with restricted quantifier prefixes over the integers and the natural numbers.
 
 - [Hilbert's tenth problem over the integers is undecidable with eleven unknowns and degree at most 1.69·10^63](h10-over-z-with-eleven-unknowns.md)
 - [Diophantine sentences over the integers with prefixes ∀⁹∃³ and ∀¹⁰∃² are undecidable](forall-exists-prefixes-over-z-undecidable.md)

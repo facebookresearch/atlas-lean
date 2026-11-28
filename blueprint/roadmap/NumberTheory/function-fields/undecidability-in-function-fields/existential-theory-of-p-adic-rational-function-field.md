@@ -16,6 +16,7 @@ Conventions: clause 2 follows from clause 1 by a criterion of Denef in the form 
 - [Hilbert's tenth problem over a ring](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/hilbert-s-tenth-problem-over-a-ring.md)
 - [The p-adic numbers](../../p-adic-numbers/p-adic-numbers.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
+- [Diophantine subsets of a ring](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/is-diophantine-set.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

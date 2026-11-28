@@ -15,7 +15,7 @@ the ring of rational numbers whose denominators are divisible only by primes in 
 1. $\mathbb{Z}$ has a Diophantine model over $\mathcal{O}_{\mathbb{Q},\mathcal{S}}$;
 2. Hilbert's tenth problem over $\mathcal{O}_{\mathbb{Q},\mathcal{S}}$ is undecidable.
 
-Conventions: a Diophantine model of $\mathbb{Z}$ over a ring $R$ is an injection $\phi : \mathbb{Z} \to R^k$ whose image and the images of the graphs of addition and multiplication are Diophantine over $R$. Taking $\mathcal{S}$ to be the complement of $\mathcal{T}_2$ gives such rings in which the inverted primes have natural density one. Since $\mathcal{S}$ ranges over uncountably many sets, Hilbert's tenth problem over $\mathcal{O}_{\mathbb{Q},\mathcal{S}}$ is meant for rings of algebraic numbers, as on the linked definition page: coefficients are rationals in $\mathcal{O}_{\mathbb{Q},\mathcal{S}}$, written as fractions, with the promise that they lie in the ring.
+Conventions: a Diophantine model of $\mathbb{Z}$ over a ring $R$ is a computable injection $\phi : \mathbb{Z} \to R^k$ (Definition 2.4 of the survey) whose image and the images of the graphs of addition and multiplication are Diophantine over $R$. Taking $\mathcal{S}$ to be the complement of $\mathcal{T}_2$ gives such rings in which the inverted primes have natural density one. Since $\mathcal{S}$ ranges over uncountably many sets, Hilbert's tenth problem over $\mathcal{O}_{\mathbb{Q},\mathcal{S}}$ is meant for rings of algebraic numbers, as on the linked definition page: coefficients are rationals in $\mathcal{O}_{\mathbb{Q},\mathcal{S}}$, written as fractions, with the promise that they lie in the ring.
 
 ## Depends on
 

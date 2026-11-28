@@ -13,7 +13,7 @@ The survey compares this with purely existential sentences, for which the best k
 
 ## Proof depends on
 
-None.
+- [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
 
 ## Expansion
 

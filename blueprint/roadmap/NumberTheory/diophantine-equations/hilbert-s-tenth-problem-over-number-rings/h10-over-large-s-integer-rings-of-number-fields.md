@@ -30,6 +30,7 @@ Conventions: for $K = \mathbb{Q}$ the density bound is vacuous. The set $\mathca
 - [Integral closure of ℤ in a field and the ring of integers of a number field](../../algebraic-number-theory/number-fields-embeddings/ring-of-integers.md)
 - [Diophantine subsets of a ring](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/is-diophantine-set.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
+- [Density of a set](../../additive-number-theory/natural-and-logarithmic-density/has-density.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
