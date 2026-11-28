@@ -10,8 +10,6 @@ Use the [Owicki–Gries proof system with auxiliary variables](owicki-gries-syst
 
 **Theorem (Owicki).** For every interpretation $I$ such that $L$ is expressive relative to $I$ and $\mathcal{S}$, every correctness formula $\{p\}\,S\,\{q\}$ with $S \in \mathcal{S}$ that is true in $I$ in the sense of partial correctness is derivable in the Owicki–Gries system with auxiliary variables, assuming all formulas true in $I$.
 
-The auxiliary-variable rule cannot be dropped: without it the system is incomplete even with Olderog's adaptation rule ([auxiliary variables are needed for shared-variable parallelism](auxiliary-variables-are-needed-for-shared-vars.md)), and no other rule is needed.
-
 ## Depends on
 
 - [Owicki–Gries proof system with auxiliary variables](owicki-gries-system-with-auxiliary-variables.md)
@@ -23,7 +21,7 @@ The auxiliary-variable rule cannot be dropped: without it the system is incomple
 
 ## Expansion
 
-The proof summarized by Prensa Nieto instruments the program with a history variable, annotates every control point with the reachable states, which form locally correct, interference-free proof outlines matching the precondition and postcondition, applies the parallel rule, and deletes the history variable with the auxiliary-variable rule. That summary codes histories and states as natural numbers, so it applies to the standard interpretation in the natural numbers, for which Prensa Nieto states the result and to which the reachability lemma refers. For an arbitrary interpretation relative to which $L$ is expressive, both the construction of a history variable with its annotations in that interpretation and the step that turns the reachable-state annotations into assertions of $L$ by expressiveness are missing developments: they are in Owicki's original proof, which the sources read here attribute but do not reproduce.
+The proof summarized by Prensa Nieto instruments the program with a history variable, annotates every control point with the reachable states, which form locally correct, interference-free proof outlines matching the precondition and postcondition, applies the parallel rule, and deletes the history variable with the auxiliary-variable rule. The auxiliary-variable rule cannot be dropped, and no other rule is needed: over the standard integers the system without that rule is incomplete even with Olderog's adaptation rule, by [auxiliary variables are needed for shared-variable parallelism](auxiliary-variables-are-needed-for-shared-vars.md). That summary codes histories and states as natural numbers, so it applies to the standard interpretation in the natural numbers, for which Prensa Nieto states the result and to which the reachability lemma refers. For an arbitrary interpretation relative to which $L$ is expressive, both the construction of a history variable with its annotations in that interpretation and the step that turns the reachable-state annotations into assertions of $L$ by expressiveness are missing developments; the general construction is attributed to Owicki's proof, which was not consulted.
 
 ## Sources
 

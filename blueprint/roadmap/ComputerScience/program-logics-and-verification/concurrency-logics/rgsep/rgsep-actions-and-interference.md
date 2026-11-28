@@ -27,7 +27,7 @@ None.
 
 ## Expansion
 
-The equivalence in the last item (stability under a set of actions is stability under each action) is Lemma 2 of the CONCUR paper and the second part of Lemma 13 of the thesis. A development needs the separation-logic assertion language with logical variables and its satisfaction relation over the chosen separation algebra.
+The equivalence in the last item (stability under a set of actions is stability under each action) is Lemma 2 of the CONCUR paper and the second part of Lemma 13 of the thesis. Implementation note: a formal treatment fixes a concrete separation-logic assertion language with logical variables and its satisfaction relation; the page is stated for any such semantic relation $\models_{SL}$.
 
 ## Sources
 

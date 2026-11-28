@@ -22,7 +22,7 @@ With the [auxiliary-variable rule](owicki-gries-system-with-auxiliary-variables.
 
 ## Expansion
 
-The source's proof: a derivation must apply PDJ to proofs of $\{p_1\}\,x := x + 1\,\{q_1\}$ and $\{p_2\}\,y := y + 1\,\{q_2\}$ and then consequence, so $x = y \to p_1 \wedge p_2$ and $q_1 \wedge q_2 \to x = y$ are valid. From $p_1 \to q_1[x := x + 1]$ and the validity of $p_1[x := y]$ it follows that $q_1[x := y + 1]$ is valid, and the source then instantiates $y$ to $x - 1$ to conclude that $q_1$ is valid; likewise $q_2$, contradicting $q_1 \wedge q_2 \to x = y$. The source states no interpretation explicitly; this argument uses the substitution of $x - 1$ and that $x = y$ is not valid, which the integer interpretation fixed above provides. A development needs the syntax of disjoint parallel programs and the side conditions of PDJ.
+The source's proof: a derivation must apply PDJ to proofs of $\{p_1\}\,x := x + 1\,\{q_1\}$ and $\{p_2\}\,y := y + 1\,\{q_2\}$ and then consequence, so $x = y \to p_1 \wedge p_2$ and $q_1 \wedge q_2 \to x = y$ are valid. From $p_1 \to q_1[x := x + 1]$ and the validity of $p_1[x := y]$ it follows that $q_1[x := y + 1]$ is valid, and the source then instantiates $y$ to $x - 1$ to conclude that $q_1$ is valid; likewise $q_2$, contradicting $q_1 \wedge q_2 \to x = y$. The source states no interpretation explicitly; this argument uses the substitution of $x - 1$ and that $x = y$ is not valid, which the integer interpretation fixed above provides. Implementation note: the syntax of disjoint parallel programs and the side conditions of PDJ are given inline above.
 
 ## Sources
 

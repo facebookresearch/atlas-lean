@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-A development fixes the syntax of terms and Boolean expressions with their free-variable functions and the deletion map $S \mapsto S_A$ by structural recursion, including deletion inside $\mathbf{await}$ bodies.
+Implementation note: a formal treatment defines the deletion map $S \mapsto S_A$ by structural recursion on commands, including deletion inside $\mathbf{await}$ bodies, from the free-variable functions of terms and Boolean expressions.
 
 ## Sources
 
