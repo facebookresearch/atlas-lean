@@ -13,7 +13,7 @@ Power growth: a column whose power grows fast enough has a large component along
 
 ## Proof depends on
 
-- [Deterministic recovery from an approximate signal](planted-clique-deterministic-recovery.md)
+- [Exact recovery of a planted clique by degree cleanup](planted-clique-deterministic-recovery.md)
 - [Spectral norm of planted-clique noise is O(sqrt n)](../../../GraphTheory/random-graphs/planted-clique/planted-clique-noise-spectral-norm.md)
 - [Outside vertices have at most 5|S|/8 neighbors in the planted clique](../../../GraphTheory/random-graphs/planted-clique/planted-clique-outside-degrees.md)
 

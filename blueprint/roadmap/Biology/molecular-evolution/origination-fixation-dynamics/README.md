@@ -18,3 +18,8 @@
 - [Biochemical epistasis on combinatorially complete libraries](biochemical-epistasis-on-combinatorially-complete-libraries/README.md)
 - [Germline de novo mutation rates](germline-de-novo-mutation-rates/README.md)
 - [Wright–Fisher quasispecies on class-dependent landscapes](wright-fisher-quasispecies-on-class-dependent-landscapes/README.md)
+- [Ordered independent loss model of CRISPR spacers](ordered-independent-loss-model-of-crispr-spacers/README.md)
+- [Parallel mutation and selection waiting times](parallel-mutation-and-selection-waiting-times/README.md)
+- [Accessibility percolation on trees](accessibility-percolation-on-trees/README.md)
+- [Limit laws for accessible path counts](limit-laws-for-accessible-path-counts/README.md)
+- [Open quasispecies systems](open-quasispecies-systems/README.md)

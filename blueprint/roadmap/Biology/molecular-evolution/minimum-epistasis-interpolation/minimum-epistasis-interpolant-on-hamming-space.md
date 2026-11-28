@@ -14,9 +14,11 @@ which have a unique solution if and only if the least-squares fit of the additiv
 
 **Properties.**
 1. (Local average.) Each genotype lies in $\binom l2 (\alpha-1)^2$ faces, each of whose other three members gives an additive prediction for it; for every unobserved $i$, $\hat f(i)$ equals the mean of these predictions.
-2. (Distance-shell form.) With $d_k(i)$ the mean of $\hat f$ over genotypes at Hamming distance $k$ from $i$,
+2. (Distance-shell form.) With $d_k(i)$ the mean of $\hat f$ over genotypes at Hamming distance $k$ from $i$, for every unobserved $i \notin B$
 
 $$\hat f(i) = d_1(i) + \big(d_1(i) - d_2(i)\big).$$
+
+The right-hand side is the average local prediction of property 1 at any genotype, but at an observed $i \in B$ the value $\hat f(i) = f(i)$ is fixed by the data and need not equal it.
 
 3. (Biharmonic form.) If $L$ is the graph Laplacian of the Hamming graph, the constrained minimization is the boundary-value problem $(L^2 - \alpha L)\hat f = 0$ off $B$ with $\hat f = f$ on $B$, a discrete analogue of the biharmonic equation solved by thin-plate splines.
 4. (Noise.) Predictions are linear in the observed values, so their noise-induced variance is explicit; in the data-dense regime the distance-shell form gives roughly an $l(\alpha-1)/5$-fold reduction of prediction variance relative to measurement noise.
