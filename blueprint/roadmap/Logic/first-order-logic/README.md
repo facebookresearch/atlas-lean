@@ -18,3 +18,6 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Equational logic](equational-logic/README.md)
 - [Superposition](superposition/README.md)
 - [Herbrand's theorem](herbrand-s-theorem.md)
+- [Unary negation fragment](unary-negation-fragment/README.md)
+- [Undecidable fragments of first-order logic](undecidable-fragments-of-first-order-logic/README.md)
+- [Undecidable prefix classes](undecidable-prefix-classes/README.md)
