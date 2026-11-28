@@ -11,11 +11,11 @@ module
 public import MathlibExt.NumberTheory.PrimeCounting.LandauAlmostPrimeAsymptotic
 import Mathlib.Analysis.PSeries
 import Mathlib.NumberTheory.EulerProduct.Basic
-import Mathlib.NumberTheory.Harmonic.Bounds
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.ArithmeticFunction.DivisorSummatoryBound
 import MathlibExt.NumberTheory.ArithmeticFunction.PrimePowerValues
 
 /-!
@@ -184,18 +184,6 @@ private theorem kernelTerm_partial_sum_le (N : ℕ) :
           (Real.summable_one_div_nat_pow.mpr (by decide : 1 < (2 : ℕ))).mul_left 12
       exact hs.sum_le_tsum _ (fun p _ => by positivity)
 
-/-- The sum of the divisor counts is bounded by the harmonic sum times `N`. -/
-private theorem divisor_sum_le (N : ℕ) :
-    ∑ n ∈ Ioc 0 N, ((sigma 0 n : ℕ) : ℝ) ≤ (N : ℝ) * (1 + Real.log N) := by
-  rw [← Nat.cast_sum, sum_Ioc_sigma0_eq_sum_div, Nat.cast_sum]
-  calc
-    _ ≤ ∑ n ∈ Ioc 0 N, (N : ℝ) / n := by
-      exact Finset.sum_le_sum fun _ _ => Nat.cast_div_le
-    _ = (N : ℝ) * (harmonic N : ℝ) := by
-      rw [harmonic_eq_sum_Icc, Rat.cast_sum, Finset.mul_sum]
-      simp [← Finset.Icc_succ_left_eq_Ioc 0, div_eq_mul_inv]
-    _ ≤ _ := mul_le_mul_of_nonneg_left (harmonic_le_one_add_log _) (Nat.cast_nonneg _)
-
 private theorem quotient_log_mul_le {N n : ℕ} (hn : n ∈ Ioc 0 N) :
     ((N / n : ℕ) : ℝ) * (1 + Real.log (N / n : ℕ)) ≤
       ((N : ℝ) / n) * (1 + Real.log N) := by
@@ -234,7 +222,9 @@ private theorem oddWeight_sum_le (N : ℕ) :
       rw [show kernelTerm n * ((N : ℝ) * (1 + Real.log N)) =
           oddKernel n * ((N : ℝ) / n * (1 + Real.log N)) by unfold kernelTerm; ring]
       apply mul_le_mul_of_nonneg_left _ (oddKernel_nonneg n)
-      exact (divisor_sum_le (N / n)).trans (quotient_log_mul_le hn)
+      have hτ := sum_tau_le (N / n)
+      rw [show Icc 1 (N / n) = Ioc 0 (N / n) from Icc_add_one_left_eq_Ioc 0 _] at hτ
+      simpa only [sigma_zero_apply] using hτ.trans (quotient_log_mul_le hn)
     _ = (∑ n ∈ Ioc 0 N, kernelTerm n) * ((N : ℝ) * (1 + Real.log N)) := Finset.sum_mul .. |>.symm
     _ ≤ _ := by
       rw [mul_assoc]

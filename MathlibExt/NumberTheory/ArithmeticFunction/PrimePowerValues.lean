@@ -21,7 +21,7 @@ factorization. The value at `1` is the empty product; the coefficients `a p 0` a
 
 * The construction and prime-power evaluation are adapted from `ofLocal`,
   `ofLocal_multiplicative`, and `ofLocal_prime_pow` in
-  `MathlibExt.NumberTheory.KFullPowerFreeParity`.
+  [`MathlibExt.NumberTheory.KFullPowerFreeParity` at their original location](https://github.com/facebookresearch/atlas-lean/blob/9ab9827017c4c4046fb6582bd187818d74f4da8f/MathlibExt/NumberTheory/KFullPowerFreeParity.lean#L233-L252).
 * `MetaMathlibExt.multiplicativeOfPrimePowers` in
   `MathlibExt.NumberTheory.ArithmeticFunction.UnitaryConvolution` treats the special case in
   which the coefficients depend only on the exponent.

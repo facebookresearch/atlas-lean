@@ -333,9 +333,8 @@ private lemma target_apply {k l : ℕ} (hl : 2 ≤ l) (n : ℕ) :
   classical
   rcases eq_or_ne n 0 with rfl | hn
   · simp [Nat.not_isKFull_zero]
-  change (if n = 0 then 0 else ∏ p ∈ n.primeFactors,
-    (if p ≠ 2 ∧ k ≤ n.factorization p ∧ n.factorization p < l then (1 : ℝ) else 0)) = _
-  rw [ite_eq_right hn, prod_ite_one]
+  rw [target, ofPrimePowerValues_apply_of_ne_zero _ hn, Finsupp.prod,
+    Nat.support_factorization, prod_ite_one]
   congr 1
   apply propext
   constructor
@@ -362,9 +361,8 @@ private lemma powers_apply {k : ℕ} (hk : k ≠ 0) (n : ℕ) :
   · rw [ArithmeticFunction.map_zero, ite_eq_right]
     rintro ⟨a, ha, he⟩
     exact pow_ne_zero _ (odd_ne_zero ha) he
-  change (if n = 0 then 0 else ∏ p ∈ n.primeFactors,
-    (if p ≠ 2 ∧ k ∣ n.factorization p then (1 : ℝ) else 0)) = _
-  rw [ite_eq_right hn, prod_ite_one]
+  rw [powers, ofPrimePowerValues_apply_of_ne_zero _ hn, Finsupp.prod,
+    Nat.support_factorization, prod_ite_one]
   congr 1
   apply propext
   constructor
