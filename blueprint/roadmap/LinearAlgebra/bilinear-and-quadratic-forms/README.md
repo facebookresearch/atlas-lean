@@ -3,6 +3,7 @@
 Bilinear and quadratic forms on vector spaces and modules: rank, orthogonal sums, inertia and congruence, and lattices with their duals and neighbours.
 
 - [Dual lattices](dual-lattices/README.md)
+- [Isotropic quadratic forms over a field](isotropic-quadratic-forms-over-a-field/README.md)
 - [Kneser $p$-neighbors](kneser-p-neighbors/README.md)
 - [Orthogonal product of bilinear forms](orthogonal-product-of-bilinear-forms/README.md)
 - [Quadratic forms of real matrices under congruence](quadratic-forms-of-real-matrices-under-congruenc/README.md)

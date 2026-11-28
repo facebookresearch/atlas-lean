@@ -16,3 +16,4 @@ Noncommutative rings and finite-dimensional associative algebras, including divi
 - [Extreme left and right finitistic-dimension asymmetry](left-right-finitistic-dimension-asymmetry.md)
 - [A base-change-stable Auslander–Reiten counterexample](auslander-reiten-base-change-counterexample.md)
 - [A Tachikawa counterexample over a rational function field of characteristic two](symmetric-algebra-tachikawa-counterexample.md)
+- [Decision problems for finitely presented algebras](decision-problems-for-finitely-presented-algebras/README.md)

@@ -19,3 +19,7 @@
 
 
 ## Inertia Cyclotomic
+
+## The tame character of an inertia group
+
+- [Tame character of the inertia group at a maximal ideal](exists-monoid-hom-inertia-residue-field.md)
