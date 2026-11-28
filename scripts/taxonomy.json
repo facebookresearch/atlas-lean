@@ -10599,6 +10599,7 @@
   "Domains/Biology/Dynamics/FluxBalanceValue": {"to": "Biology/systems-biology", "title": "Stochastic mass action, metabolic control and flux balance"},
   "Domains/Biology/Dynamics/GoldbeterKoshland": {"to": "Biology/systems-biology", "title": "Goldbeter–Koshland ultrasensitivity"},
   "Domains/Biology/Dynamics/IntegralFeedback": {"to": "Biology/systems-biology", "title": "Integral feedback and perfect adaptation"},
+  "Domains/Biology/Dynamics/IntegralFeedbackLoop": {"to": "Biology/systems-biology", "title": "Integral feedback and perfect adaptation"},
   "Domains/Biology/Dynamics/Logistic": {"to": "Biology/population-dynamics", "title": "Logistic growth equation"},
   "Domains/Biology/Dynamics/LotkaVolterra": {"to": "Biology/population-dynamics", "title": "Lotka–Volterra predator–prey model"},
   "Domains/Biology/Dynamics/MichaelisMenten": {"to": "Biology/systems-biology", "title": "Michaelis–Menten kinetics and the quasi-steady state"},

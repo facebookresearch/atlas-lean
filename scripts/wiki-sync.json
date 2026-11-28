@@ -53886,6 +53886,7 @@
 "MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem.output": "ae7ec425a44dd66a",
 "MathlibExt.Biology.Dynamics.IntegralFeedback.LinearSystem.output_equilibrium": "6812fd529751ac25",
 "MathlibExt.Biology.Dynamics.IntegralFeedback.output_eq_zero_of_integral_feedback": "02536783982ea262",
+"MathlibExt.Biology.Dynamics.IntegralFeedbackLoop.integral_feedback_loop_equilibrium_and_dc_gain": "0f6e666d3a9391ad",
 "MathlibExt.Biology.Dynamics.Logistic.eqOn_logistic_of_hasDerivWithinAt": "f063a8f81b157608",
 "MathlibExt.Biology.Dynamics.Logistic.hasDerivAt_logistic": "e4d4a99bfeb5ae14",
 "MathlibExt.Biology.Dynamics.Logistic.logistic": "4dc6d2e090ced172",
