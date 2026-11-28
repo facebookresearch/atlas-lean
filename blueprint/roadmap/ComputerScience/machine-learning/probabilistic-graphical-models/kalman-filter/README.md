@@ -14,6 +14,8 @@
 - [The predict step is exact](map-predict.md)
 - [The update step is the exact posterior](cond-distrib-update.md)
 - [One filter step is the exact posterior](cond-distrib-step.md)
+- [Predicted beliefs of the Kalman filter](predicted-belief.md)
+- [Filtered beliefs of the Kalman filter](filtered-belief.md)
 - [The Kalman filter gives the conditional law given the whole observation history](kalman-filter-is-the-full-history-posterior.md)
 - [Mean and covariance propagation in a linear system with uncorrelated noise](mean-and-covariance-propagation-in-a-linear-system.md)
 

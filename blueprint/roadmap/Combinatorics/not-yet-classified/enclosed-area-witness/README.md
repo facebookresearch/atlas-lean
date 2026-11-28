@@ -1,0 +1,15 @@
+# Enclosed Area Witness
+
+- [Eaw no monotone loop](eaw-no-monotone-loop.md)
+- [Eaw get Vert edge mem](eaw-get-vert-edge-mem.md)
+- [Eaw exists vert Edge](eaw-exists-vert-edge.md)
+- [Eaw ray Count extreme](eaw-ray-count-extreme.md)
+- [Eaw cycle odd Cell](eaw-cycle-odd-cell.md)
+- [Eaw cycle odd Cell'](eaw-cycle-odd-cell-2.md)
+- [Eaw Interior Subset](eaw-interior-subset.md)
+- [Eaw winding Witness of cycle interior](eaw-winding-witness-of-cycle-interior.md)
+- [Eaw Loop Winds Region](eaw-loop-winds-region.md)
+- [Eaw unit Cell ray Count eq](eaw-unit-cell-ray-count-eq.md)
+- [Eaw unit Cell interior Subset](eaw-unit-cell-interior-subset.md)
+- [Eaw unit Cell loop Winds Region](eaw-unit-cell-loop-winds-region.md)
+- [Not eaw Loop Winds Region](not-eaw-loop-winds-region.md)
