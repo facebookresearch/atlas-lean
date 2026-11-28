@@ -25,10 +25,11 @@ relative to a fixed common value type `V`, of any universe level; take `V = ℕ`
 countably infinite domain. They differ only in which instances are quantified over, not in the
 type of values allowed. Functional dependencies use `FD.HoldsIn` on the named extent.
 
-Finite implication is strictly weaker than unrestricted implication. In the separating example
-of Theorem 9.2.2 (namespace `FiniteImplication`), `{A → B, R[A] ⊆ R[B]}` finitely implies both
-`R[B] ⊆ R[A]` and `B → A` over every value type, but implies neither over `ℕ`: two infinite
-instances (Figure 9.1) are counter-models.
+Over `ℕ` (the book's countably infinite domain), finite implication is strictly weaker than
+unrestricted implication; over a finite value type every instance is finite, so the two
+notions coincide. In the separating example of Theorem 9.2.2 (namespace `FiniteImplication`),
+`{A → B, R[A] ⊆ R[B]}` finitely implies both `R[B] ⊆ R[A]` and `B → A` over every value type,
+but implies neither over `ℕ`: two infinite instances (Figure 9.1) are counter-models.
 
 ## References
 
@@ -183,7 +184,7 @@ and schema, with the same hypotheses and conclusion. -/
 theorem Dependency.finitelyImplies_of_implies {F : Set (Dependency S)} {d : Dependency S}
     (h : Implies V F d) : FinitelyImplies V F d := fun I _ hF => h I hF
 
-/-! ### Finite implication is strictly weaker than unrestricted implication -/
+/-! ### Over the natural numbers, finite implication is strictly weaker -/
 
 namespace FiniteImplication
 
