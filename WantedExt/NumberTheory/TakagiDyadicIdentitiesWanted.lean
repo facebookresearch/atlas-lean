@@ -57,22 +57,6 @@ Sequences 27 (2024), Article 24.2.7, Theorem 8 (`jis-2024-24.2.7-thm-8`). -/
 public theorem_wanted takagi_dyadic_eq_dcDNodes_div (k r : ℕ) (hr : r ≤ 2 ^ k) :
     takagiNewdef r ((k : ℤ) - 1) = (dcDNodes (2 ^ k + r) : ℝ) / 2 ^ k
 
-/-- **Level-sum formula for the divide-and-conquer D-node count.** Let $\delta$ be the
-divide-and-conquer D-node count. For every integer $n > 0$, let $k = \lfloor \log_2 n \rfloor$,
-let $\lambda_i(n)$ be the level-$i$ D-node count, and let $n_i$ be the binary digit of $n$ at
-$2^i$. Then
-$$\delta(n) = \sum_{i=0}^{k-1} \lambda_i(n),$$
-and explicitly
-$$\delta(n) = \sum_{i=0}^{k-1} \left(n_i 2^i + (-1)^{n_i} (n \bmod 2^i)\right).$$
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Theorem 11 (`jis-2024-24.2.7-thm-11`). -/
-public theorem_wanted dcDNodes_eq_sum_dcLevelDNodes (n : ℕ) (hn : 0 < n) :
-    dcDNodes n = ∑ i ∈ range (Nat.log 2 n), dcLevelDNodes n i ∧
-      (dcDNodes n : ℤ) =
-        ∑ i ∈ range (Nat.log 2 n),
-          (((n / 2 ^ i % 2 : ℕ) : ℤ) * 2 ^ i + (-1) ^ (n / 2 ^ i % 2) * ((n % 2 ^ i : ℕ) : ℤ))
-
 /-- **Symmetry of the D-node counts.** For all natural numbers $k$ and $r$ with $r \le 2^k$,
 $\delta(2^{k+1} - r) = \delta(2^k + r)$, where $\delta(n)$ denotes the number of D-nodes in the
 divide-and-conquer tree on $n$ leaves.

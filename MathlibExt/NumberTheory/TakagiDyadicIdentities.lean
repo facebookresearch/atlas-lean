@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.Log
@@ -19,7 +20,19 @@ public import Mathlib.Data.Tree.Basic
 
 For `n = 2 ^ k + r` with `r < 2 ^ k`, the dyadic mantissa is the rational number `r / 2 ^ k`.
 The even and odd recurrences for D-node counts determine the Hamming weight of a positive
-integer from the counts at that integer and its successor.
+integer from the counts at that integer and its successor. For every positive leaf count `n`,
+the total D-node count is the sum of the counts at levels `i < Nat.log 2 n`, with each level
+count given by an explicit signed binary-digit expression.
+
+## References
+
+* Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer Sequences
+  27 (2024), Article 24.2.7, pp. 1–14, Lemma 2, Definitions 4 and 6, Lemma 5, Theorems 9
+  and 11 (equations (2) and (3) on p. 6), Corollary 10, and Corollary 23.
+* Tomás M. Coronado, Mareike Fischer, Lina Herbst, Francesc Rosselló, and Kristina Wicke,
+  *On the minimum value of the Colless index and the bifurcating trees that achieve it*,
+  Journal of Mathematical Biology 80 (2020), pp. 1993–2054, §3.1 (the divide-and-conquer
+  recurrence, restated as Monroe's Theorem 9).
 -/
 
 namespace MetaMathlibExt
@@ -193,6 +206,93 @@ Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal 
 Sequences 27 (2024), Article 24.2.7, Theorem 11 (`exp_D_closed`). -/
 public theorem dcLevelDNodes_zero (n : ℕ) : dcLevelDNodes n 0 = n % 2 := by
   rcases Nat.mod_two_eq_zero_or_one n with h | h <;> simp [dcLevelDNodes, h, Nat.mod_one]
+
+private theorem dcLevelDNodes_eq_min (n i : ℕ) :
+    dcLevelDNodes n i = min (n % 2 ^ (i + 1)) (2 ^ (i + 1) - n % 2 ^ (i + 1)) := by
+  have hrem := Nat.mod_lt n (Nat.two_pow_pos i)
+  rw [pow_succ, Nat.mod_mul]
+  rcases Nat.mod_two_eq_zero_or_one (n / 2 ^ i) with h | h
+  · rw [dcLevelDNodes_of_digit_eq_zero h, h, mul_zero, add_zero, min_eq_left]
+    omega
+  · rw [dcLevelDNodes_of_digit_eq_one h, h, mul_one, min_eq_right] <;> omega
+
+private theorem dcLevelDNodes_two_mul_add (n i b : ℕ) (hb : b < 2) :
+    dcLevelDNodes (2 * n + b) (i + 1) = dcLevelDNodes n i + dcLevelDNodes (n + b) i := by
+  have hrem := Nat.mod_lt n (Nat.two_pow_pos (i + 1))
+  have hmid : (2 : ℕ) ^ (i + 1) = 2 * 2 ^ i := pow_succ' _ _
+  have hmod : (2 * n + b) % (2 * 2 ^ (i + 1)) = 2 * (n % 2 ^ (i + 1)) + b := by
+    rw [← Nat.mod_add_mod (2 * n), Nat.mul_mod_mul_left, Nat.mod_eq_of_lt (by omega)]
+  rw [dcLevelDNodes_eq_min (2 * n + b), dcLevelDNodes_eq_min n, dcLevelDNodes_eq_min (n + b),
+    pow_succ' (2 : ℕ) (i + 1), hmod, ← Nat.mod_add_mod n _ b]
+  -- Between consecutive residues the distance is linear: the midpoint is an integer.
+  by_cases h : n % 2 ^ (i + 1) + b < 2 ^ (i + 1)
+  · rw [Nat.mod_eq_of_lt h]
+    omega
+  · have hwrap : n % 2 ^ (i + 1) + b = 2 ^ (i + 1) := by omega
+    rw [hwrap, Nat.mod_self]
+    omega
+
+open Finset in
+-- Include the right endpoint so that both children stay in the preceding interval.
+private theorem dcDNodes_eq_levelSum_of_le (k n : ℕ) (hlo : 2 ^ k ≤ n) (hhi : n ≤ 2 ^ (k + 1)) :
+    dcDNodes n = ∑ i ∈ range k, dcLevelDNodes n i := by
+  induction k generalizing n with
+  | zero =>
+    have hn : n = 1 ∨ n = 2 := by
+      norm_num at hlo hhi
+      omega
+    rcases hn with rfl | rfl <;> simp [dcDNodes_one, dcDNodes_small.1]
+  | succ k ih =>
+    let m := n / 2
+    let b := n % 2
+    have hb : b < 2 := Nat.mod_lt _ (by decide)
+    have hsplit : n = 2 * m + b := (Nat.div_add_mod n 2).symm
+    rw [pow_succ] at hlo hhi
+    have hm : 0 < m := by
+      have := Nat.two_pow_pos k
+      omega
+    have hrec : dcDNodes n = dcDNodes m + dcDNodes (m + b) + b := by
+      rw [hsplit]
+      obtain h | h : b = 0 ∨ b = 1 := by omega
+      · rw [h, add_zero, dcDNodes_two_mul hm, add_zero, add_zero, two_mul]
+      · rw [h, dcDNodes_two_mul_add_one hm]
+    have hlevel (i : ℕ) :
+        dcLevelDNodes n (i + 1) = dcLevelDNodes m i + dcLevelDNodes (m + b) i := by
+      rw [hsplit, dcLevelDNodes_two_mul_add _ _ _ hb]
+    rw [sum_range_succ', dcLevelDNodes_zero, hrec,
+      ih m (by omega) (by omega), ih (m + b) (by omega) (by omega), ← sum_add_distrib]
+    congr 1
+    exact sum_congr rfl fun i _ => (hlevel i).symm
+
+open Finset in
+/-- **Level-sum formula for the divide-and-conquer D-node count.** Let $\delta$ be the
+divide-and-conquer D-node count. For every integer $n > 0$, let $k = \lfloor \log_2 n \rfloor$,
+let $\lambda_i(n)$ be the level-$i$ D-node count, and let $n_i$ be the binary digit of $n$ at
+$2^i$. Then
+$$\delta(n) = \sum_{i=0}^{k-1} \lambda_i(n),$$
+and explicitly
+$$\delta(n) = \sum_{i=0}^{k-1} \left(n_i 2^i + (-1)^{n_i} (n \bmod 2^i)\right).$$
+
+Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
+Sequences 27 (2024), Article 24.2.7, Theorem 11 (`jis-2024-24.2.7-thm-11`). -/
+public theorem dcDNodes_eq_sum_dcLevelDNodes (n : ℕ) (hn : 0 < n) :
+    dcDNodes n = ∑ i ∈ range (Nat.log 2 n), dcLevelDNodes n i ∧
+      (dcDNodes n : ℤ) =
+        ∑ i ∈ range (Nat.log 2 n),
+          (((n / 2 ^ i % 2 : ℕ) : ℤ) * 2 ^ i + (-1) ^ (n / 2 ^ i % 2) * ((n % 2 ^ i : ℕ) : ℤ)) := by
+  have h := dcDNodes_eq_levelSum_of_le (Nat.log 2 n) n (Nat.pow_log_le_self 2 hn.ne')
+    (Nat.lt_pow_succ_log_self (by decide) n).le
+  refine ⟨h, ?_⟩
+  rw [h]
+  change (Nat.castAddMonoidHom ℤ) (∑ i ∈ range (Nat.log 2 n), dcLevelDNodes n i) = _
+  rw [map_sum]
+  apply sum_congr rfl
+  intro i _
+  change (dcLevelDNodes n i : ℤ) = _
+  rcases Nat.mod_two_eq_zero_or_one (n / 2 ^ i) with hb | hb
+  · simp [dcLevelDNodes_of_digit_eq_zero hb, hb]
+  · rw [dcLevelDNodes_of_digit_eq_one hb, Nat.cast_sub (Nat.mod_lt n (Nat.two_pow_pos i)).le]
+    simp [hb, sub_eq_add_neg]
 
 /-- **Number of $D$-nodes of a full binary tree.** A $D$-node of a full binary tree is an
 interior node whose two subtrees have different numbers of leaves. The number of $D$-nodes of a
