@@ -146,7 +146,7 @@ private lemma component_d (f : verticalRow ⟶ verticalRow) :
       ((B f).partialTotalι 1).f 0
   rw [Category.assoc, ← ((B f).partialTotalι 1).comm 1 0]
   rw [← Category.assoc, (B f).partialTotalComponent_comp_partialTotalι]
-  rw [HomologicalComplex₂.total_d, comp_add, HomologicalComplex₂.ι_D₁,
+  rw [HomologicalComplex₂.total_d, Preadditive.comp_add, HomologicalComplex₂.ι_D₁,
     HomologicalComplex₂.ι_D₂]
   rw [(B f).d₁_eq (ComplexShape.down ℕ) (show (ComplexShape.down ℕ).Rel 1 0 from rfl)
     0 0 rfl]
@@ -246,7 +246,8 @@ private lemma connecting_model (f : verticalRow ⟶ verticalRow) :
   rw [step₁_row_iso_refl, adjacent_iso_refl, step₀_row_iso_refl]
   dsimp only
   rw [step₀_quotient]
-  simpa only [HomologicalComplex.homologyMapIso, Iso.refl_hom, Iso.refl_inv,
+  simp only [Nat.zero_add, Nat.add_zero, Nat.cast_one, Nat.cast_zero, neg_zero,
+    HomologicalComplex.homologyMapIso, Iso.refl_hom, Iso.refl_inv,
     HomologicalComplex.homologyMap_id, Category.id_comp, Category.comp_id]
 
 /-- The actual adjacent-row connecting map in rational coordinates is the horizontal map. -/
@@ -295,7 +296,7 @@ theorem connecting_coordinate (f : verticalRow ⟶ verticalRow) :
     calc
       _ = boundaryRepresentative f ≫ (quotient₀ f).f 0 ≫
           (row₀ExtendedObjectIso f).hom := by
-        simpa only [Category.assoc] using congrArg
+        simpa only [show (0 : ℤ) + 1 = 1 from rfl, Category.assoc] using congrArg
           (fun z => z ≫ (row₀ExtendedObjectIso f).hom)
           (cycle_coordinate ((R₀ f).extend e) 0 h₀
             (boundaryRepresentative f ≫ (quotient₀ f).f 0))
@@ -316,8 +317,11 @@ theorem identity_connecting :
   apply LinearMap.ext
   intro x
   have h := congrArg (fun z : Q ⟶ Q => z.hom x) (connecting_coordinate (𝟙 verticalRow))
-  simpa only [B, horizontalIdentity, HomologicalComplex.id_f, ModuleCat.hom_id,
-    LinearMap.id_apply] using h
+  have hp : ((𝟙 verticalRow).f 0).hom x = x := rfl
+  change ((row₁HomologyCoordinate (𝟙 verticalRow)).inv ≫
+    (B (𝟙 verticalRow)).partialTotalE₁ConnectingDifferential 0 0 ≫
+    (row₀HomologyCoordinate (𝟙 verticalRow)).hom).hom x = x
+  exact h.trans hp
 
 /-- In particular the nonzero class with coordinate one is sent to positive one. -/
 example : ((row₁HomologyCoordinate (𝟙 verticalRow)).inv ≫
