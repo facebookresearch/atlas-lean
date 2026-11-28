@@ -90,8 +90,10 @@ private theorem boundary_nonzero : boundary ≠ 0 := by
   intro hzero
   have h := congrArg (fun z : K.X 1 => (exteriorPower.oneEquiv R M z) i1) hzero
   rw [boundary_coordinate_one] at h
-  exact (by decide : (3 : R) ≠ 0)
-    (by simpa only [(exteriorPower.oneEquiv R M).map_zero, Pi.zero_apply] using h)
+  have hzeroCoord :
+      (exteriorPower.oneEquiv R M (0 : K.X 1)) i1 = (0 : R) :=
+    congrArg (fun z : M => z i1) (_root_.map_zero (exteriorPower.oneEquiv R M))
+  exact (by decide : (3 : R) ≠ 0) (h.trans hzeroCoord)
 
 private theorem next_boundary_zero : (K.d 1 0).hom boundary = 0 := by
   have hd : K.d 1 0 = ModuleCat.ofHom (KoszulComplex.differential R M φ 0) :=
