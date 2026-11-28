@@ -8,9 +8,35 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.NormNum
 
-/-! # A case-only odds ratio counterexample -/
+/-!
+# Case-only odds ratios and multiplicative interaction
+
+For binary genotype $G$, exposure $E$ and disease $D$, the positive case and non-case cell
+masses are $(a,b)$, $(c,d)$, $(e,f)$ and $(g,h)$ in strata $(G,E) = (0,0), (1,0), (0,1), (1,1)$,
+respectively. If $G$ and $E$ are independent among non-cases, equivalently $bh = df$, the
+multiplicative odds-ratio interaction equals the case-only odds ratio $ag/(ce)$. The identity
+uses neither population independence nor a rare-disease approximation. Counts and normalized
+masses give the same ratios, so no normalization hypothesis is needed.
+
+A second result gives a positive table with dependence among non-cases and in the population,
+with both multiplicative interactions equal to $1$ but the case-only odds ratio different from $1$.
+
+## References
+
+* Tyler J. VanderWeele, Sonia Hernández-Díaz and Miguel A. Hernán,
+  *Case-only gene-environment interaction studies: when does association imply mechanistic
+  interaction?*, Genetic Epidemiology 34 (2010), 327–334, Table 1 and Appendix A
+  (Independence Assumption of the Case-Only Study).
+  <https://pmc.ncbi.nlm.nih.gov/articles/PMC3112477/>
+* Walter W. Piegorsch, Clarice R. Weinberg and Jack A. Taylor,
+  *Non-hierarchical logistic models and case-only designs for assessing susceptibility in
+  population-based case-control studies*, Statistics in Medicine 13 (1994), 153–162,
+  the odds-ratio derivation credited in Appendix A of the preceding paper.
+  <https://pubmed.ncbi.nlm.nih.gov/8122051/>
+-/
 
 @[expose] public section
 
@@ -34,6 +60,21 @@ noncomputable def oddsRatioInteraction (a b c d e f g h : ℝ) : ℝ :=
 meaningful when `c e ≠ 0`; if `c e = 0`, Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def caseOnlyOddsRatio (a c e g : ℝ) : ℝ :=
   a * g / (c * e)
+
+/-- **Case-only odds ratio under non-case independence** (Piegorsch, Weinberg and Taylor 1994;
+VanderWeele et al. 2010, Appendix A). Let the eight cell masses `a, b, c, d, e, f, g, h` be
+positive. If `G` and `E` are independent among the non-cases, `b h = d f`, then
+`SOR = a g / (c e)`.
+
+Source: VanderWeele et al. (2010), Appendix A, crediting Piegorsch et al. (1994). -/
+theorem oddsRatioInteraction_eq_caseOnly {a b c d e f g h : ℝ} (ha : 0 < a)
+    (hb : 0 < b) (hc : 0 < c) (hd : 0 < d) (he : 0 < e) (hf : 0 < f) (hg : 0 < g) (hh : 0 < h)
+    (hind : b * h = d * f) :
+    oddsRatioInteraction a b c d e f g h = caseOnlyOddsRatio a c e g := by
+  unfold oddsRatioInteraction caseOnlyOddsRatio
+  calc
+    _ = a * g / (c * e) * (d * f / (b * h)) := by field_simp
+    _ = _ := by rw [← hind, div_self (mul_ne_zero hb.ne' hh.ne'), mul_one]
 
 /-- **Under dependence, the case-only odds ratio can differ from `1` without interaction.** There
 are positive cell masses `a, b, c, d, e, f, g, h` with no multiplicative interaction on either
