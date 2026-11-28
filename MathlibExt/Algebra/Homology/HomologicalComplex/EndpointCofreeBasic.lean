@@ -71,7 +71,8 @@ def endpointCofreeNextTermIso (I : ι → C) {i j : ι} (hij : c.Rel i j) :
     rw [endpointCofreeNextTerm, ite_eq_left hi]
     exact congrArg I (c.next_eq' hij))
 
-/-- For a family I in C and an index i of a complex
+omit [HasZeroMorphisms C] [HasBinaryBiproducts C] in
+/-- For a family I in a category C with a zero object and an index i of a complex
 shape c with no outgoing edge, the optional second cofree coefficient
 at i equals the zero object. -/
 theorem endpointCofreeNextTerm_of_no_next (I : ι → C) (i : ι)
@@ -79,7 +80,8 @@ theorem endpointCofreeNextTerm_of_no_next (I : ι → C) (i : ι)
     endpointCofreeNextTerm c I i = (0 : C) :=
   ite_eq_right hi
 
-/-- For a family I in C and an index i of a complex
+omit [HasZeroMorphisms C] [HasBinaryBiproducts C] in
+/-- For a family I in a category C with a zero object and an index i of a complex
 shape c satisfying ¬ c.Rel i (c.next i), the optional second coefficient
 of the cofree term is a zero object. -/
 theorem endpointCofreeNextTerm_isZero (I : ι → C) (i : ι)
