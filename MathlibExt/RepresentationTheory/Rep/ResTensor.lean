@@ -12,7 +12,7 @@ module
 public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Closed
 public import Mathlib.RepresentationTheory.Rep.Res
 public import MathlibExt.CategoryTheory.Monoidal.TensorPowerFunctor
-public import MathlibExt.LinearAlgebra.TensorProduct.DirectedTensorPower
+public import MathlibExt.LinearAlgebra.TensorPower.LeadingUnit
 
 /-!
 # Group restriction, tensor products and power coherence
@@ -30,8 +30,8 @@ an isomorphism induces power isomorphisms.
 
 The restriction comparisons commute with unit identifications,
 head–tail splittings, reassociation, prepended unit maps, identity
-and composition. The underlying maps agree with the ordinary
-positive tensor-power maps of coefficient modules.
+and composition. The underlying maps agree with native PiTensorProduct maps on the
+coefficient factors.
 -/
 
 @[expose] public section
@@ -48,33 +48,34 @@ universe u
 
 variable {k G H : Type u} [CommRing k] [Group G] [Group H]
 
-/-- For a commutative ring k and a G-representation A, the carrier
-of L_n(A)=T_(n+1)(A) is k-linearly equivalent to the positive module
-power P₀(A)=k⊗A, P_(n+1)(A)=P_n(A)⊗A.
-The equivalence keeps the left-associated factors. -/
+/-- The actual categorical leading-unit power is canonically the native tensor power.
+
+For `n + 1` coefficient factors, remove the categorical leading unit and retain their
+ordered native `Fin (n + 1)` tensor family. -/
 noncomputable def tensorPowObjPositiveCarrierEquiv (A : Rep k G) :
-    ∀ n : ℕ,
-      (TensorPower.tensorPowObj A (n + 1)).V ≃ₗ[k]
-        TensorProduct.positiveTensorPower (R := k) A.V n
-  | 0 => LinearEquiv.refl k _
+    ∀ n : ℕ, (TensorPower.tensorPowObj A (n + 1)).V ≃ₗ[k] TensorPower k (n + 1) A.V
+  | 0 => (TensorPower.leadingUnitEquiv (R := k) A.V).symm
   | n + 1 => TensorProduct.congr
-      (tensorPowObjPositiveCarrierEquiv A n)
-      (LinearEquiv.refl k A.V)
+      (tensorPowObjPositiveCarrierEquiv A n) (LinearEquiv.refl k A.V) ≪≫ₗ
+        (PiTensorProduct.finSnocEquiv k (n + 1) (fun _ : Fin (n + 2) => A.V)).symm
 
 @[simp]
 theorem tensorPowObjPositiveCarrierEquiv_zero_tmul
     (A : Rep k G) (r : k) (a : A) :
     tensorPowObjPositiveCarrierEquiv A 0 (r ⊗ₜ[k] a) =
-      r ⊗ₜ[k] a :=
-  rfl
+      PiTensorProduct.tprod k (fun _ : Fin 1 => r • a) := by
+  simp only [tensorPowObjPositiveCarrierEquiv, TensorPower.leadingUnitEquiv,
+    LinearEquiv.trans_symm, LinearEquiv.symm_symm, LinearEquiv.trans_apply,
+    TensorProduct.lid_tmul, PiTensorProduct.subsingletonEquiv_symm_apply']
 
 @[simp]
 theorem tensorPowObjPositiveCarrierEquiv_succ_tmul
     (A : Rep k G) (n : ℕ)
     (x : (TensorPower.tensorPowObj A (n + 1)).V) (a : A) :
     tensorPowObjPositiveCarrierEquiv A (n + 1) (x ⊗ₜ[k] a) =
-      tensorPowObjPositiveCarrierEquiv A n x ⊗ₜ[k] a :=
-  rfl
+      (PiTensorProduct.finSnocEquiv k (n + 1) (fun _ : Fin (n + 2) => A.V)).symm
+        (tensorPowObjPositiveCarrierEquiv A n x ⊗ₜ[k] a) := by
+  simp [tensorPowObjPositiveCarrierEquiv]
 
 /-- Let k be a commutative ring and G,H groups in universe u. Let f:H→G and Res=Res_f.
 For a G-representation A, write L_n(A)=T_(n+1)(A) for the left-associated positive tensor power
@@ -768,28 +769,37 @@ theorem tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc
       (x : Rep.res f (TensorPower.tensorPowObj A (n + 1))),
       tensorPowObjPositiveCarrierEquiv B n
           ((resTensorPowMapSucc f phi n).hom x) =
-        TensorProduct.positiveTensorPowerMap phi.hom.toLinearMap n
+        PiTensorProduct.map (fun _ : Fin (n + 1) => phi.hom.toLinearMap)
           (tensorPowObjPositiveCarrierEquiv A n x)
   | 0, x => by
       induction x using TensorProduct.inductionOn with
       | tmul r a =>
           rw [resTensorPowMapSucc_zero_tmul,
             tensorPowObjPositiveCarrierEquiv_zero_tmul,
-            tensorPowObjPositiveCarrierEquiv_zero_tmul,
-            TensorProduct.positiveTensorPowerMap_zero,
-            LinearMap.lTensor_tmul]
-          rfl
+            tensorPowObjPositiveCarrierEquiv_zero_tmul, PiTensorProduct.map_tprod]
+          apply congrArg (PiTensorProduct.tprod k)
+          funext q
+          exact (phi.hom.toLinearMap.map_smul r a).symm
       | add x y hx hy => simp only [map_add, hx, hy]
   | n + 1, x => by
       induction x using TensorProduct.inductionOn with
       | tmul y a =>
           rw [resTensorPowMapSucc_succ_tmul,
             tensorPowObjPositiveCarrierEquiv_succ_tmul,
-            tensorPowObjPositiveCarrierEquiv_succ_tmul,
-            TensorProduct.positiveTensorPowerMap_succ,
+            tensorPowObjPositiveCarrierEquiv_succ_tmul]
+          apply (PiTensorProduct.finSnocEquiv k (n + 1)
+            (fun _ : Fin (n + 2) => B.V)).injective
+          rw [LinearEquiv.apply_symm_apply]
+          have h := LinearMap.congr_fun
+            (PiTensorProduct.finSnocEquiv_naturality k (n + 1)
+              (fun _ : Fin (n + 2) => A.V) (fun _ : Fin (n + 2) => B.V)
+              (fun _ => phi.hom.toLinearMap))
+            ((PiTensorProduct.finSnocEquiv k (n + 1)
+              (fun _ : Fin (n + 2) => A.V)).symm
+              (tensorPowObjPositiveCarrierEquiv A n y ⊗ₜ[k] a))
+          simpa only [LinearMap.comp_apply, LinearEquiv.apply_symm_apply,
             TensorProduct.map_tmul,
-            tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc f phi n y]
-          rfl
+            tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc f phi n y] using h.symm
       | add x y hx hy => simp only [map_add, hx, hy]
 
 set_option backward.isDefEq.respectTransparency false in
@@ -998,28 +1008,28 @@ theorem resTensorPowMapSucc_composites_toLinearMap_eq
     tensorPowObjPositiveCarrierEquiv C n
         ((resTensorPowMapSucc g psi n).hom
           ((resTensorPowMapSucc f phi n).hom x)) =
-      TensorProduct.positiveTensorPowerMap psi.hom.toLinearMap n
+      PiTensorProduct.map (fun _ : Fin (n + 1) => psi.hom.toLinearMap)
         (tensorPowObjPositiveCarrierEquiv B n
           ((resTensorPowMapSucc f phi n).hom x)) :=
       tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc g psi n _
-    _ = TensorProduct.positiveTensorPowerMap psi.hom.toLinearMap n
-        (TensorProduct.positiveTensorPowerMap phi.hom.toLinearMap n
+    _ = PiTensorProduct.map (fun _ : Fin (n + 1) => psi.hom.toLinearMap)
+        (PiTensorProduct.map (fun _ : Fin (n + 1) => phi.hom.toLinearMap)
           (tensorPowObjPositiveCarrierEquiv A n x)) := by
       rw [tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc]
-    _ = TensorProduct.positiveTensorPowerMap
-        (psi.hom.toLinearMap.comp phi.hom.toLinearMap) n
+    _ = PiTensorProduct.map (fun _ : Fin (n + 1) =>
+        psi.hom.toLinearMap.comp phi.hom.toLinearMap)
         (tensorPowObjPositiveCarrierEquiv A n x) := by
-      rw [TensorProduct.positiveTensorPowerMap_comp]
+      rw [← LinearMap.comp_apply, ← PiTensorProduct.map_comp]
       rfl
-    _ = TensorProduct.positiveTensorPowerMap
-        (psi'.hom.toLinearMap.comp phi'.hom.toLinearMap) n
+    _ = PiTensorProduct.map (fun _ : Fin (n + 1) =>
+        psi'.hom.toLinearMap.comp phi'.hom.toLinearMap)
         (tensorPowObjPositiveCarrierEquiv A n x) := by rw [h]
-    _ = TensorProduct.positiveTensorPowerMap psi'.hom.toLinearMap n
-        (TensorProduct.positiveTensorPowerMap phi'.hom.toLinearMap n
+    _ = PiTensorProduct.map (fun _ : Fin (n + 1) => psi'.hom.toLinearMap)
+        (PiTensorProduct.map (fun _ : Fin (n + 1) => phi'.hom.toLinearMap)
           (tensorPowObjPositiveCarrierEquiv A n x)) := by
-      rw [TensorProduct.positiveTensorPowerMap_comp]
+      rw [← LinearMap.comp_apply, ← PiTensorProduct.map_comp]
       rfl
-    _ = TensorProduct.positiveTensorPowerMap psi'.hom.toLinearMap n
+    _ = PiTensorProduct.map (fun _ : Fin (n + 1) => psi'.hom.toLinearMap)
         (tensorPowObjPositiveCarrierEquiv B' n
           ((resTensorPowMapSucc f' phi' n).hom x)) := by
       rw [tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc]

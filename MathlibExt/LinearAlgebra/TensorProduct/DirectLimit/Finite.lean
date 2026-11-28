@@ -13,6 +13,7 @@ module
 
 public import MathlibExt.LinearAlgebra.TensorProduct.DirectLimit.Diagonal
 public import Mathlib.LinearAlgebra.PiTensorProduct.Basic
+public import MathlibExt.LinearAlgebra.PiTensorProduct.FinSnoc
 public import Mathlib.LinearAlgebra.TensorProduct.Associator
 public import Mathlib.Logic.Equiv.Fin.Basic
 public import Mathlib.Data.Fintype.EquivFin
@@ -44,56 +45,7 @@ open scoped TensorProduct
 
 universe r v
 
-namespace PiTensorProduct
 
-variable (R : Type r) [CommSemiring R]
-
-/-- For a commutative semiring R and a dependent family of R-modules
-V_j indexed by Fin(n + 1), each with additive commutative monoid structure,
-this R-linear equivalence splits off the last factor:
-⨂_(j:Fin(n+1)) V_j ≅ (⨂_(j:Fin n) V_(j.castSucc)) ⊗[R] V_(Fin.last n).
-The prefix keeps its original order. -/
-def finSnocEquiv (n : ℕ) (V : Fin (n + 1) → Type v)
-    [∀ j, AddCommMonoid (V j)] [∀ j, Module R (V j)] :
-    (⨂[R] j : Fin (n + 1), V j) ≃ₗ[R]
-      (⨂[R] j : Fin n, V j.castSucc) ⊗[R] V (Fin.last n) :=
-  (reindex R V (finSumFinEquiv : Fin n ⊕ Fin 1 ≃ Fin (n + 1)).symm).trans
-    ((tmulEquivDep R
-        (fun j : Fin n ⊕ Fin 1 => V ((finSumFinEquiv : Fin n ⊕ Fin 1 ≃ Fin (n + 1)) j))).symm.trans
-      (TensorProduct.congr (LinearEquiv.refl R (⨂[R] j : Fin n, V j.castSucc))
-        (subsingletonEquiv (R := R)
-          (s := fun j : Fin 1 => V ((finSumFinEquiv : Fin n ⊕ Fin 1 ≃ Fin (n + 1)) (.inr j))) 0)))
-
-/-- For a commutative semiring R, R-modules V_j indexed by Fin(n + 1),
-and a family x_j ∈ V_j, the last-factor splitting sends
-tprod(x) to tprod(j ↦ x_(j.castSucc)) ⊗ x_(Fin.last n).
-The first tensor factor contains the ordered prefix. -/
-@[simp]
-theorem finSnocEquiv_tprod (n : ℕ) (V : Fin (n + 1) → Type v)
-    [∀ j, AddCommMonoid (V j)] [∀ j, Module R (V j)] (x : ∀ j, V j) :
-    finSnocEquiv R n V (tprod R x) =
-      tprod R (fun j : Fin n => x j.castSucc) ⊗ₜ[R] x (Fin.last n) := by
-  rw [finSnocEquiv, LinearEquiv.trans_apply, reindex_tprod]
-  change TensorProduct.congr (LinearEquiv.refl R (⨂[R] j : Fin n, V j.castSucc))
-      (subsingletonEquiv (R := R)
-        (s := fun j : Fin 1 => V ((finSumFinEquiv : Fin n ⊕ Fin 1 ≃ Fin (n + 1)) (.inr j))) 0)
-      ((tmulEquivDep R
-        (fun j : Fin n ⊕ Fin 1 => V ((finSumFinEquiv : Fin n ⊕ Fin 1 ≃ Fin (n + 1)) j))).symm
-        (tprod R (fun j => x ((finSumFinEquiv : Fin n ⊕ Fin 1 ≃ Fin (n + 1)) j)))) = _
-  rw [tmulEquivDep_symm_apply]
-  change TensorProduct.congr (LinearEquiv.refl R (⨂[R] j : Fin n, V j.castSucc))
-      (subsingletonEquiv (R := R)
-        (s := fun j : Fin 1 =>
-          V ((finSumFinEquiv : Fin n ⊕ Fin 1 ≃ Fin (n + 1)) (.inr j))) 0)
-      (tprod R (fun j : Fin n => x j.castSucc) ⊗ₜ[R]
-        tprod R (fun j : Fin 1 =>
-          x ((finSumFinEquiv : Fin n ⊕ Fin 1 ≃ Fin (n + 1)) (.inr j)))) =
-    tprod R (fun j : Fin n => x j.castSucc) ⊗ₜ[R] x (Fin.last n)
-  rw [TensorProduct.congr_tmul, LinearEquiv.refl_apply,
-    subsingletonEquiv_apply_tprod]
-  rfl
-
-end PiTensorProduct
 
 universe i m n b
 
@@ -198,7 +150,7 @@ commutative monoid structures. If f and every g_j satisfy identity and
 composition, then f_ab ⊗ (⨂_j g_j,ab) satisfies those laws on the
 simultaneous tensor modules. Neither finiteness of β nor directedness
 of ι is needed for this directed-system structure. -/
-theorem finiteDiagonalTransition_directedSystem
+instance finiteDiagonalTransition_directedSystem
     [DirectedSystem M (f · · ·)] [∀ j, DirectedSystem (V j) (g j · · ·)] :
     DirectedSystem (fun a => M a ⊗[R] (⨂[R] j : β, V j a))
       (finiteDiagonalTransition f g · · ·) where
@@ -417,7 +369,7 @@ private theorem exists_finiteDiagonalEquiv_fin (t : ℕ) :
           PiTensorProduct.map_tprod]
       exact LinearMap.congr_fun he z
     let eL := Module.DirectLimit.congr eS hS
-    let eB := directLimitDiagonal fP (g (Fin.last t))
+    let eB := (directLimitDiagonal fP (g (Fin.last t))).symm
     let eT :
         ((Module.DirectLimit M f ⊗[R]
           (⨂[R] j : Fin t, Module.DirectLimit (VP j) (gP j))) ⊗[R]
@@ -600,15 +552,15 @@ g_j,ab be their R-linear transitions for a ≤ b.
 Assume ι is directed, f and every g_j satisfy identity and composition,
 and β is finite. Write D_β = lim_a(M_a ⊗[R] (⨂_j V_(j,a))).
 This is the R-linear equivalence
-D_β ≅ (lim M) ⊗[R] (⨂_j lim V_j),
-whose forward map is the canonical simultaneous-stage comparison.
+(lim M) ⊗[R] (⨂_j lim V_j) ≅ D_β,
+whose inverse is the canonical simultaneous-stage comparison.
 The finite factor family may be empty. -/
 def directLimitFinite :
-    finiteDiagonalLimit f g ≃ₗ[R]
-      Module.DirectLimit M f ⊗[R]
-        (⨂[R] j : β, Module.DirectLimit (V j) (g j)) :=
-  LinearEquiv.ofBijective (finiteDiagonalToTensor f g)
-    (finiteDiagonalToTensor_bijective f g)
+    Module.DirectLimit M f ⊗[R]
+        (⨂[R] j : β, Module.DirectLimit (V j) (g j)) ≃ₗ[R]
+      finiteDiagonalLimit f g :=
+  (LinearEquiv.ofBijective (finiteDiagonalToTensor f g)
+    (finiteDiagonalToTensor_bijective f g)).symm
 
 /-- Let R be a commutative semiring, ι a preorder with decidable
 equality, M_a R-modules, and V_(j,a) a family of R-modules indexed by β.
@@ -617,10 +569,10 @@ g_j,ab be their R-linear transitions for a ≤ b.
 Assume ι is directed, f and every g_j satisfy identity and composition,
 and β is finite. Write D_β = lim_a(M_a ⊗[R] (⨂_j V_(j,a))).
 For x ∈ M_a and y_j ∈ V_(j,a), the directed-limit equivalence
-sends [x ⊗ tprod(y)]_a to [x]_a ⊗ tprod(j ↦ [y_j]_a). -/
+has inverse value [x ⊗ tprod(y)]_a ↦ [x]_a ⊗ tprod(j ↦ [y_j]_a). -/
 @[simp]
-theorem directLimitFinite_of_tprod (a : ι) (x : M a) (y : ∀ j, V j a) :
-    directLimitFinite f g
+theorem directLimitFinite_symm_of_tprod (a : ι) (x : M a) (y : ∀ j, V j a) :
+    (directLimitFinite f g).symm
         (Module.DirectLimit.of R ι
           (fun a => M a ⊗[R] (⨂[R] j : β, V j a))
           (finiteDiagonalTransition f g) a
@@ -636,11 +588,11 @@ All modules have additive commutative monoid structures. Let f_ab and
 g_j,ab be their R-linear transitions for a ≤ b.
 Assume ι is directed, f and every g_j satisfy identity and composition,
 and β is finite. Write D_β = lim_a(M_a ⊗[R] (⨂_j V_(j,a))).
-On classes represented at a common stage a, the inverse equivalence
+On classes represented at a common stage a, the forward equivalence
 sends [x]_a ⊗ tprod(j ↦ [y_j]_a) to [x ⊗ tprod(y)]_a. -/
 @[simp]
-theorem directLimitFinite_symm_of_tprod (a : ι) (x : M a) (y : ∀ j, V j a) :
-    (directLimitFinite f g).symm
+theorem directLimitFinite_of_tprod (a : ι) (x : M a) (y : ∀ j, V j a) :
+    directLimitFinite f g
         (Module.DirectLimit.of R ι M f a x ⊗ₜ[R]
           PiTensorProduct.tprod R
             (fun j => Module.DirectLimit.of R ι (V j) (g j) a (y j))) =
@@ -648,6 +600,6 @@ theorem directLimitFinite_symm_of_tprod (a : ι) (x : M a) (y : ∀ j, V j a) :
         (fun a => M a ⊗[R] (⨂[R] j : β, V j a))
         (finiteDiagonalTransition f g) a
           (x ⊗ₜ[R] PiTensorProduct.tprod R y) := by
-  rw [← directLimitFinite_of_tprod f g a x y, LinearEquiv.symm_apply_apply]
+  rw [← directLimitFinite_symm_of_tprod f g a x y, LinearEquiv.apply_symm_apply]
 
 end TensorProduct
