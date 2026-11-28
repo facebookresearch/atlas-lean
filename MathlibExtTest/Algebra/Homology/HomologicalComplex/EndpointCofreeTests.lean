@@ -226,7 +226,7 @@ example :
           (Injective.ι N).hom (ULift.up (2 : ZMod 6)) := by
     rw [endpointCofreeHom_naturality K a coefficientDouble, endpointCofreeHom_fst]
     change (2 : ℤ) • (Injective.ι N).hom (ULift.up (1 : ZMod 6)) = _
-    exact ((Injective.ι N).hom.map_smul (2 : ℤ)
+    exact ((Injective.ι N).hom.toAddMonoidHom.map_zsmul (2 : ℤ)
       (ULift.up (1 : ZMod 6) : V)).symm.trans
         (congrArg (Injective.ι N).hom two_one)
   exact ⟨hvalue, by rw [hvalue]; exact cover_ne_zero (by decide : (2 : ZMod 6) ≠ 0)⟩
@@ -247,10 +247,10 @@ private lemma step_square {i j : ZMod 2} (hij : c.Rel i j) : step i ≫ step j =
   fin_cases i <;> fin_cases j
   · exact False.elim ((by decide : ¬ c.Rel 0 0) hij)
   · change step (0 : ZMod 2) ≫ step (1 : ZMod 2) = 0
-    simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0)]
+    simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0), ite_true]
       using two_three
   · change step (1 : ZMod 2) ≫ step (0 : ZMod 2) = 0
-    simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0)]
+    simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0), ite_true]
       using three_two
   · exact False.elim ((by decide : ¬ c.Rel 1 1) hij)
 
