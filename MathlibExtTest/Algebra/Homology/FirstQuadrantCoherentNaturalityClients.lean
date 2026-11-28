@@ -164,7 +164,7 @@ example : ¬ Monotone stages := by
   have h1 : (1 : Torsion) ∈ stages 1 := by simp [stages]
   have h2 := h12 h1
   have hz : (1 : Torsion) = 0 := by simpa [stages] using h2
-  exact one_ne_zero hz
+  exact (show (1 : ZMod 6) ≠ 0 by decide) hz
 
 example : LinearMap.range (LinearMap.id : Torsion →ₗ[ℤ] Torsion) =
     LinearMap.ker (0 : Torsion →ₗ[ℤ] Torsion) := by
