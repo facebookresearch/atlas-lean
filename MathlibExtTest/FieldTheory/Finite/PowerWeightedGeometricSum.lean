@@ -16,10 +16,8 @@ import Mathlib.Tactic.Ring
 
 open Finset MetaMathlibExt Polynomial
 
-#check one_sub_X_pow_mul_sum_pow_mul_X_pow
-
 -- The two sums on the right overlap at degree 2: their contributions are 1 and -4.
-example :
+private theorem overlap_expansions :
     ((1 - X : ℤ[X]) ^ 3 * ∑ n ∈ Icc (1 : ℕ) 1, C ((n : ℤ) ^ 2) * X ^ n) =
       X - 3 * X ^ 2 + 3 * X ^ 3 - X ^ 4 ∧
     (∑ n ∈ Icc 1 2, C (∑ i ∈ range n,
@@ -33,6 +31,13 @@ example :
   refine ⟨?_, ?_, ?_⟩ <;>
     norm_num [h12, h13, h23, sum_insert, sum_range_succ, Nat.choose_succ_succ]
   all_goals ring
+
+-- The public identity adds both contributions at the overlapping degree.
+example :
+    (((1 - X : ℤ[X]) ^ 3 * ∑ n ∈ Icc (1 : ℕ) 1, C ((n : ℤ) ^ 2) * X ^ n).coeff 2) = -3 := by
+  rw [one_sub_X_pow_mul_sum_pow_mul_X_pow 2 1 (by decide) (by decide)]
+  simp only [Nat.reduceAdd, Nat.cast_one, overlap_expansions.2.1, overlap_expansions.2.2]
+  norm_num [coeff_add, coeff_sub, coeff_neg, coeff_X, coeff_X_pow, ← C_ofNat, coeff_C_mul]
 
 -- Both interior coefficients at degrees 2 and 3 vanish, before the two nonzero tail terms.
 example :
