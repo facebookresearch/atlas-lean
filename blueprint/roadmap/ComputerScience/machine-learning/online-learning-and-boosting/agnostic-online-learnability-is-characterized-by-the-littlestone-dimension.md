@@ -1,10 +1,13 @@
 # Agnostic online learnability is characterized by the Littlestone dimension
 
-Call a nonempty class $H$ of binary classifiers agnostically online learnable if some randomized online learner has
-expected regret $o(T)$ in the worst case over sequences of length $T$, against an oblivious adversary, under the
-protocol of the online-classification page. Then $H$ is agnostically online learnable if and only if its
-Littlestone dimension is finite (Ben-David, Pál and Shalev-Shwartz). The two directions are the regret upper bound
-for finite dimension and the linear lower bound for infinite dimension.
+For a nonempty class $H$ of binary classifiers and a horizon $T$, let $R_H(T)$ be the infimum, over randomized online
+learners that may depend on $T$, of the worst-case expected regret over sequences of length $T$, against an oblivious
+adversary, under the protocol of the online-classification page. Call $H$ agnostically online learnable if
+$R_H(T) = o(T)$, that is, if for every horizon $T$ some learner for that horizon has worst-case expected regret at most
+$r(T)$, with $r(T)/T \to 0$. Then $H$ is agnostically online learnable if and only if its Littlestone dimension is
+finite (Ben-David, Pál and Shalev-Shwartz). The two directions are the regret upper bound for finite dimension, by a
+learner that receives the horizon $T$ as input, and the linear lower bound for infinite dimension, which holds for
+every learner at every horizon.
 
 ## Depends on
 
