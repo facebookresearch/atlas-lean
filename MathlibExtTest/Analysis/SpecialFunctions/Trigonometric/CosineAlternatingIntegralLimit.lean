@@ -76,4 +76,28 @@ example {q : ℕ} (hq : Odd q) : ∀ᶠ m in atTop, 0 < alternatingIntegralTwoPi
 #guard_msgs in
 #print axioms MetaMathlibExt.tendsto_sum_integral_cos_sub_cos_even_odd
 
+/-! ### Odd multipliers and odd frequencies -/
+
+private noncomputable def oddFrequencyIntegral (q m : ℕ) : ℝ :=
+  ∑ l ∈ Finset.Icc 1 m,
+    ∫ x in (2 * π * l / ((2 * m + 1 : ℝ) + 1))..(2 * π * l / ((2 * m + 1 : ℝ) - 1)),
+      (cos (q * (2 * m + 1 : ℝ) * x) - cos (q * x))
+
+-- The sum is empty at `m = 0`, where the lower odd frequency is `k = 1`.
+example (q : ℕ) : oddFrequencyIntegral q 0 = 0 := by simp [oddFrequencyIntegral]
+
+example : Tendsto (oddFrequencyIntegral 1) atTop (𝓝 (4 / π)) := by
+  have h := tendsto_sum_integral_cos_sub_cos_odd_odd (q := 1) (by decide)
+  rw [show 4 / (((1 : ℕ) : ℝ) ^ 2 * π) = 4 / π by push_cast; ring] at h
+  exact h
+
+example : Tendsto (oddFrequencyIntegral 3) atTop (𝓝 (4 / (9 * π))) := by
+  have h := tendsto_sum_integral_cos_sub_cos_odd_odd (q := 3) (by decide)
+  rw [show 4 / (((3 : ℕ) : ℝ) ^ 2 * π) = 4 / (9 * π) by push_cast; ring] at h
+  exact h
+
+/-- info: 'MetaMathlibExt.tendsto_sum_integral_cos_sub_cos_odd_odd' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MetaMathlibExt.tendsto_sum_integral_cos_sub_cos_odd_odd
+
 end MathlibExtTest.CosineAlternatingIntegralLimit

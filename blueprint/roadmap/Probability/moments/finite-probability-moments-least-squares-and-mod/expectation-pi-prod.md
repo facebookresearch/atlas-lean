@@ -1,0 +1,3 @@
+# Expectation of a product over distinct coordinates under a product weight
+
+Let $\alpha$ and $\iota$ be finite sets and $p$ any weight on $\alpha$. Under the product weight $\omega \mapsto \prod_i p(\omega_i)$ on samples $\omega \in \alpha^\iota$, the expectation of $\prod_i g_i(\omega_i)$ is $\prod_i \mathbb{E}_p[g_i]$, for all functions $g_i : \alpha \to \mathbb{R}$. The weight need not be nonnegative or sum to one. The product weight $\omega \mapsto \prod_i p(\omega_i)$ is the law of an i.i.d. sample only when $p$ is a probability law ($p \ge 0$ and $\sum_a p(a) = 1$); the identity itself is algebraic and does not use nonnegativity.
