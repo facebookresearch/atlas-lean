@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.NumberTheory.Divisors
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
@@ -15,8 +16,17 @@ import Mathlib.Tactic.Linarith
 /-!
 # Shakov's 2-regular divisor-counting sequence
 
-We show that the sequence is nonnegative at positive indices and counts the divisors of
-`m ^ 2 + 1` through its fibers.
+We show that the sequence is nonnegative at positive indices, counts the divisors of
+`m ^ 2 + 1` through its fibers, and takes Fibonacci values along Shakov's auxiliary sequence.
+For positive `n`, the fiber at `n` is exactly the two endpoints
+of the `n`th dyadic block if and only if `n ^ 2 + 1` is prime.
+
+## References
+
+* Anton Shakov, *A 2-Regular Sequence That Counts The Divisors of* `n^2 + 1`,
+  Journal of Integer Sequences 28 (2025), Article 25.6.2, pp. 1–10,
+  Theorem 4 (p. 2), Proposition 8 (pp. 6–7), and Proposition 9.
+  <https://cs.uwaterloo.ca/journals/JIS/VOL28/Shakov/shakov5.html>
 -/
 
 @[expose] public section
@@ -200,6 +210,30 @@ private theorem existsUnique_label (m : ℕ) (d e : ℤ)
         have hjk := huniq j ⟨hj, by omega, by omega, by omega⟩
         rw [hjk]
 
+private theorem left_endpoint (n : ℕ) :
+    shakovSeq (2 ^ n) = (n : ℤ) ∧ leftGap (2 ^ n) = 1 := by
+  induction n with
+  | zero => norm_num [leftGap, shakovSeq.eq_2, shakovSeq.eq_3]
+  | succ n ih =>
+    have hk : 1 ≤ (2 : ℕ) ^ n := Nat.one_le_pow n 2 (by decide)
+    obtain ⟨hval, hgap, _⟩ := left_child (2 ^ n) hk
+    rw [pow_succ', hval, hgap, ih.1, ih.2, Nat.cast_succ]
+    exact ⟨rfl, rfl⟩
+
+private theorem right_endpoint (n : ℕ) :
+    shakovSeq (2 ^ (n + 1) - 1) = (n : ℤ) ∧ rightGap (2 ^ (n + 1) - 1) = 1 := by
+  induction n with
+  | zero => norm_num [rightGap, shakovSeq.eq_2, shakovSeq.eq_4]
+  | succ n ih =>
+    have hpos : 0 < (2 : ℕ) ^ n := by positivity
+    have hk : 1 ≤ (2 : ℕ) ^ (n + 1) - 1 := by rw [pow_succ']; omega
+    have hstep : (2 : ℕ) ^ (n.succ + 1) - 1 = 2 * (2 ^ (n + 1) - 1) + 1 := by
+      rw [pow_succ' (2 : ℕ) (n + 1)]
+      omega
+    obtain ⟨hval, _, hgap⟩ := right_child _ hk
+    rw [hstep, hval, hgap, ih.1, ih.2, Nat.cast_succ]
+    exact ⟨rfl, rfl⟩
+
 end fiber_card
 
 open fiber_card in
@@ -268,5 +302,165 @@ theorem fiber_card (m : ℕ) :
       ⟨(leftGap n).toNat, Nat.mem_divisors.mpr ⟨⟨(rightGap n).toNat, hprod⟩, by positivity⟩⟩
     exact ⟨d, Finset.mem_attach _ _, (uniqueIndex d d.property).unique
       (index_spec d) ⟨hn, hnm, hleft.symm⟩⟩
+
+/-- **Shakov's auxiliary sequence.** The integer sequence $a$ with $a(0) = 0$, $a(1) = 1$ and,
+for every $n \ge 2$, $a(n) = 2a(n-1)$ if $n \equiv 0 \pmod 4$, $a(n) = a(n-1) + 1$ if
+$n \equiv 1 \pmod 4$, $a(n) = 2a(n-1) + 1$ if $n \equiv 2 \pmod 4$, and $a(n) = a(n-1) - 1$ if
+$n \equiv 3 \pmod 4$.
+
+The value $a(0)$ plays no role in the recursion; the source's sequence starts at $n = 1$. -/
+def shakovA : ℕ → ℤ
+  | 0 => 0
+  | 1 => 1
+  | n + 2 =>
+      if (n + 2) % 4 = 0 then 2 * shakovA (n + 1)
+      else if (n + 2) % 4 = 1 then shakovA (n + 1) + 1
+      else if (n + 2) % 4 = 2 then 2 * shakovA (n + 1) + 1
+      else shakovA (n + 1) - 1
+
+/-- The next two auxiliary indices are the two children of the current odd-indexed term,
+with their order alternating. -/
+private theorem shakovA_children (k : ℕ) (hk : 0 < shakovA (2 * k + 1)) :
+    0 < shakovA (2 * k + 3) ∧
+      let p := (shakovA (2 * k + 1)).toNat
+      if k % 2 = 0 then
+        (shakovA (2 * k + 2)).toNat = 2 * p + 1 ∧ (shakovA (2 * k + 3)).toNat = 2 * p
+      else
+        (shakovA (2 * k + 2)).toNat = 2 * p ∧ (shakovA (2 * k + 3)).toNat = 2 * p + 1 := by
+  dsimp only
+  have he := shakovA.eq_3 (2 * k)
+  have ho := shakovA.eq_3 (2 * k + 1)
+  simp only [Nat.succ_eq_add_one, Nat.add_assoc, Nat.reduceAdd] at he ho
+  by_cases h : k % 2 = 0
+  · have heMod : (2 * k + 2) % 4 = 2 := by omega
+    have hoMod : (2 * k + 3) % 4 = 3 := by omega
+    norm_num only [heMod, hoMod, ite_false, ite_true] at he ho
+    rw [ite_eq_left h]
+    exact ⟨by omega, by omega, by omega⟩
+  · have heMod : (2 * k + 2) % 4 = 0 := by omega
+    have hoMod : (2 * k + 3) % 4 = 1 := by omega
+    norm_num only [heMod, hoMod, ite_false, ite_true] at he ho
+    rw [ite_eq_right h]
+    exact ⟨by omega, by omega, by omega⟩
+
+private theorem fib_steps (m : ℕ) :
+    (Nat.fib (m + 3) : ℤ) = 2 * (Nat.fib (m + 2) : ℤ) - Nat.fib m ∧
+      (Nat.fib (m + 4) : ℤ) = 2 * (Nat.fib (m + 2) : ℤ) + Nat.fib (m + 1) := by
+  have step (i : ℕ) : (Nat.fib (i + 2) : ℤ) = (Nat.fib i : ℤ) + Nat.fib (i + 1) := by
+    exact_mod_cast Nat.fib_add_two (n := i)
+  have h₀ := step m
+  have h₁ : (Nat.fib (m + 3) : ℤ) = (Nat.fib (m + 1) : ℤ) + Nat.fib (m + 2) := step (m + 1)
+  have h₂ : (Nat.fib (m + 4) : ℤ) = (Nat.fib (m + 2) : ℤ) + Nat.fib (m + 3) := step (m + 2)
+  exact ⟨by omega, by omega⟩
+
+/- Keep the values at a parent and both of its children. The next pair consists of the
+same-side and opposite-side children of the last term, in that order. -/
+private theorem shakovA_fib_triple (k : ℕ) :
+    0 < shakovA (2 * k + 1) ∧
+      shakovSeq (shakovA (2 * k + 1)).toNat = (Nat.fib (2 * k) : ℤ) ∧
+      shakovSeq (shakovA (2 * k + 2)).toNat = (Nat.fib (2 * k + 1) : ℤ) ∧
+      shakovSeq (shakovA (2 * k + 3)).toNat = (Nat.fib (2 * k + 2) : ℤ) := by
+  induction k with
+  | zero => norm_num [shakovA, shakovSeq, Nat.fib]
+  | succ k ih =>
+    obtain ⟨hpos, hparent, hsibling, hcurrent⟩ := ih
+    obtain ⟨hpos', hchildren⟩ := shakovA_children k hpos
+    obtain ⟨_, hnext⟩ := shakovA_children (k + 1) hpos'
+    simp only [Nat.mul_add, Nat.mul_one, Nat.add_assoc, Nat.reduceAdd] at hnext ⊢
+    let p := (shakovA (2 * k + 1)).toNat
+    change shakovSeq p = _ at hparent
+    have hp : 1 ≤ p := by dsimp [p]; omega
+    obtain ⟨s₀, s₁, s₂, s₃⟩ := fiber_card.sequence_steps p hp
+    obtain ⟨f₃, f₄⟩ := fib_steps (2 * k)
+    refine ⟨hpos', hcurrent, ?_⟩
+    by_cases h : k % 2 = 0
+    · have h' : (k + 1) % 2 ≠ 0 := by omega
+      rw [ite_eq_left h] at hchildren
+      rw [ite_eq_right h'] at hnext
+      obtain ⟨hsib, hcur⟩ := hchildren
+      obtain ⟨hn₁, hn₂⟩ := hnext
+      change (shakovA (2 * k + 2)).toNat = 2 * p + 1 at hsib
+      change (shakovA (2 * k + 3)).toNat = 2 * p at hcur
+      rw [hsib] at hsibling
+      rw [hcur] at hcurrent hn₁ hn₂
+      rw [hn₁, hn₂, show 2 * (2 * p) = 4 * p by omega, s₀, s₁,
+        hparent, hsibling, hcurrent, f₃, f₄]
+      exact ⟨rfl, rfl⟩
+    · have h' : (k + 1) % 2 = 0 := by omega
+      rw [ite_eq_right h] at hchildren
+      rw [ite_eq_left h'] at hnext
+      obtain ⟨hsib, hcur⟩ := hchildren
+      obtain ⟨hn₁, hn₂⟩ := hnext
+      change (shakovA (2 * k + 2)).toNat = 2 * p at hsib
+      change (shakovA (2 * k + 3)).toNat = 2 * p + 1 at hcur
+      rw [hsib] at hsibling
+      rw [hcur] at hcurrent hn₁ hn₂
+      rw [hn₁, hn₂, show 2 * (2 * p + 1) = 4 * p + 2 by omega,
+        show 4 * p + 2 + 1 = 4 * p + 3 by omega, s₃, s₂, hparent, hsibling, hcurrent, f₃, f₄]
+      exact ⟨rfl, rfl⟩
+
+/-- **Shakov's sequence takes Fibonacci values along the auxiliary sequence.** Let $s$ be
+Shakov's $2$-regular sequence, let $a$ be Shakov's auxiliary sequence, and let $F_k$ denote the
+$k$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. For every natural number $n \ge 1$,
+$s(\max(a(n), 0)) = F_{n-1}$.
+
+The source shows that $a(n)$ is a positive integer and numbers the Fibonacci numbers so that
+this reads $s(a(n)) = F_n$.
+
+Source: Anton Shakov, "A 2-Regular Sequence That
+Counts The Divisors of `n^2 + 1`", Proposition 9. -/
+theorem shakovSeq_shakovA (n : ℕ) (hn : 1 ≤ n) :
+    shakovSeq (shakovA n).toNat = (Nat.fib (n - 1) : ℤ) := by
+  obtain ⟨k, rfl | rfl⟩ : ∃ k : ℕ, n = 2 * k + 1 ∨ n = 2 * k + 2 :=
+    ⟨(n - 1) / 2, by omega⟩
+  · exact (shakovA_fib_triple k).2.1
+  · exact (shakovA_fib_triple k).2.2.1
+
+open fiber_card in
+/-- **Primality of $n^2 + 1$ from the fibers of Shakov's sequence.** Let $s$ be Shakov's
+$2$-regular sequence. For every natural number $n \ge 1$, the number $n^2 + 1$ is prime if and
+only if the set of natural numbers $m$ with $s(m) = n$ is exactly $\{2^n, 2^{n+1} - 1\}$.
+
+Source: Anton Shakov, "A 2-Regular Sequence That
+Counts The Divisors of `n^2 + 1`", Proposition 8. -/
+theorem prime_iff_fiber (n : ℕ) (hn : 1 ≤ n) :
+    Nat.Prime (n ^ 2 + 1) ↔
+      {m : ℕ | shakovSeq m = (n : ℤ)} = {2 ^ n, 2 ^ (n + 1) - 1} := by
+  obtain ⟨_, F, hF, hcard⟩ := fiber_card n
+  have hFiber : (F : Set ℕ) = {m : ℕ | shakovSeq m = (n : ℤ)} := by
+    ext m
+    change m ∈ F ↔ shakovSeq m = (n : ℤ)
+    rw [hF]
+    refine ⟨And.right, fun hm ↦ ⟨?_, hm⟩⟩
+    by_contra! h
+    have hm₀ : m = 0 := by omega
+    rw [hm₀, shakovSeq.eq_1] at hm
+    omega
+  have hpow : 2 ≤ (2 : ℕ) ^ n := by
+    simpa using (Nat.pow_le_pow_right (by decide : 0 < (2 : ℕ)) hn)
+  let E : Finset ℕ := {2 ^ n, 2 ^ (n + 1) - 1}
+  have hE : (E : Set ℕ) = {2 ^ n, 2 ^ (n + 1) - 1} := by simp [E]
+  have hEcard : E.card = 2 := Finset.card_pair_eq_two_iff.mpr (by rw [pow_succ']; omega)
+  have hEF : E ⊆ F := by
+    simp only [E, Finset.insert_subset_iff, Finset.singleton_subset_iff, hF]
+    exact ⟨⟨hpow.trans' (by decide), (left_endpoint n).1⟩,
+      ⟨by rw [pow_succ']; omega, (right_endpoint n).1⟩⟩
+  rw [← hFiber, ← hE, Finset.coe_inj]
+  constructor
+  · intro hp
+    refine (Finset.eq_of_subset_of_card_le hEF ?_).symm
+    rw [hcard, hp.divisors, hEcard, Finset.card_pair_eq_two_iff.mpr hp.ne_one.symm]
+  · intro h
+    have hDcard : (n ^ 2 + 1).divisors.card = 2 := by rw [← hcard, h, hEcard]
+    have hq : 1 < n ^ 2 + 1 := Nat.succ_lt_succ (pow_pos hn 2)
+    have hq₀ : n ^ 2 + 1 ≠ 0 := by positivity
+    have hD : ({1, n ^ 2 + 1} : Finset ℕ) = (n ^ 2 + 1).divisors := by
+      apply Finset.eq_of_subset_of_card_le
+      · rw [Finset.insert_subset_iff, Finset.singleton_subset_iff]
+        exact ⟨Nat.one_mem_divisors.mpr hq₀, Nat.mem_divisors_self _ hq₀⟩
+      · rw [hDcard, Finset.card_pair_eq_two_iff.mpr hq.ne]
+    refine Nat.prime_def.mpr ⟨hq, fun d hdvd ↦ ?_⟩
+    have hd : d ∈ (n ^ 2 + 1).divisors := Nat.mem_divisors.mpr ⟨hdvd, hq₀⟩
+    simpa only [← hD, Finset.mem_insert, Finset.mem_singleton] using hd
 
 end MathlibExt.NumberTheory.ShakovTwoRegularWanted

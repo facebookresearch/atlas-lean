@@ -16,3 +16,5 @@
 
 - [Round-off versus truncation in time stepping](round-off-versus-truncation-in-time-stepping.md)
 - [Runtime assurance](runtime-assurance/README.md)
+- [State-space systems](state-space-systems/README.md)
+- [Time-varying linear systems](time-varying-linear-systems/README.md)

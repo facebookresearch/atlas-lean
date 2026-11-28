@@ -10,9 +10,9 @@ irrespective of the distribution of indel lengths and of the relative frequency 
 
 **Excess statistic.** Fitting $C(1 - \rho)^{\ell}$ to the histogram over a length range where the neutral model holds, the fraction of nucleotides in ungapped segments that is over-represented relative to the neutral prediction is
 
-$$\sigma = \frac{\sum_{\ell \ge \ell_{\min}} \ell\,\big(H_\ell - C(1 - \rho)^{\ell}\big)}{\sum_{\ell \ge \ell_{\min}} \ell\, H_\ell},$$
+$$\sigma = \frac{\sum_{\ell \ge \ell_{\min}} \ell\,\big(H_\ell - C(1 - \rho)^{\ell}\big)}{\sum_{\ell \ge 1} \ell\, H_\ell}.$$
 
-with short segments ($\ell < \ell_{\min}$, about 20 bp for human–mouse alignments) excluded because nearby indels are merged into single alignment gaps (gap attraction).
+Short segments ($\ell < \ell_{\min}$, with $\ell_{\min} = 20$ bp for human–mouse alignments) are excluded from the excess in the numerator only, because nearby indels are merged into single alignment gaps (gap attraction); the denominator counts all nucleotides in ungapped segments of every length $\ell \ge 1$, as in the source's formula $\sigma = \sum_{L=20}^{\infty} L(H_L - Cp^L)/\sum_{L=1}^{\infty} LH_L$.
 
 **Properties.**
 

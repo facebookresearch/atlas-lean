@@ -25,3 +25,5 @@
 ## Further topics
 
 - [Large-sample asymptotics of coalescent importance sampling](large-sample-asymptotics-of-coalescent-importance-sampling/README.md)
+- [Low-mutation sampling formulas for finite-alleles models](low-mutation-sampling-formulas-for-finite-alleles-models/README.md)
+- [Zig-zag sampling of coalescent trees](zig-zag-sampling-of-coalescent-trees/README.md)

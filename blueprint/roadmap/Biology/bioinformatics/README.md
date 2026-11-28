@@ -21,7 +21,10 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 
 - [Genome rearrangements](genome-rearrangements/README.md)
 - [Time and space bounds for alignment dynamic programs](time-and-space-bounds-for-alignment-dynamic-programs.md)
+- [The $q$-gram of a word at an offset](q-gram.md)
 - [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
+- [Words within Hamming distance $k$ share an aligned $q$-gram](exists-q-gram-eq-of-mul-lt.md)
+- [An exhaustive $q$-gram filter loses no pair within Hamming distance $k$](set-of-hamming-dist-le-subset.md)
 - [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
 - [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
 - [Activity-by-contact model of enhancer–gene regulation](activity-by-contact-enhancer-gene-model/README.md)
@@ -35,3 +38,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [IBD sharing HMM with linkage disequilibrium](ibd-sharing-hmm-with-linkage-disequilibrium/README.md)
 - [LD-based haplotype blocks](ld-based-haplotype-blocks/README.md)
 - [Read-based single-individual haplotyping](read-based-single-individual-haplotyping/README.md)
+- [Statistical models of genomic data](statistical-models-of-genomic-data/README.md)
+- [Sequence design and binding prediction](sequence-design-and-binding-prediction/README.md)
+- [Variant edges in bidirected pangenome graphs](variant-edges-in-bidirected-pangenome-graphs/README.md)
+- [Aberrant splicing detection](aberrant-splicing-detection/README.md)

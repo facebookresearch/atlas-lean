@@ -14,3 +14,9 @@ Classical algebraic geometry of affine and projective varieties: hypersurfaces a
 - [Tangent spaces of algebraic sets](tangent-spaces-of-algebraic-sets/README.md)
 - [Topological reconstruction of varieties](topological-reconstruction-of-varieties/README.md)
 - [Tropical varieties](tropical-varieties/README.md)
+- [Noncoordinate equations with affine-space zero fibers](noncoordinate-polynomial-affine-hypersurface.md)
+- [A degree-five stable noncoordinate with nonrectifiable affine-space fibers](degree-five-stable-noncoordinate.md)
+- [An explicit failure of complex affine-space cancellation](complex-affine-space-cancellation.md)
+- [Undecidable problems for algebraic varieties](undecidable-problems-for-varieties/README.md)
+
+- [Real algebraic geometry](real-algebraic-geometry/README.md)

@@ -27,6 +27,7 @@ The finite statements use homomorphism-count normalisations ($n^2$, $n^3$). The 
 - [Razborov's function vanishes up to edge density one half](razborov-triangle-density-of-le-half.md)
 - [Razborov's function at the Turán densities](razborov-triangle-density-one-sub-inv.md)
 - [Razborov's minimum triangle density theorem](razborov-minimum-triangle-density.md)
+- [Homomorphism density inequalities](homomorphism-density-inequalities/README.md)
 
 ## Related topics
 

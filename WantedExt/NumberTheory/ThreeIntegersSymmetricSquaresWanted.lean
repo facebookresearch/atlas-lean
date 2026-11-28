@@ -47,7 +47,9 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Even
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquares
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily330
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily331
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresHasSquareElementarySymmetricFunctionsFamily34
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily36
 
 set_option autoImplicit false
 
@@ -83,23 +85,6 @@ theorem_wanted hasSquareElementarySymmetricFunctions_family35
       (4 * s ^ 2 * t ^ 4 * (s ^ 2 + t ^ 2) *
         (secondShiftedSextic s t) ^ 2)
 
-/-- **Choudhry's family (3.6) of integer triples with square symmetric functions.** For all
-integers $s$ and $t$, let $f = s^6 - s^4 t^2 - 5 s^2 t^4 + t^6$ and
-$g = 3 s^6 + s^4 t^2 + s^2 t^4 - t^6$, and put $a = t^2 (s^2 - t^2)^2 (s^2 + t^2) g^2$,
-$b = 4 s^4 t^4 g^2$ and $c = s^2 (s^2 - t^2)^2 (s^2 + t^2) f^2$. Then each of $a + b + c$,
-$ab + bc + ca$ and $abc$ is the square of an integer.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.6). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family36
-    (s t : ℤ) :
-    HasSquareElementarySymmetricFunctions
-      (t ^ 2 * (s ^ 2 - t ^ 2) ^ 2 * (s ^ 2 + t ^ 2) *
-        (secondShiftedSextic s t) ^ 2)
-      (4 * s ^ 4 * t ^ 4 * (secondShiftedSextic s t) ^ 2)
-      (s ^ 2 * (s ^ 2 - t ^ 2) ^ 2 * (s ^ 2 + t ^ 2) *
-        (firstShiftedSextic s t) ^ 2)
-
 private abbrev shiftedQuartic (m n : ℤ) : ℤ :=
   m ^ 4 - 6 * m ^ 2 * n ^ 2 + n ^ 4
 
@@ -112,21 +97,6 @@ private abbrev secondDegreeTwelve (m n : ℤ) : ℤ :=
   m ^ 12 - 10 * m ^ 10 * n ^ 2 + 15 * m ^ 8 * n ^ 4
     - 204 * m ^ 6 * n ^ 6 + 15 * m ^ 4 * n ^ 8
     - 10 * m ^ 2 * n ^ 10 + n ^ 12
-
-/-- **Choudhry's family (3.31) of square triples with square symmetric functions.** For all
-integers $m$ and $n$, let $a = 64 m^4 n^4 (m^2 - n^2)^2$, $b = 16 m^2 n^2 (m^2 - n^2)^4$ and
-$c = (m^2 + n^2)^2 (m^4 - 6 m^2 n^2 + n^4)^2$. Then $a + b + c$, $ab + bc + ca$ and $abc$ are
-squares of integers, and $a$, $b$ and $c$ are themselves squares of integers.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.31). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family331_and_entries_square
-    (m n : ℤ) :
-    let a := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 2
-    let b := 16 * m ^ 2 * n ^ 2 * (m ^ 2 - n ^ 2) ^ 4
-    let c := (m ^ 2 + n ^ 2) ^ 2 * (shiftedQuartic m n) ^ 2
-    HasSquareElementarySymmetricFunctions a b c ∧
-      IsSquare a ∧ IsSquare b ∧ IsSquare c
 
 /-- **Choudhry's family (3.32) of square triples with square symmetric functions.** For all
 integers $m$ and $n$, let $Q = m^4 - 6 m^2 n^2 + n^4$,
