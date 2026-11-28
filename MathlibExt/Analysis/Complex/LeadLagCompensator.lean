@@ -16,8 +16,9 @@ import Mathlib.Topology.Algebra.Order.Field
 # Gain and phase of a lead or lag compensator
 
 The frequency response of `C(s) = k (s + a) / (s + b)` is evaluated at `s = iω`.
-For positive parameters its principal phase has a unique maximum (lead) or minimum
-(lag) on the nonnegative frequency axis at the geometric mean of `a` and `b`.
+For `k, a, b > 0`, on the nonnegative frequency axis the principal phase has a unique maximum
+at `√(ab)` if `a < b` (lead) and a unique minimum there if `b < a` (lag). If `a = b`,
+the phase is identically zero.
 -/
 
 public section
@@ -67,7 +68,7 @@ private theorem phaseKernel_mono {c : ℝ} (hc : 0 < c) :
     have h₂ := mul_le_mul hx' hx' hr.le hxpos.le
     exact (hcross y x).2 (mul_pos_of_neg_of_neg (sub_neg.mpr hxy) (sub_neg.mpr (by nlinarith)))
 
-/-- The gain of `C(iω) = k (a + iω)/(b + iω)` is
+/-- For `k, a, b > 0`, the gain of `C(iω) = k (a + iω)/(b + iω)` is
 `k √((ω² + a²)/(ω² + b²))`, equals `ka/b` at DC and tends to `k` as `|ω| → ∞`.
 Its principal phase is `arctan (ω/a) - arctan (ω/b)` in `(-π/2, π/2)`.
 For `a < b` the phase is positive at positive frequencies, increases strictly up to
