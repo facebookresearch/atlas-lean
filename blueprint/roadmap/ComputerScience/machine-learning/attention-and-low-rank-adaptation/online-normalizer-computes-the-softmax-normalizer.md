@@ -10,11 +10,11 @@ The source starts from $m_0 = -\infty$, $d_0 = 0$; its first step gives the valu
 
 ## Depends on
 
-- [Softmax](../../not-yet-classified/basic/part-06/softmax.md)
+- [Softmax](softmax-attention-basics/softmax.md)
 
 ## Proof depends on
 
-- [Softmax](../../not-yet-classified/basic/part-06/softmax.md)
+- [Softmax](softmax-attention-basics/softmax.md)
 
 The recurrence is verified by induction on the input length, using the exponential addition law.
 

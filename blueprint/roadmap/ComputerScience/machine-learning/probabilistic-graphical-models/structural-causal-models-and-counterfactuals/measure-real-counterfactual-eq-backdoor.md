@@ -1,0 +1,3 @@
+# The potential-outcome law is the back-door formula
+
+For a finite structural causal model with values in a finite nonempty set with decidable equality, finite noise sets and independent noise laws, let $t \ne y$ be nodes and $Z$ a set of nodes not containing $y$ that satisfies the back-door criterion for $(t, y)$ in the induced graph, and assume positivity in the induced Bayesian network: $P(X_t = a, Z = z) > 0$ whenever $P(Z = z) > 0$. Then the probability, computed on the noise space, that the potential outcome of $y$ after $do(X_t = a)$ equals $v$ is given by the back-door adjustment formula $\sum_z P(Z = z)\, P(X_y = v \mid X_t = a, Z = z)$ in the induced Bayesian network.

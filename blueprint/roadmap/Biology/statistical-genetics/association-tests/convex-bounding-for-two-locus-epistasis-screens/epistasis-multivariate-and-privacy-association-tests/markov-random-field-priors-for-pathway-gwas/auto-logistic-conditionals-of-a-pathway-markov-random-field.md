@@ -17,12 +17,12 @@ $$\log\frac{\pi(x_i = 1 \mid x_{N_i})}{\pi(x_i = -1 \mid x_{N_i})} = h + \beta_1
 
 ## Depends on
 
-- [Local Markov property](../../../../../../ComputerScience/not-yet-classified/markov-random-field/local-markov.md)
+- [Local Markov property](../../../../../../ComputerScience/machine-learning/markov-properties-and-structure-learning/markov-random-fields-gibbs-factorization-and-the/local-markov.md)
 
 ## Proof depends on
 
-- [Gibbs factorization implies the global Markov property](../../../../../../ComputerScience/not-yet-classified/markov-random-field/global-markov-of-gibbs-factorization.md)
-- [Local Markov of global Markov](../../../../../../ComputerScience/not-yet-classified/markov-random-field/local-markov-of-global-markov.md)
+- [Gibbs factorization implies the global Markov property](../../../../../../ComputerScience/machine-learning/markov-properties-and-structure-learning/markov-random-fields-gibbs-factorization-and-the/global-markov-of-gibbs-factorization.md)
+- [Local Markov of global Markov](../../../../../../ComputerScience/machine-learning/markov-properties-and-structure-learning/markov-random-fields-gibbs-factorization-and-the/local-markov-of-global-markov.md)
 
 ## Expansion
 

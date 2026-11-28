@@ -1,4 +1,5 @@
 # Likelihood and maximum likelihood estimators
+- [Logistic and softmax regression](logistic-and-softmax-regression/README.md)
 
 ## Definition
 

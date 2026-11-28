@@ -20,7 +20,7 @@ $$\Omega_\lambda(t,t') = \alpha_\lambda^2\exp\Bigl(-\frac{(t-t')^2}{2l_\lambda^2
 
 ## Depends on
 
-- [Softmax](../../../../ComputerScience/not-yet-classified/basic/part-06/softmax.md)
+- [Softmax](../../../../ComputerScience/machine-learning/attention-and-low-rank-adaptation/softmax-attention-basics/softmax.md)
 
 ## Remarks
 

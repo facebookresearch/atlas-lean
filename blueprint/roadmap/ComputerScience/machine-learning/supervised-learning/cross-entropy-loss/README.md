@@ -6,3 +6,4 @@
 - [Cross-entropy loss via the likelihood](cross-entropy-loss-eq-neg-logb-prod.md)
 - [Comparing cross-entropy losses of classifiers that rule out no label](cross-entropy-loss-le-iff-of-ne-zero.md)
 - [Minimizing cross-entropy is maximum likelihood](cross-entropy-loss-le-iff.md)
+- [Empirical cross-entropy of a fixed model on a finite sample](empirical-cross-entropy-of-a-fixed-model-on-a-fi/README.md)

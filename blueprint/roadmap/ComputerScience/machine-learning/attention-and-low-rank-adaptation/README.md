@@ -8,4 +8,5 @@ Linear algebra of recent methods for adapting and running transformer layers: lo
 - [Attention logits as bilinear forms](attention-logits-as-bilinear-forms.md)
 - [Rotary position embedding (RoPE)](rotary-position-embedding.md)
 - [Multi-head latent attention (MLA)](multi-head-latent-attention.md)
+- [Softmax attention basics](softmax-attention-basics/README.md)
 - [The online normalizer computes the softmax normalizer](online-normalizer-computes-the-softmax-normalizer.md)

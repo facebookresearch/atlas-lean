@@ -18,4 +18,6 @@
 
 - [Existence of a posterior argmax classifier](exists-is-posterior-argmax.md)
 - [The Bayes risk for the 0-1 loss](bayes-risk-zero-one-loss.md)
+- [Posterior argmax classifiers pick a MAP class](is-posterior-argmax-iff-forall-is-map.md)
+- [Under a uniform prior, posterior argmax classifiers pick a maximum-likelihood class](is-posterior-argmax-iff-forall-is-mle-of.md)
 - [Bayes rule for binary classification with misclassification costs](bayes-rule-for-binary-classification.md)

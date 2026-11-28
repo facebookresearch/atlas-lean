@@ -10,11 +10,11 @@ That is, the bound holds up to a remainder that is $O(u^2)$ as $u \to 0$ with $n
 
 ## Depends on
 
-- [Softmax](../../../not-yet-classified/basic/part-06/softmax.md)
+- [Softmax](../../../machine-learning/attention-and-low-rank-adaptation/softmax-attention-basics/softmax.md)
 
 ## Proof depends on
 
-- [Softmax](../../../not-yet-classified/basic/part-06/softmax.md)
+- [Softmax](../../../machine-learning/attention-and-low-rank-adaptation/softmax-attention-basics/softmax.md)
 
 The proof is a direct perturbation analysis of the displayed evaluation under its per-operation error model.
 

@@ -1,0 +1,16 @@
+# Finite-horizon adjoint via augmented-state backpropagation
+
+- [Augmented state with a loss accumulator](aug-state.md)
+- [Lifting an input to the augmented state](aug-lift.md)
+- [One augmented layer](aug-layer.md)
+- [Forward pass through the augmented layers](aug-forward.md)
+- [Physical trajectory of the layers](aug-traj.md)
+- [Final readout of the augmented state](aug-final-loss.md)
+- [One backward step through an augmented layer](aug-back-step.md)
+- [Backward pass through the augmented layers](aug-back.md)
+- [Backward pass for the total cost](aug-backward.md)
+- [Physical component of the augmented forward pass](aug-forward-fst.md)
+- [Accumulator of the augmented forward pass](aug-forward-snd.md)
+- [Total cost through the augmented forward pass](aug-total-cost-eq.md)
+- [Gradient of a sum](grad-add.md)
+- [Adjoint method by augmented-state backpropagation](aug-gradient-eq-backward.md)

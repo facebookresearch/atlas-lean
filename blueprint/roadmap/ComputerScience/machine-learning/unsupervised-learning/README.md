@@ -4,8 +4,10 @@ Structure in unlabelled data: k-means, single-linkage hierarchical clustering, a
 
 - [Archetypal analysis](archetypal-analysis/README.md)
 - [k-means clustering](k-means-clustering/README.md)
+- [Kleinberg's impossibility theorem for clustering](kleinberg-s-impossibility-theorem-for-clustering/README.md)
 - [Non-negative matrix factorization](non-negative-matrix-factorization/README.md)
 - [Probabilistic principal component analysis](probabilistic-principal-component-analysis/README.md)
+- [Restricted Boltzmann machine conditionals](restricted-boltzmann-machine-conditionals/README.md)
 - [Single-linkage hierarchical clustering](single-linkage-hierarchical-clustering/README.md)
 - [Successive projection algorithm](successive-projection-algorithm/README.md)
 - [Lloyd assignment stabilization under an explicit tie rule](lloyd-assignment-stabilization-under-an-explicit-tie-rule.md)
