@@ -37,6 +37,7 @@ noncomputable section
 set_option autoImplicit false
 
 open CategoryTheory CategoryTheory.Monad Opposite
+open scoped MonoidalCategory
 
 namespace MathlibExtTest.AlgebraicTopology.ClassifyingBarNerve
 
@@ -86,8 +87,10 @@ private lemma barTwo_coordinate (J : Type) [TopologicalSpace J] [Monoid J]
 
 private lemma powOne_component (X : TopCat.{0}) :
     (monadPowHom (topTensorMonadHom G π) 1).app X = (topTensorMonadHom G π).app X := by
-  simpa only [monadPowHom_zero_app, monadPow_zero, Functor.id_map, Category.id_comp] using
-    (monadPowHom_succ_app (topTensorMonadHom G π) 0 X)
+  have hpow := monadPowHom_succ_app (topTensorMonadHom G π) 0 X
+  change (monadPowHom (topTensorMonadHom G π) 1).app X =
+    𝟙 ((tensorMonad (GTop G)).obj X) ≫ (topTensorMonadHom G π).app X at hpow
+  exact hpow.trans (Category.id_comp _)
 
 private lemma map_barOne (x : G) :
     (BBarMap G π).app (op (SimplexCategory.mk 1)) (barOne G x) = barOne H (π x) := by
