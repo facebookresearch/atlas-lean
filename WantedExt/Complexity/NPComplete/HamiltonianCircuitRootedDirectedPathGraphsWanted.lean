@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
-public import WantedExt.Complexity.NPComplete.RootedDirectedPathGraphCompletionWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitRootedDirectedPathGraphsDefs
 
 @[expose] public section
 
@@ -76,20 +73,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance (`0 < n`, simple
-edge list) whose graph is a rooted directed path graph. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ IsRootedDirectedPathGraph (Graph i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT for rooted directed path graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitRootedDirectedPathGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT for rooted directed path graphs is NP-complete.** Source: Panda and
 Pradhan (2008); Johnson (1985), Table 1; de Figueiredo, de Melo, Sasaki and Silva (2022). -/

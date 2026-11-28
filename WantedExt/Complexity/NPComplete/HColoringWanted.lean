@@ -17,11 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.Complexity.NPComplete.GraphHomomorphismWanted
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
+public import CSLibExt.Complexity.NPComplete.HColoringDefs
 
 @[expose] public section
 
@@ -52,30 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` of `G` (vertices `Fin n`) and the edge list of `G`. -/
-abbrev HColoringInstance := ℕ × List (ℕ × ℕ)
-
-/-- The GRAPH HOMOMORPHISM instance with source `G = i` and target `H = (m, hs)`. -/
-def withPattern (m : ℕ) (hs : List (ℕ × ℕ)) (i : HColoringInstance) :
-    GraphHomomorphism.GraphHomomorphismInstance :=
-  (i.1, i.2, m, hs)
-
-/-- A pattern `H = (m, hs)` for which the theorem is stated: `hs` is a simple edge list on
-`Fin m` (no duplicate edges in either orientation, no self-loops, endpoints in range), and `H`
-is not bipartite. -/
-def ValidPattern (m : ℕ) (hs : List (ℕ × ℕ)) : Prop :=
-  (hs.Nodup ∧ ∀ e ∈ hs, e.1 < m ∧ e.2 < m ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ hs) ∧
-    ¬ (Cslib.Complexity.Karp.edgeGraph m hs).IsBipartite
-
-open Classical in
-/-- H-COLORING for the fixed pattern `H = (m, hs)` as a decision problem over bitstrings. -/
-noncomputable def hColoringDec (m : ℕ) (hs : List (ℕ × ℕ)) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := HColoringInstance) x with
-  | some i => decide (GraphHomomorphism.WellFormed (withPattern m hs i) ∧
-      GraphHomomorphism.GraphHomomorphismFeasible (withPattern m hs i))
-  | none => false
 
 /-- **H-COLORING is NP-complete for every fixed non-bipartite `H`.** Source: Hell and Nešetřil
 (1990). -/

@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MatrixCoverWanted
-public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import CSLibExt.Complexity.NPComplete.MatrixCoverPositiveDefiniteDefs
 
 @[expose] public section
 
@@ -54,24 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The matrix `A` of the instance, with real entries, indexed by `Fin n`. -/
-def realMatrix (i : MatrixCoverInstance) : Matrix (Fin i.1) (Fin i.1) ℝ :=
-  Matrix.of fun r c => ((i.2.1.getD r []).getD c 0 : ℝ)
-
-/-- Well-formedness of an instance: the [MS13] well-formedness, and `A` is positive definite
-(Mathlib's `Matrix.PosDef`: symmetric, and `xᵀ A x > 0` for every nonzero real vector `x`). -/
-def WellFormed (i : MatrixCoverInstance) : Prop :=
-  MatrixCover.WellFormed i ∧ (realMatrix i).PosDef
-
-open Classical in
-/-- MATRIX COVER with a positive definite matrix as a decision problem over bitstrings. -/
-noncomputable def matrixCoverPositiveDefiniteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MatrixCoverInstance) x with
-  | some i => decide (WellFormed i ∧ MatrixCoverFeasible i)
-  | none => false
 
 /-- **MATRIX COVER with a positive definite matrix is NP-complete.** Source: Garey and Johnson
 (1979), [MS13], comment. -/

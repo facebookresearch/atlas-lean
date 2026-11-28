@@ -20,11 +20,8 @@ ISGCI, class "co-bipartite" (gc_486), problem Maximum cut, NP-complete.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutCoBipartiteDefs
 
 @[expose] public section
 
@@ -60,26 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is co-bipartite (its complement is bipartite), and
-`0 < K`. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  MaxCut.WellFormed i ∧ (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1)ᶜ.IsBipartite ∧ 0 < i.2.2
-
-/-- A partition `A = S`, `B = V - S` with at least `K` edges between the two sets (the MAXIMUM
-CUT question). -/
-def SimpleMaxCutCoBipartiteFeasible (i : MaxCutInstance) : Prop :=
-  MaxCutFeasible i
-
-open Classical in
-/-- SIMPLE MAX CUT on co-bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutCoBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ SimpleMaxCutCoBipartiteFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT on co-bipartite graphs is NP-complete.** Source: Bodlaender and Jansen
 (2000); ISGCI (gc_486). -/

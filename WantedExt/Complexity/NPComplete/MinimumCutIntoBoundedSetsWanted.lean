@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.List.Basic
-public import Mathlib.Data.Finset.Card
+public import CSLibExt.Complexity.NPComplete.MinimumCutIntoBoundedSetsDefs
 
 @[expose] public section
 
@@ -53,38 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), weighted edge list
-`(u, v, w({u, v}))`, `s`, `t`, `B`, `K`. -/
-abbrev MinimumCutIntoBoundedSetsInstance := ℕ × List (ℕ × ℕ × ℕ) × ℕ × ℕ × ℕ × ℕ
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on
-`{0, ..., n - 1}` (no self-loops, no edge listed twice in either orientation), every weight is
-positive, `s, t < n`, `0 < B ≤ n`, and `0 < K`. -/
-def WellFormed (i : MinimumCutIntoBoundedSetsInstance) : Prop :=
-  (i.2.1.map fun e => (e.1, e.2.1)).Nodup ∧
-    (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧ 0 < e.2.2 ∧
-      (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ 0 < i.2.2.2.2.1 ∧ i.2.2.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2.2.2
-
-/-- A partition `V₁`, `V₂ = {0, ..., n - 1} \ V₁` with `s ∈ V₁`, `t ∈ V₂`, `|V₁| ≤ B`,
-`|V₂| ≤ B`, and total weight of the edges with one endpoint in each part at most `K`. -/
-def MinimumCutIntoBoundedSetsFeasible (i : MinimumCutIntoBoundedSetsInstance) : Prop :=
-  ∃ V₁ : Finset ℕ, V₁ ⊆ Finset.range i.1 ∧
-    i.2.2.1 ∈ V₁ ∧ i.2.2.2.1 ∉ V₁ ∧
-    V₁.card ≤ i.2.2.2.2.1 ∧ (Finset.range i.1 \ V₁).card ≤ i.2.2.2.2.1 ∧
-    ((i.2.1.filter fun e =>
-        decide ((e.1 ∈ V₁ ∧ e.2.1 ∉ V₁) ∨ (e.1 ∉ V₁ ∧ e.2.1 ∈ V₁))).map fun e => e.2.2).sum ≤
-      i.2.2.2.2.2
-
-open Classical in
-/-- MINIMUM CUT INTO BOUNDED SETS as a decision problem over bitstrings. -/
-noncomputable def minimumCutIntoBoundedSetsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumCutIntoBoundedSetsInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumCutIntoBoundedSetsFeasible i)
-  | none => false
 
 /-- **MINIMUM CUT INTO BOUNDED SETS is NP-complete.** Source: Garey and Johnson (1979), [ND17];
 Garey, Johnson, and Stockmeyer (1976). -/

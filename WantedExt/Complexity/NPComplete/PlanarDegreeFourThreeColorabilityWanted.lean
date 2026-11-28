@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.PlanarDegreeFourThreeColorabilityDefs
 
 @[expose] public section
 
@@ -56,34 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev PlanarDegreeFourThreeColorabilityInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PlanarDegreeFourThreeColorabilityInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate edges
-in either orientation, no self-loops, endpoints in range), the graph is planar, and every
-vertex has degree at most 4. -/
-def WellFormed (i : PlanarDegreeFourThreeColorabilityInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    (Graph i).IsPlanar ∧ ∀ v : Fin i.1, ((Graph i).neighborSet v).ncard ≤ 4
-
-/-- The graph is 3-colorable. -/
-def PlanarDegreeFourThreeColorabilityFeasible (i : PlanarDegreeFourThreeColorabilityInstance) :
-    Prop :=
-  (Graph i).Colorable 3
-
-open Classical in
-/-- PLANAR GRAPH 3-COLORABILITY (maximum degree 4) as a decision problem over bitstrings. -/
-noncomputable def planarDegreeFourThreeColorabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarDegreeFourThreeColorabilityInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarDegreeFourThreeColorabilityFeasible i)
-  | none => false
 
 /-- **PLANAR GRAPH 3-COLORABILITY (maximum degree 4) is NP-complete.** Source: Garey and
 Johnson (1979), [GT4]; Garey, Johnson and Stockmeyer (1976). -/

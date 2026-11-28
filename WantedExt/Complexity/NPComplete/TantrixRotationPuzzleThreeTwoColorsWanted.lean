@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TantrixRotationPuzzleWanted
+public import CSLibExt.Complexity.NPComplete.TantrixRotationPuzzleThreeTwoColorsDefs
 
 @[expose] public section
 
@@ -54,40 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of a 3-TRP instance: a Tantrix rotation puzzle instance whose tiles use only
-red, yellow and blue, i.e. tiles of `T₃`. -/
-def WellFormedThree (i : TantrixRotationPuzzleInstance) : Prop :=
-  WellFormed i ∧ ∀ t ∈ i, ∀ c ∈ t.2, c < 3
-
-/-- The color sequences of the tile set `T₂` (Baumeister and Rothe, Table 2), with red `0` and
-blue `2`. -/
-def tileSetTwo : List (List ℕ) :=
-  [[2, 2, 0, 0, 0, 0], [0, 0, 2, 2, 2, 2], [2, 0, 0, 2, 0, 0], [0, 2, 2, 0, 2, 2],
-    [0, 2, 0, 0, 0, 2], [2, 0, 2, 2, 2, 0], [2, 2, 2, 2, 2, 2], [0, 0, 0, 0, 0, 0]]
-
-/-- Well-formedness of a 2-TRP instance: no two tiles share a position, and every tile is a tile
-of `T₂`, given by one of its color sequences (a cyclic shift of a sequence of `tileSetTwo`). -/
-def WellFormedTwo (i : TantrixRotationPuzzleInstance) : Prop :=
-  (i.map Prod.fst).Nodup ∧ ∀ t ∈ i, ∃ s ∈ tileSetTwo, ∃ r < 6, t.2 = s.rotate r
-
-open Classical in
-/-- 3-TRP as a decision problem over bitstrings. -/
-noncomputable def threeColorDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TantrixRotationPuzzleInstance) x with
-  | some i => decide (WellFormedThree i ∧ TantrixRotationPuzzleFeasible i)
-  | none => false
-
-open Classical in
-/-- 2-TRP as a decision problem over bitstrings. -/
-noncomputable def twoColorDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TantrixRotationPuzzleInstance) x with
-  | some i => decide (WellFormedTwo i ∧ TantrixRotationPuzzleFeasible i)
-  | none => false
 
 /-- **The three-color Tantrix rotation puzzle (3-TRP) is NP-complete.** Source: Baumeister and
 Rothe (2009). -/

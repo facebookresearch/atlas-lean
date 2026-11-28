@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesLineGraphsDefs
 
 @[expose] public section
 
@@ -61,20 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (simple edge list, `0 < K ≤ |V|`) and the graph
-is a line graph. -/
-def WellFormed (i : PartitionIntoCliquesInstance) : Prop :=
-  PartitionIntoCliques.WellFormed i ∧ MetaMathlibExt.SimpleGraph.IsLineGraph (Graph i)
-
-open Classical in
-/-- PARTITION INTO CLIQUES for line graphs as a decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesLineGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES is NP-complete for line graphs.** Source: Garey and Johnson
 (1979), [GT15], comment; Johnson, NP-completeness column (1985), Table 1; Munaro (2017). -/

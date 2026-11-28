@@ -19,12 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Algebra.Order.Group.Int
-public import Mathlib.Algebra.Order.Group.Unbundled.Abs
-public import Mathlib.Combinatorics.SimpleGraph.Metric
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.L21LabelingDefs
 
 @[expose] public section
 
@@ -62,36 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, span bound `K`. -/
-abbrev L21LabelingInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : L21LabelingInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the graph has at least one vertex (so that the maximum
-label `λ(G)` is defined), the edge list describes a simple graph on `Fin n` (no duplicate edges
-in either orientation, no self-loops, endpoints in range), and `0 < K`. -/
-def WellFormed (i : L21LabelingInstance) : Prop :=
-  0 < i.1 ∧
-    (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2
-
-/-- Some labelling `f : V → {0, …, K}` has labels at least `2` apart on adjacent vertices and
-at least `1` apart on vertices at distance two. -/
-def L21LabelingFeasible (i : L21LabelingInstance) : Prop :=
-  ∃ f : Fin i.1 → ℕ, (∀ v, f v ≤ i.2.2) ∧
-    (∀ x y, (Graph i).Adj x y → 2 ≤ |(f x : ℤ) - f y|) ∧
-    ∀ x y, (Graph i).dist x y = 2 → 1 ≤ |(f x : ℤ) - f y|
-
-open Classical in
-/-- L(2,1)-LABELING as a decision problem over bitstrings. -/
-noncomputable def l21LabelingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := L21LabelingInstance) x with
-  | some i => decide (WellFormed i ∧ L21LabelingFeasible i)
-  | none => false
 
 /-- **L(2,1)-LABELING is NP-complete.** Source: Griggs and Yeh (1992); Fiala, Kloks and
 Kratochvíl (2001). -/

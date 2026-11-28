@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.LineGraph
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesLineGraphTriangleFreeDefs
 
 @[expose] public section
 
@@ -66,25 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is the line graph of a triangle-free graph: `G ≅ L(H)` for a graph `H` on `Fin k`
-without a triangle. -/
-def IsLineGraphOfTriangleFree {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ (k : ℕ) (H : SimpleGraph (Fin k)), H.CliqueFree 3 ∧ Nonempty (G ≃g H.lineGraph)
-
-/-- Well-formedness of an instance: a well-formed PARTITION INTO CLIQUES instance whose graph is
-the line graph of a triangle-free graph. -/
-def LineGraphWellFormed (i : PartitionIntoCliquesInstance) : Prop :=
-  WellFormed i ∧ IsLineGraphOfTriangleFree (Graph i)
-
-open Classical in
-/-- PARTITION INTO CLIQUES on line graphs of triangle-free graphs as a decision problem over
-bitstrings. -/
-noncomputable def partitionIntoCliquesLineGraphTriangleFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (LineGraphWellFormed i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES on line graphs of triangle-free graphs is NP-complete.** Source:
 Munaro (2017); Garey and Johnson (1979), [GT15]; ISGCI, class `gc_708`. -/

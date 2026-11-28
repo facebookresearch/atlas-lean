@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesCubicPlanarDefs
 
 @[expose] public section
 
@@ -60,20 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: well formed for PARTITION INTO CLIQUES (a simple graph on
-`Fin n` and `0 < K ≤ n`), and the graph is planar and cubic. -/
-def WellFormed (i : PartitionIntoCliquesInstance) : Prop :=
-  PartitionIntoCliques.WellFormed i ∧ (Graph i).IsPlanar ∧ (Graph i).IsRegularOfDegree 3
-
-open Classical in
-/-- PARTITION INTO CLIQUES on planar cubic graphs as a decision problem over bitstrings. -/
-noncomputable def partitionIntoCliquesCubicPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := PartitionIntoCliquesInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoCliquesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO CLIQUES on planar cubic graphs is NP-complete.** Source: Cerioli, Faria,
 Ferreira, Martinhon, Protti and Reed (2008); Garey and Johnson (1979), [GT15]. -/

@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiwayCutWanted
+public import CSLibExt.Complexity.NPComplete.MultiwayCutPlanarDefs
 
 @[expose] public section
 
@@ -63,20 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: well formed for MULTIWAY CUT, the graph of the edge list is
-planar, and the bound `B` is positive. -/
-def WellFormed (i : MultiwayCutInstance) : Prop :=
-  MultiwayCut.WellFormed i ∧ (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).IsPlanar ∧
-    0 < i.2.2.2
-
-open Classical in
-/-- MULTIWAY CUT ON PLANAR GRAPHS as a decision problem over bitstrings. -/
-noncomputable def multiwayCutPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MultiwayCutInstance) x with
-  | some i => decide (WellFormed i ∧ MultiwayCutFeasible i)
-  | none => false
 
 /-- **MULTIWAY CUT ON PLANAR GRAPHS is NP-complete.** Source: Dahlhaus, Johnson, Papadimitriou,
 Seymour and Yannakakis (1994); Johnson, Martin, Pandey, Paulusma, Smith and van Leeuwen (2024),

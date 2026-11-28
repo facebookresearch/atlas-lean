@@ -20,12 +20,8 @@ doi:10.1007/3-540-57785-8_189; journal version Nordic Journal of Computing 7(1) 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.SimpleMaxCutTripartiteDefs
 
 @[expose] public section
 
@@ -60,19 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
-the vertices `0, ..., n - 1`) whose graph is tripartite (3-colorable), and `0 < K`. -/
-def WellFormed (i : MaxCutInstance) : Prop :=
-  MaxCut.WellFormed i ∧ (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).Colorable 3 ∧ 0 < i.2.2
-
-open Classical in
-/-- SIMPLE MAX CUT on tripartite graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutTripartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := MaxCutInstance) x with
-  | some i => decide (WellFormed i ∧ MaxCutFeasible i)
-  | none => false
 
 /-- **SIMPLE MAX CUT on tripartite graphs is NP-complete.** Source: Bodlaender and Jansen (1991;
 STACS 1994; Nordic J. Computing 2000). -/

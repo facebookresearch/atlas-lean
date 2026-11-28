@@ -19,12 +19,8 @@ of Computer Science, Technion, Haifa (1975); the report itself was not available
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumLinearArrangementWanted
+public import CSLibExt.Complexity.NPComplete.OptimalLinearArrangementBipartiteDefs
 
 @[expose] public section
 
@@ -63,21 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed OPTIMAL LINEAR ARRANGEMENT instance (a simple
-edge list on `0, …, n - 1`) whose graph is bipartite, and `0 < K`. -/
-def WellFormed (i : MinimumLinearArrangementInstance) : Prop :=
-  MinimumLinearArrangement.WellFormed i ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).IsBipartite ∧ 0 < i.2.2
-
-open Classical in
-/-- OPTIMAL LINEAR ARRANGEMENT for bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def optimalLinearArrangementBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumLinearArrangementInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumLinearArrangementFeasible i)
-  | none => false
 
 /-- **OPTIMAL LINEAR ARRANGEMENT for bipartite graphs is NP-complete.** Source: Garey and Johnson
 (1979), [GT42]; Even and Shiloach (1975). -/

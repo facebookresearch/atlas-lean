@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.GroupTheory.Perm.Basic
+public import CSLibExt.Complexity.NPComplete.PartitionIntoHamiltonianSubgraphsUndirectedMinSixDefs
 
 @[expose] public section
 
@@ -65,36 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and the edge list. -/
-abbrev PartitionIntoHamiltonianSubgraphsUndirectedMinSixInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : PartitionIntoHamiltonianSubgraphsUndirectedMinSixInstance) :
-    SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : PartitionIntoHamiltonianSubgraphsUndirectedMinSixInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The vertices split into blocks of at least six vertices, each inducing a subgraph with a
-Hamiltonian circuit: there is a permutation `σ` of the vertices with `v` adjacent to `σ v` for
-every vertex `v` and with no cycle of length at most five. -/
-def PartitionIntoHamiltonianSubgraphsUndirectedMinSixFeasible
-    (i : PartitionIntoHamiltonianSubgraphsUndirectedMinSixInstance) : Prop :=
-  ∃ σ : Equiv.Perm (Fin i.1), ∀ v, (Graph i).Adj v (σ v) ∧ ∀ m < 6, 0 < m → (σ ^ m) v ≠ v
-
-open Classical in
-/-- PARTITION INTO HAMILTONIAN SUBGRAPHS (undirected, parts of size at least 6) as a decision
-problem over bitstrings. -/
-noncomputable def partitionIntoHamiltonianSubgraphsUndirectedMinSixDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoHamiltonianSubgraphsUndirectedMinSixInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoHamiltonianSubgraphsUndirectedMinSixFeasible i)
-  | none => false
 
 /-- **PARTITION INTO HAMILTONIAN SUBGRAPHS is NP-complete for undirected graphs and parts of
 size at least 6.** Source: Garey and Johnson (1979), [GT13], comment (Papadimitriou); Hell,

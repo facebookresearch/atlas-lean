@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartitionIntoIsomorphicSubgraphsWanted
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.PerfectHPackingDefs
 
 @[expose] public section
 
@@ -59,33 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` of `G` (vertices `Fin n`) and the edge list of `G`. -/
-abbrev PerfectHPackingInstance := ℕ × List (ℕ × ℕ)
-
-/-- The PARTITION INTO ISOMORPHIC SUBGRAPHS instance with graph `G = i` and pattern
-`H = (m, hs)`. -/
-def withPattern (m : ℕ) (hs : List (ℕ × ℕ)) (i : PerfectHPackingInstance) :
-    PartitionIntoIsomorphicSubgraphs.PartitionIntoIsomorphicSubgraphsInstance :=
-  (i.1, i.2, m, hs)
-
-/-- A pattern `H = (m, hs)` for which the theorem is stated: `hs` is a simple edge list on
-`Fin m` (no duplicate edges in either orientation, no self-loops, endpoints in range), and `H`
-has a connected component with at least 3 vertices. -/
-def ValidPattern (m : ℕ) (hs : List (ℕ × ℕ)) : Prop :=
-  (hs.Nodup ∧ ∀ e ∈ hs, e.1 < m ∧ e.2 < m ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ hs) ∧
-    ∃ c : (Cslib.Complexity.Karp.edgeGraph m hs).ConnectedComponent, 3 ≤ c.supp.ncard
-
-open Classical in
-/-- PERFECT H-PACKING for the fixed pattern `H = (m, hs)` as a decision problem over
-bitstrings. -/
-noncomputable def perfectHPackingDec (m : ℕ) (hs : List (ℕ × ℕ)) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := PerfectHPackingInstance) x with
-  | some i => decide (PartitionIntoIsomorphicSubgraphs.WellFormed (withPattern m hs i) ∧
-      PartitionIntoIsomorphicSubgraphs.PartitionIntoIsomorphicSubgraphsFeasible
-        (withPattern m hs i))
-  | none => false
 
 /-- **PERFECT H-PACKING is NP-complete for every fixed `H` with a connected component of at
 least 3 vertices.** Source: Kirkpatrick and Hell (1978); Garey and Johnson (1979), comment to

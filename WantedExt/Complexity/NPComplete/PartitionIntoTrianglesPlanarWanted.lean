@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.PartitionIntoTrianglesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoTrianglesPlanarDefs
 
 @[expose] public section
 
@@ -60,20 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's simple edge list on vertices below `n`, the
-graph is planar, and the vertex count is a multiple of 3. -/
-def WellFormed (i : PartitionIntoTriangles.PartitionIntoTrianglesInstance) : Prop :=
-  PartitionIntoTriangles.WellFormed i ∧ (PartitionIntoTriangles.Graph i).IsPlanar ∧ 3 ∣ i.1
-
-open Classical in
-/-- PARTITION INTO TRIANGLES for planar graphs as a decision problem over bitstrings. -/
-noncomputable def partitionIntoTrianglesPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionIntoTriangles.PartitionIntoTrianglesInstance) x with
-  | some i => decide (WellFormed i ∧ PartitionIntoTriangles.PartitionIntoTrianglesFeasible i)
-  | none => false
 
 /-- **PARTITION INTO TRIANGLES is NP-complete for planar graphs.** Source: Garey and Johnson
 (1979), [GT11]; Johnson, NP-completeness column (1984); Berman, Johnson, Leighton, Shor and

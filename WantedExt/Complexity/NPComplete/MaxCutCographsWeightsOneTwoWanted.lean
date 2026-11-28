@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.MaxCutDefs
+public import CSLibExt.Complexity.NPComplete.MaxCutCographsWeightsOneTwoDefs
 
 @[expose] public section
 
@@ -67,41 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), the weighted edge list of triples
-`(u, v, w)` (edge `{u, v}` of weight `w`), and the bound `K`. -/
-abbrev MaxCutCographsWeightsOneTwoInstance := ℕ × List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The edges `(u, v)` of the weighted edge list. -/
-def edges (i : MaxCutCographsWeightsOneTwoInstance) : List (ℕ × ℕ) :=
-  i.2.1.map fun e => (e.1, e.2.1)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MaxCutCographsWeightsOneTwoInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (edges i)
-
-/-- Well-formedness of an instance: the edges form a simple edge list on `0, ..., n - 1`
-(`MaxCut.WellFormed`), every weight is `1` or `2`, the graph is a cograph (no induced path on
-four vertices), and `0 < K`. -/
-def WellFormed (i : MaxCutCographsWeightsOneTwoInstance) : Prop :=
-  MaxCut.WellFormed (i.1, edges i, i.2.2) ∧ (∀ e ∈ i.2.1, e.2.2 = 1 ∨ e.2.2 = 2) ∧
-    ¬ (SimpleGraph.pathGraph 4).IsIndContained (Graph i) ∧ 0 < i.2.2
-
-/-- A partition `V₁ = S`, `V₂ = V - S` and edges of total weight at least `K`, each with one
-endpoint in `V₁` and one in `V₂`. -/
-def MaxCutCographsWeightsOneTwoFeasible (i : MaxCutCographsWeightsOneTwoInstance) : Prop :=
-  ∃ S : Finset ℕ, (∀ v ∈ S, v < i.1) ∧
-    ∃ cut : List (ℕ × ℕ × ℕ), cut.Sublist i.2.1 ∧ i.2.2 ≤ (cut.map fun e => e.2.2).sum ∧
-      ∀ e ∈ cut, (e.1 ∈ S ∧ e.2.1 ∉ S) ∨ (e.1 ∉ S ∧ e.2.1 ∈ S)
-
-open Classical in
-/-- MAX CUT for cographs with edge weights 1 and 2, as a decision problem over bitstrings. -/
-noncomputable def maxCutCographsWeightsOneTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxCutCographsWeightsOneTwoInstance) x with
-  | some i => decide (WellFormed i ∧ MaxCutCographsWeightsOneTwoFeasible i)
-  | none => false
 
 /-- **MAX CUT for cographs with edge weights 1 and 2 is NP-complete.** Source: Garey and Johnson
 (1979), [ND16]; Johnson (1987), recording Bodlaender (1987). -/

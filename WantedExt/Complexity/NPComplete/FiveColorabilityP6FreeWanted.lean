@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.FiveColorabilityP6FreeDefs
 
 @[expose] public section
 
@@ -58,20 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with `K = 5`
-whose graph is `P_6`-free (has no induced path on 6 vertices). -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = 5 ∧
-    ¬ (SimpleGraph.pathGraph 6).IsIndContained (Graph i)
-
-open Classical in
-/-- 5-COLORABILITY OF P6-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def fiveColorabilityP6FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **5-COLORABILITY OF P6-FREE GRAPHS is NP-complete.** Source: Garey and Johnson (1979), [GT4];
 Huang (2016). -/

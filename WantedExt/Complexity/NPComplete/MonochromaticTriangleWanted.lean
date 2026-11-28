@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import CSLibExt.Complexity.NPComplete.MonochromaticTriangleDefs
 
 @[expose] public section
 
@@ -49,32 +46,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev MonochromaticTriangleInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MonochromaticTriangleInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : MonochromaticTriangleInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The edges split into two triangle-free parts: a subgraph `G₁ ≤ G` such that neither `G₁`
-nor its complement `G \ G₁` in `G` contains a triangle. -/
-def MonochromaticTriangleFeasible (i : MonochromaticTriangleInstance) : Prop :=
-  ∃ G₁ : SimpleGraph (Fin i.1), G₁ ≤ Graph i ∧ G₁.CliqueFree 3 ∧ (Graph i \ G₁).CliqueFree 3
-
-open Classical in
-/-- MONOCHROMATIC TRIANGLE as a decision problem over bitstrings. -/
-noncomputable def monochromaticTriangleDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MonochromaticTriangleInstance) x with
-  | some i => decide (WellFormed i ∧ MonochromaticTriangleFeasible i)
-  | none => false
 
 /-- **MONOCHROMATIC TRIANGLE is NP-complete.** Source: Garey and Johnson (1979), [GT6]
 (S. A. Burr, 1976). -/

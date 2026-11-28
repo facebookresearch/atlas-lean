@@ -20,12 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Metric
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.RootedDirectedPathGraphCompletionDefs
 
 @[expose] public section
 
@@ -62,45 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev RootedDirectedPathGraphCompletionInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : RootedDirectedPathGraphCompletionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range); `K ≥ 0` needs no
-condition. -/
-def WellFormed (i : RootedDirectedPathGraphCompletionInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- `H` is a rooted directed path graph: for some tree `T` on `Fin m` with root `r`, each vertex
-`v` of `H` has the vertex set `P v` of a path of `T` whose every step moves away from `r`, and
-distinct vertices are adjacent in `H` exactly when their paths share a vertex. -/
-def IsRootedDirectedPathGraph {n : ℕ} (H : SimpleGraph (Fin n)) : Prop :=
-  ∃ (m : ℕ) (T : SimpleGraph (Fin m)) (r : Fin m), T.IsTree ∧
-    ∃ P : Fin n → Finset (Fin m),
-      (∀ v, ∃ (a b : Fin m) (p : T.Walk a b), p.IsPath ∧
-        (∀ d ∈ p.darts, T.dist r d.fst < T.dist r d.snd) ∧ p.support.toFinset = P v) ∧
-      ∀ u v, u ≠ v → (H.Adj u v ↔ (P u ∩ P v).Nonempty)
-
-/-- Some rooted directed path graph `H` on the same vertices contains the graph and has at
-most `K` edges that are not edges of the graph. -/
-def RootedDirectedPathGraphCompletionFeasible
-    (i : RootedDirectedPathGraphCompletionInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), Graph i ≤ H ∧
-    (H.edgeSet \ (Graph i).edgeSet).ncard ≤ i.2.2 ∧ IsRootedDirectedPathGraph H
-
-open Classical in
-/-- ROOTED DIRECTED PATH GRAPH COMPLETION as a decision problem over bitstrings. -/
-noncomputable def rootedDirectedPathGraphCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RootedDirectedPathGraphCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ RootedDirectedPathGraphCompletionFeasible i)
-  | none => false
 
 /-- **ROOTED DIRECTED PATH GRAPH COMPLETION is NP-complete.** Source: Garey and Johnson
 (1979), [GT36], comment (Gavril, 1977b). -/

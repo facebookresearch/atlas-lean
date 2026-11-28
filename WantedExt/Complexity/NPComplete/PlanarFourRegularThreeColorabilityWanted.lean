@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PlanarDegreeFourThreeColorabilityWanted
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.PlanarFourRegularThreeColorabilityDefs
 
 @[expose] public section
 
@@ -53,21 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: well formed for PLANAR GRAPH 3-COLORABILITY (maximum degree
-4), so a simple planar graph, and every vertex has degree exactly 4. -/
-def WellFormed (i : PlanarDegreeFourThreeColorabilityInstance) : Prop :=
-  PlanarDegreeFourThreeColorability.WellFormed i ∧ (Graph i).IsRegularOfDegree 4
-
-open Classical in
-/-- PLANAR 4-REGULAR GRAPH 3-COLORABILITY as a decision problem over bitstrings. -/
-noncomputable def planarFourRegularThreeColorabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarDegreeFourThreeColorabilityInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarDegreeFourThreeColorabilityFeasible i)
-  | none => false
 
 /-- **PLANAR 4-REGULAR GRAPH 3-COLORABILITY is NP-complete.** Source: Dailey (1980). -/
 public theorem_wanted planarFourRegularThreeColorability_npComplete :

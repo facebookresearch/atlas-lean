@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.MatchingCutWanted
+public import CSLibExt.Complexity.NPComplete.PlanarMatchingCutDefs
 
 @[expose] public section
 
@@ -53,20 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed MATCHING CUT instance whose graph is
-planar. -/
-def WellFormed (i : MatchingCutInstance) : Prop :=
-  MatchingCut.WellFormed i ∧ (Graph i).IsPlanar
-
-open Classical in
-/-- MATCHING CUT on planar graphs as a decision problem over bitstrings. -/
-noncomputable def planarMatchingCutDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MatchingCutInstance) x with
-  | some i => decide (WellFormed i ∧ MatchingCutFeasible i)
-  | none => false
 
 /-- **MATCHING CUT on planar graphs is NP-complete.** Source: Bonsma (2009). -/
 public theorem_wanted planarMatchingCut_npComplete :

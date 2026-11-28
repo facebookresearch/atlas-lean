@@ -26,11 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.GraphColoringCFourCFiveFreeDefs
 
 @[expose] public section
 
@@ -72,21 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with
-`0 < K ≤ |V|` whose graph has no induced `C₄` and no induced `C₅`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ (0 < i.2.2 ∧ i.2.2 ≤ i.1) ∧
-    ¬ (SimpleGraph.cycleGraph 4).IsIndContained (Graph i) ∧
-    ¬ (SimpleGraph.cycleGraph 5).IsIndContained (Graph i)
-
-open Classical in
-/-- GRAPH K-COLORABILITY ON (C₄, C₅)-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def graphColoringCFourCFiveFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **GRAPH K-COLORABILITY ON (C₄, C₅)-FREE GRAPHS is NP-complete.** Source: Garey and Johnson
 (1979), [GT4]; Král', Kratochvíl, Tuza, and Woeginger (2001); Kamiński and Lozin (2007);
