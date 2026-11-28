@@ -1,17 +1,17 @@
 # Uniform termination and repeated inevitability of lossy counter machines are Π⁰₁-complete
 
-Termination of a lossy counter machine from a given configuration is decidable, but deciding whether it terminates from every configuration is $\Pi^0_1$-complete, and so is deciding whether every run from a given configuration visits a given semilinear set infinitely often.
+Termination of a lossy counter machine from a given configuration is decidable, but deciding whether it terminates from every configuration is $\Pi^0_1$-complete, and so is deciding whether every infinite run from a given configuration visits a given semilinear set infinitely often.
 
 **Problems (Schnoebelen).** For a lossy counter machine $M$ with configurations $\mathit{Conf}$:
 
 - *Uniform termination:* given $M$, does $M$ terminate from every configuration $\sigma \in \mathit{Conf}$, that is, are all runs from every configuration finite?
-- *Repeated inevitability:* given $M$, an initial configuration $\sigma_0$ and a semilinear set $X \subseteq \mathit{Conf}$, does every run from $\sigma_0$ visit $X$ infinitely many times (the ECTL formula $A F^\infty X$)?
+- *Repeated inevitability:* given $M$, an initial configuration $\sigma_0$ and a semilinear set $X \subseteq \mathit{Conf}$, does every infinite run from $\sigma_0$ visit $X$ infinitely many times (the ECTL formula $A F^\infty X$)? Finite runs are not considered here, so the zero-step run does not refute the property; the property fails exactly when some reachable loop avoids $X$.
 
 A set of configurations is *semilinear* if it is a finite union of sets $\{\langle \ell, \vec{a} + k_1 \vec{b}_1 + \dots + k_m \vec{b}_m \rangle : k_1, \dots, k_m \in \mathbb{N}\}$; such sets are given as input by Presburger formulas or by bases and increments.
 
 **Theorem (Schnoebelen).** Uniform termination and repeated inevitability are $\Pi^0_1$-complete for lossy counter machines.
 
-Consequently the set of configurations from which $M$ must terminate, although downward closed and with decidable membership, cannot be computed.
+Consequently the set of configurations from which $M$ must terminate, although downward closed and with decidable membership, cannot be computed (Corollary 4.6): no algorithm produces, uniformly from $M$, a finite representation of it.
 
 ## Depends on
 

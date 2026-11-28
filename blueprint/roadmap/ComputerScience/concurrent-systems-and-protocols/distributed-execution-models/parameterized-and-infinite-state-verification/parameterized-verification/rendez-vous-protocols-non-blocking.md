@@ -7,7 +7,7 @@ A rendez-vous protocol is a finite-state process run by any number of identical 
 **Non-blocking semantics.** For configurations $C, C'$ of the same size and $m \in \Sigma$:
 
 - (internal) $C \to C'$ if $(q, \tau, q') \in T$, $C(q) > 0$ and $C' = C - \{q\} + \{q'\}$;
-- (rendez-vous) $C \to C'$ if $(q_1, !m, q_1') \in T$ and $(q_2, ?m, q_2') \in T$, $C(q_1) > 0$, $C(q_2) > 0$, $C(q_1) + C(q_2) \ge 2$ and $C' = C - \{q_1, q_2\} + \{q_1', q_2'\}$;
+- (rendez-vous) $C \to C'$ if $(q_1, !m, q_1') \in T$ and $(q_2, ?m, q_2') \in T$, $\{q_1, q_2\} \le C$ as multisets (so $C(q_1) \ge 2$ when $q_1 = q_2$) and $C' = C - \{q_1, q_2\} + \{q_1', q_2'\}$;
 - (non-blocking request) $C \to C'$ if $(q_1, !m, q_1') \in T$, $C(q_1) > 0$, no process of $C - \{q_1\}$ is in a state with an outgoing $?m$ transition, and $C' = C - \{q_1\} + \{q_1'\}$.
 
 Here $\{q\}$ is the one-element multiset and $+$, $-$ are multiset sum and difference; $\to^*$ is the reflexive transitive closure of $\to$.

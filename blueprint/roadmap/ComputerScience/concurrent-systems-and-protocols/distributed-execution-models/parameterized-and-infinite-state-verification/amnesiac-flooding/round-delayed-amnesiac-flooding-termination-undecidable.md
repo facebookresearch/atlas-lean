@@ -6,7 +6,7 @@ In round-delayed amnesiac flooding, nodes forward a message to their neighbors w
 
 **Theorem (Alafin, Mertzios and Spirakis).** RDAF-TERMINATION is undecidable.
 
-The reduction uses the triangle graph and adversaries that, in round $j$, either block nothing (once a given Turing machine has halted within $j$ steps) or follow a fixed period-$3$ blocking pattern. It still works when the adversary in round $n$ simulates only $\lfloor f(n) \rfloor$ steps of the machine, for any computable $f$ with $f(n) \to \infty$, so that each round costs time and space $O(f(n))$ (Theorem 6 of the source). The same paper shows that termination is decidable for eventually periodic adversaries.
+The reduction uses the triangle graph and adversaries that, in round $j$, either block nothing (once a given Turing machine has halted within $j$ steps) or follow a fixed period-$3$ blocking pattern. It still works when the adversary in round $n$ simulates only $\lfloor f(n) \rfloor$ steps of the machine, for any computable $f$ with $f(n) \to \infty$, so that each round costs time and space $O(f(n))$ (Theorem 6 of the source). The same paper shows that termination is decidable for eventually periodic adversaries when the adversary is given as a triple $(d, c, l)$ that also supplies a stabilisation round $c \in \mathbb N$ and a cycle length $l \ge 1$ with $d(i, u, e) = d(i + l, u, e)$ for all $i \ge c$ (Definition 8 and Theorem 7); eventual periodicity of $d$ alone does not suffice, since every adversary of the reduction above is eventually periodic.
 
 ## Depends on
 
