@@ -1,4 +1,5 @@
-# Entangled constraint satisfaction problems without a weak near-unanimity polymorphism are RE-complete
+# Entangled constraint satisfaction problems without a weak near-unanimity polymorphism are RE-complete in the non-TVF, Boolean and 3-coloring cases
+
 
 For every constraint language on the hard side of the CSP dichotomy (no weak near-unanimity polymorphism, which makes its classical satisfiability problem NP-complete) that is not two-variable falsifiable, or is Boolean, or is 3-coloring, the succinct entangled gap problem with perfect completeness and some constant soundness is RE-complete; the explicit version is undecidable.
 

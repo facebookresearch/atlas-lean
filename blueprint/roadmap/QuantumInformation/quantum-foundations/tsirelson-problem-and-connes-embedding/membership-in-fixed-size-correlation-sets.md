@@ -1,4 +1,5 @@
-# Membership in a fixed-size quantum correlation set is undecidable
+# Membership in fixed-size quantum-approximate and commuting-operator correlation sets is undecidable for all large enough sizes
+
 
 There is a size threshold beyond which membership in the set of quantum-approximate correlations, and in the set of commuting-operator correlations, is undecidable even with the numbers of questions and answers held fixed. The input is a single correlation with real algebraic entries.
 

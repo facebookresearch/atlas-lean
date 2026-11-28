@@ -15,7 +15,7 @@ The instances are given explicitly; the source proves the result in this direct 
 
 ## Proof depends on
 
-- [Entangled constraint satisfaction problems without a weak near-unanimity polymorphism are RE-complete](entangled-csps-with-np-complete-constraints-are.md)
+- [Entangled constraint satisfaction problems without a weak near-unanimity polymorphism are RE-complete in the non-TVF, Boolean and 3-coloring cases](entangled-csps-with-np-complete-constraints-are.md)
 - [Explicit arithmetic constant-degree expanders on every number of vertices](../../../../GraphTheory/graph-families-and-operations/explicit-and-random-expander-constructions/arithmetic-expanders-on-every-vertex-count.md)
 
 ## Expansion

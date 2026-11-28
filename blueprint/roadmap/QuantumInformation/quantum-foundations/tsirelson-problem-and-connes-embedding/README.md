@@ -14,5 +14,5 @@
 - [Deciding whether the commuting-operator value of a nonlocal game is 1 or at most 1/2 is coRE-complete](commuting-operator-value-gap-problem-is-core-complete.md)
 - [Deciding whether the quantum value of a nonlocal game is 1 is Π⁰₂-complete](exact-quantum-value-one-is-pi02-complete.md)
 - [Existence of a perfect commuting-operator strategy for a linear system game is undecidable](perfect-commuting-operator-play-is-undecidable.md)
-- [Membership in a fixed-size quantum correlation set is undecidable](membership-in-fixed-size-correlation-sets.md)
+- [Membership in fixed-size quantum-approximate and commuting-operator correlation sets is undecidable for all large enough sizes](membership-in-fixed-size-correlation-sets.md)
 - [Perfect play of linear system games in the quantum-approximate and finite-dimensional models is undecidable](perfect-play-in-c-qa-and-c-q-is-undecidable.md)
