@@ -5,7 +5,7 @@ discounted-payoff games, and their stochastic versions. On finite non-stochastic
 shortest-path games only Max always has a positional optimal strategy; mean-payoff games
 are solvable in NP ∩ coNP, in UP ∩ coUP and in pseudo-polynomial time, and parity games reduce to them, but no polynomial-time
 algorithm is known. Stochastic reachability games add random vertices. Qualitative games with
-reachability, Büchi, parity and Muller conditions are in [Muller, Rabin and Streett games](../muller-rabin-and-streett-games/README.md).
+reachability, Büchi, parity and Muller conditions are in [Muller, Rabin and Streett games](../muller-rabin-and-streett-games/README.md). Games on numeric positions, such as Minkowski games on $\mathbb R^d$ whose moves are sets of vectors added by Minkowski sums, are here as well.
 
 - [Quantitative games and their values](quantitative-games-and-values.md)
 - [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](classical-quantitative-objectives.md)
@@ -23,4 +23,7 @@ reachability, Büchi, parity and Muller conditions are in [Muller, Rabin and Str
 - [Stochastic arenas, stochastic reachability games and simple stochastic games](stochastic-arenas-and-games.md)
 - [Stochastic reachability games are positionally determined](stochastic-reachability-games-are-positionally-determined.md)
 - [Stochastic reachability games reduce to simple stochastic games](stochastic-games-reduce-to-simple-stochastic-games.md)
+- [Matrix multiplication games](matrix-multiplication-games/README.md)
+- [Reachability games on cost register automata](cost-register-reachability-games/README.md)
+- [Safety Minkowski games are undecidable](safety-minkowski-games-are-undecidable.md)
 - [Multidimensional payoff games](multidimensional-payoff-games/README.md)

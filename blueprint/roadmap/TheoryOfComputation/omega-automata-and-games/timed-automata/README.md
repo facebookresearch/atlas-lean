@@ -20,6 +20,7 @@ all Boolean operations. Emptiness is decided by the region construction, in
 - [Inclusion in the language of a deterministic timed automaton is PSPACE-complete](inclusion-in-a-deterministic-timed-automaton-is-pspace-complete.md)
 - [Zones and difference-bound matrices](zones-and-difference-bound-matrices.md)
 - [Timed games](timed-games.md)
+- [Parameterized model checking of discrete timed networks with a controller is undecidable](parameterized-model-checking-of-discrete-timed-n.md)
 - [Decision problems for timed languages](decision-problems-for-timed-languages/README.md)
 - [Higher-dimensional timed automata](higher-dimensional-timed-automata/README.md)
 - [Parametric timed automata](parametric-timed-automata/README.md)

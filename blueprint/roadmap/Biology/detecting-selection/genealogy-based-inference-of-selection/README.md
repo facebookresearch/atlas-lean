@@ -5,3 +5,6 @@ Likelihood inference of a selection coefficient and of the allele-frequency traj
 - [Structured-coalescent hidden Markov model for a local tree under selection](structured-coalescent-hmm-for-a-local-tree-under-selection.md)
 - [Importance-sampling likelihood ratio for selection from neutral ARG samples](importance-sampling-likelihood-ratio-for-selection-from-neutral-arg-samples.md)
 - [Rate of adaptive substitution from sweep scans](rate-of-adaptive-substitution-from-sweep-scans/README.md)
+- [Phylogenetic convergence test](phylogenetic-convergence-test/README.md)
+- [Selection scan against an ancestral admixture model](selection-scan-against-an-ancestral-admixture-model/README.md)
+- [Soft sweeps from recurrent mutation](soft-sweeps-from-recurrent-mutation/README.md)

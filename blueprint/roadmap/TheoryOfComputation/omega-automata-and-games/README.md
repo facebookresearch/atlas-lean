@@ -18,6 +18,7 @@ Büchi, generalized Büchi, parity, Rabin, Streett and Muller automata on infini
 - [Monadic logic on infinite words](monadic-logic-on-infinite-words/README.md)
 - [Automata on infinite trees](automata-on-infinite-trees/README.md)
 - [Alternating automata](alternating-automata/README.md)
+- [Probabilistic Büchi automata](probabilistic-buchi-automata/README.md)
 - [Timed automata](timed-automata/README.md)
 
 - [Polynomial-time solvability of mean-payoff games](polynomial-time-solvability-of-mean-payoff-games.md)
