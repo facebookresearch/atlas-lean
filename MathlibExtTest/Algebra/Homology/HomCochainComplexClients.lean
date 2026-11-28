@@ -36,7 +36,8 @@ morphisms, together with their relevant instance inference.
 noncomputable section
 set_option autoImplicit false
 
-open CategoryTheory CategoryTheory.Limits HomologicalComplex ZeroObject
+open CategoryTheory CategoryTheory.Limits HomologicalComplex
+open scoped ZeroObject
 
 namespace HomCochainComplexClients
 
@@ -47,9 +48,9 @@ private abbrev ZZ := ModuleCat.of ℤ (ℤ × ℤ)
 private def twice : Z ⟶ Z := ModuleCat.ofHom ((2 : ℤ) • (LinearMap.id : ℤ →ₗ[ℤ] ℤ))
 private def three : Z ⟶ Z := ModuleCat.ofHom ((3 : ℤ) • (LinearMap.id : ℤ →ₗ[ℤ] ℤ))
 
-private def twoTerm : ChainComplex C ℕ :=
-  ChainComplex.mk Z Z (0_ C) twice 0 (by simp)
-    (fun _ => ⟨0_ C, 0, by simp⟩)
+private abbrev twoTerm : ChainComplex C ℕ :=
+  ChainComplex.mk Z Z (0 : C) twice 0 (by simp)
+    (fun _ => ⟨(0 : C), 0, by simp⟩)
 
 private abbrev homTwo : CochainComplex AddCommGrpCat ℕ :=
   (homCochainComplexFunctor C Z).obj (Opposite.op twoTerm)
@@ -89,7 +90,8 @@ private def coefficientSplitting : coefficientSequence.Splitting where
     apply ModuleCat.hom_ext
     change (LinearMap.inl ℤ ℤ ℤ).comp (LinearMap.fst ℤ ℤ ℤ) +
       (LinearMap.inr ℤ ℤ ℤ).comp (LinearMap.snd ℤ ℤ ℤ) = LinearMap.id
-    ext z
+    apply LinearMap.ext
+    intro z
     rcases z with ⟨a, b⟩
     simp
 
@@ -169,6 +171,7 @@ example :
       ((6 : ℤ), (0 : ℤ)) := by
   change includeFirst.hom (three.hom (2 : ℤ)) = ((6 : ℤ), (0 : ℤ))
   norm_num [includeFirst, three]
+  exact LinearMap.inl_apply (R := ℤ) (M := ℤ) (M₂ := ℤ) (6 : ℤ)
 
 private def negativeIso : singleChain ≅ singleChain :=
   singleFunctor.mapIso ((LinearEquiv.neg ℤ : ℤ ≃ₗ[ℤ] ℤ).toModuleIso)
