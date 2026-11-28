@@ -77,18 +77,6 @@ private lemma rowSum_succ_succ (r m : ℕ) :
     push_cast
     ring
 
--- Removing the top term `j = m + d + 1` of the alternating sum changes the sign of the others.
-private lemma sabarNumber_add_succ (m d : ℕ) :
-    sabarNumber (m + d + 1) m = ((m + d + 1).choose m : ℤ) - sabarNumber (m + d) m := by
-  unfold sabarNumber
-  rw [Finset.sum_Ioc_succ_top (by omega), Nat.sub_self, pow_zero, one_mul, add_comm,
-    sub_eq_add_neg, ← Finset.sum_neg_distrib]
-  congr 1
-  refine Finset.sum_congr rfl fun j hj => ?_
-  rw [Finset.mem_Ioc] at hj
-  rw [show m + d + 1 - j = m + d - j + 1 by omega, pow_succ]
-  ring
-
 private lemma sabarNumber_add_add_neg_one_pow (m d : ℕ) :
     (sabarNumber (m + d) m : ℚ) + (-1) ^ d = rowSum (m + d + 1) d := by
   induction d with

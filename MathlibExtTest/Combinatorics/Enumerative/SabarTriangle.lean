@@ -41,6 +41,11 @@ example : sabarNumber 1 0 = 1 ∧ (List.range 2).map (sabarNumber 2) = [0, 2] �
     (List.range 3).map (sabarNumber 3) = [1, 1, 3] := by
   decide +kernel
 
+-- Consecutive entries in column 2, starting with the empty diagonal entry at `d = 0`.
+example : ∀ d ∈ Finset.range 5,
+    sabarNumber (2 + d + 1) 2 = ((2 + d + 1).choose 2 : ℤ) - sabarNumber (2 + d) 2 := by
+  decide +kernel
+
 -- At `n = 2` both sides are `5 / 6`. With the opposite sign `(-1)^(n-i)` (the printed sign, per
 -- the theorem's docstring), the right side would be `1 + s(1, 0) / (2 * 3) = 7 / 6` instead.
 example : lhs 2 = 5 / 6 ∧ rhs 2 = 5 / 6 := by
@@ -91,6 +96,25 @@ example (n : ℕ) (hn : 1 ≤ n) : (sabarNumber (2 * n) n : ℚ) = centralWhittR
 
 -- This includes the lower endpoint and both parities of the correction term.
 example : ∀ n ∈ Finset.Icc 1 7, (sabarNumber (2 * n) n : ℚ) = centralWhittRhs n := by
+  decide +kernel
+
+-- Check the three even-row formulas and the odd-row formula by evaluating both sides.
+private def centralFineRhs (n : ℕ) : ℚ × ℚ × ℚ × ℚ :=
+  ⟨(1 / 6) * ((2 * n + 2).choose (n + 1) : ℚ) + (2 / 3) * fineNumber n + (-1) ^ (n + 1),
+    (1 / 3) * (2 * n + 1) * (catalan n : ℚ) + (2 / 3) * fineNumber n + (-1) ^ (n + 1),
+    (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * fineNumber (n - 1) + (-1) ^ (n + 1),
+    (2 / 3) * ((2 * n - 1).choose n : ℚ) + (1 / 3) * fineNumber (n - 1) + (-1) ^ n⟩
+
+private def centralEntries (n : ℕ) : ℚ × ℚ × ℚ × ℚ :=
+  ⟨sabarNumber (2 * n) n, sabarNumber (2 * n) n, sabarNumber (2 * n) n,
+    sabarNumber (2 * n - 1) n⟩
+
+example (n : ℕ) (hn : 1 ≤ n) : centralEntries n = centralFineRhs n := by
+  obtain ⟨h₁, h₂, h₃, h₄⟩ := sabarNumber_central_eq_fineNumber n hn
+  exact Prod.ext h₁ (Prod.ext h₂ (Prod.ext h₃ h₄))
+
+-- At `n = 1` the odd entry is the empty sum; `n = 2, 3` test both signs above the endpoint.
+example : ∀ n ∈ Finset.Icc 1 7, centralEntries n = centralFineRhs n := by
   decide +kernel
 
 end MathlibExtTest.SabarTriangle
