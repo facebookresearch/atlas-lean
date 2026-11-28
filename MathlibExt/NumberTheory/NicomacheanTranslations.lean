@@ -17,8 +17,11 @@ import Mathlib.Tactic.Ring
 /-!
 # Translations and extensions of the Nicomachean identity
 
-Statements from Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the
-Nicomachean Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3.
+## References
+
+- Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean Identity*,
+  Journal of Integer Sequences 27 (2024), Article 24.6.3, pp. 1–23. Section 9 gives the two-term
+  case of the concatenation formula.
 
 For a finite sequence `σ = (a_1, …, a_n)` the paper's operator is
 `ν(σ) = (∑ a_i)^2 - ∑ a_i^3`, here `nicomacheanNu` on lists over a commutative ring; the
@@ -38,6 +41,16 @@ Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of 
 Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Section 1. -/
 def nicomacheanNu {R : Type*} [CommRing R] (σ : List R) : R :=
   σ.sum ^ 2 - (σ.map (· ^ 3)).sum
+
+/-- **Nicomachean defect under concatenation.** Let $\nu$ be the Nicomachean defect. For finite
+sequences $\sigma$ and $\tau = (t_1, \ldots, t_m)$ over a commutative ring, write $s$ for the sum of
+$\sigma$ and $t$ for the sum of $\tau$. Then
+$\nu(\sigma, \tau) = \nu(\sigma) + (2s + t)t - \sum_{j=1}^m t_j^3$. -/
+theorem nicomacheanNu_append {R : Type*} [CommRing R] (σ τ : List R) :
+    nicomacheanNu (σ ++ τ) =
+      nicomacheanNu σ + (2 * σ.sum + τ.sum) * τ.sum - (τ.map (· ^ 3)).sum := by
+  simp only [nicomacheanNu, List.sum_append, List.map_append]
+  ring
 
 /-- **Examples of the Nicomachean defect.** For the Nicomachean defect $\nu$ of a sequence of
 integers, $\nu(1, 2, 3, 4) = 0$, $\nu(1, 2) = 0$, $\nu(3, 3, 3) = 0$,
