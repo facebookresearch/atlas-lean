@@ -38,20 +38,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Maximal sets of lanes and noncrossing partitions.** For every $n \ge 0$, the maximal sets of
-lanes of the standard road intersection of size $n$, in which every lane is allowed, are in
-bijection with the noncrossing partitions of $\{0, \dots, n-1\}$, and their number is the Catalan
-number $C_n$.
-
-Source: Julien Rouyer and Alain Ninet, *Two New Integer Sequences Related to Crossroads and
-Catalan Numbers*, Journal of Integer Sequences 28 (2025), Article 25.1.1, Lemma 16
-(`jis-2025-25.1.1-lem-16`). -/
-public theorem_wanted maximalSetsOfLanes_equiv_noncrossingPartition (n : ℕ) :
-    Nonempty ({S : Finset (Fin n × Fin n) // IsMaximalSetOfLanes Finset.univ S} ≃
-      _root_.NoncrossingPartition n) ∧
-    (Finset.univ.filter fun S : Finset (Fin n × Fin n) =>
-      IsMaximalSetOfLanes Finset.univ S).card = catalan n
-
 /-- **Counting noncrossing partitions with no or one singleton block.** Write $NC_{n,m,k}$ for the
 number of noncrossing partitions of $\{0, \dots, n-1\}$ with $m$ blocks of which $k$ are
 singletons, and extend the binomial coefficient $\binom{a}{b}$ to all integers $a$, $b$ by setting

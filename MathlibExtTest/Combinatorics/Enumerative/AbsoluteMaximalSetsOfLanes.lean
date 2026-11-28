@@ -35,3 +35,14 @@ example : (Finset.univ.filter fun S : Finset (Fin 1 × Fin 1) =>
 example : marriageableSinglesCount 2 = 1 := by
   rw [← card_nonabsolute_maximalSetsOfLanes]
   decide
+
+-- The empty intersection has exactly one maximal set of lanes.
+example : (Finset.univ.filter fun S : Finset (Fin 0 × Fin 0) =>
+    IsMaximalSetOfLanes Finset.univ S).card = 1 :=
+  (maximalSetsOfLanes_equiv_noncrossingPartition 0).2.trans catalan_zero
+
+-- The two maximal sets at size two correspond to the two noncrossing partitions.
+example : Fintype.card (_root_.NoncrossingPartition 2) = 2 := by
+  obtain ⟨e⟩ := (maximalSetsOfLanes_equiv_noncrossingPartition 2).1
+  rw [← Fintype.card_congr e, Fintype.card_subtype, maximalSetsOfLanes_two]
+  decide
