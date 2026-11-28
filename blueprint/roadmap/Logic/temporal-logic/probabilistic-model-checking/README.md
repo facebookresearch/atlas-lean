@@ -22,3 +22,4 @@ Model checking of discrete-time Markov chains and Markov decision processes: rea
 - [PCTL](pctl.md)
 - [PCTL model checking reduces to reachability](pctl-model-checking-reduces-to-reachability.md)
 - [PCTL model checking of MDPs is polynomial](pctl-model-checking-of-mdps-is-polynomial.md)
+- [Probabilistic higher-order fixpoint logic](probabilistic-higher-order-fixpoint-logic/README.md)
