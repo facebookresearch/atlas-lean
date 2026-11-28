@@ -71,7 +71,8 @@ theorem complexOfGRatMatrix_ctrlLow_omegaH : complexOfGRatMatrix (ctrlLow omegaH
         · simp [hp, hq, toComplex_gaussRatEnc, Complex.ext_iff]
       · simp [h1, hp, toComplex_gaussRatEnc, Complex.ext_iff]
 
-/-- same, control = high qubit (exporter orientation rule) -/
+/-- Controlled-`e^{iπ/4} H` with the high qubit as control is `D * C`, with `D` diagonal
+(`e^{iπ/4}` where the high bit is `1`) and `C` controlled-`H` with the high qubit as control. -/
 theorem complexOfGRatMatrix_ctrlHigh_omegaH : complexOfGRatMatrix (ctrlHigh omegaH) = Matrix.diagonal (fun p : Fin 2 × Fin 2 => if p.2 = 1 then Complex.exp (Real.pi / 4 * Complex.I) else 1) * Matrix.of (fun p q : Fin 2 × Fin 2 => if p.2 = 0 ∧ q.2 = 0 ∧ p.1 = q.1 then 1 else if p.2 = 1 ∧ q.2 = 1 then hadamard p.1 q.1 else 0) := by
   ext p q
   simp only [complexOfGRatMatrix, ctrlHigh, Matrix.diagonal_mul, Matrix.of_apply]

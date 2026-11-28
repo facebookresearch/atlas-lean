@@ -15,9 +15,12 @@ completely bounded trace norm. The (unassisted) quantum capacity $Q(\Phi)$ is th
 This node states a precise definition. A good expansion adds a page for each pending prerequisite below and links it
 under the dependency sections.
 
-- Statement prerequisite: Quantum channels (CPTP maps).
-- Statement prerequisite: Measurements (POVMs).
 - Statement prerequisite: The completely bounded trace norm of a linear map.
+
+## Depends on
+
+- [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
+- [Quantum channel](../quantum-operations/quantum-channel.md)
 
 ## Sources
 

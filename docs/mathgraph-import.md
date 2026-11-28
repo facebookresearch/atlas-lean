@@ -82,7 +82,8 @@ What a run guarantees:
   repository path the importer writes or removes, and on the files whose content
   it reads, each checked on the path it is then opened by: the manifest when it
   lies in the repository, the links files, `scripts/taxonomy.json`, the card
-  move ledger, the map, the folder pages it edits or whose part copies it
+  move ledger (`scripts/card-moves.jsonl`, the folder `scripts/card-moves.d/`
+  and each entry of it), the map, the folder pages it edits or whose part copies it
   refreshes, the pages a dependency names and the pages the cycle check reads.
   Such a path is refused when it, or a folder between it and the repository
   root, is a link, a dangling link counting as there. A manifest that is itself
@@ -450,7 +451,7 @@ existing or new. A page's file name is its `stem`. New folders take their names
 first; pages then take theirs in manifest order. A stem that its folder's list
 already has, from an existing page or folder, a new folder or an earlier row
 placed anywhere in that list, that is reserved (`readme`, `index`, `part-NN`) or
-whose address `scripts/card-moves.jsonl` records is refused, with the collision
+whose address the card move ledger records is refused, with the collision
 named: it is never numbered, as a numbered name could hide a duplicate. A new
 field, subfield or topic folder takes its name from the taxonomy, which may not
 have a part's form, and is refused if its folder's list has that name or the
@@ -475,8 +476,19 @@ refused.
 
 ## Annotations
 
-Each new page and folder page gets one annotation row, appended to its
-subject's links file. A page's row has:
+Each new page and folder page gets one annotation row in its subject's links
+file, placed where the sync places a row (`sync_wiki.inserted`, which
+`sync_wiki.insert_rows` uses): right after the row whose page's path comes last
+before its own, paths compared folder by folder, wherever that row stands, or
+first if no row's path comes before its own. A links file need not itself be in
+path order, so a row lands right after that row, not necessarily next to the
+other rows of its folder. Every other byte of the file stays as it is, and a
+links file not there yet is made of the new rows alone, in path order. Rows for
+pages in different places thus no longer all meet at the end of the file; two
+imports still conflict where both add rows right after the same row, where both
+add items to the same folder page, and at the end of the map, which only grows
+([The map](#the-map)). Each row's page is read as the sync reads it, the links
+folder's defaults (`_defaults.json`) applied. A page's row has:
 
 - `id`: `af_` and the first 24 hex digits of the SHA-256 of the compact JSON
   array `["<seed.source>","<seed.node>","<seed.revision>"]`; an id that an

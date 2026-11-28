@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.Theta
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import MathlibExt.Combinatorics.Words.UlamWords
+public import MathlibExt.Combinatorics.Words.UlamWordsSierpinski
 
 /-!
 # Ulam words — wishlist
@@ -39,14 +39,6 @@ Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 public theorem_wanted ulamWordCount_sq_le_sum (n : ℕ) :
     ulamWordCount n ^ 2 ≤ ∑ i ∈ Finset.Icc n (2 * n), ulamWordCount i
 
-/-- **Linear lower bound on the number of Ulam words.** For every natural number $n \ge 6$, the
-number of Ulam words of length $n$ is at least $2n + 4$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 1. -/
-public theorem_wanted two_mul_add_four_le_ulamWordCount (n : ℕ) (hn : 6 ≤ n) :
-    2 * n + 4 ≤ ulamWordCount n
-
 /-- **Exponential lower bound for Ulam word counts along a subsequence.** Let $\#U_n$ be the
 number of Ulam words of length $n$ and $\alpha_0 = (\#U_{30} / (2 \cdot 31))^{1/30}$. For every
 real $\alpha$ with $1 < \alpha < \alpha_0$, every real $C$ and every natural number $N$, there
@@ -61,19 +53,6 @@ public theorem_wanted ulamWordCount_limsup_div_pow_eq_top (α : ℝ) (hα : 1 < 
     (hα₀ : α < ((ulamWordCount 30 : ℝ) / (2 * 31)) ^ ((1 : ℝ) / 30)) (C : ℝ) (N : ℕ) :
     ∃ n ≥ N, C * α ^ n ≤ ulamWordCount n
 
-/-- **The inverse Ulam density has the order of the mean gap.** For $n \in \mathbb{N}$ let $U_n$
-be the set of Ulam words of length $n$, and let $\mu_g(n)$ be the mean gap of the binary values
-of the words in $U_n$. Then $2^n / |U_n|$ (the reciprocal of the density $|U_n| / 2^n$) and
-$\mu_g(n)$ have the same order of growth as $n \to \infty$: there are constants $c, C > 0$ such
-that $c \, \mu_g(n) \le 2^n / |U_n| \le C \, \mu_g(n)$ for all sufficiently large $n$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 4 (first
-sentence). -/
-public theorem_wanted ulamDensity_inv_isTheta_ulamGapMean :
-    (fun n : ℕ => (2 : ℝ) ^ n / ulamWordCount n) =Θ[Filter.atTop]
-      fun n => (ulamGapMean n : ℝ)
-
 /-- **Ulam words with one 101 block.** For natural numbers $a$ and $b$ with $a + b \ge 2$, the
 binary word $0^a 101 0^b$ ($a$ zeros, then the letters $1, 0, 1$, then $b$ zeros) is an Ulam word
 if and only if $a + b$ is odd.
@@ -84,19 +63,6 @@ Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
 public theorem_wanted isUlamWord_zeros_one_zero_one_zeros_iff (a b : ℕ) (hab : 2 ≤ a + b) :
     IsUlamWord (List.replicate a false ++ [true, false, true] ++ List.replicate b false) ↔
       (a + b) % 2 = 1
-
-/-- **Ulam words made of ones followed by zeros.** For natural numbers $x$ and $y$ with
-$1 \le y \le x$, the word $1^y 0^{x-y}$ ($y$ ones followed by $x - y$ zeros) is an Ulam word if
-and only if $(x, y) = (1, 1)$ or $(x, y)$ belongs to the discrete Sierpiński triangle
-$\mathcal{S}$.
-
-Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 9
-(precise form of Theorem 3). -/
-public theorem_wanted isUlamWord_ones_zeros_iff_mem_discreteSierpinski (x y : ℕ) (hy : 1 ≤ y)
-    (hyx : y ≤ x) :
-    IsUlamWord (List.replicate y true ++ List.replicate (x - y) false) ↔
-      (x, y) = (1, 1) ∨ (x, y) ∈ discreteSierpinski
 
 /-- **Padding the word 10101 with zeros.** For natural numbers $a$ and $b$ with $a + b \ge 1$, the
 word $0^a 10101 0^b$ ($a$ zeros, then $10101$, then $b$ zeros) is an Ulam word if and only if $a$
