@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.NumberTheory.ZetaStrideSeries
+public import MathlibExt.NumberTheory.ZetaStrideSeriesDirichletEta
 public import MathlibExt.NumberTheory.ZetaStrideSeriesDigammaHalf
 public import MathlibExt.NumberTheory.ZetaStrideSeriesTendstoStrideAlternatingSumRiemannZeta
 
@@ -20,55 +21,6 @@ namespace MetaMathlibExt
 open Filter Topology
 
 @[expose] public section
-
-/-- **Signed stride sum.** For natural numbers $q$, $t$ and $n$, let
-$K = \lfloor (n + q - 1)/q \rfloor$ if $q \ge 1$ and $K = 0$ if $q = 0$. The signed stride sum is
-the real number
-$$
-T_{q,t}(n) = \sum_{i=0}^{K-1} \frac{(-1)^{(q+1)i}}{(n - qi)^t}.
-$$
-With $j = i + 1$ it reads $\sum_{j=1}^{K} (-1)^{(q+1)(j+1)}/(n + q - qj)^t$. For odd $q$ every
-sign is $+$, and for even $q$ the signs alternate.
-
-Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
-Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, Theorem 2,
-equation (25). -/
-public noncomputable def strideSignedSum (q t n : ℕ) : ℝ :=
-  ∑ i ∈ Finset.range ((n + q - 1) / q), (-1 : ℝ) ^ ((q + 1) * i) / ((n - q * i : ℕ) : ℝ) ^ t
-
-private theorem div_eq_one_of_le {q n : ℕ} (hn : 0 < n) (hnq : n ≤ q) :
-    (n + q - 1) / q = 1 :=
-  Nat.div_eq_of_lt_le (by omega) (by omega)
-
-private theorem div_add_eq {q n : ℕ} (hq : 0 < q) (hn : 0 < n) :
-    (n + q + q - 1) / q = (n + q - 1) / q + 1 := by
-  rw [show n + q + q - 1 = n + q - 1 + q by omega, Nat.add_div_right _ hq]
-
-/-- **Signed stride sum with a single term.** For natural numbers $q$, $t$ and $n$ with
-$1 \le n \le q$, the signed stride sum satisfies $T_{q,t}(n) = 1/n^t$.
-
-Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
-Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, equation (25). -/
-public theorem strideSignedSum_of_le {q t n : ℕ} (hn : 0 < n) (hnq : n ≤ q) :
-    strideSignedSum q t n = 1 / (n : ℝ) ^ t := by
-  simp [strideSignedSum, div_eq_one_of_le hn hnq]
-
-/-- **Recurrence for the signed stride sum.** Let $q \ge 1$, $n \ge 1$ and $t \ge 0$ be integers
-and let $T_{q,t}$ denote the signed stride sum. Then
-$T_{q,t}(n + q) = 1/(n + q)^t + (-1)^{q+1} T_{q,t}(n)$.
-
-Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
-Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, equation (25). -/
-public theorem strideSignedSum_add {q t n : ℕ} (hq : 0 < q) (hn : 0 < n) :
-    strideSignedSum q t (n + q) =
-      1 / ((n + q : ℕ) : ℝ) ^ t + (-1 : ℝ) ^ (q + 1) * strideSignedSum q t n := by
-  rw [strideSignedSum, div_add_eq hq hn, Finset.sum_range_succ', strideSignedSum,
-    Finset.mul_sum, add_comm]
-  congr 1
-  · refine Finset.sum_congr rfl fun i _ => ?_
-    rw [show n + q - q * (i + 1) = n - q * i by rw [Nat.mul_succ]; omega, mul_add, mul_one,
-      pow_add]
-    ring
 
 /-- **Digamma series for the signed stride sum.** Let $q \ge 1$ and $t \ge 1$ be integers, let
 $a$ be a real number with $-1 \le a < 1$, let $T_{q,t}$ denote the signed stride sum and $\psi$
@@ -102,22 +54,6 @@ public theorem_wanted tendsto_strideSignedSum_digamma (q t : ℕ) (hq : 0 < q) (
         (∑' n : ℕ, (-1 : ℂ) ^ n / ((n : ℂ) + 1) ^ t *
           (Complex.digamma (((n : ℂ) + 1 - a - 1 + 2 * q) / (2 * q)) -
             Complex.digamma (((n : ℂ) + 1 - a - 1 + q) / (2 * q)))) / (2 * q)))
-
-/-- **Stride series for the Dirichlet eta function.** Let $q, t \ge 1$ be integers and let
-$T_{q,t}(n)$ denote the signed stride sum. Then the partial sums
-$$\sum_{n=1}^{N} (-1)^{n+1} \frac{2n+q}{n(n+q)} T_{q,t}(n)$$
-converge, as $N \to \infty$, to $\eta(t+1)$, where $\eta(s) = \sum_{n \ge 1} (-1)^{n+1} n^{-s}$ is
-the Dirichlet eta function.
-
-Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
-Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, Theorem 2,
-equation (25). -/
-public theorem_wanted tendsto_strideSignedSum_dirichletEta (q t : ℕ) (hq : 0 < q)
-    (ht : 0 < t) :
-    Tendsto (fun N : ℕ => ∑ n ∈ Finset.range N,
-        (-1 : ℝ) ^ n * (2 * ((n : ℝ) + 1) + q) / (((n : ℝ) + 1) * ((n : ℝ) + 1 + q)) *
-          strideSignedSum q t (n + 1))
-      atTop (𝓝 (∑' n : ℕ, (-1 : ℝ) ^ n / ((n : ℝ) + 1) ^ (t + 1)))
 
 /-- **Digamma identity for stride sums over odd indices.** Let $q, t \ge 1$ be integers, let
 $a$ be a real number with $-1 \le a < 1$, let $S_{q,t}(n)$ denote the alternating stride sum and
