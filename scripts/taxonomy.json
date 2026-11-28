@@ -15357,6 +15357,7 @@
   "MathlibExt/Probability/CanonicalPaths": {"to": "Probability/markov-chains", "title": "Canonical paths and multicommodity flow"},
   "MathlibExt/Probability/CauchySelfNormalizedBoundAIMProbabilityProblem23": {"to": "Probability/martingales", "title": "Self-normalized bounds for symmetric random walks"},
   "MathlibExt/Probability/Causality/CausalIdentification": {"to": "Probability/nonparametric-survival", "title": "Potential outcomes and causal identification"},
+  "MathlibExt/Probability/Causality/MissingData/MeanBounds": {"to": "Probability/nonparametric-survival", "title": "Potential outcomes and causal identification"},
   "MathlibExt/Probability/Causality/PotentialOutcomes": {"to": "Probability/nonparametric-survival", "title": "Potential outcomes and causal identification"},
   "MathlibExt/Probability/CdfContinuityPoints": {"to": "Probability/distributions/distribution-functions", "title": "Cumulative distribution function"},
   "MathlibExt/Probability/CharFunLattice": {"to": "Probability/characteristic-functions", "title": "Lattice distributions"},
