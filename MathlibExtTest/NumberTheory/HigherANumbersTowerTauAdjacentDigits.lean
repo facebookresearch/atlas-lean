@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Tactic.NormNum
 import MathlibExt.NumberTheory.HigherANumbersTowerTauAdjacentDigits
 
 /-!
@@ -39,10 +38,9 @@ example : basePDigit 5 (3 / 4) (-2) = 3 := by
   calc
     basePDigit 5 (3 / 4) (-2) = basePDigit 5 (3 / 4) (-1) :=
       basePDigit_div_periodic_one 5 4 (by decide) 3 (by decide) 1 (by decide)
-    _ = 3 := by norm_num [basePDigit, zpow_neg]
+    _ = 3 := by decide +kernel
 
--- At the even prime, the only allowed denominator is 1.
-example : basePDigit 2 (3 / 1) (-4) = basePDigit 2 (3 / 1) (-3) :=
-  basePDigit_div_periodic_one 2 1 (by decide) 3 (by decide) 3 (by decide)
+-- The binary expansion of an integer has zero fractional digits.
+example : basePDigit 2 (3 / 1) (-4) = 0 := by decide +kernel
 
 end MathlibExtTest.NumberTheory.HigherANumbersTowerTauAdjacentDigits
