@@ -41,7 +41,7 @@ are bounded. The argument handles either sign of `x` without changing `P`.
   in §2 in place of Lemma 2's real-power bound.
 * G. H. Hardy and E. M. Wright, *An Introduction to the Theory of Numbers*, 5th ed.,
   Oxford University Press, 1979 (Legendre's formula, cited in §2).
-* The ATLAS formalizations `BrocardRamanujanPowerFree.le_exp_of_isPowerFree_dvd_factorial`
+* The ATLAS formalizations `le_exp_of_isPowerFree_dvd_factorial`
   and `le_pow_of_dvd_factorial_of_primeFactors_card_le` in
   `MathlibExt.NumberTheory.BrocardRamanujanPowerFree` and
   `MathlibExt.NumberTheory.BrocardRamanujanFewPrimeFactors`, respectively, supply the divisor
@@ -126,7 +126,7 @@ public theorem brocardRamanujan_polynomial_powerFree_mul_fewPrimeFactors_finite
           ((dvd_mul_right _ _).trans hq))
       obtain ⟨y, z, hmul, hy, hz, hcard⟩ := hxs i
       rw [hmul] at hdiv ⊢
-      have hyExp := BrocardRamanujanPowerFree.le_exp_of_isPowerFree_dvd_factorial hn0 hy
+      have hyExp := le_exp_of_isPowerFree_dvd_factorial hn0 hy
         ((dvd_mul_right y z).trans hdiv)
       have hyA : (y : ℝ) ≤ (A : ℝ) ^ n := calc
         _ ≤ Real.exp (3 * n * k / 2) := hyExp

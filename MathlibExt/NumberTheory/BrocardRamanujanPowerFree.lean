@@ -41,8 +41,6 @@ open Nat
 
 namespace MetaMathlibExt
 
-namespace BrocardRamanujanPowerFree
-
 /-- **Exponential bound for a power-free divisor of a factorial.**
 Let $n > 0$ and $k \ge 2$ be natural numbers. If a positive $k$-free natural number $y$
 divides $n!$, then $y \le \exp(3 n k / 2)$. -/
@@ -61,6 +59,8 @@ public theorem le_exp_of_isPowerFree_dvd_factorial {n y k : ℕ} (hn : 0 < n)
     exact_mod_cast hK.le
   have hn' : (0 : ℝ) ≤ n := Nat.cast_nonneg n
   gcongr
+
+namespace BrocardRamanujanPowerFree
 
 /-- A solution of `n! + 1 = x ^ 2` with `x - 1` or `x + 1` being `k`-free and `n ≥ 1` satisfies
 `n! < 4 ⌈exp (3 k)⌉₊ ^ n`. -/
