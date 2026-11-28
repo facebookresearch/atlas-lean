@@ -14,15 +14,34 @@ public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplexShift
 public import Mathlib.Algebra.Homology.HomotopyCategory.HomComplexSingle
 public import Mathlib.Algebra.Homology.HomotopyCategory.Pretriangulated
 public import Mathlib.CategoryTheory.Triangulated.Yoneda
+public import Mathlib.CategoryTheory.Shift.ShiftedHom
+
+/-!
+# Cocycle boundaries and shifted morphisms
+
+For integer cochain complexes in a preadditive category, a degree-q cocycle represents a
+map to a q-shift. Removing a target shift by one raises its degree to q+1 without an
+extra sign. Postcomposition by a degree-one morphism uses the shift-add order 1,q;
+the sign of that morphism is retained.
+
+A functor F commuting with shifts sends the cocycle z to the shifted morphism
+F(ẑ) followed by the shift comparison. This assignment carries the triangle-boundary
+expression to postcomposition followed by removal of the target shift. The quotient
+into the homotopy category is one such functor. Shifted composition also commutes with
+transport along isomorphisms of its two intermediate endpoints.
+-/
 
 @[expose] public section
-
 noncomputable section
 set_option autoImplicit false
-open CategoryTheory CategoryTheory.Limits
-universe u v
-namespace CochainComplex.HomComplex.Cocycle
+open CategoryTheory CategoryTheory.Limits CategoryTheory.Pretriangulated Opposite
+universe u v u' v'
+
+namespace CochainComplex.HomComplex
+
+section CocycleShift
 variable {C : Type u} [Category.{v} C] [Preadditive C]
+namespace Cocycle
 variable {K L M : CochainComplex C ℤ} {q : ℤ}
 
 set_option backward.isDefEq.respectTransparency false in
@@ -62,192 +81,10 @@ postcomposed with d is ẑ ≫ d[q] ≫ α_{1,q,M}⁻¹ : K → M[q+1], where �
 theorem equivHomShift_symm_postcomp_rightUnshift
     (z : Cocycle K L q) (d : L ⟶ M⟦(1 : ℤ)⟧) :
     equivHomShift.symm ((z.postcomp d).rightUnshift (q + 1) rfl) =
-      equivHomShift.symm z ≫ d⟦q⟧' ≫
-        (CategoryTheory.shiftFunctorAdd' (CochainComplex C ℤ) 1 q (q + 1)
-          (by omega)).inv.app M := by
+      ShiftedHom.comp (equivHomShift.symm z) d (by omega) := by
+  dsimp only [ShiftedHom.comp]
   rw [equivHomShift_symm_rightUnshift, equivHomShift_symm_postcomp]
   exact Category.assoc _ _ _
-
-end CochainComplex.HomComplex.Cocycle
-
-end
-
-noncomputable section
-set_option autoImplicit false
-open CategoryTheory CategoryTheory.Limits CategoryTheory.Pretriangulated Opposite
-universe u v
-namespace CochainComplex.HomComplex
-variable {C : Type u} [Category.{v} C] [Preadditive C]
-
-/-- Let C be preadditive, K,L integer cochain complexes, q ∈ ℤ and z a degree-q cocycle from K to L.
-Its shiftedHom is [K] → [L][q] in the homotopy category: first take the quotient class of the
-corresponding cochain map K → L[q], then use the quotient functor's canonical shift isomorphism
-[L[q]] ≅ [L][q]. -/
-def Cocycle.shiftedHom {K L : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) :
-    (HomotopyCategory.quotient C (.up ℤ)).obj K ⟶
-      ((HomotopyCategory.quotient C (.up ℤ)).obj L)⟦q⟧ :=
-  (HomotopyCategory.quotient C (.up ℤ)).map (Cocycle.equivHomShift.symm z) ≫
-    ((HomotopyCategory.quotient C (.up ℤ)).commShiftIso q).hom.app L
-
-/-- Let C be preadditive, T a triangle of integer cochain complexes with third map d : T₃ → T₁[1], K
-a complex, q ∈ ℤ and z a degree-q cocycle from K to T₃. The degree-q-to-(q+1) boundary of the
-covariant Hom sequence of the quotient triangle, with source [K], sends z.shiftedHom to the
-shiftedHom of z postcomposed with d and then target-unshifted. This is the positive composite ẑ
-≫ d[q] ≫ α_{1,q,T₁}⁻¹, with the quotient shift comparisons. -/
-theorem Cocycle.shiftedHom_boundary
-    (T : Triangle (CochainComplex C ℤ)) {K : CochainComplex C ℤ}
-    (q : ℤ) (z : Cocycle K T.obj₃ q) :
-    (preadditiveCoyoneda.obj (op ((HomotopyCategory.quotient C (.up ℤ)).obj K))).homologySequenceδ
-        ((HomotopyCategory.quotient C (.up ℤ)).mapTriangle.obj T) q (q + 1) rfl
-        z.shiftedHom =
-      ((z.postcomp T.mor₃).rightUnshift (q + 1) rfl).shiftedHom := by
-  rw [Pretriangulated.preadditiveCoyoneda_homologySequenceδ_apply]
-  dsimp only [Cocycle.shiftedHom]
-  rw [Cocycle.equivHomShift_symm_postcomp_rightUnshift]
-  simp only [Functor.map_comp, Category.assoc]
-  let Q := HomotopyCategory.quotient C (.up ℤ)
-  have hc := congrArg (fun e => e.hom.app T.obj₁)
-    (Q.commShiftIso_add' (a := (1 : ℤ)) (b := q) (c := q + 1) (by omega))
-  simp only [Functor.CommShift.isoAdd'_hom_app] at hc
-  have hn := Q.commShiftIso_hom_naturality T.mor₃ q
-  change Q.map (Cocycle.equivHomShift.symm z) ≫
-      (Q.commShiftIso q).hom.app T.obj₃ ≫
-      (Q.map T.mor₃ ≫ (Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫
-      (CategoryTheory.shiftFunctorAdd' (HomotopyCategory C (.up ℤ)) 1 q (q + 1)
-        (by omega)).inv.app (Q.obj T.obj₁) = _
-  rw [Functor.map_comp]
-  let A := (CategoryTheory.shiftFunctorAdd' (HomotopyCategory C (.up ℤ)) 1 q (q + 1)
-        (by omega)).inv.app (Q.obj T.obj₁)
-  have hn' := congrArg (fun a =>
-    a ≫ ((Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫ A) hn
-  simp only [Category.assoc] at hn'
-  simp only [Category.assoc]
-  change Q.map (Cocycle.equivHomShift.symm z) ≫
-    ((Q.commShiftIso q).hom.app T.obj₃ ≫ (Q.map T.mor₃)⟦q⟧' ≫
-      ((Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫ A) = _
-  rw [← hn']
-  rw [hc]
-  let e := CategoryTheory.shiftFunctorAdd' (CochainComplex C ℤ) 1 q (q + 1)
-    (by omega)
-  have he : Q.map (e.inv.app T.obj₁) ≫ Q.map (e.hom.app T.obj₁) = 𝟙 _ := by
-    rw [← Q.map_comp, e.inv_hom_id_app, Q.map_id]
-  change Q.map (Cocycle.equivHomShift.symm z) ≫
-      Q.map (T.mor₃⟦q⟧') ≫ (Q.commShiftIso q).hom.app (T.obj₁⟦(1 : ℤ)⟧) ≫
-      ((Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫ A =
-    Q.map (Cocycle.equivHomShift.symm z) ≫ Q.map (T.mor₃⟦q⟧') ≫
-      Q.map (e.inv.app T.obj₁) ≫ Q.map (e.hom.app T.obj₁) ≫
-      (Q.commShiftIso q).hom.app (T.obj₁⟦(1 : ℤ)⟧) ≫
-      ((Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫ A
-  rw [reassoc_of% he]
-
-
-end CochainComplex.HomComplex
-
-end
-
-noncomputable section
-set_option autoImplicit false
-open CategoryTheory CategoryTheory.Limits CategoryTheory.Pretriangulated Opposite
-universe u v u' v'
-namespace CochainComplex.HomComplex
-variable {C : Type u} [Category.{v} C] [Preadditive C]
-variable {D : Type u'} [Category.{v'} D] [Preadditive D] [HasShift D ℤ]
-variable (F : CochainComplex C ℤ ⥤ D) [F.CommShift ℤ]
-
-/-- Let C be preadditive, D a category with integer shifts, and F : CochainComplex C ℤ → D commute
-with shifts. For a degree-q cocycle z from K to L, mappedShiftedHom is F(K) → F(L)[q], obtained
-by applying F to its corresponding cochain map K → L[q] and composing with F(L[q]) ≅ F(L)[q]. -/
-def Cocycle.mappedShiftedHom {K L : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) :
-    F.obj K ⟶ (F.obj L)⟦q⟧ :=
-  F.map (Cocycle.equivHomShift.symm z) ≫ (F.commShiftIso q).hom.app L
-
-/-- Let C,D be preadditive, D have integer shifts, and F : CochainComplex C ℤ → D commute with
-shifts. For a triangle T, complex K, q ∈ ℤ and degree-q cocycle z from K to T₃, the boundary of
-Hom_D(F(K),−) for F(T) sends mappedShiftedHom(F,z) to mappedShiftedHom(F,(z postcomposed with
-T.mor₃) target-unshifted to degree q+1). The actual third triangle map and the shift-add order
-1,q are retained; distinguishedness of T is not required for this identity. -/
-theorem Cocycle.mappedShiftedHom_boundary
-    (T : Triangle (CochainComplex C ℤ)) {K : CochainComplex C ℤ}
-    (q : ℤ) (z : Cocycle K T.obj₃ q) :
-    (preadditiveCoyoneda.obj (op (F.obj K))).homologySequenceδ
-        (F.mapTriangle.obj T) q (q + 1) rfl
-        (Cocycle.mappedShiftedHom F z) =
-      Cocycle.mappedShiftedHom F ((z.postcomp T.mor₃).rightUnshift (q + 1) rfl) := by
-  rw [Pretriangulated.preadditiveCoyoneda_homologySequenceδ_apply]
-  dsimp only [Cocycle.mappedShiftedHom]
-  rw [Cocycle.equivHomShift_symm_postcomp_rightUnshift]
-  simp only [Functor.map_comp, Category.assoc]
-  let Q := F
-  have hc := congrArg (fun e => e.hom.app T.obj₁)
-    (Q.commShiftIso_add' (a := (1 : ℤ)) (b := q) (c := q + 1) (by omega))
-  simp only [Functor.CommShift.isoAdd'_hom_app] at hc
-  have hn := Q.commShiftIso_hom_naturality T.mor₃ q
-  change Q.map (Cocycle.equivHomShift.symm z) ≫
-      (Q.commShiftIso q).hom.app T.obj₃ ≫
-      (Q.map T.mor₃ ≫ (Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫
-      (CategoryTheory.shiftFunctorAdd' D 1 q (q + 1)
-        (by omega)).inv.app (Q.obj T.obj₁) = _
-  rw [Functor.map_comp]
-  let A := (CategoryTheory.shiftFunctorAdd' D 1 q (q + 1)
-        (by omega)).inv.app (Q.obj T.obj₁)
-  have hn' := congrArg (fun a =>
-    a ≫ ((Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫ A) hn
-  simp only [Category.assoc] at hn'
-  simp only [Category.assoc]
-  change Q.map (Cocycle.equivHomShift.symm z) ≫
-    ((Q.commShiftIso q).hom.app T.obj₃ ≫ (Q.map T.mor₃)⟦q⟧' ≫
-      ((Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫ A) = _
-  rw [← hn']
-  rw [hc]
-  let e := CategoryTheory.shiftFunctorAdd' (CochainComplex C ℤ) 1 q (q + 1)
-    (by omega)
-  have he : Q.map (e.inv.app T.obj₁) ≫ Q.map (e.hom.app T.obj₁) = 𝟙 _ := by
-    rw [← Q.map_comp, e.inv_hom_id_app, Q.map_id]
-  change Q.map (Cocycle.equivHomShift.symm z) ≫
-      Q.map (T.mor₃⟦q⟧') ≫ (Q.commShiftIso q).hom.app (T.obj₁⟦(1 : ℤ)⟧) ≫
-      ((Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫ A =
-    Q.map (Cocycle.equivHomShift.symm z) ≫ Q.map (T.mor₃⟦q⟧') ≫
-      Q.map (e.inv.app T.obj₁) ≫ Q.map (e.hom.app T.obj₁) ≫
-      (Q.commShiftIso q).hom.app (T.obj₁⟦(1 : ℤ)⟧) ≫
-      ((Q.commShiftIso 1).hom.app T.obj₁)⟦q⟧' ≫ A
-  rw [reassoc_of% he]
-
-
-end CochainComplex.HomComplex
-
-end
-
-noncomputable section
-set_option autoImplicit false
-open CategoryTheory
-universe u v u' v'
-namespace CochainComplex.HomComplex.Cocycle
-variable {C : Type u} [Category.{v} C] [Preadditive C]
-variable {D : Type u'} [Category.{v'} D] [Preadditive D] [HasShift D ℤ]
-
-omit [Preadditive D] in
-/-- Let C be preadditive, D a category with integer shifts and F : CochainComplex C ℤ → D commute
-with shifts. For a degree-q cocycle z from K to L and a cochain map g : L → M,
-mappedShiftedHom(F,z postcomposed with g) = mappedShiftedHom(F,z) ≫ F(g)[q] as maps F(K) →
-F(M)[q]. -/
-theorem mappedShiftedHom_postcomp (F : CochainComplex C ℤ ⥤ D) [F.CommShift ℤ]
-    {K L M : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) (g : L ⟶ M) :
-    mappedShiftedHom F (z.postcomp g) = mappedShiftedHom F z ≫ (F.map g)⟦q⟧' := by
-  dsimp only [mappedShiftedHom]
-  rw [equivHomShift_symm_postcomp, Functor.map_comp, Category.assoc,
-    F.commShiftIso_hom_naturality]
-  exact (Category.assoc _ _ _).symm
-
-end CochainComplex.HomComplex.Cocycle
-
-end
-
-noncomputable section
-set_option autoImplicit false
-open CategoryTheory
-universe u v
-namespace CochainComplex.HomComplex.Cocycle
-variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Let C be preadditive, K,L,M integer cochain complexes, q ∈ ℤ, z a degree-q cocycle K → L and a a
@@ -265,16 +102,81 @@ theorem postcomp_equivHomShift_rightUnshift
   change (Cochain.ofHom (equivHomShift.symm a)).rightUnshift 1 (zero_add 1) = a.val at h
   rw [h]
 
-end CochainComplex.HomComplex.Cocycle
+end Cocycle
+end CocycleShift
 
-end
+section Mapped
+variable {C : Type u} [Category.{v} C] [Preadditive C]
+variable {D : Type u'} [Category.{v'} D] [HasShift D ℤ]
+namespace Cocycle
 
-noncomputable section
-set_option autoImplicit false
-open CategoryTheory CategoryTheory.Limits
-universe u v
-namespace CochainComplex.HomComplex.Cochain
+/-- Let C be preadditive, D a category with integer shifts, and F : CochainComplex C ℤ → D
+commute with shifts. A degree-q cocycle z from K to L defines F(ẑ) followed by the shift
+comparison, as a morphism F(K) → F(L)[q]. -/
+abbrev mappedShiftedHom (F : CochainComplex C ℤ ⥤ D) [F.CommShift ℤ]
+    {K L : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) :
+    F.obj K ⟶ (F.obj L)⟦q⟧ :=
+  ShiftedHom.map (equivHomShift.symm z) F
+
+/-- Let C be preadditive, D a category with integer shifts and F : CochainComplex C ℤ → D commute
+with shifts. For a degree-q cocycle z from K to L and a cochain map g : L → M,
+mappedShiftedHom(F,z postcomposed with g) = mappedShiftedHom(F,z) ≫ F(g)[q] as maps F(K) →
+F(M)[q]. -/
+theorem mappedShiftedHom_postcomp (F : CochainComplex C ℤ ⥤ D) [F.CommShift ℤ]
+    {K L M : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) (g : L ⟶ M) :
+    mappedShiftedHom F (z.postcomp g) = mappedShiftedHom F z ≫ (F.map g)⟦q⟧' := by
+  dsimp only [mappedShiftedHom, ShiftedHom.map]
+  rw [equivHomShift_symm_postcomp, Functor.map_comp, Category.assoc,
+    F.commShiftIso_hom_naturality]
+  exact (Category.assoc _ _ _).symm
+
+variable [Preadditive D]
+
+/-- Native shifted composition carries a cocycle boundary through a shift-compatible functor.
+The triangle need not be distinguished and no additional boundary sign is introduced. -/
+theorem mappedShiftedHom_boundary (F : CochainComplex C ℤ ⥤ D) [F.CommShift ℤ]
+    (T : Triangle (CochainComplex C ℤ)) {K : CochainComplex C ℤ}
+    (q : ℤ) (z : Cocycle K T.obj₃ q) :
+    (preadditiveCoyoneda.obj (op (F.obj K))).homologySequenceδ
+        (F.mapTriangle.obj T) q (q + 1) rfl (mappedShiftedHom F z) =
+      mappedShiftedHom F ((z.postcomp T.mor₃).rightUnshift (q + 1) rfl) := by
+  rw [Pretriangulated.preadditiveCoyoneda_homologySequenceδ_apply]
+  dsimp only [mappedShiftedHom]
+  rw [equivHomShift_symm_postcomp_rightUnshift]
+  change (ShiftedHom.map (equivHomShift.symm z) F).comp
+      (ShiftedHom.map T.mor₃ F) (by omega) =
+    ShiftedHom.map (ShiftedHom.comp (equivHomShift.symm z) T.mor₃ (by omega)) F
+  exact (ShiftedHom.map_comp (equivHomShift.symm z) T.mor₃ (by omega) F).symm
+
+end Cocycle
+end Mapped
+
+section Quotient
+variable {C : Type u} [Category.{v} C] [Preadditive C]
+namespace Cocycle
+
+/-- The cocycle's canonical shifted morphism in the homotopy category. -/
+abbrev shiftedHom {K L : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) :
+    (HomotopyCategory.quotient C (.up ℤ)).obj K ⟶
+      ((HomotopyCategory.quotient C (.up ℤ)).obj L)⟦q⟧ :=
+  mappedShiftedHom (HomotopyCategory.quotient C (.up ℤ)) z
+
+/-- The homotopy-category boundary is the generic mapped boundary specialization. -/
+theorem shiftedHom_boundary
+    (T : Triangle (CochainComplex C ℤ)) {K : CochainComplex C ℤ}
+    (q : ℤ) (z : Cocycle K T.obj₃ q) :
+    (preadditiveCoyoneda.obj (op ((HomotopyCategory.quotient C (.up ℤ)).obj K))).homologySequenceδ
+        ((HomotopyCategory.quotient C (.up ℤ)).mapTriangle.obj T) q (q + 1) rfl z.shiftedHom =
+      ((z.postcomp T.mor₃).rightUnshift (q + 1) rfl).shiftedHom := by
+  simpa only [shiftedHom] using
+    mappedShiftedHom_boundary (HomotopyCategory.quotient C (.up ℤ)) T q z
+
+end Cocycle
+end Quotient
+
+section Single
 variable {C : Type u} [Category.{v} C] [Preadditive C] [HasZeroObject C]
+namespace Cochain
 
 set_option backward.isDefEq.respectTransparency false in
 set_option backward.isDefEq.respectTransparency.types false in
@@ -283,7 +185,8 @@ A map f : Z → K^{q+a} defines a degree-q cochain from Z[0] to K[a]. Removing t
 produces exactly the degree-(q+a) cochain from Z[0] to K defined by the same map f. -/
 theorem fromSingleMk_rightUnshift (Z : C) (K : CochainComplex C ℤ) (a q : ℤ)
     (f : Z ⟶ K.X (q + a)) :
-    (fromSingleMk (X := Z) (K := K⟦a⟧) (p := 0) (q := q) (n := q) f (zero_add q)).rightUnshift (q + a) rfl =
+    (fromSingleMk (X := Z) (K := K⟦a⟧) (p := 0) (q := q) (n := q)
+      f (zero_add q)).rightUnshift (q + a) rfl =
       fromSingleMk (X := Z) (K := K) (p := 0) (q := q + a) (n := q + a) f (zero_add (q + a)) := by
   apply (fromSingleEquiv (X := Z) (K := K) (p := 0) (q := q + a)
     (n := q + a) (zero_add (q + a))).injective
@@ -295,33 +198,25 @@ theorem fromSingleMk_rightUnshift (Z : C) (K : CochainComplex C ℤ) (a q : ℤ)
   rw [fromSingleMk_v]
   simp [CochainComplex.shiftFunctorObjXIso]
 
+end Cochain
+end Single
+end CochainComplex.HomComplex
 
-end CochainComplex.HomComplex.Cochain
+namespace CategoryTheory.ShiftedHom
+variable {C : Type u} [Category.{v} C] [HasShift C ℤ]
 
-end
-
-noncomputable section
-set_option autoImplicit false
-open CategoryTheory CategoryTheory.Limits CategoryTheory.Pretriangulated Opposite
-universe u v
-namespace CategoryTheory
-variable {C : Type u} [Category.{v} C] [Preadditive C] [HasShift C ℤ]
-
-omit [Preadditive C] in
 /-- Let C be a category with integer shifts, e : X ≅ A and f : Y ≅ B isomorphisms, and d : X → Y[1],
 d′ : A → B[1] maps satisfying d ≫ f.hom[1] = e.hom ≫ d′. For q ∈ ℤ and x : Z → A[q], define
 δ_d^q(y) = y ≫ d[q] ≫ α_{1,q,Y}⁻¹, where α_{1,q,Y} : Y[q+1] ≅ (Y[1])[q]. Then δ_d^q(x ≫
 e.inv[q]) = δ_d′^q(x) ≫ f.inv[q+1], as maps Z → Y[q+1]. -/
-theorem triangle_boundary_transport
+theorem comp_iso_transport
     {X Y A B Z : C} (e : X ≅ A) (f : Y ≅ B)
     (d : X ⟶ Y⟦(1 : ℤ)⟧) (d' : A ⟶ B⟦(1 : ℤ)⟧)
     (hd : d ≫ f.hom⟦(1 : ℤ)⟧' = e.hom ≫ d') (q : ℤ)
     (x : Z ⟶ A⟦q⟧) :
-    (x ≫ e.inv⟦q⟧') ≫ d⟦q⟧' ≫
-        (shiftFunctorAdd' C 1 q (q + 1) (by omega)).inv.app Y =
-    (x ≫ d'⟦q⟧' ≫
-        (shiftFunctorAdd' C 1 q (q + 1) (by omega)).inv.app B) ≫
-      f.inv⟦q + 1⟧' := by
+    ShiftedHom.comp (x ≫ e.inv⟦q⟧') d (by omega) =
+      ShiftedHom.comp x d' (by omega) ≫ f.inv⟦q + 1⟧' := by
+  dsimp only [ShiftedHom.comp]
   have h : e.inv ≫ d ≫ f.hom⟦(1 : ℤ)⟧' = d' := by
     rw [hd, Iso.inv_hom_id_assoc]
   have h' := congrArg (fun a => (shiftFunctor C q).map a) h
@@ -335,7 +230,5 @@ theorem triangle_boundary_transport
   simpa only [Category.assoc] using congrArg (fun t => x ≫ t ≫
     (shiftFunctorAdd' C 1 q (q + 1) (by omega)).inv.app B) h'
 
-
-end CategoryTheory
-
+end CategoryTheory.ShiftedHom
 end

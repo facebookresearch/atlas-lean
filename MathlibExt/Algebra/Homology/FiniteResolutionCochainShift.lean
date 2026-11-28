@@ -103,7 +103,7 @@ theorem cochainExtension_isZero_below (Q : FiniteResolution i X) (j : ℤ)
 additive functor. Let Q be a finite resolution of X∈A by a nonnegative complex in P, with
 augmentation i(Q) → X[0] and inclusive support bound b=Q.bound. The cochain extension is zero in
 every degree j>0, so its inclusive upper support bound is zero. -/
-theorem cochainExtension_isStrictlyLE (Q : FiniteResolution i X) :
+instance cochainExtension_isStrictlyLE (Q : FiniteResolution i X) :
     CochainComplex.IsStrictlyLE Q.cochainExtension 0 := by
   unfold cochainExtension
   infer_instance
@@ -112,7 +112,7 @@ theorem cochainExtension_isStrictlyLE (Q : FiniteResolution i X) :
 additive functor. Let Q be a finite resolution of X∈A by a nonnegative complex in P, with
 augmentation i(Q) → X[0] and inclusive support bound b=Q.bound. The cochain extension is zero in
 every degree j<-b, so its inclusive lower support bound is -b. -/
-theorem cochainExtension_isStrictlyGE (Q : FiniteResolution i X) :
+instance cochainExtension_isStrictlyGE (Q : FiniteResolution i X) :
     CochainComplex.IsStrictlyGE Q.cochainExtension (-(Q.bound : ℤ)) := by
   rw [CochainComplex.isStrictlyGE_iff]
   intro j hj
@@ -122,18 +122,18 @@ theorem cochainExtension_isStrictlyGE (Q : FiniteResolution i X) :
 additive functor. Let Q be a finite resolution of X∈A by a nonnegative complex in P, with
 augmentation i(Q) → X[0] and inclusive support bound b=Q.bound. For every d ∈ ℤ, the shifted
 cochain resolution vanishes in degrees j>d; its inclusive upper support endpoint is d. -/
-theorem cochainShift_isStrictlyLE (Q : FiniteResolution i X) (d : ℤ) :
+instance cochainShift_isStrictlyLE (Q : FiniteResolution i X) (d : ℤ) :
     CochainComplex.IsStrictlyLE (Q.cochainShift d) d := by
-  letI := Q.cochainExtension_isStrictlyLE
+  have := Q.cochainExtension_isStrictlyLE
   exact CochainComplex.isStrictlyLE_shift Q.cochainExtension 0 (-d) d (by omega)
 
 /-- Let P be a preadditive category with a zero object, A an abelian category and i : P → A an
 additive functor. Let Q be a finite resolution of X∈A by a nonnegative complex in P, with
 augmentation i(Q) → X[0] and inclusive support bound b=Q.bound. For d ∈ ℤ, the shifted cochain
 resolution vanishes in degrees j<d-b; its inclusive lower support endpoint is d-b. -/
-theorem cochainShift_isStrictlyGE (Q : FiniteResolution i X) (d : ℤ) :
+instance cochainShift_isStrictlyGE (Q : FiniteResolution i X) (d : ℤ) :
     CochainComplex.IsStrictlyGE (Q.cochainShift d) (d - (Q.bound : ℤ)) := by
-  letI := Q.cochainExtension_isStrictlyGE
+  have := Q.cochainExtension_isStrictlyGE
   exact CochainComplex.isStrictlyGE_shift Q.cochainExtension (-(Q.bound : ℤ))
     (-d) (d - (Q.bound : ℤ)) (by omega)
 
@@ -143,7 +143,7 @@ augmentation i(Q) → X[0] and inclusive support bound b=Q.bound. For d,j ∈ �
 degree-j shifted term is a zero object. -/
 theorem cochainShift_isZero_above (Q : FiniteResolution i X) (d j : ℤ) (hj : d < j) :
     IsZero ((Q.cochainShift d).X j) := by
-  letI := Q.cochainShift_isStrictlyLE d
+  have := Q.cochainShift_isStrictlyLE d
   exact CochainComplex.isZero_of_isStrictlyLE (Q.cochainShift d) d j hj
 
 /-- Let P be a preadditive category with a zero object, A an abelian category and i : P → A an
@@ -152,7 +152,7 @@ augmentation i(Q) → X[0] and inclusive support bound b=Q.bound. For d,j ∈ �
 degree-j shifted term is a zero object. -/
 theorem cochainShift_isZero_below (Q : FiniteResolution i X) (d j : ℤ)
     (hj : j < d - (Q.bound : ℤ)) : IsZero ((Q.cochainShift d).X j) := by
-  letI := Q.cochainShift_isStrictlyGE d
+  have := Q.cochainShift_isStrictlyGE d
   exact CochainComplex.isZero_of_isStrictlyGE (Q.cochainShift d)
     (d - (Q.bound : ℤ)) j hj
 
@@ -172,7 +172,7 @@ additive functor. Let Q be a finite resolution of X∈A by a nonnegative complex
 augmentation i(Q) → X[0] and inclusive support bound b=Q.bound. The augmentation
 i(Q.cochainExtension) → X[0] is a quasi-isomorphism, as is the original finite-resolution
 augmentation. -/
-theorem cochainExtensionAugmentation_quasiIso (Q : FiniteResolution i X) :
+instance cochainExtensionAugmentation_quasiIso (Q : FiniteResolution i X) :
     QuasiIso Q.cochainExtensionAugmentation := by
   let K0 : CochainComplex A ℤ := (i.mapHomologicalComplex (.up ℤ)).obj Q.cochainExtension
   let K1 : CochainComplex A ℤ := Q.mappedComplex.extend ComplexShape.embeddingDownNat
@@ -185,10 +185,10 @@ theorem cochainExtensionAugmentation_quasiIso (Q : FiniteResolution i X) :
   let f1 : K1 ⟶ K2 := HomologicalComplex.extendMap Q.augmentation ComplexShape.embeddingDownNat
   let f2 : K2 ⟶ K3 :=
     (HomologicalComplex.extendSingleIso ComplexShape.embeddingDownNat X 0 0 (by simp)).hom
-  letI : IsIso f0 := by
+  have : IsIso f0 := by
     change IsIso e0.inv
     infer_instance
-  letI : IsIso f2 := by
+  have : IsIso f2 := by
     dsimp only [f2]
     infer_instance
   have h0 : QuasiIso f0 := _root_.quasiIso_of_isIso f0
@@ -218,7 +218,7 @@ additive functor. Let Q be a finite resolution of X∈A by a nonnegative complex
 augmentation i(Q) → X[0] and inclusive support bound b=Q.bound. For every integer d, the shifted
 augmentation i(Q.cochainShift d) → the complex concentrated on X in degree d is a
 quasi-isomorphism. -/
-theorem cochainShiftAugmentation_quasiIso (Q : FiniteResolution i X) (d : ℤ) :
+instance cochainShiftAugmentation_quasiIso (Q : FiniteResolution i X) (d : ℤ) :
     QuasiIso (Q.cochainShiftAugmentation d) := by
   let K0 : CochainComplex A ℤ := (i.mapHomologicalComplex (.up ℤ)).obj (Q.cochainShift d)
   let K1 : CochainComplex A ℤ :=
@@ -230,10 +230,10 @@ theorem cochainShiftAugmentation_quasiIso (Q : FiniteResolution i X) (d : ℤ) :
   let f1 : K1 ⟶ K2 := Q.cochainExtensionAugmentation⟦-d⟧'
   let f2 : K2 ⟶ K3 :=
     ((CochainComplex.singleFunctors A).shiftIso (-d) d 0 (neg_add_cancel d)).hom.app X
-  letI : IsIso f0 := by
+  have : IsIso f0 := by
     change IsIso e0.hom
     infer_instance
-  letI : IsIso f2 := by
+  have : IsIso f2 := by
     dsimp only [f2]
     infer_instance
   have h0 : QuasiIso f0 := _root_.quasiIso_of_isIso f0

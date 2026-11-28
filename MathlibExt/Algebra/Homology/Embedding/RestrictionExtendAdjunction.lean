@@ -143,10 +143,6 @@ theorem πStupidTrunc_f_zero (q : J) (h : ∀ p, e.f p ≠ q) :
     (K.πStupidTrunc e).f q = 0 :=
   (K.isZero_stupidTrunc_X e q h).eq_of_tgt _ _
 
-instance πStupidTrunc_f_epi (q : J) : Epi ((K.πStupidTrunc e).f q) := inferInstance
-
-instance πStupidTrunc_epi : Epi (K.πStupidTrunc e) := inferInstance
-
 variable {K}
 
 /--
