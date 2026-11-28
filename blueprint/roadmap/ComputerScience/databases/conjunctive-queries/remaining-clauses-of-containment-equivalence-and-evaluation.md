@@ -14,7 +14,7 @@ $q'$ on the tableau of $q$; hardness is by reduction from exact cover.
 
 ## Proof depends on
 
-- [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/not-yet-classified/part-01/part-10/conjunctive-query-containment/conjunctive-query-containment-np-complet.md)
+- [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/np-completeness/databases-and-concurrency/databases-and-concurrency/conjunctive-query-containment-np-complet.md)
 - [Homomorphism theorem for conjunctive queries with constants](cores-and-minimization/homomorphism-theorem-for-conjunctive-queries-with-constants.md)
 - [EXACT COVER is NP-complete](../../../TheoryOfComputation/np-completeness/set-systems-and-location/exact-cover/exact-cover-np-complete.md)
 
