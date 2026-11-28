@@ -8,7 +8,7 @@ The first-order theory of the class of free lattices, that of the finitely gener
 2. the first-order theory of the class of finitely generated free lattices is undecidable;
 3. for every cardinal $\kappa \geq 3$, the first-order theory $\mathrm{Th}(\mathbf{F}_\kappa)$ is undecidable.
 
-The decidability of the universal theory of infinite free lattices is proved in the second paper of the series, J. B. Nation and G. Paolini, "Elementary properties of free lattices II: Decidability of the universal theory", which the source cites in its abstract and Section 1. For $\kappa = 1, 2$ the free lattice is finite (one or four elements), so its theory is decidable; $\mathbf{F}_3$ is the first infinite free lattice. This remark is not in the source; it is in Nation's lecture notes (Chapter 6: $\mathrm{FL}(2)$ has four elements and $\mathrm{FL}(n)$ is infinite for $n \ge 3$).
+The decidability of the universal theory of infinite free lattices is proved in the second paper of the series, J. B. Nation and G. Paolini, "Elementary properties of free lattices II: Decidability of the universal theory", *Selecta Mathematica* 32(2), Paper No. 41, 2026, doi:10.1007/s00029-026-01147-9, which the source cites, as a preprint, in its abstract and Section 1. For $\kappa = 1, 2$ the free lattice is finite (one or four elements), so its theory is decidable; $\mathbf{F}_3$ is the first infinite free lattice. This remark is not in the source; it is in Nation's lecture notes (Chapter 6: $\mathrm{FL}(2)$ has four elements and $\mathrm{FL}(n)$ is infinite for $n \ge 3$).
 
 ## Depends on
 

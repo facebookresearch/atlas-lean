@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-Lavrov's paper (by its title, as the source's bibliography gives it) shows that the sets of sentences true in all graphs and of sentences refuted in some finite graph are effectively inseparable, which yields the hereditary undecidability. The copy read cites the result without proof; a good expansion links the reduction from the halting problem or from Trakhtenbrot's theorem, neither of which is given in the copy read.
+Lavrov's paper shows, for certain elementary theories (by its title, as the source's bibliography gives it), that the sets of sentences true in all models and of sentences refuted in some finite model are effectively inseparable; that graphs are among these theories is the source's citation of Lavrov for $\mathcal G_{\mathrm{fin}}$ (Section 1). For graphs this yields the hereditary undecidability. The copy read cites the result without proof; a good expansion links the reduction from the halting problem or from Trakhtenbrot's theorem, neither of which is given in the copy read.
 
 ## Sources
 

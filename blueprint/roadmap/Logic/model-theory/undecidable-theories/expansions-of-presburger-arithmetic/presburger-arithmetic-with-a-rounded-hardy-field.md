@@ -2,7 +2,7 @@
 
 Adding to the integers with order and addition the nearest-integer rounding of a Hardy field function that grows polynomially but is not asymptotically linear or slower than every positive power gives an undecidable theory.
 
-**Theorem (Brown and Konieczny).** Call two continuous real functions equivalent if they agree on some interval $[x_0, \infty)$; the equivalence classes (germs) form a ring, a *Hardy field* is a subfield of this ring closed under differentiation, and a *Hardy field function* is a function whose germ lies in some Hardy field, extended by $0$ outside its domain $[x_0, \infty)$. For real $x$ let $\lfloor x\rceil$ be the integer with $\lfloor x\rceil - 1/2 \le x < \lfloor x\rceil + 1/2$ (rounding half up, the convention of Section 1.1 of the source, which the theorems use; Section 1.4 of the source briefly writes $\lfloor x\rceil = \lceil x - 1/2\rceil$), and $\lfloor f\rceil(n) = \lfloor f(n)\rceil$. Let $f$ be a Hardy field function. Then the first-order theory $\mathrm{Th}(\mathbb Z; <, +, \lfloor f\rceil)$ is undecidable in each of the following cases:
+**Theorem (Brown and Konieczny).** Call two continuous real functions equivalent if they agree on some interval $[x_0, \infty)$; the equivalence classes (germs) form a ring, a *Hardy field* is a subfield of this ring closed under differentiation, and a *Hardy field function* is a function whose germ lies in some Hardy field, extended by $0$ outside its domain $[x_0, \infty)$. For a real function $f$ let $\lfloor f\rceil(n) = \lceil f(n) - 1/2\rceil$, the nearest integer to $f(n)$, rounding half down, as the source defines the function of its theorems (Sections 1.2 and 1.5 of arXiv:2508.19206v1; Sections 1.1 and 1.4 of the STACS version). Let $f$ be a Hardy field function. Then the first-order theory $\mathrm{Th}(\mathbb Z; <, +, \lfloor f\rceil)$ is undecidable in each of the following cases:
 
 1. $\lim_{x \to \infty} f(x)/x = \infty$ and $\lim_{x \to \infty} f(x)/x^d = 0$ for some integer $d \ge 2$ (Theorem A of the source);
 2. $\lim_{x \to \infty} f(x)/x^{\varepsilon} = \infty$ for some $\varepsilon > 0$ and $\lim_{x \to \infty} f(x)/x = 0$ (Theorem B).
@@ -13,11 +13,12 @@ Hardy field functions include all logarithmico-exponential functions. Presburger
 
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Subfield](../../../../Algebra/rings-and-fields/subfield.md)
+- [Continuous map between topological spaces](../../../../Topology/topological-spaces/continuous-map.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [Tarski's undefinability theorem](../../../proof-theory/g-del-s-incompleteness-theorems/tarski-s-undefinability-theorem.md)
+- [The first-order theory of the ring of integers is undecidable](../../../proof-theory/g-del-s-incompleteness-theorems/first-order-theory-of-the-integers-is-undecidable.md)
 
 ## Expansion
 

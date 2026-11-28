@@ -18,6 +18,7 @@ When $k$ is algebraically closed, every local wild $k$-algebra and every wild $k
 
 - [Field](../../../Algebra/rings-and-fields/field.md)
 - [Finite-dimensional vector space](../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/dimension/finite-dimensional.md)
+- [Linear map](../../../Algebra/modules/linear-map.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Module over a semiring](../../../Algebra/modules/module.md)
 

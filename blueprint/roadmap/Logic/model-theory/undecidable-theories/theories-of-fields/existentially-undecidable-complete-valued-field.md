@@ -16,6 +16,7 @@ This answers a question of Anscombe and Fehm on existentially undecidable hensel
 
 - [Field](../../../../Algebra/rings-and-fields/field.md)
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
+- [Polynomials in one variable over a semiring](../../../../Algebra/polynomials/univariate-polynomial-arithmetic/polynomial-ring.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
