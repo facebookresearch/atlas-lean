@@ -24,7 +24,8 @@ example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E]
     circleIntegral.integral_smul_const,
     circleIntegral.integral_sub_inv_of_mem_ball (mem_ball_self one_pos), smul_smul,
     inv_mul_cancel₀ two_pi_I_ne_zero, one_smul]
-  exact ((differentiableOn_id.sub_const a).fun_inv fun z hz => sub_ne_zero.2 hz.2).smul_const v
+  exact ((differentiableOn_id.sub_const a).fun_inv fun z (hz : z ∈ univ \ {a}) =>
+    sub_ne_zero.2 hz.2).smul_const v
 
 -- The closed-disc reading of "circle contained in `Ω`" matters: `(z - 2)⁻¹` is holomorphic on
 -- `Ω = ℂ \ {2}` and the circle `|z| = 3` lies in `Ω`, but the normalized integral over it is `1`,

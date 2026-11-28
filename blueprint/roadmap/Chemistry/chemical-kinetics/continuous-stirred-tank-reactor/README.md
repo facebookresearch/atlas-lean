@@ -5,6 +5,7 @@ concentration $c_{\mathrm{in}}$, and its perfectly mixed contents react with fir
 constant $k \ge 0$, so that the concentration solves $V c' = Q (c_{\mathrm{in}} - c) - k V c$. The
 explicit solution relaxes exponentially to the steady concentration $Q c_{\mathrm{in}} / (Q + kV)$.
 
+- [The reactor equation's right-hand side vanishes at the steady state](cstr-steady-state.md)
 - [Steady concentration of a continuous stirred-tank reactor](steady.md)
 - [Concentration in a continuous stirred-tank reactor](solution.md)
 - [The reactor concentration in explicit form](solution-eq.md)
@@ -15,3 +16,5 @@ explicit solution relaxes exponentially to the steady concentration $Q c_{\mathr
 - [The reactor concentration solves the reactor equation](solution-has-deriv-at.md)
 - [A reactor without flow is a batch decay](solution-zero-flow.md)
 - [A reactor without flow or reaction keeps its concentration](solution-zero-flow-zero-rate.md)
+- [Exact linearization remainder for a second-order stirred tank](linearization-remainder-of-a-second-order-reactor.md)
+- [Uniqueness for the CSTR initial value problem](eq-solution-of-has-deriv-at.md)

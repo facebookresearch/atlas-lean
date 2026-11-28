@@ -19,7 +19,7 @@ whether there is a side-effect-free deletion is NP-hard for the project-join que
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Databases.RelationalAlgebra
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

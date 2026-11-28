@@ -48,7 +48,7 @@ open MvPolynomial
 
 /-- The three relations `xy - p`, `y ^ n` and `x ^ b - x ^ a` in
 `ℤ[x, y]`, with the two variables indexed by `Bool`. -/
-public def truncatedDieudonneRelations (p n a b : ℕ) :
+public noncomputable def truncatedDieudonneRelations (p n a b : ℕ) :
     Set (MvPolynomial Bool ℤ) :=
   {X true * X false - C (p : ℤ), X false ^ n, X true ^ b - X true ^ a}
 

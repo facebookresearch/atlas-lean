@@ -19,6 +19,24 @@ namespace MathlibExtTest.PolynomialCubes
 
 open Polynomial MathlibExt.NumberTheory.PolynomialCubesWanted
 
+-- At p = q = 0 the four cubes cancel, with every witness distinct from every constant.
+example : ∃ f g h k : ℤ[X], (∀ c : ℤ, f ≠ C c ∧ g ≠ C c ∧ h ≠ C c ∧ k ≠ C c) ∧
+    f ^ 3 + g ^ 3 + h ^ 3 + k ^ 3 = 0 := by
+  obtain ⟨f, g, h, k, hf, hg, hh, hk, hsum⟩ :=
+    int_sum_four_polynomial_cubes_of_cube_form 0 0 0 (Or.inl (by decide))
+  refine ⟨f, g, h, k, ?_, by simpa using hsum⟩
+  intro c
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> rintro rfl <;> simp_all
+
+-- With p = 0, two slopes in (2.2) vanish. Four nonconstant witnesses still give the
+-- required sum at every integer input.
+example (q : ℤ) : ∃ f g h k : ℤ[X],
+    1 ≤ f.natDegree ∧ 1 ≤ g.natDegree ∧ 1 ≤ h.natDegree ∧ 1 ≤ k.natDegree ∧
+      ∀ t : ℤ, f.eval t ^ 3 + g.eval t ^ 3 + h.eval t ^ 3 + k.eval t ^ 3 = -2 * q ^ 6 := by
+  obtain ⟨f, g, h, k, hf, hg, hh, hk, hsum⟩ :=
+    int_sum_four_polynomial_cubes_of_cube_form (-2 * q ^ 6) 0 q (Or.inr (by simp))
+  exact ⟨f, g, h, k, hf, hg, hh, hk, fun t ↦ by simpa using congrArg (eval t) hsum⟩
+
 -- Test section: specialization. Evaluating the identity at any integer `t` writes `N` as a sum of
 -- five cubes of integers, so every integer is a sum of five integer cubes.
 example (N t : ℤ) : ∃ a b c d e : ℤ, a ^ 3 + b ^ 3 + c ^ 3 + d ^ 3 + e ^ 3 = N := by

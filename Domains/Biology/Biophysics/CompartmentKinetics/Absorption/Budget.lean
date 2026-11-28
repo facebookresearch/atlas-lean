@@ -38,16 +38,15 @@ theorem hasDerivAt_totalAmount {F D ka k s : ℝ} (h : ka ≠ k) :
   convert htot using 1
   ring
 
-/-- **Budget derivative.** The total amount derivative is the
-absorption loss `-(1 - F) * ka * Ag` plus central elimination
-`-k * Ac`. -/
+/-- **Budget derivative.** At distinct rates `ka ≠ k`, the total amount derivative is the absorption
+loss `-(1 - F) * ka * Ag` plus central elimination `-k * Ac`. -/
 theorem budget_deriv {F D ka k t : ℝ} (h : ka ≠ k) :
     deriv (fun t => depotAmount D ka t + centralAmount F D ka k t) t =
       -(1 - F) * ka * depotAmount D ka t - k * centralAmount F D ka k t :=
   (hasDerivAt_totalAmount h).deriv
 
-/-- **Integrated budget.** The finite-interval change in total
-amount equals the integral of the two loss terms. -/
+/-- **Integrated budget.** At distinct rates `ka ≠ k`, the change in total amount over `[0, t]`
+equals the integral of the two loss terms (an oriented integral for `t < 0`). -/
 theorem budget_integral {F D ka k t : ℝ} (h : ka ≠ k) :
     (∫ s in (0:ℝ)..t, (-(1 - F) * ka * depotAmount D ka s -
       k * centralAmount F D ka k s)) =

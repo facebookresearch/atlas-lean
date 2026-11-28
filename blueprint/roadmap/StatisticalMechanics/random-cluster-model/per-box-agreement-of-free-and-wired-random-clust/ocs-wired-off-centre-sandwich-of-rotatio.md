@@ -1,3 +1,12 @@
 # Wired off-centre sandwich from wired rotation residues
 
 Let $d \ge 1$ and $N \in \mathbb{N}$, and suppose the [wired rotation residue](ocs-wired-rotation-residue.md) holds for every edge $e'$ of $\Lambda_N$ and every $t$: every edge $e$ of every box $\Lambda_m$ satisfies $\theta^1_e(\sigma(t)) = \theta^1_{e'}(\sigma(t))$. Then for every edge $e'$ of $\Lambda_N$ and every $t \in \mathbb{R}$, there are sets $I_n$ of edges of $\Lambda_n$ and numbers $\delta_n \ge 0$ with $\delta_n \to 0$ such that every $e \in I_n$ satisfies $\theta^1_e(\sigma(t)) = \theta^1_{e'}(\sigma(t))$ and $\phi^w_n(e \text{ open}) \le \theta^1_{e'}(\sigma(t)) + \delta_n$, and $(E(n) - |I_n|)/E(n) \to 0$ (read as $0$ when $E(n) = 0$). Here $\theta^1_e(p)$ is the [wired edge density](wired-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the wired infinite-volume random-cluster measure on $\mathbb{Z}^d$), $\phi^w_n$ is the [wired random-cluster probability](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md) of $\Lambda_n = \{-n, \dots, n\}^d$ with boundary $\partial\Lambda_n = \Lambda_n \setminus \Lambda_{n-1}$ at $(\sigma(t), 2)$, $E(n)$ is the number of edges of $\Lambda_n = \{-n, \dots, n\}^d$, and $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md).
+
+## Depends on
+
+- [Wired off-centre sandwich hypothesis](../translation-invariance-and-ergodicity-of-the-q-2/bdp-wired-off-centre-sandwich.md)
+- [Wired rotation residue for a box pair](ocs-wired-rotation-residue.md)
+- [Wired infinite-volume edge density](wired-edge-density.md)
+- [Logistic function $e^t/(1+e^t)$](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md)
+- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
+- [Wired random-cluster probability of a configuration](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md)

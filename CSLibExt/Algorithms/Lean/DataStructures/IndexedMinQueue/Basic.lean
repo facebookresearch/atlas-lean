@@ -348,7 +348,7 @@ private lemma siftUpTracked_data {W : Type u} [LinearOrder W] {n : Nat}
     (position : Vector (Option (Fin n)) n) (hcap : a.size ≤ n) (i : Nat) :
     (siftUpTracked a position hcap i).data = siftUp a i := by
   induction i using Nat.strong_induction_on generalizing a position with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUpTracked, siftUp]
     by_cases hi : i < a.size
     · simp only [dite_eq_left hi]
@@ -365,7 +365,7 @@ private lemma siftDownTracked_data {W : Type u} [LinearOrder W] {n : Nat}
     (position : Vector (Option (Fin n)) n) (hcap : a.size ≤ n) (i : Nat) :
     (siftDownTracked a position hcap i).data = siftDown a i := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a position i with
-  | h m ih =>
+  | ind m ih =>
     rw [siftDownTracked]
     split
     · rename_i hnone
@@ -399,7 +399,7 @@ private lemma siftUpTracked_inverse {W : Type u} [LinearOrder W] {n : Nat}
     Inverse (siftUpTracked a position hcap i).data
       (siftUpTracked a position hcap i).position := by
   induction i using Nat.strong_induction_on generalizing a position with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUpTracked]
     split
     · rename_i hi
@@ -422,7 +422,7 @@ private lemma siftDownTracked_inverse {W : Type u} [LinearOrder W] {n : Nat}
     Inverse (siftDownTracked a position hcap i).data
       (siftDownTracked a position hcap i).position := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a position i with
-  | h m ih =>
+  | ind m ih =>
     rw [siftDownTracked]
     split
     · exact hinv

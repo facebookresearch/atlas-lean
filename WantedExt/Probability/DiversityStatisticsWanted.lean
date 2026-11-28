@@ -38,87 +38,15 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.RingTheory.Polynomial.Basic
 public import Mathlib.Topology.Basic
+public import MathlibExt.Probability.DiversityStatistics
+public import MathlibExt.Probability.GiniSimpsonAsymptotics
+public import MathlibExt.Probability.GiniSimpsonTriangular
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Probability.DiversityStatisticsWanted
-
-/-- **Number of values of the Gini–Simpson index.** For a natural number $N$, $\gamma(N)$ is the
-number of distinct values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$
-of natural numbers with $a_1 + \dots + a_k = N$.
-
-For $N \ge 1$, the Gini–Simpson index of a sample of size $N$ with type counts $a_1, \dots, a_k$ is
-$1 - \sum_i (a_i / N)^2$, so $\gamma(N)$ is the number of possible values of the Gini–Simpson index
-across all samples of size $N$. -/
-noncomputable def giniSimpsonCount (N : ℕ) : ℕ :=
-  Set.ncard {s : ℕ | ∃ l : List ℕ, l.sum = N ∧
-    (l.map (fun a => a ^ 2)).sum = s}
-
-/-- **Number of values of the Shannon index.** For a natural number $N$, $\sigma(N)$ is the number
-of distinct real numbers $-\sum_{i=1}^{k} (a_i / N) \log (a_i / N)$ over all finite sequences $(a_1,
-\dots, a_k)$ of natural numbers with $a_1 + \dots + a_k = N$, where a term with $a_i = 0$ counts as
-$0$ (the convention $0 \log 0 = 0$).
-
-For $N \ge 1$, this is the number of possible values of the Shannon index across all samples of size
-$N$. -/
-noncomputable def shannonCount (N : ℕ) : ℕ :=
-  Set.ncard {v : ℝ | ∃ l : List ℕ, l.sum = N ∧
-    v = -(l.map (fun a => ((a : ℝ) / N) * Real.log ((a : ℝ) / N))).sum}
-
-/-- **Upper bound on the number of Gini–Simpson values.** Let $\gamma(N)$ be the number of distinct
-values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$ of natural numbers
-with $a_1 + \dots + a_k = N$ (for $N \ge 1$, the number of possible values of the Gini–Simpson index
-across samples of size $N$). Then for every natural number $N$,
-$$\gamma(N) \le \tfrac{1}{2} N^2 - \tfrac{1}{2} N + 1.$$
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics",
-Proposition 4. -/
-theorem_wanted giniSimpsonCount_le (N : ℕ) :
-    (giniSimpsonCount N : ℚ) ≤ (1 / 2) * N ^ 2 - (1 / 2) * N + 1
-
-/-- **Triangular-number lower bound on the number of Gini–Simpson values.** Let $\gamma(N)$ be the
-number of distinct values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$
-of natural numbers with $a_1 + \dots + a_k = N$ (for $N \ge 1$, the number of possible values of the
-Gini–Simpson index across samples of size $N$). Let $m$ and $r$ be natural numbers with $r \le m$,
-and let $N = \binom{m+1}{2} + r$. Then
-$$\tfrac{1}{3} m (m^2 + 3r - 1) + 1 \le \gamma(N).$$
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics",
-Proposition 5. -/
-theorem_wanted giniSimpsonCount_ge_triangular (N m r : ℕ)
-    (hN : N = (m + 1) * m / 2 + r) (hr : r ≤ m) :
-    (1 / 3) * (m : ℚ) * ((m : ℚ) ^ 2 + 3 * r - 1) + 1 ≤
-      (giniSimpsonCount N : ℚ)
-
-/-- **Quadratic lower bound on the number of Gini–Simpson values.** Let $\gamma(N)$ be the number of
-distinct values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$ of natural
-numbers with $a_1 + \dots + a_k = N$ (for $N \ge 1$, the number of possible values of the
-Gini–Simpson index across samples of size $N$). Then for every natural number $N$,
-$$\tfrac{1}{2} \left( \lfloor N^2 / 5 \rfloor - N \right) \le \gamma(N).$$
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics",
-Proposition 6. -/
-theorem_wanted giniSimpsonCount_ge (N : ℕ) :
-    (((N ^ 2 / 5 : ℕ) : ℚ) - N) / 2 ≤ (giniSimpsonCount N : ℚ)
-
-/-- **Asymptotics of the number of Gini–Simpson values.** Let $\gamma(N)$ be the number of distinct
-values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$ of natural numbers
-with $a_1 + \dots + a_k = N$ (for $N \ge 1$, the number of possible values of the Gini–Simpson index
-across samples of size $N$). Then $\gamma(N) / N^2 \to 1/2$ as $N \to \infty$, that is, $\gamma(N)
-\sim \tfrac{1}{2} N^2$.
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics",
-Proposition 7. -/
-theorem_wanted giniSimpsonCount_asymp :
-    Filter.Tendsto
-      (fun N : ℕ => (giniSimpsonCount N : ℝ) / (N : ℝ) ^ 2)
-      Filter.atTop (nhds (1 / 2))
 
 /-- **Upper bound on the number of Shannon values.** Let $\sigma(N)$ be the number of distinct real
 numbers $-\sum_{i=1}^{k} (a_i / N) \log (a_i / N)$ over all finite sequences $(a_1, \dots, a_k)$ of
@@ -149,87 +77,6 @@ theorem_wanted shannonCount_superpolynomial
     Filter.Tendsto
       (fun N : ℕ => (shannonCount N : ℝ) / |q.eval (N : ℝ)|)
       Filter.atTop Filter.atTop
-
-/-- `M_min(J) = (1 + √((⌈J⁻¹⌉ J - 1) / (⌈J⁻¹⌉ - 1))) / ⌈J⁻¹⌉`,
-the lower bound for the maximal cell probability given
-`J = ∑ p_i^2`.
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics", Journal of
-Integer Sequences 29 (2026), Article 26.1.5, Eq. (1) (`M_min`). -/
-noncomputable def diversityMmin (J : ℝ) : ℝ :=
-  (1 + Real.sqrt (((⌈J⁻¹⌉ : ℝ) * J - 1) / ((⌈J⁻¹⌉ : ℝ) - 1))) / (⌈J⁻¹⌉ : ℝ)
-
-/-- `M_max(J) = (1 + √((I J - 1)(I - 1))) / I`, the upper
-bound for the maximal cell probability given `J = ∑ p_i^2`
-over `I` cells.
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics", Journal of
-Integer Sequences 29 (2026), Article 26.1.5, Eq. (2) (`M_max`). -/
-noncomputable def diversityMmax (I : ℕ) (J : ℝ) : ℝ :=
-  (1 + Real.sqrt (((I : ℝ) * J - 1) * ((I : ℝ) - 1))) / I
-
-/-- `S_min(M) = ⌊M⁻¹⌋ M log(1/M) + (1 - ⌊M⁻¹⌋ M) log(1 / (1 - ⌊M⁻¹⌋ M))`,
-the lower bound for the Shannon index given the maximal
-cell probability `M`.
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics", Journal of
-Integer Sequences 29 (2026), Article 26.1.5, Eq. (3) (`S_min`), with the argument of the second
-logarithm `1 / (1 - ⌊M⁻¹⌋ M)` as in Proposition 2 (Eq. (3)
-misplaces a floor bracket). -/
-noncomputable def diversitySmin (M : ℝ) : ℝ :=
-  (⌊M⁻¹⌋ : ℝ) * M * Real.log (1 / M) +
-    (1 - (⌊M⁻¹⌋ : ℝ) * M) * Real.log (1 / (1 - (⌊M⁻¹⌋ : ℝ) * M))
-
-/-- `S_max(M) = M log(1/M) + (1 - M) log((I - 1) / (1 - M))`,
-the upper bound for the Shannon index given the maximal
-cell probability `M` over `I` cells.
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics", Journal of
-Integer Sequences 29 (2026), Article 26.1.5, Eq. (4) (`S_max`). -/
-noncomputable def diversitySmax (I : ℕ) (M : ℝ) : ℝ :=
-  M * Real.log (1 / M) + (1 - M) * Real.log (((I : ℝ) - 1) / (1 - M))
-
-/-- Characteristic value: `M_min(1) = 1`.
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics", Journal of
-Integer Sequences 29 (2026), Article 26.1.5, Eq. (1). -/
-theorem diversityMmin_one : diversityMmin 1 = 1 := by
-  simp [diversityMmin]
-
-/-- Characteristic value: `M_max(1) = 1` for `I ≥ 1` cells.
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics", Journal of
-Integer Sequences 29 (2026), Article 26.1.5, Eq. (2). -/
-theorem diversityMmax_one {I : ℕ} (hI : 1 ≤ I) : diversityMmax I 1 = 1 := by
-  have hI' : (1 : ℝ) ≤ I := by exact_mod_cast hI
-  have h : Real.sqrt (((I : ℝ) * 1 - 1) * ((I : ℝ) - 1)) = (I : ℝ) - 1 := by
-    rw [mul_one]
-    exact Real.sqrt_mul_self (by linarith)
-  rw [diversityMmax, h]
-  field_simp
-  ring
-
-/-- Characteristic value: `S_min(1) = 0`.
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics", Journal of
-Integer Sequences 29 (2026), Article 26.1.5, Eq. (3). -/
-theorem diversitySmin_one : diversitySmin 1 = 0 := by
-  simp [diversitySmin]
-
-/-- Characteristic value: `S_max(1) = 0`.
-
-Source: Bradley K. Moon and Noah A. Rosenberg,
-"Integer Sequences for Diversity Statistics", Journal of
-Integer Sequences 29 (2026), Article 26.1.5, Eq. (4). -/
-theorem diversitySmax_one (I : ℕ) : diversitySmax I 1 = 0 := by
-  simp [diversitySmax]
 
 /-- **Proposition 1** (quoted from Rosenberg, Thm. 2.7): for a
 probability vector `p` on `I ≥ 2` cells with at least two

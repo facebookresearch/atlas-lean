@@ -9,73 +9,24 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.GobelSequence
+public import MathlibExt.NumberTheory.GobelSequenceError
+public import MathlibExt.NumberTheory.GobelSequenceRootLimit
+public import MathlibExt.NumberTheory.GobelSequenceRoots
+public import MathlibExt.NumberTheory.GobelSequenceSomosBound
+public import MathlibExt.NumberTheory.SomosLikeRoots
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
+public import MathlibExt.NumberTheory.GobelSequenceGobelSequenceErrorEqTsumLe
 
 namespace MetaMathlibExt
 
 open Filter Topology Asymptotics
 
 @[expose] public section
-
-/-- **The (k, l)-Göbel sequence.** For natural numbers $k$ and $l$, the $(k, l)$-Göbel sequence
-is the sequence of rational numbers $g_{k,l}(n)$, $n \ge 0$, given by $g_{k,l}(0) = 0$,
-$g_{k,l}(1) = l$ and, for $n \ge 1$,
-$$g_{k,l}(n + 1) = \frac{g_{k,l}(n) \bigl(n + g_{k,l}(n)^{k-1}\bigr)}{n + 1},$$
-where $k - 1$ is truncated subtraction, so the exponent is $0$ when $k = 0$.
-
-The paper indexes from $n = 1$ and takes $k, l \ge 2$ (Lemma 5 also admits $k, l \ge 1$); the
-value at $n = 0$ is a convention and plays no role.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Definition 1. -/
-public def gobelSequence (k l : ℕ) : ℕ → ℚ
-  | 0 => 0
-  | 1 => l
-  | n + 2 => gobelSequence k l (n + 1) * ((n + 1 : ℚ) + gobelSequence k l (n + 1) ^ (k - 1))
-      / (n + 2)
-
-/-- **Initial value of the $(k, l)$-Göbel sequence.** For all natural numbers $k$ and $l$, the
-$(k, l)$-Göbel sequence $g_{k,l}$ satisfies $g_{k,l}(1) = l$.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Definition 1. -/
-public theorem gobelSequence_one (k l : ℕ) : gobelSequence k l 1 = l := rfl
-
-/-- **Recursion for the (k, l)-Göbel sequence.** For all natural numbers $k$, $l$ and $n \ge 1$,
-the $(k, l)$-Göbel sequence $g_{k,l}$ satisfies, in $\mathbb{Q}$,
-$$(n + 1)\, g_{k,l}(n + 1) = g_{k,l}(n) \bigl(n + g_{k,l}(n)^{k-1}\bigr),$$
-where $k - 1$ is truncated subtraction, so the exponent is $0$ when $k = 0$.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Definition 1. -/
-public theorem gobelSequence_succ (k l n : ℕ) (hn : 1 ≤ n) :
-    (n + 1 : ℚ) * gobelSequence k l (n + 1)
-      = gobelSequence k l n * ((n : ℚ) + gobelSequence k l n ^ (k - 1)) := by
-  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
-  show (↑(m + 1) + 1 : ℚ) * (gobelSequence k l (m + 1) *
-      ((m + 1 : ℚ) + gobelSequence k l (m + 1) ^ (k - 1)) / (m + 2)) = _
-  have h : (m + 2 : ℚ) ≠ 0 := by positivity
-  push_cast
-  field_simp
-  ring
-
-/-- **Göbel's original sequence.** The $(2, 2)$-Göbel sequence $g_{2,2}$ satisfies
-$g_{2,2}(2) = 3$, $g_{2,2}(3) = 5$, $g_{2,2}(4) = 10$ and $g_{2,2}(5) = 28$.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Section 1. -/
-public theorem gobelSequence_two_two_small :
-    gobelSequence 2 2 2 = 3 ∧ gobelSequence 2 2 3 = 5 ∧ gobelSequence 2 2 4 = 10 ∧
-      gobelSequence 2 2 5 = 28 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> norm_num [gobelSequence]
 
 /-- **Integrality of the early terms of $(k, l)$-Göbel sequences.** Let $g_{k,l}$ denote the
 $(k, l)$-Göbel sequence. For all natural numbers $k, l \ge 2$ and $1 \le n \le 6$, the value
@@ -194,114 +145,6 @@ public theorem_wanted gobelSequence_seven_iff_padic_claims :
       (∀ k ∈ Finset.Icc 1 6, ∀ l ∈ Finset.Icc 1 7,
         (padicValRat 7 (gobelSequence k l 7) < 0 ↔ k = 2 ∧ l = 3)))
 
-/-- **Strict decrease of the normalized Göbel roots.** Let $k, l \ge 2$ be natural numbers, let
-$g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $C_{k,l}(n) = g_{k,l}(n)^{1/k^n}$, a real
-number. Then $C_{k,l}(n) > C_{k,l}(n + 1) > 1$ for every natural number $n \ge 1$.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Lemma 7 (`jis-2024-24.8.1-lem-7`). -/
-public theorem_wanted gobelSequence_root_strictAnti (k l n : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l)
-    (hn : 1 ≤ n) :
-    (gobelSequence k l (n + 1) : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ (n + 1))
-        < (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n) ∧
-      1 < (gobelSequence k l (n + 1) : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ (n + 1))
-
-/-- **Root asymptotics of Somos-type sequences.** Let $k \ge 2$ be a natural number, let
-$\sigma_k = \exp\bigl(\sum_{m \ge 1} \log m / k^m\bigr)$ be the $k$-Somos constant, and let
-$t : \mathbb{N} \to \mathbb{R}$ satisfy $t(n + 1) = t(n)^k / (n + 1)$ for all $n \ge 0$. If
-$t(0) > \sigma_k$, then the sequence $n \mapsto t(n)^{1/k^n}$ is nonincreasing and converges to
-some real number $c > 1$.
-
-The sequence is constant from $n = 0$ to $n = 1$, so the paper's "decreases monotonically" is
-read in the non-strict sense.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Lemma 8 (`jis-2024-24.8.1-lem-8`). -/
-public theorem_wanted somosLike_root_antitone_tendsto (k : ℕ) (hk : 2 ≤ k) (t : ℕ → ℝ)
-    (ht : ∀ n : ℕ, t (n + 1) = t n ^ k / (n + 1))
-    (h0 : Real.exp (∑' m : ℕ, Real.log m / (k : ℝ) ^ m) < t 0) :
-    ∃ c : ℝ, 1 < c ∧ Antitone (fun n : ℕ => t n ^ ((1 : ℝ) / (k : ℝ) ^ n)) ∧
-      Tendsto (fun n : ℕ => t n ^ ((1 : ℝ) / (k : ℝ) ^ n)) atTop (𝓝 c)
-
-/-- **Somos-type sequences lie below Göbel sequences.** Let $k, l \ge 2$ be natural numbers, let
-$g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $t : \mathbb{N} \to \mathbb{R}$ satisfy
-$t(n + 1) = t(n)^k / (n + 1)$ for all $n \ge 0$. If $t(0)^k \le l$, then $t(n) \le g_{k,l}(n)$
-for every $n \ge 1$.
-
-The paper also assumes $t(0) > 1$; the statement holds without it (for even $k$, $t(n) \ge 0$
-for $n \ge 1$; for odd $k$, $x \mapsto x^k$ is monotone), so that hypothesis is dropped.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Lemma 9 (`jis-2024-24.8.1-lem-9`). -/
-public theorem_wanted somosLike_le_gobelSequence (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l)
-    (t : ℕ → ℝ) (ht : ∀ n : ℕ, t (n + 1) = t n ^ k / (n + 1)) (h0 : t 0 ^ k ≤ l)
-    (n : ℕ) (hn : 1 ≤ n) :
-    t n ≤ gobelSequence k l n
-
-/-- **The normalized Göbel roots converge to a limit greater than 1.** Let $k, l \ge 2$ be natural
-numbers and let $g_{k,l}$ be the $(k, l)$-Göbel sequence. There is a real number $C > 1$ such
-that the real numbers $g_{k,l}(n)^{1/k^n}$ tend to $C$ as $n \to \infty$.
-
-The paper defines $C_{k,l}$ as this limit.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Proposition 10 (`jis-2024-24.8.1-prop-10`). -/
-public theorem_wanted gobelSequence_root_tendsto_gt_one (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) :
-    ∃ C : ℝ, 1 < C ∧
-      Tendsto (fun n : ℕ => (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n)) atTop (𝓝 C)
-
-/-- **The Göbel error term decays faster than every power of $n$.** Let $k, l \ge 2$ be natural
-numbers, let $g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $C$ be a real number such that the
-real numbers $C_{k,l}(n) = g_{k,l}(n)^{1/k^n}$ tend to $C$ as $n \to \infty$. Then for every real
-number $R > 0$, as $n \to \infty$,
-
-$$\exp\Bigl(\sum_{m=1}^{\infty} \frac{\log(m + n)}{k^m}\Bigr) -
-\Bigl(\frac{C_{k,l}(n)}{C}\Bigr)^{k^n} = O(n^{-R}).$$
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Theorem 11 (`jis-2024-24.8.1-thm-11`). -/
-public theorem_wanted gobelSequence_error_isBigO (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) (C : ℝ)
-    (hC : Tendsto (fun n : ℕ => (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n))
-      atTop (𝓝 C))
-    (R : ℝ) (hR : 0 < R) :
-    (fun n : ℕ => Real.exp (∑' m : ℕ, Real.log ((m + 1 : ℝ) + n) / (k : ℝ) ^ (m + 1))
-        - ((gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n) / C) ^ (k ^ n))
-      =O[atTop] (fun n : ℕ => (n : ℝ) ^ (-R))
-
-/-- **Series formula and bound for the Göbel error.** Let $k, l \ge 2$ be natural numbers, let
-$g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $C$ be a real number such that the real numbers
-$C_{k,l}(n) = g_{k,l}(n)^{1/k^n}$ tend to $C$ as $n \to \infty$. Then for every natural number
-$n \ge 1$ the error
-
-$$\varepsilon_{k,l}(n) = \sum_{m=1}^{\infty} \frac{\log(m + n)}{k^m} -
-k^n \bigl(\log C_{k,l}(n) - \log C\bigr)$$
-
-satisfies
-
-$$\varepsilon_{k,l}(n) = \sum_{m=1}^{\infty} \frac{1}{k^m}
-\log\Bigl(1 + \frac{m + n - 1}{g_{k,l}(m + n - 1)^{k-1}}\Bigr) \le \frac{2n}{C^{(k-1) k^n}}.$$
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Lemma 12 (`jis-2024-24.8.1-lem-12`). -/
-public theorem_wanted gobelSequence_error_eq_tsum_le (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) (C : ℝ)
-    (hC : Tendsto (fun n : ℕ => (gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n))
-      atTop (𝓝 C))
-    (n : ℕ) (hn : 1 ≤ n) :
-    (∑' m : ℕ, Real.log ((m + 1 : ℝ) + n) / (k : ℝ) ^ (m + 1))
-        - (k : ℝ) ^ n * (Real.log ((gobelSequence k l n : ℝ) ^ ((1 : ℝ) / (k : ℝ) ^ n))
-          - Real.log C)
-      = ∑' m : ℕ, Real.log (1 + ((m + n : ℕ) : ℝ) / (gobelSequence k l (m + n) : ℝ) ^ (k - 1))
-          / (k : ℝ) ^ (m + 1) ∧
-    ∑' m : ℕ, Real.log (1 + ((m + n : ℕ) : ℝ) / (gobelSequence k l (m + n) : ℝ) ^ (k - 1))
-          / (k : ℝ) ^ (m + 1)
-      ≤ 2 * n / C ^ ((k - 1) * k ^ n)
-
 /-- **Sondow–Hadjicostas asymptotic expansion.** Let $k \ge 2$ be a natural number. For $j \ge 1$
 put $S_j = \sum_{i \ge 1} i^j / k^i$ and $b_j = (-1)^{j-1} S_j / j$, and for $r \ge 0$ let
 $$a_r = \sum_{m_1 + 2 m_2 + \dots + r m_r = r} \ \prod_{j=1}^{r} \frac{b_j^{m_j}}{m_j!},$$
@@ -330,30 +173,6 @@ public theorem_wanted somos_tsum_asymptotic_expansion (k : ℕ) (hk : 2 ≤ k) (
         - (n : ℝ) ^ ((1 : ℝ) / (k - 1)) * (1 + ∑ r ∈ Finset.Icc 1 R, a r / (n : ℝ) ^ r))
       =O[atTop] (fun n : ℕ => (n : ℝ) ^ ((1 : ℝ) / (k - 1)) / (n : ℝ) ^ (R + 1))
 
-/-- **Residue of a rational number modulo an integer.** For a natural number $m$ and a rational
-number $x = a/b$ in lowest terms with $b > 0$, the residue of $x$ modulo $m$ is the element
-$a \cdot b^{-1}$ of $\mathbb{Z}/m\mathbb{Z}$. When $b$ is prime to $m$, $b^{-1}$ is the inverse
-of $b$ modulo $m$, so the residue is the class $c$ with $b c \equiv a \pmod m$; for other $x$
-the inverse, and hence the residue, is a conventional value with no arithmetic meaning.
-
-For a prime $p$ and a natural number $r$, it is used to read congruences modulo $p^r$ in the
-ring $\mathbb{Z}_{(p)}$ of rational numbers whose denominator is prime to $p$.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Section 4 (residues of `g_{k,l}(n)` modulo `p^r` in `ℤ_(p)`). -/
-public def ratResidue (m : ℕ) (x : ℚ) : ZMod m :=
-  (x.num : ZMod m) * (x.den : ZMod m)⁻¹
-
-/-- **Residue of an integer.** For every natural number $m$ and every integer $z$, the residue
-modulo $m$ of $z$, viewed as a rational number, is the image of $z$ in $\mathbb{Z}/m\mathbb{Z}$.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Section 4. -/
-public theorem ratResidue_intCast (m : ℕ) (z : ℤ) : ratResidue m z = (z : ZMod m) := by
-  simp [ratResidue]
-
 /-- **Residues of the $(k, l)$-Göbel sequence modulo $p^r$.** Let $p$ be a prime, let
 $k, l, r \ge 2$ be natural numbers, and let $g_{k,l}$ be the $(k, l)$-Göbel sequence. Let $I$ be
 the set of natural numbers $n$ with $1 \le n < p$ such that $g_{k,l}(n) = 0$ or
@@ -376,24 +195,6 @@ public theorem_wanted gobelSequence_residues_singleton_or_injective (p : ℕ) (h
         (fun n => ratResidue (p ^ r) (gobelSequence k l n))).card =
       ((Finset.Ico 1 p).filter (fun n => gobelSequence k l n = 0 ∨
           ((r : ℤ) - 1 ≤ padicValRat p (gobelSequence k l n)))).card
-
-/-- **Propagation of a congruence along the $(k, l)$-Göbel sequence.** Let $p$ be a prime, let
-$k, l, r \ge 2$ be natural numbers, let $g_{k,l}$ be the $(k, l)$-Göbel sequence, and let $a, b$ be
-natural numbers with $1 \le a < p$ and $b < p$. For rational numbers $x, y$ write
-$x \equiv y \pmod{p^r}$ when $x = y$ or $\nu_p(x - y) \ge r$, where $\nu_p$ is the $p$-adic
-valuation on $\mathbb{Q}$. If $g_{k,l}(a) \equiv b p^{r-1} \pmod{p^r}$, then
-$n \, g_{k,l}(n) \equiv a b p^{r-1} \pmod{p^r}$ for every natural number $n$ with $a \le n < p$.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Lemma 20 (`jis-2024-24.8.1-lem-20`). -/
-public theorem_wanted gobelSequence_mul_index_congr (p : ℕ) (hp : p.Prime) (k l r a b : ℕ)
-    (hk : 2 ≤ k) (hl : 2 ≤ l) (hr : 2 ≤ r) (ha₁ : 1 ≤ a) (hap : a < p) (hbp : b < p)
-    (hg : gobelSequence k l a - b * (p : ℚ) ^ (r - 1) = 0 ∨
-      (r : ℤ) ≤ padicValRat p (gobelSequence k l a - b * (p : ℚ) ^ (r - 1)))
-    (n : ℕ) (han : a ≤ n) (hnp : n < p) :
-    n * gobelSequence k l n - a * b * (p : ℚ) ^ (r - 1) = 0 ∨
-      (r : ℤ) ≤ padicValRat p (n * gobelSequence k l n - a * b * (p : ℚ) ^ (r - 1))
 
 end
 

@@ -1,0 +1,32 @@
+2026-11-23T17:07:33.5384815Z Note: This linter can be disabled with `set_option linter.unusedTactic false`
+2026-11-23T17:07:33.5420261Z Build completed successfully (6373 jobs).
+2026-11-23T17:07:35.1536250Z Build completed successfully (4155 jobs).
+2026-11-23T17:07:37.1575651Z Build completed successfully (6375 jobs).
+2026-11-23T17:07:37.1913472Z ##[group]Run scripts/check.sh build
+2026-11-23T17:07:37.1913976Z [36;1mscripts/check.sh build[0m
+2026-11-23T17:07:37.1932777Z shell: /usr/bin/bash -e {0}
+2026-11-23T17:07:37.1933220Z ##[endgroup]
+2026-11-23T17:07:37.2030143Z ==> compiler diagnostics
+2026-11-23T17:07:51.1575925Z Hint: Replace the deprecated name:
+2026-11-23T17:07:51.1577143Z   M̵e̵a̵s̵u̵r̵e̵T̵h̵e̵o̵r̵y̵.̵M̵e̵a̵s̵u̵r̵e̵.̵QuasiMeasurePreserving.birkhoffAverage_ae_eq_of_ae_eq
+2026-11-23T17:07:51.9383976Z ✖ [12255/12293] Building MathlibExt.Probability.DyadicTruncation (2.4s)
+2026-11-23T17:07:51.9421874Z trace: .> LEAN_PATH=/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Cli/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/batteries/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Qq/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/aesop/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/importGraph/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/plausible/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/mathlib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/cslib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Physlib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean /home/runner/.elan/toolchains/leanprover--lean4---v4.36.0/bin/lean /home/runner/work/atlas-lean/atlas-lean/MathlibExt/Probability/DyadicTruncation.lean -o /home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean/MathlibExt/Probability/DyadicTruncation.olean -i /home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean/MathlibExt/Probability/DyadicTruncation.ilean -c /home/runner/work/atlas-lean/atlas-lean/.lake/build/ir/MathlibExt/Probability/DyadicTruncation.c --setup /home/runner/work/atlas-lean/atlas-lean/.lake/build/ir/MathlibExt/Probability/DyadicTruncation.setup.json --json
+2026-11-23T17:07:51.9432819Z warning: MathlibExt/Probability/DyadicTruncation.lean:13:0: 'Mathlib.Data.Real.Basic' has been deprecated: please replace this import by
+2026-11-23T17:07:51.9576920Z
+2026-11-23T17:07:51.9577267Z Note: This linter can be disabled with `set_option linter.style.longLine false`
+2026-11-23T17:07:51.9578107Z error: MathlibExt/Probability/DyadicTruncation.lean:183:45: Type mismatch
+2026-11-23T17:07:51.9578684Z   this
+2026-11-23T17:07:51.9578971Z has type
+2026-11-23T17:30:17.1473161Z - MathlibExt.Probability.DyadicTruncation
+2026-11-23T17:30:17.1479325Z error: build failed
+2026-11-23T17:30:17.2087830Z FAIL [build]: audited libraries do not build.
+2026-11-23T17:30:17.2115321Z ==> compiled environment policy
+2026-11-23T17:30:33.4144620Z compiled audit: 1024/17918 assigned modules checked
+2026-11-23T17:32:51.4204191Z compiled audit: 5120/17918 assigned modules checked
+2026-11-23T17:33:11.4584426Z compiled audit: 6144/17918 assigned modules checked
+2026-11-23T17:33:12.9386965Z FAIL [environment]: /tmp/atlas-axioms-1iof0fxo.lean:1:0: error: object file '/home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean/MathlibExt/Probability/DyadicTruncation.olean' of module MathlibExt.Probability.DyadicTruncation does not exist
+2026-11-23T17:33:12.9461559Z ==> declaration collisions
+2026-11-23T17:33:13.1344384Z Missing compiled module: MathlibExt/Probability/DyadicTruncation.lean
+2026-11-23T17:33:13.1363117Z FAIL [declaration collisions]: could not list the compiled v2 modules
+2026-11-23T17:33:13.1398043Z ##[error]Process completed with exit code 1.
+2026-11-23T17:33:13.1588827Z Post job cleanup.

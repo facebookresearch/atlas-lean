@@ -26,11 +26,11 @@ H. Müller, "Hamiltonian circuits in chordal bipartite graphs", Discrete Mathema
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ComparabilityGraphSandwichWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -45,7 +45,7 @@ INSTANCE: a comparability graph `G = (V, E)`.
 QUESTION: does `G` contain a Hamiltonian circuit?
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n` given by an edge list; a Hamiltonian circuit needs at least three vertices). The
 restriction adds that the graph is a comparability graph.
 

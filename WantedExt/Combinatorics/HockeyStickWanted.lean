@@ -16,9 +16,8 @@ Sequences* 28 (2025), Article 25.7.7
 
 Corollary 14 is the classical hockey stick identity,
 already in Mathlib as `Nat.sum_range_add_choose`.
-Corollary 15 (namespace `MathlibExt.Combinatorics.HockeyStickWanted`)
-was verified numerically for `n < 8`, `k < 14`. The
-generalized identity (Corollary 13) and the paper's
+Corollary 15 is proved in `MathlibExt.Combinatorics.HockeyStick`.
+The generalized identity (Corollary 13) and the paper's
 combinatorial framework (compositions with parts in
 `[2, r + 1]`, labeled tableaux `Λ(α, r)`, lattice
 sequences `𝓛(m, h)`, Propositions 1, 4, 11, Lemma 9,
@@ -31,56 +30,14 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Nat.Choose.Basic
+public import MathlibExt.Combinatorics.HockeyStick
+public import MathlibExt.Combinatorics.HockeyStickTableauCardinality
 
 set_option autoImplicit false
 
 @[expose] public section
 
-namespace MathlibExt.Combinatorics.HockeyStickWanted
-
-/-- **Generalized hockey stick identity of Lynch and Weselcouch.** For all natural numbers
-$n$ and $k$,
-$$\sum_{i=0}^{k} \binom{2i + n}{i} =
-\sum_{i=0}^{\lfloor k/2 \rfloor} (-1)^i \binom{2k + 1 + n - i}{k - 2i}.$$
-
-Source: Molly Lynch and Michael Weselcouch, "A
-Generalized Hockey Stick Theorem", Corollary 15. -/
-theorem_wanted sum_choose_two_mul_add (n k : ℕ) :
-    (∑ i ∈ Finset.range (k + 1),
-        (Nat.choose (2 * i + n) i : ℤ)) =
-      ∑ i ∈ Finset.range (k / 2 + 1),
-        (-1 : ℤ) ^ i *
-          (Nat.choose (2 * k + 1 + n - i) (k - 2 * i) : ℤ)
-
-end MathlibExt.Combinatorics.HockeyStickWanted
-
 namespace MetaMathlibExt
-
-/-- The sign `sgn(α) = (-1)^{|α| - ℓ(α)}` of a composition `α`, given as its list of parts.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Section 2.2. -/
-def hockeyCompositionSign (α : List ℕ) : ℤ :=
-  (-1) ^ (α.sum - α.length)
-
-/-- `sgn((2)) = -1` and `sgn((3, 1)) = 1`.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Section 2.2. -/
-theorem hockeyCompositionSign_small :
-    hockeyCompositionSign [2] = -1 ∧ hockeyCompositionSign [3, 1] = 1 := by
-  decide
-
-/-- For a composition `α = (a, t…)` with `a ≥ 2`, each of `α^→ = (a + 1, t…)`,
-`α^↑ = (2, a, t…)` and `α^↙` (`(a - 1, t…)` if `a > 2`, `(t…)` if `a = 2`) has sign `-sgn(α)`.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Proposition 1 (`jis-2025-25.7.7-prop-1`). -/
-theorem_wanted hockeyCompositionSign_ops (a : ℕ) (t : List ℕ) (ha : 2 ≤ a)
-    (ht : ∀ b ∈ t, 0 < b) :
-    hockeyCompositionSign ((a + 1) :: t) = -hockeyCompositionSign (a :: t) ∧
-      hockeyCompositionSign (2 :: a :: t) = -hockeyCompositionSign (a :: t) ∧
-      hockeyCompositionSign (if 2 < a then (a - 1) :: t else t) = -hockeyCompositionSign (a :: t)
 
 /-- The set `𝒞(k, r)` of compositions of some `j ≤ k` with every part in `[2, r + 1]`, as lists
 of parts.
@@ -101,15 +58,6 @@ theorem hockeyCompositions_five_three :
     hockeyCompositions 5 3 = {[], [2], [3], [4], [2, 2], [2, 3], [3, 2]} := by
   decide
 
-/-- The labeled tableaux `Λ(α, r)` of shape `α`: in each row `i` the entries after the empty first
-box are strictly increasing labels in `{0, …, r - 1}`, recorded as the set of the `α_i - 1` labels
-of the row.
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Section 2.3 (labeled tableaux). -/
-def labeledTableaux (α : List ℕ) (r : ℕ) : Finset (Fin α.length → Finset (Fin r)) :=
-  Fintype.piFinset fun i => (Finset.univ : Finset (Fin r)).powersetCard (α.get i - 1)
-
 /-- `|Λ((2, 2), 2)| = 4` and `|Λ(∅, 3)| = 1`.
 
 Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
@@ -117,13 +65,6 @@ Integer Sequences 28 (2025), Article 25.7.7, Section 2.3 (labeled tableaux). -/
 theorem card_labeledTableaux_small :
     (labeledTableaux [2, 2] 2).card = 4 ∧ (labeledTableaux [] 3).card = 1 := by
   decide
-
-/-- `|Λ(α, r)| = ∏_j C(r, α_j - 1)` (equal to `1` for `α = ∅`).
-
-Source: Molly Lynch and Michael Weselcouch, *A Generalized Hockey Stick Theorem*, Journal of
-Integer Sequences 28 (2025), Article 25.7.7, Proposition 4 (`jis-2025-25.7.7-prop-4`). -/
-theorem_wanted card_labeledTableaux (α : List ℕ) (r : ℕ) :
-    (labeledTableaux α r).card = (α.map fun a => r.choose (a - 1)).prod
 
 /-- The lattice sequences `𝓛(m, h)` of width `m` and height `h`:
 `0 = L_0 ≤ L_1 ≤ ⋯ ≤ L_{m+1} = h`, as maps `Fin (m + 2) → Fin (h + 1)`.

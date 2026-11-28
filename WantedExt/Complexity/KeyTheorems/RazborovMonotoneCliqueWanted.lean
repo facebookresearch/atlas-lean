@@ -18,8 +18,9 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Computability.BinaryNatEncoding
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Classes
+public import CSLibExt.Computability.Complexity.RazborovMonotoneClique
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
@@ -53,39 +54,6 @@ only earlier gates, at most `g` distinct ones; a circuit with `g` gates therefor
 fan-in-two equivalent with at most `g ^ 2` gates, and superpolynomial bounds transfer.
 -/
 
-
-/-- **The clique function on adjacency-matrix bits.** For a natural number $n$ and a bitstring
-$x$, read $x$ as an $n \times n$ adjacency matrix in row-major order: the entry for a pair
-$(a, b)$ is the bit of $x$ at position $an + b$, where a position beyond the end of $x$ reads as
-false. The clique predicate holds for $n$ and $x$ when there is a set $S$ of exactly
-$\lfloor n/3 \rfloor$ vertices among $0, \dots, n - 1$ such that the entry for $(a, b)$ is true
-for all distinct $a, b \in S$. -/
-def cliqueHolds (n : ℕ) (x : List Bool) : Prop :=
-  ∃ S : Finset ℕ, S.card = n / 3 ∧ (∀ v ∈ S, v < n) ∧
-    ∀ a ∈ S, ∀ b ∈ S, a ≠ b → x.getD (a * n + b) false = true
-
-/-- **Razborov: monotone circuits for clique need superpolynomial size.** For every polynomial
-$p$ with natural-number coefficients there is a natural number $n$ with the following property.
-Let $C$ be a well-formed monotone flat circuit on $n^2$ inputs, that is, every gate of $C$ is an
-input variable, an and gate or an or gate, and refers only to earlier gates. Suppose that for
-every bitstring $x$ of length $n^2$, when input variable $i$ is given the $i$-th bit of $x$, $C$
-has a last gate with value true if and only if the $n \times n$ matrix read from $x$ in
-row-major order has a clique of size $\lfloor n/3 \rfloor$, that is, a set
-$S \subseteq \{0, \dots, n - 1\}$ of $\lfloor n/3 \rfloor$ vertices whose entries $(a, b)$ are
-true for all distinct $a, b \in S$. Then $C$ has more than $p(n^2)$ gates.
-
-This is a consequence of Razborov's bound `m ^ Ω(log m)` for cliques of size about `(log m) / 4` on
-`m` vertices, by padding with universal vertices (A. A. Razborov, "Lower bounds on the monotone
-complexity of some Boolean functions", Soviet Mathematics Doklady 31 (1985), 354-357; the bound is
-restated in N. Alon and R. B. Boppana, Combinatorica 7 (1987), 1-22, Section 1, which also gives the
-exponential bound). -/
-public theorem_wanted razborov_monotone_clique :
-    ∀ p : Polynomial ℕ, ∃ n : ℕ, ∀ C : List (ACGate (n * n)),
-      WellFormedCircuit C → IsMonotoneCircuit C →
-        (∀ x : List Bool, x.length = n * n →
-          ((circuitEval C (fun i => x.getD (i : ℕ) false)).getLast? = some true ↔
-            cliqueHolds n x)) →
-          C.length > p.eval (n * n)
 
 /-- **The clique function `CLIQUE(n, s)` on adjacency-matrix bits.** For a bitstring `x` read
 as an `n × n` adjacency matrix in row-major order (positions beyond the end read as false),

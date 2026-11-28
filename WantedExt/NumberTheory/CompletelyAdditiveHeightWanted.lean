@@ -11,6 +11,8 @@ LICENSE file in the root directory of this source tree.
 
 Statements from Hartosh Singh Bal, *Completely Additive Height Functions: Profile
 Laws, Matula Bounds, and Inverse Growth*, INTEGERS 26 (2026), Article A116.
+The statement `isGreatest_primeIndexHeight_level` is proved in
+`MathlibExt.NumberTheory.CompletelyAdditiveHeightIsGreatestPrimeIndexHeightLevel`.
 
 A height function is a completely additive `H : ℕ → ℕ` (on positive integers) with `H(p) ≥ 1`
 for every prime `p` and only finitely many primes at each height `n ≥ 1`. Primes are indexed
@@ -22,134 +24,17 @@ equations, which determine `H` uniquely by strong induction.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.NumberTheory.PrimeCounting
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
-public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
+public import MathlibExt.NumberTheory.CompletelyAdditiveHeight
+public import MathlibExt.NumberTheory.CompletelyAdditiveHeightIsGreatestPrimeIndexHeightLevel
+public import MathlibExt.NumberTheory.CompletelyAdditiveHeightExistsHeightFunctionWithProfile
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Filter
-
-/-- **Completely additive functions on the positive integers.** A function
-$H : \mathbb{N} \to \mathbb{N}$ is completely additive on the positive integers if
-$H(ab) = H(a) + H(b)$ for all integers $a, b \ge 1$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 2 (definition of a height
-function). -/
-public def IsCompletelyAdditiveNat (H : ℕ → ℕ) : Prop :=
-  ∀ a b : ℕ, 0 < a → 0 < b → H (a * b) = H a + H b
-
-/-- **A completely additive function vanishes at one.** If $H : \mathbb{N} \to \mathbb{N}$ is
-completely additive on the positive integers, that is, $H(ab) = H(a) + H(b)$ for all $a, b \ge 1$,
-then $H(1) = 0$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 2 (definition of a height
-function). -/
-public theorem IsCompletelyAdditiveNat.map_one {H : ℕ → ℕ} (hH : IsCompletelyAdditiveNat H) :
-    H 1 = 0 := by
-  have := hH 1 1 one_pos one_pos
-  simp at this
-  omega
-
-/-- **Height functions.** A function $H : \mathbb{N} \to \mathbb{N}$ is a height function if it is
-completely additive on the positive integers, that is $H(ab) = H(a) + H(b)$ for all integers
-$a, b \ge 1$; if $H(p) \ge 1$ for every prime $p$; and if for every $n \ge 1$ only finitely many
-primes $p$ have $H(p) = n$.
-
-Complete additivity forces $H(1) = 0$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 2 (definition of a height
-function). -/
-public structure IsHeightFunction (H : ℕ → ℕ) : Prop where
-  additive : IsCompletelyAdditiveNat H
-  prime_pos : ∀ p : ℕ, p.Prime → 1 ≤ H p
-  finite_primes : ∀ n : ℕ, 1 ≤ n → {p : ℕ | p.Prime ∧ H p = n}.Finite
-
-/-- **The $i$-th prime.** For a natural number $i \ge 1$, $p_i$ denotes the $i$-th prime in
-increasing order, so that $p_1 = 2$. For $i = 0$ the definition also gives $p_0 = 2$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 2 (notation `pᵢ`). -/
-public noncomputable def nthPrimeOne (i : ℕ) : ℕ :=
-  Nat.nth Nat.Prime (i - 1)
-
-/-- **The first three primes.** With primes indexed from one, the first three primes are
-$p_1 = 2$, $p_2 = 3$ and $p_3 = 5$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 2 (notation `pᵢ`). -/
-public theorem nthPrimeOne_one_two_three :
-    nthPrimeOne 1 = 2 ∧ nthPrimeOne 2 = 3 ∧ nthPrimeOne 3 = 5 :=
-  ⟨Nat.nth_prime_zero_eq_two, Nat.nth_prime_one_eq_three, Nat.nth_prime_two_eq_five⟩
-
-/-- **Completely additive function with prescribed prime values.** Given a function
-$v : \mathbb{N} \to \mathbb{N}$, this is the function $\mathbb{N} \to \mathbb{N}$ that sends each
-$m \ge 1$ with prime factorization $m = \prod_p p^{a_p}$ to $\sum_p a_p\, v(p)$, and sends $0$
-to $0$. Only the values of $v$ at primes matter.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 3 (extension by complete
-additivity). -/
-public noncomputable def additiveOfPrimeValues (v : ℕ → ℕ) (m : ℕ) : ℕ :=
-  m.factorization.sum fun p a => a * v p
-
-/-- **The completely additive extension vanishes at one.** For every function
-$v : \mathbb{N} \to \mathbb{N}$, the completely additive function with prime values $v$ (which
-sends $m = \prod_p p^{a_p}$ to $\sum_p a_p\, v(p)$) takes the value $0$ at $1$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 3 (extension by complete
-additivity). -/
-public theorem additiveOfPrimeValues_one (v : ℕ → ℕ) : additiveOfPrimeValues v 1 = 0 := by
-  simp [additiveOfPrimeValues]
-
-/-- **The completely additive extension at a prime.** For every function
-$v : \mathbb{N} \to \mathbb{N}$ and every prime $p$, the completely additive function with prime
-values $v$ (which sends $m = \prod_q q^{a_q}$ to $\sum_q a_q\, v(q)$) takes the value $v(p)$
-at $p$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 3 (extension by complete
-additivity). -/
-public theorem additiveOfPrimeValues_prime (v : ℕ → ℕ) {p : ℕ} (hp : p.Prime) :
-    additiveOfPrimeValues v p = v p := by
-  simp [additiveOfPrimeValues, hp.factorization]
-
-/-- **The extension from prime values is completely additive.** For every function
-$v : \mathbb{N} \to \mathbb{N}$, let $H_v$ be the function with $H_v(m) = \sum_p a_p v(p)$ for
-$m = \prod_p p^{a_p}$. Then $H_v$ is completely additive on the positive integers:
-$H_v(ab) = H_v(a) + H_v(b)$ for all integers $a, b \ge 1$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 3 (extension by complete
-additivity). -/
-public theorem isCompletelyAdditiveNat_additiveOfPrimeValues (v : ℕ → ℕ) :
-    IsCompletelyAdditiveNat (additiveOfPrimeValues v) := by
-  intro a b ha hb
-  unfold additiveOfPrimeValues
-  rw [Nat.factorization_mul ha.ne' hb.ne']
-  exact Finsupp.sum_add_index' (fun _ => zero_mul _) (fun _ _ _ => add_mul _ _ _)
-
-/-- **Level construction for a height function.** Let $H$ be a height function and let $n \ge 1$,
-and for $k \ge 0$ write $\mathcal{H}_k = \{m \ge 1 : H(m) = k\}$. Then $\mathcal{H}_n$ is the union
-of two sets: the set of products $p m'$, where $p$ is a prime with $H(p) = \ell$ for some integer
-$\ell$ with $1 \le \ell \le \lfloor n/2 \rfloor$ and $m' \in \mathcal{H}_{n - \ell}$; and the set
-of primes $p$ with $H(p) = n$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Theorem 1 (`integers-2026-A116-thm-1`). -/
-public theorem_wanted heightLevel_eq_products_union_primes {H : ℕ → ℕ} (hH : IsHeightFunction H)
-    {n : ℕ} (hn : 1 ≤ n) :
-    {m : ℕ | 0 < m ∧ H m = n} =
-      {m : ℕ | ∃ ℓ, 1 ≤ ℓ ∧ ℓ ≤ n / 2 ∧ ∃ p m', p.Prime ∧ H p = ℓ ∧ 0 < m' ∧ H m' = n - ℓ ∧
-        m = p * m'} ∪ {p : ℕ | p.Prime ∧ H p = n}
 
 /-- **Height levels are counted by coloured partitions.** Let $H$ be a height function and, for
 $\ell \ge 1$, let $\pi_\ell$ be the number of primes $p$ with $H(p) = \ell$. For every $n \ge 0$,
@@ -169,74 +54,6 @@ public theorem_wanted heightLevel_card_eq_multipartitions {H : ℕ → ℕ} (hH 
     Nat.card {m : ℕ // 0 < m ∧ H m = n} =
       Nat.card {α : (Σ ℓ : Fin n, Fin {p : ℕ | p.Prime ∧ H p = ℓ.1 + 1}.ncard) → ℕ //
         ∑ x, (x.1.1 + 1) * α x = n}
-
-/-- **Realizing a prescribed profile.** Let $(\pi_k)_{k \ge 1}$ be nonnegative integers with
-$\pi_k \ne 0$ for infinitely many $k$ (equivalently, $\sum_k \pi_k = \infty$). Then there is a
-height function $H$ such that for every $k \ge 1$ exactly $\pi_k$ primes $p$ satisfy $H(p) = k$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 2
-(`integers-2026-A116-prop-2`). -/
-public theorem_wanted exists_heightFunction_with_profile (π : ℕ → ℕ)
-    (hπ : {k : ℕ | 1 ≤ k ∧ π k ≠ 0}.Infinite) :
-    ∃ H : ℕ → ℕ, IsHeightFunction H ∧ ∀ k, 1 ≤ k → {p : ℕ | p.Prime ∧ H p = k}.ncard = π k
-
-/-- **Height functions with prescribed values at the primes.** Let $f : \mathbb{N} \to \mathbb{N}$
-satisfy $f(i) \ge 1$ for every $i \ge 1$, and suppose that for every $t \ge 1$ only finitely many
-$i \ge 1$ have $f(i) = t$. Let $H$ be the completely additive function on the positive integers
-with $H(p) = f(i)$ when $p$ is the $i$-th prime (so $H(2) = f(1)$). Then $H$ is a height function,
-and for every $n \ge 1$ the number of primes $p$ with $H(p) = n$ equals the number of integers
-$i \ge 1$ with $f(i) = n$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 3
-(`integers-2026-A116-prop-3`). -/
-public theorem_wanted isHeightFunction_of_finite_fibers (f : ℕ → ℕ)
-    (hpos : ∀ i, 1 ≤ i → 1 ≤ f i) (hfin : ∀ t, 1 ≤ t → {i : ℕ | 1 ≤ i ∧ f i = t}.Finite) :
-    let H := additiveOfPrimeValues fun p => f (Nat.count Nat.Prime p + 1)
-    IsHeightFunction H ∧
-      ∀ n, 1 ≤ n → {p : ℕ | p.Prime ∧ H p = n}.ncard = {i : ℕ | 1 ≤ i ∧ f i = n}.ncard
-
-/-- **The largest integer at each height for the prime-index height.** Let $H$ be the completely
-additive function on the positive integers with $H(p) = i$ when $p$ is the $i$-th prime, so that
-$H(2) = 1$, $H(3) = 2$ and $H(5) = 3$. For every natural number $n$, $2^n$ is the largest integer
-$m \ge 1$ with $H(m) = n$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 4
-(`integers-2026-A116-prop-4`). -/
-public theorem_wanted isGreatest_primeIndexHeight_level (n : ℕ) :
-    IsGreatest
-      {m : ℕ | 0 < m ∧ additiveOfPrimeValues (fun p => Nat.count Nat.Prime p + 1) m = n} (2 ^ n)
-
-/-- **Gutman–Ivić maximal Matula numbers.** Write $p_i$ for the $i$-th prime, indexed from one
-($p_1 = 2$). For a natural number $n$, $P(n)$ is the result of applying $i \mapsto p_i$ to $8$
-exactly $n - 3$ times, so $P(4) = p_8$ and $P(n) = p_{P(n-1)}$ for $n \ge 5$. For $n \le 3$ there
-are no applications and $P(n) = 8$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 3.2 (definition of `P(n)`). -/
-public noncomputable def matulaMax (n : ℕ) : ℕ :=
-  nthPrimeOne^[n - 3] 8
-
-/-- **The first maximal Matula number.** The Gutman–Ivić maximal Matula number $P(4)$ equals
-$p_8$, the eighth prime.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 3.2 (definition of `P(n)`). -/
-public theorem matulaMax_four : matulaMax 4 = nthPrimeOne 8 :=
-  rfl
-
-/-- **Recursion for the maximal Matula numbers.** Write $p_i$ for the $i$-th prime, indexed from
-one ($p_1 = 2$). For every $n \ge 4$ the Gutman–Ivić maximal Matula numbers satisfy
-$P(n + 1) = p_{P(n)}$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 3.2 (definition of `P(n)`). -/
-public theorem matulaMax_succ {n : ℕ} (hn : 4 ≤ n) :
-    matulaMax (n + 1) = nthPrimeOne (matulaMax n) := by
-  unfold matulaMax
-  rw [show n + 1 - 3 = (n - 3) + 1 by omega, Function.iterate_succ_apply']
 
 /-- **Largest number at a given Matula height.** Write $p_i$ for the $i$-th prime, indexed from
 one ($p_1 = 2$), and let $H$ be a function from the natural numbers to themselves that is
@@ -279,30 +96,6 @@ public theorem_wanted nthPrimeOne_rosser_schoenfeld :
       (k : ℝ) * (Real.log k + Real.log (Real.log k) - 1) ≤ nthPrimeOne k ∧
         (nthPrimeOne k : ℝ) ≤ k * (Real.log k + Real.log (Real.log k))
 
-/-- **The $k$-th prime exceeds $2k$ for $k \ge 6$.** For every natural number $k \ge 6$, the
-$k$-th prime $p_k$, indexed from one so that $p_1 = 2$, satisfies $p_k > 2k$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Lemma 2 (`integers-2026-A116-lem-2`). -/
-public theorem_wanted two_mul_lt_nthPrimeOne {k : ℕ} (hk : 6 ≤ k) : 2 * k < nthPrimeOne k
-
-/-- **Prime-power decomposition of summatory heights.** Let $H : \mathbb{N} \to \mathbb{N}$ be
-completely additive on the positive integers, and let $x \ge 2$ be a natural number. Then
-$$\sum_{m=1}^{x} H(m) = \sum_{p \le x} \sum_{\alpha \ge 1,\ p^\alpha \le x} H(p)
-\left\lfloor \frac{x}{p^\alpha} \right\rfloor,$$
-where $p$ runs over the primes $p \le x$.
-
-The paper states this for real $x \ge 2$; both sides depend on $x$ only through $\lfloor x \rfloor$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 7
-(`integers-2026-A116-prop-7`), Equation (6). -/
-public theorem_wanted sum_height_eq_sum_prime_powers {H : ℕ → ℕ} (hH : IsCompletelyAdditiveNat H)
-    {x : ℕ} (hx : 2 ≤ x) :
-    ∑ m ∈ Finset.Icc 1 x, H m =
-      ∑ p ∈ (Finset.Iic x).filter Nat.Prime,
-        ∑ α ∈ (Finset.Icc 1 x).filter (fun α => p ^ α ≤ x), H p * (x / p ^ α)
-
 /-- **Prime reduction for summatory heights.** Let $H : \mathbb{N} \to \mathbb{N}$ be completely
 additive on the positive integers, and for real $x$ let $F(x) = \sum_{1 \le m \le x} H(m)$. Then
 there is a real constant $C$ such that for every real $x \ge 2$,
@@ -335,70 +128,6 @@ public theorem_wanted isHeightFunction_of_iterative (f : ℕ → ℕ) (hf1 : f 1
     (∃ H : ℕ → ℕ, IsCompletelyAdditiveNat H ∧ ∀ i, 1 ≤ i → H (nthPrimeOne i) = H (f i) + j) ∧
       ∀ H : ℕ → ℕ, IsCompletelyAdditiveNat H → (∀ i, 1 ≤ i → H (nthPrimeOne i) = H (f i) + j) →
         IsHeightFunction H
-
-/-- **Weighted partition coefficients.** Given real weights $(b_k)_{k \ge 0}$, the coefficients
-$a_n$ of the weighted partition product $\prod_{k \ge 1} (1 - q^k)^{-b_k}$ are defined by $a_0 = 1$
-and, for $n \ge 1$, the logarithmic-derivative recurrence
-$n a_n = \sum_{m=1}^{n} \big(\sum_{k \mid m} k b_k\big) a_{n-m}$ (valid for real exponents $b_k$).
-The value $b_0$ is unused.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 6.1 (weighted partitions
-`F(q) = ∑ aₙ qⁿ`). -/
-public noncomputable def weightedPartitionCoeff (b : ℕ → ℝ) : ℕ → ℝ
-  | 0 => 1
-  | n + 1 => (∑ m : Fin (n + 1), (∑ k ∈ (m.1 + 1).divisors, (k : ℝ) * b k) *
-      weightedPartitionCoeff b (n - m.1)) / (n + 1)
-decreasing_by omega
-
-/-- **Zeroth weighted partition coefficient.** For every sequence of real weights $(b_k)$, the
-weighted partition coefficient $a_0$ attached to $(b_k)$ equals $1$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 6.1 (weighted partitions
-`F(q) = ∑ aₙ qⁿ`). -/
-public theorem weightedPartitionCoeff_zero (b : ℕ → ℝ) : weightedPartitionCoeff b 0 = 1 := by
-  simp [weightedPartitionCoeff]
-
-/-- **First weighted partition coefficient.** For every sequence of real weights $(b_k)$, the
-weighted partition coefficient $a_1$ attached to $(b_k)$ equals $b_1$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 6.1 (weighted partitions
-`F(q) = ∑ aₙ qⁿ`). -/
-public theorem weightedPartitionCoeff_one (b : ℕ → ℝ) : weightedPartitionCoeff b 1 = b 1 := by
-  simp [weightedPartitionCoeff]
-
-/-- **Meinardus' hypotheses.** Let $b_1, b_2, \dots$ be real weights (the value $b_0$ is unused),
-let $\alpha$ and $A$ be reals and let $G : \mathbb{C} \to \mathbb{C}$. The weights satisfy
-Meinardus' hypotheses (M1)–(M3) with exponent $\alpha$, residue $A$ and continuation $G$ if there
-is $C_0$ with $0 < C_0 < 1$ such that: (M1) for $\operatorname{Re} s > \alpha$ the Dirichlet series
-$B(s) = \sum_{k \ge 1} b_k k^{-s}$ converges absolutely and equals $G(s)$, and there is a function
-$R : \mathbb{C} \to \mathbb{C}$ that is complex differentiable at every point of the closed
-half-plane $\{s : \operatorname{Re} s \ge -C_0\}$ relative to that half-plane, with
-$G(s) = A/(s - \alpha) + R(s)$ for all $s \ne \alpha$ with $\operatorname{Re} s \ge -C_0$; (M2)
-there are $c > 0$ and reals $K$, $T$ with $|G(s)| \le K (1 + |\operatorname{Im} s|)^c$ whenever
-$\operatorname{Re} s \ge -C_0$ and $|\operatorname{Im} s| \ge T$; (M3) there are
-$\varepsilon > 0$, $C_3 > 0$ and $y_0 > 0$ such that, with
-$g(\tau) = \sum_{k \ge 1} b_k e^{-k\tau}$, the inequality
-$\operatorname{Re} g(y + 2\pi i x) - g(y) \le -C_3 y^{-\varepsilon}$ holds for all reals
-$x$, $y$ with $0 < y < y_0$ and $y^{1 + \varepsilon/2} \le |x| \le 1/2$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 6.1 (hypotheses of Theorem 3). -/
-public def MeinardusHypotheses (b : ℕ → ℝ) (α A : ℝ) (G : ℂ → ℂ) : Prop :=
-  ∃ C₀ : ℝ, 0 < C₀ ∧ C₀ < 1 ∧
-    (∀ s : ℂ, α < s.re →
-      LSeriesSummable (fun k => (b k : ℂ)) s ∧ LSeries (fun k => (b k : ℂ)) s = G s) ∧
-    (∃ R : ℂ → ℂ, DifferentiableOn ℂ R {s | -C₀ ≤ s.re} ∧
-      ∀ s : ℂ, -C₀ ≤ s.re → s ≠ α → G s = A / (s - α) + R s) ∧
-    (∃ c : ℝ, 0 < c ∧ ∃ K T : ℝ, ∀ s : ℂ, -C₀ ≤ s.re → T ≤ |s.im| →
-      ‖G s‖ ≤ K * (1 + |s.im|) ^ c) ∧
-    (∃ ε C₃ y₀ : ℝ, 0 < ε ∧ 0 < C₃ ∧ 0 < y₀ ∧ ∀ y x : ℝ, 0 < y → y < y₀ →
-      y ^ (1 + ε / 2) ≤ |x| → |x| ≤ 1 / 2 →
-      (∑' k : ℕ, (b (k + 1) : ℂ) *
-          Complex.exp (-((k : ℂ) + 1) * ((y : ℂ) + 2 * Real.pi * Complex.I * x))).re -
-        ∑' k : ℕ, b (k + 1) * Real.exp (-((k : ℝ) + 1) * y) ≤ -C₃ * y ^ (-ε))
 
 /-- **Meinardus' theorem.** Let $b_0, b_1, b_2, \dots$ be nonnegative reals with $b_k \ne 0$ for
 some $k \ge 1$, and let $a_n$ be the coefficients of the weighted partition product
@@ -495,65 +224,6 @@ public theorem_wanted heightProfile_identification {H : ℕ → ℕ} (hH : IsHei
         (fun x : ℝ => (∑ k ∈ Finset.Icc 1 ⌊x⌋₊, {p : ℕ | p.Prime ∧ H p = k}.ncard : ℝ))
         (fun x : ℝ => A / r * x ^ r)
 
-/-- **Cumulative profile.** For a sequence $\pi : \mathbb{N} \to \mathbb{N}$ and a natural number
-$k$, the cumulative profile is $\Pi_k = \sum_{j=1}^{k} \pi_j$. The value $\pi_0$ is not used, and
-$\Pi_0 = 0$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 7.2 (canonical sequential
-realization). -/
-public def profilePartialSum (π : ℕ → ℕ) (k : ℕ) : ℕ :=
-  ∑ j ∈ Finset.Icc 1 k, π j
-
-/-- **Recursion for the cumulative profile.** For every sequence $\pi : \mathbb{N} \to \mathbb{N}$
-with cumulative profile $\Pi_k = \sum_{j=1}^{k} \pi_j$ and every natural number $k$,
-$\Pi_{k+1} = \Pi_k + \pi_{k+1}$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 7.2 (canonical sequential
-realization). -/
-public theorem profilePartialSum_succ (π : ℕ → ℕ) (k : ℕ) :
-    profilePartialSum π (k + 1) = profilePartialSum π k + π (k + 1) := by
-  simp [profilePartialSum, Finset.sum_Icc_succ_top]
-
-/-- **Block index of a profile.** Let $\pi : \mathbb{N} \to \mathbb{N}$ be a sequence with
-cumulative profile $\Pi_k = \sum_{j=1}^{k} \pi_j$. For a natural number $i$, the block index $k(i)$
-is the least natural number $k$ with $i \le \Pi_k$, and $k(i) = 0$ if there is no such $k$. When
-$i \ge 1$ and $\Pi$ is unbounded, $k(i)$ is the unique $k$ with $\Pi_{k-1} < i \le \Pi_k$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 7.2 (canonical sequential
-realization). -/
-public noncomputable def seqHeightIndex (π : ℕ → ℕ) (i : ℕ) : ℕ :=
-  sInf {k | i ≤ profilePartialSum π k}
-
-/-- **Block index of the constant profile.** For the constant profile $\pi_k = 1$, whose cumulative
-profile is $\Pi_k = \sum_{j=1}^{k} \pi_j = k$, the block index $k(i)$, the least $k$ with
-$i \le \Pi_k$, equals $i$ for every natural number $i$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Section 7.2 (canonical sequential
-realization). -/
-public theorem seqHeightIndex_const_one (i : ℕ) : seqHeightIndex (fun _ => 1) i = i := by
-  have h : ∀ k, profilePartialSum (fun _ => 1) k = k := fun k => by simp [profilePartialSum]
-  simp only [seqHeightIndex, h]
-  exact le_antisymm (Nat.sInf_le (show i ≤ i from le_rfl))
-    (le_csInf ⟨i, show i ≤ i from le_rfl⟩ fun k hk => hk)
-
-/-- **Canonical sequential realization of a profile.** Let $(\pi_k)_{k \ge 1}$ be a sequence of
-nonnegative integers with partial sums $\Pi_k = \sum_{1 \le j \le k} \pi_j$. For $i \ge 1$ let
-$k(i)$ be the least $k \ge 0$ with $i \le \Pi_k$, or $0$ if there is none, and let
-$p_1 = 2, p_2 = 3, \dots$ be the primes in increasing order. The canonical sequential realization
-$H_{\mathrm{seq}}$ of $\pi$ is the function $\mathbb{N} \to \mathbb{N}$ that sends $m \ge 1$ to
-$\sum_{i \ge 1} a_i\, k(i)$, where $a_i$ is the exponent of $p_i$ in $m$, and sends $0$ to $0$;
-thus $H_{\mathrm{seq}}$ is completely additive with $H_{\mathrm{seq}}(p_i) = k(i)$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Definition 2 (canonical sequential
-realization, Section 7.2). -/
-public noncomputable def canonicalSeqHeight (π : ℕ → ℕ) : ℕ → ℕ :=
-  additiveOfPrimeValues fun p => seqHeightIndex π (Nat.count Nat.Prime p + 1)
-
 /-- **Inverting a polynomial profile.** Let $\pi : \mathbb{N} \to \mathbb{N}$ be a sequence with
 cumulative profile $\Pi_k = \sum_{j=1}^{k} \pi_j$, let $k(i)$ be its block index (the least $k$
 with $i \le \Pi_k$, and $0$ if there is none), let $H_{\mathrm{seq}}$ be its canonical sequential
@@ -636,23 +306,6 @@ public theorem_wanted canonicalSeq_averageOrder {π : ℕ → ℕ} {C α : ℝ} 
         (fun x : ℝ => x ^ (1 + 1 / α) / Real.log x ^ (1 + 1 / α)) ∧
       (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (canonicalSeqHeight π n : ℝ)) =Θ[atTop]
         (fun x : ℝ => x ^ (1 + 1 / α) / Real.log x ^ (1 + 1 / α))
-
-/-- **Growth for the ordinary partition profile.** Let $H_{\mathrm{seq}}$ be the canonical
-sequential realization of the constant profile $\pi_k = 1$ for all $k \ge 1$ (so
-$H_{\mathrm{seq}}(p_i) = i$ for the $i$-th prime $p_i$). Then, as $x \to \infty$ over the reals,
-$\sum_{p \le x} H_{\mathrm{seq}}(p)/p = \Theta\bigl(x / (\log x)^2\bigr)$, the sum running over
-primes $p \le x$, and
-$\sum_{1 \le n \le x} H_{\mathrm{seq}}(n) = \Theta\bigl(x^2 / (\log x)^2\bigr)$, where
-$f = \Theta(g)$ means $f = O(g)$ and $g = O(f)$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Corollary 3 (`integers-2026-A116-cor-3`). -/
-public theorem_wanted canonicalSeq_partitionProfile_growth :
-    (fun x : ℝ => ∑ p ∈ (Finset.Iic ⌊x⌋₊).filter Nat.Prime,
-        (canonicalSeqHeight (fun _ => 1) p : ℝ) / p) =Θ[atTop]
-        (fun x : ℝ => x / Real.log x ^ 2) ∧
-      (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (canonicalSeqHeight (fun _ => 1) n : ℝ)) =Θ[atTop]
-        (fun x : ℝ => x ^ 2 / Real.log x ^ 2)
 
 /-- **Growth for the plane partition profile.** Let $H_{\mathrm{seq}}$ be the canonical
 sequential realization of the profile $\pi_k = k$ for $k \ge 1$, let

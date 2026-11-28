@@ -10,8 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.NumberTheory.ConsecutivePrimePowerSums
+public import MathlibExt.NumberTheory.ConsecutivePrimePowerSumsLowerBound
 
 /-!
 # Sums of powers of consecutive primes (statements)
@@ -34,19 +34,6 @@ namespace MetaMathlibExt
 open Asymptotics Filter Finset
 
 @[expose] public section
-
-/-- **Counting sums of a fixed number of consecutive prime powers.** Let $p_1 < p_2 < \cdots$
-be the primes. For natural numbers $k > 1$, $m > 0$ and $x$, the number of integers $n \le x$ of
-the form $n = p_{\ell+1}^k + p_{\ell+2}^k + \cdots + p_{\ell+m}^k$ for some $\ell \ge 0$ is at
-most $\pi(\lfloor (x/m)^{1/k} \rfloor)$, the number of primes up to $(x/m)^{1/k}$.
-
-Source: Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl, *Algorithms and Bounds on the
-Sums of Powers of Consecutive Primes*, INTEGERS 24 (2024), Article A4, Lemma 1 (quoted from
-[6]) (`integers-2024-A4-lem-1`). -/
-public theorem_wanted card_consecutivePrimePowerSums_length_le (k m x : ℕ) (hk : 1 < k)
-    (hm : 0 < m) :
-    {n : ℕ | n ≤ x ∧ ∃ l, n = ∑ i ∈ range m, Nat.nth Nat.Prime (l + i) ^ k}.ncard ≤
-      Nat.primeCounting ⌊((x : ℝ) / m) ^ ((1 : ℝ) / k)⌋₊
 
 /-- **Length of the longest sum of consecutive prime powers.** Let $p_1 < p_2 < \cdots$ be the
 primes, let $k > 1$ be a natural number, and for a natural number $x$ let $M(x, k)$ be the
@@ -81,28 +68,6 @@ public theorem_wanted card_consecutivePrimePowerSums_le (k : ℕ) (hk : 1 < k) (
           ∑ i ∈ range lm.2, Nat.nth Nat.Prime (lm.1 + i) ^ k ≤ x)).card : ℝ) ≤
         (1 + ε) * ((k ^ 2 / (k - 1) : ℝ) * ((k : ℝ) + 1) ^ (1 - (1 : ℝ) / k)) *
           ((x : ℝ) ^ ((2 : ℝ) / (k + 1)) / Real.log x ^ ((2 * k : ℝ) / (k + 1)))
-
-/-- **Lower bound for the number of sums of consecutive prime powers.** Let $p_1 < p_2 < \cdots$
-be the primes and let $k > 1$ be a natural number. For a natural number $x$ let $s_k(x)$ be the
-number of pairs $(\ell, m)$ of integers with $0 \le \ell < x$ and $1 \le m \le x$ such that
-$p_{\ell+1}^k + \cdots + p_{\ell+m}^k \le x$, and let $M(x, k)$ be the largest $m \le x$ with
-$p_1^k + \cdots + p_m^k \le x$. Then $M(x, k)^2 / 2 \le s_k(x)$ for every $x$, and for every
-real $\varepsilon > 0$, for all sufficiently large $x$,
-$(1 - \varepsilon) (k + 1)^2 x^{2/(k+1)} / \bigl(2 (\log x)^{2k/(k+1)}\bigr) \le M(x, k)^2 / 2$.
-
-Source: Cathal O'Sullivan, Jonathan P. Sorenson, and Aryn Stahl, *Algorithms and Bounds on the
-Sums of Powers of Consecutive Primes*, INTEGERS 24 (2024), Article A4, Theorem 2
-(`integers-2024-A4-thm-2`). -/
-public theorem_wanted card_consecutivePrimePowerSums_ge (k : ℕ) (hk : 1 < k) :
-    let s : ℕ → ℝ := fun x =>
-      (((range x ×ˢ Icc 1 x).filter (fun lm =>
-          ∑ i ∈ range lm.2, Nat.nth Nat.Prime (lm.1 + i) ^ k ≤ x)).card : ℝ)
-    let M : ℕ → ℝ := fun x =>
-      (Nat.findGreatest (fun m => ∑ i ∈ range m, Nat.nth Nat.Prime i ^ k ≤ x) x : ℝ)
-    (∀ x : ℕ, M x ^ 2 / 2 ≤ s x) ∧
-      ∀ ε : ℝ, 0 < ε → ∀ᶠ x : ℕ in atTop,
-        (1 - ε) * (((k : ℝ) + 1) ^ 2 * (x : ℝ) ^ ((2 : ℝ) / (k + 1)) /
-          (2 * Real.log x ^ ((2 * k : ℝ) / (k + 1)))) ≤ M x ^ 2 / 2
 
 end
 

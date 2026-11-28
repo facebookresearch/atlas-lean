@@ -19,6 +19,7 @@ $-2, -4, \dots$ cancel the trivial zeros.
 
 ## Depends on
 
+- [Statement of the Riemann hypothesis](../riemann-hypothesis-statement.md)
 - [Real-rootedness of the de Bruijn–Newman deformation](zeros-all-real.md)
 
 ## Proof depends on

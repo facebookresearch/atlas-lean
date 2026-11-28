@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import contextlib
 import gzip
+import html
 import io
 import json
 import shutil
@@ -12,6 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from html.parser import HTMLParser
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -204,6 +206,36 @@ def quiet_build(*args, **kwargs):
         return pages.build(*args, **kwargs)
 
 
+class PageTexts(HTMLParser):
+    """The decoded text of a page's title in its head (the `<title>` there alone), its header, its heading and its own
+    navigation link."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.open: list[tuple[str, str | None]] = []
+        self.found: dict[str, str] = {}
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        key = ("head" if tag == "title" and any(name == "head" for name, _ in self.open)
+               else "heading" if tag == "h1" and attrs.get("id") == "_title"
+               else "header" if attrs.get("data-md-component") == "header-topic"
+               else "navigation" if tag == "a" and attrs.get("href") == "index.html"
+               and "md-nav__link--active" in (attrs.get("class") or "").split() else None)
+        self.open.append((tag, key))
+        if key:
+            self.found.setdefault(key, "")
+
+    def handle_endtag(self, tag):
+        while self.open and self.open.pop()[0] != tag:
+            pass
+
+    def handle_data(self, data):
+        for _, key in self.open:
+            if key:
+                self.found[key] += data
+
+
 class MathlibPagesTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -225,6 +257,58 @@ class MathlibPagesTests(unittest.TestCase):
             shutil.copytree(self.out, copy)
             edit(copy)
             return pages.check(self.site, self.graph, copy)
+
+    def test_the_site_leaves_out_the_bump_records_and_no_topic(self):
+        # A topic folder is named after its title, which the taxonomy chooses: an exclusion of the site that matched
+        # at any depth would drop its pages. MkDocs loads the configured exclusions, and there is one.
+        from mkdocs.config import load_config
+
+        with tempfile.TemporaryDirectory() as docs, tempfile.TemporaryDirectory() as site:
+            excluded = load_config(str(ROOT / "mkdocs.yml"), docs_dir=docs, site_dir=site)["exclude_docs"]
+        self.assertEqual([rule.pattern for rule in excluded.patterns if rule.include is not None], ["/migrations/"])
+        self.assertTrue(excluded.match_file("migrations/README.md"))
+        self.assertTrue(excluded.match_file("migrations/2026-11-01-bump.md"))
+        for page in ("mathlib/Algebra/algebraic-identities/migrations/index.md",
+                     "roadmap/Algebra/x/migrations/README.md", "roadmap/migrations/README.md"):
+            self.assertFalse(excluded.match_file(page), page)
+
+    def test_a_title_with_markup_characters_reads_as_text(self):
+        # The taxonomy titles topics: a title such as `Maps on List<T>`, one that holds an element or a link, a
+        # control character, or a half-open interval followed by a colon, reads as its own text in the page's head,
+        # header, heading and navigation, and in the search index (escaped once, as the theme's results take it),
+        # and leaves the site's check nothing to follow.
+        for title, folder in (('Maps on List<T> & <img src="diagram.svg"> Bayes\x92 rule [notes](notes.md)',
+                               "maps-on-list"),
+                              ("Integrals on (a,b]: basics", "integrals-on-a-b")):
+            with self.subTest(title=title), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                graph, site, out = make_graph(root), make_site(root), root / "out"
+                with gzip.open(graph / "topics.jsonl.gz", "rt", encoding="utf-8") as handle:
+                    topics = [json.loads(line) for line in handle]
+                write_jsonl(graph / "topics.jsonl.gz",
+                            [{**row, "title": title} if "title" in row else row for row in topics])
+                quiet_build(site, graph, out, MKDOCS)
+                self.assertEqual(pages.check(site, graph, out), [])
+                page = next(path for path in out.rglob("index.html") if path.parent.name.startswith(folder))
+                texts = PageTexts()
+                texts.feed(page.read_text(encoding="utf-8"))
+                self.assertEqual({key: " ".join(value.split()) for key, value in texts.found.items()},
+                                 {"head": f"{title} - ATLAS", "header": title, "heading": title, "navigation": title})
+                index = json.loads((out / pages.SEARCH_INDEX).read_text(encoding="utf-8"))
+                record = next(doc for doc in index["docs"] if doc["location"] == page.relative_to(out).as_posix())
+                self.assertEqual(record["title"], html.escape(title, quote=False))
+
+    def test_the_committed_taxonomy_titles_and_describes_every_group(self):
+        # (Its placements' titles, the topics' names in the navigation too, are one line each: see
+        # scripts/test_blueprint_taxonomy.py.)
+        # The page plan reads scripts/taxonomy.json itself: a PR that changes only the taxonomy skips the Mathlib
+        # pages' build, so its unit tests catch a subject, field or subfield the pages could not title or describe.
+        titles, descriptions, order, _ = pages.taxonomy_tree(json.loads(pages.TAXONOMY.read_text(encoding="utf-8")))
+        self.assertTrue(order)
+        # A title is one line: it labels the group in the site's navigation, whose entries are lines.
+        self.assertEqual([path for path in order if not isinstance(titles[path], str) or not titles[path].strip()
+                          or titles[path].splitlines() != [titles[path]]], [])
+        self.assertEqual([path for path in order if not isinstance(descriptions[path], str)], [])
 
     def test_one_page_per_module_grouped_by_topic(self):
         self.assertEqual(self.report["declarations"], len(NODES))

@@ -14,7 +14,7 @@ Approach*, INTEGERS 24 (2024), Article A35 (arXiv:2311.15388).
 
 An Arndt composition is a composition `(σ₁, …, σ_ℓ)` with `σ_{2i-1} > σ_{2i}` for every `i`
 with `2i ≤ ℓ`; `a(n, m) = arndtCompositionCount (fun _ => True) n m` counts those of `n` with `m`
-parts (`WantedExt/Combinatorics/Enumerative/ArndtCompositionsWanted.lean`). Bivariate generating
+parts (`MathlibExt/Combinatorics/Enumerative/ArndtCompositions.lean`). Bivariate generating
 functions live in `ℤ[y][[x]]`, `x` marking the weight and `y` the second statistic, and rational
 generating functions are stated multiplicatively (generating function times denominator equals
 numerator).
@@ -25,6 +25,11 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.RingTheory.Binomial
+public import MathlibExt.Combinatorics.Enumerative.ArndtCompositions
+public import MathlibExt.Combinatorics.Enumerative.ArndtLastPartBounds
+public import MathlibExt.Combinatorics.Enumerative.ArndtPositiveSum
+public import MathlibExt.Combinatorics.Enumerative.KArndtTotalGFNeg
+public import MathlibExt.Combinatorics.Enumerative.KArndtTotalGFNonneg
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsWanted
 
 namespace MetaMathlibExt
@@ -126,57 +131,6 @@ theorem antiPalindromicCompositionCount_six_four :
     antiPalindromicCompositionCount 6 4 = 4 ∧ reducedAntiPalindromicCompositionCount 6 4 = 1 := by
   decide
 
-/-- **Arndt compositions by last part.** An Arndt composition of $n$ is a composition
-$(\sigma_1, \ldots, \sigma_\ell)$ of $n$ into positive parts such that $\sigma_{2i-1} > \sigma_{2i}$
-for every $i$ with $2i \le \ell$. For natural numbers $n$ and $j$, $b(n, j)$ is the number of
-Arndt compositions of $n$, with any number of parts, whose last part is $j$. The empty
-composition of $0$ counts as having last part $0$, so $b(0, 0) = 1$ and $b(0, j) = 0$ for
-$j \ge 1$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 3 (definition of `b(n, m)` and Table 2). -/
-def arndtLastPartCount (n j : ℕ) : ℕ :=
-  if n = 0 then (if j = 0 then 1 else 0) else
-    ∑ m ∈ Finset.range n,
-      ((Finset.Nat.antidiagonalTuple (m + 1) n).filter fun c =>
-        (∀ i, 0 < c i) ∧
-          (∀ i i' : Fin (m + 1), (i : ℕ) % 2 = 0 → (i' : ℕ) = i + 1 → c i' < c i) ∧
-            c (Fin.last m) = j).card
-
-/-- **Arndt compositions of 6 by last part.** Let $b(n, j)$ be the number of Arndt compositions
-of $n$ with last part $j$. Then $b(6, 1) = 4$, $b(6, 2) = 2$, $b(6, 3) = 1$ and $b(6, 6) = 1$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 3, Table 2. -/
-theorem arndtLastPartCount_six :
-    arndtLastPartCount 6 1 = 4 ∧ arndtLastPartCount 6 2 = 2 ∧ arndtLastPartCount 6 3 = 1 ∧
-      arndtLastPartCount 6 6 = 1 := by
-  decide +kernel
-
-/-- **Number of $k$-Arndt compositions.** For an integer $k$ and $n, m \ge 0$, $a_k(n, m)$ is the
-number of $k$-Arndt compositions of $n$ with $m$ parts: sequences $(c_0, \ldots, c_{m-1})$ of
-positive integers with $c_0 + \cdots + c_{m-1} = n$ such that $c_{2i} > c_{2i+1} + k$ for every
-$i \ge 0$ with $2i + 1 < m$. For $k = 0$ these are the Arndt compositions.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 4 (definition of `k`-Arndt compositions,
-after Hopkins and Tangboonduangjit; Theorem 11 treats `k ≥ 0` and `k < 0`). -/
-def kArndtCompositionCount (k : ℤ) (n m : ℕ) : ℕ :=
-  ((Finset.Nat.antidiagonalTuple m n).filter fun c =>
-    (∀ i, 0 < c i) ∧
-      ∀ i j : Fin m, (i : ℕ) % 2 = 0 → (j : ℕ) = i + 1 → (c j : ℤ) + k < c i).card
-
-/-- **Sample values of the $k$-Arndt composition counts.** Writing $a_k(n, m)$ for the number of
-$k$-Arndt compositions of $n$ with $m$ parts, $a_3(7, 2) = 1$, $a_3(7, 3) = 1$ and
-$a_{-3}(4, 2) = 3$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Section 4 (series expansions after Theorem 11). -/
-theorem kArndtCompositionCount_examples :
-    kArndtCompositionCount 3 7 2 = 1 ∧ kArndtCompositionCount 3 7 3 = 1 ∧
-      kArndtCompositionCount (-3) 4 2 = 3 := by
-  decide
-
 /-- **Number of $k$-block Arndt compositions.** For $k \ge 1$ and $n, m \ge 0$, $a^{(k)}(n, m)$ is
 the number of $k$-block Arndt compositions of $n$ with $m$ parts: sequences
 $(c_0, \ldots, c_{m-1})$ of positive integers with $c_0 + \cdots + c_{m-1} = n$ that strictly
@@ -231,26 +185,6 @@ public theorem_wanted arndtCompositionCount_eq_alternating_sum_and_recurrence :
             arndtCompositionCount (fun _ => True) (n - 3) m +
               arndtCompositionCount (fun _ => True) (n - 3) (m - 2)
 
-/-- **Positive sum for Arndt compositions.** Let $a(n, m)$ be the number of Arndt compositions of
-$n$ with $m$ parts, and write $h = \lfloor m/2 \rfloor$. For all $n \ge 0$ and $m \ge 1$: if
-$m + h \le n$, then
-$$a(n, m) = \sum_{\ell=0}^{\lfloor (n-m-h)/2 \rfloor} \binom{h+\ell-1}{\ell}
-\binom{n-2h-2\ell-1}{\lfloor (m-1)/2 \rfloor},$$
-and otherwise $a(n, m) = 0$. Here $\binom{-1}{0} = 1$ (this term occurs for $m = 1$).
-
-The paper states it for all $n, m \ge 0$; at $n = m = 0$ it fails ($a(0, 0) = 1$, while the only
-term has lower index $\lfloor -1/2 \rfloor = -1$ and vanishes), so the case $m = 0$ is omitted.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Theorem 3 (`integers-2024-A35-thm-3`). -/
-public theorem_wanted arndtCompositionCount_eq_positive_sum (n m : ℕ) (hm : 0 < m) :
-    (arndtCompositionCount (fun _ => True) n m : ℤ) =
-      if m + m / 2 ≤ n then
-        ∑ ℓ ∈ Finset.range ((n - m - m / 2) / 2 + 1),
-          Ring.choose (((m / 2 : ℕ) : ℤ) + ℓ - 1) ℓ *
-            Ring.choose ((n : ℤ) - 2 * (m / 2 : ℕ) - 2 * ℓ - 1) ((m - 1) / 2)
-      else 0
-
 /-- **Holonomic recurrence for Arndt compositions.** Let $a(n, m)$ be the number of Arndt
 compositions of $n$ with $m$ parts. For all $n, m \ge 0$,
 $$(m - n - 2 + \lfloor m/2 \rfloor)\, a(n+2, m) + (m - \lfloor m/2 \rfloor)\, a(n+1, m) +
@@ -262,33 +196,6 @@ public theorem_wanted arndtCompositionCount_holonomic_recurrence (n m : ℕ) :
     ((m : ℤ) - n - 2 + (m / 2 : ℕ)) * arndtCompositionCount (fun _ => True) (n + 2) m +
         ((m : ℤ) - (m / 2 : ℕ)) * arndtCompositionCount (fun _ => True) (n + 1) m +
           (n : ℤ) * arndtCompositionCount (fun _ => True) n m = 0
-
-/-- **Asymptotics of Arndt compositions with a fixed number of parts.** Let $a(n, m)$ be the
-number of Arndt compositions of $n$ with $m$ parts. For every fixed integer $m \ge 1$,
-$$a(n, m) \sim \frac{n^{m-1}}{2^{\lfloor m/2 \rfloor} (m-1)!} \quad (n \to \infty).$$
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Corollary 1 (`integers-2024-A35-cor-1`). -/
-public theorem_wanted arndtCompositionCount_isEquivalent (m : ℕ) (hm : 0 < m) :
-    Asymptotics.IsEquivalent Filter.atTop
-      (fun n : ℕ => (arndtCompositionCount (fun _ => True) n m : ℝ))
-      (fun n : ℕ => (n : ℝ) ^ (m - 1) / (2 ^ (m / 2) * (Nat.factorial (m - 1) : ℝ)))
-
-/-- **Arndt compositions are counted by Fibonacci numbers.** Let $a(n, m)$ be the number of Arndt
-compositions of $n$ with $m$ parts, let $a(n) = \sum_{m=0}^{n} a(n, m)$ be the number of all
-Arndt compositions of $n$, and let $F_n$ be the $n$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$).
-Then, in $\mathbb{Z}[[x]]$,
-$$\Big(\sum_{n \ge 0} a(n) x^n\Big)(1 - x - x^2) = 1 - x^2,$$
-and $a(n) = F_n$ for every $n \ge 1$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Corollary 2 (`integers-2024-A35-cor-2`). -/
-public theorem_wanted arndtComposition_total_eq_fib :
-    (PowerSeries.mk fun n =>
-        ((∑ m ∈ Finset.range (n + 1), arndtCompositionCount (fun _ => True) n m : ℕ) : ℤ)) *
-        (1 - PowerSeries.X - PowerSeries.X ^ 2) = 1 - PowerSeries.X ^ 2 ∧
-      ∀ n : ℕ, 1 ≤ n →
-        ∑ m ∈ Finset.range (n + 1), arndtCompositionCount (fun _ => True) n m = Nat.fib n
 
 /-- **Expected number of parts of an Arndt composition.** Let $a(n, m)$ be the number of Arndt
 compositions of $n$ with $m$ parts, and $F_n$ the $n$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$).
@@ -389,39 +296,6 @@ public theorem_wanted arndtLastPartCount_eq (n m : ℕ) (hn : 1 ≤ n) (hm : 1 �
     arndtLastPartCount n m =
       if n < m then 0 else if n < 2 * m then t₁ (n - m) else t₁ (n - m) + t₂ (n - 2 * m)
 
-/-- **Asymptotics of Arndt compositions with a fixed last part.** Let $b(n, m)$ be the number of
-Arndt compositions of $n$ with last part $m$, and let $\varphi$ be the golden ratio. For every
-fixed integer $m \ge 1$,
-$b(n, m) \sim \frac{\varphi^{n-m-2}}{\sqrt{5}} \left(1 + \frac{1}{\varphi^{m-1}}\right)$ as
-$n \to \infty$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Theorem 10 (`integers-2024-A35-thm-10`). -/
-public theorem_wanted arndtLastPartCount_isEquivalent (m : ℕ) (hm : 0 < m) :
-    Asymptotics.IsEquivalent Filter.atTop (fun n : ℕ => (arndtLastPartCount n m : ℝ))
-      (fun n : ℕ => Real.goldenRatio ^ ((n : ℤ) - m - 2) / Real.sqrt 5 *
-        (1 + 1 / Real.goldenRatio ^ ((m : ℤ) - 1)))
-
-/-- **Arndt compositions with last part at most or at least $k$.** Let $F_n$ be the $n$-th
-Fibonacci number ($F_0 = 0$, $F_1 = 1$) and $b(n, j)$ the number of Arndt compositions of $n$
-with last part $j$. For all integers $k \ge 1$ and $n \ge 2k + 2$, the number of Arndt
-compositions of $n$ with last part at most $k$ is
-$\sum_{j=1}^{k} b(n, j) = F_n - F_{n-k-1} - F_{n-2k-2}$, and the number with last part at least
-$k$ is $\sum_{j=k}^{n} b(n, j) = F_{n-k} + F_{n-2k}$.
-
-The paper prints the second count as $F_{n-k} - F_{n-2k}$, which is false: for $k = 1$ and
-$n = 4$ all $F_4 = 3$ Arndt compositions of $4$ have last part at least $1$, while
-$F_3 - F_2 = 1$. The sign $+$ is the one the paper's own consequence uses ($F_{n-2} + F_{n-4}$
-compositions with last part greater than $1$), and it is what subtracting the number with last
-part at most $k - 1$ from $F_n$ gives.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Corollary 4 (`integers-2024-A35-cor-4`). -/
-public theorem_wanted arndtLastPart_atMost_atLeast (k n : ℕ) (hk : 1 ≤ k) (hn : 2 * k + 2 ≤ n) :
-    ((∑ j ∈ Finset.Icc 1 k, arndtLastPartCount n j : ℕ) : ℤ) =
-        Nat.fib n - Nat.fib (n - k - 1) - Nat.fib (n - 2 * k - 2) ∧
-      ∑ j ∈ Finset.Icc k n, arndtLastPartCount n j = Nat.fib (n - k) + Nat.fib (n - 2 * k)
-
 /-- **Generating function of $k$-Arndt compositions for $k \ge 0$.** Let $k \ge 0$ be an
 integer, let $a_k(n, m)$ be the number of $k$-Arndt compositions of $n$ with $m$ parts, and let
 $A_k(x, y) = \sum_{n \ge 0} \sum_{m=0}^{n} a_k(n, m)\, x^n y^m \in \mathbb{Z}[y][[x]]$. Then
@@ -453,36 +327,6 @@ public theorem_wanted bivariateCountGF_kArndt_neg (k' : ℕ) (hk' : 0 < k') :
           PowerSeries.C (1 - Polynomial.X ^ 2) * PowerSeries.X ^ 3 +
             PowerSeries.C (Polynomial.X ^ 2) * PowerSeries.X ^ (2 + k')) =
       (1 - PowerSeries.X ^ 2) * (1 - PowerSeries.X + PowerSeries.C Polynomial.X * PowerSeries.X)
-
-/-- **Counting $k$-Arndt compositions for nonnegative $k$.** Let $k \ge 0$ be an integer and let
-$a_k(n) = \sum_{m = 0}^{n} a_k(n, m)$ be the number of $k$-Arndt compositions of $n$. Then, in
-$\mathbb{Z}[[x]]$,
-$$\Bigl(\sum_{n \ge 0} a_k(n)\, x^n\Bigr)(1 - x - x^2 + x^3 - x^{k+3}) = 1 - x^2,$$
-that is, $\sum_{n \ge 0} a_k(n)\, x^n = (1 - x^2)/(1 - x - x^2 + x^3 - x^{k+3})$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Corollary 6, case `k ≥ 0`
-(`integers-2024-A35-cor-6`). -/
-public theorem_wanted kArndtComposition_total_gf_nonneg (k : ℕ) :
-    (PowerSeries.mk fun n =>
-        ((∑ m ∈ Finset.range (n + 1), kArndtCompositionCount k n m : ℕ) : ℤ)) *
-        (1 - PowerSeries.X - PowerSeries.X ^ 2 + PowerSeries.X ^ 3 - PowerSeries.X ^ (k + 3)) =
-      1 - PowerSeries.X ^ 2
-
-/-- **Counting $k$-Arndt compositions for negative $k$.** Let $k = -k'$ with $k' \ge 1$ an integer,
-and let $a_k(n) = \sum_{m = 0}^{n} a_k(n, m)$ be the number of $k$-Arndt compositions of $n$. Then,
-in $\mathbb{Z}[[x]]$,
-$$\Bigl(\sum_{n \ge 0} a_k(n)\, x^n\Bigr)(1 - x - 2x^2 + x^{2-k}) = 1 - x^2,$$
-that is, $\sum_{n \ge 0} a_k(n)\, x^n = (1 - x^2)/(1 - x - 2x^2 + x^{2-k})$.
-
-Source: Daniel F. Checa and José L. Ramírez, *Arndt Compositions: A Generating Functions
-Approach*, INTEGERS 24 (2024), Article A35, Corollary 6, case `k < 0`
-(`integers-2024-A35-cor-6`). -/
-public theorem_wanted kArndtComposition_total_gf_neg (k' : ℕ) (hk' : 0 < k') :
-    (PowerSeries.mk fun n =>
-        ((∑ m ∈ Finset.range (n + 1), kArndtCompositionCount (-(k' : ℤ)) n m : ℕ) : ℤ)) *
-        (1 - PowerSeries.X - 2 * PowerSeries.X ^ 2 + PowerSeries.X ^ (2 + k')) =
-      1 - PowerSeries.X ^ 2
 
 /-- **Generating function of block Arndt compositions.** Let $k \ge 1$, let $a^{(k)}(n, m)$ be
 the number of $k$-block Arndt compositions of $n$ with $m$ parts, and let

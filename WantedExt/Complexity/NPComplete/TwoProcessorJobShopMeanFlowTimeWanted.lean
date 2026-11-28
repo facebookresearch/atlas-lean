@@ -24,11 +24,11 @@ http://www2.informatik.uni-osnabrueck.de/knust/class/, class `j_nop`, entry `J2|
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ completion time `∑_{j ∈ J} C_j` is at most `K`, `C_j = σ(t_{n_j}[j]) + l(t_
 time the last task of `j` finishes? (The mean flow time is that sum divided by `|J|`.)
 
 This is `J2||ΣC_i` in the Brucker-Knust classification: JOB-SHOP SCHEDULING ([SS18],
-`JobShopSchedulingWanted`) with `m = 2` and the deadline replaced by a bound `K` on the sum of
+`JobShopSchedulingDefs`) with `m = 2` and the deadline replaced by a bound `K` on the sum of
 the completion times. The instance type `JobShopScheduling.JobShopSchedulingInstance`,
 `JobShopScheduling.WellFormed` (which includes `n_j ≥ 1`), the tasks and their lengths and
 processors are the parent's; the last component of the instance is the bound `K ∈ ℤ⁺` in place

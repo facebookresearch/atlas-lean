@@ -30,3 +30,5 @@
 
 - [Analysis of linear probing](../analysis-of-linear-probing/README.md): Knuth's expected number
   of probes for the linear-probing probe sequence, with uniformly random hash addresses.
+
+- [Probe-prefix bound for open addressing](first-k-probes-bound.md)

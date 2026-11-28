@@ -293,7 +293,7 @@ $\binom{n}{n_0, \ldots, n_{r-1}} = \frac{n!}{n_0! \cdots n_{r-1}!}$. -/
 theorem card_wordsOfContent_eq_multinomial {r : ℕ} (degree : Fin r → ℕ) :
     Fintype.card (WordsOfContent degree) = Nat.multinomial Finset.univ degree := by
   induction hn : (∑ i, degree i) using Nat.strong_induction_on generalizing degree with
-  | h n ih =>
+  | ind n ih =>
       by_cases hn0 : n = 0
       · have hdegree : degree = fun _ => 0 := by
           funext i

@@ -10,6 +10,8 @@
 
 ## The Peierls bound
 
+- [The outer contour map exists in every box](spin-compatible-fill-outer-contour-map.md)
+- [Peierls bound in every box when $4 e^{-2\beta} < 1$](peierls-prob-origin-minus-le-two-peierls.md)
 - [Plus and minus box measures on $\mathbb{Z}^2$ differ for large $\beta$](peierls-long-range-order-spin-compatible.md)
 - [Peierls bound](peierls-prob-origin-minus-le-uniform.md)
 

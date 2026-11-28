@@ -14,157 +14,20 @@ public import Mathlib.Data.Nat.Totient
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import MathlibExt.NumberTheory.Cyclotomic.CommonPrimeDivisorEvalPow
+public import MathlibExt.NumberTheory.Cyclotomic.ComposedFactorization
+public import MathlibExt.NumberTheory.Cyclotomic.PrimeDivisorCongruence
+public import MathlibExt.NumberTheory.Cyclotomic.PrimePowerDivisibility
+public import MathlibExt.NumberTheory.Cyclotomic.TwoPowRamifiedBound
+public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsHybridBoundPrimeDivisors
+public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsPrimeHybridBound
+public import MathlibExt.NumberTheory.HybridPrimeDivisorBoundsLtSixteenIffProdFirstPrimesLt
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Polynomial
-
-/-- **A common prime divisor of $x - 1$ and $\Phi_p(x)$ is $p$.** Let $\rho$ and $p$ be primes,
-let $x$ be a positive integer, and let $\Phi_p$ be the $p$-th cyclotomic polynomial with integer
-coefficients. If $\rho \mid x - 1$ and $\rho \mid \Phi_p(x)$, then $\rho = p$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 1 (`integers-2026-A95-lem-1`). -/
-public theorem_wanted prime_eq_of_dvd_sub_one_of_dvd_cyclotomic_eval {ρ p : ℕ}
-    (hρ : ρ.Prime) (hp : p.Prime) {x : ℤ} (hx : 0 < x) (h₁ : (ρ : ℤ) ∣ x - 1)
-    (h₂ : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval x) : ρ = p
-
-/-- **Divisibility of $x^p - 1$ by $p$.** Let $p$ be a prime, let $x$ be a positive integer, and
-let $\Phi_p$ be the $p$-th cyclotomic polynomial with integer coefficients. Then
-$p \mid x^p - 1$ if and only if $p \mid x - 1$ and $p \mid \Phi_p(x)$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 2 (`integers-2026-A95-lem-2`). -/
-public theorem_wanted prime_dvd_pow_self_sub_one_iff {p : ℕ} (hp : p.Prime) {x : ℤ}
-    (hx : 0 < x) :
-    (p : ℤ) ∣ x ^ p - 1 ↔ (p : ℤ) ∣ x - 1 ∧ (p : ℤ) ∣ (cyclotomic p ℤ).eval x
-
-/-- **A common prime divisor of $y - 1$ and $\Phi_p(y^{p^{a-1}})$ is $p$.** Let $\rho$ and $p$ be
-primes, let $a \ge 1$ be a natural number, let $y$ be a positive integer, and let $\Phi_p$ be the
-$p$-th cyclotomic polynomial with integer coefficients. If $\rho \mid y - 1$ and
-$\rho \mid \Phi_p(y^{p^{a-1}})$, then $\rho = p$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 3 (`integers-2026-A95-lem-3`). -/
-public theorem_wanted prime_eq_of_dvd_sub_one_of_dvd_cyclotomic_eval_pow {ρ p a : ℕ}
-    (hρ : ρ.Prime) (hp : p.Prime) (ha : 0 < a) {y : ℤ} (hy : 0 < y) (h₁ : (ρ : ℤ) ∣ y - 1)
-    (h₂ : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval (y ^ p ^ (a - 1))) : ρ = p
-
-/-- **Divisibility of $x^{rp^a} - 1$ by $p$.** Let $p$ be a prime, let $r$ and $a$ be natural
-numbers with $r$ coprime to $p$, let $x$ be a positive integer, and let $\Phi_p$ be the $p$-th
-cyclotomic polynomial with integer coefficients. Then $p \mid x^{rp^a} - 1$ if and only if
-$p \mid x^r - 1$ and $p \mid \Phi_p(x^{rp^{i-1}})$ for every $i \in \{1, \dots, a\}$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 4 (`integers-2026-A95-lem-4`). -/
-public theorem_wanted prime_dvd_pow_sub_one_iff_cyclotomic {p r a : ℕ} (hp : p.Prime)
-    (hr : r.Coprime p) {x : ℤ} (hx : 0 < x) :
-    (p : ℤ) ∣ x ^ (r * p ^ a) - 1 ↔
-      (p : ℤ) ∣ x ^ r - 1 ∧
-        ∀ i ∈ Finset.Icc 1 a, (p : ℤ) ∣ (cyclotomic p ℤ).eval (x ^ (r * p ^ (i - 1)))
-
-/-- **Prime divisors of $\Phi_p(x)$ other than $p$ are $1$ modulo $p$.** Let $\rho$ and $p$ be
-distinct primes, let $x$ be a positive integer, and let $\Phi_p$ be the $p$-th cyclotomic
-polynomial with integer coefficients. If $\rho \mid \Phi_p(x)$, then $\rho \equiv 1 \pmod p$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 1 (`integers-2026-A95-prop-1`). -/
-public theorem_wanted prime_modEq_one_of_dvd_cyclotomic_eval {ρ p : ℕ} (hρ : ρ.Prime)
-    (hp : p.Prime) (hne : ρ ≠ p) {x : ℤ} (hx : 0 < x)
-    (h : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval x) : Nat.ModEq p ρ 1
-
-/-- The hybrid bound. Let `n = ∏_{i=1}^m p_i^{a_i}` with distinct primes `p_i` (in any order),
-`x > 1`, and `ω_n = ω(x^n - 1)`. With `p_0 := 1`, let
-`Π^j = {ρ prime : ρ ≡ 1 (mod p_j), ρ ≢ 1 (mod p_s) for j < s ≤ m}` and `r_{i,j}` its `i`-th
-element (`Nat.nth`, `0`-indexed here). The source's
-`x ≥ min_{k_0 + ⋯ + k_m = ω_n} max_{0 ≤ t ≤ m} (1 + ∏_{j ≤ t} ∏_{i ≤ k_j} r_{i,j})^{T(t)}` with
-`T(t) = ∏_{s=1}^t p_s^{-a_s}` is stated equivalently, after raising to the power
-`∏_{s ≤ t} p_s^{a_s}`, as the existence of a composition `k` meeting every bound. The parts `k_j`
-range over `ℕ` (the source writes `k_i ∈ ℤ⁺`; with positive parts the claim fails for
-`n = 3`, `x = 2`, where `x^3 - 1 = 7` and `ω_n = 1` admits no positive composition into two
-parts). The source's factors are all primes, and since `Nat.nth` returns `0` past the end of
-a finite set, the statement requires every factor to be a genuine (positive) element of its
-prime class.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Theorem 1 (`integers-2026-A95-thm-1`). -/
-public theorem_wanted hybrid_bound_prime_divisors (m : ℕ) (p a : ℕ → ℕ)
-    (hp : ∀ i ∈ Finset.Icc 1 m, (p i).Prime) (hinj : Set.InjOn p (Finset.Icc 1 m))
-    (ha : ∀ i ∈ Finset.Icc 1 m, 0 < a i) {x : ℕ} (hx : 1 < x) :
-    ∃ k : ℕ → ℕ,
-      ∑ j ∈ Finset.range (m + 1), k j =
-          (x ^ (∏ i ∈ Finset.Icc 1 m, p i ^ a i) - 1).primeFactors.card ∧
-        (∀ j ≤ m, ∀ i < k j, 0 < Nat.nth (fun ρ => ρ.Prime ∧
-          (j = 0 ∨ Nat.ModEq (p j) ρ 1) ∧
-            ∀ s ∈ Finset.Ioc j m, ¬ Nat.ModEq (p s) ρ 1) i) ∧
-        ∀ t ≤ m,
-          1 + ∏ j ∈ Finset.range (t + 1), ∏ i ∈ Finset.range (k j),
-              Nat.nth (fun ρ => ρ.Prime ∧ (j = 0 ∨ Nat.ModEq (p j) ρ 1) ∧
-                ∀ s ∈ Finset.Ioc j m, ¬ Nat.ModEq (p s) ρ 1) i ≤
-            x ^ ∏ s ∈ Finset.Icc 1 t, p s ^ a s
-
-/-- The `p`-hybrid bound (Theorem 1 for prime `n = p`). For a prime `p`, `x > 1` and
-`ω_p = ω(x^p - 1)`, let `r_{i,0}` and `r_{j,1}` enumerate the primes `≢ 1` and `≡ 1 (mod p)`
-(`Nat.nth`, `0`-indexed here). The source's
-`x ≥ min_{0 ≤ k < ω_p} max(1 + ∏_{i ≤ k} r_{i,0}, (1 + ∏_{i ≤ k} r_{i,0} ∏_{j ≤ ω_p - k} r_{j,1})^{1/p})`
-is stated equivalently as the existence of `k < ω_p` meeting both bounds, the second after
-raising to the `p`-th power. The source's factors are all primes, and since `Nat.nth`
-returns `0` past the end of a finite set, the statement requires every factor to be a genuine
-(positive) element of its prime class.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 2 (`integers-2026-A95-prop-2`). -/
-public theorem_wanted prime_hybrid_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (hx : 1 < x) :
-    ∃ k < (x ^ p - 1).primeFactors.card,
-      (∀ i < k, 0 < Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i) ∧
-      1 + ∏ i ∈ Finset.range k, Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i ≤ x ∧
-        1 + (∏ i ∈ Finset.range k, Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i) *
-            ∏ j ∈ Finset.range ((x ^ p - 1).primeFactors.card - k),
-              Nat.nth (fun ρ => ρ.Prime ∧ Nat.ModEq p ρ 1) j ≤ x ^ p
-
-/-- **The ramified bound for $n = 2^a$.** Let $a \ge 1$, let $n = 2^a$, let $x > 1$ be a natural
-number, let $\omega_n$ be the number of distinct prime factors of $x^n - 1$, and let
-$s_1 = 2 < s_2 = 3 < s_3 = 5 < \cdots$ be the primes in increasing order. Then
-$$\min\Bigl(1 + 2n \prod_{i=1}^{\omega_n} s_i,\ 1 + \prod_{i=2}^{\omega_n + 1} s_i\Bigr) \le x^n.$$
-
-Equivalently, $x$ is at least the smaller of the $n$-th roots of these two numbers, which is the
-form of the source. The source admits every positive integer $x$; at $x = 1$ the number
-$x^n - 1 = 0$ has an empty prime factorization, so $\omega_n = 0$ and the bound would read
-$2 \le 1$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Theorem 3 (`integers-2026-A95-thm-3`). -/
-public theorem_wanted two_pow_ramified_bound {a x : ℕ} (ha : 0 < a) (hx : 1 < x) :
-    min (1 + 2 * 2 ^ a * ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime i)
-        (1 + ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime (i + 1)) ≤
-      x ^ 2 ^ a
-
-/-- **A weaker ramified bound for $n = 2^a$.** Let $a \ge 1$, let $n = 2^a$, let $x > 1$ be a
-natural number, let $\omega_n$ be the number of distinct prime factors of $x^n - 1$, and let
-$s_1 = 2 < s_2 = 3 < s_3 = 5 < \cdots$ be the primes in increasing order. Then
-$$\min\Bigl(1 + n \prod_{i=1}^{\omega_n} s_i,\ 1 + \prod_{i=2}^{\omega_n + 1} s_i\Bigr) \le x^n.$$
-
-This weakens the ramified bound for $n = 2^a$, which has the factor $2n$ in place of $n$. The
-extracted text of the source reads $n = 2a$; its own discussion ($n = 4$, "extends to $n = 2^a$")
-shows that $n = 2^a$ is meant. As in the stronger bound, $x > 1$ replaces the source's positive
-integer $x$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Corollary 1 (`integers-2026-A95-cor-1`). -/
-public theorem_wanted two_pow_trivial_ramified_bound {a x : ℕ} (ha : 0 < a) (hx : 1 < x) :
-    min (1 + 2 ^ a * ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime i)
-        (1 + ∏ i ∈ Finset.range (x ^ 2 ^ a - 1).primeFactors.card, Nat.nth Nat.Prime (i + 1)) ≤
-      x ^ 2 ^ a
-
-/-- **Primorials below powers of sixteen.** For every positive integer $w$, we have $w < 16$ if and
-only if the product $p_1 p_2 \cdots p_w$ of the first $w$ primes is less than $16^w$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 10 (`integers-2026-A95-prop-10`). -/
-public theorem_wanted lt_sixteen_iff_prod_first_primes_lt {w : ℕ} (hw : 0 < w) :
-    w < 16 ↔ ∏ i ∈ Finset.range w, Nat.nth Nat.Prime i < 16 ^ w
 
 /-- The ramified bound. Let `n = ∏_{i=1}^m p_i^{a_i}` with primes `p_1 < ⋯ < p_m` (the ordering
 the source fixes at the start of its Section 5), `x > 1`, `ω_n = ω(x^n - 1)`, and, with
@@ -243,27 +106,6 @@ public theorem_wanted prime_ramified_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (h
       if k ≤ b then (∀ i < k - 1, 0 < r₀ i) ∧ 1 + p * R₀ (k - 1) ≤ x ∧
         1 + p ^ 2 * R₀ (k - 1) * R₁ k ≤ x ^ p
       else (∀ i < k, 0 < r₀ i) ∧ 1 + R₀ k ≤ x ∧ 1 + p * R₀ k * R₁ k ≤ x ^ p)
-
-/-- **Factorization into composed cyclotomic polynomials.** Let $x$ be the indeterminate of the
-polynomial ring $\mathbb{Z}[x]$. Let $m$ be a natural number, let $p_1, \dots, p_m$ be primes,
-not necessarily distinct, let $a_1, \dots, a_m$ be natural numbers, and put
-$n = \prod_{i=1}^m p_i^{a_i}$. For $1 \le i \le m$ let $x_i = x^{N_i}$ with
-$N_i = \prod_{1 \le r < i} p_r^{a_r}$. Then
-$$x^n - 1 = (x - 1) \prod_{i=1}^m \prod_{j=1}^{a_i} \Phi_{p_i}(x_i^{p_i^{j-1}}),$$
-where $\Phi_p$ is the $p$-th cyclotomic polynomial over $\mathbb{Z}$ and $\Phi_{p_i}(\cdot)$
-denotes composition of polynomials.
-
-The source takes the prime factorization of $n$; the identity needs only that each $p_i$ is
-prime. The definition of $x_i$ follows the arXiv version of the source (arXiv:2412.00010),
-which the journal statement refers to as "$x_k$ as above".
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Proposition 4 (`integers-2026-A95-prop-4`). -/
-public theorem_wanted X_pow_sub_one_eq_mul_prod_cyclotomic_comp (m : ℕ) (p a : ℕ → ℕ)
-    (hp : ∀ i ∈ Finset.Icc 1 m, (p i).Prime) :
-    (X ^ (∏ i ∈ Finset.Icc 1 m, p i ^ a i) - 1 : ℤ[X]) =
-      (X - 1) * ∏ i ∈ Finset.Icc 1 m, ∏ j ∈ Finset.Icc 1 (a i),
-        (cyclotomic (p i) ℤ).comp (X ^ ((∏ r ∈ Finset.Ico 1 i, p r ^ a r) * p i ^ (j - 1)))
 
 /-- **Cohen's prime sieve for the line problem.** Let $q$ and $n$ be natural numbers, let $\omega$
 be the number of distinct prime factors of $q^n - 1$, and let $S$ be a set of $s$ prime factors of

@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.ClassGroup.FiniteIdeleContent
 open IsDedekindDomain
 
 /-- Source consumer with the original binders. -/
-theorem exactSource (R : Type*) [CommRing R] [IsDedekindDomain R]
+private theorem exactSource (R : Type*) [CommRing R] [IsDedekindDomain R]
     (K : Type*) [Field K] [Algebra R K] [IsFractionRing R K] :
     ∃ φ : (FiniteAdeleRing R K)ˣ →* ClassGroup R, Function.Surjective φ ∧
       φ.ker = FiniteAdeleRing.unitIdeles R K ⊔

@@ -6,9 +6,10 @@ docs_dir: site-src
 site_dir: site
 use_directory_urls: false
 # blueprint/migrations/ holds the records of the pinned-bump tooling
-# (scripts/bump/), not wiki pages, so the site leaves them out.
+# (scripts/bump/), not wiki pages, so the site leaves them out. Only the
+# top-level folder: a topic the taxonomy names "Migrations" keeps its pages.
 exclude_docs: |
-  migrations/
+  /migrations/
 
 hooks:
   # Material eagerly builds its search index in every browser tab. Keep one
@@ -18,8 +19,9 @@ hooks:
   # and every page loses the indentation the theme writes.
   - hooks/trim_pages.py
   # Each card's folder page shows the card, and every address the card move
-  # ledger retired keeps leading to its page (docs/cards.md#reading). Without
-  # card data of the commit being built, it changes nothing.
+  # ledger retired keeps leading to its page (docs/cards.md#reading), with the
+  # ledger check's receipt of the commit being built. Without card data of that
+  # commit, it shows no card but still keeps those addresses.
   - hooks/card_pages.py
 
 # The nav is not listed here. `autoform render` writes it to SUMMARY.md from
@@ -37,7 +39,8 @@ theme:
     code: JetBrains Mono
   # Readers with JavaScript browse with the explorer, which hides the theme's
   # header, sidebars and footer. For everyone else, theme/partials/nav.html
-  # lists Home, the sections above the page, its siblings and its entries.
+  # lists Home, the sections above the page, up to 50 of its siblings and its
+  # entries.
   features:
     - navigation.top
     - toc.follow

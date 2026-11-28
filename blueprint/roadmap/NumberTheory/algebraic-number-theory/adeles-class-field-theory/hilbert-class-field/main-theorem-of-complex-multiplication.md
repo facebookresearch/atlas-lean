@@ -40,7 +40,11 @@ which relates idèles to ray class groups.
 
 ## Depends on
 
-- [Global Artin reciprocity](../global-artin-reciprocity.md)
+- [Global Artin map](../reciprocity-law/global-artin-map.md), for the global Artin map of $K$, trivial on the infinite idèles of the totally imaginary field $K$
+
+## Proof depends on
+
+- [Global reciprocity law](../reciprocity-law/global-reciprocity-law.md), through which Milne's proof passes between idèles and ray class groups
 
 ## Sources
 

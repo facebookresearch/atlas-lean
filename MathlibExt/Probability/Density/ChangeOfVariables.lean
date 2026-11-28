@@ -86,13 +86,15 @@ theorem map_withDensity_eq_withDensity_abs_det_jacobianMatrix_symm {d : ℕ}
 measure: the preimage under `T` of a null set is the image of a null set under `T⁻¹`, hence null. -/
 theorem quasiMeasurePreserving_of_differentiable_symm (T : E ≃ᵐ E)
     (hT : Differentiable ℝ T.symm) : QuasiMeasurePreserving T μ μ := by
-  refine ⟨T.measurable, Measure.AbsolutelyContinuous.mk fun s hs hs0 => ?_⟩
+  refine ⟨T.measurable.aemeasurable, Measure.AbsolutelyContinuous.mk fun s hs hs0 => ?_⟩
   rw [Measure.map_apply T.measurable hs, ← T.image_symm]
   exact addHaar_image_eq_zero_of_differentiableOn_of_addHaar_eq_zero μ hT.differentiableOn hs0
 
 omit [FiniteDimensional ℝ E] [BorelSpace E] in
 /-- If `T` has derivative `A` at `z` and `T⁻¹` has derivative `B` at `T z`, then
-`det B * det A = 1`. -/
+`det B * det A = 1`. The theorem does not assume `FiniteDimensional ℝ E`; on an
+infinite-dimensional `E` the determinant (`LinearMap.det`) is `1`, so the statement is trivial
+there. -/
 theorem det_fderiv_symm_mul_det_fderiv (T : E ≃ᵐ E) {A B : E →L[ℝ] E} {z : E}
     (hT : HasFDerivAt T A z) (hS : HasFDerivAt T.symm B (T z)) : B.det * A.det = 1 := by
   have hcomp : HasFDerivAt (T.symm ∘ T) (B.comp A) z := HasFDerivAt.comp z hS hT
@@ -113,7 +115,10 @@ theorem map_comp_eq_withDensity (T : E ≃ᵐ E) {S' : E → E →L[ℝ] E}
     (HasPDF.aemeasurable Z ℙ μ), map_eq_withDensity_pdf Z ℙ μ,
     map_withDensity_eq_withDensity_abs_det_fderiv_symm μ T hS']
 
-/-- The density `x ↦ pdf Z (T⁻¹ x) * |det S' x|` is almost everywhere measurable. -/
+/-- The function `x ↦ pdf Z (T⁻¹ x) * |det S' x|` is almost everywhere measurable. Here
+`pdf Z ℙ μ` is Mathlib's Radon-Nikodym derivative of the law of `Z` with respect to `μ`: the
+density of its absolutely continuous part, and `0` when the law has no Lebesgue decomposition
+with respect to `μ`. -/
 theorem aemeasurable_pdf_comp_symm_mul_abs_det (T : E ≃ᵐ E) {S' : E → E →L[ℝ] E}
     (hS' : ∀ x, HasFDerivAt T.symm (S' x) x) (Z : Ω → E) (ℙ : Measure Ω) :
     AEMeasurable (fun x => pdf Z ℙ μ (T.symm x) * ENNReal.ofReal |(S' x).det|) μ := by

@@ -28,7 +28,11 @@ is `(q ^ (N + 1) - 1) / (q - 1)`.
 
 The original statement cites Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor
 Problems over B-Free Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80,
-Proposition 4 (`integers-2026-A80-prop-4`), case `h = 1`, `m = 1`. -/
+Proposition 4 (`integers-2026-A80-prop-4`), case `h = 1`, `m = 1`.
+
+Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
+Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Proposition 4
+(`integers-2026-A80-prop-4`), case `h = 1`, `m = 1`. -/
 public theorem monic_count_natDegree_le {F : Type*} [Field F] [Fintype F] (N : ℕ) :
     (Nat.card {f : F[X] // f.Monic ∧ f.natDegree ≤ N} : ℚ) =
       ((Fintype.card F : ℚ) ^ (N + 1) - 1) / (Fintype.card F - 1) := by

@@ -13,13 +13,22 @@ Statements from Sela Fried, "Proofs of Ten Conjectures From the OEIS", *Journal 
 Sequences* 29 (2026), Article 26.1.8
 (<https://cs.uwaterloo.ca/journals/JIS/VOL29/Fried/fried21.html>).
 
-Stated: Lemma 1 (a binomial identity), Theorem 2 (a diagonal coefficient), Theorem 3
-(triangular numbers near squares along `⌊n√2⌋`), Theorem 5 (arithmetic progressions of `[n]`),
-Theorem 6 (digit insertion and the digit sum), Theorem 7 (a binomial sum modulo `4`), Theorem 8
+Stated: Theorem 2 (a diagonal coefficient), Theorem 5 (arithmetic progressions of `[n]`),
+Theorem 6 (digit insertion and the digit sum), Theorem 8
 (the Bala-Somos parity conjectures from A067567 and A305123), Lemmas 9-11 and Theorem 12 (the
-ceiling of `cot (π / (2m))`), Theorem 13 (A285273), Theorem 14 and Corollary 15 (cevians), and
-Theorem 16 and Corollaries 17 and 21 (intersections and regions in the two-fan construction).
-Theorems 18 and 20 and Corollary 19 stay blocked (see the source audit table).
+ceiling of `cot (π / (2m))`), Theorem 14 and Corollary 15 (cevians), and Theorem 16 and
+Corollaries 17 and 21 (intersections and regions in the two-fan construction). Theorems 18 and 20
+and Corollary 19 stay blocked (see the source audit table).
+
+Proved in `MathlibExt.Combinatorics.Enumerative.FriedAlternatingBinomialIdentity`, which this
+module imports: Lemma 1 (`fried_alternating_binomial_identity`).
+Theorem 7 (a binomial sum modulo `4`, `bala_binomial_sum_odd_imp_mod_four`) is proved in
+`MathlibExt.Combinatorics.Enumerative.TenOeisConjecturesBalaBinomialSumOddImpModFour`, which this
+module imports.
+Theorem 13 (A285273) is proved in `MathlibExt.Combinatorics.Enumerative.RepeatingDecimalRatio`.
+`exists_sq_near_triangular_beatty_sqrt_two` (triangular numbers near squares along `⌊n√2⌋`) is
+proved in `MathlibExt.Combinatorics.Enumerative.TriangularNearSquareBeattySqrtTwo`, which this
+module imports.
 -/
 module
 
@@ -38,29 +47,16 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Topology.Connected.Clopen
 public import MathlibExt.Combinatorics.AP.Basic
+public import MathlibExt.Combinatorics.Enumerative.FriedAlternatingBinomialIdentity
+public import MathlibExt.Combinatorics.Enumerative.RepeatingDecimalRatio
+public import MathlibExt.Combinatorics.Enumerative.TriangularNearSquareBeattySqrtTwo
+public import MathlibExt.Combinatorics.Enumerative.TenOeisConjecturesBalaBinomialSumOddImpModFour
 
 namespace MetaMathlibExt
 
 open MvPolynomial
 
 @[expose] public section
-
-/-- **Fried's alternating binomial identity.** For integers $a$ and $b$ let $\binom{a}{b}$ be the
-binomial coefficient when $a, b \ge 0$ (so $0$ when $b > a$), and $0$ when $a < 0$ or $b < 0$.
-For natural numbers $n$, $r$, $s$ with $r \le n$ and $s \le 2r$, with all arguments computed in
-the integers,
-$$\sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{2n-2r}{n-k} \binom{n-k}{n-2r+s}
-\binom{2r-k-s}{n-s} = (-1)^n \binom{n}{2r-n} \binom{2n-2r}{n-s}.$$
-
-Source: Sela Fried, *Proofs of Ten Conjectures From the OEIS*, Journal of Integer Sequences 29
-(2026), Article 26.1.8, Lemma 1 (`jis-2026-26.1.8-lem-1`). -/
-public theorem_wanted fried_alternating_binomial_identity (n r s : ℕ) (hr : r ≤ n)
-    (hs : s ≤ 2 * r) :
-    let C : ℤ → ℤ → ℤ := fun a b => if 0 ≤ a ∧ 0 ≤ b then (a.toNat.choose b.toNat : ℤ) else 0
-    ∑ k ∈ Finset.range (n + 1),
-        (-1) ^ k * C n k * C (2 * n - 2 * r) (n - k) * C (n - k) (n - 2 * r + s) *
-          C (2 * r - k - s) (n - s) =
-      (-1) ^ n * C n (2 * r - n) * C (2 * n - 2 * r) (n - s)
 
 /-- **The Bala–Somos parity conjectures.** For a natural number $k$ let $p(k)$ be the number of
 partitions of $k$. For natural numbers $m$ and $N$ let
@@ -100,17 +96,6 @@ public theorem_wanted coeff_diag_trinomial_product_eq_franel (n : ℕ) :
         (1 - X 0 + X 1 + X 2) ^ n).coeff (Finsupp.equivFunOnFinite.symm fun _ => n)) =
       (-1) ^ n * ∑ k ∈ Finset.range (n + 1), ((n.choose k : ℤ)) ^ 3
 
-/-- **Triangular numbers near squares along $\lfloor n\sqrt{2} \rfloor$.** For a natural number
-$n$ let $a = \lfloor n\sqrt{2} \rfloor$ (A001951) and $T_a = a(a+1)/2$. Then some integer $k$
-satisfies $|T_a - k^2| \le \lfloor a/2 \rfloor$; that is, the distance from $T_a$ to the nearest
-perfect square is at most $\lfloor a/2 \rfloor$.
-
-Source: Sela Fried, *Proofs of Ten Conjectures From the OEIS*, Journal of Integer Sequences 29
-(2026), Article 26.1.8, Theorem 3 (`jis-2026-26.1.8-thm-3`). -/
-public theorem_wanted exists_sq_near_triangular_beatty_sqrt_two (n : ℕ) :
-    let a : ℕ := ⌊(n : ℝ) * Real.sqrt 2⌋₊
-    ∃ k : ℤ, |((a * (a + 1) / 2 : ℕ) : ℤ) - k ^ 2| ≤ (a / 2 : ℕ)
-
 /-- **Counting arithmetic progressions in $\{1, \dots, n\}$.** For every integer $n \ge 1$, the
 number of subsets $S \subseteq \{1, \dots, n\}$ with $|S| \ge 2$ that are arithmetic progressions,
 that is, $S = \{a, a + d, \dots, a + (|S| - 1)d\}$ for some natural numbers $a$ and $d \ge 1$,
@@ -140,19 +125,6 @@ public theorem_wanted card_digitInsertion_le_ten_mul_eq_digitSum (n : ℕ) (hn :
     let S : Finset ℕ := (((Finset.range (L.length + 1)) ×ˢ Finset.range 10).filter
         fun p => ¬(p.1 = L.length ∧ p.2 = 0)).image fun p => Nat.ofDigits 10 (L.insertIdx p.1 p.2)
     (S.filter (· ≤ 10 * n)).card = L.sum
-
-/-- **Odd values of Bala's binomial sum are $1$ modulo $4$.** For a natural number $n$, let
-$a(n) = \sum_{k=0}^{n} \binom{2n+1}{n+k+1} (-2)^k$. If $a(n)$ is odd, then $a(n) \equiv 1 \pmod 4$.
-
-The paper's $a(n)$ is A026641 (the number of even-outdegree nodes in all ordered trees with $n$
-edges); its proof works with this binomial sum (Bala's formula, display (13)), which is taken as
-the definition here.
-
-Source: Sela Fried, *Proofs of Ten Conjectures From the OEIS*, Journal of Integer Sequences 29
-(2026), Article 26.1.8, Theorem 7 (`jis-2026-26.1.8-thm-7`). -/
-public theorem_wanted bala_binomial_sum_odd_imp_mod_four (n : ℕ)
-    (h : Odd (∑ k ∈ Finset.range (n + 1), ((2 * n + 1).choose (n + k + 1) : ℤ) * (-2) ^ k)) :
-    (∑ k ∈ Finset.range (n + 1), ((2 * n + 1).choose (n + k + 1) : ℤ) * (-2) ^ k) % 4 = 1
 
 /-- **The ceiling of $\cot(\pi/(2m))$ rises in steps of $0$ or $1$.** For $m \ge 1$ let
 $g(m) = \lceil \cot(\pi/(2m)) \rceil$. Then for every $m \ge 1$, $g(m) \le g(m+1)$ and
@@ -206,19 +178,6 @@ public theorem_wanted jeffery_floor_cot_singletons (n : ℕ) (hn : 1 ≤ n) :
     let A : ℕ → Prop := fun k => 1 ≤ k ∧ ∃! m : ℕ, 2 ≤ m ∧ -(k : ℤ) = f (-(m : ℤ))
     let B : ℕ → Prop := fun k => 2 ≤ k ∧ f (-(k : ℤ) - 1) < f (-(k : ℤ)) ∧ f (-(k : ℤ)) < f (-(k : ℤ) + 1)
     2 * Nat.nth A (n - 1) = Nat.nth B (n - 1) + n - 1
-
-/-- **Counting solutions of a repeating-decimal ratio equation.** For every natural number
-$n \ge 1$, the number of natural numbers $x$ with $10^n \le x < 10^{n+1}$ for which there is a
-natural number $k$ with $x \le k < 2x$ and $k / x = 1 + (x - 10^n) / (10^n - 1)$, computed in the
-rationals, (OEIS A285273) equals $2^{\omega(10^n - 1)}$, where $\omega(m)$ is the number of
-distinct prime factors of $m$.
-
-Source: Sela Fried, *Proofs of Ten Conjectures From the OEIS*, Journal of Integer Sequences 29
-(2026), Article 26.1.8, Theorem 13 (`jis-2026-26.1.8-thm-13`). -/
-public theorem_wanted ncard_repeating_decimal_ratio_eq_two_pow_omega (n : ℕ) (hn : 1 ≤ n) :
-    {x : ℕ | 10 ^ n ≤ x ∧ x < 10 ^ (n + 1) ∧ ∃ k : ℕ, x ≤ k ∧ k < 2 * x ∧
-        (k : ℚ) / x = 1 + ((x : ℚ) - 10 ^ n) / (10 ^ n - 1)}.ncard =
-      2 ^ ArithmeticFunction.cardDistinctFactors (10 ^ n - 1)
 
 /-- **Zakharov's conjecture on regions cut by cevians.** Let $A$, $B$, $C$ be affinely independent
 points of $\mathbb{R}^2$ and $T$ the triangle they span; a cevian is a segment joining a vertex

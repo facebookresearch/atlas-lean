@@ -1,0 +1,8 @@
+{
+  "rows": [
+    {"path": "CSLibExtTest/Coding/CRCTests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b5fe81245c3d39b95135ccc6525e79722bb184402f642c05360c9ec8f16f392c", "rationale": "Adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.", "upstream_sha256": "bf474b54b205e657600943b29f8830fc4d9de082db4fa7ea6642bbae926c9498"},
+    {"path": "CSLibExtTest/Coding/Hamming74Tests.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "27dde91fed28ec9219ca7e75e2e0d4c92bd243d30ab12b13eabf0a6ab4bc1964", "rationale": "Adapted to the Lean, Mathlib, CSLib and Physlib v4.36.0 API changes (toolchain bump); formal-math needs the same changes when it moves to v4.36.0.", "upstream_sha256": "622f5c85ae8ddc7398b359d0bc25e510211bd7b85b62522f4383477f2bf17336"},
+    {"path": "CSLibExtTest/Coding/LinearCodeTests.lean", "disposition": "identical", "published_sha256": "d69fd53b467982f3a1d57e4c01ff4df80fb6cecc405c6e47563213ce7f714394", "upstream_sha256": "7348ab359319cc247a041b2d4b4733f936d08c76070d6ab6c1a3b8c136219bf5"},
+    {"path": "CSLibExtTest/Coding/ReedSolomonTests.lean", "disposition": "identical", "published_sha256": "5756697339d97db748d60d576165bf9808336b66ded1dc2c8ee3675b05232a5a", "upstream_sha256": "abcffe4ec914e327ef3810409cf0f5eb18cf4d1c19749a74a9cd24763a409769"}
+  ]
+}

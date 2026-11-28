@@ -45,7 +45,11 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Even
-public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquares
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily330
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily331
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresHasSquareElementarySymmetricFunctionsFamily34
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily36
 
 set_option autoImplicit false
 
@@ -53,117 +57,16 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresWanted
 
-/-- **Integer triples with square elementary symmetric functions.** Integers $a$, $b$ and $c$
-have square elementary symmetric functions when $a + b + c$, $ab + bc + ca$ and $abc$ are each
-the square of an integer. -/
-def HasSquareElementarySymmetricFunctions (a b c : ℤ) : Prop :=
-  IsSquare (a + b + c) ∧
-    IsSquare (a * b + b * c + c * a) ∧
-    IsSquare (a * b * c)
-
-/-- **Rationals with square elementary symmetric functions.** Rational numbers $a$, $b$, $c$
-have square elementary symmetric functions when each of $a + b + c$, $ab + bc + ca$ and $abc$
-is the square of a rational number. -/
-def HasSquareElementarySymmetricFunctionsℚ (a b c : ℚ) : Prop :=
-  IsSquare (a + b + c) ∧
-    IsSquare (a * b + b * c + c * a) ∧
-    IsSquare (a * b * c)
-
-/-- **Sums of two rational squares.** A rational number $q$ is a sum of two squares when
-$q = x^2 + y^2$ for some rational numbers $x$ and $y$. -/
-def IsSumTwoSquaresℚ (q : ℚ) : Prop :=
-  ∃ x y : ℚ, q = x ^ 2 + y ^ 2
-
-/-- **Sums of two integer squares.** An integer $z$ is a sum of two squares when $z = x^2 + y^2$
-for some integers $x$ and $y$. -/
-def IsSumTwoSquaresℤ (z : ℤ) : Prop :=
-  ∃ x y : ℤ, z = x ^ 2 + y ^ 2
-
 /-- **Sums of two nonzero integer squares.** An integer $z$ is a sum of two nonzero squares
 when $z = x^2 + y^2$ for some nonzero integers $x$ and $y$. -/
 def IsSumTwoNonzeroSquaresℤ (z : ℤ) : Prop :=
   ∃ x y : ℤ, x ≠ 0 ∧ y ≠ 0 ∧ z = x ^ 2 + y ^ 2
-
-/-- **Quotients of sums of two rational squares.** If $\alpha$ and $\beta$ are nonzero rational
-numbers that are each a sum of two squares of rational numbers, then $\alpha / \beta$ is also a
-sum of two squares of rational numbers.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Lemma 1. -/
-theorem_wanted sum_two_squares_div_sum_two_squaresℚ
-    {α β : ℚ} (hα : α ≠ 0) (hβ : β ≠ 0)
-    (hα₂ : IsSumTwoSquaresℚ α) (hβ₂ : IsSumTwoSquaresℚ β) :
-    IsSumTwoSquaresℚ (α / β)
-
-/-- **Pairwise products preserve square symmetric functions.** If $a$, $b$, $c$ are integers
-such that each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an integer, then the
-same holds for the triple $ab$, $bc$, $ca$.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Lemma 2. -/
-theorem_wanted hasSquareElementarySymmetricFunctions_pairwise_products
-    {a b c : ℤ}
-    (h : HasSquareElementarySymmetricFunctions a b c) :
-    HasSquareElementarySymmetricFunctions (a * b) (b * c) (c * a)
-
-/-- **Rational solutions are sums of two squares and rescale to integer solutions.** Let $a$, $b$,
-$c$ be rational numbers such that $a + b + c$, $ab + bc + ca$ and $abc$ are squares of rational
-numbers. Then each of $a$, $b$ and $c$ is a sum of two squares of rational numbers. Moreover,
-there is a nonzero rational number $k$ such that $A = ka$, $B = kb$ and $C = kc$ are integers,
-$A + B + C$, $AB + BC + CA$ and $ABC$ are squares of integers, and each of $A$, $B$ and $C$ is a
-sum of two squares of integers.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Lemma 3. -/
-theorem_wanted isSumTwoSquaresℚ_of_hasSquareElementarySymmetricFunctionsℚ_and_scaling
-    {a b c : ℚ}
-    (h : HasSquareElementarySymmetricFunctionsℚ a b c) :
-    IsSumTwoSquaresℚ a ∧
-      IsSumTwoSquaresℚ b ∧
-      IsSumTwoSquaresℚ c ∧
-      ∃ (k : ℚ) (A B C : ℤ),
-        k ≠ 0 ∧
-          (A : ℚ) = k * a ∧
-          (B : ℚ) = k * b ∧
-          (C : ℚ) = k * c ∧
-          HasSquareElementarySymmetricFunctions A B C ∧
-          IsSumTwoSquaresℤ A ∧
-          IsSumTwoSquaresℤ B ∧
-          IsSumTwoSquaresℤ C
 
 private abbrev firstShiftedSextic (s t : ℤ) : ℤ :=
   s ^ 6 - s ^ 4 * t ^ 2 - 5 * s ^ 2 * t ^ 4 + t ^ 6
 
 private abbrev secondShiftedSextic (s t : ℤ) : ℤ :=
   3 * s ^ 6 + s ^ 4 * t ^ 2 + s ^ 2 * t ^ 4 - t ^ 6
-
-/-- **Choudhry's family (3.3) of integer triples with square symmetric functions.** For all
-integers $s$ and $t$, put $a = t^2 (s^2 - t^2)^2 (s^2 + t^2)$, $b = s^2 (s^2 - t^2)^2 (s^2 + t^2)$
-and $c = 4 s^4 t^4$. Then each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an
-integer.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.3). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family33
-    (s t : ℤ) :
-    HasSquareElementarySymmetricFunctions
-      (t ^ 2 * (s ^ 2 - t ^ 2) ^ 2 * (s ^ 2 + t ^ 2))
-      (s ^ 2 * (s ^ 2 - t ^ 2) ^ 2 * (s ^ 2 + t ^ 2))
-      (4 * s ^ 4 * t ^ 4)
-
-/-- **Choudhry's family (3.4) of integer triples with square symmetric functions.** For all
-integers $s$ and $t$, put $a = 4 s^4 t^2 (s^2 + t^2)$, $b = 4 s^2 t^4 (s^2 + t^2)$ and
-$c = (s^4 - t^4)^2$. Then each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an
-integer.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.4). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family34
-    (s t : ℤ) :
-    HasSquareElementarySymmetricFunctions
-      (4 * s ^ 4 * t ^ 2 * (s ^ 2 + t ^ 2))
-      (4 * s ^ 2 * t ^ 4 * (s ^ 2 + t ^ 2))
-      ((s ^ 4 - t ^ 4) ^ 2)
 
 /-- **Choudhry's family (3.5) of integer triples with square symmetric functions.** For all
 integers $s$ and $t$, let $f = s^6 - s^4 t^2 - 5 s^2 t^4 + t^6$ and
@@ -182,23 +85,6 @@ theorem_wanted hasSquareElementarySymmetricFunctions_family35
       (4 * s ^ 2 * t ^ 4 * (s ^ 2 + t ^ 2) *
         (secondShiftedSextic s t) ^ 2)
 
-/-- **Choudhry's family (3.6) of integer triples with square symmetric functions.** For all
-integers $s$ and $t$, let $f = s^6 - s^4 t^2 - 5 s^2 t^4 + t^6$ and
-$g = 3 s^6 + s^4 t^2 + s^2 t^4 - t^6$, and put $a = t^2 (s^2 - t^2)^2 (s^2 + t^2) g^2$,
-$b = 4 s^4 t^4 g^2$ and $c = s^2 (s^2 - t^2)^2 (s^2 + t^2) f^2$. Then each of $a + b + c$,
-$ab + bc + ca$ and $abc$ is the square of an integer.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.6). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family36
-    (s t : ℤ) :
-    HasSquareElementarySymmetricFunctions
-      (t ^ 2 * (s ^ 2 - t ^ 2) ^ 2 * (s ^ 2 + t ^ 2) *
-        (secondShiftedSextic s t) ^ 2)
-      (4 * s ^ 4 * t ^ 4 * (secondShiftedSextic s t) ^ 2)
-      (s ^ 2 * (s ^ 2 - t ^ 2) ^ 2 * (s ^ 2 + t ^ 2) *
-        (firstShiftedSextic s t) ^ 2)
-
 private abbrev shiftedQuartic (m n : ℤ) : ℤ :=
   m ^ 4 - 6 * m ^ 2 * n ^ 2 + n ^ 4
 
@@ -211,37 +97,6 @@ private abbrev secondDegreeTwelve (m n : ℤ) : ℤ :=
   m ^ 12 - 10 * m ^ 10 * n ^ 2 + 15 * m ^ 8 * n ^ 4
     - 204 * m ^ 6 * n ^ 6 + 15 * m ^ 4 * n ^ 8
     - 10 * m ^ 2 * n ^ 10 + n ^ 12
-
-/-- **Choudhry's family (3.30) of square triples with square symmetric functions.** For all
-integers $m$ and $n$, let $Q = m^4 - 6 m^2 n^2 + n^4$ and put $a = (m^4 - n^4)^2 Q^2$,
-$b = 4 m^2 n^2 (m^2 + n^2)^2 Q^2$ and $c = 64 m^4 n^4 (m^2 - n^2)^4$. Then each of $a$, $b$,
-$c$, $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an integer.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.30). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family330_and_entries_square
-    (m n : ℤ) :
-    let a := (m ^ 4 - n ^ 4) ^ 2 * (shiftedQuartic m n) ^ 2
-    let b := 4 * m ^ 2 * n ^ 2 * (m ^ 2 + n ^ 2) ^ 2
-      * (shiftedQuartic m n) ^ 2
-    let c := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 4
-    HasSquareElementarySymmetricFunctions a b c ∧
-      IsSquare a ∧ IsSquare b ∧ IsSquare c
-
-/-- **Choudhry's family (3.31) of square triples with square symmetric functions.** For all
-integers $m$ and $n$, let $a = 64 m^4 n^4 (m^2 - n^2)^2$, $b = 16 m^2 n^2 (m^2 - n^2)^4$ and
-$c = (m^2 + n^2)^2 (m^4 - 6 m^2 n^2 + n^4)^2$. Then $a + b + c$, $ab + bc + ca$ and $abc$ are
-squares of integers, and $a$, $b$ and $c$ are themselves squares of integers.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.31). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family331_and_entries_square
-    (m n : ℤ) :
-    let a := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 2
-    let b := 16 * m ^ 2 * n ^ 2 * (m ^ 2 - n ^ 2) ^ 4
-    let c := (m ^ 2 + n ^ 2) ^ 2 * (shiftedQuartic m n) ^ 2
-    HasSquareElementarySymmetricFunctions a b c ∧
-      IsSquare a ∧ IsSquare b ∧ IsSquare c
 
 /-- **Choudhry's family (3.32) of square triples with square symmetric functions.** For all
 integers $m$ and $n$, let $Q = m^4 - 6 m^2 n^2 + n^4$,

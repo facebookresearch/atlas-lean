@@ -58,10 +58,10 @@ theorem sum_over_classes (f : G → ℂ) :
       = ∑ l : ConjClasses G, ∑ x ∈ (ConjClasses.carrier l).toFinset, f x := by
   let fiberEquiv (l : ConjClasses G) :
       ↥((ConjClasses.carrier l).toFinset) ≃ {x : G // ConjClasses.mk x = l} :=
-    Set.equivOfEq (by
+    Set.equivOfEq (s := ((ConjClasses.carrier l).toFinset : Set G))
+      (t := {x | ConjClasses.mk x = l}) (by
       ext x
-      simp [ConjClasses.carrier_eq_preimage_mk]
-      rfl)
+      simp [ConjClasses.carrier_eq_preimage_mk])
   let e : (Σ l : ConjClasses G,
       ↥((ConjClasses.carrier l).toFinset)) ≃ G :=
     (Equiv.sigmaCongrRight fiberEquiv).trans

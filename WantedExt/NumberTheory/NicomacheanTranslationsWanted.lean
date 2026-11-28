@@ -13,6 +13,10 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.NumberTheory.NicomacheanAdjoinedProgression
+public import MathlibExt.NumberTheory.NicomacheanLargeTopGap
+public import MathlibExt.NumberTheory.NicomacheanTranslations
+public import MathlibExt.NumberTheory.NicomacheanTranslationsExistsGoldenRatioNicomacheanSequence
 
 /-!
 # Translations and extensions of the Nicomachean identity
@@ -31,58 +35,6 @@ open Filter Topology PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Nicomachean defect.** For a finite sequence $\sigma = (a_1, \ldots, a_n)$ of elements of a
-commutative ring, the Nicomachean defect of $\sigma$ is
-$\nu(\sigma) = \left(\sum_{i=1}^n a_i\right)^2 - \sum_{i=1}^n a_i^3$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Section 1. -/
-def nicomacheanNu {R : Type*} [CommRing R] (σ : List R) : R :=
-  σ.sum ^ 2 - (σ.map (· ^ 3)).sum
-
-/-- **Examples of the Nicomachean defect.** For the Nicomachean defect $\nu$ of a sequence of
-integers, $\nu(1, 2, 3, 4) = 0$, $\nu(1, 2) = 0$, $\nu(3, 3, 3) = 0$,
-$\nu(1, 2, 2, 3, 4, 5, 6, 8) = 0$ and $\nu(1, 2, 2, 3, 4, 6, 6, 8) = -28$.
-
-The last two are the values at $x = 5$ and $x = 6$ of the paper's identity
-$\nu(1, 2, 2, 3, 4, x, 6, 8) = (5 - x)(x - 4)(8 + x)$; the identity itself is not stated here.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Section 1. -/
-theorem nicomacheanNu_examples :
-    nicomacheanNu ([1, 2, 3, 4] : List ℤ) = 0 ∧ nicomacheanNu ([1, 2] : List ℤ) = 0 ∧
-      nicomacheanNu ([3, 3, 3] : List ℤ) = 0 ∧
-      nicomacheanNu ([1, 2, 2, 3, 4, 5, 6, 8] : List ℤ) = 0 ∧
-      nicomacheanNu ([1, 2, 2, 3, 4, 6, 6, 8] : List ℤ) = -28 := by
-  decide
-
-/-- **The Nicomachean progression factor.** For rational numbers $n$, $s$ and $a$, define
-
-$$\alpha(n, s, a) = 2n^2 + na - a^2 + \frac{n(n-1)(s - s^2)}{2} - (n-1)as.$$
-
-This is the second factor of $\nu(S_m)$, where
-$\nu(a_1, \dots, a_k) = (a_1 + \dots + a_k)^2 - (a_1^3 + \dots + a_k^3)$ is the Nicomachean defect,
-$S = (a, a + s, \dots, a + (n-1)s)$, and $S_m$ joins $n$ copies of $n$ with the translated
-progressions $S, S + n, \dots, S + mn$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Section 6, equation (nusm). -/
-def nicomacheanAlpha (n s a : ℚ) : ℚ :=
-  2 * n ^ 2 + n * a - a ^ 2 + n * (n - 1) * (s - s ^ 2) / 2 - (n - 1) * a * s
-
-/-- **Specializations of the Nicomachean factor at $s = 1, 2, 3$.** Let
-$\alpha(n, s, a) = 2n^2 + na - a^2 + n(n-1)(s - s^2)/2 - (n-1)as$. For all rational numbers $n$
-and $a$, $\alpha(n, 1, a) = 2n^2 + a - a^2$, $\alpha(n, 2, a) = n^2 + (1 - a)n - a^2 + 2a$ and
-$\alpha(n, 3, a) = -(a + n - 3)(a + n)$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Section 6. -/
-theorem nicomacheanAlpha_one_two_three (n a : ℚ) :
-    nicomacheanAlpha n 1 a = 2 * n ^ 2 + a - a ^ 2 ∧
-      nicomacheanAlpha n 2 a = n ^ 2 + (1 - a) * n - a ^ 2 + 2 * a ∧
-      nicomacheanAlpha n 3 a = -(a + n - 3) * (a + n) := by
-  refine ⟨?_, ?_, ?_⟩ <;> · unfold nicomacheanAlpha; ring
 
 /-- **Second differences of roots of translated Nicomachean bag squares.** Write
 $\nu(a_1, \dots, a_k) = (a_1 + \dots + a_k)^2 - (a_1^3 + \dots + a_k^3)$ for the Nicomachean defect
@@ -116,18 +68,6 @@ public theorem_wanted nicomachean_bagSquare_root_secondDifference_tendsto :
       Tendsto (fun m => s (m + 2) - 2 * s (m + 1) + s m) atTop
         (𝓝 ((3 - Real.sqrt 105) / 12)) ∧
       Tendsto (fun m => ρ (m + 2) - 2 * ρ (m + 1) + ρ m) atTop (𝓝 ((3 + Real.sqrt 105) / 12))
-
-/-- **Nicomachean sequences of rationals with large denominators.** Write
-$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
-of a finite sequence. For every natural number $Q$ there is a finite sequence $\sigma$ of positive
-rational numbers with $\nu(\sigma) = 0$ having an entry whose denominator in lowest terms is
-greater than $Q$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 3
-(`jis-2024-24.6.3-prop-3`). -/
-public theorem_wanted exists_pos_rat_nicomacheanNu_eq_zero_large_den (Q : ℕ) :
-    ∃ σ : List ℚ, (∀ x ∈ σ, 0 < x) ∧ nicomacheanNu σ = 0 ∧ ∃ x ∈ σ, Q < x.den
 
 /-- **Two-valued Nicomachean sequences with a large gap.** Write
 $\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
@@ -178,51 +118,6 @@ public theorem_wanted nicomachean_run_repeat_generatingFunctions :
       (1 - X) * (1 - 6 * X + X ^ 2) * (1 + 6 * X + X ^ 2) * PowerSeries.mk (fun k => (M k : ℤ)) =
         6 * (1 + X) ^ 2
 
-/-- **Nicomachean sequences with a large gap at the top.** Write
-$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
-of a finite sequence. For every natural number $G$ there is a finite sequence $\sigma$ of
-positive integers with $\nu(\sigma) = 0$ and entries $a < b$ of $\sigma$ such that $b$ is the
-largest entry of $\sigma$ and occurs exactly once, every entry other than $b$ is at most $a$, and
-$b - a > G$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 6
-(`jis-2024-24.6.3-prop-6`). -/
-public theorem_wanted exists_nicomachean_large_top_gap (G : ℕ) :
-    ∃ σ : List ℤ, (∀ x ∈ σ, 0 < x) ∧ nicomacheanNu σ = 0 ∧ ∃ a ∈ σ, ∃ b ∈ σ,
-      σ.count b = 1 ∧ (∀ x ∈ σ, x ≤ b) ∧ a < b ∧ (∀ x ∈ σ, x ≠ b → x ≤ a) ∧ (G : ℤ) < b - a
-
-/-- **Golden-ratio sequences with vanishing Nicomachean defect.** Let $\varphi = (1 + \sqrt 5)/2$
-be the golden ratio and write
-$\nu(a_1, \dots, a_k) = (a_1 + \dots + a_k)^2 - (a_1^3 + \dots + a_k^3)$ for the Nicomachean defect
-of a finite sequence of real numbers. For every natural number $N$ there is a finite sequence
-$\sigma$ of positive real numbers, each of the form $p + q\varphi$ with $p, q \in \mathbb{Z}$, such
-that $\nu(\sigma) = 0$, $\sigma$ contains $\varphi^{-n}$ for every $1 \le n \le N$, and $\sigma$ has
-a subsequence of irrational entries whose length is more than half the length of $\sigma$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 7
-(`jis-2024-24.6.3-prop-7`). -/
-public theorem_wanted exists_goldenRatio_nicomachean_sequence (N : ℕ) :
-    ∃ σ : List ℝ, (∀ x ∈ σ, 0 < x ∧ ∃ p q : ℤ, x = p + q * Real.goldenRatio) ∧
-      (∃ τ : List ℝ, τ.Sublist σ ∧ σ.length < 2 * τ.length ∧ ∀ x ∈ τ, Irrational x) ∧
-      nicomacheanNu σ = 0 ∧ ∀ n ∈ Finset.Icc 1 N, Real.goldenRatio⁻¹ ^ n ∈ σ
-
-/-- **Adjoined Nicomachean sequences are eventually arithmetic progressions.** Write
-$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
-of a finite sequence. Let $(a_1, \dots, a_n)$ be a finite, possibly empty, sequence of real numbers
-and let $x_1, x_2, x_3, \dots$ be nonzero real numbers with $x_{j+1} \ne -x_j$ for every $j \ge 1$.
-If $\nu(a_1, \dots, a_n, x_1, \dots, x_l) = 0$ for every $l \ge 1$, then $x_{j+1} = x_j + 1$ for
-every $j \ge 2$; that is, $x_2, x_3, \dots$ is an arithmetic progression with difference $1$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 8
-(`jis-2024-24.6.3-prop-8`). -/
-public theorem_wanted nicomachean_adjoined_arithmeticProgression (a : List ℝ) (x : ℕ → ℝ)
-    (hx : ∀ j, x j ≠ 0) (hneg : ∀ j, x (j + 1) ≠ -x j)
-    (hν : ∀ l, nicomacheanNu (a ++ (List.range (l + 1)).map x) = 0) :
-    ∀ j, 1 ≤ j → x (j + 1) = x j + 1
-
 /-- **Positive integer roots of the Nicomachean factor for $s = 1, 2$.** Let
 $\alpha(n, s, a) = 2n^2 + na - a^2 + n(n-1)(s - s^2)/2 - (n-1)as$ and let $F_0 = 0$, $F_1 = 1$,
 $F_{k+2} = F_{k+1} + F_k$ be the Fibonacci numbers. Let $n \ge 1$ be a natural number. Then
@@ -261,7 +156,8 @@ Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 1
 public theorem_wanted exists_nicomachean_family_same_quadratic_factor (N : ℕ) :
     ∃ σ : Fin N → List ℤ, Function.Injective (fun i => (σ i : Multiset ℤ)) ∧ ∃ c : ℤ, ∀ i,
       (∀ x ∈ σ i, 0 < x) ∧ nicomacheanNu (σ i) = 0 ∧
-        ∀ a b : ℤ, nicomacheanNu (σ i ++ [a, b]) = -(a + b) * (a ^ 2 - a * b + b ^ 2 - a - b - 2 * c)
+        ∀ a b : ℤ, nicomacheanNu (σ i ++ [a, b]) =
+          -(a + b) * (a ^ 2 - a * b + b ^ 2 - a - b - 2 * c)
 
 end
 

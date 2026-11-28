@@ -1,0 +1,3 @@
+# Well-formed instances of MAXIMUM CUT ON INTERVAL GRAPHS
+
+An instance $(n, E, K)$ is well-formed for MAXIMUM CUT ON INTERVAL GRAPHS when it is a well-formed MAXIMUM CUT instance (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), the graph on the vertices $0, \dots, n-1$ in which $u$ and $v$ are adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$ is an interval graph (there are real numbers $l_v \le r_v$ for each vertex $v$ such that two distinct vertices are adjacent exactly when $[l_u, r_u]$ and $[l_v, r_v]$ intersect), and $1 \le K \le |E|$, where $|E|$ is the length of the list $E$.

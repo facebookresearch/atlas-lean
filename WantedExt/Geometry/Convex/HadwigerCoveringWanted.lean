@@ -8,13 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Geometry.Convex.Illumination
+public import MathlibExt.Geometry.Convex.IlluminationFiniteMinimum
+public import MathlibExt.Geometry.Convex.IlluminationInteriorCovering
+public import MathlibExt.Geometry.Convex.IlluminationInteriorEquivalence
+public import MathlibExt.Geometry.Convex.IlluminationUniformInteriorCovering
 import Batteries.Util.ProofWanted
 
 /-!
 # Known Hadwiger covering and illumination statements with unproved Lean payloads
 
-These twelve private `ProofWanted` records supply no proof of their payloads.
+These private `ProofWanted` records supply no proof of their payloads.
 They import only canonical geometry, not an open conjecture or its Results.
 -/
 
@@ -85,17 +88,6 @@ theorem_wanted directionalHomothetFormulationsEquivalent :
     ∀ n : ℕ, 0 < n → ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsConvexBody K →
       ∀ q : ℕ, IlluminatedByDirections K q ↔ CoveredBySmallerPositiveHomothets K q
 
-/-- **Directional illumination is equivalent to covering by interior translates.** Let $n \ge 1$,
-let $K \subseteq \mathbb{R}^n$ be a convex body and let $q$ be a natural number. Then some $q$ unit
-vectors illuminate $K$ if and only if $K$ is covered by $q$ translates
-$v_1 + \operatorname{int} K, \dots, v_q + \operatorname{int} K$ of its interior, repetitions
-allowed.
-
-Source: Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction. -/
-theorem_wanted directionalInteriorFormulationsEquivalent :
-    ∀ n : ℕ, 0 < n → ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsConvexBody K →
-      ∀ q : ℕ, IlluminatedByDirections K q ↔ CoveredByInteriorTranslates K q
-
 /-- **Directional and exterior-point illumination numbers are equal.** For every $n \ge 1$ and
 every convex body $K \subseteq \mathbb{R}^n$, the directional illumination number of $K$ equals
 its exterior-point illumination number. These are the least $q$ such that some $q$ unit vectors,
@@ -107,41 +99,6 @@ equivalence, whose Lean proof is also requested here. -/
 theorem_wanted directionalExternalIlluminationNumbersEqual (n : ℕ) (hn : 0 < n)
     (K : Set (EuclideanSpace ℝ (Fin n))) (hK : IsConvexBody K) :
     directionalIlluminationNumber K = externalPointIlluminationNumber K
-
-/-- **Directional illumination number equals the interior-translate covering number.** For every
-$n \ge 1$ and every convex body $K \subseteq \mathbb{R}^n$, the directional illumination number of
-$K$ equals the least $q$ such that $K$ is covered by $q$ translates of its interior
-$\operatorname{int} K$. Both sides take the value $\infty$ when no finite family exists.
-
-Source: Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction; follows from the
-finite-count equivalence, whose Lean proof is also requested here. -/
-theorem_wanted directionalInteriorCoveringNumbersEqual (n : ℕ) (hn : 0 < n)
-    (K : Set (EuclideanSpace ℝ (Fin n))) (hK : IsConvexBody K) :
-    directionalIlluminationNumber K = translateCoveringNumber K (interior K)
-
-/-- **Every convex body has a finite illumination number.** For every $n \ge 1$ and every convex
-body $K \subseteq \mathbb{R}^n$ there is a least natural number $q$ such that some $q$ unit vectors
-$v_1, \dots, v_q$ illuminate $K$: every boundary point $x$ of $K$ has an $i$ and a $t > 0$ with
-$x + t v_i$ in the interior of $K$.
-
-Source: Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction's illumination-number
-definition; finite existence is the standard compact-convex-body qualification. -/
-theorem_wanted illuminationFiniteMinimum :
-    ∀ n : ℕ, 0 < n → ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsConvexBody K →
-      ∃ q : ℕ, IsLeast {q : ℕ | IlluminatedByDirections K q} q
-
-/-- **Uniform covering by interior translates and uniform directional illumination.** For
-integers $n \ge 1$ and $q \ge 0$, every convex body in $\mathbb{R}^n$ (a compact convex set with
-nonempty interior) can be covered by $q$ translates of its interior if and only if every convex
-body $K$ in $\mathbb{R}^n$ is illuminated by $q$ directions: there are unit vectors
-$v_1, \dots, v_q$ such that each boundary point $x$ of $K$ has some $i$ and some $t > 0$ with
-$x + t v_i$ in the interior of $K$.
-
-Source: Arman, Kaire and Prymak, arXiv:2510.25968v3, introduction; follows from the
-finite-count equivalence, whose Lean proof is also requested here. -/
-theorem_wanted uniformDirectionalIlluminationInterpretation (n : ℕ) (hn : 0 < n) (q : ℕ) :
-    UniformInteriorTranslateBound n q ↔
-      ∀ K : Set (EuclideanSpace ℝ (Fin n)), IsConvexBody K → IlluminatedByDirections K q
 
 /-- **Uniform covering of symmetric bodies and uniform illumination by external points.** For
 integers $n \ge 1$ and $q \ge 0$, every centrally symmetric convex body in $\mathbb{R}^n$ (a

@@ -60,8 +60,9 @@ variable {I J K : Type*} [Fintype K]
 
 variable {mJ : MeasurableSpace J} {μ : Measure J}
 
-/-- F4 linearity for individuals from raw global-ancestry data. Only the
-row-sum hypothesis `∑ k, Q i k = 1` is used. -/
+/-- F4 linearity for individuals from raw global-ancestry data, for
+square-integrable frequencies. Besides square integrability, only the
+row-sum hypothesis `∑ k, Q i k = 1` is used (no sign condition). -/
 theorem f4_ancestryFreqOf_individual (Q : I → K → ℝ) (F : K → J → ℝ)
     (hQ : ∀ i, ∑ k, Q i k = 1)
     (hp : ∀ X, MemLp (ancestryFreqOf Q F X) 2 μ) (i : I) (X Y Z : I ⊕ K) :
@@ -73,7 +74,8 @@ theorem f4_ancestryFreqOf_individual (Q : I → K → ℝ) (F : K → J → ℝ)
 /-- QpWave bound for raw global-ancestry data: with individuals
 `Fin (n + 1)` as left populations and `Fin (k + 1)` ancestral populations,
 the individual-level f4 matrix against arbitrary right populations has rank
-at most `k`, assuming only that every `Q` row sums to `1`. -/
+at most `k`, assuming only that every `Q` row sums to `1` and that the
+frequencies are square integrable. -/
 theorem rank_f4Matrix_ancestryFreqOf_le {n r k : ℕ}
     (Q : Fin (n + 1) → Fin (k + 1) → ℝ) (F : Fin (k + 1) → J → ℝ)
     (hQ : ∀ i, ∑ l, Q i l = 1)
@@ -83,7 +85,8 @@ theorem rank_f4Matrix_ancestryFreqOf_le {n r k : ℕ}
   rank_f4Matrix_le hp Sum.inl R Sum.inr Q hQ
     (fun i j => ancestryFreqOf_inl_eq_sum Q F i j)
 
-/-- The raw rank bound over finitely many loci with a finite measure (in
+/-- The raw rank bound (rank at most `k` when every `Q` row sums to `1`) over
+finitely many loci, every subset measurable, with a finite measure (in
 particular the counting measure), where square integrability is automatic. -/
 theorem rank_f4Matrix_ancestryFreqOf_le_of_finite {n r k : ℕ} [Finite J]
     [DiscreteMeasurableSpace J] [IsFiniteMeasure μ]
@@ -92,21 +95,25 @@ theorem rank_f4Matrix_ancestryFreqOf_le_of_finite {n r k : ℕ} [Finite J]
     (f4Matrix μ (ancestryFreqOf Q F) Sum.inl R).rank ≤ k :=
   rank_f4Matrix_ancestryFreqOf_le Q F hQ (fun _ => MemLp.of_discrete) R
 
-/-- F4 linearity for individuals of the `AdmixtureEM` model. The strict
-positivity fields of `Params` are not used; only `θ.Q_sum` enters. -/
+/-- F4 linearity for individuals of the `AdmixtureEM` model, for
+square-integrable frequencies. The strict positivity fields of `Params` are
+not used; only `θ.Q_sum` enters. -/
 theorem f4_ancestryFreq_individual (θ : Params I J K)
     (hp : ∀ X, MemLp (ancestryFreq θ X) 2 μ) (i : I) (X Y Z : I ⊕ K) :
     f4 μ (ancestryFreq θ) (Sum.inl i) X Y Z =
       ∑ k, θ.Q i k * f4 μ (ancestryFreq θ) (Sum.inr k) X Y Z :=
   f4_ancestryFreqOf_individual θ.Q θ.F (fun i => θ.Q_sum i) hp i X Y Z
 
-/-- QpWave bound for the `AdmixtureEM` model, in `k = K - 1` form. -/
+/-- QpWave bound for the `AdmixtureEM` model, in `k = K - 1` form: for
+square-integrable frequencies, the individual-level f4 matrix against
+arbitrary right populations has rank at most `k`. -/
 theorem rank_f4Matrix_ancestryFreq_le {n r k : ℕ} (θ : Params (Fin (n + 1)) J (Fin (k + 1)))
     (hp : ∀ X, MemLp (ancestryFreq θ X) 2 μ) (R : Fin (r + 1) → Fin (n + 1) ⊕ Fin (k + 1)) :
     (f4Matrix μ (ancestryFreq θ) Sum.inl R).rank ≤ k :=
   rank_f4Matrix_ancestryFreqOf_le θ.Q θ.F (fun i => θ.Q_sum i) hp R
 
-/-- The `Params` rank bound over finitely many loci with a finite measure. -/
+/-- The `Params` rank bound (rank at most `k`) over finitely many loci, every
+subset measurable, with a finite measure. -/
 theorem rank_f4Matrix_ancestryFreq_le_of_finite {n r k : ℕ} [Finite J]
     [DiscreteMeasurableSpace J] [IsFiniteMeasure μ]
     (θ : Params (Fin (n + 1)) J (Fin (k + 1))) (R : Fin (r + 1) → Fin (n + 1) ⊕ Fin (k + 1)) :

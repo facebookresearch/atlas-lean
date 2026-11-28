@@ -1,0 +1,16 @@
+# Fixed Label Path Filtered Colimit
+
+- [Stage Quiver](stage-quiver.md)
+- [Colimit Quiver](colimit-quiver.md)
+- [Stage Map](stage-map.md)
+- [Injection](injection.md)
+- [Injection comp](injection-comp.md)
+- [Stage Map id](stage-map-id.md)
+- [Stage Map comp](stage-map-comp.md)
+- [Injection stage Map](injection-stage-map.md)
+- [Path Diagram](path-diagram.md)
+- [Path Cocone](path-cocone.md)
+- [Jointly surjective](jointly-surjective.md)
+- [Generator injection injective](generator-injection-injective.md)
+- [Injection injective](injection-injective.md)
+- [Path Is Colimit](path-is-colimit.md)

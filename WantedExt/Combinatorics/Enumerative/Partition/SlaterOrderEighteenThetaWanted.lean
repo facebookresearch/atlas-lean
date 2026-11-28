@@ -10,7 +10,11 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
-public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.NonicProduct
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanOneTwo
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductDifference
+public import MathlibExt.Combinatorics.Enumerative.Partition.SlaterOrderEighteenThetaRamanujanThetaEtaQuotients
+public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductSum
 
 /-!
 # Theta-function lemmas for the order-eighteen Rogers-Ramanujan-Slater relations
@@ -18,7 +22,9 @@ public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
 Statements from A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
 Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
 INTEGERS 24 (2024), Article A103: Section 2 (Lemmas 1-5, classical identities quoted from
-Berndt's *Ramanujan's Notebooks*) and the modular relations of Theorems 1 and 2.
+Berndt's *Ramanujan's Notebooks*) and the modular relations of Theorems 1 and 2. The theorem
+`ramanujanTheta_eta_quotients` is proved in
+`MathlibExt.Combinatorics.Enumerative.Partition.SlaterOrderEighteenThetaRamanujanThetaEtaQuotients`.
 
 Ramanujan's notation, on the open unit disk `‖q‖ < 1`:
 * `f(a, b) = ∑_{n ∈ ℤ} a^{n(n+1)/2} b^{n(n-1)/2}` is `ramanujanThetaRaw a b`;
@@ -35,41 +41,6 @@ namespace MetaMathlibExt
 
 open MetaMathlibExt.QPochhammer
 
-/-- **Ramanujan's theta function: sum of products when $ab = cd$.** Let
-$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function. For
-complex numbers $a, b, c, d$ with $ab = cd$ and $|ab| < 1$,
-$f(a,b) f(c,d) + f(-a,-b) f(-c,-d) = 2 f(ac,bd) f(ad,bc)$.
-
-This is Entry 29(i) of Berndt's *Ramanujan's Notebooks*; the hypothesis $|ab| < 1$ makes all
-the theta series converge.
-
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 2, Equation (6) (`integers-2024-A103-lem-2`). -/
-public theorem_wanted ramanujanTheta_mul_add_mul_neg {a b c d : ℂ} (habcd : a * b = c * d)
-    (hab : ‖a * b‖ < 1) :
-    ramanujanThetaRaw a b * ramanujanThetaRaw c d +
-        ramanujanThetaRaw (-a) (-b) * ramanujanThetaRaw (-c) (-d) =
-      2 * ramanujanThetaRaw (a * c) (b * d) * ramanujanThetaRaw (a * d) (b * c)
-
-/-- **Ramanujan's theta function: difference of products when $ab = cd$.** Let
-$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function. For
-complex numbers $a, b, c, d$ with $ab = cd$, $|ab| < 1$, $c \ne 0$ and $d \ne 0$,
-$f(a,b) f(c,d) - f(-a,-b) f(-c,-d) = 2a \, f(b/c, ac^2 d) \, f(b/d, acd^2)$.
-
-This is Entry 29(ii) of Berndt's *Ramanujan's Notebooks*, where the second arguments are written
-$(c/b)abcd = ac^2 d$ and $(d/b)abcd = acd^2$.
-
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 2, Equation (7) (`integers-2024-A103-lem-2`). -/
-public theorem_wanted ramanujanTheta_mul_sub_mul_neg {a b c d : ℂ} (habcd : a * b = c * d)
-    (hab : ‖a * b‖ < 1) (hc : c ≠ 0) (hd : d ≠ 0) :
-    ramanujanThetaRaw a b * ramanujanThetaRaw c d -
-        ramanujanThetaRaw (-a) (-b) * ramanujanThetaRaw (-c) (-d) =
-      2 * a * ramanujanThetaRaw (b / c) (a * c ^ 2 * d) *
-        ramanujanThetaRaw (b / d) (a * c * d ^ 2)
-
 /-- **Ramanujan's theta function at $(q, q^5)$.** Let
 $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
 $(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$. For every complex number $q$ with $|q| < 1$,
@@ -82,60 +53,6 @@ INTEGERS 24 (2024), Article A103, Lemma 3, Equation (9) (`integers-2024-A103-lem
 public theorem_wanted ramanujanTheta_one_five {q : ℂ} (hq : ‖q‖ < 1) :
     ramanujanThetaRaw q (q ^ 5) =
       qPochhammerInfRaw (-q) (q ^ 2) * ramanujanThetaRaw (-q ^ 3) ((-q ^ 3) ^ 3)
-
-/-- **Product of the nonic theta functions.** Let
-$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
-write $f(-x) = f(-x,-x^2)$. For every complex number $q$ with $|q| < 1$,
-$f(-q,-q^8) f(-q^2,-q^7) f(-q^4,-q^5) f(-q^3) = f(-q) f(-q^9)^3$, that is,
-$f(-q,-q^8) f(-q^2,-q^7) f(-q^4,-q^5) = f(-q) f^3(-q^9)/f(-q^3)$ with the denominator cleared.
-
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 4, Equation (10) (`integers-2024-A103-lem-4`). -/
-public theorem_wanted ramanujanTheta_order_nine_product {q : ℂ} (hq : ‖q‖ < 1) :
-    ramanujanThetaRaw (-q) (-q ^ 8) * ramanujanThetaRaw (-q ^ 2) (-q ^ 7) *
-        ramanujanThetaRaw (-q ^ 4) (-q ^ 5) * ramanujanThetaRaw (-q ^ 3) (-(q ^ 3) ^ 2) =
-      ramanujanThetaRaw (-q) (-q ^ 2) * ramanujanThetaRaw (-q ^ 9) (-(q ^ 9) ^ 2) ^ 3
-
-/-- **Ramanujan's theta function at $(q, q^2)$.** Let
-$f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function and
-$(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$. For every complex number $q$ with $|q| < 1$,
-$f(q,q^2) \, (q;q^2)_\infty = f(-q^3,-q^3)$, that is, $f(q,q^2) = \varphi(-q^3)/\chi(-q)$ with
-the denominator cleared, where $\varphi(q) = f(q,q)$ and $\chi(-q) = (q;q^2)_\infty$.
-
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 5, Equation (11) (`integers-2024-A103-lem-5`). -/
-public theorem_wanted ramanujanTheta_one_two {q : ℂ} (hq : ‖q‖ < 1) :
-    ramanujanThetaRaw q (q ^ 2) * qPochhammerInfRaw q (q ^ 2) =
-      ramanujanThetaRaw (-q ^ 3) (-q ^ 3)
-
-/-- **Eta-quotients of Ramanujan's theta functions.** Let $q$ be a complex number with
-$|q| < 1$. Write $(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and $f_k = (q^k;q^k)_\infty$, and
-let $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ be Ramanujan's theta function.
-Then $f(q,q) f_1^2 f_4^2 = f_2^5$, $f(q,q^3) f_1 = f_2^2$, $f(-q,-q) f_2 = f_1^2$,
-$f(-q,-q^3) f_2 = f_1 f_4$, $f(q,-q^2) f_1 f_4 = f_2^3$, $(-q;q^2)_\infty f_1 f_4 = f_2^2$ and
-$(q;q^2)_\infty f_2 = f_1$.
-
-These are the classical eta-quotients $\varphi(q) = f_2^5/(f_1^2 f_4^2)$, $\psi(q) = f_2^2/f_1$,
-$\varphi(-q) = f_1^2/f_2$, $\psi(-q) = f_1 f_4/f_2$, $f(q) = f_2^3/(f_1 f_4)$,
-$\chi(q) = f_2^2/(f_1 f_4)$ and $\chi(-q) = f_1/f_2$ with the denominators cleared, where
-$\varphi(q) = f(q,q)$, $\psi(q) = f(q,q^3)$, $f(q) = f(q,-q^2)$ and $\chi(q) = (-q;q^2)_\infty$.
-
-Source: A. Vanitha, M. P. Chaudhary, and Madiha Khanum, *Modular Relations for the
-Rogers-Ramanujan-Slater Type Functions of Order Eighteen with Applications to Partitions*,
-INTEGERS 24 (2024), Article A103, Lemma 1 (quoted from Berndt) (`integers-2024-A103-lem-1`). -/
-public theorem_wanted ramanujanTheta_eta_quotients {q : ℂ} (hq : ‖q‖ < 1) :
-    let f₁ := qPochhammerInfRaw q q
-    let f₂ := qPochhammerInfRaw (q ^ 2) (q ^ 2)
-    let f₄ := qPochhammerInfRaw (q ^ 4) (q ^ 4)
-    ramanujanThetaRaw q q * (f₁ ^ 2 * f₄ ^ 2) = f₂ ^ 5 ∧
-      ramanujanThetaRaw q (q ^ 3) * f₁ = f₂ ^ 2 ∧
-      ramanujanThetaRaw (-q) (-q) * f₂ = f₁ ^ 2 ∧
-      ramanujanThetaRaw (-q) (-q ^ 3) * f₂ = f₁ * f₄ ∧
-      ramanujanThetaRaw q (-q ^ 2) * (f₁ * f₄) = f₂ ^ 3 ∧
-      qPochhammerInfRaw (-q) (q ^ 2) * (f₁ * f₄) = f₂ ^ 2 ∧
-      qPochhammerInfRaw q (q ^ 2) * f₂ = f₁
 
 /-- **Modular relations for the order-eighteen Rogers–Ramanujan–Slater functions.** Let $q$ be
 a complex number with $0 < |q| < 1$. Write $(a;q)_\infty = \prod_{n \ge 0} (1 - a q^n)$ and

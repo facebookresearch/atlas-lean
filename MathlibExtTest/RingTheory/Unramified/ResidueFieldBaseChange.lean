@@ -23,7 +23,7 @@ public import MathlibExt.RingTheory.Unramified.ResidueFieldBaseChange
 
 open scoped TensorProduct
 
-theorem exactSource (R S : Type*) [CommRing R] [IsLocalRing R] [CommRing S] [Algebra R S]
+private theorem exactSource (R S : Type*) [CommRing R] [IsLocalRing R] [CommRing S] [Algebra R S]
     [Module.Finite R S]
     (h : Algebra.FormallyUnramified (IsLocalRing.ResidueField R)
       (IsLocalRing.ResidueField R ⊗[R] S)) :
@@ -31,7 +31,7 @@ theorem exactSource (R S : Type*) [CommRing R] [IsLocalRing R] [CommRing S] [Alg
   Algebra.FormallyUnramified.of_residueField_baseChange_of_finite R S h
 
 /-- The same criterion in a higher universe. -/
-theorem exactSourceTypeOne (R S : Type 1) [CommRing R] [IsLocalRing R] [CommRing S]
+private theorem exactSourceTypeOne (R S : Type 1) [CommRing R] [IsLocalRing R] [CommRing S]
     [Algebra R S] [Module.Finite R S]
     (h : Algebra.FormallyUnramified (IsLocalRing.ResidueField R)
       (IsLocalRing.ResidueField R ⊗[R] S)) :

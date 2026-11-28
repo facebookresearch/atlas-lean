@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.GameTheory.SpragueGrundy
+public import MathlibExt.GameTheory.SpragueGrundyZero
 public import WantedExt.Combinatorics.SlowANimWanted
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Fin.VecNotation
@@ -21,7 +21,10 @@ import Mathlib.Tactic.FinCases
 Statement-only targets from the paper, stated over
 `MetaMathlibExt.SpragueGrundy.ImpartialGame`. The Sprague–Grundy value of `G` is the
 paper's definition: the `n` with `G` equivalent to the Nim heap `*n` (Theorem 3, proved in
-MathlibExt as `SpragueGrundy.sprague_grundy`). The game `{ G with start := q }` is the option
+MathlibExt as `SpragueGrundy.sprague_grundy`). The criterion that two impartial games are
+equivalent if and only if their game sum is a P-position is proved in
+`MathlibExt.GameTheory.SpragueGrundy` as
+`impartialGame_equiv_iff_isP_gameSum`. The game `{ G with start := q }` is the option
 of `G` reached by moving to `q`.
 
 Section 1 quotes general Sprague–Grundy facts. Sections 2–3 study the Princess and the Roses
@@ -35,40 +38,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open SpragueGrundy
-
-/-- **Equivalence of impartial games via their sum.** Two finite impartial games $G$ and $H$ are
-equivalent if and only if their sum $G + H$ is a P-position, that is, the position of $G + H$ in
-which both $G$ and $H$ are at their starting positions is a P-position.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Lemma 5 (`integers-2026-G4-lem-5`). -/
-public theorem_wanted impartialGame_equiv_iff_isP_gameSum (G H : ImpartialGame) :
-    Equiv G H ↔ IsP (gameSum G H) ((G.start, H.start) : (gameSum G H).Pos)
-
-/-- **P-positions are the games of Sprague–Grundy value zero.** Let $G$ be a finite impartial game
-and $n$ a natural number such that $G$ is equivalent to the Nim heap $*n$, that is, $G$ has
-Sprague–Grundy value $n$. Then the starting position of $G$ is a P-position if and only if
-$n = 0$.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Theorem 6 (`integers-2026-G4-thm-6`). -/
-public theorem_wanted isP_start_iff_of_equiv_nimHeap (G : ImpartialGame) (n : ℕ)
-    (hG : Equiv G (nimHeap n)) :
-    IsP G G.start ↔ n = 0
-
-/-- **Mex rule for Sprague–Grundy values.** Let $G$ be a finite impartial game and $n$ a natural
-number such that $G$ is equivalent to the Nim heap $*n$, that is, $G$ has Sprague–Grundy value
-$n$. For a move from the start position of $G$ to a position $q$, write $G_q$ for the game $G$
-started at $q$. Then no $G_q$ is equivalent to $*n$, and for every natural number $m < n$ some
-$G_q$ is equivalent to $*m$. That is, the Sprague–Grundy value of $G$ is the mex of the
-Sprague–Grundy values of the games $G_q$.
-
-Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
-INTEGERS 26 (2026), Article G4, Corollary 4 (`integers-2026-G4-cor-4`). -/
-public theorem_wanted spragueGrundyValue_eq_mex_options (G : ImpartialGame) (n : ℕ)
-    (hG : Equiv G (nimHeap n)) :
-    (∀ q ∈ G.moves G.start, ¬ Equiv { G with start := q } (nimHeap n)) ∧
-      ∀ m < n, ∃ q ∈ G.moves G.start, Equiv { G with start := q } (nimHeap m)
 
 /-! ### The Princess and the Roses game -/
 

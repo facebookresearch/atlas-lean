@@ -88,7 +88,8 @@ def brusselator (a b : ℝ) (x : Fin 2 → ℝ) : Fin 2 → ℝ :=
 noncomputable def brusselatorSteadyState (a b : ℝ) : Fin 2 → ℝ :=
   ![a, b / a]
 
-/-- The Jacobian `[[b - 1, a²], [-b, -a²]]` of the Brusselator kinetics at its steady state. -/
+/-- The matrix `[[b - 1, a²], [-b, -a²]]`, defined for all real `a`, `b`: for `a ≠ 0` it is the
+Jacobian of the Brusselator kinetics at its steady state (`jacobianMatrix_brusselator`). -/
 def brusselatorJacobian (a b : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![b - 1, a ^ 2; -b, -a ^ 2]
 
@@ -111,8 +112,8 @@ theorem brusselator_steadyState (a b : ℝ) :
   funext i
   fin_cases i <;> simp [brusselator, brusselatorSteadyState] <;> field_simp <;> ring
 
-/-- The Jacobian matrix of the Brusselator kinetics at the steady state is
-`brusselatorJacobian a b`. -/
+/-- For `a ≠ 0`, the Jacobian matrix of the Brusselator kinetics at the steady state is
+`brusselatorJacobian a b`. (At `a = 0` the steady state is `(0, 0)`, where `f_u = -(b + 1)`.) -/
 theorem jacobianMatrix_brusselator {a b : ℝ} (ha : a ≠ 0) :
     MetaMathlibExt.jacobianMatrix (brusselator a b) (brusselatorSteadyState a b) =
       brusselatorJacobian a b := by
@@ -205,12 +206,14 @@ theorem brusselator_turing_iff {a b d : ℝ} (ha : 0 < a) (hb : b < 1 + a ^ 2) (
 /-! ### Neutral diffusion and the pattern branch -/
 
 /-- The neutral inhibitor diffusion `a² (1 + d_u q) / ((b - 1) q - d_u q²)` of squared
-wavenumber `q` for the Brusselator. -/
+wavenumber `q` for the Brusselator, with `x / 0 = 0`: it is `0` where `(b - 1) q - d_u q² = 0`,
+for example at `q = 0`. -/
 noncomputable def brusselatorNeutralDiffusion (a b du q : ℝ) : ℝ :=
   a ^ 2 * (1 + du * q) / ((b - 1) * q - du * q ^ 2)
 
 /-- The general neutral diffusion of the Brusselator Jacobian is
-`brusselatorNeutralDiffusion`. -/
+`brusselatorNeutralDiffusion`, for all real inputs (both quotients use `x / 0 = 0` and have the
+same denominator). -/
 theorem neutralDiffusion_brusselatorJacobian (a b du q : ℝ) :
     neutralDiffusion (brusselatorJacobian a b) du q = brusselatorNeutralDiffusion a b du q := by
   rw [neutralDiffusion, det_brusselatorJacobian, brusselatorJacobian_one_one,
@@ -224,15 +227,16 @@ theorem brusselator_admissible_iff {b du q : ℝ} (hq : 0 < q) :
   rw [show (b - 1) * q - du * q ^ 2 = q * (b - 1 - du * q) by ring, mul_pos_iff_of_pos_left hq,
     sub_pos]
 
-/-- At an admissible wavenumber the neutral diffusion is positive (`a ≠ 0`, `d_u ≥ 0`). -/
+/-- At an admissible squared wavenumber `q ≥ 0` the neutral diffusion is positive (`a ≠ 0`,
+`d_u ≥ 0`). -/
 theorem brusselatorNeutralDiffusion_pos {a b du q : ℝ} (ha : a ≠ 0) (hdu : 0 ≤ du)
     (hq : 0 ≤ q) (hk : 0 < (b - 1) * q - du * q ^ 2) :
     0 < brusselatorNeutralDiffusion a b du q := by
   have ha2 : 0 < a ^ 2 := lt_of_le_of_ne (sq_nonneg a) (pow_ne_zero 2 ha).symm
   exact div_pos (mul_pos ha2 (by nlinarith)) hk
 
-/-- With `b < 1 + a²`, the mode matrix at the neutral diffusion of an admissible wavenumber has
-negative trace. -/
+/-- With `a ≠ 0`, `b < 1 + a²` and `d_u ≥ 0`, the mode matrix at the neutral diffusion of an
+admissible wavenumber has negative trace. -/
 theorem trace_modeMatrix_brusselator_neg {a b du k : ℝ} (ha : a ≠ 0) (hb : b < 1 + a ^ 2)
     (hdu : 0 ≤ du) (hk : 0 < (b - 1) * k ^ 2 - du * (k ^ 2) ^ 2) :
     (brusselatorJacobian a b).trace -
@@ -249,16 +253,19 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 `(a, b / a)` is stable without diffusion), `d_u ≥ 0`, and let mode `i₀`, with wavenumber
 `k = κ i₀`, be admissible, `0 < (b - 1) k² - d_u k⁴`, with neutral inhibitor diffusion
 `d₀ = a² (1 + d_u k²) / ((b - 1) k² - d_u k⁴)`, and no other mode critical at `d₀`. Let `F(w, d)`
-be a map on Neumann-mode coefficients with the trivial branch `F(0, d) = 0`, strictly
-differentiable at `(0, d₀)`, whose linearization along the trivial branch is the Brusselator
-linearization `D(d) ∂ₓₓ + J` for every `d` near `d₀`, and let `G` be a factor, strictly
-differentiable at `(0, d₀)`, of the scalar bifurcation function for the critical mode and the
-normalized critical functional. Then
+be a map on Neumann-mode coefficients with the trivial branch `F(0, d) = 0` for `d` near `d₀`,
+strictly differentiable at `(0, d₀)` with state derivative there the linearization at `d₀`,
+whose linearization along the trivial branch is the Brusselator linearization `D(d) ∂ₓₓ + J` for
+every `d` near `d₀`. Fix a Fredholm package of the linearization at `d₀` whose kernel part
+contains the critical mode `φ`, and let `G` be a factor, strictly differentiable at `(0, d₀)`, of
+the scalar bifurcation function for the critical mode and the normalized critical functional.
+Then
 
 * `∂_d G(0, d₀) = (d_u k⁴ - (b - 1) k²) / (b - 1 - a² - k² (d_u + d₀))`, and it is positive;
 * near `d₀`, `G(0, d)` has the sign of the critical eigenvalue of `J - k² D(d)`;
-* there is a branch `d = β(s)` through `β 0 = d₀` such that near `(0, d₀)` the zeros of `F` are
-  exactly the trivial ones and the branch `w = s φ + W(s φ, d)`, `d = β(s)`;
+* there is a branch `d = β(s)` through `β 0 = d₀`, with slope `-∂_s G / ∂_d G` at `0`, such that
+  near `(0, d₀)` the zeros of `F` are exactly the trivial ones and the branch
+  `w = s φ + W(s φ, d)`, `d = β(s)`;
 * for small `s ≠ 0` the branch state is a **nonzero** steady state at `d = β(s)` (a pattern);
 * `G(0, d)` is negative for `d < d₀` and positive for `d > d₀` near `d₀`. -/
 theorem brusselator_patternBranch_of_reduction {a b du d₀ : ℝ} {κ : ι → ℝ} {i₀ : ι}

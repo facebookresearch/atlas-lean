@@ -19,6 +19,28 @@ public import Mathlib.Tactic.Ring
 
 namespace MetaMathlibExt
 
+open Finset in
+/-- `∑_{i=0}^n binom(n, i) F_{i+m} = F_{2n+m}`. -/
+theorem Nat.sum_range_choose_mul_fib_add (n m : ℕ) :
+    ∑ i ∈ range (n + 1), n.choose i * Nat.fib (i + m) =
+      Nat.fib (2 * n + m) := by
+  induction n generalizing m with
+  | zero => simp
+  | succ n ih =>
+    have h2 : ∑ i ∈ range (n + 2), n.choose i * Nat.fib (i + m) =
+        Nat.fib (2 * n + m) := by
+      rw [sum_range_succ, ih, Nat.choose_succ_self, zero_mul, add_zero]
+    rw [sum_range_succ'] at h2
+    have h1 := ih (m + 1)
+    rw [sum_range_succ']
+    simp only [Nat.choose_succ_succ, add_mul, sum_add_distrib,
+      Nat.choose_zero_right] at h2 ⊢
+    have e : ∀ i, Nat.fib (i + 1 + m) = Nat.fib (i + (m + 1)) := fun i => by
+      rw [add_assoc, add_comm 1 m]
+    simp only [e] at h2 ⊢
+    rw [add_assoc, h2, h1, show 2 * (n + 1) + m = 2 * n + m + 2 by ring,
+      Nat.fib_add_two, add_comm, ← add_assoc]
+
 /-- **Pascal's rule for binomial coefficients.** For all natural numbers $n$ and $i$,
 $\binom{n+1}{i+1} = \binom{n}{i} + \binom{n}{i+1}$, as an identity of integers. -/
 theorem choose_succ_int (n i : ℕ) :

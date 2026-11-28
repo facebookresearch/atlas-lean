@@ -9,9 +9,15 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`Theorems/Thm_ValuationSubring_exists_mem_inertiaSubgroupIn_apply_eq_pow.lean`
-and
-`P2M/Sol/S_ValuationSubring_exists_mem_inertiaSubgroupIn_apply_eq_pow.lean`
+`Theorems/Thm_ValuationSubring_exists_mem_inertiaSubgroupIn_apply_eq_pow.lean`,
+`P2M/Sol/S_ValuationSubring_exists_mem_inertiaSubgroupIn_apply_eq_pow.lean`,
+the prime-power inertia-character theorem and solution in `Theorems/` and
+`P2M/Sol/` (files named
+`..._exists_mem_inertiaSubgroupIn_apply_eq_pow_of_pow_prime_pow_eq_one`),
+`Definitions/Def_FLTPrelim_Ramification.lean`, and the inertia-at-`p`
+Kummer-character theorem and solution in `Theorems/` and `P2M/Sol/`
+(files named
+`..._exists_forall_mem_inertiaSubgroupIn_apply_eq_and_pow_eq_pow_of_isPrimitiveRoot`)
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -33,6 +39,7 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.NumberTheory.NumberField.Basic
+public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 public import Mathlib.RingTheory.Valuation.RamificationGroup
 public import MathlibExt.RingTheory.Valuation.InertiaRootsOfUnity
 public import MathlibExt.RingTheory.Valuation.LiesOverPrime
@@ -45,6 +52,7 @@ import Mathlib.NumberTheory.RamificationInertia.Unramified
 import Mathlib.RingTheory.DedekindDomain.AdicValuation
 import Mathlib.RingTheory.Invariant.Profinite
 import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
+import Mathlib.RingTheory.Polynomial.Cyclotomic.Eval
 import Mathlib.RingTheory.Valuation.LocalSubring
 
 @[expose] public section
@@ -738,6 +746,21 @@ private theorem map_restrictNormalHom_inertiaSubgroupIn_eq_inertia (hp : p.Prime
 
 variable [FiniteDimensional ℚ L]
 
+/-- Let `A` be a valuation subring of `ℚ̄` lying over a prime `p`, and let `L` be a finite Galois
+subextension of `ℚ̄ / ℚ`. Then `𝓞 L` lies in `A`, its center `{x ∈ 𝓞 L | A.valuation x < 1}` is
+a maximal ideal containing `p`, and the inertia group of the center is the image of the inertia
+subgroup of `A` under restriction to `L`. -/
+public theorem exists_isMaximal_inertia_eq_map_restrictNormalHom (hp : p.Prime)
+    (hA : A.LiesOverPrime p) :
+    ∃ Q : Ideal (𝓞 L), Q.IsMaximal ∧ (p : 𝓞 L) ∈ Q ∧
+      (∀ x : 𝓞 L, A.valuation (algebraMap L (AlgebraicClosure ℚ) (x : L)) ≤ 1) ∧
+      (∀ x : 𝓞 L, x ∈ Q ↔ A.valuation (algebraMap L (AlgebraicClosure ℚ) (x : L)) < 1) ∧
+      (A.inertiaSubgroupIn ℚ).map (AlgEquiv.restrictNormalHom L) =
+        Q.inertia (L ≃ₐ[ℚ] L) :=
+  ⟨primeBelow A L, isMaximal_primeBelow A L hp hA, natCast_mem_primeBelow A L hA,
+    valuation_algebraMap_ringOfIntegers_le_one A L, fun _ => mem_primeBelow_iff A L,
+    map_restrictNormalHom_inertiaSubgroupIn_eq_inertia A L hp hA⟩
+
 attribute [local instance] Ideal.Quotient.field in
 
 private theorem card_inertia_primeBelow_eq_ramificationIdx (hp : p.Prime) (hA : A.LiesOverPrime p) :
@@ -885,6 +908,230 @@ public theorem exists_mem_inertiaSubgroupIn_apply_eq_pow
     ∃ σ ∈ A.inertiaSubgroupIn ℚ, ∀ μ : AlgebraicClosure ℚ, μ ^ p = 1 →
       σ μ = μ ^ (a : ZMod p).val :=
   exists_mem_inertiaSubgroupIn_cyclotomic_character A hp hA a
+
+
+section PrimePowerCyclotomic
+
+variable (A : ValuationSubring (AlgebraicClosure ℚ))
+
+private theorem valuation_one_sub_pow_le {ζ : AlgebraicClosure ℚ} (hζ : IsIntegral ℤ ζ)
+    (i : ℕ) :
+    A.valuation (1 - ζ ^ i) ≤ A.valuation (1 - ζ) := by
+  have hζA : ζ ∈ A := mem_of_isIntegral_int A hζ
+  have hS : (∑ j ∈ Finset.range i, ζ ^ j) ∈ A :=
+    sum_mem fun j _ => pow_mem hζA j
+  rw [← geom_sum_mul_neg ζ i, map_mul]
+  calc A.valuation (∑ j ∈ Finset.range i, ζ ^ j) * A.valuation (1 - ζ)
+      ≤ 1 * A.valuation (1 - ζ) :=
+        mul_le_mul_left ((A.valuation_le_one_iff _).mpr hS) _
+    _ = A.valuation (1 - ζ) := one_mul _
+
+private theorem valuation_one_sub_eq_of_mem_primitiveRoots {n : ℕ} (hn : 0 < n)
+    {ζ μ : AlgebraicClosure ℚ} (hζ : IsPrimitiveRoot ζ n)
+    (hμ : μ ∈ primitiveRoots n (AlgebraicClosure ℚ)) :
+    A.valuation (1 - μ) = A.valuation (1 - ζ) := by
+  haveI : NeZero n := ⟨hn.ne'⟩
+  have hμ' : IsPrimitiveRoot μ n := (mem_primitiveRoots hn).mp hμ
+  obtain ⟨i, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ'.pow_eq_one
+  obtain ⟨j, -, hj⟩ := hμ'.eq_pow_of_pow_eq_one hζ.pow_eq_one
+  refine le_antisymm (valuation_one_sub_pow_le A (hζ.isIntegral hn) i) ?_
+  calc A.valuation (1 - ζ) = A.valuation (1 - (ζ ^ i) ^ j) := by rw [hj]
+    _ ≤ A.valuation (1 - ζ ^ i) :=
+        valuation_one_sub_pow_le A ((hζ.isIntegral hn).pow i) j
+
+private theorem valuation_one_sub_pow_totient_eq {p : ℕ} (hp : p.Prime) {k : ℕ}
+    (hk : 0 < k) {ζ : AlgebraicClosure ℚ} (hζ : IsPrimitiveRoot ζ (p ^ k)) :
+    A.valuation (1 - ζ) ^ Nat.totient (p ^ k) = A.valuation (p : AlgebraicClosure ℚ) := by
+  haveI := Fact.mk hp
+  obtain ⟨k', rfl⟩ : ∃ k', k = k' + 1 := ⟨k - 1, (Nat.sub_add_cancel hk).symm⟩
+  have hpos : 0 < p ^ (k' + 1) := pow_pos hp.pos _
+  have hprod : (p : AlgebraicClosure ℚ) =
+      ∏ μ ∈ primitiveRoots (p ^ (k' + 1)) (AlgebraicClosure ℚ), (1 - μ) := by
+    have h := Polynomial.eval_one_cyclotomic_prime_pow (R := AlgebraicClosure ℚ)
+      (p := p) k'
+    rw [Polynomial.cyclotomic_eq_prod_X_sub_primitiveRoots hζ, Polynomial.eval_prod] at h
+    simp only [Polynomial.eval_sub, Polynomial.eval_X, Polynomial.eval_C] at h
+    exact h.symm
+  rw [hprod, map_prod,
+    Finset.prod_congr rfl fun μ hμ => valuation_one_sub_eq_of_mem_primitiveRoots A hpos hζ hμ,
+    Finset.prod_const, hζ.card_primitiveRoots]
+
+private theorem exists_mem_inertiaSubgroupIn_prime_pow_character
+    (A : ValuationSubring (AlgebraicClosure ℚ)) {p : ℕ} (hp : p.Prime)
+    (hA : A.LiesOverPrime p) (k : ℕ) (a : (ZMod (p ^ k))ˣ) :
+    ∃ σ ∈ A.inertiaSubgroupIn ℚ, ∀ μ : AlgebraicClosure ℚ, μ ^ p ^ k = 1 →
+      σ μ = μ ^ (a : ZMod (p ^ k)).val := by
+  rcases Nat.eq_zero_or_pos k with rfl | hk
+  · refine ⟨1, Subgroup.one_mem _, fun μ hμ => ?_⟩
+    rw [pow_zero, pow_one] at hμ
+    subst hμ
+    rw [one_pow]
+    exact map_one _
+  haveI : NeZero (p ^ k) := ⟨(pow_pos hp.pos k).ne'⟩
+  obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_primitiveRoot (AlgebraicClosure ℚ) (p ^ k)
+  let L : IntermediateField ℚ (AlgebraicClosure ℚ) := IntermediateField.adjoin ℚ {ζ}
+  haveI : FiniteDimensional ℚ L :=
+    IntermediateField.adjoin.finiteDimensional (Algebra.IsIntegral.isIntegral ζ)
+  haveI : IsCyclotomicExtension {p ^ k} ℚ L :=
+    hζ.intermediateField_adjoin_isCyclotomicExtension ℚ
+  haveI : IsGalois ℚ L := IsCyclotomicExtension.isGalois {p ^ k} ℚ L
+  let ζL : L := ⟨ζ, IntermediateField.mem_adjoin_simple_self ℚ ζ⟩
+  have hζL : IsPrimitiveRoot ζL (p ^ k) :=
+    IsPrimitiveRoot.of_map_of_injective (f := algebraMap L (AlgebraicClosure ℚ)) hζ
+      (algebraMap L (AlgebraicClosure ℚ)).injective
+  have hval : A.valuation (algebraMap L (AlgebraicClosure ℚ) (1 - ζL)) ^
+        Nat.totient (p ^ k) =
+      A.valuation ((p : ℕ) : AlgebraicClosure ℚ) ^ 1 := by
+    have hmap : algebraMap L (AlgebraicClosure ℚ) (1 - ζL) = 1 - ζ := by
+      rw [map_sub, map_one]; rfl
+    rw [hmap, pow_one, valuation_one_sub_pow_totient_eq A hp hk hζ]
+  have hdvd : Nat.totient (p ^ k) ∣
+      Nat.card ((A.inertiaSubgroupIn ℚ).map (AlgEquiv.restrictNormalHom L)) :=
+    dvd_card_map_restrictNormalHom_inertiaSubgroupIn A L hp hA (1 - ζL)
+      (Nat.totient_pos.mpr (pow_pos hp.pos k)) (Nat.coprime_one_left _) hval
+  have hGcard : Nat.card (L ≃ₐ[ℚ] L) = Nat.totient (p ^ k) := by
+    rw [IsGalois.card_aut_eq_finrank,
+      IsCyclotomicExtension.finrank (K := ℚ) (n := p ^ k) L
+        (Polynomial.cyclotomic.irreducible_rat (pow_pos hp.pos k))]
+  have himtop : (A.inertiaSubgroupIn ℚ).map (AlgEquiv.restrictNormalHom L) = ⊤ := by
+    refine Subgroup.eq_top_of_card_eq _ ?_
+    have hdvd' := Subgroup.card_subgroup_dvd_card
+      ((A.inertiaSubgroupIn ℚ).map (AlgEquiv.restrictNormalHom L))
+    rw [hGcard] at hdvd' ⊢
+    exact Nat.dvd_antisymm hdvd' hdvd
+  let χ := hζL.autToPow ℚ
+  have hχ : Function.Bijective χ := by
+    refine (Nat.bijective_iff_injective_and_card χ).mpr ⟨hζL.autToPow_injective ℚ, ?_⟩
+    rw [IsGalois.card_aut_eq_finrank,
+      IsCyclotomicExtension.finrank (K := ℚ) (n := p ^ k) L
+        (Polynomial.cyclotomic.irreducible_rat (pow_pos hp.pos k)),
+      Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
+  obtain ⟨τ, hτ⟩ := hχ.2 a
+  have hτζ : τ ζL = ζL ^ (a : ZMod (p ^ k)).val := by
+    rw [← hτ]
+    exact (hζL.autToPow_spec ℚ τ).symm
+  have hτmem : τ ∈ (A.inertiaSubgroupIn ℚ).map (AlgEquiv.restrictNormalHom L) := by
+    rw [himtop]; exact Subgroup.mem_top τ
+  obtain ⟨σ, hσ, hσL⟩ := Subgroup.mem_map.mp hτmem
+  refine ⟨σ, hσ, ?_⟩
+  have hσζ : σ ζ = ζ ^ (a : ZMod (p ^ k)).val := by
+    change σ (algebraMap L (AlgebraicClosure ℚ) ζL) =
+      (algebraMap L (AlgebraicClosure ℚ) ζL) ^ (a : ZMod (p ^ k)).val
+    rw [← algebraMap_restrictNormalHom_apply L σ ζL, hσL, hτζ, map_pow]
+  intro μ hμ
+  obtain ⟨i, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hμ
+  rw [map_pow, hσζ, ← pow_mul, ← pow_mul, mul_comm]
+
+end PrimePowerCyclotomic
+
+/-- Inertia at a prime above `p` surjects onto the mod-`p ^ k` cyclotomic
+character: for every unit `a` modulo `p ^ k` there is an element of the
+inertia subgroup at a valuation subring of `AlgebraicClosure ℚ` lying
+over `p` that sends every `p ^ k`-th root of unity `μ` to `μ ^ a`. -/
+public theorem exists_mem_inertiaSubgroupIn_apply_eq_pow_prime_pow
+    (A : ValuationSubring (AlgebraicClosure ℚ)) {p : ℕ} (hp : p.Prime)
+    (hA : A.LiesOverPrime p) (k : ℕ) (a : (ZMod (p ^ k))ˣ) :
+    ∃ σ ∈ A.inertiaSubgroupIn ℚ, ∀ μ : AlgebraicClosure ℚ, μ ^ p ^ k = 1 →
+      σ μ = μ ^ (a : ZMod (p ^ k)).val :=
+  exists_mem_inertiaSubgroupIn_prime_pow_character A hp hA k a
+
+section KummerDescent
+
+variable {K L : Type*} [Field K] [Field L] [Algebra K L]
+
+private lemma exists_forall_apply_eq_pow {n : ℕ} (hn : 0 < n) {ζ : L}
+    (hζ : IsPrimitiveRoot ζ n) (σ : L ≃ₐ[K] L) :
+    ∃ a : ℕ, ∀ η : L, η ^ n = 1 → σ η = η ^ a := by
+  haveI : NeZero n := ⟨hn.ne'⟩
+  have h1 : (σ ζ) ^ n = 1 := by rw [← map_pow, hζ.pow_eq_one, map_one]
+  obtain ⟨a, -, ha⟩ := hζ.eq_pow_of_pow_eq_one h1
+  refine ⟨a, fun η hη => ?_⟩
+  obtain ⟨b, -, rfl⟩ := hζ.eq_pow_of_pow_eq_one hη
+  rw [map_pow, ← ha, ← pow_mul, ← pow_mul, mul_comm]
+
+private theorem exists_forall_apply_eq_and_pow_eq_pow {n : ℕ} (hn : 0 < n)
+    (I : Subgroup (L ≃ₐ[K] L)) {ζ : L}
+    (hζ : IsPrimitiveRoot ζ n) (g₀ : L ≃ₐ[K] L) (hg₀ : g₀ ∈ I)
+    (hg₀act : ∀ η : L, η ^ n = 1 → g₀ η = η ^ 2)
+    (w : L) (hw : ∀ σ ∈ I, σ ζ = ζ → σ w = w) (hx : ∀ σ ∈ I, σ (w ^ n) = w ^ n) :
+    ∃ w' : L, (∀ σ ∈ I, σ w' = w') ∧ w' ^ n = w ^ n := by
+  by_cases hw0 : w = 0
+  · exact ⟨0, fun σ _ => map_zero σ, by rw [hw0]⟩
+  let η : (L ≃ₐ[K] L) → L := fun σ => σ w / w
+  have hηw : ∀ σ : L ≃ₐ[K] L, σ w = η σ * w := fun σ => by
+    change σ w = σ w / w * w
+    rw [div_mul_cancel₀ _ hw0]
+  have hηn : ∀ σ ∈ I, η σ ^ n = 1 := fun σ hσ => by
+    change (σ w / w) ^ n = 1
+    rw [div_pow, ← map_pow, hx σ hσ, div_self (pow_ne_zero _ hw0)]
+  have hη0 : ∀ σ ∈ I, η σ ≠ 0 := fun σ hσ h => by
+    have h1 := hηn σ hσ
+    rw [h, zero_pow hn.ne'] at h1
+    exact zero_ne_one h1
+  have key : ∀ σ ∈ I, σ (η g₀) = η σ * η g₀ := by
+    intro σ hσ
+    obtain ⟨a, ha⟩ := exists_forall_apply_eq_pow hn hζ σ
+    have hζa : (ζ ^ a) ^ n = 1 := by
+      rw [← pow_mul, mul_comm, pow_mul, hζ.pow_eq_one, one_pow]
+    have hL : (σ * g₀) ζ = ζ ^ (2 * a) := by
+      rw [AlgEquiv.mul_apply, hg₀act ζ hζ.pow_eq_one, map_pow, ha ζ hζ.pow_eq_one,
+        ← pow_mul, mul_comm]
+    have hR : (g₀ * σ) ζ = ζ ^ (2 * a) := by
+      rw [AlgEquiv.mul_apply, ha ζ hζ.pow_eq_one, hg₀act _ hζa, ← pow_mul, mul_comm]
+    have hdI : (g₀ * σ)⁻¹ * (σ * g₀) ∈ I :=
+      I.mul_mem (I.inv_mem (I.mul_mem hg₀ hσ)) (I.mul_mem hσ hg₀)
+    have hdζ : ((g₀ * σ)⁻¹ * (σ * g₀)) ζ = ζ := by
+      rw [AlgEquiv.mul_apply, hL, ← hR, ← AlgEquiv.mul_apply, inv_mul_cancel,
+        AlgEquiv.one_apply]
+    have hdw := hw _ hdI hdζ
+    have hcommw : (σ * g₀) w = (g₀ * σ) w := by
+      have h2 := congrArg (g₀ * σ) hdw
+      rwa [← AlgEquiv.mul_apply, ← mul_assoc, mul_inv_cancel, one_mul] at h2
+    have hL' : (σ * g₀) w = σ (η g₀) * η σ * w := by
+      rw [AlgEquiv.mul_apply, hηw g₀, map_mul, hηw σ, mul_assoc]
+    have hR' : (g₀ * σ) w = η σ ^ 2 * η g₀ * w := by
+      rw [AlgEquiv.mul_apply, hηw σ, map_mul, hg₀act _ (hηn σ hσ), hηw g₀, mul_assoc]
+    rw [hL', hR'] at hcommw
+    have h3 : σ (η g₀) * η σ = η σ ^ 2 * η g₀ := mul_right_cancel₀ hw0 hcommw
+    apply mul_right_cancel₀ (hη0 σ hσ)
+    rw [h3]
+    ring
+  refine ⟨w / η g₀, fun σ hσ => ?_, ?_⟩
+  · rw [map_div₀, key σ hσ, hηw σ, mul_comm (η σ) w, mul_comm (η σ) (η g₀),
+      mul_div_mul_right _ _ (hη0 σ hσ)]
+  · rw [div_pow, hηn g₀ hg₀, div_one]
+
+end KummerDescent
+
+/-- Kummer descent along the inertia subgroup: if every inertia element
+fixing a primitive `p ^ N`-th root of unity `ζ` also fixes `w`, and every
+inertia element fixes `w ^ (p ^ N)`, then some `w'` fixed by the whole
+inertia subgroup satisfies `w' ^ (p ^ N) = w ^ (p ^ N)`. The odd prime
+hypothesis supplies an inertia element acting by squaring on roots of
+unity, which forces the Kummer cocycle to be a coboundary. -/
+public theorem exists_inertia_fixed_and_pow_eq_pow_of_isPrimitiveRoot
+    (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (N : ℕ)
+    (P : ValuationSubring (AlgebraicClosure ℚ)) (hP : P.LiesOverPrime p)
+    (ζ : AlgebraicClosure ℚ) (hζ : IsPrimitiveRoot ζ (p ^ N))
+    (w : AlgebraicClosure ℚ)
+    (hw : ∀ σ ∈ P.inertiaSubgroupIn ℚ, σ ζ = ζ → σ w = w)
+    (hx : ∀ σ ∈ P.inertiaSubgroupIn ℚ, σ (w ^ p ^ N) = w ^ p ^ N) :
+    ∃ w' : AlgebraicClosure ℚ, (∀ σ ∈ P.inertiaSubgroupIn ℚ, σ w' = w') ∧
+      w' ^ p ^ N = w ^ p ^ N := by
+  have hn : 0 < p ^ N := pow_pos hp.pos N
+  have h2 : Nat.Coprime 2 (p ^ N) :=
+    ((Nat.coprime_primes Nat.prime_two hp).mpr (Ne.symm hp2)).pow_right N
+  obtain ⟨g₀, hg₀, hg₀act⟩ :=
+    exists_mem_inertiaSubgroupIn_apply_eq_pow_prime_pow P hp hP N
+      (ZMod.unitOfCoprime 2 h2)
+  refine exists_forall_apply_eq_and_pow_eq_pow hn (P.inertiaSubgroupIn ℚ) hζ g₀ hg₀ ?_ w hw hx
+  intro η hη
+  have hmod : η ^ (2 % p ^ N) = η ^ 2 := by
+    conv_rhs => rw [← Nat.div_add_mod 2 (p ^ N), pow_add, pow_mul, hη, one_pow, one_mul]
+  have hthis := hg₀act η hη
+  rw [ZMod.coe_unitOfCoprime, ZMod.val_natCast, hmod] at hthis
+  convert hthis using 1
+
 
 end ValuationSubring
 

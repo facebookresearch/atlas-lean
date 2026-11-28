@@ -28,7 +28,11 @@ $2^j$), then $n = 18$ and either $i = 0, j = 1$ or $i = 1, j = 0$, so the omitte
 $1$ and $2$.
 
 See Aryan, Madhavani, Parikh, Slattery and Zelinsky, *On 2-Near Perfect Numbers*,
-Proposition 8 of [arXiv:2310.01305](https://arxiv.org/abs/2310.01305). -/
+Proposition 8 of [arXiv:2310.01305](https://arxiv.org/abs/2310.01305).
+
+Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
+*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 1
+(`integers-2024-A61-prop-1`). -/
 public theorem two_near_perfect_two_pow_mul_prime_sq_case_one {k p i j : ℕ}
     (hp : p.Prime) (hp2 : p ≠ 2) (hi : i ≤ k) (hj : j ≤ k) (hij : i ≠ j)
     (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) = 2 * (2 ^ k * p ^ 2) + 2 ^ i + 2 ^ j) :

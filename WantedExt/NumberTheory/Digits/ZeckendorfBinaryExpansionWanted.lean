@@ -23,6 +23,14 @@ public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Order.LiminfLimsup
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import MathlibExt.NumberTheory.Digits.BinaryFundamentalSequence
+public import MathlibExt.NumberTheory.Digits.ZeckendorfBinaryRank
+public import MathlibExt.NumberTheory.Digits.ZeckendorfBlockCountRecurrence
+public import MathlibExt.NumberTheory.Digits.ZeckendorfFundamentalSequence
+public import MathlibExt.NumberTheory.Digits.ZeckendorfMaxBlockScaling
+public import MathlibExt.NumberTheory.Digits.ZeckendorfProperBlockCount
+public import MathlibExt.NumberTheory.Digits.ZeckendorfProperBlockLex
+public import MathlibExt.NumberTheory.Digits.ZeckendorfSubcollection
 
 /-!
 # Fundamental sequences and the duality formula for Zeckendorf binary expansions
@@ -48,56 +56,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Powers of two are the only binary fundamental sequence.** Let
-$H \colon \mathbb{N} \to \mathbb{N}$ be a strictly increasing sequence of positive integers. Then
-every natural number (including $0$) equals $\sum_{k \in s} H_k$ for exactly one finite set
-$s \subseteq \mathbb{N}$ if and only if $H_k = 2^k$ for all $k$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 1 (`integers-2025-A25-lem-1`). -/
-public theorem_wanted bijective_finset_sum_iff_eq_two_pow {H : ℕ → ℕ} (hpos : ∀ k, 0 < H k)
-    (hmono : StrictMono H) :
-    Function.Bijective (fun s : Finset ℕ => ∑ k ∈ s, H k) ↔ ∀ k, H k = 2 ^ k
-
-/-- **The Fibonacci numbers are the only Zeckendorf fundamental sequence.** Let
-$H \colon \mathbb{N} \to \mathbb{N}$ be a strictly increasing sequence of positive integers, and
-call a finite set $s \subseteq \mathbb{N}$ nonadjacent if $k \in s$ implies $k + 1 \notin s$.
-Then every natural number (including $0$) equals $\sum_{k \in s} H_k$ for exactly one nonadjacent
-finite set $s$ if and only if $H_k = F_{k+2}$ for all $k$, where $F_0 = 0$, $F_1 = 1$ and
-$F_{n+2} = F_{n+1} + F_n$ are the Fibonacci numbers.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 1 (`integers-2025-A25-lem-1`). -/
-public theorem_wanted bijective_nonadjacent_finset_sum_iff_eq_fib {H : ℕ → ℕ}
-    (hpos : ∀ k, 0 < H k) (hmono : StrictMono H) :
-    Function.Bijective (fun s : {s : Finset ℕ // ∀ k ∈ s, k + 1 ∉ s} => ∑ k ∈ s.1, H k) ↔
-      ∀ k, H k = Nat.fib (k + 2)
-
-/-- **Duality formula for binary expansions without adjacent ones.** For $x \in \mathbb{N}$ let
-$z(x)$ be the number of $n < x$ whose binary expansion has no two adjacent digits equal to $1$.
-For a finite set $A \subseteq \mathbb{N}$, put $\bar A = A$ if there is no $j$ with
-$j, j + 1 \in A$, and otherwise $\bar A = \{k \in A : k \ge j\}$, where $j$ is the largest index
-with $j, j + 1 \in A$. Then $z\bigl(\sum_{k \in A} 2^k\bigr) = \sum_{k \in \bar A} F_{k+2}$,
-where $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$ are the Fibonacci numbers.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 2 (`integers-2025-A25-lem-2`). -/
-public theorem_wanted card_zeckendorfBinary_lt_sum_two_pow (A : Finset ℕ) :
-    let J := A.filter (fun j => j + 1 ∈ A)
-    let Abar := if h : J.Nonempty then A.filter (fun k => J.max' h ≤ k) else A
-    ((Finset.range (∑ k ∈ A, 2 ^ k)).filter (fun n => n &&& (n >>> 1) = 0)).card =
-      ∑ k ∈ Abar, Nat.fib (k + 2)
-
-/-- **Ascending lexicographic order.** For coefficient functions
-$\mu, \nu \colon \mathbb{N} \to \mathbb{N}$ with finite support, $\mu <_a \nu$ means that there
-is an index $k$ with $\mu_k < \nu_k$ and $\mu_j = \nu_j$ for all $j > k$: at the largest index
-where they differ, $\mu$ is smaller.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.2). -/
-public def AscLexLT (μ ν : ℕ →₀ ℕ) : Prop :=
-  ∃ k, μ k < ν k ∧ ∀ j, k < j → μ j = ν j
-
 /-- **Example of the ascending lexicographic order.** Write $(a_0, a_1, a_2, a_3, a_4)$ for the
 coefficient function with finite support whose entry at index $i \le 4$ is $a_i$ and whose other
 entries are $0$. Then $(1, 2, 10, 3, 7) <_a (1, 3, 1, 4, 7)$ in the ascending lexicographic
@@ -113,47 +71,6 @@ public theorem ascLexLT_example :
   refine ⟨3, by simp, fun j hj => ?_⟩
   simp only [Finsupp.coe_add, Pi.add_apply, Finsupp.single_apply]
   split_ifs <;> omega
-
-/-- **Immediate predecessor.** Let $E$ be a collection of finitely supported coefficient functions
-$\mathbb N \to \mathbb N$, and let $<_a$ be the ascending lexicographic order. A finitely supported
-coefficient function $\mu$ is the immediate predecessor of $\nu$ in $E$ if $\mu \in E$,
-$\mu <_a \nu$, and every $\xi \in E$ with $\xi <_a \nu$ satisfies $\xi = \mu$ or $\xi <_a \mu$.
-That is, $\mu$ is the largest element of $E$ that is $<_a \nu$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.2). -/
-public def IsImmediatePredecessor (E : Set (ℕ →₀ ℕ)) (ν μ : ℕ →₀ ℕ) : Prop :=
-  μ ∈ E ∧ AscLexLT μ ν ∧ ∀ ξ ∈ E, AscLexLT ξ ν → ξ = μ ∨ AscLexLT ξ μ
-
-/-- **Immediate successor.** Let $E$ be a collection of finitely supported coefficient functions
-$\mathbb N \to \mathbb N$, and let $<_a$ be the ascending lexicographic order. A finitely supported
-coefficient function $\nu$ is the immediate successor of $\mu$ in $E$ if $\nu \in E$,
-$\mu <_a \nu$, and every $\xi \in E$ with $\mu <_a \xi$ satisfies $\xi = \nu$ or $\nu <_a \xi$.
-That is, $\nu$ is the smallest element of $E$ that is $>_a \mu$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.2). -/
-public def IsImmediateSuccessor (E : Set (ℕ →₀ ℕ)) (μ ν : ℕ →₀ ℕ) : Prop :=
-  ν ∈ E ∧ AscLexLT μ ν ∧ ∀ ξ ∈ E, AscLexLT μ ξ → ξ = ν ∨ AscLexLT ν ξ
-
-/-- **Zeckendorf collections.** Index coefficient functions from $1$, let $\beta^n$ be the basis
-coefficient function with entry $1$ at index $n$, and for a coefficient function $\mu$ let
-$\operatorname{res}_n(\mu)$ keep the entries of $\mu$ at indices $\le n$ and
-$\operatorname{res}^n(\mu)$ keep those at indices $\ge n$, the other entries being $0$. A set $E$
-of finitely supported coefficient functions $\mathbb N \to \mathbb N$ is a Zeckendorf collection
-when it contains $0$ and $\beta^n$ for every $n \ge 1$, every $\mu \in E$ has only finitely many
-elements of $E$ below it in the ascending lexicographic order $<_a$, and for every $\mu \in E$
-and every immediate successor $\tilde\mu$ of $\mu$ in $E$ with $\tilde\mu \ne \beta^1 + \mu$
-there is an index $n \ge 2$ such that $\operatorname{res}_{n-1}(\mu)$ is the immediate
-predecessor of $\beta^n$ in $E$ and $\tilde\mu = \beta^n + \operatorname{res}^n(\mu)$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.2). -/
-public def IsZeckendorfCollection (E : Set (ℕ →₀ ℕ)) : Prop :=
-  0 ∈ E ∧ (∀ i, Finsupp.single i 1 ∈ E) ∧ (∀ μ ∈ E, {ν | ν ∈ E ∧ AscLexLT ν μ}.Finite) ∧
-    ∀ μ ∈ E, ∀ ν, IsImmediateSuccessor E μ ν → ν ≠ Finsupp.single 0 1 + μ →
-      ∃ m, 1 ≤ m ∧ IsImmediatePredecessor E (Finsupp.single m 1) (μ.filter (· < m)) ∧
-        ν = Finsupp.single m 1 + μ.filter (m ≤ ·)
 
 /-- **Zeckendorf collections contain zero.** Every Zeckendorf collection $E$ of finitely supported
 coefficient functions $\mathbb N \to \mathbb N$ contains the zero coefficient function.
@@ -218,16 +135,6 @@ public def periodicZeckendorfCollection (L : List ℕ) : Set (ℕ →₀ ℕ) :=
   {μ | ∃ blocks : List ((ℕ →₀ ℕ) × ℕ × ℕ), (∀ b ∈ blocks, IsLBlock L b.1 b.2.1 b.2.2) ∧
     blocks.Pairwise (fun a b => a.2.2 ≤ b.2.1 ∨ b.2.2 ≤ a.2.1) ∧ μ = (blocks.map Prod.fst).sum}
 
-/-- **Evaluation of a coefficient function at an integer sequence.** For a sequence $H$ of
-natural numbers and a finitely supported coefficient function
-$\varepsilon \colon \mathbb{N} \to \mathbb{N}$, the evaluation of $\varepsilon$ at $H$ is the
-natural number $\mathrm{eval}_H(\varepsilon) = \sum_{k \ge 0} \varepsilon_k H_k$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 1 (arXiv:2308.12872v1, Section 1). -/
-public def zeckendorfEval (H : ℕ → ℕ) (ε : ℕ →₀ ℕ) : ℕ :=
-  ε.sum fun k a => a * H k
-
 /-- **Zeckendorf collections are determined by their immediate predecessors.** Index
 coefficient functions from $0$, and for $m \in \mathbb N$ let $\beta^{(m)}$ be the coefficient
 function with entry $1$ at index $m$ and $0$ elsewhere. Suppose that for each $m \ge 1$ a finitely
@@ -291,16 +198,6 @@ public theorem_wanted zeckendorfCollection_subset_iff {E E' : Set (ℕ →₀ �
     (hE' : IsZeckendorfCollection E') (hE : IsZeckendorfCollection E) (θ : ℕ → ℕ →₀ ℕ)
     (hθ : ∀ m, 1 ≤ m → IsImmediatePredecessor E (Finsupp.single m 1) (θ m)) :
     E ⊆ E' ↔ ∀ m, 1 ≤ m → θ m ∈ E'
-
-/-- **Counting function of a subcollection.** For a set $E$ of finitely supported coefficient
-functions $\mu : \mathbb{N} \to \mathbb{N}$, a sequence $H : \mathbb{N} \to \mathbb{N}$ and a
-real number $x$, $z(x)$ is the number of natural numbers $n < x$ of the form
-$n = \sum_k \mu_k H_k$ for some $\mu \in E$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Theorem 1 and Section 3 (arXiv:2308.12872v1, Sections 1 and 3.2). -/
-public noncomputable def subcollectionCount (E : Set (ℕ →₀ ℕ)) (H : ℕ → ℕ) (x : ℝ) : ℕ :=
-  {n : ℕ | (n : ℝ) < x ∧ ∃ μ ∈ E, zeckendorfEval H μ = n}.ncard
 
 /-- **The counting function $z$ vanishes for $x \le 0$.** Let $E$ be a set of finitely supported
 coefficient functions and $H$ a sequence of natural numbers, and for real $x$ let $z(x)$ be the
@@ -417,70 +314,6 @@ public theorem_wanted fundamentalSequence_div_rpow_tendsto (L L' : List ℕ) (hL
       Filter.Tendsto (fun n : ℕ => (H n : ℝ) / (H' n : ℝ) ^ Real.logb φ' φ) Filter.atTop
         (nhds (α / α' ^ Real.logb φ' φ))
 
-/-- **Reduction lemma for counting a subcollection.** Let $E \subseteq \tilde E$ be Zeckendorf
-collections, and let $\tilde H$ be a strictly increasing sequence of positive integers such that
-$\varepsilon \mapsto \sum_k \varepsilon_k \tilde H_k$ is a bijection from $\tilde E$ onto
-$\mathbb{N}$. For a natural number $x$ let $R(x)$ be the set of natural numbers $n < x$ of the
-form $n = \sum_k \varepsilon_k \tilde H_k$ with $\varepsilon \in E$. Let $\mu \in \tilde E$ be
-nonzero, suppose that $\mu$ has an immediate predecessor $\check\mu$ in $E$ (the largest element
-of $E$ that is $<_a \mu$ in the ascending lexicographic order), and suppose that $\check\mu$ has
-an immediate successor $\bar\mu$ in $E$ (the smallest element of $E$ that is $>_a \check\mu$).
-Then $R(\sum_k \mu_k \tilde H_k) = R(\sum_k \bar\mu_k \tilde H_k)$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 7 (`integers-2025-A25-lem-7`; arXiv:2308.12872v1, Section 3.2, with the paper's
-definition of `μ̌` and `μ̄` there). -/
-public theorem_wanted subcollectionLT_eval_eq_eval_bar {E E' : Set (ℕ →₀ ℕ)}
-    (hE : IsZeckendorfCollection E) (hE' : IsZeckendorfCollection E') (hsub : E ⊆ E')
-    {H' : ℕ → ℕ} (hmono' : StrictMono H') (hpos' : ∀ k, 0 < H' k)
-    (hbij' : Set.BijOn (zeckendorfEval H') E' Set.univ) {μ μc μb : ℕ →₀ ℕ} (hμ : μ ∈ E')
-    (hμ0 : μ ≠ 0) (hc : IsImmediatePredecessor E μ μc) (hb : IsImmediateSuccessor E μc μb) :
-    {n : ℕ | n < zeckendorfEval H' μ ∧ ∃ ε ∈ E, zeckendorfEval H' ε = n} =
-      {n : ℕ | n < zeckendorfEval H' μb ∧ ∃ ε ∈ E, zeckendorfEval H' ε = n}
-
-/-- **Duality formula.** Let $E \subseteq \tilde E$ be Zeckendorf collections. Let $H$ and
-$\tilde H$ be strictly increasing sequences of positive integers such that
-$\mu \mapsto \sum_k \mu_k H_k$ is a bijection from $E$ onto $\mathbb N$ and
-$\mu \mapsto \sum_k \mu_k \tilde H_k$ is a bijection from $\tilde E$ onto $\mathbb N$. For real
-$x$, let $z(x)$ be the number of natural numbers $n < x$ of the form $n = \sum_k \nu_k \tilde H_k$
-with $\nu \in E$. Let $\mu \in \tilde E$ be nonzero, let $\check\mu$ be the immediate predecessor
-of $\mu$ in $E$ (the largest element of $E$ below $\mu$ in the ascending lexicographic order), and
-let $\bar\mu$ be the immediate successor of $\check\mu$ in $E$. Then
-$z\left(\sum_k \mu_k \tilde H_k\right) = \sum_k \bar\mu_k H_k$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Theorem 8 (`integers-2025-A25-thm-8`; arXiv:2308.12872v1, Section 3.2). -/
-public theorem_wanted subcollectionCount_eval_eq_eval_bar {E E' : Set (ℕ →₀ ℕ)}
-    (hE : IsZeckendorfCollection E) (hE' : IsZeckendorfCollection E') (hsub : E ⊆ E')
-    {H H' : ℕ → ℕ} (hmono : StrictMono H) (hpos : ∀ k, 0 < H k)
-    (hbij : Set.BijOn (zeckendorfEval H) E Set.univ) (hmono' : StrictMono H')
-    (hpos' : ∀ k, 0 < H' k) (hbij' : Set.BijOn (zeckendorfEval H') E' Set.univ)
-    {μ μc μb : ℕ →₀ ℕ} (hμ : μ ∈ E') (hμ0 : μ ≠ 0) (hc : IsImmediatePredecessor E μ μc)
-    (hb : IsImmediateSuccessor E μc μb) :
-    subcollectionCount E H' (zeckendorfEval H' μ) = zeckendorfEval H μb
-
-/-- **Descending lexicographic order.** For coefficient functions
-$\varepsilon, \varepsilon' \colon \mathbb{N} \to \mathbb{N}$, $\varepsilon <_d \varepsilon'$
-means that there is an index $k$ with $\varepsilon_k < \varepsilon'_k$ and
-$\varepsilon_j = \varepsilon'_j$ for all $j < k$: at the smallest index where they differ,
-$\varepsilon$ is smaller.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def DescLexLT (ε ε' : ℕ → ℕ) : Prop :=
-  ∃ k, ε k < ε' k ∧ ∀ j, j < k → ε j = ε' j
-
-/-- **The maximal $L^*$-block.** Let $L = (e_1, \dots, e_N)$ be a list of natural numbers and $s$
-an index, with indices starting at $0$. The maximal $L^*$-block starting at $s$ is the
-coefficient function whose entry at index $i$ is $0$ for $i < s$, and $e_j$ for $i \ge s$, where
-$j - 1 = (i - s) \bmod N$ (every entry is $0$ when $L$ is empty). It is the paper's
-$\bar\beta^{s+1}$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def maxLStarBlock (L : List ℕ) (s i : ℕ) : ℕ :=
-  if i < s then 0 else L.getD ((i - s) % L.length) 0
-
 /-- **The maximal block $\bar\beta^2$ for $L = (2, 3, 0)$.** For $L = (2, 3, 0)$, the maximal
 $L^*$-block starting at index $1$ (indices start at $0$; the paper's $\bar\beta^2$) has entries
 $0, 2, 3, 0, 2$ at the indices $0, 1, 2, 3, 4$.
@@ -490,47 +323,6 @@ Section 2 (arXiv:2308.12872v1, Section 2.3, example). -/
 public theorem maxLStarBlock_example :
     (List.range 5).map (maxLStarBlock [2, 3, 0] 1) = [0, 2, 3, 0, 2] := by
   decide
-
-/-- **Proper $L^*$-blocks.** Let $L$ be a list of natural numbers, index coefficient functions
-from $1$, and let $\bar\beta^s$ be the maximal $L^*$-block starting at index $s$. For $s \ge 1$,
-a function $\zeta : \mathbb N \to \mathbb N$ is a proper $L^*$-block with support interval
-$[s, k]$ when $s \le k$, $\zeta_i = \bar\beta^s_i$ for all $i < k$, $\zeta_k < \bar\beta^s_k$,
-and $\zeta_i = 0$ for all $i > k$. Since $\bar\beta^s$ vanishes below $s$, so does $\zeta$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def IsProperLStarBlock (L : List ℕ) (ζ : ℕ → ℕ) (s k : ℕ) : Prop :=
-  s ≤ k ∧ (∀ i, i < k → ζ i = maxLStarBlock L s i) ∧ ζ k < maxLStarBlock L s k ∧
-    ∀ i, k < i → ζ i = 0
-
-/-- **Sums of disjoint proper $L^\ast$-blocks.** Let $L$ be a list of natural numbers, and for
-each $s$ let $\bar\beta^{s+1}$ be the maximal $L^*$-block starting at (zero-based) index $s$. Let
-$I$ be a finite or infinite set of pairs $(s, k)$ of natural numbers. A coefficient function
-$\varepsilon : \mathbb N \to \mathbb N$ is the sum of the disjoint proper $L^*$-blocks with
-support intervals $[s, k]$, $(s, k) \in I$, if $s \le k$ for every $(s, k) \in I$, the intervals
-$[s, k]$ of distinct pairs in $I$ are pairwise disjoint, for every $(s, k) \in I$ we have
-$\varepsilon_i = \bar\beta^{s+1}_i$ whenever $s \le i < k$ and
-$\varepsilon_k < \bar\beta^{s+1}_k$, and $\varepsilon_i = 0$ for every index $i$ that lies in
-none of the intervals.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def IsLStarBlockSum (L : List ℕ) (I : Set (ℕ × ℕ)) (ε : ℕ → ℕ) : Prop :=
-  (∀ p ∈ I, p.1 ≤ p.2) ∧ I.PairwiseDisjoint (fun p => Set.Icc p.1 p.2) ∧
-    (∀ p ∈ I, (∀ i, p.1 ≤ i → i < p.2 → ε i = maxLStarBlock L p.1 i) ∧
-      ε p.2 < maxLStarBlock L p.1 p.2) ∧
-    ∀ i, (∀ p ∈ I, i ∉ Set.Icc p.1 p.2) → ε i = 0
-
-/-- **The periodic collection $E^*$.** For a list $L$ of natural numbers, $E^*$ is the set of
-nonzero coefficient functions $\varepsilon : \mathbb{N} \to \mathbb{N}$ that are sums of finitely
-or infinitely many disjoint proper $L^*$-blocks, that is, the $\varepsilon \ne 0$ that are
-$L^*$-block sums over some set of support intervals. It is the collection $E^*$ for the interval
-$(0, 1)$ determined by $L$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Section 2 (arXiv:2308.12872v1, Section 2.3). -/
-public def lStarCollection (L : List ℕ) : Set (ℕ → ℕ) :=
-  {ε | ε ≠ 0 ∧ ∃ I, IsLStarBlockSum L I ε}
 
 /-- **The zero function is not in the periodic Zeckendorf collection for $(0, 1)$.** For every
 list $L$ of natural numbers, the zero coefficient function $\mathbb{N} \to \mathbb{N}$ does not
@@ -652,20 +444,6 @@ public theorem_wanted exists_prefix_eq_of_lStar_near (L : List ℕ) (hL : 2 ≤ 
       (∀ ε' ∈ lStarCollection L, ∑' k, (ε k : ℝ) * Q k - δ < ∑' k, (ε' k : ℝ) * Q k →
         ∑' k, (ε' k : ℝ) * Q k < ∑' k, (ε k : ℝ) * Q k → ∀ i ≤ n, ε' i = lStarInf L ε i)
 
-/-- **Proper blocks below a maximal block.** Let $L = (e_1, \dots, e_N)$ with $N \ge 2$ and
-$e_1 \ne 0$, let $\varepsilon \colon \mathbb{N} \to \mathbb{N}$ and $b \in \mathbb{N}$ with
-$\varepsilon_i = 0$ for all $i < b$, and let $\bar\beta$ be the maximal $L^*$-block starting at
-index $b$. Then $\varepsilon <_d \bar\beta$ in the descending lexicographic order if and only if
-there is $k \ge b$ such that the function equal to $\varepsilon_i$ for $i \le k$ and to $0$ for
-$i > k$ is a proper $L^*$-block with support interval $[b, k]$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 8 (`integers-2025-A25-lem-8`; arXiv:2308.12872v1, Section 3.3). -/
-public theorem_wanted descLexLT_maxLStarBlock_iff (L : List ℕ) (hL : 2 ≤ L.length)
-    (he : L.getD 0 0 ≠ 0) {ε : ℕ → ℕ} {b : ℕ} (hε : ∀ i, i < b → ε i = 0) :
-    DescLexLT ε (maxLStarBlock L b) ↔
-      ∃ k, b ≤ k ∧ IsProperLStarBlock L (fun i => if i ≤ k then ε i else 0) b k
-
 /-- **Decomposing $L^*$-blocks into $\tilde L^*$-blocks.** Let $L$ and $\tilde L$ be lists of
 natural numbers of length at least $2$ with nonzero first entries whose periodic Zeckendorf
 collections satisfy $E \subsetneq \tilde E$. If $\zeta$ is a nonzero proper $L^*$-block with
@@ -705,50 +483,6 @@ public theorem_wanted mem_lStarCollection_of_lStarBar_decomposition (L L' : List
       DescLexLT (maxLStarBlock L b) (fun i => if i < b then 0 else ε i)) :
     (fun i => if i < b then 0 else ε i) ∈ lStarCollection L'
 
-/-- **Shifted maximal blocks scale geometrically.** Let $L = (e_1, \dots, e_N)$ and $\tilde L$ be
-lists of natural numbers of length at least $2$ with nonzero first entries, and let $\tilde Q$ be
-a strictly decreasing sequence with values in $(0, 1)$ such that
-$\varepsilon \mapsto \sum_k \varepsilon_k \tilde Q_k$ is a bijection from $\tilde E^*$, the
-periodic Zeckendorf collection for $(0, 1)$ determined by $\tilde L$, onto $(0, 1)$. For
-$s \in \mathbb{N}$ let $\bar\beta_s$ be the maximal $L^*$-block starting at index $s$: it is $0$
-at indices $i < s$ and $e_j$ at indices $i \ge s$ with $j - 1 \equiv i - s \pmod N$. Then
-$\sum_k (\bar\beta_s)_k \tilde Q_k = \tilde Q_0^{\,s} \sum_k (\bar\beta_0)_k \tilde Q_k$ for every
-$s \in \mathbb{N}$.
-
-Indices are zero-based: $\bar\beta_s$ is the paper's $\bar\beta^{s+1}$ and $\tilde Q_0$ is its
-$\tilde Q_1 = \tilde\omega$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 16 (`integers-2025-A25-lem-16`; arXiv:2308.12872v1, Section 4.1). -/
-public theorem_wanted tsum_maxLStarBlock_mul_eq (L L' : List ℕ) (hL : 2 ≤ L.length)
-    (he : L.getD 0 0 ≠ 0) (hL' : 2 ≤ L'.length) (he' : L'.getD 0 0 ≠ 0) {Q' : ℕ → ℝ}
-    (hQ' : StrictAnti Q') (hQ'01 : ∀ n, 0 < Q' n ∧ Q' n < 1)
-    (hbij' : Set.BijOn (fun ε : ℕ → ℕ => ∑' k, (ε k : ℝ) * Q' k) (lStarCollection L')
-      (Set.Ioo 0 1)) (s : ℕ) :
-    ∑' k, (maxLStarBlock L s k : ℝ) * Q' k = Q' 0 ^ s * ∑' k, (maxLStarBlock L 0 k : ℝ) * Q' k
-
-/-- **Number of proper $L^*$-blocks with a given support interval.** Let
-$L = (e_1, \dots, e_N)$ be a list of natural numbers with $N \ge 2$ and $e_1 \ne 0$, let $s \le k$
-be natural numbers, and let $j$ be the integer with $1 \le j \le N$ and
-$k - s + 1 \equiv j \pmod N$. Then there are exactly $e_j$ proper $L^*$-blocks with support
-interval $[s, k]$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 15 (`integers-2025-A25-lem-15`; arXiv:2308.12872v1, Section 4.1). -/
-public theorem_wanted ncard_properLStarBlock (L : List ℕ) (hL : 2 ≤ L.length)
-    (he : L.getD 0 0 ≠ 0) {s k : ℕ} (hsk : s ≤ k) :
-    {ζ : ℕ → ℕ | IsProperLStarBlock L ζ s k}.ncard = L.getD ((k - s) % L.length) 0
-
-/-- **Number of $L^*$-block sums of length $n$.** For a list $L$ of natural numbers and $n \ge 0$,
-with coefficient functions indexed from $1$, $C_n$ is the number of functions
-$\varepsilon : \mathbb N \to \mathbb N$ that are sums of disjoint proper $L^*$-blocks with
-support intervals inside $[1, n]$. The zero function (the empty sum) is counted, so $C_0 = 1$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Proposition 4 (arXiv:2308.12872v1, Section 4.1). -/
-public noncomputable def lStarBlockSumCount (L : List ℕ) (n : ℕ) : ℕ :=
-  {ε : ℕ → ℕ | ∃ I, IsLStarBlockSum L I ε ∧ ∀ p ∈ I, p.2 < n}.ncard
-
 /-- **The empty block-sum count.** For every list $L$ of natural numbers, $C_0 = 1$, where $C_n$
 is the number of sums of disjoint proper $L^*$-blocks with support intervals inside $[1, n]$:
 for $n = 0$ the zero function is the only such sum.
@@ -766,22 +500,6 @@ public theorem lStarBlockSumCount_zero (L : List ℕ) : lStarBlockSumCount L 0 =
     · rintro rfl
       exact ⟨∅, ⟨by simp, by simp, by simp, fun _ _ => rfl⟩, by simp⟩
   rw [lStarBlockSumCount, h, Set.ncard_singleton]
-
-/-- **Recurrence for the number of $L^*$-block sums.** Let $L = (e_1, \dots, e_N)$ be a list of
-natural numbers with $N \ge 2$ and $e_1 \ne 0$, index coefficient functions from $1$, and let
-$C_n$ be the number of functions $\mathbb N \to \mathbb N$ that are sums of disjoint proper
-$L^*$-blocks with support intervals inside $[1, n]$. Then $C_k = \sum_{j=1}^{k} e_j C_{k-j}$ for
-$1 \le k \le N$, and $C_n = \sum_{k=1}^{N-1} e_k C_{n-k} + (1 + e_N) C_{n-N}$ for $n \ge N + 1$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Proposition 4 (`integers-2025-A25-prop-4`; arXiv:2308.12872v1, Section 4.1). -/
-public theorem_wanted lStarBlockSumCount_recurrence (L : List ℕ) (hL : 2 ≤ L.length)
-    (he : L.getD 0 0 ≠ 0) :
-    (∀ k, 1 ≤ k → k ≤ L.length → lStarBlockSumCount L k =
-      ∑ j ∈ Finset.Icc 1 k, L.getD (j - 1) 0 * lStarBlockSumCount L (k - j)) ∧
-    ∀ n, L.length + 1 ≤ n → lStarBlockSumCount L n =
-      ∑ k ∈ Finset.Ico 1 L.length, L.getD (k - 1) 0 * lStarBlockSumCount L (n - k) +
-        (1 + L.getD (L.length - 1) 0) * lStarBlockSumCount L (n - L.length)
 
 /-- **Generating function of the $L^\ast$-block-sum counts.** Let $L = (e_1, \dots, e_N)$ be a
 list of natural numbers with $N \ge 2$ and $e_1 \ne 0$. For each $k$ let $C_k$ be the number of
@@ -1077,7 +795,7 @@ public theorem zeckendorfGenericExponent_spec {Q Q' : ℕ → ℝ}
     0 < zeckendorfGenericExponent Q Q' ∧
       Real.logb (Q' 0) (Q 0) * Q' 0 ^ (zeckendorfGenericExponent Q Q' - 1) <
         Q 0 ^ zeckendorfGenericExponent Q Q' :=
-  Nat.sInf_mem h
+  Nat.sInf_mem (s := .ofPred _) h
 
 /-- **The set $U$ of evaluations of $\tilde E^* \setminus \bar E^*$.** For lists $L$ and
 $\tilde L$ and a real sequence $\tilde Q$, let $\tilde E^*$ be the $\tilde L^*$-collection and

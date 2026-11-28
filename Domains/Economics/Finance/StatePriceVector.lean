@@ -34,12 +34,14 @@ open MathlibExt.Probability.Finance.FundedFTAP
 -- name `StatePriceVector.NoFundedArbitrage` for existing statements.
 export MathlibExt.Probability.Finance.FundedFTAP (NoFundedArbitrage)
 
-/-- The state-price vector induced by a normalized pricing probability `q` and gross
-risk-free return `R`: `ψ ω = q ω / R`. -/
+/-- The state-price vector induced by a normalized pricing probability `q` and gross risk-free
+return `R`: `ψ ω = q ω / R`. No condition on `q` or `R` is imposed; with the convention `x / 0 = 0`,
+`ψ = 0` when `R = 0`. -/
 noncomputable def statePriceVector {Ω : Type*} (q : Ω → ℝ) (R : ℝ) : Ω → ℝ :=
   fun ω => q ω / R
 
-/-- **State-price vector and replication pricing (FI08.T02).** Under no arbitrage on
+/-- **State-price vector and replication pricing (FI08.T02).** With finitely many states, at
+least one, and a gross risk-free return `R > 0`, under no arbitrage on
 funded gains, `ψ = q / R` is strictly positive, sums to `1 / R`, and prices every
 replicated payoff: the `ψ`-value of the payoff `∑ a, h a * X a ω` of portfolio `h`
 equals its cost `∑ a, h a * p a`. The pricing probability `q` and its pricing

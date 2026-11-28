@@ -112,12 +112,13 @@ the first canonical heat mode under the depth rescaling `z / H`
 and diffusivity rescaling `cv / H^2`, with the basis normalization
 divided out. Depth `z` runs from one drained face (`z = 0`) to the
 other (`z = H`). The formula is totalized over all real
-parameters; it is a physical consolidation mode for `0 < H`
-and `0 < cv` (see `consolidationMode_abs_le_amplitude`). -/
+parameters (with `x / 0 = 0` it is identically `0` when `H = 0`);
+it is a physical consolidation mode for `0 < H` and `0 < cv` (see
+`consolidationMode_abs_le_amplitude`). -/
 noncomputable def consolidationMode (u0 H cv t z : ℝ) : ℝ :=
   (u0 / Real.sqrt 2) * heatMode (cv / H ^ 2) 1 t (z / H)
 
-/-- Explicit physical form of the consolidation mode:
+/-- Explicit physical form of the consolidation mode for `H ≠ 0`:
 `u0 * exp (-cv * (π / H)^2 * t) * sin (π * z / H)`. -/
 theorem consolidationMode_eq {u0 H cv t z : ℝ} (hH : H ≠ 0) :
     consolidationMode u0 H cv t z
@@ -138,8 +139,8 @@ theorem consolidationMode_eq {u0 H cv t z : ℝ} (hH : H ≠ 0) :
 
 /-! ## B. PDE, drained faces, and initial profile -/
 
-/-- The mode satisfies the one-dimensional Terzaghi consolidation
-equation `∂u/∂t = cv * ∂²u/∂z²` at every time and depth. -/
+/-- For `H ≠ 0`, the mode satisfies the one-dimensional Terzaghi
+consolidation equation `∂u/∂t = cv * ∂²u/∂z²` at every time and depth. -/
 theorem consolidationMode_pde {u0 H cv : ℝ} (hH : H ≠ 0) (t z : ℝ) :
     deriv (fun τ => consolidationMode u0 H cv τ z) t
       = cv * iteratedDeriv 2 (consolidationMode u0 H cv t) z := by
@@ -215,13 +216,14 @@ theorem consolidationMode_pde {u0 H cv : ℝ} (hH : H ≠ 0) (t z : ℝ) :
   rw [hsinarg]
   field_simp
 
-/-- Drained face value at `z = 0`. -/
+/-- Drained face value at `z = 0`: for all real `u0`, `H`, `cv` and `t`, the mode vanishes there.
+This includes `H = 0`, where the convention `x / 0 = 0` makes the mode identically `0`. -/
 theorem consolidationMode_zero_left (u0 H cv t : ℝ) :
     consolidationMode u0 H cv t 0 = 0 := by
   unfold consolidationMode heatMode sineBasisFun
   simp
 
-/-- Drained face value at `z = H`. -/
+/-- Drained face value at `z = H`: for `H ≠ 0` the mode vanishes there. -/
 theorem consolidationMode_zero_right {u0 H cv t : ℝ} (hH : H ≠ 0) :
     consolidationMode u0 H cv t H = 0 := by
   rw [consolidationMode_eq hH]
@@ -229,14 +231,15 @@ theorem consolidationMode_zero_right {u0 H cv t : ℝ} (hH : H ≠ 0) :
     field_simp
   rw [harg, Real.sin_pi, mul_zero]
 
-/-- At `t = 0` the mode recovers the sine initial profile. -/
+/-- For `H ≠ 0`, at `t = 0` the mode recovers the sine initial profile
+`u0 * sin (π * z / H)`. -/
 theorem consolidationMode_time_zero {u0 H cv z : ℝ} (hH : H ≠ 0) :
     consolidationMode u0 H cv 0 z = u0 * Real.sin (Real.pi * z / H) := by
   rw [consolidationMode_eq hH]
   simp
 
-/-- At `t = 0` the mid-depth value is the full initial amplitude:
-`H` is the full layer thickness, so the sine factor is `1`
+/-- For `H ≠ 0`, at `t = 0` the mid-depth value is the full initial
+amplitude: `H` is the full layer thickness, so the sine factor is `1`
 at `H / 2`. -/
 theorem consolidationMode_midpoint_time_zero {u0 H cv : ℝ} (hH : H ≠ 0) :
     consolidationMode u0 H cv 0 (H / 2) = u0 := by
@@ -427,7 +430,9 @@ private theorem consolidationModeSettlementOfStress_nonneg {n : ℕ} {mv : ℝ}
 of the increase of the vertical (index `k`)
 compression-positive effective stress, for any
 time-constant total stress field `σ` and any index `k`:
-the two total-stress terms cancel pointwise. -/
+the two total-stress terms cancel pointwise. This holds for all real `mv`, `u0`, `H`, `cv` and `t`;
+when `H = 0` both integrals run over an empty range and both sides are `0` (the mode itself is then
+identically `0`, by the convention `x / 0 = 0`). -/
 lemma consolidationModeSettlement_eq_effectiveStress_integral {n : ℕ} (mv : ℝ)
     (σ : ℝ → Matrix (Fin n) (Fin n) ℝ) (k : Fin n) (u0 H cv t : ℝ) :
     consolidationModeSettlement mv u0 H cv t

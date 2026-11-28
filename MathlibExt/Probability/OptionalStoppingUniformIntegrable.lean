@@ -136,9 +136,9 @@ theorem Martingale.uniformIntegrable_stoppedProcess_of_uniformIntegrable
     (hmart : Martingale f ℱ μ) (hui : UniformIntegrable f 1 μ)
     (τ : Ω → WithTop ℕ) (hτ : IsStoppingTime ℱ τ) :
     UniformIntegrable (stoppedProcess f τ) 1 μ := by
-  obtain ⟨R, hR⟩ := hui.2
   have hg_int : Integrable (ℱ.limitProcess f μ) μ :=
-    (Filtration.memLp_limitProcess_of_eLpNorm_bdd hui.aestronglyMeasurable hR).integrable le_rfl
+    (Filtration.memLp_limitProcess_of_eLpNorm_bdd hui.aestronglyMeasurable
+      hui.iSup_eLpNorm_lt).integrable le_rfl
   have hcond : UniformIntegrable (fun n => μ[ℱ.limitProcess f μ |
       (IsStoppingTime.min (isStoppingTime_const ℱ (n : ℕ)) hτ).measurableSpace]) 1 μ :=
     hg_int.uniformIntegrable_condExp
@@ -158,15 +158,15 @@ theorem Martingale.integral_stoppedValueAtTop_eq_of_uniformIntegrable
     (τ : Ω → WithTop ℕ) (hτ : IsStoppingTime ℱ τ) :
     (∫ ω, f 0 ω ∂μ = ∫ ω, stoppedValueAtTop f τ ω ∂μ) ∧
     (∫ ω, stoppedValueAtTop f τ ω ∂μ = ∫ ω, ℱ.limitProcess f μ ω ∂μ) := by
-  obtain ⟨R, hR⟩ := hui.2
   have hg_int : Integrable (ℱ.limitProcess f μ) μ :=
-    (Filtration.memLp_limitProcess_of_eLpNorm_bdd hui.aestronglyMeasurable hR).integrable le_rfl
+    (Filtration.memLp_limitProcess_of_eLpNorm_bdd hui.aestronglyMeasurable
+      hui.iSup_eLpNorm_lt).integrable le_rfl
   have hUIstop : UniformIntegrable (stoppedProcess f τ) 1 μ :=
     hmart.uniformIntegrable_stoppedProcess_of_uniformIntegrable hui τ hτ
   -- The stopped process converges a.e. to the stopped value at `τ`.
   have hae_lim : ∀ᵐ ω ∂μ, Tendsto (fun n => f n ω) atTop
       (𝓝 (ℱ.limitProcess f μ ω)) :=
-    hmart.submartingale.ae_tendsto_limitProcess hR
+    hmart.submartingale.ae_tendsto_limitProcess hui.iSup_eLpNorm_lt
   have hae_stop : ∀ᵐ ω ∂μ, Tendsto (fun n => stoppedProcess f τ n ω) atTop
       (𝓝 (stoppedValueAtTop f τ ω)) := by
     filter_upwards [hae_lim] with ω hω

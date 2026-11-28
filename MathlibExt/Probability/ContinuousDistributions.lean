@@ -203,7 +203,7 @@ noncomputable def studentTPivot {Ω : Type*} (X : ℕ → Ω → ℝ) (μ : ℝ)
 /-- The interval `[x̄ₙ - q sₙ / √n, x̄ₙ + q sₙ / √n]` computed from the first `n` observations.
 With `q = t_{n-1, 1-α/2}` it is the usual Student-t interval for the mean. It is a set computed
 from data and carries no coverage claim. -/
-def studentTInterval {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (q : ℝ) (ω : Ω) : Set ℝ :=
+noncomputable def studentTInterval {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (q : ℝ) (ω : Ω) : Set ℝ :=
   Icc (FiniteProbability.sampleMean (fun i : Fin n => X i ω) - q * sampleStdDev X n ω / √n)
     (FiniteProbability.sampleMean (fun i : Fin n => X i ω) + q * sampleStdDev X n ω / √n)
 
@@ -374,9 +374,10 @@ theorem ae_tendsto_sampleMean {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
 
 /-! ## D. Weibull survival and weakest-link scaling -/
 
-/-- The Weibull survival function with shape `k` and scale `lam`: `1` for `x < 0` and
-`exp (-(x / lam) ^ k)` for `0 ≤ x`, intended for `0 < k` and `0 < lam`. Its cumulative hazard
-`(x / lam) ^ k` (`neg_log_weibullSurvival`) is the power-law form. For `0 < k` and `0 < lam` it is
+/-- The Weibull survival-function formula with shape `k` and scale `lam`: `1` for `x < 0` and
+`exp (-(x / lam) ^ k)` for `0 ≤ x`, defined for all real `k` and `lam`, intended for `0 < k`
+and `0 < lam`. Its cumulative hazard `-log S(x)` is `0` for `x < 0` and the power law
+`(x / lam) ^ k` for `0 ≤ x` (`neg_log_weibullSurvival`). For `0 < k` and `0 < lam` it is
 the survival function `x ↦ P(X > x)` of ATLAS's Weibull law `ProbabilityTheory.weibullMeasure k lam`
 (`weibullSurvival_eq_weibullMeasure_real_Ioi`). -/
 noncomputable def weibullSurvival (k lam : ℝ) (x : ℝ) : ℝ :=
@@ -405,7 +406,7 @@ lemma weibullSurvival_eq_weibullMeasure_real_Ioi {k lam x : ℝ} (hk : 0 < k) (h
       isProbabilityMeasure_weibullMeasure hk hlam
     have hIic : (weibullMeasure k lam).real (Iic x) = 0 := by
       rw [measureReal_def,
-        measure_mono_null (fun y hy => hy.trans hx'.le) (weibullMeasure_Iic_zero k lam),
+        measure_mono_null (Iic_subset_Iic.2 hx'.le) (weibullMeasure_Iic_zero k lam),
         ENNReal.toReal_zero]
     have hunion : (weibullMeasure k lam).real univ =
         (weibullMeasure k lam).real (Iic x) + (weibullMeasure k lam).real (Ioi x) := by
@@ -525,10 +526,11 @@ lemma weibullSurvival_rpow {k lam c : ℝ} (hk : 0 < k) (hlam : 0 < lam) (hc : 0
 /-! ## E. JMAK void probability -/
 
 /-- The stipulated JMAK void probability `exp (-kappa * volume)`: the probability that a region
-of the given volume contains no nucleus, for the nucleation intensity `kappa`. It is a
-STIPULATED model, not derived from a point process. Constructing a continuum Poisson point
-process and deriving this void law from it is a separately scoped optional extension; it is not
-part of this file and is not claimed. -/
+of the given volume contains no nucleus, for the nucleation intensity `kappa`. The probability
+reading needs `0 ≤ kappa` and `0 ≤ volume`; when `kappa * volume < 0` the value exceeds `1`.
+It is a STIPULATED model, not derived from a point process. Constructing a continuum Poisson
+point process and deriving this void law from it is a separately scoped optional extension; it
+is not part of this file and is not claimed. -/
 noncomputable def voidProbability (kappa volume : ℝ) : ℝ :=
   Real.exp (-kappa * volume)
 
@@ -571,10 +573,10 @@ lemma one_sub_voidProbability_eq_avrami {kappa volume K t n : ℝ}
 
 /-! ## F. Maxwell speed density -/
 
-/-- The Maxwell speed density with scale `a` (for a gas, `a ^ 2 = k_B T / m`):
-`√(2 / π) v ^ 2 / a ^ 3 exp (-v ^ 2 / (2 a ^ 2))`. Convention: the formula is used for `0 < a`
-and `v > 0`, with no piecewise extension. Every integral below is over `Set.Ioi 0`, and the
-formula is not a probability density on all of `ℝ`. -/
+/-- The Maxwell speed density formula with scale `a` (for a gas, `a ^ 2 = k_B T / m`):
+`√(2 / π) v ^ 2 / a ^ 3 exp (-v ^ 2 / (2 a ^ 2))`, defined for all real `a` and `v`. It is the
+Maxwell speed density only for `0 < a` and `v > 0`, with no piecewise extension. Every integral
+below is over `Set.Ioi 0`, and the formula is not a probability density on all of `ℝ`. -/
 noncomputable def maxwellSpeedPDF (a : ℝ) (v : ℝ) : ℝ :=
   Real.sqrt (2 / Real.pi) * v ^ 2 / a ^ 3 * Real.exp (-v ^ 2 / (2 * a ^ 2))
 

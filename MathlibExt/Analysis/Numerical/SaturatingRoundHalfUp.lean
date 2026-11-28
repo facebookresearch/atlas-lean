@@ -23,7 +23,8 @@ saturating analog-to-digital quantizer is
 `Q(x) = Delta * clamp(kmin, kmax, floor(x / Delta + 1 / 2))`, where
 rounding is to nearest with ties toward `+infinity`. This module proves
 the explicit quantization contract: `Q` is monotone, the error is at
-most `Delta / 2` on the full-scale interval `[Delta * kmin, Delta * kmax]`,
+most `Delta / 2` on every unclipped input, in particular on the
+full-scale interval `[Delta * kmin, Delta * kmax]`,
 and for arbitrary inputs the error is at most the distance to that
 interval plus `Delta / 2`. Clipping is exposed separately as
 `IsClipped`, and signed `w`-bit codes (`w >= 1`) are handled with the
@@ -90,12 +91,14 @@ the code range `[kmin, kmax]`. -/
 def IsClipped (Δ : ℝ) (kmin kmax : ℤ) (x : ℝ) : Prop :=
   round (x / Δ) < kmin ∨ kmax < round (x / Δ)
 
-/-- The least signed `w`-bit code, `-(2 ^ (w - 1))`. Meaningful for
-`1 <= w`; the theorems below carry that hypothesis. -/
+/-- The integer `-(2 ^ (w - 1))`. For `1 ≤ w` it is the least signed `w`-bit code. At `w = 0`
+the definition returns the convention value `-1`, because truncated natural subtraction gives
+`w - 1 = 0`. -/
 def signedMinCode (w : ℕ) : ℤ := -(2 : ℤ) ^ (w - 1)
 
-/-- The greatest signed `w`-bit code, `2 ^ (w - 1) - 1`. Meaningful for
-`1 <= w`; the theorems below carry that hypothesis. -/
+/-- The integer `2 ^ (w - 1) - 1`. For `1 ≤ w` it is the greatest signed `w`-bit code. At
+`w = 0` the definition returns the convention value `0`, because truncated natural subtraction
+gives `w - 1 = 0`. -/
 def signedMaxCode (w : ℕ) : ℤ := (2 : ℤ) ^ (w - 1) - 1
 
 /-- The endpoints of the full-scale interval are ordered, as required
@@ -104,7 +107,8 @@ theorem fullScale_le {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ} (hk : kmin ≤ 
     Δ * (kmin : ℝ) ≤ Δ * (kmax : ℝ) := by
   exact mul_le_mul_of_nonneg_left (Int.cast_le.mpr hk) hΔ.le
 
-/-- The code in floor form: `round y = ⌊y + 1 / 2⌋`. -/
+/-- The saturating code in floor form: for real `Δ`, `x` and integers `kmin`, `kmax`,
+`code Δ kmin kmax x = max kmin (min kmax ⌊x / Δ + 1 / 2⌋)`, since `round y = ⌊y + 1 / 2⌋`. -/
 theorem code_eq_floor_add_half (Δ : ℝ) (kmin kmax : ℤ) (x : ℝ) :
     code Δ kmin kmax x = max kmin (min kmax ⌊x / Δ + 1 / 2⌋) := by
   unfold code
@@ -189,13 +193,12 @@ theorem not_isClipped_of_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ} {x 
     have hcast : (kmax : ℝ) + 1 ≤ (round (x / Δ) : ℝ) := by exact_mod_cast h1
     linarith
 
-/-- In the full-scale interval the quantization error is at most `Δ / 2`. -/
-theorem abs_quantize_sub_le_of_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
-    {x : ℝ} (hx : x ∈ Set.Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))) :
+/-- Away from clipping the quantization error is at most `Δ / 2`. -/
+theorem abs_quantize_sub_le_of_not_isClipped {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
+    {x : ℝ} (hx : ¬ IsClipped Δ kmin kmax x) :
     |quantize Δ kmin kmax x - x| ≤ Δ / 2 := by
-  have hnc : ¬ IsClipped Δ kmin kmax x := not_isClipped_of_mem_Icc hΔ hx
   have hcode : code Δ kmin kmax x = round (x / Δ) :=
-    code_eq_round_of_not_isClipped hnc
+    code_eq_round_of_not_isClipped hx
   have habs := abs_sub_round (x / Δ)
   have hDx : Δ * (x / Δ) = x := mul_div_cancel₀ x (ne_of_gt hΔ)
   have h1 : Δ * (round (x / Δ) : ℝ) - x = Δ * ((round (x / Δ) : ℝ) - x / Δ) := by
@@ -208,6 +211,12 @@ theorem abs_quantize_sub_le_of_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : �
   calc Δ * |(round (x / Δ) : ℝ) - x / Δ| ≤ Δ * (1 / 2) :=
         mul_le_mul_of_nonneg_left habs2 hΔ.le
     _ = Δ / 2 := by ring
+
+/-- In the full-scale interval the quantization error is at most `Δ / 2`. -/
+theorem abs_quantize_sub_le_of_mem_Icc {Δ : ℝ} (hΔ : 0 < Δ) {kmin kmax : ℤ}
+    {x : ℝ} (hx : x ∈ Set.Icc (Δ * (kmin : ℝ)) (Δ * (kmax : ℝ))) :
+    |quantize Δ kmin kmax x - x| ≤ Δ / 2 :=
+  abs_quantize_sub_le_of_not_isClipped hΔ (not_isClipped_of_mem_Icc hΔ hx)
 
 /-- The Mathlib interval projection `Set.projIcc` is a nearest point:
 for real endpoints `a <= b`, `|x - (Set.projIcc a b hab x : ℝ)|` is at

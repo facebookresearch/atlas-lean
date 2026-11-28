@@ -13,7 +13,14 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.FieldTheory.Separable
 public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Algebra.Polynomial.Roots
-public import Mathlib.Data.Matrix.Mul
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinCompanion
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinExpansion
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinFundamentalSpan
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
+public import MathlibExt.NumberTheory.PadovanPerrinFundamentalProduct
+public import MathlibExt.NumberTheory.PadovanPerrinShiftWindow
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModelKPadovanPerrinEqSumRoots
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModelPadovanPerrinFundamentalEqShift
 
 namespace MetaMathlibExt
 
@@ -21,98 +28,9 @@ namespace MetaMathlibExt
 
 open Polynomial
 
-/-- **Simple roots of the Padovan–Perrin characteristic polynomial.** Let $k_1, k_2, p, s$ be
-natural numbers with $k_1 > 0$, $p \ge 2$, $p < s$ and $k_1^2 < k_2$. Then the characteristic
-polynomial $P(z) = z^{s+p} - k_1 z^p - k_2$ of the $([k]; p; s)$-generalized Padovan–Perrin
-recurrence is separable over $\mathbb{C}$, that is, it has only simple roots.
-
-The hypotheses force $k_2 > 0$ and $s > 0$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Lemma 4 (`integers-2024-A49-lem-4`). -/
-public theorem_wanted padovanPerrin_charPoly_separable (k₁ k₂ p s : ℕ) (hk₁ : 0 < k₁)
-    (hp : 2 ≤ p) (hps : p < s) (hk : k₁ ^ 2 < k₂) :
-    (X ^ (s + p) - C (k₁ : ℂ) * X ^ p - C (k₂ : ℂ)).Separable
-
 section Model
 
 variable {R : Type*}
-
-/-- **Generalized Padovan–Perrin recurrence.** Let $R$ be a commutative semiring, $k_1, k_2 \in R$
-and $p, s \in \mathbb{N}$. The $([k]; p; s)$-generalized Padovan–Perrin recurrence is the linear
-recurrence of order $s + p$ with coefficients $c_i = [i = 0] \, k_2 + [i = p] \, k_1$ for
-$0 \le i < s + p$, where $[\cdot]$ is $1$ if the condition holds and $0$ otherwise: a sequence
-$v \colon \mathbb{N} \to R$ solves it when $v_{n+s+p} = \sum_{i=0}^{s+p-1} c_i v_{n+i}$ for every
-$n \ge 0$. For $s > 0$ this reads $v_{n+s+p} = k_1 v_{n+p} + k_2 v_n$, that is,
-$v_n = k_1 v_{n-s} + k_2 v_{n-s-p}$ for $n \ge s + p$ (equation (1)).
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, equation (1). -/
-def padovanPerrinRecurrence [CommSemiring R] (k₁ k₂ : R) (p s : ℕ) : LinearRecurrence R :=
-  ⟨s + p, fun i => (if (i : ℕ) = 0 then k₂ else 0) + (if (i : ℕ) = p then k₁ else 0)⟩
-
-/-- **Characterization of solutions of the generalized Padovan–Perrin recurrence.** Let $R$ be a
-commutative semiring, $k_1, k_2 \in R$, and $p, s \in \mathbb{N}$ with $s > 0$. A sequence
-$v \colon \mathbb{N} \to R$ is a solution of the $([k]; p; s)$-Padovan–Perrin recurrence if and
-only if $v_{n+s+p} = k_1 v_{n+p} + k_2 v_n$ for every $n \ge 0$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, equation (1). -/
-theorem padovanPerrinRecurrence_isSolution_iff [CommSemiring R] (k₁ k₂ : R) (p s : ℕ)
-    (hs : 0 < s) (v : ℕ → R) :
-    (padovanPerrinRecurrence k₁ k₂ p s).IsSolution v ↔
-      ∀ n, v (n + (s + p)) = k₁ * v (n + p) + k₂ * v n := by
-  unfold LinearRecurrence.IsSolution
-  refine forall_congr' fun n => ?_
-  have key : ∑ i : Fin (padovanPerrinRecurrence k₁ k₂ p s).order,
-      (padovanPerrinRecurrence k₁ k₂ p s).coeffs i * v (n + i) = k₁ * v (n + p) + k₂ * v n := by
-    change ∑ i : Fin (s + p),
-      ((if (i : ℕ) = 0 then k₂ else 0) + (if (i : ℕ) = p then k₁ else 0)) * v (n + i) = _
-    rw [Fin.sum_univ_eq_sum_range
-      (fun i => ((if i = 0 then k₂ else 0) + (if i = p then k₁ else 0)) * v (n + i)) (s + p)]
-    simp [add_mul, Finset.sum_add_distrib, hs, add_comm]
-  rw [key]
-  exact Iff.rfl
-
-/-- **Fibonacci fundamental system of the generalized Padovan–Perrin recurrence.** Let $R$ be a
-commutative semiring, $k_1, k_2 \in R$ and $p, s \in \mathbb{N}$. For a natural number $j$, the
-$j$-th fundamental sequence $v^{(j)} \colon \mathbb{N} \to R$ is the solution of the
-$([k]; p; s)$-Padovan–Perrin recurrence with initial values $v^{(j)}_n = 1$ if $n + 1 = j$ and
-$v^{(j)}_n = 0$ otherwise, for $0 \le n < s + p$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, equation (2) and Definition 1. -/
-def padovanPerrinFundamental [CommSemiring R] (k₁ k₂ : R) (p s j : ℕ) : ℕ → R :=
-  (padovanPerrinRecurrence k₁ k₂ p s).mkSol fun i => if (i : ℕ) + 1 = j then 1 else 0
-
-/-- **Initial values of the generalized Padovan–Perrin fundamental system.** Let $R$ be a
-commutative semiring, $k_1, k_2 \in R$ and $p, s, j \in \mathbb{N}$. For every $n < s + p$, the
-$j$-th sequence $v^{(j)}$ of the Fibonacci fundamental system satisfies $v^{(j)}_n = 1$ if
-$n + 1 = j$ and $v^{(j)}_n = 0$ otherwise.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, equation (2). -/
-theorem padovanPerrinFundamental_of_lt [CommSemiring R] (k₁ k₂ : R) (p s j n : ℕ)
-    (hn : n < s + p) :
-    padovanPerrinFundamental k₁ k₂ p s j n = if n + 1 = j then 1 else 0 :=
-  (padovanPerrinRecurrence k₁ k₂ p s).mkSol_eq_init _ ⟨n, hn⟩
-
-/-- **The generalized Padovan–Perrin fundamental sequences solve the recurrence.** Let $R$ be a
-commutative semiring, $k_1, k_2 \in R$ and $p, s \in \mathbb{N}$. For every natural number $j$,
-the $j$-th sequence $v^{(j)}$ of the Fibonacci fundamental system is a solution of the
-$([k]; p; s)$-Padovan–Perrin recurrence.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, equation (2). -/
-theorem padovanPerrinFundamental_isSolution [CommSemiring R] (k₁ k₂ : R) (p s j : ℕ) :
-    (padovanPerrinRecurrence k₁ k₂ p s).IsSolution (padovanPerrinFundamental k₁ k₂ p s j) :=
-  (padovanPerrinRecurrence k₁ k₂ p s).is_sol_mkSol _
 
 /-- **Padovan–Perrin coefficients.** Let $R$ be a commutative semiring, let $k_1, k_2 \in R$ and
 let $p, s, n$ be natural numbers. The coefficient $\rho(n, s + p)$ attached to $k_1, k_2, p, s$ is
@@ -326,114 +244,6 @@ Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machad
 theorem padovanPerrinRho_one_one_one_two_twelve : padovanPerrinRho (1 : ℤ) 1 1 2 12 = 5 := by
   decide
 
-/-- **Expansion in the Fibonacci fundamental system.** Let $R$ be a commutative ring, let
-$k_1, k_2 \in R$ and $p, s \in \mathbb{N}$, and for $1 \le j \le s + p$ let $v^{(j)}$ be the
-solution of the $([k]; p; s)$-Padovan–Perrin recurrence with $v^{(j)}(m) = 1$ if $m + 1 = j$ and
-$v^{(j)}(m) = 0$ otherwise, for $0 \le m < s + p$. Then every solution $v \colon \mathbb{N} \to R$
-of the recurrence satisfies, for every $n \ge 0$,
-$$v(n) = \sum_{j=0}^{s+p-1} v(j)\, v^{(j+1)}(n).$$
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Proposition 1 (`integers-2024-A49-prop-1`). -/
-public theorem_wanted padovanPerrin_eq_sum_fundamental [CommRing R] (k₁ k₂ : R) (p s : ℕ)
-    (v : ℕ → R)
-    (hv : (padovanPerrinRecurrence k₁ k₂ p s).IsSolution v) (n : ℕ) :
-    v n = ∑ j ∈ Finset.range (s + p), v j * padovanPerrinFundamental k₁ k₂ p s (j + 1) n
-
-/-- **Solutions agreeing on a window agree afterwards.** Let $R$ be a commutative ring, let
-$k_1, k_2 \in R$, let $p, s$ be natural numbers and let $v, w \colon \mathbb{N} \to R$ be solutions
-of the Padovan–Perrin recurrence with parameters $k_1, k_2, p, s$. Let $n_0, m_0, N$ be natural
-numbers such that $v(j + n_0) = w(j + m_0)$ for every $j$ with $N \le j < N + s + p$. Then
-$v(n + n_0) = w(n + m_0)$ for every $n \ge N$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Lemma 1 (`integers-2024-A49-lem-1`). -/
-public theorem_wanted padovanPerrin_shift_eq_of_window [CommRing R] (k₁ k₂ : R) (p s : ℕ)
-    {v w : ℕ → R}
-    (hv : (padovanPerrinRecurrence k₁ k₂ p s).IsSolution v)
-    (hw : (padovanPerrinRecurrence k₁ k₂ p s).IsSolution w) (n₀ m₀ N : ℕ)
-    (h : ∀ j, N ≤ j → j < N + (s + p) → v (j + n₀) = w (j + m₀)) :
-    ∀ n, N ≤ n → v (n + n₀) = w (n + m₀)
-
-/-- **The Fibonacci fundamental system spans the solutions.** Let $R$ be a commutative ring, let
-$k_1, k_2 \in R$ and let $p, s$ be natural numbers. For $1 \le j \le s + p$ let $v^{(j)}$ be the
-solution of the Padovan–Perrin recurrence with parameters $k_1, k_2, p, s$ whose initial values
-are $v^{(j)}(n) = 1$ if $n + 1 = j$ and $v^{(j)}(n) = 0$ otherwise, for $n < s + p$. Then the
-submodule of $R^{\mathbb{N}}$ formed by all solutions of this recurrence is the submodule spanned
-by $v^{(1)}, \dots, v^{(s+p)}$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Corollary 1 (`integers-2024-A49-cor-1`). -/
-public theorem_wanted padovanPerrin_solSpace_eq_span_fundamental [CommRing R] (k₁ k₂ : R)
-    (p s : ℕ) :
-    (padovanPerrinRecurrence k₁ k₂ p s).solSpace =
-      Submodule.span R
-        (Set.range fun j : Fin (s + p) => padovanPerrinFundamental k₁ k₂ p s ((j : ℕ) + 1))
-
-/-- **Shift property of the generalized Padovan–Perrin fundamental system.** Let $R$ be a
-commutative ring, $k_1, k_2 \in R$, and let $p, s, j$ be natural numbers with $p \ge 1$ and
-$p + 1 \le j \le s + p - 1$. Write $v^{(\ell)}$ for the $\ell$-th sequence of the Fibonacci
-fundamental system of the $([k]; p; s)$-Padovan–Perrin recurrence. Then
-$v^{(j)}_n = v^{(s+p)}_{n+s+p-j}$ for every $n \ge 0$, and
-$v^{(j)}_n = k_1 v^{(s+p)}_{n-j+p} + k_2 v^{(s+p)}_{n-j}$ for every $n \ge j$.
-
-The paper's second clause, $v^{(j)}_n = k_2 v^{(s+p)}_{n+j}$ for $1 \le j \le p$, is omitted: it
-fails for $k_1 = k_2 = 1$, $p = 1$, $s = 2$, $j = 1$, $n = 0$, where $v^{(1)}_0 = 1$ but
-$v^{(3)}_1 = 0$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Proposition 2 (`integers-2024-A49-prop-2`). -/
-public theorem_wanted padovanPerrinFundamental_eq_shift [CommRing R] (k₁ k₂ : R) (p s j : ℕ)
-    (hp : 0 < p) (hpj : p + 1 ≤ j) (hjs : j ≤ s + p - 1) :
-    (∀ n, padovanPerrinFundamental k₁ k₂ p s j n =
-        padovanPerrinFundamental k₁ k₂ p s (s + p) (n + (s + p) - j)) ∧
-      ∀ n, j ≤ n → padovanPerrinFundamental k₁ k₂ p s j n =
-        k₁ * padovanPerrinFundamental k₁ k₂ p s (s + p) (n - j + p) +
-          k₂ * padovanPerrinFundamental k₁ k₂ p s (s + p) (n - j)
-
-/-- **Powers of the Padovan–Perrin companion matrix.** Let $R$ be a commutative ring, let
-$k_1, k_2 \in R$, let $p, s$ be positive integers, and write $r = s + p$. Let $A$ be the
-$r \times r$ matrix over $R$, with rows and columns indexed by $0, \dots, r - 1$, whose row $0$ has
-$k_1$ in column $s - 1$, $k_2$ in column $r - 1$ and $0$ elsewhere, and whose entry in row
-$a \ge 1$ and column $b$ is $1$ if $a = b + 1$ and $0$ otherwise. For $1 \le \ell \le r$ let
-$v^{(\ell)}$ be the solution of the $([k]; p; s)$-Padovan–Perrin recurrence with
-$v^{(\ell)}(m) = 1$ if $m + 1 = \ell$ and $v^{(\ell)}(m) = 0$ otherwise, for $0 \le m < r$. Then
-for every $n \ge 0$ and all $0 \le i, j \le r - 1$,
-$$(A^n)_{ij} = v^{(r - j)}(n + r - 1 - i).$$
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Theorem 1, equations (5) and (9) (`integers-2024-A49-thm-1`). -/
-public theorem_wanted padovanPerrin_companion_pow_apply [CommRing R] (k₁ k₂ : R) (p s : ℕ)
-    (hp : 0 < p) (hs : 0 < s) (n : ℕ) (i j : Fin (s + p)) :
-    ((Matrix.of fun a b : Fin (s + p) =>
-        if (a : ℕ) = 0 then
-          (if (b : ℕ) + 1 = s then k₁ else 0) + (if (b : ℕ) + 1 = s + p then k₂ else 0)
-        else if (a : ℕ) = (b : ℕ) + 1 then 1 else 0) ^ n) i j =
-      padovanPerrinFundamental k₁ k₂ p s (s + p - j) (n + (s + p) - 1 - i)
-
-/-- **Product identity for the generalized Padovan–Perrin fundamental system.** Let $R$ be a
-commutative ring, $k_1, k_2 \in R$, and $p, s \ge 1$. Write $r = s + p$ and $v^{(\ell)}$ for the
-$\ell$-th sequence of the Fibonacci fundamental system of the $([k]; p; s)$-Padovan–Perrin
-recurrence. Then for all $m, n \ge 0$ and all $1 \le i, j \le r$,
-
-$$v^{(r-j+1)}_{n+m+r-i} = \sum_{k=1}^{r} v^{(r-k+1)}_{m+r-i} \, v^{(r-j+1)}_{n+r-k}.$$
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Proposition 3, equation (10) (`integers-2024-A49-prop-3`). -/
-public theorem_wanted padovanPerrinFundamental_mul_sum [CommRing R] (k₁ k₂ : R) (p s : ℕ)
-    (hp : 0 < p) (hs : 0 < s) (m n i j : ℕ) (hi : 1 ≤ i) (hi' : i ≤ s + p) (hj : 1 ≤ j)
-    (hj' : j ≤ s + p) :
-    padovanPerrinFundamental k₁ k₂ p s (s + p - j + 1) (n + m + (s + p) - i) =
-      ∑ k ∈ Finset.Icc 1 (s + p),
-        padovanPerrinFundamental k₁ k₂ p s (s + p - k + 1) (m + (s + p) - i) *
-          padovanPerrinFundamental k₁ k₂ p s (s + p - j + 1) (n + (s + p) - k)
-
 /-- **Combinatorial expression of the Padovan–Perrin sequences.** Let $R$ be a commutative ring,
 let $k_1, k_2 \in R$, let $p, s$ be positive integers, and let $v \colon \mathbb{N} \to R$ satisfy
 $v(n + s + p) = k_1 v(n + p) + k_2 v(n)$ for every $n$. For $0 \le m \le s + p - 1$ put
@@ -496,19 +306,6 @@ public theorem_wanted padovanPerrinFundamental_eq_rho [CommRing R] (k₁ k₂ : 
         padovanPerrinFundamental k₁ k₂ p s (s + p) (n + (s + p) - j) ∧
       padovanPerrinFundamental k₁ k₂ p s (s + p) (n + (s + p) - j) =
         padovanPerrinRho k₁ k₂ p s (n + (s + p) - j + 1)
-
-/-- **Simple roots of the Padovan–Perrin polynomial for $p = 1$.** Let $k_1, k_2, s$ be positive
-integers with $\left(-\frac{k_2 (s + 1)}{k_1 s}\right)^s \neq \frac{k_1}{s + 1}$. Then the
-polynomial $P(z) = z^{s+1} - k_1 z - k_2$ is separable over $\mathbb{C}$, that is, it has only
-simple roots.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Lemma 2 (`integers-2024-A49-lem-2`). -/
-public theorem_wanted padovanPerrin_charPoly_separable_of_p_eq_one (k₁ k₂ s : ℕ) (hk₁ : 0 < k₁)
-    (hk₂ : 0 < k₂) (hs : 0 < s)
-    (h : (-(k₂ : ℚ) * (s + 1) / (k₁ * s)) ^ s ≠ k₁ / (s + 1)) :
-    (X ^ (s + 1) - C (k₁ : ℂ) * X - C (k₂ : ℂ)).Separable
 
 /-- **Root formula for the generalized Padovan–Perrin coefficients ρ.** Let $k_1, k_2$ be complex
 numbers with $k_2 \neq 0$, let $p, s \ge 1$, and let $P(z) = z^{s+p} - k_1 z^p - k_2$. If $P$ is
@@ -596,29 +393,6 @@ Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machad
 public theorem_wanted kPadovanPerrinFundamental_eq_rho [CommRing R] (k : R) (n : ℕ) :
     padovanPerrinFundamental 1 k 1 2 3 n = padovanPerrinRho 1 k 1 2 (n + 1) ∧
       padovanPerrinFundamental 1 k 1 2 2 n = padovanPerrinRho 1 k 1 2 (n + 2)
-
-/-- **Root formula for the $k$-Padovan–Perrin numbers.** Let $k \ge 2$ be an integer, let
-$P(z) = z^3 - z - k$, and let $v \colon \mathbb{N} \to \mathbb{C}$ satisfy
-$v(n + 3) = v(n + 1) + k\,v(n)$ for every $n$, that is, $v$ solves the Padovan–Perrin recurrence
-with $k_1 = 1$, $k_2 = k$, $p = 1$, $s = 2$. Put $A_0 = k\,v(0) + v(1)$, $A_1 = k\,v(1) + v(2)$
-and $A_2 = k\,v(2)$. Then for every $n \ge 3$,
-$$v(n) = \sum_\lambda \frac{A_0\lambda^{n-1} + A_1\lambda^{n-2} + A_2\lambda^{n-3}}{P'(\lambda)},$$
-where $\lambda$ runs over the complex roots of $P$ counted with multiplicity.
-
-Since $27 k^2 - 4 \neq 0$, the roots of $P$ are distinct. The paper prints the middle coefficient
-as $k\,v(1)$; $k\,v(1) + v(2)$ is the coefficient $A_1$ of its Theorem 3, and the printed form
-fails already for $k = 2$, $(v(0), v(1), v(2)) = (0, 0, 1)$, $n = 4$, where it gives $0$ while
-$v(4) = 1$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Proposition 10 (`integers-2024-A49-prop-10`). -/
-public theorem_wanted kPadovanPerrin_eq_sum_roots (k : ℕ) (hk : 2 ≤ k) (v : ℕ → ℂ)
-    (hv : (padovanPerrinRecurrence 1 (k : ℂ) 1 2).IsSolution v) (n : ℕ) (hn : 3 ≤ n) :
-    v n = ((X ^ 3 - X - C (k : ℂ)).roots.map fun x =>
-      (((k : ℂ) * v 0 + v 1) * x ^ (n - 1) + ((k : ℂ) * v 1 + v 2) * x ^ (n - 2) +
-          (k : ℂ) * v 2 * x ^ (n - 3)) /
-        (derivative (X ^ 3 - X - C (k : ℂ))).eval x).sum
 
 end Model
 

@@ -25,7 +25,10 @@ and `(A (n + 1), B (n + 1))`. The latter is on the right for even `n` and on the
 
 The initial pair `(A 0, B 0) = (1, 0)` has conventional index `-1`. When every `q i` is positive,
 `A (k + 1)` and `B (k + 1)` are the numerator and denominator of the `k`-th convergent
-`[q₀; q₁, …, qₖ]`. -/
+`[q₀; q₁, …, qₖ]`.
+
+Source: Hongshen Chua, *Binary Trees and Sum of Two Squares*, INTEGERS 26 (2026), Article A76,
+Theorem 1 (`integers-2026-A76-thm-1`). -/
 public theorem continuedFraction_path_eq_convergents (q A B : ℕ → ℕ)
     (hA₀ : A 0 = 1) (hA₁ : A 1 = q 0) (hA : ∀ k, A (k + 2) = q (k + 1) * A (k + 1) + A k)
     (hB₀ : B 0 = 0) (hB₁ : B 1 = 1) (hB : ∀ k, B (k + 2) = q (k + 1) * B (k + 1) + B k)

@@ -13,7 +13,7 @@ public import MathlibExt.GroupTheory.PairingAdjointKernel
 @[expose] public section
 
 /-- Consumer with the original binders of the source statement. -/
-theorem exactSource
+private theorem exactSource
     {P : Type*} [AddCommGroup P] [Finite P] {K : Type*} [Field K]
     (e : P → P → Kˣ)
     (hadd₁ : ∀ x x' y, e (x + x') y = e x y * e x' y)

@@ -17,7 +17,7 @@ arXiv:q-bio/0508012, Section II.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -64,8 +64,10 @@ reduction from every language in `NP`
 with entries `0`, `1`, or `2` for a hole, and the bound `K`. -/
 abbrev MinimumErrorCorrectionInstance := ℕ × List (List ℕ) × ℕ
 
-/-- `d(X, Y)`: the number of positions `j` where the row `X` has a `0` or `1` entry different
-from the haplotype value `Y j`; holes (`2`) do not count. -/
+/-- `d(X, Y)`: the number of positions `j < m` where the entry `x` of the row `X` (read as `2`
+beyond its length) is not `2` and `x = 1` differs from the haplotype value `Y j`. Holes (`2`)
+do not count; every other entry, `0` or a value above `2`, is read as `false` unless it is `1`.
+-/
 def mismatches {m : ℕ} (X : List ℕ) (Y : Fin m → Bool) : ℕ :=
   (Finset.univ.filter fun j : Fin m => X.getD j 2 ≠ 2 ∧ decide (X.getD j 2 = 1) ≠ Y j).card
 

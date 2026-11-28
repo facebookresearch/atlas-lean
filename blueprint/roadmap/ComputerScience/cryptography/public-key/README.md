@@ -14,3 +14,15 @@ Diffie–Hellman key agreement; ElGamal encryption and its security under the de
 - [Rabin cryptosystem](rabin-cryptosystem/README.md)
 - [RSA cryptosystem](rsa-cryptosystem/README.md)
 - [Security of Diffie–Hellman key exchange](security-of-diffie-hellman-key-exchange/README.md)
+- [Random-oracle constructions](random-oracle-constructions/README.md)
+- [Pairing-based cryptography](advanced-encryption-and-pairings/README.md)
+- [Homomorphic encryption](homomorphic-encryption/README.md)
+- [Lattice- and Code-Based Cryptography](lattice-and-code-based-cryptography/README.md)
+- [Discrete-Logarithm and Diffie–Hellman Problems](discrete-logarithm-and-diffie-hellman-problems/README.md)
+- [Security Notions and Chosen-Ciphertext Security](chosen-ciphertext-security/README.md)
+
+- [Circular security from fully composable homomorphic encryption](circular-security-from-composable-homomorphic-encryption.md)
+
+- [Post-quantum indistinguishability obfuscation from standard assumptions](post-quantum-obfuscation-from-standard-assumptions.md)
+- [Isogeny and lattice foundations](isogeny-and-lattice-foundations/README.md)
+- [Obfuscation and witness encryption](obfuscation-and-witness-encryption/README.md)

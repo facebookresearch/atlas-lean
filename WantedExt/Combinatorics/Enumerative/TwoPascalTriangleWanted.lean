@@ -14,6 +14,18 @@ public import Mathlib.RingTheory.PowerSeries.Binomial
 public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.Combinatorics.Enumerative.ExtendedTrinomialAlternating
+public import MathlibExt.Combinatorics.Enumerative.GouldTrinomialIdentities
+public import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
+public import MathlibExt.Combinatorics.Enumerative.SprugnoliBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.TrinomialAlternatingColumn
+public import MathlibExt.Combinatorics.Enumerative.TrinomialBinomialTransform
+public import MathlibExt.Combinatorics.Enumerative.TrinomialConvolution
+public import MathlibExt.Combinatorics.Enumerative.TrinomialEvenAlternating
+public import MathlibExt.Combinatorics.Enumerative.TrinomialEvenGenerating
+public import MathlibExt.Combinatorics.Enumerative.TrinomialInverseTransform
+public import MathlibExt.Combinatorics.Enumerative.TrinomialOddGenerating
+public import MathlibExt.Combinatorics.Enumerative.TrinomialUpperHalf
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 public import MathlibExt.NumberTheory.TrinomialCoefficient
@@ -36,18 +48,6 @@ open PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Fundamental theorem of Riordan arrays.** Write $[t^m]F$ for the coefficient of $t^m$ in a
-power series $F$. Let $R$ be a commutative ring and let $d$, $h$, $f$ be power series over
-$R$ with $h(0) = 0$. Then for every $n \in \mathbb{N}$,
-
-$$\sum_{k=0}^{n} \left([t^n]\,d(t)\,h(t)^k\right) [t^k]\,f = [t^n]\,d(t)\,f(h(t)).$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 1 (`jis-2025-25.3.5-thm-1`). -/
-public theorem_wanted riordan_array_sum_eq_coeff_subst {R : Type*} [CommRing R]
-    (d h f : PowerSeries R) (hh : constantCoeff h = 0) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), coeff n (d * h ^ k) * coeff k f = coeff n (d * f.subst h)
 
 /-- **Trinomial coefficients as coefficients of a rational series.** Write $\binom{n}{k}_2$ for
 the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$, and $[t^m]\,F$ for the
@@ -132,92 +132,6 @@ public theorem_wanted sum_trinomialCoefficient_arith_prog_alternating (n x b : �
         Real.cos (Real.pi * ((n : ℝ) - x) * (1 + 2 * j) / b) *
           (1 + 2 * Real.cos (Real.pi * (2 * j + 1) / b)) ^ n
 
-/-- **Generating polynomial of trinomial coefficients with even index.** Write $\binom{n}{k}_2$
-for the trinomial coefficient, the coefficient of $t^k$ in $(1+t+t^2)^n$. For every
-$n \in \mathbb{N}$ and all complex numbers $z$ and $s$ with $s^2 = z$
-$$\sum_{k=0}^{n} \binom{n}{2k}_2 z^k = \frac{(1 + s + z)^n + (1 - s + z)^n}{2}.$$
-
-The paper states this for an indeterminate $z$, with $\sqrt{z}$ in place of $s$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Corollary 13 (`jis-2025-25.3.5-cor-13`). -/
-public theorem_wanted sum_trinomialCoefficient_even (n : ℕ) (z s : ℂ) (hs : s ^ 2 = z) :
-    ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient n (2 * k) : ℂ) * z ^ k =
-      ((1 + s + z) ^ n + (1 - s + z) ^ n) / 2
-
-/-- **Generating polynomial of trinomial coefficients with odd index.** Write $\binom{n}{k}_2$
-for the trinomial coefficient, the coefficient of $t^k$ in $(1+t+t^2)^n$. For every
-$n \in \mathbb{N}$ and all complex numbers $z$ and $s$ with $s^2 = z$ and $s \ne 0$
-$$\sum_{k=0}^{n} \binom{n}{2k+1}_2 z^k = \frac{(1 + s + z)^n - (1 - s + z)^n}{2s}.$$
-
-The paper states this for an indeterminate $z$, with $\sqrt{z}$ in place of $s$, and calls the
-left side $q_n(z)$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Corollary 15 (`jis-2025-25.3.5-cor-15`). -/
-public theorem_wanted sum_trinomialCoefficient_odd (n : ℕ) (z s : ℂ) (hs : s ^ 2 = z)
-    (hs0 : s ≠ 0) :
-    ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient n (2 * k + 1) : ℂ) * z ^ k =
-      ((1 + s + z) ^ n - (1 - s + z) ^ n) / (2 * s)
-
-/-- **Alternating binomial transform of a row of trinomial coefficients.** Write
-$\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $t^k$ in $(1+t+t^2)^n$. For all
-$n, m \in \mathbb{N}$
-$$\sum_{k=m}^{2n} \binom{n}{k}_2 \binom{k}{m} (-1)^k = \binom{n}{m}_2.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 16 (`jis-2025-25.3.5-thm-16`). -/
-public theorem_wanted sum_trinomialCoefficient_mul_choose_alternating (n m : ℕ) :
-    ∑ k ∈ Finset.Icc m (2 * n), (trinomialCoefficient n k : ℤ) * k.choose m * (-1) ^ k =
-      (trinomialCoefficient n m : ℤ)
-
-/-- **Two binomial transforms of a row of trinomial coefficients agree.** Write
-$\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $t^k$ in $(1+t+t^2)^n$. For all
-$n, m \in \mathbb{N}$
-$$\sum_{k=0}^{m} \binom{n}{k}_2 \binom{m}{k} =
-\sum_{k=0}^{2n} \binom{n}{k}_2 \binom{m+k}{k} (-1)^k.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 17 (`jis-2025-25.3.5-thm-17`). -/
-public theorem_wanted sum_trinomialCoefficient_mul_choose_eq (n m : ℕ) :
-    ∑ k ∈ Finset.range (m + 1), (trinomialCoefficient n k : ℤ) * m.choose k =
-      ∑ k ∈ Finset.range (2 * n + 1),
-        (trinomialCoefficient n k : ℤ) * (m + k).choose k * (-1) ^ k
-
-/-- **Alternating binomial sum down a trinomial column.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For natural numbers $n \le m$,
-$\sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{n-k}{m}_2 = \binom{n}{m-n}$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 18 (`jis-2025-25.3.5-thm-18`). -/
-public theorem_wanted sum_trinomialCoefficient_sub_mul_choose (n m : ℕ) (h : n ≤ m) :
-    ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient (n - k) m : ℤ) * n.choose k * (-1) ^ k =
-      (n.choose (m - n) : ℤ)
-
-/-- **Alternating binomial sum of trinomial coefficients over even rows.** Write
-$\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For
-every natural number $n$, $\sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{2n-2k}{n}_2 = 2^n$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 19 (`jis-2025-25.3.5-thm-19`). -/
-public theorem_wanted sum_trinomialCoefficient_two_mul_sub (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        (trinomialCoefficient (2 * n - 2 * k) n : ℤ) * n.choose k * (-1) ^ k = 2 ^ n
-
-/-- **Vandermonde convolution for trinomial coefficients.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $t^k$ in $(1 + t + t^2)^n$, and put $\binom{n}{k}_2 = 0$
-for negative integers $k$. Then for all natural numbers $n$, $m$ and every integer $l$,
-
-$$\sum_{k=0}^{2m} \binom{n}{l + k}_2 \binom{m}{k}_2 = \binom{n + m}{2m + l}_2.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 20 (`jis-2025-25.3.5-thm-20`). -/
-public theorem_wanted sum_trinomialCoefficient_convolution (n m : ℕ) (l : ℤ) :
-    ∑ k ∈ Finset.range (2 * m + 1),
-        (if 0 ≤ l + k then trinomialCoefficient n (l + k).toNat else 0) *
-          trinomialCoefficient m k =
-      if 0 ≤ 2 * m + l then trinomialCoefficient (n + m) (2 * m + l).toNat else 0
-
 /-- **Alternating sum of squared trinomial coefficients.** Write $\binom{n}{k}_2$ for the
 trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For every natural number $n$,
 $\sum_{k=0}^{2n} (-1)^k \binom{n}{k}_2^2 = \binom{n}{n}_2$.
@@ -250,18 +164,6 @@ public theorem_wanted sum_trinomialCoefficient_even_sq (n : ℕ) :
         (trinomialCoefficient (2 * n) n : ℚ) / 2 +
           (if Even n then (trinomialCoefficient n (n / 2) : ℚ) else 0) / 2
 
-/-- **Absorption identity for trinomial coefficients.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For natural numbers $n \ge 1$
-and $k$, $\frac{k}{n} \binom{n}{k}_2 = \binom{n-1}{k-1}_2 + 2 \binom{n-1}{k-2}_2$, where a term
-whose lower index is negative is read as $0$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Lemma 31 (`jis-2025-25.3.5-lem-31`). -/
-public theorem_wanted trinomialCoefficient_absorption (n k : ℕ) (hn : 0 < n) :
-    (k : ℚ) / n * trinomialCoefficient n k =
-      (if 1 ≤ k then (trinomialCoefficient (n - 1) (k - 1) : ℚ) else 0) +
-        2 * (if 2 ≤ k then (trinomialCoefficient (n - 1) (k - 2) : ℚ) else 0)
-
 /-- **Weighted diagonal sums of trinomial coefficients by coefficient extraction.** Write
 $\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $t^k$ in $(1+t+t^2)^n$,
 $[t^m]\,g$ for the coefficient of $t^m$ in a power series $g$, and $f_k = [t^k]\,f$. For every
@@ -291,21 +193,6 @@ public theorem_wanted sum_trinomialCoefficient_diagonal_alternating (n : ℕ) (h
     let S := ∑ k ∈ Finset.range (2 * n / 3 + 1),
       (trinomialCoefficient (n - k) k : ℚ) * n / (n - k : ℕ) * (-1) ^ k
     (n % 4 = 1 ∨ n % 4 = 3 → S = 1) ∧ (n % 4 = 2 → S = -1) ∧ (n % 4 = 0 → S = 3)
-
-/-- **Generating sum of the upper half of a trinomial row.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For every natural number $n$
-and every complex number $w$,
-$$\sum_{k=0}^{n} \binom{n}{n-k}_2 w^{n+k} = \frac{(1+w+w^2)^n}{2} + \frac{\binom{n}{n}_2 w^n}{2} +
-\frac{w^2-1}{2} \sum_{k=0}^{n-1} \binom{k}{k}_2 (1+w+w^2)^{n-1-k} w^k.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Corollary 40 (`jis-2025-25.3.5-cor-40`). -/
-public theorem_wanted sum_trinomialCoefficient_upper_half (n : ℕ) (w : ℂ) :
-    ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient n (n - k) : ℂ) * w ^ (n + k) =
-      (1 + w + w ^ 2) ^ n / 2 + (trinomialCoefficient n n : ℂ) * w ^ n / 2 +
-        (w ^ 2 - 1) / 2 * ∑ k ∈ Finset.range n,
-          (trinomialCoefficient k k : ℂ) * (1 + w + w ^ 2) ^ (n - 1 - k) * w ^ k
-
 
 /-- **Trinomial coefficients along lines from a square-root series.** Write
 $\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$, and
@@ -348,34 +235,6 @@ public theorem_wanted implicit_riordan_sum_inverse {K : Type*} [Field K]
       coeff (n - k) ((ψ - X * derivative ψ) * derivative h * (f * ψ ^ (k + 1))⁻¹ *
         g⁻¹ ^ (n + 1)) * a k
 
-
-/-- **Sprugnoli's binomial sum theorem.** Write $[t^j]F$ for the coefficient of $t^j$ in a power
-series $F$ over $\mathbb{C}$, $\binom{u}{j}$ for the generalized binomial coefficient, and
-$(1 + t)^u = \sum_{j \ge 0} \binom{u}{j} t^j$ for the binomial series of a complex number $u$.
-Let $f$ be a power series over $\mathbb{C}$. For natural numbers $n$, $x$, $a$, $b$ with
-$a < b$,
-
-$$\sum_{k=0}^{n} \binom{n + ak}{x + bk} [t^k]\,f =
-[t^n]\,\frac{t^x}{(1 - t)^{x+1}}\, f\!\left(\frac{t^{b-a}}{(1 - t)^b}\right),$$
-
-and for natural numbers $m$, $c$ with $c > 0$, every complex $y$ and every integer $a'$,
-
-$$\sum_{k=0}^{\lfloor m/c \rfloor} \binom{y + a'k}{m - ck} [t^k]\,f =
-[t^m]\,(1 + t)^y f\!\left(t^c (1 + t)^{a'}\right).$$
-
-In the first sum the terms with $k > n$ would vanish, and the second stops where the lower
-index $m - ck$ would become negative. The paper allows integer $x$ and $a$ in the first
-identity and writes the second with $b = -c < 0$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 2 (`jis-2025-25.3.5-thm-2`). -/
-public theorem_wanted sum_choose_mul_coeff_eq_coeff_subst (n x a b m c : ℕ) (hab : a < b)
-    (hc : 0 < c) (y : ℂ) (a' : ℤ) (f : PowerSeries ℂ) :
-    ∑ k ∈ Finset.range (n + 1), ((n + a * k).choose (x + b * k) : ℂ) * coeff k f =
-        coeff n (X ^ x * ((1 - X) ^ (x + 1))⁻¹ * f.subst (X ^ (b - a) * ((1 - X) ^ b)⁻¹)) ∧
-      ∑ k ∈ Finset.range (m / c + 1), Ring.choose (y + a' * k) (m - c * k) * coeff k f =
-        coeff m (PowerSeries.binomialSeries ℂ y *
-          f.subst (X ^ c * PowerSeries.binomialSeries ℂ (a' : ℂ)))
 
 /-- **Trinomial coefficients from an algebraic Riordan array.** Write $\binom{n}{k}_2$ for the
 trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$, and $[t^m]\,F$ for the
@@ -430,52 +289,6 @@ public theorem_wanted sum_trinomialCoefficient_mul_coeff_eq_coeff_subst (n x a b
             (1 - C z * X + C z ^ 2 * X ^ 2) ^ a * ((1 - C z * X) ^ b)⁻¹)) ∧
       ∑ k ∈ Finset.range (m / c + 1), E (y + a' * k) (m - c * k) * z ^ (m - c * k) * coeff k f =
         coeff m (P y * f.subst (X ^ c * P a'))
-
-/-- **Gould-type identities for binomial and extended trinomial coefficients.** For complex $u$
-and $j \in \mathbb{N}$ write $\binom{u}{j}$ for the generalized binomial coefficient and
-$\binom{u}{j}_2$ for the coefficient of $t^j$ in
-$(1 + t + t^2)^u = \sum_{i \ge 0} \binom{u}{i}(t + t^2)^i$ (Comtet's extension). Then for all
-complex $x$, $y$ and every $n \in \mathbb{N}$,
-
-$$\sum_{k=0}^{\lfloor n/3 \rfloor} \binom{x}{k}\binom{y - 3x}{n - 3k} =
-\sum_{k=0}^{n} \binom{x}{k}\binom{y - 2k}{n - k}(-3)^k$$
-
-and
-
-$$\sum_{k=0}^{\lfloor n/3 \rfloor} \binom{-x}{n - 3k}_2 \binom{x}{k}(-1)^k = (-1)^n \binom{x}{n}.$$
-
-The paper's Eq. (25) also equates the first two sums with
-$\sum_k \binom{2x}{n-k}_2 \binom{y-2x}{k}(-1)^{n-k}$; that expression is left out because it is
-false as printed: at $x = 2$, $y = 1/3$, $n = 1$ it equals $-23/3$, while both sides of the
-first identity equal $-17/3$.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 21 (`jis-2025-25.3.5-thm-21`). -/
-public theorem_wanted sum_choose_gould_and_extended_trinomial (x y : ℂ) (n : ℕ) :
-    let E : ℂ → ℕ → ℂ := fun u j =>
-      coeff j ((PowerSeries.binomialSeries ℂ u).subst (X + X ^ 2 : PowerSeries ℂ))
-    ∑ k ∈ Finset.range (n / 3 + 1), Ring.choose x k * Ring.choose (y - 3 * x) (n - 3 * k) =
-        ∑ k ∈ Finset.range (n + 1),
-          Ring.choose x k * Ring.choose (y - 2 * k) (n - k) * (-3) ^ k ∧
-      ∑ k ∈ Finset.range (n / 3 + 1), E (-x) (n - 3 * k) * Ring.choose x k * (-1) ^ k =
-        (-1) ^ n * Ring.choose x n
-
-/-- **An alternating convolution of extended trinomial coefficients.** For complex $u$ and
-$j \in \mathbb{N}$ write $\binom{u}{j}_2$ for the coefficient of $t^j$ in
-$(1 + t + t^2)^u = \sum_{i \ge 0} \binom{u}{i}(t + t^2)^i$ (Comtet's extension), where
-$\binom{u}{i}$ is the generalized binomial coefficient. Then for every complex $x$ and every
-$n \in \mathbb{N}$,
-
-$$\sum_{k=0}^{n} \binom{2n - x}{n - k}_2 \binom{x}{k}_2 (-1)^k =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{2n - 2x}{n - 2k}_2 \binom{x}{k}_2.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 23 (`jis-2025-25.3.5-thm-23`). -/
-public theorem_wanted sum_extended_trinomial_alternating_eq (x : ℂ) (n : ℕ) :
-    let E : ℂ → ℕ → ℂ := fun u j =>
-      coeff j ((PowerSeries.binomialSeries ℂ u).subst (X + X ^ 2 : PowerSeries ℂ))
-    ∑ k ∈ Finset.range (n + 1), E (2 * n - x) (n - k) * E x k * (-1) ^ k =
-      ∑ k ∈ Finset.range (n / 2 + 1), E (2 * n - 2 * x) (n - 2 * k) * E x k
 
 /-- **Tribonacci numbers from every third term of A077943.** Let $T_n$ be the Tribonacci
 numbers, $T_0 = T_1 = 0$, $T_2 = 1$ and $T_{n+3} = T_{n+2} + T_{n+1} + T_n$. Let
@@ -566,34 +379,6 @@ public theorem_wanted sum_trinomialCoefficient_add_sub_eq_tribonacci (n : ℕ) :
       (tribonacci (2 * (n + 1)) : ℚ) / 2 + (trinomialCoefficient n n : ℚ) / 2 +
         (∑ k ∈ Finset.range n, (trinomialCoefficient k k : ℚ) *
           ((tribonacci (2 * (n - k)) : ℚ) + tribonacci (2 * (n - 1 - k)))) / 2
-
-/-- **Recovering even coefficients from the 2-Pascal transform.** Write $[t^m]F$ for the
-coefficient of $t^m$ in a power series $F$. Let $S$, $Q$, $R$ be power series over $\mathbb{Q}$
-with $S^2 = 4 - 3t^2$, $S(0) = 2$, $2Q^2 = 2 - t^2 - tS$, $Q(0) = 1$, $R^2 = 1 - t + t^2$ and
-$R(0) = 1$, and put
-
-$$\alpha = \frac{-2(2Q + t^2 S - t)}{Q(3t^4 + 2tS - t^2 - 4)}, \qquad
-\beta = \frac{t(t + S)}{2(1 - t^2)}.$$
-
-For a power series $f$ over $\mathbb{Q}$ let $g(t) = \alpha(t)\,f(\beta(t))$. Then for every
-$n \in \mathbb{N}$,
-
-$$[t^{2n}]\,f = [t^{2n}]\,\frac{(2 - t)(1 - t)^{2n}}{2(1 - t + t^2)}\,g\!\left(\frac{t}{R}\right).$$
-
-Here $S$, $Q$, $R$ are the square roots $\sqrt{4 - 3t^2}$, $\sqrt{(2 - t^2 - tS)/2}$ and
-$\sqrt{1 - t + t^2}$, and $\alpha$, $\beta$ are the series of the paper's Theorem 6.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Corollary 49 (`jis-2025-25.3.5-cor-49`). -/
-public theorem_wanted coeff_two_mul_eq_inverse_trinomial_transform (S Q R : PowerSeries ℚ)
-    (hS : S ^ 2 = 4 - 3 * X ^ 2) (hS0 : constantCoeff S = 2)
-    (hQ : 2 * Q ^ 2 = 2 - X ^ 2 - X * S) (hQ0 : constantCoeff Q = 1)
-    (hR : R ^ 2 = 1 - X + X ^ 2) (hR0 : constantCoeff R = 1) (f : PowerSeries ℚ) (n : ℕ) :
-    let α := -2 * (2 * Q + X ^ 2 * S - X) * (Q * (3 * X ^ 4 + 2 * X * S - X ^ 2 - 4))⁻¹
-    let β := X * (X + S) * (2 * (1 - X ^ 2))⁻¹
-    let g := α * f.subst β
-    coeff (2 * n) f = coeff (2 * n) ((2 - X) * (1 - X) ^ (2 * n) * (2 * (1 - X + X ^ 2))⁻¹ *
-      g.subst (X * R⁻¹))
 
 end
 

@@ -267,8 +267,8 @@ lemma forwardFeasibleExtents_eq_Ici {ι : Type*} (ν n₀ : ι → ℝ) (hn₀ :
   exact and_iff_left_of_imp fun hξ i => add_nonneg (hn₀ i) (mul_nonneg (h i) hξ)
 
 /-- **Feasible reverse extents.** If every initial amount is nonnegative and some species is
-produced, the feasible reverse extents form the closed interval from `minExtent ν n₀ h`, minus
-the smallest ratio `n₀ i / ν i` over the produced species, to `0`. -/
+produced, the feasible reverse extents form the closed interval from `minExtent ν n₀ h`, which
+is minus the smallest ratio `n₀ i / ν i` over the produced species, to `0`. -/
 lemma reverseFeasibleExtents_eq_Icc {ι : Type*} [Fintype ι] (ν n₀ : ι → ℝ)
     (hn₀ : ∀ i, 0 ≤ n₀ i) (h : ∃ i, 0 < ν i) :
     reverseFeasibleExtents ν n₀ = Set.Icc (minExtent ν n₀ h) 0 := by
@@ -327,8 +327,8 @@ lemma isLimitingReagent_iff {ι : Type*} [Fintype ι] {ν n₀ : ι → ℝ} (h 
   · rintro ⟨hi, heq⟩
     exact ⟨hn₀, hi, fun _ hj => heq.trans_le (maxExtent_le n₀ h hj)⟩
 
-/-- **A limiting reagent exists.** A reaction that consumes some species, from nonnegative
-initial amounts, has a limiting reagent. -/
+/-- **A limiting reagent exists.** A reaction with finitely many species that consumes some
+species, from nonnegative initial amounts, has a limiting reagent. -/
 lemma exists_isLimitingReagent {ι : Type*} [Finite ι] (ν n₀ : ι → ℝ)
     (hn₀ : ∀ i, 0 ≤ n₀ i) (h : ∃ i, ν i < 0) :
     ∃ i, IsLimitingReagent ν n₀ i := by
@@ -373,7 +373,8 @@ lemma isGreatest_mul_maxExtent {ι : Type*} [Fintype ι] {ν n₀ : ι → ℝ} 
   exact mul_le_mul_maxExtent h hP ξ hξ
 
 /-- The percent yield `100 * actual / theoretical` of a product, from its actual and its
-theoretical amount. -/
+theoretical amount. It is defined for every real `theoretical`: for `theoretical = 0` the
+convention `x / 0 = 0` makes it `0`, and the intended domain is `theoretical > 0`. -/
 noncomputable def percentYield (actual theoretical : ℝ) : ℝ :=
   100 * actual / theoretical
 

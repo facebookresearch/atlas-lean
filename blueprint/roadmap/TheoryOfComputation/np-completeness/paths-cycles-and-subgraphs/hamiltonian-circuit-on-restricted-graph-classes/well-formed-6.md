@@ -1,0 +1,3 @@
+# Well-formed instances of HAMILTONIAN CIRCUIT ON GRAPHS WITHOUT A SUBDIVIDED K_{3,3}
+
+An instance $(n, E)$ is well-formed for HAMILTONIAN CIRCUIT ON GRAPHS WITHOUT A SUBDIVIDED $K_{3,3}$ when it is a well-formed HAMILTONIAN CIRCUIT instance ($n > 0$, the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), and the graph of the instance (on the vertices $0, \dots, n-1$, with $u$ and $v$ adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$) contains no subdivision of $K_{3,3}$ (no six distinct vertices $a_0, a_1, a_2, b_0, b_1, b_2$ with paths $P_{ij}$ from $a_i$ to $b_j$ such that a vertex on two different paths $P_{ij}, P_{kl}$ is always an endpoint of $P_{ij}$).

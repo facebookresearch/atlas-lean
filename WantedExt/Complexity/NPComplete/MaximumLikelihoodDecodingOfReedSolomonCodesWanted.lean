@@ -18,7 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Coding.ReedSolomon
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.InformationTheory.Hamming
 public import Mathlib.RingTheory.AdjoinRoot
@@ -72,7 +72,8 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the bits `f₀, …, f_m` of the defining polynomial `f`, the points `x₁, …, xₙ`
-of `D` and the target `y₁, …, yₙ` as `m`-bit vectors, the dimension `k`, and the bound `w`. -/
+of `D` and the target `y₁, …, yₙ` as `m`-bit vectors, the degree bound `k` (the code's dimension
+when the points are distinct and `k ≤ n`, as `WellFormed` requires), and the bound `w`. -/
 abbrev MaximumLikelihoodDecodingOfReedSolomonCodesInstance :=
   List Bool × List (List Bool) × ℕ × List (List Bool) × ℕ
 
@@ -112,7 +113,9 @@ def WellFormed (i : MaximumLikelihoodDecodingOfReedSolomonCodesInstance) : Prop 
 
 open Classical in
 /-- Over the field `AdjoinRoot f` (with `f` irreducible), some codeword `c` of the Reed-Solomon
-code of the points and dimension `k` is within Hamming distance `w` of the target. -/
+code of the points with degree bound `k` (evaluations of polynomials of degree less than `k`) is
+within Hamming distance `w` of the target. Distinct points and `k ≤ n` are not checked here;
+under `WellFormed` the code has dimension `k`. -/
 def MaximumLikelihoodDecodingOfReedSolomonCodesFeasible
     (i : MaximumLikelihoodDecodingOfReedSolomonCodesInstance) : Prop :=
   ∃ hf : Irreducible (modulus i),

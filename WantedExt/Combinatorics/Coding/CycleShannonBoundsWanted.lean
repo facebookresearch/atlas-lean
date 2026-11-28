@@ -10,15 +10,24 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import MathlibExt.Combinatorics.Coding.CycleCode
+public import MathlibExt.Combinatorics.Coding.CycleShannonBounds
+public import MathlibExt.Combinatorics.Coding.PolakSchrijver
+public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneConstruction
+public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneLowerBound
+public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsLovasz1979UpperBound
+public import MathlibExt.Combinatorics.Coding.CycleShannonBoundsMathewOstergard2017LowerBound
 
 /-!
 # Known cycle-capacity construction and rate requests
 
 These are private unproved requests, not proofs or conjectures about newly open results.
 The actual modular code and capacity model comes from `CycleGraphCode`. The paper-specific
-integer profiles below perform only the displayed arithmetic; they do not supply independent
-sets or prove that a profile comes from a valid tuple.
+integer profiles below perform only arithmetic, using `BPZProfile`, `BPZProfile.star` and
+`bpzProfileSquareIter`, which are now defined in
+`MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneConstruction`; they do
+not supply independent sets or prove that a profile comes from a valid tuple. The
+twenty-one-cycle lower bound `bpz2026CycleTwentyOneLowerBound` is proved in
+`MathlibExt.Combinatorics.Coding.CycleShannonBoundsBpz2026CycleTwentyOneLowerBound`.
 
 Source: Optimization Problems, constant 9a, pinned at
 `2c1968cd520b60f1cf3cf50749f7285e800e4e15`; Gao arXiv:2607.27869;
@@ -32,65 +41,12 @@ namespace MathlibExt.Combinatorics.Coding.CycleShannonBoundsWanted
 
 open MathlibExt.Combinatorics.Coding.CycleGraphCode
 
-/-- **Polak–Schrijver code of size 367 for the 7-cycle.** There is a finite set $A$ of words of
-length $5$ over $\mathbb{Z}/7\mathbb{Z}$ that is an independent code for the $7$-cycle and has
-exactly $367$ elements.
-
-Source: Polak--Schrijver, arXiv:1808.07438, the fifth-power 367-word construction. -/
-theorem_wanted polakSchrijverLowerBound :
-  ∃ A : Finset (Fin 5 → ZMod 7), IsCycleCode 7 A ∧ A.card = 367
-
-/-- **Shannon's upper bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at most $7/2$.
-
-Source: Shannon (1956), the fractional-clique-cover upper bound. -/
-theorem_wanted shannon1956UpperBound :
-  shannonCapacityCycle 7 ≤ (7 : ENNReal) / 2
-
-/-- **Lovász's theta value for the 7-cycle.** This is the real number
-$\frac{7 \cos(\pi/7)}{1 + \cos(\pi/7)}$, Lovász's closed form for the theta number of the
-$7$-cycle, viewed as an element of $[0, \infty]$.
-
-Approximate decimal displays of this number in the source are not asserted as equalities.
-
-Source: Lovász (1979), as printed in BPZ, arXiv:2607.29681. -/
-noncomputable def lovaszThetaCycleSeven : ENNReal :=
-  ENNReal.ofReal (7 * Real.cos (Real.pi / 7) / (1 + Real.cos (Real.pi / 7)))
-
-/-- **Lovász's upper bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at most $\frac{7 \cos(\pi/7)}{1 + \cos(\pi/7)}$, as an inequality in $[0, \infty]$.
-
-Source: Lovász (1979); the closed form is also printed in the retained BPZ primary. -/
-theorem_wanted lovasz1979UpperBound :
-  shannonCapacityCycle 7 ≤ lovaszThetaCycleSeven
-
-/-- **Baumert et al. lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at least $343^{1/5}$, as an inequality in $[0, \infty]$.
-
-Source: Baumert--McEliece--Rodemich--Rumsey--Stanley--Taylor (1971), exact rate row. -/
-theorem_wanted bmrrst1971LowerBound :
-  ENNReal.rpow 343 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
-
 /-- **Vesel–Žerovnik lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
 $7$-cycle is at least $108^{1/4}$.
 
 Source: Vesel--Žerovnik (2002), exact rate row; no unprinted code is supplied. -/
 theorem_wanted veselZerovnik2002LowerBound :
   ENNReal.rpow 108 ((4 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
-
-/-- **Mathew–Östergård lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at least $350^{1/5}$, as an inequality in $[0, \infty]$.
-
-Source: Mathew--Östergård (2017), exact rate row; no unprinted code is supplied. -/
-theorem_wanted mathewOstergard2017LowerBound :
-  ENNReal.rpow 350 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
-
-/-- **Polak–Schrijver lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at least $367^{1/5}$, as an inequality in $[0, \infty]$.
-
-Source: Polak--Schrijver, arXiv:1808.07438, exact fifth-root rate. -/
-theorem_wanted polakSchrijverRateLowerBound :
-  ENNReal.rpow 367 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
 
 /-- **Itty–Rosin–Carstensen–Reichman lower bound for the capacity of the 7-cycle.** The Shannon
 capacity of the $7$-cycle is at least $134753^{1/10}$, as an inequality in $[0, \infty]$.
@@ -106,48 +62,6 @@ $7$-cycle and has exactly $134753$ elements.
 Source: Itty--Rosin--Carstensen--Reichman, arXiv:2607.21517, tenth-power construction. -/
 theorem_wanted ittyRosinCarstensenReichman2026Construction :
   ∃ A : Finset (Fin 10 → ZMod 7), IsCycleCode 7 A ∧ A.card = 134753
-
-/-- **BPZ profiles.** A BPZ profile is an arbitrary quadruple of integers, called its code,
-pairs, auxiliary and neutral coordinates: the four integer coordinates propagated by the
-valid-tuple product of Buys, Polak and Zuiddam. No validity condition is imposed on the
-quadruple.
-
-Source: BPZ, arXiv:2607.29681, valid-tuple profiles. -/
-structure BPZProfile where
-  code : ℤ
-  pairs : ℤ
-  auxiliary : ℤ
-  neutral : ℤ
-  deriving DecidableEq, Repr
-
-/-- **Product of BPZ profiles.** For $i = 1, 2$ let $p_i = (c_i, \pi_i, a_i, z_i)$ be a BPZ
-profile, with integer code, pairs, auxiliary and neutral coordinates. The product $p_1 \star p_2$
-is the BPZ profile with code coordinate $(c_1 - \pi_1)(c_2 - \pi_2) + a_1 \pi_2 + \pi_1 a_2$,
-pairs coordinate $z_1 \pi_2 + \pi_1 z_2$, auxiliary coordinate $a_1 a_2$ and neutral coordinate
-$z_1 z_2 + (a_1 - z_1)(a_2 - z_2)$.
-
-The product is arithmetic on the four coordinates only; it does not supply an independent set.
-
-Source: BPZ, arXiv:2607.29681, the profile product. -/
-def BPZProfile.star (p₁ p₂ : BPZProfile) : BPZProfile where
-  code :=
-    (p₁.code - p₁.pairs) * (p₂.code - p₂.pairs) +
-      p₁.auxiliary * p₂.pairs + p₁.pairs * p₂.auxiliary
-  pairs := p₁.neutral * p₂.pairs + p₁.pairs * p₂.neutral
-  auxiliary := p₁.auxiliary * p₂.auxiliary
-  neutral :=
-    p₁.neutral * p₂.neutral +
-      (p₁.auxiliary - p₁.neutral) * (p₂.auxiliary - p₂.neutral)
-
-/-- **Iterated squaring of BPZ profiles.** Write $\star$ for the BPZ profile product. For a
-natural number $k$ and a BPZ profile $p$, the $k$-fold iterated square $S_k(p)$ is defined by
-$S_0(p) = p$ and $S_{k+1}(p) = S_k(p \star p)$; that is, $S_k(p)$ is obtained from $p$ by
-squaring $k$ times under $\star$.
-
-Source: BPZ, arXiv:2607.29681, iterated profile products. -/
-def bpzProfileSquareIter : ℕ → BPZProfile → BPZProfile
-  | 0, p => p
-  | k + 1, p => bpzProfileSquareIter k (p.star p)
 
 set_option linter.style.longLine false in
 /-- **Gao's code size in dimension 200.** $M_{40}$ is the natural number
@@ -431,23 +345,6 @@ $p_0$ twelve times.
 Source: BPZ, arXiv:2607.29681, nineteen-cycle construction. -/
 def bpzC19Pi4096 : BPZProfile := bpzProfileSquareIter 12 bpzC19Pi1
 
-/-- **Buys–Polak–Zuiddam one-block profile for the 21-cycle.** This is the Buys–Polak–Zuiddam
-(BPZ) profile whose code, pairs, auxiliary and neutral coordinates are $11441$, $10$,
-$11441$ and $11398$.
-
-Only these four integers are recorded, not BPZ's four-dimensional construction behind them.
-
-Source: BPZ, arXiv:2607.29681, twenty-one-cycle construction. -/
-def bpzC21Pi1 : BPZProfile := ⟨11441, 10, 11441, 11398⟩
-/-- **Buys–Polak–Zuiddam 1024-block profile for the 21-cycle.** Let $p_0$ be the one-block
-21-cycle profile, whose code, pairs, auxiliary and neutral coordinates are $11441$, $10$,
-$11441$ and $11398$, and let $p_{j+1} = p_j \star p_j$, where $\star$ is the
-Buys–Polak–Zuiddam (BPZ) profile product. This profile is $p_{10}$, the result of squaring
-$p_0$ ten times.
-
-Source: BPZ, arXiv:2607.29681, twenty-one-cycle construction. -/
-def bpzC21Pi1024 : BPZProfile := bpzProfileSquareIter 10 bpzC21Pi1
-
 /-- **Buys–Polak–Zuiddam one-block profile for the 23-cycle.** This is the Buys–Polak–Zuiddam
 (BPZ) profile whose code, pairs, auxiliary and neutral coordinates are $16466$, $30$,
 $16466$ and $16323$.
@@ -501,15 +398,6 @@ Source: BPZ, arXiv:2607.29681, nineteen-cycle construction in dimension 16384. -
 theorem_wanted bpz2026CycleNineteenConstruction :
   ∃ A : Finset (Fin 16384 → ZMod 19), IsCycleCode 19 A ∧ A.card = bpzC19Pi4096.code.toNat
 
-/-- **Buys–Polak–Zuiddam code for the 21-cycle in length 4096.** Let $c$ be the code coordinate
-of BPZ's final twenty-one-cycle profile after ten squarings, and let $M = \max(c, 0)$. There is
-a finite set of words of length $4096$ over $\mathbb{Z}/21\mathbb{Z}$ that is an independent
-code for the $21$-cycle and has exactly $M$ elements.
-
-Source: BPZ, arXiv:2607.29681, twenty-one-cycle construction in dimension 4096. -/
-theorem_wanted bpz2026CycleTwentyOneConstruction :
-  ∃ A : Finset (Fin 4096 → ZMod 21), IsCycleCode 21 A ∧ A.card = bpzC21Pi1024.code.toNat
-
 /-- **Buys–Polak–Zuiddam code for the 23-cycle in length 2048.** Let $c$ be the code coordinate
 of BPZ's final twenty-three-cycle profile after nine squarings, and let $M = \max(c, 0)$. There
 is a finite set of words of length $2048$ over $\mathbb{Z}/23\mathbb{Z}$ that is an independent
@@ -554,15 +442,6 @@ inequality in $[0, \infty]$.
 Source: BPZ, arXiv:2607.29681, exact nineteen-cycle root rate. -/
 theorem_wanted bpz2026CycleNineteenLowerBound :
   ENNReal.rpow (bpzC19Pi4096.code.toNat : ENNReal) ((16384 : ℝ)⁻¹) ≤ shannonCapacityCycle 19
-
-/-- **Buys–Polak–Zuiddam lower bound for the capacity of the 21-cycle.** Let $c$ be the code
-coordinate of BPZ's final twenty-one-cycle profile after ten squarings, and let
-$M = \max(c, 0)$. Then $M^{1/4096}$ is at most the Shannon capacity of the $21$-cycle, as an
-inequality in $[0, \infty]$.
-
-Source: BPZ, arXiv:2607.29681, exact twenty-one-cycle root rate. -/
-theorem_wanted bpz2026CycleTwentyOneLowerBound :
-  ENNReal.rpow (bpzC21Pi1024.code.toNat : ENNReal) ((4096 : ℝ)⁻¹) ≤ shannonCapacityCycle 21
 
 /-- **Buys–Polak–Zuiddam lower bound for the capacity of the 23-cycle.** Let $c$ be the code
 coordinate of BPZ's final twenty-three-cycle profile after nine squarings, and let

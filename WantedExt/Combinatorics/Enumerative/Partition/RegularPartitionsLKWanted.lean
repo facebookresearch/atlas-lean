@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.ZMod.Defs
+public import MathlibExt.Combinatorics.Enumerative.Partition.ReciprocalEulerDissection
+public import MathlibExt.Combinatorics.Enumerative.Partition.RegularPartitionsLK
 public import WantedExt.Combinatorics.Enumerative.Partition.PondPendCongruencesWanted
 
 /-!
@@ -31,75 +32,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 local notation "𝔣" => qEulerProduct
-
-/-- **Number of $(\ell, k)$-regular partitions.** For natural numbers $\ell$, $k$ and $n$,
-$b_{\ell,k}(n)$ is the number of $(\ell, k)$-regular partitions of $n$, that is, partitions of
-$n$ none of whose parts is divisible by $\ell$ or by $k$.
-
-Source: Manjil P. Saikia and James A. Sellers, *Generalizing Recent Results of Kathiravan,
-Majumdar, Sangale, and Srinivas on `(ℓ, k)`-regular Partitions*, Journal of Integer Sequences
-28 (2025), Article 25.6.1, Section 1 (definition of `b_{ℓ,k}(n)`). -/
-public def regularPartitionCount (l k n : ℕ) : ℕ :=
-  ((Finset.univ : Finset n.Partition).filter fun p => ∀ i ∈ p.parts, ¬ l ∣ i ∧ ¬ k ∣ i).card
-
-/-- **The $(4, 9)$-regular partition count at zero.** The number $b_{4,9}(0)$ of
-$(4, 9)$-regular partitions of $0$, that is, partitions of $0$ none of whose parts is divisible by
-$4$ or by $9$, equals $1$: the only such partition is the empty partition.
-
-Source: Manjil P. Saikia and James A. Sellers, *Generalizing Recent Results of Kathiravan,
-Majumdar, Sangale, and Srinivas on `(ℓ, k)`-regular Partitions*, Journal of Integer Sequences
-28 (2025), Article 25.6.1, Section 1 (definition of `b_{ℓ,k}(n)`). -/
-public theorem regularPartitionCount_four_nine_zero : regularPartitionCount 4 9 0 = 1 := by
-  decide
-
-/-- **For small $n$ every partition is $(\ell, k)$-regular.** Let $\ell$, $k$ and $n$ be natural
-numbers with $n < \ell$ and $n < k$, and write $b_{\ell,k}(n)$ for the number of
-$(\ell, k)$-regular partitions of $n$ (partitions none of whose parts is divisible by $\ell$ or by
-$k$) and $p(n)$ for the number of all partitions of $n$. Then every partition of $n$ is
-$(\ell, k)$-regular, so $b_{\ell,k}(n) = p(n)$.
-
-Source: Manjil P. Saikia and James A. Sellers, *Generalizing Recent Results of Kathiravan,
-Majumdar, Sangale, and Srinivas on `(ℓ, k)`-regular Partitions*, Journal of Integer Sequences
-28 (2025), Article 25.6.1, Section 1 (definition of `b_{ℓ,k}(n)`). -/
-public theorem regularPartitionCount_of_lt {l k n : ℕ} (hl : n < l) (hk : n < k) :
-    regularPartitionCount l k n = Fintype.card n.Partition := by
-  rw [regularPartitionCount, Finset.filter_true_of_mem, Finset.card_univ]
-  intro p _ i hi
-  have hpos := p.parts_pos hi
-  have hle : i ≤ n := by
-    rw [← p.parts_sum]
-    exact Multiset.le_sum_of_mem hi
-  exact ⟨fun h => absurd (Nat.le_of_dvd hpos h) (by omega),
-    fun h => absurd (Nat.le_of_dvd hpos h) (by omega)⟩
-
-/-- **Parity of $(4, p)$-regular partitions in nonresidue progressions.** Let $p \ge 5$ be a
-prime and let $r$ be a natural number such that $8r + 1$ is not a square modulo $p$ (a quadratic
-nonresidue). Write $b_{4,p}(m)$ for the number of $(4, p)$-regular partitions of $m$, that is,
-partitions of $m$ none of whose parts is divisible by $4$ or by $p$. Then
-$b_{4,p}(pn + r) \equiv 0 \pmod 2$ for every natural number $n$.
-
-Restricting $r$ to natural numbers loses nothing: every residue class modulo $p$ has a
-natural-number representative.
-
-Source: Manjil P. Saikia and James A. Sellers, *Generalizing Recent Results of Kathiravan,
-Majumdar, Sangale, and Srinivas on `(ℓ, k)`-regular Partitions*, Journal of Integer Sequences
-28 (2025), Article 25.6.1, Theorem 1 (`jis-2025-25.6.1-thm-1`). -/
-public theorem_wanted regularPartitionCount_four_prime_mod_two {p r : ℕ} (hp : p.Prime)
-    (h5 : 5 ≤ p) (hr : ¬ IsSquare ((8 * r + 1 : ℕ) : ZMod p)) (n : ℕ) :
-    regularPartitionCount 4 p (p * n + r) ≡ 0 [MOD 2]
-
-/-- **Parity of $(2, p)$-regular partitions in nonresidue progressions.** Let $p \ge 5$ be a
-prime and let $r$ be a natural number such that $24r + 1$ is not a square modulo $p$ (a quadratic
-nonresidue). Write $b_{2,p}(m)$ for the number of $(2, p)$-regular partitions of $m$, that is,
-partitions of $m$ none of whose parts is divisible by $2$ or by $p$. Then
-$b_{2,p}(pn + r) \equiv 0 \pmod 2$ for every natural number $n$.
-
-Source: Manjil P. Saikia and James A. Sellers, *Generalizing Recent Results of Kathiravan,
-Majumdar, Sangale, and Srinivas on `(ℓ, k)`-regular Partitions*, Journal of Integer Sequences
-28 (2025), Article 25.6.1, Theorem 2 (`jis-2025-25.6.1-thm-2`). -/
-public theorem_wanted regularPartitionCount_two_prime_mod_two {p r : ℕ} (hp : p.Prime)
-    (h5 : 5 ≤ p) (hr : ¬ IsSquare ((24 * r + 1 : ℕ) : ZMod p)) (n : ℕ) :
-    regularPartitionCount 2 p (p * n + r) ≡ 0 [MOD 2]
 
 /-- **Congruences modulo $12$ for $b_{4,9}$ along powers of $2$.** Let $b_{4,9}(n)$ be the
 number of partitions of $n$ with no part divisible by $4$ or by $9$. For all natural numbers
@@ -160,40 +92,6 @@ public theorem_wanted f3_sq_div_f1_sq_two_dissection :
     𝔣 3 ^ 2 * 𝔣 2 ^ 5 * 𝔣 8 * 𝔣 12 * 𝔣 24 =
       𝔣 1 ^ 2 * 𝔣 4 ^ 4 * 𝔣 6 * 𝔣 12 ^ 3 +
         2 * X * 𝔣 1 ^ 2 * 𝔣 2 * 𝔣 4 * 𝔣 6 ^ 2 * 𝔣 8 ^ 2 * 𝔣 24 ^ 2
-
-/-- **The 2-dissections of $1/f_1^4$, $1/f_1^8$ and $1/f_1^{12}$.** Write
-$f_k = (q^k; q^k)_\infty$ for the Euler products. In the ring of integer power series in $q$,
-the following three identities hold:
-$$
-f_2^{14} f_8^4 = f_1^4 f_4^{14} + 4q f_1^4 f_2^4 f_4^2 f_8^8,
-$$
-$$
-f_2^{28} f_8^8 = f_1^8 f_4^{28} + 8q f_1^8 f_2^4 f_4^{16} f_8^8 + 16q^2 f_1^8 f_2^8 f_4^4 f_8^{16},
-$$
-$$
-f_2^{42} f_8^{12} = f_1^{12} f_4^{42} + 12q f_1^{12} f_2^4 f_4^{30} f_8^8 +
-48q^2 f_1^{12} f_2^8 f_4^{18} f_8^{16} + 64q^3 f_1^{12} f_2^{12} f_4^6 f_8^{24}.
-$$
-Since each $f_k$ with $k \ge 1$ has constant term $1$ and is therefore invertible, dividing by
-$f_1^4 f_2^{14} f_8^4$, $f_1^8 f_2^{28} f_8^8$ and $f_1^{12} f_2^{42} f_8^{12}$ respectively turns
-these into the 2-dissections
-$1/f_1^4 = f_4^{14}/(f_2^{14} f_8^4) + 4q f_4^2 f_8^4/f_2^{10}$,
-$1/f_1^8 = f_4^{28}/(f_2^{28} f_8^8) + 8q f_4^{16}/f_2^{24} + 16q^2 f_4^4 f_8^8/f_2^{20}$ and
-$1/f_1^{12} = f_4^{42}/(f_2^{42} f_8^{12}) + 12q f_4^{30}/(f_2^{38} f_8^4) +
-48q^2 f_4^{18} f_8^4/f_2^{34} + 64q^3 f_4^6 f_8^{12}/f_2^{30}$.
-
-Source: Manjil P. Saikia and James A. Sellers, *Generalizing Recent Results of Kathiravan,
-Majumdar, Sangale, and Srinivas on `(ℓ, k)`-regular Partitions*, Journal of Integer Sequences
-28 (2025), Article 25.6.1, Lemma 10 (`jis-2025-25.6.1-lem-10`). -/
-public theorem_wanted one_div_f1_pow_four_eight_twelve_two_dissection :
-    𝔣 2 ^ 14 * 𝔣 8 ^ 4 = 𝔣 1 ^ 4 * 𝔣 4 ^ 14 + 4 * X * 𝔣 1 ^ 4 * 𝔣 2 ^ 4 * 𝔣 4 ^ 2 * 𝔣 8 ^ 8 ∧
-      𝔣 2 ^ 28 * 𝔣 8 ^ 8 =
-        𝔣 1 ^ 8 * 𝔣 4 ^ 28 + 8 * X * 𝔣 1 ^ 8 * 𝔣 2 ^ 4 * 𝔣 4 ^ 16 * 𝔣 8 ^ 8 +
-          16 * X ^ 2 * 𝔣 1 ^ 8 * 𝔣 2 ^ 8 * 𝔣 4 ^ 4 * 𝔣 8 ^ 16 ∧
-      𝔣 2 ^ 42 * 𝔣 8 ^ 12 =
-        𝔣 1 ^ 12 * 𝔣 4 ^ 42 + 12 * X * 𝔣 1 ^ 12 * 𝔣 2 ^ 4 * 𝔣 4 ^ 30 * 𝔣 8 ^ 8 +
-          48 * X ^ 2 * 𝔣 1 ^ 12 * 𝔣 2 ^ 8 * 𝔣 4 ^ 18 * 𝔣 8 ^ 16 +
-          64 * X ^ 3 * 𝔣 1 ^ 12 * 𝔣 2 ^ 12 * 𝔣 4 ^ 6 * 𝔣 8 ^ 24
 
 /-- **The 2-dissection of $1/(f_1 f_3)$.** Write $f_k = (q^k; q^k)_\infty$ for the Euler
 products. In the ring of integer power series in $q$,

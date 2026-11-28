@@ -74,7 +74,7 @@ theorem boussinesq_density_deriv {rho0 beta : ℝ} (z : ℝ) :
   rwa [mul_one] at h
 
 /-- Unrestricted algebraic identity behind the Brunt-Vaisala formula: for all
-real `g, beta, rho0` (with Lean's total division),
+real `g, beta, rho0` (with the convention `x / 0 = 0`, both sides are `0` when `rho0 = 0`),
 `-(g / rho0) * deriv (fun z => rho0 - beta * z) z = g * beta / rho0`, since the
 profile's gradient is `-beta` by `boussinesq_density_deriv`. It is the squared
 Brunt-Vaisala frequency only in the physical domain `rho0 > 0`; see

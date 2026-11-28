@@ -16,7 +16,7 @@ Completeness* (1979), MAXIMUM 2-SATISFIABILITY.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Logics.Propositional.CNF.Semantics
@@ -46,7 +46,7 @@ reduction from every language in `NP`
 $n$ (the number of variables), a CNF formula $\varphi$ and a natural number $K$ (the bound). The
 type does not restrict clause lengths; that clauses have at most two literals is part of
 well-formedness. -/
-abbrev MaxTwoSatInstance := ℕ × Cslib.Logic.PL.CNF × ℕ
+abbrev MaxTwoSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- **Well-formed MAX-2SAT instances.** A MAX-2SAT instance $(n, \varphi, K)$ is well formed when
 every clause of $\varphi$ has at most two literals and every literal $(x, b)$ in it has variable
@@ -61,8 +61,8 @@ $v(x) = \mathrm{false}$ for $x \ge n$. -/
 def MaxTwoSatFeasible
     (i : MaxTwoSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    ∃ sub : Cslib.Logic.PL.CNF, sub.Sublist i.2.1 ∧ i.2.2 ≤ sub.length ∧
-      ∀ clause ∈ sub, Cslib.Logic.PL.CNFClause.Satisfies
+    ∃ sub : Cslib.Logic.LegacyPL.CNF, sub.Sublist i.2.1 ∧ i.2.2 ≤ sub.length ∧
+      ∀ clause ∈ sub, Cslib.Logic.LegacyPL.CNFClause.Satisfies
         (fun x => assign.getD x false) clause
 
 open Classical in

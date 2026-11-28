@@ -9,6 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Additive.ConsecutiveOrthogonal
+public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
+public import MathlibExt.Combinatorics.Additive.DavenportElementaryTwo
+public import MathlibExt.Combinatorics.Additive.DavenportModuleProd
+public import MathlibExt.NumberTheory.EvenIntersectionSubset
+public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfDivPrime
+public import MathlibExt.NumberTheory.UnitWeightedZeroSumOfEvenUnits
+public import MathlibExt.NumberTheory.UnitWeightedZeroSumPrimePowerParity
+public import MathlibExt.NumberTheory.WeightedZeroSumCosets
 public import Mathlib.Data.Rat.Floor
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Coset.Defs
@@ -72,42 +81,6 @@ local notation "NoConsecutiveUnitWeightedZeroSum" n:max L:max x:max =>
   ¬ ∃ s t : ℕ, s ≤ t ∧ t < L ∧ ∃ a : ℕ → ZMod n,
     (∀ i ∈ Finset.Icc s t, IsUnit (a i)) ∧ ∑ i ∈ Finset.Icc s t, a i * x i = 0
 
-/-- **Weighted Davenport constant of a product with product weights.** Let $R$ and $R'$ be rings,
-$M$ an $R$-module, $N$ an $R'$-module, $A \subseteq R$ and $B \subseteq R'$. Let $D_A(M)$ be the
-least positive integer $k$, if one exists, such that every sequence $x_1, \dots, x_k$ in $M$ has
-a nonempty set of indices $I$ and weights $a_i \in A$ for $i \in I$ with
-$\sum_{i \in I} a_i x_i = 0$, and define $D_B(N)$ in the same way. Let $D_{A \times B}(M \times N)$
-be the least positive integer $k$, if one exists, such that every sequence
-$(y_1, z_1), \dots, (y_k, z_k)$ in $M \times N$ has a nonempty set of indices $I$ and weights
-$(a_i, b_i) \in A \times B$ for $i \in I$ with $\sum_{i \in I} (a_i y_i, b_i z_i) = 0$. If all
-three constants exist, then $D_{A \times B}(M \times N) \ge D_A(M) + D_B(N) - 1$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 2.1 (`integers-2024-A38-thm-2-1`). -/
-public theorem_wanted davenport_prod_ring_ge {R R' M N : Type*} [Ring R] [Ring R']
-    [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R' N] (A : Set R) (B : Set R')
-    {dA dB d : ℕ} (hA : IsLeast (davenportSet R M A) dA)
-    (hB : IsLeast (davenportSet R' N B) dB)
-    (h : IsLeast {k : ℕ | 0 < k ∧ ∀ x : Fin k → M × N, ∃ I : Finset (Fin k), I.Nonempty ∧
-      ∃ a : Fin k → R × R', (∀ i ∈ I, a i ∈ A ×ˢ B) ∧
-        ∑ i ∈ I, ((a i).1 • (x i).1, (a i).2 • (x i).2) = 0} d) :
-    dA + dB - 1 ≤ d
-
-/-- **Weighted Davenport constant of a product of modules.** Let $R$ be a ring and
-$A \subseteq R$. For an $R$-module $P$, let $D_A(P)$ be the least positive integer $k$, if one
-exists, such that every sequence $x_1, \dots, x_k$ in $P$ has a nonempty set of indices $I$ and
-weights $a_i \in A$ for $i \in I$ with $\sum_{i \in I} a_i x_i = 0$. If $M$ and $N$ are
-$R$-modules for which $D_A(M)$, $D_A(N)$ and $D_A(M \times N)$ all exist, then
-$D_A(M \times N) \ge D_A(M) + D_A(N) - 1$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 2.2 (`integers-2024-A38-thm-2-2`). -/
-public theorem_wanted davenport_prod_ge {R M N : Type*} [Ring R] [AddCommGroup M] [Module R M]
-    [AddCommGroup N] [Module R N] (A : Set R) {dM dN d : ℕ}
-    (hM : IsLeast (davenportSet R M A) dM) (hN : IsLeast (davenportSet R N A) dN)
-    (h : IsLeast (davenportSet R (M × N) A) d) :
-    dM + dN - 1 ≤ d
-
 /-- **Consecutive weighted zero-sum constant of a product with product weights.** Let $R$ and
 $R'$ be rings, $M$ an $R$-module, $N$ an $R'$-module, $A \subseteq R$ and $B \subseteq R'$. Let
 $C_A(M)$ be the least positive integer $k$, if one exists, such that every sequence
@@ -144,85 +117,6 @@ public theorem_wanted consecutive_prod_ge {R M N : Type*} [Ring R] [AddCommGroup
     (h : IsLeast (consecutiveSet R (M × N) A) c) :
     cM * cN ≤ c
 
-/-- **Consecutive zero-sum constant of a finite abelian group.** Let $G$ be a finite abelian
-group and let $C(G)$ be the least positive integer $k$ such that every sequence
-$x_1, \dots, x_k$ in $G$ has a block of consecutive terms $x_s, \dots, x_t$ with $s \le t$ and
-$x_s + \dots + x_t = 0$. Then $C(G) = |G|$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 3.1 (`integers-2024-A38-thm-3-1`). -/
-public theorem_wanted consecutive_constant_eq_card (G : Type*) [AddCommGroup G] [Fintype G] :
-    IsLeast (consecutiveSet ℤ G ({1} : Set ℤ)) (Fintype.card G)
-
-/-- **A block of consecutive coordinates orthogonal to $a$ vectors of $\mathbb{Z}_2^m$.** Let
-$\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$, let $2^a \le m$ and let
-$v_1, \dots, v_a \in \mathbb{Z}_2^m$, with coordinates indexed by $\{0, \dots, m - 1\}$. Then there
-are indices $s \le t$ in $\{0, \dots, m - 1\}$ such that $\sum_{j = s}^{t} (v_i)_j = 0$ in
-$\mathbb{Z}_2$ for every $i$; that is, the nonzero vector whose ones occupy exactly the positions
-$s, \dots, t$ is orthogonal to every $v_i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 3.2 (`integers-2024-A38-lem-3-2`). -/
-public theorem_wanted exists_consecutive_orthogonal {a m : ℕ} (hm : 2 ^ a ≤ m)
-    (v : Fin a → Fin m → ZMod 2) :
-    ∃ s t : Fin m, s ≤ t ∧ ∀ i, ∑ j ∈ Finset.Icc s t, v i j = 0
-
-/-- **A block of consecutive integers meeting $a$ given sets evenly.** Let $2^a \le m$ and let
-$X_1, \dots, X_a$ be finite sets of natural numbers. Then there are integers $s, t$ with
-$1 \le s \le t \le m$ such that $|\{s, s + 1, \dots, t\} \cap X_i|$ is even for every $i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 3.3 (`integers-2024-A38-lem-3-3`). -/
-public theorem_wanted exists_consecutive_even_inter {a m : ℕ} (hm : 2 ^ a ≤ m)
-    (X : Fin a → Finset ℕ) :
-    ∃ s t : ℕ, 1 ≤ s ∧ s ≤ t ∧ t ≤ m ∧ ∀ i, Even (Finset.Icc s t ∩ X i).card
-
-/-- **Griffiths' criterion for unit-weighted zero sums modulo a prime power.** Let $p$ be a prime,
-let $r$ and $k$ be natural numbers, put $n = p^r$, and let
-$x_1, \dots, x_k \in \mathbb{Z}/n\mathbb{Z}$. Suppose that for each $i \in [1, r]$ the set
-$X_i = \{j : x_j \not\equiv 0 \pmod{p^i}\}$ has an even number of elements. Then there are units
-$a_1, \dots, a_k$ of $\mathbb{Z}/n\mathbb{Z}$ with $a_1 x_1 + \dots + a_k x_k = 0$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 3.5 (`integers-2024-A38-lem-3-5`). -/
-public theorem_wanted unitWeightedZeroSum_of_even_nonDivisible {p r k : ℕ} (hp : p.Prime)
-    (x : Fin k → ZMod (p ^ r))
-    (h : ∀ i ∈ Finset.Icc 1 r, Even (Finset.univ.filter fun j => ¬ p ^ i ∣ (x j).val).card) :
-    IsUnitWeightedZeroSum (p ^ r) x
-
-/-- **Davenport constant of $\mathbb{Z}_2^a$.** Let $\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$. For
-every natural number $a$, the least positive integer $k$ such that every sequence of $k$ elements
-of the group $\mathbb{Z}_2^a$ has a nonempty subsequence with sum zero is $a + 1$; that is, the
-Davenport constant of $\mathbb{Z}_2^a$ is $a + 1$.
-
-The paper states this for positive $a$; for $a = 0$ both sides equal $1$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 4.1 (`integers-2024-A38-thm-4-1`). -/
-public theorem_wanted davenport_zmod_two_pow (a : ℕ) :
-    IsLeast (davenportSet (ZMod 2) (Fin a → ZMod 2) ({1} : Set (ZMod 2))) (a + 1)
-
-/-- **A nonzero vector of $\mathbb{Z}_2^m$ orthogonal to $a$ vectors when $a < m$.** Let
-$\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$, let $a + 1 \le m$ and let
-$v_1, \dots, v_a \in \mathbb{Z}_2^m$. Then there is a nonzero $w \in \mathbb{Z}_2^m$ with
-$w \cdot v_i = \sum_j w_j (v_i)_j = 0$ in $\mathbb{Z}_2$ for every $i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 4.2 (`integers-2024-A38-lem-4-2`). -/
-public theorem_wanted exists_ne_zero_orthogonal {a m : ℕ} (hm : a + 1 ≤ m)
-    (v : Fin a → Fin m → ZMod 2) :
-    ∃ w : Fin m → ZMod 2, w ≠ 0 ∧ ∀ i, ∑ j, w j * v i j = 0
-
-/-- **A nonempty subset of $\{1, \dots, m\}$ meeting $a$ given sets evenly.** Let $a + 1 \le m$
-and let $X_1, \dots, X_a$ be finite sets of natural numbers. Then there is a nonempty set
-$Y \subseteq \{1, \dots, m\}$ such that $|Y \cap X_i|$ is even for every $i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 4.3 (`integers-2024-A38-lem-4-3`). -/
-public theorem_wanted exists_nonempty_even_inter {a m : ℕ} (hm : a + 1 ≤ m)
-    (X : Fin a → Finset ℕ) :
-    ∃ Y : Finset ℕ, Y.Nonempty ∧ Y ⊆ Finset.Icc 1 m ∧ ∀ i, Even (Y ∩ X i).card
-
 /-- **Zero-sum subsequences of length $m$ in $\mathbb{Z}_2^a$.** Let $a$ and $m$ be natural numbers
 with $m$ even and $2^a \le m$, and write $\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$. Every sequence
 $(x_1, \dots, x_{m+a})$ of length $m + a$ in $\mathbb{Z}_2^a$ has a zero-sum subsequence of length
@@ -246,16 +140,6 @@ public theorem_wanted exists_weight_orthogonal {a m : ℕ} (hme : Even m) (hm : 
     (v : Fin a → Fin (m + a) → ZMod 2) :
     ∃ w : Fin (m + a) → ZMod 2, (Finset.univ.filter fun j => w j = 1).card = m ∧
       ∀ i, ∑ j, w j * v i j = 0
-
-/-- **An $m$-subset of $\{1, \dots, m + a\}$ meeting $a$ given sets evenly.** Let $m$ be even with
-$2^a \le m$, and let $X_1, \dots, X_a$ be finite sets of natural numbers. Then there is a set
-$Y \subseteq \{1, \dots, m + a\}$ with $|Y| = m$ such that $|Y \cap X_i|$ is even for every $i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 5.4 (`integers-2024-A38-lem-5-4`). -/
-public theorem_wanted exists_card_even_inter {a m : ℕ} (hme : Even m) (hm : 2 ^ a ≤ m)
-    (X : Fin a → Finset ℕ) :
-    ∃ Y : Finset ℕ, Y ⊆ Finset.Icc 1 (m + a) ∧ Y.card = m ∧ ∀ i, Even (Y ∩ X i).card
 
 /-- **Unit-weighted zero sums of even length in $\mathbb{Z}_n$.** Let $n \ge 1$, let $\Omega(n)$ be
 the number of prime factors of $n$ counted with multiplicity, and let $m$ be even with
@@ -352,34 +236,6 @@ public theorem_wanted unitEquiv_profile_of_eExtremal {r : ℕ} (hr : 1 ≤ r)
         ∃ b : Fin (2 ^ r + r - 1) → ZMod (2 ^ r), (∀ i, IsUnit (b i)) ∧
           ∀ i, c * y (σ i) = b i * x i
 
-/-- **Luca's lemma on unit-weighted zero sums modulo $2^r$.** Let $r$ and $k$ be natural numbers
-and let $x_1, \dots, x_k \in \mathbb{Z}/2^r\mathbb{Z}$. If the number of indices $j$ for which
-$x_j$ is a unit is even and nonzero, then there are units $a_1, \dots, a_k$ of
-$\mathbb{Z}/2^r\mathbb{Z}$ with $a_1 x_1 + \dots + a_k x_k = 0$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 6.5 (`integers-2024-A38-lem-6-5`). -/
-public theorem_wanted unitWeightedZeroSum_of_even_units {r k : ℕ} (x : Fin k → ZMod (2 ^ r))
-    (h0 : (Finset.univ.filter fun j => IsUnit (x j)).card ≠ 0)
-    (he : Even (Finset.univ.filter fun j => IsUnit (x j)).card) :
-    IsUnitWeightedZeroSum (2 ^ r) x
-
-/-- **Unit-weighted zero sums of multiples of a prime.** Let $p$ be a prime, let $n'$ and $k$ be
-natural numbers, put $n = p n'$, and let $z_1, \dots, z_k \in \mathbb{Z}/n\mathbb{Z}$. Write
-$\bar z_i$ for the reduction of $z_i$ modulo $n'$. If there are units $a_1, \dots, a_k$ of
-$\mathbb{Z}/n'\mathbb{Z}$ with $\sum_i a_i \bar z_i = 0$, then there are units $b_1, \dots, b_k$
-of $\mathbb{Z}/n\mathbb{Z}$ with $\sum_i b_i \, p z_i = 0$.
-
-In the source the sequence $(p z_1, \dots, p z_k)$ determines the $z_i$ only modulo $n'$, so the
-hypothesis does not depend on the choice of the $z_i$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 6.7 (`integers-2024-A38-lem-6-7`). -/
-public theorem_wanted unitWeightedZeroSum_of_div_prime {p n' k : ℕ} (hp : p.Prime)
-    (z : Fin k → ZMod (p * n'))
-    (h : IsUnitWeightedZeroSum n' (fun i => ZMod.castHom (dvd_mul_left n' p) (ZMod n') (z i))) :
-    IsUnitWeightedZeroSum (p * n') (fun i => (p : ZMod (p * n')) * z i)
-
 /-- **Halving consecutive unit-weighted zero-sum free sequences modulo a power of two.** Let
 $s \ge 0$, $n = 2^{s+1}$ and $n' = 2^s$. Say that a sequence $y_1, \dots, y_L$ in $\mathbb{Z}_m$ has
 no consecutive unit-weighted zero-sum if there are no indices $1 \le i \le j \le L$ and units
@@ -447,23 +303,6 @@ of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 7.5 (`integers-2024-A38-th
 public theorem_wanted davenport_unit_pow_le {k p : ℕ} (hk : k.Prime) (hk2 : k ≠ 2)
     (hp : p.Prime) (hpk : p % k = 1) (hpk2 : p % k ^ 2 ≠ 1) :
     k ∈ davenportSet (ZMod p) (ZMod p) {x : ZMod p | ∃ u : ZMod p, IsUnit u ∧ x = u ^ k}
-
-/-- **Weighted zero-sum free pairs in a field.** Let $F$ be a field, let $A$ be a subgroup of the
-multiplicative group $F^*$, and let $x, y \in F$ be nonzero. Then the sequence
-$(x_1, x_2) = (x, y)$ has no $A$-weighted zero-sum subsequence, that is, there is no nonempty
-set $I \subseteq \{1, 2\}$ with elements $a_i \in A$ for $i \in I$ such that
-$\sum_{i \in I} a_i x_i = 0$, if and only if $x$ and $-y$ lie in different cosets of $A$ in $F^*$.
-
-A zero term is by itself a zero-sum subsequence, so the cosets are taken for nonzero $x$ and $y$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Lemma 7.6 (`integers-2024-A38-lem-7-6`). -/
-public theorem_wanted pair_no_weightedZeroSum_iff {F : Type*} [Field F] (A : Subgroup Fˣ)
-    {x y : F} (hx : x ≠ 0) (hy : y ≠ 0) :
-    (¬ ∃ I : Finset (Fin 2), I.Nonempty ∧ ∃ a : Fin 2 → F,
-      (∀ i ∈ I, a i ∈ ((↑) : Fˣ → F) '' A) ∧ ∑ i ∈ I, a i * ![x, y] i = 0) ↔
-      (QuotientGroup.mk (Units.mk0 x hx) : Fˣ ⧸ A) ≠
-        QuotientGroup.mk (Units.mk0 (-y) (neg_ne_zero.mpr hy))
 
 /-- **Weighted zero-sum free pairs for a proper subgroup of $F^\times$.** Let $F$ be a field and
 $A$ a proper subgroup of the multiplicative group $F^\times$. Then some sequence $x_1, x_2$ in

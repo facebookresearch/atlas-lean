@@ -1,0 +1,16 @@
+# Consensus from test-and-set
+
+- [Stages of a process in test-and-set consensus](stage.md)
+- [Global state of test-and-set consensus](state.md)
+- [The other process in a two-process system](../peterson-s-mutual-exclusion-algorithm/other.md)
+- [Two-process consensus protocol from test-and-set](step.md)
+- [Initial state of test-and-set consensus](init.md)
+- [Test-and-set consensus as a labelled transition system](lts.md)
+- [Reachable states of test-and-set consensus](reachable.md)
+- [State reached along a schedule in test-and-set consensus](run.md)
+- [The initial state of test-and-set consensus is reachable](reachable-init.md)
+- [Reachable states of test-and-set consensus are closed under steps](step-2.md)
+- [Executions of test-and-set consensus are determined by their schedule](m-tr-iff-eq-run.md)
+- [States reached along a schedule in test-and-set consensus are reachable](reachable-run.md)
+- [Safety of test-and-set consensus](safety.md)
+- [Wait-free termination of test-and-set consensus](decision-is-some-of-three-le-count.md)

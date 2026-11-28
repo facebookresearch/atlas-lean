@@ -44,8 +44,9 @@ open MeasureTheory Matrix MathlibExt.Biology.PopulationGenetics.FStatistics
 namespace MathlibExt.Biology.PopulationGenetics.FStatistics.DriftModel
 
 /-- Every weight matrix `w` and every nonnegative length vector `len` are realized by a drift
-model: the counting measure on the edge set, with increment `√(len e)` on the atom `e` (so the
-increments have disjoint supports, hence are uncorrelated). -/
+model: the counting measure on the edge set (not normalized), with root frequency `1 / 2` and
+increment `√(len e)` on the atom `e` (so the increments have disjoint supports, hence are
+orthogonal in L²: the integral of the product of two of them is `0`). -/
 noncomputable def ofLen {P E : Type*} [Fintype E] [DecidableEq E] [MeasurableSpace E]
     [DiscreteMeasurableSpace E] (w : P → E → ℝ) (len : E → ℝ) (hlen : ∀ e, 0 ≤ len e) :
     DriftModel (Measure.count : Measure E) E P where
@@ -135,7 +136,8 @@ theorem exists_len_ne_of_not_injective [MeasurableSpace E]
     exact h1.trans ((congrFun h3 i).trans h2.symm)
 
 /-- Identifiability criterion: the edge lengths are determined by the basis statistics (among
-drift models with the given weights) iff the design matrix has full column rank. -/
+drift models on the counting measure of the edge set with the given weights) iff the design
+matrix has full column rank. -/
 theorem len_identifiable_iff_rank_eq_card [MeasurableSpace E]
     [DiscreteMeasurableSpace E] (w : P → E → ℝ) (A B C D : ι → P) :
     (∀ M M' : DriftModel (Measure.count : Measure E) E P, M.weight = w → M'.weight = w →
@@ -149,8 +151,9 @@ theorem len_identifiable_iff_rank_eq_card [MeasurableSpace E]
   obtain ⟨M, M', hw, hw', hne, hf⟩ := exists_len_ne_of_not_injective hB
   exact hne (h M M' hw hw' hf)
 
-/-- Dimension bound: if there are more edges than `n choose 2 = dim V_F`, some nonzero length
-perturbation `v` leaves every f-statistic `∑ e, (w A e - w B e) (w C e - w D e) ℓ e` unchanged. -/
+/-- Dimension bound: if there are more edges than `n choose 2 = dim V_F`, where `n` is the
+number of populations, some nonzero length perturbation `v` leaves every f-statistic
+`∑ e, (w A e - w B e) (w C e - w D e) ℓ e` unchanged. -/
 theorem exists_ne_zero_forall_sum_eq_zero [Fintype P] (w : P → E → ℝ)
     (h : (Fintype.card P).choose 2 < Fintype.card E) :
     ∃ v : E → ℝ, v ≠ 0 ∧
@@ -201,8 +204,9 @@ theorem exists_ne_zero_forall_sum_eq_zero [Fintype P] (w : P → E → ℝ)
   simp_rw [hpol, ← Finset.sum_div, Finset.sum_sub_distrib, Finset.sum_add_distrib, hf2]
   norm_num
 
-/-- With more edges than `n choose 2`, no family of f-statistics identifies the edge lengths:
-the design matrix of any basis `(A i, B i, C i, D i)` has a nontrivial kernel. -/
+/-- With more edges than `n choose 2`, where `n` is the number of populations, no family of
+f-statistics identifies the edge lengths: the design matrix of any family
+`(A i, B i, C i, D i)` has a nontrivial kernel. -/
 theorem not_injective_of_choose_two_lt [Fintype P] (w : P → E → ℝ)
     (h : (Fintype.card P).choose 2 < Fintype.card E) (A B C D : ι → P) :
     ¬ Function.Injective (designMatrix w A B C D).mulVec := by
@@ -214,9 +218,9 @@ theorem not_injective_of_choose_two_lt [Fintype P] (w : P → E → ℝ)
     rw [← hv (A i) (B i) (C i) (D i)]
   exact fun hinj => hv0 (hinj (hker.trans (mulVec_zero _).symm))
 
-/-- Positive lengths: if the design matrix is not of full column rank and every length is
-positive, a kernel direction gives a different, still positive, length vector with the same
-predicted statistics. -/
+/-- Positive lengths: if a real matrix `G` (for instance a design matrix) is not of full column
+rank and every length is positive, a kernel direction gives a different, still positive, length
+vector with the same image under `G` (the same predicted statistics). -/
 theorem exists_pos_ne_mulVec_eq_of_not_injective {G : Matrix ι E ℝ}
     (hG : ¬ Function.Injective G.mulVec) {len : E → ℝ} (hlen : ∀ e, 0 < len e) :
     ∃ len' : E → ℝ, (∀ e, 0 < len' e) ∧ len' ≠ len ∧ G *ᵥ len' = G *ᵥ len := by
@@ -258,9 +262,10 @@ theorem exists_pos_ne_mulVec_eq_of_not_injective {G : Matrix ι E ℝ}
     exact (smul_eq_zero.mp this).resolve_left ht.ne'
   · rw [mulVec_add, mulVec_smul, hv, smul_zero, add_zero]
 
-/-- The record's positive-orthant statement for drift models: with more edges than
-`n choose 2`, every drift model with positive lengths has a second drift model with the same
-weights, different positive lengths, and the same value of every f-statistic. -/
+/-- Positive-orthant non-identifiability for drift models: with more edges than `n choose 2`,
+where `n` is the number of populations, every drift model with positive lengths has a second
+drift model, on the counting measure of the edge set, with the same weights, different positive
+lengths, and the same value of every `f4` (hence of every f-statistic). -/
 theorem exists_driftModel_pos_len_ne [Fintype P]
     [MeasurableSpace E] [DiscreteMeasurableSpace E] {Ω : Type*} {m : MeasurableSpace Ω}
     {μ : Measure Ω} (M : DriftModel μ E P) (h : (Fintype.card P).choose 2 < Fintype.card E)

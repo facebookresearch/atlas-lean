@@ -178,7 +178,7 @@ private theorem sml_closure_mem {K : Type*} [Field K] (k : ℕ) (c u : ℕ → K
     ∀ n, u n ∈ R := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hn : n < k
     · exact hu n hn
     · have hnn : u n = u ((n - k) + k) := by congr 1; omega
@@ -440,15 +440,15 @@ private theorem sml_pow_div_factorial_norm (p : ℕ) [Fact p.Prime] (hp : 3 ≤ 
     Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero j)
   have h1 : ‖(p : ℚ_[p]) ^ j‖ = (p : ℝ) ^ (-(j : ℤ)) := Padic.norm_p_pow j
   have h2 : ‖((Nat.factorial j : ℕ) : ℚ_[p])‖
-      = (p : ℝ) ^ (-((padicValNat p (Nat.factorial j) : ℕ) : ℤ)) := by
+      = (p : ℝ) ^ (-((multiplicity p (Nat.factorial j) : ℕ) : ℤ)) := by
     rw [Padic.norm_eq_zpow_neg_valuation hfact, Padic.valuation_natCast]
-  have hleg : (p - 1) * padicValNat p (Nat.factorial j) = j - (Nat.digits p j).sum :=
-    sub_one_mul_padicValNat_factorial j
-  have h2v : 2 * padicValNat p (Nat.factorial j) ≤ j := by
+  have hleg : (p - 1) * multiplicity p (Nat.factorial j) = j - (Nat.digits p j).sum :=
+    (Fact.out : p.Prime).sub_one_mul_multiplicity_factorial
+  have h2v : 2 * multiplicity p (Nat.factorial j) ≤ j := by
     have h1' : 2 ≤ p - 1 := by omega
-    have h2' : 2 * padicValNat p (Nat.factorial j) ≤ (p - 1) * padicValNat p (Nat.factorial j) :=
+    have h2' : 2 * multiplicity p (Nat.factorial j) ≤ (p - 1) * multiplicity p (Nat.factorial j) :=
       mul_le_mul_of_nonneg_right h1' (Nat.zero_le _)
-    have h3' : (p - 1) * padicValNat p (Nat.factorial j) ≤ j := by
+    have h3' : (p - 1) * multiplicity p (Nat.factorial j) ≤ j := by
       rw [hleg]
       exact Nat.sub_le _ _
     omega
@@ -457,7 +457,7 @@ private theorem sml_pow_div_factorial_norm (p : ℕ) [Fact p.Prime] (hp : 3 ≤ 
   rw [norm_div, h1, h2, ← zpow_sub₀ hP0, pow_two, ← zpow_add₀ hP0,
     inv_pow, ← zpow_natCast, ← zpow_neg]
   apply zpow_le_zpow_right₀ hP1
-  have h2vZ : 2 * ((padicValNat p (Nat.factorial j) : ℕ) : ℤ) ≤ (j : ℤ) := by
+  have h2vZ : 2 * ((multiplicity p (Nat.factorial j) : ℕ) : ℤ) ≤ (j : ℤ) := by
     exact_mod_cast h2v
   omega
 

@@ -19,6 +19,7 @@ module
 
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Defs
+public import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.Nat.Digits.Div
 
 /-!
@@ -28,7 +29,11 @@ Let `b ≥ 2`. If the base-`b` digits of a natural number `N` form a palindrome 
 of digits, then `b + 1` divides `N` (`MetaMathlibExt.succ_dvd_of_palindrome_even_length`). The
 base-`b` digits of `N` are Mathlib's little-endian list `Nat.digits b N`, and `N` is a palindrome
 in base `b` when this list is a `List.Palindrome`. For `b = 10` the theorem is Mathlib's
-`Nat.eleven_dvd_of_palindrome`.
+`Nat.eleven_dvd_of_palindrome`. If `N = p ^ n` for a prime `p`, every divisor of `N` is a power
+of `p`, so the base has the form `p ^ x - 1`
+(`MetaMathlibExt.base_eq_prime_pow_sub_one_of_palindrome`). In particular, if the base-`b`
+digits of `2 ^ n` form a palindrome with an even number of digits, then `b = 2 ^ x - 1` for some
+`x` (`MetaMathlibExt.base_eq_two_pow_sub_one_of_palindrome`).
 
 ## Proof outline
 
@@ -48,11 +53,15 @@ it, so the conclusion holds in every base. The theorem keeps the full name and t
 had as a wanted theorem in `WantedExt.NumberTheory.Digits.MinBasePalindromeWanted`, so the
 hypothesis stays and the unused-variables linter is turned off for this declaration only.
 
+The source proves the statement for powers of two directly from the divisibility lemma and
+generalizes it to prime powers afterwards. Here the power-of-two statement is derived as the case
+`p = 2` of the prime-power theorem.
+
 ## References
 
 * D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic Representations of Powers of 2*,
-  INTEGERS 24 (2024), Article A69; preprint arXiv:2401.07351, Lemma 2.2 and its proof
-  (<https://arxiv.org/abs/2401.07351>).
+  INTEGERS 24 (2024), Article A69; preprint arXiv:2401.07351, Lemma 2.2 and its proof,
+  Corollary 2.3 and Theorem 3.1 (<https://arxiv.org/abs/2401.07351>).
 -/
 
 @[expose] public section
@@ -79,5 +88,32 @@ theorem succ_dvd_of_palindrome_even_length (N b : ℕ) (hb : 2 ≤ b)
   -- Since `b ≡ -1 [ZMOD b + 1]`, `N` is congruent to that alternating sum modulo `b + 1`.
   rw [Nat.dvd_iff_dvd_ofDigits (b + 1) b (-1) (by simp) N, Nat.ofDigits_neg_one, h0]
   exact dvd_zero _
+
+/-- **Even-length palindromic prime powers have base one less than a power of the prime.** Let
+$p$ be a prime and let $n$ and $b \ge 2$ be natural numbers. If the base-$b$ representation of
+$p^n$ is a palindrome with an even number of digits, then $b = p^x - 1$ for some natural number
+$x$.
+
+Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
+Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 6
+(`integers-2024-A69-thm-6`). -/
+theorem base_eq_prime_pow_sub_one_of_palindrome (p n b : ℕ) (hp : p.Prime)
+    (hb : 2 ≤ b) (hpal : (Nat.digits b (p ^ n)).Palindrome)
+    (he : Even (Nat.digits b (p ^ n)).length) : ∃ x, b = p ^ x - 1 := by
+  have hdvd := succ_dvd_of_palindrome_even_length (p ^ n) b hb hpal he
+  obtain ⟨x, _, hx⟩ := (Nat.dvd_prime_pow hp).mp hdvd
+  exact ⟨x, Nat.eq_sub_of_add_eq hx⟩
+
+/-- **Even-length palindromic powers of 2 have base one less than a power of 2.** Let $n$ and
+$b \ge 2$ be natural numbers. If the base-$b$ representation of $2^n$ is a palindrome with an
+even number of digits, then $b = 2^x - 1$ for some natural number $x$.
+
+Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
+Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 2
+(`integers-2024-A69-cor-2`). -/
+theorem base_eq_two_pow_sub_one_of_palindrome (n b : ℕ) (hb : 2 ≤ b)
+    (hp : (Nat.digits b (2 ^ n)).Palindrome) (he : Even (Nat.digits b (2 ^ n)).length) :
+    ∃ x, b = 2 ^ x - 1 :=
+  base_eq_prime_pow_sub_one_of_palindrome 2 n b Nat.prime_two hb hp he
 
 end MetaMathlibExt

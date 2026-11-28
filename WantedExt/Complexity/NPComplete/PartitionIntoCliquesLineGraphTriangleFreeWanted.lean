@@ -21,11 +21,11 @@ triangle-free graphs: NP-complete, with the attribution to Munaro (2017).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.LineGraph
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesWanted
+public import CSLibExt.Complexity.NPComplete.PartitionIntoCliquesDefs
 
 @[expose] public section
 
@@ -49,7 +49,7 @@ triangle-freeness (Mathlib's `CliqueFree 3`) added. Line graphs and their roots 
 polynomial time, so the restriction keeps the problem in NP.
 
 The instance, its graph, its well-formedness (a simple edge list and `0 < K ≤ |V|`) and the
-question are those of PARTITION INTO CLIQUES (`PartitionIntoCliquesWanted`, Garey and Johnson's
+question are those of PARTITION INTO CLIQUES (`PartitionIntoCliquesDefs`, Garey and Johnson's
 [GT15]); this module adds the class restriction to well-formedness. ISGCI records the problem as
 NP-complete on this class, citing Munaro (2017). In a triangle-free root every clique of `L(H)`
 is a set of edges with a common endpoint, so `L(H)` splits into `K` cliques exactly when `H` has a

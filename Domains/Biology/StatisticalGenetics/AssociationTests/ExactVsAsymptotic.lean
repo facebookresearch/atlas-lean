@@ -144,8 +144,8 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 noncomputable def orderedPValue (f g : ℕ → ℝ) (M h : ℕ) : ℝ :=
   ∑ j ∈ (range M).filter (fun j => g j ≤ g h), f j
 
-/-- **Ordered p-values are super-uniform, combinatorial form.** For a nonnegative mass function
-`f`, the `f`-mass of the outcomes whose ordered p-value is at most `t` is at most `t`.
+/-- **Ordered p-values are super-uniform, combinatorial form.** For a nonnegative mass function `f`
+and every `t ≥ 0`, the `f`-mass of the outcomes whose ordered p-value is at most `t` is at most `t`.
 
 If `h₀` is the least extreme outcome (largest `g`) among those with p-value `≤ t`, every such
 outcome is at least as extreme as `h₀`, so their mass is at most the p-value of `h₀`.
@@ -178,7 +178,8 @@ theorem leveneProb_eq_zero_of_lt {N nA h : ℕ} (hh : nA < h) : leveneProb N nA 
   omega
 
 /-- Levene's law of the heterozygote count given `nA` copies of `A` among `N` individuals, as a
-measure on `ℕ` supported on `{0, …, nA}`. -/
+measure on `ℕ` supported on `{0, …, nA}`. It is a probability measure when `nA ≤ 2 * N`; for
+`nA > 2 * N` every Levene probability is `0` and it is the zero measure. -/
 noncomputable def leveneMeasure (N nA : ℕ) : Measure ℕ :=
   ∑ j ∈ range (nA + 1), ENNReal.ofReal (leveneProb N nA j) • Measure.dirac j
 
@@ -216,8 +217,9 @@ instance (N nA : ℕ) [Fact (nA ≤ 2 * N)] : IsProbabilityMeasure (leveneMeasur
   rw [leveneMeasure_apply]
   simp [sum_leveneProb (Fact.out : nA ≤ 2 * N)]
 
-/-- The uniform law on placements of `nA` copies of `A` in the `2N` gamete slots
-`Fin N × Fin 2`: the HWE null model conditional on the allele count. -/
+/-- The uniform law on placements of `nA` copies of `A` in the `2N` gamete slots `Fin N × Fin 2`:
+the HWE null model conditional on the allele count. It is a probability measure when `nA ≤ 2 * N`;
+for `nA > 2 * N` there is no placement and it is the zero measure. -/
 noncomputable def uniformArrangements (N nA : ℕ) : Measure (Finset (Fin N × Fin 2)) :=
   uniformOn ((univ.filter fun s : Finset (Fin N × Fin 2) => s.card = nA :
     Finset (Finset (Fin N × Fin 2))) : Set (Finset (Fin N × Fin 2)))
@@ -293,12 +295,18 @@ theorem isValidPValue_orderedPValue {H : Ω → ℕ} {N nA : ℕ} (_hnA : nA ≤
   exact ENNReal.ofReal_le_ofReal
     (by simpa using sum_filter_orderedPValue_le (leveneProb_nonneg N nA) (g := g) ht.1)
 
-/-- The exact HWE p-value of Wigginton, Cutler and Abecasis: the total Levene probability of the
-heterozygote counts that are no more probable than the observed count `h`. -/
+/-- The exact HWE p-value of Wigginton, Cutler and Abecasis: the sum of the Levene probabilities
+`leveneProb N nA j` of the heterozygote counts `j ≤ nA` that are no more probable than the observed
+count `h`. For `nA ≤ 2 * N`, Levene's law is a probability measure and this is the probability under
+it of a count no more probable than `h`; for `nA > 2 * N` every Levene probability is `0`, there is
+no such law, and the p-value is `0` (for example `N = 0`, `nA = 1`). -/
 noncomputable def hweExactPValue (N nA h : ℕ) : ℝ :=
   orderedPValue (leveneProb N nA) (leveneProb N nA) (nA + 1) h
 
-/-- The one-sided exact p-value for a heterozygote deficit: `P(n_AB ≤ h)` under Levene's law. -/
+/-- The one-sided exact p-value for a heterozygote deficit: the sum of the Levene probabilities
+`leveneProb N nA j` over `j ≤ min h nA`. For `nA ≤ 2 * N`, Levene's law is a probability measure and
+this is `P(n_AB ≤ h)` under it; for `nA > 2 * N` every Levene probability is `0`, there is no such
+law, and the p-value is `0` (for example `N = 0`, `nA = 1`). -/
 noncomputable def hweDeficitPValue (N nA h : ℕ) : ℝ :=
   orderedPValue (leveneProb N nA) (fun j => (j : ℝ)) (nA + 1) h
 
@@ -313,9 +321,10 @@ theorem isValidPValue_hweExactPValue (N nA : ℕ) (_hnA : nA ≤ 2 * N) :
     IsValidPValue (uniformArrangements N nA) (fun s => hweExactPValue N nA (hetCount s)) :=
   isValidPValue_orderedPValue _hnA (hasLaw_hetCount N nA) _
 
-/-- **The exact heterozygote-deficit test is valid in finite samples.** As above, this
-requires the feasible range `nA ≤ 2 * N`; for `nA > 2 * N` the arrangement set is empty
-and the statement would hold only vacuously.
+/-- **The exact heterozygote-deficit test is valid in finite samples.** Under the uniform-placement
+null model the heterozygote-deficit p-value of the observed heterozygote count is a valid p-value,
+for every `N` and every feasible `nA ≤ 2 * N`; for `nA > 2 * N` the arrangement set is empty and the
+statement would hold only vacuously.
 
 Source: Wigginton, Cutler and Abecasis (2005). -/
 theorem isValidPValue_hweDeficitPValue (N nA : ℕ) (_hnA : nA ≤ 2 * N) :
@@ -324,12 +333,12 @@ theorem isValidPValue_hweDeficitPValue (N nA : ℕ) (_hnA : nA ≤ 2 * N) :
 
 /-! ### The asymptotic chi-square test and where it fails -/
 
-/-- Pearson's statistic as a function of the heterozygote count `h`, given `N` and `nA`: the
-fitted statistic `PearsonLimit.hweStat` of the genotype table
-`(n_BB, n_AB, n_AA) = ((2N - nA - h) / 2, h, (nA - h) / 2)`, whose cell `i` counts the
-individuals carrying `i` copies of `A`. For impossible counts (`h > nA` or `nA - h` odd) the
-natural-number floor division and truncated subtraction give a meaningless value; those counts
-have null probability `0`. -/
+/-- Pearson's statistic as a function of the heterozygote count `h`, given `N` and `nA`: the fitted
+statistic `PearsonLimit.hweStat` of the genotype table
+`(n_BB, n_AB, n_AA) = ((2N - nA - h) / 2, h, (nA - h) / 2)`, whose cell `i` counts the individuals
+carrying `i` copies of `A`. For counts that are not realizable (`h > nA`, `h + nA > 2 * N` or
+`nA - h` odd) the natural-number floor division and truncated subtraction do not give the genotype
+table (for `h > nA` the `AA` entry is `0`); those counts have Levene probability `0`. -/
 noncomputable def hweChiSqOfHet (N nA h : ℕ) : ℝ :=
   hweStat N ![(((2 * N - nA - h) / 2 : ℕ) : ℝ), (h : ℝ), (((nA - h) / 2 : ℕ) : ℝ)]
 

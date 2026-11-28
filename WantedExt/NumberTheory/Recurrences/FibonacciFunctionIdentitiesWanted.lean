@@ -16,6 +16,18 @@ public import Mathlib.Data.Int.Fib.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.GelinCesaroAlternatingSum
+public import MathlibExt.NumberTheory.Recurrences.GibonacciCatalanIdentity
+public import MathlibExt.NumberTheory.Recurrences.GibonacciDOcagneIdentity
+public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciFactorIdentity
+public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciLucasIdentity
+public import MathlibExt.NumberTheory.Recurrences.GibonacciIndexDoubling
+public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasLikeSum
+public import MathlibExt.NumberTheory.Recurrences.GibonacciLucasMultiplier
+public import MathlibExt.NumberTheory.Recurrences.GibonacciProductSum
+public import MathlibExt.NumberTheory.Recurrences.GibonacciShiftedProduct
+public import MathlibExt.NumberTheory.Recurrences.GibonacciTripleProduct
+public import MathlibExt.NumberTheory.Recurrences.LucasFibonacciTelescoping
 
 /-!
 # Fibonacci identities via Fibonacci functions
@@ -72,28 +84,6 @@ public theorem_wanted lucas_fib_weighted_binomial_sum_even_step
           (j : ℝ) * (n.choose j : ℝ) * (Int.fib (r + 2 * k * j) : ℝ) =
         n * L k ^ (n - 1) * L (r + n * k) * (Int.fib k : ℝ) +
           n * L k ^ n * (Int.fib (r + n * k) : ℝ)
-
-/-- **Two telescoping relations between Lucas and Fibonacci numbers.** Let $F_m$ be the Fibonacci
-numbers extended to all integers $m$ ($F_0 = 0$, $F_1 = 1$, $F_{m+2} = F_{m+1} + F_m$) and
-$L_m = F_{m-1} + F_{m+1}$ the Lucas numbers. Then for every integer $k$,
-$$\frac{L_{2k+1}}{F_{2k+1}^2 + 1} = \frac{L_{2k}}{F_{2k}^2 + 1} - \frac{L_{2k+2}}{F_{2k+2}^2 + 1}$$
-and
-$$\frac{L_{2k+1}}{L_{2k} L_{2k+2}} \cdot \frac{(F_{2k}^2 + 1)(F_{2k+2}^2 + 1)}{F_{2k+1}^2 + 1}
-= \frac{F_{2k+2}^2 + 1}{L_{2k+2}} - \frac{F_{2k}^2 + 1}{L_{2k}}.$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 3
-(`jis-2024-24.6.2-prop-3`). -/
-public theorem_wanted lucas_div_fib_sq_add_one_telescoping
-    (L : ℤ → ℝ) (hL : ∀ m : ℤ, L m = Int.fib (m - 1) + Int.fib (m + 1)) (k : ℤ) :
-    L (2 * k + 1) / ((Int.fib (2 * k + 1) : ℝ) ^ 2 + 1) =
-        L (2 * k) / ((Int.fib (2 * k) : ℝ) ^ 2 + 1) -
-          L (2 * k + 2) / ((Int.fib (2 * k + 2) : ℝ) ^ 2 + 1) ∧
-      L (2 * k + 1) / (L (2 * k) * L (2 * k + 2)) *
-          (((Int.fib (2 * k) : ℝ) ^ 2 + 1) * ((Int.fib (2 * k + 2) : ℝ) ^ 2 + 1) /
-            ((Int.fib (2 * k + 1) : ℝ) ^ 2 + 1)) =
-        ((Int.fib (2 * k + 2) : ℝ) ^ 2 + 1) / L (2 * k + 2) -
-          ((Int.fib (2 * k) : ℝ) ^ 2 + 1) / L (2 * k)
 
 /-- **Telescoping sums of Lucas numbers over Fibonacci squares plus one.** Let $F_m$ denote the
 Fibonacci numbers and $L_m$ the Lucas numbers ($L_0 = 2$, $L_1 = 1$, $L_{m+2} = L_{m+1} + L_m$).
@@ -263,41 +253,6 @@ public theorem_wanted alternating_sum_fib_sq_fib_div_fib_pow_four_sub (n : ℕ) 
             (Nat.fib (2 * n + 7) : ℝ) /
               ((lucasNumber (n + 3) : ℝ) * (lucasNumber (n + 4) : ℝ)))
 
-/-- **Alternating Gelin–Cesàro sum for generalized Fibonacci sequences.** Let $p$ be a real
-number, let $W : \mathbb{Z} \to \mathbb{R}$ satisfy $W_{j+2} = p W_{j+1} + W_j$ for every integer
-$j$, and put $\gamma_W = (p W_0 W_1 + W_0^2 - W_1^2)(p^2 - 1)$. Let $n \ge 0$ and $k$ be
-integers such that $W_{j+k-2} W_{j+k-1} W_{j+k+1} W_{j+k+2} \ne 0$ for $1 \le j \le n$ and
-$W_{n+k-1}$, $W_{k-1}$, $W_{n+k+2}$, $W_{k+2}$ are nonzero. Then
-
-$$
-\sum_{j=1}^{n} \frac{(-1)^{j-1} \cdot 2 W_{j+k} (W_{j+k+1} + W_{j+k-1})
-\bigl(2 W_{j+k}^2 + (-1)^{j+k} \gamma_W\bigr)}{W_{j+k-2} W_{j+k-1} W_{j+k+1} W_{j+k+2}} =
-(-1)^{n+1} \frac{W_{n+k} + W_{n+k-2}}{W_{n+k-1}} + \frac{W_k + W_{k-2}}{W_{k-1}} +
-(-1)^{n+1} \frac{W_{n+k+3} + W_{n+k+1}}{W_{n+k+2}} + \frac{W_{k+3} + W_{k+1}}{W_{k+2}}.
-$$
-
-The paper's standing assumption $p \ne 0$ is not needed.
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 11
-(`jis-2024-24.6.2-prop-11`). -/
-public theorem_wanted generalized_fibonacci_gelin_cesaro_alternating_sum
-    (W : ℤ → ℝ) (p : ℝ) (hW : ∀ j : ℤ, W (j + 2) = p * W (j + 1) + W j)
-    (n : ℕ) (k : ℤ)
-    (hden : ∀ j ∈ Finset.Icc 1 n,
-      W (j + k - 2) * W (j + k - 1) * W (j + k + 1) * W (j + k + 2) ≠ 0)
-    (h₁ : W (n + k - 1) ≠ 0) (h₂ : W (k - 1) ≠ 0) (h₃ : W (n + k + 2) ≠ 0)
-    (h₄ : W (k + 2) ≠ 0) :
-    ∑ j ∈ Finset.Icc 1 n, (-1 : ℝ) ^ (j - 1) * 2 * W (j + k) *
-          (W (j + k + 1) + W (j + k - 1)) *
-          (2 * W (j + k) ^ 2 + (-1 : ℝ) ^ ((j : ℤ) + k) *
-            ((p * W 0 * W 1 + W 0 ^ 2 - W 1 ^ 2) * (p ^ 2 - 1))) /
-          (W (j + k - 2) * W (j + k - 1) * W (j + k + 1) * W (j + k + 2)) =
-      (-1 : ℝ) ^ (n + 1) * (W (n + k) + W (n + k - 2)) / W (n + k - 1) +
-        (W k + W (k - 2)) / W (k - 1) +
-        (-1 : ℝ) ^ (n + 1) * (W (n + k + 3) + W (n + k + 1)) / W (n + k + 2) +
-        (W (k + 3) + W (k + 1)) / W (k + 2)
-
 /-- **Reciprocal series of Lucas sequences with doubling subscripts.** Let $P \ne 0$ be an
 integer and let $U_m = U_m(P, -1)$ and $V_m = V_m(P, -1)$ be the Lucas sequences with parameters
 $(P, -1)$, so $U_0 = 0$, $U_1 = 1$, $V_0 = 2$, $V_1 = P$, and both satisfy
@@ -331,25 +286,6 @@ public theorem_wanted sum_two_pow_lucasV_div_lucasU_sq_doubling
           2 * (1 - (-1 : ℝ) ^ k) * (lucasV ⟨P, -1, by norm_num⟩ (2 * k) : ℝ) /
             (lucasU ⟨P, -1, by norm_num⟩ (2 * k) : ℝ) ^ 2)
 
-/-- **A Fibonacci–Lucas identity for gibonacci sequences.** Let $F_m$ denote the Fibonacci
-numbers, extended to all integers $m$ by $F_{-m} = (-1)^{m+1} F_m$, and let
-$L_m = F_{m-1} + F_{m+1}$ be the Lucas numbers, for every integer $m$. If
-$G : \mathbb{Z} \to \mathbb{R}$ satisfies $G_{j+2} = G_{j+1} + G_j$ for every integer $j$, then
-for all integers $k$ and $r$,
-$$
-5 F_k G_{k+r} - L_k \left(G_{k+r+1} + G_{k+r-1}\right)
-= 2 (-1)^{k-1} \left(G_{r+1} + G_{r-1}\right).
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 18
-(`jis-2024-24.6.2-prop-18`). -/
-public theorem_wanted five_fib_mul_gibonacci_sub_lucas_mul
-    (L : ℤ → ℝ) (hL : ∀ m : ℤ, L m = Int.fib (m - 1) + Int.fib (m + 1))
-    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (k r : ℤ) :
-    5 * (Int.fib k : ℝ) * G (k + r) - L k * (G (k + r + 1) + G (k + r - 1)) =
-      (-1 : ℝ) ^ (k - 1) * 2 * (G (r + 1) + G (r - 1))
-
 /-- **An identity for products of two gibonacci sequences.** Let
 $G, H : \mathbb{Z} \to \mathbb{R}$ satisfy $G_{j+2} = G_{j+1} + G_j$ and
 $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. Then for all integers $k$, $r$ and $s$,
@@ -370,103 +306,6 @@ public theorem_wanted five_gibonacci_mul_sub_two_gibonacci
       (-1 : ℝ) ^ (k - r + 1) * 2 * (G (r + 1) + G (r - 1)) * (H (s + 1) + H (s - 1)) +
         (-1 : ℝ) ^ (k - r) * 2 *
           (G 0 * (H (r + s) + H (r + s - 2)) + G 1 * (H (r + s + 1) + H (r + s - 1)))
-
-/-- **Addition formula for gibonacci sequences.** Let $F_m$ denote the Fibonacci numbers,
-extended to all integers $m$ by $F_{-m} = (-1)^{m+1} F_m$. If $G : \mathbb{Z} \to \mathbb{R}$
-satisfies $G_{j+2} = G_{j+1} + G_j$ for every integer $j$, then
-$F_{k+1} G_{s+1} + F_k G_s = G_{k+s+1}$ for all integers $k$ and $s$.
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 20
-(`jis-2024-24.6.2-prop-20`). -/
-public theorem_wanted fib_mul_gibonacci_add_eq_gibonacci
-    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (k s : ℤ) :
-    (Int.fib (k + 1) : ℝ) * G (s + 1) + (Int.fib k : ℝ) * G s = G (k + s + 1)
-
-/-- **A sum of two gibonacci products in terms of the seeds.** Let
-$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
-$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. Then for all
-integers $k$ and $s$,
-$$
-H_{k+1} G_{s+1} + H_k G_s = G_0 H_{k+s} + G_1 H_{k+s+1}.
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 21
-(`jis-2024-24.6.2-prop-21`). -/
-public theorem_wanted gibonacci_mul_gibonacci_add_eq_seed_combination
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (k s : ℤ) :
-    H (k + 1) * G (s + 1) + H k * G s = G 0 * H (k + s) + G 1 * H (k + s + 1)
-
-/-- **d'Ocagne-type identity for two gibonacci sequences.** Let $G$ and $H$ be gibonacci
-sequences, that is, functions $X : \mathbb{Z} \to \mathbb{R}$ with $X_{j+2} = X_{j+1} + X_j$
-for every integer $j$. Then for all integers $r$, $s$, $k$,
-
-$$
-H_{r+s} G_{k+1} - H_{r+s+1} G_k =
-(-1)^{r-1} (H_{s+1} + H_{s-1}) G_{k-r} + (-1)^r (G_0 H_{k+s-r-1} + G_1 H_{k+s-r}).
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 23
-(`jis-2024-24.6.2-prop-23`). -/
-public theorem_wanted gibonacci_dOcagne_type_identity
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (r s k : ℤ) :
-    H (r + s) * G (k + 1) - H (r + s + 1) * G k =
-      (-1 : ℝ) ^ (r - 1) * (H (s + 1) + H (s - 1)) * G (k - r) +
-        (-1 : ℝ) ^ r * (G 0 * H (k + s - r - 1) + G 1 * H (k + s - r))
-
-/-- **Shifted product identity for two gibonacci sequences.** Let
-$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
-$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. Then for all
-integers $s$ and $k$,
-$$
-G_{k+1} H_{s+1} + G_{k-2} H_{s-2} = 2 G_k H_s + 2 G_{k-1} H_{s-1}.
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 24
-(`jis-2024-24.6.2-prop-24`). -/
-public theorem_wanted gibonacci_product_shift_identity
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (s k : ℤ) :
-    G (k + 1) * H (s + 1) + G (k - 2) * H (s - 2) = 2 * G k * H s + 2 * G (k - 1) * H (s - 1)
-
-/-- **Product recurrence for three gibonacci sequences.** Let
-$G, H, I : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$, $j \mapsto H_j$ and
-$j \mapsto I_j$, satisfy $G_{j+2} = G_{j+1} + G_j$, $H_{j+2} = H_{j+1} + H_j$ and
-$I_{j+2} = I_{j+1} + I_j$ for every integer $j$. Then for all integers $k$, $r$ and $s$,
-$$
-G_{k+1} H_{r+1} I_{s+1} = 3 G_k H_r I_s + 6 G_{k-1} H_{r-1} I_{s-1} -
-3 G_{k-2} H_{r-2} I_{s-2} - G_{k-3} H_{r-3} I_{s-3}.
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 25
-(`jis-2024-24.6.2-prop-25`). -/
-public theorem_wanted gibonacci_triple_product_recurrence
-    (G H I : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j)
-    (hI : ∀ j : ℤ, I (j + 2) = I (j + 1) + I j) (k r s : ℤ) :
-    G (k + 1) * H (r + 1) * I (s + 1) =
-      3 * G k * H r * I s + 6 * G (k - 1) * H (r - 1) * I (s - 1) -
-        3 * G (k - 2) * H (r - 2) * I (s - 2) - G (k - 3) * H (r - 3) * I (s - 3)
-
-/-- **Gibonacci index doubling via Fibonacci squares.** Let $F_m$ be the Fibonacci numbers
-extended to all integers $m$ ($F_0 = 0$, $F_1 = 1$, $F_{m+2} = F_{m+1} + F_m$), and let
-$G \colon \mathbb{Z} \to \mathbb{R}$ satisfy $G_{j+2} = G_{j+1} + G_j$ for every integer $j$.
-Then for all integers $k$, $s$,
-$$G_{2k+s} = F_{k+1}^2 G_{s+1} + F_k^2 G_s - F_{k-1}^2 G_{s-1}.$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 26
-(`jis-2024-24.6.2-prop-26`). -/
-public theorem_wanted gibonacci_two_mul_add_eq_fib_sq_combination
-    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (k s : ℤ) :
-    G (2 * k + s) = (Int.fib (k + 1) : ℝ) ^ 2 * G (s + 1) + (Int.fib k : ℝ) ^ 2 * G s -
-      (Int.fib (k - 1) : ℝ) ^ 2 * G (s - 1)
 
 /-- **Seed expansion of a triple gibonacci product.** Let $G, H, I \colon \mathbb{Z} \to \mathbb{R}$
 satisfy $G_{j+2} = G_{j+1} + G_j$, $H_{j+2} = H_{j+1} + H_j$ and $I_{j+2} = I_{j+1} + I_j$ for
@@ -516,26 +355,6 @@ public theorem_wanted gibonacci_seed_lucas_like_identity
     (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (k r : ℤ) :
     G 0 * (H (r + k) + H (r + k - 2)) + G 1 * (H (r + k + 1) + H (r + k - 1)) =
       G r * (H k + H (k - 2)) + G (r + 1) * (H (k + 1) + H (k - 1))
-
-/-- **Sum of products of two gibonacci sequences.** Let $G, H \colon \mathbb{Z} \to \mathbb{R}$
-satisfy $G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. For every
-natural number $n$ and all integers $k$ and $s$,
-$$2 \sum_{j=1}^{n} G_{j+k} H_{j+s} = G_{n+k} H_{n+s+1} + G_{n+k+1} H_{n+s} -
-G_{k+1} H_s - G_k H_{s+1}.$$
-
-The printed statement lacks the factor $2$: it fails for the Fibonacci sequence $G = H = F$
-with $k = s = 0$ and $n = 1$, where the left side is $1$ and the right side $2$. The paper's own
-derivation (its display before the proposition) carries the factor $2$.
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 30
-(`jis-2024-24.6.2-prop-30`). -/
-public theorem_wanted two_mul_sum_gibonacci_mul_gibonacci
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (n : ℕ) (k s : ℤ) :
-    2 * ∑ j ∈ Finset.Icc 1 n, G (j + k) * H (j + s) =
-      G (n + k) * H (n + s + 1) + G (n + k + 1) * H (n + s) - G (k + 1) * H s -
-        G k * H (s + 1)
 
 /-- **Hoggatt–Bicknell-type binomial sum with Fibonacci cubes.** Let $F_m$ denote the Fibonacci
 numbers, extended to all integers $m$ by $F_{-m} = (-1)^{m+1} F_m$. If
@@ -638,24 +457,6 @@ public theorem_wanted four_gibonacci_melham_type_identity
           4 * G (k + n) * H (r + n) * I (s + n) * J (t + n) +
           G (k + n + 1) * H (r + n + 1) * I (s + n + 1) * J (t + n + 1))
 
-/-- **Two-sequence gibonacci identity with a Fibonacci factor.** Let
-$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
-$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$, and let $F_m$ be
-the Fibonacci numbers, extended to negative indices by $F_{-m} = (-1)^{m+1} F_m$. Then for all
-integers $r$, $s$ and $k$,
-$$
-H_s G_{k+r} + (-1)^{r-1} H_{s-r} G_k = F_r (G_0 H_{k+s-1} + G_1 H_{k+s}).
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 35
-(`jis-2024-24.6.2-prop-35`). -/
-public theorem_wanted gibonacci_mul_add_neg_one_pow_eq_fib_mul
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (r s k : ℤ) :
-    H s * G (k + r) + (-1 : ℝ) ^ (r - 1) * H (s - r) * G k =
-      (Int.fib r : ℝ) * (G 0 * H (k + s - 1) + G 1 * H (k + s))
-
 /-- **Four-index product identity for two gibonacci sequences.** Let
 $G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
 $G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$, and let $F_m$ be
@@ -725,41 +526,6 @@ public theorem_wanted gibonacci_candido_four_sequence
         (G k * N t + G (k + 1) * N (t + 1) + G (k + 2) * N (t + 2)) *
           (H r * M s + H (r + 1) * M (s + 1) + H (r + 2) * M (s + 2))
 
-/-- **Lucas multiplier identity for gibonacci sequences.** Let $F_m$ be the Fibonacci numbers,
-extended to all integers $m$ by $F_{m+2} = F_{m+1} + F_m$, and let $L_m = F_{m-1} + F_{m+1}$ be
-the Lucas numbers. Let $G : \mathbb{Z} \to \mathbb{R}$ be a gibonacci sequence, that is,
-$G_{j+2} = G_{j+1} + G_j$ for every integer $j$. Then for all integers $r$ and $s$,
-$G_{s+r} + (-1)^r G_{s-r} = L_r G_s$.
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 39
-(`jis-2024-24.6.2-prop-39`). -/
-public theorem_wanted gibonacci_add_neg_one_pow_mul_eq_lucas_mul
-    (L : ℤ → ℝ) (hL : ∀ m : ℤ, L m = Int.fib (m - 1) + Int.fib (m + 1))
-    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (r s : ℤ) :
-    G (s + r) + (-1 : ℝ) ^ r * G (s - r) = L r * G s
-
-/-- **Two-sequence gibonacci identity with a Fibonacci factor and Lucas-type sums.** Let
-$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
-$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$, and let $F_m$ be
-the Fibonacci numbers, extended to negative indices by $F_{-m} = (-1)^{m+1} F_m$. Then for all
-integers $r$, $k$ and $s$,
-$$
-G_s (H_{r+k+1} + H_{r+k-1}) + (-1)^{r-1} G_{s-r} (H_{k+1} + H_{k-1}) =
-G_0 F_r (H_{k+s} + H_{k+s-2}) + G_1 F_r (H_{k+s+1} + H_{k+s-1}).
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 40
-(`jis-2024-24.6.2-prop-40`). -/
-public theorem_wanted gibonacci_lucas_like_mul_add_eq_fib_mul
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (r k s : ℤ) :
-    G s * (H (r + k + 1) + H (r + k - 1)) +
-        (-1 : ℝ) ^ (r - 1) * G (s - r) * (H (k + 1) + H (k - 1)) =
-      G 0 * (Int.fib r : ℝ) * (H (k + s) + H (k + s - 2)) +
-        G 1 * (Int.fib r : ℝ) * (H (k + s + 1) + H (k + s - 1))
-
 /-- **Two-sequence Gelin–Cesàro derivative identity for gibonacci sequences.** Let
 $G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
 $G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$, and put
@@ -783,24 +549,6 @@ public theorem_wanted gibonacci_gelin_cesaro_two_sequence
       4 * H (k + r) * G k ^ 3 -
         2 * (G 0 ^ 2 - G 1 ^ 2 + G 0 * G 1) * G 0 * (H (r + 2) + H r) +
         2 * (G 0 ^ 2 - G 1 ^ 2 + G 0 * G 1) * G 1 * (H (r + 1) + H (r - 1))
-
-/-- **Catalan-type identity for Fibonacci and gibonacci numbers.** Let $F_m$ denote the Fibonacci
-numbers, extended to all integers $m$ by $F_{-m} = (-1)^{m+1} F_m$. If
-$G : \mathbb{Z} \to \mathbb{R}$ satisfies $G_{j+2} = G_{j+1} + G_j$ for every integer $j$, then
-for all integers $k$, $r$ and $s$,
-$$
-F_{k+r} G_{k-r+s} + F_{k-r} G_{k+r+s}
-= 2 F_k G_{k+s} + (-1)^{k+r+1} F_r^2 \left(G_{s+1} + G_{s-1}\right).
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 43
-(`jis-2024-24.6.2-prop-43`). -/
-public theorem_wanted fib_gibonacci_catalan_type_identity
-    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (k r s : ℤ) :
-    (Int.fib (k + r) : ℝ) * G (k - r + s) + (Int.fib (k - r) : ℝ) * G (k + r + s) =
-      2 * (Int.fib k : ℝ) * G (k + s) +
-        (-1 : ℝ) ^ (k + r + 1) * (Int.fib r : ℝ) ^ 2 * (G (s + 1) + G (s - 1))
 
 /-- **Lucas-weighted identity for two gibonacci sequences.** Let $F_m$ be the Fibonacci numbers
 extended to all integers $m$ ($F_0 = 0$, $F_1 = 1$, $F_{m+2} = F_{m+1} + F_m$) and

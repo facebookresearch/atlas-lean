@@ -228,7 +228,7 @@ theorem blockRow_mul_mul_transpose {ρ ρ' : Type*} (P : Matrix ρ ι ℝ)
       P * S.toBlocks₁₁ * P'ᵀ + P * S.toBlocks₁₂ * Q'ᵀ + Q * S.toBlocks₂₁ * P'ᵀ +
         Q * S.toBlocks₂₂ * Q'ᵀ := by
   ext r r'
-  simp only [blockRow, mul_apply, Fintype.sum_sum_type, of_apply, Sum.elim_inl, Sum.elim_inr,
+  simp only [blockRow, Matrix.mul_apply, Fintype.sum_sum_type, of_apply, Sum.elim_inl, Sum.elim_inr,
     transpose_apply, toBlocks₁₁, toBlocks₁₂, toBlocks₂₁, toBlocks₂₂, Matrix.add_apply,
     Finset.sum_add_distrib, add_mul, Finset.sum_mul]
   ring
@@ -287,7 +287,7 @@ theorem condDistrib_multivariateGaussian {V : Ω → EuclideanSpace ℝ (ι ⊕ 
     rw [hAdef, Matrix.mul_assoc, nonsing_inv_mul _ hYY, Matrix.mul_one]
   have hMzeq : Mz = Mx - A * My := by
     ext i a
-    cases a <;> simp [hMz, hMx, hMy, blockRow, mul_apply, Matrix.one_apply]
+    cases a <;> simp [hMz, hMx, hMy, blockRow, Matrix.mul_apply, Matrix.one_apply]
   have hZ : ∀ ω, toEuclideanLin Mx (V ω) - Acl (toEuclideanLin My (V ω)) =
       toEuclideanLin Mz (V ω) := by
     intro ω

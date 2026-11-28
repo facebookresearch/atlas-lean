@@ -58,7 +58,7 @@ to the empty clause.
 
 @[expose] public section
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 namespace CNFClause
 
@@ -243,4 +243,4 @@ theorem resolutionDerivable_nil_iff_not_cnfSat {φ : CNF} :
 
 end CNF
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

@@ -150,7 +150,7 @@ private theorem isPrecomplete_of_module_finite [IsPrecomplete I R] [Module.Finit
 
 private theorem isAdicComplete_of_module_finite [IsNoetherianRing R] [IsAdicComplete I R]
     [Module.Finite R M] : IsAdicComplete I M :=
-  haveI := IsHausdorff.of_le_jacobson I M (IsAdicComplete.le_jacobson_bot I)
+  haveI := IsHausdorff.of_le_jacobson I M (IsAdicComplete.le_jacobson I)
   haveI := isPrecomplete_of_module_finite I (M := M)
   ⟨⟩
 

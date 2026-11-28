@@ -38,7 +38,7 @@ ranks at most `2` were known).
 group $M_n = F_n / F_n''$ of rank $n$: the quotient of the free group $F_n$ on $n$ generators by
 its second derived subgroup $F_n'' = [[F_n, F_n], [F_n, F_n]]$. -/
 abbrev FreeMetabelianGroup (n : ℕ) : Type :=
-  FreeGroup (Fin n) ⧸ derivedSeries (FreeGroup (Fin n)) 2
+  FreeGroup (Fin n) ⧸ Subgroup.derivedSeries (FreeGroup (Fin n)) 2
 
 /-- **Primitive elements of the free metabelian group.** Let $F_n$ be the free group on $n$
 generators, let $F_n''$ be its second derived subgroup, and let $M_n = F_n / F_n''$ be the free

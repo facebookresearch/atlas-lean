@@ -9,7 +9,7 @@
 - [Block sums of a repetend](repetend-block-sum-eq.md)
 - [Long division of a proper fraction](long-division-remainder-expansion.md)
 - [The last repetend digit is nonzero](repetend-last-digit-ne-zero.md)
-- [A constraint on $b^2 + un$ between $2$ and $n - 2$](ne-add-one-of-sq-add-mul-mem.md)
+- [A constraint on the quotient of the square of a small base](ne-add-one-of-sq-add-mul-mem.md)
 - [Long-division remainders and small bases of prime order](long-division-remainders-erase-one-eq-sm.md)
 - [Small bases of order greater than two come in pairs](even-card-small-bases-order-of.md)
 - [Repetend digits are symmetric under inverse indices](repetend-digit-pow-mul-eq-of-mul-mod-eq.md)
@@ -40,4 +40,3 @@
 - [Column $4$ of the order-$6$ repetend table of $t p^k$ differs from columns $0$ and $5$](repetend-column-four-ne-zero-five.md)
 - [Columns $1$ to $4$ of the order-$6$ repetend table of $t p^k$ are pairwise different](repetend-columns-one-to-four-pairwise-ne.md)
 - [Repetend tables with at most three rows have no matched columns](repetend-columns-ne-of-card-le-three.md)
-- [Tail bound for sums of inverse powers](tsum-inv-pow-succ-lt.md)

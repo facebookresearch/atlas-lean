@@ -20,7 +20,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Computability.BinaryNatEncoding
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Classes
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 
@@ -36,7 +36,7 @@ open MetaMathlibExt.ComplexityTheory
 
 2-SAT is in `P`, by the implication-graph / strongly connected components algorithm. The
 instance is `(n, clauses)` with every clause of length at most 2; the question is whether some
-assignment satisfies every clause. The matrix is the canonical `Cslib.Logic.PL.CNF`.
+assignment satisfies every clause. The matrix is the canonical `Cslib.Logic.LegacyPL.CNF`.
 -/
 
 open Classical in
@@ -49,11 +49,11 @@ sends each variable $v < n$ to $a_v$ and every other variable to false. -/
 noncomputable def twoSatDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ℕ × Cslib.Logic.PL.CNF) x with
+      (α := ℕ × Cslib.Logic.LegacyPL.CNF) x with
   | some i => decide (
       (∀ clause ∈ i.2, clause.length ≤ 2 ∧ ∀ l ∈ clause, l.1 < i.1) ∧
       ∃ assign : List Bool, assign.length = i.1 ∧
-        Cslib.Logic.PL.CNF.Satisfies (fun v => assign.getD v false) i.2)
+        Cslib.Logic.LegacyPL.CNF.Satisfies (fun v => assign.getD v false) i.2)
   | none => false
 
 /-- **2-SAT is in P.** The 2-SAT decision problem lies in the complexity class P.

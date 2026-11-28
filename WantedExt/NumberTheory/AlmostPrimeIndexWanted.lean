@@ -19,8 +19,9 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.NumberTheory.AlmostPrimeIndex
 public import MathlibExt.NumberTheory.PrimeCounting.LandauAlmostPrimeAsymptotic
-public import WantedExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumWanted
+public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 
 /-!
 # Almost primes of almost prime index
@@ -51,43 +52,6 @@ open Filter Asymptotics Topology
 
 @[expose] public section
 
-/-- **Almost primes of almost prime index.** For natural numbers $k_1, \dots, k_m$ with $m \ge 1$,
-the set $N_{k_1 \cdots k_m}$ of natural numbers is defined by recursion on $m$: $N_{k_1}$ is the
-set of $k_1$-almost primes (the $n \ne 0$ with exactly $k_1$ prime factors counted with
-multiplicity), and for $m \ge 2$, $N_{k_1 \cdots k_m}$ is the set of the $i$th $k_1$-almost
-primes, in increasing order and counted from $1$, for $i \ge 1$ in $N_{k_2 \cdots k_m}$. When
-there are fewer than $i$ $k_1$-almost primes (only for $k_1 = 0$, where $1$ is the only one),
-the $i$th one is taken to be $0$.
-
-Source: Paul Kinlaw, Megan Triplett, and William Tripp, *Almost Primes of Almost Prime Index*,
-INTEGERS 24 (2024), Article A99, Section 1 (definitions of `N_k`, `N_{j,k}`, and
-`N_{k_1 ⋯ k_m}`). -/
-public def almostPrimeIndexSet (k : ℕ) : List ℕ → Set ℕ
-  | [] => {n | Nat.IsAlmostPrime k n}
-  | j :: L => {n | ∃ i ∈ almostPrimeIndexSet j L, 1 ≤ i ∧ n = Nat.nth (Nat.IsAlmostPrime k) (i - 1)}
-
-/-- **Almost prime index sets with one index.** For every natural number $k$, the almost prime
-index set $N_k$ with the single index $k$ is the set of $k$-almost primes, the natural numbers
-$n \ne 0$ with exactly $k$ prime factors counted with multiplicity.
-
-Source: Paul Kinlaw, Megan Triplett, and William Tripp, *Almost Primes of Almost Prime Index*,
-INTEGERS 24 (2024), Article A99, Section 1 (definition of `N_k`). -/
-public theorem almostPrimeIndexSet_nil (k : ℕ) :
-    almostPrimeIndexSet k [] = {n | Nat.IsAlmostPrime k n} := rfl
-
-/-- **Membership in an almost prime index set.** For natural numbers $k$, $j$, $n$ and
-$\ell_1, \dots, \ell_r$ (with $r \ge 0$), $n$ lies in the almost prime index set
-$N_{k j \ell_1 \cdots \ell_r}$ if and only if there is an $i \ge 1$ in $N_{j \ell_1 \cdots \ell_r}$
-such that $n$ is the $i$th $k$-almost prime in increasing order, counted from $1$ (taken to be $0$
-if there are fewer than $i$ of them).
-
-Source: Paul Kinlaw, Megan Triplett, and William Tripp, *Almost Primes of Almost Prime Index*,
-INTEGERS 24 (2024), Article A99, Section 1 (definition of `N_{k_1 ⋯ k_m}`). -/
-public theorem mem_almostPrimeIndexSet_cons (k j : ℕ) (L : List ℕ) (n : ℕ) :
-    n ∈ almostPrimeIndexSet k (j :: L) ↔
-      ∃ i ∈ almostPrimeIndexSet j L, 1 ≤ i ∧ n = Nat.nth (Nat.IsAlmostPrime k) (i - 1) :=
-  Iff.rfl
-
 /-- **Dusart's bounds for the $n$th prime.** For $n \ge 1$ let $p_n$ denote the $n$th prime, so
 that $p_1 = 2$, and let $\log$ be the natural logarithm. For every natural number $n \ge 2$,
 $$
@@ -112,23 +76,6 @@ public theorem_wanted nth_prime_dusart_bounds :
         (Real.log (Real.log n) - 2.25) / Real.log n) ≤ Nat.nth Nat.Prime (n - 1)) ∧
     (∀ n : ℕ, 39017 ≤ n →
       (Nat.nth Nat.Prime (n - 1) : ℝ) ≤ n * (Real.log n + Real.log (Real.log n) - 0.9484))
-
-/-- **Convergence of reciprocal sums over almost primes of almost prime index.** A $k$-almost
-prime is a positive integer with exactly $k$ prime factors counted with multiplicity. For positive
-integers $k_1, \dots, k_m$ let $N_{k_1}$ be the set of $k_1$-almost primes and, for $m \ge 2$, let
-$N_{k_1 k_2 \cdots k_m}$ be the set of $k_1$-almost primes whose index in the increasing
-enumeration of the $k_1$-almost primes (starting at $1$) lies in $N_{k_2 \cdots k_m}$. Then for
-every $m \ge 2$ and all positive integers $k_1, \dots, k_m$ the series
-$\sum_{n \in N_{k_1 k_2 \cdots k_m}} 1/n$ converges.
-
-In particular (the case $m = 2$), for all positive integers $j$ and $k$ the sum of the reciprocals
-of the $j$-almost primes of $k$-almost prime index converges.
-
-Source: Paul Kinlaw, Megan Triplett, and William Tripp, *Almost Primes of Almost Prime Index*,
-INTEGERS 24 (2024), Article A99, Theorem 5 (`integers-2024-A99-thm-5`). -/
-public theorem_wanted summable_inv_almostPrimeIndexSet {k : ℕ} {L : List ℕ} (hk : 1 ≤ k)
-    (hL : L ≠ []) (hpos : ∀ j ∈ L, 1 ≤ j) :
-    Summable fun n : almostPrimeIndexSet k L => (1 : ℝ) / n
 
 /-- **Reciprocal sum of the primes of semiprime index.** Let $N_{1,2}$ be the set of primes $p_i$
 (indexed from $p_1 = 2$) whose index $i$ is a semiprime, that is, a product of two not
@@ -466,22 +413,6 @@ public theorem_wanted tsum_inv_almostPrimeIndexSet_triple_isBigO {k₁ k₂ : �
     (hk₂ : 1 ≤ k₂) :
     (fun k : ℕ => ∑' n : almostPrimeIndexSet k₁ [k₂, k], (1 : ℝ) / n)
       =O[atTop] fun k : ℕ => Real.exp (-(k : ℝ) / 2)
-
-/-- **Reciprocal sums over iterated almost prime index sets tend to zero.** A $k$-almost prime is
-a positive integer with exactly $k$ prime factors counted with multiplicity. For positive integers
-$k_1, \dots, k_m$ let $N_{k_1}$ be the set of $k_1$-almost primes and, for $m \ge 2$, let
-$N_{k_1 k_2 \cdots k_m}$ be the set of $k_1$-almost primes whose index in the increasing
-enumeration of the $k_1$-almost primes (starting at $1$) lies in $N_{k_2 \cdots k_m}$. Fix
-$m \ge 2$ and positive integers $k_1, \dots, k_m$. Then
-$$
-\lim_{k \to \infty} \sum_{n \in N_{k_1 \cdots k_m k}} \frac{1}{n} = 0.
-$$
-
-Source: Paul Kinlaw, Megan Triplett, and William Tripp, *Almost Primes of Almost Prime Index*,
-INTEGERS 24 (2024), Article A99, Theorem 9, "in particular" clause (`integers-2024-A99-thm-9`). -/
-public theorem_wanted tendsto_tsum_inv_almostPrimeIndexSet_append_zero {k : ℕ} {ks : List ℕ}
-    (hks : ks ≠ []) (hpos : ∀ i ∈ k :: ks, 1 ≤ i) :
-    Tendsto (fun k' : ℕ => ∑' n : almostPrimeIndexSet k (ks ++ [k']), (1 : ℝ) / n) atTop (𝓝 0)
 
 end
 

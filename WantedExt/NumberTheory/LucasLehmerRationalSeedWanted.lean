@@ -9,10 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-import Mathlib.Tactic.NormNum.LegendreSymbol
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import Mathlib.NumberTheory.LucasLehmer
-public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.LucasLehmerInfiniteSeeds
+public import MathlibExt.NumberTheory.MersenneEtaCondition
+public import MathlibExt.NumberTheory.MersenneEtaConditionResidues
+public import MathlibExt.NumberTheory.OrderOfTwoMulCoprime
+public import MathlibExt.NumberTheory.PellEulerSolutions
+public import MathlibExt.NumberTheory.LucasLehmerRationalSeedExistsNotMersenneEtaConditionOfMinus
 
 /-!
 # The Lucas–Lehmer test with the rational seed `6/5`
@@ -138,202 +142,7 @@ public theorem_wanted mersenne_dvd_lehmerV_of_diophantine {n : ℕ} (hn : Odd n)
     (hrd : jacobiSym (r * d) (mersenne n) = -1) (hqr : jacobiSym (q * r) (mersenne n) = -1) :
     (mersenne n : ℤ) ∣ lehmerV (r * X ^ 2) (q * Y ^ 2) (2 ^ (n - 1))
 
-/-- **Euler's family of solutions of $aT^2 - bU^2 = c$.** Let $a$, $b$, $c$ be integers
-with $ab > 1$, $ab$ not a perfect square and $c \ne 0$, and let $T_1$, $U_1$ be integers with
-$aT_1^2 - bU_1^2 = c$. Let $\varepsilon = x_1 + y_1\sqrt{ab}$ be the fundamental solution of
-$x^2 - ab\,y^2 = 1$ and, for every natural number $j$, write
-$\varepsilon^j = x_j + y_j\sqrt{ab}$. Then for every $j \ge 0$ the integers
-$T = T_1 x_j + b U_1 y_j$ and $U = a T_1 y_j + U_1 x_j$ satisfy $aT^2 - bU^2 = c$, and different
-$j$ give different pairs $(T, U)$.
-
-The hypothesis $c \ne 0$ is added to the source statement: for $c = 0$ the only integer solution
-is $(0, 0)$, since $ab$ is not a square.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Theorem 8. -/
-public theorem_wanted pell_euler_solutions (a b c T₁ U₁ : ℤ) (hab : 1 < a * b)
-    (hsq : ¬ IsSquare (a * b)) (hc : c ≠ 0) (h₁ : a * T₁ ^ 2 - b * U₁ ^ 2 = c)
-    (ε : Pell.Solution₁ (a * b)) (hε : Pell.IsFundamental ε) :
-    (∀ j : ℕ, a * (T₁ * (ε ^ j).x + b * U₁ * (ε ^ j).y) ^ 2 -
-        b * (a * T₁ * (ε ^ j).y + U₁ * (ε ^ j).x) ^ 2 = c) ∧
-      Function.Injective fun j : ℕ =>
-        (T₁ * (ε ^ j).x + b * U₁ * (ε ^ j).y, a * T₁ * (ε ^ j).y + U₁ * (ε ^ j).x)
-
 /-! ### Squarefree parts, the order of `2`, and condition (etar) -/
-
-/-- **Odd squarefree part.** For an integer $N$ and a natural number $k$, $k$ is an odd
-squarefree part of $N$, written $N^* = k$, when $k$ is odd and squarefree and $N = 2^a m^2 k$
-for some natural number $a$ and some integer $m$.
-
-For positive $N$ such a $k$ is unique: it is the squarefree part of $N$ when that is odd, and
-half of it otherwise.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (definition of `N^*`). -/
-def IsOddSquarefreePart (N : ℤ) (k : ℕ) : Prop :=
-  Odd k ∧ Squarefree k ∧ ∃ a : ℕ, ∃ m : ℤ, N = 2 ^ a * m ^ 2 * k
-
-/-- **The odd squarefree part of $360$.** The number $5$ is the odd squarefree part of $360$:
-$5$ is odd and squarefree, and $360 = 2^a m^2 \cdot 5$ for some natural number $a$ and some
-integer $m$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example
-`10 = sqf(360)`). -/
-theorem isOddSquarefreePart_360 : IsOddSquarefreePart 360 5 :=
-  ⟨by decide, Nat.prime_five.prime.squarefree, 1, 6, by norm_num⟩
-
-/-- **The order $\Omega(m)$ of $2$, doubled when odd.** For a natural number $m$, let $\omega(m)$
-be the multiplicative order of $2$ modulo $m$, taken to be $0$ when no positive power of $2$ is
-congruent to $1$ modulo $m$ (that is, when $m$ is even). Then $\Omega(m) = 2\omega(m)$ if
-$\omega(m)$ is odd, and $\Omega(m) = \omega(m)$ otherwise.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (definitions of `ω(m)` and
-`Ω(m)`). -/
-noncomputable def mersenneOmega (m : ℕ) : ℕ :=
-  if Odd (orderOf (2 : ZMod m)) then 2 * orderOf (2 : ZMod m) else orderOf (2 : ZMod m)
-
-/-- **$\Omega$ for the seed $37$.** We have $\Omega(1365) = 12$, where $\Omega(m)$ is the
-multiplicative order of $2$ modulo $m$, doubled when that order is odd. Here $1365 = 35 \cdot 39$
-is the product of the odd squarefree parts $35$ of $37 - 2$ and $39$ of $37 + 2$, the parts
-$s_1^-$ and $s_1^+$ for the seed $s_1 = 37$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example `s_1 = 37`). -/
-theorem mersenneOmega_1365 : mersenneOmega 1365 = 12 := by
-  have h : orderOf (2 : ZMod 1365) = 12 := by
-    rw [orderOf_eq_iff (by norm_num)]
-    refine ⟨by decide, fun m hm hm0 => ?_⟩
-    interval_cases m <;> decide
-  rw [mersenneOmega, h]
-  decide
-
-/-- **Condition (etar) on Jacobi symbols of $M_n$.** Let $s^-$, $s^+$ and $n$ be natural
-numbers and let $M_n = 2^n - 1$. For a natural number $s$ write $\left(\frac{M_n}{s}\right)$ for
-the Jacobi symbol, the product of the Legendre symbols $\left(\frac{M_n}{p}\right)$ over the
-prime factors $p$ of $s$ counted with multiplicity (so it is $1$ for $s = 0$ and $s = 1$).
-Condition (etar) holds for $s^-$, $s^+$ and $n$ when $s^- = 1$ or
-$\left(\frac{M_n}{s^-}\right) = (-1)^{(s^- - 1)/2}$, and moreover
-$\left(\frac{M_n}{s^+}\right) = (-1)^{(s^+ + 1)/2}$. Here the exponents are rounded down, and
-$s^- - 1$ is read as $0$ when $s^- = 0$.
-
-In the source, $s^-$ and $s^+$ are the odd squarefree parts $s_1^-$ and $s_1^+$ of $s_1 - 2$
-and $s_1 + 2$ for a seed $s_1$. For squarefree $s$ the Jacobi symbol $\left(\frac{M_n}{s}\right)$
-is the product of $\eta_n(p) = \left(\frac{M_n}{p}\right)$ over the primes $p$ dividing $s$,
-which is how the source states the condition.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7, condition (etar). -/
-def MersenneEtaCondition (sm sp n : ℕ) : Prop :=
-  (sm = 1 ∨ jacobiSym (mersenne n) sm = (-1) ^ ((sm - 1) / 2)) ∧
-    jacobiSym (mersenne n) sp = (-1) ^ ((sp + 1) / 2)
-
-/-- **Condition (etar) for the seed $37$.** For the seed $s_1 = 37$, the odd squarefree parts of
-$s_1 - 2 = 35$ and $s_1 + 2 = 39$ are $s_1^- = 35$ and $s_1^+ = 39$. Condition (etar) for
-$s_1^- = 35$ and $s_1^+ = 39$ holds for $n = 7$ and fails for $n = 1$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example `s_1 = 37`,
-`𝒜(37) = {7}`). -/
-theorem mersenneEtaCondition_37 :
-    MersenneEtaCondition 35 39 7 ∧ ¬ MersenneEtaCondition 35 39 1 := by
-  norm_num [MersenneEtaCondition, mersenne]
-
-/-- **Infinitely many acceptable seeds with the same odd squarefree parts.** Let $n \ge 3$ be a
-natural number and $M_n = 2^n - 1$. For an integer $S$ put $S_1 = S$ and $S_{k+1} = S_k^2 - 2$,
-and call $S$ an acceptable seed for $M_n$ if $M_n$ is prime exactly when $M_n$ divides
-$S_{n-1}$. Let $s_1 \ge 3$ be an integer that is an acceptable seed for $M_n$, and let $s_1^-$
-and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$. Then there are infinitely
-many integers $S \ge 3$ that are acceptable seeds for $M_n$ and for which $s_1^-$ and $s_1^+$
-are the odd squarefree parts of $S - 2$ and $S + 2$.
-
-Seeds are taken $\ge 3$ (the paper's seeds are nonnegative, and the odd squarefree part of
-$S - 2$ needs $S - 2 > 0$).
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Theorem 10. -/
-public theorem_wanted infinite_acceptableSeeds_same_parts {n : ℕ} (h3 : 3 ≤ n) (s₁ : ℤ)
-    (hs₁ : 3 ≤ s₁) (sm sp : ℕ) (hsm : IsOddSquarefreePart (s₁ - 2) sm)
-    (hsp : IsOddSquarefreePart (s₁ + 2) sp)
-    (hacc : (mersenne n).Prime ↔
-      (mersenne n : ℤ) ∣ (fun x : ℤ => x ^ 2 - 2)^[n - 2] s₁) :
-    {S : ℤ | 3 ≤ S ∧ IsOddSquarefreePart (S - 2) sm ∧ IsOddSquarefreePart (S + 2) sp ∧
-      ((mersenne n).Prime ↔ (mersenne n : ℤ) ∣ (fun x : ℤ => x ^ 2 - 2)^[n - 2] S)}.Infinite
-
-/-- **A zero Legendre symbol forces $\gcd(n, \Omega) > 1$.** Let $s_1 \ge 3$ be an integer, let
-$s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$, and let
-$\Omega = \Omega(s_1^- s_1^+)$. Let $p$ be a prime dividing $s_1^- s_1^+$, let $n$ be a natural
-number and let $M_n = 2^n - 1$. If the Legendre symbol $\left(\frac{M_n}{p}\right)$ is $0$, then
-$\gcd(n, \Omega) > 1$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Proposition 12. -/
-public theorem_wanted one_lt_gcd_mersenneOmega_of_legendreSym_eq_zero (s₁ : ℤ) (hs₁ : 3 ≤ s₁)
-    (sm sp : ℕ) (hsm : IsOddSquarefreePart (s₁ - 2) sm) (hsp : IsOddSquarefreePart (s₁ + 2) sp)
-    (p : ℕ) [Fact p.Prime] (hp : p ∣ sm * sp) (n : ℕ)
-    (h : legendreSym p (mersenne n) = 0) :
-    1 < Nat.gcd n (mersenneOmega (sm * sp))
-
-/-- **Condition (etar) fails for some reduced residue when $s_1^- \equiv 3 \pmod 4$.** Let
-$s_1 \ge 3$ be an integer, let $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and
-$s_1 + 2$, and let $\Omega = \Omega(s_1^- s_1^+)$ be the order of $2$ modulo $s_1^- s_1^+$,
-doubled when it is odd. If $s_1^- \equiv 3 \pmod 4$, then there is a natural number $n$ with
-$1 \le n < \Omega$ and $\gcd(n, \Omega) = 1$ for which condition (etar) for $s_1^-$, $s_1^+$
-and $n$ fails.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Lemma 13. -/
-public theorem_wanted exists_not_mersenneEtaCondition_of_minus (s₁ : ℤ) (hs₁ : 3 ≤ s₁)
-    (sm sp : ℕ) (hsm : IsOddSquarefreePart (s₁ - 2) sm) (hsp : IsOddSquarefreePart (s₁ + 2) sp)
-    (h4 : sm % 4 = 3) :
-    ∃ n, 1 ≤ n ∧ n < mersenneOmega (sm * sp) ∧ n.Coprime (mersenneOmega (sm * sp)) ∧
-      ¬ MersenneEtaCondition sm sp n
-
-/-- **Condition (etar) fails for some reduced residue when $s_1^+ \equiv 1 \pmod 4$.** Let
-$s_1 \ge 3$ be an integer, let $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and
-$s_1 + 2$, and let $\Omega = \Omega(s_1^- s_1^+)$ be the order of $2$ modulo $s_1^- s_1^+$,
-doubled when it is odd. If $s_1^+ \equiv 1 \pmod 4$, then there is a natural number $n$ with
-$1 \le n < \Omega$ and $\gcd(n, \Omega) = 1$ for which condition (etar) for $s_1^-$, $s_1^+$
-and $n$ fails.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Lemma 14. -/
-public theorem_wanted exists_not_mersenneEtaCondition_of_plus (s₁ : ℤ) (hs₁ : 3 ≤ s₁)
-    (sm sp : ℕ) (hsm : IsOddSquarefreePart (s₁ - 2) sm) (hsp : IsOddSquarefreePart (s₁ + 2) sp)
-    (h4 : sp % 4 = 1) :
-    ∃ n, 1 ≤ n ∧ n < mersenneOmega (sm * sp) ∧ n.Coprime (mersenneOmega (sm * sp)) ∧
-      ¬ MersenneEtaCondition sm sp n
-
-/-- **Residues mod $4$ of $s_1^-$ and $s_1^+$ when (etar) always holds.** Let $s_1 \ge 3$ be an
-integer, let $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$, and let
-$\Omega = \Omega(s_1^- s_1^+)$. If the number of integers $n$ with $1 \le n < \Omega$ and
-$\gcd(n, \Omega) = 1$ for which condition (etar) holds for $s_1^-$, $s_1^+$ and $n$ equals
-$\varphi(\Omega)$, then $s_1^- \equiv 1 \pmod 4$ and $s_1^+ \equiv 3 \pmod 4$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Theorem 15. -/
-public theorem_wanted minus_mod_four_of_mersenneEtaCondition_all (s₁ : ℤ) (hs₁ : 3 ≤ s₁)
-    (sm sp : ℕ) (hsm : IsOddSquarefreePart (s₁ - 2) sm) (hsp : IsOddSquarefreePart (s₁ + 2) sp)
-    (hq : {n | n ∈ Finset.Ico 1 (mersenneOmega (sm * sp)) ∧
-        n.Coprime (mersenneOmega (sm * sp)) ∧ MersenneEtaCondition sm sp n}.ncard =
-      Nat.totient (mersenneOmega (sm * sp))) :
-    sm % 4 = 1 ∧ sp % 4 = 3
-
-/-- **Condition (etar) fails for some reduced residue when the seed is odd.** Let $s_1 \ge 3$ be
-an odd integer, let $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$,
-and let $\Omega = \Omega(s_1^- s_1^+)$. Then the number of integers $n$ with $1 \le n < \Omega$
-and $\gcd(n, \Omega) = 1$ for which condition (etar) holds for $s_1^-$, $s_1^+$ and $n$ is not
-equal to $\varphi(\Omega)$.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Corollary 16. -/
-public theorem_wanted mersenneEtaCondition_not_all_of_odd (s₁ : ℤ) (hs₁ : 3 ≤ s₁)
-    (hodd : Odd s₁) (sm sp : ℕ) (hsm : IsOddSquarefreePart (s₁ - 2) sm)
-    (hsp : IsOddSquarefreePart (s₁ + 2) sp) :
-    {n | n ∈ Finset.Ico 1 (mersenneOmega (sm * sp)) ∧
-        n.Coprime (mersenneOmega (sm * sp)) ∧ MersenneEtaCondition sm sp n}.ncard ≠
-      Nat.totient (mersenneOmega (sm * sp))
 
 end
 

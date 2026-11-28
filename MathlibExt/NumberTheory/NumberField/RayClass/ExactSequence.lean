@@ -24,8 +24,8 @@ Source (immutable, ATLAS NumberTheoryI N406 at commit
 (`mk0` bridge through ray-class projection surjectivity).
 
 Source-to-API map:
-- Lemma 21.7 at lines 958--1010 is reused via the stronger existing
-  formal-math theorem `ClassGroup.exists_mk0_eq_and_isCoprime`, which subsumes
+- Lemma 21.7 at lines 958--1010 is reused via Mathlib's stronger
+  `ClassGroup.exists_mk0_eq_and_isCoprime`, which subsumes
   it: every ideal class has an integral representative coprime to any
   prescribed nonzero ideal;
 - ATLAS lines 1431--1465 to `fractionalIdealMk0_mem_coprimeFractionalIdeals`
@@ -83,7 +83,7 @@ theorem fractionalIdealMk0_mem_coprimeFractionalIdeals
       sup_le (Ideal.dvd_iff_le.mp hdvd) hv'
     rw [hsup] at hle
     exact v.isPrime.ne_top (top_le_iff.mp hle)
-  rw [FractionalIdeal.coe_mk0, FractionalIdeal.count_coe K v hI0]
+  rw [FractionalIdeal.coe_mk0, FractionalIdeal.count_coeIdeal K v hI0]
   have hcount : (Associates.mk v.asIdeal).count
       (Associates.mk (I : Ideal (𝓞 K))).factors = 0 := by
     by_contra hne
@@ -102,10 +102,10 @@ Source: ATLAS lines 1466--1476; Lemma 21.7 at lines 958--1010 is reused via the 
 theorem coprimeIdealClassMap_surjective (m : Modulus K) :
     Function.Surjective (coprimeIdealClassMap m) := by
   intro c
-  obtain ⟨J, hJne, hJclass, hJcop⟩ :=
-    ClassGroup.exists_mk0_eq_and_isCoprime c
-      (m.finitePart : Ideal (𝓞 K))
+  obtain ⟨⟨J, hJmem⟩, hJclass, hJcop⟩ :=
+    ClassGroup.exists_mk0_eq_and_isCoprime c (J := (m.finitePart : Ideal (𝓞 K)))
       (mem_nonZeroDivisors_iff_ne_zero.mp m.finitePart.property)
+  have hJne : J ≠ ⊥ := mem_nonZeroDivisors_iff_ne_zero.mp hJmem
   have hJne0 : J ≠ 0 := by simpa using hJne
   let I : nonZeroDivisors (Ideal (𝓞 K)) :=
     ⟨J, mem_nonZeroDivisors_iff_ne_zero.mpr hJne0⟩

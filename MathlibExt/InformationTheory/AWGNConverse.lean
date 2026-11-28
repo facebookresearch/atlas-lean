@@ -124,7 +124,7 @@ theorem measureMutualInformation_scalarAWGN_le_variance {Ω : Type*} {mΩ : Meas
         (!![1] : Matrix (Fin 1) (Fin 1) ℝ)ᵀ = !![N + variance X μ] := by
       ext i j
       rw [Fin.eq_zero i, Fin.eq_zero j]
-      simp [Matrix.vecMul, dotProduct]
+      simp [Matrix.vecMul, dotProduct, -Matrix.transpose_of]
     rw [hm, Matrix.det_fin_one_of, Matrix.det_fin_one_of]
     field_simp
   rw [hdet] at hMI

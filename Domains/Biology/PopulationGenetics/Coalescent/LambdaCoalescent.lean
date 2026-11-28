@@ -60,8 +60,8 @@ This file is about these rates; it does not construct the partition-valued proce
 * `eq_of_mergerRate_eq`: `Λ` is determined by its rates (indeed by the `λ_{k,k}`, which are
   the moments of `Λ`): the uniqueness half of Pitman's representation theorem. The existence
   half (every consistent family of nonnegative rates comes from some `Λ`, a Hausdorff moment
-  problem) is recorded as wanted in
-  `WantedExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescentWanted`.
+  problem) is proved in
+  `MathlibExt.MeasureTheory.Measure.UnitIntervalMomentRepresentation`.
 
 ## References
 
@@ -110,11 +110,13 @@ def blockCountingGenerator [IsFiniteMeasure Λ] (n : ℕ) :
 
 variable [IsFiniteMeasure Λ]
 
-/-- On valid indices Pitman's rate is the mixed moment of orders `k - 2` and `b - k`. -/
+/-- For `2 ≤ k ≤ b` (the valid indices), Pitman's rate is the mixed moment of orders `k - 2` and
+`b - k`. -/
 theorem mergerRate_eq_unitIntervalMoment {b k : ℕ} (hk : 2 ≤ k) (hkb : k ≤ b) :
     mergerRate Λ b k = unitIntervalMoment Λ (k - 2) (b - k) := ite_eq_left ⟨hk, hkb⟩
 
-/-- The merger rate inside its domain. -/
+/-- The merger rate inside its domain `2 ≤ k ≤ b`, with natural powers and `0 ^ 0 = 1`: an atom
+of `Λ` at `0` contributes only for `k = 2`, and an atom at `1` only for `k = b`. -/
 theorem mergerRate_of_le {b k : ℕ} (hk : 2 ≤ k) (hkb : k ≤ b) :
     mergerRate Λ b k = ∫ x, (x : ℝ) ^ (k - 2) * (1 - (x : ℝ)) ^ (b - k) ∂Λ :=
   mergerRate_eq_unitIntervalMoment Λ hk hkb

@@ -256,7 +256,7 @@ lemma complete_not_mem_of_oxygen_lt {n₀ : Species → ℝ} (hO2 : n₀ .O2 < 2
   simp only [methaneCombustion] at hO2'
   linarith
 
-/-- With oxygen at most twice the methane, oxygen is a limiting reagent. -/
+/-- From nonnegative amounts with oxygen at most twice the methane, oxygen is a limiting reagent. -/
 lemma isLimitingReagent_O2 {n₀ : Species → ℝ} (hn₀ : ∀ i, 0 ≤ n₀ i)
     (hO2 : n₀ .O2 ≤ 2 * n₀ .CH4) : IsLimitingReagent methaneCombustion n₀ .O2 := by
   have hO2neg : methaneCombustion .O2 < 0 := by norm_num [methaneCombustion]
@@ -271,8 +271,9 @@ lemma isLimitingReagent_O2 {n₀ : Species → ℝ} (hn₀ : ∀ i, 0 ≤ n₀ i
   · norm_num [methaneCombustion] at hj
   · norm_num [methaneCombustion] at hj
 
-/-- In the oxygen-limited case a partial extent remains feasible: the maximal forward extent is
-`n_O2 / 2`, it is feasible, and it is below the complete-combustion extent `n_CH4`. -/
+/-- In the oxygen-limited case, from nonnegative amounts, a partial extent remains feasible: the
+maximal forward extent is `n_O2 / 2`, it is feasible, and it is below the complete-combustion extent
+`n_CH4`. -/
 lemma oxygen_limited_maxExtent {n₀ : Species → ℝ} (hn₀ : ∀ i, 0 ≤ n₀ i)
     (hO2 : n₀ .O2 < 2 * n₀ .CH4) :
     maxExtent methaneCombustion n₀ methaneCombustion_consumes = n₀ .O2 / 2 ∧
@@ -312,7 +313,8 @@ def totalHeatCapacity {ι : Type*} [Fintype ι] (cp : ι → ℝ → ℝ) (nP : 
 def heatRelease {ι : Type*} [Fintype ι] (H : ι → ℝ → ℝ) (ν : ι → ℝ) (ξ Tin : ℝ) : ℝ :=
   -(ξ * reactionEnthalpy (fun i => H i Tin) ν)
 
-/-- The temperature derivative of the residual is the total heat capacity of the products. -/
+/-- If every `H j` has derivative `cp j T` at `T`, the temperature derivative of the residual is the
+total heat capacity of the products. -/
 lemma hasDerivAt_enthalpyResidual {ι : Type*} [Fintype ι] {H cp : ι → ℝ → ℝ} {nR nP : ι → ℝ}
     {Tin T : ℝ} (hH : ∀ j, HasDerivAt (H j) (cp j T) T) :
     HasDerivAt (enthalpyResidual H nR nP Tin) (totalHeatCapacity cp nP T) T := by
@@ -322,7 +324,8 @@ lemma hasDerivAt_enthalpyResidual {ι : Type*} [Fintype ι] {H cp : ι → ℝ �
   exact hsum.sub_const _
 
 /-- Kirchhoff form of the residual: between two temperatures where every `H j` has derivative
-`cp j`, the residual grows by the integral of the total heat capacity. -/
+`cp j`, and with the total heat capacity interval-integrable, the residual grows by the integral of
+the total heat capacity. -/
 lemma enthalpyResidual_eq_add_integral {ι : Type*} [Fintype ι] {H cp : ι → ℝ → ℝ}
     {nR nP : ι → ℝ} {Tin T₁ T₂ : ℝ}
     (hH : ∀ T ∈ Set.uIcc T₁ T₂, ∀ j, HasDerivAt (H j) (cp j T) T)
@@ -415,8 +418,9 @@ lemma totalHeatCapacity_pos {ι : Type*} [Fintype ι] {cp : ι → ℝ → ℝ} 
   · exact ⟨j₀, Finset.mem_univ j₀, mul_pos hj₀ (hcp j₀)⟩
 
 /-- Feasible products have positive total heat capacity: from nonnegative initial amounts, a
-feasible positive extent `ξ` of a reaction that produces the species `j₀` leaves nonnegative
-amounts with a positive amount of `j₀`. -/
+feasible positive extent `ξ` of a reaction that produces the species `j₀` leaves nonnegative amounts
+with a positive amount of `j₀`, so with positive molar heat capacities `cp j T` their total heat
+capacity is positive. -/
 lemma totalHeatCapacity_pos_of_mem_forwardFeasibleExtents {ι : Type*} [Fintype ι]
     {cp : ι → ℝ → ℝ} {n₀ ν : ι → ℝ} {ξ T : ℝ} (hn₀ : ∀ i, 0 ≤ n₀ i)
     (hξ : ξ ∈ forwardFeasibleExtents ν n₀) (hξpos : 0 < ξ) {j₀ : ι} (hj₀ : 0 < ν j₀)
@@ -457,9 +461,9 @@ lemma strictMonoOn_enthalpyResidual {ι : Type*} [Fintype ι] {H cp : ι → ℝ
   rw [h.deriv]
   exact hC x hxIcc
 
-/-- The unique adiabatic temperature: with `Tlo < Thi`, positive total heat capacity on
-`[Tlo, Thi]` and the sign change `R(Tlo) ≤ 0 ≤ R(Thi)`, the residual has exactly one root in
-`[Tlo, Thi]`. -/
+/-- The unique adiabatic temperature: with `Tlo < Thi`, every `H j` having derivative `cp j` on
+`[Tlo, Thi]`, positive total heat capacity on `[Tlo, Thi]` and the sign change
+`R(Tlo) ≤ 0 ≤ R(Thi)`, the residual has exactly one root in `[Tlo, Thi]`. -/
 lemma existsUnique_adiabaticTemperature {ι : Type*} [Fintype ι] {H cp : ι → ℝ → ℝ}
     {nR nP : ι → ℝ} {Tin Tlo Thi : ℝ} (hlt : Tlo < Thi)
     (hH : ∀ T ∈ Set.Icc Tlo Thi, ∀ j, HasDerivAt (H j) (cp j T) T)
@@ -474,11 +478,10 @@ lemma existsUnique_adiabaticTemperature {ι : Type*} [Fintype ι] {H cp : ι →
   obtain ⟨c, hc, hcz⟩ := intermediate_value_Icc (le_of_lt hlt) hcont ⟨hlo, hhi⟩
   exact ⟨c, ⟨hc, hcz⟩, fun y hy => hmono.injOn hy.1 hc (hy.2.trans hcz.symm)⟩
 
-/-- The adiabatic temperature of the methane product model: from nonnegative reactant amounts
-`n₀` and a feasible positive extent `ξ` of complete methane combustion, with molar heat
-capacities `cp j > 0` and `H j` differentiable on `[Tlo, Thi]` and a sign change of the residual,
-the products `n₀ + ξ • methaneCombustion` have exactly one adiabatic temperature in
-`[Tlo, Thi]`. -/
+/-- The adiabatic temperature of the methane product model: from nonnegative reactant amounts `n₀`
+and a feasible positive extent `ξ` of complete methane combustion, with `Tlo < Thi`, `H j` having
+derivative `cp j > 0` on `[Tlo, Thi]` and the sign change `R(Tlo) ≤ 0 ≤ R(Thi)` of the residual, the
+products `n₀ + ξ • methaneCombustion` have exactly one adiabatic temperature in `[Tlo, Thi]`. -/
 lemma existsUnique_adiabaticTemperature_methane {H cp : Species → ℝ → ℝ} {n₀ : Species → ℝ}
     {ξ Tin Tlo Thi : ℝ} (hn₀ : ∀ i, 0 ≤ n₀ i)
     (hξ : ξ ∈ forwardFeasibleExtents methaneCombustion n₀) (hξpos : 0 < ξ) (hlt : Tlo < Thi)

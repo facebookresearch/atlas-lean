@@ -2,7 +2,8 @@
 
 Let $n$ and $i$ be natural numbers
 such that the binary digit $n_i$ of $n$ (the coefficient of $2^i$ in the binary expansion of
-$n$) equals $1$. Then the level count of D-nodes is $\lambda_i(n) = 2^i - (n \bmod 2^i)$.
+$n$) equals $1$. Then $\lambda_i(n) = 2^i - (n \bmod 2^i)$. For $n > 0$ and
+$i < \lfloor \log_2 n \rfloor$, this is the number of D-nodes on level $i$.
 
 ## Sources
 

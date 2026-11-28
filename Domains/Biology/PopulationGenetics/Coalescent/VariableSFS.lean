@@ -55,8 +55,8 @@ identifiability theorem is stated for `(c_2, …, c_n)`. The bound `n ≥ 2K` is
 2014, Corollary 7). Consequently, for every `n` there are two bounded measurable histories,
 different on a set of positive measure, with the same `c_2, …, c_n`. The
 Myers–Fefferman–Patterson theorem (one pair with the same `c_m` for every `m`, which needs a
-Müntz-type construction) is recorded in
-`WantedExt/Biology/PopulationGenetics/Coalescent/VariableSFSWanted.lean`.
+Müntz-type construction) is proved in
+`Domains/Biology/PopulationGenetics/Coalescent/VariableSFSExistsNeAeFirstCoalMeanEq.lean`.
 
 ## Main results
 
@@ -384,7 +384,12 @@ this is Lean's junk value `0`; for piecewise-constant histories it is integrable
 def firstCoalMean (η : ℝ → ℝ) (m : ℕ) : ℝ :=
   meanWaitingTime (fun t => (η t)⁻¹) (m.choose 2)
 
-/-- The survival integral for the sample's pair count and cumulative coalescence intensity. -/
+/-- The survival integral for the sample's pair count and cumulative coalescence intensity:
+`c_m = ∫_{s > 0} exp(-C(m,2) R(s)) ds` with `R = cumRate η`, where `(η r)⁻¹ = 0` if `η r = 0`
+and the integral of a non-integrable function is `0` (so `c_0 = c_1 = 0`). The identity is
+unconditional. For example, when `m ≥ 2`, `η` is positive and `1/η` is locally integrable, the
+integrand is the model survival function: if it is integrable, `c_m` is the expected waiting
+time; if the mean is infinite, the formula gives `0` (as for `η = exp`, `m = 2`). -/
 theorem firstCoalMean_eq_integral (η : ℝ → ℝ) (m : ℕ) :
     firstCoalMean η m = ∫ s in Set.Ioi 0, Real.exp (-((m.choose 2 : ℕ) : ℝ) * cumRate η s) := rfl
 
@@ -1055,7 +1060,7 @@ positive measure in `[0, ∞)`, with the same `c_m` for `2 ≤ m ≤ n` (two `(n
 histories from `PiecewiseHistory.exists_ne_firstCoalMean_eq_of_lt`, extended to `s < 0` by
 their size at `0`). This is the finite-sample shape of the statement of Myers, Fefferman &
 Patterson (2008); their theorem, one pair of functions with equal `c_m` for **every** `m`, is
-not proved here (it is `VariableSFSWanted.exists_ne_ae_firstCoalMean_eq`). -/
+proved in `VariableSFSExistsNeAeFirstCoalMeanEq` (`VariableSFSWanted.exists_ne_ae_firstCoalMean_eq`). -/
 theorem exists_ne_ae_firstCoalMean_eq_Icc (n : ℕ) :
     ∃ η₁ η₂ : ℝ → ℝ, Measurable η₁ ∧ Measurable η₂ ∧
       (∃ a b : ℝ, 0 < a ∧ ∀ s, a ≤ η₁ s ∧ η₁ s ≤ b ∧ a ≤ η₂ s ∧ η₂ s ≤ b) ∧

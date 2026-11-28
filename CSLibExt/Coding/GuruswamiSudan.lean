@@ -279,7 +279,7 @@ theorem exists_interpolant {n : ℕ} (α y : Fin n → F) (w D r : ℕ)
     have hterm : ∀ m : M,
         ((c m • v m).coeff j).coeff i = if m.1 = (i, j) then c m else 0 := by
       intro m
-      simp only [v, coeff_smul, coeff_C_mul_X_pow]
+      simp only [v, AddMonoidAlgebra.coeff_smul_apply, coeff_C_mul_X_pow]
       by_cases h : m.1 = (i, j)
       · rw [ite_eq_left h]; obtain ⟨⟨u, w'⟩, hm⟩ := m; simp only [Prod.mk.injEq] at h
         obtain ⟨rfl, rfl⟩ := h; simp

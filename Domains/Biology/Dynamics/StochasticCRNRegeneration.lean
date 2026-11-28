@@ -102,8 +102,8 @@ For stochastic reaction networks:
 
 Two lemmas are verbatim copies of private lemmas: `tendsto_div_of_eq_add_sum'` of
 `StochasticCRNErgodicity.tendsto_div_of_eq_add_sum`, and `propensity_eq_zero_of_not_le` of
-`SystemsBiology.propensity_eq_zero`. A recorded follow-up of T223 makes those two originals public
-and deletes the copies. The step-sequence lemmas (`ProbabilityTheory.measurable_ctmcShift`,
+`SystemsBiology.propensity_eq_zero`. Making those two originals public would let the copies be
+deleted. The step-sequence lemmas (`ProbabilityTheory.measurable_ctmcShift`,
 `ProbabilityTheory.ctmc_indep_infinitePi`, `ProbabilityTheory.ctmc_map_shift_infinitePi`) are
 used from `ContinuousTimeMarkovChain/Path.lean`.
 
@@ -137,8 +137,10 @@ variable {σ : Type*}
 def IsStepStoppingTime (τ : (ℕ → (σ → σ) × ℝ) → ℕ∞) : Prop :=
   ∀ (n : ℕ) (ω ω' : ℕ → (σ → σ) × ℝ), τ ω = n → (∀ i < n, ω i = ω' i) → τ ω' = n
 
-/-- The set `C` is **determined before** `τ`: on `{τ = n}`, membership in `C` depends only on the
-first `n` steps. -/
+/-- The set `C` is **determined before** `τ`: if `τ ω = n`, `ω ∈ C` and `ω'` agrees with `ω` in
+the first `n` steps, then `ω' ∈ C`, whatever `τ ω'` is; nothing is asked where `τ ω = ⊤`. For a
+stopping time `τ`, this says that membership in `C ∩ {τ = n}` depends only on the first `n`
+steps. -/
 def IsDeterminedBefore (τ : (ℕ → (σ → σ) × ℝ) → ℕ∞) (C : Set (ℕ → (σ → σ) × ℝ)) : Prop :=
   ∀ (n : ℕ) (ω ω' : ℕ → (σ → σ) × ℝ), τ ω = n → (∀ i < n, ω i = ω' i) → ω ∈ C → ω' ∈ C
 
@@ -186,17 +188,19 @@ theorem measurable_ctmcShift_pi (n : ℕ) : Measurable (ctmcShift (ι := σ) n) 
 
 variable (ν : Measure ((σ → σ) × ℝ)) [IsProbabilityMeasure ν]
 
-/-- The level sets of a measurable stopping time are measurable. -/
+/-- For a measurable random time `τ`, with no stopping-time property needed, the steps after `τ`
+form a measurable map `ω ↦ shiftAt τ ω` (product σ-algebras on both sides). -/
 theorem measurable_shiftAt {τ : (ℕ → (σ → σ) × ℝ) → ℕ∞} (hτ : Measurable τ) :
     Measurable (shiftAt τ) := by
   have h : Measurable fun p : ℕ × (ℕ → (σ → σ) × ℝ) => ctmcShift p.1 p.2 :=
     measurable_from_prod_countable_right fun n => measurable_ctmcShift_pi n
   exact h.comp (((measurable_of_countable ENat.toNat).comp hτ).prodMk measurable_id)
 
-/-- **Strong Markov property of an i.i.d. step sequence.** For a stopping time `τ` and a
-set `C` determined before `τ`, on `{τ < ⊤}` the steps after `τ` are independent of `C` and have
-the law of the whole sequence:
-`P(τ < ⊤, C, shift_τ ∈ B) = P(τ < ⊤, C) P(B)`. -/
+/-- **Strong Markov property of an i.i.d. step sequence.** Let `P` be the product of copies of a
+probability measure `ν` on the steps. For a measurable stopping time `τ`, a measurable set `C`
+determined before `τ` and a measurable set `B`,
+`P(τ < ⊤, C, shift_τ ∈ B) = P(τ < ⊤, C) P(B)`. So, when `P(τ < ⊤) > 0`, under `P` conditioned on
+`{τ < ⊤}` the steps after `τ` are independent of `C` and have the law of the whole sequence. -/
 theorem measure_inter_shiftAt_preimage {τ : (ℕ → (σ → σ) × ℝ) → ℕ∞}
     (hτ : IsStepStoppingTime τ) (hτm : Measurable τ) {C : Set (ℕ → (σ → σ) × ℝ)}
     (hC : MeasurableSet C) (hCd : IsDeterminedBefore τ C) {B : Set (ℕ → (σ → σ) × ℝ)}
@@ -250,8 +254,11 @@ theorem measure_inter_shiftAt_preimage {τ : (ℕ → (σ → σ) × ℝ) → �
     (hlev n).inter hC, ← ENNReal.tsum_mul_right]
   exact tsum_congr fun n => by rw [hpiece, hmul]
 
-/-- **Strong Markov property, almost surely finite stopping time**: the steps after `τ` have the
-law of the whole sequence and are independent of every measurable map determined before `τ`. -/
+/-- **Strong Markov property at an almost surely finite stopping time**: let `P` be the product of
+copies of a probability measure `ν` on the steps, `τ` a measurable stopping time with
+`P(τ = ⊤) = 0` and `G` a measurable map determined before `τ`. Then `(G, shift_τ)` has law
+`law(G) ⊗ P`: the steps after `τ` have the law of the whole sequence and are independent of
+`G`. -/
 theorem map_prod_shiftAt {τ : (ℕ → (σ → σ) × ℝ) → ℕ∞} (hτ : IsStepStoppingTime τ)
     (hτm : Measurable τ) (hfin : (Measure.infinitePi fun _ : ℕ => ν) {ω | τ ω = ⊤} = 0)
     {β : Type*} [MeasurableSpace β] {G : (ℕ → (σ → σ) × ℝ) → β} (hG : Measurable G)
@@ -265,7 +272,7 @@ theorem map_prod_shiftAt {τ : (ℕ → (σ → σ) × ℝ) → ℕ∞} (hτ : I
     have : ∀ᵐ ω ∂μ, τ ω ≠ ⊤ := by
       rw [ae_iff]; simpa using hfin
     filter_upwards [this] with ω hω
-    change (ω ∈ {ω | τ ω ≠ ⊤} ∩ D) = (ω ∈ D)
+    change ω ∈ {ω | τ ω ≠ ⊤} ∩ D ↔ ω ∈ D
     simp [hω]
   refine (Measure.prod_eq fun s t hs ht => ?_).symm
   rw [Measure.map_apply (hG.prodMk (measurable_shiftAt hτm)) (hs.prod ht),
@@ -434,7 +441,8 @@ theorem visit_self_one_ne_top_iff {x₀ : σ} {ω : ℕ → (σ → σ) × ℝ} 
     rw [hm]
     exact ENat.natCast_ne_top m
 
-/-- Within the first excursion from `x₀`, only step `0` is at `x₀`. -/
+/-- Within a finite first excursion from `x₀`, only step `0` is at `x₀`: if the first return is
+at step `m`, the chain started at `x₀` is not at `x₀` at any step `i` with `0 < i < m`. -/
 theorem ctmcJumpChain_ne_of_lt_visit_one {x₀ : σ} {ω : ℕ → (σ → σ) × ℝ} {m : ℕ}
     (h : visit x₀ x₀ 1 ω = m) {i : ℕ} (hi0 : 0 < i) (him : i < m) :
     ctmcJumpChain x₀ ω i ≠ x₀ := by
@@ -463,7 +471,8 @@ theorem ctmcJumpChain_add {x₀ x : σ} {ω : ℕ → (σ → σ) × ℝ} {n : �
   rw [← h, ctmcJumpChain_shift]
 
 /-- **Visits after a visit.** If the `k`-th visit is at step `n`, the `(k + j)`-th visit is `n`
-plus the `j`-th visit of the chain restarted at `x₀` with the shifted steps. -/
+plus the `j`-th visit of the chain restarted at `x₀` with the shifted steps. The sum is in `ℕ∞`
+with `n + ⊤ = ⊤`, so one side is `⊤` exactly when the other is. -/
 theorem visit_add {x₀ x : σ} {k : ℕ} {ω : ℕ → (σ → σ) × ℝ} {n : ℕ}
     (h : visit x₀ x k ω = n) (j : ℕ) :
     visit x₀ x (k + j) ω = n + visit x₀ x₀ j (ctmcShift n ω) := by
@@ -489,7 +498,8 @@ theorem visit_add {x₀ x : σ} {k : ℕ} {ω : ℕ → (σ → σ) × ℝ} {n :
 
 /-- The reward `∑_{i < m} g(Y_i) H_i` collected by the observable `g` during the first `m`
 holding intervals of the chain started at `x`, with holding times `H_i = E_i / q(Y_i)`. For
-`g = 1` it is the jump time `T_m`. -/
+`g = 1` it is the jump time `T_m`. With the convention `a / 0 = 0`, a step at a state with
+`q = 0` has `H_i = 0` and contributes `0`. -/
 noncomputable def reward (q g : σ → ℝ) (x : σ) (ω : ℕ → (σ → σ) × ℝ) (m : ℕ) : ℝ :=
   ∑ i ∈ range m, g (ctmcJumpChain x ω i) * JumpHold.holdingTime q x ω i
 
@@ -518,16 +528,22 @@ theorem reward_congr (q g : σ → ℝ) (x : σ) {n : ℕ} {ω ω' : ℕ → (σ
   simp only [JumpHold.holdingTime, hY i hi'.le, h i hi']
 
 /-- The reward collected by `g` during the first excursion of the chain started at `x₀`, up to
-its first return to `x₀` (all steps if it never returns). -/
+its first return to `x₀`. If it never returns, `visit x₀ x₀ 1 ω = ⊤` converts to `0` steps and
+the value is `0`. -/
 noncomputable def returnReward (q g : σ → ℝ) (x₀ : σ) (ω : ℕ → (σ → σ) × ℝ) : ℝ :=
   reward q g x₀ ω (visit x₀ x₀ 1 ω).toNat
 
 /-- The reward collected by `g` during the `k`-th **regeneration cycle** of the chain started at
-`x`, from its `k`-th to its `(k + 1)`-st visit to `x₀`. For `g = 1` it is the cycle length. -/
+`x`, from its `k`-th to its `(k + 1)`-st visit to `x₀` (counting from `0`), when the
+`(k + 1)`-st visit is finite; for `g = 1` it is then the cycle length. An infinite visit converts
+to `0` steps, so the value is `-reward q g x ω n` when the `k`-th visit is at step `n` and the
+`(k + 1)`-st is `⊤`, and `0` when the `k`-th visit is `⊤`. -/
 noncomputable def cycleSum (q g : σ → ℝ) (x₀ x : σ) (k : ℕ) (ω : ℕ → (σ → σ) × ℝ) : ℝ :=
   reward q g x ω (visit x₀ x (k + 1) ω).toNat - reward q g x ω (visit x₀ x k ω).toNat
 
-/-- Each regeneration cycle is the first excursion from `x₀` of the shifted steps. -/
+/-- A completed regeneration cycle is the first excursion from `x₀` of the shifted steps: if the
+`k`-th visit is at step `n` and the `(k + 1)`-st visit is finite, the `k`-th cycle sum is the
+return reward of the steps after the `k`-th visit. -/
 theorem cycleSum_eq (q g : σ → ℝ) {x₀ x : σ} {k : ℕ} {ω : ℕ → (σ → σ) × ℝ} {n : ℕ}
     (h : visit x₀ x k ω = n) (h1 : visit x₀ x (k + 1) ω ≠ ⊤) :
     cycleSum q g x₀ x k ω = returnReward q g x₀ (shiftAt (visit x₀ x k) ω) := by
@@ -571,7 +587,8 @@ theorem measurable_jumpChain (x : σ) (n : ℕ) :
     exact h.comp (ih.prodMk measurable_id)
 
 omit [DecidableEq σ] in
-/-- A set determined by the first `n + 1` states of the jump chain is measurable. -/
+/-- On a countable state space with measurable singletons, a set determined by the first `n + 1`
+states of the jump chain is measurable. -/
 theorem measurableSet_of_jumpChain (x : σ) (n : ℕ) {A : Set (ℕ → (σ → σ) × ℝ)}
     (hA : ∀ ω ω', (∀ j ≤ n, ctmcJumpChain x ω j = ctmcJumpChain x ω' j) → ω ∈ A → ω' ∈ A) :
     MeasurableSet A := by
@@ -636,15 +653,18 @@ theorem holdingTime_succ_eq (q : σ → ℝ) (x : σ) (ω : ℕ → (σ → σ) 
   rw [show ctmcShift 1 ω k = ω (k + 1) by simp [ctmcShift, Nat.add_comm]]
 
 /-- The **Abel functional** of the jump–hold chain started at `x`:
-`∑_k g(Y_k) e^{-a T_k} (1 - e^{-a H_k})`. For nonnegative clocks and jump times tending to `∞`
-it is the Laplace transform `a ∫_0^∞ e^{-a t} g(X_t) dt` of the path
-(`lintegral_exp_path_eq_abelSum`). -/
+`∑_k max(g(Y_k), 0) · max(e^{-a T_k} (1 - e^{-a H_k}), 0)`, summed in `[0, ∞]`, where
+`H_k = E_k / q(Y_k)` (`0` when `q(Y_k) = 0`) and `T_k = H_0 + ⋯ + H_{k-1}`. For positive rates,
+nonnegative clocks, `g ≥ 0`, `a > 0` and jump times tending to `∞`, it is the Laplace transform
+`a ∫_0^∞ e^{-a t} g(X_t) dt` of the path, a lower integral. -/
 noncomputable def abelSum (q g : σ → ℝ) (a : ℝ) (x : σ) (ω : ℕ → (σ → σ) × ℝ) : ℝ≥0∞ :=
   ∑' k, ENNReal.ofReal (g (ctmcJumpChain x ω k)) *
     ENNReal.ofReal (Real.exp (-(a * JumpHold.jumpTime q x ω k)) *
       (1 - Real.exp (-(a * JumpHold.holdingTime q x ω k))))
 
-/-- First-step decomposition of the Abel functional. -/
+/-- First-step decomposition of the Abel functional, for all inputs:
+`A(x, ω) = max(g(x), 0) · max(1 - e^{-a H_0}, 0) + e^{-a H_0} · A(ξ_0(x), ω')`, where
+`H_0 = E_0 / q(x)` (`0` when `q(x) = 0`) and `ω'` is the shifted step sequence. -/
 theorem abelSum_eq (q g : σ → ℝ) (a : ℝ) (x : σ) (ω : ℕ → (σ → σ) × ℝ) :
     abelSum q g a x ω =
       ENNReal.ofReal (g x) * ENNReal.ofReal (1 - Real.exp (-(a * ((ω 0).2 / q x)))) +
@@ -659,8 +679,9 @@ theorem abelSum_eq (q g : σ → ℝ) (a : ℝ) (x : σ) (ω : ℕ → (σ → �
       neg_add, Real.exp_add, mul_assoc, ENNReal.ofReal_mul (Real.exp_pos _).le]
     ring
 
-/-- With nonnegative clocks and `0 ≤ g ≤ 1`, the Abel functional is at most `1` (the weights
-`e^{-a T_k} - e^{-a T_{k+1}}` telescope). -/
+/-- With `a ≥ 0`, positive rates `q`, nonnegative clocks and `g ≤ 1`, the Abel functional is at
+most `1` (negative values of `g` count as `0`; the weights `e^{-a T_k} - e^{-a T_{k+1}}`
+telescope). -/
 theorem abelSum_le_one (q g : σ → ℝ) {a : ℝ} (ha : 0 ≤ a) (hq : ∀ x, 0 < q x)
     (hg1 : ∀ x, g x ≤ 1) (x : σ) {ω : ℕ → (σ → σ) × ℝ} (hE : ∀ k, 0 ≤ (ω k).2) :
     abelSum q g a x ω ≤ 1 := by
@@ -726,8 +747,11 @@ theorem ae_nonneg_expMeasure_one : ∀ᵐ e ∂expMeasure 1, 0 ≤ e := by
 
 variable (K : σ → PMF σ)
 
-/-- **First-step equation for the Abel functional** (the resolvent equation of the chain):
-`E_x[A] = g(x) a / (q(x) + a) + q(x) / (q(x) + a) ∑_y K(x, y) E_y[A]`. -/
+/-- **First-step equation for the Abel functional** (the resolvent equation of the chain): for
+positive rates `q` and `a ≥ 0`,
+`E_x[A] = max(g(x), 0) a / (q(x) + a) + q(x) / (q(x) + a) ∑_y K(x, y) E_y[A]`, where `E_y[A]`
+is the lower integral of the Abel functional of the chain started at `y` under the input law
+(an identity in `[0, ∞]`, with `0 · ∞ = 0`). -/
 theorem lintegral_abelSum (q g : σ → ℝ) (hq : ∀ x, 0 < q x) {a : ℝ} (ha : 0 ≤ a) (x : σ) :
     ∫⁻ ω, abelSum q g a x ω ∂JumpHold.inputMeasure K =
       ENNReal.ofReal (g x) * ENNReal.ofReal (a / (q x + a)) +
@@ -828,11 +852,13 @@ theorem lintegral_abelSum (q g : σ → ℝ) (hq : ∀ x, 0 < q x) {a : ℝ} (ha
       hevalx, hexp, mul_comm]
   rw [hp1, hp2]
 
-/-- **Resolvent identity** (stationarity of a balanced law in Laplace form). Let the weights `w`
-balance the rate-weighted jump kernel, `∑_x w(x) q(x) K(x, y) = w(y) q(y)` (the stationary
-master equation `w Q = 0`), with `∑_x w(x) q(x) < ∞`. Then for every `a > 0` and `0 ≤ g ≤ 1`,
-`∑_x w(x) E_x[A_a g] = ∑_x w(x) g(x)`, where `A_a g` is the Abel functional
-`a ∫_0^∞ e^{-a t} g(X_t) dt`. -/
+/-- **Resolvent identity** (stationarity of a balanced law in Laplace form). Let the rates `q` be
+positive and let the weights `w` balance the rate-weighted jump kernel,
+`∑_x w(x) q(x) K(x, y) = w(y) q(y)` (the stationary master equation `w Q = 0`), with
+`∑_x w(x) q(x) < ∞`. Then for every `a > 0` and `g ≤ 1`,
+`∑_x w(x) E_x[A_a g] = ∑_x w(x) max(g(x), 0)`, where `A_a g` is the Abel functional (for `g ≥ 0`,
+the Laplace transform `a ∫_0^∞ e^{-a t} g(X_t) dt` of the path where the clocks are nonnegative
+and the jump times tend to `∞`). -/
 theorem tsum_mul_lintegral_abelSum (q g : σ → ℝ) (hq : ∀ x, 0 < q x) (hg1 : ∀ x, g x ≤ 1)
     {a : ℝ} (ha : 0 < a) (w : σ → ℝ≥0∞)
     (hbal : ∀ y, ∑' x, w x * ENNReal.ofReal (q x) * K x y = w y * ENNReal.ofReal (q y))
@@ -972,7 +998,8 @@ theorem intervalIntegrable_path [MeasurableSpace σ] [Countable σ] [MeasurableS
     ((measurable_of_countable g).comp hmeas).aestronglyMeasurable
     (ae_of_all _ fun s => by simpa [Real.norm_eq_abs] using hB _)
 
-/-- The occupation integral of the path up to the `m`-th jump time is the reward
+/-- For positive rates, nonnegative clocks, a measurable path and a bounded observable `g`, the
+occupation integral of the path up to the `m`-th jump time is the reward
 `∑_{k < m} g(Y_k) H_k`. -/
 theorem integral_path_jumpTime [MeasurableSpace σ] [Countable σ] [MeasurableSingletonClass σ]
     (hq : ∀ y, 0 < q y) (hE : ∀ k, 0 ≤ (ω k).2)
@@ -996,7 +1023,9 @@ theorem integral_path_jumpTime [MeasurableSpace σ] [Countable σ] [MeasurableSi
     rw [Set.uIoc_of_le hle] at hmem
     exact congrArg g (JumpHold.path_eq_ctmcJumpChain hq hE hmem.1.le (lt_of_le_of_ne hmem.2 hs))
 
-/-- The occupation integral of a bounded observable is Lipschitz in time. -/
+/-- For a measurable path and `|g| ≤ B`, the occupation integral of `g` is Lipschitz in time:
+`|∫_0^t g(X_u) du - ∫_0^s g(X_u) du| ≤ B (t - s)` for `s ≤ t` (oriented integrals, so
+`∫_0^s = -∫_s^0` for `s < 0`). -/
 theorem abs_integral_path_sub_le [MeasurableSpace σ] [Countable σ] [MeasurableSingletonClass σ]
     (hmeas : Measurable fun s => JumpHold.path q x ω s) {g : σ → ℝ} {B : ℝ}
     (hB : ∀ y, |g y| ≤ B) {s t : ℝ} (hst : s ≤ t) :
@@ -1019,8 +1048,10 @@ theorem integral_mul_exp_neg_mul {a : ℝ} (ha : a ≠ 0) (u v : ℝ) :
   field_simp
   ring_nf
 
-/-- **The Abel functional is the Laplace transform of the path**: with nonnegative clocks and
-jump times tending to `∞`, `∫_0^∞ a e^{-a t} g(X_t) dt = ∑_k g(Y_k) e^{-a T_k} (1 - e^{-a H_k})`. -/
+/-- **The Abel functional is the Laplace transform of the path**: with positive rates,
+nonnegative clocks, jump times tending to `∞`, `g ≥ 0` and `a > 0`,
+`∫_0^∞ a e^{-a t} g(X_t) dt = ∑_k g(Y_k) e^{-a T_k} (1 - e^{-a H_k})`, a lower integral with
+values in `[0, ∞]`. -/
 theorem lintegral_exp_path_eq_abelSum (hq : ∀ y, 0 < q y) (hE : ∀ k, 0 ≤ (ω k).2)
     (hT : Tendsto (JumpHold.jumpTime q x ω) atTop atTop) {g : σ → ℝ} (hg0 : ∀ y, 0 ≤ g y)
     {a : ℝ} (ha : 0 < a) :
@@ -1068,7 +1099,10 @@ theorem lintegral_exp_path_eq_abelSum (hq : ∀ y, 0 < q y) (hE : ∀ k, 0 ≤ (
   rw [mul_add, neg_add, Real.exp_add]
   ring
 
-/-- Real form of `lintegral_exp_path_eq_abelSum`. -/
+/-- Real form of the Laplace transform identity: with positive rates, nonnegative clocks, jump
+times tending to `∞`, `g ≥ 0` and `a > 0`, the Abel functional read as a real number is
+`a ∫_0^∞ e^{-a t} g(X_t) dt` (a Bochner integral). If the Abel functional is `∞`, both sides are
+`0`: the real reading of `∞` is `0`, and the integral of a non-integrable function is `0`. -/
 theorem abelSum_toReal_eq [MeasurableSpace σ] [Countable σ] [MeasurableSingletonClass σ]
     (hq : ∀ y, 0 < q y) (hE : ∀ k, 0 ≤ (ω k).2)
     (hT : Tendsto (JumpHold.jumpTime q x ω) atTop atTop) {g : σ → ℝ} (hg0 : ∀ y, 0 ≤ g y)
@@ -1091,7 +1125,7 @@ end Pathwise
 section Abelian
 
 
-/-- `∫_t^∞ a² e^{-a r} dr = a e^{-a t}`. -/
+/-- `∫_t^∞ a² e^{-a r} dr = a e^{-a t}` for `a > 0` and every real `t` (a lower integral). -/
 theorem lintegral_Ici_sq_mul_exp {a : ℝ} (ha : 0 < a) (t : ℝ) :
     ∫⁻ r in Set.Ici t, ENNReal.ofReal (a ^ 2 * Real.exp (-(a * r))) =
       ENNReal.ofReal (a * Real.exp (-(a * t))) := by
@@ -1271,12 +1305,12 @@ theorem lintegral_abelSum_le_one (q g : σ → ℝ) (hq : ∀ x, 0 < q x) (hg1 :
         exact abelSum_le_one q g ha hq hg1 x hω)
     _ = 1 := by simp
 
-/-- **Identification of the limit.** Let `w` be a probability law balancing the rate-weighted
-jump kernel (`w Q = 0`) with `∑ w q < ∞`, and let the chain be non-explosive from every state.
-If from every initial state the time averages of `0 ≤ g ≤ 1` converge almost surely to the same
-constant `L`, then `L = ∑_x w(x) g(x)`. The proof passes to Abel means (Abelian theorem), takes
-expectations (bounded convergence), averages over `w` (dominated convergence), and uses the
-resolvent identity `tsum_mul_lintegral_abelSum`. -/
+/-- **Identification of the limit.** Let the rates `q` be positive, let `w` be a probability law
+balancing the rate-weighted jump kernel (`w Q = 0`) with `∑ w q < ∞`, and let the chain be
+non-explosive from every state. If from every initial state the time averages of `0 ≤ g ≤ 1`
+converge almost surely to the same constant `L`, then `L = ∑_x w(x) g(x)`. The proof passes to
+Abel means (Abelian theorem), takes expectations (bounded convergence), averages over `w`
+(dominated convergence), and uses the resolvent identity. -/
 theorem eq_tsum_of_ae_tendsto (q g : σ → ℝ) (hq : ∀ x, 0 < q x) (hg0 : ∀ x, 0 ≤ g x)
     (hg1 : ∀ x, g x ≤ 1) (w : σ → ℝ≥0∞) (hw : ∑' x, w x = 1)
     (hbal : ∀ y, ∑' x, w x * ENNReal.ofReal (q x) * K x y = w y * ENNReal.ofReal (q y))
@@ -1357,8 +1391,10 @@ variable {σ : Type*} [MeasurableSpace σ] [Countable σ] [MeasurableSingletonCl
   [DecidableEq σ] (K : σ → PMF σ)
 
 omit [DecidableEq σ] in
-/-- **First-step analysis**: a functional of the chain after its first jump, from `x`, averages
-to `∑_y K(x, y) E_y[F y]`. -/
+/-- **First-step analysis**: for `F y` measurable for every `y`, the functional `F` of the first
+jump target from `x` and of the later steps averages to `∑_y K(x, y) E[F y]` (lower integrals and
+sums in `[0, ∞]`, with `0 · ∞ = 0`): the first jump target has law `K(x, ·)` and is independent
+of the later steps, which have the input law. -/
 theorem lintegral_comp_first (x : σ) {F : σ → (ℕ → (σ → σ) × ℝ) → ℝ≥0∞}
     (hF : ∀ y, Measurable (F y)) :
     ∫⁻ ω, F ((ω 0).1 x) (ctmcShift 1 ω) ∂JumpHold.inputMeasure K =
@@ -1400,7 +1436,9 @@ theorem measurableSet_hit (x₀ x : σ) :
   rw [this]
   exact MeasurableSet.iUnion fun n => measurable_jumpChain x n (measurableSet_singleton x₀)
 
-/-- The hitting probabilities `h(x) = P_x(∃ n, Y_n = x₀)`. -/
+/-- The hitting probabilities `h(x) = P_x(∃ n, Y_n = x₀)`, with step `n = 0` included, so
+`h(x₀) = 1`. The event is measurable when `σ` is countable with measurable singletons; in general
+the value is its outer measure. -/
 noncomputable def hitProb (x₀ x : σ) : ℝ≥0∞ :=
   JumpHold.inputMeasure K {ω | ∃ n, ctmcJumpChain x ω n = x₀}
 
@@ -1445,7 +1483,9 @@ theorem measure_return_eq (x₀ : σ) :
   · rintro ⟨n, hn⟩; exact ⟨n, by rw [← JumpHold.ctmcJumpChain_succ_eq]; exact hn⟩
   · rintro ⟨n, hn⟩; exact ⟨n, by rw [JumpHold.ctmcJumpChain_succ_eq]; exact hn⟩
 
-/-- The `(k + 1)`-st visit happens iff the `k`-th does and the chain restarted there returns. -/
+/-- The `(k + 1)`-st visit happens iff the `k`-th does and the chain restarted there returns, so
+by the strong Markov property
+`P(visit k + 1 exists) = P(visit k exists) · P(the chain started at x₀ returns to x₀)`. -/
 theorem measure_visit_succ (x₀ x : σ) (k : ℕ) :
     JumpHold.inputMeasure K {ω | visit x₀ x (k + 1) ω ≠ ⊤} =
       JumpHold.inputMeasure K {ω | visit x₀ x k ω ≠ ⊤} *
@@ -1499,8 +1539,8 @@ theorem ae_exists_visit_eq_top {x₀ : σ}
     fun ω hω => hω k).trans (measure_visit_le K x₀ x k)
 
 omit [MeasurableSpace σ] [Countable σ] [MeasurableSingletonClass σ] in
-/-- With finitely many visits to `x₀`, the time spent at `x₀` is bounded, so its long-run
-fraction vanishes. -/
+/-- For positive rates, nonnegative clocks and jump times tending to `∞`: with finitely many
+visits to `x₀`, the time spent at `x₀` is bounded, so its long-run fraction vanishes. -/
 theorem tendsto_integral_indicator_div_zero {q : σ → ℝ} (hq : ∀ y, 0 < q y) {x₀ x : σ}
     {ω : ℕ → (σ → σ) × ℝ} (hE : ∀ k, 0 ≤ (ω k).2)
     (hT : Tendsto (JumpHold.jumpTime q x ω) atTop atTop) {k₀ : ℕ}
@@ -1557,9 +1597,9 @@ theorem tendsto_integral_indicator_div_zero {q : σ → ℝ} (hq : ∀ y, 0 < q 
   · filter_upwards [eventually_gt_atTop 0] with t ht
     exact div_le_div_of_nonneg_right (hle t ht.le) ht.le
 
-/-- **Recurrence from a balanced law.** If `w` is a probability law balancing the
-rate-weighted jump kernel, `∑ w q < ∞`, the chain is non-explosive and `w(x₀) > 0`, then the
-chain started at `x₀` returns to `x₀` almost surely. -/
+/-- **Recurrence from a balanced law.** Let the rates `q` be positive. If `w` is a probability
+law balancing the rate-weighted jump kernel, `∑ w q < ∞`, the chain is non-explosive from every
+state and `w(x₀) > 0`, then the chain started at `x₀` returns to `x₀` almost surely. -/
 theorem measure_return_eq_one (q : σ → ℝ) (hq : ∀ x, 0 < q x) (w : σ → ℝ≥0∞)
     (hw : ∑' x, w x = 1)
     (hbal : ∀ y, ∑' x, w x * ENNReal.ofReal (q x) * K x y = w y * ENNReal.ofReal (q y))
@@ -1584,9 +1624,9 @@ theorem measure_return_eq_one (q : σ → ℝ) (hq : ∀ x, 0 < q x) (w : σ →
   simp only [hgdef, mul_ite, mul_one, mul_zero, tsum_ite_eq] at h0
   exact (ENNReal.toReal_pos hx₀ hw').ne h0
 
-/-- **Hitting from every state.** If the chain returns to `x₀` almost surely and every state is
-reachable from `x₀` through jumps of positive probability, then from every initial state the
-chain hits `x₀` almost surely. -/
+/-- **Hitting from every reachable state.** If the chain returns to `x₀` almost surely and `y` is
+reachable from `x₀` through jumps of positive probability, then the chain started at `y` hits
+`x₀` almost surely. -/
 theorem hitProb_eq_one {x₀ : σ} (hp : JumpHold.inputMeasure K {ω | visit x₀ x₀ 1 ω ≠ ⊤} = 1)
     {y : σ} (hy : Relation.ReflTransGen (fun u v => K u v ≠ 0) x₀ y) : hitProb K x₀ y = 1 := by
   have hle : ∀ z, hitProb K x₀ z ≤ 1 := fun z => prob_le_one
@@ -1611,8 +1651,8 @@ theorem hitProb_eq_one {x₀ : σ} (hp : JumpHold.inputMeasure K {ω | visit x�
       exact hprop _ (by rw [← measure_return_eq]; exact hp) c hbc
     · exact hprop b (by rw [← hitProb_eq K hb]; exact ih) c hbc
 
-/-- Under recurrence of `x₀` and reachability of every state, all visits to `x₀` happen almost
-surely, from every initial state. -/
+/-- Under recurrence of `x₀` and reachability of every state from `x₀` (through jumps of positive
+probability), all visits to `x₀` happen almost surely, from every initial state. -/
 theorem ae_forall_visit_ne_top {x₀ : σ}
     (hp : JumpHold.inputMeasure K {ω | visit x₀ x₀ 1 ω ≠ ⊤} = 1)
     (hirr : ∀ y, Relation.ReflTransGen (fun u v => K u v ≠ 0) x₀ y) (x : σ) :
@@ -1693,7 +1733,10 @@ theorem cycleSum_ae_eq {q g : σ → ℝ} {x₀ x : σ}
   obtain ⟨n, hn⟩ : ∃ n : ℕ, visit x₀ x k ω = n := ⟨_, (ENat.natCast_toNat (hω k)).symm⟩
   exact cycleSum_eq q g hn (hω (k + 1))
 
-/-- Each regeneration cycle has the law of the first excursion from `x₀`. -/
+/-- If almost surely every visit to `x₀` of the chain started at `x` happens, each regeneration
+cycle has the law of the first excursion from `x₀`: the reward collected by `g` in the `k`-th
+cycle has the law of the reward collected by `g` in the first excursion of the chain started at
+`x₀`. With `E / 0 = 0`, `q` and `g` may be any real functions. -/
 theorem identDistrib_cycleSum (q g : σ → ℝ) {x₀ x : σ}
     (hall : ∀ᵐ ω ∂JumpHold.inputMeasure K, ∀ k, visit x₀ x k ω ≠ ⊤) (k : ℕ) :
     IdentDistrib (cycleSum q g x₀ x k) (returnReward q g x₀)
@@ -1705,7 +1748,10 @@ theorem identDistrib_cycleSum (q g : σ → ℝ) {x₀ x : σ}
     (measurable_returnReward q g x₀).aemeasurable, ?_⟩
   rw [← Measure.map_map (measurable_returnReward q g x₀) hsh, map_shiftAt_visit K hk]
 
-/-- Distinct regeneration cycles are independent (strong Markov property at the later visit). -/
+/-- If almost surely every visit to `x₀` of the chain started at `x` happens, distinct
+regeneration cycles are independent (strong Markov property at the later visit): for `j < k`, the
+reward collected by `g` in the `j`-th cycle and the reward collected by `g'` in the `k`-th cycle
+are independent. -/
 theorem indepFun_cycleSum_of_lt (q g g' : σ → ℝ) {x₀ x : σ}
     (hall : ∀ᵐ ω ∂JumpHold.inputMeasure K, ∀ k, visit x₀ x k ω ≠ ⊤) {j k : ℕ} (hjk : j < k) :
     IndepFun (cycleSum q g x₀ x j) (cycleSum q g' x₀ x k) (JumpHold.inputMeasure K) := by
@@ -1744,7 +1790,9 @@ theorem abs_reward_le {q g : σ → ℝ} (hq : ∀ y, 0 < q y) (hg : ∀ y, |g y
   exact mul_le_of_le_one_left hH (hg _)
 
 omit [MeasurableSpace σ] [Countable σ] [MeasurableSingletonClass σ] in
-/-- The time spent at `x₀` during the first excursion from `x₀` is the first holding time. -/
+/-- If the chain started at `x₀` returns to `x₀`, the time spent at `x₀` during the first
+excursion from `x₀` is the first holding time `E₀ / q(x₀)` (both sides are `0` when
+`q(x₀) = 0`, with `E / 0 = 0`). Without a return the reward is `0`. -/
 theorem returnReward_indicator_eq {q : σ → ℝ} {x₀ : σ} {ω : ℕ → (σ → σ) × ℝ}
     (h : visit x₀ x₀ 1 ω ≠ ⊤) :
     returnReward q (fun y => if y = x₀ then 1 else 0) x₀ ω = (ω 0).2 / q x₀ := by
@@ -1762,7 +1810,8 @@ theorem returnReward_indicator_eq {q : σ → ℝ} {x₀ : σ} {ω : ℕ → (σ
   · intro h0; simp at h0; omega
 
 omit [MeasurableSpace σ] [Countable σ] [MeasurableSingletonClass σ] in
-/-- With positive clocks the times of the successive visits are strictly increasing. -/
+/-- With positive rates and positive clocks, if every visit to `x₀` happens, the times of the
+successive visits are strictly increasing. -/
 theorem strictMono_jumpTime_visit {q : σ → ℝ} (hq : ∀ y, 0 < q y) {x₀ x : σ}
     {ω : ℕ → (σ → σ) × ℝ} (hE : ∀ k, 0 < (ω k).2) (hall : ∀ k, visit x₀ x k ω ≠ ⊤) :
     StrictMono fun n => JumpHold.jumpTime q x ω (visit x₀ x n ω).toNat := by
@@ -1785,7 +1834,8 @@ theorem strictMono_jumpTime_visit {q : σ → ℝ} (hq : ∀ y, 0 < q y) {x₀ x
   omega
 
 omit [MeasurableSpace σ] [Countable σ] [MeasurableSingletonClass σ] in
-/-- Rewards at the successive visits telescope into the cycle rewards. -/
+/-- Rewards at the successive visits telescope into the cycle rewards. A visit that does not
+happen counts as step `0`; the identity holds for every step sequence. -/
 theorem reward_visit_eq (q g : σ → ℝ) (x₀ x : σ) (ω : ℕ → (σ → σ) × ℝ) (n : ℕ) :
     reward q g x ω (visit x₀ x n ω).toNat =
       reward q g x ω (visit x₀ x 0 ω).toNat + ∑ k ∈ range n, cycleSum q g x₀ x k ω := by
@@ -1802,9 +1852,11 @@ theorem tendsto_div_of_eq_add_sum' {a d : ℕ → ℝ} {c μ : ℝ}
   refine this.congr fun n => ?_
   rw [h, smul_eq_mul, add_div, div_eq_inv_mul (∑ k ∈ range n, d k)]
 
-/-- **Renewal–reward along the regeneration cycles.** If all visits to `x₀` happen and the mean
-return time to `x₀` is finite, the time averages of `|g| ≤ 1` from `x` converge almost surely
-to `E[cycle reward] / E[cycle length]` of the first excursion from `x₀`. -/
+/-- **Renewal–reward along the regeneration cycles.** Let the rates be positive and the chain
+started at `x` be non-explosive. If almost surely all visits to `x₀` of the chain started at `x`
+happen, the chain started at `x₀` returns to `x₀` almost surely and the mean return time to `x₀`
+is finite, then the time averages of `|g| ≤ 1` from `x` converge almost surely to
+`E[cycle reward] / E[cycle length]` of the first excursion from `x₀`. -/
 theorem ae_tendsto_of_integrable (q g : σ → ℝ) (hq : ∀ y, 0 < q y) (hg : ∀ y, |g y| ≤ 1)
     {x₀ x : σ}
     (hT : ∀ᵐ ω ∂JumpHold.inputMeasure K, Tendsto (JumpHold.jumpTime q x ω) atTop atTop)
@@ -1885,11 +1937,13 @@ theorem cycleSum_one_eq (q : σ → ℝ) (x₀ x : σ) (ω : ℕ → (σ → σ)
         JumpHold.jumpTime q x ω (visit x₀ x k ω).toNat := by
   simp only [cycleSum, reward_one]
 
-/-- **Positive recurrence from a balanced law.** Under the hypotheses of
-`measure_return_eq_one`, if all visits to `x₀` happen from every initial state, the mean return
-time to `x₀` is finite. Otherwise the long-run fraction of time at `x₀` would vanish from every
-initial state (renewal theorem with infinite mean), contradicting `eq_tsum_of_ae_tendsto`,
-which identifies it with `w(x₀) > 0`. -/
+/-- **Positive recurrence from a balanced law.** Let the rates `q` be positive, let `w` be a
+probability law balancing the rate-weighted jump kernel (`∑_x w(x) q(x) K(x, y) = w(y) q(y)`)
+with `∑ w q < ∞`, let the chain be non-explosive from every initial state and let `w(x₀) > 0`.
+If all visits to `x₀` happen almost surely from every initial state, the mean return time to
+`x₀` is finite. Otherwise the long-run fraction of time at `x₀` would vanish from every initial
+state (renewal theorem with infinite mean), contradicting `eq_tsum_of_ae_tendsto`, which
+identifies it with `w(x₀) > 0`. -/
 theorem integrable_returnReward (q : σ → ℝ) (hq : ∀ y, 0 < q y) (w : σ → ℝ≥0∞)
     (hw : ∑' x, w x = 1)
     (hbal : ∀ y, ∑' x, w x * ENNReal.ofReal (q x) * K x y = w y * ENNReal.ofReal (q y))
@@ -1973,7 +2027,8 @@ theorem integrable_returnReward (q : σ → ℝ) (hq : ∀ y, 0 < q y) (w : σ �
   simp only [hgdef, mul_ite, mul_one, mul_zero, tsum_ite_eq] at h0
   exact (ENNReal.toReal_pos hx₀ hw').ne h0
 
-/-- **Ergodic theorem for a jump–hold chain with a balanced law.** Let `w` be a probability law
+/-- **Ergodic theorem for a jump–hold chain with a balanced law.** On a countable state space,
+let the rates `q` be positive and let `w` be a probability law
 balancing the rate-weighted jump kernel (`∑_x w(x) q(x) K(x, y) = w(y) q(y)`) with
 `∑ w q < ∞`, let the chain be non-explosive from every initial state, let `w(x₀) > 0`, and let
 every state be reachable from `x₀` through jumps of positive probability. Then the chain started
@@ -2113,7 +2168,8 @@ theorem ofReal_holdRate_mul_jumpPMF (M : StochasticCRN S ρ) (x y : S → ℕ) :
 
 omit [Fintype ρ] in
 /-- The inflow along one reaction: `∑_x π(x) λ_r(x) [fire r x = y]` is the single term from the
-predecessor `unfire r y`. -/
+predecessor `unfire r y` (`0` if `prod r ≰ y`). The terms are the positive parts
+`ENNReal.ofReal (π(x) λ_r(x))`, so the identity holds for all real `c` and `κ`. -/
 theorem tsum_ite_fire_eq (N : ReactionNetwork S ρ) {κ : ρ → ℝ} (c : S → ℝ) (r : ρ)
     (y : S → ℕ) :
     ∑' x, (if fire N r x = y then
@@ -2139,10 +2195,10 @@ theorem tsum_ite_fire_eq (N : ReactionNetwork S ρ) {κ : ρ → ℝ} (c : S →
       simp [fire]
     · rfl
 
-/-- **Balance of the product-form law for the jump–hold chain**: complex balance makes the
-Poisson weights balance the rate-weighted jump kernel of the stochastic mass-action chain,
-`∑_x π_c(x) q(x) K(x, y) = π_c(y) q(y)` (the stationary master equation
-`isStationaryMasterSolution_poissonWeight`, with the self-loops of absorbing states). -/
+/-- **Balance of the product-form law for the jump–hold chain**: for `κ ≥ 0` and `c ≥ 0`,
+complex balance makes the Poisson weights balance the rate-weighted jump kernel of the
+stochastic mass-action chain, `∑_x π_c(x) q(x) K(x, y) = π_c(y) q(y)` (the stationary master
+equation `isStationaryMasterSolution_poissonWeight`, with the self-loops of absorbing states). -/
 theorem tsum_poissonWeight_mul_holdRate_mul_jumpPMF (N : ReactionNetwork S ρ) {κ : ρ → ℝ}
     (hκ : ∀ r, 0 ≤ κ r) {c : S → ℝ} (hcb : N.IsComplexBalanced κ c) (hc : ∀ s, 0 ≤ c s)
     (y : S → ℕ) :
@@ -2257,7 +2313,8 @@ theorem tsum_ofReal_poissonWeight_mul_holdRate_ne_top (N : ReactionNetwork S ρ)
         mul_le_mul_of_nonneg_left hq (hπ x)
     _ = G x := by simp only [G, StochasticCRN.totalRate, mul_add, mul_sum, mul_one]; rfl
 
-/-- Reachability along reactions with positive propensity is reachability in the jump kernel. -/
+/-- Reachability along reactions with positive propensity gives reachability in the jump kernel
+(only this direction is stated). -/
 theorem reflTransGen_jumpPMF (N : ReactionNetwork S ρ) {κ : ρ → ℝ} (hκ : ∀ r, 0 ≤ κ r)
     {u v : S → ℕ}
     (h : Relation.ReflTransGen (fun u v => ∃ r, 0 < propensity N κ r u ∧ fire N r u = v) u v) :
@@ -2275,9 +2332,10 @@ theorem reflTransGen_jumpPMF (N : ReactionNetwork S ρ) {κ : ρ → ℝ} (hκ :
     ENNReal.ofReal_eq_zero, not_le]
   exact div_pos hr (lt_of_le_of_ne (M.totalRate_nonneg a) (Ne.symm hT))
 
-/-- **Non-explosion in the form of `StochasticCRNErgodicity.NoExplosion`.** If the jump times of
-the chain tend to `∞` (`StochasticCRNNonExplosion`), its path stays bounded on bounded time
-intervals. This connects the two formulations of non-explosion. -/
+/-- **Non-explosion in the form of `StochasticCRNErgodicity.NoExplosion`.** If almost surely the
+jump times of the chain tend to `∞` (`StochasticCRNNonExplosion`), then almost surely its path
+stays bounded on bounded time intervals. This connects the two formulations of
+non-explosion. -/
 theorem noExplosion_path (M : StochasticCRN S ρ) (x : S → ℕ)
     (hT : ∀ᵐ ω ∂M.inputMeasure, Tendsto (M.jumpTime x ω) atTop atTop) :
     NoExplosion M.inputMeasure (fun s ω => M.path x ω s) := by
@@ -2297,14 +2355,14 @@ theorem noExplosion_path (M : StochasticCRN S ρ) (x : S → ℕ)
   exact single_le_sum (f := fun k => ∑ i, ctmcJumpChain x ω k i) (fun _ _ => Nat.zero_le _)
     (mem_range.2 hkn)
 
-/-- **The forward-equation transfer, in Laplace form.** For a complex-balanced network whose
-chain is non-explosive (drift bound `L V ≤ a V + b`, `∑_s x_s ≤ V(x)`), the product-form law
-`π_c` is stationary for the chain in the Laplace sense: for every `a > 0` and `0 ≤ g ≤ 1`,
-`∑_x π_c(x) E_x[∫_0^∞ a e^{-a t} g(X_t) dt] = ∑_x π_c(x) g(x)`. For `g` the indicator of a state
-`y` this says that `t ↦ P_{π_c}(X_t = y)` has the Laplace transform of the constant `π_c(y)`;
-the fixed-time identity `P_{π_c}(X_t = y) = π_c(y)` (the hypothesis `htransfer` of
-`StochasticCRNErgodicity.ergodic_of_isComplexBalanced`) would follow by uniqueness of Laplace
-transforms, which is not proved here. -/
+/-- **The forward-equation transfer, in Laplace form.** For a network with `κ ≥ 0`, `c ≥ 0`
+complex balanced, and chain non-explosive by a drift bound `L V ≤ a V + b` with `a, b ≥ 0` and
+`∑_s x_s ≤ V(x)`, the product-form law `π_c` is stationary for the chain in the Laplace sense:
+for every `θ > 0` and `0 ≤ g ≤ 1`,
+`∑_x π_c(x) E_x[∫_0^∞ θ e^{-θ t} g(X_t) dt] = ∑_x π_c(x) g(x)`. For `g` the indicator of a
+state `y` this is the Laplace form of `P_{π_c}(X_t = y) = π_c(y)`; that fixed-time identity
+(the hypothesis `htransfer` of `StochasticCRNErgodicity.ergodic_of_isComplexBalanced`) is not
+part of this statement. -/
 theorem tsum_poissonWeight_mul_lintegral_laplace_path (N : ReactionNetwork S ρ) {κ : ρ → ℝ}
     (hκ : ∀ r, 0 ≤ κ r) {c : S → ℝ} (hcb : N.IsComplexBalanced κ c) (hc : ∀ s, 0 ≤ c s)
     (V : (S → ℕ) → ℝ≥0) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
@@ -2329,7 +2387,8 @@ theorem tsum_poissonWeight_mul_lintegral_laplace_path (N : ReactionNetwork S ρ)
 /-- **Ergodic theorem for complex-balanced stochastic reaction networks, with the forward
 equation and the regeneration proved.** Let `c > 0` be complex balanced for the rate constants
 `κ ≥ 0`, let the stochastic mass-action chain satisfy a Foster–Lyapunov drift bound
-`L V ≤ a V + b` with `∑_s x_s ≤ V(x)` (non-explosion, `StochasticCRNNonExplosion`), and let every
+`L V ≤ a V + b` for some `V ≥ 0` and `a, b ≥ 0`, with `∑_s x_s ≤ V(x)` (non-explosion,
+`StochasticCRNNonExplosion`), and let every
 state be reachable from `x₀` along reactions with positive propensity. Then for the chain built
 by the jump–hold construction:
 
@@ -2381,11 +2440,14 @@ theorem ergodic_of_isComplexBalanced_of_reachable (N : ReactionNetwork S ρ) {κ
     simp only [ENNReal.toReal_ofReal (hπ _)] at hω
     exact hω
 
-/-- **The same limit from the product-form initial law.** For the chain started from `π_c` (an
+/-- **The same limit from the product-form initial law.** Let `c > 0` be complex balanced for the
+rate constants `κ ≥ 0`, let the stochastic mass-action chain satisfy a drift bound
+`L V ≤ a V + b` for some `V ≥ 0` and `a, b ≥ 0`, with `∑_s x_s ≤ V(x)`, and let every state be
+reachable from `x₀` along reactions with positive propensity. For the chain started from `π_c` (an
 initial state drawn from `countLaw π_c`, independent of the steps), the time averages of every
 bounded observable converge almost surely to `∑_y π_c(y) f(y)`; this is the conclusion of
 `StochasticCRNErgodicity.ergodic_of_isComplexBalanced` with its hypotheses `htransfer`, `hreg`
-and `hnonexp` replaced by complex balance, reachability and a drift bound. -/
+and `hnonexp` replaced by reachability and a drift bound. -/
 theorem ergodic_of_isComplexBalanced_of_reachable_countLaw (N : ReactionNetwork S ρ)
     {κ : ρ → ℝ} (hκ : ∀ r, 0 ≤ κ r) {c : S → ℝ} (hcb : N.IsComplexBalanced κ c)
     (hc : ∀ s, 0 < c s) (V : (S → ℕ) → ℝ≥0) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)

@@ -21,12 +21,12 @@ P. Brucker, *Scheduling Algorithms*, Springer, Section 6.4 (the job-shop model).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Finset.Lattice.Fold
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ exactly when the preceding operation of the same job is completed. QUESTION: is 
 feasible schedule whose total completion time `Σ_i C_i` is at most `K`, where `C_i` is the
 completion time of job `i` (that of its last operation)?
 
-This is the job-shop model of `JobShopSchedulingWanted` (Garey and Johnson's [SS18]), whose
+This is the job-shop model of `JobShopSchedulingDefs` (Garey and Johnson's [SS18]), whose
 task type `JobShopScheduling.Task`, `JobShopScheduling.taskLength`,
 `JobShopScheduling.taskProcessor` and `JobShopScheduling.WellFormed` are reused through
 `toJobShop`, specialized to two machines and unit processing times, with release dates, the
@@ -82,7 +82,7 @@ release date `r_i`) and the bound `K`. -/
 abbrev TwoMachineUnitNoWaitJobShopReleaseTotalCompletionInstance :=
   List (List (ℕ × ℕ) × ℕ) × ℕ
 
-/-- The two-machine job-shop instance of `JobShopSchedulingWanted` with the same jobs (and
+/-- The two-machine job-shop instance of `JobShopSchedulingDefs` with the same jobs (and
 deadline component `1`, which no condition below uses). -/
 abbrev toJobShop (i : TwoMachineUnitNoWaitJobShopReleaseTotalCompletionInstance) :
     JobShopScheduling.JobShopSchedulingInstance :=

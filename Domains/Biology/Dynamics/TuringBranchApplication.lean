@@ -280,8 +280,9 @@ theorem modeOperator_eq_add_smul (J : Matrix (Fin 2) (Fin 2) ℝ) (du d d₀ : �
 variable [DecidableEq ι]
 
 /-- The critical functional normalized against the critical mode, `ψ̂ = ψ / ψ(φ)`, so that
-`ψ̂ φ = 1` whenever `ψ(φ) = f_v tr (J - k² D) ≠ 0` (`criticalFunctional_criticalMode`). It cuts
-out the same range as `criticalFunctional`. -/
+`ψ̂ φ = 1` whenever `ψ(φ) = f_v tr (J - k² D) ≠ 0` (`criticalFunctional_criticalMode`); it then
+cuts out the same range as `criticalFunctional`. With `0⁻¹ = 0` it is the zero functional when
+`ψ(φ) = 0`. -/
 noncomputable def normalizedCriticalFunctional (J : Matrix (Fin 2) (Fin 2) ℝ) (du d : ℝ)
     (κ : ι → ℝ) (i₀ : ι) : (ι → Fin 2 → ℝ) →L[ℝ] ℝ :=
   (criticalFunctional J du d κ i₀ (criticalMode J du d κ i₀))⁻¹ • criticalFunctional J du d κ i₀
@@ -354,8 +355,8 @@ functional: `G̃(a, d) = a G(a, d)` near `(0, d₀)`. Then
 * `G(0, d)` is negative for `d < d₀` and positive for `d > d₀` near `d₀`.
 
 The trivial-branch values `G(0, d)` are not assumed; they are derived from the reduction
-(`lsScalar_factor_normalization`), and they agree with the critical eigenvalue only to first
-order at `d₀`. -/
+(`lsScalar_factor_normalization`), and they agree with the critical eigenvalue to first order at
+`d₀`, and in general not beyond. -/
 theorem turing_patternBranch_of_reduction {J : Matrix (Fin 2) (Fin 2) ℝ} {du d₀ : ℝ}
     {κ : ι → ℝ} {i₀ : ι}
     (htr : J.trace - κ i₀ ^ 2 * (du + d₀) < 0) (hk : 0 < J 0 0 * κ i₀ ^ 2 - du * (κ i₀ ^ 2) ^ 2)

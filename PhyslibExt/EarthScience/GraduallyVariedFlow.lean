@@ -85,16 +85,22 @@ total discharge `Q` at depth `y` under Manning roughness `n`:
 Manning's law solved for slope,
 `(n * Q / (A * R ^ (2 / 3))) ^ 2` with `A = b * y` and
 `R = (b * y) / (b + 2 * y)`. Physical for `0 < n`, `0 < b`,
-`0 < y`, `0 ≤ Q`; the division is totalized elsewhere. -/
+`0 < y`, `0 ≤ Q`; the division is totalized elsewhere: with the
+conventions `a / 0 = 0` and `0 ^ r = 0` for `r ≠ 0`, it is `0` when
+`b * y = 0` or `b + 2 * y = 0`; with `a ^ r = |a| ^ r * cos (π r)` for
+`a < 0`, a negative hydraulic radius enters as `-|R| ^ (2 / 3) / 2`. -/
 noncomputable def frictionSlope (n b Q y : ℝ) : ℝ :=
   (n * Q / ((b * y) * ((b * y) / (b + 2 * y)) ^ ((2 : ℝ) / 3))) ^ 2
 
 /-- Right-hand side of the declared steady gradually-varied-flow
 equation in a rectangular channel (Chow 1959, `α = 1`):
 `(S0 - Sf y) / (1 - (Q / b) ^ 2 / (g * y ^ 3))`. Physical for
-`0 < b`, `0 < n`, `0 < S0`, `0 < g`, `0 < y`, `y ≠ yc`; at
-`y = yc` the totalized division returns `0`, which is not a
-physical slope. -/
+`0 < b`, `0 < n`, `0 < S0`, `0 < g`, `0 < y`, `y ≠ yc`; at a
+positive critical depth `y = yc` (with `b, g > 0`) the totalized
+division returns `0`, which is not a physical slope. With the convention `a / 0 = 0`, the term
+`(Q / b) ^ 2 / (g * y ^ 3)` is `0` when `b = 0`, `g = 0` or `y = 0`. Inside `Sf`, a negative
+hydraulic radius `R = (b * y) / (b + 2 * y)` enters as `R ^ (2 / 3) = -|R| ^ (2 / 3) / 2`, by the
+convention `a ^ r = |a| ^ r * cos (π r)` for `a < 0`. -/
 noncomputable def gvfSlope (n S0 b Q g y : ℝ) : ℝ :=
   (S0 - frictionSlope n b Q y) / (1 - (Q / b) ^ 2 / (g * y ^ 3))
 
@@ -152,8 +158,11 @@ lemma manningDischarge_frictionSlope {n b Q y : ℝ} (hn : 0 < n)
 /-- Bridge to the rectangular discharge: for a downhill bed
 `0 < S0`, the friction slope equals
 `S0 * (Q / rectangularDischarge (sqrt S0 / n) b y) ^ 2`, the bed slope
-scaled by the squared ratio of the carried discharge to the uniform-
-flow discharge at depth `y`. -/
+scaled by the squared ratio of the carried discharge to the uniform-flow discharge at depth `y`. It
+also holds where a denominator vanishes, with the convention `x / 0 = 0` (both sides are `0` when
+`n = 0`), and for a negative hydraulic radius `R = (b * y) / (b + 2 * y)`, which enters both sides
+as `R ^ (2 / 3) = -|R| ^ (2 / 3) / 2` by the convention `x ^ r = |x| ^ r * cos (π r)` for
+`x < 0`. -/
 lemma frictionSlope_eq_rectangularDischarge {n S0 b Q y : ℝ}
     (hS0 : 0 < S0) :
     frictionSlope n b Q y
@@ -192,13 +201,14 @@ lemma frictionSlope_eq_rectangularDischarge {n S0 b Q y : ℝ}
 
 /-! ## B. Sign certificate and profile regimes -/
 
-/-- Sign certificate for the gradually-varied-flow slope: for a
-positive normal depth `yn` (rectangular Manning discharge `Q` at bed
-slope `S0`) and a depth `y > 0` away from the critical depth
-`yc = rectangularCriticalDepth (Q / b) g`, the declared slope has sign
-`sign (y - yn) * sign (y - yc)`. Positive flow `0 < Q` follows from
-`hyn` and is not a separate premise. The premise `y ≠ yc` keeps the
-totalized value at the singular point out of the claim. -/
+/-- Sign certificate for the gradually-varied-flow slope: for a positive normal depth `yn`
+(rectangular Manning discharge `Q` at bed slope `S0`) and a depth `y > 0` away from the critical
+depth `yc = rectangularCriticalDepth (Q / b) g`, the declared slope has sign
+`sign (y - yn) * sign (y - yc)`. Positive flow `0 < Q` follows from `hyn` and is not a separate
+premise. The premise `y ≠ yc` keeps the totalized value at the singular point out of the claim. Here
+the channel width `b`, the roughness `n`, the bed slope `S0` and `g` are positive, and `yn > 0` is a
+normal depth for `Q`: `(√S0 / n) * (b * yn) * ((b * yn) / (b + 2 * yn)) ^ (2 / 3) = Q`, with
+`yc = ((Q / b) ^ 2 / g) ^ (1 / 3)` the critical depth. -/
 theorem sign_gvfSlope {n S0 b Q g yn y : ℝ} (hb : 0 < b) (hn : 0 < n)
     (hS0 : 0 < S0) (hg : 0 < g) (hyn0 : 0 < yn)
     (hyn : rectangularDischarge (Real.sqrt S0 / n) b yn = Q)
@@ -285,9 +295,11 @@ theorem sign_gvfSlope {n S0 b Q g yn y : ℝ} (hb : 0 < b) (hn : 0 < n)
   unfold gvfSlope
   rw [sign_div hden_ne, hsign_num, hsign_den]
 
-/-- At the normal depth the declared slope vanishes: uniform flow is
-a constant-depth solution of the equation, read only when
-`yn ≠ yc` (at `yn = yc` the slope is the singular `0 / 0`). -/
+/-- At the normal depth the declared slope vanishes: uniform flow is a constant-depth solution of
+the equation, read only when `yn ≠ yc` (at `yn = yc` the slope is the singular `0 / 0`). Here the
+channel width `b`, the roughness `n`, the bed slope `S0` and `g` are positive, and `yn > 0` is a
+normal depth for `Q`: `(√S0 / n) * (b * yn) * ((b * yn) / (b + 2 * yn)) ^ (2 / 3) = Q`, with
+`yc = ((Q / b) ^ 2 / g) ^ (1 / 3)` the critical depth. -/
 theorem gvfSlope_normalDepth {n S0 b Q g yn : ℝ} (hb : 0 < b)
     (hn : 0 < n) (hS0 : 0 < S0) (_hg : 0 < g) (hyn0 : 0 < yn)
     (hyn : rectangularDischarge (Real.sqrt S0 / n) b yn = Q)
@@ -303,9 +315,11 @@ theorem gvfSlope_normalDepth {n S0 b Q g yn : ℝ} (hb : 0 < b)
   unfold gvfSlope
   rw [hSf, sub_self, zero_div]
 
-/-- Mild channel (`yc < yn`): the depth rises downstream above the
-normal depth (zone 1), falls between critical and normal depth
-(zone 2), and rises below critical depth (zone 3). -/
+/-- Mild channel (`yc < yn`): the depth rises downstream above the normal depth (zone 1), falls
+between critical and normal depth (zone 2), and rises below critical depth (zone 3). Here the
+channel width `b`, the roughness `n`, the bed slope `S0` and `g` are positive, and `yn > 0` is a
+normal depth for `Q`: `(√S0 / n) * (b * yn) * ((b * yn) / (b + 2 * yn)) ^ (2 / 3) = Q`, with
+`yc = ((Q / b) ^ 2 / g) ^ (1 / 3)` the critical depth. -/
 theorem gvfSlope_mild {n S0 b Q g yn : ℝ} (hb : 0 < b) (hn : 0 < n)
     (hS0 : 0 < S0) (hg : 0 < g) (hyn0 : 0 < yn)
     (hyn : rectangularDischarge (Real.sqrt S0 / n) b yn = Q)
@@ -347,9 +361,11 @@ theorem gvfSlope_mild {n S0 b Q g yn : ℝ} (hb : 0 < b) (hn : 0 < n)
     rw [h9] at h
     exact sign_eq_one_iff.mp h
 
-/-- Steep channel (`yn < yc`): the depth rises downstream above the
-critical depth (zone 1), falls between normal and critical depth
-(zone 2), and rises below normal depth (zone 3). -/
+/-- Steep channel (`yn < yc`): the depth rises downstream above the critical depth (zone 1), falls
+between normal and critical depth (zone 2), and rises below normal depth (zone 3). Here the channel
+width `b`, the roughness `n`, the bed slope `S0` and `g` are positive, and `yn > 0` is a normal
+depth for `Q`: `(√S0 / n) * (b * yn) * ((b * yn) / (b + 2 * yn)) ^ (2 / 3) = Q`, with
+`yc = ((Q / b) ^ 2 / g) ^ (1 / 3)` the critical depth. -/
 theorem gvfSlope_steep {n S0 b Q g yn : ℝ} (hb : 0 < b) (hn : 0 < n)
     (hS0 : 0 < S0) (hg : 0 < g) (hyn0 : 0 < yn)
     (hyn : rectangularDischarge (Real.sqrt S0 / n) b yn = Q)
@@ -390,11 +406,12 @@ theorem gvfSlope_steep {n S0 b Q g yn : ℝ} (hb : 0 < b) (hn : 0 < n)
     rw [h9] at h
     exact sign_eq_one_iff.mp h
 
-/-- Derivative reading: if a depth profile `Y` (distance `x` positive
-downstream) satisfies the declared gradually-varied-flow equation at
-`x`, with `0 < Y x` and `Y x ≠ yc`, then the sign of `dY/dx` at `x`
-is `sign (Y x - yn) * sign (Y x - yc)`. No profile existence is
-claimed. -/
+/-- Derivative reading: if a depth profile `Y` (distance `x` positive downstream) satisfies the
+declared gradually-varied-flow equation at `x`, with `0 < Y x` and `Y x ≠ yc`, then the sign of
+`dY/dx` at `x` is `sign (Y x - yn) * sign (Y x - yc)`. No profile existence is claimed. Here the
+channel width `b`, the roughness `n`, the bed slope `S0` and `g` are positive, and `yn > 0` is a
+normal depth for `Q`: `(√S0 / n) * (b * yn) * ((b * yn) / (b + 2 * yn)) ^ (2 / 3) = Q`, with
+`yc = ((Q / b) ^ 2 / g) ^ (1 / 3)` the critical depth. -/
 theorem sign_deriv_of_gvf {n S0 b Q g yn : ℝ} {Y : ℝ → ℝ} {x : ℝ}
     (hb : 0 < b) (hn : 0 < n) (hS0 : 0 < S0) (hg : 0 < g)
     (hyn0 : 0 < yn)

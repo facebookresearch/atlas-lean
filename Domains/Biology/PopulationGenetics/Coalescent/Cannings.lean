@@ -55,9 +55,9 @@ generation's parent map: child `c` of the new generation has parent `f c` in the
 The law is exchangeable in the children (relabelling the children `f ↦ f ∘ τ`) and in the
 parents (relabelling the parents `f ↦ σ ∘ f`). The offspring vector `ν_i = #{c | f c = i}`
 (`offspring`) is then an exchangeable vector summing to `N`, and given `ν` the children are
-assigned to parents uniformly at random; this is Cannings' model (Cannings 1974). Successive
-generations are independent copies of this law. Real-valued probabilities use the masses
-`(law f).toReal`. -/
+assigned to parents uniformly at random; this is Cannings' model (Cannings 1974). The structure
+is this one-generation law only; the iterated Cannings process uses independent copies of it for
+successive generations. Real-valued probabilities use the masses `(law f).toReal`. -/
 structure CanningsModel (N : ℕ) where
   /-- The law of one generation's parent map: `law f` is the probability of the parent map `f`. -/
   law : PMF (Fin N → Fin N)
@@ -89,24 +89,28 @@ def sampleProb {m : ℕ} (E : (Fin m → Fin N) → Prop) [DecidablePred E] : �
 
 /-- The probability that `k` sampled lineages all have the same parent one generation back
 (a `k`-merger among `k` lineages); `mergeProb_mul_descFactorial` expresses it through the
-offspring factorial moment `E[(ν_1)_k]`. -/
+offspring factorial moment `E[(ν_1)_k]`. It is `0` for `k > N`, and `1` for `k ≤ 1` when
+`k ≤ N`. -/
 def mergeProb (k : ℕ) : ℝ := M.sampleProb fun g : Fin k → Fin N => ∀ i j, g i = g j
 
 /-- The **coalescence probability** `c_N`: two sampled lineages have the same parent,
-`c_N = E[ν_1 (ν_1 - 1)] / (N - 1)`. It sets the coalescent time scale. -/
+`c_N = E[ν_1 (ν_1 - 1)] / (N - 1)` for `N ≥ 2`, and `c_N = 0` for `N < 2`. It sets the
+coalescent time scale. -/
 def coalProb : ℝ := M.mergeProb 2
 
 /-- The probability of a **simultaneous double merger**: among four sampled lineages, the first
-two share a parent, the last two share a parent, and the two parents differ. -/
+two share a parent, the last two share a parent, and the two parents differ. It is `0` when
+`N < 4`. -/
 def doubleMergeProb : ℝ :=
   M.sampleProb fun g : Fin 4 → Fin N => g 0 = g 1 ∧ g 2 = g 3 ∧ g 0 ≠ g 2
 
 /-- The one-generation transition probability of the **ancestral lineage count**: `b` sampled
-lineages have exactly `a` distinct parents. -/
+lineages have exactly `a` distinct parents. It is `0` when `b > N`. -/
 def lineageProb (b a : ℕ) : ℝ := M.sampleProb fun g : Fin b → Fin N => #(univ.image g) = a
 
 /-- The one-generation transition matrix of the ancestral lineage count (block-counting
-process) of a sample of at most `n` lineages, on the states `0, …, n`. -/
+process) of a sample of at most `n` lineages, on the states `0, …, n`. Rows `b > N` are
+zero. -/
 def lineageMatrix (n : ℕ) : Matrix (Fin (n + 1)) (Fin (n + 1)) ℝ :=
   Matrix.of fun b a => M.lineageProb b a
 
@@ -155,8 +159,8 @@ theorem sum_law_comp_emb {m : ℕ} (e : Fin m ↪ Fin N) (E : (Fin m → Fin N) 
   rw [M.law_comp_perm τ f]
   rfl
 
-/-- Events for a subsample: the event `E` for the parents of the lineages `u 0, …, u (m - 1)`
-of a sample of `b` has probability `sampleProb E`. -/
+/-- Events for a subsample: for `b ≤ N`, the event `E` for the parents of the lineages
+`u 0, …, u (m - 1)` of a sample of `b` has probability `sampleProb E`. -/
 theorem sampleProb_comp_emb {b m : ℕ} (hb : b ≤ N) (u : Fin m ↪ Fin b)
     (E : (Fin m → Fin N) → Prop) [DecidablePred E] :
     M.sampleProb (fun g : Fin b → Fin N => E (g ∘ u)) = M.sampleProb E := by

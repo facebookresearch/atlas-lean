@@ -1825,7 +1825,7 @@ private lemma followPredecessors_final_spec {n : Nat}
         (finalCore graph weight source).2.2.2.1.get vertex = some rank ∧
         rank ≤ targetRank := by
   induction targetRank using Nat.strong_induction_on generalizing target fuel distance with
-  | h targetRank induction =>
+  | ind targetRank induction =>
       by_cases hsource : target = source
       · subst target
         have hdistanceZero : distance = 0 := by

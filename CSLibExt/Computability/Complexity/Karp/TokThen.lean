@@ -31,7 +31,7 @@ the reduction host (`Cslib.Complexity.Host`).
 namespace Cslib.Complexity.Karp
 
 open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program MetaMathlibExt.TM2Embedding
-open Cslib.CookLevin Cslib.Logic.PL Cslib.Complexity.SatVerifier
+open Cslib.CookLevin Cslib.Logic.LegacyPL Cslib.Complexity.SatVerifier
 
 /-- **Emitter.** An emitter is a multi-stack machine, given by a type of stacks and a type of
 labels (both with decidable equality), an alphabet for each stack and a program with boolean
@@ -202,14 +202,14 @@ theorem embeds_tok : Embeds (embT E) (φT E) Tokenizer.prog (prog E) := by
   by_cases hr : l = .rej
   · subst hr; exact .inr rfl
   left
-  simp only [φT, ha, hr, if_false, prog]
+  simp only [φT, ha, hr, ite_false, prog]
 
 theorem embeds_em : Embeds (embE E) (φE E) E.prog (prog E) := by
   intro l
   by_cases hd : l = E.done
   · subst hd; exact .inr E.prog_done
   left
-  simp only [φE, hd, if_false, prog]
+  simp only [φE, hd, ite_false, prog]
 
 /-- **Initial stacks of the tokenizer.** For a bit string $x$, the SAT tokenizer's initial stacks
 hold $x$, as bit symbols, on the formula-bit stack $X$ and leave every other stack empty. -/

@@ -39,6 +39,17 @@ maximal zero-free segment, including end segments, is all-`1`
 of length `≥ b-1` or all-`2` of length `≥ b`); with the
 conditions read literally without end segments, the string
 `0` would be a counterexample at `n = 2`, `b = 3`.
+
+Proved in `MathlibExt.Combinatorics.Enumerative.NColorCompositions`,
+which this module imports: the partial-sum identities for `t(3k)`
+(`trib_three_mul`) and `t(3k+1)` (`trib_three_mul_add_one`), and the identities
+for `t(n) + t(n-2)` (`trib_add_two_sub_three_mul` and `trib_add_two_sub_three_mul_add_two`).
+The tribonacci numbers `tribNat` and `trib` moved there as well, with
+unchanged names, bodies and docstrings.
+
+The binomial sum `ccoAllowed_one_eq_sum` is proved in
+`MathlibExt.Combinatorics.Enumerative.NColorCompositionBinomialSum`, which also defines
+`ColorCompAllowed` and `ccoAllowed`. All three are re-exported here under their original names.
 -/
 module
 
@@ -49,22 +60,14 @@ public import Mathlib.Data.List.Chain
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.NColorCompositionBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.NColorCompositions
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.NColorCompositionsWanted
-
-/-- **n-color compositions with two allowed consecutive colors.** For natural numbers $b$ and $n$,
-$\mathrm{CCo}_{b,b+1}(n)$ is the set of $n$-color compositions of $n$ that use only the colors $b$
-and $b+1$: finite sequences of pairs $(k_1, c_1), \dots, (k_m, c_m)$ of natural numbers (part
-$k_i$ with color $c_i$) such that $1 \le c_i \le k_i$ and $c_i \in \{b, b+1\}$ for every $i$, and
-$k_1 + \dots + k_m = n$. -/
-def ColorCompAllowed (b n : ℕ) : Type :=
-  { l : List (ℕ × ℕ) //
-    (∀ pc ∈ l, 1 ≤ pc.2 ∧ pc.2 ≤ pc.1 ∧ (pc.2 = b ∨ pc.2 = b + 1)) ∧
-      (l.map Prod.fst).sum = n }
 
 /-- **n-color compositions with two prohibited consecutive colors.** For natural numbers $b$ and
 $n$, $\mathrm{CCo}_{\widehat{b,b+1}}(n)$ is the set of $n$-color compositions of $n$ in which no
@@ -84,14 +87,6 @@ def ColorCompProhibit2 (n : ℕ) : Type :=
   { l : List (ℕ × ℕ) //
     (∀ pc ∈ l, 1 ≤ pc.2 ∧ pc.2 ≤ pc.1 ∧ pc.2 ≠ 2) ∧
       (l.map Prod.fst).sum = n }
-
-/-- **Count of n-color compositions with two consecutive colors.** An $n$-color composition of a
-natural number $n$ is a finite sequence of parts, each a positive integer $k$ carrying a color
-$c$ with $1 \le c \le k$, whose sizes sum to $n$. For natural numbers $b$ and $n$,
-$\operatorname{cco}_{b,b+1}(n)$ is the number of $n$-color compositions of $n$ in which every
-part has color $b$ or $b+1$. -/
-noncomputable def ccoAllowed (b n : ℕ) : ℕ :=
-  Nat.card (ColorCompAllowed b n)
 
 /-- **Number of n-color compositions with two prohibited consecutive colors.** For natural numbers
 $b$ and $n$, $\mathrm{cco}_{\widehat{b,b+1}}(n)$ is the number of elements of
@@ -165,22 +160,6 @@ def TwoTypeComp (n : ℕ) : Type :=
     (l.map (fun s => if s.val < 2 then 1 else 2)).sum = n ∧
       l.IsChain (fun x y => 2 ≤ x.val ∨ 2 ≤ y.val ∨ x ≠ y) }
 
-/-- **Tribonacci numbers with initial values $1, 0, 1$.** The sequence
-$t : \mathbb{N} \to \mathbb{Z}$ with $t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and
-$t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$. -/
-def tribNat : ℕ → ℤ
-  | 0 => 1
-  | 1 => 0
-  | 2 => 1
-  | n + 3 => tribNat (n + 2) + tribNat (n + 1) + tribNat n
-
-/-- **Hopkins–Wang tribonacci numbers on the integers.** Let $t(0) = 1$, $t(1) = 0$,
-$t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for natural numbers $n \ge 3$. This
-extends $t$ to an integer-valued function on all integers by setting $t(n) = 0$ for
-$n < 0$. -/
-def trib (n : ℤ) : ℤ :=
-  if 0 ≤ n then tribNat n.toNat else 0
-
 /-- **Recurrence for n-color compositions with two consecutive colors.** Fix a natural number
 $b \ge 1$. For an integer $m$, let $c(m)$ be the number of $n$-color compositions of $m$ in
 which every part has color $b$ or $b+1$ when $m \ge 0$, and $c(m) = 0$ when $m < 0$. Then for
@@ -238,18 +217,6 @@ theorem_wanted nonempty_equiv_colorCompAllowed_ternary
     (b n : ℕ) (hb : 1 ≤ b) (hn : 1 ≤ n) :
     Nonempty (ColorCompAllowed b n ≃ TernaryAdmissible b n)
 
-/-- **Binomial sum for n-color compositions with colors 1 and 2.** For every natural number
-$n \ge 1$, the number $\operatorname{cco}_{1,2}(n)$ of $n$-color compositions of $n$ in which
-every part has color $1$ or $2$ satisfies
-$$\operatorname{cco}_{1,2}(n) = \sum_{m=0}^{\lfloor n/2 \rfloor} 2^m \binom{n}{2m}.$$
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Theorem 3. -/
-theorem_wanted ccoAllowed_one_eq_sum (n : ℕ) (hn : 1 ≤ n) :
-    ccoAllowed 1 n =
-      ∑ m ∈ Finset.range (n / 2 + 1), 2 ^ m * Nat.choose n (2 * m)
-
 /-- **n-color compositions with colors 2, 3 and compositions with parts not divisible by 3.** For
 every natural number $n \ge 1$, there is a bijection between $\mathrm{CCo}_{2,3}(n+1)$, the
 $n$-color compositions of $n+1$ using only the colors $2$ and $3$, and the compositions of $n$ all
@@ -298,80 +265,6 @@ Proposition 7. -/
 theorem_wanted trib_eq_add_one_add_sum (n : ℤ) (hn : 3 ≤ n) :
     trib n = trib (n - 1) + 1 +
       2 * ∑ i ∈ Finset.Icc 1 (n / 2 - 1), trib (n - 2 * i - 1)
-
-/-- **Tribonacci partial-sum identity for $t(3k)$.** Let $t$ be the tribonacci numbers with
-$t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
-extended by $t(n) = 0$ for $n < 0$. For every natural number $k$,
-$$t(3k) = 1 + \sum_{i=0}^{k} \bigl(t(3k-3i-1) + t(3k-3i-2)\bigr).$$
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Theorem 8. -/
-theorem_wanted trib_three_mul (k : ℕ) :
-    trib (3 * (k : ℤ)) = 1 +
-      ∑ i ∈ Finset.range (k + 1),
-        (trib (3 * (k : ℤ) - 3 * (i : ℤ) - 1) +
-          trib (3 * (k : ℤ) - 3 * (i : ℤ) - 2))
-
-/-- **Tribonacci partial-sum identity for $t(3k+1)$.** Let $t$ be the tribonacci numbers with
-$t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
-extended by $t(n) = 0$ for $n < 0$. For every natural number $k$,
-$$t(3k+1) = -1 + \sum_{i=0}^{k} \bigl(t(3k-3i) + t(3k-3i-1)\bigr).$$
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Theorem 8. -/
-theorem_wanted trib_three_mul_add_one (k : ℕ) :
-    trib (3 * (k : ℤ) + 1) = -1 +
-      ∑ i ∈ Finset.range (k + 1),
-        (trib (3 * (k : ℤ) + 1 - 3 * (i : ℤ) - 1) +
-          trib (3 * (k : ℤ) + 1 - 3 * (i : ℤ) - 2))
-
-/-- **Tribonacci partial-sum identity for $t(3k+2)$.** Let $t$ be the tribonacci numbers with
-$t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
-extended by $t(n) = 0$ for $n < 0$. For every natural number $k$,
-$$t(3k+2) = \sum_{i=0}^{k} \bigl(t(3k-3i+1) + t(3k-3i)\bigr).$$
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Theorem 8. -/
-theorem_wanted trib_three_mul_add_two (k : ℕ) :
-    trib (3 * (k : ℤ) + 2) =
-      ∑ i ∈ Finset.range (k + 1),
-        (trib (3 * (k : ℤ) + 2 - 3 * (i : ℤ) - 1) +
-          trib (3 * (k : ℤ) + 2 - 3 * (i : ℤ) - 2))
-
-/-- **Identity for $t(n) + t(n-2)$ when $n \ge 3$ and $n \equiv 0, 1 \pmod 3$.** Let $t$ be the
-tribonacci numbers with $t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and
-$t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$, extended by $t(n) = 0$ for $n < 0$. For every
-natural number $k \ge 1$, both $n = 3k$ and $n = 3k + 1$ satisfy
-$$t(n) + t(n-2) = 2 \sum_{i=0}^{k-1} t(n-3i-1).$$
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Theorem 9. -/
-theorem_wanted trib_add_two_sub_three_mul (k : ℕ) (hk : 1 ≤ k) :
-    trib (3 * (k : ℤ)) + trib (3 * (k : ℤ) - 2) =
-        2 * ∑ i ∈ Finset.range k,
-          trib (3 * (k : ℤ) - 3 * (i : ℤ) - 1) ∧
-      trib (3 * (k : ℤ) + 1) + trib (3 * (k : ℤ) + 1 - 2) =
-        2 * ∑ i ∈ Finset.range k,
-          trib (3 * (k : ℤ) + 1 - 3 * (i : ℤ) - 1)
-
-/-- **Identity for $t(n) + t(n-2)$ when $n \ge 3$ and $n \equiv 2 \pmod 3$.** Let $t$ be the
-tribonacci numbers with $t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and
-$t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$, extended by $t(n) = 0$ for $n < 0$. For every
-natural number $k \ge 1$, with $n = 3k + 2$,
-$$t(n) + t(n-2) = 2 + 2 \sum_{i=0}^{k-1} t(n-3i-1).$$
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Theorem 9. -/
-theorem_wanted trib_add_two_sub_three_mul_add_two (k : ℕ)
-    (hk : 1 ≤ k) :
-    trib (3 * (k : ℤ) + 2) + trib (3 * (k : ℤ) + 2 - 2) =
-      2 + 2 * ∑ i ∈ Finset.range k,
-        trib (3 * (k : ℤ) + 2 - 3 * (i : ℤ) - 1)
 
 /-- **Fibonacci identity for n-color compositions with colors 3 and 4.** For a natural number
 $m$, let $\operatorname{cco}_{3,4}(m)$ be the number of $n$-color compositions of $m$ in which

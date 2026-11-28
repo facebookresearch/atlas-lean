@@ -81,7 +81,7 @@ set_option quotPrecheck false in
 local notation "obsRY" => fun z : Bool × ℝ => (z.1, if z.1 then z.2 else (0 : ℝ))
 
 lemma measurable_obsRY : Measurable obsRY :=
-  measurable_fst.prodMk (Measurable.ite (p := {z : Bool × ℝ | z.1 = true})
+  measurable_fst.prodMk (Measurable.ite (p := fun z : Bool × ℝ => z.1 = true)
     (measurable_fst (measurableSet_singleton true)) measurable_snd measurable_const)
 
 /-! ### The δ-shift of nonrespondents -/
@@ -115,7 +115,9 @@ lemma integrable_snd_map_nonresponseShift {P : Measure (Bool × ℝ)} [IsFiniteM
     (measurable_nonresponseShift δ).aemeasurable).2
     (hP.add ((integrable_const δ).indicator measurableSet_nonresponse))
 
-/-- The δ-shift moves the full-data mean by `δ P(R = false)`. -/
+/-- For a finite measure `P` on `Bool × ℝ` with integrable second coordinate, the δ-shift moves
+the integral of the second coordinate by `δ * P.real {z | z.1 = false}`. When `P` is a
+probability measure this is the full-data mean moving by `δ P(R = false)`. -/
 theorem integral_snd_map_nonresponseShift {P : Measure (Bool × ℝ)} [IsFiniteMeasure P]
     (hP : Integrable Prod.snd P) (δ : ℝ) :
     ∫ z, z.2 ∂(P.map (nonresponseShift δ)) =
@@ -357,7 +359,7 @@ local notation "obsXRY" => fun z : _ × Bool × ℝ => (z.1, z.2.1, if z.2.1 the
 omit [MeasurableSingletonClass 𝒳] in
 lemma measurable_obsXRY : Measurable (obsXRY : 𝒳 × Bool × ℝ → 𝒳 × Bool × ℝ) :=
   measurable_fst.prodMk (measurable_snd.fst.prodMk
-    (Measurable.ite (p := {z : 𝒳 × Bool × ℝ | z.2.1 = true})
+    (Measurable.ite (p := fun z : 𝒳 × Bool × ℝ => z.2.1 = true)
       (measurable_snd.fst (measurableSet_singleton true)) measurable_snd.snd measurable_const))
 
 lemma measurableSet_stratum_nonresponse (x₀ : 𝒳) :

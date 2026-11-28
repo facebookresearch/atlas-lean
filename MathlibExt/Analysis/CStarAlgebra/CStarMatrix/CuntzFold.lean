@@ -1,0 +1,161 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+public import Mathlib.Algebra.Star.BigOperators
+
+/-!
+# The finite Cuntz matrix fold
+
+An actual finite family in a unital star semiring, satisfying orthogonality
+and partition, gives the literal matrix fold and inverse. The scalar action
+need only be distributive and compatible with left/right multiplication.
+No coefficient norm, topology, C-star completeness or output fold is supplied.
+The finite index may be empty, in which case the partition forces `0=1`.
+-/
+
+@[expose] public section
+
+open scoped BigOperators Matrix
+
+namespace CuntzFamily
+
+universe uS uR uI
+
+variable (S : Type uS) {R : Type uR} {ι : Type uI}
+variable [Monoid S] [Semiring R] [StarRing R]
+variable [DistribMulAction S R] [IsScalarTower S R R] [SMulCommClass S R R]
+variable [Fintype ι] [DecidableEq ι]
+
+/-- Let `S` be a monoid acting additively on a star semiring `R`, compatibly with multiplication on both
+sides. Let `ι` be finite with decidable equality. For a family `v : ι → R` satisfying `star (v i) *
+v j = δij` and `∑ i, v i * star (v i) = 1`, the matrix fold is a star-algebra equivalence
+`CStarMatrix ι ι R ≃⋆ₐ[S] R`. It sends `X` to `∑ i,j, v i * X i j * star (v j)`; its inverse sends
+`z` to the matrix with entry `star (v i) * z * v j`. Here `δij` is one when `i = j` and zero
+otherwise.
+-/
+def fold (v : ι → R)
+    (hOrth : ∀ i j : ι, star (v i) * v j = if i = j then 1 else 0)
+    (hPartition : (∑ i : ι, v i * star (v i)) = 1) :
+    CStarMatrix ι ι R ≃⋆ₐ[S] R := by
+  let Phi : CStarMatrix ι ι R → R :=
+    fun X => ∑ i : ι, ∑ j : ι, v i * X i j * star (v j)
+  let Psi : R → CStarMatrix ι ι R :=
+    fun z => CStarMatrix.ofMatrix (fun i j : ι => star (v i) * z * v j)
+  have Psi_apply (z : R) (i j : ι) :
+      Psi z i j = star (v i) * z * v j := by
+    rfl
+  have hRight (z : R) : Phi (Psi z) = z := by
+    calc
+      _ = (∑ i : ι, v i * star (v i)) * z *
+          (∑ j : ι, v j * star (v j)) := by
+        simp only [Phi, Psi_apply, Finset.sum_mul, Finset.mul_sum, mul_assoc]
+        exact Finset.sum_comm
+      _ = z := by rw [hPartition, one_mul, mul_one]
+  have sandwich (p q i j : ι) (a : R) :
+      star (v p) * (v i * a * star (v j)) * v q =
+        if p = i then (if j = q then a else 0) else 0 := by
+    calc
+      _ = (star (v p) * v i) * a * (star (v j) * v q) := by
+        simp only [mul_assoc]
+      _ = _ := by
+        rw [hOrth p i, hOrth j q]
+        by_cases hpi : p = i <;> by_cases hjq : j = q <;>
+          simp only [hpi, hjq, ↓reduceIte, one_mul, mul_one, zero_mul, mul_zero]
+  have hLeft (X : CStarMatrix ι ι R) : Psi (Phi X) = X := by
+    apply CStarMatrix.ext
+    intro p q
+    change star (v p) * Phi X * v q = X p q
+    calc
+      _ = ∑ i : ι, ∑ j : ι,
+          star (v p) * (v i * X i j * star (v j)) * v q := by
+        simp only [Phi, Finset.mul_sum, Finset.sum_mul]
+      _ = ∑ i : ι, ∑ j : ι,
+          if p = i then (if j = q then X i j else 0) else 0 := by
+        apply Finset.sum_congr rfl
+        intro i _
+        apply Finset.sum_congr rfl
+        intro j _
+        exact sandwich p q i j (X i j)
+      _ = X p q := by
+        simp only [Finset.sum_ite_irrel, Fintype.sum_ite_eq',
+          Finset.sum_const_zero, Fintype.sum_ite_eq]
+  have hPsiInjective : Function.Injective Psi := by
+    intro z w h
+    calc
+      z = Phi (Psi z) := (hRight z).symm
+      _ = Phi (Psi w) := congrArg Phi h
+      _ = w := hRight w
+  have hPsiMul (z w : R) : Psi (z * w) = Psi z * Psi w := by
+    apply CStarMatrix.ext
+    intro i j
+    rw [CStarMatrix.mul_apply]
+    change star (v i) * (z * w) * v j =
+      ∑ k : ι, (star (v i) * z * v k) * (star (v k) * w * v j)
+    calc
+      _ = (star (v i) * z) * ((∑ k : ι, v k * star (v k)) * w) * v j := by
+        rw [hPartition]
+        simp only [one_mul, mul_assoc]
+      _ = _ := by
+        simp only [Finset.sum_mul, Finset.mul_sum, mul_assoc]
+  have hPhiMul (X Y : CStarMatrix ι ι R) : Phi (X * Y) = Phi X * Phi Y := by
+    apply hPsiInjective
+    calc
+      Psi (Phi (X * Y)) = X * Y := hLeft (X * Y)
+      _ = Psi (Phi X) * Psi (Phi Y) := by rw [hLeft, hLeft]
+      _ = Psi (Phi X * Phi Y) := (hPsiMul (Phi X) (Phi Y)).symm
+  refine
+    { toFun := Phi
+      invFun := Psi
+      left_inv := hLeft
+      right_inv := hRight
+      map_add' := ?_
+      map_mul' := hPhiMul
+      map_star' := ?_
+      map_smul' := ?_ }
+  · intro X Y
+    simp only [Phi, CStarMatrix.add_apply, mul_add, add_mul, Finset.sum_add_distrib]
+  · intro X
+    simp only [Phi, CStarMatrix.star_apply, star_sum, star_mul, star_star, mul_assoc]
+    rw [Finset.sum_comm]
+  · intro c X
+    simp only [Phi, CStarMatrix.smul_apply, mul_smul_comm, smul_mul_assoc, Finset.smul_sum]
+
+/-- Let `S` be a monoid. Let `R` be a semiring. Let `ι` be a finite index type with decidable equality.
+The star on `R` is an additive involution reversing products. `S` acts on `R` preserving addition
+and zero. The `S`-scalar action on `R` is compatible with multiplication on both sides. For `v : ι →
+R` and `X : CStarMatrix ι ι R`. Assume `∀ i j : ι, star (v i) * v j = if i = j then 1 else 0` and
+`(∑ i : ι, v i * star (v i)) = 1`. The fold evaluates to its ordered double sum.
+-/
+theorem fold_apply (v : ι → R)
+    (hOrth : ∀ i j : ι, star (v i) * v j = if i = j then 1 else 0)
+    (hPartition : (∑ i : ι, v i * star (v i)) = 1) (X : CStarMatrix ι ι R) :
+    fold S v hOrth hPartition X =
+      ∑ i : ι, ∑ j : ι, v i * X i j * star (v j) := by
+  rfl
+
+/-- Let `S` be a monoid. Let `R` be a semiring. Let `ι` be a finite index type with decidable equality.
+The star on `R` is an additive involution reversing products. `S` acts on `R` preserving addition
+and zero. The `S`-scalar action on `R` is compatible with multiplication on both sides. For `v : ι →
+R`, `z : R` and `i` and `j : ι`. Assume `∀ i j : ι, star (v i) * v j = if i = j then 1 else 0` and
+`(∑ i : ι, v i * star (v i)) = 1`. The inverse fold has the ordered multiplier sandwich entries.
+-/
+theorem fold_symm_apply_entry (v : ι → R)
+    (hOrth : ∀ i j : ι, star (v i) * v j = if i = j then 1 else 0)
+    (hPartition : (∑ i : ι, v i * star (v i)) = 1) (z : R) (i j : ι) :
+    (fold S v hOrth hPartition).symm z i j = star (v i) * z * v j := by
+  rfl
+
+end CuntzFamily

@@ -19,7 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Computability.BinaryNatEncoding
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Classes
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 
@@ -51,10 +51,10 @@ entries form $Q'$, it holds under $a$ when, if $e$ is true, the formula with pre
 under $a[v \mapsto \mathrm{true}]$ or under $a[v \mapsto \mathrm{false}]$, and, if $e$ is false,
 the formula with prefix $Q'$ holds under both $a[v \mapsto \mathrm{true}]$ and
 $a[v \mapsto \mathrm{false}]$. -/
-def EvalQBF (pref : List (Bool × ℕ)) (φ : Cslib.Logic.PL.CNF)
+def EvalQBF (pref : List (Bool × ℕ)) (φ : Cslib.Logic.LegacyPL.CNF)
     (assign : ℕ → Bool) : Prop :=
   match pref with
-  | [] => Cslib.Logic.PL.CNF.Satisfies assign φ
+  | [] => Cslib.Logic.LegacyPL.CNF.Satisfies assign φ
   | (isEx, v) :: rest =>
     if isEx then
       EvalQBF rest φ (Function.update assign v true) ∨
@@ -74,7 +74,7 @@ $\varphi$ holds under the assignment that sends every variable to false. -/
 noncomputable def tqbfDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := List (Bool × ℕ) × Cslib.Logic.PL.CNF) x with
+      (α := List (Bool × ℕ) × Cslib.Logic.LegacyPL.CNF) x with
   | some i => decide (
       List.Perm (i.1.map Prod.snd) (List.range i.1.length) ∧
       (∀ clause ∈ i.2, ∀ l ∈ clause, l.1 < i.1.length) ∧

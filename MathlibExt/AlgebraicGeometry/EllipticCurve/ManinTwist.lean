@@ -194,7 +194,7 @@ private lemma intDegree_add_le_of_le {x y : RatFunc F} {m : ℤ}
   · simp [hxy, hm]
   by_cases hy0 : y = 0
   · simpa [hy0] using hx
-  exact (RatFunc.intDegree_add_le hy0 hxy).trans (max_le hx hy)
+  exact (RatFunc.intDegree_add_le hxy).trans (max_le hx hy)
 
 private lemma intDegree_add_sub_le_of_le {x y z : RatFunc F} {m : ℤ}
     (hm : 0 ≤ m) (hx : x.intDegree ≤ m) (hy : y.intDegree ≤ m)
@@ -1320,7 +1320,7 @@ private lemma frobeniusPolynomial_splits [Finite F] :
   rw [Polynomial.splits_iff_card_roots]
   unfold frobeniusPolynomial
   rw [Nat.card_eq_fintype_card, FiniteField.roots_X_pow_card_sub_X,
-    FiniteField.X_pow_card_sub_X_natDegree_eq F Fintype.one_lt_card]
+    Polynomial.natDegree_X_pow_sub_X Fintype.one_lt_card]
   simp
 
 private lemma minusOneGCD_natDegree [Fintype F]

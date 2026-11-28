@@ -14,6 +14,9 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import MathlibExt.Algebra.Polynomial.RealRooted
+public import MathlibExt.Combinatorics.Enumerative.MinusculePolynomial
+public import MathlibExt.Combinatorics.Enumerative.MinusculePolynomialClosedForm
+public import MathlibExt.Combinatorics.Enumerative.MinusculePolynomialLogConcavity
 public import MathlibExt.LinearAlgebra.Matrix.NonnegativeMinors
 
 /-!
@@ -29,45 +32,6 @@ namespace MetaMathlibExt
 open Polynomial Filter Topology
 
 @[expose] public section
-
-/-- **Type-A minuscule polynomial.** For a natural number $n$, the type-A minuscule polynomial
-$N_n(x)$ is the polynomial with rational coefficients
-$$N_n(x) = \frac{1}{4n + 2} \sum_{k=1}^{n-1} k (n - k) \binom{2n + 2}{2k + 1} x^k.$$
-For $n = 0$ the sum is empty, so $N_0 = 0$.
-
-Source: Ming-Jian Ding and Jiang Zeng, *Some New Results on the Minuscule Polynomials of
-Type A*, Journal of Integer Sequences 28 (2025), Article 25.1.2, definition (1.1)
-(arXiv:2308.16782v3, equation (1.1)). -/
-public noncomputable def minusculePolynomialA (n : ℕ) : ℚ[X] :=
-  ∑ k ∈ Finset.Icc 1 (n - 1),
-    C ((k : ℚ) * ((n : ℚ) - k) * ((2 * n + 2).choose (2 * k + 1) : ℚ) / (4 * n + 2)) * X ^ k
-
-/-- **The minuscule polynomial $N_1$ vanishes.** The type-A minuscule polynomial $N_1(x)$ is the
-zero polynomial.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, table of `N_n(x)` after (1.1). -/
-public theorem minusculePolynomialA_one : minusculePolynomialA 1 = 0 := by
-  simp [minusculePolynomialA]
-
-/-- **The minuscule polynomial $N_2$.** The type-A minuscule polynomial $N_2(x)$ equals $2x$.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, table of `N_n(x)` after (1.1). -/
-public theorem minusculePolynomialA_two : minusculePolynomialA 2 = C 2 * X := by
-  simp [minusculePolynomialA, Nat.choose]
-  norm_num
-
-/-- **The minuscule polynomial $N_3$.** The type-A minuscule polynomial $N_3(x)$ equals
-$8x + 8x^2$.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, table of `N_n(x)` after (1.1). -/
-public theorem minusculePolynomialA_three :
-    minusculePolynomialA 3 = C 8 * X + C 8 * X ^ 2 := by
-  rw [minusculePolynomialA, show Finset.Icc 1 (3 - 1) = {1, 2} by decide]
-  simp [Nat.choose]
-  norm_num
 
 /-- **Real-rootedness of the minuscule polynomials.** For every natural number $n$, the type-A
 minuscule polynomial $N_n$, viewed as a complex polynomial, is real-rooted: every element of its
@@ -100,18 +64,6 @@ public theorem_wanted minusculePolynomialA_interlaces_succ (n : ℕ) (hn : 2 ≤
       ∀ (j : ℕ) (hj : j + 1 < n),
         r ⟨j, by omega⟩ ≤ s ⟨j, by omega⟩ ∧ s ⟨j, by omega⟩ ≤ r ⟨j + 1, hj⟩
 
-/-- **Log-concavity of the coefficients of the minuscule polynomials.** Let $N_{n,k}$ be the
-coefficient of $x^k$ in the type-A minuscule polynomial $N_n(x)$. For all natural numbers $n$
-and $k$, $N_{n,k-1} N_{n,k+1} \le N_{n,k}^2$, where for $k = 0$ the index $k - 1$ is read as $0$.
-
-The cases outside $n \ge 1$, $1 \le k \le n - 1$ hold because the coefficients involved vanish.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, Corollary 7. -/
-public theorem_wanted minusculePolynomialA_coeff_logConcave (n k : ℕ) :
-    (minusculePolynomialA n).coeff (k - 1) * (minusculePolynomialA n).coeff (k + 1) ≤
-      (minusculePolynomialA n).coeff k ^ 2
-
 /-- **Gamma-positivity of the minuscule polynomials.** For every natural number $n$ there are
 non-negative integers $\gamma_{n,0}, \dots, \gamma_{n,\lfloor n/2 \rfloor}$ such that the type-A
 minuscule polynomial $N_n$ satisfies
@@ -124,37 +76,6 @@ Integer Sequences 28 (2025), Article 25.1.2, Corollary 8. -/
 public theorem_wanted minusculePolynomialA_gamma_positive (n : ℕ) :
     ∃ γ : ℕ → ℕ, minusculePolynomialA n =
       ∑ k ∈ Finset.range (n / 2 + 1), C (γ k : ℚ) * X ^ k * (1 + X) ^ (n - 2 * k)
-
-/-- **Binomial closed form of the minuscule polynomials.** For every natural number $n$, the
-type-A minuscule polynomial $N_n$ satisfies the identity of polynomials with rational
-coefficients
-$16x\, N_n(x^2) = 2(n+1)x \bigl((1+x)^{2n} + (1-x)^{2n}\bigr) -
-\bigl((1+x)^{2n+2} - (1-x)^{2n+2}\bigr)$.
-
-Dividing by $16x$ gives $N_n(x^2) = \frac{n+1}{8} \bigl((1+x)^{2n} + (1-x)^{2n}\bigr) -
-\frac{1}{16x} \bigl((1+x)^{2n+2} - (1-x)^{2n+2}\bigr)$; both sides vanish at $n = 0$.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, Proposition 9. -/
-public theorem_wanted minusculePolynomialA_comp_sq (n : ℕ) :
-    C 16 * X * (minusculePolynomialA n).comp (X ^ 2) =
-      C (2 * ((n : ℚ) + 1)) * X * ((1 + X) ^ (2 * n) + (1 - X) ^ (2 * n)) -
-        ((1 + X) ^ (2 * n + 2) - (1 - X) ^ (2 * n + 2))
-
-/-- **Exponential generating function of the minuscule polynomials.** For all real numbers $x$
-and $z$ with $x \ne 0$, the series $\sum_{n \ge 0} N_n(x^2)\, z^n / n!$ built from the type-A
-minuscule polynomials $N_n$ has sum
-$\frac{2x(1+x)^2 z - 1 - x^2}{16x} e^{(1+x)^2 z} +
-\frac{2x(1-x)^2 z + 1 + x^2}{16x} e^{(1-x)^2 z}$.
-
-The sum starts at $n = 0$, where $N_0 = 0$.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, Proposition 10. -/
-public theorem_wanted minusculePolynomialA_egf (x z : ℝ) (hx : x ≠ 0) :
-    HasSum (fun n : ℕ => aeval (x ^ 2) (minusculePolynomialA n) * z ^ n / n.factorial)
-      ((2 * x * (1 + x) ^ 2 * z - 1 - x ^ 2) / (16 * x) * Real.exp ((1 + x) ^ 2 * z) +
-        (2 * x * (1 - x) ^ 2 * z + 1 + x ^ 2) / (16 * x) * Real.exp ((1 - x) ^ 2 * z))
 
 /-- **Bourn–Erickson formula for the minuscule polynomials at one.** For every integer $n \ge 1$,
 the type-A minuscule polynomial $N_n$ satisfies $N_n(1) = (n - 1)\, 2^{2n-3}$.
@@ -187,8 +108,8 @@ public theorem_wanted bender_asymptotic_normality (r : (n : ℕ) → Fin n → �
         (∑ k ∈ Finset.range (n + 1), ((k : ℝ) - μ n) ^ 2 * a n k) /
           (∑ k ∈ Finset.range (n + 1), a n k) = σ2 n) ∧
     (Tendsto σ2 atTop atTop → ∀ x : ℝ,
-      Tendsto (fun n => (∑ k ∈ (Finset.range (n + 1)).filter (fun k : ℕ => (k : ℝ) ≤ μ n + x * √(σ2 n)),
-            a n k) /
+      Tendsto (fun n => (∑ k ∈ (Finset.range (n + 1)).filter
+          (fun k : ℕ => (k : ℝ) ≤ μ n + x * √(σ2 n)), a n k) /
           (∑ k ∈ Finset.range (n + 1), a n k))
         atTop (𝓝 (ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) x)))
 

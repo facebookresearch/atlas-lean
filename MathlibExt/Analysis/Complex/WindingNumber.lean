@@ -320,8 +320,8 @@ public theorem differentiableOn_curveIntegral_div_sub (hγ : γ.IsPiecewiseC1) {
       (range γ)ᶜ :=
   differentiableOn_curveIntegral hγ (isCompact_range γ.continuous).isClosed.isOpen_compl
     (Φ := fun z ζ => φ ζ / (ζ - z))
-    ((hφ.comp continuousOn_snd fun _ hp => hp.2).div₀
-      (continuous_snd.sub continuous_fst).continuousOn fun _ hp h0 =>
+    ((hφ.comp continuousOn_snd fun p (hp : p ∈ (range γ)ᶜ ×ˢ range γ) => hp.2).div₀
+      (continuous_snd.sub continuous_fst).continuousOn fun p (hp : p ∈ (range γ)ᶜ ×ˢ range γ) h0 =>
         hp.1 (sub_eq_zero.1 h0 ▸ hp.2))
     fun ζ hζ z hz => ((differentiableAt_const _).fun_div
       ((differentiableAt_const ζ).sub differentiableAt_id)

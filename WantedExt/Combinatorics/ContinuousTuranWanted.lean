@@ -19,6 +19,8 @@ of `[0, n]²`.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.ContinuousTuran
+public import MathlibExt.Combinatorics.ContinuousTuranMonotonicity
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Analysis.Asymptotics.Theta
@@ -27,57 +29,6 @@ public import Mathlib.Computability.Ackermann
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Containment of planar point sets.** A set $S \subseteq \mathbb{R}^2$ contains a set
-$P \subseteq \mathbb{R}^2$ when there are maps $f_X, f_Y : \mathbb{R} \to \mathbb{R}$ such that
-$f_X(x_0) - f_X(x_1) \ge x_0 - x_1$ whenever $x_0 > x_1$ are $x$-coordinates of points of $P$,
-$f_Y(y_0) - f_Y(y_1) \ge y_0 - y_1$ whenever $y_0 > y_1$ are $y$-coordinates of points of $P$,
-and $(f_X(x), f_Y(y)) \in S$ for every $(x, y) \in P$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of containment). -/
-public def PointSetContainsPattern (S P : Set (ℝ × ℝ)) : Prop :=
-  ∃ fX fY : ℝ → ℝ,
-    (∀ p ∈ P, ∀ q ∈ P, q.1 < p.1 → p.1 - q.1 ≤ fX p.1 - fX q.1) ∧
-    (∀ p ∈ P, ∀ q ∈ P, q.2 < p.2 → p.2 - q.2 ≤ fY p.2 - fY q.2) ∧
-    ∀ p ∈ P, (fX p.1, fY p.2) ∈ S
-
-/-- **Every planar set contains the empty pattern.** Every set $S \subseteq \mathbb{R}^2$ contains
-the empty set $\emptyset$ in the sense of containment of planar point sets.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of containment). -/
-public theorem pointSetContainsPattern_empty (S : Set (ℝ × ℝ)) : PointSetContainsPattern S ∅ :=
-  ⟨id, id, by simp, by simp, by simp⟩
-
-/-- **Continuous Turán number in the plane.** For a real number $n$ and a set
-$P \subseteq \mathbb{R}^2$, the continuous Turán number $\operatorname{opx}(n, P)$ is the supremum
-of the Lebesgue measures $\mu_2(S)$ over all open sets $S \subseteq [0, n]^2$ that do not contain
-$P$ in the sense of point-set pattern containment; it is $0$ when there is no such set.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of `opx(n, P)`). -/
-public noncomputable def opx (n : ℝ) (P : Set (ℝ × ℝ)) : ℝ :=
-  sSup ((fun S => (MeasureTheory.volume S).toReal) ''
-    {S | IsOpen S ∧ S ⊆ Set.Icc 0 n ×ˢ Set.Icc 0 n ∧ ¬ PointSetContainsPattern S P})
-
-/-- **Nonnegativity of the continuous Turán number.** For every real number $n$ and every set
-$P \subseteq \mathbb{R}^2$, $\operatorname{opx}(n, P) \ge 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of `opx(n, P)`). -/
-public theorem opx_nonneg (n : ℝ) (P : Set (ℝ × ℝ)) : 0 ≤ opx n P := by
-  apply Real.sSup_nonneg
-  rintro _ ⟨S, -, rfl⟩
-  exact ENNReal.toReal_nonneg
-
-/-- **Continuous Turán number of the empty pattern.** For every real number $n$,
-$\mathrm{opx}(n, \emptyset) = 0$: every set contains the empty pattern, so no set avoids it.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 1
-(definition of `opx(n, P)`). -/
-public theorem opx_empty (n : ℝ) : opx n ∅ = 0 := by
-  simp [opx, pointSetContainsPattern_empty]
 
 /-- **Rotation and reflection invariance of the continuous Turán number.** For every real
 number $n$ and every set $P \subseteq \mathbb{R}^2$, the value $\operatorname{opx}(n, P)$ does
@@ -91,36 +42,6 @@ public theorem_wanted opx_rotate_reflect (n : ℝ) (P : Set (ℝ × ℝ)) :
     opx n ((fun p : ℝ × ℝ => (-p.2, p.1)) '' P) = opx n P ∧
       opx n ((fun p : ℝ × ℝ => (-p.1, p.2)) '' P) = opx n P ∧
       opx n ((fun p : ℝ × ℝ => (p.1, -p.2)) '' P) = opx n P
-
-/-- **Translation invariance of the continuous Turán number.** Let $n$ be a real number,
-$P \subseteq \mathbb{R}^2$ a set and $v \in \mathbb{R}^2$ a vector, and let
-$P + v = \{p + v : p \in P\}$ be the translate of $P$ by $v$. Then
-$\operatorname{opx}(n, P + v) = \operatorname{opx}(n, P)$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.2
-(`integers-2024-A1-lem-2-2`). -/
-public theorem_wanted opx_translate (n : ℝ) (P : Set (ℝ × ℝ)) (v : ℝ × ℝ) :
-    opx n ((fun p => p + v) '' P) = opx n P
-
-/-- **Monotonicity of the continuous Turán number under containment.** Let $n$ be a real number
-and let $P, Q \subseteq \mathbb{R}^2$. If $Q$ contains $P$ in the sense of containment of planar
-point sets, then $\operatorname{opx}(n, P) \le \operatorname{opx}(n, Q)$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.3
-(`integers-2024-A1-lem-2-3`). -/
-public theorem_wanted opx_mono_of_containsPattern (n : ℝ) {P Q : Set (ℝ × ℝ)}
-    (h : PointSetContainsPattern Q P) :
-    opx n P ≤ opx n Q
-
-/-- **Monotonicity of the continuous Turán number in the side length.** For every set
-$P \subseteq \mathbb{R}^2$ and all real numbers $m \le n$, the continuous Turán numbers satisfy
-$\operatorname{opx}(m, P) \le \operatorname{opx}(n, P)$.
-
-The paper assumes $0 < m$. This is not needed, since $\operatorname{opx}(m, P) = 0$ for $m \le 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 2.4
-(`integers-2024-A1-lem-2-4`). -/
-public theorem_wanted opx_mono_left (P : Set (ℝ × ℝ)) {m n : ℝ} (hmn : m ≤ n) : opx m P ≤ opx n P
 
 /-- **Superadditivity of the continuous Turán number.** For every set $P \subseteq \mathbb{R}^2$
 and all real numbers $m, n > 0$,
@@ -599,108 +520,6 @@ public theorem_wanted opx_two_row_growing_iff (s : ℝ → ℝ) (Q : ℝ → Set
     (∀ ε : ℝ, 0 < ε → ∀ᶠ n in Filter.atTop, n ^ (2 - ε) ≤ opx n (Q n)) ↔
       ∀ ε : ℝ, 0 < ε → ∀ᶠ n in Filter.atTop, n ^ (1 - ε) ≤ s n
 
-/-- **Saturating sets for a point pattern.** Let $n$ be a real number and let $P$ and $S$ be
-subsets of $\mathbb{R}^2$. Then $S$ is saturating for $P$ in $[0, n]^2$ when $S$ is an open
-subset of $[0, n]^2$ that does not contain $P$, while every open set $S'$ with
-$S \subsetneq S' \subseteq [0, n]^2$ contains $P$. Here a set $T$ contains $P$ when there are
-maps $f_X, f_Y : \mathbb{R} \to \mathbb{R}$ such that $f_X(x) - f_X(x') \ge x - x'$ whenever
-$x > x'$ are $x$-coordinates of points of $P$, likewise $f_Y(y) - f_Y(y') \ge y - y'$ whenever
-$y > y'$ are $y$-coordinates of points of $P$, and $(f_X(x), f_Y(y)) \in T$ for every
-$(x, y) \in P$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 6
-(definition of saturating sets). -/
-public def IsOpxSaturating (n : ℝ) (P S : Set (ℝ × ℝ)) : Prop :=
-  IsOpen S ∧ S ⊆ Set.Icc 0 n ×ˢ Set.Icc 0 n ∧ ¬ PointSetContainsPattern S P ∧
-    ∀ S' : Set (ℝ × ℝ), IsOpen S' → S' ⊆ Set.Icc 0 n ×ˢ Set.Icc 0 n → S ⊂ S' →
-      PointSetContainsPattern S' P
-
-/-- **Saturation function for continuous patterns.** For a real number $n$ and a set
-$P \subseteq \mathbb{R}^2$, call an open set $S \subseteq [0, n]^2$ saturating for $P$ if $S$
-does not contain $P$ but every open set $S' \subseteq [0, n]^2$ properly containing $S$ contains
-$P$ (containment in the sense of point-set pattern containment). The saturation function
-$\operatorname{osat}(n, P)$ is the infimum of the Lebesgue measures $\mu_2(S)$ over all sets $S$
-saturating for $P$, and is $0$ when no saturating set exists.
-
-The paper leaves $\operatorname{osat}(n, P)$ undefined when no saturating set exists.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 6
-(definition of `osat(n, P)`). -/
-public noncomputable def osat (n : ℝ) (P : Set (ℝ × ℝ)) : ℝ :=
-  sInf ((fun S => (MeasureTheory.volume S).toReal) '' {S | IsOpxSaturating n P S})
-
-/-- **The saturation function is nonnegative.** For every real number $n$ and every set
-$P \subseteq \mathbb{R}^2$, $\operatorname{osat}(n, P) \ge 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 6
-(definition of `osat(n, P)`). -/
-public theorem osat_nonneg (n : ℝ) (P : Set (ℝ × ℝ)) : 0 ≤ osat n P := by
-  apply Real.sInf_nonneg
-  rintro _ ⟨S, -, rfl⟩
-  exact ENNReal.toReal_nonneg
-
-/-- **Saturation function and continuous Turán number of a single point.** For every real number
-$n$ and every point $p \in \mathbb{R}^2$, $\operatorname{osat}(n, \{p\}) = 0$ and
-$\operatorname{opx}(n, \{p\}) = 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 6.5
-(`integers-2024-A1-lem-6-5`). -/
-public theorem_wanted osat_singleton_and_opx_singleton (n : ℝ) (p : ℝ × ℝ) :
-    osat n {p} = 0 ∧ opx n {p} = 0
-
-/-- **Containment of point sets in $\mathbb{R}^d$.** Let $d$ be a natural number and let
-$S, P \subseteq \mathbb{R}^d$. Then $S$ contains $P$ when there are maps
-$f_1, \dots, f_d : \mathbb{R} \to \mathbb{R}$ that expand distances between coordinates of points
-of $P$, that is, $f_i(p_i) - f_i(q_i) \ge p_i - q_i$ for every $i$ and all $p, q \in P$ with
-$p_i > q_i$, and such that $(f_1(p_1), \dots, f_d(p_d)) \in S$ for every $p \in P$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of containment in `ℝ^d`). -/
-public def ContainsPatternD {d : ℕ} (S P : Set (Fin d → ℝ)) : Prop :=
-  ∃ f : Fin d → ℝ → ℝ,
-    (∀ i, ∀ p ∈ P, ∀ q ∈ P, q i < p i → p i - q i ≤ f i (p i) - f i (q i)) ∧
-    ∀ p ∈ P, (fun i => f i (p i)) ∈ S
-
-/-- **Every set in $\mathbb{R}^d$ contains the empty pattern.** For every natural number $d$ and
-every set $S \subseteq \mathbb{R}^d$, $S$ contains the empty set $\emptyset \subseteq \mathbb{R}^d$
-in the sense of containment of point sets in $\mathbb{R}^d$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of containment in `ℝ^d`). -/
-public theorem containsPatternD_empty {d : ℕ} (S : Set (Fin d → ℝ)) : ContainsPatternD S ∅ :=
-  ⟨fun _ => id, by simp, by simp⟩
-
-/-- **Continuous Turán number in $\mathbb{R}^d$.** For a natural number $d$, a real number $n$
-and a set $P \subseteq \mathbb{R}^d$, the continuous Turán number $\mathrm{opx}(n, P, d)$ is the
-supremum of the $d$-dimensional Lebesgue measures $\mu_d(S)$ over all open sets
-$S \subseteq [0, n]^d$ that do not contain $P$ in the sense of containment of point sets in
-$\mathbb{R}^d$; it is $0$ when there is no such set.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of `opx(n, P, d)`). -/
-public noncomputable def opxD (d : ℕ) (n : ℝ) (P : Set (Fin d → ℝ)) : ℝ :=
-  sSup ((fun S => (MeasureTheory.volume S).toReal) ''
-    {S | IsOpen S ∧ S ⊆ Set.Icc 0 (fun _ => n) ∧ ¬ ContainsPatternD S P})
-
-/-- **Higher-dimensional continuous Turán numbers are nonnegative.** For every dimension $d$,
-real number $n$ and set $P \subseteq \mathbb{R}^d$, $\mathrm{opx}(n, P, d) \ge 0$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of `opx(n, P, d)`). -/
-public theorem opxD_nonneg (d : ℕ) (n : ℝ) (P : Set (Fin d → ℝ)) : 0 ≤ opxD d n P := by
-  apply Real.sSup_nonneg
-  rintro _ ⟨S, -, rfl⟩
-  exact ENNReal.toReal_nonneg
-
-/-- **The higher-dimensional continuous Turán number of the empty pattern.** For every dimension
-$d$ and every real number $n$, $\mathrm{opx}(n, \emptyset, d) = 0$: every set contains the empty
-pattern, so no set is free of it.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Section 5
-(definition of `opx(n, P, d)`). -/
-public theorem opxD_empty (d : ℕ) (n : ℝ) : opxD d n ∅ = 0 := by
-  simp [opxD, containsPatternD_empty]
-
 /-- **Containment of a point pattern in d-dimensional grid cells.** Let $d$ be a natural number,
 let $A \subseteq \mathbb{N}^d$ be a set of cells and let $P \subseteq \mathbb{R}^d$. Then $A$
 contains $P$ when there are maps $f_1, \dots, f_d : \mathbb{R} \to \mathbb{N}$ such that each $f_i$
@@ -753,40 +572,6 @@ public theorem patternExD_singleton (d n : ℕ) (p : Fin d → ℝ) : patternExD
   rcases A.eq_empty_or_nonempty with rfl | ⟨a, ha⟩
   · simp
   · exact absurd ⟨fun i _ => a i, fun i => by simp, by simpa using ha⟩ hA
-
-/-- **Higher-dimensional continuous Turán numbers are monotone under containment.** Let
-$P, Q \subseteq \mathbb{R}^d$. If $Q$ contains $P$, then
-$\mathrm{opx}(n, P, d) \le \mathrm{opx}(n, Q, d)$ for every real number $n$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.1
-(`integers-2024-A1-lem-5-1`). -/
-public theorem_wanted opxD_mono_of_containsPatternD {d : ℕ} (n : ℝ) {P Q : Set (Fin d → ℝ)}
-    (h : ContainsPatternD Q P) : opxD d n P ≤ opxD d n Q
-
-/-- **Higher-dimensional continuous Turán numbers are monotone in the side length.** For every
-set $P \subseteq \mathbb{R}^d$ and all real numbers $m \le n$,
-$\mathrm{opx}(m, P, d) \le \mathrm{opx}(n, P, d)$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.2
-(`integers-2024-A1-lem-5-2`). -/
-public theorem_wanted opxD_mono_left {d : ℕ} (P : Set (Fin d → ℝ)) {m n : ℝ} (hmn : m ≤ n) :
-    opxD d m P ≤ opxD d n P
-
-/-- **Increment bound for the d-dimensional continuous Turán number.** Let $d \ge 2$ be a
-natural number, let $P \subseteq \mathbb{R}^d$, and let $n, \varepsilon$ be real numbers with
-$n > 0$ and $0 < \varepsilon < n$. Then the $d$-dimensional continuous Turán number
-$\mathrm{opx}$ satisfies $\mathrm{opx}(n, P, d) \le \mathrm{opx}(n + \varepsilon, P, d)$ and
-$\mathrm{opx}(n + \varepsilon, P, d) < \mathrm{opx}(n, P, d) + d (2n)^{d-1} \varepsilon$.
-
-The hypothesis $d \ge 2$ is needed: for $d = 1$ and $P = \{0, L\}$ with $L > n + \varepsilon$,
-every open subset of $[0, n + \varepsilon]$ avoids $P$, so
-$\mathrm{opx}(n + \varepsilon, P, 1) = n + \varepsilon = \mathrm{opx}(n, P, 1) + \varepsilon$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Lemma 5.3
-(`integers-2024-A1-lem-5-3`). -/
-public theorem_wanted opxD_add_lt {d : ℕ} (hd : 2 ≤ d) (P : Set (Fin d → ℝ)) {n ε : ℝ}
-    (hn : 0 < n) (hε : 0 < ε) (hεn : ε < n) :
-    opxD d n P ≤ opxD d (n + ε) P ∧ opxD d (n + ε) P < opxD d n P + d * (2 * n) ^ (d - 1) * ε
 
 /-- **Continuity of the d-dimensional continuous Turán number.** For every natural number $d$
 and every $P \subseteq \mathbb{R}^d$, the $d$-dimensional continuous Turán number
@@ -1008,24 +793,6 @@ public theorem_wanted opxD_graph_stack_isTheta {a b c : ℝ} (ha : 0 < a) (hc : 
     (fun n : ℝ => opxD 3 n {v | (∃ t ∈ Set.Icc 0 a, v 0 = t ∧ v 1 = f t) ∧
         ∃ i : ℕ, 1 ≤ i ∧ i ≤ 2 ∧ v 2 = i * c}) =Θ[Filter.atTop] (fun n : ℝ => n ^ (5 / 2 : ℝ)) ∧
       (fun n : ℝ => opxD 3 n {v | (∃ t ∈ Set.Icc 0 a, v 0 = t ∧ v 1 = f t) ∧
-        ∃ i : ℕ, 1 ≤ i ∧ i ≤ 3 ∧ v 2 = i * c}) =Θ[Filter.atTop] (fun n : ℝ => n ^ (8 / 3 : ℝ))
-
-/-- **Stacked plus signs in three dimensions.** Let $r > 0$ and $c > 0$, let
-$P = \{(x, y) \in \mathbb{R}^2 : |x| \le r,\ |y| \le r,\ x = 0 \text{ or } y = 0\}$ be the plus
-sign of size $r$, and for $t \in \{2, 3\}$ let
-$Q_{P,t,c} = \{(x, y, ic) : (x, y) \in P,\ i \in \{1, \dots, t\}\} \subseteq \mathbb{R}^3$. Then,
-as the real number $n$ tends to infinity, $\mathrm{opx}(n, Q_{P,2,c}, 3) = \Theta(n^{5/2})$ and
-$\mathrm{opx}(n, Q_{P,3,c}, 3) = \Theta(n^{8/3})$.
-
-The paper's size parameter $d$ is renamed $r$, and $r > 0$ is added: for $r = 0$, $Q_{P,2,c}$ is
-two points on a vertical line and $\mathrm{opx}(n, Q_{P,2,c}, 3) \le c n^2$.
-
-Source: Jesse Geneson, *Continuous Turán Numbers*, INTEGERS 24 (2024), Article A1, Corollary 5.19
-(`integers-2024-A1-cor-5-19`). -/
-public theorem_wanted opxD_plus_stack_isTheta {r c : ℝ} (hr : 0 < r) (hc : 0 < c) :
-    (fun n : ℝ => opxD 3 n {v | |v 0| ≤ r ∧ |v 1| ≤ r ∧ (v 0 = 0 ∨ v 1 = 0) ∧
-        ∃ i : ℕ, 1 ≤ i ∧ i ≤ 2 ∧ v 2 = i * c}) =Θ[Filter.atTop] (fun n : ℝ => n ^ (5 / 2 : ℝ)) ∧
-      (fun n : ℝ => opxD 3 n {v | |v 0| ≤ r ∧ |v 1| ≤ r ∧ (v 0 = 0 ∨ v 1 = 0) ∧
         ∃ i : ℕ, 1 ≤ i ∧ i ≤ 3 ∧ v 2 = i * c}) =Θ[Filter.atTop] (fun n : ℝ => n ^ (8 / 3 : ℝ))
 
 end

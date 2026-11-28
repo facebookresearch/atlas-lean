@@ -21,7 +21,7 @@ span-dependent instructions", ACM Transactions on Programming Languages and Syst
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Set.Basic
@@ -60,8 +60,8 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance `(m, g, B, M)`: the number `m` of variables, the targets `g(I₁), …, g(Iₙ)`
-(see the module docstring), and the positive integers `B` and `M`. -/
+/-- An instance `(m, g, B, M)`: the number `m` of variables, the list `g` of instruction
+targets `g(I₁), …, g(Iₙ)` (see the module docstring), and natural numbers `B` and `M`. -/
 abbrev CodeGenerationUnfixedVariableLocationsInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ
 
 /-- Well-formedness of an instance: every `g(Iᵢ)` names an instruction `(0, j)` with `j < n`

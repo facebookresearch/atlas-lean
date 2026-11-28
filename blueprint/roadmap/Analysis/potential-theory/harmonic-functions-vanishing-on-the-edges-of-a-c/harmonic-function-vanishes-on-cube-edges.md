@@ -1,7 +1,7 @@
 # Scottish Book Problem 151: a harmonic function vanishing on the edges of a cube
 
 There
-exist an open set $U \subseteq \mathbb{R}^3$ whose interior contains the closed cube
+exist a connected open set $U \subseteq \mathbb{R}^3$ whose interior contains the closed cube
 $[-1, 1]^3$ and a function $f : \mathbb{R}^3 \to \mathbb{R}$ that is harmonic at every point of
 $U$, vanishes at every point of the edges of the cube $[-1, 1]^3$, and satisfies $f(x) \neq 0$
 for some $x \in U$.

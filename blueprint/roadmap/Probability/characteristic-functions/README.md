@@ -8,3 +8,5 @@ Characteristic functions, probability generating functions and positive-definite
 - [Taylor bounds for characteristic functions](taylor-bounds-for-characteristic-functions/README.md)
 - [Lévy's continuity theorem](levy-continuity-theorem/README.md)
 - [Cramér's decomposition theorem](cramer-decomposition-theorem/README.md)
+- [Characteristic function of a sum of independent random variables](independence-and-characteristic-functions/README.md)
+- [Characteristic functions of finite measures](characteristic-functions-of-finite-measures/README.md)

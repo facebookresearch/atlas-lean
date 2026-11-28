@@ -480,7 +480,7 @@ private lemma sqrt_le_div_ten_of_le_eight_mul {n N : ℕ} (hn : 800 ≤ n)
 private lemma cube_succ_le_two_pow_three_mul_div_four_add_one {c : ℕ} (hc : 15 ≤ c) :
     (c + 1) ^ 3 ≤ 2 ^ (3 * c / 4 + 1) := by
   induction c using Nat.strong_induction_on with
-  | h c ih =>
+  | ind c ih =>
     by_cases hsmall : c < 19
     · interval_cases c <;> norm_num
     · have hc19 : 19 ≤ c := by omega

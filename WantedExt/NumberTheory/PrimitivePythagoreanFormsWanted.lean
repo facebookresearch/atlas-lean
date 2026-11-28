@@ -23,6 +23,9 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Rat.Init
 public import Mathlib.Data.Set.Card
+public import MathlibExt.NumberTheory.PrimitivePythagoreanSidesSumTwoSquares
+public import MathlibExt.NumberTheory.PrimitivePythagoreanSquareLeg
+public import MathlibExt.NumberTheory.RationalRightTriangleReciprocalDifferences
 public import MathlibExt.NumberTheory.RationalRightTriangleReciprocalSums
 
 set_option autoImplicit false
@@ -30,37 +33,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PrimitivePythagoreanFormsWanted
-
-/-- **Infinitely many primitive Pythagorean triples with sides sums of two squares.** There are
-infinitely many triples $(X, Y, Z)$ of natural numbers with $X^2 + Y^2 = Z^2$ and
-$\gcd(X, Y) = 1$ such that each of $X$, $Y$ and $Z$ is a sum of two squares of positive
-integers.
-
-Source: Yangcheng Li and Yong Zhang, "Primitive Pythagorean Triangles
-with Sides of Certain Forms", Theorem 1. -/
-theorem_wanted primitive_pythagorean_sides_sum_two_squares_infinite :
-    Set.Infinite
-      {(X, Y, Z) : ℕ × ℕ × ℕ |
-        X ^ 2 + Y ^ 2 = Z ^ 2 ∧ Nat.Coprime X Y ∧
-          ∃ x y p q r s : ℕ,
-            0 < x ∧ 0 < y ∧ 0 < p ∧ 0 < q ∧ 0 < r ∧ 0 < s ∧
-              X = x ^ 2 + y ^ 2 ∧ Y = p ^ 2 + q ^ 2 ∧
-                Z = r ^ 2 + s ^ 2}
-
-/-- **Infinitely many primitive Pythagorean triples with a square leg.** There are infinitely
-many triples $(X, Y, Z)$ of natural numbers with $X^2 + Y^2 = Z^2$ and $\gcd(X, Y) = 1$ such that
-$X$ and $Z$ are each a sum of two squares of positive integers and $Y$ is the square of a
-positive integer.
-
-Source: Yangcheng Li and Yong Zhang, "Primitive Pythagorean Triangles
-with Sides of Certain Forms", Corollary 1. -/
-theorem_wanted primitive_pythagorean_sides_square_middle_infinite :
-    Set.Infinite
-      {(X, Y, Z) : ℕ × ℕ × ℕ |
-        X ^ 2 + Y ^ 2 = Z ^ 2 ∧ Nat.Coprime X Y ∧
-          ∃ x y p r s : ℕ,
-            0 < x ∧ 0 < y ∧ 0 < p ∧ 0 < r ∧ 0 < s ∧
-              X = x ^ 2 + y ^ 2 ∧ Y = p ^ 2 ∧ Z = r ^ 2 + s ^ 2}
 
 /-- **Infinitely many primitive Pythagorean triples with sides sums of two cubes.** There are
 infinitely many triples $(X, Y, Z)$ of natural numbers with $X^2 + Y^2 = Z^2$ and
@@ -77,21 +49,5 @@ theorem_wanted primitive_pythagorean_sides_sum_two_cubes_infinite :
             0 < x ∧ 0 < y ∧ 0 < p ∧ 0 < q ∧ 0 < r ∧ 0 < s ∧
               X = x ^ 3 + y ^ 3 ∧ Y = p ^ 3 + q ^ 3 ∧
                 Z = r ^ 3 + s ^ 3}
-
-/-- **Infinitely many rational right triangles with sides differences of unit fractions.** There
-are infinitely many triples $(X, Y, Z)$ of positive rational numbers with $X^2 + Y^2 = Z^2$ such
-that each of $X$, $Y$ and $Z$ has the form $1/u - 1/v$ for some positive integers $u$ and $v$.
-
-Source: Yangcheng Li and Yong Zhang, "Primitive Pythagorean Triangles
-with Sides of Certain Forms", Theorem 3. -/
-theorem_wanted rational_right_triangles_reciprocal_differences_infinite :
-    Set.Infinite
-      {(X, Y, Z) : ℚ × ℚ × ℚ |
-        0 < X ∧ 0 < Y ∧ 0 < Z ∧ X ^ 2 + Y ^ 2 = Z ^ 2 ∧
-          ∃ x y p q r s : ℕ,
-            0 < x ∧ 0 < y ∧ 0 < p ∧ 0 < q ∧ 0 < r ∧ 0 < s ∧
-              X = 1 / (x : ℚ) - 1 / (y : ℚ) ∧
-                Y = 1 / (p : ℚ) - 1 / (q : ℚ) ∧
-                  Z = 1 / (r : ℚ) - 1 / (s : ℚ)}
 
 end MathlibExt.NumberTheory.PrimitivePythagoreanFormsWanted

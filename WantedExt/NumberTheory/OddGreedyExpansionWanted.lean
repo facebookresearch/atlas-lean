@@ -42,18 +42,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.OddGreedyExpansionWanted
 
-/-- **Odd greedy choice at a fraction.** Let $n$ and $d$ be positive natural numbers and let $x_1$
-be an odd natural number. Then $x_1$ is the odd greedy choice at $n/d$ (the first denominator of
-the odd greedy expansion of $n/d$) if and only if $d \le n x_1$ and $n x_1 < d + 2n$, that is,
-$0 \le n x_1 - d < 2n$ in the integers.
-
-Source: Joel Louwsma and Joseph Martino, "Rational
-Numbers with Two-Term Odd Greedy Expansion", Lemma 2. -/
-theorem_wanted isOddGreedyChoice_iff (n d x1 : ℕ)
-    (hn : 0 < n) (hd : 0 < d) (hx : Odd x1) :
-    MetaMathlibExt.IsOddGreedyChoice ((n : ℚ) / (d : ℚ)) x1 ↔
-      d ≤ n * x1 ∧ n * x1 < d + 2 * n
-
 /-- **Theorem 3**: a positive rational has a two-term odd greedy expansion if and only
 if it equals `n / (n (∏_{p ∣ r} p^{a_p}) (1 + 2t) - r)` for an even positive `n`, an
 integer `0 < r < 2n` with `v₂(2r) ≤ v₂(n)`, a nonnegative integer `t`, and

@@ -32,3 +32,10 @@
 - [Derivative of the Poisson log-likelihood](has-fderiv-at-poisson-log-lik.md)
 - [Score equations](score-eq-zero-of-is-max-on.md)
 - [Profile maximum in the mutation parameter](poisson-log-lik-le-profile.md)
+
+## Substitution rates under a distribution of fitness effects
+
+- [Monotonicity of the deleterious F-based rate model](nearly-neutral-theory-substitution-rate-decrease.md)
+- [Gamma-DFE power law for the F-based substitution rate](gamma-dfe-power-law-dependence-of-substitution-r.md)
+- [Adaptive proportion from a full distribution of fitness effects](adaptive-proportion-from-a-full-dfe.md)
+- [Full-DFE model of polymorphism and divergence counts](full-dfe-model-of-polymorphism-and-divergence-counts.md)

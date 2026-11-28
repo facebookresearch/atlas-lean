@@ -1,0 +1,109 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Algebra.NonUnitalSubalgebra.Quotient
+public import Mathlib.Analysis.Normed.Group.Quotient
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Quotient
+
+/-!
+# Quotients by closed two-sided nonunital subalgebras
+
+This file equips the canonical `Submodule.Quotient` by a scalar-stable two-sided
+nonunital subalgebra with its quotient normed-ring structure. Its algebraic
+quotient structures come from the neutral algebraic owner. Multiplication,
+ring, scalar-compatibility, and normed-ring structures are scoped, so importing
+this file does not put a multiplication on arbitrary submodule quotients.
+
+The additive, module, quotient-norm, and completeness structures remain the
+ones supplied by `Submodule.Quotient`. In particular, a closed quotient of a
+complete normed algebra is complete without a second quotient construction.
+
+The closest existing constructions are `Ideal.Quotient`, whose algebraic
+carrier is an ideal quotient, and the normed quotient for commutative ideals.
+Neither supplies this canonical scalar submodule quotient for a possibly
+noncommutative nonunital algebra.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+namespace NonUnitalSubalgebra
+
+namespace Quotient
+
+open scoped NonUnitalSubalgebra.Quotient
+
+section Normed
+
+open Filter Metric
+
+variable {𝕜 A : Type*} [NormedField 𝕜] [NonUnitalNormedRing A] [NormedSpace 𝕜 A]
+variable (S : NonUnitalSubalgebra 𝕜 A)
+
+/-- **Continuous linear projection to a nonunital quotient.** Let `𝕜` be a normed field, `A` a nonunital
+normed ring with a compatible normed `𝕜`-vector-space structure, and `S ⊆ A` a nonunital
+`𝕜`-subalgebra. The projection `a ↦ [a]` is a continuous `𝕜`-linear map from `A` to `A/S`. -/
+def mkCL : A →L[𝕜] S.Quotient :=
+  (quotientSubmodule S).mkQL
+
+@[simp]
+theorem mkCL_apply (x : A) : mkCL S x = Submodule.Quotient.mk x := rfl
+
+/-- **Norm bound for a nonunital quotient class.** Let `𝕜` be a normed field, `A` a nonunital normed
+ring with a compatible normed `𝕜`-vector-space structure, and `S ⊆ A` a nonunital `𝕜`-subalgebra.
+For every `a ∈ A`, the quotient seminorm satisfies `‖[a]‖ ≤ ‖a‖`. -/
+theorem norm_mk_le (x : A) :
+    ‖(Submodule.Quotient.mk x : S.Quotient)‖ ≤ ‖x‖ :=
+  Submodule.Quotient.norm_mk_le (quotientSubmodule S) x
+
+/-- **Submultiplicative nonunital quotient seminorm.** Let `𝕜` be a normed field, `A` a nonunital normed
+ring with a compatible normed `𝕜`-vector-space structure, and `S ⊆ A` a nonunital `𝕜`-subalgebra. If
+`S` is two-sided, the quotient multiplication satisfies `‖x y‖ ≤ ‖x‖ ‖y‖` for all `x,y ∈ A/S`. -/
+theorem norm_mul_le [S.IsTwoSided] (x y : S.Quotient) :
+    ‖x * y‖ ≤ ‖x‖ * ‖y‖ := by
+  refine le_of_forall_pos_le_add fun ε hε ↦ ?_
+  have h := ((nhds_basis_ball.prod_nhds nhds_basis_ball).tendsto_iff
+    nhds_basis_ball).mp (continuous_mul.tendsto (‖x‖, ‖y‖)) ε hε
+  simp only [Set.mem_prod, mem_ball, and_imp, Prod.forall, Prod.exists] at h
+  rcases h with ⟨ε₁, ε₂, ⟨hε₁, hε₂⟩, h⟩
+  obtain ⟨⟨a, rfl, ha⟩, ⟨b, rfl, hb⟩⟩ :=
+    Submodule.Quotient.norm_mk_lt (S := quotientSubmodule S) x hε₁,
+      Submodule.Quotient.norm_mk_lt (S := quotientSubmodule S) y hε₂
+  simp only [dist, abs_sub_lt_iff] at h
+  specialize h ‖a‖ ‖b‖
+    ⟨by linarith, by linarith [norm_mk_le S a]⟩
+    ⟨by linarith, by linarith [norm_mk_le S b]⟩
+  calc
+    ‖(Submodule.Quotient.mk a : S.Quotient) * Submodule.Quotient.mk b‖ =
+        ‖(Submodule.Quotient.mk (a * b) : S.Quotient)‖ := by rw [mk_mul]
+    _ ≤ ‖a * b‖ := norm_mk_le S _
+    _ ≤ ‖a‖ * ‖b‖ := _root_.norm_mul_le _ _
+    _ ≤ ‖(Submodule.Quotient.mk a : S.Quotient)‖ *
+        ‖(Submodule.Quotient.mk b : S.Quotient)‖ + ε :=
+      (sub_lt_iff_lt_add'.mp h.1).le
+
+/-- The scoped nonunital normed-ring structure on a quotient by a closed
+two-sided nonunital subalgebra. The quotient's normed additive group and its
+completeness instance are the canonical `Submodule.Quotient` structures. -/
+scoped instance instNonUnitalNormedRing [S.IsTwoSided] [IsClosed (S : Set A)] :
+    NonUnitalNormedRing S.Quotient where
+  __ : NormedAddCommGroup S.Quotient := inferInstance
+  __ : NonUnitalRing S.Quotient := instNonUnitalRing S
+  norm_mul_le := norm_mul_le S
+
+end Normed
+
+end Quotient
+
+end NonUnitalSubalgebra

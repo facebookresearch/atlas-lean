@@ -18,7 +18,7 @@ doi:10.1145/2897518.2897527 (arXiv:1510.05043), Section 2 (the cost function) an
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Bioinformatics.Clustering.OptimalLeafOrdering
@@ -61,8 +61,11 @@ reduction from every language in `NP`
 `(i, j, w_{ij})`, and the bound `K`. -/
 abbrev DasguptaHierarchicalClusteringInstance := ℕ × List (ℕ × ℕ × ℕ) × ℕ
 
-/-- `|leaves(T[i ∨ j])|`: the number of leaves of the smallest subtree of `T` whose leaves include
-both `i` and `j`. -/
+/-- `|leaves(T[i ∨ j])|`: descending from the root into a child (left child first) as long as
+that child's leaves contain both `i` and `j`, the number of leaves of the subtree where descent
+stops (`1` at a leaf, and `T.leaves.length` when no proper child subtree contains both; if the
+leaf labels of `T` are distinct and both `i` and `j` occur among them, the number of leaves of
+the smallest rooted subtree containing both). -/
 def lcaLeafCount : Dendrogram ℕ → ℕ → ℕ → ℕ
   | .leaf _, _, _ => 1
   | .node l r, i, j =>

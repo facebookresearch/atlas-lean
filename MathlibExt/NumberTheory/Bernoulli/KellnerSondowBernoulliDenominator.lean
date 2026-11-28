@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.NumberTheory.BernoulliPolynomials
+public import MathlibExt.NumberTheory.Bernoulli.DerivativeDenominator
 import Mathlib.Algebra.GCDMonoid.FinsetLemmas
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Tactic.IntervalCases
@@ -86,17 +87,12 @@ private theorem rhs_merge (n : ℕ) :
         | inr h' => exact h'
   rw [← hunion, Finset.prod_union hABC, Finset.prod_union hAB]
 
--- Kummer consequence: q prime, q ∤ C(n,k) → digit sums satisfy s_q(k) ≤ s_q(n).
-private theorem kummer_digit_le {q k n : ℕ} (hq : Nat.Prime q) (hkn : k ≤ n)
-    (hdiv : ¬ q ∣ n.choose k) : (q.digits k).sum ≤ (q.digits n).sum := by
-  have : Fact (Nat.Prime q) := ⟨hq⟩
-  have hpos : 0 < n.choose k := Nat.choose_pos hkn
-  have hval : padicValNat q (n.choose k) = 0 := by
-    rw [padicValNat.eq_zero_iff]
-    right; right
-    exact hdiv
-  have hkum := sub_one_mul_padicValNat_choose_eq_sub_sum_digits hkn (p := q)
-  rw [hval, mul_zero] at hkum
+-- Kummer's theorem bounds the sum of the two digit sums when there is no carry.
+private theorem digit_sum_add_le_of_not_dvd_choose {p k n : ℕ} (hp : p.Prime) (hkn : k ≤ n)
+    (hdiv : ¬ p ∣ n.choose k) : (p.digits k).sum + (p.digits (n - k)).sum ≤ (p.digits n).sum := by
+  let : Fact p.Prime := ⟨hp⟩
+  have hkum := sub_one_mul_multiplicity_choose_eq_sub_sum_digits hkn (p := p)
+  rw [Nat.multiplicity_eq_zero_iff.mpr (Or.inr (Or.inr hdiv)), mul_zero] at hkum
   omega
 
 -- Coefficient form: every support index i satisfies i ≤ n.
@@ -147,16 +143,7 @@ private theorem digit_sum_n_ge_of_mem {q k n : ℕ} (hq : Nat.Prime q) (hkn : k 
     (hk1 : 1 ≤ k) (hdvd : q - 1 ∣ k) (hdiv : ¬ q ∣ n.choose k) :
     q - 1 ≤ (q.digits n).sum := by
   have h1 : q - 1 ≤ (q.digits k).sum := digit_sum_ge_of_dvd hq hk1 hdvd
-  have h2 : (q.digits k).sum ≤ (q.digits n).sum := by
-    have : Fact (Nat.Prime q) := ⟨hq⟩
-    have hpos : 0 < n.choose k := Nat.choose_pos hkn
-    have hval : padicValNat q (n.choose k) = 0 := by
-      rw [padicValNat.eq_zero_iff]
-      right; right
-      exact hdiv
-    have hkum := sub_one_mul_padicValNat_choose_eq_sub_sum_digits hkn (p := q)
-    rw [hval, mul_zero] at hkum
-    omega
+  have h2 := digit_sum_add_le_of_not_dvd_choose hq hkn hdiv
   omega
 
 private theorem digit_sum_succ_of_not_dvd {q n : ℕ} (hq : Nat.Prime q) (h : ¬ q ∣ (n + 1)) :
@@ -293,23 +280,23 @@ private theorem upper_k_odd {n k : ℕ} (hodd : Odd k) (hne1 : k ≠ 1) (S : Fin
   rw [hB, zero_mul, Rat.den_zero]
   exact one_dvd _
 
--- Upper bound, k = 1 case: den divides 2 and 2 ∈ S.
-private theorem upper_k_one {n : ℕ} (hn : 1 ≤ n) :
-    (bernoulli 1 * (n.choose 1 : ℚ)).den ∣
-    ∏ p ∈ (Finset.range (n + 2)).filter
-      (fun p => Nat.Prime p ∧ (p ∣ (n + 1) ∨ p ≤ (Nat.digits p (n + 1)).sum)), p := by
+-- For `k = 1`, the factor `2` from `B₁` survives only when `n` is odd.
+private theorem upper_k_one {n : ℕ} (S : Finset ℕ) (hS : Odd n → 2 ∈ S) :
+    (bernoulli 1 * (n.choose 1 : ℚ)).den ∣ ∏ p ∈ S, p := by
   rw [bernoulli_one, Nat.choose_one_right]
-  have hd : ((-1 / 2 : ℚ)).den = 2 := by norm_num
-  have h2 : ((-1 / 2 : ℚ) * (n : ℚ)).den ∣ ((-1 / 2 : ℚ)).den * ((n : ℚ)).den :=
-    Rat.mul_den_dvd _ _
-  rw [hd, Rat.den_natCast, mul_one] at h2
-  exact dvd_trans h2 (Finset.dvd_prod_of_mem _ (two_mem_S hn))
+  rcases Nat.even_or_odd n with ⟨a, rfl⟩ | hodd
+  · rw [Nat.cast_add, show (-1 / 2 : ℚ) * ((a : ℚ) + a) = -(a : ℚ) by ring]
+    simp
+  · have hd : ((-1 / 2 : ℚ)).den = 2 := by norm_num
+    have h := Rat.mul_den_dvd (-1 / 2 : ℚ) (n : ℚ)
+    rw [hd, Rat.den_natCast, mul_one] at h
+    exact h.trans (Finset.dvd_prod_of_mem _ (hS hodd))
 
--- Upper bound, even k ≥ 2 case via von Staudt–Clausen.
-private theorem upper_k_even {n k : ℕ} (hkn : k ≤ n) (h2 : 2 ≤ k) (heven : Even k) :
-    (bernoulli k * (n.choose k : ℚ)).den ∣
-    ∏ p ∈ (Finset.range (n + 2)).filter
-      (fun p => Nat.Prime p ∧ (p ∣ (n + 1) ∨ p ≤ (Nat.digits p (n + 1)).sum)), p := by
+-- For positive even `k`, von Staudt–Clausen bounds the coefficient denominator by the
+-- product of the primes that survive multiplication by `n.choose k`.
+private theorem upper_k_even {n k : ℕ} (heven : Even k) (S : Finset ℕ)
+    (hS : ∀ p : ℕ, p.Prime → p - 1 ∣ k → ¬ p ∣ n.choose k → p ∈ S) :
+    (bernoulli k * (n.choose k : ℚ)).den ∣ ∏ p ∈ S, p := by
   obtain ⟨m, hm⟩ := heven
   have hkm : k = 2 * m := by omega
   subst hkm
@@ -446,28 +433,12 @@ private theorem upper_k_even {n k : ℕ} (hkn : k ≤ n) (h2 : 2 ≤ k) (heven :
     rw [Rat.den_natCast, Rat.inv_natCast_den_of_pos hpos, one_mul] at h
     rw [div_eq_mul_inv]
     exact h
-  have hstep2 : ∏ p ∈ (Finset.range (2 * m + 2)).filter
-        (fun p => Nat.Prime p ∧ p - 1 ∣ 2 * m) |>.filter
-        (fun p => ¬ p ∣ n.choose (2 * m)), p ∣
-      ∏ p ∈ (Finset.range (n + 2)).filter
-        (fun p => Nat.Prime p ∧ (p ∣ (n + 1) ∨ p ≤ (Nat.digits p (n + 1)).sum)), p := by
-    apply Finset.prod_dvd_prod_of_subset
-    intro q hq
-    have hq0 := Finset.mem_filter.mp hq
-    have hqT := hq0.1
-    have hnc : ¬ q ∣ n.choose (2 * m) := hq0.2
-    have hTm := Finset.mem_filter.mp hqT
-    have hqr := hTm.1
-    have hprime := hTm.2.1
-    have hdiv := hTm.2.2
-    have hqr' : q < n + 2 := by
-      rw [Finset.mem_range] at hqr
-      omega
-    rw [Finset.mem_filter, Finset.mem_range]
-    refine ⟨hqr', hprime, ?_⟩
-    exact (factF hprime).mp
-      (digit_sum_n_ge_of_mem hprime hkn (by omega) hdiv hnc)
-  exact dvd_trans hstep1 hstep2
+  refine hstep1.trans ?_
+  apply Finset.prod_dvd_prod_of_subset
+  intro p hp
+  obtain ⟨hp', hnc⟩ := Finset.mem_filter.mp hp
+  obtain ⟨_, hprime, hdvd⟩ := Finset.mem_filter.mp hp'
+  exact hS p hprime hdvd hnc
 
 -- Small digit sums: s_p(x) = x for x < p.
 private theorem digit_sum_small {p x : ℕ} (hp : 1 < p) (hx : x < p) :
@@ -569,16 +540,13 @@ private theorem even_den_dvd {k p : ℕ} (hprime : Nat.Prime p) (heven : Even k)
   rw [h2m]
   exact Bernoulli.dvd_den_bernoulli hm0 hdvd2
 
--- Lower bound core: every p ∈ S divides the support-lcm.
-private theorem lower_mem_S {n p : ℕ}
-    (hp : p ∈ (Finset.range (n + 2)).filter
-      (fun p => Nat.Prime p ∧ (p ∣ (n + 1) ∨ p ≤ (Nat.digits p (n + 1)).sum))) :
-    p ∣ (Polynomial.bernoulli n).support.lcm
-      (fun i => ((Polynomial.bernoulli n).coeff i).den) := by
-  rw [Finset.mem_filter, Finset.mem_range] at hp
-  obtain ⟨hprange, hprime, hmem⟩ := hp
+-- Choose `k` with digit sum `p - 1` and no borrow from `n`. The surviving denominator
+-- factor occurs in degree `n - k`, whose digit sum is positive when `s_p(n) ≥ p`.
+private theorem exists_dvd_coeff_bernoulli_den {n p : ℕ} (hprime : p.Prime)
+    (hge : p - 1 ≤ (p.digits n).sum) :
+    ∃ i, (p.digits i).sum = (p.digits n).sum - (p - 1) ∧
+      p ∣ ((Polynomial.bernoulli n).coeff i).den := by
   have hp2 : 2 ≤ p := hprime.two_le
-  have hge : p - 1 ≤ (p.digits n).sum := (factF hprime).mpr hmem
   obtain ⟨k, hkn, hsk, hsd⟩ :=
     exists_digit_subnumber hprime.one_lt n (p - 1) hge
   have hk1 : 1 ≤ k := by
@@ -589,15 +557,15 @@ private theorem lower_mem_S {n p : ℕ}
   have hnc : ¬ p ∣ n.choose k := by
     have : Fact (Nat.Prime p) := ⟨hprime⟩
     have hpos : 0 < n.choose k := Nat.choose_pos hkn
-    have hkum := sub_one_mul_padicValNat_choose_eq_sub_sum_digits hkn (p := p)
+    have hkum := sub_one_mul_multiplicity_choose_eq_sub_sum_digits hkn (p := p)
     have hrhs : (p.digits k).sum + (p.digits (n - k)).sum - (p.digits n).sum = 0 := by
       omega
     rw [hrhs] at hkum
-    have hv0 : padicValNat p (n.choose k) = 0 := by
+    have hv0 : multiplicity p (n.choose k) = 0 := by
       rcases Nat.mul_eq_zero.mp hkum with h | h
       · omega
       · exact h
-    rw [padicValNat.eq_zero_iff] at hv0
+    rw [Nat.multiplicity_eq_zero_iff] at hv0
     rcases hv0 with h | h | h
     · exact absurd h hprime.ne_one
     · omega
@@ -681,18 +649,7 @@ private theorem lower_mem_S {n p : ℕ}
       bernoulli k * ((n.choose k : ℕ) : ℚ) := by
     have hle : n - k ≤ n := Nat.sub_le n k
     rw [Polynomial.coeff_bernoulli, ite_eq_left hle, hkj, Nat.choose_symm hkn]
-  have hmem_supp : n - k ∈ (Polynomial.bernoulli n).support := by
-    rw [Polynomial.mem_support_iff, hcoeff_j]
-    intro hz
-    rw [hz, Rat.den_zero] at hp_den
-    have hle1 : p ≤ 1 := Nat.le_of_dvd (by norm_num) hp_den
-    omega
-  have hmem2 : ((Polynomial.bernoulli n).coeff (n - k)).den ∣
-      (Polynomial.bernoulli n).support.lcm
-        (fun i => ((Polynomial.bernoulli n).coeff i).den) :=
-    Finset.dvd_lcm hmem_supp
-  rw [hcoeff_j] at hmem2
-  exact dvd_trans hp_den hmem2
+  exact ⟨n - k, hsd, hcoeff_j.symm ▸ hp_den⟩
 
 /-- **Kellner–Sondow factorization of the denominators of Bernoulli polynomials.** Let $B_k$
 denote the $k$-th Bernoulli number, with $B_1 = -1/2$, let
@@ -749,18 +706,86 @@ theorem kellner_sondow_bernoulli_denom : ∀ (n : ℕ), 1 ≤ n →
     · exact upper_k_zero (n - i) hk0 _
     · by_cases hk1 : n - i = 1
       · rw [hk1]
-        exact upper_k_one hn
+        exact upper_k_one _ (fun _ => two_mem_S hn)
       · rcases Nat.even_or_odd (n - i) with hev | hod
-        · have h2 : 2 ≤ n - i := by omega
-          have hkn' : n - i ≤ n := Nat.sub_le n i
-          exact upper_k_even hkn' h2 hev
+        · refine upper_k_even hev _ (fun p hp hdiv hnc => ?_)
+          have hs := digit_sum_n_ge_of_mem hp (Nat.sub_le n i) (by omega) hdiv hnc
+          have hr := Nat.digit_sum_le p n
+          rw [Finset.mem_filter, Finset.mem_range]
+          exact ⟨by have := hp.two_le; omega, hp, (factF hp).mp hs⟩
         · exact upper_k_odd hod hk1 _
   · apply Finset.prod_primes_dvd
     · intro a ha
       rw [Finset.mem_filter] at ha
       exact ha.2.1.prime
-    · intro a ha
-      exact lower_mem_S ha
+    · intro p hp
+      obtain ⟨_, hprime, hmem⟩ := Finset.mem_filter.mp hp
+      obtain ⟨i, _, hd⟩ := exists_dvd_coeff_bernoulli_den hprime ((factF hprime).mpr hmem)
+      exact hd.trans (coeff_den_dvd_polynomialDenominator _ i)
+
+open Polynomial in
+/-- **Product formula for the denominator of $B_n(x) - B_n$.** Let $n \ge 1$, let $B_n(x)$ be
+the $n$-th Bernoulli polynomial and $B_n = B_n(0)$ the $n$-th Bernoulli number, and write
+$s_p(n)$ for the sum of the base-$p$ digits of $n$. Then $\mathbb{D}_n$, the product of the
+primes $p$ with $s_p(n) \ge p$, equals the denominator of the polynomial $B_n(x) - B_n$.
+
+Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
+Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2,
+definition of `𝔻_n` and equation (8), quoting Kellner (2017), Section 5. -/
+public theorem bernoulliDiffDenominator_eq_polynomialDenominator (n : ℕ) (hn : 1 ≤ n) :
+    bernoulliDiffDenominator n =
+      polynomialDenominator (Polynomial.bernoulli n - C (_root_.bernoulli n)) := by
+  have hzero : (Polynomial.bernoulli n - C (_root_.bernoulli n)).coeff 0 = 0 := by
+    simp [Polynomial.coeff_bernoulli]
+  have hcoeff (i : ℕ) (hi : i ≠ 0) :
+      (Polynomial.bernoulli n - C (_root_.bernoulli n)).coeff i =
+        (Polynomial.bernoulli n).coeff i := by
+    simp [Polynomial.coeff_C, hi]
+  let primes := (Finset.range (n + 1)).filter (fun p => p.Prime ∧ p ≤ (p.digits n).sum)
+  change (∏ p ∈ primes, p) = _
+  apply Nat.dvd_antisymm
+  · apply Finset.prod_primes_dvd
+    · intro p hp
+      exact (Finset.mem_filter.mp hp).2.1.prime
+    · intro p hp
+      obtain ⟨_, hprime, hs⟩ := Finset.mem_filter.mp hp
+      have hp₂ := hprime.two_le
+      have hpos : 0 < (p.digits n).sum - (p - 1) := by omega
+      obtain ⟨i, hi, hd⟩ := exists_dvd_coeff_bernoulli_den hprime (by omega :
+        p - 1 ≤ (p.digits n).sum)
+      have hi0 : i ≠ 0 := by
+        rintro rfl
+        simp only [Nat.digits_zero, List.sum_nil] at hi
+        exact (Nat.ne_of_gt hpos) hi.symm
+      rw [← hcoeff i hi0] at hd
+      exact hd.trans (coeff_den_dvd_polynomialDenominator _ i)
+  · apply Finset.lcm_dvd
+    intro i hi
+    have hi0 : i ≠ 0 := fun h => (Polynomial.mem_support_iff.mp hi) (h.symm ▸ hzero)
+    have hin : i ≤ n := support_le (Polynomial.mem_support_iff.mpr
+      (hcoeff i hi0 ▸ Polynomial.mem_support_iff.mp hi))
+    rw [hcoeff i hi0, Polynomial.coeff_bernoulli, ite_eq_left hin, ← Nat.choose_symm hin]
+    set k := n - i
+    have hkn : k < n := Nat.sub_lt hn (Nat.pos_of_ne_zero hi0)
+    have hmem (p : ℕ) (hp : p.Prime) (hsk : p - 1 ≤ (p.digits k).sum)
+        (hnc : ¬ p ∣ n.choose k) : p ∈ primes := by
+      have hsum := digit_sum_add_le_of_not_dvd_choose hp hkn.le hnc
+      have hpos := digit_sum_pos hp.one_lt (Nat.sub_pos_of_lt hkn)
+      have hle := Nat.digit_sum_le p n
+      simp only [primes, Finset.mem_filter, Finset.mem_range]
+      exact ⟨by omega, hp, by have := hp.two_le; omega⟩
+    by_cases hk0 : k = 0
+    · exact upper_k_zero k hk0 _
+    by_cases hk1 : k = 1
+    · rw [hk1]
+      refine upper_k_one _ (fun hodd => hmem 2 Nat.prime_two ?_ ?_)
+      · rw [hk1]
+        decide
+      · simpa only [hk1, Nat.choose_one_right, ← even_iff_two_dvd, Nat.not_even_iff_odd] using hodd
+    rcases Nat.even_or_odd k with heven | hodd
+    · exact upper_k_even heven _ (fun p hp hdiv hnc =>
+        hmem p hp (digit_sum_ge_of_dvd hp (by omega) hdiv) hnc)
+    · exact upper_k_odd hodd hk1 _
 
 end MetaMathlibExt
 end

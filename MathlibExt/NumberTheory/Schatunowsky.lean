@@ -31,7 +31,7 @@ namespace MetaMathlibExt
 /-- For `n ≥ 7`, the product of the primes up to `n` exceeds the next square. -/
 private theorem succ_sq_lt_primorial (n : ℕ) (hn : 7 ≤ n) : (n + 1) ^ 2 < primorial n := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     by_cases hsmall : n < 14
     · calc
         (n + 1) ^ 2 ≤ 14 ^ 2 := Nat.pow_le_pow_left (by omega) _
@@ -73,7 +73,11 @@ private theorem lt_fifty_of_coprimes_prime {a : ℕ}
   omega
 
 /-- **Schatunowsky's theorem.** The natural numbers `a ≥ 2` for which every integer strictly
-between `1` and `a` coprime to `a` is prime are exactly `2, 3, 4, 6, 8, 12, 18, 24, 30`. -/
+between `1` and `a` coprime to `a` is prime are exactly `2, 3, 4, 6, 8, 12, 18, 24, 30`.
+
+Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 1,
+quoting Schatunowsky (`integers-2026-A110-thm-1`). -/
 public theorem nat_schatunowsky :
     {a : ℕ | 2 ≤ a ∧ ∀ b : ℕ, 1 < b → b < a → Nat.Coprime a b → b.Prime} =
       {2, 3, 4, 6, 8, 12, 18, 24, 30} := by

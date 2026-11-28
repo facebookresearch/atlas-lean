@@ -16,7 +16,7 @@ open scoped NumberField
 
 /-- Consumer with the original binders: an extension of `ℚ(ζ₃)` unramified at
 every maximal ideal has degree one over `ℚ(ζ₃)`. -/
-theorem exactSource
+private theorem exactSource
     {F : Type*} [Field F] [NumberField F] [Algebra (CyclotomicField 3 ℚ) F]
     (h : ∀ (P : Ideal (𝓞 F)) (_ : P.IsMaximal),
       Algebra.IsUnramifiedAt (𝓞 (CyclotomicField 3 ℚ)) P) :

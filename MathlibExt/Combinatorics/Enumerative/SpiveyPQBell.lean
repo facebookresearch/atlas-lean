@@ -978,7 +978,7 @@ private theorem spivey_generic_sum
 
 /- Lean lifts the recursive `let` in the public theorem's signature after elaborating its proof.
 This helper constructs the application to `spivey_generic_sum` using that pending declaration. -/
-private def spivey_finish_public : Lean.Elab.Tactic.TacticM Unit := do
+private meta def spivey_finish_public : Lean.Elab.Tactic.TacticM Unit := do
   let goal ← Lean.Elab.Tactic.getMainGoal
   goal.withContext do
     let target ← Lean.instantiateMVars (← goal.getType)
@@ -1028,7 +1028,7 @@ private def spivey_finish_public : Lean.Elab.Tactic.TacticM Unit := do
       let condition := Lean.mkAppN (Lean.mkConst ``Eq [.succ .zero])
         #[Lean.mkConst ``Nat, k, natZero]
       let decision := Lean.mkApp2 (Lean.mkConst ``Nat.decEq) k natZero
-      let proof := Lean.mkAppN (Lean.mkConst ``if_neg [.succ .zero])
+      let proof := Lean.mkAppN (Lean.mkConst ``ite_eq_right [.succ .zero])
         #[condition, decision, hne, Lean.mkConst ``Real, realZero, rhs]
       Lean.Meta.mkLambdaFVars xs proof
     let proof := Lean.mkAppN generic

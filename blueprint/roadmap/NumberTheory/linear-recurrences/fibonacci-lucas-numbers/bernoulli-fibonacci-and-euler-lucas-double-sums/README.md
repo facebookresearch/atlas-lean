@@ -24,4 +24,5 @@
 - [Euler–Lucas multinomial expansion of $(x + q/2)^m$](two-pow-mul-add-half-pow.md)
 - [Multinomial Genocchi–Lucas expansion of $(x + q\beta)^m$](two-sqrt5-pow-mul-add.md)
 - [Iterated forward differences of a power as an alternating binomial sum](iterate-forward-diff-pow-eq-sum.md)
+- [Iterate forward Diff pow eq zero of lt](iterate-forward-diff-pow-eq-zero-of-lt.md)
 - [Genocchi numbers via Stirling numbers of the second kind](genocchi-number-div-eq-sum.md)

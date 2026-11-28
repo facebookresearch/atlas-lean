@@ -63,7 +63,6 @@ private lemma T_even_aux (T : ℕ → ℤ) (hT_zero : T 0 = 0)
           by_contra hc
           push Not at hc
           obtain ⟨hc1, hc2⟩ := hc
-          rw [Nat.not_even_iff_odd] at hc1 hc2
           have hadd : Even (k + (m - k)) := hc1.add_odd hc2
           rw [Nat.add_sub_cancel' hkm] at hadd
           obtain ⟨a, ha⟩ := hadd

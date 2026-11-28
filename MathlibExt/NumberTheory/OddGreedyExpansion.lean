@@ -12,16 +12,18 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.OddGreedyChoice
 
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.BigOperators.Ring.Nat
 import Mathlib.Algebra.Ring.Int.Parity
 
 /-!
-# Parity of sums of odd unit fractions
+# Odd greedy expansions and sums of odd unit fractions
 
 Clearing the denominators gives an odd product. Each summand then contributes the product of
-all denominators except its own.
+all denominators except its own. The first odd greedy denominator of a positive fraction is
+characterized by comparing consecutive odd denominators.
 -/
 
 public section
@@ -33,7 +35,11 @@ and let $d_1, \dots, d_m$ be odd natural numbers. If integers $a$ and $b$ with $
 $a/b = \sum_{i=1}^{m} 1/d_i$, then $a$ is even.
 
 See Joel Louwsma and Joseph Martino, *Rational numbers with odd greedy expansion of fixed length*,
-[Proposition 2.1](https://arxiv.org/html/2309.07280). -/
+[Proposition 2.1](https://arxiv.org/html/2309.07280).
+
+Source: Joel Louwsma and Joseph Martino, "Rational
+Numbers with Two-Term Odd Greedy Expansion",
+Proposition 1. -/
 theorem even_num_of_even_sum_unit_fractions
     (m : ℕ) (hm : Even m) (d : Fin m → ℕ)
     (hd : ∀ i, Odd (d i)) (a b : ℤ) (hb : b ≠ 0)
@@ -58,5 +64,42 @@ theorem even_num_of_even_sum_unit_fractions
     exact_mod_cast (div_eq_div_iff (Int.cast_ne_zero.mpr hb) hD₀).mp hfrac
   have he : Even (a * (D : ℤ)) := hcross ▸ hsum.natCast.mul_right b
   exact (Int.even_mul.mp he).resolve_right (by simpa using hD)
+
+/-- **Odd greedy choice at a fraction.** Let $n$ and $d$ be positive natural numbers and let $x_1$
+be an odd natural number. Then $x_1$ is the odd greedy choice at $n/d$ (the first denominator of
+the odd greedy expansion of $n/d$) if and only if $d \le n x_1$ and $n x_1 < d + 2n$, that is,
+$0 \le n x_1 - d < 2n$ in the integers.
+
+Source: Joel Louwsma and Joseph Martino, "Rational
+Numbers with Two-Term Odd Greedy Expansion", Lemma 2. -/
+theorem isOddGreedyChoice_iff (n d x1 : ℕ)
+    (hn : 0 < n) (hd : 0 < d) (hx : Odd x1) :
+    MetaMathlibExt.IsOddGreedyChoice ((n : ℚ) / (d : ℚ)) x1 ↔
+      d ≤ n * x1 ∧ n * x1 < d + 2 * n := by
+  have admissible {e : ℕ} (he : 0 < e) :
+      (1 : ℚ) / e ≤ (n : ℚ) / d ↔ d ≤ n * e := by
+    rw [div_le_div_iff₀ (Nat.cast_pos.mpr he) (Nat.cast_pos.mpr hd), one_mul]
+    norm_cast
+  constructor
+  · intro h
+    refine ⟨(admissible hx.pos).mp h.inv_le, ?_⟩
+    by_contra! hlarge
+    have hprev : d ≤ n * (x1 - 2) := by
+      rw [Nat.mul_sub, Nat.mul_comm n 2]
+      omega
+    have hpos : 0 < x1 - 2 := Nat.pos_of_mul_pos_left (hd.trans_le hprev)
+    have hodd := Nat.Odd.sub_even (by omega : 2 ≤ x1) hx even_two
+    have hmin := h.min hpos hodd ((admissible hpos).mpr hprev)
+    omega
+  · rintro ⟨hlower, hupper⟩
+    refine ⟨div_pos (Nat.cast_pos.mpr hn) (Nat.cast_pos.mpr hd), hx.pos, hx,
+      (admissible hx.pos).mpr hlower, ?_⟩
+    intro e he hodd hle
+    have hlt : x1 < e + 2 := by
+      apply (Nat.mul_lt_mul_left hn).mp
+      rw [Nat.mul_add, Nat.mul_comm n 2]
+      exact hupper.trans_le (Nat.add_le_add_right ((admissible he).mp hle) _)
+    rw [Nat.odd_iff] at hx hodd
+    omega
 
 end MathlibExt.NumberTheory.OddGreedyExpansionWanted

@@ -176,7 +176,7 @@ generalized Beatty sequence $V(p, q, r)$, which the paper denotes $V_0(p, q, r)$
 
 Source: F. Michel Dekking, *The Structure of Base Phi Expansions*, INTEGERS 24
 (2024), Article A24, Section 6 (definition of `V₀`). -/
-def beattySet₀ (p q r : ℤ) : Set ℤ :=
+noncomputable def beattySet₀ (p q r : ℤ) : Set ℤ :=
   Set.range (generalizedBeatty p q r)
 
 /-- **The value at one is a term of a generalized Beatty sequence.** Let $\varphi$ be the golden

@@ -210,6 +210,175 @@ class EventValidation(unittest.TestCase):
         self.assertEqual(values["scanner_sha"], SCANNER)
         self.assertTrue(calls[0].args[0].full_url.endswith("/commits/main"))
 
+    def test_pr_into_another_branch_may_run_on_the_default_ref(self):
+        payload = event("pull_request_target")
+        payload["pull_request"]["base"]["ref"] = "roadmap-domain-imports"
+        for run_ref in ("refs/heads/main", "refs/heads/roadmap-domain-imports"):
+            with self.subTest(run_ref=run_ref):
+                failure, values, calls = self.validate(
+                    payload, "pull_request_target", {"GITHUB_REF": run_ref}
+                )
+                self.assertIsNone(failure)
+                self.assertEqual(
+                    values,
+                    {
+                        "kind": "pull_request_target",
+                        "base_sha": BASE,
+                        "head_sha": HEAD,
+                        "head_ref": "",
+                        "pr_number": "1",
+                        "scanner_sha": SCANNER,
+                    },
+                )
+                self.assertEqual(len(calls), 1)
+                self.assertTrue(calls[0].args[0].full_url.endswith("/commits/main"))
+
+    def test_non_main_default_and_distinct_runtime_sha(self):
+        payload = event("pull_request_target")
+        payload["repository"]["default_branch"] = "trunk"
+        payload["pull_request"]["base"]["ref"] = "roadmap-domain-imports"
+        # The run's own SHA (the default branch tip) need not be the PR base;
+        # the outputs keep the PR's base and head, and the scanner is trunk.
+        failure, values, calls = self.validate(
+            payload,
+            "pull_request_target",
+            {"GITHUB_REF": "refs/heads/trunk", "GITHUB_SHA": "e" * 40},
+        )
+        self.assertIsNone(failure)
+        self.assertEqual(
+            (values["base_sha"], values["head_sha"], values["scanner_sha"]),
+            (BASE, HEAD, SCANNER),
+        )
+        self.assertTrue(calls[0].args[0].full_url.endswith("/commits/trunk"))
+        for run_ref in ("refs/heads/main", "refs/heads/release"):
+            with self.subTest(run_ref=run_ref):
+                self.assertEqual(
+                    self.validate(
+                        payload, "pull_request_target", {"GITHUB_REF": run_ref}
+                    )[1:],
+                    ({}, []),
+                )
+
+    def test_run_ref_must_be_the_base_or_trusted_default_branch(self):
+        def stacked():
+            payload = event("pull_request_target")
+            payload["pull_request"]["base"]["ref"] = "roadmap-domain-imports"
+            return payload
+
+        for run_ref in (
+            "refs/heads/other",
+            "refs/heads/roadmap-applied-statements",
+            "refs/heads/main\n",
+            "refs/heads/main ",
+            "main",
+            "refs/tags/main",
+            "refs/heads/roadmap-domain-imports/x",
+            "",
+        ):
+            with self.subTest(run_ref=run_ref):
+                self.assertEqual(
+                    self.validate(
+                        stacked(), "pull_request_target", {"GITHUB_REF": run_ref}
+                    )[1:],
+                    ({}, []),
+                )
+        # The default branch comes only from the event's repository object.
+        for where in ("base", "head"):
+            payload = stacked()
+            payload["pull_request"][where]["repo"]["default_branch"] = "release"
+            with self.subTest(pr_default=where):
+                self.assertEqual(
+                    self.validate(
+                        payload,
+                        "pull_request_target",
+                        {"GITHUB_REF": "refs/heads/release"},
+                    )[1:],
+                    ({}, []),
+                )
+        bad = {
+            "repository mismatch": lambda p: p["repository"].update(
+                full_name="other/repository"
+            ),
+            "base repository mismatch": lambda p: p["pull_request"]["base"][
+                "repo"
+            ].update(full_name="other/repository"),
+            "number mismatch": lambda p: p.update(number=2),
+            "head sha": lambda p: p["pull_request"]["head"].update(sha="x" * 40),
+            "base ref with newline": lambda p: p["pull_request"]["base"].update(
+                ref="roadmap-domain-imports\nscanner_sha=" + HEAD
+            ),
+            "default branch with newline": lambda p: p["repository"].update(
+                default_branch="main\nscanner_sha=" + HEAD
+            ),
+            "default branch missing": lambda p: p["repository"].pop(
+                "default_branch"
+            ),
+            "base ref missing": lambda p: p["pull_request"]["base"].pop("ref"),
+        }
+        for name, change in bad.items():
+            payload = stacked()
+            change(payload)
+            with self.subTest(case=name):
+                self.assertEqual(
+                    self.validate(
+                        payload,
+                        "pull_request_target",
+                        {"GITHUB_REF": "refs/heads/main"},
+                    )[1:],
+                    ({}, []),
+                )
+        # Both refs are validated even when the run ref matches the other one.
+        for field, value, run_ref in (
+            ("base", "bad..ref", "refs/heads/main"),
+            ("default", "bad..ref", "refs/heads/roadmap-domain-imports"),
+        ):
+            payload = stacked()
+            if field == "base":
+                payload["pull_request"]["base"]["ref"] = value
+            else:
+                payload["repository"]["default_branch"] = value
+            with self.subTest(other_malformed=field):
+                self.assertEqual(
+                    self.validate(
+                        payload, "pull_request_target", {"GITHUB_REF": run_ref}
+                    )[1:],
+                    ({}, []),
+                )
+        # A run ref equal to a malformed base or default ref is still invalid.
+        for field, value in (
+            ("base", "bad..ref"),
+            ("base", "roadmap\nscanner_sha=" + HEAD),
+            ("default", "bad..ref"),
+            ("default", "main\nscanner_sha=" + HEAD),
+        ):
+            payload = stacked()
+            if field == "base":
+                payload["pull_request"]["base"]["ref"] = value
+            else:
+                payload["repository"]["default_branch"] = value
+            with self.subTest(malformed=field, value=value):
+                self.assertEqual(
+                    self.validate(
+                        payload,
+                        "pull_request_target",
+                        {"GITHUB_REF": "refs/heads/" + value},
+                    )[1:],
+                    ({}, []),
+                )
+        for env in (
+            {"GITHUB_REPOSITORY": "other/repository"},
+            {"GITHUB_SHA": "not-a-sha"},
+        ):
+            with self.subTest(env=env):
+                self.assertEqual(
+                    self.validate(
+                        stacked(),
+                        "pull_request_target",
+                        {"GITHUB_REF": "refs/heads/main", **env},
+                    )[1:],
+                    ({}, []),
+                )
+
     def test_pr_payload_base_may_differ_from_event_sha(self):
         # The PR scanner fetches its own API snapshot; this unused payload
         # field need not equal the event SHA. Live event staleness is not assumed.

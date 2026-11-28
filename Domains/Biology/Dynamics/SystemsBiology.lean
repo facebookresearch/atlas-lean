@@ -444,7 +444,7 @@ theorem exists_isRegularSteadyState [Fintype M] {N : Matrix M R ℝ} {f : R → 
       (ContDiffAt.comp (e₀, s₀) (contDiffAt_apply (𝕜 := ℝ) (F' := fun _ : R => ℝ) i e₀)
         contDiffAt_fst)
       (ContDiffAt.comp (e₀, s₀) (hf i) contDiffAt_snd)
-  have hF := hFc.hasStrictFDerivAt one_ne_zero
+  have hF := hFc.hasStrictFDerivAt_fderiv one_ne_zero
   set F' := fderiv ℝ F (e₀, s₀)
   -- the partial derivative in the concentrations
   set A : (M → ℝ) →ₗ[ℝ] (M → ℝ) :=

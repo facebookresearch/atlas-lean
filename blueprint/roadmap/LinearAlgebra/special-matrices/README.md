@@ -1,6 +1,6 @@
 # Special matrices
 
-Classes of matrices defined by their structure or entries: Toeplitz, Hankel and circulant matrices, Hadamard and sign matrices, combinatorial matrices, nonnegative, doubly stochastic and totally positive matrices.
+Classes of matrices defined by their structure or entries: Toeplitz, Hankel and circulant matrices, Hadamard and sign matrices, combinatorial matrices, nonnegative, row-stochastic, doubly stochastic and totally positive matrices.
 
 - [Circulant matrices](circulant-matrices/README.md)
 - [Hadamard matrices](hadamard-matrices/README.md)
@@ -20,3 +20,9 @@ Classes of matrices defined by their structure or entries: Toeplitz, Hankel and 
 - [Semiseparable matrices](semiseparable-matrices/README.md)
 - [Generalized Householder matrices](generalized-householder-matrices/README.md)
 - [Real planar rotation matrices](rotation-matrices/README.md)
+- [Row-stochastic matrices](row-stochastic-matrices/README.md)
+- [Cube-fiber cancellation for order-six complex Hadamard matrices](sum-row-ratio-eq-zero-of-two-cube-values.md)
+
+- [Fourier vanishing for order-six complex Hadamard matrices outside the Tao class](order-six-hadamard-fourier-vanishing.md)
+- [A robust four-row permanent inequality](robust-four-row-permanent.md)
+- [Weighted permutation averages and four-row power means](weighted-four-row-permutation-average.md)

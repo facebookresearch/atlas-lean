@@ -22,6 +22,7 @@ import Mathlib.Probability.Independence.Integration
 import Mathlib.Probability.ProductMeasure
 import Mathlib.Probability.StrongLaw
 import Mathlib.Tactic.FinCases
+import MathlibExt.Probability.Distributions.PoissonCountSplitting
 
 /-!
 # Poisson processes
@@ -400,7 +401,6 @@ theorem hasLaw_count {T : ℕ → Ω → ℝ} {r : ℝ≥0} (hr : 0 < r)
       filter_upwards [hpos, hgood] with ω hω hg
       obtain ⟨j, hj⟩ := mem_iUnion.mp hg
       have hjc := count_of_gap T t ω hω j hj
-      apply propext
       simp only [mem_preimage, mem_singleton_iff]
       constructor
       · intro hk
@@ -601,29 +601,6 @@ theorem IsPoissonProcess.add {N₁ N₂ : ℝ≥0 → Ω → ℕ} {r₁ r₂ : �
     filter_upwards [hmono] with ω hω
     exact hω s t hst
 
-private lemma poisson_binomial_split (r : ℝ≥0) (p : unitInterval) (j k : ℕ) :
-    poissonMeasure r {j + k} * binomial (j + k) p {k} =
-      poissonMeasure (unitInterval.toNNReal p * r) {k} *
-        poissonMeasure (unitInterval.toNNReal (unitInterval.symm p) * r) {j} := by
-  rw [poissonMeasure_singleton, binomial_singleton,
-    poissonMeasure_singleton, poissonMeasure_singleton,
-    ← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul (by positivity)]
-  congr 1
-  simp only [NNReal.coe_mul, unitInterval.coe_toNNReal, unitInterval.symm,
-    Nat.add_sub_cancel_right, pow_add, mul_pow]
-  rw [show ((j + k).choose k : ℝ) =
-      ((j + k).factorial : ℝ) / ((j.factorial : ℝ) * (k.factorial : ℝ)) by
-    apply (eq_div_iff (by positivity : ((j.factorial : ℝ) * (k.factorial : ℝ) : ℝ) ≠ 0)).2
-    exact_mod_cast (by simpa [mul_assoc] using
-      Nat.add_choose_mul_factorial_mul_factorial j k)]
-  have he : Real.exp (-(↑p * ↑r)) * Real.exp (-((1 - ↑p) * ↑r)) =
-      Real.exp (-(r : ℝ)) := by
-    rw [← Real.exp_add]
-    congr 1
-    ring
-  rw [← he]
-  field_simp
-
 private lemma poisson_binomial_mixture (r : ℝ≥0) (p : unitInterval) (k : ℕ) :
     (∑' m, poissonMeasure r {m} * binomial m p {k}) =
       poissonMeasure (unitInterval.toNNReal p * r) {k} := by
@@ -642,7 +619,7 @@ private lemma poisson_binomial_mixture (r : ℝ≥0) (p : unitInterval) (k : ℕ
       exact hm (by simp [hz])
     exact ⟨m - k, Nat.sub_add_cancel hkm⟩
   rw [← hshift]
-  simp_rw [poisson_binomial_split]
+  simp_rw [poissonMeasure_mul_binomial_singleton]
   rw [ENNReal.tsum_mul_left]
   have htotal (q : ℝ≥0) : (∑' j : ℕ, poissonMeasure q {j}) = 1 := by
     rw [← measure_iUnion (by intro i j hij; simpa using hij)
@@ -1019,9 +996,9 @@ private theorem lintegral_poisson_step {r : ℝ≥0} (hr : 0 < r) (u : ℝ≥0) 
         rw [← he, mul_pow, pow_succ]
         field_simp
       · rw [indicator_of_notMem (show a ∉ {a : ℝ | a ≤ u} from hau),
-          indicator_of_notMem (fun h ↦ hau h.2), mul_zero]
+          indicator_of_notMem (show a ∉ Icc 0 (u : ℝ) from fun h ↦ hau h.2), mul_zero]
     · rw [gammaPDF_of_neg (lt_of_not_ge ha), zero_mul,
-        indicator_of_notMem (fun h ↦ ha h.1)]
+        indicator_of_notMem (show a ∉ Icc 0 (u : ℝ) from fun h ↦ ha h.1)]
   rw [expMeasure, gammaMeasure, lintegral_withDensity_eq_lintegral_mul _
     (by unfold gammaPDF; fun_prop) hmeas]
   simp only [Pi.mul_apply]
@@ -1312,8 +1289,7 @@ private theorem expSeq_inGaps {r : ℝ≥0} (hr : 0 < r) (L : List (ℝ≥0 × �
           rfl
         · rw [indicator_of_notMem (show a ∉ Ioi (u : ℝ) from ha)]
           convert measure_empty (μ := expSeq r)
-          ext y
-          simp only [mem_ofPred_eq, mem_empty_iff_false, iff_false, not_and]
+          simp only [mem_ofPred_eq, Set.mem_eq_mem, mem_empty_iff_false, iff_false, not_and]
           exact fun h ↦ absurd h ha
       rw [hset, expSeq_eq_lintegral hr (by rw [← hset]; exact measurableSet_inGaps 0 0 _)]
       simp_rw [hint]
@@ -1333,7 +1309,6 @@ private theorem expSeq_inGaps {r : ℝ≥0} (hr : 0 < r) (L : List (ℝ≥0 × �
             expSeq r {y | a ≤ u ∧ InGaps y 0 0 ((Real.toNNReal (u - a), m) :: L)} := by
           apply measure_congr
           filter_upwards [ae_expSeq_nonneg hr] with y hy
-          apply propext
           rw [inGaps_seqCons_succ, inGaps_neg_offset hy]
         rw [hcongr]
         by_cases hau : a ≤ (u : ℝ)
@@ -1460,7 +1435,6 @@ private theorem measure_increments_eq {T : ℕ → Ω → ℝ} {r : ℝ≥0} (hr
       P (⋃ k₀, G k₀) := by
     apply measure_congr
     filter_upwards [hmem] with ω hω
-    apply propext
     simp only [mem_iUnion, hω]
     constructor
     · intro h

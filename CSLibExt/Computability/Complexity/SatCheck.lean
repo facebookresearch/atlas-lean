@@ -31,7 +31,7 @@ sub-program `lk` on `LL`, started at `l0` and returning to `DLab.ret`, and `run`
 
 namespace Cslib.Complexity.SatVerifier.Check
 
-open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.PL
+open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.LegacyPL
   Computability
 
 /-- **Stacks of the clause check.** The eight stacks of the clause-check machine: $T$ (tokens),
@@ -194,7 +194,7 @@ theorem ret_run (v : Bool) (St : ∀ _ : K, List Sym) (val p s : Bool) (hV : St 
   refine ⟨val == p, Run.single ?_⟩
   cases val <;> cases p <;> cases s <;>
     simp [prog, drv, TM2.stepAux, hV, hP, hF, update_idem, update_comm (show K.F ≠ K.V by decide),
-      update_comm (show K.F ≠ K.P by decide)] <;> rfl
+      update_comm (show K.F ≠ K.P by decide)]
 
 theorem drop_run (bs : List Bool) (R : List Sym) (hR : R.head?.bind Sym.bit? = none) :
     ∀ (v : Bool) (St : ∀ _ : K, List Sym), St .T = bs.map Sym.bit ++ R →

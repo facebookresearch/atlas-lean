@@ -14,57 +14,13 @@ public import Mathlib.Algebra.Order.Round
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Height.NumberField
 public import Mathlib.NumberTheory.Real.Irrational
-public import MathlibExt.NumberTheory.PerrinSequence
+public import MathlibExt.NumberTheory.ContinuedFractions.BestApproximation
+public import MathlibExt.NumberTheory.ContinuedFractions.BoundedPartialQuotients
+public import MathlibExt.NumberTheory.PerrinZeroUnique
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Perrin sequence at negative indices.** The Perrin sequence $R_k$, given by $R_0 = 3$,
-$R_1 = 0$, $R_2 = 2$ and $R_{k+3} = R_{k+1} + R_k$, extends uniquely to all integers $k$ by
-running the recurrence backward. This defines the integers $R_{-n}$ for natural numbers $n$:
-$R_0 = 3$, $R_{-1} = -1$, $R_{-2} = 1$ and $R_{-(n+3)} = R_{-n} - R_{-(n+2)}$ for every $n \ge 0$.
-
-Source: Karen J. Sacanamboy, Eric F. Bravo, and Jhon J. Bravo, *Perrin Squares
-Which Are Again Perrin*, INTEGERS 25 (2025), Article A70, Theorems 2–4. -/
-public def perrinNeg : ℕ → ℤ
-  | 0 => 3
-  | 1 => -1
-  | 2 => 1
-  | n + 3 => perrinNeg n - perrinNeg (n + 2)
-
-/-- **The Perrin sequence and its backward extension fit together at index zero.** Write $R_n$
-for the Perrin sequence and $R_{-n}$ for its extension to negative indices, for natural numbers
-$n$. The two definitions give the same value at index $0$, and the Perrin recurrence holds across
-index $0$: $R_2 = R_0 + R_{-1}$ and $R_1 = R_{-1} + R_{-2}$.
-
-Source: Karen J. Sacanamboy, Eric F. Bravo, and Jhon J. Bravo, *Perrin Squares
-Which Are Again Perrin*, INTEGERS 25 (2025), Article A70, Theorems 2–4. -/
-public theorem perrinNeg_bridge :
-    perrinNeg 0 = (perrinSequence 0 : ℤ) ∧
-      (perrinSequence 2 : ℤ) = perrinSequence 0 + perrinNeg 1 ∧
-        (perrinSequence 1 : ℤ) = perrinNeg 1 + perrinNeg 2 := by
-  decide
-
-/-- **Perrin recurrence at negative indices.** Let $R_{-k}$ denote the Perrin sequence extended
-to negative indices. For every natural number $n$, $R_{-n} = R_{-(n+2)} + R_{-(n+3)}$.
-
-Source: Karen J. Sacanamboy, Eric F. Bravo, and Jhon J. Bravo, *Perrin Squares
-Which Are Again Perrin*, INTEGERS 25 (2025), Article A70, Theorems 2–4. -/
-public theorem perrinNeg_rec (n : ℕ) :
-    perrinNeg n = perrinNeg (n + 2) + perrinNeg (n + 3) := by
-  rw [perrinNeg]; ring
-
-/-- **Some values of the Perrin sequence at negative indices.** The Perrin sequence $R_k$
-extended to negative indices satisfies $R_{-5} = 4$, $R_{-18} = 25$,
-$R_{-1} = R_{-7} = R_{-11} = R_{-29} = -1$ and $R_{-2} = 1$.
-
-Source: Karen J. Sacanamboy, Eric F. Bravo, and Jhon J. Bravo, *Perrin Squares
-Which Are Again Perrin*, INTEGERS 25 (2025), Article A70, Theorems 2 and 4. -/
-public theorem perrinNeg_small_values :
-    perrinNeg 5 = 4 ∧ perrinNeg 18 = 25 ∧ perrinNeg 1 = -1 ∧ perrinNeg 7 = -1 ∧
-      perrinNeg 11 = -1 ∧ perrinNeg 29 = -1 ∧ perrinNeg 2 = 1 := by
-  decide
 
 /-- **Perrin numbers that are squares of Perrin numbers.** Let $R_n$ denote the $n$-th term of
 the Perrin sequence. For positive integers $n$ and $m$, $R_n = R_m^2$ holds if and only if
@@ -118,17 +74,6 @@ public theorem_wanted perrinNeg_eq_pm_perrinNeg_sq :
       ({1, 2, 7, 11, 29} : Set ℕ) ×ˢ ({1, 2, 7, 11, 29} : Set ℕ) ∪
         {(5, 3), (5, 6), (5, 20), (18, 8), (18, 16)}
 
-/-- **The only zero of the two-sided Perrin sequence.** Let $R_n$ denote the $n$-th term of
-the Perrin sequence and $R_{-n}$ the term at index $-n$ of its backward extension to negative
-indices. For every natural number $n$, $R_n = 0$ if and only if $n = 1$, and $R_{-n} \ne 0$.
-Thus $R_1 = 0$ is the only zero of the sequence $(R_k)_{k \in \mathbb{Z}}$.
-
-Source: Karen J. Sacanamboy, Eric F. Bravo, and Jhon J. Bravo, *Perrin Squares
-Which Are Again Perrin*, INTEGERS 25 (2025), Article A70, Theorem 5
-(`integers-2025-A70-thm-5`). -/
-public theorem_wanted perrin_zero_unique :
-    (∀ n : ℕ, perrinSequence n = 0 ↔ n = 1) ∧ ∀ n : ℕ, perrinNeg n ≠ 0
-
 /-- **Size of the Perrin numbers at negative indices.** Let $\alpha$ be a real number with
 $\alpha^3 = \alpha + 1$ (the real root of $X^3 - X - 1$), and let $R_{-k}$ denote the Perrin
 sequence extended to negative indices. For every integer $k \ge 6$,
@@ -169,44 +114,6 @@ public theorem_wanted matveev_two_logs_complex_lower_bound
     Real.exp (-(9.20483 * 10 ^ 11 * (Module.finrank ℚ K : ℝ) ^ 2 * A₁ * A₂ *
         (1 + Real.log (Module.finrank ℚ K : ℝ)) * (1 + Real.log (2 * B)))) <
       ‖f η₁ ^ b₁ * f η₂ ^ b₂ - 1‖
-
-/-- **Lower bound for $|x - p/q|$ from bounded partial quotients.** Let $x$ be an irrational real
-number with continued fraction expansion $[a_0; a_1, a_2, \dots]$, where $a_0 = \lfloor x \rfloor$,
-and with convergents $p_k / q_k$. Let $M \ge 1$ and $N \ge 0$ be integers with
-$q_N \le M < q_{N+1}$, and let $a$ be a real number with $a \ge a_j$ for every $0 \le j \le N + 1$.
-Then
-
-$$\left|x - \frac{p}{q}\right| > \frac{1}{(a + 2) q^2}$$
-
-for all integers $p$ and $q$ with $0 < q < M$.
-
-The source takes $a$ to be the maximum of $a_0, \dots, a_{N+1}$; since the bound weakens as $a$
-grows, the two forms are equivalent.
-
-Source: Karen J. Sacanamboy, Eric F. Bravo, and Jhon J. Bravo, *Perrin Squares
-Which Are Again Perrin*, INTEGERS 25 (2025), Article A70, Lemma 3
-(`integers-2025-A70-lem-3`). -/
-public theorem_wanted one_div_partialQuotient_bound_lt_abs_sub {x : ℝ} (hx : Irrational x)
-    {M N : ℕ} (hM : 0 < M) (hNM : (GenContFract.of x).dens N ≤ M)
-    (hMN : (M : ℝ) < (GenContFract.of x).dens (N + 1)) {aM : ℝ} (ha0 : (⌊x⌋ : ℝ) ≤ aM)
-    (ha : ∀ j ≤ N, ∀ b : ℝ, (GenContFract.of x).partDens.get? j = some b → b ≤ aM)
-    {p q : ℤ} (hq : 0 < q) (hqM : q < M) :
-    1 / ((aM + 2) * (q : ℝ) ^ 2) < |x - p / q|
-
-/-- **Convergents minimize $|p - qx|$ up to their denominator.** Let $x$ be an irrational real
-number with continued fraction convergents $p_k / q_k$, where $p_0 / q_0 = \lfloor x \rfloor / 1$.
-If $n > 1$ is a natural number and $p, q$ are integers with $0 < q \le q_n$ and
-$p / q \ne p_n / q_n$, then $|p_n - q_n x| < |p - q x|$.
-
-This is Theorem 182 of Hardy and Wright.
-
-Source: Karen J. Sacanamboy, Eric F. Bravo, and Jhon J. Bravo, *Perrin Squares
-Which Are Again Perrin*, INTEGERS 25 (2025), Article A70, Theorem 10
-(`integers-2025-A70-thm-10`). -/
-public theorem_wanted abs_convergent_num_sub_lt_of_le_den {x : ℝ} (hx : Irrational x)
-    {n : ℕ} (hn : 1 < n) {p q : ℤ} (hq : 0 < q) (hqn : (q : ℝ) ≤ (GenContFract.of x).dens n)
-    (hne : (p : ℝ) / q ≠ (GenContFract.of x).nums n / (GenContFract.of x).dens n) :
-    |(GenContFract.of x).nums n - (GenContFract.of x).dens n * x| < |p - q * x|
 
 end
 

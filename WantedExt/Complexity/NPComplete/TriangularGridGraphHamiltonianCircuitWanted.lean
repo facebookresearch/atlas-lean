@@ -22,11 +22,11 @@ ISGCI (Information System on Graph Classes and their Inclusions), class triangul
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.GridGraphHamiltonianCircuitWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ QUESTION: does `G` have a Hamiltonian circuit?
 Arkin et al., Definition 2.2: a triangular grid graph is a plane graph induced by a subset of the
 vertices of the tiling of the plane with unit-side equilateral triangles; their Theorem 3.1: "The
 HCP for triangular grid graphs is NP-complete". The question is HAMILTONIAN CIRCUIT
-(`HamiltonianCycleUndirectedWanted`, Garey and Johnson [GT37]) restricted to these graphs, given
+(`HamiltonianCycleUndirectedDefs`, Garey and Johnson [GT37]) restricted to these graphs, given
 by their vertices.
 
 Coordinates: the vertices of the tiling are the points `a • (1, 0) + b • (1/2, √3/2)` with

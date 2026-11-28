@@ -16,6 +16,12 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.ConvergentVectors
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.Determinant
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.InteriorPoints
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.Lame
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.PairedColumns
+public import MathlibExt.Combinatorics.CleanLatticeParallelogram.Reflection
 
 /-!
 # Clean lattice parallelograms
@@ -40,115 +46,6 @@ open MeasureTheory
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **The integer lattice in the plane.** The lattice points of $\mathbb{R}^2$ are the points
-$(a, b)$ with $a, b \in \mathbb{Z}$; they form the image of $\mathbb{Z}^2$ in $\mathbb{R}^2$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 1. -/
-def latticePoints : Set (ℝ × ℝ) :=
-  Set.range fun z : ℤ × ℤ => ((z.1 : ℝ), (z.2 : ℝ))
-
-/-- **Parallelogram spanned by two vectors.** For $u, v \in \mathbb{R}^2$, the parallelogram
-spanned by $u$ and $v$ is the set $\{s u + t v : 0 \le s \le 1,\ 0 \le t \le 1\}$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 1.1. -/
-def latticeParallelogram (u v : ℝ × ℝ) : Set (ℝ × ℝ) :=
-  {p | ∃ s t : ℝ, 0 ≤ s ∧ s ≤ 1 ∧ 0 ≤ t ∧ t ≤ 1 ∧ p = s • u + t • v}
-
-/-- **The parallelogram $P_{a,n}$.** For natural numbers $a$ and $n$, the set
-$P_{a,n} \subseteq \mathbb{R}^2$ is the closed parallelogram spanned by $(1, 0)$ and $(a, n)$,
-that is, the set of points $s (1, 0) + t (a, n)$ with $0 \le s \le 1$ and $0 \le t \le 1$. For
-$n \ge 1$ it is the parallelogram with vertices $(0, 0)$, $(1, 0)$, $(a, n)$ and $(a + 1, n)$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 2. -/
-def stdCleanParallelogram (a n : ℕ) : Set (ℝ × ℝ) :=
-  latticeParallelogram (1, 0) (a, n)
-
-/-- **Integer affine maps of the plane.** For a $2 \times 2$ integer matrix $M$ with entries
-$m_{ij}$ and an integer vector $u = (u_1, u_2) \in \mathbb{Z}^2$, the map
-$T_{M,u} : \mathbb{R}^2 \to \mathbb{R}^2$ is
-$T_{M,u}(x, y) = (m_{11} x + m_{12} y + u_1, m_{21} x + m_{22} y + u_2)$, that is,
-$p \mapsto M p + u$. It is an affine unimodular map when $\det M = \pm 1$; the definition itself
-puts no condition on $\det M$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 1.1. -/
-def unimodularMap (M : Matrix (Fin 2) (Fin 2) ℤ) (u : ℤ × ℤ) (p : ℝ × ℝ) : ℝ × ℝ :=
-  ((M 0 0 : ℝ) * p.1 + (M 0 1 : ℝ) * p.2 + u.1, (M 1 0 : ℝ) * p.1 + (M 1 1 : ℝ) * p.2 + u.2)
-
-/-- **Unimodularly equivalent sets.** Two sets $P, Q \subseteq \mathbb{R}^2$ are unimodularly
-equivalent when some affine unimodular map sends $P$ onto $Q$: there are a $2 \times 2$ integer
-matrix $M$ with $\det M = 1$ or $\det M = -1$ and an integer vector $u \in \mathbb{Z}^2$ such that
-$\{M x + u : x \in P\} = Q$.
-
-In the paper's notation, where $T$ is the map and $P_1$ and $P_2$ are the two sets, the displayed
-condition $T(P_1) = T(P_2)$ is a typo for $T(P_1) = P_2$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 1.1. -/
-def UnimodularlyEquivalent (P Q : Set (ℝ × ℝ)) : Prop :=
-  ∃ (M : Matrix (Fin 2) (Fin 2) ℤ) (u : ℤ × ℤ), (M.det = 1 ∨ M.det = -1) ∧
-    unimodularMap M u '' P = Q
-
-/-- **Unimodular equivalence is reflexive.** Every subset $P$ of $\mathbb{R}^2$ is unimodularly
-equivalent to itself (take the identity matrix and the zero translation).
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 1.1. -/
-theorem unimodularlyEquivalent_refl (P : Set (ℝ × ℝ)) : UnimodularlyEquivalent P P := by
-  refine ⟨1, 0, Or.inl Matrix.det_one, ?_⟩
-  have : unimodularMap 1 0 = id := by
-    funext p
-    simp [unimodularMap]
-  simp [this]
-
-/-- **Clean lattice parallelogram.** For points $u, v \in \mathbb{R}^2$, the parallelogram
-spanned by $u$ and $v$ is clean when $u$ and $v$ are lattice points and the lattice points on the
-boundary of the parallelogram are exactly $0$, $u$, $v$ and $u + v$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 2 (definition after Reznick). -/
-def IsCleanParallelogram (u v : ℝ × ℝ) : Prop :=
-  u ∈ latticePoints ∧ v ∈ latticePoints ∧
-    frontier (latticeParallelogram u v) ∩ latticePoints = {0, u, v, u + v}
-
-/-- **Interior lattice points of $P_{a,n}$ on a vertical line.** For natural numbers $a$ and $n$,
-let $P_{a,n}$ be the parallelogram spanned by $(1, 0)$ and $(a, n)$, with vertices $(0, 0)$,
-$(1, 0)$, $(a, n)$, $(a + 1, n)$. For an integer $k$, the set $S_k$ is the set of integers $y$
-such that $(k, y)$ lies in the interior of $P_{a,n}$, that is, the $y$-coordinates of the lattice
-points in the interior of $P_{a,n}$ on the line $x = k$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 2. -/
-def stdColumn (a n : ℕ) (k : ℤ) : Set ℤ :=
-  {y | ((k : ℝ), (y : ℝ)) ∈ interior (stdCleanParallelogram a n)}
-
-/-- **Point reflection between the two triangles of a parallelogram.** Let $u$ and $v$ be
-linearly independent vectors in $\mathbb{R}^2$ and let $P$ be the parallelogram they span. The map
-$p \mapsto u + v - p$ is a bijection from the set of points of the triangle
-$\operatorname{conv}\{0, u, v\}$ that lie in the interior of $P$ onto the set of points of the
-triangle $\operatorname{conv}\{u, v, u + v\}$ that lie in the interior of $P$.
-
-The map sends $s u + t v$ to $(1 - s) u + (1 - t) v$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 1 (`integers-2026-A10-lem-1`). -/
-public theorem_wanted antidiagonal_triangle_bijOn {u v : ℝ × ℝ} (huv : LinearIndependent ℝ ![u, v]) :
-    Set.BijOn (fun p => u + v - p)
-      (convexHull ℝ {0, u, v} ∩ interior (latticeParallelogram u v))
-      (convexHull ℝ {u, v, u + v} ∩ interior (latticeParallelogram u v))
 
 /-- **Unimodular equivalences between the parallelograms $P_{b,n}$.** For natural numbers $b$
 and $n$ let $P_{b,n}$ be the parallelogram spanned by $(1, 0)$ and $(b, n)$, with vertices
@@ -182,21 +79,6 @@ public theorem_wanted cleanParallelogram_unimodularlyEquivalent_std {u v : ℝ �
     ∃ a : ℕ, 1 ≤ a ∧ a < n ∧ Nat.Coprime a n ∧
       UnimodularlyEquivalent (latticeParallelogram u v) (stdCleanParallelogram a n)
 
-/-- **Interior lattice points of a standard clean parallelogram.** Let $1 \le a < n$ with
-$\gcd(a, n) = 1$, let $P_{a,n} = \{s (1, 0) + t (a, n) : 0 \le s \le 1,\ 0 \le t \le 1\}$, and
-write $\langle x \rangle = x - \lfloor x \rfloor$ for the fractional part of a real number $x$.
-The lattice points in the interior of $P_{a,n}$ are exactly the points
-$\langle k(n - a)/n \rangle \, (1, 0) + (k/n) \, (a, n)$ for $k = 1, \dots, n - 1$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 3 (`integers-2026-A10-lem-3`). -/
-public theorem_wanted interior_stdCleanParallelogram_latticePoints {a n : ℕ} (ha : 1 ≤ a)
-    (han : a < n) (hcop : Nat.Coprime a n) :
-    interior (stdCleanParallelogram a n) ∩ latticePoints =
-      (fun k : ℕ => (Int.fract ((k : ℝ) * (n - a) / n) + (k : ℝ) * a / n, (k : ℝ))) ''
-        Set.Icc 1 (n - 1)
-
 /-- **The point reflection symmetry of $P_{a,n}$.** Let $a$ and $n$ be natural numbers with
 $1 \le a < n$ and $\gcd(a, n) = 1$, let $P_{a,n} \subseteq \mathbb{R}^2$ be the parallelogram
 with vertices $(0, 0)$, $(1, 0)$, $(a, n)$, $(a + 1, n)$, and let
@@ -213,163 +95,6 @@ public theorem_wanted stdCleanParallelogram_symmetry {a n : ℕ} (ha : 1 ≤ a) 
         stdCleanParallelogram a n ∧
       Isometry fun p : ℝ × ℝ => ((a + 1 : ℝ) - p.1, (n : ℝ) - p.2)
 
-/-- **Lowest and highest interior lattice points of $P_{a,n}$ on each vertical line.** Let $a$
-and $n$ be natural numbers with $1 \le a < n$ and $\gcd(a, n) = 1$, let $P_{a,n}$ be the
-parallelogram with vertices $(0, 0)$, $(1, 0)$, $(a, n)$, $(a + 1, n)$, and for an integer $k$
-let $S_k$ be the set of integers $y$ such that $(k, y)$ lies in the interior of $P_{a,n}$. If
-$a = 1$, the least element of $S_1$ is $1$ and the greatest is $n - 1$. If $a > 1$, then: for
-every integer $k$ with $2 \le k \le a - 1$, the least element of $S_k$ is
-$\lceil (k - 1) n / a \rceil$ and the greatest is $\lfloor k n / a \rfloor$; the least element of
-$S_1$ is $1$ and the greatest is $\lfloor n / a \rfloor$; and the least element of $S_a$ is
-$\lceil (a - 1) n / a \rceil$ and the greatest is $n - 1$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 5 (`integers-2026-A10-lem-5`). -/
-public theorem_wanted stdColumn_least_greatest {a n : ℕ} (ha : 1 ≤ a) (han : a < n)
-    (hcop : Nat.Coprime a n) :
-    (a = 1 → IsLeast (stdColumn a n 1) 1 ∧ IsGreatest (stdColumn a n 1) (n - 1)) ∧
-      (1 < a →
-        (∀ k : ℕ, 2 ≤ k → k ≤ a - 1 →
-          IsLeast (stdColumn a n k) ⌈(((k - 1 : ℕ) * n : ℕ) : ℚ) / a⌉ ∧
-            IsGreatest (stdColumn a n k) ⌊((k * n : ℕ) : ℚ) / a⌋) ∧
-        IsLeast (stdColumn a n 1) 1 ∧ IsGreatest (stdColumn a n 1) ⌊(n : ℚ) / a⌋ ∧
-        IsLeast (stdColumn a n a) ⌈(((a - 1 : ℕ) * n : ℕ) : ℚ) / a⌉ ∧
-        IsGreatest (stdColumn a n a) (n - 1))
-
-/-- **Lowest and highest interior lattice points of $P_{a,n}$ on paired vertical lines.** Let $a$
-and $n$ be natural numbers with $1 \le a < n$ and $\gcd(a, n) = 1$, let $P_{a,n}$ be the
-parallelogram with vertices $(0, 0)$, $(1, 0)$, $(a, n)$, $(a + 1, n)$, and for an integer $k$
-let $S_k$ be the set of integers $y$ such that $(k, y)$ lies in the interior of $P_{a,n}$. Let
-$k, l \ge 1$ be natural numbers with $k + l = a + 1$, and suppose that $y_L$ is the least element
-of $S_k$ and $y_H$ is the greatest element of $S_l$. Then $y_L + y_H = n$, and $(l, y_H)$ lies on
-the boundary of the convex hull of the points of $\mathbb{Z}^2$ in the interior of $P_{a,n}$ if
-and only if $(k, y_L)$ does.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 6 (`integers-2026-A10-lem-6`). -/
-public theorem_wanted stdColumn_low_add_high {a n : ℕ} (ha : 1 ≤ a) (han : a < n)
-    (hcop : Nat.Coprime a n) {k l : ℕ} (hk : 1 ≤ k) (hl : 1 ≤ l) (hkl : k + l = a + 1)
-    {yL yH : ℤ} (hL : IsLeast (stdColumn a n k) yL) (hH : IsGreatest (stdColumn a n l) yH) :
-    yL + yH = n ∧
-      ((((l : ℝ), (yH : ℝ)) ∈
-          frontier (convexHull ℝ (interior (stdCleanParallelogram a n) ∩ latticePoints))) ↔
-        (((k : ℝ), (yL : ℝ)) ∈
-          frontier (convexHull ℝ (interior (stdCleanParallelogram a n) ∩ latticePoints))))
-
-/-- **Number of steps of Euclid's algorithm.** For natural numbers $u$ and $v$, the number of
-division steps of Euclid's algorithm on $(u, v)$ is $0$ if $v = 0$, and otherwise one more than
-the number of division steps on $(v, u \bmod v)$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 5.3 (division steps of the Euclidean algorithm). -/
-def euclidSteps (u v : ℕ) : ℕ :=
-  if h : v = 0 then 0 else euclidSteps v (u % v) + 1
-termination_by v
-decreasing_by exact Nat.mod_lt _ (Nat.pos_of_ne_zero h)
-
-/-- **Euclid's algorithm on small inputs.** Euclid's algorithm takes exactly one division step
-on $(2, 1)$, two division steps on $(3, 2)$ and five division steps on $(13, 8)$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 5.3. -/
-theorem euclidSteps_small_values :
-    euclidSteps 2 1 = 1 ∧ euclidSteps 3 2 = 2 ∧ euclidSteps 13 8 = 5 := by
-  refine ⟨?_, ?_, ?_⟩ <;> simp [euclidSteps]
-
-/-- **Lamé's theorem (1844).** Let $F_0 = 0$, $F_1 = 1$, $F_{k+2} = F_{k+1} + F_k$ be the
-Fibonacci numbers, and let $N \ge 1$. Let $u > v > 0$ be natural numbers on which Euclid's
-algorithm takes exactly $N$ division steps, and suppose that $u \le u'$ whenever $u' > v' > 0$
-are natural numbers on which it takes exactly $N$ division steps. Then $u = F_{N+2}$ and
-$v = F_{N+1}$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Theorem 7 (`integers-2026-A10-thm-7`). -/
-public theorem_wanted lame_euclidSteps_minimal {N u v : ℕ} (hN : 1 ≤ N) (huv : v < u) (hv : 0 < v)
-    (hsteps : euclidSteps u v = N)
-    (hmin : ∀ u' v', v' < u' → 0 < v' → euclidSteps u' v' = N → u ≤ u') :
-    u = Nat.fib (N + 2) ∧ v = Nat.fib (N + 1)
-
-/-- **Convergent vectors of a continued fraction.** Let $x$ be a rational number with regular
-continued fraction $[q_0; q_1, q_2, \dots]$, and let $A_j$ and $B_j$ be the numerators and
-denominators of its convergents, given by $A_{-2} = 0$, $A_{-1} = 1$, $B_{-2} = 1$, $B_{-1} = 0$
-and $A_j = q_j A_{j-1} + A_{j-2}$, $B_j = q_j B_{j-1} + B_{j-2}$ for $j \ge 0$. Stark's
-convergent vectors of $x$ are $v_j = (B_j, A_j)$ for $j \ge -2$, so $v_{-2} = (1, 0)$,
-$v_{-1} = (0, 1)$ and $v_j = v_{j-2} + q_j v_{j-1}$ for every $j \ge 0$ for which $q_j$ exists.
-
-If the expansion terminates with $q_m$, then $v_j = v_m$ for all $j > m$; for $j < -2$ the
-value is set to $v_0$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 3 (CF algorithm). -/
-def convergentVec (x : ℚ) (i : ℤ) : ℝ × ℝ :=
-  if i = -2 then (1, 0)
-  else if i = -1 then (0, 1)
-  else ((((GenContFract.of x).dens i.toNat : ℚ) : ℝ), (((GenContFract.of x).nums i.toNat : ℚ) : ℝ))
-
-/-- **Partial quotients of a rational number.** Let $x$ be a rational number. The continued
-fraction algorithm sets $x_0 = x$ and $q_0 = \lfloor x_0 \rfloor$ and, as long as $x_j$ is not an
-integer, $x_{j+1} = 1/(x_j - q_j)$ and $q_{j+1} = \lfloor x_{j+1} \rfloor$; it stops at the first
-index $m$ for which $x_m$ is an integer, so that $x = [q_0; q_1, \dots, q_m]$. For a natural
-number $i$, the $i$-th partial quotient of $x$ is $q_i$ when $i \le m$ and $0$ when $i > m$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 3. -/
-def partialQuotient (x : ℚ) (i : ℕ) : ℚ :=
-  if i = 0 then (GenContFract.of x).h else ((GenContFract.of x).partDens.get? (i - 1)).getD 0
-
-/-- **Initial convergent vectors.** For every rational number $x$, the convergent vectors of the
-regular continued fraction of $x$ begin with $v_{-2} = (1, 0)$, $v_{-1} = (0, 1)$ and
-$v_0 = (1, \lfloor x \rfloor)$, and its zeroth partial quotient is $q_0 = \lfloor x \rfloor$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 3 (CF algorithm, Step 1 and Step 2). -/
-theorem convergentVec_initial (x : ℚ) :
-    convergentVec x (-2) = (1, 0) ∧ convergentVec x (-1) = (0, 1) ∧
-      convergentVec x 0 = (1, ((⌊x⌋ : ℤ) : ℝ)) ∧ partialQuotient x 0 = ⌊x⌋ := by
-  refine ⟨by simp [convergentVec], by simp [convergentVec], ?_, by
-    simp [partialQuotient, GenContFract.of_h_eq_floor]⟩
-  simp [convergentVec, GenContFract.zeroth_den_eq_one, GenContFract.zeroth_num_eq_h,
-    GenContFract.of_h_eq_floor]
-
-/-- **Recurrence for convergent vectors.** Let $x$ be a rational number with regular continued
-fraction $[q_0; q_1, q_2, \dots]$ and convergent vectors $v_{-2}, v_{-1}, v_0, \dots$, and let
-$i \ge 0$. If the expansion of $x$ has a term $b$ in position $i + 2$ (it does not terminate
-before $q_{i+2}$), then $q_{i+2} = b$ and $v_{i+2} = v_i + b \, v_{i+1}$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Section 3 (CF algorithm, Step 3). -/
-theorem convergentVec_recurrence (x : ℚ) (i : ℕ) {b : ℚ}
-    (hb : (GenContFract.of x).partDens.get? (i + 1) = some b) :
-    convergentVec x ((i : ℤ) + 2) =
-      convergentVec x i + (b : ℝ) • convergentVec x ((i : ℤ) + 1) ∧
-      partialQuotient x (i + 2) = b := by
-  obtain ⟨gp, hs, hgb⟩ := GenContFract.exists_s_b_of_partDen hb
-  have ha : gp.a = 1 := GenContFract.of_partNum_eq_one (GenContFract.partNum_eq_s_a hs)
-  have hA := GenContFract.nums_recurrence hs rfl rfl
-  have hB := GenContFract.dens_recurrence hs rfl rfl
-  refine ⟨?_, by simp [partialQuotient, hb]⟩
-  have h2 : ((i : ℤ) + 2).toNat = i + 2 := by omega
-  have h1 : ((i : ℤ) + 1).toNat = i + 1 := by omega
-  have h0 : (i : ℤ).toNat = i := by omega
-  have n22 : (i : ℤ) + 2 ≠ -2 := by omega
-  have n21 : (i : ℤ) + 2 ≠ -1 := by omega
-  have n12 : (i : ℤ) + 1 ≠ -2 := by omega
-  have n11 : (i : ℤ) + 1 ≠ -1 := by omega
-  have n02 : (i : ℤ) ≠ -2 := by omega
-  have n01 : (i : ℤ) ≠ -1 := by omega
-  simp only [convergentVec, h2, h1, h0, hA, hB, ha, hgb, n22, n21, n12, n11, n02, n01,
-    ite_false]
-  ext <;> simp <;> ring
-
 /-- **The last partial quotient of $n/a$ is at least $2$.** Let $a$ and $n$ be natural numbers
 with $1 \le a < n$, and let $n/a = [q_0; q_1, \dots, q_m]$ be the regular continued fraction of
 $n/a$, where $q_0 = \lfloor n/a \rfloor$ and $m$ is the number of partial quotients after $q_0$
@@ -382,26 +107,6 @@ Lemma 7 (`integers-2026-A10-lem-7`). -/
 public theorem_wanted partialQuotient_last_ge_two {a n m : ℕ} (ha : 1 ≤ a) (han : a < n)
     (hm : IsLeast {k | (GenContFract.of ((n : ℚ) / a)).TerminatedAt k} m) :
     2 ≤ partialQuotient ((n : ℚ) / a) m
-
-/-- **Lattice points of the parallelogram of two consecutive convergent vectors.** Let
-$1 \le a < n$ be integers, let $n / a = [q_0; q_1, \dots, q_m]$ be the regular continued fraction
-of $n / a$, where $m$ is the least index at which it terminates, and let $v_i$ be its convergent
-vectors. For every integer $i$ with $-2 \le i < m$, the lattice points of the parallelogram
-spanned by $v_i$ and $v_{i+1}$ are exactly $0$, $v_i$, $v_{i+1}$ and $v_i + v_{i+1}$, and every
-point of $\mathbb{Z}^2$ equals $s v_i + t v_{i+1}$ for some integers $s$ and $t$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Theorem 4 (`integers-2026-A10-thm-4`). -/
-public theorem_wanted convergentVec_parallelogram_latticePoints {a n m : ℕ} (ha : 1 ≤ a)
-    (han : a < n) (hm : IsLeast {k | (GenContFract.of ((n : ℚ) / a)).TerminatedAt k} m)
-    {i : ℤ} (hi : -2 ≤ i) (him : i < m) :
-    latticeParallelogram (convergentVec ((n : ℚ) / a) i) (convergentVec ((n : ℚ) / a) (i + 1)) ∩
-        latticePoints =
-      {0, convergentVec ((n : ℚ) / a) i, convergentVec ((n : ℚ) / a) (i + 1),
-        convergentVec ((n : ℚ) / a) i + convergentVec ((n : ℚ) / a) (i + 1)} ∧
-      ∀ p ∈ latticePoints, ∃ s t : ℤ,
-        p = (s : ℝ) • convergentVec ((n : ℚ) / a) i + (t : ℝ) • convergentVec ((n : ℚ) / a) (i + 1)
 
 /-- **Distances of the convergent vectors to the line $y = (n / a) x$.** Let $1 \le a < n$ be
 coprime integers, let $n / a = [q_0; q_1, \dots, q_m]$ be the regular continued fraction of
@@ -476,26 +181,6 @@ public theorem_wanted convergentVec_triangle_latticePoints {a n m : ℕ} (ha : 1
     ((segment ℝ v' v ∩ latticePoints).ncard : ℚ) = partialQuotient ((n : ℚ) / a) i + 1 ∧
       interior (convexHull ℝ {0, v', v}) ∩ latticePoints = ∅ ∧
       (convexHull ℝ {0, v', v} ∩ latticePoints) \ {0, v', v} ⊆ segment ℝ v' v
-
-/-- **A determinant of three convergent vectors.** Let $1 \le a < n$ be integers, let
-$n / a = [q_0; q_1, \dots, q_m]$ be the regular continued fraction of $n / a$, where $m$ is the
-least index at which it terminates, and let $v_j = (B_j, A_j)$ be its convergent vectors. Then
-for every natural number $i$ with $i + 2 \le m$, the determinant of the $3 \times 3$ matrix with
-rows $(1, B_{i-2}, A_{i-2})$, $(1, B_i, A_i)$ and $(1, B_{i+2}, A_{i+2})$ equals
-$(-1)^{i+1} q_i q_{i+1} q_{i+2}$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 10 (`integers-2026-A10-lem-10`). -/
-public theorem_wanted convergentVec_det_three {a n m : ℕ} (ha : 1 ≤ a) (han : a < n)
-    (hm : IsLeast {k | (GenContFract.of ((n : ℚ) / a)).TerminatedAt k} m) {i : ℕ}
-    (him : i + 2 ≤ m) :
-    let v := convergentVec ((n : ℚ) / a)
-    let q := partialQuotient ((n : ℚ) / a)
-    Matrix.det !![1, (v ((i : ℤ) - 2)).1, (v ((i : ℤ) - 2)).2;
-        1, (v i).1, (v i).2;
-        1, (v ((i : ℤ) + 2)).1, (v ((i : ℤ) + 2)).2] =
-      (-1) ^ (i + 1) * ((q i * q (i + 1) * q (i + 2) : ℚ) : ℝ)
 
 /-- **Vertices of the interior hull of a standard clean parallelogram.** Let $1 \le a < n$ with
 $\gcd(a, n) = 1$, let $P_{a,n} = \{s (1, 0) + t (a, n) : 0 \le s \le 1,\ 0 \le t \le 1\}$, and let

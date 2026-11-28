@@ -86,7 +86,7 @@ example : (axialCompatibilityUnit r3 ![0] ![1] *ᵥ u6) 0 = 2 := by
   have hrow : axialCompatibilityUnit r3 ![0] ![1]
       = (4 : ℝ)⁻¹ • axialCompatibility r3 ![0] ![1] := by
     ext e q
-    fin_cases e <;> simp [axialCompatibilityUnit, hL]
+    fin_cases e; simp [axialCompatibilityUnit, hL]
   rw [hrow, Matrix.smul_mulVec]
   have h8 : (axialCompatibility r3 ![0] ![1] *ᵥ u6) 0 = 8 := by
     rw [axialCompatibility_mulVec_apply]
@@ -120,7 +120,7 @@ example : ((axialCompatibility r3 ![0] ![1] * S6)ᵀ
     * Matrix.diagonal (![1] : Fin 1 → ℝ)
     * (axialCompatibility r3 ![0] ![1] * S6)).PosSemidef :=
   supported_posSemidef r3 ![0] ![1] S6 (![1] : Fin 1 → ℝ)
-    (by intro i; fin_cases i <;> norm_num)
+    (by intro i; fin_cases i; norm_num)
 
 /-! ## B. Supported virtual work -/
 
@@ -137,7 +137,7 @@ example : (axialCompatibility r3 ![0] ![1] * S6)ᵀ *ᵥ (![2] : Fin 1 → ℝ)
   obtain ⟨j, k⟩ := q
   fin_cases j <;> fin_cases k <;>
     simp [Matrix.mulVec_apply, Matrix.transpose_apply, axialCompatibility,
-      Matrix.of_apply, dotProduct, fB, r3] <;> norm_num
+      Matrix.of_apply, dotProduct, fB, r3, -Matrix.transpose_of] <;> norm_num
 
 /-- Forward direction at the nonzero virtual displacement
 `u6`: internal and external virtual work are both `16`.
@@ -152,7 +152,7 @@ example : (![2] : Fin 1 → ℝ)
     obtain ⟨j, k⟩ := q
     fin_cases j <;> fin_cases k <;>
       simp [Matrix.mulVec_apply, Matrix.transpose_apply, axialCompatibility,
-        Matrix.of_apply, dotProduct, fB, r3] <;> norm_num
+        Matrix.of_apply, dotProduct, fB, r3, -Matrix.transpose_of] <;> norm_num
   refine ⟨(supported_virtualWork_iff r3 ![0] ![1] S6 _ _).mp heq u6, ?_⟩
   simp only [dotProduct, u6, fB, Fintype.sum_prod_type, Fin.sum_univ_three,
     Fin.sum_univ_two]
@@ -503,7 +503,7 @@ private lemma supportedStiffnessF :
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.diagonal,
-      axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two] <;> norm_num
+      axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two, -Matrix.transpose_of] <;> norm_num
 
 /-- Focused check as a truss instance:
 `K *ᵥ ![3, 5] = ![0, 6]`, with `![3, 5]` the unique
@@ -1114,7 +1114,7 @@ example : unitLoadResponse rF ![0, 1] ![1, 2] SF ![1, 1] ![2, 0]
       ext i j
       fin_cases i <;> fin_cases j <;>
         simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.diagonal,
-          axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two] <;>
+          axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two, -Matrix.transpose_of] <;>
         norm_num
     rw [hK]
     funext i
@@ -1720,7 +1720,7 @@ private lemma supportedBsF :
     axialCompatibility rF ![0, 1] ![1, 2] * SF = !![2, 0; 1, -1] := by
   ext e f
   fin_cases e <;> fin_cases f <;>
-    simp [Matrix.mul_apply, axialCompatibility, SF, Matrix.of_apply] <;>
+    simp [Matrix.mul_apply, axialCompatibility, SF, Matrix.of_apply];
     norm_num
 
 /-- W1 as a truss: the separation-form elastic

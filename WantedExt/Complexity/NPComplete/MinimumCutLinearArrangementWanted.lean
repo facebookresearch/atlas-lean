@@ -23,7 +23,7 @@ maximum degree three).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
@@ -70,8 +70,10 @@ def WellFormed (i : MinimumCutLinearArrangementInstance) : Prop :=
     0 < i.2.2
 
 /-- A one-to-one numbering of the vertices, given by the positions in a permutation `perm` of
-`0, ..., n - 1`, such that for every cut position `j` with `j + 1 < n` at most `K` edges have
-one endpoint at a position `≤ j` and the other at a position `> j`. -/
+`0, ..., n - 1`, such that for every cut position `j` with `j + 1 < n` at most `K` entries
+`(u, v)` of the edge list have one endpoint at a position `≤ j` and the other at a position
+`> j`; a vertex not in `perm` has position `n`. Entries are counted, so `(0, 1)` and `(1, 0)`
+count twice; on a simple edge list, which well-formedness checks, this counts edges. -/
 def MinimumCutLinearArrangementFeasible (i : MinimumCutLinearArrangementInstance) : Prop :=
   ∃ perm : List ℕ, perm.Perm (List.range i.1) ∧
     ∀ j, j + 1 < i.1 →

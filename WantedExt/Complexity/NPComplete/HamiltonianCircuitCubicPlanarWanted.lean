@@ -21,12 +21,12 @@ Computer Science 131 (1994), 463-473, doi:10.1016/0304-3975(94)90185-6.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.HamiltonianCircuitRegularWanted
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
 
 @[expose] public section
 
@@ -53,7 +53,7 @@ Cubic means 3-regular: the cubic restriction is HAMILTONIAN CIRCUIT on `k`-regul
 (`HamiltonianCircuitRegular.WellFormed 3`: a well-formed HAMILTONIAN CIRCUIT instance, `0 < n` and a
 simple edge list, whose graph is Mathlib's `SimpleGraph.IsRegularOfDegree 3`) is reused; the
 instance, the graph and the question are those of HAMILTONIAN CIRCUIT
-(`HamiltonianCycleUndirectedWanted`: `HamiltonianCycleUndirected.Graph` and
+(`HamiltonianCycleUndirectedDefs`: `HamiltonianCycleUndirected.Graph` and
 `HamiltonianCycleUndirected.HamiltonianCycleUndirectedFeasible`, `3 ≤ n` and Mathlib's
 `SimpleGraph.IsHamiltonian`). The restriction adds that the graph is planar, MathlibExt's
 `SimpleGraph.IsPlanar` (a crossing-free straight-line drawing, which by Fáry's theorem is equivalent

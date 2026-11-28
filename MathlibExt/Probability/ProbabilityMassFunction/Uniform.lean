@@ -25,9 +25,9 @@ public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 The finite-type construction uses the public `PMF.ofFintype` constructor.
 
-These are `PMF`-valued samplers. Pinned Mathlib (v4.35) has no `PMF`-valued finite
-uniform sampler: in `Mathlib.Probability.Distributions.Uniform`, the former `PMF` API was
-retired in favour of the measure-valued
+These are `PMF`-valued samplers. Pinned Mathlib (v4.36, as v4.35 before it) has no
+`PMF`-valued finite uniform sampler: in `Mathlib.Probability.Distributions.Uniform`, the former
+`PMF` API was retired in favour of the measure-valued
 `MeasureTheory.Measure.uniformOfFinset : Finset α → Measure α`, and
 `PMF.uniformOfFintype` survives only as a deprecated alias (since `2026-10-04`) for that
 `Measure` construction — `#check @PMF.uniformOfFintype` gives
@@ -64,7 +64,7 @@ open scoped Classical in
 @[simp] theorem uniformFinset_apply_of_mem {s : Finset α} (hs : s.Nonempty)
     {a : α} (ha : a ∈ s) : uniformFinset s hs a = (s.card : ℝ≥0∞)⁻¹ := by
   classical
-  rw [uniformFinset_apply, if_pos ha]
+  rw [uniformFinset_apply, ite_eq_left ha]
 
 /-- **Uniform distribution on a finite type.** For a nonempty finite type $\alpha$, the uniform
 distribution on $\alpha$ is the probability mass function on $\alpha$ that gives mass $1/|\alpha|$

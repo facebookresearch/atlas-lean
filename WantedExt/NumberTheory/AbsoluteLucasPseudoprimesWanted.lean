@@ -13,68 +13,18 @@ public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.Squarefree
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.Algebra.Polynomial.PrimeValueConditions
+public import MathlibExt.NumberTheory.AbsoluteLucasPseudoprimes
+public import MathlibExt.NumberTheory.JacobiSymbolDiscriminant
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.ThreePrimeDCarmichael
+public import MathlibExt.NumberTheory.ThreePrimeDCarmichaelDivisibility
 import Mathlib.Tactic.NormNum.LegendreSymbol
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Jacobi symbols of a discriminant $D$ agree at odd primes congruent modulo $D$.** Let $p$ and
-$p'$ be odd primes and let $D$ be an integer with $D \equiv 0$ or $1 \pmod 4$ that is coprime to
-$p$. If $p' = p + D x$ for some integer $x$, then the Jacobi symbols agree:
-$\left(\frac{D}{p'}\right) = \left(\frac{D}{p}\right)$.
-
-For an odd prime $p$ the Jacobi symbol $\left(\frac{D}{p}\right)$ is the Legendre symbol and agrees
-with the Kronecker symbol.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Lemma 1 (`integers-2026-A102-lem-1`). -/
-public theorem_wanted jacobiSym_prime_add_mul_eq {p p' : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (hp' : p'.Prime) (hp'2 : p' ≠ 2) {D : ℤ} (hD : D % 4 = 0 ∨ D % 4 = 1)
-    (hDp : IsCoprime D p) {x : ℤ} (hx : (p' : ℤ) = p + D * x) :
-    jacobiSym D p' = jacobiSym D p
-
-/-- **Ballot's Lemma 2: three divisibilities as one congruence.** Let
-$\varepsilon_1, \varepsilon_2, \varepsilon_3 \in \{1, -1\}$, let $c_1, c_2, c_3$ be pairwise coprime
-positive integers, let $g \ne 0$ be an integer, and put
-$n = (c_1 g + \varepsilon_1)(c_2 g + \varepsilon_2)(c_3 g + \varepsilon_3)$ and
-$\varepsilon_n = \varepsilon_1 \varepsilon_2 \varepsilon_3$. Then $c_i g \mid n - \varepsilon_n$ for
-$i = 1, 2, 3$ if and only if
-$$c_1 c_2 c_3 \mid g (\varepsilon_3 c_1 c_2 + \varepsilon_2 c_1 c_3 + \varepsilon_1 c_2 c_3) +
-\varepsilon_n (\varepsilon_1 c_1 + \varepsilon_2 c_2 + \varepsilon_3 c_3).$$
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Lemma 2 (`integers-2026-A102-lem-2`). -/
-public theorem_wanted mul_dvd_prod_sub_sign_iff {ε₁ ε₂ ε₃ c₁ c₂ c₃ g : ℤ}
-    (hε₁ : ε₁ = 1 ∨ ε₁ = -1) (hε₂ : ε₂ = 1 ∨ ε₂ = -1) (hε₃ : ε₃ = 1 ∨ ε₃ = -1)
-    (hc₁ : 0 < c₁) (hc₂ : 0 < c₂) (hc₃ : 0 < c₃)
-    (h₁₂ : IsCoprime c₁ c₂) (h₁₃ : IsCoprime c₁ c₃) (h₂₃ : IsCoprime c₂ c₃) (hg : g ≠ 0) :
-    (c₁ * g ∣ (c₁ * g + ε₁) * (c₂ * g + ε₂) * (c₃ * g + ε₃) - ε₁ * ε₂ * ε₃ ∧
-      c₂ * g ∣ (c₁ * g + ε₁) * (c₂ * g + ε₂) * (c₃ * g + ε₃) - ε₁ * ε₂ * ε₃ ∧
-      c₃ * g ∣ (c₁ * g + ε₁) * (c₂ * g + ε₂) * (c₃ * g + ε₃) - ε₁ * ε₂ * ε₃) ↔
-    c₁ * c₂ * c₃ ∣
-      g * (ε₃ * c₁ * c₂ + ε₂ * c₁ * c₃ + ε₁ * c₂ * c₃) +
-        ε₁ * ε₂ * ε₃ * (ε₁ * c₁ + ε₂ * c₂ + ε₃ * c₃)
-
 /-! ## Absolute Lucas pseudoprimes -/
-
-/-- **$D$-Carmichael number.** Let $D$ be an integer. A natural number $n$ is a $D$-Carmichael
-number when $D \equiv 0$ or $1 \pmod 4$, $n > 1$ is odd and composite, $D$ and $n$ are coprime,
-and for all integers $P$ and $Q \ne 0$ with $P$ and $Q$ coprime, $P^2 - 4Q = D$ and $Q$ coprime
-to $n$, the number $n$ divides the term $U_{n - \varepsilon_n}(P, Q)$ of the Lucas sequence
-$U(P, Q)$, where $\varepsilon_n = \left(\frac{D}{n}\right)$ is the Jacobi symbol.
-
-These are Williams' absolute Lucas $D$-pseudoprimes. The condition on $D$ is the paper's standing
-assumption; for other $D$ no Lucas sequence has discriminant $D$, so the last clause would be
-vacuous.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Section 1 (definition of absolute Lucas `D`-pseudoprimes, after [17]). -/
-def IsDCarmichael (D : ℤ) (n : ℕ) : Prop :=
-  (D % 4 = 0 ∨ D % 4 = 1) ∧ Odd n ∧ 1 < n ∧ ¬ n.Prime ∧ IsCoprime D n ∧
-    ∀ params : LucasSequenceParams, params.IsCoprime → params.p ^ 2 - 4 * params.q = D →
-      IsCoprime params.q n → (n : ℤ) ∣ lucasU params (n - jacobiSym D n).toNat
 
 /-- **$D$-Carmichael numbers are not prime.** For every integer $D$ and every natural number $n$,
 if $n$ is a $D$-Carmichael number, then $n$ is not prime.
@@ -353,22 +303,6 @@ public theorem_wanted infinite_primary_fiveCarmichael_of_primeKTuples
     {n : ℕ | IsPrimaryDCarmichael 5 n ∧
       n.primeFactorsList.map (fun p => jacobiSym 5 p) = σ}.Infinite
 
-/-- **The $D$-Carmichael numbers of the form $3qr$.** Let $q < r$ be primes with $3 < q$. Then
-$3qr$ is a $D$-Carmichael number for some integer $D$ if and only if $3qr$ is one of $105$,
-$195$, $255$, $399$, $561$ and $2703$. Moreover, for all integers $D$ and $D'$ such that $3qr$
-is both $D$-Carmichael and $D'$-Carmichael, the Jacobi symbols agree at $3$, $q$ and $r$:
-$(D \mid 3) = (D' \mid 3)$, $(D \mid q) = (D' \mid q)$ and $(D \mid r) = (D' \mid r)$.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Theorem 7 (`integers-2026-A102-thm-7`). -/
-public theorem_wanted threeQR_isDCarmichael_iff {q r : ℕ} (hq : q.Prime) (hr : r.Prime)
-    (h3q : 3 < q) (hqr : q < r) :
-    ((∃ D : ℤ, IsDCarmichael D (3 * q * r)) ↔
-      3 * q * r ∈ ({105, 195, 255, 399, 561, 2703} : Finset ℕ)) ∧
-    ∀ D D' : ℤ, IsDCarmichael D (3 * q * r) → IsDCarmichael D' (3 * q * r) →
-      jacobiSym D 3 = jacobiSym D' 3 ∧ jacobiSym D q = jacobiSym D' q ∧
-        jacobiSym D r = jacobiSym D' r
-
 /-- **Primary and secondary $5$-Carmichael numbers from prime quadruples.** Assume the prime
 $k$-tuples conjecture (the paper's Conjecture 1) in the following form: for every finite list
 of linear forms $a_i x + b_i$ with integers $a_i \ge 1$ and $b_i$ such that for every prime
@@ -521,59 +455,6 @@ Theorem 13 (`integers-2026-A102-thm-13`). -/
 public theorem_wanted jacobiSym_eq_of_isDCarmichael_three {D D' : ℤ} {n : ℕ}
     (h3 : n.primeFactors.card = 3) (h : IsDCarmichael D n) (h' : IsDCarmichael D' n) :
     jacobiSym D n = jacobiSym D' n
-
-/-- **Ballot's Lemma 3: the three divisibilities persist modulo $c_1 c_2 c_3$.** Let
-$\varepsilon_1, \varepsilon_2, \varepsilon_3 \in \{1, -1\}$, let $c_1, c_2, c_3$ be pairwise coprime
-positive integers, let $\varepsilon = \varepsilon_1 \varepsilon_2 \varepsilon_3$, and let $g \ne 0$
-be an integer such that $c_i g$ divides
-$(c_1 g + \varepsilon_1)(c_2 g + \varepsilon_2)(c_3 g + \varepsilon_3) - \varepsilon$ for
-$i = 1, 2, 3$. Then every nonzero integer $h \equiv g \pmod{c_1 c_2 c_3}$ satisfies the same
-divisibilities: $c_i h$ divides
-$(c_1 h + \varepsilon_1)(c_2 h + \varepsilon_2)(c_3 h + \varepsilon_3) - \varepsilon$ for
-$i = 1, 2, 3$.
-
-The divisibility hypothesis on $g$ is needed: for $(c_1, c_2, c_3) = (1, 2, 3)$,
-$\varepsilon_1 = \varepsilon_2 = \varepsilon_3 = 1$ and $g = h = 1$, the product is $24$ and
-$2 \nmid 24 - 1$.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Lemma 3 (`integers-2026-A102-lem-3`). -/
-public theorem_wanted mul_dvd_prod_sub_sign_of_modEq {ε₁ ε₂ ε₃ c₁ c₂ c₃ g h : ℤ}
-    (hε₁ : ε₁ = 1 ∨ ε₁ = -1) (hε₂ : ε₂ = 1 ∨ ε₂ = -1) (hε₃ : ε₃ = 1 ∨ ε₃ = -1)
-    (hc₁ : 0 < c₁) (hc₂ : 0 < c₂) (hc₃ : 0 < c₃)
-    (h₁₂ : IsCoprime c₁ c₂) (h₁₃ : IsCoprime c₁ c₃) (h₂₃ : IsCoprime c₂ c₃) (hg : g ≠ 0)
-    (hgdvd : ∀ c ∈ ({c₁, c₂, c₃} : Finset ℤ),
-      c * g ∣ (c₁ * g + ε₁) * (c₂ * g + ε₂) * (c₃ * g + ε₃) - ε₁ * ε₂ * ε₃)
-    (hh : h ≠ 0) (hhg : h ≡ g [ZMOD c₁ * c₂ * c₃]) :
-    ∀ c ∈ ({c₁, c₂, c₃} : Finset ℤ),
-      c * h ∣ (c₁ * h + ε₁) * (c₂ * h + ε₂) * (c₃ * h + ε₃) - ε₁ * ε₂ * ε₃
-
-/-- **Divisibility conditions for $D$-Carmichael numbers $3qr$.** Let $D$ be an integer, let
-$q < r$ be primes with $3 < q$, and write $\alpha = (D \mid 3)$, $\beta = (D \mid q)$ and
-$\gamma = (D \mid r)$ for the Jacobi symbols. If $3qr$ is a $D$-Carmichael number, then
-$q - \beta$ divides $3r - \alpha\gamma$ and $r - \gamma$ divides $3q - \alpha\beta$; moreover
-$r = 3q + 2\gamma$ if $\gamma = -\alpha\beta$, and $2r = 3q + \gamma$ if $\gamma = \alpha\beta$.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Lemma 4 (`integers-2026-A102-lem-4`). -/
-public theorem_wanted threeQR_isDCarmichael_divisibility {D : ℤ} {q r : ℕ} (hq : q.Prime)
-    (hr : r.Prime) (h3q : 3 < q) (hqr : q < r)
-    (h : IsDCarmichael D (3 * q * r)) :
-    ((q : ℤ) - jacobiSym D q) ∣ (3 * r - jacobiSym D 3 * jacobiSym D r) ∧
-    ((r : ℤ) - jacobiSym D r) ∣ (3 * q - jacobiSym D 3 * jacobiSym D q) ∧
-    (jacobiSym D r = -(jacobiSym D 3 * jacobiSym D q) → (r : ℤ) = 3 * q + 2 * jacobiSym D r) ∧
-    (jacobiSym D r = jacobiSym D 3 * jacobiSym D q → 2 * (r : ℤ) = 3 * q + jacobiSym D r)
-
-/-- **Williams' characterization of two-prime $D$-Carmichael numbers.** Let $D$ be an integer
-with $D \equiv 0$ or $1 \pmod 4$ and let $p_1 < p_2$ be primes. Then $p_1 p_2$ is a
-$D$-Carmichael number if and only if $p_2 = p_1 + 2$, $\left(\frac{D}{p_1}\right) = -1$ and
-$\left(\frac{D}{p_2}\right) = 1$, where $\left(\frac{D}{p}\right)$ is the Jacobi symbol.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Proposition 1 (`integers-2026-A102-prop-1`). -/
-public theorem_wanted isDCarmichael_mul_iff {D : ℤ} (hD : D % 4 = 0 ∨ D % 4 = 1) {p₁ p₂ : ℕ}
-    (h₁ : p₁.Prime) (h₂ : p₂.Prime) (h12 : p₁ < p₂) :
-    IsDCarmichael D (p₁ * p₂) ↔ p₂ = p₁ + 2 ∧ jacobiSym D p₁ = -1 ∧ jacobiSym D p₂ = 1
 
 end
 

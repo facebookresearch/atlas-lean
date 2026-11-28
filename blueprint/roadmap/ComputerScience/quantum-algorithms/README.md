@@ -8,6 +8,24 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 - [Shor's order-finding algorithm](shor-s-order-finding-algorithm/README.md)
 - [Shor's reduction of factoring to order finding](shor-s-reduction-of-factoring-to-order-finding/README.md)
 
+- [Quantum query lower bounds](quantum-query-lower-bounds/README.md)
+- [Quantum phase estimation](quantum-phase-estimation.md)
+- [Simon's algorithm](simon-s-algorithm.md)
+- [Classical lower bound for Simon's problem](classical-lower-bound-for-simon-s-problem.md)
+- [Amplitude amplification](amplitude-amplification.md)
+- [Approximate quantum Fourier transform with Gaussian-rational gates](approximate-quantum-fourier-transform-with-gaussian-rational-gates.md)
+- [Reversible modular adder](reversible-modular-adder.md)
+- [Reversible modular multiplication by a constant unit](reversible-modular-multiplication-by-a-constant-unit.md)
+- [Shor per-outcome probability bound (asymptotic source form)](shor-per-outcome-probability-bound.md)
+- [Shor period finding: outcome distribution and order recovery](shor-period-finding-outcome-distribution-and-order-recovery.md)
+- [Shor success budget after approximation and repetition](shor-success-budget-after-approximation-and-repetition.md)
+- [Counting good outcomes of Shor period finding](counting-good-outcomes-of-shor-period-finding.md)
+- [Outcome distribution of Shor period finding when the order divides q](outcome-distribution-of-shor-period-finding-when-the-order-divides-q.md)
+
+## Planned results
+
+- [Probability-one complete factoring with a fixed finite quantum gate set](exact-factoring-over-a-fixed-gate-set.md)
+
 ## Related topics
 
 - [Quantum Information](../../QuantumInformation/README.md): states, channels, the quantum Fourier transform and error correction.

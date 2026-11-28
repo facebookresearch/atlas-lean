@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.ModularForms.CuspFormRescale
 open CongruenceSubgroup
 
 /-- Consumer with the original binders: the rescaled coefficient formula. -/
-theorem exactSource {d R M : ℕ} [NeZero M] (hdRM : d * R ∣ M) (k : ℤ)
+private theorem exactSource {d R M : ℕ} [NeZero M] (hdRM : d * R ∣ M) (k : ℤ)
     (f : CuspForm (Gamma0 R) k) (n : ℕ) :
     ModularFormClass.qCoeff (CuspForm.rescaleLin hdRM k f) n
       = if d ∣ n then (d : ℂ) ^ (k - 1) * ModularFormClass.qCoeff f (n / d)
@@ -27,7 +27,7 @@ so the divisibility hypothesis in the coefficient formula matters. -/
 example {d R M : ℕ} [NeZero M] (hdRM : d * R ∣ M) (k : ℤ)
     (f : CuspForm (Gamma0 R) k) {n : ℕ} (hn : ¬ d ∣ n) :
     ModularFormClass.qCoeff (CuspForm.rescaleLin hdRM k f) n = 0 := by
-  rw [CuspForm.qCoeff_rescaleLin, if_neg hn]
+  rw [CuspForm.qCoeff_rescaleLin, ite_eq_right hn]
 
 universe u v
 

@@ -1,0 +1,14 @@
+# Temporal specification
+
+- [Kripke structures with initial states](kripke-structures-with-initial-states.md)
+- [Bisimulation preserves CTL* and simulation preserves ACTL*](bisimulation-preserves-ctl-and-simulation.md)
+- [First-order logic of order over infinite words](first-order-logic-of-order-over-infinite-words.md)
+- [Common knowledge cannot be attained without guaranteed communication](common-knowledge-cannot-be-attained-without.md)
+- [Every hyperproperty is the intersection of a hypersafety and a hyperliveness property](every-hyperproperty-is-the-intersection-of-a.md)
+- [LTL translates into first-order logic of order](ltl-translates-into-first-order-logic-of-order.md)
+- [Hyperproperties, hypersafety and k-safety](hyperproperties-hypersafety-and-k-safety.md)
+- [HyperLTL](hyperltl.md)
+- [HyperCTL*](hyperctl-star.md)
+- [Complexity of HyperCTL* model checking](model-checking-hyperctl-star-by-alternation-depth.md)
+- [HyperLTL model checking is PSPACE-hard in the system size](hyperltl-model-checking-is-pspace-hard-in-the-system.md)
+- [HyperCTL* satisfiability is undecidable](hyperctl-star-satisfiability-is-undecidable.md)

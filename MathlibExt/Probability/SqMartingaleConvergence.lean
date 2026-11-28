@@ -15,6 +15,7 @@ public import Mathlib.Probability.Martingale.OptionalStopping
 public import Mathlib.Probability.Process.Stopping
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.Analysis.PSeries
 
 /-!
 # Square-integrable martingale convergence on `{A_∞ < ∞}`
@@ -56,6 +57,8 @@ convergence argument below are local to this file.
 
 * `MeasureTheory.Martingale.ae_tendsto_of_tendsto_predictableQuadVar`:
   if `A_n(ω)` converges, then `f_n(ω)` converges, almost surely.
+* `MeasureTheory.ae_exists_tendsto_sum_div_succ`: for bounded martingale
+  differences `e k`, the series `∑ e k / (k + 1)` converges almost surely.
 -/
 
 @[expose] public section
@@ -379,7 +382,7 @@ private theorem exists_ae_tendsto_of_forall_quadVar_le [IsProbabilityMeasure μ]
     exact h1.trans h2
   obtain ⟨R, hR⟩ := hg_L1
   have hg_conv : ∀ᵐ ω ∂μ, ∃ c, Tendsto (fun n => g n ω) atTop (𝓝 c) :=
-    hg_mart.submartingale.exists_ae_tendsto_of_bdd hR
+    hg_mart.submartingale.exists_ae_tendsto_of_bdd ((iSup_le hR).trans_lt ENNReal.coe_lt_top)
   filter_upwards [hg_conv] with ω hω hbnd
   have hτ_top : τ ω = ⊤ := by
     rw [hτ_def]
@@ -429,5 +432,82 @@ theorem Martingale.ae_tendsto_of_tendsto_predictableQuadVar [IsProbabilityMeasur
       le_trans (hB (Set.mem_range_self n)) (le_of_lt (by exact_mod_cast hM))⟩
   obtain ⟨M, hM⟩ := hbdd
   exact hω M hM
+
+/-- **Almost-sure convergence of a martingale series.** Let `e k` be bounded martingale
+differences for a filtration `ℱ` on a probability space: `e k` is `ℱ (k + 1)`-measurable,
+`|e k| ≤ K` almost surely and `E[e k | ℱ k] = 0` almost surely. Then the series
+`∑ e k / (k + 1)` converges almost surely: its partial sums form a square-integrable martingale
+whose predictable quadratic variation is bounded by `K² ∑ 1 / (k + 1)²`, so the
+square-integrable martingale convergence theorem applies. -/
+theorem ae_exists_tendsto_sum_div_succ [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0)
+    {e : ℕ → Ω → ℝ} {K : ℝ} (he : ∀ k, StronglyMeasurable[ℱ (k + 1)] (e k))
+    (heK : ∀ k, ∀ᵐ ω ∂μ, |e k ω| ≤ K)
+    (hce : ∀ k, μ[e k | ℱ k] =ᵐ[μ] 0) :
+    ∀ᵐ ω ∂μ, ∃ c, Tendsto (fun n => ∑ k ∈ Finset.range n, e k ω / ((k : ℝ) + 1)) atTop
+      (𝓝 c) := by
+  set M : ℕ → Ω → ℝ := fun n ω => ∑ k ∈ Finset.range n, e k ω / ((k : ℝ) + 1) with hMdef
+  have hem : ∀ k, StronglyMeasurable[m0] (e k) := fun k => (he k).mono (ℱ.le _)
+  have heint : ∀ k, Integrable (e k) μ := fun k =>
+    Integrable.of_bound (hem k).aestronglyMeasurable K (by simpa [Real.norm_eq_abs] using heK k)
+  have hMadapt : StronglyAdapted ℱ M := fun n =>
+    Finset.stronglyMeasurable_fun_sum _ fun k hk =>
+      (((he k).mono (ℱ.mono (by simpa using Finset.mem_range.1 hk))).measurable.div_const
+        _).stronglyMeasurable
+  have hMint : ∀ n, Integrable (M n) μ := fun n =>
+    integrable_finsetSum _ fun k _ => (heint k).div_const _
+  have hMsucc : ∀ n, M (n + 1) = M n + fun ω => e n ω / ((n : ℝ) + 1) := fun n => by
+    ext ω
+    simp [hMdef, Finset.sum_range_succ]
+  have hmart : Martingale M ℱ μ := by
+    refine martingale_nat hMadapt hMint fun n => ?_
+    rw [hMsucc]
+    have h1 := condExp_add (hMint n) ((heint n).div_const ((n : ℝ) + 1)) (ℱ n : MeasurableSpace Ω)
+    have h2 : μ[M n | ℱ n] = M n := condExp_of_stronglyMeasurable (ℱ.le n) (hMadapt n) (hMint n)
+    have h3 : μ[fun ω => e n ω / ((n : ℝ) + 1) | ℱ n] =ᵐ[μ] 0 := by
+      have : (fun ω => e n ω / ((n : ℝ) + 1)) = ((n : ℝ) + 1)⁻¹ • e n := by
+        ext ω
+        simp [div_eq_inv_mul]
+      rw [this]
+      filter_upwards [condExp_smul ((n : ℝ) + 1)⁻¹ (e n) (ℱ n), hce n] with ω h h'
+      simp [h, h']
+    filter_upwards [h1, h3] with ω h1 h3
+    rw [h1, Pi.add_apply, h2, h3, Pi.zero_apply, add_zero]
+  have hMbdd : ∀ n, ∀ᵐ ω ∂μ, |M n ω| ≤ ∑ k ∈ Finset.range n, K / ((k : ℝ) + 1) := fun n => by
+    filter_upwards [ae_all_iff.2 heK] with ω hω
+    calc |M n ω| ≤ ∑ k ∈ Finset.range n, |e k ω / ((k : ℝ) + 1)| :=
+          Finset.abs_sum_le_sum_abs _ _
+      _ ≤ _ := Finset.sum_le_sum fun k _ => by
+        rw [abs_div, abs_of_pos (by positivity : (0 : ℝ) < k + 1)]
+        exact div_le_div_of_nonneg_right (hω k) (by positivity)
+  have hinteg : ∀ n, Integrable (fun ω => (M n ω) ^ 2) μ := fun n =>
+    (MemLp.of_bound ((hMadapt n).mono (ℱ.le n)).aestronglyMeasurable _
+      (by simpa [Real.norm_eq_abs] using hMbdd n)).integrable_sq
+  -- the predictable quadratic variation converges almost surely
+  have hK0 : 0 ≤ K := by
+    obtain ⟨ω, hω⟩ := (heK 0).exists
+    exact (abs_nonneg _).trans hω
+  have hq : ∀ k, ∀ᵐ ω ∂μ, 0 ≤ μ[(fun ω' => (M (k + 1) ω' - M k ω') ^ 2) | ℱ k] ω ∧
+      μ[(fun ω' => (M (k + 1) ω' - M k ω') ^ 2) | ℱ k] ω ≤ (K / ((k : ℝ) + 1)) ^ 2 := by
+    intro k
+    have hd : ∀ ω, M (k + 1) ω - M k ω = e k ω / ((k : ℝ) + 1) := fun ω => by
+      rw [hMsucc, Pi.add_apply, add_sub_cancel_left]
+    have hbd : ∀ᵐ ω ∂μ, |(fun ω' => (M (k + 1) ω' - M k ω') ^ 2) ω| ≤ (K / ((k : ℝ) + 1)) ^ 2 := by
+      filter_upwards [heK k] with ω hω
+      rw [hd, abs_of_nonneg (sq_nonneg _), div_pow, div_pow]
+      refine div_le_div_of_nonneg_right ?_ (by positivity)
+      rw [← sq_abs (e k ω)]
+      exact pow_le_pow_left₀ (abs_nonneg _) hω 2
+    filter_upwards [condExp_nonneg (m := ℱ k) (ae_of_all μ fun ω => sq_nonneg
+      (M (k + 1) ω - M k ω)), ae_bdd_abs_condExp_of_ae_bdd_abs (m := ℱ k) hbd] with ω h0 h1
+    exact ⟨h0, (le_abs_self _).trans h1⟩
+  have hsum : Summable fun k : ℕ => (K / ((k : ℝ) + 1)) ^ 2 := by
+    have h := (summable_nat_add_iff 1).2 (Real.summable_one_div_nat_pow.2 one_lt_two)
+    refine (h.mul_left (K ^ 2)).congr fun k => ?_
+    push_cast
+    rw [div_pow, one_div, div_eq_mul_inv]
+  filter_upwards [hmart.ae_tendsto_of_tendsto_predictableQuadVar hinteg, ae_all_iff.2 hq]
+    with ω h1 h2
+  exact h1 ⟨_, (Summable.of_nonneg_of_le (fun k => (h2 k).1) (fun k => (h2 k).2)
+    hsum).hasSum.tendsto_sum_nat⟩
 
 end MeasureTheory

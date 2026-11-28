@@ -228,9 +228,9 @@ theorem isAlgebraic_adjoin_roots (n : ℕ) :
         ↥(Algebra.adjoin ℂ (Set.range (root n)))) :
       Polynomial (Algebra.adjoin ℂ (Set.range (root n)))), ?_, ?_⟩
   · intro hzero
-    have hcoeff := congrArg (Polynomial.coeff · 1) hzero
+    have hcoeff := congrArg (fun q => q.coeff 1) hzero
     simp only [Polynomial.coeff_sub, Polynomial.coeff_C_mul, Polynomial.coeff_X_one, mul_one, Polynomial.coeff_C,
-      if_neg (by norm_num : (1 : ℕ) ≠ 0), sub_zero, Polynomial.coeff_zero] at hcoeff
+      ite_eq_right (by norm_num : (1 : ℕ) ≠ 0), sub_zero, Polynomial.coeff_zero] at hcoeff
     exact hqimg (congrArg Subtype.val hcoeff)
   · dsimp only at hz
     rw [map_sub, map_mul, Polynomial.aeval_C, Polynomial.aeval_X, Polynomial.aeval_C]
@@ -306,17 +306,17 @@ theorem val_coeffNat (n k : ℕ) :
       (Finset.univ.val.map (root n)).esymm k := by
   rw [coeffNat]
   by_cases h0 : k = 0
-  · rw [dif_pos h0, h0]
+  · rw [dite_eq_left h0, h0]
     simp [Multiset.esymm_zero]
-  · rw [dif_neg h0]
+  · rw [dite_eq_right h0]
     by_cases hkn : k ≤ n
-    · rw [dif_pos hkn]
+    · rw [dite_eq_left hkn]
       have hk : (⟨k - 1, Nat.sub_one_lt_of_le (Nat.pos_of_ne_zero h0) hkn⟩ : Fin n).val + 1 = k := by
         show k - 1 + 1 = k
         omega
       rw [val_coeffElem, coeff, hk]
       exact algebraMap_esymm n k
-    · rw [dif_neg hkn]
+    · rw [dite_eq_right hkn]
       have hcard : Multiset.card (Finset.univ.val.map (root n)) = n := by
         simp
       have hlt : Multiset.card (Finset.univ.val.map (root n)) < k := by

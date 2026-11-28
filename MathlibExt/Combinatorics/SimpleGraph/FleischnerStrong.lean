@@ -547,7 +547,7 @@ private theorem IsVertexConnected.singletonComponentTrailCover [Fintype V]
     apply M.underlying_adj.mpr
     exact ⟨ULift.up 0, by simp [M, singletonCoverEnds]⟩
 
-private abbrev CycleCoverEdge {S : Set V}
+private noncomputable abbrev CycleCoverEdge {S : Set V}
     (p : (G.contractOutside S).square.Walk none none) :=
   p.toSubgraph.spanningCoe.edgeSet
 
@@ -6671,7 +6671,7 @@ private theorem IsVertexConnected.hasStrongSquareCycle_card
     (hG : G.IsVertexConnected 2) (hcard : Fintype.card V = n) (x : V) :
     G.HasStrongSquareCycle x := by
   induction n using Nat.strong_induction_on generalizing V with
-  | h n ih =>
+  | ind n ih =>
       classical
       have hn3 : 3 ≤ n := by
         have := hG.card_gt

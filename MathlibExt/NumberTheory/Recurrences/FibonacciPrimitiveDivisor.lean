@@ -224,10 +224,11 @@ private theorem padicVal_layerCake (p b K : ℕ) [Fact (Nat.Prime p)]
     simp only [Finset.mem_filter, Finset.mem_range]
     constructor
     · intro h
-      have hle : j + 1 ≤ padicValNat p (Nat.fib b) := (padicValNat_dvd_iff_le hb).mp h.2
+      have hle : j + 1 ≤ padicValNat p (Nat.fib b) :=
+        ((multiplicity_dvd_iff_le hb).mp h.2).trans_eq Nat.padicValNat_def.symm
       omega
     · intro h
-      refine ⟨by omega, (padicValNat_dvd_iff_le hb).mpr (by omega)⟩
+      refine ⟨by omega, (multiplicity_dvd_iff_le hb).mpr (by rw [← Nat.padicValNat_def]; omega)⟩
   rw [Finset.sum_boole, hfilter, Finset.card_range]
 
 /-- N3 auxiliary: uniform bound v_p(F_b) ≤ F_n + 1 for b ∣ n. -/
@@ -243,8 +244,9 @@ private theorem padicVal_fib_le (n : ℕ) (p : ℕ) [Fact (Nat.Prime p)]
       omega
     · exact hpos
   have hFbpos : 0 < Nat.fib b := Nat.fib_pos.mpr hbpos
-  have hle1 : p ^ padicValNat p (Nat.fib b) ≤ Nat.fib b :=
-    Nat.le_of_dvd hFbpos pow_padicValNat_dvd
+  have hle1 : p ^ padicValNat p (Nat.fib b) ≤ Nat.fib b := by
+    rw [Nat.padicValNat_def]
+    exact Nat.le_of_dvd hFbpos (pow_multiplicity_dvd _ _)
   have hlt : padicValNat p (Nat.fib b) < p ^ padicValNat p (Nat.fib b) :=
     Nat.lt_pow_self hpprime.one_lt
   have hle2 : Nat.fib b ≤ Nat.fib n := Nat.fib_mono (Nat.le_of_dvd hnpos hbn)
@@ -266,8 +268,9 @@ private theorem moebiusVal_le (n : ℕ) (hn : 1 ≤ n) (p : ℕ) [Fact (Nat.Prim
   have hFne_d : Nat.fib d ≠ 0 := (Nat.fib_pos.mpr hdpos).ne'
   have hFne_n : Nat.fib n ≠ 0 := (Nat.fib_pos.mpr (by omega : 0 < n)).ne'
   have hFdn : Nat.fib d ∣ Nat.fib n := Nat.fib_dvd _ _ hdn'
-  have hle : padicValNat p (Nat.fib d) ≤ padicValNat p (Nat.fib n) :=
-    (padicValNat_dvd_iff_le hFne_n).mp (pow_padicValNat_dvd.trans hFdn)
+  have hle : padicValNat p (Nat.fib d) ≤ padicValNat p (Nat.fib n) := by
+    simp only [Nat.padicValNat_def]
+    exact (multiplicity_dvd_iff_le hFne_n).mp ((pow_multiplicity_dvd _ _).trans hFdn)
   set K := Nat.fib n + 1 with hKdef
   have hx2pos : ∀ x ∈ n.divisorsAntidiagonal, 0 < x.2 := by
     intro x hx
@@ -327,11 +330,11 @@ private theorem moebiusVal_le (n : ℕ) (hn : 1 ≤ n) (p : ℕ) [Fact (Nat.Prim
       ∧ ∀ b ∈ n.divisors, b < n → ¬ p ^ (j + 1) ∣ Nat.fib b)
     · have hvd : padicValNat p (Nat.fib d) ≤ j := by
         have hnd : ¬ p ^ (j + 1) ∣ Nat.fib d := hC.2 d hd hdn
-        rw [padicValNat_dvd_iff_le hFne_d] at hnd
+        rw [multiplicity_dvd_iff_le hFne_d, ← Nat.padicValNat_def] at hnd
         omega
       have hvn : j < padicValNat p (Nat.fib n) := by
         have h1 : j + 1 ≤ padicValNat p (Nat.fib n) :=
-          (padicValNat_dvd_iff_le hFne_n).mp hC.1
+          ((multiplicity_dvd_iff_le hFne_n).mp hC.1).trans_eq Nat.padicValNat_def.symm
         omega
       rw [hN2 j, ite_eq_left hC, ite_eq_left ⟨hvd, hvn⟩]
     · rw [hN2 j, ite_eq_right hC]
@@ -430,7 +433,7 @@ private theorem twoAdic_fib_odd (n : ℕ) (hodd : Odd n) :
     intro hd
     obtain ⟨c, hc⟩ := hd
     omega
-  rw [padicValNat_dvd_iff_le hne (p := 2) (n := 2)] at hnot
+  rw [multiplicity_dvd_iff_le hne (p := 2) (n := 2), ← Nat.padicValNat_def] at hnot
   omega
 
 /-- N4 auxiliary: the doubling bracket is never 0 mod 8. -/
@@ -500,9 +503,11 @@ private theorem twoAdic_fib_twoMul (m : ℕ) (hm : 1 ≤ m) :
     obtain ⟨c, hc⟩ := hd
     omega
   have hle : ¬ (3 ≤ padicValNat 2 (2 * Nat.fib (m + 1) - Nat.fib m)) := by
-    rw [← padicValNat_dvd_iff_le hBne (p := 2) (n := 3)]
+    rw [Nat.padicValNat_def, ← multiplicity_dvd_iff_le hBne (p := 2) (n := 3)]
     exact hBnot
-  rw [hFib, padicValNat.mul hFne hBne]
+  rw [hFib]
+  simp only [Nat.padicValNat_def] at hle ⊢
+  rw [Nat.multiplicity_mul hFne hBne]
   omega
 
 
@@ -531,12 +536,13 @@ private theorem properDivisor_valLe (n : ℕ) (hn : 7 ≤ n) (p : ℕ) (hp : p.P
         have hN4 := twoAdic_fib_twoMul (n / 2) hd1
         rw [hnm] at hN4
         have hv2n : 2 ≤ padicValNat 2 (2 * n) := by
-          have h1 : padicValNat 2 (2 * n) = padicValNat 2 2 + padicValNat 2 n :=
-            padicValNat.mul (by omega) (by omega)
-          have h2 : padicValNat 2 2 = 1 := padicValNat_self
-          have h3 : 1 ≤ padicValNat 2 n := by
+          have h1 : multiplicity 2 (2 * n) = multiplicity 2 2 + multiplicity 2 n :=
+            Nat.multiplicity_mul (by omega) (by omega)
+          have h2 : multiplicity 2 2 = 1 := Nat.Prime.multiplicity_self
+          have h3 : 1 ≤ multiplicity 2 n := by
             have h21 : (2 : ℕ) ^ 1 ∣ n := by simpa using h2dvd
-            exact (padicValNat_dvd_iff_le (by omega : n ≠ 0) (p := 2) (n := 1)).mp h21
+            exact (multiplicity_dvd_iff_le (by omega : n ≠ 0) (p := 2) (n := 1)).mp h21
+          rw [Nat.padicValNat_def]
           omega
         have hdvd : n / 2 ∣ n := ⟨2, (Nat.div_mul_cancel h2dvd).symm⟩
         refine ⟨n / 2, Nat.mem_divisors.mpr ⟨hdvd, by omega⟩,
@@ -549,10 +555,11 @@ private theorem properDivisor_valLe (n : ℕ) (hn : 7 ≤ n) (p : ℕ) (hp : p.P
           omega
         have hv1 : padicValNat 2 (Nat.fib n) ≤ 1 := twoAdic_fib_odd n hodd
         have hv2n : padicValNat 2 (2 * n) = 1 := by
-          have h1 : padicValNat 2 (2 * n) = padicValNat 2 2 + padicValNat 2 n :=
-            padicValNat.mul (by omega) (by omega)
-          have h2 : padicValNat 2 2 = 1 := padicValNat_self
-          have h3 : padicValNat 2 n = 0 := padicValNat.eq_zero_of_not_dvd h2n
+          have h1 : multiplicity 2 (2 * n) = multiplicity 2 2 + multiplicity 2 n :=
+            Nat.multiplicity_mul (by omega) (by omega)
+          have h2 : multiplicity 2 2 = 1 := Nat.Prime.multiplicity_self
+          have h3 : multiplicity 2 n = 0 := multiplicity_eq_zero_of_not_dvd h2n
+          rw [Nat.padicValNat_def]
           omega
         refine ⟨1, Nat.mem_divisors.mpr ⟨one_dvd n, by omega⟩, by omega, ?_⟩
         omega
@@ -615,21 +622,23 @@ private theorem properDivisor_valLe (n : ℕ) (hn : 7 ≤ n) (p : ℕ) (hp : p.P
       rw [Nat.div_mul_cancel hqn] at hN5
       by_cases hqp : q = p
       · rw [hqp] at hqn hN5 hdvd hd1
-        have hvq : padicValNat p p = 1 := padicValNat_self
+        have hvq : padicValNat p p = 1 := Nat.padicValNat_def.trans Nat.Prime.multiplicity_self
         have h1n : 1 ≤ padicValNat p (2 * n) := by
           have h2n : p ∣ 2 * n := hqn.trans (dvd_mul_left n 2)
           have h21 : p ^ 1 ∣ 2 * n := by simpa using h2n
-          exact (padicValNat_dvd_iff_le (by omega : 2 * n ≠ 0) (p := p) (n := 1)).mp h21
+          exact ((multiplicity_dvd_iff_le (by omega : 2 * n ≠ 0) (p := p) (n := 1)).mp
+            h21).trans_eq Nat.padicValNat_def.symm
         refine ⟨n / p, Nat.mem_divisors.mpr ⟨hdvd, by omega⟩,
           Nat.div_lt_self (by omega) hp.one_lt, ?_⟩
         omega
       · have hfactq : Fact (Nat.Prime q) := ⟨hq⟩
-        have hvq : padicValNat p q = 0 := padicValNat_primes (Ne.symm hqp)
+        have hvq : padicValNat p q = 0 :=
+          Nat.padicValNat_def.trans (multiplicity_primes (Ne.symm hqp))
         refine ⟨n / q, Nat.mem_divisors.mpr ⟨hdvd, by omega⟩,
           Nat.div_lt_self (by omega) hq.two_le, ?_⟩
         omega
   · refine ⟨1, Nat.mem_divisors.mpr ⟨one_dvd n, by omega⟩, by omega, ?_⟩
-    rw [padicValNat.eq_zero_of_not_dvd hdiv]
+    rw [Nat.padicValNat_def (n := Nat.fib n), multiplicity_eq_zero_of_not_dvd hdiv]
     omega
 
 
@@ -693,7 +702,7 @@ private theorem fibDiv_le (n : ℕ) (hn : 7 ≤ n)
         (Nat.fib x.2 ^ (ArithmeticFunction.moebius x.1).toNat).factorization p
           = (ArithmeticFunction.moebius x.1).toNat * padicValNat p (Nat.fib x.2) := by
       intro x _
-      rw [Nat.factorization_def _ hp, padicValNat.pow]
+      rw [Nat.factorization_def _ hp, Nat.multiplicity_pow, Nat.padicValNat_def]
     rw [e1]
     exact Finset.sum_congr rfl e2
   have hR : (2 * n * fibMoebiusNeg n).factorization p
@@ -715,10 +724,10 @@ private theorem fibDiv_le (n : ℕ) (hn : 7 ≤ n)
             = (-ArithmeticFunction.moebius x.1).toNat
               * padicValNat p (Nat.fib x.2) := by
         intro x _
-        rw [Nat.factorization_def _ hp, padicValNat.pow]
+        rw [Nat.factorization_def _ hp, Nat.multiplicity_pow, Nat.padicValNat_def]
       rw [f1]
       exact Finset.sum_congr rfl f2
-    rw [e1, e2, Nat.factorization_def _ hp]
+    rw [e1, e2, Nat.factorization_def _ hp, Nat.padicValNat_def]
   have hcomb : ((∑ x ∈ n.divisorsAntidiagonal,
         (ArithmeticFunction.moebius x.1).toNat * padicValNat p (Nat.fib x.2) : ℕ) : ℤ)
       - ((∑ x ∈ n.divisorsAntidiagonal,

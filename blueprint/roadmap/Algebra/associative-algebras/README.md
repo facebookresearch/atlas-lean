@@ -10,3 +10,8 @@ Noncommutative rings and finite-dimensional associative algebras, including divi
 - [Burnside's theorem on matrix algebras](burnside-matrix.md)
 - [Frobenius theorem on real division algebras](frobenius-real-division-algebra.md)
 - [Skolem–Noether theorem](skolem-noether.md)
+- [Weyl algebra of polynomial differential operators](weyl-algebra.md)
+- [A finite-dimensional complex algebra of infinite little finitistic dimension](infinite-little-finitistic-dimension.md)
+- [Extreme left and right finitistic-dimension asymmetry](left-right-finitistic-dimension-asymmetry.md)
+- [A base-change-stable Auslander–Reiten counterexample](auslander-reiten-base-change-counterexample.md)
+- [A Tachikawa counterexample over a rational function field of characteristic two](symmetric-algebra-tachikawa-counterexample.md)

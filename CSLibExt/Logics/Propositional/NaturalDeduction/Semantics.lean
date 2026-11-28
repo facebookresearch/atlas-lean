@@ -11,13 +11,13 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Cslib.Logics.Propositional.NaturalDeduction.Theory
+public import CSLibExt.Logics.Propositional.Legacy.NaturalDeduction.Theory
 
 /-!
 # Truth-table semantics and soundness of natural deduction
 
-Upstream CSLib's natural deduction (`Cslib.Logic.PL.Theory.Derivation`) has the
-introduction and elimination rules of *minimal* logic only.  Falsum is not a
+The natural deduction of CSLib v4.35, restored as `Cslib.Logic.LegacyPL.Theory.Derivation`, has
+the introduction and elimination rules of *minimal* logic only.  Falsum is not a
 connective: under `[Bot Atom]` the proposition `⊥` is the atom `.atom ⊥`, and
 intuitionistic or classical reasoning comes from axioms in the theory `T`
 (`Theory.IPL`, `Theory.CPL`, or any `T` with an `IsClassical` instance).
@@ -57,7 +57,7 @@ would specialise to this one at the Boolean algebra `Bool`.
 
 universe u
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 open Proposition Theory InferenceSystem
 
@@ -253,4 +253,4 @@ theorem not_derivableIn_cpl_atom (x : Atom) :
 
 end Classical
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

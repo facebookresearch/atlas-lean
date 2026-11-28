@@ -35,21 +35,22 @@ namespace MathlibExt.Probability.Finance.ExpectedLossFactorization
 
 open MeasureTheory ProbabilityTheory
 
-/-- Expected loss: the expected value of `EAD ω * LGD ω` on the default event
-`D`, and `0` outside `D`. Local copy of the FI16.T03 interface (FI16.T03 is a
-concurrent gap in this run, not on main); future unification with
-`Domains.Economics.Finance.ExpectedLoss` is noted in the PR body. -/
+/-- Expected loss: the expected value of `EAD ω * LGD ω` on the default event `D`, and `0` outside
+`D`. The same definition as `MathlibExt.Probability.Finance.ExpectedLoss.expectedLoss`, with which
+it is to be unified. It is `0` when `1_D · EAD · LGD` is not integrable, by the convention for the
+integral of a non-integrable function. -/
 noncomputable def expectedLoss {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (D : Set Ω) (EAD LGD : Ω → ℝ) : ℝ :=
   ∫ ω, Set.indicator D (fun ω => EAD ω * LGD ω) ω ∂μ
 
-/-- Probability of the default event `D`. -/
+/-- Probability of the default event `D`. If `μ(D) = ∞`, the real value is `0` by convention. -/
 noncomputable def defaultProbability {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (D : Set Ω) : ℝ :=
   μ.real D
 
-/-- Factorization step (FI16.T04): when exposure at default is the constant
-`ead` on the default event, expected loss factors as PD times the conditional
+/-- Factorization step (FI16.T04): on a probability space, for a measurable default event `D`
+with `μ D ≠ 0` and `EAD * LGD` and `LGD` integrable on `D`, when exposure at default is the
+constant `ead` on the default event, expected loss factors as PD times the conditional
 expectation of LGD times `ead`. This is the separately stated factorization
 assumption: EAD constant on `D` (no independence of LGD from anything is used). -/
 theorem expectedLoss_eq_defaultProbability_mul_condExpectedLGD_mul_ead
@@ -78,8 +79,9 @@ theorem expectedLoss_eq_defaultProbability_mul_condExpectedLGD_mul_ead
         rw [hscale, one_mul]; ring
     _ = μ.real D * (((μ D)⁻¹).toReal * (∫ ω in D, LGD ω ∂μ)) * ead := by ring
 
-/-- PD x LGD x EAD (FI16.T04): when exposure at default is the constant `ead`
-on `D` and loss-given-default is the constant `lgd` on `D`, expected loss
+/-- PD x LGD x EAD (FI16.T04): on a probability space, for a measurable default event `D`
+with `μ D ≠ 0` and `EAD * LGD` and `LGD` integrable on `D`, when exposure at default is the
+constant `ead` on `D` and loss-given-default is the constant `lgd` on `D`, expected loss
 reduces to PD * LGD * EAD. -/
 theorem expectedLoss_eq_pd_mul_lgd_mul_ead
     {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]

@@ -4,6 +4,7 @@ Ergodic theory studies measure-preserving transformations and their statistical 
 
 - [Bilinear polynomial ergodic averages](bilinear-polynomial-ergodic-averages/README.md)
 - [Bourgain's polynomial ergodic theorem](bourgain-s-polynomial-ergodic-theorem/README.md)
+- [Factors of Bernoulli shifts](factors-of-bernoulli-shifts/README.md)
 - [Genericity of weak mixing](genericity-of-weak-mixing/README.md)
 - [Lax approximation theorem](lax-approximation-theorem/README.md)
 - [Multiplicative recurrence along Pythagorean pairs](multiplicative-recurrence-along-pythagorean-pair/README.md)
@@ -14,5 +15,9 @@ Ergodic theory studies measure-preserving transformations and their statistical 
 - [Furstenberg multiple recurrence theorem](furstenberg-multiple-recurrence.md)
 - [Krylov–Bogolyubov theorem](krylov-bogolyubov.md)
 - [Mixing](mixing/README.md)
+- [Multiple ergodic averages and recurrence](multiple-ergodic-averages-and-recurrence/README.md)
 - [Kolmogorov–Sinai entropy](kolmogorov-sinai-entropy/README.md)
 - [Poincaré recurrence theorem](ae-frequently-mem-of-mem.md)
+
+- [Simple Lebesgue spectrum on the smooth three-torus](simple-lebesgue-spectrum-on-the-three-torus.md)
+- [A finite-entropy system with no smooth positive-density model](finite-entropy-without-smooth-positive-density-model.md)

@@ -30,7 +30,7 @@ file lists as not proved.
 * `exists_eventually_measure_lt_sum_condExp_le` (**tightness transfer**): under Lindeberg,
   boundedness in probability of the realized variation `∑_{j < k n} ξ n j²` implies that of
   the predictable variation `∑_{j < k n} E[ξ n j² | 𝓕 n j]`.
-* `tendstoInMeasure_sup_abs_sum_sq_sub_condExp_of_sq` (**Hall–Heyde, Theorem 2.23, converse
+* `tendstoInMeasure_sup_abs_sum_sq_sub_condExp_of_sq` (**Hall–Heyde, Chapter 2, converse
   hypothesis**): Lindeberg plus tightness of the *realized* variation imply
   `max_{i ≤ k n} |∑_{j < i} (ξ n j² - E[ξ n j² | 𝓕 n j])| → 0` in probability.
 * `tendstoInMeasure_sum_condExp_floor_of_rqv` (**converse direction**): under Lindeberg,
@@ -50,8 +50,8 @@ truncated sum `∑_{i < j} a i` passes `C`: the indicator `𝟙{∑_{i < j} a i 
 `𝓕 n j`-measurable, so `E ∑_j 𝟙{…} E[a j | 𝓕 n j] = E ∑_j 𝟙{…} a j ≤ C + 1`, and Markov's
 inequality bounds the stopped predictable sum. The large parts have
 `E ∑_j E[b j | 𝓕 n j]` equal to the Lindeberg sum at level `1`. Off `{∑_{j<K} ξ j² > C}` the
-stopping never triggers. This Lenglart-type bound gives the tightness transfer; T123's
-Theorem 2.23 then gives the uniform closeness of `U` and `V`.
+stopping never triggers. This Lenglart-type bound gives the tightness transfer;
+`tendstoInMeasure_sup_abs_sum_sq_sub_condExp` then gives the uniform closeness of `U` and `V`.
 
 ## Scope and what is not proved
 
@@ -64,16 +64,16 @@ Theorem 2.23 then gives the uniform closeness of `U` and `V`.
 ## Source
 
 P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic Press (1980),
-Theorem 2.23: under the conditional Lindeberg condition, if either
+Chapter 2: under the conditional Lindeberg condition, if either
 `U²_{n k_n} = ∑_{i ≤ k_n} X_{ni}²` or `V²_{n k_n} = ∑_{i ≤ k_n} E[X_{ni}² | 𝓕_{n,i-1}]` is
-tight, then `max_{i ≤ k_n} |U²_{ni} - V²_{ni}| → 0` in probability. T123 proves the `V`-tight
-case; this file supplies the `U`-tight case by reducing it to the `V`-tight one.
-(Statement paraphrased; theorem number matches a secondary citation (arXiv:2506.22354 §3);
-book not consulted.)
+tight, then `max_{i ≤ k_n} |U²_{ni} - V²_{ni}| → 0` in probability.
+`tendstoInMeasure_sup_abs_sum_sq_sub_condExp` proves the `V`-tight case; this file supplies the
+`U`-tight case by reducing it to the `V`-tight one. (Statement paraphrased, following the
+secondary citation arXiv:2506.22354 §3.)
 The uniform-in-`t` step is the monotone-function argument behind Pólya's theorem (pointwise
 convergence of monotone functions to a continuous limit is uniform).
 
-Reused from `RealizedQV` (merged): `tendstoInMeasure_sup_abs_sum_sq_sub_condExp` (Theorem 2.23,
+Reused from `RealizedQV` (merged): `tendstoInMeasure_sup_abs_sum_sq_sub_condExp` (Chapter 2,
 `V`-tight case) and `tendstoInMeasure_sum_sq_floor_of_qv`. Proved here: the grid lemma, the
 tightness transfer, and the corollaries. Also reused from `RealizedQV`: the Markov bound
 `measure_ge_le_ofReal_integral_div` and `exists_eventually_measure_lt_le` (convergence in
@@ -394,14 +394,14 @@ theorem exists_eventually_measure_lt_sum_condExp_le {m : MeasurableSpace Ω} {μ
     _ ≤ ENNReal.ofReal (η / 3) + ENNReal.ofReal (η / 3) + ENNReal.ofReal (η / 3) := by
         rw [hCM]
         gcongr
-        exact (measure_mono fun ω (hω : C < _) => (show C₀ < _ from
-          lt_of_le_of_lt (le_max_left _ _) hω)).trans hn
+        exact hn.trans' (measure_mono fun ω (hω : C < _) => (show C₀ < _ from
+          lt_of_le_of_lt (le_max_left _ _) hω))
     _ = ENNReal.ofReal η := by
         rw [← ENNReal.ofReal_add (by positivity) (by positivity),
           ← ENNReal.ofReal_add (by positivity) (by positivity)]
         congr 1; ring
 
-/-- **Hall–Heyde, Theorem 2.23, with the realized variation tight.** Under the hypotheses of
+/-- **Hall–Heyde, Chapter 2, with the realized variation tight.** Under the hypotheses of
 `tendstoInMeasure_sup_abs_sum_sq_sub_condExp` with tightness of the predictable variation
 replaced by tightness of the realized variation `∑_{j < k n} ξ n j²`,
 `max_{i ≤ k n} |∑_{j < i} ξ n j² - ∑_{j < i} E[ξ n j² | 𝓕 n j]| → 0` in probability. -/

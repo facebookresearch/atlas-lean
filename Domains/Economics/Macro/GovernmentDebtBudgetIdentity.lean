@@ -61,7 +61,8 @@ interest); a primary surplus is a negative `D t`. -/
 def DebtRecursion (B D : ℕ → ℝ) (r : ℝ) : Prop :=
   ∀ t, B (t + 1) = (1 + r) * B t + D (t + 1)
 
-/-- **Discounted debt step (MA07.T01).** Dividing the recursion by `(1 + r) ^ (t + 1)`
+/-- **Discounted debt step (MA07.T01).** For `1 + r ≠ 0`, dividing the recursion by
+`(1 + r) ^ (t + 1)`
 gives the telescoping step: discounted debt rises by the discounted primary deficit. -/
 theorem debt_discounted_step {B D : ℕ → ℝ} {r : ℝ} (h : DebtRecursion B D r)
     (hr : (1 + r) ≠ 0) (t : ℕ) :
@@ -71,10 +72,10 @@ theorem debt_discounted_step {B D : ℕ → ℝ} {r : ℝ} (h : DebtRecursion B 
   rw [h t, pow_succ]
   field_simp
 
-/-- **Finite-horizon government budget identity (MA07.T01), present-value form.** Iterating
-the debt recursion, initial debt plus the present value of primary deficits through horizon
-`n` equals the discounted terminal debt; the terminal debt is retained explicitly and not
-assumed away:
+/-- **Finite-horizon government budget identity (MA07.T01), present-value form.** For
+`1 + r ≠ 0`, iterating the debt recursion, initial debt plus the present value of primary
+deficits through horizon `n` equals the discounted terminal debt; the terminal debt is retained
+explicitly and not assumed away:
 `B 0 + presentValue (discountFactor r) (Finset.Icc 1 n) D = discountFactor r n * B n`.
 Rewritten as `B t = (-D (t + 1) + B (t + 1)) / (1 + r)`, the debt recursion is the price
 recursion of `FiniteDividendDiscount.finiteDividendDiscount` with cash flow `-D`; the
@@ -99,7 +100,7 @@ theorem governmentBudgetIdentity_presentValue {B D : ℕ → ℝ} {r : ℝ} (h :
 
 /-- **Finite-horizon government budget identity (MA07.T01), raw division form.** The
 present-value identity `governmentBudgetIdentity_presentValue` with the discount factors
-written as divisions:
+written as divisions, for the debt recursion with `1 + r ≠ 0`:
 `B 0 + ∑ s ∈ Finset.Icc 1 n, D s / (1 + r) ^ s = B n / (1 + r) ^ n`. -/
 theorem governmentBudgetIdentity {B D : ℕ → ℝ} {r : ℝ} (h : DebtRecursion B D r)
     (hr : (1 + r) ≠ 0) (n : ℕ) :
@@ -107,8 +108,8 @@ theorem governmentBudgetIdentity {B D : ℕ → ℝ} {r : ℝ} (h : DebtRecursio
   simpa only [presentValue, discountFactor, inv_mul_eq_div] using
     governmentBudgetIdentity_presentValue h hr n
 
-/-- **Terminal-debt form (MA07.T01).** Initial debt equals discounted terminal debt
-minus the present value of primary deficits. -/
+/-- **Terminal-debt form (MA07.T01).** Under the debt recursion with `1 + r ≠ 0`, initial debt
+equals discounted terminal debt minus the present value of primary deficits. -/
 theorem governmentBudgetIdentity_terminal {B D : ℕ → ℝ} {r : ℝ} (h : DebtRecursion B D r)
     (hr : (1 + r) ≠ 0) (n : ℕ) :
     B 0 = B n / (1 + r) ^ n - ∑ s ∈ Finset.Icc 1 n, D s / (1 + r) ^ s := by

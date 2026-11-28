@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.NumberField.HeckeCharacter
 open NumberField IsDedekindDomain
 
 /-- Exact-source consumer: the original binders and conclusion. -/
-theorem exactSource
+private theorem exactSource
     (K : Type*) [Field K] [NumberField K]
     (χ₁ χ₂ : (AdeleRing (𝓞 K) K)ˣ →* ℂˣ)
     (hχ₁ : NumberField.IsIdeleClassChar (𝓞 K) K χ₁)
@@ -47,7 +47,7 @@ example (v : HeightOneSpectrum (𝓞 ℚ)) :
 /-- Consumer in the standard restricted-product idele topology: characters
 on `TopologicalIdeleGroup`, continuous for that topology, are determined by
 their values on the local uniformizer ideles outside a finite set. -/
-theorem exactSourceTopological
+private theorem exactSourceTopological
     (K : Type*) [Field K] [NumberField K]
     (ψ₁ ψ₂ : NumberField.TopologicalIdeleGroup (𝓞 K) K →* ℂˣ)
     (hψ₁ : Continuous ψ₁)

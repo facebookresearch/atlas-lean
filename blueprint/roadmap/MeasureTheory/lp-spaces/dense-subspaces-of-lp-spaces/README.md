@@ -31,3 +31,7 @@ properties.
 - [The vanishing cutoff factor vanishes at the right endpoint](vanishing-cutoff-eq-zero-right.md): construction used in the proof.
 - [The vanishing cutoff factor is at most one](vanishing-cutoff-le-one.md): construction used in the proof.
 - [The vanishing cutoff factor is nonnegative](vanishing-cutoff-nonneg.md): construction used in the proof.
+
+## Background
+
+- [Density of simple functions in L^p](../density-of-simple-functions-in-lp/README.md): scalar simple approximation, for any measure

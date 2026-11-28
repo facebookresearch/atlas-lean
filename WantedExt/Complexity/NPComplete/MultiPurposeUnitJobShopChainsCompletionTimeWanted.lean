@@ -21,12 +21,12 @@ model).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Logic.Relation
-public import WantedExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsWanted
+public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
 
 @[expose] public section
 
@@ -48,7 +48,7 @@ of `j'` starts before `j` is completed. QUESTION: is there a schedule whose tota
 `Σ_j C_j` is at most `K`, where `C_j` is the completion time of job `j` (of its last operation)?
 
 This is the job shop with multi-purpose machines (MPM) of Brucker (2004), Chapter 10, as stated in
-`MultiPurposeJobShopThreeJobsWanted` (instance, operations, eligible machine sets, schedules and
+`MultiPurposeJobShopThreeJobsDefs` (instance, operations, eligible machine sets, schedules and
 `MPMWellFormed` are reused from there), with `m = 2` machines, every operation of length `1`, chain
 precedence constraints between jobs, and the total completion time criterion. Brucker and Knust's
 classification lists `JMPM2|chains;p_ij=1|ΣC_i` as minimal NP-hard in the strong sense, citing
@@ -63,7 +63,7 @@ arc to name two jobs, no two arcs with the same tail or the same head, and no cy
 closure `Relation.TransGen` of the arc relation is irreflexive); the precedence relation is that
 transitive closure. The constraint is imposed on the arcs; on the rest of the transitive closure it
 follows, since every job starts its first operation before it completes its last. Start times are
-natural numbers, which does not change the answer (see `MultiPurposeJobShopThreeJobsWanted`).
+natural numbers, which does not change the answer (see `MultiPurposeJobShopThreeJobsDefs`).
 Operations are listed one by one, so the instance size counts every operation (the cited hardness
 is in the strong sense). Binary encoding of all numbers.
 

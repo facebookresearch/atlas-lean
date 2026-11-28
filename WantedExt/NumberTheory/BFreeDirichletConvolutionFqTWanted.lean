@@ -16,6 +16,9 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.MeasureTheory.Integral.CircleIntegral
 public import Mathlib.NumberTheory.MulChar.Basic
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Moebius
+public import MathlibExt.NumberTheory.FunctionField.BFreeConvolution
+public import MathlibExt.NumberTheory.FunctionField.KappaPowMoebius
+public import MathlibExt.NumberTheory.FunctionField.MonicConvolution
 public import MathlibExt.NumberTheory.FunctionField.MonicCount
 
 /-!
@@ -38,41 +41,6 @@ open Polynomial UniqueFactorizationMonoid Filter Asymptotics
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Dirichlet convolution over monic divisors.** Let $F$ be a field. The Dirichlet convolution
-of functions $\alpha$ and $\beta$ from $F[T]$ to $\mathbb{C}$ is the function $\alpha * \beta$
-given at $f \in F[T]$ by
-$$(\alpha * \beta)(f) = \sum_{g \text{ monic},\ g \mid f} \alpha(g)\, \beta(f/g),$$
-the sum running over the monic divisors $g$ of $f$.
-
-When $f = 0$ every monic polynomial divides $f$; the sum is then the sum of its nonzero terms if
-there are finitely many, and $0$ otherwise.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of the
-Dirichlet convolution. -/
-public noncomputable def monicDirichletConv {F : Type*} [Field F] (α β : F[X] → ℂ)
-    (f : F[X]) : ℂ :=
-  ∑ᶠ g ∈ {g : F[X] | g.Monic ∧ g ∣ f}, α g * β (f /ₘ g)
-
-/-- **Dirichlet convolution at $1$.** Let $F$ be a field and let $\alpha$ and $\beta$ be functions
-from $F[T]$ to $\mathbb{C}$. Their Dirichlet convolution over monic divisors satisfies
-$(\alpha * \beta)(1) = \alpha(1) \beta(1)$, since the only monic divisor of $1$ is $1$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of the
-Dirichlet convolution. -/
-public theorem monicDirichletConv_one {F : Type*} [Field F] (α β : F[X] → ℂ) :
-    monicDirichletConv α β 1 = α 1 * β 1 := by
-  have hset : {g : F[X] | g.Monic ∧ g ∣ 1} = {1} := by
-    ext g
-    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
-    constructor
-    · rintro ⟨hm, hg⟩
-      exact hm.isUnit_iff.mp (isUnit_of_dvd_one hg)
-    · rintro rfl
-      exact ⟨monic_one, dvd_rfl⟩
-  rw [monicDirichletConv, hset, finsum_mem_singleton, divByMonic_one]
 
 /-- **Perron's formula for monic polynomials over a finite field.** Let $F$ be a finite field, let
 $a$ be a complex-valued function on $F[T]$, and let $\rho$ be a real number with $0 < \rho < 1$ such
@@ -211,30 +179,6 @@ public theorem fqNorm_mul {F : Type*} [Field F] [Fintype F] {f g : F[X]} (hf : f
   rw [fqNorm_of_ne_zero (mul_ne_zero hf hg), fqNorm_of_ne_zero hf, fqNorm_of_ne_zero hg,
     natDegree_mul hf hg, pow_add]
 
-/-- **Monic polynomials of degree zero.** Let $F$ be a field. A polynomial $f \in F[T]$ is monic
-of degree at most $0$ if and only if $f = 1$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 2, the set
-`M_{≤ 0}`. -/
-public theorem monic_natDegree_le_zero_iff {F : Type*} [Field F] {f : F[X]} :
-    f.Monic ∧ f.natDegree ≤ 0 ↔ f = 1 := by
-  constructor
-  · rintro ⟨hm, hd⟩
-    exact eq_one_of_monic_natDegree_zero hm (Nat.le_zero.mp hd)
-  · rintro rfl
-    exact ⟨monic_one, by simp⟩
-
-/-- **$B_\kappa$-free polynomials.** Let $F$ be a field and let $\kappa$ assign a natural number to
-each polynomial in $F[T]$. A polynomial $f \in F[T]$ is $B_\kappa$-free when $P^{\kappa(P)}$ does
-not divide $f$ for any monic irreducible $P \in F[T]$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
-`B_κ`-free polynomials. -/
-public def IsBFree {F : Type*} [Field F] (κ : F[X] → ℕ) (f : F[X]) : Prop :=
-  ∀ P : F[X], P.Monic → Irreducible P → ¬ P ^ κ P ∣ f
-
 /-- **The polynomial $1$ is $B_\kappa$-free.** Let $F$ be a field and let $\kappa$ assign to each
 polynomial in $F[T]$ a natural number, with $\kappa(P) \ne 0$ for every monic irreducible $P$.
 Then $1$ is $B_\kappa$-free: $P^{\kappa(P)}$ does not divide $1$ for any monic irreducible $P$.
@@ -246,65 +190,6 @@ public theorem isBFree_one {F : Type*} [Field F] (κ : F[X] → ℕ)
     (hκ : ∀ P : F[X], P.Monic → Irreducible P → κ P ≠ 0) : IsBFree κ (1 : F[X]) := by
   intro P hm hP hdvd
   exact hP.not_isUnit ((isUnit_pow_iff (hκ P hm hP)).mp (isUnit_of_dvd_one hdvd))
-
-/-- **The minimal exponent $\kappa_{\min}$.** Let $F$ be a field and let $\kappa$ be a function
-from $F[T]$ to the natural numbers. Then $\kappa_{\min}$ is the minimum of $\kappa(P)$ over all
-monic irreducible polynomials $P \in F[T]$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
-`κ_min`. -/
-public noncomputable def kappaMin {F : Type*} [Field F] (κ : F[X] → ℕ) : ℕ :=
-  ⨅ P : {P : F[X] // P.Monic ∧ Irreducible P}, κ P
-
-/-- **$\kappa_{\min}$ is a lower bound for $\kappa$.** Let $F$ be a field, let $\kappa$ assign a
-natural number to each polynomial in $F[T]$, and let $\kappa_{\min}$ be the minimum of $\kappa(P)$
-over the monic irreducible $P \in F[T]$. Then $\kappa_{\min} \le \kappa(P)$ for every monic
-irreducible $P \in F[T]$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 1, definition of
-`κ_min`. -/
-public theorem kappaMin_le {F : Type*} [Field F] (κ : F[X] → ℕ) {P : F[X]} (hm : P.Monic)
-    (hP : Irreducible P) : kappaMin κ ≤ κ P :=
-  ciInf_le (OrderBot.bddBelow _) (⟨P, hm, hP⟩ : {P : F[X] // P.Monic ∧ Irreducible P})
-
-/-- **The $\kappa$-power of a polynomial.** Let $F$ be a field and let $\kappa$ be a function
-from $F[T]$ to the natural numbers. For nonzero $f \in F[T]$ and a monic irreducible $P$, write
-$\nu_P(f)$ for the multiplicity of $P$ in $f$. The $\kappa$-power of $f$ is
-$f^\kappa = \prod_P P^{\nu_P(f)\, \kappa(P)}$, the product over the monic irreducible $P$ dividing
-$f$; it does not depend on the leading coefficient of $f$. For $f = 0$ the product is empty and
-$0^\kappa = 1$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`f ^ κ`. -/
-public noncomputable def kappaPow {F : Type*} [Field F] (κ : F[X] → ℕ) (f : F[X]) : F[X] :=
-  open scoped Classical in
-  ((normalizedFactors f).map fun P => P ^ κ P).prod
-
-/-- **The $\kappa$-power of $1$.** Let $F$ be a field and let $\kappa$ be a function from $F[T]$
-to the natural numbers. Then the $\kappa$-power of the constant polynomial $1$ is $1^\kappa = 1$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`f ^ κ`. -/
-public theorem kappaPow_one {F : Type*} [Field F] (κ : F[X] → ℕ) :
-    kappaPow κ (1 : F[X]) = 1 := by
-  classical
-  simp [kappaPow]
-
-/-- **The $\kappa$-power of a monic irreducible polynomial.** Let $F$ be a field and let $\kappa$
-be a function from $F[T]$ to the natural numbers. For every monic irreducible $P \in F[T]$, the
-$\kappa$-power of $P$ is $P^\kappa = P^{\kappa(P)}$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`f ^ κ`. -/
-public theorem kappaPow_of_irreducible {F : Type*} [Field F] (κ : F[X] → ℕ) {P : F[X]}
-    (hm : P.Monic) (hP : Irreducible P) : kappaPow κ P = P ^ κ P := by
-  classical
-  simp [kappaPow, normalizedFactors_irreducible hP, hm.normalize_eq_self]
 
 /-- **The $h$-fold divisor function.** Let $F$ be a field and $h$ a natural number. For
 $f \in F[T]$, $d_h(f)$ is the number of $h$-tuples $(g_1, \dots, g_h)$ of monic polynomials in
@@ -364,118 +249,6 @@ public theorem monicDivisorCount_one_left {F : Type*} [Field F] {f : F[X]} (hf :
   obtain rfl := Subsingleton.elim i 0
   simpa using hprod
 
-/-- **Shifted partial sums of a Dirichlet convolution.** Let $F$ be a field, let
-$\alpha, \beta \colon F[T] \to \mathbb{C}$, let $\alpha * \beta$ be their Dirichlet convolution
-over monic divisors, let $f \in F[T]$ and let $n$ be a natural number. Then
-$S_f[\alpha, \beta](n) = \sum_g (\alpha * \beta)(fg)$, the sum over the monic $g \in F[T]$ with
-$\deg f + \deg g \le n$, where $\deg 0 = 0$. This is the paper's sum over $g$ of degree at most
-$n - \deg f$.
-
-The sum is a finitary sum: it is $0$ when infinitely many of its terms are nonzero, which can
-happen only for infinite $F$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, eq. (3). -/
-public noncomputable def monicConvShiftedSum {F : Type*} [Field F] (α β : F[X] → ℂ)
-    (f : F[X]) (n : ℕ) : ℂ :=
-  ∑ᶠ g ∈ {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ n}, monicDirichletConv α β (f * g)
-
-/-- **Shifted partial sums vanish below $\deg f$.** Let $F$ be a field, let
-$\alpha, \beta \colon F[T] \to \mathbb{C}$ and let $f \in F[T]$. For every natural number
-$n < \deg f$, the shifted partial sum of the Dirichlet convolution satisfies
-$S_f[\alpha, \beta](n) = 0$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, eq. (3). -/
-public theorem monicConvShiftedSum_of_lt {F : Type*} [Field F] (α β : F[X] → ℂ) {f : F[X]}
-    {n : ℕ} (hn : n < f.natDegree) : monicConvShiftedSum α β f n = 0 := by
-  have hset : {g : F[X] | g.Monic ∧ f.natDegree + g.natDegree ≤ n} = ∅ := by
-    ext g
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and, not_le]
-    intro _
-    omega
-  rw [monicConvShiftedSum, hset, finsum_mem_empty]
-
-/-- **Partial sums of a Dirichlet convolution over monic polynomials.** Let $F$ be a field, let
-$\alpha, \beta \colon F[T] \to \mathbb{C}$, and let $\alpha * \beta$ be their Dirichlet
-convolution over monic divisors. For an integer $n$,
-$D[\alpha, \beta](n) = \sum_g (\alpha * \beta)(g)$, the sum over the monic $g \in F[T]$ of degree
-at most $n$. For $n < 0$ the sum is empty, so $D[\alpha, \beta](n) = 0$; this is how the paper's
-Lemma 3 uses $D$ at $n - \deg(f \ell)$.
-
-The sum is a finitary sum: it is $0$ when infinitely many of its terms are nonzero, which can
-happen only for infinite $F$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[α, β](n)`. -/
-public noncomputable def monicConvPartialSum {F : Type*} [Field F] (α β : F[X] → ℂ) (n : ℤ) : ℂ :=
-  ∑ᶠ g ∈ {g : F[X] | g.Monic ∧ (g.natDegree : ℤ) ≤ n}, monicDirichletConv α β g
-
-/-- **$D[\alpha, \beta]$ vanishes at negative arguments.** Let $F$ be a field and let
-$\alpha, \beta \colon F[T] \to \mathbb{C}$. For every integer $n < 0$, the partial sum of the
-Dirichlet convolution of $\alpha$ and $\beta$ satisfies $D[\alpha, \beta](n) = 0$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[α, β](n)`. -/
-public theorem monicConvPartialSum_of_neg {F : Type*} [Field F] (α β : F[X] → ℂ) {n : ℤ}
-    (hn : n < 0) : monicConvPartialSum α β n = 0 := by
-  have hset : {g : F[X] | g.Monic ∧ (g.natDegree : ℤ) ≤ n} = ∅ := by
-    ext g
-    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and, not_le]
-    intro _
-    omega
-  rw [monicConvPartialSum, hset, finsum_mem_empty]
-
-/-- **The partial sum $D[\alpha, \beta](0)$.** Let $F$ be a field and let
-$\alpha, \beta \colon F[T] \to \mathbb{C}$. The partial sum of the Dirichlet convolution of
-$\alpha$ and $\beta$ at $0$ is $D[\alpha, \beta](0) = \alpha(1)\, \beta(1)$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[α, β](n)`. -/
-public theorem monicConvPartialSum_zero {F : Type*} [Field F] (α β : F[X] → ℂ) :
-    monicConvPartialSum α β 0 = α 1 * β 1 := by
-  have hset : {g : F[X] | g.Monic ∧ (g.natDegree : ℤ) ≤ 0} = {1} := by
-    ext g
-    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
-    rw [← monic_natDegree_le_zero_iff]
-    exact and_congr_right fun _ => ⟨fun h => by omega, fun h => by omega⟩
-  rw [monicConvPartialSum, hset, finsum_mem_singleton, monicDirichletConv_one]
-
-/-- **Weighted convolution sum.** Let $F$ be a field, let $\gamma, \alpha, \beta$ be functions from
-$F[T]$ to $\mathbb{C}$, and write $\alpha * \beta$ for the monic Dirichlet convolution of $\alpha$
-and $\beta$. For a natural number $n$, let $M_{\le n}$ be the set of monic polynomials in $F[T]$ of
-degree at most $n$. The weighted convolution sum is
-$$D(\gamma, \alpha, \beta; n) = \sum_{f \in M_{\le n}} \gamma(f)\,(\alpha * \beta)(f).$$
-
-When $F$ is infinite and this sum has infinitely many nonzero terms, its value is taken to be $0$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[γ, α, β](n)`. -/
-public noncomputable def weightedMonicConvSum {F : Type*} [Field F] (γ α β : F[X] → ℂ)
-    (n : ℕ) : ℂ :=
-  ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ n}, γ f * monicDirichletConv α β f
-
-/-- **The weighted convolution sum at degree zero.** Let $F$ be a field and let
-$\gamma, \alpha, \beta$ be functions from $F[T]$ to $\mathbb{C}$, and write $\alpha * \beta$ for
-the monic Dirichlet convolution. The weighted convolution sum $D(\gamma, \alpha, \beta; 0)$, the
-sum of $\gamma(f)\,(\alpha * \beta)(f)$ over the monic $f \in F[T]$ of degree at most $0$, equals
-$\gamma(1)\,\alpha(1)\,\beta(1)$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Section 3, definition of
-`D[γ, α, β](n)`. -/
-public theorem weightedMonicConvSum_zero {F : Type*} [Field F] (γ α β : F[X] → ℂ) :
-    weightedMonicConvSum γ α β 0 = γ 1 * (α 1 * β 1) := by
-  have hset : {f : F[X] | f.Monic ∧ f.natDegree ≤ 0} = {1} := by
-    ext f
-    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
-    exact monic_natDegree_le_zero_iff
-  rw [weightedMonicConvSum, hset, finsum_mem_singleton, monicDirichletConv_one]
-
 /-- **Shifted partial sums for completely multiplicative functions.** Let $F$ be a finite field
 and let $\alpha, \beta \colon F[T] \to \mathbb{C}$ be completely multiplicative, that is, monoid
 homomorphisms from the multiplicative monoid of $F[T]$ to $\mathbb{C}$. Write $\mu$ for the Möbius
@@ -502,97 +275,6 @@ public theorem_wanted monicConvShiftedSum_eq_of_completelyMultiplicative {F : Ty
         ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ d},
           (moebius ℓ : ℂ) * β ℓ * monicConvPartialSum α β ((n : ℤ) - (f * ℓ).natDegree)
 
-/-- **Weighted convolution sums as sums of shifted sums.** Let $F$ be a finite field and let
-$\gamma, \alpha, \beta$ be functions from $F[T]$ to $\mathbb{C}$. Write $\alpha * \beta$ for the
-monic Dirichlet convolution, $\mu$ for the Möbius function of $F[T]$, and $\lambda = \gamma * \mu$.
-For a natural number $n$ let $M_{\le n}$ be the set of monic polynomials in $F[T]$ of degree at
-most $n$, let $D(\gamma, \alpha, \beta; n) = \sum_{f \in M_{\le n}} \gamma(f)\,(\alpha * \beta)(f)$
-and, for monic $f$, let
-$S_f(\alpha, \beta; n) = \sum_{g \text{ monic},\ \deg f + \deg g \le n} (\alpha * \beta)(fg)$.
-Then
-$$D(\gamma, \alpha, \beta; n) = \sum_{f \in M_{\le n}} \lambda(f)\, S_f(\alpha, \beta; n).$$
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 4
-(`integers-2026-A80-lem-4`). -/
-public theorem_wanted weightedMonicConvSum_eq_sum_shifted {F : Type*} [Field F] [Finite F]
-    (γ α β : F[X] → ℂ) (n : ℕ) :
-    weightedMonicConvSum γ α β n =
-      ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ n},
-        monicDirichletConv γ (fun g => (moebius g : ℂ)) f * monicConvShiftedSum α β f n
-
-/-- **Camargo's identity over $F[T]$.** Let $F$ be a finite field and let $\mu$ be the Möbius
-function of $F[T]$. For functions $\alpha, \beta \colon F[T] \to \mathbb{C}$ let
-$(\alpha * \beta)(f) = \sum_{g \mid f} \alpha(g) \beta(f/g)$, over monic divisors $g$, be their
-Dirichlet convolution, and let $D[\alpha, \beta](k)$ be the sum of $(\alpha * \beta)(g)$ over the
-monic $g$ of degree at most $k$, which is $0$ for $k < 0$. For a further function $\gamma$ let
-$D[\gamma, \alpha, \beta](n)$ be the sum of $\gamma(f) (\alpha * \beta)(f)$ over the monic $f$ of
-degree at most $n$. Suppose $\alpha$ and $\beta$ are completely multiplicative, that is,
-$\alpha(1) = 1$ and $\alpha(f g) = \alpha(f) \alpha(g)$ for all $f, g \in F[T]$, and likewise for
-$\beta$, and let $\gamma \colon F[T] \to \mathbb{C}$ be arbitrary. Then for every natural number
-$n$,
-
-$$D[\gamma, \alpha, \beta](n) = \sum_{f \text{ monic},\ \deg f \le n} (\gamma * \mu)(f)
-\sum_{d \mid f} \alpha(d) \beta(f/d) \sum_{\ell \mid d} \mu(\ell) \beta(\ell) \,
-D[\alpha, \beta](n - \deg(f \ell)),$$
-
-where $d$ runs over the monic divisors of $f$ and $\ell$ over the monic divisors of $d$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Theorem 6
-(`integers-2026-A80-thm-6`). -/
-public theorem_wanted weightedMonicConvSum_eq_of_completelyMultiplicative {F : Type*} [Field F]
-    [Finite F] (γ : F[X] → ℂ) (α β : F[X] →* ℂ) (n : ℕ) :
-    weightedMonicConvSum γ α β n =
-      ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f.natDegree ≤ n},
-        monicDirichletConv γ (fun g => (moebius g : ℂ)) f *
-          ∑ᶠ d ∈ {d : F[X] | d.Monic ∧ d ∣ f}, α d * β (f /ₘ d) *
-            ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ d},
-              (moebius ℓ : ℂ) * β ℓ * monicConvPartialSum α β ((n : ℤ) - (f * ℓ).natDegree)
-
-/-- **Convolution of the $B_\kappa$-free indicator with the Möbius function.** Let $F$ be a field
-and let $\kappa$ assign a natural number to each polynomial in $F[T]$, with $\kappa(P) \ne 0$ for
-every monic irreducible $P \in F[T]$. Let $\mathbf{1}_{B_\kappa} \colon F[T] \to \mathbb{C}$ be
-the indicator function of the $B_\kappa$-free polynomials, let $\mu$ be the Möbius function of
-$F[T]$, and write $r^\kappa$ for the $\kappa$-power of a polynomial $r$. Then for every monic
-$f \in F[T]$, the Dirichlet convolution of $\mathbf{1}_{B_\kappa}$ and $\mu$ over monic divisors
-satisfies
-$$(\mathbf{1}_{B_\kappa} * \mu)(f) = \sum_{r} \mu(r),$$
-the sum running over the monic $r \in F[T]$ with $r^\kappa = f$.
-
-There is at most one such $r$, so the right side is $\mu(r)$ if $f = r^\kappa$ for a monic $r$,
-and $0$ if there is no such $r$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 5
-(`integers-2026-A80-lem-5`). -/
-public theorem_wanted monicDirichletConv_bFreeIndicator_moebius {F : Type*} [Field F]
-    (κ : F[X] → ℕ) (hκ : ∀ P : F[X], P.Monic → Irreducible P → κ P ≠ 0) {f : F[X]}
-    (hf : f.Monic) :
-    monicDirichletConv ({g : F[X] | IsBFree κ g}.indicator 1) (fun g => (moebius g : ℂ)) f =
-      ∑ᶠ r ∈ {r : F[X] | r.Monic ∧ kappaPow κ r = f}, (moebius r : ℂ)
-
-/-- **Bound on the Möbius sum over κ-th powers.** Let $F$ be a finite field with $q$ elements and
-let $\kappa$ assign a natural number to each polynomial in $F[T]$, with $\kappa(P) \ge 2$ for
-every monic irreducible $P$. Let $\kappa_{\min}$ be the minimum of $\kappa(P)$ over the monic
-irreducible $P$, and for monic $r = \prod_P P^{\nu_P}$ write
-$r^\kappa = \prod_P P^{\nu_P \kappa(P)}$. Then for every natural number $N \ge 1$,
-$$
-\Bigl|\sum_{r} \mu(r) \sum_{f \mid r^\kappa} \sum_{\ell \mid f} \mu(\ell)\Bigr| \le
-q^{N/\kappa_{\min}},
-$$
-where $r$ runs over the monic polynomials with $\deg r^\kappa \le N$, $f$ and $\ell$ run over monic
-divisors, $\mu$ is the Möbius function, and the exponent $N/\kappa_{\min}$ is a real number.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 8, eq. (6)
-(`integers-2026-A80-lem-8`). -/
-public theorem_wanted abs_sum_moebius_kappaPow_le {F : Type*} [Field F] [Fintype F]
-    (κ : F[X] → ℕ) (hκ : ∀ P : F[X], P.Monic → Irreducible P → 2 ≤ κ P) {N : ℕ} (hN : 1 ≤ N) :
-    |∑ᶠ r ∈ {r : F[X] | r.Monic ∧ (kappaPow κ r).natDegree ≤ N},
-        (moebius r : ℝ) * ∑ᶠ f ∈ {f : F[X] | f.Monic ∧ f ∣ kappaPow κ r},
-          ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ f}, (moebius ℓ : ℝ)| ≤
-      (Fintype.card F : ℝ) ^ ((N : ℝ) / kappaMin κ)
 
 /-- **Divisor-count bound over $\kappa$-th powers of monic polynomials.** Let $F$ be a finite
 field with $q$ elements and let $\kappa$ assign a natural number to each polynomial in $F[T]$,

@@ -8,7 +8,16 @@ Apply Poincaré duality for noncompact manifolds to $M$. Since $M$ is compact, $
 
 ## Expansion
 
-A good expansion of this node links each prerequisite of its statement and proof: Singular cohomology with compact supports H^k\_c(X; G); Poincaré duality for manifolds that are not necessarily compact; the cap product; Closed manifold; Commutative ring with identity; Fundamental class of a closed R-oriented n-manifold; R-orientation of an n-manifold M; Singular homology H\_n(X; G) with coefficients in an abelian group G; Singular cohomology H^n(X; G) of a space with coefficients in an abelian group G.
+A good expansion of this node links each prerequisite of its statement and proof: Singular cohomology with compact supports H^k\_c(X; G); Poincaré duality for manifolds that are not necessarily compact; Singular homology H\_n(X; G) with coefficients in an abelian group G.
+
+## Depends on
+
+- [Commutative ring with identity: a ring whose multiplication is commutative and has an identity element 1](../../Algebra/rings-and-fields/commutative-ring-with-identity.md)
+- [Cap product of singular homology with singular cohomology](cap-product.md)
+- [Closed manifold, not required to be connected](../manifolds-geometric-topology/closed-topological-manifold.md)
+- [Fundamental class of a closed R-oriented manifold](fundamental-class.md)
+- [R-orientation of a topological manifold](homological-orientation.md)
+- [Singular cohomology with coefficients in an abelian group](singular-cohomology-coefficients.md)
 
 ## Sources
 

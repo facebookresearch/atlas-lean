@@ -23,7 +23,7 @@ namespace MathlibExt.Analysis.AMR22Problem7082Wanted
 
 /-- **Open unit disc.** The open unit disc $\mathbb{D}$ is the set of complex numbers $z$ with
 $|z| < 1$, the open ball of radius $1$ about $0$ in $\mathbb{C}$. -/
-def UnitDisc : Set ℂ := Metric.ball (0 : ℂ) 1
+noncomputable def UnitDisc : Set ℂ := Metric.ball (0 : ℂ) 1
 
 /-- **Injectivity at each parameter of the disc.** Let $\mathbb{D}$ be the open unit disc, $E$ a
 set of complex numbers and $F$ a function assigning a complex number $F(w, z)$ to each pair of

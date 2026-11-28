@@ -63,7 +63,7 @@ theorem isSpectralContrast₀ : IsSpectralContrast X₀ K₀ B₀ d₀ where
   mul_transpose := by
     ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [B₀, Matrix.mul_apply, Fin.sum_univ_succ, one_apply] <;> nlinarith [c_mul_c]
+      simp [B₀, Matrix.mul_apply, Fin.sum_univ_succ] <;> nlinarith [c_mul_c]
   card_add_card := by simp
   mul_mul_transpose := by
     ext i j
@@ -76,7 +76,7 @@ def V₀ : Matrix (Fin 4) (Fin 2) ℝ := !![1, 0; 1, 0; 0, 1; 0, 1]
 theorem K₀_eq : K₀ = (1/2 : ℝ) • (1 : Matrix (Fin 4) (Fin 4) ℝ) + (1/2 : ℝ) • (V₀ * V₀ᵀ) := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [K₀, V₀, Fin.sum_univ_succ, one_apply, vecMul, dotProduct] <;> norm_num
+    simp [K₀, V₀, Fin.sum_univ_succ, vecMul, dotProduct, -Matrix.transpose_of] <;> norm_num
 
 /-- The GREML covariance of the fixture is positive semidefinite for nonnegative components. -/
 theorem posSemidef_gremlCov₀ {θ : ℝ × ℝ} (h1 : 0 ≤ θ.1) (h2 : 0 ≤ θ.2) :

@@ -13,7 +13,7 @@ public import MathlibExt.RingTheory.Polynomial.AevalHeightOne
 @[expose] public section
 
 /-- Exact-source consumer: the original binders and hypotheses. -/
-theorem exactSource
+private theorem exactSource
     {A C : Type*} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
     [CommRing C] [IsDomain C] [Algebra A C]
     (x : C) (hx : Function.Injective (Polynomial.aeval (R := A) x))

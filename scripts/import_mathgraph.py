@@ -1,31 +1,34 @@
 #!/usr/bin/env python3
-"""Apply a reviewed mathgraph manifest to the ATLAS wiki: planned pages only.
+"""Apply a reviewed mathgraph manifest to the ATLAS wiki: planned pages, and pages credited to Mathlib declarations.
 
     python scripts/import_mathgraph.py --check --manifest MANIFEST.jsonl --manifest-sha256 SHA256
     python scripts/import_mathgraph.py --apply --manifest MANIFEST.jsonl --manifest-sha256 SHA256
     python scripts/import_mathgraph.py --identity blueprint/roadmap/PAGE.md
     python scripts/import_mathgraph.py --check-map [--base REV]
 
-The manifest is an allowlist: each JSON line authorises one planned page, its annotation and its row of
-scripts/mathgraph-map.jsonl. Nothing else of mathgraph is read. The file must have the SHA-256 given, which the review
-approved, every row must match MANIFEST_SCHEMA and pass the checks docs/mathgraph-import.md lists, and the whole change
-is laid out and checked before anything is written: a check that fails stops the run, writes nothing, names the problems
-found and exits 1. --check prints the change, each folder, file and line with the rule that puts it there, and writes
-nothing. --apply writes it as one transaction (see apply): an exception while writing is rolled back, or what cannot be
-restored is named; a crash or a power loss is not covered, so it runs on a clean worktree, which
-`git checkout -- . && git clean -fd` restores. It assumes an exclusive worktree that nothing else changes while it runs:
-it detects some concurrent changes and then refuses or reports an incomplete rollback, but it does not promise immunity
-to concurrent mutation. Existing statement pages are never changed, the planned pages an earlier import wrote among
-them, nor a line of the map: an existing file changes only by the items a folder page gains (sync_wiki.add_to_listing,
-or after the page's own list where the sync would only append, each checked as the sync checks its edits) and by rows
-appended to a links file and to the map. Symbolic links are refused on every repository path the importer writes or
-removes, and on the files whose content it reads, each checked on the path then opened (see symlink_on): a manifest in
-the repository, the links files, scripts/taxonomy.json, the card move ledger, the map, the folder pages it edits or
-whose part copies it refreshes, the pages a dependency names and the pages its cycle check reads. A manifest that is
-itself a symbolic link is refused (see read_manifest). Folder listings, used to place pages and check names, and any
-other file sync_wiki, generate_wiki and Autoform read are read as those tools read them. Where the importer itself
-decides whether a path is there, it does so without following links, so a dangling link is there. --identity prints what
-a dependency on an existing page is bound to (see page_identity), and writes nothing. --check-map checks the map's lines
+The manifest is an allowlist: each JSON line authorises one page, planned or credited to one Mathlib declaration
+(docs/BLUEPRINT.md, "Mathlib-credited pages"), its annotation and its row of scripts/mathgraph-map.jsonl. Nothing else
+of mathgraph is read. The file must have the SHA-256 given, which the review approved, every row must match
+MANIFEST_SCHEMA and pass the checks docs/mathgraph-import.md lists, and the whole change is laid out and checked before
+anything is written: a check that fails stops the run, writes nothing, names the problems found and exits 1. --check
+prints the change, each folder, file and line with the rule that puts it there, and writes nothing. --apply writes it as
+one transaction (see apply): an exception while writing is rolled back, or what cannot be restored is named; a crash or
+a power loss is not covered, so it runs on a clean worktree, which `git checkout -- . && git clean -fd` restores. It
+assumes an exclusive worktree that nothing else changes while it runs: it detects some concurrent changes and then
+refuses or reports an incomplete rollback, but it does not promise immunity to concurrent mutation. Existing statement
+pages are never changed, the planned pages an earlier import wrote among them, nor a line of the map: an existing file
+changes only by the items a folder page gains (sync_wiki.add_to_listing, or after the page's own list where the sync
+would only append, each checked as the sync checks its edits), by rows added to a links file where the sync adds them
+(sync_wiki.inserted: each right after the row whose page's path comes last before its own, wherever that row stands)
+and by rows appended to the map.
+Symbolic links are refused on every repository path the importer writes or removes, and on the files whose content it
+reads, each checked on the path then opened (see symlink_on): a manifest in the repository, the links files,
+scripts/taxonomy.json, the card move ledger, the map, the folder pages it edits or whose part copies it refreshes, the
+pages a dependency names and the pages its cycle check reads. A manifest that is itself a symbolic link is refused (see
+read_manifest). Folder listings, used to place pages and check names, and any other file sync_wiki, generate_wiki and
+Autoform read, lake-manifest.json among them, are read as those tools read them. Where the importer itself decides
+whether a path is there, it does so without following links, so a dangling link is there. --identity prints what a
+dependency on an existing page is bound to (see page_identity), and writes nothing. --check-map checks the map's lines
 (see map_problems) and, with --base, that the map only grows from its state at REV (see growth_problems) and that each
 line appended since records a page the change adds (see appended_problems), and writes nothing.
 
@@ -95,7 +98,7 @@ MANIFEST_SCHEMA = {
                  "mg_statement_sha256", "mg_sketch_sha256", "reference_sha256", "edges_sha256"],
     "properties": {
         "key": {"$ref": "#/$defs/key"},
-        "kind": {"enum": ["planned"]},
+        "kind": {"enum": ["planned", "mathlib"]},
         "mg_kind": {"enum": ["theorem", "definition"]},
         "title": {"$ref": "#/$defs/line"},
         "statement": {"$ref": "#/$defs/text"},
@@ -132,9 +135,26 @@ MANIFEST_SCHEMA = {
         "mg_sketch_sha256": {"$ref": "#/$defs/sha256"},
         "reference_sha256": {"$ref": "#/$defs/sha256"},
         "edges_sha256": {"$ref": "#/$defs/sha256"},
+        "mathlib": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["declaration", "module"],
+            "properties": {"declaration": {"$ref": "#/$defs/declaration"}, "module": {"$ref": "#/$defs/module"}},
+        },
     },
+    # A Mathlib-credited row states what its declaration states, with no sketch and no prerequisite of its own: the
+    # build derives its edges (docs/BLUEPRINT.md, "Mathlib-credited pages"). Only such a row names a declaration.
+    "if": {"required": ["kind"], "properties": {"kind": {"const": "mathlib"}}},
+    "then": {
+        "required": ["mathlib"],
+        "properties": {"sketch": {"type": "null"}, "depends": {"maxItems": 0}, "pending": {"maxItems": 0},
+                       "not_ready": {"const": False}, "prose_missing": {"type": "null"}},
+    },
+    "else": {"properties": {"mathlib": {"not": {}}}},
     "$defs": {
         "key": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$", "maxLength": 96},
+        "declaration": {"type": "string", "pattern": "^\\S+$"},
+        "module": {"type": "string", "pattern": "^Mathlib(?:\\.[A-Za-z0-9_']+)+$"},
         "line": {"type": "string", "pattern": "^\\S(?:[^\\n\\r]*\\S)?$"},
         "text": {"type": "string", "pattern": "^\\S(?:[^\\r]*\\S)?$"},
         "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -180,8 +200,9 @@ def shown(text: str) -> str:
     return text if text.isprintable() else json.dumps(text, ensure_ascii=False)
 
 
-# A line of scripts/mathgraph-map.jsonl: its fields, in the order the importer writes them (see map_line), and their
-# schema, whose pending list, key, digests, id and revision are the manifest's.
+# A line of scripts/mathgraph-map.jsonl: its fields, in the order the importer writes them (see map_line), a Mathlib
+# credit last when the line has one, and their schema, whose pending list, key, digests, id, revision and credit are the
+# manifest's.
 MAP_FIELDS = ("key", "node", "revision", "page", "statement_sha256", "sketch_sha256", "mg_statement_sha256",
               "mg_sketch_sha256", "reference_sha256", "edges_sha256", "pending")
 MAP_SCHEMA = {
@@ -198,8 +219,20 @@ MAP_SCHEMA = {
                                                "[a-z0-9]+(?:-[a-z0-9]+)*\\.md$")},
         **{name: {"$ref": "#/$defs/sha256"} for name in MAP_FIELDS if name.endswith("_sha256")},
         "pending": MANIFEST_SCHEMA["properties"]["pending"],
+        "mathlib": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["declaration", "module", "rev"],
+            "properties": {"declaration": {"$ref": "#/$defs/declaration"}, "module": {"$ref": "#/$defs/module"},
+                           "rev": MANIFEST_SCHEMA["properties"]["seed"]["properties"]["revision"]},
+        },
     },
-    "$defs": {name: MANIFEST_SCHEMA["$defs"][name] for name in ("key", "sha256")},
+    # A line with a Mathlib credit records a row with no sketch and no pending prerequisite, as MANIFEST_SCHEMA
+    # requires.
+    "if": {"required": ["mathlib"]},
+    "then": {"properties": {"pending": {"maxItems": 0},
+                            "sketch_sha256": {"const": hashlib.sha256(b"").hexdigest()}}},
+    "$defs": {name: MANIFEST_SCHEMA["$defs"][name] for name in ("key", "sha256", "declaration", "module")},
 }
 
 
@@ -300,10 +333,14 @@ def symlink_problem(path: Path) -> str | None:
 
 def input_problems() -> list[str]:
     """Symbolic links on what the checks read before any page: the roadmap and links folders, every links file, the
-    taxonomy, the card move ledger and the map."""
-    paths = [wiki.ROADMAP, sync.LINKS, wiki.TAXONOMY, wiki.ROOT / "scripts" / "card-moves.jsonl", MAP]
+    taxonomy, the card move ledger (its frozen file, its folder of fragments and every entry of that folder) and the
+    map."""
+    fragments = wiki.ROOT / "scripts" / "card-moves.d"
+    paths = [wiki.ROADMAP, sync.LINKS, wiki.TAXONOMY, wiki.ROOT / "scripts" / "card-moves.jsonl", fragments, MAP]
     if symlink_on(sync.LINKS) is None and sync.LINKS.is_dir():
         paths += sorted(sync.LINKS.glob("*.jsonl"))
+    if symlink_on(fragments) is None and fragments.is_dir():
+        paths += sorted(fragments.iterdir())
     return [problem for path in paths if (problem := symlink_problem(path))]
 
 
@@ -424,8 +461,11 @@ def parse_rows(data: bytes, problems: list[str]) -> tuple[list[Row], dict[str, d
         for error in errors:
             at = "/".join(str(part) for part in error.absolute_path)
             label = f"manifest line {number} ({shown(key)})" if key else f"manifest line {number}"
-            if error.validator == "not" and error.validator_value == {}:
-                # The schema's only `{"not": {}}`: a target's identity, which only an existing page has.
+            if error.validator == "not" and error.validator_value == {} and at == "mathlib":
+                # The schema's `{"not": {}}` on a row's credit, which only a Mathlib-credited row has.
+                problems.append(f"{label}: mathlib is allowed only on a row of kind mathlib")
+            elif error.validator == "not" and error.validator_value == {}:
+                # Its `{"not": {}}` on a target's identity, which only an existing page has.
                 problems.append(f"{label}: {at} is allowed only for a target that is an existing page")
             elif error.validator == "anyOf" and error.context:
                 # What each alternative finds wrong: a pattern the value does not match, or a type it does not have.
@@ -479,11 +519,13 @@ def map_page_problem(page: str) -> str | None:
 
 
 def map_line(row: dict) -> str:
-    """A line of the map as the importer writes it for *row*, without its line break: its fields in MAP_FIELDS' order
-    and a pending entry's as key, kind, reason, as json.dumps writes them, with its default separators (`, ` and `: `)
-    and non-ASCII characters as they are."""
+    """A line of the map as the importer writes it for *row*, without its line break: its fields in MAP_FIELDS' order,
+    a pending entry's as key, kind, reason, and then its Mathlib credit, if it has one, as declaration, module, rev, as
+    json.dumps writes them, with its default separators (`, ` and `: `) and non-ASCII characters as they are."""
     ordered = {name: row[name] for name in MAP_FIELDS}
     ordered["pending"] = [{name: entry[name] for name in ("key", "kind", "reason")} for entry in row["pending"]]
+    if "mathlib" in row:
+        ordered["mathlib"] = {name: row["mathlib"][name] for name in ("declaration", "module", "rev")}
     return json.dumps(ordered, ensure_ascii=False)
 
 
@@ -568,8 +610,9 @@ def read_wiki(problems: list[str]) -> Wiki:
     owners, doubled, ids, cards = annotation_owners()
     try:
         retired = sync.retired_addresses()
-    except (ValueError, AttributeError):
-        problems.append("scripts/card-moves.jsonl is not a JSON object per line")
+    except (ValueError, AttributeError) as error:
+        problems.append(f"the card move ledger (scripts/card-moves.jsonl and scripts/card-moves.d/) cannot be read: "
+                        f"{error or 'a row is no JSON object'}")
         retired = set()
     return Wiki(owners, doubled, ids, cards, retired, mapped)
 
@@ -669,6 +712,114 @@ def text_problems(row: Row) -> list[str]:
                      "importer writes every link to a page" for how, address in addresses(value)
                      if not address.startswith("https://")]
     return problems
+
+
+def pinned_mathlib() -> tuple[str | None, str | None]:
+    """The Mathlib revision lake-manifest.json pins, as sync_wiki reads it (sync_wiki.mathlib_revision), and None with
+    why when it pins none, as when the file is missing or cannot be read, is no JSON object or names no Mathlib
+    commit."""
+    try:
+        revision = sync.mathlib_revision()
+    except (OSError, ValueError, AttributeError, TypeError) as error:
+        return None, f"lake-manifest.json cannot be read as sync_wiki reads it: {error}"
+    if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-f]{40}", revision):
+        return None, "lake-manifest.json pins no Mathlib commit"
+    return revision, None
+
+
+def claimants(files: dict[Path, list[dict]], names: set[str]) -> dict[str, list[tuple[Path, str]]]:
+    """The pages that credit each of *names*, as sync_wiki reads credit (page_owner), to Mathlib or as a declaration of
+    this project, each with the kind of its owner (`mathlib` or `atlas`): the one rule the importer applies to a
+    Mathlib-credited row and --check-map to an appended line with a Mathlib credit, as a declaration has one page. A row
+    whose credit sync_wiki cannot read one way (CreditError) is no claimant here, as sync_wiki's own checks refuse it;
+    nor is a row an earlier sync wrote with a module and a name only, which credits the declaration the Lean index gives
+    it, as the build resolves; nor a row whose only link to the declaration is a Mathlib link without the `mathlib`
+    flag, a reference that credits nothing."""
+    found: dict[str, list[tuple[Path, str]]] = {name: [] for name in names}
+    for file_rows in files.values():
+        for annotation in file_rows:
+            page = sync.subject_path(annotation)
+            if page is None:
+                continue  # about no one page, which sync_wiki's own checks refuse
+            try:
+                owner, name, _module = sync.page_owner(annotation)
+            except sync.CreditError:
+                continue
+            if owner != "none" and name in found:
+                found[name].append((page, owner))
+    return found
+
+
+def claim_problems(name: str, claims: list[tuple[Path, str]], own: Path | None = None) -> list[str]:
+    """Each page that credits the Mathlib declaration *name* (see claimants) other than *own*, the page of an appended
+    line of the map; a declaration has one page."""
+    how = {"mathlib": "to Mathlib", "atlas": "as a declaration of this project"}
+    return [f"{repo_path(page)} credits {name} {how[owner]} too; a declaration has one page" for page, owner in claims
+            if own is None or page.resolve() != own.resolve()]
+
+
+def mathlib_problems(rows: list[Row]) -> list[str]:
+    """What keeps the manifest's Mathlib-credited rows from crediting their declarations as sync_wiki reads credit
+    (docs/BLUEPRINT.md, "Mathlib-credited pages"): the links folder's credits are ambiguous, which `sync_wiki.py
+    mathlib-names` refuses too (credited_mathlib); a declaration two rows name, or that a page already credits, to
+    Mathlib or as a declaration of this project (claimants), while a declaration has one page; or lake-manifest.json
+    pins no Mathlib revision, which the map records (pinned_mathlib). A row an earlier sync wrote with a module and a
+    name only credits a declaration of this project that the Lean index gives it, which the build resolves and the
+    importer does not. Whether the declaration is Mathlib's at that revision, in the module the row names, is not
+    checked here (docs/mathgraph-import.md, "The manifest")."""
+    credits = [row for row in rows if row.data["kind"] == "mathlib"]
+    if not credits:
+        return []
+    problems = []
+    _, unpinned = pinned_mathlib()
+    if unpinned:
+        problems.append(f"{unpinned}; the map records the Mathlib revision for a Mathlib-credited row")
+    files = sync.read_annotations()
+    _, ambiguous = sync.credited_mathlib(files)
+    problems += [f"the links folder's credits are ambiguous, as sync_wiki.py mathlib-names reads them: {problem}"
+                 for problem in ambiguous]
+    claims = claimants(files, {row.data["mathlib"]["declaration"] for row in credits})
+    first: dict[str, Row] = {}
+    for row in credits:
+        name = row.data["mathlib"]["declaration"]
+        if name in first:
+            problems.append(f"{row.where()}: mathlib/declaration {name} is also that of {first[name].where()}; a "
+                            "declaration has one page")
+        else:
+            problems += [f"{row.where()}: mathlib/declaration: {problem}"
+                         for problem in claim_problems(name, claims[name])]
+        first.setdefault(name, row)
+    return problems
+
+
+def written_credit_problems(rows: list[Row], pages: dict, annotations: dict[Path, list[dict]]) -> list[str]:
+    """What sync_wiki's credit check finds in the links folder as the change would leave it, its current rows and the
+    rows the change adds (credit_problems), and each new page whose row would credit otherwise than its manifest row
+    says (page_owner): its Mathlib declaration and module for a Mathlib-credited row, nothing for a planned one."""
+    files = sync.read_annotations()
+    after = {path: [*files.get(path, []), *annotations.get(path, [])] for path in {*files, *annotations}}
+    problems = [f"the links folder as the change would leave it: {problem}" for problem in sync.credit_problems(after)]
+    for row in rows:
+        data = row.data
+        expected = (("mathlib", data["mathlib"]["declaration"], data["mathlib"]["module"])
+                    if data["kind"] == "mathlib" else ("none", None, None))
+        try:
+            found = sync.page_owner(page_annotation(row, pages[row.key].path))
+        except sync.CreditError as error:
+            problems.append(f"{row.where()}: {error}")
+            continue
+        if found != expected:
+            problems.append(f"{row.where()}: sync_wiki would read its page's annotation as crediting "
+                            f"{credit_text(found)}, not {credit_text(expected)}")
+    return problems
+
+
+def credit_text(owner: tuple[str, str | None, str | None]) -> str:
+    """What sync_wiki.page_owner's reading of a row says it credits, in words."""
+    kind, name, module = owner
+    if kind == "mathlib":
+        return f"the Mathlib declaration {name}" + (f" in {module}" if module else "")
+    return f"the declaration {name} of this project" if kind == "atlas" else "no declaration"
 
 
 def page_identity(target: str, known: Wiki) -> tuple[dict | None, list[str]]:
@@ -781,7 +932,7 @@ def check_rows(rows: list[Row], raw: dict[str, dict], known: Wiki, problems: lis
 
 
 def check_planned(row: Row, problems: list[str]) -> None:
-    """The rules of a planned row that its schema does not state: digests, readiness and a definition's sections."""
+    """The rules of a row that its schema does not state: digests, readiness and a definition's sections."""
     data, where = row.data, row.where()
     if sha256(data["statement"]) != data["statement_sha256"]:
         problems.append(f"{where}: statement_sha256 is not the SHA-256 of its statement")
@@ -983,7 +1134,7 @@ def lay_out(directory: Path, kids: list, taken: dict[str, str], retired: set[str
         else:
             clash = taken.get(kid.slug.casefold())
         if clash is None and f"{here}/{kid.slug}" in retired:
-            clash = f"the address {PREFIX}{here}/{kid.slug}, which scripts/card-moves.jsonl records"
+            clash = f"the address {PREFIX}{here}/{kid.slug}, which the card move ledger records"
         if clash:
             problems.append(f"{repo_path(path)}/ cannot be made a folder: it collides with {clash}")
             continue
@@ -1004,7 +1155,7 @@ def name_page(page: Page, directory: Path, taken: dict[str, str], retired: set[s
     if reserved:
         clash = reserved
     elif f"{here}/{stem}" in retired:
-        clash = f"the address {PREFIX}{here}/{stem}, which scripts/card-moves.jsonl records"
+        clash = f"the address {PREFIX}{here}/{stem}, which the card move ledger records"
     if clash:
         problems.append(f"{page.row.where()}: its stem {stem} collides with {clash}, in {repo_path(directory)}; a stem "
                         "is never numbered, as a numbered name could hide a duplicate")
@@ -1121,7 +1272,7 @@ def listing_problems(container: wiki.Container, body: str) -> list[str]:
 
 
 def page_sections(page: Page, refs: list, pages: dict[str, Page]) -> list[tuple[str, str]]:
-    """A planned page's sections, each its title and its text; see docs/mathgraph-import.md, "Pages". A dependency
+    """A new page's sections, each its title and its text; see docs/mathgraph-import.md, "Pages". A dependency
     section with nothing to list is left out: no section claims that the page has no prerequisite."""
     data = page.row.data
     statement = [link(page, ref, pages) for kind, ref in refs if kind == "statement"]
@@ -1141,14 +1292,14 @@ def page_sections(page: Page, refs: list, pages: dict[str, Page]) -> list[tuple[
 
 
 def page_text(page: Page, sections: list[tuple[str, str]]) -> str:
-    """A planned page's Markdown: its title, its statement and its *sections* (see page_sections)."""
+    """A new page's Markdown: its title, its statement and its *sections* (see page_sections)."""
     data = page.row.data
     parts = [f"# {data['title']}", data["statement"], *(f"## {title}\n\n{text}" for title, text in sections)]
     return "\n\n".join(parts) + "\n"
 
 
 def read_as_written(page: Page, text: str, sections: list[tuple[str, str]]) -> bool:
-    """Whether Autoform reads a planned page's *text* as the importer wrote it (autoform_cli.markdown.article_parts):
+    """Whether Autoform reads a new page's *text* as the importer wrote it (autoform_cli.markdown.article_parts):
     its statement, and its *sections*, each with its title and its text."""
     parts = article_parts(text)
     return parts.statement == page.row.data["statement"] and [(section.title, section.body)
@@ -1156,16 +1307,23 @@ def read_as_written(page: Page, text: str, sections: list[tuple[str, str]]) -> b
 
 
 def page_annotation(row: Row, path: Path) -> dict:
-    """The annotation of a row's page at *path*: its fresh id and seed, and the pending prerequisites and `not_ready`
-    flag of a page that has any; never an `object`, `kind` or `status`."""
+    """The annotation of a row's page at *path*: its fresh id and seed; the pending prerequisites and `not_ready` flag
+    of a page that has any; and for a Mathlib-credited row, its Lean link to Mathlib's repository with the declaration
+    and its module, and Autoform's `mathlib` flag (docs/BLUEPRINT.md, "Mathlib-credited pages"). Never a `kind` or a
+    `status`, which lean-facts derives."""
     data = row.data
     annotation: dict = {"subject": [{"type": "generic", "uri": "../" + path.relative_to(wiki.VAULT).as_posix()}],
                         "id": article_id(data["seed"])}
+    if data["kind"] == "mathlib":
+        annotation["object"] = [{"type": "lean", "uri": sync.MATHLIB, "location": {
+            "declaration": data["mathlib"]["declaration"], "module": data["mathlib"]["module"]}}]
     own: dict = {"seed": {name: data["seed"][name] for name in ("source", "node", "revision")}}
     extensions: dict = {sync.OWN: own}
     if data["pending"]:
         own["pending"] = [{name: entry[name] for name in ("key", "kind", "reason")} for entry in data["pending"]]
         extensions[sync.NAMESPACE] = {"not_ready": True}
+    if data["kind"] == "mathlib":
+        extensions[sync.NAMESPACE] = {"mathlib": True}
     annotation["extensions"] = extensions
     return annotation
 
@@ -1177,9 +1335,13 @@ def map_row(row: Row, pages: dict[str, Page]) -> dict:
     digests = ("statement_sha256", "sketch_sha256", "mg_statement_sha256", "mg_sketch_sha256", "reference_sha256",
                "edges_sha256")
     # In the order map_line writes, so that each line the importer adds is as map_problems requires.
-    return {"key": row.key, "node": data["seed"]["node"], "revision": data["seed"]["revision"],
+    line = {"key": row.key, "node": data["seed"]["node"], "revision": data["seed"]["revision"],
             "page": repo_path(pages[row.key].path), **{name: data[name] for name in digests},
             "pending": [{name: entry[name] for name in ("key", "kind", "reason")} for entry in data["pending"]]}
+    if data["kind"] == "mathlib":
+        line["mathlib"] = {"declaration": data["mathlib"]["declaration"], "module": data["mathlib"]["module"],
+                           "rev": pinned_mathlib()[0]}
+    return line
 
 
 def after_own_list(text: str, line: str) -> str | None:
@@ -1323,6 +1485,7 @@ def make_plan(manifest: Path, digest: str) -> Plan:
         raise Refused(problems + unsafe)
     known = read_wiki(problems)
     resolved = check_rows(rows, raw, known, problems)
+    problems += mathlib_problems(rows)
     if problems:
         raise Refused(problems)
     taxonomy = wiki.load_taxonomy()
@@ -1343,7 +1506,7 @@ def make_plan(manifest: Path, digest: str) -> Plan:
                                 + (", a symbolic link" if taken.is_symlink() else ""))
                 return False
         if folder in known.retired:
-            problems.append(f"{PREFIX}{folder}/ cannot be made a folder: scripts/card-moves.jsonl records the address")
+            problems.append(f"{PREFIX}{folder}/ cannot be made a folder: the card move ledger records the address")
             return False
         if not make(parent):
             return False
@@ -1474,7 +1637,8 @@ def make_plan(manifest: Path, digest: str) -> Plan:
             if not one_link(line, href):
                 problems.append(f"{page.row.where()}: {line!r} would not be one link to {href}, as the title it shows "
                                 "breaks Markdown's link syntax; its dependency would be lost")
-        report.append(("file", repo_path(page.path), f"the planned page of {key}, in {page.why}"))
+        what = "Mathlib-credited" if page.row.data["kind"] == "mathlib" else "planned"
+        report.append(("file", repo_path(page.path), f"the {what} page of {key}, in {page.why}"))
         annotations[sync.links_file(page.path)].append(page_annotation(page.row, page.path))
         edges[page.path] = [pages[value].path if kind == "row" else value for _, (kind, value) in refs]
     for folder, kids in tops.items():
@@ -1502,8 +1666,9 @@ def make_plan(manifest: Path, digest: str) -> Plan:
             report += [("line", f"{repo_path(parent)}: {line}", "copies the part's new item, as "
                         "sync_wiki.with_part_lists keeps a part's list") for line in lines]
 
-    def append(path: Path, rows_out: list[dict], why_row) -> None:
-        text = "".join(json.dumps(entry, ensure_ascii=False) + "\n" for entry in rows_out)
+    def add(path: Path, rows_out: list[dict], why_row, place) -> None:
+        """Add *rows_out* to the JSON lines file *path*, each as json.dumps writes it, where *place* (the file's bytes,
+        empty when it is not there yet, and the rows) puts them: a file that is not there yet is made of them alone."""
         report.extend(("line", f"{repo_path(path)}: {json.dumps(entry, ensure_ascii=False)}", why_row(entry))
                       for entry in rows_out)
         unsafe = symlink_problem(path)
@@ -1511,14 +1676,34 @@ def make_plan(manifest: Path, digest: str) -> Plan:
             problems.append(unsafe or f"{repo_path(path)} is not a file")
         elif os.path.lexists(path):
             old = path.read_bytes()
-            edits[path] = (old, old + b"\n" * bool(old and not old.endswith(b"\n")) + text.encode("utf-8"))
+            edits[path] = (old, place(old, rows_out))
         else:
-            creates[path] = text
+            creates[path] = place(b"", rows_out).decode("utf-8")
             report.append(("file", repo_path(path), "a new file for the rows below"))
 
+    def appended(old: bytes, rows_out: list[dict]) -> bytes:
+        """*old* and *rows_out* after it, a line feed ending *old* first if it has none."""
+        return (old + b"\n" * bool(old and not old.endswith(b"\n"))
+                + "".join(json.dumps(entry, ensure_ascii=False) + "\n" for entry in rows_out).encode("utf-8"))
+
+    def inserted(old: bytes, rows_out: list[dict]) -> bytes:
+        """The links file *old* with *rows_out* where the sync puts rows (sync_wiki.inserted), with the links folder's
+        current defaults. On an unchanged, valid checkout the file's content raises no error here: read_wiki has read
+        every links file as the sync does (sync_wiki.read_annotations, which decodes it as UTF-8 and parses each of its
+        rows) and each row's subject (sync_wiki.subject_path, the read_subject that row_order makes), stopping the run
+        otherwise, and the rows the importer adds are its own. A failing stat, open or read, as of the folder's
+        defaults, and a file changed while the importer runs are not covered."""
+        return sync.inserted(old.decode("utf-8"), rows_out).encode("utf-8")
+
+    if any(row.data["kind"] == "mathlib" for row in rows):
+        problems += written_credit_problems(rows, pages, annotations)
+    # A links file takes each row where the sync puts one (sync_wiki.inserted): right after the row whose page's path
+    # comes last before its own, wherever that row stands, or first if none does. The map only grows at its end.
     for path, rows_out in annotations.items():
-        append(path, rows_out, lambda entry: f"the annotation of blueprint/{entry['subject'][0]['uri'][3:]}")
-    append(MAP, [map_row(row, pages) for row in rows], lambda entry: f"the map row of {entry['key']}")
+        add(path, rows_out, lambda entry: f"the annotation of blueprint/{entry['subject'][0]['uri'][3:]}, right after "
+            "the row whose page's path comes last before its own, wherever that row stands, or first if none does",
+            inserted)
+    add(MAP, [map_row(row, pages) for row in rows], lambda entry: f"the map row of {entry['key']}, at its end", appended)
     if MAP in creates or MAP in edits:
         written = edits[MAP][1] if MAP in edits else creates[MAP].encode("utf-8")
         problems += [f"the map the change would write is refused: {problem}"
@@ -1829,8 +2014,10 @@ def apply(plan: Plan) -> None:
 
 
 def print_plan(plan: Plan, applied: bool) -> None:
-    print(f"Manifest {plan.manifest}: SHA-256 {plan.digest}, {len(plan.rows)} planned rows")
-    for section, title in (("folder", "Folders to create"), ("file", "Files to create"), ("line", "Lines to append")):
+    kinds = Counter(row.data["kind"] for row in plan.rows)
+    print(f"Manifest {plan.manifest}: SHA-256 {plan.digest}, {len(plan.rows)} rows ({kinds['planned']} planned, "
+          f"{kinds['mathlib']} Mathlib-credited)")
+    for section, title in (("folder", "Folders to create"), ("file", "Files to create"), ("line", "Lines to add")):
         entries = [(item, rule) for kind, item, rule in plan.report if kind == section]
         print(f"\n{title}: {len(entries)}")
         for item, rule in entries:
@@ -1927,11 +2114,14 @@ def appended_problems(appended: list[tuple[int, dict]], commit: str, label: str)
     """What keeps each line appended to the map since *commit* from recording a page the same change adds, as an import
     writes them: the page is not in the commit's tree and is a file in the worktree, with no symbolic link on its path;
     it has exactly one annotation row, whose seed is the line's (source mathgraph, the line's node and revision), whose
-    id is the one that seed gives (article_id) and whose pending list, none when it records none, is the line's; and
-    the line's statement_sha256 and sketch_sha256 are those of the page (statement_sha256, sketch_sha256). The line's
-    mg_statement_sha256, mg_sketch_sha256, reference_sha256 and edges_sha256 come from mathgraph, which the importer
-    does not read, and are not checked. The lines of the map at *commit* are never checked against the pages, which
-    may have moved since."""
+    id is the one that seed gives (article_id), whose pending list, none when it records none, is the line's, and which
+    credits, as sync_wiki reads it (page_owner), the Mathlib declaration and module of the line's `mathlib`, which no
+    other page credits, to Mathlib or as a declaration of this project (claimants), and whose rev is the one
+    lake-manifest.json pins, or nothing when the line has no `mathlib`; and the line's statement_sha256 and
+    sketch_sha256 are those of the page (statement_sha256, sketch_sha256). The line's mg_statement_sha256,
+    mg_sketch_sha256, reference_sha256 and edges_sha256 come from mathgraph, which the importer does not read, and are
+    not checked; nor is whether the declaration is Mathlib's. The lines of the map at *commit* are never checked against
+    the pages, which may have moved since."""
     if not appended:
         return []
     problems = input_problems()
@@ -1939,6 +2129,11 @@ def appended_problems(appended: list[tuple[int, dict]], commit: str, label: str)
         return problems
     before = paths_at(commit, [row["page"] for _, row in appended])
     owners, doubled, _, _ = annotation_owners()
+    # The pages crediting each Mathlib declaration an appended line records (claimants), and the Mathlib revision
+    # lake-manifest.json pins.
+    names = {row["mathlib"]["declaration"] for _, row in appended if "mathlib" in row}
+    claims = claimants(sync.read_annotations(), names) if names else {}
+    pinned = pinned_mathlib() if names else (None, None)
     for number, row in appended:
         where, page = f"{label} line {number} ({row['key']}), appended since {commit}", wiki.ROOT / row["page"]
         unsafe = symlink_problem(page)
@@ -1981,6 +2176,22 @@ def appended_problems(appended: list[tuple[int, dict]], commit: str, label: str)
         elif row["sketch_sha256"] != found:
             problems.append(f"{where}: sketch_sha256 is {row['sketch_sha256']}, but its page's sketch, as Autoform "
                             f"reads it (the empty string when it has none), has the SHA-256 {found}")
+        credit = row.get("mathlib")
+        expected = ("mathlib", credit["declaration"], credit["module"]) if credit else ("none", None, None)
+        try:
+            owner = sync.page_owner(annotation)
+        except sync.CreditError as error:
+            problems.append(f"{where}: {error}")
+        else:
+            if owner != expected:
+                problems.append(f"{where}: its page's annotation credits {credit_text(owner)}, as sync_wiki reads it, "
+                                f"not {credit_text(expected)}")
+        if credit:
+            problems += [f"{where}: {problem}" for problem in claim_problems(credit["declaration"],
+                                                                             claims[credit["declaration"]], own=page)]
+        if credit and credit["rev"] != pinned[0]:
+            problems.append(f"{where}: mathlib/rev is {credit['rev']}, not the Mathlib revision lake-manifest.json "
+                            f"pins: {pinned[1] or pinned[0]}")
     return problems
 
 

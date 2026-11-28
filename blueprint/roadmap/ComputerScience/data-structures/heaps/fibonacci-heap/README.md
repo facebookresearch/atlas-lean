@@ -91,3 +91,4 @@
 - [Decrease-key preserves the number of elements](decrease-key-card-elements.md)
 - [Minimum after decrease-key](decrease-key-find-min.md)
 - [Decrease-key yields a valid forest](decrease-key-valid.md)
+- [Rank bound and amortized costs of Fibonacci heaps](rank-bound-and-amortized-costs-of-fibonacci-heaps.md)

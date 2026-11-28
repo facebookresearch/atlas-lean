@@ -137,7 +137,9 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 /-- The **one-sided exact allelic p-value** of a case–control variant: `X ω` copies of the tested
 allele among `n₁` case alleles and `Y ω` among `n₂` control alleles. It is the upper Fisher exact
 p-value of `X` given the margin `X + Y`. The margin is capped at `n₁ + n₂`, which changes nothing
-under the null (where `X ≤ n₁` and `Y ≤ n₂` almost surely) and makes the definition total. -/
+under the null (where `X ≤ n₁` and `Y ≤ n₂` almost surely) and makes the definition total. Off
+that support the value can be degenerate: it is `0` when `X ω > n₁`, and `1` when
+`X ω + Y ω > n₁ + n₂` and `X ω ≤ n₁`. -/
 noncomputable def allelicPValue (n₁ n₂ : ℕ) (X Y : Ω → ℕ) (ω : Ω) : ℝ :=
   fisherUpperPValue n₁ n₂ (min (X ω + Y ω) (n₁ + n₂)) (min_le_right _ _) X ω
 
@@ -164,7 +166,7 @@ variable {n₁ n₂ : ℕ} {f : I} {X Y : Ω → ℕ}
 `Y ~ Bin(n₂, f)` independent, with common allele frequency `0 < f < 1`), the allelic p-value is
 valid under `μ`: `μ {allelicPValue ≤ s} ≤ s` for `s ∈ [0, 1]`, whatever the value of `f`.
 
-This holds only under that null. It is a per-variant statement; it says nothing about the joint
+The statement assumes that null. It is a per-variant statement; it says nothing about the joint
 law of the p-values of different variants.
 
 Source: Lehmann–Romano (2005), §4.5 and Lemma 3.3.1. -/
@@ -181,8 +183,9 @@ theorem isValidPValue_allelicPValue [IsProbabilityMeasure μ] (hf₀ : 0 < f) (h
   filter_upwards [ae_le_of_hasLaw_binomial hX, ae_le_of_hasLaw_binomial hY] with ω h₁ h₂
   omega
 
-/-- **Calibration of the exact allelic test at attainable levels.** Under the stated null, given
-the allele-count margin `X + Y = t ≤ n₁ + n₂`, the allelic p-value is exactly calibrated at each
+/-- **Calibration of the exact allelic test at attainable levels.** If `X ~ Bin(n₁, f)` and
+`Y ~ Bin(n₂, f)` are measurable and independent under `μ`, with `0 < f < 1`, then given the
+allele-count margin `X + Y = t ≤ n₁ + n₂`, the allelic p-value is exactly calibrated at each
 attainable level `s = P_H(X ≥ k)`, where `H = H(n₁ + n₂, n₁, t)` is the hypergeometric null law:
 `P(allelicPValue ≤ s | X + Y = t) = s`. -/
 theorem cond_allelicPValue_le_upperTail (hf₀ : 0 < f) (hf₁ : f < 1) (hXm : Measurable X)
@@ -231,10 +234,9 @@ def DependenceRegime.Holds {m : ℕ} (r : DependenceRegime) (μ : Measure Ω) [I
   | .arbitrary => True
 
 /-- **The hypotheses a genome-wide BH/BY pipeline needs** from `m` per-variant p-values `p` with
-(unknown) true-null set `H0`, in dependence regime `r`. They are assumptions for the pipeline,
-not proved here: `null_valid` is supplied per variant (for the allelic test by
-`isValidPValue_allelicPValue`, only under its stated null); `dependence` must be justified
-separately for the variants at hand. -/
+(unknown) true-null set `H0`, in dependence regime `r`. They are assumptions for the pipeline:
+`null_valid` is supplied per variant (for the allelic test by `isValidPValue_allelicPValue`, under
+its binomial null); `dependence` must be justified separately for the variants at hand. -/
 structure GenomeWideAssumptions {m : ℕ} (μ : Measure Ω) [IsProbabilityMeasure μ]
     (p : Fin m → Ω → ℝ) (H0 : Finset (Fin m)) (r : DependenceRegime) : Prop where
   /-- Every p-value is measurable. -/

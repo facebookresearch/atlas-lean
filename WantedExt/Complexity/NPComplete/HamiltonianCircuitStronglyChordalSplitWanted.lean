@@ -18,7 +18,7 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [GT37] HAMILTONIAN CIR
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.HamiltonianCircuitSplitGraphsWanted
@@ -47,7 +47,7 @@ for strongly chordal split graphs." The ISGCI database lists HAMILTONIAN CYCLE a
 the class "split ∩ strongly chordal" (gc_315), citing Müller.
 
 The instance, its well-formedness and the question are those of
-`WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
+`CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs` ([GT37]: a simple graph on
 `Fin n` given by an edge list; a Hamiltonian circuit needs at least three vertices). The
 restriction conjoins the two class predicates already used for this class by
 `StronglyChordalSplitHamiltonianPathWanted` (HAMILTONIAN PATH on the same class):

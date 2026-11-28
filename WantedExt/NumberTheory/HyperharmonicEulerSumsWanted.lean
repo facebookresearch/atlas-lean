@@ -12,193 +12,16 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.NumberTheory.CatalanOddMultipleHarmonicDivTsum
+public import MathlibExt.NumberTheory.CentralBinomialBetaPartialFractions
+public import MathlibExt.NumberTheory.HyperharmonicEulerCentralBinomial
+public import MathlibExt.NumberTheory.HyperharmonicEulerSums
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Real
-
-/-- **Generalized hyperharmonic numbers.** For natural numbers $n$ and $k$ and a complex number
-$r$, the generalized hyperharmonic number $H_n^{[r]}(k)$ is $0$ when $k > n$; when $k \le n$ it is
-the elementary symmetric polynomial of degree $n - k$ in $r, r + 1, \ldots, r + n - 1$ divided by
-$n!$, that is,
-
-$$H_n^{[r]}(k) = \frac{1}{n!} \sum_{0 \le j_1 < \cdots < j_{n-k} < n} \prod_{i=1}^{n-k} (r + j_i).$$
-
-The source defines $H_n^{[r]}(k)$ in (2.4) by $(-1)^k k! \, H_n^{[r]}(k) = D_x^k \binom{n+r-x-1}{n}$
-at $x = 0$, where $D_x^k$ is the $k$-th derivative in $x$; the explicit form above follows from it.
-For $r = 1$ it is the depth-$k$ multiple harmonic number, and for
-$r \notin \{0, -1, \ldots, 1 - n\}$ it equals
-$\binom{n+r-1}{n} \sum_{1 \le i_1 < \cdots < i_k \le n} \prod_{j=1}^{k} 1/(i_j + r - 1)$,
-see (2.10).
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Section 2, (2.4) and (2.10) (`integers-2026-A81-cor-1`). -/
-noncomputable def generalizedHyperharmonic (n k : ℕ) (r : ℂ) : ℂ :=
-  if k ≤ n then
-    (∑ s ∈ (Finset.range n).powersetCard (n - k), ∏ j ∈ s, (r + j)) / n.factorial
-  else 0
-
-/-- **Generalized hyperharmonic numbers vanish for $k > n$.** For all natural numbers $n$ and $k$
-with $n < k$ and every complex number $r$, the generalized hyperharmonic number $H_n^{[r]}(k)$
-equals $0$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Section 2, (2.4) (`integers-2026-A81-cor-1`). -/
-theorem generalizedHyperharmonic_of_lt {n k : ℕ} (h : n < k) (r : ℂ) :
-    generalizedHyperharmonic n k r = 0 := by
-  simp [generalizedHyperharmonic, Nat.not_le.mpr h]
-
-/-- **Generalized hyperharmonic numbers with both indices zero.** For every complex number $r$,
-the generalized hyperharmonic number $H_0^{[r]}(0)$ equals $1$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Section 2, (2.4) (`integers-2026-A81-cor-1`). -/
-@[simp]
-theorem generalizedHyperharmonic_zero_zero (r : ℂ) : generalizedHyperharmonic 0 0 r = 1 := by
-  simp [generalizedHyperharmonic]
-
-/-- **The value $H_1^{[r]}(0) = r$.** For every complex number $r$, the generalized
-hyperharmonic number $H_1^{[r]}(0)$ equals $r$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Section 2, (2.4) (`integers-2026-A81-cor-1`). -/
-theorem generalizedHyperharmonic_one_zero (r : ℂ) : generalizedHyperharmonic 1 0 r = r := by
-  simp [generalizedHyperharmonic, Finset.range_one, Finset.powersetCard_one]
-
-/-- **The value $H_1^{[r]}(1) = 1$.** For every complex number $r$, the generalized
-hyperharmonic number $H_1^{[r]}(1)$ equals $1$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Section 2, (2.4) (`integers-2026-A81-cor-1`). -/
-theorem generalizedHyperharmonic_one_one (r : ℂ) : generalizedHyperharmonic 1 1 r = 1 := by
-  simp [generalizedHyperharmonic]
-
-/-- **Generalized hyperharmonic Euler sum.** For an integer $k \ge 0$, complex numbers $r$ and
-$a$ and an integer $p$, the generalized hyperharmonic Euler sum is
-$S(k, r; p; a) = \sum_{n \ge k} H_n^{[r]}(k) / (n + a)^p$, where $H_n^{[r]}(k)$ is the
-generalized hyperharmonic number. A term whose denominator $(n + a)^p$ vanishes counts as $0$,
-and $S(k, r; p; a) = 0$ when the series is not summable.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 1 display (`integers-2026-A81-cor-1`). -/
-noncomputable def hyperharmonicEulerSum (k : ℕ) (r : ℂ) (p : ℤ) (a : ℂ) : ℂ :=
-  ∑' n : ℕ, generalizedHyperharmonic (n + k) k r / (((n + k : ℕ) : ℂ) + a) ^ p
-
-/-- **Hyperharmonic Euler sums as sums over all indices.** For every integer $k \ge 0$, complex
-numbers $r$ and $a$, and integer $p$, write $H_n^{[r]}(k)$ for the generalized hyperharmonic
-number. Then the hyperharmonic Euler sum $S(k, r; p; a) = \sum_{n \ge k} H_n^{[r]}(k) / (n + a)^p$
-equals $\sum_{n \ge 0} H_n^{[r]}(k) / (n + a)^p$, because $H_n^{[r]}(k) = 0$ for $n < k$.
-
-Both sides are the sums of the series in the sense of unconditional summation, with the value $0$
-assigned to a series that does not converge, and a term with $n + a = 0$ and $p \ne 0$ is read as
-$0$, so the identity holds without any hypothesis.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 1 display (`integers-2026-A81-cor-1`). -/
-theorem hyperharmonicEulerSum_eq_tsum (k : ℕ) (r : ℂ) (p : ℤ) (a : ℂ) :
-    hyperharmonicEulerSum k r p a =
-      ∑' n : ℕ, generalizedHyperharmonic n k r / ((n : ℂ) + a) ^ p := by
-  unfold hyperharmonicEulerSum
-  refine (add_left_injective k).tsum_eq
-    (f := fun n : ℕ => generalizedHyperharmonic n k r / ((n : ℂ) + a) ^ p) ?_
-  intro n hn
-  by_cases h : k ≤ n
-  · exact ⟨n - k, by simp only; omega⟩
-  · exact absurd (by simp [generalizedHyperharmonic_of_lt (Nat.lt_of_not_le h)]) hn
-
-/-- **Odd multiple harmonic numbers.** For natural numbers $k$ and $n$, the depth-$k$ odd
-harmonic number is the real number
-$$O_n(k) = \sum_{1 \le i_1 < \cdots < i_k \le n} \prod_{j=1}^{k} \frac{1}{i_j - 1/2}.$$
-In particular $O_n(0) = 1$ (the empty product) and $O_n(k) = 0$ for $k > n$ (the empty sum).
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, (1.8) and (2.11) (`integers-2026-A81-cor-1`). -/
-noncomputable def oddMultipleHarmonic (k n : ℕ) : ℝ :=
-  ∑ s ∈ (Finset.Icc 1 n).powersetCard k, ∏ i ∈ s, ((i : ℝ) - 1 / 2)⁻¹
-
-/-- **Odd multiple harmonic numbers of depth zero.** For every natural number $n$, the
-depth-zero odd harmonic number $O_n(0)$ equals $1$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, (2.11) (`integers-2026-A81-cor-1`). -/
-@[simp]
-theorem oddMultipleHarmonic_zero (n : ℕ) : oddMultipleHarmonic 0 n = 1 := by
-  simp [oddMultipleHarmonic]
-
-/-- **Vanishing of odd multiple harmonic numbers of large depth.** For natural numbers $k$ and
-$n$ with $k > n$, the depth-$k$ odd harmonic number $O_n(k)$ equals $0$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, (2.11) (`integers-2026-A81-cor-1`). -/
-theorem oddMultipleHarmonic_of_lt {k n : ℕ} (h : n < k) : oddMultipleHarmonic k n = 0 := by
-  have hcard : (Finset.Icc 1 n).card < k := by simpa using h
-  simp [oddMultipleHarmonic, Finset.powersetCard_eq_empty.mpr hcard]
-
-/-- **The first odd harmonic number.** The depth-one odd harmonic number $O_1(1)$ equals $2$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, (2.11) (`integers-2026-A81-cor-1`). -/
-theorem oddMultipleHarmonic_one_one : oddMultipleHarmonic 1 1 = 2 := by
-  simp [oddMultipleHarmonic, Finset.powersetCard_one]
-  norm_num
-
-/-- **The algebra generated by $\log 2$, $\pi^2$ and odd zeta values.** This is the
-$\mathbb{Q}$-subalgebra of $\mathbb{C}$ generated by $\log 2$, $\pi^2$ and the zeta values
-$\zeta(3), \zeta(5), \zeta(7), \dots$ (that is, $\zeta(2j+1)$ for all integers $j \ge 1$). It is
-written $\mathbb{Q}[\log 2, \pi^2, \zeta(3), \zeta(5), \dots]$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 2 (`integers-2026-A81-cor-2`). -/
-noncomputable def eulerSumPeriodAlgebra : Subalgebra ℚ ℂ :=
-  Algebra.adjoin ℚ
-    ({(Real.log 2 : ℂ), (π : ℂ) ^ 2} ∪ Set.range fun j : ℕ => riemannZeta (2 * j + 3))
-
-/-- **Generators of the Euler sum period algebra.** The numbers $\log 2$ and $\pi^2$ and the odd
-zeta values $\zeta(2j + 3)$ for all integers $j \ge 0$ lie in the $\mathbb{Q}$-subalgebra
-$\mathbb{Q}[\log 2, \pi^2, \zeta(2j+1)_{j \ge 1}]$ of $\mathbb{C}$ that they generate.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 2 (`integers-2026-A81-cor-2`). -/
-theorem generators_mem_eulerSumPeriodAlgebra :
-    (Real.log 2 : ℂ) ∈ eulerSumPeriodAlgebra ∧ (π : ℂ) ^ 2 ∈ eulerSumPeriodAlgebra ∧
-      ∀ j : ℕ, riemannZeta (2 * j + 3) ∈ eulerSumPeriodAlgebra :=
-  ⟨Algebra.subset_adjoin (by simp), Algebra.subset_adjoin (by simp),
-    fun j => Algebra.subset_adjoin (Or.inr ⟨j, rfl⟩)⟩
-
-/-- **The algebra generated by $\log 2$, $\pi$, odd zeta values and even beta values.** For
-integers $s \ge 2$ let $\beta(s) = \sum_{n \ge 0} (-1)^n / (2n+1)^s$ be the value of the Dirichlet
-beta function. This is the $\mathbb{Q}$-subalgebra of $\mathbb{C}$ generated by $\log 2$, $\pi$,
-the zeta values $\zeta(2j+1)$ for all integers $j \ge 1$ and the beta values $\beta(2j)$ for all
-integers $j \ge 1$. It is written
-$\mathbb{Q}[\log 2, \pi, \zeta(2j+1)_{j \ge 1}, \beta(2j)_{j \ge 1}]$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 6 (`integers-2026-A81-cor-6`). -/
-noncomputable def eulerSumBetaPeriodAlgebra : Subalgebra ℚ ℂ :=
-  Algebra.adjoin ℚ
-    ({(Real.log 2 : ℂ), (π : ℂ)} ∪ Set.range (fun j : ℕ => riemannZeta (2 * j + 3)) ∪
-      Set.range fun j : ℕ =>
-        ((∑' n : ℕ, (-1 : ℝ) ^ n / (2 * n + 1 : ℝ) ^ (2 * j + 2) : ℝ) : ℂ))
-
-/-- **Generators of the Euler sum beta period algebra.** The numbers $\log 2$ and $\pi$, the zeta
-values $\zeta(2j + 3)$ for all integers $j \ge 0$, and the Dirichlet beta values
-$\beta(2j + 2) = \sum_{n \ge 0} (-1)^n / (2n + 1)^{2j+2}$ for all integers $j \ge 0$ lie in the
-$\mathbb{Q}$-subalgebra $\mathbb{Q}[\log 2, \pi, \zeta(2j+1)_{j \ge 1}, \beta(2j)_{j \ge 1}]$ of
-$\mathbb{C}$ that they generate.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 6 (`integers-2026-A81-cor-6`). -/
-theorem generators_mem_eulerSumBetaPeriodAlgebra :
-    (Real.log 2 : ℂ) ∈ eulerSumBetaPeriodAlgebra ∧ (π : ℂ) ∈ eulerSumBetaPeriodAlgebra ∧
-      (∀ j : ℕ, riemannZeta (2 * j + 3) ∈ eulerSumBetaPeriodAlgebra) ∧
-      ∀ j : ℕ, ((∑' n : ℕ, (-1 : ℝ) ^ n / (2 * n + 1 : ℝ) ^ (2 * j + 2) : ℝ) : ℂ) ∈
-        eulerSumBetaPeriodAlgebra :=
-  ⟨Algebra.subset_adjoin (by simp), Algebra.subset_adjoin (by simp),
-    fun j => Algebra.subset_adjoin (Or.inl (Or.inr ⟨j, rfl⟩)),
-    fun j => Algebra.subset_adjoin (Or.inr ⟨j, rfl⟩)⟩
 
 /-- **Beta-function evaluation of hyperharmonic Euler sums.** Let $k, p \ge 0$ be integers and
 let $r, a$ be complex numbers with $\operatorname{Re}(r) < p + 1$ and $\operatorname{Re}(a) > -k$,
@@ -276,23 +99,6 @@ public theorem_wanted hyperharmonicEulerSum_rat_mem_pi_mul_adjoin (a r : ℚ)
             {(π : ℂ) ^ 2} ∪ Set.range fun j : ℕ => riemannZeta (2 * j + 3)),
         hyperharmonicEulerSum k r p a = π * x
 
-/-- **Duality for hyperharmonic Euler sums.** Let $k, p \ge 0$ be integers and let $r, t$ be
-complex numbers with $\operatorname{Re}(r) < p + 1$ and $\operatorname{Re}(t) < k + 1$. Write
-$H_n^{[r]}(k)$ for the generalized hyperharmonic number. Then the series
-$S(k, r; p + 1; 1 - t) = \sum_{n \ge k} H_n^{[r]}(k) / (n + 1 - t)^{p+1}$ and
-$S(p, t; k + 1; 1 - r) = \sum_{n \ge p} H_n^{[t]}(p) / (n + 1 - r)^{k+1}$ both converge absolutely,
-and $S(k, r; p + 1; 1 - t) = S(p, t; k + 1; 1 - r)$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 1 (`integers-2026-A81-cor-1`). -/
-public theorem_wanted hyperharmonicEulerSum_duality (k p : ℕ) (r t : ℂ) (hr : r.re < p + 1)
-    (ht : t.re < k + 1) :
-    Summable (fun n : ℕ =>
-        generalizedHyperharmonic (n + k) k r / (((n + k : ℕ) : ℂ) + (1 - t)) ^ ((p : ℤ) + 1)) ∧
-      Summable (fun n : ℕ =>
-        generalizedHyperharmonic (n + p) p t / (((n + p : ℕ) : ℂ) + (1 - r)) ^ ((k : ℤ) + 1)) ∧
-      hyperharmonicEulerSum k r (p + 1) (1 - t) = hyperharmonicEulerSum p t (k + 1) (1 - r)
-
 /-- **Hyperharmonic Euler sums with integer parameter and half-integer shift.** Let $k \ge 0$, $r$
 and $p$ be integers with $1 \le r < p$, and let $a \in \frac{1}{2} + \mathbb{Z}$. Write
 $H_n^{[r]}(k)$ for the generalized hyperharmonic number. Then the series
@@ -328,21 +134,6 @@ public theorem_wanted centralBinom_oddMultipleHarmonic_sum_mem_eulerSumPeriodAlg
         ((2 * n).choose n : ℝ) * oddMultipleHarmonic k n / (4 ^ n * ((n : ℝ) + a) ^ p)) ∧
       ((∑' n : ℕ, ((2 * n).choose n : ℝ) * oddMultipleHarmonic k n /
           (4 ^ n * ((n : ℝ) + a) ^ p) : ℝ) : ℂ) ∈ eulerSumPeriodAlgebra
-
-/-- **Central binomial odd harmonic sum with denominator $4^n (n + 1)^2$.** For every integer
-$k \ge 0$, with $O_n(k)$ the depth-$k$ odd harmonic number,
-$$\sum_{n \ge 0} \frac{\binom{2n}{n} O_n(k)}{4^n (n + 1)^2} =
-2^{k+2} (k + 1 - \log 2) - \sum_{j=1}^{k} (2^{k+2} - 2^j) \zeta(k + 2 - j).$$
-
-The terms with $n < k$ vanish, since $O_n(k) = 0$ for $n < k$.
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 3 (`integers-2026-A81-cor-3`). -/
-public theorem_wanted centralBinom_oddMultipleHarmonic_div_succ_sq_tsum (k : ℕ) :
-    ((∑' n : ℕ, ((2 * n).choose n : ℝ) * oddMultipleHarmonic k n /
-        (4 ^ n * ((n : ℝ) + 1) ^ 2) : ℝ) : ℂ) =
-      2 ^ (k + 2) * (k + 1 - Real.log 2) -
-        ∑ j ∈ Finset.Icc 1 k, (2 ^ (k + 2) - 2 ^ j) * riemannZeta ((k + 2 - j : ℕ) : ℂ)
 
 /-- **Odd harmonic central binomial sums with weight $\binom{n}{m}$ at integer shifts.** Let
 $k, m \ge 0$ and $p > m$ be integers, let $a$ be an integer with $a > -k$, and let $O_n(k)$
@@ -380,21 +171,6 @@ public theorem_wanted centralBinom_oddMultipleHarmonic_div_choose_sum_mem_eulerS
       ((∑' n : ℕ, ((2 * n).choose n : ℝ) * oddMultipleHarmonic k n /
           (4 ^ n * ((n + m).choose m : ℝ) * ((n : ℝ) + a) ^ p) : ℝ) : ℂ) ∈
         eulerSumPeriodAlgebra
-
-/-- **Catalan–odd harmonic sum with denominator $4^n n$.** Let $k \ge 1$ be an integer, let $C_n$
-denote the $n$-th Catalan number and $O_n(k)$ the depth-$k$ odd harmonic number. Then
-$$\sum_{n \ge 1} \frac{C_n O_n(k)}{4^n n} = (2^{k+1} - 1) \zeta(k + 1) - 2^{k+1}.$$
-
-Since $O_n(k) = 0$ for $n < k$, the sum can equally be taken over $n \ge k$.
-
-Source: the denominator $4^n n$ is read from the record's two-row layout ($C_n O_n(k)$ over
-$4^n n$).
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 5 (`integers-2026-A81-cor-5`). -/
-public theorem_wanted catalan_oddMultipleHarmonic_div_tsum (k : ℕ) (hk : 0 < k) :
-    ((∑' n : ℕ, (catalan n : ℝ) * oddMultipleHarmonic k n / (4 ^ n * n) : ℝ) : ℂ) =
-      (2 ^ (k + 1) - 1) * riemannZeta (k + 1) - 2 ^ (k + 1)
 
 /-- **Quarter-shift hyperharmonic Euler sums.** Let $k \ge 0$ and $0 \le r < p$ be integers, and
 let $a$ be a complex number with $a \in \tfrac14 + \mathbb{Z}$ or $a \in \tfrac34 + \mathbb{Z}$.
@@ -488,20 +264,6 @@ public theorem_wanted catalan_oddMultipleHarmonic_half_sum_sub_mem_pi_mul (k p :
       ∃ x ∈ eulerSumPeriodAlgebra,
         ((∑' n : ℕ, (catalan n : ℝ) * oddMultipleHarmonic k n /
           (4 ^ n * ((n : ℝ) + 1 / 2) ^ p) : ℝ) : ℂ) - (-2) ^ p * 2 ^ (k + 1) = π * x
-
-/-- **Central binomial sum over $\binom{n+m}{m} (n + 1/2)^2$.** Let $m \ge 1$ be an integer and
-write $O_m = O_m(1) = \sum_{i=1}^{m} 1/(i - 1/2)$ for the depth-one odd harmonic number. Then
-$$\sum_{n \ge 0} \frac{\binom{2n}{n}}{4^n \binom{n+m}{m} (n + 1/2)^2} =
-\frac{4^m \pi}{\binom{2m}{m}} \bigl(2 \log 2 - O_m\bigr) -
-\sum_{q=1}^{m} \frac{(-4)^q \binom{m}{q}}{\binom{2q}{q} (q - 1/2)^2}.$$
-
-Source: Paul Thomas Young, *Parametric Euler Sums of Generalized Hyperharmonic Numbers*,
-INTEGERS 26 (2026), Article A81, Corollary 9, first identity (`integers-2026-A81-cor-9`). -/
-public theorem_wanted centralBinom_div_choose_half_sq_tsum (m : ℕ) (hm : 0 < m) :
-    ∑' n : ℕ, ((2 * n).choose n : ℝ) / (4 ^ n * ((n + m).choose m : ℝ) * ((n : ℝ) + 1 / 2) ^ 2) =
-      4 ^ m * π / ((2 * m).choose m : ℝ) * (2 * Real.log 2 - oddMultipleHarmonic 1 m) -
-        ∑ q ∈ Finset.Icc 1 m,
-          (-4 : ℝ) ^ q * (m.choose q : ℝ) / (((2 * q).choose q : ℝ) * ((q : ℝ) - 1 / 2) ^ 2)
 
 /-- **Odd harmonic central binomial sum over $\binom{n+m}{m} (n + 1/2)^2$.** Let $m \ge 1$ be an
 integer and write $O_j = O_j(1) = \sum_{i=1}^{j} 1/(i - 1/2)$ for the depth-one odd harmonic

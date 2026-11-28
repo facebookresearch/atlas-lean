@@ -9,8 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Complexity.Algebraic.RectangularCircuitExponent
+public import CSLibExt.Complexity.Algebraic.DualMatrixMultiplicationBounds
 public import Mathlib.Algebra.CharP.Basic
+public import CSLibExt.Complexity.Algebraic.DualMatrixMultiplicationBoundsRectangularOperationRankBridge
+public import CSLibExt.Complexity.Algebraic.DualMatrixMultiplicationBoundsRectangularNaiveUpper
 
 /-!
 # Dual matrix-multiplication exponent: source-bound requests
@@ -35,13 +37,6 @@ namespace Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted
 open Cslib.Complexity.Algebraic
 
 universe u v
-
-/-- **Dual exponent at most one.** For every field $F$, the dual matrix multiplication
-exponent $\alpha(F)$ of the arithmetic-circuit model satisfies $\alpha(F) \le 1$.
-
-Source: C15b, CLLZ2025 Figure 2, the general upper bound, not a method-specific barrier. -/
-theorem_wanted upperBoundOne :
-    ∀ (F : Type u) [Field F], dualCircuitExponent F ≤ 1
 
 /-- **Coppersmith's rectangular exponent.** For every field $F$, the rectangular matrix
 multiplication exponent of the arithmetic-circuit model at aspect $0.172$ equals $2$: an
@@ -83,25 +78,6 @@ $\alpha(F) > 0.321334$.
 Source: C15b/WXXZ2024 introduction, the best displayed lower bound is strict. -/
 theorem_wanted williamsXuXuZhou2024StrictLower :
     ∀ (F : Type u) [Field F], ENNReal.ofReal ((321334 : ℝ) / 1000000) < dualCircuitExponent F
-
-/-- **Naive bound for rectangular matrix multiplication.** For every field $F$ and every real
-$k \ge 0$, the rectangular matrix multiplication exponent of the arithmetic-circuit model at
-aspect $k$ is at most $2 + k$.
-
-Source: CLLZ rectangular naive upper bound; a general finite circuit construction is missing. -/
-theorem_wanted rectangularNaiveUpper :
-    ∀ (F : Type u) [Field F] (k : ℝ), 0 ≤ k →
-      rectangularCircuitExponent F k ≤ ENNReal.ofReal (2 + k)
-
-/-- **Circuit size and tensor rank give the same rectangular exponent.** For every infinite field
-$F$ and every real $k \ge 0$, the rectangular matrix multiplication exponent at aspect $k$ defined
-by arithmetic-circuit size equals the one defined by tensor rank.
-
-Source: LG2012 exact bilinear-rank characterization; the operation/rank transfer is missing. -/
-theorem_wanted rectangularOperationRankBridge :
-    ∀ (F : Type u) [Field F] [Infinite F] (k : ℝ), 0 ≤ k →
-      rectangularCircuitExponent F k =
-        MatrixMultiplicationExponent.rectangularMatrixMultiplicationExponent F k
 
 /-- **The rectangular exponent depends only on the characteristic.** If two infinite fields $F$
 and $K$ have the same characteristic, then for every real $k \ge 0$ the rectangular matrix

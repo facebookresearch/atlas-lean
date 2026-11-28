@@ -20,7 +20,7 @@ doi:10.1145/800133.804355 (Theorem 13 and the closing remark of Section 4).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
@@ -38,7 +38,7 @@ INSTANCE: a graph `G = (V, E)` and a positive integer `K ≤ |E|`. QUESTION: is 
 `E' ⊆ E` with `|E'| ≥ K` such that `G' = (V, E')` is connected and bipartite?
 
 This is BIPARTITE SUBGRAPH (Garey and Johnson [GT25], on `main` as the equivalent
-`MaxCutWanted`) with the connectivity requirement of the [GT25] comment, credited to
+`MaxCutDefs`) with the connectivity requirement of the [GT25] comment, credited to
 [Yannakakis, 1978b]. Yannakakis (1978) proves the edge-deletion "bipartite" (simple max cut)
 problem NP-complete (Theorem 13) and closes Section 4 with "for all the above properties the
 edge deletion problem remains NP-complete if we include a connectivity requirement"; the

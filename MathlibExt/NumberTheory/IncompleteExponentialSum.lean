@@ -20,8 +20,8 @@ first two terms of the partial-fraction expansion
 `π / sin(πx) = 1/x + ∑_{n ≥ 1} (-1)^(n+1) 2x / (n² - x²)`.
 
 This is Lemma 3.1 of Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*,
-INTEGERS 25 (2025), Article A48, quoted there from [3, Lemma 2.2]. The other statements of that
-paper are still wanted in `WantedExt.NumberTheory.IncompleteExponentialSumWanted`.
+INTEGERS 25 (2025), Article A48, quoted there from [3, Lemma 2.2]. Further statements from that
+paper appear in `WantedExt.NumberTheory.IncompleteExponentialSumWanted`.
 
 ## Proof outline
 

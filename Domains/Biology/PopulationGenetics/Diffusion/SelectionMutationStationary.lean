@@ -83,21 +83,26 @@ namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 /-- Normalizing constant (partition function) of the selection-mutation
 stationary density: the integral of `selectionMutationSpeedDensity` over
 `(0, 1)`. Defined for all real parameters by the interval-integral junk
-convention; the theorems assume `0 < θ₁` and `0 < θ₂`. This is an analytic
+convention; the theorems assume `0 < θ₁` and `0 < θ₂`. For `θ₁ ≤ 0` or `θ₂ ≤ 0` the
+density is not integrable on `[0, 1]` and the value is `0`. This is an analytic
 normalizer only, not a process construction. -/
 noncomputable def selectionMutationPartition (α θ₁ θ₂ : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..1, selectionMutationSpeedDensity α θ₁ θ₂ x
 
 /-- Stationary mean under selection-mutation balance: the normalized first
-moment of the speed density over `(0, 1)`. The ratio is junk when the
-normalizer vanishes; positivity is proved separately. -/
+moment of the speed density over `(0, 1)`. The integral of a non-integrable function is `0`
+(which makes the normalizer vanish for `θ₁ ≤ 0` or `θ₂ ≤ 0`), and with `x / 0 = 0` the ratio is `0`
+when the normalizer vanishes; that the normalizer is positive for `0 < θ₁`, `0 < θ₂` is proved
+separately. -/
 noncomputable def selectionMutationMean (α θ₁ θ₂ : ℝ) : ℝ :=
   (∫ x in (0 : ℝ)..1, x * selectionMutationSpeedDensity α θ₁ θ₂ x) /
     selectionMutationPartition α θ₁ θ₂
 
 /-- Stationary variance under selection-mutation balance: the normalized
 centered second moment of the speed density over `(0, 1)`, centered at
-`selectionMutationMean`. Junk when the normalizer vanishes. -/
+`selectionMutationMean`. The integral of a non-integrable function is `0` (which makes the
+normalizer vanish for `θ₁ ≤ 0` or `θ₂ ≤ 0`), and with `x / 0 = 0` the variance is `0` when the
+normalizer vanishes. The intended domain is `0 < θ₁`, `0 < θ₂`. -/
 noncomputable def selectionMutationVariance (α θ₁ θ₂ : ℝ) : ℝ :=
   (∫ x in (0 : ℝ)..1,
       (x - selectionMutationMean α θ₁ θ₂) ^ 2 *
@@ -456,8 +461,8 @@ theorem selectionMutationPartition_pos (α : ℝ) {θ₁ θ₂ : ℝ} (hθ₁ : 
   show 0 < selectionMutationSpeedDensity α θ₁ θ₂ x
   exact selectionSpeedDensity_pos_aux α θ₁ θ₂ x hx0 hx1
 
-/-- Derivative of the log partition function in the selection parameter:
-d/dα log Z equals twice the stationary mean. -/
+/-- Derivative of the log partition function in the selection parameter, for positive
+mutation parameters: d/dα log Z equals twice the stationary mean. -/
 theorem hasDerivAt_log_selectionMutationPartition (α : ℝ) {θ₁ θ₂ : ℝ}
     (hθ₁ : 0 < θ₁) (hθ₂ : 0 < θ₂) :
     HasDerivAt (fun α => Real.log (selectionMutationPartition α θ₁ θ₂))
@@ -470,8 +475,8 @@ theorem hasDerivAt_log_selectionMutationPartition (α : ℝ) {θ₁ θ₂ : ℝ}
   unfold selectionMutationMean
   ring
 
-/-- Derivative of the stationary mean in the selection parameter:
-d/dα mean equals twice the stationary variance. -/
+/-- Derivative of the stationary mean in the selection parameter, for positive mutation
+parameters: d/dα mean equals twice the stationary variance. -/
 theorem hasDerivAt_selectionMutationMean (α : ℝ) {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ₁)
     (hθ₂ : 0 < θ₂) :
     HasDerivAt (fun α => selectionMutationMean α θ₁ θ₂)
@@ -628,7 +633,8 @@ theorem selectionMutationVariance_pos (α : ℝ) {θ₁ θ₂ : ℝ} (hθ₁ : 0
   unfold selectionMutationVariance
   exact div_pos hpos hZpos
 
-/-- The stationary mean is strictly increasing in the selection parameter. -/
+/-- For positive mutation parameters, the stationary mean is strictly increasing in the
+selection parameter. -/
 theorem strictMono_selectionMutationMean {θ₁ θ₂ : ℝ} (hθ₁ : 0 < θ₁)
     (hθ₂ : 0 < θ₂) : StrictMono (fun α => selectionMutationMean α θ₁ θ₂) := by
   refine strictMono_of_hasDerivAt_pos

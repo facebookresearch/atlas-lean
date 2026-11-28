@@ -119,7 +119,7 @@ private lemma schnirelmannCount_add_lower {A B : Set ℕ} [DecidablePred (· ∈
       schnirelmannCount (A + B) n := by
   classical
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       let sA := {x ∈ Icc 0 n | x ∈ A}
       have hsA : sA.Nonempty := ⟨0, by simp [sA, hA]⟩
       let a := sA.max' hsA

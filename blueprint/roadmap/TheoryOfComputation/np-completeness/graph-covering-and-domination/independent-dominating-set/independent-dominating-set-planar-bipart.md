@@ -1,0 +1,3 @@
+# INDEPENDENT DOMINATING SET ON PLANAR BIPARTITE SUBCUBIC GRAPHS OF GIRTH AT LEAST 9 as a decision problem
+
+The decision problem INDEPENDENT DOMINATING SET ON PLANAR BIPARTITE SUBCUBIC GRAPHS OF GIRTH AT LEAST 9 accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance that is well-formed for INDEPENDENT DOMINATING SET ON PLANAR BIPARTITE SUBCUBIC GRAPHS OF GIRTH AT LEAST 9 and feasible for INDEPENDENT DOMINATING SET: some set $S$ of at most $K$ vertices contains or is adjacent to every vertex, and no two distinct vertices of $S$ are adjacent. It rejects every bitstring that does not decode to such an instance.

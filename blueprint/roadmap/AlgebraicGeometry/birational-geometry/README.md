@@ -1,5 +1,28 @@
 # Birational geometry and vanishing theorems
 
-Resolution of singularities and principalization of ideals in characteristic zero, vanishing theorems (Kodaira, Kawamata–Viehweg, Nadel), multiplier ideals, positivity of line bundles and divisors (nef and big classes, volumes), L² extension theorems, and the minimal model program. Rational maps of particular varieties, Cremona groups, linear systems on projective space and intersection multiplicities are under varieties and projective geometry, and complex manifolds as such under complex and symplectic geometry.
+Resolution of singularities and principalization of ideals in characteristic zero, and explicit resolutions such as that of the crossing xy = t^e over any commutative ring, vanishing theorems (Kodaira, Kawamata–Viehweg, Nadel), multiplier ideals, positivity of line bundles and divisors (nef and big classes, volumes), L² extension theorems with currents of integration and the Poincaré–Lelong formula, and, in subfields, singularities of pairs with the minimal model program and K-stability of Fano varieties. Rational maps of particular varieties, Cremona groups, linear systems on projective space and intersection multiplicities are under varieties and projective geometry, and complex manifolds as such under complex and symplectic geometry.
 
-- [Vanishing theorems and resolution of singularities in characteristic zero](vanishing-theorems-and-resolution-in-characteristic-zero.md)
+- [Simple normal crossing divisor](simple-normal-crossing-divisor.md)
+- [Resolution of singularities in characteristic zero](resolution-of-singularities/README.md)
+- [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md)
+- [Nef and big line bundles](nef-and-big-line-bundles.md)
+- [Intersection numbers and Riemann–Roch for nef line bundles](intersection-numbers-of-nef-line-bundles.md)
+- [Multiplier ideal of an effective Q-divisor](multiplier-ideal-of-a-q-divisor.md)
+- [Currents of integration and the support theorems](currents-of-integration.md)
+- [Poincaré–Lelong formula](poincare-lelong-formula.md)
+- [Integrated Poincaré–Lelong formula](integrated-poincare-lelong-formula.md)
+- [L² estimates for the ∂̄ operator](l2-estimates-for-the-dbar-operator.md)
+- [Nadel vanishing theorem for singular hermitian metrics](nadel-vanishing-for-singular-hermitian-metrics.md)
+- [Ohsawa–Takegoshi L² extension theorem](ohsawa-takegoshi-extension-theorem.md)
+- [L² extension from subvarieties defined by log canonical weights](l2-extension-from-log-canonical-subvarieties.md)
+- [Logarithmic de Rham complexes and E₁-degeneration](logarithmic-de-rham-complexes-and-e1-degeneration.md)
+- [Kodaira vanishing theorem](kodaira-vanishing-theorem.md)
+- [Volume of a line bundle](volume-of-a-line-bundle.md)
+- [Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md)
+- [Relative vanishing theorem for birational morphisms](relative-vanishing-for-birational-morphisms.md)
+- [Local vanishing theorem for multiplier ideals](local-vanishing-for-multiplier-ideals.md)
+- [Nadel vanishing theorem](nadel-vanishing-theorem.md)
+- [Nadel vanishing for pairs and separation of points by sections](nadel-vanishing-for-klt-pairs-and-point-separation.md)
+- [Seshadri constants of points in the plane](seshadri-constants-of-points-in-the-plane/README.md)
+- [Logarithmic Kodaira additivity for negative fibers](negative-fiber-log-kodaira-additivity.md)
+- [Eventual maximal multipoint Seshadri constants on surfaces](eventual-maximal-seshadri-constants.md)

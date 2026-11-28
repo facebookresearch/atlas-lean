@@ -11,3 +11,4 @@ Sylvester's coin theorem, Frobenius numbers, pseudo-Frobenius sets and numerical
 - [Primes in numerical semigroups with two generators](primes-in-numerical-semigroups-with-two-generato/README.md)
 - [Sylvester's coin theorem](sylvester-s-coin-theorem/README.md)
 - [Telescopic numerical semigroups](telescopic-numerical-semigroups/README.md)
+- [Two-generated numerical semigroups are symmetric](numerical-semigroup-two-generated-symmet.md)

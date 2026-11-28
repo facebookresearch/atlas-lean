@@ -10,12 +10,16 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Probability.Distributions.Geometric
 public import Mathlib.RingTheory.MvPolynomial.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.Combinatorics.Enumerative.SymmetricPeaksCompositions
+public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightBivariateGeneratingFunction
+public import MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction
+public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthClosedForm
+public import MathlibExt.Combinatorics.Enumerative.SymmetricValleyDepthGeneratingFunction
 
 /-!
 # Heights of symmetric peaks and depths of symmetric valleys over compositions
@@ -40,6 +44,11 @@ The trivariate generating functions of Theorems 1 and 3 are stated coefficientwi
 multivariate power series; Theorem 3 uses the corrected reading recorded in its docstring
 and audit row.
 
+The univariate generating function of `hsp(n)` in Lemma 1, (5) is proved in
+`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightGeneratingFunction`, and the bivariate
+generating function of `hsp(n, k)` in Lemma 1 in
+`MathlibExt.Combinatorics.Enumerative.SymmetricPeakHeightBivariateGeneratingFunction`.
+
 Not stated (see the source audit table): the bivariate part of Lemma 2 (false as
 extracted), Theorem 2(b) (false as extracted) and the variances of Theorem 6 (false as printed in the journal).
 -/
@@ -49,133 +58,6 @@ open MeasureTheory ProbabilityTheory PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Number of symmetric peaks.** For a finite word $w = w_1 w_2 \cdots w_m$ of natural
-numbers, a symmetric peak is a factor $w_i w_{i+1} w_{i+2}$ of three consecutive letters with
-$w_i = w_{i+2} < w_{i+1}$. The number of symmetric peaks of $w$ is the number of indices $i$
-with $1 \le i \le m - 2$ at which $w$ has a symmetric peak (overlapping peaks all count); it
-is $0$ when $m < 3$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Section 1 (symmetric peaks). -/
-def symmetricPeakCount : List ℕ → ℕ
-  | a :: b :: c :: t => (if a = c ∧ a < b then 1 else 0) + symmetricPeakCount (b :: c :: t)
-  | _ => 0
-
-/-- **Sum of the heights of symmetric peaks.** For a finite word $w = w_1 w_2 \cdots w_m$ of
-natural numbers, a symmetric peak is a factor $w_i w_{i+1} w_{i+2}$ of three consecutive
-letters with $w_i = w_{i+2} < w_{i+1}$, and its height is $w_{i+1} - w_i$. The symmetric peak
-height sum of $w$ is the sum of the heights of the symmetric peaks of $w$ over all indices $i$
-with $1 \le i \le m - 2$ at which one occurs; it is $0$ when $m < 3$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Section 1 (heights of symmetric peaks). -/
-def symmetricPeakHeightSum : List ℕ → ℕ
-  | a :: b :: c :: t =>
-      (if a = c ∧ a < b then b - a else 0) + symmetricPeakHeightSum (b :: c :: t)
-  | _ => 0
-
-/-- **Number of symmetric valleys of a word.** For a word $w = w_1 w_2 \cdots w_\ell$ of natural
-numbers, a symmetric valley is a position $i$ with $1 < i < \ell$ such that $w_{i-1} = w_{i+1}$
-and $w_i < w_{i-1}$, that is, a factor $a\,b\,a$ with $b < a$. The symmetric valley count of $w$
-is the number of such positions; in particular it is $0$ when $\ell < 3$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Section 1 (symmetric valleys). -/
-def symmetricValleyCount : List ℕ → ℕ
-  | a :: b :: c :: t => (if a = c ∧ b < a then 1 else 0) + symmetricValleyCount (b :: c :: t)
-  | _ => 0
-
-/-- **Total depth of the symmetric valleys of a word.** For a word $w = w_1 w_2 \cdots w_\ell$ of
-natural numbers, a symmetric valley is a position $i$ with $1 < i < \ell$ such that
-$w_{i-1} = w_{i+1}$ and $w_i < w_{i-1}$; its depth is $w_{i-1} - w_i$. The symmetric valley depth
-sum of $w$ is the sum of the depths of all its symmetric valleys; in particular it is $0$ when
-$\ell < 3$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Section 1 (depths of symmetric valleys). -/
-def symmetricValleyDepthSum : List ℕ → ℕ
-  | a :: b :: c :: t =>
-      (if a = c ∧ b < a then a - b else 0) + symmetricValleyDepthSum (b :: c :: t)
-  | _ => 0
-
-/-- **Symmetric peak examples among the compositions of 5.** The symmetric peak height sums of
-the words $1\,3\,1$, $1\,2\,1\,1$, $1\,1\,2\,1$ and $1\,1\,1\,1\,1$ are $2$, $1$, $1$ and $0$
-respectively, and the word $1\,3\,1$ has exactly one symmetric peak.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-example after Corollary 1. -/
-theorem symmetricPeakHeightSum_examples :
-    symmetricPeakHeightSum [1, 3, 1] = 2 ∧ symmetricPeakHeightSum [1, 2, 1, 1] = 1 ∧
-      symmetricPeakHeightSum [1, 1, 2, 1] = 1 ∧ symmetricPeakHeightSum [1, 1, 1, 1, 1] = 0 ∧
-      symmetricPeakCount [1, 3, 1] = 1 := by
-  decide
-
-/-- **Symmetric valleys in three compositions of eight.** The word $2\,1\,2\,1\,2$ has two
-symmetric valleys and total symmetric valley depth $2$, the word $3\,1\,3\,1$ has total symmetric
-valley depth $2$, and the word $3\,2\,3$ has total symmetric valley depth $1$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-example after Corollary 2. -/
-theorem symmetricValleyDepthSum_examples :
-    symmetricValleyDepthSum [2, 1, 2, 1, 2] = 2 ∧ symmetricValleyCount [2, 1, 2, 1, 2] = 2 ∧
-      symmetricValleyDepthSum [3, 1, 3, 1] = 2 ∧ symmetricValleyDepthSum [3, 2, 3] = 1 := by
-  decide
-
-/-- **Generating function of the total symmetric peak height over compositions.** For
-$n \ge 0$ let $\mathrm{hsp}(n)$ be the sum, over all compositions $c$ of $n$, of the symmetric
-peak height sum of the sequence of parts of $c$. Then in $\mathbb{Z}[[x]]$
-$$
-\left(\sum_{n \ge 0} \mathrm{hsp}(n)\, x^n\right)(1 - 2x)^2 (1 - x^3) = x^4,
-$$
-that is, $\sum_{n \ge 0} \mathrm{hsp}(n)\, x^n = x^4 / ((1 - 2x)^2 (1 - x^3))$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Lemma 1, (5) (`integers-2026-A65-lem-1`). -/
-public theorem_wanted symmetricPeakHeightSum_compositions_genFun :
-    PowerSeries.mk (fun n => ((∑ c : Composition n, symmetricPeakHeightSum c.blocks : ℕ) : ℤ)) *
-        ((1 - 2 * X) ^ 2 * (1 - X ^ 3)) = X ^ 4
-
-/-- **Bivariate generating function of the total symmetric peak height over compositions.**
-For $n, k \ge 0$ let $\mathrm{hsp}(n, k)$ be the sum, over all compositions $c$ of $n$ with
-exactly $k$ parts, of the symmetric peak height sum of the sequence of parts of $c$. Then in
-the ring $\mathbb{Z}[y][[x]]$ of formal power series in $x$ over $\mathbb{Z}[y]$,
-$$
-\left(\sum_{n \ge 0} \sum_{k \ge 0} \mathrm{hsp}(n, k)\, y^k x^n\right)
-(1 - x^3)(1 - x - yx)^2 = y^3 x^4,
-$$
-that is, $\sum_{n, k \ge 0} \mathrm{hsp}(n, k)\, x^n y^k = y^3 x^4 / ((1 - x^3)(1 - x - yx)^2)$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Lemma 1 (`integers-2026-A65-lem-1`). -/
-public theorem_wanted symmetricPeakHeightSum_compositions_bivariate_genFun :
-    PowerSeries.mk (fun n => ∑ c : Composition n,
-        Polynomial.C ((symmetricPeakHeightSum c.blocks : ℕ) : ℤ) * Polynomial.X ^ c.length) *
-        ((1 - X ^ 3) * (1 - X - PowerSeries.C (Polynomial.X : Polynomial ℤ) * X) ^ 2) =
-      PowerSeries.C (Polynomial.X ^ 3 : Polynomial ℤ) * X ^ 4
-
-/-- **Generating function for the total depth of symmetric valleys over compositions.** For
-$n \ge 0$, let $\operatorname{dsv}(n)$ be the sum, over all compositions $c$ of $n$, of the total
-depth of the symmetric valleys of the sequence of parts of $c$. Then in the ring $\mathbb{Z}[[x]]$
-of formal power series,
-$$\Big(\sum_{n \ge 0} \operatorname{dsv}(n)\, x^n\Big)(1-2x)^2(1-x^3)(1-x^2)^2 = x^5 - 2x^6 + x^7,$$
-that is, $\sum_{n \ge 0} \operatorname{dsv}(n)\, x^n$ equals
-$(x^5 - 2x^6 + x^7)/((1-2x)^2(1-x^3)(1-x^2)^2)$.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Lemma 2, (11) (`integers-2026-A65-lem-2`). -/
-public theorem_wanted symmetricValleyDepthSum_compositions_genFun :
-    PowerSeries.mk (fun n => ((∑ c : Composition n, symmetricValleyDepthSum c.blocks : ℕ) : ℤ)) *
-        ((1 - 2 * X) ^ 2 * (1 - X ^ 3) * (1 - X ^ 2) ^ 2) = X ^ 5 - 2 * X ^ 6 + X ^ 7
 
 /-- **Closed form for the total symmetric peak height over compositions.** For $n \ge 0$ let
 $\mathrm{hsp}(n)$ be the sum, over all compositions $c$ of $n$, of the symmetric peak height
@@ -197,25 +79,6 @@ public theorem_wanted symmetricPeakHeightSum_compositions_closed_form (n : ℕ) 
           (441 * (1 + Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) +
         (-33 + 15 * Complex.I * (Real.sqrt 3 : ℂ)) * (-2) ^ n /
           (441 * (1 - Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) + 1 / 3
-
-/-- **Closed form for the total depth of symmetric valleys over compositions.** For $n \ge 0$,
-let $\operatorname{dsv}(n)$ be the sum, over all compositions $c$ of $n$, of the total depth of
-the symmetric valleys of the sequence of parts of $c$, and write $\omega_\pm = 1 \pm i\sqrt{3}$.
-Then, as complex numbers,
-$$\operatorname{dsv}(n) = \frac{(-6n+7)(-1)^n}{108} + \frac{2^n(21n-79)}{1323} +
-\frac{(-33-15\sqrt{3}\,i)(-2)^n}{441\,\omega_+^{n+1}} +
-\frac{(-33+15\sqrt{3}\,i)(-2)^n}{441\,\omega_-^{n+1}} + \frac{1}{12}.$$
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Corollary 2, (12) (`integers-2026-A65-cor-2`). -/
-public theorem_wanted symmetricValleyDepthSum_compositions_closed_form (n : ℕ) :
-    ((∑ c : Composition n, symmetricValleyDepthSum c.blocks : ℕ) : ℂ) =
-      (-6 * n + 7) / 108 * (-1) ^ n + (2 : ℂ) ^ n * (21 * n - 79) / 1323 +
-        (-33 - 15 * (Real.sqrt 3 : ℂ) * Complex.I) * (-2) ^ n /
-          (441 * (1 + Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) +
-        (-33 + 15 * (Real.sqrt 3 : ℂ) * Complex.I) * (-2) ^ n /
-          (441 * (1 - Complex.I * (Real.sqrt 3 : ℂ)) ^ (n + 1)) + 1 / 12
 
 /-- **Total symmetric peak height over compositions with a fixed number of parts.** For
 $n, k \ge 0$ let $\mathrm{hsp}(n, k)$ be the sum, over all compositions $c$ of $n$ with exactly
@@ -254,20 +117,6 @@ public theorem_wanted symmetricValleyDepthSum_compositions_length (n k : ℕ) (h
       (k - 2) * ∑ m ∈ Finset.Icc 1 ((n - k + 1) / 3),
         ∑ b ∈ Finset.Icc (m + 1) ((n - m - (k - 3)) / 2),
           (n - 2 * b - m - 1).choose (k - 4) * (b - m)
-
-/-- **Total depth of symmetric valleys over compositions with three parts.** For every natural
-number $n$, the sum, over all compositions $c$ of $n$ with exactly three parts, of the total
-depth of the symmetric valleys of the sequence of parts of $c$ equals
-$\sum_{m=1}^{\lfloor (n-2)/3 \rfloor} d_m$, where $d_m = (n-3m)/2$ if $n - m$ is even and
-$d_m = 0$ otherwise.
-
-Source: Walaa Asakly and Noor Kezil, *The Heights of Symmetric Peaks and the Depths of
-Symmetric Valleys over Compositions of an Integer*, INTEGERS 26 (2026), Article A65,
-Theorem 4(b) (`integers-2026-A65-thm-4`). -/
-public theorem_wanted symmetricValleyDepthSum_compositions_length_three (n : ℕ) :
-    ∑ c ∈ Finset.univ.filter (fun c : Composition n => c.length = 3),
-        symmetricValleyDepthSum c.blocks =
-      ∑ m ∈ Finset.Icc 1 ((n - 2) / 3), if Even (n - m) then (n - 3 * m) / 2 else 0
 
 /-- **Expected symmetric peaks and valleys in geometric words.** Let $n \ge 2$, let
 $0 < p < 1$ and $q = 1 - p$, and let $X_1, \dots, X_n$ be independent random variables, each

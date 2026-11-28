@@ -1,0 +1,18 @@
+# Lower Restriction
+
+- [Predecessor Order Iso](predecessor-order-iso.md)
+- [Diagram](diagram.md)
+- [Diagram obj function](diagram-obj-function.md)
+- [Diagram map function](diagram-map-function.md)
+- [Predecessor Diagram](predecessor-diagram.md)
+- [Predecessor](predecessor.md)
+- [Predecessor obj function](predecessor-obj-function.md)
+- [Predecessor leg function](predecessor-leg-function.md)
+- [Predecessor Map](predecessor-map.md)
+- [Tree](tree.md)
+- [Tree label function](tree-label-function.md)
+- [Tree cell function](tree-cell-function.md)
+- [Tree endpoint](tree-endpoint.md)
+- [Tree root](tree-root.md)
+- [Tree inclusion function](tree-inclusion-function.md)
+- [Tree good](tree-good.md)

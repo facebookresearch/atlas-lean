@@ -31,8 +31,11 @@ open Polynomial IsLocalRing Ring
 variable {A : Type*} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
   [IsAdicComplete (maximalIdeal A) A]
 
-/-- Newton-iteration Hensel lift for a complete DVR: an approximate root whose derivative
-    is a unit refines to an exact root congruent to the approximation mod the maximal ideal. -/
+/-- **Hensel's lemma for complete discrete valuation rings.** Let $A$ be a discrete valuation ring
+with maximal ideal $\mathfrak{m}$ that is complete and Hausdorff for the $\mathfrak{m}$-adic
+topology. Let $f \in A[X]$ have derivative $f'$, and let $a_0 \in A$ satisfy
+$f(a_0) \in \mathfrak{m}$ with $f'(a_0)$ a unit of $A$. Then $f$ has a root $a \in A$ with
+$a - a_0 \in \mathfrak{m}$. -/
 theorem Polynomial.exists_isRoot_sub_mem_maximalIdeal_of_isUnit_derivative (f : A[X])
     (a₀ : A) (h₁ : f.eval a₀ ∈ maximalIdeal A)
     (h₂ : IsUnit (f.derivative.eval a₀)) :
@@ -116,7 +119,9 @@ theorem Polynomial.exists_isRoot_sub_mem_maximalIdeal_of_isUnit_derivative (f : 
     exact Ideal.mul_mem_right _ _ h₁
 
 omit [IsAdicComplete (maximalIdeal A) A] in
-/-- Evaluation does not decrease the valuation of a difference. -/
+/-- **Polynomials do not decrease the valuation of differences.** Let $A$ be a discrete valuation
+ring with normalized additive valuation $v \colon A \to \mathbb{N} \cup \{\infty\}$. For every
+polynomial $p \in A[X]$ and all $a, a_0 \in A$, we have $v(a - a_0) \le v(p(a) - p(a_0))$. -/
 theorem Polynomial.addVal_sub_le_addVal_eval_sub (p : A[X]) (a a₀ : A) :
     IsDiscreteValuationRing.addVal A (a - a₀) ≤
       IsDiscreteValuationRing.addVal A (p.eval a - p.eval a₀) := by
@@ -147,7 +152,10 @@ theorem Polynomial.addVal_derivative_eval_eq_of_lt_addVal_sub
 
 omit [IsAdicComplete (maximalIdeal A) A] in
 open IsDiscreteValuationRing in
-/-- Two roots strictly closer to `a₀` than the derivative valuation coincide. -/
+/-- **Uniqueness of roots near a point.** Let $A$ be a discrete valuation ring with normalized
+additive valuation $v \colon A \to \mathbb{N} \cup \{\infty\}$, let $f \in A[X]$ have derivative
+$f'$, and let $a_0 \in A$. If $a, a' \in A$ are roots of $f$ with $v(f'(a_0)) < v(a - a_0)$ and
+$v(f'(a_0)) < v(a' - a_0)$, then $a = a'$. -/
 theorem Polynomial.eq_of_isRoot_of_addVal_derivative_lt_addVal_sub
     (f : A[X]) (a a' a₀ : A)
     (hfa : f.IsRoot a) (hfa' : f.IsRoot a')
@@ -214,8 +222,13 @@ theorem Polynomial.eq_of_isRoot_of_addVal_derivative_lt_addVal_sub
 namespace IsDiscreteValuationRing
 
 omit [IsAdicComplete (maximalIdeal A) A] in
-/-- Multiplying a nonzero element by an element of the maximal ideal strictly
-    increases its additive valuation. -/
+/-- **Elements of the maximal ideal have positive valuation.** Let $A$ be a discrete valuation
+ring with maximal ideal $\mathfrak{m}$ and normalized additive valuation
+$v \colon A \to \mathbb{N} \cup \{\infty\}$. If $d \in A$ is nonzero and $q \in \mathfrak{m}$, then
+$v(d) < v(d) + v(q)$.
+
+Since $v(dq) = v(d) + v(q)$, multiplying a nonzero element by an element of the maximal ideal
+strictly increases its valuation. -/
 theorem addVal_lt_addVal_add_of_mem_maximalIdeal {d q : A}
     (hd : d ≠ 0) (hq : q ∈ maximalIdeal A) :
     addVal A d < addVal A d + addVal A q := by
@@ -248,13 +261,16 @@ private lemma isUnit_one_add_mul_of_mem_maximalIdeal {c b : A}
     ((Ideal.eq_top_iff_one _).mpr h1)
 
 open IsDiscreteValuationRing in
-/-- Strong complete-DVR Hensel endpoint: an approximate root with
-    `2 * addVal (derivative) < addVal (value)` refines to an exact root `a`
-    with a valuation bound, uniqueness in the strict ball, and derivative
-    valuation stability. The strict-ball witness fact is kept (the ATLAS
-    published statement dropped it), which is what makes uniqueness usable.
-    This is an existence/uniqueness/stability statement only; it claims
-    nothing about Newton sequences or convergence rates. -/
+/-- **Hensel's lemma with a derivative bound.** Let $A$ be a discrete valuation ring with maximal
+ideal $\mathfrak{m}$ that is complete and Hausdorff for the $\mathfrak{m}$-adic topology, and let
+$v \colon A \to \mathbb{N} \cup \{\infty\}$ be its normalized additive valuation. Let $f \in A[X]$
+have derivative $f'$, and let $a_0 \in A$ satisfy $2 v(f'(a_0)) < v(f(a_0))$. Then $f$ has a root
+$a \in A$ such that $a - a_0 \in \mathfrak{m}$, $v(f'(a_0)) < v(a - a_0)$,
+$v(f(a_0)) \le v(a - a_0) + 2 v(f'(a_0))$ and $v(f'(a)) = v(f'(a_0))$. Moreover, every root
+$a' \in A$ of $f$ with $v(f'(a_0)) < v(a' - a_0)$ equals $a$.
+
+Source: ATLAS Hensel endpoint; the published statement dropped the condition
+$v(f'(a_0)) < v(a - a_0)$ on the root, which is kept here so that uniqueness applies to it. -/
 theorem Polynomial.exists_isRoot_of_two_mul_addVal_derivative_lt_addVal
     (f : A[X]) (a₀ : A)
     (hval : 2 * addVal A (f.derivative.eval a₀) < addVal A (f.eval a₀)) :

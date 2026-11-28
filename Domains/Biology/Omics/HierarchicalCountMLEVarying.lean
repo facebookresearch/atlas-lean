@@ -16,7 +16,7 @@ import Domains.Biology.Omics.HierarchicalCountMLEUniqueness
 /-!
 # Maximum marginal likelihood for the Gamma–Poisson hierarchy at heterogeneous size factors
 
-`Domains.Biology.Omics.HierarchicalCountMLE` (T86) defines the log marginal likelihood
+`Domains.Biology.Omics.HierarchicalCountMLE` defines the log marginal likelihood
 `logMarginalLik a b s k = ∑ᵢ log NB(kᵢ; a, sᵢ a / b)` of counts `kᵢ` at size factors `sᵢ`, with one
 rate `λᵢ ~ Gamma(a, b)` per cell, and its shape and rate scores `shapeScore`, `rateScore`. Its
 conditional results (unique rate root at a fixed shape, unique shape root at a fixed rate) already
@@ -39,8 +39,8 @@ The model is the intercept-only negative binomial regression with offsets `log s
 
 * Score equations: `score_eq_zero_iff_rateRoot` (the joint score equations hold iff `b = b̂(a)`
   and `a` is a zero of the profile); `rateRoot_spec`, `rateRoot_eq` (characterization);
-  `rateRoot_const`, `profileShapeScoreVarying_const` (at a common size factor they are T86's
-  closed forms).
+  `rateRoot_const`, `profileShapeScoreVarying_const` (at a common size factor they are the closed
+  forms of `HierarchicalCountMLE`).
 * The rate root: `rateRoot_strictMonoOn` (increasing in the shape), `continuousOn_rateRoot`,
   `div_le_sum_of_rateScore_eq_zero` (`a / b̂(a) ≤ ∑ᵢ kᵢ / sᵢ`), `tendsto_div_rateRoot` (the
   fitted prior mean `a / b̂(a)` tends to `μ̂` as `a → ∞`).
@@ -48,14 +48,14 @@ The model is the intercept-only negative binomial regression with offsets `log s
   joint score equations have a solution with `a, b > 0`. The condition says that the residual sum
   of squares around the fitted Poisson means exceeds their sum; it is the positivity of the
   numerator of the Dean–Lawless (1989) score statistic for overdispersion. At a common size factor
-  it is T86's `M < V` (`overdispersed_const_iff`). The proof uses the profile: `b̂` is continuous,
+  it is `M < V` (`overdispersed_const_iff`). The proof uses the profile: `b̂` is continuous,
   the profile is positive near `a = 0`, and by `sq_mul_shapeScore_le` and `tendsto_div_rateRoot`
   `a² · profile(a)` is at most a term tending to `(∑ᵢ kᵢ - ∑ᵢ (kᵢ - sᵢ μ̂)²) / 2 < 0` as `a → ∞`.
 * Uniqueness at a common size factor, under the condition above:
   `existsUnique_score_root_const_varying` (exactly one positive root of the joint score
   equations), `profileShapeScoreVarying_eq_zero_unique_const`, and
   `existsUnique_isMaxOn_logMarginalLik_const_varying` (exactly one joint MLE). These restate the
-  Levin–Reeds theorem of `HierarchicalCountMLEUniqueness` (T173) in this file's terms, through
+  Levin–Reeds theorem of `HierarchicalCountMLEUniqueness` in this file's terms, through
   `overdispersed_const_iff` and `profileShapeScoreVarying_const`.
 * Heterogeneous size factors, roots from sign changes: `exists_score_root_of_mem_uIcc` (a sign
   change of the profile on `[a₁, a₂]` gives a root there) and `exists_two_score_roots` (two sign
@@ -74,8 +74,8 @@ The model is the intercept-only negative binomial regression with offsets `log s
 
 * Model and score equations: Gamma–Poisson hierarchy, empirical-Bayes hyperparameter estimation
   (Robbins 1956, Morris 1983); negative binomial regression with offsets (Lawless 1987). Score
-  equations are T86's `hasDerivAt_logMarginalLik_shape`, `hasDerivAt_logMarginalLik_rate`, which
-  already allow per-cell size factors and are reused here.
+  equations are `hasDerivAt_logMarginalLik_shape`, `hasDerivAt_logMarginalLik_rate` of
+  `HierarchicalCountMLE`, which already allow per-cell size factors and are reused here.
 * Existence: common size factor: Anscombe (1950), Aragón, Eberly and Eberly (1992). The
   heterogeneous condition is the Dean–Lawless (1989) overdispersion score numerator
   `∑ᵢ ((kᵢ - μ̂ᵢ)² - kᵢ)` at the Poisson fit `μ̂ᵢ = sᵢ μ̂`. No published existence theorem in
@@ -98,14 +98,14 @@ The model is the intercept-only negative binomial regression with offsets `log s
   condition for uniqueness at heterogeneous size factors is not proved.
 * The sign hypothesis of `ae_eventually_exists_score_root_varying` is assumed: deriving it for
   negative binomial counts needs the identity `E[∑_{j<K} 1 / (a₀ + j) ∣ S] = log (1 + S / b₀)`,
-  which T86 also leaves unproved. The conditional-mean hypothesis of
+  which `HierarchicalCountMLE` also leaves unproved. The conditional-mean hypothesis of
   `popRateScoreLog_eq_zero_of_condMean` is stated, not derived from the count law, because the
   count law of a random variable is not formalized (as in `HierarchicalCount`).
 * Asymptotic normality and efficiency.
 
 ## Implementation notes
 
-Uniqueness at a common size factor is imported from `HierarchicalCountMLEUniqueness` (T173), not
+Uniqueness at a common size factor is imported from `HierarchicalCountMLEUniqueness`, not
 reproved. Reuse (search of `MathlibExt`, `CSLibExt`, `WantedExt` and Mathlib on 2026-11-12 for
 size factor, offset, negative binomial MLE, overdispersion, implicit root continuity): the
 definitions and conditional results come from `HierarchicalCountMLE`, which is merged (#1623) and
@@ -149,23 +149,28 @@ variable {ι : Type*} [Fintype ι]
 /-! ### The rate root at a fixed shape -/
 
 open Classical in
-/-- The rate root `b̂(a)`: the positive solution of the rate score equation
-`∑ᵢ (a / b - (a + kᵢ) / (b + sᵢ)) = 0` at the shape `a`, and `0` if there is none. For `a > 0`,
-positive size factors and some positive count it exists and is unique
-(`exists_rateScore_eq_zero`, `rateScore_eq_zero_unique`), see `rateRoot_spec`; with a common size
-factor `σ` it is the closed form `σ a / M` (`rateRoot_const`). -/
+/-- The rate root `b̂(a)`: a positive solution of the rate score equation
+`∑ᵢ (a / b - (a + kᵢ) / (b + sᵢ)) = 0` at the shape `a` (an unspecified one if there are several,
+as for an empty family), and `0` if there is none. For `a > 0`, positive size factors and a
+nonempty sample there is at most one, and it exists iff some count is positive
+(`exists_rateScore_eq_zero`, `rateScore_eq_zero_unique`, `rateScore_pos_of_counts_eq_zero`), see
+`rateRoot_spec`; with a common size factor `σ > 0` and `M > 0` it is the closed form `σ a / M`
+(`rateRoot_const`). -/
 noncomputable def rateRoot (a : ℝ) (s : ι → ℝ) (k : ι → ℕ) : ℝ :=
   if h : ∃ b, 0 < b ∧ rateScore a b s k = 0 then h.choose else 0
 
-/-- The profile shape score `a ↦ ∂ℓ/∂a (a, b̂(a))`, the shape score along the rate root. Its
-positive zeros are exactly the shapes of the positive solutions of the joint score equations
-(`score_eq_zero_iff_rateRoot`). With a common size factor `σ` it is `profileShapeScore`
+/-- The profile shape score `a ↦ ∂ℓ/∂a (a, b̂(a))`, the shape score along the rate root. For
+positive size factors, a nonempty sample and some positive count, its positive zeros are exactly
+the shapes of the positive solutions of the joint score equations (`score_eq_zero_iff_rateRoot`).
+Where `b̂(a) = 0` it is `∑ᵢ (∑_{j<kᵢ} 1 / (a + j) - log sᵢ)`, with `log 0 = 0`, `log x = log |x|`
+and `1 / 0 = 0`. With a common size factor `σ > 0`, `a > 0` and `M > 0` it is `profileShapeScore`
 (`profileShapeScoreVarying_const`). -/
 noncomputable def profileShapeScoreVarying (a : ℝ) (s : ι → ℝ) (k : ι → ℕ) : ℝ :=
   shapeScore a (rateRoot a s k) s k
 
-/-- The pooled Poisson rate `μ̂ = (∑ᵢ kᵢ) / (∑ᵢ sᵢ)`: the prior mean `a / b` fitted by the rate
-score equation in the Poisson limit `a → ∞` (`tendsto_div_rateRoot`). -/
+/-- The pooled Poisson rate `μ̂ = (∑ᵢ kᵢ) / (∑ᵢ sᵢ)`, with `x / 0 = 0`: it is `0` when
+`∑ᵢ sᵢ = 0`. For positive size factors and some positive count it is the prior mean `a / b` fitted
+by the rate score equation in the Poisson limit `a → ∞` (`tendsto_div_rateRoot`). -/
 noncomputable def pooledMean (s : ι → ℝ) (k : ι → ℕ) : ℝ := (∑ i, (k i : ℝ)) / ∑ i, s i
 
 private lemma rateScoreLog_eq_zero {a b : ℝ} (hb : 0 < b) {s : ι → ℝ} (hs : ∀ i, 0 < s i)
@@ -187,8 +192,8 @@ theorem rateRoot_spec {a : ℝ} [Nonempty ι] (ha : 0 < a) {s : ι → ℝ} (hs 
   rw [rateRoot, dite_eq_left h]
   exact h.choose_spec
 
-/-- **Characterization of the rate root.** Any positive root of the rate score equation at the
-shape `a > 0` is `b̂(a)`. -/
+/-- **Characterization of the rate root.** For positive size factors and a nonempty sample, any
+positive root of the rate score equation at the shape `a > 0` is `b̂(a)`. -/
 theorem rateRoot_eq {a b : ℝ} [Nonempty ι] (ha : 0 < a) (hb : 0 < b) {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) {k : ι → ℕ} (h : rateScore a b s k = 0) : rateRoot a s k = b := by
   have hex : ∃ b, 0 < b ∧ rateScore a b s k = 0 := ⟨b, hb, h⟩
@@ -196,20 +201,22 @@ theorem rateRoot_eq {a b : ℝ} [Nonempty ι] (ha : 0 < a) (hb : 0 < b) {s : ι 
   rw [rateRoot, dite_eq_left hex]
   exact rateScore_eq_zero_unique ha hspec.1 hb hs hspec.2 h
 
-/-- **Common size factor.** At a common size factor `σ > 0` the rate root is `σ a / M`. -/
+/-- **Common size factor.** At a common size factor `σ > 0`, a shape `a > 0` and a positive sample
+mean `M`, the rate root is `σ a / M`. -/
 theorem rateRoot_const {a σ : ℝ} [Nonempty ι] (ha : 0 < a) (hσ : 0 < σ) {k : ι → ℕ}
     (hM : 0 < countMean k) : rateRoot a (fun _ => σ) k = σ * a / countMean k :=
   rateRoot_eq ha (by positivity) (fun _ => hσ) (rateScore_const_eq_zero ha hσ hM)
 
-/-- At a common size factor `σ > 0` the profile shape score along the rate root is T86's
-`profileShapeScore`. -/
+/-- At a common size factor `σ > 0`, a shape `a > 0` and a positive sample mean `M`, the profile
+shape score along the rate root is `profileShapeScore`. -/
 theorem profileShapeScoreVarying_const {a σ : ℝ} [Nonempty ι] (ha : 0 < a) (hσ : 0 < σ)
     {k : ι → ℕ} (hM : 0 < countMean k) :
     profileShapeScoreVarying a (fun _ => σ) k = profileShapeScore a k := by
   rw [profileShapeScoreVarying, rateRoot_const ha hσ hM, shapeScore_const_rateRoot ha hσ hM]
 
-/-- **The joint score equations reduce to the profile.** For `a, b > 0`, `(a, b)` solves both
-score equations iff `b = b̂(a)` and `a` is a zero of the profile shape score. -/
+/-- **The joint score equations reduce to the profile.** For `a, b > 0`, positive size factors and
+a nonempty sample, `(a, b)` solves both score equations iff `b = b̂(a)` and `a` is a zero of the
+profile shape score. -/
 theorem score_eq_zero_iff_rateRoot {a b : ℝ} [Nonempty ι] (ha : 0 < a) (hb : 0 < b)
     {s : ι → ℝ} (hs : ∀ i, 0 < s i) {k : ι → ℕ} :
     shapeScore a b s k = 0 ∧ rateScore a b s k = 0 ↔
@@ -232,7 +239,8 @@ theorem score_eq_zero_iff_rateRoot {a b : ℝ} [Nonempty ι] (ha : 0 < a) (hb : 
       linarith [rateScore_pos_of_counts_eq_zero ha hc0 hs fun i => Nat.le_zero.1 (hc i)]
     exact (rateRoot_spec ha hs hk).2
 
-/-- **The rate root increases with the shape.** For `0 < a < a'`, `b̂(a) < b̂(a')`. -/
+/-- **The rate root increases with the shape.** For positive size factors and some positive count,
+`b̂(a) < b̂(a')` whenever `0 < a < a'`. -/
 theorem rateRoot_strictMonoOn [Nonempty ι] {s : ι → ℝ} (hs : ∀ i, 0 < s i) {k : ι → ℕ}
     (hk : ∃ i, 0 < k i) : StrictMonoOn (fun a => rateRoot a s k) (Set.Ioi 0) := by
   intro a ha a' ha' hlt
@@ -255,9 +263,10 @@ theorem rateRoot_strictMonoOn [Nonempty ι] {s : ι → ℝ} (hs : ∀ i, 0 < s 
   · linarith [rateScoreLog_strictAnti ha' hb' h hs k]
   · rw [h] at h0'; linarith
 
-/-- **A lower bound on the rate root.** At a positive root `b` of the rate score equation the
-fitted prior mean `a / b` is at most `∑ᵢ kᵢ / sᵢ`: otherwise every term `a / b - (a + kᵢ) /
-(b + sᵢ) = (a sᵢ - b kᵢ) / (b (b + sᵢ))` would be positive. -/
+/-- **A lower bound on the rate root.** For positive size factors and a nonempty sample, at a
+positive root `b` of the rate score equation the fitted prior mean `a / b` is at most `∑ᵢ kᵢ / sᵢ`:
+otherwise every term `a / b - (a + kᵢ) / (b + sᵢ) = (a sᵢ - b kᵢ) / (b (b + sᵢ))` would be
+positive. -/
 theorem div_le_sum_of_rateScore_eq_zero {a b : ℝ} [Nonempty ι] (hb : 0 < b) {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) {k : ι → ℕ} (h : rateScore a b s k = 0) :
     a / b ≤ ∑ i, (k i : ℝ) / s i := by
@@ -377,10 +386,11 @@ private lemma rateScoreLog_eq_sum_fitted {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {
   field_simp
   ring
 
-/-- **The second-order bound behind overdispersion.** At a positive root `b` of the rate score
-equation, with fitted means `mᵢ = sᵢ a / b`,
-`a² ∂ℓ/∂a ≤ ∑ᵢ ((kᵢ - (kᵢ - mᵢ)²) / 2 + (mᵢ - kᵢ) mᵢ² / (a + mᵢ) + kᵢ³ / a)`. The leading term
-`(∑ᵢ kᵢ - ∑ᵢ (kᵢ - mᵢ)²) / 2` is negative for overdispersed samples. -/
+/-- **The second-order bound behind overdispersion.** For `a > 0` and positive size factors, at a
+positive root `b` of the rate score equation, with fitted means `mᵢ = sᵢ a / b`,
+`a² ∂ℓ/∂a ≤ ∑ᵢ ((kᵢ - (kᵢ - mᵢ)²) / 2 + (mᵢ - kᵢ) mᵢ² / (a + mᵢ) + kᵢ³ / a)`. Along the rate root,
+as `a → ∞`, `mᵢ → sᵢ μ̂` (`tendsto_div_rateRoot`) and the bound tends to
+`(∑ᵢ kᵢ - ∑ᵢ (kᵢ - sᵢ μ̂)²) / 2`, which is negative for overdispersed samples. -/
 theorem sq_mul_shapeScore_le {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) {k : ι → ℕ} (h : rateScore a b s k = 0) :
     a ^ 2 * shapeScore a b s k ≤ ∑ i, (((k i : ℝ) - ((k i : ℝ) - s i * (a / b)) ^ 2) / 2 +
@@ -542,14 +552,15 @@ private lemma exists_profileShapeScoreVarying_pos [Nonempty ι] {s : ι → ℝ}
   have := mul_nonpos_of_nonneg_of_nonpos ha.le (not_lt.1 hc)
   linarith
 
-/-- **Overdispersion gives a solution of the score equations, heterogeneous size factors.** Let
-`μ̂ = (∑ᵢ kᵢ) / (∑ᵢ sᵢ)` be the pooled Poisson rate and `sᵢ μ̂` the fitted Poisson means. If the
-Pearson-type excess `∑ᵢ (kᵢ - sᵢ μ̂)² > ∑ᵢ kᵢ` holds (residual sum of squares above the summed
-Poisson variances; at a common size factor this is `M < V`, see `overdispersed_const_iff`), then
-the joint score equations have a solution `(â, b̂)` with `â, b̂ > 0`. At a common size factor it
-is unique (`existsUnique_score_root_const_varying`); at heterogeneous size factors it need not be
-(`exists_two_score_roots` and the tests). That a solution maximizes the likelihood is not proved
-here. -/
+/-- **Overdispersion gives a solution of the score equations, heterogeneous size factors.** For
+positive size factors, let `μ̂ = (∑ᵢ kᵢ) / (∑ᵢ sᵢ)` be the pooled Poisson rate and `sᵢ μ̂` the
+fitted Poisson means. If the Pearson-type excess `∑ᵢ (kᵢ - sᵢ μ̂)² > ∑ᵢ kᵢ` holds (residual sum of
+squares above the summed Poisson variances; at a common size factor this is `M < V`, see
+`overdispersed_const_iff`), then the joint score equations have a solution `(â, b̂)` with
+`â, b̂ > 0`. At a common size factor it is unique (`existsUnique_score_root_const_varying`); at
+heterogeneous size factors it need not be (`exists_two_score_roots`; for example size factors
+`(1000, 1/100, 100)` with counts `(12, 1, 6)`). The result does not assert that a solution
+maximizes the likelihood. -/
 theorem exists_score_root_of_overdispersed_varying [Nonempty ι] {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) {k : ι → ℕ}
     (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - s i * pooledMean s k) ^ 2) :
@@ -565,8 +576,9 @@ theorem exists_score_root_of_overdispersed_varying [Nonempty ι] {s : ι → ℝ
   have hb := (rateRoot_spec ha0 hs hk).1
   exact ⟨a, _, ha0, hb, (score_eq_zero_iff_rateRoot ha0 hb hs).2 ⟨rfl, hPa⟩⟩
 
-/-- **The overdispersion condition at a common size factor.** For `s ≡ σ > 0` the condition of
-`exists_score_root_of_overdispersed_varying`, `∑ᵢ (kᵢ - σ μ̂)² > ∑ᵢ kᵢ`, is T86's `M < V`. -/
+/-- **The overdispersion condition at a common size factor.** For a nonempty sample and
+`s ≡ σ > 0` the condition of `exists_score_root_of_overdispersed_varying`,
+`∑ᵢ (kᵢ - σ μ̂)² > ∑ᵢ kᵢ`, is `M < V`. -/
 theorem overdispersed_const_iff {σ : ℝ} [Nonempty ι] (hσ : 0 < σ) (k : ι → ℕ) :
     ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - (fun _ => σ) i * pooledMean (fun _ => σ) k) ^ 2 ↔
       countMean k < countVar k := by
@@ -608,8 +620,9 @@ theorem existsUnique_score_root_const_varying [Nonempty ι] {σ : ℝ} (hσ : 0 
   existsUnique_score_root hσ (countMean_pos_of_overdispersed hQ)
     ((overdispersed_const_iff hσ k).1 hQ)
 
-/-- **The profile shape score has at most one positive zero at a common size factor**, under the
-overdispersion condition (Levin and Reeds 1977, via `profileShapeScore_eq_zero_unique`). -/
+/-- **The profile shape score has at most one positive zero at a common size factor** `s ≡ σ > 0`,
+under the overdispersion condition (Levin and Reeds 1977, via
+`profileShapeScore_eq_zero_unique`). -/
 theorem profileShapeScoreVarying_eq_zero_unique_const [Nonempty ι] {σ : ℝ} (hσ : 0 < σ)
     {k : ι → ℕ} (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - σ * pooledMean (fun _ => σ) k) ^ 2)
     {a a' : ℝ} (ha : 0 < a) (ha' : 0 < a') (h : profileShapeScoreVarying a (fun _ => σ) k = 0)
@@ -620,8 +633,8 @@ theorem profileShapeScoreVarying_eq_zero_unique_const [Nonempty ι] {σ : ℝ} (
   exact profileShapeScore_eq_zero_unique ((overdispersed_const_iff hσ k).1 hQ) ha ha' h h'
 
 /-- **Existence and uniqueness of the joint MLE at a common size factor** (Levin and Reeds 1977,
-via `existsUnique_isMaxOn_logMarginalLik`), under the overdispersion condition of
-`exists_score_root_of_overdispersed_varying`: `ℓ` has exactly one maximizer over `(0, ∞)²`. -/
+via `existsUnique_isMaxOn_logMarginalLik`). At `s ≡ σ > 0` and under the overdispersion condition
+of `exists_score_root_of_overdispersed_varying`, `ℓ` has exactly one maximizer over `(0, ∞)²`. -/
 theorem existsUnique_isMaxOn_logMarginalLik_const_varying [Nonempty ι] {σ : ℝ} (hσ : 0 < σ)
     {k : ι → ℕ} (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - σ * pooledMean (fun _ => σ) k) ^ 2) :
     ∃! p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ ∀ q : ℝ × ℝ, 0 < q.1 → 0 < q.2 →
@@ -631,9 +644,9 @@ theorem existsUnique_isMaxOn_logMarginalLik_const_varying [Nonempty ι] {σ : �
 
 /-! ### Heterogeneous size factors: score roots from sign changes of the profile -/
 
-/-- **A root of the joint score equations from a sign change of the profile.** If `0` lies
-between the profile shape scores at `0 < a₁ ≤ a₂`, then some `a ∈ [a₁, a₂]` with its rate root
-`b̂(a) > 0` solves both score equations. -/
+/-- **A root of the joint score equations from a sign change of the profile.** For positive size
+factors and some positive count, if `0` lies between the profile shape scores at `0 < a₁ ≤ a₂`, then
+some `a ∈ [a₁, a₂]` with its rate root `b̂(a) > 0` solves both score equations. -/
 theorem exists_score_root_of_mem_uIcc [Nonempty ι] {s : ι → ℝ} (hs : ∀ i, 0 < s i)
     {k : ι → ℕ} (hk : ∃ i, 0 < k i) {a₁ a₂ : ℝ} (ha₁ : 0 < a₁) (h12 : a₁ ≤ a₂)
     (h0 : (0 : ℝ) ∈ Set.uIcc (profileShapeScoreVarying a₁ s k) (profileShapeScoreVarying a₂ s k)) :
@@ -648,11 +661,12 @@ theorem exists_score_root_of_mem_uIcc [Nonempty ι] {s : ι → ℝ} (hs : ∀ i
   obtain ⟨hb, hr⟩ := rateRoot_spec (lt_of_lt_of_le ha₁ ha.1) hs hk
   exact ⟨a, ha, hb, hPa, hr⟩
 
-/-- **Two sign changes of the profile give two roots.** If `0` lies between the profile shape
-scores at `a₁` and `a₂` and between those at `a₂` and `a₃`, with `0 < a₁ < a₂ < a₃`, and the
-profile does not vanish at `a₂`, the joint score equations have two positive solutions with
-different shapes. The tests exhibit such samples at heterogeneous size factors, one of them
-satisfying the overdispersion condition of `exists_score_root_of_overdispersed_varying`; so
+/-- **Two sign changes of the profile give two roots.** For positive size factors and some positive
+count, if `0` lies between the profile shape scores at `a₁` and `a₂` and between those at `a₂` and
+`a₃`, with `0 < a₁ < a₂ < a₃`, and the profile does not vanish at `a₂`, the joint score equations
+have two positive solutions with different shapes. Such samples exist at heterogeneous size
+factors, for example size factors `(1000, 1/100, 100)` with counts `(12, 1, 6)`, which also satisfy
+the overdispersion condition of `exists_score_root_of_overdispersed_varying`; so
 `existsUnique_score_root_const_varying` does not extend to heterogeneous size factors. -/
 theorem exists_two_score_roots [Nonempty ι] {s : ι → ℝ} (hs : ∀ i, 0 < s i) {k : ι → ℕ}
     (hk : ∃ i, 0 < k i) {a₁ a₂ a₃ : ℝ} (ha₁ : 0 < a₁) (h12 : a₁ < a₂) (h23 : a₂ < a₃)
@@ -681,13 +695,16 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilit
   {S : ℕ → Ω → ℝ} {X : ℕ → Ω → ℕ}
 
 /-- The population rate score in the log rate, for a cell with random size factor `S` and count
-`K`: `a - E[(a + K) · b / (b + S)]`, the almost sure limit of `n⁻¹ · rateScoreLog a b` for i.i.d.
-copies of `(S, K)` (`ae_tendsto_rateRoot`). -/
+`K`: `a - E[(a + K) · b / (b + S)]` (a Bochner integral, `0` if the integrand is not integrable,
+with `x / 0 = 0`). For a probability measure, `a ≥ 0`, `b > 0`, `S > 0` and integrable `K`, it is
+the almost sure limit of `n⁻¹ · rateScoreLog a b` for pairwise independent copies of `(S, K)` (see
+`ae_tendsto_rateRoot`). -/
 noncomputable def popRateScoreLog (μ : Measure Ω) (S : Ω → ℝ) (K : Ω → ℕ) (a b : ℝ) : ℝ :=
   a - μ[fun ω => (a + K ω) * (b / (b + S ω))]
 
-/-- The population shape score `E[∑_{j<K} 1 / (a + j) - log (1 + S / b)]`, the almost sure limit of
-`n⁻¹ · shapeScore a b` for i.i.d. copies of `(S, K)`. -/
+/-- The population shape score `E[∑_{j<K} 1 / (a + j) - log (1 + S / b)]` (a Bochner integral, `0`
+if the integrand is not integrable). For `a, b > 0`, `S > 0` and integrable `S`, `K`, it is the
+almost sure limit of `n⁻¹ · shapeScore a b` for pairwise independent copies of `(S, K)`. -/
 noncomputable def popShapeScore (μ : Measure Ω) (S : Ω → ℝ) (K : Ω → ℕ) (a b : ℝ) : ℝ :=
   μ[fun ω => digammaIncrement a (K ω) - log (1 + S ω / b)]
 
@@ -781,7 +798,9 @@ private lemma ae_tendsto_shapeScore {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
   simp only
   rw [shapeScore_eq_sub (s := fun i : Fin n => S i ω) hb fun i => hpos i ω]
 
-/-- **The population rate score decreases in the rate.** -/
+/-- **The population rate score decreases in the rate.** For a probability measure, `a > 0`, a
+measurable size factor `S > 0` and a measurable integrable count `K`,
+`b ↦ popRateScoreLog μ S K a b` is strictly decreasing on `b > 0`. -/
 theorem popRateScoreLog_strictAnti {a b b' : ℝ} (ha : 0 < a) (hb : 0 < b) (hbb' : b < b')
     {S₀ : Ω → ℝ} {K : Ω → ℕ} (hS : Measurable S₀) (hK : Measurable K) (hpos : ∀ ω, 0 < S₀ ω)
     (hint : Integrable (fun ω => (K ω : ℝ)) μ) :
@@ -804,10 +823,10 @@ theorem popRateScoreLog_strictAnti {a b b' : ℝ} (ha : 0 < a) (hb : 0 < b) (hbb
   simp only [popRateScoreLog]
   linarith
 
-/-- **The truth solves the population rate equation.** If the count has conditional mean
-`E[K ∣ S] = a₀ S / b₀` (the hierarchy `K ∣ S, λ ~ Po(S λ)`, `λ ~ Gamma(a₀, b₀)` independent of
-`S`), expressed as `E[K g(S)] = (a₀ / b₀) E[S g(S)]` for every bounded measurable `g`, then
-`popRateScoreLog μ S K a₀ b₀ = 0`. -/
+/-- **The truth solves the population rate equation.** Under a probability measure, if the count has
+conditional mean `E[K ∣ S] = a₀ S / b₀` (the hierarchy `K ∣ S, λ ~ Po(S λ)`, `λ ~ Gamma(a₀, b₀)`
+independent of `S`), expressed as `E[K g(S)] = (a₀ / b₀) E[S g(S)]` for every bounded measurable
+`g`, then `popRateScoreLog μ S K a₀ b₀ = 0`. -/
 theorem popRateScoreLog_eq_zero_of_condMean {a₀ b₀ : ℝ} (hb₀ : 0 < b₀) {S₀ : Ω → ℝ}
     {K : Ω → ℕ} (hS : Measurable S₀) (hK : Measurable K) (hpos : ∀ ω, 0 < S₀ ω)
     (hint : Integrable (fun ω => (K ω : ℝ)) μ)
@@ -894,12 +913,13 @@ private lemma nonempty_fin_of_inv_mul_ne {n : ℕ} {x : ℝ} (h : (n : ℝ)⁻¹
   · simp at h
   · exact ⟨⟨0, hn⟩⟩
 
-/-- **Strong consistency of the rate root, heterogeneous size factors.** Let `(S₀, X₀), (S₁, X₁), …`
-be pairwise independent, identically distributed pairs of a positive size factor and a count, with
-`X₀` integrable, and let `b₀ > 0` solve the population rate equation at the shape `a > 0`,
-`popRateScoreLog μ S₀ X₀ a b₀ = 0` (at the true hyperparameters this follows from the conditional
-mean, `popRateScoreLog_eq_zero_of_condMean`). Almost surely, for all large `n` the rate root
-`b̂ₙ(a)` of the first `n` cells solves their rate score equation, and `b̂ₙ(a) → b₀`. -/
+/-- **Strong consistency of the rate root, heterogeneous size factors.** On a probability space, let
+`(S₀, X₀), (S₁, X₁), …` be measurable, pairwise independent, identically distributed pairs of a
+positive size factor and a count, with `X₀` integrable, and let `b₀ > 0` solve the population rate
+equation at the shape `a > 0`, `popRateScoreLog μ S₀ X₀ a b₀ = 0` (at the true hyperparameters this
+follows from the conditional mean, `popRateScoreLog_eq_zero_of_condMean`). Almost surely, for all
+large `n` the rate root `b̂ₙ(a)` of the first `n` cells solves their rate score equation, and
+`b̂ₙ(a) → b₀`. -/
 theorem ae_tendsto_rateRoot {a b₀ : ℝ} (ha : 0 < a) (hb₀ : 0 < b₀)
     (hmeas : ∀ i, Measurable (S i) ∧ Measurable (X i)) (hpos : ∀ i ω, 0 < S i ω)
     (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on fun i ω => (S i ω, X i ω)))
@@ -1024,8 +1044,9 @@ private lemma ae_all_shape {κ : Type*} [Countable κ] (A B : κ → ℝ)
   · exact ae_of_all _ fun ω h1 h2 => absurd ⟨h1, h2⟩ h
 
 /-- **Consistency of a root of the joint score equations (Cramér), heterogeneous size factors.**
-Let `(S₀, X₀), (S₁, X₁), …` be pairwise independent, identically distributed pairs of a positive
-size factor and a count, both integrable, and let the true hyperparameters `a₀, b₀ > 0` solve the
+On a probability space, let `(S₀, X₀), (S₁, X₁), …` be measurable, pairwise independent,
+identically distributed pairs of a positive size factor and a count, both integrable, and let the
+true hyperparameters `a₀, b₀ > 0` solve the
 population rate equation, `popRateScoreLog μ S₀ X₀ a₀ b₀ = 0` (which follows from the conditional
 mean, `popRateScoreLog_eq_zero_of_condMean`). Assume local identifiability of the shape: for all
 small `η > 0` there are rates at which the population rate and shape scores are both positive at
@@ -1035,8 +1056,7 @@ surely, for every `ε > 0` and all large `n`, the score equations of the first `
 solution `(â, b̂)` with `|â - a₀| < ε` and `|b̂ - b₀| < ε`.
 
 The sign hypothesis is assumed, not derived from the negative binomial law: it rests on the
-expected shape score vanishing at the truth, which is not proved here or in
-`HierarchicalCountMLE`. -/
+expected shape score vanishing at the truth, which is assumed rather than derived. -/
 theorem ae_eventually_exists_score_root_varying {a₀ b₀ : ℝ} (ha₀ : 0 < a₀) (hb₀ : 0 < b₀)
     (hmeas : ∀ i, Measurable (S i) ∧ Measurable (X i)) (hpos : ∀ i ω, 0 < S i ω)
     (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on fun i ω => (S i ω, X i ω)))

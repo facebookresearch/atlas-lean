@@ -102,7 +102,8 @@ theorem recombine_select_eq_mul (r : ℝ) (x w y : Bool × Bool → ℝ) (p q a 
 
 /-- Multiplicative haploid selection followed by recombination preserves a
 product haplotype-frequency vector, stated with Atlas's `Selection.select`
-and `Linkage.recombine`. -/
+and `Linkage.recombine`. It holds for all real `r`, `p`, `q`, `a`, `b`: when a single-locus mean
+fitness vanishes, both sides are `0` (division by zero gives zero). -/
 theorem recombine_select_of_mul {r : ℝ} {x w : Bool × Bool → ℝ}
     {p q a b : Bool → ℝ} (hx : ∀ g, x g = p g.1 * q g.2)
     (hw : ∀ g, w g = a g.1 * b g.2) (g : Bool × Bool) :
@@ -114,8 +115,13 @@ theorem recombine_select_of_mul {r : ℝ} {x w : Bool × Bool → ℝ}
     (MathlibExt.Biology.PopulationGenetics.Selection.select x w)
     p q a b hx hw (fun _ => rfl) g
 
-/-- Under the same hypotheses, the haplotype frequencies after selection and
-recombination have zero linkage disequilibrium. -/
+/-- If the haplotype frequencies are in linkage equilibrium (`x g = p g.1 * q g.2`) and the
+fitnesses are multiplicative across loci (`w g = a g.1 * b g.2`), then for every `r` the haplotype
+frequencies after selection and recombination have zero linkage disequilibrium. Here `p`, `q`,
+`a`, `b` are arbitrary real vectors: when a single-locus mean fitness vanishes, so does the
+haplotype mean fitness, and division by zero makes the selected and then the recombined
+frequencies `0`, not a haplotype distribution. The biological domain is `0 ≤ r ≤ 1/2`, `p` and
+`q` on the simplex and positive fitnesses. -/
 theorem linkageDiseq_recombine_select_of_mul {r : ℝ}
     {x w : Bool × Bool → ℝ} {p q a b : Bool → ℝ}
     (hx : ∀ g, x g = p g.1 * q g.2) (hw : ∀ g, w g = a g.1 * b g.2) :

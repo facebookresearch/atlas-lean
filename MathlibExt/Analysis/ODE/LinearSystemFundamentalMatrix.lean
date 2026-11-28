@@ -349,7 +349,7 @@ theorem fundamental_matrix_linear_system
     (ODE.existsUnique_hasDerivAt_eq_continuousLinearMap B t₀
       (Matrix.of.symm (1 : Matrix (Fin n) (Fin n) ℝ)) hB).exists
   let Φ : ℝ → Matrix (Fin n) (Fin n) ℝ := fun t ↦ Matrix.of (φ t)
-  have hΦ0 : Φ t₀ = 1 := by simp [Φ, hφ0]
+  have hΦ0 : Φ t₀ = 1 := by simp only [Φ, hφ0, Equiv.apply_symm_apply]
   have hΦ' (t : ℝ) : HasDerivAt Φ (A t * Φ t) t := by
     apply hasDerivAt_pi.mpr
     intro i

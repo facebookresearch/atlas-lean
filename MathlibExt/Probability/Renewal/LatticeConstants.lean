@@ -107,8 +107,8 @@ theorem measure_Ici_eq_measure_Ici_ceil {μ : Measure ℝ} {h : ℝ} (hh : 0 < h
     μ (Ici t) = μ (Ici (h * ⌈t / h⌉)) := by
   refine measure_congr (hμ.mono fun x hx => ?_)
   obtain ⟨k, rfl⟩ := hx
-  change (t ≤ k * h) = (h * ⌈t / h⌉ ≤ k * h)
-  refine propext ⟨fun htk => ?_, fun htk => ?_⟩
+  change (t ≤ k * h) ↔ (h * ⌈t / h⌉ ≤ k * h)
+  refine ⟨fun htk => ?_, fun htk => ?_⟩
   · have : ⌈t / h⌉ ≤ k := Int.ceil_le.2 ((div_le_iff₀ hh).2 htk)
     have : (⌈t / h⌉ : ℝ) ≤ k := by exact_mod_cast this
     nlinarith
@@ -127,8 +127,8 @@ theorem measure_Ioi_eq_measure_Ici_add {μ : Measure ℝ} {h : ℝ} (hh : 0 < h)
     μ (Ioi (k * h)) = μ (Ici ((k + 1) * h)) := by
   refine measure_congr (hμ.mono fun x hx => ?_)
   obtain ⟨j, rfl⟩ := hx
-  change ((k : ℝ) * h < j * h) = (((k : ℝ) + 1) * h ≤ j * h)
-  refine propext ⟨fun hlt => ?_, fun hle => ?_⟩
+  change ((k : ℝ) * h < j * h) ↔ (((k : ℝ) + 1) * h ≤ j * h)
+  refine ⟨fun hlt => ?_, fun hle => ?_⟩
   · have : k < j := by exact_mod_cast lt_of_mul_lt_mul_right hlt hh.le
     have : (k : ℝ) + 1 ≤ j := by exact_mod_cast this
     nlinarith
@@ -562,8 +562,9 @@ ladder-height measure on `[0, ∞)` with Cramér root `θ > 0`,
 measurable, bounded, zero on `(-∞, 0)`, and solve
 `Z t = 1_{t ≥ 0} G(t, ∞) + ∫ Z (t - y) dG(y)` for all real `t` (Feller's
 convention: for the maximum `M` of the ladder process, `Z t = P(M > t)` for
-`t ≥ 0`). The vanishing and boundedness conditions pin `Z` down: without
-them, `Z + k e^{-θ t}` solves the same equation on all of `ℝ`. Given the key
+`t ≥ 0`). For a defective `G` (`G(ℝ) < 1`) the vanishing and boundedness
+conditions pin `Z` down: without them, `Z + k e^{-θ t}` solves the same
+equation on all of `ℝ`. Given the key
 renewal theorem for the tilted law (hypothesis `hKRT`, as in
 `tendsto_scaled_of_keyRenewal`),
 `e^{θ t} Z t → (1 - G(ℝ)) / (θ ∫ y e^{θ y} dG(y))`. -/

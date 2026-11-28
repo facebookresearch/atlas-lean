@@ -635,7 +635,7 @@ omit [Fintype ι] [DecidableEq ι] in
 private theorem gram_updateRow_zero (X : Matrix (Fin m) ι ℝ) (i : Fin m) :
     (X.updateRow i 0)ᵀ * X.updateRow i 0 = Xᵀ * X - vecMulVec (X i) (X i) := by
   ext a b
-  rw [Matrix.sub_apply, mul_apply, mul_apply, vecMulVec_apply,
+  rw [Matrix.sub_apply, Matrix.mul_apply, Matrix.mul_apply, vecMulVec_apply,
     sum_eq_add_sum_erase (fun k => (X.updateRow i 0)ᵀ a k * X.updateRow i 0 k b) i,
     sum_eq_add_sum_erase (fun k => Xᵀ a k * X k b) i]
   simp only [transpose_apply, updateRow_self, Pi.zero_apply, zero_mul, zero_add,

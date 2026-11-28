@@ -60,6 +60,32 @@ example (N b : ℕ) (hb : 2 ≤ b) (hN : N.Prime) (hp : (Nat.digits b N).Palindr
   ((hN.eq_one_or_self_of_dvd _ (succ_dvd_of_palindrome_even_length N b hb hp he)).resolve_left
     (by omega)).symm
 
+-- The smallest allowed base: `3 = (1, 1)_2`.
+example : ∃ x : ℕ, 2 = 3 ^ x - 1 :=
+  base_eq_prime_pow_sub_one_of_palindrome 3 1 2 Nat.prime_three le_rfl (by decide) (by decide)
+
+-- `3 ^ 3 = (3, 3)_8`, where the exponent in `8 + 1 = 3 ^ 2` is less than the input exponent.
+example : ∃ x : ℕ, 8 = 3 ^ x - 1 :=
+  base_eq_prime_pow_sub_one_of_palindrome 3 3 8 Nat.prime_three (by decide) (by decide) (by decide)
+
+-- Powers of two: `2 ^ 3 = (2, 2)_3`, and `2 ^ 9 = 8 ^ 3 = (1, 3, 3, 1)_7` with four digits.
+example : ∃ x : ℕ, 3 = 2 ^ x - 1 :=
+  base_eq_two_pow_sub_one_of_palindrome 3 3 (by norm_num) (by decide) (by decide)
+
+example : ∃ x : ℕ, 7 = 2 ^ x - 1 :=
+  base_eq_two_pow_sub_one_of_palindrome 9 7 (by norm_num) (by decide) (by decide)
+
+-- Since `2` is not one less than a power of two, no binary representation of a power of two is a
+-- palindrome with an even number of digits.
+example (n : ℕ) :
+    ¬ ((Nat.digits 2 (2 ^ n)).Palindrome ∧ Even (Nat.digits 2 (2 ^ n)).length) := by
+  rintro ⟨hp, he⟩
+  obtain ⟨x, hx⟩ := base_eq_two_pow_sub_one_of_palindrome n 2 le_rfl hp he
+  rcases x with _ | x
+  · simp at hx
+  · rw [pow_succ] at hx
+    omega
+
 -- Test section: neither hypothesis can be dropped.
 
 -- `101 = (1, 0, 1)_10` is a palindrome with an odd number of digits, and `11 ∤ 101`.
@@ -69,5 +95,16 @@ example : (Nat.digits 10 101).Palindrome ∧ ¬ Even (Nat.digits 10 101).length 
 -- `12 = (1, 2)_10` has an even number of digits but is not a palindrome, and `11 ∤ 12`.
 example : ¬ (Nat.digits 10 12).Palindrome ∧ Even (Nat.digits 10 12).length ∧ ¬ 11 ∣ 12 := by
   decide
+
+-- Powers of two in base `5`: `2 ^ 2 = (4)_5` is a palindrome with an odd number of digits,
+-- `2 ^ 3 = (1, 3)_5` has an even number of digits but is not a palindrome, and `5` is not one
+-- less than a power of two.
+example : (Nat.digits 5 (2 ^ 2)).Palindrome ∧ ¬ Even (Nat.digits 5 (2 ^ 2)).length ∧
+    ¬ (Nat.digits 5 (2 ^ 3)).Palindrome ∧ Even (Nat.digits 5 (2 ^ 3)).length ∧
+    ¬ ∃ x, 5 = 2 ^ x - 1 := by
+  refine ⟨by decide, by decide, by decide, by decide, ?_⟩
+  rintro ⟨x, hx⟩
+  rcases x with _ | _ | _ | x <;> simp [pow_succ] at hx
+  omega
 
 end MathlibExtTest.MinBasePalindrome

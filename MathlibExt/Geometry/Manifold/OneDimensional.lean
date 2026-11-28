@@ -375,7 +375,7 @@ private theorem odm_exists_partialDiffeomorph_of_deriv_pos
   have hne : ∀ t ∈ J, deriv f t ≠ 0 := fun t ht => (hderiv t ht).ne'
   have hsd : ∀ t ∈ J, HasStrictDerivAt f (deriv f t) t := by
     intro t ht
-    exact ((hfd.contDiffAt (hJopen.mem_nhds ht)).hasStrictDerivAt (by simp))
+    exact ((hfd.contDiffAt (hJopen.mem_nhds ht)).hasStrictDerivAt_deriv (by simp))
   have hmap : ∀ t ∈ J, Filter.map f (𝓝 t) = 𝓝 (f t) := by
     intro t ht
     exact HasStrictDerivAt.map_nhds_eq (hsd t ht) (hne t ht)

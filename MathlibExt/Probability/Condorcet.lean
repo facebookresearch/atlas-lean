@@ -301,11 +301,9 @@ private lemma pat_split {Ω : Type*} (X : ℕ → Ω → Bool) (s t : Finset ℕ
       = {ω : Ω | X j ω = false} ∩ (((s.erase j) \ t).inf fun i => {ω : Ω | X i ω = false}) := by
     conv_lhs => rw [hsdiff, ← hmid_eq]
     rw [Finset.inf_insert]
-    rfl
   have hinf_true : ((insert j t).inf fun i => {ω : Ω | X i ω = true})
       = {ω : Ω | X j ω = true} ∩ (t.inf fun i => {ω : Ω | X i ω = true}) := by
     rw [Finset.inf_insert]
-    rfl
   have hU := true_union_false (Ω := Ω) X j
   have hD := true_inter_false (Ω := Ω) X j
   constructor
@@ -799,8 +797,8 @@ private lemma measSet_maj {Ω : Type*} [MeasurableSpace Ω]
     ext ω
     simp only [Set.mem_iUnion, Finset.mem_coe]
   rw [hun, hcongr]
-  exact (Finset.finite_toSet _).measurableSet_biUnion
-    (fun t _ => measSet_filter_eq X hmeas _ t)
+  exact (Finset.finite_toSet ((Finset.powerset (Finset.range n)).filter
+    (fun t => Q t.card))).measurableSet_biUnion (fun t _ => measSet_filter_eq X hmeas _ t)
 
 /-- **Condorcet's jury theorem.** Let $\mu$ be a probability measure on a measurable space
 $\Omega$, let $X_0, X_1, \dots$ be measurable maps from $\Omega$ to $\{\text{true}, \text{false}\}$

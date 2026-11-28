@@ -191,7 +191,7 @@ theorem orderAt_C_of_ne_zero {a : R} (ha : a ≠ 0) (v : σ → R) :
 the `d`-th power of the scalar. The evaluation form is
 `FormalizedTextbooks.Hartshorne1977.ClassicalVarieties.isHomogeneous_eval_smul`; this generalized
 form is kept private, as an ingredient of `orderAt_smul`. -/
-private theorem IsHomogeneous.aeval_smul {S : Type*} [CommSemiring S] [Algebra R S]
+private theorem IsHomogeneous.aeval_smul' {S : Type*} [CommSemiring S] [Algebra R S]
     {F : MvPolynomial σ R} {d : ℕ} (hF : F.IsHomogeneous d) (c : S) (y : σ → S) :
     MvPolynomial.aeval (c • y) F = c ^ d * MvPolynomial.aeval y F := by
   rw [F.as_sum, map_sum, map_sum, Finset.mul_sum]
@@ -210,7 +210,7 @@ private theorem coeff_aeval_C_mul_X (a : R) (G : MvPolynomial σ R) (d : σ →�
   have hcomp : ∀ n, aeval (fun i => C a * X i) (homogeneousComponent n G) =
       C (a ^ n) * homogeneousComponent n G := by
     intro n
-    have h := (homogeneousComponent_isHomogeneous n G).aeval_smul (C a) X
+    have h := (homogeneousComponent_isHomogeneous n G).aeval_smul' (C a) X
     rw [aeval_X_left_apply, ← C_pow] at h
     rw [← h]
     rfl
@@ -336,7 +336,7 @@ theorem orderAt_smul {F : MvPolynomial σ K} {d : ℕ} (hF : F.IsHomogeneous d) 
         fun i => C c⁻¹ * X i + C (v i) := by
       funext i
       simp
-    rw [hpt, hF.aeval_smul, ← C_pow, ← AlgHom.comp_apply, comp_aeval, hfun]
+    rw [hpt, hF.aeval_smul', ← C_pow, ← AlgHom.comp_apply, comp_aeval, hfun]
   refine order_coe_eq_of_coeff_eq_zero_iff fun α => ?_
   rw [key, coeff_C_mul, coeff_aeval_C_mul_X]
   simp [hc]

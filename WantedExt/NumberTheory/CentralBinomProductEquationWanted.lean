@@ -10,8 +10,14 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Data.Nat.Choose.Central
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.CentralBinomProductEquationLeTen
+public import MathlibExt.NumberTheory.CentralBinomProductEquationOne
+public import MathlibExt.NumberTheory.CentralBinomProductEquationSmall
+public import MathlibExt.NumberTheory.CentralBinomProductEquationSubOne
+public import MathlibExt.NumberTheory.CentralBinomProductEquationSubTwo
+public import MathlibExt.NumberTheory.CentralBinomProductInequality
+public import MathlibExt.NumberTheory.CentralBinomProductEquationCentralBinomAddNeCentralBinomMulChooseSubThree
 
 /-!
 # Solvability of `C(2k, k) = C(2a, a) C(x + 2b, b)`
@@ -38,58 +44,6 @@ INTEGERS 26 (2026), Article A26, Theorem 1 (`integers-2026-A26-thm-1`). -/
 public theorem_wanted centralBinom_add_eq_centralBinom_mul_choose_iff (x a b : ℕ) (hx : 0 < x)
     (hb : 0 < b) :
     (a + b).centralBinom = a.centralBinom * (x + 2 * b).choose b ↔ x = 1 ∧ a = 1
-
-/-- **Allen's inequality for central binomial products.** Let $x$ and $b$ be positive integers
-and let $a$ be a nonnegative integer with $a \le x$. Then
-$\binom{2(a+b)}{a+b} \le \binom{2a}{a}\binom{x+2b}{b}$, and equality holds if and only if
-$x = 1$ and $a = 1$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Proposition 1 (`integers-2026-A26-prop-1`). -/
-public theorem_wanted centralBinom_add_le_centralBinom_mul_choose_of_le (x a b : ℕ) (hx : 0 < x)
-    (hb : 0 < b) (hax : a ≤ x) :
-    (a + b).centralBinom ≤ a.centralBinom * (x + 2 * b).choose b ∧
-      ((a + b).centralBinom = a.centralBinom * (x + 2 * b).choose b ↔ x = 1 ∧ a = 1)
-
-/-- **Central binomial products with $a + b \le 10$.** Let $x$, $a$, $b$ be positive integers
-with $a + b \le 10$. Then $\binom{2(a+b)}{a+b} = \binom{2a}{a}\binom{x+2b}{b}$ if and only if
-$x = 1$ and $a = 1$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Lemma 1 (`integers-2026-A26-lem-1`). -/
-public theorem_wanted centralBinom_add_eq_centralBinom_mul_choose_iff_of_le_ten (x a b : ℕ)
-    (hx : 0 < x) (ha : 0 < a) (hb : 0 < b) (hk : a + b ≤ 10) :
-    (a + b).centralBinom = a.centralBinom * (x + 2 * b).choose b ↔ x = 1 ∧ a = 1
-
-/-- **Central binomial products in the case $x = a - 1$.** Let $a$ and $b$ be natural numbers
-with $4 < 2a \le a + b$. Then $\binom{2(a+b)}{a+b} \ne \binom{2a}{a}\binom{a+2b-1}{b}$, so the
-equation $\binom{2(a+b)}{a+b} = \binom{2a}{a}\binom{x+2b}{b}$ has no solution with $x = a - 1$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Lemma 2 (`integers-2026-A26-lem-2`). -/
-public theorem_wanted centralBinom_add_ne_centralBinom_mul_choose_sub_one (a b : ℕ)
-    (ha : 4 < 2 * a) (hab : 2 * a ≤ a + b) :
-    (a + b).centralBinom ≠ a.centralBinom * (a + 2 * b - 1).choose b
-
-/-- **Central binomial products in the case $x = a - 2$.** Let $a$ and $b$ be natural numbers
-with $4 < 2a \le a + b$. Then $\binom{2(a+b)}{a+b} \ne \binom{2a}{a}\binom{a+2b-2}{b}$, so the
-equation $\binom{2(a+b)}{a+b} = \binom{2a}{a}\binom{x+2b}{b}$ has no solution with $x = a - 2$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Lemma 3 (`integers-2026-A26-lem-3`). -/
-public theorem_wanted centralBinom_add_ne_centralBinom_mul_choose_sub_two (a b : ℕ)
-    (ha : 4 < 2 * a) (hab : 2 * a ≤ a + b) :
-    (a + b).centralBinom ≠ a.centralBinom * (a + 2 * b - 2).choose b
-
-/-- **Central binomial products in the case $x = a - 3$.** Let $a$ and $b$ be natural numbers
-with $4 < 2a \le a + b$. Then $\binom{2(a+b)}{a+b} \ne \binom{2a}{a}\binom{a+2b-3}{b}$, so the
-equation $\binom{2(a+b)}{a+b} = \binom{2a}{a}\binom{x+2b}{b}$ has no solution with $x = a - 3$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Lemma 4 (`integers-2026-A26-lem-4`). -/
-public theorem_wanted centralBinom_add_ne_centralBinom_mul_choose_sub_three (a b : ℕ)
-    (ha : 4 < 2 * a) (hab : 2 * a ≤ a + b) :
-    (a + b).centralBinom ≠ a.centralBinom * (a + 2 * b - 3).choose b
 
 /-- **Hanson's theorem on a prime factor above $3m/2$ in consecutive integers.** Let $m$ and $n$
 be natural numbers with $0 < m < n$. The product $n(n+1)\cdots(n+m-1)$ has a prime divisor $p$
@@ -190,15 +144,6 @@ public theorem_wanted centralBinom_add_ne_of_large_a (x a b : ℕ) (hx : 2 ≤ x
     (hk : 150 ≤ a + b) (ha : 171 * x ≤ 121 * a) :
     (a + b).centralBinom ≠ a.centralBinom * (x + 2 * b).choose b
 
-/-- **Central binomial products with $x = 1$.** Let $a$ and $b$ be positive integers. Then
-$\binom{2(a+b)}{a+b} = \binom{2a}{a}\binom{1+2b}{b}$ if and only if $a = 1$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Proposition 2 (`integers-2026-A26-prop-2`). -/
-public theorem_wanted centralBinom_add_eq_centralBinom_mul_choose_one_iff (a b : ℕ) (ha : 0 < a)
-    (hb : 0 < b) :
-    (a + b).centralBinom = a.centralBinom * (1 + 2 * b).choose b ↔ a = 1
-
 /-- **No large solutions of the central binomial product equation with shift at least two.**
 For natural numbers $a$, $b$, $x$ with $a \ge 1$, $b \ge 1$, $x \ge 2$ and $a + b \ge 150$, we have
 $\binom{2(a+b)}{a+b} \ne \binom{2a}{a}\binom{x+2b}{b}$.
@@ -207,16 +152,6 @@ Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b
 INTEGERS 26 (2026), Article A26, Proposition 3 (`integers-2026-A26-prop-3`). -/
 public theorem_wanted centralBinom_add_ne_of_two_le_of_large (x a b : ℕ) (hx : 2 ≤ x)
     (ha : 0 < a) (hb : 0 < b) (hk : 150 ≤ a + b) :
-    (a + b).centralBinom ≠ a.centralBinom * (x + 2 * b).choose b
-
-/-- **Central binomial products with $x \ge 2$ and $a + b < 150$.** Let $x$, $a$, $b$ be natural
-numbers with $a \ge 1$, $b \ge 1$, $x \ge 2$ and $x < a + b < 150$. Then
-$\binom{2(a+b)}{a+b} \ne \binom{2a}{a}\binom{x+2b}{b}$.
-
-Source: Meaghan Allen, *Solvability of $\binom{2k}{k} = \binom{2a}{a}\binom{x+2b}{b}$*,
-INTEGERS 26 (2026), Article A26, Proposition 4 (`integers-2026-A26-prop-4`). -/
-public theorem_wanted centralBinom_add_ne_of_two_le_of_small (x a b : ℕ) (hx : 2 ≤ x)
-    (ha : 0 < a) (hb : 0 < b) (hxk : x < a + b) (hk : a + b < 150) :
     (a + b).centralBinom ≠ a.centralBinom * (x + 2 * b).choose b
 
 end

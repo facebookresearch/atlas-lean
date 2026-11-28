@@ -168,7 +168,7 @@ theorem rossby_mode_beta_plane_residual {A β k l ω t x y : ℝ} :
   rw [deriv_laplacian_t, deriv_cos_x1]
   ring
 
-/-- Dispersion relation: with `ω = -β k / (k² + l²)` the residual above
+/-- Dispersion relation: for `k² + l² ≠ 0`, with `ω = -β k / (k² + l²)` the residual above
 vanishes, i.e. the specified linear β-plane mode satisfies its dispersion
 relation. -/
 theorem rossby_mode_satisfies_dispersion {A β k l t x y : ℝ}

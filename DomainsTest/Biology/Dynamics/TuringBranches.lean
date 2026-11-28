@@ -336,7 +336,7 @@ example : ∃ φ : ℝ → ℝ, φ 0 = 100 / 11 ∧ ∀ᶠ a in 𝓝[≠] (0 : �
   obtain ⟨φ, hφ0, -, -, -, hbr⟩ := turing_patternBranch_stability (J := J₀) (du := 1)
     (k := 1 / 2) (d₀ := 100 / 11) (H := fun _ => -1) (Ha := fun _ => 0)
     (by rw [J₀_trace]; norm_num) J₀_admissible J₀_neutral.symm
-    (J₀_G_contDiffAt.hasStrictFDerivAt one_ne_zero)
+    (J₀_G_contDiffAt.hasStrictFDerivAt_fderiv one_ne_zero)
     (Eventually.of_forall fun d => by simp)
     (Eventually.of_forall fun p => by simp [sub_eq_add_neg])
     continuousAt_const (by norm_num)
@@ -391,7 +391,7 @@ example :
     (d₀ := 100 / 11)
     (G := fun p : ℝ × ℝ => leadingEigenvalue (modeMatrix J₀ 1 p.2 (1 / 2)) - p.1 ^ 2)
     (by rw [J₀_trace]; norm_num) J₀_admissible J₀_neutral.symm
-    (J₀_G_contDiffAt.hasStrictFDerivAt one_ne_zero) (Eventually.of_forall fun d => by simp)
+    (J₀_G_contDiffAt.hasStrictFDerivAt_fderiv one_ne_zero) (Eventually.of_forall fun d => by simp)
   refine ⟨J₀_mode4_neutral_8pi, ?_, ?_, J₀_unstable_8pi (by norm_num)⟩
   · rw [J₀_mode4_8pi]
     filter_upwards [hleft] with d hd

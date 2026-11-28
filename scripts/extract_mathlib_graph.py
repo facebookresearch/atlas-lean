@@ -29,6 +29,7 @@ from __future__ import annotations
 import argparse
 import collections
 import concurrent.futures
+import functools
 import gzip
 import io
 import json
@@ -272,35 +273,51 @@ def node_kind(row: dict) -> str:
 
 
 def gather(uses: list[str], through: dict[str, frozenset[str]], nodes, rule_of: dict[str, str],
-           found: dict[str, set[str]]) -> None:
-    """Add the nodes that *uses* reach, each with how: directly, or through hidden constants of which rules."""
+           found: dict[str, set[str]], alias: dict[str, str | None] | None = None, name: str | None = None) -> None:
+    """Add the nodes that *uses*, an expression of *name*, reach, each with how: directly, or through hidden constants
+    of which rules. A use of a duplicate (*alias*, see extract_v2_lean_dependencies.frontiers) is a use of its
+    article, and so counts as direct: the duplicate states the article's result; one whose article is gone reaches
+    nothing. A duplicate of *name*'s own is part of it, as in the v2 extraction: *uses* come with those it names
+    replaced by what they use (extract_v2_lean_dependencies.own_duplicates), a direct use of theirs being one of
+    *name*'s. One reached otherwise, through hidden constants or through another of its duplicates, reaches what it
+    reaches itself, as a hidden constant does."""
+    alias = alias or {}
     for use in uses:
         if use in nodes:
             found.setdefault(use, set()).add(DIRECT)
+        elif use in alias and alias[use] != name:
+            if alias[use] is not None:
+                found.setdefault(alias[use], set()).add(DIRECT)
         else:
             rule = rule_of.get(use, "outside")
-            for target in through.get(use, ()):
+            for target in v2.through_aliases(name, through.get(use, frozenset()), through, alias):
                 found.setdefault(target, set()).add(rule)
 
 
-def collapse(rows: dict[str, dict], nodes, sources,
-             rule_of: dict[str, str]) -> tuple[list[dict], list[list[str]], dict]:
+def collapse(rows: dict[str, dict], nodes, sources, rule_of: dict[str, str],
+             alias: dict[str, str | None] | None = None) -> tuple[list[dict], list[list[str]], dict]:
     """Statement and proof edges from each name in *sources* to *nodes*, with extract_v2_lean_dependencies.py's
     semantics, the mutual groups whose statement edges to each other are left out, and edge counts."""
-    reach_statement, reach = v2.frontiers(rows, nodes, statement=True), v2.frontiers(rows, nodes)
+    alias = alias or {}
+    reach_statement = v2.frontiers(rows, nodes, statement=True, alias=alias)
+    reach = v2.frontiers(rows, nodes, alias=alias)
     found_statement: dict[str, dict[str, tuple[str, set[str]]]] = {}
     found_proof: dict[str, dict[str, set[str]]] = {}
     for name in sources:
         row = rows[name]
         by_type: dict[str, set[str]] = {}
         by_value: dict[str, set[str]] = {}
-        gather(row["type"], reach_statement, nodes, rule_of, by_type)
+        # The source's own duplicates are part of it: what they use, it uses.
+        own_type = v2.own_duplicates(name, row["type"], rows, alias, True)[0]
+        gather(own_type, reach_statement, nodes, rule_of, by_type, alias, name)
         statement: dict[str, tuple[str, set[str]]] = {}
         proof: dict[str, set[str]] = {}
         if row["kind"] in STATEMENT_VALUE:
-            gather(row["value"], reach_statement, nodes, rule_of, by_value)
+            own_value = v2.own_duplicates(name, row["value"], rows, alias, True)[0]
+            gather(own_value, reach_statement, nodes, rule_of, by_value, alias, name)
         else:
-            gather(row["value"], reach, nodes, rule_of, proof)
+            own_value = v2.own_duplicates(name, row["value"], rows, alias, False)[0]
+            gather(own_value, reach, nodes, rule_of, proof, alias, name)
         for target, how in by_value.items():
             statement[target] = ("value", how)
         for target, how in by_type.items():
@@ -464,6 +481,22 @@ def _adjacency(edges: list[dict], kinds: tuple[str, ...]) -> dict[str, set[str]]
 
 # -------------------------------------------------------------------------------------------------- bridge
 
+
+def read_aliases(path: str | None) -> dict[str, str]:
+    """The duplicates and their articles a file gives, one `name<TAB>article` a line (see
+    extract_v2_lean_dependencies.article_aliases); none without a file."""
+    if path is None:
+        return {}
+    aliases: dict[str, str] = {}
+    for number, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        fields = line.split("\t")
+        if len(fields) != 2 or not all(field.strip() == field and field for field in fields) or fields[0] in aliases:
+            raise SystemExit(f"{path}, line {number}: not `name<TAB>article`, each name once")
+        aliases[fields[0]] = fields[1]
+    return aliases
+
 ATLAS_HIDDEN = "atlas_non_article"  # how a bridge edge passes through an ATLAS constant that no article links
 
 
@@ -491,9 +524,40 @@ def command_bridge(args: argparse.Namespace) -> int:
     rows, rule_of, full, _ = load_classified(Path(args.mathlib_dump))
     mathlib_nodes = frozenset(full)
     del full
-    manifest = v2.article_manifest() if args.articles is None else set(
-        line.strip() for line in Path(args.articles).read_text(encoding="utf-8").splitlines() if line.strip())
-    atlas_rows = v2.publish_private_targets(v2.read_dump(Path(args.v2_dump))[0], manifest)
+    if args.aliases is not None and args.articles is None:
+        raise SystemExit("--aliases goes with --articles: without them, both are read from blueprint/")
+    # The annotations' problems stop the bridge before it writes, as they stop the v2 extraction.
+    try:
+        manifest = v2.article_manifest() if args.articles is None else set(
+            line.strip() for line in Path(args.articles).read_text(encoding="utf-8").splitlines() if line.strip())
+        # The duplicates the annotations list, or those --aliases gives beside --articles (none without it, so that
+        # such a run needs no Autoform), collapsed onto their articles as the v2 extraction collapses them.
+        listed = v2.article_aliases() if args.articles is None else read_aliases(args.aliases)
+    except ValueError as error:
+        raise SystemExit(str(error)) from None
+    project_rows = v2.read_dump(Path(args.v2_dump))[0]
+    collisions = v2.private_collisions(project_rows, listed.keys() | set(listed.values()))
+    atlas_rows = v2.publish_private_targets(project_rows, manifest | listed.keys())
+    sources = functools.cache(v2.lean_index)
+    # An article the annotations name with redundant quotes has its row under Lean's own spelling: it is joined to
+    # that row as the v2 extraction joins it, with the same checks, which stop the bridge before it writes. The
+    # bridge reads no registry, so only the duplicates are endpoints the join must not touch. An explicit manifest
+    # comes with no Lean sources to show the name's one owner, so its names are taken as given. The join comes before
+    # the constants in both dumps are dropped, which would otherwise drop an article's row; neither spelling of a
+    # joined article may be a constant of the Mathlib dump, whatever the Mathlib layer makes of it.
+    missing = manifest - atlas_rows.keys()
+    if args.articles is None and any("«" in name for name in missing):
+        compiled = set(atlas_rows)
+        try:
+            atlas_rows = v2.join_missing_quoted_articles(atlas_rows, missing, manifest, listed, {}, sources)
+        except ValueError as error:
+            raise SystemExit(str(error)) from None
+        except OSError as error:
+            from autoform_cli.lean import index_failure_message
+
+            raise SystemExit(index_failure_message(error)) from None
+        if clashes := sorted((compiled ^ atlas_rows.keys()) & rows.keys()):
+            raise SystemExit(f"quoted articles whose compiled or authored names are in the Mathlib dump: {clashes[:5]}")
     # A reserved name that both a v2 module and a Mathlib module the v2 module does not import realise on
     # demand (`AddMonoidHom.mk.congr_simp`) is in both dumps: the two are the same generated lemma.
     realised_twice = sorted(atlas_rows.keys() & rows.keys())
@@ -502,10 +566,21 @@ def command_bridge(args: argparse.Namespace) -> int:
     for name in realised_twice:
         del atlas_rows[name]
     articles = manifest & atlas_rows.keys()
+    # The duplicates as the v2 extraction counts them: one this dump cannot count stops the bridge before it writes, and
+    # one the Lean no longer declares is warned about. Only the checkout's Lean sources can tell a deleted declaration
+    # from an incomplete dump: an explicit manifest has none.
+    alias, problems, warnings = v2.resolve_aliases(
+        listed, manifest, atlas_rows,
+        (lambda name: name in sources().declarations) if args.articles is None else (lambda name: None), collisions)
+    for warning in warnings:
+        print(f"warning: {warning}", file=sys.stderr)
+    if problems:
+        raise SystemExit(f"{len(problems)} declarations listed as duplicates whose uses could not count as uses of "
+                         "their articles: " + "; ".join(problems[:5]))
     for name in atlas_rows:
         rule_of[name] = NODE if name in articles else ATLAS_HIDDEN
     rows.update(atlas_rows)
-    edges, groups, report = collapse(rows, mathlib_nodes | articles, sorted(articles), rule_of)
+    edges, groups, report = collapse(rows, mathlib_nodes | articles, sorted(articles), rule_of, alias)
     bridge = []
     for edge in edges:
         if edge["target"] in mathlib_nodes:
@@ -787,7 +862,9 @@ def command_stats(args: argparse.Namespace) -> int:
         "most_used_in_statements": top(indegree["statement"]),
         "seconds": {"graph": graph_meta["seconds"]},
     }
-    for meta_file in sorted(out.glob("*dump-meta.json")):
+    # The v2 dump's meta first: its ATLAS commit is the layer's. The Mathlib dump depends only on the pins, and the
+    # workflow may restore it from a cache made at another commit.
+    for meta_file in sorted(out.glob("*dump-meta.json"), reverse=True):
         meta = json.loads(meta_file.read_text(encoding="utf-8"))
         stats.setdefault("versions", {key: meta.get(key) for key in ("lean_version", "mathlib_rev", "atlas_commit")})
         stats["seconds"][meta_file.name.removesuffix("-meta.json")] = meta["dump"]["seconds"]
@@ -853,6 +930,9 @@ def main(argv: list[str] | None = None) -> int:
     bridge.add_argument("outdir")
     bridge.add_argument("--mathlib-dump", required=True, help="the merged Mathlib dump")
     bridge.add_argument("--articles", help="file of article Lean names (default: read by Autoform from blueprint/)")
+    bridge.add_argument("--aliases", help="with --articles, file of duplicates and their articles, one "
+                                          "`name<TAB>article` a line (default: none; without --articles, read by "
+                                          "Autoform from blueprint/)")
     bridge.add_argument("--check-v2", help="extract_v2_lean_dependencies.py output to compare ATLAS edges with")
     bridge.set_defaults(run=command_bridge)
 

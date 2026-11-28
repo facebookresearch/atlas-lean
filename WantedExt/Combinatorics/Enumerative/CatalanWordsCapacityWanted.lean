@@ -13,67 +13,16 @@ public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.Polynomial.Laurent
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Fintype.Pi
-public import Mathlib.Data.Nat.Choose.Basic
-public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.Combinatorics.Enumerative.CatalanGrowthAreaDist
+public import MathlibExt.Combinatorics.Enumerative.CatalanWordsCapacity
 public import MathlibExt.NumberTheory.TrinomialCoefficient
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **A recursion for binomial sums of odd-indexed Fibonacci numbers.** Let $F_k$ be the Fibonacci
-numbers, with the convention $F_{-1} = 1$. For all integers $n \ge 1$ and $2 \le i \le n + 1$,
-$$\sum_{m=0}^{n-i+1} \binom{n-m-1}{i-2} F_{2m-1} =
-\binom{n-1}{i-2} + \sum_{j=i}^{n} \sum_{m=0}^{n-j} \binom{n-m-2}{j-2} F_{2m-1}$$
-(Mansour and Shattuck's Lemma 5, identity (21)). All differences in the binomial coefficients and
-in the summation bounds are nonnegative.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Lemma 5 (`integers-2025-A5-lem-5`). -/
-public theorem_wanted sum_choose_mul_fib_odd_eq_choose_add_sum (n i : ℕ) (hn : 1 ≤ n)
-    (hi : 2 ≤ i) (hin : i ≤ n + 1) :
-    ∑ m ∈ Finset.range (n + 2 - i),
-        (n - m - 1).choose (i - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1)) =
-      (n - 1).choose (i - 2) +
-        ∑ j ∈ Finset.Icc i n, ∑ m ∈ Finset.range (n - j + 1),
-          (n - m - 2).choose (j - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1))
-
-/-- **A double-sum identity for even-indexed Fibonacci numbers.** Let $F_k$ be the Fibonacci
-numbers, with $F_0 = 0$, $F_1 = 1$ and $F_{k+2} = F_{k+1} + F_k$, and set $F_{-1} = 1$. For every
-natural number $n \ge 1$,
-$$F_{2n} = \sum_{j=1}^{n} \sum_{m=0}^{n-j} \binom{n-m-1}{j-1} F_{2m-1}.$$
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Lemma 5 (`integers-2025-A5-lem-5`). -/
-public theorem_wanted fib_two_mul_eq_sum_sum_choose_mul_fib_odd (n : ℕ) (hn : 1 ≤ n) :
-    Nat.fib (2 * n) =
-      ∑ j ∈ Finset.Icc 1 n, ∑ m ∈ Finset.range (n - j + 1),
-        (n - m - 1).choose (j - 1) * (if m = 0 then 1 else Nat.fib (2 * m - 1))
-
-
 open Polynomial LaurentPolynomial
-
-/-- **Capacity of a word.** The capacity of a word $w = w_1 \cdots w_n$ of natural numbers,
-viewed as a bargraph, is
-$$\mathrm{cap}(w) = \sum_{i=1}^{n}
-\max\Bigl(0, \min\bigl(\max_{j < i} w_j, \max_{j > i} w_j\bigr) - w_i\Bigr),$$
-the number of cells of water held above the columns, where an empty maximum is $0$. In particular
-the first and last columns hold no water.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of capacity. -/
-public def wordCapacity {n : ℕ} (w : Fin n → ℕ) : ℕ :=
-  ∑ i : Fin n,
-    (min ((Finset.univ.filter (· < i)).sup w) ((Finset.univ.filter (i < ·)).sup w) - w i)
-
-/-- **Area of a word.** The area of a word $w = w_1 \cdots w_n$ of natural numbers is the sum
-$w_1 + \cdots + w_n$ of its letters, the area of its bargraph.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of the area statistic. -/
-public def wordArea {n : ℕ} (w : Fin n → ℕ) : ℕ :=
-  ∑ i : Fin n, w i
 
 /-- **Capacity of the word $122341123212323$.** The word
 $w = 1\,2\,2\,3\,4\,1\,1\,2\,3\,2\,1\,2\,3\,2\,3$ of length $15$ has capacity $10$ (Mansour and
@@ -84,18 +33,6 @@ to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, Figure 1. -/
 public theorem wordCapacity_figure_one :
     wordCapacity ![1, 2, 2, 3, 4, 1, 1, 2, 3, 2, 1, 2, 3, 2, 3] = 10 := by
   decide
-
-/-- **Catalan words.** For a natural number $n$, the set $\mathcal{A}_n$ of Catalan words of length
-$n$ consists of the words $w = w_1 w_2 \cdots w_n$ of positive integers with $w_1 = 1$ and
-$w_{i+1} \le w_i + 1$ for $1 \le i < n$; for $n = 0$ it contains only the empty word.
-
-Every letter of a Catalan word of length $n$ is at most $n$, so $\mathcal{A}_n$ is finite.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of Catalan words. -/
-public def catalanWords (n : ℕ) : Finset (Fin n → ℕ) :=
-  (Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun w =>
-    (∀ i : Fin n, i.val = 0 → w i = 1) ∧ ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1
 
 /-- **Smooth words.** For $n \ge 0$, the set $\mathcal{R}_n$ of smooth words of length $n$ consists
 of the words $w = w_1 \cdots w_n$ of positive integers with $w_1 = 1$ (when $n \ge 1$) and
@@ -109,37 +46,6 @@ public def smoothWords (n : ℕ) : Finset (Fin n → ℕ) :=
   (Fintype.piFinset fun _ : Fin n => Finset.Icc 1 n).filter fun w =>
     (∀ i : Fin n, i.val = 0 → w i = 1) ∧
       ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 ∧ w i ≤ w j + 1
-
-/-- **Characterization of Catalan words.** For a natural number $n$, let $\mathcal{A}_n$ be the
-set of Catalan words of length $n$, defined as the words $w = w_1 \cdots w_n$ with letters in
-$\{1, \dots, n\}$ such that $w_1 = 1$ when $n \ge 1$ and $w_{k+1} \le w_k + 1$ for $1 \le k < n$.
-A word $w = w_1 \cdots w_n$ of natural numbers belongs to $\mathcal{A}_n$ if and only if
-$w_k \ge 1$ for every $k$, $w_1 = 1$ when $n \ge 1$, and $w_{k+1} \le w_k + 1$ for $1 \le k < n$.
-In particular, the bound $w_k \le n$ on the letters is automatic.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 1, definition of Catalan words. -/
-public theorem mem_catalanWords_iff {n : ℕ} (w : Fin n → ℕ) :
-    w ∈ catalanWords n ↔ (∀ i, 1 ≤ w i) ∧ (∀ i : Fin n, i.val = 0 → w i = 1) ∧
-      ∀ i j : Fin n, j.val = i.val + 1 → w j ≤ w i + 1 := by
-  simp only [catalanWords, Finset.mem_filter, Fintype.mem_piFinset, Finset.mem_Icc]
-  constructor
-  · rintro ⟨hb, h0, hg⟩
-    exact ⟨fun i => (hb i).1, h0, hg⟩
-  · rintro ⟨h1, h0, hg⟩
-    have key : ∀ k (hk : k < n), w ⟨k, hk⟩ ≤ k + 1 := by
-      intro k
-      induction k with
-      | zero => intro hk; rw [h0 ⟨0, hk⟩ rfl]
-      | succ k ih =>
-        intro hk
-        have h₁ := hg ⟨k, by omega⟩ ⟨k + 1, hk⟩ rfl
-        have h₂ := ih (by omega)
-        omega
-    refine ⟨fun i => ⟨h1 i, ?_⟩, h0, hg⟩
-    have := key i.val i.isLt
-    rw [Fin.eta] at this
-    omega
 
 /-- **Characterization of smooth words.** For a natural number $n$, let $\mathcal{R}_n$ be the
 set of smooth words of length $n$, defined as the words $w = w_1 \cdots w_n$ with letters in
@@ -182,65 +88,6 @@ to Capacity*, INTEGERS 25 (2025), Article A5, Section 4, definition of restricte
 public def restrictedSmoothWords (n : ℕ) : Finset (Fin n → ℕ) :=
   (smoothWords n).filter fun w => ∀ i j : Fin n, j.val = i.val + 1 → ¬(w i = 1 ∧ w j = 1)
 
-/-- **Words ending in a given letter.** Given a finite set $S$ of words $w = w_1 \cdots w_n$
-of length $n$ with letters in $\mathbb{N}$ and a natural number $k$, this is the set of words
-in $S$ whose last letter $w_n$ is $k$. When $n = 0$ this set is empty.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `𝒜_{n,i}`. -/
-public def wordsEndingIn {n : ℕ} (S : Finset (Fin n → ℕ)) (k : ℕ) : Finset (Fin n → ℕ) :=
-  S.filter fun w => ∃ i : Fin n, i.val + 1 = n ∧ w i = k
-
-/-- **Words with all letters at most a bound.** Given a finite set $S$ of words of length $n$
-with letters in $\mathbb{N}$ and a natural number $k$, this is the set of words in $S$ all of
-whose letters are at most $k$. Applied to the words of $S$ whose last letter is $k$, it gives
-those whose largest letter is $k$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `ℬ_{n,i}`. -/
-public def wordsBoundedBy {n : ℕ} (S : Finset (Fin n → ℕ)) (k : ℕ) : Finset (Fin n → ℕ) :=
-  S.filter fun w => ∀ i : Fin n, w i ≤ k
-
-/-- **Capacity distribution.** For a finite set $S$ of words of length $n$ with letters in the
-natural numbers, the capacity distribution of $S$ is the polynomial
-$\sum_{w \in S} q^{\operatorname{cap}(w)}$ in $\mathbb{Z}[q]$, where $\operatorname{cap}(w)$ is the
-capacity of $w$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `a(n, i; q)`. -/
-public noncomputable def capacityDist {n : ℕ} (S : Finset (Fin n → ℕ)) : ℤ[X] :=
-  ∑ w ∈ S, X ^ wordCapacity w
-
-/-- **Area distribution.** For a finite set $S$ of words of length $n$ with letters in the
-natural numbers, the area distribution of $S$ is the polynomial
-$\sum_{w \in S} q^{\operatorname{area}(w)}$ in $\mathbb{Z}[q]$, where the area of a word is the
-sum of its letters.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `c(m, j, ℓ; q)`. -/
-public noncomputable def areaDist {n : ℕ} (S : Finset (Fin n → ℕ)) : ℤ[X] :=
-  ∑ w ∈ S, X ^ wordArea w
-
-/-- **Capacity distribution of Catalan words with a given last letter.** For natural numbers $n$
-and $i$, $a(n, i; q) \in \mathbb{Z}[q]$ is the capacity distribution of the Catalan words of
-length $n$ whose last letter is $i$: the sum of $q^{\mathrm{cap}(w)}$ over all such words $w$,
-where $\mathrm{cap}(w)$ is the capacity of $w$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `a(n, i; q)`. -/
-public noncomputable def catalanCapacityDist (n i : ℕ) : ℤ[X] :=
-  capacityDist (wordsEndingIn (catalanWords n) i)
-
-/-- **Capacity distribution of Catalan words ending in their largest letter.** For natural
-numbers $n$ and $i$, $b(n, i; q) \in \mathbb{Z}[q]$ is the sum of $q^{\mathrm{cap}(w)}$, where
-$\mathrm{cap}(w)$ is the capacity of $w$, over the Catalan words $w$ of length $n$ whose last
-letter is $i$ and all of whose letters are at most $i$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `b(n, i; q)`. -/
-public noncomputable def catalanMaxEndCapacityDist (n i : ℕ) : ℤ[X] :=
-  capacityDist (wordsBoundedBy (wordsEndingIn (catalanWords n) i) i)
-
 /-- **Capacity distribution of smooth words by last letter.** For $n, i \ge 0$, $r(n, i; q)$ is the
 polynomial $\sum_w q^{\operatorname{cap}(w)} \in \mathbb{Z}[q]$, where $w$ runs over the smooth
 words of length $n$ whose last letter is $i$ and $\operatorname{cap}(w)$ is the capacity of $w$.
@@ -281,29 +128,6 @@ Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Wor
 to Capacity*, INTEGERS 25 (2025), Article A5, Section 4, definition of `s*(n, i; q)`. -/
 public noncomputable def restrictedSmoothMaxEndCapacityDist (n i : ℕ) : ℤ[X] :=
   capacityDist (wordsBoundedBy (wordsEndingIn (restrictedSmoothWords n) i) i)
-
-/-- **Words with unit-bounded rises ending in their maximum.** For natural numbers $m$ and $j$,
-$\mathcal{C}_{m,j}$ is the set of words $w = w_1 \cdots w_m$ of length $m$ with letters in
-$\{1, \dots, j\}$ such that $w_{k+1} \le w_k + 1$ for $1 \le k < m$ and whose last letter $w_m$
-is $j$. It is empty when $m = 0$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `𝒞_{m,j}`. -/
-public def catalanGrowthWords (m j : ℕ) : Finset (Fin m → ℕ) :=
-  wordsEndingIn ((Fintype.piFinset fun _ : Fin m => Finset.Icc 1 j).filter fun w =>
-    ∀ i k : Fin m, k.val = i.val + 1 → w k ≤ w i + 1) j
-
-/-- **Area distribution of words with unit-bounded rises, by first letter.** For natural numbers
-$m$, $j$ and $\ell$, let $\mathcal{C}_{m,j}$ be the set of words of length $m$ with letters in
-$\{1, \dots, j\}$, each letter at most one more than the letter before it, and last letter $j$.
-Then $c(m, j, \ell; q) \in \mathbb{Z}[q]$ is the area distribution of the words in
-$\mathcal{C}_{m,j}$ whose first letter is $\ell$: the sum of $q^{\mathrm{area}(w)}$ over these
-words $w$, where $\mathrm{area}(w)$ is the sum of the letters of $w$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Section 2, definition of `c(m, j, ℓ; q)`. -/
-public noncomputable def catalanGrowthAreaDist (m j ℓ : ℕ) : ℤ[X] :=
-  areaDist ((catalanGrowthWords m j).filter fun w => ∀ i : Fin m, i.val = 0 → w i = ℓ)
 
 /-- **Area distribution of smooth words from $j$ to $j$.** For natural numbers $m$ and $j$, let
 $\mathcal{T}_{m,j}$ be the set of words $w = w_1 \cdots w_m$ with letters in $\{1, \dots, j\}$
@@ -349,22 +173,6 @@ public theorem card_catalanWords_four_smoothWords_four :
     (catalanWords 4).card = 14 ∧ (smoothWords 4).card = 13 ∧
       (restrictedSmoothWords 4).card = 7 := by
   decide
-
-/-- **Recurrence for the area distribution by first letter.** For natural numbers $m$, $j$ and
-$\ell$, let $c(m, j, \ell; q) \in \mathbb{Z}[q]$ be the area distribution of the words of length
-$m$ with letters in $\{1, \dots, j\}$, each letter at most one more than the letter before it,
-that begin with $\ell$ and end with $j$. For all natural numbers $m \ge 2$ and $j$, $\ell$ with
-$1 \le \ell \le j$,
-$$c(m, j, \ell; q) = q^{\ell} \sum_{i=1}^{\ell+1} c(m-1, j, i; q),$$
-and $c(1, j, \ell; q)$ equals $q^{\ell}$ if $j = \ell$ and $0$ otherwise.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Lemma 1 (`integers-2025-A5-lem-1`). -/
-public theorem_wanted catalanGrowthAreaDist_succ (m j ℓ : ℕ) (hm : 2 ≤ m) (hℓ : 1 ≤ ℓ)
-    (hℓj : ℓ ≤ j) :
-    catalanGrowthAreaDist m j ℓ =
-        X ^ ℓ * ∑ i ∈ Finset.Icc 1 (ℓ + 1), catalanGrowthAreaDist (m - 1) j i ∧
-      catalanGrowthAreaDist 1 j ℓ = X ^ ℓ * if j = ℓ then 1 else 0
 
 /-- **Denominator polynomials for the area of words with unit-bounded rises.** The polynomials
 $d_j(x; q)$, viewed as formal power series in $x$ over $\mathbb{Z}[q]$, are defined by $d_0 = 1$,
@@ -528,19 +336,6 @@ public theorem_wanted catalanMaxEndCapacityDist_recurrence (n i : ℕ) (hi : 1 <
           T ((m * i : ℕ) : ℤ) * toLaurent (catalanMaxEndCapacityDist (n - m - 1) i) *
             invert (toLaurent (areaDist (catalanGrowthWords m (i - 1))))
 
-/-- **Boundary values of the capacity distributions on Catalan words.** Write $a(n, i)$ for the
-capacity distribution of the Catalan words of length $n$ ending in $i$, $b(n, i)$ for that of
-those Catalan words of length $n$ ending in $i$ whose largest letter is $i$, and $a(n)$ for the
-capacity distribution of all Catalan words of length $n$. For every $n \ge 1$,
-$a(n, n) = b(n, 1) = b(n, n) = 1$, and if $n \ge 2$ then $a(n, 1) = a(n - 1)$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Lemma 2 (`integers-2025-A5-lem-2`). -/
-public theorem_wanted catalanCapacityDist_boundary (n : ℕ) (hn : 1 ≤ n) :
-    (2 ≤ n → catalanCapacityDist n 1 = capacityDist (catalanWords (n - 1))) ∧
-      catalanCapacityDist n n = 1 ∧ catalanMaxEndCapacityDist n 1 = 1 ∧
-        catalanMaxEndCapacityDist n n = 1
-
 /-- **Generating function of Catalan words by last letter.** Let $C(x) = \sum_{n \ge 0} C_n x^n$
 be the generating function of the Catalan numbers $C_n$. For every $i \ge 1$, let $a_{n,i}$ be the
 number of Catalan words of length $n$ whose last letter is $i$. Then, as formal power series with
@@ -589,21 +384,6 @@ public theorem_wanted catalanWords_capacity_subleading_coeff (n : ℕ) (hn : 4 �
       if n = 4 then 13 else if n = 5 then 7 else if n = 6 then 8
       else if n % 3 = 0 then 2 * (n / 3 : ℕ) else if n % 3 = 1 then (n / 3 : ℕ) + 1
       else (n / 3 : ℕ) + 2
-
-/-- **Zero-capacity Catalan words with a given last letter.** For $2 \le i \le n$, let
-$a(n, i; q)$ be the capacity distribution of the Catalan words of length $n$ ending in $i$, so that
-$a(n, i; 0)$ is the number of those words with capacity $0$. Then
-$$
-a(n, i; 0) = \sum_{m=0}^{n-i} \binom{n-m-2}{i-2} F_{2m-1},
-$$
-where $F_k$ is the $k$-th Fibonacci number ($F_1 = F_2 = 1$) and $F_{-1} = 1$.
-
-Source: Toufik Mansour and Mark Shattuck, *Enumeration of Catalan and Smooth Words According
-to Capacity*, INTEGERS 25 (2025), Article A5, Theorem 3 (`integers-2025-A5-thm-3`). -/
-public theorem_wanted catalanCapacityDist_eval_zero (n i : ℕ) (hi : 2 ≤ i) (hin : i ≤ n) :
-    (catalanCapacityDist n i).eval 0 =
-      ∑ m ∈ Finset.range (n - i + 1),
-        (((n - m - 2).choose (i - 2) * (if m = 0 then 1 else Nat.fib (2 * m - 1)) : ℕ) : ℤ)
 
 /-- **Catalan words of capacity zero.** Let $F_k$ be the Fibonacci numbers, with $F_0 = 0$ and
 $F_1 = 1$. For $n \ge 1$, let $a(n, 1; q)$ be the capacity distribution on Catalan words of length

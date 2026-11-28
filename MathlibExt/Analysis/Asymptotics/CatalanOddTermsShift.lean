@@ -344,7 +344,7 @@ private theorem catalanOddShift_expansionWith (M N : ℕ) (hNM : N ≤ M) :
 private lemma catalanOddShift_expCoeff_compatible (M k : ℕ) (hkM : k ≤ M) :
     catalanOddShiftExpCoeff M k = catalanOddShiftExpCoeff k k := by
   induction k using Nat.strong_induction_on generalizing M with
-  | h k ih =>
+  | ind k ih =>
       have hprefix (n : ℕ) :
           ∑ i ∈ Finset.range k,
               catalanOddShiftExpCoeff M i * catalanOddShiftY n ^ i =

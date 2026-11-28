@@ -15,6 +15,12 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Expand
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
+public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorCalculus
+public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorInverseConvolution
+public import MathlibExt.RingTheory.PowerSeries.PowerRecursion
+public import MathlibExt.RingTheory.PowerSeries.PowerRecursionZPow
+public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorProduct
+public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorPowRecursion
 
 /-!
 # Glaisher's divisors and infinite products: wishlist
@@ -80,69 +86,6 @@ set_option quotPrecheck false in
 /-- `t_k(m)`: ordered representations of `m` as a sum of `k` triangular numbers. -/
 local notation "ttri" k:max m:max =>
   ((Set.ncard {x : Fin k → ℕ | ∑ i, x i * (x i + 1) / 2 = m} : ℕ) : ℤ)
-
-/-- **Series-divisors add under multiplication.** Let $R$ be a commutative ring and let $A$, $B$
-be formal power series over $R$ with coefficients $a(n)$, $b(n)$. Suppose $s_A, s_B$ are maps
-$\mathbb{N} \to R$ with $n\,a(n) = \sum_{i=1}^{n} s_A(i)\,a(n-i)$ and
-$n\,b(n) = \sum_{i=1}^{n} s_B(i)\,b(n-i)$ for every $n \ge 0$ (that is, $s_A$ and $s_B$ are
-series-divisors of $A$ and $B$). Then, writing $c(n)$ for the coefficients of $AB$,
-$n\,c(n) = \sum_{i=1}^{n} \bigl(s_A(i) + s_B(i)\bigr)\,c(n-i)$ for every $n \ge 0$, so $s_A + s_B$
-is a series-divisor of $AB$.
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 2
-(`jis-2024-24.1.6-lem-2`). -/
-public theorem_wanted series_divisor_add_of_mul {R : Type*} [CommRing R]
-    (A B : PowerSeries R) (sA sB : ℕ → R)
-    (hA : ∀ n : ℕ, (n : R) * coeff n A = ∑ i ∈ Finset.Icc 1 n, sA i * coeff (n - i) A)
-    (hB : ∀ n : ℕ, (n : R) * coeff n B = ∑ i ∈ Finset.Icc 1 n, sB i * coeff (n - i) B) :
-    ∀ n : ℕ, (n : R) * coeff n (A * B) =
-      ∑ i ∈ Finset.Icc 1 n, (sA i + sB i) * coeff (n - i) (A * B)
-
-/-- **Calculus of series-divisors.** Let $R$ be a commutative ring, let $A$ be a formal power
-series over $R$, write $[q^k]F$ for the coefficient of $q^k$ in a power series $F$, and let
-$s : \mathbb{N} \to R$ satisfy $n\,[q^n]A = \sum_{i=1}^{n} s(i)\,[q^{n-i}]A$ for every $n \ge 0$
-(that is, $s$ is a series-divisor of $A$). Then the following hold for every $n \ge 0$:
-(a) for every power series $B$ over $R$ with $AB = 1$,
-$n\,[q^n]B = \sum_{i=1}^{n} \bigl(-s(i)\bigr)\,[q^{n-i}]B$;
-(b) $n\,[q^n]A(-q) = \sum_{i=1}^{n} (-1)^i s(i)\,[q^{n-i}]A(-q)$;
-(c) for every integer $m \ge 1$, $n\,[q^n]A(q^m) = \sum_{i=1}^{n} t_m(i)\,[q^{n-i}]A(q^m)$,
-where $t_m(i) = m\,s(i/m)$ if $m \mid i$ and $t_m(i) = 0$ otherwise;
-(d) for every integer $m \ge 0$, $n\,[q^n]A^m = \sum_{i=1}^{n} m\,s(i)\,[q^{n-i}]A^m$.
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Proposition 3
-(`jis-2024-24.1.6-prop-3`). -/
-public theorem_wanted series_divisor_calculus {R : Type*} [CommRing R]
-    (A : PowerSeries R) (s : ℕ → R)
-    (hA : ∀ n : ℕ, (n : R) * coeff n A = ∑ i ∈ Finset.Icc 1 n, s i * coeff (n - i) A) :
-    (∀ B : PowerSeries R, A * B = 1 → ∀ n : ℕ,
-      (n : R) * coeff n B = ∑ i ∈ Finset.Icc 1 n, -s i * coeff (n - i) B) ∧
-    (∀ n : ℕ, (n : R) * coeff n (rescale (-1) A) =
-      ∑ i ∈ Finset.Icc 1 n, (-1) ^ i * s i * coeff (n - i) (rescale (-1) A)) ∧
-    (∀ (m : ℕ) (hm : m ≠ 0) (n : ℕ), (n : R) * coeff n (expand m hm A) =
-      ∑ i ∈ Finset.Icc 1 n,
-        (if m ∣ i then (m : R) * s (i / m) else 0) * coeff (n - i) (expand m hm A)) ∧
-    (∀ m n : ℕ, (n : R) * coeff n (A ^ m) =
-      ∑ i ∈ Finset.Icc 1 n, (m : R) * s i * coeff (n - i) (A ^ m))
-
-/-- **Coefficient recursion for powers of a power series.** Let $R$ be a commutative ring, let
-$A$ be a formal power series over $R$ with coefficients $a(k)$, and let $s : \mathbb{N} \to R$
-satisfy $k\,a(k) = \sum_{i=1}^{k} s(i)\,a(k-i)$ for every $k \ge 0$ (that is, $s$ is a
-series-divisor of $A$). For natural numbers $m$ and $k$, write $a_m(k)$ for the coefficient of
-$q^k$ in $A^m$. Then for all natural numbers $m$ and $n$,
-$n\,a_m(n) = m \sum_{j=1}^{n} s(j)\,a_m(n-j)$.
-
-Source: in Corollary 4 the printed summand `σ^A(i)` is read as `σ^A(j)` (the summation index).
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Corollary 4
-(`jis-2024-24.1.6-cor-4`). -/
-public theorem_wanted series_divisor_pow_recursion {R : Type*} [CommRing R]
-    (A : PowerSeries R) (s : ℕ → R)
-    (hA : ∀ n : ℕ, (n : R) * coeff n A = ∑ i ∈ Finset.Icc 1 n, s i * coeff (n - i) A)
-    (m n : ℕ) :
-    (n : R) * coeff n (A ^ m) = (m : R) * ∑ j ∈ Finset.Icc 1 n, s j * coeff (n - j) (A ^ m)
 
 /-- **Glaisher's divisor functions as series-divisors.** Let $n$ be a natural number. For a
 positive integer $m$, write $\sigma(m)$ for the sum of the divisors of $m$, $d_B(m)$ and
@@ -258,24 +201,6 @@ public theorem_wanted glaisher_theta_divisor_recursions (n : ℕ) (hn : 0 < n) :
     16 * ∑ j ∈ Finset.Ioo 0 n, (dD j) * σtilde₃ (n - j) = (dD n) - (n : ℤ) * σtilde₃ n ∧
     8 * ∑ j ∈ Finset.Icc 1 n, (dF j) * σbar₃ (n + 1 - j) = (n : ℤ) * σbar₃ (n + 1)
 
-/-- **Power recursion lemma for nonzero integer exponents.** Let $K$ be a field of characteristic
-zero, let $A$ be an invertible formal power series in $K[[X]]$, and let $u$ and $v$ be nonzero
-integers. Write $a_u(k)$ and $a_v(k)$ for the coefficients of $X^k$ in $A^u$ and $A^v$. Then for
-every natural number $n$,
-
-$$\sum_{k=0}^{n} \left(n - \left(\frac{u}{v} + 1\right) k\right) a_u(n-k)\, a_v(k) = 0.$$
-
-Invertibility of $A$ is assumed so that the negative powers $A^u$, $A^v$ make sense.
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 17
-(`jis-2024-24.1.6-lem-17`). -/
-public theorem_wanted power_coeff_convolution_zpow {K : Type*} [Field K] [CharZero K]
-    (A : (PowerSeries K)ˣ) (u v : ℤ) (hu : u ≠ 0) (hv : v ≠ 0) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-      ((n : K) - ((u : K) / v + 1) * k) * coeff (n - k) ((A ^ u : (PowerSeries K)ˣ) : PowerSeries K) *
-        coeff k ((A ^ v : (PowerSeries K)ˣ) : PowerSeries K) = 0
-
 /-- **Six divisor-function identities from the power recursion lemma.** Let $n \ge 1$ be a
 natural number. Write $\sigma(m)$ for the sum of the positive divisors of $m$,
 $\bar\sigma_3(m) = \sum_{d \mid m,\ m/d \text{ odd}} d^3$,
@@ -345,26 +270,6 @@ Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Theorem 23
 public theorem_wanted sigma_triangular_shift_sum_mod_five (n : ℕ) (hn : 0 < n) :
     ∑ j ∈ Finset.range (n + 1), σ₁ (2 * n + 1 - j * (j + 1)) ≡
       (if ∃ k : ℕ, 5 * k * (k + 1) / 2 = n then 1 else 0) [ZMOD 5]
-
-/-- **Convolution identities for the series-divisor of an invertible series.** Let $R$ be a
-commutative ring and let $A$, $B$ be formal power series over $R$ with coefficients $a(k)$,
-$b(k)$ and $AB = 1$. Let $s : \mathbb{N} \to R$ satisfy $s(0) = 0$ and
-$k\,a(k) = \sum_{i=1}^{k} s(i)\,a(k-i)$ for every $k \ge 0$ (that is, $s$ is a series-divisor
-of $A$). Then for every $n \ge 0$,
-$$s(n) = \sum_{i=0}^{n} (n-i)\,a(n-i)\,b(i)$$
-and
-$$\sum_{i=1}^{n} s(n-i)\,s(i) = -\sum_{i=1}^{n} i\,(n-i)\,a(n-i)\,b(i).$$
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 25
-(`jis-2024-24.1.6-lem-25`). -/
-public theorem_wanted series_divisor_inverse_convolution {R : Type*} [CommRing R]
-    (A B : PowerSeries R) (hAB : A * B = 1) (s : ℕ → R) (hs0 : s 0 = 0)
-    (hA : ∀ n : ℕ, (n : R) * coeff n A = ∑ i ∈ Finset.Icc 1 n, s i * coeff (n - i) A)
-    (n : ℕ) :
-    s n = ∑ i ∈ Finset.range (n + 1), ((n - i : ℕ) : R) * coeff (n - i) A * coeff i B ∧
-    ∑ i ∈ Finset.Icc 1 n, s (n - i) * s i =
-      -∑ i ∈ Finset.Icc 1 n, ((i * (n - i) : ℕ) : R) * coeff (n - i) A * coeff i B
 
 /-- **Overpartition formulas for a divisor sum with odd cofactors.** Let $n$ be a natural number.
 Write $\sigma(m)$ for the sum of the positive divisors of $m$, $\sigma(m/2)$ for $\sigma$

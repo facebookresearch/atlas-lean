@@ -105,7 +105,7 @@ theorem prod_row_none (A B : Matrix (Option (Fin 2)) (Option (Fin 2)) ℝ)
       (1 + A none none) * (1 + B) none l +
         (A none (some 0) * (1 : Matrix (Option (Fin 2)) (Option (Fin 2)) ℝ) (some 0) l +
           A none (some 1) * (1 : Matrix (Option (Fin 2)) (Option (Fin 2)) ℝ) (some 1) l) := by
-  simp only [mul_apply, Fintype.sum_option, Fin.sum_univ_two, Matrix.add_apply, hB, add_zero,
+  simp only [Matrix.mul_apply, Fintype.sum_option, Fin.sum_univ_two, Matrix.add_apply, hB, add_zero,
     one_apply_eq, one_apply_ne (Option.some_ne_none _).symm, zero_add]
 
 /-- The Nelson–Aalen jumps of `D`, entry by entry. -/

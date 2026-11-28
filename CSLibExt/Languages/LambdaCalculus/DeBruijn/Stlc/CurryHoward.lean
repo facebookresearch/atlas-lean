@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Languages.LambdaCalculus.DeBruijn.Stlc.Syntax
-public import Cslib.Logics.Propositional.NaturalDeduction.Basic
+public import CSLibExt.Logics.Propositional.Legacy.NaturalDeduction.Basic
 
 /-!
 # Curry-Howard: STLC terms to natural deduction
@@ -19,8 +19,8 @@ is an implicational proposition over atoms `Base` (`Ty.toProp`), and a
 context `Γ : List (Ty Base)` is the set of hypotheses `ctxHyps Γ`. This
 module sends every intrinsically typed de Bruijn term `t : Tm Γ A` of
 `CSLibExt.Languages.LambdaCalculus.DeBruijn.Stlc.Syntax` to a derivation of
-`A.toProp` from `ctxHyps Γ` in CSLib's natural deduction
-(`Tm.toDerivation`): a variable becomes the assumption of its type, an
+`A.toProp` from `ctxHyps Γ` in CSLib v4.35's natural deduction, restored in
+`Cslib.Logic.LegacyPL` (`Tm.toDerivation`): a variable becomes the assumption of its type, an
 application becomes implication elimination, and an abstraction becomes
 implication introduction. The derivation uses no axioms, so it exists in
 every theory, minimal logic included (`curry_howard`).
@@ -34,7 +34,7 @@ formalized here.
 
 namespace Cslib.Languages.LambdaCalculus.Stlc
 
-open Cslib.Logic Cslib.Logic.PL InferenceSystem
+open Cslib.Logic Cslib.Logic.LegacyPL InferenceSystem
 
 universe u
 
@@ -75,8 +75,9 @@ def Tm.toDerivation {T : Theory Base} :
   | Γ, _, .lam (A := A) body =>
       .implI (ctxHyps Γ) (ctxHyps_cons A Γ ▸ body.toDerivation)
 
-/-- Curry-Howard, soundness direction: the type of every term is derivable
-in natural deduction from the hypotheses of its context, in every theory. -/
+/-- Curry-Howard, soundness direction. Assume equality of base types is
+decidable. Then the type of every term is derivable in natural deduction from
+the hypotheses of its context, in every theory. -/
 theorem curry_howard {T : Theory Base} {Γ : List (Ty Base)} {A : Ty Base}
     (t : Tm Γ A) : DerivableIn T (ctxHyps Γ ⊢ A.toProp) :=
   ⟨t.toDerivation⟩

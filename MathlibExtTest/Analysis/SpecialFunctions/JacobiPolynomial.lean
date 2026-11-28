@@ -78,7 +78,7 @@ example (a b : ℝ) : shiftedJacobi a b 0 = 1 := by simp [shiftedJacobi]
 
 /-- The normalization `R_n(0) = 1`. -/
 example (a b : ℝ) (n : ℕ) : (shiftedJacobi a b n).eval 0 = 1 := by
-  rw [shiftedJacobi, eval_finset_sum]
+  rw [shiftedJacobi, eval_finsetSum]
   refine (Finset.sum_eq_single 0 ?_ ?_).trans ?_
   · intro k _ hk
     simp [hk]

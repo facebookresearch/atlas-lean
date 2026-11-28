@@ -1,3 +1,4 @@
-# Pairs of rows
+# Increasing pairs of finite indices
 
-The pairs of rows of a $k$-row alignment are the pairs $(i, j)$ with $0 \le i < j < k$.
+For a natural number `k`, the finite set of pairs `(i, j)` of indices `i, j ∈ {0, …, k - 1}` with
+`i < j`, so that each unordered pair of distinct indices appears exactly once.

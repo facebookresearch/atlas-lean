@@ -61,18 +61,23 @@ private theorem injective_mulVec_iff_rank_eq_card {m n : Type*} [Fintype n]
 
 variable (μ p) in
 /-- The qpAdm source matrix: row `j`, column `l` is
-`f4 (S (l+1)) (S 0) (R (j+1)) (R 0)`. -/
+`f4 (S (l+1)) (S 0) (R (j+1)) (R 0)`. An entry whose integrand is not integrable is `0`, by the
+convention of `f4`. -/
 noncomputable def qpAdmSourceMatrix {k r : ℕ} (S : Fin (k + 1) → P)
     (R : Fin (r + 1) → P) : Matrix (Fin r) (Fin k) ℝ :=
   Matrix.of fun j l => f4 μ p (S l.succ) (S 0) (R j.succ) (R 0)
 
 variable (μ p) in
-/-- The qpAdm target vector: entry `j` is `f4 T (S 0) (R (j+1)) (R 0)`. -/
+/-- The qpAdm target vector: entry `j` is `f4 T (S 0) (R (j+1)) (R 0)`. An entry whose integrand
+is not integrable is `0`, by the convention of `f4`. -/
 noncomputable def qpAdmTargetVector {k r : ℕ} (T : P) (S : Fin (k + 1) → P)
     (R : Fin (r + 1) → P) : Fin r → ℝ :=
   fun j => f4 μ p T (S 0) (R j.succ) (R 0)
 
-/-- The qpAdm model equation: an affine frequency representation of the target gives the linear system `target = sourceMatrix *ᵥ w` on the non-reference weights. -/
+/-- The qpAdm model equation: for square-integrable frequencies, an affine frequency
+representation `p T = ∑ l, w l * p (S l)` of the target (pointwise, weights of any sign with
+`∑ l, w l = 1`) gives the linear system `target = sourceMatrix *ᵥ w` on the non-reference
+weights. -/
 theorem qpAdmTargetVector_eq_qpAdmSourceMatrix_mulVec
     (hp : ∀ X, MemLp (p X) 2 μ) {k r : ℕ} {T : P} (S : Fin (k + 1) → P)
     (R : Fin (r + 1) → P) (w : Fin (k + 1) → ℝ) (hw : ∑ l, w l = 1)
@@ -90,7 +95,8 @@ theorem qpAdmTargetVector_eq_qpAdmSourceMatrix_mulVec
   refine Finset.sum_congr rfl fun l _ => ?_
   ring
 
-/-- The qpAdm weights are unique iff the source matrix has full column rank `k`. -/
+/-- Given a solution `w` of the qpAdm system `sourceMatrix *ᵥ w = target`, it is the only solution
+iff the source matrix has full column rank `k`. -/
 theorem qpAdm_unique_iff_rank_eq {k r : ℕ} {T : P} (S : Fin (k + 1) → P)
     (R : Fin (r + 1) → P) {w : Fin k → ℝ}
     (hw : qpAdmSourceMatrix μ p S R *ᵥ w = qpAdmTargetVector μ p T S R) :
@@ -134,7 +140,8 @@ theorem exists_line_of_rank_ne {k r : ℕ} {T : P} (S : Fin (k + 1) → P)
     rw [Matrix.mulVec_sub, hxy, sub_self]
   rw [Matrix.mulVec_add, Matrix.mulVec_smul, hd, smul_zero, hw, add_zero]
 
-/-- Under full column rank, the weights have the ordinary least-squares (normal-equation) form. -/
+/-- Under full column rank, a solution `w` of the qpAdm system has the ordinary least-squares
+(normal-equation) form `w = (Aᵀ A)⁻¹ Aᵀ target`, where `A` is the source matrix. -/
 theorem qpAdm_weights_eq_inv_gram_mulVec {k r : ℕ} {T : P} (S : Fin (k + 1) → P)
     (R : Fin (r + 1) → P) {w : Fin k → ℝ}
     (hw : qpAdmSourceMatrix μ p S R *ᵥ w = qpAdmTargetVector μ p T S R)
@@ -155,7 +162,9 @@ theorem qpAdm_weights_eq_inv_gram_mulVec {k r : ℕ} {T : P} (S : Fin (k + 1) �
         rw [Matrix.mulVec_mulVec, Matrix.nonsing_inv_mul _ hgram, Matrix.one_mulVec]
     _ = (Aᵀ * A)⁻¹ *ᵥ (Aᵀ *ᵥ qpAdmTargetVector μ p T S R) := by rw [hnorm]
 
-/-- An exact solution maximizes the unweighted qpGraph score `scoreS1` at `Q = 1`; under an exact model the same weights are optimal for every positive-definite weighting. -/
+/-- An exact solution `w` of the qpAdm system maximizes the unweighted qpGraph score `scoreS1` at
+`Q = 1`: `scoreS1 1 target (A *ᵥ v) ≤ scoreS1 1 target (A *ᵥ w)` for every `v`, where `A` is the
+source matrix. -/
 theorem qpAdm_weights_maximize_scoreS1_one {k r : ℕ} {T : P} (S : Fin (k + 1) → P)
     (R : Fin (r + 1) → P) {w : Fin k → ℝ}
     (hw : qpAdmSourceMatrix μ p S R *ᵥ w = qpAdmTargetVector μ p T S R) (v : Fin k → ℝ) :

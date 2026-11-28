@@ -92,12 +92,15 @@ namespace Chemistry.ReactingTransportPorts
 /-! ## A. Rates, balances and the box -/
 
 /-- Arrhenius rate coefficient `k(T) = A * exp(-B / T)`, with prefactor `A` (per time) and
-activation temperature `B = E_a / R`. -/
+activation temperature `B = E_a / R`. It is read for `T > 0`; by the convention `-B / 0 = 0`,
+`k(0) = A`, and `k(T) > A` for `T < 0` when `A, B > 0`. -/
 noncomputable def arrheniusRateConstant (A B T : ℝ) : ℝ :=
   A * Real.exp (-B / T)
 
 /-- The proof-device rate `A * exp(-B / max (Tfloor / 2) T)`: the Arrhenius rate at the
-temperature raised to at least `Tfloor / 2`. -/
+temperature raised to at least `Tfloor / 2`. It is defined for all real arguments: when
+`max (Tfloor / 2) T = 0` the convention `x / 0 = 0` makes it `A`. The intended domain is
+`Tfloor > 0`, where the floored temperature is positive. -/
 noncomputable def flooredRateConstant (A B Tfloor T : ℝ) : ℝ :=
   arrheniusRateConstant A B (max (Tfloor / 2) T)
 
@@ -117,11 +120,15 @@ def cstrField (a b h cin Tin Tc : ℝ) (κ : ℝ → ℝ) (x : ℝ × ℝ) : ℝ
 noncomputable def concentrationCeiling (c0 cin : ℝ) : ℝ :=
   max c0 cin
 
-/-- Temperature floor `Tmin = min T0 ((a Tin + h Tc) / (a + h))`. -/
+/-- Temperature floor `Tmin = min T0 ((a Tin + h Tc) / (a + h))`. It is defined for all real
+arguments: for `a + h = 0` the convention `x / 0 = 0` makes it `min T0 0`. The intended domain is
+`a > 0` and `h ≥ 0`, where `a + h > 0`. -/
 noncomputable def temperatureFloor (a h Tin Tc T0 : ℝ) : ℝ :=
   min T0 ((a * Tin + h * Tc) / (a + h))
 
-/-- Temperature ceiling `Tmax = max T0 ((a Tin + h Tc + b A cmax) / (a + h))`. -/
+/-- Temperature ceiling `Tmax = max T0 ((a Tin + h Tc + b A cmax) / (a + h))`. It is defined for
+all real arguments: for `a + h = 0` the convention `x / 0 = 0` makes it `max T0 0`. The intended
+domain is `a > 0` and `h ≥ 0`, where `a + h > 0`. -/
 noncomputable def temperatureCeiling (a b h A Tin Tc T0 cmax : ℝ) : ℝ :=
   max T0 ((a * Tin + h * Tc + b * A * cmax) / (a + h))
 
@@ -132,7 +139,7 @@ lemma arrheniusRateConstant_nonneg {A : ℝ} (hA : 0 ≤ A) (B T : ℝ) :
     0 ≤ arrheniusRateConstant A B T := by
   exact mul_nonneg hA (Real.exp_pos _).le
 
-/-- Above absolute zero the Arrhenius rate is at most its prefactor. -/
+/-- For `0 ≤ A` and `0 ≤ B`, above absolute zero the Arrhenius rate is at most its prefactor. -/
 lemma arrheniusRateConstant_le {A B T : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B) (hT : 0 < T) :
     arrheniusRateConstant A B T ≤ A := by
   unfold arrheniusRateConstant
@@ -157,7 +164,8 @@ lemma flooredRateConstant_eq {A B Tfloor T : ℝ} (hfloor : 0 ≤ Tfloor) (hT : 
   unfold flooredRateConstant
   rw [max_eq_right (by linarith)]
 
-/-- For a positive floor the extended rate takes values in `[0, A]` at every real `T`. -/
+/-- For `0 ≤ A`, `0 ≤ B` and a positive floor, the extended rate takes values in `[0, A]` at every
+real `T`. -/
 lemma flooredRateConstant_mem_Icc {A B Tfloor : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B) (hfloor : 0 < Tfloor)
     (T : ℝ) : flooredRateConstant A B Tfloor T ∈ Set.Icc 0 A := by
   exact ⟨arrheniusRateConstant_nonneg hA _ _,
@@ -204,9 +212,9 @@ lemma locallyLipschitz_cstrField_flooredRateConstant (a b h cin Tin Tc A B : ℝ
 
 /-! ## C. Boundary signs -/
 
-/-- Inward signs on the four faces of the box, for any rate value `0 ≤ k ≤ A` and a state with
-`0 ≤ c ≤ cmax`: `c' ≥ 0` at `c = 0`, `c' ≤ 0` at `c = cmax`, `T' ≥ 0` at `T = Tmin` and
-`T' ≤ 0` at `T = Tmax`. -/
+/-- Inward signs on the four faces of the box, for `0 < a`, nonnegative `b`, `h` and `cin`, any rate
+value `0 ≤ k ≤ A` and a state with `0 ≤ c ≤ cmax`: `c' ≥ 0` at `c = 0`, `c' ≤ 0` at `c = cmax`,
+`T' ≥ 0` at `T = Tmin` and `T' ≤ 0` at `T = Tmax`. -/
 lemma box_face_signs {a b h A cin Tin Tc c0 T0 k c T : ℝ} (ha : 0 < a) (hh : 0 ≤ h)
     (hb : 0 ≤ b) (hcin : 0 ≤ cin) (hk : 0 ≤ k) (hkA : k ≤ A)
     (hc : c ∈ Set.Icc 0 (concentrationCeiling c0 cin)) :
@@ -289,10 +297,10 @@ private lemma barrier_nonpos {g g' : ℝ → ℝ} {τ : ℝ}
   have := hs0S.2
   simp only [Set.mem_ofPred_eq] at this
   linarith
-/-- Comparison on a time interval `[0, τ]`, for any rate law `κ` with `0 ≤ κ T` for every `T`
-and `κ T ≤ A` for `T > 0`: a solution starting at `(c0, T0)` is in the box at time `τ`. The
-concentration bounds and the two temperature bounds are the two orthant arguments (lower and
-upper corner). -/
+/-- Comparison on a time interval `[0, τ]`, for `0 < a`, nonnegative `b`, `h`, `cin` and `c0`,
+`0 < T0`, and any rate law `κ` with `0 ≤ κ T` for every `T` and `κ T ≤ A` for `T > 0`: a solution
+starting at `(c0, T0)` is in the box at time `τ`. The concentration bounds and the two temperature
+bounds are the two orthant arguments (lower and upper corner). -/
 lemma box_invariant_of_rate_bounds {a b h A cin Tin Tc c0 T0 τ : ℝ} {κ : ℝ → ℝ}
     (ha : 0 < a) (hh : 0 ≤ h) (hb : 0 ≤ b) (hcin : 0 ≤ cin) (hc0 : 0 ≤ c0) (hT0 : 0 < T0)
     (hκ0 : ∀ T, 0 ≤ κ T) (hκA : ∀ T, 0 < T → κ T ≤ A) {c T : ℝ → ℝ} (hcI : c 0 = c0)
@@ -369,8 +377,9 @@ lemma box_invariant_of_rate_bounds {a b h A cin Tin Tc c0 T0 τ : ℝ} {κ : ℝ
   exact ⟨⟨by linarith [hcl τ hτm], by linarith [hcu τ hτm]⟩,
     ⟨by linarith [hTl τ hτm], by linarith [hTu τ hτm]⟩⟩
 
-/-- Invariance for the physical CSTR: every forward solution with the Arrhenius rate, from
-`(c0, T0)`, stays in the concentration and temperature box for all `t ≥ 0`. -/
+/-- Invariance for the physical CSTR, for `0 < a`, `0 < B`, `0 < T0` and nonnegative `A`, `b`, `h`,
+`cin` and `c0`: every forward solution with the Arrhenius rate, from `(c0, T0)`, stays in the
+concentration and temperature box for all `t ≥ 0`. -/
 lemma arrhenius_box_invariant {a b h A B cin Tin Tc c0 T0 : ℝ} (ha : 0 < a) (hB : 0 < B)
     (hT0 : 0 < T0) (hA : 0 ≤ A) (hb : 0 ≤ b) (hh : 0 ≤ h) (hcin : 0 ≤ cin) (hc0 : 0 ≤ c0)
     {c T : ℝ → ℝ} (hcI : c 0 = c0) (hTI : T 0 = T0)
@@ -401,9 +410,10 @@ private lemma hasDerivAt_snd_comp {x : ℝ → ℝ × ℝ} {x' : ℝ × ℝ} {t 
     HasDerivAt (fun s => (x s).2) x'.2 t := by
   exact hasFDerivAt_snd.comp_hasDerivAt t h
 
-/-- The physical CSTR path exists for all forward time and stays in the box: there are `c`, `T`
-with `c 0 = c0`, `T 0 = T0` that, at every `t ≥ 0`, lie in the box and solve the physical
-balances with the Arrhenius rate. -/
+/-- The physical CSTR path exists for all forward time and stays in the box, for `0 < a`, `0 < B`,
+positive `T0`, `Tin` and `Tc`, and nonnegative `A`, `b`, `h`, `cin` and `c0`: there are `c`, `T`
+with `c 0 = c0`, `T 0 = T0` that, at every `t ≥ 0`, lie in the box and solve the physical balances
+with the Arrhenius rate. -/
 lemma exists_arrhenius_path {a b h A B cin Tin Tc c0 T0 : ℝ} (ha : 0 < a) (hB : 0 < B)
     (hT0 : 0 < T0) (hTin : 0 < Tin) (hTc : 0 < Tc) (hA : 0 ≤ A) (hb : 0 ≤ b) (hh : 0 ≤ h)
     (hcin : 0 ≤ cin) (hc0 : 0 ≤ c0) :

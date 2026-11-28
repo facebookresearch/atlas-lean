@@ -57,9 +57,9 @@ close to `p` stay close to `p` and converge to `p`.
 
 Every vertex of the simplex is a rest point of the replicator equation, and a boundary rest
 point need not be a Nash equilibrium (the tests exhibit a vertex of the Hawk–Dove game that is
-a rest point but not Nash). The results here are stated **only for interior ESS** (`∀ i,
-0 < p i`); the ESS → asymptotic stability implication for an ESS on the boundary of the simplex
-(Hofbauer–Sigmund 1998, Theorem 7.2.4 in full generality) is not proved here. A Nash
+a rest point but not Nash). The results here are stated **only for interior ESS**
+(`∀ i, 0 < p i`); the ESS → asymptotic stability implication for an ESS on the boundary of the
+simplex (Hofbauer–Sigmund 1998, Theorem 7.2.4 in full generality) is not proved here. A Nash
 equilibrium alone does not suffice: the tests give a two-strategy Nash equilibrium that is not
 asymptotically stable.
 
@@ -67,10 +67,9 @@ asymptotically stable.
 
 The stability argument is Lyapunov's direct method carried out directly for the replicator
 equation, using compactness of annuli `{y ∈ Δ | a ≤ ‖y - p‖ ≤ b}` and the intermediate value
-theorem. The general Lyapunov criterion of `MathlibExt/Analysis/ODE/LyapunovStability.lean`
-(atlas-lean PR #1127) is not on `main` at the base of this file, so it is not used. The
-existing definitions `Replicator.IsSolution`, `Replicator.meanFitness` and the invariance
-results `IsSolution.mem_simplex`, `IsSolution.pos_of_pos` are reused; `meanFitness` of the
+theorem, without a general Lyapunov criterion. The existing definitions
+`Replicator.IsSolution`, `Replicator.meanFitness` and the invariance results
+`IsSolution.mem_simplex`, `IsSolution.pos_of_pos` are reused; `meanFitness` of the
 fitness `y ↦ A y` is definitionally `y · A y`.
 
 `IsESS.lyapunovStable` and `IsESS.tendsto_nhds` quantify over global forward solutions
@@ -108,15 +107,16 @@ def IsNash (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
     ∀ q : ι → ℝ, (∀ i, 0 ≤ q i) ∧ ∑ i, q i = 1 → q ⬝ᵥ A *ᵥ p ≤ p ⬝ᵥ A *ᵥ p
 
 /-- `p` is an **evolutionarily stable state** of the matrix game `A` (Maynard Smith and Price
-1973; Hofbauer–Sigmund 1998, (6.3)–(6.4)): for every mixed strategy `q ≠ p`, either
-`q · A p < p · A p`, or `q · A p = p · A p` and `q · A q < p · A q`. -/
+1973; Hofbauer–Sigmund 1998, (6.3)–(6.4)): `p` is a mixed strategy and for every mixed strategy
+`q ≠ p`, either `q · A p < p · A p`, or `q · A p = p · A p` and `q · A q < p · A q`. -/
 def IsESS (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
   ((∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1) ∧ ∀ q : ι → ℝ, (∀ i, 0 ≤ q i) ∧ ∑ i, q i = 1 → q ≠ p →
     q ⬝ᵥ A *ᵥ p < p ⬝ᵥ A *ᵥ p ∨ (q ⬝ᵥ A *ᵥ p = p ⬝ᵥ A *ᵥ p ∧ q ⬝ᵥ A *ᵥ q < p ⬝ᵥ A *ᵥ q)
 
 /-- The Lyapunov function `relEntropy p y = ∑ i, p i * (log (p i) - log (y i))` (the relative
-entropy of `p` with respect to `y`). It equals `log P(p) - log P(y)` for the Hofbauer–Sigmund
-function `P(y) = ∏ i, y i ^ p i`. -/
+entropy of `p` with respect to `y`, for `p`, `y` in the simplex with `y > 0`). With `log 0 = 0`
+and `log x = log |x|` it is defined for all vectors. For `p ≥ 0` and `y > 0` it equals
+`log P(p) - log P(y)` for the Hofbauer–Sigmund function `P(y) = ∏ i, y i ^ p i`. -/
 noncomputable def relEntropy (p y : ι → ℝ) : ℝ :=
   ∑ i, p i * (log (p i) - log (y i))
 
@@ -216,8 +216,9 @@ theorem continuousAt_relEntropy (hp : ∀ i, 0 < p i) : ContinuousAt (relEntropy
   exact isOpen_iInter_of_finite fun i => isOpen_ne_fun (continuous_apply i) continuous_const
 
 /-- **Derivative of the Lyapunov function** (Hofbauer–Sigmund 1998, proof of Theorem 7.2.4:
-`P'/P = p · A x - x · A x`). Along a solution of the replicator equation of the matrix game `A`
-with all frequencies nonzero at time `t`, `d/dt relEntropy p (x t) = -(p · A x - x · A x)`. -/
+`P'/P = p · A x - x · A x`). For `∑ i, p i = 1`, along a solution of the replicator equation of
+the matrix game `A` with all frequencies nonzero at time `t ≥ 0`,
+`d/dt relEntropy p (x t) = -(p · A x - x · A x)`. -/
 theorem IsSolution.hasDerivAt_relEntropy {x : ℝ → ι → ℝ} (h : IsSolution (fun z => A *ᵥ z) x)
     (hp1 : ∑ i, p i = 1) {t : ℝ} (ht : 0 ≤ t) (hx : ∀ i, x t i ≠ 0) :
     HasDerivAt (fun s => relEntropy p (x s)) (-(p ⬝ᵥ A *ᵥ x t - x t ⬝ᵥ A *ᵥ x t)) t := by
@@ -263,7 +264,8 @@ private theorem exists_pos_le_on_annulus {F : (ι → ℝ) → ℝ} {a b : ℝ} 
     ∃ m > 0, ∀ y : ι → ℝ, (∀ i, 0 ≤ y i) ∧ ∑ i, y i = 1 → a ≤ ‖y - p‖ → ‖y - p‖ ≤ b → m ≤ F y := by
   set K := {y : ι → ℝ | (∀ i, 0 ≤ y i) ∧ ∑ i, y i = 1} ∩ {y | a ≤ ‖y - p‖ ∧ ‖y - p‖ ≤ b}
   have hKcl : IsClosed K := by
-    refine IsClosed.inter (IsClosed.inter ?_ ?_) ?_
+    refine IsClosed.inter (IsClosed.inter (s₁ := {y : ι → ℝ | ∀ i, 0 ≤ y i})
+      (s₂ := {y : ι → ℝ | ∑ i, y i = 1}) ?_ ?_) ?_
     · have hset : {y : ι → ℝ | ∀ i, 0 ≤ y i} = ⋂ i, {y : ι → ℝ | 0 ≤ y i} := by
         ext y
         simp
@@ -370,7 +372,7 @@ private theorem continuous_advantage (A : Matrix ι ι ℝ) (p : ι → ℝ) :
 /-- **Lyapunov stability of an interior ESS** (Hofbauer–Sigmund 1998, Theorem 7.2.4, interior
 case). For every `ε > 0` there is `δ > 0` such that every solution of the replicator equation
 starting in the simplex within distance `δ` of `p` stays within distance `ε` of `p` for all
-`t ≥ 0`. -/
+`t ≥ 0` (distances in the sup norm `‖v‖ = max_i |v_i|`). -/
 theorem IsESS.lyapunovStable (h : IsESS A p) (hp : ∀ i, 0 < p i) :
     ∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → ι → ℝ, IsSolution (fun z => A *ᵥ z) x →
       (∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1 → ‖x 0 - p‖ < δ → ∀ t, 0 ≤ t → ‖x t - p‖ < ε := by
@@ -409,7 +411,7 @@ theorem IsESS.lyapunovStable (h : IsESS A p) (hp : ∀ i, 0 < p i) :
 
 /-- **Local attraction of an interior ESS** (Hofbauer–Sigmund 1998, Theorem 7.2.4, interior
 case). There is `δ > 0` such that every solution of the replicator equation starting in the
-simplex within distance `δ` of `p` converges to `p`. -/
+simplex within distance `δ` of `p` (in the sup norm) converges to `p`. -/
 theorem IsESS.tendsto_nhds (h : IsESS A p) (hp : ∀ i, 0 < p i) :
     ∃ δ > 0, ∀ x : ℝ → ι → ℝ, IsSolution (fun z => A *ᵥ z) x →
       (∀ i, 0 ≤ x 0 i) ∧ ∑ i, x 0 i = 1 → ‖x 0 - p‖ < δ → Tendsto x atTop (𝓝 p) := by
@@ -476,7 +478,7 @@ theorem IsESS.tendsto_nhds (h : IsESS A p) (hp : ∀ i, 0 < p i) :
 /-- **An interior ESS is locally asymptotically stable** under the replicator dynamics of the
 matrix game (Hofbauer–Sigmund 1998, Theorem 7.2.4, interior case): every state of the simplex
 has a global forward solution, and `p` is Lyapunov stable and locally attracting for all of
-them. Boundary ESS and boundary rest points are not covered. -/
+them (distances in the sup norm). Boundary ESS and boundary rest points are not covered. -/
 theorem IsESS.asymptoticallyStable (h : IsESS A p) (hp : ∀ i, 0 < p i) :
     (∀ x₀ : ι → ℝ, ((∀ i, 0 ≤ x₀ i) ∧ ∑ i, x₀ i = 1) →
       ∃ x : ℝ → ι → ℝ, x 0 = x₀ ∧ IsSolution (fun z => A *ᵥ z) x) ∧

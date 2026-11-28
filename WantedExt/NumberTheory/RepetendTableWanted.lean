@@ -17,8 +17,18 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.GroupTheory.SpecificGroups.Cyclic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Data.Nat.Factorization.Defs
-public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.RepetendTable
+public import MathlibExt.NumberTheory.RepetendTable.BaseShift
+public import MathlibExt.NumberTheory.RepetendTable.DigitDifference
+public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
+public import MathlibExt.NumberTheory.RepetendTable.InverseColumns
+public import MathlibExt.NumberTheory.RepetendTable.InversePairs
+public import MathlibExt.NumberTheory.RepetendTable.LastDigit
+public import MathlibExt.NumberTheory.RepetendTable.OrderCount
+public import MathlibExt.NumberTheory.RepetendTable.OrderSix
+public import MathlibExt.NumberTheory.RepetendTable.PrimePowerValuation
+public import MathlibExt.Analysis.Series.InversePowerTail
+public import MathlibExt.NumberTheory.RepetendTableSmallBaseConstraint
 
 /-!
 # Repetend tables
@@ -29,32 +39,41 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 
 `MetaMathlibExt.long_division_remainder_expansion` is proved in
 `MathlibExt.NumberTheory.RepetendTable`.
+
+`MetaMathlibExt.digit_add_mul_modulus_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.BaseShift`.
+
+`MetaMathlibExt.repetend_digit_sub_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.DigitDifference`.
+
+`MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
+
+`MetaMathlibExt.repetend_column_eq_column_of_mul_modEq_one` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InverseColumns`.
+
+`MetaMathlibExt.even_card_small_bases_orderOf` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InversePairs`.
+
+`MetaMathlibExt.repetend_last_digit_ne_zero` is proved in
+`MathlibExt.NumberTheory.RepetendTable.LastDigit`.
+
+`MetaMathlibExt.totient_dvd_card_orderOf_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.OrderCount`.
+
+`MetaMathlibExt.orderOf_eq_six_ne_small_residues` is proved in
+`MathlibExt.NumberTheory.RepetendTable.OrderSix`.
+
+`MetaMathlibExt.padicValNat_sq_sub_add_one_of_orderOf_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.PrimePowerValuation`.
+
+`MetaMathlibExt.tsum_inv_pow_succ_lt` is proved in
+`MathlibExt.Analysis.Series.InversePowerTail`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Raising the base by multiples of $n$ shifts repetend digits linearly.** Let $m$ and $j$ be
-natural numbers, $n \ge 1$ and $b \ge 2$. For a base $B$ write
-$d_j(B) = \lfloor m B^{j+1} / n \rfloor \bmod B$ for the $j$-th base-$B$ digit of $m/n$. Then
-there is a natural number $c < n$ such that $d_j(b + tn) = d_j(b) + tc$ for every natural number
-$t$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Corollary 3 (`integers-2025-A26-cor-3`). -/
-public theorem_wanted digit_add_mul_modulus_eq (m n b j : ℕ) (hn : 0 < n) (hb : 2 ≤ b) :
-    ∃ c < n, ∀ t : ℕ,
-      m * (b + t * n) ^ (j + 1) / n % (b + t * n) = m * b ^ (j + 1) / n % b + t * c
-
-/-- **The number of units of order $L$ is a multiple of $\varphi(L)$.** For natural numbers
-$n \ge 1$ and $L$, the number $E(L, n)$ of elements of order $L$ in the unit group
-$(\mathbb{Z}/n\mathbb{Z})^\times$ is divisible by Euler's totient $\varphi(L)$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Corollary 4 (`integers-2025-A26-cor-4`). -/
-public theorem_wanted totient_dvd_card_orderOf_eq (L n : ℕ) [NeZero n] : L.totient ∣
-    (Finset.univ.filter fun u : (ZMod n)ˣ => orderOf u = L).card
 
 /-- **Moduli with exactly $\varphi(L)$ units of even order $L$.** Let $n \ge 1$ and let $L \ge 2$
 be even. If the number of elements of multiplicative order $L$ in
@@ -76,18 +95,6 @@ Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, 
 Article A26, Corollary 6 (`integers-2025-A26-cor-6`). -/
 public theorem_wanted card_orderOf_eq_two_eq_two_pow_sub_one (n : ℕ) [NeZero n] :
     ∃ k : ℕ, (Finset.univ.filter fun u : (ZMod n)ˣ => orderOf u = 2).card = 2 ^ k - 1
-
-/-- **Order-six elements modulo a power of a prime congruent to $1$ mod $6$.** Let $p$ be a prime
-with $p \equiv 1 \pmod 6$, let $k \ge 1$ and put $n = p^k$. If $b \in \mathbb{Z}/n\mathbb{Z}$ has
-multiplicative order $6$, then $b \ne 0$, $2b \ne 1$, $b \ne 1$, $b \ne -1$ and $b \ne 2$ in
-$\mathbb{Z}/n\mathbb{Z}$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 16 (`integers-2025-A26-lem-16`). -/
-public theorem_wanted orderOf_eq_six_ne_small_residues (p k : ℕ) (hp : p.Prime) (hp6 : p % 6 = 1)
-    (hk : 0 < k) (b : ZMod (p ^ k))
-    (hb : orderOf b = 6) :
-    b ≠ 0 ∧ 2 * b ≠ 1 ∧ b ≠ 1 ∧ b ≠ -1 ∧ b ≠ 2
 
 /-- **Sign balance for differences of shifted linear residues.** Let $p$ be prime, $j \ge 1$ and
 $Q = p^j$. Let $g_1, g_2, f_1, f_2$ be natural numbers with $g_1, g_2 < Q$ and $f_1 \le f_2 < Q$
@@ -129,30 +136,6 @@ public theorem_wanted repetend_block_sum_eq (B N x d k : ℕ) (hB : 2 ≤ B) (hx
     let R := ∑ j ∈ Finset.range d, x * B ^ (j * k) % N
     S * N = R * (B ^ k - 1) ∧ (Nat.Coprime (B ^ k - 1) N → B ^ k - 1 ∣ S)
 
-/-- **The last repetend digit is nonzero.** Let $n \ge 2$ and let $b \ge 2$ be prime to $n$,
-with multiplicative order $L$ modulo $n$ (the repetend length of $1/n$ in base $b$). Then the
-digit $\lfloor b^{(L-1)+1}/n \rfloor \bmod b$ of $1/n$ at position $L - 1$ is not $0$.
-
-This holds for every such base, not only for the small bases $b < n$ that form the rows of the
-paper's table.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 25 (`integers-2025-A26-lem-25`). -/
-public theorem_wanted repetend_last_digit_ne_zero (n b : ℕ) (hn : 2 ≤ n) (hb : 2 ≤ b)
-    (hcop : Nat.Coprime b n) :
-    b ^ (orderOf (b : ZMod n) - 1 + 1) / n % b ≠ 0
-
-/-- **A constraint on $b^2 + un$ between $2$ and $n - 2$.** Let $n$ and $b$ be natural numbers and
-$u$ an integer, and put $b_2 = b^2 + un$. If $2 \le b_2 \le n - 2$, then $b \ne u + 1$.
-
-The paper states this for a small base $b$; here $b$ is any natural number.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 31 (`integers-2025-A26-lem-31`). -/
-public theorem_wanted ne_add_one_of_sq_add_mul_mem (n b : ℕ) (u : ℤ)
-    (h2 : 2 ≤ (b : ℤ) ^ 2 + u * n) (hn : (b : ℤ) ^ 2 + u * n ≤ n - 2) :
-    (b : ℤ) ≠ u + 1
-
 /-- **Long-division remainders and small bases of prime order.** Let $n$ and $L$ be primes and
 let $b$ be a natural number of multiplicative order $L$ modulo $n$. Suppose $m = 1$, or
 $2 \le m \le n - 1$ and $m$ has multiplicative order $L$ modulo $n$. Then removing $1$ from the
@@ -167,15 +150,6 @@ public theorem_wanted long_division_remainders_erase_one_eq_small_bases (n L b m
     ((Finset.range L).image fun j => m * b ^ j % n).erase 1 =
       (Finset.Icc 2 (n - 1)).filter fun a : ℕ => orderOf (a : ZMod n) = L
 
-/-- **Small bases of order greater than two come in pairs.** For every natural number $n$ and
-every $L > 2$, the number of integers $b$ with $1 \le b < n$ and $\gcd(b, n) = 1$ whose
-multiplicative order modulo $n$ is $L$ is even.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 3 (`integers-2025-A26-lem-2`). -/
-public theorem_wanted even_card_small_bases_orderOf (n L : ℕ) (hL : 2 < L) :
-    Even ((Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L).card
-
 /-- **Repetend digits are symmetric under inverse indices.** Let $n, b, x, j, j'$ be natural
 numbers and $L \ge 1$, and suppose $b$ has multiplicative order $L$ modulo $n$. For $y, c \ge 0$
 put $b_y = b^y \bmod n$ and $r_{y,c} = \lfloor b_y^{c+1}/n \rfloor \bmod b_y$, the $c$-th digit
@@ -187,20 +161,6 @@ Article A26, Lemma 6 (`integers-2025-A26-lem-6`). -/
 public theorem_wanted repetend_digit_pow_mul_eq_of_mul_modEq_one (n b L x j j' : ℕ) (hL : 0 < L)
     (hb : orderOf (b : ZMod n) = L) (hj : Nat.Coprime j L) (hjj : j * j' ≡ 1 [MOD L]) :
     (b ^ (x * j) % n) ^ (j' + 1) / n % (b ^ (x * j) % n) = (b ^ x % n) ^ (j + 1) / n % (b ^ x % n)
-
-/-- **Columns $j$ and $j^{-1}$ of a repetend table match.** Let $n$ and $L \ge 1$ be natural
-numbers, and consider the repetend table of $1/n$ whose rows are the natural numbers $1 \le b < n$
-coprime to $n$ of multiplicative order $L$ modulo $n$, and whose column $j$ holds the digits
-$\lfloor b^{j+1}/n \rfloor \bmod b$. If $j$ and $j'$ are natural numbers with $j$ coprime to $L$,
-$j^2 \not\equiv 1 \pmod L$ and $jj' \equiv 1 \pmod L$, then columns $j$ and $j'$ are equal as
-multisets.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Theorem 2 (`integers-2025-A26-thm-2`). -/
-public theorem_wanted repetend_column_eq_column_of_mul_modEq_one (n L j j' : ℕ) (hL : 0 < L)
-    (hj : Nat.Coprime j L) (hjsq : ¬ j ^ 2 ≡ 1 [MOD L]) (hjj : j * j' ≡ 1 [MOD L]) :
-    let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
-    (B.val.map fun b => b ^ (j + 1) / n % b) = B.val.map fun b => b ^ (j' + 1) / n % b
 
 /-- **Units modulo $L$ whose square is not $1$.** Let $L \ge 1$, let $e$ be the exponent of $2$
 in $L$ and let $f$ be the number of distinct odd prime factors of $L$. Then the number of
@@ -249,31 +209,6 @@ public theorem_wanted repetend_columns_match_iff_triple_sum_eq (p k a b : ℕ) (
     (∀ i < L, Nat.Coprime i L →
         (b ^ i % n + b ^ (i + L / 3) % n + b ^ (i + 2 * L / 3) % n) / n = 1) ↔
       (C (2 * a + 1) = C (4 * a + 2) ∧ C (8 * a + 4) = C (10 * a + 5))
-
-/-- **Differences of repetend digits.** Let $n \ge 1$ and $b$ be natural numbers with
-$\gcd(b, n) = 1$. For $x, j \ge 0$ put $b_x = b^x \bmod n$ and
-$r_{x,j} = \lfloor b_x^{j+1}/n \rfloor \bmod b_x$. Then for all natural numbers $y, m, d, e$,
-$$n (r_{ym,e} - r_{y,d}) = b_{ym} b_{yme} - b_{ym(e+1)} - b_y b_{yd} + b_{y(d+1)}.$$
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 7 (`integers-2025-A26-lem-7`). -/
-public theorem_wanted repetend_digit_sub_eq (n b y m d e : ℕ) (hn : 0 < n) (hb : Nat.Coprime b n) :
-    let r : ℕ → ℕ → ℕ := fun x j => (b ^ x % n) ^ (j + 1) / n % (b ^ x % n)
-    (n : ℤ) * ((r (y * m) e : ℤ) - r y d) =
-      ((b ^ (y * m) % n : ℕ) : ℤ) * (b ^ (y * m * e) % n : ℕ) - (b ^ (y * m * (e + 1)) % n : ℕ) -
-        ((b ^ y % n : ℕ) : ℤ) * (b ^ (y * d) % n : ℕ) + (b ^ (y * (d + 1)) % n : ℕ)
-
-/-- **The $p$-adic valuation of $B^2 - B + 1$ for a base of order $6p^j$.** Let $p$ be a prime
-with $p \equiv 1 \pmod 6$, let $i$ and $j$ be natural numbers with $j \ge 1$ and $i \ge 2j$, and
-let $B$ be a natural number whose multiplicative order modulo $p^i$ is $6p^j$. Then the $p$-adic
-valuation of $B^2 - B + 1$ is exactly $i - j$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 8 (`integers-2025-A26-lem-8`). -/
-public theorem_wanted padicValNat_sq_sub_add_one_of_orderOf_eq (p i j B : ℕ) (hp : p.Prime)
-    (hp6 : p % 6 = 1)
-    (hj : 0 < j) (hij : 2 * j ≤ i) (hB : orderOf (B : ZMod (p ^ i)) = 6 * p ^ j) :
-    padicValNat p (B ^ 2 - B + 1) = i - j
 
 /-- **A power of $B$ equal to $B - 1$ modulo $p^i$.** Let $p$ be a prime with $p \equiv 1 \pmod 6$,
 let $i$ and $j$ be natural numbers with $j \ge 1$ and $i \ge 2j$, put $n = p^i$ and $Q = p^j$, and
@@ -407,22 +342,6 @@ public theorem_wanted repetend_columns_ne_of_card_eq_one_or_three (n L : ℕ) :
     let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
     (B.card = 1 ∨ B.card = 3) → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
-
-/-- **Matching columns of a two-row repetend table.** Let $n$ and $L$ be natural numbers and let
-$B$ be the set of integers $c$ with $1 \le c < n$, $\gcd(c, n) = 1$ and multiplicative order $L$
-modulo $n$. For $c \in B$ and $k \ge 0$ let $r_k(c) = \lfloor c^{k+1}/n \rfloor \bmod c$, and let
-$C_k$ be the multiset of the $r_k(c)$ over $c \in B$. Suppose $B$ has exactly two elements, $b$
-and $b' \ne b$, and put $D_k = r_k(b') - r_k(b)$. Then for all $i, j \ge 0$ with $C_i = C_j$,
-$D_i = D_j$ or $D_i = -D_j$, and the sum of the elements of $C_i$ equals that of $C_j$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 28 (`integers-2025-A26-lem-28`). -/
-public theorem_wanted repetend_digit_diff_of_columns_eq (n L b b' i j : ℕ) :
-    let B := (Finset.Ico 1 n).filter fun c => Nat.Coprime c n ∧ orderOf (c : ZMod n) = L
-    let C : ℕ → Multiset ℕ := fun k => B.val.map fun c => c ^ (k + 1) / n % c
-    let D : ℕ → ℤ := fun k => ((b' ^ (k + 1) / n % b' : ℕ) : ℤ) - (b ^ (k + 1) / n % b : ℕ)
-    B.card = 2 → b ∈ B → b' ∈ B → b ≠ b' → C i = C j →
-      (D i = D j ∨ D i = -D j) ∧ (C i).sum = (C j).sum
 
 /-- **Half-period symmetry of the repetend of $1/n$.** Let $n$ be a natural number whose unit
 group $(\mathbb{Z}/n\mathbb{Z})^\times$ is cyclic, let $L > 0$ be even, and let $b < n$ be a
@@ -605,14 +524,6 @@ public theorem_wanted repetend_columns_ne_of_card_le_three (n L : ℕ) :
     let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
     1 ≤ B.card → B.card ≤ 3 → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
-
-/-- **Tail bound for sums of inverse powers.** For natural numbers $m \ge 2$ and $s \ge 1$,
-$\sum_{n = s+1}^{\infty} n^{-m} < \dfrac{1}{(m-1)\, s^{m-1}}$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 42 (`integers-2025-A26-lem-42`). -/
-public theorem_wanted tsum_inv_pow_succ_lt (m s : ℕ) (hm : 2 ≤ m) (hs : 0 < s) :
-    ∑' k : ℕ, (((k + s + 1 : ℕ) : ℝ) ^ m)⁻¹ < (((m - 1 : ℕ) : ℝ) * (s : ℝ) ^ (m - 1))⁻¹
 
 end
 

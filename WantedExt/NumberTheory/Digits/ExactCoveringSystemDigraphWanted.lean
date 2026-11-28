@@ -12,12 +12,21 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.ZMod.Defs
 public import Mathlib.GroupTheory.OrderOfElement
+public import MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphTypeTwo
+public import MathlibExt.NumberTheory.Digits.NegTwoCubeDvd
+public import MathlibExt.NumberTheory.Digits.NineDvdExponent
+public import MathlibExt.NumberTheory.Digits.PositiveTwoCubeDvd
+public import MathlibExt.NumberTheory.Digits.ThreePowCubeBound
+public import MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTypeOneRelIso
+public import MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTypeThreeRelIso
 
 /-!
 # Exact covering system digraphs of degree 2
 
 Statements from Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and
 Non-Standard Binary Representations of Integers*, INTEGERS 26 (2026), Article A107.
+The theorem `ecsd_type_three_relIso` is proved in
+`MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTypeThreeRelIso`.
 
 For a representative set `S = {(aᵢ, dᵢ)}` of an exact covering system, the exact
 covering system digraph (ECSD) `G_S` has vertex set `ℤ` and an edge `n → dᵢ n + aᵢ`
@@ -40,166 +49,6 @@ Conventions used below, following Section 1 of the paper:
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Edge relation of an exact covering system digraph.** Let $r \in \mathbb{N}$ and let
-$d_1, \dots, d_r$ and $a_1, \dots, a_r$ be integers. The digraph
-$G(d_1 n + a_1, \dots, d_r n + a_r)$ has vertex set $\mathbb{Z}$ and an edge $x \to y$ iff
-$y = d_i x + a_i$ for some $i \in \{1, \dots, r\}$.
-
-When the pairs $(a_i, d_i)$ form an exact covering system this is the paper's digraph $G_S$;
-the definition itself places no condition on the $d_i$ and $a_i$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 1
-(definition of `G_S`). -/
-def ecsdAdj {r : ℕ} (d a : Fin r → ℤ) (m n : ℤ) : Prop :=
-  ∃ i, n = d i * m + a i
-
-/-- **Out-neighbours in a two-rule digraph.** For all integers $d_1, d_2, a_1, a_2, x, y$, the
-digraph $G(d_1 n + a_1, d_2 n + a_2)$ has an edge $x \to y$ iff $y = d_1 x + a_1$ or
-$y = d_2 x + a_2$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 1
-(definition of `G_S`). -/
-theorem ecsdAdj_two (d₁ d₂ a₁ a₂ m n : ℤ) :
-    ecsdAdj ![d₁, d₂] ![a₁, a₂] m n ↔ n = d₁ * m + a₁ ∨ n = d₂ * m + a₂ := by
-  simp [ecsdAdj, Fin.exists_fin_two]
-
-/-- **$k$-descendants in a digraph on the integers.** Let $R$ be a digraph on $\mathbb{Z}$, let
-$k \in \mathbb{N}$ and let $m, n \in \mathbb{Z}$. Then $n$ is a $k$-descendant of $m$ in $R$ when
-there is a directed walk of exactly $k$ edges from $m$ to $n$, that is, integers
-$m = x_0, x_1, \dots, x_k = n$ such that $R$ has an edge $x_{i-1} \to x_i$ for every
-$1 \le i \le k$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 1
-(definition of `k`-descendant). -/
-def IsKDescendant (R : ℤ → ℤ → Prop) : ℕ → ℤ → ℤ → Prop
-  | 0, m, n => n = m
-  | k + 1, m, n => ∃ x, IsKDescendant R k m x ∧ R x n
-
-/-- **The only $0$-descendant of a vertex is itself.** Let $R$ be a digraph on $\mathbb{Z}$ and let
-$m, n \in \mathbb{Z}$. Then $n$ is a $0$-descendant of $m$ in $R$ if and only if $n = m$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 1
-(definition of `k`-descendant). -/
-theorem isKDescendant_zero (R : ℤ → ℤ → Prop) (m n : ℤ) :
-    IsKDescendant R 0 m n ↔ n = m :=
-  Iff.rfl
-
-/-- **The $1$-descendants are the out-neighbours.** Let $R$ be a digraph on $\mathbb{Z}$ and let
-$m, n \in \mathbb{Z}$. Then $n$ is a $1$-descendant of $m$ in $R$ if and only if $R$ has an edge
-$m \to n$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 1
-(definition of successor). -/
-theorem isKDescendant_one (R : ℤ → ℤ → Prop) (m n : ℤ) :
-    IsKDescendant R 1 m n ↔ R m n := by
-  simp [IsKDescendant]
-
-/-- **Cycles of a digraph on the integers.** Let $R$ be a digraph on $\mathbb{Z}$, given by its edge
-relation. A list $c = (c_1, \dots, c_t)$ of integers is a cycle of $R$ when it is nonempty, its
-entries are pairwise distinct, and $R$ has the edges $c_1 \to c_2, \dots, c_{t-1} \to c_t$ and
-$c_t \to c_1$ (for $t = 1$ this means a loop $c_1 \to c_1$).
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 2
-(cycles `C = (c₁, …, c_t)`). -/
-def IsDigraphCycle (R : ℤ → ℤ → Prop) (c : List ℤ) : Prop :=
-  c ≠ [] ∧ c.Nodup ∧ (c ++ c.take 1).IsChain R
-
-/-- **One-vertex cycles of a digraph on the integers.** Let $R$ be a digraph on $\mathbb{Z}$ and let
-$x \in \mathbb{Z}$. The one-element list $(x)$ is a cycle of $R$ if and only if $R$ has a loop
-$x \to x$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 2
-(cycles of length 1). -/
-theorem isDigraphCycle_singleton (R : ℤ → ℤ → Prop) (x : ℤ) :
-    IsDigraphCycle R [x] ↔ R x x := by
-  simp [IsDigraphCycle]
-
-/-- **Two-vertex cycles of a digraph on the integers.** Let $R$ be a digraph on $\mathbb{Z}$ and let
-$x, y \in \mathbb{Z}$. The list $(x, y)$ is a cycle of $R$ if and only if $x \ne y$ and $R$ has both
-edges $x \to y$ and $y \to x$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Section 2
-(2-cycles). -/
-theorem isDigraphCycle_pair (R : ℤ → ℤ → Prop) (x y : ℤ) :
-    IsDigraphCycle R [x, y] ↔ x ≠ y ∧ R x y ∧ R y x := by
-  simp [IsDigraphCycle]
-
-/-- **Translation isomorphism of exact covering system digraphs.** Let $r \in \mathbb{N}$, let
-$d_1, \dots, d_r$, $a_1, \dots, a_r$ and $k$ be integers, and put $a_i' = a_i - (d_i - 1)k$.
-Then the map $x \mapsto x + k$ is a digraph isomorphism from
-$G(d_1 n + a_1, \dots, d_r n + a_r)$ onto $G(d_1 n + a_1', \dots, d_r n + a_r')$.
-
-The paper's exact-covering hypothesis on the rules is not needed.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 1
-(`integers-2026-A107-thm-1`). -/
-theorem_wanted ecsdAdj_shift_relIso {r : ℕ} (d a : Fin r → ℤ) (k : ℤ) :
-    ∃ e : ecsdAdj d a ≃r ecsdAdj d (fun i => a i - (d i - 1) * k), ∀ n, e n = n + k
-
-/-- **Reflection isomorphism of exact covering system digraphs.** Let $r \in \mathbb{N}$, let
-$d_1, \dots, d_r$, $a_1, \dots, a_r$ and $k$ be integers, and put $a_i' = -a_i + (d_i - 1)k$.
-Then the map $x \mapsto -(x + k)$ is a digraph isomorphism from
-$G(d_1 n + a_1, \dots, d_r n + a_r)$ onto $G(d_1 n + a_1', \dots, d_r n + a_r')$.
-
-The paper's exact-covering hypothesis on the rules is not needed.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 2
-(`integers-2026-A107-thm-2`). -/
-theorem_wanted ecsdAdj_neg_shift_relIso {r : ℕ} (d a : Fin r → ℤ) (k : ℤ) :
-    ∃ e : ecsdAdj d a ≃r ecsdAdj d (fun i => -a i + (d i - 1) * k), ∀ n, e n = -(n + k)
-
-/-- **Normal form of the ECSDs $G(2n + a_1, 2n + a_2)$.** For all integers $a_1, a_2$ with
-$a_1 - a_2$ odd, the exact covering system digraph $G(2n + a_1, 2n + a_2)$, with an edge
-$m \to 2m + a_1$ and an edge $m \to 2m + a_2$ for every integer $m$, is isomorphic as a digraph
-to $G(2n, 2n - a)$ for some odd natural number $a$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 3
-(`integers-2026-A107-thm-3`). -/
-theorem_wanted ecsd_type_one_relIso (a₁ a₂ : ℤ) (h : Odd (a₁ - a₂)) :
-    ∃ a : ℕ, Odd a ∧ Nonempty (ecsdAdj ![2, 2] ![a₁, a₂] ≃r ecsdAdj ![2, 2] ![0, -(a : ℤ)])
-
-/-- **Normal form of Type 2 exact covering system digraphs.** Let $a_1, a_2 \in \mathbb{Z}$ with
-$a_1 - a_2$ odd, and write $G(2n + a_1, -2n + a_2)$ for the exact covering system digraph on
-$\mathbb{Z}$ with an edge $m \to n$ exactly when $n = 2m + a_1$ or $n = -2m + a_2$. Then there is
-an odd natural number $a$ such that $G(2n + a_1, -2n + a_2)$ is isomorphic as a digraph to
-$G(2n, -2n + a)$, the digraph on $\mathbb{Z}$ with an edge $m \to n$ exactly when $n = 2m$ or
-$n = -2m + a$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 4
-(`integers-2026-A107-thm-4`). -/
-theorem_wanted ecsd_type_two_relIso (a₁ a₂ : ℤ) (h : Odd (a₁ - a₂)) :
-    ∃ a : ℕ, Odd a ∧ Nonempty (ecsdAdj ![2, -2] ![a₁, a₂] ≃r ecsdAdj ![2, -2] ![0, (a : ℤ)])
-
-/-- **Normal forms of the ECSDs $G(-2n + a_1, -2n + a_2)$.** For all integers $a_1, a_2$ with
-$a_1 - a_2$ odd, the exact covering system digraph $G(-2n + a_1, -2n + a_2)$, with an edge
-$m \to -2m + a_1$ and an edge $m \to -2m + a_2$ for every integer $m$, is isomorphic as a
-digraph to one of the following: $G(-2n, -2n + a)$ for an odd natural number $a$ (Type 3.1);
-$G(-2n + 1, -2n + a)$ for an even natural number $a$ with $a \equiv 1 \pmod 3$ (Type 3.2); or
-$G(-2n + 1, -2n + a)$ for an even integer $a$ with $a \equiv 2 \pmod 3$ (Type 3.3).
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Theorem 5
-(`integers-2026-A107-thm-5`). -/
-theorem_wanted ecsd_type_three_relIso (a₁ a₂ : ℤ) (h : Odd (a₁ - a₂)) :
-    (∃ a : ℕ, Odd a ∧
-        Nonempty (ecsdAdj ![-2, -2] ![a₁, a₂] ≃r ecsdAdj ![-2, -2] ![0, (a : ℤ)])) ∨
-      (∃ a : ℕ, Even a ∧ a % 3 = 1 ∧
-        Nonempty (ecsdAdj ![-2, -2] ![a₁, a₂] ≃r ecsdAdj ![-2, -2] ![1, (a : ℤ)])) ∨
-      ∃ a : ℤ, Even a ∧ a % 3 = 2 ∧
-        Nonempty (ecsdAdj ![-2, -2] ![a₁, a₂] ≃r ecsdAdj ![-2, -2] ![1, a])
 
 /-- **Cycles of the digraph $G(2n, 2n - a)$.** For an integer $b$ write $G_b$ for the digraph
 $G(2n, 2n - b)$ on $\mathbb{Z}$, with an edge $m \to 2m$ and an edge $m \to 2m - b$ for every
@@ -503,56 +352,6 @@ theorem_wanted negabinary_two_digits_complete_iff (a₁ a₂ : ℤ) (h : |a₁ -
         z = ∑ j ∈ Finset.range (k + 1), b j * (-2) ^ j) ↔
       (∃ m : ℕ, |a₁ - a₂| = 3 ^ m) ∧ ¬ 3 ∣ a₁ ∧ ¬ 3 ∣ a₂ ∧
         max |a₁| |a₂| ≤ 2 * |a₁ - a₂| - 1
-
-/-- **Divisibility of $2^{3n} + 1$ from $2^n + 1$.** For every natural number $n$, if $3n$
-divides $2^n + 1$, then $9n$ divides $2^{3n} + 1$.
-
-Equivalently, if $3$ divides $2^n + 1$ and $n$ divides $(2^n + 1)/3$, then $3n$ divides
-$(2^{3n} + 1)/3$. For $n = 0$ the hypothesis fails, so positivity is not assumed.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Lemma 1
-(`integers-2026-A107-lem-1`). -/
-theorem_wanted three_mul_dvd_two_pow_add_one_cube (n : ℕ) (h : 3 * n ∣ 2 ^ n + 1) :
-    9 * n ∣ 2 ^ (3 * n) + 1
-
-/-- **Divisibility of $1 - (-2)^{3k}$ from $1 - (-2)^k$.** For every integer $n$ and every
-natural number $k$, if $3n$ divides $1 - (-2)^k$, then $9n$ divides $1 - (-2)^{3k}$.
-
-Since $3$ always divides $1 - (-2)^k$, this is equivalent to: if $n$ divides
-$(1 - (-2)^k)/3$, then $3n$ divides $(1 - (-2)^{3k})/3$. The paper states it for positive $n$
-and $k$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Lemma 2
-(`integers-2026-A107-lem-2`). -/
-theorem_wanted three_mul_dvd_one_sub_neg_two_pow_cube (n : ℤ) (k : ℕ)
-    (h : 3 * n ∣ 1 - (-2) ^ k) : 9 * n ∣ 1 - (-2) ^ (3 * k)
-
-/-- **Bounding the power of $3$ dividing $2^{3k} + 1$.** For all natural numbers $m$ and $k$, if
-$3^{m+1}$ does not divide $2^k + 1$, then $3^{m+2}$ does not divide $2^{3k} + 1$.
-
-For odd $k$, where $3$ divides $2^k + 1$, this says: if $3^m$ does not divide $(2^k + 1)/3$,
-then $3^{m+1}$ does not divide $(2^{3k} + 1)/3$. For even $k$ the conclusion holds since $3$
-does not divide $2^{3k} + 1$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Lemma 3
-(`integers-2026-A107-lem-3`). -/
-theorem_wanted three_pow_not_dvd_two_pow_add_one_cube (m k : ℕ)
-    (h : ¬ 3 ^ (m + 1) ∣ 2 ^ k + 1) : ¬ 3 ^ (m + 2) ∣ 2 ^ (3 * k) + 1
-
-/-- **Nine divides $n$ when $n > 3$ and $3n$ divides $2^n + 1$.** Let $n > 3$ be a natural
-number. If $3n$ divides $2^n + 1$, then $9$ divides $n$.
-
-For odd $n$ the hypothesis says that $n$ divides the integer $(2^n + 1)/3$, which is the form
-in the paper; for even $n$ it never holds, since $3$ does not divide $2^n + 1$.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Lemma 4
-(`integers-2026-A107-lem-4`), quoting [3]. -/
-theorem_wanted nine_dvd_of_three_mul_dvd_two_pow_add_one (n : ℕ) (hn : 3 < n)
-    (h : 3 * n ∣ 2 ^ n + 1) : 9 ∣ n
 
 /-- **Single-component degree-2 ECSDs up to isomorphism.** Let $d_1, d_2 \in \{2, -2\}$ and let
 $a_1, a_2$ be integers with $a_1 - a_2$ odd. If the exact covering system digraph

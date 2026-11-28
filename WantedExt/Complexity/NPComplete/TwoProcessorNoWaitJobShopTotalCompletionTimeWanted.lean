@@ -25,11 +25,11 @@ no-wait versions of JOB-SHOP SCHEDULING).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
 
 @[expose] public section
 
@@ -47,7 +47,7 @@ QUESTION: is there a job-shop schedule for `J` with no wait in process, i.e.
 over all `j ∈ J`, of the completion times `C_j = σ(t_{n_j}[j]) + l(t_{n_j}[j])` is at most `K`?
 
 In the Brucker-Knust notation this is `J2|no-wait|∑ C_i`. It is the no-wait version of
-JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingWanted`) with `m = 2`, with the overall deadline
+JOB-SHOP SCHEDULING ([SS18], `JobShopSchedulingDefs`) with `m = 2`, with the overall deadline
 replaced by a bound `K` on the sum of the completion times, as Garey and Johnson do for
 NO-WAIT FLOW-SHOP SCHEDULING in the comment to [SS16]. The instance type,
 `JobShopScheduling.WellFormed`, `JobShopScheduling.Task`, `JobShopScheduling.taskLength` and

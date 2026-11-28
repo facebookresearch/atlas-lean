@@ -23,7 +23,7 @@ jobs", Discrete Applied Mathematics 59 (1995), 237-266, doi:10.1016/0166-218X(95
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
@@ -55,7 +55,7 @@ multiprocessor task with `μ_jk = {M}`. The instances, their well-formedness and
 those of `MultiprocessorTaskJobShopThreeJobsWanted` (`JMPT3|n=3|C_max`:
 `MultiprocessorTaskJobShopThreeJobs.WellFormed` and
 `MultiprocessorTaskJobShopThreeJobs.IsMPTJobShopSchedule`, over the instance data of
-`MultiPurposeJobShopThreeJobsWanted`), with the last component of the instance read as the bound
+`MultiPurposeJobShopThreeJobsDefs`), with the last component of the instance read as the bound
 `K` on `∑_j C_j`. The values `C j` bound the completion time of the last task of each job `j`;
 the least such values are the completion times, so some choice has sum at most `K` exactly when
 `∑_j C_j ≤ K`. Lengths and the bound use the canonical binary encoding. Membership in NP: some

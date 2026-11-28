@@ -2,27 +2,45 @@
 
 Cards (docs/cards.md) are derived in the wiki job itself: after lean-facts and before render,
 `scripts/cards.py rollup` writes build/cards.json from the job's own checkout and extraction, and writes nothing
-when the strict check finds an error. This hook reads that file only when it is an `atlas-cards/v1` rollup of the
-commit being built (the checkout's HEAD), well formed, naming only pages the site publishes and agreeing with
-itself where it restates itself (statuses and their rows, counts and their lists, clusters and `uses`), and only
-when scripts/card-moves.jsonl leads every address it retired to a page the site publishes. Otherwise, or when
-there is no card and no moved address to show, it changes nothing: the site is, byte for byte, the site without
-cards, so no card data of another revision, and no part of a rollup, is ever shown.
+when the strict check finds an error; and `scripts/cards.py moves` checks the move ledger on its own, the frozen
+scripts/card-moves.jsonl and the fragments of scripts/card-moves.d/ read as one logical ledger, and writes
+build/card-moves.json, its receipt, and nothing when the ledger is invalid.
 
-With card data, the hook adds:
+The hook keeps the moved addresses only with that receipt: an `atlas-card-moves/v3` receipt of the commit being
+built (the checkout's HEAD) whose digests are those of the ledger's files the hook reads (ledger_files: the frozen
+file must exist, and every fragment be well formed) and of the links folder as it is now, which shows the receipt
+refers to the current inputs (it does not vouch for its contents: the job that makes it is trusted), and only when
+every address resolves to a page the site publishes, a retired card's folder or statement's page that is gone
+leading to the folder or page the receipt gives its last replacement. Card data needs no part of that, nor the moved
+addresses card data: the hook shows card data only when build/cards.json is an `atlas-cards/v1` rollup of the commit
+being built, well formed, naming only pages the site publishes and agreeing with itself where it restates itself
+(statuses and their rows, counts and their lists, clusters and `uses`), only with the moved addresses, and only when
+its cards are, folder for folder, the receipt's complete list. So no card data of another revision, and no part of a
+rollup, is ever shown, and a card error never costs a moved address. When the hook shows neither, or has nothing to
+show, and for a site source without render's search index, which is no rendered wiki, the site is, byte for byte,
+the site without this hook.
 
-- on each card's folder page, before its first section, a block with the card's kind, importance and level, the
-  status of its main statement, the progress of its other statements, the statements it presents from
-  elsewhere, and each of its derived edges with the statements that witness it: the cards it uses and the cards
-  that use it, the cards its main statement needs and the cards whose main statement needs it, each with its
-  walk, and the cluster of mutually reachable cards it belongs to, with one cycle among them. It is HTML a
-  reader without JavaScript reads as it is, with the witnesses in collapsed `<details>`;
+Neither failure fails the build, and neither is silent: the build log says what is not shown and why, at INFO since
+`mkdocs build --strict` fails on a warning, and under GitHub Actions so do a workflow annotation and a line of the
+job summary.
+
+The hook adds:
+
+- with card data, on each card's folder page, before its first section, a block with the card's kind, importance
+  and level, the status of its main statement, the progress of its other statements, the statements it presents
+  from elsewhere, and each of its derived edges with the statements that witness it: the cards it uses and the
+  cards that use it, the cards its main statement needs and the cards whose main statement needs it, each with its
+  walk, and the cluster of mutually reachable cards it belongs to, with one cycle among them. It is HTML a reader
+  without JavaScript reads as it is, with the witnesses in collapsed `<details>`;
 - the redirects of the move ledger, all from one resolution of its history (history()), in which a folder row
   moves the folder alone and each page or folder inside it that moved has its own row, for every shape an old
   address had. A statement's old route was its box on its folder's page or a page of its own, and the ledger
   does not say which, so every moved statement keeps both: on its old folder page, if that still exists, an
   element with its old anchor holding a plain link to where it went, and a script that follows that link; and a
-  notice page at `<old address>.html`. At the address of a folder that is gone, a notice page with a plain link to
+  notice page at `<old address>.html`. A retired statement's addresses lead, by both routes, to the statement page
+  or folder page that replaces it; a statement that replaces it in place keeps only the route it does not have
+  itself, its old page of its own if it is boxed, its old box if it has a page of its own, and no route ever
+  redirects to itself. At the address of a folder that is gone, a notice page with a plain link to
   where the folder went and an element for each old anchor of its statements; at the old explorer page of a
   folder that is gone, a notice like the ones render writes for live folders; and
   `javascripts/atlas-card-moves.js`, a table of every old address and where it leads, which the pages an old
@@ -34,14 +52,18 @@ With card data, the hook adds:
 
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 import logging
+import os
 import posixpath
 import re
+import stat
 import subprocess
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
+from datetime import datetime
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import quote, unquote, urlsplit
@@ -51,6 +73,18 @@ log = logging.getLogger("mkdocs.hooks.card_pages")
 # Relative to the folder of mkdocs.yml.
 DATA = "build/cards.json"
 LEDGER = "scripts/card-moves.jsonl"
+# The move ledger's fragments, one per change, read after the frozen file (docs/cards.md#move-ledger).
+FRAGMENTS = "scripts/card-moves.d"
+# ASCII digits only: a stamp of other digits would sort after every ASCII one.
+FRAGMENT_NAME = re.compile(r"([0-9]{8}T[0-9]{6}Z)-[a-z0-9][a-z0-9-]*\.jsonl")
+STAMP = "%Y%m%dT%H%M%SZ"
+# The receipt of `scripts/cards.py moves`, and the links folder whose digest it records, with its defaults file.
+RECEIPT = "build/card-moves.json"
+RECEIPT_SCHEMA = "atlas-card-moves/v3"
+RECEIPT_KEYS = {"schema", "commit", "ledger_sha256", "annotations_sha256", "cards", "cards_complete", "replacements"}
+LINKS = "blueprint/links"
+LINKS_DEFAULTS = "_defaults.json"
+SHA256 = re.compile(r"[0-9a-f]{64}")
 # In the site source: render's search index, which gives every published page's route and title.
 INDEX = "dependencies/index.json"
 INDEX_SCHEMA = "autoform-dag-search/v1"
@@ -100,7 +134,8 @@ FOLLOW = ('(function(){var h=location.hash.slice(1),e;try{h=decodeURIComponent(h
 
 
 class CardDataError(ValueError):
-    """Card data the site cannot show as it is; the site then shows no card data at all."""
+    """Card data the site cannot show as it is, so it shows none of it, or moved addresses it cannot keep as they
+    are, so it keeps none of them."""
 
 
 def need(condition: object, reason: str) -> None:
@@ -242,7 +277,7 @@ def bucket(row: dict) -> str:
     """A statement's status as docs/cards.md gives it, from its row of the rollup's `pages` table: the first marker
     that applies, then Autoform's state."""
     for marker, holds in (("stale", row["stale"]), ("held", row["held"]), ("not_ready", row["not_ready"]),
-                          ("page_only", row["credit"] == "none")):
+                          ("page_only", row["credit"] == "none" and row.get("kind") is None)):
         if holds:
             return marker
     return row["state"] if row["state"] in STATES else "planned"
@@ -281,7 +316,7 @@ def check_data(data: object, pages: Pages) -> dict[str, dict]:
         found = table.get(node_id)
         need(isinstance(found, dict) and found.get("credit") in CREDITS
              and all(isinstance(found.get(key), bool) for key in ("held", "not_ready", "stale"))
-             and (found.get("state") is None or isinstance(found.get("state"), str)),
+             and all(found.get(key) is None or isinstance(found.get(key), str) for key in ("state", "kind")),
              f"{node_id} has no well-formed row in the `pages` table")
         return found
 
@@ -402,44 +437,130 @@ def check_data(data: object, pages: Pages) -> dict[str, dict]:
 
 @dataclass
 class Ledger:
-    """scripts/card-moves.jsonl: its rows in order, each ("page", old, new), ("folder", old, new) or ("card", card,
-    folder, replaced_by), and each retired card's last address and replacement."""
+    """The logical move ledger (ledger_files, read_ledger): its rows in order, each ("page", old, new), ("folder", old,
+    new), ("card", card, folder, replaced_by) or ("statement", statement, page, replaced_by); each retired card's last
+    address and replacement; and each retired statement's."""
 
     rows: list[tuple[str, ...]] = field(default_factory=list)
     retired: dict[str, tuple[str, str]] = field(default_factory=dict)
+    statements: dict[str, tuple[str, str]] = field(default_factory=dict)
 
 
 def valid_address(value: object) -> bool:
+    """A page's or folder's node id: a relative path below roadmap/, without `.md`, `.` or `..` parts; the predicate
+    scripts/cards.py's valid_address applies to the ledger's rows and to the cards its receipt lists."""
     return (isinstance(value, str) and bool(value) and not value.startswith("/") and not value.endswith(".md")
             and all(part and part not in (".", "..") for part in value.split("/")))
 
 
-def read_ledger(text: str) -> Ledger:
-    """The ledger's rows, in order. A page or folder address moves once and a card is retired once; a folder may be
-    the last address of several retired cards, each replaced in place by the next (docs/cards.md#move-ledger)."""
+def ledger_files(root: Path) -> list[tuple[str, bytes]]:
+    """The move ledger's files in the checkout ``root``, each read once, in its logical order, by path in the
+    repository: the frozen scripts/card-moves.jsonl, which must be a regular file, then each fragment of
+    scripts/card-moves.d/ in byte order of name, a missing or empty folder holding none. Every entry of that folder is
+    a regular file named <YYYYMMDDTHHMMSSZ>-<slug>.jsonl, its stamp a real UTC time, holding UTF-8 with at least one
+    row; anything else is a CardDataError, as is a missing frozen file (no empty ledger). scripts/card_moves.py reads
+    the ledger the same way, and a test holds the two to one result."""
+    frozen = root / LEDGER
+    try:
+        found = os.lstat(frozen)
+    except FileNotFoundError as error:
+        raise CardDataError(f"there is no {LEDGER}") from error
+    need(stat.S_ISREG(found.st_mode), f"{LEDGER}: no regular file")
+    files = [(LEDGER, frozen.read_bytes())]
+    folder = root / FRAGMENTS
+    try:
+        found = os.lstat(folder)
+    except FileNotFoundError:
+        return files
+    need(stat.S_ISDIR(found.st_mode), f"{FRAGMENTS} is no folder")
+    for name in sorted(os.listdir(folder), key=os.fsencode):
+        path = f"{FRAGMENTS}/{name}"
+        match = FRAGMENT_NAME.fullmatch(name)
+        need(match is not None, f"{path}: not a fragment; a fragment is a file named <YYYYMMDDTHHMMSSZ>-<slug>.jsonl")
+        try:
+            datetime.strptime(match.group(1), STAMP)
+        except ValueError as error:
+            raise CardDataError(f"{path}: not a fragment; {match.group(1)} is no UTC time") from error
+        need(stat.S_ISREG(os.lstat(folder / name).st_mode), f"{path}: no regular file")
+        data = (folder / name).read_bytes()
+        try:
+            text = data.decode("utf-8")
+        except UnicodeDecodeError as error:
+            raise CardDataError(f"{path}: not UTF-8") from error
+        need(any(line.strip() for line in text.splitlines()), f"{path}: no row; a fragment holds at least one")
+        files.append((path, data))
+    return files
+
+
+def ledger_digest(files: list[tuple[str, bytes]]) -> str:
+    """The digest of the ledger's files as read (ledger_files), as `scripts/cards.py moves` records it in an
+    `atlas-card-moves/v3` receipt (card_moves.digest there): sha256 over each file, in logical order, as its path in
+    the repository, a NUL, its length in bytes in decimal, a NUL and its bytes."""
+    digest = hashlib.sha256()
+    for path, data in files:
+        digest.update(path.encode() + b"\0" + str(len(data)).encode() + b"\0" + data)
+    return digest.hexdigest()
+
+
+def read_ledger(parts: str | list[tuple[str, str]]) -> Ledger:
+    """The rows of the logical ledger ``parts``, each file's path and text in its logical order (a text alone is the
+    frozen file's), each file read on its own, line by line, and each row named by its file and line. A page or folder
+    address moves once, an article moves into an address once, and a card or a statement is retired once; a folder may
+    be the last address of several retired cards, and a page of several retired statements, each replaced in place by
+    the next, in the ledger's order (docs/cards.md#move-ledger), but an address is never both moved and retired, or a
+    card's and a statement's: an address has one owner, as scripts/cards.py's check_moves requires."""
     ledger = Ledger()
     moved: set[tuple[str, str]] = set()
-    for number, line in enumerate(text.splitlines(), 1):
+    # Each article moved into each address, by kind: two such moves would make its history branch.
+    arrived: set[tuple[str, str, str]] = set()
+    claims: dict[str, dict[str, list[tuple[str, str]]]] = {"card": defaultdict(list), "statement": defaultdict(list)}
+    lines = [(path, number, line) for path, text in ([(LEDGER, parts)] if isinstance(parts, str) else parts)
+             for number, line in enumerate(text.splitlines(), 1)]
+    for path, number, line in lines:
         if not line.strip():
             continue
         try:
             row = json.loads(line)
         except json.JSONDecodeError as error:
-            raise CardDataError(f"{LEDGER}:{number}: not JSON") from error
-        need(isinstance(row, dict), f"{LEDGER}:{number}: not an object")
+            raise CardDataError(f"{path}:{number}: not JSON") from error
+        need(isinstance(row, dict), f"{path}:{number}: not an object")
         kind = next((kind for kind in ("page", "folder") if set(row) == {kind, "to", "article_id"}), None)
         if kind is not None:
-            need(valid_address(row[kind]) and valid_address(row["to"]) and (kind, row[kind]) not in moved,
-                 f"{LEDGER}:{number}: a malformed or repeated {kind} row")
+            need(valid_address(row[kind]) and valid_address(row["to"]) and (kind, row[kind]) not in moved
+                 and isinstance(row["article_id"], str), f"{path}:{number}: a malformed or repeated {kind} row")
+            need((kind, row["article_id"], row["to"]) not in arrived,
+                 f"{path}:{number}: {row['article_id']} moves into {row['to']} a second time; an article moves into "
+                 "an address once")
             moved.add((kind, row[kind]))
+            arrived.add((kind, row["article_id"], row["to"]))
             ledger.rows.append((kind, row[kind], row["to"]))
+        elif set(row) == {"statement", "page", "replaced_by"}:
+            need(all(isinstance(row[key], str) and ARTICLE_ID.fullmatch(row[key])
+                     for key in ("statement", "replaced_by")) and valid_address(row["page"])
+                 and row["statement"] not in ledger.statements and row["statement"] not in ledger.retired,
+                 f"{path}:{number}: a malformed statement retirement row, or a repeated one")
+            ledger.statements[row["statement"]] = (row["page"], row["replaced_by"])
+            ledger.rows.append(("statement", row["statement"], row["page"], row["replaced_by"]))
+            claims["statement"][row["page"]].append((row["statement"], row["replaced_by"]))
         else:
             need(set(row) == {"card", "folder", "replaced_by"} and valid_address(row["folder"])
                  and isinstance(row["card"], str) and isinstance(row["replaced_by"], str)
-                 and row["card"] not in ledger.retired,
-                 f"{LEDGER}:{number}: not a page, folder or retirement row, or a repeated one")
+                 and row["card"] not in ledger.retired and row["card"] not in ledger.statements,
+                 f"{path}:{number}: not a page, folder or retirement row, or a repeated one")
             ledger.retired[row["card"]] = (row["folder"], row["replaced_by"])
             ledger.rows.append(("card", row["card"], row["folder"], row["replaced_by"]))
+            claims["card"][row["folder"]].append((row["card"], row["replaced_by"]))
+    addresses = {address for _, address in moved}
+    folders = {folder for folder, _ in ledger.retired.values()}
+    for statement, (page, _) in sorted(ledger.statements.items()):
+        need(page not in addresses and page not in folders, f"{LEDGER}: {page} is the last address of the retired "
+             f"statement {statement}, and moved or was a retired card's too; an address has one owner")
+    for kind, at_address in claims.items():
+        for address, found in sorted(at_address.items()):
+            for (one, successor), (two, _) in zip(found, found[1:]):
+                need(successor == two, f"{LEDGER}: {address} is the last address of the retired {kind} {one}, replaced "
+                     f"by {successor}, and of {two}; an address has one owner, so each retirement there is replaced in "
+                     "place by the next")
     return ledger
 
 
@@ -454,42 +575,113 @@ def ancestors(address: str):
         yield address
 
 
-def history(ledger: Ledger, pages: Pages, cards: dict[str, dict]) -> dict[tuple[str, str], str]:
+def history(ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str]]) -> dict[tuple[str, str], str]:
     """Every address the ledger's history gave a statement page or a folder and the site no longer publishes, by
     kind (`page` or `folder`) and address, with the published statement or folder it leads to now.
 
     The rows are replayed backwards from the pages the site publishes, so that every address is followed through
-    every row after it, in order. Each page or folder row puts its old address in the place of its new one. A
-    folder row moves the folder alone: each page and folder inside it that moved has its own row
+    every row after it, in order. Each page or folder row puts its old address in the place of its new one. A folder
+    row moves the folder alone: each page and folder inside it that moved has its own row
     (docs/cards.md#move-ledger), so no address is inferred from what a folder holds, and a page added to a folder
     after it moved gets no old address. A retired card's folder that is gone leads to the folder of the live card
-    its replacements end at, as scripts/cards.py follows them; a folder that held a moved address and is gone with
-    no row of its own leads where its nearest enclosing folder leads at that point. An address the rows lead to no
-    published page or folder is an error."""
-    where = {("page" if entry["kind"] == "node" else "folder", node_id): node_id
-             for node_id, entry in pages.entries.items()}
-    found: dict[tuple[str, str], str] = {}
+    its replacements end at, and a retired statement's page that is gone to the live statement page or folder page
+    its replacements end at, through any retirement on the way, as scripts/cards.py follows them; ``replacements``
+    gives each of those, by id, with its kind and node (the receipt's). A folder that held a moved address and is
+    gone with no row of its own leads where its nearest enclosing folder led at that point, an inferred fallback.
 
-    def replacement(card: str) -> str:
-        seen = {card}
-        while card in ledger.retired:
-            card = ledger.retired[card][1]
-            need(card not in seen, f"{LEDGER}: the replacements of a retired card go round")
-            seen.add(card)
-        need(card in cards, f"{LEDGER}: a retired card's replacements end at {card}, which is no card of the rollup")
-        return cards[card]["folder"]
+    The replay keeps two things apart: what held each folder address at each point of the history, a binding, and
+    the route each old folder address keeps. What a folder row or a card's retirement says is a folder's route, and
+    no fallback replaces it, whatever their order; a fallback is the route of a folder no row speaks of, the one taken
+    first in the history. A fallback is bound to the binding it was taken from, the folder that held the address
+    above it at that point, which a row may say later in the replay: a card's retirement says it of the folder the
+    card was, which no folder row moves in or out (an address has one owner), so the fallback in place at the card's
+    folder becomes what the retirement says, and every fallback bound to it, at any depth, follows. A folder row
+    changes what holds its two addresses: a fallback below them bound after the change keeps what it was bound to,
+    and holds its folder no longer before the change, where the folder is bound again, when needed, to what held the
+    address then (release). So a fallback never follows a later or earlier holder of its parent's path. An address the
+    rows lead to no published page or folder is an error. A retired statement's address that holds its replacement, a
+    statement in place, is kept too, leading to itself: redirects() keeps only the route the replacement does not
+    have itself; held by another article, it is an error."""
+    where = {("page", node_id): node_id for node_id, entry in pages.entries.items() if entry["kind"] == "node"}
+    found: dict[tuple[str, str], str] = {}
+    # The last addresses of retired statements, which may hold their replacement in place.
+    retired_pages: set[str] = set()
+    # Every binding of a folder address, by number: a published folder, what a row said, or a fallback, each with the
+    # binding it was taken from, or what it leads to.
+    bindings: list[tuple[int | None, str | None]] = []
+
+    def bind(source: int | None = None, endpoint: str | None = None) -> int:
+        bindings.append((source, endpoint))
+        return len(bindings) - 1
+
+    def resolve(number: int) -> str:
+        while bindings[number][1] is None:
+            number = bindings[number][0]
+        return bindings[number][1]
+
+    # The binding that holds each folder address at this point of the replay, the folders it holds by a fallback, and
+    # the bindings that are fallbacks.
+    holding = {node_id: bind(endpoint=node_id) for node_id, entry in pages.entries.items() if entry["kind"] != "node"}
+    inferred: set[str] = set()
+    fallbacks: set[int] = set()
+    # The binding that gives each old folder address its route, and the folders whose route a row said.
+    route: dict[str, int] = {}
+    claimed: set[str] = set()
+
+    def replacement(what: str, article: str) -> str:
+        """The node a retired card's or statement's replacements end at: a card's through retired cards, to a
+        published folder; a statement's through any retirement, to a published statement page or folder."""
+        through = ledger.retired if what == "card" else {**ledger.retired, **ledger.statements}
+        seen = {article}
+        while article in through:
+            article = through[article][1]
+            need(article not in seen, f"{LEDGER}: the replacements of a retired {what} go round")
+            seen.add(article)
+        need(article in replacements, f"{LEDGER}: a retired {what}'s replacements end at {article}, which {RECEIPT} "
+             "does not list")
+        kind, node = replacements[article]
+        need((kind == "folder" or what == "statement") and (pages.leaf(node) if kind == "page" else pages.folder(node)),
+             f"{LEDGER}: a retired {what}'s replacements end at {article}, whose {kind} {node} the site does not "
+             "publish")
+        return node
 
     def enclosed(address: str) -> None:
-        """The folders that held ``address`` at this point: one that is gone leads where the nearest one that is
-        not leads."""
+        """The folders that held ``address`` at this point: one that is gone is bound to the nearest one above it that
+        is not, a fallback, farthest first, so that each is bound to the one above it; the first fallback of a folder
+        whose route no row said is its route, until an earlier one."""
         missing = []
         for above in ancestors(address):
-            if ("folder", above) in where:
-                for folder in missing:
-                    where[("folder", folder)] = found[("folder", folder)] = where[("folder", above)]
+            if above in holding:
+                source = holding[above]
+                for folder in reversed(missing):
+                    source = holding[folder] = bind(source)
+                    fallbacks.add(source)
+                    inferred.add(folder)
+                    if folder not in claimed:
+                        route[folder] = source
                 return
             missing.append(above)
         raise CardDataError(f"{LEDGER}: {address} is in no published folder")
+
+    def release(folder: str) -> None:
+        """What holds ``folder`` changes at this point, as a folder row moves a folder into it or out of it: every gone
+        folder below that a fallback resting on its binding holds, directly or through other fallbacks, is held by
+        nothing from here, so that what held its parent before is found again when needed. A folder a row said, or one
+        the site has, is no fallback and stops it; routes taken stay."""
+        number = holding.get(folder)
+        for below in sorted(other for other in inferred if other.startswith(f"{folder}/")):
+            source = holding[below]
+            while source in fallbacks and source != number:
+                source = bindings[source][0]
+            if source == number:
+                del holding[below]
+                inferred.discard(below)
+
+    def say(folder: str, number: int) -> None:
+        """What a row says of ``folder``: binding ``number`` holds it at this point and is its route."""
+        holding[folder] = route[folder] = number
+        claimed.add(folder)
+        inferred.discard(folder)
 
     for row in reversed(ledger.rows):
         if row[0] == "page":
@@ -499,18 +691,48 @@ def history(ledger: Ledger, pages: Pages, cards: dict[str, dict]) -> dict[tuple[
             enclosed(old)
         elif row[0] == "folder":
             # A folder row moves the folder alone: each page and folder inside it that moved has its own row, and a
-            # page added to the folder later has none, so it gets no old address.
+            # page added to the folder later has none, so it gets no old address. Undone, the folder's arrival leaves
+            # its new address to whatever held it before.
             _, old, new = row
-            need(("folder", new) in where, f"{LEDGER}: the folder {old} leads to {new}, which is no published folder")
-            where[("folder", old)] = found[("folder", old)] = where.pop(("folder", new))
+            need(new in holding, f"{LEDGER}: the folder {old} leads to {new}, which is no published folder")
+            release(new)
+            inferred.discard(new)
+            arrival = holding.pop(new)
+            if old in holding:
+                release(old)
+            say(old, bind(arrival))
             enclosed(old)
-        else:
+        elif row[0] == "card":
+            # A retired card's folder leads to its replacement unless what a later row said, the card's replacement in
+            # place among them, is in place there; a fallback is not, and becomes the replacement, with every fallback
+            # bound to it.
             _, card, folder, _ = row
-            if ("folder", folder) not in where:
-                where[("folder", folder)] = found[("folder", folder)] = replacement(card)
+            if folder in inferred:
+                bindings[holding[folder]] = (None, replacement("card", card))
+                fallbacks.discard(holding[folder])
+                say(folder, holding[folder])
+            elif folder not in holding:
+                say(folder, bind(endpoint=replacement("card", card)))
             enclosed(folder)
+        else:
+            # A statement retired at its last address: both routes it may have had, its box on its folder's page and
+            # a page of its own, lead to its final replacement, a statement page or a folder page; unless that lives
+            # at the address itself, as a statement.
+            _, statement, page, _ = row
+            successor = replacement("statement", statement)
+            # A statement live at the address at this point is the replacement, in place, or another article's.
+            need(where.get(("page", page), successor) == successor,
+                 f"{LEDGER}: the last address {page} of the retired statement {statement} is another article's")
+            where[("page", page)] = found[("page", page)] = successor
+            retired_pages.add(page)
+            enclosed(page)
+    for page in sorted(retired_pages):
+        need(not pages.leaf(page) or found[("page", page)] == page,
+             f"{LEDGER}: the last address {page} of a retired statement is another article's")
+    found.update({("folder", folder): resolve(number) for folder, number in route.items()})
     return {key: endpoint for key, endpoint in found.items()
-            if not (pages.leaf(key[1]) if key[0] == "page" else pages.folder(key[1]))}
+            if not (pages.leaf(key[1]) if key[0] == "page" else pages.folder(key[1]))
+            or (key[0] == "page" and key[1] in retired_pages)}
 
 
 def walk_phrase(steps: list[dict]) -> str:
@@ -663,23 +885,30 @@ def moves_script(moves: dict[str, str]) -> str:
     )
 
 
-def redirects(site: Site, ledger: Ledger, pages: Pages, cards: dict[str, dict], docs: Path) -> None:
-    """The redirects of the move ledger, added to ``site``, all from one resolution of its history."""
-    found = history(ledger, pages, cards)
+def redirects(site: Site, ledger: Ledger, pages: Pages, replacements: dict[str, tuple[str, str]], docs: Path) -> None:
+    """The redirects of the move ledger, added to ``site``, all from one resolution of its history, with the live
+    article each retirement ends at from ``replacements``."""
+    found = history(ledger, pages, replacements)
     # A statement's old route was its box on its folder's page or a page of its own, by whether it had a
     # declaration kind then; the ledger does not say which, and a statement credited or uncredited since has another
     # route now. So every old address of a statement keeps both: its old anchor and a notice at `<address>.html`.
+    # A route the endpoint has itself is never redirected: a retired statement replaced in place by a statement keeps
+    # only the route form its replacement does not have, the old page of its own of a boxed replacement, or the old box
+    # of one on a page of its own.
     leaves_in: dict[str, list[tuple[str, str]]] = defaultdict(list)
     for (kind, address), endpoint in sorted(found.items()):
         if kind != "page":
             continue
         folder, slug = parent(address), address.rsplit("/", 1)[-1]
+        target = pages[endpoint]
         leaves_in[folder].append((slug, endpoint))
         page = f"{ROOT}/{address}.html"
-        site.files[source_path(page)] = notice(page, href(page, pages[endpoint]), [])
+        if target.path != page:
+            site.files[source_path(page)] = notice(page, href(page, target), [])
         if pages.folder(folder):
             folder_page = pages[folder].path
-            site.anchors.setdefault(folder_page, []).append((slug, moved_element(slug, folder_page, pages[endpoint])))
+            if (target.path, target.fragment) != (folder_page, slug):
+                site.anchors.setdefault(folder_page, []).append((slug, moved_element(slug, folder_page, target)))
     # A folder that is gone: a notice with an element for each old anchor of its statements, and its old explorer
     # page, as render writes those of the live folders.
     for (kind, folder), endpoint in sorted(found.items()):
@@ -692,16 +921,17 @@ def redirects(site: Site, ledger: Ledger, pages: Pages, cards: dict[str, dict], 
         if not (docs / scope).exists():
             explorer = f"dependencies/scopes/{folder}.html"
             site.files[scope] = notice(explorer, href(explorer, pages[endpoint]), [])
-    if found:
-        # An explorer link names a node; a statement and a folder beside it with its name share one, and the
-        # statement's way is kept.
-        table = {address: endpoint for (kind, address), endpoint in sorted(found.items()) if kind == "folder"}
-        table.update({address: endpoint for (kind, address), endpoint in sorted(found.items()) if kind == "page"})
+    # An explorer link names a node, and one that leads to its own node needs no rewrite.
+    served = {key: endpoint for key, endpoint in found.items() if key[1] != endpoint}
+    if served:
+        # A statement and a folder beside it with its name share one node, and the statement's way is kept.
+        table = {address: endpoint for (kind, address), endpoint in sorted(served.items()) if kind == "folder"}
+        table.update({address: endpoint for (kind, address), endpoint in sorted(served.items()) if kind == "page"})
         site.files[SCRIPT] = moves_script(table)
         # The pages an old explorer link reaches: the published folders above each old address (render's notices for
         # old explorer pages lead there) and where each folder that is gone leads.
-        landing = {endpoint for (kind, _), endpoint in found.items() if kind == "folder"}
-        for _, address in found:
+        landing = {endpoint for (kind, _), endpoint in served.items() if kind == "folder"}
+        for _, address in served:
             landing.update(folder for folder in ancestors(address) if pages.folder(folder))
         for folder in sorted(landing):
             page = pages[folder].path
@@ -712,16 +942,41 @@ def redirects(site: Site, ledger: Ledger, pages: Pages, cards: dict[str, dict], 
     site.addresses = len(found)
 
 
-def build(data: object, index: object, ledger_text: str, docs: Path) -> Site:
-    """What the hook adds for a rollup ``data``, given render's search index and the move ledger; a CardDataError
-    when any part of it cannot be shown as it is."""
-    pages = Pages(read_index(index))
+def card_blocks(data: object, pages: Pages) -> tuple[Site, dict[str, str]]:
+    """A site with the block of each card of the rollup ``data``, and the folder of each card, by id; a CardDataError
+    when the rollup cannot be shown as it is."""
     cards = check_data(data, pages)
     site = Site(cards=len(cards))
     shown = Cards(data, cards, pages)
     for card_id in sorted(cards):
         site.blocks[shown.page(card_id)] = shown.block(card_id)
-    redirects(site, read_ledger(ledger_text), pages, cards, docs)
+    return site, {card_id: card["folder"] for card_id, card in cards.items()}
+
+
+def agree(folders: dict[str, str], listed: dict[str, str], complete: bool) -> None:
+    """Card data is shown only if its cards are, folder for folder, the ones the ledger check lists, and it lists
+    them all; a CardDataError otherwise."""
+    need(complete, f"{RECEIPT} lists only the cards with an article id no other article has, not all of them")
+    for card in sorted(folders.keys() | listed.keys()):
+        need(card in folders, f"the rollup has no card {card}, which {RECEIPT} places at {listed.get(card)}")
+        need(card in listed, f"the rollup has a card {card}, which {RECEIPT} does not list")
+        need(folders[card] == listed[card],
+             f"the rollup places {card} at {folders[card]}, but {RECEIPT} places it at {listed[card]}")
+
+
+def build(data: object, index: object, ledger_text: str | list[tuple[str, str]], docs: Path,
+          listed: dict[str, str] | None = None, replacements: dict[str, tuple[str, str]] | None = None) -> Site:
+    """What the hook adds for a rollup ``data``, given render's search index, the move ledger (its frozen file's text,
+    or each file's path and text in logical order), the cards the ledger check lists, all of them (by default, the
+    rollup's), and the replacements it gives retirements (by default, those cards' folders); a CardDataError when any
+    part of it cannot be shown as it is."""
+    pages = Pages(read_index(index))
+    site, folders = card_blocks(data, pages)
+    listed = folders if listed is None else listed
+    agree(folders, listed, True)
+    if replacements is None:
+        replacements = {card: ("folder", folder) for card, folder in listed.items()}
+    redirects(site, read_ledger(ledger_text), pages, replacements, docs)
     return site
 
 
@@ -732,6 +987,143 @@ def head_commit(root: Path) -> str | None:
     except (OSError, subprocess.CalledProcessError):
         return None
     return commit if COMMIT.fullmatch(commit) else None
+
+
+def read_json(path: Path, name: str) -> object:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except ValueError as error:  # not UTF-8, or not JSON
+        raise CardDataError(f"{name} is not JSON: {error}") from error
+
+
+def card_data(root: Path) -> object:
+    """build/cards.json, read, when it is the rollup of the commit being built; a CardDataError otherwise."""
+    need((root / DATA).is_file(), f"there is no {DATA} (the rollup writes none when the strict check fails)")
+    data = read_json(root / DATA, DATA)
+    commit = head_commit(root)
+    need(commit is not None and isinstance(data, dict) and data.get("commit") == commit,
+         f"{DATA} is not the rollup of the commit being built")
+    return data
+
+
+def links_digest(links: Path) -> str:
+    """The digest of the links folder ``links`` as `scripts/cards.py moves` records it (links_digest there), from the
+    files, unparsed: sha256 over every `*.jsonl` file and the defaults file, in sorted order of name, each as its
+    name, a NUL, its length in bytes (`-` for a defaults file that is no regular file), a NUL and its bytes."""
+    files: dict[str, bytes | None] = {path.name: path.read_bytes() for path in sorted(links.glob("*.jsonl"))}
+    try:
+        found = os.lstat(links / LINKS_DEFAULTS)
+    except FileNotFoundError:
+        pass
+    except OSError:
+        files[LINKS_DEFAULTS] = None
+    else:
+        files[LINKS_DEFAULTS] = (links / LINKS_DEFAULTS).read_bytes() if stat.S_ISREG(found.st_mode) else None
+    digest = hashlib.sha256()
+    for name in sorted(files):
+        data = files[name]
+        digest.update(os.fsencode(name) + b"\0" + (b"-" if data is None else str(len(data)).encode()) + b"\0"
+                      + (data or b""))
+    return digest.hexdigest()
+
+
+def read_receipt(root: Path, ledger: list[tuple[str, bytes]]) -> tuple[dict[str, str], bool,
+                                                                       dict[str, tuple[str, str]]]:
+    """The cards the ledger check lists, by id, with their folders, whether it lists them all, and the live article
+    each retirement ends at, by id, with its kind and node, from its receipt,
+    build/card-moves.json, when that is a well-formed `atlas-card-moves/v3` receipt of the commit being built, of
+    ``ledger``, the move ledger's files as read (ledger_files), and of the links folder as it is now; a
+    CardDataError otherwise. The digests show that the receipt refers to the current inputs, not that its contents
+    are right: the job that makes it is trusted."""
+    path = root / RECEIPT
+    need(path.is_file(), f"there is no {RECEIPT} (the ledger check writes none when the ledger is invalid)")
+    receipt = read_json(path, RECEIPT)
+    need(isinstance(receipt, dict) and set(receipt) == RECEIPT_KEYS and receipt["schema"] == RECEIPT_SCHEMA,
+         f"{RECEIPT} is not a receipt of {RECEIPT_SCHEMA}")
+    commit = head_commit(root)
+    need(commit is not None and receipt["commit"] == commit, f"{RECEIPT} is not the ledger check of the commit being "
+         "built")
+    need(isinstance(receipt["ledger_sha256"], str) and SHA256.fullmatch(receipt["ledger_sha256"])
+         and receipt["ledger_sha256"] == ledger_digest(ledger),
+         f"{RECEIPT} is the check of another move ledger than the one being built")
+    need(isinstance(receipt["annotations_sha256"], str) and SHA256.fullmatch(receipt["annotations_sha256"])
+         and receipt["annotations_sha256"] == links_digest(root / LINKS),
+         f"{RECEIPT} is the check of other annotations than {LINKS}/ as it is now")
+    cards = receipt["cards"]
+    need(isinstance(cards, dict) and all(isinstance(card, str) and ARTICLE_ID.fullmatch(card) and valid_address(folder)
+                                         for card, folder in cards.items())
+         and len(set(cards.values())) == len(cards) and isinstance(receipt["cards_complete"], bool),
+         f"{RECEIPT}'s cards are not a list of card ids and their folders, one card a folder")
+    replacements = receipt["replacements"]
+    need(isinstance(replacements, dict)
+         and all(isinstance(article, str) and ARTICLE_ID.fullmatch(article) and isinstance(found, dict)
+                 and set(found) == {"kind", "node"} and found["kind"] in ("page", "folder")
+                 and valid_address(found["node"])
+                 for article, found in replacements.items())
+         and len({found["node"] for found in replacements.values()}) == len(replacements),
+         f"{RECEIPT}'s replacements are not a list of article ids and their pages or folders, one article an address")
+    return cards, receipt["cards_complete"], {article: (found["kind"], found["node"])
+                                              for article, found in replacements.items()}
+
+
+def cause(error: Exception) -> str:
+    return str(error) if isinstance(error, CardDataError) else f"{type(error).__name__}: {error}"
+
+
+def assemble(root: Path, docs: Path) -> tuple[Site, str | None, str | None]:
+    """What the hook adds to the site source ``docs`` of the checkout ``root``, with why it shows no card data, if it
+    does not, and why it keeps no moved address, if it does not. The moved addresses need the ledger check's receipt,
+    and no card data; card data needs the moved addresses, and the receipt's complete list of cards to be its own."""
+    try:
+        pages = Pages(read_index(read_json(docs / INDEX, INDEX)))
+    except Exception as error:  # noqa: BLE001 - nothing here fails the build: the site then has nothing added
+        return Site(), cause(error), cause(error)
+    try:
+        shown, folders = card_blocks(card_data(root), pages)
+        unshown = None
+    except Exception as error:  # noqa: BLE001 - card data never fails the build: the site then shows none
+        shown, folders, unshown = None, None, cause(error)
+    try:
+        # Read once: the bytes the receipt's digest is checked against are the ledger the site serves. A missing
+        # frozen file is no empty ledger.
+        ledger = ledger_files(root)
+        listed, complete, replacements = read_receipt(root, ledger)
+        site = Site()
+        redirects(site, read_ledger([(path, data.decode("utf-8")) for path, data in ledger]), pages, replacements,
+                  docs)
+    except Exception as error:  # noqa: BLE001 - nor do the moved addresses: the site then keeps none
+        return Site(), unshown or cause(error), cause(error)
+    if shown is not None:
+        try:
+            agree(folders, listed, complete)
+        except CardDataError as error:
+            return site, cause(error), None
+        site.blocks, site.cards = shown.blocks, shown.cards
+    return site, unshown, None
+
+
+def workflow_text(value: str, in_property: bool = False) -> str:
+    """``value`` as a GitHub Actions workflow command carries it: `%`, CR and LF escaped, and in a property `:` and
+    `,` too."""
+    value = value.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+    return value.replace(":", "%3A").replace(",", "%2C") if in_property else value
+
+
+def report(level: str, title: str, reason: str, said: str | None = None) -> None:
+    """Say that a part of the site is not shown, and why: in the build log at INFO, since `mkdocs build --strict`
+    fails on a warning of MkDocs' loggers, and under GitHub Actions, so that it is seen, as a workflow annotation of
+    ``level`` (printed, so no log record) and a line of the job summary."""
+    log.info("%s: %s", said or title, reason)
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    try:
+        print(f"::{level} title={workflow_text(title, True)}::{workflow_text(reason)}", flush=True)
+        summary = os.environ.get("GITHUB_STEP_SUMMARY")
+        if summary:
+            with open(summary, "a", encoding="utf-8") as file:
+                file.write(f"- **{title}**: {html.escape(' '.join(reason.split()), quote=False)}\n")
+    except (OSError, ValueError) as error:
+        log.info("Not reported to GitHub Actions: %s", error)
 
 
 class Reading(HTMLParser):
@@ -788,31 +1180,29 @@ def on_config(config):
     global _site
     _site = None
     root = Path(config.config_file_path).resolve().parent
-    data_file = root / DATA
-    if not data_file.is_file():
-        log.info("No card data: the site shows no card")
+    docs = Path(config.docs_dir)
+    if not (docs / INDEX).is_file():
+        # Render always writes its search index: a site source without one, such as a test's built with this
+        # configuration, is no rendered wiki, and has no card to show and no moved address to keep.
+        log.info("No %s in the site source, so no rendered wiki: no card shown, no moved address kept", INDEX)
         return config
-    try:
-        data = json.loads(data_file.read_text(encoding="utf-8"))
-        commit = head_commit(root)
-        need(commit is not None and isinstance(data, dict) and data.get("commit") == commit,
-             f"{DATA} is not the rollup of the commit being built")
-        docs = Path(config.docs_dir)
-        ledger = root / LEDGER
-        site = build(data, json.loads((docs / INDEX).read_text(encoding="utf-8")),
-                     ledger.read_text(encoding="utf-8") if ledger.is_file() else "", docs)
-    except Exception as error:  # noqa: BLE001 - card data never fails the build: the site then shows none
-        log.info("Card data not shown, so the site shows no card: %s", error)
-        return config
+    site, unshown, unkept = assemble(root, docs)
+    if unshown is not None:
+        report("warning", "Card data not shown",
+               unshown if unkept is not None else f"{unshown}; moved addresses are still kept")
+    if unkept is not None:
+        report("error", "Moved addresses not kept", unkept, said="Moved addresses NOT kept")
     if site.empty():
-        log.info("Card data with no card and no moved address: the site is as without card data")
+        if unshown is None:
+            log.info("Card data with no card and no moved address: the site is as without card data")
         return config
     _site = site
     # The block and the old anchors need the stylesheet; every page links it, as the explorer moves between pages
     # without reloading their heads.
     if site.blocks or site.anchors:
         config.extra_css.append(STYLE)
-    log.info("Cards shown: %d cards, %d retired addresses kept", site.cards, site.addresses)
+    log.info("Card pages: %s shown, %s kept", plural(site.cards, "card"),
+             plural(site.addresses, "retired address", "retired addresses"))
     return config
 
 

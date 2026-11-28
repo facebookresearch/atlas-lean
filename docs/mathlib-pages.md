@@ -8,8 +8,8 @@ Mathlib declarations they use. `scripts/build_mathlib_pages.py` writes it from
 the built site and the layer's `mathlib-graph` artifact of the same revision.
 Like the layer, these pages are build outputs and are never committed: they
 are about 1 GB of generated HTML. GitHub Pages, which publishes sites of up to
-1 GB, gets the full site with its pages stored gzipped
-([BLUEPRINT.md](BLUEPRINT.md#the-github-pages-copy)).
+1 GB, gets the full site with its pages and the project map's data stored
+gzipped ([BLUEPRINT.md](BLUEPRINT.md#the-github-pages-copy)).
 
 ## What a page shows
 
@@ -80,7 +80,9 @@ since the pin.
 - A link whose title is a declaration and whose address is written exactly as
   that declaration's source line at the pinned revision points to its Mathlib
   page. One that disagrees with its title is reported and left as written;
-  `--strict-links`, as pull requests run it, fails the build on it.
+  `--strict-links`, as a pull request's build runs it, fails the build on it.
+  A pull request builds the site when it changes the wiki, among others
+  ([GitHub Actions and publication](BLUEPRINT.md#github-actions-and-publication)).
 - The links that Autoform's Lean code blocks make to Mathlib's documentation
   point to the Mathlib page when they name a declaration that has one, and stay
   as written otherwise. Links to the documentation elsewhere are left alone.

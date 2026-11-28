@@ -22,3 +22,4 @@ A matrix indexed by $m \times n$ acts on the tensor product $\mathbb{K}^m \otime
 - [Right partial trace is adjoint to identity amplification](trace-partial-trace-right-mul.md): the same, over the second factor
 - [Left partial trace of a density matrix has trace one](trace-partial-trace-left-of-trace-eq-one.md): it preserves the trace, so density matrices go to density matrices
 - [Right partial trace of a density matrix has trace one](trace-partial-trace-right-of-trace-eq-on.md): the same, over the second factor
+- [Characterization of the partial trace by the product rule](remaining-clauses-of-partial-trace-and-reduced-states.md): the unique linear map with $\operatorname{tr}_1(X \otimes Y) = \operatorname{tr}(X)\, Y$

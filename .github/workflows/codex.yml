@@ -35,6 +35,7 @@ jobs:
       group: codex-${{ github.repository }}-${{ github.event.issue.number || github.event.pull_request.number }}-${{ github.event_name == 'pull_request' && 'automatic' || github.event_name == 'pull_request_target' && 'automatic' || github.event.comment.id || github.run_id }}
       cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
     permissions:
+      actions: read
       contents: read
       pull-requests: write
       issues: write
@@ -87,8 +88,8 @@ jobs:
     outputs:
       authorized: ${{ steps.check_auth.outputs.authorized }}
       formal: ${{ steps.check_auth.outputs.formal }}
-      verdict: ${{ steps.submit.outputs.verdict }}
-      review_id: ${{ steps.submit.outputs.review_id }}
+      verdict: ${{ steps.submit.outputs.verdict || steps.existing_verdict.outputs.verdict }}
+      review_id: ${{ steps.submit.outputs.review_id || steps.existing_verdict.outputs.review_id }}
       reviewed_sha: ${{ steps.target.outputs.ref }}
       trusted_repo: ${{ steps.check_auth.outputs.trusted_repo }}
       trusted_sha: ${{ steps.check_auth.outputs.trusted_sha }}
@@ -620,8 +621,393 @@ jobs:
             core.setOutput("base", base);
             core.setOutput("context", contextPath);
 
+      - name: Check existing formal @codex verdict
+        id: existing_verdict
+        if: |
+          steps.check_auth.outputs.authorized == 'true' &&
+          steps.check_auth.outputs.formal == 'true' &&
+          (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
+          github.event.action == 'ready_for_review'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          TARGET_REF: ${{ steps.target.outputs.ref }}
+        with:
+          script: |
+            const https = require("node:https");
+            const targetRef = process.env.TARGET_REF || "";
+            const pullNumber = Number(context.payload.pull_request?.number || 0);
+            core.setOutput("skip", "false");
+            core.setOutput("verdict", "");
+            core.setOutput("review_id", "");
+            if (
+              !/^[0-9a-f]{40}$/.test(targetRef) ||
+              !Number.isInteger(pullNumber) ||
+              pullNumber <= 0
+            ) {
+              return;
+            }
+            const FORMAL_MARKERS = [
+              "<!-- codex-automatic-review -->",
+              "<!-- codex-comment-review -->",
+            ];
+            const APPROVED_LINE = /\dZ Codex approved review (\d+)\./;
+            const REJECTED_LINE =
+              /\dZ Codex verdict is 'change requested'; approval required\./;
+            const ATTEST_BUDGET = 8;
+            const MAX_LOG_BYTES = 4 * 1024 * 1024;
+            const POLL_MS = Math.min(
+              10000,
+              Math.max(1, Number(process.env.CODEX_ATTEST_POLL_MS) || 10000)
+            );
+
+            function isoUtcSeconds(ms) {
+              return new Date(ms).toISOString().replace(/\.\d{3}Z$/, "Z");
+            }
+
+            function fetchHttpsTextNoAuth(urlString, redirectsLeft = 3) {
+              const parsed = new URL(urlString);
+              if (parsed.protocol !== "https:") {
+                return Promise.reject(
+                  new Error(`Refusing non-HTTPS log redirect: ${parsed.protocol}`)
+                );
+              }
+              return new Promise((resolve, reject) => {
+                const req = https.get(
+                  parsed,
+                  { timeout: 30000 },
+                  (res) => {
+                    if (
+                      [301, 302, 303, 307, 308].includes(res.statusCode) &&
+                      res.headers.location
+                    ) {
+                      res.resume();
+                      if (redirectsLeft <= 0) {
+                        reject(new Error("Too many redirects fetching job log"));
+                        return;
+                      }
+                      const nextUrl = new URL(
+                        res.headers.location,
+                        parsed
+                      ).toString();
+                      resolve(fetchHttpsTextNoAuth(nextUrl, redirectsLeft - 1));
+                      return;
+                    }
+                    if (res.statusCode !== 200) {
+                      res.resume();
+                      reject(
+                        new Error(`Job log fetch failed with HTTP ${res.statusCode}`)
+                      );
+                      return;
+                    }
+                    const chunks = [];
+                    let total = 0;
+                    res.on("data", (chunk) => {
+                      if (total < MAX_LOG_BYTES) {
+                        const slice =
+                          total + chunk.length > MAX_LOG_BYTES
+                            ? chunk.subarray(0, MAX_LOG_BYTES - total)
+                            : chunk;
+                        chunks.push(slice);
+                        total += slice.length;
+                      }
+                    });
+                    res.on("end", () =>
+                      resolve(Buffer.concat(chunks).toString("utf8"))
+                    );
+                    res.on("error", reject);
+                  }
+                );
+                req.on("timeout", () => {
+                  req.destroy(new Error("Job log fetch timed out"));
+                });
+                req.on("error", reject);
+              });
+            }
+
+            async function readJobLog(jobId) {
+              let response = null;
+              let location = "";
+              try {
+                response = await github.request(
+                  "GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs",
+                  {
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    job_id: jobId,
+                    request: { redirect: "manual" },
+                  }
+                );
+                location = response?.headers?.location || "";
+              } catch (error) {
+                if (error?.status === 302) {
+                  location = error.response?.headers?.location || "";
+                } else {
+                  throw error;
+                }
+              }
+              if (location) {
+                return await fetchHttpsTextNoAuth(location);
+              }
+              if (response?.status === 200 && response.data != null) {
+                if (typeof response.data === "string") {
+                  return response.data.slice(0, MAX_LOG_BYTES);
+                }
+                return Buffer.from(response.data)
+                  .subarray(0, MAX_LOG_BYTES)
+                  .toString("utf8");
+              }
+              return "";
+            }
+
+            try {
+              const reviews = await github.paginate(
+                github.rest.pulls.listReviews,
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: pullNumber,
+                  per_page: 100,
+                }
+              );
+              const formalOnHead = reviews
+                .filter((review) => {
+                  const login = review?.user?.login || "";
+                  const state = review?.state || "";
+                  const body = review?.body || "";
+                  return (
+                    login === "github-actions[bot]" &&
+                    ["APPROVED", "CHANGES_REQUESTED", "DISMISSED"].includes(
+                      state
+                    ) &&
+                    review?.commit_id === targetRef &&
+                    FORMAL_MARKERS.some((marker) => body.includes(marker))
+                  );
+                })
+                .sort((left, right) => {
+                  const leftTime = left.submitted_at || "";
+                  const rightTime = right.submitted_at || "";
+                  if (leftTime !== rightTime) {
+                    return leftTime < rightTime ? -1 : 1;
+                  }
+                  return (Number(left.id) || 0) - (Number(right.id) || 0);
+                });
+              const latest = formalOnHead[formalOnHead.length - 1];
+              if (!latest) {
+                return;
+              }
+              const reviewId = String(latest.id ?? "");
+              const body = latest.body || "";
+              if (
+                !/^\d+$/.test(reviewId) ||
+                !body.includes("<!-- codex-comment-review -->") ||
+                !["APPROVED", "CHANGES_REQUESTED"].includes(latest.state)
+              ) {
+                return;
+              }
+              const submittedMs = Date.parse(latest.submitted_at || "");
+              if (!Number.isFinite(submittedMs)) {
+                return;
+              }
+
+              // A base retarget changes BASE...HEAD without changing HEAD,
+              // voiding any formal review submitted at or before the retarget.
+              const issueEvents = await github.paginate(
+                github.rest.issues.listEvents,
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pullNumber,
+                  per_page: 100,
+                }
+              );
+              for (const ev of issueEvents) {
+                if (ev?.event !== "base_ref_changed") {
+                  continue;
+                }
+                const evMs = Date.parse(ev.created_at || "");
+                if (!Number.isFinite(evMs) || evMs >= submittedMs) {
+                  core.info(
+                    `Formal @codex review ${reviewId} does not postdate base_ref_changed (${ev.created_at}); running fresh review.`
+                  );
+                  return;
+                }
+              }
+
+              // Verify provenance against main's issue_comment codex.yml runs
+              // using the same window and budget as scripts/queue/preflight.py,
+              // so diff-line comments (pull_request_review_comment) or unattested
+              // reviews never suppress the automatic review.
+              const windowStartMs = submittedMs - 50 * 60 * 1000;
+              const windowEndMs = submittedMs + 60 * 1000;
+              const issueComments = await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pullNumber,
+                  per_page: 100,
+                }
+              );
+              const hasConversationTrigger = issueComments.some((comment) => {
+                if (!(comment?.body || "").startsWith("@codex")) {
+                  return false;
+                }
+                const commentMs = Date.parse(comment?.created_at || "");
+                return (
+                  Number.isFinite(commentMs) &&
+                  commentMs >= windowStartMs &&
+                  commentMs <= submittedMs + 5000
+                );
+              });
+              if (!hasConversationTrigger) {
+                core.info(
+                  `Formal @codex review ${reviewId} has no conversation @codex comment in window; running fresh review.`
+                );
+                return;
+              }
+
+              const createdWindow = `${isoUtcSeconds(
+                windowStartMs
+              )}..${isoUtcSeconds(windowEndMs)}`;
+              const wantStatus =
+                latest.state === "APPROVED" ? "success" : "failure";
+              const checkedLogs = new Map();
+
+              async function listCommentRuns(status) {
+                const collected = [];
+                for (let page = 1; page <= 2; page += 1) {
+                  const { data } =
+                    await github.rest.actions.listWorkflowRuns({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      workflow_id: "codex.yml",
+                      event: "issue_comment",
+                      status,
+                      created: createdWindow,
+                      per_page: 100,
+                      page,
+                    });
+                  const batch = data?.workflow_runs || [];
+                  for (const run of batch) {
+                    if (
+                      run?.path === ".github/workflows/codex.yml" &&
+                      run?.event === "issue_comment"
+                    ) {
+                      collected.push(run);
+                    }
+                  }
+                  if (batch.length < 100) {
+                    break;
+                  }
+                }
+                collected.sort((a, b) =>
+                  (b.created_at || "").localeCompare(a.created_at || "")
+                );
+                return collected;
+              }
+
+              let attested = false;
+              for (let attempt = 0; attempt < 4; attempt += 1) {
+                const runs = await listCommentRuns(wantStatus);
+                for (const run of runs.slice(0, ATTEST_BUDGET)) {
+                  const { data: jobsData } =
+                    await github.rest.actions.listJobsForWorkflowRun({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      run_id: run.id,
+                      per_page: 50,
+                    });
+                  const jobs = jobsData?.jobs || [];
+                  if (latest.state === "APPROVED") {
+                    for (const job of jobs) {
+                      if (
+                        job?.name !== "codex-verdict" ||
+                        job?.conclusion !== "success"
+                      ) {
+                        continue;
+                      }
+                      let logText = checkedLogs.get(job.id);
+                      if (logText === undefined) {
+                        logText = await readJobLog(job.id);
+                        checkedLogs.set(job.id, logText);
+                      }
+                      const match = APPROVED_LINE.exec(logText);
+                      if (match && match[1] === reviewId) {
+                        attested = true;
+                        break;
+                      }
+                    }
+                  } else {
+                    const codexJob = jobs.find(
+                      (j) =>
+                        j?.name === "codex" && j?.conclusion === "success"
+                    );
+                    const verdictJob = jobs.find(
+                      (j) =>
+                        j?.name === "codex-verdict" &&
+                        j?.conclusion === "failure"
+                    );
+                    const completedMs = Date.parse(
+                      codexJob?.completed_at || ""
+                    );
+                    if (
+                      codexJob &&
+                      verdictJob &&
+                      Number.isFinite(completedMs) &&
+                      completedMs >= submittedMs - 30 * 1000
+                    ) {
+                      let logText = checkedLogs.get(verdictJob.id);
+                      if (logText === undefined) {
+                        logText = await readJobLog(verdictJob.id);
+                        checkedLogs.set(verdictJob.id, logText);
+                      }
+                      if (REJECTED_LINE.test(logText)) {
+                        attested = true;
+                      }
+                    }
+                  }
+                  if (attested) {
+                    break;
+                  }
+                }
+                if (attested || attempt === 3) {
+                  break;
+                }
+                // Submit posts the review a few seconds before codex-verdict
+                // finishes; wait briefly only if an issue_comment run is still active.
+                const [inProgress, queued] = await Promise.all([
+                  listCommentRuns("in_progress"),
+                  listCommentRuns("queued"),
+                ]);
+                if (inProgress.length === 0 && queued.length === 0) {
+                  break;
+                }
+                await new Promise((resolve) => setTimeout(resolve, POLL_MS));
+              }
+
+              if (!attested) {
+                core.info(
+                  `Formal @codex review ${reviewId} on ${targetRef} has no matching issue_comment attestation; running fresh review.`
+                );
+                return;
+              }
+
+              const mappedVerdict =
+                latest.state === "APPROVED" ? "approved" : "change requested";
+              core.info(
+                `Skipping redundant ready_for_review Codex run: head ${targetRef} already has attested formal @codex review ${reviewId} (${mappedVerdict}).`
+              );
+              core.setOutput("skip", "true");
+              core.setOutput("verdict", mappedVerdict);
+              core.setOutput("review_id", reviewId);
+            } catch (error) {
+              core.warning(
+                `Could not verify existing @codex review (${error?.message || error}); running fresh review.`
+              );
+            }
+
       - name: Checkout request target
-        if: steps.check_auth.outputs.authorized == 'true'
+        if: steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true'
         env:
           TARGET_REPO: ${{ steps.target.outputs.repo }}
           TARGET_REF: ${{ steps.target.outputs.ref }}
@@ -649,7 +1035,7 @@ jobs:
           git -c advice.detachedHead=false checkout -q --detach FETCH_HEAD
 
       - name: Load trusted review guide
-        if: steps.check_auth.outputs.authorized == 'true'
+        if: steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true'
         env:
           BASE_SHA: ${{ steps.target.outputs.base }}
         run: |
@@ -670,7 +1056,7 @@ jobs:
           test -s "$guide"
 
       - name: Guard fetched size
-        if: steps.check_auth.outputs.authorized == 'true'
+        if: steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true'
         run: |
           set -euo pipefail
           # Fail closed before any secret-holding step runs if the
@@ -694,8 +1080,27 @@ jobs:
             exit 1
           fi
 
+      - name: Remove agent instructions from the review checkout
+        if: steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true'
+        run: |
+          set -euo pipefail
+          # Reviews follow only the base branch's REVIEWING.md. Codex can also
+          # load agent instructions from its working directory, which is this
+          # checkout of the pull request: project settings and skills under
+          # .codex/, skills under .agents/, AGENTS.md. Delete such files and
+          # folders anywhere outside .git. The diff Codex reviews comes from
+          # the commits, so it still shows any change to them.
+          names=(-name AGENTS.md -o -name AGENTS.override.md -o -name CLAUDE.md
+            -o -name .agents -o -name .claude -o -name .codex)
+          find . -path ./.git -prune -o \( "${names[@]}" \) -prune -exec rm -rf -- {} +
+          leftover="$(find . -path ./.git -prune -o \( "${names[@]}" \) -print -quit)"
+          if [[ -n "$leftover" ]]; then
+            echo "::error title=Agent instructions::Agent instruction files remain in the review checkout." >&2
+            exit 1
+          fi
+
       - name: Prepare isolated Codex runtime
-        if: steps.check_auth.outputs.authorized == 'true'
+        if: steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true'
         run: |
           set -euo pipefail
           runtime="$RUNNER_TEMP/codex-runtime"
@@ -715,6 +1120,11 @@ jobs:
           # REVIEWING.md is injected from the base branch; never load
           # instructions from the untrusted pull-request checkout.
           project_doc_max_bytes = 0
+          # Keep the skills list out of the prompt. Codex 0.155.1 cannot turn
+          # off repository skill discovery, so the step that removes agent
+          # instructions from the review checkout deletes those skills.
+          [skills]
+          include_instructions = false
           # Shell snapshots copy Codex's environment, broker token included,
           # into a file under CODEX_HOME that agent commands can read.
           [features]
@@ -974,7 +1384,7 @@ jobs:
       # the key away from the Codex agent, which reads untrusted PR content,
       # and serves only requests that carry a per-run token held by Codex.
       - name: Start isolated credential broker
-        if: steps.check_auth.outputs.authorized == 'true'
+        if: steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true'
         env:
           CODEX_IMAGE: node:24-bookworm@sha256:64af3819f9275802414d7cdc38c27e9d82bd564dec4d4da87d008255d36c63b4
           MODEL_API_KEY: ${{ secrets.CODEX_METAGEN_API_KEY }}
@@ -1025,7 +1435,7 @@ jobs:
           fi
 
       - name: Run Codex
-        if: steps.check_auth.outputs.authorized == 'true'
+        if: steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true'
         # A step timeout fails the job, which report-failure reports, while a
         # job timeout cancels it. The 40-minute job timeout leaves 15 minutes
         # for the steps before and after this one, which take about a minute.
@@ -1244,7 +1654,7 @@ jobs:
           fi
 
       - name: Stop isolated credential broker
-        if: always() && steps.check_auth.outputs.authorized == 'true'
+        if: always() && steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true'
         run: |
           broker="codex-model-proxy-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           network="codex-review-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
@@ -1261,7 +1671,7 @@ jobs:
 
       - name: Submit Codex response
         id: submit
-        if: steps.check_auth.outputs.authorized == 'true' && success()
+        if: steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true' && success()
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           CODEX_OUTPUT: ${{ runner.temp }}/codex-io/codex-output.md
@@ -1401,7 +1811,7 @@ jobs:
             core.setOutput("review_id", "");
 
       - name: Upload Codex output
-        if: always() && steps.check_auth.outputs.authorized == 'true'
+        if: always() && steps.check_auth.outputs.authorized == 'true' && steps.existing_verdict.outputs.skip != 'true'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: codex-output-${{ github.run_id }}
