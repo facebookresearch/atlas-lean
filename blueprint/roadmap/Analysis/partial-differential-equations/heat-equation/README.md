@@ -24,6 +24,8 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
 - [Weak maximum principle for the heat equation](exists-mem-parabolic-boundary-is-max-on.md)
 - [Uniqueness for the heat equation on a bounded domain](eq-on-of-heat-equation.md)
 - [Single-mode solution of the Dirichlet heat equation](single-mode-solution-of-the-dirichlet-heat-equation.md)
+- [Uniqueness of the Gaussian heat solution in the exponential-growth class](eq-heat-solution-of-exp-growth.md)
+- [The Gaussian heat solution has exponential growth on every strip](heat-solution-has-exp-growth-on-strip.md)
 
 ## Related topics
 
@@ -32,3 +34,15 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
   of the Boltzmann entropy (Jordan, Kinderlehrer and Otto).
 - [Fokker–Planck equation](../../../Probability/stochastic-calculus/fokker-planck-equation/README.md):
   the drift–diffusion equation that reduces to the heat equation without drift.
+
+- [Heat convolution](heat-convolution.md)
+
+- [The heat convolution preserves the constant one](heat-convolution-const-one.md)
+
+- [The heat convolution solves the heat equation](heat-convolution-satisfies-heat-equation.md)
+
+- [The heat convolution is smooth at positive time](heat-convolution-smooth.md)
+
+- [The heat semigroup's generator is the Laplacian](heat-semigroup-generator-eq-laplacian.md)
+
+- [The heat semigroup's generator is the Laplacian, in `ENNReal`](heat-semigroup-generator-eq-laplacian-en.md)

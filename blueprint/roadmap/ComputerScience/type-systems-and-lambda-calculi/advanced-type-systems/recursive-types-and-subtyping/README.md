@@ -13,3 +13,4 @@ Equi-recursive types read as regular infinite trees: the tree ordering, the Amad
 - [Faithfulness of the subtyping algorithm to paths](faithfulness-of-the-subtyping-algorithm-to-paths.md)
 - [Solutions of systems of type equations](solutions-of-systems-of-type-equations.md)
 - [Correctness of the Amadio–Cardelli subtyping algorithm](correctness-of-the-amadio-cardelli-subtyping-algorithm.md)
+- [Structural subtyping with recursively defined type constructors is undecidable](structural-subtyping-with-type-constructors-undecidable.md)

@@ -1,0 +1,18 @@
+# Frobenius isocrystals of rank one
+
+- [To Phi NModule](to-phi-nmodule.md)
+- [Newton Number standard One Dim Isocrystal](newton-number-standard-one-dim-isocrysta.md)
+- [Newton Number eq of isocrystal Equiv](newton-number-eq-of-isocrystal-equiv.md)
+- [Exists newton Number eq](exists-newton-number-eq.md)
+- [Add Valuation](add-valuation.md)
+- [Add Valuation algebra Map](add-valuation-algebra-map.md)
+- [Add Valuation algebra Map nonneg](add-valuation-algebra-map-nonneg.md)
+- [Add Valuation algebra Map unit](add-valuation-algebra-map-unit.md)
+- [Add Valuation eq top iff](add-valuation-eq-top-iff.md)
+- [Add Valuation p](add-valuation-p.md)
+- [Add Valuation p pow](add-valuation-p-pow.md)
+- [Add Valuation p zpow](add-valuation-p-zpow.md)
+- [Add Valuation p zpow mul unit](add-valuation-p-zpow-mul-unit.md)
+- [Add Valuation frobenius](add-valuation-frobenius.md)
+- [Add Valuation frobenius symm](add-valuation-frobenius-symm.md)
+- [Add Valuation comap frobenius](add-valuation-comap-frobenius.md)

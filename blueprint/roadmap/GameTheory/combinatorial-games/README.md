@@ -22,3 +22,5 @@ Combinatorial game theory studies two-player games of perfect information withou
 - [Recursive Snaky certificate data and row invariants](snaky-thirty-five-move-certificate.md)
 - [Legal Snaky strategy by the thirty-fifth Maker move](snaky-legal-strategy-thirty-five-moves.md)
 - [Legal Snaky strategy by the twenty-first Maker move](snaky-legal-strategy-twenty-one-moves.md)
+- [Computability of winning strategies](computability-of-winning-strategies/README.md)
+- [Undecidable outcome problems for combinatorial games](undecidable-outcome-problems/README.md)

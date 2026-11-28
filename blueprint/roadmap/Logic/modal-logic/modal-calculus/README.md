@@ -43,3 +43,4 @@
 - [Fuelled parsing inverts modal μ-calculus token encoding](mu-parse-fuel-mu-tokens.md)
 - [Token-list decoding inverts modal μ-calculus token encoding](mu-decode-list-mu-tokens.md)
 - [Injectivity of the μ-calculus number code](mu-code-injective.md)
+- [The enriched μ-calculus over a single P-transitive relation is undecidable](enriched-mu-calculus-on-p-transitive-graphs.md)

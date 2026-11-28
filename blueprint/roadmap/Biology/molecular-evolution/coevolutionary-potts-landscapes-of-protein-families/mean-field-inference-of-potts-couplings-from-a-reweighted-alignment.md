@@ -31,6 +31,8 @@ $\varphi_{ji}(b,a) = \varphi_{ij}(a,b)$), and the fields, with a small pseudocou
 $$\varphi_i(a) = \log\frac{f_i^{\Lambda_1}(a)}{f_i^{\Lambda_1}(-)} - \sum_{j \ne i}\sum_{b}\varphi_{ij}(a,b)\,
 f_j^{\Lambda_1}(b).$$
 
+**This field formula is derived here, not quoted from a source.** It is the mean-field self-consistency relation $f_i(a) \propto \exp\{\varphi_i(a) + \sum_{j \ne i}\sum_b \varphi_{ij}(a,b) f_j(b)\}$ solved for $\varphi_i(a)$ in the gauge $\varphi_i(-) = 0$, $\varphi_{ij}(-,\cdot) = \varphi_{ij}(\cdot,-) = 0$. The source prints $\varphi_i(a) = \log\big(f_i^{\Lambda_1}(a)/f_i^{\Lambda_1}(-)\big) - \sum_{j,b}\varphi_{ij}(a,b)f_j^{\Lambda_1}(b)$, but with its own printed couplings $\varphi_{ij} = +[C^{-1}]_{ij}$ and with $j = i$ included in the sum; it does not state the formula with the couplings $-[C^{-1}]_{ij}$ and the restriction $j \ne i$ used on this page.
+
 ## Depends on
 
 - [Potts model of a protein family and context-dependent mutational effects](potts-model-of-a-protein-family-and-context-dependent-mutational-effects.md)
