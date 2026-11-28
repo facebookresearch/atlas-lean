@@ -11,21 +11,21 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.LinearAlgebra.Matrix.ProjectiveSpecialLinearGroup
+public import Mathlib.LinearAlgebra.Matrix.Trace
 
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Data.Set.Card
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.GroupTheory.GroupAction.Iwasawa
 import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Card
-import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.LinearAlgebra.Projectivization.PSL.PSL2
-import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import MathlibExt.GroupTheory.DicksonPGL2Wild
 
 /-!
 # Large normal subsets whose square is not the whole group (Kourovka Notebook Problem 20.74)
@@ -52,8 +52,7 @@ identity in the square. The bound on `p` absorbs the prime `2`.
   Notebook*, 21st issue, Novosibirsk, 2026, Problem 20.74 (L. Pyber), arXiv:1401.0300v49.
 * Saveliy V. Skresanov, *Expanders and growth of normal subsets in finite simple groups of Lie
   type*, Bulletin of the London Mathematical Society 57 (2025), no. 11, 3429–3440, Corollary 3.
-* The center-order computation generalizes `center_card` in
-  `MathlibExt.GroupTheory.RadicalHereditaryFormation`.
+* The group order formula uses `MetaMathlibExt.Dickson.card_projectiveSpecialLinearGroup_fin_two`.
 -/
 
 namespace MathlibExt.GroupTheory.LargeNormalSubsetSquareKourovka20Problem74Wanted
@@ -965,9 +964,6 @@ private theorem exists_cyclicColumns_det_ne_zero (C : SL(2, K))
 private def conjSL (P : M₂ˣ) (A : SL(2, K)) : SL(2, K) :=
   ⟨P.val * A.val * (P⁻¹).val, by rw [Matrix.det_units_conj, det_coe]⟩
 
-private theorem trace_conjSL (P : M₂ˣ) (A : SL(2, K)) : traceSL (conjSL P A) = traceSL A :=
-  Matrix.trace_units_conj P A.val
-
 private theorem conjSL_mul (P : M₂ˣ) (A B : SL(2, K)) :
     conjSL P A * conjSL P B = conjSL P (A * B) := by
   apply Subtype.ext
@@ -994,11 +990,16 @@ private theorem project_neg (A : SL(2, K)) : project (-A) = project A := by
   rw [← neg_one_mul, map_mul, show project (-1 : SL(2, K)) = 1 from
     (QuotientGroup.eq_one_iff _).mpr h, one_mul]
 
-private theorem square_eq_univ_of_trace [Fintype K] (h₂ : (2 : K) ≠ 0)
-    (hodd : Fintype.card K % 2 = 1) {S : Set PSL(2, K)}
-    (hnormal : ∀ g s : PSL(2, K), s ∈ S → g * s * g⁻¹ ∈ S)
-    (hinv : ∀ s ∈ S, s⁻¹ ∈ S) (T : SL(2, K)) (hT : project T ∈ S)
-    (ht : traceSL T ≠ 0) (hdisc : traceSL T ^ 2 ≠ 4) : S * S = Set.univ := by
+/-- Over a finite field of odd characteristic, an inverse-closed normal subset of `PSL(2, K)`
+whose preimage in `SL(2, K)` contains a matrix of trace different from `0` and `±2`
+has square equal to the whole group. -/
+public theorem psl2_square_eq_univ_of_trace [Finite K] (hchar : ringChar K ≠ 2)
+    {S : Set PSL(2, K)} (hnormal : ∀ g s : PSL(2, K), s ∈ S → g * s * g⁻¹ ∈ S)
+    (hinv : ∀ s ∈ S, s⁻¹ ∈ S) (T : SL(2, K)) (hT : (T : PSL(2, K)) ∈ S)
+    (ht : T.val.trace ≠ 0) (hdisc : T.val.trace ^ 2 ≠ 4) : S * S = Set.univ := by
+  let _ := Fintype.ofFinite K
+  have h₂ : (2 : K) ≠ 0 := Ring.two_ne_zero hchar
+  have hodd := FiniteField.odd_card_of_char_ne_two hchar
   have hpos (A : SL(2, K)) (hA : traceSL A = traceSL T) : project A ∈ S := by
     have hc := isConj_traceCompanion h₂ hodd A (hA ▸ hdisc)
     rw [hA] at hc
@@ -1023,11 +1024,11 @@ private theorem square_eq_univ_of_trace [Fintype K] (h₂ : (2 : K) ≠ 0)
       rw [Units.mul_inv_eq_iff_eq_mul, hP]
       exact (mul_cyclicColumns C x y).symm
     obtain ⟨A, B, hA, hB, hAB⟩ := factor_companion h₂ hodd ht hC
-    refine Set.mem_mul.mpr ⟨project (conjSL P A), hpos _ ((trace_conjSL P A).trans hA),
+    have htraceA : (conjSL P A).val.trace = A.val.trace := Matrix.trace_units_conj P A.val
+    refine Set.mem_mul.mpr ⟨project (conjSL P A), hpos _ (htraceA.trans hA),
       project (conjSL P B), ?_, ?_⟩
-    · rcases hB with hB | hB
-      · exact hpos _ ((trace_conjSL P B).trans hB)
-      · exact hneg _ ((trace_conjSL P B).trans hB)
+    · have htrace : (conjSL P B).val.trace = B.val.trace := Matrix.trace_units_conj P B.val
+      exact hB.elim (fun h ↦ hpos _ (htrace.trans h)) (fun h ↦ hneg _ (htrace.trans h))
     · rw [← map_mul, conjSL_mul, hAB, hconj]
   apply Set.eq_univ_of_forall
   intro z
@@ -1080,25 +1081,14 @@ private theorem trace_fiber_ncard_le {K : Type} [Field K] [Finite K] (t : K) :
   simpa [F, Nat.card_coe_set_eq, Nat.card_sum, Nat.card_prod, pow_two, two_mul] using
     Nat.card_le_card_of_injective f hf
 
-private theorem card_sl_two (p : ℕ) [Fact p.Prime] :
-    Nat.card SL(2, ZMod p) = p * (p ^ 2 - 1) := by
-  have hp : 2 ≤ p := (Fact.out : p.Prime).two_le
-  have h := Matrix.card_SL_mul_card_units (n := Fin 2) (R := ZMod p)
-  rw [Nat.card_units, Nat.card_zmod, Matrix.card_GL_field, ZMod.card, Fin.prod_univ_two] at h
-  simp only [Fin.val_zero, Fin.val_one, pow_zero, pow_one] at h
-  have hsub : p ^ 2 - p = p * (p - 1) := by rw [Nat.mul_sub, pow_two, mul_one]
-  rw [hsub, ← mul_assoc, mul_comm (p ^ 2 - 1) p] at h
-  exact Nat.eq_of_mul_eq_mul_right (by omega) h
-
 private theorem card_psl_two_mul_two (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) :
     Nat.card PSL(2, ZMod p) * 2 = p * (p ^ 2 - 1) := by
-  have hc : Nat.card (Subgroup.center SL(2, ZMod p)) = 2 := by
-    rw [Nat.card_congr (center_equiv_rootsOfUnity' (R := ZMod p) (0 : Fin 2)).toEquiv]
-    simpa using (IsPrimitiveRoot.neg_one p hp (R := ZMod p)).card_rootsOfUnity
-  calc
-    Nat.card PSL(2, ZMod p) * 2 = (Subgroup.center SL(2, ZMod p)).index *
-        Nat.card (Subgroup.center SL(2, ZMod p)) := by rw [Subgroup.index_eq_card, hc]
-    _ = _ := by rw [Subgroup.index_mul_card, card_sl_two]
+  have hodd : Odd (p ^ 2) := ((Fact.out : p.Prime).odd_of_ne_two hp).pow
+  have hdvd : 2 ∣ p ^ 2 - 1 := by
+    obtain ⟨k, hk⟩ := hodd
+    exact ⟨k, by omega⟩
+  rw [MetaMathlibExt.Dickson.card_projectiveSpecialLinearGroup_fin_two p (ZMod p) hp,
+    ZMod.card, Nat.div_mul_cancel (dvd_mul_of_dvd_right hdvd p)]
 
 open Filter
 
@@ -1182,17 +1172,13 @@ public theorem finitelyManyPSL2WithLargeNormalSubset_holds :
   by_contra! hpN
   let _ : Fact p.Prime := ⟨hp⟩
   have hp₂ : 2 < p := hN.trans_lt hpN
-  have h₂ : (2 : ZMod p) ≠ 0 := by
-    intro h
-    have hd : p ∣ 2 := (ZMod.natCast_eq_zero_iff 2 p).mp h
-    exact (not_le_of_gt hp₂) (Nat.le_of_dvd (by decide) hd)
-  have hodd : Fintype.card (ZMod p) % 2 = 1 := by
-    rw [ZMod.card]
-    exact hp.eq_two_or_odd.resolve_left hp₂.ne'
+  have hchar : ringChar (ZMod p) ≠ 2 := by
+    rw [ZMod.ringChar_zmod_n]
+    exact hp₂.ne'
   obtain ⟨S, hnormal, hinv, hsize, hsquare⟩ := hS
   by_cases hgood : ∃ T : SL(2, ZMod p), project T ∈ S ∧ traceSL T ≠ 0 ∧ traceSL T ^ 2 ≠ 4
   · obtain ⟨T, hT, ht, hdisc⟩ := hgood
-    exact hsquare (square_eq_univ_of_trace h₂ hodd hnormal hinv T hT ht hdisc)
+    exact hsquare (psl2_square_eq_univ_of_trace hchar hnormal hinv T hT ht hdisc)
   let fiber (t : ZMod p) : Set SL(2, ZMod p) := {A | traceSL A = t}
   have hbad (A : SL(2, ZMod p)) (hA : project A ∈ S) : A ∈ fiber 0 ∪ (fiber 2 ∪ fiber (-2)) := by
     by_cases h₀ : traceSL A = 0
