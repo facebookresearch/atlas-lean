@@ -1748,6 +1748,7 @@
   "CSLibExt/Computability/Distributed/Byzantine/OralMessages": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Byzantine generals problem"},
   "CSLibExt/Computability/Distributed/Byzantine/OralMessagesProtocol": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Byzantine generals problem"},
   "CSLibExt/Computability/Distributed/Byzantine/SignedMessages": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Byzantine generals problem"},
+  "CSLibExt/Computability/Distributed/CausalDelivery": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Replication and consistency"},
   "CSLibExt/Computability/Distributed/ChandyLamport": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Chandy–Lamport snapshots"},
   "CSLibExt/Computability/Distributed/ChangRoberts": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Chang–Roberts leader election"},
   "CSLibExt/Computability/Distributed/ColeVishkin": {"to": "ComputerScience/parallel-algorithms", "title": "Cole–Vishkin deterministic coin tossing"},
