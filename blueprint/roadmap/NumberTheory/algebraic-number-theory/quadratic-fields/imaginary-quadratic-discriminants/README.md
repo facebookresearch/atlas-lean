@@ -24,4 +24,3 @@
 - [The conductor of a discriminant decomposition is at least one](u-ge-one.md)
 - [The equation of a discriminant decomposition](prop-eq.md)
 - [Decomposition from a conductor and a fundamental discriminant](of-fundamental.md)
-- [Every imaginary quadratic discriminant has a conductor decomposition](exists-conductor-decomposition.md)
