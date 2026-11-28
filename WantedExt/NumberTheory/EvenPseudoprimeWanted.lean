@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.SmoothNumbers
 public import MathlibExt.NumberTheory.EvenPseudoprime
+public import MathlibExt.NumberTheory.EvenPseudoprimeReciprocalWindow
 public import MathlibExt.NumberTheory.EvenPseudoprimeResidueSixteen
 public import MathlibExt.NumberTheory.EvenPseudoprimeWieferich
 
@@ -33,6 +34,11 @@ written `orderOf (2 : ZMod p)`.
 Proved in `MathlibExt.NumberTheory.EvenPseudoprimeWieferich`, which this module imports:
 `evenPseudoprime_wieferich_of_sq_dvd` (a prime whose square divides an even pseudoprime is a
 Wieferich prime, at least `3511`).
+
+Proved in `MathlibExt.NumberTheory.EvenPseudoprimeReciprocalWindow`, which this module imports:
+`sum_inv_modEq_orderOf_le` (Proposition 11: for an odd prime `p` and a natural number `k`, the
+sum of `1 / N` over the integers `N` with `e ^ k < N ≤ e ^ (k + 1)`, `N ≡ p [MOD p * ℓ₂(p)]` and
+`N > p` is at most `2 / (p * ℓ₂(p))`).
 -/
 
 namespace MetaMathlibExt
@@ -50,22 +56,6 @@ public theorem_wanted evenPseudoprime_modEq_and_orderOf_odd {N p : ℕ} (hN : Ma
     (hp : p.Prime) (hp2 : p ≠ 2) (hpN : p ∣ N) :
     N ≡ p [MOD p * orderOf (2 : ZMod p)] ∧ Odd (orderOf (2 : ZMod p)) ∧
       (p % 8 = 1 ∨ p % 8 = 7) ∧ 14 * p ≤ N
-
-open scoped Classical in
-/-- **Reciprocal sum over a residue class in an exponential window.** Write $\ell_2(p)$ for the
-multiplicative order of $2$ modulo a prime $p$. Let $p$ be an odd prime and $k$ a natural
-number, and let $F_p(k)$ be the sum of $1/N$ over the integers $N$ with $e^k < N \le e^{k+1}$,
-$N \equiv p \pmod{p\,\ell_2(p)}$ and $N > p$. Then $F_p(k) \le 2 / (p\,\ell_2(p))$.
-
-The bound holds for every $k$, since the terms are $1/N$ with $N = p + j\,p\,\ell_2(p)$ and
-$j \ge 1$.
-
-Source: Cheng, Kinlaw and Nguyen, *The Reciprocal Sum of Even Pseudoprimes*, Journal of
-Integer Sequences 29 (2026), Article 26.1.3, Proposition 11 (`jis-2026-26.1.3-prop-11`). -/
-public theorem_wanted sum_inv_modEq_orderOf_le {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) (k : ℕ) :
-    ∑ N ∈ (Finset.Icc 1 ⌊Real.exp (k + 1)⌋₊).filter (fun N : ℕ =>
-        Real.exp k < N ∧ N ≡ p [MOD p * orderOf (2 : ZMod p)] ∧ p < N), (1 : ℝ) / N ≤
-      2 / (p * orderOf (2 : ZMod p))
 
 open scoped Classical in
 /-- **Reciprocal sum over a residue class restricted modulo 16.** Write $\ell_2(p)$ for the
