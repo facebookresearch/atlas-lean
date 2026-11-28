@@ -38,7 +38,7 @@ variable {C : Type u₁} [Category.{v₁} C]
   {M N P : CategoryTheory.Functor C A}
 
 /-- Degreewise map of coefficient bar objects induced by a natural transformation of coefficients.
-  -/
+-/
 noncomputable def coefficientBarMap (α : M ⟶ N) (n : ℕ) :
     coefficientBarObj M n ⟶ coefficientBarObj N n :=
   Limits.Sigma.map (f := coefficientBarFamily N n)
