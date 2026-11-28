@@ -32,6 +32,7 @@ for an absolute constant $c$.
 - [Negation of a sub-exponential variable](../../../../Probability/concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/neg.md)
 - [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 - [Simulation lemma](../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
+- [No deterministic policy beats the optimal value](../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
 
 ## Expansion
 

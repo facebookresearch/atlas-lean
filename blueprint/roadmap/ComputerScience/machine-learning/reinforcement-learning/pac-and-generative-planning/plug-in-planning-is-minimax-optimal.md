@@ -29,6 +29,7 @@ With $\varepsilon_{\mathrm{opt}}$ of order $(1-\gamma)\varepsilon$ this finds an
 - [Decoupled Bernstein bound for empirical optimal values](decoupled-bernstein-bound-for-empirical-values.md)
 - [Total-variance bound](total-variance-bound.md)
 - [Simulation lemma](../simulation-lemma/stoch-value-sub-stoch-value-eq.md)
+- [No deterministic policy beats the optimal value](../../../heuristic-search-and-planning/value-iteration/policy-value-le-optimal-value.md)
 
 ## Expansion
 
