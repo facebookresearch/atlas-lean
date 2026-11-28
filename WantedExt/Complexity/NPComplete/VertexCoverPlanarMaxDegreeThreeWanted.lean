@@ -26,12 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.VertexCover
+public import CSLibExt.Complexity.NPComplete.VertexCoverPlanarMaxDegreeThreeDefs
 
 @[expose] public section
 
@@ -69,34 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev VertexCoverPlanarMaxDegreeThreeInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : VertexCoverPlanarMaxDegreeThreeInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-open Classical in
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`, the graph
-is planar with every vertex degree at most `3`, and `0 < K ≤ |V|`. -/
-def WellFormed (i : VertexCoverPlanarMaxDegreeThreeInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (Graph i).IsPlanar ∧ (∀ v, (Graph i).degree v ≤ 3) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some set of at most `K` vertices is a vertex cover of `G`. -/
-def VertexCoverPlanarMaxDegreeThreeFeasible (i : VertexCoverPlanarMaxDegreeThreeInstance) :
-    Prop :=
-  ∃ s : Finset (Fin i.1), s.card ≤ i.2.2 ∧ (Graph i).IsVertexCover (s : Set (Fin i.1))
-
-open Classical in
-/-- VERTEX COVER on planar graphs of maximum degree 3 as a decision problem over bitstrings. -/
-noncomputable def vertexCoverPlanarMaxDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := VertexCoverPlanarMaxDegreeThreeInstance) x with
-  | some i => decide (WellFormed i ∧ VertexCoverPlanarMaxDegreeThreeFeasible i)
-  | none => false
 
 /-- **VERTEX COVER on planar graphs of maximum degree 3 is NP-complete.** Source: Garey and
 Johnson (1979), [GT1] and [GT20], comments; Garey, Johnson and Stockmeyer (1976); Mohar (2001),

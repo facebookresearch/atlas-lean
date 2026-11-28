@@ -22,14 +22,8 @@ doi:10.7155/jgaa.00519 (records that Chang's result holds with two positive weig
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import MathlibExt.Combinatorics.SimpleGraph.Domination
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.WeightedIndependentDominatingSetChordalDefs
 
 @[expose] public section
 
@@ -68,38 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n` (vertices `0, ..., n - 1`), the edge list, the vertex
-weights `w(0), ..., w(n - 1)`, and the bound `B`. -/
-abbrev WeightedIndependentDominatingSetChordalInstance := ℕ × List (ℕ × ℕ) × List ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : WeightedIndependentDominatingSetChordalInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), there is one weight
-per vertex, and the graph is chordal (no induced cycle of length at least `4`). -/
-def WellFormed (i : WeightedIndependentDominatingSetChordalInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1.length = i.1 ∧
-    ∀ k, 4 ≤ k → ¬ (SimpleGraph.cycleGraph k).IsIndContained (Graph i)
-
-/-- Some independent dominating set has total weight at most `B`. -/
-def WeightedIndependentDominatingSetChordalFeasible
-    (i : WeightedIndependentDominatingSetChordalInstance) : Prop :=
-  ∃ D : Finset (Fin i.1), (Graph i).IsIndepDominating (D : Set (Fin i.1)) ∧
-    ∑ v ∈ D, i.2.2.1.getD v 0 ≤ i.2.2.2
-
-open Classical in
-/-- WEIGHTED INDEPENDENT DOMINATING SET for chordal graphs as a decision problem over
-bitstrings. -/
-noncomputable def weightedIndependentDominatingSetChordalDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := WeightedIndependentDominatingSetChordalInstance) x with
-  | some i => decide (WellFormed i ∧ WeightedIndependentDominatingSetChordalFeasible i)
-  | none => false
 
 /-- **WEIGHTED INDEPENDENT DOMINATING SET for chordal graphs is NP-complete.** Source: Chang
 (2004); Johnson, NP-completeness column (1984). -/

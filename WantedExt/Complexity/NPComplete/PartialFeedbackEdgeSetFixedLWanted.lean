@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartialFeedbackEdgeSetWanted
+public import CSLibExt.Complexity.NPComplete.PartialFeedbackEdgeSetFixedLDefs
 
 @[expose] public section
 
@@ -55,24 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance for a fixed cycle-length bound: vertex count `n` (vertices `Fin n`), edge list,
-bound `K`. -/
-abbrev FixedLInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The PARTIAL FEEDBACK EDGE SET instance given by `i` and the cycle-length bound `L`. -/
-abbrev withBound (i : FixedLInstance) (L : ℕ) : PartialFeedbackEdgeSetInstance :=
-  (i.1, i.2.1, i.2.2, L)
-
-open Classical in
-/-- PARTIAL FEEDBACK EDGE SET with the cycle-length bound fixed to `L`, as a decision problem
-over bitstrings. -/
-noncomputable def fixedLDec (L : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FixedLInstance) x with
-  | some i => decide (WellFormed (withBound i L) ∧
-      PartialFeedbackEdgeSetFeasible (withBound i L))
-  | none => false
 
 /-- **PARTIAL FEEDBACK EDGE SET is NP-complete for every fixed `L ≥ 3`.** Source: Garey and
 Johnson (1979), [GT9], comment; Yannakakis (1978). -/

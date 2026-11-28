@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ZeroForcingNumberDefs
 
 @[expose] public section
 
@@ -73,29 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The vertices that end up black when the vertices of `S` start black and the zero forcing
-color-change rule is applied: the least set of vertices containing `S` and closed under forcing.
--/
-inductive Forced {n : ℕ} (G : SimpleGraph (Fin n)) (S : Finset (Fin n)) : Fin n → Prop
-  /-- The vertices of `S` are black. -/
-  | init {v : Fin n} : v ∈ S → Forced G S v
-  /-- A black vertex `u` whose neighbors other than `v` are all black forces its neighbor `v`.
-  -/
-  | force {u v : Fin n} : Forced G S u → G.Adj u v →
-      (∀ w, G.Adj u w → w ≠ v → Forced G S w) → Forced G S v
-
-/-- The graph has a zero forcing set of at most `K` vertices. -/
-def ZeroForcingNumberFeasible (i : GraphColoringInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card ≤ i.2.2 ∧ ∀ v, Forced (Graph i) S v
-
-open Classical in
-/-- ZERO FORCING NUMBER as a decision problem over bitstrings. -/
-noncomputable def zeroForcingNumberDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (GraphColoring.WellFormed i ∧ ZeroForcingNumberFeasible i)
-  | none => false
 
 /-- **ZERO FORCING NUMBER is NP-complete.** Source: Fallat, Meagher and Yang (2016),
 Corollary 3.4; Yang (2013); Aazami (2008). -/

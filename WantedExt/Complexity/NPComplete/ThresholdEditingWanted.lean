@@ -18,12 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import WantedExt.Complexity.NPComplete.ThresholdNumberWanted
-public import Mathlib.Data.Set.Card
-public import Mathlib.Order.SymmDiff
+public import CSLibExt.Complexity.NPComplete.ThresholdEditingDefs
 
 @[expose] public section
 
@@ -52,34 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev ThresholdEditingInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : ThresholdEditingInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). Every `K` is
-allowed. -/
-def WellFormed (i : ThresholdEditingInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- Some threshold graph `H` on the same vertices differs from `G` in at most `K` edges (added
-or deleted). -/
-def ThresholdEditingFeasible (i : ThresholdEditingInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), ThresholdNumber.IsThresholdGraph H ∧
-    (symmDiff (Graph i).edgeSet H.edgeSet).ncard ≤ i.2.2
-
-open Classical in
-/-- THRESHOLD EDITING as a decision problem over bitstrings. -/
-noncomputable def thresholdEditingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThresholdEditingInstance) x with
-  | some i => decide (WellFormed i ∧ ThresholdEditingFeasible i)
-  | none => false
 
 /-- **THRESHOLD EDITING is NP-complete.** Source: Drange, Dregi, Lokshtanov and Sullivan
 (2022). -/
