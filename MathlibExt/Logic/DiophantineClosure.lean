@@ -253,8 +253,8 @@ theorem IsDiophantine.exists_proj {φ : A →+* R} {k m : ℕ} {S : Set (Fin (k 
     have : x = fun i => t (Fin.castAdd m i) := funext hx
     rwa [this, Fin.append_castAdd_natAdd]
 
-/-- In a formally real commutative ring, a finite sum of squares vanishes only if every term
-does. -/
+/-- In a formally real commutative ring, $\sum_{i \in I} a_i^2 = 0$ if and only if $a_i = 0$ for
+every $i \in I$. -/
 private theorem sum_sq_eq_zero_iff [IsFormallyReal R] {ι : Type*} (I : Finset ι) (a : ι → R) :
     ∑ i ∈ I, a i ^ 2 = 0 ↔ ∀ i ∈ I, a i = 0 := by
   classical
@@ -274,9 +274,9 @@ private theorem sum_sq_eq_zero_iff [IsFormallyReal R] {ι : Type*} (I : Finset �
       simp [h1, h2]
 
 /-- **One polynomial suffices over a formally real ring.** Let $\varphi : A \to R$ be a ring
-homomorphism of commutative rings, where $R$ is formally real: a sum of squares in $R$ vanishes
-only if each square does (for instance a linearly ordered ring such as $R = \mathbb{Q}$, with
-$A = \mathbb{Z}$). A set $S \subseteq R^k$ is Diophantine over $R$ with
+homomorphism of commutative rings, where $R$ is formally real: $a_1^2 + \dots + a_m^2 = 0$ in $R$
+only if $a_1 = \dots = a_m = 0$ (for instance a linearly ordered ring such as $R = \mathbb{Q}$,
+with $A = \mathbb{Z}$). A set $S \subseteq R^k$ is Diophantine over $R$ with
 coefficients from $A$ through $\varphi$ if and only if there are $n \in \mathbb{N}$ and one
 polynomial $p$ with coefficients in $A$ in the variables $x_1, \dots, x_k, y_1, \dots, y_n$ such
 that $x \in S$ if and only if $p(x, y) = 0$ for some $y \in R^n$.
