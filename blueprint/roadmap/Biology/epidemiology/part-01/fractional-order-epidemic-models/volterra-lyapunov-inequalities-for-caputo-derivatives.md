@@ -20,10 +20,6 @@ which is exactly the expression $\dot V$ of the integer-order model. Any bound $
 
 - [Caputo fractional derivative](caputo-fractional-derivative.md)
 
-## Proof depends on
-
-- [LaSalle's invariance principle](../../../../Dynamics/smooth-dynamics/lasalle-s-invariance-principle/lasalle.md)
-
 ## Expansion
 
 Write $g(u) = u - \varphi^* - \varphi^*\ln(u/\varphi^*)$, which is convex on $(0,\infty)$ with $g'(u) = 1 - \varphi^*/u$. Integrating by parts in the Caputo integral, the difference $g'(\varphi(t))\,{}^{C}D^{\vartheta}\varphi(t) - {}^{C}D^{\vartheta}g(\varphi(t))$ equals a non-negative integral of the convexity gap $g(\varphi(\tau)) - g(\varphi(t)) - g'(\varphi(t))(\varphi(\tau) - \varphi(t)) \ge 0$ against the decreasing kernel $(t-\tau)^{-\vartheta-1}$, plus a non-negative boundary term. The same argument with the convex function $u^2/2$ gives the quadratic inequality. These inequalities make the classical Volterra–Lyapunov method for SIR, SEIR and multi-compartment models carry over to Caputo models unchanged.
