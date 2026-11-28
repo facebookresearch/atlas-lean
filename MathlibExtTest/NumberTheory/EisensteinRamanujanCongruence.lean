@@ -362,3 +362,23 @@ example : 37 ∣ weightNumerator 68 ∧ 37 ∣ weightNumerator 32 ∧ ¬ 37 ∣ 
     have hcop : (modulus 68).Coprime (weightNumerator 32) :=
       (Finset.mem_filter.mp hdmod).2 3 (by decide)
     exact fun h => (by decide : ¬ Nat.Coprime 37 37) ((hcop.of_dvd_left h).of_dvd_right h32)
+
+-- Match the public statement before specializing n: simplifying at n = 0 would hide the matrix.
+-- Check both the constant term and a coefficient beyond the first m positive coefficients.
+example :
+    ((sigma₀ 24 0 - matrixSumAt 24 2 0) / modulus 24).den.Coprime (modulus 24) ∧
+    ((sigma₀ 24 3 - matrixSumAt 24 2 3) / modulus 24).den.Coprime (modulus 24) := by
+  have h (n : ℕ) :
+      ((sigma₀ 24 n - matrixSumAt 24 2 n) / modulus 24).den.Coprime (modulus 24) :=
+    MetaMathlibExt.eisenstein_congr_sum_delta_pow_mul_eisenstein 24 (by decide) (by decide)
+      (by decide) n
+  exact ⟨h 0, h 3⟩
+
+example :
+    ((sigma₀ 68 0 - matrixSumAt 68 5 0) / modulus 68).den.Coprime (modulus 68) ∧
+    ((sigma₀ 68 6 - matrixSumAt 68 5 6) / modulus 68).den.Coprime (modulus 68) := by
+  have h (n : ℕ) :
+      ((sigma₀ 68 n - matrixSumAt 68 5 n) / modulus 68).den.Coprime (modulus 68) :=
+    MetaMathlibExt.eisenstein_congr_sum_delta_pow_mul_eisenstein 68 (by decide) (by decide)
+      (by decide) n
+  exact ⟨h 0, h 6⟩
