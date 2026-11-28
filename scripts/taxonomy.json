@@ -10403,6 +10403,7 @@
   "MathlibExt/Analysis/SpecificLimits/ExpOneTaylorRemainderBound": {"to": "Analysis/sequences-and-series/series-for-constants", "title": "Series for e"},
   "MathlibExt/Analysis/SpecificLimits/OneSubCosDivSeriesUniform": {"to": "Analysis/sequences-and-series/convergence", "title": "Uniform convergence of series of functions"},
   "MathlibExt/Analysis/SpecificLimits/PowerSeriesCoeffEqOfAgreeOnReciprocals": {"to": "Analysis/sequences-and-series/convergence", "title": "Identity theorem for power series"},
+  "MathlibExt/Analysis/SpecificLimits/RenderingEquation": {"to": "ComputerScience/computational-geometry", "title": "Geometric modeling and rendering"},
   "MathlibExt/Analysis/SpecificLimits/ReciprocalSumAddInvNull": {"to": "Analysis/sequences-and-series/convergence", "title": "Limits of specific sequences and partial sums"},
   "MathlibExt/Analysis/SpecificLimits/RisingProductSeries": {"to": "Analysis/sequences-and-series/convergence", "title": "Series with rising-product denominators"},
   "MathlibExt/Analysis/SpecificLimits/RootTest": {"to": "Analysis/sequences-and-series/convergence", "title": "Root test"},

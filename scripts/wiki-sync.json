@@ -12047,6 +12047,7 @@
 "ContinuousLinearMap.pow_nonneg": "f91de9a3c5eff246",
 "ContinuousLinearMap.rangeEquivOfRetract": "3b97905242b49a41",
 "ContinuousLinearMap.range_comp_subtypeL_orthogonalComplement_ker": "3b3c97b07032f83f",
+"ContinuousLinearMap.rendering_equation_fixed_point_and_counterexample": "a8b0d0448cf1bd8a",
 "ContinuousLinearMap.setRange_eq_coe_linearMap_range": "2e2713f415f95cc6",
 "ContinuousMap.IntervalGluing.MatchingPaths": "1462d2c682e0580b",
 "ContinuousMap.IntervalGluing.constantHom": "eec1b11dad03b0f0",
