@@ -259,8 +259,8 @@
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "5d9d3960983932f3887dd368b29d945682268f2cfa7e4422f845cbfcd12cae69",
-      "rationale": "Use native exterior-degree and scalar-extension coordinates and canonical native quotient group/module structures for the adjacent-stage quotient aliases. Bind carriers, actual submodules, and tensor-piece targets explicitly in the quotient transports and representative formulas. Preserve the original filtration, mixed-injection order, maps, ring/module hypotheses, and independent universes. Mathematical source docstrings replace workflow prose. Backport and Native verification pending.",
+      "published_sha256": "dc81db0ec445ffe4e5c5f999b7654c8be3fa16b3375662ac8e785412c4d94e29",
+      "rationale": "Use native exterior-degree and scalar-extension coordinates and canonical native quotient group/module structures for the adjacent-stage quotient aliases. Bind carriers, actual submodules, and tensor-piece targets explicitly in the quotient transports and representative formulas. Preserve the original filtration, mixed-injection order, maps, ring/module hypotheses, and independent universes. Mathematical source docstrings replace workflow prose. Backport and Native verification pending. Give the two adjacent-stage quotient types ordinary definition heads, retaining their quotient bodies byte-for-byte and their exact canonical native quotient group/module dictionaries. This isolates instance matching from the reducible raw quotient relation without new transparency/resource settings, hypotheses, scalar data or map changes. Native recheck pending.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "62807779224eb1dd42d41bfe19eea64c1fe389e2e246ea6beefb02506b7837da"
     },
