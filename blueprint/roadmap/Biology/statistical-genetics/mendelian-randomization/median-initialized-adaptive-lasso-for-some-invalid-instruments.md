@@ -17,7 +17,7 @@ $\beta$ is identified when the valid instruments form the largest group of equal
 3. $n^{-1}Z^{\mathsf T}Z \to_p Q$, $n^{-1}Z^{\mathsf T}d \to_p \mathbb{E}[Z_{i\cdot}^{\mathsf T}D_i]$, $n^{-1}Z^{\mathsf T}\varepsilon \to_p 0$, $n^{-1}Z^{\mathsf T}v \to_p 0$, $n^{-1}\sum_i u_i \to_p 0$ and $n^{-1}\sum_i u_iu_i^{\mathsf T} \to_p \Sigma$;
 4. $\gamma = Q^{-1}\mathbb{E}[Z_{i\cdot}^{\mathsf T}D_i]$ with $\gamma_j \ne 0$ for every $j = 1, \dots, L$.
 
-The probability limits in 3 are laws of large numbers only; the $\sqrt n$ limits below also use the i.i.d. sampling, outcome-error conditional moments, and first-stage projection assumptions, through a central limit theorem for $n^{-1/2}Z^{\mathsf T}u$.
+The valid-ratio limit uses the CLT for $n^{-1/2}Z^{\mathsf T}\varepsilon$ and consistency of $\hat\gamma$; no joint CLT with the first-stage residual is needed.
 
 The ratio estimates are $\hat\pi_j = \hat\Gamma_j/\hat\gamma_j$, from the least-squares reduced-form and first-stage coefficients $\hat\Gamma = (Z^{\mathsf T}Z)^{-1}Z^{\mathsf T}y$ and $\hat\gamma = (Z^{\mathsf T}Z)^{-1}Z^{\mathsf T}d$. The Lasso approach (sisVIVE) estimates $\alpha$ by $\ell_1$-penalized regression of $y$ on $Z$ after projecting out $\hat d = Z\hat\gamma$.
 
