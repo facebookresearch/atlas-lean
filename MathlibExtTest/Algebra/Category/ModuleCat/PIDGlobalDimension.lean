@@ -13,6 +13,7 @@ Author: @toskua
 module
 
 public import Mathlib.Algebra.EuclideanDomain.Int
+public import Mathlib.Data.Rat.Cast.CharZero
 public import MathlibExt.Algebra.Category.ModuleCat.PIDGlobalDimension
 
 @[expose] public section
@@ -86,6 +87,17 @@ example : Subsingleton
   subsingleton_ext_of_two_le_of_isPrincipalIdealRing _ A 3 (by decide)
 
 end IntegerInfinite
+
+section Rational
+
+example (M : ModuleCat.{0} ℚ) : HasProjectiveDimensionLE M 1 :=
+  hasProjectiveDimensionLE_one_of_isPrincipalIdealRing M
+
+example : HasProjectiveDimensionLE
+    (ModuleCat.of ℚ (ℕ → ℚ) : ModuleCat.{0} ℚ) 1 :=
+  hasProjectiveDimensionLE_one_of_isPrincipalIdealRing _
+
+end Rational
 
 end ModuleCat
 

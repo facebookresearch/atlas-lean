@@ -45,7 +45,7 @@ independent universe v, the functor M↦M⊗_R N, valued in universe max(v,w), i
 parallel maps f,g, (f+g)⊗id_N=(f⊗id_N)+(g⊗id_N). -/
 instance tensorBifunctorAt_flip_obj_additive (N : ModuleCat.{w} R) :
     ((tensorBifunctorAt.{u, v, w} R).flip.obj N).Additive where
-  map_add {M M' f g} :=
+  map_add {_M _M' f g} :=
     NatTrans.congr_app ((tensorBifunctorAt.{u, v, w} R).map_add (f := f) (g := g)) N
 
 /-- Let R be commutative in universe u and M an R-module in universe v, flat over R. The functor

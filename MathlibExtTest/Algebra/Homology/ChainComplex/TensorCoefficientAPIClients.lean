@@ -1,0 +1,152 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Algebra.Homology.ChainComplex.TensorCoefficient.Regular
+public import MathlibExtTest.Algebra.Homology.ChainComplex.TensorCoefficientZMod
+
+/-!
+# Regular coefficients, chain-map transport and six-term tensor sequences
+
+The nonsplit ZMod 4 coefficient sequence and multiplication-by-two complex give a nonzero
+connecting arrow. The regular-coefficient unitor retains the scalar three on a pure tensor
+and induces the same degree-zero class. A nonidentity negation isomorphism tests chain-map
+transport and coefficient naturality.
+
+The six-term sequence and its coefficient-map morphism use the literal connecting arrow,
+with naturality in both the coefficient sequence and the fixed complex. The terminal
+homology map is an epimorphism by the short exact sequence, without a coefficient-flatness
+assumption.
+-/
+
+@[expose] public section
+noncomputable section
+set_option autoImplicit false
+
+open CategoryTheory CategoryTheory.Limits
+open scoped TensorProduct
+open MathlibExtTest.TensorCoefficientZMod
+
+namespace TensorCoefficientAPIClients
+
+private abbrev R := R4
+
+example :
+    (((ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0).hom
+      ((3 : R) ⊗ₜ[R] (1 : R))) = 3 := by
+  rw [ChainComplex.TensorCoefficient.regularIso_tmul]
+  simp
+
+example :
+    (ChainComplex.TensorCoefficient.regularHomologyIso R originalComplex 0).hom.hom
+        ((ChainComplex.homologyZeroClass regularComplex).hom
+          ((3 : R) ⊗ₜ[R] (1 : R))) =
+      (ChainComplex.homologyZeroClass originalComplex).hom (3 : R) := by
+  change (HomologicalComplex.homologyMap
+    (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom 0).hom _ = _
+  have h := ConcreteCategory.congr_hom
+    (ChainComplex.homologyZeroClass_naturality
+      (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom)
+    ((3 : R) ⊗ₜ[R] (1 : R))
+  simpa only [ChainComplex.TensorCoefficient.regularIso_tmul, smul_eq_mul, mul_one] using h
+
+private def negativeComplexIso : originalComplex ≅ originalComplex where
+  hom := -𝟙 originalComplex
+  inv := -𝟙 originalComplex
+  hom_inv_id := by simp
+  inv_hom_id := by simp
+
+example :
+    unitEvaluation.hom
+      ((((ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app binary).f 0).hom
+        ((1 : ZMod 2) ⊗ₜ[R] (1 : R))) = 1 := by
+  rw [ChainComplex.TensorCoefficient.map_chain_tmul]
+  change unitEvaluation.hom ((1 : ZMod 2) ⊗ₜ[R] (-1 : R)) = 1
+  rw [unitEvaluation_tmul]
+  decide
+
+example :
+    unitEvaluation.hom
+      ((((ChainComplex.TensorCoefficient.mapIso R negativeComplexIso).hom.app binary).f 0).hom
+        ((1 : ZMod 2) ⊗ₜ[R] (1 : R))) = 1 := by
+  change unitEvaluation.hom
+    ((((ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app binary).f 0).hom _) = 1
+  rw [ChainComplex.TensorCoefficient.map_chain_tmul]
+  change unitEvaluation.hom ((1 : ZMod 2) ⊗ₜ[R] (-1 : R)) = 1
+  rw [unitEvaluation_tmul]
+  decide
+
+example :
+    (ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app regular ≫
+        (ChainComplex.TensorCoefficient.functor R originalComplex).map quotient =
+      (ChainComplex.TensorCoefficient.functor R originalComplex).map quotient ≫
+        (ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app binary :=
+  ((ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).naturality quotient).symm
+
+private def window : ComposableArrows (ModuleCat.{0} R) 5 :=
+  ChainComplex.TensorCoefficient.sixTermSequence R originalComplex
+    originalComplex_terms_flat sequence sequence_shortExact 0
+
+example : window.Exact :=
+  ChainComplex.TensorCoefficient.sixTermSequence_exact R originalComplex
+    originalComplex_terms_flat sequence sequence_shortExact 0
+
+example : window.map' 2 3 =
+    ChainComplex.TensorCoefficient.connecting R originalComplex
+      originalComplex_terms_flat sequence sequence_shortExact 0 := rfl
+
+example : window.map' 2 3 ≠ 0 := by
+  change ChainComplex.TensorCoefficient.connecting R originalComplex
+    originalComplex_terms_flat sequence sequence_shortExact 0 ≠ 0
+  exact connecting_ne_zero
+
+private def sequenceNegation : sequence ⟶ sequence := -𝟙 sequence
+
+example : window ⟶ window :=
+  ChainComplex.TensorCoefficient.sixTermSequenceMap R originalComplex originalComplex_terms_flat
+    sequenceNegation sequence_shortExact sequence_shortExact 0
+
+example :
+    ChainComplex.TensorCoefficient.connecting R originalComplex
+        originalComplex_terms_flat sequence sequence_shortExact 0 ≫
+        (ChainComplex.TensorCoefficient.homologyFunctor R originalComplex 0).map
+          sequenceNegation.τ₁ =
+      (ChainComplex.TensorCoefficient.homologyFunctor R originalComplex 1).map
+        sequenceNegation.τ₃ ≫
+        ChainComplex.TensorCoefficient.connecting R originalComplex
+          originalComplex_terms_flat sequence sequence_shortExact 0 :=
+  ChainComplex.TensorCoefficient.connecting_naturality_sequence R originalComplex
+    originalComplex_terms_flat sequenceNegation sequence_shortExact sequence_shortExact 0
+
+example :
+    (ChainComplex.TensorCoefficient.mapShortComplex R originalComplex
+      negativeComplexIso.hom sequence).τ₁ =
+      (ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app binary := rfl
+
+example :
+    ChainComplex.TensorCoefficient.connecting R originalComplex
+        originalComplex_terms_flat sequence sequence_shortExact 0 ≫
+        HomologicalComplex.homologyMap
+          ((ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app binary) 0 =
+      HomologicalComplex.homologyMap
+          ((ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app binary) 1 ≫
+        ChainComplex.TensorCoefficient.connecting R originalComplex
+          originalComplex_terms_flat sequence sequence_shortExact 0 :=
+  ChainComplex.TensorCoefficient.connecting_naturality_complex R originalComplex
+    negativeComplexIso.hom originalComplex_terms_flat originalComplex_terms_flat
+    sequence sequence_shortExact 0
+
+example : Epi ((ChainComplex.TensorCoefficient.homologyFunctor R originalComplex 0).map quotient) :=
+  ChainComplex.TensorCoefficient.homologyMap_zero_epi R originalComplex
+    originalComplex_terms_flat sequence sequence_shortExact
+
+end TensorCoefficientAPIClients

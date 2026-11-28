@@ -22,7 +22,8 @@ import Mathlib.Algebra.Category.Grp.Zero
 
 Let R be a commutative principal ideal domain in universe u, and assume its underlying set has a
 representative in the module universe v. Every R-module M in v has projective dimension at most
-one: the kernel of a free cover is a submodule of a free module and is free over R. This applies
+one: the kernel of a free presentation is a submodule of a free module and is free over R.
+This applies
 to arbitrary modules without a finite-generation or finite-rank restriction.
 
 When Ext groups of this module category are defined in universe w, Ext^p_R(M,A)=0 for all p≥2
@@ -47,9 +48,9 @@ variable {R : Type u} [CommRing R] [IsDomain R]
   [IsPrincipalIdealRing R] [Small.{v} R]
 
 /-- Let R be a commutative principal ideal domain in universe u, whose underlying set can be
-represented in the module universe v. For every R-module M in v, pd(M)≤1. A projective cover
+represented in the module universe v. For every R-module M in v, pd(M)≤1. A projective presentation
 comes from a free module, and its kernel is free because R is a principal ideal domain. Neither
-finite generation of M nor finite rank of the cover is assumed. -/
+finite generation of M nor finite rank of the presenting free module is assumed. -/
 theorem hasProjectiveDimensionLE_one_of_isPrincipalIdealRing
     (M : ModuleCat.{v} R) : HasProjectiveDimensionLE M 1 := by
   let S := M.projectiveShortComplex

@@ -25,7 +25,7 @@ finite colimits and projective objects carries pd(M)≤n to pd(FM)≤n. It also 
 bounds, including pd(M)<0, which denotes the zero object.
 
 For an equivalence of module categories, assume each ring is representable in its respective
-module universe and both the forward and inverse functors are additive. Exactness and projective
+module universe and the forward functor is additive. Exactness and projective
 preservation follow from the equivalence. Applying the transport in both directions identifies
 each strict and non-strict dimension bound and gives pd(E(M))=pd(M) in ℕ∞ with its extra bottom
 value for zero objects. No commutativity assumption on the rings is required.
@@ -51,7 +51,7 @@ variable [PreservesFiniteLimits F] [PreservesFiniteColimits F]
 represented in vR, and F:R-Mod_{vR}→S-Mod_{vS} is additive, preserves finite limits and finite
 colimits, and sends projective objects to projective objects. For M in R-Mod_{vR}, n∈ℕ and
 pd(M)≤n, one has pd(FM)≤n. The finite-limit and finite-colimit hypotheses preserve short exact
-projective-cover sequences, and projective preservation carries their middle terms to
+projective presentations, and projective preservation carries their middle terms to
 projectives. -/
 theorem hasProjectiveDimensionLE_map
     (hF : ∀ P : ModuleCat.{vR} R, Projective P → Projective (F.obj P))
@@ -83,7 +83,7 @@ theorem hasProjectiveDimensionLT_map
     HasProjectiveDimensionLT (F.obj M) n := by
   cases n with
   | zero =>
-      letI : HasProjectiveDimensionLT M 0 := hM
+      let : HasProjectiveDimensionLT M 0 := hM
       exact (F.map_isZero (isZero_of_hasProjectiveDimensionLT_zero M)).hasProjectiveDimensionLT_zero
   | succ n =>
       exact hasProjectiveDimensionLE_map F hF M n hM
@@ -95,10 +95,10 @@ section AdditiveEquivalence
 variable {R : Type uR} {S : Type uS} [Ring R] [Ring S]
 variable [Small.{vR} R] [Small.{vS} S]
 variable (E : ModuleCat.{vR} R ≌ ModuleCat.{vS} S)
-variable [E.functor.Additive] [E.inverse.Additive]
+variable [E.functor.Additive]
 
 /-- Let R,S be rings in universes uR,uS, representable in their respective module universes vR,vS.
-Let E:R-Mod_{vR}≅S-Mod_{vS} be an equivalence whose forward and inverse functors are additive.
+Let E:R-Mod_{vR}≅S-Mod_{vS} be an equivalence whose forward functor is additive.
 For M in R-Mod_{vR} and n∈ℕ, pd(E(M))<n if and only if pd(M)<n. The forward and inverse
 equivalences preserve exact sequences and projectives, and the equivalence unit identifies the
 twice-transported module with M. -/
@@ -109,14 +109,14 @@ theorem hasProjectiveDimensionLT_equivalence_iff (M : ModuleCat.{vR} R) (n : ℕ
     have hInverse : HasProjectiveDimensionLT (E.inverse.obj (E.functor.obj M)) n :=
       hasProjectiveDimensionLT_map E.inverse
         (fun P hP => (E.symm.map_projective_iff P).mpr hP) (E.functor.obj M) n hM
-    letI : HasProjectiveDimensionLT ((E.functor ⋙ E.inverse).obj M) n := hInverse
+    let : HasProjectiveDimensionLT ((E.functor ⋙ E.inverse).obj M) n := hInverse
     exact hasProjectiveDimensionLT_of_iso (E.unitIso.app M).symm n
   · intro hM
     exact hasProjectiveDimensionLT_map E.functor
       (fun P hP => (E.map_projective_iff P).mpr hP) M n hM
 
 /-- Let R,S be rings in universes uR,uS, representable in their respective module universes vR,vS.
-Let E:R-Mod_{vR}≅S-Mod_{vS} be an equivalence whose forward and inverse functors are additive.
+Let E:R-Mod_{vR}≅S-Mod_{vS} be an equivalence whose forward functor is additive.
 For M in R-Mod_{vR} and n∈ℕ, pd(E(M))≤n if and only if pd(M)≤n. This is the strict-bound
 comparison at n+1, with the same module and equivalence data. -/
 theorem hasProjectiveDimensionLE_equivalence_iff (M : ModuleCat.{vR} R) (n : ℕ) :
@@ -124,7 +124,7 @@ theorem hasProjectiveDimensionLE_equivalence_iff (M : ModuleCat.{vR} R) (n : ℕ
   hasProjectiveDimensionLT_equivalence_iff E M (n + 1)
 
 /-- Let R,S be rings in universes uR,uS, representable in their respective module universes vR,vS.
-Let E:R-Mod_{vR}≅S-Mod_{vS} be an equivalence whose forward and inverse functors are additive.
+Let E:R-Mod_{vR}≅S-Mod_{vS} be an equivalence whose forward functor is additive.
 For M in R-Mod_{vR}, the numeric projective dimensions satisfy pd(E(M))=pd(M). The equality is
 in the extended naturals with an extra bottom value, so it retains finite dimensions, infinite
 dimension and the zero-object bottom value. -/

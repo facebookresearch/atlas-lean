@@ -216,7 +216,11 @@ private theorem finsuppSubmodule_free [LinearOrder ι] [WellFoundedLT ι]
     exact y.1.support.le_max' j hj
   exact Module.Free.of_basis (Basis.mk hp htop)
 
-private theorem submodule_free_aux
+/-- Over a commutative principal ideal domain, every submodule of a free semimodule is free.
+
+The module has an additive commutative monoid structure and arbitrary rank. Its carrier
+universe is independent of the scalar universe. -/
+theorem submodule_of_isPrincipalIdealRing
     {M : Type v} [AddCommMonoid M] [Module R M] [Module.Free R M]
     (N : Submodule R M) : Module.Free R N := by
   classical
@@ -226,14 +230,6 @@ private theorem submodule_free_aux
   let N' : Submodule R (ι →₀ R) := N.map b.repr.toLinearMap
   have hN' : Module.Free R N' := finsuppSubmodule_free N'
   exact Module.Free.of_equiv' hN' (b.repr.submoduleMap N).symm
-
-/-- Let R be a commutative principal ideal domain, M a free R-module,
-and N an R-submodule of M. Then N is free over R. The module M may
-have arbitrary rank, and its carrier universe is independent of that of R. -/
-theorem submodule_of_isPrincipalIdealRing
-    {M : Type v} [AddCommGroup M] [Module R M] [Module.Free R M]
-    (N : Submodule R M) : Module.Free R N :=
-  submodule_free_aux N
 
 end Module.Free
 

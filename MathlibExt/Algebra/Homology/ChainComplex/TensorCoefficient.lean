@@ -145,7 +145,7 @@ theorem shortExact (hK : ∀ n, Module.Flat R (K.X n))
     (S.map (functor R K)).ShortExact := by
   apply HomologicalComplex.shortExact_of_degreewise_shortExact
   intro n
-  letI : Module.Flat R (K.X n) := hK n
+  let : Module.Flat R (K.X n) := hK n
   apply ModuleCat.shortComplex_shortExact
   · change Function.Exact (S.f.hom.rTensor (K.X n)) (S.g.hom.rTensor (K.X n))
     exact Module.Flat.rTensor_exact (K.X n)

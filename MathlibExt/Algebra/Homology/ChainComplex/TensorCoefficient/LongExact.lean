@@ -170,20 +170,15 @@ homology sequence therefore ends in H₀(S₃⊗K) → 0. -/
 theorem homologyMap_zero_epi (hK : ∀ n, Module.Flat R (K.X n))
     (S : ShortComplex (ModuleCat.{t} R)) (hS : S.ShortExact) :
     Epi ((homologyFunctor R K 0).map S.g) := by
-  let K₂ := (functor R K).obj S.X₂
-  let K₃ := (functor R K).obj S.X₃
-  let g : K₂ ⟶ K₃ := (functor R K).map S.g
-  have hZero := (HomologicalComplex.shortExact_iff_degreewise_shortExact
+  let g := (functor R K).map S.g
+  have hDegree := (HomologicalComplex.shortExact_iff_degreewise_shortExact
     (S.map (functor R K))).mp (shortExact R K hK S hS) 0
-  letI : Epi (g.f 0) := hZero.epi_g
-  letI : Epi (ChainComplex.homologyZeroClass K₃) := by
-    unfold ChainComplex.homologyZeroClass
-    infer_instance
-  letI : Epi (ChainComplex.homologyZeroClass K₂ ≫ HomologicalComplex.homologyMap g 0) := by
-    rw [ChainComplex.homologyZeroClass_naturality]
-    infer_instance
-  exact epi_of_epi (ChainComplex.homologyZeroClass K₂) (HomologicalComplex.homologyMap g 0)
-
+  let : Epi (g.f 0) := hDegree.epi_g
+  change Epi (HomologicalComplex.homologyMap g 0)
+  exact HomologicalComplex.epi_homologyMap_of_epi_of_not_rel g 0 (by
+    intro j
+    change j + 1 ≠ 0
+    exact Nat.succ_ne_zero j)
 /-- Let R be a commutative ring, K a flat-term ℕ-chain complex, and S₁ →^f S₂ →^g S₃ a short exact
 coefficient sequence. For a probe module T, let x₃ : T → (S₃⊗K)_{n+1} be a cycle, choose x₂
 with x₂≫g_{n+1}=x₃, and choose x₁ : T → (S₁⊗K)_n with x₁≫f_n=x₂≫d_{n+1,n}. Then x₁ is a cycle
