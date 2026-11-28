@@ -1,0 +1,3 @@
+# Dalal's revision operator
+
+Let $\sigma$ be a finite set of atoms with decidable equality, and represent each propositional formula over $\sigma$ by its finite set of models (interpretations $\sigma \to \{\mathrm{true}, \mathrm{false}\}$). Dalal's revision operator revises a model set $A$ by a model set $B$ by selecting the minimal elements of $B$ for the Dalal preorder relative to $A$. For nonempty $A$ these are the models of $B$ closest to $A$ in Hamming distance. For empty $A$ every [Dalal key](dalal-key.md) is $0$, all models of $B$ tie, and the revision of $\emptyset$ by $B$ is $B$; there is no minimum distance to a member of $\emptyset$, so this case is a convention extending Dalal's operator.

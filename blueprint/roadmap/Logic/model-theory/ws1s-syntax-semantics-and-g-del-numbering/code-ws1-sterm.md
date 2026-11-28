@@ -1,0 +1,3 @@
+# Gödel numbering of WS1S terms
+
+WS1S terms are numbered by tagging each constructor: a variable $x_i$ has code $\langle 0, i\rangle$, the constant $0$ has code $\langle 1, 0\rangle$, and the successor $t + 1$ has code $\langle 2, c(t)\rangle$, where $c(t)$ is the code of $t$. Here $\langle a, b\rangle$ is the square-shell pairing of natural numbers, $\langle a, b\rangle = b^2 + a$ if $a < b$ and $a^2 + a + b$ otherwise (so $\langle 1, 1\rangle = 3$), not Cantor's diagonal pairing, which sends $(1, 1)$ to $4$. Bare constants are never used as codes: coding $0$ by the bare number $1$ would collide with the code $\langle 0, 1\rangle = 1$ of the variable $x_1$.

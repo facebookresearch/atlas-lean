@@ -1,0 +1,3 @@
+# DAG refutation of the shared-resolvent formula
+
+Write $a, b, c, d$ for the variables $0, 1, 3, 4$ and $I_1, \dots, I_5$ for the clauses $a \vee b$, $a \vee \neg b$, $\neg a \vee c$, $\neg a \vee d$, $\neg c \vee \neg d$ of the [sharing example](ex-dag-formula.md). Its DAG-like refutation is the list of ten clauses $I_1, I_2, a \vee a, I_3, c, I_4, d, I_5, \neg d, \square$, interleaving inputs and resolvents: $a \vee a$ resolves $I_1$ and $I_2$ on $b$; $c$ resolves $a \vee a$ and $I_3$ on $a$; $d$ resolves $a \vee a$ and $I_4$ on $a$; $\neg d$ resolves $c$ and $I_5$ on $c$; and the empty clause $\square$ resolves $d$ and $\neg d$.

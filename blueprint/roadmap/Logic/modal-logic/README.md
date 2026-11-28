@@ -5,6 +5,7 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [Epistemic logic](epistemic-logic/README.md)
 - [Kripke semantics](kripke-semantics/README.md)
 - [Bisimulation](bisimulation/README.md)
+- [Common knowledge](common-knowledge/README.md)
 - [Modal μ-calculus](modal-calculus/README.md)
 - [Model-checking game for the modal μ-calculus](model-checking-game-for-the-modal-calculus/README.md)
 - [Normal modal logics](normal-modal-logics/README.md)
@@ -14,7 +15,10 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [Sahlqvist formulas](sahlqvist-formulas/README.md)
 - [Soundness and completeness of normal modal logics](soundness-and-completeness-of-normal-modal-logic/README.md)
 - [Filtration and the finite model property](filtration-and-the-finite-model-property/README.md)
+- [Katsuno–Mendelzon belief revision: postulates and representation](katsuno-mendelzon-belief-revision-postulates-and/README.md)
+- [Katsuno–Mendelzon update](katsuno-mendelzon-update/README.md)
 - [Standard translation of modal logic](standard-translation-of-modal-logic/README.md)
+- [Weak Hennessy–Milner logic](weak-hennessy-milner-logic/README.md)
 
 - [Intuitionistic modal logics CK and IK](intuitionistic-modal-logics-ck-and-ik.md)
 - [ALC as multimodal K_m](alc-as-multimodal-k-m.md)

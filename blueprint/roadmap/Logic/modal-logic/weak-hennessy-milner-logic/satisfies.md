@@ -1,0 +1,3 @@
+# Weak satisfaction of observation formulas
+
+For a labelled transition system with a designated silent label $\tau$, satisfaction of an [observation formula](observation-formula.md) at a state is defined by recursion: $\top$ holds everywhere; $\neg\varphi$ holds when $\varphi$ does not; $\varphi \wedge \psi$ holds when both do; and $\langle a\rangle\varphi$ holds at $s$ when some state $s'$ satisfying $\varphi$ is reached from $s$ by a weak $a$-transition. For a label $a \ne \tau$, a weak $a$-transition is zero or more $\tau$-steps, one $a$-step, then zero or more $\tau$-steps; for $a = \tau$ it is zero or more $\tau$-steps in total. In particular $\langle\tau\rangle\top$ holds at every state, even one with no transitions at all, through the empty path.

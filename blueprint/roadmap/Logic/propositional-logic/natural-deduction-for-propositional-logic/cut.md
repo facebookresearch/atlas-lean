@@ -1,0 +1,3 @@
+# Cut rule for derivations
+
+Propositions over an atom type with decidable equality are built from atoms by $\wedge$, $\vee$ and $\to$; there is no primitive $\bot$ or $\top$. A theory $T$ is a set of propositions, and $T$ derives a sequent $\Gamma \vdash A$, for a finite set $\Gamma$ of propositions, by natural deduction with the members of $T$ as axioms. Given a derivation of $\Gamma \vdash A$ and a derivation of $\Delta \cup \{A\} \vdash B$, both in $T$, the cut rule produces a derivation of $\Gamma \cup \Delta \vdash B$ in $T$, by implication introduction on $A$ followed by implication elimination. This removes the hypothesis $A$; it is not substitution of the first derivation into the second.

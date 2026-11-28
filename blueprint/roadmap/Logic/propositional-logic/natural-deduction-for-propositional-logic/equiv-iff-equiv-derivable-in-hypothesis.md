@@ -1,0 +1,3 @@
+# Equivalent propositions are equally strong as hypotheses
+
+Propositions over an atom type with decidable equality are built from atoms by $\wedge$, $\vee$ and $\to$; there is no primitive $\bot$ or $\top$. A theory $T$ is a set of propositions, and $T$ derives a sequent $\Gamma \vdash A$, for a finite set $\Gamma$ of propositions, by natural deduction with the members of $T$ as axioms. Propositions $A$ and $B$ are equivalent in $T$ (each derives the other as a single hypothesis) if and only if, for every context $\Gamma$ and every proposition $C$, $T$ derives $\Gamma \cup \{A\} \vdash C$ exactly when it derives $\Gamma \cup \{B\} \vdash C$.

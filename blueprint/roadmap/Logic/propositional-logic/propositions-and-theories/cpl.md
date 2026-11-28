@@ -1,0 +1,3 @@
+# Classical propositional logic
+
+For any atom type with a designated bottom atom $\bot$, propositions are built from atoms by $\wedge$, $\vee$ and $\to$, there is no primitive $\bot$ or $\top$ other than that atom, and $\neg A$ is $A \to \bot$. A theory is a set of propositions. Classical propositional logic is the theory $\{\neg\neg A \to A : A \text{ a proposition}\}$ of all double-negation-elimination instances. It is not the intuitionistic theory plus another schema: for example $\bot \to \bot$ is an explosion instance but not syntactically a double-negation-elimination instance. Explosion is derivable from this theory. No decidability of equality of atoms is needed for this definition; the derivation calculus that uses theories assumes it separately.

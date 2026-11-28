@@ -1,0 +1,46 @@
+# Natural deduction for propositional logic
+
+- [Contexts of propositions](ctx.md)
+- [Substitution in a context](subst.md)
+- [Sequents](sequent.md)
+- [Derivations in a theory](derivation.md)
+- [Equivalence of propositions by derivations](equiv.md)
+- [Forward direction of an equivalence](mp.md)
+- [Reverse direction of an equivalence](mpr.md)
+- [Equivalence of propositions in a theory](equiv-2.md)
+- [Equivalence of propositions in minimal logic](equiv-3.md)
+
+## Operations on derivations
+
+- [Weakening for derivations](weak.md)
+- [Weakening the theory of a derivation](weak-theory.md)
+- [Weakening the context of a derivation](weak-ctx.md)
+- [Weakening for derivability](weak-2.md)
+- [Weakening the theory for derivability](weak-theory-2.md)
+- [Weakening the context for derivability](weak-ctx-2.md)
+- [Cut rule for derivations](cut.md)
+- [Cut rule for derivability](cut-2.md)
+- [Cutting away derivable hypotheses](cut-away.md)
+- [Substituting derivations for hypotheses](subs.md)
+- [Substituting propositions for atoms in a derivation](subst-atom.md)
+
+## Properties of equivalence
+
+- [Derivation of the canonical tautology](derivation-top.md)
+- [Changing the conclusion along an equivalence](map-equiv-conclusion.md)
+- [Replacing a hypothesis along an equivalence](map-equiv-hypothesis.md)
+- [Reflexivity of equivalence](refl.md)
+- [Symmetry of equivalence](symm.md)
+- [Transitivity of equivalence](trans.md)
+- [Equivalent propositions are derivable from the same contexts](equiv-iff-equiv-derivable-in.md)
+- [Equivalent propositions are equally strong as hypotheses](equiv-iff-equiv-derivable-in-hypothesis.md)
+- [Equivalence of propositions is an equivalence relation](equiv-equivalence.md)
+- [Setoid of propositions under equivalence](proposition-setoid.md)
+- [Ex falso in an arbitrary context](efq-ctx.md)
+- [Ex falso as a derived rule](efq-rule.md)
+- [Any proposition follows from contradictory hypotheses](contra.md)
+- [Proof by contradiction](by-contra.md)
+- [Excluded middle in a classical theory](lem.md)
+- [Peirce's law in a classical theory](pierce.md)
+- [Axioms of excluded middle](lem-2.md)
+- [Axioms of Peirce's law](pierce-2.md)

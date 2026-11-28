@@ -6,9 +6,13 @@ Linear and branching-time temporal logics interpreted over infinite words and tr
 - [Linear temporal logic](linear-temporal-logic/README.md)
 - [Büchi automata for a fragment of linear temporal logic](b-chi-automata-for-a-fragment-of-linear-temporal/README.md)
 - [CTL*](ctl/README.md)
+- [Executable LTL validity and satisfiability](executable-ltl-validity-and-satisfiability/README.md)
 - [Linear-time μ-calculus](linear-time-calculus/README.md)
 - [Model checking for computation tree logic](model-checking-for-computation-tree-logic/README.md)
 - [Model checking for linear temporal logic](model-checking-for-linear-temporal-logic/README.md)
+- [Temporal induction and invariant principles for LTL](temporal-induction-and-invariant-principles-for/README.md)
+- [The run semantics of LTL agrees with the ω-word semantics](the-run-semantics-of-ltl-agrees-with-the-word-se/README.md)
+- [Vardi-Wolper state bound for the LTL tableau](vardi-wolper-state-bound-for-the-ltl-tableau/README.md)
 
 - [Continuous stochastic logic](continuous-stochastic-logic.md)
 - [Probabilistic model checking](probabilistic-model-checking/README.md)

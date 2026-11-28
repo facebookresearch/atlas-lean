@@ -9,13 +9,17 @@
 
 - [Negation of epistemic formulas](not.md)
 - [Disjunction of epistemic formulas](or.md)
+- [Conjunction encoded with implication and falsity](and.md)
 
 ## Epistemic
 
+- [One accessibility step by a group member](group-rel.md)
+- [Satisfaction relative to a set of worlds](sat-at.md)
 - [Satisfaction in an epistemic model](sat.md)
 - [Validity in an epistemic model](valid.md)
 - [Falsity is not valid in an epistemic model](not-valid-bot.md)
 - [Satisfaction of a disjunction](sat-or.md)
+- [Satisfaction of an encoded conjunction](sat-and.md)
 - [Distribution axiom K](valid-know-dist.md)
 - [Truth axiom T](valid-know-truth.md)
 - [Positive introspection axiom 4](valid-know-pos.md)

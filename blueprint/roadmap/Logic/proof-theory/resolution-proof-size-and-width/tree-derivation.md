@@ -1,0 +1,3 @@
+# Tree-like resolution derivations
+
+A clause is a finite list of literals $(x, s)$, a variable $x \in \mathbb{N}$ with a sign $s$, repeats allowed, and a CNF formula $\varphi$ is a list of clauses. The resolvent of clauses $C$ and $D$ on the pivot $x$ is the list $C$ with every occurrence of the literal $x$ removed, followed by the list $D$ with every occurrence of $\neg x$ removed. A tree-like resolution derivation of a clause from $\varphi$ is either an input clause of $\varphi$, or a resolution step applied to tree derivations of clauses $C$ and $D$ with $x \in C$ and $\neg x \in D$, deriving their resolvent on $x$. There is no weakening rule, and the derivation is data: the same clause may be derived in several branches.

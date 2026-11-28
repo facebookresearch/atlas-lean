@@ -1,0 +1,3 @@
+# Faithful update assignments
+
+Let `σ` be a finite set of atoms with decidable equality, and represent each propositional formula over `σ` by its finite set of models (interpretations `σ → Bool`). A faithful update assignment (Katsuno–Mendelzon, §3.2) gives, for each interpretation `I`, a relation `J ≤_I K` on interpretations that is reflexive and transitive but not necessarily total, such that `I` is strictly below every other interpretation: `I ≤_I J` and not `J ≤_I I` whenever `I ≠ J`. Unlike a faithful assignment for revision, the order is indexed by an interpretation rather than by a model set, and it need not be total.

@@ -1,0 +1,3 @@
+# Ex falso in an arbitrary context
+
+Propositions over an atom type with decidable equality are built from atoms by $\wedge$, $\vee$ and $\to$; there is no primitive $\bot$ or $\top$. A theory $T$ is a set of propositions, and $T$ derives a sequent $\Gamma \vdash A$, for a finite set $\Gamma$ of propositions, by natural deduction with the members of $T$ as axioms. A designated bottom atom $\bot$ is fixed, and $\neg A$ is $A \to \bot$. A theory $T$ is intuitionistic when it derives $\bot \to A$ for every $A$. For an intuitionistic theory $T$, every context $\Gamma$ derives the implication $\bot \to A$ in $T$, for every $A$. This is the implication itself, not the separate rule that turns a derivation of $\bot$ into one of $A$.

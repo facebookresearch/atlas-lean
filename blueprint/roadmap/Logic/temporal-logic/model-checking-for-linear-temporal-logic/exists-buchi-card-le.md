@@ -14,6 +14,8 @@ tableau, closer to the direct proof of Vardi and Wolper (1994). Together with th
 emptiness test, this gives the exponential-time procedures for LTL satisfiability and model
 checking; the sharper PSPACE bounds are due to Sistla and Clarke.
 
+
+Taking the alphabet to be the sets of atoms, with an atom true at a letter exactly when it belongs to it, gives the Vardi–Wolper bound in the form of M. Y. Vardi and P. Wolper (LICS 1986): a finite-state Büchi automaton over sets of atoms for $\varphi$ with at most $2^{2|\varphi|} = 4^{|\varphi|}$ states. The concrete constant belongs to an encoding with one Boolean per syntactic occurrence; the source states the bound in asymptotic form.
 ## Informally uses
 
 - [Exponential state bound for the Büchi automaton of an LTL formula](nat-card-buchi-state-le.md):
