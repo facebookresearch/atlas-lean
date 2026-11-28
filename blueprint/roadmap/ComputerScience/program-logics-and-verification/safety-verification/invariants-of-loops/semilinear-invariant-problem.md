@@ -29,4 +29,3 @@ The Monniaux problem asks, for a class of programs and an abstract domain of can
 ## Sources
 
 - Nathanaël Fijalkow, Engel Lefaucheux, Pierre Ohlmann, Joël Ouaknine, Amaury Pouly and James Worrell, "On the Monniaux Problem in Abstract Interpretation", Static Analysis (SAS 2019), Lecture Notes in Computer Science 11822, pp. 162–180, 2019, <https://doi.org/10.1007/978-3-030-32304-2_9>; Sections 1 and 3 of arXiv:1907.08257v1, <https://arxiv.org/abs/1907.08257v1>.
-- The same authors, "On the Monniaux Problem in Abstract Interpretation", Journal of the ACM 72(2), 51 pages, 2025, <https://doi.org/10.1145/3704632>; extended version, not read (the statements rest on the version read of the first source above).

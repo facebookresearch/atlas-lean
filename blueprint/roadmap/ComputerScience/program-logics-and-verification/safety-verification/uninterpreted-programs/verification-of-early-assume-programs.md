@@ -13,9 +13,9 @@ The verification problem stays undecidable for uninterpreted programs all of who
 
 - [Two-counter machines are universal](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 
-## Expansion
+## Proof sketch
 
-The proof is a reduction from the halting problem for two-counter machines. A fake counter $c^*$ advances in every simulated step and stays ahead of the real counters, and all equality assumptions (that $g$ inverts $f$, and auxiliary equalities used for zero tests) are made on $c^*$, so they are early; the real simulation makes only disequality assumptions. These executions are not memoizing. By contrast, the problem is decidable for coherent programs, which are both memoizing and have early assumes. A good expansion links a page for the undecidability of halting of two-counter machines started with both counters at $0$, which follows from the linked universality theorem together with the undecidability of halting of Turing machines on the blank tape.
+The proof is a reduction from the halting problem for two-counter machines. A fake counter $c^*$ advances in every simulated step and stays ahead of the real counters, and the equality assumptions (that $g$ inverts $f$, and auxiliary equalities used for zero tests) are made on $c^*$, except the single auxiliary equality $s_1(0) = s_2(0)$ on $0$ (Appendix B.1 of the source), so they are early; the real simulation makes only disequality assumptions. These executions are not memoizing. By contrast, the problem is decidable for coherent programs, which are both memoizing and have early assumes. The halting problem for two-counter machines started with both counters at $0$ is stated on the linked universality page.
 
 ## Sources
 

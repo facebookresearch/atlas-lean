@@ -16,7 +16,7 @@ In part 1 the axiom set is fixed and even a single coherent execution cannot be 
 
 ## Proof depends on
 
-- [The Thue word problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-thue-wp.md)
+- [The uniform word problem for Thue systems is undecidable](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-thue-wp.md)
 - [The Post correspondence problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
 
 ## Expansion

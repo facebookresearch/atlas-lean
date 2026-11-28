@@ -6,7 +6,7 @@ A control improvisation problem asks for a random generator of words accepted by
 
 **Theorem (Fremont, Donzé, Seshia and Wessel).**
 
-1. The set of feasible control improvisation instances, with $\alpha$ ranging over computable predicates, each given by a Turing machine that halts on every input, is computably enumerable but not computable (Corollary 3.4 of the source).
+1. For instances whose $\alpha$ is given by a Turing machine that halts on every input, there is a procedure that, given such an instance, halts exactly when the instance is feasible, and no procedure decides feasibility for all such instances (Corollaries 3.3 and 3.4 of the source). The set of all such instances that are feasible is not itself computably enumerable, since it would then contain a fixed feasible instance exactly when the given machine is total.
 2. For each of the classes $\mathcal{P}_1$ and $\mathcal{P}_2$, determining whether an instance is feasible is undecidable.
 
 Feasibility holds exactly when $|I| \ge 1/\rho$ and $|A| \ge (1 - \epsilon)/\rho$. When both components are given by DFAs, the same paper gives a polynomial-time improvisation scheme.

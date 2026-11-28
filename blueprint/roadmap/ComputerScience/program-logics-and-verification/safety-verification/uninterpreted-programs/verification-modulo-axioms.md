@@ -21,7 +21,7 @@ None.
 
 ## Expansion
 
-With $\mathcal{A} = \emptyset$ every execution coherent in the earlier sense is coherent modulo $\emptyset$, but not conversely: the early-assumes condition here only forbids dropped terms from gaining new equivalences, so an equality assume made after dropping superterms that are already equivalent is allowed (the Remark and Example 3 in Section 4.2 of the source). A separate difference is that here all assumes, not only equality assumes, must be early. Coherent verification stays decidable modulo several axiom classes, such as relations required to be reflexive, symmetric, transitive, partial or total orders, and functions required to be commutative or idempotent.
+With $\mathcal{A} = \emptyset$ every execution coherent in the earlier sense is coherent modulo $\emptyset$, but not conversely: the early-assumes condition here only forbids dropped terms from gaining new equivalences, so an equality assume made after dropping superterms that are already equivalent is allowed (the Remark in Section 4.2 of the source, and Example 3 there, which appears in arXiv:1910.10889v2 only). A separate difference is that here all assumes, not only equality assumes, must be early. Coherent verification stays decidable modulo several axiom classes, such as relations required to be reflexive, symmetric, transitive, strict partial orders or strict total orders (the latter with a modified notion of executions, Theorems 6 and 7), and functions required to be commutative or idempotent.
 
 ## Sources
 

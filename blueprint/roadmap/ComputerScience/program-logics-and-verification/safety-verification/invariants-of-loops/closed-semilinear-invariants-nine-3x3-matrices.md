@@ -13,7 +13,7 @@ The number of matrices ($9$) and the dimension ($3$) are fixed; only the entries
 
 ## Proof depends on
 
-None.
+- [König's lemma for finitely branching graphs](../../../concurrent-systems-and-protocols/petri-nets/decision-procedures/konig-s-lemma-for-finitely-branching-graphs.md)
 
 ## Expansion
 
@@ -23,9 +23,8 @@ $$
 M_i = \begin{bmatrix} 1 & [u^{(i)}] & -[v^{(i)}] \\ 0 & 4^{-|u^{(i)}|} & 0 \\ 0 & 0 & 4^{-|v^{(i)}|} \end{bmatrix}, \qquad x = (0, 1, 1), \quad y = (0, 0, 0),
 $$
 
-so that a product along a finite word $w$ sends $x$ to $([u^{(w)}] - [v^{(w)}], 4^{-|u^{(w)}|}, 4^{-|v^{(w)}|})$. If the instance has an infinite solution, the images of $x$ along its prefixes converge to $y$, so every closed invariant containing $x$ contains $y$. If it has none, König's lemma gives a bound $n_0$ such that every infinite word shows a mismatch within the first $n_0$ letters, and the union of the finitely many images of $x$ along words of length at most $n_0 + 1$ with the closed semilinear set $\{(s, c, d) : |s| \ge 4(c + d) + 4^{-n_0-1},\ c \ge 0,\ d \ge 0\}$ is a separating invariant. A good expansion links pages for the undecidability of the infinite Post correspondence problem for nine pairs (Halava and Harju) and for König's lemma.
+so that a product along a finite word $w$ sends $x$ to $([u^{(w)}] - [v^{(w)}], 4^{-|u^{(w)}|}, 4^{-|v^{(w)}|})$. If the instance has an infinite solution, the images of $x$ along its prefixes converge to $y$, so every closed invariant containing $x$ contains $y$. If it has none, König's lemma gives a bound $n_0$ such that every infinite word shows a mismatch within the first $n_0$ letters, and the union of the finitely many images of $x$ along words of length at most $n_0 + 1$ with the closed semilinear set $\{(s, c, d) : |s| \ge 4(c + d) + 4^{-n_0-1},\ c \ge 0,\ d \ge 0\}$ is a separating invariant. A good expansion links a page for the undecidability of the infinite Post correspondence problem for nine pairs (Halava and Harju).
 
 ## Sources
 
 - Nathanaël Fijalkow, Engel Lefaucheux, Pierre Ohlmann, Joël Ouaknine, Amaury Pouly and James Worrell, "On the Monniaux Problem in Abstract Interpretation", Static Analysis (SAS 2019), Lecture Notes in Computer Science 11822, pp. 162–180, 2019, <https://doi.org/10.1007/978-3-030-32304-2_9>; Theorem 8, Theorem 9 and the proof of Theorem 8 in Section 4 of arXiv:1907.08257v1, <https://arxiv.org/abs/1907.08257v1>.
-- Vesa Halava and Tero Harju, "Undecidability of infinite Post correspondence problem for instances of size 9", RAIRO – Theoretical Informatics and Applications 40(4), pp. 551–557, 2006, <https://doi.org/10.1051/ita:2006039>; the source problem of the reduction, not read: its undecidability for nine pairs is taken as stated in the proof of Theorem 8 of the version read of the first source above.

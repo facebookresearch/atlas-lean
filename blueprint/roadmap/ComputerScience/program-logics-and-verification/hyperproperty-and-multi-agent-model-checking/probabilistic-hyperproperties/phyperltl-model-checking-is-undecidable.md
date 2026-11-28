@@ -12,7 +12,7 @@ with policy variables $\pi_i$, state variables $s_i$, $n \le m$, quantifiers $Q_
 
 **Theorem (Pontiggia, Macák, Andriushchenko, Chiari and Češka).** PHyperLTL model checking is undecidable.
 
-The proof uses a formula with a single probability constraint; the authors note that the earlier proof for HyperPCTL uses nested probability operators, which PHyperLTL lacks, and that the formula of the proof for PHL can be rewritten in PHyperLTL only with at least two probability constraints. As a corollary, planning for factored, observation-independent, locally fully observable decentralized MDPs under the infinite-horizon total reward criterion is undecidable.
+The proof uses a formula with a single probability constraint; the authors note that the earlier proof for HyperPCTL uses nested probability operators, which PHyperLTL lacks, and that the formula of the proof for PHL can be rewritten as a PHyperLTL formula containing at least two probability constraints. As a corollary, planning for factored, observation-independent, locally fully observable decentralized MDPs under the infinite-horizon total reward criterion is undecidable.
 
 ## Depends on
 
