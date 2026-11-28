@@ -15,6 +15,8 @@ basis of magic-state distillation. The three-qubit bit-flip code and Shor's nine
 - [The five-qubit code is perfect](five-qubit-code-is-perfect.md)
 - [The fifteen-qubit quantum Reed–Muller code](fifteen-qubit-quantum-reed-muller-code.md)
 - [Transversal $T$ preserves the fifteen-qubit code](transversal-t-preserves-the-fifteen-qubit-code.md)
+- [Weights in the shortened Reed–Muller codes of the fifteen-qubit code](weights-in-the-shortened-reed-muller-codes-of-the-fifteen-qubit-code.md)
+- [The $[[2m, 2m - 2, 2]]$ error-detecting codes](error-detecting-codes-of-even-length.md)
 
 ## Related topics
 

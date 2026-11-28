@@ -20,13 +20,13 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 - [Evolutionary conservation scores](evolutionary-conservation-scores/README.md)
 - [Consistency of minimum-distance GTR estimators](consistency-of-minimum-distance-gtr-estimators/README.md)
 - [Consistency of the GTR maximum-likelihood estimator](consistency-of-the-gtr-maximum-likelihood-estima/README.md)
-- [Identifiability of the GTR model](identifiability-of-the-gtr-model/README.md)
+- [Identifiability and estimation of the GTR model](gtr-identifiability-and-estimation/README.md)
 - [Kimura two-parameter model](kimura-two-parameter-model/README.md)
-- [Log-det estimation of the GTR rate matrix](log-det-estimation-of-the-gtr-rate-matrix/README.md)
 - [Quartet support and determination of trees by quartets](quartet-support-and-determination-of-trees-by-qu/README.md)
-- [Sampling model for log-det estimation of the GTR rate matrix](sampling-model-for-log-det-estimation-of-the-gtr/README.md)
 
 - [Phylogenetic inference and comparison](inference-and-comparison/README.md)
+- [Phylogenetic networks](phylogenetic-networks/README.md)
+- [Tree shape and balance](tree-shape-and-balance/README.md)
 
 - [Phylogenetic invariants](phylogenetic-invariants/README.md)
 - [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)

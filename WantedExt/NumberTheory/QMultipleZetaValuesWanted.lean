@@ -53,16 +53,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Block indices for Schlesinger–Zudilin qMZVs.** For a list of pairs of natural numbers
-$(k_1, d_1), \dots, (k_r, d_r)$, the block index is the index
-$(k_1, \{0\}^{d_1 - 1}, \dots, k_r, \{0\}^{d_r - 1})$ obtained by concatenating, for
-$j = 1, \dots, r$, the entry $k_j$ followed by $d_j - 1$ zeros (no zeros when $d_j = 0$).
-
-Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
-Article A6, Theorem 4 and Theorem 5 (SZ duality), index notation. -/
-public def szBlockIndex (kd : List (ℕ × ℕ)) : List ℕ :=
-  (kd.map fun p => p.1 :: List.replicate (p.2 - 1) 0).flatten
-
 /-- **Block index of the empty list.** The block index of the empty list of pairs is the empty
 index.
 
@@ -106,20 +96,6 @@ public theorem_wanted coeff_szQMZV_szBlockIndex_eq_sum_choose (r : ℕ) (k d : F
         ∏ j : Fin r, ((((mn.2 j - 1).choose (k j - 1)) *
           ((mn.1 j - (if h : j.val + 1 < r then mn.1 ⟨j.val + 1, h⟩ else 0) - 1).choose
             (d j - 1)) : ℕ) : ℚ)
-
-/-- **Schlesinger–Zudilin duality.** Let $\zeta_q^{SZ}$ denote the Schlesinger–Zudilin qMZV, let
-$(k_1, d_1), \dots, (k_r, d_r)$ be pairs of natural numbers with $k_j \ge 1$ and $d_j \ge 1$
-for all $j$, and let $\{0\}^n$ denote $n$ zeros. Then
-$$\zeta_q^{SZ}(k_1, \{0\}^{d_1 - 1}, \dots, k_r, \{0\}^{d_r - 1}) =
-\zeta_q^{SZ}(d_r, \{0\}^{k_r - 1}, \dots, d_1, \{0\}^{k_1 - 1}).$$
-That is, $\zeta_q^{SZ}$ takes the same value at the block index of the list of pairs and at
-the block index of the reversed list with each pair swapped.
-
-Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
-Article A6, Theorem 5 (SZ duality, Zhao) (`integers-2024-A6-thm-5`). -/
-public theorem_wanted szQMZV_szBlockIndex_dual (kd : List (ℕ × ℕ))
-    (hkd : ∀ p ∈ kd, 1 ≤ p.1 ∧ 1 ≤ p.2) :
-    szQMZV (szBlockIndex kd) = szQMZV (szBlockIndex (kd.reverse.map Prod.swap))
 
 /-- **Class numbers of finite general linear groups via OOZ-qMZVs.** Let $K$ be a finite field
 with $c$ elements and, for $n \ge 0$, let $a_{n,K}$ be the number of conjugacy classes of

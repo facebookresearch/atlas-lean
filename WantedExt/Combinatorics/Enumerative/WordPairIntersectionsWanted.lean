@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.MvPowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.WeaklyDecreasingWordPairs
+public import MathlibExt.Combinatorics.Enumerative.WeaklyDecreasingWordPairsBivariate
 public import MathlibExt.Combinatorics.Enumerative.WordPairIntersections
 public import MathlibExt.Combinatorics.Enumerative.WordPairOverlap
 
@@ -53,25 +54,6 @@ public theorem_wanted weaklyDecreasingNonIntersectingPairs_card_eq_coeff (k n r 
         Antitone p.2 ∧ Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ) =
       ∑ j ∈ Finset.Icc 1 (k - 1), (k.choose j : ℚ) * coeff n (X ^ j * ((1 - X) ^ j)⁻¹ : ℚ⟦X⟧) *
         coeff r ((((1 - X) ^ (k - j))⁻¹ - 1 : ℚ⟦X⟧))
-
-/-- **Generating function of non-intersecting pairs of weakly decreasing words.** Let $k$ be a
-natural number and order an alphabet of $k$ letters. In the ring of formal power series in $x$
-and $y$ over $\mathbb{Q}$ let
-$f(x, y) = \bigl(x (1-x)^{-1} + (1-y)^{-1}\bigr)^k - (1-x)^{-k} - (1-y)^{-k} + 1$.
-Then for all natural numbers $n$ and $r$, the coefficient of $x^n y^r$ in $f$ is $0$ if $n = 0$
-or $r = 0$, and otherwise equals the number of pairs $(u, v)$ of weakly decreasing words over this
-alphabet, $u$ of length $n$ and $v$ of length $r$, such that no letter occurs in both.
-
-Source: Aubrey Blecher and Arnold Knopfmacher, *Intersections in Pairs of Words*, INTEGERS 24 (2024),
-Article A107, Corollary 4 (`integers-2024-A107-cor-4`). -/
-public theorem_wanted weaklyDecreasingNonIntersectingPairs_generatingFunction (k n r : ℕ) :
-    MvPowerSeries.coeff (Finsupp.single 0 n + Finsupp.single 1 r)
-        ((MvPowerSeries.X 0 * (1 - MvPowerSeries.X 0)⁻¹ + (1 - MvPowerSeries.X 1)⁻¹) ^ k -
-          ((1 - MvPowerSeries.X 0)⁻¹) ^ k - ((1 - MvPowerSeries.X 1)⁻¹) ^ k + 1 :
-          MvPowerSeries (Fin 2) ℚ) =
-      if 1 ≤ n ∧ 1 ≤ r then (((Finset.univ : Finset ((Fin n → Fin k) × (Fin r →
-          Fin k))).filter fun p => Antitone p.1 ∧ Antitone p.2 ∧
-          Disjoint (Finset.univ.image p.1) (Finset.univ.image p.2)).card : ℚ) else 0
 
 end
 
