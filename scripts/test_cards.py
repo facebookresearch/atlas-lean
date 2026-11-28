@@ -40,8 +40,8 @@ def af(number: int) -> str:
 # where each chain ends, what holds a moved or retired address, a replacement's liveness, an id two articles have, a
 # replacement whose address the site cannot serve, and a checkout that is no Git one. Each is matched whole.
 TREE_DEPENDENT = re.compile("|".join(rf"(?:{pattern})" for pattern in (
-    r"card-moves\.jsonl: the (?:page|folder) \S+ moved but is still there",
-    r"card-moves\.jsonl: \S+ moved as a (?:page|folder), and another article's (?:page|folder) now holds the "
+    r"\S+:\d+: the (?:page|folder) \S+ moved but is still there",
+    r"\S+:\d+: \S+ moved as a (?:page|folder), and another article's (?:page|folder) now holds the "
     r"address",
     r"card-moves\.jsonl: \S+ ends at \S+, but \S+ is (?:no statement page|\S+)",
     r"card-moves\.jsonl: the folder \S+ ends at \S+, but \S+ is (?:no folder page|\S+)",
@@ -1890,6 +1890,538 @@ class Moves(Vault):
             self.assertTrue(any(expected in error for error in errors), (expected, errors))
 
 
+class FolderRemoval(Vault):
+    """The helpers of the tests of a folder page's removal: a base commit's annotations, the ledger, what the check and
+    the site hook say."""
+
+    g = "Algebra/groups"
+
+    def base(self, moved: dict[str, str] | None = None, gone: dict[str, dict] | None = None) -> dict[Path, dict]:
+        """The base commit's annotations: the checkout's, with each page of ``moved`` (new -> old path below roadmap/,
+        file name included) at its old path, and the pages of ``gone`` (path -> fields), which the change removed."""
+        self.write()
+        base = cards.read_annotations()
+        for new, old in (moved or {}).items():
+            row = dict(base.pop((wiki.ROADMAP / new).resolve()))
+            row["subject"] = [{"type": "generic", "uri": f"../roadmap/{old}"}]
+            base[(wiki.ROADMAP / old).resolve()] = row
+        for path, fields in (gone or {}).items():
+            base[(wiki.ROADMAP / path).resolve()] = {"subject": [{"type": "generic", "uri": f"../roadmap/{path}"}],
+                                                     **fields}
+        return base
+
+    def ledger(self, frozen: list[dict], fragments: dict[str, list[dict]] | None = None,
+               published: bool = True) -> card_moves.BaseLedger | None:
+        """Write the ledger, its frozen file and fragments; the base's ledger is all of it when ``published`` (rows of
+        earlier changes), none of it otherwise (rows of this change, each replayed against the base)."""
+        (wiki.ROOT / "scripts" / cards.MOVES).write_text("".join(json.dumps(row) + "\n" for row in frozen))
+        for name, rows in (fragments or {}).items():
+            folder = wiki.ROOT / cards.FRAGMENTS
+            folder.mkdir(exist_ok=True)
+            (folder / name).write_text("".join(json.dumps(row) + "\n" for row in rows))
+        if not published:
+            return None
+        files, problems = card_moves.read_ledger(wiki.ROOT / "scripts")
+        self.assertEqual(problems, [])
+        return card_moves.BaseLedger({path: card_moves.blob_id(data) for path, data in files})
+
+    def note(self, folder: str, number: int, route: str, where: str, more: int = 0, said: str | None = None) -> str:
+        how = (f"as {said} says" if said else "the route the site hook infers from the ledger in its order, from the "
+               f"rows that leave addresses below it ({where}{f' and {more} more' if more else ''})")
+        return (f"{cards.MOVES}: {folder} ({af(number)}) is emptied and its folder page is gone; its old address will "
+                f"lead to {route}, {how}")
+
+    def nowhere(self, folder: str, number: int) -> str:
+        return (f"{cards.MOVES}: {folder} ({af(number)}) is emptied and its folder page is gone, but no row leaves an "
+                "address below it and none moves or retires it, so its old address would lead nowhere: add the row of "
+                "the statement that moved out of it, or keep its folder page")
+
+    def gone(self, address: str, number: int) -> str:
+        return (f"{cards.MOVES}: {address} ({af(number)}) is gone, and no row moves it; an article keeps its address "
+                "or moves with its row")
+
+    def published(self) -> tuple[dict[str, str], dict[str, str], object]:
+        """What the site hook publishes for the checkout as built: render's index of its roadmap (cards.render_index),
+        the roadmap as the site source, the ledger's files and the replacements the annotations give; its explorer
+        table, the target of each folder notice by folder, and the site."""
+        hook = load_hook()
+        files, problems = card_moves.read_ledger(wiki.ROOT / "scripts")
+        self.assertEqual(problems, [])
+        ledger = hook.read_ledger([(path, data.decode()) for path, data in files])
+        replacements = {row["id"]: ("folder" if page.name == "README.md" else "page", cards.node_id(page))
+                        for page, row in cards.read_annotations().items()
+                        if isinstance(row.get("id"), str) and page.is_file()}
+        site = hook.Site()
+        hook.redirects(site, ledger, hook.Pages(cards.render_index(hook.ROOT)), replacements, wiki.VAULT)
+        script = site.files.get(hook.SCRIPT, "")
+        table = json.loads(script.split("var moves = ", 1)[1].split(", own = ", 1)[0]) if script else {}
+        notices = {path[len("roadmap/"):-len("/README.md")]: re.search(r'<p><a href="([^"]+)">Continue', text).group(1)
+                   for path, text in site.files.items() if path.startswith("roadmap/") and path.endswith("/README.md")}
+        return table, notices, site
+
+
+
+class EmptiedFolders(FolderRemoval):
+    """A plain folder's page whose folder is emptied, holding no page at any depth, may go with the change that empties
+    it or after it, when nothing else holds its address, a row of the ledger leaves an address below it, and the site
+    hook keeps a route for its old address: the check then says where that route leads, as the hook's own replay of
+    the ledger gives it (docs/cards.md#move-ledger). Otherwise its folder page stays."""
+
+    def moved_out_of_q(self) -> list[dict]:
+        """The folder p/q/r and its page moved to s by an earlier change, leaving p/q with its folder page alone (the
+        shape of #9947); p stays."""
+        g = self.g
+        self.folder(f"{g}/p/README.md", "P", ["keep.md"], {"id": af(30)})
+        self.leaf(f"{g}/p/keep.md", 31)
+        self.folder(f"{g}/s/README.md", "S", ["x.md"], {"id": af(41)})
+        self.leaf(f"{g}/s/x.md", 42)
+        return [{"folder": f"{g}/p/q/r", "to": f"{g}/s", "article_id": af(41)},
+                {"page": f"{g}/p/q/r/x", "to": f"{g}/s/x", "article_id": af(42)}]
+
+    def test_an_emptied_folder_s_page_may_go_once_a_row_leaves_an_address_below_it(self) -> None:
+        # The shape of #10866: p/q's folder page goes, with its annotation row and its line in p's page; the row that
+        # left p/q/r is published, an earlier change's. Its old address will lead to p, as the hook publishes it.
+        g = self.g
+        rows = self.moved_out_of_q()
+        base = self.base(gone={f"{g}/p/q/README.md": {"id": af(40)}})
+        errors, warnings = cards.check(base_ledger=self.ledger(rows), base_annotations=base)
+        self.assertEqual(errors, [])
+        self.assertIn(self.note(f"{g}/p/q", 40, f"{g}/p", "card-moves.jsonl:2", 1), warnings)
+        table, notices, _ = self.published()
+        self.assertEqual((table[f"{g}/p/q"], notices[f"{g}/p/q"]), (f"{g}/p", "../index.html"))
+
+    def test_an_emptied_folder_s_page_with_no_row_below_it_stays(self) -> None:
+        # No row leaves an address below p/q, and none moves or retires it: its old address would get no route.
+        g = self.g
+        self.moved_out_of_q()
+        base = self.base(gone={f"{g}/p/q/README.md": {"id": af(40)}})
+        errors, warnings = cards.check(base_ledger=self.ledger([]), base_annotations=base)
+        self.assertEqual(errors, [self.nowhere(f"{g}/p/q", 40)])
+        self.assertFalse([warning for warning in warnings if "is emptied" in warning], warnings)
+
+    def test_a_folder_page_whose_folder_still_holds_a_page_stays(self) -> None:
+        g = self.g
+        rows = self.moved_out_of_q()
+        self.leaf(f"{g}/p/q/deep/left.md", 43)
+        base = self.base(gone={f"{g}/p/q/README.md": {"id": af(40)}, f"{g}/p/q/deep/README.md": {"id": af(44)}})
+        errors, warnings = cards.check(base_ledger=self.ledger(rows), base_annotations=base)
+        self.assertIn(self.gone(f"{g}/p/q", 40), errors)
+        self.assertFalse([warning for warning in warnings if "is emptied" in warning], warnings)
+
+    def test_an_emptied_parent_and_an_emptied_child_may_go_with_the_change_that_empties_them(self) -> None:
+        # The shape of #7943 and #9949: the change moves the folder p/c/d and its page out to t, and removes the folder
+        # pages of p/c and p, both emptied; its rows leave addresses below both. Both lead to groups.
+        g = self.g
+        self.folder(f"{g}/t/README.md", "T", ["x.md"], {"id": af(52)})
+        self.leaf(f"{g}/t/x.md", 53)
+        self.leaf(f"{g}/u/y.md", 54)
+        self.folder(f"{g}/u/README.md", "U", ["y.md"], {"id": af(55)})
+        base = self.base(moved={f"{g}/t/README.md": f"{g}/p/c/d/README.md", f"{g}/t/x.md": f"{g}/p/c/d/x.md",
+                                f"{g}/u/y.md": f"{g}/p/y.md"},
+                         gone={f"{g}/p/README.md": {"id": af(50)}, f"{g}/p/c/README.md": {"id": af(51)}})
+        rows = [{"folder": f"{g}/p/c/d", "to": f"{g}/t", "article_id": af(52)},
+                {"page": f"{g}/p/c/d/x", "to": f"{g}/t/x", "article_id": af(53)},
+                {"page": f"{g}/p/y", "to": f"{g}/u/y", "article_id": af(54)}]
+        errors, warnings = cards.check(base_ledger=self.ledger(rows, published=False), base_annotations=base)
+        self.assertEqual(errors, [])
+        self.assertIn(self.note(f"{g}/p", 50, g, "card-moves.jsonl:3", 2), warnings)
+        self.assertIn(self.note(f"{g}/p/c", 51, g, "card-moves.jsonl:2", 1), warnings)
+        table, notices, _ = self.published()
+        self.assertEqual({folder: table[folder] for folder in (f"{g}/p", f"{g}/p/c")}, {f"{g}/p": g, f"{g}/p/c": g})
+
+    def test_a_row_in_a_fragment_alone_covers_an_emptied_folder(self) -> None:
+        g = self.g
+        rows = self.moved_out_of_q()
+        name = "20261120T000000Z-move-r.jsonl"
+        base = self.base(gone={f"{g}/p/q/README.md": {"id": af(40)}})
+        errors, warnings = cards.check(base_ledger=self.ledger([], {name: rows}), base_annotations=base)
+        self.assertEqual(errors, [])
+        self.assertIn(self.note(f"{g}/p/q", 40, f"{g}/p", f"{cards.FRAGMENTS}/{name}:2", 1), warnings)
+        # A fragment of this change, the base's ledger being an empty frozen file, covers it as well.
+        published = card_moves.BaseLedger({cards.FROZEN: card_moves.blob_id(b"")})
+        base = self.base(moved={f"{g}/s/README.md": f"{g}/p/q/r/README.md", f"{g}/s/x.md": f"{g}/p/q/r/x.md"},
+                         gone={f"{g}/p/q/README.md": {"id": af(40)}})
+        errors, warnings = cards.check(base_ledger=published, base_annotations=base)
+        self.assertEqual(errors, [])
+        self.assertIn(self.note(f"{g}/p/q", 40, f"{g}/p", f"{cards.FRAGMENTS}/{name}:2", 1), warnings)
+
+    def test_a_folder_whose_page_moves_out_while_its_siblings_stay_keeps_its_page(self) -> None:
+        g = self.g
+        self.folder(f"{g}/p/README.md", "P", ["b.md"], {"id": af(50)})
+        self.leaf(f"{g}/p/b.md", 61)
+        self.folder(f"{g}/u/README.md", "U", ["a.md"], {"id": af(70)})
+        self.leaf(f"{g}/u/a.md", 60)
+        base = self.base(moved={f"{g}/u/a.md": f"{g}/p/a.md"}, gone={})
+        base.pop((wiki.ROADMAP / f"{g}/u/README.md").resolve())
+        rows = [{"page": f"{g}/p/a", "to": f"{g}/u/a", "article_id": af(60)}]
+        self.assertEqual(cards.check(base_ledger=self.ledger(rows, published=False), base_annotations=base), ([], []))
+
+    def test_a_nest_only_regroup_keeps_the_parent_s_page(self) -> None:
+        g = self.g
+        self.folder(f"{g}/p/README.md", "P", ["s1/README.md", "s2/README.md"], {"id": af(50)})
+        self.folder(f"{g}/p/s1/README.md", "S1", ["a.md"], {"id": af(71)})
+        self.leaf(f"{g}/p/s1/a.md", 60)
+        self.folder(f"{g}/p/s2/README.md", "S2", ["b.md"], {"id": af(72)})
+        self.leaf(f"{g}/p/s2/b.md", 61)
+        base = self.base(moved={f"{g}/p/s1/a.md": f"{g}/p/a.md", f"{g}/p/s2/b.md": f"{g}/p/b.md"})
+        for folder in ("s1", "s2"):
+            base.pop((wiki.ROADMAP / f"{g}/p/{folder}/README.md").resolve())
+        rows = [{"page": f"{g}/p/a", "to": f"{g}/p/s1/a", "article_id": af(60)},
+                {"page": f"{g}/p/b", "to": f"{g}/p/s2/b", "article_id": af(61)}]
+        self.assertEqual(cards.check(base_ledger=self.ledger(rows, published=False), base_annotations=base), ([], []))
+
+    def test_module_folders_moved_with_their_pages(self) -> None:
+        # As in the slices of AlgebraicGeometry: a module folder (navigation `module`) moves with a folder row and its
+        # pages with page rows. Its old parent n keeps another page and its folder page; the parent e, emptied by the
+        # move, loses its folder page, which then leads to groups.
+        g = self.g
+        module = {"extensions": {"org.autoform": {"navigation": "module"}}}
+        self.folder(f"{g}/n/README.md", "N", ["other.md"], {"id": af(80)})
+        self.leaf(f"{g}/n/other.md", 84)
+        self.folder(f"{g}/k/README.md", "K", ["m/README.md", "w/README.md"], {"id": af(85)})
+        self.folder(f"{g}/k/m/README.md", "M", ["a.md", "b.md"], {"id": af(81), **module})
+        self.leaf(f"{g}/k/m/a.md", 82)
+        self.leaf(f"{g}/k/m/b.md", 83)
+        self.folder(f"{g}/k/w/README.md", "W", ["c.md"], {"id": af(86), **module})
+        self.leaf(f"{g}/k/w/c.md", 87)
+        base = self.base(moved={f"{g}/k/m/README.md": f"{g}/n/m/README.md", f"{g}/k/m/a.md": f"{g}/n/m/a.md",
+                                f"{g}/k/m/b.md": f"{g}/n/m/b.md", f"{g}/k/w/README.md": f"{g}/e/w/README.md",
+                                f"{g}/k/w/c.md": f"{g}/e/w/c.md"},
+                         gone={f"{g}/e/README.md": {"id": af(88)}})
+        base.pop((wiki.ROADMAP / f"{g}/k/README.md").resolve())
+        rows = [{"folder": f"{g}/n/m", "to": f"{g}/k/m", "article_id": af(81)},
+                {"page": f"{g}/n/m/a", "to": f"{g}/k/m/a", "article_id": af(82)},
+                {"page": f"{g}/n/m/b", "to": f"{g}/k/m/b", "article_id": af(83)},
+                {"folder": f"{g}/e/w", "to": f"{g}/k/w", "article_id": af(86)},
+                {"page": f"{g}/e/w/c", "to": f"{g}/k/w/c", "article_id": af(87)}]
+        errors, warnings = cards.check(base_ledger=self.ledger(rows, published=False), base_annotations=base)
+        self.assertEqual(errors, [])
+        self.assertEqual(warnings, [self.note(f"{g}/e", 88, g, "card-moves.jsonl:5", 1)])
+
+    def test_an_address_a_row_leaves_that_is_live_again_names_the_row(self) -> None:
+        # A page made again at a moved page's old address would hide its redirect: refused, naming the row, whether
+        # the row is the frozen file's or a fragment's.
+        g = self.g
+        self.leaf(f"{g}/s/x.md", 42)
+        self.folder(f"{g}/s/README.md", "S", ["x.md"], {"id": af(41)})
+        self.leaf(f"{g}/old.md", 45)
+        self.write()
+        row = {"page": f"{g}/old", "to": f"{g}/s/x", "article_id": af(42)}
+        self.ledger([{"folder": f"{g}/elsewhere", "to": f"{g}/s", "article_id": af(41)}, row])
+        self.assertIn(f"{cards.MOVES}:2: the page {g}/old moved but is still there", cards.check()[0])
+        name = "20261120T000000Z-move-x.jsonl"
+        self.ledger([], {name: [row]})
+        self.assertIn(f"{cards.FRAGMENTS}/{name}:1: the page {g}/old moved but is still there", cards.check()[0])
+
+    def retained(self, keep: str) -> list[dict]:
+        """The page e/q/x moved to live/x by an earlier change; ``keep`` says which folder page stays: `q` (transparent,
+        holding nothing below it), `e` (plain, holding nothing below it once q goes) or `none`."""
+        g = self.g
+        self.folder(f"{g}/live/README.md", "Live", ["x.md"], {"id": af(91)})
+        self.leaf(f"{g}/live/x.md", 92)
+        gone = {}
+        if keep == "q":
+            self.folder(f"{g}/e/q/README.md", "Q", [], {"id": af(94), "extensions": {"org.autoform": {
+                "navigation": "transparent"}}})
+        else:
+            gone[f"{g}/e/q/README.md"] = {"id": af(94)}
+        if keep == "e":
+            self.folder(f"{g}/e/README.md", "E", [], {"id": af(93)})
+        else:
+            gone[f"{g}/e/README.md"] = {"id": af(93)}
+        self.base(gone=gone)
+        return [{"page": f"{g}/e/q/x", "to": f"{g}/live/x", "article_id": af(92)}]
+
+    def test_a_folder_removed_above_a_retained_page_only_folder_keeps_a_route(self) -> None:
+        # e's folder page goes, q's stays, holding nothing below it: the hook's search for gone folders goes on past q,
+        # so e keeps a route, to groups, and the check says so; q keeps its own page.
+        g = self.g
+        rows = self.retained("q")
+        base = self.base(gone={f"{g}/e/README.md": {"id": af(93)}})
+        errors, warnings = cards.check(base_ledger=self.ledger(rows), base_annotations=base)
+        self.assertEqual((errors, warnings), ([], [self.note(f"{g}/e", 93, g, "card-moves.jsonl:1")]))
+        table, notices, site = self.published()
+        self.assertEqual((table, notices), ({f"{g}/e": g, f"{g}/e/q/x": f"{g}/live/x"}, {f"{g}/e": "../index.html"}))
+        self.assertIn('href="../../../../../roadmap/Algebra/groups/e/q/index.html"',
+                      site.files[f"dependencies/scopes/{g}/e/q.md"])
+
+    def test_hidden_paths_are_no_part_of_the_roadmap(self) -> None:
+        # As pinned Autoform finds articles, a hidden directory, with all it holds, and a hidden file are no part of
+        # the roadmap: below the retained page-only q, a folder page in a hidden directory leaves q a page-only folder
+        # (render indexes it as a node), and a hidden Markdown file is no page, so e is still emptied; e's removal
+        # is accepted, leading to groups, as the hook publishes it. A visible page there is a page: e is not emptied.
+        g = self.g
+        for hidden, visible in ((".scratch/README.md", False), (".draft.md", False), (".notes/x.md", False),
+                                ("y.md", True)):
+            with self.subTest(hidden):
+                rows = self.retained("q")
+                base = self.base(gone={f"{g}/e/README.md": {"id": af(93)}})
+                path = wiki.ROADMAP / g / "e/q" / hidden
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("# Not an article\n")
+                errors, warnings = cards.check(base_ledger=self.ledger(rows), base_annotations=base)
+                if visible:
+                    self.assertIn(self.gone(f"{g}/e", 93), errors)
+                    self.assertEqual(cards.render_index()[f"{g}/e/q"]["kind"], "scope")
+                else:
+                    self.assertEqual((errors, warnings), ([], [self.note(f"{g}/e", 93, g, "card-moves.jsonl:1")]))
+                    self.assertEqual(cards.render_index()[f"{g}/e/q"]["kind"], "node")
+                    self.assertFalse([node for node in cards.render_index() if "/." in node])
+                    table, notices, _ = self.published()
+                    self.assertEqual((table[f"{g}/e"], notices[f"{g}/e"]), (g, "../index.html"))
+                self.doCleanups()
+                self.setUp()
+
+    def test_both_folder_pages_removed_lead_to_their_parent(self) -> None:
+        g = self.g
+        rows = self.retained("none")
+        base = self.base(gone={f"{g}/e/README.md": {"id": af(93)}, f"{g}/e/q/README.md": {"id": af(94)}})
+        errors, warnings = cards.check(base_ledger=self.ledger(rows), base_annotations=base)
+        self.assertEqual(errors, [])
+        self.assertEqual(sorted(warnings), sorted([self.note(f"{g}/e", 93, g, "card-moves.jsonl:1"),
+                                                   self.note(f"{g}/e/q", 94, g, "card-moves.jsonl:1")]))
+        table, notices, _ = self.published()
+        self.assertEqual(notices, {f"{g}/e": "../index.html", f"{g}/e/q": "../../index.html"})
+
+    def test_a_folder_removed_below_a_retained_page_only_folder_leads_to_it(self) -> None:
+        # The mirror: q's folder page goes, e's stays, holding nothing below it; render indexes e as a node at its own
+        # page, so q leads there, in the check and in the hook alike.
+        g = self.g
+        rows = self.retained("e")
+        base = self.base(gone={f"{g}/e/q/README.md": {"id": af(94)}})
+        errors, warnings = cards.check(base_ledger=self.ledger(rows), base_annotations=base)
+        self.assertEqual((errors, warnings), ([], [self.note(f"{g}/e/q", 94, f"{g}/e", "card-moves.jsonl:1")]))
+        table, notices, _ = self.published()
+        self.assertEqual((table, notices), ({f"{g}/e/q": f"{g}/e", f"{g}/e/q/x": f"{g}/live/x"},
+                                            {f"{g}/e/q": "../index.html"}))
+
+
+class StrictSideCases(FolderRemoval):
+    """The strict side's cases of the removal of an emptied folder's page, each with what `check the cards` says and,
+    where the site is at stake, what the hook publishes. The base: a (34) with keep (22), its folder empty (40) with
+    the page x (21) that a row moves to live (99), unless a case says otherwise."""
+
+    G = "Algebra/groups"
+    A, D, L, M = f"{G}/a", f"{G}/a/empty", f"{G}/live", f"{G}/moved"
+    F = "20261120T000000Z-p1.jsonl"
+
+    def case(self, name: str) -> tuple[list[str], list[str]]:
+        A, D, L, M, F = self.A, self.D, self.L, self.M, self.F
+        move = lambda kind, number, old, new: {kind: old, "to": new, "article_id": af(number)}  # noqa: E731
+        self.folder(f"{L}/README.md", "Live", ["x.md"], {"id": af(99)})
+        self.leaf(f"{L}/x.md", 21)
+        temporal = name in ("parent-first", "child-first")
+        published = not name.startswith("fresh-") and not temporal
+        if temporal:
+            self.folder(f"{M}/README.md", "Moved", ["stable.md"], {"id": af(34)})
+            self.leaf(f"{M}/stable.md", 22)
+            changed = {f"{M}/README.md": f"{A}/README.md", f"{M}/stable.md": f"{A}/stable.md", f"{L}/x.md": f"{D}/x.md"}
+        else:
+            self.folder(f"{A}/README.md", "A", ["keep.md"], {"id": af(34)})
+            self.leaf(f"{A}/keep.md", 22)
+            changed = {} if published else {f"{L}/x.md": f"{D}/x.md"}
+        if name.startswith("address-taken"):
+            self.leaf(f"{D}.md", 40 if name == "address-taken-same-id" else 90)
+        if name == "nest-page-stays":
+            self.leaf(f"{D}/r/s/t/z.md", 83)
+        if name == "nest-only-readme":
+            self.folder(f"{D}/r/s/README.md", "S", [], {"id": af(83)})
+        card = {"extensions": {cards.OWN: {"card": {"main_article_id": af(21), "kind": "result"}}}}
+        gone = ({f"{D}.md": {"id": af(40)}} if name == "leaf-gone" else
+                {f"{D}/README.md": {"id": af(40), **(card if name == "card-gone" else {})}})
+        base = self.base(changed, gone)
+        if name.startswith("address-taken"):
+            base.pop((wiki.ROADMAP / f"{D}.md").resolve())
+        if name == "unannotated-original-file":
+            (wiki.ROADMAP / D).mkdir(parents=True, exist_ok=True)
+            (wiki.ROADMAP / D / "README.md").write_text("# Retained original folder page\n")
+        rows = [move("page", 21, f"{D}/x", f"{L}/x")]
+        if temporal:
+            parent, sibling = move("folder", 34, A, M), move("page", 22, f"{A}/stable", f"{M}/stable")
+            rows = [parent, rows[0], sibling] if name == "parent-first" else [rows[0], parent, sibling]
+        if name == "prefix-only":
+            rows = [move("page", 21, f"{D}-also/x", f"{L}/x")]
+        if name == "no-cover":
+            rows = []
+        if name == "fresh-missing-own-child":
+            base[(wiki.ROADMAP / f"{D}/uncovered.md").resolve()] = {"id": af(97)}
+        if name == "again-same-kind":
+            self.leaf(f"{D}/x.md", 98)
+            self.write()
+        if name == "again-other-kind":
+            self.folder(f"{D}/x/README.md", "Other", [], {"id": af(98)})
+            self.write()
+        if name == "fresh-fake-retire-plain-as-card":
+            rows.append({"card": af(40), "folder": D, "replaced_by": af(99)})
+        if name == "fresh-fake-retire-plain-as-page":
+            rows.append({"statement": af(40), "page": D, "replaced_by": af(99)})
+        if published and name not in ("published-fragment", "again-other-kind"):
+            known = self.ledger(rows)
+        else:
+            known = self.ledger([], {F: rows})
+            if not published:
+                known = card_moves.BaseLedger({card_moves.FROZEN: card_moves.blob_id(b"")})
+        return cards.check(base_ledger=known, base_annotations=base)
+
+    def outcome(self, name: str, errors: list[str], warnings: list[str]) -> None:
+        with self.subTest(name):
+            self.assertEqual(self.case(name), (errors, warnings))
+
+    def test_cases_with_the_folder_s_page_removed_and_a_row_below_it(self) -> None:
+        D, A = self.D, self.A
+        for name, where in (("published-frozen", "card-moves.jsonl:1"),
+                            ("published-fragment", f"{cards.FRAGMENTS}/{self.F}:1"),
+                            ("fresh-fragment", f"{cards.FRAGMENTS}/{self.F}:1"),
+                            ("nest-only-readme", "card-moves.jsonl:1")):
+            self.outcome(name, [], [self.note(D, 40, A, where)])
+            self.doCleanups()
+            self.setUp()
+
+    def test_cases_with_no_row_below_the_folder(self) -> None:
+        for name in ("no-cover", "prefix-only"):
+            self.outcome(name, [self.nowhere(self.D, 40)], [])
+            self.doCleanups()
+            self.setUp()
+
+    def test_cases_whose_folder_is_not_emptied_or_is_no_plain_folder(self) -> None:
+        D = self.D
+        cases = {
+            "nest-page-stays": [self.gone(D, 40)],
+            "card-gone": [self.gone(D, 40), f"{cards.MOVES}: the card {af(40)} at {D} is no card any more, and no row "
+                                            "retires it"],
+            "leaf-gone": [self.gone(D, 40)],
+            "again-same-kind": [f"{cards.MOVES}:1: the page {D}/x moved but is still there", self.gone(D, 40)],
+        }
+        for name, errors in cases.items():
+            self.outcome(name, errors, [])
+            self.doCleanups()
+            self.setUp()
+
+    def test_cases_with_other_errors_beside_the_folder(self) -> None:
+        D, A, L, F = self.D, self.A, self.L, self.F
+        where = f"{cards.FRAGMENTS}/{F}"
+        cases = {
+            "fresh-missing-own-child": ([self.gone(f"{D}/uncovered", 97)], [self.note(D, 40, A, f"{where}:1")]),
+            "fresh-fake-retire-plain-as-card": ([f"{cards.MOVES}: the retired card {af(40)} is replaced by {af(99)}, "
+                                                 "which is no card", f"{where}:2: {af(40)} was no card at the base "
+                                                 "commit"], [self.note(D, 40, L, "", said=f"{where}:2")]),
+            "fresh-fake-retire-plain-as-page": ([f"{where}:2: {af(40)} was no statement page at the base commit"],
+                                                [self.note(D, 40, A, f"{where}:1")]),
+            "again-other-kind": ([f"{where}:1: {D}/x moved as a page, and another article's folder now holds the "
+                                  "address"], [self.note(D, 40, A, f"{where}:1")]),
+        }
+        for name, (errors, warnings) in cases.items():
+            self.outcome(name, errors, warnings)
+            self.doCleanups()
+            self.setUp()
+
+    def test_an_address_another_article_holds_is_no_emptied_folder_s(self) -> None:
+        # Finding 1: a statement page of another id at the folder's address refuses the removal; of the same id, the
+        # folder became a page, which is said. The hook never rewrites the live statement's explorer address.
+        D = self.D
+        self.outcome("address-taken-new-id", [f"{cards.MOVES}: {D} ({af(40)}) is gone, and no row moves it; another "
+                                              "article's page now holds its address, which changes hands only by a "
+                                              "retirement, to its final replacement"], [])
+        table, _, _ = self.published()
+        self.assertNotIn(D, table)
+        self.doCleanups()
+        self.setUp()
+        self.outcome("address-taken-same-id", [f"{cards.MOVES}: {af(40)} was the folder {D} and is now the page {D}",
+                                               self.gone(D, 40), f"{cards.MOVES}: {D} takes {af(40)}, which another "
+                                               "article had"], [])
+        table, _, _ = self.published()
+        self.assertNotIn(D, table)
+
+    def test_a_folder_page_left_in_place_without_its_annotation_is_not_gone(self) -> None:
+        # Finding 2: its file is there, its annotation row deleted: the existing rule speaks, and the hook keeps the
+        # page, with no route for it.
+        self.outcome("unannotated-original-file", [self.gone(self.D, 40)], [])
+        table, notices, _ = self.published()
+        self.assertNotIn(self.D, table)
+        self.assertNotIn(self.D, notices)
+
+    def test_the_route_said_is_the_hook_s_in_either_order(self) -> None:
+        # Finding 3: the folder a moves to moved before or after the page leaves a/empty. Moved first, empty's nearest
+        # folder that stays at that point is groups; moved after, a, which leads to moved. The check says what the hook
+        # publishes.
+        G, D, M = self.G, self.D, self.M
+        where = f"{cards.FRAGMENTS}/{self.F}"
+        for name, route, line in (("parent-first", G, 2), ("child-first", M, 1)):
+            self.outcome(name, [], [self.note(D, 40, route, f"{where}:{line}")])
+            table, notices, _ = self.published()
+            self.assertEqual(table[D], route)
+            self.doCleanups()
+            self.setUp()
+
+    def test_a_declassified_card_s_retirement_says_where_its_folder_leads(self) -> None:
+        # Finding 7: the card at a/empty was retired for the card at replacement and its folder kept as a plain one.
+        # Its folder page then goes: with a row below it, the check says it leads to replacement, as the retirement
+        # says and the hook publishes; with none, the removal is refused without claiming it leads nowhere.
+        G, A, D, L = self.G, self.A, self.D, self.L
+        Y = f"{G}/replacement"
+        for covered in (False, True):
+            with self.subTest(covered=covered):
+                self.folder(f"{A}/README.md", "A", ["keep.md"], {"id": af(34)})
+                self.leaf(f"{A}/keep.md", 22)
+                self.card(Y, 70, 71, ["main"])
+                self.leaf(f"{Y}/main.md", 71)
+                self.folder(f"{L}/README.md", "Live", ["x.md"], {"id": af(99)})
+                self.leaf(f"{L}/x.md", 21)
+                base = self.base(gone={f"{D}/README.md": {"id": af(40)}})
+                rows = [{"card": af(40), "folder": D, "replaced_by": af(70)}]
+                if covered:
+                    rows.append({"page": f"{D}/x", "to": f"{L}/x", "article_id": af(21)})
+                errors, warnings = cards.check(base_ledger=self.ledger(rows), base_annotations=base)
+                if covered:
+                    self.assertEqual((errors, warnings), ([], [self.note(D, 40, Y, "", said="card-moves.jsonl:1")]))
+                else:
+                    self.assertEqual((errors, warnings), ([self.gone(D, 40)], []))
+                table, notices, _ = self.published()
+                self.assertEqual(notices[D], "../../replacement/index.html")
+                self.doCleanups()
+                self.setUp()
+
+
+class RenderIndex(Vault):
+    """cards.render_index, the index the check replays the site hook with, is render's as pinned Autoform writes it:
+    the kinds and folder documents below, taken from a render of this very layout, hidden entries included, with
+    Autoform b1fe52ba."""
+
+    def test_render_index_matches_a_pinned_render(self) -> None:
+        g = "Algebra/groups"
+        self.folder(f"{g}/p/README.md", "P", [])
+        self.folder(f"{g}/q/README.md", "Q", ["a.md"])
+        self.leaf(f"{g}/q/a.md", 4, facts=None)
+        self.folder(f"{g}/r/README.md", "R", [], {"extensions": {"org.autoform": {"navigation": "transparent"}}})
+        self.folder(f"{g}/s/README.md", "S", ["u/README.md"])
+        self.folder(f"{g}/s/u/README.md", "U", [])
+        self.folder(f"{g}/v/README.md", "V", ["b.md"], {"extensions": {"org.autoform": {"navigation": "transparent"}}})
+        self.leaf(f"{g}/v/b.md", 9, facts=None)
+        self.folder(f"{g}/w/sub/README.md", "Sub", ["c.md"])
+        self.leaf(f"{g}/w/sub/c.md", 11, facts=None)
+        self.write()
+        # Hidden entries, which pinned render leaves out at any depth: none changes the index.
+        for hidden in ("q/.scratch/README.md", "q/.draft.md", "p/.notes/x.md", ".hidden/README.md"):
+            path = wiki.ROADMAP / g / hidden
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("# Hidden\n")
+        # Pinned render's index of the same layout below its root T (kind, and the route of each folder page).
+        pinned = {"T": ("scope", "T/index.html"), "T/p": ("node", "T/p/index.html"), "T/q": ("scope", "T/q/index.html"),
+                  "T/q/a": ("node", None), "T/r": ("node", "T/r/index.html"), "T/s": ("scope", "T/s/index.html"),
+                  "T/s/u": ("node", "T/s/u/index.html"), "T/v": ("scope", "T/v/index.html"), "T/v/b": ("node", None),
+                  "T/w/sub": ("scope", "T/w/sub/index.html"), "T/w/sub/c": ("node", None)}
+        entries = cards.render_index()
+        found = {}
+        for node, entry in entries.items():
+            if node == g or node.startswith(f"{g}/"):
+                short = "T" + node[len(g):]
+                folder = entry["path"].endswith("/index.html")
+                found[short] = (entry["kind"], f"T{entry['path'][len('roadmap/' + g):]}" if folder else None)
+        self.assertEqual(found, pinned)
+        self.assertNotIn(f"{g}/w", entries)
+        self.assertEqual(entries["roadmap"]["kind"], "scope")
+
+
 class InMathlib(Vault):
     def test_a_mathlib_fact_links_its_pinned_source_line_with_its_name(self) -> None:
         pin = "56a005855ea17e0b0958f73ec801ae140b0a1679"
@@ -3575,7 +4107,7 @@ class Fragments(Vault):
         self.commit("p")
         status, errors = self.moves("--base", self.base)
         self.assertEqual(status, 1)
-        for error in (f"{path}:2: {g}/p already moved", f"card-moves.jsonl: the page {g}/q moved but is still there",
+        for error in (f"{path}:2: {g}/p already moved", f"{path}:3: the page {g}/q moved but is still there",
                       f"card-moves.jsonl: {g}/q ends at {g}/nowhere, but {af(21)} is {g}/q"):
             self.assertIn(error, errors)
         self.assertEqual(self.check("--base", self.base), (1, f"error: {path}:2: {g}/p already moved\n"))

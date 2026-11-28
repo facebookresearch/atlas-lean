@@ -406,6 +406,16 @@ owns what, the base's rows being published history:
   moved with its folder but has no row of its own included); a statement a row retires is matched by Git's rename
   to nothing, since its replacements may take its prose; an address that changed hands is a retired card's or
   statement's, held by its final replacement; a new article takes an `id` no article ever had;
+- but the folder page of an emptied plain folder, one that holds no page at any depth once the change is made (no
+  file a page row can name, whatever folder pages are left below it; hidden files and directories, which render
+  leaves out, hold none), may go with no row of its own when the file itself is removed, not its annotation row
+  alone; no other article, page or folder, nor any file holds its address; a row of the ledger, the frozen file's
+  or a fragment's, published or new, leaves an address below it; and the site keeps a route for its old address,
+  which the check finds by replaying the ledger with the site hook's own resolution on render's index of the
+  checkout. A warning then says where that route leads, as a row says it (a folder row, or the retirement of the
+  card the folder was) or as the hook infers it, in the ledger's order. Otherwise its folder page stays: another
+  article holding its address is said, and with no row below it the check says its old address would lead nowhere
+  only when the site would keep no route for it either;
 - every card of the base that is no card any more, gone or declassified, has its retirement (a
   declassified folder may keep its `id` as a plain folder).
 
@@ -471,7 +481,16 @@ the folder alone, as the move ledger says, so no address is inferred from what a
 folder after it moved gets no old address. A retired card's folder that is gone leads to the live card its
 replacements end at, a retired statement's page that is gone to the live statement page or folder page its
 replacements end at, each where the receipt places it, and a folder that is gone with no row of its own to where its
-nearest enclosing folder led at that point, a fallback. The replay keeps apart what held each folder address at each
+nearest enclosing folder led at that point, a fallback. A folder whose folder page holds nothing below it any more,
+such as one left when everything below it moved away, is not gone: render indexes it as a node at its own page,
+plain or transparent alike, and its page keeps its address, with the old anchors of the statements that left it,
+while its old explorer page, which render no longer writes, leads to that page, which loads the explorer's rewrite
+table; what is bound to it leads to it, and
+a retirement may be replaced by it. Such a folder holds its own address but not those above it: a folder gone above
+it still gets its fallback. A folder page the site source has though render does not index it is kept as well, and
+what is bound to it leads to the nearest folder above it whose page render publishes, since the explorer cannot
+select it. No explorer link to an address render publishes, whatever holds it, is rewritten.
+The replay keeps apart what held each folder address at each
 point of the history and the route each old folder address keeps. What a folder row or a card's retirement says of a
 folder is its route, whatever their order in the ledger, and no fallback replaces it; a folder that no row speaks of
 keeps the fallback taken first in the history. A fallback stays bound to what held the address above it when it was
