@@ -23,4 +23,5 @@
 - [Least-squares fitted values are the orthogonal projection onto the column space](fitted-values-are-the-orthogonal-projection.md)
 - [Decomposition of the total sum of squares](total-sum-of-squares-decomposition.md)
 - [A saturated cell-indicator regression reproduces cell means](saturated-cell-regression-reproduces-cell-means.md)
+- [Design matrix for a full two-level factorial experiment](factorial-design.md)
 - [Factorial effects from ±1 coding in a balanced two-level design](factorial-effects-from-plus-minus-coding.md)

@@ -75381,6 +75381,8 @@
 "MathlibExt.Probability.Statistics.LinearModel.fStatistic": "5773814e0ab80787",
 "MathlibExt.Probability.Statistics.LinearModel.fStatistic_measureReal_gt_eq": "f5125599f6e5dede",
 "MathlibExt.Probability.Statistics.LinearModel.fTest_size_eq": "3db2588f57088c61",
+"MathlibExt.Probability.Statistics.LinearModel.factorialDesign": "bfba76c8900bd4f1",
+"MathlibExt.Probability.Statistics.LinearModel.factorial_ols_effects": "7c81ceb869417853",
 "MathlibExt.Probability.Statistics.LinearModel.fderiv_remlLogLik_mul_left": "06ba40f2071c5f4c",
 "MathlibExt.Probability.Statistics.LinearModel.fitted_eq_hatMatrix_mulVec": "af5e3d1321dcd90a",
 "MathlibExt.Probability.Statistics.LinearModel.fullRankDesigns": "7abb8e62f122b48e",
