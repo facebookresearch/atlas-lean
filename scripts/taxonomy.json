@@ -10502,6 +10502,7 @@
   "Domains/Biology/PopulationGenetics/Classical/HaploidSelection": {"to": "Biology/population-genetics", "title": "Haploid selection and multiplicative fitnesses"},
   "Domains/Biology/PopulationGenetics/Classical/InfinitesimalLimit": {"to": "Biology/quantitative-genetics", "title": "Mendelian segregation and the infinitesimal model"},
   "Domains/Biology/PopulationGenetics/Classical/LandeResponse": {"to": "Biology/quantitative-genetics", "title": "Lande's selection gradient"},
+  "Domains/Biology/PopulationGenetics/Classical/MeioticDrive": {"to": "Biology/population-genetics/selection-migration-and-transmission", "title": "One-locus selection dynamics"},
   "Domains/Biology/PopulationGenetics/Classical/MultiallelicLD": {"to": "Biology/population-genetics", "title": "Linkage disequilibrium and Haldane's map function"},
   "Domains/Biology/PopulationGenetics/Classical/MultilevelPrice": {"to": "Biology/population-genetics", "title": "Natural selection, Fisher's theorem and the Price equation"},
   "Domains/Biology/PopulationGenetics/Classical/PloidyBridge": {"to": "Biology/population-genetics", "title": "Haploid selection and multiplicative fitnesses"},
