@@ -23,6 +23,9 @@ Three Consecutive Star Numbers", *INTEGERS* 25 (2025), Article A106
 A common divisor of `S_n`, `S_{n+1}`, `S_{n+2}` divides
 `S_{n+2} - 2 S_{n+1} + S_n = 12`, and `S_n ≡ 1 (mod 12)`.
 
+The module also exports the successor identity and the modular inverse of `S_{n+1}` modulo
+`S_n`, both valid for every natural index `n`.
+
 The definitions live in `MetaMathlibExt.StarNumber` so that `star`
 does not shadow `Star.star` in the `MetaMathlibExt` namespace.
 -/

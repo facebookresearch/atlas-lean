@@ -23,7 +23,8 @@ star numbers `MetaMathlibExt.StarNumber.star`, re-exported by
 `MathlibExt.NumberTheory.PFrobeniusStarNumbersLeNine`.
 
 Proved in `MathlibExt.NumberTheory.PFrobeniusStarNumbersPSylvesterCountOneStar`:
-`MathlibExt.NumberTheory.PFrobeniusStarNumbersWanted.pSylvesterCount_one_star`.
+`MathlibExt.NumberTheory.PFrobeniusStarNumbersWanted.pSylvesterCount_one_star` and
+`MathlibExt.NumberTheory.PFrobeniusStarNumbersWanted.exists_isPFrobeniusNumber_star_of_ten_le`.
 
 Proved in `MathlibExt.NumberTheory.PFrobeniusStarNumbersPSylvesterCountZeroStar`:
 the `p = 0` case of Theorem 2

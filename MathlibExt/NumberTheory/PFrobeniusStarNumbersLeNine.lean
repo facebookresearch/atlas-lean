@@ -22,6 +22,10 @@ when the starting index is six through nine and p is zero, one, or two.
 The proof counts representations in one finite interval and extends the count bound
 to all larger numbers by adding copies of the first star number.
 
+The module also exports the computable representation-count evaluator and its correctness
+below the product of the first two star numbers, the shift lemma for adding copies of the
+first star number, and characterizations of the representation count and p-Frobenius predicate.
+
 ## References
 
 * Takao Komatsu, Tapas Chatterjee, and Palak Narula,
@@ -127,7 +131,7 @@ def starRepCountCandidates (n N : ℕ) : ℕ :=
     decide (secondCoeff n remaining * star (n + 1) ≤ remaining)
 
 /-- Below `S_n S_{n+1}`, the candidate count equals the number of representing triples. -/
-theorem starRepCount_eq_countCandidates (n N : ℕ)
+theorem starRepCount_eq_starRepCountCandidates (n N : ℕ)
     (hN : N < star n * star (n + 1)) :
     starRepCount n N = starRepCountCandidates n N := by
   have hinv : star (n + 1) * inverse n ≡ 1 [MOD star n] :=
@@ -226,7 +230,7 @@ theorem exists_isPFrobeniusNumber_star_of_le_nine
   obtain ⟨hsub, hprod, hcount, hwindow⟩ := checkThreshold n p hn hn9 hp2
   let g := thresholdSum n p - star n
   refine ⟨g, ⟨?_, ?_⟩, ?_⟩
-  · rw [starRepCount_eq_countCandidates n g (by omega)]
+  · rw [starRepCount_eq_starRepCountCandidates n g (by omega)]
     exact hcount
   · intro N hN
     let i := (N - (g + 1)) % star n
@@ -238,7 +242,7 @@ theorem exists_isPFrobeniusNumber_star_of_le_nine
       omega
     have hbase : p < starRepCountCandidates n (g + i + 1) := of_decide_eq_true
       (List.all_eq_true.mp hwindow i (List.mem_range.mpr hi))
-    rw [← starRepCount_eq_countCandidates n (g + i + 1) (by omega)] at hbase
+    rw [← starRepCount_eq_starRepCountCandidates n (g + i + 1) (by omega)] at hbase
     exact hbase.trans_le (hsplit ▸ starRepCount_le_add_mul n (g + i + 1) k)
   · change ((thresholdSum n p - star n : ℕ) : ℤ) = _
     rw [Int.ofNat_sub hsub]

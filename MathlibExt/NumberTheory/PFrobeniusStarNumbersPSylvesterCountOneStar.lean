@@ -23,12 +23,13 @@ import Mathlib.Tactic.FinCases
 public import MathlibExt.NumberTheory.PFrobeniusStarNumbersLeNine
 
 /-!
-# The one-Sylvester count for three consecutive star numbers
+# Frobenius numbers and one-Sylvester counts for three consecutive star numbers
 
-Representation counts for three consecutive star numbers. For `n ≥ 6`, the canonical
-pairs also give the number of natural numbers with at most one representation. For `n ≥ 10`
-and `p ∈ {0, 1, 2}`, the largest number with at most `p` representations is the maximum
-of the first, second, or third weight in each residue class, minus the first star number.
+For `n ≥ 6`, `pSylvesterCount_one_star` gives the number of natural numbers with at most
+one representation by three consecutive star numbers. For `n ≥ 10` and `p ∈ {0, 1, 2}`,
+`exists_isPFrobeniusNumber_star_of_ten_le` gives the largest natural number with at most
+`p` representations. The Frobenius formula takes the maximum of the first, second, or third
+pair weight in each residue class and subtracts the first star number.
 
 ## References
 
@@ -39,7 +40,7 @@ of the first, second, or third weight in each residue class, minus the first sta
 * Takao Komatsu, "On the determination of p-Frobenius and related numbers using the p-Apéry set",
   *Rev. R. Acad. Cienc. Exactas Fís. Nat. Ser. A Mat. RACSAM* 118 (2024), Article 58, 17 pp.
   (the Apéry-set formula quoted in Lemma 1 of the consecutive-star-numbers paper).
-* A. Brauer and B. M. Shockley, "On a problem of Frobenius",
+* A. Brauer and J. E. Shockley, "On a problem of Frobenius",
   *J. Reine Angew. Math.* 211 (1962), pp. 215–220 (the classical `p = 0` case of that formula).
 -/
 
