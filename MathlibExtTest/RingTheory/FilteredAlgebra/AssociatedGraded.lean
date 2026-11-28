@@ -154,7 +154,7 @@ private theorem algebraMap_two :
   apply congrArg (symbol filtration 0)
   apply Subtype.ext
   change algebraMap ℤ A 2 = ((2 : ℤ), (2 : ℤ))
-  norm_num
+  ext <;> norm_num
 
 example :
     (2 : ℤ) • symbol filtration 1 degreeOneRepresentative =
