@@ -115,10 +115,8 @@ structure on the same coefficient carrier. -/
 def negativeLieRingModule (M : RightLieModuleCat.{w} R L) : LieRingModule L M where
   bracket x m := -(M.action x m)
   add_lie x y m := by
-    change -(M.action (x + y) m) = -(M.action x m) + -(M.action y m)
     rw [M.action.map_add, LinearMap.add_apply, neg_add]
   lie_add x m n := by
-    change -(M.action x (m + n)) = -(M.action x m) + -(M.action x n)
     rw [(M.action x).map_add, neg_add]
   leibniz_lie x y m := by
     change -(M.action x (-(M.action y m))) =
@@ -136,13 +134,11 @@ def toLeft (M : RightLieModuleCat.{w} R L) : LieModuleCat.{w} R L := by
   letI : LieRingModule L M := negativeLieRingModule M
   letI : LieModule R L M :=
     { smul_lie := fun r x m => by
-        simpa only [negativeLieRingModule] using
-          (show -(M.action (r • x) m) = r • -(M.action x m) by
-            rw [M.action.map_smul, LinearMap.smul_apply, smul_neg])
+        change -(M.action (r • x) m) = r • -(M.action x m)
+        rw [M.action.map_smul, LinearMap.smul_apply, smul_neg]
       lie_smul := fun r x m => by
-        simpa only [negativeLieRingModule] using
-          (show -(M.action x (r • m)) = r • -(M.action x m) by
-            rw [(M.action x).map_smul, smul_neg]) }
+        change -(M.action x (r • m)) = r • -(M.action x m)
+        rw [(M.action x).map_smul, smul_neg] }
   exact LieModuleCat.of R L M
 
 /-- The carrier of the left module associated to right coefficients.
@@ -386,8 +382,8 @@ def fromLeftMap {M : LieModuleCat.{w} R L} {N : LieModuleCat.{w'} R L}
     HomOver (LieHom.id : L →ₗ⁅R⁆ L) (fromLeft M) (fromLeft N) :=
   ⟨g.toLinearMap, by
     intro x m
-    change g.toLinearMap (-⁅x, (m : M)⁆) = -⁅x, (g m : N)⁆
-    rw [g.toLinearMap.map_neg, g.map_lie]⟩
+    rw [fromLeft_action, fromLeft_action, g.toLinearMap.map_neg]
+    exact congrArg Neg.neg (g.map_lie x (m : M))⟩
 
 /-- The right coefficient map associated to a left Lie-module homomorphism has the same
 value on each coefficient element. -/
@@ -450,14 +446,19 @@ def toLeftCounitIso (M : LieModuleCat.{w} R L) : toLeft (fromLeft M) ≅ M where
     { toLinearMap := LinearMap.id
       map_lie' := by
         intro x m
-        change -(-⁅x, (m : M)⁆) = ⁅x, (m : M)⁆
-        simp only [neg_neg] }
+        change (@Bracket.bracket L (toLeft (fromLeft M)).carrier
+          (LieModuleCat.lieRingModule (toLeft (fromLeft M))).toBracket x m) =
+          @Bracket.bracket L M.carrier (LieModuleCat.lieRingModule M).toBracket x (m : M)
+        rw [toLeft_lie (fromLeft M), fromLeft_action, neg_neg] }
   inv :=
     { toLinearMap := LinearMap.id
       map_lie' := by
         intro x m
-        change ⁅x, (m : M)⁆ = -(-⁅x, (m : M)⁆)
-        simp only [neg_neg] }
+        change (@Bracket.bracket L M.carrier
+          (LieModuleCat.lieRingModule M).toBracket x (m : M)) =
+          @Bracket.bracket L (toLeft (fromLeft M)).carrier
+            (LieModuleCat.lieRingModule (toLeft (fromLeft M))).toBracket x m
+        rw [toLeft_lie (fromLeft M), fromLeft_action, neg_neg] }
   hom_inv_id := by
     apply LieModuleHom.ext
     intro m

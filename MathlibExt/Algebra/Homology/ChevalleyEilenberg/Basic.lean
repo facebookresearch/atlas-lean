@@ -27,9 +27,6 @@ A Lie homomorphism gives maps on these exterior powers. Compatibility with two d
 families means that their differential squares commute, and supplies the corresponding
 chain map. Compatibility is stable under identity and composition.
 
-The bracket prescription and its presentation are developed in Presentation, and its
-canonical realization and coefficient complex are constructed by the corresponding
-Chevalley–Eilenberg boundary owners.
 -/
 
 @[expose] public section
