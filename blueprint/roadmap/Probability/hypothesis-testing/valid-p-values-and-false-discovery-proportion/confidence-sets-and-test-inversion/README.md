@@ -1,0 +1,15 @@
+# Confidence sets and test inversion
+
+- [Hoeffding confidence interval for a Bernoulli mean](bernoulli-mean-hoeffding-ci.md)
+- [Chebyshev confidence band for an i.i.d. sample mean](sample-mean-chebyshev-ci.md)
+- [Confidence set from a family of tests](conf-set-of-tests.md)
+- [Inverting valid p-values gives a confidence set](coverage-of-is-valid-pvalue.md)
+- [Coverage passes to larger confidence sets](coverage-mono-of-subset.md)
+- [Coverage passes to a set that rarely misses](coverage-of-subset-ae-budget.md)
+- [Coverage of a projected point-test confidence set](coverage-of-projected-point-tests.md)
+- [A cutoff at the upper quantile level gives a level-α test](measure-real-lt-le-of-le-cdf.md)
+- [Raising the cutoff keeps the level](measure-real-lt-le-of-le-cdf-mono.md)
+- [Bonferroni simultaneous coverage](simultaneous-coverage-bonferroni.md)
+- [Confidence set from a pivot](pivot-confidence-set.md)
+- [Coverage of a pivot confidence set](pivot-confidence-set-coverage.md)
+- [Test inversion](level-iff-coverage.md)

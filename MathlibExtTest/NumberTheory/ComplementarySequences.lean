@@ -129,3 +129,18 @@ example : nthNonValue (fun j => j ^ 2) 7 = 10 := by
     have hhi : Real.sqrt (7 : ℕ) < 7 / 2 := (Real.sqrt_lt' (by norm_num)).mpr (by norm_num)
     constructor <;> push_cast <;> linarith
   rw [h]
+
+-- For the shifted sums of squares, the first positive non-value is 1. At n = 5 the
+-- condition is an equality and gives 6; at n = 6 it is false and the complement skips 7.
+example : nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ 2) 1 = 1 :=
+  (nthNonValue_add_sumPow 2 (by decide) 1 (by decide)).trans (by decide)
+
+example : nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ 2) 5 = 6 :=
+  (nthNonValue_add_sumPow 2 (by decide) 5 (by decide)).trans (by decide)
+
+example : nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ 2) 6 = 8 :=
+  (nthNonValue_add_sumPow 2 (by decide) 6 (by decide)).trans (by decide)
+
+-- For cubes and n = 4, (k + 1) * n is exactly 2^4.
+example : nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ 3) 4 = 5 :=
+  (nthNonValue_add_sumPow 3 (by decide) 4 (by decide)).trans (by decide)

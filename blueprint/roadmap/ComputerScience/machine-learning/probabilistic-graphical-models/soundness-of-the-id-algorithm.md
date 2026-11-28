@@ -1,27 +1,16 @@
 # Soundness of the ID algorithm
 
-Let $G$ be a semi-Markovian causal diagram (a DAG over observed variables with bidirected edges for
-latent common causes) over finite-valued variables, and let $X$, $Y$ be disjoint sets of observed
-variables. Whenever the Shpitser–Pearl ID algorithm, run on $(Y, X, G)$, returns an expression in the
-observational distribution, that expression equals $P(y \mid \mathrm{do}(x))$ for every causal model
-compatible with $G$ whose observational distribution is strictly positive. Each line of the
-algorithm is justified by one of the rules of the do-calculus or by the c-component factorization of
-Tian and Pearl.
-
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: semi-Markovian causal models and their diagrams (bidirected edges for latent common causes), with the ID algorithm.
-- Proof prerequisite: Tian-Pearl c-component factorization.
-
-## Proof depends on
-
-- [Rule 1 of the do-calculus](causal-bayesian-networks/do-calculus-rule1.md)
-- [Rule 2 of the do-calculus](causal-bayesian-networks/do-calculus-rule2.md)
-- [Rule 3 of the do-calculus](causal-bayesian-networks/do-calculus-rule3.md)
+Let a Bayesian network whose nodes take values in a finite
+nonempty type have latent node set `L`, let `σ` be a topological order of its latent projection
+onto the observed nodes, and suppose the observed law is strictly positive at every observed
+assignment. Let `X` and `Y` be disjoint sets of observed nodes. If the ID algorithm (Shpitser and
+Pearl, AAAI 2006, Fig. 3), run on the latent projection with the order `σ`, returns an expression
+`e` for the effect of `do(X)` on `Y`, then `e`, evaluated against the observed law, equals the
+effect `P_x(y)` at every observed assignment `v`, with `x` and `y` the values of `v` on `X` and
+`Y`. No semi-Markovian hypothesis is needed. When ID returns a failure pair `(F, F')` instead,
+nothing is claimed: neither that `(F, F')` is a hedge nor that `P_x(y)` is not identified.
 
 ## Sources
 
-- I. Shpitser and J. Pearl, *Identification of joint interventional distributions in recursive semi-Markovian causal models*, AAAI 2006 (author technical report R-327): algorithm ID (Figure 3) and the proof that it terminates and is sound. <http://ftp.cs.ucla.edu/pub/stat_ser/r327.pdf>
-- I. Shpitser and J. Pearl, *Identification of conditional interventional distributions*, UAI 2006 (technical report R-329): ID restated (Figure 2) with the soundness of the do-calculus and c-component factorization steps. <http://ftp.cs.ucla.edu/pub/stat_ser/r329-uai.pdf>
+- I. Shpitser and J. Pearl, *Identification of Joint Interventional Distributions in Recursive Semi-Markovian Causal Models*, AAAI 2006 (technical report R-327), Theorem 5. <https://ftp.cs.ucla.edu/pub/stat_ser/r327.pdf>
+- I. Shpitser and J. Pearl, *Identification of Conditional Interventional Distributions*, UAI 2006 (technical report R-329), Section 4, where the result is restated. <https://ftp.cs.ucla.edu/pub/stat_ser/r329-uai.pdf>
