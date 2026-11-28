@@ -10,9 +10,9 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Nat.ModEq
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-import Mathlib.Data.Nat.ModEq
 
 /-!
 # Available integers for two distinct primes
@@ -37,6 +37,11 @@ count is `p ^ 2` or `p ^ 2 - p` instead of `p ^ 2 - 1`.
 
 * `availableCount_two_primes`: for distinct primes `p` and `q` and any residues, the number of
   available integers in `[1, p q]` is `onesDiagDet ![p, q]`.
+
+## References
+
+* Florian Pausinger, *Counting Appearances of Integers in Sets of Arithmetic Progressions*,
+  INTEGERS **26** (2026), Article A50, pp. 1–10, Lemma 5.
 -/
 
 set_option autoImplicit false
@@ -65,6 +70,31 @@ $\mathrm{av}(k)$. -/
 def availableCount {k : ℕ} (p r : Fin k → ℕ) : ℕ :=
   ((Finset.Icc 1 (∏ i, p i)).filter
     (fun n => residueHitCount p r n ≤ 1)).card
+
+/-- **Available count without counting hits.** For natural moduli $p_1, \dots, p_k$ and residues
+$r_1, \dots, r_k$, the available count is the cardinality of the set of integers
+$1 \le n \le \prod_i p_i$ such that, for all $1 \le i,j \le k$, the two congruences
+$n \equiv r_i \pmod{p_i}$ and $n \equiv r_j \pmod{p_j}$ imply $i = j$. -/
+theorem availableCount_eq_card_filter {k : ℕ} (p r : Fin k → ℕ) :
+    availableCount p r = ((Finset.Icc 1 (∏ i, p i)).filter fun n =>
+      ∀ i j, n ≡ r i [MOD p i] → n ≡ r j [MOD p j] → i = j).card := by
+  unfold availableCount
+  congr 1
+  apply Finset.filter_congr
+  intro n _
+  simp [residueHitCount, Finset.card_le_one_iff, Nat.ModEq]
+
+/-- **Ones-diagonal determinant as a diagonal plus constant matrix.** For natural numbers
+$p_1, \dots, p_k$, let $J_k$ be the $k \times k$ all-ones matrix. Then
+$A_k(p_1, \dots, p_k) = \det(\operatorname{diag}(p_1 - 1, \dots, p_k - 1) + J_k)$,
+where the diagonal entries are formed by subtraction in $\mathbb{Z}$. -/
+theorem onesDiagDet_eq_det_diagonal_add {k : ℕ} (p : Fin k → ℕ) :
+    onesDiagDet p =
+      (Matrix.diagonal (fun i => (p i : ℤ) - 1) + Matrix.of (fun _ _ => 1)).det := by
+  unfold onesDiagDet
+  congr 1
+  ext i j
+  by_cases h : i = j <;> simp [h]
 
 -- Chinese remainder theorem, counted on `[1, m n]`: for coprime positive moduli, exactly one
 -- integer in this interval lies in both residue classes.
