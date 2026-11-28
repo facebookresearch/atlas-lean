@@ -120,8 +120,8 @@ def splitting : Functor.AugmentationSplit U Q Z (𝟙 Q) where
   s _ := 0
   section_comp := by simp
   zero := by
-    simp only [HomologicalComplex.id_f, Functor.map_id, Category.id_comp]
-    rw [Limits.zero_comp, add_zero]
+    change (𝟙 Z) ≫ (𝟙 Z) + (0 : Z ⟶ Q.X 1) ≫ 0 = 𝟙 Z
+    rw [Category.id_comp, Limits.zero_comp, add_zero]
   succ n := by
     have hz : IsZero (Q.X (n + 1)) :=
       HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 0 Z (n + 1) (by simp)
@@ -197,6 +197,16 @@ lemma homologyTwice_naturality : homologyTwice ≫ homologyIso.hom = homologyIso
     ((Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ)).hom.naturality
       ((ChainComplex.single₀ (ModuleCat ℤ)).map twice))
   simp only [Functor.map_comp] at hn
+  have hnat : HomologicalComplex.homologyMap
+      ((U.mapHomologicalComplex (ComplexShape.down ℕ)).map
+        ((ChainComplex.single₀ (ModuleCat ℤ)).map twice)) 0 ≫
+      ((HomologicalComplex.homologyFunctor (ModuleCat ℤ) (ComplexShape.down ℕ) 0).mapIso
+        ((Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ)).app Q)).hom =
+    ((HomologicalComplex.homologyFunctor (ModuleCat ℤ) (ComplexShape.down ℕ) 0).mapIso
+      ((Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ)).app Q)).hom ≫
+        HomologicalComplex.homologyMap ((ChainComplex.single₀ (ModuleCat ℤ)).map twice) 0 := by
+    simpa only [U, Q, Functor.mapIso_hom, Iso.app_hom,
+      HomologicalComplex.homologyFunctor_map, Functor.id_map] using hn
   change HomologicalComplex.homologyMap
       ((U.mapHomologicalComplex (ComplexShape.down ℕ)).map
         ((ChainComplex.single₀ (ModuleCat ℤ)).map twice)) 0 ≫
@@ -206,7 +216,7 @@ lemma homologyTwice_naturality : homologyTwice ≫ homologyIso.hom = homologyIso
     (((HomologicalComplex.homologyFunctor (ModuleCat ℤ) (ComplexShape.down ℕ) 0).mapIso
       ((Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ)).app Q)).hom ≫
         (HomologicalComplex.singleObjHomologySelfIso (ComplexShape.down ℕ) 0 Z).hom) ≫ twice
-  rw [← Category.assoc, hn, Category.assoc,
+  rw [← Category.assoc, hnat, Category.assoc,
     HomologicalComplex.singleObjHomologySelfIso_hom_naturality, ← Category.assoc]
 
 /-- Conjugating the comparison homology map by its canonical coordinate gives doubling. -/
