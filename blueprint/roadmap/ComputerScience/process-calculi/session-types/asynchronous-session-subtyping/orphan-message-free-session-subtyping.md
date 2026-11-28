@@ -12,7 +12,7 @@ The asynchronous subtyping of Chen, Dezani-Ciancaglini, Scalas and Yoshida, whic
 
 $T \le_o S$ if $(T, S)$ lies in some such relation.
 
-**Theorem.** It is undecidable, given two session types $T$ and $S$ with carried types, whether $T \le_o S$. Instances are finite closed type terms over finitely many labels and primitive types; the queue-machine encodings used for the other relations are such terms, carrying no payload types.
+**Theorem.** It is undecidable, given two session types $T$ and $S$ with carried types, whether $T \le_o S$. Instances are finite closed type terms over finitely many labels and primitive types; the queue-machine encodings used for the other relations become such terms when every choice carries one fixed primitive type (for example $\mathsf{bool}$).
 
 ## Depends on
 
@@ -23,7 +23,7 @@ $T \le_o S$ if $(T, S)$ lies in some such relation.
 
 - [Asynchronous single-choice subtyping is undecidable](asynchronous-single-choice-subtyping-undecidable.md)
 
-## Expansion
+## Proof sketch
 
 The core language embeds one-to-one into the types with carried types by letting every choice carry one fixed primitive type. On the image of the single-choice fragment $(T^{\mathsf{out}} \times T^{\mathsf{in}}) \cap (\mathit{NOINF} \times \mathit{NOINF})$ the extra condition of clause 2 is automatic, because types with input-guarded recursion never perform infinitely many consecutive outputs, so $\le_o$ coincides with the single-choice relation there; undecidability transfers.
 

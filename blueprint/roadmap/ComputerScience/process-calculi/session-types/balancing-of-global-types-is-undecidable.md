@@ -23,9 +23,8 @@ $$
 \mathsf{G}_q = ?\{a;\ !b^a_1; \dots; !b^a_{n_a}; \mathsf{G}_{q'}\}_{a \in \Gamma} \quad \text{where } \delta(q, a) = \langle q', b^a_1 \cdots b^a_{n_a} \rangle,
 $$
 
-so $\mathsf{G}_q$ reads one symbol and writes the symbols the machine appends. Theorem 5.3 of the arXiv version shows that $M$ does not accept $\gamma$ if and only if $\mathsf{G}_s \parallel \gamma\triangleleft$ is balanced: a diverging run yields an infinite balancing derivation, and a halting run reaches an input with an empty queue, which no rule can derive. Hence balancing decides non-acceptance. The global types built by the reduction have two participants, one only sending and the other only receiving.
+so $\mathsf{G}_q$ reads one symbol and writes the symbols the machine appends. Theorem 5.3 of the arXiv version shows that $M$ does not accept $\gamma$ if and only if $\mathsf{G}_s \parallel \gamma\triangleleft$ is balanced: a diverging run yields an infinite balancing derivation, and a halting run reaches an input with an empty queue, which no rule can derive. Hence balancing decides non-acceptance. The global types built by the reduction have two participants, one only sending and the other only receiving. A good expansion links a page for the undecidability of acceptance for queue machines, the problem the reduction starts from.
 
 ## Sources
 
 - Francesco Dagnino, Paola Giannini and Mariangiola Dezani-Ciancaglini, "Deconfined Global Types for Asynchronous Sessions", Logical Methods in Computer Science 19(1), Article 3, 2023, <https://doi.org/10.46298/lmcs-19(1:3)2023>; Corollary 5.7 (balancing is undecidable), Theorem 5.3 (the reduction), Definitions 5.1 and 5.2 (queue machines and acceptance) and the remark after Corollary 5.7 (weak balancing) of arXiv:2111.11984v6, <https://arxiv.org/abs/2111.11984v6>.
-- Dexter Kozen, *Automata and Computability*, Springer, 1997, <https://doi.org/10.1007/978-1-4612-1844-9>; Turing completeness of queue machines, as cited in the paper above; not read, the clause rests on Section 5 of the version read of the first source above.

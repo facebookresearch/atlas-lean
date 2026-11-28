@@ -8,11 +8,11 @@ $$
 \phi ::= \exists x.\,\phi \mid \phi \land \phi \mid \neg \phi \mid \langle \ell \rangle \phi \mid \mathsf{end} \mid e_1@A = e_2@B \mid \phi \mid \phi \mid \Diamond \phi,
 $$
 
-where $\exists$ ranges over channels, participants, labels and expression placeholders. Satisfaction $C \models_\sigma \phi$: $\mathsf{end}$ is true if $C \equiv \mathbf 0$; $e_1@A = e_2@B$ if both evaluate in $\sigma$ to the same value; $\langle \ell \rangle \phi$ if $(\sigma, C) \xrightarrow{\ell} (\sigma', C')$ with $C' \models_{\sigma'} \phi$; $\Diamond \phi$ if $(\sigma, C) \to^* (\sigma', C')$ with $C' \models_{\sigma'} \phi$; $\phi \mid \chi$ if $C \equiv C_1 \mid C_2$ with $C_1 \models_\sigma \phi$ and $C_2 \models_\sigma \chi$; the Boolean connectives and $\exists$ (for some value of the appropriate sort) as usual.
+where $\exists$ ranges over channels, participants, labels and expression placeholders. Satisfaction $C \models_\sigma \phi$: $\mathsf{end}$ is true if $C \equiv \mathbf 0$; $e_1@A = e_2@B$ if both evaluate in $\sigma$ to the same value; $\langle \ell \rangle \phi$ if $(\sigma, C) \xrightarrow{\ell} (\sigma', C')$ with $C' \models_{\sigma'} \phi$; $\Diamond \phi$ if $(\sigma, C) \to^* (\sigma', C')$ with $C' \models_{\sigma'} \phi$, where $\to^*$ is the transitive closure of the transition relation, as in Section 2.2 of the source, so $\Diamond$ requires at least one step; $\phi \mid \chi$ if $C \equiv C_1 \mid C_2$ with $C_1 \models_\sigma \phi$ and $C_2 \models_\sigma \chi$; the Boolean connectives and $\exists$ (for some value of the appropriate sort) as usual.
 
 ## Depends on
 
-- [The global calculus of choreographies](global-calculus-and-global-logic.md)
+- [The global calculus of choreographies](global-calculus.md)
 
 ## Proof depends on
 

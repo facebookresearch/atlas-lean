@@ -2,7 +2,7 @@
 
 Reachability of a given term remains undecidable for hierarchical π-calculus terms, even for those certified by the hierarchical type system, although their coverability problem is decidable.
 
-**Theorem.** The reachability problem (given $P$ and $Q$, is a term structurally congruent to $Q$ reachable from $P$?) is undecidable for [hierarchical terms](hierarchical-pi-calculus-terms.md) $P$, and already for $P$ typably hierarchical. The proof (Theorem 8 of the source) reduces reachability of Minsky machine configurations to reachability of typably hierarchical terms, through a weak encoding: some runs of the encoding are spurious, but reaching the encoding of a target configuration is possible only along runs that simulate the machine.
+**Theorem.** The reachability problem (given $P$ and $Q$, is a term structurally congruent to $Q$ reachable from $P$?) is undecidable for [hierarchical terms](hierarchical-pi-calculus-terms.md) $P$. The proof (Theorem 8 of the source) reduces reachability of Minsky machine configurations to reachability of typably hierarchical terms, through a weak encoding: some runs of the encoding are spurious, but reaching the encoding of a target configuration is possible only along runs that simulate the machine.
 
 ## Depends on
 
@@ -15,7 +15,7 @@ Reachability of a given term remains undecidable for hierarchical π-calculus te
 
 ## Expansion
 
-The reduction is from reachability of Minsky (two-counter) machines, through a *weak* encoding: not every run of the encoded term represents a real run of the machine. Reachability of an exact target term, unlike coverability, distinguishes the reachable terms that encode reachable configurations from the others, so the machine reaches its target configuration iff the encoding reaches the corresponding term. The encoding is typably hierarchical.
+The reduction is from reachability of Minsky (two-counter) machines, through a *weak* encoding: not every run of the encoded term represents a real run of the machine. Reachability of an exact target term, unlike coverability, distinguishes the reachable terms that encode reachable configurations from the others, so the machine reaches its target configuration iff the encoding reaches the corresponding term. The encoding is typably hierarchical: it is typable in the source's type system for hierarchical terms (Section 4), so reachability stays undecidable for typably hierarchical terms. A good expansion states that type system on a page of its own and links it here, together with a page for the undecidability of reachability for Minsky machines in the form the reduction uses.
 
 The result separates the fragment from models such as Petri nets, whose reachability is decidable, and from $\mathrm{CCS}^!$, which is contained in it and has decidable reachability. Coverability (reaching a term into which a given query embeds) is decidable for depth-bounded and hence for hierarchical terms, which suffices for many safety properties.
 

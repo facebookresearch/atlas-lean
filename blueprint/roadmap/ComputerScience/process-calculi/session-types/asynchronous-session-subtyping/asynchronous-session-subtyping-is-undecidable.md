@@ -13,7 +13,7 @@ No algorithm decides, given two binary session types $T$ and $S$, whether $T$ is
 
 - [Asynchronous single-choice subtyping is undecidable](asynchronous-single-choice-subtyping-undecidable.md)
 
-## Expansion
+## Proof sketch
 
 The single-choice relation $\le_{\mathsf{sc}}$ is $\le$ restricted to the pairs in $(T^{\mathsf{out}} \times T^{\mathsf{in}}) \cap (\mathit{NOINF} \times \mathit{NOINF})$, a decidable set of pairs. If $\le$ were decidable, so would be its intersection with a decidable set, contradicting the undecidability of $\le_{\mathsf{sc}}$. The same queue-machine encoding carries over to standard binary session types with message payloads (same source, Corollary 4.2) and to multiparty asynchronous subtyping (Corollary 4.4). Lange and Yoshida obtained an undecidability result for asynchronous subtyping independently.
 

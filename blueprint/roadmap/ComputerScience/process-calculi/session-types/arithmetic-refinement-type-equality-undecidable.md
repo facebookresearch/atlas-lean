@@ -21,7 +21,7 @@ The authors note that the fragment containing only type definitions, internal ch
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 
-## Expansion
+## Proof sketch
 
 The reduction is from the non-halting problem of two-counter machines. Type names indexed by the counter values encode machine configurations, and assertions on the indices let a type branch on whether a counter is zero, so that unfolding a type step by step follows the computation of the machine. Two types are constructed that behave identically as long as the computation runs and differ when it halts, so they are equal exactly when the machine does not halt.
 
