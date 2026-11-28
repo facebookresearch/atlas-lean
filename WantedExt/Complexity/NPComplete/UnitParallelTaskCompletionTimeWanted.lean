@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.UnitParallelTaskCompletionTimeDefs
 
 @[expose] public section
 
@@ -57,32 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of processors, the sizes `sizeⱼ` of the tasks, and the bound
-`K`. -/
-abbrev UnitParallelTaskInstance := ℕ × List ℕ × ℕ
-
-/-- Well-formedness of an instance: there is at least one processor (`0 < m`), every size
-satisfies `1 ≤ sizeⱼ ≤ m`, and `0 < K`. -/
-def WellFormed (i : UnitParallelTaskInstance) : Prop :=
-  0 < i.1 ∧ (∀ q ∈ i.2.1, 0 < q ∧ q ≤ i.1) ∧ 0 < i.2.2
-
-/-- There are start times `s` such that at every time `t` the tasks started at `t` (those
-processed during `[t, t + 1)`) need at most `m` processors in total, and the total completion
-time `∑ⱼ (s j + 1)` is at most `K`. -/
-def UnitParallelTaskCompletionTimeFeasible (i : UnitParallelTaskInstance) : Prop :=
-  ∃ s : Fin i.2.1.length → ℕ,
-    (∀ t, ((Finset.univ.filter fun j => s j = t).sum fun j => i.2.1.get j) ≤ i.1) ∧
-      ∑ j, (s j + 1) ≤ i.2.2
-
-open Classical in
-/-- `P|sizeⱼ, pⱼ = 1|∑ Cⱼ` as a decision problem over bitstrings. -/
-noncomputable def unitParallelTaskCompletionTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitParallelTaskInstance) x with
-  | some i => decide (WellFormed i ∧ UnitParallelTaskCompletionTimeFeasible i)
-  | none => false
 
 /-- **UNIT-TIME PARALLEL-TASK SCHEDULING with total completion time bound
 (`P|sizeⱼ, pⱼ = 1|∑ Cⱼ`) is NP-complete.** Source: Drozdowski and Dell'Olmo (2000). -/
