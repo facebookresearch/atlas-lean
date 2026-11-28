@@ -15,6 +15,19 @@ import Mathlib.LinearAlgebra.Matrix.Block
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.Combinatorics.Words.LyndonWord
 
+/-!
+# Toeplitz–Hessenberg determinants and Trudi's formula
+
+## References
+
+* Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with Fuss-Catalan
+  Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, pp. 1–23, Section 2, display
+  (1) and Lemma 1 (the determinant and its partition expansion), and Section 3 (the
+  composition form).
+* Mircea Merca, *A note on the determinant of a Toeplitz-Hessenberg matrix*, Special Matrices
+  1 (2013), pp. 10–16, Theorem 1 (Trudi's formula).
+-/
+
 namespace MetaMathlibExt
 
 @[expose] public section
@@ -474,6 +487,13 @@ Fuss-Catalan Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, S
 def toeplitzHessenbergDet {R : Type*} [CommRing R] (a : ℕ → R) (n : ℕ) : R :=
   (Matrix.of fun i j : Fin n =>
     if (j : ℕ) ≤ (i : ℕ) + 1 then a ((i : ℕ) + 1 - (j : ℕ)) else 0).det
+
+/-- **The empty Toeplitz–Hessenberg determinant.** For every commutative ring $R$ and every
+sequence $a_0, a_1, a_2, \dots$ in $R$, the Toeplitz–Hessenberg determinant of size $0$ built
+from $a$ is $\det A_0 = 1$. -/
+theorem toeplitzHessenbergDet_zero {R : Type*} [CommRing R] (a : ℕ → R) :
+    toeplitzHessenbergDet a 0 = 1 := by
+  rw [toeplitzHessenbergDet, Matrix.det_fin_zero]
 
 /-- **The $1 \times 1$ Toeplitz–Hessenberg determinant.** For every commutative ring $R$ and every
 sequence $a_0, a_1, a_2, \dots$ in $R$, the Toeplitz–Hessenberg determinant of size $1$ built
