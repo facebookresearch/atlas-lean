@@ -16,6 +16,7 @@ public import Mathlib.Analysis.Analytic.IsolatedZeros
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Complex
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 public import Mathlib.Analysis.Real.Pi.Bounds
+import MathlibExt.Analysis.SpecialFunctions.Trigonometric.ComplexNorm
 
 /-!
 # A periodic entire function of exponential growth is constant
@@ -232,20 +233,10 @@ private theorem entire_quotient_by_sin_pi
     intro z hz
     simp [mkQuotient, hz]
 
-/-- `‖sin z‖² = sin² (Re z) + sinh² (Im z)`. -/
-private lemma normSq_sin (z : ℂ) : Complex.normSq (Complex.sin z) =
-    Real.sin z.re ^ 2 + Real.sinh z.im ^ 2 := by
-  rw [Complex.sin_eq z, ← Complex.ofReal_sin, ← Complex.ofReal_cos,
-      ← Complex.ofReal_sinh, ← Complex.ofReal_cosh, ← ofReal_mul, ← ofReal_mul]
-  simp only [normSq_apply, add_re, ofReal_re, mul_re, I_re, mul_zero, I_im,
-    mul_one,
-    sub_zero, add_im, ofReal_im, mul_im, add_zero]
-  nlinarith [Real.sin_sq_add_cos_sq z.re, Real.cosh_sq z.im]
-
 /-- `‖sin z‖ ≥ |sinh (Im z)|`. -/
 private lemma norm_sin_ge_abs_sinh_im (z : ℂ) :
     ‖Complex.sin z‖ ≥ |Real.sinh z.im| := by
-  nlinarith [Complex.sq_norm (Complex.sin z), normSq_sin z,
+  nlinarith [Complex.sq_norm (Complex.sin z), Complex.normSq_sin z,
     sq_nonneg (Real.sin z.re),
     sq_abs (Real.sinh z.im), norm_nonneg (Complex.sin z),
     sq_nonneg (‖Complex.sin z‖ - |Real.sinh z.im|)]
