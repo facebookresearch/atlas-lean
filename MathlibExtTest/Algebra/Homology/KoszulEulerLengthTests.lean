@@ -18,6 +18,7 @@ import MathlibExt.RingTheory.Length.ExactEulerChain
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Field.Rat
 import Mathlib.Data.ZMod.Basic
+import Mathlib.Algebra.Field.ZMod
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
@@ -38,6 +39,8 @@ open scoped BigOperators
 
 namespace MathlibExtTest.KoszulEulerLength
 
+private instance : Fact (Nat.Prime 2) := ⟨by decide⟩
+
 private abbrev R6 := ZMod 6
 private def standardPair : Fin 2 → (Fin 2 → R6) := fun i => Pi.single i 1
 private def orderedWedge : ⋀[R6]^2 (Fin 2 → R6) :=
@@ -48,14 +51,15 @@ private lemma top_one : KoszulComplex.pairTopEquiv R6 orderedWedge = 1 := by
   norm_num [standardPair, Pi.single_apply]
 
 private lemma coordinate_top_one :
-    (KoszulComplex.pairCoordinateShortComplex R6 3 2).f.hom 1 =
+    (KoszulComplex.pairCoordinateShortComplex R6 3 2).f.hom (1 : R6) =
       KoszulComplex.pairFamily R6 4 3 := by
-  funext i
-  fin_cases i <;>
-    norm_num [KoszulComplex.pairCoordinateShortComplex, LinearMap.toSpanSingleton_apply]
+  change LinearMap.toSpanSingleton R6 (Fin 2 → R6)
+      (KoszulComplex.pairFamily R6 (-2) 3) (1 : R6) =
+    KoszulComplex.pairFamily R6 4 3
+  rw [LinearMap.toSpanSingleton_apply_one, show (-2 : R6) = 4 from by decide]
 
 example :
-    (KoszulComplex.pairCoordinateShortComplex R6 3 2).f.hom 1 =
+    (KoszulComplex.pairCoordinateShortComplex R6 3 2).f.hom (1 : R6) =
       KoszulComplex.pairFamily R6 4 3 := coordinate_top_one
 
 example :
@@ -65,20 +69,18 @@ example :
       KoszulComplex.pairFamily R6 4 3 := by
   dsimp only
   let e := KoszulComplex.pairCoordinateShortComplexIso R6 3 2
-  have h := ConcreteCategory.congr_hom e.hom.comm₁₂ (e.inv.τ₁.hom (1 : R6))
-  change e.hom.τ₂.hom
-      (((KoszulComplex.familyComplex R6 (KoszulComplex.pairFamily R6 3 2)).sc 1).f.hom
-        (e.inv.τ₁.hom (1 : R6))) =
-    (KoszulComplex.pairCoordinateShortComplex R6 3 2).f.hom
-      (e.hom.τ₁.hom (e.inv.τ₁.hom (1 : R6))) at h
+  have h := LinearMap.congr_fun (congrArg ModuleCat.Hom.hom e.hom.comm₁₂)
+    (e.inv.τ₁.hom (1 : R6))
+  simp only [ModuleCat.hom_comp, LinearMap.comp_apply] at h
   have hc := congrArg
     (fun f : KoszulComplex.pairCoordinateShortComplex R6 3 2 ⟶
       KoszulComplex.pairCoordinateShortComplex R6 3 2 => f.τ₁) e.inv_hom_id
   change e.inv.τ₁ ≫ e.hom.τ₁ = 𝟙 _ at hc
-  have hv := ConcreteCategory.congr_hom hc (1 : R6)
-  change e.hom.τ₁.hom (e.inv.τ₁.hom (1 : R6)) = 1 at hv
+  have hv := LinearMap.congr_fun (congrArg ModuleCat.Hom.hom hc) (1 : R6)
+  simp only [ModuleCat.hom_comp, ModuleCat.hom_id, LinearMap.comp_apply,
+    LinearMap.id_apply] at hv
   rw [hv] at h
-  exact h.trans coordinate_top_one
+  exact h.symm.trans coordinate_top_one
 
 example :
     exteriorPower.oneEquiv R6 (Fin 2 → R6)
@@ -87,8 +89,9 @@ example :
           1 orderedWedge) = KoszulComplex.pairFamily R6 4 3 := by
   have h := LinearMap.congr_fun
     (KoszulComplex.pair_differential_one_coordinates R6 3 2) orderedWedge
+  simp only [LinearMap.comp_apply] at h
   rw [top_one] at h
-  simpa only [LinearMap.comp_apply, LinearMap.toSpanSingleton_apply,
+  simpa only [LinearMap.toSpanSingleton_apply,
     one_smul, show (-2 : R6) = 4 from by decide] using h
 
 section EmptyFamily
@@ -130,7 +133,7 @@ example :
     KoszulComplex.familyEulerCharacteristicOfQuotient ℚ emptyFamily quotient_finite = 1 := by
   rw [KoszulComplex.familyEulerCharacteristicOfQuotient_eq]
   simpa only [Fintype.card_fin, zero_add, Finset.sum_range_one, pow_zero,
-    one_mul, empty_homology_length] using (show (1 : ℤ) = 1 from rfl)
+    one_mul, empty_homology_length, ENat.toNat_one] using (show (1 : ℤ) = 1 from rfl)
 
 end EmptyFamily
 
@@ -146,7 +149,9 @@ private def axisEquiv : ℚ ≃ₗ[ℚ] axis where
   right_inv x := by
     apply Subtype.ext
     exact Prod.ext rfl (show x.1.2 = 0 from x.2).symm
-  map_add' _ _ := rfl
+  map_add' _ _ := by
+    apply Subtype.ext
+    simp
   map_smul' r x := by
     apply Subtype.ext
     simp
@@ -162,13 +167,17 @@ private lemma axis_quotient_length : Module.length ℚ (M ⧸ axis) = 1 :=
 example : Module.length ℚ M = 2 ∧ Module.length ℚ axis = 1 ∧
     Module.length ℚ (M ⧸ axis) = 1 := by
   refine ⟨?_, axis_length, axis_quotient_length⟩
-  rw [Module.length_prod, Module.length_eq_one, Module.length_eq_one]
+  rw [Module.length_prod, Module.length_eq_one]
   norm_num
 
 example :
     Module.length ℚ (M ⧸ (⊥ : Submodule ℚ M)) =
       Module.length ℚ (axis ⧸ (⊥ : Submodule ℚ axis)) + 1 := by
-  simpa [axis_quotient_length] using
+  have hker : axis.subtype.ker = (⊥ : Submodule ℚ axis) := by
+    ext x
+    change (x : M) = 0 ↔ x = 0
+    exact ⟨fun hx => Subtype.ext hx, fun hx => congrArg Subtype.val hx⟩
+  simpa [axis_quotient_length, hker] using
     Submodule.length_quotient_eq_add_of_le (⊥ : Submodule ℚ M) axis bot_le
 
 example :
@@ -207,7 +216,7 @@ private lemma between_exact :
   change ULift.up x.down = (0 : ULift.{2} ℚ) ↔ ∃ q : ℚ, (0 : ULift.{1} ℚ) = x
   constructor
   · intro h
-    have hd : x.down = 0 := congrArg ULift.down h
+    have hd : x.down = 0 := congrArg (fun y : ULift.{2} ℚ => y.down) h
     exact ⟨0, (ULift.ext hd).symm⟩
   · rintro ⟨q, hq⟩
     rw [← hq]
@@ -238,21 +247,44 @@ private def identityComplex : HomologicalComplex (ModuleCat.{0} ℚ)
       exact False.elim (hij (by decide))
     · simp [edge, h]
   d_comp_d' i j k _ _ := by
-    fin_cases i <;> fin_cases j <;> fin_cases k <;> simp [edge]
+    by_cases hij : i = 1 ∧ j = 0
+    · have hjk : ¬ (j = 1 ∧ k = 0) := by
+        rintro ⟨hj, _⟩
+        exact zero_ne_one (hij.2.symm.trans hj)
+      simp only [edge, if_pos hij, if_neg hjk, comp_zero]
+    · simp only [edge, if_neg hij, zero_comp]
 
 private def weight (i : ZMod 2) : ℤ := if i = 0 then 1 else -1
 private lemma weight_opposite (i j : ZMod 2)
     (h : (ComplexShape.down (ZMod 2)).Rel i j) : weight i + weight j = 0 := by
-  fin_cases i <;> fin_cases j <;> norm_num [ComplexShape.down_Rel, weight] at h ⊢
+  have hrel : j + 1 = i := h
+  have hne : i ≠ j := by
+    intro hij
+    have hh : j + 1 = j + 0 := by simpa only [hij, add_zero] using hrel
+    exact one_ne_zero (add_left_cancel hh)
+  have hi : i = 0 ∨ i = 1 := (by decide : ∀ x : ZMod 2, x = 0 ∨ x = 1) i
+  have hj : j = 0 ∨ j = 1 := (by decide : ∀ x : ZMod 2, x = 0 ∨ x = 1) j
+  rcases hi with rfl | rfl <;> rcases hj with rfl | rfl
+  · exact (hne rfl).elim
+  · simp only [weight, if_pos rfl, if_neg (show (1 : ZMod 2) ≠ 0 from one_ne_zero)]
+    norm_num
+  · simp only [weight, if_pos rfl, if_neg (show (1 : ZMod 2) ≠ 0 from one_ne_zero)]
+    norm_num
+  · exact (hne rfl).elim
 
-example : (identityComplex.d 1 0).hom (1 : ℚ) = 1 ∧
+example : (identityComplex.d 1 0).hom (1 : ℚ) = (1 : ℚ) ∧
     identityComplex.d 0 1 = 0 := by
-  constructor <;> simp [identityComplex, edge]
+  constructor
+  · change (edge (1 : ZMod 2) 0).hom (1 : ℚ) = (1 : ℚ)
+    simp only [edge, if_pos (And.intro rfl rfl), ModuleCat.hom_id, LinearMap.id_apply]
+  · change edge (0 : ZMod 2) 1 = 0
+    have hbad : ¬ ((0 : ZMod 2) = 1 ∧ (1 : ZMod 2) = 0) := fun h => zero_ne_one h.1
+    simp only [edge, if_neg hbad]
 
 example : Module.length ℚ (identityComplex.d 1 0).hom.range = 1 := by
   change Module.length ℚ (LinearMap.id : ℚ →ₗ[ℚ] ℚ).range = 1
   rw [LinearMap.range_id, Module.length_top]
-  exact Module.length_eq_one
+  exact Module.length_eq_one (R := ℚ) (M := ℚ)
 
 example :
     (∑ i : ZMod 2, weight i * (Module.length ℚ (identityComplex.homology i)).toNat) = 0 := by
