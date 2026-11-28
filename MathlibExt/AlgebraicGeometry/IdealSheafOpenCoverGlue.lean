@@ -39,7 +39,6 @@ Ideal sheaves on the members of an open cover that agree on overlaps glue to an 
 the whole scheme.
 -/
 
-@[expose] public section
 
 set_option autoImplicit false
 
@@ -88,7 +87,7 @@ variable {X : Scheme.{u}} (𝒰 : X.OpenCover) (I : ∀ i, (𝒰.X i).IdealSheaf
 def imA (i : 𝒰.I₀) (W : (𝒰.X i).affineOpens) : X.affineOpens :=
   ⟨𝒰.f i ''ᵁ (W : (𝒰.X i).Opens), W.2.image_of_isOpenImmersion _⟩
 
-@[scoped simp] lemma coe_imA (i : 𝒰.I₀) (W : (𝒰.X i).affineOpens) :
+@[local simp] lemma coe_imA (i : 𝒰.I₀) (W : (𝒰.X i).affineOpens) :
     (imA 𝒰 i W : X.Opens) = 𝒰.f i ''ᵁ (W : (𝒰.X i).Opens) := rfl
 
 noncomputable def T (i : 𝒰.I₀) (W : (𝒰.X i).affineOpens) : Ideal Γ(X,

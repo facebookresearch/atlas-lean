@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
 public import MathlibExt.AlgebraicGeometry.CompactifiedPoincareKernels
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PullbackFree
+public import MathlibExt.AlgebraicGeometry.Modules.SectionPullback
 
 /-!
 # Actual line-bundle powers and sections for geometric task interfaces
@@ -57,9 +58,6 @@ abbrev sheafifyModules (X : Scheme.{u}) : ModulePresheaves X ⥤ X.Modules :=
   @PresheafOfModules.sheafification.{u, u, u, u} X.Opens inferInstance
     (Opens.grothendieckTopology X) X.ringCatSheaf.obj X.ringCatSheaf
     (𝟙 X.ringCatSheaf.obj) inferInstance inferInstance inferInstance inferInstance
-
-/-- The actual structure-sheaf morphisms, equivalently global sections. -/
-abbrev Section {X : Scheme.{u}} (L : X.Modules) := structureModule X ⟶ L
 
 /-- The tensor of two actual module morphisms, followed by sheafification. -/
 abbrev tensorMap {X : Scheme.{u}} {L L' M M' : X.Modules}
@@ -141,15 +139,6 @@ def sectionPower {X : Scheme.{u}} {L : X.Modules} (s : Section L) :
   | zero => exact (Category.id_comp _).symm
   | succ n ih =>
       simp only [sectionPower, powerMap, tensorSection, ih, tensorMap_comp, Category.assoc]
-
-/-- The canonical pullback of a section, with its source fixed by the
-actual adjunction-induced structure-sheaf comparison. -/
-def pullbackSection {X Y : Scheme.{u}} (f : X ⟶ Y) {L : Y.Modules}
-    (s : Section L) : Section ((Scheme.Modules.pullback f).obj L) := by
-  letI : (SheafOfModules.pushforward f.toRingCatSheafHom).IsRightAdjoint :=
-    inferInstanceAs (Scheme.Modules.pushforward f).IsRightAdjoint
-  exact (asIso (SheafOfModules.pullbackObjUnitToUnit f.toRingCatSheafHom)).inv ≫
-    (Scheme.Modules.pullback f).map s
 
 /-- A normalized comparison of the *fixed* pullback and tensor-power
 operations. This records reusable comparison data, not a power oracle. -/

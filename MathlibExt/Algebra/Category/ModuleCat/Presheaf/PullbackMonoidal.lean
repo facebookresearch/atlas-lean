@@ -46,7 +46,6 @@ preserves finite products, the pullback along `φ : S ⟶ F.op ⋙ R` is a monoi
 (`PresheafOfModules.PullbackMonoidal.pullback_monoidal`).
 -/
 
-@[expose] public section
 
 
 set_option autoImplicit false
@@ -62,17 +61,23 @@ section restrictScalars
 
 variable {C : Type u₁} [Category.{v₁} C] {R S : Cᵒᵖ ⥤ CommRingCat.{u}} (φ : S ⟶ R)
 
-abbrev ringCatHom : S ⋙ forget₂ CommRingCat RingCat ⟶ R ⋙ forget₂ CommRingCat RingCat :=
+/-- The morphism of presheaves of rings `S ⋙ forget₂ _ _ ⟶ R ⋙ forget₂ _ _` underlying a morphism
+`φ : S ⟶ R` of presheaves of commutative rings. -/
+public abbrev ringCatHom : S ⋙ forget₂ CommRingCat RingCat ⟶ R ⋙ forget₂ CommRingCat RingCat :=
   Functor.whiskerRight φ (forget₂ CommRingCat RingCat)
 
-noncomputable abbrev restrictScalarsAt (U : Cᵒᵖ) : ModuleCat.{u} (R.obj U) ⥤ ModuleCat.{u} (S.obj
-    U) :=
+/-- Restriction of scalars along `φ.app U : S.obj U ⟶ R.obj U`, the component at `U` of
+restriction of scalars along `ringCatHom φ`. -/
+public noncomputable abbrev restrictScalarsAt (U : Cᵒᵖ) :
+    ModuleCat.{u} (R.obj U) ⥤ ModuleCat.{u} (S.obj U) :=
   ModuleCat.restrictScalars (φ.app U).hom
 
 example (M : PresheafOfModules.{u} (R ⋙ forget₂ _ _)) (U : Cᵒᵖ) :
     ((restrictScalars (ringCatHom φ)).obj M).obj U = (restrictScalarsAt φ U).obj (M.obj U) := rfl
 
-noncomputable def restrictScalarsε :
+/-- The unit of the lax monoidal structure on restriction of scalars along `ringCatHom φ`; its
+component at `U` is the unit of the lax monoidal functor `restrictScalarsAt φ U`. -/
+@[expose] public noncomputable def restrictScalarsε :
     𝟙_ (PresheafOfModules.{u} (S ⋙ forget₂ _ _)) ⟶
       (restrictScalars (ringCatHom φ)).obj (𝟙_ (PresheafOfModules.{u} (R ⋙ forget₂ _ _))) where
   app U := ε (restrictScalarsAt φ U)
@@ -82,7 +87,11 @@ noncomputable def restrictScalarsε :
     erw [ModuleCat.restrictScalars_η, ModuleCat.restrictScalars_η]
     exact ConcreteCategory.congr_hom (φ.naturality i) s
 
-noncomputable def restrictScalarsμ (M N : PresheafOfModules.{u} (R ⋙ forget₂ _ _)) :
+/-- The tensorator of the lax monoidal structure on restriction of scalars along `ringCatHom φ`;
+its component at `U` is the tensorator of the lax monoidal functor `restrictScalarsAt φ U`, which
+sends `m ⊗ₜ n` to `m ⊗ₜ n`. -/
+@[expose] public noncomputable def restrictScalarsμ
+    (M N : PresheafOfModules.{u} (R ⋙ forget₂ _ _)) :
     (restrictScalars (ringCatHom φ)).obj M ⊗ (restrictScalars (ringCatHom φ)).obj N ⟶
       (restrictScalars (ringCatHom φ)).obj (M ⊗ N) where
   app U := μ (restrictScalarsAt φ U) (M.obj U) (N.obj U)
@@ -95,7 +104,7 @@ noncomputable def restrictScalarsμ (M N : PresheafOfModules.{u} (R ⋙ forget�
     erw [PresheafOfModulesOfCommRing.Monoidal.tensorObj_map_tmul]
     rfl
 
-noncomputable instance restrictScalars_laxMonoidal :
+public noncomputable instance restrictScalars_laxMonoidal :
     (restrictScalars (ringCatHom φ)).LaxMonoidal where
   ε := restrictScalarsε φ
   μ M N := restrictScalarsμ φ M N
@@ -131,12 +140,12 @@ section pushforward
 variable {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D] (F : C ⥤ D)
   {R : Dᵒᵖ ⥤ CommRingCat.{u}} {S : Cᵒᵖ ⥤ CommRingCat.{u}} (φ : S ⟶ F.op ⋙ R)
 
-noncomputable instance pushforward_laxMonoidal :
+public noncomputable instance pushforward_laxMonoidal :
     (pushforward (R := R ⋙ forget₂ _ _) (ringCatHom φ)).LaxMonoidal :=
   inferInstanceAs (pushforward₀OfCommRingCat F R ⋙
     restrictScalars (ringCatHom (R := F.op ⋙ R) φ)).LaxMonoidal
 
-noncomputable instance pullback_oplaxMonoidal
+public noncomputable instance pullback_oplaxMonoidal
     [(pushforward (R := R ⋙ forget₂ _ _) (ringCatHom φ)).IsRightAdjoint] :
     (pullback (R := R ⋙ forget₂ _ _) (ringCatHom φ)).OplaxMonoidal :=
   (pullbackPushforwardAdjunction (R := R ⋙ forget₂ _ _) (ringCatHom φ)).leftAdjointOplaxMonoidal
@@ -185,7 +194,9 @@ lemma freeObj_map_freeMk (T : Cᵒᵖ ⥤ Type u) {X Y : Cᵒᵖ} (f : X ⟶ Y) 
     (freeObj (R := R') T).map f (ModuleCat.freeMk x) = ModuleCat.freeMk (T.map f x) := by
   simp [freeObj, ModuleCat.freeDesc_apply]
 
-noncomputable def freeεIso :
+/-- The tensor unit of presheaves of modules is the free presheaf of modules on the terminal
+presheaf of types; the component at `X` is `ModuleCat.FreeMonoidal.εIso`. -/
+@[expose] public noncomputable def freeεIso :
     𝟙_ (PresheafOfModules.{u} R') ≅ (free R').obj (𝟙_ (Cᵒᵖ ⥤ Type u)) :=
   isoMk (fun X => ModuleCat.FreeMonoidal.εIso (R.obj X)) (by
     intro X Y f
@@ -202,7 +213,10 @@ noncomputable def freeεIso :
     erw [freeObj_map_freeMk]
     rfl)
 
-noncomputable def freeμIso (F G : Cᵒᵖ ⥤ Type u) :
+/-- The tensor product of the free presheaves of modules on `F` and `G` is the free presheaf of
+modules on `F ⊗ G`; the component at `X` is `ModuleCat.FreeMonoidal.μIso`, which sends
+`freeMk x ⊗ₜ freeMk y` to `freeMk (x, y)`. -/
+@[expose] public noncomputable def freeμIso (F G : Cᵒᵖ ⥤ Type u) :
     (free R').obj F ⊗ (free R').obj G ≅ (free R').obj (F ⊗ G) :=
   isoMk (fun X => ModuleCat.FreeMonoidal.μIso (R.obj X) (F.obj X) (G.obj X)) (by
     intro X Y f
@@ -221,13 +235,13 @@ noncomputable def freeμIso (F G : Cᵒᵖ ⥤ Type u) :
     erw [ModuleCat.FreeMonoidal.μIso_hom_freeMk_tmul_freeMk]
     rfl)
 
-@[simp] lemma freeμIso_hom_app (F G : Cᵒᵖ ⥤ Type u) (X : Cᵒᵖ) :
+@[simp] public lemma freeμIso_hom_app (F G : Cᵒᵖ ⥤ Type u) (X : Cᵒᵖ) :
     (freeμIso (R := R) F G).hom.app X =
       (ModuleCat.FreeMonoidal.μIso (R.obj X) (F.obj X) (G.obj X)).hom := rfl
-@[simp] lemma freeεIso_hom_app (X : Cᵒᵖ) :
+@[simp] public lemma freeεIso_hom_app (X : Cᵒᵖ) :
     (freeεIso (R := R)).hom.app X = (ModuleCat.FreeMonoidal.εIso (R.obj X)).hom := rfl
 
-noncomputable instance free_monoidal : (free R').Monoidal :=
+public noncomputable instance free_monoidal : (free R').Monoidal :=
   Functor.CoreMonoidal.toMonoidal
     { εIso := freeεIso
       μIso := freeμIso
@@ -281,13 +295,17 @@ variable {C D : Type u} [SmallCategory C] [SmallCategory D]
 local notation "R'" => R ⋙ forget₂ CommRingCat RingCat
 local notation "S'" => S ⋙ forget₂ CommRingCat RingCat
 
-noncomputable abbrev pf : PresheafOfModules.{u} R' ⥤ PresheafOfModules.{u} S' :=
+/-- Pushforward of presheaves of modules along `F` and `φ : S ⟶ F.op ⋙ R`. -/
+public noncomputable abbrev pf : PresheafOfModules.{u} R' ⥤ PresheafOfModules.{u} S' :=
   pushforward (R := R') (ringCatHom φ)
 
-noncomputable abbrev pb : PresheafOfModules.{u} S' ⥤ PresheafOfModules.{u} R' :=
+/-- Pullback of presheaves of modules along `F` and `φ`, the left adjoint of `pf F φ`. -/
+public noncomputable abbrev pb : PresheafOfModules.{u} S' ⥤ PresheafOfModules.{u} R' :=
   pullback (R := R') (ringCatHom φ)
 
-noncomputable abbrev adj : pb F φ ⊣ pf F φ := pullbackPushforwardAdjunction (R := R') (ringCatHom φ)
+/-- The adjunction between the pullback `pb F φ` and the pushforward `pf F φ`. -/
+public noncomputable abbrev adj : pb F φ ⊣ pf F φ :=
+  pullbackPushforwardAdjunction (R := R') (ringCatHom φ)
 
 noncomputable abbrev gS (U : C) : PresheafOfModules.{u} S' := (free S').obj (yoneda.obj U)
 noncomputable abbrev gR (V : D) : PresheafOfModules.{u} R' := (free R').obj (yoneda.obj V)
@@ -331,7 +349,7 @@ lemma freeμIso_inv_app_freeMk {E : Type u} [SmallCategory E] {T : Eᵒᵖ ⥤ C
   ModuleCat.FreeMonoidal.μIso_inv_freeMk _ z
 
 omit [HasFiniteProducts C] [HasFiniteProducts D] [PreservesFiniteProducts F] in
-lemma tensorHom_app_tmul {E : Type u} [SmallCategory E] {T : Eᵒᵖ ⥤ CommRingCat.{u}}
+public lemma tensorHom_app_tmul {E : Type u} [SmallCategory E] {T : Eᵒᵖ ⥤ CommRingCat.{u}}
     {M₁ M₂ M₃ M₄ : PresheafOfModulesOfCommRing.{u} T}
     (f : M₁ ⟶ M₂) (g : M₃ ⟶ M₄) (X : Eᵒᵖ) (m : M₁.obj X) (n : M₃.obj X) :
     DFunLike.coe (α := (M₁.obj X ⊗ M₃.obj X :)) (β := fun _ => (M₂.obj X ⊗ M₄.obj X :))
@@ -418,7 +436,7 @@ noncomputable def r₀ : gR (R := R) (F.obj (⊤_ C)) ≅ 𝟙_ _ :=
     ((free R').mapIso (tensorUnitIso D)).symm ≪≫ freeεIso.symm
 
 omit [HasFiniteProducts C] [HasFiniteProducts D] [PreservesFiniteProducts F] in
-lemma pf_μ_app_tmul (M N : PresheafOfModulesOfCommRing.{u} R) (W : C)
+public lemma pf_μ_app_tmul (M N : PresheafOfModulesOfCommRing.{u} R) (W : C)
     (m : M.obj (op (F.obj W))) (n : N.obj (op (F.obj W))) :
     DFunLike.coe (α := (PresheafOfModulesOfCommRing.obj ((pf F φ).obj M) (op W) ⊗
         PresheafOfModulesOfCommRing.obj ((pf F φ).obj N) (op W) :))
@@ -520,7 +538,7 @@ lemma isIso_app_of_freeYoneda {ℬ : Type*} [Category ℬ]
 
 instance : PreservesColimitsOfSize.{u, u} (pb F φ) := (adj F φ).leftAdjoint_preservesColimits
 
-instance isIso_δ (A B : PresheafOfModules.{u} S') : IsIso (δ (pb F φ) A B) := by
+public instance isIso_δ (A B : PresheafOfModules.{u} S') : IsIso (δ (pb F φ) A B) := by
   have h1 : ∀ (U : C) (B : PresheafOfModules.{u} S'), IsIso (δ (pb F φ) (gS U) B) := fun U => by
     let σ : tensorLeft (gS (S := S) U) ⋙ pb F φ ⟶ pb F φ ⋙ tensorLeft ((pb F φ).obj (gS U)) :=
       { app := fun B => δ (pb F φ) (gS U) B
@@ -573,16 +591,11 @@ lemma η_eq : η (pb F φ) = (pb F φ).map (j₀ (S := S)).hom ≫ (e F φ (⊤_
     ← cancel_epi (j₀ (S := S)).inv, Iso.inv_hom_id_assoc]
   exact key_η F φ
 
-instance isIso_η : IsIso (η (pb F φ)) := by rw [η_eq]; infer_instance
+public instance isIso_η : IsIso (η (pb F φ)) := by rw [η_eq]; infer_instance
 
-noncomputable instance pullback_monoidal : (pb F φ).Monoidal := Functor.Monoidal.ofOplaxMonoidal _
+public noncomputable instance pullback_monoidal : (pb F φ).Monoidal :=
+  Functor.Monoidal.ofOplaxMonoidal _
 
 end PullbackMonoidal
-
-noncomputable instance pullback_monoidal' {C D : Type u} [SmallCategory C] [SmallCategory D]
-    [HasFiniteProducts C] [HasFiniteProducts D] (F : C ⥤ D) [PreservesFiniteProducts F]
-    {R : Dᵒᵖ ⥤ CommRingCat.{u}} {S : Cᵒᵖ ⥤ CommRingCat.{u}} (φ : S ⟶ F.op ⋙ R) :
-    (pullback (R := R ⋙ forget₂ _ _) (ringCatHom φ)).Monoidal :=
-  PullbackMonoidal.pullback_monoidal F φ
 
 end PresheafOfModules

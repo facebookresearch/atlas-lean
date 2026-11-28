@@ -67,6 +67,7 @@ Topics added since this subject's fields were last revised.
 - [Presheaf Tensor Formulae](presheaf-tensor-formulae/README.md)
 - [Presheaf Tensor Locality](presheaf-tensor-locality/README.md)
 - [Projection](projection/README.md)
+- [Pullback Monoidal](pullback-monoidal/README.md)
 - [Pure Tensor Negative Cyclic](pure-tensor-negative-cyclic/README.md)
 - [Quasi Iso Projective Separator](quasi-iso-projective-separator/README.md)
 - [Quotient](quotient/README.md)

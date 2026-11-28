@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.GeometricHiggsFamilies
+public import MathlibExt.AlgebraicGeometry.Modules.SectionPullback
 
 /-!
 # Local-section normalization for the fixed module tensor pullback
@@ -38,12 +39,6 @@ open MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 open MathlibExt.AlgebraicGeometry.GeometricHiggsFamilies
 
 universe u
-
-/-- The actual pullback of a local section, read through the native unit. -/
-def localPullback {X Y : Scheme.{u}} (f : X ⟶ Y) (L : Y.Modules)
-    (U : Y.Opens) (s : Γ(L,U)) :
-    Γ((Scheme.Modules.pullback f).obj L, f ⁻¹ᵁ U) :=
-  (((Scheme.Modules.pullbackPushforwardAdjunction f).unit.app L).val.app (op U)).hom s
 
 /-- Further restriction to an actual source open contained in the preimage. -/
 def localPullbackOn {X Y : Scheme.{u}} (f : X ⟶ Y) (L : Y.Modules)

@@ -1,4 +1,16 @@
 # Tensor Pow Section Support
 
-- [Pullback Local Section](pullback-local-section.md)
+- [To Unit Section](to-unit-section.md)
+- [Of Unit Section](of-unit-section.md)
+- [Restrict Section](restrict-section.md)
+- [Coeff](coeff.md)
+- [Coeff Ideal](coeff-ideal.md)
+- [Zero Scheme Ideal](zero-scheme-ideal.md)
+- [Zero Scheme](zero-scheme.md)
+- [Pullback₀](pullback.md)
+- [Pullback Tensor Obj Iso](pullback-tensor-obj-iso.md)
+- [Pullback Tensor Unit Obj Iso](pullback-tensor-unit-obj-iso.md)
+- [Coeff Ideal le and ideal zero Scheme Ideal eq](coeff-ideal-le-and-ideal-zero-scheme-ide.md)
+- [Comap zero Scheme Ideal](comap-zero-scheme-ideal.md)
+- [Zero Scheme Ideal tensor Hom](zero-scheme-ideal-tensor-hom.md)
 - [Exists hom tensor Pow three support zero Scheme Ideal eq](exists-hom-tensor-pow-three-support-zero.md)

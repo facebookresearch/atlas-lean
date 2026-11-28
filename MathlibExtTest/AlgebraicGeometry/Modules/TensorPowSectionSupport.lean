@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.Modules.TensorPowSectionSupport
-import MathlibExt.AlgebraicGeometry.ModuleTensorPullbackSections
 
 @[expose] public section
 
@@ -37,7 +36,7 @@ private theorem exactSource
         L))
     (θ : 𝟙_ X.Modules ⟶ L)
     (a b : Over.mk (𝟙 (Spec (CommRingCat.of k))) ⟶ Over.mk t) :
-    ∃ s : 𝟙_ X.Modules ⟶ L.tensorPow 3,
+    ∃ s : 𝟙_ X.Modules ⟶ MathlibExt.AlgebraicGeometry.SchemeModulesTensor.power L 3,
       ((Scheme.Modules.zeroSchemeIdeal s).support : Set X) =
         (𝟙 (Over.mk t) * (CartesianMonoidalCategory.toUnit (Over.mk t) ≫ a)).left.base ⁻¹'
             ((Scheme.Modules.zeroSchemeIdeal θ).support : Set X) ∪
@@ -48,17 +47,46 @@ private theorem exactSource
   AlgebraicGeometry.Scheme.Modules.exists_hom_tensorPow_three_support_zeroSchemeIdeal_eq
     k t L hL hsq θ a b
 
-/-- `Scheme.Modules.pullbackLocalSection` agrees with
-`ModuleTensorPullbackSections.localPullback`. -/
-example {X Y : Scheme.{u}} (φ : X ⟶ Y) {L : Y.Modules} {U : Y.Opens} (s : Γ(L, U)) :
-    Scheme.Modules.pullbackLocalSection φ s =
-      MathlibExt.AlgebraicGeometry.ModuleTensorPullbackSections.localPullback φ L U s :=
-  rfl
+/-- The source states the theorem with the monoidal cube `((𝟙_ ⊗ L) ⊗ L) ⊗ L`; that form follows,
+since `moduleTensorIso` identifies the cube with `SchemeModulesTensor.power L 3` and composing a
+section with an isomorphism keeps its zero ideal. -/
+private theorem exactSourceMonoidalCube
+    (k : Type u) [Field k] {X : Scheme.{u}} (t : X ⟶ Spec (CommRingCat.of k))
+    [GrpObj (Over.mk t)] [IsCommMonObj (Over.mk t)]
+    (L : X.Modules) (hL : IsLineBundle L)
+    (hsq : ∀ x y : Over.mk (𝟙 (Spec (CommRingCat.of k))) ⟶ Over.mk t,
+      Nonempty (
+        (Scheme.Modules.pullback (𝟙 (Over.mk t) * (CartesianMonoidalCategory.toUnit (Over.mk t) ≫
+            x)).left).obj L ⊗
+        (Scheme.Modules.pullback (𝟙 (Over.mk t) * (CartesianMonoidalCategory.toUnit (Over.mk t) ≫
+            y)).left).obj L ≅
+        (Scheme.Modules.pullback (𝟙 (Over.mk t) * (CartesianMonoidalCategory.toUnit (Over.mk t) ≫
+            (x * y))).left).obj L ⊗
+        L))
+    (θ : 𝟙_ X.Modules ⟶ L)
+    (a b : Over.mk (𝟙 (Spec (CommRingCat.of k))) ⟶ Over.mk t) :
+    ∃ s : 𝟙_ X.Modules ⟶ ((𝟙_ X.Modules ⊗ L) ⊗ L) ⊗ L,
+      ((Scheme.Modules.zeroSchemeIdeal s).support : Set X) =
+        (𝟙 (Over.mk t) * (CartesianMonoidalCategory.toUnit (Over.mk t) ≫ a)).left.base ⁻¹'
+            ((Scheme.Modules.zeroSchemeIdeal θ).support : Set X) ∪
+          (𝟙 (Over.mk t) * (CartesianMonoidalCategory.toUnit (Over.mk t) ≫ b)).left.base ⁻¹'
+            ((Scheme.Modules.zeroSchemeIdeal θ).support : Set X) ∪
+          (𝟙 (Over.mk t) * (CartesianMonoidalCategory.toUnit (Over.mk t) ≫ (a * b)⁻¹)).left.base ⁻¹'
+            ((Scheme.Modules.zeroSchemeIdeal θ).support : Set X) := by
+  obtain ⟨s, hs⟩ := exactSource k t L hL hsq θ a b
+  let P := MathlibExt.AlgebraicGeometry.SchemeModulesTensor.power L
+  let e : P 3 ≅ ((𝟙_ X.Modules ⊗ L) ⊗ L) ⊗ L :=
+    Scheme.Modules.moduleTensorIso (P 2) L ≪≫
+      whiskerRightIso (Scheme.Modules.moduleTensorIso (P 1) L ≪≫
+        whiskerRightIso (Scheme.Modules.moduleTensorIso (P 0) L) L) L
+  exact ⟨s ≫ e.hom, by rw [Scheme.Modules.zeroSchemeIdeal_comp_eq_of_isIso, hs]⟩
 
-/-- The tensor powers are iterated monoidal tensor products, starting from `𝒪_X`. -/
-example {X : Scheme.{u}} (L : X.Modules) :
-    L.tensorPow 3 = ((𝟙_ X.Modules ⊗ L) ⊗ L) ⊗ L :=
-  rfl
+/-- The pullback compatibility applies to sections typed as `LineBundleTaskContracts.Section`. -/
+example {X X' : Scheme.{u}} (F : X' ⟶ X) {M : X.Modules} (hM : IsLineBundle M)
+    (s : MathlibExt.AlgebraicGeometry.LineBundleTaskContracts.Section M) :
+    (Scheme.Modules.zeroSchemeIdeal s).comap F = Scheme.Modules.zeroSchemeIdeal
+      (MathlibExt.AlgebraicGeometry.LineBundleTaskContracts.pullbackSection F s) :=
+  hM.comap_zeroSchemeIdeal F s
 
 /-- The zero section vanishes everywhere: its zero ideal is `⊥`. -/
 example {X : Scheme.{u}} (M : X.Modules) :
