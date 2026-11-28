@@ -25,7 +25,7 @@ values in `ℤᵐ⁰`, so `v_O f = exp (-ord_O f)`). This file proves:
 * `v_O (p(x) + q(x) y) = max (exp (2 deg p)) (exp (2 deg q + 3))`, a term being `0` when its
   polynomial is `0` (`WeierstrassCurve.valuationAtInfinity_add_mul_affineY`), that is
   `ord_O f = -max (2 deg p, 2 deg q + 3)` for `f ≠ 0`;
-* `ord_O f ≥ -2` exactly for `f ∈ F + F x`, and `ord_O f ≥ -3` exactly for
+* for `f ∈ A_W`, `ord_O f ≥ -2` exactly for `f ∈ F + F x`, and `ord_O f ≥ -3` exactly for
   `f ∈ F + F x + F y`; `ord_O (r + u x) = -2` exactly when `u ≠ 0`, and
   `ord_O (t + s x + u y) = -3` exactly when `u ≠ 0`.
 
@@ -62,8 +62,10 @@ of polynomials `p, q ∈ R[x]`. This restates Mathlib's basis `{1, y}` of `A_W` 
 (`WeierstrassCurve.Affine.CoordinateRing.basis`). The source works over a field with `Δ_W ≠ 0`;
 neither is used.
 
-Source: J. S. Milne, *Elliptic Curves*, second edition, World Scientific, 2021, author's version
-<https://jmilne.org/math/Books/EC2.pdf>, Chapter II, §1, p. 47. -/
+Mathlib's basis is the source of this statement; for context, J. S. Milne, *Elliptic Curves*,
+second edition, World Scientific, 2021, author's version <https://jmilne.org/math/Books/EC2.pdf>,
+Chapter II, §1, p. 47, uses the bases `{1, x}` and `{1, x, y}` of `L(2[O])` and `L(3[O])` over a
+field for a nonsingular curve. -/
 theorem existsUnique_eq_add_mul_affineY (f : W.toAffine.CoordinateRing) :
     ∃! pq : R[X] × R[X], AdjoinRoot.of W.toAffine.polynomial pq.1 +
       AdjoinRoot.of W.toAffine.polynomial pq.2 * W.affineY = f := by
@@ -82,32 +84,6 @@ end CommRing
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
-/-- Let `g : F[X] → K` be a ring map to a field with a valuation `v` in `ℤᵐ⁰`, such that the
-nonzero constants have valuation `1` and `v (g X) = exp k` with `k > 0`. Then
-`v (g p) = exp (k deg p)` for every nonzero polynomial `p`. -/
-private lemma valuation_map_polynomial {K : Type*} [Field K]
-    (v : Valuation K (WithZero (Multiplicative ℤ))) (g : F[X] →+* K)
-    (hC : ∀ c : F, c ≠ 0 → v (g (C c)) = 1) {k : ℤ} (hX : v (g X) = WithZero.exp k)
-    (hk : 0 < k) {p : F[X]} (hp : p ≠ 0) :
-    v (g p) = WithZero.exp (p.natDegree * k) := by
-  induction hn : p.natDegree using Nat.strong_induction_on generalizing p with
-  | _ n ih =>
-    have hlead : v (g (C p.leadingCoeff * X ^ p.natDegree)) = WithZero.exp (n * k) := by
-      rw [map_mul, map_pow, Valuation.map_mul, Valuation.map_pow,
-        hC _ (leadingCoeff_ne_zero.mpr hp), one_mul, hX, ← WithZero.exp_nsmul, hn, nsmul_eq_mul]
-    conv_lhs => rw [← p.eraseLead_add_C_mul_X_pow]
-    by_cases he : p.eraseLead = 0
-    · rw [he, zero_add, hlead]
-    · have hlt : p.eraseLead.natDegree < n :=
-        hn ▸ p.eraseLead_natDegree_lt_or_eraseLead_eq_zero.resolve_right he
-      rw [map_add, Valuation.map_add_eq_of_lt_right, hlead]
-      rw [hlead, ih _ hlt he rfl, WithZero.exp_lt_exp]
-      exact mul_lt_mul_of_pos_right (by exact_mod_cast hlt) hk
-
-private lemma of_C_eq (c : F) :
-    AdjoinRoot.of W.toAffine.polynomial (C c) = algebraMap F W.toAffine.CoordinateRing c := by
-  simp [IsScalarTower.algebraMap_apply F F[X] (AdjoinRoot _), AdjoinRoot.algebraMap_eq]
-
 private lemma of_X_eq : AdjoinRoot.of W.toAffine.polynomial X = W.affineX := rfl
 
 open scoped Classical in
@@ -115,8 +91,10 @@ open scoped Classical in
 `p ∈ F[x]`. The valuation at the point at infinity of `p(x) ∈ A_W` is `0` if `p = 0` and
 `exp (2 deg p)` otherwise, since `ord_O x = -2` and nonzero constants have valuation `1`.
 
-Source: J. S. Milne, *Elliptic Curves*, second edition, World Scientific, 2021, author's version
-<https://jmilne.org/math/Books/EC2.pdf>, Chapter II, §1, p. 47. -/
+Deduced here from `ord_O x = -2` and `ord_O y = -3`; J. S. Milne, *Elliptic Curves*, second
+edition, World Scientific, 2021, author's version <https://jmilne.org/math/Books/EC2.pdf>,
+Chapter II, §1, p. 47, gives the bases `{1, x}` and `{1, x, y}` of `L(2[O])` and `L(3[O])` for a
+nonsingular curve, not this statement in all degrees. -/
 theorem valuationAtInfinity_polynomial (p : F[X]) :
     W.valuationAtInfinity (algebraMap _ W.toAffine.FunctionField
       (AdjoinRoot.of W.toAffine.polynomial p)) =
@@ -125,7 +103,7 @@ theorem valuationAtInfinity_polynomial (p : F[X]) :
   · simp [hp]
   · rw [← RingHom.comp_apply, valuation_map_polynomial _ _ (fun c hc ↦ ?_) ?_ two_pos hp, mul_comm]
     · exact W.valuationAtInfinity_affineX
-    · rw [RingHom.comp_apply, W.of_C_eq]
+    · rw [RingHom.comp_apply, W.of_C_eq_algebraMap]
       exact W.valuationAtInfinity_algebraMap_constant hc
 
 open scoped Classical in
@@ -133,8 +111,10 @@ open scoped Classical in
 `q ∈ F[x]`. The valuation at the point at infinity of `q(x) y ∈ A_W` is `0` if `q = 0` and
 `exp (2 deg q + 3)` otherwise, since `ord_O y = -3`.
 
-Source: J. S. Milne, *Elliptic Curves*, second edition, World Scientific, 2021, author's version
-<https://jmilne.org/math/Books/EC2.pdf>, Chapter II, §1, p. 47. -/
+Deduced here from `ord_O x = -2` and `ord_O y = -3`; J. S. Milne, *Elliptic Curves*, second
+edition, World Scientific, 2021, author's version <https://jmilne.org/math/Books/EC2.pdf>,
+Chapter II, §1, p. 47, gives the bases `{1, x}` and `{1, x, y}` of `L(2[O])` and `L(3[O])` for a
+nonsingular curve, not this statement in all degrees. -/
 theorem valuationAtInfinity_polynomial_mul_affineY (q : F[X]) :
     W.valuationAtInfinity (algebraMap _ W.toAffine.FunctionField
       (AdjoinRoot.of W.toAffine.polynomial q * W.affineY)) =
@@ -150,8 +130,10 @@ when `q = 0`). Since `v_O = exp (-ord_O)`, for `f ≠ 0` this is
 `ord_O f = -max (2 deg p, 2 deg q + 3)` with `deg 0 = -∞`: the two terms have orders of different
 parity. The source assumes `Δ_W ≠ 0`, which is not used.
 
-Source: J. S. Milne, *Elliptic Curves*, second edition, World Scientific, 2021, author's version
-<https://jmilne.org/math/Books/EC2.pdf>, Chapter II, §1, p. 47. -/
+Deduced here from `ord_O x = -2` and `ord_O y = -3`; J. S. Milne, *Elliptic Curves*, second
+edition, World Scientific, 2021, author's version <https://jmilne.org/math/Books/EC2.pdf>,
+Chapter II, §1, p. 47, gives the bases `{1, x}` and `{1, x, y}` of `L(2[O])` and `L(3[O])` for a
+nonsingular curve, not this statement in all degrees. -/
 theorem valuationAtInfinity_add_mul_affineY (p q : F[X]) :
     W.valuationAtInfinity (algebraMap _ W.toAffine.FunctionField
       (AdjoinRoot.of W.toAffine.polynomial p + AdjoinRoot.of W.toAffine.polynomial q * W.affineY)) =
@@ -179,8 +161,10 @@ private lemma ite_le_exp_iff {P : Prop} [Decidable P] {a k : ℤ} :
 `ord_O (p(x) + q(x) y) ≥ -k`, if and only if `p = 0` or `2 deg p ≤ k`, and `q = 0` or
 `2 deg q + 3 ≤ k`. The source assumes `Δ_W ≠ 0`, which is not used.
 
-Source: J. S. Milne, *Elliptic Curves*, second edition, World Scientific, 2021, author's version
-<https://jmilne.org/math/Books/EC2.pdf>, Chapter II, §1, p. 47. -/
+Deduced here from `ord_O x = -2` and `ord_O y = -3`; J. S. Milne, *Elliptic Curves*, second
+edition, World Scientific, 2021, author's version <https://jmilne.org/math/Books/EC2.pdf>,
+Chapter II, §1, p. 47, gives the bases `{1, x}` and `{1, x, y}` of `L(2[O])` and `L(3[O])` for a
+nonsingular curve, not this statement in all degrees. -/
 theorem valuationAtInfinity_add_mul_affineY_le_exp_iff (p q : F[X]) (k : ℤ) :
     W.valuationAtInfinity (algebraMap _ W.toAffine.FunctionField
       (AdjoinRoot.of W.toAffine.polynomial p + AdjoinRoot.of W.toAffine.polynomial q * W.affineY)) ≤
@@ -192,7 +176,7 @@ theorem valuationAtInfinity_add_mul_affineY_le_exp_iff (p q : F[X]) (k : ℤ) :
 private lemma of_linear (r u : F) :
     AdjoinRoot.of W.toAffine.polynomial (C u * X + C r) =
       algebraMap F _ r + algebraMap F _ u * W.affineX := by
-  rw [map_add, map_mul, of_C_eq, of_C_eq, of_X_eq, add_comm]
+  rw [map_add, map_mul, of_C_eq_algebraMap, of_C_eq_algebraMap, of_X_eq, add_comm]
 
 private lemma eq_add_zero_mul (a : W.toAffine.CoordinateRing) :
     a = a + AdjoinRoot.of W.toAffine.polynomial 0 * W.affineY := by
@@ -254,10 +238,10 @@ theorem valuationAtInfinity_le_exp_three_iff (f : W.toAffine.CoordinateRing) :
       · simp [hp]
       · omega
     refine ⟨p.coeff 0, p.coeff 1, q.coeff 0, ?_⟩
-    rw [← of_linear, ← eq_X_add_C_of_natDegree_le_one hp, ← of_C_eq,
+    rw [← of_linear, ← eq_X_add_C_of_natDegree_le_one hp, ← of_C_eq_algebraMap,
       ← eq_C_of_natDegree_eq_zero hq]
   · rintro ⟨t, s, u, rfl⟩
-    rw [← of_linear, ← of_C_eq, valuationAtInfinity_add_mul_affineY_le_exp_iff]
+    rw [← of_linear, ← of_C_eq_algebraMap, valuationAtInfinity_add_mul_affineY_le_exp_iff]
     refine ⟨Or.inr ?_, Or.inr ?_⟩
     · have := natDegree_linear_le (a := s) (b := t)
       omega
@@ -301,7 +285,7 @@ theorem valuationAtInfinity_add_mul_affineX_add_mul_affineY_eq_exp_three_iff (t 
       (algebraMap F _ t + algebraMap F _ s * W.affineX + algebraMap F _ u * W.affineY)) =
         WithZero.exp 3 ↔ u ≠ 0 := by
   classical
-  rw [← of_linear, ← of_C_eq, valuationAtInfinity_add_mul_affineY]
+  rw [← of_linear, ← of_C_eq_algebraMap, valuationAtInfinity_add_mul_affineY]
   have hp : (if C s * X + C t = 0 then (0 : WithZero (Multiplicative ℤ)) else
       WithZero.exp (2 * ((C s * X + C t).natDegree : ℤ))) < WithZero.exp 3 := by
     split_ifs

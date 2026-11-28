@@ -44,8 +44,8 @@ example : Module.Flat ℤ_[5] E₅.CoordinateRingAtInfinity := inferInstance
 
 example : Algebra.FinitePresentation ℤ_[5] E₅.CoordinateRingAtInfinity := inferInstance
 
-/-- Both charts of the projective cubic over `ℤ_[5]` are flat and finitely presented; the chart
-`Z ≠ 0` by Mathlib. -/
+/-- The other chart `Z ≠ 0` of the projective cubic over `ℤ_[5]` is also flat and finitely
+presented, by Mathlib. -/
 example : Module.Flat ℤ_[5] E₅.toAffine.CoordinateRing ∧
     Algebra.FinitePresentation ℤ_[5] E₅.toAffine.CoordinateRing := ⟨inferInstance, inferInstance⟩
 

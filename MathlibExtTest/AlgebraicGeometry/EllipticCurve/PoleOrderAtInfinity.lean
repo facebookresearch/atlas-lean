@@ -55,6 +55,14 @@ example : E.valuationAtInfinity (algebraMap _ E.toAffine.FunctionField E.affineY
     WithZero.exp 3 :=
   (E.valuationAtInfinity_le_exp_three_iff _).mpr ⟨0, 0, 1, by simp⟩
 
+/-- `y` does not lie in `L(2[O])`. -/
+example : ¬ E.valuationAtInfinity (algebraMap _ E.toAffine.FunctionField E.affineY) ≤
+    WithZero.exp 2 := by
+  rw [valuationAtInfinity_affineY, WithZero.exp_le_exp]
+  norm_num
+
+#check @WeierstrassCurve.valuation_map_polynomial
+#check @WeierstrassCurve.of_C_eq_algebraMap
 #check @WeierstrassCurve.existsUnique_eq_add_mul_affineY
 #check @WeierstrassCurve.valuationAtInfinity_polynomial
 #check @WeierstrassCurve.valuationAtInfinity_polynomial_mul_affineY

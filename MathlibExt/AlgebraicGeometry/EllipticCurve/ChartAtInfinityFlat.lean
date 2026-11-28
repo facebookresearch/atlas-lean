@@ -100,10 +100,11 @@ noncomputable def coordinateRingAtInfinityEquivAdjoinRoot :
 
 /-- **The chart at infinity is free.** Let `W` be a Weierstrass curve over a commutative ring
 `R`. The coordinate ring at infinity `B_W = R[z, w] / (h)`,
-`h = w + a₁ z w + a₃ w² - z³ - a₂ z² w - a₄ z w² - a₆ w³`, is a free `R`-module. Proof: `-h` is
-monic of degree `3` in `z` over `R[w]` (`monic_monicPolynomialAtInfinity`), so `B_W` is free over
-`R[w]` with basis `1, z, z²` (`coordinateRingAtInfinityEquivAdjoinRoot`), and `R[w]` is free
-over `R`.
+`h = w + a₁ z w + a₃ w² - z³ - a₂ z² w - a₄ z w² - a₆ w³`, is a free `R`-module. Proof: `-h`,
+as a polynomial in `z` over `R[w]`, is monic for every `R` (`monic_monicPolynomialAtInfinity`);
+when `R` is nontrivial it has degree three, with power basis `1, z, z²`. So `B_W` is free over
+`R[w]` (`coordinateRingAtInfinityEquivAdjoinRoot`, with the power basis of a monic polynomial),
+and `R[w]` is free over `R`.
 
 In particular `B_W` is a flat `R`-module (Mathlib's `Module.Flat.of_free`). The source states
 flatness for `R` a discrete valuation ring, through `π` being a nonzerodivisor on `B_W`; this
