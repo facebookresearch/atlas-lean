@@ -270,13 +270,21 @@ private theorem mul_sq_sub_le {D U V : ℝ} (hD : 1 ≤ D) (hU : 1 ≤ U) (hVU :
   nlinarith [mul_nonneg (sub_nonneg.mpr hVU) (by linarith : (0 : ℝ) ≤ V + D * U - 1),
     mul_nonneg (mul_nonneg (by linarith : (0 : ℝ) ≤ D) (sq_nonneg U)) (sub_nonneg.mpr hD)]
 
-/-- For an HBC-admissible tuple `u 0 < ⋯ < u (m - 1)` for `a/(a + d)` and `α = (a + d)/d`, some
-`κ` with `1 ≤ κ ≤ m` has `a ∏_{i<κ} u i + d ≤ d α ^ 2 ^ κ`, and then `a ∏ u i` is at most
-`F_{m-κ}(d α ^ 2 ^ κ)` if `κ < m` and at most `d F_m(α)` if `κ = m`, where
-`F_L(t) = t ^ 2 ^ L - t ^ 2 ^ (L - 1)`. The index `κ` is the largest one whose prefix product is
-at most that of the calibrating numbers; the tail after it is again HBC-admissible, with a
-defect at most `d`, and the induction hypothesis bounds it. -/
-private theorem hbc_recursion (m : ℕ) : ∀ (a d : ℕ) (u : ℕ → ℕ), 0 < a → 0 < d → 1 ≤ m →
+end hbcAdmissible_half_prime_prod_le_of_five_le
+
+open hbcAdmissible_half_prime_prod_le_of_five_le in
+/-- **Prefix-product estimate for HBC-admissible tuples.** Let $a,d,m$ be positive integers and
+$u_0 < \cdots < u_{m-1}$ positive integers satisfying
+$\prod_{i=0}^{m-1}(1 - 1/u_i) \le a/(a+d) < \prod_{i=0}^{m-2}(1 - 1/u_i)$.
+Put $\alpha = (a+d)/d$ and $F_j(t) = t^{2^j} - t^{2^{j-1}}$ for $j \ge 1$.
+There is an index $1 \le \kappa \le m$ with
+$a\prod_{i=0}^{\kappa-1} u_i + d \le d\alpha^{2^\kappa}$ such that
+$a\prod_{i=0}^{m-1} u_i \le F_{m-\kappa}(d\alpha^{2^\kappa})$ if $\kappa < m$ and
+$a\prod_{i=0}^{m-1} u_i \le d F_m(\alpha)$ if $\kappa = m$.
+
+This is a form of the estimate used in the proof of Stone's Theorem 1. -/
+public theorem hbcAdmissible_exists_prefix_bound (m : ℕ) :
+    ∀ (a d : ℕ) (u : ℕ → ℕ), 0 < a → 0 < d → 1 ≤ m →
     (∀ i, i + 1 < m → u i < u (i + 1)) → 0 < u 0 →
     ∏ i ∈ range m, (1 - 1 / (u i : ℝ)) ≤ (a : ℝ) / (a + d) →
     (a : ℝ) / (a + d) < ∏ i ∈ range (m - 1), (1 - 1 / (u i : ℝ)) →
@@ -564,6 +572,7 @@ private theorem hbc_recursion (m : ℕ) : ∀ (a d : ℕ) (u : ℕ → ℕ), 0 <
         _ ≤ (d * β) ^ 2 ^ L := pow_le_pow_left₀ (by positivity) hΓ _
     exact mul_sq_sub_le hd'1 hU1 hVU
 
+namespace hbcAdmissible_half_prime_prod_le_of_five_le
 
 /-! ### From the recursion to explicit bounds -/
 
@@ -584,7 +593,7 @@ private theorem lift_pow {j₀ κ : ℕ} {d α c : ℝ} (hj₀ : j₀ ≤ κ) (h
     _ = (d * α ^ 2 ^ j₀) ^ 2 ^ s := (mul_pow _ _ _).symm
     _ ≤ (c ^ 2 ^ j₀) ^ 2 ^ s := pow_le_pow_left₀ (by positivity) hc _
 
-/-- The output of `hbc_recursion` and `d α ^ 2 ^ κ ≤ c ^ 2 ^ κ` give
+/-- The output of `hbcAdmissible_exists_prefix_bound` and `d α ^ 2 ^ κ ≤ c ^ 2 ^ κ` give
 `X ≤ c ^ 2 ^ m - c ^ 2 ^ (m - 1)`. -/
 private theorem range_bound {m κ : ℕ} {X d α c : ℝ} (hκ1 : 1 ≤ κ) (hκm : κ ≤ m)
     (hd : 1 ≤ d) (hα : 1 ≤ α)
@@ -607,8 +616,8 @@ private theorem range_bound {m κ : ℕ} {X d α c : ℝ} (hκ1 : 1 ≤ κ) (hκ
     rw [pow_succ, pow_mul, pow_mul] at hc ⊢
     exact mul_sq_sub_le' hd (one_le_pow₀ hα) hc
 
-/-- The index from `hbc_recursion` is at least `j₀` when every smaller index is excluded by a
-lower bound `L` for the prefix products. -/
+/-- The index from `hbcAdmissible_exists_prefix_bound` is at least `j₀` when a lower bound `L`
+for the prefix products excludes every smaller index. -/
 private theorem le_index {κ m j₀ : ℕ} {a d α A : ℝ} {P L : ℕ → ℝ} (hκ1 : 1 ≤ κ)
     (hκm : κ ≤ m) (ha : 0 ≤ a) (hd : 0 ≤ d) (hα : 0 ≤ α) (hαA : α ≤ A)
     (hL : ∀ j ≤ m, L j ≤ P j) (hfirst : a * P κ + d ≤ d * α ^ 2 ^ κ)
@@ -759,8 +768,9 @@ public theorem hbcAdmissible_half_prime_prod_le_of_five_le (k : ℕ) (y : ℕ �
       lt_div_iff₀ hp0] at hlt
     rw [hdR, div_lt_iff₀ (by linarith), hn, Nat.add_sub_cancel]
     nlinarith
-  obtain ⟨κ, hκ1, hκm, hfirst, hκlt, hκeq⟩ := hbc_recursion m p (p - 2) (fun i => y (i + 2))
-    (by omega) (by omega) hm1
+  obtain ⟨κ, hκ1, hκm, hfirst, hκlt, hκeq⟩ :=
+    hbcAdmissible_exists_prefix_bound m p (p - 2) (fun i => y (i + 2))
+      (by omega) (by omega) hm1
     (fun i hi => by
       rw [show i + 1 + 2 = i + 2 + 1 by omega]
       exact hmono (i + 2) (by omega) (by omega))
@@ -985,7 +995,8 @@ public theorem hbcAdmissible_prod_le_sqrt (a d k : ℕ) (ha : 0 < a) (hd : 0 < d
     rw [← Ico_add_one_right_eq_Icc, prod_Ico_eq_prod_range]
     simp
   -- With `u i = y (1 + i)`, the recursion applies to the tuple as it stands.
-  obtain ⟨κ, hκ1, hκm, -, hκlt, hκeq⟩ := hbc_recursion k a d (fun i => y (1 + i)) ha hd hk
+  obtain ⟨κ, hκ1, hκm, -, hκlt, hκeq⟩ :=
+    hbcAdmissible_exists_prefix_bound k a d (fun i => y (1 + i)) ha hd hk
     (fun i hi => by
       have h := hmono (1 + i) (by omega) (by omega)
       rwa [show 1 + i + 1 = 1 + (i + 1) by omega] at h)
@@ -1128,7 +1139,8 @@ public theorem hbcAdmissible_half_prime_prod_le_of_eq_five (k : ℕ) (y : ℕ �
         (3 : ℝ) * (8 / 3) ^ 2 ^ j < 5 * (∏ i ∈ range j, low i) + 3 := by
       intro j hj1 hj5
       interval_cases j <;> norm_num [prod_range_succ, low]
-    obtain ⟨κ, hκ1, hκm, hfirst, hκlt, hκeq⟩ := hbc_recursion m 5 3 (fun i => y (i + 2))
+    obtain ⟨κ, hκ1, hκm, hfirst, hκlt, hκeq⟩ :=
+      hbcAdmissible_exists_prefix_bound m 5 3 (fun i => y (i + 2))
       (by decide) (by decide) hm1 (fun i hi => hmono (i + 2) (by omega) (by omega))
       (by change 0 < y 2; omega)
       (by simpa only [Nat.cast_ofNat, show (5 : ℝ) + 3 = 8 by norm_num] using hle')
@@ -1234,7 +1246,8 @@ public theorem hbcAdmissible_half_prime_prod_le_of_eq_five (k : ℕ) (y : ℕ �
       have hprod0 : 0 ≤ ∏ i ∈ range j, low i := prod_nonneg (fun i _ => hlow0 i)
       have hprod := mul_le_mul_of_nonneg_right had hprod0
       nlinarith only [mul_lt_mul_of_pos_left hnum hd0R, hprod]
-    obtain ⟨κ, hκ1, hκn, hfirst, hκlt, hκeq⟩ := hbc_recursion n a d (fun i => y (i + 3))
+    obtain ⟨κ, hκ1, hκn, hfirst, hκlt, hκeq⟩ :=
+      hbcAdmissible_exists_prefix_bound n a d (fun i => y (i + 3))
       ha0 hdpos hn1 (fun i hi => hmono (i + 3) (by omega) (by omega))
       (by change 0 < y 3; omega) hle'' hlt''
     let α : ℝ := (a + d) / d
