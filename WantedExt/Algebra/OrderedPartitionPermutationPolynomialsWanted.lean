@@ -10,13 +10,13 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Field.ZMod
+public import MathlibExt.Algebra.Polynomial.PowerWeightedGeometricSum
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSum
 public import MathlibExt.FieldTheory.Finite.DilatedPowerSumPermutationPolynomial
 public import MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial
 public import MathlibExt.FieldTheory.Finite.OrderedPartitionCongruence
 public import MathlibExt.FieldTheory.Finite.PermutationPolynomial
 public import MathlibExt.FieldTheory.Finite.PowerSumCriterion
-public import MathlibExt.FieldTheory.Finite.PowerWeightedGeometricSum
 public import MathlibExt.FieldTheory.Finite.ShiftedPowerSumPermutationPolynomial
 
 /-!
@@ -36,8 +36,6 @@ the monomial criterion the paper quotes (`isPermutationPolynomial_X_pow_iff_copr
 namespace MetaMathlibExt
 
 @[expose] public section
-
-open Polynomial
 
 /-- **Vishwakarma–Singh congruence for ordered partitions into multiples.** Let $p$ be an odd
 prime and let $a, k, s, t$ be positive integers with $\gcd(a, p - 1) = 1$, $s \le p - 2$ and

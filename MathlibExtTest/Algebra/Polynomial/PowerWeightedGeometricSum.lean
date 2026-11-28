@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.FieldTheory.Finite.PowerWeightedGeometricSum
+import MathlibExt.Algebra.Polynomial.PowerWeightedGeometricSum
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
