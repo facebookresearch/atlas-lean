@@ -7,6 +7,7 @@
 - [Progress for closed STLC terms](progress.md)
 - [Small-step call-by-value reduction in STLC is deterministic](deterministic-2.md)
 - [Normal forms for call-by-value reduction in STLC](normal-form.md)
+- [Call-by-value normal forms are the generic normal forms of the step relation](normal-form-iff-normal.md)
 - [Closed normal forms are exactly the values](closed-normal-form-iff-value.md)
 - [Multi-step call-by-value reduction in STLC](steps.md)
 - [Big-step call-by-value evaluation in the simply typed lambda calculus](eval.md)

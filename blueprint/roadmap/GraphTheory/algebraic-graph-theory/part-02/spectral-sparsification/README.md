@@ -2,6 +2,11 @@
 
 A graph $H$ is a spectral approximation of $G$ when $L_G \preceq L_H \preceq \kappa L_G$ in the Loewner order, so that every Laplacian quadratic form, and hence every eigenvalue and cut, is preserved up to $\kappa$. Batson, Spielman and Srivastava showed that $O(n)$ edges suffice, through a barrier argument that the Marcus–Spielman–Srivastava proof of Kadison–Singer later refined.
 
+- [Weighted Presentation](weighted-presentation.md)
+- [Is Cut Approximation](is-cut-approximation.md)
+- [Spectral approximation of graphs](spectral-approximation-of-graphs.md)
+- [Is Cut Approximation](is-cut-approximation-2.md)
+- [Is Spectral Approximation iff pos Semidef](is-spectral-approximation-iff-pos-semide.md)
 - [Batson–Spielman–Srivastava, vector form](exists-sparse-reweighting.md)
 - [Twice-Ramanujan sparsifiers](exists-twice-ramanujan-sparsifier.md)
 

@@ -6,6 +6,7 @@
 - [Berndt's function $\varphi_r(x)$ on $(-1, 0)$](chapter7-phi.md)
 - [A sine series for $\varphi_r(x-1) - \varphi_r(-x)$](ramanujan-part1-ch7-entry15-vonstaudtcla.md)
 - [A cosine series for $\varphi_r(x-1) + \varphi_r(-x)$](ramanujan-part1-ch7-entry16-kummercongru.md)
+- [Sine zeta at one quarter is the Dirichlet beta function](sin-zeta-quarter-eq-beta.md)
 - [$\varphi_r(-1/4) - \varphi_r(-3/4)$ through the Dirichlet beta function](ramanujan-part1-ch7-entry17-bernoullipol.md)
 - [Ramanujan's functional equation for $\varphi$ at rationals with odd denominator](ramanujan-part1-ch7-entry19-zetanegint.md)
 - [Ramanujan's functional equation for $\varphi$ at $-1/3$ and $-2/3$](ramanujan-part1-ch7-entry20-generalizedb.md)

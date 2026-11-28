@@ -59,3 +59,22 @@ example :
     let t : BinaryTree Unit := .node () .nil (.node () .nil .nil)
     IsDivideConquerTree t ∧ treeDNodes t = 1 ∧ treeSNodes t = 1 := by
   simp [IsDivideConquerTree, treeDNodes, treeSNodes, BinaryTree.numLeaves]
+
+-- A single leaf has no interior nodes.
+example : treeDNodes .nil = 0 := by
+  rw [treeDNodes_eq_numLeaves_sub_one_sub_treeSNodes]
+  decide
+
+-- The root is an S-node: the mirrored subtrees have the same number of leaves.
+example :
+    let t : BinaryTree Unit := .node () (.node () .nil (.node () .nil .nil))
+      (.node () (.node () .nil .nil) .nil)
+    treeDNodes t = 2 := by
+  dsimp only
+  rw [treeDNodes_eq_numLeaves_sub_one_sub_treeSNodes]
+  decide
+
+-- In the four-leaf comb, the top two nodes are D-nodes.
+example : treeDNodes (.node () .nil (.node () .nil (.node () .nil .nil))) = 2 := by
+  rw [treeDNodes_eq_numLeaves_sub_one_sub_treeSNodes]
+  decide

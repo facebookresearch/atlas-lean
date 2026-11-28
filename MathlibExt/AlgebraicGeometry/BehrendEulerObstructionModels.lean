@@ -112,7 +112,7 @@ def chartScheme (X : SchemeData) (C : X.scheme.left.OpenCover.{0}) (i : C.I₀) 
     Over (Spec (.of ℂ)) := Over.mk (C.f i ≫ X.scheme.hom)
 
 def chartInclusion {X : SchemeData} {C : X.scheme.left.OpenCover.{0}} {i : C.I₀}
-    (U : SchemeData) (h : U.scheme=chartScheme X C i) : U.scheme ⟶ X.scheme := by
+    (U : SchemeData) (h : U.scheme = chartScheme X C i) : U.scheme ⟶ X.scheme := by
   rw [h]
   exact Over.homMk (C.f i) rfl
 

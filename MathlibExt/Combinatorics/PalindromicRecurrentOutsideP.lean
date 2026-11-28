@@ -163,7 +163,7 @@ def conjecture : Prop :=
 end
 
 open List
-open MetaMathlibExt (morphExtend morphIterate)
+open MetaMathlibExt (morphExtend morphIterate morphIterate_prefix morphIterate_succ_right)
 
 variable {α β : Type*}
 
@@ -190,23 +190,11 @@ private theorem iterate_append (f : α → List α) (n : Nat) (x y : List α) :
   | zero => rfl
   | succ n ih => simp [morphIterate, morphExtend, ih, List.flatMap_append]
 
-private theorem iterate_succ_right (f : α → List α) (n : Nat) (w : List α) :
-    morphIterate f (n + 1) w = morphIterate f n (w.flatMap f) := by
-  induction n with
-  | zero => rfl
-  | succ n ih => change (morphIterate f (n + 1) w).flatMap f = _; rw [ih]; rfl
-
 private theorem iterate_eq_extendIter (f : Morphism) (n : Nat) (w : List Sigma) :
     morphIterate f n w = extendIter f n w := by
   induction n with
   | zero => rfl
   | succ n ih => change (morphIterate f n w).flatMap f = extend f (extendIter f n w); rw [ih]; rfl
-
-private theorem iterate_prefix {x y : List α} (h : x <+: y) (f : α → List α) (n : Nat) :
-    morphIterate f n x <+: morphIterate f n y := by
-  induction n with
-  | zero => exact h
-  | succ n ih => exact ih.flatMap f
 
 private theorem iterate_add (f : α → List α) (m n : Nat) (w : List α) :
     morphIterate f (m + n) w = morphIterate f n (morphIterate f m w) := by
@@ -248,14 +236,15 @@ private abbrev secondBlock (n : Nat) : List Sigma := piWord (morphIterate mu n [
 private theorem firstBlock_succ (n : Nat) :
     firstBlock (n + 1) = firstBlock n ++ secondBlock n := by
   change piWord (binaryPrefix (n + 1)) = _
-  rw [show binaryPrefix (n + 1) = morphIterate mu n ([false] ++ [true]) from iterate_succ_right ..]
+  rw [show binaryPrefix (n + 1) = morphIterate mu n ([false] ++ [true]) from
+    morphIterate_succ_right ..]
   simp only [iterate_append, piWord, List.flatMap_append]
 
 private theorem secondBlock_succ (n : Nat) :
     secondBlock (n + 1) = firstBlock n ++ firstBlock (n + 1) := by
   change piWord (morphIterate mu (n + 1) [true]) = _
   rw [show morphIterate mu (n + 1) [true] =
-    morphIterate mu n ([false] ++ ([false] ++ [true])) from iterate_succ_right ..]
+    morphIterate mu n ([false] ++ ([false] ++ [true])) from morphIterate_succ_right ..]
   rw [firstBlock_succ]
   simp only [iterate_append, piWord, firstBlock, binaryPrefix, secondBlock, List.flatMap_append]
 
@@ -289,8 +278,8 @@ private theorem binaryPrefix_mono {m n : Nat} (h : m ≤ n) :
   | base => exact ⟨[], by simp⟩
   | succ n _ ih =>
     apply ih.trans
-    rw [show binaryPrefix (n + 1) = morphIterate mu n [false, true] from iterate_succ_right ..]
-    exact iterate_prefix (List.prefix_append [false] [true]) mu n
+    rw [show binaryPrefix (n + 1) = morphIterate mu n [false, true] from morphIterate_succ_right ..]
+    exact morphIterate_prefix (List.prefix_append [false] [true]) mu n
 
 private theorem firstBlock_mono {m n : Nat} (h : m ≤ n) :
     firstBlock m <+: firstBlock n := (binaryPrefix_mono h).flatMap code
@@ -340,13 +329,13 @@ private theorem gamma_fixed : IsFixedPoint gamma word := by
   refine ⟨a, by decide, ?_, ?_⟩
   · intro L
     refine ⟨L + 1, ?_⟩
-    rw [← iterate_eq_extendIter, iterate_succ_right]
-    have h := (iterate_prefix (show [a, c] <+: [a].flatMap gamma by decide) gamma L).length_le
+    rw [← iterate_eq_extendIter, morphIterate_succ_right]
+    have h := (morphIterate_prefix (show [a, c] <+: [a].flatMap gamma by decide) gamma L).length_le
     rw [← show piWord [false] = [a, c] from rfl, ← code_iterate] at h
     exact le_trans (Nat.le_of_lt (firstBlock_length L)) h
   · intro n i
     have h : morphIterate gamma n [a] <+: morphIterate gamma n [a, c] :=
-      iterate_prefix (List.prefix_append [a] [c]) gamma n
+      morphIterate_prefix (List.prefix_append [a] [c]) gamma n
     rw [← show piWord [false] = [a, c] from rfl, ← code_iterate, iterate_eq_extendIter] at h
     simpa using (firstBlock_prefix_iff.mp h).2 i
 
@@ -446,10 +435,10 @@ private theorem gamma_recurrent : IsUniformlyRecurrent word := by
   have hwR : w <:+: morphIterate gamma R [a] := by
     apply (occurs_in_firstBlock hk₀).trans
     suffices ht : firstBlock (k₀ + w.length) <+: morphIterate gamma R [a] from ht.isInfix
-    rw [show R = _ + 1 from rfl, iterate_succ_right]
+    rw [show R = _ + 1 from rfl, morphIterate_succ_right]
     rw [show firstBlock (k₀ + w.length) = morphIterate gamma (k₀ + w.length) [a, c] from
       code_iterate _ [false]]
-    exact iterate_prefix (show [a, c] <+: [a].flatMap gamma by decide) gamma _
+    exact morphIterate_prefix (show [a, c] <+: [a].flatMap gamma by decide) gamma _
   let Q := 3 + R
   have hall : ∀ x : Sigma, w <:+: morphIterate gamma Q [x] := by
     intro x

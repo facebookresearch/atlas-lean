@@ -29,3 +29,6 @@
 - [The GCTA diagonal estimator is unbiased for $1 + F_i$](integral-grm-diag.md)
 - [KING-robust kinship estimator](king-robust-kinship-estimator.md)
 - [Marker cross-products have pedigree relationships as expectation, and ridge-regression BLUP is animal-model BLUP with the realized relationship matrix](marker-cross-products-capture-pedigree-relationships.md)
+- [PC-Relate kinship estimator under population structure](pc-relate-kinship-estimator.md)
+- [Realized relationship matrix scaling and Ledoit–Wolf shrinkage](realized-relationship-matrix-scaling-and-ledoit-wolf-shrinkage.md)
+- [LD-residual genetic relationship matrix](ld-residual-genetic-relationship-matrix.md)
