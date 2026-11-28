@@ -41,6 +41,7 @@ source modules; planned destinations are listed separately when added.
 
 **Planned application models:**
 
+- [Biochemistry, biomaterials and local therapeutic delivery](../roadmap/Biology/biochemistry/README.md), from molecular foundations to source-qualified research targets.
 - [Plug-flow reactors](../roadmap/Chemistry/chemical-kinetics/plug-flow-reactor/README.md)
 - [Residence-time distributions](../roadmap/Chemistry/chemical-kinetics/residence-time-distributions/README.md)
 - [Chemostat dynamics](../roadmap/Biology/population-dynamics/chemostat/README.md)
