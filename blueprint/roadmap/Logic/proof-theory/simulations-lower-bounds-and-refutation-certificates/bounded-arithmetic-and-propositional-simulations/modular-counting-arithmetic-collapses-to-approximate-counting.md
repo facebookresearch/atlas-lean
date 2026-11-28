@@ -21,7 +21,7 @@ The proof assigns to each $\Sigma^b_\infty(\oplus_p)$ formula $\varphi$ a transl
 
 ## Depends on
 
-None.
+- [Cook's theory PV of polynomial-time reasoning](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/meta-complexity-barriers-and-unprovability/bounded-arithmetic-and-witnessing/cooks-theory-pv.md)
 
 ## Proof depends on
 

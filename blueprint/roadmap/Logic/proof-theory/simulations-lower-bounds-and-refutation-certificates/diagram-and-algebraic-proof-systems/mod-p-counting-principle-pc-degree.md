@@ -2,7 +2,7 @@
 
 Over a field of characteristic $q$ with $q \nmid p$, and over the ring $\mathbb{Z}_q$ when $p$ and $q$ are relatively prime, every polynomial calculus refutation of the mod $p$ counting principle needs degree linear in $n$, while over $\mathbb{Z}_p$ (the field $\mathbb{F}_p$ when $p$ is prime) constant degree suffices: a linear degree gap between characteristics.
 
-**Polynomial calculus.** Over a field $F$, a PC derivation from a set $Q$ of polynomials is a sequence $P_1, \dots, P_l$ in which each $P_i$ is in $Q$, or is $cP_j + dP_k$ for earlier $P_j, P_k$ and $c, d \in F$, or is $xP_j$ for an earlier $P_j$ and a variable $x$. A refutation derives $1$. Over a ring $R$ the rules are the same and a refutation derives a nonzero constant $r \in R$. The degree of a derivation is the maximum degree of its lines.
+**Polynomial calculus over a field or ring.** Over a field $F$, PC derivations, refutations, and degree are as defined on [Polynomial calculus](../../algebraic-and-semialgebraic-proof-systems/polynomial-calculus.md) (the Boolean axioms $x_e^2 - x_e = 0$ are included among the $\mathrm{MOD}^n_p$ equations below). Over a commutative ring $R$, the inference rules ($cP_j + dP_k$ for $c, d \in R$ and $xP_j$ for a variable $x$) and degree are the same, and a refutation derives a nonzero constant $r \in R$.
 
 **Mod $p$ counting principle.** For $p \ge 2$, $\mathrm{MOD}^n_p$ has a variable $x_e$ for every $p$-element subset $e \subseteq [n]$ and the degree-$2$ equations
 
@@ -24,6 +24,7 @@ The proof goes through a multiplicative mod $p$ Tseitin system $\mathrm{TS}_n(p)
 ## Depends on
 
 - [Cook-Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
+- [Polynomial calculus](../../algebraic-and-semialgebraic-proof-systems/polynomial-calculus.md)
 
 ## Proof depends on
 

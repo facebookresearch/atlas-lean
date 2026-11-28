@@ -29,6 +29,7 @@ An automatable system could be approximated within a polynomial factor, so these
 - [Resolution refutation](../../../propositional-logic/resolution-size-and-width/is-resolution-refutation.md)
 - [Cook-Reckhow propositional proof systems](../../../propositional-logic/propositional-proof-complexity/cookreckhow-propositional-proof-systems.md)
 - [Horn formula](../../../propositional-logic/horn-satisfiability/is-horn.md)
+- [Polynomial calculus](../../algebraic-and-semialgebraic-proof-systems/polynomial-calculus.md)
 
 ## Proof depends on
 
