@@ -10,7 +10,7 @@ Finding an invalid step in a purported resolution refutation that is shorter tha
 2. (Upper bound for the pigeonhole principle.) There is a uniform decision-tree reduction of block-depth 3 from the refuter problem for the bound $1.01^n$ on resolution refutations of $\mathrm{PHP}_{(n+1)\to n}$ to $\mathrm{rwPHP}(\mathsf{PLS})$: from a purported refutation with $L\le 1.01^n$ clauses it computes an $\mathrm{rwPHP}(\mathsf{PLS})$ instance, and from any solution of that instance an invalid derivation can be computed in $\mathrm{poly}(n)$ time.
 3. (Completeness.) $\mathrm{Refuter}(s(\mathrm{PHP}_{(n+1)\to n}\vdash_{\mathrm{Res}}\bot)\le 1.01^n)$ is complete for $\mathrm{rwPHP}(\mathsf{PLS})$.
 
-**Bounded-arithmetic form.** $T^1_2=\mathrm{BASIC}+\Sigma^b_1\text{-}\mathrm{IND}$, and $\mathrm{dwPHP}(\mathsf{PV})$ is the schema $\forall a>1\,\exists v<a^2\,\forall u<a\;f(u)\ne v$ for every $\mathsf{PV}$ function $f$ with parameters; the relativized theories add a unary predicate $\alpha$ encoding an exponentially long input. Let $\mathrm{LB}^{\mathrm{Res}}_{\mathrm{PHP}}(\mathsf{PV}(\alpha))$ be the $\forall\Sigma^b_1(\alpha)$-sentences
+**Bounded-arithmetic form.** $T^1_2=\mathrm{BASIC}+\Sigma^b_1\text{-}\mathrm{IND}$, and $\mathrm{dwPHP}(\mathsf{PV})$ is the dual weak pigeonhole principle for $\mathsf{PV}$ functions from [Jeřábek's theory APC1 and the dual weak pigeonhole principle](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/meta-complexity-barriers-and-unprovability/bounded-arithmetic-and-witnessing/theory-apc1.md), written in the source in the parameter form $\forall a>1\,\exists v<a^2\,\forall u<a\;f(u)\ne v$ for every $\mathsf{PV}$ function $f$ with parameters (the various parameter forms are equivalent over $S^1_2\subseteq T^1_2$); the relativized theories add a unary predicate $\alpha$ encoding an exponentially long input. Let $\mathrm{LB}^{\mathrm{Res}}_{\mathrm{PHP}}(\mathsf{PV}(\alpha))$ be the $\forall\Sigma^b_1(\alpha)$-sentences
 
 $$
 \forall n\in\mathrm{Log}\;\forall z\;\exists i\in[1.01^n]\;\mathrm{mistake}_{\mathrm{PHP}}(n,M,z,i),
@@ -34,6 +34,7 @@ Similar upper bounds hold for Tseitin formulas on expanders, XOR-lifted formulas
 - [Refuter problems for resolution lower bounds](resolution-lower-bound-refuter-problems.md)
 - [Query total search problems TFNP^dt, decision-tree formulations and the black-box classes](../../../../TheoryOfComputation/complexity-classes/tfnp-hierarchies-and-avoidance/tfnp-proof-complexity-characterizations/query-tfnp-and-formulations.md)
 - [Cook's theory PV of polynomial-time reasoning](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/meta-complexity-barriers-and-unprovability/bounded-arithmetic-and-witnessing/cooks-theory-pv.md)
+- [Jeřábek's theory APC1 and the dual weak pigeonhole principle](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/meta-complexity-barriers-and-unprovability/bounded-arithmetic-and-witnessing/theory-apc1.md)
 
 ## Proof depends on
 
