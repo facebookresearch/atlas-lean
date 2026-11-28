@@ -25,3 +25,4 @@ Minimum spanning trees (Kruskal, Prim), maximum flow and minimum cut (Edmonds-Ka
 - [Minimum-Weight Outgoing Edges and MST Uniqueness](minimum-weight-outgoing-edges-and-mst-uniqueness/README.md)
 - [Optimum Arborescences and Branchings](optimum-arborescences-and-branchings/README.md)
 - [The Auction Algorithm for Assignment](auction-algorithm-for-assignment/README.md)
+- [Fixed-value flow rerouting](fixed-value-flow-rerouting/README.md)

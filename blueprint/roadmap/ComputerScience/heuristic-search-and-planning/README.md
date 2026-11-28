@@ -1,9 +1,10 @@
 # Heuristic search and planning
 
-Search and decision procedures from artificial intelligence: A* search, game-tree search with alpha-beta pruning, arc consistency for constraint satisfaction, and dynamic programming for Markov decision processes (value and policy iteration, optimality of stationary policies, stochastic shortest path problems).
+Search and decision procedures from artificial intelligence: A* search, game-tree search with alpha-beta pruning, arc consistency and global constraint propagation for finite-domain constraint satisfaction, and dynamic programming for Markov decision processes (value and policy iteration, optimality of stationary policies, stochastic shortest path problems).
 
 - [A* search algorithm](a-search-algorithm/README.md)
 - [AC-3 algorithm](ac-3-algorithm/README.md)
+- [Global constraint propagation](global-constraint-propagation/README.md)
 - [Alpha-beta on a perfectly ordered uniform tree (Knuth and Moore)](alpha-beta-on-a-perfectly-ordered-uniform-tree-k/README.md)
 - [Alpha–beta pruning](alpha-beta-pruning/README.md)
 - [Backtracking search with forward checking: soundness and completeness](backtracking-search-with-forward-checking-soundn/README.md)
