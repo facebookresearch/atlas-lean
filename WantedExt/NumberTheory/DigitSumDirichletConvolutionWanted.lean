@@ -10,32 +10,17 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Digits.DigitSumDirichletConvolution
+public import MathlibExt.NumberTheory.Digits.DigitSumPartialSum
 public import MathlibExt.NumberTheory.Digits.TrollopeDelange
 public import MathlibExt.NumberTheory.DigitSumDirichletConvolutionDigitSumAuxiliaryIsBigO
 public import MathlibExt.NumberTheory.Digits.DigitSumArithSqPartialSum
+public import MathlibExt.NumberTheory.Digits.DigitSumArithPowPartialSum
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Filter Asymptotics Real
-
-/-- **Trollope–Delange formula for real $x$.** Let $q \ge 2$ be an integer, let $s_q(n)$ denote
-the sum of the base-$q$ digits of $n$, and let $F$ be the Trollope–Delange fluctuation and $h$
-Delange's series in base $q$. For every real number $x \ge 1$,
-$$\sum_{n=1}^{\lfloor x \rfloor} s_q(n) = \frac{q - 1}{2 \log q} \, x \log x +
-x F\left(\frac{\log x}{\log q}\right) - h(x) +
-(1 + \lfloor x \rfloor - x) \, s_q(\lfloor x \rfloor).$$
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 1 (`integers-2026-A43-thm-1`), equation (1). -/
-public theorem_wanted digitSum_partialSum_trollopeDelange (q : ℕ) (hq : 2 ≤ q) (x : ℝ)
-    (hx : 1 ≤ x) :
-    ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ((Nat.digits q n).sum : ℝ) =
-      ((q : ℝ) - 1) / (2 * log q) * x * log x +
-        x * trollopeDelangeFluctuation q (log x / log q) - trollopeDelangeSeries q x +
-          (1 + ⌊x⌋₊ - x) * ((Nat.digits q ⌊x⌋₊).sum : ℝ)
 
 /-- **Exact formulas for the reciprocal digit sums.** Let $q \ge 2$ be an integer and let $s_q(n)$
 denote the sum of the base-$q$ digits of $n$. Let $F$ be the Trollope–Delange fluctuation and $J$
@@ -80,22 +65,6 @@ public theorem_wanted digitSum_reciprocal_log_pow_sum_isBigO (q : ℕ) (hq : 2 �
     (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ((Nat.digits q n).sum : ℝ) / n * log n ^ j -
         ((q : ℝ) - 1) * log x ^ (j + 2) / (2 * (j + 2) * log q)) =O[atTop]
       (fun x => log x ^ (j + 1))
-
-/-- **Partial sums of the iterated digit-sum convolutions.** Let $q \ge 2$ be an integer, let
-$s_q(n)$ be the sum of the base-$q$ digits of $n$, let $s_q^{(k)}$ be the $k$-fold Dirichlet
-convolution $s_q * \cdots * s_q$, and let $a(k)$ be the base-$q$ digit-convolution coefficients.
-For every integer $k \ge 2$,
-$$\sum_{1 \le n \le x} s_q^{(k)}(n) = a(k) \, x \log^{2k-1} x + O(x \log^{2k-2} x)$$
-as $x \to \infty$ through the reals.
-
-Source: Ka Lun Wong and Erdenebileg Erdenebat, *Asymptotics of Partial Sums of Dirichlet
-Convolutions of Digital Sum Functions in Arbitrary Bases*, INTEGERS 26 (2026), Article A43,
-Theorem 3 (`integers-2026-A43-thm-3`), equation (2). -/
-public theorem_wanted digitSumArith_pow_partialSum_isBigO (q : ℕ) (hq : 2 ≤ q) (k : ℕ)
-    (hk : 2 ≤ k) :
-    (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, ((digitSumArith q ^ k) n : ℝ) -
-        digitConvolutionCoeff q k * x * log x ^ (2 * k - 1)) =O[atTop]
-      (fun x => x * log x ^ (2 * k - 2))
 
 end
 
