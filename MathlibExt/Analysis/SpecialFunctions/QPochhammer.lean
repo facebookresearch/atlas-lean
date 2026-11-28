@@ -10,6 +10,8 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Summable
 public import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Topology.Algebra.InfiniteSum.Constructions
 
 /-!
 # Infinite q-Pochhammer products
@@ -30,6 +32,7 @@ out-of-domain `q` cannot be passed silently.
 ## Main statements
 
 * `MetaMathlibExt.QPochhammer.hasProd_qPochhammerInf`
+* `MetaMathlibExt.QPochhammer.qPochhammerInfRaw_split`
 * `MetaMathlibExt.QPochhammer.qPochhammerInfRaw_two_one`
 -/
 
@@ -43,6 +46,11 @@ defined for every $q$: when this product does not converge unconditionally (in p
 most $q$ with $|q| \ge 1$), its value is $1$ by convention. -/
 noncomputable def qPochhammerInfRaw (a q : ℂ) : ℂ :=
   tprod (fun n : ℕ => (1 - a * q ^ n))
+
+/-- **Product formula for the raw q-Pochhammer symbol.** The total infinite product
+`qPochhammerInfRaw a q` has factors `1 - a * q ^ n`, indexed by the natural numbers. -/
+theorem qPochhammerInfRaw_eq_tprod (a q : ℂ) :
+    qPochhammerInfRaw a q = ∏' n : ℕ, (1 - a * q ^ n) := rfl
 
 /-- **Infinite q-Pochhammer symbol.** For complex numbers $a$ and $q$ with $|q| < 1$, the infinite
 q-Pochhammer symbol is $(a;q)_\infty = \prod_{n=0}^{\infty} (1 - a q^n)$, the unconditional
@@ -80,6 +88,24 @@ theorem hasProd_qPochhammerInf (a q : ℂ) (hq : ‖q‖ < 1) :
   have hm : Multipliable (fun n : ℕ => 1 + (-a) * q ^ n) :=
     Complex.multipliable_one_add_of_summable hsa
   simpa [qPochhammerInf, qPochhammerInfRaw, sub_eq_add_neg] using hm.hasProd
+
+/-- **Residue-class split of the infinite q-Pochhammer product.** For $|q| < 1$ and a positive
+natural number $d$, the product $(a;q)_\infty$ equals the product of $(a q^i;q^d)_\infty$
+over $0 \le i < d$. -/
+theorem qPochhammerInfRaw_split (a q : ℂ) (hq : ‖q‖ < 1) (d : ℕ) [NeZero d] :
+    qPochhammerInfRaw a q = ∏ i : Fin d, qPochhammerInfRaw (a * q ^ i.val) (q ^ d) := by
+  let e := (Equiv.prodComm (Fin d) ℕ).trans (Nat.divModEquiv d).symm
+  have hp := e.hasProd_iff.mpr (hasProd_qPochhammerInf a q hq)
+  have hf := hp.prod_fiberwise (g := fun i : Fin d => qPochhammerInfRaw (a * q ^ i.val) (q ^ d)) (by
+    intro i
+    have hd : ‖q ^ d‖ < 1 := by
+      rw [norm_pow]
+      exact pow_lt_one₀ (norm_nonneg _) hq (NeZero.ne d)
+    apply (hasProd_qPochhammerInf _ _ hd).congr_fun
+    intro n
+    simp [e, pow_add, pow_mul, mul_comm n d]
+    ring)
+  exact hf.unique (hasProd_fintype _)
 
 /-- **The q-Pochhammer symbol vanishes at a = 1 and q = 0.** The infinite q-Pochhammer symbol
 satisfies $(1;0)_\infty = 0$, because its factor for $n = 0$ is $1 - 1 \cdot 0^0 = 0$ (with the

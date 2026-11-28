@@ -48,21 +48,6 @@ public theorem_wanted ramanujanK_eta_quotients (q : ℂ) (hq : ‖q‖ < 1) (hq0
         (q * qPochhammerInfRaw (q ^ 2) (q ^ 2) * qPochhammerInfRaw (q ^ 10) (q ^ 10) ^ 3) =
       1 / ramanujanK q - 4 - ramanujanK q
 
-/-- **Ramanujan's function $k$ at $q$ and $q^2$ as an eta quotient.** For every complex number
-$q$ with $0 < |q| < 1$, Ramanujan's function $k$ satisfies
-$$
-\frac{k(q)}{k(q^2)} - \frac{k(q^2)}{k(q)} =
-\frac{(q;q)_\infty (q^5;q^5)_\infty^3}{q\,(q^{10};q^{10})_\infty^4},
-$$
-where $(a;x)_\infty = \prod_{n \ge 0} (1 - a x^n)$ is the infinite q-Pochhammer product.
-
-Source: Russelle Guadalupe, *New Proofs of Certain Theta Function Identities via Ramanujan's
-Function*, INTEGERS 26 (2026), Article A41, Lemma 3 (`integers-2026-A41-lem-3`). -/
-public theorem_wanted ramanujanK_div_sub_div_sq (q : ℂ) (hq : ‖q‖ < 1) (hq0 : q ≠ 0) :
-    ramanujanK q / ramanujanK (q ^ 2) - ramanujanK (q ^ 2) / ramanujanK q =
-      qPochhammerInfRaw q q * qPochhammerInfRaw (q ^ 5) (q ^ 5) ^ 3 /
-        (q * qPochhammerInfRaw (q ^ 10) (q ^ 10) ^ 4)
-
 /-- **Ramanujan's level-10 theta function identities.** For complex $x$ with $|x| < 1$, let
 $\varphi(x) = \sum_{n \in \mathbb{Z}} x^{n^2}$, $\psi(x) = \sum_{n \ge 0} x^{n(n+1)/2}$ and
 $f(-x) = \prod_{n \ge 1} (1 - x^n)$, so that $f(x) = \prod_{n \ge 1} (1 - (-x)^n)$. Then for
