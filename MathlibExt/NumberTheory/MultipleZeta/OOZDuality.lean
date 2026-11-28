@@ -798,11 +798,7 @@ open Finset
 -- Shift the open gap to an initial interval and use the hockey-stick identity.
 private lemma sum_gap_choose (l M t : ℕ) :
     ∑ a ∈ Ioo l M, (a - l - 1).choose t = (M - l - 1).choose (t + 1) := by
-  have hI : Ioo l M = Ico (l + 1) M := by
-    ext a
-    simp only [mem_Ioo, mem_Ico]
-    omega
-  rw [hI, sum_Ico_eq_sum_range]
+  rw [← Ico_add_one_left_eq_Ioo, sum_Ico_eq_sum_range]
   simp only [show ∀ i : ℕ, l + 1 + i - l - 1 = i by omega,
     show M - (l + 1) = M - l - 1 by omega]
   generalize M - l - 1 = b
@@ -834,18 +830,11 @@ private lemma partial_zero_prefix_cons (t k : ℕ) (ks : List ℕ) (M : ℕ) :
   | zero => simp [szQMZVPartial_cons]
   | succ t ih =>
     simp only [List.replicate_succ, List.cons_append, szQMZVPartial_cons, pow_zero, one_mul, ih]
-    have hI (b : ℕ) : Ioo 0 b = Ico 1 b := by
-      ext a
-      simp [Nat.succ_le_iff]
-    simp_rw [hI]
+    simp only [← Ico_add_one_left_eq_Ioo, zero_add]
     rw [← sum_Ico_Ico_comm']
     apply sum_congr rfl
     intro m _
-    rw [← sum_mul, ← map_sum, ← Nat.cast_sum]
-    have hm : Ico (m + 1) M = Ioo m M := by
-      ext a
-      simp
-    rw [hm, sum_gap_choose]
+    rw [← sum_mul, ← map_sum, ← Nat.cast_sum, Ico_add_one_left_eq_Ioo, sum_gap_choose]
 
 private def descendingTuples (r M : ℕ) : Finset (Fin r → ℕ) := by
   classical

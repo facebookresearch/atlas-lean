@@ -99,10 +99,6 @@ private lemma coeff_inv_one_sub_pow_of_pos {m : ℕ} (hm : 0 < m) (a : ℕ) :
       · rw [ite_eq_right hma, sub_zero] at hc
         rwa [ite_eq_right (fun h => hma (Nat.le_of_dvd ha h))]
 
-private lemma testIoo (M : ℕ) : Ioo 0 M = Ico 1 M := by
-  ext n
-  simp only [mem_Ioo, mem_Ico, Nat.succ_le_iff]
-
 private lemma coeff_weight_mul (a b n : ℕ) :
     coeff n ((X ^ a * (1 - X ^ a)⁻¹) * (X ^ b * (1 - X ^ b)⁻¹) : ℚ⟦X⟧) =
       if a + b ≤ n then
@@ -126,15 +122,16 @@ example : coeff 0 (szQMZV [2, 0]) = 0 := by
 example : coeff 6 (szQMZV [2, 0]) = 4 := by
   have hzero (M : ℕ) : szQMZVPartial [0] M = ((M - 1 : ℕ) : ℚ⟦X⟧) := by
     simp [szQMZVPartial_cons, szQMZVPartial_nil]
-  rw [coeff_szQMZV_eq_coeff_partial, szQMZVPartial_cons, testIoo, sum_Ico_eq_sum_range, map_sum]
+  rw [coeff_szQMZV_eq_coeff_partial, szQMZVPartial_cons, ← Ico_add_one_left_eq_Ioo,
+    sum_Ico_eq_sum_range, map_sum]
   simp only [hzero, coeff_mul_natCast, pow_two, coeff_weight_mul]
   norm_num [sum_range_succ, coeff_inv_one_sub_pow_of_pos]
 
 -- In the interior gap there is one choice for a chain 3 > a > 1 and two for 4 > a > 1.
 example : coeff 5 (szQMZV [1, 0, 1]) = 3 := by
   simp only [coeff_szQMZV_eq_coeff_partial, szQMZVPartial_cons, szQMZVPartial_nil,
-    pow_zero, pow_one, one_mul, mul_one, testIoo, sum_Ico_eq_sum_range, mul_sum, map_sum,
-    coeff_weight_mul]
+    pow_zero, pow_one, one_mul, mul_one, ← Ico_add_one_left_eq_Ioo, zero_add,
+    sum_Ico_eq_sum_range, mul_sum, map_sum, coeff_weight_mul]
   norm_num only [sum_range_succ, sum_range_zero, sum_empty, coeff_inv_one_sub_pow_of_pos,
     Nat.dvd_zero, add_zero, zero_add, zero_mul, mul_zero, one_mul, mul_one]
   norm_num
