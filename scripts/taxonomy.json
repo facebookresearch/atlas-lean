@@ -15614,6 +15614,7 @@
   "MathlibExt/Probability/Process/ContinuousTimeMarkovChain/EventJumpHold": {"to": "Probability/markov-chains", "title": "Jump–hold chains"},
   "MathlibExt/Probability/Process/ContinuousTimeMarkovChain/Path": {"to": "Probability/markov-chains", "title": "Finite continuous-time Markov chains as path processes"},
   "MathlibExt/Probability/Process/ContinuousTimeMarkovChain/Semigroup": {"to": "Probability/markov-chains", "title": "The transition semigroup of a finite continuous-time Markov chain"},
+  "MathlibExt/Probability/Process/ContinuousTimeMarkovChain/StationaryPath": {"to": "Probability/markov-chains", "title": "Finite continuous-time Markov chains"},
   "MathlibExt/Probability/Process/Girsanov": {"to": "Probability/stochastic-calculus", "title": "Girsanov's theorem"},
   "MathlibExt/Probability/Process/IteratedRandomMap": {"to": "Probability/markov-chains", "title": "Foster–Lyapunov criteria"},
   "MathlibExt/Probability/Process/PoissonPointProcess": {"to": "Probability/point-processes", "title": "Poisson point processes"},
