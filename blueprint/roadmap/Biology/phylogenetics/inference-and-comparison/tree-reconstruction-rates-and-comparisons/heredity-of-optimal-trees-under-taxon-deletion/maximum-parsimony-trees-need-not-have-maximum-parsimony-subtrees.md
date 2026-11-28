@@ -18,7 +18,7 @@ So optimal phylogenies are not built up from optimal smaller phylogenies: adding
 
 ## Proof depends on
 
-- [No-common-mechanism maximum likelihood trees are maximum parsimony trees (Tuffley–Steel)](../../../not-yet-classified/no-common-mechanism-parsimony/ncm-ml-iff-mp.md)
+- [No-common-mechanism maximum likelihood trees are maximum parsimony trees (Tuffley–Steel)](../../../../not-yet-classified/no-common-mechanism-parsimony/ncm-ml-iff-mp.md)
 
 ## Expansion
 

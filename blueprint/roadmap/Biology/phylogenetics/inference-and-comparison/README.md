@@ -34,10 +34,4 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
 - [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)
-- [Block-correlation distances under indels](block-correlation-distances-under-indels/README.md)
-- [Heredity of optimal trees under taxon deletion](heredity-of-optimal-trees-under-taxon-deletion/README.md)
-- [Inconsistency of concatenated maximum likelihood](inconsistency-of-concatenated-maximum-likelihood/README.md)
-- [Latent tree reconstruction in the Kesten–Stigum regime](latent-tree-reconstruction-in-the-kesten-stigum-regime/README.md)
-- [Rates-across-sites models](rates-across-sites-models/README.md)
-- [Species trees under the coalescent and gene transfer](species-trees-under-the-coalescent-and-gene-transfer/README.md)
-- [Tree distances and tree comparison](tree-distances-and-comparison/README.md)
+- [Tree reconstruction, rates, and comparisons](tree-reconstruction-rates-and-comparisons/README.md)

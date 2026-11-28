@@ -16,7 +16,7 @@ strongly fits $\psi$ ultrametrically (Theorem 3.2).
 
 ## Depends on
 
-- [The multispecies coalescent](../../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
+- [The multispecies coalescent](../../../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
 
 ## Expansion
 

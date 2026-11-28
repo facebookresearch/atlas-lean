@@ -18,7 +18,7 @@ In both, $k$ i.i.d. samples of the leaf vector $\sigma_{[n]}$ are observed, and 
 
 ## Depends on
 
-- [General time-reversible (GTR) rate matrix](../../time-reversible-nucleotide-substitution-models/gtr-rate.md)
+- [General time-reversible (GTR) rate matrix](../../../time-reversible-nucleotide-substitution-models/gtr-rate.md)
 
 ## Expansion
 

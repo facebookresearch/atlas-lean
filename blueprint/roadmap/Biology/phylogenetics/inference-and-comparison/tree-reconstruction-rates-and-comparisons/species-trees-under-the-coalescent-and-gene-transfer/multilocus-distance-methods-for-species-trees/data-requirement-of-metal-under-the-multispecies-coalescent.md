@@ -26,11 +26,11 @@ a bound that behaves like a constant times $f^{-2}$ as $f\to0$. So a total of $m
 
 ## Depends on
 
-- [The multispecies coalescent](../../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
-- [Closed form of the Jukes–Cantor difference probability](../../../jukes-cantor-model/p-diff-eq.md)
-- [Jukes–Cantor distance](../../../jukes-cantor-model/jc-distance.md)
-- [Ultrametric on taxa](../../../splits-compatibility-ultrametrics-and-upgma/is-ultrametric.md)
-- [UPGMA is exact on ultrametrics](../../../splits-compatibility-ultrametrics-and-upgma/upgma-exact.md)
+- [The multispecies coalescent](../../../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
+- [Closed form of the Jukes–Cantor difference probability](../../../../jukes-cantor-model/p-diff-eq.md)
+- [Jukes–Cantor distance](../../../../jukes-cantor-model/jc-distance.md)
+- [Ultrametric on taxa](../../../../splits-compatibility-ultrametrics-and-upgma/is-ultrametric.md)
+- [UPGMA is exact on ultrametrics](../../../../splits-compatibility-ultrametrics-and-upgma/upgma-exact.md)
 
 ## Expansion
 
