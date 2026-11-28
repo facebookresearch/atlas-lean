@@ -1,5 +1,5 @@
 # Undecidable ground-state properties
 
-Macroscopic observables of ground states of periodic classical spin lattices that no algorithm computes from the interactions.
+Periodic classical spin lattices whose ground states encode the runs of cellular automata, and the undecidability of their macroscopic ground-state observables.
 
-- [Ground-state magnetization of periodic Ising lattices is undecidable](periodic-ising-lattice-observables.md)
+- [Periodic Ising lattices with a prescribed edge](periodic-ising-lattice-observables.md)
