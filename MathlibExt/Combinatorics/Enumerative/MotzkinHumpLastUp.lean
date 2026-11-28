@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Enumerative.MotzkinHumpsYoungTableaux
-import all MathlibExt.Combinatorics.Enumerative.MotzkinHumpPeakHeight
 
 /-!
 # Marked humps and last-up Motzkin prefixes
@@ -19,6 +18,11 @@ where `B*` reverses the steps of `B` and interchanges up and down. The inverse r
 `r` from the trailing flats and locates the first cut at the last vertex of height `k - 1`.
 We implement the cuts in terms of vertex heights, so `B*` traverses the same heights
 in reverse order, translated up by `k`.
+
+## References
+
+* Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*,
+  Journal of Integer Sequences 28 (2025), Article 25.8.1, pp. 1–11, Lemma 3 (p. 4).
 -/
 
 namespace MetaMathlibExt
@@ -33,21 +37,14 @@ private structure Walk (n : ℕ) (h : ℤ) (H : Heights) : Prop where
   nonneg : ∀ m ≤ n, 0 ≤ H m
   step : ∀ m < n, -1 ≤ H (m + 1) - H m ∧ H (m + 1) - H m ≤ 1
 
-private theorem height_succ {n : ℕ} (p : Word n) (i : Fin n) :
-    mhHeight p (i.val + 1) - mhHeight p i.val = motzkinStep (p i) := by
-  rw [mhHeight, Finset.sum_range_succ, mhStepAt_val, ← mhHeight]
-  change _ - _ = mhStep (p i)
-  omega
-
 private theorem walk_height {n : ℕ} {h : ℤ} {p : Word n} (hp : IsMotzkinPrefix n h p) :
-    Walk n h (mhHeight p) where
-  start := by simp [mhHeight]
-  finish := (mhHeight_total p).symm.trans hp.2
-  nonneg m hm := mhHeight_bridge p hm ▸ hp.1 m hm
+    Walk n h (motzkinPrefixHeight p) where
+  start := motzkinPrefixHeight_zero p
+  finish := (motzkinPrefixHeight_total p).symm.trans ((isMotzkinPrefix_iff n h p).mp hp).2
+  nonneg m hm := motzkinPrefixHeight_prefix_sum p hm ▸ ((isMotzkinPrefix_iff n h p).mp hp).1 m hm
   step m hm := by
-    rw [height_succ p ⟨m, hm⟩]
+    rw [motzkinPrefixHeight_step p ⟨m, hm⟩, motzkinStep_eq_sub_one]
     have hb := (p ⟨m, hm⟩).isLt
-    unfold motzkinStep
     omega
 
 private def wordOf {n : ℕ} {h : ℤ} {H : Heights} (w : Walk n h H) : Word n :=
@@ -58,34 +55,37 @@ private def wordOf {n : ℕ} {h : ℤ} {H : Heights} (w : Walk n h H) : Word n :
 private theorem step_wordOf {n : ℕ} {h : ℤ} {H : Heights} (w : Walk n h H) (i : Fin n) :
     motzkinStep (wordOf w i) = H (i.val + 1) - H i.val := by
   have := w.step i.val i.isLt
+  rw [motzkinStep_eq_sub_one]
   change (↑(H (i.val + 1) - H i.val + 1).toNat : ℤ) - 1 = _
   omega
 
 private theorem height_wordOf {n : ℕ} {h : ℤ} {H : Heights} (w : Walk n h H) (m : ℕ)
-    (hm : m ≤ n) : mhHeight (wordOf w) m = H m := by
+    (hm : m ≤ n) : motzkinPrefixHeight (wordOf w) m = H m := by
   induction m with
-  | zero => simpa [mhHeight] using w.start.symm
+  | zero => simpa only [motzkinPrefixHeight_zero] using w.start.symm
   | succ m ih =>
-    have e := height_succ (wordOf w) (⟨m, by omega⟩ : Fin n)
+    have e := motzkinPrefixHeight_step (wordOf w) (⟨m, by omega⟩ : Fin n)
     rw [step_wordOf] at e
-    change mhHeight (wordOf w) (m + 1) - mhHeight (wordOf w) m = H (m + 1) - H m at e
+    change motzkinPrefixHeight (wordOf w) (m + 1) - motzkinPrefixHeight (wordOf w) m =
+      H (m + 1) - H m at e
     have := ih (by omega)
     omega
 
 private theorem prefix_wordOf {n : ℕ} {h : ℤ} {H : Heights} (w : Walk n h H) :
     IsMotzkinPrefix n h (wordOf w) := by
+  apply (isMotzkinPrefix_iff n h (wordOf w)).mpr
   refine ⟨fun m hm => ?_, ?_⟩
-  · rw [mhHeight_bridge _ hm, height_wordOf w m hm]
+  · rw [motzkinPrefixHeight_prefix_sum _ hm, height_wordOf w m hm]
     exact w.nonneg m hm
-  · rw [mhHeight_total, height_wordOf w n le_rfl, w.finish]
+  · rw [motzkinPrefixHeight_total, height_wordOf w n le_rfl, w.finish]
 
 private theorem word_ext {n : ℕ} {p q : Word n}
-    (e : ∀ m ≤ n, mhHeight p m = mhHeight q m) : p = q := by
+    (e : ∀ m ≤ n, motzkinPrefixHeight p m = motzkinPrefixHeight q m) : p = q := by
   funext i
   apply Fin.ext
-  have h := height_succ p i
-  rw [e _ (by omega), e _ i.isLt.le, height_succ] at h
-  unfold motzkinStep at h
+  have h := motzkinPrefixHeight_step p i
+  rw [e _ (by omega), e _ i.isLt.le, motzkinPrefixHeight_step] at h
+  simp only [motzkinStep_eq_sub_one] at h
   omega
 
 private theorem eq_of_flat {H : Heights} {a b : ℕ} (hab : a ≤ b)
@@ -105,31 +105,33 @@ private structure Hump (n : ℕ) (k : ℤ) (H : Heights) (i j : ℕ) : Prop wher
   after : H (j + 1) = k - 1
 
 private theorem hump_iff {n k : ℕ} {p : Word n} {i j : Fin n} :
-    IsMotzkinHump n k p i j ↔ Hump n k (mhHeight p) i.val j.val := by
+    IsMotzkinHump n k p i j ↔ Hump n k (motzkinPrefixHeight p) i.val j.val := by
+  rw [isMotzkinHump_iff]
   constructor
   · rintro ⟨hij, hu, hd, hf, hk⟩
-    rw [mhHeight_le_bridge] at hk
-    have hi := height_succ p i
-    have hj := height_succ p j
-    have mid (m : ℕ) (him : i.val < m) (hmj : m ≤ j.val) : mhHeight p m = (k : ℤ) := by
+    rw [motzkinPrefixHeight_inclusive_sum] at hk
+    have hi := motzkinPrefixHeight_step p i
+    have hj := motzkinPrefixHeight_step p j
+    have mid (m : ℕ) (him : i.val < m) (hmj : m ≤ j.val) : motzkinPrefixHeight p m = (k : ℤ) := by
       rw [← hk]
       apply eq_of_flat (by omega)
       intro l hil hlm
       let x : Fin n := ⟨l, by omega⟩
-      have e := (height_succ p x).trans (hf x (by exact hil) (by dsimp [x]; omega))
+      have e := (motzkinPrefixHeight_step p x).trans (hf x (by exact hil) (by dsimp [x]; omega))
       exact sub_eq_zero.mp e
     refine ⟨hij, j.isLt, by omega, mid, ?_⟩
     have := mid j.val hij le_rfl
     omega
   · intro h
     have hki := h.middle (i.val + 1) (by omega) h.lt
-    refine ⟨h.lt, ?_, ?_, ?_, (mhHeight_le_bridge p i).trans hki⟩
-    · rw [← height_succ, h.before, hki]
+    refine ⟨h.lt, ?_, ?_, ?_, (motzkinPrefixHeight_inclusive_sum p i).trans hki⟩
+    · rw [← motzkinPrefixHeight_step, h.before, hki]
       omega
-    · rw [← height_succ, h.after, h.middle _ h.lt le_rfl]
+    · rw [← motzkinPrefixHeight_step, h.after, h.middle _ h.lt le_rfl]
       omega
     · intro r hir hrj
-      rw [← height_succ, h.middle _ hir hrj.le, h.middle _ (by omega) (by omega), sub_self]
+      rw [← motzkinPrefixHeight_step, h.middle _ hir hrj.le,
+        h.middle _ (by omega) (by omega), sub_self]
 
 private structure Last (n : ℕ) (k : ℤ) (H : Heights) (t : ℕ) : Prop where
   bound : t < n
@@ -137,47 +139,43 @@ private structure Last (n : ℕ) (k : ℤ) (H : Heights) (t : ℕ) : Prop where
   after : ∀ m, t < m → m ≤ n → H m = 2 * k
 
 private theorem last_of_word {n : ℕ} {k : ℤ} {p : Word n} (hp : IsMotzkinPrefix n (2 * k) p)
-    (hl : LastNonflatStepUp n p) : ∃ t, Last n k (mhHeight p) t := by
-  obtain ⟨t, hu, hf⟩ := hl
-  have after (m : ℕ) (htm : t.val < m) (hm : m ≤ n) : mhHeight p m = 2 * k := by
+    (hl : LastNonflatStepUp n p) : ∃ t, Last n k (motzkinPrefixHeight p) t := by
+  obtain ⟨t, hu, hf⟩ := (lastNonflatStepUp_iff n p).mp hl
+  have after (m : ℕ) (htm : t.val < m) (hm : m ≤ n) : motzkinPrefixHeight p m = 2 * k := by
     rw [← (walk_height hp).finish]
     symm
     apply eq_of_flat hm
     intro l hml hl
     let x : Fin n := ⟨l, hl⟩
-    have e := height_succ p x
-    rw [hf x (show t.val < l by omega)] at e
-    change mhHeight p (l + 1) - mhHeight p l = mhStep 1 at e
-    rw [mhStep_vals.2.1] at e
+    have e := motzkinPrefixHeight_step p x
+    rw [hf x (show t.val < l by omega), motzkinStep_values.2.1] at e
     exact sub_eq_zero.mp e
-  have e := height_succ p t
-  rw [hu] at e
-  change mhHeight p (t.val + 1) - mhHeight p t.val = mhStep 2 at e
-  rw [mhStep_vals.2.2] at e
+  have e := motzkinPrefixHeight_step p t
+  rw [hu, motzkinStep_values.2.2] at e
   have := after (t.val + 1) (by omega) (by omega)
   exact ⟨t.val, t.isLt, by omega, after⟩
 
 private theorem last_marker {n : ℕ} {k : ℤ} {p : Word n} {t : ℕ}
-    (h : Last n k (mhHeight p) t) :
+    (h : Last n k (motzkinPrefixHeight p) t) :
     p ⟨t, h.bound⟩ = 2 ∧ ∀ i : Fin n, t < i.val → p i = 1 := by
   constructor
-  · apply (mhStep_eq_one_iff _).mp
-    change motzkinStep (p ⟨t, h.bound⟩) = 1
-    rw [← height_succ]
-    change mhHeight p (t + 1) - mhHeight p t = 1
+  · apply (motzkinStep_eq_one_iff _).mp
+    rw [← motzkinPrefixHeight_step]
+    change motzkinPrefixHeight p (t + 1) - motzkinPrefixHeight p t = 1
     rw [h.before, h.after _ (Nat.lt_succ_self t) h.bound]
     omega
   · intro i hi
-    apply (mhStep_eq_zero_iff _).mp
-    change motzkinStep (p i) = 0
-    rw [← height_succ, h.after _ (by omega) (by omega), h.after _ hi i.isLt.le, sub_self]
+    apply (motzkinStep_eq_zero_iff _).mp
+    rw [← motzkinPrefixHeight_step, h.after _ (by omega) (by omega),
+      h.after _ hi i.isLt.le, sub_self]
 
 private theorem Last.isLast {n : ℕ} {k : ℤ} {p : Word n} {t : ℕ}
-    (h : Last n k (mhHeight p) t) : LastNonflatStepUp n p :=
-  ⟨⟨t, h.bound⟩, (last_marker h).1, (last_marker h).2⟩
+    (h : Last n k (motzkinPrefixHeight p) t) : LastNonflatStepUp n p :=
+  (lastNonflatStepUp_iff n p).mpr ⟨⟨t, h.bound⟩, (last_marker h).1, (last_marker h).2⟩
 
 private theorem Last.ends_iff {n : ℕ} {k : ℤ} {p : Word n} {t : ℕ}
-    (h : Last n k (mhHeight p) t) : EndsWithUp n p ↔ t + 1 = n := by
+    (h : Last n k (motzkinPrefixHeight p) t) : EndsWithUp n p ↔ t + 1 = n := by
+  rw [endsWithUp_iff]
   obtain ⟨hu, hf⟩ := last_marker h
   have ht := h.bound
   constructor
@@ -427,7 +425,7 @@ private theorem cutTime_spec {n i j : ℕ} (hij : i < j) (hjn : j < n) :
 
 private theorem imageWalk {n k : ℕ} {p : Word n} {i j : Fin n} (hk : 1 ≤ k)
     (hp : IsMotzkinPrefix n 0 p) (hh : IsMotzkinHump n k p i j) :
-    Walk n (2 * (k : ℤ)) (forward (mhHeight p) n k i.val (cutTime n i.val j.val)) := by
+    Walk n (2 * (k : ℤ)) (forward (motzkinPrefixHeight p) n k i.val (cutTime n i.val j.val)) := by
   have h := hump_iff.mp hh
   have ht := cutTime_spec h.lt h.bound
   exact forward_walk (by exact_mod_cast hk) (walk_height hp) h ht.1 ht.2
@@ -438,19 +436,21 @@ private def image {n k : ℕ} {p : Word n} {i j : Fin n} (hk : 1 ≤ k)
 
 private theorem image_height {n k : ℕ} {p : Word n} {i j : Fin n} (hk : 1 ≤ k)
     (hp : IsMotzkinPrefix n 0 p) (hh : IsMotzkinHump n k p i j) (m : ℕ) (hm : m ≤ n) :
-    mhHeight (image hk hp hh) m = forward (mhHeight p) n k i.val (cutTime n i.val j.val) m :=
+    motzkinPrefixHeight (image hk hp hh) m =
+      forward (motzkinPrefixHeight p) n k i.val (cutTime n i.val j.val) m :=
   height_wordOf (imageWalk hk hp hh) m hm
 
 private theorem image_cut {n k : ℕ} {p : Word n} {i j : Fin n} (hk : 1 ≤ k)
     (hp : IsMotzkinPrefix n 0 p) (hh : IsMotzkinHump n k p i j) :
-    Cut n k (mhHeight (image hk hp hh)) i.val (cutTime n i.val j.val) := by
+    Cut n k (motzkinPrefixHeight (image hk hp hh)) i.val (cutTime n i.val j.val) := by
   have h := hump_iff.mp hh
   have ht := cutTime_spec h.lt h.bound
   exact (forward_cut (walk_height hp) h ht.1 ht.2).of_heights (image_height hk hp hh)
 
 private theorem recover_height {n k : ℕ} {p : Word n} {i j : Fin n} (hk : 1 ≤ k)
     (hp : IsMotzkinPrefix n 0 p) (hh : IsMotzkinHump n k p i j) (m : ℕ) (hm : m ≤ n) :
-    backward (mhHeight (image hk hp hh)) n k i.val j.val m = mhHeight p m := by
+    backward (motzkinPrefixHeight (image hk hp hh)) n k i.val j.val m =
+      motzkinPrefixHeight p m := by
   have h := hump_iff.mp hh
   have ht := cutTime_spec h.lt h.bound
   have e := backward_forward h ht.1 ht.2 hm
@@ -513,7 +513,7 @@ private theorem toLast_surjective (n : ℕ) : Function.Surjective (toLast n) := 
   apply word_ext
   intro m hm
   rw [image_height hk (prefix_wordOf w) hh m hm]
-  change forward (mhHeight (wordOf w)) n (k : ℤ) i (cutTime n i j) m = _
+  change forward (motzkinPrefixHeight (wordOf w)) n (k : ℤ) i (cutTime n i j) m = _
   have htn := l.bound
   have et : cutTime n i j = t := by dsimp [cutTime, j]; omega
   rw [et]
@@ -555,8 +555,8 @@ public theorem motzkinHumpFamily_equiv_lastUpEvenFamily (n : ℕ) :
   · rintro ⟨⟨k, p, i, j⟩, hk, hkn, hp, hh⟩
     rfl
   · rintro ⟨⟨k, p, i, j⟩, hk, hkn, hp, hh⟩
-    change (IsMotzkinHump n k p i j ∧ i.val + 1 = j.val) ↔ EndsWithUp n (image hk hp hh)
-    rw [and_iff_right hh, (image_cut hk hp hh).last.ends_iff]
+    change IsMotzkinPeak n k p i j ↔ EndsWithUp n (image hk hp hh)
+    rw [isMotzkinPeak_iff, and_iff_right hh, (image_cut hk hp hh).last.ends_iff]
     have hij := (hump_iff.mp hh).lt
     have hjn := j.isLt
     dsimp [cutTime]

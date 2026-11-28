@@ -26,6 +26,16 @@ import Mathlib.Logic.Equiv.Prod
 import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Tactic
 
+/-!
+# Heights and marked humps of Motzkin paths
+
+## References
+
+* Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*,
+  Journal of Integer Sequences 28 (2025), Article 25.8.1, pp. 1–11,
+  Section 1 (step and prefix definitions) and Theorem 1 (height distribution).
+-/
+
 @[expose] public section
 
 namespace MetaMathlibExt
@@ -40,6 +50,10 @@ Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (
         of Integer Sequences 28 (2025), Article 25.8.1, Section 1 (definitions).
 -/
 public def motzkinStep (s : Fin 3) : ℤ := (s.val : ℤ) - 1
+
+/-- **Displacement from the step code.** Subtracting one from the integer value of a step code
+recovers its vertical displacement. -/
+public theorem motzkinStep_eq_sub_one (s : Fin 3) : motzkinStep s = (s.val : ℤ) - 1 := rfl
 
 /-- **Motzkin prefix.** Let $p = p_0 p_1 \cdots p_{n-1}$ be a word of length $n$ in the steps $D$,
 $F$, $U$ (encoded as $0$, $1$, $2$), whose vertical displacements are $-1$, $0$ and $+1$, and let
@@ -172,11 +186,10 @@ public def motzkinHumpCount (n k : ℕ) : ℕ :=
   Fintype.card {q : (Fin n → Fin 3) × Fin n × Fin n //
     IsMotzkinPrefix n 0 q.1 ∧ IsMotzkinHump n k q.1 q.2.1 q.2.2}
 
-private abbrev mhStep := motzkinStep
 private abbrev mhIsMotzkin (n : ℕ) := IsMotzkinPrefix n 0
 private abbrev mhIsHump := IsMotzkinHump
 
-/-- Copy of the Wanted `IsPeak` predicate with `mhStep`. -/
+/-- Copy of the Wanted `IsPeak` predicate with `motzkinStep`. -/
 private def mhIsPeak (n k : ℕ) (p : Fin n → Fin 3) (i j : Fin n) : Prop :=
   mhIsHump n k p i j ∧ j.val = i.val + 1
 
@@ -192,19 +205,29 @@ private def mhDyckCount : ℕ → ℤ → ℕ
 
 /-- Step of `p` at index `r`, or `0` past the end. -/
 private def mhStepAt {L : ℕ} (p : Fin L → Fin 3) (r : ℕ) : ℤ :=
-  if h : r < L then mhStep (p ⟨r, h⟩) else 0
+  if h : r < L then motzkinStep (p ⟨r, h⟩) else 0
 
-/-- Height of `p` after `m` steps. -/
-private def mhHeight {L : ℕ} (p : Fin L → Fin 3) (m : ℕ) : ℤ :=
-  ∑ r ∈ Finset.range m, mhStepAt p r
+/-- **Height after a Motzkin prefix.** The height after the first `m` steps of a word is the sum
+of their vertical displacements, starting from zero. Indices past the end contribute zero. -/
+public def motzkinPrefixHeight {L : ℕ} (p : Fin L → Fin 3) (m : ℕ) : ℤ :=
+  ∑ r ∈ Finset.range m, if h : r < L then motzkinStep (p ⟨r, h⟩) else 0
+
+private theorem motzkinPrefixHeight_eq_range {L : ℕ} (p : Fin L → Fin 3) (m : ℕ) :
+    motzkinPrefixHeight p m = ∑ r ∈ Finset.range m, mhStepAt p r := rfl
+
+/-- **Height of the empty prefix.** Before taking any steps, the height of a Motzkin word
+is zero. -/
+@[simp] public theorem motzkinPrefixHeight_zero {L : ℕ} (p : Fin L → Fin 3) :
+    motzkinPrefixHeight p 0 = 0 := by
+  simp [motzkinPrefixHeight]
 
 /-- `p` stays nonnegative and ends at height `h`. -/
 private def mhPrefixGood {L : ℕ} (p : Fin L → Fin 3) (h : ℤ) : Prop :=
-  (∀ m : ℕ, m ≤ L → 0 ≤ mhHeight p m) ∧ mhHeight p L = h
+  (∀ m : ℕ, m ≤ L → 0 ≤ motzkinPrefixHeight p m) ∧ motzkinPrefixHeight p L = h
 
 /-- `p` started at height `h` stays nonnegative and ends at `0`. -/
 private def mhSuffixGood {L : ℕ} (p : Fin L → Fin 3) (h : ℤ) : Prop :=
-  (∀ m : ℕ, m ≤ L → 0 ≤ h + mhHeight p m) ∧ h + mhHeight p L = 0
+  (∀ m : ℕ, m ≤ L → 0 ≤ h + motzkinPrefixHeight p m) ∧ h + motzkinPrefixHeight p L = 0
 
 -- Basic API for the two counts. -------------------------------------------
 
@@ -246,13 +269,22 @@ private theorem mhStepAt_of_le {L r : ℕ} (p : Fin L → Fin 3) (h : L ≤ r) :
   rw [dite_eq_right (by omega)]
 
 private theorem mhStepAt_val {L : ℕ} (p : Fin L → Fin 3) (i : Fin L) :
-    mhStepAt p i.val = mhStep (p i) := by
+    mhStepAt p i.val = motzkinStep (p i) := by
   unfold mhStepAt
   rw [dite_eq_left i.is_lt, Fin.eta]
 
-private theorem mhHeight_bridge {n m : ℕ} (p : Fin n → Fin 3) (hm : m ≤ n) :
-    (∑ i : Fin n, if i.val < m then mhStep (p i) else 0) = mhHeight p m := by
-  have step_eq : ∀ i : Fin n, (if i.val < m then mhStep (p i) else 0) =
+/-- **Height increment at a step.** The difference between the heights immediately after and
+immediately before step `i` equals that step's vertical displacement. -/
+public theorem motzkinPrefixHeight_step {L : ℕ} (p : Fin L → Fin 3) (i : Fin L) :
+    motzkinPrefixHeight p (i.val + 1) - motzkinPrefixHeight p i.val = motzkinStep (p i) := by
+  simp only [motzkinPrefixHeight_eq_range]
+  rw [Finset.sum_range_succ, mhStepAt_val, add_sub_cancel_left]
+
+/-- **Height as a sum over the word.** For a prefix of length `m` within the word, summing the
+vertical displacements of the steps with indices below `m` gives its height. -/
+public theorem motzkinPrefixHeight_prefix_sum {n m : ℕ} (p : Fin n → Fin 3) (hm : m ≤ n) :
+    (∑ i : Fin n, if i.val < m then motzkinStep (p i) else 0) = motzkinPrefixHeight p m := by
+  have step_eq : ∀ i : Fin n, (if i.val < m then motzkinStep (p i) else 0) =
       (if (i : ℕ) < m then mhStepAt p i else 0) := by
     intro i
     split_ifs with h
@@ -265,7 +297,7 @@ private theorem mhHeight_bridge {n m : ℕ} (p : Fin n → Fin 3) (hm : m ≤ n)
       (fun r => if r < m then mhStepAt p r else 0) n
     simpa using h2
   rw [key]
-  unfold mhHeight
+  simp only [motzkinPrefixHeight_eq_range]
   have hIco : (∑ r ∈ Finset.Ico m n, (if r < m then mhStepAt p r else 0)) = 0 := by
     apply Finset.sum_eq_zero
     intro r hr
@@ -283,16 +315,20 @@ private theorem mhHeight_bridge {n m : ℕ} (p : Fin n → Fin 3) (hm : m ≤ n)
   rw [hhead] at hsplit
   exact hsplit.symm
 
-private theorem mhHeight_total {n : ℕ} (p : Fin n → Fin 3) :
-    (∑ i : Fin n, mhStep (p i)) = mhHeight p n := by
-  have h := mhHeight_bridge p (le_refl n)
+/-- **Total height of a Motzkin word.** The sum of all step displacements equals the height after
+reading the whole word. -/
+public theorem motzkinPrefixHeight_total {n : ℕ} (p : Fin n → Fin 3) :
+    (∑ i : Fin n, motzkinStep (p i)) = motzkinPrefixHeight p n := by
+  have h := motzkinPrefixHeight_prefix_sum p (le_refl n)
   simpa using h
 
-private theorem mhHeight_le_bridge {n : ℕ} (p : Fin n → Fin 3) (i : Fin n) :
-    (∑ r : Fin n, if r.val ≤ i.val then mhStep (p r) else 0) =
-      mhHeight p (i.val + 1) := by
-  have heq : ∀ r : Fin n, (if r.val ≤ i.val then mhStep (p r) else 0) =
-      (if r.val < i.val + 1 then mhStep (p r) else 0) := by
+/-- **Height just after a marked step.** Summing the vertical displacements through index `i`,
+including the step at `i`, gives the height after `i + 1` steps. -/
+public theorem motzkinPrefixHeight_inclusive_sum {n : ℕ} (p : Fin n → Fin 3) (i : Fin n) :
+    (∑ r : Fin n, if r.val ≤ i.val then motzkinStep (p r) else 0) =
+      motzkinPrefixHeight p (i.val + 1) := by
+  have heq : ∀ r : Fin n, (if r.val ≤ i.val then motzkinStep (p r) else 0) =
+      (if r.val < i.val + 1 then motzkinStep (p r) else 0) := by
     intro r
     split_ifs with h1 h2 h2
     · rfl
@@ -300,7 +336,7 @@ private theorem mhHeight_le_bridge {n : ℕ} (p : Fin n → Fin 3) (i : Fin n) :
     · omega
     · rfl
   simp only [heq]
-  exact mhHeight_bridge p (Nat.succ_le_of_lt i.is_lt)
+  exact motzkinPrefixHeight_prefix_sum p (Nat.succ_le_of_lt i.is_lt)
 
 private theorem mhStepAt_snoc_of_lt {L r : ℕ} (α : Fin L → Fin 3) (x : Fin 3)
     (hr : r < L) : mhStepAt (Fin.snoc α x) r = mhStepAt α r := by
@@ -312,7 +348,7 @@ private theorem mhStepAt_snoc_of_lt {L r : ℕ} (α : Fin L → Fin 3) (x : Fin 
   rw [dite_eq_left h1, dite_eq_left hr, e, Fin.snoc_castSucc]
 
 private theorem mhStepAt_snoc_last {L : ℕ} (α : Fin L → Fin 3) (x : Fin 3) :
-    mhStepAt (Fin.snoc α x) L = mhStep x := by
+    mhStepAt (Fin.snoc α x) L = motzkinStep x := by
   have h1 : L < L + 1 := Nat.lt_succ_self L
   have e : (⟨L, h1⟩ : Fin (L + 1)) = Fin.last L := by
     apply Fin.ext
@@ -320,17 +356,21 @@ private theorem mhStepAt_snoc_last {L : ℕ} (α : Fin L → Fin 3) (x : Fin 3) 
   unfold mhStepAt
   rw [dite_eq_left h1, e, Fin.snoc_last]
 
-private theorem mhHeight_snoc_of_le {L m : ℕ} (α : Fin L → Fin 3) (x : Fin 3)
-    (hm : m ≤ L) : mhHeight (Fin.snoc α x) m = mhHeight α m := by
-  unfold mhHeight
+/-- **Prefix height before an appended step.** Appending a step leaves the height of every prefix
+of length at most the original length unchanged. -/
+public theorem motzkinPrefixHeight_snoc_of_le {L m : ℕ} (α : Fin L → Fin 3) (x : Fin 3)
+    (hm : m ≤ L) : motzkinPrefixHeight (Fin.snoc α x) m = motzkinPrefixHeight α m := by
+  simp only [motzkinPrefixHeight_eq_range]
   apply Finset.sum_congr rfl
   intro r hr
   rw [Finset.mem_range] at hr
   exact mhStepAt_snoc_of_lt α x (by omega)
 
-private theorem mhHeight_snoc_succ {L : ℕ} (α : Fin L → Fin 3) (x : Fin 3) :
-    mhHeight (Fin.snoc α x) (L + 1) = mhHeight α L + mhStep x := by
-  unfold mhHeight
+/-- **Total height after appending a step.** The total height after appending a step is the
+original total height plus the displacement of the appended step. -/
+public theorem motzkinPrefixHeight_snoc_succ {L : ℕ} (α : Fin L → Fin 3) (x : Fin 3) :
+    motzkinPrefixHeight (Fin.snoc α x) (L + 1) = motzkinPrefixHeight α L + motzkinStep x := by
+  simp only [motzkinPrefixHeight_eq_range]
   rw [Finset.sum_range_succ, mhStepAt_snoc_last]
   congr 1
   apply Finset.sum_congr rfl
@@ -339,7 +379,7 @@ private theorem mhHeight_snoc_succ {L : ℕ} (α : Fin L → Fin 3) (x : Fin 3) 
   exact mhStepAt_snoc_of_lt α x hr
 
 private theorem mhStepAt_cons_zero {L : ℕ} (x : Fin 3) (β : Fin L → Fin 3) :
-    mhStepAt (Fin.cons x β) 0 = mhStep x := by
+    mhStepAt (Fin.cons x β) 0 = motzkinStep x := by
   have h0 : (0 : ℕ) < L + 1 := Nat.zero_lt_succ L
   unfold mhStepAt
   rw [dite_eq_left h0]
@@ -358,29 +398,29 @@ private theorem mhStepAt_cons_succ {L : ℕ} (x : Fin 3) (β : Fin L → Fin 3)
   · rw [mhStepAt_of_le _ (by omega : L + 1 ≤ r + 1),
       mhStepAt_of_le _ (by omega : L ≤ r)]
 
-private theorem mhHeight_cons_zero {L : ℕ} (x : Fin 3) (β : Fin L → Fin 3) :
-    mhHeight (Fin.cons x β) 0 = 0 := by
-  unfold mhHeight
-  rw [Finset.sum_range_zero]
-
-private theorem mhHeight_cons_succ {L : ℕ} (x : Fin 3) (β : Fin L → Fin 3)
+/-- **Prefix height after prepending a step.** After prepending a step, the height after `m + 1`
+steps is its displacement plus the original height after `m` steps. -/
+public theorem motzkinPrefixHeight_cons_succ {L : ℕ} (x : Fin 3) (β : Fin L → Fin 3)
     (m : ℕ) :
-    mhHeight (Fin.cons x β) (m + 1) = mhStep x + mhHeight β m := by
+    motzkinPrefixHeight (Fin.cons x β) (m + 1) = motzkinStep x + motzkinPrefixHeight β m := by
   have hsum : (∑ k ∈ Finset.range m, mhStepAt (Fin.cons x β) (k + 1)) =
       ∑ r ∈ Finset.range m, mhStepAt β r :=
     Finset.sum_congr rfl (fun r _ => mhStepAt_cons_succ x β r)
-  unfold mhHeight
+  simp only [motzkinPrefixHeight_eq_range]
   rw [Finset.sum_range_succ', mhStepAt_cons_zero, hsum]
   exact add_comm _ _
 
 private theorem mhHeight_add {L a b : ℕ} (p : Fin L → Fin 3) :
-    mhHeight p (a + b) = mhHeight p a + ∑ r ∈ Finset.range b, mhStepAt p (a + r) := by
-  unfold mhHeight
+    motzkinPrefixHeight p (a + b) =
+      motzkinPrefixHeight p a + ∑ r ∈ Finset.range b, mhStepAt p (a + r) := by
+  simp only [motzkinPrefixHeight_eq_range]
   rw [Finset.sum_range_add]
 
 -- Prefix count. -----------------------------------------------------------------
 
-private theorem mhStep_vals : mhStep 0 = -1 ∧ mhStep 1 = 0 ∧ mhStep 2 = 1 := by
+/-- **Displacements of Motzkin steps.** The down, flat, and up codes have displacements
+`-1`, `0`, and `1`, respectively. -/
+public theorem motzkinStep_values : motzkinStep 0 = -1 ∧ motzkinStep 1 = 0 ∧ motzkinStep 2 = 1 := by
   decide
 
 /-- Snoc decomposition of length-`L+1` paths. -/
@@ -405,25 +445,25 @@ private def mhSnocEquiv (L : ℕ) :
 
 private theorem mhPrefixGood_snoc {L : ℕ} (α : Fin L → Fin 3) (x : Fin 3)
     (h : ℤ) (hh : 0 ≤ h) :
-    mhPrefixGood (Fin.snoc α x) h ↔ mhPrefixGood α (h - mhStep x) := by
+    mhPrefixGood (Fin.snoc α x) h ↔ mhPrefixGood α (h - motzkinStep x) := by
   unfold mhPrefixGood
   constructor
   · rintro ⟨hcuts, htot⟩
-    rw [mhHeight_snoc_succ] at htot
+    rw [motzkinPrefixHeight_snoc_succ] at htot
     refine ⟨fun m hm => ?_, by linarith⟩
-    rw [← mhHeight_snoc_of_le α x hm]
+    rw [← motzkinPrefixHeight_snoc_of_le α x hm]
     exact hcuts m (by omega)
   · rintro ⟨hcuts, htot⟩
     refine ⟨?_, ?_⟩
     · intro m hm
       by_cases hmL : m ≤ L
-      · rw [mhHeight_snoc_of_le α x hmL]
+      · rw [motzkinPrefixHeight_snoc_of_le α x hmL]
         exact hcuts m hmL
       · have hmE : m = L + 1 := by omega
         subst hmE
-        rw [mhHeight_snoc_succ]
+        rw [motzkinPrefixHeight_snoc_succ]
         linarith
-    · rw [mhHeight_snoc_succ]
+    · rw [motzkinPrefixHeight_snoc_succ]
       linarith
 
 private theorem mh_card_prefixGood (L : ℕ) (h : ℤ) :
@@ -440,13 +480,13 @@ private theorem mh_card_prefixGood (L : ℕ) (h : ℤ) :
         · intro m hm
           have hm0 : m = 0 := by omega
           subst hm0
-          simp [mhHeight]
-        · simp [mhHeight]
+          simp [motzkinPrefixHeight]
+        · simp [motzkinPrefixHeight]
       rw [Nat.card_congr (Equiv.subtypeUnivEquiv hall), Nat.card_eq_fintype_card]
       simp
     · have hempty : IsEmpty {p : Fin 0 → Fin 3 // mhPrefixGood p h} := ⟨fun p => by
         obtain ⟨_, htot⟩ := p.property
-        simp only [mhHeight, Finset.sum_range_zero] at htot
+        simp only [motzkinPrefixHeight_eq_range, Finset.sum_range_zero] at htot
         exact hh htot.symm⟩
       exact @Nat.card_of_isEmpty _ hempty
   | succ L ih =>
@@ -473,13 +513,13 @@ private theorem mh_card_prefixGood (L : ℕ) (h : ℤ) :
         (fun (x : Fin 3) (α : Fin L → Fin 3) => mhPrefixGood (Fin.snoc α x) h)
       have e3 : (Σ _x : Fin 3, {α : Fin L → Fin 3 //
             mhPrefixGood (Fin.snoc α _x) h}) ≃
-          Σ _x : Fin 3, {α : Fin L → Fin 3 // mhPrefixGood α (h - mhStep _x)} :=
+          Σ _x : Fin 3, {α : Fin L → Fin 3 // mhPrefixGood α (h - motzkinStep _x)} :=
         Equiv.sigmaCongrRight
           (fun x => Equiv.subtypeEquivRight (fun α => mhPrefixGood_snoc α x h hneg))
       rw [Nat.card_congr (e1.symm.trans (eSwap.trans (e2.trans e3))),
         Nat.card_sigma, Fin.sum_univ_three]
       simp only [ih]
-      obtain ⟨hz, ho, ht⟩ := mhStep_vals
+      obtain ⟨hz, ho, ht⟩ := motzkinStep_values
       rw [hz, ho, ht]
       have eA : h - (-1 : ℤ) = h + 1 := by ring
       have eB : h - (0 : ℤ) = h := by ring
@@ -496,17 +536,17 @@ private def mhConsEquiv (L : ℕ) :
 private theorem mhSuffixGood_cons {L : ℕ} (x : Fin 3) (β : Fin L → Fin 3)
     (h : ℤ) :
     mhSuffixGood (Fin.cons x β) h ↔
-      (0 ≤ h ∧ mhSuffixGood β (h + mhStep x)) := by
+      (0 ≤ h ∧ mhSuffixGood β (h + motzkinStep x)) := by
   unfold mhSuffixGood
   constructor
   · rintro ⟨hcuts, htot⟩
     have h0 := hcuts 0 (Nat.zero_le _)
-    rw [mhHeight_cons_zero] at h0
-    rw [mhHeight_cons_succ] at htot
+    rw [motzkinPrefixHeight_zero] at h0
+    rw [motzkinPrefixHeight_cons_succ] at htot
     refine ⟨by linarith, ?_, ?_⟩
     · intro m hm
       have hm1 := hcuts (m + 1) (by omega)
-      rw [mhHeight_cons_succ] at hm1
+      rw [motzkinPrefixHeight_cons_succ] at hm1
       linarith
     · linarith
   · rintro ⟨hh, hcuts, htot⟩
@@ -514,13 +554,13 @@ private theorem mhSuffixGood_cons {L : ℕ} (x : Fin 3) (β : Fin L → Fin 3)
     · intro m hm
       cases m with
       | zero =>
-        rw [mhHeight_cons_zero]
+        rw [motzkinPrefixHeight_zero]
         linarith
       | succ m =>
-        rw [mhHeight_cons_succ]
+        rw [motzkinPrefixHeight_cons_succ]
         have hmL := hcuts m (by omega)
         linarith
-    · rw [mhHeight_cons_succ]
+    · rw [motzkinPrefixHeight_cons_succ]
       linarith
 
 private theorem mh_card_suffixGood (L : ℕ) (h : ℤ) :
@@ -537,13 +577,13 @@ private theorem mh_card_suffixGood (L : ℕ) (h : ℤ) :
         · intro m hm
           have hm0 : m = 0 := by omega
           subst hm0
-          simp [mhHeight]
-        · simp [mhHeight]
+          simp [motzkinPrefixHeight]
+        · simp [motzkinPrefixHeight]
       rw [Nat.card_congr (Equiv.subtypeUnivEquiv hall), Nat.card_eq_fintype_card]
       simp
     · have hempty : IsEmpty {p : Fin 0 → Fin 3 // mhSuffixGood p h} := ⟨fun p => by
         obtain ⟨_, htot⟩ := p.property
-        simp only [mhHeight, Finset.sum_range_zero, add_zero] at htot
+        simp only [motzkinPrefixHeight_eq_range, Finset.sum_range_zero, add_zero] at htot
         exact hh htot⟩
       exact @Nat.card_of_isEmpty _ hempty
   | succ L ih =>
@@ -552,7 +592,7 @@ private theorem mh_card_suffixGood (L : ℕ) (h : ℤ) :
       have hempty : IsEmpty {p : Fin (L + 1) → Fin 3 // mhSuffixGood p h} := ⟨fun p => by
         obtain ⟨hcuts, _⟩ := p.property
         have hle := hcuts 0 (Nat.zero_le _)
-        simp only [mhHeight, Finset.sum_range_zero, add_zero] at hle
+        simp only [motzkinPrefixHeight_eq_range, Finset.sum_range_zero, add_zero] at hle
         linarith⟩
       exact @Nat.card_of_isEmpty _ hempty
     · push Not at hneg
@@ -565,14 +605,14 @@ private theorem mh_card_suffixGood (L : ℕ) (h : ℤ) :
         (fun (x : Fin 3) (β : Fin L → Fin 3) => mhSuffixGood (Fin.cons x β) h)
       have e3 : (Σ _x : Fin 3, {β : Fin L → Fin 3 //
             mhSuffixGood (Fin.cons _x β) h}) ≃
-          Σ _x : Fin 3, {β : Fin L → Fin 3 // mhSuffixGood β (h + mhStep _x)} :=
+          Σ _x : Fin 3, {β : Fin L → Fin 3 // mhSuffixGood β (h + motzkinStep _x)} :=
         Equiv.sigmaCongrRight (fun x => Equiv.subtypeEquivRight (fun β => by
           rw [mhSuffixGood_cons]
           exact ⟨fun hcon => hcon.2, fun hb => ⟨hneg, hb⟩⟩))
       rw [Nat.card_congr (e1.symm.trans (e2.trans e3)),
         Nat.card_sigma, Fin.sum_univ_three]
       simp only [ih]
-      obtain ⟨hz, ho, ht⟩ := mhStep_vals
+      obtain ⟨hz, ho, ht⟩ := motzkinStep_values
       rw [hz, ho, ht]
       have eA : h + (-1 : ℤ) = h - 1 := by ring
       have eB : h + (0 : ℤ) = h := by ring
@@ -580,13 +620,17 @@ private theorem mh_card_suffixGood (L : ℕ) (h : ℤ) :
 
 -- Shape equivalence. -------------------------------------------------------------
 
-private theorem mhStep_eq_one_iff : ∀ s : Fin 3, mhStep s = 1 ↔ s = 2 := by
+/-- **Characterization of up steps.** A step has displacement one exactly when it is an up step
+(code two). -/
+public theorem motzkinStep_eq_one_iff : ∀ s : Fin 3, motzkinStep s = 1 ↔ s = 2 := by
   decide
 
-private theorem mhStep_eq_zero_iff : ∀ s : Fin 3, mhStep s = 0 ↔ s = 1 := by
+/-- **Characterization of flat steps.** A step has displacement zero exactly when it is a flat step
+(code one). -/
+public theorem motzkinStep_eq_zero_iff : ∀ s : Fin 3, motzkinStep s = 0 ↔ s = 1 := by
   decide
 
-private theorem mhStep_eq_neg_one_iff : ∀ s : Fin 3, mhStep s = -1 ↔ s = 0 := by
+private theorem mhStep_eq_neg_one_iff : ∀ s : Fin 3, motzkinStep s = -1 ↔ s = 0 := by
   decide
 
 /-- The forced shape of a path with a hump at `(i, j)`: up at `i`, flats between,
@@ -755,15 +799,15 @@ private theorem mhShapeSnd_eq {n : ℕ} {i j : Fin n} (hij : i.val < j.val)
 private theorem mh_hump_height_facts {n : ℕ} {i j : Fin n} (hij : i.val < j.val)
     (p : Fin n → Fin 3) (hp : mhIsShape p i j) :
     (∀ m : ℕ, m ≤ i.val →
-      mhHeight p m = mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) m) ∧
+      motzkinPrefixHeight p m = motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) m) ∧
     (∀ m : ℕ, i.val < m → m ≤ j.val →
-      mhHeight p m = mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val + 1) ∧
+      motzkinPrefixHeight p m = motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val + 1) ∧
     (∀ m : ℕ, m ≤ n - 1 - j.val →
-      mhHeight p (j.val + 1 + m) =
-        mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val +
-          mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).2) m) := by
+      motzkinPrefixHeight p (j.val + 1 + m) =
+        motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val +
+          motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).2) m) := by
   have ⟨hpi, hpmid, hpj⟩ := hp
-  obtain ⟨hz, ho, ht⟩ := mhStep_vals
+  obtain ⟨hz, ho, ht⟩ := motzkinStep_values
   have hS1 : ∀ r : ℕ, r < i.val → mhStepAt p r =
       mhStepAt ((mhShapeEquiv hij ⟨p, hp⟩).1) r := by
     intro r hr
@@ -773,9 +817,9 @@ private theorem mh_hump_height_facts {n : ℕ} {i j : Fin n} (hij : i.val < j.va
     unfold mhStepAt
     rw [dite_eq_left hrn, dite_eq_left hr, e]
   have hH1 : ∀ m : ℕ, m ≤ i.val →
-      mhHeight p m = mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) m := by
+      motzkinPrefixHeight p m = motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) m := by
     intro m hm
-    unfold mhHeight
+    simp only [motzkinPrefixHeight_eq_range]
     apply Finset.sum_congr rfl
     intro r hr
     rw [Finset.mem_range] at hr
@@ -786,16 +830,16 @@ private theorem mh_hump_height_facts {n : ℕ} {i j : Fin n} (hij : i.val < j.va
     unfold mhStepAt
     rw [dite_eq_left hrn, e, hpi]
     exact ht
-  have hH2base : mhHeight p (i.val + 1) =
-      mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val + 1 := by
+  have hH2base : motzkinPrefixHeight p (i.val + 1) =
+      motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val + 1 := by
     have h1 := hH1 i.val (le_refl _)
-    have hsplit : mhHeight p (i.val + 1) =
-        mhHeight p i.val + mhStepAt p i.val := by
-      unfold mhHeight
+    have hsplit : motzkinPrefixHeight p (i.val + 1) =
+        motzkinPrefixHeight p i.val + mhStepAt p i.val := by
+      simp only [motzkinPrefixHeight_eq_range]
       rw [Finset.sum_range_succ]
     rw [hsplit, h1, hStepI]
   have hH2 : ∀ m : ℕ, i.val < m → m ≤ j.val →
-      mhHeight p m = mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val + 1 := by
+      motzkinPrefixHeight p m = motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val + 1 := by
     intro m hm1 hm2
     have htail : ∑ r ∈ Finset.range (m - (i.val + 1)),
         mhStepAt p (i.val + 1 + r) = 0 := by
@@ -809,7 +853,7 @@ private theorem mh_hump_height_facts {n : ℕ} {i j : Fin n} (hij : i.val < j.va
       unfold mhStepAt
       rw [dite_eq_left hrn, hpr]
       exact ho
-    have hsplit : mhHeight p m = mhHeight p (i.val + 1) +
+    have hsplit : motzkinPrefixHeight p m = motzkinPrefixHeight p (i.val + 1) +
         ∑ r ∈ Finset.range (m - (i.val + 1)), mhStepAt p (i.val + 1 + r) := by
       have hle : i.val + 1 ≤ m := by omega
       have hadd := mhHeight_add (L := n) (a := i.val + 1) (b := m - (i.val + 1)) p
@@ -823,12 +867,12 @@ private theorem mh_hump_height_facts {n : ℕ} {i j : Fin n} (hij : i.val < j.va
     unfold mhStepAt
     rw [dite_eq_left hrn, e, hpj]
     exact hz
-  have hH2top : mhHeight p (j.val + 1) =
-      mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val := by
+  have hH2top : motzkinPrefixHeight p (j.val + 1) =
+      motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val := by
     have hj := hH2 j.val hij (le_refl _)
-    have hsplit : mhHeight p (j.val + 1) =
-        mhHeight p j.val + mhStepAt p j.val := by
-      unfold mhHeight
+    have hsplit : motzkinPrefixHeight p (j.val + 1) =
+        motzkinPrefixHeight p j.val + mhStepAt p j.val := by
+      simp only [motzkinPrefixHeight_eq_range]
       rw [Finset.sum_range_succ]
     rw [hsplit, hj, hStepJ]
     ring
@@ -845,11 +889,11 @@ private theorem mh_hump_height_facts {n : ℕ} {i j : Fin n} (hij : i.val < j.va
     · rw [mhStepAt_of_le _ (by omega : n ≤ j.val + 1 + r),
         mhStepAt_of_le _ (by omega : n - 1 - j.val ≤ r)]
   have hH3 : ∀ m : ℕ, m ≤ n - 1 - j.val →
-      mhHeight p (j.val + 1 + m) =
-        mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val +
-          mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).2) m := by
+      motzkinPrefixHeight p (j.val + 1 + m) =
+        motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val +
+          motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).2) m := by
     intro m hm
-    have hsplit : mhHeight p (j.val + 1 + m) = mhHeight p (j.val + 1) +
+    have hsplit : motzkinPrefixHeight p (j.val + 1 + m) = motzkinPrefixHeight p (j.val + 1) +
         ∑ r ∈ Finset.range m, mhStepAt p (j.val + 1 + r) :=
       mhHeight_add (L := n) (a := j.val + 1) (b := m) p
     rw [hsplit, hH2top]
@@ -867,53 +911,53 @@ private theorem mh_hump_iff {n k : ℕ} {i j : Fin n} (hij : i.val < j.val)
   obtain ⟨hH1, hH2, hH3⟩ := mh_hump_height_facts hij p hp
   have ⟨hpi, hpmid, hpj⟩ := hp
   have eMot : mhIsMotzkin n p ↔
-      ((∀ m : ℕ, m ≤ n → 0 ≤ mhHeight p m) ∧ mhHeight p n = 0) := by
+      ((∀ m : ℕ, m ≤ n → 0 ≤ motzkinPrefixHeight p m) ∧ motzkinPrefixHeight p n = 0) := by
     unfold mhIsMotzkin IsMotzkinPrefix
     constructor
     · rintro ⟨h1, h2⟩
       refine ⟨fun m hm => ?_, ?_⟩
-      · rw [← mhHeight_bridge p hm]
+      · rw [← motzkinPrefixHeight_prefix_sum p hm]
         exact h1 m hm
-      · rw [← mhHeight_total p]
+      · rw [← motzkinPrefixHeight_total p]
         exact h2
     · rintro ⟨h1, h2⟩
       refine ⟨fun m hm => ?_, ?_⟩
-      · rw [mhHeight_bridge p hm]
+      · rw [motzkinPrefixHeight_prefix_sum p hm]
         exact h1 m hm
-      · rw [mhHeight_total p]
+      · rw [motzkinPrefixHeight_total p]
         exact h2
   have eHump : mhIsHump n k p i j ↔
       (i.val < j.val ∧ p i = 2 ∧ p j = 0 ∧
         (∀ r : Fin n, i.val < r.val → r.val < j.val → p r = 1) ∧
-        mhHeight p (i.val + 1) = (k : ℤ)) := by
+        motzkinPrefixHeight p (i.val + 1) = (k : ℤ)) := by
     unfold mhIsHump IsMotzkinHump
     constructor
     · rintro ⟨hlt, hs1, hs2, hs3, hs4⟩
       refine ⟨hlt, ?_, ?_, ?_, ?_⟩
-      · exact (mhStep_eq_one_iff _).mp hs1
+      · exact (motzkinStep_eq_one_iff _).mp hs1
       · exact (mhStep_eq_neg_one_iff _).mp hs2
       · intro r hr1 hr2
-        exact (mhStep_eq_zero_iff _).mp (hs3 r hr1 hr2)
-      · rw [← mhHeight_le_bridge p i]
+        exact (motzkinStep_eq_zero_iff _).mp (hs3 r hr1 hr2)
+      · rw [← motzkinPrefixHeight_inclusive_sum p i]
         exact hs4
     · rintro ⟨hlt, hs1, hs2, hs3, hs4⟩
       refine ⟨hlt, ?_, ?_, ?_, ?_⟩
       · rw [hs1]
-        obtain ⟨hz, ho, ht⟩ := mhStep_vals
+        obtain ⟨hz, ho, ht⟩ := motzkinStep_values
         exact ht
       · rw [hs2]
-        obtain ⟨hz, ho, ht⟩ := mhStep_vals
+        obtain ⟨hz, ho, ht⟩ := motzkinStep_values
         exact hz
       · intro r hr1 hr2
         rw [hs3 r hr1 hr2]
-        obtain ⟨hz, ho, ht⟩ := mhStep_vals
+        obtain ⟨hz, ho, ht⟩ := motzkinStep_values
         exact ho
-      · rw [mhHeight_le_bridge p i]
+      · rw [motzkinPrefixHeight_inclusive_sum p i]
         exact hs4
   rw [eMot, eHump]
   constructor
   · rintro ⟨⟨hmcuts, hmtot⟩, _hlt, _hpi, _hpj, _hpmid, hheight⟩
-    have hα : mhHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val = (k : ℤ) - 1 := by
+    have hα : motzkinPrefixHeight ((mhShapeEquiv hij ⟨p, hp⟩).1) i.val = (k : ℤ) - 1 := by
       have h2 := hH2 (i.val + 1) (by omega) (by have _h := hij; omega)
       linarith
     refine ⟨⟨?_, hα⟩, ?_, ?_⟩
@@ -960,9 +1004,9 @@ private theorem mhHump_shape {n k : ℕ} {p : Fin n → Fin 3} {i j : Fin n}
     (h : mhIsMotzkin n p ∧ mhIsHump n k p i j) : mhIsShape p i j := by
   obtain ⟨_, _hlt, hs1, hs2, hs3, _⟩ := h
   refine ⟨?_, ?_, ?_⟩
-  · exact (mhStep_eq_one_iff _).mp hs1
+  · exact (motzkinStep_eq_one_iff _).mp hs1
   · intro r hr1 hr2
-    exact (mhStep_eq_zero_iff _).mp (hs3 r hr1 hr2)
+    exact (motzkinStep_eq_zero_iff _).mp (hs3 r hr1 hr2)
   · exact (mhStep_eq_neg_one_iff _).mp hs2
 
 private theorem mh_card_hump_at (n k : ℕ) (i j : Fin n) :

@@ -27,6 +27,20 @@ example : ∃ e : MotzkinHumpFamily 3 ≃ MotzkinLastUpEvenFamily 3,
     contradiction
   exact hnot ((h nonpeak).mpr hlast)
 
+-- The proposed images UFU and UUF both end at height two, but only UFU ends in U.
+-- These checks use the concrete words, independently of the equivalence theorem.
+example : IsMotzkinPrefix 3 2 ![2, 1, 2] ∧ IsMotzkinPrefix 3 2 ![2, 2, 1] ∧
+    EndsWithUp 3 ![2, 1, 2] ∧ ¬ EndsWithUp 3 ![2, 2, 1] := by
+  simp only [endsWithUp_iff]
+  decide
+
+example : IsMotzkinPeak 3 1 ![2, 0, 1] 0 1 ∧ ¬ IsMotzkinPeak 3 1 ![2, 1, 0] 0 2 := by
+  simp only [isMotzkinPeak_iff]
+  decide
+
+example : IsMotzkinHump 4 2 ![2, 2, 0, 0] 1 2 ∧ IsMotzkinPrefix 4 4 ![2, 2, 2, 2] := by
+  decide
+
 -- The peak of height two in UUDD retains its label, so its image is at height four.
 example : ∃ e : MotzkinHumpFamily 4 ≃ MotzkinLastUpEvenFamily 4,
     ∃ q : MotzkinHumpFamily 4, q.val = (2, ![2, 2, 0, 0], 1, 2) ∧
