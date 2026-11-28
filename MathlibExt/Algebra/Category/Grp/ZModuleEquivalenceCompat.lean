@@ -14,7 +14,8 @@ Authors: Kim Morrison
 -/
 module
 
--- BACKPORT: Extracted from PR #42860 head `4d9c97ac1bb4deb8ce8e6005aca99087372c2d77`,
+-- BACKPORT: Selected definitions from Mathlib PR #42860 head
+-- `4d9c97ac1bb4deb8ce8e6005aca99087372c2d77`,
 -- path `Mathlib/Algebra/Category/Grp/ZModuleEquivalence.lean`,
 -- blob `928458bb9acc91aebac4211cfefb0dc1efa8b298`, authors Junyan Xu.
 -- See `BACKPORTS.md` for copied surface, adaptations, and upgrade-removal steps.

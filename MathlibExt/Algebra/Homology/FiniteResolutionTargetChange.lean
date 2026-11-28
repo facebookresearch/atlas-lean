@@ -134,11 +134,11 @@ theorem mapTarget_bound
 homology preserving, and e : Fi ≅ j a natural isomorphism. For a finite resolution Q of X
 relative to i, if Q.bound < n for a natural number n, the degree-n resolving term of mapTarget Q
 F e is a zero object of P. -/
-theorem mapTarget_isZero_above
+abbrev mapTarget_isZero_above
     (Q : FiniteResolution i X)
     (F : A ⥤ B) [F.Additive] [F.PreservesHomology]
     (e : i ⋙ F ≅ j) (n : ℕ) (hn : Q.bound < n) :
     IsZero ((mapTarget Q F e).complex.X n) :=
-  Q.isZero_above n hn
+  (mapTarget Q F e).isZero_above n hn
 
 end CategoryTheory.Abelian.FiniteResolution

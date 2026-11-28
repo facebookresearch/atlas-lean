@@ -101,10 +101,10 @@ theorem mapSource_bound (R : FiniteResolution i X) (F : P ⥤ Q) [F.Additive]
 additive, and e : jF ≅ i a natural isomorphism. For a finite resolution R of X relative to i, if
 the natural number n satisfies R.bound < n, the degree-n term F(Rₙ) of mapSource R F e is a zero
 object of Q. -/
-theorem mapSource_isZero_above (R : FiniteResolution i X) (F : P ⥤ Q) [F.Additive]
+abbrev mapSource_isZero_above (R : FiniteResolution i X) (F : P ⥤ Q) [F.Additive]
     (e : F ⋙ j ≅ i) (n : ℕ) (hn : R.bound < n) :
     IsZero ((R.mapSource F e).complex.X n) :=
-  F.map_isZero (R.isZero_above n hn)
+  (R.mapSource F e).isZero_above n hn
 
 end CategoryTheory.Abelian.FiniteResolution
 
