@@ -14955,6 +14955,7 @@
   "MathlibExt/Probability/Statistics/Assouad": {"to": "Probability/statistical-estimation", "title": "Minimax lower bounds"},
   "MathlibExt/Probability/Statistics/BasisPursuit": {"to": "Probability/linear-models-multivariate", "title": "Exact recovery by basis pursuit"},
   "MathlibExt/Probability/Statistics/BootstrapMaximum": {"to": "Probability/statistical-estimation", "title": "Bootstrap and the Mallows metric"},
+  "MathlibExt/Probability/Statistics/BootstrapStandardDeviation": {"to": "Probability/statistical-estimation", "title": "Bootstrap and the Mallows metric"},
   "MathlibExt/Probability/Statistics/CochranQ": {"to": "Probability/hypothesis-testing", "title": "Meta-analysis"},
   "MathlibExt/Probability/Statistics/ConditionalExpectationVariance": {"to": "Probability/moments", "title": "Conditional variance"},
   "MathlibExt/Probability/Statistics/ConformalCovariateShift": {"to": "Probability/hypothesis-testing", "title": "Conformal prediction under covariate shift"},

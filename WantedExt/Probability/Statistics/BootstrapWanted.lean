@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Probability.Statistics.BootstrapStandardDeviation
 public import MathlibExt.Probability.Statistics.EmpiricalMallows
 public import MathlibExt.Probability.Statistics.MallowsMetric
 public import Mathlib.Probability.Distributions.Gaussian.Real
@@ -63,23 +64,6 @@ theorem_wanted bootstrap_mean_tendsto_gaussianReal {Ω : Type*} [MeasurableSpace
           f (Real.sqrt nm.2 * ((nm.2 : ℝ)⁻¹ * ∑ j, X (I j) ω -
             ((nm.1 + 1 : ℕ) : ℝ)⁻¹ * ∑ i ∈ Finset.range (nm.1 + 1), X i ω)))
       (atTop ×ˢ atTop) (𝓝 (∫ x, f x ∂(gaussianReal 0 σsq)))
-
-/-- **Consistency of the bootstrap standard deviation** (P. J. Bickel and D. A. Freedman,
-*Ann. Statist.* 9 (1981), Theorem 2.1(b)). Under the hypotheses of
-`bootstrap_mean_tendsto_gaussianReal`, along almost every sample sequence the bootstrap standard
-deviation `s*_m = ((1/m) ∑_j (X*_j - μ*_m)²)^{1/2}` converges to `σ` in conditional probability:
-for every `ε > 0` the proportion of resampling maps `I : Fin m → Fin (n + 1)` with
-`|s*_m - σ| > ε` tends to `0` as `n, m → ∞`. -/
-theorem_wanted bootstrap_sd_tendsto {Ω : Type*} [MeasurableSpace Ω]
-    {P : Measure Ω} [IsProbabilityMeasure P] {X : ℕ → Ω → ℝ} (hmeas : ∀ i, Measurable (X i))
-    (hindep : iIndepFun X P) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
-    (hL2 : MemLp (X 0) 2 P) {σsq : ℝ≥0} (hvar : variance (X 0) P = σsq) (hpos : 0 < σsq) :
-    ∀ᵐ ω ∂P, ∀ ε > 0, Tendsto (fun nm : ℕ × ℕ =>
-        (((nm.1 + 1 : ℕ) : ℝ) ^ nm.2)⁻¹ *
-          ((Finset.univ.filter fun I : Fin nm.2 → Fin (nm.1 + 1) =>
-            ε < |Real.sqrt ((nm.2 : ℝ)⁻¹ * ∑ j, (X (I j) ω -
-              (nm.2 : ℝ)⁻¹ * ∑ l, X (I l) ω) ^ 2) - Real.sqrt σsq|).card : ℝ))
-      (atTop ×ˢ atTop) (𝓝 0)
 
 /-- **Bootstrap of the mean in `ℝ^k`** (P. J. Bickel and D. A. Freedman, *Ann. Statist.* 9
 (1981), Theorem 2.2(a)). Let `X₀, X₁, …` be i.i.d. in `ℝ^k` with `E‖X₀‖² < ∞`, and let `S` be
