@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Sum
-public import WantedExt.Complexity.NPComplete.IndependentDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentDominatingSetTwoP3FreeDefs
 
 @[expose] public section
 
@@ -60,23 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`), the graph has
-no induced `2P₃`, and `0 < K ≤ n`. -/
-def WellFormed (i : IndependentDominatingSet.IndependentDominatingSetInstance) : Prop :=
-  IndependentDominatingSet.WellFormed i ∧
-    ¬ (SimpleGraph.pathGraph 3 ⊕g SimpleGraph.pathGraph 3).IsIndContained
-      (IndependentDominatingSet.Graph i) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- INDEPENDENT DOMINATING SET for 2P₃-free graphs as a decision problem over bitstrings. -/
-noncomputable def independentDominatingSetTwoP3FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IndependentDominatingSet.IndependentDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ IndependentDominatingSet.IndependentDominatingSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT DOMINATING SET for 2P₃-free graphs is NP-complete.** Source: Zverovich (2006);
 ISGCI (gc_931). -/

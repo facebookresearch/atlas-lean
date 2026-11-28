@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetGirthNineHX85K14FreeWanted
-public import WantedExt.Complexity.NPComplete.IndependentDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentDominatingSetGirthNineHX85K14FreeDefs
 
 @[expose] public section
 
@@ -65,21 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the instance class of `DominatingSetGirthNineHX85K14Free` (a
-simple edge list on `Fin n`, `0 < K ≤ n`, and no induced `C_3, …, C_8`, `H`, `X_85` or
-`K_1,4`). -/
-def WellFormed (i : IndependentDominatingSet.IndependentDominatingSetInstance) : Prop :=
-  DominatingSetGirthNineHX85K14Free.WellFormed i
-
-open Classical in
-/-- INDEPENDENT DOMINATING SET on the graph class gc_529 as a decision problem over bitstrings. -/
-noncomputable def independentDominatingSetGirthNineHX85K14FreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IndependentDominatingSet.IndependentDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ IndependentDominatingSet.IndependentDominatingSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT DOMINATING SET on the graph class gc_529 is NP-complete.**
 Source: Zverovich and Zverovich (2006);

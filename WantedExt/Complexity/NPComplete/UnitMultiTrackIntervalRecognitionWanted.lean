@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Interval.Set.Defs
-public import WantedExt.Complexity.NPComplete.TrackIntervalGraphRecognitionWanted
+public import CSLibExt.Complexity.NPComplete.UnitMultiTrackIntervalRecognitionDefs
 
 @[expose] public section
 
@@ -76,29 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `H` is a unit `d`-track interval graph: each vertex `v` is assigned one closed unit interval
-`[l v j, l v j + 1]` on each track `j : Fin d`, and two distinct vertices are adjacent in `H`
-exactly when their intervals on some track intersect. -/
-def IsUnitMultiTrackIntervalGraph (d : ℕ) {n : ℕ} (H : SimpleGraph (Fin n)) : Prop :=
-  ∃ l : Fin n → Fin d → ℝ,
-    ∀ u v, u ≠ v →
-      (H.Adj u v ↔ ∃ j, (Set.Icc (l u j) (l u j + 1) ∩ Set.Icc (l v j) (l v j + 1)).Nonempty)
-
-/-- The graph of the instance is a unit `d`-track interval graph. -/
-def UnitMultiTrackIntervalRecognitionFeasible (d : ℕ)
-    (i : TrackIntervalGraphRecognitionInstance) : Prop :=
-  IsUnitMultiTrackIntervalGraph d (Graph i)
-
-open Classical in
-/-- UNIT d-TRACK INTERVAL GRAPH RECOGNITION, for the fixed `d`, as a decision problem over
-bitstrings. -/
-noncomputable def unitMultiTrackIntervalRecognitionDec (d : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TrackIntervalGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ UnitMultiTrackIntervalRecognitionFeasible d i)
-  | none => false
 
 /-- **UNIT d-TRACK INTERVAL GRAPH RECOGNITION is NP-complete for every fixed `d ≥ 2`.** Source:
 Jiang (2013); Ardévol Martínez, Rizzi, Sikora and Vialette (2025), Section 1. -/

@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Order.Defs.Unbundled
+public import CSLibExt.Complexity.NPComplete.IrredundanceNumberBipartiteDefs
 
 @[expose] public section
 
@@ -67,33 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `v` is redundant in `S` (Johnson's wording): `v` is adjacent to another member of `S`, and
-each neighbor of `v` is in `S` or adjacent to some vertex of `S - {v}`. -/
-def IsRedundant {V : Type*} (G : SimpleGraph V) (S : Finset V) (v : V) : Prop :=
-  (∃ w ∈ S, w ≠ v ∧ G.Adj v w) ∧ ∀ u, G.Adj v u → u ∈ S ∨ ∃ w ∈ S, w ≠ v ∧ G.Adj u w
-
-/-- `S` is irredundant: none of its members is redundant in `S`. -/
-def IsIrredundant {V : Type*} (G : SimpleGraph V) (S : Finset V) : Prop :=
-  ∀ v ∈ S, ¬ IsRedundant G S v
-
-/-- Well-formedness of an instance: a simple edge list on `Fin n`, a bipartite graph, and
-`0 < K ≤ |V|`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ (Graph i).IsBipartite ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some maximal irredundant set has at most `K` vertices. -/
-def IrredundanceNumberBipartiteFeasible (i : GraphColoringInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), Maximal (IsIrredundant (Graph i)) S ∧ S.card ≤ i.2.2
-
-open Classical in
-/-- IRREDUNDANCE NUMBER on bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def irredundanceNumberBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ IrredundanceNumberBipartiteFeasible i)
-  | none => false
 
 /-- **IRREDUNDANCE NUMBER on bipartite graphs is NP-complete.** Source: Johnson (1984),
 NP-completeness column (Pfaff, Laskar, and Hedetniemi, 1983). -/

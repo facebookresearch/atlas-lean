@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.ClawFreeIndependencePoly
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingSetClawFreeDefs
 
 @[expose] public section
 
@@ -70,21 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed DOMINATING SET instance (a simple edge list on
-`Fin n`) whose graph is claw-free, and `0 < K ≤ n`. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ (Graph i).IsClawFree ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- DOMINATING SET for claw-free graphs as a decision problem
-over bitstrings. -/
-noncomputable def dominatingSetClawFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET for claw-free graphs is NP-complete.**
 Source: Garey and Johnson (1979), [GT2]; Yannakakis and Gavril (1980). -/

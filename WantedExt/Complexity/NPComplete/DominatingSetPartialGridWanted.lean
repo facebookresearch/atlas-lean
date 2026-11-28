@@ -25,12 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Prod
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingSetPartialGridDefs
 
 @[expose] public section
 
@@ -69,21 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed DOMINATING SET instance with `0 < K ≤ |V|`
-whose graph is a subgraph of the grid `ℤ × ℤ` (a partial grid). -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1 ∧
-    (Graph i).IsContained (SimpleGraph.hasse ℤ □ SimpleGraph.hasse ℤ)
-
-open Classical in
-/-- DOMINATING SET on partial grid graphs as a decision problem over bitstrings. -/
-noncomputable def dominatingSetPartialGridDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET on partial grid graphs is NP-complete.** Source: Clark, Colbourn and
 Johnson (1990); de Berg et al. (2020); ISGCI (`gc_440`); Garey and Johnson (1979), [GT2]. -/

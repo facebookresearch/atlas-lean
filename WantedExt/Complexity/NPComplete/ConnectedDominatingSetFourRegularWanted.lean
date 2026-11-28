@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ConnectedDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.ConnectedDominatingSetFourRegularDefs
 
 @[expose] public section
 
@@ -67,22 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed CONNECTED DOMINATING SET instance with
-`0 < K ≤ |V|` whose graph is regular of degree 4. -/
-def WellFormed (i : ConnectedDominatingSetInstance) : Prop :=
-  ConnectedDominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1 ∧
-    (Graph i).IsRegularOfDegree 4
-
-open Classical in
-/-- CONNECTED DOMINATING SET on 4-regular graphs as a decision problem over bitstrings. -/
-noncomputable def connectedDominatingSetFourRegularDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConnectedDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ ConnectedDominatingSetFeasible i)
-  | none => false
 
 /-- **CONNECTED DOMINATING SET on 4-regular graphs is NP-complete.** Source: Garey and Johnson
 (1979), [GT2], comment, as corrected by Johnson (1984). -/

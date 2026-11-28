@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingSetPlanarMaxDegreeThreeDefs
 
 @[expose] public section
 
@@ -65,23 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed DOMINATING SET instance with `0 < K ≤ |V|`
-whose graph is planar with every vertex degree at most `3`. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1 ∧ (Graph i).IsPlanar ∧
-    ∀ v, (Graph i).degree v ≤ 3
-
-open Classical in
-/-- DOMINATING SET on planar graphs of maximum degree 3 as a decision problem over
-bitstrings. -/
-noncomputable def dominatingSetPlanarMaxDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET on planar graphs of maximum degree 3 is NP-complete.** Source: Garey and
 Johnson (1979), [GT2], comment; Zverovich and Zverovich (1995). -/

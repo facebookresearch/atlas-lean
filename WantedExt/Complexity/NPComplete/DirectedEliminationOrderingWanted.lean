@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Batteries.Data.List.Basic
-public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.DirectedEliminationOrderingDefs
 
 @[expose] public section
 
@@ -60,43 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), arc list, and the bound `K`. -/
-abbrev DirectedEliminationOrderingInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The directed graph on `Fin n` whose arcs are the pairs listed in `as`. -/
-def digraphOfArcs (n : ℕ) (as : List (ℕ × ℕ)) : Digraph (Fin n) where
-  Adj u v := ((u : ℕ), (v : ℕ)) ∈ as
-
-/-- The directed graph `G = (V, A)` of the instance. -/
-def Graph (i : DirectedEliminationOrderingInstance) : Digraph (Fin i.1) :=
-  digraphOfArcs i.1 i.2.1
-
-/-- Well-formedness of an instance: the arc list has no repeated arcs, no loops, and endpoints
-in range. -/
-def WellFormed (i : DirectedEliminationOrderingInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2
-
-/-- `G` contains a directed path `u = x₀, x₁, ..., xₖ = v` (distinct vertices, consecutive
-vertices joined by arcs) whose interior vertices `w` all satisfy `f w < min (f u) (f v)`. -/
-def FillPath {n : ℕ} (G : Digraph (Fin n)) (f : Fin n → Fin n) (u v : Fin n) : Prop :=
-  ∃ ws : List (Fin n), (∀ w ∈ ws, f w < min (f u) (f v)) ∧
-    (u :: (ws ++ [v])).IsChain G.Adj ∧ (u :: (ws ++ [v])).Nodup
-
-/-- An elimination ordering with fill-in at most `K`: a one-to-one `f` such that at most `K`
-pairs `(u, v)` that are not arcs are joined by a `FillPath`. -/
-def DirectedEliminationOrderingFeasible (i : DirectedEliminationOrderingInstance) : Prop :=
-  ∃ f : Fin i.1 → Fin i.1, Function.Injective f ∧
-    {p : Fin i.1 × Fin i.1 | ¬ (Graph i).Adj p.1 p.2 ∧ FillPath (Graph i) f p.1 p.2}.ncard ≤ i.2.2
-
-open Classical in
-/-- DIRECTED ELIMINATION ORDERING as a decision problem over bitstrings. -/
-noncomputable def directedEliminationOrderingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DirectedEliminationOrderingInstance) x with
-  | some i => decide (WellFormed i ∧ DirectedEliminationOrderingFeasible i)
-  | none => false
 
 /-- **DIRECTED ELIMINATION ORDERING is NP-complete.** Source: Garey and Johnson (1979),
 [GT46]; Rose and Tarjan (1978). -/

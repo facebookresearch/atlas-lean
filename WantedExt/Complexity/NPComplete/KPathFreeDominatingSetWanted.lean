@@ -17,9 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.KernelWanted
+public import CSLibExt.Complexity.NPComplete.KPathFreeDominatingSetDefs
 
 @[expose] public section
 
@@ -62,25 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `S` contains a (simple, directed) path with `k` vertices: distinct vertices
-`p 0, …, p (k - 1)` of `S` with an arc `p j → p (j + 1)` for every `j + 1 < k`. -/
-def HasPathIn {V : Type*} (G : Digraph V) (S : Finset V) (k : ℕ) : Prop :=
-  ∃ p : Fin k → V, Function.Injective p ∧ (∀ j, p j ∈ S) ∧
-    ∀ (j : Fin k) (h : j.val + 1 < k), G.Adj (p j) (p ⟨j.val + 1, h⟩)
-
-/-- A `k`-path-free dominating set: a vertex set `S` such that every vertex `y ∉ S` has an arc
-`x → y` from some `x ∈ S`, and `S` contains no path with `k` vertices. -/
-def KPathFreeDominatingSetFeasible (k : ℕ) (i : KernelInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), (∀ y ∉ S, ∃ x ∈ S, (Graph i).Adj x y) ∧ ¬ HasPathIn (Graph i) S k
-
-open Classical in
-/-- k-PATH-FREE DOMINATING SET, for the fixed `k`, as a decision problem over bitstrings. -/
-noncomputable def kPathFreeDominatingSetDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := KernelInstance) x with
-  | some i => decide (WellFormed i ∧ KPathFreeDominatingSetFeasible k i)
-  | none => false
 
 /-- **k-PATH-FREE DOMINATING SET is NP-complete for every fixed `k ≥ 2`.** Source:
 Bar-Yehuda and Vishkin (1982). -/

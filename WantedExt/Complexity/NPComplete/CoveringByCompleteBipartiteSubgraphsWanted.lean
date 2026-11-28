@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import CSLibExt.Complexity.NPComplete.CoveringByCompleteBipartiteSubgraphsDefs
 
 @[expose] public section
 
@@ -56,38 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev CoveringByCompleteBipartiteSubgraphsInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CoveringByCompleteBipartiteSubgraphsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |E|`, the length of the edge list. -/
-def WellFormed (i : CoveringByCompleteBipartiteSubgraphsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- The edges are covered by at most `K` complete bipartite subgraphs: for some `k ≤ K` there
-are vertex sets `A j` and `B j`, `j : Fin k`, with `A j` complete to `B j` in the graph, such
-that every edge has one endpoint in `A j` and the other in `B j` for some `j`. -/
-def CoveringByCompleteBipartiteSubgraphsFeasible
-    (i : CoveringByCompleteBipartiteSubgraphsInstance) : Prop :=
-  ∃ k ≤ i.2.2, ∃ A B : Fin k → Set (Fin i.1),
-    (∀ j, (Graph i).IsCompleteBetween (A j) (B j)) ∧
-      ∀ u v, (Graph i).Adj u v → ∃ j, (u ∈ A j ∧ v ∈ B j) ∨ (v ∈ A j ∧ u ∈ B j)
-
-open Classical in
-/-- COVERING BY COMPLETE BIPARTITE SUBGRAPHS as a decision problem over bitstrings. -/
-noncomputable def coveringByCompleteBipartiteSubgraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CoveringByCompleteBipartiteSubgraphsInstance) x with
-  | some i => decide (WellFormed i ∧ CoveringByCompleteBipartiteSubgraphsFeasible i)
-  | none => false
 
 /-- **COVERING BY COMPLETE BIPARTITE SUBGRAPHS is NP-complete.** Source: Garey and Johnson
 (1979), [GT18]; Orlin (1977). -/

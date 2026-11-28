@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import CSLibExt.Complexity.NPComplete.CoveringByCliquesDefs
 
 @[expose] public section
 
@@ -53,37 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev CoveringByCliquesInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CoveringByCliquesInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |E|`, the length of the edge list. -/
-def WellFormed (i : CoveringByCliquesInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- The edges are covered by at most `K` cliques: for some `k ≤ K` there are vertex sets
-`S j`, `j : Fin k`, each a clique of the graph, such that every edge has both endpoints in some
-`S j`. -/
-def CoveringByCliquesFeasible (i : CoveringByCliquesInstance) : Prop :=
-  ∃ k ≤ i.2.2, ∃ S : Fin k → Set (Fin i.1),
-    (∀ j, (Graph i).IsClique (S j)) ∧
-      ∀ u v, (Graph i).Adj u v → ∃ j, u ∈ S j ∧ v ∈ S j
-
-open Classical in
-/-- COVERING BY CLIQUES as a decision problem over bitstrings. -/
-noncomputable def coveringByCliquesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CoveringByCliquesInstance) x with
-  | some i => decide (WellFormed i ∧ CoveringByCliquesFeasible i)
-  | none => false
 
 /-- **COVERING BY CLIQUES is NP-complete.** Source: Garey and Johnson (1979), [GT17];
 Kou, Stockmeyer, and Wong (1978); Orlin (1977). -/

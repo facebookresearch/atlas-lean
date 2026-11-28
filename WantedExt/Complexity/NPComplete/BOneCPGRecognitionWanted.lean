@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CliqueBOneVPGWanted
-public import WantedExt.Complexity.NPComplete.PartitionIntoCliquesBZeroCPGWanted
+public import CSLibExt.Complexity.NPComplete.BOneCPGRecognitionDefs
 
 @[expose] public section
 
@@ -81,50 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev BOneCPGRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : BOneCPGRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : BOneCPGRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `P = (a, c, b)` is a grid path from `a` to `b` with at most one bend, at `c`: the leg `a`-`c`
-is horizontal and the leg `c`-`b` vertical, or the other way round, and `a ≠ b`. -/
-def IsOneBendPath (P : BendPath) : Prop :=
-  P.1 ≠ P.2.2 ∧
-    ((P.1.2 = P.2.1.2 ∧ P.2.1.1 = P.2.2.1) ∨ (P.1.1 = P.2.1.1 ∧ P.2.1.2 = P.2.2.2))
-
-/-- The interior points of the path on the grid refined by a factor of `2`: the refined grid
-points of the doubled path other than its doubled endpoints. -/
-def interiorPoints (P : BendPath) : Set (ℕ × ℕ) :=
-  pathPoints (double P.1, double P.2.1, double P.2.2) \ {double P.1, double P.2.2}
-
-/-- `G` is a `B₁`-CPG graph: there are grid paths `P v` with at most one bend, one per vertex,
-pairwise without common interior points, such that two distinct vertices are adjacent exactly
-when their paths have a common grid point. -/
-def IsBOneCPG {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ P : Fin n → BendPath, (∀ v, IsOneBendPath (P v)) ∧
-    (∀ u v, u ≠ v → interiorPoints (P u) ∩ interiorPoints (P v) = ∅) ∧
-    ∀ u v, u ≠ v → (G.Adj u v ↔ (pathPoints (P u) ∩ pathPoints (P v)).Nonempty)
-
-/-- The graph of the instance is a `B₁`-CPG graph. -/
-def BOneCPGRecognitionFeasible (i : BOneCPGRecognitionInstance) : Prop :=
-  IsBOneCPG (Graph i)
-
-open Classical in
-/-- `B₁`-CPG GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def bOneCPGRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BOneCPGRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ BOneCPGRecognitionFeasible i)
-  | none => false
 
 /-- **`B₁`-CPG GRAPH RECOGNITION is NP-complete.** Source: Champseix, Galby, Munaro and Ries
 (2021), Theorem 9; ISGCI, class `gc_1338`. -/

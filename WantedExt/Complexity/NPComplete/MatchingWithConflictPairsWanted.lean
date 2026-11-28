@@ -18,11 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Matching
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.MatchingWithConflictPairsDefs
 
 @[expose] public section
 
@@ -53,37 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, edge list, conflict pairs (each a pair of edges, written as
-they appear in the edge list), and the bound `K`. -/
-abbrev MatchingWithConflictPairsInstance :=
-  ℕ × List (ℕ × ℕ) × List ((ℕ × ℕ) × (ℕ × ℕ)) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MatchingWithConflictPairsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: a simple edge list on `Fin n` (no loops, no repeated or
-reversed edges), and every conflict pair consists of two distinct listed edges. -/
-def WellFormed (i : MatchingWithConflictPairsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    ∀ c ∈ i.2.2.1, c.1 ∈ i.2.1 ∧ c.2 ∈ i.2.1 ∧ c.1 ≠ c.2
-
-/-- There is a matching `M` of `G` with at least `K` edges that contains at most one edge of
-every conflict pair. -/
-def MatchingWithConflictPairsFeasible (i : MatchingWithConflictPairsInstance) : Prop :=
-  ∃ M : (Graph i).Subgraph, M.IsMatching ∧ i.2.2.2 ≤ M.edgeSet.ncard ∧
-    ∀ c ∈ i.2.2.1, ¬ (s(c.1.1, c.1.2) ∈ Sym2.map Fin.val '' M.edgeSet ∧
-      s(c.2.1, c.2.2) ∈ Sym2.map Fin.val '' M.edgeSet)
-
-open Classical in
-/-- MATCHING WITH CONFLICT PAIRS as a decision problem over bitstrings. -/
-noncomputable def matchingWithConflictPairsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MatchingWithConflictPairsInstance) x with
-  | some i => decide (WellFormed i ∧ MatchingWithConflictPairsFeasible i)
-  | none => false
 
 /-- **MATCHING WITH CONFLICT PAIRS is NP-complete.** Source: Darmann, Pferschy, Schauer and
 Woeginger (2011). -/

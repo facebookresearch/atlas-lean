@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import WantedExt.Complexity.NPComplete.ConnectedDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.ConnectedDominatingSetBipartiteDefs
 
 @[expose] public section
 
@@ -68,20 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed CONNECTED DOMINATING SET instance (a simple
-edge list on `Fin n`) whose graph is bipartite, with `0 < K ≤ n`. -/
-def WellFormed (i : ConnectedDominatingSetInstance) : Prop :=
-  ConnectedDominatingSet.WellFormed i ∧ (Graph i).IsBipartite ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- CONNECTED DOMINATING SET on bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def connectedDominatingSetBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConnectedDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ ConnectedDominatingSetFeasible i)
-  | none => false
 
 /-- **CONNECTED DOMINATING SET on bipartite graphs is NP-complete.** Source: Müller and
 Brandstädt (1987); Pfaff, Laskar and Hedetniemi (1983). -/

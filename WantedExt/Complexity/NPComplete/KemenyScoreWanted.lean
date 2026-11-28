@@ -20,10 +20,8 @@ doi:10.1145/371920.372165, Appendix B, Theorem 11.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Algorithms.Lean.Online.ListUpdate
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.KemenyScoreDefs
 
 @[expose] public section
 
@@ -56,32 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of candidates (candidates `0, …, m - 1`), the voters'
-rankings, and the bound `k`. -/
-abbrev KemenyScoreInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every voter's ranking is a total order of the candidates,
-that is, a permutation of `List.range m`. -/
-def WellFormed (i : KemenyScoreInstance) : Prop :=
-  ∀ v ∈ i.2.1, v.Perm (List.range i.1)
-
-/-- Some ranking `π` of the candidates (a permutation of `0, …, m - 1`) has total inversion count
-`∑ ListUpdate.inv v π` at most `k` over the ballots `v`. The ballots are not required to be
-rankings here; when they are, as well-formedness requires, `inv v π` is the Kendall tau
-distance between `v` and `π`. -/
-def KemenyScoreFeasible (i : KemenyScoreInstance) : Prop :=
-  ∃ π : List ℕ, π.Perm (List.range i.1) ∧
-    (i.2.1.map fun v => Cslib.Algorithms.Lean.Online.ListUpdate.inv v π).sum ≤ i.2.2
-
-open Classical in
-/-- KEMENY SCORE as a decision problem over bitstrings. -/
-noncomputable def kemenyScoreDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KemenyScoreInstance) x with
-  | some i => decide (WellFormed i ∧ KemenyScoreFeasible i)
-  | none => false
 
 /-- **KEMENY SCORE is NP-complete.** Source: Bartholdi, Tovey and Trick (1989); Dwork, Kumar,
 Naor and Sivakumar (2001), Theorem 11. -/

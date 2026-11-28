@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetPlanarBipartiteSubcubicGirthNineWanted
-public import WantedExt.Complexity.NPComplete.IndependentDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentDominatingSetPlanarBipartiteSubcubicGirthNineDefs
 
 @[expose] public section
 
@@ -63,22 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the instance class of
-`DominatingSetPlanarBipartiteSubcubicGirthNine` (a simple edge list on `Fin n`, `0 < K ≤ n`, and
-a planar bipartite graph of maximum degree at most `3` and girth at least `9`). -/
-def WellFormed (i : IndependentDominatingSet.IndependentDominatingSetInstance) : Prop :=
-  DominatingSetPlanarBipartiteSubcubicGirthNine.WellFormed i
-
-open Classical in
-/-- INDEPENDENT DOMINATING SET on planar bipartite subcubic graphs of girth at least 9 as a
-decision problem over bitstrings. -/
-noncomputable def independentDominatingSetPlanarBipartiteSubcubicGirthNineDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IndependentDominatingSet.IndependentDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ IndependentDominatingSet.IndependentDominatingSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT DOMINATING SET on planar bipartite subcubic graphs of girth at least 9 is
 NP-complete.** Source: Zverovich and Zverovich (1995);

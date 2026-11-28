@@ -25,13 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.CycleCover
-public import MathlibExt.Combinatorics.SimpleGraph.Domination
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingCyclePlanarBiconnectedDefs
 
 @[expose] public section
 
@@ -72,25 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed DOMINATING SET instance with `0 < K` whose
-graph is planar and 2-connected. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ (Graph i).IsPlanar ∧ (Graph i).IsVertexConnected 2
-
-/-- Some cycle of at most `K` vertices dominates the graph. -/
-def DominatingCycleFeasible (i : DominatingSetInstance) : Prop :=
-  ∃ c : SimpleGraph.Cycle (Graph i), c.length ≤ i.2.2 ∧
-    (Graph i).IsDominating {v | v ∈ c.walk.support}
-
-open Classical in
-/-- DOMINATING CYCLE on planar 2-connected graphs as a decision problem over bitstrings. -/
-noncomputable def dominatingCyclePlanarBiconnectedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingCycleFeasible i)
-  | none => false
 
 /-- **DOMINATING CYCLE on planar 2-connected graphs is NP-complete.** Source: Johnson (1984),
 DOMINATING SET [GT2]; Proskurowski and Sysło (1981); Eto, Kawahara, Miyano and Nonoue (2018). -/

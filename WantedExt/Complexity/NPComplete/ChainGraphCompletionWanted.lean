@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Finset.Card
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ChainGraphCompletionDefs
 
 @[expose] public section
 
@@ -57,38 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the side sizes `p = |P|` and `q = |Q|`, the edges `(a, b)` with `a < p` and
-`b < q`, and the bound `K`. -/
-abbrev ChainGraphCompletionInstance := ℕ × ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the edges are distinct pairs `(a, b)` with `a < p` and
-`b < q`. -/
-def WellFormed (i : ChainGraphCompletionInstance) : Prop :=
-  i.2.2.1.Nodup ∧ ∀ e ∈ i.2.2.1, e.1 < i.1 ∧ e.2 < i.2.1
-
-/-- The edge set `E ⊆ P × Q` of the instance. -/
-def Edges (i : ChainGraphCompletionInstance) : Finset (Fin i.1 × Fin i.2.1) :=
-  Finset.univ.filter fun e => ((e.1 : ℕ), (e.2 : ℕ)) ∈ i.2.2.1
-
-/-- The bipartite graph with edge set `F ⊆ P × Q` is a chain graph: for any two vertices
-`u, v ∈ P`, `N(u) ⊆ N(v)` or `N(v) ⊆ N(u)`. -/
-def IsChainGraph {P Q : Type*} (F : Finset (P × Q)) : Prop :=
-  ∀ u v : P, (∀ w, (u, w) ∈ F → (v, w) ∈ F) ∨ (∀ w, (v, w) ∈ F → (u, w) ∈ F)
-
-/-- Adding at most `K` edges between `P` and `Q` gives a chain graph. -/
-def ChainGraphCompletionFeasible (i : ChainGraphCompletionInstance) : Prop :=
-  ∃ F : Finset (Fin i.1 × Fin i.2.1), Edges i ⊆ F ∧ (F \ Edges i).card ≤ i.2.2.2 ∧
-    IsChainGraph F
-
-open Classical in
-/-- CHAIN GRAPH COMPLETION as a decision problem over bitstrings. -/
-noncomputable def chainGraphCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChainGraphCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ ChainGraphCompletionFeasible i)
-  | none => false
 
 /-- **CHAIN GRAPH COMPLETION is NP-complete.** Source: Yannakakis (1981); Natanzon, Shamir and
 Sharan (2001), Section 3.1. -/

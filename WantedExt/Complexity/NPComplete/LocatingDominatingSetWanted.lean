@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Domination
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.LocatingDominatingSetDefs
 
 @[expose] public section
 
@@ -53,36 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, and the bound `d`. -/
-abbrev LocatingDominatingSetInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : LocatingDominatingSetInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: a simple edge list on `Fin n` (no repeated edge, no loop,
-no reversed copy). -/
-def WellFormed (i : LocatingDominatingSetInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- `S` is a locating-dominating set of `G`: it dominates `G`, and distinct vertices outside
-`S` have distinct neighborhoods in `S`. -/
-def IsLocatingDominating {n : ℕ} (G : SimpleGraph (Fin n)) (S : Finset (Fin n)) : Prop :=
-  G.IsDominating ↑S ∧ ∀ u v, u ∉ S → v ∉ S → u ≠ v → G.neighborSet u ∩ ↑S ≠ G.neighborSet v ∩ ↑S
-
-/-- Some locating-dominating set has at most `d` vertices. -/
-def LocatingDominatingSetFeasible (i : LocatingDominatingSetInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card ≤ i.2.2 ∧ IsLocatingDominating (Graph i) S
-
-open Classical in
-/-- LOCATING-DOMINATING SET as a decision problem over bitstrings. -/
-noncomputable def locatingDominatingSetDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := LocatingDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ LocatingDominatingSetFeasible i)
-  | none => false
 
 /-- **LOCATING-DOMINATING SET is NP-complete.** Source: Charon, Hudry and Lobstein (2003). -/
 public theorem_wanted locatingDominatingSet_npComplete :
