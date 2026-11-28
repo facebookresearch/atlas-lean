@@ -18,7 +18,7 @@ computed.
 ## Depends on
 
 - [Generalized hypertree decompositions and generalized hypertreewidth](generalized-hypertree-decompositions-and-width.md)
-- [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
+- [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
 - [The k-consistency procedure for Boolean conjunctive queries](k-consistency-procedure.md)
 
@@ -26,6 +26,7 @@ computed.
 
 - [Conjunctive queries of bounded generalized hypertreewidth are evaluable in polynomial time](bounded-ghw-cqs-are-evaluable-in-polynomial-time.md)
 - [Pairwise consistency](../join-processing/pairwise-consistent.md)
+- [Minimizations of a conjunctive query are isomorphic](../conjunctive-queries/cores-and-minimization/minimizations-of-a-conjunctive-query-are-isomorphic.md)
 
 ## Sources
 

@@ -2,6 +2,7 @@
 
 Discriminants and their bounds, ramification and inertia, orders, units, ideal counting, local degrees under completion, field enumeration and towers.
 
+- [Card units quotient ring of integers proof](card-units-quotient-ring-of-integers-proof/README.md)
 - [Class field towers](class-field-towers/README.md)
 - [Completions of number fields at finite places](completions-of-number-fields-at-finite-places/README.md)
 - [Counting ideals of bounded norm](counting-ideals-of-bounded-norm/README.md)

@@ -5,6 +5,7 @@ Laplace, Mellin and Radon transforms (Ramanujan's master theorem, Fourier slice 
 - [Hausdorff moment problem](hausdorff-moment-problem/README.md)
 - [Laplace transform](laplace-transform/README.md)
 - [Mellin uniqueness over compact groups](mellin-uniqueness-over-compact-groups/README.md)
+- [Mellin transform and inversion](mellin-transform-and-inversion/README.md)
 - [Moment problem for compactly supported measures](moment-problem-for-compactly-supported-measures/README.md)
 - [Radon transform](radon-transform/README.md)
 - [Stieltjes moment problem](stieltjes-moment-problem/README.md)

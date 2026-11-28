@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Basic.Finite.Defs
 public import Mathlib.Data.List.Basic
+import Mathlib.Data.List.Infix
 
 /-!
 Pure morphic words after Huova and Durand.
@@ -19,6 +20,12 @@ Concept `jis_sem_817d955b6393d48d72476d2d` with source statements
 `jis_83acfc0f995c923dbbbed9e5`, `jis_95467c21193bf40b4aae1281`,
 `jis_e5dacb15b7f36a3e2d33683c`, `jis_f0ae0eecd29e48e7e5a45717`.
 Finite words are modelled by `List A`; infinite words by `Nat → A`.
+
+## References
+
+* The proofs of `morphIterate_succ_right` and `morphIterate_prefix` were moved from the private
+  lemmas `iterate_succ_right` and `iterate_prefix` in
+  `MathlibExt.Combinatorics.PalindromicRecurrentOutsideP`.
 -/
 
 namespace MetaMathlibExt
@@ -49,6 +56,26 @@ Source: concept `jis_sem_817d955b6393d48d72476d2d`, clause `word_morphism`; stat
 public def morphIterate {A : Type*} (f : A → List A) : Nat → List A → List A
   | 0, w => w
   | n + 1, w => morphExtend f (morphIterate f n w)
+
+/-- **Applying the first step of a letter-map iterate.** For any letter map $f$, finite word
+$w$ and natural number $n$, the $(n+1)$-st iterate on $w$ equals the $n$-th iterate on the
+one-step image of $w$. -/
+public theorem morphIterate_succ_right {A : Type*} (f : A → List A) (n : ℕ) (w : List A) :
+    morphIterate f (n + 1) w = morphIterate f n (morphExtend f w) := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    change morphExtend f (morphIterate f (n + 1) w) = _
+    rw [ih]
+    rfl
+
+/-- **Iterated letter maps preserve prefixes.** If $u$ is a prefix of $v$, then for any letter
+map $f$ and natural number $n$, $f^n(u)$ is a prefix of $f^n(v)$. -/
+public theorem morphIterate_prefix {A : Type*} {u v : List A} (h : u <+: v) (f : A → List A)
+    (n : ℕ) : morphIterate f n u <+: morphIterate f n v := by
+  induction n with
+  | zero => exact h
+  | succ n ih => exact ih.flatMap f
 
 /-- **Extended letter maps preserve concatenation.** Let $f$ send each letter of an alphabet $A$
 to a finite word over $A$, extended to finite words by concatenation. Then $f(uv) = f(u)f(v)$

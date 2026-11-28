@@ -17,3 +17,4 @@ Topological and smooth manifolds in low and high dimensions: surfaces, 3- and 4-
 - [Milnor's exotic 7-sphere](milnor-exotic-sphere-seven.md)
 - [Pardon's theorem: the p-adic integers cannot act faithfully and continuously on a connected 3-manifold](hilbert-smith-padic-dimension-three.md)
 - [Closed manifold, not required to be connected](closed-topological-manifold.md)
+- [Undecidable problems in manifold topology](undecidable-problems-in-manifold-topology/README.md)
