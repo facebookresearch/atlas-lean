@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# PURE-k-DIR GRAPH RECOGNITION is NP-complete for every fixed k ≥ 2: definitions
+# PURE-k-DIR GRAPH RECOGNITION: definitions
 
 Source:
 J. Kratochvíl and J. Matoušek, "NP-hardness results for intersection graphs",

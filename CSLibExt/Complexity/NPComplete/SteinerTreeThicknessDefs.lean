@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# STEINER TREE IN GRAPHS (unit weights) on graphs of thickness at most k (fixed k ≥ 1) is: definitions
-NP-complete
+# STEINER TREE IN GRAPHS (unit weights) on graphs of thickness at most k (fixed k ≥ 1): definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

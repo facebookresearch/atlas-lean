@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# STEINER TREE IN GRAPHS with unit weights, terminals forming one side of a bipartite graph,: definitions
-is NP-complete
+# STEINER TREE IN GRAPHS with unit weights, terminals forming one side of a bipartite graph:
+definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# PARTITION INTO CLIQUES for graphs of thickness at most k is NP-complete, for every fixed k ≥ 1: definitions
+# PARTITION INTO CLIQUES for graphs of thickness at most k: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

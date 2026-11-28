@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# STEINER TREE IN GRAPHS with unit weights is NP-complete on graphs of maximum degree `k`, for: definitions
-every fixed `k ≥ 4`
+# STEINER TREE IN GRAPHS with unit weights on graphs of maximum degree `k`: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
