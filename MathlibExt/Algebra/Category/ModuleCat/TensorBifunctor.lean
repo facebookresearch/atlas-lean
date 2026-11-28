@@ -36,22 +36,32 @@ universe u v w
 
 variable (R : Type u) [CommRing R]
 
-/-- Linear tensor of the two modules, in their joint carrier universe. -/
+/-- For a commutative ring `R` in universe `u`, an `R`-module `M` with
+carrier in `v` and an `R`-module `N` with carrier in `w`, their tensor
+product over `R` is an object of `ModuleCat` in carrier universe `max(v,w)`. -/
 abbrev tensorObjAt (M : ModuleCat.{v} R) (N : ModuleCat.{w} R) : ModuleCat.{max v w} R :=
   ModuleCat.of R (M ⊗[R] N)
 
-/-- The tensor map on the module morphisms. -/
+/-- For a commutative ring `R`, maps `f : M → M′` between modules in
+carrier universe `v` and `g : N → N′` between modules in `w` induce the
+linear tensor map `M ⊗_R N → M′ ⊗_R N′`, sending `m ⊗ n` to
+`f(m) ⊗ g(n)`. The two carrier universes and ring universe are independent. -/
 def tensorHomAt {M M' : ModuleCat.{v} R} {N N' : ModuleCat.{w} R}
     (f : M ⟶ M') (g : N ⟶ N') : tensorObjAt R M N ⟶ tensorObjAt R M' N' :=
   ModuleCat.ofHom (TensorProduct.map f.hom g.hom)
 
+/-- For linear maps `f : M → M′` and `g : N → N′` over a commutative ring
+`R`, the independently sized tensor map sends the pure tensor `m ⊗ n`
+to `f(m) ⊗ g(n)`. -/
 @[simp]
 theorem tensorHomAt_tmul {M M' : ModuleCat.{v} R} {N N' : ModuleCat.{w} R}
     (f : M ⟶ M') (g : N ⟶ N') (m : M) (n : N) :
     (tensorHomAt R f g).hom (m ⊗ₜ[R] n) = f.hom m ⊗ₜ[R] g.hom n :=
   TensorProduct.map_tmul _ _ _ _
 
-/-- Tensoring the two identity module maps gives the tensor identity. -/
+/-- For modules `M`, `N` over a commutative ring `R` in independent
+carrier universes `v`, `w`, the tensor map of their two identities is
+the identity of `M ⊗_R N` in universe `max(v,w)`. -/
 @[simp]
 theorem tensorHomAt_id (M : ModuleCat.{v} R) (N : ModuleCat.{w} R) :
     tensorHomAt R (𝟙 M) (𝟙 N) = 𝟙 (tensorObjAt R M N) := by
@@ -60,7 +70,10 @@ theorem tensorHomAt_id (M : ModuleCat.{v} R) (N : ModuleCat.{w} R) :
     LinearMap.id
   exact TensorProduct.map_id
 
-/-- The tensor product with independent coefficient universes, curried in both variables. -/
+/-- For a commutative ring `R` in universe `u`, tensor product defines a
+curried bifunctor `ModuleCat_v(R) → ModuleCat_w(R) → ModuleCat_max(v,w)(R)`.
+Its object value is `M ⊗_R N`; its maps apply the given linear map to
+the relevant tensor factor. All three universes retain their given values. -/
 def tensorBifunctorAt :
     ModuleCat.{v} R ⥤ ModuleCat.{w} R ⥤ ModuleCat.{max v w} R where
   obj M :=
@@ -103,7 +116,10 @@ def tensorBifunctorAt :
         (TensorProduct.map f.hom LinearMap.id (m ⊗ₜ[R] n))
     simp only [TensorProduct.map_tmul, LinearMap.comp_apply, LinearMap.id_apply]
 
-/-- Uncurrying retains the simultaneous map of both tensor factors. -/
+/-- For the independently sized tensor bifunctor over a commutative ring
+`R`, a morphism `(f,g)` in the product of the two module categories is
+sent by the uncurried bifunctor to the simultaneous tensor map
+`f ⊗ g : M ⊗_R N → M′ ⊗_R N′`. -/
 theorem tensorBifunctorAt_uncurry_map
     {X Y : ModuleCat.{v} R × ModuleCat.{w} R} (f : X ⟶ Y) :
     (CategoryTheory.Functor.uncurry.obj (tensorBifunctorAt R : ModuleCat.{v} R ⥤ ModuleCat.{w} R ⥤
@@ -116,7 +132,10 @@ theorem tensorBifunctorAt_uncurry_map
     TensorProduct.map f.1.hom f.2.hom (m ⊗ₜ[R] n)
   simp only [TensorProduct.map_tmul, LinearMap.id_apply]
 
-/-- The heterogeneous tensor is additive in the first coefficient. -/
+/-- For a commutative ring `R`, the curried tensor bifunctor with carrier
+universes `v`, `w` preserves addition of first-variable linear maps:
+`(f+g) ⊗ id = f ⊗ id + g ⊗ id`, as natural transformations in the
+second variable. Its target carrier universe is `max(v,w)`. -/
 instance tensorBifunctorAt_additive :
     (tensorBifunctorAt R : ModuleCat.{v} R ⥤ ModuleCat.{w} R ⥤
       ModuleCat.{max v w} R).Additive where
@@ -132,7 +151,9 @@ instance tensorBifunctorAt_additive :
     simp only [TensorProduct.map_tmul, LinearMap.add_apply, LinearMap.id_apply,
       TensorProduct.add_tmul]
 
-/-- The heterogeneous tensor is additive in the second coefficient. -/
+/-- For a commutative ring `R` and a fixed module `M` with carrier in `v`,
+tensoring by `M` preserves addition of linear maps between modules in `w`:
+`id ⊗ (f+g) = id ⊗ f + id ⊗ g`. The tensor-product carrier universe is `max(v,w)`. -/
 instance tensorBifunctorAt_obj_additive (M : ModuleCat.{v} R) :
     ((tensorBifunctorAt R : ModuleCat.{v} R ⥤ ModuleCat.{w} R ⥤
       ModuleCat.{max v w} R).obj M).Additive where
@@ -150,10 +171,10 @@ section NativeMonoidal
 
 open scoped MonoidalCategory
 
-/--
-In the monoidal carrier universe the heterogeneous factory is the curried tensor functor, with
-unchanged tensor products and tensor maps.
--/
+/-- For a commutative ring `R` in universe `u`, when both coefficient
+carrier universes are `u`, the independently sized tensor bifunctor is
+naturally isomorphic to the monoidal category's curried tensor functor.
+The components are identities on the same tensor-product modules. -/
 def tensorBifunctorAtNativeIso :
     (tensorBifunctorAt R : ModuleCat.{u} R ⥤ ModuleCat.{u} R ⥤ ModuleCat.{u} R) ≅
       CategoryTheory.MonoidalCategory.curriedTensor (ModuleCat.{u} R) :=
