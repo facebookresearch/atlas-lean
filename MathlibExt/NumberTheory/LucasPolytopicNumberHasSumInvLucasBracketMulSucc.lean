@@ -23,6 +23,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.LucasPolytopicNumberClosedForm
 
 /-!
 # Sum of reciprocals of consecutive Lucas brackets
@@ -46,22 +47,13 @@ private theorem bracket_succ (P : LucasParameters) (x y : ℝ)
     rw [← hsum, (by linarith : P.t = -(x * y)), pow_succ]
     linear_combination y * ih
 
-private theorem bracket_closed (P : LucasParameters) (x y : ℝ)
-    (hsum : x + y = P.s) (hprod : x * y = -P.t) (n : ℕ) :
-    (x - y) * lucasBracket P n = x ^ n - y ^ n := by
-  induction n with
-  | zero => simp [lucasBracket, lucasBracketAux]
-  | succ n ih =>
-    rw [bracket_succ P x y hsum hprod, pow_succ, pow_succ]
-    linear_combination x * ih
-
 private theorem log_term_eq (P : LucasParameters) (x y : ℝ)
     (hsum : x + y = P.s) (hprod : x * y = -P.t) (hx : x ≠ 0)
     (hxy : x - y ≠ 0) (n : ℕ) (hn : n ≠ 0) :
     (-x / P.t) ^ n / lucasBracket P n =
       (x - y) * (-1 / P.t) ^ n / (1 - (y / x) ^ n) := by
   have ha := lucasBracket_ne_zero P hn
-  have hclosed := bracket_closed P x y hsum hprod n
+  have hclosed := lucasBracket_closed_form P x y hsum hprod n
   have hden : x ^ n * (1 - (y / x) ^ n) = (x - y) * lucasBracket P n := by
     rw [hclosed, div_pow]
     field_simp

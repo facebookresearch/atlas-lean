@@ -84,7 +84,7 @@ private theorem open_finEuclidean_isGeneratedBy
 
 If Y is delta-generated and U ⊆ Y is open, then the subspace U is delta-generated, with
 generator family Fin n → ℝ for n : ℕ. -/
-theorem Topology.IsOpen.deltaGeneratedSpace
+theorem IsOpen.deltaGeneratedSpace
     {Y : Type u} [TopologicalSpace Y] [DeltaGeneratedSpace Y]
     {U : Set Y} (hU : IsOpen U) : DeltaGeneratedSpace U := by
   let _ (n : ℕ) (V : TopologicalSpace.Opens (Fin n → ℝ)) :
@@ -138,11 +138,11 @@ theorem TopCat.isIso_subspaceMap_of_toDeltaGenerated_map_isIso
     {X Y : TopCat.{u}} (f : X ⟶ Y) (U : Set Y)
     [DeltaGeneratedSpace (f ⁻¹' U)] [DeltaGeneratedSpace U]
     [IsIso (TopCat.toDeltaGenerated.map f)] :
-    IsIso (AlgebraicTopology.subspaceMap f
+    IsIso (TopCat.subspaceMap f
       (fun _x hx => hx : Set.MapsTo f (f ⁻¹' U) U)) := by
-  let fU := AlgebraicTopology.subspaceMap f
+  let fU := TopCat.subspaceMap f
     (fun _x hx => hx : Set.MapsTo f (f ⁻¹' U) U)
-  have hs := (AlgebraicTopology.isPullback_preimageSubspace f U).map
+  have hs := (TopCat.isPullback_preimageSubspace f U).map
     TopCat.toDeltaGenerated
   let _ : IsIso (TopCat.toDeltaGenerated.map fU) :=
     hs.isIso_fst_of_isIso

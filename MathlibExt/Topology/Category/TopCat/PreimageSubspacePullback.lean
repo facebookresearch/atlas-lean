@@ -16,7 +16,7 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
 For a continuous map `f : X → Y` and a subset `U ⊆ Y`, the subspace
 `f⁻¹(U)` is the pullback of the inclusion `U → Y` along `f`. Its maps
-are restriction to `U` and the inclusion into `X`. A pullback square
+are restriction to `U` and the inclusion into `X`. A commuting square
 can itself be restricted to the corresponding preimage subspaces, with
 the same continuous map between the ambient total spaces. All spaces
 here lie in the given universe `u`.
@@ -28,7 +28,7 @@ universe u
 
 open CategoryTheory Limits
 
-namespace AlgebraicTopology
+namespace TopCat
 
 variable {X Y : TopCat.{u}} (f : X ⟶ Y) (U : Set Y)
 
@@ -77,90 +77,42 @@ theorem isPullback_preimageSubspace :
       ConcreteCategory.congr_hom h₂ w
     exact h2w
 
-/-- Let `E₁ → E`, `E₁ → B₁`, `E → B` and `B₁ → B` form a pullback
+/-- Let `E₁ → E`, `E₁ → B₁`, `E → B` and `B₁ → B` form a commuting
 square of topological spaces in universe `u`. If `U ⊆ B` and `U₁ ⊆ B₁`
 satisfy `b₁⁻¹(U) = U₁`, the induced map from `p₁⁻¹(U₁)` to `p⁻¹(U)`,
 together with the two subspace inclusions and the original map `E₁ → E`,
 again forms a pullback square. -/
-theorem isPullback_preimageSubspace_of_isPullback
+theorem isPullback_preimageSubspace_of_comm
     {E E₁ B B₁ : TopCat.{u}}
     {p : E ⟶ B} {p₁ : E₁ ⟶ B₁} {e₁ : E₁ ⟶ E} {b₁ : B₁ ⟶ B}
-    (sq : IsPullback e₁ p₁ p b₁)
+    (w : e₁ ≫ p = p₁ ≫ b₁)
     (U : Set B) (U₁ : Set B₁) (hU : ⇑b₁ ⁻¹' U = U₁) :
     IsPullback
-      (AlgebraicTopology.subspaceMap e₁ (by
+      (TopCat.subspaceMap e₁ (by
         intro x hx
         simp only [Set.mem_preimage] at hx ⊢
         have hwb : p (e₁ x) = b₁ (p₁ x) := by
-          have h := ConcreteCategory.congr_hom sq.w x
+          have h := ConcreteCategory.congr_hom w x
           simpa using h
         have hxU : b₁ (p₁ x) ∈ U := by
           rw [←Set.mem_preimage, hU]
           exact hx
         rw [hwb]
         exact hxU : Set.MapsTo e₁ (⇑p₁ ⁻¹' U₁) (⇑p ⁻¹' U)))
-      (AlgebraicTopology.subspaceIncl (⇑p₁ ⁻¹' U₁))
-      (AlgebraicTopology.subspaceIncl (⇑p ⁻¹' U)) e₁ := by
-  have hPre : ⇑p₁ ⁻¹' (⇑b₁ ⁻¹' U) = ⇑p₁ ⁻¹' U₁ := by rw [hU]
-  have hMaps_e : Set.MapsTo e₁ (⇑p₁ ⁻¹' (⇑b₁ ⁻¹' U)) (⇑p ⁻¹' U) := by
-    intro x hx
-    simp only [Set.mem_preimage] at hx ⊢
-    have hwb : p (e₁ x) = b₁ (p₁ x) := by
-      have h := ConcreteCategory.congr_hom sq.w x
-      simpa using h
-    rw [hwb]
-    exact hx
-  have h_p1 :=
-    AlgebraicTopology.isPullback_preimageSubspace p₁ (⇑b₁ ⁻¹' U)
-  have h_b1 := AlgebraicTopology.isPullback_preimageSubspace b₁ U
-  have hRight := AlgebraicTopology.isPullback_preimageSubspace p U
-  have hOuter0 := h_p1.paste_horiz h_b1
-  have hTopEq :
-      AlgebraicTopology.subspaceMap p₁
-          (show Set.MapsTo p₁ (⇑p₁ ⁻¹' (⇑b₁ ⁻¹' U)) (⇑b₁ ⁻¹' U) from fun _ hx => hx) ≫
-        AlgebraicTopology.subspaceMap b₁
-          (show Set.MapsTo b₁ (⇑b₁ ⁻¹' U) U from fun _ hx => hx) =
-      AlgebraicTopology.subspaceMap e₁ hMaps_e ≫
-        AlgebraicTopology.subspaceMap p
-          (show Set.MapsTo p (⇑p ⁻¹' U) U from fun _ hx => hx) := by
-    apply TopCat.hom_ext
+      (TopCat.subspaceIncl (⇑p₁ ⁻¹' U₁))
+      (TopCat.subspaceIncl (⇑p ⁻¹' U)) e₁ := by
+  have hPre : ⇑e₁ ⁻¹' (⇑p ⁻¹' U) = ⇑p₁ ⁻¹' U₁ := by
     ext x
-    change b₁ (p₁ x.1) = p (e₁ x.1)
-    have h := ConcreteCategory.congr_hom sq.w x.1
-    simpa using h.symm
-  have hBotEq : p₁ ≫ b₁ = e₁ ≫ p := sq.w.symm
-  rw [hTopEq, hBotEq] at hOuter0
-  have hComm :
-      AlgebraicTopology.subspaceMap e₁ hMaps_e ≫
-          AlgebraicTopology.subspaceIncl (⇑p ⁻¹' U) =
-        AlgebraicTopology.subspaceIncl (⇑p₁ ⁻¹' (⇑b₁ ⁻¹' U)) ≫ e₁ :=
-    AlgebraicTopology.subspaceMap_comp_subspaceIncl e₁ hMaps_e
-  have hFinalPre := IsPullback.of_right hOuter0 hComm hRight
-  let eP : TopCat.of (⇑p₁ ⁻¹' (⇑b₁ ⁻¹' U)) ≅ TopCat.of (⇑p₁ ⁻¹' U₁) := {
-    hom := AlgebraicTopology.subspaceInclOfSubset (by rw [hPre])
-    inv := AlgebraicTopology.subspaceInclOfSubset (by rw [←hPre])
-    hom_inv_id := by apply TopCat.hom_ext; ext x; rfl
-    inv_hom_id := by apply TopCat.hom_ext; ext x; rfl }
-  exact hFinalPre.of_iso eP (Iso.refl _) (Iso.refl _) (Iso.refl _)
-    (commfst := by
-      apply TopCat.hom_ext
-      ext x
-      simp only [ConcreteCategory.comp_apply, ConcreteCategory.id_apply, Iso.refl_hom,
-        AlgebraicTopology.subspaceMap, TopCat.hom_ofHom]
-      have hE : ((ConcreteCategory.hom eP.hom) x).1 = x.1 := by
-        rw [show eP.hom = AlgebraicTopology.subspaceInclOfSubset (by rw [hPre]) from rfl]
-        rfl
-      exact congrArg ⇑e₁ hE.symm)
-    (commsnd := by
-      apply TopCat.hom_ext
-      ext x
-      simp only [ConcreteCategory.comp_apply, ConcreteCategory.id_apply, Iso.refl_hom,
-        AlgebraicTopology.subspaceIncl, TopCat.hom_ofHom]
-      have hE : ((ConcreteCategory.hom eP.hom) x).1 = x.1 := by
-        rw [show eP.hom = AlgebraicTopology.subspaceInclOfSubset (by rw [hPre]) from rfl]
-        rfl
-      exact hE.symm)
-    (commf := by rfl)
-    (commg := by rfl)
+    have hw : p (e₁ x) = b₁ (p₁ x) := ConcreteCategory.congr_hom w x
+    change p (e₁ x) ∈ U ↔ p₁ x ∈ U₁
+    rw [hw, ← hU]
+    rfl
+  let eP : TopCat.of (⇑e₁ ⁻¹' (⇑p ⁻¹' U)) ≅ TopCat.of (⇑p₁ ⁻¹' U₁) :=
+    TopCat.isoOfHomeo (Homeomorph.setCongr hPre)
+  exact (TopCat.isPullback_preimageSubspace e₁ (⇑p ⁻¹' U)).of_iso
+    eP (Iso.refl _) (Iso.refl _) (Iso.refl _)
+    (commfst := by apply TopCat.hom_ext; ext x; rfl)
+    (commsnd := by apply TopCat.hom_ext; ext x; rfl)
+    (commf := by rfl) (commg := by rfl)
 
-end AlgebraicTopology
+end TopCat

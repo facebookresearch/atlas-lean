@@ -27,7 +27,7 @@ inclusions into the ambient spaces.
 
 open CategoryTheory
 
-namespace AlgebraicTopology
+namespace TopCat
 
 universe w v u
 
@@ -53,7 +53,7 @@ variable {X : TopCat.{w}} {S T : Set X}
 /-- For subsets `S ⊆ T` of a topological space `X`, inclusion defines a
 continuous morphism between their induced subspaces. -/
 noncomputable def subspaceInclOfSubset (h : S ⊆ T) : TopCat.of S ⟶ TopCat.of T :=
-  TopCat.ofHom ⟨fun x => ⟨x.1, h x.2⟩, by fun_prop⟩
+  TopCat.ofHom (ContinuousMap.inclusion h)
 
 /-- For subsets `S ⊆ T ⊆ X`, the inclusion `S → T` followed by `T → X`
 equals the direct subspace inclusion `S → X`. -/
@@ -81,14 +81,6 @@ noncomputable def subspaceMap (f : X ⟶ Y) (h : Set.MapsTo f S T) :
         f.hom.continuous.comp continuous_subtype_val
       exact hcont.subtype_mk (fun x => h x.2)⟩
 
-/-- For a continuous map `f : X → Y` and fixed subsets `S`, `T`, the
-restricted morphism `S → T` is independent of the proof that `f(S) ⊆ T`. -/
-theorem subspaceMap_proof_irrel (f : X ⟶ Y) (h₁ h₂ : Set.MapsTo f S T) :
-    subspaceMap f h₁ = subspaceMap f h₂ := by
-  apply TopCat.hom_ext
-  ext x
-  rfl
-
 /-- For a subset `S` of a space `X` and any proof that the identity of
 `X` maps `S` into itself, its restriction is the identity of the subspace `S`. -/
 @[simp]
@@ -98,18 +90,11 @@ lemma subspaceMap_id (h : Set.MapsTo (𝟙 X) S S) :
   ext x
   rfl
 
-/-- For any subset `S` of a topological space `X`, restricting the identity
-map using its canonical subset-preservation proof gives the identity of `S`. -/
-lemma subspaceMap_id_of (S : Set X) :
-    subspaceMap (𝟙 X) (fun _ hx => hx : Set.MapsTo (𝟙 X) S S) = 𝟙 (TopCat.of S) :=
-  subspaceMap_id _
-
 /-- For continuous maps `f : X → Y`, `g : Y → Z` in the same universe and
 subsets `S`, `T`, `U` with `f(S) ⊆ T`, `g(T) ⊆ U`, restricting `f ≫ g`
 to `S → U` equals the composite of the restrictions `S → T → U`,
 independently of the given proof for the composite. -/
-@[simp]
-lemma subspaceMap_comp {Z : TopCat.{w}} {U : Set Z} {f : X ⟶ Y} {g : Y ⟶ Z}
+private lemma subspaceMap_comp_proofs {Z : TopCat.{w}} {U : Set Z} {f : X ⟶ Y} {g : Y ⟶ Z}
     {hf : Set.MapsTo f S T} {hg : Set.MapsTo g T U}
     {hfg : Set.MapsTo (f ≫ g) S U} :
     subspaceMap (f ≫ g) hfg = subspaceMap f hf ≫ subspaceMap g hg := by
@@ -124,7 +109,15 @@ lemma subspaceMap_comp_of {Z : TopCat.{w}} {U : Set Z} (f : X ⟶ Y) (g : Y ⟶ 
     (hf : Set.MapsTo f S T) (hg : Set.MapsTo g T U) :
     subspaceMap (f ≫ g) (fun _ hx => hg (hf hx)) =
       subspaceMap f hf ≫ subspaceMap g hg :=
-  subspaceMap_comp
+  subspaceMap_comp_proofs
+
+/-- Restrictions preserving `S → T → U` compose to the restriction of the composite. -/
+@[simp]
+lemma subspaceMap_comp {Z : TopCat.{w}} {U : Set Z} (f : X ⟶ Y) (g : Y ⟶ Z)
+    (hf : Set.MapsTo f S T) (hg : Set.MapsTo g T U) :
+    subspaceMap f hf ≫ subspaceMap g hg =
+      subspaceMap (f ≫ g) (fun _ hx => hg (hf hx)) :=
+  (subspaceMap_comp_of f g hf hg).symm
 
 /-- For a continuous map `f : X → Y` carrying `S ⊆ X` into `T ⊆ Y`,
 restriction `S → T` followed by inclusion into `Y` equals inclusion of `S`
@@ -138,4 +131,4 @@ lemma subspaceMap_comp_subspaceIncl (f : X ⟶ Y) (h : Set.MapsTo f S T) :
 
 end SubspaceMap
 
-end AlgebraicTopology
+end TopCat

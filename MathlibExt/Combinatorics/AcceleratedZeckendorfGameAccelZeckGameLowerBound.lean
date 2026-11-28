@@ -17,8 +17,11 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 Every complete Accelerated Zeckendorf Game on `n ≥ 1` has at least
 `Nat.greatestFib n - 2` moves.
 
-Statements from D. Garcia-Fernandezsesma, S. J. Miller, T. Rascon, R. Vandegrift and
-A. Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1.
+## References
+
+* Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and Ajmain Yamin,
+  *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1, pp. 3–14,
+  Definition 1.2, Theorem 1.3, and Lemma 2.1.
 -/
 
 namespace MetaMathlibExt
@@ -138,7 +141,16 @@ private theorem accelZeckGame_invariant (n L : ℕ) (g : ℕ → ℕ →₀ ℕ)
     · exact (accelZeckValue_move _ _ hmove).trans hprev.1
     · exact accelZeckMove_bound _ _ (j + 1) hprev.2 hmove
 
-private theorem accelZeckTerminal_counts (s : ℕ →₀ ℕ)
+/-- In a complete accelerated game on `n`, the Fibonacci value is `n` and the count at index
+zero is zero at every step `j` up to and including the last step `L`. -/
+public theorem IsAccelZeckGame.value_eq_and_zero {n L : ℕ} {g : ℕ → ℕ →₀ ℕ}
+    (hg : IsAccelZeckGame n L g) {j : ℕ} (hj : j ≤ L) :
+    (∑ i ∈ (g j).support, g j i * Nat.fib (i + 1)) = n ∧ g j 0 = 0 := by
+  obtain ⟨hvalue, hbound⟩ := accelZeckGame_invariant n L g hg j hj
+  exact ⟨hvalue, hbound 0 (Or.inl rfl)⟩
+
+/-- In a state with no legal accelerated move, every positive index has at most one token. -/
+public theorem accelZeck_count_le_one_of_terminal (s : ℕ →₀ ℕ)
     (ht : ∀ t, ¬ AccelZeckMove s t) (i : ℕ) (hi : 1 ≤ i) : s i ≤ 1 := by
   by_contra h
   have htwo : 2 * 1 ≤ s i := by omega
@@ -148,7 +160,9 @@ private theorem accelZeckTerminal_counts (s : ℕ →₀ ℕ)
   · exact ht _ ⟨1, by decide, Or.inr (Or.inr (Or.inl ⟨htwo, rfl⟩))⟩
   exact ht _ ⟨1, by decide, Or.inr (Or.inr (Or.inr ⟨i, by omega, htwo, rfl⟩))⟩
 
-private theorem accelZeckTerminal_adjacent (s : ℕ →₀ ℕ)
+/-- In a state with no legal accelerated move and no tokens at index zero, a nonzero count
+at an index `i + 1` forces the count at index `i` to be zero. -/
+public theorem accelZeck_count_eq_zero_of_succ_ne_zero_of_terminal (s : ℕ →₀ ℕ)
     (ht : ∀ t, ¬ AccelZeckMove s t) (hzero : s 0 = 0) (i : ℕ)
     (hi : s (i + 1) ≠ 0) : s i = 0 := by
   by_cases h : i = 0
@@ -164,12 +178,12 @@ private theorem accelZeckTerminal_sum (s : ℕ →₀ ℕ)
   | zero => simp
   | one => simp [hzero]
   | more b ih₀ ih₁ =>
-    have hcount := accelZeckTerminal_counts s ht (b + 1) (by omega)
+    have hcount := accelZeck_count_le_one_of_terminal s ht (b + 1) (by omega)
     by_cases h : s (b + 1) = 0
     · rw [Finset.sum_range_succ, h, Nat.zero_mul, Nat.add_zero]
       exact ih₁.trans_le (Nat.fib_mono (by omega))
     · have hone : s (b + 1) = 1 := by omega
-      have hprev := accelZeckTerminal_adjacent s ht hzero b h
+      have hprev := accelZeck_count_eq_zero_of_succ_ne_zero_of_terminal s ht hzero b h
       rw [Finset.sum_range_succ, Finset.sum_range_succ, hprev, hone,
         Nat.zero_mul, Nat.one_mul, Nat.add_zero]
       have hf := @Nat.fib_add_two (b + 1)

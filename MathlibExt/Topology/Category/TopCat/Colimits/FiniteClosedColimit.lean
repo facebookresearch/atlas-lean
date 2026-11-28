@@ -92,7 +92,7 @@ lemma isClosed_of_forall_preimage_isClosed
 For a cocone over a category J with finitely many objects, a colimit after forgetting to sets
 and closed embedding of every leg imply IsColimit c in TopCat. Their closed-set gluing
 identifies the vertex topology with the final cocone topology. -/
-noncomputable def isColimit_of_isColimit_forget_of_isClosedEmbedding
+noncomputable def isColimitOfIsColimitForgetOfIsClosedEmbedding
     (hcType : IsColimit ((forget TopCat).mapCocone c))
     (hclosed : ∀ j, IsClosedEmbedding (c.ι.app j : F.obj j → c.pt)) :
     IsColimit c := by
@@ -186,16 +186,13 @@ lemma isInducing_of_isColimit
     IsInducing (f : c.pt → Y) := by
   have hcType : IsColimit ((forget TopCat).mapCocone c) :=
     isColimitOfPreserves (forget TopCat) hc
-  have h_sup : c.pt.str = ⨆ j, (F.obj j).str.coinduced (c.ι.app j : F.obj j → c.pt) :=
-    ((TopCat.nonempty_isColimit_iff_eq_coinduced c hcType).mp ⟨hc⟩)
   have h_eq : (inferInstance : TopologicalSpace c.pt) =
       TopologicalSpace.induced (f : c.pt → Y) (inferInstance : TopologicalSpace Y) := by
     apply TopologicalSpace.ext_isClosed
     intro S
     have h_orig : IsClosed (S : Set c.pt) ↔
         ∀ j, IsClosed ((c.ι.app j : F.obj j → c.pt) ⁻¹' S) := by
-      rw [h_sup]
-      exact isClosed_sup_coinduced_iff c S
+      exact TopCat.isClosed_iff_of_isColimit c hc S
     have h_induced :
         IsClosed[TopologicalSpace.induced (f : c.pt → Y) inferInstance] (S : Set c.pt) ↔
         ∃ T : Set Y, IsClosed T ∧ (f : c.pt → Y) ⁻¹' T = S := by
@@ -215,9 +212,6 @@ lemma isInducing_of_isColimit
       obtain ⟨T, hT, hT_eq⟩ := hS
       rw [← hT_eq]
       exact hT.preimage f.hom.continuous
-      -- alternative route via h_orig: each (f∘ι)⁻¹' T is closed, hence ∀ j, IsClosed (ι⁻¹' S)
-      -- follows from continuity of f∘ι and hT, giving IsClosed S via h_orig.mpr.
-      -- The preimage argument above is the direct continuity proof.
   exact ⟨h_eq⟩
 
 /-- Embedding descended from composite closed embeddings.

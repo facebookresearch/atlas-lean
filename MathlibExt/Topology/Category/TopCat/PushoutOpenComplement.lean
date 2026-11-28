@@ -35,68 +35,50 @@ namespace CategoryTheory.Limits.Types
 
 variable {S X₁ X₂ : Type u} {f : S ⟶ X₁} {g : S ⟶ X₂}
 
+private theorem pushout_rel_notMem_range_invariant
+    {x : X₂} (hx : x ∉ Set.range g) {a b : X₁ ⊕ X₂}
+    (hab : Relation.EqvGen (Pushout.Rel f g) a b) :
+    a = Sum.inr x ↔ b = Sum.inr x := by
+  induction hab with
+  | rel a b hab =>
+      rcases hab with ⟨s⟩
+      constructor
+      · intro hbad
+        cases hbad
+      · intro hbad
+        have : g s = x := Sum.inr.inj hbad
+        exact (hx ⟨s, this⟩).elim
+  | refl => exact Iff.rfl
+  | symm a b _ ih => exact ih.symm
+  | trans a b c _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
 private theorem pushout_inr_injectiveOn_compl_range_aux
     {x y : X₂} (hx : x ∉ Set.range g)
     (h : Pushout.inr f g x = Pushout.inr f g y) : x = y := by
   have hEqv : Relation.EqvGen (Pushout.Rel f g)
       (Sum.inr x) (Sum.inr y) := Quot.eqvGen_exact h
-  have hInv : ∀ {a b : X₁ ⊕ X₂},
-      Relation.EqvGen (Pushout.Rel f g) a b →
-        (a = Sum.inr x ↔ b = Sum.inr x) := by
-    intro a b hab
-    induction hab with
-    | rel a b hab =>
-        rcases hab with ⟨s⟩
-        constructor
-        · intro hbad
-          cases hbad
-        · intro hbad
-          have : g s = x := Sum.inr.inj hbad
-          exact (hx ⟨s, this⟩).elim
-    | refl => exact Iff.rfl
-    | symm a b _ ih => exact ih.symm
-    | trans a b c _ _ ih₁ ih₂ => exact ih₁.trans ih₂
   have hyx : Sum.inr y = Sum.inr x :=
-    (hInv hEqv).mp rfl
+    (pushout_rel_notMem_range_invariant hx hEqv).mp rfl
   exact Sum.inr.inj hyx.symm
 
-private theorem pushout_inl_ne_inr_of_not_mem_range_aux
+private theorem pushout_inl_ne_inr_of_notMem_range_aux
     {z : X₁} {x : X₂} (hx : x ∉ Set.range g) :
     Pushout.inl f g z ≠ Pushout.inr f g x := by
   intro h
   have hEqv : Relation.EqvGen (Pushout.Rel f g)
       (Sum.inl z) (Sum.inr x) := Quot.eqvGen_exact h
-  have hInv : ∀ {a b : X₁ ⊕ X₂},
-      Relation.EqvGen (Pushout.Rel f g) a b →
-        (a = Sum.inr x ↔ b = Sum.inr x) := by
-    intro a b hab
-    induction hab with
-    | rel a b hab =>
-        rcases hab with ⟨s⟩
-        constructor
-        · intro hbad
-          cases hbad
-        · intro hbad
-          have : g s = x := Sum.inr.inj hbad
-          exact (hx ⟨s, this⟩).elim
-    | refl => exact Iff.rfl
-    | symm a b _ ih => exact ih.symm
-    | trans a b c _ _ ih₁ ih₂ => exact ih₁.trans ih₂
-  have hbad : Sum.inl z = Sum.inr x := (hInv hEqv).mpr rfl
+  have hbad : Sum.inl z = Sum.inr x := (pushout_rel_notMem_range_invariant hx hEqv).mpr rfl
   cases hbad
 
 /-- For maps `f : S → X₁` and `g : S → X₂`, let `c` be a pushout cocone
 of their span. If `x ∈ X₂` does not lie in the image of `g`, then
 `c.inr(x) = c.inr(y)` implies `x = y` for every `y ∈ X₂`. The condition
 on the second point `y` is unrestricted. -/
-theorem pushoutCocone_inr_eq_inr_of_not_mem_range_of_isColimit
+theorem pushoutCocone_inr_eq_inr_of_notMem_range_of_isColimit
     {c : PushoutCocone f g} (hc : IsColimit c)
     {x y : X₂} (hx : x ∉ Set.range g) (hxy : c.inr x = c.inr y) : x = y := by
   let e : c ≅ Pushout.cocone f g :=
-    Cocone.ext
-      (IsColimit.coconePointUniqueUpToIso hc (Pushout.isColimitCocone f g))
-      (fun j ↦ IsColimit.comp_coconePointUniqueUpToIso_hom hc
-        (Pushout.isColimitCocone f g) j)
+    IsColimit.uniqueUpToIso hc (Pushout.isColimitCocone f g)
   have hcanonical : Pushout.inr f g x = Pushout.inr f g y := by
     convert! congrArg e.hom.hom hxy
     · exact ConcreteCategory.congr_hom (e.hom.w WalkingSpan.right).symm x
@@ -106,20 +88,17 @@ theorem pushoutCocone_inr_eq_inr_of_not_mem_range_of_isColimit
 /-- For a pushout cocone of `f : S → X₁` and `g : S → X₂`, a point
 `x ∈ X₂` outside the image of `g` has image distinct from the image of
 every `z ∈ X₁`: `c.inl(z) ≠ c.inr(x)`. -/
-theorem pushoutCocone_inl_ne_inr_of_not_mem_range_of_isColimit
+theorem pushoutCocone_inl_ne_inr_of_notMem_range_of_isColimit
     {c : PushoutCocone f g} (hc : IsColimit c)
     {z : X₁} {x : X₂} (hx : x ∉ Set.range g) : c.inl z ≠ c.inr x := by
   intro hzx
   let e : c ≅ Pushout.cocone f g :=
-    Cocone.ext
-      (IsColimit.coconePointUniqueUpToIso hc (Pushout.isColimitCocone f g))
-      (fun j ↦ IsColimit.comp_coconePointUniqueUpToIso_hom hc
-        (Pushout.isColimitCocone f g) j)
+    IsColimit.uniqueUpToIso hc (Pushout.isColimitCocone f g)
   have hcanonical : Pushout.inl f g z = Pushout.inr f g x := by
     convert! congrArg e.hom.hom hzx
     · exact ConcreteCategory.congr_hom (e.hom.w WalkingSpan.left).symm z
     · exact ConcreteCategory.congr_hom (e.hom.w WalkingSpan.right).symm x
-  exact pushout_inl_ne_inr_of_not_mem_range_aux (f := f) (g := g) hx hcanonical
+  exact pushout_inl_ne_inr_of_notMem_range_aux (f := f) (g := g) hx hcanonical
 
 /-- For a pushout cocone of `f : S → X₁` and `g : S → X₂`, the right
 inclusion is injective on the complement of the image of `g` in `X₂`.
@@ -128,7 +107,7 @@ theorem pushoutCocone_inr_injectiveOn_compl_range_of_isColimit
     {c : PushoutCocone f g} (hc : IsColimit c) :
     Set.InjOn c.inr (Set.range g)ᶜ := by
   intro x hx y _ hxy
-  exact pushoutCocone_inr_eq_inr_of_not_mem_range_of_isColimit hc hx hxy
+  exact pushoutCocone_inr_eq_inr_of_notMem_range_of_isColimit hc hx hxy
 
 end CategoryTheory.Limits.Types
 
@@ -184,7 +163,7 @@ theorem isHomeomorph_restrictPreimage_inr_of_isPushout
   have hinj : Function.Injective (U.restrictPreimage b) := by
     intro x y hxy
     apply Subtype.ext
-    apply Types.pushoutCocone_inr_eq_inr_of_not_mem_range_of_isColimit
+    apply Types.pushoutCocone_inr_eq_inr_of_notMem_range_of_isColimit
       hType.isColimit (hl x.prop)
     exact congrArg Subtype.val hxy
   have hsurj : Function.Surjective (U.restrictPreimage b) := by
@@ -221,7 +200,7 @@ theorem isHomeomorph_restrictPreimage_inr_of_isPushout
       constructor
       · rintro ⟨x, hxA, hxb⟩
         have hxnot : x ∉ Set.range l := hl (hA'_sub hxA)
-        have hne := Types.pushoutCocone_inl_ne_inr_of_not_mem_range_of_isColimit
+        have hne := Types.pushoutCocone_inl_ne_inr_of_notMem_range_of_isColimit
           hType.isColimit (z := z) (x := x) hxnot
         exact (hne hxb.symm).elim
       · intro hz
@@ -231,7 +210,7 @@ theorem isHomeomorph_restrictPreimage_inr_of_isPushout
       constructor
       · rintro ⟨x, hxA, hxb⟩
         have hxnot : x ∉ Set.range l := hl (hA'_sub hxA)
-        have hxz := Types.pushoutCocone_inr_eq_inr_of_not_mem_range_of_isColimit
+        have hxz := Types.pushoutCocone_inr_eq_inr_of_notMem_range_of_isColimit
           hType.isColimit hxnot hxb
         simpa [hxz] using hxA
       · intro hz
