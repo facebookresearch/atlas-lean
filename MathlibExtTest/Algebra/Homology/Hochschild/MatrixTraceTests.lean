@@ -129,6 +129,29 @@ private def zeroCoordinate :
   (TensorProduct.rid ℤ A).toLinearMap.comp
     (TensorProduct.map LinearMap.id (TensorPower.zeroEquiv ℤ A).toLinearMap)
 
+private theorem zeroCoordinate_tprod (m : A) (a : Fin 0 → A) :
+    zeroCoordinate (m ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ a) = m := by
+  let f : A ⊗[ℤ] ℤ →ₗ[ℤ] A := (TensorProduct.rid ℤ A).toLinearMap
+  let e : TensorPower ℤ 0 A ≃ₗ[ℤ] ℤ := TensorPower.zeroEquiv ℤ A
+  let h : A ⊗[ℤ] TensorPower ℤ 0 A →ₗ[ℤ] A ⊗[ℤ] ℤ :=
+    TensorProduct.map (LinearMap.id : A →ₗ[ℤ] A) e.toLinearMap
+  have he : e.toLinearMap (PiTensorProduct.tprod ℤ a) = (1 : ℤ) := by
+    exact PiTensorProduct.isEmptyEquiv_apply_tprod
+      (R := ℤ) (s := fun _ : Fin 0 => A) (ι := Fin 0) a
+  have hh : h (m ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ a) = m ⊗ₜ[ℤ] (1 : ℤ) := by
+    calc
+      _ = m ⊗ₜ[ℤ] e.toLinearMap (PiTensorProduct.tprod ℤ a) :=
+        TensorProduct.map_tmul (LinearMap.id : A →ₗ[ℤ] A) e.toLinearMap m
+          (PiTensorProduct.tprod ℤ a)
+      _ = _ := congrArg (fun r : ℤ => m ⊗ₜ[ℤ] r) he
+  calc
+    _ = f (h (m ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ a)) :=
+      LinearMap.comp_apply f h (m ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ a)
+    _ = f (m ⊗ₜ[ℤ] (1 : ℤ)) := congrArg f hh
+    _ = (1 : ℤ) • m := TensorProduct.rid_tmul (R := ℤ) m (1 : ℤ)
+    _ = m := one_smul ℤ m
+
+
 -- Pin the regular coefficient actions before opening the matrix-actor scope.
 local instance : Module A A := Semiring.toModule
 local instance : Module Aᵐᵒᵖ A := Semiring.toOppositeModule
@@ -168,10 +191,8 @@ example :
         zeroCoordinate ((ModuleCat.Algebra.Hochschild.boundary ℤ A A 0).hom x)) matchedTrace
     _ = _ := by
       rw [ModuleCat.Algebra.Hochschild.boundary_one_tprod]
-      simp [zeroCoordinate, LinearMap.comp_apply, TensorProduct.map_tmul,
-        TensorPower.zeroEquiv, PiTensorProduct.isEmptyEquiv_apply_tprod,
-        unit2, Matrix.mul_apply, Matrix.single_apply, Fin.sum_univ_succ,
-        smul_eq_mul]
+      simp [zeroCoordinate_tprod, unit2, Matrix.mul_apply, Matrix.single_apply,
+        Fin.sum_univ_succ, smul_eq_mul]
 
 example :
     (cornerChainMap ℤ A A (ULift.{1} I2) (ULift.up 0)) ≫
