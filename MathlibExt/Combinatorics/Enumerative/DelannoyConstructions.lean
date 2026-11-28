@@ -13,6 +13,7 @@ public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Logic.Function.Iterate
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Polynomial.Coeff
 import Mathlib.Data.Nat.Choose.Vandermonde
 
@@ -25,7 +26,7 @@ numbers `k`, `m` and `n`. The lower-index version requires `k ≤ m` and `k ≤ 
 ## References
 
 - Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal of Integer Sequences
-  27 (2024), Article 24.1.8, pp. 1–10, Theorem 11
+  27 (2024), Article 24.1.8, pp. 1–10, Theorems 9–11
   (<https://cs.uwaterloo.ca/journals/JIS/VOL27/Edwards/ed6.html>). See also Section 1 for the
   definitions and examples, and Sections 3–5 for the other identities and parity results.
 - The coefficient argument adapts the expansion in `coeff_delannoyPolynomial_pow` from
@@ -201,6 +202,34 @@ public theorem genDelannoy_eq_sum_two_pow_unified (k m n : ℕ) :
     refine sum_congr rfl fun j hj ↦ ?_
     have hjn : j ≤ n := by rw [mem_range] at hj; omega
     rw [show n + k - (n - j) = j + k by omega]
+
+/-- **Lower generalized Delannoy numbers as a sum of powers of two.** For natural numbers $k$, $m$,
+$n$ with $m \ge k$ and $n \ge k$, the lower generalized Delannoy number $D_k(m, n)$ satisfies
+$D_k(m, n) = \sum_{j=0}^{\min(m-k, n-k)} \binom{m-k}{j} \binom{n}{j+k} 2^{j+k}$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 9
+(`jis-2024-24.1.8-thm-9`). -/
+public theorem genDelannoyLower_eq_sum_two_pow (k m n : ℕ) (hm : k ≤ m) (hn : k ≤ n) :
+    genDelannoyLower k m n =
+      ∑ j ∈ range (min (m - k) (n - k) + 1), (m - k).choose j * n.choose (j + k) * 2 ^ (j + k) := by
+  have htop : min m n + 1 - k = min (m - k) (n - k) + 1 := by omega
+  rw [(genDelannoy_eq_sum_two_pow_unified k m n).1 hm hn, sum_Ico_eq_sum_range, htop]
+  simp only [Nat.add_comm k, Nat.add_sub_cancel]
+
+/-- **Powers-of-two formula for the upper generalized Delannoy numbers.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$,
+$$D^k(m, n) = \sum_{j=0}^{\min(m, n)} \binom{m + k}{j + k} \binom{n}{j} 2^j.$$
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 10
+(`jis-2024-24.1.8-thm-10`). -/
+public theorem genDelannoyUpper_eq_sum_two_pow (k m n : ℕ) :
+    genDelannoyUpper k m n =
+      ∑ j ∈ range (min m n + 1), (m + k).choose (j + k) * n.choose j * 2 ^ j :=
+  (genDelannoy_eq_sum_two_pow_unified k m n).2
 
 /-- **An upper generalized Delannoy number equal to $13$.**
 For natural numbers $k$, $m$ and $n$, write

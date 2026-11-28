@@ -37,6 +37,18 @@ example : genDelannoyLower 1 1 3 = 6 ∧
     (∑ j ∈ range (min 1 3 + 1), (1 + 1).choose (j + 1) * (3 : ℕ).choose j * 2 ^ j) = 8 := by
   decide
 
+-- Reindexing the lower formula gives the two terms at j = 0 and j = 1.
+example : genDelannoyLower 1 2 4 = 32 ∧
+    (∑ j ∈ range (min (2 - 1) (4 - 1) + 1),
+      (2 - 1).choose j * (4 : ℕ).choose (j + 1) * 2 ^ (j + 1)) = 32 := by
+  decide
+
+-- The named corollaries give the two entries at m = k < n.
+example : genDelannoyLower 1 1 3 + genDelannoyUpper 1 1 3 = 14 := by
+  rw [genDelannoyLower_eq_sum_two_pow 1 1 3 (by decide) (by decide),
+    genDelannoyUpper_eq_sum_two_pow 1 1 3]
+  decide
+
 -- A client can use either component of the unified theorem from this import.
 example : genDelannoyLower 1 2 2 = genDelannoyUpper 1 1 3 := by
   rw [(genDelannoy_eq_sum_two_pow_unified 1 2 2).1 (by decide) (by decide),
