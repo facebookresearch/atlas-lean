@@ -38,6 +38,8 @@ universe v u v' u'
 
 namespace HomologicalComplex
 
+section Preadditive
+
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 /-- Reversed Hom cochain short complex of a chain sequence.
@@ -48,38 +50,6 @@ noncomputable abbrev homCochainShortComplex
     (S : ShortComplex (ChainComplex C ℕ)) (G : C) :
     ShortComplex (CochainComplex AddCommGrpCat.{v} ℕ) :=
   S.op.map (homCochainComplexFunctor C G)
-
-omit [Preadditive C] in
-/-- Degreewise split first arrow gives reversed Hom short exactness.
-
-If a chain-complex short sequence is short exact and its first arrow is split monic in every
-natural degree, its reversed Hom cochain sequence into any `G` is short exact. -/
-theorem homCochainShortComplex_shortExact_of_degreewise_splitMono
-    [Abelian C] (S : ShortComplex (ChainComplex C ℕ)) (hS : S.ShortExact)
-    (hsplit : ∀ n, SplitMono ((S.map
-      (HomologicalComplex.eval C (ComplexShape.down ℕ) n)).f)) (G : C) :
-    (homCochainShortComplex S G).ShortExact := by
-  apply HomologicalComplex.shortExact_of_degreewise_shortExact
-  intro n
-  let S_n : ShortComplex C :=
-    S.map (HomologicalComplex.eval C (ComplexShape.down ℕ) n)
-  have hS_n : S_n.ShortExact :=
-    (HomologicalComplex.shortExact_iff_degreewise_shortExact S).mp hS n
-  have hsplit_n : SplitMono S_n.f := hsplit n
-  let splitting : S_n.Splitting :=
-    ShortComplex.Splitting.ofExactOfRetraction S_n hS_n.exact
-      hsplit_n.retraction hsplit_n.id hS_n.epi_g
-  let F : Cᵒᵖ ⥤ AddCommGrpCat.{v} := preadditiveYoneda.obj G
-  have hMapped : ((S_n.op).map F).ShortExact :=
-    (splitting.op.map F).shortExact
-  have hEq :
-      ((homCochainShortComplex S G).map
-        (HomologicalComplex.eval AddCommGrpCat.{v} (ComplexShape.up ℕ) n)) =
-        ((S_n.op).map F) := by
-    dsimp [homCochainShortComplex, homCochainComplexFunctor, S_n, F]
-    rfl
-  rw [hEq]
-  exact hMapped
 
 /-- Hom cochains as a functor of the coefficient object.
 
@@ -114,19 +84,54 @@ private noncomputable instance homCochainComplexCoefficientFunctorEval_additive
   dsimp [homCochainComplexCoefficientFunctorEval]
   infer_instance
 
-omit [Preadditive C] in
+end Preadditive
+
+section Abelian
+
+variable {C : Type u} [Category.{v} C] [Abelian C]
+
+/-- Degreewise split first arrow gives reversed Hom short exactness.
+
+If a chain-complex short sequence is short exact and its first arrow is split monic in every
+natural degree, its reversed Hom cochain sequence into any `G` is short exact. -/
+theorem homCochainShortComplex_shortExact_of_degreewise_splitMono
+    (S : ShortComplex (ChainComplex C ℕ)) (hS : S.ShortExact)
+    (hsplit : ∀ n, SplitMono ((S.map
+      (HomologicalComplex.eval C (ComplexShape.down ℕ) n)).f)) (G : C) :
+    (homCochainShortComplex S G).ShortExact := by
+  apply HomologicalComplex.shortExact_of_degreewise_shortExact
+  intro n
+  let S_n : ShortComplex C :=
+    S.map (HomologicalComplex.eval C (ComplexShape.down ℕ) n)
+  have hS_n : S_n.ShortExact :=
+    (HomologicalComplex.shortExact_iff_degreewise_shortExact S).mp hS n
+  have hsplit_n : SplitMono S_n.f := hsplit n
+  let splitting : S_n.Splitting :=
+    ShortComplex.Splitting.ofExactOfRetraction S_n hS_n.exact
+      hsplit_n.retraction hsplit_n.id hS_n.epi_g
+  let F : Cᵒᵖ ⥤ AddCommGrpCat.{v} := preadditiveYoneda.obj G
+  have hMapped : ((S_n.op).map F).ShortExact :=
+    (splitting.op.map F).shortExact
+  have hEq :
+      ((homCochainShortComplex S G).map
+        (HomologicalComplex.eval AddCommGrpCat.{v} (ComplexShape.up ℕ) n)) =
+        ((S_n.op).map F) := by
+    dsimp [homCochainShortComplex, homCochainComplexFunctor, S_n, F]
+    rfl
+  rw [hEq]
+  exact hMapped
+
 private noncomputable instance
     homCochainComplexCoefficientFunctorEval_preservesFiniteLimits
-    [Abelian C] (K : ChainComplex C ℕ) (n : ℕ) :
+    (K : ChainComplex C ℕ) (n : ℕ) :
     PreservesFiniteLimits (homCochainComplexCoefficientFunctorEval K n) := by
   change PreservesFiniteLimits
     (preadditiveCoyoneda.obj (Opposite.op (K.X n)))
   infer_instance
 
-omit [Preadditive C] in
 private noncomputable instance
     homCochainComplexCoefficientFunctorEval_preservesFiniteColimits
-    [Abelian C] (K : ChainComplex C ℕ) (n : ℕ) [Projective (K.X n)] :
+    (K : ChainComplex C ℕ) (n : ℕ) [Projective (K.X n)] :
     PreservesFiniteColimits (homCochainComplexCoefficientFunctorEval K n) := by
   change PreservesFiniteColimits
     (preadditiveCoyoneda.obj (Opposite.op (K.X n)))
@@ -141,13 +146,12 @@ private noncomputable instance
     @Functor.preservesFiniteColimits_of_preservesHomology _ _ _ _ _ _ F
       inferInstance hHomology inferInstance inferInstance inferInstance
 
-omit [Preadditive C] in
 /-- Projective chain terms give coefficient Hom short exactness.
 
 If every `K.X n` is projective, applying the coefficient Hom cochain functor to a short exact
 coefficient sequence gives a short exact sequence of cochain complexes. -/
 theorem homCochainComplexCoefficientFunctor_map_shortExact_of_projective
-    [Abelian C] (K : ChainComplex C ℕ) [∀ n, Projective (K.X n)]
+    (K : ChainComplex C ℕ) [∀ n, Projective (K.X n)]
     (S : ShortComplex C) (hS : S.ShortExact) :
     (S.map (homCochainComplexCoefficientFunctor K)).ShortExact := by
   let S' : ShortComplex (CochainComplex AddCommGrpCat.{v} ℕ) :=
@@ -165,6 +169,8 @@ theorem homCochainComplexCoefficientFunctor_map_shortExact_of_projective
   exact
     ShortComplex.ShortExact.map_of_exact hS
       (homCochainComplexCoefficientFunctorEval K n)
+
+end Abelian
 
 /-- Hom cochains for a functorial family of chain complexes.
 

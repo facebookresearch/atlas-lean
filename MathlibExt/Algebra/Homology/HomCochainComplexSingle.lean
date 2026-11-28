@@ -203,7 +203,8 @@ lemma homCochainComplexSingle₀Iso_hom_f_zero (R G : C) :
   rw [homCochainComplexSingle₀Iso, homCochainComplexSingleIso_hom_f_self]
   simp [homCochainComplexSingleSupportedIso, homCochainComplexSingleEvalIso,
     singleObjXSelf, singleObjXIsoOfEq, HomologicalComplex.singleCompEvalIsoSelf,
-    HomologicalComplex.single, preadditiveCoyoneda]
+    HomologicalComplex.single, preadditiveCoyoneda] <;>
+    ext f <;> rfl
 
 /-- Single-object Hom cohomology vanishes away from its degree.
 
