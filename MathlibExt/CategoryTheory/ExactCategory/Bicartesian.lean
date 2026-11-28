@@ -20,7 +20,7 @@ Let `C` be an additive category with a chosen Quillen exact structure.
 A morphism between admissible exact short complexes that is invertible on
 the left gives a pullback square on the last two objects; invertibility
 on the right gives a pushout square on the first two objects. The associated
-biproduct kernel–cokernel sequences characterize these squares.
+biproduct kernel–cokernel sequences give sufficient conditions for these squares.
 
 References: Theo Bühler, *Exact Categories*, Proposition 2.12,
 Proposition 3.1, and Corollary 3.2.
@@ -53,7 +53,7 @@ theorem isPushout_of_isAdmissibleExact_shortComplex
     (sq.isColimitEquivIsColimitCokernelCofork.symm hc)
 
 /-- In an additive exact category `C`, let `sq` be a commutative square
-with initial object `X₁` and final object `X₄`. If the associated
+with upper-left corner `X₁` and lower-right corner `X₄`. If the associated
 biproduct short complex with map into `X₂ ⊞ X₃` is admissible exact,
 the original square is a pullback. -/
 theorem isPullback_of_isAdmissibleExact_shortComplex'
