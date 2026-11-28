@@ -112,7 +112,7 @@ private theorem lift_value :
   change (resolution.π.f 0).hom ((lift.f 0).hom 2) =
     quotient.hom ((ε.f 0).hom 2) at h
   have hε : (ε.f 0).hom (2 : ℤ) = (2 : ℤ) := by
-    simpa using ConcreteCategory.congr_hom ε_zero (2 : ℤ)
+    rfl
   rw [hε] at h
   have hq : quotient.hom (2 : ℤ) = (2 : ZMod 6) := by
     decide
@@ -122,7 +122,7 @@ example : (resolution.π.f 0).hom ((lift.f 0).hom 2) = (2 : ZMod 6) := lift_valu
 
 example : (resolution.π.f 0).hom ((lift.f 0).hom 2) ≠ (0 : ZMod 6) := by
   rw [lift_value]
-  decide
+  exact (by decide : (2 : ZMod 6) ≠ (0 : ZMod 6))
 
 private abbrev I : InjectiveResolution N := injectiveResolution N
 private abbrev twice : Z ⟶ N :=
@@ -137,7 +137,7 @@ private abbrev representative : Z ⟶ I.cocomplex.X 0 := twice ≫ inclusion
 private theorem representative_cycle :
     representative ≫ I.cocomplex.d 0 1 = 0 :=
   (Category.assoc twice inclusion (I.cocomplex.d 0 1)).trans
-    ((congrArg (fun f => twice ≫ f) inclusion_cycle).trans (comp_zero twice))
+    ((congrArg (fun f => twice ≫ f) inclusion_cycle).trans (comp_zero (f := twice)))
 private abbrev e : CategoryTheory.Abelian.Ext Z N 0 :=
   I.extMk representative 1 rfl representative_cycle
 
@@ -149,7 +149,7 @@ private theorem e_nonzero : e ≠ 0 := by
     calc
       _ = representative := rfl
       _ = 0 := hr
-      _ = (0 : Z ⟶ N) ≫ inclusion := (zero_comp inclusion).symm
+      _ = (0 : Z ⟶ N) ≫ inclusion := (zero_comp (f := inclusion)).symm
   have ht : twice = 0 := (cancel_mono inclusion).mp hcomp
   have h2 : (2 : ZMod 6) = 0 := by
     simpa [twice, LinearMap.toSpanSingleton_apply] using
