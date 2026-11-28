@@ -81,8 +81,8 @@ namespace PerronFormulaPolynomialDegreeSlice
 
 open Complex MeasureTheory
 
-/-- The contour integral of the single term `c u^m / u^(n+1)` over `|u| = r` is `2πi c` when
-`m = n` and `0` otherwise. -/
+/-- For `0 < r`, the contour integral of the single term `c u^m / u^(n+1)` over `|u| = r` is
+`2πi c` when `m = n` and `0` otherwise. -/
 private theorem circleIntegral_monomial_div_pow {r : ℝ} (hr : 0 < r) (c : ℂ) (m n : ℕ) :
     (∮ u in C(0, r), c * u ^ m / u ^ (n + 1)) =
       if m = n then c * (2 * Real.pi * I) else 0 := by
