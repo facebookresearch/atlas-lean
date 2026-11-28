@@ -192,7 +192,7 @@ that states them in the form used. A good expansion states and links:
 - D. Loeffler and J. Weinstein, "On the computation of local components of a newform", Math. Comp. 81 (2012),
   no. 278, 1179–1200, doi:10.1090/S0025-5718-2011-02530-5: §1.1, p. 1179 ("The isomorphism class of the infinite
   component $\pi_{f,\infty}$ is determined by the weight $k$ alone: it is the unique discrete series subrepresentation of
-  the representation constructed via unitary induction from the character" $\left(\begin{smallmatrix} t_1 & * \\ 0 & t_2 \end{smallmatrix}\right) \mapsto (t_1/t_2)^{k/2}\operatorname{sgn}(t_1)^k$ "of the Borel subgroup of
+  the representation constructed via unitary induction from the character" $\left(\begin{smallmatrix} t_1 & x \\ 0 & t_2 \end{smallmatrix}\right) \mapsto (t_1/t_2)^{k/2}\operatorname{sgn}(t_1)^k$ "of the Borel subgroup of
   $\mathrm{GL}_2(\mathbb{R})$ [Gel75, prop. 5.21]"), and §2.1, p. 1181 ("The function $\varphi_f$ in fact lies in the space
   $\mathcal{A}_0(\omega)$ of automorphic forms on $G_{\mathbb{A}}$ of central character $\omega$; see [Gel75, §3]").
 - T. Wedhorn, "The local Langlands correspondence for GL(n) over p-adic fields", lecture notes,

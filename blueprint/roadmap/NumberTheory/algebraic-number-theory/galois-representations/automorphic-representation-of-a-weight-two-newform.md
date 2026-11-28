@@ -106,7 +106,7 @@ This node is still to be broken down. A good expansion states and links:
     Remark 2.3 ("Casselman uses $\omega(a)$ rather than $\omega(d)$, but his theorem and Theorem 2.2 are clearly
     equivalent"), Definition 2.4 (the conductor $r(\pi)$ and new vectors), the operator $T_p$ and $\lambda(\pi)$, Table 1 (the
     principal series $\pi(\chi_1, \chi_2)$, defined when $\chi_1/\chi_2 \neq \lvert\cdot\rvert^{\pm 1}$, with central character $\chi_1\chi_2$
-    and $\lambda(\pi) = \chi_1^*(p) + \chi_2^*(p)$), and "If $f$ is a $p$-new eigenform, the automorphic form $\varphi_f$ constructed
+    and $\lambda(\pi) = \chi_1^\ast(p) + \chi_2^\ast(p)$), and "If $f$ is a $p$-new eigenform, the automorphic form $\varphi_f$ constructed
     above is a new vector for $\pi_{f,p}$ for every prime $p$. One checks that $\lambda(\pi_{f,p}) = a_p(f)/p^{(k-1)/2}$. In
     particular, if $p \nmid N$, then $\pi_{f,p} \cong \pi(\chi_1, \chi_2)$ with $\chi_1$ and $\chi_2$ the unramified characters whose
     values at $p$ are $\{\alpha/p^{(k-1)/2}, \beta/p^{(k-1)/2}\}$, for $\alpha$ and $\beta$ the roots of $X^2 - a_pX + \omega(p)p^{k-1}$"
