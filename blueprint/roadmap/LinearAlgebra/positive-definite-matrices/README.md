@@ -15,6 +15,7 @@ Positive definite and semidefinite matrices, criteria for definiteness, and ineq
 - [Araki–Lieb–Thirring inequality](araki-lieb-thirring-inequality/README.md)
 
 - [Strict convexity of a positive-definite quadratic form](strict-convexity-of-positive-definite-quadratic.md)
+- [Weak diagonal dominance and positive semidefiniteness](pos-semidef-of-diagonally-dominant.md)
 
 ## Related topics
 

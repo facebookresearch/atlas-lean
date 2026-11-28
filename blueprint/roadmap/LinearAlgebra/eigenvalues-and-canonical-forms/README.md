@@ -13,6 +13,7 @@ Eigenvalues, eigenspaces and characteristic polynomials of matrices and endomorp
 - [Smith normal form](smith-normal-form/README.md)
 - [Trace dispersion of real symmetric matrices](trace-dispersion-of-real-symmetric-matrices/README.md)
 - [Triangularization](triangularization/README.md)
+- [Charpoly pow trace](sum-roots-charpoly-map-pow-eq-trace-pow.md)
 - [Eigenvalues of the inverse matrix](eigenvalues-of-the-inverse/README.md)
 - [Spectral theorem for normal matrices](spectral-theorem-for-normal-matrices/README.md)
 - [Spectral radius under a row-sum bound](row-sum-bounds-on-eigenvalues/README.md)
@@ -22,3 +23,4 @@ Eigenvalues, eigenspaces and characteristic polynomials of matrices and endomorp
 - [Existence of eigenvalues](existence-of-eigenvalues/README.md)
 - [A finitely generated torsion-free module over a principal ideal domain is free](finite-torsion-free-module-pid-free.md)
 - [Joint spectral radius and switched linear systems](joint-spectral-radius-and-switched-systems/README.md)
+- [Finite determination of linear observations](finite-determination-of-linear-observations/README.md)

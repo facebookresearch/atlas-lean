@@ -1,6 +1,6 @@
 # A two-level unitary from multiply controlled gates along a Gray code
 
-Let $n \ge 1$ and let $T$ be a two-level unitary (a unitary that is [two-level](../../../LinearAlgebra/not-yet-classified/two-level/is-two-level.md)) on $(\mathbb{C}^2)^{\otimes n}$
+Let $n \ge 1$ and let $T$ be a two-level unitary (a unitary that is [two-level](../../../LinearAlgebra/matrix-decompositions/two-level-unitary-decomposition/is-two-level.md)) on $(\mathbb{C}^2)^{\otimes n}$
 acting on the computational basis states $|x\rangle$ and $|y\rangle$, $x \ne y \in \{0, 1\}^n$. Let
 $x = g_1, g_2, \dots, g_m = y$ be a shortest Gray code from $x$ to $y$: consecutive strings differ in exactly one bit
 and each bit in which $x$ and $y$ differ is flipped exactly once, so the strings are distinct and $m - 1 \le n$ is the
@@ -14,7 +14,7 @@ of $O(n^2)$ gates each, $T$ costs $O(n^3)$ single-qubit gates and CNOTs.
 
 ## Depends on
 
-- [Two-level matrix](../../../LinearAlgebra/not-yet-classified/two-level/is-two-level.md)
+- [Two-level matrix](../../../LinearAlgebra/matrix-decompositions/two-level-unitary-decomposition/is-two-level.md)
 - [Multiply controlled unitaries from CNOT and single-qubit gates](multiply-controlled-unitary-from-cnot-and-single-qubit-gates.md)
 
 ## Proof depends on
