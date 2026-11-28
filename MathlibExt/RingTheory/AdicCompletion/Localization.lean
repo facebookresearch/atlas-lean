@@ -42,7 +42,7 @@ namespace AdicCompletion
 
 variable {R S : Type*} [CommRing R] [CommRing S] (I : Ideal R) (J : Ideal S)
 
-private theorem factorPow_evalₐ {m n : ℕ} (hle : m ≤ n) (x : AdicCompletion I R) :
+theorem factorPow_evalₐ {m n : ℕ} (hle : m ≤ n) (x : AdicCompletion I R) :
     Ideal.Quotient.factorPow I hle (evalₐ I n x) = evalₐ I m x := by
   obtain ⟨a, rfl⟩ := mk_surjective I R x
   rw [evalₐ_mk, evalₐ_mk, Ideal.Quotient.factor_mk]

@@ -1211,3 +1211,4 @@ Topics added since this subject's fields were last revised.
 - [QMCoarse Moduli](qmcoarse-moduli/README.md)
 - [Relative Group Law Etale](relative-group-law-etale/README.md)
 - [Structure Constants](structure-constants/README.md)
+- [Abelian De Rham Comparison](abelian-de-rham-comparison/README.md)
