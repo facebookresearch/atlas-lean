@@ -40,13 +40,6 @@ elements is admissible, so that case is vacuous. Compared with the formal-conjec
 `ErdosProblems/772.lean` (equivalent; no code imported).
 -/
 
-/-- Erdős Problem 772, first question: for every `k ≥ 1`, `H_k(n) / √n → ∞`, where
-`‖1_A ∗ 1_A‖_∞ ≤ k` bounds `AdditiveCombinatorics.orderedRepresentationCount` (ordered pairs). -/
-def sidonSubsetBeyondSqrt : Prop :=
-  ∀ k : ℕ, 1 ≤ k → ∀ C : ℝ, ∀ᶠ n : ℕ in Filter.atTop, ∀ A : Finset ℕ, A.card = n →
-    (∀ m, AdditiveCombinatorics.orderedRepresentationCount (A : Set ℕ) m ≤ k) →
-      ∃ S ⊆ A, (S : Set ℕ).IsSidon ∧ C * Real.sqrt n ≤ S.card
-
 /-- Erdős Problem 772, second question: for every `k ≥ 1` some `c > 0` has `H_k(n) > n^{1/2 + c}`
 for all large `n`. -/
 def sidonSubsetPowerGain : Prop :=

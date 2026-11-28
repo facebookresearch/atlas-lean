@@ -23,11 +23,12 @@ import Mathlib.Tactic.Positivity
 /-!
 # Sidon subsets of sets with bounded representation counts
 
-For each `k ≥ 1` and real `C`, every sufficiently large finite set `A ⊆ ℕ` with at most `k`
-ordered representations of each sum has a Sidon subset of size at least `C * √|A|`. We use
-Alon and Erdős's sampling and deletion argument for inequality (4). Their `B₂` condition tests
-sums of distinct terms; to obtain `Set.IsSidon` we also remove three-element supports of
-collisions with a repeated summand, using the count in the proof of Theorem 3.
+For each `k ≥ 1`, every nonempty finite set `A ⊆ ℕ` with at most `k` ordered representations of
+each sum has a Sidon subset of size at least `|A|^(2/3) / (8 * k)`. In particular, for each real
+`C`, if `A` is sufficiently large in terms of `k` and `C`, it has a Sidon subset of size at least
+`C * √|A|`. We use Alon and Erdős's sampling and deletion argument for inequality (4). Their `B₂`
+condition tests sums of distinct terms; to obtain `Set.IsSidon` we also remove three-element
+supports of collisions with a repeated summand, using the count in the proof of Theorem 3.
 
 ## References
 
@@ -47,6 +48,13 @@ namespace MathlibExt.NumberTheory.SidonSubsetBoundedRepresentationsErdosProblem7
 
 open AdditiveCombinatorics
 
+/-- Erdős Problem 772, first question: for every `k ≥ 1`, `H_k(n) / √n → ∞`, where
+`‖1_A ∗ 1_A‖_∞ ≤ k` bounds `AdditiveCombinatorics.orderedRepresentationCount` (ordered pairs). -/
+@[expose] public def sidonSubsetBeyondSqrt : Prop :=
+  ∀ k : ℕ, 1 ≤ k → ∀ C : ℝ, ∀ᶠ n : ℕ in Filter.atTop, ∀ A : Finset ℕ, A.card = n →
+    (∀ m, AdditiveCombinatorics.orderedRepresentationCount (A : Set ℕ) m ≤ k) →
+      ∃ S ⊆ A, (S : Set ℕ).IsSidon ∧ C * Real.sqrt n ≤ S.card
+
 private def repPairs (A : Finset ℕ) (m : ℕ) : Finset (ℕ × ℕ) :=
   (antidiagonal m).filter (fun p => p.1 ∈ A ∧ p.2 ∈ A)
 
@@ -57,11 +65,7 @@ private lemma mem_repPairs {A : Finset ℕ} {m a b : ℕ} :
 private lemma card_repPairs_le {A : Finset ℕ} {k : ℕ}
     (hk : ∀ m, orderedRepresentationCount (A : Set ℕ) m ≤ k) (m : ℕ) :
     (repPairs A m).card ≤ k := by
-  have h := hk m
-  rw [orderedRepresentationCount] at h
-  convert h using 2
-  ext p
-  simp [repPairs]
+  simpa only [repPairs, ← orderedRepresentationCount_coe_finset A m] using hk m
 
 private def collisionSupports {ι : Type*} (A : Finset ℕ) (I : Finset ι) (m : ι → ℕ)
     (support : ι → ℕ × ℕ → Finset ℕ) (r : ℕ) : Finset (Finset ℕ) :=
@@ -247,7 +251,11 @@ private lemma exists_sidon_of_representation_bound {A : Finset ℕ} {k : ℕ}
     · rw [mul_comm]; exact_mod_cast hE₃
     · rw [mul_comm]; exact_mod_cast hE₄
 
-private lemma exists_sidon_card_rpow {A : Finset ℕ} {k : ℕ} (hk : 1 ≤ k) (hA : 1 ≤ A.card)
+/-- **Quantitative Sidon subset bound.** If `k ≥ 1` and `A` is a nonempty finite set of
+natural numbers with at most `k` ordered representations of each sum, then `A` contains a
+Sidon subset of size at least `|A|^(2/3) / (8 * k)`. This is the sampling bound of Alon and Erdős
+(inequality (4)), with repeated summands included in the Sidon condition. -/
+public theorem exists_sidon_card_rpow {A : Finset ℕ} {k : ℕ} (hk : 1 ≤ k) (hA : 1 ≤ A.card)
     (hrep : ∀ m, orderedRepresentationCount (A : Set ℕ) m ≤ k) :
     ∃ S ⊆ A, (S : Set ℕ).IsSidon ∧ (A.card : ℝ) ^ ((2 : ℝ) / 3) / (8 * k) ≤ S.card := by
   let n : ℝ := A.card
@@ -323,10 +331,7 @@ Journal of Combinatorics 6 (1985), 201–203, Theorem 1 (inequality (4)). Their 
 consider only sums of distinct terms. The same sampling argument gives the stated Sidon
 convention, by also discarding supports of collisions `a + a = b + c` with three distinct terms.
 -/
-public theorem sidonSubsetBeyondSqrt_holds :
-    ∀ k : ℕ, 1 ≤ k → ∀ C : ℝ, ∀ᶠ n : ℕ in Filter.atTop, ∀ A : Finset ℕ, A.card = n →
-      (∀ m, AdditiveCombinatorics.orderedRepresentationCount (A : Set ℕ) m ≤ k) →
-        ∃ S ⊆ A, (S : Set ℕ).IsSidon ∧ C * Real.sqrt n ≤ S.card := by
+public theorem sidonSubsetBeyondSqrt_holds : sidonSubsetBeyondSqrt := by
   intro k hk C
   have ht : Tendsto (fun n : ℕ => (n : ℝ) ^ ((1 : ℝ) / 6)) atTop atTop :=
     (tendsto_rpow_atTop (by norm_num)).comp tendsto_natCast_atTop_atTop
