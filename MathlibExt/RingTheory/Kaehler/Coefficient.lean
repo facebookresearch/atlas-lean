@@ -63,16 +63,17 @@ section Ext
 
 variable {M : Type t} [AddCommGroup M] [Module A M]
 
-/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
-C=A⊗_PΩ. For any A-module M, if A-linear maps f,g:C → M have f(1⊗dp)=g(1⊗dp) for every p∈P, then
-f=g. No separately supplied P- or k-action on M is required for this extensionality statement. -/
+omit [Algebra k A] [IsScalarTower k P A] in
+/-- For a k-algebra P and a P-algebra A, put C=A⊗_PΩ¹_{P/k}. A-linear maps f,g:C → M
+are equal if f(1⊗dp)=g(1⊗dp) for every p∈P. The A-module M needs no separately supplied
+P- or k-action, and no chosen k-algebra structure on A is needed. -/
 @[ext]
 theorem coefficient_hom_ext {f g : Coefficient k P A →ₗ[A] M}
     (h : ∀ p : P,
       f ((1 : A) ⊗ₜ[P] KaehlerDifferential.D k P p) =
       g ((1 : A) ⊗ₜ[P] KaehlerDifferential.D k P p)) : f = g := by
-  letI : Module P M := Module.compHom M (algebraMap P A)
-  letI : IsScalarTower P A M := IsScalarTower.of_compHom P A M
+  let : Module P M := Module.compHom M (algebraMap P A)
+  let : IsScalarTower P A M := IsScalarTower.of_compHom P A M
   apply TensorProduct.AlgebraTensorModule.ext
   intro a ω
   have hω : ω ∈ Submodule.span P (Set.range (KaehlerDifferential.D k P)) := by
@@ -109,15 +110,16 @@ variable {M : Type t} [AddCommGroup M]
   [Module A M] [Module P M] [Module k M]
   [IsScalarTower P A M] [IsScalarTower k P M] [IsScalarTower k A M]
 
-/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
-C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
-towers. There is a bijection Hom_A(C,M) ≃ Der_k(P,M), sending f to p ↦ f(1⊗dp). Its inverse
-sends D to the unique A-linear map a⊗dp ↦ a·D(p). -/
+/-- For a k-algebra P and a P-algebra A, let M carry compatible module actions with
+towers P→A→M and k→P→M. Then Hom_A(A⊗_PΩ¹_{P/k},M) ≃ Der_k(P,M), sending f to
+p ↦ f(1⊗dp). The inverse sends D to the A-linear map a⊗dp ↦ a·D(p). No chosen
+k-algebra structure on A is needed. -/
 def coefficientHomEquivDerivation :
     (Coefficient k P A →ₗ[A] M) ≃ Derivation k P M :=
   (LinearMap.liftBaseChangeEquiv A).symm.toEquiv.trans
     (KaehlerDifferential.linearMapEquivDerivation k P).toEquiv
 
+omit [Algebra k A] [IsScalarTower k P A] [IsScalarTower k A M] in
 @[simp]
 theorem coefficientHomEquivDerivation_apply
     (f : Coefficient k P A →ₗ[A] M) (p : P) :
@@ -138,19 +140,20 @@ def coefficientLinearMapEquivDerivation :
     ext p
     rfl
 
-/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
-C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
-towers. For D∈Der_k(P,M), coefficientLift k P A D is the A-linear map C → M determined by a⊗dp ↦
-a·D(p). -/
+/-- For a k-algebra P and a P-algebra A, let M carry compatible module actions with
+towers P→A→M and k→P→M. For D∈Der_k(P,M), coefficientLift k P A D is the A-linear
+map A⊗_PΩ¹_{P/k} → M determined by a⊗dp ↦ a·D(p). -/
 def coefficientLift (D : Derivation k P M) : Coefficient k P A →ₗ[A] M :=
   D.liftKaehlerDifferential.liftBaseChange A
 
+omit [Algebra k A] [IsScalarTower k P A] [IsScalarTower k A M] in
 @[simp]
 theorem coefficientLift_tmul_D (D : Derivation k P M) (a : A) (p : P) :
     coefficientLift k P A D (a ⊗ₜ[P] KaehlerDifferential.D k P p) = a • D p := by
   rw [coefficientLift, LinearMap.liftBaseChange_tmul,
     Derivation.liftKaehlerDifferential_comp_D]
 
+omit [Algebra k A] [IsScalarTower k P A] [IsScalarTower k A M] in
 @[simp]
 theorem coefficientHomEquivDerivation_symm_apply (D : Derivation k P M) :
     (coefficientHomEquivDerivation k P A).symm D = coefficientLift k P A D := rfl
@@ -182,11 +185,11 @@ variable {N : Type*} [AddCommGroup N]
   [Module A N] [Module P N] [Module k N]
   [IsScalarTower P A N] [IsScalarTower k P N] [IsScalarTower k A N]
 
-/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
-C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
-towers. Let N have the same compatible scalar towers and g:M →ₗ[A] N. For f:C →ₗ[A] M, the
-derivation corresponding to g∘f equals postcomposition by the P-linear restriction of g of the
-derivation corresponding to f. -/
+omit [Algebra k A] [IsScalarTower k P A] [IsScalarTower k A M] [IsScalarTower k A N] in
+/-- For a k-algebra P and a P-algebra A, let M and N have compatible module towers
+P→A→M, k→P→M and P→A→N, k→P→N. For an A-linear g:M→N, the derivation
+corresponding to g∘f is the P-linear restriction of g postcomposed with the derivation
+corresponding to f. No separate k-algebra action on A or k→A→M,N towers are needed. -/
 theorem coefficientHomEquivDerivation_naturality
     (g : M →ₗ[A] N) (f : Coefficient k P A →ₗ[A] M) :
     coefficientHomEquivDerivation k P A (g.comp f) =
@@ -234,6 +237,7 @@ def coefficientPullback (f : P →ₐ[k] Q)
     · rw [← IsScalarTower.algebraMap_smul (R := Q) (A := A),
         ← IsScalarTower.algebraMap_smul (R := P) (A := A), h q]
 
+omit [IsScalarTower k P A] in
 @[simp]
 theorem coefficientPullback_apply (f : P →ₐ[k] Q)
     (h : ∀ p : P, algebraMap P A p = algebraMap Q A (f p)) (p : P) :

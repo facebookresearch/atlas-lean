@@ -110,8 +110,6 @@ theorem tensorIso_naturality {M N M' N' : ModuleCat.{max u v w} S}
   apply ModuleCat.hom_ext
   apply TensorProduct.ext'
   intro m n
-  simp only [ModuleCat.hom_comp, LinearMap.comp_apply, TensorProduct.map_tmul,
-    tensorIso_hom_tmul]
   rfl
 
 end ModuleCat.RingEquivUniverse

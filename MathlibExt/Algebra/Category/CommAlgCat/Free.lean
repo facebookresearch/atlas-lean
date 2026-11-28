@@ -8,10 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 
 /-
+Portions of this file are adapted from:
+
+`Mathlib/Algebra/Category/Ring/Adjunctions.lean` (Mathlib):
 Copyright (c) 2019 Kim Morrison. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Author: @toskua
+Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Kim Morrison, Johannes Hölzl, Andrew Yang
+Polynomial free/forget unit, counit and adjunction constructions.
 -/
+-- Adapter: @toskua
 module
 
 public import Mathlib.Algebra.Category.CommAlgCat.Basic
