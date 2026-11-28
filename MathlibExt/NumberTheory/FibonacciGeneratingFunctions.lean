@@ -525,13 +525,10 @@ public theorem mem_fibonacciPairOrbit_iff (v w : ℤ × ℤ) :
 private def signedReverseFibonacciPair (s : ℤ) (v : ℤ × ℤ) : ℤ × ℤ :=
   (s * -v.2, s * v.1)
 
-/-- **Ratios of a shifted Gibonacci sequence are negated reciprocal ratios.** For any
-$a,b\in\mathbb{Z}$, let $H$ and $G$ be the two-sided sequences satisfying the Fibonacci
-recurrence at every integer index, with $H_0=-b$, $H_1=a$, $G_0=a$, and $G_1=b$.
-Then the following sets of rational numbers coincide:
-
-$$\{H_n/H_{n+1} : n\in\mathbb{Z},\ H_{n+1}\ne 0\}
-  = \{-G_{n+1}/G_n : n\in\mathbb{Z},\ G_n\ne 0\}.$$
+/-- Lemma 9: the values `H_n / H_{n+1}` (`n ∈ ℤ`, `H_{n+1} ≠ 0`) of the
+sequence with `H_0 = -b`, `H_1 = a` are exactly the values
+`-G_{n+1} / G_n` (`n ∈ ℤ`, `G_n ≠ 0`) of the Gibonacci sequence with
+`G_0 = a`, `G_1 = b`; both index sets run over the two-sided orbits.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 9 (`jis-2024-24.3.1-lem-9`). -/
