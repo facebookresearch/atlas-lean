@@ -11,12 +11,11 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import MathlibExt.NumberTheory.ZetaStrideSeriesTendstoStrideAlternatingSumRiemannZeta
 
-import all MathlibExt.NumberTheory.ZetaStrideSeriesTendstoStrideAlternatingSumRiemannZeta
-import all MathlibExt.Analysis.Ramanujan.Part1Ch8Entry8Digammaseries
 import Mathlib.Algebra.Order.Floor.Div
 import Mathlib.Analysis.Normed.Group.Tannery
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import MathlibExt.Analysis.Ramanujan.Part1Ch8Entry8Digammaseries
 
 /-!
 # The half-shift digamma series for alternating stride sums
@@ -31,9 +30,9 @@ alternating rows. Ramanujan's alternating digamma series gives the limit of each
 * Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta Function and
   Its Associated Functions*, INTEGERS 24 (2024), Article A45, pp. 1–17, Corollary 1, equation (20).
 * Bruce C. Berndt, *Ramanujan's Notebooks, Part I* (Springer-Verlag, 1985), Chapter 8, Entry 8.
-  We use `ramanujan_part1_ch8_entry8_digammaseries_complex_digamma` and `bridge_iff` from
+  We use `ramanujan_part1_ch8_entry8_digammaseries_complex_digamma` from
   `MathlibExt.Analysis.Ramanujan.Part1Ch8Entry8Digammaseries`.
-* The finite row bound uses `alternating_bound` from
+* The finite row bound uses `norm_sum_range_neg_one_pow_mul_le_two_mul` from
   `MathlibExt.NumberTheory.ZetaStrideSeriesTendstoStrideAlternatingSumRiemannZeta`.
 -/
 
@@ -52,7 +51,7 @@ private theorem sum_stride_reindex {q t N : ℕ} (hq : 0 < q) (w : ℕ → ℝ) 
       ∑ m ∈ range N, (1 / ((m : ℝ) + 1) ^ t) *
         ∑ j ∈ range ((N - m + q - 1) / q), (-1 : ℝ) ^ j * w (m + q * j) := by
   classical
-  simp only [strideAlternatingSum, mul_sum, sum_sigma']
+  simp only [strideAlternatingSum.eq_def, mul_sum, sum_sigma']
   refine sum_bij' (fun p _ ↦ ⟨p.1 - q * p.2, p.2⟩) (fun p _ ↦ ⟨p.1 + q * p.2, p.2⟩)
     ?_ ?_ ?_ ?_ ?_
   · rintro ⟨n, j⟩ h
@@ -97,7 +96,7 @@ private theorem norm_sum_alternating_reciprocal_le {a : ℝ} (ha : 0 < a) (q K :
         simp
       _ ≤ 2 * (1 / a) := by
         rw [norm_mul, norm_pow, norm_neg, norm_one, one_pow, one_mul]
-        simpa [f] using alternating_bound (fun j ↦ f (k - j)) k
+        simpa [f] using norm_sum_range_neg_one_pow_mul_le_two_mul (fun j ↦ f (k - j)) k
           (fun j _ ↦ by dsimp [f]; positivity) (fun j _ ↦ hanti (by omega))
 
 open MathlibExt.Analysis.Ramanujan.Part1Ch8.Entry8Digammaseries in
@@ -113,12 +112,12 @@ private theorem tendsto_sum_alternating_reciprocal {a : ℝ} (ha : 0 < a) {q : �
   have hne (j : ℕ) : (a : ℂ) - q + q * ((j + 1 : ℕ) : ℂ) ≠ 0 := by
     rw [hden]
     exact_mod_cast (show a + (q : ℝ) * (j : ℝ) ≠ 0 by positivity)
-  have h := (bridge_iff _ _).mp
-    (ramanujan_part1_ch8_entry8_digammaseries_complex_digamma ((a : ℂ) - q) q hq₀ hne)
+  have h := ramanujan_part1_ch8_entry8_digammaseries_complex_digamma ((a : ℂ) - q) q hq₀ hne
+  rw [HasSum, SummationFilter.conditional_filter_eq_map_range, Filter.tendsto_map'_iff] at h
   rw [show (a : ℂ) - q + 2 * q = a + q by ring, sub_add_cancel] at h
-  simpa only [chapter8Entry8Term, hden, Complex.ofReal_sum, Complex.ofReal_mul, Complex.ofReal_pow,
-    Complex.ofReal_neg, Complex.ofReal_one, Complex.ofReal_div, Complex.ofReal_add,
-    Complex.ofReal_natCast, mul_one_div] using h
+  simpa only [Function.comp_def, chapter8Entry8Term.eq_def, hden, Complex.ofReal_sum,
+    Complex.ofReal_mul, Complex.ofReal_pow, Complex.ofReal_neg, Complex.ofReal_one,
+    Complex.ofReal_div, Complex.ofReal_add, Complex.ofReal_natCast, mul_one_div] using h
 
 private theorem tendsto_stride_reciprocal (q t : ℕ) (hq : 0 < q) (ht : 0 < t) (a : ℝ)
     (ha : 0 ≤ a) :
