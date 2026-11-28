@@ -1,0 +1,68 @@
+{
+  "lean_toolchain": "leanprover/lean4:v4.36.0",
+  "mathlib_repository": "https://github.com/leanprover-community/mathlib4",
+  "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+  "source_files": [
+    {
+      "path": "MathlibExt/Analysis/CStarAlgebra/GNS/NullKernel.lean",
+      "source_sha256": "819d79d4e16512a8ff28de4cfb7f9211071aa04b75ad17f148fae20549f8a53d",
+      "source_bytes": 4102,
+      "author_notice": "Author: @toskua",
+      "original_library": "MathlibExt",
+      "original_sha256": "b57a16c5a2376fba7fd4171c92dd8ee737470bb2b837b44872a20489d96545ad",
+      "original_git_blob": "e0b4b31a336a28938864c82e1a4b4ec1e2f9c7be",
+      "original_bytes": 3924,
+      "original_lines": 94,
+      "snapshot_path": "provenance/functional-analysis/gns-null-submodules/source-records.json",
+      "snapshot_entry_path": "/originals/0/text_utf8",
+      "adaptations": [
+        "Add the Meta copyright and license header; retain the original author notice.",
+        "Remove the unused iff_true argument from the simp proof of ker_toGNS_zero.",
+        "Remove the redundant simp attribute from mem_ker_toGNS. Public declarations and proof bodies are otherwise unchanged."
+      ]
+    },
+    {
+      "path": "MathlibExt/Analysis/CStarAlgebra/GNS/NullSubmodule.lean",
+      "source_sha256": "5ac6c1d639b956ac108f9efb107d498472f40047ac472d0e09326afe1719a288",
+      "source_bytes": 3846,
+      "author_notice": "Author: @toskua",
+      "original_library": "MathlibExt",
+      "original_sha256": "120c89f89124892c317be04442af7b064a8efee8e845722f4d3c895e49427b55",
+      "original_git_blob": "149f56637756b19730033c984c149a29318fe7a5",
+      "original_bytes": 3577,
+      "original_lines": 84,
+      "snapshot_path": "provenance/functional-analysis/gns-null-submodules/source-records.json",
+      "snapshot_entry_path": "/originals/1/text_utf8",
+      "adaptations": [
+        "Add the Meta copyright and license header; retain the original author notice.",
+        "Clarify the module introduction to say closed left ideal and cite Murphy Chapter 3 by its publisher-verified title. All declaration docstrings, hypotheses, types, proof bodies and definitions are unchanged."
+      ]
+    },
+    {
+      "path": "MathlibExtTest/Analysis/CStarAlgebra/GNS/NullSubmoduleSmoke.lean",
+      "source_sha256": "19c6d2e6d7dd4275811e1ba310a888d5ecf802078c0c8dddfa0b49dbb4079acb",
+      "source_bytes": 1854,
+      "author_notice": "Author: @toskua",
+      "source_kind": "MathlibExtTest consumer"
+    }
+  ],
+  "snapshot_encoding": "UTF-8 text stored as JSON strings",
+  "originals": [
+    {
+      "path": "MathlibExt/Analysis/CStarAlgebra/GNS/NullKernel.lean",
+      "original_library": "MathlibExt",
+      "sha256": "b57a16c5a2376fba7fd4171c92dd8ee737470bb2b837b44872a20489d96545ad",
+      "git_blob": "e0b4b31a336a28938864c82e1a4b4ec1e2f9c7be",
+      "bytes": 3924,
+      "text_utf8": "/-\nAuthor: @toskua\n-/\nmodule\n\npublic import MathlibExt.Analysis.CStarAlgebra.GNS.UnitizationComparison\npublic import Mathlib.Analysis.CStarAlgebra.PositiveLinearMap\n\n/-!\n# The kernel of the GNS coefficient map\n\nFor a positive complex functional on a possibly nonunital C-star algebra,\nthe actual coefficient map into its GNS completion vanishes exactly on\nthe quadratic null set. This kernel is closed in the algebra norm and\nstable under left multiplication. The zero functional has the whole\nalgebra as its kernel. No normalization or nonzero assumption is needed.\n-/\n\n@[expose] public section\nset_option autoImplicit false\nset_option relaxedAutoImplicit false\nnoncomputable section\n\nopen Set Topology\nopen scoped ComplexOrder InnerProductSpace\n\nnamespace PositiveLinearMap\n\nuniverse uA\nvariable {A : Type uA} [NonUnitalCStarAlgebra A]\n  [PartialOrder A] [StarOrderedRing A]\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nLet `tau : A → ℂ` be a positive complex-linear functional, possibly zero.\nFor every `a : A`, its coefficient in `tau`'s actual GNS completion is zero exactly\nwhen `tau (star a * a) = 0`. -/\ntheorem toGNS_eq_zero_iff (tau : A →ₚ[ℂ] ℂ) (a : A) :\n    tau.toGNS a = 0 ↔ tau (star a * a) = 0 := by\n  constructor\n  · intro h\n    have hg := (tau.toGNS_inner a a).symm\n    simpa only [h, inner_zero_left] using hg\n  · intro h\n    apply (inner_self_eq_zero (𝕜 := ℂ)).mp\n    rw [tau.toGNS_inner]\n    exact h\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nLet `tau : A → ℂ` be a positive complex-linear functional, possibly zero.\nAn element `a : A` belongs to the complex linear kernel of the actual GNS coefficient\nmap exactly when `tau (star a * a) = 0`. -/\n@[simp]\ntheorem mem_ker_toGNS (tau : A →ₚ[ℂ] ℂ) (a : A) :\n    a ∈ tau.toGNS.ker ↔ tau (star a * a) = 0 :=\n  toGNS_eq_zero_iff tau a\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nLet `tau : A → ℂ` be a positive complex-linear functional, possibly zero.\nThe kernel of its actual GNS coefficient map is closed in the original C*-algebra\nnorm topology on `A`. -/\ntheorem isClosed_ker_toGNS (tau : A →ₚ[ℂ] ℂ) :\n    IsClosed ((tau.toGNS.ker : Submodule ℂ A) : Set A) := by\n  have hcarrier : ((tau.toGNS.ker : Submodule ℂ A) : Set A) =\n      {a : A | tau (star a * a) = 0} := by\n    ext a\n    exact toGNS_eq_zero_iff tau a\n  rw [hcarrier]\n  exact isClosed_eq ((map_continuous tau).comp (continuous_star.mul continuous_id)) continuous_const\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nLet `tau : A → ℂ` be a positive complex-linear functional, possibly zero.\nIf `x : A` belongs to the kernel of the actual GNS coefficient map, then `a * x`\nbelongs to that kernel for every `a : A`. -/\ntheorem mul_mem_ker_toGNS (tau : A →ₚ[ℂ] ℂ) (a : A) {x : A}\n    (hx : x ∈ tau.toGNS.ker) : a * x ∈ tau.toGNS.ker := by\n  change tau.toGNS x = 0 at hx\n  change tau.toGNS (a * x) = 0\n  rw [← tau.gnsNonUnitalStarAlgHom_toGNS a x, hx, map_zero]\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nFor the zero positive complex-linear functional `A → ℂ`, the actual GNS coefficient\nkernel is the full complex submodule `A`, represented by `⊤ : Submodule ℂ A`. -/\n@[simp]\ntheorem ker_toGNS_zero :\n    (0 : A →ₚ[ℂ] ℂ).toGNS.ker = ⊤ := by\n  ext a\n  simp only [mem_ker_toGNS, zero_apply, Submodule.mem_top, iff_true]\n\nend PositiveLinearMap\n"
+    },
+    {
+      "path": "MathlibExt/Analysis/CStarAlgebra/GNS/NullSubmodule.lean",
+      "original_library": "MathlibExt",
+      "sha256": "120c89f89124892c317be04442af7b064a8efee8e845722f4d3c895e49427b55",
+      "git_blob": "149f56637756b19730033c984c149a29318fe7a5",
+      "bytes": 3577,
+      "text_utf8": "/-\nAuthor: @toskua\n-/\nmodule\n\npublic import MathlibExt.Analysis.CStarAlgebra.GNS.NullKernel\npublic import Mathlib.Topology.Algebra.Module.ClosedSubmodule\n\n/-!\n# The actual closed GNS null submodule\n\nThe coefficient kernel of an arbitrary positive complex functional is a\nclosed submodule in the original C-star algebra norm topology. It is stable\nunder ambient left multiplication. This construction uses the stock\n`ClosedSubmodule` carrier and includes the zero functional and zero or\nnonunital algebras without a normalization premise.\n\nThe quadratic-null ideal construction appears in Murphy,\nC*-Algebras and Operator Theory, Section V.3.\n-/\n\n@[expose] public section\nset_option autoImplicit false\nset_option relaxedAutoImplicit false\nnoncomputable section\n\nopen Set\nopen scoped ComplexOrder InnerProductSpace\n\nnamespace PositiveLinearMap\n\nuniverse uA\nvariable {A : Type uA} [NonUnitalCStarAlgebra A]\n  [PartialOrder A] [StarOrderedRing A]\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nLet `tau : A → ℂ` be a positive complex-linear functional, possibly zero.\nConstruct its actual GNS coefficient kernel as a stock `ClosedSubmodule ℂ A`, closed\nin the original C*-algebra norm topology. -/\ndef gnsNullSubmodule (tau : A →ₚ[ℂ] ℂ) : ClosedSubmodule ℂ A where\n  toSubmodule := tau.toGNS.ker\n  isClosed' := isClosed_ker_toGNS tau\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nLet `tau : A → ℂ` be a positive complex-linear functional, possibly zero.\nThe underlying complex submodule of its actual closed GNS null submodule is exactly\nthe linear kernel `tau.toGNS.ker`. -/\n@[simp]\ntheorem gnsNullSubmodule_toSubmodule (tau : A →ₚ[ℂ] ℂ) :\n    (gnsNullSubmodule tau).toSubmodule = tau.toGNS.ker := rfl\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nLet `tau : A → ℂ` be a positive complex-linear functional, possibly zero.\nAn element `a : A` belongs to its actual closed GNS null submodule exactly when\n`tau (star a * a) = 0`. -/\n@[simp]\ntheorem mem_gnsNullSubmodule (tau : A →ₚ[ℂ] ℂ) (a : A) :\n    a ∈ gnsNullSubmodule tau ↔ tau (star a * a) = 0 :=\n  mem_ker_toGNS tau a\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nLet `tau : A → ℂ` be a positive complex-linear functional, possibly zero.\nIf `x : A` belongs to its actual closed GNS null submodule, then `a * x` belongs to\nthe same submodule for every `a : A`. -/\ntheorem mul_mem_gnsNullSubmodule (tau : A →ₚ[ℂ] ℂ) (a : A) {x : A}\n    (hx : x ∈ gnsNullSubmodule tau) : a * x ∈ gnsNullSubmodule tau :=\n  mul_mem_ker_toGNS tau a hx\n\n/-- Let `A` be a possibly nonunital complex C*-algebra, including the zero algebra, with a\ncompatible partial order (`PartialOrder A`, `StarOrderedRing A`).\nThe actual closed GNS null submodule of the zero positive complex-linear functional\n`A → ℂ` is `⊤ : ClosedSubmodule ℂ A`, in the original C*-algebra norm topology. -/\n@[simp]\ntheorem gnsNullSubmodule_zero :\n    gnsNullSubmodule (0 : A →ₚ[ℂ] ℂ) = ⊤ := by\n  apply ClosedSubmodule.toSubmodule_injective\n  change (0 : A →ₚ[ℂ] ℂ).toGNS.ker = (⊤ : Submodule ℂ A)\n  exact ker_toGNS_zero\n\nend PositiveLinearMap\n"
+    }
+  ]
+}
