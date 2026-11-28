@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# MINIMUM SUM OF `α`-TH POWERS is NP-complete for every fixed integer `α ≥ 2`: definitions
+# MINIMUM SUM OF `α`-TH POWERS: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
