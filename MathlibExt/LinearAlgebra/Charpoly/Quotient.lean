@@ -81,9 +81,19 @@ multiplication by s is left multiplication by its class in S/IS over R/I.
 theorem lmul_quotientBaseChange (s : S) (I : Ideal R) :
     (Algebra.lmul R S s).quotientBaseChange I =
       Algebra.lmul (R ⧸ I) (S ⧸ I.map (algebraMap R S)) (Ideal.Quotient.mk _ s) := by
-  ext x
-  obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective x
-  simp [Algebra.coe_lmul_eq_mul]
+  apply LinearMap.ext
+  intro y
+  obtain ⟨x, rfl⟩ := Ideal.Quotient.mk_surjective y
+  let q : S →+* S ⧸ I.map (algebraMap R S) :=
+    Ideal.Quotient.mk (I.map (algebraMap R S))
+  calc
+    (Algebra.lmul R S s).quotientBaseChange I (q x) =
+        q ((Algebra.lmul R S s) x) :=
+      LinearMap.quotientBaseChange_mk (Algebra.lmul R S s) I x
+    _ = q (s * x) := by rw [Algebra.coe_lmul_eq_mul, LinearMap.mul_apply']
+    _ = q s * q x := q.map_mul s x
+    _ = Algebra.lmul (R ⧸ I) (S ⧸ I.map (algebraMap R S)) (q s) (q x) := by
+      rw [Algebra.coe_lmul_eq_mul, LinearMap.mul_apply']
 
 variable [Module.Free R S] [Module.Finite R S]
 
@@ -135,7 +145,7 @@ theorem charpoly_lmul_map_ringEquiv (φ : k ≃+* k')
     (h : ∀ (c : k) (y : E), φ c • y = c • y) (x : E) :
     (Algebra.lmul k E x).charpoly.map φ.toRingHom = (Algebra.lmul k' E x).charpoly :=
   LinearMap.charpoly_mapCoeffs φ h (Algebra.lmul k E x) (Algebra.lmul k' E x)
-    (fun y ↦ by simp only [Algebra.coe_lmul_eq_mul])
+    (fun y ↦ by simp only [Algebra.coe_lmul_eq_mul, LinearMap.mul_apply'])
 
 end MapRingEquiv
 

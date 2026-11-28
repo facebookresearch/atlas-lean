@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.LinearAlgebra.Determinant.ColumnNormalization
-import Mathlib.LinearAlgebra.Matrix.ToLin
+public import Mathlib.LinearAlgebra.Matrix.ToLin
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
