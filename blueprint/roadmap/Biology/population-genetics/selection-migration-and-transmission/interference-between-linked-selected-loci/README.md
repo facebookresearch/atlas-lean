@@ -15,3 +15,5 @@
 - [Speed of adaptation from a marked lineage trajectory](speed-of-adaptation-from-a-marked-lineage-trajectory.md)
 - [Brunet–Derrida free boundary problem](brunet-derrida-free-boundary-problem/README.md)
 - [Recombination and the speed of adaptation](recombination-and-the-speed-of-adaptation/README.md)
+- [Airy profile of the fitness wave in the moderate-selection regime](airy-profile-of-the-fitness-wave-in-the-moderate-selection-regime.md)
+- [Traveling-wave self-consistency for fixation probabilities](traveling-wave-self-consistency-for-fixation-probabilities.md)

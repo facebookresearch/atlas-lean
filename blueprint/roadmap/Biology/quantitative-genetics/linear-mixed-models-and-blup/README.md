@@ -37,3 +37,8 @@ See [Henderson's mixed-model equations](../../../Probability/linear-models-multi
 - [Multitrait Bayesian regression with Gaussian, spike–slab and kernel priors](multitrait-bayesian-regression-with-gaussian-and-spike-slab-priors.md)
 - [Multitrait kernel random effect as a Gaussian regression on a factor of the kernel](multitrait-kernel-random-effect-as-regression-on-a-kernel-factor.md)
 - [Combining ability and genotype-by-environment models](combining-ability-and-genotype-by-environment-models/README.md)
+- [Additive-and-dominance genomic BLUP (DGBLUP)](additive-and-dominance-genomic-blup.md)
+- [Eigen-rotation of genomic kernel models](eigen-rotation-of-genomic-kernel-models.md)
+- [Factor-loading regression on environmental covariates for prediction in new environments](factor-loading-regression-on-environmental-covariates.md)
+- [Pseudo-expectation Gauss–Seidel solver for SNP-BLUP](pseudo-expectation-gauss-seidel-solver-for-snp-blup.md)
+- [Polyploid QTL models, genomic regression and realised relationship](polyploid-qtl-and-genomic-regression/README.md)

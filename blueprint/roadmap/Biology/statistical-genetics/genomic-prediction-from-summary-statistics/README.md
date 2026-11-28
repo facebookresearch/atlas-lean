@@ -126,3 +126,6 @@
 - [SumHer: expected association statistics under an annotation-based heritability model](sumher-expected-association-statistics-under-a-heritability-model.md)
 - [Absolute risk models with polygenic scores](absolute-risk-models-with-polygenic-scores/README.md)
 - [Cross-population genetic correlation of causal effects](cross-population-genetic-correlation-of-causal-effects/README.md)
+- [Gamma–gamma local shrinkage prior and the three-parameter beta law of the shrinkage factor (PRS-CS)](gamma-gamma-prior-and-three-parameter-beta-shrinkage.md)
+- [LDpred2-auto: Gibbs-sampler inference of heritability, polygenicity, selection parameter and predictive $r^2$](ldpred2-auto-gibbs-inference-of-architecture-and-predictive-r2.md)
+- [Multi-ethnic polygenic risk score](multi-ethnic-polygenic-risk-score.md)

@@ -34,3 +34,4 @@
 - [Equilibrium neutral diversity under recurrent selective sweeps](recurrent-hitchhiking-equilibrium-diversity.md)
 - [Recurrent hitchhiking and the protein divergence of a gene](recurrent-hitchhiking-reduction-of-neutral-diversity.md)
 - [Spatially normalized feature vector for soft and hard sweep classification](spatially-normalized-feature-vector-for-soft-and-hard-sweep-classification.md)
+- [Kim–Nielsen $\omega$ statistic for the LD signature of a selective sweep](kim-nielsen-omega-statistic.md)

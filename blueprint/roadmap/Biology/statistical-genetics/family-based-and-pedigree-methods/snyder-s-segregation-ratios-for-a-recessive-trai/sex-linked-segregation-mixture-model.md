@@ -20,7 +20,7 @@ Each row is a sampling identity. A hemizygous male carries one copy, so his dipl
 
 ## Depends on
 
-- [Hardy–Weinberg proportions](../../population-genetics/hardy-weinberg-law/offspring-apply.md)
+- [Hardy–Weinberg proportions](../../../population-genetics/hardy-weinberg-law/offspring-apply.md)
 
 ## Sources
 

@@ -12,3 +12,4 @@
 - [Large-dimension limit of the beneficial probability](tendsto-beneficial-prob.md)
 - [Effective stress level and characteristic stress for evolutionary rescue](effective-stress-level-and-characteristic-stress-for-rescue.md)
 - [Evolutionary rescue rates in Fisher's geometric model](evolutionary-rescue-rates-in-fisher-s-geometric-model.md)
+- [Evolutionary rescue by multiple mutations](evolutionary-rescue-by-multiple-mutations/README.md)

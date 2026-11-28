@@ -18,3 +18,4 @@
 - [Central limit theorem for the homozygosity of the hierarchical Dirichlet process](central-limit-theorem-for-homozygosity-of-the-hierarchical-dirichlet-process.md)
 - [Diversity bounds from the most frequent allele](diversity-bounds-from-the-most-frequent-allele/README.md)
 - [Allelic frequency spectrum of splitting trees](allelic-frequency-spectrum-of-splitting-trees/README.md)
+- [Shannon entropy bounds from ranked abundances](shannon-entropy-bounds-from-ranked-abundances/README.md)

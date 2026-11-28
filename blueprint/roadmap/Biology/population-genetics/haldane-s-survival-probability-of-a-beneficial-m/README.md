@@ -15,3 +15,4 @@
 - [Sequential fixation of beneficial mutations](sequential-fixation-of-beneficial-mutations/README.md)
 - [Finite-horizon survival in Galton–Watson processes](finite-horizon-survival-in-galton-watson-processes/README.md)
 - [Haldane's formula in Cannings models](haldane-s-formula-in-cannings-models/README.md)
+- [Evolutionary rescue in a deteriorating environment](evolutionary-rescue-in-a-deteriorating-environment/README.md)

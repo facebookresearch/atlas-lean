@@ -26,8 +26,8 @@ Backward-in-time models of the genealogy of a sample of genes, from Kingman's co
 - [Site frequency spectrum under a population bottleneck](site-frequency-spectrum-under-a-population-bottl/README.md)
 - [Site frequency spectrum under exponential growth](site-frequency-spectrum-under-exponential-growth/README.md)
 
-- [Recoverable demographic history from finite genomic samples](recoverable-demographic-history-from-finite-genomic-samples.md)
 - [Coalescent limits of genotype imputation](coalescent-limits-of-genotype-imputation/README.md)
 - [Inverse instantaneous coalescence rate](inverse-instantaneous-coalescence-rate/README.md)
 - [Identifiability of level-1 species networks from quartets and logDet distances](level-1-network-identifiability/README.md)
 - [Duality between site and branch statistics](site-and-branch-statistics-duality/README.md)
+- [Genomic inference of genealogies and demography](genomic-inference-of-genealogies-and-demography/README.md)

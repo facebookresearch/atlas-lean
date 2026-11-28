@@ -38,3 +38,4 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [Spatial Λ-Fleming–Viot process with varying population size](spatial-lambda-fleming-viot-with-varying-population-size/README.md)
 - [Graph-structured populations and speciation graphs](graph-structured-populations-and-speciation/README.md)
 - [Nonparametric spatial ancestry localization](nonparametric-spatial-ancestry-localization/README.md)
+- [Diversity and ancestry of admixed populations](diversity-and-ancestry-of-admixed-populations/README.md)

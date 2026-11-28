@@ -7,3 +7,4 @@
 
 - [Diffusion approximation of Wright–Fisher models](diffusion-approximation-of-wright-fisher-models/README.md)
 - [Diffusion approximation error for the Moran model](diffusion-approximation-error-for-the-moran-model/README.md)
+- [Invariance of scaled parameters under population-size rescaling](invariance-of-scaled-parameters-under-population-size-rescaling.md)
