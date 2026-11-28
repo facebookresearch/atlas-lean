@@ -12,6 +12,7 @@ The same paper shows that the problem is in coNP for every weakly acyclic settin
 
 - [Tuple- and equality-generating dependencies and the chase](../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Data exchange: universal solutions and certain answers of UCQs](../dependencies-and-the-chase/data-exchange-universal-solutions-and-certain-answers-of-ucq.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,4 +24,4 @@ The reduction is from the embedding problem for finite semigroups: given a finit
 
 ## Sources
 
-- Marco Calautti, Sergio Greco, Cristian Molinaro and Irina Trubitsyna, "Querying Data Exchange Settings Beyond Positive Queries", Theory and Practice of Logic Programming 24(2), pp. 250–278, 2024, <https://doi.org/10.1017/S1471068423000339>; the definitions of Sections 2 and 3 (existential choices, supported solutions and supported certain answers), the problem $\mathrm{SCert}(\mathcal{S}, Q)$ and Theorem 6 (main statement) in Section 4 of arXiv:2307.03071v1, read at <https://arxiv.org/abs/2307.03071v1>.
+- Marco Calautti, Sergio Greco, Cristian Molinaro and Irina Trubitsyna, "Querying Data Exchange Settings Beyond Positive Queries", Theory and Practice of Logic Programming 24(2), pp. 250–278, 2024, <https://doi.org/10.1017/S1471068423000339>; the definitions of Sections 2 and 3 (existential choices, supported solutions and supported certain answers), the problem $\mathrm{SCert}(\mathcal{S}, Q)$ and Theorem 6 (main statement) in Section 4, Theorems 7 and 8 (coNP membership for weakly acyclic settings and coNP-hardness), and Theorem 3 (positive queries) in Section 3 of arXiv:2307.03071v1, read at <https://arxiv.org/abs/2307.03071v1>.

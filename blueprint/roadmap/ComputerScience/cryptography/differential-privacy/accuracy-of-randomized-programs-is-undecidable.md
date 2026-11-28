@@ -19,7 +19,7 @@ The proof in the appendix of the source uses only programs independent of $\epsi
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

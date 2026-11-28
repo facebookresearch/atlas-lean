@@ -18,6 +18,7 @@ The non-triviality condition cannot simply be dropped for $c > 1$: on the one-el
 
 - [Answers of a conjunctive query](answers-of-a-conjunctive-query.md)
 - [Bag semantics of CQs: bag containment and bag equivalence](bag-semantics-of-cqs-bag-containment-and-bag-equivalence.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

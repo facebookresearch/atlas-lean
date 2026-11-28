@@ -11,6 +11,7 @@ The set of locks is part of the input, although the reduction uses only eight lo
 ## Depends on
 
 - [Pushdown automaton](../../../../../TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ The reduction is from the halting problem of two-counter machines started with b
 
 ## Sources
 
-- Rémi Bonnet, Rohit Chadha, Mahesh Viswanathan and P. Madhusudan, "Reachability under Contextual Locking", Logical Methods in Computer Science 9(3), Article 21, 2013, <https://doi.org/10.2168/LMCS-9(3:21)2013>; the undecidability lemma of Section 5 (subsection "Pairwise reachability problem"), the definitions of Sections 3 and 5, and the abstract (polynomial-time decidability without reentrance) of arXiv:1308.2349v3, <https://arxiv.org/abs/1308.2349v3>.
+- Rémi Bonnet, Rohit Chadha, Mahesh Viswanathan and P. Madhusudan, "Reachability under Contextual Locking", Logical Methods in Computer Science 9(3), Article 21, 2013, <https://doi.org/10.2168/LMCS-9(3:21)2013>; read in arXiv:1308.2349v3, <https://arxiv.org/abs/1308.2349v3>: Lemma 4.1 in Section 4 ("Reentrant locking"), the definitions of Sections 2 ("Model") and 3 ("Pairwise reachability"), and the abstract (polynomial-time decidability without reentrance), in the numbering of that version.

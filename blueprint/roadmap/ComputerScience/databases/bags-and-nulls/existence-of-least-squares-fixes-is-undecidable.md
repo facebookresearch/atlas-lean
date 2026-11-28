@@ -12,6 +12,7 @@ The source does not define "complex" separately; the aggregation constraint in i
 ## Depends on
 
 - [Least-squares fixes of databases with numerical attributes](least-squares-fixes-of-numerical-databases.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,7 +22,7 @@ The source does not define "complex" separately; the aggregation constraint in i
 
 For $\mathit{NE}$ the proof reduces from Hilbert's tenth problem, the existence of integer solutions of a Diophantine equation. Each monomial of the equation becomes a relation (or a block of one relation) with one tuple per unit of its coefficient, one fixable attribute per occurrence of a variable in the monomial and one for the constant, plus a key. Fixable values $0$ mark the variable occurrences, extended linear denials with $x \ne y$ force all occurrences of the same variable to take one common value and pin the other attributes to $1$ or to the constant, and a single aggregation constraint equates the sum of the products of the attributes over the left-hand monomials with the same sum over the right-hand monomials. A fix then is exactly an integer solution, and by Proposition 1 a fix exists if and only if an LS-fix exists. For $\mathit{CQA}$, Proposition 2 reduces $\mathit{NE}(IC)$ in polynomial time to the complements of $\mathit{CQA}(\mathit{False}, IC, \mathit{Skeptical})$ and $\mathit{CQA}(\mathit{True}, IC, \mathit{Majority})$, where $\mathit{False}$ and $\mathit{True}$ are ground queries false (true) in every instance sharing the key values of the input.
 
-A good expansion links the undecidability of Hilbert's tenth problem over the integers (which follows from the theorem linked above but has no page of its own), the existence of an LS-fix whenever a fix exists (Proposition 1) and the reduction of Proposition 2.
+A good expansion links the undecidability of Hilbert's tenth problem over the integers (which follows from the theorem linked above), the existence of an LS-fix whenever a fix exists (Proposition 1) and the reduction of Proposition 2.
 
 ## Sources
 

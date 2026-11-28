@@ -1,8 +1,8 @@
 # Bag containment of Boolean CQs up to any factor 1 + ε is undecidable
 
-For every rational $\varepsilon > 0$, no algorithm decides whether $(1 + \varepsilon)$ times the homomorphism count of one Boolean conjunctive query is at most the count of another on every non-trivial database. The case $\varepsilon = 0$ is plain bag containment of conjunctive queries, whose decidability is open.
+For every rational $\varepsilon > 0$, no algorithm decides whether $(1 + \varepsilon)$ times the homomorphism count of one Boolean conjunctive query is at most the count of another on every non-trivial database. For $\varepsilon = 0$ the question becomes bag containment of conjunctive queries on non-trivial databases; the decidability of bag containment of conjunctive queries is open.
 
-**Setting.** Databases are finite relational structures whose signature may contain constants, among them $\mathfrak{m}$ and $\mathfrak{v}$; a database is non-trivial if $\mathfrak{m} \ne \mathfrak{v}$ holds in it; and for a Boolean conjunctive query $\beta$ without inequalities, $\beta(D) = |\mathrm{Hom}(\beta, D)|$ counts homomorphisms fixing the constants.
+**Setting.** Databases are finite relational structures, sets of facts with no repeated fact (bag-set semantics), whose signature may contain constants, among them $\mathfrak{m}$ and $\mathfrak{v}$; a database is non-trivial if $\mathfrak{m} \ne \mathfrak{v}$ holds in it; and for a Boolean conjunctive query $\beta$ without inequalities, $\beta(D) = |\mathrm{Hom}(\beta, D)|$ counts homomorphisms fixing the constants.
 
 **Theorem (Marcinkowski and Ostropolski-Nalewaja).** For each rational $\varepsilon > 0$ the following problem is undecidable: given Boolean conjunctive queries $\beta_s$ and $\beta_b$, does $(1 + \varepsilon) \cdot \beta_s(D) \le \beta_b(D)$ hold for every non-trivial database $D$?
 
@@ -12,6 +12,7 @@ Here $\varepsilon$ is fixed and only the queries are input. Non-triviality is ne
 
 - [Answers of a conjunctive query](answers-of-a-conjunctive-query.md)
 - [Bag semantics of CQs: bag containment and bag equivalence](bag-semantics-of-cqs-bag-containment-and-bag-equivalence.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,4 +24,4 @@ The source of undecidability is a variant of Hilbert's tenth problem, with polyn
 
 ## Sources
 
-- Jerzy Marcinkowski and Piotr Ostropolski-Nalewaja, "Bag Semantics Query Containment: The CQ vs. UCQ Case and Other Stories", Proceedings of the ACM on Management of Data 3(5), 24 pages, 2025, <https://doi.org/10.1145/3767711>; Theorem 3 (main statement), Corollaries 4 and 5 with the proof of Corollary 5 in Section 3, and Section 2 of arXiv:2503.07219v3 (the copy read), <https://arxiv.org/abs/2503.07219v3>.
+- Jerzy Marcinkowski and Piotr Ostropolski-Nalewaja, "Bag Semantics Query Containment: The CQ vs. UCQ Case and Other Stories", Proceedings of the ACM on Management of Data 3(5), 24 pages, 2025, <https://doi.org/10.1145/3767711>; Theorem 3 (main statement) with its proof in Section 10, Corollaries 4 and 5 with the proof of Corollary 5 in Section 3, and Section 2 of arXiv:2503.07219v3 (the copy read), <https://arxiv.org/abs/2503.07219v3>.

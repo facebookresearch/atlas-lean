@@ -9,8 +9,7 @@ For finite-state concurrent programs running under the promising semantics PS 2.
 The proof also works when executions are restricted to $3$ context switches. Reachability with only release/acquire accesses was already known to be undecidable even without promises (Abdulla, Arora, Atig and Krishna, PLDI 2019). For the relaxed fragment with a bounded number of promises, reachability is decidable, though non-primitive recursive.
 
 ## Depends on
-
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +21,4 @@ The reduction is from the Post correspondence problem. The program has two proce
 
 ## Sources
 
-- Parosh Aziz Abdulla, Mohamed Faouzi Atig, Adwait Godbole, Shankara Narayanan Krishna and Viktor Vafeiadis, "The Decidability of Verification under PS 2.0", Programming Languages and Systems (ESOP 2021), Lecture Notes in Computer Science 12648, pp. 1–29, 2021, <https://doi.org/10.1007/978-3-030-72019-3_1>; Section 2 (program syntax, PS 2.0, consistency and the reachability problem) and the theorem of Section 3 ("Undecidability of Consistent Reachability") of arXiv:2007.09944v5, <https://arxiv.org/abs/2007.09944v5>.
+- Parosh Aziz Abdulla, Mohamed Faouzi Atig, Adwait Godbole, Shankara Narayanan Krishna and Viktor Vafeiadis, "The Decidability of Verification under PS 2.0", Programming Languages and Systems (ESOP 2021), Lecture Notes in Computer Science 12648, pp. 1–29, 2021, <https://doi.org/10.1007/978-3-030-72019-3_1>; read in arXiv:2007.09944v5, <https://arxiv.org/abs/2007.09944v5>: Section 2 (program syntax, PS 2.0, consistency and the reachability problem) and Theorem 3.1 in Section 3 ("Undecidability of Consistent Reachability in PS 2.0"), in the numbering of that version.

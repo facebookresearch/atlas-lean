@@ -14,6 +14,7 @@ Without these fairness conditions, the same paper reduces both problems to games
 ## Depends on
 
 - [The x86-TSO abstract machine](../../weak-memory-models/the-x86-tso-abstract-machine.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -25,4 +26,4 @@ Both proofs reduce from state reachability in perfect channel systems, finite-st
 
 ## Sources
 
-- Stephan Spengler, "Reachability and Safety Games under TSO Semantics", Proceedings of the Fifteenth International Symposium on Games, Automata, Logics, and Formal Verification (GandALF 2024), EPTCS 409, pp. 154–171, 2024, <https://doi.org/10.4204/EPTCS.409.14>; the sections on games, TSO games, process fairness in safety games and update fairness in reachability games, with their undecidability theorems, of arXiv:2411.00847v1, read at <https://arxiv.org/abs/2411.00847v1>.
+- Stephan Spengler, "Reachability and Safety Games under TSO Semantics", Proceedings of the Fifteenth International Symposium on Games, Automata, Logics, and Formal Verification (GandALF 2024), EPTCS 409, pp. 154–171, 2024, <https://doi.org/10.4204/EPTCS.409.14>; Section 4 (games), Section 5 (TSO games, with Theorem 4 reducing them to single-process games), Section 6 (decidability and PSPACE-completeness without fairness), Theorem 8 of Section 7 (update fairness in reachability games) and Theorem 9 of Section 8 (process fairness in safety games) of arXiv:2411.00847v1, read at <https://arxiv.org/abs/2411.00847v1>.

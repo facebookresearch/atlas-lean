@@ -12,6 +12,7 @@ The safety problem (global state reachability) for asynchronous programs with ca
 ## Depends on
 
 - [Asynchronous programs with cancel](asynchronous-programs-with-cancel.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

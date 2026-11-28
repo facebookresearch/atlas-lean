@@ -12,6 +12,7 @@ Since non-triviality can be enforced by adding the atom $\mathfrak{m} \ne \mathf
 
 - [Conjunctive queries with inequalities](conjunctive-queries-with-inequalities.md)
 - [Bag semantics of CQs: bag containment and bag equivalence](bag-semantics-of-cqs-bag-containment-and-bag-equivalence.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
