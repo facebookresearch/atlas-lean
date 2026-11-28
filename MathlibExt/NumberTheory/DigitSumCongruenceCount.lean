@@ -12,12 +12,11 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.Nat.Count
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.Int.CardIntervalMod
 import Mathlib.Tactic.Ring
+import MathlibExt.Data.Int.CardIntervalMod
 
 /-!
 # Digit-sum congruence counts
@@ -33,21 +32,6 @@ time, then sum over the leading interval. The leading coordinate need not be les
   Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, pp. 1–29,
   Definition 3 and Lemmas 4 and 5.
 -/
-
-/-- For `q > 0`, the number of naturals less than `n` congruent to the integer `r` modulo
-`q` is `n / q` (natural division), plus one if the least nonnegative residue of `r` is less
-than `n % q`. -/
-public theorem Nat.count_intModEq_card {q : ℕ} (hq : 0 < q) (r : ℤ) (n : ℕ) :
-    Nat.count (fun i : ℕ => (i : ℤ) ≡ r [ZMOD q]) n =
-      n / q + if r % q < ((n % q : ℕ) : ℤ) then 1 else 0 := by
-  let u := (r % q).toNat
-  have hu : (u : ℤ) = r % q := Int.toNat_of_nonneg (Int.emod_nonneg _ (by exact_mod_cast hq.ne'))
-  have hmod (i : ℕ) : (i : ℤ) ≡ r [ZMOD q] ↔ i ≡ u [MOD q] := by
-    rw [← Int.natCast_modEq_iff, hu]
-    exact ⟨fun h => h.trans (Int.mod_modEq r q).symm, fun h => h.trans (Int.mod_modEq r q)⟩
-  have hlt : (u % q < n % q) ↔ r % q < ((n % q : ℕ) : ℤ) := by
-    rw [← Int.ofNat_lt, Int.natCast_emod, hu, Int.emod_emod]
-  simp only [hmod, Nat.count_modEq_card n hq, hlt]
 
 namespace MetaMathlibExt
 

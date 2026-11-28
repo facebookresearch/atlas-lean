@@ -53,6 +53,22 @@ example : (palindromeAPCount 5 87 4 0 : ℚ) = 6 ∧ (palindromeAPCount 5 88 4 0
   norm_num [hd₈₇, hd₈₈, hc₈₇, hc₈₈, Nat.odd_iff, Nat.even_iff, Finset.sum_range_succ] at hbelow hat
   exact ⟨hbelow, hat⟩
 
+-- With odd modulus and two digits, the reflected endpoint `22` in base four enters at 10.
+example : palindromeAPCount 4 9 3 1 = 1 ∧ palindromeAPCount 4 10 3 1 = 2 := by
+  decide +kernel
+
+example : (palindromeAPCount 4 9 3 1 : ℚ) = 1 ∧ (palindromeAPCount 4 10 3 1 : ℚ) = 2 := by
+  have hbelow := (palindromeAPCount_of_modEq_one (b := 4) (m := 9) (q := 3) (r := 1)
+    (by decide) (by decide) (by decide) (by decide) (by decide)).1 (by decide)
+  have hat := (palindromeAPCount_of_modEq_one (b := 4) (m := 10) (q := 3) (r := 1)
+    (by decide) (by decide) (by decide) (by decide) (by decide)).1 (by decide)
+  have hd₉ : Nat.digits 4 9 = [1, 2] := by decide
+  have hd₁₀ : Nat.digits 4 10 = [2, 2] := by decide
+  have hc₉ : ¬ palindromicHalfCopy 4 9 ≤ 9 := by decide
+  have hc₁₀ : palindromicHalfCopy 4 10 ≤ 10 := by decide
+  norm_num [hd₉, hd₁₀, hc₉, hc₁₀, Nat.even_iff, Finset.sum_range_succ] at hbelow hat ⊢
+  exact ⟨hbelow, hat⟩
+
 -- Odd modulus, with a center and an included endpoint.
 example : (palindromeAPCount 4 38 3 2 : ℚ) = 5 := by
   have h := (palindromeAPCount_of_modEq_one (b := 4) (m := 38) (q := 3) (r := 2)

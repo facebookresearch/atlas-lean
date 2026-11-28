@@ -14,7 +14,8 @@ import Mathlib.Data.List.GetD
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
-import MathlibExt.NumberTheory.DigitSumCongruenceCount
+import MathlibExt.Data.Int.CardIntervalMod
+import MathlibExt.Data.Nat.ModEq
 
 /-!
 # Palindromes modulo a divisor of the base minus one
@@ -25,7 +26,8 @@ residue class `r`. Each pair of reflected digits contributes twice its digit, wh
 contributes once. We sum over complete blocks of centers before the cutoff and split the
 remaining prefix count at the first digit where a prefix is smaller than the bound's prefix.
 The formula uses natural division for `r / 2` when `q` is even; for odd `r` the branches
-only use congruences at a center, where no division of `r` is needed.
+only use congruences at a center, where no division of `r` is needed. The auxiliary residues
+`r_j` and `s_j` in Theorem 9 are used only for `0 ≤ j ≤ ⌊k/2⌋`.
 
 ## References
 
@@ -37,9 +39,10 @@ only use congruences at a center, where no division of `r` is needed.
   `palindromeAPCount_eq_prefix_counts` for reindexing by leading halves.
 * `MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase` supplies `palindromicHalfCopy_eq_ofDigits`
   and `div_pow_half_eq_sum_digits` to translate between leading halves and digits.
-* `MathlibExt.NumberTheory.DigitSumCongruenceCount` supplies `Nat.count_intModEq_card`, extracted
-  from its `sum_residueIndicator_range`. The shift and complete-block arguments follow
-  `residueIndicator_add` and `sum_residueIndicator_base` in that module.
+* `MathlibExt.Data.Int.CardIntervalMod` supplies `Nat.count_intModEq_card`;
+  `MathlibExt.Data.Nat.ModEq` supplies `Nat.two_mul_modEq_iff_of_odd`.
+* The shift and complete-block arguments follow `residueIndicator_add` and
+  `sum_residueIndicator_base` in `MathlibExt.NumberTheory.DigitSumCongruenceCount`.
 -/
 
 namespace MetaMathlibExt

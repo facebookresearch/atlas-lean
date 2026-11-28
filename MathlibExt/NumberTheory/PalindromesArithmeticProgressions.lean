@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Digits.Lemmas
 import Mathlib.Data.Int.CardIntervalMod
 import Mathlib.Tactic.IntervalCases
 import MathlibExt.Data.Nat.Digits.Div
+import MathlibExt.Data.Nat.ModEq
 
 /-!
 # Palindromes in arithmetic progressions
@@ -35,22 +36,6 @@ Each has discrepancy at most one, and the skipped interval is empty below the sq
   Progressions*, Journal of Integer Sequences 27 (2024), Article 24.4.8, pp. 1–29,
   Section 1, Lemma 2(ii), and Corollaries 11 and 12.
 -/
-
-/-- For odd `q`, a natural number `x` satisfies `2 * x ≡ r [MOD q]` exactly when
-`x ≡ ((q + 1) / 2) * r [MOD q]`. -/
-public theorem Nat.two_mul_modEq_iff_of_odd {q : ℕ} (hq : Odd q) (x r : ℕ) :
-    2 * x ≡ r [MOD q] ↔ x ≡ ((q + 1) / 2) * r [MOD q] := by
-  let u := (q + 1) / 2
-  have hu : u * 2 ≡ 1 [MOD q] := by
-    have h : u * 2 = 1 + q := by obtain ⟨k, hk⟩ := hq; dsimp [u]; omega
-    rw [h, Nat.add_modulus_modEq_iff]
-  constructor
-  · intro h
-    exact (by simpa [mul_assoc] using hu.symm.mul_right x :
-      x ≡ u * (2 * x) [MOD q]).trans (h.mul_left u)
-  · intro h
-    apply (h.mul_left 2).trans
-    simpa [u, mul_left_comm, mul_assoc, mul_comm] using hu.mul_right r
 
 namespace MetaMathlibExt
 

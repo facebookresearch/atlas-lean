@@ -33,9 +33,3 @@ example : palindromeAPCount 5 87 4 0 + 2 = 8 := by
   have h := palindromeAPCount_eq_prefix_counts (b := 5) (m := 87) (q := 4) (r := 0)
     (by decide) hd (by decide) (by decide)
   exact h.trans (by decide)
-
--- Inversion by two works for a nonzero residue modulo an odd modulus.
-example : 2 * 4 ≡ 3 [MOD 5] ∧ 4 ≡ ((5 + 1) / 2) * 3 [MOD 5] := by decide
-
-example : 4 ≡ ((5 + 1) / 2) * 3 [MOD 5] :=
-  (Nat.two_mul_modEq_iff_of_odd (by decide : Odd 5) 4 3).mp (by decide)

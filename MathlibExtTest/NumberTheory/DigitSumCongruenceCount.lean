@@ -12,14 +12,6 @@ import MathlibExt.NumberTheory.DigitSumCongruenceCount
 
 open MetaMathlibExt
 
--- Integer representatives on opposite sides of the final partial block.
-example : Nat.count (fun x : ℕ => (x : ℤ) ≡ -3 [ZMOD 4]) 6 = 2 ∧
-    Nat.count (fun x : ℕ => (x : ℤ) ≡ -1 [ZMOD 4]) 6 = 1 := by
-  decide +kernel
-
-example : Nat.count (fun x : ℕ => (x : ℤ) ≡ -3 [ZMOD 4]) 6 = 2 :=
-  (Nat.count_intModEq_card (q := 4) (by decide) (-3) 6).trans (by decide +kernel)
-
 -- An empty tail and a negative representative of the zero class.
 example :
     digitSumCongruenceCount 5 1 4 (-4) 0 6 = 2 ∧
