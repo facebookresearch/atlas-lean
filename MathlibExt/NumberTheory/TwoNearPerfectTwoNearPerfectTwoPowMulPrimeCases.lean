@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.NumberTheory.ArithmeticFunction.Misc
-import Mathlib.Algebra.Ring.GeomSum
+public import MathlibExt.NumberTheory.ArithmeticFunction.SigmaTwoPow
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Zify
 
@@ -24,11 +23,6 @@ Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Ze
 -/
 
 namespace MetaMathlibExt
-
-private theorem sigma_two_pow_add_one (k : ℕ) :
-    ArithmeticFunction.sigma 1 (2 ^ k) + 1 = 2 ^ (k + 1) := by
-  rw [ArithmeticFunction.sigma_one_apply_prime_pow Nat.prime_two]
-  simpa only [one_add_one_eq_two, mul_one] using geom_sum_mul_add (1 : ℕ) (k + 1)
 
 private theorem divisor_two_pow_mul_prime {k p d : ℕ} (hp : p.Prime)
     (hd : d ∣ 2 ^ k * p) : ∃ a : ℕ, d = 2 ^ a ∨ d = 2 ^ a * p := by
