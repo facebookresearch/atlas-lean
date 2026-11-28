@@ -20,8 +20,8 @@ Authors: OpenAI (project attribution in lean/formalization.yaml).
 module
 
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Analysis.Normed.Group.Uniform
-import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Topology.MetricSpace.HausdorffDistance
@@ -34,6 +34,9 @@ boundary ties arbitrarily. A center indexed by `(a, b)` has color `a + 3b` modul
 point is at distance less than `1/2` from its chosen center, and distinct centers of the same
 color are at distance greater than `2`. Thus points at distance exactly one have different
 colors, with no regularity assumption on the coloring.
+
+The namespace `EuclideanGeometry.SevenColorTiling` provides the lattice centers, their residues,
+and the coloring that assigns each point the residue of a chosen nearest center.
 
 ## References
 
@@ -49,16 +52,22 @@ colors, with no regularity assumption on the coloring.
 
 namespace EuclideanGeometry
 
+namespace SevenColorTiling
+
 private abbrev Plane := EuclideanSpace ℝ (Fin 2)
 
-private noncomputable def center (i : ℤ × ℤ) : Plane :=
+/-- The center with integer indices `(a, b)` in the triangular lattice of spacing `4/5`,
+with coordinates `(4/5 * (a + b/2), 2/5 * √3 * b)`. -/
+public noncomputable def center (i : ℤ × ℤ) : EuclideanSpace ℝ (Fin 2) :=
   WithLp.toLp 2 ![4 / 5 * ((i.1 : ℝ) + (i.2 : ℝ) / 2), 2 / 5 * Real.sqrt 3 * (i.2 : ℝ)]
 
-private lemma center_zero (i : ℤ × ℤ) :
+/-- The horizontal coordinate of the center indexed by `(a, b)` is `4/5 * (a + b/2)`. -/
+public lemma center_zero (i : ℤ × ℤ) :
     center i 0 = 4 / 5 * ((i.1 : ℝ) + (i.2 : ℝ) / 2) := by
   simp [center]
 
-private lemma center_one (i : ℤ × ℤ) : center i 1 = 2 / 5 * Real.sqrt 3 * (i.2 : ℝ) := by
+/-- The vertical coordinate of the center indexed by `(a, b)` is `2/5 * √3 * b`. -/
+public lemma center_one (i : ℤ × ℤ) : center i 1 = 2 / 5 * Real.sqrt 3 * (i.2 : ℝ) := by
   simp [center]
 
 private lemma sqrt_three_sq : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
@@ -107,6 +116,15 @@ private lemma exists_nearest (p : Plane) :
   obtain ⟨q, ⟨i, rfl⟩, hq⟩ := isClosed_range_center.exists_infDist_eq_dist
     (Set.range_nonempty center) p
   exact ⟨i, fun j ↦ hq.symm.le.trans (Metric.infDist_le_dist_of_mem ⟨j, rfl⟩)⟩
+
+/-- An index of a lattice center closest to the given point. Ties are broken by classical choice. -/
+public noncomputable def nearestCenter (p : EuclideanSpace ℝ (Fin 2)) : ℤ × ℤ :=
+  Classical.choose (exists_nearest p)
+
+/-- The chosen nearest center is no farther from the point than any lattice center. -/
+public theorem nearestCenter_spec (p : EuclideanSpace ℝ (Fin 2)) (j : ℤ × ℤ) :
+    dist p (center (nearestCenter p)) ≤ dist p (center j) :=
+  Classical.choose_spec (exists_nearest p) j
 
 private lemma dist_center_sq (i j : ℤ × ℤ) :
     dist (center i) (center j) ^ 2 = 16 / 25 *
@@ -163,8 +181,22 @@ private lemma dist_lt_half_of_nearest (p : Plane) (i : ℤ × ℤ)
     simpa only [EuclideanSpace.dist_sq_eq, Fin.sum_univ_two, Real.dist_eq, sq_abs] using hbound
   nlinarith only [hdist, dist_nonneg (x := p) (y := center i)]
 
-private def residue (i : ℤ × ℤ) : Fin 7 :=
+/-- The color of the lattice center indexed by `(a, b)` is `a + 3b` modulo seven. -/
+public def residue (i : ℤ × ℤ) : Fin 7 :=
   ⟨((i.1 + 3 * i.2) % 7).toNat, by omega⟩
+
+/-- The value of the center's color is `a + 3b` reduced modulo seven and read as a natural. -/
+public lemma residue_val (i : ℤ × ℤ) : (residue i).val = ((i.1 + 3 * i.2) % 7).toNat := by
+  simp only [residue]
+
+/-- The seven-coloring assigns to each point the color of its chosen nearest center. -/
+public noncomputable def sevenColor (p : EuclideanSpace ℝ (Fin 2)) : Fin 7 :=
+  residue (nearestCenter p)
+
+/-- The color of a point is the residue of the chosen nearest center's index. -/
+public lemma sevenColor_eq (p : EuclideanSpace ℝ (Fin 2)) :
+    sevenColor p = residue (nearestCenter p) := by
+  rw [sevenColor]
 
 private lemma seven_le_of_dvd_form {a b : ℤ} (hne : a ≠ 0 ∨ b ≠ 0) (h : 7 ∣ a + 3 * b) :
     7 ≤ a ^ 2 + a * b + b ^ 2 := by
@@ -196,6 +228,24 @@ private lemma two_lt_dist_center_of_same_residue {i j : ℤ × ℤ} (hij : i ≠
   have hle := pow_le_pow_left₀ dist_nonneg h 2
   nlinarith only [hsq, hle, hreal]
 
+private lemma sevenColor_ne_of_dist_eq_one {x y : Plane} (hxy : dist x y = 1) :
+    sevenColor x ≠ sevenColor y := by
+  rw [sevenColor_eq, sevenColor_eq]
+  intro hcolor
+  let i := nearestCenter
+  have hx := dist_lt_half_of_nearest x (i x) (nearestCenter_spec x)
+  have hy := dist_lt_half_of_nearest y (i y) (nearestCenter_spec y)
+  by_cases h : i x = i y
+  · have ht := dist_triangle_right x y (center (i x))
+    rw [h] at hx ht
+    linarith
+  · have hc := two_lt_dist_center_of_same_residue h hcolor
+    have h₁ := dist_triangle x y (center (i y))
+    have h₂ := dist_triangle_left (center (i x)) (center (i y)) x
+    linarith
+
+end SevenColorTiling
+
 /-- There is a coloring of the entire Euclidean plane with seven colors in which any
 pair of points at distance exactly one has different colors. No measurability or other
 regularity is imposed, and the condition holds at every point, including boundaries.
@@ -207,19 +257,7 @@ Aubrey D.N.J. de Grey, *The chromatic number of the plane is at least 5*,
 Geombinatorics 28 (2018), no. 1, pp. 18–31, §1. -/
 public theorem exists_seven_coloring :
     ∃ c : EuclideanSpace ℝ (Fin 2) → Fin 7,
-      ∀ x y : EuclideanSpace ℝ (Fin 2), dist x y = 1 → c x ≠ c y := by
-  choose i hi using exists_nearest
-  refine ⟨fun p ↦ residue (i p), ?_⟩
-  intro x y hxy hcolor
-  have hx := dist_lt_half_of_nearest x (i x) (hi x)
-  have hy := dist_lt_half_of_nearest y (i y) (hi y)
-  by_cases h : i x = i y
-  · have ht := dist_triangle_right x y (center (i x))
-    rw [h] at hx ht
-    linarith
-  · have hc := two_lt_dist_center_of_same_residue h hcolor
-    have h₁ := dist_triangle x y (center (i y))
-    have h₂ := dist_triangle_left (center (i x)) (center (i y)) x
-    linarith
+      ∀ x y : EuclideanSpace ℝ (Fin 2), dist x y = 1 → c x ≠ c y :=
+  ⟨SevenColorTiling.sevenColor, fun _ _ h ↦ SevenColorTiling.sevenColor_ne_of_dist_eq_one h⟩
 
 end EuclideanGeometry
