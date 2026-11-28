@@ -256,7 +256,7 @@ theorem submodule_of_isPrincipalIdealRing
   let iN : N →ₗ[R] F := i.domRestrict N
   have hiN : Function.Injective iN := fun x y h => Subtype.ext (hi h)
   have hfree : Module.Free R (LinearMap.range iN) :=
-    Module.Free.submodule_free_aux (R := R) (M := F) (LinearMap.range iN)
+    Module.Free.submodule_of_isPrincipalIdealRing (R := R) (M := F) (LinearMap.range iN)
   let _ : Module.Free R (LinearMap.range iN) := hfree
   exact Module.Projective.of_equiv' (LinearEquiv.ofInjective iN hiN).symm
 
