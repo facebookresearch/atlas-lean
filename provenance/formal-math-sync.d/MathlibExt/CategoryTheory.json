@@ -4027,6 +4027,24 @@
       "upstream_sha256": "dbcfa9f8e06cc4b44cf38a89de1d604d2e1c834c06417c1e09e2b9f01fdfaa29"
     },
     {
+      "path": "MathlibExt/CategoryTheory/Waldhausen/BinaryCoproductCobaseChange.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "bd76eca5bbea0f079de98143bd9487a5fed5dd39dd9a3a554c198ca57f5c1ff3",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "36f993e5b40c7a2afa15d49e57bfdd5d22eeeda0ca6ca13a38201a151677846e"
+    },
+    {
+      "path": "MathlibExt/CategoryTheory/Waldhausen/BinaryCoproductFunctor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f75f95d4f0f20034c67a383a75888940eea9123cfd87ef96ac3f75d27178e952",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9aedb8ad05e75fcf1c2dfa102c1d12b707ab9ebfea02a97ada95100f285487db"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/Waldhausen/CofibrationArrow.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -4045,6 +4063,24 @@
       "upstream_sha256": "d31c7c857fd6015096f1dbfbfba6f94397187d0f58c7fc62fa88fd038d7f1bbf"
     },
     {
+      "path": "MathlibExt/CategoryTheory/Waldhausen/CoproductExactFunctorIso.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b887d58010a13d01538113362bdcb599972abe896f298b59a4566d1398068e27",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "57876d0e5360a696ee261343594ee263a47eade2b1ec6778ea7fefd4fcf20efe"
+    },
+    {
+      "path": "MathlibExt/CategoryTheory/Waldhausen/Exact.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5bec686418ec9cba6a68d22a14975090b49a693e2b8934892fb40654b9dfd152",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a89599518bf6b2c42f3e16b3875c9a359069abfecb0ba5822e1134504b32c70f"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/Waldhausen/ExactFunctor.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -4054,6 +4090,24 @@
       "upstream_sha256": "0d1463b6a5893c9284c987bcdd479d0fc4c7e3d68a9f95f247150c44de4d7791"
     },
     {
+      "path": "MathlibExt/CategoryTheory/Waldhausen/Fibration/AcyclicSubcategory.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2f3bc7f549e5e53712a53da0bde7d694f0ae0994f61c011ed4a754563f6d58b3",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "270db9d191521967a8bf3d2cdd4f5330e790dbf827c5cc9e5e7d568263dc3fe3"
+    },
+    {
+      "path": "MathlibExt/CategoryTheory/Waldhausen/Fibration/TrivialCofibration.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "8e153431d805d6bd248ff116b066a1e2ac7558338c90b298fe628796051f9ba1",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "8518e8f02ae8cbcb6727505ee329d65b761ec9982a3e7fb5254aa505f55df3fd"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/Waldhausen/Gluing.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -4061,6 +4115,15 @@
       "rationale": "Use the already-merged WaldhausenCategoryWithoutGluing provider. The legacy class fields agree after renaming; no gluing axiom is changed.",
       "upstream_commit": "11faf00241b371826000ec82975d096d2ab584d0",
       "upstream_sha256": "a87e6c27a50de73c0af089bfaf89765b0782bdbb3d36d3bba232a1ce4b57b031"
+    },
+    {
+      "path": "MathlibExt/CategoryTheory/Waldhausen/Pi.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "8c0614dd42e08a5261cba85f4725517d9cf1b781c9c5f156b2a2c5d6358b3537",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "feae8ab6fed42af62b02377384cc9d35265f5323bac72868e0d948a52b3fa5c6"
     },
     {
       "path": "MathlibExt/CategoryTheory/Waldhausen/SConstruction/FiniteStage.lean",
