@@ -1,0 +1,112 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua, Avocado
+-/
+
+module
+
+public import MathlibExt.Algebra.Homology.KoszulComplexAnnihilation
+public import MathlibExt.Algebra.Homology.KoszulComplexFamilyReindex
+
+/-!
+# Euler characteristics of finite-family Koszul complexes
+
+For a finite family a : I → R over a noetherian commutative ring, finite length of R/(a) gives
+finite length of every Koszul homology module. The complex vanishes above |I|, so its
+finite-length homology cutoff is |I|+1.
+
+Its Euler characteristic is ∑_{j=0}^{|I|}(−1)^jℓ_R(H_j(K(a))). Reindexing the family by an
+equivalence preserves this value, with the ring and index universe levels separate.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+noncomputable section
+
+open CategoryTheory CategoryTheory.Limits
+
+namespace KoszulComplex
+
+universe u v
+
+variable (R : Type u) [CommRing R] [IsNoetherianRing R]
+variable {I : Type v} [Fintype I]
+
+/-- Finite-length homology data from a finite family quotient.
+
+For finite-length R/(a), use the finite Koszul homology lengths and vanishing above |I| to
+obtain cutoff |I|+1. -/
+noncomputable def familyFiniteLengthHomologyDataOfQuotient
+    (a : I → R)
+    (hquot : Module.length R (R ⧸ Ideal.span (Set.range a)) ≠ ⊤) :
+    HomologicalComplex.FiniteLengthHomologyData R
+      (familyComplex R a) where
+  cutoff := Fintype.card I + 1
+  length_ne_top j _ :=
+    familyHomology_length_ne_top_of_quotient R a j hquot
+  vanishes j hj := by
+    have hX : IsZero ((familyComplex R a).X j) :=
+      familyComplex_isZero_above R a j (by omega)
+    exact (HomologicalComplex.ExactAt.of_isZero hX).isZero_homology
+
+/-- The Euler invariant of a finite family with finite quotient.
+
+Take the finite-length Euler characteristic of the family complex using the quotient-derived
+homology data. -/
+noncomputable def familyEulerCharacteristicOfQuotient
+    (a : I → R)
+    (hquot : Module.length R (R ⧸ Ideal.span (Set.range a)) ≠ ⊤) : ℤ :=
+  HomologicalComplex.finiteLengthEulerCharacteristic R
+    (familyFiniteLengthHomologyDataOfQuotient R a hquot)
+
+/-- The finite-family alternating homology sum.
+
+The quotient-defined Euler invariant is the sum of (−1)^j times the finite homology lengths
+for 0≤j≤|I|. -/
+theorem familyEulerCharacteristicOfQuotient_eq
+    (a : I → R)
+    (hquot : Module.length R (R ⧸ Ideal.span (Set.range a)) ≠ ⊤) :
+    familyEulerCharacteristicOfQuotient R a hquot =
+      ∑ j ∈ Finset.range (Fintype.card I + 1),
+        (-1 : ℤ) ^ j *
+          (Module.length R ((familyComplex R a).homology j)).toNat :=
+  rfl
+
+/-- Reindexing preserves the finite-family Euler invariant.
+
+For an equivalence of finite index types, the reindexed family has the same quotient ideal and
+Euler characteristic. -/
+theorem familyEulerCharacteristicOfQuotient_reindex
+    {J : Type v} [Fintype J] (a : I → R) (e : I ≃ J)
+    (hquot : Module.length R (R ⧸ Ideal.span (Set.range a)) ≠ ⊤) :
+    let hquot' : Module.length R
+        (R ⧸ Ideal.span (Set.range (fun j => a (e.symm j)))) ≠ ⊤ := by
+      rwa [familyReindex_range R a e]
+    familyEulerCharacteristicOfQuotient R a hquot =
+      familyEulerCharacteristicOfQuotient R
+        (fun j => a (e.symm j)) hquot' := by
+  let hquot' : Module.length R
+      (R ⧸ Ideal.span (Set.range (fun j => a (e.symm j)))) ≠ ⊤ := by
+    rwa [familyReindex_range R a e]
+  let hdata := familyFiniteLengthHomologyDataOfQuotient R a hquot
+  change familyEulerCharacteristicOfQuotient R a hquot =
+    familyEulerCharacteristicOfQuotient R (fun j => a (e.symm j)) hquot'
+  calc
+    familyEulerCharacteristicOfQuotient R a hquot =
+        HomologicalComplex.finiteLengthEulerCharacteristic R hdata := rfl
+    _ = HomologicalComplex.finiteLengthEulerCharacteristic R
+          (familyComplexReindexFiniteLengthData R a e hdata) :=
+      familyComplexReindex_eulerCharacteristic R a e hdata
+    _ = familyEulerCharacteristicOfQuotient R
+          (fun j => a (e.symm j)) hquot' :=
+      HomologicalComplex.finiteLengthEulerCharacteristic_eq_of_data R _ _
+
+end KoszulComplex
