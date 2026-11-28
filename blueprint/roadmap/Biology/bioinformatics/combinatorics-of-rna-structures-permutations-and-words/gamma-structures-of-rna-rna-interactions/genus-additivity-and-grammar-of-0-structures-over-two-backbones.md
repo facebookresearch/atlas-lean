@@ -11,7 +11,7 @@ $$g(E) = \begin{cases} \displaystyle\sum_{S' \in \mathbb{I}_1(E)} g(S') + \sum_{
 
 3. (Grammar) There is a grammar $\mathscr{G}_0$ such that every $0$-structure over two backbones decomposes uniquely via $\mathscr{G}_0$ and every diagram it generates is a $0$-structure over two backbones. $\mathscr{G}_0$ is unambiguous, so it computes the partition function, base-pairing probabilities, probabilities of hybrid blocks and gap structures, and Boltzmann samples of $0$-structures over two backbones, with $O(n^6)$ time and $O(n^4)$ space for the partition function.
 
-Because a $0$-structure is built from finitely many genus-$0$ irreducible shadows yet may have arbitrarily high total genus, this class strictly contains the joint structures of earlier interaction models and includes, e.g., two crossing hybrids.
+Because a $0$-structure is built from finitely many genus-$0$ irreducible shadows yet may have arbitrarily high total genus, this class neither contains nor is contained in the AP-structures (joint structures) of earlier interaction models (the source's Section 7, Figure 15); it includes, e.g., two crossing hybrids.
 
 ## Expansion
 

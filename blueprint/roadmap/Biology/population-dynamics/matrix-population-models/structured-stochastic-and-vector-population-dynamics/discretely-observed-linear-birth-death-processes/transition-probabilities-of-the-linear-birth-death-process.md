@@ -1,6 +1,6 @@
 # Transition probabilities of the linear birth-death process and the Galton-Watson estimator
 
-Let $X(t)$ be a linear birth-death process with constant per-capita birth rate $\lambda > 0$ and death rate $\mu \ge 0$, $\lambda \neq \mu$: in a time element $dt$ the population moves from $n$ to $n+1$ with probability $\lambda n\, dt + o(dt)$ and to $n-1$ with probability $\mu n\, dt + o(dt)$. Write $\alpha = \lambda - \mu$ (Malthusian parameter) and
+Let $X(t)$ be a linear birth-death process with constant per-capita birth rate $\lambda > 0$ and death rate $\mu > 0$, $\lambda \neq \mu$: in a time element $dt$ the population moves from $n$ to $n+1$ with probability $\lambda n\, dt + o(dt)$ and to $n-1$ with probability $\mu n\, dt + o(dt)$. Write $\alpha = \lambda - \mu$ (Malthusian parameter) and
 
 $$ A(t) = \frac{\mu\,(e^{\alpha t} - 1)}{\lambda e^{\alpha t} - \mu}, \qquad B(t) = \frac{\lambda}{\mu} A(t) = \frac{\lambda\,(e^{\alpha t} - 1)}{\lambda e^{\alpha t} - \mu}. $$
 

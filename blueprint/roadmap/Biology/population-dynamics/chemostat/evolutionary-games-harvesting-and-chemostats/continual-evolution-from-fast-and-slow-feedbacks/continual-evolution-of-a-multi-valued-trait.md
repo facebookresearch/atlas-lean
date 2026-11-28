@@ -12,7 +12,7 @@ $$
 \frac{du_i}{dt} = u_i\left(\mu_i\left(1 - \frac{\sum_j u_j}{k}\right) - d\right) + \epsilon_m\, g_i(u), \qquad \frac{d\varphi}{dt} = \epsilon_e\, h(u,\varphi),
 $$
 
-where the growth rates $\mu_i > 0$ depend continuously on $(u,\varphi)$ and, for fixed $(u,\varphi)$, are either constant in $i$ or strictly monotone in $i$; $k, d > 0$; each mutation term $g_i$ is nonnegative at $u_i = 0$, decreasing in $u_i$ and strictly increasing in every $u_j$, $j \ne i$ (any phenotype can mutate into any other). Assume
+where the growth rates $\mu_i > 0$ depend continuously on $(u,\varphi)$ and, for fixed $(u,\varphi)$, are either constant in $i$ or strictly monotone in $i$; $k, d > 0$; each mutation term $g_i$ is nonnegative at $u_i = 0$, decreasing in $u_i$ and strictly increasing in every $u_j$, $j \ne i$ (any phenotype can mutate into any other); $h$ is continuously differentiable. Assume
 
 - **(NF1)** $h < 0$ when $\varphi > M(u)$ and $h > 0$ when $\varphi < M(u)$ (the feedback tracks the mean trait, e.g. $h = M - \varphi$);
 - **(NF2)** there are $0 < \varphi_- < \varphi_+ < 1$ such that for every nonzero $u$, $\mu$ is decreasing in $i$ when $\varphi > \varphi_+$ and increasing in $i$ when $\varphi < \varphi_-$;

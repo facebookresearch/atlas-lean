@@ -20,8 +20,8 @@ which automatically has zero rate for changes requiring two or more nucleotide s
 
 ## Depends on
 
-- [Codon as a triple of nucleotides](../../codon-substitution-models-and-dn-ds/codon.md)
-- [Codons differing at exactly one position](../../codon-substitution-models-and-dn-ds/is-single-change.md)
+- [Codon as a triple of nucleotides](../../../codon-substitution-models-and-dn-ds/codon.md)
+- [Codons differing at exactly one position](../../../codon-substitution-models-and-dn-ds/is-single-change.md)
 
 ## Expansion
 

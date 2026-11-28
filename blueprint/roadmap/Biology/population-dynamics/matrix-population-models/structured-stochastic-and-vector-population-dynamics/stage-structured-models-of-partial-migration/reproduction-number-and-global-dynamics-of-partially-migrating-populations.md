@@ -11,7 +11,7 @@ $$R^{c2}_0(\phi_s,\phi_r) = \rho\begin{pmatrix}\phi_s R^s_0 & (1 - \phi_r)R^r_0\
 
 **Nonlinear models.** Replace the survival probabilities by density-dependent $t_i(x)$, with stage map $x_{i+1}(t+1) = s_i(x_i(t)) := x_i(t)\,t_i(x_i(t))$ and $x_1(t+1) = \sum_j f_j x_j(t)$, and assume (A1) $t_i \in C^1$, $0 < t_i \le 1$, strictly decreasing; (A2) $s_i$ strictly increasing and bounded; (A3) $f_j \ge 0$, $f_n > 0$ (Beverton–Holt $t_i(x) = b_i/(1 + c_i x)$ is an example).
 
-**Theorem.** If every $s_i$ is strongly sublinear on $\mathbb{R}_+$ ($\lambda s_i(x) < s_i(\lambda x)$ for $0 < \lambda < 1$, $x > 0$), then for the isolated model, for the single-egg-pool coupled model and for the two-egg-pool coupled model, with $R_0$ the reproduction number of the linearization at the origin ($R^{c1}_0$, $R^{c2}_0$ respectively): if $R_0 < 1$ the origin is the only fixed point and is globally asymptotically stable; if $R_0 > 1$ there is a unique positive fixed point, which is locally stable and attracts every nonzero orbit.
+**Theorem.** If every $s_i$ is strongly sublinear on $\mathbb{R}_+$ ($\lambda s_i(x) < s_i(\lambda x)$ for $0 < \lambda < 1$, $x > 0$), then for the isolated model, for the single-egg-pool coupled model and for the two-egg-pool coupled model with $0 < \phi_s, \phi_r < 1$, with $R_0$ the reproduction number of the linearization at the origin ($R^{c1}_0$, $R^{c2}_0$ respectively): if $R_0 < 1$ the origin is the only fixed point and is globally asymptotically stable; if $R_0 > 1$ there is a unique positive fixed point, which is locally stable and attracts every nonzero orbit.
 
 ## Depends on
 

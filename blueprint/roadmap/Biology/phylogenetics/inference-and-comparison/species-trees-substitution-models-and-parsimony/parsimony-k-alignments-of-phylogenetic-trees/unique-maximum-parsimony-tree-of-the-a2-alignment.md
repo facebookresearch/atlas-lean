@@ -22,8 +22,8 @@ $$l\big(A_2(T),\widetilde T\big) > l\big(A_2(T),T\big) = 2\,|A_2(T)| = 4(n-3)^2.
 
 ## Depends on
 
-- [Pairwise compatible splits determine a unique unrooted X-tree](../../neighbor-joining/pairwise-compatible-splits-determine-a-unique-un.md)
-- [Fitch's algorithm](../../small-parsimony-problem/fitch.md)
+- [Pairwise compatible splits determine a unique unrooted X-tree](../../../neighbor-joining/pairwise-compatible-splits-determine-a-unique-un.md)
+- [Fitch's algorithm](../../../small-parsimony-problem/fitch.md)
 - [Concatenation preserves a unique maximum parsimony tree](concatenation-preserves-a-unique-maximum-parsimony-tree.md)
 
 ## Expansion

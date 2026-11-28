@@ -6,7 +6,7 @@ $$
 S' = -\beta (1 - u) S I, \qquad I' = \beta (1 - u) S I - \gamma I, \qquad \beta, \gamma > 0,\quad R_0 = \beta/\gamma > 1,
 $$
 
-with $S(0), I(0) > 0$ and $S(0) + I(0) \le 1$. The **total incidence** is $S(0) - S_u(\infty)$, the fraction ever infected after time $0$. Interventions are piecewise continuous and have a linear cost budget $\|u\|_1 = \int_0^\infty u(t)\, dt \le c_1$ and a maximal level $\|u\|_\infty \le c_{\max}$.
+with $S(0), I(0) > 0$ and $S(0) + I(0) \le 1$. The **total incidence** is $S(0) - S_u(\infty)$, the fraction ever infected after time $0$. Interventions are piecewise continuous and have a linear cost budget $\|u\|_1 = \int_0^\infty u(t)\, dt \le c_1$ and a maximal level $\|u\|_\infty \le c_{\max}$, where $0 < c_{\max} \le 1$ and $c_1 \ge 0$.
 
 **Theorem (optimal intervention).** For any initial state with $S(0), I(0) > 0$, total incidence over all admissible interventions is minimized by a **wait–suppress–relax** intervention
 

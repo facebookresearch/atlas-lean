@@ -20,7 +20,7 @@ $$
 
 The WI-only equilibrium $E_3 = \big(0, K(1 - 1/R_{0w}), 0, \tfrac{\psi K}{2\mu_w}(1 - 1/R_{0w})\big)$ is locally asymptotically stable when $R_{0w} > 1$ and $\mu_{\bar w} > \rho_2\mu_w$, even if $R_{0w|\bar w} < 1$, which gives bistability.
 
-**Theorem (loss of infection).** If $\sigma + \rho_2\mu_w \ge \mu_{\bar w}(1 - \rho_1)$, the adjusted invasive number is $R^1_{0w|\bar w} = \frac{R_{0w}(1 - \rho_2)\mu_w}{R_{0\bar w}(\mu_w + \sigma)}$. When $R^1_{0w|\bar w} < 1$ and $R_{0\bar w} > 1$, the WU-only equilibrium is the only nontrivial equilibrium; there is no WI-only state, since loss of infection keeps replenishing WU mosquitoes.
+**Theorem (loss of infection).** Let $\sigma > 0$ and $\rho_1 \in (0,1]$. If $\sigma + \rho_2\mu_w \ge \mu_{\bar w}(1 - \rho_1)$, the adjusted invasive number is $R^1_{0w|\bar w} = \frac{R_{0w}(1 - \rho_2)\mu_w}{R_{0\bar w}(\mu_w + \sigma)}$. When $R^1_{0w|\bar w} < 1$ and $R_{0\bar w} > 1$, the WU-only equilibrium is the only nontrivial equilibrium; there is no WI-only state, since loss of infection keeps replenishing WU mosquitoes.
 
 ## Depends on
 

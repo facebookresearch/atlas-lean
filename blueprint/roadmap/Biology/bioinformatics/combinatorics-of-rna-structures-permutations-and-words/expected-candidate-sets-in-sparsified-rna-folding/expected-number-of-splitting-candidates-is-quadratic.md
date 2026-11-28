@@ -15,9 +15,9 @@ $$\mathbb{E}_g(n) = \Theta(n^2), \qquad \frac{\mathbb{E}_g(n)}{\Omega(n)} \sim \
 
 $$\mathbf{F}^*_0(z) = \frac{6}{16}\Big[e^{0.5}z^2\frac{z}{1-z} + e^{1}z^2\Big(\frac{1}{1-z}\Big)^2\mathbf{F}^*_0(z) + e^{-5}z^2\,\frac{\big(\mathbf{F}^*_0(z)\tfrac{1}{1-z}\big)^2}{1 - \mathbf{F}^*_0(z)\tfrac{1}{1-z}}\,\frac{1}{1-z}\Big], \qquad \mathbf{F}_0(z) = \frac{1}{1-z}\,\frac{1}{1 - \mathbf{F}^*_0(z)\tfrac{1}{1-z}},$$
 
-with $\mathbf{F}^*_0$ the unique power-series solution of the first equation. Then $\mathbf{f}^*_0(n) \sim \alpha n^{-3/2}\gamma^n$ and $\mathbf{f}_0(n) \sim \beta n^{-3/2}\gamma^n$ with $\alpha \approx 0.24$, $\beta \approx 2.88$, $\gamma \approx 2.1673$, and if mfe irreducibility has probability $\mathbf{f}^*_0(m)/\mathbf{f}_0(m)$ then $\mathbb{E}_0(n) = \Theta(n^2)$ with $\mathbb{E}_0(n)/\Omega(n) \to \alpha/\beta \approx 0.08$.
+with $\mathbf{F}^*_0$ the unique power-series solution of the first equation. Then $\mathbf{f}^*_0(n) \sim \alpha n^{-3/2}\gamma^n$ and $\mathbf{f}_0(n) \sim \beta n^{-3/2}\gamma^n$ for constants $\alpha, \beta > 0$ and a growth rate $\gamma > 1$ (the dominant singularity of $\mathbf{F}_0$ is $1/\gamma$), and if mfe irreducibility has probability $\mathbf{f}^*_0(m)/\mathbf{f}_0(m)$ then $\mathbb{E}_0(n) = \Theta(n^2)$ with $\mathbb{E}_0(n)/\Omega(n) \to \alpha/\beta$. The source prints $\alpha \approx 0.24$, $\beta \approx 2.88$, $\gamma \approx 2.1673$, $\alpha/\beta \approx 0.08$ and a predicted $91\%$ time reduction (Lemma 4, (15), Theorem 4 and the abstract); this page omits these values because they do not follow from the source's eqs (13)–(14): iterating both equations as power series gives $\mathbf{f}^*_0(n)/\mathbf{f}_0(n) \approx 0.0023$ at $n = 250$ with growth rate about $2.17$, so $\alpha/\beta \approx 0.002$.
 
-So, unlike the polymer-zeta prediction, the candidate set has quadratic expected size: sparsification of $\Lambda^*$ reduces running time only by a constant factor rather than by a factor of $n$ (a $91\%$ reduction predicted for the simplified loop model, against $96\%$ observed).
+So, unlike the polymer-zeta prediction, the candidate set has quadratic expected size: sparsification of $\Lambda^*$ reduces running time only by a constant factor rather than by a factor of $n$.
 
 ## Expansion
 

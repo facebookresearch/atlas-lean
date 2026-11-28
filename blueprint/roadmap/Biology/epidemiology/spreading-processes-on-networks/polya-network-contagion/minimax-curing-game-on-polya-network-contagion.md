@@ -18,6 +18,8 @@ $$
 
 a Nash equilibrium (saddle point) exists, and some equilibrium spends both budgets in full: $\sum_i x_i = \mathcal{B}_b$ and $\sum_i y_i = \mathcal{B}_r$.
 
+The source's Theorem 3 prints "Moreover, the equilibrium policy will satisfy $\sum_i\Delta_{b,i}(n)=\mathcal B_b$ and $\sum_i\Delta_{r,i}(n)=\mathcal B_r$"; this page claims this only for some equilibrium, because for degenerate urns not every equilibrium spends both budgets (if every urn starts all red, every allocation is a saddle point; see the Expansion).
+
 ## Expansion
 
 Conditionally on the past, write $S_{i,n} = (c_i + C_i y)/(c_i + d_i + C_i y + D_i x)$, where $c_i, d_i$ count accumulated red and black balls in the super urn and $C_i y = \sum_{j \in \mathcal{N}_i'} y_j Z_{j,n}$, $D_i x = \sum_{j \in \mathcal{N}_i'} x_j (1 - Z_{j,n})$ are linear in the controls. For each draw outcome this is convex in $x$; $1 - S_{i,n}$ has the same form in $y$, so $S_{i,n}$ is concave in $y$. The conditional law of $Z_n$ does not depend on the time-$n$ controls, so taking the expectation preserves both properties. The budget sets are convex and compact, so the classical minimax theorem gives a saddle point. The exposure is nonincreasing in each $x_j$ and nondecreasing in each $y_j$, so a player never gains by leaving budget unspent; not every equilibrium need spend in full (if every urn starts all red, every allocation is a saddle point). The exposure serves as a tractable proxy for $\tilde I_n$, which is hard to optimize directly.

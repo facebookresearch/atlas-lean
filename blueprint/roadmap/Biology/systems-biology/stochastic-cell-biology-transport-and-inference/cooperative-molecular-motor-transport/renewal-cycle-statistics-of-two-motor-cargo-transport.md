@@ -12,7 +12,15 @@ The source's Proposition 1(2) also gives compound-sum formulas for $\operatornam
 
 $$V_{\rm pool}=\frac{\mu_{M_\emptyset}}{\mu_T}=\frac{\mu_{\Delta M}}{\mu_{\Delta T}},\qquad D_{\rm pool}=\frac{V_{\rm pool}^2\sigma^2_T+\sigma^2_{M_\emptyset}-2V_{\rm pool}\sigma_{T,M_\emptyset}}{2\mu_T}=\frac{V_{\rm pool}^2\sigma^2_{\Delta T}+\sigma^2_{\Delta M}-2V_{\rm pool}\sigma_{\Delta T,\Delta M}}{2\mu_{\Delta T}} ,$$
 
-and the *long-run* velocity and diffusivity of a cargo that reattaches after complete detachment are given by the renewal–reward formulas $V_{\rm run}=\mu_{\Delta\hat M}/\mu_{\Delta\hat T}$ and $D_{\rm run}=(V_{\rm run}^2\sigma^2_{\Delta\hat T}+\sigma^2_{\Delta\hat M}-2V_{\rm run}\sigma_{\Delta\hat T,\Delta\hat M})/(2\mu_{\Delta\hat T})$ over full renewal cycles $(\Delta\hat T,\Delta\hat M)$. All cycle moments are explicit in the effective nondimensional rates and single-motor velocities.
+where the pooled statistics are the limits over independent runs $j=1,\dots,S$ of $\sum_jM^{(j)}_\emptyset/\sum_jT^{(j)}$ and $\sum_j(M^{(j)}_\emptyset-V_{\rm pool}T^{(j)})^2/(2\sum_jT^{(j)})$ as $S\to\infty$ (the source's (72)–(73)). The *long-run* velocity and diffusivity censor the runs to those with more than $k$ completed cycles (the source's (74)–(75)):
+
+$$V_{\rm run}=\lim_{k\to\infty}\lim_{S\to\infty}\frac{\sum_{j=1}^SM^{(j)}_\emptyset\mathbf 1_{\{N^{(j)}>k\}}}{\sum_{j=1}^ST^{(j)}\mathbf 1_{\{N^{(j)}>k\}}},\qquad D_{\rm run}=\lim_{k\to\infty}\lim_{S\to\infty}\frac{\sum_{j=1}^S\big(M^{(j)}_\emptyset-V_{\rm run}T^{(j)}\big)^2\mathbf 1_{\{N^{(j)}>k\}}}{2\sum_{j=1}^ST^{(j)}\mathbf 1_{\{N^{(j)}>k\}}}.$$
+
+Let $\mathcal A$ be the event that a cycle ends with a return to the two-motor state $(1,2)$ rather than with complete detachment, and write $\mu_{\Delta T|\mathcal A}$, $\sigma^2_{\Delta T|\mathcal A}$, $\sigma_{\Delta T,\Delta M|\mathcal A}$, … for the moments of a cycle conditioned on $\mathcal A$. Then (the source's Proposition 2(2), (78)–(79))
+
+$$V_{\rm run}=\frac{\mu_{\Delta M|\mathcal A}}{\mu_{\Delta T|\mathcal A}},\qquad D_{\rm run}=\frac{V_{\rm run}^2\sigma^2_{\Delta T|\mathcal A}+\sigma^2_{\Delta M|\mathcal A}-2V_{\rm run}\sigma_{\Delta T,\Delta M|\mathcal A}}{2\mu_{\Delta T|\mathcal A}}.$$
+
+All cycle moments are explicit in the effective nondimensional rates and single-motor velocities.
 
 **Corollary.** For two identical motors $V_{\rm pool}=V_{\rm run}$ and $|D_{\rm pool}-D_{\rm run}|\le 1/(8\mu_{\Delta T})$; for nonidentical motors the two notions of velocity can differ.
 

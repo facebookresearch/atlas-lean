@@ -16,10 +16,12 @@ where $d_g^{\mathcal S_u}$ is graph distance in the unrooted species tree, and c
 
 $$\max_{\ell,\ell'}\mathrm{Var}\big[\hat\delta_{\mathrm{int}}^m(\ell,\ell')\big] \ge C\,\frac{n}{m}.$$
 
+The source's Theorem 1 prints "a constant $C>0$ such that, for any integer $n\ge4$ and real $f>0$"; this page restricts to $f\in(0,f_0]$ because no constant works for all $f>0$: when every branch is at least $f$, the gene trees agree with the species tree with probability tending to $1$ as $f\to\infty$, so the variance tends to $0$, and the proof's per-block estimate $\tfrac29(1-\Theta(f))$ is a small-$f$ estimate.
+
 ## Depends on
 
-- [The multispecies coalescent](../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
-- [Rooted binary species tree with branch lengths](../../../coalescent-theory/multispecies-coalescent/species-tree.md)
+- [The multispecies coalescent](../../../../coalescent-theory/multispecies-coalescent/gene-tree-prob.md)
+- [Rooted binary species tree with branch lengths](../../../../coalescent-theory/multispecies-coalescent/species-tree.md)
 
 ## Expansion
 

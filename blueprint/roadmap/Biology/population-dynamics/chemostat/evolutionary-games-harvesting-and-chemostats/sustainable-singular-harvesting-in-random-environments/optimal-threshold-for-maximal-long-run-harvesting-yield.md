@@ -18,7 +18,7 @@ and $\liminf_{T\to\infty}\frac1T\mathbb{E}_x\int_0^T dZ_s \le \ell^*$ for every 
 
 **Theorem (pathwise yield).** For every reflection policy at level $b$, almost surely $Z^b_T/T \to 1/(S'(b)m((0,b)))$. Under pathwise uniqueness and a Yamada–Watanabe modulus for $\sigma$, existence of an invariant probability measure, and, for the value function $v$, $\sigma v'$ non-decreasing and square-integrable with respect to the speed measure, every admissible strategy satisfies $\liminf_{T\to\infty} Z_T/T \le \ell^* = \lim_{T\to\infty} Z^{b^*}_T/T$ almost surely.
 
-**Theorem (Abelian limit).** If $V_r$ is the maximal expected discounted yield at rate $r$, with optimal boundary $x^*_r$, then $x^*_r$ increases to $b^*$ as $r \downarrow 0$ and $\lim_{r\to0+} rV_r(x) = \mu(b^*)b^* = \ell^*$ for all $x$.
+**Theorem (Abelian limit).** Consider discount rates $r > 0$ for which $\theta_r(x) = (\mu(x) - r)x$ satisfies (B1) $\lim_{x\downarrow0}\theta_r(x) \ge 0$ and $\lim_{x\to\infty}\theta_r(x) < -\varepsilon$ for some $\varepsilon > 0$, and (B2) $\theta_r$ attains a unique maximum at $\hat x_r \in (0, x_{r0})$, $x_{r0} = \inf\{x > 0 : \theta_r(x) = 0\}$ (the source's Assumption 3.1). If $V_r$ is the maximal expected discounted yield at rate $r$, with optimal boundary $x^*_r$, then $x^*_r$ increases to $b^*$ as $r \downarrow 0$ and $\lim_{r\to0+} rV_r(x) = \mu(b^*)b^* = \ell^*$ for all $x$.
 
 ## Expansion
 

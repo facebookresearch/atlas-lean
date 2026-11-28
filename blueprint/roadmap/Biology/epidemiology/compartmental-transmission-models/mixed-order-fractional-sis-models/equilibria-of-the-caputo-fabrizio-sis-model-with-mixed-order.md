@@ -50,6 +50,8 @@ $$
 
 if $R \le 1$, then $I(t) \to 0$ and $S(t) \to P_\alpha / M(\alpha)$.
 
+For $R \le 1$ the source's Proposition 1 prints "$S(t) \to P_\alpha(S_0, I_0)$"; this page states $P_\alpha/M(\alpha)$ because at $I = 0$ the conservation law reads $M(\alpha)S = P_\alpha$ (the two agree only when $M(\alpha) = 1$).
+
 **Proposition (monotonicity of the total population).** Let $S_0, I_0 > 0$. If $R > 1$ and $0 < I_0 < E_\alpha$, then $N(t)$ increases strictly to $N_\alpha = \frac{\beta}{\beta - \gamma}E_\alpha$. If $R > 1$ and $I_0 > E_\alpha$, or if $R \le 1$, then $N(t)$ decreases strictly to its limit. In particular the long-run total population determines the fractional order: for $M \equiv 1$, $N_0 = S_0 + I_0$ and $N(t) \to N_\infty$ with $R > 1$,
 
 $$

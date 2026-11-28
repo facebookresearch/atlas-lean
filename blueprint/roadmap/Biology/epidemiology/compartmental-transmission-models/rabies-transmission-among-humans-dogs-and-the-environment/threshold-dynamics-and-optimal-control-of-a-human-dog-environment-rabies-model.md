@@ -22,7 +22,7 @@ with $R_{21} = \frac{\kappa_1\theta_2\gamma}{\mu_2(\mu_2+\gamma)(\sigma_2+\mu_2)
 
 **Theorem.**
 
-1. *(Well-posedness.)* Solutions starting in the nonnegative orthant remain positive and are uniformly bounded.
+1. *(Well-posedness.)* For measurable controls with values in $[0,1]$ that also satisfy $u_1 + u_3 \le 1$ and $u_1 + u_2 \le 1$ (in particular for the uncontrolled system), solutions starting in the nonnegative orthant remain nonnegative and are uniformly bounded. The source's Lemma 1 states this for its whole control set $\mathcal{U} = \{0 \le u_j \le 1\} = [0,1]^4$; this page adds $u_1 + u_3 \le 1$, $u_1 + u_2 \le 1$ because on $[0,1]^4$ the factors $1 - u_1 - u_3$ and $1 - u_1 - u_2$ can be negative: $u_1 = u_3 = 1$, $E_H(0) = 0$, $S_H(0) > 0$, $I_F(0) > 0$ give $\dot E_H(0) < 0$ (likewise $E_D$ with $u_1 = u_2 = 1$).
 2. *(Disease-free equilibrium.)* The rabies-free equilibrium is globally asymptotically stable when $\mathcal{R}_0 < 1$ and unstable otherwise (the source's Theorem 3).
 3. *(Endemic equilibrium.)* If $\mathcal{R}_e \ge 1$, the system has exactly one equilibrium with $E_H, E_F, E_D > 0$ (the source's Theorem 4, whose hypothesis "$E_H, E_F, E_D > 0$" is a condition on the equilibrium sought), and it is globally asymptotically stable when $\mathcal{R}_e > 1$.
 4. *(Optimal control.)* For the objective (the source's (22))

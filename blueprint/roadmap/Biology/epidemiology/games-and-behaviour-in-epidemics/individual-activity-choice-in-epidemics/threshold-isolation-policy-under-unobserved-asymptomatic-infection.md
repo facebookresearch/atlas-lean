@@ -8,7 +8,7 @@ and the value function $\phi_t(s,a)$ of the belief-state problem solves an HJB e
 
 **Theorem.** Let $\beta_t \equiv \bar\beta$ and let $\bar\beta^{\mathrm{crit}} = \frac{\alpha}{\lambda^{SA} \bar\phi(a)}(1 + \eta/\gamma)$ be the fully observed critical level.
 
-1. (Belief ceiling, Proposition 5) Set $\bar a = (\lambda^{SA} \bar\beta + \eta)/\lambda^{AI}$. If the agent starts susceptible ($S_0 = 1$) and stays active ($U_s = 1$ for $s < t$), then $A_t < \bar a$ for all $0 \le t < \tau$; if moreover $\lambda^{AR} = 0$, then $A_t \uparrow \min\{\bar a, 1\}$ as $t \to \infty$.
+1. (Belief ceiling, Proposition 5) Set $\bar a = (\lambda^{SA} \bar\beta + \eta)/\lambda^{AI}$. If the agent starts susceptible ($S_0 = 1$) and stays active ($U_s = 1$ for $s < t$), then $A_t < \bar a$ for all $0 \le t < \tau$; if moreover $\lambda^{AR} = 0$, then $A_t \uparrow \min\{\bar a, 1\}$ as $t \to \infty$. (Proposition 5 prints "$A_t \uparrow \bar a$"; this page writes $\min\{\bar a, 1\}$ because $A_t$ is a probability, and when $\bar a > 1$ the belief equation of the Expansion drives $A_t$ to $1$, not to $\bar a$.)
 2. (Threshold policy, Proposition 4) Assume $S_0 + A_0 = 1$ and $\lambda^{AR} = 0$, so that $S_t + A_t = 1$ for $t < \tau$ and the belief is the single number $A_t$. If $\bar\beta \ge \bar\beta^{\mathrm{crit}}$, the optimal policy is to isolate, $\bar\psi(\cdot, a) = 0$. If $\bar\beta < \alpha / (\lambda^{SA} \bar\phi(i)) < \bar\beta^{\mathrm{crit}}$, there is $\underline\lambda^{AI}(\bar\beta)$ such that for all $\lambda^{AI} > \underline\lambda^{AI}(\bar\beta)$ the optimal policy is of threshold type,
 
 $$ \bar\psi(\cdot, a) = 1 \ \text{ for } 0 \le a < a^{\mathrm{thresh}}, \qquad \bar\psi(\cdot, a) = 0 \ \text{ for } a^{\mathrm{thresh}} < a \le 1, $$

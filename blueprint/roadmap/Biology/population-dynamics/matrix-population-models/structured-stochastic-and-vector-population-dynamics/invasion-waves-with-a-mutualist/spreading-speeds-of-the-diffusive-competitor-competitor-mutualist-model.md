@@ -26,7 +26,7 @@ the inequality
 
 $$X \ge \frac{\beta\,ab}{1+mL} + \frac{\gamma\,aml}{(1+mL)^2}\,\frac{X}{Y}$$
 
-holds (the source's (18), obtained by substituting its (19) into its (21); equivalently $\frac{ab - (1+mL)}{(1+mL) - a} \le \frac{\alpha}{\beta}\big(2 - \frac{D_2}{D_1}\big) - \frac{\gamma}{\beta}\,\frac{aml}{(1+mL)((1+mL)-a)}\,\frac{X}{Y}$), then the system is linearly determinate with single spreading speed $c_1$.
+holds (the source's (21) with its (19) substituted; equivalently $\frac{ab - (1+mL)}{(1+mL) - a} \le \frac{\alpha}{\beta}\big(2 - \frac{D_2}{D_1}\big) - \frac{\gamma}{\beta}\,\frac{aml}{(1+mL)((1+mL)-a)}\,\frac{X}{Y}$), then the system is linearly determinate with single spreading speed $c_1$. The source states this condition as its (18), whose last term it prints as $\frac{\gamma}{\beta}\frac{mal}{(1+mL)^2}\frac{X}{Y}$; that printed form is not equivalent to the one above, which is what substituting (19) into (21) gives, so the page states the latter.
 
 **Theorem (mutualist helps the resident).** If $b < 1$, then $E_6$ is invadable by $p_2$. If either $ml \le (1+mL)(1-b)$ and $a \le 1 + mL$, or $ml > (1+mL)(1-b)$ and $a \le a_1$ with
 

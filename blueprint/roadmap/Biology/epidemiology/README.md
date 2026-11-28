@@ -43,7 +43,6 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Human-vector SIS epidemic model](compartmental-transmission-models/human-vector-sis-epidemic-model/README.md)
 - [Infection-age HIV model with cell-to-cell transmission](compartmental-transmission-models/infection-age-hiv-model-with-cell-to-cell-transmission/README.md)
 - [Kinetic SEIR models with contact distributions](compartmental-transmission-models/kinetic-seir-models-with-contact-distributions/README.md)
-- [Matrix SIR models with phase-type infectious periods](compartmental-transmission-models/matrix-sir-models-with-phase-type-infectious-periods/README.md)
 - [Mixed-order fractional SIS models](compartmental-transmission-models/mixed-order-fractional-sis-models/README.md)
 - [Multi-host multi-vector staged-progression models](compartmental-transmission-models/multi-host-multi-vector-staged-progression-models/README.md)
 - [Non-population-conserving SIR model](compartmental-transmission-models/non-population-conserving-sir-model/README.md)

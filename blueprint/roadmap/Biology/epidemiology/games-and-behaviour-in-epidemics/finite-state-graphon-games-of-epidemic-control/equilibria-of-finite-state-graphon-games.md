@@ -24,7 +24,7 @@ $$\begin{aligned} \dot p^x(t,e)&=\sum_{e'}q^x_{e',e}\big(\hat\phi^x(t,e'),Z^x_t\
 
 closed by the aggregate formula above, has a bounded solution $(u,p)\in C([0,T];L^2(I\times E)^2)$ with each $p^x(t,\cdot)$ a probability vector; the feedback $\hat\phi$ is then a graphon-game equilibrium.
 
-**Theorem (law of large numbers).** On a rich Fubini extension carrying essentially pairwise independent state processes $X^x$, for any admissible control profile the aggregate $Z^x$ is almost surely equal to a deterministic function, continuous in time for every $x$, so the deterministic forward equation for $p^x$ describes the random population exactly.
+**Theorem (law of large numbers).** Under Conditions 2.3 and 2.4, on a rich Fubini extension carrying essentially pairwise independent state processes $X^x$, for any admissible control profile the aggregate $Z^x$ is almost surely equal to a deterministic function, continuous in time for every $x$, so the deterministic forward equation for $p^x$ describes the random population exactly.
 
 ## Expansion
 

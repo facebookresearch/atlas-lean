@@ -18,8 +18,8 @@ General monotonicity facts used along the way: $f_{k,r}^A \le f_{k,r}^B$ wheneve
 
 ## Depends on
 
-- [Fitch's algorithm](../../small-parsimony-problem/fitch.md)
-- [Fitch's root set is the set of optimal root states](../../small-parsimony-problem/fitch-set-eq.md)
+- [Fitch's algorithm](../../../small-parsimony-problem/fitch.md)
+- [Fitch's root set is the set of optimal root states](../../../small-parsimony-problem/fitch-set-eq.md)
 
 ## Expansion
 

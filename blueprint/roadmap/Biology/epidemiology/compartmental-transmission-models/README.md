@@ -10,7 +10,6 @@ Compartmental models of specific diseases and settings, deterministic, fractiona
 - [Human-vector SIS epidemic model](human-vector-sis-epidemic-model/README.md)
 - [Infection-age HIV model with cell-to-cell transmission](infection-age-hiv-model-with-cell-to-cell-transmission/README.md)
 - [Kinetic SEIR models with contact distributions](kinetic-seir-models-with-contact-distributions/README.md)
-- [Matrix SIR models with phase-type infectious periods](matrix-sir-models-with-phase-type-infectious-periods/README.md)
 - [Mixed-order fractional SIS models](mixed-order-fractional-sis-models/README.md)
 - [Multi-host multi-vector staged-progression models](multi-host-multi-vector-staged-progression-models/README.md)
 - [Non-population-conserving SIR model](non-population-conserving-sir-model/README.md)
