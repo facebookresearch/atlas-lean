@@ -33,7 +33,8 @@ is embedded by doubling the last coordinate.
 
 * John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power of 2*,
   Journal of Integer Sequences 28 (2025), Article 25.7.8, pp. 1–18, especially §1 for the cover
-  definitions, §2, Lemmas 5 and 6, §3, Theorem 15(c) and Lemma 16, and §4, Lemma 21 (p. 12).
+  definitions, §2, Lemmas 5 and 6 (p. 4), Theorem 15(c) and Lemma 16 (p. 8), and §4,
+  Lemma 21 (p. 12).
 -/
 
 namespace MetaMathlibExt
@@ -134,7 +135,7 @@ set of all sums $\sum_{x \in A} c_x x$ with integer coefficients $c_x$ such that
 either $0$ or odd.
 
 Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 3 (the operator `𝒯`). -/
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 2 (the operator `𝒯`). -/
 def oddCombinations (A : Finset G) : Set G :=
   {g | ∃ c : G → ℤ, (∀ x ∈ A, c x = 0 ∨ Odd (c x)) ∧ g = ∑ x ∈ A, c x • x}
 
@@ -143,7 +144,7 @@ omit [DecidableEq G] in
 in the set $\mathcal{T}(A)$ of odd combinations of $A$ (take every coefficient equal to $0$).
 
 Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 3 (the operator `𝒯`). -/
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 2 (the operator `𝒯`). -/
 theorem zero_mem_oddCombinations (A : Finset G) : (0 : G) ∈ oddCombinations A :=
   ⟨0, fun _ _ => Or.inl rfl, by simp⟩
 
@@ -154,7 +155,7 @@ in which every integer coefficient $c_y$ is $0$ or odd. Every $x \in A$ lies in 
 take $c_x = 1$ and $c_y = 0$ for $y \neq x$.
 
 Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 3 (the operator `𝒯`). -/
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 2 (the operator `𝒯`). -/
 theorem mem_oddCombinations_of_mem {A : Finset G} {x : G} (hx : x ∈ A) :
     x ∈ oddCombinations A := by
   classical
@@ -168,7 +169,7 @@ $A \subseteq G$, let $\mathcal{T}(A)$ be the set of combinations $\sum_{x \in A}
 every integer coefficient $c_x$ is $0$ or odd. Then $\mathcal{T}(\emptyset) = \{0\}$.
 
 Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 3 (the operator `𝒯`). -/
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 2 (the operator `𝒯`). -/
 theorem oddCombinations_empty : oddCombinations (∅ : Finset G) = {0} := by
   ext g
   simp [oddCombinations]

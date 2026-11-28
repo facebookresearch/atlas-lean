@@ -34,7 +34,8 @@ index sets `I : Finset ι`, so repeated values are distinguished. The record tex
 these notions: a perfect cover of a group of order `2^n` is a set of `n` nonzero elements
 with distinct subset sums (Lemma 16), a perfect `m`-cover covers each element `m` times
 (Lemmas 5 and 8), and `C(G)` is the number of perfect covers of `G`. The relation `a ∼ b`
-("`b` is an odd multiple of `a`") and the operator `𝒯` are taken from the paper's Section 3.
+("`b` is an odd multiple of `a`") and the operator `𝒯` are introduced in the paper's Section 2
+(pp. 6 and 8, respectively).
 -/
 
 namespace MetaMathlibExt
