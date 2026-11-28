@@ -136,6 +136,14 @@ example : coeff 5 (szQMZV [1, 0, 1]) = 3 := by
     Nat.dvd_zero, add_zero, zero_add, zero_mul, mul_zero, one_mul, mul_one]
   norm_num
 
+-- Compute the same coefficient through the public formula, checking the interior gap.
+example : coeff 5 (szQMZV [1, 0, 1]) = 3 := by
+  let k : Fin 2 → ℕ := fun _ => 1
+  let d : Fin 2 → ℕ := ![2, 1]
+  have hindex : szBlockIndex (List.ofFn fun j => (k j, d j)) = [1, 0, 1] := by decide
+  rw [← hindex, coeff_szQMZV_szBlockIndex_eq_sum_choose 2 k d (by decide) (by decide) 5]
+  decide +kernel
+
 -- The exported theorem is available without importing the old wanted module.
 example (N : ℕ) :
     coeff N (szQMZV (szBlockIndex [(2, 2)])) =
