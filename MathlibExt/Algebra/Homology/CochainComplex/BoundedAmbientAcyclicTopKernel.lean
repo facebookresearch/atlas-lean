@@ -92,7 +92,8 @@ theorem mappedTopDifferential_epi (K : Bounded E)
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness.
 
-The component of the differential of the termwise mapped complex F(K) at t−1,t is exactly F(d_K^{t−1}). -/
+The component of the differential of the termwise mapped complex F(K) at t−1,t is exactly
+F(d_K^{t−1}). -/
 theorem mappedTopDifferential_eq (K : Bounded E) :
     F.map (K.obj.d (topCutoff K - 1) (topCutoff K)) =
       ((F.mapHomologicalComplex (.up ℤ)).obj K.obj).d
@@ -121,10 +122,12 @@ variable [F.Full] [F.Faithful]
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
 Z —ι→ K^{t−1} for the represented source kernel of F(d).
 
-The source kernel lift represents Ker(F(d)) by Z and an inclusion ι:Z → K^{t−1}, with its mapped kernel property. -/
+The source kernel lift represents Ker(F(d)) by Z and an inclusion ι:Z → K^{t−1}, with its mapped
+kernel property. -/
 def topKernelLift (K : Bounded E)
     (hK : ((F.mapHomologicalComplex (.up ℤ)).obj K.obj).Acyclic) :
     Functor.KernelLift F (K.obj.d (topCutoff K - 1) (topCutoff K)) := by
@@ -134,7 +137,8 @@ def topKernelLift (K : Bounded E)
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
 Z —ι→ K^{t−1} for the represented source kernel of F(d).
 
 The source object Z is the representative supplied by the essential-image witness for Ker(F(d)). -/
@@ -146,10 +150,12 @@ theorem topKernelLift_K (K : Bounded E)
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
 Z —ι→ K^{t−1} for the represented source kernel of F(d).
 
-For the representative isomorphism α:F(Z) ≅ Ker(F(d)), the mapped inclusion is F(ι)=κ∘α, where κ is the ambient kernel inclusion. -/
+For the representative isomorphism α:F(Z) ≅ Ker(F(d)), the mapped inclusion is F(ι)=κ∘α, where κ is
+the ambient kernel inclusion. -/
 theorem topKernelLift_map_ι (K : Bounded E)
     (hK : ((F.mapHomologicalComplex (.up ℤ)).obj K.obj).Acyclic) :
     F.map (topKernelLift F hKernelClosure K hK).ι =
@@ -160,7 +166,8 @@ theorem topKernelLift_map_ι (K : Bounded E)
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
 Z —ι→ K^{t−1} for the represented source kernel of F(d).
 
 The source kernel inclusion satisfies d∘ι=0. -/
@@ -173,7 +180,8 @@ theorem topKernelLift_zero (K : Bounded E)
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
 Z —ι→ K^{t−1} for the represented source kernel of F(d).
 
 F(ι):F(Z) → F(K^{t−1}) has the universal property of the kernel of F(d). -/
@@ -187,7 +195,8 @@ def topKernelLiftMappedIsLimit (K : Bounded E)
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
 Z —ι→ K^{t−1} for the represented source kernel of F(d).
 
 The second map in the represented source row Z → K^{t−1} → K^t is the original differential d. -/
@@ -199,7 +208,8 @@ theorem topKernelLift_shortComplex_g (K : Bounded E)
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
 Z —ι→ K^{t−1} for the represented source kernel of F(d).
 
 The mapped row 0 → F(Z) → F(K^{t−1}) → F(K^t) → 0 is short exact in A. -/
@@ -215,8 +225,10 @@ variable [HasZeroObject E] [HasBinaryBiproducts E] [ExactCategory E]
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
-Z —ι→ K^{t−1} for the represented source kernel of F(d). Assume E is Quillen exact with a zero object and binary biproducts,
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
+Z —ι→ K^{t−1} for the represented source kernel of F(d). Assume E is Quillen exact with a zero
+object and binary biproducts,
 and F reflects admissible exactness.
 
 The represented source row Z → K^{t−1} → K^t is admissible exact. -/
@@ -229,8 +241,10 @@ theorem topKernelLift_isAdmissibleExact (K : Bounded E)
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
-Z —ι→ K^{t−1} for the represented source kernel of F(d). Assume E is Quillen exact with a zero object and binary biproducts,
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
+Z —ι→ K^{t−1} for the represented source kernel of F(d). Assume E is Quillen exact with a zero
+object and binary biproducts,
 and F reflects admissible exactness.
 
 The original top differential d:K^{t−1} → K^t is an admissible epimorphism in E. -/
@@ -242,8 +256,10 @@ theorem topDifferential_isAdmissibleEpi (K : Bounded E)
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
-Z —ι→ K^{t−1} for the represented source kernel of F(d). Assume E is Quillen exact with a zero object and binary biproducts,
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
+Z —ι→ K^{t−1} for the represented source kernel of F(d). Assume E is Quillen exact with a zero
+object and binary biproducts,
 and F reflects admissible exactness.
 
 The source inclusion ι:Z → K^{t−1} is a kernel of d in E. -/
@@ -258,8 +274,10 @@ def topKernelLiftIsLimit (K : Bounded E)
 /-- Let E be preadditive, A abelian, F:E → A additive and K a bounded
 integer cochain complex. Let t be the upper endpoint selected from
 K's finite-support witness. Assume F(K) is acyclic and the essential image of F is closed
-under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write d:K^{t−1} → K^t and
-Z —ι→ K^{t−1} for the represented source kernel of F(d). Assume E is Quillen exact with a zero object and binary biproducts,
+under kernels of epimorphisms between objects in that image. Assume F is fully faithful. Write
+d:K^{t−1} → K^t and
+Z —ι→ K^{t−1} for the represented source kernel of F(d). Assume E is Quillen exact with a zero
+object and binary biproducts,
 and F reflects admissible exactness.
 
 The original differential d:K^{t−1} → K^t is a cokernel of ι in E. -/

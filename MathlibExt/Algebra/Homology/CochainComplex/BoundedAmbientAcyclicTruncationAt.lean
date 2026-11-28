@@ -136,7 +136,8 @@ and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
 and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts.
 
-The lower chart is the single-term identification followed by the shifted-source cofiber inclusion. -/
+The lower chart is the single-term identification followed by the shifted-source cofiber inclusion.
+-/
 theorem topDiskLowerIso_hom (K : Bounded E) :
     (topDiskLowerIso (b := b) K).hom =
       (HomologicalComplex.singleObjXSelf (.up ℤ) (b)
@@ -207,7 +208,8 @@ and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
 and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts.
 
-The degree-one cocycle h=−∂f₀, the negative Hom-complex boundary of the top-term cochain, supplies the shifted-source cone coordinate. -/
+The degree-one cocycle h=−∂f₀, the negative Hom-complex boundary of the top-term cochain, supplies
+the shifted-source cone coordinate. -/
 def topDiskBoundary (K : Bounded E) : Cocycle K.obj (topDiskSingle (b := b) K) 1 :=
   Cocycle.mk (-δ 0 1 (topDiskCochain (b := b) K)) 2 rfl (by simp only [δ_neg, δ_δ, neg_zero])
 
@@ -254,7 +256,8 @@ and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
 and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts.
 
-For p+1=q, the negative boundary has component h_{p,q}=f₀,q∘d_K(p,q), with positive differential sign. -/
+For p+1=q, the negative boundary has component h_{p,q}=f₀,q∘d_K(p,q), with positive differential
+sign. -/
 theorem topDiskBoundary_v (K : Bounded E) (p q : ℤ) (hpq : p + 1 = q) :
     (topDiskBoundary (b := b) K).1.v p q hpq =
       K.obj.d p q ≫ (topDiskCochain (b := b) K).v q q (add_zero _) := by
@@ -268,7 +271,8 @@ and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
 and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts.
 
-In degree j the projection π_j is the sum of h_{j,j+1} followed by the shifted-source inclusion and f₀,j followed by the target inclusion. -/
+In degree j the projection π_j is the sum of h_{j,j+1} followed by the shifted-source inclusion and
+f₀,j followed by the target inclusion. -/
 theorem topDiskProjection_f (K : Bounded E) (j : ℤ) :
     (topDiskProjection (b := b) K).f j =
       (topDiskBoundary (b := b) K).1.v j (j + 1) rfl ≫
@@ -282,7 +286,8 @@ and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
 and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts.
 
-For p+1=q, the projection π_p equals the shifted-source inclusion composed with h_{p,q}, plus the target inclusion composed with f₀,p. -/
+For p+1=q, the projection π_p equals the shifted-source inclusion composed with h_{p,q}, plus the
+target inclusion composed with f₀,p. -/
 theorem topDiskProjection_f' (K : Bounded E) (p q : ℤ) (hpq : p + 1 = q) :
     (topDiskProjection (b := b) K).f p =
       (topDiskBoundary (b := b) K).1.v p q hpq ≫
@@ -372,7 +377,8 @@ and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
 and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts.
 
-The top disk admits the canonical homotopy from its identity to zero, as the cofiber of an identity map. -/
+The top disk admits the canonical homotopy from its identity to zero, as the cofiber of an identity
+map. -/
 def topDiskContraction (K : Bounded E) :
     _root_.Homotopy (𝟙 (topDiskRaw (b := b) K)) 0 := by
   change _root_.Homotopy (𝟙 (mappingCone (𝟙 (topDiskSingle (b := b) K)))) 0
@@ -383,7 +389,8 @@ def topDiskContraction (K : Bounded E) :
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Let F:E → A be any additive functor with A abelian.
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Let F:E → A be any additive functor
+with A abelian.
 
 The ambient image F(D_t) is acyclic. -/
 theorem topDisk_map_acyclic {A : Type uA} [Category.{vA} A] [Abelian A]
@@ -418,7 +425,8 @@ variable (a : ℤ)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -453,7 +461,8 @@ theorem topDiskProjection_isAdmissibleEpi (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -471,13 +480,15 @@ theorem topDiskProjection_hasKernel_f (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
 Write π:K → D_t for the top-disk projection, T=Ker(π) and i:T → K.
 
-The kernel of π exists in the category of integer cochain complexes, computed from its component kernels. -/
+The kernel of π exists in the category of integer cochain complexes, computed from its component
+kernels. -/
 theorem topDiskProjection_hasKernel (K : Bounded E)
     (hSupport : ∀ j : ℤ, j < a ∨ b < j → IsZero (K.obj.X j))
     (hK : ((F.mapHomologicalComplex (.up ℤ)).obj K.obj).Acyclic) :
@@ -489,7 +500,8 @@ theorem topDiskProjection_hasKernel (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -506,7 +518,8 @@ def topTruncationRaw (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -524,7 +537,8 @@ def topTruncationRawι (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -543,7 +557,8 @@ theorem topTruncationRawι_projection (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -564,7 +579,8 @@ def topTruncationKernelIsLimit (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -588,7 +604,8 @@ def topTruncationTermIsLimit (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -614,7 +631,8 @@ theorem topTruncationRaw_isZero_X_of_isZero (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -633,7 +651,8 @@ theorem topTruncationRaw_isZero_X_upper (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -662,7 +681,8 @@ theorem topTruncationRaw_support (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -680,7 +700,8 @@ theorem bounded_topTruncationRaw (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -696,7 +717,8 @@ def topTruncation (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -713,7 +735,8 @@ def topTruncationι (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -729,7 +752,8 @@ theorem topTruncationι_hom (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -747,7 +771,8 @@ theorem topTruncationι_projection (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -765,7 +790,8 @@ abbrev topTruncationRawShortComplex (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -803,7 +829,8 @@ theorem topTruncationRawShortComplex_term_isAdmissibleExact (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -824,7 +851,8 @@ variable [F.IsExact]
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -849,7 +877,8 @@ theorem topTruncationRawShortComplex_map_shortExact (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -878,7 +907,8 @@ theorem topTruncation_map_acyclic (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -895,13 +925,15 @@ omit [F.IsExact] in
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
 Write π:K → D_t for the top-disk projection, T=Ker(π) and i:T → K.
 
-The raw cofiber Cofib(i) is bounded, using the finite support of T and K with the source shift by one. -/
+The raw cofiber Cofib(i) is bounded, using the finite support of T and K with the source shift by
+one. -/
 theorem bounded_topTruncationCofiberRaw (K : Bounded E)
     (hSupport : ∀ j : ℤ, j < a ∨ b < j → IsZero (K.obj.X j))
     (hK : ((F.mapHomologicalComplex (.up ℤ)).obj K.obj).Acyclic) :
@@ -922,7 +954,8 @@ theorem bounded_topTruncationCofiberRaw (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -938,7 +971,8 @@ def topTruncationCofiber (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -957,7 +991,8 @@ omit [F.IsExact] in
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -978,7 +1013,8 @@ omit [F.IsExact] in
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -1003,7 +1039,8 @@ theorem topTruncationCofiber_inlX_desc_f (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -1022,7 +1059,8 @@ omit [F.IsExact] in
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -1039,13 +1077,15 @@ theorem topTruncationCofiberDesc_hom (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
 Write π:K → D_t for the top-disk projection, T=Ker(π) and i:T → K.
 
-The additive-functor comparison F(Cofib(i)) ≅ Cofib(F(i)) identifies the two cofiber constructions. -/
+The additive-functor comparison F(Cofib(i)) ≅ Cofib(F(i)) identifies the two cofiber constructions.
+-/
 abbrev topTruncationCofiberMapIso (K : Bounded E)
     (hSupport : ∀ j : ℤ, j < a ∨ b < j → IsZero (K.obj.X j))
     (hK : ((F.mapHomologicalComplex (.up ℤ)).obj K.obj).Acyclic) :
@@ -1061,13 +1101,15 @@ omit [F.IsExact] in
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
 Write π:K → D_t for the top-disk projection, T=Ker(π) and i:T → K.
 
-Under F(Cofib(i)) ≅ Cofib(F(i)), the mapped descendant F(r) equals the canonical descendant of the mapped row F(T) → F(K) → F(D_t). -/
+Under F(Cofib(i)) ≅ Cofib(F(i)), the mapped descendant F(r) equals the canonical descendant of the
+mapped row F(T) → F(K) → F(D_t). -/
 theorem topTruncationCofiberDesc_map (K : Bounded E)
     (hSupport : ∀ j : ℤ, j < a ∨ b < j → IsZero (K.obj.X j))
     (hK : ((F.mapHomologicalComplex (.up ℤ)).obj K.obj).Acyclic) :
@@ -1119,7 +1161,8 @@ theorem topTruncationCofiberDesc_map (K : Bounded E)
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
@@ -1151,13 +1194,15 @@ omit [F.IsExact] in
 /-- Let E be preadditive with a zero object and binary biproducts,
 and K a bounded integer cochain complex. t=b is a supplied integer.
 Let S_t be the single complex on K^t, D_t=Cofib(1_{S_t}),
-and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E → A is additive fully faithful,
+and ℓ:K^t ≅ D_t^{t−1}, u:K^t ≅ D_t^t the lower and upper charts. Assume E is Quillen exact and F:E →
+A is additive fully faithful,
 with A abelian. Assume F reflects admissible exactness, its essential image
 is closed under kernels of epimorphisms between image objects, and F(K)
 is acyclic. Let [a,t] be the supplied support interval of K.
 Write π:K → D_t for the top-disk projection, T=Ker(π) and i:T → K.
 
-The kernel retains the lower bound a and has the strictly smaller upper bound b−1<b: its terms are zero outside [a,b−1]. -/
+The kernel retains the lower bound a and has the strictly smaller upper bound b−1<b: its terms are
+zero outside [a,b−1]. -/
 theorem topTruncation_strict_support (K : Bounded E)
     (hSupport : ∀ j : ℤ, j < a ∨ b < j → IsZero (K.obj.X j))
     (hK : ((F.mapHomologicalComplex (.up ℤ)).obj K.obj).Acyclic) :

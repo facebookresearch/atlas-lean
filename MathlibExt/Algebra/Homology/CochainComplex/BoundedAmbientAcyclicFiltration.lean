@@ -81,7 +81,8 @@ variable {F} {a b : ℤ} {n : ℕ}
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
 Put t=b−n and S′ for the upper kernel truncation of S at t.
@@ -100,12 +101,14 @@ def next (S : Stage F a b n) : Stage F a b (n + 1) where
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
 Put t=b−n and S′ for the upper kernel truncation of S at t.
 
-The complex object of the next stage is precisely the upper kernel truncation at the carried endpoint t=b−n. -/
+The complex object of the next stage is precisely the upper kernel truncation at the carried
+endpoint t=b−n. -/
 theorem next_complex (S : Stage F a b n) :
     (next hKernelClosure S).complex =
       TruncationAt.topTruncation (b := b - (n : ℤ)) (a := a)
@@ -113,7 +116,8 @@ theorem next_complex (S : Stage F a b n) :
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
 Put t=b−n and S′ for the upper kernel truncation of S at t.
@@ -125,10 +129,12 @@ def inclusion (S : Stage F a b n) : (next hKernelClosure S).complex ⟶ S.comple
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 Every degree component of i is an admissible monomorphism in E. -/
@@ -139,7 +145,8 @@ theorem inclusion_isAdmissibleMono_f (S : Stage F a b n) (j : ℤ) :
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E has a zero object and binary biproducts, and put t=b−n.
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E has a zero object and binary
+biproducts, and put t=b−n.
 
 The signed top disk D_t is formed from the top term S^t in degrees t−1 and t. -/
 abbrev disk (S : Stage F a b n) : Bounded E :=
@@ -147,7 +154,8 @@ abbrev disk (S : Stage F a b n) : Bounded E :=
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E has a zero object and binary biproducts, and put t=b−n.
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E has a zero object and binary
+biproducts, and put t=b−n.
 
 The cochain projection π:S → D_t to the signed disk of the top term. -/
 abbrev projection (S : Stage F a b n) : S.complex ⟶ disk S :=
@@ -156,9 +164,11 @@ abbrev projection (S : Stage F a b n) : S.complex ⟶ disk S :=
 omit [ExactCategory E] [F.Full] [F.Faithful] [F.ReflectsAdmissibleExact] [F.IsExact] in
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E has a zero object and binary biproducts, and put t=b−n.
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E has a zero object and binary
+biproducts, and put t=b−n.
 
-In the upper disk coordinate S^t → D_t^t, the projection component π_t is the canonical upper comparison map. -/
+In the upper disk coordinate S^t → D_t^t, the projection component π_t is the canonical upper
+comparison map. -/
 theorem projection_f_upper (S : Stage F a b n) :
     (projection S).hom.f (b - (n : ℤ)) =
       (TruncationAt.topDiskUpperIso (b := b - (n : ℤ)) S.complex).hom :=
@@ -167,9 +177,11 @@ theorem projection_f_upper (S : Stage F a b n) :
 omit [ExactCategory E] [F.Full] [F.Faithful] [F.ReflectsAdmissibleExact] [F.IsExact] in
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E has a zero object and binary biproducts, and put t=b−n.
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E has a zero object and binary
+biproducts, and put t=b−n.
 
-The lower projection component π_{t−1} is d_S^{t−1} followed by the canonical lower disk coordinate S^t → D_t^{t−1}, with positive sign. -/
+The lower projection component π_{t−1} is d_S^{t−1} followed by the canonical lower disk coordinate
+S^t → D_t^{t−1}, with positive sign. -/
 theorem projection_f_lower (S : Stage F a b n) :
     (projection S).hom.f (b - (n : ℤ) - 1) =
       S.complex.obj.d (b - (n : ℤ) - 1) (b - (n : ℤ)) ≫
@@ -178,10 +190,12 @@ theorem projection_f_lower (S : Stage F a b n) :
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 The composite π∘i is zero as a bounded cochain map. -/
@@ -192,10 +206,12 @@ theorem inclusion_projection (S : Stage F a b n) :
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 The underlying cochain short complex is S′ —i→ S —π→ D_t. -/
@@ -205,10 +221,12 @@ abbrev rawRow (S : Stage F a b n) : ShortComplex (CochainComplex E ℤ) :=
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 The first map of the underlying stage short complex is the cochain inclusion i. -/
@@ -218,10 +236,12 @@ theorem rawRow_f (S : Stage F a b n) :
 omit [F.IsExact] in
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 The second map of the underlying stage short complex is the cochain projection π. -/
@@ -230,10 +250,12 @@ theorem rawRow_g (S : Stage F a b n) :
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 Applying F termwise to S′ → S → D_t gives a short exact sequence of ambient cochain complexes. -/
@@ -244,10 +266,12 @@ theorem rawRow_map_shortExact (S : Stage F a b n) :
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 The stage cofiber is the bounded homotopy cofiber Cofib(i). -/
@@ -257,10 +281,12 @@ abbrev cofiber (S : Stage F a b n) : Bounded E :=
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 The cofiber descendant Cofib(i) → D_t is induced by π and the zero composite π∘i. -/
@@ -270,23 +296,28 @@ abbrev descendant (S : Stage F a b n) : cofiber hKernelClosure S ⟶ disk S :=
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
-The underlying complex of the stage cofiber is the homotopy cofiber of the underlying inclusion i. -/
+The underlying complex of the stage cofiber is the homotopy cofiber of the underlying inclusion i.
+-/
 theorem cofiber_obj (S : Stage F a b n) :
     (cofiber hKernelClosure S).obj =
       HomologicalComplex.homotopyCofiber (inclusion hKernelClosure S).hom := rfl
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 The cofiber target inclusion S → Cofib(i) followed by the descendant equals π. -/
@@ -298,13 +329,16 @@ theorem descendant_inr (S : Stage F a b n) :
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
-Every shifted-source component of the descendant Cofib(i) → D_t is zero, as prescribed by its zero homotopy. -/
+Every shifted-source component of the descendant Cofib(i) → D_t is zero, as prescribed by its zero
+homotopy. -/
 theorem descendant_inlX_f (S : Stage F a b n) (i j : ℤ)
     (hij : (ComplexShape.up ℤ).Rel i j) :
     HomologicalComplex.homotopyCofiber.inlX (inclusion hKernelClosure S).hom j i hij ≫
@@ -314,10 +348,12 @@ theorem descendant_inlX_f (S : Stage F a b n) (i j : ℤ)
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 The canonical additive-functor comparison F(Cofib(i)) ≅ Cofib(F(i)) for the stage inclusion. -/
@@ -330,13 +366,16 @@ abbrev cofiberMapIso (S : Stage F a b n) :
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
-Under F(Cofib(i)) ≅ Cofib(F(i)), the image of the stage descendant is the canonical descendant of the mapped short exact row. -/
+Under F(Cofib(i)) ≅ Cofib(F(i)), the image of the stage descendant is the canonical descendant of
+the mapped short exact row. -/
 theorem descendant_map (S : Stage F a b n) :
     (cofiberMapIso hKernelClosure S).hom ≫
       HomologicalComplex.homotopyCofiber.descShortComplex
@@ -347,10 +386,12 @@ theorem descendant_map (S : Stage F a b n) :
 
 /-- Let E be preadditive, A abelian and F:E → A additive.
 A stage S with indices a,b∈ℤ and n∈ℕ is a bounded complex
-supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero object and binary biproducts,
+supported in [a,b−n] whose ambient image F(S) is acyclic. Assume E is Quillen exact with a zero
+object and binary biproducts,
 F is fully faithful, exact and reflects admissible exactness, and its
 essential image is closed under kernels of epimorphisms between image objects.
-Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t for the signed top disk,
+Put t=b−n and S′ for the upper kernel truncation of S at t. Write i:S′ → S for its inclusion, D_t
+for the signed top disk,
 and π:S → D_t for the projection.
 
 The image under F of the stage descendant Cofib(i) → D_t is a quasi-isomorphism. -/
@@ -372,7 +413,8 @@ reflecting admissible exactness. Assume its essential image is closed under
 kernels of epimorphisms between image objects.
 Let K be supported in [a,b] and F(K) acyclic.
 
-The recursive stage K_n is obtained by n successive upper kernel truncations, retaining support [a,b−n] and ambient acyclicity. -/
+The recursive stage K_n is obtained by n successive upper kernel truncations, retaining support
+[a,b−n] and ambient acyclicity. -/
 def stage : (n : ℕ) → Stage F a b n :=
   Nat.rec
     { complex := K
