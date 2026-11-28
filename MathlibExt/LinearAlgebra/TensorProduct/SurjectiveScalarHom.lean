@@ -43,17 +43,8 @@ variable {R : Type uR} {S : Type uS} [CommRing R] [CommRing S] [Algebra R S]
   [Module S M] [Module S J] [Module S U]
   [IsScalarTower R S M] [IsScalarTower R S J] [IsScalarTower R S U]
 
-/-- Let R,S be commutative rings with S an R-algebra, and M,J compatible R,S-modules in independent
-universes. If algebraMap:R→S is surjective, then (s•m)⊗_R j=m⊗_R(s•j) for every s∈S,m∈M,j∈J.
-Lifting s to R reduces the relation to R-balancing. -/
-theorem compatibleSMul_of_surjective_algebraMap
-    (h : Function.Surjective (algebraMap R S)) : CompatibleSMul R S M J where
-  smul_tmul s m j := by
-    obtain ⟨r, rfl⟩ := h s
-    simpa only [algebraMap_smul] using (TensorProduct.smul_tmul (R := R) r m j)
-
 /-- Let S be a commutative R-algebra with surjective algebra map, and let all R,S-module actions
-below be compatible scalar towers. The ring, module and index universes are independent. Let
+below be compatible scalar towers. The ring and module carrier universes are independent. Let
 M,J,U be R,S-modules. This is the R-linear equivalence Hom_R(M,J)⊗_R U≅Hom_S(M,J)⊗_S U. R-linear
 maps are S-linear by surjectivity and the compatible actions, and the tensor quotient changes
 from R- to S-balancing. No finite-projectivity assumption is used. -/
@@ -61,14 +52,14 @@ def rTensorHomScalarInputEquiv
     (h : Function.Surjective (algebraMap R S)) :
     (M →ₗ[R] J) ⊗[R] U ≃ₗ[R] (M →ₗ[S] J) ⊗[S] U := by
   letI : CompatibleSMul R S (M →ₗ[S] J) U :=
-    compatibleSMul_of_surjective_algebraMap (M := M →ₗ[S] J) (J := U) h
+    CompatibleSMul.of_algebraMap_surjective (M := M →ₗ[S] J) (N := U) h
   let eHom : (M →ₗ[R] J) ≃ₗ[R] M →ₗ[S] J :=
     LinearMap.extendScalarsOfSurjectiveEquiv h
   exact TensorProduct.congr eHom (LinearEquiv.refl R U) ≪≫ₗ
     TensorProduct.equivOfCompatibleSMul S R R (M →ₗ[S] J) U
 
 /-- Let S be a commutative R-algebra with surjective algebra map, and let all R,S-module actions
-below be compatible scalar towers. The ring, module and index universes are independent. Let
+below be compatible scalar towers. The ring and module carrier universes are independent. Let
 M,J,U be R,S-modules. This R-linear equivalence Hom_S(M,J⊗_S U)≅Hom_R(M,J⊗_R U) first restricts
 the map's scalar structure and then applies the canonical balancing equivalence J⊗_S U≅J⊗_R U to
 each value. -/
@@ -76,7 +67,7 @@ def rTensorHomScalarOutputEquiv
     (h : Function.Surjective (algebraMap R S)) :
     (M →ₗ[S] J ⊗[S] U) ≃ₗ[R] M →ₗ[R] J ⊗[R] U := by
   letI : CompatibleSMul R S J U :=
-    compatibleSMul_of_surjective_algebraMap (M := J) (J := U) h
+    CompatibleSMul.of_algebraMap_surjective (M := J) (N := U) h
   let eTensor : J ⊗[S] U ≃ₗ[R] J ⊗[R] U :=
     TensorProduct.equivOfCompatibleSMul R S R J U
   exact (LinearMap.extendScalarsOfSurjectiveEquiv
@@ -84,7 +75,7 @@ def rTensorHomScalarOutputEquiv
       (LinearEquiv.refl R M).arrowCongr eTensor
 
 /-- Let S be a commutative R-algebra with surjective algebra map, and let all R,S-module actions
-below be compatible scalar towers. The ring, module and index universes are independent. Let
+below be compatible scalar towers. The ring and module carrier universes are independent. Let
 M,J,U be R,S-modules. If M is finitely generated projective over S, there is an R-linear
 equivalence Hom_R(M,J)⊗_R U≅Hom_R(M,J⊗_R U). It is the input scalar comparison, S-linear
 finite-projective contraction and output scalar comparison, with the R-linear contraction as
@@ -98,7 +89,7 @@ def rTensorHomEquivOfSurjectiveScalars
       rTensorHomScalarOutputEquiv h
 
 /-- Let S be a commutative R-algebra with surjective algebra map, and let all R,S-module actions
-below be compatible scalar towers. The ring, module and index universes are independent. Let
+below be compatible scalar towers. The ring and module carrier universes are independent. Let
 M,J,U be R,S-modules. Assume M is finitely generated projective over S. For f∈Hom_R(M,J), u∈U
 and m∈M, the equivalence sends f⊗_R u to the map with value f(m)⊗_R u at m. -/
 theorem rTensorHomEquivOfSurjectiveScalars_tmul
@@ -113,7 +104,7 @@ theorem rTensorHomEquivOfSurjectiveScalars_tmul
     LinearMap.extendScalarsOfSurjectiveEquiv]
 
 /-- Let S be a commutative R-algebra with surjective algebra map, and let all R,S-module actions
-below be compatible scalar towers. The ring, module and index universes are independent. Let
+below be compatible scalar towers. The ring and module carrier universes are independent. Let
 M,J,U be R,S-modules. When M is finitely generated projective over S, the forward linear map of
 Hom_R(M,J)⊗_R U≅Hom_R(M,J⊗_R U) is χ_R, characterized by χ_R(f⊗u)(m)=f(m)⊗_R u. The scalar
 transports preserve this precise comparison. -/

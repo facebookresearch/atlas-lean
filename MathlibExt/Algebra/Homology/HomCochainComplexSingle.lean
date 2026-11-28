@@ -35,109 +35,6 @@ namespace HomologicalComplex
 
 variable {C : Type u} [Category.{v} C] [Preadditive C] [HasZeroObject C]
 
-/-- Hom cochains of a degree-zero single object are a degree-zero single Hom group.
-
-For objects `A` and `G`, the Hom cochain complex of `A[0]` into `G` is isomorphic to the
-degree-zero single cochain complex on `Hom_C(A,G)`. -/
-noncomputable def homCochainComplexSingle₀Iso (R G : C) :
-    (homCochainComplexFunctor C G).obj
-        (Opposite.op ((ChainComplex.single₀ C).obj R)) ≅
-      (CochainComplex.single₀ AddCommGrpCat.{v}).obj
-        (AddCommGrpCat.of (R ⟶ G)) :=
-  Hom.isoOfComponents
-    (fun n =>
-      if h : n = 0 then by
-        subst n
-        exact (preadditiveYoneda.obj G).mapIso
-          ((singleObjXSelf (ComplexShape.down ℕ) 0 R).symm.op)
-      else by
-        have hs : IsZero
-            (((homCochainComplexFunctor C G).obj
-              (Opposite.op ((ChainComplex.single₀ C).obj R))).X n) := by
-          let _ : Subsingleton
-              (((homCochainComplexFunctor C G).obj
-                (Opposite.op ((ChainComplex.single₀ C).obj R))).X n) :=
-            ⟨fun f g =>
-              (isZero_single_obj_X (ComplexShape.down ℕ) 0 R n h).eq_of_src f g⟩
-          exact AddCommGrpCat.isZero_of_subsingleton _
-        exact hs.iso
-          (isZero_single_obj_X (ComplexShape.up ℕ) 0
-            (AddCommGrpCat.of (R ⟶ G)) n h))
-    (fun i j _ => by
-      have hY :
-          ((CochainComplex.single₀ AddCommGrpCat.{v}).obj
-            (AddCommGrpCat.of (R ⟶ G))).d i j = 0 :=
-        rfl
-      have hX :
-          ((homCochainComplexFunctor C G).obj
-            (Opposite.op ((ChainComplex.single₀ C).obj R))).d i j = 0 := by
-        change (preadditiveYoneda.obj G).map
-          (((ChainComplex.single₀ C).obj R).d j i).op = 0
-        simp [single_obj_d]
-      simp only [hY, hX, comp_zero, zero_comp])
-
-set_option backward.isDefEq.respectTransparency.types false in
-/-- Degree-zero single Hom comparison is the identity on its Hom group.
-
-The forward component in degree zero of the single-object Hom cochain comparison is the
-identity. -/
-@[simp]
-lemma homCochainComplexSingle₀Iso_hom_f_zero (R G : C) :
-    (homCochainComplexSingle₀Iso (C := C) R G).hom.f 0 = 𝟙 _ := by
-  change (preadditiveYoneda.obj G).map (𝟙 (Opposite.op R)) = 𝟙 _
-  ext f
-  exact Category.id_comp f
-
-/-- Coefficient Hom cochain functor of a degree-zero single object.
-
-For fixed object `A`, take coefficients `G` to the Hom cochain complex of `A[0]` into `G`. -/
-noncomputable def homCochainComplexSingle₀Functor (R : C) :
-    C ⥤ CochainComplex AddCommGrpCat.{v} ℕ :=
-  homCochainComplexBifunctor C ⋙
-    (evaluation _ _).obj (Opposite.op ((ChainComplex.single₀ C).obj R))
-
-/-- Degree-zero single Hom cochain comparison is natural in coefficients.
-
-The Hom cochain coefficient functor of `A[0]` is naturally isomorphic to `Hom_C(A,-)` followed
-by the degree-zero single cochain functor. -/
-noncomputable def homCochainComplexSingle₀NatIso (R : C) :
-    homCochainComplexSingle₀Functor (C := C) R ≅
-      preadditiveCoyoneda.obj (Opposite.op R) ⋙
-        CochainComplex.single₀ AddCommGrpCat.{v} :=
-  NatIso.ofComponents
-    (fun G => homCochainComplexSingle₀Iso (C := C) R G)
-    (fun {G G'} f => by
-      apply Hom.ext
-      funext n
-      by_cases hn : n = 0
-      · subst n
-        ext g
-        simp only [homCochainComplexSingle₀Iso_hom_f_zero, comp_f]
-        change g ≫ f = g ≫ f
-        rfl
-      · exact
-          (isZero_single_obj_X (ComplexShape.up ℕ) 0
-            (AddCommGrpCat.of (R ⟶ G')) n hn).eq_of_tgt _ _)
-
-/-- Zeroth cohomology of single-object Hom cochains is Coyoneda.
-
-The degree-zero Hom cochain cohomology coefficient functor of `A[0]` is naturally isomorphic
-to the additive Hom functor `Hom_C(A,-)`. -/
-noncomputable def homCochainComplexHomologyFunctorSingle₀Iso (R : C) :
-    homCochainComplexHomologyFunctor C ((ChainComplex.single₀ C).obj R) 0 ≅
-      preadditiveCoyoneda.obj (Opposite.op R) := by
-  let F := preadditiveCoyoneda.obj (Opposite.op R)
-  let S := CochainComplex.single₀ AddCommGrpCat.{v}
-  let H := homologyFunctor AddCommGrpCat.{v} (ComplexShape.up ℕ) 0
-  change (homCochainComplexSingle₀Functor R ⋙ H) ≅ F
-  exact
-    Functor.isoWhiskerRight (homCochainComplexSingle₀NatIso R) H ≪≫
-      Functor.associator F S H ≪≫
-      Functor.isoWhiskerLeft F
-        (homologyFunctorSingleIso AddCommGrpCat.{v}
-          (ComplexShape.up ℕ) 0) ≪≫
-      F.rightUnitor
-
 /-- Coefficient Hom cochain functor of an object in degree j.
 
 For fixed `A` and natural `j`, take `G` to the Hom cochain complex of the chain single object
@@ -271,6 +168,42 @@ noncomputable def homCochainComplexHomologyFunctorSingleIso (R : C) (j : ℕ) :
       Functor.isoWhiskerLeft F
         (homologyFunctorSingleIso AddCommGrpCat.{v} (ComplexShape.up ℕ) j) ≪≫
       F.rightUnitor
+
+/-- Hom cochains of a degree-zero single object use the general single-degree comparison. -/
+noncomputable def homCochainComplexSingle₀Iso (R G : C) :
+    (homCochainComplexFunctor C G).obj
+        (Opposite.op ((ChainComplex.single₀ C).obj R)) ≅
+      (CochainComplex.single₀ AddCommGrpCat.{v}).obj
+        (AddCommGrpCat.of (R ⟶ G)) :=
+  homCochainComplexSingleIso (C := C) R G 0
+
+/-- The degree-zero coefficient functor is the degree-zero general single functor. -/
+noncomputable def homCochainComplexSingle₀Functor (R : C) :
+    C ⥤ CochainComplex AddCommGrpCat.{v} ℕ :=
+  homCochainComplexSingleFunctor (C := C) R 0
+
+/-- The degree-zero natural comparison uses the general coefficient-natural comparison. -/
+noncomputable def homCochainComplexSingle₀NatIso (R : C) :
+    homCochainComplexSingle₀Functor (C := C) R ≅
+      preadditiveCoyoneda.obj (Opposite.op R) ⋙
+        CochainComplex.single₀ AddCommGrpCat.{v} :=
+  homCochainComplexSingleNatIso (C := C) R 0
+
+/-- Zeroth single-object Hom cohomology uses the general supported cohomology comparison. -/
+noncomputable def homCochainComplexHomologyFunctorSingle₀Iso (R : C) :
+    homCochainComplexHomologyFunctor C ((ChainComplex.single₀ C).obj R) 0 ≅
+      preadditiveCoyoneda.obj (Opposite.op R) :=
+  homCochainComplexHomologyFunctorSingleIso (C := C) R 0
+
+set_option backward.isDefEq.respectTransparency.types false in
+/-- The retained degree-zero Hom comparison is the identity on the Hom group. -/
+@[simp]
+lemma homCochainComplexSingle₀Iso_hom_f_zero (R G : C) :
+    (homCochainComplexSingle₀Iso (C := C) R G).hom.f 0 = 𝟙 _ := by
+  rw [homCochainComplexSingle₀Iso, homCochainComplexSingleIso_hom_f_self]
+  simp [homCochainComplexSingleSupportedIso, homCochainComplexSingleEvalIso,
+    singleObjXSelf, singleObjXIsoOfEq, HomologicalComplex.singleCompEvalIsoSelf,
+    HomologicalComplex.single, preadditiveCoyoneda]
 
 /-- Single-object Hom cohomology vanishes away from its degree.
 

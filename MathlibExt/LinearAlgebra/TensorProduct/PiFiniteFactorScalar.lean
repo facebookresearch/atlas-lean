@@ -54,9 +54,9 @@ def piRightFiniteFactorOfSurjectiveScalars
     (h : Function.Surjective (algebraMap R S)) :
     U ⊗[R] (∀ i, N i) ≃ₗ[R] ∀ i, U ⊗[R] N i := by
   letI : CompatibleSMul R S U (∀ i, N i) :=
-    compatibleSMul_of_surjective_algebraMap (M := U) (J := ∀ i, N i) h
+    CompatibleSMul.of_algebraMap_surjective (M := U) (N := ∀ i, N i) h
   letI (i : ι) : CompatibleSMul R S U (N i) :=
-    compatibleSMul_of_surjective_algebraMap (M := U) (J := N i) h
+    CompatibleSMul.of_algebraMap_surjective (M := U) (N := N i) h
   exact TensorProduct.equivOfCompatibleSMul S R R U (∀ i, N i) ≪≫ₗ
     (piRightFiniteFactor S N U).restrictScalars R ≪≫ₗ
       LinearEquiv.piCongrRight (fun i => TensorProduct.equivOfCompatibleSMul R S R U (N i))

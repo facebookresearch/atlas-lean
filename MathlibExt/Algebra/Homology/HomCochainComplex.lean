@@ -25,8 +25,9 @@ The coefficient functor also gives its cohomology groups as functors of `G`.
 
 Chain homotopies and homotopy equivalences induce the corresponding Hom cochain homotopies and
 cohomology isomorphisms, with the chain direction reversed. An additive fully faithful functor
-identifies these Hom cochains by applying its morphism map in every degree. Object and
-morphism universes are independent.
+identifies these Hom cochains by applying its morphism map in every degree. The object and
+morphism universes are independent; the two compared categories share their object level and
+share their morphism level, so the comparison lands in the same additive-group category.
 -/
 
 @[expose] public section
@@ -69,22 +70,7 @@ noncomputable instance homCochainComplexFunctor_preservesLimitsOfShape
     inferInstance
   have hMap : PreservesLimitsOfShape J
       ((preadditiveYoneda.obj G).mapHomologicalComplex (ComplexShape.up ℕ)) :=
-    HomologicalComplex.preservesLimitsOfShape_of_eval
-      ((preadditiveYoneda.obj G).mapHomologicalComplex (ComplexShape.up ℕ))
-      (fun n => by
-        have hEval : PreservesLimitsOfShape J
-            (HomologicalComplex.eval Cᵒᵖ (ComplexShape.up ℕ) n) :=
-          inferInstance
-        have hYoneda : PreservesLimitsOfShape J (preadditiveYoneda.obj G) :=
-          inferInstance
-        have hComp : PreservesLimitsOfShape J
-            (HomologicalComplex.eval Cᵒᵖ (ComplexShape.up ℕ) n ⋙ preadditiveYoneda.obj G) :=
-          @CategoryTheory.Limits.comp_preservesLimitsOfShape _ _ _ _ _ _ _ _
-            (HomologicalComplex.eval Cᵒᵖ (ComplexShape.up ℕ) n) (preadditiveYoneda.obj G)
-            hEval hYoneda
-        change PreservesLimitsOfShape J
-            (HomologicalComplex.eval Cᵒᵖ (ComplexShape.up ℕ) n ⋙ preadditiveYoneda.obj G)
-        exact hComp)
+    inferInstance
   exact @CategoryTheory.Limits.comp_preservesLimitsOfShape _ _ _ _ _ _ _ _
     (HomologicalComplex.opFunctor C (ComplexShape.down ℕ))
     ((preadditiveYoneda.obj G).mapHomologicalComplex (ComplexShape.up ℕ))
@@ -163,7 +149,8 @@ variable {C D : Type u} [Category.{v} C] [Category.{v} D] [Preadditive C] [Pread
 
 /-- Fully faithful additive functor identifies Hom cochains objectwise.
 
-For an additive fully faithful functor `F : C ⥤ D`, the Hom cochain complex of `K` and `G` is
+For an additive fully faithful functor `F : C ⥤ D`, with `C` and `D` sharing their object
+and morphism universe levels, the Hom cochain complex of `K` and `G` is
 isomorphic to that of the image complex and `F.obj G`. Its degree maps apply `F.map` to Hom
 morphisms. -/
 noncomputable def homCochainComplexObjIsoOfFullyFaithful
