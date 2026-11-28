@@ -36,8 +36,9 @@ Proved in `MathlibExt.NumberTheory.EvenPseudoprimeWieferich`, which this module 
 Wieferich prime, at least `3511`).
 
 Proved in `MathlibExt.NumberTheory.EvenPseudoprimeReciprocalWindow`, which this module imports:
-`sum_inv_modEq_orderOf_le` (Proposition 11, the sum of `1 / N` over the integers `N` with
-`e ^ k < N ≤ e ^ (k + 1)`, `N ≡ p [MOD p * ℓ₂(p)]` and `N > p` is at most `2 / (p * ℓ₂(p))`).
+`sum_inv_modEq_orderOf_le` (Proposition 11: for an odd prime `p` and a natural number `k`, the
+sum of `1 / N` over the integers `N` with `e ^ k < N ≤ e ^ (k + 1)`, `N ≡ p [MOD p * ℓ₂(p)]` and
+`N > p` is at most `2 / (p * ℓ₂(p))`).
 -/
 
 namespace MetaMathlibExt
