@@ -243,9 +243,9 @@ private lemma relations_two :
     exact hy
 
 private abbrev inputBoundaryZero : source.d 1 0 = 0 := by rfl
-private abbrev e₊ := ChainComplex.kernelTailEmbedding
+private abbrev positiveEmbedding := ChainComplex.kernelTailEmbedding
 private abbrev smartQuotient :=
-  truncationQuotient e₊ (pairing 2)
+  truncationQuotient positiveEmbedding (pairing 2)
 private abbrev strictQuotient :=
   strictPositiveCokernel (pairing 2) inputBoundaryZero inputBoundaryZero
 private abbrev imageQuotient :=
@@ -258,7 +258,7 @@ private abbrev smartToImage :=
   truncationQuotientIsoPositiveImageQuotient (pairing 2) inputBoundaryZero inputBoundaryZero
 
 private def smartClass (r : R) : smartQuotient.X 2 :=
-  ((truncationProjection e₊ (pairing 2)).f 2).hom (targetValue r)
+  ((truncationProjection positiveEmbedding (pairing 2)).f 2).hom (targetValue r)
 
 private def strictClass (r : R) : strictQuotient.X 2 :=
   ((strictPositiveProjection (pairing 2) inputBoundaryZero inputBoundaryZero).f 2).hom
@@ -431,7 +431,7 @@ private def imageMapFive : imageQuotient ⟶ imageQuotient :=
     targetFive pairing_five
 
 private def smartMapFive : smartQuotient ⟶ smartQuotient :=
-  truncationQuotientMap e₊ (pairing 2) (pairing 2)
+  truncationQuotientMap positiveEmbedding (pairing 2) (pairing 2)
     sourceFive (𝟙 source) targetFive pairing_five
 
 private lemma imageMapFive_value (r : R) :
