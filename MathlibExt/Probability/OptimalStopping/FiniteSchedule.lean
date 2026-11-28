@@ -97,7 +97,7 @@ noncomputable def finiteScheduleStoppingEquiv {Ω ι : Type*} {m : MeasurableSpa
     funext ω
     exact hindex τ ω
 
-/-- The forward map of the finite-schedule correspondence evaluates the stopping date. -/
+/- This is the defining forward equation of `finiteScheduleStoppingEquiv`. -/
 theorem finiteScheduleStoppingEquiv_apply {Ω ι : Type*} {m : MeasurableSpace Ω} [LinearOrder ι]
     (F : Filtration ι m) {n : ℕ} (e : Fin (n + 1) → ι) (he : StrictMono e)
     (i : {i : Ω → Fin (n + 1) //

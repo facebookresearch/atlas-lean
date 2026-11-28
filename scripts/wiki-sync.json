@@ -91887,7 +91887,6 @@
 "MetaMathlibExt.finiteScheduleFiltration": "d6aba921ec0787f0",
 "MetaMathlibExt.finiteScheduleFiltration_apply": "94b3145880befa0c",
 "MetaMathlibExt.finiteScheduleStoppingEquiv": "40f078f78e008d3f",
-"MetaMathlibExt.finiteScheduleStoppingEquiv_apply": "ddf496b587812281",
 "MetaMathlibExt.finiteSums_witness_iff_mem_closure_idempotents": "710b05e49a73870c",
 "MetaMathlibExt.finite_idp_reflexive_multiplicities": "006f2692493d781f",
 "MetaMathlibExt.finite_near_repdigit_perfect_powers": "a211bd7447223c9a",

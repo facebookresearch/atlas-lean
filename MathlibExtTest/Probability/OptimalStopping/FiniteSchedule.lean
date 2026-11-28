@@ -38,6 +38,36 @@ example :
   ⟨(finiteScheduleFiltration_apply _ _ _ (0 : Fin 3)).trans rfl,
     (finiteScheduleFiltration_apply _ _ _ (1 : Fin 3)).trans rfl⟩
 
+-- The original filtration reveals information only after the last sampled date.
+private def informationAtTen : Filtration ℕ (⊤ : MeasurableSpace Bool) where
+  seq t := if 10 ≤ t then ⊤ else ⊥
+  mono' := by
+    intro s t hst
+    by_cases hs : 10 ≤ s
+    · simp [hs, hs.trans hst]
+    · simp [hs]
+  le' _ := le_top
+
+-- The sampled filtration stays at the terminal algebra even when the original filtration grows.
+example :
+    finiteScheduleFiltration informationAtTen nonuniformDates nonuniformDates_strictMono.monotone
+      2 = ⊥ ∧
+    finiteScheduleFiltration informationAtTen nonuniformDates nonuniformDates_strictMono.monotone
+      3 = ⊥ ∧
+    (⊥ : MeasurableSpace Bool) < informationAtTen 10 := by
+  refine ⟨rfl, rfl, ?_⟩
+  change (⊥ : MeasurableSpace Bool) < ⊤
+  apply lt_of_le_of_ne bot_le
+  intro h
+  have hMeas : MeasurableSet[(⊥ : MeasurableSpace Bool)] ({true} : Set Bool) :=
+    h.symm ▸ MeasurableSpace.measurableSet_top
+  rcases MeasurableSpace.measurableSet_bot_iff.mp hMeas with he | hu
+  · have ht : true ∈ ({true} : Set Bool) := by simp
+    have hn : true ∉ (∅ : Set Bool) := by simp
+    exact hn (he ▸ ht)
+  · have hf : false ∉ ({true} : Set Bool) := by simp
+    exact hf (hu.symm ▸ Set.mem_univ false)
+
 -- Start with a stopping date and check that the inverse recovers both indices.
 example : ∃ i : Bool → Fin 3,
     IsStoppingTime
