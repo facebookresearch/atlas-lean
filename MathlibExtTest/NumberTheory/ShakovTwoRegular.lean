@@ -48,3 +48,11 @@ example : shakovSeq (shakovA 1).toNat = 0 := by
 
 example : shakovSeq (shakovA 9).toNat = 21 :=
   (shakovSeq_shakovA 9 (by decide)).trans (by decide)
+
+-- The first positive fiber has just its two endpoints, since 1² + 1 is prime.
+example : {m : ℕ | shakovSeq m = 1} = {2, 3} :=
+  (prime_iff_fiber 1 (by decide)).mp (by decide)
+
+-- The composite value 3² + 1 gives a fiber larger than its endpoint pair.
+example : {m : ℕ | shakovSeq m = 3} ≠ {8, 15} :=
+  mt (prime_iff_fiber 3 (by decide)).mpr (by decide)

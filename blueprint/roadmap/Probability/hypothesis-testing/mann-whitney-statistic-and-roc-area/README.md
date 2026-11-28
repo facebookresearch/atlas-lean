@@ -7,3 +7,6 @@
 - [Strict ROC rate equals the rate at the next score](roc-rate-above-eq-roc-rate-of-forall-not.md)
 - [Strict ROC rate vanishes above the largest score](roc-rate-above-eq-zero-of-forall-le.md)
 - [Empirical AUC equals the Mann–Whitney statistic with ties](empirical-auc-eq-mann-whitney-u.md)
+- [Measurability of the Mann–Whitney kernel](mann-whitney-kernel-measurable.md)
+- [The Mann–Whitney kernel is bounded by one](mann-whitney-kernel-norm-le-one.md)
+- [Expectation of the Mann–Whitney statistic](mann-whitney-u-mean.md)

@@ -2,8 +2,12 @@
 
 Mathematics of insurance and pensions: life tables and survival functions, life insurance and annuity present values and their identities, multiple-state and multiple-life models with reserve recursions and Thiele's equation, aggregate loss models and stop-loss premiums, ruin theory, credibility theory and claims reserving. Interest-only present values are under Interest theory and fixed income; survival estimation from data is under Nonparametric statistics and survival analysis in Probability.
 
+- [Bühlmann moments in a finite mixture](b-hlmann-moments-in-a-finite-mixture/README.md)
+- [Capped loss layers](capped-loss-layers/README.md)
+- [Chain-ladder completion of a run-off triangle](chain-ladder-completion-of-a-run-off-triangle/README.md)
 - [Life contingencies](life-contingencies/README.md)
 - [Multiple-state models](multiple-state-models/README.md)
+- [The adjustment coefficient](the-adjustment-coefficient/README.md)
 - [Stop-loss premiums on an arithmetic lattice](stop-loss-premium-recursion-on-a-lattice.md)
 - [Existence and uniqueness of the adjustment coefficient](existence-and-uniqueness-of-the-adjustment-coefficient.md)
 - [Lundberg's inequality for the classical risk process](lundberg-s-inequality-for-the-classical-risk-process.md)

@@ -25,3 +25,19 @@ example (m : ℕ) (hm : 2 ≤ m) : nicomachusLEven m 0 = nicomachusTriangular (2
 -- At x = -2 each term of the second sum is zero, leaving the odd cubes and x³.
 example : nicomachusLEven 2 (-2) = 20 := by
   norm_num [nicomachusLEven, show Finset.Icc 1 2 = {1, 2} by decide, Finset.sum_insert]
+
+-- Compute the first admissible odd case directly from the two cube sums and the square.
+example : nicomachusLOdd 3 1 - nicomachusROdd 3 1 = 36 := by
+  norm_num [nicomachusLOdd, nicomachusROdd, nicomachusTriangular,
+    show Finset.Icc 1 3 = {1, 2, 3} by decide, show Finset.Icc 2 3 = {2, 3} by decide,
+    Finset.sum_insert]
+
+-- Apply the odd theorem beyond the base case, where the left index is one greater.
+example : nicomachusLOdd 4 (-1) - nicomachusROdd 4 (-1) = 90 := by
+  rw [nicomachusLOdd_sub_ROdd_succ_eq 3 (by decide)]
+  norm_num [nicomachusPOdd, show Finset.Icc 0 3 = {0, 1, 2, 3} by decide, Finset.sum_insert]
+
+-- The zero correction recovers the odd-termination form of the classical identity.
+example (m : ℕ) (hm : 2 ≤ m) :
+    nicomachusLOdd (m + 1) 0 = nicomachusTriangular (2 * (m + 1) - 1) ^ 2 := by
+  simpa [nicomachusROdd, sub_eq_zero] using nicomachusLOdd_sub_ROdd_succ_eq m hm 0

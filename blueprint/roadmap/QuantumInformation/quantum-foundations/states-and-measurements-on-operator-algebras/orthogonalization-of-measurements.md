@@ -14,6 +14,7 @@ Diagonalize each effect and select $|\iota|$ eigenpairs of largest weight $\lamb
 
 ## Depends on
 
+- [States on star-ordered algebras, state-dependent norm and approximation](algebraic-states-and-state-dependent-norm.md)
 - [Measurements, agreement and character observables in a star-ordered algebra](algebraic-measurements-and-agreement.md)
 
 ## Proof depends on

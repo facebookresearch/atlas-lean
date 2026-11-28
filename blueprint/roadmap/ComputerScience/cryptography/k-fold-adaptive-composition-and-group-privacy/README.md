@@ -13,3 +13,5 @@
 - [Group privacy for pure differential privacy](is-dp-group-privacy.md)
 - [Group privacy for chains of at most k steps](is-dp-group-privacy-le.md)
 - [Group privacy for approximate differential privacy](is-approx-dp-group-privacy.md)
+- [Add/remove differential privacy implies replace-one differential privacy](add-remove-dp-implies-replace-one-dp.md)
+- [Replace-one differential privacy implies add/remove differential privacy for databases with null records](replace-one-dp-implies-add-remove-dp-with-null.md)
