@@ -2,7 +2,7 @@
 
 The set of indices of programs that halt on no input is $\Pi^0_1$-complete under many-one reductions: it is co-recursively enumerable, and every $\Pi^0_1$ set reduces to it by a computable function.
 
-Fix the standard numbering $(\varphi_e)_{e\in\mathbb N}$ of codes of the partial computable functions, as on the linked definition pages (the notes use their own fixed universal numbering, and the results do not depend on the choice) and write $W_e=\mathrm{dom}(\varphi_e)$. A set $B\subseteq\mathbb N$ *many-one reduces* to $A$, written $B\le_m A$, if some total computable $f$ satisfies $x\in B\iff f(x)\in A$ for all $x$. For a class $\Gamma$ of the [arithmetical hierarchy](is-pi.md), $A$ is *$\Gamma$-m-complete* if $A\in\Gamma$ and $B\le_m A$ for every $B\in\Gamma$.
+Fix the standard numbering $(\varphi_e)_{e\in\mathbb N}$ of codes of the partial computable functions, as on the linked definition pages (the notes use their own fixed universal numbering, and the results do not depend on the choice, by Theorem 12.1 (Rogers) of the notes) and write $W_e=\mathrm{dom}(\varphi_e)$. A set $B\subseteq\mathbb N$ *many-one reduces* to $A$, written $B\le_m A$, if some total computable $f$ satisfies $x\in B\iff f(x)\in A$ for all $x$. For a class $\Gamma$ of the [arithmetical hierarchy](is-pi.md), $A$ is *$\Gamma$-m-complete* if $A\in\Gamma$ and $B\le_m A$ for every $B\in\Gamma$.
 
 **Theorem.** The [emptiness index set](../../computability/emptiness-and-equivalence-problems-for-programs/empty-code.md)
 

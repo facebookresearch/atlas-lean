@@ -1,6 +1,6 @@
 # The Post correspondence problem is undecidable for Claus instances of size 7
 
-The Post correspondence problem stays undecidable for Claus instances with seven pairs, already in the restricted form that asks for a solution starting with the first pair and ending with the last; even six of the seven pairs and one word of the first pair can be fixed.
+The Post correspondence problem stays undecidable for Claus instances with seven pairs, and so does the restricted form that asks for a solution starting with the first pair and ending with the last; even six of the seven pairs and one word of the first pair can be fixed.
 
 An instance of the [Post correspondence problem](pcp.md) is given here by two morphisms $h, g \colon \Sigma^* \to \Gamma^*$, and asks for a nonempty word $w$ with $h(w) = g(w)$; its *size* is $\lvert\Sigma\rvert$. Let $\Gamma = \{a, b\}$, $d = aba$ and $A = ab^2 b^* a$. An instance with $\Sigma = \{b_1, \dots, b_n\}$, $n \geq 3$, and $h, g \colon \Sigma^* \to (abb^*a)^*$ is a *Claus instance* if
 
@@ -12,11 +12,11 @@ The *restricted problem* for a Claus instance asks whether it has a solution $b_
 
 **Theorem (Halava, Harju and Hirvensalo, after Claus).**
 
-1. If some semi-Thue system with $n$ rules has an undecidable individual word problem, then the restricted problem is undecidable for Claus instances of size $n + 4$ (Theorem 4 of the source, through construction (2.1)).
-2. The restricted problem is undecidable for Claus instances of size $7$: no algorithm decides whether a given Claus instance $h, g \colon \{b_1, \dots, b_7\}^* \to \Gamma^*$ has a solution $b_1 u b_7$ with $u \in \{b_2, \dots, b_6\}^*$ (Theorem 5, which the source notes also proves its Theorem 2).
+1. If some semi-Thue system with $n$ rules has an undecidable individual word problem, then the Post correspondence problem is undecidable for Claus instances of size $n + 4$, and so is the restricted problem (Theorem 4 of the source, through construction (2.1)).
+2. The Post correspondence problem is undecidable for Claus instances of size $7$ (Theorem 5), and so is the restricted problem: no algorithm decides whether a given Claus instance $h, g \colon \{b_1, \dots, b_7\}^* \to \Gamma^*$ has a solution $b_1 u b_7$ with $u \in \{b_2, \dots, b_6\}^*$ (the source notes that Theorem 5 also proves its Theorem 2).
 3. There are a word $v_1 \in \Gamma^*$ and six pairs $(u_2, v_2), \dots, (u_7, v_7) \in \Gamma^* \times \Gamma^*$ such that it is undecidable, for a given word $u_1 \in \Gamma^*$, whether $u_1 u_{i_2} \cdots u_{i_m} u_7 = v_1 v_{i_2} \cdots v_{i_m} v_7$ for some $i_2, \dots, i_m \in \{2, \dots, 6\}$; for the words $u_1 = h(c)$ that construction (2.1) produces, the instance with $h(b_i) = u_i$ and $g(b_i) = v_i$ is a Claus instance (Theorem 6).
 
-Item 2 follows from item 1 and the three-rule semi-Thue system of Matiyasevich and Sénizergues. It is the undecidability of the restricted Post correspondence problem for seven pairs, in which a solution must start with the first pair, end with the last and use only the others in between.
+Both forms come from the instances of construction (2.1): on them, a nonempty solution exists if and only if a solution $b_1 u b_n$ does, because their minimal solutions have the form $c\,w\,e$ (the paragraph after (2.2) of the source). This equivalence is not claimed for all Claus instances; the example above shows that it can fail. Item 2 follows from item 1 and the three-rule semi-Thue system of Matiyasevich and Sénizergues. Its restricted form is the undecidability of the restricted Post correspondence problem for seven pairs, in which a solution must start with the first pair, end with the last and use only the others in between.
 
 ## Depends on
 

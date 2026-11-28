@@ -2,7 +2,7 @@
 
 The set of indices of programs that halt on every input is $\Pi^0_2$-complete, and the set of indices of programs that halt on only finitely many inputs is $\Sigma^0_2$-complete, both under many-one reductions.
 
-Fix the standard numbering $(\varphi_e)_{e\in\mathbb N}$ of codes of the partial computable functions, as on the linked definition pages (the notes use their own fixed universal numbering, and the results do not depend on the choice), write $W_e=\mathrm{dom}(\varphi_e)$, and use many-one reductions $\le_m$ and $\Gamma$-m-completeness as on the page on the [emptiness index set](emptiness-index-set-is-pi01-complete.md).
+Fix the standard numbering $(\varphi_e)_{e\in\mathbb N}$ of codes of the partial computable functions, as on the linked definition pages (the notes use their own fixed universal numbering, and the results do not depend on the choice, by Theorem 12.1 (Rogers) of the notes), write $W_e=\mathrm{dom}(\varphi_e)$, and use many-one reductions $\le_m$ and $\Gamma$-m-completeness as on the page on the [emptiness index set](emptiness-index-set-is-pi01-complete.md).
 
 **Theorem.**
 1. The [totality index set](../../computability/totality-problem-for-programs/total-code.md) $\mathrm{TOT}=\{e : W_e=\mathbb N\}$ is $\Pi^0_2$-m-complete.
