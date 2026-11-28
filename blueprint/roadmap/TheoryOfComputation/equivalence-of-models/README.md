@@ -12,3 +12,4 @@ Register (URM), counter and RAM machines, and theorems that Turing machines and 
 - [Counter and combinator models](counter-and-combinator-models/README.md)
 - [Tag systems](tag-systems/README.md)
 - [Cellular automata](cellular-automata/README.md)
+- [P systems with array insertion](p-systems-with-array-insertion/README.md)
