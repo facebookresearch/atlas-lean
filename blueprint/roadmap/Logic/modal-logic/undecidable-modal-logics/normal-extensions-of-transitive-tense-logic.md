@@ -12,6 +12,9 @@ A tense logic is a normal bimodal logic with a future box and a past box that ar
 
 - [Kripke model](../kripke-semantics/kripke-model.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [First-order language of Kripke frames](../standard-translation-of-modal-logic/frame-language.md)
+- [A frame as a first-order structure](../standard-translation-of-modal-logic/frame-structure.md)
+
 ## Proof depends on
 
 None.

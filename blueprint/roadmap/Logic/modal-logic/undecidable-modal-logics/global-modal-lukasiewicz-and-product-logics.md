@@ -11,6 +11,7 @@ Whether these consequence relations are $\Pi^0_2$-complete, like the tautologies
 ## Depends on
 
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Kripke model](../kripke-semantics/kripke-model.md)
 
 ## Proof depends on
 

@@ -28,7 +28,7 @@ All these problems are therefore undecidable. By contrast, satisfiability of $\m
 
 ## Expansion
 
-For an instance of the Post correspondence problem a conjunction of literals is built that is satisfiable over $\mathrm{RCP}(\mathbb{R}^n)$ if the instance has a solution, and that is satisfiable over a unicoherent, finitely decomposable frame only if the instance has a solution (Theorem 8, for a language with an additional contact predicate); the contact predicate is then eliminated, giving clause 1. The planar results use a separate construction with regions that have infinitely many components. Since $\mathbb{R}^n$ is unicoherent, both directions apply to the Euclidean frames.
+For an instance of the Post correspondence problem a conjunction of literals is built that is satisfiable over $\mathrm{RCP}(\mathbb{R}^n)$ if the instance has a solution, and that is satisfiable over a unicoherent, finitely decomposable frame only if the instance has a solution (Theorem 8, for a language with an additional contact predicate); the contact predicate is then eliminated, giving clause 1. The planar results use a separate construction with regions that have infinitely many components. Since $\mathbb{R}^n$ is unicoherent (Kuratowski, as cited in Section 2 of the source), both directions apply to the Euclidean frames. A good expansion links pages for the reduction of Theorem 8, the unicoherence of $\mathbb{R}^n$, the elimination of the contact predicate (as in the proof of Theorem 7, used for Corollary 10), and the planar constructions of Theorems 20 and 21.
 
 ## Sources
 

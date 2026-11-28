@@ -11,6 +11,9 @@ Global satisfiability of $\varphi$ over $\mathcal K_\Phi$ amounts to first-order
 - [Kripke model](../kripke-semantics/kripke-model.md)
 - [Modal formulas](../kripke-semantics/formula.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [First-order language of Kripke frames](../standard-translation-of-modal-logic/frame-language.md)
+- [A frame as a first-order structure](../standard-translation-of-modal-logic/frame-structure.md)
+
 ## Proof depends on
 
 None.

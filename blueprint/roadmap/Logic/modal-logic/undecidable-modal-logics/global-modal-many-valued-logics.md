@@ -13,6 +13,7 @@ The same holds over any class of transitive frames containing isomorphic copies 
 ## Depends on
 
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Kripke model](../kripke-semantics/kripke-model.md)
 
 ## Proof depends on
 

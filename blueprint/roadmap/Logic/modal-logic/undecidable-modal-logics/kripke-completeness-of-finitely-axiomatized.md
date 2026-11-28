@@ -2,7 +2,7 @@
 
 There is no algorithm that decides, given a unimodal formula $\varphi$, whether the normal modal logic axiomatized over $\mathbf{K}$ by $\varphi$ is Kripke complete.
 
-**Setting.** For a normal modal logic $L_0$, $\mathrm{NExt}\,L_0$ is the lattice of its normal extensions, and $L_0 \oplus \varphi$ is the least normal modal logic containing $L_0$ and $\varphi$, closed under modus ponens, uniform substitution and necessitation. A logic is *Kripke complete* if it is the set of formulas valid in some class of Kripke frames; it has the *finite model property* if it is the set of formulas valid in some class of finite frames; it is *decidable* if membership in it is decidable. A property $P$ is *decidable in $\mathrm{NExt}\,L_0$* if some algorithm decides, for a formula $\varphi$ (a finite axiomatization, since finitely many axioms can be joined into one), whether $L_0 \oplus \varphi$ has $P$.
+**Setting.** For a normal modal logic $L_0$, $\mathrm{NExt}\,L_0$ is the lattice of its normal extensions, and $L_0 \oplus \varphi$ is the least normal modal logic containing $L_0$ and $\varphi$, closed under modus ponens, uniform substitution and necessitation: the [theorems](../normal-modal-logics/derivable.md) of $\mathbf{K} \oplus \Lambda$ for $\Lambda$ the union of $L_0$ and the closure of $\{\varphi\}$ under [substitution](../kripke-semantics/subst.md); that page has no substitution rule, and $L_0$ is already closed under substitution. A logic is *Kripke complete* if it is the set of formulas valid in some class of Kripke frames; it has the *finite model property* if it is the set of formulas valid in some class of finite frames; it is *decidable* if membership in it is decidable. A property $P$ is *decidable in $\mathrm{NExt}\,L_0$* if some algorithm decides, for a formula $\varphi$ (a finite axiomatization, since finitely many axioms can be joined into one), whether $L_0 \oplus \varphi$ has $P$.
 
 **Theorem (Thomason).** Kripke completeness is undecidable in $\mathrm{NExt}\,\mathbf{K}$: no algorithm decides, given a unimodal formula $\varphi$, whether $\mathbf{K} \oplus \varphi$ is Kripke complete.
 
@@ -11,6 +11,7 @@ As surveyed in the source, Kripke completeness, the finite model property and de
 ## Depends on
 
 - [Theorems of a normal modal logic](../normal-modal-logics/derivable.md)
+- [Substitution of a formula for an atom](../kripke-semantics/subst.md)
 - [Kripke model](../kripke-semantics/kripke-model.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
