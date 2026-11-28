@@ -70,7 +70,8 @@ private lemma basis_single (i j : Fin 2) :
     rfl
   rw [hindex, Module.Basis.map_apply, Pi.basisFun_apply]
   ext r c
-  change (Pi.single (⟨i, j⟩ : J) (1 : R)) ⟨r, c⟩ = Matrix.single i j (1 : R) r c
+  change ((Pi.single (⟨i, j⟩ : J) (1 : R) : J → R) ⟨r, c⟩) =
+    Matrix.single i j (1 : R) r c
   fin_cases i <;> fin_cases j <;> fin_cases r <;> fin_cases c <;> decide
 
 private lemma basis_zero : basis 0 = Matrix.single 0 0 (1 : R) :=
@@ -175,7 +176,11 @@ private lemma commutator_zero_coefficient :
       (generator 1 * generator 2 - generator 2 * generator 1) (oneWord 0) = 1 := by
   have hthree :
       (Finsupp.single (oneWord 3) (1 : R)) (oneWord 0) = 0 :=
-    Finsupp.single_eq_of_ne (by decide : oneWord (0 : Fin 4) ≠ oneWord 3)
+    Finsupp.single_eq_of_ne (by
+      intro h
+      have hv : ([(0 : Fin 4)] : List (Fin 4)) = [3] :=
+        congrArg (fun w : OrderedWord (Fin 4) => w.val) h
+      exact (by decide : ([(0 : Fin 4)] : List (Fin 4)) ≠ [3]) hv)
   rw [commutator_coordinates, Finsupp.sub_apply, Finsupp.single_eq_same,
     hthree, sub_zero]
 
@@ -262,10 +267,18 @@ example : basisWord basis [1, 2] - basisWord basis [2, 1] ≠ 0 := by
     normalize_pair, normalize_reversed, map_zero] at hc
   have hpair :
       (Finsupp.single pairWord (1 : R)) (oneWord 0) = 0 :=
-    Finsupp.single_eq_of_ne (by decide : oneWord (0 : Fin 4) ≠ pairWord)
+    Finsupp.single_eq_of_ne (by
+      intro h
+      have hv : ([(0 : Fin 4)] : List (Fin 4)) = [1, 2] :=
+        congrArg (fun w : OrderedWord (Fin 4) => w.val) h
+      exact (by decide : ([(0 : Fin 4)] : List (Fin 4)) ≠ [1, 2]) hv)
   have hthree :
       (Finsupp.single (oneWord 3) (1 : R)) (oneWord 0) = 0 :=
-    Finsupp.single_eq_of_ne (by decide : oneWord (0 : Fin 4) ≠ oneWord 3)
+    Finsupp.single_eq_of_ne (by
+      intro h
+      have hv : ([(0 : Fin 4)] : List (Fin 4)) = [3] :=
+        congrArg (fun w : OrderedWord (Fin 4) => w.val) h
+      exact (by decide : ([(0 : Fin 4)] : List (Fin 4)) ≠ [3]) hv)
   simp only [Finsupp.sub_apply, Finsupp.add_apply, hpair, hthree,
     Finsupp.single_eq_same, Finsupp.zero_apply, zero_add, zero_sub, neg_neg] at hc
   exact (by decide : (1 : R) ≠ 0) hc
