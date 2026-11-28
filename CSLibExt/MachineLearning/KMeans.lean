@@ -29,6 +29,8 @@ Main results:
   the cost; `cost_lloyd_le`: one round does not either.
 * `IsRun.antitone`: **the cost is non-increasing along every run of Lloyd's algorithm**;
   `exists_run`: runs exist from any start when `k > 0`.
+* `IsRun.exists_cost_const`: **the cost along every run is eventually constant**: the minimum
+  among costs actually attained persists from its attaining time.
 
 No claim is made here about the number of rounds or about reaching a global optimum (Lloyd's
 algorithm can stop at a local one).
@@ -215,5 +217,48 @@ theorem exists_run (x : ι → E) (hk : 0 < k) (a₀ : ι → Fin k) (c₀ : Fin
   let as : ℕ → ι → Fin k := fun t => Nat.rec a₀ (fun _ a => step a) t
   let cs : ℕ → Fin k → E := fun t => Nat.rec c₀ (fun t _ => centers x (as t)) t
   exact ⟨as, cs, rfl, rfl, fun t => ⟨rfl, hstep (as t)⟩⟩
+
+/-- **The cost along every run is eventually constant.** From step one on, the centers are
+determined by the previous assignment, so the initial cost together with the finite image of
+the cost over ordered pairs of assignments is a finite set containing every cost of this run.
+The costs actually attained by the run therefore have a minimum; from a time attaining that
+attained minimum, `IsRun.antitone` keeps every later cost equal to it. This is the minimum
+among costs actually attained, not the minimum of the full assignment-pair image, which the
+run need not attain. -/
+theorem IsRun.exists_cost_const {x : ι → E} {as : ℕ → ι → Fin k} {cs : ℕ → Fin k → E}
+    (h : IsRun x as cs) : ∃ T, ∀ t, T ≤ t → cost x (as t) (cs t) = cost x (as T) (cs T) := by
+  classical
+  have hanti : Antitone fun t => cost x (as t) (cs t) := h.antitone
+  have hsucc : ∀ n, cost x (as (n + 1)) (cs (n + 1)) =
+      cost x (as (n + 1)) (centers x (as n)) := by
+    intro n
+    obtain ⟨hc, -⟩ := h n
+    rw [hc]
+  set img : Finset ℝ := Finset.univ.image
+    fun p : (ι → Fin k) × (ι → Fin k) => cost x p.2 (centers x p.1) with himg
+  set s : Finset ℝ := insert (cost x (as 0) (cs 0)) img with hs
+  have hmem : ∀ t, cost x (as t) (cs t) ∈ s := by
+    intro t
+    refine match t with | 0 => ?_ | n + 1 => ?_
+    · rw [hs]
+      exact Finset.mem_insert_self _ _
+    · rw [hs, hsucc n]
+      refine Finset.mem_insert_of_mem ?_
+      rw [himg]
+      exact Finset.mem_image.mpr ⟨(as n, as (n + 1)), Finset.mem_univ _, rfl⟩
+  set s' : Finset ℝ := s.filter (fun r => ∃ t, cost x (as t) (cs t) = r) with hs'
+  have hne : s'.Nonempty := by
+    refine ⟨cost x (as 0) (cs 0), ?_⟩
+    rw [hs']
+    exact Finset.mem_filter.mpr ⟨hmem 0, 0, rfl⟩
+  obtain ⟨m, hms, hmin⟩ := Finset.exists_min_image s' id hne
+  rw [hs', Finset.mem_filter] at hms
+  obtain ⟨T, hT⟩ := hms.2
+  refine ⟨T, fun t ht => le_antisymm (hanti ht) ?_⟩
+  rw [hT]
+  have hmem' : cost x (as t) (cs t) ∈ s' := by
+    rw [hs']
+    exact Finset.mem_filter.mpr ⟨hmem t, t, rfl⟩
+  exact hmin _ hmem'
 
 end Cslib.MachineLearning.KMeans

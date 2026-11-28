@@ -117,6 +117,79 @@ example : cost (fun _ : Fin 4 => (0 : ℝ)) (fun _ => (0 : Fin 2)) ![0, 1] =
   intro i
   rfl
 
+/-- The cost along a run from the `split` fixture is eventually constant. -/
+example : ∃ as cs, as 0 = split ∧ cs 0 = ![0, 10] ∧ IsRun pts as cs ∧
+    (∃ T, ∀ t, T ≤ t → cost pts (as t) (cs t) = cost pts (as T) (cs T)) := by
+  obtain ⟨as, cs, h0, hc0, hrun⟩ := exists_run pts (by decide) split ![0, 10]
+  exact ⟨as, cs, h0, hc0, hrun, hrun.exists_cost_const⟩
+
+private def cyc : Fin 2 → ℝ := ![-1, 1]
+
+private def alt : ℕ → Fin 2 → Fin 2 :=
+  fun t => if t % 2 = 0 then (fun _ => 0) else (fun _ => 1)
+
+private def zerocs : ℕ → Fin 2 → ℝ := fun _ => 0
+
+/-- With all points in cluster `0`, both updated centers are `0`. -/
+private theorem centers_cyc_zero : centers cyc (fun _ => (0 : Fin 2)) = 0 := by
+  have h0 : centers cyc (fun _ => (0 : Fin 2)) 0 = 0 := by
+    simp only [centers, centroid]
+    norm_num [cyc]
+  have h1 : centers cyc (fun _ => (0 : Fin 2)) 1 = 0 :=
+    centers_eq_zero_of_forall_ne _ _ _ (by decide)
+  funext j
+  fin_cases j
+  · simpa using h0
+  · simpa using h1
+
+/-- With all points in cluster `1`, both updated centers are `0`. -/
+private theorem centers_cyc_one : centers cyc (fun _ => (1 : Fin 2)) = 0 := by
+  have h0 : centers cyc (fun _ => (1 : Fin 2)) 0 = 0 :=
+    centers_eq_zero_of_forall_ne _ _ _ (by decide)
+  have h1 : centers cyc (fun _ => (1 : Fin 2)) 1 = 0 := by
+    simp only [centers, centroid]
+    norm_num [cyc]
+  funext j
+  fin_cases j
+  · simpa using h0
+  · simpa using h1
+
+private theorem centers_cyc_alt (t : ℕ) : centers cyc (alt t) = 0 := by
+  by_cases h : t % 2 = 0
+  · simp [alt, h, centers_cyc_zero]
+  · simp [alt, h, centers_cyc_one]
+
+/-- The alternating assignments with zero centers form a run. -/
+example : IsRun cyc alt zerocs := by
+  intro t
+  refine ⟨?_, ?_⟩
+  · simp [zerocs, centers_cyc_alt]
+  · intro i j
+    simp [zerocs]
+
+/-- The cycling run has cost `2` at every time. -/
+example (t : ℕ) : cost cyc (alt t) (zerocs t) = 2 := by
+  simp only [cost, Fin.sum_univ_two]
+  norm_num [cyc, zerocs]
+
+/-- Consecutive alternating assignments differ. -/
+example (t : ℕ) : alt t ≠ alt (t + 1) := by
+  by_cases h : t % 2 = 0
+  · have h1 : (t + 1) % 2 ≠ 0 := by omega
+    have e0 : alt t = fun _ => (0 : Fin 2) := by simp [alt, h]
+    have e1 : alt (t + 1) = fun _ => (1 : Fin 2) := by simp [alt, h1]
+    rw [e0, e1]
+    intro heq
+    have h2 := congrFun heq 0
+    exact absurd h2 (by decide)
+  · have h1 : (t + 1) % 2 = 0 := by omega
+    have e0 : alt t = fun _ => (1 : Fin 2) := by simp [alt, h]
+    have e1 : alt (t + 1) = fun _ => (0 : Fin 2) := by simp [alt, h1]
+    rw [e0, e1]
+    intro heq
+    have h2 := congrFun heq 0
+    exact absurd h2 (by decide)
+
 #print axioms IsRun.antitone
 #print axioms cost_lloyd_le
 #print axioms sum_sq_eq
@@ -129,5 +202,6 @@ example : cost (fun _ : Fin 4 => (0 : ℝ)) (fun _ => (0 : Fin 2)) ![0, 1] =
 #print axioms centers_eq_zero_of_forall_ne
 #print axioms cost_congr_centers
 #print axioms cost_eq_sum_clusters
+#print axioms IsRun.exists_cost_const
 
 end Cslib.MachineLearning.KMeans
