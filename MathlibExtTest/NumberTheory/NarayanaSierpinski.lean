@@ -19,4 +19,16 @@ example (b : ℕ) : ∃ t, b < narayanaCowsSequence t ∧ Odd (narayanaCowsSeque
   obtain ⟨k, ⟨hk, t, rfl⟩, ht⟩ := infinite_setOf_isSierpinskiNumber_narayanaCowsSequence.exists_gt b
   exact ⟨t, ht, hk.1, by simpa only [pow_one] using hk.2 1 le_rfl⟩
 
+-- At the first listed index, the term is odd and the least positive exponent gives a nonprime.
+example : Odd (narayanaCowsSequence 3629412) ∧
+    ¬ (narayanaCowsSequence 3629412 * 2 - 1).Prime := by
+  have h := isRieselNumber_narayanaCowsSequence (t := 3629412) (by decide)
+  exact ⟨h.1, by simpa only [pow_one] using h.2 1 le_rfl⟩
+
+-- The last listed index still works after shifting by any number of full periods.
+example (q : ℕ) : IsRieselNumber (narayanaCowsSequence (703725732 + 718391520 * q)) := by
+  apply isRieselNumber_narayanaCowsSequence
+  rw [Nat.add_mul_mod_self_left]
+  decide
+
 end MetaMathlibExt
