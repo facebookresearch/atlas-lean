@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.ZeckendorfOdometer
 public import MathlibExt.NumberTheory.ZeckendorfNewInformationZone
 public import MathlibExt.NumberTheory.ZeckendorfRenewal
+public import MathlibExt.NumberTheory.ZeckendorfVariationOne
 public import MathlibExt.Probability.MixingCoefficients
 public import Mathlib.Data.Nat.Fib.Zeckendorf
 public import Mathlib.NumberTheory.Real.GoldenRatio
@@ -424,25 +425,6 @@ public theorem_wanted zeckAdicVariation_count_le (μ : Measure (ℕ → Bool))
       ((({n ∈ Finset.range N |
         ((Nat.zeckendorf (n + r)).length : ℤ) - (Nat.zeckendorf n).length = d}.card : ℕ) : ℝ) /
           N ≤ r * Real.goldenRatio ^ 3 * (μ {x | zeckAdicVariation r x = d}).toReal)
-
-/-- **When the variation $\Delta^{(1)}$ exists.** Let $x$ be a Zeckendorf-adic integer with digits
-$x_k$, and let $\Delta_k^{(1)}(x)$ be its truncated variation of order $k$ for $r = 1$. The
-integer sequence $(\Delta_k^{(1)}(x))_k$ is eventually constant (equivalently, the variation
-$\Delta^{(1)}(x) = \lim_{k \to \infty} \Delta_k^{(1)}(x)$ exists) if and only if there is
-$d \ge 0$ such that either $x_{2d+3} = x_{2d+2} = 0$ and $x_{2i+1} = 1$, $x_{2i} = 0$ for
-$1 \le i \le d$ (the cylinder $C_{00(10)^d}$), or $x_{2d+4} = x_{2d+3} = 0$, $x_{2d+2} = 1$ and
-$x_{2i+1} = 0$, $x_{2i} = 1$ for $1 \le i \le d$ (the cylinder $C_{001(01)^d}$).
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Lemma 27 (`jis-2024-24.3.2-lem-27`), first part. -/
-public theorem_wanted zeckAdicVariation_one_exists_iff {x : ℕ → Bool} (hx : x ∈ zeckAdic) :
-    (∃ d, ∀ᶠ k in Filter.atTop, zeckAdicTruncVariation 1 k x = d) ↔
-      ∃ d : ℕ,
-        (x (2 * d + 3) = false ∧ x (2 * d + 2) = false ∧
-          ∀ i, 1 ≤ i → i ≤ d → x (2 * i + 1) = true ∧ x (2 * i) = false) ∨
-        (x (2 * d + 4) = false ∧ x (2 * d + 3) = false ∧ x (2 * d + 2) = true ∧
-          ∀ i, 1 ≤ i → i ≤ d → x (2 * i + 1) = false ∧ x (2 * i) = true)
 
 /-- **The variation $\Delta^{(1)}$ on the cylinder $C_{00(10)^d}$.** Let $d \ge 0$ and let $x$ be a
 Zeckendorf-adic integer in the cylinder $C_{00(10)^d}$, that is, one whose digits satisfy

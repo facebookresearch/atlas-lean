@@ -62,6 +62,12 @@ Zeckendorf representation of `F_{k+1} + w` is that of `w` with the index `k + 1`
 `u < F_{m+1}` have `D_m(u) = 1` and the others have `D_m(u) = 0`. On `[F_{ℓ-1}, F_{ℓ+1})` the
 variation is therefore `0` below `F_ℓ`, which gives `F_{ℓ-2}` zeros. From `F_ℓ` onward it takes
 the values of `D_{ℓ-2}` on `[0, F_{ℓ-1})`, which gives `F_{ℓ-3}` more zeros and `F_{ℓ-2}` ones.
+
+## References
+
+* Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
+  An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
+  (2024), Article 24.3.2, pp. 1–48, Sections 3.1, 4 and 5.1, Lemmas 32–33, and Proposition 41.
 -/
 
 namespace MetaMathlibExt
@@ -310,6 +316,16 @@ An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Inte
 public noncomputable def zeckAdicTruncVariation (r k : ℕ) (x : ℕ → Bool) : ℤ :=
   ∑ i ∈ Finset.Icc 2 k, ((zeckOdometer^[r] x i).toNat : ℤ) -
     ∑ i ∈ Finset.Icc 2 k, ((x i).toNat : ℤ)
+
+/-- **Change of the truncated variation at the next digit.** Let $r \in \mathbb{N}$, $k \ge 1$,
+let $x$ be a binary sequence, and let $T$ be the Zeckendorf odometer. Then
+$\Delta_{k+1}^{(r)}(x) = \Delta_k^{(r)}(x) + (T^r x)_{k+1} - x_{k+1}$, where each digit is
+read as an integer. -/
+public theorem zeckAdicTruncVariation_succ (r : ℕ) (x : ℕ → Bool) {k : ℕ} (hk : 1 ≤ k) :
+    zeckAdicTruncVariation r (k + 1) x = zeckAdicTruncVariation r k x +
+      ((zeckOdometer^[r] x (k + 1)).toNat : ℤ) - ((x (k + 1)).toNat : ℤ) := by
+  simp only [zeckAdicTruncVariation, Finset.sum_Icc_succ_top (by omega : 2 ≤ k + 1)]
+  omega
 
 /-- **The truncated variation vanishes for zero steps.** Let $T$ be the Zeckendorf odometer and,
 for a binary sequence $x$, let $s_k(x) = x_2 + \dots + x_k$ and
