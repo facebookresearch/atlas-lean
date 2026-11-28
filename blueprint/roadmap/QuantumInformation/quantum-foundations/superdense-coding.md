@@ -5,15 +5,10 @@ classical bits $(b_1, b_2)$, Alice applies $Z^{b_1} X^{b_2}$ to her qubit and se
 channel. The four resulting states are, up to global phases, the four Bell states, which form an orthonormal basis, so
 Bob's projective measurement in the Bell basis recovers $(b_1, b_2)$ with probability $1$.
 
-## Expansion
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Measurements (POVM, projective) and the Born rule.
-
 ## Depends on
 
 - [Bell basis and maximally entangled states](bell-basis-and-maximally-entangled-states.md)
+- [Positive-operator-valued measurements and the Born rule](../quantum-operations/povms-and-measurement-readout/povm-and-born-rule.md)
 
 ## Sources
 

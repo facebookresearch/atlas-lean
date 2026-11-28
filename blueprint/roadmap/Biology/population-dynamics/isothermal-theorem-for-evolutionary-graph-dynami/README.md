@@ -6,3 +6,4 @@
 - [Is Fixation Function](is-fixation-function.md)
 - [Moran Fixation](moran-fixation.md)
 - [Isothermal theorem, "if" direction](average-fixation-eq-moran-fixation.md)
+- [Universality of Moran fixation on random graphs](universality-of-moran-fixation-on-random-graphs.md)
