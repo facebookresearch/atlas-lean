@@ -11,11 +11,15 @@ Beth's clause for disjunction.
 
 ## Expansion
 
-A sound expansion fixes one presentation of BI (formulas, bunches and a sequent calculus) and has
-separate pages for: BI-algebras and soundness and completeness of the calculus for them; a relational
-or resource semantics with its soundness and completeness theorem, as stated in a source fixed for
-that page; cut elimination; and decidability or undecidability of provability. Boolean BI and the
-non-commutative variant are separate logics.
+Formulas and bunches, natural deduction NBI with cut admissibility, the sequent calculus LBI with cut
+elimination, conservativity over intuitionistic propositional logic, BI-algebras with soundness and
+completeness, and the elementary, Grothendieck and inconsistent-world resource semantics with their
+soundness, completeness and incompleteness results are expanded in
+[Foundations of bunched implications](bunched-implications-foundations/README.md). Still to expand:
+decidability or undecidability of provability; the equivalence of NBI and LBI; conservativity over
+multiplicative intuitionistic linear logic; soundness and completeness for bicartesian doubly closed
+categories; the ternary relational semantics and resource tableaux; and Boolean BI, Classical BI and the
+non-commutative variant, which are separate logics.
 
 ## Status
 
