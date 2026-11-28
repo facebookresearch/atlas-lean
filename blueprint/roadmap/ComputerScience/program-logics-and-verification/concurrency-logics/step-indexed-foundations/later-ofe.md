@@ -6,7 +6,7 @@ $$
 \blacktriangleright T \triangleq \{ \mathrm{next}(x) \mid x \in T \}, \qquad \mathrm{next}(x) \overset{n}{=} \mathrm{next}(y) \iff n = 0 \lor x \overset{n-1}{=} y .
 $$
 
-$\blacktriangleright T$ is complete whenever $T$ is. In the Iris model the later OFE is the guard placed on recursive occurrences of the type of propositions, as in the camera $\mathrm{AG}(\blacktriangleright \mathit{iProp})$ of named propositions.
+$\blacktriangleright T$ is complete whenever $T$ is.
 
 ## Depends on
 
@@ -20,7 +20,7 @@ $\blacktriangleright T$ is complete whenever $T$ is. In the Iris model the later
 
 ## Expansion
 
-The relations are equivalences (total at index 0) that refine as $n$ grows, and equality at every index means equality in $T$, so $\blacktriangleright T$ is an OFE. If $T$ is complete, a chain $(\mathrm{next}(c_k))$ in $\blacktriangleright T$ gives the chain $(c_{k+1})$ in $T$, and $\mathrm{next}$ of its limit is a limit; so the later functor maps COFEs to COFEs. The later functor is the archetypical locally contractive bifunctor used to apply the America-Rutten theorem.
+The relations are equivalences (total at index 0) that refine as $n$ grows, and equality at every index means equality in $T$, so $\blacktriangleright T$ is an OFE. If $T$ is complete, a chain $(\mathrm{next}(c_k))$ in $\blacktriangleright T$ gives the chain $(c_{k+1})$ in $T$, and $\mathrm{next}$ of its limit is a limit; so the later functor maps COFEs to COFEs. The later functor is the archetypical locally contractive bifunctor used to apply the America-Rutten theorem. In the Iris model the later OFE is the guard placed on recursive occurrences of the type of propositions, as in the camera $\mathrm{AG}(\blacktriangleright \mathit{iProp})$ of named propositions.
 
 ## Sources
 
