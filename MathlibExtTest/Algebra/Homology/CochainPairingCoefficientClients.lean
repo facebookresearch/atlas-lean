@@ -112,16 +112,10 @@ private abbrev coefficient (a : R) : K R A ⟶ K R A where
   f _ := ModuleCat.ofHom (a • LinearMap.id)
   comm' _ _ _ := by simp [K]
 
-/-- Genuine joint coefficient naturality, with output scalar `a*b`. -/
-example (a b : R) (p q : ℕ) :
-    (pairing R A).pairHomology p q ≫ homologyMap (coefficient R A (a * b)) (p + q) =
-      (homologyMap (coefficient R A a) p ⊗ₘ homologyMap (coefficient R A b) q) ≫
-        (pairing R A).pairHomology p q := by
-  symm
-  apply CochainGradedPairing.pairHomology_naturality
-    (pairing R A) (pairing R A) (coefficient R A a) (coefficient R A b)
-    (coefficient R A (a * b))
-  intro i j
+private lemma coefficient_pairing (a b : R) (i j : ℕ) :
+    (pairing R A).pair i j ≫ (coefficient R A (a * b)).f (i + j) =
+      ((coefficient R A a).f i ⊗ₘ (coefficient R A b).f j) ≫
+        (pairing R A).pair i j := by
   apply ModuleCat.hom_ext
   change ((a * b) • (LinearMap.id : A →ₗ[R] A)).comp (LinearMap.mul' R A) =
     (LinearMap.mul' R A).comp (TensorProduct.map (a • LinearMap.id) (b • LinearMap.id))
@@ -129,6 +123,15 @@ example (a b : R) (p q : ℕ) :
   intro x y
   change (a * b) • (x * y) = (a • x) * (b • y)
   simp only [smul_mul_assoc, mul_smul_comm, smul_smul]
+
+/-- Genuine joint coefficient naturality, with output scalar `a*b`. -/
+example (a b : R) (p q : ℕ) :
+    (pairing R A).pairHomology p q ≫ homologyMap (coefficient R A (a * b)) (p + q) =
+      (homologyMap (coefficient R A a) p ⊗ₘ homologyMap (coefficient R A b) q) ≫
+        (pairing R A).pairHomology p q :=
+  (CochainGradedPairing.pairHomology_naturality
+    (pairing R A) (pairing R A) (coefficient R A a) (coefficient R A b)
+    (coefficient R A (a * b)) (coefficient_pairing R A a b) p q).symm
 
 /-- The actual restriction functor forgets only the scalar structure. -/
 private def restrictedCarriers : ModuleCat.{u} R ⥤ Type u :=
