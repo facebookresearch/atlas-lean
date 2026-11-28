@@ -59,3 +59,14 @@
 - [Type-II error of rejecting on false](type-ii-ph5-singleton-false.md)
 - [The biased-bit pair satisfies the tradeoff condition at log 3](kovpair-ph5-qh5.md)
 - [Tradeoff of the biased-bit pair at one quarter](tradeoff-ph5-qh5-quarter.md)
+
+## Randomized-response dominance under adaptive composition
+
+- [Rr exists channel of kovpair](rr-exists-channel-of-kovpair.md)
+- [Rr Stage](rr-stage.md)
+- [Is Approx DP rr Stage](is-approx-dp-rr-stage.md)
+- [Rr Kfold](rr-kfold.md)
+- [Rr Kfold exists channel](rr-kfold-exists-channel.md)
+- [Rr Kfold tradeoff le](rr-kfold-tradeoff-le.md)
+- [Kovpair kfold of rr Kfold](kovpair-kfold-of-rr-kfold.md)
+- [Is Approx DP kfold of rr Kfold](is-approx-dp-kfold-of-rr-kfold.md)
