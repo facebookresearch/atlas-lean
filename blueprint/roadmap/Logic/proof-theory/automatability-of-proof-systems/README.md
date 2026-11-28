@@ -12,3 +12,4 @@
 - [de Rezende et al.: automating Nullstellensatz and Polynomial Calculus is NP-hard](drgnprs-algebraic.md)
 - [Garlík: Res(k) is not automatable unless P = NP](garlik-resk.md)
 - [Göös–Koroth–Mertz–Pitassi: automating cutting planes is NP-hard](gkmp-cutting-planes.md)
+- [Meta-Complexity of Proof Search](meta-complexity-of-proof-search/README.md)
