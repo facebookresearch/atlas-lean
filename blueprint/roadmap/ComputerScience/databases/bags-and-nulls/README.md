@@ -20,3 +20,5 @@
 - [Duplicate elimination commutes with positive relational algebra](duplicate-elimination-commutes-with-positive-relational-algebra.md)
 - [Repairs are block selections](repairs-are-block-selections.md)
 - [Consistent answers to single-atom queries](consistent-answers-to-single-atom-queries.md)
+- [Existence of least-squares fixes under aggregation constraints is undecidable](existence-of-least-squares-fixes-is-undecidable.md)
+- [Least-squares fixes of databases with numerical attributes](least-squares-fixes-of-numerical-databases.md)

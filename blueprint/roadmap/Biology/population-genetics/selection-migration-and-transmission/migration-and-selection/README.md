@@ -8,3 +8,6 @@
 - [Two-locus two-deme migration–selection model](two-locus-two-deme-migration-selection-model/README.md)
 - [Diploid migration–selection–mutation balance on an island](diploid-migration-selection-mutation-balance-on-an-island.md)
 - [Two-locus continent–island model](two-locus-continent-island-model/README.md)
+- [Two-locus clines in a step environment](two-locus-clines-in-a-step-environment/README.md)
+- [Two-locus clines under diffusion](two-locus-clines-under-diffusion/README.md)
+- [SPDE on metric graphs](spde-on-metric-graphs/README.md)
