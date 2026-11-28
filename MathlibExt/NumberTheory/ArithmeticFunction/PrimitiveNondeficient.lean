@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.NumberTheory.Divisors
+public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndex
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -45,6 +46,9 @@ At $n = 0$ this gives $h(0) = 0$, since division by zero is $0$ in $\mathbb{Q}$;
 index is only meaningful for positive $n$. -/
 noncomputable def abundancyIndex (n : ℕ) : ℚ :=
   ((∑ d ∈ Nat.divisors n, d : ℕ) : ℚ) / (n : ℚ)
+
+/-- The ATLAS abundancy index agrees with Mathlib's `Nat.abundancyIndex`. -/
+lemma abundancyIndex_eq_nat_abundancyIndex (n : ℕ) : abundancyIndex n = n.abundancyIndex := rfl
 
 /-- **Product of $p/(p-1)$ over the prime factors.** For a natural number $n$, let
 $H(n) = \prod_p p/(p-1)$ in $\mathbb{Q}$, the product over the distinct primes $p$ dividing $n$.

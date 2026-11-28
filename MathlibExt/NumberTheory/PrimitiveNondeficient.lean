@@ -63,95 +63,23 @@ private theorem three_le_of_mem_primeFactors (n q : ℕ) (hno : Odd n)
   have h2 := hprime.two_le
   omega
 
-/-- The abundancy index of a positive number is positive. -/
-private theorem abundancyIndex_pos (m : ℕ) (hm : 0 < m) :
-    0 < abundancyIndex m := by
-  rw [abundancyIndex]
-  apply div_pos _ (by exact_mod_cast hm)
-  have hle : m ≤ ∑ d ∈ Nat.divisors m, d :=
-    Finset.single_le_sum (f := fun d => d) (fun _ _ => Nat.zero_le _)
-      (Nat.mem_divisors_self m hm.ne')
-  have hleQ : (m : ℚ) ≤ ((∑ d ∈ Nat.divisors m, d : ℕ) : ℚ) := by exact_mod_cast hle
-  have hm1 : (1 : ℚ) ≤ (m : ℚ) := by exact_mod_cast hm
-  linarith [hleQ]
-
-/-- The abundancy index of `1` is `1`. -/
-private theorem abundancyIndex_one : abundancyIndex 1 = 1 := by
-  simp [abundancyIndex, Nat.divisors_one]
-
-/-- The abundancy index is multiplicative on coprime pairs. -/
-private theorem abundancyIndex_mul_of_coprime {m n : ℕ} (hc : m.Coprime n) :
-    abundancyIndex (m * n) = abundancyIndex m * abundancyIndex n := by
-  simp only [abundancyIndex, hc.sum_divisors_mul, Nat.cast_mul, mul_div_mul_comm]
-
-/-- The abundancy index of a product of pairwise coprime factors. -/
-private theorem abundancyIndex_prod (s : Finset ℕ) (f : ℕ → ℕ)
-    (hcop : ∀ p ∈ s, ∀ q ∈ s, p ≠ q → (f p).Coprime (f q)) :
-    abundancyIndex (∏ p ∈ s, f p) = ∏ p ∈ s, abundancyIndex (f p) := by
-  revert hcop
-  induction s using Finset.induction with
-  | empty => intro _; simp [abundancyIndex_one]
-  | insert a t ha ih =>
-    intro hcop
-    rw [Finset.prod_insert ha, Finset.prod_insert ha, abundancyIndex_mul_of_coprime]
-    · congr 1
-      apply ih
-      intro p hp q hq hpq
-      exact hcop p (Finset.mem_insert_of_mem hp) q (Finset.mem_insert_of_mem hq) hpq
-    · rw [← Nat.isCoprime_iff_coprime, Nat.cast_prod]
-      apply IsCoprime.prod_right
-      intro q hq
-      rw [Nat.isCoprime_iff_coprime]
-      exact hcop a (Finset.mem_insert_self a t) q (Finset.mem_insert_of_mem hq)
-        (fun heq => ha (heq ▸ hq))
-
-/-- Abundancy of a prime power via the geometric sum. -/
-private theorem abundancyIndex_prime_pow_eq (p a : ℕ) (hp : p.Prime) :
-    abundancyIndex (p ^ a)
-      = (p : ℚ) / ((p : ℚ) - 1) * (1 - 1 / (p : ℚ) ^ (a + 1)) := by
-  have hgeom : ((∑ i ∈ Finset.range (a + 1), p ^ i : ℕ) : ℚ) * ((p : ℚ) - 1)
-      = (p : ℚ) ^ (a + 1) - 1 := by
-    have hcast : ((∑ i ∈ Finset.range (a + 1), p ^ i : ℕ) : ℚ)
-        = ∑ i ∈ Finset.range (a + 1), (p : ℚ) ^ i := by
-      rw [Nat.cast_sum]
-      apply Finset.sum_congr rfl
-      intro i _
-      exact Nat.cast_pow p i
-    rw [hcast]
-    exact geom_sum_mul _ _
-  have hsig : (ArithmeticFunction.sigma 1) (p ^ a)
-      = ∑ i ∈ Finset.range (a + 1), p ^ i :=
-    ArithmeticFunction.sigma_one_apply_prime_pow hp
-  have hdiv : abundancyIndex (p ^ a)
-      = ((∑ i ∈ Finset.range (a + 1), p ^ i : ℕ) : ℚ) / (p : ℚ) ^ a := by
-    simp only [abundancyIndex, ← ArithmeticFunction.sigma_one_apply, hsig, Nat.cast_pow]
-  rw [hdiv]
-  have hp0 : (p : ℚ) ≠ 0 := by exact_mod_cast hp.ne_zero
-  have hp1 : (0 : ℚ) < (p : ℚ) - 1 := by
-    have h2 : (2 : ℚ) ≤ (p : ℚ) := by exact_mod_cast hp.two_le
-    linarith
-  have hpa : (p : ℚ) ^ a ≠ 0 := pow_ne_zero _ hp0
-  have hpa1 : (p : ℚ) ^ (a + 1) ≠ 0 := pow_ne_zero _ hp0
-  have hps : (p : ℚ) ^ (a + 1) = (p : ℚ) * (p : ℚ) ^ a := pow_succ' _ _
-  field_simp
-  linear_combination (p : ℚ) ^ (a + 1) * hgeom + ((p : ℚ) ^ (a + 1) - 1) * hps
-
 /-- Abundancy as the supremum bound times correction factors. -/
 private theorem abundancyIndex_eq_sup_mul (n : ℕ) (hn0 : n ≠ 0) :
     abundancyIndex n = abundancySup n *
       ∏ p ∈ n.primeFactors, (1 - 1 / (p : ℚ) ^ (n.factorization p + 1)) := by
-  have hcop : ∀ p ∈ n.primeFactors, ∀ q ∈ n.primeFactors, p ≠ q →
-      (p ^ n.factorization p).Coprime (q ^ n.factorization q) := by
+  let f (p : ℕ) := p ^ n.factorization p
+  have hcop : (n.primeFactors : Set ℕ).Pairwise (Function.onFun Nat.Coprime f) := by
     intro p hp q hq hpq
-    have hpp : p.Prime := (Nat.mem_primeFactors.mp hp).1
-    have hqq : q.Prime := (Nat.mem_primeFactors.mp hq).1
-    exact ((Nat.coprime_primes hpp hqq).mpr hpq).pow_left _ |>.pow_right _
+    have hpp : p.Prime := Nat.prime_of_mem_primeFactors hp
+    have hqq : q.Prime := Nat.prime_of_mem_primeFactors hq
+    exact ((Nat.coprime_primes hpp hqq).mpr hpq).pow _ _
+  rw [abundancyIndex_eq_nat_abundancyIndex]
   conv_lhs => rw [Nat.prod_primeFactors_pow_factorization hn0]
-  rw [abundancyIndex_prod _ _ hcop]
+  rw [Nat.abundancyIndex_prod _ f hcop]
   simp only [abundancySup, ← Finset.prod_mul_distrib]
   apply Finset.prod_congr rfl
   intro p hp
-  exact abundancyIndex_prime_pow_eq p _ ((Nat.mem_primeFactors.mp hp).1)
+  exact Nat.abundancyIndex_prime_pow_eq p _ (Nat.prime_of_mem_primeFactors hp)
 
 /-- Product of `p/(p-1)` over distinct naturals, bounded by telescoping. -/
 private theorem prod_div_sub_one_le (T : Finset ℕ) (c : ℕ) (hc : 1 ≤ c)
@@ -662,7 +590,9 @@ private theorem abundancy_lt_two_mul (n p₁ : ℕ) (hn : IsPrimitiveNondeficien
   have h2 : abundancyIndex (n / p₁) < 2 := by
     rw [abundancyIndex, div_lt_iff₀ hnposdQ]
     exact_mod_cast hdef
-  have hposd : 0 < abundancyIndex (n / p₁) := abundancyIndex_pos _ hnposd
+  have hposd : 0 < abundancyIndex (n / p₁) := by
+    rw [abundancyIndex_eq_nat_abundancyIndex]
+    exact zero_lt_one.trans_le (Nat.one_le_abundancyIndex hnposd)
   have ha1 : 1 ≤ n.factorization p₁ := by
     have hpos := Nat.Prime.factorization_pos_of_dvd hpp hn0 hdvd
     omega
