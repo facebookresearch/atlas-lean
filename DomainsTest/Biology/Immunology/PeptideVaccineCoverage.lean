@@ -35,11 +35,13 @@ A population with two HLA haplotypes over four alleles, and three candidate pept
   two hits each and the heterozygous ones three, so the curve is `1` up to the threshold `2`,
   `2 * (3/5) * (2/5) = 12/25` at `3` — the two ordered pairs of a heterozygous genotype, as random
   mating weights it — and `0` beyond;
-* the theorems on these data: the curve starts at `1`, is non-increasing, and lies in `[0, 1]`;
+* the theorems on these data: the curve starts at `1`, is non-increasing, lies in `[0, 1]`, and
+  agrees with the maximum `n`-times coverage of the genotypes;
 * monotonicity in the peptide set: adding the peptide `2`, displayed by `B`, raises the coverage at
   the threshold `3` from `12/25` to `16/25`;
 * a model that displays nothing covers no one above the threshold `0`. -/
 
+open Cslib.Algorithms.Lean.MaxNTimesCoverage
 open Domains.Biology.Immunology.PeptideVaccineCoverage
 
 namespace DomainsTest.Biology.Immunology.PeptideVaccineCoverage
@@ -96,10 +98,17 @@ example : populationCoverage alleles displays freq V 2 = 1 := by
 
 /-- Only the heterozygous genotypes reach three hits from `V`, and random mating gives them
 `2 * (3/5) * (2/5)`. -/
-example : populationCoverage alleles displays freq V 3 = 12 / 25 := by
+theorem coverage_V_three : populationCoverage alleles displays freq V 3 = 12 / 25 := by
   simp only [populationCoverage, hits_V, Finset.sum_filter, Fintype.sum_prod_type,
     Fin.sum_univ_two]
   norm_num [freq]
+
+/-- The same number as maximum `n`-times coverage of the genotypes, each peptide covering a
+genotype once for each carried allele that displays it. -/
+example : nCoverage (fun g : Fin 2 × Fin 2 => freq g.1 * freq g.2)
+    (fun p g => ((alleles g.1 ∪ alleles g.2).filter fun a => displays p a).card) 3 V = 12 / 25 := by
+  rw [← populationCoverage_eq_nCoverage]
+  exact coverage_V_three
 
 /-- No one has four hits from `V`. -/
 example : populationCoverage alleles displays freq V 4 = 0 := by
