@@ -22,7 +22,7 @@ $$\mu(x)\, b(x)\, \bar n(x)\, \frac{[f(x+h; x)]_+}{b(x+h)}\, m(x,h)\, dh,$$
 
 the rate of mutant births times the survival probability $[f]_+/b$ of the supercritical branching process started by one mutant; the population density converges accordingly to $\bar n(x)\,\delta_x$ at the current resident trait $x$. The lower bound on $u_K$ keeps the resident near $\bar n$ until the next mutation, and the upper bound lets each mutant's fate be decided first. Holding the mutation probability fixed while $K \to \infty$ gives no such separation: the number of mutant births per unit time then grows like $K$.
 
-**Canonical equation.** Replace $m(x, h)$ by $m_\varepsilon(x, h) = \varepsilon^{-1} m(x, h/\varepsilon)$ and let $\varepsilon \to 0$ after the limit above. On the time scale $t/\varepsilon^2$ the trait substitution sequence converges to the solution of
+**Canonical equation.** Assume further that $\mu$ is Lipschitz on $\mathcal X$ and $m(x, h)$ is Lipschitz in $x$, uniformly in $h$ (matching the regularity assumptions on $g$ and $M$ in Champagnat–Ferrière–Méléard, Section 5.2, so the right-hand side of the limiting ODE is Lipschitz and admits a unique solution). Replace $m(x, h)$ by $m_\varepsilon(x, h) = \varepsilon^{-1} m(x, h/\varepsilon)$ and let $\varepsilon \to 0$ after the limit above. On the time scale $t/\varepsilon^2$ the trait substitution sequence converges to the unique solution of
 
 $$\frac{dx}{dt} = \mu(x)\,\bar n(x) \int h\,[h\,\partial_1 f(x; x)]_+\, m(x,h)\, dh,$$
 
@@ -30,7 +30,7 @@ which for symmetric $m(x, \cdot)$ becomes
 
 $$\frac{dx}{dt} = \frac12\,\mu(x)\,\sigma^2(x)\,\bar n(x)\,\partial_1 f(x; x).$$
 
-Since $b > d$, $\bar n(x) > 0$, and $\mu(x) > 0$ by assumption. Where $\sigma^2(x) > 0$ (nondegenerate mutational variance), the rest points of the symmetric equation are exactly the evolutionarily singular strategies, where the fitness gradient $\partial_1 f(x;x)$ vanishes. Where $\sigma^2(x) = 0$ the right-hand side vanishes whatever the fitness gradient.
+Since $b > d$, $\bar n(x) > 0$, $\mu(x) > 0$, and $m(x, \cdot)$ is a probability density (so $\sigma^2(x) > 0$), the rest points of the symmetric equation are exactly the evolutionarily singular strategies, where the fitness gradient $\partial_1 f(x;x)$ vanishes.
 
 ## Depends on
 
