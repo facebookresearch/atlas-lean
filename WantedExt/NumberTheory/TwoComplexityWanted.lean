@@ -39,6 +39,7 @@ public import MathlibExt.NumberTheory.TwoComplexitySum
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLDecomp
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLEqAddTwoOfForm
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLPowAddPow
+public import MathlibExt.NumberTheory.TwoComplexityLogbTwoBounds
 
 set_option autoImplicit false
 
@@ -56,29 +57,6 @@ theorem_wanted logb_le_complexityL_le (l n : ℕ) (hl : 1 < l)
     (hln : l ∣ n) (hn : 1 ≤ n) :
     Real.logb l n ≤ (complexityL l n : ℝ) ∧
       (complexityL l n : ℝ) ≤ l * Real.logb l n - 1
-
-/-- **The 2-complexity of a power of two and of a sum of two powers of two.** Write
-$\|n\|_2$ for the $2$-complexity of $n$. For all natural numbers $m_1$ and $m_2$ with
-$m_1 > m_2 \ge 1$, one has $\|2^{m_1}\|_2 = m_1$ and $\|2^{m_1} + 2^{m_2}\|_2 = m_1 + 1$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Lemma 3. -/
-theorem_wanted complexityL_two_pow_and_add (m1 m2 : ℕ)
-    (h : m2 < m1) (hm2 : 1 ≤ m2) :
-    complexityL 2 (2 ^ m1) = m1 ∧
-      complexityL 2 (2 ^ m1 + 2 ^ m2) = m1 + 1
-
-/-- **Logarithmic bounds for the 2-complexity (Zhang's Lemma 3(3)).** Write $\|n\|_2$ for the
-2-complexity of $n$: the least number of copies of $2$ from which $n$ can be built using addition
-and multiplication, and $0$ if $n$ cannot be built. For every even natural number $n \ge 1$,
-$\log_2 n \le \|n\|_2 \le 2 \log_2 n - 1$, where $\log_2$ is the real base-2 logarithm.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Lemma 3. -/
-theorem_wanted logb_two_bounds (n : ℕ) (h2n : 2 ∣ n)
-    (hn : 1 ≤ n) :
-    Real.logb 2 n ≤ (complexityL 2 n : ℝ) ∧
-      (complexityL 2 n : ℝ) ≤ 2 * Real.logb 2 n - 1
 
 /-- **Even $n$ with $2^m < n \le 2^{m+1}$ and 2-complexity $m + 1$.** Write $\|n\|_2$ for the
 2-complexity of $n$. Let $m \ge 1$ and let $n$ be an even natural number with

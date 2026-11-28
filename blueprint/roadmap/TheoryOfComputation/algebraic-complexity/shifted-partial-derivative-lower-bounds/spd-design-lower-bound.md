@@ -1,10 +1,14 @@
 # Shifted partials of design polynomials are near-maximal
 
-Let $P = \mathrm{NW}_{q,d,k}$ be the Nisan-Wigderson design polynomial in $N = qd$ variables. For $k' \le \min(k, d - k)$, the $k'$-th order partial derivatives of $P$ along design directions have pairwise distinct leading monomials, and for some shift degree $\ell \le N^{O(1)}$, $\mathrm{SP}_{k',\ell}(P)$ is at least a $2^{-O(d)}$ fraction of the minimum of the trivial upper bound and $q^{k'}$ times the number of degree-$\ell$ monomials in $N$ variables. Hence design polynomials achieve shifted-partials dimension within a $2^{-O(d)}$ factor of the largest value permitted by their number of derivatives.
+Let $F_{t,n} = \mathrm{NW}_{n,n,k}$ be the Nisan-Wigderson design polynomial of degree $n$ in $N = n^2$ variables $\{x_{i,j}\}_{i,j \in \mathbb{F}_n}$ (where $n$ is a prime power) with $k = \lfloor n/(2t) \rfloor$. Because distinct degree-$< k$ polynomials over $\mathbb{F}_n$ agree on fewer than $k$ points, every $k$-th order partial derivative of $F_{t,n}$ is either zero or a single monomial of degree $n - k$, and the space $\langle \partial^{=k} F_{t,n} \rangle_{\le \ell}$ of shifted partials of shift degree at most $\ell$ is spanned precisely by all monomials of degree at most $\ell + n - k$ divisible by at least $n - k$ variables from some graph $S_a$ with $\deg a < k$ (Kayal–Saha–Saptharishi, Propositions 7–8). Moreover, whenever $\log^2 n < t < n/100$ and $\ell = \lceil c n^2 t / \log n \rceil$ for a constant $c > 5$, the shifted-partials dimension is nearly maximal up to a $(1 - o(1))/n^2$ factor of the ambient monomial space:
+
+$$
+\dim\bigl(\langle \partial^{=k} F_{t,n} \rangle_{\le \ell}\bigr) \;\ge\; \frac{1 - o(1)}{n^2} \binom{n^2 + \ell + n - k}{n^2}.
+$$
 
 ## Proof sketch
 
-Distinct degree-$<k$ polynomials $h$ give monomials that pairwise share fewer than $k$ variables, so after differentiating along $k' \le \min(k, d-k)$ design variables (so that each leading monomial, of degree $d - k' \ge k$, determines $h$) the resulting derivatives have distinct leading monomials that remain distinct after multiplication by shifts unless the shifts collide, which happens rarely by an inclusion-exclusion count. Counting distinct leading monomials of shifted derivatives lower-bounds the span dimension.
+Distinct degree-$<k$ polynomials $a \in \mathbb{F}_n[z]$ give graphs $S_a \subseteq \mathbb{F}_n^2$ that pairwise share fewer than $k$ points, so every $k$-th order partial derivative of $F_{t,n}$ is zero or a single monomial of degree $n - k$, and shifting by monomials of degree at most $\ell$ yields precisely the monomials of degree at most $\ell + n - k$ containing at least $n - k$ variables from some $S_a$ (Propositions 7–8). Estimating the probability that a uniformly random monomial of degree at most $\ell + n - k$ misses at most $k$ variables of some $S_a$ via a second-moment argument (Lemma 9) shows that at least a $(1 - o(1))/n^2$ fraction of all monomials of degree at most $\ell + n - k$ lie in the span.
 
 ## Depends on
 
@@ -13,5 +17,4 @@ Distinct degree-$<k$ polynomials $h$ give monomials that pairwise share fewer th
 
 ## Sources
 
-- N. Kayal, C. Saha, R. Saptharishi, "A super-polynomial lower bound for regular arithmetic formulas", STOC (2014), ECCC TR13-091.
-- A. Gupta, P. Kamath, N. Kayal, R. Saptharishi, "Approaching the chasm at depth four", Journal of the ACM 61 (2014); CCC (2013).
+- N. Kayal, C. Saha, R. Saptharishi, "A super-polynomial lower bound for regular arithmetic formulas", STOC (2014), ECCC TR13-091 (Propositions 7–8 and Lemma 9).

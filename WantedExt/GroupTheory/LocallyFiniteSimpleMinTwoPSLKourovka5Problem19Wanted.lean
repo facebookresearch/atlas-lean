@@ -23,7 +23,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.PGroup
 public import MathlibExt.GroupTheory.InvolutionCentralizerPSLTwoKourovka18Problem59
 public import WantedExt.GroupTheory.CentralizerDimensionSocleQuotientKourovka19Problem101Wanted
-public import WantedExt.GroupTheory.GroupClassesShared
+public import MathlibExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
