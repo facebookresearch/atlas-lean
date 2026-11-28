@@ -22,6 +22,9 @@ Integer evaluation also detects that the generator is nonzero, without PBW.
 
 noncomputable section
 namespace EnvelopingInductionTests
+
+attribute [local instance] LieRing.ofAssociativeRing
+
 private def twice : ℤ →ₗ⁅ℤ⁆ ℤ :=
   { ((2 : ℤ) • LinearMap.id : ℤ →ₗ[ℤ] ℤ) with
     map_lie' := by

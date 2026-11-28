@@ -152,7 +152,15 @@ theorem leftTower [Module A M] [IsScalarTower k A M] :
     letI : Module (Matrix ι ι A) (Matrix ι ι M) := leftModule A M ι
     IsScalarTower k (Matrix ι ι A) (Matrix ι ι M) := by
   let : Module (Matrix ι ι A) (Matrix ι ι M) := leftModule A M ι
-  infer_instance
+  apply IsScalarTower.of_algebraMap_smul
+  intro c X
+  have hc : algebraMap k (Matrix ι ι A) c =
+      Matrix.diagonal (fun _ : ι => algebraMap k A c) := by
+    ext i j
+    simp only [Matrix.algebraMap_matrix_apply, Matrix.diagonal_apply]
+  rw [hc, Matrix.Module.diagonal_const_smul]
+  ext i j
+  exact IsScalarTower.algebraMap_smul A c (X i j)
 
 /-- Let k be commutative, A a k-algebra and M a right A-module
 with compatible k-action. For finite ι with decidable equality,

@@ -141,13 +141,14 @@ private theorem corner_summand_eq_zero (b : ι) (n : ℕ) (m : M) (a : Fin n →
   revert hj
   refine Fin.cases ?_ (fun j => ?_) j
   · intro hj
-    simp only [Matrix.singleLinearMap_apply, Matrix.single_apply, eq_comm, ite_and, hj, ite_false,
-      TensorProduct.zero_tmul]
+    rw [Matrix.singleLinearMap_apply,
+      Matrix.single_apply_of_row_ne (Ne.symm hj) b (γ 1) m, TensorProduct.zero_tmul]
   · intro hj
     have hz :
         (fun i : Fin n => Matrix.singleLinearMap k b b (a i)
           (γ i.succ) (γ (i.succ + 1))) j = 0 := by
-      simp only [Matrix.singleLinearMap_apply, Matrix.single_apply, eq_comm, ite_and, hj, ite_false]
+      simpa only [Matrix.singleLinearMap_apply] using
+        (Matrix.single_apply_of_row_ne (Ne.symm hj) b (γ (j.succ + 1)) (a j))
     rw [(PiTensorProduct.tprod k).map_coord_zero j hz, TensorProduct.tmul_zero]
 
 /-- Let k be a commutative ring, A and M k-modules, and ι a finite

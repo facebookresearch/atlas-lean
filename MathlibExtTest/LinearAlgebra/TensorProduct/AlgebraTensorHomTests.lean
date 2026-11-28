@@ -44,4 +44,5 @@ example :
   rw [TensorProduct.algebraTensorHomEquiv_symm_tmul]
   norm_num [f, e01, e10, LinearMap.toSpanSingleton_apply, smul_eq_mul,
     Matrix.mul_apply, Matrix.single_apply, Fin.sum_univ_succ]
+  decide
 end AlgebraTensorHomTests
