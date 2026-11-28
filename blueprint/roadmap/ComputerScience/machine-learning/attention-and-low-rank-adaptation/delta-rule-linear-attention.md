@@ -29,8 +29,10 @@ $\beta_t \in [0, 2]$.
 
 ## Informally uses
 
-- [Spectrum, determinant and norm of a generalized Householder matrix](../../../LinearAlgebra/special-matrices/generalized-householder-matrices/spectrum-one-sub-smul-vec-mul-vec.md):
-  mathematical prerequisite, the spectrum and norm of the transition $I - \beta_t k_t k_t^{\mathsf{T}}$.
+- [Spectrum of a generalized Householder matrix](../../../LinearAlgebra/special-matrices/generalized-householder-matrices/spectrum-one-sub-smul-vec-mul-vec.md):
+  mathematical prerequisite, the spectrum of the transition $I - \beta_t k_t k_t^{\mathsf{T}}$.
+- [When a generalized Householder matrix is a contraction](../../../LinearAlgebra/special-matrices/generalized-householder-matrices/l2-op-norm-one-sub-smul-vec-mul-vec-le-o.md):
+  mathematical prerequisite, the norm of the transition $I - \beta_t k_t k_t^{\mathsf{T}}$.
 
 ## Sources
 

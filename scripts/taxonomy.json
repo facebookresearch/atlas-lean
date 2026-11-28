@@ -12836,6 +12836,7 @@
   "MathlibExt/LinearAlgebra/Matrix/FischerDeterminant": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Fischer's determinant inequality"},
   "MathlibExt/LinearAlgebra/Matrix/FrischWaughLovell": {"to": "Probability/linear-models-multivariate", "title": "Frisch–Waugh–Lovell theorem"},
   "MathlibExt/LinearAlgebra/Matrix/GaussPivot": {"to": "LinearAlgebra/matrix-decompositions", "title": "Gaussian elimination and row echelon form"},
+  "MathlibExt/LinearAlgebra/Matrix/GeneralizedHouseholder": {"to": "LinearAlgebra/special-matrices", "title": "Generalized Householder matrices"},
   "MathlibExt/LinearAlgebra/Matrix/GoldenThompson": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Golden–Thompson inequality"},
   "MathlibExt/LinearAlgebra/Matrix/GoldenThompsonInequality": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Golden–Thompson inequality"},
   "MathlibExt/LinearAlgebra/Matrix/HadamardCirculantCore": {"to": "LinearAlgebra/special-matrices", "title": "Hadamard matrices"},
