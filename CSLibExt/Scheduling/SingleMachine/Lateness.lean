@@ -30,8 +30,8 @@ order, so that integer, rational and real data are all covered.
 
 ## References
 
-* D. Chakrabarty, *Lecture 5: Single Machine Environments (Maximum Lateness)*, Scheduling Theory
-  CO 454 lecture notes, University of Waterloo, May 19, 2009.
+* *Lecture 5: Single Machine Environments (Maximum Lateness)*, Scheduling Theory, CO 454,
+  Spring 2009, May 19, 2009, lecture notes (instructor: D. Chakrabarty, University of Waterloo).
 -/
 
 @[expose] public section
