@@ -33,21 +33,11 @@ As a consequence the infimum defining the Wasserstein distance is attained.
 open MeasureTheory Filter Topology Set
 open scoped ENNReal
 
-open MathlibExt.MeasureTheory.OptimalTransport.KantorovichWanted (IsCoupling)
+open MathlibExt.MeasureTheory.OptimalTransport.KantorovichWanted (IsCoupling isCoupling_iff_map)
 
 namespace MathlibExt.MeasureTheory.OptimalTransport.Existence
 
 open MathlibExt.MeasureTheory.OptimalTransport.Wasserstein
-
-private theorem isCoupling_iff_map {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
-    (μ : ProbabilityMeasure X) (ν : ProbabilityMeasure Y)
-    (π : ProbabilityMeasure (X × Y)) :
-    IsCoupling μ ν π ↔ π.map Prod.fst = μ ∧ π.map Prod.snd = ν := by
-  constructor
-  · rintro ⟨h1, h2⟩
-    exact ⟨Subtype.ext h1.symm, Subtype.ext h2.symm⟩
-  · rintro ⟨h1, h2⟩
-    exact ⟨(congrArg Subtype.val h1).symm, (congrArg Subtype.val h2).symm⟩
 
 variable {X Y : Type*} [TopologicalSpace X] [PolishSpace X] [MeasurableSpace X] [BorelSpace X]
   [TopologicalSpace Y] [PolishSpace Y] [MeasurableSpace Y] [BorelSpace Y]

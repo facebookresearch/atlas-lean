@@ -16,6 +16,8 @@ $$\lim_{N\to\infty}\rho\big(r, \mathcal{M}^{G_m}_{N}\big) \;\ge\; p\,\big(1 - r^
 
 For a single-vertex leaf ($p = \alpha = \beta = 1$) and fitness $r \ge 1$, this recovers the large-population Star value $1 - r^{-2}$ (equal to $0$ at $r = 1$, the limit of the neutral value $1/N$). No such recovery is claimed for $0 < r < 1$, where $1 - r^{-2} < 0$ (for example $-3$ at $r = 1/2$) cannot be a fixation probability.
 
+The restriction $r \ge 1$ is the source's standing assumption (mutants "are associated with a fitness advantage $r \ge 1$" in its model section), under which its Theorem 1 is stated and proved. The linked Star page allows any $r > 0$, but this page makes no claim for disadvantageous mutants $0 < r < 1$.
+
 ## Depends on
 
 - [Fixation probability on the Star graph](fixation-probability-on-the-star-graph.md)
