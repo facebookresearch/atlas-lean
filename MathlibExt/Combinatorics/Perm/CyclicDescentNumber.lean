@@ -23,7 +23,8 @@ descent count zero.
 Rotating positions on the right and values on the left preserves this count: `c(ρ^r * σ *
 ρ^s)=c(σ)` for all natural `r,s`, where `ρ=finRotate(n+1)`.
 
-Reference: Stanley, *Enumerative Combinatorics*, Volume 1, Chapter 1.
+For the ordinary descent convention, see Stanley, *Enumerative Combinatorics*, Volume 1,
+§1.4. The closing comparison is the additional convention used here.
 -/
 
 @[expose] public section
