@@ -70,19 +70,6 @@ Interpretations of Rascal Numbers", Theorem 17. -/
 theorem_wanted apkCard_succ_eq_rascalZ (n k : ℕ) :
     (apkCard (n + 1) k : ℤ) = rascalZ (n : ℤ) (k : ℤ)
 
-/-- **Forward differences of generalized Rascal row sums.** Fix a natural number $j$. For natural
-numbers $n$ and $k$ let $R^{(j)}_{n,k}$ be the number of binary words of length $n$ with exactly
-$k$ ones and at most $j$ ascents, and let $S(n) = \sum_{k=0}^{n} R^{(j)}_{n,k}$. Then
-$(\Delta^{2j+1} S)(n) = 1$ for every natural number $n$, where $\Delta$ is the forward
-difference $(\Delta a)(n) = a(n+1) - a(n)$.
-
-Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
-Interpretations of Rascal Numbers", Corollary 22. -/
-theorem_wanted iterate_forwardDiff_sum_rascalGen (j n : ℕ) :
-    ((fun a : ℕ → ℤ => fun m => a (m + 1) - a m)^[2 * j + 1]
-      (fun m => ∑ k ∈ Finset.range (m + 1),
-        rascalGenZ j (m : ℤ) (k : ℤ))) n = 1
-
 /-- **Alternating row sums of generalized Rascal numbers on even rows.** Write $R^{(j)}_{n,k}$ for
 the number of binary words of length $n$ with exactly $k$ ones and at most $j$ ascents
 (positions where a $0$ is immediately followed by a $1$). For natural numbers $j$ and $m$ with
