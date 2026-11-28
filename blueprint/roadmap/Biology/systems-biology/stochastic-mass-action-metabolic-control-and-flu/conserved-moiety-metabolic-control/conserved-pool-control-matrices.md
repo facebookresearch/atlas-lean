@@ -13,7 +13,7 @@ Then for all $i,j\in R$ and $m\in M$:
 3. $LC^{s\prime}=0$: first-order concentration responses leave every pool total unchanged;
 4. $C^{s\prime}$ and $C^{J\prime}$ do not depend on the choice of $(B,L)$.
 
-These identities hold for any such $\sigma$, whether or not it was produced by the [implicit function theorem](exists-conserved-pool-steady-state-map.md); they use only the steady-state and pool identities near $e_0$ and differentiability at $e_0$.
+These identities hold for any such $\sigma$, whether or not it was produced by the [regular steady-state existence theorem](exists-conserved-pool-steady-state-map.md); they use only the steady-state and pool identities near $e_0$ and differentiability at $e_0$.
 
 ## Depends on
 

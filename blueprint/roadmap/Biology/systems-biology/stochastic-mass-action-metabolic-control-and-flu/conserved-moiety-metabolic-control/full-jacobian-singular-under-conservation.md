@@ -25,4 +25,9 @@ $N\varepsilon'$ maps $\mathbb{R}^M$ into $\operatorname{im}N$, a proper subspace
 
 ## Sources
 
+- E. Feliu and C. Wiuf, *Preclusion of switch behavior in networks with mass-action kinetics*,
+  Applied Mathematics and Computation 219 (2012), 1449–1467, Lemma 4.5 (conservation vectors
+  annihilate the Jacobian) and Remark 4.15 (the result also holds for general differentiable
+  kinetics), [author-hosted published version](https://web.math.ku.dk/~pbx512/journalWiuf/applMathComput219.pdf).
+  Apply the lemma to the vector field $s\mapsto Nv(e,s)$ with $e$ fixed.
 - K. Smallbone, E. Simeonidis, N. Swainston and P. Mendes, Towards a genome-scale kinetic model of cellular metabolism, *BMC Systems Biology* 4 (2010), article 6, [doi:10.1186/1752-0509-4-6](https://doi.org/10.1186/1752-0509-4-6): Methods, “Control analysis”, Equation (6) and the following paragraph (in general $\operatorname{rank}(N\varepsilon')<m$ and the system displays moiety conservations).

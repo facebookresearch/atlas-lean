@@ -22,7 +22,7 @@ The definition does not depend on the choice of $(B,L)$: changing $L$ to $QL$ ch
 
 ## Expansion
 
-Choice independence is item 1 of the [reduced Jacobian](conserved-pool-reduced-jacobian.md) page together with item 4 of the [reduced coordinates](conserved-pool-reduced-coordinates.md) page. For $p=0$, $B$ is invertible and $N\varepsilon'=BN_R\varepsilon'BB^{-1}=BJ_{\mathrm{red}}B^{-1}$, so injectivity of $N\varepsilon'$ is invertibility of $J_{\mathrm{red}}$. Existence of such maps is the [conserved-pool implicit function theorem](exists-conserved-pool-steady-state-map.md).
+Choice independence is item 1 of the [reduced Jacobian](conserved-pool-reduced-jacobian.md) page together with item 4 of the [reduced coordinates](conserved-pool-reduced-coordinates.md) page. For $p=0$, $B$ is invertible and $N\varepsilon'=BN_R\varepsilon'BB^{-1}=BJ_{\mathrm{red}}B^{-1}$, so injectivity of $N\varepsilon'$ is invertibility of $J_{\mathrm{red}}$. Existence of such maps follows from [regular steady-state existence in reduced coordinates](exists-conserved-pool-steady-state-map.md).
 
 ## Sources
 

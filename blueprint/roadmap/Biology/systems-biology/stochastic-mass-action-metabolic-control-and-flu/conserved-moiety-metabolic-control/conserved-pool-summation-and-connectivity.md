@@ -16,7 +16,7 @@ $$\sum_{i\in R}C^{J_j}_{e_i}\sum_{m'\in M}\varepsilon^{v_i}_{s_{m'}}\frac{\delta
 
 4. **Metabolite-wise connectivity is conditional.** The classical identity $\sum_iC^{J_j}_{e_i}\varepsilon^{v_i}_{s_m}=0$ is the case $\delta=s_{0,m}u_m$ of item 3 and holds whenever the unit vector $u_m$ lies in $\operatorname{im}N$; it can fail otherwise. In the two-pool network $S_1+C_1\to S_2+C_2$, $S_2\to S_1$, $C_2\to C_1$ with all constants equal to $1$, $\sum_iC^{J_j}_{e_i}\varepsilon^{v_i}_{s_m}=\tfrac13$ for every $j$ and $m$.
 
-Without conserved pools ($\operatorname{im}N=\mathbb{R}^M$) items 1–3 reduce to the [concentration summation](../sum-conc-control.md), [flux summation](../sum-flux-control.md) and [flux connectivity](../sum-flux-control-mul-elasticity.md) theorems. Items 1 and 2 use that the enzyme levels of **all** reactions are the parameters; with enzyme-independent rates see the [summation defect](summation-defect-of-enzyme-independent-rates.md).
+Without conserved pools ($\operatorname{im}N=\mathbb{R}^M$) items 1–3 reduce to the [concentration summation](../sum-conc-control.md), [flux summation](../sum-flux-control.md) and [flux connectivity](../sum-flux-control-mul-elasticity.md) theorems. Items 1 and 2 use that the enzyme levels of **all** reactions are the parameters. They do not apply to sums over only enzyme-dependent reactions in a model that also has fixed, enzyme-independent rates.
 
 ## Depends on
 
