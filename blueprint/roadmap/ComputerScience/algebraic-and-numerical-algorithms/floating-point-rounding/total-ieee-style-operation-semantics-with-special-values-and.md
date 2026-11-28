@@ -4,9 +4,10 @@ Let $F$ be a binary floating-point format with precision $p \ge 1$ and last-plac
 $q_{\min} \le q_{\max}$. Its value domain consists of the finite numbers $\pm m$, each given by a sign bit and a magnitude
 $m \ge 0$ that is a number of the bounded format, so that $+0$ and $-0$ are distinct; the infinities $+\infty$ and
 $-\infty$; and NaN. The model is canonical-NaN: all NaNs are identified, so a NaN carries neither a sign nor a payload,
-and there is no signalling NaN. Let $r$ be one of the four rounding modes of IEEE 754 binary arithmetic: round to
-nearest with ties to even, the default, or one of the three directed rounding modes, toward $+\infty$, toward $-\infty$
-and toward zero. Each basic operation ($+$, $-$, $\times$,
+and there is no signalling NaN. Let $r$ be one of the four rounding modes that IEEE 754-2019 requires for binary
+arithmetic: round to nearest with ties to even, the default, or one of the three directed rounding modes, toward
+$+\infty$, toward $-\infty$ and toward zero; round to nearest with ties away from zero, which the standard requires only
+for decimal formats, is not modelled. Each basic operation ($+$, $-$, $\times$,
 $\div$, $\sqrt{\ }$) is total: it returns a value of $F$ together with the status flags it raises, among invalid,
 divide by zero, overflow, underflow and inexact.
 
@@ -54,6 +55,6 @@ operation here returns only the flags it raises.
 
 ## Sources
 
-- IEEE Standard for Floating-Point Arithmetic, IEEE Std 754-2019. <https://doi.org/10.1109/IEEESTD.2019.8766229>
+- IEEE Standard for Floating-Point Arithmetic, IEEE Std 754-2019, Clause 4.3.3 (the rounding-direction attributes an implementation shall provide). <https://doi.org/10.1109/IEEESTD.2019.8766229>
 - What Every Computer Scientist Should Know About Floating-Point Arithmetic — D. Goldberg, ACM Computing Surveys 23(1), 1991, Sec. 2.2 Special Quantities, Sec. 2.3 Exceptions, Flags, and Trap Handlers, and Sec. 3.2.2 IEEE Standard ($x - x = +0$ and the negation of zero). <https://www.cs.tufts.edu/comp/40/docs/WhatEveryComputerScientistShouldKnowAboutFloatingPointArithmetic.pdf>
 - Verified Compilation of Floating-Point Computations — S. Boldo, J.-H. Jourdan, X. Leroy, G. Melquiond, Journal of Automated Reasoning 54(2), 2015, Sec. 5.1 (formats, signed zeros, infinities and NaN) and Sec. 5.2 (special cases first, then rounding with an exponent unbounded above, and the overflow result by rounding mode). <https://xavierleroy.org/publi/floating-point-compcert.pdf>

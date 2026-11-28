@@ -31,7 +31,7 @@ Sections 5.1, 5.2 and 6.3), built on the bounded format `IsFloatIn` of
 * `Flags`, `roundResult`: the flags an operation raises, and the value an exact real result
   delivers: overflow by rounding mode, gradual underflow with tininess detected before rounding.
 * `Operation.eval`: the total semantics of `+`, `-`, `×`, `÷` and `√`.
-* `Value.compare`: the quiet four-outcome comparison (less, equal, greater, unordered).
+* `Value.compare`: which of the four comparison relations (less, equal, greater, unordered) holds.
 
 ## Main results
 
@@ -44,8 +44,9 @@ Sections 5.1, 5.2 and 6.3), built on the bounded format `IsFloatIn` of
 ## Scope
 
 The model is canonical-NaN: one quiet NaN, with no sign, no payload and no signalling NaN. It
-covers round to nearest, ties to even, and the three directed rounding modes, not
-`roundTiesToAway`; tininess is detected before rounding; and comparison is the quiet one. Fused
+covers the four rounding modes IEEE 754-2019 requires for binary formats, round to nearest, ties to
+even, and the three directed rounding modes, not `roundTiesToAway`; tininess is detected before
+rounding; and comparison classifies the four relations, with no signalling NaN and no flags. Fused
 multiply-add, remainder, conversions and trapping are not modelled.
 
 ## Why a separate model
@@ -91,12 +92,14 @@ structure BinaryFormat where
   /-- The exponent range is not empty. -/
   qmin_le_qmax : qmin ≤ qmax
 
-/-- **Rounding modes.** The four rounding modes of IEEE 754 binary arithmetic: round to nearest with
-ties to even, the default, and the three directed rounding modes the standard requires, toward
-$+\infty$, toward $-\infty$ and toward zero.
+/-- **Rounding modes.** The four rounding-direction attributes that IEEE 754-2019 requires an
+implementation of binary arithmetic to provide: round to nearest with ties to even, the default, and
+the three directed rounding modes, toward $+\infty$, toward $-\infty$ and toward zero. The standard
+also defines round to nearest with ties away from zero, which it requires only for decimal formats;
+this model does not include it.
 
-Source: IEEE Std 754-2019; Goldberg, *What every computer scientist should know about floating-point
-arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3.2. -/
+Source: IEEE Std 754-2019, Clause 4.3.3; Goldberg, *What every computer scientist should know about
+floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 2.3.2. -/
 inductive RoundingMode where
   /-- Round to nearest, ties to even. -/
   | nearestEven
@@ -566,11 +569,16 @@ end Operation
 
 /-! ## Comparison -/
 
-/-- **Four-outcome comparison.** The comparison of two values of a binary format has four mutually
-exclusive outcomes: less (`some .lt`), equal (`some .eq`), greater (`some .gt`) and unordered
-(`none`). NaN is unordered with every value, itself included. Any other two values compare as
-their values in the extended real line, with $-\infty$ below every finite number and $+\infty$
-above, so $+0$ and $-0$ are equal. This is IEEE's quiet comparison, which raises no flag.
+/-- **Four-outcome comparison.** Between two values of a binary format exactly one of four mutually
+exclusive relations holds: less than, equal, greater than or unordered. This function returns which
+one, as `some .lt`, `some .eq`, `some .gt` or `none`. NaN is unordered with every value, itself
+included. Any other two values are related as their values in the extended real line, with
+$-\infty$ below every finite number and $+\infty$ above, so $+0$ and $-0$ are equal.
+
+IEEE 754's comparison predicates are Boolean tests of these relations, such as whether $a \le b$;
+this function is not one of them but classifies the relation, and it returns no flags. The model
+has a single quiet NaN and no signalling NaN, so it leaves out the invalid exception that a
+comparison with a signalling NaN operand signals, whichever predicate is used.
 
 Source: IEEE Std 754-2019, Clause 5.11; Goldberg, *What every computer scientist should know about
 floating-point arithmetic*, ACM Computing Surveys 23(1), 1991, Section 3.2.2; Boldo, Jourdan, Leroy
