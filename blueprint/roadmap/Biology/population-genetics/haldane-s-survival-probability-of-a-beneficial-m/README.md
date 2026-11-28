@@ -14,3 +14,4 @@
 - [Fixation under skewed offspring distributions](fixation-under-skewed-offspring-distributions/README.md)
 - [Sequential fixation of beneficial mutations](sequential-fixation-of-beneficial-mutations/README.md)
 - [Finite-horizon survival in Galton–Watson processes](finite-horizon-survival-in-galton-watson-processes/README.md)
+- [Haldane's formula in Cannings models](haldane-s-formula-in-cannings-models/README.md)
