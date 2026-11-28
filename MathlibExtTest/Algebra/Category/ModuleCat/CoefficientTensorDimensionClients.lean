@@ -89,10 +89,12 @@ example : projectiveDimension (swapEquivalence.functor.obj regularP) =
 
 -- The restriction functor changes the two scalar coordinates, so the equivalence is nonidentity.
 example :
-    (swapEquivalence.functor.obj regularP).smul ((3, 5) : P) ((7, 11) : P) =
-      ((35, 33) : P) := by
-  have h := congrFun
+    (((swapEquivalence.functor.obj regularP).smul ((3, 5) : P)).asHom).hom
+        ((7, 11) : P) = ((35, 33) : P) := by
+  have h := congrArg
+    (fun f : End ((forget₂ (ModuleCat P) AddCommGrpCat).obj regularP) =>
+      f.asHom.hom ((7, 11) : P))
     (ModuleCat.smul_restrictScalars swapRing.toRingHom ((3, 5) : P) regularP)
-    ((7, 11) : P)
-  simpa [swapEquivalence, swapRing] using h
+  simpa [swapEquivalence, swapRing, ModuleCat.smul] using h
+
 end CoefficientTensorDimensionClients

@@ -74,8 +74,8 @@ example :
       (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom
   have hv := congrArg
     (fun g : regularComplex.X 0 ⟶ originalComplex.homology 0 =>
-      g ((3 : R) ⊗ₜ[R] zeroCoordinate 1)) h
-  rw [ConcreteCategory.comp_apply, ConcreteCategory.comp_apply] at hv
+      g.hom ((3 : R) ⊗ₜ[R] zeroCoordinate 1)) h
+  rw [ModuleCat.hom_comp, ModuleCat.hom_comp] at hv
   change (HomologicalComplex.homologyMap
     (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom 0).hom
       ((ChainComplex.homologyZeroClass regularComplex).hom
@@ -90,9 +90,8 @@ example :
     rw [map_smul, zeroCoordinate_value, zeroCoordinate_value]
     simp
   have hterm :
-      (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0
+      ((ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0).hom
         ((3 : R) ⊗ₜ[R] zeroCoordinate 1) = zeroCoordinate 3 := by
-    change ((ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0).hom _ = _
     rw [ChainComplex.TensorCoefficient.regularIso_tmul]
     exact hc
   simpa only [hterm] using hv
