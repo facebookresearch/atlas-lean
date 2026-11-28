@@ -8,3 +8,4 @@
 - [Typical subspace](typical-subspace.md)
 - [Achievable rates form an interval containing zero](achievable-rates-form-an-interval-containing-zero.md)
 - [Classical-Quantum States, Mutual Information and Holevo Information](classical-quantum-information/README.md)
+- [Multiple access channels from nonlocal games](multiple-access-channels-from-nonlocal-games/README.md)

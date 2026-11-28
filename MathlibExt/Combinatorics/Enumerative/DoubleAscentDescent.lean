@@ -46,15 +46,6 @@ public def pattern3 (v : Fin 3 → Fin 3) (hv : Function.Bijective v := by decid
   left_inv := Fintype.leftInverse_bijInv hv
   right_inv := Fintype.rightInverse_bijInv hv
 
-/-- Classical pattern containment `HasPattern σ π` is decidable.
-
-Source: Han, *Joint Distributions of 10 Classical Statistics over Permutations
-Avoiding Two Patterns of Length 3*, INTEGERS 26 (2026), Article A18, Section 1. -/
-public instance {n k : ℕ} (σ : Equiv.Perm (Fin n)) (π : Fin k → Fin k) :
-    Decidable (HasPattern σ π) := by
-  unfold HasPattern
-  infer_instance
-
 /-- **Ascent number of a permutation.** For a permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$,
 $\operatorname{asc}(\sigma)$ is the number of positions $i$ with $i + 1 < n$ and
 $\sigma(i) < \sigma(i + 1)$.
