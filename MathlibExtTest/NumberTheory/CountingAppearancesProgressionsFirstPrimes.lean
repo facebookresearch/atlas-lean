@@ -10,8 +10,9 @@ module
 
 import MathlibExt.NumberTheory.CountingAppearancesProgressionsFirstPrimes
 import Mathlib.Data.Nat.Prime.Nth
+import Mathlib.Tactic.NormNum
 
-/-! # Tests for free integers modulo the first primes -/
+/-! # Tests for free integers and bordered determinants for the first primes -/
 
 namespace MathlibExt.NumberTheory.CountingAppearancesProgressionsWanted
 
@@ -29,5 +30,17 @@ example : borderedOnesDiagDet (firstPrimes 3) = 8 := by
         Nat.nth_prime_two_eq_five]
   rw [← freeCount_firstPrimes 3 ![3, 5, 12], h]
   decide
+
+-- At the first allowed index, the new factor is 3 - 1.
+example : borderedOnesDiagDet (firstPrimes 2) = 2 * borderedOnesDiagDet (firstPrimes 1) := by
+  have h := borderedOnesDiagDet_firstPrimes_recurrence 2 (by decide)
+  norm_num [Nat.nth_prime_one_eq_three] at h
+  exact h
+
+-- The next step multiplies the previous determinant by 5 - 1.
+example : borderedOnesDiagDet (firstPrimes 3) = 4 * borderedOnesDiagDet (firstPrimes 2) := by
+  have h := borderedOnesDiagDet_firstPrimes_recurrence 3 (by decide)
+  norm_num [Nat.nth_prime_two_eq_five] at h
+  exact h
 
 end MathlibExt.NumberTheory.CountingAppearancesProgressionsWanted
