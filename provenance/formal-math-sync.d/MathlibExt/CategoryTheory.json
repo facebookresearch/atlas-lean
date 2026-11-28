@@ -1428,6 +1428,7 @@
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "c695a8631747e194887df75d5c5854af68f3bd0fa5638a7e672e1dcdfb138aee"
     },
+    {"path": "MathlibExt/CategoryTheory/ExactCategory/KernelOfEpiLift.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a8557ac1e4f5e770b27c82a9ede4fa071caf982573bad0752ec623d51084ea80", "rationale": "Import the complete general MathlibExt.CategoryTheory.ExactCategory.KernelOfEpiLift API from the recorded immutable source, retaining its original authors and mathematical statements, signed maps, hypotheses, independent worlds and proof implementations. Atlas documentation is mathematical. This focused split preserves every nonwhitespace source token; required100-column formatting is whitespace only. Native compilation remains pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "44a5945bc4bfb696369028ac09fba7cfc56b24d0dc5a4f0499cd899ce7a7d422"},
     {
       "path": "MathlibExt/CategoryTheory/ExactCategory/MorphismProperty.lean",
       "backport": "pending",
@@ -2125,6 +2126,7 @@
       "published_sha256": "da2651c5fe0f957f6cd98da6c89ab928acd0b25d13d6b00418133e9850f9ec0e",
       "upstream_sha256": "cad5e13116d832075007ada7c0794b15d931fd54b7bcd307a45965f9fa22af80"
     },
+    {"path": "MathlibExt/CategoryTheory/Limits/Shapes/BiprodPushoutCorner.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "bcb79a028771855128f0ec1fb48a7c1fcfa0a5705ca2fabbbe09e428fdc0a485", "rationale": "Import the complete general MathlibExt.CategoryTheory.Limits.Shapes.BiprodPushoutCorner API from the recorded immutable source, retaining its original authors and mathematical statements, signed maps, hypotheses, independent worlds and proof implementations. Atlas documentation is mathematical. This focused split preserves every nonwhitespace source token; required100-column formatting is whitespace only. Native compilation remains pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "6e25b0d06ec29bba5dd2a7c823434b16293d86884f13fcddb71ac1cbee1420e1"},
     {
       "path": "MathlibExt/CategoryTheory/Limits/Shapes/Cofiber.lean",
       "disposition": "identical",
@@ -2221,6 +2223,7 @@
       "published_sha256": "b876d6f2b9e105081a85f10e55372c8e795d855aa76358e1ff476d433163c032",
       "upstream_sha256": "d2835cdca2b14d13d3dd580d2323116511ffc48c45e09c755ed9613b627b277c"
     },
+    {"path": "MathlibExt/CategoryTheory/Limits/Shapes/UnderCokernel.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e9717d5197c0480ed2f502094e5e7814fa5c6cf4dba97986869a9cd94ada70b5", "rationale": "Import the complete general MathlibExt.CategoryTheory.Limits.Shapes.UnderCokernel API from the recorded immutable source, retaining its original authors and mathematical statements, signed maps, hypotheses, independent worlds and proof implementations. Atlas documentation is mathematical. This focused split preserves every nonwhitespace source token; required100-column formatting is whitespace only. Native compilation remains pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "d223594f11079cf910d88f9d4c91fe68a653453683fc1dfcccf2f28ddb307c65"},
     {
       "path": "MathlibExt/CategoryTheory/Limits/Shapes/ZeroObjectArrowFunctors.lean",
       "disposition": "identical",
@@ -2640,6 +2643,7 @@
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "2fac2d9173f09dc4baf9554f0f06d914388b3f1d4c218506d4ab54b57e2f0734"
     },
+    {"path": "MathlibExt/CategoryTheory/Preadditive/SemisimpleExactFunctor.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "03212af214c30877b6f6e7b1aa9633e52715b48406c4eb649f9e22967a5a824f", "rationale": "Import the complete general MathlibExt.CategoryTheory.Preadditive.SemisimpleExactFunctor API from the recorded immutable source, retaining its original authors and mathematical statements, signed maps, hypotheses, independent worlds and proof implementations. Atlas documentation is mathematical. This focused split preserves every nonwhitespace source token; required100-column formatting is whitespace only. Native compilation remains pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "1305f37f9c14d91c6bb44b38b46c9d46021dbafb916c03dfcafaf48d2539845f"},
     {
       "path": "MathlibExt/CategoryTheory/Preadditive/SignedDiagonal.lean",
       "disposition": "identical",
@@ -3880,6 +3884,7 @@
       "published_sha256": "10af91d317dc1247ed869b03598c1b7bd15848e27344d0cb50e7bb144c35b9f8",
       "upstream_sha256": "bf96f7ba44ebee0b0b58a71c7ec7687ecac575aa8b4e1717bd6f8dc9dc0f517e"
     },
+    {"path": "MathlibExt/CategoryTheory/Subobject/FiniteFiltrationSingleGrade.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e9f2c51a0a4bfaa968d9679da70dfbea45bba2728ec2f3e3e112ba329e8521b0", "rationale": "Import the complete general MathlibExt.CategoryTheory.Subobject.FiniteFiltrationSingleGrade API from the recorded immutable source, retaining its original authors and mathematical statements, signed maps, hypotheses, independent worlds and proof implementations. Atlas documentation is mathematical. This focused split preserves every nonwhitespace source token; required100-column formatting is whitespace only. Native compilation remains pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "aa75f2593bec5109289fabe04898d49859727984b5e22704d89452d57fe83943"},
     {
       "path": "MathlibExt/CategoryTheory/TrivialBundleWithFiber.lean",
       "disposition": "identical",
