@@ -80,9 +80,13 @@ example : ((3 : ℚ) - 1 / 2) * zuritaMCoeff 3 0 = 1 ∧
     ((3 : ℚ) - 2 - 1 / 2) * zuritaMCoeff 3 2 = (3 - 2) * zuritaMCoeff 3 1 := by
   norm_num [zuritaMCoeff]
 
+-- The recurrence extends beyond the polynomial's coefficient range, even when n = 0.
+example : (-(1 / 2) : ℚ) * zuritaMCoeff 0 0 = 1 ∧
+    (-(5 / 2) : ℚ) * zuritaMCoeff 0 2 = -2 * zuritaMCoeff 0 1 := by
+  norm_num [zuritaMCoeff]
+
 example : zuritaM 3 (1 / 2) = 14 / 15 := by
-  rw [zuritaM_eq_sum_range]
-  norm_num [sum_range_succ, zuritaMCoeff]
+  norm_num [zuritaM, sum_range_succ, zuritaMCoeff]
 
 private theorem sqrt_half_mul_one_sub : Real.sqrt ((1 / 2 : ℝ) * (1 - 1 / 2)) = 1 / 2 := by
   rw [show (1 / 2 : ℝ) * (1 - 1 / 2) = (1 / 2) ^ 2 by norm_num,
@@ -96,7 +100,7 @@ example :
   refine (tsum_four_pow_div_sub_sq_mul_centralBinom (n := 1) le_rfl
     (x := 1 / 2) (by norm_num) (by norm_num)).trans ?_
   rw [sqrt_half_mul_one_sub]
-  norm_num [zuritaM_eq_sum_range, zuritaSCoeff, zuritaMCoeff, sum_range_succ,
+  norm_num [zuritaM, zuritaSCoeff, zuritaMCoeff, sum_range_succ,
     Nat.centralBinom, Nat.choose, show Icc 1 0 = (∅ : Finset ℕ) by decide]
   ring
 
@@ -109,6 +113,6 @@ example :
   refine (tsum_four_pow_div_sub_sq_mul_centralBinom (n := 2) (by decide)
     (x := 1 / 2) (by norm_num) (by norm_num)).trans ?_
   rw [sqrt_half_mul_one_sub]
-  norm_num [zuritaM_eq_sum_range, zuritaSCoeff, zuritaMCoeff, zuritaTCoeff, zuritaTCoeffRev,
+  norm_num [zuritaM, zuritaSCoeff, zuritaMCoeff, zuritaTCoeff, zuritaTCoeffRev,
     zuritaC, sum_range_succ, Nat.centralBinom, Nat.choose, show Icc 1 1 = ({1} : Finset ℕ) by decide]
   ring

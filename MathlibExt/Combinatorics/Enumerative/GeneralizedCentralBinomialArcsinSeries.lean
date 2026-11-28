@@ -374,7 +374,6 @@ end
 namespace ZuritaSquaredSeries
 
 open PowerSeries
-open ZuritaAntiderivative (zuritaMCoeff_weighted)
 
 private noncomputable def euler : Derivation ℝ ℝ⟦X⟧ ℝ⟦X⟧ :=
   (X : ℝ⟦X⟧) • PowerSeries.derivative
@@ -459,14 +458,14 @@ private theorem euler_M (d : ℕ) (hd : 0 < d) :
   | zero =>
     rw [coeff_zero_X_mul, coeff_M, ite_eq_left hd, coeff_one]
     simpa only [Nat.cast_zero, sub_zero, zero_mul, add_zero, ite_true] using
-      zuritaMCoeff_weighted d 0 hd
+      zuritaMCoeff_recurrence d 0
   | succ k =>
     rw [coeff_succ_X_mul, coeff_weighted, coeff_M, coeff_M, coeff_one,
       ite_eq_right (Nat.succ_ne_zero k)]
     rw [Nat.cast_sub hd, Nat.cast_one, Nat.cast_succ]
     by_cases h : k + 1 < d
     · rw [ite_eq_left h, ite_eq_left (show k < d by omega)]
-      have hm := zuritaMCoeff_weighted d (k + 1) h
+      have hm := zuritaMCoeff_recurrence d (k + 1)
       simp only [Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel, Nat.cast_succ] at hm
       linear_combination hm
     · rw [ite_eq_right h]
@@ -732,7 +731,7 @@ private theorem eval_M_mul (d : ℕ) {f : ℝ⟦X⟧} {x y : ℝ} (h : Evaluates
   have hm : M d = ∑ k ∈ range d, C (zuritaMCoeff d k : ℝ) * X ^ k := by
     ext k
     simp only [coeff_M, map_sum, coeff_C_mul_X_pow, sum_ite_eq, mem_range]
-  rw [hm, sum_mul, zuritaM_eq_sum_range, sum_mul]
+  rw [hm, sum_mul, zuritaM, sum_mul]
   apply eval_sum
   intro i _
   rw [mul_assoc, mul_assoc]
@@ -912,6 +911,9 @@ $$
 \arcsin(\sqrt{x}) \sqrt{x(1 - x)} \sum_{k=0}^{n-1} s^{(n)}_k M_{n-k-1}(x)\, x^k +
 \sum_{k=1}^{n-1} r_k x^k + q x^n.
 $$
+
+The source states the identity for $|x| < 1$; this statement is its case $0 < x < 1$, where
+$\sqrt{x}$ is real.
 
 Source: Rimer Zurita, *Power Series Associated with Reciprocals of Generalized Central Binomial
 Coefficients*, INTEGERS 26 (2026), Article A2, Corollary 2 (`integers-2026-A2-cor-2`). -/

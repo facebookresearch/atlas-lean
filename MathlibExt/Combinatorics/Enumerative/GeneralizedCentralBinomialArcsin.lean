@@ -94,6 +94,31 @@ def zuritaMCoeff (n : ℕ) : ℕ → ℚ
   | 0 => 2 / (2 * n - 1)
   | k + 1 => 2 * ((k : ℚ) + 1 - n) / (2 * ((k : ℚ) + 1) - 2 * n + 1) * zuritaMCoeff n k
 
+/-- **Zurita's coefficient recurrence without denominators.** For every natural number $n$,
+write $m_k = \texttt{zuritaMCoeff}\ n\ k$. Then $(n-\tfrac12)m_0 = 1$, and for every natural
+number $k \ge 1$, $(n-k-\tfrac12)m_k = (n-k)m_{k-1}$, with the index differences read in
+$\mathbb R$. These identities follow from Definition 3 of Rimer Zurita's *Power Series Associated
+with Reciprocals of Generalized Central Binomial Coefficients*. -/
+theorem zuritaMCoeff_recurrence (n k : ℕ) :
+    ((n : ℝ) - k - 1 / 2) * (zuritaMCoeff n k : ℝ) =
+      if k = 0 then 1 else ((n : ℝ) - k) * (zuritaMCoeff n (k - 1) : ℝ) := by
+  cases k with
+  | zero =>
+    have h : (2 * (n : ℝ) - 1) ≠ 0 := by
+      exact_mod_cast (show (2 * (n : ℤ) - 1) ≠ 0 by omega)
+    simp only [Nat.cast_zero, sub_zero, ite_true, zuritaMCoeff]
+    push_cast
+    rw [← mul_div_assoc, show ((n : ℝ) - 1 / 2) * 2 = 2 * n - 1 by ring, div_self h]
+  | succ k =>
+    have h : (2 * ((k : ℝ) + 1) - 2 * n + 1) ≠ 0 := by
+      exact_mod_cast (show (2 * ((k : ℤ) + 1) - 2 * n + 1) ≠ 0 by omega)
+    simp only [Nat.succ_ne_zero, ite_false, Nat.succ_sub_one, zuritaMCoeff]
+    push_cast
+    rw [← mul_assoc, ← mul_div_assoc,
+      show ((n : ℝ) - (↑k + 1) - 1 / 2) * (2 * (↑k + 1 - n)) =
+        ((n : ℝ) - (↑k + 1)) * (2 * (↑k + 1) - 2 * n + 1) by ring,
+      mul_div_cancel_right₀ _ h]
+
 /-- **Zurita's constant $d_n$.** For a natural number $n$, let $m_0, m_1, \dots$ be Zurita's
 coefficients, given by $m_0 = 2/(2n - 1)$ and $m_k = \frac{2(k - n)}{2k - 2n + 1}\, m_{k-1}$ for
 $k \ge 1$, so that $M_{n-1}(x) = \sum_{k=0}^{n-1} m_k x^k$ for $n \ge 1$. Then $d_n$ is the
@@ -167,10 +192,6 @@ Source: Rimer Zurita, *Power Series Associated with Reciprocals of Generalized C
 Coefficients*, INTEGERS 26 (2026), Article A2, Definition 3. -/
 noncomputable def zuritaM (n : ℕ) (x : ℝ) : ℝ :=
   ∑ k ∈ range n, (zuritaMCoeff n k : ℝ) * x ^ k
-
-/-- Evaluation of $M_{n-1}$ as the finite sum of its first $n$ terms. -/
-theorem zuritaM_eq_sum_range (n : ℕ) (x : ℝ) :
-    zuritaM n x = ∑ k ∈ range n, (zuritaMCoeff n k : ℝ) * x ^ k := rfl
 
 /-- **Zurita's polynomial $N_{n-2}$.** For a natural number $n$, let $m_0, m_1, \dots$ be Zurita's
 coefficients, given by $m_0 = 2/(2n - 1)$ and $m_k = \frac{2(k - n)}{2k - 2n + 1}\, m_{k-1}$ for
@@ -333,20 +354,10 @@ private theorem factor_deriv (n : ℕ) {x : ℝ} (hx0 : 0 < x) (hx1 : x < 1) :
   rw [Real.sq_sqrt hx0.le]
   linear_combination 2 * x * s_identity n x
 
--- With n = m + 1, the recurrence cancels consecutive powers in the derivative.
-private theorem m_step (m k : ℕ) (hk : k < m) :
-    ((k : ℝ) + 1 - m - 1 / 2) * (zuritaMCoeff (m + 1) (k + 1) : ℝ) =
-      ((k : ℝ) - m) * (zuritaMCoeff (m + 1) k : ℝ) := by
-  have hkm : (k : ℝ) + 1 ≤ m := by exact_mod_cast hk
-  rw [zuritaMCoeff]
-  push_cast
-  field_simp (disch := linarith)
-  ring
-
 private theorem m_identity (m : ℕ) (x : ℝ) :
     (1 - x) * weightedSum (zuritaMCoeff (m + 1)) (m + 1) m x -
       zuritaM (m + 1) x / 2 = -1 := by
-  have partial_sum (l : ℕ) (hl : l ≤ m) :
+  have partial_sum (l : ℕ) :
       (1 - x) * weightedSum (zuritaMCoeff (m + 1)) (l + 1) m x -
         (∑ k ∈ range (l + 1), (zuritaMCoeff (m + 1) k : ℝ) * x ^ k) / 2 =
           -1 - ((l : ℝ) - m) * (zuritaMCoeff (m + 1) l : ℝ) * x ^ (l + 1) := by
@@ -360,26 +371,11 @@ private theorem m_identity (m : ℕ) (x : ℝ) :
       rw [sum_range_succ, sum_range_succ (f := fun k => (zuritaMCoeff (m + 1) k : ℝ) * x ^ k)]
       push_cast
       rw [pow_succ x (l + 1)]
-      linear_combination ih (by omega) + x ^ (l + 1) * m_step m l hl
-  simpa [zuritaM] using partial_sum m le_rfl
-
-/-- The coefficient recurrence for $M_{n-1}$ (cleared of denominators), including the
-constant term. -/
-public theorem zuritaMCoeff_weighted (n k : ℕ) (hk : k < n) :
-    ((n : ℝ) - k - 1 / 2) * (zuritaMCoeff n k : ℝ) =
-      if k = 0 then 1 else ((n : ℝ) - k) * (zuritaMCoeff n (k - 1) : ℝ) := by
-  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
-  cases k with
-  | zero =>
-    simp only [Nat.cast_zero, sub_zero, ite_true, zuritaMCoeff]
-    push_cast
-    have hm := Nat.cast_nonneg (α := ℝ) m
-    field_simp (disch := linarith)
-  | succ k =>
-    simp only [Nat.succ_ne_zero, ite_false, Nat.succ_sub_one]
-    have h := m_step m k (by omega)
-    push_cast at h ⊢
-    linear_combination -h
+      have hm := zuritaMCoeff_recurrence (m + 1) (l + 1)
+      simp only [Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel, Nat.cast_add,
+        Nat.cast_one] at hm
+      linear_combination ih - x ^ (l + 1) * hm
+  simpa [zuritaM] using partial_sum m
 
 -- The final coefficient of M gives d, and all earlier coefficients come from N.
 private theorem n_identity (m : ℕ) (x : ℝ) :
