@@ -20,4 +20,4 @@ Every classical set is an equivariant set with atoms whose elements are their ow
 
 ## Sources
 
-- B. Klin and M. Łełyk, "Scalar and Vectorial mu-calculus with Atoms", *Logical Methods in Computer Science* 15(4), 2019, paper 5, <https://doi.org/10.23638/LMCS-15(4:5)2019>; numbers from arXiv:1803.06752v3, <https://arxiv.org/abs/1803.06752v3>: Section 3 (sets with atoms, equality and ordered atoms, Example 3.3) and Section 4 (Definition 4.4).
+- B. Klin and M. Łełyk, "Scalar and Vectorial mu-calculus with Atoms", *Logical Methods in Computer Science* 15(4), 2019, paper 5, <https://doi.org/10.23638/LMCS-15(4:5)2019>; numbers from arXiv:1803.06752v3, <https://arxiv.org/abs/1803.06752v3>: Section 2 (deterministic Kripke models, in the paragraph on LTL after Definition 2.5), Section 3 (sets with atoms, equality and ordered atoms, Example 3.3) and Section 4 (Definition 4.4).

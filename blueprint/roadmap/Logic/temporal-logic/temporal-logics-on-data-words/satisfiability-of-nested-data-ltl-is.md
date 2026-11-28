@@ -1,6 +1,6 @@
 # Satisfiability of nested data LTL is undecidable
 
-Satisfiability of nested data LTL over multi-attributed data words is undecidable over finite and over infinite words, and its past-only fragment is undecidable over infinite words.
+Satisfiability of nested data LTL over multi-attributed data words is undecidable over finite and over infinite words, and its fragment without the future class operators $\mathsf X^{=}$ and $\mathsf U^{=}$ is undecidable over infinite words.
 
 **Theorem (Decker, Habermehl, Leucker and Thoma).** Satisfiability of [nested data LTL](nested-data-ltl.md) is undecidable over finite data words and over infinite data words. Satisfiability of its fragment ND-LTL$^-$, without the future class operators $\mathsf X^{=}$ and $\mathsf U^{=}$, is undecidable over infinite data words (Theorem 5 of the source).
 

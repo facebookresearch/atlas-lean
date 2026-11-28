@@ -17,7 +17,7 @@ Classical μ-calculus satisfiability is decidable (EXPTIME-complete), and model 
 
 ## Expansion
 
-An atomic LTL formula $\varphi$ in negation normal form is translated into an atomic μ-calculus formula $M(\varphi)$ by $M(\mathbf X\varphi) = \square M(\varphi)$, $M(\varphi\,\mathbf U\,\psi) = \mu Y.(M(\psi) \vee (M(\varphi) \wedge \square Y))$, $M(\varphi\,\mathbf R\,\psi) = \nu Y.(M(\psi) \wedge (M(\varphi) \vee \square Y))$, homomorphically on the other connectives. In a word model, $\varphi$ implies $M(\varphi)$; in any Kripke model, $M(\varphi)$ at a state implies $\varphi$ along every infinite path from it. Hence $\varphi$ is satisfiable iff $M(\varphi) \wedge \nu X.\lozenge X$ is, the second conjunct saying that an infinite path starts at the state.
+An atomic LTL formula $\varphi$ in negation normal form is translated into an atomic μ-calculus formula $M(\varphi)$ by $M(\mathbf X\varphi) = \square M(\varphi)$, $M(\varphi\,\mathbf U\,\psi) = \mu Y.(M(\psi) \vee (M(\varphi) \wedge \square Y))$, $M(\varphi\,\mathbf R\,\psi) = \nu Y.(M(\psi) \wedge (M(\varphi) \vee \square Y))$, homomorphically on the other connectives. In a word model, $\varphi$ implies $M(\varphi)$; in any Kripke model, $M(\varphi)$ at a state implies $\varphi$ along every infinite path from it. Hence $\varphi$ is satisfiable iff $M(\varphi) \wedge \nu X.\lozenge X$ is, the second conjunct saying that an infinite path starts at the state. A good expansion links a page for the finite presentation of orbit-finite sets by set-builder expressions (Section 3 of the source, (3.1)), which the statement uses for its instances.
 
 ## Sources
 

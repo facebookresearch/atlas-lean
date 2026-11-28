@@ -15,7 +15,7 @@ By contrast, model checking finite Markov chains is decidable for the full $\mu^
 
 - [The value-1 problem for probabilistic automata is undecidable](../../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/value-1-problem-for-probabilistic-automata.md)
 
-## Expansion
+## Proof sketch
 
 The proof reduces the value-1 problem for probabilistic automata (Gimbert and Oualhadj): given an automaton $A$ with state set $Q$ and letters $c_1, \ldots, c_m$, is $\sup_w \Pr_A(w) = 1$? One builds a Markov chain $M_A$ and order-1 formulas $g_w$ of type $\mathrm{Prop}$, one per word, with $A_q(w)$, the acceptance probability of $w$ from $q$, equal to the value of $g_w$ at $q$ (Lemma 3.4). For the $\mu$-only order-1 formula $\theta_A = \mu F.\lambda X.\,X \vee \bigvee_{c \in \Sigma} F(f_c X)$, the value of $\theta_A\,p_F$ at the initial state is $\mathrm{val}(A)$, so $M_A \models [\theta_A\,p_F]_{\ge 1}$ iff $\mathrm{val}(A) = 1$ (Theorem 3.5). Since $\mathrm{val}(A)$ cannot even be approximated, the values of qualitative PHFL formulas are not approximately computable in general.
 

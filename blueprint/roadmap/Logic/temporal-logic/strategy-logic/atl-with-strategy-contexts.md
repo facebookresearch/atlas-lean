@@ -14,7 +14,7 @@ for $p \in AP$ and coalitions $A \subseteq \mathrm{Agt}$. Under a context $F$: $
 
 ## Depends on
 
-None.
+- [Formulas of linear temporal logic](../linear-temporal-logic/formula.md)
 
 ## Proof depends on
 

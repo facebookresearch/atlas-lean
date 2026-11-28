@@ -26,7 +26,7 @@ By contrast, over deterministic one-counter automata, model checking these logic
 
 ## Expansion
 
-The finitary bound reduces the halting problem for Minsky machines, the infinitary one their recurrence problem. The one-register freeze formula describes a run of the Minsky machine, coding counter values by repetitions of data values, as in the Demri–Lazić reduction for satisfiability; that reduction alone allows incrementing errors, because the logic cannot say that each decremented datum occurred earlier, and the one-counter automaton is used to exclude such faulty decrements. A purification lemma (Lemma 5 of the source) removes state atoms. The upper bounds hold because an accepting run is a function $\mathbb N\to\mathbb N$ whose conditions are arithmetical.
+The finitary bound reduces the halting problem for Minsky machines, the infinitary one their recurrence problem. The one-register freeze formula describes a run of the Minsky machine, coding counter values by repetitions of data values, as in the Demri–Lazić reduction for satisfiability; that reduction alone allows incrementing errors, because the logic cannot say that each decremented datum occurred earlier, and the one-counter automaton is used to exclude such faulty decrements. A purification lemma (Lemma 5 of the source) removes state atoms. The upper bounds hold because an accepting run is a function $\mathbb N\to\mathbb N$ whose conditions are arithmetical. A good expansion links pages for the analytical hierarchy, its level $\Sigma^1_1$ and the reductions that define hardness for it, which the statement uses.
 
 ## Sources
 

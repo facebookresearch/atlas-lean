@@ -27,7 +27,7 @@ None.
 
 ## Expansion
 
-Demri, Lazić and Sangnier showed that model checking OCA against full freeze LTL is undecidable; a close inspection of their proof shows that every formula it builds is co-flat, which gives the first statement. Negating the input formula turns "some run satisfies the co-flat sentence $\phi$" into the negation of "every run satisfies the flat sentence $\neg\phi$", which gives the second. A good expansion links a page for the undecidability of model checking one-counter automata against freeze LTL (Demri, Lazić and Sangnier) together with the observation that its formulas are co-flat.
+Demri, Lazić and Sangnier showed that model checking OCA against full freeze LTL is undecidable; a close inspection of their proof shows that every formula it builds is co-flat, which gives the first statement. Negating the input formula turns "some run satisfies the co-flat sentence $\phi$" into the negation of "every run satisfies the flat sentence $\neg\phi$", which gives the second. The undecidability of model checking one-counter automata against freeze LTL (Demri, Lazić and Sangnier) is [freeze LTL model checking over one-counter automata](freeze-ltl-model-checking-over-one-counter.md); a good expansion adds the co-flat form of its formulas (Theorem 5.1 of the source).
 
 ## Sources
 

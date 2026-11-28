@@ -17,7 +17,7 @@ Since model checking the vectorial atomic μ-calculus over orbit-finite models i
 
 ## Expansion
 
-For the atomic LTL formula $\varphi$ built from a Turing machine $M$ with states $Q$ and tape alphabet $\Gamma$ in the satisfiability proof, take the orbit-finite equivariant model with states $(\mathbb A \times \Gamma \times (Q \cup \{\mathit{nohead}\})) \cup \{\#\}$, the obvious basic predicates, and transitions in both directions between every two states. Every candidate word model is a path of this model starting at $\#$, so $\exists\varphi$ holds at $\#$ iff $\varphi$ is satisfiable. Since $\varphi$ forces its models to be finitely supported, the choice of path semantics does not matter.
+For the atomic LTL formula $\varphi$ built from a Turing machine $M$ with states $Q$ and tape alphabet $\Gamma$ in the satisfiability proof, take the orbit-finite equivariant model with states $(\mathbb A \times \Gamma \times (Q \cup \{\mathit{nohead}\})) \cup \{\#\}$, the obvious basic predicates, and transitions in both directions between every two states. Every candidate word model is a path of this model starting at $\#$, so $\exists\varphi$ holds at $\#$ iff $\varphi$ is satisfiable. Since $\varphi$ forces its models to be finitely supported, the choice of path semantics does not matter. A good expansion links a page for the finite presentation of orbit-finite sets by set-builder expressions (Section 3 of the source, (3.1)), which the statement uses for its instances. The proof uses Theorem 9.1 for the formulas its proof builds: that the models of the atomic LTL formula $\varphi$ obtained from $M$ are finitely supported word models over that proof's propositions; a good expansion links a page stating this strengthened form.
 
 ## Sources
 
