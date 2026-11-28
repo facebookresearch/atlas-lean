@@ -2,7 +2,7 @@
 
 For a set $\Sigma$ of integrity constraints and conjunctive queries $q, q'$, write $q \subseteq_\Sigma q'$ when
 $q(D) \subseteq q'(D)$ for every (finite) database $D$ that satisfies $\Sigma$. The problem of deciding, for conjunctive queries $q, q'$ and a set $\Sigma$ of
-functional dependencies, whether $q \subseteq_\Sigma q'$ is NP-complete. Chasing $q$ with $\Sigma$ identifies terms as the
+functional dependencies, whether $q \subseteq_\Sigma q'$ is NP-complete. Chasing $q$ with $\Sigma$, replaced by the equivalent set of functional dependencies with singleton right-hand sides, identifies terms as the
 dependencies dictate, computes in polynomial time and either fails (then $q \subseteq_\Sigma q'$ holds trivially) or
 yields a set of atoms that satisfies $\Sigma$ together with the head tuple of $q$ as rewritten by the chase, which may
 contain constants, so the pair is a tableau rather than a query of the linked syntax; in that case a witness is a map
@@ -15,11 +15,16 @@ of conjunctive queries by taking $\Sigma$ empty.
 - [Answers of a conjunctive query](answers-of-a-conjunctive-query.md)
 - [Functional dependency](../functional-dependencies/fd.md)
 - [NP-complete decision problems](../../../TheoryOfComputation/complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [A functional dependency holds in a relation](../functional-dependencies/holds-in.md)
 
 ## Proof depends on
 
 - [Containment of tableau queries under functional and join dependencies via the chase](../dependency-reasoning/containment-under-fds-and-jds-via-the-chase.md)
 - [Chandra-Merlin containment criterion](../../not-yet-classified/conjunctive-queries/contained-iff-hom.md)
+- [The result of the chase for functional dependencies satisfies them](../dependency-reasoning/chase-for-functional-and-inclusion-dependencies/the-result-of-the-fd-chase-satisfies-the-dependencies.md)
+- [The chase for functional dependencies runs in polynomial time](../dependency-reasoning/chase-for-functional-and-inclusion-dependencies/the-fd-chase-runs-in-polynomial-time.md)
+- [Universality of the chase for functional dependencies](../dependency-reasoning/chase-for-functional-and-inclusion-dependencies/universality-of-the-fd-chase.md)
+- [Homomorphism theorem for conjunctive queries with constants](cores-and-minimization/homomorphism-theorem-for-conjunctive-queries-with-constants.md)
 - [CONJUNCTIVE QUERY CONTAINMENT is NP-complete](../../../TheoryOfComputation/np-completeness/databases-and-concurrency/databases-and-concurrency/conjunctive-query-containment-np-complet.md)
 
 ## Sources
