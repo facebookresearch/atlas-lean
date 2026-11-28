@@ -31,7 +31,7 @@ example : (1 - 1 / (5 : ℝ)) * (1 - 1 / 6) = 2 / 3 ∧
 
 -- For `(3, 4, 31)` at `15/31`, the first two terms give a strict prefix and the
 -- full reciprocal product gives equality. Only length two meets the prefix estimate.
-example : (1 - 1 / (3 : ℝ)) * (1 - 1 / 4) * (1 - 1 / 31) = 15 / 31 ∧
+private theorem triple_arithmetic : (1 - 1 / (3 : ℝ)) * (1 - 1 / 4) * (1 - 1 / 31) = 15 / 31 ∧
     (15 : ℝ) / 31 < (1 - 1 / 3) * (1 - 1 / 4) ∧ ⌊(1 : ℝ) + 31 / 16⌋₊ = 2 ∧
     (16 : ℝ) * (31 / 16) ^ (2 ^ 1 : ℕ) < 15 * 3 + 16 ∧
     (15 : ℝ) * (3 * 4) + 16 ≤ 16 * (31 / 16) ^ (2 ^ 2 : ℕ) ∧
@@ -51,6 +51,28 @@ example : 15 * ∏ i ∈ Icc 1 3, (triple i : ℝ) ≤
       (31 / (16 : ℝ) ^ ((3 : ℝ) / 4)) ^ (2 ^ 2 : ℕ) := by
   rw [sixteen_rpow_three_quarters, show Icc 1 3 = {1, 2, 3} by decide]
   norm_num [triple]
+
+-- Apply the public bound at `d = 16`, where the three-quarter denominator is 8.
+example : 15 * ∏ i ∈ Icc 1 3, (triple i : ℝ) ≤
+    (31 / (8 : ℝ)) ^ (2 ^ 3 : ℕ) - (31 / (8 : ℝ)) ^ (2 ^ 2 : ℕ) := by
+  obtain ⟨hfull, hprefix, hfloor, -⟩ := triple_arithmetic
+  have hadd : (15 : ℝ) + 16 = 31 := by norm_num
+  have hle : ∏ i ∈ Icc 1 3, (1 - 1 / (triple i : ℝ)) ≤ (15 : ℝ) / (15 + 16) := by
+    rw [show Icc 1 3 = {1, 2, 3} by decide, prod_insert (by decide),
+      prod_insert (by decide), prod_singleton, ← mul_assoc, hadd]
+    exact hfull.le
+  have hlt : (15 : ℝ) / (15 + 16) < ∏ i ∈ Icc 1 (3 - 1), (1 - 1 / (triple i : ℝ)) := by
+    rw [show Icc 1 (3 - 1) = {1, 2} by decide, prod_insert (by decide), prod_singleton, hadd]
+    exact hprefix
+  have hne : triple 1 ≠ ⌊1 + ((15 : ℝ) + 16) / 16⌋₊ := by
+    rw [hadd, hfloor]
+    decide
+  have h := hbcAdmissible_prod_le_of_ne_floor 15 16 3 (by decide) (by decide) (by decide)
+    (by decide) triple (by decide) (by
+      intro i hi hik
+      obtain rfl | rfl : i = 1 ∨ i = 2 := by omega
+      all_goals decide) hle hlt hne
+  simpa only [Nat.cast_ofNat, hadd, sixteen_rpow_three_quarters] using h
 
 -- The excluded first term matters: `(2, 31)` is admissible at `15/31` but fails the bound.
 example : (1 - 1 / (2 : ℝ)) * (1 - 1 / 31) = 15 / 31 ∧
