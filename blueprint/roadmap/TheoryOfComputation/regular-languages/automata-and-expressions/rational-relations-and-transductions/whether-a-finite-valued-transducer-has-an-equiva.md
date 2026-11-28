@@ -19,6 +19,7 @@ Rosenberg had shown the undecidability for general two-tape automata, through re
 ## Depends on
 
 - [Rational relations and transducers](rational-relations-and-transducers.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -33,4 +34,4 @@ configurations stay bounded in length.
 
 ## Sources
 
-- E. Burjons, F. Frei and M. Raszyk, "From finite-valued nondeterministic transducers to deterministic two-tape automata", in *36th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2021)*, IEEE, 2021, pp. 1–13, doi:10.1109/LICS52264.2021.9470688; read in arXiv:2005.13710v3: the undecidability theorem of the section "Bounded Trailing is Undecidable" with its corollary on Turing machines, the theorems that bounded trailing is sufficient and necessary, the definition of deterministic two-tape automata in the Preliminaries, and the introduction.
+- E. Burjons, F. Frei and M. Raszyk, "From finite-valued nondeterministic transducers to deterministic two-tape automata", in *36th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2021)*, IEEE, 2021, pp. 1–13, doi:10.1109/LICS52264.2021.9470688; read in arXiv:2005.13710v3: Theorem 23 of Section VI ("Bounded Trailing is Undecidable") with Lemma 19, Corollary 20 and Claims 21 and 22, Theorems 14 and 15 (bounded trailing is sufficient and necessary), Definition 2 (deterministic two-tape automata) and Definition 11 (bounded trailing), and the introduction, with the numbering of that version.

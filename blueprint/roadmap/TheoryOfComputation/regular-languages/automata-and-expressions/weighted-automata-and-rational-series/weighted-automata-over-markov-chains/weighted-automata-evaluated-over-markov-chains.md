@@ -36,4 +36,4 @@ None.
 
 ## Sources
 
-- J. Michaliszyn and J. Otop, "Non-deterministic weighted automata evaluated over Markov chains", *Journal of Computer and System Sciences* 108:118–136, 2020, doi:10.1016/j.jcss.2019.10.001; Section 2 of the version arXiv:1908.04625v2 (weighted automata, value functions, Markov chains and terminating Markov chains, automata as random variables, the computational questions) and the theorem on irrational values in Section 3.
+- J. Michaliszyn and J. Otop, "Non-deterministic weighted automata evaluated over Markov chains", *Journal of Computer and System Sciences* 108:118–136, 2020, doi:10.1016/j.jcss.2019.10.001; Section 2 of the version arXiv:1908.04625v2 (weighted automata, value functions, Markov chains and terminating Markov chains, automata as random variables, the computational questions) and Theorem 6 (irrational values) in Section 3.

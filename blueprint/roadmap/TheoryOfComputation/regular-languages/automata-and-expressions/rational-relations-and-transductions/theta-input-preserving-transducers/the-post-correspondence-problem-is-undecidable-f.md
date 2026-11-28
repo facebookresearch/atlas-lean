@@ -4,14 +4,15 @@ For every fixed antimorphic permutation $\theta$ of an alphabet with at least tw
 words has a sequence whose first concatenation equals $\theta$ of the second.
 
 **Theorem (Kari, Konstantinidis and Kopecki).** For every fixed antimorphic permutation $\theta$ of $\Sigma_k$ with $k \ge 2$, the
-[$\theta$-Post correspondence problem](antimorphic-permutations-input-preserving-transd.md) is undecidable.
+[$\theta$-Post correspondence problem](theta-post-correspondence-problem.md) is undecidable.
 
 This includes the mirror image (the antimorphic extension of the identity) and Watson–Crick complementation on the DNA alphabet. The
 alphabet size $k$ and the permutation are fixed; the word pairs are the input.
 
 ## Depends on
 
-- [Antimorphic permutations, input-preserving transducers and the θ-Post correspondence problem](antimorphic-permutations-input-preserving-transd.md)
+- [θ-Post correspondence problem](theta-post-correspondence-problem.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -25,4 +26,4 @@ the original instance has a solution if and only if the new one has.
 
 ## Sources
 
-- L. Kari, S. Konstantinidis and S. Kopecki, "Transducer descriptions of DNA code properties and undecidability of antimorphic problems", *Information and Computation* 259:237–258, 2018, doi:10.1016/j.ic.2017.09.004; read in arXiv:1503.00035v1: the theorem on the $\theta$-PCP in Section 6 with its proof.
+- L. Kari, S. Konstantinidis and S. Kopecki, "Transducer descriptions of DNA code properties and undecidability of antimorphic problems", *Information and Computation* 259:237–258, 2018, doi:10.1016/j.ic.2017.09.004; read in arXiv:1503.00035v1: Theorem 28 in Section 6 with its proof, with the numbering of that version.

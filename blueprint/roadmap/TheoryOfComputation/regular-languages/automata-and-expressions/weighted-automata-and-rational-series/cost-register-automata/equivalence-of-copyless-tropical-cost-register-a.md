@@ -20,6 +20,7 @@ equivalence.
 - [Copyless cost register automata over the tropical semirings](copyless-cost-register-automata-over-the-tropica.md)
 - [Semilinear set of vectors](../../../../context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md)
 - [Weighted automata over a semiring](../weighted-automata-over-a-semiring.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -36,4 +37,4 @@ correct run exists.
 
 ## Sources
 
-- S. Almagor, M. Cadilhac, F. Mazowiecki and G. A. Pérez, "Weak cost register automata are still powerful", *International Journal of Foundations of Computer Science* 31(6):689–709, 2020, doi:10.1142/S0129054120410026; conference version in *Developments in Language Theory (DLT 2018)*, Lecture Notes in Computer Science 11088, pp. 83–95, 2018, doi:10.1007/978-3-319-98654-8_7. Read in arXiv:1804.06336v1: the theorems Equivalence, Semilinearity and Upperboundedness of Section 6 (Applications) with their proofs, the simulation theorem of Section 5, the proposition on vector addition systems with zero tests in Section 2, and the introduction.
+- S. Almagor, M. Cadilhac, F. Mazowiecki and G. A. Pérez, "Weak cost register automata are still powerful", *International Journal of Foundations of Computer Science* 31(6):689–709, 2020, doi:10.1142/S0129054120410026; conference version in *Developments in Language Theory (DLT 2018)*, Lecture Notes in Computer Science 11088, pp. 83–95, 2018, doi:10.1007/978-3-319-98654-8_7. Read in arXiv:1804.06336v1: Theorems 2 (Equivalence), 3 (Semilinearity) and 4 (Upperboundedness) of Section 6 (Applications) with their proofs, Theorem 1 (Simulation) of Section 5, Proposition 1 on vector addition systems with zero tests in Section 2, Proposition 2 of Section 3, and the introduction, with the numbering of that version.

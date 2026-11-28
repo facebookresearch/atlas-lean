@@ -10,7 +10,7 @@ $$
 
 A *uniformizer* of $R$ is a function $U$ with $\mathrm{dom}(U) = \mathrm{dom}(R)$ and $(u, U(u)) \in R$ for all $u \in \mathrm{dom}(R)$. The relation $R$ is *$d$-approximately uniformizable* if there are a uniformizer $U$ of $R$ and a sequential function $f$ with $d(U, f) < \infty$; equivalently, there are a sequential $f$ and $k \in \mathbb{N}$ such that every $u \in \mathrm{dom}(R)$ has some $(u, v) \in R$ with $d(v, f(u)) \le k$.
 
-**Theorem.** For each $d \in \{d_l, d_{lcs}, d_{dl}\}$ it is undecidable, given a finite transducer recognizing a rational relation $R$, whether $R$ is $d$-approximately uniformizable.
+**Theorem.** For each $d \in \{d_l, d_{lcs}, d_{dl}\}$ it is undecidable, given a finite transducer recognizing a rational relation $R$, whether $R$ is $d$-approximately uniformizable (Theorem 40 of the source).
 
 The exact version, whether a rational relation has a sequential uniformizer, is undecidable as well, and the reduction below shows both at once. The case of the Hamming distance is left open by the source, as is the letter-to-letter setting. By contrast, the source proves that approximate functionality and approximate determinisation of transducers are decidable for several classical distances, including the Hamming and Levenshtein distances.
 
@@ -18,6 +18,7 @@ The exact version, whether a rational relation has a sequential uniformizer, is 
 
 - [Rational relations and transducers](../rational-relations-and-transducers.md)
 - [Sequential and subsequential functions](../sequential-and-subsequential-functions.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

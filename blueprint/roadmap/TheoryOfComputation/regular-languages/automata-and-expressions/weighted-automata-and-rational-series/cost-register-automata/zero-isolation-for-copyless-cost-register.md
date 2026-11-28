@@ -9,10 +9,12 @@ In contrast, the source shows that zero isolation is decidable, assuming Schanue
 ## Depends on
 
 - [Copyless cost register automata](copyless-cost-register-automata.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
@@ -20,4 +22,4 @@ First, the $<$-threshold problem (is $\mathcal A(w)<C$ for some $w$?) reduces to
 
 ## Sources
 
-- Wojciech Czerwiński, Engel Lefaucheux, Filip Mazowiecki, David Purser and Markus A. Whiteland, "The boundedness and zero isolation problems for weighted automata over nonnegative rationals", in *Proceedings of the 37th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2022)*, ACM, 2022, pp. 1–13, doi:[10.1145/3531130.3533336](https://doi.org/10.1145/3531130.3533336); read in arXiv:2205.13516v1 ([arXiv](https://arxiv.org/abs/2205.13516v1)), cited by section and statement because its theorem counter is not recoverable: the main theorem of Section 3 (its second sentence) and the appendix section showing that zero isolation for copyless CRA is undecidable, with its two lemmas.
+- Wojciech Czerwiński, Engel Lefaucheux, Filip Mazowiecki, David Purser and Markus A. Whiteland, "The boundedness and zero isolation problems for weighted automata over nonnegative rationals", in *Proceedings of the 37th Annual ACM/IEEE Symposium on Logic in Computer Science (LICS 2022)*, ACM, 2022, pp. 1–13, doi:[10.1145/3531130.3533336](https://doi.org/10.1145/3531130.3533336); read in arXiv:2205.13516v1 ([arXiv](https://arxiv.org/abs/2205.13516v1)), whose numbering is used: Theorem 3.4 in Section 3 (its second sentence; the first gives the decidable case) and Appendix E, Theorem E.1 with Lemmas E.2 and E.3.

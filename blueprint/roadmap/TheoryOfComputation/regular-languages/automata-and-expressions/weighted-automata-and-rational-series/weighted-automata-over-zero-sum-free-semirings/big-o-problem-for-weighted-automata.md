@@ -17,6 +17,7 @@ On labeled Markov chains, $s$ is big-O of $s'$ exactly when the multiplicative (
 ## Depends on
 
 - [Weighted automata over a semiring](../weighted-automata-over-a-semiring.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -4,17 +4,17 @@ For every fixed antimorphic permutation $\theta$ of an alphabet with at least tw
 output $\theta(w)$ on every input $w$, nor whether it never can.
 
 **Theorem (Kari, Konstantinidis and Kopecki).** Let $\theta$ be a fixed antimorphic permutation of $\Sigma_k$ with $k \ge 2$, and consider transducers over $\Sigma_k$ in the sense of
-[antimorphic permutations, input-preserving transducers and the θ-Post correspondence problem](antimorphic-permutations-input-preserving-transd.md).
+[antimorphic permutations and input-preserving transducers](antimorphic-permutations-input-preserving-transd.md).
 
 1. It is undecidable whether a given transducer is $\theta$-input-preserving.
 2. It is undecidable whether a given transducer is $\theta$-input-altering, already for one-state transducers.
 
-As a consequence, for every such $\theta$ it is undecidable, given a transducer describing a property, whether the empty language is maximal for that
-property, since $\emptyset$ is maximal exactly when the transducer is $\theta$-input-preserving. By contrast, satisfaction is decidable: given a regular language $L$, a transducer $t$ and an antimorphic involution $\theta$, it can be decided whether $L$ satisfies the property described by $t$ with respect to $\theta$.
+As a consequence, for every such $\theta$ it is undecidable, given a transducer $t$, whether the empty language is maximal for the strict property $S_{\theta,t}$ of the languages $L$ with $\theta(L) \cap t(L) = \varnothing$, since $\emptyset$ is maximal for it exactly when $t$ is $\theta$-input-preserving. By contrast, for the weak property $W_{\theta,t}$ of the source, satisfaction is decidable: given a regular language $L$, a transducer $t$ and an antimorphic involution $\theta$, it can be decided whether $L$ satisfies $W_{\theta,t}$.
 
 ## Depends on
 
-- [Antimorphic permutations, input-preserving transducers and the θ-Post correspondence problem](antimorphic-permutations-input-preserving-transd.md)
+- [Antimorphic permutations and input-preserving transducers](antimorphic-permutations-input-preserving-transd.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -31,4 +31,4 @@ $(\alpha_i, \theta^2(\beta_i))$ is not $\theta$-input-altering.
 
 ## Sources
 
-- L. Kari, S. Konstantinidis and S. Kopecki, "Transducer descriptions of DNA code properties and undecidability of antimorphic problems", *Information and Computation* 259:237–258, 2018, doi:10.1016/j.ic.2017.09.004; read in arXiv:1503.00035v1: the theorem on $\theta$-input-preserving transducers in Section 5 with its proof and the corollary on maximality after it, and the corollary on $\theta$-input-altering transducers in Section 6.
+- L. Kari, S. Konstantinidis and S. Kopecki, "Transducer descriptions of DNA code properties and undecidability of antimorphic problems", *Information and Computation* 259:237–258, 2018, doi:10.1016/j.ic.2017.09.004; read in arXiv:1503.00035v1: Theorem 25 in Section 5.2 with its proof and Corollary 26 (maximality) after it, Corollary 29 ($\theta$-input-altering transducers) in Section 6, Definition 5 (the properties $S_{\theta,t}$ and $W_{\theta,t}$) in Section 3, and Theorem 21 (satisfaction) in Section 5.1, with the numbering of that version.

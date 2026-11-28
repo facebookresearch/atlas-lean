@@ -20,6 +20,7 @@ for LimAvg-automata it gives approximation algorithms in exponential time instea
 ## Depends on
 
 - [Weighted automata evaluated over Markov chains](weighted-automata-evaluated-over-markov-chains.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -37,4 +38,4 @@ respectively $\mathbb{E}(\mathcal{A}')$, and the same comparison applies.
 
 ## Sources
 
-- J. Michaliszyn and J. Otop, "Non-deterministic weighted automata evaluated over Markov chains", *Journal of Computer and System Sciences* 108:118–136, 2020, doi:10.1016/j.jcss.2019.10.001; Section 4 of the version arXiv:1908.04625v2 (The exact value problems): the undecidability theorem at its beginning with its proof, and Section 6 (exponential-time approximation of LimAvg-automata).
+- J. Michaliszyn and J. Otop, "Non-deterministic weighted automata evaluated over Markov chains", *Journal of Computer and System Sciences* 108:118–136, 2020, doi:10.1016/j.jcss.2019.10.001; Section 4 of the version arXiv:1908.04625v2 (The exact value problems): Theorem 7 with its proof, and Section 6 (exponential-time approximation of LimAvg-automata).

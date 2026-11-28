@@ -13,6 +13,7 @@ For deterministic $V$-automata the problem is decidable. The discounted-sum case
 ## Depends on
 
 - [Functional weighted automata and quantitative language realizability](functional-weighted-automata-and-quantitative.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

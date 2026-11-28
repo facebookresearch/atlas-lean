@@ -4,7 +4,7 @@ There is a computable zero-sum-free commutative semiring over which no algorithm
 
 **Definitions.** For a semiring $(S, +, \times, 0, 1)$ and a finite alphabet $\Sigma$, a [weighted finite automaton](../weighted-automata-over-a-semiring.md) $\mathcal{A} = (Q, \mathrm{in}, \mathrm{wt}, \mathrm{out})$ has a non-empty finite state set $Q$, initial and final weights $\mathrm{in}, \mathrm{out} : Q \to S$ and transition weights $\mathrm{wt} : Q \times \Sigma \times Q \to S$; its behavior $\|\mathcal{A}\| : \Sigma^* \to S$ sums, over all state sequences, the product of the initial weight, the transition weights and the final weight. The *support* of a series $r : \Sigma^* \to S$ is $\mathrm{supp}(r) = \{ w \in \Sigma^* : r(w) \neq 0 \}$. The semiring is *zero-sum-free* if $s + s' = 0$ implies $s = s' = 0$. A semiring is *computable* if its elements are represented by a recursive subset of $\mathbb{N}$, its operations are computable, and equality of elements is decidable.
 
-**Theorem.** There is a zero-sum-free commutative semiring $S$, contained as a recursive subset in a computable commutative ring $R$, such that for every finite alphabet $\Sigma$ it is undecidable, for a given weighted finite automaton $\mathcal{A}$ over $\Sigma$ and $S$, whether $\mathrm{supp}(\|\mathcal{A}\|) = \Sigma^*$, and whether $\mathrm{supp}(\|\mathcal{A}\|)$ is infinite.
+**Theorem.** There is a zero-sum-free commutative semiring $S$, contained as a recursive subset in a computable commutative ring $R$, such that for every finite alphabet $\Sigma$ it is undecidable, for a given weighted finite automaton $\mathcal{A}$ over $\Sigma$ and $S$, whether $\mathrm{supp}(\|\mathcal{A}\|) = \Sigma^*$, and whether $\mathrm{supp}(\|\mathcal{A}\|)$ is infinite (Theorem 1 of the source).
 
 Equivalently, it is undecidable whether $0$ occurs as a value of $\|\mathcal{A}\|$. Over a zero-sum-free commutative semiring the support of every weighted automaton is recognizable (Kirsten), so the theorem shows that a finite automaton, or even a pushdown automaton, recognizing the support cannot be constructed effectively in general. The ring $R$ can be ordered so that $S$ is exactly its set of nonnegative elements. The source also notes that for $S$ it is undecidable whether the image of $\|\mathcal{A}\|$ is infinite.
 
@@ -13,6 +13,7 @@ Equivalently, it is undecidable whether $0$ occurs as a value of $\|\mathcal{A}\
 - [Weighted automata over a semiring](../weighted-automata-over-a-semiring.md)
 - [Semirings and formal power series on a free monoid](../semirings-and-formal-power-series.md)
 - [Commutative ring with identity](../../../../../Algebra/rings-and-fields/commutative-ring-with-identity.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

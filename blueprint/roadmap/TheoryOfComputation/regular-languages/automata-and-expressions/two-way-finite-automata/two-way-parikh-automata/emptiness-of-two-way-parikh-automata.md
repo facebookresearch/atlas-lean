@@ -11,6 +11,7 @@ By contrast, emptiness is PSPACE-complete for deterministic and for bounded-visi
 ## Depends on
 
 - [Semilinear set of vectors](../../../../context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

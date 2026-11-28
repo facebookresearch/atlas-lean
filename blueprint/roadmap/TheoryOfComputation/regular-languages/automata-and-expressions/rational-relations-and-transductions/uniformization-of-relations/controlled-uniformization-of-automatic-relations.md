@@ -10,6 +10,7 @@ For rational relations, already the fixed control by $(\Sigma\Gamma)^*(\Sigma^* 
 
 - [Rational relations and transducers](../rational-relations-and-transducers.md)
 - [Sequential and subsequential functions](../sequential-and-subsequential-functions.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -10,6 +10,7 @@ Synchronizability is also undecidable for DPDAs whose stack makes at most one tu
 
 - [Synchronizing automata and reset words](synchronizing-automata-and-reset-words.md)
 - [Deterministic pushdown automaton](../../context-free-languages/grammars-and-pushdown-automata/deterministic-context-free-languages/is-deterministic.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

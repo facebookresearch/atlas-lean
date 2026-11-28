@@ -10,6 +10,7 @@ An example is the semiring $(\mathcal{P}(\Sigma^*), \cup, \cdot, \emptyset, \{\v
 
 - [Synchronizing matrices over a semiring](synchronizing-matrices-over-a-semiring.md)
 - [Semirings and formal power series on a free monoid](../semirings-and-formal-power-series.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
