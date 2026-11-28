@@ -6,6 +6,7 @@ Spin models on finite graphs: the Ising Hamiltonian, Gibbs distribution and part
 - [Lee–Yang circle theorem](lee-yang-circle-theorem/README.md)
 - [Pressure of the Ising model](pressure-of-the-ising-model/README.md)
 - [The finite planar classical O(n) Gibbs law](classical-on-gibbs-law.md)
+- [Undecidable ground-state properties](undecidable-ground-state-properties/README.md)
 
 ## Related topics
 
@@ -13,4 +14,3 @@ Spin models on finite graphs: the Ising Hamiltonian, Gibbs distribution and part
   independent Gaussian couplings, the Sherrington–Kirkpatrick model.
 
 - [Exponential decay for the planar classical O(n) model](classical-on-planar-decay.md)
-- [Undecidable ground-state properties](undecidable-ground-state-properties/README.md)
