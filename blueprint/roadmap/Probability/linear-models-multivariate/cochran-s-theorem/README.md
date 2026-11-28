@@ -1,5 +1,6 @@
 # Cochran's theorem
 
+- [Analysis of variance](analysis-of-variance/README.md)
 - [Rank criterion](cochran-rank-criterion.md)
 - [Independence of orthogonal projections of a standard Gaussian](i-indep-fun-star-projection-std-gaussian.md)
 - [Independence of squared lengths of orthogonal Gaussian projections](i-indep-fun-norm-sq-star-projection-std.md)

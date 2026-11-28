@@ -1,5 +1,6 @@
 # Permutation tests
 
+- [The Fisher randomization test](fisher-randomization/README.md)
 - [Permutation p-value](permutation-pvalue.md)
 - [Counting lemma for rank counts](card-filter-rank-count-le.md)
 - [Validity of permutation p-values](is-valid-pvalue-permutation-pvalue.md)
@@ -11,3 +12,4 @@
 - [Sum of the edge cut over all $t$-subsets](sum-card-interedges-compl-powerset-card.md)
 - [Variance of the edge cut of a uniform $t$-subset](variance-card-interedges-compl-powerset.md)
 - [Averaging over an invariant finite group](measure-eq-card-div-of-ae-card-filter-sm.md)
+- [Complete randomization is invariant under relabeling units](invariant-complete-randomization-map-ima.md)

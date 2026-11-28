@@ -53,6 +53,25 @@ example : ((0 : ℝ) - (-3)) ^ 2 * ((3 / 4) ^ 2 + 1) =
     (3 / 4 - (-3)) ^ 2 * (0 ^ 2 + 1) := by
   apply bisector_slope_equation 0 (3 / 4) (-3) <;> norm_num
 
+-- For slopes 1 and 7 with bisector slope 2, the other bisector has slope -1/2.
+-- Simultaneous negation and swapping the input slopes also preserve the equation.
+example :
+    ((1 : ℝ) - (-1 / 2)) ^ 2 * (7 ^ 2 + 1) = (7 - (-1 / 2)) ^ 2 * (1 ^ 2 + 1) ∧
+      ((-1 : ℝ) - (-2)) ^ 2 * ((-7) ^ 2 + 1) = (-7 - (-2)) ^ 2 * ((-1) ^ 2 + 1) ∧
+      ((7 : ℝ) - 2) ^ 2 * (1 ^ 2 + 1) = (1 - 2) ^ 2 * (7 ^ 2 + 1) := by
+  have h := bisector_equation_symm 1 7 2 (by norm_num)
+  have hrec : -(2 : ℝ)⁻¹ = -1 / 2 := by norm_num
+  exact ⟨by simpa only [hrec] using h.1 (by norm_num), h.2⟩
+
+-- A horizontal bisector still admits negation and swapping, without a nonzero hypothesis.
+example (a b : ℝ) (h : a ^ 2 * (b ^ 2 + 1) = b ^ 2 * (a ^ 2 + 1)) :
+    (-a) ^ 2 * ((-b) ^ 2 + 1) = (-b) ^ 2 * ((-a) ^ 2 + 1) ∧
+      b ^ 2 * (a ^ 2 + 1) = a ^ 2 * (b ^ 2 + 1) := by
+  have h₀ := bisector_equation_symm a b 0 (by simpa only [sub_zero] using h)
+  simpa only [neg_zero, sub_zero] using h₀.2
+
+#print axioms bisector_equation_symm
+
 -- The Pell points (1, 1) and (1/7, 5/7) admit both the slope 1/2 and its negative reciprocal.
 example (c : ℚ) (hc : c ∈ ({1 / 2, -2} : Set ℚ)) :
     ∃ u v : ℚ, 1 ^ 2 - 2 * u ^ 2 = -1 ∧ (1 / 7) ^ 2 - 2 * v ^ 2 = -1 ∧

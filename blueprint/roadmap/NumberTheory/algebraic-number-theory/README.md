@@ -9,3 +9,4 @@ Number fields and rings of integers: quadratic and cyclotomic fields, discrimina
 - [Galois representations and p-adic Hodge theory](galois-representations/README.md)
 - [Number fields and embeddings](number-fields-embeddings/README.md)
 - [Shanks cubic polynomial](shanks-cubic-polynomial.md)
+- [Undecidable theories of number fields and rings of integers](undecidable-theories-of-number-fields/README.md)

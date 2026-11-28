@@ -27,7 +27,10 @@ namespace MetaMathlibExt
 
 open ArithmeticFunction
 
-private theorem smooth_eq_sq (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+/-- If a complex-valued multiplicative arithmetic function agrees with squaring on positive
+powers of primes below `p`, it agrees with squaring at every `n` whose prime factors are below
+`p`. -/
+public lemma smooth_eq_sq (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
     {p n : ℕ}
     (hind : ∀ q s : ℕ, q.Prime → q < p → 1 ≤ s → f (q ^ s) = (q : ℂ) ^ (2 * s))
     (hn : ∀ q : ℕ, q.Prime → q ∣ n → q < p) : f n = (n : ℂ) ^ 2 := by

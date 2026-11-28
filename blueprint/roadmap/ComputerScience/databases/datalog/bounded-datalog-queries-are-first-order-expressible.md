@@ -33,8 +33,7 @@ This node states a precise result. The cited proof of (1) implies (2) unfolds th
 that a first-order query preserved under homomorphisms on finite databases is equivalent to a union of conjunctive
 queries with such equalities
 (the source's Theorem 28.11, a theorem of finite model theory). A good expansion links that theorem once a page for it
-exists in Logic or Theory of Computation, and adds a page for the unfolding of a Datalog query into an infinitary union
-of conjunctive queries (the source's Proposition 36.2) used for (1) implies (2). The union ranges over the unfoldings that use only input relations (the source's p. 332);
+exists in Logic or Theory of Computation; the unfolding used for (1) implies (2) is linked under `## Proof depends on`. The union ranges over the unfoldings that use only input relations (the source's p. 332);
 when there is none, as for $Q() \mathrel{:-} Q()$, it is empty and $q$ returns the empty relation on every database.
 
 ## Depends on
@@ -45,7 +44,8 @@ when there is none, as for $Q() \mathrel{:-} Q()$, it is empty and $q$ returns t
 
 ## Proof depends on
 
-- [Datalog queries are monotone and homomorphism-preserved; CQ-in-Datalog containment](datalog-queries-are-monotone-and-homomorphism-preserved-cq-i.md)
+- [Datalog queries are equivalent to infinitary unions of conjunctive queries](homomorphism-preservation-and-containment/datalog-queries-are-equivalent-to-infinitary-ucqs.md)
+- [Datalog queries are preserved under homomorphisms](homomorphism-preservation-and-containment/datalog-queries-are-preserved-under-homomorphisms.md)
 - [Positive relational algebra = unions of conjunctive queries = positive existential calculus](../relational-calculus/positive-relational-algebra-unions-of-conjunctive-queries-po.md)
 
 ## Sources

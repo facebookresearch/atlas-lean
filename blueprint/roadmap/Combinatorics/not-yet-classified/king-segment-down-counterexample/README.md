@@ -1,0 +1,18 @@
+# King Segment Down Counterexample
+
+- [Ksd stair](ksd-stair.md)
+- [Ksd stair raycount](ksd-stair-raycount.md)
+- [Ksd stair support locus](ksd-stair-support-locus.md)
+- [Ksd hseg Right edge mem](ksd-hseg-right-edge-mem.md)
+- [Ksd vseg Up edge mem](ksd-vseg-up-edge-mem.md)
+- [Ksd hseg Right edge mem'](ksd-hseg-right-edge-mem-2.md)
+- [Ksd vseg Up edge mem'](ksd-vseg-up-edge-mem-2.md)
+- [Ksd interior eq](ksd-interior-eq.md)
+- [Ksd support cells](ksd-support-cells.md)
+- [Ksd stair four Thin](ksd-stair-four-thin.md)
+- [Ksd seed is 11](ksd-seed-is-11.md)
+- [Ksd stair body false](ksd-stair-body-false.md)
+- [Ksd king Segment Down false](ksd-king-segment-down-false.md)
+- [Ksd king Segment Down lex Min Seed false](ksd-king-segment-down-lex-min-seed-false.md)
+- [Ksd king Row Linked](ksd-king-row-linked.md)
+- [Ksd residue false but theorem true](ksd-residue-false-but-theorem-true.md)

@@ -1,0 +1,17 @@
+# Self-dual assembly for the critical probability
+
+- [Half Measure](half-measure.md)
+- [Half Measure eq](half-measure-eq.md)
+- [Measurable dual Config](measurable-dual-config.md)
+- [Dual Config preserves half](dual-config-preserves-half.md)
+- [Self Dual Rotation preserves half](self-dual-rotation-preserves-half.md)
+- [Half crossing Prob of self Dual dichotomy](half-crossing-prob-of-self-dual-dichotom.md)
+- [Percolation Probability to Real](percolation-probability-to-real.md)
+- [Percolation Probability eq zero iff theta](percolation-probability-eq-zero-iff-thet.md)
+- [Percolation Probability congr](percolation-probability-congr.md)
+- [Subcritical Densities bdd Above](subcritical-densities-bdd-above.md)
+- [Half mem subcritical Densities](half-mem-subcritical-densities.md)
+- [Half le critical Probability of subcritical](half-le-critical-probability-of-subcriti.md)
+- [Critical Probability le half of sharp Threshold](critical-probability-le-half-of-sharp-th.md)
+- [Critical Probability eq half of self Dual Assembly](critical-probability-eq-half-of-self-dua.md)
+- [No percolation at pc of self Dual Assembly](no-percolation-at-pc-of-self-dual-assemb.md)
