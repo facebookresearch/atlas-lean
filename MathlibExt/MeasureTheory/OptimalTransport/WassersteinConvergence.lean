@@ -297,12 +297,14 @@ theorem tendsto_wasserstein_iff {X : Type*}
     [MetricSpace X] [CompleteSpace X] [SecondCountableTopology X] [MeasurableSpace X]
     [BorelSpace X] {p : ℝ} (hp : 1 ≤ p) (x₀ : X)
     (μs : ℕ → ProbabilityMeasure X) (μ : ProbabilityMeasure X)
-    (_hμs : ∀ k, ∫⁻ x, edist x₀ x ^ p ∂(μs k : Measure X) < ∞)
+    (hμs : ∀ k, ∫⁻ x, edist x₀ x ^ p ∂(μs k : Measure X) < ∞)
     (hμ : ∫⁻ x, edist x₀ x ^ p ∂(μ : Measure X) < ∞) :
     Tendsto (fun k => wasserstein p (μs k) μ) atTop (𝓝 0) ↔
       Tendsto μs atTop (𝓝 μ) ∧
         Tendsto (fun k => ∫⁻ x, edist x₀ x ^ p ∂(μs k : Measure X)) atTop
           (𝓝 (∫⁻ x, edist x₀ x ^ p ∂(μ : Measure X))) := by
+  -- Keep the finite-moment hypothesis of the original `P_p` statement.
+  have _ := hμs
   constructor
   · intro h
     exact ⟨tendsto_of_tendsto_wasserstein hp h, tendsto_moments_of_tendsto_wasserstein hp x₀ h⟩
