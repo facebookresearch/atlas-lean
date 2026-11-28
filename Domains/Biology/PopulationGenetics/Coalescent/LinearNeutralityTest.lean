@@ -85,8 +85,8 @@ Watterson's weight function `1 / (f log N)` is not of bounded variation on `[0, 
 proved for it is the invariance `normalizedWeights_const_mul`, through which the cutoff `N`
 drops out of the normalized weights. The centred weights of `w - c w'` have no such invariance:
 for `n = 3`, `w(f) = 2 (1 - f)` (Tajima's `θ_π`) and `w'(f) = 1 / f` (Watterson's estimator), the
-first of them is `1 / 3 - 3 c / 4` (`centredWeights_three_one`), whose sign depends on `c`
-(`not_exists_centredWeights_three_eq_const_mul`).
+first of them is `1 / 3 - 3 c / 4` (`centredWeights_tajima_watterson_three_one`), whose sign
+depends on `c` (`not_exists_centredWeights_three_eq_const_mul`).
 
 ## References
 
@@ -342,7 +342,7 @@ theorem normalizedWeights_const_mul (w w' : ℝ → ℝ) {c c' : ℝ} (hc : c �
 `2 (1 - f)` (of `θ_π`) against Watterson's weight function `1 / f` scaled by `c`, is
 `1 / 3 - 3 c / 4`. With the cutoff at the inverse population size `1 / N`, Watterson's weight
 function is `1 / (f log N)`, so `c = 1 / log N`. -/
-theorem centredWeights_three_one (c : ℝ) :
+theorem centredWeights_tajima_watterson_three_one (c : ℝ) :
     centredWeights (fun f => 2 * (1 - f) - c / f) 3 1 = 1 / 3 - 3 * c / 4 := by
   simp only [centredWeights, show (Ico 1 3 : Finset ℕ) = {1, 2} by decide]
   rw [sum_pair (by norm_num)]
@@ -353,16 +353,16 @@ theorem centredWeights_three_one (c : ℝ) :
 for `n = 3`, the centred weights of `2 (1 - f) - c / f` for `c = 1 / 4` and for `c = 1` are
 related by no positive factor, which would leave the test unchanged
 (`linearNeutralityTest_const_mul`): their first entries `7 / 48` and `-5 / 12` have opposite
-signs (`centredWeights_three_one`). The normalized weights of `2 (1 - f)` and `c / f` do not
-depend on `c ≠ 0` (`normalizedWeights_const_mul`), so of the two forms only the normalized one
-avoids the dependence on the cutoff `N` in `c = 1 / log N`. -/
+signs (`centredWeights_tajima_watterson_three_one`). The normalized weights of `2 (1 - f)` and
+`c / f` do not depend on `c ≠ 0` (`normalizedWeights_const_mul`), so of the two forms only the
+normalized one avoids the dependence on the cutoff `N` in `c = 1 / log N`. -/
 theorem not_exists_centredWeights_three_eq_const_mul :
     ¬ ∃ a : ℝ, 0 < a ∧ ∀ i ∈ Ico 1 3,
       centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 i =
         a * centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 i := by
   rintro ⟨a, ha, h⟩
   have h1 := h 1 (by decide)
-  rw [centredWeights_three_one, centredWeights_three_one] at h1
+  rw [centredWeights_tajima_watterson_three_one, centredWeights_tajima_watterson_three_one] at h1
   nlinarith
 
 /-! ### The `O(1 / n)` bounds -/

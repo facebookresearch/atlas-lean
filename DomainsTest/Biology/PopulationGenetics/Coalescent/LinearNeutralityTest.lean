@@ -180,10 +180,10 @@ example (w' : ℝ → ℝ) (i : ℕ) :
 /-! ### The cutoff of a divergent weight function -/
 
 /-- For `n = 3`, the first centred weights of `2 (1 - f) - c / f` for `c = 1 / 4` and `c = 1`
-(`centredWeights_three_one`). -/
+(`centredWeights_tajima_watterson_three_one`). -/
 example : centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 1 = 7 / 48 ∧
     centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 1 = -5 / 12 := by
-  rw [centredWeights_three_one, centredWeights_three_one]
+  rw [centredWeights_tajima_watterson_three_one, centredWeights_tajima_watterson_three_one]
   norm_num
 
 /-- The second centred weight is the negative of the first, as for any centred weights with
@@ -202,7 +202,7 @@ example : (¬ ∃ a : ℝ, 0 < a ∧ ∀ i ∈ Ico 1 3,
     centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 1 =
       -20 / 7 * centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 1 := by
   refine ⟨not_exists_centredWeights_three_eq_const_mul, ?_⟩
-  rw [centredWeights_three_one, centredWeights_three_one]
+  rw [centredWeights_tajima_watterson_three_one, centredWeights_tajima_watterson_three_one]
   norm_num
 
 /-- The normalized weights do not depend on `c ≠ 0` (`normalizedWeights_const_mul`). -/
