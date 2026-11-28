@@ -13,7 +13,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniqueness
 import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativePrimeOneModFour
-import all MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativePrimeThreeModFour
+import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativePrimeThreeModFour
 
 /-!
 # Parallelogram uniqueness of squares for multiplicative functions
@@ -567,18 +567,31 @@ private theorem small_values_of_four_ne_zero (h4 : f 4 ≠ 0) :
     exact (mul_eq_zero.mp certificate).resolve_left (by norm_num)
   have hf4 : f 4 = 16 := sub_eq_zero.mp ((mul_eq_zero.mp hc).resolve_left h4)
   simp only [hf4] at e51 e71 e74 e75 e76 e81 e91 e92 e10_2 e10_6
+  -- Comparing the equations for (5, 3) and (5, 1) with their doubled pairs shows
+  -- that if the linear factor below is nonzero, both remaining factors must vanish.
+  have hz : (2 * f 5 - f 9 + 31) * (f 5 ^ 2 - 34 * f 5 + 514) = 0 := by
+    linear_combination -e10_6 / 2
+  have hx : (2 * f 5 - f 9 + 31) * (f 5 ^ 2 - 35 * f 5 + 2 * f 9 + 32) = 0 := by
+    linear_combination (16 * e51 - e10_2) / 2
+  have hrelation : f 9 = 2 * f 5 + 31 := by
+    by_contra h
+    have hn : 2 * f 5 - f 9 + 31 ≠ 0 := fun he => h (by linear_combination -he)
+    have hz0 := (mul_eq_zero.mp hz).resolve_left hn
+    have hx0 := (mul_eq_zero.mp hx).resolve_left hn
+    have hv : f 9 = (f 5 + 482) / 2 := by linear_combination (hx0 - hz0) / 2
+    rw [hv] at e51
+    have hd : f 5 = 17194 / 483 := by linear_combination (-e51 - hz0) / 483
+    norm_num [hd] at hz0
   have hf5 : f 5 = 25 := by
-    clear * - f e51 e76 e81 e91
-    grobner
-  have hf9 : f 9 = 81 := by
-    clear * - f e51 e76 e81 e91 hf5
-    grobner
+    rw [hrelation] at e51 e91
+    linear_combination (-e51 / 4 - e91 / 8) / 48
+  have hf9 : f 9 = 81 := by norm_num [hrelation, hf5]
   have hf3 : f 3 = 9 := by norm_num [hf4, hf5] at v3 ⊢; exact v3
   have hf7 : f 7 = 49 := by norm_num [hf2, hf4, hf5, hf9] at v7 ⊢; exact v7
   have hf8 : f 8 = 64 := by norm_num [hf2, hf5, hf9] at v8 ⊢; exact v8
   have hf11 : f 11 = 121 := by
-    clear * - f e92 hf5 hf9
-    grobner
+    rw [hf5, hf9] at e92
+    linear_combination e92 / 49
   exact ⟨hf2, hf3, hf4, hf7, hf8, hf11⟩
 
 end

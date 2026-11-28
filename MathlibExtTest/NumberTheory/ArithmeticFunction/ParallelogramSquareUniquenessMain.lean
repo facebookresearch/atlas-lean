@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.NumberTheory.ArithmeticFunction.Misc
+import Mathlib.Tactic.Ring
 import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessMain
 
 /-!
@@ -15,6 +17,22 @@ import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessM
 -/
 
 open ArithmeticFunction MetaMathlibExt
+
+private abbrev squares : ArithmeticFunction ℂ :=
+  (ArithmeticFunction.pow 2 : ArithmeticFunction ℕ)
+
+-- Check directly that the square function meets the hypotheses, without using uniqueness.
+example : squares.IsMultiplicative ∧ squares 4 ≠ 0 ∧
+    ∀ m n : ℕ, 0 < n → n < m →
+      squares (m ^ 2 + n ^ 2) + squares (m ^ 2 - n ^ 2) =
+        2 * squares (m ^ 2) + 2 * squares (n ^ 2) := by
+  refine ⟨ArithmeticFunction.isMultiplicative_pow.natCast, ?_, ?_⟩
+  · norm_num [squares, ArithmeticFunction.pow_apply]
+  · intro m n _ hnm
+    have hle : n ^ 2 ≤ m ^ 2 := Nat.pow_le_pow_left hnm.le 2
+    simp only [squares, ArithmeticFunction.natCoe_apply, ArithmeticFunction.pow_apply,
+      show (2 : ℕ) ≠ 0 by decide, false_and, ite_false, Nat.cast_add, Nat.cast_sub hle, Nat.cast_pow]
+    ring
 
 section
 
