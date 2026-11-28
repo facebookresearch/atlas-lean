@@ -15,6 +15,7 @@ Inequalities relating entropies, divergences and mutual information, such as the
 - [I-projections](i-projections/README.md)
 - [Rényi divergence](r-nyi-divergence/README.md)
 - [f-divergences](f-divergences/README.md)
+- [Bosonic Fock states and the passive beam-splitter output condition](beam-splitter-fock-model.md)
 
 ## Related topics
 
@@ -23,3 +24,11 @@ Inequalities relating entropies, divergences and mutual information, such as the
 ## Research directions
 
 - [Entropy region of four random variables](entropy-region-of-four-random-variables.md)
+
+- [Information inequalities for binary channels on the cube](binary-cube-noise/README.md)
+- [The entropy photon-number inequality for a bosonic beam splitter](entropy-photon-number-inequality.md)
+- [Binary Relative Entropy](binary-relative-entropy/README.md)
+- [Collision Probability, Hash Isolation and Smoothed Extraction](collision-entropy-and-smoothed-extraction/README.md)
+- [KL Tensorization and Conditioning of Product Distributions](kl-tensorization-and-product-conditioning/README.md)
+- [Renyi, Chi-Square and Hockey-Stick Divergences](renyi-chi-square-and-hockey-stick-divergences/README.md)
+- [Undecidability of information inequalities](undecidability-of-information-inequalities/README.md)

@@ -13,14 +13,15 @@ public import MathlibExt.InformationTheory.RenyiDivergence
 /-!
 # Rényi differential privacy
 
-A mechanism `M : X → Measure Ω` is `(α, ε)`-Rényi differentially private for a neighbouring
-relation `Adj` when `D_α(M x ‖ M y) ≤ ε` for all neighbours `x, y`, where `D_α` is the Rényi
-divergence `renyiDiv · · α` (Mironov, *Rényi differential privacy*, 2017, Definition 4 at real
-orders `α > 1`).
+For real orders `α > 1`, a probability-valued mechanism `M : X → Measure Ω` is `(α, ε)`-Rényi
+differentially private for a neighbouring relation `Adj` when `D_α(M x ‖ M y) ≤ ε` for all
+neighbours `x, y` (Mironov, *Rényi differential privacy*, 2017, Definition 4). The Lean
+predicate records the inequality, without requiring that the output measures be probabilities.
 
-`gaussianMechanism_renyiDifferentiallyPrivate`: adding `N(0, v)` noise to a real-valued query
-whose values on neighbours differ by at most `Δ` is `(α, α Δ² / (2 v))`-Rényi differentially
-private for every `α > 1` (Mironov, Corollary 3 at orders `α > 1`, the case `Δ = 1`).
+`gaussianMechanism_renyiDifferentiallyPrivate`: adding `N(0, v)` noise with `v > 0` to a
+real-valued query whose values on neighbours differ by at most `Δ` gives
+`(α, α Δ² / (2 v))`-Rényi differential privacy for every `α > 1` (Mironov, Corollary 3 at
+orders `α > 1`, the case `Δ = 1`).
 -/
 
 @[expose] public section
@@ -32,14 +33,16 @@ namespace Cslib.Crypto.Privacy
 
 variable {X Ω : Type*} [MeasurableSpace Ω]
 
-/-- **Rényi differential privacy.** A mechanism `M : X → Measure Ω` is `(α, ε)`-Rényi
-differentially private for the neighbouring relation `Adj` if `D_α(M x ‖ M y) ≤ ε` for all
-`x, y` with `Adj x y`, where `D_α(μ ‖ ν)` is the Rényi divergence `renyiDiv μ ν α`. This agrees
-with Mironov's Definition 4 (*Rényi differential privacy*, 2017) for real orders `α > 1`. Mironov
-also admits `α = 1`, where `D₁` is the Kullback–Leibler divergence, and `α = ∞`, where
-`(∞, ε)`-Rényi differential privacy is `ε`-differential privacy. Neither is captured here: by the
-convention of `renyiDiv`, the divergence is `⊤` at every `α ≤ 1`, so at those orders the condition
-holds only when no two inputs are neighbours. -/
+/-- **Rényi differential privacy.** For probability-valued outputs and real orders `α > 1`,
+Mironov's Definition 4 (*Rényi differential privacy*, 2017) requires
+`D_α(M x ‖ M y) ≤ ε` whenever `Adj x y`. Here `D_α(μ ‖ ν)` is `renyiDiv μ ν α`. The
+predicate records that inequality for arbitrary measures; it does not enforce the
+probability-law assumption.
+
+Mironov also admits `α = 1`, where `D₁` is the Kullback–Leibler divergence, and `α = ∞`, where
+`(∞, ε)`-Rényi differential privacy is `ε`-differential privacy. Neither is captured here. At
+real orders `α ≤ 1`, `renyiDiv` is `⊤`, so the inequality for a real budget holds only when no
+two inputs are neighbours. -/
 def RenyiDifferentiallyPrivate (Adj : X → X → Prop) (M : X → Measure Ω) (α ε : ℝ) : Prop :=
   ∀ ⦃x y : X⦄, Adj x y → renyiDiv (M x) (M y) α ≤ ε
 

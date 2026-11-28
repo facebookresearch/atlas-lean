@@ -9,3 +9,4 @@
 - [Kourovka Problem 18.14, abelian assertion for finitely generated groups](twisted-unit-classes-subgroups-fgimplies.md)
 - [Negative answer to the nilpotency assertion of Kourovka Problem 18.14](twisted-unit-classes-subgroups-implies-n-2.md)
 - [Negative answer to the abelian assertion of Kourovka Problem 18.14](twisted-unit-classes-subgroups-fgimplies-2.md)
+- [Property R∞](property-r-infinity.md)

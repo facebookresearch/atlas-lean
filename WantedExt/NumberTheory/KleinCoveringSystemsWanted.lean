@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.CoveringSystem.MirskyNewman
 public import MathlibExt.NumberTheory.CoveringSystem.SwapResidues
 public import MathlibExt.NumberTheory.CoveringSystem.Translate
 public import MathlibExt.NumberTheory.CoveringSystem.TrifonovCovering
+public import MathlibExt.NumberTheory.KleinCoveringSystems
 
 /-!
 # Distinct covering systems with minimum modulus five, six and seven
@@ -79,26 +80,6 @@ public theorem_wanted lcm_moduli_ge_5040_of_distinct_covering_min_six
     (classes : Finset (ℤ × ℕ)) (hcov : Int.IsCoveringSystem classes)
     (hdist : Set.InjOn Prod.snd (classes : Set (ℤ × ℕ))) (hmin : ∀ c ∈ classes, 6 ≤ c.2)
     (hsix : ∃ c ∈ classes, c.2 = 6) : 5040 ≤ classes.lcm Prod.snd
-
-/-- **Replacing the largest prime factor of the modulus set.** Let $m, L \in \mathbb{N}$, let
-$p \ge m$ be a prime with $p \nmid L$, let $q > p$ be the largest prime dividing $L$, and write
-$\nu_q(L)$ for the exponent of $q$ in $L$. Suppose there are residues $r_d \in \mathbb{Z}$, one
-for each divisor $d \ge m$ of $L$, such that every integer $x$ satisfies $x \equiv r_d \pmod d$
-for some such $d$. Then the same holds with $L$ replaced by $p^{\nu_q(L)} L / q^{\nu_q(L)}$:
-there are residues $s_d \in \mathbb{Z}$, one for each divisor $d \ge m$ of
-$p^{\nu_q(L)} L / q^{\nu_q(L)}$, such that every integer $x$ satisfies $x \equiv s_d \pmod d$
-for some such $d$.
-
-Source: Jonah Klein, *On a Conjecture of Krukenberg and a Problem of Dalton and Trifonov*,
-INTEGERS 26 (2026), Article A38, Lemma 6 (`integers-2026-A38-lem-6`). -/
-public theorem_wanted exists_covering_divisors_replace_largest_prime {m p q L : ℕ}
-    (hp : p.Prime) (hmp : m ≤ p) (hpL : ¬ p ∣ L) (hq : q.Prime) (hqL : q ∣ L)
-    (hpq : p < q) (hqmax : ∀ r : ℕ, r.Prime → r ∣ L → r ≤ q)
-    (h : ∃ res : ℕ → ℤ, Int.IsCoveringSystem
-      ((L.divisors.filter fun d => m ≤ d).image fun d => (res d, d))) :
-    ∃ res : ℕ → ℤ, Int.IsCoveringSystem
-      (((p ^ L.factorization q * (L / q ^ L.factorization q)).divisors.filter
-        fun d => m ≤ d).image fun d => (res d, d))
 
 end
 

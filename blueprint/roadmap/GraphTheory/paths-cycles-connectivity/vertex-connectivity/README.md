@@ -9,3 +9,7 @@
 - [Characterization of 2-vertex-connected graphs](is-vertex-connected-two-iff.md)
 - [Degrees in a 2-vertex-connected graph are at least two](two-le-degree.md)
 - [Cycles through each vertex of a 2-vertex-connected graph](exists-cycle-through.md)
+- [Minimal vertex cut](is-minimal-cut.md)
+- [Largest number of minimal cuts](max-minimal-cuts.md)
+- [Erdős Problem 150 (growth of the number of minimal cuts)](minimal-cuts-exponential-rate-below-two.md)
+- [Resolution of Erdős Problem 150](minimal-cuts-exponential-rate-below-two-2.md)

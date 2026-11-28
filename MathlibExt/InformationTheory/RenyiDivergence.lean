@@ -16,16 +16,17 @@ import Mathlib.MeasureTheory.Integral.MeanInequalities
 /-!
 # Rényi divergence between measures
 
-For measures `μ` and `ν` and an order `α > 1`, the Rényi moment `renyiMoment μ ν α` is
-`∫⁻ x, (∂μ/∂ν) x ^ α ∂ν` when `μ ≪ ν`, and the Rényi divergence `renyiDiv μ ν α` is
+For probability measures `μ` and `ν` and an order `α > 1`, the Rényi moment `renyiMoment μ ν α`
+is `∫⁻ x, (∂μ/∂ν) x ^ α ∂ν` when `μ ≪ ν`, and the Rényi divergence `renyiDiv μ ν α` is
 `(α - 1)⁻¹ * log (renyiMoment μ ν α)` in `EReal`, with the natural logarithm (Mironov, *Rényi
 Differential Privacy*, IEEE CSF 2017, arXiv:1702.07476v3, Definition 3, where the moment is
 `E_{x ∼ Q} (P(x) / Q(x)) ^ α`). Both are `⊤` when `μ` is not absolutely continuous with respect
 to `ν`, and at every order `α ≤ 1` (in Mironov, orders `α < 1` are set aside in Remark 2,
 and `α = 1` is defined after Definition 3 by continuity as the KL divergence).
 
-The definitions accept any measures but are meant for probability measures. For other measures
-the value carries no divergence meaning; for instance `renyiDiv 0 ν α = ⊥` for `1 < α`.
+Lean accepts arbitrary measures and uses Mathlib's total `μ.rnDeriv ν`. This function is zero
+if the pair has no Lebesgue decomposition; in that case it need not recover `μ` as a density
+against `ν`, even when `μ ≪ ν`.
 
 ## Main results
 
@@ -52,9 +53,10 @@ open scoped ENNReal NNReal
 namespace MathlibExt.InformationTheory.RenyiDivergence
 
 open scoped Classical in
-/-- **Rényi moment** of order `α` of `μ` with respect to `ν`: `∫⁻ x, (∂μ/∂ν) x ^ α ∂ν` when
-`μ ≪ ν` and `1 < α`, and `∞` otherwise (Mironov, arXiv:1702.07476v3, Definition 3, the
-expectation `E_{x ∼ Q} (P(x) / Q(x)) ^ α`). -/
+/-- **Rényi moment** of order `α` of `μ` with respect to `ν`: `∫⁻ x, (μ.rnDeriv ν x) ^ α ∂ν`
+when `μ ≪ ν` and `1 < α`, and `∞` otherwise. For absolutely continuous probability laws this
+is the moment in Mironov, arXiv:1702.07476v3, Definition 3. For arbitrary measures the formula
+uses Mathlib's total `rnDeriv`, which is zero without a Lebesgue decomposition. -/
 noncomputable def renyiMoment {Ω : Type*} [MeasurableSpace Ω] (μ ν : Measure Ω) (α : ℝ) :
     ℝ≥0∞ :=
   if μ ≪ ν ∧ 1 < α then ∫⁻ x, μ.rnDeriv ν x ^ α ∂ν else ∞
@@ -65,7 +67,9 @@ arXiv:1702.07476v3, Definition 3). Meant for probability measures. -/
 noncomputable def renyiDiv {Ω : Type*} [MeasurableSpace Ω] (μ ν : Measure Ω) (α : ℝ) : EReal :=
   if 1 < α then (((α - 1)⁻¹ : ℝ) : EReal) * ENNReal.log (renyiMoment μ ν α) else ⊤
 
-/-- Under `μ ≪ ν` and `1 < α`, the moment is the integral of the `α`-th power of `∂μ/∂ν`. -/
+/-- Under `μ ≪ ν` and `1 < α`, the moment integrates the `α`-th power of Mathlib's
+`μ.rnDeriv ν`. With a Lebesgue decomposition of `μ` with respect to `ν`, this function is a
+density of `μ` against `ν`. -/
 theorem renyiMoment_of_ac {Ω : Type*} [MeasurableSpace Ω] {μ ν : Measure Ω} {α : ℝ}
     (hμν : μ ≪ ν) (hα : 1 < α) :
     renyiMoment μ ν α = ∫⁻ x, μ.rnDeriv ν x ^ α ∂ν := by

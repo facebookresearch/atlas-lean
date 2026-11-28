@@ -6,3 +6,4 @@
 - [Lambert's problem](lambert-s-problem/README.md)
 - [Rocket ascent losses](rocket-ascent-losses/README.md)
 - [Torque-free rigid-body motion](torque-free-rigid-body-motion/README.md)
+- [Averaging of pulse-width modulated systems](averaging-of-pulse-width-modulated-systems/README.md)

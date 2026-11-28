@@ -14,12 +14,16 @@ public import Mathlib.NumberTheory.FLT.Basic
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import MathlibExt.NumberTheory.WieferichPrime
+public import MathlibExt.NumberTheory.FiniteMultipleZetaLevelColoredFiniteMZVOneEqPowMulSumProd
+public import MathlibExt.NumberTheory.FiniteMultipleZetaLevelExistsBoundBernoulliIffFiniteIInter
 
 /-!
 # Regular primes, non-Wieferich primes and finite multiple zeta values of level `N`
 
 Statements from Shin-ichiro Seki, *Regular Primes, Non-Wieferich Primes, and Finite
 Multiple Zeta Values of Level N*, INTEGERS 24 (2024), Article A22 (arXiv:2310.06809).
+The statement `exists_bound_bernoulli_iff_finite_iInter` is proved in
+`MathlibExt.NumberTheory.FiniteMultipleZetaLevelExistsBoundBernoulliIffFiniteIInter`.
 
 The paper works in `𝒜 = (∏_p ℤ/pℤ) / (⊕_p ℤ/pℤ)`. An identity "holds in `𝒜`" exactly
 when it holds modulo `p` for all but finitely many primes `p`; it is stated here as
@@ -39,26 +43,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter
-
-open scoped Classical in
-/-- **Colored finite multiple harmonic sums.** Let $p$ and $N$ be natural numbers, let
-$k = (k_1, \dots, k_r)$ be a finite sequence of natural numbers and let
-$\alpha = (\alpha_1, \dots, \alpha_r) \in (\mathbb{Z}/N\mathbb{Z})^r$. The colored finite multiple
-harmonic sum $\zeta^{\alpha}_{p,N}(k) \in \mathbb{Z}/p\mathbb{Z}$ is the sum of
-$m_1^{-k_1} \cdots m_r^{-k_r}$ over all integers $0 < m_1 < \dots < m_r < p$ with
-$m_i \equiv \alpha_i \pmod N$ for every $i$.
-
-Here $m^{-1}$ is the inverse of $m$ in $\mathbb{Z}/p\mathbb{Z}$; when $p$ is prime every
-$0 < m < p$ is invertible, and for other $p$ non-units get a conventional value.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Section 2.2 (definition of `ζ^α_{p,N}(k)`). -/
-noncomputable def coloredFiniteMZV (p N : ℕ) {r : ℕ} (k : Fin r → ℕ) (α : Fin r → ZMod N) :
-    ZMod p :=
-  ∑ m ∈ (Finset.univ : Finset (Fin r → Fin p)).filter
-      (fun m : Fin r → Fin p => StrictMono m ∧
-        ∀ i, 0 < (m i : ℕ) ∧ ((m i : ℕ) : ZMod N) = α i),
-    ∏ i, (((m i : ℕ) : ZMod p)⁻¹) ^ k i
 
 /-- **Colored finite multiple harmonic sum of the empty index.** For all natural numbers $p$
 and $N$, the colored finite multiple harmonic sum $\zeta^{\varnothing}_{p,N}(\varnothing)$ of the
@@ -117,17 +101,6 @@ public theorem_wanted two_mul_coloredFiniteMZV_twelve {k : ℕ} (hk : Odd k) (hk
         2 * coloredFiniteMZV p 12 ![k] ![-(3 : ZMod 12) * p] =
           (((3 : ZMod p) ^ k)⁻¹ - ((4 : ZMod p) ^ k)⁻¹ - ((6 : ZMod p) ^ k)⁻¹ +
             ((12 : ZMod p) ^ k)⁻¹) * Z
-
-/-- **Kummer's theorem for regular primes.** Let $p$ be an odd prime and let $K$ be a $p$-th
-cyclotomic field over $\mathbb{Q}$ (a number field generated over $\mathbb{Q}$ by a primitive
-$p$-th root of unity). If $p$ does not divide the class number of $K$, then Fermat's Last Theorem
-holds for the exponent $p$: there are no positive integers $a, b, c$ with $a^p + b^p = c^p$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Theorem 1 (`integers-2024-A22-thm-1`). -/
-public theorem_wanted fermatLastTheoremFor_of_regular {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (K : Type*) [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-    (hreg : ¬ p ∣ NumberField.classNumber K) : FermatLastTheoremFor p
 
 /-- **Wieferich's criterion for the first case of Fermat's Last Theorem.** Let $p$ be a prime
 that is not a Wieferich prime, that is, $p^2 \nmid 2^{p-1} - 1$. Then there are no integers
@@ -232,36 +205,6 @@ public theorem_wanted finiteMZVColored_eq_neg_one_pow_mul_reverse {N r : ℕ} (h
       finiteMZVColored p N k c = (-1) ^ (∑ i, k i) *
         finiteMZVColored p N (k ∘ Fin.rev) (fun a => (c a).map fun β i => a - β (Fin.rev i))
 
-open scoped Classical in
-/-- **Decomposition of finite multiple zeta values into level-$N$ pieces.** Let $N \ge 1$ and
-let $k = (k_1, \dots, k_r)$ be a finite sequence of natural numbers (entries equal to $0$ are
-allowed) of weight $w = k_1 + \dots + k_r$. For a prime $p$ put
-$\zeta_p(k) = \sum_{0 < m_1 < \dots < m_r < p} m_1^{-k_1} \cdots m_r^{-k_r}$ in
-$\mathbb{Z}/p\mathbb{Z}$, and for $0 \le j < N$ and a finite sequence $l$ let
-$\zeta^{[j]}_{p,N}(l)$ be the colored finite multiple harmonic sum of level $N$ of $l$ with every
-color equal to the class of $-jp$ modulo $N$. Then for all sufficiently large primes $p$
-$$
-\zeta_p(k) = N^w \sum_{0 \le i_1 \le \dots \le i_{N-1} \le r} \prod_{j=0}^{N-1}
-\zeta^{[j]}_{p,N}(k_{i_j + 1}, \dots, k_{i_{j+1}}),
-$$
-where $i_0 = 0$, $i_N = r$, and $(k_{i_j + 1}, \dots, k_{i_{j+1}})$ is empty when
-$i_j = i_{j+1}$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Proposition 1 (`integers-2024-A22-prop-1`). -/
-public theorem_wanted coloredFiniteMZV_one_eq_pow_mul_sum_prod {N : ℕ} (hN : 0 < N)
-    (κ : List ℕ) :
-    ∀ᶠ p in atTop, p.Prime →
-      coloredFiniteMZV p 1 (fun t : Fin κ.length => κ.get t) 0 =
-        (N : ZMod p) ^ κ.sum *
-          ∑ i ∈ (Finset.univ : Finset (Fin (N - 1) → Fin (κ.length + 1))).filter Monotone,
-            ∏ j : Fin N,
-              let e : ℕ → ℕ := fun t =>
-                if t = 0 then 0 else if h : t - 1 < N - 1 then (i ⟨t - 1, h⟩ : ℕ) else κ.length
-              let sub := (κ.drop (e j)).take (e ((j : ℕ) + 1) - e j)
-              coloredFiniteMZV p N (fun t : Fin sub.length => sub.get t)
-                (fun _ => -((j : ℕ) : ZMod N) * p)
-
 /-- **Raising the level of finite multiple zeta values.** Let $N$ and $M$ be positive integers
 with $N \mid M$, let $k = (k_1, \dots, k_r)$ be an index of positive integers of weight
 $w = k_1 + \dots + k_r$, and let $c$ be a color map from $\mathbb{Z}/N\mathbb{Z}$ to
@@ -308,29 +251,6 @@ public theorem_wanted exists_bound_fermatQuotient_iff_finite_iInter :
         ∃ N, 1 ≤ N ∧ N ≤ M ∧ ¬ p ∣ N ∧ ¬ p ^ 2 ∣ N ^ (p - 1) - 1) ↔
       ∃ M : ℕ, 3 ≤ M ∧
         {p : ℕ | p.Prime ∧ ∀ N ∈ Finset.Icc 2 M, p ^ 2 ∣ N ^ (p - 1) - 1}.Finite
-
-/-- **Criterion for a uniform bound on the least non-vanishing Bernoulli index.** The following
-are equivalent:
-(a) there is a natural number $M$ such that for every prime $p \ge 5$ there is an odd integer
-$k$ with $3 \le k \le M$, $k < p$ and $p \nmid \operatorname{num}(B_{p-k})$;
-(b) there is a natural number $M \ge 5$ such that only finitely many primes $p$ satisfy $k < p$
-and $p \mid \operatorname{num}(B_{p-k})$ for every odd integer $k$ with $3 \le k \le M$.
-
-Here $B_n$ is the $n$-th Bernoulli number, with $B_1 = +1/2$ (only even indices $n \ge 2$ occur),
-and $\operatorname{num}(B_n)$ is its numerator in lowest terms.
-
-Condition (a) says that the least such $k$, the source's $g_p$, is bounded uniformly in $p$;
-condition (b) says that $\bigcap_{3 \le k \le M,\ k \text{ odd}} I(k)$ is finite, where $I(k)$ is
-the set of primes $p > k$ with $p \mid \operatorname{num}(B_{p-k})$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Lemma 4 (`integers-2024-A22-lem-4`). -/
-public theorem_wanted exists_bound_bernoulli_iff_finite_iInter :
-    (∃ M : ℕ, ∀ p : ℕ, p.Prime → 5 ≤ p →
-        ∃ k, Odd k ∧ 3 ≤ k ∧ k ≤ M ∧ k < p ∧ ¬ (p : ℤ) ∣ (bernoulli' (p - k)).num) ↔
-      ∃ M : ℕ, 5 ≤ M ∧
-        {p : ℕ | p.Prime ∧ ∀ k ∈ Finset.Icc 3 M, Odd k →
-          k < p ∧ (p : ℤ) ∣ (bernoulli' (p - k)).num}.Finite
 
 /-- **Regular and non-Wieferich primes give non-vanishing finite multiple zeta values.**
 (i) Suppose that infinitely many odd primes $p$ are regular, in the sense that $p$ does not

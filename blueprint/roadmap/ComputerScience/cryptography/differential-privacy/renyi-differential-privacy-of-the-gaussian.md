@@ -4,17 +4,17 @@ Let $\mathrm{Adj}$ be a neighbouring relation on a set $X$ of databases, and let
 $f : X \to \mathbb{R}$ satisfy $|f(x) - f(y)| \le \Delta$ whenever $\mathrm{Adj}(x, y)$. For a
 variance $v > 0$, the *Gaussian mechanism* releases $f(x) + Z$ with $Z \sim \mathcal{N}(0, v)$, so
 its output on $x$ has law $\mathcal{N}(f(x), v)$. For every order $\alpha > 1$ it is
-$(\alpha, \alpha \Delta^2 / (2v))$-[Rényi differentially private](renyi-differentially-private.md):
+$(\alpha, \alpha \Delta^2 / (2v))$-[Rényi differentially private](../renyi-differential-privacy/renyi-differential-privacy.md):
 
 $$
 D_\alpha\left(\mathcal{N}(f(x), v) \,\|\, \mathcal{N}(f(y), v)\right) \le \frac{\alpha \Delta^2}{2v} \quad \text{whenever } \mathrm{Adj}(x, y).
 $$
 
-Here $D_\alpha(P \,\|\, Q) = \frac{1}{\alpha - 1} \log \int (dP/dQ)^\alpha \, dQ$ is the
-[Rényi divergence](../../../InformationTheory/information-inequalities/r-nyi-divergence/renyi-div.md),
-with the natural logarithm, when $P$ is absolutely continuous with respect to $Q$, and $\infty$
-otherwise. It is defined for arbitrary measures through the Radon–Nikodym
-derivative $dP/dQ$, which for these Gaussian laws is the ratio of their densities.
+For probability laws $P$ and $Q$, $D_\alpha(P \,\|\, Q) = \frac{1}{\alpha - 1} \log \int (dP/dQ)^\alpha \, dQ$
+is the [Rényi divergence](../../../InformationTheory/information-inequalities/r-nyi-divergence/renyi-div.md)
+when $P$ is absolutely continuous with respect to $Q$, and is $\infty$ otherwise. The logarithm is
+natural. For the nondegenerate Gaussian laws here, the Radon–Nikodym derivative $dP/dQ$ is the
+ratio of their densities.
 
 With sensitivity $\Delta = 1$ and variance $v = \sigma^2$ this is Mironov's Corollary 3 at orders
 $\alpha > 1$: the Gaussian mechanism is $(\alpha, \alpha / (2\sigma^2))$-Rényi differentially
