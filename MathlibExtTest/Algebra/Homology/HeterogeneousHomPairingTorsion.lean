@@ -148,14 +148,24 @@ private theorem comparison_routes :
   change (K.X 0 ⟶ M) at φ
   change (coefficientMap.f 0).hom ((sourceMap.f 0).hom φ) =
     (sourceMap.f 0).hom ((coefficientMap.f 0).hom φ)
-  calc
-    _ = ((sourceMap.f 0).hom φ) ≫ doubleCoefficient :=
-      coefficientMap_apply ((sourceMap.f 0).hom φ)
-    _ = (-φ) ≫ doubleCoefficient :=
-      congrArg (fun ψ : K.X 0 ⟶ M => ψ ≫ doubleCoefficient) (sourceMap_apply φ)
-    _ = -(φ ≫ doubleCoefficient) := Preadditive.neg_comp φ doubleCoefficient
-    _ = _ := ((sourceMap_apply ((coefficientMap.f 0).hom φ)).trans
-      (congrArg (fun ψ : K.X 0 ⟶ M => -ψ) (coefficientMap_apply φ))).symm
+  have h₁ : @Eq (K.X 0 ⟶ M)
+      ((coefficientMap.f 0).hom ((sourceMap.f 0).hom φ))
+      (((sourceMap.f 0).hom φ) ≫ doubleCoefficient) := by
+    simpa only using! coefficientMap_apply ((sourceMap.f 0).hom φ)
+  have hs : @Eq (K.X 0 ⟶ M) ((sourceMap.f 0).hom φ) (-φ) := by
+    simpa only using! sourceMap_apply φ
+  have h₂ := congrArg (fun ψ : K.X 0 ⟶ M => ψ ≫ doubleCoefficient) hs
+  have h₃ : @Eq (K.X 0 ⟶ M) ((-φ) ≫ doubleCoefficient)
+      (-(φ ≫ doubleCoefficient)) := Preadditive.neg_comp φ doubleCoefficient
+  have hs' : @Eq (K.X 0 ⟶ M)
+      ((sourceMap.f 0).hom ((coefficientMap.f 0).hom φ))
+      (-((coefficientMap.f 0).hom φ)) := by
+    simpa only using! sourceMap_apply ((coefficientMap.f 0).hom φ)
+  have hc : @Eq (K.X 0 ⟶ M) ((coefficientMap.f 0).hom φ)
+      (φ ≫ doubleCoefficient) := by
+    simpa only using! coefficientMap_apply φ
+  exact h₁.trans (h₂.trans (h₃.trans
+    (hs'.trans (congrArg (fun ψ : K.X 0 ⟶ M => -ψ) hc)).symm))
 
 example :
     (((sourceMap.f 0 ≫ coefficientMap.f 0).hom unitCochain).hom sample) =
