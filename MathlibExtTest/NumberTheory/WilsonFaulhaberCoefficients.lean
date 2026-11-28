@@ -25,6 +25,17 @@ example : ∃ F : ℚ[X], F.eval 0 = 0 ∧ F.eval 3 = 9 := by
     norm_num [show Icc 1 2 = {1, 2} by decide, sum_insert] at hn
     exact hn
 
+-- The explicit cubic power-sum polynomial is `X^2`. Its Wilson difference at `p = 3` is `9 / 2`.
+example : (X ^ 2 : ℚ[X]).eval 0 = 0 ∧ (X ^ 2 : ℚ[X]).eval 3 = 9 ∧
+    padicNorm 3 (2 - ((X ^ 2 : ℚ[X]).coeff 2 / 2 - 3)) = (3 : ℚ) ^ (-2 : ℤ) := by
+  let : Fact (Nat.Prime 3) := ⟨by decide⟩
+  refine ⟨by simp, by norm_num, ?_⟩
+  have h2 : padicNorm 3 (2 : ℚ) = 1 := (padicNorm.nat_eq_one_iff 2).2 (by decide)
+  have h3 : padicNorm 3 (3 : ℚ) = (3 : ℚ)⁻¹ := padicNorm.padicNorm_p_of_prime (p := 3)
+  rw [coeff_X_pow, ite_eq_left rfl, show (2 : ℚ) - (1 / 2 - 3) = (3 * 3) / 2 by norm_num]
+  simp only [padicNorm.div, padicNorm.mul, h2, h3, div_one]
+  norm_num [zpow_neg]
+
 private noncomputable def fifthPowerPoly : ℚ[X] := C (4 / 3) * X ^ 3 - C (1 / 3) * X ^ 2
 
 private theorem fifthPowerPoly_eval (n : ℕ) :
@@ -50,3 +61,27 @@ example : padicNorm 5 (-1 / 3) ≤ 1 ∧ padicNorm 5 (4 / 3) ≤ 1 ∧
   · simpa [fifthPowerPoly, coeff_sub, coeff_C_mul, coeff_X_pow] using hc 2 (by decide)
   · norm_num [fifthPowerPoly, coeff_sub, coeff_C_mul, coeff_X_pow, Nat.factorial] at hw ⊢
     exact hw
+
+-- Check the norms independently of the general theorem, using the exact Wilson difference 175 / 6.
+example : padicNorm 5 (fifthPowerPoly.coeff 2) = 1 ∧
+    padicNorm 5 (fifthPowerPoly.coeff 3) = 1 ∧
+    padicNorm 5 (24 - (fifthPowerPoly.coeff 2 / 2 - 5)) = (5 : ℚ) ^ (-2 : ℤ) := by
+  let : Fact (Nat.Prime 5) := ⟨by decide⟩
+  have hc2 : fifthPowerPoly.coeff 2 = -(1 / 3) := by
+    norm_num [fifthPowerPoly, coeff_sub, coeff_C_mul, coeff_X_pow]
+  have hc3 : fifthPowerPoly.coeff 3 = 4 / 3 := by
+    norm_num [fifthPowerPoly, coeff_sub, coeff_C_mul, coeff_X_pow]
+  have hnorm (n : ℕ) (hn : ¬ 5 ∣ n) : padicNorm 5 (n : ℚ) = 1 :=
+    (padicNorm.nat_eq_one_iff n).2 hn
+  have h3 : padicNorm 5 (3 : ℚ) = 1 := hnorm 3 (by decide)
+  have h4 : padicNorm 5 (4 : ℚ) = 1 := hnorm 4 (by decide)
+  have h5 : padicNorm 5 (5 : ℚ) = (5 : ℚ)⁻¹ := padicNorm.padicNorm_p_of_prime (p := 5)
+  have h6 : padicNorm 5 (6 : ℚ) = 1 := hnorm 6 (by decide)
+  have h7 : padicNorm 5 (7 : ℚ) = 1 := hnorm 7 (by decide)
+  rw [hc2, hc3]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [padicNorm.neg, padicNorm.div, padicNorm.one, h3, div_one]
+  · rw [padicNorm.div, h4, h3, div_one]
+  · rw [show (24 : ℚ) - (-(1 / 3) / 2 - 5) = (5 * 5) * (7 / 6) by norm_num]
+    simp only [padicNorm.mul, padicNorm.div, h5, h7, h6, div_one, mul_one]
+    norm_num [zpow_neg]

@@ -18,8 +18,8 @@ import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Data.Nat.Choose.Dvd
 import Mathlib.NumberTheory.BernoulliPolynomials
 import MathlibExt.Algebra.Polynomial.ZeroOneSquareComposition
-import all MathlibExt.NumberTheory.Bernoulli.SumModPrime
-import all MathlibExt.NumberTheory.WilsonFermatQuotient
+import MathlibExt.NumberTheory.Bernoulli.SumModPrime
+import MathlibExt.NumberTheory.WilsonFermatQuotient
 
 /-!
 # Faulhaber coefficients and Wilson's theorem modulo `p^2`
@@ -52,7 +52,8 @@ following Corollary 1, with the quadratic coefficient identified by differentiat
 * `MathlibExt.Algebra.Polynomial.ZeroOneSquareComposition`
   (`Polynomial.expand_contract_of_comp_neg_X_eq`),
   `MathlibExt.NumberTheory.Bernoulli.SumModPrime` (`padicValuation_bernoulli_le_one`), and
-  `MathlibExt.NumberTheory.WilsonFermatQuotient` (`wilson_mod_prime_sq`, `coprime_of_mem`).
+  `MathlibExt.NumberTheory.WilsonFermatQuotient`
+  (`wilson_mod_prime_sq`, `isCoprime_intCast_of_mem_Icc`).
 -/
 
 namespace MathlibExt.NumberTheory.WilsonFaulhaberWanted
@@ -228,10 +229,11 @@ private theorem factorial_sub_power_sum_norm {p : ℕ} [Fact p.Prime] (hp2 : p �
         ((∑ k ∈ Icc 1 (p - 1), (k : ℚ) ^ (p - 1)) - p)) ≤ (p : ℚ) ^ (-2 : ℤ) := by
   have hp : p.Prime := Fact.out
   have hq (k : Icc 1 (p - 1)) :
-      (p : ZMod (p ^ 2)) * (Int.fermatQuotient p hp (k.1 : ℤ) (coprime_of_mem hp k.2) :
-        ZMod (p ^ 2)) = (k.1 : ZMod (p ^ 2)) ^ (p - 1) - 1 := by
+      (p : ZMod (p ^ 2)) *
+          (Int.fermatQuotient p hp (k.1 : ℤ) (isCoprime_intCast_of_mem_Icc hp k.2) :
+            ZMod (p ^ 2)) = (k.1 : ZMod (p ^ 2)) ^ (p - 1) - 1 := by
     exact_mod_cast congrArg (fun z : ℤ => (z : ZMod (p ^ 2)))
-      (Int.natCast_mul_fermatQuotient p hp (k.1 : ℤ) (coprime_of_mem hp k.2))
+      (Int.natCast_mul_fermatQuotient p hp (k.1 : ℤ) (isCoprime_intCast_of_mem_Icc hp k.2))
   have hs := wilson_mod_prime_sq p hp hp2
   rw [mul_sum] at hs
   simp_rw [hq] at hs

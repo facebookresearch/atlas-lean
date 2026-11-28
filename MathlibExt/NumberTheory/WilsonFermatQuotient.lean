@@ -16,8 +16,14 @@ import Mathlib.Tactic.Ring
 /-!
 # Wilson's theorem modulo the square of an odd prime
 
-Levaillant's formula in terms of Fermat quotients follows by expanding products in `ZMod (p ^ 2)`:
-all terms containing two factors of `p` vanish.
+For an odd prime `p`, Levaillant's formula in terms of Fermat quotients follows by expanding
+products in `ZMod (p ^ 2)`: all terms containing two factors of `p` vanish.
+
+## References
+
+* Claire Levaillant, *Wilson's Theorem Modulo p^2 Derived from Faulhaber Polynomials*,
+  INTEGERS 24 (2024), Article A87, pp. 1–17, Theorem 1 (p. 3).
+  <https://math.colgate.edu/~integers/y87/y87.pdf>
 -/
 
 set_option autoImplicit false
@@ -28,7 +34,8 @@ open Finset
 
 namespace MathlibExt.NumberTheory.WilsonFaulhaberWanted
 
-private theorem coprime_of_mem {p k : ℕ} (hp : p.Prime)
+/-- If `p` is prime and `1 ≤ k ≤ p - 1`, then the integer casts of `k` and `p` are coprime. -/
+theorem isCoprime_intCast_of_mem_Icc {p k : ℕ} (hp : p.Prime)
     (h : k ∈ Finset.Icc 1 (p - 1)) : IsCoprime (k : ℤ) (p : ℤ) := by
   rw [Finset.mem_Icc] at h
   have hlt : k < p := by have := hp.pos; omega
@@ -36,7 +43,9 @@ private theorem coprime_of_mem {p k : ℕ} (hp : p.Prime)
     ((hp.coprime_iff_not_dvd.mpr
       (Nat.not_dvd_of_pos_of_lt h.1 hlt)).symm)
 
-private theorem prod_one_add_mul_of_square_zero {R ι : Type*} [CommRing R]
+/-- If `x * x = 0`, only the constant and linear terms survive in the product of
+`1 + x * f i` over a finite set. -/
+theorem prod_one_add_mul_of_square_zero {R ι : Type*} [CommRing R]
     (x : R) (hx : x * x = 0) (s : Finset ι) (f : ι → R) :
     ∏ i ∈ s, (1 + x * f i) = 1 + x * ∑ i ∈ s, f i := by
   classical
@@ -62,17 +71,18 @@ theorem wilson_mod_prime_sq (p : ℕ) (hp : p.Prime)
       -1 + (p : ZMod (p ^ 2)) *
         ∑ k ∈ (Finset.Icc 1 (p - 1)).attach,
           ((Int.fermatQuotient p hp (k.1 : ℤ)
-            (by exact coprime_of_mem hp k.2) : ℤ) : ZMod (p ^ 2)) := by
+            (by exact isCoprime_intCast_of_mem_Icc hp k.2) : ℤ) : ZMod (p ^ 2)) := by
   let x : ZMod (p ^ 2) := p
   have hx : x * x = 0 := by
     calc
       x * x = ((p ^ 2 : ℕ) : ZMod (p ^ 2)) := by simp only [x, pow_two, Nat.cast_mul]
       _ = 0 := ZMod.natCast_self _
   let s := Finset.Icc 1 (p - 1)
-  let q (k : s) : ZMod (p ^ 2) := Int.fermatQuotient p hp (k.1 : ℤ) (coprime_of_mem hp k.2)
+  let q (k : s) : ZMod (p ^ 2) :=
+    Int.fermatQuotient p hp (k.1 : ℤ) (isCoprime_intCast_of_mem_Icc hp k.2)
   have hq (k : s) : (k.1 : ZMod (p ^ 2)) ^ (p - 1) = 1 + x * q k := by
     have h := congrArg (fun n : ℤ => (n : ZMod (p ^ 2)))
-      (Int.natCast_mul_fermatQuotient p hp (k.1 : ℤ) (coprime_of_mem hp k.2))
+      (Int.natCast_mul_fermatQuotient p hp (k.1 : ℤ) (isCoprime_intCast_of_mem_Icc hp k.2))
     have h' : x * q k = (k.1 : ZMod (p ^ 2)) ^ (p - 1) - 1 := by
       simpa only [x, q, Int.cast_mul, Int.cast_sub, Int.cast_pow, Int.cast_natCast, Int.cast_one]
         using h

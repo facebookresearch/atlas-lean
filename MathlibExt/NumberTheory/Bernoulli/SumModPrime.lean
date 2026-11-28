@@ -80,7 +80,7 @@ private theorem padicValuation_bernoulli_two_mul_le_one {p : ℕ} [Fact p.Prime]
   exact ⟨hq.2.1, fun hqp => hpm (hqp ▸ hq.2.2)⟩
 
 /-- For `p = 2k + 1` an odd prime, every `B_j` with `j ≤ p` and `j ≠ 2k` is `p`-integral. -/
-private theorem padicValuation_bernoulli_le_one {p k j : ℕ} [Fact p.Prime] (hp2 : p ≠ 2)
+public theorem padicValuation_bernoulli_le_one {p k j : ℕ} [Fact p.Prime] (hp2 : p ≠ 2)
     (hk : p = 2 * k + 1) (hj : j ≤ p) (hjk : j ≠ 2 * k) :
     Rat.padicValuation p (bernoulli j) ≤ 1 := by
   rcases Nat.lt_or_ge j 2 with hj2 | hj2
