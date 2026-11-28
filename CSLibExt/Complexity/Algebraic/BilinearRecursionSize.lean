@@ -136,6 +136,141 @@ theorem recursiveCircuit_size_le {F : Type u} [Field F] {q : ℕ}
     nlinarith [mul_le_mul_right ih r, mul_le_mul_right hlen ((recursiveCircuit terms k).size),
       mul_le_mul_right hLr2 (6 * q ^ (2 * k) * q ^ 2)]
 
+/-- **Zero-padding embedding.** Inputs of `n`-by-`n` matrices are embedded into the
+input positions of `N`-by-`N` matrices, padding with zeros outside the range. -/
+private def padEmbed (F : Type u) [Field F] {n N : ℕ} :
+    ArithmeticCircuit F ((Fin n × Fin n) ⊕ (Fin n × Fin n))
+      ((Fin N × Fin N) ⊕ (Fin N × Fin N)) where
+  size := 0
+  gate := fun i => nomatch i
+  output
+    | Sum.inl (i, j) =>
+      if h : i.val < n ∧ j.val < n then
+        ArithmeticOperand.input (Sum.inl (Fin.castLT i h.1, Fin.castLT j h.2))
+      else ArithmeticOperand.constant 0
+    | Sum.inr (i, j) =>
+      if h : i.val < n ∧ j.val < n then
+        ArithmeticOperand.input (Sum.inr (Fin.castLT i h.1, Fin.castLT j h.2))
+      else ArithmeticOperand.constant 0
+
+/-- **Output projection.** Outputs of `N`-by-`N` matrices are projected back to the
+`n`-by-`n` output positions. -/
+private def padProject (F : Type u) [Field F] {n N : ℕ} (hnN : n ≤ N) :
+    ArithmeticCircuit F (Fin N × Fin N) (Fin n × Fin n) where
+  size := 0
+  gate := fun i => nomatch i
+  output := fun p => ArithmeticOperand.input (Fin.castLE hnN p.1, Fin.castLE hnN p.2)
+
+/-- **Monotonicity of matrix-multiplication circuit size.** A circuit for `N`-by-`N`
+matrices restricts to one for `n`-by-`n` matrices with no extra gates, by
+zero-padding the inputs and projecting the outputs. -/
+theorem IsMatrixMultiplication.exists_size_le_of_le {F : Type u} [Field F]
+    {n N : ℕ} (hnN : n ≤ N) {c : MatrixArithmeticCircuit F N N N}
+    (hc : IsMatrixMultiplication c) :
+    ∃ c' : MatrixArithmeticCircuit F n n n, IsMatrixMultiplication c' ∧
+      c'.size ≤ c.size := by
+  refine ⟨(padProject F hnN).subst (c.subst (padEmbed F)), ?_, ?_⟩
+  · intro A B i j
+    set A' : Matrix (Fin N) (Fin N) F :=
+      Matrix.of fun a b =>
+        if h : a.val < n ∧ b.val < n then
+          A (Fin.castLT a h.1) (Fin.castLT b h.2)
+        else 0 with hA'def
+    set B' : Matrix (Fin N) (Fin N) F :=
+      Matrix.of fun a b =>
+        if h : a.val < n ∧ b.val < n then
+          B (Fin.castLT a h.1) (Fin.castLT b h.2)
+        else 0 with hB'def
+    have hA' : ∀ a b : Fin N, A' a b =
+        (if h : a.val < n ∧ b.val < n then
+          A (Fin.castLT a h.1) (Fin.castLT b h.2)
+        else 0) := fun a b => rfl
+    have hB' : ∀ a b : Fin N, B' a b =
+        (if h : a.val < n ∧ b.val < n then
+          B (Fin.castLT a h.1) (Fin.castLT b h.2)
+        else 0) := fun a b => rfl
+    have hemb : (fun a => (padEmbed F).evaluate (matrixInput A B) a)
+        = matrixInput A' B' := by
+      funext a
+      cases a with
+      | inl p =>
+        obtain ⟨p1, p2⟩ := p
+        simp only [ArithmeticCircuit.evaluate, padEmbed,
+          ArithmeticOperand.evaluate, matrixInput, Sum.elim_inl, hA' p1 p2]
+        by_cases h : p1.val < n ∧ p2.val < n <;> simp [h]
+      | inr p =>
+        obtain ⟨p1, p2⟩ := p
+        simp only [ArithmeticCircuit.evaluate, padEmbed,
+          ArithmeticOperand.evaluate, matrixInput, Sum.elim_inr, hB' p1 p2]
+        by_cases h : p1.val < n ∧ p2.val < n <;> simp [h]
+    have hproj : ∀ (x : (Fin N × Fin N) → F) (p : Fin n × Fin n),
+        (padProject F hnN).evaluate x p
+          = x (Fin.castLE hnN p.1, Fin.castLE hnN p.2) := by
+      intro x p
+      obtain ⟨p1, p2⟩ := p
+      simp [ArithmeticCircuit.evaluate, padProject, ArithmeticOperand.evaluate]
+    simp only [ArithmeticCircuit.evaluate_subst, hemb, hproj]
+    rw [hc A' B' (Fin.castLE hnN i) (Fin.castLE hnN j)]
+    set u : Fin N := Fin.castLE hnN i with hu_def
+    set v : Fin N := Fin.castLE hnN j with hv_def
+    have hu_val : u.val = i.val := rfl
+    have hv_val : v.val = j.val := rfl
+    have hu_lt : u.val < n := by rw [hu_val]; exact i.isLt
+    have hv_lt : v.val < n := by rw [hv_val]; exact j.isLt
+    rw [Matrix.mul_apply, Matrix.mul_apply]
+    set s : Finset (Fin N) := Finset.univ.image (Fin.castLE hnN) with hs_def
+    have hmem : ∀ k : Fin N, k ∈ s ↔ k.val < n := by
+      intro k
+      simp only [hs_def, Finset.mem_image, Finset.mem_univ, true_and]
+      constructor
+      · rintro ⟨a, rfl⟩
+        have h1 : (Fin.castLE hnN a).val = a.val := rfl
+        rw [h1]; exact a.isLt
+      · intro hk
+        exact ⟨Fin.castLT k hk, Fin.ext rfl⟩
+    have hvanish : ∀ k : Fin N, k ∉ s → A' u k * B' k v = 0 := by
+      intro k hk
+      have hkn : ¬ k.val < n := fun hh => hk ((hmem k).mpr hh)
+      have hA0 : A' u k = 0 := by
+        have hneg : ¬ (u.val < n ∧ k.val < n) := fun h => hkn h.2
+        simp [hA' u k, hneg]
+      rw [hA0, zero_mul]
+    have hsum1 : (∑ k : Fin N, A' u k * B' k v)
+        = Finset.sum s (fun k => A' u k * B' k v) :=
+      (Finset.sum_subset (Finset.subset_univ s)
+        (fun k _ hk => hvanish k hk)).symm
+    have hinj : Function.Injective (Fin.castLE hnN) := by
+      intro a b hab
+      have hval : (Fin.castLE hnN a).val = (Fin.castLE hnN b).val :=
+        congrArg Fin.val hab
+      have hval' : a.val = b.val := hval
+      exact Fin.ext hval'
+    have hsum2 : Finset.sum s (fun k => A' u k * B' k v)
+        = ∑ k : Fin n, A' u (Fin.castLE hnN k) * B' (Fin.castLE hnN k) v := by
+      rw [hs_def]
+      exact Finset.sum_image (fun a _ b _ hab => hinj hab)
+    have hpoint : ∀ k : Fin n, A' u (Fin.castLE hnN k) * B' (Fin.castLE hnN k) v
+        = A i k * B k j := by
+      intro k
+      have hk : (Fin.castLE hnN k).val < n := by
+        have h1 : (Fin.castLE hnN k).val = k.val := rfl
+        rw [h1]; exact k.isLt
+      have hA1 : A' u (Fin.castLE hnN k) = A i k := by
+        have hcond : u.val < n ∧ (Fin.castLE hnN k).val < n := ⟨hu_lt, hk⟩
+        simp only [hA' u (Fin.castLE hnN k), dite_eq_left hcond]
+        congr 1
+      have hB1 : B' (Fin.castLE hnN k) v = B k j := by
+        have hcond : (Fin.castLE hnN k).val < n ∧ v.val < n := ⟨hk, hv_lt⟩
+        simp only [hB' (Fin.castLE hnN k) v, dite_eq_left hcond]
+        congr 1
+      rw [hA1, hB1]
+    rw [hsum1, hsum2]
+    exact Finset.sum_congr rfl (fun k _ => hpoint k)
+  · have hE : (@padEmbed F _ n N).size = 0 := rfl
+    have hP : (@padProject F _ n N hnN).size = 0 := rfl
+    rw [ArithmeticCircuit.size_subst, ArithmeticCircuit.size_subst, hE, hP,
+      zero_add, add_zero]
+
 end
 
 end Cslib.Complexity.Algebraic

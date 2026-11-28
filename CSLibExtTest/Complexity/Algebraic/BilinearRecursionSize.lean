@@ -61,4 +61,12 @@ example {F : Type u} [Field F] {q : ℕ}
         (terms.length : ℤ) ^ 0 :=
   recursiveCircuit_size_closed terms 0
 
+#check @IsMatrixMultiplication.exists_size_le_of_le
+
+example {F : Type u} [Field F] (c : MatrixArithmeticCircuit F 4 4 4)
+    (hc : IsMatrixMultiplication c) :
+    ∃ c' : MatrixArithmeticCircuit F 3 3 3, IsMatrixMultiplication c' ∧
+      c'.size ≤ c.size :=
+  IsMatrixMultiplication.exists_size_le_of_le (by norm_num) hc
+
 end Cslib.Complexity.Algebraic
