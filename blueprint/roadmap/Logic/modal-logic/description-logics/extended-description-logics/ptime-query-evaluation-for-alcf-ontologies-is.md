@@ -10,7 +10,7 @@ Unless PTime = NP, no algorithm decides whether a given ontology in the descript
 4. $\mathcal T$ is rewritable into Datalog with inequalities;
 5. $\mathcal T$ is materializable, that is, query evaluation over every ABox with respect to $\mathcal T$ reduces to evaluation in a single model of $\mathcal T$ and the ABox (in the sense of Section 3 of the source).
 
-The source also shows that there is no PTime/coNP dichotomy for query evaluation with respect to ALCF-TBoxes unless PTime = NP: for every language in coNP there is an ALCF-TBox whose query evaluation has the same complexity up to polynomial reductions (Theorem 7.4). By contrast, there is a PTime/coNP dichotomy for query evaluation with respect to ALCFI-TBoxes of depth one and with respect to ALCI-TBoxes (Points 1 and 2 of the source's introduction), the latter through a link to the dichotomy for finite-template constraint satisfaction problems.
+The source also shows that there is no PTime/coNP dichotomy for query evaluation with respect to ALCF-TBoxes unless PTime = NP: for every language $L$ in coNP there are an ALCF-TBox $\mathcal T$ and a concept name $M_0$ such that $L$ reduces in polynomial time to the evaluation of $(\mathcal T, \exists x\, M_0(x))$ and the evaluation of $(\mathcal T, q)$ reduces in polynomial time to $L$ for every positive existential query $q$ (Theorem 7.4). By contrast, there is a PTime/coNP dichotomy for query evaluation with respect to ALCFI-TBoxes of depth one and with respect to ALCI-TBoxes (Points 1 and 2 of the source's introduction), the latter through a link to the dichotomy for finite-template constraint satisfaction problems.
 
 ## Depends on
 
@@ -24,7 +24,7 @@ None.
 
 ## Expansion
 
-The proofs reduce the finite rectangle tiling problem: given tile types with a horizontal and a vertical matching relation, an initial tile and a final tile, is there a tiling of some rectangle $\{0, \ldots, n\} \times \{0, \ldots, m\}$ with the initial tile in the lower left and the final tile in the upper right corner? From an instance $P$ the source builds an ALCF-TBox $\mathcal T_P$, using functional roles $x, y, \hat x, \hat y$ and "hidden concepts", following a TBox constructed for the undecidability of query emptiness in ALCF, and relates the properties above of the resulting TBoxes to whether $P$ admits a tiling. A good expansion links the undecidability of the finite rectangle tiling problem, which has no page yet.
+The proofs reduce the finite rectangle tiling problem: given tile types with a horizontal and a vertical matching relation, an initial tile and a final tile, is there a tiling of some rectangle $\{0, \ldots, n\} \times \{0, \ldots, m\}$ with the initial tile in the lower left and the final tile in the upper right corner? From an instance $P$ the source builds an ALCF-TBox $\mathcal T_P$, using functional roles $x, y, \hat x, \hat y$ and "hidden concepts", following a TBox constructed for the undecidability of query emptiness in ALCF, and relates the properties above of the resulting TBoxes to whether $P$ admits a tiling. A good expansion links the undecidability of the finite rectangle tiling problem.
 
 ## Sources
 

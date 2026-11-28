@@ -4,7 +4,7 @@ Whether a union of conjunctive queries holds in every finite model of a knowledg
 
 **Logics.** ALCOIF extends [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md) by nominals $\{a\}$, inverse roles $r^-$ and functionality axioms $\mathrm{Fun}(r)$, satisfied when $r^{\mathcal{I}}$ is a partial function. SHOIF adds role inclusions $r \sqsubseteq s$ and transitivity axioms $\mathrm{Trans}(r)$; SROIF⁻ further allows complex role inclusions $r_1 \circ \cdots \circ r_n \sqsubseteq r$. A knowledge base is a finite set of such axioms together with concept inclusions and assertions.
 
-**Queries and finite entailment.** A conjunctive query is a finite set of atoms $A(x)$ and $r(x, y)$ over variables, which holds in an interpretation if some assignment of domain elements to its variables makes all atoms true; a union of conjunctive queries holds if one of them does. A two-way regular path query $E(x, y)$ asks for a path from $x$ to $y$ whose sequence of roles and inverse roles matches the regular expression $E$. A knowledge base $\mathcal{K}$ *finitely entails* a query $q$, written $\mathcal{K} \models_{\mathrm{fin}} q$, if $q$ holds in every model of $\mathcal{K}$ with a finite domain.
+**Queries and finite entailment.** A conjunctive query is a finite set of atoms $A(x)$ and $r(x, y)$ over variables, all existentially quantified (Boolean queries, as in the source's footnote on query entailment), which holds in an interpretation if some assignment of domain elements to its variables makes all atoms true; a union of conjunctive queries holds if one of them does. A two-way regular path query $E(x, y)$ asks for a path from $x$ to $y$ whose sequence of roles and inverse roles matches the regular expression $E$. A knowledge base $\mathcal{K}$ *finitely entails* a query $q$, written $\mathcal{K} \models_{\mathrm{fin}} q$, if $q$ holds in every model of $\mathcal{K}$ with a finite domain.
 
 **Theorem (Rudolph).**
 
@@ -22,11 +22,11 @@ Finite and unrestricted entailment differ: the SHOIF knowledge base with $\mathr
 
 ## Proof depends on
 
-- [The Post correspondence problem is undecidable](../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [The Post correspondence problem is undecidable over the binary alphabet](../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/not-tm2-decidable-pcp-bool.md)
 
 ## Expansion
 
-For a PCP instance $P$ over $\{a, b\}$, a SHOIF knowledge base $\mathcal{K}_P$ has finite models that spell a candidate solution letter by letter along a chain, with a correspondence relation between the two spelled words, and two conjunctive queries $q_1, q_2$ are matched exactly in the finite models that do not encode a solution; then $P$ has a solution iff $\mathcal{K}_P \not\models_{\mathrm{fin}} \{q_1, q_2\}$ (Theorem 2). Complex role inclusions merge the two queries into one, and a reduction of the source turns the one-atom query into a two-way regular path query over ALCOIF.
+For a PCP instance $P$, a finite list of pairs of nonempty words over the two-letter alphabet $\{a, b\}$ (Definition 2), a SHOIF knowledge base $\mathcal{K}_P$ has finite models that spell a candidate solution letter by letter along a chain, with a correspondence relation between the two spelled words, and two conjunctive queries $q_1, q_2$ are matched exactly in the finite models that do not encode a solution; then $P$ has a solution iff $\mathcal{K}_P \not\models_{\mathrm{fin}} \{q_1, q_2\}$ (Theorem 2). Complex role inclusions merge the two queries into one, and a reduction of the source turns the one-atom query into a two-way regular path query over ALCOIF.
 
 ## Sources
 
