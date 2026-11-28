@@ -20,6 +20,7 @@ The first claim is direct substitution. In the second case the polynomial $g(Z) 
 
 - [Pairwise-independent hashing by affine maps over GF(2)](../../../../TheoryOfComputation/counting-complexity/counting-and-the-polynomial-hierarchy/pairwise-independent-hashing-by-affine-maps.md)
 - [Universal hash family](../../../data-structures/hashing/universal-hashing/is-universal.md)
+- [A polynomial over an integral domain has at most as many roots as its degree](../../../../Algebra/zeros-of-polynomials/card-roots-le-degree.md)
 
 ## Sources
 

@@ -17,3 +17,6 @@ The edge bound holds because each forest has at most $n - 1$ edges. For the cert
 ## Sources
 
 - Hiroshi Nagamochi, Toshihide Ibaraki, "A Linear-Time Algorithm for Finding a Sparse k-Connected Spanning Subgraph of a k-Connected Graph", Algorithmica (1992).
+- G. Bezdrighin, M. Elkin, M. Ghaffari, C. Grunau, B. Haeupler, S. Ilchi, V. Rozhoň, "Deterministic Distributed Sparse and Ultra-Sparse Spanners and Connectivity Certificates", arXiv:2204.14086v2, Appendix G (union of $k$ skeletons contains all or at least $k$ edges of every cut, size at most $k(n-1)$).
+- K. Kawarabayashi, M. Thorup, "Deterministic Edge Connectivity in Near-Linear Time", arXiv:1411.5123v5, Section 6.2.
+- C. Chekuri, C. Xu, "Computing Minimum Cuts in Hypergraphs", arXiv:1607.08682v3, Section 1.1.

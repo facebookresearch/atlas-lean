@@ -13,7 +13,7 @@ Within a synchronized view, all correct replicas vote in every phase once the le
 
 ## Proof depends on
 
-- [Safety of HotStuff under n at least 3f + 1](hotstuff-safety.md)
+- [Safety of HotStuff with 3f + 1 replicas](hotstuff-safety.md)
 
 ## Sources
 

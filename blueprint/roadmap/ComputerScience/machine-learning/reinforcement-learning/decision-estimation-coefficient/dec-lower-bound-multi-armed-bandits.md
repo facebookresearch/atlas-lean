@@ -9,7 +9,7 @@ Take the reference model $\bar M \in \mathcal{M}$ with all means equal to $\tfra
 ## Depends on
 
 - [Decision-estimation coefficient](decision-estimation-coefficient.md)
-- [Stochastic k-armed bandits: canonical history law and regret](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Stochastic k-armed bandits: canonical history law](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
 - [The constrained DEC lower bounds the regret of every algorithm](dec-regret-lower-bound.md)
 
 ## Sources

@@ -20,4 +20,4 @@ The difference $\mathbf{\Delta} - \sum_{e \notin T}\mathbf{\Delta}_e\boldsymbol{
 
 ## Sources
 
-- Li Chen, Rasmus Kyng, Yang P. Liu, Richard Peng, Maximilian Probst Gutenberg, Sushant Sachdeva, "Maximum Flow and Minimum-Cost Flow in Almost-Linear Time", FOCS (2022), arXiv:2203.00671.
+- Li Chen, Rasmus Kyng, Yang P. Liu, Richard Peng, Maximilian Probst Gutenberg, Sushant Sachdeva, "Maximum Flow and Minimum-Cost Flow in Almost-Linear Time", FOCS (2022), arXiv:2203.00671, Section 2.2 and Figure 1 (the classic decomposition of a circulation into fundamental tree cycles of its off-tree edges).

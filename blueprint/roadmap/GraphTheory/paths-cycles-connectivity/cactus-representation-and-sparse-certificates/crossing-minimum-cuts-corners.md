@@ -28,3 +28,4 @@ For the cut function $f(X) = w(\partial X)$ one has the identity $f(S \cap T) + 
 ## Sources
 
 - Efim A. Dinits, Alexander V. Karzanov, Michael V. Lomonosov, "On the Structure of a System of Minimum Edge Cuts of a Graph", Studies in Discrete Optimization (1976).
+- Hiroshi Nagamochi, Tiko Kameda, "Constructing Cactus Representation for All Minimum Cuts in an Undirected Network", Journal of the Operations Research Society of Japan 39(2) (1996), Lemma 3.1 (both displayed equalities, for edge-weighted networks).

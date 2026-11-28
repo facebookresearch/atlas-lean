@@ -16,3 +16,7 @@ equivalently (by Menger's theorem) $|\partial_H S| \ge \min\{|\partial_G S|, k\}
 ## Sources
 
 - Hiroshi Nagamochi, Toshihide Ibaraki, "A Linear-Time Algorithm for Finding a Sparse k-Connected Spanning Subgraph of a k-Connected Graph", Algorithmica (1992).
+- C. Chekuri, C. Xu, "Computing Minimum Cuts in Hypergraphs", arXiv:1607.08682v3, Section 1.1 (local-connectivity form $\lambda_{G'}(s,t) \ge \min\{k, \lambda_G(s,t)\}$).
+- G. Bezdrighin, M. Elkin, M. Ghaffari, C. Grunau, B. Haeupler, S. Ilchi, V. Rozhoň, "Deterministic Distributed Sparse and Ultra-Sparse Spanners and Connectivity Certificates", arXiv:2204.14086v2, Appendix G (cut form).
+- K. Kawarabayashi, M. Thorup, "Deterministic Edge Connectivity in Near-Linear Time", arXiv:1411.5123v5, Section 6.2 (maximal forest decomposition).
+- D. Panigrahi, Duke COMPSCI 590.1 Graph Algorithms, Lecture 7 (2015), Definition 4 (greedy spanning forest packing).

@@ -25,6 +25,8 @@ If some component of $G$ contains an odd number of vertices of $T$, both sides a
 ## Proof depends on
 
 - [Edmonds' perfect matching polytope theorem](../../../../GraphTheory/matchings-and-flows/matching-polytope/perfect-matching-polytope-eq.md)
+- [Strong linear programming duality](../../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md)
+- [Strict separation of a point from a closed convex set](../../../../Analysis/banach-spaces/duality-and-weak-topologies/hahn-banach-theorem/strict-separation-of-a-point-from-a-closed-convex-set.md)
 
 ## Sources
 

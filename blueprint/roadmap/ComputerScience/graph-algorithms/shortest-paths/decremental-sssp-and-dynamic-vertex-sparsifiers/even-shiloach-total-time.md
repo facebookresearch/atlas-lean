@@ -4,11 +4,12 @@ An Even-Shiloach tree of depth $D$ on an unweighted undirected graph with $m$ ed
 
 ## Proof sketch
 
-Edge deletions only increase distances, so every level $\ell(v)$ is nondecreasing and takes at most $D + 1$ finite values. Between two increases of $\ell(v)$, the scan pointer of $v$ moves monotonically through its $\deg(v)$ neighbours, because a neighbour rejected at level $\ell(v) - 1$ can never return to that level. Thus $v$ costs $O(\deg(v))$ per level, and summing over vertices and levels gives $O(D \sum_v \deg(v)) = O(mD)$.
+Edge deletions only increase distances, so every level $\ell(v)$ is nondecreasing and takes at most $D + 1$ finite values. Use the heap-free scan-pointer implementation of the Even-Shiloach tree. Between two increases of $\ell(v)$, the scan pointer of $v$ moves monotonically through its $\deg(v)$ neighbours, because a neighbour rejected at level $\ell(v) - 1$ can never return to that level. Each increase of $\ell(v)$ also notifies the $\deg(v)$ neighbours of $v$. Thus $v$ costs $O(\deg(v))$ per level, and summing over vertices and levels gives $O(D \sum_v \deg(v)) = O(mD)$.
 
 ## Depends on
 
 - [Even-Shiloach trees of bounded depth](even-shiloach-tree.md)
+- [Oblivious and adaptive adversaries; amortized and worst-case update time](../../../data-structures/disjoint-sets-and-dynamic-trees/fully-dynamic-connectivity-and-spanning-forests/adversary-and-update-time-models.md)
 
 ## Proof depends on
 
@@ -17,3 +18,5 @@ Edge deletions only increase distances, so every level $\ell(v)$ is nondecreasin
 ## Sources
 
 - Shimon Even, Yossi Shiloach, "An On-Line Edge-Deletion Problem", J. ACM 28(1) (1981).
+- Monika Henzinger, Sebastian Krinninger, Danupon Nanongkai, "Dynamic Approximate All-Pairs Shortest Paths: Breaking the O(mn) Barrier and Derandomization", FOCS (2013); SIAM Journal on Computing (2016), arXiv:1308.0776, Section 2.2.
+- Valerie King, "Fully Dynamic Algorithms for Maintaining All-Pairs Shortest Paths and Transitive Closure in Digraphs", FOCS (1999).

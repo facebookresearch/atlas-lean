@@ -1,12 +1,12 @@
 # Polylogarithmic-time deterministic network decomposition
 
-Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. There is a deterministic distributed algorithm that computes a network decomposition with $O(\log n)$ colours and weak diameter $O(\log^3 n)$ in $\mathrm{poly}(\log n)$ rounds, using messages of $O(\log n)$ bits (so in CONGEST). Combined with the completeness of network decomposition, this gives
+Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. There is a deterministic distributed algorithm that computes a network decomposition with $O(\log n)$ colours and weak diameter $O(\log^3 n)$ in $\mathrm{poly}(\log n)$ rounds, using messages of $O(\log n)$ bits (so in CONGEST). Combined with known results on network decomposition and derandomization, this gives
 
 $$
-\mathrm{P}\text{-}\mathrm{LOCAL} = \mathrm{P}\text{-}\mathrm{SLOCAL} = \mathrm{P}\text{-}\mathrm{RLOCAL}
+\mathrm{P}\text{-}\mathrm{LOCAL} = \mathrm{P}\text{-}\mathrm{RLOCAL},
 $$
 
-for problems whose solutions can be checked deterministically in polylogarithmic rounds; in particular maximal independent set and $(\Delta+1)$-colouring have deterministic polylogarithmic-round algorithms.
+where $\mathrm{P}\text{-}\mathrm{LOCAL}$ is the family of locally checkable problems solvable by deterministic algorithms in $\mathrm{poly}(\log n)$ rounds of the LOCAL model on $n$-vertex graphs, and $\mathrm{P}\text{-}\mathrm{RLOCAL}$ the family of locally checkable problems solvable by randomized algorithms in $\mathrm{poly}(\log n)$ rounds of the LOCAL model with success probability $1 - 1/n$; in particular maximal independent set and $(\Delta+1)$-colouring have deterministic polylogarithmic-round algorithms.
 
 ## Proof sketch
 
@@ -16,12 +16,13 @@ Construct each colour class in $b = O(\log n)$ phases indexed by the bits of the
 
 - [Network decomposition with weak or strong diameter](network-decomposition-weak-strong-diameter.md)
 - [The CONGEST model of distributed computing](the-congest-model.md)
-- [The SLOCAL model and its polylogarithmic class](the-slocal-model.md)
+- [The LOCAL model](../../distributed-execution-models/the-local-model.md)
 
 ## Proof depends on
 
 - [Network decomposition is complete for polylogarithmic sequential locality](network-decomposition-slocal-complete.md)
+- [The SLOCAL model and its polylogarithmic class](the-slocal-model.md)
 
 ## Sources
 
-- V. Rozhoň, M. Ghaffari, "Polylogarithmic-Time Deterministic Network Decomposition and Distributed Derandomization", STOC 2020, arXiv:1907.10937, Section 1.3 and Section 2.
+- V. Rozhoň, M. Ghaffari, "Polylogarithmic-Time Deterministic Network Decomposition and Distributed Derandomization", STOC 2020, arXiv:1907.10937, Theorem 1.1, Section 1.3 and Section 2.

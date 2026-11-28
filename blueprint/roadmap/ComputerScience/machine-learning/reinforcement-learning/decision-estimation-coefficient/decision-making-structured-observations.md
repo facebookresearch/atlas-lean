@@ -4,7 +4,7 @@ In the **decision making with structured observations** framework, a model class
 
 ## Depends on
 
-- [Stochastic k-armed bandits: canonical history law and regret](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Stochastic k-armed bandits: canonical history law](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
 - [Stochastic policy](../stochastic-policies-and-discounted-occupancy/stochastic-policy.md)
 
 ## Sources

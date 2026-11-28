@@ -7,7 +7,7 @@ The *negative-weight single-source shortest paths problem* (negative-weight SSSP
 1. a shortest-path tree $T$ rooted at $s$ that spans all vertices reachable from $s$, so that the tree path to each such $v$ has weight $\mathrm{dist}_G(s,v)$, or
 2. a directed cycle $C$ of $G$ with $w(C)<0$.
 
-Algorithms are analysed on the word RAM with words of $\Theta(\log(nM))$ bits, where $M\ge 2$ bounds $|w(e)|$ for every $e\in E$ (the lower bound $W$ does not bound positive weights), so that every input weight and every sum of at most $n$ weights fits in $O(1)$ words. Both outputs are certificates checkable in $O(m)$ time. The classical baselines are the Bellman-Ford algorithm, running in $O(mn)$ time, and the scaling algorithms of Gabow-Tarjan, running in $O(m\sqrt{n}\log(nM))$ time, and Goldberg, running in $O(m\sqrt{n}\log W)$ time.
+Algorithms are analysed on the word RAM with words of $\Theta(\log(nM))$ bits, where $M\ge 2$ bounds $|w(e)|$ for every $e\in E$ (the lower bound $W$ does not bound positive weights), so that every input weight and every sum of at most $n$ weights fits in $O(1)$ words. Both outputs are certificates checkable in $O(m)$ time. The classical baselines are the Bellman-Ford algorithm, running in $O(mn)$ time, and the scaling algorithms of Gabow, of Gabow and Tarjan, and of Goldberg, which led to running time $O(m\sqrt{n}\log W)$ for weights with $w(e) \ge -W$, $W \ge 2$ (Bernstein, Nanongkai and Wulff-Nilsen, Section 1, who cite the Gabow-Tarjan bound as $\tilde{O}(m\sqrt{n}\log W)$).
 
 ## Depends on
 
@@ -18,7 +18,8 @@ Algorithms are analysed on the word RAM with words of $\Theta(\log(nM))$ bits, w
 
 ## Sources
 
-- Aaron Bernstein, Danupon Nanongkai, Christian Wulff-Nilsen, "Negative-Weight Single-Source Shortest Paths in Near-linear Time", FOCS (2022), arXiv:2203.03456.
+- Aaron Bernstein, Danupon Nanongkai, Christian Wulff-Nilsen, "Negative-Weight Single-Source Shortest Paths in Near-linear Time", FOCS (2022), arXiv:2203.03456, abstract and Section 1 (Bellman-Ford and the scaling algorithms of Gabow, Gabow-Tarjan and Goldberg).
 - Richard Bellman, "On a Routing Problem", Quarterly of Applied Mathematics 16(1) (1958).
+- Harold N. Gabow, "Scaling Algorithms for Network Problems", Journal of Computer and System Sciences 31(2) (1985).
 - Harold N. Gabow, Robert E. Tarjan, "Faster Scaling Algorithms for Network Problems", SIAM Journal on Computing 18(5) (1989).
 - Andrew V. Goldberg, "Scaling Algorithms for the Shortest Paths Problem", SIAM Journal on Computing 24(3) (1995).

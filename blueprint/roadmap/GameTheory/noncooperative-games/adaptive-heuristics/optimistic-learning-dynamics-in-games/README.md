@@ -2,7 +2,7 @@
 
 - [Internal and swap regret minimization via stationary distributions](swap-regret-stationary-distribution-dynamics.md)
 - [Optimistic Hedge in a repeated normal-form game](optimistic-hedge-in-games.md)
-- [Stability of Hedge and Optimistic Hedge iterates](hedge-iterate-stability.md)
+- [Stability of Optimistic Hedge iterates](hedge-iterate-stability.md)
 - [A player's loss variation is bounded by the other players' movement](loss-variation-bounded-by-opponents-movement.md)
 - [Regret bounded by variation in utilities for optimistic algorithms](rvu-property-optimistic-algorithms.md)
 - [Higher-order smoothness of Optimistic Hedge iterates](higher-order-smoothness-optimistic-hedge.md)

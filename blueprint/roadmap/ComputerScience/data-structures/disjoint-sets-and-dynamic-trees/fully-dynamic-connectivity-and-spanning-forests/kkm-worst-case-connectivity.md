@@ -20,4 +20,5 @@ Maintain a spanning forest in Euler-tour trees together with, for each of $O(\lo
 ## Sources
 
 - Bruce M. Kapron, Valerie King, Ben Mountjoy, "Dynamic graph connectivity in polylogarithmic worst case time", SODA (2013).
-- Danupon Nanongkai, Thatchaphol Saranurak, "Dynamic Spanning Forest with Worst-Case Update Time: Adaptive, Las Vegas, and O(n^{1/2-epsilon})-Time", STOC (2017), arXiv:1611.03745.
+- Zhengyu Wang, "An Improved Randomized Data Structure for Dynamic Graph Connectivity", arXiv:1510.04590, Section 1 (the update and query bounds and one-sided error of Kapron, King and Mountjoy).
+- Danupon Nanongkai, Thatchaphol Saranurak, "Dynamic Spanning Forest with Worst-Case Update Time: Adaptive, Las Vegas, and O(n^{1/2-epsilon})-Time", STOC (2017), arXiv:1611.03745, abstract (the Kapron–King–Mountjoy structure assumes an oblivious adversary).

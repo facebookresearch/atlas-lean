@@ -14,7 +14,7 @@ The distinct substrings of length $k$ correspond to the suffixes of length at le
 
 - [Suffix array](../../data-structures/tries-and-integer-dictionaries/suffix-array/suffix-array.md)
 - [The LCP array](../../data-structures/tries-and-integer-dictionaries/suffix-array/lcp-array.md)
-- [Construction time of suffix arrays, LCP arrays and suffix trees](../../data-structures/tries-and-integer-dictionaries/suffix-array/construction-time-of-suffix-arrays-lcp-arrays-and-suffix-trees.md)
+- [Kasai's algorithm runs in linear time](../../data-structures/tries-and-integer-dictionaries/suffix-array/construction-time-of-suffix-arrays-lcp-arrays-and-suffix-trees.md)
 
 ## Sources
 

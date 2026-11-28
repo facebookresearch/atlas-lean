@@ -15,6 +15,7 @@ To answer a query $g$ with values in $[-b, b]$ locally, each individual reports 
 ## Proof depends on
 
 - [Parities are not learnable from statistical queries](../../../statistical-query-dimension/parities-not-sq-learnable.md)
+- [The Laplace mechanism is differentially private](../../../../../cryptography/laplace-and-exponential-mechanisms/laplace-mechanism-differentially-private.md)
 
 ## Sources
 

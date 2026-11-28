@@ -4,7 +4,7 @@ In a **contextual bandit** with $K$ actions, at each round $t$ the environment r
 
 ## Depends on
 
-- [Stochastic k-armed bandits: canonical history law and regret](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Stochastic k-armed bandits: canonical history law](../multi-armed-bandits/stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
 - [Decision making with structured observations](../decision-estimation-coefficient/decision-making-structured-observations.md)
 
 ## Sources

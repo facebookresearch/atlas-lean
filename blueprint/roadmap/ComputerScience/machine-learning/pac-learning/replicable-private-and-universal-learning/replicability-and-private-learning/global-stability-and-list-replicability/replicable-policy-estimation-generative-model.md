@@ -17,6 +17,7 @@ Estimate each transition and reward to accuracy $\varepsilon(1-\gamma)^2$ with r
 - [Markov decision process](../../../../../heuristic-search-and-planning/value-iteration/mdp.md)
 - [Optimal value of a discounted Markov decision process](../../../../../heuristic-search-and-planning/value-iteration/optimal-value.md)
 - [Total-variation indistinguishable learning rules](tv-indistinguishable-learning-rule.md)
+- [Replicable algorithms with shared randomness](../../../replicable-learning/replicable-algorithms-with-shared-seed.md)
 
 ## Proof depends on
 

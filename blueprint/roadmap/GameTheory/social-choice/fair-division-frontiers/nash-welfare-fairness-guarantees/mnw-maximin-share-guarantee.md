@@ -6,7 +6,7 @@ $$
 v_i(X_i) \ge \frac{2}{1 + \sqrt{4n - 3}}\; \mu_i \quad \text{for every agent } i,
 $$
 
-and for every $n$ there are instances with a maximum Nash welfare allocation attaining this ratio for some agent; hence maximum Nash welfare is not $c$-MMS for any constant $c > 0$ independent of $n$.
+and the ratio is tight: for every $n$ and every $\varepsilon > 0$ there is an instance with $n$ agents having additive valuations in which no maximum Nash welfare allocation gives every agent $i$ at least $\left(\frac{2}{1 + \sqrt{4n - 3}} + \varepsilon\right)\mu_i$; hence maximum Nash welfare is not $c$-MMS for any constant $c > 0$ independent of $n$.
 
 ## Proof sketch
 
@@ -24,4 +24,4 @@ Assume first that every agent has positive value, fix $i$, and for each $j \ne i
 
 ## Sources
 
-- I. Caragiannis, D. Kurokawa, H. Moulin, A. D. Procaccia, N. Shah, J. Wang, "The Unreasonable Fairness of Maximum Nash Welfare", ACM Transactions on Economics and Computation 7(3) (2019); EC 2016.
+- I. Caragiannis, D. Kurokawa, H. Moulin, A. D. Procaccia, N. Shah, J. Wang, "The Unreasonable Fairness of Maximum Nash Welfare", ACM Transactions on Economics and Computation 7(3) (2019); EC 2016, Theorem 4.1.

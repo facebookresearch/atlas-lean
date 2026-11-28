@@ -1,6 +1,6 @@
 # Bernstein-Stein: deterministic (3/2+eps)-approximate bipartite matching in O(m^{1/4} eps^{-2.5}) worst-case time
 
-There is a deterministic fully dynamic algorithm that maintains a $(3/2 + \varepsilon)$-approximate maximum matching in a bipartite graph with $m$ edges in worst-case update time $O(m^{1/4}\varepsilon^{-2.5})$. For bipartite graphs of arboricity at most $\alpha$ and constant $\varepsilon$, a $(1 + \varepsilon)$-approximate matching can be maintained in worst-case update time $O(\alpha(\alpha + \log n))$. Being deterministic, these work against adaptive adversaries.
+For every $0 < \varepsilon < 2/3$ there is a deterministic fully dynamic algorithm that maintains a $(3/2 + \varepsilon)$-approximate maximum matching in a bipartite graph with $m$ edges in worst-case update time $O(m^{1/4}\varepsilon^{-2.5})$. For bipartite graphs of arboricity at most $\alpha$ and constant $\varepsilon$, a $(1 + \varepsilon)$-approximate matching can be maintained in worst-case update time $O(\alpha(\alpha + \log n))$. Being deterministic, these work against adaptive adversaries.
 
 ## Proof sketch
 
@@ -18,5 +18,5 @@ Maintain an EDCS $H$ with $\beta$ chosen as a function of $m$ and $\varepsilon$:
 
 ## Sources
 
-- Aaron Bernstein, Cliff Stein, "Fully Dynamic Matching in Bipartite Graphs", ICALP (2015), arXiv:1506.07076.
+- Aaron Bernstein, Cliff Stein, "Fully Dynamic Matching in Bipartite Graphs", ICALP (2015), arXiv:1506.07076, Theorem 1.
 - Aaron Bernstein, Cliff Stein, "Faster Fully Dynamic Matchings with Small Approximation Ratios", SODA (2016).

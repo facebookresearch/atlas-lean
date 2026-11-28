@@ -1,6 +1,6 @@
 # Proper private learning of Littlestone classes with polynomial sample complexity
 
-Every class of Littlestone dimension $d$ is properly PAC learnable under $(\varepsilon, \delta)$-differential privacy from $n = \tilde O\big(d^6/(\varepsilon\alpha^2)\big)$ samples (with logarithmic factors in $1/\delta$ and the confidence suppressed), outputting with high probability a hypothesis of the class with error at most $\alpha$ on every realizable distribution; a generic reduction gives essentially the same bound in the agnostic setting. Moreover, the sample complexity of privately sanitizing (releasing accurate answers to all counting queries in) a binary class is polynomial in its Littlestone dimension and dual Littlestone dimension, so a class is privately sanitizable if and only if it has finite Littlestone dimension.
+Let the domain $X$ and the class $F \subseteq \{-1, 1\}^X$ be countable, the paper's standing measurability assumption (Section 2.1). Every such class $F$ of Littlestone dimension $d$ is properly PAC learnable under $(\varepsilon, \delta)$-differential privacy from $n = \tilde O\big(d^6/(\varepsilon\alpha^2)\big)$ samples (with logarithmic factors in $1/\delta$ and the confidence suppressed), outputting with high probability a hypothesis of the class with error at most $\alpha$ on every realizable distribution; a generic reduction gives essentially the same bound in the agnostic setting. Moreover, for countable $X$ and $F$, the sample complexity of privately sanitizing (releasing accurate answers to all counting queries in) the binary class $F$ is polynomial in its Littlestone dimension and dual Littlestone dimension, so such a class is privately sanitizable if and only if it has finite Littlestone dimension.
 
 ## Proof sketch
 
@@ -18,4 +18,4 @@ A class $G$ is **irreducible** if for every point $x$ some label $b$ keeps the L
 
 ## Sources
 
-- B. Ghazi, N. Golowich, R. Kumar, P. Manurangsi, "Sample-efficient Proper PAC Learning with Approximate Differential Privacy", STOC (2021), arXiv:2012.03893, Theorem 1.1 (Theorem 6.4), Corollaries 1.2 and 1.3, Definition 4.1.
+- B. Ghazi, N. Golowich, R. Kumar, P. Manurangsi, "Sample-efficient Proper PAC Learning with Approximate Differential Privacy", STOC (2021), arXiv:2012.03893, Theorem 1.1 (Theorem 6.4), Corollaries 1.2 and 1.3, Definition 4.1, Section 2.1.

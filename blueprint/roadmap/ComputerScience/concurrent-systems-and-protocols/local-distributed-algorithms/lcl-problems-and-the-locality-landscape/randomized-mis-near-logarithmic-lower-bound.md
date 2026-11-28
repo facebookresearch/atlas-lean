@@ -1,6 +1,6 @@
 # Randomized MIS requires Omega(sqrt(log n / log log n)) rounds
 
-Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. There are graphs (with unbounded degree) on which every possibly randomized LOCAL algorithm that always outputs a maximal independent set, only its running time depending on the randomness, has expected running time $\Omega\bigl(\sqrt{\log n / \log\log n}\bigr)$, and likewise $\Omega(\log\Delta / \log\log\Delta)$ as a function of $\Delta$; this holds even with identifiers $\{1, \dots, n\}$. For comparison, the randomized algorithms of Luby and of Alon, Babai and Itai use $O(\log n)$ rounds.
+Let $G = (V, E)$ be a simple connected graph with $n$ vertices and maximum degree $\Delta$, whose vertices carry distinct identifiers from $\{1, \dots, n^{O(1)}\}$. There are graphs (with unbounded degree) on which every possibly randomized LOCAL algorithm that always outputs a maximal independent set, only its running time depending on the randomness, has expected running time $\Omega\bigl(\sqrt{\log n / \log\log n}\bigr)$, and likewise $\Omega(\log\Delta / \log\log\Delta)$ as a function of $\Delta$. For comparison, the randomized algorithms of Luby and of Alon, Babai and Itai use $O(\log n)$ rounds.
 
 ## Proof sketch
 

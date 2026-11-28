@@ -1,14 +1,14 @@
-# Stability of Hedge and Optimistic Hedge iterates
+# Stability of Optimistic Hedge iterates
 
-Let $x^{t+1}(a) \propto x^t(a) \exp(-\eta\, m^t(a))$ on the simplex $\Delta_n$ with a vector $m^t$ whose coordinates lie in an interval of length at most $3$ (as for Optimistic Hedge with losses in $[0, 1]$, where $m^t = 2\ell^t - \ell^{t-1}$). Then for $0 < \eta \le 1/3$,
+Let player $i$ run Optimistic Hedge with step size $\eta > 0$ on loss vectors $\ell_i^t \in [0, 1]^{n_i}$, so that $x_i^{t+1}(a) \propto x_i^t(a) \exp\bigl(-\eta\,(2\ell_i^t(a) - \ell_i^{t-1}(a))\bigr)$ on the simplex $\Delta_{n_i}$. Then consecutive iterates have coordinatewise ratios bounded by $\exp(6\eta)$ in both directions:
 
 $$
-\lVert x^{t+1} - x^t \rVert_1 \le e^{3\eta} - 1 \le 6\eta .
+\max\left\{ \left\lVert \frac{x_i^{t}}{x_i^{t+1}} \right\rVert_\infty,\ \left\lVert \frac{x_i^{t+1}}{x_i^{t}} \right\rVert_\infty \right\} \le \exp(6\eta).
 $$
 
 ## Proof sketch
 
-Since normalization cancels any additive shift of $m^t$, assume its coordinates lie in $[0, 3]$; then each ratio $x^{t+1}(a)/x^t(a)$ lies in $[e^{-3\eta}, e^{3\eta}]$ after normalization, more precisely in $[Z^{-1} e^{-3\eta}, Z^{-1}]$ with $Z \in [e^{-3\eta}, 1]$. Hence $\lvert x^{t+1}(a) - x^t(a)\rvert \le (e^{3\eta} - 1) x^t(a)$, and summing over $a$ gives the first bound; convexity of the exponential on $[0, 1]$ gives $e^{3\eta} - 1 \le 6\eta$ when $3\eta \le 1$.
+Each exponent $-\eta(2\ell_i^t(a) - \ell_i^{t-1}(a))$ lies in $[-2\eta, \eta]$, so the unnormalized factor of every action lies in $[e^{-2\eta}, e^{\eta}]$, and so does the normalizer, which is the $x_i^t$-average of these factors. Hence every ratio $x_i^{t+1}(a)/x_i^t(a)$ lies in $[e^{-3\eta}, e^{3\eta}] \subseteq [e^{-6\eta}, e^{6\eta}]$.
 
 ## Depends on
 
@@ -16,5 +16,4 @@ Since normalization cancels any additive shift of $m^t$, assume its coordinates 
 
 ## Sources
 
-- V. Syrgkanis, A. Agarwal, H. Luo, R. E. Schapire, "Fast Convergence of Regularized Learning in Games", NeurIPS 2015, arXiv:1507.00407.
-- C. Daskalakis, M. Fishelson, N. Golowich, "Near-Optimal No-Regret Learning in General Games", NeurIPS 2021, arXiv:2108.06924.
+- C. Daskalakis, M. Fishelson, N. Golowich, "Near-Optimal No-Regret Learning in General Games", NeurIPS 2021, arXiv:2108.06924, update (1) and the proof of Lemma 4.2.

@@ -10,7 +10,7 @@ Explicitly: if $A \subseteq \{1, \dots, N\}$ is nonempty and contains no non-tri
 
 ## Proof sketch
 
-Each $M_x$ is a matching since $a \mapsto x + a$ and $a \mapsto x + 2a$ are injective, and distinct $x$ give disjoint matchings. If some edge of $M_y$ joined the left endpoint $x + a$ and the right endpoint $x + 2b$ of edges of $M_x$, then $x + a = y + c$ and $x + 2b = y + 2c$ for some $c \in A$, so $a + c = 2b$; progression-freeness forces $a = b = c$ and hence $y = x$, proving inducedness. Behrend's construction of a progression-free set of size $N e^{-c\sqrt{\ln N}}$ (points of a large sphere in a cube, read in a large base) finishes the bound.
+Each $M_x$ is a matching since $a \mapsto x + a$ and $a \mapsto x + 2a$ are injective, and distinct $x$ give disjoint matchings. If some edge of $M_y$ joined the left endpoint $x + a$ and the right endpoint $x + 2b$ of edges of $M_x$, then $x + a = y + c$ and $x + 2b = y + 2c$ for some $c \in A$, so $a + c = 2b$; progression-freeness forces $a = b = c$ and hence $y = x$, proving inducedness. Behrend's construction of a progression-free set of size $N e^{-c\sqrt{\ln N}}$ (points of a large sphere in a cube, read in a large base) finishes the bound. This is the bipartite form of the standard tripartite construction (Zhao, proof of Theorem 2.4.1) whose triangles $(x, x + a, x + 2a)$, $a \in A$, are the only triangles, so every edge lies in a unique triangle: the matching $M_x$ consists of the $Y$–$Z$ edges $(x + a, x + 2a)$ of the triangles with apex $x$.
 
 ## Depends on
 
@@ -25,3 +25,4 @@ Each $M_x$ is a matching since $a \mapsto x + a$ and $a \mapsto x + 2a$ are inje
 
 - Imre Z. Ruzsa, Endre Szemerédi, "Triple systems with no six points carrying three triangles", Combinatorics (Proc. Fifth Hungarian Colloq., Keszthely 1976), Colloq. Math. Soc. János Bolyai 18 (1978).
 - Felix A. Behrend, "On sets of integers which contain no three terms in arithmetical progression", Proc. Nat. Acad. Sci. USA 32 (1946).
+- Yufei Zhao, "Graph Theory and Additive Combinatorics", Cambridge University Press (2023), author's homepage copy, Section 2.4 (proof of Theorem 2.4.1: the tripartite graph in which every edge lies in a unique triangle) and Section 2.5 (Theorem 2.5.1, Behrend's construction, and Corollary 2.5.2).

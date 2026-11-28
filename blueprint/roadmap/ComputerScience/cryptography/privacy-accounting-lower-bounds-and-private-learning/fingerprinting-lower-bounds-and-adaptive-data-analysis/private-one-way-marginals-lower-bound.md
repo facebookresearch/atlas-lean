@@ -22,6 +22,7 @@ By the reduction above it suffices to treat $\varepsilon = 1$ and expected $\ell
 - [Tardos codes: optimal fully collusion-resilient fingerprinting](tardos-fingerprinting-code.md)
 - [Group privacy for approximate differential privacy](../../k-fold-adaptive-composition-and-group-privacy/is-approx-dp-group-privacy.md)
 - [The Gaussian mechanism](../../differential-privacy/gaussian-mechanism-differentially-privat.md)
+- [The Laplace mechanism for vector-valued queries](../../laplace-and-exponential-mechanisms/laplace-mechanism-pi-differentially-priv.md)
 
 ## Sources
 

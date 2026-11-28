@@ -15,6 +15,10 @@ For PCSA-type and LogLog-type sketches the state is a vector of independent geom
 - [Fisher information](../../../../Probability/statistical-estimation/fisher-information-and-the-cram-r-rao-bound/fisher-information.md)
 - [Turnstile streams, support size and linear sketches of a frequency vector](turnstile-streams-and-support-size.md)
 
+## Proof depends on
+
+- [Cramér–Rao inequality](../../../../Probability/statistical-estimation/fisher-information-and-the-cram-r-rao-bound/cramer-rao.md)
+
 ## Sources
 
 - Seth Pettie, Dingyu Wang, "Information Theoretic Limits of Cardinality Estimation: Fisher Meets Shannon", STOC (2021), arXiv:2007.08051, Sections 2.3 and 3.4, Definitions 2 and 3, Lemmas 1 and 2.

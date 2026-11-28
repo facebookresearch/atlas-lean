@@ -25,12 +25,12 @@ The proof gives a new analysis of the shadow bound, again counting edges of the 
 ## Depends on
 
 - [Gaussian-smoothed linear programs and smoothed pivot complexity](gaussian-smoothed-linear-programs.md)
+- [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
 
 ## Proof depends on
 
 - [Dadush-Huiberts shadow bound for smoothed unit linear programs](dadush-huiberts-shadow-bound.md)
 - [Shadow vertices are bounded by edges of the polar section](shadow-vertices-and-polar-section.md)
-- [The shadow vertex pivot rule and the smoothed shadow bound](shadow-vertex-rule-and-shadow-bound.md)
 
 ## Sources
 

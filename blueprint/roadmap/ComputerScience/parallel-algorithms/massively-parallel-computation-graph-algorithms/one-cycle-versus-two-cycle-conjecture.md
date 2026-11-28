@@ -8,5 +8,5 @@ The one-versus-two-cycle problem asks, given an $n$-vertex graph promised to be 
 
 ## Sources
 
-- T. Roughgarden, S. Vassilvitskii, J. R. Wang, "Shuffles and Circuits (On Lower Bounds for Modern Parallel Computation)", Journal of the ACM 65(6) (2018); SPAA 2016.
+- T. Roughgarden, S. Vassilvitskii, J. R. Wang, "Shuffles and Circuits (On Lower Bounds for Modern Parallel Computation)", Journal of the ACM 65(6) (2018); SPAA 2016, Theorem 6.1.
 - M. Ghaffari, F. Kuhn, J. Uitto, "Conditional Hardness Results for Massively Parallel Computation from Distributed Lower Bounds", FOCS 2019.

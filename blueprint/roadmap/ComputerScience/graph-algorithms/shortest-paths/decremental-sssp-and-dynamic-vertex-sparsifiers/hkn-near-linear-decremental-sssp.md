@@ -1,6 +1,6 @@
 # Henzinger-Krinninger-Nanongkai: decremental SSSP in m^{1+o(1)} total update time via hopsets
 
-For undirected graphs with integer edge weights in $[1, W]$ and $0 < \varepsilon \le 1$ with $1/\varepsilon = \mathrm{polylog}(n)$ (constant $\varepsilon$ included), there is a randomized decremental $(1+\varepsilon)$-approximate SSSP data structure with constant query time and expected total update time $O(m^{1 + o(1)}\log W + n)$, against an oblivious adversary. The algorithm maintains a sparse $(h, \varepsilon)$-hopset $F$, a set of weighted edges such that for all $u, v$,
+For undirected graphs with integer edge weights in $[1, W]$ and $0 < \varepsilon \le 1$ with $1/\varepsilon = \mathrm{polylog}(n)$ (constant $\varepsilon$ included), there is a randomized decremental $(1+\varepsilon)$-approximate SSSP data structure with constant query time and expected total update time $O(m^{1 + o(1)}\log W + n)$, against an oblivious adversary, whose distance estimates are correct with high probability (FOCS version and arXiv v1, Section 1: "it is correct with high probability and the bound on its total update time holds in expectation"). The journal version (Section 1) strengthens this to an algorithm that is always correct, a Las Vegas algorithm. The algorithm maintains a sparse $(h, \varepsilon)$-hopset $F$, a set of weighted edges such that for all $u, v$,
 
 $$
 \mathrm{dist}_G(u, v) \le \mathrm{dist}^{(h)}_{G \cup F}(u, v) \le (1 + \varepsilon)\,\mathrm{dist}_G(u, v),
@@ -22,4 +22,4 @@ On $G \cup F$, distances are realized by paths with few hops, so a weighted, rou
 
 ## Sources
 
-- Monika Henzinger, Sebastian Krinninger, Danupon Nanongkai, "Decremental Single-Source Shortest Paths on Undirected Graphs in Near-Linear Total Update Time", FOCS (2014); J. ACM 65(6) (2018), arXiv:1512.08148.
+- Monika Henzinger, Sebastian Krinninger, Danupon Nanongkai, "Decremental Single-Source Shortest Paths on Undirected Graphs in Near-Linear Total Update Time", FOCS (2014); J. ACM 65(6) (2018), arXiv:1512.08148 (v1 and the journal version), Section 1.

@@ -4,7 +4,7 @@ There is a randomized algorithm that, given an undirected graph $G = (V, E, w)$ 
 
 ## Proof sketch
 
-For each of the $\lceil \log_2 |R| \rceil + 1$ sampling rates $p = 2^{-j}$ repeat $O(\log n)$ times: sample $R'$, and if $|R'| \ge 2$ run the isolating cut lemma on $R'$ and keep the lightest isolating cut found. Every candidate is a Steiner cut of $R$, and by the subsampling lemma the correct rate yields $\lambda_R(G)$ with probability at least $1/15$ per trial, so $O(\log n)$ trials succeed with probability $1 - n^{-c}$. Each isolating cut invocation costs $O(\log n)$ max-flow calls, giving $O(\log^3 n)$ calls in total.
+For each of the $\lfloor \log_2 |R| \rfloor$ sample sizes $2^i$, $i = 1, \dots, \lfloor \log_2 |R| \rfloor$, repeat $O(\log n)$ times: let $R'$ be a uniformly random subset of exactly $2^i$ terminals, run the isolating cut lemma on $R'$ and keep the lightest isolating cut found. Every candidate is a Steiner cut of $R$, since $|R'| = 2^i \ge 2$. For $k = |S^{*} \cap R| \le |R|/2$ as in the subsampling lemma, the size $2^i$ with $i = \lfloor \log_2(|R|/k) \rfloor$ is among those tried, and by that lemma each of its trials yields $\lambda_R(G)$ with probability $\Omega(1)$, so $O(\log n)$ trials succeed with probability $1 - n^{-c}$. Each isolating cut invocation costs $O(\log n)$ max-flow calls, giving $O(\log^3 n)$ calls in total.
 
 ## Depends on
 

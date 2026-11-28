@@ -30,4 +30,6 @@ The theta body $\mathrm{TH}(G)$ lies in $[0, 1]^V$ and contains the indicator ve
 - M. Grotschel, L. Lovasz, A. Schrijver, "The ellipsoid method and its consequences in combinatorial optimization", Combinatorica 1 (1981).
 - M. Grotschel, L. Lovasz, A. Schrijver, "Polynomial algorithms for perfect graphs", Annals of Discrete Mathematics 21 (1984).
 - M. Grotschel, L. Lovasz, A. Schrijver, "Geometric Algorithms and Combinatorial Optimization", Springer (1988).
-- D. E. Knuth, "The Sandwich Theorem", Electronic Journal of Combinatorics 1 (1994), arXiv:math/9312214.
+- D. E. Knuth, "The Sandwich Theorem", Electronic Journal of Combinatorics 1 (1994), arXiv:math/9312214, Section 37 (citing GLS Section 9.3).
+- L. Lovász, "Geometric representations of graphs" (2016 course notes), Chapter 6, Section 6.3.4 (Proposition 6.3.5) and Section 6.4.2 (Theorem 6.4.4 and weighted extension).
+- A. Gupta, CMU 15-859E Lecture 11 (Fall 2011), Theorem 11.10; R. O'Donnell, CMU 15-859E Lecture 10, Theorem 10.10 (rational Gaussian-elimination PSD test).
