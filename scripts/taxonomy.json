@@ -10116,6 +10116,7 @@
   "MathlibExt/Analysis/Fourier/PeriodicConvolution": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Periodic convolution"},
   "MathlibExt/Analysis/Fourier/Scaling": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Fourier transform of dilations"},
   "MathlibExt/Analysis/Fourier/SchwartzWeightedL2DerivInequality": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Heisenberg uncertainty principle"},
+  "MathlibExt/Analysis/Fourier/FinitePolynomial": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Finite Fourier polynomials on the two-dimensional torus"},
   "MathlibExt/Analysis/Fourier/TorusSobolev": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Brezis–Gallouët inequality on the two-dimensional torus"},
   "MathlibExt/Analysis/Fourier/WienerTauberian": {"to": "Analysis/sequences-and-series/summability", "title": "Wiener's Tauberian theorem"},
   "MathlibExt/Analysis/Fourier/ZModConvolution": {"to": "Analysis/harmonic-analysis/discrete-fourier-analysis", "title": "Convolution theorem for the discrete Fourier transform"},
