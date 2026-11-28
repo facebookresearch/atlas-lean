@@ -19,6 +19,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import MathlibExt.Combinatorics.Additive.WeightedDavenport
 public import MathlibExt.Combinatorics.Additive.SquareSetPrimePowerCount
 public import MathlibExt.Combinatorics.Additive.SquareWeightedZeroSum
+public import MathlibExt.Combinatorics.Additive.SquareWeightedZeroSumTwoPower
 
 namespace MetaMathlibExt
 
@@ -175,20 +176,6 @@ public theorem_wanted squareWeightedZeroSum_of_reduction_oddPower (p r k : ℕ)
     (hp : 2 ≤ p) (hr : Odd r) (T : Fin k → ZMod (p ^ r))
     (hT : HasWeightedZeroSum (squareSet p) (fun i => (ZMod.cast (T i) : ZMod p))) :
     HasWeightedZeroSum (squareSet (p ^ r)) T
-
-/-- **Square-weighted zero-sum free unit triples modulo even powers of two.** Let $r$ be a nonzero
-even natural number, and let $x_1, x_2, x_3$ be units of $\mathbb{Z}_{2^r}$ that are each
-congruent to $1$ modulo $4$. Write $S(2^r)$ for the set of nonzero squares in $\mathbb{Z}_{2^r}$.
-Then $(x_1, x_2, x_3)$ has no $S(2^r)$-weighted zero-sum subsequence: there are no non-empty set
-$J$ of indices and weights $a_j \in S(2^r)$ for $j \in J$ with $\sum_{j \in J} a_j x_j = 0$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Lemma 10. -/
-public theorem_wanted no_squareWeightedSubseq_three_units_twoPower (r : ℕ)
-    (hr0 : r ≠ 0) (hrEven : Even r) (S : Fin 3 → ZMod (2 ^ r))
-    (hunit : ∀ i, IsUnit (S i))
-    (hred : ∀ i, (ZMod.cast (S i) : ZMod 4) = 1) :
-    ¬HasWeightedZeroSumSubseq (squareSet (2 ^ r)) S
 
 /-- **Three-term sequences without square-weighted zero-sum subsequences.** Let $p$ be a prime and
 $r$ a nonzero even natural number, and write $S(m)$ for the set of nonzero squares in

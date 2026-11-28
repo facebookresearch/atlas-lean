@@ -36,5 +36,7 @@
 
 - [Labeled histories and maximally probable topologies of multifurcating trees](labeled-histories-of-multifurcating-trees/README.md)
 - [Ranked tree spaces](ranked-tree-spaces/README.md)
+- [Horton–Strahler structure of coalescent trees](horton-strahler-structure-of-coalescent-trees/README.md)
+- [Kingman comb and the Brownian coalescent point process](kingman-comb-and-the-brownian-coalescent-point-process/README.md)
 - [Cherries and pitchforks of ranked coalescent trees](cherries-and-pitchforks-of-ranked-coalescent-trees/README.md)
 - [Evolving Moran genealogy](evolving-moran-genealogy/README.md)

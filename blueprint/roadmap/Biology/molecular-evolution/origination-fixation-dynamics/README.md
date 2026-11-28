@@ -17,5 +17,6 @@
 - [Position-specific substitution rates in binding sites](position-specific-substitution-rates-in-binding-sites/README.md)
 - [Biochemical epistasis on combinatorially complete libraries](biochemical-epistasis-on-combinatorially-complete-libraries/README.md)
 - [Germline de novo mutation rates](germline-de-novo-mutation-rates/README.md)
+- [Wright–Fisher quasispecies on class-dependent landscapes](wright-fisher-quasispecies-on-class-dependent-landscapes/README.md)
 - [Ordered independent loss model of CRISPR spacers](ordered-independent-loss-model-of-crispr-spacers/README.md)
 - [Parallel mutation and selection waiting times](parallel-mutation-and-selection-waiting-times/README.md)
