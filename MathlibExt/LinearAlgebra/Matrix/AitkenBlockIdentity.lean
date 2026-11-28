@@ -59,10 +59,11 @@ and residual covariance `Σ_YY - Σ_XYᵀ Σ_XX⁻¹ Σ_XY`, are Aitken's blocks
 Source: Aitken (1934), p. 109, equation (7). -/
 theorem aitken_block_identity (Sxx : Matrix (Fin p) (Fin p) ℝ)
     (Sxy : Matrix (Fin p) (Fin q) ℝ) (Syy : Matrix (Fin q) (Fin q) ℝ)
-    (V : Matrix (Fin p) (Fin p) ℝ) (hsym : Sxx.IsSymm) (_hdet : IsUnit Sxx.det) :
+    (V : Matrix (Fin p) (Fin p) ℝ) (hsym : Sxx.IsSymm) (hdet : IsUnit Sxx.det) :
     V * (Sxyᵀ * Sxx⁻¹)ᵀ = V * Sxx⁻¹ * Sxy ∧
       Sxyᵀ * Sxx⁻¹ * V * (Sxyᵀ * Sxx⁻¹)ᵀ + (Syy - Sxyᵀ * Sxx⁻¹ * Sxy) =
         Syy - Sxyᵀ * (Sxx⁻¹ - Sxx⁻¹ * V * Sxx⁻¹) * Sxy := by
+  have _ := hdet
   rw [transpose_mul, hsym.inv.eq, transpose_transpose]
   constructor
   · exact (Matrix.mul_assoc V Sxx⁻¹ Sxy).symm
