@@ -24,7 +24,7 @@ The *model-checking problem* for $\mathrm{SL}_{ii}$ takes a sentence $\Phi$ and 
 
 None.
 
-## Expansion
+## Remarks
 
 Unlike imperfect-information versions of ATL, observations are attached to strategy quantifiers rather than to players, so one agent may be bound to strategies of different observational power in different parts of a formula. When every $\sim_o$ is the identity, every strategy is uniform and $\mathrm{SL}_{ii}$ becomes strategy logic interpreted on finite structures.
 

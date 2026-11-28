@@ -2,7 +2,7 @@
 
 Checking whether some run of a one-counter automaton satisfies a flat freeze LTL sentence is NEXPTIME-complete, but checking whether all runs satisfy it is undecidable.
 
-**One-counter automata.** A one-counter automaton (OCA) has a finite set of states with an initial state, a labeling of states by finite sets of atomic propositions, and transitions that change a counter ranging over $\mathbb N$ by $+1$, $0$ or $-1$ or test it for zero, starting from counter value $0$; an OCA with succinct updates may instead add any integer written in binary; a run is an infinite sequence of configurations in which the counter never becomes negative. A run induces the data word $(P_0,v_0)(P_1,v_1)\cdots$ of state labels $P_i$ and counter values $v_i$.
+**One-counter automata.** A one-counter automaton (OCA) has a finite set of states with an initial state, a labeling of states by finite sets of atomic propositions, and transitions that change a counter ranging over $\mathbb N$ by $+1$, $0$ or $-1$ or test it for zero, starting from counter value $0$; an OCA with succinct updates may instead add any integer written in binary; a run is an infinite sequence of configurations, starting from the initial state with counter $0$, in which each configuration follows from the previous one by an enabled transition and the counter never becomes negative. A run induces the data word $(P_0,v_0)(P_1,v_1)\cdots$ of state labels $P_i$ and counter values $v_i$.
 
 **Freeze LTL.** Formulas of freeze LTL are
 
@@ -20,10 +20,11 @@ By contrast, existential model checking of OCA, and of OCA with succinct updates
 
 - [Formulas of linear temporal logic](../linear-temporal-logic/formula.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [The complexity class NEXP](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/nexp.md)
 
 ## Proof depends on
 
-None.
+- [Model checking one-counter automata against freeze LTL is Σ¹₁-complete](freeze-ltl-model-checking-over-one-counter.md)
 
 ## Expansion
 

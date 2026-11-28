@@ -13,6 +13,7 @@ The source states the same $\Sigma^1_1$-hardness for its boolean-goal fragment S
 
 - [Strategy logic](strategy-logic.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 
 ## Proof depends on
 

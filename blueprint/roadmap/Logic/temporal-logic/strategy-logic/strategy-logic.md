@@ -10,7 +10,7 @@ $$
 \varphi ::= p \mid \neg\varphi \mid \varphi \wedge \varphi \mid \varphi \vee \varphi \mid X\varphi \mid \varphi\, U \varphi \mid \varphi\, R\, \varphi \mid \langle\langle x\rangle\rangle\varphi \mid [[x]]\varphi \mid (a, x)\varphi.
 $$
 
-Free variables are those not under a quantifier; an agent is free in $\varphi$ when it occurs unbound in the scope of a temporal operator (temporal operators make all agents free, and $(a, x)$ removes $a$ and introduces $x$). A *sentence* has neither free variables nor free agents.
+Free variables are those not under a quantifier; an agent is free in $\varphi$ when it occurs unbound in the scope of a temporal operator: a temporal operator makes all agents free until an enclosing binding discharges them, and for a binding $(a, x)\varphi$, if $a$ is free in $\varphi$ then $a$ is removed from the free set and $x$ added, and otherwise the free set is that of $\varphi$ (Definition 2.6 (vii)–(viii) of the source). A *sentence* has neither free variables nor free agents.
 
 **Semantics.** Under an assignment $\chi$ of strategies to variables and agents, $\langle\langle x\rangle\rangle\varphi$ is true at $s$ if some strategy $f$ makes $\varphi$ true under $\chi[x \mapsto f]$, $[[x]]\varphi$ if every strategy does, and $(a, x)\varphi$ is true if $\varphi$ is true under $\chi[a \mapsto \chi(x)]$. When every agent is bound, the strategies determine a unique play from $s$, and $X$, $U$, $R$ are evaluated on it as in LTL, with the assignment shifted along the play. A sentence $\varphi$ is *satisfiable* if $\mathcal{G}, \varnothing, s_0 \models \varphi$ for some concurrent game structure $\mathcal{G}$, and *satisfiable on finite models* if such a $\mathcal{G}$ with finitely many states and actions exists.
 
@@ -22,7 +22,7 @@ Free variables are those not under a quantifier; an agent is free in $\varphi$ w
 
 None.
 
-## Expansion
+## Remarks
 
 LTL is the fragment without quantifiers and bindings, and ATL* embeds into SL: $\langle\langle A\rangle\rangle\psi$ says that the agents in $A$ have strategies such that, for all strategies of the other agents, $\psi$ holds on the resulting play. Model checking SL is nonelementary-hard; its one-goal fragment SL[1G] has 2EXPTIME-complete satisfiability.
 

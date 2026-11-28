@@ -8,14 +8,15 @@ Atomic LTL extends linear temporal logic by disjunctions over orbit-finite sets 
 
 - [Atomic Kripke models](atomic-kripke-models.md)
 - [Formulas of linear temporal logic](../linear-temporal-logic/formula.md)
+- [Atomic CTL*](atomic-ctl-star.md)
 
 ## Proof depends on
 
 None.
 
-## Expansion
+## Remarks
 
-A satisfiable atomic LTL formula can force its models to encode an unbounded sequence of distinct atoms, which is how it simulates the tape of a Turing machine.
+A satisfiable atomic LTL formula can force its models to repeat a finite block of distinct atoms as tape cell names, which is how it simulates the tape of a Turing machine (proof of Theorem 9.1); the block length needed is unbounded across machines, not within one accepting computation.
 
 ## Sources
 

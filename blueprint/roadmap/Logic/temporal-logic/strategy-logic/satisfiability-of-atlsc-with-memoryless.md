@@ -10,6 +10,7 @@ This is Theorem 14 of the source, which proves it in detail for infinite-state t
 
 - [ATL with strategy contexts](atl-with-strategy-contexts.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Strategy logic](strategy-logic.md)
 
 ## Proof depends on
 
@@ -21,5 +22,5 @@ The proof adapts French's undecidability proof for quantified CTL under the stru
 
 ## Sources
 
-- F. Laroussinie and N. Markey, "Satisfiability of ATL with strategy contexts", in *Proceedings of the Fourth International Symposium on Games, Automata, Logics and Formal Verification (GandALF 2013)*, Electronic Proceedings in Theoretical Computer Science 119, 2013, pp. 208–223, <https://doi.org/10.4204/EPTCS.119.18>; numbers from arXiv:1307.4478v1, <https://arxiv.org/abs/1307.4478v1>: Section 6: Theorem 14 and its proof (Figure 1); Section 7.1: Theorem 17; Section 5: Theorems 10 and 11.
+- F. Laroussinie and N. Markey, "Satisfiability of ATL with strategy contexts", in *Proceedings of the Fourth International Symposium on Games, Automata, Logics and Formal Verification (GandALF 2013)*, Electronic Proceedings in Theoretical Computer Science 119, 2013, pp. 208–223, <https://doi.org/10.4204/EPTCS.119.18>; numbers from arXiv:1307.4478v1, <https://arxiv.org/abs/1307.4478v1>: Section 6: Theorem 14 and its proof (Figure 1); Section 7.1: Theorem 17; Section 4: Theorems 10 and 11.
 - T. French, "Decidability of quantified propositional branching time logics", in *AI 2001: Advances in Artificial Intelligence (14th Australian Joint Conference on Artificial Intelligence)*, Lecture Notes in Computer Science 2256, Springer, 2001, pp. 165–176, <https://doi.org/10.1007/3-540-45656-2_15>: undecidability of quantified CTL under the structure semantics, the proof adapted here; not read directly here: this clause rests on its statement in the arXiv copy of the first source above (proof of Theorem 14).

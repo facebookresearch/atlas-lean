@@ -19,9 +19,9 @@ where $\Phi$ ranges over orbit-finite sets of formulas and $X$ occurs only posit
 
 None.
 
-## Expansion
+## Remarks
 
-Orbit-finite disjunctions act as quantifiers over atoms: with $P = \mathbb A$, the formula $\bigvee_{a \in \mathbb A}\lozenge(a \wedge \bigwedge_{b \neq a}\neg b)$ is a legal formula. Every formula has finite depth and is finitely supported, and the semantics of a formula in a finitely supported model is a finitely supported set of states.
+Orbit-finite disjunctions act as quantifiers over atoms: with $P = \mathbb A$, the formula $\bigvee_{a \in \mathbb A}\lozenge(a \wedge \bigwedge_{b \neq a}\neg b)$ is a legal formula. Every formula has finite depth and is finitely supported, and the semantics of a formula in a finitely supported model, under a finitely supported environment for its free variables, is a finitely supported set of states (Lemma 4.9 of the source).
 
 ## Sources
 

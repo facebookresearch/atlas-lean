@@ -15,12 +15,13 @@ for $p \in AP$ and coalitions $A \subseteq \mathrm{Agt}$. Under a context $F$: $
 ## Depends on
 
 - [Formulas of linear temporal logic](../linear-temporal-logic/formula.md)
+- [Kripke model](../../modal-logic/kripke-semantics/kripke-model.md)
 
 ## Proof depends on
 
 None.
 
-## Expansion
+## Remarks
 
 The existential strategy quantifier carries an implicit universal quantification over the outcomes, and so over the strategies of agents outside $A$ that the context leaves free; this is the difference with strategy logic, where every strategy is quantified explicitly. $\mathrm{ATL}_{sc}$ is as expressive as $\mathrm{ATL}^*_{sc}$ (Brihaye, Da Costa, Laroussinie and Markey). Satisfiability of $\mathrm{ATL}_{sc}$ over concurrent games is undecidable (Troquard and Walther), but becomes decidable over turn-based games and when the number of moves is bounded, through a translation into quantified CTL under the tree semantics.
 

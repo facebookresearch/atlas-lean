@@ -8,7 +8,7 @@ $$
 \varphi ::= p \mid X \mid \varphi \vee \varphi \mid \varphi \wedge \varphi \mid [\varphi]_J \mid \square\varphi \mid \lozenge\varphi \mid \bigcirc\varphi \mid \mu X.\varphi \mid \nu X.\varphi \mid \lambda X.\varphi \mid \varphi\,\varphi,
 $$
 
-with $J$ of the form $> r$ or $\ge r$ for rational $r \in [0, 1]$, restricted to well-typed formulas. A formula of type $\mathrm{Prop}$ denotes a function $S \to [0, 1]$: $p$ is the indicator of $\rho(p)$, $\vee$ and $\wedge$ are pointwise maximum and minimum, $[\varphi]_J$ is $1$ where the value of $\varphi$ lies in $J$ and $0$ elsewhere, $\square\varphi$, $\lozenge\varphi$ and $\bigcirc\varphi$ are the minimum, maximum and $P$-weighted average of the value of $\varphi$ over the successors ($P(s, s') > 0$), and $\mu$, $\nu$ are least and greatest fixpoints of monotone functions on the domains of their types, $\lambda$ and application being function abstraction and application. The *order* of a formula is the largest order of a type in its typing derivation; order-0 PHFL is the $\mu^p$-calculus. For a closed formula $\varphi$ of type $\mathrm{Prop}$, $M \models \varphi$ iff the value of $\varphi$ at $s_{\mathrm{in}}$ is $1$, and the *model-checking problem* asks, given $M$ and $\varphi$, whether $M \models \varphi$; as an input, $M$ is given by finite tables with rational transition probabilities.
+with $J$ of the form $> r$ or $\ge r$ for rational $r \in [0, 1]$, excluding the trivial bounds $> 1$ and $\ge 0$ (Section 2.2 of the source), restricted to well-typed formulas. A formula of type $\mathrm{Prop}$ denotes a function $S \to [0, 1]$: $p$ is the indicator of $\rho(p)$, $\vee$ and $\wedge$ are pointwise maximum and minimum, $[\varphi]_J$ is $1$ where the value of $\varphi$ lies in $J$ and $0$ elsewhere, $\square\varphi$, $\lozenge\varphi$ and $\bigcirc\varphi$ are the minimum, maximum and $P$-weighted average of the value of $\varphi$ over the successors ($P(s, s') > 0$), and $\mu$, $\nu$ are least and greatest fixpoints of monotone functions on the domains of their types, $\lambda$ and application being function abstraction and application. The *order* of a formula is the largest order of a type in its typing derivation; order-0 PHFL is the $\mu^p$-calculus. For a closed formula $\varphi$ of type $\mathrm{Prop}$, $M \models \varphi$ iff the value of $\varphi$ at $s_{\mathrm{in}}$ is $1$, and the *model-checking problem* asks, given $M$ and $\varphi$, whether $M \models \varphi$; as an input, $M$ is given by finite tables with rational transition probabilities.
 
 ## Depends on
 
@@ -19,7 +19,7 @@ with $J$ of the form $> r$ or $\ge r$ for rational $r \in [0, 1]$, restricted to
 
 None.
 
-## Expansion
+## Remarks
 
 Only the thresholds $> r$ and $\ge r$ are allowed, which keeps every formula monotone, so the fixpoints exist. Order-1 PHFL is strictly more expressive than the $\mu^p$-calculus (Theorem 2.9 of the source), and model checking is decidable for the $\mu^p$-calculus and for non-probabilistic higher-order fixpoint logic.
 

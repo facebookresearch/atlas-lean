@@ -2,7 +2,7 @@
 
 Atomic CTL* extends CTL* by disjunctions over orbit-finite sets of formulas, built from basic propositions that may mention atoms, and is interpreted over atomic Kripke models.
 
-**Definition.** Over atoms $\mathbb A$ and an equivariant set $P$ of basic propositions as in [atomic Kripke models](atomic-kripke-models.md), *atomic CTL** has state formulas $\Phi ::= p \mid \bigvee\Psi \mid \neg\Phi \mid \exists\varphi$ and path formulas $\varphi ::= \Phi \mid \bigvee\Psi' \mid \neg\varphi \mid \varphi\,\mathbf U\,\varphi \mid \mathbf X\varphi$, where $\Psi$ and $\Psi'$ range over orbit-finite sets of state and path formulas respectively. State formulas are evaluated at states of an atomic Kripke model and path formulas along its infinite paths, as for CTL*, an orbit-finite disjunction holding iff some disjunct does. The path quantifier $\exists$ may range over all paths or over finitely supported paths only; the source allows either reading.
+**Definition.** Over atoms $\mathbb A$ and an equivariant set $P$ of basic propositions as in [atomic Kripke models](atomic-kripke-models.md), *atomic CTL\** has state formulas $\Phi ::= p \mid \bigvee\Psi \mid \neg\Phi \mid \exists\varphi$ and path formulas $\varphi ::= \Phi \mid \bigvee\Psi' \mid \neg\varphi \mid \varphi\,\mathbf U\,\varphi \mid \mathbf X\varphi$, where $\Psi$ and $\Psi'$ range over orbit-finite sets of state and path formulas respectively. State formulas are evaluated at states of an atomic Kripke model and path formulas along its infinite paths, as for CTL*, an orbit-finite disjunction holding iff some disjunct does. The path quantifier $\exists$ may range over all paths or over finitely supported paths only; the source allows either reading.
 
 ## Depends on
 
@@ -13,7 +13,7 @@ Atomic CTL* extends CTL* by disjunctions over orbit-finite sets of formulas, bui
 
 None.
 
-## Expansion
+## Remarks
 
 Classical CTL* embeds into the modal μ-calculus, but this fails with atoms: model checking the vectorial atomic μ-calculus over orbit-finite models is decidable, while model checking atomic CTL* is not.
 

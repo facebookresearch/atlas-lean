@@ -22,7 +22,7 @@ For sentences, in which every check lies under a freeze quantifier, $w \models \
 
 None.
 
-## Expansion
+## Remarks
 
 With the identity ordering on a single attribute this is the one-register freeze LTL of Demri and Lazić. For a linear ordering $[k] = \{1 < \dots < k\}$, freezing attribute $x$ stores the prefix $d_1 \dots d_x$ of the value vector and a check succeeds if the current prefix of length $y$ agrees with a stored one. If $x \sqsubseteq z \sqsupseteq y$ with $x$, $y$ incomparable, freezing $z$ stores the *set* of values of $x$ and $y$, which is what makes undecidability possible.
 
