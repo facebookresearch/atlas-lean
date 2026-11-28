@@ -74,8 +74,9 @@ def InLine (x y z : ℕ × ℕ) : Prop :=
     (x.2 = y.2 ∧ y.2 = z.2 ∧
       ((x.1 + 1 = y.1 ∧ y.1 + 1 = z.1) ∨ (z.1 + 1 = y.1 ∧ y.1 + 1 = x.1)))
 
-/-- One jump on the `n × n` board from the position `P` to the position `Q`: the peg on `x`
-jumps over the peg on `y` to the empty hole `z` of the board, and the peg on `y` is
+/-- One jump on the `n × n` board from the position `P` to the position `Q`: for holes `x`,
+`y`, `z` that are consecutive in one row or one column, in this order (`InLine`), the peg on
+`x` jumps over the peg on `y` to the empty hole `z` of the board, and the peg on `y` is
 removed. -/
 def Jump (n : ℕ) (P Q : Finset (ℕ × ℕ)) : Prop :=
   ∃ x y z, InLine x y z ∧ z.1 < n ∧ z.2 < n ∧ x ∈ P ∧ y ∈ P ∧ z ∉ P ∧

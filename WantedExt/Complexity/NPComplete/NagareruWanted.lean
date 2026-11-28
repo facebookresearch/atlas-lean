@@ -124,7 +124,9 @@ def Windy (i : NagareruInstance) (x : Fin (rows i) × Fin (cols i)) (w : ℕ) : 
   ∃ b, entry i b = 6 + w ∧ Beyond b x w ∧
     ∀ y, Beyond b y w → (Beyond y x w ∨ y = x) → entry i y < 5
 
-/-- The directed cycle `c` satisfies rules 1-4. -/
+/-- The directed cycle `c` satisfies rules 1-4, where the wind of a black arrow cell blows in
+the arrow's direction through the following cells up to the next black cell or the border
+(`Windy`). -/
 def Solves (i : NagareruInstance) {u : Fin (rows i) × Fin (cols i)}
     (c : (Grid i).Walk u u) : Prop :=
   -- 1. the loop passes only through white cells
@@ -141,7 +143,9 @@ def Solves (i : NagareruInstance) {u : Fin (rows i) × Fin (cols i)}
     (Step d.fst d.snd ((w + 1) % 4) ∨ Step d.fst d.snd ((w + 3) % 4)) →
       Step d'.fst d'.snd w
 
-/-- Some directed cycle of the grid graph satisfies the rules. -/
+/-- Some directed cycle of the grid graph satisfies rules 1-4 (`Solves`), where the wind of a
+black arrow cell blows in the arrow's direction through the following cells up to the next
+black cell or the border. -/
 def NagareruFeasible (i : NagareruInstance) : Prop :=
   ∃ u, ∃ c : (Grid i).Walk u u, c.IsCycle ∧ Solves i c
 
