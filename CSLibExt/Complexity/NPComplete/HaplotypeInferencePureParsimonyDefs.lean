@@ -6,8 +6,30 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Data.Fintype.Pi
+
+/-!
 # HAPLOTYPE INFERENCE BY PURE PARSIMONY: definitions
+
+INSTANCE: a set `G` of genotypes, each a vector of length `m` with entries in `{0, 1, 2}`, and an
+integer `K`. QUESTION: is there a set `H` of at most `K` haplotypes (vectors of length `m` with
+entries in `{0, 1}`) such that every genotype `g ∈ G` is explained by two haplotypes
+`h₁, h₂ ∈ H`, i.e., for each position `k`, `g[k] ∈ {0, 1}` implies `h₁[k] = h₂[k] = g[k]`, and
+`g[k] = 2` implies `h₁[k] ≠ h₂[k]`?
+
+The two haplotypes explaining a genotype need not be distinct: a genotype without entries `2`
+is explained by one haplotype taken twice. Haplotypes are functions `Fin m → Bool` (`false`
+for `0`, `true` for `1`) and `H` is a `Finset` of them, so `|H|` counts distinct haplotypes.
+Genotypes are lists of natural numbers, so the alphabet `{0, 1, 2}` and the common length `m`
+go in `WellFormed`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 G. Lancia, M. C. Pinotti, and R. Rizzi, "Haplotyping populations by pure parsimony: complexity
@@ -18,11 +40,6 @@ haplotyping", IEEE/ACM Transactions on Computational Biology and Bioinformatics 
 303-311, doi:10.1109/TCBB.2006.40 (NP-hardness, crediting the first proof to E. Hubbell,
 unpublished).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Pi
 
 @[expose] public section
 

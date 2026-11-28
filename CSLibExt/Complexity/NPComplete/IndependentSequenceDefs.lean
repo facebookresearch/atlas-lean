@@ -6,8 +6,37 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Computability.Complexity.Karp.Color
+public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # INDEPENDENT SEQUENCE: definitions
+
+INSTANCE: a graph `G = (V, E)` and a positive integer `K ≤ |V|`.
+QUESTION: is there an independent sequence for `G` of length at least `K`, i.e., a sequence
+`v₁, …, v_m` of independent vertices of `G` with `m ≥ K` such that, for all `i < m`, a vertex
+`v̄ᵢ ∈ V` exists which is adjacent to `v_{i+1}` but is not adjacent to any `v_j` for `j ≤ i`?
+
+The sequence is a list `l` (0-indexed, so `v_{i+1}` is `l[i]` and `v₁, …, vᵢ` is `l.take i`)
+whose entries form an independent set (Mathlib's `SimpleGraph.IsIndepSet`). The witness
+condition forces the entries to be distinct: if `v_{i+1} = v_j` with `j ≤ i`, a vertex adjacent
+to `v_{i+1}` is adjacent to `v_j`. The graph is given by a vertex count `n` (vertices `Fin n`)
+and a simple edge list. The bound `K ≤ |V|` follows the convention of Garey and Johnson's
+[GT20] INDEPENDENT SET.
+
+Halldórsson shows that feasibility of a sequence is checked in polynomial time, so the problem
+is in NP, and Proposition 2.3 maps a graph `G` on `v₁, …, vₙ` to the graph `H_G` that adds a
+clique `w₁, …, wₙ` with `vᵢ wⱼ` an edge iff `i ≥ j`; `G` has an independent set of size `K`
+iff `H_G` has an independent sequence of length `K`, which reduces INDEPENDENT SET to this
+problem.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. M. Halldórsson, "Approximations of weighted independent set and hereditary subset
@@ -17,13 +46,6 @@ and Proposition 2.3 (a size-preserving reduction from INDEPENDENT SET);
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MAXIMUM INDEPENDENT SEQUENCE.
 -/
-module
-
-public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

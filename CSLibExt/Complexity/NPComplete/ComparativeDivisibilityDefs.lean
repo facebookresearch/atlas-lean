@@ -6,8 +6,24 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # COMPARATIVE DIVISIBILITY: definitions
+
+Given sequences `a₁, …, aₙ` and `b₁, …, bₘ` of positive integers, is there a positive integer
+`c` such that the number of `i` for which `c` divides `aᵢ` is more than the number of `j` for
+which `c` divides `bⱼ`? The sequences may repeat entries; each occurrence is counted.
+
+Numbers use the canonical binary encoding (the problem is NP-complete in the weak sense:
+trying every `c ≤ max aᵢ` is pseudo-polynomial).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,10 +33,6 @@ Proc. 17th Annual Symposium on Foundations of Computer Science (1976), 264-267,
 doi:10.1109/SFCS.1976.29; journal version SIAM Journal on Computing 7 (1978), 458-464,
 doi:10.1137/0207036.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

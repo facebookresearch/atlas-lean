@@ -6,8 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TruthFunctionallyCompleteConnectivesDefs
+
+/-!
 # TRUTH-FUNCTIONALLY COMPLETE CONNECTIVES with two expressions: definitions
+
+INSTANCE: a set `U` of variables and a collection `C` of two well-formed Boolean expressions
+over `U` (the comment's restriction `|C| = 2`). QUESTION: is `C` truth-functionally complete,
+i.e., is there a truth-functionally complete set of logical connectives (unary and binary
+operators) `D = {θ₁, …, θₖ}` such that for each `θᵢ ∈ D` there is an expression `E ∈ C` and a
+substitution `s : U → {a, b}` for which `s(E) ≡ a θᵢ b` or `s(E) ≡ θᵢ a`?
+
+This is the restriction of `TruthFunctionallyCompleteConnectivesWanted` to collections of two
+expressions: the instance, the expressions, the substitutions and the question are that
+module's, and `WellFormed` adds that `C` consists of two distinct expressions: a list of two
+token lists whose parsed expressions differ. Distinct token lists are not enough, because the
+reader ignores the second component of operator tokens: two encodings of one expression that
+differ only there (for example two spellings of NAND whose negation tokens differ) are one
+expression, and such a pair is malformed.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -15,11 +39,6 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [LO10] TRUTH-FUNCTIONA
 CONNECTIVES, p. 261, comment: remains NP-complete even if `|C| = 2` (reference: R. Statman
 (1976), private communication).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.TruthFunctionallyCompleteConnectivesDefs
 
 @[expose] public section
 

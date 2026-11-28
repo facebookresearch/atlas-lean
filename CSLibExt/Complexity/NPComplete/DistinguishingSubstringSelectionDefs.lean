@@ -6,8 +6,38 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ClosestSubstringDefs
+
+/-!
 # DISTINGUISHING SUBSTRING SELECTION: definitions
+
+INSTANCE: an alphabet `Σ`, "bad" strings `B₁, ..., Bₘ` and "good" strings `G₁, ..., Gₙ` over
+`Σ`, each of length at least `L`, and integers `L`, `k_b` and `k_g`.
+QUESTION: is there a string `t ∈ Σ^L` such that every bad string has a length-`L` substring
+within Hamming distance `k_b` of `t`, and every length-`L` substring of every good string has
+Hamming distance at least `k_g` from `t`?
+
+This is the statement of Gramm, Guo and Niedermeier ("given integers `d_g`, `d_b`, and `L`, we
+ask for a length-`L` string `s` such that `s` has Hamming distance at least `d_g` to every
+length-`L` substring of the good strings and such that every bad string has a length-`L`
+substring with Hamming distance at most `d_b` to `s`"), with `k_b = d_b` and `k_g = d_g`. With
+no good strings it is CLOSEST SUBSTRING (`ClosestSubstringWanted`), which Lanctot et al. prove
+NP-hard; with every string of length `L` it is DISTINGUISHING STRING SELECTION
+(`DistinguishingStringSelectionWanted`).
+
+The alphabet is `{0, ..., q - 1}`, given by its size `q`; strings are lists of letters; the
+candidate `t` is a word `Fin L → ℕ` with letters below `q`; the length-`L` substring of `s`
+starting at position `j` (with `j + L ≤ |s|`) is `ClosestSubstring.substringAt s j L`; and the
+distance is Mathlib's `hammingDist`. Lengths and distance bounds use the canonical binary
+encoding.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 J. K. Lanctot, M. Li, B. Ma, S. Wang and L. Zhang, "Distinguishing string selection problems",
@@ -15,11 +45,6 @@ Information and Computation 185 (2003), 41-55, doi:10.1016/S0890-5401(03)00057-9
 J. Gramm, J. Guo and R. Niedermeier, "Parameterized intractability of distinguishing substring
 selection", Theory of Computing Systems 39 (2006), 545-560, doi:10.1007/s00224-004-1185-z.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.ClosestSubstringDefs
 
 @[expose] public section
 

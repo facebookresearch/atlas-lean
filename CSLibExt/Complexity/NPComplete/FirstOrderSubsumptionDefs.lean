@@ -6,8 +6,38 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.UnificationForFinitelyPresentedAlgebrasDefs
+
+/-!
 # FIRST ORDER SUBSUMPTION: definitions
+
+INSTANCE: a finite set `U` of "variable symbols", a finite set `C` of "function symbols", a
+collection `E = {E₁, E₂, ..., Eₘ}` of expressions over `U ∪ C`, and a collection
+`F = {F₁, F₂, ..., Fₙ}` of expressions over `C`.
+QUESTION: is there a substitution mapping `s` that assigns to each `u ∈ U` an expression `s(u)`
+over `C` such that, if `s(Eᵢ)` denotes the result of substituting for each occurrence in `Eᵢ` of
+each `u ∈ U` the corresponding expression `s(u)`, then `{s(E₁), s(E₂), ..., s(Eₘ)}` is a subset of
+`{F₁, F₂, ..., Fₙ}`?
+
+Expressions are first-order terms. The function symbols of `C` are `0, …, |C| - 1`, each with
+its arity (constants have arity `0`), as in
+`UnificationForFinitelyPresentedAlgebrasDefs`: `lang ar` is the first-order language whose
+function symbols are the indices of the arity list `ar`. Expressions over `U ∪ C` are Mathlib's
+terms `(lang ar).Term (Fin |U|)`, with variables `0, …, |U| - 1`; expressions over `C` are the
+closed terms `(lang ar).Term Empty`; `s(Eᵢ)` is `Term.subst`.
+
+Expressions are given by the prefix token lists `tokens` of that module (Mathlib's
+`Term.listEncode`): `(0, u)` is the variable `u` and `(1, f)` the function symbol `f`, followed
+by the tokens of its arguments. Since the arities are part of the instance, a token list
+determines the expression.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
@@ -17,11 +47,6 @@ L. D. Baxter, *The Complexity of Unification*, Doctoral Thesis, Department of Co
 University of Waterloo (1976);
 L. D. Baxter, "The NP-completeness of subsumption", unpublished manuscript (1977).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.UnificationForFinitelyPresentedAlgebrasDefs
 
 @[expose] public section
 

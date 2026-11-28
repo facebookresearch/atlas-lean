@@ -6,8 +6,28 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.InformationTheory.Hamming
+
+/-!
 # CLOSEST SUBSTRING: definitions
+
+INSTANCE: an alphabet `Σ`, strings `s₁, ..., s_k` over `Σ` (of arbitrary lengths), a positive
+integer `L ≤ min |sᵢ|`, and a nonnegative integer `d`. QUESTION: is there a string `t` of length
+`L` over `Σ` such that every `sᵢ` has a substring (a block of consecutive letters) of length `L`
+within Hamming distance `d` of `t`?
+
+Representation. The alphabet is `Σ = {0, ..., a - 1}`, given by its size `a`; strings are lists
+of letters. The candidate `t` is a word `Fin L → ℕ` with letters below `a`, the length-`L`
+substring of `s` starting at position `j` (with `j + L ≤ |s|`) is the word
+`k ↦ s[j + k]`, and the distance is Mathlib's `hammingDist`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 J. K. Lanctot, M. Li, B. Ma, S. Wang, and L. Zhang, "Distinguishing string selection
@@ -17,11 +37,6 @@ M. Frances and A. Litman, "On covering problems of codes", Theory of Computing S
 (1997), 113-119, doi:10.1007/BF02679443 (CLOSEST STRING, the special case `L = |sᵢ|`, is
 NP-complete over the binary alphabet).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.InformationTheory.Hamming
 
 @[expose] public section
 

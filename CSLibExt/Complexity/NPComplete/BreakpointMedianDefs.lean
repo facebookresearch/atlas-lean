@@ -6,19 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ExemplarBreakpointDistanceDefs
+
+/-!
 # BREAKPOINT MEDIAN: definitions
+
+INSTANCE: three signed permutations `π₀, π₁, π₂` on `n` elements and an integer `k`.
+QUESTION: is there a signed permutation `π̂` on `n` elements with
+`bp(π₀, π̂) + bp(π₁, π̂) + bp(π₂, π̂) ≤ k`?
+
+Definitions of Pe'er and Shamir (Section 2). A signed permutation on `n` elements is an
+`n`-tuple `(π(1), …, π(n))` with `π(i) ∈ {±1, …, ±n}` and `|π(i)| ≠ |π(j)|` for `i ≠ j`. Its
+standard augmentation is the unsigned permutation on `0, …, 2n + 1` obtained by replacing `+i`
+by `2i - 1, 2i` and `-i` by `2i, 2i - 1`, and adding `0` in front and `2n + 1` at the end; the
+pairs at positions `2j, 2j + 1` (`0 ≤ j ≤ n`) of the augmentation are the successive pairs of
+the signed permutation. A successive pair of `π` that is not a successive pair of `σ` is a
+breakpoint, and `bp(π, σ)` is the number of breakpoints of `π` with respect to `σ`.
+
+A signed element is a pair `(a, s)` of an absolute value `a : ℕ` and a sign `s : Bool` (`true`
+for `+`); a signed permutation on `n` elements is a list of signed elements whose absolute values
+form a permutation of `1, …, n`. The number `n` is the length of `π₀`. The breakpoint count is
+the breakpoint distance `ExemplarBreakpointDistance.breakpointDistance` of
+`WantedExt.Complexity.NPComplete.ExemplarBreakpointDistanceWanted` (Sankoff's definition, as
+used by Bryant), which agrees with Pe'er and Shamir's count on signed permutations of the same
+elements: the successive pair between consecutive elements `a b` of `π` is `{tail(a), head(b)}`,
+and it is a successive pair of `σ` exactly when `a b` or `-b -a` are consecutive in `σ`; the pair
+containing `0` (resp. `2n + 1`) is a successive pair of `σ` exactly when `π` and `σ` have the
+same first (resp. last) signed element. `k` uses the canonical binary encoding.
+
+Pe'er and Shamir prove the signed median problem NP-complete already for three permutations
+(Corollary 4.9) and extend the hardness to unsigned permutations (Theorem 5.1).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 I. Pe'er and R. Shamir, "The median problems for breakpoints are NP-complete", Electronic
 Colloquium on Computational Complexity, Report TR98-071 (1998) (Section 2, the signed median
 problem and breakpoints; Corollary 4.9: the signed permutations median problem is NP-complete).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.ExemplarBreakpointDistanceDefs
 
 @[expose] public section
 

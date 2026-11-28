@@ -6,8 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Data.List.Sort
+
+/-!
 # DOUBLE DIGEST: definitions
+
+INSTANCE: multisets `A`, `B` and `C` of positive integers with `∑ A = ∑ B = ∑ C` (the lengths
+of the fragments of a DNA sequence cut by enzyme 1, by enzyme 2, and by both enzymes).
+QUESTION: are there orderings of `A` and of `B` such that, when both are laid out from the same
+starting point, the union of their cut points cuts the sequence into fragments whose lengths
+form the multiset `C`? As in the source formulation, the restriction sites of the two enzymes
+do not coincide: apart from the common ends of the sequence, no cut point of `A` is a cut point
+of `B` (so `|C| = |A| + |B| - 1` for every solution).
+
+Kao, Samet and Sung define the problem this way ("It is a biology fact that the restriction
+sites for enzymes A and B do not coincide"; `A`, `B`, `C` the multisets of fragment lengths
+from enzyme A, enzyme B and both) and record that Goldstein and Waterman "showed that the DD
+problem is NP-hard by reducing the set partition problem to it". Cieliebak, Eidenbenz and
+Woeginger revisit the problem and its complexity. The orderings are a polynomial certificate,
+so the problem is in NP. Lengths are natural numbers in binary encoding.
+
+The multisets are lists, compared up to permutation (`List.Perm`). An ordering of `A` is a list
+`a` with `a.Perm A`; its cut points are its prefix sums `0, a₁, a₁ + a₂, ..., ∑ a`
+(`List.scanl`); its internal cut points drop the first (`0`) and the last (`∑ a`). The internal
+cut points of the two orderings are disjoint, and all cut points are merged into one
+duplicate-free list (`List.dedup`, which merges the common ends) and sorted
+(`List.insertionSort`); the fragments are the differences of consecutive cut points.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 L. Goldstein and M. S. Waterman, "Mapping DNA by stochastic relaxation", Advances in Applied
@@ -19,11 +51,6 @@ M. Cieliebak, S. Eidenbenz and G. J. Woeginger, "Double digest revisited: comple
 approximability in the presence of noisy data", COCOON 2003, Lecture Notes in Computer Science
 2697 (2003), 519-527, doi:10.1007/3-540-45071-8_52.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.List.Sort
 
 @[expose] public section
 

@@ -6,8 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Fin
+
+/-!
 # CHAMBERLIN-COURANT WINNER DETERMINATION: definitions
+
+INSTANCE: a set `C` of candidates, a list of voters, each with a strict ranking of `C`, a
+committee size `k`, and a misrepresentation bound `B`. QUESTION: is there a committee `W ⊆ C` of
+`k` candidates such that the total Borda misrepresentation, the sum over the voters of the
+position (`0` for the top choice, `|C| - 1` for the last) of their best-ranked member of `W`, is
+at most `B`?
+
+Representation. The candidates are `C = {0, ..., m - 1}`. A vote is a list of candidates, best
+first, listing every candidate exactly once (`List.Perm` of `List.range m`); the position of
+`c` in vote `v` is `v.idxOf c`, the Borda misrepresentation `(0, 1, ..., m - 1)`. The question
+is stated with an assignment `r` of a representative in `W` to each voter: the minimum over
+assignments of the total misrepresentation is the sum of the voters' misrepresentations by their
+best-ranked members of `W`, so the two readings agree. As in Lu and Boutilier's
+`K`-recommendation sets, a committee member need not represent any voter.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 T. Lu and C. Boutilier, "Budgeted social choice: From consensus to personalized decision
@@ -19,11 +43,6 @@ N. Betzler, A. Slinko, and J. Uhlmann, "On the computation of fully proportional
 representation", Journal of Artificial Intelligence Research 47 (2013), 475-519,
 doi:10.1613/jair.3896, Theorem 2.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Fin
 
 @[expose] public section
 

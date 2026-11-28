@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.FirstOrderSubsumptionDefs
+
+/-!
 # FIRST ORDER SUBSUMPTION with a fixed number `n ≥ 3` of target expressions: definitions
+
+FIRST ORDER SUBSUMPTION (`FirstOrderSubsumptionWanted`) with the size `n` of the collection
+`F = {F₁, F₂, ..., Fₙ}` fixed. INSTANCE: a finite set `U` of "variable symbols", a finite set
+`C` of "function symbols", a collection `E = {E₁, E₂, ..., Eₘ}` of expressions over `U ∪ C`, and
+a collection `F = {F₁, F₂, ..., Fₙ}` of `n` expressions over `C`.
+QUESTION: is there a substitution mapping `s` that assigns to each `u ∈ U` an expression `s(u)`
+over `C` such that `{s(E₁), s(E₂), ..., s(Eₘ)}` is a subset of `{F₁, F₂, ..., Fₙ}`?
+
+Garey and Johnson record that the problem "remains NP-complete for any fixed `n ≥ 3`, but is
+solvable in polynomial time for any fixed `m`". The corresponding wanted theorem states the first
+half: for every
+fixed `n ≥ 3`, the problem restricted to instances with exactly `n` expressions in `F` is
+NP-complete. The instances, their well-formedness and the question are those of
+`FirstOrderSubsumptionDefs`; `F` is given as a list of `n` token lists, and since token lists
+determine expressions, requiring them to be distinct makes `F` a set of `n` expressions.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
@@ -17,11 +42,6 @@ L. D. Baxter, *The Complexity of Unification*, Doctoral Thesis, Department of Co
 University of Waterloo (1976);
 L. D. Baxter, "The NP-completeness of subsumption", unpublished manuscript (1977).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.FirstOrderSubsumptionDefs
 
 @[expose] public section
 

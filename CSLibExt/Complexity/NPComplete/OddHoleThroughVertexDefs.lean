@@ -6,8 +6,34 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Computability.Complexity.Karp.Color
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
+public import Mathlib.Combinatorics.SimpleGraph.Maps
+
+/-!
 # ODD HOLE THROUGH A GIVEN VERTEX: definitions
+
+INSTANCE: a graph `G = (V, E)` and a vertex `v ∈ V`. QUESTION: does `G` have an odd hole
+containing `v`, i.e., an induced cycle of odd length at least `5` through `v`?
+
+Chudnovsky, Scott, Seymour and Spirkl (Section 1): "A hole of `G` is an induced subgraph of `G`
+that is a cycle of length at least four", and "D. Bienstock [2, 3] showed that testing if a graph
+has an odd hole containing a given vertex is NP-complete" (in contrast, they show that testing
+for an odd hole anywhere in the graph is polynomial).
+
+A hole of length `k` is an induced copy of Mathlib's `SimpleGraph.cycleGraph k`: a graph
+embedding `cycleGraph k ↪g G` (`SimpleGraph.Embedding`, an injective map that preserves and
+reflects adjacency, so the copy is induced, i.e. chordless). The hole is odd when `k` is odd, and
+it contains `v` when `v` is the image of one of its vertices. The given vertex is a natural number
+`v < n`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 D. Bienstock, "On the complexity of testing for odd holes and induced odd paths", Discrete
@@ -17,14 +43,6 @@ M. Chudnovsky, A. Scott, P. Seymour and S. Spirkl, "Detecting an odd hole", Jour
 67 (2020), Article 5, doi:10.1145/3375720 (arXiv:1903.00208; Section 1: "D. Bienstock [2, 3]
 showed that testing if a graph has an odd hole containing a given vertex is NP-complete").
 -/
-module
-
-public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Combinatorics.SimpleGraph.Maps
 
 @[expose] public section
 

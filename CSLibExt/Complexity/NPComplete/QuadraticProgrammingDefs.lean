@@ -6,8 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.Order.Field.Rat
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # QUADRATIC PROGRAMMING: definitions
+
+Given a finite set `X` of pairs `(x, b)`, where `x` is an `m`-tuple of rational numbers and `b`
+is a rational number, two `m`-tuples `c` and `d` of rational numbers, and a rational number `B`,
+is there an `m`-tuple `y` of rational numbers such that `x · y ≤ b` for all `(x, b) ∈ X` and
+`∑ᵢ (cᵢ yᵢ² + dᵢ yᵢ) ≥ B`?
+
+A rational number is encoded as `((p, q), r)` with value `(p - q) / r` and `r > 0`
+(`WellFormed`): an integer numerator as a pair of naturals `(positive part, negative part)`,
+as in `ZeroOneILPWanted`, over a positive denominator. All numbers use the canonical binary
+encoding.
+
+Garey and Johnson record the problem as NP-hard and not known to be in NP; Vavasis (1990)
+proved membership in NP, so it is NP-complete.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,12 +41,6 @@ doi:10.1137/0203021 (NP-hardness);
 S. A. Vavasis, "Quadratic programming is in NP", Information Processing Letters 36 (1990),
 73-77, doi:10.1016/0020-0190(90)90100-C (membership in NP).
 -/
-module
-
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.Order.Field.Rat
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

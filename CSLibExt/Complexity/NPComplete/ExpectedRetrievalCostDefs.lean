@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.Order.Field.Rat
+
+/-!
 # EXPECTED RETRIEVAL COST: definitions
+
+INSTANCE: a set `R` of records, a rational probability `p(r) ∈ [0, 1]` for each `r ∈ R`, with
+`∑_{r ∈ R} p(r) = 1`, a number `m` of sectors, and a positive integer `K`. QUESTION: is there a
+partition of `R` into disjoint subsets `R₁, R₂, …, Rₘ` such that, if `p(Rᵢ) = ∑_{r ∈ Rᵢ} p(r)`
+and the "latency cost" `d(i, j)` is defined to be `j - i - 1` if `1 ≤ i < j ≤ m` and to be
+`m - i + j - 1` if `1 ≤ j ≤ i ≤ m`, then the sum over all ordered pairs `i, j`,
+`1 ≤ i, j ≤ m`, of `p(Rᵢ) · p(Rⱼ) · d(i, j)` is at most `K`?
+
+The partition is given by the map `f : R → Fin m` sending each record to its sector, so
+`Rᵢ = f⁻¹(i)`; `f` is surjective because the blocks of a partition are nonempty (so a
+yes-instance has `m ≤ |R|`). Sectors are indexed from `0` here, which leaves both
+cases of `d` unchanged. A rational probability `a / b` is encoded as a pair of naturals
+`(a, b)` with `0 < b`; the cost is a rational number compared with the integer `K`. Numbers use
+the binary encoding.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -15,12 +40,6 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [SR4] EXPECTED RETRIEV
 R. A. Cody and E. G. Coffman, Jr., "Record allocation for minimizing expected retrieval costs on
 drum-like storage devices", Journal of the ACM 23 (1976), 103-115, doi:10.1145/321921.321933.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.Order.Field.Rat
 
 @[expose] public section
 

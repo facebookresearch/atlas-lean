@@ -6,8 +6,29 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Order.Ring.Rat
+
+/-!
 # OPEN HEMISPHERE: definitions
+
+INSTANCE: a finite set `X` of `m`-tuples of integers, and a positive integer `K ≤ |X|`.
+QUESTION: is there an `m`-tuple `y` of rational numbers such that `x · y > 0` for at least `K`
+`m`-tuples `x ∈ X`?
+
+Each integer is encoded as a pair of naturals `(positive part, negative part)` representing their
+difference (`intOf`), as in `WantedExt.Complexity.NPComplete.ZeroOneILPWanted`; numbers use the
+canonical binary encoding. `X` is a list; since `X` is a set, `WellFormed` requires the decoded
+integer tuples to be pairwise distinct, so the length of the list is `|X|` and the count of
+tuples with `x · y > 0` is a count of elements of `X`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -15,12 +36,6 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [MP6] OPEN HEMISPHERE;
 D. S. Johnson and F. P. Preparata, "The densest hemisphere problem", Theoretical
 Computer Science 6 (1978), 93-107, doi:10.1016/0304-3975(78)90006-3.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Order.Ring.Rat
 
 @[expose] public section
 

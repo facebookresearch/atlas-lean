@@ -6,14 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# FLOOD-IT: definitions
-
-Source:
-R. Clifford, M. Jalsenius, A. Montanaro, and B. Sach, "The complexity of flood filling games",
-Theory of Computing Systems 50(1) (2012), 72-92, doi:10.1007/s00224-011-9339-2
-(arXiv:1001.4420, Theorem 1).
--/
 module
 
 public import MathlibExt.Computability.BinaryNatEncoding
@@ -21,6 +13,37 @@ public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Prod
+
+/-!
+# FLOOD-IT: definitions
+
+For a fixed number of colors `c ≥ 3`:
+
+INSTANCE: an `n × n` board of tiles, each allocated one of `c` colors, and an integer `k`.
+QUESTION: can the board be made a single color with at most `k` flooding operations? A flooding
+operation chooses a color `a` and changes the color of every tile of the monochromatic region
+connected to the top left tile to `a`.
+
+Tiles are `Fin n × Fin n` (row, column), adjacent when left/right/up/down neighbors, i.e. in
+Mathlib's grid graph `pathGraph n □ pathGraph n` (`Grid`). Two adjacent tiles of the same color
+are connected (`SameColorGraph`), and the region of the top left tile `(0, 0)` is the set of
+tiles reachable from it in that graph (`Region`). `flood col a` recolors that region with `a`;
+after it, neighboring regions already of color `a` join the region, which the next operation
+sees through `Region` of the new coloring. The colors are `0, …, c - 1`, and the board is given
+row by row as a list of `n²` colors.
+
+Clifford, Jalsenius, Montanaro and Sach prove that for every `c ≥ 3` the decision version of
+`c`-Flood-It is NP-complete (Theorem 1), so the statement is quantified over `c ≥ 3`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+Source:
+R. Clifford, M. Jalsenius, A. Montanaro, and B. Sach, "The complexity of flood filling games",
+Theory of Computing Systems 50(1) (2012), 72-92, doi:10.1007/s00224-011-9339-2
+(arXiv:1001.4420, Theorem 1).
+-/
 
 @[expose] public section
 

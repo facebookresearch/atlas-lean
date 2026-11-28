@@ -6,8 +6,42 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # EXEMPLAR BREAKPOINT DISTANCE: definitions
+
+INSTANCE: two genomes `G` and `H`, strings of signed (`+` or `-`) symbols (genes) over an
+alphabet `A`, in which every symbol of `A` occurs in both genomes, and a nonnegative integer
+`K`. QUESTION: is the exemplar breakpoint distance between `G` and `H` at most `K`, i.e. are
+there exemplar strings `g` of `G` and `h` of `H` whose breakpoint distance is at most `K`?
+
+The definitions are Bryant's (Section 2, following Sankoff 1999). All occurrences of a symbol
+`a` in both genomes form the gene family of `a`; Bryant assumes every family has a member in
+each genome. An exemplar string is obtained from a genome by deleting all but one occurrence of
+each gene family, so it keeps the relative order of the remaining genes. For exemplar strings
+`g = g₁ ⋯ gₙ` and `h = h₁ ⋯ hₙ`, consecutive genes `a b` of `g` determine a breakpoint unless
+`a` immediately precedes `b` in `h` or `-b` immediately precedes `-a` in `h`; additional
+breakpoints are posited if `g₁ ≠ h₁` and if `gₙ ≠ hₙ` (signed genes compared). The breakpoint
+distance is the number of breakpoints. (Bryant's worked example, exemplars `-b -a -c d` and
+`c a b d` at breakpoint distance `2`, fixes the signed reading of the adjacency clause.)
+
+Bryant proves that calculating the exemplar breakpoint distance is NP-hard (Theorem 1, even for
+genomes in which every family has at most two members in each genome); the decision problem
+is in NP because a pair of exemplar strings is a short certificate.
+
+A gene is a pair `(a, s)` of a symbol `a : ℕ` and a sign `s : Bool` (`true` for `+`, `false`
+for `-`); a genome is a list of genes. An exemplar string of `X` is a sublist (`List.Sublist`)
+of `X` containing exactly one gene of every family of `X`. "`a` immediately precedes `b` in
+`h`" means that `(a, b)` is one of the consecutive pairs `h.zip h.tail`. `K` uses the canonical
+binary encoding.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 D. Bryant, "The complexity of calculating exemplar distances", in D. Sankoff and J. H. Nadeau
@@ -15,10 +49,6 @@ D. Bryant, "The complexity of calculating exemplar distances", in D. Sankoff and
 Section 2 (definitions, after D. Sankoff, "Genome rearrangement with gene families",
 Bioinformatics 15 (1999), 909-917, doi:10.1093/bioinformatics/15.11.909) and Theorem 1.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

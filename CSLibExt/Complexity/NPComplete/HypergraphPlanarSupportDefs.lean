@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Combinatorics.SimpleGraph.Planarity
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+
+/-!
 # PLANAR SUPPORT OF A HYPERGRAPH (PLANAR VENN DIAGRAM): definitions
+
+INSTANCE: a hypergraph `H = (V, C)`.
+QUESTION: is there a planar graph `G = (V, E)` such that every hyperedge `c ∈ C` induces a
+connected subgraph of `G`?
+
+Such a graph `G` is a planar support of `H` (Buchin et al.); Johnson and Pollak relate it to
+drawing the hyperedges as the regions of a Venn-type diagram.
+The vertices are `Fin n`, the hyperedges are lists of vertex numbers (a hyperedge is the set of
+its entries), and every hyperedge is nonempty (a hyperedge is a nonempty set of vertices). "A
+planar graph" is `SimpleGraph.IsPlanar` from `MathlibExt.Combinatorics.SimpleGraph.Planarity`
+(a crossing-free straight-line drawing, equivalent to planarity by Fáry's theorem; loops and
+parallel edges do not affect connectivity, so simple graphs suffice), and "induces a connected
+subgraph" is Mathlib's `SimpleGraph.Connected` for the subgraph of `G` induced on the
+hyperedge.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 D. S. Johnson and H. O. Pollak, "Hypergraph planarity and the complexity of drawing Venn
@@ -22,12 +47,6 @@ the subgraph of `G` induced by `S_i` is connected. `G` is a planar support if it
 and planar. Johnson and Pollak proved that it is NP-complete to decide if a given hypergraph
 has a planar support.").
 -/
-module
-
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 @[expose] public section
 

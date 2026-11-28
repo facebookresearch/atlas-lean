@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.OddHoleThroughVertexDefs
+
+/-!
 # EVEN HOLE THROUGH A GIVEN VERTEX: definitions
+
+INSTANCE: a graph `G = (V, E)` and a vertex `v ∈ V`. QUESTION: does `G` have an even hole
+containing `v`, i.e., an induced cycle of even length at least `4` through `v`?
+
+Cheong and Lu (2022): "An even (respectively, odd) hole in a graph is an induced cycle with even
+(respectively, odd) length that is at least four. Bienstock [DM 1991 and 1992] proved that
+detecting an even (respectively, odd) hole containing a given vertex is NP-complete." Testing for
+an even hole anywhere in the graph is polynomial (Conforti, Cornuéjols, Kapoor and Vušković).
+
+The instance, its graph and its well-formedness are those of
+`OddHoleThroughVertex`: the vertex count `n` (vertices `Fin n`), a simple edge list and the given
+vertex `v < n`. As there, a hole of length `k` is an induced copy of Mathlib's
+`SimpleGraph.cycleGraph k`, a graph embedding `cycleGraph k ↪g G` (injective, preserving and
+reflecting adjacency, so chordless); it is even when `k` is even, and contains `v` when `v` is
+the image of one of its vertices.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 D. Bienstock, "On the complexity of testing for odd holes and induced odd paths", Discrete
@@ -18,11 +43,6 @@ Theory 99 (2022), 425-434, doi:10.1002/jgt.22748 (arXiv:2008.06740; abstract: "B
 [DM 1991 and 1992] proved that detecting an even (respectively, odd) hole containing a given
 vertex is NP-complete").
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.OddHoleThroughVertexDefs
 
 @[expose] public section
 

@@ -6,8 +6,27 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.Ring.Int.Defs
+
+/-!
 # BINARY QUADRATIC DIOPHANTINE EQUATIONS: definitions
+
+INSTANCE: integers `a, b, c, d, e, f`. QUESTION: are there nonnegative integers `x₁, x₂` with
+`a x₁² + b x₁ x₂ + c x₂² + d x₁ + e x₂ + f = 0`?
+
+This is Lagarias's set `Σ₂`. Each integer is a pair of naturals `(positive part, negative part)`
+denoting their difference, in binary. The smallest solution can be exponentially long in the
+input, so membership in NP is Lagarias's theorem, not a direct certificate. Lagarias also shows
+that the variant with unrestricted integer solutions (his `Σ₃`) is in NP, but NP-completeness
+is stated, and proved, only for nonnegative solutions, which this module formalizes.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 J. C. Lagarias, "Succinct certificates for the solvability of binary quadratic Diophantine
@@ -23,11 +42,6 @@ M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the The
 NP-Completeness*, W. H. Freeman (1979), problem [AN8] QUADRATIC DIOPHANTINE EQUATIONS (the
 special form).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.Ring.Int.Defs
 
 @[expose] public section
 

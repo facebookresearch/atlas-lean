@@ -6,8 +6,44 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Topology.MetricSpace.Congruence
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.QuadraticProgrammingDefs
+
+/-!
 # COMMON POINT SET: definitions
+
+INSTANCE: a positive integer `d`, a collection `S₁, …, S_k` of finite sets of points in `ℝ^d`,
+and a positive integer `K`. QUESTION: is there a point set `S'` with at least `K` points that is
+congruent to a subset of each `Sᵢ`?
+
+This is the decision version of MAXIMUM COMMON POINT SET in the compendium of Crescenzi and
+Kann, whose measure is the number of points of `S'`.
+
+Points have rational coordinates: a point is a list of `d` rationals, and a rational is encoded
+as `((p, q), r)` with value `(p - q) / r` and `r > 0` (`QuadraticProgramming.RatCode`,
+`QuadraticProgramming.ratVal`, reused from `QuadraticProgrammingDefs`). A set `Sᵢ` is a list
+of points (a repeated point denotes the same point), and points are read in
+`EuclideanSpace ℝ (Fin d)`. All numbers use the canonical binary encoding.
+
+The set `S'` is an injective family `v : Fin m → ℝ^d` with `K ≤ m`, and "`S'` is congruent to a
+subset of `Sᵢ`" is a family `w` of points of `Sᵢ` with `Congruent v w` (Mathlib's congruence of
+indexed families: all corresponding pairwise distances agree). Such a `w` is injective because
+`v` is, and in Euclidean space a bijection between finite point sets that preserves all pairwise
+distances extends to an isometry of `ℝ^d` (translations, rotations and reflections), so this is
+congruence of point sets. The collection is nonempty (`k ≥ 1`); with no sets every `K` would be
+a yes-instance.
+
+Membership in NP: a certificate picks `K` points of each `Sᵢ` (taking `v` to be the points picked
+in `S₁`), and the squared pairwise distances, which are rational, are compared exactly.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
@@ -17,13 +53,6 @@ common point sets", Theoretical Computer Science 233 (2000), 33-50,
 doi:10.1016/S0304-3975(97)00278-8 (conference version: Proc. ISAAC 1994, LNCS 834, 405-413,
 doi:10.1007/3-540-58325-4_205).
 -/
-module
-
-public import Mathlib.Analysis.InnerProductSpace.PiL2
-public import Mathlib.Topology.MetricSpace.Congruence
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.QuadraticProgrammingDefs
 
 @[expose] public section
 

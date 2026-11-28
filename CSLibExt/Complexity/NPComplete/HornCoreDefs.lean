@@ -6,8 +6,34 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Algorithms.SAT.Horn.Basic
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # HORN CORE: definitions
+
+INSTANCE: a set `M` of truth assignments on `n` variables, and a positive integer `K`.
+QUESTION: is there a Horn core of `M`, that is, a subset `M' ⊆ M` such that `M'` is equal to
+the set of truth assignments satisfying a Horn Boolean formula, with `|M'| ≥ K`?
+
+A truth assignment on `n` variables is a list of `n` Booleans (entry `x` is the value of
+variable `x`), and `M` is a duplicate-free list of such lists. A Horn formula is a CNF formula
+(`Cslib.Logic.LegacyPL.CNF`) in which every clause has at most one positive literal
+(`Cslib.Algorithms.SAT.Horn.IsHorn`); a formula on the `n` variables uses only the variables
+`0, …, n - 1`, and its set of satisfying truth assignments on the `n` variables must be exactly
+`M'`. The subset `M'` is a sublist of `M`, so it has no duplicates and its length is `|M'|`.
+
+Kavvadias, Papadimitriou and Sideri (1993) call such a formula a Horn core when `M'` is
+maximal; a subset of size at least `K` exists iff a maximal one does, so the question is the
+same. Gogic, Papadimitriou and Sideri (1998), Theorem 1, record their result that selecting
+the Horn core with the maximum number of models is NP-complete.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
@@ -18,11 +44,6 @@ Springer (1993), 399-405, doi:10.1007/3-540-57568-5_271;
 G. Gogic, C. H. Papadimitriou and M. Sideri, "Incremental recompilation of knowledge",
 J. Artificial Intelligence Res. 8 (1998), 23-37, doi:10.1613/jair.380, Theorem 1.
 -/
-module
-
-public import CSLibExt.Algorithms.SAT.Horn.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 
@@ -45,7 +66,9 @@ def extend {n : ℕ} (a : Fin n → Bool) : ℕ → Bool := fun x =>
   if h : x < n then a ⟨x, h⟩ else false
 
 /-- `φ` is a Horn formula on the `n` variables whose set of satisfying truth assignments on
-those variables is exactly `M'`. -/
+those variables is exactly the set of members of `M'` of length `n`; members of other lengths
+are ignored. In `HornCoreFeasible`, `M'` is a sublist of `M`, whose members all have length `n`
+under `WellFormed`. -/
 def IsHornModelSet (n : ℕ) (M' : List (List Bool)) (φ : CNF) : Prop :=
   IsHorn φ ∧ (∀ C ∈ φ, ∀ l ∈ C, l.1 < n) ∧
     ∀ a : Fin n → Bool, φ.Satisfies (extend a) ↔ List.ofFn a ∈ M'

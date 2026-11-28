@@ -33,4 +33,13 @@ example :
   unfold WellFormed ComparativeDivisibility.WellFormed
   decide
 
+/-- Repeating a left-hand entry makes the encoding malformed even when two divides it. -/
+example :
+    comparativeDivisibilityDistinctDec
+      (bitEncode (([2, 2], [3]) : ComparativeDivisibilityInstance)) = false := by
+  have h : ¬ WellFormed (([2, 2], [3]) : ComparativeDivisibilityInstance) := by
+    intro h
+    exact (by decide : ¬ ([2, 2] : List ℕ).Nodup) h.2.1
+  simp [comparativeDivisibilityDistinctDec, h]
+
 end MetaMathlibExt.Complexity.NPComplete.ComparativeDivisibilityDistinct

@@ -6,8 +6,30 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+
+/-!
 # GENERALIZED 0-1 ASSIGNMENT: definitions
+
+INSTANCE: an integer `m × n` matrix `A ∈ ℤ^{m·n}`, an integer `m`-vector `b ∈ ℤ^m`, a binary
+`m × n` matrix `C ∈ {0, 1}^{m·n}`, and a positive integer `K`.
+QUESTION: is there a binary `m × n` matrix `X ∈ {0, 1}^{m·n}` with exactly one `1` in each
+column, such that `∑_{j = 1}^{n} A_{i,j} X_{i,j} ≤ b_i` for all `i ∈ [1..m]` and
+`∑_{i = 1}^{m} ∑_{j = 1}^{n} C_{i,j} X_{i,j} ≤ K`?
+
+This is the decision version, with bound `K`, of MINIMUM GENERALIZED 0-1 ASSIGNMENT in the
+Crescenzi-Kann compendium (rows are knapsacks or agents, columns are items or jobs; each column
+is assigned to the row holding its `1`). Indices are `0`-based: rows `Fin m`, columns `Fin n`.
+
+Encoding: binary encoding. Each entry of `A` and `b` is a pair of naturals `(positive part,
+negative part)` standing for their difference, as in `ZeroOneILP`; `A` and `C` are lists of
+`m` rows of length `n`. The instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
@@ -18,11 +40,6 @@ S. Martello and P. Toth, *Knapsack Problems: Algorithms and Computer Implementat
 (1990), Section 7.1, p. 190 (even the feasibility question of the generalized assignment problem
 is NP-complete, by a reduction from PARTITION with two knapsacks).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 
 @[expose] public section
 

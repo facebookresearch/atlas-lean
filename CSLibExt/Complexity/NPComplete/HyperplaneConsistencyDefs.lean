@@ -6,8 +6,38 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Order.Ring.Rat
+
+/-!
 # HYPERPLANE CONSISTENCY: definitions
+
+INSTANCE: finite sets `P` and `N` of integer `n`-vectors, `n ≥ 1` (`P` the positive examples,
+`N` the negative examples), and a positive integer `K ≤ |P| + |N|`.
+QUESTION: is there a hyperplane, given by a normal vector `w ∈ ℚⁿ`, `w ≠ 0`, and a bias
+`w₀ ∈ ℚ`, such that the number of examples consistent with it,
+`|{x ∈ P : w · x > w₀}| + |{x ∈ N : w · x < w₀}|`, is at least `K`?
+
+This is the decision version of MAXIMUM HYPERPLANE CONSISTENCY from the Crescenzi-Kann
+compendium, which records it as APX-complete (Amaldi and Kann). The compendium calls
+it similar to OPEN HEMISPHERE ([MP6], Garey and Johnson, stated in
+`WantedExt.Complexity.NPComplete.OpenHemisphereWanted`), the homogeneous problem without a
+bias and without negative examples; the bound `K ≤ |P| + |N|` follows [MP6]'s `K ≤ |X|`.
+
+Each integer is encoded as a pair of naturals `(positive part, negative part)` representing their
+difference (`intOf`), as in `WantedExt.Complexity.NPComplete.ZeroOneILPWanted`; numbers use the
+canonical binary encoding. `P` and `N` are lists; since they are sets, `WellFormed` requires
+the decoded integer vectors of each to be pairwise distinct, so the counts are counts of
+elements of `P` and of `N`. As in the source, `P` and `N` need not be disjoint. A hyperplane
+needs a nonzero normal vector, hence `w ≠ 0` and `n ≥ 1`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
@@ -20,12 +50,6 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [MP6] OPEN HEMISPHERE;
 D. S. Johnson and F. P. Preparata, "The densest hemisphere problem", Theoretical Computer
 Science 6 (1978), 93-107, doi:10.1016/0304-3975(78)90006-3.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Order.Ring.Rat
 
 @[expose] public section
 

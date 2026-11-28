@@ -6,8 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import MathlibExt.GameTheory.SocialChoice.CondorcetCycle
+
+/-!
 # DODGSON SCORE: definitions
+
+INSTANCE: a set `C` of candidates, a candidate `c ∈ C`, a multiset `V` of voters' preference
+orders on `C` (strict, transitive and complete; coded as a list), and a positive integer `k`.
+QUESTION: is the Dodgson score of `c` at most `k`, i.e., can `c` be made a Condorcet winner by at
+most `k` sequential switches, where a switch exchanges two adjacent candidates in one voter's
+preference order, and a Condorcet winner is preferred to each other candidate by strictly more
+than half of the voters?
+
+Candidates are `0, …, m - 1`, and each voter's preference order is a list of all candidates,
+each once, most preferred first. A switch `(v, p)` exchanges the candidates at positions `p` and
+`p + 1` of voter `v`'s list. The resulting lists are read as a profile of strict total orders
+(`MathlibExt`'s `Profile`, the encoding of Arrow's theorem), and pairwise majority is
+`MathlibExt`'s `MajorityPrefers` (strictly more than half of the voters strictly prefer one
+candidate to the other). Binary encoding of all numbers.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 J. J. Bartholdi III, C. A. Tovey and M. A. Trick, "Voting schemes for which it can be difficult
@@ -18,11 +42,6 @@ Carroll's 1876 voting system is complete for parallel access to NP", Journal of 
 (1997), 806-825, doi:10.1145/268999.269002 (arXiv:cs/9907036), Section 3 (the decision problem
 DodgsonScore and its NP-completeness, due to Bartholdi, Tovey and Trick).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.GameTheory.SocialChoice.CondorcetCycle
 
 @[expose] public section
 
@@ -44,10 +63,11 @@ def switchAt (l : List ℕ) (p : ℕ) : List ℕ :=
 def applySwitch (V : List (List ℕ)) (s : ℕ × ℕ) : List (List ℕ) :=
   V.set s.1 (switchAt (V.getD s.1 []) s.2)
 
-/-- `c` is a Condorcet winner for the preference lists `V` over `m` candidates: the lists are
-the orders of a profile `R` (voter `v` strictly prefers `a` to `b` exactly when `a` comes before
-`b` in `v`'s list), and in `R` the candidate `c` beats every other candidate by pairwise
-majority. -/
+/-- For a candidate `c < m`, `c` is a Condorcet winner for the preference lists `V` over `m`
+candidates: the lists are the orders of a profile `R` (voter `v` strictly prefers `a` to `b`
+exactly when `a` comes before `b` in `v`'s list), and in `R` the candidate `c` beats every other
+candidate by pairwise majority. When `c ≥ m` the predicate only asks that the lists be the
+orders of a profile; `WellFormed` requires `c < m`. -/
 def IsCondorcetWinner (m : ℕ) (V : List (List ℕ)) (c : ℕ) : Prop :=
   ∃ R : Profile (Fin m) (Fin V.length),
     (∀ v a b, (R v).lt a b ↔ (V.get v).idxOf a.1 < (V.get v).idxOf b.1) ∧

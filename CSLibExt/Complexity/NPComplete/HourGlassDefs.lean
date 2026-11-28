@@ -6,18 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# THE HOUR-GLASS: definitions
-
-Source:
-H. Petersen, "The Complexity of Some Combinatorial Puzzles", arXiv:1507.08690 (2015), Theorem 2
-("Generalized Hour-Glass is complete in NP").
--/
 module
 
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+
+/-!
+# THE HOUR-GLASS: definitions
+
+Petersen: "The Hour-Glass consists of two triangular shapes containing numbers and a target sum.
+The goal is to find a path from the first row to the last row such that the numbers traversed
+add up to the target sum. Each step moves diagonally down the structure." The generalized puzzle
+has arbitrary size and arbitrary numbers, and asks whether a solution exists.
+
+INSTANCE: a positive integer `m`, an hour-glass of `2m - 1` rows of natural numbers whose widths
+are `m, m - 1, ..., 2, 1, 2, ..., m - 1, m` (an inverted triangle on top of an upright one, meeting
+in a single cell), and a target sum `t`.
+QUESTION: is there a path that starts in a cell of the first row, moves in each step diagonally
+down to an adjacent cell of the next row, ends in the last row, and whose numbers add up to `t`?
+
+Rows are numbered `0, ..., 2m - 2` and the cells of a row `0, 1, ...` from the left; row `r` has
+width `m - r` for `r < m` and `r + 2 - m` for `r ≥ m`. A cell `j` of a row of width `w` lies
+between the cells `j` and `j + 1` of an adjacent row of width `w + 1`, so a diagonal step down
+from cell `j` goes to cell `j - 1` or `j` of the next row while the rows shrink (`r + 1 < m`), and
+to cell `j` or `j + 1` while they grow. A path is a choice of a cell `p r` in every row `r`. The
+numbers are in binary encoding; with bounded numbers the problem is easier (Petersen, Section 3).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+Source:
+H. Petersen, "The Complexity of Some Combinatorial Puzzles", arXiv:1507.08690 (2015), Theorem 2
+("Generalized Hour-Glass is complete in NP").
+-/
 
 @[expose] public section
 

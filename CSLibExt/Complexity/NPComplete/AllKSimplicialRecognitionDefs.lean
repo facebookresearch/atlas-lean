@@ -6,20 +6,50 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Computability.Complexity.Karp.Color
+
+/-!
 # ALL-K-SIMPLICIAL GRAPH RECOGNITION: definitions
+
+Fix an integer `K ≥ 3`.
+INSTANCE: a graph `G = (V, E)`.
+QUESTION: is `G` all-`K`-simplicial, that is, can the neighborhood of each vertex be partitioned
+into at most `K` cliques?
+
+Gambette and Vialette (Section 5): "Let `k ∈ ℕ*`. A graph `G = (V, E)` is all-`k`-simplicial if
+the neighborhood of each vertex `v ∈ V` can be partitioned into at most `k` cliques"; Theorem 3:
+"Recognizing all-`k`-simplicial graphs is NP-complete for `k ≥ 3`" (by a reduction from GRAPH
+K-COLORABILITY: the complement of `G` plus a universal vertex). The ISGCI database lists
+recognition of the class "all-4-simplicial" (gc_880) as NP-complete, citing them; ISGCI states the
+definition with the closed neighborhood ("the closed neighbourhood of every vertex is the union
+of at most 4 cliques"), which is equivalent: a vertex is adjacent to all its neighbors, so it can
+be added to (or removed from) any one clique of a partition of its neighborhood (or form a clique
+by itself when it has no neighbor, as `K ≥ 1`).
+
+`K` is fixed, not part of the input: the decision problem is `allKSimplicialRecognitionDec k`,
+and the theorem holds for every `k ≥ 3`. The graph is given by an edge list on `Fin n`. A
+partition of the neighborhood of `v` into at most `k` cliques is a labeling `c` of the
+neighbors of `v` (the subtype `{a // G.Adj v a}`) by `Fin k` (the parts are the label classes,
+some possibly empty) such that two distinct neighbors with the same label are adjacent
+(`IsAllKSimplicial`); an empty neighborhood has the empty labeling for every `k`, including
+`k = 0`. Membership in NP, although the vertex count `n` is written in binary: isolated vertices
+have empty neighborhoods and impose no condition, so the labelings of the neighborhoods of the at
+most `2|E|` non-isolated vertices are a certificate of size polynomial in the length of the edge
+list.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Gambette and S. Vialette, "On restrictions of balanced 2-interval graphs", Graph-Theoretic
 Concepts in Computer Science (WG 2007), Lecture Notes in Computer Science 4769 (2007), 55-65,
 doi:10.1007/978-3-540-74839-7_6, Theorem 3 (arXiv:0704.1571).
 -/
-module
-
-public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
 
 @[expose] public section
 
