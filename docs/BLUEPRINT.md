@@ -268,7 +268,10 @@ how to [pick a task](../CONTRIBUTING.md#picking-a-task).
 
 With the pinned Autoform installed as described below, run
 `python -m scripts.graph_work` from the repository root. It reads the authored
-annotations without building Lean or calling GitHub. The JSON lists marked
+annotations without building Lean or calling GitHub. It stops with an error
+when a page it would list has another annotation, an annotation that Autoform's
+strict JSON reader rejects, or an article ID another annotation also has, so
+each ID it lists names one article. The JSON lists marked
 articles and separates expansions from imported pages whose pending prerequisites
 need review. It is not a readiness verdict: read the page and check its sources,
 prerequisites, and any existing PRs before starting. See [Expanding a node](#expanding-a-node)

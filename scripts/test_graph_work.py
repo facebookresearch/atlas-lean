@@ -1,3 +1,4 @@
+import hashlib
 import json
 import tempfile
 import unittest
@@ -5,6 +6,11 @@ from pathlib import Path
 from unittest.mock import patch
 
 from scripts import graph_work, sync_wiki as sync
+
+
+def article_id(name):
+    """A distinct, well-formed article id for each page name."""
+    return "af_" + hashlib.sha256(name.encode()).hexdigest()[:24]
 
 
 class GraphWorkTests(unittest.TestCase):
@@ -24,7 +30,7 @@ class GraphWorkTests(unittest.TestCase):
 
     def row(self, name, *, flag=True, own=None, **fields):
         (self.roadmap / name).write_text("# Article\n\nIts statement.\n")
-        return {"subject": [{"uri": f"../roadmap/{name}"}], "id": "af_" + "1" * 24,
+        return {"subject": [{"uri": f"../roadmap/{name}"}], "id": article_id(name),
                 "extensions": {"org.autoform": {"not_ready": flag}, "org.atlas-wiki": own or {}}, **fields}
 
     def save(self, *rows):
@@ -37,7 +43,7 @@ class GraphWorkTests(unittest.TestCase):
         report = graph_work.inventory()
         self.assertEqual([item["kind"] for item in report], ["expand", "review-pending-prerequisites"])
         self.assertEqual(report[0]["path"], "blueprint/roadmap/a.md")
-        self.assertEqual(report[0]["article_id"], "af_" + "1" * 24)
+        self.assertEqual(report[0]["article_id"], article_id("a.md"))
         self.assertEqual(report[1]["pending"], pending)
         self.assertEqual((self.links / "roadmap.jsonl").read_bytes(), before)
 
@@ -61,6 +67,31 @@ class GraphWorkTests(unittest.TestCase):
                 self.save({**row, **id_fields})
                 with self.assertRaisesRegex(ValueError, r"blueprint/roadmap/topic\.md: expected an article ID"):
                     graph_work.inventory()
+
+    def test_an_id_two_annotations_share_fails_with_both_pages(self):
+        for marked in (True, False):
+            with self.subTest(second_marked=marked):
+                first, second = self.row("a.md"), self.row("b.md", flag=marked)
+                self.save(first, {**second, "id": first["id"]})
+                with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/a\.md: its article ID af_[0-9a-f]{24} is "
+                                                        r"also the ID of blueprint/roadmap/b\.md$"):
+                    graph_work.inventory()
+
+    def test_a_listed_page_with_another_annotation_fails_whichever_comes_first(self):
+        marked, unmarked = self.row("a.md"), {**self.row("a.md", flag=False), "id": article_id("other")}
+        for rows in ((unmarked, marked), (marked, unmarked)):
+            with self.subTest(first_marked=rows[0] is marked):
+                self.save(*rows)
+                with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/a\.md: expected one annotation of this "
+                                                        r"page, found 2"):
+                    graph_work.inventory()
+
+    def test_a_listed_annotation_autoform_leaves_out_fails(self):
+        row = json.dumps(self.row("topic.md"))
+        (self.links / "roadmap.jsonl").write_text(f'{row[:-1]}, "id": "{article_id("other")}"}}\n')
+        with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/topic\.md: Autoform leaves its annotation out: "
+                                                r"duplicate key 'id'"):
+            graph_work.inventory()
 
     def test_missing_marked_page_fails(self):
         self.save(self.row("gone.md"))
