@@ -28,9 +28,8 @@ elementary facts only; no RSW inequality is proved here.
 
 * `StatMech.RSW.Box.rect` and its sides `leftSide`, `rightSide`, `bottomSide`, `topSide`.
 * `StatMech.RSW.Box.HorizontalCrossing`, `StatMech.RSW.Box.VerticalCrossing` and their events.
-* `StatMech.RSW.Box.DualHorizontalCrossing`: left–right crossings on the shifted dual lattice.
-* `StatMech.RSW.Box.DualVerticalCrossing`: bottom–top crossings in the rotated complement
-  `dualConfig ω`.
+* `StatMech.RSW.Box.DualHorizontalCrossing`, `StatMech.RSW.Box.DualVerticalCrossing` and their
+  events: left–right and bottom–top crossings on the shifted dual lattice.
 * `StatMech.RSW.Box.annulus`, `StatMech.RSW.Box.AnnulusCircuit`: open circuits in an annulus.
 * `StatMech.RSW.Box.boxCrossingEvent`: the left–right crossing of `[0, ⌊αn⌋] × [0, n]`.
 * `StatMech.RSW.Box.P5`, `StatMech.RSW.Box.P5c`: the box-crossing property for one family of
@@ -39,7 +38,12 @@ elementary facts only; no RSW inequality is proved here.
 ## Main results
 
 * `StatMech.RSW.Box.horizontalCrossingEvent_increasing`,
-  `StatMech.RSW.Box.verticalCrossingEvent_increasing`: crossing events are increasing.
+  `StatMech.RSW.Box.verticalCrossingEvent_increasing`: primal crossing events are increasing.
+* `StatMech.RSW.Box.dualHorizontalCrossing_iff`, `StatMech.RSW.Box.dualVerticalCrossing_iff`:
+  dual crossings are paths that step across closed primal edges.
+* `StatMech.RSW.Box.dualHorizontalCrossingEvent_antitone`,
+  `StatMech.RSW.Box.dualVerticalCrossingEvent_antitone`: dual crossing events are antitone
+  in primal openness.
 * `StatMech.RSW.Box.horizontalCrossing_eq_twoDim`: agreement with
   `StatMech.TwoDim.HorizontalCrossing` for rectangles with a corner at the origin.
 
@@ -297,15 +301,22 @@ def DualHorizontalCrossing (ω : ConfigSpace (Sym2 (Site 2))) (a b c d : ℤ) : 
     ((whb_faceRegion (openSubgraph 2 ω)).induce (rect a b c d)).Reachable
       ⟨(x : Site 2), leftSide_subset x.2⟩ ⟨(y : Site 2), rightSide_subset y.2⟩
 
-/-- A bottom–top crossing of `rect a b c d` in the dual configuration `dualConfig ω`. -/
+/-- **Dual bottom–top crossing.** There is an open path in the shifted dual rectangle
+`(1/2, 1/2) + ([a, b] × [c, d])` from its bottom side to its top side. Integer vertex labels
+are the lower left corners of the faces, and each step crosses a primal edge
+(`sharedPrimalEdge`) closed in `ω`. The path may have length zero when the sides coincide
+(Duminil-Copin, *Introduction to Bernoulli percolation*, 2018, §4.1 for duality). -/
 def DualVerticalCrossing (ω : ConfigSpace (Sym2 (Site 2))) (a b c d : ℤ) : Prop :=
-  VerticalCrossing (dualConfig ω) a b c d
+  ∃ (x : bottomSide a b c d) (y : topSide a b c d),
+    ((whb_faceRegion (openSubgraph 2 ω)).induce (rect a b c d)).Reachable
+      ⟨(x : Site 2), bottomSide_subset x.2⟩ ⟨(y : Site 2), topSide_subset y.2⟩
 
 /-- The event `DualHorizontalCrossing`. -/
 def dualHorizontalCrossingEvent (a b c d : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω | DualHorizontalCrossing ω a b c d}
 
-/-- The event `DualVerticalCrossing`. -/
+/-- **Dual bottom–top crossing event.** The set of primal configurations for which the shifted
+rectangle has an open bottom–top crossing on the dual lattice. -/
 def dualVerticalCrossingEvent (a b c d : ℤ) : Set (ConfigSpace (Sym2 (Site 2))) :=
   {ω | DualVerticalCrossing ω a b c d}
 
@@ -316,38 +327,69 @@ def dualVerticalCrossingEvent (a b c d : ℤ) : Set (ConfigSpace (Sym2 (Site 2))
     {ω : ConfigSpace (Sym2 (Site 2))} :
     ω ∈ dualVerticalCrossingEvent a b c d ↔ DualVerticalCrossing ω a b c d := Iff.rfl
 
+private theorem faceRegion_openSubgraph_induce_reachable_iff (ω : ConfigSpace (Sym2 (Site 2)))
+    {S : Set (Site 2)} (x y : S) :
+    ((whb_faceRegion (openSubgraph 2 ω)).induce S).Reachable x y ↔
+      Relation.ReflTransGen (fun f g : S =>
+        dualLattice.Adj f g ∧ ω (sharedPrimalEdge f g) = false) x y := by
+  have hsteps : ((whb_faceRegion (openSubgraph 2 ω)).induce S).Adj =
+      (fun f g : S => dualLattice.Adj f g ∧ ω (sharedPrimalEdge f g) = false) := by
+    funext f g
+    exact propext (faceRegion_openSubgraph_adj ω f g)
+  rw [SimpleGraph.reachable_iff_reflTransGen, hsteps]
+
+/-- **Dual left–right crossing steps.** A dual left–right crossing is a sequence of adjacent
+faces in the rectangle, from the left side to the right side, with each crossed primal edge
+closed. -/
 theorem dualHorizontalCrossing_iff (ω : ConfigSpace (Sym2 (Site 2))) (a b c d : ℤ) :
     DualHorizontalCrossing ω a b c d ↔
       ∃ (x : leftSide a b c d) (y : rightSide a b c d),
         Relation.ReflTransGen (fun f g : rect a b c d =>
           dualLattice.Adj f g ∧ ω (sharedPrimalEdge f g) = false)
           ⟨(x : Site 2), leftSide_subset x.2⟩ ⟨(y : Site 2), rightSide_subset y.2⟩ := by
-  have hsteps : ((whb_faceRegion (openSubgraph 2 ω)).induce (rect a b c d)).Adj =
-      (fun f g : rect a b c d => dualLattice.Adj f g ∧ ω (sharedPrimalEdge f g) = false) := by
-    funext f g
-    exact propext (faceRegion_openSubgraph_adj ω f g)
-  simp only [DualHorizontalCrossing, SimpleGraph.reachable_iff_reflTransGen, hsteps]
+  simp only [DualHorizontalCrossing, faceRegion_openSubgraph_induce_reachable_iff]
 
+/-- **Dual bottom–top crossing steps.** A dual bottom–top crossing is a sequence of adjacent
+faces in the rectangle, from the bottom side to the top side, with each crossed primal edge
+closed. -/
 theorem dualVerticalCrossing_iff (ω : ConfigSpace (Sym2 (Site 2))) (a b c d : ℤ) :
-    DualVerticalCrossing ω a b c d ↔ VerticalCrossing (dualConfig ω) a b c d := Iff.rfl
+    DualVerticalCrossing ω a b c d ↔
+      ∃ (x : bottomSide a b c d) (y : topSide a b c d),
+        Relation.ReflTransGen (fun f g : rect a b c d =>
+          dualLattice.Adj f g ∧ ω (sharedPrimalEdge f g) = false)
+          ⟨(x : Site 2), bottomSide_subset x.2⟩ ⟨(y : Site 2), topSide_subset y.2⟩ := by
+  simp only [DualVerticalCrossing, faceRegion_openSubgraph_induce_reachable_iff]
 
-theorem dualHorizontalCrossingEvent_antitone {a b c d : ℤ}
-    {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : ω' ≤ ω)
-    (hω : ω ∈ dualHorizontalCrossingEvent a b c d) :
-    ω' ∈ dualHorizontalCrossingEvent a b c d := by
-  obtain ⟨x, y, hxy⟩ := hω
-  refine ⟨x, y, hxy.mono ?_⟩
+private theorem faceRegion_openSubgraph_induce_le {ω ω' : ConfigSpace (Sym2 (Site 2))}
+    (h : ω' ≤ ω) (S : Set (Site 2)) :
+    (whb_faceRegion (openSubgraph 2 ω)).induce S ≤
+      (whb_faceRegion (openSubgraph 2 ω')).induce S := by
   intro f g
   simp only [SimpleGraph.induce_adj, faceRegion_openSubgraph_adj]
   rintro ⟨hfg, hclosed⟩
   exact ⟨hfg, le_antisymm (by simpa only [hclosed] using h (sharedPrimalEdge f g))
     (Bool.false_le _)⟩
 
-theorem dualHorizontalCrossingEvent_increasing {a b c d : ℤ}
-    {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : dualConfig ω ≤ dualConfig ω')
+/-- **Antitonicity of dual left–right crossings.** Closing more primal edges preserves a dual
+left–right crossing event. -/
+theorem dualHorizontalCrossingEvent_antitone {a b c d : ℤ}
+    {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : ω' ≤ ω)
     (hω : ω ∈ dualHorizontalCrossingEvent a b c d) :
     ω' ∈ dualHorizontalCrossingEvent a b c d := by
-  apply dualHorizontalCrossingEvent_antitone _ hω
+  obtain ⟨x, y, hxy⟩ := hω
+  exact ⟨x, y, hxy.mono (faceRegion_openSubgraph_induce_le h _)⟩
+
+/-- **Antitonicity of dual bottom–top crossings.** Closing more primal edges preserves a dual
+bottom–top crossing event. -/
+theorem dualVerticalCrossingEvent_antitone {a b c d : ℤ}
+    {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : ω' ≤ ω)
+    (hω : ω ∈ dualVerticalCrossingEvent a b c d) :
+    ω' ∈ dualVerticalCrossingEvent a b c d := by
+  obtain ⟨x, y, hxy⟩ := hω
+  exact ⟨x, y, hxy.mono (faceRegion_openSubgraph_induce_le h _)⟩
+
+private theorem le_of_dualConfig_le {ω ω' : ConfigSpace (Sym2 (Site 2))}
+    (h : dualConfig ω ≤ dualConfig ω') : ω' ≤ ω := by
   intro e
   have he := h (crossEdge e)
   change (!(ω (crossEdge.symm (crossEdge e)))) ≤
@@ -355,11 +397,21 @@ theorem dualHorizontalCrossingEvent_increasing {a b c d : ℤ}
   rw [Equiv.symm_apply_apply] at he
   cases hωe : ω e <;> cases hω'e : ω' e <;> simp_all
 
+/-- **Dual left–right crossings under rotated-complement order.** Increasing the rotated
+complement `dualConfig ω` preserves a dual left–right crossing event. -/
+theorem dualHorizontalCrossingEvent_increasing {a b c d : ℤ}
+    {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : dualConfig ω ≤ dualConfig ω')
+    (hω : ω ∈ dualHorizontalCrossingEvent a b c d) :
+    ω' ∈ dualHorizontalCrossingEvent a b c d :=
+  dualHorizontalCrossingEvent_antitone (le_of_dualConfig_le h) hω
+
+/-- **Dual bottom–top crossings under rotated-complement order.** Increasing the rotated
+complement `dualConfig ω` preserves a dual bottom–top crossing event. -/
 theorem dualVerticalCrossingEvent_increasing {a b c d : ℤ}
     {ω ω' : ConfigSpace (Sym2 (Site 2))} (h : dualConfig ω ≤ dualConfig ω')
     (hω : ω ∈ dualVerticalCrossingEvent a b c d) :
     ω' ∈ dualVerticalCrossingEvent a b c d :=
-  verticalCrossingEvent_increasing h hω
+  dualVerticalCrossingEvent_antitone (le_of_dualConfig_le h) hω
 
 /-- The annulus `z + (Λ_{2n} \ Λ_n)`, where `Λ_n = [-n, n]²`. -/
 def annulus (z : Site 2) (n : ℕ) : Set (Site 2) :=
