@@ -8,12 +8,13 @@ $$
 r(S) = \frac{1}{c} \dim \Big( \sum_{e \in S} W_e \Big) \qquad \text{for all } S \subseteq E;
 $$
 
-$M$ is *multilinear* if it is multilinear over some field. In the formulation of Kühne and Yashfe's undecidability theorem for multilinear matroids, a *$c$-arrangement* is a family of subspaces each of dimension exactly $c$ such that every sum of them has dimension a multiple of $c$, and $M$ is *representable as a $c$-arrangement* over $F$ if some such family satisfies the displayed identity; for a matroid without loops the two notions agree, since $r(\{e\}) = 1$ forces $\dim W_e = c$.
+$M$ is *multilinear* if it is multilinear over some field. In the formulation of Kühne and Yashfe's undecidability theorem for multilinear matroids, a *$c$-arrangement* is a family of subspaces each of dimension exactly $c$ such that every sum of them has dimension a multiple of $c$, and $M$ is *representable as a $c$-arrangement* over $F$ if some such family satisfies the displayed identity. For a matroid without loops the two notions agree, since $r(\{e\}) = 1$ forces $\dim W_e = c$; a matroid with a loop $e$ can be multilinear (with $W_e = 0$) but is never representable as a $c$-arrangement.
 
 ## Depends on
 
-- [Matroids given by rank functions](matroids-given-by-rank-functions.md)
+- [Matroids](matroids-given-by-rank-functions.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
+- [Module over a semiring](../../../Algebra/modules/module.md)
 
 ## Proof depends on
 

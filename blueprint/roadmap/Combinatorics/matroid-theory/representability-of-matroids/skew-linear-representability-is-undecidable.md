@@ -15,7 +15,7 @@ Problems 1 and 2 remain undecidable when the input is restricted to connected ma
 
 ## Depends on
 
-- [Matroids given by rank functions](matroids-given-by-rank-functions.md)
+- [Matroids](matroids-given-by-rank-functions.md)
 - [Representations of matroids over division rings](representations-of-matroids-over-division-rings.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
@@ -25,7 +25,7 @@ Problems 1 and 2 remain undecidable when the input is restricted to connected ma
 
 ## Expansion
 
-Macintyre showed that from a universal Horn sentence $H$ in the language of groups one can compute a universal Horn sentence $H'$ that is true in all division rings exactly when $H$ is true in all groups, and constructed for each characteristic a division ring $D_p$ that witnesses the falsity of $H'$ whenever possible. A universal Horn sentence is true in all groups exactly when the corresponding word is trivial in the corresponding finitely presented group, so by the unsolvability of the word problem the truth of Horn sentences in division rings (in all of them, in those of characteristic $p$, or in a suitable single one) is undecidable. Through von Staudt constructions, each Horn sentence yields finitely many matroids such that the sentence fails in a class of division rings exactly when one of them is representable over a member of the class (Lemma 4.2 of arXiv:2012.07361v1). A good expansion links Macintyre's theorem on Horn sentences in groups and division rings, which has no page.
+Macintyre showed that from a universal Horn sentence $H$ in the language of groups one can compute a universal Horn sentence $H'$ that is true in all division rings exactly when $H$ is true in all groups, and constructed for each characteristic a division ring $D_p$ that witnesses the falsity of $H'$ whenever possible. A universal Horn sentence is true in all groups exactly when the corresponding word is trivial in the corresponding finitely presented group, so by the unsolvability of the word problem the truth of Horn sentences in division rings (in all of them, in those of characteristic $p$, or in a suitable single one) is undecidable. Through von Staudt constructions, each Horn sentence yields finitely many matroids such that the sentence fails in a class of division rings exactly when one of them is representable over a member of the class (Lemma 4.2 of arXiv:2012.07361v1). A good expansion links Macintyre's theorem on Horn sentences in groups and division rings.
 
 ## Sources
 

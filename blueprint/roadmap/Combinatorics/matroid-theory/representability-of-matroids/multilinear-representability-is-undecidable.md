@@ -2,15 +2,15 @@
 
 For every field $F$, no algorithm decides whether a given finite matroid can be represented by an arrangement of equidimensional subspaces over $F$; the problem stays undecidable when the field is left unspecified.
 
-Let $M$ range over finite matroids, given by their rank functions, and use the notion of a matroid [multilinear over a field](multilinear-matroids.md), that is, representable as a $c$-arrangement for some $c \ge 1$.
+Let $M$ range over finite matroids, given by their rank functions, and use the notions of a matroid [multilinear over a field](multilinear-matroids.md) and of a representation as a $c$-arrangement: a family $(W_e)_{e \in E}$ of subspaces of a vector space over the field with $\dim W_e = c$ for every $e$, every sum $\sum_{e \in S} W_e$ of dimension a multiple of $c$, and $\dim \sum_{e \in S} W_e = c \cdot r(S)$ for all $S \subseteq E$. For loopless matroids, representability as a $c$-arrangement for some $c \ge 1$ is the same as being multilinear over the field; a matroid with a loop is never representable as a $c$-arrangement.
 
-**Theorem (Kühne and Yashfe).** Fix a field $F$. The *multilinear representability problem over $F$*, which asks, given a matroid $M$, whether there is $c \ge 1$ such that $M$ is representable as a $c$-arrangement over $F$, is undecidable. This holds for every field $F$, and the problem remains undecidable when the field is unspecified (is $M$ multilinear over some field?) or is allowed to range over a given set of fields (Theorem 1.3 of arXiv:1912.06123v2).
+**Theorem (Kühne and Yashfe).** Fix a field $F$. The *multilinear representability problem over $F$*, which asks, given a matroid $M$, whether there is $c \ge 1$ such that $M$ is representable as a $c$-arrangement over $F$, is undecidable. This holds for every field $F$, and the problem remains undecidable when the field is unspecified (is $M$ representable as a $c$-arrangement for some $c \ge 1$ over some field?) or is allowed to range over a given set of fields (Theorem 1.3 of arXiv:1912.06123v2).
 
 Only the matroid is the input; the field is fixed in advance. By contrast, over an algebraically closed field, linear representability ($c = 1$) and, for each fixed $c$, representability as a $c$-arrangement can be decided by Gröbner basis computations, while linear representability over $\mathbb{Q}$ is equivalent to Hilbert's tenth problem over $\mathbb{Q}$, whose decidability is open. With the network coding constructions of El Rouayheb, Sprintson and Georghiades, the theorem implies that it is undecidable whether a network coding instance has a linear vector coding solution.
 
 ## Depends on
 
-- [Matroids given by rank functions](matroids-given-by-rank-functions.md)
+- [Matroids](matroids-given-by-rank-functions.md)
 - [Multilinear matroids](multilinear-matroids.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
@@ -21,7 +21,7 @@ None.
 
 ## Expansion
 
-The proof reduces the uniform word problem for finite groups, undecidable by a theorem of Slobodskoi: given a finite presentation $\langle S \mid R \rangle$ and a word $w$, is $w$ mapped to the identity by every homomorphism to a finite group? From the presentation the source builds generalized Dowling geometries, matroids of rank three encoding the multiplication of the group (triangle matroids with a distinguished basis), and von Staudt constructions. A $c$-arrangement representation of such a matroid yields a representation of the group by invertible $c \times c$ matrices, and finite quotients in which $w$ survives yield representations of the matroids; the subtle point is the existence of fixed points of the matrix representations, which the source handles through weak $c$-representations (Theorem 4.6 of arXiv:1912.06123v2). A good expansion links Slobodskoi's undecidability of the uniform word problem for finite groups, which has no page.
+The proof reduces the uniform word problem for finite groups, undecidable by a theorem of Slobodskoi: given a finite presentation $\langle S \mid R \rangle$ and a word $w$, is $w$ mapped to the identity by every homomorphism to a finite group? From the presentation the source builds generalized Dowling geometries, matroids of rank three encoding the multiplication of the group (triangle matroids with a distinguished basis), and von Staudt constructions. A $c$-arrangement representation of such a matroid yields a representation of the group by invertible $c \times c$ matrices, and finite quotients in which $w$ survives yield representations of the matroids; the subtle point is the existence of fixed points of the matrix representations, which the source handles through weak $c$-representations (Theorem 4.6 of arXiv:1912.06123v2). A good expansion links Slobodskoi's undecidability of the uniform word problem for finite groups.
 
 ## Sources
 

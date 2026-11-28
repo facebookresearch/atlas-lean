@@ -13,7 +13,7 @@ Entropic matroids are exactly the secret sharing matroids of Brickell and Davenp
 
 ## Depends on
 
-- [Matroids given by rank functions](matroids-given-by-rank-functions.md)
+- [Matroids](matroids-given-by-rank-functions.md)
 - [Entropic matroids](entropic-matroids.md)
 - [Almost multilinear matroids](almost-multilinear-matroids.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
@@ -24,7 +24,7 @@ None.
 
 ## Expansion
 
-Both clauses reduce word problems for finitely presented groups to the representability of finite families of partial Dowling geometries built from a symmetric triangular presentation. For clause 1, if the group has a finite quotient in which a given generator is nontrivial, permutation representations give a multilinear, hence entropic, member of the family (Theorem 7.1); conversely an entropic member yields a homomorphism to a symmetric group separating the generator from the identity (Theorems 4.5 and 7.2), so the uniform word problem for finite groups, undecidable by Slobodskoi, reduces to entropic representability. For clause 2, approximate representations of sofic groups in rank distance give almost multilinear members (Theorem 9.16), and almost multilinear members force the generator to be nontrivial (Theorem 9.17); the word problem of a finitely presented torsion-free sofic group with undecidable word problem (Theorem 2.11) then reduces to almost multilinearity. A good expansion links Slobodskoi's undecidability of the uniform word problem for finite groups and the existence of a finitely presented sofic group with undecidable word problem, which have no pages.
+Both clauses reduce word problems for finitely presented groups to the representability of finite families of partial Dowling geometries built from a symmetric triangular presentation. For clause 1, if the group has a finite quotient in which a given generator is nontrivial, permutation representations give a multilinear, hence entropic, member of the family (Theorem 7.1); conversely an entropic member yields a homomorphism to a symmetric group separating the generator from the identity (Theorems 4.5 and 7.2), so the uniform word problem for finite groups, undecidable by Slobodskoi, reduces to entropic representability. For clause 2, approximate representations of sofic groups in rank distance give almost multilinear members (Theorem 9.16), and almost multilinear members force the generator to be nontrivial (Theorem 9.17); the word problem of a finitely presented torsion-free sofic group with undecidable word problem (Theorem 2.11) then reduces to almost multilinearity. A good expansion links Slobodskoi's undecidability of the uniform word problem for finite groups and the existence of a finitely presented sofic group with undecidable word problem.
 
 ## Sources
 

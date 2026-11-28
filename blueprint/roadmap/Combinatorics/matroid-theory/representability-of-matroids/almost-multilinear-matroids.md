@@ -12,8 +12,9 @@ In the source's problem formulation the field $F$ is fixed together with the mat
 
 ## Depends on
 
-- [Matroids given by rank functions](matroids-given-by-rank-functions.md)
+- [Matroids](matroids-given-by-rank-functions.md)
 - [Field](../../../Algebra/rings-and-fields/field.md)
+- [Module over a semiring](../../../Algebra/modules/module.md)
 
 ## Proof depends on
 
