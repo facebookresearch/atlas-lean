@@ -11,6 +11,7 @@ Abstract reduction systems, confluence and termination, reduction and simplifica
 - [Termination of term rewriting is undecidable](termination-of-term-rewriting-is-undecidable.md)
 - [Reduction ordering](reduction-ordering.md)
 - [Reduction orderings characterize termination](reduction-orderings-characterize-termination.md)
+- [Termination](termination/README.md)
 - [Monotone interpretations give reduction orderings](monotone-interpretations-give-reduction-orderings.md)
 - [Simplification ordering](simplification-ordering.md)
 - [Simplification orderings contain the embedding](simplification-orderings-contain-the-embedding.md)
@@ -23,4 +24,3 @@ Abstract reduction systems, confluence and termination, reduction and simplifica
 - [Knuth–Bendix ordering](knuth-bendix-ordering.md)
 - [The Knuth–Bendix ordering is a simplification ordering](kbo-is-a-simplification-ordering.md)
 - [Knuth–Bendix completion](completion/README.md)
-- [Termination](termination/README.md)

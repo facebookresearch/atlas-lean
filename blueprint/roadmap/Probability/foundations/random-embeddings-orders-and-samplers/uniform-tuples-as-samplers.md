@@ -1,6 +1,6 @@
 # Uniform tuples are good samplers
 
-Let $U$ be a nonempty finite set, $I$ a finite index set, and $F : U \to [0,1]$ with $\frac{1}{|U|}\sum_{x}F(x) \ge \mu$. Then the number of tuples $b \in U^I$ with $\sum_{i \in I}F(b_i) \le \mu|I|/2$ is at most $|U|^{|I|}\, e^{-\mu|I|/8}$. Consequently, for every family $W \subseteq U^I$ of tuples,
+Let $U$ be a nonempty finite set, $I$ a finite index set, and $F : U \to [0,1]$ with $\frac{1}{|U|}\sum_{x}F(x) \ge \mu$, where $0 \le \mu \le 1$. Then the number of tuples $b \in U^I$ with $\sum_{i \in I}F(b_i) \le \mu|I|/2$ is at most $|U|^{|I|}\, e^{-\mu|I|/8}$. Consequently, for every family $W \subseteq U^I$ of tuples,
 
 $$
 \Big(|W| - |U|^{|I|}e^{-\mu|I|/8}\Big)\,\mu|I| \le 2\sum_{b \in W}\sum_{i \in I}F(b_i).

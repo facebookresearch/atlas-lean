@@ -15,6 +15,7 @@ By the radius form of the Le Cam-Birgé test and a union bound over the $M-1$ co
 ## Depends on
 
 - [Hellinger distance](../../../convergence-of-measures/hellinger-distance/hellinger-dist.md)
+- [Robust Le Cam-Birgé test with clipped likelihood-ratio weights](le-cam-birge-pairwise-test.md)
 
 ## Proof depends on
 
