@@ -68,8 +68,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the board (as in `ZigZagNumberlinkWanted`) and the obstacle squares
-`(row, column)`. -/
+/-- An instance: the board (as in `ZigZagNumberlinkWanted`) and a list of natural pairs, read
+as the obstacle squares `(row, column)`. The list may repeat a square or name a square off the
+board or one with a terminal; a well-formed board and distinct obstacles on terminal-free
+squares of the board belong to `WellFormed`. -/
 abbrev NumberlinkWithObstaclesInstance := ZigZagNumberlinkInstance × List (ℕ × ℕ)
 
 /-- Well-formedness of an instance: a well-formed ZIG-ZAG NUMBERLINK board, and distinct

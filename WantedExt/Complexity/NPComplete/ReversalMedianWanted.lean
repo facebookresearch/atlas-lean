@@ -55,7 +55,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A signed permutation: the list of (gene, orientation) pairs, orientation `true` meaning `-`. -/
+/-- A signed permutation: a list of (gene, orientation) pairs, orientation `true` meaning `-`.
+The type holds any such list, so genes may repeat or be missing; `IsSignedPerm n` says that the
+genes are exactly `0, ..., n - 1`, and `WellFormed` requires it of the three genomes. -/
 abbrev SignedPerm := List (ℕ × Bool)
 
 /-- An instance: the number `n` of genes, the three genomes `π¹, π², π³`, and the bound `K`. -/

@@ -65,8 +65,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the size `m` of `Y`, the postfix token list of `R`, the token lists of
-`R₁, ..., Rₙ`, and the string `w`. -/
+/-- An instance: the size `m` of `Y`, a raw list of natural pairs read as the postfix token
+list of `R`, a list of such lists read as the token lists of `R₁, ..., Rₙ`, and a list `w` of
+naturals. The token lists need not parse, and their letters and those of `w` need not lie in
+the alphabets; these conditions belong to `WellFormed`. -/
 abbrev RegularExpressionSubstitutionInstance :=
   ℕ × List (ℕ × ℕ) × List (List (ℕ × ℕ)) × List ℕ
 

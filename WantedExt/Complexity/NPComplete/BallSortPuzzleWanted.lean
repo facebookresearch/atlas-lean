@@ -64,8 +64,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance `(h, k, F)`: the capacity `h`, the number `k` of empty bins, and the full bins
-`F`, each the list of its colors from bottom to top. -/
+/-- An instance `(h, k, F)`: the capacity `h`, the number `k` of empty bins, and a list `F` of
+lists of natural colors, read as the full bins, each from bottom to top. A bin of `F` may hold
+more or fewer than `h` balls; that every bin of `F` is full, with exactly `h` balls, belongs to
+`WellFormed`. -/
 abbrev BallSortPuzzleInstance := ℕ × ℕ × List (List ℕ)
 
 /-- The initial configuration: the full bins followed by `k` empty bins. -/

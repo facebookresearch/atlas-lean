@@ -62,8 +62,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An edge `(k, c)`: flat (`k = 0`), a tab of shape `c` (`k = 1`), or a pocket of shape `c`
-(`k = 2`). -/
+/-- An edge `(k, c)`: a pair of naturals, read as flat (`k = 0`), a tab of shape `c`
+(`k = 1`), or a pocket of shape `c` (`k = 2`). The type also holds a tag `k ≥ 3`, which `Fits`
+never matches, and a flat edge still carries a shape `c`, which `Fits` ignores; tags at most
+`2` belong to `WellFormed`. -/
 abbrev Edge := ℕ × ℕ
 
 /-- A piece: its top, right, bottom and left edges. -/

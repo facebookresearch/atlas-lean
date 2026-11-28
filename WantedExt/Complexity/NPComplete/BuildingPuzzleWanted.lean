@@ -73,8 +73,12 @@ reduction from every language in `NP`
 
 open LatinSquareCompletion
 
-/-- An instance: the size `n` and the partial Latin square `S` (`0` = blank), and the Building
-numbers `(top, bottom, left, right)` (`0` = none). -/
+/-- An instance: a size `n` and a list of rows of naturals, read as the partial Latin square
+`S` (`0` = blank), and four lists of naturals, read as the Building numbers
+`(top, bottom, left, right)` (`0` = none). The data are raw: `S` need not be an `n × n` grid
+(`entry` reads a missing square as a blank), its entries may exceed `n`, a nonzero entry may
+repeat in a row or column, and the four lists need not have length `n` or entries at most `n`;
+these conditions and `n ≥ 1` belong to `WellFormed`. -/
 abbrev BuildingPuzzleInstance :=
   LatinSquareCompletionInstance × (List ℕ × List ℕ × List ℕ × List ℕ)
 

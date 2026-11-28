@@ -66,7 +66,10 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the sequence `S₁` and its arc list `P₁`, the sequence `S₂` and its arc list
-`P₂`, and the bound `k`. An arc `(i₁, i₂)` joins the positions `i₁` and `i₂` (`0`-based). -/
+`P₂`, and the bound `k`. An arc `(i₁, i₂)` joins the positions `i₁` and `i₂` (`0`-based). The
+arc lists are raw lists of natural pairs: an arc may repeat, have `i₂ ≤ i₁` or a position
+outside its sequence, and the arcs need not be nested; nested arc sets (`IsNestedArcSet`) and
+`0 < k` belong to `WellFormed`. -/
 abbrev LongestArcPreservingCommonSubsequenceNestedInstance :=
   List ℕ × List (ℕ × ℕ) × List ℕ × List (ℕ × ℕ) × ℕ
 

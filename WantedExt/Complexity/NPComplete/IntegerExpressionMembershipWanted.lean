@@ -84,7 +84,10 @@ def IntExpr.tokens : IntExpr → List (ℕ × ℕ)
   | .union f g => (1, 0) :: (f.tokens ++ g.tokens)
   | .plus f g => (2, 0) :: (f.tokens ++ g.tokens)
 
-/-- An instance: the prefix token list of the expression `e`, and the target `K`. -/
+/-- An instance: a raw list of natural pairs, read as the prefix token list of an integer
+expression `e`, and the target `K`. The list may be empty or fail to be the token list of an
+expression, and a number token `(0, n)` may carry `n = 0`; that the list is the token list of
+an expression with positive numbers and that `0 < K` belong to `WellFormed`. -/
 abbrev IntegerExpressionMembershipInstance := List (ℕ × ℕ) × ℕ
 
 /-- Well-formedness of an instance: the token list is the prefix token list of an integer

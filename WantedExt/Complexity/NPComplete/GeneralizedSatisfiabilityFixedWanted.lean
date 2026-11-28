@@ -80,7 +80,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A relation `R ⊆ {T, F}^k`: its arity `k` and the list of its tuples. -/
+/-- A relation: a number `k` and a list of Boolean lists, read as the arity and the tuples of a
+relation `R ⊆ {T, F}^k`. Nothing in the type makes `k` positive or ties the rows to length `k`;
+`RelationsWellFormed` states both, and `WellFormed` requires them of the paired instance. -/
 abbrev Relation := ℕ × List (List Bool)
 
 /-- The relations are well formed: every arity is positive and every tuple of a relation has

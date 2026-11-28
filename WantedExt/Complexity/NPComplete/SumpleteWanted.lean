@@ -49,8 +49,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the grid as a list of `m` rows of integers, the `m` row targets, and the `n`
-column targets. Each integer is a pair `(p, q)` of naturals standing for `p - q`. -/
+/-- An instance: the grid as a list of rows of integers, the list of row targets and the list
+of column targets. Each integer is a pair `(p, q)` of naturals standing for `p - q`. The lists
+are raw: the rows may have different lengths and the numbers of targets need not match the
+grid; one row target per row and one entry per column target in each row, so `m` rows and `n`
+columns, belong to `WellFormed`. -/
 abbrev SumpleteInstance := List (List (ℕ × ℕ)) × List (ℕ × ℕ) × List (ℕ × ℕ)
 
 /-- The integer `p - q` represented by the pair `(p, q)`. -/

@@ -59,8 +59,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the board side `n`, the start configuration `s` and the target configuration
-`t` (row by row, `0` for the hole), and the move bound `k`. -/
+/-- An instance: the board side `n`, two lists of rows of naturals, read as the start
+configuration `s` and the target configuration `t` (row by row, `0` for the hole), and the
+move bound `k`. The configurations are raw: they need not have `n` rows of length `n` or list
+each label `0, …, n² − 1` exactly once, so a raw board may have no hole or several; `n ≥ 1`,
+the shapes and the labels belong to `WellFormed`. -/
 abbrev NPuzzleShortestSolutionInstance := ℕ × List (List ℕ) × List (List ℕ) × ℕ
 
 /-- Well-formedness: `n ≥ 1`, both configurations have `n` rows of length `n`, and each lists
