@@ -53,4 +53,32 @@ private theorem one_coordinate_fiber :
   simpa using card_dotProduct_fiber (d := fun _ : Fin 1 ↦ (2 : ZMod 5)) (i₀ := 0)
     (by decide) 3
 
+-- For this pivot the retained coordinate contributes `2 * 1`, so the inverse must
+-- subtract it before dividing by the pivot weight `2`.
+private def fiberWeights (i : Fin 2) : ZMod 5 := if i = 1 then 2 else 1
+
+private noncomputable def fiveFiberEquiv :
+    {r : Fin 2 → ZMod 5 // r ⬝ᵥ fiberWeights = 3} ≃ ({i : Fin 2 // i ≠ 1} → ZMod 5) :=
+  dotProductFiberEquiv (by decide : fiberWeights 1 ≠ 0) 3
+
+private theorem five_fiber_forward :
+    fiveFiberEquiv ⟨fun i ↦ if i = 1 then 3 else 2, by decide⟩ ⟨0, by decide⟩ = 2 := rfl
+
+private theorem five_fiber_inverse :
+    (fiveFiberEquiv.symm (fun _ ↦ 2)).1 0 = 2 ∧ (fiveFiberEquiv.symm (fun _ ↦ 2)).1 1 = 3 := by
+  constructor
+  · simp [fiveFiberEquiv, dotProductFiberEquiv, show (0 : Fin 2) ≠ 1 by decide]
+  · simp [fiveFiberEquiv, dotProductFiberEquiv]
+    rw [Finset.sum_eq_single (⟨0, by decide⟩ : {i : Fin 2 // i ≠ 1})]
+    · change (3 - 2 * 1) / 2 = (3 : ZMod 5)
+      exact ((eq_div_iff_mul_eq (by decide : (2 : ZMod 5) ≠ 0)).2 (by decide)).symm
+    · rintro ⟨i, hi⟩ - hne
+      exfalso
+      apply hne
+      apply Subtype.ext
+      fin_cases i
+      · rfl
+      · exact (hi rfl).elim
+    · simp
+
 end MathlibExtTest.Probability.Distributions.UniformDotProduct
