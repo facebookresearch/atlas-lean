@@ -1766,6 +1766,7 @@
   "CSLibExt/Computability/Distributed/Paxos/Voting": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Paxos consensus"},
   "CSLibExt/Computability/Distributed/PaxosSafety": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Paxos consensus"},
   "CSLibExt/Computability/Distributed/Peterson": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Peterson's mutual-exclusion algorithm"},
+  "CSLibExt/Computability/Distributed/Raft/Protocol": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Consensus and agreement"},
   "CSLibExt/Computability/Distributed/ReliableBroadcast": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Replication and consistency"},
   "CSLibExt/Computability/Distributed/RotatingCoordinator/Protocol": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Consensus and agreement"},
   "CSLibExt/Computability/Distributed/RotatingCoordinator/Run": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Consensus and agreement"},
