@@ -1,5 +1,6 @@
 # Paperfolding series for odd zeta values
 
+- [Bernoulli polynomials at one quarter and Euler numbers](bernoulli-eval-quarter-eq-chapter5-euler.md)
 - [Hurwitz zeta at $3/4$ and odd arguments](hurwitz-zeta-three-quarters-two-mul-add.md)
 - [Tóth's paperfolding and Thue–Morse series for $\zeta(2k+1)$](riemann-zeta-two-mul-add-one-sub-eq-tsum.md)
 - [A paperfolding Dirichlet series at odd integers](tsum-paperfolding-two-mul-add-one.md)
