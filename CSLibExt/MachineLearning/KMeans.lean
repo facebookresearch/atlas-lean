@@ -29,8 +29,8 @@ Main results:
   the cost; `cost_lloyd_le`: one round does not either.
 * `IsRun.antitone`: **the cost is non-increasing along every run of Lloyd's algorithm**;
   `exists_run`: runs exist from any start when `k > 0`.
-* `IsRun.exists_cost_const`: **the cost along every run is eventually constant**: from step one
-  the centers are determined by the previous assignment, so the attained minimum persists.
+* `IsRun.exists_cost_const`: **the cost along every run is eventually constant**: the minimum
+  among costs actually attained persists from its attaining time.
 
 No claim is made here about the number of rounds or about reaching a global optimum (Lloyd's
 algorithm can stop at a local one).
@@ -219,10 +219,12 @@ theorem exists_run (x : ι → E) (hk : 0 < k) (a₀ : ι → Fin k) (c₀ : Fin
   exact ⟨as, cs, rfl, rfl, fun t => ⟨rfl, hstep (as t)⟩⟩
 
 /-- **The cost along every run is eventually constant.** From step one on, the centers are
-determined by the previous assignment, so every later cost lies in the finite image of the cost
-over ordered pairs of assignments. Together with the initial cost this range is finite, hence it
-attains a minimum; since the cost is non-increasing (`IsRun.antitone`), all costs from the
-attaining time on equal that minimum. -/
+determined by the previous assignment, so the initial cost together with the finite image of
+the cost over ordered pairs of assignments is a finite set containing every cost of this run.
+The costs actually attained by the run therefore have a minimum; from a time attaining that
+attained minimum, `IsRun.antitone` keeps every later cost equal to it. This is the minimum
+among costs actually attained, not the minimum of the full assignment-pair image, which the
+run need not attain. -/
 theorem IsRun.exists_cost_const {x : ι → E} {as : ℕ → ι → Fin k} {cs : ℕ → Fin k → E}
     (h : IsRun x as cs) : ∃ T, ∀ t, T ≤ t → cost x (as t) (cs t) = cost x (as T) (cs T) := by
   classical
