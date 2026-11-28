@@ -7,10 +7,17 @@ $\gcd(|h|,|k|,|l|)=1$. Without this primitive-index condition, some $P_m$ contai
 planes spaced $a/2$, whereas adjacent occupied planes of $a\mathbb Z^3$ with that normal are spaced $a$. Both $a$ and $d$ are lengths. Bragg's condition for diffraction is a separate physical law, not a consequence of the lattice geometry, and noncubic metrics
 are outside this result.
 
-## Depends on
-
-## Proof depends on
+The distance is a minimum over all pairs of real points from the two planes, attained by a
+pair displaced along the normal. In fractional coordinates $(x/a,y/a,z/a)$, the plane $P_m$
+is the level $m$ of the linear form with coefficients $(h,k,l)$. Occupancy is a separate condition:
+a level $m$ is occupied exactly when $\gcd(|h|,|k|,|l|)$ divides $m$ in $\mathbb{Z}$.
 
 ## Sources
 
-- MIT OpenCourseWare 3.091, *Introduction to Solid-State Chemistry*, fall 2018, Recitation 14, Miller indices and interplanar spacing, <https://ocw.mit.edu/courses/3-091-introduction-to-solid-state-chemistry-fall-2018/>.
+- MIT OpenCourseWare 3.091, *Introduction to Solid-State Chemistry*, fall 2018, Recitation 14, §2, <https://ocw.mit.edu/courses/3-091-introduction-to-solid-state-chemistry-fall-2018/> (cubic spacing formula).
+
+Bézout's identity gives the occupancy criterion: an integer level is occupied exactly when
+the gcd of the indices divides it. For $(2,0,0)$ this means precisely the even levels.
+The plane $2x=2ma$ is the same as $x=ma$, so level $2m$ for $(2,0,0)$ is level $m$ for
+$(1,0,0)$. Consecutive occupied planes thus correspond to levels $m$ and $m+1$ for
+$(1,0,0)$, and the geometric spacing formula gives distance $a$.

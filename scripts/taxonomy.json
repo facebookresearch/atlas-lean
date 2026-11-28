@@ -15429,6 +15429,7 @@
   "PhyslibExt/Circuits/IndexOneEulerBridge": {"to": "Analysis/numerical-analysis", "title": "Euler method"},
   "PhyslibExt/CondensedMatter/CrystalPacking": {"to": "Geometry/packings-and-coverings", "title": "Crystal packing and interstitial holes"},
   "PhyslibExt/CondensedMatter/Crystallography/BravaisLattice": {"to": "Geometry/discrete-geometry", "title": "Bravais lattices and lattice relabeling"},
+  "PhyslibExt/CondensedMatter/Crystallography/CubicPlaneSpacing": {"to": "Geometry/discrete-geometry", "title": "Metric tensors, Miller indices and interplanar spacing"},
   "PhyslibExt/CondensedMatter/Crystallography/CubicSpacing": {"to": "Geometry/discrete-geometry", "title": "Metric tensors, Miller indices and interplanar spacing"},
   "PhyslibExt/CondensedMatter/Crystallography/MillerIndices": {"to": "Geometry/discrete-geometry", "title": "Metric tensors, Miller indices and interplanar spacing"},
   "PhyslibExt/CondensedMatter/Crystallography/ReciprocalLattice": {"to": "Geometry/discrete-geometry", "title": "Reciprocal lattices and Brillouin zones"},
