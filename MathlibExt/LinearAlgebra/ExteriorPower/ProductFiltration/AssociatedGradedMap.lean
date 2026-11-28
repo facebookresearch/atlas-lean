@@ -269,27 +269,28 @@ theorem gradeMap_comp
   have hs : (f.comp g).stageMap m q x = g.stageMap m q (f.stageMap m q x) :=
     (LinearMap.congr_fun (f.stageMap_comp g m q) x).trans
       (LinearMap.comp_apply (g.stageMap m q) (f.stageMap m q) x)
-  calc
-    (f.comp g).gradeMap m q (Submodule.Quotient.mk (p := nextStage R M N m q) x) =
-        (Submodule.Quotient.mk (p := nextStage R M'' N'' m q)
-          ((f.comp g).stageMap m q x) : associatedGraded R M'' N'' m q) :=
-      (f.comp g).gradeMap_mk m q x
-    _ = (Submodule.Quotient.mk (p := nextStage R M'' N'' m q)
-          (g.stageMap m q (f.stageMap m q x)) : associatedGraded R M'' N'' m q) :=
-      congrArg (fun y : filtration R M'' N'' m q =>
-        (Submodule.Quotient.mk (p := nextStage R M'' N'' m q) y :
-          associatedGraded R M'' N'' m q)) hs
-    _ = g.gradeMap m q
-          (Submodule.Quotient.mk (p := nextStage R M' N' m q) (f.stageMap m q x)) :=
-      (g.gradeMap_mk m q (f.stageMap m q x)).symm
-    _ = g.gradeMap m q
-          (f.gradeMap m q (Submodule.Quotient.mk (p := nextStage R M N m q) x)) :=
-      congrArg (fun y : associatedGraded R M' N' m q => g.gradeMap m q y)
-        (f.gradeMap_mk m q x).symm
-    _ = ((g.gradeMap m q).comp (f.gradeMap m q))
-          (Submodule.Quotient.mk (p := nextStage R M N m q) x) :=
-      (LinearMap.comp_apply (g.gradeMap m q) (f.gradeMap m q)
-        (Submodule.Quotient.mk (p := nextStage R M N m q) x)).symm
+  let qa : associatedGraded R M N m q :=
+    Submodule.Quotient.mk (p := nextStage R M N m q) x
+  let qb : associatedGraded R M' N' m q :=
+    Submodule.Quotient.mk (p := nextStage R M' N' m q) (f.stageMap m q x)
+  let qc : associatedGraded R M'' N'' m q :=
+    Submodule.Quotient.mk (p := nextStage R M'' N'' m q) ((f.comp g).stageMap m q x)
+  let qd : associatedGraded R M'' N'' m q :=
+    Submodule.Quotient.mk (p := nextStage R M'' N'' m q)
+      (g.stageMap m q (f.stageMap m q x))
+  have h₁ : (f.comp g).gradeMap m q qa = qc := (f.comp g).gradeMap_mk m q x
+  have h₂ : qc = qd :=
+    congrArg (fun y : filtration R M'' N'' m q =>
+      (Submodule.Quotient.mk (p := nextStage R M'' N'' m q) y :
+        associatedGraded R M'' N'' m q)) hs
+  have h₃ : qd = g.gradeMap m q qb := (g.gradeMap_mk m q (f.stageMap m q x)).symm
+  have h₄ : g.gradeMap m q qb = g.gradeMap m q (f.gradeMap m q qa) :=
+    congrArg (fun y : associatedGraded R M' N' m q => g.gradeMap m q y)
+      (f.gradeMap_mk m q x).symm
+  have h₅ : g.gradeMap m q (f.gradeMap m q qa) =
+      ((g.gradeMap m q).comp (f.gradeMap m q)) qa :=
+    (LinearMap.comp_apply (g.gradeMap m q) (f.gradeMap m q) qa).symm
+  exact h₁.trans (h₂.trans (h₃.trans (h₄.trans h₅)))
 
 end exteriorPower.ProductFiltration.FirstSummandMap
 
