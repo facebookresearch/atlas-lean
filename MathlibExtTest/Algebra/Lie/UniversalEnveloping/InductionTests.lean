@@ -30,6 +30,10 @@ private def twice : ℤ →ₗ⁅ℤ⁆ ℤ :=
     map_lie' := by
       intro x y
       simp [LieRing.of_associative_ring_bracket, mul_comm] }
+
+private theorem twice_apply (n : ℤ) : twice n = 2 * n := by
+  change ((2 : ℤ) • LinearMap.id : ℤ →ₗ[ℤ] ℤ) n = 2 * n
+  simp only [LinearMap.smul_apply, LinearMap.id_apply, smul_eq_mul]
 private def evalTwice : UniversalEnvelopingAlgebra ℤ ℤ →ₐ[ℤ] ℤ :=
   UniversalEnvelopingAlgebra.lift ℤ twice
 private def evalZero : UniversalEnvelopingAlgebra ℤ ℤ →ₐ[ℤ] ZMod 2 :=
@@ -40,8 +44,8 @@ example (x : UniversalEnvelopingAlgebra ℤ ℤ) :
   induction x using UniversalEnvelopingAlgebra.induction ℤ ℤ with
   | algebraMap r => simp [evalZero, evalTwice, AlgHom.commutes]
   | ι n =>
-    simp [evalZero, evalTwice, UniversalEnvelopingAlgebra.lift_ι_apply,
-      twice, LinearMap.smul_apply, smul_eq_mul, map_mul]
+    norm_num [evalZero, evalTwice, UniversalEnvelopingAlgebra.lift_ι_apply,
+      twice_apply, map_mul]
   | mul a b ha hb => simp only [map_mul, ha, hb]
   | add a b ha hb => simp only [map_add, ha, hb]
 
@@ -49,5 +53,5 @@ example : UniversalEnvelopingAlgebra.ι ℤ (1 : ℤ) ≠ 0 := by
   intro h
   have he := congrArg evalTwice h
   norm_num [evalTwice, UniversalEnvelopingAlgebra.lift_ι_apply,
-    twice, LinearMap.smul_apply, smul_eq_mul] at he
+    twice_apply] at he
 end EnvelopingInductionTests
