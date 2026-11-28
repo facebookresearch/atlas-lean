@@ -10372,6 +10372,7 @@
   "MathlibExt/Analysis/ODE/SteadyCableTransfer": {"to": "Analysis/ordinary-differential-equations", "title": "Linear systems and fundamental matrices"},
   "MathlibExt/Analysis/ODE/SturmLiouvilleExistence": {"to": "Analysis/ordinary-differential-equations", "title": "Sturm–Liouville Dirichlet problem"},
   "MathlibExt/Analysis/ODE/SturmLiouvilleUniqueness": {"to": "Analysis/ordinary-differential-equations", "title": "Sturm–Liouville Dirichlet problem"},
+  "MathlibExt/Analysis/ODE/TimeStepping/ThetaRule": {"to": "Analysis/numerical-analysis", "title": "Theta rule for exponential decay"},
   "MathlibExt/Analysis/OperatorTheory/AdjointCompFredholmClosedRange": {"to": "Analysis/operator-theory/compact-and-fredholm", "title": "Closed range theorem"},
   "MathlibExt/Analysis/OddWeightedCatalanSeries": {"to": "Analysis/sequences-and-series/trigonometric-and-harmonic-series", "title": "Series from Nörlund's digamma identity"},
   "MathlibExt/Analysis/OperatorTheory/HilbertIntegralOperatorLpBound": {"to": "Analysis/operator-theory/integral-and-multiplication", "title": "Hilbert's integral operator"},

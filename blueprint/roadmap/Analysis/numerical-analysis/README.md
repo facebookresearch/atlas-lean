@@ -24,6 +24,7 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Rungeâ€“Kutta methods](runge-kutta-methods/README.md)
 - [Stationary iterative methods](stationary-iterative-methods/README.md)
 - [Strang's lemma](strang-s-lemma/README.md)
+- [Theta rule for exponential decay](theta-rule-for-exponential-decay/README.md)
 - [Trust-region methods](trust-region-methods/README.md)
 - [Decidability and complexity of bounded delta-SMT](decidability-and-complexity-of-bounded-delta-smt.md)
 - [delta-weakening and delta-complete decision procedures](delta-weakening-and-delta-complete-decision-procedures.md)
