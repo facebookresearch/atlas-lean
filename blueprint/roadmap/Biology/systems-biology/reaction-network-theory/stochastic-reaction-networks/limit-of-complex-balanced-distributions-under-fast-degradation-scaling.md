@@ -21,7 +21,7 @@ $$\lim_{N \to \infty} \pi^\beta_N(x) = \begin{cases} \pi(x)/\pi(\Gamma^\beta_0),
 ## Depends on
 
 - [Conditional stationary distribution after eliminating non-interacting species](conditional-stationary-distribution-after-eliminating-non-interacting-species.md)
-- [Complex-balanced concentrations](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
 
 ## Expansion
 
