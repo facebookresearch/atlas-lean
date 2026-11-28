@@ -9869,6 +9869,7 @@
   "MathlibExt/AlgebraicGeometry/PointMultiplicity": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Multiplicity of a hypersurface at a point"},
   "MathlibExt/AlgebraicGeometry/PullbackPoints": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
   "MathlibExt/AlgebraicGeometry/Sections": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
+  "MathlibExt/AlgebraicGeometry/SemistableReduction": {"to": "AlgebraicGeometry/abelian-varieties", "title": "Semistable reduction"},
   "MathlibExt/AlgebraicGeometry/SeshadriConstant": {"to": "AlgebraicGeometry/birational-geometry", "title": "Seshadri constants of points in the plane"},
   "MathlibExt/AlgebraicGeometry/SeshadriConstantSubmaximalUpperBoundWanted": {"to": "AlgebraicGeometry/birational-geometry", "title": "Seshadri constants of points in the plane"},
   "MathlibExt/AlgebraicGeometry/SmoothKrullDim": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Smooth morphisms"},

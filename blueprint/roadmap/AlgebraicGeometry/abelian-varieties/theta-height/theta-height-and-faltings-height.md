@@ -63,7 +63,7 @@ item (1) into item (2).
 
 - [The stable Faltings height is invariant under finite extension](../stable-faltings-height/faltings-height-field-base-change.md),
   for the passage to a number field over which $A$ has a Moret-Bailly model
-- [Semistable reduction theorem for abelian varieties](../semistable-reduction-theorem.md), for the
+- [Semistable reduction theorem for abelian varieties](../semistable-reduction/semistable-reduction-theorem.md), for the
   existence of such fields (the remark after Definition 3.2)
 
 ## Sources
