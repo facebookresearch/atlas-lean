@@ -61,18 +61,6 @@ private theorem two_mul_choose_eq (n : ℕ) : 2 * Nat.choose n 2 = n * (n - 1) :
   have h2 := mul_pred_add n
   omega
 
-private theorem polygonal_ge (s n : ℕ) : n ≤ Nat.polygonalNumber s n := by
-  unfold Nat.polygonalNumber
-  exact Nat.le_add_left n ((s - 2) * Nat.choose n 2)
-
-private theorem polygonal_mono (s : ℕ) {a b : ℕ} (h : a ≤ b) :
-    Nat.polygonalNumber s a ≤ Nat.polygonalNumber s b := by
-  unfold Nat.polygonalNumber
-  have hC : a.choose 2 ≤ b.choose 2 := Nat.choose_le_choose 2 h
-  have hmul : (s - 2) * a.choose 2 ≤ (s - 2) * b.choose 2 :=
-    Nat.mul_le_mul_left (s - 2) hC
-  exact Nat.add_le_add hmul h
-
 private theorem polygonal_succ (s m : ℕ) :
     Nat.polygonalNumber s (m + 1) =
       Nat.polygonalNumber s m + (s - 2) * m + 1 := by
@@ -236,7 +224,7 @@ private theorem exists_exception_above (N s : ℕ) (hs : 3 ≤ s)
   let m := N + 14
   have hm13 : 13 ≤ m := by omega
   have hgap := gap_ge s m hs hm13
-  have hPm_ge : m ≤ Nat.polygonalNumber s m := polygonal_ge s m
+  have hPm_ge : m ≤ Nat.polygonalNumber s m := Nat.le_polygonalNumber s m
   let A := Nat.polygonalNumber s m + 2
   let B := Nat.polygonalNumber s (m + 1) + 1
   have hAB : A + 13 ≤ B := hgap
@@ -259,15 +247,15 @@ private theorem exists_exception_above (N s : ℕ) (hs : 3 ≤ s)
   rcases hq12 with rfl | rfl
   · have heq1 : n = Nat.polygonalNumber s k + 1 := by omega
     rcases htri with hkm | hkm
-    · have hle := polygonal_mono s hkm
+    · have hle := Nat.polygonalNumber_mono s hkm
       omega
-    · have hle := polygonal_mono s hkm
+    · have hle := Nat.polygonalNumber_mono s hkm
       omega
   · have heq2 : n = Nat.polygonalNumber s k + 2 := by omega
     rcases htri with hkm | hkm
-    · have hle := polygonal_mono s hkm
+    · have hle := Nat.polygonalNumber_mono s hkm
       omega
-    · have hle := polygonal_mono s hkm
+    · have hle := Nat.polygonalNumber_mono s hkm
       omega
 
 private theorem infinite_exceptions (s : ℕ) (hs : 3 ≤ s)

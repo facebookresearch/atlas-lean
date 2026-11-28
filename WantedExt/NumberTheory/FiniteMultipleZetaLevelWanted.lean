@@ -102,17 +102,6 @@ public theorem_wanted two_mul_coloredFiniteMZV_twelve {k : ℕ} (hk : Odd k) (hk
           (((3 : ZMod p) ^ k)⁻¹ - ((4 : ZMod p) ^ k)⁻¹ - ((6 : ZMod p) ^ k)⁻¹ +
             ((12 : ZMod p) ^ k)⁻¹) * Z
 
-/-- **Kummer's theorem for regular primes.** Let $p$ be an odd prime and let $K$ be a $p$-th
-cyclotomic field over $\mathbb{Q}$ (a number field generated over $\mathbb{Q}$ by a primitive
-$p$-th root of unity). If $p$ does not divide the class number of $K$, then Fermat's Last Theorem
-holds for the exponent $p$: there are no positive integers $a, b, c$ with $a^p + b^p = c^p$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Theorem 1 (`integers-2024-A22-thm-1`). -/
-public theorem_wanted fermatLastTheoremFor_of_regular {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (K : Type*) [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-    (hreg : ¬ p ∣ NumberField.classNumber K) : FermatLastTheoremFor p
-
 /-- **Wieferich's criterion for the first case of Fermat's Last Theorem.** Let $p$ be a prime
 that is not a Wieferich prime, that is, $p^2 \nmid 2^{p-1} - 1$. Then there are no integers
 $x, y, z$ with $p \nmid xyz$ and $x^p + y^p = z^p$.
