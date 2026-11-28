@@ -10,6 +10,8 @@ The modal logic of the RCC8 relations over a class of region structures has one 
 
 - [Kripke model](../../kripke-semantics/kripke-model.md)
 - [Topological space](../../../../Topology/topological-spaces/topological-space.md)
+- [Interior of a subset](../../../../Topology/topological-spaces/open-and-closed-sets/interior-of-subset.md)
+- [Closure of a subset](../../../../Topology/topological-spaces/open-and-closed-sets/closure-of-subset.md)
 
 ## Proof depends on
 

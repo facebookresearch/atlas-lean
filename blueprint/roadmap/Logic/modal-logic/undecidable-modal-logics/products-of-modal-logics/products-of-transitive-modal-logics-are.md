@@ -17,7 +17,7 @@ None.
 
 ## Expansion
 
-The source of the copy read sketches the proof: the $\omega \times \omega$ grid is represented in product frames of large depth by an enumeration of its points along chains of the two transitive relations, and an undecidable $\omega \times \omega$ tiling problem is reduced to satisfiability. A good expansion links that tiling problem; the variant used (with the grid built from the enumeration of pairs) has no page.
+The source of the copy read sketches the proof: the $\omega \times \omega$ grid is represented in product frames of large depth by an enumeration of its points along chains of the two transitive relations, and an undecidable $\omega \times \omega$ tiling problem is reduced to satisfiability. A good expansion links the undecidability of the $\omega \times \omega$ tiling problem in the form the proof uses, with the grid built from an enumeration of pairs.
 
 ## Sources
 

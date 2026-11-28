@@ -22,7 +22,7 @@ None.
 
 Kripke completeness of finitely axiomatized normal modal logics is [undecidable as well](kripke-completeness-of-finitely-axiomatized.md).
 
-The proof goes through the Thomason simulation, which embeds polymodal, in particular bimodal, logics into unimodal ones while preserving properties such as decidability, the finite model property and tabularity; undecidability of these properties for bimodal logics then transfers to $\mathrm{NExt}\,\mathbf{K}$. The copy read cites the result without proof; a good expansion links the simulation and the bimodal undecidability results, which have no pages.
+The proof goes through the Thomason simulation, which embeds polymodal, in particular bimodal, logics into unimodal ones while preserving properties such as decidability, the finite model property and tabularity; undecidability of these properties for bimodal logics then transfers to $\mathrm{NExt}\,\mathbf{K}$. The copy read cites the result without proof; a good expansion links the simulation and the bimodal undecidability results.
 
 ## Sources
 

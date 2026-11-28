@@ -2,7 +2,7 @@
 
 The global consequence relation of the two-dimensional product logic $\mathbf{K} \times \mathbf{K}$ is undecidable, although validity in $\mathbf{K} \times \mathbf{K}$ is decidable.
 
-**Theorem (Marx).** It is undecidable, given bimodal formulas $\varphi$ and $\psi$, whether $\psi$ is a global consequence of $\varphi$ in $\mathbf{K} \times \mathbf{K}$, that is, whether $\psi$ is true throughout every model based on a product frame $\mathfrak{F}_1 \times \mathfrak{F}_2$ in which $\varphi$ is true throughout (see [products and commutators of modal logics](products-and-commutators-of-modal-logics.md)).
+**Theorem (Marx).** It is undecidable, given bimodal formulas $\varphi$ and $\psi$, whether $\psi$ is a global consequence of $\varphi$ in $\mathbf{K} \times \mathbf{K}$, that is, whether $\psi$ is true throughout every model in which $\varphi$ and every formula of $\mathbf{K} \times \mathbf{K}$ are true throughout (see [products and commutators of modal logics](products-and-commutators-of-modal-logics.md)). Since $\mathbf{K} \times \mathbf{K}$ is globally Kripke complete, as the source notes, this is the same as $\psi$ being true throughout every model based on a product frame $\mathfrak{F}_1 \times \mathfrak{F}_2$ in which $\varphi$ is true throughout.
 
 Validity in $\mathbf{K} \times \mathbf{K}$ is decidable (Gabbay and Shehtman), but not in elementary time. The global consequence relation of $\mathbf{K} \times \mathbf{S5}$ is decidable, in co2NEXPTIME.
 
@@ -17,7 +17,7 @@ Validity in $\mathbf{K} \times \mathbf{K}$ is decidable (Gabbay and Shehtman), b
 
 ## Expansion
 
-The copy read attributes the result to a reduction of the $\omega \times \omega$ tiling problem, without details: global consequence lets $\varphi$ act as an axiom throughout the product model, which is what such grid encodings need. A good expansion would give Marx's reduction in full.
+The copy read attributes the result to a reduction of the $\omega \times \omega$ tiling problem, without details: global consequence lets $\varphi$ act as an axiom throughout the product model, which is what such grid encodings need. A finite tile set tiles the $\omega \times \omega$ quadrant exactly when it tiles every finite square, which by the compactness statement of the linked page holds exactly when it tiles the plane. A good expansion gives Marx's reduction in full.
 
 ## Sources
 

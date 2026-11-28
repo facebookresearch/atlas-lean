@@ -4,12 +4,13 @@ If the horizontal component of a δ-product is a logic of discrete linear orders
 
 **Theorem (Hampson, Kikot and Kurucz).** Let $L_h$ be a Kripke complete unimodal logic containing $\mathbf{DisK4.3}$ such that $(\omega,<)$ is a frame for $L_h$, and let $L_v$ be a Kripke complete unimodal logic such that some $\omega$-fan is a frame for $L_v$. Then the [δ-product](delta-products-of-modal-logics.md) $L_h \times^\delta L_v$ is $\Pi^1_1$-hard (Theorem 5), and so is its variant over δ-products of rooted frames with equal universes.
 
-Here $\mathbf{DisK4.3}$ is the logic of modally discrete linear orders, and $\Pi^1_1$-hardness refers to the validity problem with the formula as input.
+Here a frame $(W, R)$ is *modally discrete* if there are no points $x_0, x_1, \dots, x_\infty$ in $W$ with $x_0 R x_1 R x_2 R \cdots$, $x_n R x_\infty$, $x_n \neq x_{n+1}$ and not $x_\infty R x_n$ for all $n < \omega$, and $\mathbf{DisK4.3}$ is the logic of all modally discrete linear orders (Section 6 of the source), and $\Pi^1_1$-hardness refers to the validity problem with the formula as input.
 
 ## Depends on
 
 - [Delta-products of modal logics](delta-products-of-modal-logics.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

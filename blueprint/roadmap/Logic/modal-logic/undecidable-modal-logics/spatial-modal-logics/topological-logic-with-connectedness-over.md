@@ -4,7 +4,7 @@ Satisfiability of quantifier-free Boolean combinations of region terms with a co
 
 **Languages.** $\mathcal{B}c$ is the quantifier-free fragment of first-order logic in the signature $(+, \cdot, -, 0, 1, c)$ with a unary predicate $c$; $\mathcal{B}c^\circ$ is the same with a unary predicate $c^\circ$ in place of $c$.
 
-**Interpretations.** A set $X \subseteq \mathbb{R}^n$ is *regular closed* if it is the closure of an open set, and *polyhedral* if it is a finite union of finite intersections of closed half-spaces. $\mathrm{RC}(\mathbb{R}^n)$ is the Boolean algebra of regular closed subsets of $\mathbb{R}^n$ under inclusion, and $\mathrm{RCP}(\mathbb{R}^n)$ its subalgebra of regular closed polyhedra. Formulas are interpreted by taking $+, \cdot, -, 0, 1$ as the Boolean operations of these algebras, $c(r)$ as "$r$ is connected" and $c^\circ(r)$ as "the interior of $r$ is connected". The *satisfiability problem* asks whether some assignment of elements of the algebra to the variables of a formula makes it true.
+**Interpretations.** A set $X \subseteq \mathbb{R}^n$ is *regular closed* if it is the closure of an open set, and *polyhedral* if it is a finite union of finite intersections of closed half-spaces. $\mathrm{RC}(\mathbb{R}^n)$ is the Boolean algebra of regular closed subsets of $\mathbb{R}^n$ under inclusion, and $\mathrm{RCP}(\mathbb{R}^n)$ its subalgebra of regular closed polyhedra. Formulas are interpreted by taking $+, \cdot, -, 0, 1$ as the Boolean operations of these algebras, $c(r)$ as "$r$ is connected" and $c^\circ(r)$ as "the interior of $r$ is connected", where a set is connected if, with the subspace topology, it is not the union of two disjoint nonempty closed subsets; in particular the empty region $0$ satisfies both $c$ and $c^\circ$. The *satisfiability problem* asks whether some assignment of elements of the algebra to the variables of a formula makes it true.
 
 **Theorem (Kontchakov, Nenov, Pratt-Hartmann and Zakharyaschev).**
 
@@ -17,6 +17,8 @@ All these problems are therefore undecidable. By contrast, satisfiability of $\m
 ## Depends on
 
 - [Topological space](../../../../Topology/topological-spaces/topological-space.md)
+- [Interior of a subset](../../../../Topology/topological-spaces/open-and-closed-sets/interior-of-subset.md)
+- [Closure of a subset](../../../../Topology/topological-spaces/open-and-closed-sets/closure-of-subset.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 

@@ -18,7 +18,7 @@ $\mathbf{K}^n$ has the finite model property for every $n$ (Gabbay and Shehtman)
 
 ## Expansion
 
-The proof reduces the undecidable problem whether a finite simple relation algebra is representable (Hirsch and Hodkinson): from such an algebra $\mathcal{A}$ one builds a finite $n$-frame $\mathfrak{F}_{\mathcal{A},n}$ and a $3$-modal formula $\varphi_{\mathcal{A}}$ such that, for every $L$ in the interval, $\mathfrak{F}_{\mathcal{A},n}$ is a frame for $L$ iff $\neg\varphi_{\mathcal{A}} \notin L$ iff $\mathfrak{F}_{\mathcal{A},3}$ is a p-morphic image of a universal product $\mathbf{S5}^3$-frame, and the last condition holds iff $\mathcal{A}$ is representable (Lemmas 5 and 6). A good expansion links a page for the undecidability of representability of finite relation algebras, which has none yet.
+The proof reduces the undecidable problem whether a finite simple relation algebra is representable (Hirsch and Hodkinson): from such an algebra $\mathcal{A}$ one builds a finite $n$-frame $\mathfrak{F}_{\mathcal{A},n}$ and a $3$-modal formula $\varphi_{\mathcal{A}}$ such that, for every $L$ in the interval, $\mathfrak{F}_{\mathcal{A},n}$ is a frame for $L$ iff $\neg\varphi_{\mathcal{A}} \notin L$ iff $\mathfrak{F}_{\mathcal{A},3}$ is a p-morphic image of a universal product $\mathbf{S5}^3$-frame, and the last condition holds iff $\mathcal{A}$ is representable (Lemmas 5 and 6). A good expansion links a page for the undecidability of representability of finite simple relation algebras.
 Non-finite axiomatizability follows from the undecidability of the frame problem: a finite axiomatization would give a test for finite frames.
 
 ## Sources

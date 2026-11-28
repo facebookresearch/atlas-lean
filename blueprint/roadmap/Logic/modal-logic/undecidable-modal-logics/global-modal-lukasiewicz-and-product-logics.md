@@ -2,18 +2,19 @@
 
 Global consequence in Kripke models valued in the standard Łukasiewicz algebra, or in the standard product algebra, is not recursively enumerable: no recursive axiomatization of these modal many-valued logics exists.
 
-**Theorem (Vidal).** Let $\vdash_{K\L}$ and $\vdash_{K\Pi}$ be the [global consequence relations](global-modal-many-valued-logics.md) between finite sets of modal formulas and formulas over all safe Kripke models valued in the standard MV-algebra $[0,1]_{\L}$ ($a \cdot b = \max\{0, a + b - 1\}$, $a \to b = \min\{1, 1 - a + b\}$) and in the standard product algebra $[0,1]_\Pi$ ($a \cdot b = ab$, $a \to b = 1$ if $a \le b$ and $b/a$ otherwise), respectively. The sets $\{(\Gamma, \varphi) \mid \Gamma \vdash_{K\L} \varphi\}$ and $\{(\Gamma, \varphi) \mid \Gamma \vdash_{K\Pi} \varphi\}$, with $\Gamma$ finite, are not recursively enumerable; hence neither logic is recursively axiomatizable. The same holds for global consequence over finite models only, $\vdash_{\omega K\L}$ and $\vdash_{\omega K\Pi}$ (Corollary 4.4 of the source).
+Modal formulas are built from propositional variables and the constants $0, 1$ by $\wedge, \vee, \cdot, \to$ and unary $\square, \lozenge$. For an algebra $A$ on $[0,1]$, an *$A$-Kripke model* $\langle W, R, e \rangle$ is a Kripke frame with a valuation $e : W \times \mathrm{Var} \to A$, extended to formulas by the operations of $A$ and by $e(v, \square\varphi) = \inf_{Rvw} e(w, \varphi)$ and $e(v, \lozenge\varphi) = \sup_{Rvw} e(w, \varphi)$ (on $[0,1]$ these always exist, so every model is safe). For a finite set $\Gamma$ and a formula $\varphi$, $\Gamma$ *globally entails* $\varphi$ over a class of models if in every model of the class where each formula of $\Gamma$ takes value $1$ at every world, $\varphi$ also takes value $1$ at every world.
+
+**Theorem (Vidal).** Let $\vdash_{K\L}$ and $\vdash_{K\Pi}$ be the global consequence relations over all Kripke models valued in the standard MV-algebra $[0,1]_{\L}$ ($a \cdot b = \max\{0, a + b - 1\}$, $a \to b = \min\{1, 1 - a + b\}$) and in the standard product algebra $[0,1]_\Pi$ ($a \cdot b = ab$, $a \to b = 1$ if $a \le b$ and $b/a$ otherwise), respectively. The sets $\{(\Gamma, \varphi) \mid \Gamma \vdash_{K\L} \varphi\}$ and $\{(\Gamma, \varphi) \mid \Gamma \vdash_{K\Pi} \varphi\}$, with $\Gamma$ finite, are not recursively enumerable; hence neither logic is recursively axiomatizable (Theorem 4.8 and Corollary 4.10 of the source). The same holds for global consequence over finite models only, $\vdash_{\omega K\L}$ and $\vdash_{\omega K\Pi}$ (Corollary 4.4 of the source).
 
 Whether these consequence relations are $\Pi^0_2$-complete, like the tautologies of first-order Łukasiewicz and product logics, is left open in the source.
 
 ## Depends on
 
-- [Global modal many-valued logics are undecidable](global-modal-many-valued-logics.md)
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
-None.
+- [Global modal many-valued logics are undecidable](global-modal-many-valued-logics.md)
 
 ## Expansion
 

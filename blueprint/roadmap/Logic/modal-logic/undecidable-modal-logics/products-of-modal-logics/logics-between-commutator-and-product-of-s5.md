@@ -15,6 +15,7 @@ The logic $\mathbf{S5}^n$ does not even have the finite model property for $n \g
 ## Depends on
 
 - [products and commutators of modal logics](products-and-commutators-of-modal-logics.md)
+- [Extra axioms of S5](../../normal-modal-logics/s5.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -23,7 +24,7 @@ The logic $\mathbf{S5}^n$ does not even have the finite model property for $n \g
 
 ## Expansion
 
-Maddux worked in the algebraic setting of diagonal-free cylindric algebras of dimension $n$, the algebraic counterparts of these logics, and reduced the word problem for semigroups. Another proof, via the connection between $\mathbf{S5}^n$ and the $n$-variable fragment of first-order logic, reduces the $\omega \times \omega$ tiling problem. A good expansion would also link the correspondence between these logics and diagonal-free cylindric algebras, which has no page.
+Maddux worked in the algebraic setting of diagonal-free cylindric algebras of dimension $n$, the algebraic counterparts of these logics, and reduced the word problem for semigroups. Another proof, via the connection between $\mathbf{S5}^n$ and the $n$-variable fragment of first-order logic, reduces the $\omega \times \omega$ tiling problem. The source names the word problem for semigroups; the linked page states the uniform word problem for Thue systems, that is, for finitely presented monoids. A good expansion also links the correspondence between these logics and diagonal-free cylindric algebras.
 
 ## Sources
 

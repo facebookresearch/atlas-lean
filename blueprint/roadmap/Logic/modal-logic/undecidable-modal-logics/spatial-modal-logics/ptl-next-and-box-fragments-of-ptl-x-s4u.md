@@ -20,7 +20,7 @@ The proofs show that both statements already hold for the future fragments of th
 
 ## Expansion
 
-Both theorems are proved in Appendix B.2 of the source by a reduction of Post's correspondence problem: each instance is mapped to a formula of the respective fragment that is satisfiable iff the instance has a solution. The proof of Theorem 3.6 also uses Lemma B.1(ii) of the source, by which $\mathrm{PTL} \circ \mathrm{S4}_u$ formulas need only be considered in tt-models based on Aleksandrov topological spaces; that lemma has no page. Decidability is regained when spatial variables are restricted to regions (regular closed sets) and the interaction between spatial and temporal constructors is limited, as in the decidable logics of the same paper.
+Both theorems are proved in Appendix B.2 of the source by a reduction of Post's correspondence problem: each instance is mapped to a formula of the respective fragment that is satisfiable iff the instance has a solution. The proof of Theorem 3.6 also uses Lemma B.1(ii) of the source, by which $\mathrm{PTL} \circ \mathrm{S4}_u$ formulas need only be considered in tt-models based on Aleksandrov topological spaces; a good expansion links that lemma. Decidability is regained when spatial variables are restricted to regions (regular closed sets) and the interaction between spatial and temporal constructors is limited, as in the decidable logics of the same paper.
 
 ## Sources
 

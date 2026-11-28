@@ -2,7 +2,7 @@
 
 The δ-product of two unimodal logics is the logic of all product frames of their frames enriched with a diagonal constant δ, true exactly at the pairs $(x,x)$. It approximates two-variable first-order logic with equality and extends this approach to arbitrary component logics.
 
-**Formulas.** Formulas are built from propositional variables and the constant $\delta$ with $\neg$, $\wedge$ and two boxes $\Box_h$ ("horizontal") and $\Box_v$ ("vertical"); $\Diamond_i = \neg\Box_i\neg$.
+**Formulas.** Formulas are built from an infinite set of propositional variables and the constant $\delta$ with $\neg$, $\wedge$ and two boxes $\Box_h$ ("horizontal") and $\Box_v$ ("vertical"); $\Diamond_i = \neg\Box_i\neg$.
 
 **Product and δ-product frames.** For unimodal Kripke frames $\mathfrak{F}_h = (W_h, R_h)$ and $\mathfrak{F}_v = (W_v, R_v)$, the product frame $\mathfrak{F}_h \times \mathfrak{F}_v$ has universe $W_h \times W_v$ and relations
 
@@ -12,7 +12,7 @@ $$
 
 The *δ-product* $\mathfrak{F}_h \times^\delta \mathfrak{F}_v$ adds the set $D = \{(x,x) : x \in W_h \cap W_v\}$, and $\delta$ is true at a point iff the point lies in $D$. A formula is valid in a frame if it is true at every point under every valuation.
 
-**δ-product logics.** For Kripke complete unimodal logics $L_h$, $L_v$ with frame classes $\mathrm{Fr}\,L_h$, $\mathrm{Fr}\,L_v$,
+**δ-product logics.** For a set $L$ of formulas, $\mathrm{Fr}\,L$ is the class of frames in which every formula of $L$ is valid, and $L$ is a *Kripke complete logic* if it is the set of formulas valid in every frame of some class of frames. For Kripke complete unimodal logics $L_h$, $L_v$,
 
 $$
 L_h \times^\delta L_v = \{\varphi : \varphi \text{ is valid in } \mathfrak{F}_h \times^\delta \mathfrak{F}_v \text{ for all } \mathfrak{F}_h \in \mathrm{Fr}\,L_h,\ \mathfrak{F}_v \in \mathrm{Fr}\,L_v\},
@@ -33,7 +33,7 @@ None.
 
 ## Expansion
 
-δ-products approximate two-variable first-order logic with equality: $\Box_h$ and $\Box_v$ act as $\forall x$ and $\forall y$, and $\delta$ as $x = y$. The transposition-free two-variable fragment corresponds exactly to the variant $\mathbf{S5} \times^\delta_{sq} \mathbf{S5}$, the logic of δ-products of rooted frames with equal universes; $\mathbf{S5} \times^\delta \mathbf{S5}$ is properly contained in it (it does not contain $\Diamond_h \delta$). Every result of the source stated for $L_h \times^\delta L_v$ also holds for the corresponding variant $L_h \times^\delta_{sq} L_v$. If $\mathrm{Fr}\,L_h$ and $\mathrm{Fr}\,L_v$ are recursively first-order definable, then $L_h \times^\delta L_v$ is recursively enumerable (Theorem 1).
+δ-products approximate two-variable first-order logic with equality: $\Box_h$ and $\Box_v$ act as $\forall x$ and $\forall y$, and $\delta$ as $x = y$. The transposition-free two-variable fragment corresponds exactly to the variant $\mathbf{S5} \times^\delta_{sq} \mathbf{S5}$, the logic of δ-products of rooted frames with equal universes; $\mathbf{S5} \times^\delta \mathbf{S5}$ is properly contained in it (it does not contain $\Diamond_h \delta$). Every result of the source stated for $L_h \times^\delta L_v$ also holds for the corresponding variant $L_h \times^\delta_{sq} L_v$. If $\mathrm{Fr}\,L_h$ and $\mathrm{Fr}\,L_v$ are recursively first-order definable in the language with one binary predicate symbol, then $L_h \times^\delta L_v$ is recursively enumerable (Theorem 1).
 
 ## Sources
 

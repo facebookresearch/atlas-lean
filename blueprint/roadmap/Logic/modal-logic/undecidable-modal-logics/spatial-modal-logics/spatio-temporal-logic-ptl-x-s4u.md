@@ -23,6 +23,7 @@ with $\mathcal S$ the mirror image towards the past; on a discrete flow the next
 ## Depends on
 
 - [Topological space](../../../../Topology/topological-spaces/topological-space.md)
+- [Interior of a subset](../../../../Topology/topological-spaces/open-and-closed-sets/interior-of-subset.md)
 - [Formulas of linear temporal logic](../../../temporal-logic/linear-temporal-logic/formula.md)
 
 ## Proof depends on

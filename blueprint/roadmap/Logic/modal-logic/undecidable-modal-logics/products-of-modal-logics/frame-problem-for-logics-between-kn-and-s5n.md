@@ -4,7 +4,7 @@ For every $n \geq 3$ and every set of $n$-modal formulas between $\mathbf{K}^n$ 
 
 **Theorem (Hirsch, Hodkinson and Kurucz).** Let $n \geq 3$ and let $L$ be any set of $n$-modal formulas with $\mathbf{K}^n \subseteq L \subseteq \mathbf{S5}^n$ (see [products and commutators of modal logics](products-and-commutators-of-modal-logics.md)).
 
-1. It is undecidable whether a finite $n$-frame is a frame for $L$, that is, validates every formula of $L$ (Theorem 2).
+1. It is undecidable whether a finite $n$-frame, given by its finite set of points and the tables of its $n$ relations, is a frame for $L$, that is, validates every formula of $L$ (Theorem 2).
 2. There is a $3$-modal formula that does not belong to $L$ but is valid in all finite $k$-ary product frames, for all $k \geq 3$; so $L$ lacks the product finite model property (Theorem 4).
 
 ## Depends on
@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The proof reduces the undecidable problem whether a finite simple relation algebra is representable (Hirsch and Hodkinson): from such an algebra $\mathcal{A}$ one builds a finite $n$-frame $\mathfrak{F}_{\mathcal{A},n}$ and a $3$-modal formula $\varphi_{\mathcal{A}}$ such that, for every $L$ in the interval, $\mathfrak{F}_{\mathcal{A},n}$ is a frame for $L$ iff $\neg\varphi_{\mathcal{A}} \notin L$ iff $\mathfrak{F}_{\mathcal{A},3}$ is a p-morphic image of a universal product $\mathbf{S5}^3$-frame, and the last condition holds iff $\mathcal{A}$ is representable (Lemmas 5 and 6). Clause 2 applies the same lemmas to a finite simple relation algebra that is representable only on an infinite base, such as Maddux's point algebra. A good expansion links pages for the undecidability of representability of finite relation algebras and for such an algebra; neither has a page yet.
+The proof reduces the undecidable problem whether a finite simple relation algebra is representable (Hirsch and Hodkinson): from such an algebra $\mathcal{A}$ one builds a finite $n$-frame $\mathfrak{F}_{\mathcal{A},n}$ and a $3$-modal formula $\varphi_{\mathcal{A}}$ such that, for every $L$ in the interval, $\mathfrak{F}_{\mathcal{A},n}$ is a frame for $L$ iff $\neg\varphi_{\mathcal{A}} \notin L$ iff $\mathfrak{F}_{\mathcal{A},3}$ is a p-morphic image of a universal product $\mathbf{S5}^3$-frame, and the last condition holds iff $\mathcal{A}$ is representable (Lemmas 5 and 6). Clause 2 applies the same lemmas to a finite simple relation algebra that is representable only on an infinite base, such as Maddux's point algebra. A good expansion links pages for the undecidability of representability of finite simple relation algebras and for such an algebra.
 
 ## Sources
 
