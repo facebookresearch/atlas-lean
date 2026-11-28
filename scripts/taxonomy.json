@@ -14364,6 +14364,7 @@
   "MathlibExt/NumberTheory/Schatunowsky": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Schatunowsky-type theorems"},
   "MathlibExt/NumberTheory/SchatunowskyImaginaryQuadratic": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Schatunowsky-type theorems"},
   "MathlibExt/NumberTheory/SecondOrderGenValue": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
+  "MathlibExt/NumberTheory/SecondOrderGenValueFamily": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/SecondOrderGenValueNeighbors": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/SecondOrderGenValueTrivialFamilies": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/SecondOrderMValue": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
