@@ -1801,6 +1801,7 @@
   "CSLibExt/Databases/NormalForms": {"to": "ComputerScience/databases", "title": "Lossless decomposition and normal forms"},
   "CSLibExt/Databases/RelationalAlgebra": {"to": "ComputerScience/databases", "title": "Relational algebra"},
   "CSLibExt/Databases/Serializability": {"to": "ComputerScience/databases", "title": "Conflict serializability"},
+  "CSLibExt/Databases/ThresholdAlgorithm": {"to": "ComputerScience/databases", "title": "Top-k query processing"},
   "CSLibExt/Databases/TwoPhaseLocking": {"to": "ComputerScience/databases", "title": "Two-phase locking"},
   "CSLibExt/Foundations/Data/Nat/PolynomialBound": {"to": "TheoryOfComputation/complexity-classes", "title": "Polynomially bounded functions"},
   "CSLibExt/Foundations/Data/OmegaSequence/Parity": {"to": "TheoryOfComputation/omega-automata-and-games", "title": "Parity condition on infinite sequences"},

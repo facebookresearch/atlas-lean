@@ -1,5 +1,14 @@
 # Top-k query processing
 
+- [Graded sorted lists](graded-lists.md)
+- [Aggregate grade](aggregate.md)
+- [Top-k answer](is-top-k.md)
+- [Top-k choice among a finite set](is-top-kamong.md)
+- [Row of graded sorted lists](row.md)
+- [Objects seen in the first rounds](seen.md)
+- [Threshold value](threshold.md)
+- [Run of the threshold algorithm](threshold-run.md)
+- [Stopping rule of the threshold algorithm](stopping-rule-holds.md)
 - [Correctness of the threshold algorithm for top-k aggregation](correctness-of-the-threshold-algorithm-for-top-k-aggregation.md)
 - [Index construction and postings compression](index-construction-and-postings-compression.md)
 - [Positional indexes and phrase/proximity queries](positional-indexes-and-phrase-proximity-queries.md)
