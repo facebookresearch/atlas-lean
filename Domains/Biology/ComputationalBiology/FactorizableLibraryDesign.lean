@@ -195,6 +195,8 @@ alone, and the couplings between a prefix position and a suffix position, which 
 indicator of the suffix letter. This is the factorization through features of dimension
 `Ls * card α + 2` that `exists_features_of_pairwise` states. -/
 
+/-- A sum over the positions after `i` is a sum over all positions of a term that vanishes
+except after `i`. -/
 private theorem sum_Ioi_eq_sum_ite {n : ℕ} (g : Fin n → Fin n → ℝ) (i : Fin n) :
     ∑ j ∈ Finset.Ioi i, g i j = ∑ j, if i < j then g i j else 0 := by
   rw [← Finset.sum_filter]
@@ -202,6 +204,9 @@ private theorem sum_Ioi_eq_sum_ite {n : ℕ} (g : Fin n → Fin n → ℝ) (i : 
   ext j
   simp
 
+/-- A sum over the ordered pairs of positions of a concatenation splits into the pairs of two
+prefix positions, the pairs of two suffix positions, and the pairs of a prefix position with a
+suffix position, which are ordered that way round. -/
 private theorem sum_Ioi_append_split (g : Fin (Lp + Ls) → Fin (Lp + Ls) → ℝ) :
     ∑ i, ∑ j ∈ Finset.Ioi i, g i j =
       (∑ k : Fin Lp, ∑ k' ∈ Finset.Ioi k, g (Fin.castAdd Ls k) (Fin.castAdd Ls k')) +
@@ -240,10 +245,10 @@ private theorem sum_Ioi_append_split (g : Fin (Lp + Ls) → Fin (Lp + Ls) → �
   rw [Finset.sum_comm (s := (Finset.univ : Finset (Fin Lp))) (t := (Finset.univ : Finset (Fin Ls)))]
   abel
 
-/-- The prefix feature of a pairwise score: for a suffix position `l` and a letter `b`, the sum
-over the prefix positions `k` of the coupling `J k (Lp + l) (x k) b`; on the first of the two
-extra coordinates, the part of the score that the prefix alone contributes; and `1` on the
-second, which carries the suffix-only part. -/
+/-- The prefix feature of a pairwise score: on the coordinate `Sum.inl (l, b)` of a suffix
+position `l` and a letter `b`, the sum over the prefix positions `k` of the coupling
+`J k (Lp + l) (x k) b`; on `Sum.inr true`, the part of the score that the prefix alone
+contributes; and `1` on `Sum.inr false`, the coordinate that carries the suffix-only part. -/
 private def pottsPrefixFeature (h : Fin (Lp + Ls) → α → ℝ)
     (J : Fin (Lp + Ls) → Fin (Lp + Ls) → α → α → ℝ) (x : Fin Lp → α) :
     (Fin Ls × α) ⊕ Bool → ℝ
@@ -254,9 +259,10 @@ private def pottsPrefixFeature (h : Fin (Lp + Ls) → α → ℝ)
           J (Fin.castAdd Ls k) (Fin.castAdd Ls k') (x k) (x k')
   | .inr false => 1
 
-/-- The suffix feature of a pairwise score: the indicator of the letter of the suffix at each
-suffix position, `1` on the coordinate carrying the prefix-only part of the score, and the part
-of the score that the suffix alone contributes on the other. -/
+/-- The suffix feature of a pairwise score: on the coordinate `Sum.inl (l, b)`, the indicator of
+the letter `b` of the suffix at the position `l`; `1` on `Sum.inr true`, against the prefix-only
+part of the score; and on `Sum.inr false`, the part of the score that the suffix alone
+contributes. -/
 private def pottsSuffixFeature (h : Fin (Lp + Ls) → α → ℝ)
     (J : Fin (Lp + Ls) → Fin (Lp + Ls) → α → α → ℝ) (y : Fin Ls → α) :
     (Fin Ls × α) ⊕ Bool → ℝ
@@ -267,6 +273,8 @@ private def pottsSuffixFeature (h : Fin (Lp + Ls) → α → ℝ)
         ∑ l : Fin Ls, ∑ l' ∈ Finset.Ioi l,
           J (Fin.natAdd Lp l) (Fin.natAdd Lp l') (y l) (y l')
 
+/-- The two features of a pairwise score have the score of the concatenation as their inner
+product, coordinate by coordinate. -/
 private theorem sum_pottsFeature_mul [Fintype α] (h : Fin (Lp + Ls) → α → ℝ)
     (J : Fin (Lp + Ls) → Fin (Lp + Ls) → α → α → ℝ) (x : Fin Lp → α) (y : Fin Ls → α) :
     ∑ j : (Fin Ls × α) ⊕ Bool, pottsPrefixFeature h J x j * pottsSuffixFeature h J y j =
