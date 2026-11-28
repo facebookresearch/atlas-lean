@@ -149,7 +149,7 @@ private abbrev resIdentity : Rep.res doubleFirst (A ℤ) ⟶ A ℤ :=
   Rep.ofHom ⟨LinearMap.id, fun g => by rfl⟩
 
 private lemma pulledCross :
-    mapCocycles₂ doubleFirst (resIdentity ⊗ₘ resIdentity) (cross ℤ) =
+    mapCocycles₂ (A := T ℤ) (B := T ℤ) doubleFirst (resIdentity ⊗ₘ resIdentity) (cross ℤ) =
       cupCocycleOneOne (A ℤ) (A ℤ)
         (mapCocycles₁ doubleFirst resIdentity (first ℤ))
         (mapCocycles₁ doubleFirst resIdentity (second ℤ)) :=
@@ -187,7 +187,8 @@ private lemma pulledCup_coordinate :
 
 /-- An actual nonidentity group pullback doubles the detected ordered cup value. -/
 example : tensorCoordinate ℤ
-    ((mapCocycles₂ doubleFirst (resIdentity ⊗ₘ resIdentity) (cross ℤ)) (e₁ ℤ, e₂ ℤ)) = 2 :=
+    ((mapCocycles₂ (A := T ℤ) (B := T ℤ)
+      doubleFirst (resIdentity ⊗ₘ resIdentity) (cross ℤ)) (e₁ ℤ, e₂ ℤ)) = 2 :=
   (congrArg (fun z : cocycles₂ (T ℤ) => tensorCoordinate ℤ (z (e₁ ℤ, e₂ ℤ)))
     pulledCross).trans pulledCup_coordinate
 
