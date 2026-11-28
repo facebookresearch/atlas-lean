@@ -9,10 +9,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.AlgebraicTopology.SimplexCategory.GeneratorsRelations.Equivalence
+public import Mathlib.AlgebraicTopology.SimplexCategory.MorphismProperty
 public import Mathlib.AlgebraicTopology.SimplicialObject.Basic
-public import Mathlib.CategoryTheory.CommSq
-public import Mathlib.CategoryTheory.Functor.FullyFaithful
 
 /-!
 # Simplicial morphisms specified by degree maps
@@ -23,8 +21,8 @@ equations are f_(n+1) ≫ δ_i^Y = δ_i^X ≫ f_n; the degeneracy equations are 
 ≫ f_(n+1).
 
 The resulting morphism has exactly the specified components, is uniquely determined by them,
-and respects identities and composition. The construction uses the presentation of the simplex
-category by faces, degeneracies and their relations.
+and respects identities and composition. Naturality follows from the native generation theorem for
+morphisms by faces and degeneracies.
 
 See Mac Lane, *Categories for the Working Mathematician*, Chapter VII, for simplicial objects.
 -/
@@ -40,87 +38,34 @@ namespace CategoryTheory.SimplicialObject
 
 variable {C : Type u} [Category.{v} C] {X Y : SimplicialObject C}
 
-local notation "E" => SimplexCategoryGenRel.toSimplexCategory
-local notation "W" => Functor.obj
-  (Functor.whiskeringLeft SimplexCategoryGenRelᵒᵖ SimplexCategoryᵒᵖ C) (Functor.op E)
-
-private def generatorComponent
-    (f : ∀ n : ℕ, X.obj (op (SimplexCategory.mk n)) ⟶
-      Y.obj (op (SimplexCategory.mk n)))
-    (q : SimplexCategoryGenRelᵒᵖ) :
-    X.obj (op (Functor.obj E q.unop)) ⟶ Y.obj (op (Functor.obj E q.unop)) :=
-  f q.unop.len
-
-private theorem generatorNaturality
-    (f : ∀ n : ℕ, X.obj (op (SimplexCategory.mk n)) ⟶
-      Y.obj (op (SimplexCategory.mk n)))
-    (hδ : ∀ {n : ℕ} (i : Fin (n + 2)), f (n + 1) ≫ Y.δ i = X.δ i ≫ f n)
-    (hσ : ∀ {n : ℕ} (i : Fin (n + 1)), f n ≫ Y.σ i = X.σ i ≫ f (n + 1))
-    {a b : SimplexCategoryGenRel} (g : a ⟶ b) :
-    X.map (Functor.map E g).op ≫ generatorComponent f (op a) =
-      generatorComponent f (op b) ≫ Y.map (Functor.map E g).op := by
-  let P : MorphismProperty SimplexCategoryGenRel := fun a b g ↦
-    X.map (Functor.map E g).op ≫ generatorComponent f (op a) =
-      generatorComponent f (op b) ≫ Y.map (Functor.map E g).op
-  change P g
-  refine SimplexCategoryGenRel.hom_induction P ?_ ?_ ?_ g
-  · intro n
-    simp only [P, Functor.map_id, op_id, Category.id_comp, Category.comp_id]
-  · intro n m g i hg
-    have sg : CommSq (X.map (Functor.map E g).op)
-        (generatorComponent f (op (SimplexCategoryGenRel.mk m)))
-        (generatorComponent f (op (SimplexCategoryGenRel.mk n)))
-        (Y.map (Functor.map E g).op) := ⟨hg⟩
-    have sd : CommSq (X.map (Functor.map E (SimplexCategoryGenRel.δ i)).op)
-        (generatorComponent f (op (SimplexCategoryGenRel.mk (m + 1))))
-        (generatorComponent f (op (SimplexCategoryGenRel.mk m)))
-        (Y.map (Functor.map E (SimplexCategoryGenRel.δ i)).op) := by
-      constructor
-      simpa only [generatorComponent, SimplexCategoryGenRel.mk_len,
-        SimplexCategoryGenRel.toSimplexCategory_obj_mk,
-        SimplexCategoryGenRel.toSimplexCategory_map_δ, SimplicialObject.δ_def]
-        using (hδ i).symm
-    have h := (sd.horiz_comp sg).w
-    simpa only [P, Functor.map_comp, op_comp, Category.assoc] using h
-  · intro n m g i hg
-    have sg : CommSq (X.map (Functor.map E g).op)
-        (generatorComponent f (op (SimplexCategoryGenRel.mk (m + 1))))
-        (generatorComponent f (op (SimplexCategoryGenRel.mk n)))
-        (Y.map (Functor.map E g).op) := ⟨hg⟩
-    have ss : CommSq (X.map (Functor.map E (SimplexCategoryGenRel.σ i)).op)
-        (generatorComponent f (op (SimplexCategoryGenRel.mk m)))
-        (generatorComponent f (op (SimplexCategoryGenRel.mk (m + 1))))
-        (Y.map (Functor.map E (SimplexCategoryGenRel.σ i)).op) := by
-      constructor
-      simpa only [generatorComponent, SimplexCategoryGenRel.mk_len,
-        SimplexCategoryGenRel.toSimplexCategory_obj_mk,
-        SimplexCategoryGenRel.toSimplexCategory_map_σ, SimplicialObject.σ_def]
-        using (hσ i).symm
-    have h := (ss.horiz_comp sg).w
-    simpa only [P, Functor.map_comp, op_comp, Category.assoc] using h
-
-private def generatorMap
-    (f : ∀ n : ℕ, X.obj (op (SimplexCategory.mk n)) ⟶
-      Y.obj (op (SimplexCategory.mk n)))
-    (hδ : ∀ {n : ℕ} (i : Fin (n + 2)), f (n + 1) ≫ Y.δ i = X.δ i ≫ f n)
-    (hσ : ∀ {n : ℕ} (i : Fin (n + 1)), f n ≫ Y.σ i = X.σ i ≫ f (n + 1)) :
-    Functor.obj W X ⟶ Functor.obj W Y where
-  app := generatorComponent f
-  naturality {_ _} g := generatorNaturality f hδ hσ g.unop
-
 /-- Let X and Y be simplicial objects in a category C. Suppose f_n : X_n ⟶ Y_n satisfies f_(n+1) ≫
 δ_i^Y = δ_i^X ≫ f_n for i : Fin (n + 2), and f_n ≫ σ_i^Y = σ_i^X ≫ f_(n+1) for i : Fin (n +
 1). The family f defines a morphism homOfComponents f hδ hσ : X ⟶ Y whose component at op ⦋n⦌
 is f_n. The face and degeneracy equations give its naturality for every simplex-category
 morphism. -/
-@[no_expose]
 def homOfComponents
     (f : ∀ n : ℕ, X.obj (op (SimplexCategory.mk n)) ⟶
       Y.obj (op (SimplexCategory.mk n)))
     (hδ : ∀ {n : ℕ} (i : Fin (n + 2)), f (n + 1) ≫ Y.δ i = X.δ i ≫ f n)
     (hσ : ∀ {n : ℕ} (i : Fin (n + 1)), f n ≫ Y.σ i = X.σ i ≫ f (n + 1)) :
-    X ⟶ Y :=
-  Functor.preimage W (generatorMap f hδ hσ)
+    X ⟶ Y where
+  app q := f q.unop.len
+  naturality {a b} g := by
+    let P : MorphismProperty SimplexCategoryᵒᵖ :=
+      MorphismProperty.naturalityProperty
+        (fun q : SimplexCategoryᵒᵖ => f q.unop.len)
+    have hP : P.unop = ⊤ := by
+      apply SimplexCategory.morphismProperty_eq_top
+      · intro n i
+        change X.δ i ≫ f n = f (n + 1) ≫ Y.δ i
+        exact (hδ i).symm
+      · intro n i
+        change X.σ i ≫ f (n + 1) = f n ≫ Y.σ i
+        exact (hσ i).symm
+    have hg : P.unop g.unop := by
+      rw [hP]
+      trivial
+    exact hg
 
 /-- Let X and Y be simplicial objects in a category C. Suppose f_n : X_n ⟶ Y_n satisfies f_(n+1) ≫
 δ_i^Y = δ_i^X ≫ f_n for i : Fin (n + 2), and f_n ≫ σ_i^Y = σ_i^X ≫ f_(n+1) for i : Fin (n +
@@ -131,10 +76,7 @@ theorem homOfComponents_app_mk
       Y.obj (op (SimplexCategory.mk n)))
     (hδ : ∀ {n : ℕ} (i : Fin (n + 2)), f (n + 1) ≫ Y.δ i = X.δ i ≫ f n)
     (hσ : ∀ {n : ℕ} (i : Fin (n + 1)), f n ≫ Y.σ i = X.σ i ≫ f (n + 1))
-    (n : ℕ) : (homOfComponents f hδ hσ).app (op (SimplexCategory.mk n)) = f n := by
-  have h := congr_app (Functor.map_preimage W (generatorMap f hδ hσ))
-    (op (SimplexCategoryGenRel.mk n))
-  exact h
+    (n : ℕ) : (homOfComponents f hδ hσ).app (op (SimplexCategory.mk n)) = f n := rfl
 
 /-- Let X and Y be simplicial objects in a category C. Suppose f_n : X_n ⟶ Y_n satisfies f_(n+1) ≫
 δ_i^Y = δ_i^X ≫ f_n for i : Fin (n + 2), and f_n ≫ σ_i^Y = σ_i^X ≫ f_(n+1) for i : Fin (n +
