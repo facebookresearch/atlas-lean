@@ -28,3 +28,6 @@
 - [Automaton group](automaton-group.md)
 - [Some automaton group has undecidable Engel problem](automaton-group-undecidable-engel-problem.md)
 - [Some automaton group has undecidable order problem](automaton-group-undecidable-order-problem.md)
+- [The order problem is undecidable for contracting automata groups](contracting-automata-group-order-undecidable.md)
+- [Functionally recursive groups and contracting automata groups](functionally-recursive-group.md)
+- [The word problem is undecidable for functionally recursive groups](functionally-recursive-word-problem-undecidable.md)
