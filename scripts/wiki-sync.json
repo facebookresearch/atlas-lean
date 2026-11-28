@@ -71823,6 +71823,7 @@
 "MathlibExt.Probability.DiscreteLogConcaveSelfConvolutionOWR14298808Problem013Wanted.selfConvolution": "88b59dd650bc51ca",
 "MathlibExt.Probability.DiscreteLogConcaveSelfConvolutionOWR14298808Problem013Wanted.selfConvolutionPreservesLogConcavity": "8ef4eae29980d620",
 "MathlibExt.Probability.DiscreteLogConcaveSelfConvolutionOWR14298808Problem013Wanted.selfConvolutionPreservesLogConcavity_refuted": "83f782262fd803ad",
+"MathlibExt.Probability.DiscreteLogConcaveSelfConvolutionOWR14298808Problem013Wanted.selfConvolution_eq_tsum": "d7f13eb763fd4f2d",
 "MathlibExt.Probability.Distributions.BetaBinomialSampleRank.ae_injective_pi": "ac1463e819e44b8b",
 "MathlibExt.Probability.Distributions.BetaBinomialSampleRank.choose_mul_choose_div_choose_eq_betaBinomialPMF": "84e6e02cfa8981b3",
 "MathlibExt.Probability.Distributions.BetaBinomialSampleRank.exists_realOrderStatistic_eq": "a40a9c12b8e3a04c",
