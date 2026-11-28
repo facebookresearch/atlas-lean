@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# ROBOT FLOW SHOP, TOTAL COMPLETION TIME WITH RELEASE DATES `F3;R1|p_ij=1;t_ik;r_i|ΣC_i` is: definitions
-# NP-complete
+# ROBOT FLOW SHOP, TOTAL COMPLETION TIME WITH RELEASE DATES `F3;R1|p_ij=1;t_ik;r_i|ΣC_i`:
+definitions
 
 Source:
 S. Knust, *Shop-scheduling problems with transportation*, PhD thesis, Universität Osnabrück

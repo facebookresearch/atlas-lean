@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# J2|p_ij=1;r_j|Σw_jC_j (two-machine unit-time job shop with release dates, total weighted: definitions
-completion time) is NP-complete
+# J2|p_ij=1;r_j|Σw_jC_j (two-machine unit-time job shop with release dates, total weighted
+completion time): definitions
 
 Source:
 V. G. Timkovsky, "Is a unit-time job shop not easier than identical parallel machines?",

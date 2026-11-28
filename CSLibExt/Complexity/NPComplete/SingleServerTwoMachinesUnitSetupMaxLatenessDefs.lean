@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO PARALLEL MACHINES WITH A SINGLE SERVER, unit setups, maximum lateness: definitions
-(`P2;S1|s_i=1|Lmax`) is NP-complete
+# TWO PARALLEL MACHINES WITH A SINGLE SERVER, unit setups, maximum lateness (`P2;S1|s_i=1|Lmax`):
+definitions
 
 Source:
 N. G. Hall, C. N. Potts and C. Sriskandarajah, "Parallel machine scheduling with a common

@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal processing times, total completion time: definitions
-(`P2;S1|p_i=p|ΣC_i`) is NP-complete
+# TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal processing times, total completion time
+(`P2;S1|p_i=p|ΣC_i`): definitions
 
 Source:
 P. Brucker, C. Dhaenens-Flipo, S. Knust, S. A. Kravchenko and F. Werner, "Complexity results

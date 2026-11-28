@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# PARALLEL MACHINES WITH A SINGLE SERVER, unit setups, total completion time: definitions
-(`P;S1|s_i=1|ΣC_i`) is NP-complete
+# PARALLEL MACHINES WITH A SINGLE SERVER, unit setups, total completion time (`P;S1|s_i=1|ΣC_i`):
+definitions
 
 Source:
 P. Brucker, C. Dhaenens-Flipo, S. Knust, S. A. Kravchenko and F. Werner, "Complexity results

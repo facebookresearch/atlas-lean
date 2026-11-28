@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# ROBOT FLOW SHOP, EQUAL PROCESSING TIMES, MAXIMUM LATENESS `F3;R1|p_ij=p;t_ik|L_max` is: definitions
-# NP-complete
+# ROBOT FLOW SHOP, EQUAL PROCESSING TIMES, MAXIMUM LATENESS `F3;R1|p_ij=p;t_ik|L_max`: definitions
 
 Source:
 S. Knust, *Shop-scheduling problems with transportation*, PhD thesis, Universität Osnabrück

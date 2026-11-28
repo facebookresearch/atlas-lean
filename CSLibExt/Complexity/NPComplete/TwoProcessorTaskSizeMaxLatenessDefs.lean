@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 /-
 # ONE- AND TWO-PROCESSOR TASKS ON TWO PROCESSORS, maximum lateness (`P2|size_i|Lmax`): definitions
-is NP-complete
 
 Source:
 C.-Y. Lee and X. Cai, "Scheduling one and two-processor tasks on two parallel processors",

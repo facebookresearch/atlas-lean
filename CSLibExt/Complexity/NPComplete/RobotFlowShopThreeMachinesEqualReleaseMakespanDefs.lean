@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# ROBOT FLOW SHOP, EQUAL PROCESSING TIMES, MAKESPAN WITH RELEASE DATES: definitions
-# `F3;R1|p_ij=p;t_ik;r_i|C_max` is NP-complete
+# ROBOT FLOW SHOP, EQUAL PROCESSING TIMES, MAKESPAN WITH RELEASE DATES
+`F3;R1|p_ij=p;t_ik;r_i|C_max`: definitions
 
 Source:
 S. Knust, *Shop-scheduling problems with transportation*, PhD thesis, Universität Osnabrück

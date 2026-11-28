@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal processing times, makespan: definitions
-(`P2;S1|p_i=p|C_max`) is NP-complete
+# TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal processing times, makespan
+(`P2;S1|p_i=p|C_max`): definitions
 
 Source:
 P. Brucker, C. Dhaenens-Flipo, S. Knust, S. A. Kravchenko and F. Werner, "Complexity results for

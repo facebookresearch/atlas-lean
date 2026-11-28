@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO PARALLEL MACHINES WITH A SINGLE SERVER, unit processing times, total tardiness: definitions
-(`P2;S1|p_i=1|ΣT_i`) is NP-complete
+# TWO PARALLEL MACHINES WITH A SINGLE SERVER, unit processing times, total tardiness
+(`P2;S1|p_i=1|ΣT_i`): definitions
 
 Source:
 N. G. Hall, C. N. Potts and C. Sriskandarajah, "Parallel machine scheduling with a common server",

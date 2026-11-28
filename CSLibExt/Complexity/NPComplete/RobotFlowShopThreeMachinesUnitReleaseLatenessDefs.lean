@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# ROBOT FLOW SHOP, MAXIMUM LATENESS WITH RELEASE DATES `F3;R1|p_ij=1;t_ik;r_i|L_max` is: definitions
-# NP-complete
+# ROBOT FLOW SHOP, MAXIMUM LATENESS WITH RELEASE DATES `F3;R1|p_ij=1;t_ik;r_i|L_max`: definitions
 
 Source:
 S. Knust, *Shop-scheduling problems with transportation*, PhD thesis, Universität Osnabrück

@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal setups, makespan (`P2;S1|s_i=s|Cmax`): definitions
-is NP-complete
+# TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal setups, makespan (`P2;S1|s_i=s|Cmax`):
+definitions
 
 Source:
 N. G. Hall, C. N. Potts and C. Sriskandarajah, "Parallel machine scheduling with a common

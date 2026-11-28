@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal setups, total completion time: definitions
-(`P2;S1|s_i=s|ΣC_i`) is NP-complete
+# TWO PARALLEL MACHINES WITH A SINGLE SERVER, equal setups, total completion time
+(`P2;S1|s_i=s|ΣC_i`): definitions
 
 Source:
 N. G. Hall, C. N. Potts and C. Sriskandarajah, "Parallel machine scheduling with a common

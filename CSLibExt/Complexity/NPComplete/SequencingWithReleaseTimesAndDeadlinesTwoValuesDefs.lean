@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# SEQUENCING WITH RELEASE TIMES AND DEADLINES with two release times and two deadlines is: definitions
-NP-complete
+# SEQUENCING WITH RELEASE TIMES AND DEADLINES with two release times and two deadlines: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
