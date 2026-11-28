@@ -10,7 +10,7 @@ $G_p \subseteq G_{\mathbb{Q}}$ be its stabilizer. It acts on the algebraic closu
 completion of $\overline{\mathbb{Q}}$ at $v_p$, and the resulting map $G_p \to G_{\mathbb{Q}_p}$ is an
 isomorphism. Through it, let $I_p \subseteq G_p$ be the inertia group, $P_p \subseteq I_p$ the wild inertia
 group, and, for $u \in [-1, \infty]$, $I_p^u \subseteq G_p$ the ramification group in the upper numbering
-$G_{\mathbb{Q}_p}^u$ of [Upper numbering of ramification groups](../discriminants-ramification/upper-numbering-of-ramification-groups.md),
+$G_{\mathbb{Q}_p}^u$ of [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md),
 except that $I_p^{-1} = I_p$ and $I_p^\infty = 1$. So $I_p^u = I_p$ for $u \le 0$, and $I_p^u \subseteq P_p$ for
 $u > 0$. The representation $\rho$ is **unramified at $p$** if $\rho(I_p) = 1$. For a subgroup
 $H \subseteq G_{\mathbb{Q}}$, write $\rho^H$ for the subspace of $K^d$ fixed by every $\rho(\sigma)$,
@@ -38,13 +38,13 @@ $p$, then $m_p(\rho) = 0$, so the product is finite.
 
 ## Depends on
 
-- [Upper numbering of ramification groups](../discriminants-ramification/upper-numbering-of-ramification-groups.md), for the groups $G_{\mathbb{Q}_p}^u$
+- [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), for the groups $G_{\mathbb{Q}_p}^u$
 - [Inertia and tame inertia of a p-adic field](weil-deligne-representations/inertia-and-tame-inertia-of-a-p-adic-field.md), for the inertia group $I_p$ and the wild inertia group $P_p$
 
 ## Proof depends on
 
 - [Inertia and tame inertia of a p-adic field](weil-deligne-representations/inertia-and-tame-inertia-of-a-p-adic-field.md), for $P_p$ being a pro-$p$ group, which makes $\rho(P_p)$ finite
-- [Upper numbering of ramification groups](../discriminants-ramification/upper-numbering-of-ramification-groups.md), for the closed subgroups $G_{\mathbb{Q}_p}^u \subseteq P_p$ ($u > 0$), decreasing in $u$ with trivial intersection, so that $\rho(I_p^u) = 1$ for large $u$
+- [Upper numbering of ramification groups](../discriminants-ramification/ramification-groups-in-the-upper-numbering.md), for the closed subgroups $G_{\mathbb{Q}_p}^u \subseteq P_p$ ($u > 0$), decreasing in $u$ with trivial intersection, so that $\rho(I_p^u) = 1$ for large $u$
 
 ## Sources
 
