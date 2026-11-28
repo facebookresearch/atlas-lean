@@ -43,6 +43,8 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 private abbrev M := Matrix (Fin 2) (Fin 2) ℤ
 private abbrev U := UniversalEnvelopingAlgebra ℤ M
 
+local instance : Module ℤ U := Algebra.toModule
+
 private def e01 : M := Matrix.single 0 1 1
 private def e10 : M := Matrix.single 1 0 1
 
@@ -66,12 +68,14 @@ example : evaluate (HopfAlgebra.antipode ℤ g01) 0 1 = -1 := by
 example : g01 ≠ 0 := by
   intro h
   have hv := congrArg (fun a : U => evaluate a 0 1) h
-  norm_num [g01, e01, Matrix.single] at hv
+  rw [evaluate_ι, map_zero] at hv
+  norm_num [e01, Matrix.single] at hv
 
 private theorem evaluate_product_values :
     evaluate (g01 * g10) 0 0 = 1 ∧ evaluate (g01 * g10) 1 1 = 0 := by
+  simp only [map_mul, evaluate_ι]
   constructor <;>
-    norm_num [g01, g10, e01, e10, Matrix.mul_apply, Fin.sum_univ_two, Matrix.single]
+    norm_num [e01, e10, Matrix.mul_apply, Fin.sum_univ_two, Matrix.single]
 
 example : g01 * g10 ≠ 0 := by
   intro h
@@ -89,8 +93,9 @@ private theorem evaluate_antipode_product_values :
     evaluate (HopfAlgebra.antipode ℤ (g01 * g10)) 0 0 = 0 ∧
       evaluate (HopfAlgebra.antipode ℤ (g01 * g10)) 1 1 = 1 := by
   rw [antipode_product]
+  simp only [map_mul, evaluate_ι]
   constructor <;>
-    norm_num [g01, g10, e01, e10, Matrix.mul_apply, Fin.sum_univ_two, Matrix.single]
+    norm_num [e01, e10, Matrix.mul_apply, Fin.sum_univ_two, Matrix.single]
 
 example : HopfAlgebra.antipode ℤ (g01 * g10) ≠ g01 * g10 := by
   intro h

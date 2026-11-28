@@ -117,7 +117,8 @@ private theorem inclusion_one_value :
 private theorem counit_zero_degree : (ComonObj.counit (X := D)).f 0 = inclusion.f 0 := by
   have h := IsComonHom.hom_counit inclusion
   have hf := congrArg (fun f : D ⟶ unitComplex => f.f 0) h
-  change (inclusion.f 0 ≫ (𝟙 unitComplex).f 0) = (ComonObj.counit (X := D)).f 0 at hf
+  change (inclusion.f 0 ≫ (𝟙 unitComplex : unitComplex ⟶ unitComplex).f 0) =
+    (ComonObj.counit (X := D)).f 0 at hf
   simpa only [HomologicalComplex.id_f, Category.comp_id] using hf.symm
 
 example : oneElement ≠ 0 := by
