@@ -34,7 +34,9 @@ unique decreasing permutation with zero last, to obtain the count `F_{2n-1}`.
 * Juan B. Gil, Felix H. Xu, and William Y. Zhu, *Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
   Permutations*, INTEGERS 25 (2025), Article A79, pp. 1–19, Propositions 10 and 11.
   The proof of Proposition 10 here uses the position count of Proposition 11 instead of the
-  paper's first-entry case split.
+  paper's first-entry case split. The finite checks for occurrences of `321` and `4123`
+  follow the checks for `231` and `3124` in this module
+  (`card_avoid_231_3124_pos_zero.has231_iff` and `card_avoid_231_3124_pos_zero.has3124_iff`).
 * Earlier work on the nine symmetry classes, cited in Section 1 of the above article:
   M. D. Atkinson, *Restricted permutations*, Discrete Mathematics 195 (1999), no. 1–3,
   pp. 27–38; and Julian West, *Generating trees and forbidden subsequences*, Discrete
@@ -66,6 +68,39 @@ def pat3412 : Fin 4 → Fin 4 := ![2, 3, 0, 1]
 /-- **The pattern $3124$.** The pattern $3124$ written with values $0, 1, 2, 3$: the map from
 $\{0, 1, 2, 3\}$ to itself sending $0 \mapsto 2$, $1 \mapsto 0$, $2 \mapsto 1$ and $3 \mapsto 3$. -/
 def pat3124 : Fin 4 → Fin 4 := ![2, 0, 1, 3]
+
+/-- **Occurrences of $321$.** This pattern occurs exactly when three increasing positions
+have strictly decreasing values. -/
+theorem hasPattern_pat321_iff {n : ℕ} (σ : Equiv.Perm (Fin n)) :
+    HasPattern σ pat321 ↔ ∃ a b c, a < b ∧ b < c ∧ σ c < σ b ∧ σ b < σ a := by
+  rw [hasPattern_iff_exists_orderEmbedding]
+  constructor
+  · rintro ⟨e, h⟩
+    exact ⟨e 0, e 1, e 2, e.strictMono (by decide), e.strictMono (by decide),
+      (h 2 1).2 (by decide), (h 1 0).2 (by decide)⟩
+  · rintro ⟨a, b, c, hab, hbc, hcb, hba⟩
+    have he : StrictMono (![a, b, c] : Fin 3 → Fin n) :=
+      Fin.strictMono_iff_lt_succ.mpr (by intro i; fin_cases i <;> assumption)
+    refine ⟨OrderEmbedding.ofStrictMono _ he, ?_⟩
+    intro i j
+    fin_cases i <;> fin_cases j <;> simp [pat321] <;> omega
+
+/-- **Occurrences of $4123$.** This pattern occurs exactly when four increasing positions
+have values whose last three are increasing and all below the first. -/
+theorem hasPattern_pat4123_iff {n : ℕ} (σ : Equiv.Perm (Fin n)) :
+    HasPattern σ pat4123 ↔
+      ∃ a b c d, a < b ∧ b < c ∧ c < d ∧ σ b < σ c ∧ σ c < σ d ∧ σ d < σ a := by
+  rw [hasPattern_iff_exists_orderEmbedding]
+  constructor
+  · rintro ⟨e, h⟩
+    exact ⟨e 0, e 1, e 2, e 3, e.strictMono (by decide), e.strictMono (by decide),
+      e.strictMono (by decide), (h 1 2).2 (by decide), (h 2 3).2 (by decide), (h 3 0).2 (by decide)⟩
+  · rintro ⟨a, b, c, d, hab, hbc, hcd, hbc', hcd', hda⟩
+    have he : StrictMono (![a, b, c, d] : Fin 4 → Fin n) :=
+      Fin.strictMono_iff_lt_succ.mpr (by intro i; fin_cases i <;> assumption)
+    refine ⟨OrderEmbedding.ofStrictMono _ he, ?_⟩
+    intro i j
+    fin_cases i <;> fin_cases j <;> simp [pat4123] <;> omega
 
 end
 

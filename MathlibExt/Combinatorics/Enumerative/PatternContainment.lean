@@ -12,6 +12,7 @@ public import Mathlib.Data.Fintype.Fin
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Nat.Notation
 public import Mathlib.Logic.Equiv.Defs
+public import Mathlib.Order.Hom.Basic
 
 /-!
 # Classical permutation pattern containment
@@ -40,6 +41,18 @@ def HasPattern {n k : ℕ} (σ : Equiv.Perm (Fin n))
     (π : Fin k → Fin k) : Prop :=
   ∃ e : Fin k → Fin n, (∀ i j : Fin k, i < j → e i < e j) ∧
     ∀ i j : Fin k, σ (e i) < σ (e j) ↔ π i < π j
+
+/-- **Pattern containment by an order embedding.** A classical occurrence of `π` in `σ`
+is an order embedding of the pattern's positions into the permutation's positions that
+identifies all the corresponding strict value comparisons. -/
+theorem hasPattern_iff_exists_orderEmbedding {n k : ℕ} (σ : Equiv.Perm (Fin n))
+    (π : Fin k → Fin k) :
+    HasPattern σ π ↔ ∃ e : Fin k ↪o Fin n, ∀ i j, σ (e i) < σ (e j) ↔ π i < π j := by
+  constructor
+  · rintro ⟨e, he, h⟩
+    exact ⟨OrderEmbedding.ofStrictMono e (fun _ _ hij => he _ _ hij), h⟩
+  · rintro ⟨e, h⟩
+    exact ⟨e, fun _ _ hij => e.strictMono hij, h⟩
 
 end MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted
 
