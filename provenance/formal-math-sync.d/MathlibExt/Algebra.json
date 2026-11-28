@@ -570,8 +570,8 @@
       "path": "MathlibExt/Algebra/DirectSum/InternalGrade.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "9d671f124f2fb11460a6083af2d4d5b974becd2a094fff49b510ac0f0bc001c9",
-      "rationale": "Add the Atlas header and mathematical coordinate/graded-action documentation to the recorded 9a495da file. Remove its duplicate ModuleCoordinates ring-only aliases and internalGrade_finite wrapper; the semiring coordinate interface still applies to rings, while native DirectSum.of_injective and Module.Finite.range provide the injectivity/finiteness facts directly. Retain the actual decomposition and graded action. Backport this interface cleanup and its dependent generic-name substitutions.",
+      "published_sha256": "8c728c5ed780fde09e353f997a4919155d780598b9830db21e7e05ac65e5345f",
+      "rationale": "Add the Atlas header and mathematical coordinate/graded-action documentation to the recorded 9a495da file. Remove its duplicate ModuleCoordinates ring-only aliases and internalGrade_finite wrapper; the semiring coordinate interface still applies to rings, while native DirectSum.of_injective and Module.Finite.range provide the injectivity/finiteness facts directly. Retain the actual decomposition and graded action. Backport this interface cleanup and its dependent generic-name substitutions. Correct the native DirectSum.of_injective call to name its implicit beta family, as verified by the completed46103981488 compiler diagnostics; all maps, hypotheses, universes, source notices and13 client assertions remain unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "34384b830f4f6816f550c380aedc3cb53e00e66bebafa298fda5024e2cc2c1e0"
     },
