@@ -1172,8 +1172,11 @@ theorem emExtra_s' (alg : T.Algebra) : (emExtra alg).s' = T.η.app alg.A := by
   change 𝟙 (T.obj alg.A) ≫
     (emLiteralResolutionIso alg).inv.left.app (Opposite.op (SimplexCategory.mk 0)) =
       𝟙 (T.obj alg.A) at hi
-  rw [Category.id_comp] at hi
-  rw [hi, Category.comp_id]
+  have hinv : (emLiteralResolutionIso alg).inv.left.app
+      (Opposite.op (SimplexCategory.mk 0)) = 𝟙 (T.obj alg.A) :=
+    (Category.id_comp _).symm.trans hi
+  exact (congrArg (fun f : T.obj alg.A ⟶ T.obj alg.A => T.η.app alg.A ≫ f) hinv).trans
+    (Category.comp_id _)
 
 /-- The transported section splits the actual forgotten EM augmentation. -/
 noncomputable def emSplitEpi (alg : T.Algebra) :

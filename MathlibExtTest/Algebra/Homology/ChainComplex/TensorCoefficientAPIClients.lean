@@ -40,24 +40,44 @@ namespace TensorCoefficientAPIClients
 
 private abbrev R := R4
 
+private def zeroTermIso : originalComplex.X 0 ≅ regular := eqToIso (by rfl)
+
+private def zeroCoordinate (a : R) : originalComplex.X 0 := zeroTermIso.inv.hom a
+
+private theorem zeroCoordinate_value (a : R) : zeroTermIso.hom.hom (zeroCoordinate a) = a :=
+  ConcreteCategory.congr_hom zeroTermIso.inv_hom_id a
+
+private def binaryValue : binaryComplex.X 0 →ₗ[R] binary :=
+  (TensorProduct.rid R (ZMod 2)).toLinearMap.comp
+    (TensorProduct.map (LinearMap.id : binary →ₗ[R] binary) zeroTermIso.hom.hom)
+
 example :
-    (((ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0).hom
-      ((3 : R) ⊗ₜ[R] (1 : R))) = 3 := by
-  rw [ChainComplex.TensorCoefficient.regularIso_tmul]
+    zeroTermIso.hom.hom
+      (((ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0).hom
+        ((3 : R) ⊗ₜ[R] zeroCoordinate 1)) = 3 := by
+  rw [ChainComplex.TensorCoefficient.regularIso_tmul, map_smul, zeroCoordinate_value]
   simp
 
 example :
     (ChainComplex.TensorCoefficient.regularHomologyIso R originalComplex 0).hom.hom
         ((ChainComplex.homologyZeroClass regularComplex).hom
-          ((3 : R) ⊗ₜ[R] (1 : R))) =
-      (ChainComplex.homologyZeroClass originalComplex).hom (3 : R) := by
+          ((3 : R) ⊗ₜ[R] zeroCoordinate 1)) =
+      (ChainComplex.homologyZeroClass originalComplex).hom (zeroCoordinate 3) := by
   change (HomologicalComplex.homologyMap
     (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom 0).hom _ = _
-  have h := ConcreteCategory.congr_hom
+  have h := congrArg ModuleCat.Hom.hom
     (ChainComplex.homologyZeroClass_naturality
       (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom)
-    ((3 : R) ⊗ₜ[R] (1 : R))
-  simpa only [ChainComplex.TensorCoefficient.regularIso_tmul, smul_eq_mul, mul_one] using h
+  have hv := LinearMap.congr_fun h ((3 : R) ⊗ₜ[R] zeroCoordinate 1)
+  simp only [ModuleCat.hom_comp, LinearMap.comp_apply,
+    ChainComplex.TensorCoefficient.regularIso_tmul] at hv
+  have hc : (3 : R) • zeroCoordinate 1 = zeroCoordinate 3 := by
+    apply (ModuleCat.mono_iff_injective zeroTermIso.hom).mp inferInstance
+    change zeroTermIso.hom.hom ((3 : R) • zeroCoordinate 1) =
+      zeroTermIso.hom.hom (zeroCoordinate 3)
+    rw [map_smul, zeroCoordinate_value, zeroCoordinate_value]
+    simp
+  simpa only [hc] using hv
 
 private def negativeComplexIso : originalComplex ≅ originalComplex where
   hom := -𝟙 originalComplex
@@ -66,23 +86,29 @@ private def negativeComplexIso : originalComplex ≅ originalComplex where
   inv_hom_id := by simp
 
 example :
-    unitEvaluation.hom
+    binaryValue
       ((((ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app binary).f 0).hom
-        ((1 : ZMod 2) ⊗ₜ[R] (1 : R))) = 1 := by
+        ((1 : ZMod 2) ⊗ₜ[R] zeroCoordinate 1)) = 1 := by
   rw [ChainComplex.TensorCoefficient.map_chain_tmul]
-  change unitEvaluation.hom ((1 : ZMod 2) ⊗ₜ[R] (-1 : R)) = 1
-  rw [unitEvaluation_tmul]
+  have hn : (negativeComplexIso.hom.f 0).hom (zeroCoordinate 1) = -zeroCoordinate 1 := by
+    simp [negativeComplexIso, HomologicalComplex.neg_f_apply]
+  rw [hn]
+  simp only [binaryValue, LinearMap.comp_apply, TensorProduct.map_tmul,
+    LinearMap.id_apply, map_neg, zeroCoordinate_value, TensorProduct.rid_tmul]
   decide
 
 example :
-    unitEvaluation.hom
+    binaryValue
       ((((ChainComplex.TensorCoefficient.mapIso R negativeComplexIso).hom.app binary).f 0).hom
-        ((1 : ZMod 2) ⊗ₜ[R] (1 : R))) = 1 := by
-  change unitEvaluation.hom
+        ((1 : ZMod 2) ⊗ₜ[R] zeroCoordinate 1)) = 1 := by
+  change binaryValue
     ((((ChainComplex.TensorCoefficient.map R negativeComplexIso.hom).app binary).f 0).hom _) = 1
   rw [ChainComplex.TensorCoefficient.map_chain_tmul]
-  change unitEvaluation.hom ((1 : ZMod 2) ⊗ₜ[R] (-1 : R)) = 1
-  rw [unitEvaluation_tmul]
+  have hn : (negativeComplexIso.hom.f 0).hom (zeroCoordinate 1) = -zeroCoordinate 1 := by
+    simp [negativeComplexIso, HomologicalComplex.neg_f_apply]
+  rw [hn]
+  simp only [binaryValue, LinearMap.comp_apply, TensorProduct.map_tmul,
+    LinearMap.id_apply, map_neg, zeroCoordinate_value, TensorProduct.rid_tmul]
   decide
 
 example :

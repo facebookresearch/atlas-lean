@@ -10,7 +10,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Algebra.Homology.ChevalleyEilenberg.CoefficientComplex
+public import Mathlib.Data.Matrix.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
+public import Mathlib.Algebra.DirectSum.Decomposition
 public import Mathlib.LinearAlgebra.TensorProduct.Associator
 public meta import Mathlib.Tactic.NormNum
 
@@ -54,13 +56,23 @@ private def zeroWord : ⋀[ℤ]^0 Mat := exteriorPower.ιMulti ℤ 0 Fin.elim0
   simp [oneWord, exteriorPower.ιMulti_apply_coe, ExteriorAlgebra.ιMulti_succ_apply]
 private lemma pair_coe : (pair : E) = ExteriorAlgebra.ι ℤ e01 * ExteriorAlgebra.ι ℤ e10 := by
   simp [pair, pairInputs, exteriorPower.ιMulti_apply_coe, ExteriorAlgebra.ιMulti_succ_apply]
-private def entry (i j : Fin 2) : Mat →ₗ[ℤ] ℤ := (LinearMap.proj j).comp (LinearMap.proj i)
+private def entry (i j : Fin 2) : Mat →ₗ[ℤ] ℤ :=
+  (LinearMap.proj j : (Fin 2 → ℤ) →ₗ[ℤ] ℤ).comp
+    ((LinearMap.proj i : (Fin 2 → Fin 2 → ℤ) →ₗ[ℤ] (Fin 2 → ℤ)).comp
+      (Matrix.ofLinearEquiv ℤ).symm.toLinearMap)
+private def degreeOneProjection : E →ₗ[ℤ] ⋀[ℤ]^1 Mat :=
+  (DirectSum.component ℤ ℕ (fun n => ↥(⋀[ℤ]^n Mat)) 1).comp
+    (DirectSum.decomposeLinearEquiv (fun n : ℕ => ⋀[ℤ]^n Mat)).toLinearMap
+@[simp] private lemma degreeOneProjection_subtype (a : ⋀[ℤ]^1 Mat) :
+    degreeOneProjection (a : E) = a := by
+  change DirectSum.decompose (fun n : ℕ => ⋀[ℤ]^n Mat) (a : E) 1 = a
+  rw [DirectSum.decompose_coe, DirectSum.of_eq_same]
 private def firstEntry : E →ₗ[ℤ] ℤ := (entry 0 0).comp
-  ((exteriorPower.oneEquiv ℤ Mat).toLinearMap.comp (exteriorPower.projection ℤ Mat 1))
+  ((exteriorPower.oneEquiv ℤ Mat).toLinearMap.comp (degreeOneProjection))
 @[simp] private lemma firstEntry_ι (x : Mat) : firstEntry (ExteriorAlgebra.ι ℤ x) = x 0 0 := by
-  change (exteriorPower.oneEquiv ℤ Mat (exteriorPower.projection ℤ Mat 1
+  change (exteriorPower.oneEquiv ℤ Mat (degreeOneProjection
     (ExteriorAlgebra.ι ℤ x))) 0 0 = x 0 0
-  rw [← oneWord_coe x, exteriorPower.projection_subtype_apply]
+  rw [← oneWord_coe x, degreeOneProjection_subtype]
   simp [oneWord]
 private def readZero : ((⋀[ℤ]^0 Mat) ⊗[ℤ] Mat) →ₗ[ℤ] Mat :=
   (TensorProduct.lid ℤ Mat).toLinearMap.comp
@@ -83,7 +95,8 @@ example : readZero ((K.d 1 0).hom (oneWord e01 ⊗ₜ[ℤ] e10)) = -diagonal := 
 example : (K.d 1 0).hom (oneWord e01 ⊗ₜ[ℤ] e10) ≠ 0 := by
   intro hz
   have h : (-diagonal : Mat) = 0 := firstValue.symm.trans
-    ((congrArg readZero hz).trans readZero.map_zero)
+    ((congrArg (fun z : (⋀[ℤ]^0 Mat) ⊗[ℤ] Mat => readZero z) hz).trans
+      (show readZero (0 : (⋀[ℤ]^0 Mat) ⊗[ℤ] Mat) = 0 from readZero.map_zero))
   exact (by decide : (-diagonal : Mat) ≠ 0) h
 private lemma boundary_pair : coefficientBoundary ℤ Mat Mat
     ((ExteriorAlgebra.ι ℤ e01 * ExteriorAlgebra.ι ℤ e10) ⊗ₜ[ℤ] e01) =
@@ -93,12 +106,15 @@ private lemma boundary_pair : coefficientBoundary ℤ Mat Mat
     adjointAction_ι, coefficientBoundary_ι_tmul, bracket_pair]
   simp only [lie_self, TensorProduct.tmul_zero, add_zero, map_neg,
     coefficientInsertion_tmul, mul_one, bracket_reverse, TensorProduct.tmul_neg,
-    neg_neg, sub_neg_eq_add, add_neg_eq_sub]
+    neg_neg, sub_neg_eq_add, ← sub_eq_add_neg]
 private lemma secondAmbient : ((⋀[ℤ]^1 Mat).subtype.rTensor Mat)
     ((K.d 2 1).hom (pair ⊗ₜ[ℤ] e01)) =
     -(ExteriorAlgebra.ι ℤ diagonal ⊗ₜ[ℤ] e01) -
       ExteriorAlgebra.ι ℤ e01 ⊗ₜ[ℤ] diagonal := by
-  rw [coefficientComplex_d_succ, coefficientDifferential_inclusion_apply]
+  rw [coefficientComplex_d_succ]
+  change ((⋀[ℤ]^1 Mat).subtype.rTensor Mat)
+    (coefficientDifferential ℤ Mat Mat 1 (pair ⊗ₜ[ℤ] e01)) = _
+  rw [coefficientDifferential_inclusion_apply]
   simpa only [LinearMap.rTensor_tmul, Submodule.subtype_apply, pair_coe] using boundary_pair
 private lemma secondValue : readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat)
     ((K.d 2 1).hom (pair ⊗ₜ[ℤ] e01))) = -1 := by
@@ -108,8 +124,10 @@ example : readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat)
     ((K.d 2 1).hom (pair ⊗ₜ[ℤ] e01))) = -1 := secondValue
 example : (K.d 2 1).hom (pair ⊗ₜ[ℤ] e01) ≠ 0 := by
   intro hz
-  have h := congrArg (fun x => readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat) x)) hz
-  have h0 : readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat) 0) = 0 := by simp
+  have h := congrArg (fun x : (⋀[ℤ]^1 Mat) ⊗[ℤ] Mat =>
+    readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat) x)) hz
+  have h0 : readOne (((⋀[ℤ]^1 Mat).subtype.rTensor Mat)
+      (0 : (⋀[ℤ]^1 Mat) ⊗[ℤ] Mat)) = 0 := by simp
   exact (by decide : (-1 : ℤ) ≠ 0) (secondValue.symm.trans (h.trans h0))
 example : K.d 2 1 ≫ K.d 1 0 = 0 := K.d_comp_d 2 1 0
 example : (K.d 1 0).hom ((K.d 2 1).hom (pair ⊗ₜ[ℤ] e01)) = 0 := by

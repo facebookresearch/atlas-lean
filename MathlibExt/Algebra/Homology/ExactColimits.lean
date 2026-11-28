@@ -14,6 +14,8 @@ public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 public import Mathlib.Algebra.Homology.ShortComplex.ExactFunctor
 public import Mathlib.CategoryTheory.Limits.Preserves.Limits
 
+import Mathlib.CategoryTheory.Preadditive.AdditiveFunctor
+
 /-!
 # Homology of exact colimits
 
@@ -41,8 +43,10 @@ by colim implies exactness of those colimits. -/
 theorem hasExactColimitsOfShape_of_colim_preservesHomology
     [(colim (J := J) (C := C)).PreservesHomology] :
     HasExactColimitsOfShape J C where
-  preservesFiniteLimits :=
-    Functor.preservesFiniteLimits_of_preservesHomology (colim (J := J) (C := C))
+  preservesFiniteLimits := by
+    let _ : (colim (J := J) (C := C)).Additive :=
+      preservesFiniteColimits_le_additiveFunctor (J ⥤ C) C _ (by infer_instance)
+    exact Functor.preservesFiniteLimits_of_preservesHomology (colim (J := J) (C := C))
 
 variable [HasExactColimitsOfShape J C]
 

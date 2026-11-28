@@ -24,8 +24,8 @@ The transition on M_a ⊗[R] N_a is f_ab ⊗ g_ab.
 
 If both systems satisfy identity and composition and ι is directed, the
 simultaneous tensor direct limit D is R-linearly isomorphic to
-(lim M) ⊗[R] (lim N). The forward map sends a stage tensor to the tensor
-of its two stage classes. The inverse sends [x]_a ⊗ [y]_b to the class
+(lim M) ⊗[R] (lim N). The inverse map sends a stage tensor to the tensor
+of its two stage classes. The forward map sends [x]_a ⊗ [y]_b to the class
 [f_ac(x) ⊗ g_bc(y)]_c at any common upper stage c ≥ a, b; this value
 is independent of c. No injectivity or flatness condition is imposed
 on the transitions or modules.
@@ -506,7 +506,7 @@ Assume also that ι is directed.
 For z ∈ M_a ⊗[R] N_a, the direct-limit equivalence satisfies
 equiv.symm(of_a(z)) = (of_a^M ⊗ of_a^N)(z). -/
 @[simp]
-theorem directLimitDiagonal_of (a : ι) (z : M a ⊗[R] N a) :
+theorem directLimitDiagonal_symm_of (a : ι) (z : M a ⊗[R] N a) :
     (directLimitDiagonal f g).symm
         (Module.DirectLimit.of R ι (fun j => M j ⊗[R] N j)
           (diagonalTransition f g) a z) =
@@ -522,7 +522,7 @@ Assume both transition families satisfy identity and composition.
 Assume also that ι is directed.
 For x ∈ M_a and y ∈ N_a, the direct-limit equivalence has pure
 value equiv.symm([x ⊗ y]_a) = [x]_a ⊗ [y]_a. -/
-theorem directLimitDiagonal_of_tmul (a : ι) (x : M a) (y : N a) :
+theorem directLimitDiagonal_symm_of_tmul (a : ι) (x : M a) (y : N a) :
     (directLimitDiagonal f g).symm
         (Module.DirectLimit.of R ι (fun j => M j ⊗[R] N j)
           (diagonalTransition f g) a (x ⊗ₜ[R] y)) =
@@ -564,7 +564,7 @@ theorem exists_eq_zero_of_map_to_directLimit_diagonal_eq_zero
       Module.DirectLimit.of R ι (fun j => M j ⊗[R] N j)
         (diagonalTransition f g) a z = 0 := by
     apply (directLimitDiagonal f g).symm.injective
-    rw [directLimitDiagonal_of, map_zero]
+    rw [directLimitDiagonal_symm_of, map_zero]
     exact hz
   exact Module.DirectLimit.of.zero_exact hcolimit
 

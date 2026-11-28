@@ -13,9 +13,8 @@ module
 
 public import MathlibExt.LinearAlgebra.TensorPower.DirectLimit
 public import MathlibExt.Algebra.Colimit.Module
-public import MathlibExt.LinearAlgebra.TensorPower.LeadingUnit
 public import Mathlib.Order.Lattice
-public meta import Mathlib.Tactic.Omega
+public meta import Lean.Elab.Tactic.Omega
 public meta import Mathlib.Tactic.NormNum
 
 /-!

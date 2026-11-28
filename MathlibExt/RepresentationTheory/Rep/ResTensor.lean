@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Category.ModuleCat.Monoidal.Closed
 public import Mathlib.RepresentationTheory.Rep.Res
 public import MathlibExt.CategoryTheory.Monoidal.TensorPowerFunctor
 public import MathlibExt.LinearAlgebra.TensorPower.LeadingUnit
+public import MathlibExt.LinearAlgebra.PiTensorProduct.FinSnocNaturality
 
 /-!
 # Group restriction, tensor products and power coherence

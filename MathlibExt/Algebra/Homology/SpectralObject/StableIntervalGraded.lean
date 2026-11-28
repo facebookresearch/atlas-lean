@@ -458,8 +458,18 @@ theorem stableIntervalImageToStable_comp_iso_hom
         (Y.stableIntervalStepToAbutment n i₂) (stableIntervalKernelZero Y n i₂) ≫
       (Y.stableIntervalOrderedImageCokernelIso n h).inv = _
   rw [← Category.assoc, stableIntervalStepToStable_comp_stepCokernelIso Y,
-    ← Category.assoc, Y.stableIntervalCokernelSequence_f,
-    cokernel_π_imageQuotientForward, Category.assoc,
+    ← Category.assoc]
+  change (cokernel.π (biprod.desc (Y.stableIntervalStepMap n h)
+      (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+        (n - 1) n (by omega))) ≫
+    imageQuotientForward (Y.stableIntervalStepMap n h)
+      (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
+        (n - 1) n (by omega))
+      (Y.stableIntervalStepToAbutment n i₂) (stableIntervalKernelZero Y n i₂)) ≫
+    (Y.stableIntervalOrderedImageCokernelIso n h).inv =
+      factorThruImage (Y.stableIntervalStepToAbutment n i₂) ≫
+        cokernel.π (Y.stableIntervalImageMap n h)
+  rw [cokernel_π_imageQuotientForward, Category.assoc,
     cokernel_π_stableIntervalOrderedImageCokernelIso_inv Y]
 
 /-- The descended stable quotient is a cokernel of the ordered image inclusion.
