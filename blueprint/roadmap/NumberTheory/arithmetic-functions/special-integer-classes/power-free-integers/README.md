@@ -8,3 +8,4 @@
 - [Divisors of k-free numbers are k-free](of-dvd.md)
 - [Power-freeness is monotone in the exponent](mono.md)
 - [A natural number is 2-free if and only if it is squarefree](is-power-free-two.md)
+- [Density of power-free values of integer polynomials](power-free-polynomial-values.md)
