@@ -11414,6 +11414,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/PartitionPolynomialDerivatives": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Partition polynomials"},
   "MathlibExt/Combinatorics/Enumerative/Partition/PeakGeneratingFunction": {"to": "Combinatorics/set-partitions", "title": "Peaks in set partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/PentagonalRecurrenceParity": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Parity of Euler's pentagonal recurrence"},
+  "MathlibExt/Combinatorics/Enumerative/Partition/PondPendCongruencesQEulerProductPowPrimePowCongruence": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "POND and PEND partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/QEulerProduct": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "q-Pochhammer symbol"},
   "MathlibExt/Combinatorics/Enumerative/Partition/QEulerProductCongruence": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Tuples of ℓ-regular partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/QEulerProductFourthTwoDissection": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Overpartitions with even parts distinct"},
