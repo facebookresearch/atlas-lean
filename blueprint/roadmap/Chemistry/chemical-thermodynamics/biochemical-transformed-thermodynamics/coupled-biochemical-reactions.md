@@ -1,6 +1,6 @@
-# Coupling of biochemical reactions by an extra conserved component
+# Coupling by an extra conserved component in the glutamate–ammonia ligase reaction
 
-Transformed reaction Gibbs energies add when biochemical reactions are added, but only a mechanism that runs the sum couples them. Glutamate–ammonia ligase runs ATP hydrolysis and glutamine synthesis as one reaction: its transformed Gibbs energy is the sum of theirs, and it conserves one quantity beyond the element balances.
+In the IUBMB example of glutamate–ammonia ligase, which catalyzes ATP hydrolysis and glutamine synthesis only as one combined reaction, the combined transformed reaction Gibbs energy is the sum of the two, and the combined reaction conserves one quantity beyond the element balances. General statements about adding and coupling reactions appear only as derived extensions.
 
 **Setting.** Fix $T>0$, $P$, $I$ and pH, and take as reactants $I'$ ATP, ADP, phosphate, glutamate, ammonia, glutamine and water, with composition matrix $A'$ over C, N, O and P as for the [apparent equilibrium constant](apparent-equilibrium-constant.md); hydrogen is not balanced at specified pH. Consider the biochemical reactions
 
@@ -14,7 +14,7 @@ $$
 
 each [balanced](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiometric-conservati/is-balanced.md) for $A'$; water cancels in $\nu_c$. Let $G'$ be a differentiable function of the reactant amounts $n'$ on an open set, with $\partial G'/\partial n_i'=\Delta_fG_i'$, as in the reactant form of the [fundamental equation of the transformed Gibbs energy](transformed-gibbs-fundamental-equation.md), and write $\Delta_rG'(\nu)=\sum_i\nu_i\Delta_fG_i'$ at the current state.
 
-**Statement.**
+**Statement (glutamate–ammonia ligase example).**
 
 1. (additivity) $\Delta_rG'(\nu_c)=\Delta_rG'(\nu_a)+\Delta_rG'(\nu_b)$, the same holds for the standard values $\Delta_rG'^\circ$, and $K'(\nu_c)=K'(\nu_a)\,K'(\nu_b)$.
 2. (single extent) Along the [amounts after an extent](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiometric-conservati/amount-after-extents.md) $n'(\xi')=n_0'+\xi'\nu_c$ of the ligase reaction, wherever $n'(\xi')$ lies in the domain of $G'$,
