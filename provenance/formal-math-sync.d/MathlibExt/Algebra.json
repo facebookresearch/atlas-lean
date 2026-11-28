@@ -926,6 +926,33 @@
       "upstream_sha256": "ffb311ccc6afc66e601d4cb149fe91a214995ab909597844ca536935e754bc33"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/NonUnital/Basic.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9df55e0002d0b4bd0dc41f1eac10a9f67b015e5b9567fbc8cad1794e3a614da6",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague Hochschild/bar/mixed-complex descriptions with exact mathematical module/declaration docs and readable titles, retaining every code, import, option, privacy and legal token. State the actual coefficient actions, normalized/unnormalized signs, quotient and ground-projective hypotheses.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "92ca1caff00e9708c3bafe1c827c78b769b89e23eea0518530d8c39d9fba1527"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/NonUnital/Coefficients.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d1982c5c85d17d4f915335798259390b6ff3017b048f818abc47b3bd8377a08a",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague Hochschild/bar/mixed-complex descriptions with exact mathematical module/declaration docs and readable titles, retaining every code, import, option, privacy and legal token. State the actual coefficient actions, normalized/unnormalized signs, quotient and ground-projective hypotheses.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "48f9258c97dfa56093943043fabd30eaf79aa694a666addc5bdba525f8d1e1dc"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Hochschild/NonUnital/UnitalComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6bd6300aa31c14afbba7b4d124637c257d6a9baf0c9f911a8b3941288e80a2a8",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague Hochschild/bar/mixed-complex descriptions with exact mathematical module/declaration docs and readable titles, retaining every code, import, option, privacy and legal token. State the actual coefficient actions, normalized/unnormalized signs, quotient and ground-projective hypotheses.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6dc3c93384beb03562985f27de9ea888e250c858fec9f2817ba6c85e36f0af06"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/Hochschild/WeakRegularLocalForms.lean",
       "backport": "not-needed",
       "disposition": "diverged",
