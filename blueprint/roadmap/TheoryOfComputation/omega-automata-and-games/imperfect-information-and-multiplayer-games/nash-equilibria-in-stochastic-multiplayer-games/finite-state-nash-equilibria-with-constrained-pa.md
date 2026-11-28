@@ -20,11 +20,14 @@ finite Markov chain and finitely many finite Markov decision processes; the plai
 ## Depends on
 
 - [Stochastic multiplayer games and the constrained Nash equilibrium problem](stochastic-multiplayer-games-and-the-constrained.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
 - [Constrained Nash equilibria in simple stochastic multiplayer games are not recursively enumerable](constrained-nash-equilibria-in-simple-stochastic.md)
 - [Two-counter machines are universal](../../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

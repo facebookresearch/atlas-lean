@@ -9,7 +9,8 @@ The machine built in the proof is $1$-reversal-bounded but not finitely ambiguou
 ## Depends on
 
 - [Reversal-bounded counter machines](reversal-bounded-counter-machines.md)
-- [Counting-regular and slender languages](counting-regular-and-slender-languages.md)
+- [Counting-regular languages](counting-regular-and-slender-languages.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ As in the pushdown case, the halting problem for a deterministic Turing machine 
 
 ## Sources
 
-- O. H. Ibarra, I. McQuillan and B. Ravikumar, "On counting functions and slenderness of languages", *Theoretical Computer Science* 777:356–378, 2019, doi:[10.1016/j.tcs.2018.11.021](https://doi.org/10.1016/j.tcs.2018.11.021); numbering of arXiv:1903.03504v1: Theorem 29 with its proof and Theorem 30, in Section 5.
+- O. H. Ibarra, I. McQuillan and B. Ravikumar, "On counting functions and slenderness of languages", *Theoretical Computer Science* 777:356–378, 2019, doi:[10.1016/j.tcs.2018.11.021](https://doi.org/10.1016/j.tcs.2018.11.021); numbering of arXiv:1903.03504v1: Theorem 29 with its proof and Theorem 30, in Section 6.

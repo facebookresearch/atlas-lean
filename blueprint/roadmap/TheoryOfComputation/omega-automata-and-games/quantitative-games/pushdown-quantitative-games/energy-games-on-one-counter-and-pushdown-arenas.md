@@ -4,11 +4,11 @@ Energy games played on the configuration graph of a one-counter automaton are de
 
 In a *pushdown energy game* of dimension $n$, control states are split between player 0 and player 1, a finite pushdown automaton determines the moves on configurations (state, stack), and each transition adds a vector in $\{-1,0,1\}^n$ to the current energy $E\in\mathbb Z^n$. The owner of the current configuration picks the next move; player 0 wins as soon as some energy component becomes negative, and player 1 wins every infinite play. A *one-counter energy game* is the special case where the stack is a counter that can be incremented, decremented and tested for zero. The energy components are not counters: they cannot be tested and never restrict the available moves (compare [mean-payoff and energy games](../mean-payoff-games-and-energy-games.md)). The *fixed initial credit problem* asks whether player 1 wins from a given configuration with a given initial energy; the *unknown initial credit problem* asks whether there is some initial energy from which player 1 wins.
 
-**Theorem.**
-1. The fixed initial credit problem is undecidable for one-counter energy games of energy dimension $n\ge2$.
-2. Both the fixed and the unknown initial credit problems are undecidable for pushdown energy games, already for energy dimension $n=1$.
+**Theorem.** The fixed initial credit problem is undecidable for one-counter energy games of energy dimension $n\ge2$ (Theorem 13 of the source).
 
-By contrast, for one-counter energy games of energy dimension $1$ the winning sets are semilinear and the fixed initial credit problem is decidable. As a consequence of the correspondence between energy games and simulation games, simulation preorder between one-counter nets and vector addition systems of dimension $\ge2$, and between pushdown automata and one-counter nets, is undecidable.
+In Section V the source also shows that both the fixed and the unknown initial credit problems are undecidable for pushdown energy games, already for energy dimension $n=1$.
+
+By contrast, for one-counter energy games of energy dimension $1$ the winning sets are semilinear and the fixed initial credit problem is decidable (Theorem 5). As a consequence of the correspondence between energy games and simulation games, simulation preorder between one-counter nets and vector addition systems of dimension $\ge2$, and between pushdown automata and one-counter nets, is undecidable.
 
 ## Depends on
 
@@ -16,6 +16,7 @@ By contrast, for one-counter energy games of energy dimension $1$ the winning se
 - [Pushdown automaton](../../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
 - [One-counter automata and one-counter nets](../../../undecidable-problems/extended-finite-automata/regular-separability-of-one-counter-automata/one-counter-automata-and-one-counter-nets.md)
 - [Arenas, strategies and memory structures](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

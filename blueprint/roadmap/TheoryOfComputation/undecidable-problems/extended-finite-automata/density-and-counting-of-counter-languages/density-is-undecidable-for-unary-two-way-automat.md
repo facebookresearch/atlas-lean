@@ -15,6 +15,7 @@ reversal-bounded counters density is undecidable in general.
 
 - [Prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-and-infix-dense-languages.md)
 - [Deterministic two-way automaton](../../../regular-languages/automata-and-expressions/two-way-finite-automata/two-way-dfa.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -30,4 +31,4 @@ $L(M) = a^*$, and if $Z$ halts then $L(M)$ is finite; so $L(M)$ is dense, equal 
 
 ## Sources
 
-- O. H. Ibarra and I. McQuillan, "On the density of languages accepted by Turing machines and other machine models", *Journal of Automata, Languages and Combinatorics* 23:189–199, 2018, doi:10.25596/jalc-2018-189; Section 3 of the version arXiv:1903.03018v1: the proposition on unary $2\mathrm{DFA}$s with one unrestricted counter and its proof, the corollary after it, and the propositions and corollary on $2\mathrm{NCM}$ and $2\mathrm{DCM}(2)$ before it.
+- O. H. Ibarra and I. McQuillan, "On the density of languages accepted by Turing machines and other machine models", *Journal of Automata, Languages and Combinatorics* 23:189–199, 2018, doi:10.25596/jalc-2018-189; Section 3 of the version arXiv:1903.03018v1: Proposition 14 and its proof, Corollary 15, and Corollary 12 ($2\mathrm{DCM}(2)$) and Proposition 13 (unary $2\mathrm{NCM}$) before it.

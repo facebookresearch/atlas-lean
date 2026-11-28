@@ -13,6 +13,8 @@ existence question comes from simultaneous moves.
 ## Depends on
 
 - [Concurrent limit-average games and their Nash equilibria](concurrent-limit-average-games-and-their-nash-eq.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -29,4 +31,4 @@ gets expected payoff at least $0$, that is, exactly when the simulated two-count
 
 ## Sources
 
-- M. Ummels and D. Wojtczak, "The complexity of Nash equilibria in limit-average games", in *CONCUR 2011 – Concurrency Theory*, Lecture Notes in Computer Science 6901, pp. 482–496, Springer, 2011, doi:10.1007/978-3-642-23217-6_32; Section 7 of the version arXiv:1109.6220v1 (the corollary at the end of the section and its proof), and Section 3 (the game without Nash equilibrium).
+- M. Ummels and D. Wojtczak, "The complexity of Nash equilibria in limit-average games", in *CONCUR 2011 – Concurrency Theory*, Lecture Notes in Computer Science 6901, pp. 482–496, Springer, 2011, doi:10.1007/978-3-642-23217-6_32; Section 7 of the version arXiv:1109.6220v1 (Corollary 26 and its proof, which refers to the proof of Corollary 10), and Section 3 (Example 1, the game without Nash equilibrium).

@@ -20,6 +20,7 @@ Büchi games is decidable when Adam is perfectly informed or more informed than 
 ## Depends on
 
 - [Partial-observation stochastic games and qualitative winning](partial-observation-stochastic-games-and-qualita.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -35,4 +36,4 @@ reduces to it.
 
 ## Sources
 
-- A. Carayol, C. Löding and O. Serre, "Pure strategies in imperfect information stochastic games", *Fundamenta Informaticae* 160(4):361–384, 2018, doi:10.3233/FI-2018-1687; read in arXiv:1506.09140v2: Theorems 1 and 2 of Section 3 (Undecidability results) with their proofs and the value 1 lemma, the definitions of Section 2, and the decidability theorems of Sections 4 and 5.
+- A. Carayol, C. Löding and O. Serre, "Pure strategies in imperfect information stochastic games", *Fundamenta Informaticae* 160(4):361–384, 2018, doi:10.3233/FI-2018-1687; read in arXiv:1506.09140v2: Theorems 1 and 2 of Section 3 (Undecidability results) with their proofs and Lemma 1 (value 1), the definitions of Section 2, and Theorems 4 and 5 of Section 4 and Theorem 6 of Section 5 (the decidable cases), with the numbering of that version.

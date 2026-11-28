@@ -9,6 +9,7 @@ The threshold three is on the number of players and holds for the plain existenc
 ## Depends on
 
 - [Concurrent terminal-reward games with state-based strategies](concurrent-terminal-reward-games-with-state-based.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The result is due to Bouyer, Markey and Stan (2014), and the 2016 paper recalls 
 
 ## Sources
 
-- Patricia Bouyer, Nicolas Markey and Daniel Stan, "Stochastic Equilibria under Imprecise Deviations in Terminal-Reward Concurrent Games", Electronic Proceedings in Theoretical Computer Science 226, 2016, pp. 61–75, doi:[10.4204/EPTCS.226.5](https://doi.org/10.4204/EPTCS.226.5); numbering of arXiv:1609.04089v1 ([arXiv](https://arxiv.org/abs/1609.04089v1)): Theorem 1 (stated there as established, with attribution to the authors' FSTTCS 2014 paper) and the discussion before it in Section 2.3.
+- Patricia Bouyer, Nicolas Markey and Daniel Stan, "Stochastic Equilibria under Imprecise Deviations in Terminal-Reward Concurrent Games", Electronic Proceedings in Theoretical Computer Science 226, 2016, pp. 61–75, doi:[10.4204/EPTCS.226.5](https://doi.org/10.4204/EPTCS.226.5); numbering of arXiv:1609.04089v1 ([arXiv](https://arxiv.org/abs/1609.04089v1)): Theorem 5 (stated there as established, with attribution to the authors' FSTTCS 2014 paper) and the discussion before it in Section 2.3.

@@ -9,7 +9,8 @@ The bound on ambiguity cannot be lowered to one: languages of unambiguous revers
 ## Depends on
 
 - [Pushdown automaton](../../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
-- [Counting-regular and slender languages](counting-regular-and-slender-languages.md)
+- [Counting-regular languages](counting-regular-and-slender-languages.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ Let $Z$ be a single-tape deterministic Turing machine started on a blank tape. T
 
 ## Sources
 
-- O. H. Ibarra, I. McQuillan and B. Ravikumar, "On counting functions and slenderness of languages", *Theoretical Computer Science* 777:356–378, 2019, doi:[10.1016/j.tcs.2018.11.021](https://doi.org/10.1016/j.tcs.2018.11.021); numbering of arXiv:1903.03504v1: Theorem 28 with its proof, which uses the languages of the proof of Theorem 27, in Section 5.
+- O. H. Ibarra, I. McQuillan and B. Ravikumar, "On counting functions and slenderness of languages", *Theoretical Computer Science* 777:356–378, 2019, doi:[10.1016/j.tcs.2018.11.021](https://doi.org/10.1016/j.tcs.2018.11.021); numbering of arXiv:1903.03504v1: Theorem 28 with its proof, which uses the languages of the proof of Theorem 27, in Section 6.

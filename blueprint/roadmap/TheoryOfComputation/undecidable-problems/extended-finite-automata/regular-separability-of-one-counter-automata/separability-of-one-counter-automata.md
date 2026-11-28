@@ -11,6 +11,7 @@ For one-counter nets, without zero tests, regular separability is decidable and 
 ## Depends on
 
 - [One-counter automata and one-counter nets](one-counter-automata-and-one-counter-nets.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

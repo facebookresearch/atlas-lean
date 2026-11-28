@@ -5,14 +5,14 @@ six letters and 553 states, and also when all states are initial and final.
 
 A *max-plus automaton* over an alphabet $\Sigma$ with $d$ states, a [weighted automaton](../weighted-automata-over-a-semiring.md) over the semiring
 $(\mathbb{Z} \cup \{-\infty\}, \max, +)$, is a morphism $\mu$ from $\Sigma^+$ to $d \times d$ matrices over $\mathbb{Z} \cup \{-\infty\}$ with an initial row vector $I$ and a final
-column vector $F$ with entries in $\{0, -\infty\}$; it computes $f_{\mathcal{A}}(w) = I \mu(w) F$ for nonempty words $w$. The *comparison problem* $\mathrm{Comp}_k(S)$, respectively
-$\mathrm{Comp}^d_k(S)$, asks, given a max-plus automaton on a $k$-letter alphabet with weights in $S$, respectively with weights in $S$ and $d$ states, whether
-$f_{\mathcal{A}}(w) \ge 0$ for every nonempty word $w$.
+column vector $F$ with entries in $\{0, -\infty\}$; it computes $f_{\mathcal{A}}(w) = I \mu(w) F$ for nonempty words $w$. The *comparison problem*, written $\mathrm{Pos}_k(S)$ in the source, respectively
+$\mathrm{Pos}^d_k(S)$, asks, given a max-plus automaton on a $k$-letter alphabet with weights in $S$, respectively with weights in $S$ and $d$ states, whether
+$f_{\mathcal{A}}(w) \ge 0$ for every nonempty word $w$. An instance is given by its finitely many matrices and vectors, the finite weights written as integers in binary.
 
 **Theorem.**
 
-1. $\mathrm{Comp}_2(\{-1, 1\})$ and $\mathrm{Comp}^{553}_6(\mathbb{Z} \cup \{-\infty\})$ are undecidable.
-2. The restrictions of $\mathrm{Comp}_3(\{-1, 0, 1\})$ and of $\mathrm{Comp}^{554}_7(\mathbb{Z} \cup \{-\infty\})$ to automata whose states are all initial and final are undecidable.
+1. $\mathrm{Pos}_2(\{-1, 1\})$ and $\mathrm{Pos}^{553}_6(\mathbb{Z} \cup \{-\infty\})$ are undecidable.
+2. The restrictions of $\mathrm{Pos}_3(\{-1, 0, 1\})$ and of $\mathrm{Pos}^{554}_7(\mathbb{Z} \cup \{-\infty\})$ to automata whose states are all initial and final are undecidable.
 
 The first part of item 1 follows directly from the two-counter-machine proof of
 Colcombet; the bounded number of states in the second part needs unbounded weights, since with bounded weights and a bounded number of states the problem
@@ -21,6 +21,7 @@ becomes decidable.
 ## Depends on
 
 - [Weighted automata over a semiring](../weighted-automata-over-a-semiring.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

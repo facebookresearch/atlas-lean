@@ -17,10 +17,13 @@ total-reward criterion.
 ## Depends on
 
 - [Concurrent limit-average games and their Nash equilibria](concurrent-limit-average-games-and-their-nash-eq.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
@@ -35,4 +38,4 @@ infinite if and only if the game has a Nash equilibrium in which player $0$ rece
 
 ## Sources
 
-- M. Ummels and D. Wojtczak, "The complexity of Nash equilibria in limit-average games", in *CONCUR 2011 – Concurrency Theory*, Lecture Notes in Computer Science 6901, pp. 482–496, Springer, 2011, doi:10.1007/978-3-642-23217-6_32; Section 7 of the version arXiv:1109.6220v1 (the undecidability theorem for randomised strategies with its proof), and the summary of results in Section 1.
+- M. Ummels and D. Wojtczak, "The complexity of Nash equilibria in limit-average games", in *CONCUR 2011 – Concurrency Theory*, Lecture Notes in Computer Science 6901, pp. 482–496, Springer, 2011, doi:10.1007/978-3-642-23217-6_32; Section 7 of the version arXiv:1109.6220v1 (Theorem 25 with its proof), and the summary of results in Section 1.

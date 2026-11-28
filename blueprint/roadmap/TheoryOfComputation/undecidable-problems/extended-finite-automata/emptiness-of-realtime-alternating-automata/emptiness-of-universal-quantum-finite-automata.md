@@ -9,6 +9,7 @@ By contrast, emptiness for nondeterministic QFAs (is there $w$ with $f_M(w)>0$?)
 ## Depends on
 
 - [Alternating quantum finite automata](alternating-quantum-finite-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

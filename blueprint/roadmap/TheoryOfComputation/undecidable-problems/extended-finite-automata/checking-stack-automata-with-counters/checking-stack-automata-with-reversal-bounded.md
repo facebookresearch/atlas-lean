@@ -7,8 +7,8 @@ A *checking stack* over a stack alphabet $\Gamma_0$ starts empty (between a bott
 phases. In the *writing phase* the machine may push a symbol of $\Gamma_0$ or leave the stack unchanged, but never pop; at
 some point it enters the *reading phase*, in which the stack head moves down, up or stays inside the stack in two-way
 read-only mode, and the stack can never be changed again. A *counter* stores a natural number that can be incremented,
-decremented and tested for zero; it is *$l$-reversal-bounded* if in every computation it alternates between increasing and
-decreasing mode at most $l$ times.
+decremented and tested for zero; it is *$l$-reversal-bounded* if it alternates between non-decreasing and
+non-increasing mode at most $l$ times. Following the source, the bound is part of the machine: $l$ is given with $M$, and a computation can accept only if each counter respects it (the store type's instruction language), so reversal-boundedness is a syntactic restriction checked along the computation rather than a semantic promise about all computations.
 
 A *one-way* machine reads its input $\triangleright w \triangleleft$ (between end-markers) from left to right; a transition
 depends on the state, the input symbol, the symbol under the stack head and the zero status of each counter, and it updates

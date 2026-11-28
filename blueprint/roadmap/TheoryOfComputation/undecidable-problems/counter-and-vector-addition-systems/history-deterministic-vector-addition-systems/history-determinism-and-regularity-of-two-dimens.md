@@ -16,6 +16,7 @@ regularity of $L(\mathcal{A})$ is decidable in exponential space, by converting 
 ## Depends on
 
 - [History-deterministic vector addition systems](history-deterministic-vector-addition-systems.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -31,4 +32,4 @@ construction; in the reachability semantics it reduces instead from universality
 
 ## Sources
 
-- S. Bose, D. Purser and P. Totzke, "History-deterministic vector addition systems", in *34th International Conference on Concurrency Theory (CONCUR 2023)*, LIPIcs 279, paper 18, 2023, doi:10.4230/LIPIcs.CONCUR.2023.18; read in arXiv:2305.01981v2: the theorems of Section 5 (Decision problems) on inclusion and history-determinism of $2$-VASS, on language history-determinism for coverability and reachability, and on regularity in dimensions $1$ and $2$.
+- S. Bose, D. Purser and P. Totzke, "History-deterministic vector addition systems", in *34th International Conference on Concurrency Theory (CONCUR 2023)*, LIPIcs 279, paper 18, 2023, doi:10.4230/LIPIcs.CONCUR.2023.18; read in arXiv:2305.01981v2: Theorems 15 and 16 (inclusion and history-determinism of $2$-VASS, Section 5.1) with Lemma 13, Theorems 17 and 18 (language history-determinism for coverability and reachability, Section 5.2), Theorems 19 and 20 (regularity in dimensions $1$ and $2$, Section 5.3), and Theorem 11 (inclusion for $1$-dimensional systems) of Section 5, with the numbering of that version.

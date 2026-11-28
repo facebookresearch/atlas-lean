@@ -9,6 +9,7 @@ The input alphabet is part of the instance; the reduction uses inputs over $\{0,
 ## Depends on
 
 - [Blind alternating finite automata](blind-alternating-finite-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

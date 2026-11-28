@@ -16,6 +16,7 @@ nondeterminism is used here.
 
 - [Prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-and-infix-dense-languages.md)
 - [Pushdown automaton](../../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -30,4 +31,4 @@ If $Z$ halts, $\mathrm{inf}(L(M)) = a^*$; otherwise $L(M)$ is empty. So $L(M)$ i
 
 ## Sources
 
-- O. H. Ibarra and I. McQuillan, "On the density of languages accepted by Turing machines and other machine models", *Journal of Automata, Languages and Combinatorics* 23:189–199, 2018, doi:10.25596/jalc-2018-189; Section 3 of the version arXiv:1903.03018v1: the proposition on unary languages of nondeterministic real-time two-pushdown machines with its proof, and the conjecture before it.
+- O. H. Ibarra and I. McQuillan, "On the density of languages accepted by Turing machines and other machine models", *Journal of Automata, Languages and Combinatorics* 23:189–199, 2018, doi:10.25596/jalc-2018-189; Section 3 of the version arXiv:1903.03018v1: Proposition 11 with its proof, and the conjecture before it.

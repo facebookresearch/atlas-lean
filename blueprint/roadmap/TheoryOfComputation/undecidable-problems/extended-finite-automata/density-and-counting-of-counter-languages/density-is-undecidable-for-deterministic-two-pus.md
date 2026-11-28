@@ -18,6 +18,7 @@ reversal-bounded worktape, so the boundary lies between one and two reversal-bou
 
 - [Prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-and-infix-dense-languages.md)
 - [Pushdown automaton](../../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -35,4 +36,4 @@ $w \natural (\Sigma \cup \{\natural\})^*$. A $1$-reversal-bounded worktape simul
 
 ## Sources
 
-- O. H. Ibarra and I. McQuillan, "On the density of languages accepted by Turing machines and other machine models", *Journal of Automata, Languages and Combinatorics* 23:189–199, 2018, doi:10.25596/jalc-2018-189; Section 3 of the version arXiv:1903.03018v1: the proposition on families with undecidable emptiness, the construction after it, and the two corollaries on deterministic real-time two-pushdown automata and Turing machines with two $1$-reversal-bounded worktapes; the decidability proposition for a nondeterministic Turing machine with one reversal-bounded worktape.
+- O. H. Ibarra and I. McQuillan, "On the density of languages accepted by Turing machines and other machine models", *Journal of Automata, Languages and Combinatorics* 23:189–199, 2018, doi:10.25596/jalc-2018-189; Section 3 of the version arXiv:1903.03018v1: Proposition 7 (families with undecidable emptiness), Construction 8, and Corollaries 9 and 10 (deterministic real-time two-pushdown automata and Turing machines with two $1$-reversal-bounded worktapes); Proposition 2 (decidability for a nondeterministic Turing machine with one reversal-bounded worktape).

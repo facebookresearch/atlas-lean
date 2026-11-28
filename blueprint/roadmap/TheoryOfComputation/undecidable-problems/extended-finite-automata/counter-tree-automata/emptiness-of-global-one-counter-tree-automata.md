@@ -12,6 +12,7 @@ In contrast, the uniform membership problem for GOCTA, whether a given tree is a
 
 - [Bottom-up finite tree automata](../../../omega-automata-and-games/logic-and-tree-automata/bottom-up-finite-tree-automata.md)
 - [Top-down tree automata](../../../omega-automata-and-games/logic-and-tree-automata/top-down-tree-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -19,7 +20,7 @@ None.
 
 ## Expansion
 
-The source reduces emptiness of indexed counter grammars with a global counter semantics (R-mode derivations of Duske, Middendorf and Parchmann), which are Turing-complete: given such a grammar, a GOCTA recognizes its computation trees. The underlying reason is that a global counter can multiply its value by a constant, so it can simulate a pushdown storage by representing each pushdown content as a number in base $m$, and a context-free grammar with a global pushdown is Turing-complete. A good expansion links the Turing-completeness of indexed counter grammars with global counter semantics, which has no page.
+The source reduces emptiness of indexed counter grammars with a global counter semantics (R-mode derivations of Duske, Middendorf and Parchmann), which are Turing-complete: given such a grammar, a GOCTA recognizes its computation trees. The underlying reason is that a global counter can multiply its value by a constant, so it can simulate a pushdown storage by representing each pushdown content as a number in base $m$, and a context-free grammar with a global pushdown is Turing-complete. A good expansion links the Turing-completeness of indexed counter grammars with global counter semantics.
 
 ## Sources
 

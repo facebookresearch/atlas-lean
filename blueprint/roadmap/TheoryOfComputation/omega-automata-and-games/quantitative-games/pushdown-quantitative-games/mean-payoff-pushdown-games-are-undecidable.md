@@ -8,6 +8,8 @@ A *weighted pushdown system* $(Q,\Gamma,q_0,E,w)$ has finitely many states with 
 1. for the objective $\Phi\bowtie0$, with $\Phi\in\{\mathrm{LimInfAvg},\mathrm{LimSupAvg}\}$ and $\bowtie\in\{\ge,>\}$;
 2. for the same objectives together with *stack boundedness* (the stack height along the play stays bounded).
 
+(Theorem 6 of the source.)
+
 With a single player (pushdown systems) the source solves these problems in polynomial time, and under *modular* strategies, which depend only on the history of the current module invocation of the equivalent recursive game, the problem is NP-complete for pushdown games and systems alike.
 
 ## Depends on
@@ -15,6 +17,7 @@ With a single player (pushdown systems) the source solves these problems in poly
 - [Classical quantitative objectives](../classical-quantitative-objectives.md)
 - [Pushdown automaton](../../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
 - [Arenas, strategies and memory structures](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -26,4 +29,4 @@ The reduction is from non-universality of weighted finite automata with weights 
 
 ## Sources
 
-- Krishnendu Chatterjee and Yaron Velner, "Mean-Payoff Pushdown Games", in *2012 27th Annual IEEE Symposium on Logic in Computer Science (LICS)*, 2012, pp. 195–204, doi:[10.1109/LICS.2012.30](https://doi.org/10.1109/LICS.2012.30); read in arXiv:1201.2829v3 ([arXiv](https://arxiv.org/abs/1201.2829v3)), cited by section because the source files are concatenated out of order: the definitions of weighted pushdown systems and mean-payoff objectives in the section on mean-payoff pushdown graphs, and the definition of weighted pushdown games, the reduction from weighted automata and the undecidability theorem in the section on mean-payoff pushdown games.
+- Krishnendu Chatterjee and Yaron Velner, "Mean-Payoff Pushdown Games", in *2012 27th Annual IEEE Symposium on Logic in Computer Science (LICS)*, 2012, pp. 195–204, doi:[10.1109/LICS.2012.30](https://doi.org/10.1109/LICS.2012.30); read in arXiv:1201.2829v3 ([arXiv](https://arxiv.org/abs/1201.2829v3)), whose numbering, checked in the PDF, is used: the definitions of weighted pushdown systems and mean-payoff objectives in the section on mean-payoff pushdown graphs, and the definition of weighted pushdown games, Theorem 5 (non-universality of weighted automata, cited there), Lemma 19 (the reduction) and Theorem 6 (undecidability) in the section on mean-payoff pushdown games.

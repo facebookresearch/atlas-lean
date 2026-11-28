@@ -4,13 +4,14 @@ For nondeterministic set automata, no algorithm even semi-decides whether one ac
 
 Let set automata, deterministic (DSA) and nondeterministic (NSA), be as in [Set automata](set-automata.md), and let $\mathsf{DSA}$ be the class of languages accepted by deterministic set automata.
 
-**Theorem (Kutrib, Malcher and Wendlandt).** For nondeterministic set automata the following questions are not semi-decidable: universality, equivalence with a given regular set, equivalence of two automata, inclusion of the language of one in that of another, and regularity of the language. Moreover it is not semi-decidable whether the language accepted by a given NSA belongs to $\mathsf{DSA}$ (Theorem 3 of the copy read, citing Kutrib, Malcher and Wendlandt).
+**Theorem (Kutrib, Malcher and Wendlandt).** For nondeterministic set automata the following questions are not semi-decidable: universality (whether the automaton accepts every word over its input alphabet), equivalence with a given regular set (given by a finite automaton), equivalence of two automata, inclusion of the language of one in that of another, and regularity of the language. Moreover it is not semi-decidable whether the language accepted by a given NSA belongs to $\mathsf{DSA}$ (Theorem 3 of the copy read, citing Kutrib, Malcher and Wendlandt).
 
 In particular all these problems are undecidable. Emptiness of nondeterministic set automata is decidable, in polynomial space, and it is PSPACE-complete for deterministic ones (Rubtsov and Vyalyi).
 
 ## Depends on
 
 - [Set automata](set-automata.md)
+- [Recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -18,7 +19,7 @@ In particular all these problems are undecidable. Emptiness of nondeterministic 
 
 ## Expansion
 
-The copy read explains that these results rest on the fact that nondeterministic set automata can accept the set of invalid computations of a Turing machine. That set is universal exactly when the machine has no accepting computation, which is not semi-decidable; the remaining questions are handled in the original paper of Kutrib, Malcher and Wendlandt. The construction accepting invalid computations has no page.
+The copy read explains that these results rest on the fact that nondeterministic set automata can accept the set of invalid computations of a Turing machine. That set is universal exactly when the machine has no accepting computation, which is not semi-decidable; the remaining questions are handled in the original paper of Kutrib, Malcher and Wendlandt. A good expansion links a page for the construction accepting invalid computations.
 
 ## Sources
 

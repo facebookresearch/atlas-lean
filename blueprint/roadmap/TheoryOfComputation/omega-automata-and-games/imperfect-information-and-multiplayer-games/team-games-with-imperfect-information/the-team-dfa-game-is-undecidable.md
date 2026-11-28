@@ -12,6 +12,7 @@ members, not from unbounded memory in the game.
 ## Depends on
 
 - [The team DFA game and its communication variant](the-team-dfa-game-and-its-communication-variant.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -25,4 +26,4 @@ recalls the result as a theorem and uses it as the starting point of its reducti
 
 ## Sources
 
-- M. Coulombe and J. Lynch, "Characterizing the decidability of finite state automata team games with communication", in *GandALF 2022*, Electronic Proceedings in Theoretical Computer Science 370, pp. 213–228, 2022, doi:10.4204/EPTCS.370.14; read in arXiv:2209.10324v1: Section 2.1, the theorem stating that the team DFA game is undecidable, credited to the paper above.
+- M. Coulombe and J. Lynch, "Characterizing the decidability of finite state automata team games with communication", in *GandALF 2022*, Electronic Proceedings in Theoretical Computer Science 370, pp. 213–228, 2022, doi:10.4204/EPTCS.370.14; read in arXiv:2209.10324v1: Theorem 1 in Section 1.1, stating that the team DFA game is undecidable, credited to the paper above.

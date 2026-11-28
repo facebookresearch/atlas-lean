@@ -5,8 +5,7 @@ or a Büchi objective with positive probability, in a finite turn-based game wit
 player $1$ has partial observation.
 
 Let $G$ range over finite turn-based [games of partial observation](partial-observation-stochastic-games-and-qualita.md) with
-deterministic transition function and one-sided complete observation, with an initial state $s_*$ and a set $T$ of states (or a
-union of observations).
+deterministic transition function and one-sided complete observation, with an initial state $s_*$ and an arbitrary set $T \subseteq S$ of states; the undecidability holds already when $T$ is a union of observations of player $1$, so that the objective is visible to player $1$ (Corollary 2 of the source).
 
 **Theorem.** Both of the following problems are undecidable:
 
@@ -20,6 +19,7 @@ that it holds even when the objective is visible to player $1$.
 ## Depends on
 
 - [Partial-observation stochastic games and qualitative winning](partial-observation-stochastic-games-and-qualita.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

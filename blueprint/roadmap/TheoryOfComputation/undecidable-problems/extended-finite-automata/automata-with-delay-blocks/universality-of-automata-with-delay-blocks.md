@@ -4,11 +4,11 @@ Finite automata whose output symbols may be deferred by fixed discrete delays ge
 
 **Theorem.** A *finite automaton with delay blocks* (ADB) is a tuple $\mathcal A = (L, D, \Sigma, \delta, l_s, L_f)$ with a finite set $L$ of locations, a starting location $l_s$, accepting locations $L_f \subseteq L$, an output alphabet $\Sigma$, a finite set $D \subseteq \mathbb N$ of delays, and a transition relation $\delta : (L \times \Sigma \times D) \cup (L \times \{\epsilon, \mathit{tick}\}) \to 2^L$. A generating run $l_s = l_0 \xrightarrow{\alpha_0} l_1 \cdots \xrightarrow{\alpha_{n-1}} l_n \in L_f$ with $l_{i+1} \in \delta(l_i, \alpha_i)$ outputs, for every label $\alpha_i = (\sigma, t)$, the symbol $\sigma$ at time $t + (\text{number of } \mathit{tick}\text{s among } \alpha_0, \ldots, \alpha_{i-1})$; the generated timed word lists these symbols sorted by their output times, symbols with equal times in the order of generation. The *untimed language* $U(\mathcal A) \subseteq \Sigma^*$ is the set of words obtained from generated timed words by dropping the times. There is no algorithm that decides, given an ADB $\mathcal A$ over $\Sigma$, whether $U(\mathcal A) = \Sigma^*$.
 
-Consequently it is undecidable whether $U(\mathcal A)$ equals a given regular language and whether $U(\mathcal A) \subseteq U(\mathcal A')$ for ADBs $\mathcal A, \mathcal A'$ (Corollaries 1 and 2 of the source). Emptiness of an ADB is decidable in linear time (Proposition 12), and every regular language is the untimed language of an ADB whose delays are all $0$ (Proposition 2).
+Consequently it is undecidable whether $U(\mathcal A)$ equals a given [regular language](../../../regular-languages/automata-and-expressions/kleene-s-theorem/is-regular-iff-exists-regex.md) and whether $U(\mathcal A) \subseteq U(\mathcal A')$ for ADBs $\mathcal A, \mathcal A'$ (Corollaries 1 and 2 of the source). Emptiness of an ADB is decidable in linear time (Proposition 12), and every regular language is the untimed language of an ADB whose delays are all $0$ (Proposition 2).
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

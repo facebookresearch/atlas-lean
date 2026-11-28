@@ -15,16 +15,18 @@ The number of players is fixed at $10$; the arena, the transition probabilities 
 already for the qualitative variant, which asks for a Nash equilibrium in which player $0$ wins almost surely. For PureNE the
 source strengthens the bound to $9$ players, by merging two players of the construction.
 
-By contrast, the problems for positional and for stationary profiles are decidable (in NP and in PSPACE,
-respectively), and PureFinNE is recursively enumerable.
+By contrast, for Streett–Rabin and Muller objectives the problems for positional and for stationary profiles are decidable (in NP and in PSPACE, respectively), and PureFinNE is recursively enumerable.
 
 ## Depends on
 
 - [Stochastic multiplayer games and the constrained Nash equilibrium problem](stochastic-multiplayer-games-and-the-constrained.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

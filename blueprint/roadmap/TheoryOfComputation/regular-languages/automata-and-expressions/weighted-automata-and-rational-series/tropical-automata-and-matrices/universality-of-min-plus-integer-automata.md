@@ -4,7 +4,7 @@ No algorithm decides, given a nondeterministic weighted automaton with integer w
 
 **Definitions.** A *$\mathbb{Z}$-weighted finite automaton* ($\mathbb{Z}$-WFA) over a finite alphabet $\Sigma$ is a nondeterministic finite automaton whose transitions carry weights in $\mathbb{Z}$, together with initial and final weights in $\mathbb{Z} \cup \{\infty\}$. The weight of a run is the sum of its initial weight, its transition weights and its final weight; the value $\mathcal{A}(w)$ of a word $w \in \Sigma^*$ is the minimum weight of an accepting run on $w$, and $\infty$ if there is none. This is a [weighted automaton](../weighted-automata-over-a-semiring.md) over the min-plus semiring $(\mathbb{Z} \cup \{\infty\}, \min, +, \infty, 0)$. The automaton is *complete* if every state has an outgoing transition on every letter. The *universality problem* asks, given a $\mathbb{Z}$-WFA $\mathcal{A}$ and a threshold $v \in \mathbb{Z}$, whether $\mathcal{A}(w) < v$ for every $w \in \Sigma^*$.
 
-**Theorem.** The universality problem for nondeterministic $\mathbb{Z}$-WFAs is undecidable, even for complete $\mathbb{Z}$-WFAs whose transition weights lie in $\{-1, 0, 1\}$ and with the fixed threshold $v = 1$.
+**Theorem.** The universality problem for nondeterministic $\mathbb{Z}$-WFAs is undecidable, even for complete $\mathbb{Z}$-WFAs whose transition weights lie in $\{-1, 0, 1\}$ and with the fixed threshold $v = 1$ (Theorem 4.1 of the source).
 
 The automata produced by the reduction moreover have all initial weights in $\{0, \infty\}$ and all final weights equal to $0$. The source states the problem with the strict inequality; since the weights are integers, the variants with $\le$ reduce to it. By contrast, universality is decidable when all weights are natural numbers.
 
@@ -12,6 +12,7 @@ The automata produced by the reduction moreover have all initial weights in $\{0
 
 - [Weighted automata over a semiring](../weighted-automata-over-a-semiring.md)
 - [Semirings and formal power series on a free monoid](../semirings-and-formal-power-series.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

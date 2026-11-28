@@ -24,7 +24,7 @@ counters with nonnegative coefficients and positive constant term. A one-counter
 positive and changes it by $-1$, $0$ or $+1$.
 
 The *decisiveness problem* asks, given a pCM, an initial configuration $s_0$ and a target set $A$, whether its Markov chain is decisive with respect to
-$s_0$ and $A$.
+$s_0$ and $A$. As an input, a pCM is given by its finite sets of states, counters and transitions together with the weight function: for a static pCM by its positive integer constants, for a polynomial pCM by the coefficients of its polynomials, and in general by a program computing $W$; a finite target set is listed explicitly.
 
 ## Depends on
 
@@ -36,4 +36,4 @@ None.
 
 ## Sources
 
-- A. Finkel, S. Haddad and L. Ye, "About decisiveness of dynamic probabilistic models", in *34th International Conference on Concurrency Theory (CONCUR 2023)*, LIPIcs 279, paper 14, 2023, doi:10.4230/LIPIcs.CONCUR.2023.14; read in arXiv:2305.19564v1: the section "Decisive Markov chains" (Markov chains and the definition of decisiveness), the section "Probabilistic counter machines" (the definition of pCMs, their Markov chain, static and polynomial pCMs) and the beginning of the section "Probabilistic safe one-counter machines".
+- A. Finkel, S. Haddad and L. Ye, "About decisiveness of dynamic probabilistic models", in *34th International Conference on Concurrency Theory (CONCUR 2023)*, LIPIcs 279, paper 14, 2023, doi:10.4230/LIPIcs.CONCUR.2023.14; read in arXiv:2305.19564v1: Section 2 ("Decisive Markov chains": Markov chains and Definition 6 of decisiveness), Section 3 ("Probabilistic counter machines": pCMs, Definition 11 of their Markov chain, static and polynomial pCMs) and the beginning of Section 4 ("Probabilistic safe one-counter machines"), with the numbering of that version.

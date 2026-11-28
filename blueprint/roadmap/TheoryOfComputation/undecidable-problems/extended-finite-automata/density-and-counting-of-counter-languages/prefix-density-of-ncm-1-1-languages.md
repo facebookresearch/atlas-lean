@@ -10,6 +10,7 @@ For deterministic machines the problem is decidable: prefix-density is decidable
 
 - [Reversal-bounded counter machines](reversal-bounded-counter-machines.md)
 - [Prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-and-infix-dense-languages.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ Each class $\mathrm{NCM}(k, l)$ is effectively closed under reversal, and $\math
 
 ## Sources
 
-- J. Eremondi, O. H. Ibarra and I. McQuillan, "On the Density of Context-Free and Counter Languages", *International Journal of Foundations of Computer Science* 29(2):233–250, 2018, doi:[10.1142/S0129054118400051](https://doi.org/10.1142/S0129054118400051); numbering of arXiv:1903.03001v1: the corollary on prefix-density of $\mathrm{NCM}(1,1)$ in Section 3 with its proof, and the decidability results for prefix-density of $\mathrm{DCM}$ and $\mathrm{DPDA}$ languages in the same section.
+- J. Eremondi, O. H. Ibarra and I. McQuillan, "On the Density of Context-Free and Counter Languages", *International Journal of Foundations of Computer Science* 29(2):233–250, 2018, doi:[10.1142/S0129054118400051](https://doi.org/10.1142/S0129054118400051); numbering of arXiv:1903.03001v1: Corollary 4 (prefix-density of $\mathrm{NCM}(1,1)$) in Section 3 with its proof, and Corollary 2 and Proposition 2 (decidability of prefix-density for $\mathrm{DCM}$ and $\mathrm{DPDA}$ languages) in the same section.

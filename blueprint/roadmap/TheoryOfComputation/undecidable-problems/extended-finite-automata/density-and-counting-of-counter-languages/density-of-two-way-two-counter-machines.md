@@ -12,6 +12,8 @@ By contrast, density is decidable for unary two-way nondeterministic finite auto
 
 - [Reversal-bounded counter machines](reversal-bounded-counter-machines.md)
 - [Prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-and-infix-dense-languages.md)
+- [Deterministic two-way automaton](../../../regular-languages/automata-and-expressions/two-way-finite-automata/two-way-dfa.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -19,7 +21,7 @@ None.
 
 ## Expansion
 
-If a family of languages has undecidable emptiness and is closed under right marked concatenation with regular languages, density is undecidable for it: for a new letter $\natural$, the language $L\natural(\Sigma \cup \{\natural\})^*$ is dense exactly when $L$ is nonempty (Proposition 7). The family of $2\mathrm{DCM}(2)$ languages has this closure property, and its emptiness problem is undecidable already for machines accepting letter-bounded languages, a result of Ibarra that has no page here; a good expansion links it.
+If a family of languages has undecidable emptiness and is closed under right marked concatenation with regular languages, density is undecidable for it: for a new letter $\natural$, the language $L\natural(\Sigma \cup \{\natural\})^*$ is dense exactly when $L$ is nonempty (Proposition 7). The family of $2\mathrm{DCM}(2)$ languages has this closure property, and its emptiness problem is undecidable already for machines accepting letter-bounded languages, a result of Ibarra; a good expansion links it.
 
 ## Sources
 

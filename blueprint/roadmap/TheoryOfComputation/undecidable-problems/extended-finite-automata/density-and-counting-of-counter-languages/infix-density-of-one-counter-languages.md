@@ -10,6 +10,7 @@ With a reversal bound the problem becomes decidable, even for pushdown automata:
 
 - [Reversal-bounded counter machines](reversal-bounded-counter-machines.md)
 - [Prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-and-infix-dense-languages.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ With $T$ and $L_{na}$ as for suffix-density (computations of a fixed Turing mach
 
 ## Sources
 
-- J. Eremondi, O. H. Ibarra and I. McQuillan, "On the Density of Context-Free and Counter Languages", *International Journal of Foundations of Computer Science* 29(2):233–250, 2018, doi:[10.1142/S0129054118400051](https://doi.org/10.1142/S0129054118400051); numbering of arXiv:1903.03001v1: the proposition on infix-density of $\mathrm{NCA}$ languages in Section 3 with its proof, and the decidability of infix-density for reversal-bounded $\mathrm{NPDA}$ languages (a later proposition of the same section, after the one on $\mathrm{DPDA}$ languages).
+- J. Eremondi, O. H. Ibarra and I. McQuillan, "On the Density of Context-Free and Counter Languages", *International Journal of Foundations of Computer Science* 29(2):233–250, 2018, doi:[10.1142/S0129054118400051](https://doi.org/10.1142/S0129054118400051); numbering of arXiv:1903.03001v1: Proposition 8 (infix-density of $\mathrm{NCA}$ languages) in Section 3 with its proof, and Proposition 10 (decidability of infix-density for reversal-bounded $\mathrm{NPDA}$ languages) in the same section.

@@ -8,7 +8,7 @@ different questions.
 a finite transition relation $\delta \subseteq Q \times \Sigma \times \mathbb{Z} \times Q$ and accepting states $F \subseteq Q$. Configurations are pairs $(s, v) \in Q \times \mathbb{N}$, and
 $(s, v) \xrightarrow{\sigma} (s', v + d)$ for a transition $(s, \sigma, d, s')$ provided $v + d \ge 0$. A word is accepted from initial counter $c$ if some run on it
 from $(s_0, c)$ ends in an accepting state; $\mathcal{L}(\mathcal{A}, c)$ is the set of such words, and $\mathcal{L}(\mathcal{A}, c) \subseteq \mathcal{L}(\mathcal{A}, c')$ when $c \le c'$. The net is
-*deterministic* (a DOCN) if every state and letter have at most one outgoing transition.
+*deterministic* (a DOCN) if every state and letter have at most one outgoing transition. As an input, an OCN is given by its finite tables, with each effect $d$ written as an integer.
 
 **Determinization notions.** For an OCN $\mathcal{A}$:
 
@@ -30,4 +30,4 @@ None.
 
 ## Sources
 
-- S. Almagor and A. Yeshurun, "Determinization of one-counter nets", in *33rd International Conference on Concurrency Theory (CONCUR 2022)*, LIPIcs 243, paper 18, 2022, doi:10.4230/LIPIcs.CONCUR.2022.18; read in arXiv:2112.13716v1: Section 1 (the four determinization notions), Section 2 (one-counter nets, runs and languages) and Section 3 (the observation on implications and the separating examples).
+- S. Almagor and A. Yeshurun, "Determinization of one-counter nets", in *33rd International Conference on Concurrency Theory (CONCUR 2022)*, LIPIcs 243, paper 18, 2022, doi:10.4230/LIPIcs.CONCUR.2022.18; read in arXiv:2112.13716v1: Section 1 (the four determinization notions), Section 2 (one-counter nets, runs and languages) and Section 3 (Observation 1 on implications and Lemma 2 with the separating examples), with the numbering of that version.

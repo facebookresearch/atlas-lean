@@ -10,6 +10,7 @@ In contrast, suffix-density is decidable for $\mathrm{DCM}(1, 1)$, because the s
 
 - [Reversal-bounded counter machines](reversal-bounded-counter-machines.md)
 - [Prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-and-infix-dense-languages.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ Fix a deterministic Turing machine $Z$ accepting a unary recursively enumerable 
 
 ## Sources
 
-- J. Eremondi, O. H. Ibarra and I. McQuillan, "On the Density of Context-Free and Counter Languages", *International Journal of Foundations of Computer Science* 29(2):233–250, 2018, doi:[10.1142/S0129054118400051](https://doi.org/10.1142/S0129054118400051); numbering of arXiv:1903.03001v1: the proposition on suffix-density in Section 3 (stated for $\mathrm{DCM}(1,3)$, $\mathrm{DCM}(2,1)$ and $\mathrm{NCM}(1,1)$) with its proof, the lemmas on $Z$, $T$ and $L_{na}$ before it, and the decidability results for $\mathrm{DCM}(1,1)$ and for prefix-density in the same section.
+- J. Eremondi, O. H. Ibarra and I. McQuillan, "On the Density of Context-Free and Counter Languages", *International Journal of Foundations of Computer Science* 29(2):233–250, 2018, doi:[10.1142/S0129054118400051](https://doi.org/10.1142/S0129054118400051); numbering of arXiv:1903.03001v1: Proposition 7 (suffix-density) in Section 3 (stated for $\mathrm{DCM}(1,3)$, $\mathrm{DCM}(2,1)$ and $\mathrm{NCM}(1,1)$) with its proof, Lemmas 1 and 2 (on $Z$, $T$ and $L_{na}$) before it, and Corollary 3 (decidability for $\mathrm{DCM}(1,1)$) and Corollary 2 and Proposition 2 (prefix-density) in the same section.

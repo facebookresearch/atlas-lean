@@ -4,15 +4,15 @@ For finite game graphs in which several players with private observations move a
 
 **Game graphs.** There are players $1, \dots, n$ and an agent Nature. Each player $i$ has a finite set $A^i$ of actions and a finite set $B^i$ of observations. A *game graph* $G = (V, E, (\beta^i)_i)$ has a finite set $V$ of states, an initial state $v_0$ known to all players, moves $E \subseteq V \times A \times V$ labeled by action profiles (every state has a move for every profile) and observation functions $\beta^i \colon V \to B^i$. In each round every player chooses an action, Nature chooses a successor along a move with that action profile, and every player $i$ receives the observation $\beta^i$ of the new state. A *history* is a finite sequence $v_0 a_1 v_1 \cdots a_\ell v_\ell$ of states and action profiles following the moves. Player $i$ cannot distinguish histories $\pi \sim^i \pi'$ with the same sequence of own actions and observations $\beta^i(v_0)\, a^i_1\, \beta^i(v_1) \cdots$.
 
-**Common knowledge of the state.** For a set $F$ of histories, player $i$ knows $F$ at $\pi$ if every $\pi' \sim^i \pi$ lies in $F$, and $F$ is common knowledge at $\pi$ if $\pi$ belongs to every iterate $K^{i_1}(K^{i_2}(\cdots K^{i_k}(F)))$ of these knowledge operators. The players *attain common knowledge of the state* at $\pi$ if the set of histories that end at the same state as $\pi$ is common knowledge at $\pi$. A history is *within* $S \subseteq V$ if all its states lie in $S$.
+**Common knowledge of the state.** For a set $F$ of histories, player $i$ knows $F$ at $\pi$ if every $\pi' \sim^i \pi$ lies in $F$, and $F$ is common knowledge at $\pi$ if $\pi$ belongs to every iterate $K^{i_1}(K^{i_2}(\cdots K^{i_k}(F)))$ of these knowledge operators. The players *attain common knowledge of the state* at $\pi$ if the set of histories that end at the same state as $\pi$ is common knowledge at $\pi$. A history is *within* $S \subseteq V$ if all its states lie in $S$, and it is *nontrivial* if it has length $\ell \ge 1$, that is, it is not the history $v_0$ consisting of the initial state alone.
 
-**Theorem (Berwanger and Mathew).** It is undecidable whether, for a given game graph and a designated subset $S$ of states, there is a nontrivial history within $S$ at which the players attain common knowledge of the state.
+**Theorem (Berwanger and Mathew).** It is undecidable whether, for a given game graph and a designated subset $S$ of states, there is a nontrivial history within $S$ at which the players attain common knowledge of the state (Proposition 4.3 of the source). The number $n$ of players is part of the game graph; the reduction, from the undecidable universality problem for corridor tilings, already uses two players.
 
 Whether the players attain common knowledge of the state at a given history is PSPACE-complete, and whether a game allows recurring common knowledge of the state (common knowledge of the state infinitely often along every play) is decidable, as the same paper shows.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-The proof reduces the corridor universality problem for domino systems, undecidable by results of van Emde Boas and of Latteux and Simplot, which has no page here: from a domino system with a designated set of dominoes one builds a game graph and a set $S$ of states such that the players attain common knowledge of the state at some nontrivial history within $S$ if and only if some frontier constraint admits no corridor tiling, the observations along the history spelling such a constraint.
+The proof reduces the corridor universality problem for domino systems, undecidable by results of van Emde Boas and of Latteux and Simplot: from a domino system with a designated set of dominoes one builds a game graph and a set $S$ of states such that the players attain common knowledge of the state at some nontrivial history within $S$ if and only if some frontier constraint admits no corridor tiling, the observations along the history spelling such a constraint.
 
 ## Sources
 

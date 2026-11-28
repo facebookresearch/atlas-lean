@@ -3,14 +3,18 @@
 No algorithm decides whether a two-dimensional counter net is prime, that is, whether its language is not an intersection of one-counter-net languages, nor whether some one-counter net accepts the same language.
 
 **Theorem.** The following problems are undecidable, already for $2$-dimensional [counter nets](counter-nets.md):
-1. (*primality*) given a $k$-CN $\mathcal A$, is $\mathcal A$ prime?
+1. (*primality*) given a $k$-CN $\mathcal A$, is $\mathcal A$ [prime](prime-and-dimension-minimal-counter-nets.md)?
 2. (*dimension-minimality*) given a $k$-CN $\mathcal A$, is $\mathcal A$ dimension-minimal?
+
+(Theorem 2 of the source.)
 
 For $1$-dimensional counter nets both problems are undecidable for a simpler reason: there, compositeness and dimension-minimality ask whether the language is regular, which is undecidable for one-counter nets. The point of the theorem is that undecidability persists when the lower dimension is not the degenerate dimension $0$. In contrast, regularity of deterministic $k$-CNs is decidable (from the same source).
 
 ## Depends on
 
 - [Counter nets](counter-nets.md)
+- [Prime and dimension-minimal counter nets](prime-and-dimension-minimal-counter-nets.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

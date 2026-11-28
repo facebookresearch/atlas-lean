@@ -14,6 +14,7 @@ self-affine attractor equals $[0, 1]^d$.
 ## Depends on
 
 - [Multi-tape automata on infinite words](multi-tape-automata-on-infinite-words.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

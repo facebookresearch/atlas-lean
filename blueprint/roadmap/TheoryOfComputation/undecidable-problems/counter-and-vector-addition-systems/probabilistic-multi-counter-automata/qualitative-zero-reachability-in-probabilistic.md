@@ -11,13 +11,14 @@ For probabilistic multi-counter automata, deciding whether a run almost surely r
 1. some $\varrho \in \mathcal{Z}$ has more than one element, or
 2. there are distinct counters $i, j$ with $\{i, j\} \cap \varrho = \varnothing$ for every $\varrho \in \mathcal{Z}$.
 
-Then the qualitative $\mathcal{Z}$-reachability problem is undecidable, even for instances in which the probability of being stopped is either $0$ or $1$. Hence that probability cannot be computed up to an absolute error smaller than $0.5$.
+Then the qualitative $\mathcal{Z}$-reachability problem is undecidable, even for instances in which the probability of being stopped is either $0$ or $1$. Hence that probability cannot be computed up to an absolute error smaller than $0.5$ (Observation 1 of the source).
 
 The two stopping criteria not covered, $\{\{1\}, \dots, \{d\}\}$ (stop when some counter is zero) and that set with one singleton removed, are analyzed separately in the same paper.
 
 ## Depends on
 
 - [Probabilistic counter machines and decisiveness](../decisiveness-of-probabilistic-counter-systems/probabilistic-counter-machines-and-decisiveness.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

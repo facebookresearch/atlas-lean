@@ -8,7 +8,7 @@ between two given thresholds.
 vertices, pairwise disjoint sets $V_i \subseteq V$ of vertices *controlled* by player $i \in \Pi$ (the remaining vertices are
 *stochastic*), a set of edges in which every vertex has at least one successor, a rational probability distribution on the
 successors of each stochastic vertex, a coloring $\chi : V \to C$ into a finite set of colors, and for each player $i$ an
-objective $\mathrm{Win}_i \subseteq C^\omega$. A *play* is an infinite path; player $i$ *wins* it if its sequence of colors
+objective $\mathrm{Win}_i \subseteq C^\omega$. As inputs, objectives are given in one of the standard finite forms over the colors: a parity condition (a priority for each color), a finite set of Streett or Rabin pairs $(F, G)$ of color sets, or a Muller condition (a family of accepting color sets); any $\omega$-regular objective reduces to these by a product with a deterministic word automaton (Section 2 of the source). The undecidability results already hold for terminal reachability objectives, given by the sets $F_i$. A *play* is an infinite path; player $i$ *wins* it if its sequence of colors
 lies in $\mathrm{Win}_i$. An *initialised* SMG $(\mathcal{G}, v_0)$ fixes an initial vertex. A *terminal* vertex $v$ has itself
 as its only successor. A *simple stochastic multiplayer game* (SSMG) is an SMG in which every vertex is colored by itself and
 every objective is a *terminal reachability* objective: reach a given set $F_i$ of terminal vertices.
@@ -36,7 +36,7 @@ the complementary objective, is a [stochastic reachability game](../../quantitat
 
 ## Depends on
 
-None.
+- [Arenas, strategies and memory structures](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
 
 ## Proof depends on
 

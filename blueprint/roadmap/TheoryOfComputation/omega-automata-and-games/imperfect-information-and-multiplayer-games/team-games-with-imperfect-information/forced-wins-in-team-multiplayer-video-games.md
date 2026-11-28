@@ -4,18 +4,16 @@ Whether a team has a forced win is undecidable in a graph game with two teams, t
 
 **Team graph game.** An instance consists of a directed graph $G=(V,E)$ with edge weights in $\mathbb N$ (traversal times), start nodes $s_r,s_b$ for a red and a blue team and a win node $w$, a directed visibility relation $S\subseteq V^2$, an attack relation $A\subseteq V^2$, and numbers $n_r,n_b$ of players. The game starts with $n_r$ red tokens at $s_r$ and $n_b$ blue tokens at $s_b$ and proceeds in frames: in each frame all active players simultaneously choose a neighboring node to move towards, or to stay, and then every player learns the position and team of each token it can see. A player crossing an edge guarded by an enemy at an attacking node is eliminated. A team wins if all enemy tokens are eliminated or one of its tokens reaches $w$. A team has a *forced win* if its members have strategies, each depending only on what that member has seen, that guarantee a win.
 
-**Theorem (Coulombe and Lynch).**
+**Theorem (Coulombe and Lynch).** There is a computable map $h$ from instances $D$ of the [team DFA game](the-team-dfa-game-and-its-communication-variant.md) to instances of the team graph game such that the existential team has a forced win on $D$ if and only if the blue team has a forced win on $h(D)$ (Theorem 3); hence it is undecidable whether the blue team has a forced win in the team graph game (Corollary 4).
 
-1. There is a computable map $h$ from instances $D$ of the [team DFA game](the-team-dfa-game-and-its-communication-variant.md) to instances of the team graph game such that the existential team has a forced win on $D$ if and only if the blue team has a forced win on $h(D)$ (Theorem 3); hence it is undecidable whether the blue team has a forced win in the team graph game (Corollary 4).
-2. In a generalized Super Smash Bros. match between two teams of Pikachus on some stage, it is undecidable whether Player 1's team has a forced win (Theorem 5).
-3. In generalized Mario Kart Balloon Battle with the Bob-ombs Only item distribution, it is undecidable whether the blue team has a forced win (Theorem 6).
-4. Team Fortress 2, in a king-of-the-hill match with unlimited time and default loadouts, simulates the team graph game exactly, so whether a team has a forced win is undecidable there too (Section 4.1).
+The same paper realizes the team graph game in video games, which are therefore undecidable as well: in a generalized Super Smash Bros. match between two teams of Pikachus on some stage, it is undecidable whether Player 1's team has a forced win (Theorem 5); in generalized Mario Kart Balloon Battle with the Bob-ombs Only item distribution, it is undecidable whether the blue team has a forced win (Theorem 6); and Team Fortress 2, in a king-of-the-hill match with unlimited time and default loadouts, simulates the team graph game directly (Section 4.1).
 
 In all these games the map size and the number of players are unbounded, and team members cannot communicate except through their actions in the game: they are not co-located, see only their own screens, and all chat is disabled. The source also shows that the team DFA game and the team computation game of Hearn and Demaine reduce to each other (Lemma 7). The undecidability holds although each game instance has a bounded configuration space.
 
 ## Depends on
 
 - [The team DFA game and its communication variant](the-team-dfa-game-and-its-communication-variant.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

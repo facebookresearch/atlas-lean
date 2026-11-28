@@ -4,9 +4,9 @@ No algorithm decides whether the first player of a finite mean-payoff game with 
 
 A *mean-payoff game with partial observation* is a tuple $G=(Q,q_I,\Sigma,\Delta,w,\mathrm{Obs})$ with a finite set $Q$ of states, an initial state $q_I$, a finite set $\Sigma$ of actions, a total transition relation $\Delta\subseteq Q\times\Sigma\times Q$, integer weights $w$ on transitions, and a partition $\mathrm{Obs}$ of $Q$ into observations. In each round Eve chooses an action and Adam resolves the nondeterminism; Eve sees only the observations and plays *observation-based* strategies, which depend only on the sequence of observations and actions. For a play $\pi$, $\underline{\mathrm{MP}}(\pi)$ is the $\liminf$ of the average weights of its prefixes. The game has *limited observation* if $\{q_I\}$ is an observation and the $\sigma$-successors of an observation always form a union of observations.
 
-**Theorem.**
-1. Determining whether Eve has an observation-based strategy ensuring $\underline{\mathrm{MP}}\ge0$ in a mean-payoff game with partial observation is undecidable (Theorem 1); for the threshold $\underline{\mathrm{MP}}>0$ this was shown by Degorre, Doyen, Gentilini, Raskin and Toruńczyk.
-2. Determining whether a mean-payoff game with limited observation is *forcibly terminating*, i.e. whether the reachability game on abstract plays that the source associates with it is won by one of the players, is undecidable (Theorem 6).
+**Theorem.** Determining whether Eve has an observation-based strategy ensuring $\underline{\mathrm{MP}}\ge0$ in a mean-payoff game with partial observation is undecidable (Theorem 1 of the source); for the threshold $\underline{\mathrm{MP}}>0$ this was shown by Degorre, Doyen, Gentilini, Raskin and Toruńczyk.
+
+The source also shows that determining whether a mean-payoff game with limited observation is *forcibly terminating*, i.e. whether the reachability game on abstract plays that the source associates with it is won by one of the players, is undecidable (Theorem 6).
 
 Eve may need infinite memory to ensure $\underline{\mathrm{MP}}\ge0$, and these games are not determined under concrete strategies, though they are determined when Adam may play observation-based strategies (Theorem 2, for limited observation). Winning a forcibly terminating game is decidable, and the source identifies subclasses (forcibly first abstract cycle games, first abstract cycle games) whose membership and winner problems are decidable.
 
@@ -14,6 +14,7 @@ Eve may need infinite memory to ensure $\underline{\mathrm{MP}}\ge0$, and these 
 
 - [Arenas, strategies and memory structures](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
 - [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](../../quantitative-games/classical-quantitative-objectives.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,7 +22,7 @@ Eve may need infinite memory to ensure $\underline{\mathrm{MP}}\ge0$, and these 
 
 ## Expansion
 
-A mean-payoff game with limited observation can simulate a deterministic four-counter machine, and hence a Turing machine, so that Eve wins the associated reachability game iff the machine accepts and Adam wins it iff the machine rejects; this gives item 2. For item 1 the construction is adapted to two-counter machines: a pumping phase at the start, weights $0$ and $-1$ on its loops, and a sink observation for Adam at the halting state make Adam win, by exiting the pumping phase after $N$ steps and simulating faithfully, iff the machine halts within some $N$ steps; so Eve wins iff the machine does not halt.
+A mean-payoff game with limited observation can simulate a deterministic four-counter machine, and hence a Turing machine, so that Eve wins the associated reachability game iff the machine accepts and Adam wins it iff the machine rejects; this gives Theorem 6. For Theorem 1 the construction is adapted to two-counter machines: a pumping phase at the start, weights $0$ and $-1$ on its loops, and a sink observation for Adam at the halting state make Adam win, by exiting the pumping phase after $N$ steps and simulating faithfully, iff the machine halts within some $N$ steps; so Eve wins iff the machine does not halt.
 
 ## Sources
 

@@ -5,16 +5,17 @@ when the machine has a single state and a single counter with counter-dependent 
 
 **Theorem (Finkel, Haddad and Ye).** For [probabilistic counter machines](probabilistic-counter-machines-and-decisiveness.md):
 
-1. decisiveness with respect to a finite target set is undecidable for static pCMs;
-2. the decisiveness problem is undecidable for safe one-counter pCMs, even with a single control state.
+1. decisiveness with respect to a finite target set is undecidable for static pCMs (Theorem 12);
+2. the decisiveness problem is undecidable for safe one-counter pCMs, even with a single control state, the initial counter value $1$ and the target set $\{0\}$, the weights being given by a program computing them (Theorem 13).
 
-In the second case the weights depend on the counter value; for polynomial safe one-counter pCMs, decisiveness with respect to a finite set is
-decidable. The source also shows that decisiveness of probabilistic Petri nets with polynomial weights is undecidable when the target set is finite
+In the second case the weights depend on the counter value; for polynomial safe one-counter pCMs with a single state, decisiveness with respect to a finite set is
+decidable (Theorem 14). The source also shows that decisiveness of probabilistic Petri nets with polynomial weights is undecidable when the target set is finite
 or upward closed, whereas for constant weights Petri nets are decisive with respect to upward-closed sets.
 
 ## Depends on
 
 - [Probabilistic counter machines and decisiveness](probabilistic-counter-machines-and-decisiveness.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -30,4 +31,4 @@ otherwise the increment weight is at least twice the decrement weight everywhere
 
 ## Sources
 
-- A. Finkel, S. Haddad and L. Ye, "About decisiveness of dynamic probabilistic models", in *34th International Conference on Concurrency Theory (CONCUR 2023)*, LIPIcs 279, paper 14, 2023, doi:10.4230/LIPIcs.CONCUR.2023.14; read in arXiv:2305.19564v1: the theorem on static pCMs in the section "Probabilistic counter machines", the theorem on single-state safe one-counter pCMs in the section "Probabilistic safe one-counter machines" with its proof and the decidability theorem for polynomial ones after it, and the theorems of the section "Probabilistic Petri nets".
+- A. Finkel, S. Haddad and L. Ye, "About decisiveness of dynamic probabilistic models", in *34th International Conference on Concurrency Theory (CONCUR 2023)*, LIPIcs 279, paper 14, 2023, doi:10.4230/LIPIcs.CONCUR.2023.14; read in arXiv:2305.19564v1: Theorem 12 (static pCMs) in Section 3 ("Probabilistic counter machines") with Lemma 25 of the appendix, Theorem 13 (single-state safe one-counter pCMs) in Section 4.1 with its proof and Theorem 14 (polynomial ones) after it, and Theorem 20 and the remark on constant weights in Section 5 ("Probabilistic Petri nets"), with the numbering of that version.

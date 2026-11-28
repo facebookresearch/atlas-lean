@@ -10,6 +10,7 @@ The deterministic automaton needs an unrestricted pushdown: for reversal-bounded
 
 - [Deterministic pushdown automaton](../../../context-free-languages/grammars-and-pushdown-automata/deterministic-context-free-languages/is-deterministic.md)
 - [Prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-and-infix-dense-languages.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ With $T$ and $L_{na}(p)$ as for suffix-density, and $\Sigma_1 = \Sigma \cup \{\%
 
 ## Sources
 
-- J. Eremondi, O. H. Ibarra and I. McQuillan, "On the Density of Context-Free and Counter Languages", *International Journal of Foundations of Computer Science* 29(2):233–250, 2018, doi:[10.1142/S0129054118400051](https://doi.org/10.1142/S0129054118400051); numbering of arXiv:1903.03001v1: the proposition on infix-density of $\mathrm{DPDA}$ languages in Section 3 with its proof.
+- J. Eremondi, O. H. Ibarra and I. McQuillan, "On the Density of Context-Free and Counter Languages", *International Journal of Foundations of Computer Science* 29(2):233–250, 2018, doi:[10.1142/S0129054118400051](https://doi.org/10.1142/S0129054118400051); numbering of arXiv:1903.03001v1: Proposition 9 (infix-density of $\mathrm{DPDA}$ languages) in Section 3 with its proof.

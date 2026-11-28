@@ -9,6 +9,7 @@ For comparison, the source recalls that for one-way pushdown automata emptiness 
 ## Depends on
 
 - [Realtime alternating one-counter automata](realtime-alternating-one-counter-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

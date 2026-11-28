@@ -8,15 +8,15 @@ Conversely, for the class $\mathcal H$ of languages of higher-order pushdown aut
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-None.
+- [Coverability is decidable for well-structured transition systems](../../../../Logic/temporal-logic/timed-and-infinite-state-verification/coverability-is-decidable-for-well-structured.md)
 
 ## Expansion
 
-Decidability of intersection emptiness uses that reset VASS languages are closed under rational transductions and intersection and have a decidable emptiness problem, as reset VASS are well-structured transition systems (Lemmas 4.2 and 4.3). Regular separability is shown undecidable by reducing the infinity problem for $\mathcal R$, whether a reset VASS language is infinite, which is undecidable because boundedness of reset VASS is undecidable (Dufourd, Finkel and Schnoebelen). From $L \in \mathcal R$ one forms $K = \{1 0^{|w|} : w \in L\} \in \mathcal R$, so that $\nu(K)$ is a set of powers of $2$ that is infinite iff $L$ is; then $K_1 = a^{\nu(K)}$ and $K_2 = a^{\mathbb N \setminus 2^{\mathbb N}}$ lie in $\mathcal I$, they are disjoint, and they are regularly separable iff $K_1$ is finite (Lemmas 4.5 and 4.6), because every infinite regular subset of $a^*$ contains an arithmetic progression, which meets every interval between consecutive powers of $2$ once they are long enough.
+Decidability of intersection emptiness uses that reset VASS languages are closed under rational transductions and intersection and have a decidable emptiness problem, as reset VASS are well-structured transition systems (Lemmas 4.2 and 4.3). Regular separability is shown undecidable by reducing the infinity problem for $\mathcal R$, whether a reset VASS language is infinite, which is undecidable because boundedness of reset VASS is undecidable (Dufourd, Finkel and Schnoebelen); a good expansion links pages for these two undecidability results. From $L \in \mathcal R$ one forms $K = \{1 0^{|w|} : w \in L\} \in \mathcal R$, so that $\nu(K)$ is a set of powers of $2$ that is infinite iff $L$ is; then $K_1 = a^{\nu(K)}$ and $K_2 = a^{\mathbb N \setminus 2^{\mathbb N}}$ lie in $\mathcal I$, they are disjoint, and they are regularly separable iff $K_1$ is finite (Lemmas 4.5 and 4.6), because every infinite regular subset of $a^*$ contains an arithmetic progression, which meets every interval between consecutive powers of $2$ once they are long enough.
 
 ## Sources
 

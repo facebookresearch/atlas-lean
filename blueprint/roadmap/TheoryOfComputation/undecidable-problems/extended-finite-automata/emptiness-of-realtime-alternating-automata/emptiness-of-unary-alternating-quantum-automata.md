@@ -2,13 +2,14 @@
 
 No algorithm decides, given a realtime alternating quantum finite automaton over a one-letter alphabet, whether it accepts some input.
 
-**Theorem.** The emptiness problem for realtime [alternating quantum finite automata](alternating-quantum-finite-automata.md) over unary alphabets is undecidable: there is no algorithm that, given an AQFA $R$ with input alphabet $\{a\}$, decides whether $R$ accepts some word $a^m$.
+**Theorem.** The emptiness problem for realtime [alternating quantum finite automata](alternating-quantum-finite-automata.md) over unary alphabets is undecidable: there is no algorithm that, given an AQFA $R$ with input alphabet $\{a\}$, decides whether $R$ accepts some word $a^m$. Instances are finite: the entries of the operation elements are algebraic numbers, each given by its minimal polynomial over $\mathbb Q$ and an isolating interval (the source states the theorem without fixing the amplitudes; its examples, as in Theorem 4.3, use rational entries).
 
 Unary NQFAs and UQFAs recognize only regular languages, so the undecidability comes from combining the two kinds of branching.
 
 ## Depends on
 
 - [Alternating quantum finite automata](alternating-quantum-finite-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -19,6 +19,8 @@ reversals that accept letter-bounded languages, and stay undecidable for such au
 
 - [Multi-head finite automata](multi-head-finite-automata.md)
 - [Context-free languages](../../../context-free-languages/grammars-and-pushdown-automata/context-free-languages.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
