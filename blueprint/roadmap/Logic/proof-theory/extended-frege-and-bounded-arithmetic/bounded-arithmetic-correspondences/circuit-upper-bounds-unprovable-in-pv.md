@@ -23,10 +23,11 @@ The proof adapts the Santhanam–Williams theorem that $\mathsf P$ has no polyno
 ## Depends on
 
 - [The class P](../../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)
+- [Cook's theory PV of polynomial-time reasoning](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/meta-complexity-barriers-and-unprovability/bounded-arithmetic-and-witnessing/cooks-theory-pv.md)
 
 ## Proof depends on
 
-None.
+- [The KPT witnessing theorem](../../../../TheoryOfComputation/hierarchy-theorems-and-barriers/meta-complexity-barriers-and-unprovability/bounded-arithmetic-and-witnessing/kpt-witnessing-theorem.md)
 
 ## Sources
 
