@@ -10,6 +10,10 @@ $$p(n\boldsymbol e_a; \theta) = \pi_a\Bigl(1 - \theta(1 - P_{aa})\sum_{l=1}^{n-1
 
 (their equation (7)). In particular, for every $n$ a stationary sample is, with probability tending to $\pi_a$, monomorphic of type $a$. The following consequence is derived here: since the sampling probabilities are the moments $\binom{n}{\boldsymbol n}E[X_1^{n_1}\cdots X_d^{n_d}]$ of the stationary law (their equation (2)), and these moments determine a law on the simplex, the stationary law converges weakly as $\theta \to 0$ to $\sum_a\pi_a\delta_{\boldsymbol e_a}$, the law that puts mass $\pi_a$ on the population fixed for type $a$. For two alleles this is the limit $p_0\,\delta_0 + p_1\,\delta_1$ of the stationary frequency of one type, with weights given by the stationary distribution $\pi$ of the $2 \times 2$ matrix $P$.
 
+## Depends on
+
+- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](k-allele-wright-fisher-generator-on-the-simplex.md)
+
 ## Expansion
 
 1. The neutral $d$-allele diffusion (1), its stationary sampling probabilities (2) and their recursion.

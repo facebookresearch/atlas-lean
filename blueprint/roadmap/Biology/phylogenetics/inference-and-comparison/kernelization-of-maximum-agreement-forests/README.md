@@ -5,4 +5,3 @@ A maximum agreement forest of a set of phylogenetic trees partitions the taxa in
 - [Linear kernel for maximum agreement forest on multiple trees](linear-kernel-for-maximum-agreement-forest-on-multiple-trees.md)
 - [Fixed-parameter tractability of the rooted SPR distance](rooted-spr-distance-equals-maximum-agreement-forest.md)
 - [Unrooted SPR distance and the maximum agreement forest number](tbr-distance-equals-maximum-agreement-forest.md)
-- [Maximum agreement subtree of two trees in polynomial time](maximum-agreement-subtree-of-two-leaf-labelled-trees-in-polynomial-tim.md)

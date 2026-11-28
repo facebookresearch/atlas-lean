@@ -15,5 +15,6 @@
 - [Minimum-recombinant haplotyping](minimum-recombinant-haplotyping/README.md)
 - [Phase-aware fetal aneuploidy detection](phase-aware-fetal-aneuploidy-detection/README.md)
 - [Chain reduction of pedigree selectors](chain-reduction-of-pedigree-selectors.md)
+- [IBD detection from imputed haplotype dosages](ibd-detection-from-imputed-haplotype-dosages/README.md)
 - [Holmans' possible triangle for affected sib pairs](holmans-possible-triangle-for-affected-sib-pair-ibd-sharing.md)
 - [Negative range of the Kong–Cox linear allele-sharing parameter](kong-cox-allele-sharing-lod-scores.md)

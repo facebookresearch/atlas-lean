@@ -25,5 +25,4 @@
 - [Fleming–Viot processes with varying population size](fleming-viot-processes-with-varying-population-size/README.md)
 - [Grapheme-valued Wright–Fisher diffusion](grapheme-valued-wright-fisher-diffusion/README.md)
 - [Smoothing distributions of measure-valued population diffusions](smoothing-distributions-of-measure-valued-population-diffusions/README.md)
-- [Duality between Fleming–Viot processes and coalescents](fleming-viot-coalescent-duality.md)
-- [The lookdown construction: almost-sure path convergence to the Fleming–Viot process](lookdown-construction.md)
+- [Lambda/Xi Fleming–Viot and Poisson–Dirichlet models](lambda-xi-fleming-viot-and-poisson-dirichlet-models/README.md)

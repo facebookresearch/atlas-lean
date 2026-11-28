@@ -54,12 +54,13 @@
 - [Structured coalescent for background selection with recombination](structured-coalescent-for-background-selection-with-recombination.md)
 - [Time-dependent isolation–migration model fitted to coalescence rates](time-dependent-isolation-migration-fit-to-coalescence-rates.md)
 - [IBD block sharing under spatial diffusion](ibd-block-sharing-under-spatial-diffusion/README.md)
+- [Coalescence time of coalescing random walks on graphs](coalescence-time-of-coalescing-random-walks-on-graphs/README.md)
+- [Coalescence time of reversible random walks](coalescence-time-of-reversible-random-walks/README.md)
 
 ## Further structured ancestral models
 
 - [Genealogies of samples from a large torus](large-space-genealogical-limits.md)
 - [Genealogies within a fixed pedigree](fixed-pedigree-versus-averaged-genealogy.md)
-- [The coalescent with separate sexes](coalescent-limit-with-separate-sexes.md)
 - [Genealogies at unlinked loci are conditionally independent given the pedigree](unlinked-does-not-mean-universally-independent.md)
 - [Backward migration probabilities from forward migration and deme sizes](backward-versus-forward-migration.md)
 - [Distribution of the pairwise coalescence time in the island model](island-coalescence-time-distribution.md)

@@ -10,21 +10,32 @@ module
 
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
+import Mathlib.Algebra.Ring.Parity
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring.Basic
+import MathlibExt.NumberTheory.FermatPolygonal
 
 /-!
 # Multiplicative functions additive on sums of two positive triangular numbers
 
-Park's identity and vanishing lemmas follow by evaluating small integers
-as sums of admissible summands and as products of coprime factors.
+Park's theorem classifies multiplicative complex-valued arithmetic functions `f` satisfying
+`f (a + b) = f a + f b` whenever both `a` and `b` are sums of two positive triangular numbers.
+It yields the identity or vanishing outside `{1, 3, 5}` with `f 3 * f 5 = 0`. The natural-number
+formulation includes `0`, where arithmetic functions vanish by definition.
+The small-value lemmas evaluate sums of admissible summands and products of coprime factors.
 
 ## References
 
 * Poo-Sung Park, *Multiplicative Functions Additive on the Sums of Two Positive Triangular
   Numbers*, Journal of Integer Sequences 28 (2025), Article 25.4.8, pp. 1–6,
-  Lemmas 2–5. <https://cs.uwaterloo.ca/journals/JIS/VOL28/Park/park10.html>
+  Theorem 1 and Lemmas 2–5. <https://cs.uwaterloo.ca/journals/JIS/VOL28/Park/park10.html>
+* Gauss's three-triangular-number theorem, stated in the introduction to Melvyn B. Nathanson,
+  *A Short Proof of Cauchy's Polygonal Number Theorem*, Proceedings of the American Mathematical
+  Society 99 (1987), pp. 22–24. We use `Nat.exists_eq_add_add_triangular` from
+  `MathlibExt.NumberTheory.FermatPolygonal`.
+* The auxiliary bound `small_triangular_sums` comes from the original tests in
+  `MathlibExtTest.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditive`.
 -/
 
 @[expose] public section
@@ -233,5 +244,98 @@ theorem multiplicative_additive_on_sum_two_triangular_eq_id_le_21
   · exact sum_id t7 t12 h7 h12
   · exact mul_id (by decide) h4 h5
   · exact mul_id (by decide) h3 h7
+
+private theorem small_triangular_sums {n : ℕ} (hn : IsSumTwoPositiveTriangular n) :
+    n = 2 ∨ n = 4 ∨ 6 ≤ n := by
+  obtain ⟨a, b, ha, hb, hab⟩ := hn
+  have gap (k : ℕ) (hk : 1 ≤ k) :
+      k * (k + 1) = 2 ∨ k * (k + 1) = 6 ∨ 12 ≤ k * (k + 1) := by
+    have cases : k = 1 ∨ k = 2 ∨ 3 ≤ k := by omega
+    rcases cases with rfl | rfl | h
+    · decide
+    · decide
+    · exact Or.inr (Or.inr (Nat.mul_le_mul h (Nat.succ_le_succ h)))
+  rcases gap a ha with ha | ha | ha <;> rcases gap b hb with hb | hb | hb <;> omega
+
+private theorem exists_add_of_gt_twenty_one {n : ℕ} (hn : 21 < n) :
+    ∃ a b, IsSumTwoPositiveTriangular a ∧ IsSumTwoPositiveTriangular b ∧ n = a + b := by
+  let t := Nat.polygonalNumber 3
+  have pair {i j : ℕ} (hi : i ≠ 0) (hj : j ≠ 0) :
+      IsSumTwoPositiveTriangular (t i + t j) := by
+    refine ⟨i, j, by omega, by omega, ?_⟩
+    change 2 * (Nat.polygonalNumber 3 i + Nat.polygonalNumber 3 j) = _
+    rw [Nat.mul_add, Nat.polygonalNumber_three, Nat.polygonalNumber_three,
+      Nat.mul_div_cancel' (Nat.two_dvd_mul_add_one i),
+      Nat.mul_div_cancel' (Nat.two_dvd_mul_add_one j)]
+  have pack (i j k l : ℕ) (hi : i ≠ 0) (hj : j ≠ 0) (hk : k ≠ 0) (hl : l ≠ 0)
+      (he : n = t i + t j + (t k + t l)) :
+      ∃ a b, IsSumTwoPositiveTriangular a ∧ IsSumTwoPositiveTriangular b ∧ n = a + b :=
+    ⟨_, _, pair hi hj, pair hk hl, he⟩
+  -- Replace 21 and any zero summands with 21, 6 + 15, or 1 + 10 + 10.
+  have padTwo {i : ℕ} (hi : i ≠ 0) (he : n = t i + 21) :
+      ∃ a b, IsSumTwoPositiveTriangular a ∧ IsSumTwoPositiveTriangular b ∧ n = a + b := by
+    have h21 : t 1 + (t 4 + t 4) = 21 := by decide
+    exact pack i 1 4 4 hi (by decide) (by decide) (by decide) (by omega)
+  have padOne {i j : ℕ} (hi : i ≠ 0) (hj : j ≠ 0) (he : n = t i + t j + 21) :
+      ∃ a b, IsSumTwoPositiveTriangular a ∧ IsSumTwoPositiveTriangular b ∧ n = a + b := by
+    have h21 : t 3 + t 5 = 21 := by decide
+    exact pack i j 3 5 hi hj (by decide) (by decide) (by omega)
+  obtain ⟨x, y, z, h⟩ := Nat.exists_eq_add_add_triangular (n - 21)
+  have hs : n = t x + t y + t z + 21 := by
+    change n - 21 = t x + t y + t z at h
+    omega
+  have ht0 : t 0 = 0 := Nat.polygonalNumber_zero 3
+  rcases eq_or_ne x 0 with rfl | hx <;> rcases eq_or_ne y 0 with rfl | hy <;>
+    rcases eq_or_ne z 0 with rfl | hz <;> (try simp only [ht0, zero_add, add_zero] at hs)
+  · omega
+  · exact padTwo hz hs
+  · exact padTwo hy hs
+  · exact padOne hy hz hs
+  · exact padTwo hx hs
+  · exact padOne hx hz hs
+  · exact padOne hx hy hs
+  · have h21 : t 6 = 21 := by decide
+    exact pack x y z 6 hx hy hz (by decide) (by omega)
+
+/-- **Park's theorem on multiplicative functions additive on sums of two triangular numbers.**
+Let $f$ be a multiplicative arithmetic function with values in $\mathbb{C}$ (so $f$ is defined on
+the natural numbers with $f(0) = 0$) such that $f(a + b) = f(a) + f(b)$ whenever $a$ and $b$ are
+both sums of two positive triangular numbers. Then either $f(n) = n$ for every natural number
+$n$, or $f(n) = 0$ for every natural number $n \notin \{1, 3, 5\}$ and $f(3) f(5) = 0$.
+
+Source: Poo-Sung Park, "Multiplicative Functions Additive on the Sums
+of Two Positive Triangular Numbers", Theorem 1 (TeX label `thm1`). -/
+theorem multiplicative_additive_on_sum_two_triangular_classification
+    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
+    (hadd : ∀ a b : ℕ, IsSumTwoPositiveTriangular a →
+      IsSumTwoPositiveTriangular b → f (a + b) = f a + f b) :
+    (∀ n : ℕ, f n = (n : ℂ)) ∨
+      ((∀ n : ℕ, n ≠ 1 ∧ n ≠ 3 ∧ n ≠ 5 → f n = 0) ∧ f 3 * f 5 = 0) := by
+  by_cases hf2 : f 2 = 0
+  · obtain ⟨h35, hsmall⟩ := small_values_of_two_eq_zero f hf hadd hf2
+    refine Or.inr ⟨?_, h35⟩
+    intro n
+    induction n using Nat.strong_induction_on with
+    | ind n ih =>
+      rintro ⟨hn1, hn3, hn5⟩
+      by_cases hn : n ≤ 21
+      · rcases eq_or_ne n 0 with rfl | hn0
+        · exact f.map_zero
+        · exact hsmall n (by omega) hn hn3 hn5
+      · obtain ⟨a, b, ha, hb, rfl⟩ := exists_add_of_gt_twenty_one (by omega : 21 < n)
+        have ha' := small_triangular_sums ha
+        have hb' := small_triangular_sums hb
+        rw [hadd a b ha hb, ih a (by omega) ⟨by omega, by omega, by omega⟩,
+          ih b (by omega) ⟨by omega, by omega, by omega⟩, add_zero]
+  · refine Or.inl ?_
+    intro n
+    induction n using Nat.strong_induction_on with
+    | ind n ih =>
+      by_cases hn : n ≤ 21
+      · exact multiplicative_additive_on_sum_two_triangular_eq_id_le_21 f hf hadd hf2 n hn
+      · obtain ⟨a, b, ha, hb, rfl⟩ := exists_add_of_gt_twenty_one (by omega : 21 < n)
+        have ha' := small_triangular_sums ha
+        have hb' := small_triangular_sums hb
+        rw [hadd a b ha hb, ih a (by omega), ih b (by omega), Nat.cast_add]
 
 end MathlibExt.NumberTheory.ArithmeticFunction.MultiplicativeTriangularAdditiveWanted

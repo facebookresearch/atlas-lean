@@ -10,7 +10,7 @@
 - [Simulating the variable-size coalescent by a time change](simulation-correctness.md)
 - [Expected spectra on demographic graphs by dynamic programming (momi2)](momi-demographic-graph-recursions.md)
 - [Multi-population composite likelihoods and conditional maximization in fastsimcoal2](fastsimcoal-and-simulation-based-fitting.md)
-- [Sampled IBD segment lengths and detection error in IBD-based demographic inference](ibd-segment-demographic-inference.md)
+- [Detection error and regularization in IBD-based demographic inference](ibd-segment-demographic-inference.md)
 - [Effect of polarization error on the site-frequency spectrum](polarization-error.md)
 - [Ascertainment conditioning in site-frequency likelihoods](ascertainment-conditioning.md)
 - [Missing data in spectrum-based coalescent inference](missing-data-and-genotype-likelihoods.md)

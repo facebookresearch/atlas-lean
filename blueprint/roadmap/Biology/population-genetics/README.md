@@ -34,3 +34,6 @@ Mathematical models of allele frequencies in populations under random mating, se
 
 - [Bernstein's law for the ABO blood groups](part-01/bernstein-s-law-for-the-abo-blood-groups/README.md)
 - [Frequency spectra and demographic inference](part-01/frequency-spectra-and-demographic-inference/README.md)
+- [Effective size beyond the Wright–Fisher model](part-01/effective-size-beyond-the-wright-fisher-model/README.md)
+- [Geographically structured populations](part-01/geographically-structured-populations/README.md)
+- [Fleming–Viot duality and lookdown construction](part-01/fleming-viot-duality-and-lookdown/README.md)

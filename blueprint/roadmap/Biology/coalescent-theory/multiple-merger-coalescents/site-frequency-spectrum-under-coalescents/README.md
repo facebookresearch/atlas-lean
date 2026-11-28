@@ -48,3 +48,5 @@
 
 - [Expected length of singleton branches for three copies](expected-length-three-one.md)
 - [Expected length of doubleton branches for three copies](expected-length-three-two.md)
+- [Expected SFS of time-inhomogeneous Xi-coalescents](expected-sfs-of-time-inhomogeneous-xi-coalescents/README.md)
+- [Nonparametric inference of Lambda-coalescents](nonparametric-inference-of-lambda-coalescents/README.md)
