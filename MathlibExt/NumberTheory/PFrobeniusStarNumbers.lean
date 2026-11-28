@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Group.Nat.Even
+public import Mathlib.Data.Nat.ModEq
 import Mathlib.Tactic.Ring
 
 /-!
@@ -22,6 +23,9 @@ Three Consecutive Star Numbers", *INTEGERS* 25 (2025), Article A106
 A common divisor of `S_n`, `S_{n+1}`, `S_{n+2}` divides
 `S_{n+2} - 2 S_{n+1} + S_n = 12`, and `S_n ≡ 1 (mod 12)`.
 
+The module also exports the successor identity and the modular inverse of `S_{n+1}` modulo
+`S_n`, both valid for every natural index `n`.
+
 The definitions live in `MetaMathlibExt.StarNumber` so that `star`
 does not shadow `Star.star` in the `MetaMathlibExt` namespace.
 -/
@@ -33,6 +37,31 @@ namespace MetaMathlibExt.StarNumber
 /-- The `n`th star number `6 * n * (n - 1) + 1`. -/
 def star (n : ℕ) : ℕ :=
   6 * n * (n - 1) + 1
+
+/-- **Successive star numbers.** For every natural number `n`, the next star number is
+obtained by adding `12 * n` to the current one. -/
+theorem star_succ_eq (n : ℕ) : star (n + 1) = star n + 12 * n := by
+  cases n with
+  | zero => rfl
+  | succ k =>
+    simp only [star, Nat.add_sub_cancel]
+    ring
+
+/-- `3 * n * (n - 1)^2` is an inverse of the next star number modulo the current one. -/
+theorem star_succ_mul_inverse_modEq (n : ℕ) :
+    star (n + 1) * (3 * n * (n - 1) ^ 2) ≡ 1 [MOD star n] := by
+  let m := 6 * n * (n - 1)
+  have hm : m + 1 ≡ 0 [MOD star n] := Nat.modulus_modEq_zero
+  have hsq : m * m + m ≡ 0 [MOD star n] := by
+    simpa only [add_mul, one_mul, zero_mul] using hm.mul_right m
+  calc
+    star (n + 1) * (3 * n * (n - 1) ^ 2) ≡ (12 * n) * (3 * n * (n - 1) ^ 2)
+        [MOD star n] := by
+      rw [star_succ_eq n]
+      exact ((Nat.modulus_add_modEq_iff).mpr (Nat.ModEq.refl _)).mul_right _
+    _ = m * m := by dsimp [m]; ring
+    _ ≡ 1 [MOD star n] := (Nat.ModEq.add_right_cancel' m)
+      (hsq.trans (by simpa only [Nat.add_comm 1 m] using hm.symm))
 
 /-- Komatsu, Chatterjee, and Narula's Lemma 2: any three
 consecutive star numbers are relatively prime. The hypothesis
