@@ -196,6 +196,23 @@ public theorem genDelannoyUpper_add_succ_left (k m n : ℕ) (hk : 1 ≤ k) :
   simpa only [genDelannoyUpper, htop, htop', hbot, Nat.add_sub_add_right, Nat.cast_id,
     Nat.mul_comm] using hsplit.symm
 
+/-- **Vertical difference identity for the upper generalized Delannoy numbers.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$ with $k \ge 1$,
+$D^k(m + 1, n) - D^k(m, n) = D^{k-1}(m + 1, n)$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Corollary 6
+(`jis-2024-24.1.8-cor-6`). -/
+public theorem genDelannoyUpper_succ_left_sub (k m n : ℕ) (hk : 1 ≤ k) :
+    (genDelannoyUpper k (m + 1) n : ℤ) - genDelannoyUpper k m n =
+      genDelannoyUpper (k - 1) (m + 1) n := by
+  have hv := genDelannoyUpper_add_succ_left k m n hk
+  have hh := genDelannoyUpper_add_succ_right (k - 1) (m + 1) n
+  rw [Nat.sub_add_cancel hk] at hh
+  omega
+
 /-- **Horizontal difference identity for the upper generalized Delannoy numbers.**
 For natural numbers $k$, $m$ and $n$, write
 $D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
@@ -344,5 +361,119 @@ public theorem delannoyArray_binomial_seeds_horizontalSum_modEq (R : ℕ → ℕ
     R m n + R m (n + 1) ≡ (k + n).choose (k - 1) [ZMOD 2] := by
   exact (delannoyArray_horizontalSum_rows_modEq R hR 1 le_rfl m 0 n).trans
     (iterate_horizontalSum_seed R k hseed 1 hk n)
+
+private theorem iterate_horizontalSum_zero_congr (R S : ℕ → ℕ → ℤ)
+    (h : ∀ n, R 0 n = S 0 n) (p n : ℕ) :
+    horizontalSum^[p] R 0 n = horizontalSum^[p] S 0 n := by
+  induction p generalizing n with
+  | zero => exact h n
+  | succ p ih => simp only [Function.iterate_succ_apply', horizontalSum, ih]
+
+private theorem iterate_horizontalSum_one (p n : ℕ) :
+    horizontalSum^[p] (fun _ _ => (1 : ℤ)) 0 n = 2 ^ p := by
+  induction p generalizing n with
+  | zero => rfl
+  | succ p ih => rw [Function.iterate_succ_apply', horizontalSum, ih, ih, pow_succ', two_mul]
+
+private theorem two_pow_dvd_iterate_horizontalSum_choose (k p d n : ℕ) :
+    (2 : ℤ) ^ (p - d) ∣ horizontalSum^[p] (fun _ b => ((k + b).choose d : ℤ)) 0 n := by
+  -- Pascal's identity gives twice the same binomial row plus the row of one lower degree.
+  have hpascal (p d n : ℕ) :
+      horizontalSum^[p + 1] (fun _ b => ((k + b).choose (d + 1) : ℤ)) 0 n =
+        2 * horizontalSum^[p] (fun _ b => ((k + b).choose (d + 1) : ℤ)) 0 n +
+          horizontalSum^[p] (fun _ b => ((k + b).choose d : ℤ)) 0 n := by
+    induction p generalizing n with
+    | zero =>
+      simp only [Function.iterate_succ_apply', Function.iterate_zero_apply, horizontalSum,
+        ← Nat.add_assoc, Nat.choose_succ_succ', Nat.cast_add, two_mul]
+      omega
+    | succ p ih =>
+      have hn := ih n
+      have hn' := ih (n + 1)
+      simp only [Function.iterate_succ_apply', horizontalSum] at hn hn' ⊢
+      omega
+  induction p generalizing d with
+  | zero => simp
+  | succ p ih =>
+    by_cases h : p + 1 ≤ d
+    · simp [Nat.sub_eq_zero_of_le h]
+    cases d with
+    | zero => simp [iterate_horizontalSum_one]
+    | succ d =>
+      rw [hpascal, Nat.add_sub_add_right]
+      refine Int.dvd_add ?_ (ih d)
+      rw [show p - d = p - (d + 1) + 1 by omega, pow_succ']
+      exact mul_dvd_mul_left _ (ih (d + 1))
+
+/-- **Powers of two dividing iterated horizontal sums of a Delannoy array.** Let $R(m, n)$, for
+$m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all
+$m, n$. For an array $S$ let $(HS)(m, n) = S(m, n) + S(m, n+1)$, and write $R^i = H^i R$ for the
+$i$-fold horizontal sum. Let $k, i \in \mathbb{N}$ with $i \ge 1$, and suppose
+$R(0, n) = \binom{k+n}{k}$ for all $n$. Then every entry of $R^{k+i}$ is divisible by $2^i$, and
+some entry of $R^{k+i}$ is not divisible by $2^{i+1}$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 18
+(`jis-2024-24.1.8-thm-18`). -/
+public theorem delannoyArray_binomial_seeds_two_pow_dvd (R : ℕ → ℕ → ℤ)
+    (hR : ∀ m n, R (m + 1) (n + 1) = R m (n + 1) + R (m + 1) n + R m n) (k i : ℕ) (hi : 1 ≤ i)
+    (hseed : ∀ n, R 0 n = (k + n).choose k) :
+    (∀ m n, (2 : ℤ) ^ i ∣ (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[k + i] R m n) ∧
+      ∃ m n, ¬ (2 : ℤ) ^ (i + 1) ∣
+        (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[k + i] R m n := by
+  change (∀ m n, (2 : ℤ) ^ i ∣ horizontalSum^[k + i] R m n) ∧
+    ∃ m n, ¬ (2 : ℤ) ^ (i + 1) ∣ horizontalSum^[k + i] R m n
+  constructor
+  · intro m n
+    induction i, hi using Nat.le_induction generalizing m with
+    | base =>
+      rw [pow_one]
+      exact (delannoyArray_binomial_seeds_parity R hR k hseed).1 m n
+    | succ i _ ih =>
+      induction m with
+      | zero =>
+        rw [iterate_horizontalSum_zero_congr R (fun _ b => ((k + b).choose k : ℤ)) hseed]
+        simpa only [Nat.add_sub_cancel_left] using
+          two_pow_dvd_iterate_horizontalSum_choose k (k + (i + 1)) k n
+      | succ m hm =>
+        rw [← Nat.add_assoc, iterate_horizontalSum_succ_row R hR (k + i) m n]
+        exact Int.dvd_add hm (by rw [pow_succ']; exact mul_dvd_mul_left _ (ih (m + 1)))
+  · by_cases hk : k = 0
+    · subst k
+      have hone (n : ℕ) : R 0 n = 1 := by simp [hseed]
+      refine ⟨0, 0, ?_⟩
+      rw [Nat.zero_add, iterate_horizontalSum_zero_congr R (fun _ _ => 1) hone,
+        iterate_horizontalSum_one]
+      have htwo : (2 : ℤ) ≠ 0 := by decide
+      have h := mul_dvd_mul_iff_left (pow_ne_zero i htwo) (b := (2 : ℤ)) (c := 1)
+      rw [← pow_succ, mul_one] at h
+      exact fun hd => (by decide : ¬ (2 : ℤ) ∣ 1) (h.mp hd)
+    -- A tail of divisible entries in column zero would give such a tail one level lower.
+    have sharp (j b : ℕ) : ∃ m ≥ b, ¬ (2 : ℤ) ^ (j + 1) ∣ horizontalSum^[k + j] R m 0 := by
+      induction j generalizing b with
+      | zero =>
+        refine ⟨b, le_rfl, ?_⟩
+        have h : horizontalSum^[k] R 0 0 ≡ 1 [ZMOD 2] := by
+          simpa using iterate_horizontalSum_seed R k hseed k le_rfl 0
+        have hb : horizontalSum^[k] R b 0 ≡ horizontalSum^[k] R 0 0 [ZMOD 2] :=
+          delannoyArray_horizontalSum_rows_modEq R hR k (Nat.pos_of_ne_zero hk) b 0 0
+        change ¬ (2 : ℤ) ∣ horizontalSum^[k] R b 0
+        rw [(hb.trans h).dvd_iff]
+        decide
+      | succ j ih =>
+        by_contra! hall
+        obtain ⟨m, hm, hn⟩ := ih (b + 1)
+        cases m with
+        | zero => omega
+        | succ m =>
+          have hupper := hall (m + 1) (by omega)
+          have hlower := hall m (by omega)
+          rw [← Nat.add_assoc k j 1] at hupper hlower
+          rw [iterate_horizontalSum_succ_row R hR (k + j) m 0] at hupper
+          have hd := (Int.dvd_add_right hlower).mp hupper
+          rw [pow_succ'] at hd
+          exact hn ((mul_dvd_mul_iff_left (by decide : (2 : ℤ) ≠ 0)).mp hd)
+    obtain ⟨m, _, hm⟩ := sharp i 0
+    exact ⟨m, 0, hm⟩
 
 end MetaMathlibExt.DelannoyConstructions

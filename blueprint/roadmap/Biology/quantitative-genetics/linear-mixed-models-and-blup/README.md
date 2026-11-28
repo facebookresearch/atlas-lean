@@ -30,3 +30,10 @@ See [Henderson's mixed-model equations](../../../Probability/linear-models-multi
 ## Related topics
 
 - [Random-intercept models and the design effect](../../../Probability/linear-models-multivariate/random-intercept-models-and-the-design-effect/README.md): random-intercept and crossed random-intercept designs of a linear mixed model, the intraclass correlation and the design effect.
+- [Average-information REML](average-information-reml.md)
+- [Bayesian sparse linear mixed model (BSLMM) and the PVE/PGE parameterization](bayesian-sparse-linear-mixed-model.md)
+- [Cross-population BLUP with a genetic correlation (XPA)](cross-population-blup-posterior-mean.md)
+- [Factor-analytic and recursive parametrizations of a trait covariance matrix](factor-analytic-and-recursive-trait-covariance-structures.md)
+- [Multitrait Bayesian regression with Gaussian, spike–slab and kernel priors](multitrait-bayesian-regression-with-gaussian-and-spike-slab-priors.md)
+- [Multitrait kernel random effect as a Gaussian regression on a factor of the kernel](multitrait-kernel-random-effect-as-regression-on-a-kernel-factor.md)
+- [Combining ability and genotype-by-environment models](combining-ability-and-genotype-by-environment-models/README.md)

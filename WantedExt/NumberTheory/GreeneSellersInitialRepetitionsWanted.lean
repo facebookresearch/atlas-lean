@@ -16,48 +16,14 @@ public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.NumberTheory.InitialRepetitionsC3
 public import MathlibExt.NumberTheory.InitialRepetitionsC8
+public import MathlibExt.NumberTheory.InitialRepetitionsC8Prime
+public import MathlibExt.NumberTheory.InitialRepetitionsQuadraticNonresidues
 public import MathlibExt.NumberTheory.SquaresModTwoPow
+public import MathlibExt.NumberTheory.GreeneSellersInitialRepetitionsCardNotIsSquareTwelveMulAddOneEightMulAddOne
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-open scoped Classical in
-/-- **Residues $r$ with $16r + 1$ and $8r + 1$ both non-squares modulo $p$.** For every prime $p$,
-the number of integers $r$ with $1 \le r \le p - 1$ such that neither $16r + 1$ nor $8r + 1$ is a
-square modulo $p$ equals $\lfloor p/4 \rfloor$.
-
-Here $0$ counts as a square modulo $p$, so "not a square" means "quadratic nonresidue". The paper
-assumes $p \ge 5$; for $p = 2$ and $p = 3$ both sides are $0$. If $0$ were counted as a non-square,
-the count at $p = 5$ would be $2$ instead of $1$.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 5 (`integers-2025-A32-thm-5`). -/
-public theorem_wanted card_not_isSquare_sixteen_mul_add_one_eight_mul_add_one (p : ℕ)
-    (hp : p.Prime) :
-    ((Finset.Icc 1 (p - 1)).filter fun r =>
-        ¬IsSquare ((16 * r + 1 : ℕ) : ZMod p) ∧ ¬IsSquare ((8 * r + 1 : ℕ) : ZMod p)).card =
-      p / 4
-
-open scoped Classical in
-/-- **Residues $r$ with $12r + 1$ and $8r + 1$ both non-squares modulo $p$.** For every prime $p$,
-let $N$ be the number of integers $r$ with $1 \le r \le p - 1$ such that neither $12r + 1$ nor
-$8r + 1$ is a square modulo $p$. Then $N = \lfloor p/4 \rfloor - 1$ if $p \equiv 5 \pmod{24}$,
-$N = \lfloor p/4 \rfloor + 1$ if $p \equiv 11 \pmod{24}$, and $N = \lfloor p/4 \rfloor$ otherwise.
-
-Here $0$ counts as a square modulo $p$, so "not a square" means "quadratic nonresidue". The paper
-assumes $p \ge 5$; for $p = 2$ and $p = 3$ both sides are $0$. If $0$ were counted as a non-square,
-the count at $p = 5$ would be $2$ instead of $0$.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 8 (`integers-2025-A32-thm-8`). -/
-public theorem_wanted card_not_isSquare_twelve_mul_add_one_eight_mul_add_one (p : ℕ)
-    (hp : p.Prime) :
-    ((Finset.Icc 1 (p - 1)).filter fun r =>
-        ¬IsSquare ((12 * r + 1 : ℕ) : ZMod p) ∧ ¬IsSquare ((8 * r + 1 : ℕ) : ZMod p)).card =
-      if p % 24 = 5 then p / 4 - 1 else if p % 24 = 11 then p / 4 + 1 else p / 4
 
 /-- **Counting $r$ with $mr + 1$ and $nr + 1$ both quadratic nonresidues.** Let $p$ be an odd
 prime, write $\left(\frac{a}{p}\right)$ for the Legendre symbol of an integer $a$, and let $m$ and
@@ -113,28 +79,6 @@ public def initialRepetitionsC2 (n : ℕ) : ℕ :=
   ((Finset.univ : Finset (Nat.Partition n)).filter fun p =>
     ∃ j ∈ Finset.Icc 1 n, p.parts.count j = j ∧ (∀ a ∈ p.parts, a = j ∨ 2 * j + 1 ≤ a) ∧
       ∀ a ∈ p.parts, Even a → 2 * j + 2 ≤ a → p.parts.count a = 1).card
-
-/-- **The initial-repetitions partition function $c_8'$.** For $n \ge 0$, $c_8'(n)$ is the number
-of partitions of $n$ into distinct even parts plus the sum, over $m = 1, \dots, n$, of the number
-of partitions of $n$ in which every even number $2i$ with $1 \le i \le m$ is a part, every even
-part at most $m$ appears at most twice, every odd part at most $m$ appears exactly once, and every
-part greater than $m$ is even and appears exactly once.
-
-Equivalently, $c_8'(n)$ counts partitions of $n$ with a possibly distinguished part: either all
-parts are even and distinct and no part is distinguished, or a part $2m$ is distinguished and the
-conditions above hold for $m$.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Section 4 (definition of `c₈'`). -/
-public def initialRepetitionsC8Prime (n : ℕ) : ℕ :=
-  ((Finset.univ : Finset (Nat.Partition n)).filter fun p =>
-      ∀ a ∈ p.parts, Even a ∧ p.parts.count a = 1).card +
-    ∑ m ∈ Finset.Icc 1 n, ((Finset.univ : Finset (Nat.Partition n)).filter fun p =>
-      (∀ i ∈ Finset.Icc 1 m, 2 * i ∈ p.parts) ∧
-        (∀ a ∈ p.parts, Even a → a ≤ m → p.parts.count a ≤ 2) ∧
-        (∀ a ∈ p.parts, Odd a → a ≤ m → p.parts.count a = 1) ∧
-        ∀ a ∈ p.parts, m < a → Even a ∧ p.parts.count a = 1).card
 
 /-- **Small values of the partition functions $c_2$, $c_3$, $c_8$ and $c_8'$.** We have
 $c_2(0) = 0$, $c_2(1) = 1$, $c_3(1) = 1$, $c_8(0) = c_8(1) = 1$, $c_8'(0) = 1$ and $c_8'(1) = 0$.
@@ -301,22 +245,6 @@ public theorem_wanted initialRepetitionsC8Prime_two_pow_mul_add_even (k n r : �
       (r < 2 ^ (2 * k + 1) →
         (15 * r : ℤ) ≡ 2 ^ (2 * k) + 2 ^ (2 * k - 2) - 4 [ZMOD 2 ^ (2 * k + 1)] →
         Even (initialRepetitionsC8Prime (2 ^ (2 * k + 1) * n + r)))
-
-/-- **Parity of $c_8'$ on residue classes modulo a prime.** Let $c_8'$ be the partition function
-that counts partitions with a possibly distinguished part. Let $p \ge 7$ be a prime and let $r$ be
-an integer with $1 \le r \le p - 1$ such that $15r + 4$ is not a square modulo $p$. Then
-$c_8'(pn + r)$ is even for every integer $n \ge 0$.
-
-Here $x$ is a square modulo $p$ when $x \equiv y^2 \pmod{p}$ for some integer $y$, so multiples
-of $p$ count as squares.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Corollary 4 (`integers-2025-A32-cor-4`). -/
-public theorem_wanted initialRepetitionsC8Prime_prime_mul_add_even (p r n : ℕ) (hp : p.Prime)
-    (hp7 : 7 ≤ p) (hr : r ∈ Finset.Icc 1 (p - 1))
-    (h15 : ¬ IsSquare ((15 * r + 4 : ℕ) : ZMod p)) :
-    Even (initialRepetitionsC8Prime (p * n + r))
 
 end
 

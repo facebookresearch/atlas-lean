@@ -1,0 +1,5 @@
+# Expectation of the block-weighted Neyman estimator
+
+Let $U$ be a finite population of $N$ units with potential outcomes $y_{0i}, y_{1i} \in \mathbb{R}$, let $B_1, \dots, B_m \subseteq U$ be blocks and $n_1, \dots, n_m \in \mathbb{N}$. Under block randomization the treated sets $S_b \subseteq B_b$ are drawn independently, $S_b$ by complete randomization of $n_b$ treated units within $B_b$. Let $\hat V_b(S_b) = s_1^2(S_b)/|S_b| + s_0^2(B_b \setminus S_b)/|B_b \setminus S_b|$ be Neyman's variance estimator within block $b$, where $s_1^2(S_b)$ and $s_0^2(B_b \setminus S_b)$ are the sample variances of $y_1$ over $S_b$ and of $y_0$ over $B_b \setminus S_b$, with divisor size minus one. Let $\hat V_{\mathrm{blk}} = \sum_b (|B_b|/N)^2 \hat V_b(S_b)$ be the block-weighted Neyman estimator, and write $S_{1,b}^2$, $S_{0,b}^2$ for the population variances of $y_1$, $y_0$ over $B_b$ (divisor $|B_b| - 1$). If $2 \le n_b$ and $n_b + 2 \le |B_b|$ for every $b$, then
+
+$$\mathbb{E}\big[\hat V_{\mathrm{blk}}\big] = \sum_{b=1}^m \Big(\frac{|B_b|}{N}\Big)^2 \Big(\frac{S_{1,b}^2}{n_b} + \frac{S_{0,b}^2}{|B_b| - n_b}\Big).$$

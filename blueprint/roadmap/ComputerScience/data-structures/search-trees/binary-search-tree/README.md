@@ -1,6 +1,8 @@
 # Binary search tree
 
 - [Membership in a binary tree](mem.md)
+- [Mem nil](mem-nil.md)
+- [Mem node](mem-node.md)
 - [Inorder traversal of a binary tree with an accumulator](inorder-aux.md)
 - [Inorder traversal of a binary tree](inorder.md)
 - [A predicate holding at every key of a binary tree](all.md)

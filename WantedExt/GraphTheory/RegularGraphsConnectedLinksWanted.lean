@@ -29,7 +29,9 @@ def link {V : Type*} (G : SimpleGraph V) (S : Finset V) : Set V :=
   {w | ∀ s ∈ S, G.Adj s w}
 
 /-- The graph induced by `G` on `W` is `(d₁, …, d_r)`-regular: every `v ∈ W` has exactly `d₁`
-neighbours in `W`, and `N(v) ∩ W` induces a `(d₂, …, d_r)`-regular graph. -/
+neighbours in `W`, and `N(v) ∩ W` induces a `(d₂, …, d_r)`-regular graph. Neighbours are counted
+with `Set.ncard`, which is `0` for an infinite set, so a vertex with infinitely many neighbours in
+`W` counts as having `0`. -/
 def IsTupleRegularOn {V : Type*} (G : SimpleGraph V) : Set V → List ℕ → Prop
   | _, [] => True
   | W, d :: ds => ∀ v ∈ W, (G.neighborSet v ∩ W).ncard = d ∧

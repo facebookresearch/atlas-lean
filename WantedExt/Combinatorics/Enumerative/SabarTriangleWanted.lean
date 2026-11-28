@@ -11,8 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.SabarFineNumberWhitt
 public import MathlibExt.Combinatorics.Enumerative.SabarFineNumber
+public import MathlibExt.Combinatorics.Enumerative.SabarFineNumberDifference
 public import MathlibExt.Combinatorics.Enumerative.WhittGeneralizedCatalan
 public import MathlibExt.Combinatorics.Enumerative.SabarTriangle
+public import MathlibExt.Combinatorics.Enumerative.SabarHarmonicReciprocal
 public import MathlibExt.Combinatorics.Enumerative.SabarWeightedBinomialSum
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
@@ -42,32 +44,14 @@ definition `sabarNumber` with its checks `sabarNumber_rows_five_ten` and
 
 The weighted binomial sum identity `sum_choose_mul_two_pow_add_succ` is proved in
 `MathlibExt.Combinatorics.Enumerative.SabarWeightedBinomialSum`, also imported here.
+
+The Fine-number identity `fineNumber_eq_sabarNumber_sub` is proved in
+`MathlibExt.Combinatorics.Enumerative.SabarFineNumberDifference`, also imported here.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Harmonic numbers from Sabar's triangle.** For every natural number $n \ge 2$, the harmonic
-number $H_n = \sum_{k=1}^{n} \frac{1}{k}$ and the entries $s(n-1, i)$ of Sabar's triangle satisfy
-$$H_n = \frac{1}{n} \sum_{i=0}^{n-1} \binom{n-1}{i}^{-1} +
-\sum_{i=0}^{n-2} \frac{(-1)^{n-i} \, s(n-1, i)}{n-i}.$$
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Theorem 2 (`integers-2026-A27-thm-2`). -/
-public theorem_wanted harmonic_eq_sum_inv_choose_add_sum_sabarNumber (n : ℕ) (hn : 2 ≤ n) :
-    harmonic n =
-      (1 / (n : ℚ)) * ∑ i ∈ Finset.range n, 1 / ((n - 1).choose i : ℚ) +
-        ∑ i ∈ Finset.range (n - 1), (-1 : ℚ) ^ (n - i) * sabarNumber (n - 1) i / ((n - i : ℕ) : ℚ)
-
-/-- **Fine numbers from Sabar's triangle.** For every natural number $n \ge 2$, the Fine number
-$F(n)$ is the difference of two entries of row $2n$ of Sabar's triangle $s$:
-$F(n) = s(2n, n+1) - s(2n, n-1)$.
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Theorem 4 (`integers-2026-A27-thm-4`). -/
-public theorem_wanted fineNumber_eq_sabarNumber_sub (n : ℕ) (hn : 2 ≤ n) :
-    fineNumber n = (sabarNumber (2 * n) (n + 1) - sabarNumber (2 * n) (n - 1) : ℤ)
 
 /-- **Central entries of Sabar's triangle and Fine numbers.** Let $F(m)$ denote the Fine numbers
 and $C_m$ the Catalan numbers. For every natural number $n \ge 1$, the entries of Sabar's
@@ -89,19 +73,6 @@ public theorem_wanted sabarNumber_central_eq_fineNumber (n : ℕ) (hn : 1 ≤ n)
         (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * fineNumber (n - 1) + (-1) ^ (n + 1) ∧
       (sabarNumber (2 * n - 1) n : ℚ) =
         (2 / 3) * ((2 * n - 1).choose n : ℚ) + (1 / 3) * fineNumber (n - 1) + (-1) ^ n
-
-/-- **Central entries of Sabar's triangle and Whitt's numbers.** Let $C(2, m)$ denote Whitt's
-generalized Catalan numbers at $\alpha = 2$. For every natural number $n \ge 1$, the central
-entry $s(2n, n)$ of Sabar's triangle satisfies
-$$s(2n, n) = \frac{2}{3} \binom{2n}{n} - \frac{1}{3} \cdot \frac{C(2, n)}{2^{n+1}} +
-(-1)^{n+1} + \frac{(-1)^n}{2^{n+1}}.$$
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Theorem 7 (`integers-2026-A27-thm-7`). -/
-public theorem_wanted sabarNumber_central_eq_whittGeneralizedCatalan (n : ℕ) (hn : 1 ≤ n) :
-    (sabarNumber (2 * n) n : ℚ) =
-      (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * whittGeneralizedCatalan 2 n / 2 ^ (n + 1) +
-        (-1) ^ (n + 1) + (-1) ^ n / 2 ^ (n + 1)
 
 end
 

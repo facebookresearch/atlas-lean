@@ -54,3 +54,41 @@ example :
   norm_num
 
 end MetaMathlibExt.generalizedFruit_no_solution_two_dvd
+
+namespace MetaMathlibExt.ringOfIntegers_quotient_pow_ringEquiv_zmod_two_pow
+
+open NumberField
+
+-- The first quotient is the residue field, while 4 survives in the quotient by the cube.
+example : ∃ P ∈ twoUnramifiedDegreeOnePrimes ℚ,
+    Nonempty ((𝓞 ℚ ⧸ P) ≃+* ZMod 2) ∧ (4 : 𝓞 ℚ ⧸ P ^ 3) ≠ 0 := by
+  obtain ⟨P, hP⟩ := generalizedFruit_no_solution_two_dvd.rational_two_prime
+  refine ⟨P, hP, ?_, ?_⟩
+  · obtain ⟨e⟩ := ringOfIntegers_quotient_pow_ringEquiv_zmod_two_pow ℚ P hP 1 (by decide)
+    exact ⟨(Ideal.quotEquivOfEq (pow_one P).symm).trans e⟩
+  · obtain ⟨e⟩ := ringOfIntegers_quotient_pow_ringEquiv_zmod_two_pow ℚ P hP 3 (by decide)
+    intro h
+    have : (4 : ZMod 8) = 0 := by simpa only [map_ofNat, map_zero] using congrArg e h
+    exact (by decide : (4 : ZMod 8) ≠ 0) this
+
+end MetaMathlibExt.ringOfIntegers_quotient_pow_ringEquiv_zmod_two_pow
+
+namespace MetaMathlibExt
+
+-- An even parameter and a nonintegral x-coordinate with even numerator.
+example (y : ℚ) : ¬ (fruitWeierstrassCurve (0 : ℚ)).toAffine.Equation (2 / 3) y :=
+  fruitWeierstrassCurve_rat_not_equation_of_two_dvd_num 0 (2 / 3) y (by decide +kernel)
+
+-- An odd parameter and a negative even numerator in lowest terms.
+example (y : ℚ) : ¬ (fruitWeierstrassCurve (-1 : ℚ)).toAffine.Equation (-4 / 5) y :=
+  fruitWeierstrassCurve_rat_not_equation_of_two_dvd_num (-1) (-4 / 5) y (by decide +kernel)
+
+-- The same curve family does have rational points with odd numerator.
+example : (fruitWeierstrassCurve (1 : ℚ)).toAffine.Nonsingular (101 / 16) (1225 / 64) ∧
+    ¬ 2 ∣ (101 / 16 : ℚ).num := by
+  constructor
+  · rw [WeierstrassCurve.Affine.nonsingular_iff', WeierstrassCurve.Affine.equation_iff]
+    norm_num [fruitWeierstrassCurve, WeierstrassCurve.toAffine]
+  · decide +kernel
+
+end MetaMathlibExt

@@ -15,3 +15,7 @@ Large-scale and analytic properties of finitely generated groups: growth, word-h
 - [Property (T) for automorphism groups of free groups](property-t-for-automorphism-groups-of-free-group/README.md)
 - [Sofic groups](sofic-groups/README.md)
 - [Word metrics and quasi-isometries](word-metrics-and-quasi-isometries/README.md)
+- [Coarse recognition of virtually polycyclic groups](quasi-isometric-recognition-virtually-polycyclic.md)
+- [Uniform bounded height for self quasi-isometries of solvable Lie models](uniform-bounded-height-solvable-lie-group.md)
+- [Coarse recognition of finite-covolume solvable lattices](coarse-recognition-solvable-lattices.md)
+- [Domino problem on groups](domino-problem-on-groups/README.md)

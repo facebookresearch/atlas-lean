@@ -2138,7 +2138,7 @@ theorem firstTightParent_eq_parent {C : Type} [DecidableEq C] (O : Oracles C)
       simp only [List.map_cons, List.nodup_cons] at hnodup
       rw [firstTightParent_cons]
       rcases hmem with rfl | hmem
-      · rw [if_pos ⟨rfl, htight⟩]
+      · rw [ite_eq_left ⟨rfl, htight⟩]
       · have hne : e.2 ≠ v := by
           intro hcon
           have hndfull : ((e :: es).map Prod.snd).Nodup :=
@@ -2150,7 +2150,7 @@ theorem firstTightParent_eq_parent {C : Type} [DecidableEq C] (O : Oracles C)
             rw [heq]
             exact List.mem_map.mpr ⟨(p, v), hmem, rfl⟩
           exact hnodup.1 hcon2
-        rw [if_neg (fun h => hne h.1)]
+        rw [ite_eq_right (fun h => hne h.1)]
         exact ih hnodup.2 hmem htight
 
 /-- A parent chain over `edges`: consecutive vertices linked by parent edges. -/
@@ -2662,7 +2662,7 @@ private theorem recomputeCosts_cost_start_uncond_aux {C : Type} [DecidableEq C]
   rw [treeCostsAux_cons_new]
   · refine (treeCostsAux_cost_mem _ _ _ _ _ _ (by simp)).trans ?_
     first | exact costToCome_cons_eq | simp [costToCome_cons_eq]
-  all_goals simp
+  simp
 
 theorem pairVal_costToCome_recomputeCosts {S : Type} [DecidableEq S]
     (O : Oracles S) (verts : List S) (edges : List (S × S)) (start v : S)
