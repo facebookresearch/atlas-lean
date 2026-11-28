@@ -33,6 +33,7 @@ public import MathlibExt.Analysis.CatalanDigammaSeries
 public import MathlibExt.Analysis.CatalanDigammaNatSpecialization
 public import MathlibExt.Analysis.CatalanSeriesSpecialValues
 public import MathlibExt.Analysis.CentralBinomDigammaSeries
+public import MathlibExt.Analysis.CentralBinomSeriesSpecialValues
 public import MathlibExt.Analysis.HalfIntegerHarmonic
 public import MathlibExt.Analysis.OddWeightedCatalanSeries
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.HalfIntegerShifts
@@ -180,18 +181,6 @@ public theorem_wanted tsum_nat_mul_catalan_mul_harmonic_special :
       ∑' n : ℕ, (n : ℝ) * (∑ j ∈ Finset.range (n + 2), 1 / (2 * (j : ℝ) + 1)) /
           (((n : ℝ) + 1) * (2 * n + 1) * (2 * n + 3)) =
         13 / 4 - 2 * Real.log 2 - Real.pi ^ 2 / 6
-
-/-- **Central binomial series for $\pi^2/8$ and a series for $2\ln 2$.** We have
-$$\sum_{n=0}^{\infty} \frac{4^n}{\binom{2(n+1)}{n+1} (n+1)^2} = \frac{\pi^2}{8}$$
-and
-$$\sum_{n=0}^{\infty} \frac{1}{(2n+1)(n+1)} = 2\ln 2.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 8, identities (17) and (18)
-(`integers-2025-A18-thm-8`). -/
-public theorem_wanted tsum_four_pow_div_centralBinom_mul_sq_special :
-    ∑' n : ℕ, (4 : ℝ) ^ n / (((n + 1).centralBinom : ℝ) * ((n : ℝ) + 1) ^ 2) = Real.pi ^ 2 / 8 ∧
-      ∑' n : ℕ, 1 / ((2 * (n : ℝ) + 1) * ((n : ℝ) + 1)) = 2 * Real.log 2
 
 /-- **A shifted central binomial series.** For every natural number $h$, with
 $H_h = \sum_{j=1}^{h} \frac{1}{j}$ the $h$th harmonic number,
