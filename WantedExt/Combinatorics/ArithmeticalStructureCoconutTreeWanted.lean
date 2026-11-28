@@ -37,24 +37,6 @@ The coconut tree `CT(p, s)` has vertex type `Fin p ⊕ Fin s`: the path vertex
 vertices. Counts `|Arith(G)|` and `|SArith(G)|` are `Set.ncard` of the sets of
 pairs `(d, r)`. -/
 
-/-- **Monotonicity criteria for arithmetical structures on coconut trees.** Let $(d, r)$ be an
-arithmetical structure on the coconut tree $CT(p, s)$ with path vertices $v_1, \dots, v_p$, and
-write $d_k = d(v_k)$ and $r_k = r(v_k)$. The following are equivalent: (1) $d_k \ge 2$ for
-$1 \le k \le p - 1$; (2) $0 < r_2 - r_1 \le r_3 - r_2 \le \cdots \le r_p - r_{p-1}$; (3)
-$r_1 < r_2 < \cdots < r_p$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Lemma 1
-(`integers-2025-A82-lem-1`). -/
-public theorem_wanted IsArithmeticalStructure.coconut_tfae {p s : ℕ}
-    {d r : Fin p ⊕ Fin s → ℕ} (h : IsArithmeticalStructure (coconutTree p s) d r) :
-    [∀ i : Fin p, i.val + 1 < p → 2 ≤ d (.inl i),
-      (∀ hp : 1 < p, r (.inl ⟨0, by omega⟩) < r (.inl ⟨1, hp⟩)) ∧
-        ∀ (i : ℕ) (hi : i + 2 < p),
-          (r (.inl ⟨i + 1, by omega⟩) : ℤ) - r (.inl ⟨i, by omega⟩)
-            ≤ (r (.inl ⟨i + 2, hi⟩) : ℤ) - r (.inl ⟨i + 1, by omega⟩),
-      StrictMono fun i : Fin p => r (.inl i)].TFAE
-
 /-- **Smooth coconut structures with prescribed labels.** Let $s \ge 1$ and let $c$ and
 $a_1, \dots, a_s$ be natural numbers with $a_i > 0$, $a_i \mid c$ and $a_i < c$ for every $i$, such
 that the only natural number dividing $c$ and all of $a_1, \dots, a_s$ is $1$. Write $CT(p, s)$ for

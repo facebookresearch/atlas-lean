@@ -1,0 +1,15 @@
+# Segment Down Counterexample
+
+- [Sdc down on support of not Interior](sdc-down-on-support-of-not-interior.md)
+- [Sdc no segment Down of bottom Interior](sdc-no-segment-down-of-bottom-interior.md)
+- [Sdc not forall segment Down](sdc-not-forall-segment-down.md)
+- [Sdc fjord](sdc-fjord.md)
+- [Sdc fjord raycount](sdc-fjord-raycount.md)
+- [Sdc hseg Right mem](sdc-hseg-right-mem.md)
+- [Sdc vseg Up mem](sdc-vseg-up-mem.md)
+- [Sdc hseg Right mem'](sdc-hseg-right-mem-2.md)
+- [Sdc vseg Up mem'](sdc-vseg-up-mem-2.md)
+- [Sdc fjord support locus](sdc-fjord-support-locus.md)
+- [Sdc fjord body false](sdc-fjord-body-false.md)
+- [Sdc segment Down false](sdc-segment-down-false.md)
+- [Sdc forall segment Down false](sdc-forall-segment-down-false.md)

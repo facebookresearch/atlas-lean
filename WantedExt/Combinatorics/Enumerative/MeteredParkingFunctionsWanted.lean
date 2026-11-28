@@ -87,21 +87,6 @@ public theorem_wanted one_metered_last_spot_n_card {m n : ℕ} (hm : 1 ≤ m) (h
         (meteredOutcome 1 n (List.ofFn fun i => (f i : ℕ))).getLast? = some (some (n - 1))).card =
       meteredParkingCount 1 (m - 1) n
 
-/-- **Lucas-type recursion for 1-metered parking functions.** Write $\mathrm{mpf}_{m,n}(1)$ for
-the number of $1$-metered $(m, n)$-parking functions. For every natural number $n$,
-$\mathrm{mpf}_{1,n}(1) = n$ and $\mathrm{mpf}_{0,n}(1) = 1$, and for every natural number $m$
-with $1 \le m \le n$,
-$$\mathrm{mpf}_{m+1,n}(1) = n \cdot \mathrm{mpf}_{m,n}(1) - \mathrm{mpf}_{m-1,n}(1),$$
-where the subtraction is taken in the integers.
-
-Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
-Functions*, INTEGERS 25 (2025), Article A73, Theorem 2 (`integers-2025-A73-thm-2`). -/
-public theorem_wanted meteredParkingCount_one_recursion (n : ℕ) :
-    meteredParkingCount 1 1 n = n ∧ meteredParkingCount 1 0 n = 1 ∧
-      ∀ m, 1 ≤ m → m ≤ n →
-        (meteredParkingCount 1 (m + 1) n : ℤ) =
-          n * meteredParkingCount 1 m n - meteredParkingCount 1 (m - 1) n
-
 /-- **Metered parking functions in which every car is lucky.** Let $m \ge 2$, $n \ge 2$ and
 $t \le m - 1$. The number of $t$-metered $(m, n)$-parking functions in which every car parks in
 its preferred spot is $n(n-1)\cdots(n-t+1) \cdot (n-t)^{m-t}$, where the falling factorial

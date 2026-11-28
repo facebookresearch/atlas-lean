@@ -30,3 +30,4 @@ Quantum operations and channels covers the physically allowed transformations of
 - [A trace-preserving PPT channel whose square is not entanglement breaking](ppt-channel-square-dimension-twenty-one.md)
 - [A dimension-ten PPT pair with non-entanglement-breaking composition](ppt-composition-dimension-ten.md)
 - [POVMs, Naimark Dilation and Measurement Readout](povms-and-measurement-readout/README.md)
+- [Tensor-stable positive maps](tensor-stable-positive-maps/README.md)
