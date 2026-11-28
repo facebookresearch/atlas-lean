@@ -26,18 +26,21 @@ import Mathlib.Tactic.Ring
 
 Let `a, b` be integers not both zero and let `D = a² + ab - b²`. Every pair of integers `M, k`
 with `k ≠ 0` and `M² = 5k² + (2b - 6a)k + (a - b)²` gives a good rational value
-`x = (a - b - k + M) / (2k)`, where the generating function equals `k`. This direction needs
-neither the search bound nor the auxiliary quadratic equation used to select candidates in the
-paper. Conversely, start with a good fraction `p / q` with `gcd(p, q) = 1` and `q ≠ 0`. If its
-two-sided family contains neither the rational number `0` nor a zero of the generating function,
-it has a representative of the displayed form with `M² + 3MN + N² = D` for an integer `N`,
-and with `M² ≤ -D` when `D < 0` or `5M² ≤ D` when `D > 0`.
+`x = (a - b - k + M) / (2k)`, where the generating function equals `k`. The printed Theorem 4
+restricts its candidates to `M` within the search bound for which the auxiliary quadratic
+has an integer solution `N`. The root formula in Section 3, equations (5)–(6), gives goodness
+without either restriction. For completeness, start with a good fraction `p / q` with
+`gcd(p, q) = 1` and `q ≠ 0`. If its two-sided family contains neither the rational number `0`
+nor a zero of the generating function, it has a representative of the displayed form with
+`M² + 3MN + N² = D` for an integer `N`, and with `M² ≤ -D` when `D < 0` or `5M² ≤ D` when `D > 0`.
 
 ## References
 
 * Michael P. Knapp, [*Fibonacci Generating Functions*](https://cs.uwaterloo.ca/journals/JIS/VOL27/Knapp/knapp5.pdf),
-  Journal of Integer Sequences 27 (2024), Article 24.3.1, pp. 1–12, Theorem 4. The proof uses
-  Theorem 1, the identities of Lemma 11, and the minimum argument of Lemmas 12 and 13.
+  Journal of Integer Sequences 27 (2024), Article 24.3.1, pp. 1–12, Theorem 4 for the completeness
+  of the bounded search and Section 3, equations (5)–(6), for goodness without the candidate
+  restrictions. The proof also uses Theorem 1, the identities of Lemma 11, and the minimum argument
+  of Lemmas 12 and 13.
 * Prapanpong Pongsriiam, *Integral Values of the Generating Functions of Fibonacci and Lucas
   Numbers*, The College Mathematics Journal 48(2) (2017), pp. 97–101, for the discriminant method
   credited by Knapp in Section 3.
@@ -130,7 +133,7 @@ private theorem knapp_bounds_of_minimum (M N : ℤ) (hN : M ^ 2 ≤ N ^ 2)
 
 -- Keep the nonzero seed assumption of Theorem 4; the implications in the bound need no case D = 0.
 set_option linter.unusedVariables false in
-/-- Theorem 4: for `(a, b) ≠ (0, 0)`, (i) every integer solution `(M, k)`,
+/-- For `(a, b) ≠ (0, 0)`, (i) every integer solution `(M, k)`,
 `k ≠ 0`, of `M² = 5k² + (2b - 6a)k + (a - b)²` gives a good value
 `x = (a - b - k + M) / 2k` (whose family is good by Theorem 1); (ii) every
 family of good values other than the Fibonacci family (the one containing
@@ -139,6 +142,11 @@ family of good values other than the Fibonacci family (the one containing
 `|M| ≤ C` (written `M² ≤ |a² + ab - b²|` if `a² + ab - b² < 0` and
 `5M² ≤ a² + ab - b²` if it is positive) and an integer `N` with
 `M² + 3MN + N² = a² + ab - b²`.
+
+The printed Theorem 4 asserts goodness only for candidates whose `M` satisfies
+both the search bound and the auxiliary quadratic equation for some integer `N`.
+Part (i) drops those two restrictions by the root formula in Section 3,
+equations (5)–(6). Part (ii) is the completeness claim of Theorem 4.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Theorem 4 (`jis-2024-24.3.1-thm-4`). -/
