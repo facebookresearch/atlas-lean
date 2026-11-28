@@ -14,6 +14,7 @@ import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
 import MathlibExt.NumberTheory.ChurchBicknellFibonacciConvolution
 import MathlibExt.NumberTheory.Digits.BasePhiConjugate
+import MathlibExt.NumberTheory.Digits.BasePhiLucasPowers
 public import MathlibExt.NumberTheory.LucasSequence
 
 /-!
@@ -258,16 +259,6 @@ private theorem lower_bound {S : Finset ℤ} {n k : ℕ} (hn : 1 ≤ n)
     rw [hne] at hi
     simp at hi
 
-private theorem pair_value (n : ℕ) :
-    φ ^ (2 * (n : ℤ)) + φ ^ (-(2 * (n : ℤ))) = (lucasNumber (2 * n) : ℝ) := by
-  have hcast : ((2 * n : ℕ) : ℤ) = 2 * (n : ℤ) := by push_cast; ring
-  have hev : Even (2 * (n : ℤ)) := by
-    use (n : ℤ)
-    ring
-  rw [← cb_lucas_binet, ← zpow_natCast φ, ← zpow_natCast ψ, hcast]
-  congr 1
-  exact (even_pow_eq hev).symm
-
 end bergman_lucas_even_add
 
 /-- **Bergman expansion of $L_{2n} + k$.** Let $n \ge 1$ and let $k$ be a natural number with
@@ -304,7 +295,7 @@ public theorem bergman_lucas_even_add (n k : ℕ) (hn : 1 ≤ n)
       exact ⟨by omega, hnotA⟩
     rw [bergman_lucas_even_add.value_insert hnotA',
       bergman_lucas_even_add.value_insert hnotB, hSk, ← add_assoc,
-      bergman_lucas_even_add.pair_value, hTN]
+      BasePhiLucasPowers.pair_value, hTN]
     norm_cast
   have hberg : IsBergmanExpansion
       (insert (2 * (n : ℤ)) (insert (-(2 * (n : ℤ))) S)) := by

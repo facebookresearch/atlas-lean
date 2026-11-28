@@ -12,8 +12,8 @@ public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
 public import MathlibExt.NumberTheory.LucasSequence
 import MathlibExt.NumberTheory.ChurchBicknellFibonacciConvolution
 import MathlibExt.NumberTheory.Digits.BasePhiConjugate
-import all MathlibExt.NumberTheory.Digits.BasePhiRepresentationsBergmanLowestPositionLucasInterval
-import all MathlibExt.NumberTheory.Digits.BergmanLucasEvenAdd
+import MathlibExt.NumberTheory.Digits.BasePhiLucasPowers
+import MathlibExt.NumberTheory.Digits.BasePhiRepresentationsBergmanLowestPositionLucasInterval
 
 /-!
 # Recursive structure of Bergman expansions in odd Lucas intervals
@@ -36,9 +36,10 @@ uniqueness. For the first case, the conjugate sum rules out a digit two position
   62 (2024), no. 2, 112–124, Theorem 5.2 II and Proposition 5.1(b).
 * F. Michel Dekking, *How to Add Two Natural Numbers in Base Phi*, The Fibonacci Quarterly
   59 (2021), no. 1, 19–22, Recursive Structure Theorem, Part II.
-* Reuses `bergman_value_lt`, `value_pow_le_of_mem`, `bergman_eq_of_value_eq`, `pow_add_prev` and
-  `pair_value` from `MathlibExt.NumberTheory.Digits.BergmanLucasEvenAdd`, and
-  `bergman_lowest_position_lucasInterval` and its Lucas power bounds from
+* Reuses `bergman_value_lt`, `value_pow_le_of_mem`, `bergman_eq_of_value_eq` and `pow_add_prev`
+  from `MathlibExt.NumberTheory.Digits.BasePhiRepresentations`, and the Lucas power bounds and
+  `pair_value` from `MathlibExt.NumberTheory.Digits.BasePhiLucasPowers`.
+  The least-position theorem `bergman_lowest_position_lucasInterval` is from
   `MathlibExt.NumberTheory.Digits.BasePhiRepresentationsBergmanLowestPositionLucasInterval`.
   The conjugate estimate is `BasePhiConjugate.conj_factor_gt` from
   `MathlibExt.NumberTheory.Digits.BasePhiConjugate`.
@@ -48,14 +49,14 @@ open scoped goldenRatio
 
 namespace MetaMathlibExt
 
-open bergman_lucas_even_add (pow_add_prev pair_value)
+open BasePhiRepresentations (pow_add_prev)
+open BasePhiLucasPowers (pair_value)
 
 namespace bergman_lucas_odd_add
 
 open BasePhiConjugate
-open bergman_lucas_even_add (bergman_value_lt value_pow_le_of_mem bergman_eq_of_value_eq)
-open bergman_lowest_position_lucasInterval (lucas_even_gt lucas_odd_lt lucas_odd_add_one_gt
-  lucas_even_sub_one_lt)
+open BasePhiRepresentations (bergman_value_lt value_pow_le_of_mem bergman_eq_of_value_eq)
+open BasePhiLucasPowers (lucas_even_gt lucas_odd_lt lucas_odd_add_one_gt lucas_even_sub_one_lt)
 
 private theorem greatest_eq_of_value_bounds {S : Finset ℤ} (hS : IsBergmanExpansion S)
     {t j : ℤ} (ht : IsGreatest (S : Set ℤ) t)
