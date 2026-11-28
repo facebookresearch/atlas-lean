@@ -59,8 +59,10 @@ section
 
 variable {k : ℕ} {State Symbol : Type*} {input : List Symbol} {tm : MultiTapeTM k Symbol State}
 
-/-- `step` never reads the output tape, so the core of the next configuration is determined by the
-core of the current one. -/
+/-- For a fixed deterministic machine `tm` and a fixed input word `input` (both configurations have
+type `Cfg k Symbol State input`), `step` never reads the output tape, so the core of the next
+configuration is determined by the core of the current one. The core records the input head
+position but not the input word: on two different words the machine may read different symbols. -/
 lemma core_step_eq_of_core_eq {c₁ c₂ : Cfg k Symbol State input} (h : c₁.core = c₂.core) :
     (tm.step c₁).core = (tm.step c₂).core := by
   rcases c₁ with ⟨q₁, i₁, w₁, p₁, out₁⟩

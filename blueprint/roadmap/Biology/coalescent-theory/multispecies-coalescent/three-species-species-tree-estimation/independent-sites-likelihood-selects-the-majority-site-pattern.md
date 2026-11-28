@@ -7,7 +7,7 @@
 1. If the true species tree is $S_1$ with parameters $\theta_1$, then $\bar p_1 > \bar p_2 = \bar p_3$.
 2. Isml infers $S_1$ if $x_{\cdot 1} > \max\{x_{\cdot 2}, x_{\cdot 3}\}$, and symmetrically for $S_2, S_3$.
 
-Hence isml chooses the same species tree as maximum-likelihood concatenation, which also selects $G_1$ exactly when $x_{\cdot 1} > \max(x_{\cdot 2}, x_{\cdot 3})$, and it is statistically consistent as $m \to \infty$ without needing parameter estimates.
+Hence isml chooses the same species tree as maximum-likelihood concatenation whenever one pooled count among $x_{\cdot 1}, x_{\cdot 2}, x_{\cdot 3}$ is strictly largest, since concatenation also selects $G_1$ if $x_{\cdot 1} > \max(x_{\cdot 2}, x_{\cdot 3})$, and it is statistically consistent as $m \to \infty$ without needing parameter estimates.
 
 ## Depends on
 

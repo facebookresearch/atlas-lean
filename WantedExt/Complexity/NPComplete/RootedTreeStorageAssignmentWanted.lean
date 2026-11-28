@@ -66,9 +66,10 @@ abbrev RootedTreeStorageAssignmentInstance := ℕ × List (List ℕ) × ℕ
 def WellFormed (i : RootedTreeStorageAssignmentInstance) : Prop :=
   (∀ S ∈ i.2.1, S.Nodup ∧ ∀ x ∈ S, x < i.1) ∧ 0 < i.2.2
 
-/-- Supersets `Xᵢ' ⊇ Xᵢ` with at most `K` added elements in total, and a tree `T` on `X` with
-root `r` in which every `Xᵢ'` is the vertex set of a simple path `p` from `u` to `v` running away
-from the root (`dist(r, v) = dist(r, u) + length(p)`). -/
+/-- Sets `Xᵢ' ⊆ X` that contain every listed element of `Xᵢ` below `N` (listed entries `≥ N` are
+not tested; well-formed instances have none), with at most `K` elements not listed in `Xᵢ` added in
+total, and a tree `T` on `X` with root `r` in which every `Xᵢ'` is the vertex set of a simple path
+`p` from `u` to `v` running away from the root (`dist(r, v) = dist(r, u) + length(p)`). -/
 def RootedTreeStorageAssignmentFeasible (i : RootedTreeStorageAssignmentInstance) : Prop :=
   ∃ X' : Fin i.2.1.length → Finset (Fin i.1),
     (∀ j, ∀ x : Fin i.1, (x : ℕ) ∈ i.2.1[j] → x ∈ X' j) ∧

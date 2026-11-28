@@ -24,6 +24,11 @@ The Chinese remainder theorem identifies each lift of a representative modulo th
 with one remainder modulo the new prime. Among the lifts of each available representative,
 all lifts that miss the new class remain available; the unique lift that hits it remains
 available precisely when the representative is free.
+
+## References
+
+* Florian Pausinger, *Counting Appearances of Integers in Sets of Arithmetic Progressions*,
+  INTEGERS **26** (2026), Article A50, pp. 1–10, Lemma 4.
 -/
 
 set_option autoImplicit false
@@ -37,6 +42,18 @@ $0 \le i < k$, is the $(i+1)$-st prime; that is, the first $k$ primes $2, 3, 5, 
 increasing order. -/
 noncomputable def firstPrimes (k : ℕ) : Fin k → ℕ :=
   fun i => Nat.nth Nat.Prime i.val
+
+/-- **Characterization of the first primes by rank.** For natural numbers $k$ and $p$ and a
+zero-based index $0 \le i < k$, the entry at index $i$ of the first $k$ primes is $p$ if and
+only if $p$ is prime and there are exactly $i$ primes strictly smaller than $p$. -/
+theorem firstPrimes_eq_iff {k : ℕ} {i : Fin k} {p : ℕ} :
+    firstPrimes k i = p ↔ p.Prime ∧ Nat.count Nat.Prime p = i.val := by
+  constructor
+  · rintro rfl
+    exact ⟨Nat.nth_mem_of_infinite Nat.infinite_setOfPred_prime _,
+      Nat.count_nth_of_infinite Nat.infinite_setOfPred_prime _⟩
+  · rintro ⟨hp, hcount⟩
+    rw [firstPrimes, ← hcount, Nat.nth_count hp]
 
 -- Use the right endpoint as the representative of the zero class.
 private def intervalRep (m n : ℕ) : ℕ :=

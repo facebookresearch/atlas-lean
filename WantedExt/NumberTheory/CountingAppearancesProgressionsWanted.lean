@@ -51,6 +51,7 @@ public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableRecurrence
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableFirstPrimes
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFirstPrimes
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCount
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableCountDistinctPrimes
@@ -92,20 +93,6 @@ theorem_wanted onesDiagDet_firstPrimes_recurrence (k : ℕ)
       borderedOnesDiagDet (firstPrimes (k - 1)) +
         ((Nat.nth Nat.Prime (k - 1) : ℤ) - 1) *
           onesDiagDet (firstPrimes (k - 1))
-
-/-- **Available integers for the first primes.** Let $k$ be a natural number, let
-$p_1, \dots, p_k$ be the first $k$ primes, and let $r_1, \dots, r_k$ be any natural numbers. Call an
-integer $n$ available if $n \equiv r_i \pmod{p_i}$ holds for at most one index $i$. Then the number
-of available integers $n$ with $1 \le n \le p_1 p_2 \cdots p_k$ equals
-$a_k = A_k(p_1, \dots, p_k)$, the determinant of the $k \times k$ matrix with diagonal entries
-$p_1, \dots, p_k$ and all other entries $1$.
-
-Source: Florian Pausinger, "Counting Appearances of Integers in
-Sets of Arithmetic Progressions", Theorem 1. -/
-theorem_wanted availableCount_firstPrimes (k : ℕ)
-    (r : Fin k → ℕ) :
-    (availableCount (firstPrimes k) r : ℤ) =
-      onesDiagDet (firstPrimes k)
 
 /-- **Available integers for three distinct primes.** Let $p$, $q$, $s$ be pairwise distinct
 primes and let $r_1, r_2, r_3$ be any natural numbers. Call an integer $n$ available if it satisfies

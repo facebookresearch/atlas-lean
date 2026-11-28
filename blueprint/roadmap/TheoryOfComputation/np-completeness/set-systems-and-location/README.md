@@ -5,6 +5,7 @@
 - [3-dimensional matching](3-dimensional-matching/README.md)
 - [Coalition formation](coalition-formation/README.md)
 - [Consecutive ones and block minimization](consecutive-ones-and-block-minimization/README.md)
+- [Decision trees and testing](decision-trees-and-testing/README.md)
 - [Exact cover](exact-cover/README.md)
 - [Exact cover by 3-sets](exact-cover-by-3-sets/README.md)
 - [Exact hitting set](exact-hitting-set/README.md)

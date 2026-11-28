@@ -15,10 +15,10 @@ public import MathlibExt.Analysis.SpecialFunctions.LambertWFunction
 namespace MetaMathlibExt
 
 example : lambertMap 0 = 0 := by
-  simp [lambertMap]
+  simp [lambertMap_apply]
 
 example : lambertMap (-1) = -Real.exp (-1) := by
-  simp [lambertMap]
+  simp [lambertMap_apply]
 
 example : ∃! y : { y : ℝ // -1 < y }, lambertMap y.val = 0 := by
   apply existsUnique_lambertMap_preimage 0
@@ -31,7 +31,7 @@ example (y : { y : ℝ // -1 < y }) (hy : lambertMap y.val = 0) : y.val = 0 := b
     linarith
   have hU := existsUnique_lambertMap_preimage 0 hx
   have h0 : lambertMap (⟨0, by norm_num⟩ : { y : ℝ // -1 < y }).val = 0 := by
-    simp [lambertMap]
+    simp [lambertMap_apply]
   have heq := hU.unique hy h0
   exact congrArg Subtype.val heq
 
@@ -46,7 +46,7 @@ example (y : { y : ℝ // y ≤ -1 }) (hy : lambertMap y.val = -Real.exp (-1)) :
   have he := Real.exp_pos (-1)
   have hU := existsUnique_lambertMap_lower_preimage (x := -Real.exp (-1)) le_rfl (by linarith)
   have h0 : lambertMap (⟨-1, le_rfl⟩ : { y : ℝ // y ≤ -1 }).val = -Real.exp (-1) := by
-    simp [lambertMap]
+    simp [lambertMap_apply]
   exact congrArg Subtype.val (hU.unique hy h0)
 
 end MetaMathlibExt
