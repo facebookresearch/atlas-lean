@@ -15,23 +15,11 @@ public import Mathlib.NumberTheory.BernoulliPolynomials
 public import Mathlib.NumberTheory.DirichletCharacter.Basic
 public import MathlibExt.NumberTheory.CotangentPowerSums
 public import MathlibExt.NumberTheory.CotangentPowerSumsBernoulli
+public import MathlibExt.NumberTheory.CotangentPowerSumsIMulCotPowEqSumIteratedDerivCot
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Cotangent powers through cotangent derivatives.** Let $c_{r,j}$ be Girstmair's cotangent
-power coefficients and $\cot^{(m)}$ the $m$-th derivative of the real cotangent function. For
-every natural number $r \ge 1$ and every real number $x$ with $\sin x \ne 0$,
-$$(i \cot x)^r = \frac{(-1)^r + 1}{2} + \sum_{j=1}^{r} c_{r,j} \, i^j \cot^{(j-1)}(x).$$
-
-Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
-Article A63, Proposition 1 (`integers-2025-A63-prop-1`). -/
-public theorem_wanted I_mul_cot_pow_eq_sum_iteratedDeriv_cot (r : ℕ) (hr : 1 ≤ r) (x : ℝ)
-    (hx : Real.sin x ≠ 0) :
-    (Complex.I * Real.cot x) ^ r = ((-1) ^ r + 1) / 2 +
-      ∑ j ∈ Finset.Icc 1 r, (cotangentPowerCoeff r j : ℂ) * Complex.I ^ j *
-        ((iteratedDeriv (j - 1) Real.cot x : ℝ) : ℂ)
 
 /-- **Girstmair's cotangent power sums, odd case.** Let $n \ge 2$, let $r$ be odd, and let $\chi$
 be a complex Dirichlet character modulo $n$ with $\chi(-1) = -1$. Let $f$ be the conductor of
