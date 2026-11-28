@@ -74116,6 +74116,7 @@
 "MathlibExt.Probability.Statistics.RegressionDiscontinuity.condExp_observed_ae_eq_sharpRDMean": "358d502300a4ed98",
 "MathlibExt.Probability.Statistics.RegressionDiscontinuity.sharpRDMean": "4f327d3e70f8bc7f",
 "MathlibExt.Probability.Statistics.RegressionDiscontinuity.sharpRD_identification": "8af3fcbcae5a3338",
+"MathlibExt.Probability.Statistics.RegressionDiscontinuity.sharpRD_jump_without_effect": "1f5bba448fd89dae",
 "MathlibExt.Probability.Statistics.RegressionDiscontinuity.tendsto_sharpRDMean": "6f2168a28f5ed230",
 "MathlibExt.Probability.Statistics.SampleCorrelation.sampleCorrSq": "e0d199b9a9b2052f",
 "MathlibExt.Probability.Statistics.SampleCorrelation.sampleMean": "68242eb481184147",
