@@ -12,7 +12,7 @@ Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.Monoidal.CoherenceLemmas
-public import Mathlib.CategoryTheory.Monoidal.FunctorCategory
+public import Mathlib.CategoryTheory.Monoidal.Functor
 
 /-!
 # Finite tensor powers and coherent ordered pairings
@@ -26,8 +26,6 @@ images of these powers, with its unit and associative multiplication coherence.
 -/
 
 @[expose] public section
-
-set_option autoImplicit false
 
 universe v u vD uD
 
@@ -139,58 +137,47 @@ theorem tensorPowFunctor_map (n : ℕ) {X Y : C} (f : X ⟶ Y) :
 /-- Splitting a finite tensor power into two blocks.
 
 The coherent isomorphism takes power `m+n` to the tensor product of powers `m` and `n`. -/
-noncomputable def tensorPowObj_add (X : C) (m : ℕ) : ∀ (n : ℕ),
+noncomputable def tensorPowAddIso (X : C) (m : ℕ) : ∀ (n : ℕ),
     tensorPowObj X (m + n) ≅ tensorPowObj X m ⊗ tensorPowObj X n
   | 0 => (rightUnitor _).symm
   | n + 1 =>
-      (tensorIso (tensorPowObj_add X m n) (Iso.refl X)) ≪≫
+      (tensorIso (tensorPowAddIso X m n) (Iso.refl X)) ≪≫
         associator _ _ _
 
 /-- Right zero block splitting is the inverse right unitor.
 
 The forward split map for a zero right block is the inverse right unitor. -/
-theorem tensorPowObj_add_zero_right (X : C) (m : ℕ) :
-    (tensorPowObj_add X m 0).hom = (rightUnitor _).symm.hom :=
-  rfl
-
-/-- Equality transport commutes with appending a tensor factor.
-
-Tensoring a power-index equality map with the identity of `X` equals the equality map of the
-corresponding appended-factor objects. -/
-theorem tensorPowObj_eqToHom_whiskerRight (X : C) {a b : ℕ} (h : a = b) :
-    ((eqToIso (congrArg (tensorPowObj X) h)).hom ⊗ₘ 𝟙 X) =
-      (eqToIso (congrArg (fun k => tensorPowObj X k ⊗ X) h)).hom := by
-  rw [eqToIso.hom, tensorHom_id, MonoidalCategory.eqToHom_whiskerRight]
-  cases h
+theorem tensorPowAddIso_hom_zero_right (X : C) (m : ℕ) :
+    (tensorPowAddIso X m 0).hom = (rightUnitor _).inv :=
   rfl
 
 /-- Left zero block splitting agrees with the left unitor.
 
 Splitting `0+n` and applying the left unitor gives the power-index equality transport to `n`. -/
-theorem tensorPowObj_add_zero_left (X : C) (n : ℕ) :
-    (tensorPowObj_add X 0 n).hom ≫
+theorem tensorPowAddIso_hom_zero_left (X : C) (n : ℕ) :
+    (tensorPowAddIso X 0 n).hom ≫
         (leftUnitor (tensorPowObj X n)).hom =
-      (eqToIso (congrArg (tensorPowObj X) (Nat.zero_add n))).hom := by
+      eqToHom (congrArg (tensorPowObj X) (Nat.zero_add n)) := by
   induction n with
   | zero =>
-    rw [tensorPowObj_add_zero_right] at ⊢
+    rw [tensorPowAddIso_hom_zero_right] at ⊢
     change (rightUnitor (𝟙_ C)).inv ≫ (leftUnitor (𝟙_ C)).hom =
       𝟙 (𝟙_ C)
     have hUE : (leftUnitor (𝟙_ C)).hom = (rightUnitor (𝟙_ C)).hom :=
       unitors_equal
     rw [hUE, Iso.inv_hom_id]
   | succ n ih =>
-    have hAdd : (tensorPowObj_add X 0 (n + 1)).hom =
-          (tensorIso (tensorPowObj_add X 0 n) (Iso.refl X)).hom ≫
+    have hAdd : (tensorPowAddIso X 0 (n + 1)).hom =
+          (tensorIso (tensorPowAddIso X 0 n) (Iso.refl X)).hom ≫
           (associator (tensorPowObj X 0)
             (tensorPowObj X n) X).hom := rfl
-    have hIso : (tensorIso (tensorPowObj_add X 0 n) (Iso.refl X)).hom =
-        (tensorPowObj_add X 0 n).hom ⊗ₘ 𝟙 X := rfl
+    have hIso : (tensorIso (tensorPowAddIso X 0 n) (Iso.refl X)).hom =
+        (tensorPowAddIso X 0 n).hom ⊗ₘ 𝟙 X := rfl
     rw [hAdd, hIso] at ⊢
     let a2 : tensorPowObj X (0 + n) ⟶ 𝟙_ C ⊗ tensorPowObj X n :=
       Eq.mpr
         (congrArg (fun U => tensorPowObj X (0 + n) ⟶ U ⊗ tensorPowObj X n)
-          (rfl : tensorPowObj X 0 = 𝟙_ C)) (tensorPowObj_add X 0 n).hom
+          (rfl : tensorPowObj X 0 = 𝟙_ C)) (tensorPowAddIso X 0 n).hom
     have hTri := leftUnitor_tensor_hom (tensorPowObj X n) X
     have hTriW : (leftUnitor (tensorPowObj X n ⊗ X)).hom =
         (associator (𝟙_ C) (tensorPowObj X n) X).inv ≫
@@ -206,7 +193,11 @@ theorem tensorPowObj_add_zero_left (X : C) (n : ℕ) :
       (associator (𝟙_ C) (tensorPowObj X n) X).inv _,
       Iso.hom_inv_id, Category.id_comp, tensorHom_comp_tensorHom,
       Category.comp_id, ih_t]
-    rw [tensorPowObj_eqToHom_whiskerRight X (Nat.zero_add n)]
+    rw [eqToIso.hom, tensorHom_id, MonoidalCategory.eqToHom_whiskerRight]
+    have hindex :
+        congrArg (fun T => T ⊗ X) (congrArg (tensorPowObj X) (Nat.zero_add n)) =
+          congrArg (fun k => tensorPowObj X k ⊗ X) (Nat.zero_add n) := by rfl
+    rw [hindex]
     have hD : Nat.zero_add (n + 1) = congrArg Nat.succ (Nat.zero_add n) :=
       rfl
     rw [hD]
@@ -216,13 +207,13 @@ theorem tensorPowObj_add_zero_left (X : C) (n : ℕ) :
 
 A morphism's full power map commutes with the splitting and the tensor of its two block power
 maps. -/
-theorem tensorPowObj_add_naturality {X Y : C} (f : X ⟶ Y) (m n : ℕ) :
-    tensorPowMap f (m + n) ≫ (tensorPowObj_add Y m n).hom =
-      (tensorPowObj_add X m n).hom ≫
+theorem tensorPowAddIso_hom_naturality {X Y : C} (f : X ⟶ Y) (m n : ℕ) :
+    tensorPowMap f (m + n) ≫ (tensorPowAddIso Y m n).hom =
+      (tensorPowAddIso X m n).hom ≫
         ((tensorPowMap f m) ⊗ₘ (tensorPowMap f n)) := by
   induction n generalizing m with
   | zero =>
-    rw [tensorPowObj_add_zero_right, tensorPowObj_add_zero_right]
+    rw [tensorPowAddIso_hom_zero_right, tensorPowAddIso_hom_zero_right]
     change tensorPowMap f m ≫ (rightUnitor _).inv =
       (rightUnitor _).inv ≫ (tensorPowMap f m ⊗ₘ 𝟙 _)
     have h := rightUnitor_naturality (tensorPowMap f m)
@@ -237,24 +228,24 @@ theorem tensorPowObj_add_naturality {X Y : C} (f : X ⟶ Y) (m n : ℕ) :
         tensorPowMap f (m + n) ⊗ₘ f := rfl
     have hMapN : tensorPowMap f (n + 1) =
         tensorPowMap f n ⊗ₘ f := rfl
-    have hAddY : (tensorPowObj_add Y m (n + 1)).hom =
-          (tensorIso (tensorPowObj_add Y m n) (Iso.refl Y)).hom ≫
+    have hAddY : (tensorPowAddIso Y m (n + 1)).hom =
+          (tensorIso (tensorPowAddIso Y m n) (Iso.refl Y)).hom ≫
           (associator (tensorPowObj Y m)
             (tensorPowObj Y n) Y).hom := rfl
-    have hAddX : (tensorPowObj_add X m (n + 1)).hom =
-          (tensorIso (tensorPowObj_add X m n) (Iso.refl X)).hom ≫
+    have hAddX : (tensorPowAddIso X m (n + 1)).hom =
+          (tensorIso (tensorPowAddIso X m n) (Iso.refl X)).hom ≫
           (associator (tensorPowObj X m)
             (tensorPowObj X n) X).hom := rfl
-    have hIsoY : (tensorIso (tensorPowObj_add Y m n) (Iso.refl Y)).hom =
-        (tensorPowObj_add Y m n).hom ⊗ₘ 𝟙 Y := rfl
-    have hIsoX : (tensorIso (tensorPowObj_add X m n) (Iso.refl X)).hom =
-        (tensorPowObj_add X m n).hom ⊗ₘ 𝟙 X := rfl
+    have hIsoY : (tensorIso (tensorPowAddIso Y m n) (Iso.refl Y)).hom =
+        (tensorPowAddIso Y m n).hom ⊗ₘ 𝟙 Y := rfl
+    have hIsoX : (tensorIso (tensorPowAddIso X m n) (Iso.refl X)).hom =
+        (tensorPowAddIso X m n).hom ⊗ₘ 𝟙 X := rfl
     rw [hMap, hAddY, hAddX, hIsoY, hIsoX, hMapN]
     change (tensorPowMap f (m + n) ⊗ₘ f) ≫
-        (((tensorPowObj_add Y m n).hom ⊗ₘ 𝟙 Y) ≫
+        (((tensorPowAddIso Y m n).hom ⊗ₘ 𝟙 Y) ≫
           (associator (tensorPowObj Y m)
             (tensorPowObj Y n) Y).hom) =
-      (((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 X) ≫
+      (((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 X) ≫
         (associator (tensorPowObj X m)
           (tensorPowObj X n) X).hom) ≫
         (tensorPowMap f m ⊗ₘ (tensorPowMap f n ⊗ₘ f))
@@ -273,20 +264,21 @@ noncomputable def tensorPowAddNatIso (m n : ℕ) :
     tensorPowFunctor (C := C) (m + n) ≅
       (tensorPowFunctor (C := C) m).prod' (tensorPowFunctor (C := C) n) ⋙
         MonoidalCategory.tensor C :=
-  NatIso.ofComponents (fun X ↦ tensorPowObj_add X m n)
-    (fun f ↦ tensorPowObj_add_naturality f m n)
+  NatIso.ofComponents (fun X ↦ tensorPowAddIso X m n)
+    (fun f ↦ tensorPowAddIso_hom_naturality f m n)
 
 /-- Tensor power block splitting is associative.
 
 The two splitting routes for three blocks agree after the associator and natural-number
 addition transport. -/
-theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
-    (eqToIso (congrArg (tensorPowObj X) (Nat.add_assoc m n k))).hom ≫
-        (tensorPowObj_add X m (n + k)).hom ≫
-        (𝟙 _ ⊗ₘ (tensorPowObj_add X n k).hom) =
-      (tensorPowObj_add X (m + n) k).hom ≫
-        ((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 _) ≫
+theorem tensorPowAddIso_hom_assoc (X : C) (m n k : ℕ) :
+    eqToHom (congrArg (tensorPowObj X) (Nat.add_assoc m n k)) ≫
+        (tensorPowAddIso X m (n + k)).hom ≫
+        (tensorPowObj X m ◁ (tensorPowAddIso X n k).hom) =
+      (tensorPowAddIso X (m + n) k).hom ≫
+        ((tensorPowAddIso X m n).hom ▷ tensorPowObj X k) ≫
         (associator _ _ _).hom := by
+  simp only [← eqToIso.hom, ← id_tensorHom, ← tensorHom_id]
   induction k with
   | zero =>
     have hr : (m + n) + 0 = m + (n + 0) := rfl
@@ -294,20 +286,20 @@ theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
     rw [hAeq] at ⊢
     have hA1 : (eqToIso (congrArg (tensorPowObj X) hr)).hom = 𝟙 _ := rfl
     rw [hA1, Category.id_comp] at ⊢
-    have hN0 : (tensorPowObj_add X m (n + 0)).hom =
-        (tensorPowObj_add X m n).hom := rfl
+    have hN0 : (tensorPowAddIso X m (n + 0)).hom =
+        (tensorPowAddIso X m n).hom := rfl
     rw [hN0] at ⊢
-    have hR1 : (tensorPowObj_add X n 0).hom =
+    have hR1 : (tensorPowAddIso X n 0).hom =
         (rightUnitor (tensorPowObj X n)).symm.hom :=
-      tensorPowObj_add_zero_right X n
-    have hR2 : (tensorPowObj_add X (m + n) 0).hom =
+      tensorPowAddIso_hom_zero_right X n
+    have hR2 : (tensorPowAddIso X (m + n) 0).hom =
         (rightUnitor (tensorPowObj X (m + n))).symm.hom :=
-      tensorPowObj_add_zero_right X (m + n)
+      tensorPowAddIso_hom_zero_right X (m + n)
     rw [hR1, hR2] at ⊢
-    change (tensorPowObj_add X m n).hom ≫
+    change (tensorPowAddIso X m n).hom ≫
         (𝟙 _ ⊗ₘ (rightUnitor (tensorPowObj X n)).inv) =
       (rightUnitor (tensorPowObj X (m + n))).inv ≫
-        ((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 _) ≫
+        ((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 _) ≫
         (associator (tensorPowObj X m)
           (tensorPowObj X n) (𝟙_ C)).hom
     have hTinv : (rightUnitor
@@ -318,22 +310,22 @@ theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
       have h := rightUnitor_tensor_inv
         (tensorPowObj X m) (tensorPowObj X n)
       rwa [← id_tensorHom] at h
-    have hNat := rightUnitor_naturality (tensorPowObj_add X m n).hom
-    have hNat' : ((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 _) ≫
+    have hNat := rightUnitor_naturality (tensorPowAddIso X m n).hom
+    have hNat' : ((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 _) ≫
         (rightUnitor (tensorPowObj X m ⊗ tensorPowObj X n)).hom =
         (rightUnitor (tensorPowObj X (m + n))).hom ≫
-          (tensorPowObj_add X m n).hom := by
+          (tensorPowAddIso X m n).hom := by
       rw [tensorHom_id]
       exact hNat
     have hVW : (rightUnitor (tensorPowObj X (m + n))).inv ≫
-        ((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 _) =
-        (tensorPowObj_add X m n).hom ≫
+        ((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 _) =
+        (tensorPowAddIso X m n).hom ≫
         (rightUnitor (tensorPowObj X m ⊗ tensorPowObj X n)).inv := by
       have h1 : (rightUnitor (tensorPowObj X (m + n))).hom ≫
           ((rightUnitor (tensorPowObj X (m + n))).inv ≫
-          ((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 _)) =
+          ((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 _)) =
           (rightUnitor (tensorPowObj X (m + n))).hom ≫
-          ((tensorPowObj_add X m n).hom ≫
+          ((tensorPowAddIso X m n).hom ≫
           (rightUnitor (tensorPowObj X m ⊗ tensorPowObj X n)).inv) := by
         rw [← Category.assoc, Iso.hom_inv_id, Category.id_comp,
           ← Category.assoc, ← hNat', Category.assoc, Iso.hom_inv_id,
@@ -342,46 +334,53 @@ theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
     rw [← Category.assoc, hVW, Category.assoc, hTinv,
       Category.assoc, Iso.inv_hom_id, Category.comp_id] at ⊢
   | succ k ih =>
-    have hAddR : (tensorPowObj_add X (m + n) (k + 1)).hom =
-          (tensorIso (tensorPowObj_add X (m + n) k) (Iso.refl X)).hom ≫
+    have hAddR : (tensorPowAddIso X (m + n) (k + 1)).hom =
+          (tensorIso (tensorPowAddIso X (m + n) k) (Iso.refl X)).hom ≫
           (associator (tensorPowObj X (m + n))
             (tensorPowObj X k) X).hom := rfl
-    have hAddM : (tensorPowObj_add X m (n + (k + 1))).hom =
-          (tensorIso (tensorPowObj_add X m (n + k)) (Iso.refl X)).hom ≫
+    have hAddM : (tensorPowAddIso X m (n + (k + 1))).hom =
+          (tensorIso (tensorPowAddIso X m (n + k)) (Iso.refl X)).hom ≫
           (associator (tensorPowObj X m)
             (tensorPowObj X (n + k)) X).hom := rfl
-    have hAddN : (tensorPowObj_add X n (k + 1)).hom =
-          (tensorIso (tensorPowObj_add X n k) (Iso.refl X)).hom ≫
+    have hAddN : (tensorPowAddIso X n (k + 1)).hom =
+          (tensorIso (tensorPowAddIso X n k) (Iso.refl X)).hom ≫
           (associator (tensorPowObj X n)
             (tensorPowObj X k) X).hom := rfl
     have hIsoR : (tensorIso
-        (tensorPowObj_add X (m + n) k) (Iso.refl X)).hom =
-        (tensorPowObj_add X (m + n) k).hom ⊗ₘ 𝟙 X := rfl
+        (tensorPowAddIso X (m + n) k) (Iso.refl X)).hom =
+        (tensorPowAddIso X (m + n) k).hom ⊗ₘ 𝟙 X := rfl
     have hIsoM : (tensorIso
-        (tensorPowObj_add X m (n + k)) (Iso.refl X)).hom =
-        (tensorPowObj_add X m (n + k)).hom ⊗ₘ 𝟙 X := rfl
-    have hIsoN : (tensorIso (tensorPowObj_add X n k) (Iso.refl X)).hom =
-        (tensorPowObj_add X n k).hom ⊗ₘ 𝟙 X := rfl
+        (tensorPowAddIso X m (n + k)) (Iso.refl X)).hom =
+        (tensorPowAddIso X m (n + k)).hom ⊗ₘ 𝟙 X := rfl
+    have hIsoN : (tensorIso (tensorPowAddIso X n k) (Iso.refl X)).hom =
+        (tensorPowAddIso X n k).hom ⊗ₘ 𝟙 X := rfl
     have hD : Nat.add_assoc m n (k + 1) =
         congrArg Nat.succ (Nat.add_assoc m n k) := rfl
     rw [hD] at ⊢
     rw [hAddR, hAddM, hAddN, hIsoR, hIsoM, hIsoN] at ⊢
     change (eqToIso (congrArg (fun j => tensorPowObj X j ⊗ X)
             (Nat.add_assoc m n k))).hom ≫
-          (((tensorPowObj_add X m (n + k)).hom ⊗ₘ 𝟙 X) ≫
+          (((tensorPowAddIso X m (n + k)).hom ⊗ₘ 𝟙 X) ≫
           (associator (tensorPowObj X m)
             (tensorPowObj X (n + k)) X).hom) ≫
-          (𝟙 _ ⊗ₘ (((tensorPowObj_add X n k).hom ⊗ₘ 𝟙 X) ≫
+          (𝟙 _ ⊗ₘ (((tensorPowAddIso X n k).hom ⊗ₘ 𝟙 X) ≫
             (associator (tensorPowObj X n)
               (tensorPowObj X k) X).hom)) =
-        (((tensorPowObj_add X (m + n) k).hom ⊗ₘ 𝟙 X) ≫
+        (((tensorPowAddIso X (m + n) k).hom ⊗ₘ 𝟙 X) ≫
         (associator (tensorPowObj X (m + n))
           (tensorPowObj X k) X).hom) ≫
-        (((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 _) ≫
+        (((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 _) ≫
         (associator (tensorPowObj X m)
           (tensorPowObj X n)
           (tensorPowObj X k ⊗ X)).hom)
-    rw [← tensorPowObj_eqToHom_whiskerRight X (Nat.add_assoc m n k)] at ⊢
+    have hindex := MonoidalCategory.eqToHom_whiskerRight
+      (congrArg (tensorPowObj X) (Nat.add_assoc m n k)) X
+    have hindex' :
+        ((eqToIso (congrArg (tensorPowObj X) (Nat.add_assoc m n k))).hom ⊗ₘ 𝟙 X) =
+          (eqToIso (congrArg (fun j => tensorPowObj X j ⊗ X)
+            (Nat.add_assoc m n k))).hom := by
+      simpa only [eqToIso.hom, tensorHom_id] using hindex
+    rw [← hindex'] at ⊢
     simp only [← Category.assoc, tensorHom_comp_tensorHom,
       Category.comp_id] at ⊢
     have e1 : (𝟙 (tensorPowObj X m)) =
@@ -390,10 +389,10 @@ theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
     rw [e1] at ⊢
     rw [← tensorHom_comp_tensorHom] at ⊢
     have hNat3 := associator_naturality
-      (𝟙 (tensorPowObj X m)) (tensorPowObj_add X n k).hom (𝟙 X)
+      (𝟙 (tensorPowObj X m)) (tensorPowAddIso X n k).hom (𝟙 X)
     rw [Category.assoc _ _
       ((𝟙 (tensorPowObj X m) ⊗ₘ
-        ((tensorPowObj_add X n k).hom ⊗ₘ 𝟙 X)) ≫
+        ((tensorPowAddIso X n k).hom ⊗ₘ 𝟙 X)) ≫
       (𝟙 (tensorPowObj X m) ⊗ₘ
         (associator (tensorPowObj X n)
           (tensorPowObj X k) X).hom))] at ⊢
@@ -401,13 +400,13 @@ theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
       (associator (tensorPowObj X m)
         (tensorPowObj X (n + k)) X).hom
       (𝟙 (tensorPowObj X m) ⊗ₘ
-        ((tensorPowObj_add X n k).hom ⊗ₘ 𝟙 X))
+        ((tensorPowAddIso X n k).hom ⊗ₘ 𝟙 X))
       (𝟙 (tensorPowObj X m) ⊗ₘ
         (associator (tensorPowObj X n)
           (tensorPowObj X k) X).hom)] at ⊢
     rw [← hNat3] at ⊢
     rw [Category.assoc
-      (((𝟙 (tensorPowObj X m) ⊗ₘ (tensorPowObj_add X n k).hom) ⊗ₘ 𝟙 X))
+      (((𝟙 (tensorPowObj X m) ⊗ₘ (tensorPowAddIso X n k).hom) ⊗ₘ 𝟙 X))
       (associator (tensorPowObj X m)
         (tensorPowObj X n ⊗ tensorPowObj X k) X).hom
       (𝟙 (tensorPowObj X m) ⊗ₘ
@@ -415,8 +414,8 @@ theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
           (tensorPowObj X k) X).hom)] at ⊢
     rw [← Category.assoc
       (((eqToIso (congrArg (tensorPowObj X) (Nat.add_assoc m n k))).hom ≫
-          (tensorPowObj_add X m (n + k)).hom) ⊗ₘ 𝟙 X)
-      ((𝟙 (tensorPowObj X m) ⊗ₘ (tensorPowObj_add X n k).hom) ⊗ₘ 𝟙 X)
+          (tensorPowAddIso X m (n + k)).hom) ⊗ₘ 𝟙 X)
+      ((𝟙 (tensorPowObj X m) ⊗ₘ (tensorPowAddIso X n k).hom) ⊗ₘ 𝟙 X)
       ((associator (tensorPowObj X m)
         (tensorPowObj X n ⊗ tensorPowObj X k) X).hom ≫
       (𝟙 (tensorPowObj X m) ⊗ₘ
@@ -425,8 +424,8 @@ theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
     rw [tensorHom_comp_tensorHom, Category.comp_id] at ⊢
     rw [Category.assoc
       (eqToIso (congrArg (tensorPowObj X) (Nat.add_assoc m n k))).hom
-      (tensorPowObj_add X m (n + k)).hom
-      (𝟙 (tensorPowObj X m) ⊗ₘ (tensorPowObj_add X n k).hom)] at ⊢
+      (tensorPowAddIso X m (n + k)).hom
+      (𝟙 (tensorPowObj X m) ⊗ₘ (tensorPowAddIso X n k).hom)] at ⊢
     rw [ih] at ⊢
     have e2 : (𝟙 X) = 𝟙 X ≫ 𝟙 X :=
       (Category.id_comp _).symm
@@ -454,52 +453,52 @@ theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
       exact h
     rw [hPent] at ⊢
     rw [← Category.assoc
-      (((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k)) ⊗ₘ 𝟙 X)
+      (((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k)) ⊗ₘ 𝟙 X)
       (associator (tensorPowObj X m ⊗ tensorPowObj X n)
         (tensorPowObj X k) X).hom
       (associator (tensorPowObj X m)
         (tensorPowObj X n)
         (tensorPowObj X k ⊗ X)).hom] at ⊢
-    have hNat9 : (((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k))
+    have hNat9 : (((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k))
           ⊗ₘ 𝟙 X) ≫
         (associator (tensorPowObj X m ⊗ tensorPowObj X n)
           (tensorPowObj X k) X).hom =
         (associator (tensorPowObj X (m + n))
           (tensorPowObj X k) X).hom ≫
-        ((tensorPowObj_add X m n).hom ⊗ₘ
+        ((tensorPowAddIso X m n).hom ⊗ₘ
           (𝟙 (tensorPowObj X k) ⊗ₘ 𝟙 X)) :=
       associator_naturality
-        (tensorPowObj_add X m n).hom (𝟙 (tensorPowObj X k)) (𝟙 X)
+        (tensorPowAddIso X m n).hom (𝟙 (tensorPowObj X k)) (𝟙 X)
     rw [hNat9] at ⊢
     simp only [id_tensorHom] at ⊢
     rw [← Category.assoc
-      ((tensorPowObj_add X (m + n) k).hom ⊗ₘ 𝟙 X)
+      ((tensorPowAddIso X (m + n) k).hom ⊗ₘ 𝟙 X)
       ((associator (tensorPowObj X (m + n))
         (tensorPowObj X k) X).hom ≫
-      ((tensorPowObj_add X m n).hom ⊗ₘ
+      ((tensorPowAddIso X m n).hom ⊗ₘ
         (tensorPowObj X k ◁ 𝟙 X)))
       (associator (tensorPowObj X m)
         (tensorPowObj X n)
         (tensorPowObj X k ⊗ X)).hom] at ⊢
     rw [← Category.assoc
-      ((tensorPowObj_add X (m + n) k).hom ⊗ₘ 𝟙 X)
+      ((tensorPowAddIso X (m + n) k).hom ⊗ₘ 𝟙 X)
       (associator (tensorPowObj X (m + n))
         (tensorPowObj X k) X).hom
-      ((tensorPowObj_add X m n).hom ⊗ₘ
+      ((tensorPowAddIso X m n).hom ⊗ₘ
         (tensorPowObj X k ◁ 𝟙 X))] at ⊢
     rw [Category.assoc
-      ((tensorPowObj_add X (m + n) k).hom ⊗ₘ 𝟙 X)
+      ((tensorPowAddIso X (m + n) k).hom ⊗ₘ 𝟙 X)
       (associator (tensorPowObj X (m + n))
         (tensorPowObj X k) X).hom
-      ((tensorPowObj_add X m n).hom ⊗ₘ
+      ((tensorPowAddIso X m n).hom ⊗ₘ
         (tensorPowObj X k ◁ 𝟙 X))] at ⊢
     have hLast : (associator (tensorPowObj X (m + n))
           (tensorPowObj X k) X).hom ≫
-        ((tensorPowObj_add X m n).hom ⊗ₘ (tensorPowObj X k ◁ 𝟙 X)) =
-        (((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k)) ⊗ₘ 𝟙 X) ≫
+        ((tensorPowAddIso X m n).hom ⊗ₘ (tensorPowObj X k ◁ 𝟙 X)) =
+        (((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k)) ⊗ₘ 𝟙 X) ≫
         (associator (tensorPowObj X m ⊗ tensorPowObj X n)
           (tensorPowObj X k) X).hom := by
-      have h := (associator_naturality (tensorPowObj_add X m n).hom
+      have h := (associator_naturality (tensorPowAddIso X m n).hom
         (𝟙 (tensorPowObj X k)) (𝟙 X)).symm
       have hBridge : (tensorPowObj X k ◁ 𝟙 X) =
           (𝟙 (tensorPowObj X k) ⊗ₘ 𝟙 X) := by simp
@@ -509,18 +508,18 @@ theorem tensorPowObj_add_assoc (X : C) (m n k : ℕ) :
     have hBridge2 : (𝟙 (tensorPowObj X k ⊗ X)) =
         (tensorPowObj X k ◁ 𝟙 X) := by simp
     conv_rhs =>
-      rw [Category.assoc ((tensorPowObj_add X (m + n) k).hom ⊗ₘ 𝟙 X)
+      rw [Category.assoc ((tensorPowAddIso X (m + n) k).hom ⊗ₘ 𝟙 X)
         (associator (tensorPowObj X (m + n))
           (tensorPowObj X k) X).hom
-        ((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k ⊗ X))]
+        ((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k ⊗ X))]
       rw [hBridge2]
       rw [hLast]
-      rw [← Category.assoc ((tensorPowObj_add X (m + n) k).hom ⊗ₘ 𝟙 X)
-        (((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k)) ⊗ₘ 𝟙 X)
+      rw [← Category.assoc ((tensorPowAddIso X (m + n) k).hom ⊗ₘ 𝟙 X)
+        (((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k)) ⊗ₘ 𝟙 X)
         (associator (tensorPowObj X m ⊗ tensorPowObj X n)
           (tensorPowObj X k) X).hom]
-    rw [Category.assoc ((tensorPowObj_add X (m + n) k).hom ⊗ₘ 𝟙 X)
-      (((tensorPowObj_add X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k)) ⊗ₘ 𝟙 X)
+    rw [Category.assoc ((tensorPowAddIso X (m + n) k).hom ⊗ₘ 𝟙 X)
+      (((tensorPowAddIso X m n).hom ⊗ₘ 𝟙 (tensorPowObj X k)) ⊗ₘ 𝟙 X)
       (associator (tensorPowObj X m ⊗ tensorPowObj X n)
         (tensorPowObj X k) X).hom] at ⊢
 
@@ -538,7 +537,7 @@ noncomputable def laxTensorPowerPairing (G : C ⥤ D) [G.LaxMonoidal]
         G.obj (TensorPower.tensorPowObj X q) ⟶
       G.obj (TensorPower.tensorPowObj X (p + q)) :=
   Functor.LaxMonoidal.μ G _ _ ≫
-    G.map (TensorPower.tensorPowObj_add X p q).inv
+    G.map (TensorPower.tensorPowAddIso X p q).inv
 
 /-- Unit for the image tensor power family.
 
@@ -563,8 +562,8 @@ theorem laxTensorPowerPairing_naturality (G : C ⥤ D) [G.LaxMonoidal]
   simp only [Category.assoc, ← G.map_comp]
   congr 1
   apply congrArg G.map
-  apply (cancel_mono (TensorPower.tensorPowObj_add Y p q).hom).mp
-  simp [TensorPower.tensorPowObj_add_naturality]
+  apply (cancel_mono (TensorPower.tensorPowAddIso Y p q).hom).mp
+  simp [TensorPower.tensorPowAddIso_hom_naturality]
 
 set_option backward.isDefEq.respectTransparency false in
 /-- Lax power pairing satisfies the left unit equation.
@@ -579,21 +578,21 @@ theorem laxTensorPowerPairing_zero_left (G : C ⥤ D) [G.LaxMonoidal]
         eqToHom (congrArg
           (fun n ↦ G.obj (TensorPower.tensorPowObj X n))
           (Nat.zero_add p).symm) := by
-  have hAdd : (TensorPower.tensorPowObj_add X 0 p).inv =
+  have hAdd : (TensorPower.tensorPowAddIso X 0 p).inv =
       (λ_ (TensorPower.tensorPowObj X p)).hom ≫
         eqToHom (congrArg (TensorPower.tensorPowObj X)
           (Nat.zero_add p).symm) := by
     let e := eqToIso
       (congrArg (TensorPower.tensorPowObj X) (Nat.zero_add p))
     have h₁ : (λ_ (TensorPower.tensorPowObj X p)).hom =
-        (TensorPower.tensorPowObj_add X 0 p).inv ≫ e.hom :=
-      (Iso.eq_inv_comp (TensorPower.tensorPowObj_add X 0 p)).2
-        (TensorPower.tensorPowObj_add_zero_left X p)
+        (TensorPower.tensorPowAddIso X 0 p).inv ≫ e.hom :=
+      (Iso.eq_inv_comp (TensorPower.tensorPowAddIso X 0 p)).2
+        (TensorPower.tensorPowAddIso_hom_zero_left X p)
     exact ((Iso.comp_inv_eq e).2 h₁).symm
   change (Functor.LaxMonoidal.ε G ▷
       G.obj (TensorPower.tensorPowObj X p)) ≫
       Functor.LaxMonoidal.μ G (𝟙_ C) (TensorPower.tensorPowObj X p) ≫
-      G.map (TensorPower.tensorPowObj_add X 0 p).inv = _
+      G.map (TensorPower.tensorPowAddIso X 0 p).inv = _
   rw [hAdd, G.map_comp]
   rw [← Functor.LaxMonoidal.left_unitality_assoc, eqToHom_map]
 
@@ -609,12 +608,12 @@ theorem laxTensorPowerPairing_zero_right (G : C ⥤ D) [G.LaxMonoidal]
   change (G.obj (TensorPower.tensorPowObj X p) ◁
       Functor.LaxMonoidal.ε G) ≫
       Functor.LaxMonoidal.μ G (TensorPower.tensorPowObj X p) (𝟙_ C) ≫
-      G.map (TensorPower.tensorPowObj_add X p 0).inv = _
-  have hAdd : (TensorPower.tensorPowObj_add X p 0).inv =
+      G.map (TensorPower.tensorPowAddIso X p 0).inv = _
+  have hAdd : (TensorPower.tensorPowAddIso X p 0).inv =
       (ρ_ (TensorPower.tensorPowObj X p)).hom :=
-    (Iso.inv_eq_inv (TensorPower.tensorPowObj_add X p 0)
+    (Iso.inv_eq_inv (TensorPower.tensorPowAddIso X p 0)
       (ρ_ (TensorPower.tensorPowObj X p)).symm).2
-        (TensorPower.tensorPowObj_add_zero_right X p)
+        (TensorPower.tensorPowAddIso_hom_zero_right X p)
   rw [hAdd]
   simpa only [← Category.assoc] using
       (Functor.LaxMonoidal.right_unitality G
@@ -627,8 +626,7 @@ The two triple pairing routes agree after the associator and the degree equality
 p+(q+r)`. -/
 theorem laxTensorPowerPairing_assoc (G : C ⥤ D) [G.LaxMonoidal]
     (X : C) (p q r : ℕ) :
-    (laxTensorPowerPairing G X p q ⊗ₘ
-        𝟙 (G.obj (TensorPower.tensorPowObj X r))) ≫
+    (laxTensorPowerPairing G X p q ▷ G.obj (TensorPower.tensorPowObj X r)) ≫
         laxTensorPowerPairing G X (p + q) r ≫
         eqToHom (congrArg
           (fun n ↦ G.obj (TensorPower.tensorPowObj X n))
@@ -636,42 +634,31 @@ theorem laxTensorPowerPairing_assoc (G : C ⥤ D) [G.LaxMonoidal]
       (α_ (G.obj (TensorPower.tensorPowObj X p))
         (G.obj (TensorPower.tensorPowObj X q))
         (G.obj (TensorPower.tensorPowObj X r))).hom ≫
-        (𝟙 (G.obj (TensorPower.tensorPowObj X p)) ⊗ₘ
-          laxTensorPowerPairing G X q r) ≫
+        (G.obj (TensorPower.tensorPowObj X p) ◁ laxTensorPowerPairing G X q r) ≫
         laxTensorPowerPairing G X p (q + r) := by
-  have hSourceIso :
-      ((TensorPower.tensorPowObj_add X p q).inv ▷
-          TensorPower.tensorPowObj X r) ≫
-          (TensorPower.tensorPowObj_add X (p + q) r).inv ≫
-          (eqToIso (congrArg (TensorPower.tensorPowObj X)
-            (Nat.add_assoc p q r))).hom =
-        (α_ (TensorPower.tensorPowObj X p)
-          (TensorPower.tensorPowObj X q)
-          (TensorPower.tensorPowObj X r)).hom ≫
-          (TensorPower.tensorPowObj X p ◁
-            (TensorPower.tensorPowObj_add X q r).inv) ≫
-          (TensorPower.tensorPowObj_add X p (q + r)).inv := by
-    apply (cancel_mono
-      ((TensorPower.tensorPowObj_add X p (q + r)).hom ≫
-        (𝟙 (TensorPower.tensorPowObj X p) ⊗ₘ
-          (TensorPower.tensorPowObj_add X q r).hom))).mp
-    simp only [Category.assoc]
-    slice_lhs 3 5 =>
-      rw [TensorPower.tensorPowObj_add_assoc X p q r]
-    simp [id_tensorHom, tensorHom_id]
+  simp only [← tensorHom_id, ← id_tensorHom]
   have hSource :
-      ((TensorPower.tensorPowObj_add X p q).inv ▷
+      ((TensorPower.tensorPowAddIso X p q).inv ▷
           TensorPower.tensorPowObj X r) ≫
-          (TensorPower.tensorPowObj_add X (p + q) r).inv ≫
+          (TensorPower.tensorPowAddIso X (p + q) r).inv ≫
           eqToHom (congrArg (TensorPower.tensorPowObj X)
             (Nat.add_assoc p q r)) =
         (α_ (TensorPower.tensorPowObj X p)
           (TensorPower.tensorPowObj X q)
           (TensorPower.tensorPowObj X r)).hom ≫
           (TensorPower.tensorPowObj X p ◁
-            (TensorPower.tensorPowObj_add X q r).inv) ≫
-          (TensorPower.tensorPowObj_add X p (q + r)).inv :=
-    hSourceIso
+            (TensorPower.tensorPowAddIso X q r).inv) ≫
+          (TensorPower.tensorPowAddIso X p (q + r)).inv := by
+    apply (cancel_mono
+      ((TensorPower.tensorPowAddIso X p (q + r)).hom ≫
+        (𝟙 (TensorPower.tensorPowObj X p) ⊗ₘ
+          (TensorPower.tensorPowAddIso X q r).hom))).mp
+    simp only [Category.assoc]
+    have hAssoc := TensorPower.tensorPowAddIso_hom_assoc X p q r
+    simp only [eqToIso.hom, id_tensorHom, tensorHom_id] at ⊢
+    slice_lhs 3 5 =>
+      rw [hAssoc]
+    simp [id_tensorHom, tensorHom_id]
   unfold laxTensorPowerPairing
   simp only [tensorHom_id, comp_whiskerRight, id_tensorHom,
     MonoidalCategory.whiskerLeft_comp, Category.assoc,

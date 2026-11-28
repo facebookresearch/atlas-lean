@@ -51,7 +51,7 @@ noncomputable def tensorPowObjOneIso (X : C) :
 The block split and one-factor coordinates identify power two with `X ⊗ X`. -/
 noncomputable def tensorPowObjTwoIso (X : C) :
     tensorPowObj X 2 ≅ X ⊗ X :=
-  tensorPowObj_add X 1 1 ≪≫
+  tensorPowAddIso X 1 1 ≪≫
     tensorIso (tensorPowObjOneIso X) (tensorPowObjOneIso X)
 
 /-- Finite tensor power separates its first factor.
@@ -81,7 +81,7 @@ Split the power into blocks of lengths one and `n+1`, then apply the one-factor 
 noncomputable def tensorPowObjHeadTailAddIso (X : C) (n : ℕ) :
     tensorPowObj X (n + 2) ≅ X ⊗ tensorPowObj X (n + 1) :=
   eqToIso (congrArg (tensorPowObj X) (Nat.one_add (n + 1)).symm) ≪≫
-    tensorPowObj_add X 1 (n + 1) ≪≫
+    tensorPowAddIso X 1 (n + 1) ≪≫
     tensorIso (tensorPowObjOneIso X) (Iso.refl _)
 
 set_option backward.isDefEq.respectTransparency.types false in
@@ -103,7 +103,7 @@ theorem tensorPowObjHeadTailIso_eq_addIso (X : C) :
             (Nat.one_add 1).symm)).hom = 𝟙 _ := by
         rfl
       rw [hcast, Category.id_comp]
-      simp only [tensorPowObj_add]
+      simp only [tensorPowAddIso]
       unfold tensorPowObjOneIso
       monoidal_coherence
   | n + 1 => by
@@ -116,10 +116,13 @@ theorem tensorPowObjHeadTailIso_eq_addIso (X : C) :
           (eqToIso (congrArg (tensorPowObj X)
             (Nat.one_add (n + 2)).symm)).hom =
           ((eqToIso (congrArg (tensorPowObj X) h)).hom ⊗ₘ 𝟙 X) := by
-        rw [tensorPowObj_eqToHom_whiskerRight X h]
+        rw [eqToIso.hom, tensorHom_id, MonoidalCategory.eqToHom_whiskerRight]
+        have hindex : congrArg (fun T => T ⊗ X) (congrArg (tensorPowObj X) h) =
+            congrArg (fun k => tensorPowObj X k ⊗ X) h := by rfl
+        rw [hindex]
       rw [hcast]
-      rw [show (tensorPowObj_add X 1 ((n + 1) + 1)).hom =
-          ((tensorPowObj_add X 1 (n + 1)).hom ⊗ₘ 𝟙 X) ≫
+      rw [show (tensorPowAddIso X 1 ((n + 1) + 1)).hom =
+          ((tensorPowAddIso X 1 (n + 1)).hom ⊗ₘ 𝟙 X) ≫
             (associator (tensorPowObj X 1)
               (tensorPowObj X (n + 1)) X).hom by rfl]
       rw [tensorPowObjHeadTailIso_eq_addIso X n]
@@ -128,7 +131,7 @@ theorem tensorPowObjHeadTailIso_eq_addIso (X : C) :
       simp only [tensorIso_hom, Iso.refl_hom]
       let c := (eqToIso (congrArg (tensorPowObj X)
         (Nat.one_add (n + 1)).symm)).hom
-      let a := (tensorPowObj_add X 1 (n + 1)).hom
+      let a := (tensorPowAddIso X 1 (n + 1)).hom
       let o := (tensorPowObjOneIso X).hom
       have hcomp :
           ((c ≫ a ≫ (o ⊗ₘ 𝟙 (tensorPowObj X (n + 1)))) ⊗ₘ 𝟙 X) =
@@ -168,8 +171,8 @@ theorem tensorPowMap_comp_tensorPowObjHeadTailIso_hom
   let h := (Nat.one_add (n + 1)).symm
   let cX := (eqToIso (congrArg (tensorPowObj X) h)).hom
   let cY := (eqToIso (congrArg (tensorPowObj Y) h)).hom
-  let aX := (tensorPowObj_add X 1 (n + 1)).hom
-  let aY := (tensorPowObj_add Y 1 (n + 1)).hom
+  let aX := (tensorPowAddIso X 1 (n + 1)).hom
+  let aY := (tensorPowAddIso Y 1 (n + 1)).hom
   let oX := (tensorPowObjOneIso X).hom
   let oY := (tensorPowObjOneIso Y).hom
   have hcast : tensorPowMap f (n + 2) ≫ cY =
@@ -182,7 +185,7 @@ theorem tensorPowMap_comp_tensorPowObjHeadTailIso_hom
       subst p
       simp
     exact cast_naturality h
-  have hadd := tensorPowObj_add_naturality f 1 (n + 1)
+  have hadd := tensorPowAddIso_hom_naturality f 1 (n + 1)
   have hone : tensorPowMap f 1 ≫ oY = oX ≫ f := by
     change (𝟙 (𝟙_ C) ⊗ₘ f) ≫ (leftUnitor Y).hom =
       (leftUnitor X).hom ≫ f
@@ -288,8 +291,8 @@ theorem tensorPowObjTwoIso_hom (X : C) :
     (tensorPowObjTwoIso X).hom =
       (tensorPowObjOneIso X).hom ⊗ₘ 𝟙 X := by
   unfold tensorPowObjTwoIso tensorPowObjOneIso
-  unfold tensorPowObj_add
-  unfold tensorPowObj_add
+  unfold tensorPowAddIso
+  unfold tensorPowAddIso
   monoidal_coherence
 
 /-- Inverse two factor coordinate uses the inverse one factor map.
@@ -299,8 +302,8 @@ theorem tensorPowObjTwoIso_inv (X : C) :
     (tensorPowObjTwoIso X).inv =
       (tensorPowObjOneIso X).inv ⊗ₘ 𝟙 X := by
   unfold tensorPowObjTwoIso tensorPowObjOneIso
-  unfold tensorPowObj_add
-  unfold tensorPowObj_add
+  unfold tensorPowAddIso
+  unfold tensorPowAddIso
   monoidal_coherence
 
 /-- Right associated triple as the left associated power.
@@ -558,8 +561,8 @@ source splitting, inverse tensor structure, and the two block comparisons. -/
 theorem mapTensorPowObjIso_hom_add (G : Functor C D) [G.Monoidal]
     (X : C) (m n : ℕ) :
     (mapTensorPowObjIso G X (m + n)).hom ≫
-        (tensorPowObj_add (G.obj X) m n).hom =
-      G.map (tensorPowObj_add X m n).hom ≫
+        (tensorPowAddIso (G.obj X) m n).hom =
+      G.map (tensorPowAddIso X m n).hom ≫
         (Functor.Monoidal.μIso G
           (tensorPowObj X m) (tensorPowObj X n)).inv ≫
           ((mapTensorPowObjIso G X m).hom ⊗ₘ
@@ -599,8 +602,8 @@ theorem mapTensorPowObjIso_hom_add (G : Functor C D) [G.Monoidal]
   | succ n ih =>
       let pM := (mapTensorPowObjIso G X m).hom
       let pN := (mapTensorPowObjIso G X n).hom
-      let addC := (tensorPowObj_add X m n).hom
-      let addD := (tensorPowObj_add (G.obj X) m n).hom
+      let addC := (tensorPowAddIso X m n).hom
+      let addD := (tensorPowAddIso (G.obj X) m n).hom
       have hTensorComp :
           ((mapTensorPowObjIso G X (m + n)).hom ⊗ₘ 𝟙 (G.obj X)) ≫
               (addD ⊗ₘ 𝟙 (G.obj X)) =

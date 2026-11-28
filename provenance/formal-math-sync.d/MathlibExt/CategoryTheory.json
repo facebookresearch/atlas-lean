@@ -2514,24 +2514,8 @@
       "upstream_commit": "efb0b86f464b1cd2243085ad50810fd0ac3c0d07",
       "upstream_sha256": "98a169bd4b7231374c312274e4c1a8b5bf50540ac5a42ec5587ee67a2fcd3f2c"
     },
-    {
-      "path": "MathlibExt/CategoryTheory/Monoidal/TensorPowerFunctor.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "6b1e6b2737467688fb1fd229a43601d4f97f56e6141a980bcbeb83ce3664cdfd",
-      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds. Mathematical documentation now states the classifying-space, continuous-action, cup-product, cyclic-resolution and degree-transport contracts with all coefficient worlds, group hypotheses and signs; all noncomment tokens and legal credits are unchanged.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "9ddd659357a45835ebb7abf51d3838a19379540cb26363d3e04d68e675f1cbb5"
-    },
-    {
-      "path": "MathlibExt/CategoryTheory/Monoidal/TensorPowers.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "623fd04cef41e0ced57b26b1004a1e4aba9ff0f7f04470ee055cd0b66f61c847",
-      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds. Mathematical documentation now states the classifying-space, continuous-action, cup-product, cyclic-resolution and degree-transport contracts with all coefficient worlds, group hypotheses and signs; all noncomment tokens and legal credits are unchanged.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "1622aaf1eb314ece0e8f46e0d9ff2bbc6bbf0f842c98c08b68c05821bd60056e"
-    },
+    {"path": "MathlibExt/CategoryTheory/Monoidal/TensorPowerFunctor.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "18d77348ae74d0d6a04ffe04fd88ab4c448cb535b2c2c7bdf34e3854dcd42f62", "rationale": "Actual published TensorPowerFunctor caller migration for PR11297’s canonical tensorPowAddIso interface. Rename generic block-splitting calls and use the pinned native MonoidalCategory.eqToHom_whiskerRight law instead of the removed wrapper. All public caller declaration names, hypotheses, universes, power/factor order and structure maps are retained; 100-column wraps are whitespace only. This is an explicit API/proof adaptation, not an unchanged-token copy of the earlier source.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "9ddd659357a45835ebb7abf51d3838a19379540cb26363d3e04d68e675f1cbb5"},
+    {"path": "MathlibExt/CategoryTheory/Monoidal/TensorPowers.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a266b60ee937a3c165d069e4503235454d0ed542d413e427a5c15b3a80d473f0", "rationale": "Finite left-associated tensor powers and their coherent block-splitting isomorphism in an arbitrary monoidal category, with ordered pairings under a lax monoidal functor in independently sized source and target categories. Rename lemma-style data tensorPowObj_add to tensorPowAddIso with statement-based hom-law names; remove the duplicate equality-whisker helper in favor of pinned MonoidalCategory.eqToHom_whiskerRight; state unit/associativity laws in native simp normal form (.inv, eqToHom and whiskering). Retain all power objects, component maps, addition transports, worlds and factor order. Use the narrower monoidal Functor import and add an ATLAS-authored concrete Cartesian client. Native compilation of the repair is pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "1622aaf1eb314ece0e8f46e0d9ff2bbc6bbf0f842c98c08b68c05821bd60056e"},
     {
       "path": "MathlibExt/CategoryTheory/Monoidal/Tor/Additive.lean",
       "disposition": "identical",
@@ -2604,15 +2588,7 @@
       "published_sha256": "fd42d359cdc9621724cbdf744fc3cd9b47ac803caa8cc658a9b4e84357ca4f61",
       "upstream_sha256": "591a7f3e6d70f882b8cb54f0effe22ff70f4b6c4d4d75c0beeb92d92b550400b"
     },
-    {
-      "path": "MathlibExt/CategoryTheory/NerveHomotopy.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "7a036640ac4195cdcf7e4253a069924a0094fed0a416319cfb37327b0abdc455",
-      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds. Mathematical documentation now states the classifying-space, continuous-action, cup-product, cyclic-resolution and degree-transport contracts with all coefficient worlds, group hypotheses and signs; all noncomment tokens and legal credits are unchanged.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "8e63b6ee95aa76a0da3840fa661eb313f11803506ed3aa4c78df53cbb5d0eebf"
-    },
+    {"path": "MathlibExt/CategoryTheory/NerveHomotopy.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "28af3d420e447fb1f543c8c9d72bdc7890700c8a546d2d006c40d122b1d8b0f4", "rationale": "Import the general natural-transformation nerve-homotopy and finite-prism API, preserving the original legal credits, arrow order, endpoint orientation and common-universe transport formulas. Adapt the mathematical documentation and declaration names to Atlas conventions; generalize the chain classifier and its face laws to independent source/target category universes; reuse one classifier endpoint and constant-chain computation; remove duplicate private proof copies; expose the common-universe data and their application formulas. These are explicit Atlas API and proof changes, so the noncomment tokens differ from the upstream version.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "8e63b6ee95aa76a0da3840fa661eb313f11803506ed3aa4c78df53cbb5d0eebf"},
     {
       "path": "MathlibExt/CategoryTheory/NerveMonomorphism.lean",
       "disposition": "identical",
