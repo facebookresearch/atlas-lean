@@ -215,7 +215,9 @@ private lemma theta_product_of_ne_zero {a b : ℂ} (ha : a ≠ 0) (hb : b ≠ 0)
     rw [inv_div, div_mul_eq_mul_div, ← sq, hr, mul_div_cancel_left₀ _ ha]
   simpa only [hza, hzb, hr] using theta_product (a / r) r (div_ne_zero ha hr0) hr1
 
-private theorem ramanujanThetaRaw_zero_left (b : ℂ) : ramanujanThetaRaw 0 b = 1 + b := by
+/-- **Ramanujan's theta function with first parameter zero.** For every complex number $b$,
+$f(0,b) = 1 + b$: the only indices that contribute are $0$ and $-1$. -/
+public theorem ramanujanThetaRaw_zero_left (b : ℂ) : ramanujanThetaRaw 0 b = 1 + b := by
   unfold ramanujanThetaRaw
   rw [tsum_eq_sum (s := {0, -1})]
   · simp

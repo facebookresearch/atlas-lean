@@ -21,16 +21,6 @@ from the two-term formula for a theta function with one zero parameter.
 
 namespace MetaMathlibExt
 
-open QPochhammer
-
-private theorem ramanujanThetaRaw_zero_left (b : ℂ) : ramanujanThetaRaw 0 b = 1 + b := by
-  rw [ramanujanThetaRaw_eq_qPochhammerInfRaw (a := 0) (b := b) (by simp)]
-  simp only [zero_mul, neg_zero, qPochhammerInfRaw_eq_tprod, tprod_one, sub_zero, one_mul]
-  rw [tprod_eq_prod (s := {0})]
-  · simp
-  · intro n hn
-    simp [zero_pow (by simpa using hn : n ≠ 0)]
-
 private theorem ramanujanTheta_mul_add_mul_neg_of_ne_zero {a b c d : ℂ} (ha : a ≠ 0)
     (habcd : a * b = c * d) (hab : ‖a * b‖ < 1) :
     ramanujanThetaRaw a b * ramanujanThetaRaw c d +
