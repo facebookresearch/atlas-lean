@@ -54,22 +54,14 @@ public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableRe
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFirstPrimes
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCount
 public import MathlibExt.NumberTheory.CountingAppearancesProgressionsAvailableCountDistinctPrimes
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsOccupiedRecurrence
+public import MathlibExt.NumberTheory.CountingAppearancesProgressionsFreeCountSucc
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.CountingAppearancesProgressionsWanted
-
-/-- **Occupied count.** For natural numbers $p_1, \dots, p_k$ and $r_1, \dots, r_k$, let
-$\gamma(n)$ be the number of indices $i$ with $n \equiv r_i \pmod{p_i}$. The occupied count is
-the number of integers $n$ with $1 \le n \le p_1 \cdots p_k$ and $\gamma(n) > 1$.
-
-When $p_1, \dots, p_k$ are the first $k$ primes, this is the count $\mathrm{occ}(k)$ of
-Pausinger's paper. -/
-def occupiedCount {k : ℕ} (p r : Fin k → ℕ) : ℕ :=
-  ((Finset.Icc 1 (∏ i, p i)).filter
-    (fun n => 1 < residueHitCount p r n)).card
 
 /-- **Recurrence for the bordered determinants of the first primes.** Let $k \ge 2$ and let
 $p_1, \dots, p_k$ be the first $k$ primes. For $m \le k$ let $f_m = F_m(p_1, \dots, p_m)$, where
@@ -100,41 +92,6 @@ theorem_wanted onesDiagDet_firstPrimes_recurrence (k : ℕ)
       borderedOnesDiagDet (firstPrimes (k - 1)) +
         ((Nat.nth Nat.Prime (k - 1) : ℤ) - 1) *
           onesDiagDet (firstPrimes (k - 1))
-
-/-- **Lemma 3, occupied recurrence.** Let $k \ge 1$, let $p_1 < p_2 < \cdots$ be the primes in
-increasing order, and let $r_1, \dots, r_{k+1}$ be natural numbers. For $m \in \{k, k + 1\}$
-write $P_m = p_1 \cdots p_m$, let $\gamma_m(n)$ be the number of $i \le m$ with
-$n \equiv r_i \pmod{p_i}$, let $\mathrm{occ}(m)$ be the number of integers $n$ with
-$1 \le n \le P_m$ and $\gamma_m(n) > 1$, and let $\mathrm{free}(m)$ be the number of those with
-$\gamma_m(n) = 0$. Then
-$\mathrm{occ}(k+1) + \mathrm{free}(k) = P_k + (p_{k+1} - 1) \cdot \mathrm{occ}(k)$.
-
-In the paper's form this reads
-$\mathrm{occ}(k+1) = P_k + (p_{k+1} - 1) \cdot \mathrm{occ}(k) - \mathrm{free}(k)$.
-
-Source: Florian Pausinger, "Counting Appearances of Integers in
-Sets of Arithmetic Progressions", Lemma 3. -/
-theorem_wanted occupiedCount_firstPrimes_succ_add_free (k : ℕ)
-    (hk : 1 ≤ k) (r : Fin (k + 1) → ℕ) :
-    occupiedCount (firstPrimes (k + 1)) r +
-        freeCount (firstPrimes k) (r ∘ Fin.castSucc) =
-      (∏ i : Fin k, Nat.nth Nat.Prime i.val) +
-        (Nat.nth Nat.Prime k - 1) *
-          occupiedCount (firstPrimes k) (r ∘ Fin.castSucc)
-
-/-- **Lemma 3, free recurrence.** Let $k \ge 1$, let $p_1 < p_2 < \cdots$ be the primes in
-increasing order, and let $r_1, \dots, r_{k+1}$ be natural numbers. For $m \in \{k, k + 1\}$
-write $\mathrm{free}(m)$ for the number of integers $n$ with $1 \le n \le p_1 \cdots p_m$ such
-that $n \not\equiv r_i \pmod{p_i}$ for every $i \le m$. Then
-$\mathrm{free}(k+1) = (p_{k+1} - 1) \cdot \mathrm{free}(k)$.
-
-Source: Florian Pausinger, "Counting Appearances of Integers in
-Sets of Arithmetic Progressions", Lemma 3. -/
-theorem_wanted freeCount_firstPrimes_succ (k : ℕ) (hk : 1 ≤ k)
-    (r : Fin (k + 1) → ℕ) :
-    freeCount (firstPrimes (k + 1)) r =
-      (Nat.nth Nat.Prime k - 1) *
-        freeCount (firstPrimes k) (r ∘ Fin.castSucc)
 
 /-- **Available integers for the first primes.** Let $k$ be a natural number, let
 $p_1, \dots, p_k$ be the first $k$ primes, and let $r_1, \dots, r_k$ be any natural numbers. Call an

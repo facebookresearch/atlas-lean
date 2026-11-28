@@ -59,4 +59,23 @@ public theorem complexityL_pow_add_pow (l m m' : ℕ)
     omega
   omega
 
+/-- **The 2-complexity of a power of two and of a sum of two powers of two.** Write
+$\|n\|_2$ for the $2$-complexity of $n$. For all natural numbers $m_1$ and $m_2$ with
+$m_1 > m_2 \ge 1$, one has $\|2^{m_1}\|_2 = m_1$ and $\|2^{m_1} + 2^{m_2}\|_2 = m_1 + 1$.
+
+Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
+Integers", Lemma 3. -/
+public theorem complexityL_two_pow_and_add (m1 m2 : ℕ)
+    (h : m2 < m1) (hm2 : 1 ≤ m2) :
+    complexityL 2 (2 ^ m1) = m1 ∧
+      complexityL 2 (2 ^ m1 + 2 ^ m2) = m1 + 1 := by
+  have htwo : 1 < (2 : ℕ) := by decide
+  refine ⟨?_, complexityL_pow_add_pow 2 m1 m2 htwo h.le hm2⟩
+  have hb := (canBuild_max 2 m1 htwo (hm2.trans h.le)).1
+  refine Nat.le_antisymm (complexityL_min_le hb) ?_
+  have hs := complexityL_spec ⟨m1, hb⟩
+  have hmax := (canBuild_max 2 _ htwo hs.one_le).2 _ hs
+  by_contra hle
+  exact (not_lt_of_ge hmax) (Nat.pow_lt_pow_right htwo (Nat.lt_of_not_ge hle))
+
 end MathlibExt.NumberTheory.TwoComplexityWanted

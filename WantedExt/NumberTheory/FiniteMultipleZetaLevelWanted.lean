@@ -15,12 +15,15 @@ public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Cyclotomic.Basic
 public import MathlibExt.NumberTheory.WieferichPrime
 public import MathlibExt.NumberTheory.FiniteMultipleZetaLevelColoredFiniteMZVOneEqPowMulSumProd
+public import MathlibExt.NumberTheory.FiniteMultipleZetaLevelExistsBoundBernoulliIffFiniteIInter
 
 /-!
 # Regular primes, non-Wieferich primes and finite multiple zeta values of level `N`
 
 Statements from Shin-ichiro Seki, *Regular Primes, Non-Wieferich Primes, and Finite
 Multiple Zeta Values of Level N*, INTEGERS 24 (2024), Article A22 (arXiv:2310.06809).
+The statement `exists_bound_bernoulli_iff_finite_iInter` is proved in
+`MathlibExt.NumberTheory.FiniteMultipleZetaLevelExistsBoundBernoulliIffFiniteIInter`.
 
 The paper works in `𝒜 = (∏_p ℤ/pℤ) / (⊕_p ℤ/pℤ)`. An identity "holds in `𝒜`" exactly
 when it holds modulo `p` for all but finitely many primes `p`; it is stated here as
@@ -98,17 +101,6 @@ public theorem_wanted two_mul_coloredFiniteMZV_twelve {k : ℕ} (hk : Odd k) (hk
         2 * coloredFiniteMZV p 12 ![k] ![-(3 : ZMod 12) * p] =
           (((3 : ZMod p) ^ k)⁻¹ - ((4 : ZMod p) ^ k)⁻¹ - ((6 : ZMod p) ^ k)⁻¹ +
             ((12 : ZMod p) ^ k)⁻¹) * Z
-
-/-- **Kummer's theorem for regular primes.** Let $p$ be an odd prime and let $K$ be a $p$-th
-cyclotomic field over $\mathbb{Q}$ (a number field generated over $\mathbb{Q}$ by a primitive
-$p$-th root of unity). If $p$ does not divide the class number of $K$, then Fermat's Last Theorem
-holds for the exponent $p$: there are no positive integers $a, b, c$ with $a^p + b^p = c^p$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Theorem 1 (`integers-2024-A22-thm-1`). -/
-public theorem_wanted fermatLastTheoremFor_of_regular {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (K : Type*) [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
-    (hreg : ¬ p ∣ NumberField.classNumber K) : FermatLastTheoremFor p
 
 /-- **Wieferich's criterion for the first case of Fermat's Last Theorem.** Let $p$ be a prime
 that is not a Wieferich prime, that is, $p^2 \nmid 2^{p-1} - 1$. Then there are no integers
@@ -259,29 +251,6 @@ public theorem_wanted exists_bound_fermatQuotient_iff_finite_iInter :
         ∃ N, 1 ≤ N ∧ N ≤ M ∧ ¬ p ∣ N ∧ ¬ p ^ 2 ∣ N ^ (p - 1) - 1) ↔
       ∃ M : ℕ, 3 ≤ M ∧
         {p : ℕ | p.Prime ∧ ∀ N ∈ Finset.Icc 2 M, p ^ 2 ∣ N ^ (p - 1) - 1}.Finite
-
-/-- **Criterion for a uniform bound on the least non-vanishing Bernoulli index.** The following
-are equivalent:
-(a) there is a natural number $M$ such that for every prime $p \ge 5$ there is an odd integer
-$k$ with $3 \le k \le M$, $k < p$ and $p \nmid \operatorname{num}(B_{p-k})$;
-(b) there is a natural number $M \ge 5$ such that only finitely many primes $p$ satisfy $k < p$
-and $p \mid \operatorname{num}(B_{p-k})$ for every odd integer $k$ with $3 \le k \le M$.
-
-Here $B_n$ is the $n$-th Bernoulli number, with $B_1 = +1/2$ (only even indices $n \ge 2$ occur),
-and $\operatorname{num}(B_n)$ is its numerator in lowest terms.
-
-Condition (a) says that the least such $k$, the source's $g_p$, is bounded uniformly in $p$;
-condition (b) says that $\bigcap_{3 \le k \le M,\ k \text{ odd}} I(k)$ is finite, where $I(k)$ is
-the set of primes $p > k$ with $p \mid \operatorname{num}(B_{p-k})$.
-
-Source: Seki, *Regular Primes, Non-Wieferich Primes, and Finite Multiple Zeta Values of
-Level N*, INTEGERS 24 (2024), Article A22, Lemma 4 (`integers-2024-A22-lem-4`). -/
-public theorem_wanted exists_bound_bernoulli_iff_finite_iInter :
-    (∃ M : ℕ, ∀ p : ℕ, p.Prime → 5 ≤ p →
-        ∃ k, Odd k ∧ 3 ≤ k ∧ k ≤ M ∧ k < p ∧ ¬ (p : ℤ) ∣ (bernoulli' (p - k)).num) ↔
-      ∃ M : ℕ, 5 ≤ M ∧
-        {p : ℕ | p.Prime ∧ ∀ k ∈ Finset.Icc 3 M, Odd k →
-          k < p ∧ (p : ℤ) ∣ (bernoulli' (p - k)).num}.Finite
 
 /-- **Regular and non-Wieferich primes give non-vanishing finite multiple zeta values.**
 (i) Suppose that infinitely many odd primes $p$ are regular, in the sense that $p$ does not

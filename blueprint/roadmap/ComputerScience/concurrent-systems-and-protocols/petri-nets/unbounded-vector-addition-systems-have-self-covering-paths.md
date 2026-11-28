@@ -9,12 +9,7 @@ A finite sequence $w_1, \dots, w_m$ of vectors in $\mathbb{Z}^k$, $m > 1$, is *s
 ## Proof depends on
 
 - [Kőnig's lemma for inverse systems](../../process-calculi/csp-semantic-models/konig-s-lemma-for-inverse-systems.md)
-
-## Expansion
-
-This page becomes ready once its remaining proof prerequisite is linked:
-
-- Dickson's lemma: every infinite sequence of vectors in $\mathbb{N}^k$ has two terms $A_m \le A_n$ with $m < n$ (proof prerequisite of the forward direction, applied to an infinite path, given by Kőnig's lemma, in the tree of paths from $v$ in $\mathbb{N}^k$ with no repeated vector)
+- [Dickson's lemma for finite products of well-quasi-orders](decision-procedures/dickson-s-lemma.md)
 
 ## Sources
 

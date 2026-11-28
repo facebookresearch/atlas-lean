@@ -6,6 +6,7 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 
 - [Expected risk](risk.md)
 - [Empirical risk](empirical-risk.md)
+- [Learning a discrete distribution in total variation](learning-a-discrete-distribution-in-total-variat/README.md)
 - [Measurability of the empirical risk](measurable-empirical-risk.md)
 - [Empirical risk minimization under a uniform deviation bound](risk-le-add-two-mul-of-forall-abs-sub-le.md)
 - [Uniform deviation of the empirical risk over a finite class](measure-real-exists-abs-empirical-risk-s.md)
@@ -21,7 +22,6 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [Generalization bound for norm-bounded linear predictors with Lipschitz loss](generalization-bound-for-norm-bounded-linear-predictors-with.md)
 - [Stability of regularized loss minimization](stability-of-regularized-loss-minimization.md)
 - [Shattering lower bound for PAC learning](shattering-lower-bound-for-pac-learning.md)
-- [Learning a discrete distribution in total variation](remaining-clauses-of-learning-a-discrete-distribution-in-tot.md)
 - [Weak learnability implies PAC learnability via boosting](weak-learnability-implies-pac-learnability-via-boosting.md)
 - [VC and Natarajan classes: uniform convergence and the fundamental theorems](vc-and-natarajan-classes/README.md)
 - [Limits of uniform convergence for explaining deep-learning generalization](limits-of-uniform-convergence-for-explaining-deep-learning-g.md)
@@ -47,3 +47,9 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 
 - [Generalization of trained finite-width neural networks with feature learning](generalization-of-trained-finite-width-networks.md)
 - [Sharp guarantees for out-of-distribution generalization](out-of-distribution-generalization-guarantees.md)
+- [Occam and Description-Length Bounds](occam-and-description-length-bounds/README.md)
+- [Rademacher Generalization and Margin Bounds](rademacher-and-margin-bounds/README.md)
+
+## Relative generalization bound for bounded-loss sample compression
+
+- [Compression Validation Risk](compression-validation-risk.md)

@@ -2,6 +2,7 @@
 
 Discriminants and their bounds, ramification and inertia, orders, units, ideal counting, local degrees under completion, field enumeration and towers.
 
+- [Card units quotient ring of integers proof](card-units-quotient-ring-of-integers-proof/README.md)
 - [Class field towers](class-field-towers/README.md)
 - [Completions of number fields at finite places](completions-of-number-fields-at-finite-places/README.md)
 - [Counting ideals of bounded norm](counting-ideals-of-bounded-norm/README.md)
@@ -23,3 +24,4 @@ Discriminants and their bounds, ramification and inertia, orders, units, ideal c
 - [Dirichlet's S-unit theorem](s-unit-theorem.md)
 - [An algebraic integer of a number field is a unit if and only if its norm is ±1](unit-iff-norm-plus-minus-one.md)
 - [Kummer–Dedekind theorem](kummer-dedekind-theorem.md)
+- [Lenstra's bound for the different](lenstra-s-bound-for-the-different.md)

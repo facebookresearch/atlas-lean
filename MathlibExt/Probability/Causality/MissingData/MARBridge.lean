@@ -113,8 +113,8 @@ variable [m𝒳 : MeasurableSpace 𝒳] [MeasurableSpace 𝒴]
 finite measure, `MissingAtRandomCondIndepFun μ R X hX Y` holds iff for every measurable
 `g : 𝒴 → ℝ` with `g ∘ Y` integrable, `E[1_R g(Y) | σ(X)] = P(R | σ(X)) E[g(Y) | σ(X)]` almost
 everywhere. The forward direction is `condExp_inter_preimage_ae_eq_mul_of_condIndepFun` followed
-by `condExp_indicator_ae_eq_mul_of_mar`, applied to `g ∘ Y`. The reverse direction uses only
-indicators `g = 1_t`. -/
+by `condExp_indicator_ae_eq_mul_of_mar`, applied to `g ∘ Y`. The statement quantifies over every
+such `g`; indicators `g = 1_t` appear only in the proof of the reverse direction. -/
 theorem missingAtRandomCondIndepFun_iff_forall_condExp [StandardBorelSpace Ω]
     [IsFiniteMeasure μ] {R : Set Ω} {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → 𝒴}
     (hR : MeasurableSet R) (hY : Measurable Y) :

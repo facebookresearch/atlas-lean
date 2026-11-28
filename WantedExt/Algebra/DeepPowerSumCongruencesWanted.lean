@@ -19,9 +19,13 @@ public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Algebra.DeepPowerSumCongruences
+public import MathlibExt.Algebra.DeepPowerSumCongruences.ArtinHasse
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
 public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerSpan
+public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdeal
+public import MathlibExt.Algebra.DeepPowerSumCongruences.DVRMaximalIdealPow
 public import MathlibExt.Algebra.DeepPowerSumCongruences.Moebius
+public import MathlibExt.Algebra.DeepPowerSumCongruences.PadicInt
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PEquivClass
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PartitionProduct
 public import MathlibExt.Algebra.DeepPowerSumCongruences.PowerSumExp
@@ -171,42 +175,6 @@ Congruences*, INTEGERS 24 (2024), Article A46, Corollary 6 (`integers-2024-A46-c
 public theorem_wanted IsDividedPowerIdeal.mul {A : Type*} [CommRing A] {I : Ideal A}
     (hI : IsDividedPowerIdeal I) (J : Ideal A) : IsDividedPowerIdeal (I * J)
 
-/-- **Powers of the maximal ideal of a DVR that are divided-power ideals.** Let $p$ be a prime and
-let $O$ be a discrete valuation ring with maximal ideal $\mathfrak{m}$ such that
-$pO = \mathfrak{m}^e$ for some integer $e \ge 1$. Then for every $k \ge 0$, the ideal
-$\mathfrak{m}^k$ is a divided-power ideal if and only if $e \le (p - 1)k$.
-
-Equivalently, with $v_p(\mathfrak{m}) = 1/e$, the condition is $v_p(\mathfrak{m}^k) \ge 1/(p - 1)$.
-The paper states this for $p$-adic discrete valuation rings and remarks that it also holds for
-localizations of rings of integers; here $O$ is any such ring, and the zero ideal is omitted.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Lemma 7 (`integers-2024-A46-lem-7`). -/
-public theorem_wanted isDividedPowerIdeal_maximalIdeal_pow_iff {p : ℕ} [Fact p.Prime]
-    {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {e : ℕ} (he0 : e ≠ 0)
-    (he : Ideal.span {(p : O)} = IsLocalRing.maximalIdeal O ^ e) (k : ℕ) :
-    IsDividedPowerIdeal (IsLocalRing.maximalIdeal O ^ k) ↔ e ≤ (p - 1) * k
-
-/-- **When the maximal ideal of a DVR is a divided-power ideal.** Let $p$ be a prime and let $O$ be
-a discrete valuation ring with maximal ideal $\mathfrak{m}$ such that $pO = \mathfrak{m}^e$ for
-some integer $e \ge 1$. Then $\mathfrak{m}$ is a divided-power ideal if and only if $e \le p - 1$.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 8 (`integers-2024-A46-cor-8`). -/
-public theorem_wanted isDividedPowerIdeal_maximalIdeal_iff {p : ℕ} [Fact p.Prime]
-    {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O] {e : ℕ} (he0 : e ≠ 0)
-    (he : Ideal.span {(p : O)} = IsLocalRing.maximalIdeal O ^ e) :
-    IsDividedPowerIdeal (IsLocalRing.maximalIdeal O) ↔ e ≤ p - 1
-
-/-- **$(p)$ is a divided-power ideal of $\mathbb{Z}_p$.** For every prime $p$, the ideal generated
-by $p$ in the ring $\mathbb{Z}_p$ of $p$-adic integers is a divided-power ideal.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 8, last sentence
-(`integers-2024-A46-cor-8`). -/
-public theorem_wanted isDividedPowerIdeal_span_prime_padicInt (p : ℕ) [Fact p.Prime] :
-    IsDividedPowerIdeal (Ideal.span {(p : ℤ_[p])})
-
 /-- **Congruent elementary symmetric functions give deep power-sum congruences.** Let $p$ be a
 prime and let $A$ be a commutative ring without additive torsion in which every natural number
 not divisible by $p$ is a unit (a torsion-free $\mathbb{Z}_{(p)}$-algebra). Let
@@ -256,23 +224,6 @@ public theorem_wanted exp_signedPowerSumSeries_eq_esymmSeries (σ : Type*) [Fint
         PowerSeries (MvPolynomial σ ℚ)) =
       PowerSeries.mk fun k => MvPolynomial.esymm σ ℚ k
 
-/-- **Elementary symmetric polynomials in terms of power sums.** Let $\sigma$ be a finite set of
-variables, and in $\mathbb{Q}[x_i : i \in \sigma]$ let $e_n$ be the $n$-th elementary symmetric
-polynomial and $p_k = \sum_{i \in \sigma} x_i^k$ the $k$-th power sum. For a partition $\lambda$
-of $n$ with parts $\lambda_1, \dots, \lambda_\ell$, write
-$p_\lambda = p_{\lambda_1} \cdots p_{\lambda_\ell}$, $\varepsilon_\lambda = (-1)^{n - \ell}$ and
-$z_\lambda = \prod_a a^{r_a} \, r_a!$, where $r_a$ is the number of parts equal to $a$ and the
-product runs over the distinct parts $a$. Then for every $n \ge 0$,
-$$e_n = \sum_{\lambda \vdash n} \frac{\varepsilon_\lambda}{z_\lambda} \, p_\lambda.$$
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 21 (`integers-2024-A46-cor-21`). -/
-public theorem_wanted esymm_eq_sum_partitions (σ : Type*) [Fintype σ] (n : ℕ) :
-    MvPolynomial.esymm σ ℚ n = ∑ l : n.Partition,
-      ((-1 : ℚ) ^ (n - Multiset.card l.parts) /
-        ((l.parts.toFinset.prod fun a => a ^ l.parts.count a * (l.parts.count a).factorial :
-          ℕ) : ℚ)) • (l.parts.map (MvPolynomial.psum σ ℚ)).prod
-
 /-- **The Artin–Hasse exponential has $p$-integral coefficients.** Let $p$ be a prime and let
 $F(z) = \exp\big(\sum_{j \ge 0} z^{p^j} / p^j\big) \in \mathbb{Q}[[z]]$ be the Artin–Hasse
 exponential. For every $n \ge 0$, the coefficient of $z^n$ in $F$, written in lowest terms, has a
@@ -284,26 +235,6 @@ public theorem_wanted artinHasse_coeff_den_not_dvd (p : ℕ) [Fact p.Prime] (n :
     ¬ p ∣ (PowerSeries.coeff n (PowerSeries.subst
       (PowerSeries.mk fun m : ℕ => if p ^ Nat.log p m = m then (m : ℚ)⁻¹ else 0)
       (PowerSeries.exp ℚ) : PowerSeries ℚ)).den
-
-/-- **The Artin–Hasse exponential as a product.** Let $p$ be a prime, let $\mu$ be the Möbius
-function and let $F(z) = \exp\big(\sum_{j \ge 0} z^{p^j} / p^j\big) \in \mathbb{Q}[[z]]$ be the
-Artin–Hasse exponential. For $d \ge 1$ and $a \in \mathbb{Q}$ write
-$(1 - z^d)^a = \exp\big(a \log(1 - z^d)\big)$, where $\log(1 - z^d) = -\sum_{k \ge 1} z^{dk}/k$.
-Then for every $N \ge 0$, $F$ has the same coefficients of $z^0, \dots, z^N$ as the finite product
-of the series $(1 - z^d)^{-\mu(d)/d}$ over the integers $1 \le d \le N$ not divisible by $p$.
-Since the factors with $d > N$ are $1 + O(z^{N+1})$, this is the identity
-$F(z) = \prod_{p \nmid d} (1 - z^d)^{-\mu(d)/d}$ read coefficientwise.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Proposition 27 (`integers-2024-A46-prop-27`). -/
-public theorem_wanted artinHasse_eq_prod_one_sub_pow (p : ℕ) [Fact p.Prime] (N : ℕ) :
-    PowerSeries.trunc (N + 1) (PowerSeries.subst
-      (PowerSeries.mk fun m : ℕ => if p ^ Nat.log p m = m then (m : ℚ)⁻¹ else 0)
-      (PowerSeries.exp ℚ) : PowerSeries ℚ) =
-    PowerSeries.trunc (N + 1) (∏ d ∈ Finset.Icc 1 N with ¬ p ∣ d,
-      (PowerSeries.subst (PowerSeries.mk fun m : ℕ => if m ≠ 0 ∧ d ∣ m then
-          (-(ArithmeticFunction.moebius d : ℚ) / d) * (-(d : ℚ) / m) else 0)
-        (PowerSeries.exp ℚ) : PowerSeries ℚ))
 
 /-- **Multiplicativity of $g_\lambda$ over disjoint parts.** Let $p$ be a prime, $\sigma$ a finite
 set of variables, and for a multiset $\lambda$ of parts let $g_\lambda$ be its $p$-equivalence class

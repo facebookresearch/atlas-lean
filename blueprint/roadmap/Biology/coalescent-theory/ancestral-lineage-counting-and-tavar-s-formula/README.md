@@ -22,3 +22,10 @@
 - [Tavaré's formula](exp-block-counting-generator-apply.md)
 - [Truncation consistency](exp-smul-block-counting-generator-cast-l.md)
 - [The block-counting process never gains lineages](exp-smul-block-counting-generator-of-lt.md)
+
+## Further topics
+
+- [Ancestral counts in Feller diffusions](ancestral-counts-in-feller-diffusions/README.md)
+- [Coalescence times of Galton–Watson processes with immigration](coalescence-times-of-galton-watson-processes-with-immigration/README.md)
+- [Coalescent point process of linear-fractional Galton–Watson trees](coalescent-point-process-of-linear-fractional-galton-watson-trees/README.md)
+- [Coalescence times in Galton–Watson genealogies](coalescence-times-in-galton-watson-genealogies/README.md)

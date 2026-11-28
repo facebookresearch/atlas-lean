@@ -10,6 +10,7 @@ Local rings and their residue fields, Krull dimension, adic completion, regular 
 - [Regular local rings](regular-local-rings/README.md)
 - [Depth and regular sequences](depth-and-regular-sequences/README.md)
 - [Flat local maps reflect integrally closed domains](is-domain-and-is-integrally-closed-of-fl.md)
+- [Faithfully Flat](of-faithfully-flat.md)
 - [Length bound for a quotient containing a kernel](length-quotient-le-of-ker-le.md)
 - [Regular sequence on a module](regular-sequence.md)
 - [Artin–Rees lemma for modules over a commutative Noetherian ring](artin-rees-lemma.md)
@@ -20,3 +21,5 @@ Local rings and their residue fields, Krull dimension, adic completion, regular 
 - [Nakayama's lemma for finitely generated submodules](nakayama-lemma.md)
 - [Nakayama's lemma for maps onto a finite module](nakayama-surjectivity-criterion.md)
 - [The Krull dimension of a Noetherian local ring is at most the number of generators of its maximal ideal](noetherian-local-dimension-bound.md)
+- [Dutta multiplicity bounds Hilbert–Samuel multiplicity for complete domains](dutta-multiplicity-complete-domain.md)
+- [Ring-theoretic properties of the completed surface-cone candidate](complete-normal-threefold-local-domain.md)
