@@ -1,0 +1,7 @@
+# Pearson's chi-square theorem with estimated parameters
+
+Let $\iota$ be a finite set of $k$ cells and $\theta \mapsto p(\theta)$ a measurable model of cell probabilities on a finite-dimensional real normed space $F$ with $p_i(\theta) \ge 0$ for all $\theta$ and $\sum_i p_i(\theta) = 1$ for $\theta$ near $\theta_0$. Let $X_0, X_1, \dots$ be independent, identically distributed observations in $\iota$ on a probability space with $P(X_0 = i) = p_i(\theta_0) > 0$, and $N_i$ the cell counts of the first $n$. Suppose $p$ has derivative $D$ at $\theta_0$, let $J a = \big((Da)_i/\sqrt{p_i(\theta_0)}\big)_i$ be the weighted Jacobian with range $V$, and let $L$ be a continuous linear map with $J\circ L$ the orthogonal projection onto $V$. Let $\hat\theta_n$ be almost everywhere measurable estimators with $\sqrt n(\hat\theta_n - \theta_0) - L(r_n) \to 0$ in probability, where $r_n$ is the vector of Pearson residuals at $\theta_0$ (the efficient grouped-count expansion). Write $\hat\chi^2_n = \sum_i (N_i - np_i(\hat\theta_n))^2/(np_i(\hat\theta_n))$. If $\dim V + 1 < k$, then $\hat\chi^2_n$ converges in distribution to the chi-square law with $k - 1 - \dim V$ degrees of freedom.
+
+## Sources
+
+- K. Pearson, "On the criterion that a given system of deviations from the probable in the case of a correlated system of variables is such that it can be reasonably supposed to have arisen from random sampling", *Philosophical Magazine* (5) 50 (1900), 157–175.

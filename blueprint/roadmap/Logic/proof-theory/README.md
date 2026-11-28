@@ -22,4 +22,5 @@ Structural study of formal proofs and provability: sequent calculi, linear logic
 - [Resolution Separations and Supercritical Trade-offs](resolution-separations-and-supercritical-tradeoffs/README.md)
 - [Stabbing Planes and Semi-Algebraic Branching](stabbing-planes-and-semi-algebraic-branching/README.md)
 - [Resolution Trade-offs, Lifting and QBF](resolution-tradeoffs-lifting-and-qbf/README.md)
+- [Algebraic and Semialgebraic Proof Systems](algebraic-and-semialgebraic-proof-systems/README.md)
 - [Extended Frege and bounded arithmetic](extended-frege-and-bounded-arithmetic/README.md)
