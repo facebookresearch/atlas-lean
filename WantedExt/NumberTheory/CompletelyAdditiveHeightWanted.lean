@@ -13,6 +13,8 @@ Statements from Hartosh Singh Bal, *Completely Additive Height Functions: Profil
 Laws, Matula Bounds, and Inverse Growth*, INTEGERS 26 (2026), Article A116.
 The statement `isGreatest_primeIndexHeight_level` is proved in
 `MathlibExt.NumberTheory.CompletelyAdditiveHeightIsGreatestPrimeIndexHeightLevel`.
+The statement `sum_height_asymptotic` is proved in
+`MathlibExt.NumberTheory.CompletelyAdditiveHeightSumHeightAsymptotic`.
 
 A height function is a completely additive `H : ℕ → ℕ` (on positive integers) with `H(p) ≥ 1`
 for every prime `p` and only finitely many primes at each height `n ≥ 1`. Primes are indexed
@@ -29,6 +31,7 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import MathlibExt.NumberTheory.CompletelyAdditiveHeight
 public import MathlibExt.NumberTheory.CompletelyAdditiveHeightIsGreatestPrimeIndexHeightLevel
 public import MathlibExt.NumberTheory.CompletelyAdditiveHeightExistsHeightFunctionWithProfile
+public import MathlibExt.NumberTheory.CompletelyAdditiveHeightSumHeightAsymptotic
 
 namespace MetaMathlibExt
 
@@ -76,21 +79,6 @@ public theorem_wanted nthPrimeOne_rosser_schoenfeld :
     ∃ k₀ : ℕ, ∀ k ≥ k₀,
       (k : ℝ) * (Real.log k + Real.log (Real.log k) - 1) ≤ nthPrimeOne k ∧
         (nthPrimeOne k : ℝ) ≤ k * (Real.log k + Real.log (Real.log k))
-
-/-- **Prime reduction for summatory heights.** Let $H : \mathbb{N} \to \mathbb{N}$ be completely
-additive on the positive integers, and for real $x$ let $F(x) = \sum_{1 \le m \le x} H(m)$. Then
-there is a real constant $C$ such that for every real $x \ge 2$,
-$$\Bigl| F(x) - x \sum_{p \le x} \frac{H(p)}{p - 1} \Bigr| \le C \log x \sum_{p \le x} H(p),$$
-where both sums run over the primes $p \le x$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 7
-(`integers-2026-A116-prop-7`), "In particular" display. -/
-public theorem_wanted sum_height_asymptotic {H : ℕ → ℕ} (hH : IsCompletelyAdditiveNat H) :
-    ∃ C : ℝ, ∀ x : ℝ, 2 ≤ x →
-      |(∑ m ∈ Finset.Icc 1 ⌊x⌋₊, (H m : ℝ)) -
-          x * ∑ p ∈ (Finset.Iic ⌊x⌋₊).filter Nat.Prime, (H p : ℝ) / ((p : ℝ) - 1)| ≤
-        C * Real.log x * ∑ p ∈ (Finset.Iic ⌊x⌋₊).filter Nat.Prime, (H p : ℝ)
 
 /-- **Iteratively defined height functions.** Write $p_i$ for the $i$-th prime, so $p_1 = 2$. Let
 $f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) = 1$; suppose that for all integers $i, r \ge 1$, if

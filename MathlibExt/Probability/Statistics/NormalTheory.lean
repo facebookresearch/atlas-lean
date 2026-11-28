@@ -43,6 +43,11 @@ freedom, `S² = ∑ (Xᵢ - X̄)² / (n - 1)`):
 * `one_sample_t_one_sided_coverage_eq`: with `c = cdfQuantile t_{n-1} (1 - α)`, each
   one-sided bound has coverage exactly `1 - α`.
 
+Paired `t` (mutually independent pairs, with differences of law `N(δ, v)`, `n ≥ 2`, `v ≠ 0`):
+* `paired_t_interval_coverage`: the pivot `√n (D̄ - δ) / S` has law `t_{n-1}`, with `S > 0`
+  almost surely. For `0 < α < 1`, the interval `D̄ ± c S/√n` has coverage exactly `1 - α`,
+  where `c = cdfQuantile t_{n-1} (1 - α/2)`. No independence within a pair is required.
+
 Linear-hypothesis `F` (fixed full-rank design, Gaussian errors with unknown `σ`,
 `(q, n - p)` degrees of freedom):
 * `fStatistic_measureReal_gt_eq`: under `H₀ : C β = γ`, `P(F > c) = 1 - F_{F(q,n-p)}(c)`.
@@ -58,6 +63,9 @@ The known-variance (`z`) interval is not treated here.
   (one-sample `t` interval via the pivot `√n (X̄ - μ) / S`) and §11.2 (the ANOVA `F` test).
 * G. A. F. Seber and A. J. Lee, *Linear Regression Analysis*, 2nd ed., Wiley (2003),
   Chapter 4 (the general linear-hypothesis `F` test) and Chapter 5 (`F` confidence regions).
+* V. Dinh, *MATH 450: Mathematical Statistics*, Lecture 24, “The paired t-test”,
+  University of Delaware (2019), <https://vucdinh.github.io/F20/lecture24.pdf>, for reducing
+  the paired interval to a one-sample procedure on the differences.
 -/
 
 @[expose] public section
@@ -294,6 +302,42 @@ theorem one_sample_t_one_sided_coverage_eq {n : ℕ} (hn : 2 ≤ n) (μ : ℝ) {
     (u := 1 - α) ⟨by linarith [hα.2], by linarith [hα.1]⟩
   exact ⟨(one_sample_t_lower_bound_measureReal_eq hn μ hv _ hX).trans hc,
     (one_sample_t_upper_bound_measureReal_eq hn μ hv _ hX).trans hc⟩
+
+/-! ### Exact paired `t` interval -/
+
+/-- **Paired `t` interval for normal differences.** The pairs are mutually independent;
+no independence is required between the two observations within a pair. Suppose the paired
+differences `Dᵢ` all have law `N(δ, v)`, with `v > 0` and `n ≥ 2`. Write `D̄` for their
+sample mean and `S` for their sample standard deviation with divisor `n - 1`. Then
+`√n (D̄ - δ) / S` has Student's `t` law on `n - 1` degrees of freedom, with the
+zero-denominator value taken as `0`. The denominator is almost surely positive. For
+`0 < α < 1`, the interval centered at `D̄` with radius `c * S / √n`, where `c` is the
+Student `t` quantile at `1 - α / 2`, has coverage exactly `1 - α`. -/
+theorem paired_t_interval_coverage {n : ℕ} (hn : 2 ≤ n) (δ : ℝ) {v : NNReal} (hv : v ≠ 0)
+    {α : ℝ} (hα : α ∈ Ioo (0 : ℝ) 1) {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    {pairs : Fin n → Ω → ℝ × ℝ} (hind : iIndepFun pairs P)
+    (hD : ∀ i, HasLaw (fun ω => (pairs i ω).1 - (pairs i ω).2) (gaussianReal δ v) P) :
+    let D : Ω → Fin n → ℝ := fun ω i => (pairs i ω).1 - (pairs i ω).2
+    let mean : Ω → ℝ := fun ω => (∑ i, D ω i) / n
+    let sd : Ω → ℝ := fun ω => √((∑ i, (D ω i - mean ω) ^ 2) / ((n : ℝ) - 1))
+    let c := cdfQuantile (studentTMeasure (n - 1)) (1 - α / 2)
+    let r : Ω → ℝ := fun ω => c * sd ω / √(n : ℝ)
+    HasLaw (fun ω => √(n : ℝ) * (mean ω - δ) / sd ω) (studentTMeasure (n - 1)) P ∧
+      (∀ᵐ ω ∂P, 0 < sd ω) ∧ P.real {ω | δ ∈ Icc (mean ω - r ω) (mean ω + r ω)} = 1 - α := by
+  intro D mean sd c r
+  have hIndepD : iIndepFun (fun i ω => D ω i) P :=
+    hind.comp (fun _ (p : ℝ × ℝ) => p.1 - p.2) (fun _ => by fun_prop)
+  have hLawD : HasLaw D (Measure.pi fun _ : Fin n => gaussianReal δ v) P := hIndepD.hasLaw_pi hD
+  obtain ⟨hT, hS⟩ := oneSample_t_facts hn δ hv hLawD
+  refine ⟨hT, hS, ?_⟩
+  have hEvent : {ω | δ ∈ Icc (mean ω - r ω) (mean ω + r ω)} =
+      {ω | |mean ω - δ| ≤ r ω} := by
+    ext ω
+    simp only [mem_ofPred_eq, mem_Icc, abs_le]
+    exact ⟨fun ⟨h₁, h₂⟩ => ⟨by linarith, by linarith⟩,
+      fun ⟨h₁, h₂⟩ => ⟨by linarith, by linarith⟩⟩
+  rw [hEvent]
+  exact one_sample_t_interval_coverage_eq hn δ hv hα hLawD
 
 end ProbabilityTheory
 
