@@ -10,10 +10,11 @@ module
 import MathlibExt.RingTheory.Perfectoid.LogTranscendence
 
 /-! Tests for the logarithms in `B_dR^+`, the rings `A_max ⊆ B_max^+ ⊆ B_max`, and the
-transcendence of `log [p̃]` over `B_max`: the logarithm is additive, `log [ε]` is a nonzero
-element of `A_max` for `ε ≠ 1`, `B_max` is Galois stable, `σ(log [p̃]) - log [p̃] ∈ B_max`,
-`log [p̃]` is not in the fraction field of `B_max`, and no nonzero polynomial over `B_max` vanishes
-at it. -/
+transcendence of `log [p̃]` over `B_max`: the evaluation of power series and its naturality, the
+logarithm series as the image of Mathlib's `PowerSeries.log`, the logarithm is additive, `log [ε]`
+is a nonzero element of `A_max` for `ε ≠ 1`, `B_max` is Galois stable,
+`σ(log [p̃]) - log [p̃] ∈ B_max`, `log [p̃]` is not in the fraction field of `B_max`, and no nonzero
+polynomial over `B_max` vanishes at it. -/
 
 open Ideal WittVector PowerSeries Polynomial PadicComplexInt
 
@@ -30,6 +31,30 @@ example {A : Type*} [CommRing A] (I : Ideal A) {x : A} (hx : x ∈ I) (a : A) :
     AdicCompletion.evalPowerSeries I hx (PowerSeries.C a + PowerSeries.X) =
       AdicCompletion.of I A a + AdicCompletion.of I A x := by
   rw [map_add, AdicCompletion.evalPowerSeries_C, AdicCompletion.evalPowerSeries_X]
+
+example {A B : Type*} [CommRing A] [CommRing B] (I : Ideal A) (J : Ideal B) (g : A →+* B)
+    (h : I.map g ≤ J) {x : A} (hx : x ∈ I) (a : A) :
+    AdicCompletion.mapRingHom I J g h
+        (AdicCompletion.evalPowerSeries I hx (PowerSeries.C a + PowerSeries.X)) =
+      AdicCompletion.of J B (g a) + AdicCompletion.of J B (g x) := by
+  rw [AdicCompletion.mapRingHom_evalPowerSeries, map_add, PowerSeries.map_C, PowerSeries.map_X,
+    map_add, AdicCompletion.evalPowerSeries_C, AdicCompletion.evalPowerSeries_X]
+
+-- The logarithm series is the image of `PowerSeries.log ℚ_[p]`; its coefficient of `X²` is `-1/2`.
+example : logSeries p = PowerSeries.map (algebraMap ℚ_[p] 𝔸ₚ) (PowerSeries.log ℚ_[p]) := rfl
+
+example : PowerSeries.coeff 2 (logSeries p) = -algebraMap ℚ_[p] 𝔸ₚ (2 : ℚ_[p])⁻¹ := by
+  rw [coeff_logSeries]
+  norm_num
+
+-- With the inverses of a `ℚ`-algebra field, the series `log(1 - X)` of Fontaine's lemma is
+-- `PowerSeries.log` at `-X`; its coefficient of `X` is `-1`.
+example : AdicCompletion.logOneSubSeries (fun n => algebraMap ℚ_[p] 𝔸ₚ (n : ℚ_[p])⁻¹) =
+    PowerSeries.map (algebraMap ℚ_[p] 𝔸ₚ) (PowerSeries.rescale (-1) (PowerSeries.log ℚ_[p])) :=
+  AdicCompletion.logOneSubSeries_eq_map_rescale_log
+
+example : PowerSeries.coeff 1 (AdicCompletion.logOneSubSeries fun n : ℕ => (n : ℚ)⁻¹) = -1 := by
+  simp [AdicCompletion.logOneSubSeries]
 
 -- `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)`; in particular `log [ε ε'] = log [ε] + log [ε']`.
 example {y z : 𝔸ₚ} (hy : y ∈ 𝕀) (hz : z ∈ 𝕀) :

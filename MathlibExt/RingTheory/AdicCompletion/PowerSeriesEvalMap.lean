@@ -17,16 +17,13 @@ Licensed under the Apache License, Version 2.0.
 module
 
 public import MathlibExt.RingTheory.AdicCompletion.PowerSeriesEval
-public import MathlibExt.RingTheory.Perfectoid.Functoriality
 
 /-!
 # Values of power series in an adic completion
 
 Further properties of the evaluation `AdicCompletion.evalPowerSeries I hx : A⟦X⟧ →+* Â_I` at an
-element `x ∈ I`: the values of constants and of `X`, a criterion for two series to have the same
-value (`AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq`), and the naturality of the
-evaluation along the maps of adic completions induced by ring maps
-(`AdicCompletion.mapRingHom_evalPowerSeries`).
+element `x ∈ I`: the values of constants and of `X`, and a criterion for two series to have the
+same value (`AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq`).
 -/
 
 @[expose] public noncomputable section
@@ -37,18 +34,21 @@ namespace AdicCompletion
 
 variable {A : Type*} [CommRing A] (I : Ideal A) {x : A}
 
-/-- The value of a constant series `C a` is the image of `a` in the completion. -/
+/-- For an ideal `I` of a commutative ring `A` and `x ∈ I`, the value at `x` of a constant series
+`C a` is the image of `a` in the `I`-adic completion. -/
 @[simp]
 theorem evalPowerSeries_C (hx : x ∈ I) (a : A) : evalPowerSeries I hx (C a) = of I A a := by
   rw [← Polynomial.coe_C, evalPowerSeries_coe, Polynomial.eval_C]
 
-/-- The value of `X` at `x` is the image of `x` in the completion. -/
+/-- For an ideal `I` of a commutative ring `A` and `x ∈ I`, the value at `x` of `X` is the image
+of `x` in the `I`-adic completion. -/
 @[simp]
 theorem evalPowerSeries_X (hx : x ∈ I) : evalPowerSeries I hx X = of I A x := by
   rw [← Polynomial.coe_X, evalPowerSeries_coe, Polynomial.eval_X]
 
-/-- Two series `f` and `g` have the same values at `x ∈ I` and `y ∈ I` if their terms agree:
-`aₖ xᵏ = bₖ yᵏ` for every `k`. -/
+/-- For an ideal `I` of a commutative ring `A`, two series `f = Σ aₖ Xᵏ` and `g = Σ bₖ Xᵏ` over
+`A` have the same values at `x ∈ I` and at `y ∈ I` if their terms agree: `aₖ xᵏ = bₖ yᵏ` for
+every `k`. -/
 theorem evalPowerSeries_eq_of_coeff_mul_pow_eq {y : A} (hx : x ∈ I) (hy : y ∈ I) (f g : A⟦X⟧)
     (h : ∀ k, coeff k f * x ^ k = coeff k g * y ^ k) :
     evalPowerSeries I hx f = evalPowerSeries I hy g :=
@@ -56,17 +56,5 @@ theorem evalPowerSeries_eq_of_coeff_mul_pow_eq {y : A} (hx : x ∈ I) (hy : y �
     rw [evalₐ_evalPowerSeries, evalₐ_evalPowerSeries, Polynomial.eval, Polynomial.eval,
       eval₂_trunc_eq_sum_range, eval₂_trunc_eq_sum_range]
     simp only [RingHom.id_apply, h]
-
-/-- **Naturality of the evaluation**: for a ring map `g : A →+* B` with `I.map g ≤ J`, the map of
-completions `mapRingHom I J g h` sends the value of `f` at `x ∈ I` to the value of the series
-`f.map g` at `g x ∈ J`. -/
-theorem mapRingHom_evalPowerSeries {B : Type*} [CommRing B] (J : Ideal B) (g : A →+* B)
-    (h : I.map g ≤ J) (hx : x ∈ I) (f : A⟦X⟧) :
-    mapRingHom I J g h (evalPowerSeries I hx f) =
-      evalPowerSeries J (h (Ideal.mem_map_of_mem g hx)) (PowerSeries.map g f) :=
-  ext_evalₐ fun n => by
-    rw [evalₐ_mapRingHom, evalₐ_evalPowerSeries, evalₐ_evalPowerSeries,
-      MathlibExt.RingTheory.AdicCompletionMaps.quotientMap_mk, trunc_map, Polynomial.eval_map,
-      Polynomial.eval₂_at_apply]
 
 end AdicCompletion
