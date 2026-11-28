@@ -63,7 +63,7 @@ example :
 -- For an empty tail, every spot is admissible, and only `k = n` is a shuffle parameter.
 example :
     admissibleFirstEntries (![] : Fin 0 → Fin 3) = Finset.univ ∧
-      IsParkingShuffle 0 3 3 ![] ∧ ¬ IsParkingShuffle 0 3 2 ![] := by decide
+      ∀ k ∈ Finset.Icc 1 3, IsParkingShuffle 0 3 k ![] ↔ k = 3 := by decide
 
 -- A tail can also overflow a threshold before the first entry is added.
 example :
