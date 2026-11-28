@@ -29,6 +29,7 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import MathlibExt.AlgebraicGeometry.CurveVectorBundles
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Free
 public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.AlgebraicGeometry.Restrict
@@ -38,13 +39,13 @@ import Mathlib.CategoryTheory.Sites.Limits
 import Mathlib.LinearAlgebra.StdBasis
 
 /-!
-# Locally free sheaves of modules of finite rank on a scheme
+# Local bases of locally free sheaves of modules of finite rank on a scheme
 
-`Scheme.Modules.IsLocallyFreeOfRank n M` says that every point of `X` has an open neighbourhood
-`U` on which `M` restricts to the free sheaf of modules of rank `n`.
-`Scheme.Modules.IsLocallyFreeOfRank.exists_basis` turns such a trivialization into compatible
-bases: there are sections `e₁, …, eₙ` of `M` over `U` whose restrictions form a basis of
-`Γ(M, W)` over `Γ(X, W)` for every open `W ≤ U`.
+`MathlibExt.AlgebraicGeometry.CurveVectorBundles.IsVectorBundle M n` says that every point of `X`
+has an open neighbourhood `U` on which `M` restricts to the direct sum of `n` copies of the
+structure sheaf. `IsVectorBundle.exists_basis` turns such a trivialization into compatible bases:
+there are sections `e₁, …, eₙ` of `M` over `U` whose restrictions form a basis of `Γ(M, W)` over
+`Γ(X, W)` for every open `W ≤ U`.
 -/
 
 @[expose] public section
@@ -54,16 +55,6 @@ set_option backward.isDefEq.respectTransparency false
 universe u
 
 open CategoryTheory CategoryTheory.Limits Opposite
-
-namespace AlgebraicGeometry.Scheme.Modules
-
-/-- A sheaf of modules on a scheme is locally free of rank `n` if every point has an open
-neighbourhood `U` on which it restricts to the free sheaf of modules of rank `n`. -/
-structure IsLocallyFreeOfRank {X : Scheme.{u}} (n : ℕ) (M : X.Modules) : Prop where
-  exists_trivialization : ∀ x : X, ∃ U : X.Opens, x ∈ U ∧
-    Nonempty ((Modules.pullback U.ι).obj M ≅ SheafOfModules.free.{u} (ULift.{u} (Fin n)))
-
-end AlgebraicGeometry.Scheme.Modules
 
 namespace PresheafOfModules
 
@@ -240,6 +231,13 @@ private noncomputable def freeIsoPiPow :
     (SheafOfModules.isColimitFreeCofan.{u} (R := X.ringCatSheaf) (ULift.{u} (Fin n)))
     (isBilimitPiPowBicone X n).isColimit
 
+private noncomputable def freeIsoTrivialBundle :
+    SheafOfModules.free.{u} (R := X.ringCatSheaf) (ULift.{u} (Fin n)) ≅
+      MathlibExt.AlgebraicGeometry.CurveVectorBundles.trivialBundle X n :=
+  Sigma.whiskerEquiv (f := fun _ : ULift.{u} (Fin n) => SheafOfModules.unit X.ringCatSheaf)
+    (g := fun _ : Fin n => MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries.structureModule X)
+    Equiv.ulift (fun _ => Iso.refl _)
+
 end AlgebraicGeometry.Scheme.Modules
 
 namespace AlgebraicGeometry.Scheme.Modules
@@ -281,18 +279,19 @@ private lemma restrictFunctor_obj_presheaf_map (M : X.Modules) (V : X.Opens)
 
 end helpers
 
-namespace IsLocallyFreeOfRank
-
-/-- A sheaf of modules that is locally free of rank `n` has, around every point, sections
-`e₁, …, eₙ` over an open `V` whose restrictions to every open `W ≤ V` form a basis of `Γ(M, W)`
-over `Γ(X, W)`. -/
-theorem exists_basis {n : ℕ} {M : X.Modules} (hM : IsLocallyFreeOfRank n M) (x : X) :
+open MathlibExt.AlgebraicGeometry.CurveVectorBundles (IsVectorBundle) in
+/-- A sheaf of modules that is locally free of rank `n` (`IsVectorBundle M n`) has, around every
+point, sections `e₁, …, eₙ` over an open `V` whose restrictions to every open `W ≤ V` form a basis
+of `Γ(M, W)` over `Γ(X, W)`. -/
+theorem _root_.MathlibExt.AlgebraicGeometry.CurveVectorBundles.IsVectorBundle.exists_basis
+    {n : ℕ} {M : X.Modules} (hM : IsVectorBundle M n) (x : X) :
     ∃ (V : X.Opens), x ∈ V ∧ ∃ e : Fin n → Γ(M, V), ∀ (W : X.Opens) (hW : W ≤ V),
       ∃ b : Module.Basis (Fin n) Γ(X, W) Γ(M, W),
         ∀ i, b i = M.presheaf.map (homOfLE hW).op (e i) := by
-  obtain ⟨V, hxV, ⟨e⟩⟩ := hM.exists_trivialization x
+  obtain ⟨V, hxV, ⟨e⟩⟩ := hM x
   let t : (restrictFunctor V.ι).obj M ≅ piPowModule (V : Scheme.{u}) n :=
-    (restrictFunctorIsoPullback V.ι).app M ≪≫ e ≪≫ freeIsoPiPow (V : Scheme.{u}) n
+    (restrictFunctorIsoPullback V.ι).app M ≪≫ e ≪≫ (freeIsoTrivialBundle (V : Scheme.{u}) n).symm ≪≫
+      freeIsoPiPow (V : Scheme.{u}) n
   have hV : V.ι ''ᵁ ⊤ = V := V.ι_image_top
   let std : ∀ (W' : (V : Scheme.{u}).Opens), Fin n → Γ(piPowModule (V : Scheme.{u}) n, W') :=
     fun W' i => (Pi.single i 1 : Fin n → ((V : Scheme.{u}).presheaf.obj (op W')))
@@ -396,6 +395,4 @@ theorem exists_basis {n : ℕ} {M : X.Modules} (hM : IsLocallyFreeOfRank n M) (x
     exact Submodule.sum_mem _ (fun j _ => Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩))
   exact ⟨Module.Basis.mk hli hsp, fun i => by rw [Module.Basis.mk_apply]⟩
 
-end IsLocallyFreeOfRank
 end AlgebraicGeometry.Scheme.Modules
-

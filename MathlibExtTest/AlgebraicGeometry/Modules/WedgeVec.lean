@@ -14,19 +14,20 @@ public import MathlibExt.AlgebraicGeometry.Modules.WedgeVec
 
 open CategoryTheory CategoryTheory.Limits MonoidalCategory AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+open MathlibExt.AlgebraicGeometry.CurveVectorBundles
 
 universe u v
 
 /-- Consumer with the original binders. -/
 example {X : Scheme.{u}} {n : ℕ} (S : ShortComplex X.Modules) (hS : S.ShortExact)
-    (h₁ : Scheme.Modules.IsLocallyFreeOfRank n S.X₁) (h₃ : IsLineBundle S.X₃) :
+    (h₁ : IsVectorBundle S.X₁ n) (h₃ : IsLineBundle S.X₃) :
     Epi (((Scheme.Modules.exteriorPower X n).map S.f ▷ S.X₂) ≫
       Scheme.Modules.wedgeVec n S.X₂) :=
   Scheme.Modules.epi_whiskerRight_wedgeVec_of_shortExact S hS h₁ h₃
 
 /-- The statement is universe polymorphic. -/
 example {X : Scheme.{v + 1}} (S : ShortComplex X.Modules) (hS : S.ShortExact)
-    (h₁ : Scheme.Modules.IsLocallyFreeOfRank 2 S.X₁) (h₃ : IsLineBundle S.X₃) :
+    (h₁ : IsVectorBundle S.X₁ 2) (h₃ : IsLineBundle S.X₃) :
     Epi (((Scheme.Modules.exteriorPower X 2).map S.f ▷ S.X₂) ≫
       Scheme.Modules.wedgeVec 2 S.X₂) :=
   Scheme.Modules.epi_whiskerRight_wedgeVec_of_shortExact S hS h₁ h₃

@@ -30,17 +30,20 @@ module
 
 public import MathlibExt.Algebra.Category.ModuleCat.PresheafExteriorPowers
 public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Monoidal
+public import Mathlib.LinearAlgebra.ExteriorPower.WedgePairing
 
 /-!
-# Functoriality of sectionwise exterior powers and the wedge map
+# The sectionwise wedge map of presheaves of modules
 
 * `exteriorPower.mulVec R M n : ⋀ⁿ M →ₗ M →ₗ ⋀ⁿ⁺¹ M` is right multiplication by a vector in the
-  exterior algebra.
-* `PresheafOfModules.extPowFunctor O n` makes the sectionwise exterior power
-  `PresheafOfModules.extPow n` a functor on presheaves of modules over a presheaf of commutative
-  rings `O`.
+  exterior algebra: Mathlib's wedge product `exteriorPower.wedge R M n 1`, with the vector read in
+  `⋀¹ M`.
 * `PresheafOfModules.wedgeVec n P : extPow n P ⊗ P ⟶ extPow (n + 1) P` is the sectionwise map
   `x ⊗ m ↦ x ∧ m`.
+
+The sectionwise exterior power `PresheafOfModules.extPow n` is a functor through
+`PresheafOfModules.exteriorPowerFunctor`
+(`MathlibExt.Algebra.Category.ModuleCat.Presheaf.ExteriorPower`).
 -/
 
 @[expose] public section
@@ -55,31 +58,22 @@ namespace exteriorPower
 
 variable (R : Type*) [CommRing R] (M : Type*) [AddCommGroup M] [Module R M]
 
-/-- Multiplication in the exterior algebra, as a bilinear map `⋀ᵃ M → ⋀ᵇ M → ⋀ᵃ⁺ᵇ M`. -/
-noncomputable def mulₗ (a b : ℕ) : ⋀[R]^a M →ₗ[R] ⋀[R]^b M →ₗ[R] ⋀[R]^(a + b) M :=
-  LinearMap.mk₂ R (fun x y => ⟨x.1 * y.1, ExteriorAlgebra.mul_mem_exteriorPower x.2 y.2⟩)
-    (fun x x' y => Subtype.ext (add_mul x.1 x'.1 y.1))
-    (fun r x y => Subtype.ext (smul_mul_assoc r x.1 y.1))
-    (fun x y y' => Subtype.ext (mul_add x.1 y.1 y'.1))
-    (fun r x y => Subtype.ext (mul_smul_comm r x.1 y.1))
-
-@[simp] lemma mulₗ_apply_coe (a b : ℕ) (x : ⋀[R]^a M) (y : ⋀[R]^b M) :
-    ((mulₗ R M a b x y : ⋀[R]^(a + b) M) : ExteriorAlgebra R M) = x.1 * y.1 := rfl
-
-lemma mulₗ_ιMulti_ιMulti {a b : ℕ} (v : Fin a → M) (w : Fin b → M) :
-    mulₗ R M a b (ιMulti R a v) (ιMulti R b w) = ιMulti R (a + b) (Fin.append v w) :=
+lemma wedge_ιMulti_ιMulti {a b : ℕ} (v : Fin a → M) (w : Fin b → M) :
+    wedge R M a b (ιMulti R a v) (ιMulti R b w) = ιMulti R (a + b) (Fin.append v w) :=
   Subtype.ext (ExteriorAlgebra.ιMulti_mul_ιMulti v w)
 
-/-- Right multiplication by a vector, `⋀ⁿ M → M → ⋀ⁿ⁺¹ M`, `(x, m) ↦ x ∧ m`. -/
+/-- Right multiplication by a vector, `⋀ⁿ M → M → ⋀ⁿ⁺¹ M`, `(x, m) ↦ x ∧ m`: Mathlib's wedge
+product `exteriorPower.wedge R M n 1` with `m` read in `⋀¹ M`. The vector comes last, unlike in
+`exteriorPower.wedgeLeft R M m n`, which gives `m ∧ x`. -/
 noncomputable def mulVec (n : ℕ) : ⋀[R]^n M →ₗ[R] M →ₗ[R] ⋀[R]^(n + 1) M :=
-  (mulₗ R M n 1).compl₂ (oneEquiv R M).symm.toLinearMap
+  (wedge R M n 1).compl₂ (oneEquiv R M).symm.toLinearMap
 
 lemma mulVec_apply (n : ℕ) (x : ⋀[R]^n M) (m : M) :
-    mulVec R M n x m = mulₗ R M n 1 x ((oneEquiv R M).symm m) := rfl
+    mulVec R M n x m = wedge R M n 1 x ((oneEquiv R M).symm m) := rfl
 
 lemma mulVec_ιMulti (n : ℕ) (v : Fin n → M) (m : M) :
     mulVec R M n (ιMulti R n v) m = ιMulti R (n + 1) (Fin.append v (fun _ : Fin 1 => m)) := by
-  rw [mulVec_apply, oneEquiv_symm_apply, mulₗ_ιMulti_ιMulti]
+  rw [mulVec_apply, oneEquiv_symm_apply, wedge_ιMulti_ιMulti]
 
 end exteriorPower
 
@@ -104,56 +98,6 @@ private lemma extPow_induction {n : ℕ} {F : PresheafOfModules.{u} (O ⋙ forge
   | zero => exact zero
   | add x y _ _ hx hy => exact add x y hx hy
   | smul r x _ hx => exact smul r x hx
-
-/-- The morphism of sectionwise exterior powers induced by a morphism of presheaves of
-modules: on sections over `X` it is `⋀ⁿ` of the map on sections. -/
-noncomputable def extPowMap (n : ℕ) {F G : PresheafOfModules.{u} (O ⋙ forget₂ _ RingCat)}
-    (φ : F ⟶ G) : extPow n F ⟶ extPow n G where
-  app X := ModuleCat.ofHom (exteriorPower.map n (φ.app X).hom)
-  naturality {X Y} f := by
-    ext x
-    change exteriorPower.map n (φ.app Y).hom ((extPow n F).map f x) =
-      (extPow n G).map f (exteriorPower.map n (φ.app X).hom x)
-    induction x using extPow_induction with
-    | zero => simp only [map_zero]
-    | add x y hx hy => simp only [map_add, hx, hy]
-    | smul r x hx =>
-      erw [PresheafOfModules.map_smul, map_smul, map_smul, PresheafOfModules.map_smul, hx]
-    | ιMulti v =>
-      erw [extPow_map_ιMulti, exteriorPower.map_apply_ιMulti, exteriorPower.map_apply_ιMulti,
-        extPow_map_ιMulti]
-      congr 1
-      funext i
-      exact naturality_apply φ f (v i)
-
-lemma extPowMap_app_apply (n : ℕ) {F G : PresheafOfModules.{u} (O ⋙ forget₂ _ RingCat)}
-    (φ : F ⟶ G) (X : Cᵒᵖ) (x : ⋀[(O ⋙ forget₂ _ RingCat).obj X]^n (F.obj X)) :
-    (extPowMap n φ).app X x = exteriorPower.map n (φ.app X).hom x := rfl
-
-variable (O) in
-/-- The sectionwise `n`-th exterior power, as an endofunctor of presheaves of modules. -/
-noncomputable def extPowFunctor (n : ℕ) :
-    PresheafOfModules.{u} (O ⋙ forget₂ _ RingCat) ⥤ PresheafOfModules.{u} (O ⋙ forget₂ _ RingCat)
-    where
-  obj F := extPow n F
-  map φ := extPowMap n φ
-  map_id F := by
-    ext X x
-    change exteriorPower.map n LinearMap.id x = x
-    rw [exteriorPower.map_id]
-    rfl
-  map_comp φ ψ := by
-    ext X x
-    change exteriorPower.map n ((ψ.app X).hom ∘ₗ (φ.app X).hom) x =
-      exteriorPower.map n (ψ.app X).hom (exteriorPower.map n (φ.app X).hom x)
-    rw [exteriorPower.map_comp]
-    rfl
-
-@[simp] lemma extPowFunctor_obj (n : ℕ) (F : PresheafOfModules.{u} (O ⋙ forget₂ _ RingCat)) :
-    (extPowFunctor O n).obj F = extPow n F := rfl
-
-@[simp] lemma extPowFunctor_map (n : ℕ) {F G : PresheafOfModules.{u} (O ⋙ forget₂ _ RingCat)}
-    (φ : F ⟶ G) : (extPowFunctor O n).map φ = extPowMap n φ := rfl
 
 /-- Right multiplication by a section, on the sections of `extPow n P` over `X`. -/
 noncomputable abbrev wedgeVecApp (n : ℕ) (P : PresheafOfModulesOfCommRing.{u} O) (X : Cᵒᵖ) :

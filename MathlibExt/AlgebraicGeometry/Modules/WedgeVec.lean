@@ -34,6 +34,8 @@ module
 
 public import MathlibExt.Algebra.Category.ModuleCat.Presheaf.WedgeVec
 public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+public import MathlibExt.AlgebraicGeometry.CurveVectorBundles
+public import MathlibExt.AlgebraicGeometry.Modules.ExteriorPower
 public import MathlibExt.AlgebraicGeometry.Modules.LocallyFreeOfRank
 public import MathlibExt.AlgebraicGeometry.Modules.Monoidal
 import MathlibExt.AlgebraicGeometry.Modules.InvertibleTensorSections
@@ -45,11 +47,12 @@ import Mathlib.CategoryTheory.Sites.LocallySurjective
 import Mathlib.Topology.Sheaves.Abelian
 
 /-!
-# Exterior powers of sheaves of modules on a scheme and the wedge map
+# The wedge map on exterior powers of sheaves of modules on a scheme
 
 For a scheme `X`:
 
-* `Scheme.Modules.exteriorPower X n : X.Modules ⥤ X.Modules` is the sheafified sectionwise `n`-th
+* `Scheme.Modules.exteriorPower X n : X.Modules ⥤ X.Modules`, from
+  `MathlibExt.AlgebraicGeometry.Modules.ExteriorPower`, is the sheafified sectionwise `n`-th
   exterior power.
 * `Scheme.Modules.wedgeVec n M : ⋀ⁿ M ⊗ M ⟶ ⋀ⁿ⁺¹ M` is the sheafification of the sectionwise map
   `x ⊗ m ↦ x ∧ m`.
@@ -71,21 +74,7 @@ open CategoryTheory CategoryTheory.Limits MonoidalCategory Opposite TopologicalS
 
 namespace AlgebraicGeometry.Scheme.Modules
 
-variable (X : Scheme.{u})
-
-/-- The sectionwise `n`-th exterior power of presheaves of modules on a scheme. -/
-noncomputable abbrev presheafExteriorPower (n : ℕ) : X.PresheafOfModules ⥤ X.PresheafOfModules :=
-  PresheafOfModules.extPowFunctor X.sheaf.obj n
-
-/-- The `n`-th exterior power of sheaves of modules on a scheme: the sheafification of the
-sectionwise exterior power. -/
-noncomputable def exteriorPower (n : ℕ) : X.Modules ⥤ X.Modules :=
-  toPresheafOfModules X ⋙ presheafExteriorPower X n ⋙ sheafify X
-
-variable {X}
-
-lemma exteriorPower_obj (n : ℕ) (M : X.Modules) :
-    (exteriorPower X n).obj M = (sheafify X).obj ((presheafExteriorPower X n).obj M.val) := rfl
+variable {X : Scheme.{u}}
 
 lemma exteriorPower_map (n : ℕ) {M N : X.Modules} (φ : M ⟶ N) :
     (exteriorPower X n).map φ = (sheafify X).map ((presheafExteriorPower X n).map φ.val) := rfl
@@ -211,12 +200,13 @@ private lemma exteriorPower_le_of_span_eq_top {A : Type*} [CommRing A] {M : Type
   exact ιMulti_comp_mem w P hP _
 
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries (IsLineBundle) in
+open MathlibExt.AlgebraicGeometry.CurveVectorBundles (IsVectorBundle) in
 /-- For a short exact sequence `0 → E₁ → E₂ → E₃ → 0` of sheaves of modules on a scheme with
 `E₁` locally free of rank `n` and `E₃` invertible, the composite
 `⋀ⁿ E₁ ⊗ E₂ ⟶ ⋀ⁿ E₂ ⊗ E₂ ⟶ ⋀ⁿ⁺¹ E₂` of `⋀ⁿ` of the inclusion with the wedge map is an
 epimorphism. -/
 theorem epi_whiskerRight_wedgeVec_of_shortExact {n : ℕ} (S : ShortComplex X.Modules)
-    (hS : S.ShortExact) (h₁ : IsLocallyFreeOfRank n S.X₁) (h₃ : IsLineBundle S.X₃) :
+    (hS : S.ShortExact) (h₁ : IsVectorBundle S.X₁ n) (h₃ : IsLineBundle S.X₃) :
     Epi (((exteriorPower X n).map S.f ▷ S.X₂) ≫ wedgeVec n S.X₂) := by
   have := hS.mono_f
   have := hS.epi_g
