@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.ConsecutiveCyclicStackCount
 public import MathlibExt.Combinatorics.Enumerative.CyclicPatternAvoidingStacks
+public import MathlibExt.Combinatorics.Enumerative.CyclicSortingMachine123Iterates
 public import MathlibExt.Combinatorics.Enumerative.CyclicSortingMachineReductionLength
 public import MathlibExt.Combinatorics.Enumerative.CyclicSortingMachineSuperimpose
 
@@ -31,20 +32,6 @@ cyclic map `s_[σ]` forbids every rotation of `σ` as a pattern, and the consecu
 -/
 
 namespace MetaMathlibExt
-
-/-- **$n - 2$ passes of $SC_{[123]}$ sort every permutation, and $n - 3$ do not.** Let $n \ge 3$
-and let $SC_{[123]}^k$ be the $k$-fold iterate of the cyclic avoidance machine $SC_{[123]}$.
-For every permutation $\pi$ of $[n] = \{1, \dots, n\}$, $SC_{[123]}^{n-2}(\pi) = 12 \cdots n$, and
-the bound is tight: $SC_{[123]}^{n-3}(\xi_n) \ne 12 \cdots n$, where $\xi_n$ lists the elements of
-$[n]$ of parity different from $n$ in increasing order, followed by those of the parity of $n$
-in increasing order.
-
-Source: Alex Zhan and Stella Bie, *Cyclic-Pattern-Avoiding Stacks*, INTEGERS 26 (2026),
-Article A15, Theorem 1 (`integers-2026-A15-thm-1`). -/
-public theorem_wanted cyclicSortingMachine_123_iterate_sorts {n : ℕ} (hn : 3 ≤ n) :
-    (∀ π : List ℕ, π.Perm (List.range' 1 n) →
-      (cyclicSortingMachine [1, 2, 3])^[n - 2] π = List.range' 1 n) ∧
-    (cyclicSortingMachine [1, 2, 3])^[n - 3] (xiPermutation n) ≠ List.range' 1 n
 
 /-- **Eventual periodicity of the identity under $SC_{[321]}$.** Let $n \ge 4$, let
 $c = \lceil (2n-1)/3 \rceil$, and let $SC_{[321]}^k$ be the $k$-fold iterate of the cyclic
