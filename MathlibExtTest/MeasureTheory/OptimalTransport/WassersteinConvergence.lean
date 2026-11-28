@@ -36,24 +36,56 @@ private theorem point_tendsto : Tendsto point atTop (𝓝 1) := by
   simpa only [add_zero] using
     (tendsto_const_nhds (x := (1 : ℝ))).add tendsto_one_div_add_atTop_nhds_zero_nat
 
-private theorem secondMoment_dirac (x : ℝ) :
-    ∫⁻ y, edist (0 : ℝ) y ^ (2 : ℝ) ∂(diracProba x : Measure ℝ) = edist 0 x ^ (2 : ℝ) := by
-  change ∫⁻ y, edist (0 : ℝ) y ^ (2 : ℝ) ∂Measure.dirac x = _
+private noncomputable def secondMoment (x₀ : ℝ) (ν : ProbabilityMeasure ℝ) : ℝ≥0∞ :=
+  ∫⁻ y, edist x₀ y ^ (2 : ℝ) ∂(ν : Measure ℝ)
+
+private theorem secondMoment_dirac (x₀ x : ℝ) :
+    secondMoment x₀ (diracProba x) = edist x₀ x ^ (2 : ℝ) := by
+  change ∫⁻ y, edist x₀ y ^ (2 : ℝ) ∂Measure.dirac x = _
   rw [lintegral_dirac]
 
--- Check all three limits directly, including convergence to a nonzero second moment.
-example :
+-- Check all three limits directly, without using the convergence criterion.
+private theorem moving_dirac_limits (x₀ : ℝ) :
     Tendsto (fun k => wasserstein 2 (diracProba (point k)) (diracProba 1)) atTop (𝓝 0) ∧
       Tendsto (fun k => diracProba (point k)) atTop (𝓝 (diracProba 1)) ∧
-      Tendsto (fun k => ∫⁻ x, edist (0 : ℝ) x ^ (2 : ℝ) ∂(diracProba (point k) : Measure ℝ))
-        atTop (𝓝 (∫⁻ x, edist (0 : ℝ) x ^ (2 : ℝ) ∂(diracProba (1 : ℝ) : Measure ℝ))) := by
+      Tendsto (fun k => secondMoment x₀ (diracProba (point k))) atTop
+        (𝓝 (secondMoment x₀ (diracProba 1))) := by
   refine ⟨?_, continuous_diracProba.continuousAt.tendsto.comp point_tendsto, ?_⟩
   · exact ((tendsto_iff_edist_tendsto_0).1 point_tendsto).congr fun k =>
       (wasserstein_dirac (by norm_num : (0 : ℝ) < 2) (point k) 1).symm
   · simp only [secondMoment_dirac]
-    have hc : Continuous (fun x : ℝ => edist 0 x ^ (2 : ℝ)) :=
+    have hc : Continuous (fun x : ℝ => edist x₀ x ^ (2 : ℝ)) :=
       ENNReal.continuous_rpow_const.comp (continuous_const.edist continuous_id)
     exact hc.continuousAt.tendsto.comp point_tendsto
+
+private theorem secondMoment_dirac_lt_top (x₀ x : ℝ) : secondMoment x₀ (diracProba x) < ∞ := by
+  rw [secondMoment_dirac]
+  exact ENNReal.rpow_lt_top_of_nonneg (by norm_num) (edist_ne_top x₀ x)
+
+private theorem secondMoment_two_dirac_one : secondMoment 2 (diracProba 1) = 1 := by
+  rw [secondMoment_dirac]
+  norm_num [edist_dist, Real.dist_eq, ENNReal.rpow_two]
+
+open MathlibExt.MeasureTheory.WassersteinWanted (tendsto_wasserstein_iff)
+
+-- Forward direction: the moment about 2 converges to 1, not 0.
+example : Tendsto (fun k => diracProba (point k)) atTop (𝓝 (diracProba 1)) ∧
+    Tendsto (fun k => secondMoment 2 (diracProba (point k))) atTop (𝓝 1) := by
+  have h := (tendsto_wasserstein_iff (p := 2) (by norm_num) (2 : ℝ)
+    (fun k => diracProba (point k)) (diracProba 1)
+    (hμs := fun k => secondMoment_dirac_lt_top 2 (point k))
+    (hμ := secondMoment_dirac_lt_top 2 1)).mp (moving_dirac_limits 2).1
+  change Tendsto (fun k => diracProba (point k)) atTop (𝓝 (diracProba 1)) ∧
+    Tendsto (fun k => secondMoment 2 (diracProba (point k))) atTop
+      (𝓝 (secondMoment 2 (diracProba 1))) at h
+  simpa only [secondMoment_two_dirac_one] using h
+
+-- Reverse direction: use the independently verified weak and second-moment limits at center 2.
+example : Tendsto (fun k => wasserstein 2 (diracProba (point k)) (diracProba 1)) atTop (𝓝 0) := by
+  exact (tendsto_wasserstein_iff (p := 2) (by norm_num) (2 : ℝ)
+    (fun k => diracProba (point k)) (diracProba 1)
+    (hμs := fun k => secondMoment_dirac_lt_top 2 (point k))
+    (hμ := secondMoment_dirac_lt_top 2 1)).mpr (moving_dirac_limits 2).2
 
 private noncomputable def twoAtoms {X : Type*} [MeasurableSpace X] (a b : X) :
     ProbabilityMeasure X :=
