@@ -177,13 +177,6 @@ def TwoLink.Isotopic (L₁ L₂ : TwoLink) : Prop :=
     (∀ t, Φ.H 1 (L₁.K.curve t) = L₂.K.curve (σ.f t)) ∧
     (∀ t, Φ.H 1 (L₁.L.curve t) = L₂.L.curve (τ.f t))
 
-/-- Ordered two-component links are isotopic exactly when the same ambient isotopy, at time one,
-identifies their components up to their respective circle reparametrizations. -/
-theorem TwoLink.isotopic_iff {L₁ L₂ : TwoLink} : L₁.Isotopic L₂ ↔
-    ∃ Φ : AmbientIsotopy, ∃ σ τ : CircleReparam,
-      (∀ t, Φ.H 1 (L₁.K.curve t) = L₂.K.curve (σ.f t)) ∧
-      (∀ t, Φ.H 1 (L₁.L.curve t) = L₂.L.curve (τ.f t)) := Iff.rfl
-
 /-- **Reflection in the $xy$-plane.** The reflection of $\mathbb{R}^3$ through the $xy$-plane is
 the map $(x, y, z) \mapsto (x, y, -z)$. -/
 def reflectZ (p : R3) : R3 :=

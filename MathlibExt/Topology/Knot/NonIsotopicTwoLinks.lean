@@ -223,7 +223,7 @@ private theorem unlinkExtension_circleMap (t : ℝ) :
 
 private theorem unlink_not_isotopic_hopfLink : ¬ unlink.Isotopic hopfLink := by
   intro h
-  obtain ⟨Φ, σ, τ, hK, hL⟩ := TwoLink.isotopic_iff.mp h
+  obtain ⟨Φ, σ, τ, hK, hL⟩ := h
   have hΦ (w : ℂ) : Φ.H 1 (unlinkExtension w) ∉ range equator.curve := by
     rintro ⟨t, ht⟩
     apply unlinkExtension_notMem w
