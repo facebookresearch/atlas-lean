@@ -13753,6 +13753,7 @@
   "MathlibExt/NumberTheory/MersenneOmega": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
   "MathlibExt/NumberTheory/MillinSeries": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Reciprocal sums of doubly exponential sequences"},
   "MathlibExt/NumberTheory/MobiusFermat": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Möbius–Fermat function"},
+  "MathlibExt/NumberTheory/MobiusFermatMultinomial": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Möbius–Fermat function"},
   "MathlibExt/NumberTheory/MobiusFermatReduction": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Möbius–Fermat function"},
   "MathlibExt/NumberTheory/MobiusFermatThreeSeven": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Möbius–Fermat function"},
   "MathlibExt/NumberTheory/ModInverseSwitching": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Modular inverses from the Euclidean algorithm"},
