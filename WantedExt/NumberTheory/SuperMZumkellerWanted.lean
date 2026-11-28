@@ -54,25 +54,12 @@ public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerFourNotKmP
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerOfIsKMPerfect
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerPrimePowIff
 public import MathlibExt.NumberTheory.SuperMZumkellerIsSuperMZumkellerProdPrimes
+public import MathlibExt.NumberTheory.SuperMZumkellerTwoPowMulProdPrimes
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.SuperMZumkellerWanted
-
-/-- **Powers of $2$ times at least three distinct odd primes are super-m-Zumkeller.** Let $k$ be
-a natural number and $S$ a finite set of at least three odd primes. Then $2^k \prod_{p \in S} p$
-is super-m-Zumkeller.
-
-The primes are required to be odd because the paper's proof uses that this number has
-$(k+1)2^r$ divisors, where $r$ is the number of primes in $S$.
-
-Source: Harish Patodia, "Super m-Zumkeller Numbers",
-Corollary 2. -/
-theorem_wanted isSuperMZumkeller_two_pow_mul_prod_primes (k : ℕ)
-    (s : Finset ℕ) (hs : ∀ p ∈ s, p.Prime) (hs2 : 2 ∉ s)
-    (hcard : 3 ≤ s.card) :
-    IsSuperMZumkeller ((2 : ℕ) ^ k * ∏ p ∈ s, p)
 
 end MathlibExt.NumberTheory.SuperMZumkellerWanted
