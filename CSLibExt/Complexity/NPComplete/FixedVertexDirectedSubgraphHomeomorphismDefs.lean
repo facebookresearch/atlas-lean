@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# FIXED-VERTEX DIRECTED SUBGRAPH HOMEOMORPHISM is NP-complete for every fixed pattern whose arcs: definitions
-share neither a common tail nor a common head
+# FIXED-VERTEX DIRECTED SUBGRAPH HOMEOMORPHISM: definitions
 
 Source:
 S. Fortune, J. Hopcroft and J. Wyllie, "The directed subgraph homeomorphism problem",

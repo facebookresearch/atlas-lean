@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# PATH WITH FORBIDDEN PAIRS with disjoint pairs, on acyclic digraphs of in- and out-degree: definitions
-at most 2, is NP-complete
+# PATH WITH FORBIDDEN PAIRS with disjoint pairs, on acyclic digraphs of in- and out-degree at most
+2: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
