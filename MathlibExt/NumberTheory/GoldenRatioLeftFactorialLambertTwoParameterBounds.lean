@@ -11,7 +11,7 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds
 import Mathlib.Analysis.Complex.ExponentialBounds
-import all MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds
+import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds
 
 /-!
 # Two-parameter Lambert bounds for the left factorial
@@ -29,12 +29,14 @@ term by term with the remainder at the one-parameter cutoff.
   27 (2024), Article 24.5.7, pp. 1–11, Theorems 10 and 14 (Sections 3.1 and 3.3).
 * Đ. Kurepa, *On the left factorial function !n*, Mathematica Balkanica 1 (1971), pp. 147–153,
   especially p. 151 for the integral representation.
-* The proof reuses the following `MathlibExt.NumberTheory` modules:
-  `GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds`
-  (`kurepaPartialIntegral_lambertSequence_bounds`, `uexp_strictAnti`, `a_gt`, `cast_sub_one`, and
-  `lambertPow`) and
-  `GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds`
-  (`sum_factorial_sub_kurepaPartialIntegral` and `kurepaPartialIntegral_lt_sum_factorial`).
+* The proof reuses `kurepaPartialIntegral_lambertSequence_bounds` and
+  `lambertCutoff_pow_mul_exp` from the `MathlibExt.NumberTheory` module
+  `GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds`, and
+  `sum_factorial_sub_kurepaPartialIntegral` and `kurepaPartialIntegral_lt_sum_factorial` from
+  `GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds`.
+  It uses the lower-branch API `lambertMap_strictAntiOn_Iic` and
+  `existsUnique_lambertMap_lower_preimage` from the module
+  `MathlibExt.Analysis.SpecialFunctions.LambertWFunction`.
 -/
 
 namespace MetaMathlibExt
@@ -97,37 +99,26 @@ public theorem kurepaPartialIntegral_lambertSequence_two_bounds (n m : ℕ)
   have htarget : -(1 / d) * (4 / 7 : ℝ) ^ (1 / d) ≤ -(1 / d) * c ^ (1 / d) :=
     mul_le_mul_of_nonpos_left (rpow_le_rpow hc₀.le hc (one_div_nonneg.mpr hd.le))
       (neg_nonpos.mpr (one_div_nonneg.mpr hd.le))
-  have hAd : d < A := by
-    refine lt_of_le_of_ne hA (fun he => ?_)
-    have hboundary : lambertMap (-A / d) = -exp (-1) := by
-      rw [← he, neg_div, div_self hd.ne']
-      simp [lambertMap]
-    exact (ne_of_lt (hlow.trans_le htarget)) (hboundary.symm.trans hW)
   have haA : a ≤ A := by
-    have haU : a / d ∈ Set.Ioi (1 : ℝ) := (one_lt_div hd).mpr (a_gt n hn a ha haW)
-    have hAU : A / d ∈ Set.Ioi (1 : ℝ) := (one_lt_div hd).mpr hAd
-    have hmap : lambertMap (-a / d) ≤ lambertMap (-A / d) := by rw [haW, hW]; exact htarget
-    simp only [lambertMap, neg_div, neg_mul] at hmap
-    by_contra! hlt
-    have := uexp_strictAnti hAU haU (div_lt_div_of_pos_right hlt hd)
-    linarith
-  -- The two scaled remainders have equal exponential factors at the top power.
+    have ha' : -a / d ∈ Set.Iic (-1 : ℝ) := by
+      rw [Set.mem_Iic, neg_div, neg_le_neg_iff, one_le_div hd]
+      exact ha
+    have hA' : -A / d ∈ Set.Iic (-1 : ℝ) := by
+      rw [Set.mem_Iic, neg_div, neg_le_neg_iff, one_le_div hd]
+      exact hA
+    have hmap : lambertMap (-a / d) ≤ lambertMap (-A / d) := by
+      rw [haW, hW]
+      exact htarget
+    have hle := (lambertMap_strictAntiOn_Iic.le_iff_ge ha' hA').mp hmap
+    rwa [div_le_div_iff_of_pos_right hd, neg_le_neg_iff] at hle
+  -- Scaling the remainder by `m` makes its highest-power factor match the `m = 1` case.
   have htopA : (m : ℝ) * (exp (-A) * A ^ (n - 1)) = 4 / 7 := by
-    have hmul : A * exp (-A / d) = c ^ (1 / d) := by
-      unfold lambertMap at hW
-      field_simp [hd.ne'] at hW
-      simpa only [neg_div, neg_inj] using hW
-    have hcast : ((n - 1 : ℕ) : ℝ) = d := cast_sub_one n (by omega)
-    have hexp : ((n - 1 : ℕ) : ℝ) * (-A / d) = -A := by rw [hcast]; field_simp
-    have hone : (1 / d) * ((n - 1 : ℕ) : ℝ) = 1 := by rw [hcast]; field_simp
-    have hp := congrArg (· ^ (n - 1)) hmul
-    rw [mul_pow, ← exp_nat_mul, hexp, ← rpow_mul_natCast hc₀.le, hone, rpow_one] at hp
-    rw [mul_comm (exp (-A)), hp]
+    rw [mul_comm (exp (-A)), lambertCutoff_pow_mul_exp n (by omega) A hc₀.le hW]
     dsimp [c]
     field_simp
   have htopa : exp (-a) * a ^ (n - 1) = 4 / 7 := by
     rw [mul_comm]
-    exact lambertPow n hn a haW
+    exact lambertCutoff_pow_mul_exp n (by omega) a (by norm_num) haW
   have ha₀ := hd.trans_le ha
   have hA₀ := hd.trans_le hA
   have hterm (j : ℕ) (hj : j ≤ n - 1) :

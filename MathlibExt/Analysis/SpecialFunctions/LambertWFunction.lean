@@ -13,7 +13,7 @@ import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
-# Lambert W function, principal real branch (Ouellet JIS VOL20, rank 320)
+# Lambert W function and its real branches
 
 Source contract, rank 320, lexical id `jis_term_6c376920fa7bc177f6acc4c7`,
 semantic id `jis_sem_4b8befd1d7e70075080d07cc`.
@@ -37,6 +37,18 @@ justify such a subtype-valued inverse.
 
 `existsUnique_lambertMap_lower_preimage` gives the matching characterization of the lower
 real branch `W₋₁`: every `x` with `-exp (-1) ≤ x < 0` has exactly one preimage `y ≤ -1`.
+The Lambert map is strictly decreasing on this branch, including its endpoint `y = -1`.
+
+## References
+
+* Vincent Ouellet, *On the Sum of the Reciprocals of the Middle Prime Factors of an Integer*,
+  Journal of Integer Sequences 20 (2017), Article 17.10.1, pp. 1–16, Definition 7.
+* Brian Drake, Ira M. Gessel, and Guoce Xin, *Three Proofs and a Generalization of the
+  Goulden-Litsyn-Shevelev Conjecture on a Sequence Arising in Algebraic Geometry*,
+  Journal of Integer Sequences 10 (2007), Article 07.3.7, pp. 1–11, Section 2.
+* Aleksandar Petojević, Marjana Gorjanac Ranitović, Dragan Rastovac, and Milinko Mandić,
+  *The Golden Ratio, Factorials, and the Lambert W Function*, Journal of Integer Sequences
+  27 (2024), Article 24.5.7, pp. 1–11, Section 2 (the lower real branch).
 -/
 
 namespace MetaMathlibExt
@@ -158,6 +170,21 @@ public theorem existsUnique_lambertMap_preimage (x : ℝ)
     refine ⟨⟨max x 0, hb_pos⟩, hb_symm, fun y hy => ?_⟩
     exact huniq_gen y ⟨max x 0, hb_pos⟩ hy hb_symm
 
+/-- **Antitonicity of the lower branch of the Lambert map.** The real Lambert map
+$y \mapsto y e^y$ is strictly decreasing on $(-\infty,-1]$. -/
+public theorem lambertMap_strictAntiOn_Iic : StrictAntiOn lambertMap (Set.Iic (-1 : ℝ)) := by
+  have hlam (y : ℝ) : HasDerivAt lambertMap (Real.exp y * (1 + y)) y := by
+    have h := (hasDerivAt_id y).mul (Real.hasDerivAt_exp y)
+    change HasDerivAt lambertMap (1 * Real.exp y + y * Real.exp y) y at h
+    rwa [show 1 * Real.exp y + y * Real.exp y = Real.exp y * (1 + y) by ring] at h
+  have hcont : Continuous lambertMap :=
+    continuous_iff_continuousAt.mpr fun y => (hlam y).continuousAt
+  refine strictAntiOn_of_deriv_neg (convex_Iic _) hcont.continuousOn ?_
+  intro y hy
+  rw [interior_Iic] at hy
+  rw [(hlam y).deriv]
+  exact mul_neg_of_pos_of_neg (Real.exp_pos y) (by linarith [show y < -1 from hy])
+
 /-- **Lower-branch preimages of the Lambert map.** Let $h(y) = y e^y$ be the Lambert map on the
 real numbers. Every real $x$ with $-e^{-1} \le x < 0$ has exactly one preimage $y \le -1$ under
 $h$, that is, there is exactly one real number $y \le -1$ with $y e^y = x$.
@@ -172,21 +199,7 @@ Article 24.5.7, Section 3.1 (the lower branch `W₋₁`). -/
 public theorem existsUnique_lambertMap_lower_preimage {x : ℝ}
     (hx1 : -Real.exp (-1) ≤ x) (hx0 : x < 0) :
     ∃! y : { y : ℝ // y ≤ -1 }, lambertMap y.val = x := by
-  have hlam : ∀ y : ℝ, HasDerivAt lambertMap (Real.exp y * (1 + y)) y := by
-    intro y
-    have h := (hasDerivAt_id y).mul (Real.hasDerivAt_exp y)
-    have e : 1 * Real.exp y + y * Real.exp y = Real.exp y * (1 + y) := by ring
-    change HasDerivAt lambertMap (1 * Real.exp y + y * Real.exp y) y at h
-    rw [e] at h
-    exact h
-  have hcont : Continuous lambertMap :=
-    continuous_iff_continuousAt.mpr fun y => (hlam y).continuousAt
-  have hanti : StrictAntiOn lambertMap (Set.Iic (-1 : ℝ)) := by
-    refine strictAntiOn_of_deriv_neg (convex_Iic _) hcont.continuousOn ?_
-    intro y hy
-    rw [interior_Iic] at hy
-    rw [(hlam y).deriv]
-    exact mul_neg_of_pos_of_neg (Real.exp_pos y) (by linarith [show y < -1 from hy])
+  have hcont : Continuous lambertMap := continuous_id.mul Real.continuous_exp
   have ht : Filter.Tendsto lambertMap Filter.atBot (nhds 0) := by
     have h2 : Filter.Tendsto (fun y : ℝ => -((-y) ^ 1 * Real.exp (-(-y)))) Filter.atBot
         (nhds (-0)) :=
@@ -202,7 +215,7 @@ public theorem existsUnique_lambertMap_lower_preimage {x : ℝ}
   obtain ⟨y, hy, hyx⟩ := intermediate_value_Icc' (show y₀ ⊓ -1 ≤ -1 from inf_le_right)
     hcont.continuousOn ⟨by rw [hl]; exact hx1, h1.1.le⟩
   refine ⟨⟨y, hy.2⟩, hyx, fun z hz => Subtype.ext ?_⟩
-  exact hanti.injOn z.property hy.2 (hz.trans hyx.symm)
+  exact lambertMap_strictAntiOn_Iic.injOn z.property hy.2 (hz.trans hyx.symm)
 
 end
 
