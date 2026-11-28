@@ -19,10 +19,8 @@ public import Mathlib.Tactic.NormNum
 /-!
 # Unimodal and log-concave sequences
 
-Definitions from Stanley, *Enumerative Combinatorics*, vol. 1, 2nd ed. (author's draft of
-15 July 2011, https://math.mit.edu/~rstan/ec/ec1.pdf), Chapter 1, Exercise 50, for a finite
-sequence `(a₀, a₁, …, aₙ)` of real numbers, represented by `a : ℕ → ℝ` and the last index `n`
-(values beyond `n` are ignored):
+A finite sequence `(a₀, a₁, …, aₙ)` of real numbers is represented by `a : ℕ → ℝ` and the
+last index `n` (values beyond `n` are ignored):
 
 * `IsUnimodal a n`: `a₀ ≤ a₁ ≤ ⋯ ≤ aⱼ ≥ aⱼ₊₁ ≥ ⋯ ≥ aₙ` for some `0 ≤ j ≤ n`;
 * `IsLogConcave a n`: `aᵢ² ≥ aᵢ₋₁ aᵢ₊₁` for `1 ≤ i ≤ n - 1`;
@@ -34,6 +32,12 @@ Main results:
   is unimodal (Exercise 1.50(a)).
 * `choose_isLogConcave`, `choose_isUnimodal`: each row of Pascal's triangle is log-concave, hence
   unimodal (a direct computation with the ratio of consecutive binomial coefficients).
+
+## References
+
+* Richard P. Stanley, *Enumerative Combinatorics*, vol. 1, 2nd ed. (author's draft of
+  15 July 2011, https://math.mit.edu/~rstan/ec/ec1.pdf), Chapter 1, Exercise 50, for the
+  definitions, the midpoint formulation, and the implication from log-concavity to unimodality.
 -/
 
 @[expose] public section
@@ -57,6 +61,23 @@ exist `i < j < k ≤ n` with `aᵢ ≠ 0`, `aⱼ = 0` and `aₖ ≠ 0` (Stanley,
 Combinatorics*, vol. 1, 2nd ed., author's draft of 15 July 2011, Chapter 1, Exercise 50). -/
 def NoInternalZeros (a : ℕ → ℝ) (n : ℕ) : Prop :=
   ∀ i j k, i < j → j < k → k ≤ n → a i ≠ 0 → a k ≠ 0 → a j ≠ 0
+
+/-- **Midpoint criterion for finite log-concavity.** Log-concavity through index `n` is
+equivalent to the three-term inequality at every midpoint `j` with `1 ≤ j < n`. -/
+theorem isLogConcave_iff_mul_le_sq {a : ℕ → ℝ} {n : ℕ} :
+    IsLogConcave a n ↔ ∀ j, 1 ≤ j → j < n → a (j - 1) * a (j + 1) ≤ a j ^ 2 := by
+  constructor
+  · intro h j hj hjn
+    obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hj)
+    exact h k (Nat.succ_le_of_lt hjn)
+  · intro h k hk
+    exact h (k + 1) (Nat.succ_pos k) (Nat.lt_of_succ_le hk)
+
+/-- **Positive finite sequences have no internal zeros.** It suffices for the terms through
+index `n` to be positive, regardless of the values at later indices. -/
+theorem NoInternalZeros.of_pos {a : ℕ → ℝ} {n : ℕ} (h : ∀ j ≤ n, 0 < a j) :
+    NoInternalZeros a n :=
+  fun _ j _ _ hjk hkn _ _ => (h j (hjk.le.trans hkn)).ne'
 
 section Proof
 
