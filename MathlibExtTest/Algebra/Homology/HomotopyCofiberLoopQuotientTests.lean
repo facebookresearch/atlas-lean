@@ -33,9 +33,9 @@ namespace MathlibExtTest.HomotopyCofiberLoopQuotient
 
 private abbrev R := ZMod 16
 private abbrev M := ModuleCat.of R R
-private abbrev loop := ComplexShape.refl PUnit
+private abbrev loop := ComplexShape.refl PUnit.{1}
 local instance : DecidableRel loop.Rel := fun i j => (inferInstance : Decidable (i = j))
-private abbrev u : PUnit := PUnit.unit
+private abbrev u : PUnit.{1} := PUnit.unit
 local instance : HasFiniteBiproducts (ModuleCat R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat R)
 local instance : HasBinaryBiproducts (ModuleCat R) :=
@@ -79,7 +79,7 @@ private def H : Homotopy (phi ≫ minus) (minus ≫ phi) where
       (-1 : R) * (5 * x) = ((-1 : R) * 5) * x := (mul_assoc _ _ _).symm
       _ = (2 * 4 + 4 * 2 + 5 * (-1 : R)) * x := congrArg (fun r : R => r * x) h
       _ = 2 * (4 * x) + 4 * (2 * x) + 5 * (-1 * x) := by ring
-private def predecessor : ∀ j : PUnit, ∃ i, loop.Rel i j := fun j => ⟨j, rfl⟩
+private def predecessor : ∀ j : PUnit.{1}, ∃ i, loop.Rel i j := fun j => ⟨j, rfl⟩
 private abbrev Cof := HomologicalComplex.homotopyCofiber phi
 private abbrev chart := XIsoBiprod phi u u rfl
 private abbrev induced := mapOfHomotopy phi phi predecessor minus minus H
@@ -94,21 +94,21 @@ private lemma homotopy_block : mapCoordinates =
     biprod.desc (biprod.lift (scale (-1)) (scale 2)) (biprod.lift 0 (scale (-1))) := by
   apply biprod.hom_ext _ _
   · apply biprod.hom_ext'
-    · simp only [mapCoordinates, Category.assoc, inl_XIsoBiprod_inv_assoc,
+    · simp only [mapCoordinates, chart, induced, Category.assoc, inl_XIsoBiprod_inv_assoc,
         inlX_mapOfHomotopy_assoc, add_comp, inrX_XIsoBiprod_hom_assoc,
         inlX_XIsoBiprod_hom_assoc, biprod.inl_desc_assoc, biprod.lift_fst,
         biprod.inr_fst, biprod.inl_fst, comp_zero, Category.comp_id, add_zero, zero_add]
       rfl
-    · simp only [mapCoordinates, Category.assoc, inr_XIsoBiprod_inv_assoc,
+    · simp only [mapCoordinates, chart, induced, Category.assoc, inr_XIsoBiprod_inv_assoc,
         inrX_mapOfHomotopy_assoc, inrX_XIsoBiprod_hom_assoc,
         biprod.inr_desc_assoc, biprod.lift_fst, biprod.inr_fst, comp_zero]
   · apply biprod.hom_ext'
-    · simp only [mapCoordinates, Category.assoc, inl_XIsoBiprod_inv_assoc,
+    · simp only [mapCoordinates, chart, induced, Category.assoc, inl_XIsoBiprod_inv_assoc,
         inlX_mapOfHomotopy_assoc, add_comp, inrX_XIsoBiprod_hom_assoc,
         inlX_XIsoBiprod_hom_assoc, biprod.inl_desc_assoc, biprod.lift_snd,
         biprod.inr_snd, biprod.inl_snd, comp_zero, Category.comp_id, zero_add, add_zero]
       rfl
-    · simp only [mapCoordinates, Category.assoc, inr_XIsoBiprod_inv_assoc,
+    · simp only [mapCoordinates, chart, induced, Category.assoc, inr_XIsoBiprod_inv_assoc,
         inrX_mapOfHomotopy_assoc, inrX_XIsoBiprod_hom_assoc,
         biprod.inr_desc_assoc, biprod.lift_snd, biprod.inr_snd, Category.comp_id]
       rfl
@@ -158,7 +158,7 @@ example : secondValue differentialCoordinates = 9 := differential_second
 example : Cof.d u u ≫ Cof.d u u = 0 := Cof.d_comp_d u u u
 example : Cof.d u u ≠ 0 := by
   intro hz
-  have h : differentialCoordinates = 0 := by simp [differentialCoordinates, hz]
+  have h : differentialCoordinates = 0 := by simp [differentialCoordinates, Cof, hz]
   have h0 : firstValue (0 : M ⊞ M ⟶ M ⊞ M) = 0 := by simp [firstValue]
   exact (by decide : (12 : R) ≠ 0)
     (differential_first.symm.trans ((congrArg firstValue h).trans h0))
@@ -167,7 +167,7 @@ example : secondValue mapCoordinates = 1 := map_second
 example : induced ≠ 𝟙 Cof := by
   intro hz
   have h : mapCoordinates = 𝟙 (M ⊞ M) := by
-    simp [mapCoordinates, hz]
+    simp [mapCoordinates, chart, hz]
   have h1 : firstValue (𝟙 (M ⊞ M)) = 1 := by simp [firstValue, diagonalInput]
   exact (by decide : (15 : R) ≠ 1)
     (map_first.symm.trans ((congrArg firstValue h).trans h1))
