@@ -12,4 +12,7 @@ space–time diagrams of one-dimensional cellular automata, and the reductions f
 - [The tiling problem for NW-deterministic tile sets is undecidable](the-tiling-problem-for-nw-deterministic-tile-sets.md)
 - [The finite tiling problem is undecidable](the-finite-tiling-problem-is-undecidable.md)
 - [The tile set SNAKES and its plane-filling property](the-tile-set-snakes.md)
+- [Tiling the plane with three polygons is undecidable](tiling-the-plane-with-three-polygons-is-undecida.md)
+- [Tilings of the hyperbolic plane](tilings-of-the-hyperbolic-plane/README.md)
+- [Translational tiling problems](translational-tiling-problems/README.md)
 - [Recognizability of infinite pictures](recognizability-of-infinite-pictures/README.md)
