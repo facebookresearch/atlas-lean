@@ -61,3 +61,4 @@
 - [Uncertainty of supervised individual admixture estimates](uncertainty-of-supervised-individual-admixture-estimates/README.md)
 - [Spectral estimation of admixture models](spectral-estimation-of-admixture-models/README.md)
 - [Cross-validated choice of the number of ancestral populations](cross-validated-choice-of-the-number-of-ancestral-populations.md)
+- [Maximum likelihood in the admixture model](maximum-likelihood-in-the-admixture-model/README.md)
