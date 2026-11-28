@@ -17,8 +17,10 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectAbundancySurplus
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSum
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSumNotIsEulerPrimeOfMod165Eq
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeReciprocalSumPrimitiveNondeficientPrimeReciprocalSumGe
 
 /-! # Prime reciprocal sums of odd perfect and primitive non-deficient numbers
 
@@ -50,18 +52,6 @@ Corollary 1 (`integers-2025-A59-cor-1`). -/
 public theorem_wanted oddPerfect_primeReciprocalSum_lt_log_two_sub
     (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h11 : 11 ≤ n.minFac) :
     ∑ p ∈ n.primeFactors, (1 : ℝ) / p < Real.log 2 - 11 / (50 * (n.minFac : ℝ) ^ 2)
-
-/-- **Surplus of an odd perfect number with least prime factor at least 11.** Let $n$ be an odd
-perfect number whose least prime factor $p_1$ satisfies $p_1 \ge 11$, and let
-$H(n) = \prod_{p \mid n} p/(p-1)$, the product over the primes $p$ dividing $n$. Then its surplus
-$H(n) - 2$ satisfies $H(n) - 2 < \frac{25}{8 p_1 \log p_1}$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Corollary 2 (`integers-2025-A59-cor-2`). -/
-public theorem_wanted oddPerfect_abundancySup_sub_two_lt
-    (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h11 : 11 ≤ n.minFac) :
-    (abundancySup n : ℝ) - 2 < 25 / (8 * (n.minFac : ℝ) * Real.log n.minFac)
 
 /-- **Lower bound for the prime-counting function at primes $p \ge 19$.** For every prime
 $p \ge 19$, the number $\pi(p)$ of primes at most $p$ satisfies $\pi(p) \ge p/\log p + 1$,
@@ -146,21 +136,6 @@ public theorem_wanted oddPerfect_abundancySup_le_of_gcd_fifteen
       (Nat.gcd 15 n = 3 → abundancySup n ≤ 2.096234) ∧
       (Nat.gcd 15 n = 5 → abundancySup n ≤ 2.031002) ∧
       (Nat.gcd 15 n = 15 → abundancySup n ≤ 2.165439)
-
-/-- **Lower bound on the prime reciprocal sum of a primitive non-deficient number.** Let $n$ be a
-primitive non-deficient number with least prime factor $p_1$, let $T(n) = \sum_{p \mid n} 1/p$
-and $H(n) = \prod_{p \mid n} p/(p-1)$, with the sum and product over the primes $p$ dividing $n$,
-and let $S = H(n) - 2$ be the surplus of $n$. Then
-$T(n) \ge \log 2 - \frac{25}{64 p_1} + \frac{S}{2} - \frac{S^2}{4}$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Proposition 3 (`integers-2025-A59-prop-3`). -/
-public theorem_wanted primitiveNondeficient_primeReciprocalSum_ge
-    (n : ℕ) (hn : IsPrimitiveNondeficient n) :
-    Real.log 2 - 25 / (64 * (n.minFac : ℝ)) + ((abundancySup n : ℝ) - 2) / 2 -
-        ((abundancySup n : ℝ) - 2) ^ 2 / 4 ≤
-      ∑ p ∈ n.primeFactors, (1 : ℝ) / p
 
 /-- **Upper bound on the prime reciprocal sum of a primitive non-deficient number with one odd
 exponent.** Let $n$ be a primitive non-deficient number with least prime factor $p_1 \ge 11$,

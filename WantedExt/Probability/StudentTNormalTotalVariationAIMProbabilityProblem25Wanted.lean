@@ -50,8 +50,10 @@ noncomputable def studentTDensity (r x : ℝ) : ℝ :=
   Real.Gamma ((r + 1) / 2) / (Real.sqrt (r * Real.pi) * Real.Gamma (r / 2)) *
     (1 + x ^ 2 / r) ^ (-(r + 1) / 2)
 
-/-- The total variation distance `d_TV(t_r, Z) = (1/2) ∫ |f_r - φ|` between Student's `t_r` and the
-standard normal law `Z ∼ N(0, 1)` (density `ProbabilityTheory.gaussianPDFReal 0 1`). -/
+/-- `(1/2) ∫ |studentTDensity r - φ|` with `φ = ProbabilityTheory.gaussianPDFReal 0 1`, for every
+real `r`. For `r > 0` it is the total variation distance `d_TV(t_r, Z) = (1/2) ∫ |f_r - φ|` between
+Student's `t_r` and the standard normal law `Z ∼ N(0, 1)`; for `r ≤ 0`, `studentTDensity r` is `0`
+(`√(r π) = 0`), so the value is `1/2` and is not a distance between those laws. -/
 noncomputable def tvStudentNormal (r : ℝ) : ℝ :=
   (1 / 2) * ∫ x, |studentTDensity r x - ProbabilityTheory.gaussianPDFReal 0 1 x|
 

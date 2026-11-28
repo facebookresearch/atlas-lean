@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import MathlibExt.NumberTheory.OddPartFactorialTwoAdic
+public import MathlibExt.NumberTheory.OddPartFactorialTwoAdicExistsTwoAdicOddDoubleFactorialLimit
 
 /-!
 # Statements on the odd part of dyadic factorials
@@ -90,23 +91,6 @@ Sequences 29 (2026), Article 26.3.1, Corollary 8.
 public theorem_wanted exists_twoAdic_oddPart_factorial_limit :
     ∃ z : ℤ_[2], ∀ e : ℕ, 3 ≤ e →
       (2 : ℤ_[2]) ^ e ∣ z - (oddPart (Nat.factorial (2 ^ (e - 1))) : ℤ_[2])
-
-/--
-**A 2-adic limit of normalized odd double factorials.** Write $(2^e - 1)!!$ for the product of
-the odd natural numbers from $1$ to $2^e - 1$. There is a 2-adic integer $w$ such that for every
-natural number $e \ge 3$, $2^{e-1}$ divides $w - \lfloor ((2^e - 1)!! - 1) / 2^e \rfloor$ in
-$\mathbb{Z}_2$.
-
-For $e \ge 3$ the division is exact. The paper writes $e \ge 2$, but at $e = 2$ the quotient
-$(3 - 1)/4$ is not an integer.
-
-Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
-Sequences 29 (2026), Article 26.3.1, Definition after Corollary 10.
--/
-public theorem_wanted exists_twoAdic_oddDoubleFactorial_limit :
-    ∃ w : ℤ_[2], ∀ e : ℕ, 3 ≤ e →
-      (2 : ℤ_[2]) ^ (e - 1) ∣ w -
-        (↑(((oddDoubleFactorial e : ℤ) - 1) / (2 : ℤ) ^ e) : ℤ_[2])
 
 /--
 **Normalized difference of odd parts of dyadic factorials.** Write $\mathrm{od}(n)$ for the odd
