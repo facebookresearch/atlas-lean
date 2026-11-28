@@ -37,7 +37,8 @@ coordinate and project onto the perfect factor. This condition defines a nontriv
 * Yu. V. Tsybenko, *Abstracts of 17th All-USSR Algebraic Conf., Part 1*, Minsk (1983), p. 213,
   the original matrix counterexample, as cited in the archive.
 * Yves Cornulier, *On the Chabauty space of locally compact abelian groups*, Algebraic & Geometric
-  Topology **11** (2011), 2007–2035, Proposition 8.6, doi:10.2140/agt.2011.11.2007.
+  Topology **11** (2011), 2007–2035, Theorem 1.3 and the discussion preceding Theorem 1.5 (p. 2009),
+  and Proposition 8.6, doi:10.2140/agt.2011.11.2007.
 * Igor V. Protasov, *Selective Survey on Spaces of Closed Subgroups of Topological Groups*,
   Axioms **7** (2018), no. 4, article 75, §1.1 and Theorem 8, doi:10.3390/axioms7040075.
 -/
@@ -120,8 +121,10 @@ private theorem not_connectedSpace_chabautyTopology_prod
 Resolved false: the Kourovka Archive answers 8.61 "No, not always", citing Tsybenko (1983): the
 group of matrices `[[1, z₁, r], [0, 1, z₂], [0, 0, 1]]`, `z₁, z₂ ∈ ℤ`, `r ∈ ℝ`, is locally compact
 and contains a central subgroup topologically isomorphic to `ℝ`, but its space of closed subgroups
-is not connected. (For locally compact abelian groups the answer is yes: the Chabauty space is
-connected exactly when there is such a subgroup, Protasov's survey, *Axioms* 7 (2018), Theorem 8.)
+is not connected. For a nontrivial locally compact abelian group, the Chabauty space is connected
+exactly when the group contains such a subgroup. The trivial group has a singleton Chabauty
+space but contains no copy of `ℝ` (Cornulier, Theorem 1.3 and the discussion before Theorem 1.5).
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 8.61 (I. V.
 Protasov); resolution: Yu. V. Tsybenko, Abstracts of the 17th All-Union Algebraic Conference, Part
