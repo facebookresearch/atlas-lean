@@ -18,8 +18,23 @@ import Mathlib.Tactic.Ring
 /-!
 # Adjacent base-`p` digits in the higher `a`-number tower
 
-For `τ = (p + 1)/d` with `d ∣ p - 1`, the two base-`p` digits of `τ i` next to the
-radix point agree exactly when `p ∣ i`.
+For a prime `p`, a natural number `d` dividing `p - 1`, and `τ = (p + 1)/d`, the two
+base-`p` digits of `τ i` next to the radix point agree exactly when `p ∣ i`, for every
+natural number `i`.
+
+For the same `p` and `d` and any positive integer `m`, the digits of `m/d` at positions
+`-(k + 1)` and `-k` agree for each integer `k ≥ 1`. The paper assumes `p` is odd; when
+`p = 2`, `d = 1` and all digits after the radix point are zero.
+
+## References
+
+* Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
+  *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026),
+  Article A78, pp. 1–28, Notation 1 (i), Definition 5, Corollary 2, and Lemma 3.
+* The paper's proof of Corollary 2 uses Lemma 2, which cites G. H. Hardy and E. M. Wright,
+  *An Introduction to the Theory of Numbers*, 6th ed., Oxford University Press, 2008,
+  Theorem 136. This proof uses the floor shift from `basePDigit_towerTau_neg_one_eq_zero_iff`
+  in `MathlibExt.NumberTheory.HigherANumbersTowerTauAdjacentDigits` instead.
 -/
 
 namespace MetaMathlibExt
@@ -84,6 +99,49 @@ public theorem basePDigit_towerTau_neg_one_eq_zero_iff (p d : ℕ) [Fact p.Prime
     exact hp.one_lt.ne'
   have hcNotDvd : ¬ p ∣ c := fun h => (not_le_of_gt hcLt) (Nat.le_of_dvd hcPos h)
   simp only [k, hp.dvd_mul, hnext, hcNotDvd, false_or]
+
+/-- **Digits of $m/d$ after the radix point are constant.** Let $p$ be a prime, $d$ a divisor of
+$p - 1$, and write $[p^j](x)$ for the $j$-th base-$p$ digit of a rational number $x$. For every
+positive integer $m$ and every integer $k \ge 1$, $[p^{-(k+1)}](m/d) = [p^{-k}](m/d)$; that is,
+the base-$p$ expansion of $m/d$ is periodic with period $1$ right after the radix point.
+
+The source assumes $p$ odd; for $p = 2$ only $d = 1$ occurs.
+
+Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
+*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
+Corollary 2 (`integers-2026-A78-cor-2`). -/
+public theorem basePDigit_div_periodic_one (p d : ℕ) [Fact p.Prime] (hd : d ∣ p - 1)
+    (m : ℕ) (hm : 0 < m) (k : ℤ) (hk : 1 ≤ k) :
+    basePDigit p ((m : ℚ) / d) (-(k + 1)) = basePDigit p ((m : ℚ) / d) (-k) := by
+  have _ := hm -- The source requires positivity, although the digit calculation does not.
+  obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = (n : ℤ) + 1 := ⟨(k - 1).toNat, by omega⟩
+  simp only [basePDigit, zpow_neg, div_inv_eq_mul, ← Int.natCast_succ, zpow_natCast]
+  by_cases hpTwo : p = 2
+  · subst p
+    have hdOne : d = 1 := Nat.dvd_one.mp hd
+    subst d
+    simp only [Nat.cast_one, div_one, ← Nat.cast_pow, ← Nat.cast_mul, Int.floor_natCast]
+    simp only [Nat.cast_mul, Nat.cast_pow, pow_succ, ← mul_assoc, Int.mul_emod_left]
+  have hp : p.Prime := Fact.out
+  have hd₀ : (d : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr
+    (ne_zero_of_dvd_ne_zero (Nat.sub_pos_of_lt hp.one_lt).ne' hd)
+  obtain ⟨c, hc⟩ := hd
+  have hpc : (p : ℚ) - 1 = (d : ℚ) * c := by
+    rw [← Nat.cast_one, ← Nat.cast_sub hp.one_lt.le, hc, Nat.cast_mul]
+  have hmul : (m : ℚ) / d * ((p : ℚ) - 1) = (m : ℚ) * c := by
+    rw [hpc, ← mul_assoc, div_mul_cancel₀ _ hd₀]
+  -- The difference between successive scaled rationals is an integer multiple of p.
+  have hstep : (m : ℚ) / d * (p : ℚ) ^ (n + 1 + 1) =
+      (m : ℚ) / d * (p : ℚ) ^ (n + 1) + ((m * c * p ^ n * p : ℕ) : ℚ) := by
+    calc
+      _ = (m : ℚ) / d * (p : ℚ) ^ (n + 1) +
+          ((m : ℚ) / d * ((p : ℚ) - 1)) * (p : ℚ) ^ (n + 1) := by
+        rw [pow_succ _ (n + 1)]
+        ring
+      _ = _ := by
+        rw [hmul, pow_succ _ n]
+        simp only [Nat.cast_mul, Nat.cast_pow, mul_assoc]
+  rw [hstep, Int.floor_add_natCast, Nat.cast_mul, Int.add_mul_emod_self_right]
 
 end
 
