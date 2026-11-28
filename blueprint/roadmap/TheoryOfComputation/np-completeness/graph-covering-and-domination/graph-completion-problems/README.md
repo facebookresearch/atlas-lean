@@ -2,7 +2,6 @@
 
 - [Instances of CHAIN GRAPH COMPLETION](chain-graph-completion-instance.md)
 - [Well-formed instances of CHAIN GRAPH COMPLETION](well-formed.md)
-- [Edge set of a CHAIN GRAPH COMPLETION instance](edges.md)
 - [Chain graphs (bipartite)](is-chain-graph.md)
 - [Feasible instances of CHAIN GRAPH COMPLETION](chain-graph-completion-feasible.md)
 - [CHAIN GRAPH COMPLETION as a decision problem](chain-graph-completion-dec.md)
