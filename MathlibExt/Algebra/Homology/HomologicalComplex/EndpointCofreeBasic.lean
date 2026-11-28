@@ -52,15 +52,13 @@ variable {C : Type u} [Category.{v} C]
   [HasZeroMorphisms C] [HasZeroObject C] [HasBinaryBiproducts C]
 variable {ι : Type w} {c : ComplexShape ι}
 
-/-- For C with zero morphisms, a zero object and binary biproducts, a complex shape c and
-a family I : ι → C,
+/-- For C with a zero object, a complex shape c and a family I : ι → C,
 the second coefficient at i is I(c.next i) if c has an outgoing edge at i,
 and the zero object otherwise. -/
 def endpointCofreeNextTerm (c : ComplexShape ι) (I : ι → C) (i : ι) : C :=
   if c.Rel i (c.next i) then I (c.next i) else 0
 
-/-- For C with zero morphisms, a zero object and binary biproducts, a coefficient family I
-and an edge
+/-- For C with a zero object, a coefficient family I and an edge
 c.Rel i j of a complex shape, the optional second coefficient at i is
 canonically isomorphic to Iⱼ, using c.next i = j. -/
 def endpointCofreeNextTermIso (I : ι → C) {i j : ι} (hij : c.Rel i j) :

@@ -86,7 +86,8 @@ theorem endpointCofreeCover_fst (K : HomologicalComplex C c) [EnoughInjectives C
       Injective.ι (K.X i) :=
   endpointCofreeHom_fst _ _ _ _
 
-/-- If C has finite limits and enough injectives, then the category
+/-- If C has zero morphisms, a zero object, binary biproducts, finite limits and enough
+injectives, then the category
 of complexes in C of any shape c has enough injectives. Each complex
 embeds in the cofree complex formed from its degreewise injective
 objects, including at indices with no outgoing edge. -/
@@ -98,7 +99,8 @@ theorem enoughInjectives_of_endpointCofree (c : ComplexShape ι) [HasFiniteLimit
     EnoughInjectives.of_equivalence (piEquivalenceFunctorDiscrete ι C).functor
   exact EnoughInjectives.of_adjunction (endpointCofreeAdjunction C c)
 
-/-- For C with finite limits and enough injectives and any complex
+/-- For C with zero morphisms, a zero object, binary biproducts, finite limits and enough
+injectives, and any complex
 shape c, cofree covers provide the enough-injectives structure on
 the category of c-shaped complexes. The index, object and morphism
 universes are independent. -/

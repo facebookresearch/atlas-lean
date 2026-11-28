@@ -68,6 +68,7 @@ def endpointCofreeNextTermFunctorIso (I : GradedObject ι C) (i : ι) :
       F.mapZeroObject ≪≫
         (eqToIso (endpointCofreeNextTerm_of_no_next (fun j => F.obj (I j)) i hi)).symm
 
+omit [HasBinaryBiproducts C] [HasBinaryBiproducts D] in
 /-- Along an outgoing edge, the optional-coefficient comparison commutes with
 the two canonical identifications of that coefficient with the target term. -/
 @[reassoc (attr := simp)]
