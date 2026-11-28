@@ -17,3 +17,4 @@
 - [Posted prices are ex-post individually rational](posted-price-ex-post-ir.md)
 - [Posted prices are weakly budget-balanced](posted-price-weakly-budget-balanced.md)
 - [Posted prices are not efficient](posted-price-not-efficient.md)
+- [Bilateral trade with probabilities and net transfers](bilateral-trade-with-probabilities-and-net-trans/README.md)

@@ -54,26 +54,29 @@ def absoluteEpsilonMaxCutSurplus : Prop :=
             p.1 ∈ S ∧ p.2 ∉ S ∧ G.Adj p.1 p.2).card : ℝ)
 
 /--
-Resolved true: the abstract quotes Glock, Janzer and Sudakov's "main open problem ... whether there
-exists a positive absolute constant `ε` such that any `K_r`-free graph with `m` edges has surplus
-`Ω_r(m^{1/2+ε})`" and presents "a result that not only resolves this problem": Theorem 1, for every
-`δ > 0` there is `ε > 0` such that for every sufficiently large `m` a graph with `m` edges and no
-clique of size `m^{1/2-δ}` has a cut of size at least `m/2 + m^{1/2+ε}`; small `m` are covered by
-Edwards' bound `surp(G) ≥ (√(8m+1) - 1)/8`, quoted on p. 13. The resolving results are unrefereed
-arXiv preprints (S. Zhang first proved surplus `c_H m^{0.5001}` for every `H`-free graph; Jin,
-Milojević, Tomon and Zhang proved Theorem 1); they are used because the problem source itself
-presents Theorem 1 as resolving the problem. Source: A. Milojević (with Z. Jin, I. Tomon and S.
-Zhang), MaxCut in H-free graphs: recent results and connections, in Combinatorics, Oberwolfach
-Reports 23 (2026), no. 1, pp. 13-14, DOI 10.4171/OWR/2026/1; resolution: Z. Jin, A. Milojević, I.
-Tomon and S. Zhang, From small eigenvalues to large cuts, and Chowla's cosine problem,
-arXiv:2509.03490 (2025); Z. Jin, A. Milojević and I. Tomon, Beyond the MaxCut problem in H-free
-graphs, arXiv:2507.13298 (2025); S. Zhang, An Alon-Boppana-type bound for very dense graphs, with
-applications to max-cut, arXiv:2507.10037 (2025); unrefereed preprints, Oberwolfach Report 1/2026,
-p. 14, Theorem 1 and 'Here, we present a result that not only resolves this problem';
-Jin-Milojević-Tomon-Zhang and Jin-Milojević-Tomon abstracts: every m-edge graph with no clique of
-size m^{1/2-δ} has a cut of size at least m/2 + m^{1/2+ε}, ε = ε(δ) > 0; Zhang abstract: every
-H-free graph with m edges has a max-cut of size at least m/2 + c_H m^{0.5001}, answering questions
-of Glock-Janzer-Sudakov, https://arxiv.org/abs/2509.03490.
+Resolved true (unrefereed preprints only): the abstract quotes Glock, Janzer and Sudakov's "main
+open problem ... whether there exists a positive absolute constant `ε` such that any `K_r`-free
+graph with `m` edges has surplus `Ω_r(m^{1/2+ε})`" and presents "a result that not only resolves
+this problem": Theorem 1, for every `δ > 0` there is `ε > 0` such that for every sufficiently
+large `m` a graph with `m` edges and no clique of size `m^{1/2-δ}` has a cut of size at least
+`m/2 + m^{1/2+ε}`; small `m` are covered by Edwards' bound `surp(G) ≥ (√(8m+1) - 1)/8`, quoted
+on p. 13. No refereed proof is published: the resolving results are arXiv preprints (S. Zhang
+first proved surplus `c_H m^{0.5001}` for every `H`-free graph; Jin, Milojević, Tomon and Zhang
+proved Theorem 1), and version 2 of Jin, Milojević, Tomon and Zhang's preprint (27 October 2025)
+combines and replaces arXiv:2507.10037 and arXiv:2507.13298, which will not be published. They
+are used because the problem source itself presents Theorem 1 as resolving the problem. Source:
+A. Milojević (with Z. Jin, I. Tomon and S. Zhang), MaxCut in H-free graphs: recent results and
+connections, in Combinatorics, Oberwolfach Reports 23 (2026), no. 1, pp. 13-14, DOI
+10.4171/OWR/2026/1; resolution: Z. Jin, A. Milojević, I. Tomon and S. Zhang, From small
+eigenvalues to large cuts, and Chowla's cosine problem, arXiv:2509.03490 (2025; version 2
+combines and replaces the next two); Z. Jin, A. Milojević and I. Tomon, Beyond the MaxCut problem
+in H-free graphs, arXiv:2507.13298 (2025); S. Zhang, An Alon-Boppana-type bound for very dense
+graphs, with applications to max-cut, arXiv:2507.10037 (2025); unrefereed preprints, Oberwolfach
+Report 1/2026, p. 14, Theorem 1 and 'Here, we present a result that not only resolves this
+problem'; Jin-Milojević-Tomon-Zhang and Jin-Milojević-Tomon abstracts: every m-edge graph with no
+clique of size m^{1/2-δ} has a cut of size at least m/2 + m^{1/2+ε}, ε = ε(δ) > 0; Zhang abstract:
+every H-free graph with m edges has a max-cut of size at least m/2 + c_H m^{0.5001}, answering
+questions of Glock-Janzer-Sudakov, https://arxiv.org/abs/2509.03490.
 -/
 public theorem_wanted absoluteEpsilonMaxCutSurplus_holds : absoluteEpsilonMaxCutSurplus
 
