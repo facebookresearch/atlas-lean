@@ -28,11 +28,15 @@ pair of generators. For a coprime pair `a < b` with generalized Frobenius number
 `m > g + k * a` then `m - j * a` has at least as many representations as `g + (k - j) * a`.
 At the shifted pair cutoff for a triangular triple, each slice counts the pair cutoffs it exceeds.
 These inequalities describe a triangle of lattice points with a partially included boundary.
+For `s = k * (k + 1) + i` with `i ≤ 2 * k + 1` and `triangularFrobeniusBound n s < n`, that
+cutoff is the generalized Frobenius number of the reduced triple: above it every slice has at
+least as many representations, and the slice with first coefficient `triangularFrobeniusY n k i`
+has strictly more.
 
 ## References
 
 * Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-  Numbers*, INTEGERS 26 (2026), Article A63, pp. 1–22, Definition 1, Lemmas 2–4, and Lemma 5.
+  Numbers*, INTEGERS 26 (2026), Article A63, pp. 1–22, Definition 1, Lemmas 2–5, and Theorem 4.
 * Kittipong Subwattanachai, *Generalized Frobenius Number of Three Variables*, Kyushu J. Math.
   80 (2026), pp. 49–63, equation (2) and Lemmas 6–7 (the two-generator cutoff results).
 * Matthias Beck and Sinai Robins, *A formula related to the Frobenius problem in two
@@ -867,6 +871,124 @@ theorem frobeniusRepCount_triangular_reduced_at_pair_frobenius (n k i : ℕ)
         (t (n + 1) / d₁ ∣ t n) ∧ _
       rw [ha, hb, hc]
       exact ⟨by dsimp [a]; omega, by dsimp [b]; omega, ⟨2 * p + 1, rfl⟩, hG⟩
+
+/-- **Generalized Frobenius numbers of the reduced triangular triple.** For a natural number $r$
+write $t_r = r(r+1)/2$. Let $n$, $k$, $i$ be natural numbers with $i \le 2k + 1$ and put
+$s = k(k+1) + i$. Let $N_s = 6\lfloor\sqrt{s+1}\rfloor - 6$ if $n$ is even and
+$N_s = 6\lfloor(\sqrt{4s+5} - 1)/2\rfloor - 3$ if $n$ is odd, and suppose $n > N_s$. For even $n$
+let $(x_s, y_s) = (i, 2(k - i))$ if $i \le k$ and $(x_s, y_s) = (i - k - 1, 4k - 2i + 3)$ if
+$i > k$; for odd $n$ let $(x_s, y_s) = (2i, k - i)$ if $i \le k$ and
+$(x_s, y_s) = (2(i - k) - 1, 2k - i + 1)$ if $i > k$. Put $d_1 = \gcd(t_{n+1}, t_{n+2})$,
+$a = t_{n+1}/d_1$ and $b = t_{n+2}/d_1$. Then $(x_s + 1)ab - a - b$ is the generalized Frobenius
+number $g(a, b; x_s)$, and $(x_s + 1)ab - b - a + y_s t_n$ is the generalized Frobenius number
+$g(t_n, a, b; s)$.
+
+Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
+Numbers*, INTEGERS 26 (2026), Article A63, Theorem 4 (`integers-2026-A63-thm-4`). -/
+theorem isGenFrobeniusNumber_triangular_reduced (n k i : ℕ) (hi : i ≤ 2 * k + 1)
+    (hn : triangularFrobeniusBound n (k * (k + 1) + i) < n) :
+    let t : ℕ → ℕ := fun j => j * (j + 1) / 2
+    let d₁ := Nat.gcd (t (n + 1)) (t (n + 2))
+    let a : ℤ := (t (n + 1) / d₁ : ℕ)
+    let b : ℤ := (t (n + 2) / d₁ : ℕ)
+    let x : ℤ := triangularFrobeniusX n k i
+    IsGenFrobeniusNumber ![t (n + 1) / d₁, t (n + 2) / d₁] (triangularFrobeniusX n k i)
+        ((x + 1) * a * b - a - b) ∧
+      IsGenFrobeniusNumber ![t n, t (n + 1) / d₁, t (n + 2) / d₁] (k * (k + 1) + i)
+        ((x + 1) * a * b - b - a + triangularFrobeniusY n k i * t n) := by
+  dsimp only
+  let t : ℕ → ℕ := fun j => j * (j + 1) / 2
+  let d₁ := Nat.gcd (t (n + 1)) (t (n + 2))
+  let a := t (n + 1) / d₁
+  let b := t (n + 2) / d₁
+  let x := triangularFrobeniusX n k i
+  let y := triangularFrobeniusY n k i
+  let g₂ : ℤ := (x + 1) * a * b - a - b
+  let g := g₂ + (y : ℤ) * t n
+  have hn₀ : 1 ≤ n := by
+    by_contra! h
+    have hn0 : n = 0 := by omega
+    have hroot : 1 ≤ (k * (k + 1) + i + 1).sqrt := Nat.le_sqrt.mpr (by omega)
+    simp only [hn0, triangularFrobeniusBound, ite_eq_left (by decide : Even (0 : ℕ)),
+      Nat.cast_zero] at hn
+    omega
+  have ht : 0 < t n := Nat.div_pos (by
+    have := Nat.le_mul_of_pos_left (n + 1) hn₀
+    omega) (by decide)
+  have hfactors : 0 < a ∧ a < b ∧ Nat.Coprime a b ∧ a ∣ t n := by
+    rcases Nat.even_or_odd n with ⟨p, hp⟩ | ⟨p, hp⟩
+    · have hn' : n = 2 * p := by omega
+      dsimp only [a, b, d₁, t]
+      rw [hn']
+      obtain ⟨hc, ha, hb, hab⟩ := triangular_even_factors p
+      dsimp only at hc ha hb
+      rw [hc, ha, hb]
+      exact ⟨by omega, by omega, hab, ⟨p, rfl⟩⟩
+    · have hn' : n = 2 * p + 1 := by omega
+      dsimp only [a, b, d₁, t]
+      rw [hn']
+      obtain ⟨hc, ha, hb, hab⟩ := triangular_odd_factors p
+      dsimp only at hc ha hb
+      rw [hc, ha, hb]
+      exact ⟨by omega, by omega, hab, ⟨2 * p + 1, rfl⟩⟩
+  obtain ⟨ha, hab, hcop, ⟨u, hu⟩⟩ := hfactors
+  have hpair : IsGenFrobeniusNumber ![a, b] x g₂ :=
+    pairFrobenius_formula ha (ha.trans hab) hcop x
+  change IsGenFrobeniusNumber ![a, b] x g₂ ∧ IsGenFrobeniusNumber ![t n, a, b] _ _
+  refine ⟨hpair, ?_⟩
+  rw [show ((x : ℤ) + 1) * a * b - b - a + (y : ℤ) * t n = g by dsimp [g, g₂]; ring]
+  have hg : frobeniusRepCount ![t n, a, b] g = (↑(k * (k + 1) + i) : ℕ∞) :=
+    frobeniusRepCount_triangular_reduced_at_pair_frobenius n k i hi hn g₂ hpair
+  refine ⟨hg.le, fun m hm => ?_⟩
+  let slice (r : ℤ) (j : ℕ) := frobeniusRepCount ![a, b] (r - j * t n)
+  have hstrict : slice g y < slice m y := by
+    dsimp only [slice, g]
+    rw [add_sub_cancel_right]
+    exact hpair.1.trans_lt (hpair.2 _ (by dsimp only [g] at hm; linarith))
+  have hym : (y : ℤ) * t n ≤ m := by
+    by_contra! h
+    have hz : slice m y = 0 := frobeniusRepCount_eq_zero_of_neg _ (sub_neg.mpr h)
+    exact hstrict.not_ge (hz.le.trans zero_le)
+  have hm₀ : 0 ≤ m := (mul_nonneg (Int.natCast_nonneg _) (Int.natCast_nonneg _)).trans hym
+  let J := Finset.range (m.toNat / t n + 1)
+  have hy : y ∈ J := by
+    have hy' : (y : ℤ) * t n ≤ m.toNat := by rwa [Int.toNat_of_nonneg hm₀]
+    exact Finset.mem_range.mpr (Nat.lt_succ_of_le ((Nat.le_div_iff_mul_le ht).2
+      (by exact_mod_cast hy')))
+  -- Use a common range, padding the smaller sum with zero counts for negative residuals.
+  have hsum (r : ℤ) (hr : r ≤ m) : frobeniusRepCount ![t n, a, b] r = ∑ j ∈ J, slice r j := by
+    by_cases hr₀ : 0 ≤ r
+    · conv_lhs => rw [← Int.toNat_of_nonneg hr₀]
+      rw [frobeniusRepCount_triangular_reduced_eq_sum n hn₀]
+      simp only [Int.toNat_of_nonneg hr₀]
+      apply Finset.sum_subset (Finset.range_mono (Nat.succ_le_succ
+        (Nat.div_le_div_right (Int.toNat_le_toNat hr))))
+      intro j _ hj
+      have hd : r.toNat / t n < j := by
+        simpa only [Finset.mem_range, not_lt, Nat.succ_le_iff] using hj
+      have hjr : r.toNat < j * t n := (Nat.div_lt_iff_lt_mul ht).1 hd
+      have hjr' : (r.toNat : ℤ) < (j : ℤ) * t n := by exact_mod_cast hjr
+      rw [Int.toNat_of_nonneg hr₀] at hjr'
+      exact frobeniusRepCount_eq_zero_of_neg _ (sub_neg.mpr hjr')
+    · rw [frobeniusRepCount_eq_zero_of_neg _ (lt_of_not_ge hr₀)]
+      symm
+      exact Finset.sum_eq_zero fun j _ => frobeniusRepCount_eq_zero_of_neg _
+        (sub_neg.mpr ((lt_of_not_ge hr₀).trans_le (by positivity)))
+  have hle (j : ℕ) : slice g j ≤ slice m j := by
+    have hu' : (t n : ℤ) = (a : ℤ) * u := by exact_mod_cast hu
+    have hm' : g₂ + ((y * u : ℕ) : ℤ) * a < m := by
+      convert hm using 1
+      simp only [g, hu', Nat.cast_mul]
+      ring
+    have h := frobeniusRepCount_pair_sub_ge a b ha hab hcop x (y * u) g₂ hpair m hm' (j * u)
+    convert h using 2 <;> simp only [g, hu', Nat.cast_mul] <;> ring
+  rw [← hg, hsum g hm.le, hsum m le_rfl]
+  rw [← Finset.sum_erase_add _ _ hy, ← Finset.sum_erase_add _ _ hy]
+  apply ENat.add_lt_add_of_le_of_lt _ (Finset.sum_le_sum fun j _ => hle j) hstrict
+  have hfinite : ∑ j ∈ J, slice g j ≠ ⊤ := by
+    rw [← hsum g hm.le, hg]
+    exact ENat.natCast_ne_top _
+  exact ne_top_of_le_ne_top hfinite (Finset.sum_le_sum_of_subset (Finset.erase_subset _ _))
 
 end
 

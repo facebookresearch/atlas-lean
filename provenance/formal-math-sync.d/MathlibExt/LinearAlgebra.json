@@ -608,6 +608,13 @@
       "rationale": "Move the Girard–Waring trace formulas from WantedExt/LinearAlgebra/PowerSumMatrixWanted.lean, preserving the declaration name, statement and docstring, and prove them using Cayley–Hamilton and the binomial recurrence."
     },
     {
+      "path": "MathlibExt/LinearAlgebra/PowerSumMatrixBinomialRatio.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "708c6359352f0564505e96d7a4b2da5d570948f407cbd18e0498f35b721a835f",
+      "rationale": "Move the alternating binomial-ratio identity from WantedExt/LinearAlgebra/PowerSumMatrixWanted.lean, preserving its statement and docstring, and prove it by integrating the two-by-two matrix trace formula. Also: Use the public even- and odd-power trace formulas and the public natural-number factorial identities."
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/PowerSumMatrixOddTrace.lean",
       "backport": "pending",
       "disposition": "diverged",

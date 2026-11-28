@@ -158,16 +158,16 @@ variable [DirectSum.Gmodule A M]
 /-- Let R be a commutative ring, I an additive monoid and J an I-set, both with decidable
 equality. Let the R-semimodules A i form a graded semiring and graded R-algebra, and let the
 R-modules M j form a graded A-module. Then algebraInternalGrade R A i acts on
-moduleInternalGrade R J M j into moduleInternalGrade R J M (i +ᵥ j), with the action induced
+internalGrade R J M j into internalGrade R J M (i +ᵥ j), with the action induced
 by the homogeneous scalar products. -/
 instance algebraInternalGradeModuleInternalGradeGradedSMul :
     SetLike.GradedSMul
       (algebraInternalGrade R A)
-      (moduleInternalGrade R J M) := by
+      (internalGrade R J M) := by
   refine { smul_mem := ?_ }
   intro i j x y hx hy
   rw [mem_algebraInternalGrade_iff] at hx
-  rw [mem_moduleInternalGrade_iff] at hy ⊢
+  rw [mem_internalGrade_iff] at hy ⊢
   obtain ⟨a, rfl⟩ := hx
   obtain ⟨m, rfl⟩ := hy
   exact ⟨GradedMonoid.GSMul.smul a m,
