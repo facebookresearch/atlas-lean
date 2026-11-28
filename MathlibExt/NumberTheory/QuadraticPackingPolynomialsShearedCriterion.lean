@@ -1157,14 +1157,28 @@ private theorem first_height_eq_of_zmod {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
   simpa only [ZMod.val_natCast_of_lt (show y i < d from ybar_lt hm hn hl),
     ZMod.val_natCast_of_lt hv] using congrArg ZMod.val hcast
 
--- The width and eventual adjacency of the residue blocks determine the linear term.
-private theorem forced_sheared_form {m n k : ℕ} (hm : 0 < m) (hn : 0 < n)
-    (hmn : Nat.Coprime m n) {P : ℝ → ℝ → ℝ}
+end QuadraticPackingConstantTerm
+
+open QuadraticPackingConstantTerm
+
+/-- **Step-difference form of a quadratic packing polynomial on a rational sector.** Let $m, n$
+be coprime positive integers, let $l = \gcd(m - 1, n)$, and let $P$ be a quadratic packing
+polynomial on the lattice points $I(n/m)$ of the sector of slope $n/m$ whose step difference
+for $m, n$ is a positive integer $k$. Then $n/l$ divides $l$, $k \equiv (m - 1)/l \pmod{n/l}$,
+and for all real $x, y$ one has $P(x + \frac{m - 1}{n} y, y) =
+\frac{n}{2} x \left(x - \frac{k}{n/l}\right) + x + \frac{k}{n/l} y + P(0, 0)$.
+
+Source: Brandt and Gjaldbæk, *Classification of Quadratic Packing Polynomials on Sectors of
+R^2*, INTEGERS 25 (2025), Article A81, Proposition 1 (`integers-2025-A81-prop-1`). -/
+public theorem quadraticPackingPolynomial_necessary_form {m n k : ℕ} (hm : 0 < m)
+    (hn : 0 < n) (hmn : Nat.Coprime m n) {P : ℝ → ℝ → ℝ}
     (hP : IsQuadraticPackingPolynomial (sectorLatticePoints ((n : ℝ) / m)) P)
     (hk : 0 < k) (hkP : consecutiveStepDifference m n P = k) :
-    (n / Nat.gcd (m - 1) n ∣ Nat.gcd (m - 1) n) ∧
-    k ≡ (m - 1) / Nat.gcd (m - 1) n [MOD n / Nat.gcd (m - 1) n] ∧
-    ∀ x y, P (x + ((m : ℝ) - 1) / n * y) y = phat m n k (P 0 0) x y := by
+    n / Nat.gcd (m - 1) n ∣ Nat.gcd (m - 1) n ∧
+      k ≡ (m - 1) / Nat.gcd (m - 1) n [MOD n / Nat.gcd (m - 1) n] ∧
+      ∀ x y, P (x + ((m : ℝ) - 1) / n * y) y =
+        (n : ℝ) / 2 * x * (x - k / (n / (Nat.gcd (m - 1) n : ℝ))) + x +
+          k / (n / (Nat.gcd (m - 1) n : ℝ)) * y + P 0 0 := by
   obtain ⟨hl, b, hb⟩ := initial_sheared_form hm hn hmn hP hkP
   let l := Nat.gcd (m - 1) n
   let d := n / l
@@ -1189,7 +1203,7 @@ private theorem forced_sheared_form {m n k : ℕ} (hm : 0 < m) (hn : 0 < n)
     rw [← hd']
     exact (sheared_mem_iff hm hn hl).mpr ⟨i, t, ht, rfl⟩
   have hQ : IsQuadraticPackingPolynomial S Q :=
-    (isQuadraticPackingPolynomial_shear_iff _).mpr hP
+    (isQuadraticPackingPolynomial_image_shear_iff _).mpr hP
   choose B hB using fun i => hQ.exists_nat_eq (hmem (hC i))
   have hstart (i : ℕ) : (B i : ℝ) = (s : ℝ) / 2 * (i : ℝ) ^ 2 + b / d * i +
       (k : ℝ) / d * y i + P 0 0 := by
@@ -1317,7 +1331,7 @@ private theorem forced_sheared_form {m n k : ℕ} (hm : 0 < m) (hn : 0 < n)
     linarith
   refine ⟨hl, (ZMod.natCast_eq_natCast_iff k a d).mp hkZ, fun x z => ?_⟩
   rw [hb, hb']
-  simp only [phat, ← show (Nat.gcd (m - 1) n : ℝ) = l from rfl, hnR]
+  simp only [← show (Nat.gcd (m - 1) n : ℝ) = l from rfl, hnR]
   field_simp
   ring
 
@@ -1368,10 +1382,6 @@ private theorem sum_first_heights {m n k : ℕ} (hm : 0 < m) (hn : 0 < n)
   rw [← hIco]
   linarith
 
-end QuadraticPackingConstantTerm
-
-open QuadraticPackingConstantTerm
-
 /-- **Constant term of a quadratic packing polynomial on a rational sector.** Let $m, n$ be
 coprime positive integers, let $l = \gcd(m - 1, n)$, and let $P$ be a quadratic packing
 polynomial on the lattice points $I(n/m)$ of the sector of slope $n/m$. If the step difference
@@ -1385,8 +1395,10 @@ public theorem quadraticPackingPolynomial_constant_term {m n k : ℕ} (hm : 0 < 
     (hk : 0 < k) (hkP : consecutiveStepDifference m n P = k) :
     P 0 0 = ((Nat.gcd (m - 1) n : ℝ) ^ 2 / n) * (k - 1) * (k + 1) / 12 := by
   classical
-  obtain ⟨hl, hkm, hform⟩ := forced_sheared_form hm hn hmn hP hk hkP
+  obtain ⟨hl, hkm, hform⟩ := quadraticPackingPolynomial_necessary_form hm hn hmn hP hk hkP
   let F := P 0 0
+  have hshear : (fun x y => P (x + ((m : ℝ) - 1) / n * y) y) = phat m n k F :=
+    funext fun x => funext (hform x)
   let l := Nat.gcd (m - 1) n
   let d := n / l
   let y := staircaseFirstHeight m n
@@ -1398,8 +1410,8 @@ public theorem quadraticPackingPolynomial_constant_term {m n k : ℕ} (hm : 0 < 
   have hSheared : IsQuadraticPackingPolynomial
       ((fun p : ℝ × ℝ => (p.1 - ((m : ℝ) - 1) / n * p.2, p.2)) ''
         sectorLatticePoints ((n : ℝ) / m)) (phat m n k F) := by
-    rw [← funext fun x => funext (hform x)]
-    exact (isQuadraticPackingPolynomial_shear_iff _).mpr hP
+    rw [← hshear]
+    exact (isQuadraticPackingPolynomial_image_shear_iff _).mpr hP
   have hset : start '' Set.Iio k = ((↑) : ℕ → ℝ) '' Set.Iio k :=
     (isQuadraticPackingPolynomial_sheared_iff hm hn hmn hl hk hkm F).mp hSheared
   have hmem (i : ℕ) : ((i : ℝ) / ((n : ℝ) / l), (y i : ℝ)) ∈

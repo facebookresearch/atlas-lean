@@ -75,10 +75,19 @@ example : slopeTwelveSevenths 0 0 = 2 ∧ slopeTwelveSevenths 1 2 - slopeTwelveS
 example : slopeTwelveSevenths (0 + (1 / 2) * 2) 2 = 6 * 0 * (0 - 3 / 2) + 0 + 3 / 2 * 2 + 2 := by
   norm_num [slopeTwelveSevenths]
 
+-- Check both arithmetic conditions and the full sheared formula without using Proposition 1.
+example : (12 / Nat.gcd (7 - 1) 12) ∣ Nat.gcd (7 - 1) 12 ∧
+    3 ≡ (7 - 1) / Nat.gcd (7 - 1) 12 [MOD 12 / Nat.gcd (7 - 1) 12] ∧
+    ∀ x y : ℝ, slopeTwelveSevenths (x + (7 - 1) / 12 * y) y =
+      6 * x * (x - 3 / 2) + x + 3 / 2 * y + slopeTwelveSevenths 0 0 := by
+  refine ⟨by decide, by decide, fun x y => ?_⟩
+  dsimp only [slopeTwelveSevenths]
+  ring
+
 example : slopeTwelveSevenths 0 0 = 2 := by
   have h : IsQuadraticPackingPolynomial (sectorLatticePoints (((12 : ℕ) : ℝ) / (7 : ℕ)))
       slopeTwelveSevenths := by
-    apply (isQuadraticPackingPolynomial_shear_iff (1 / 2)).mp
+    apply (isQuadraticPackingPolynomial_image_shear_iff (1 / 2)).mp
     norm_num only [Nat.cast_ofNat]
     convert isQuadraticPackingPolynomial_sheared_example_twelve_sevenths using 1
     funext x y
@@ -100,7 +109,7 @@ example : slopeOne 0 0 = 0 ∧ slopeOne 0 1 - slopeOne 0 0 = 1 ∧
 example : slopeOne 0 0 = 0 := by
   have h : IsQuadraticPackingPolynomial (sectorLatticePoints (((1 : ℕ) : ℝ) / (1 : ℕ)))
       slopeOne := by
-    apply (isQuadraticPackingPolynomial_shear_iff 0).mp
+    apply (isQuadraticPackingPolynomial_image_shear_iff 0).mp
     have hq := qpp_one_one
     norm_num [slopeOne] at hq ⊢
     exact hq

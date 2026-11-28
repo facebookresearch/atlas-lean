@@ -97,7 +97,7 @@ private theorem IsQuadraticPackingPolynomial.shear {S : Set (ℝ × ℝ)} {P : �
 /-- For any real `c`, the shear `(x, y) ↦ (x - c * y, y)` has inverse
 `(x, y) ↦ (x + c * y, y)`. The function `(x, y) ↦ P (x + c * y) y` is a quadratic packing
 polynomial on the sheared image of `S` if and only if `P` is one on `S`. -/
-public theorem isQuadraticPackingPolynomial_shear_iff {S : Set (ℝ × ℝ)} {P : ℝ → ℝ → ℝ}
+public theorem isQuadraticPackingPolynomial_image_shear_iff {S : Set (ℝ × ℝ)} {P : ℝ → ℝ → ℝ}
     (c : ℝ) :
     IsQuadraticPackingPolynomial ((fun p : ℝ × ℝ => (p.1 - c * p.2, p.2)) '' S)
       (fun x y => P (x + c * y) y) ↔ IsQuadraticPackingPolynomial S P := by
