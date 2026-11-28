@@ -43,6 +43,7 @@ public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import MathlibExt.NumberTheory.FermatQuotient
 public import MathlibExt.NumberTheory.WilsonFermatQuotient
 public import MathlibExt.NumberTheory.WilsonFaulhaberHenselDigit
+public import MathlibExt.NumberTheory.WilsonFermatQuotientCubeDigits
 
 set_option autoImplicit false
 
@@ -88,24 +89,6 @@ Polynomials*, INTEGERS 24 (2024), Article A87, Corollary 1 (after Glaisher). -/
 theorem_wanted wilson_mod_prime_sq_bernoulli (p : ℕ) (hp : p.Prime) :
     padicNorm p ((Nat.factorial (p - 1) : ℚ) - (p * bernoulli (p - 1) - p)) ≤
       (p : ℚ) ^ (-2 : ℤ)
-
-/-- **Theorem 3**: for an odd prime `p` let `δ₀(k)`, `δ₁(k)` be the second and
-third `p`-adic digits of `k^(p-1) ≡ 1 + p δ₀(k) + p^2 δ₁(k) (mod p^3)` (here
-`((k^(p-1) - 1)/p) % p` and `((k^(p-1) - 1)/p^2) % p`). Then
-`(p - 1)! ≡ -1 + p ∑ δ₀(i) + p^2 ∑ (δ₀(i) + δ₁(i)) - (p^2/2)((∑ δ₀(i))^2 + ∑ δ₀(i)^2)
-(mod p^3)`, sums over `1 ≤ i ≤ p - 1`, read in `ℚ` through the `p`-adic norm.
-`p ≠ 2` is added (the formula divides by `2`; at `p = 2` the difference is `2`).
-
-Source: Claire Levaillant, *Wilson's Theorem Modulo p^2 Derived from Faulhaber
-Polynomials*, INTEGERS 24 (2024), Article A87, Theorem 3. -/
-theorem_wanted wilson_mod_prime_cube_digits (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) :
-    padicNorm p ((Nat.factorial (p - 1) : ℚ) -
-      (-1 + p * ∑ i ∈ Finset.Icc 1 (p - 1), (((i ^ (p - 1) - 1) / p % p : ℕ) : ℚ) +
-        p ^ 2 * ∑ i ∈ Finset.Icc 1 (p - 1),
-          ((((i ^ (p - 1) - 1) / p % p : ℕ) : ℚ) + (((i ^ (p - 1) - 1) / p ^ 2 % p : ℕ) : ℚ)) -
-        p ^ 2 / 2 * ((∑ i ∈ Finset.Icc 1 (p - 1), (((i ^ (p - 1) - 1) / p % p : ℕ) : ℚ)) ^ 2 +
-          ∑ i ∈ Finset.Icc 1 (p - 1), (((i ^ (p - 1) - 1) / p % p : ℕ) : ℚ) ^ 2))) ≤
-      (p : ℚ) ^ (-3 : ℤ)
 
 /-- **Lemma 3**: for an odd prime `p`, with `S₁ = ∑_{i=1}^{p-1} i^(p-1)` and
 `S₂ = ∑_{i=1}^{p-1} (i^(p-1))^2`,
