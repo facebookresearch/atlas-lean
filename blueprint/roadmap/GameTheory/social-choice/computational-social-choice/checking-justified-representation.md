@@ -1,7 +1,8 @@
-# Checking justified representation
+# The JR criterion
 
-`W` provides justified representation for `(A, k)` iff
-`s_W(c) < n / k`, written `k * s_W(c) < n`, for every candidate `c`.
+For every natural `k`, `W` provides justified representation for
+`(A, k)` if and only if `k * s_W(c) < n` for every candidate `c`, where `n` is the number of
+voters. For positive `k` this is the source's `s_W(c) < n / k`.
 
 ## Related topics
 

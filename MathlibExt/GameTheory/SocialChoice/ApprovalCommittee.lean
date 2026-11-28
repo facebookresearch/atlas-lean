@@ -42,10 +42,12 @@ GreedyAV, AV, SAV and MAV.
 ## Main results
 
 * `providesJR_iff_forall_mul_uncoveredSupport_lt` and `checkJR_eq_true_iff`: the criterion
-  `s(c) < n / k` for JR and the correctness of the check.
-* `IsGreedyAVRun.providesJR`: GreedyAV satisfies JR (Theorem 1).
+  `k * s(c) < n` for JR (the source's `s(c) < n / k`, for positive `k`) and the correctness
+  of the check.
+* `IsGreedyAVRun.providesJR`: with at least one voter, GreedyAV satisfies JR (Theorem 1).
 * `exists_isAVCommittee_two_providesJR`, `isAVCommittee_avTieProfile_not_providesJR` and
-  `isAVCommittee_avProfile_iff_and_not_providesJR`: for `k = 2`, AV satisfies JR when ties are
+  `isAVCommittee_avProfile_iff_and_not_providesJR`: with at least one voter and `k = 2`, AV
+  satisfies JR when ties are
   broken in favor of committees that provide JR and can fail it otherwise; for every `k ≥ 3`,
   AV fails JR (Theorem 3).
 * `isSAVCommittee_savProfile_iff_and_not_providesJR` and
@@ -56,8 +58,9 @@ GreedyAV, AV, SAV and MAV.
 
 Voters form a finite type `V`, so `n = Fintype.card V`. A ballot is any `Finset` of candidates,
 possibly empty; a committee is a `Finset C`, and the rule predicates require cardinality `k`.
-The JR threshold `|N| ≥ n / k` is the source's rational comparison, written `n ≤ k * |N|`;
-natural-number division would make Theorem 1 false. Where the source's formulas are undefined,
+The JR threshold is the product form `n ≤ k * |N|`, which for positive `k` is the source's
+rational comparison `|N| ≥ n / k`; natural-number division would make Theorem 1 false.
+Where the source's formulas are undefined,
 an empty ballot contributes `0` to the SAV score, and the MAV score with no voters is `0`.
 
 ## References
@@ -76,7 +79,8 @@ variable {V C : Type*} [Fintype V]
 /-! ### Justified representation (Definition 1) -/
 
 /-- `W` provides justified representation for `(A, k)` (Definition 1): there is no group `N` of
-voters with `|N| ≥ n / k`, written `n ≤ k * |N|`, whose ballots have a common candidate while no
+voters with `n ≤ k * |N|` (the source's `|N| ≥ n / k`, for positive `k`) whose ballots have a
+common candidate while no
 member of `N` approves a member of `W`. Definition 1 is stated for voters `N = {1, …, n}` and a
 committee with `|W| = k ≥ 1`, where this predicate agrees with it; the predicate is defined for
 every `W` and `k`. The empty group is not excluded: it violates the condition exactly when there
@@ -148,13 +152,15 @@ approve no member of `W`. -/
 def uncoveredSupport (A : V → Finset C) (W : Finset C) (c : C) : ℕ :=
   (Finset.univ.filter fun i => c ∈ A i ∧ Disjoint (A i) W).card
 
-/-- The JR check: accept `W` iff `s_W(c) < n / k` for every candidate `c`, written
-`k * s_W(c) < n`. -/
+/-- The JR check: accept `W` iff `k * s_W(c) < n` for every candidate `c`, where `n` is the
+number of voters and `s_W(c)` the number of voters approving `c` but no member of `W`. For
+positive `k` this is the source's `s_W(c) < n / k`. -/
 def checkJR [Fintype C] (A : V → Finset C) (k : ℕ) (W : Finset C) : Bool :=
   decide (∀ c, k * uncoveredSupport A W c < Fintype.card V)
 
-/-- **The JR criterion.** `W` provides justified representation for `(A, k)` iff
-`s_W(c) < n / k`, written `k * s_W(c) < n`, for every candidate `c`. -/
+/-- **The JR criterion.** For every natural `k`, `W` provides justified representation for
+`(A, k)` if and only if `k * s_W(c) < n` for every candidate `c`, where `n` is the number of
+voters. For positive `k` this is the source's `s_W(c) < n / k`. -/
 theorem providesJR_iff_forall_mul_uncoveredSupport_lt (A : V → Finset C) (k : ℕ)
     (W : Finset C) :
     ProvidesJR A k W ↔ ∀ c, k * uncoveredSupport A W c < Fintype.card V := by
@@ -184,7 +190,9 @@ theorem providesJR_iff_forall_mul_uncoveredSupport_lt (A : V → Finset C) (k : 
       le_trans hNcard hmul
     exact (Nat.not_lt_of_ge h1) (h c)
 
-/-- **Correctness of the JR check.** -/
+/-- **Correctness of the JR check.** For a finite electorate and candidate set,
+`checkJR A k W` returns `true` if and only if `W` provides justified representation
+for `(A, k)`. -/
 theorem checkJR_eq_true_iff [Fintype C] (A : V → Finset C) (k : ℕ) (W : Finset C) :
     checkJR A k W = true ↔ ProvidesJR A k W := by
   unfold checkJR
@@ -471,8 +479,8 @@ theorem exists_isAVCommittee_two_providesJR [Fintype C] [Nonempty V] (A : V → 
   · obtain ⟨a, c, -, -, hAVac, hJRac⟩ := exists_avTwo_of_not_providesJR hAV hJR
     exact ⟨{a, c}, hAVac, hJRac⟩
 
-/-- For `k = 2` a failure of AV needs a tie: a unique AV committee of size `2` provides
-justified representation. -/
+/-- With at least one voter, a unique two-seat AV winner provides JR: for `k = 2` a
+failure of AV needs a tie. -/
 theorem providesJR_of_isAVCommittee_two_unique [Nonempty V] {A : V → Finset C} {W : Finset C}
     (hW : IsAVCommittee A 2 W) (huniq : ∀ W', IsAVCommittee A 2 W' → W' = W) :
     ProvidesJR A 2 W := by
@@ -488,9 +496,9 @@ theorem providesJR_of_isAVCommittee_two_unique [Nonempty V] {A : V → Finset C}
 approves `{1}`. -/
 def avTieProfile : Fin 2 → Finset (Fin 3) := ![{0, 2}, {1}]
 
-/-- **Theorem 3 needs its tie rule.** `{0, 2}` is an AV committee for `(avTieProfile, 2)` (every
-pair of candidates is) and does not provide justified representation: voter `1` alone is a group
-of size `1 ≥ n / k = 1`. -/
+/-- **Theorem 3 needs its tie rule.** `{0, 2}` is an AV committee for `(avTieProfile, 2)` and
+does not provide justified representation: voter `1` alone is a group of size
+`1 ≥ n / k = 1`. -/
 theorem isAVCommittee_avTieProfile_not_providesJR :
     IsAVCommittee avTieProfile 2 {0, 2} ∧ ¬ ProvidesJR avTieProfile 2 {0, 2} := by
   unfold IsAVCommittee ProvidesJR avTieProfile
@@ -624,8 +632,8 @@ theorem isAVCommittee_avProfile_iff_and_not_providesJR {k : ℕ} (hk : 3 ≤ k) 
 /-! ### SAV and MAV (Theorem 4) -/
 
 /-- The SAV profile in the proof of Theorem 4: candidates `X = Fin (k + 1)` (left) and
-`Y = Fin k` (right) and `n = k` voters; voter `0` approves `X`, voter `1` approves `{y₀, y₁}`
-and voter `i ≥ 2` approves `{yᵢ}`. -/
+`Y = Fin k` (right) and `n = k` voters. In the construction for `k ≥ 2`, voter `0` approves
+`X`, voter `1` approves `{y₀, y₁}` and voter `i ≥ 2` approves `{yᵢ}`. -/
 def savProfile (k : ℕ) : Fin k → Finset (Fin (k + 1) ⊕ Fin k) := fun i =>
   if (i : ℕ) = 0 then Finset.univ.map Function.Embedding.inl
   else (Finset.univ.filter fun j : Fin k =>
@@ -1311,7 +1319,8 @@ candidate. -/
 def greedyAVPick (A : V → Finset C) (W : Finset C) : Option C :=
   ((Finset.univ \ W).sort (· ≤ ·)).argmax (uncoveredSupport A W)
 
-/-- GreedyAV with ties broken toward the least candidate, run for `j` rounds. -/
+/-- GreedyAV with ties broken toward the least candidate, run for `j` iterations; once
+every candidate is seated, further iterations leave the committee unchanged. -/
 def greedyAV (A : V → Finset C) : ℕ → Finset C
   | 0 => ∅
   | j + 1 =>
@@ -1319,9 +1328,9 @@ def greedyAV (A : V → Finset C) : ℕ → Finset C
     | some c => insert c (greedyAV A j)
     | none => greedyAV A j
 
-/-- GreedyAV with least-candidate tie-breaking is a GreedyAV run. With
-`IsGreedyAVRun.card_eq` and `IsGreedyAVRun.providesJR`, for `k ≤ |C|` it outputs a committee
-of size `k` that provides justified representation whenever there is a voter. -/
+/-- For `k ≤ |C|`, least-candidate GreedyAV yields a `k`-round GreedyAV run. With
+`IsGreedyAVRun.card_eq` and `IsGreedyAVRun.providesJR`, it outputs a committee of size `k`
+that provides justified representation whenever there is at least one voter. -/
 theorem isGreedyAVRun_greedyAV (A : V → Finset C) {k : ℕ} (hk : k ≤ Fintype.card C) :
     IsGreedyAVRun A k (greedyAV A k) := by
   induction k with
