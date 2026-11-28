@@ -106678,6 +106678,8 @@
 "ProbabilityTheory.factorial_eq_stirlingSeq_mul": "b504853c395d76bd",
 "ProbabilityTheory.fano_negBinomial": "51618d0d69a01728",
 "ProbabilityTheory.fano_poisson": "b1065dfe01406582",
+"ProbabilityTheory.finiteBirthDeathWeight": "b987c4e0662a7653",
+"ProbabilityTheory.finite_birth_death_stationary_law": "854d74b6ebaf4f55",
 "ProbabilityTheory.gammaMeasure_map_const_mul": "bfe508add6c135b2",
 "ProbabilityTheory.gammaMeasure_real_Ioi": "3d0014da8ff66256",
 "ProbabilityTheory.gammaMeasure_real_Ioi_natCast_add_one": "4439a1809a0225be",
