@@ -2,6 +2,9 @@
 
 Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.
 
+- [Parasite relatedness and genomic epidemiology](parasite-relatedness-and-genomic-epidemiology/README.md)
+- [Treatment, drug resistance and immune escape](treatment-resistance-and-immune-escape/README.md)
+- [Chronic disease and social contagion](chronic-disease-and-social-contagion/README.md)
 - [Branching-process approximation of early epidemics](branching-process-approximation-of-early-epidemi/README.md)
 - [Contact process on power-law random graphs](contact-process-on-power-law-random-graphs/README.md)
 - [Diffusion approximation of the stochastic SIR epidemic](diffusion-approximation-of-the-stochastic-sir-ep/README.md)
@@ -35,9 +38,11 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 - [Epidemic coalescent models](epidemic-coalescent-models/README.md)
-
+- [Deterministic transmission models](deterministic-transmission-models/README.md)
+- [Stochastic epidemic models](stochastic-epidemic-models/README.md)
+- [Behavior and control](behavior-and-control/README.md)
+- [Epidemic inference and testing](epidemic-inference-and-testing/README.md)
 ## [Compartmental transmission models](part-01/README.md)
-
 - [Adaptive-contact SAIS on multilayer networks](part-01/adaptive-contact-sais-on-multilayer-networks/README.md)
 - [Anthrax carcass transmission with scavengers](part-01/anthrax-carcass-transmission-with-scavengers/README.md)
 - [Biphasic environmental decay of pathogens](part-01/biphasic-environmental-decay-of-pathogens/README.md)
@@ -56,9 +61,7 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-dose vaccination measles model](part-01/two-dose-vaccination-measles-model/README.md)
 - [Two-sided fractional SEIR models](part-01/two-sided-fractional-seir-models/README.md)
 - [Viral-load-dependent fuzzy SIR model](part-01/viral-load-dependent-fuzzy-sir-model/README.md)
-
 ## [Branching processes and epidemiological inference](part-02/README.md)
-
 - [Branching processes with lagged Poisson offspring](part-02/branching-processes-with-lagged-poisson-offspring/README.md)
 - [Comparative age-period-cohort analysis](part-02/comparative-age-period-cohort-analysis/README.md)
 - [Discrete-time next-generation matrix](part-02/discrete-time-next-generation-matrix/README.md)

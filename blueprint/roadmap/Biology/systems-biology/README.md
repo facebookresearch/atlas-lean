@@ -27,9 +27,12 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
 - [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
 - [Total-variation error of a finite-precision SSA step](total-variation-error-of-a-finite-precision-ssa-step.md)
-
+- [Reaction network structure and dynamics](reaction-network-structure/README.md)
+- [Molecular computation](molecular-computation/README.md)
+- [Identifiability and inference](identifiability-and-inference/README.md)
+- [Stochastic biochemical dynamics](stochastic-biochemical-dynamics/README.md)
+- [Regulatory and signalling circuits](regulatory-and-signalling-circuits/README.md)
 ## [Reaction networks, metabolism and translation](part-01/README.md)
-
 - [Extended Permanence Conjecture](part-01/extended-permanence-conjecture.md)
 - [Nondegeneracy Conjecture for reaction networks](part-01/nondegeneracy-conjecture-for-reaction-networks.md)
 - [Maximal multistationarity of multisite phosphorylation](part-01/maximal-multistationarity-of-multisite-phosphorylation.md)
@@ -54,9 +57,7 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Optimal ribosome density in ribosome flow models](part-01/optimal-ribosome-density-in-ribosome-flow-models/README.md)
 - [Ribosome flow model on a ring](part-01/ribosome-flow-model-on-a-ring/README.md)
 - [Ribosome flow model with random rates](part-01/ribosome-flow-model-with-random-rates/README.md)
-
 ## [Gene regulatory networks: dynamics, control and inference](part-02/README.md)
-
 - [Change points in switching gene regulatory networks](part-02/change-points-in-switching-gene-regulatory-networks/README.md)
 - [Conditional Granger causality network inference](part-02/conditional-granger-causality-network-inference/README.md)
 - [Critical and redundant nodes of minimum dominating sets](part-02/critical-and-redundant-nodes-of-minimum-dominating-sets/README.md)

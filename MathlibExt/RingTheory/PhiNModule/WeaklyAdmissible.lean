@@ -119,7 +119,7 @@ namespace FilteredPhiNModule
 variable {σ p K} {D : Type*} [AddCommGroup D] [Module K₀ D] (M : FilteredPhiNModule σ p K D)
 
 /-- The Hodge number `t_H(D) = t_H(D_K) = ∑ᵢ i · dim_K gr^i D_K` of a filtered `(φ, N)`-module
-(Fontaine–Ouyang, Definition 8.36 and (8.11)). -/
+(Fontaine–Ouyang, Definition 8.36, Proposition 8.37 and (8.11)). -/
 noncomputable def hodgeNumber : ℤ := M.fil.hodgeNumber
 
 /-- The Hodge number of a filtered `(φ, N)`-module on a zero-dimensional space `D` is `0`. -/
