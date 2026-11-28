@@ -58,15 +58,4 @@ theorem coaugmentation_exact_succ {X : C} {I : CochainComplex C ℕ}
   exact (HomologicalComplex.exactAt_iff' I n (n + 1) (n + 2)
     (by simp) (by simp)).mp hI
 
-/-- In an abelian category `C`, let `ι : X[0] → I`, `κ : X[0] → J`
-be coaugmentations of nonnegative cochain complexes and `a : I → J`
-a cochain map. If `ι⁰ ≫ a⁰ = κ⁰`, then `ι ≫ a = κ` as full
-cochain maps. -/
-theorem coaugmentation_comp_eq_of_f_zero {X : C} {I J : CochainComplex C ℕ}
-    (ι : (single₀ C).obj X ⟶ I) (κ : (single₀ C).obj X ⟶ J) (a : I ⟶ J)
-    (h : ι.f 0 ≫ a.f 0 = κ.f 0) : ι ≫ a = κ := by
-  apply (fromSingle₀Equiv J X).injective
-  apply Subtype.ext
-  exact h
-
 end CochainComplex

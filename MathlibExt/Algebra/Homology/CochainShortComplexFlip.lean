@@ -16,31 +16,30 @@ public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
 public import Mathlib.Algebra.Homology.Single
 
 /-!
-# Transposing short complexes of cochain complexes
+# Transposing short complexes of arbitrary-shape complexes
 
-In an abelian category, a short complex of nonnegative cochain
-complexes can be transposed into a nonnegative cochain complex of
-short complexes. Its degree-`n` row has the three original degree-`n`
-objects and sequence maps, and its differential has the three
-cochain differentials. Projection recovers each original complex;
-a map between transposed complexes recovers a map of the original
-short complexes with the same degree components.
+In a category with zero morphisms, a short complex of complexes of any shape
+transposes into a complex of short complexes of the same shape. Its projections
+recover the three input complexes, and a map of transposed complexes recovers
+a map of the original short complexes. The cochain names also specialize to
+natural or integer cochain shapes without an abelian-category assumption.
 -/
 @[expose] public section
 noncomputable section
 set_option autoImplicit false
-universe u v
+universe u v w
 open CategoryTheory CategoryTheory.Limits
 
 namespace CategoryTheory.ShortComplex
-variable {C : Type u} [Category.{v} C] [Abelian C]
+variable {C : Type u} [Category.{v} C] [HasZeroMorphisms C]
+variable {ι : Type w} {c : ComplexShape ι}
 
-/-- In an abelian category `C`, let `S` be a short complex of
-nonnegative cochain complexes. Transposing gives a cochain complex whose degree-`n` object
+/-- In a category with zero morphisms `C`, let `S` be a short complex of
+complexes of arbitrary shape. Transposing gives a complex whose degree-`n` object
 is the short complex `S₁^n → S₂^n → S₃^n` and whose differential
 has components `d_S₁,d_S₂,d_S₃`. -/
-def cochainFlip (S : ShortComplex (CochainComplex C ℕ)) :
-    CochainComplex (ShortComplex C) ℕ where
+def cochainFlip (S : ShortComplex (HomologicalComplex C c)) :
+    HomologicalComplex (ShortComplex C) c where
   X n := ShortComplex.mk (S.f.f n) (S.g.f n)
     (by simpa only [HomologicalComplex.comp_f, HomologicalComplex.zero_f] using
       HomologicalComplex.congr_hom S.zero n)
@@ -61,36 +60,36 @@ def cochainFlip (S : ShortComplex (CochainComplex C ℕ)) :
     · exact S.X₂.d_comp_d i j k
     · exact S.X₃.d_comp_d i j k
 
-/-- In an abelian category `C`, let `S` be a short complex of
-nonnegative cochain complexes. Projection to the first object of each transposed row
-recovers the first cochain complex `S₁`. -/
-theorem cochainFlip_π₁ (S : ShortComplex (CochainComplex C ℕ)) :
-    ((ShortComplex.π₁ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).obj
+/-- In a category with zero morphisms `C`, let `S` be a short complex of
+complexes of arbitrary shape. Projection to the first object of each transposed row
+recovers the first complex `S₁`. -/
+theorem cochainFlip_π₁ (S : ShortComplex (HomologicalComplex C c)) :
+    ((ShortComplex.π₁ : ShortComplex C ⥤ C).mapHomologicalComplex (c)).obj
       S.cochainFlip = S.X₁ := rfl
 
-/-- In an abelian category `C`, let `S` be a short complex of
-nonnegative cochain complexes. Projection to the middle object of each transposed row
-recovers the middle cochain complex `S₂`. -/
-theorem cochainFlip_π₂ (S : ShortComplex (CochainComplex C ℕ)) :
-    ((ShortComplex.π₂ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).obj
+/-- In a category with zero morphisms `C`, let `S` be a short complex of
+complexes of arbitrary shape. Projection to the middle object of each transposed row
+recovers the middle complex `S₂`. -/
+theorem cochainFlip_π₂ (S : ShortComplex (HomologicalComplex C c)) :
+    ((ShortComplex.π₂ : ShortComplex C ⥤ C).mapHomologicalComplex (c)).obj
       S.cochainFlip = S.X₂ := rfl
 
-/-- In an abelian category `C`, let `S` be a short complex of
-nonnegative cochain complexes. Projection to the third object of each transposed row
-recovers the third cochain complex `S₃`. -/
-theorem cochainFlip_π₃ (S : ShortComplex (CochainComplex C ℕ)) :
-    ((ShortComplex.π₃ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).obj
+/-- In a category with zero morphisms `C`, let `S` be a short complex of
+complexes of arbitrary shape. Projection to the third object of each transposed row
+recovers the third complex `S₃`. -/
+theorem cochainFlip_π₃ (S : ShortComplex (HomologicalComplex C c)) :
+    ((ShortComplex.π₃ : ShortComplex C ⥤ C).mapHomologicalComplex (c)).obj
       S.cochainFlip = S.X₃ := rfl
 
-/-- In an abelian category `C`, let `S,T` be short complexes of
-nonnegative cochain complexes. A cochain map `a : S.flip → T.flip`
+/-- In a category with zero morphisms `C`, let `S,T` be short complexes of
+complexes of arbitrary shape. A map of complexes `a : S.cochainFlip → T.cochainFlip`
 induces a morphism of the original short complexes, using its
 three components in every degree. -/
-def cochainUnflipHom {S T : ShortComplex (CochainComplex C ℕ)}
+def cochainUnflipHom {S T : ShortComplex (HomologicalComplex C c)}
     (a : S.cochainFlip ⟶ T.cochainFlip) : S ⟶ T where
-  τ₁ := ((ShortComplex.π₁ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).map a
-  τ₂ := ((ShortComplex.π₂ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).map a
-  τ₃ := ((ShortComplex.π₃ : ShortComplex C ⥤ C).mapHomologicalComplex (ComplexShape.up ℕ)).map a
+  τ₁ := ((ShortComplex.π₁ : ShortComplex C ⥤ C).mapHomologicalComplex (c)).map a
+  τ₂ := ((ShortComplex.π₂ : ShortComplex C ⥤ C).mapHomologicalComplex (c)).map a
+  τ₃ := ((ShortComplex.π₃ : ShortComplex C ⥤ C).mapHomologicalComplex (c)).map a
   comm₁₂ := by
     apply HomologicalComplex.Hom.ext
     funext n
@@ -100,25 +99,25 @@ def cochainUnflipHom {S T : ShortComplex (CochainComplex C ℕ)}
     funext n
     exact (a.f n).comm₂₃
 
-/-- In an abelian category `C`, for `a : S.flip → T.flip`, the
-first cochain component of the recovered short-complex map in
+/-- In a category with zero morphisms `C`, for `a : S.cochainFlip → T.cochainFlip`, the
+first component of the recovered short-complex map in
 degree `n` is the first component of the row map `aⁿ`. -/
-theorem cochainUnflipHom_τ₁_f {S T : ShortComplex (CochainComplex C ℕ)}
-    (a : S.cochainFlip ⟶ T.cochainFlip) (n : ℕ) :
+theorem cochainUnflipHom_τ₁_f {S T : ShortComplex (HomologicalComplex C c)}
+    (a : S.cochainFlip ⟶ T.cochainFlip) (n : ι) :
     (cochainUnflipHom a).τ₁.f n = (a.f n).τ₁ := rfl
 
-/-- In an abelian category `C`, for `a : S.flip → T.flip`, the
-middle cochain component of the recovered short-complex map in
+/-- In a category with zero morphisms `C`, for `a : S.cochainFlip → T.cochainFlip`, the
+middle component of the recovered short-complex map in
 degree `n` is the middle component of the row map `aⁿ`. -/
-theorem cochainUnflipHom_τ₂_f {S T : ShortComplex (CochainComplex C ℕ)}
-    (a : S.cochainFlip ⟶ T.cochainFlip) (n : ℕ) :
+theorem cochainUnflipHom_τ₂_f {S T : ShortComplex (HomologicalComplex C c)}
+    (a : S.cochainFlip ⟶ T.cochainFlip) (n : ι) :
     (cochainUnflipHom a).τ₂.f n = (a.f n).τ₂ := rfl
 
-/-- In an abelian category `C`, for `a : S.flip → T.flip`, the
-third cochain component of the recovered short-complex map in
+/-- In a category with zero morphisms `C`, for `a : S.cochainFlip → T.cochainFlip`, the
+third component of the recovered short-complex map in
 degree `n` is the third component of the row map `aⁿ`. -/
-theorem cochainUnflipHom_τ₃_f {S T : ShortComplex (CochainComplex C ℕ)}
-    (a : S.cochainFlip ⟶ T.cochainFlip) (n : ℕ) :
+theorem cochainUnflipHom_τ₃_f {S T : ShortComplex (HomologicalComplex C c)}
+    (a : S.cochainFlip ⟶ T.cochainFlip) (n : ι) :
     (cochainUnflipHom a).τ₃.f n = (a.f n).τ₃ := rfl
 
 end CategoryTheory.ShortComplex
