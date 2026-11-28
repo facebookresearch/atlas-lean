@@ -20,12 +20,12 @@ A good expansion adds a page for each pending prerequisite below and links it un
 ## Depends on
 
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
-- [Stochastic mass-action propensity](stochastic-mass-action-metabolic-control-and-flu/propensity.md)
-- [State after one reaction firing](stochastic-mass-action-metabolic-control-and-flu/fire.md)
+- [Stochastic mass-action propensity](../stochastic-mass-action-metabolic-control-and-flu/propensity.md)
+- [State after one reaction firing](../stochastic-mass-action-metabolic-control-and-flu/fire.md)
 
 ## Related topics
 
-- [Jump matrix of a rate matrix](../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-jump-matrix.md)
+- [Jump matrix of a rate matrix](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/ctmc-jump-matrix.md)
 
 ## Sources
 

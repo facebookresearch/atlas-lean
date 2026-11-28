@@ -19,3 +19,5 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Reaction–diffusion on concentration-dependent growing domains](reaction-diffusion-on-concentration-dependent-growing-domains/README.md)
 - [Turing and wave instabilities in n-component systems](turing-and-wave-instabilities-in-n-component-systems/README.md)
 - [Turing instabilities for three interacting species](turing-instabilities-for-three-interacting-species/README.md)
+- [Bulk-surface membrane-protein clustering](bulk-surface-membrane-protein-clustering/README.md)
+- [$p$-adic reaction–diffusion models of branching growth](p-adic-reaction-diffusion-models-of-branching-growth/README.md)

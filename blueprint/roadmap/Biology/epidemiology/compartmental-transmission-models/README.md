@@ -1,0 +1,27 @@
+# Compartmental transmission models
+
+Compartmental models of specific diseases and settings, deterministic, fractional, spatial and age- or stage-structured: reproduction numbers, equilibria and threshold dynamics.
+
+- [Active case finding in dengue transmission](active-case-finding-in-dengue-transmission/README.md)
+- [Age-structured models with nonlinear recidivism](age-structured-models-with-nonlinear-recidivism/README.md)
+- [Caputo fractional reaction–diffusion SIR model with p-Laplacian](caputo-fractional-reaction-diffusion-sir-with-p-laplacian/README.md)
+- [Fractional-order HIV/AIDS transmission](fractional-order-hiv-aids-transmission/README.md)
+- [Heroin epidemic with information-driven prevention](heroin-epidemic-with-information-driven-prevention/README.md)
+- [Human-vector SIS epidemic model](human-vector-sis-epidemic-model/README.md)
+- [Infection-age HIV model with cell-to-cell transmission](infection-age-hiv-model-with-cell-to-cell-transmission/README.md)
+- [Kinetic SEIR models with contact distributions](kinetic-seir-models-with-contact-distributions/README.md)
+- [Mixed-order fractional SIS models](mixed-order-fractional-sis-models/README.md)
+- [Multi-host multi-vector staged-progression models](multi-host-multi-vector-staged-progression-models/README.md)
+- [Non-population-conserving SIR model](non-population-conserving-sir-model/README.md)
+- [Rabies transmission among humans, dogs and the environment](rabies-transmission-among-humans-dogs-and-the-environment/README.md)
+- [Reproduction number of infectious units](reproduction-number-of-infectious-units/README.md)
+- [SEIR models with density-dependent diffusion](seir-models-with-density-dependent-diffusion/README.md)
+- [SICA model of HIV/AIDS transmission](sica-model-of-hiv-aids-transmission/README.md)
+- [SIR models with state-dependent contact rates](sir-models-with-state-dependent-contact-rates/README.md)
+- [SIRI epidemic model with relapse](siri-epidemic-model-with-relapse/README.md)
+- [SIRS model with density-dependent mortality](sirs-model-with-density-dependent-mortality/README.md)
+- [Spatial SIR with power-saturated incidence and heterogeneous recovery](spatial-sir-with-power-saturated-incidence-and-heterogeneous-recovery/README.md)
+- [SVIR model with continuous vaccination](svir-model-with-continuous-vaccination/README.md)
+- [Two-patch SIR model with commuters and permanent residents](two-patch-sir-with-commuters-and-residents/README.md)
+- [Vector-borne disease with infective immigration](vector-borne-disease-with-infective-immigration/README.md)
+- [Viral infection of Varroa-infested honeybee colonies](viral-infection-of-varroa-infested-honeybee-colonies/README.md)

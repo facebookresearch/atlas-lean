@@ -12,3 +12,10 @@
 - [Forward invariance and global existence for the chemostat](chemostat-invariance-and-global-existence.md)
 - [Unconditional exponential stability of chemostat washout](unconditional-exponential-stability-of-chemostat-washout.md)
 - [Global convergence of the chemostat](global-convergence-of-the-chemostat.md)
+- [Exponential relaxation under the sliding-memory Caputo derivative](exponential-relaxation-under-the-sliding-memory-caputo-derivative.md)
+- [Global feedback stabilization of the chemostat with mortality](global-feedback-stabilization-of-the-chemostat-with-mortality.md)
+- [Global stabilization of an age-structured chemostat](global-stabilization-of-an-age-structured-chemostat.md)
+- [Mortality dominance obstructs global chemostat stabilization](mortality-dominance-obstructs-global-chemostat-stabilization.md)
+- [Periodic chemostat with a sliding-memory Caputo derivative](periodic-sliding-memory-fractional-chemostat.md)
+
+- [Evolutionary games, harvesting and chemostats](evolutionary-games-harvesting-and-chemostats/README.md)
