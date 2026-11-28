@@ -4,13 +4,13 @@
 
 **Theorem.** The initial value problem with nonnegative initial data has a unique solution. When all eight orders are equal (in particular in the integer-order case), the total $S+E+I+P+A+H+R+F$ is conserved, so a solution starting in the feasible region $\Omega=\{(S,\dots,F)\in\mathbb R^8_+:S+\dots+F\le N\}$ stays in $\Omega$. The basic reproduction number is
 
-$$\mathcal{R}_0 = \frac{\beta\rho_1(\gamma_a l + \varpi_h)}{\varpi_h\varpi_i} + \frac{\rho_2(\beta\gamma_a l + \beta'\varpi_h)}{\varpi_h\varpi_p} + \frac{\beta''(1-\rho_1-\rho_2)}{\delta_a},$$
+$$\mathcal{R}_0 = \frac{\beta\rho_1(\gamma_a l + \varpi_h)}{\varpi_h\varpi_i} + \frac{\rho_2(\beta\gamma_a l + \beta'\varpi_h)}{\varpi_h\varpi_p} + \frac{\beta''(1-\rho_1-\rho_2)}{\delta_a}.$$
 
 Since the model has no births or non-disease deaths, its equilibria are exactly the disease-free states $(S^*,0,0,0,0,0,R^*,F^*)$, a continuum rather than a single point. If $\mathcal R_0<1$ and $E,I,P,A,H$ share one order $\alpha$, the linear function $V=b_0E+b_1I+b_2P+b_3A+b_4H$ with $b_0=\delta_a\varpi_i\varpi_p\varpi_h$, $b_1=(\beta+\beta\gamma_al/\varpi_h)\delta_a\varpi_h\varpi_p$, $b_2=(\beta'+\beta\gamma_al/\varpi_h)\delta_a\varpi_i\varpi_h$, $b_3=\beta''\varpi_i\varpi_h\varpi_p$ and $b_4=\beta l\delta_a\varpi_i\varpi_p$ satisfies
 
 $${}^{\mathtt C}D^{\alpha}V\le\kappa\,\delta_a\varpi_i\varpi_p\varpi_h(\mathcal R_0-1)\,E\le0,$$
 
-so the weighted infected load never exceeds its initial value, $V(t)\le V(0)$. In the integer-order case this also gives $\int_0^\infty E\,dt\le V(0)/\{\kappa\delta_a\varpi_i\varpi_p\varpi_h(1-\mathcal R_0)\}$, so every solution converges to some disease-free equilibrium $(S_\infty,0,0,0,0,0,R_\infty,F_\infty)$, and the set of disease-free equilibria is stable.
+so the weighted infected load never exceeds its initial value, $V(t)\le V(0)$. In the integer-order case this also gives $\int_0^\infty E\,dt\le V(0)/\{\kappa\delta_a\varpi_i\varpi_p\varpi_h(1-\mathcal R_0)\}$, and the set of disease-free equilibria is stable.
 
 (The source's Theorem 4.3 states that "the disease free equilibrium DFE of system (model) is globally asymptotically stable whenever $\mathcal R_0<1$", with $DFE=(N,0,0,0,0,0,0,0)$, and its Theorem 4.1 that the solution "remains in $\Omega$ for all time $t\ge0$" for the incommensurate orders of the model. Both fail as printed. Every $(S^*,0,0,0,0,0,R^*,F^*)$ is an equilibrium, so $(N,0,\dots,0)$ is not attracting: in the integer-order case $S$ is nonincreasing, so from any state in $\Omega$ with $E(0)>0$ one has $S_\infty\le S(0)\le N-E(0)<N$, whatever $\mathcal R_0$ is. The source's LaSalle step, which deduces $A(0)=R(0)=F(0)=0$ and $S(0)=N$ from $E=I=P=H=0$, does not follow. For invariance, with distinct orders the total is not conserved: start from $S=N-E_0$, $E=E_0>0$ and the other compartments empty, and take $\alpha_I=\alpha_P=\alpha_A<\alpha_E$; then for small $t$ the total is $N+\kappa E_0\{t^{\alpha_I}/\Gamma(1+\alpha_I)-t^{\alpha_E}/\Gamma(1+\alpha_E)\}+o(t^{\alpha_I})>N$, so the solution leaves $\Omega$. The page therefore states invariance only for equal orders and replaces global asymptotic stability by the bound $V(t)\le V(0)$ that the source's Lyapunov computation actually proves, which also needs the five orders of $E,I,P,A,H$ to coincide, as the source's own proof assumes.)
 
@@ -20,4 +20,4 @@ The next-generation matrix is the same for every choice of fractional orders, be
 
 ## Sources
 
-- M. Khalighi, L. Lahti, F. Ndaïrou, P. Rashkov, "Fractional modelling of COVID-19 transmission incorporating asymptomatic and super-spreader individuals", *Mathematical Biosciences* 380 (2025), 109373, Section 4, Theorems 4.1–4.3 (with the Lyapunov function in the proof of Theorem 4.3), <https://doi.org/10.1016/j.mbs.2024.109373> (preprint arXiv:2501.03428).
+- M. Khalighi, L. Lahti, F. Ndaïrou, P. Rashkov, D. F. M. Torres, "Fractional modelling of COVID-19 transmission incorporating asymptomatic and super-spreader individuals", *Mathematical Biosciences* 380 (2025), 109373, Section 4, Theorems 4.1–4.3 (with the Lyapunov function in the proof of Theorem 4.3), <https://doi.org/10.1016/j.mbs.2024.109373> (preprint arXiv:2501.03428).
