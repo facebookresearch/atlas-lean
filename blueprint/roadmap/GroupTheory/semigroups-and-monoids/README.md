@@ -7,6 +7,5 @@ Magmas, semigroups and monoids and their morphisms: units and invertible element
 - [Multiplication-preserving maps and group homomorphisms](group-homomorphism.md)
 - [Unit: an element with a two-sided inverse](ring-unit.md)
 - [Algorithmic problems for finite semigroups](algorithmic-problems-for-finite-semigroups/README.md)
-- [Decision problems for matrix semigroups](decision-problems-for-matrix-semigroups/README.md)
 - [Decision problems in semigroups and monoids](decision-problems-in-semigroups/README.md)
 - [Word problems in semigroup varieties](word-problems-in-semigroup-varieties/README.md)

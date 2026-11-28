@@ -17,12 +17,11 @@ In all other cases the uniform word problem for $\mathcal V_{\mathrm{fin}}$ is u
 
 ## Proof depends on
 
-- [The uniform word problem for finite semigroups is undecidable](../algorithmic-problems-for-finite-semigroups/uniform-word-problem-for-finite-semigroups.md)
-- [Which non-periodic semigroup varieties contain finitely presented semigroups with undecidable word problem](word-problem-in-non-periodic-semigroup-varieties.md)
+- [Word problems of semigroups finitely presented inside finitely based non-periodic varieties](word-problem-in-non-periodic-semigroup-varieties.md)
 
 ## Expansion
 
-For the implication from 1 to 2, if $\mathcal V$ contains one of $\mathcal M_1$, $\overrightarrow{\mathcal M_2}$, $\overleftarrow{\mathcal M_2}$, Minsky-machine semigroups with an extra counter subgroup show that the quasi-identities holding in $\mathcal V_{\mathrm{fin}}$ are inseparable from those holding in all periodic semigroups of $\mathcal V$, as in Gurevich's theorem; if $Z_{n+1}$ is an isoterm, a substitution $\phi$ with every $\phi^s(x_1)$ an isoterm (Sapir) gives another simulation. For the converse, a periodic $\mathcal V$ has the restricted Burnside property (via Zelmanov's solution of the restricted Burnside problem), so its finite $k$-generated members can be listed, and a non-periodic $\mathcal V$ avoiding the three semigroups has residually finite finitely presented members by the theorem on non-periodic varieties. A good expansion links Zelmanov's theorem, the restricted Burnside property of periodic varieties, the isoterm substitution and Mal'cev's residual finiteness of finitely generated linear semigroups.
+For the implication from 1 to 2, if $\mathcal V$ contains one of $\mathcal M_1$, $\overrightarrow{\mathcal M_2}$, $\overleftarrow{\mathcal M_2}$, new Minsky-machine semigroups $S_1'(M)$ and $S_2'(M)$ with an extra counter subgroup, built inside $\mathcal M_1$ and the $\mathcal M_2$ with ideas from Gurevich's proof, show that the quasi-identities that fail in some member of $\mathcal V_{\mathrm{fin}}$ are recursively inseparable from those that hold in every periodic semigroup of $\mathcal V$; if $Z_{n+1}$ is an isoterm, a substitution $\phi$ with every $\phi^s(x_1)$ an isoterm (Sapir) gives another simulation. For the converse, a periodic $\mathcal V$ has the restricted Burnside property (via Zelmanov's solution of the restricted Burnside problem), so its finite $k$-generated members can be listed, and a non-periodic $\mathcal V$ avoiding the three semigroups has residually finite finitely presented members by the theorem on non-periodic varieties. A good expansion links this inseparability lemma for varieties containing $\mathcal M_1$ or one of the $\mathcal M_2$, Zelmanov's theorem, the restricted Burnside property of periodic varieties, the isoterm substitution and Mal'cev's residual finiteness of finitely generated linear semigroups.
 
 ## Sources
 
