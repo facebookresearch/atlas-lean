@@ -8,6 +8,7 @@ Newtonian dynamics of particles and lumped systems: kinetic energy, power and th
 - [Forced damped oscillator and resonance](forced-damped-oscillator-and-resonance/README.md)
 - [Hardening Duffing oscillator](hardening-duffing-oscillator/README.md)
 - [Harmonic oscillators, equilibrium and spring networks](harmonic-oscillators-equilibrium-and-spring-netw/README.md)
+- [Interatomic pair potentials](interatomic-pair-potentials/README.md)
 - [Kinetic energy and power of a force](kinetic-energy-and-power-of-a-force/README.md)
 - [Modal analysis of multi-degree-of-freedom systems](modal-analysis-of-multi-degree-of-freedom-system/README.md)
 - [Power of a muscle under Hill's law](power-of-a-muscle-under-hill-s-law/README.md)

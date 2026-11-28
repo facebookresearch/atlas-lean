@@ -6,6 +6,8 @@ derivative of the $i$-th component $f_i$ of $f$ in the $j$-th coordinate directi
 derivative at $t = 0$ of $t \mapsto f_i(x + t e_j)$, where $e_j$ is the $j$-th standard basis
 vector of $\mathbb{R}^m$. A partial derivative that does not exist is taken to be $0$.
 
+In elasticity, for $m = n = 3$ and a displacement field $u$, this matrix is the displacement gradient of $u$ at $x$.
+
 ## Sources
 
 - W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9; stable ref https://en.wikipedia.org/wiki/Jacobian_matrix_and_determinant.

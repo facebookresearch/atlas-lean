@@ -24,6 +24,7 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
 - [Weak maximum principle for the heat equation](exists-mem-parabolic-boundary-is-max-on.md)
 - [Uniqueness for the heat equation on a bounded domain](eq-on-of-heat-equation.md)
 - [Single-mode solution of the Dirichlet heat equation](single-mode-solution-of-the-dirichlet-heat-equation.md)
+- [Fick diffusion](fick-diffusion/README.md)
 
 ## Related topics
 

@@ -1,3 +1,3 @@
 # Viscoelasticity
 
-- [Energy and relaxation of a Maxwell element](energy-and-relaxation-of-a-maxwell-element.md)
+- [Maxwell branch: energy balance and held-strain relaxation](maxwell-branch-energy-balance-and-held-strain-re/README.md)
