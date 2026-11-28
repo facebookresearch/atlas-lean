@@ -59,8 +59,9 @@ public theorem jacobiStirlingFirst_initial_row {R : Type*} [CommRing R]
   unfold jacobiStirlingFirst jacobiStirlingFirstPoly
   simp [Polynomial.coeff_one]
 
-/-- In every positive row the first-kind Jacobi–Stirling number in column zero vanishes:
-its generating polynomial has `X` as the factor indexed by `0`. -/
+/-- For every commutative ring $R$, every $\zeta \in R$ and every $n \in \mathbb{N}$,
+the first-kind Jacobi–Stirling number $J(n+1,0;\zeta)$ is zero: the factor indexed by $0$
+in its generating polynomial is $X$. -/
 theorem jacobiStirlingFirst_succ_zero {R : Type*} [CommRing R] (n : ℕ) (ζ : R) :
     jacobiStirlingFirst (n + 1) 0 ζ = 0 := by
   simp [jacobiStirlingFirst, jacobiStirlingFirstPoly, Finset.prod_range_succ',

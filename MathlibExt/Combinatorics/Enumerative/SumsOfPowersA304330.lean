@@ -1150,10 +1150,10 @@ private theorem legendreStirlingFirst_cast_one (m : ℕ) :
     push_cast
     ring
 
-/-- For `k ≥ 2`, the signed Legendre–Stirling coefficients of degree one cancel in the odd
-power-sum expansion: their sum weighted by `R(k,m) / ((2m)! m)` is zero. This is equation
-(21) of Cereceda's *Sums of Powers of Integers and the Sequence A304330*, with row index
-`k` in place of `k + 1`. -/
+/-- For natural numbers $k \ge 2$, the signed Legendre–Stirling coefficients of degree one
+cancel in the odd power-sum expansion: their sum weighted by $R(k,m)/((2m)!\,m)$ and summed
+over $m=1,\ldots,k$ is zero. This is equation (21) of Cereceda's
+*Sums of Powers of Integers and the Sequence A304330*, with row index $k$ in place of $k+1$. -/
 theorem sum_arrayR_legendreStirlingFirst_one_eq_zero (k : ℕ) (hk : 2 ≤ k) :
     (∑ m ∈ Icc 1 k, (1 / (((2 * m).factorial : ℚ) * m)) *
       (arrayR k m : ℚ) * (legendreStirlingFirst m 1 : ℚ)) = 0 := by
