@@ -16,14 +16,16 @@ import MathlibExt.NumberTheory.Recurrences.LucasWeightedPowerSumParameterBound
 open MetaMathlibExt
 
 -- Fibonacci numbers: `1 + 2 + 6 = 3²`, at the first possible cutoff `k = 3`.
-example : (fibonacciLucasParams.p : ℚ) ≤ ((3 : ℚ) + 1) ^ 2 / 4 + 1 :=
-  le_of_weighted_power_sum_eq fibonacciLucasParams (n := 4) (k := 3) (p := 1) (q := 2)
-    (Or.inr rfl) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+example :
+    (∑ j ∈ Finset.Icc (1 : ℕ) 3, (j : ℤ) * lucasU fibonacciLucasParams j ^ 1) = 9 ∧
+      lucasU fibonacciLucasParams 4 ^ 2 = 9 :=
+  ⟨by decide, by decide⟩
 
 -- For `(x, y) = (2, 1)`, `U_j = j`; the sum of squares through `k = 4` is `U_30`.
-example : ((⟨2, 1, by decide⟩ : LucasSequenceParams).p : ℚ) ≤ ((4 : ℚ) + 1) ^ 2 / 4 + 1 :=
-  le_of_weighted_power_sum_eq ⟨2, 1, by decide⟩ (n := 30) (k := 4) (p := 1) (q := 1)
-    (Or.inl rfl) (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+example :
+    (∑ j ∈ Finset.Icc (1 : ℕ) 4, (j : ℤ) * lucasU ⟨2, 1, by decide⟩ j ^ 1) = 30 ∧
+      lucasU ⟨2, 1, by decide⟩ 30 ^ 1 = 30 :=
+  ⟨by decide, by decide⟩
 
 -- At `k = 3`, the bound rules out all positive indices and exponents for `(x, y) = (6, 1)`.
 example {n p q : ℕ} (hn : 0 < n) (hp : 0 < p) (hq : 0 < q) :

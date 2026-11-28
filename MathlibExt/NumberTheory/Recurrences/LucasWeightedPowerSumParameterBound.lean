@@ -15,6 +15,7 @@ import Mathlib.Algebra.Order.Ring.Abs
 import Mathlib.Algebra.Ring.Int.Parity
 import Mathlib.Data.Int.ModEq
 import Mathlib.Tactic.Linarith
+import MathlibExt.NumberTheory.Recurrences.LucasBinomialSum
 import MathlibExt.NumberTheory.Recurrences.LucasParityDivisibility
 
 /-!
@@ -35,8 +36,9 @@ then gives a nonzero multiple of `x`.
 
 * Benjamin Earp-Lynch, Simon Earp-Lynch, Omar Kihel and Puntani Pongsumpun, *Extension of the
   Equation $\sum_{j=1}^k j F_j^p = F_n^q$ to a Family of Lucas Sequences*, The Fibonacci Quarterly
-  62 (2024), no. 3, 241–257, Lemma 4.4 (the bound) and Lemma 2.1 (vii) (the constant terms, obtained
-  here directly from the recurrence).
+  62 (2024), no. 3, 241–257, Lemma 4.4 (the bound) and Lemma 2.1 (vii) (the binomial formula).
+  The proof uses `lucasU_eq_sum_choose` from `MathlibExt.NumberTheory.Recurrences.LucasBinomialSum`
+  at index one and obtains the subsequent odd-index residues from the recurrence.
 * Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*, INTEGERS 25 (2025),
   Article A107, 1–32, Proposition 2.3 (v). The proof reuses the even-index part of
   `p_dvd_lucasU_two_mul_and_lucasV_of_odd` from
@@ -51,7 +53,10 @@ open Finset
 private theorem lucasU_two_mul_add_one_modEq (P : LucasSequenceParams) (i : ℕ) :
     lucasU P (2 * i + 1) ≡ (-P.q) ^ i [ZMOD P.p] := by
   induction i with
-  | zero => simp [lucasU]
+  | zero =>
+    have hOne : lucasU P 1 = 1 := by
+      simpa using lucasU_eq_sum_choose P (r := 1) (by decide)
+    simp [hOne]
   | succ i ih =>
     rw [show 2 * (i + 1) + 1 = (2 * i + 1) + 2 by omega, lucasU_add_two, pow_succ', neg_mul]
     simpa only [zero_sub] using
