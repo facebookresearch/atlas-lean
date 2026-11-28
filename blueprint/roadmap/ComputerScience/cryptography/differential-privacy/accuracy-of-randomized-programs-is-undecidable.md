@@ -15,7 +15,7 @@ For a program $P_\epsilon$ depending on a privacy budget $\epsilon$ in an interv
 
 **Theorem (Barthe, Chadha, Krogmeier, Sistla and Viswanathan).** Both Accuracy-at-an-input and Accuracy-at-all-inputs are undecidable for the general class of randomized programs (Theorem 8).
 
-The proof in the appendix of the source uses only programs independent of $\epsilon$ with $\mathcal{U} = \mathcal{V} = \{0, 1\}$, both distances equal to $1$ between distinct points, and the single triple $(0, 0, 0)$. By contrast, the source identifies a non-trivial class of probabilistic programs for which accuracy is decidable, unconditionally or assuming Schanuel's conjecture (Section 6).
+The source does not fix a syntax for the general class of randomized programs; $I$ is an interval with rational end-points. The finite-input version the proof gives is the following: the program is a probabilistic while program with integer variables and choices of probability $1/2$ that simulates a given two-counter machine. The proof in the appendix of the source uses only programs independent of $\epsilon$ with $\mathcal{U} = \mathcal{V} = \{0, 1\}$, both distances equal to $1$ between distinct points, and the single triple $(0, 0, 0)$; such a program is $(0,0,0)$-accurate at input $0$ exactly when the machine does not halt from zero counters. By contrast, the source identifies a non-trivial class of probabilistic programs for which accuracy is decidable, unconditionally or assuming Schanuel's conjecture (Section 6).
 
 ## Depends on
 

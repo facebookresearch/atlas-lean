@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-Clause 1 is proved by mutual reductions between the three problems and a reduction from the equal-letters problem (the $Z$-intersection problem) to configuration reachability. Clause 2 follows because the $Z$-intersection problem is undecidable for indexed languages, which are exactly the languages of order-2 pushdown automata (Zetzsche), and these translate effectively into order-2 OI grammars and then into order-2 word schemes. A good expansion adds and links pages for the undecidability of the $Z$-intersection problem for indexed languages and for the mutual reductions of clause 1.
+Clause 1 is proved by mutual reductions between the three problems and a reduction from the equal-letters problem (the $Z$-intersection problem) to configuration reachability. Clause 2 follows because the $Z$-intersection problem is undecidable for indexed languages, which are exactly the languages of order-2 pushdown automata (Zetzsche), and these translate effectively into order-2 OI grammars and then into order-2 word schemes. A good expansion links pages for the undecidability of the $Z$-intersection problem for indexed languages and for the mutual reductions of clause 1.
 
 ## Sources
 
