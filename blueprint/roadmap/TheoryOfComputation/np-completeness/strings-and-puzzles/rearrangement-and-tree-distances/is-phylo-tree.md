@@ -1,0 +1,3 @@
+# Unrooted binary phylogenetic tree data
+
+Tree data $(v, E, \lambda)$, with $v$ vertices, an edge list $E$ and a list $\lambda$ of leaves, describe an unrooted binary phylogenetic tree on $m$ taxa when $E$ is simple (no repeated pair, no loop, no reversed pair, endpoints below $v$), its graph on $\{0, \dots, v - 1\}$ is a tree, the list $\lambda$ has length $m$, its entries are below $v$ and distinct, its entries are exactly the vertices of degree $1$, and every other vertex has degree $3$. The leaf of taxon $x < m$ is the entry $\lambda_x$. The supplied list matters: a single edge between two vertices has two leaves, and the leaf list $[0, 1]$ is accepted while $[0, 0]$ is not.

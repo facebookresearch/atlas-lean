@@ -84,7 +84,8 @@ def WellFormed (i : LongestArcPreservingCommonSubsequenceNestedInstance) : Prop 
 
 /-- There is an arc-preserving common subsequence of length at least `k`: order embeddings
 `f`, `g` of `Fin ℓ`, `k ≤ ℓ`, into the positions of `S₁` and `S₂` that match equal letters
-and map arcs of `P₁` exactly onto arcs of `P₂`. -/
+such that, for all selected indices `s` and `t`, `(f s, f t) ∈ P₁` exactly when
+`(g s, g t) ∈ P₂`. -/
 def LongestArcPreservingCommonSubsequenceNestedFeasible
     (i : LongestArcPreservingCommonSubsequenceNestedInstance) : Prop :=
   ∃ ℓ, i.2.2.2.2 ≤ ℓ ∧

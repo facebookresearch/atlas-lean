@@ -1,0 +1,3 @@
+# Instances given by an alphabet size, positive and negative samples and a bound
+
+An instance is a quadruple $(m, S, T, K)$: a natural alphabet size $m$, a list $S$ of sample words to accept, a list $T$ of sample words to reject, each word a list of natural labels, and a natural bound $K$. The labels need not be below $m$, and the two lists need not be disjoint. The same quadruples are the instances of MINIMUM INFERRED FINITE STATE AUTOMATON, where $K$ bounds the states, and of MINIMUM INFERRED REGULAR EXPRESSION, where $K$ bounds the occurrences of alphabet symbols; that affects the witness, not what is stored.

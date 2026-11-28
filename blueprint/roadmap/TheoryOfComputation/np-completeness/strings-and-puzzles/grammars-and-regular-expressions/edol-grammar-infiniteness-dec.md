@@ -1,0 +1,3 @@
+# EDOL GRAMMAR INFINITENESS as a decision problem
+
+The decision problem EDOL GRAMMAR INFINITENESS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(n, k, \delta, S)$ of nonterminal and terminal counts, a list of tables and an initial nonterminal, to an instance that is well-formed for EDOL GRAMMAR NON-EMPTINESS ($S$ is a nonterminal, every production takes a symbol to a string of symbols, and the grammar is EDOL: one table with exactly one production per symbol) and [feasible](edolgrammar-infiniteness-feasible.md) for EDOL GRAMMAR INFINITENESS. It rejects every bitstring that does not decode to such an instance.
