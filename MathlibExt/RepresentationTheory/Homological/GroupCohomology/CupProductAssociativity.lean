@@ -143,7 +143,17 @@ theorem barCochainCupPairing_assoc
       (𝟙 (((Rep.barComplex k G).linearYonedaObj k A).X p) ⊗ₘ
         (barCochainCupPairing G k B D).pair q r) ≫
       (barCochainCupPairing G k A (B ⊗ D)).pair p (q + r) := by
-  apply HomologicalComplex.linearYonedaCochainPair_associativity_of_diagrams
+  refine HomologicalComplex.linearYonedaCochainPair_associativity_of_diagrams
+    (R := k) (C := Rep k G)
+    (K₁ := Rep.barComplex k G) (K₂ := Rep.barComplex k G) (K₃ := Rep.barComplex k G)
+    (K₁₂ := Rep.barComplex k G) (K₂₃ := Rep.barComplex k G)
+    (Kₗ := Rep.barComplex k G) (Kᵣ := Rep.barComplex k G)
+    (M₁ := A) (M₂ := B) (M₃ := D) (M₁₂ := A ⊗ B) (M₂₃ := B ⊗ D)
+    (Mₗ := (A ⊗ B) ⊗ D) (Mᵣ := A ⊗ (B ⊗ D))
+    (barComplexDiagonal G k) (barComplexDiagonal G k)
+    (barComplexDiagonal G k) (barComplexDiagonal G k) (𝟙 (Rep.barComplex k G))
+    (𝟙 (A ⊗ B)) (𝟙 ((A ⊗ B) ⊗ D)) (𝟙 (B ⊗ D)) (𝟙 (A ⊗ (B ⊗ D)))
+    (α_ A B D).hom ?_ ?_ p q r
   · rw [show HomologicalComplex.tensorHom (barComplexDiagonal G k)
         (𝟙 (Rep.barComplex k G)) =
           barComplexDiagonal G k ▷ Rep.barComplex k G by rfl]
