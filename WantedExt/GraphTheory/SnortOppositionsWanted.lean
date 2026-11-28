@@ -49,6 +49,7 @@ public import Mathlib.Data.Fintype.Pi
 public import MathlibExt.Combinatorics.SimpleGraph.CompatibleOppositionProducts
 public import MathlibExt.Combinatorics.SimpleGraph.RookGraph
 public import MathlibExt.Combinatorics.SimpleGraph.SnortOppositions
+public import MathlibExt.Combinatorics.SimpleGraph.StrongGridOpposability
 public import MathlibExt.GameTheory.SnortOppositionStrategy
 public import MathlibExt.GraphTheory.SnortOppositionsExistsLargeTreeSnortSecondPlayerWins
 
@@ -84,21 +85,6 @@ pair). -/
 def IsSnortResponsePair [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (u v : V) : Prop :=
   u ≠ v ∧ ¬ G.Adj u v ∧ snortMoverWins G (Fintype.card V - 2) {u} {v} = false
-
-/-- **Strong grid.** For $k \in \mathbb{N}$ and natural numbers $n_0, \dots, n_{k-1}$, the
-$k$-dimensional strong grid $P_{n_0} \boxtimes \cdots \boxtimes P_{n_{k-1}}$ is the simple
-graph whose vertices are the tuples $(x_0, \dots, x_{k-1})$ of integers with $0 \le x_i < n_i$
-for each $i$, in which two vertices $x$ and $y$ are adjacent if and only if $x \ne y$ and
-$|x_i - y_i| \le 1$ for every $i$.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Corollary 3 (strong
-grids). -/
-def strongGrid {k : ℕ} (n : Fin k → ℕ) : SimpleGraph ((i : Fin k) → Fin (n i)) :=
-  SimpleGraph.fromRel fun x y => ∀ i, (x i : ℕ) ≤ y i + 1 ∧ (y i : ℕ) ≤ x i + 1
-
-instance {k : ℕ} (n : Fin k → ℕ) : DecidableRel (strongGrid n).Adj := fun x y =>
-  inferInstanceAs (Decidable (x ≠ y ∧ _))
 
 /-- **Cartesian grid.** For $k \in \mathbb{N}$ and side lengths $n_1, \dots, n_k \in \mathbb{N}$,
 the $k$-dimensional Cartesian grid has as vertices the tuples $(x_1, \dots, x_k)$ of integers
@@ -233,15 +219,6 @@ public theorem_wanted isCompatiblyAlmostOpposable_boxProd (G : SimpleGraph V)
       ∃ f : G.induce ({u}ᶜ : Set V) ≃g G.induce ({u}ᶜ : Set V),
         IsOpposition _ f ∧ ∀ x : ↥({u}ᶜ : Set V), α x = (f x : V)) :
     IsCompatiblyAlmostOpposable (G □ H)
-
-/-- **Almost opposability of strong grids.** Let $k \ge 1$ and $n_1, \dots, n_k \ge 1$. Then the
-$k$-dimensional strong grid $P_{n_1} \boxtimes \cdots \boxtimes P_{n_k}$, the strong product of the
-paths $P_{n_i}$ on $n_i$ vertices, is almost opposable.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Corollary 3. -/
-public theorem_wanted isAlmostOpposable_strongGrid {k : ℕ} (hk : 1 ≤ k) (n : Fin k → ℕ)
-    (hn : ∀ i, 1 ≤ n i) : IsAlmostOpposable (strongGrid n)
 
 /-- **Opposability of Cartesian grids.** Let $k \ge 1$ and $n_1, \dots, n_k \ge 1$, and let
 $G = P_{n_1} \square \cdots \square P_{n_k}$ be the $k$-dimensional Cartesian grid, the Cartesian
