@@ -73,23 +73,29 @@ noncomputable def ridgeLoss (Y : Matrix (Fin n) (Fin p) ℝ) (X : Matrix (Fin n)
   ‖Y - W - X * Bᵀ‖ ^ 2 + lam * ‖B‖ ^ 2
 
 /-- The `n × n` shrinkage matrix `D_λ = diag(√(λ / (λ + σ₁²)), …, √(λ / (λ + σ_d²)), 1, …, 1)`
-for the ridge parameter `λ = lam` and singular values `σ₁, …, σ_d`, given as
-`σ 0, …, σ (d - 1)`: its diagonal entry `i` is `√(λ / (λ + (σ i)²))` for `i < d` and `1` for
-`d ≤ i < n`. -/
+for the ridge parameter `λ = lam`, with `σ₁, …, σ_d` given as `σ 0, …, σ (d - 1)` (in
+`ridge_estimates`, the diagonal entries of `Σ` in a singular value decomposition `X = Q Σ Rᵀ`,
+whose absolute values are, up to order, the singular values of `X`): its diagonal entry `i` is
+`√(λ / (λ + (σ i)²))` for `i < d` and `1` for `d ≤ i < n`. -/
 noncomputable def shrinkage (n : ℕ) (lam : ℝ) (σ : Fin d → ℝ) : Matrix (Fin n) (Fin n) ℝ :=
   diagonal fun i => if h : i.val < d then √(lam / (lam + σ ⟨i.val, h⟩ ^ 2)) else 1
 
-/-- The ridge estimate `Ŵ = Q D_λ⁻¹ svd_K(D_λ Qᵀ Y)` of the latent matrix, for an `n × p`
-response matrix `Y`, ridge parameter `lam`, the left factor `Q` and singular values `σ` of a
-singular value decomposition of the primary variables, and rank `K`, where
-`D_λ = shrinkage n lam σ` and `svd_K` is the rank-`K` truncated singular value decomposition
-`truncSVD`. -/
+/-- The formula `Ŵ = Q D_λ⁻¹ svd_K(D_λ Qᵀ Y)` for the latent matrix of the ridge estimates, for
+an `n × p` response matrix `Y`, a real `lam`, an `n × n` matrix `Q`, `σ : Fin d → ℝ` and a rank
+`K`, where `D_λ = shrinkage n lam σ`, `svd_K` is the rank-`K` truncated singular value
+decomposition `truncSVD`, and `D_λ⁻¹` is Mathlib's inverse (`0` for a singular matrix). It is
+defined for all arguments. When `lam > 0`, `d < n` and `Q`, `σ` come from a singular value
+decomposition `X = Q Σ Rᵀ`, it is, with `effectEstimate`, a minimizer of `ridgeLoss` over latent
+matrices of rank at most `K` (`ridge_estimates`). -/
 noncomputable def latentEstimate (Y : Matrix (Fin n) (Fin p) ℝ) (lam : ℝ)
     (Q : Matrix (Fin n) (Fin n) ℝ) (σ : Fin d → ℝ) (K : ℕ) : Matrix (Fin n) (Fin p) ℝ :=
   Q * (shrinkage n lam σ)⁻¹ * truncSVD (shrinkage n lam σ * Qᵀ * Y) K
 
-/-- The ridge estimate of the effect sizes for a latent matrix `W`: the `p × d` matrix `B̂` with
-`B̂ᵀ = (XᵀX + λ I)⁻¹ Xᵀ (Y - W)`, where `λ = lam`, the ridge regression of `Y - W` on `X`. -/
+/-- The formula for the effect sizes given a latent matrix `W`: the `p × d` matrix `B̂` with
+`B̂ᵀ = (XᵀX + λ I)⁻¹ Xᵀ (Y - W)`, where `λ = lam` and the inverse is Mathlib's (`0` for a singular
+matrix), so that it is defined for every `lam`. For `lam > 0` it is the ridge regression of
+`Y - W` on `X`, and with `W = latentEstimate Y lam Q σ K` it completes the ridge estimates
+(`ridge_estimates`). -/
 noncomputable def effectEstimate (Y : Matrix (Fin n) (Fin p) ℝ) (X : Matrix (Fin n) (Fin d) ℝ)
     (lam : ℝ) (W : Matrix (Fin n) (Fin p) ℝ) : Matrix (Fin p) (Fin d) ℝ :=
   ((Xᵀ * X + lam • (1 : Matrix (Fin d) (Fin d) ℝ))⁻¹ * Xᵀ * (Y - W))ᵀ
@@ -295,9 +301,9 @@ private theorem svd_ridge (X : Matrix (Fin n) (Fin d) ℝ) (hd : d < n) {lam : �
 LFMM 2). Let `Y` be an `n × p` response matrix, `X` an `n × d` matrix of primary variables with
 `d < n`, `K : ℕ` and `λ = lam > 0`. Let `X = Q Σ Rᵀ` be a full singular value decomposition: `Q`
 (`n × n`) and `R` (`d × d`) orthogonal, and `Σ` the `n × d` matrix with `Σⱼⱼ = σ j` and all other
-entries zero, so that `σ 0, …, σ (d - 1)` are the singular values `σ₁, …, σ_d` (only their
-squares enter, so their signs do not matter). With `D_λ = shrinkage n λ σ`, the pair
-`Ŵ = Q D_λ⁻¹ svd_K(D_λ Qᵀ Y)` (`latentEstimate`) and `B̂` with
+entries zero, so that the absolute values `|σ 0|, …, |σ (d - 1)|` are, up to order, the singular
+values of `X` (only the squares `σ j ^ 2` enter, so the signs of the `σ j` do not matter). With
+`D_λ = shrinkage n λ σ`, the pair `Ŵ = Q D_λ⁻¹ svd_K(D_λ Qᵀ Y)` (`latentEstimate`) and `B̂` with
 `B̂ᵀ = (XᵀX + λ I)⁻¹ Xᵀ (Y - Ŵ)` (`effectEstimate`) minimizes the ridge loss
 `‖Y - W - X Bᵀ‖² + λ ‖B‖²` (`ridgeLoss`) over all `W` of rank at most `K` and all `B`: `Ŵ` has
 rank at most `K`, and no such pair has a smaller loss. It is the only minimizer whenever the
