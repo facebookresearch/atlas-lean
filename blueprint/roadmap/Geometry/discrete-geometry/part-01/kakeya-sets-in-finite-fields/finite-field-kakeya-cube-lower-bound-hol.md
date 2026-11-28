@@ -13,4 +13,4 @@ $|F|^{5/2}$, with $\varepsilon = 1/2$.
 
 ## Sources
 
-- AIM workshop Recent trends in additive combinatorics (2004), problem list collected by E. Croot and V. F. Lev, https://aimath.org/WWN/additivecomb/additivecomb.pdf, Problem 3.8 (T. Tao); resolution: Z. Dvir, On the size of Kakeya sets in finite fields, J. Amer. Math. Soc. 22 (2009), 1093-1097, arXiv:0803.2336, Theorem 3 (Section 1.1, the Alon-Tao improvement of Theorem 1): every Kakeya set K ⊂ Fⁿ satisfies |K| ≥ C_n qⁿ with C_n depending only on n; for n = 3 this is |K| ≫ q³, https://doi.org/10.1090/S0894-0347-08-00607-3.
+- AIM workshop Recent trends in additive combinatorics (2004), problem list collected by E. Croot and V. F. Lev, Problem 3.8 (T. Tao); resolution: Z. Dvir, On the size of Kakeya sets in finite fields, J. Amer. Math. Soc. 22 (2009), 1093-1097, arXiv:0803.2336, Theorem 3 (Section 1.1, the Alon-Tao improvement of Theorem 1): every Kakeya set K ⊂ Fⁿ satisfies |K| ≥ C_n qⁿ with C_n depending only on n; for n = 3 this is |K| ≫ q³, https://doi.org/10.1090/S0894-0347-08-00607-3.

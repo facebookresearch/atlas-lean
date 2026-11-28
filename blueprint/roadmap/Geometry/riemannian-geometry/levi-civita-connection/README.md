@@ -7,3 +7,12 @@
 - [Agreement of covariant derivatives on smooth vector fields](same-on-smooth.md)
 - [Smoothness of the Levi-Civita connection](cont-mdiff-covariant-derivative-levi-civ.md)
 - [Fundamental theorem of Riemannian geometry (Levi-Civita)](levi-civita-exists-unique.md)
+
+## Dually flat structures
+
+- [Partial derivative](../../../Analysis/function-spaces/sobolev-embedding-theorem/partial-deriv.md)
+- [Christoffel symbols of a metric on $\mathbb{R}^n$](christoffel.md)
+- [Levi-Civita connection shifted by a cubic tensor](shifted-connection.md)
+- [Curvature of a connection in coordinates](curvature.md)
+- [Amari's question: does every metric admit a dually flat structure?](every-metric-admits-dually-flat-structur.md)
+- [Not every Riemannian metric admits a dually flat structure](every-metric-admits-dually-flat-structur-2.md)

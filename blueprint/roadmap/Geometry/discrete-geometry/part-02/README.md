@@ -1,4 +1,4 @@
-# Part 2 of 2
+# Part 2 of 4
 
 - [Bravais lattices and lattice relabeling](bravais-lattices-and-lattice-relabeling/README.md)
 - [Metric tensors, Miller indices and interplanar spacing](metric-tensors-miller-indices-and-interplanar-sp/README.md)

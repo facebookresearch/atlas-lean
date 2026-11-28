@@ -28,3 +28,15 @@
 
 - [Positively curved Einstein four-manifolds without an orientability hypothesis](positively-curved-einstein-four-manifolds.md)
 - [Manifolds admitting a metric of positive scalar curvature](admits-positive-scalar-curvature-metric.md)
+
+## Milnor's conjecture on fundamental groups of manifolds with nonnegative Ricci curvature
+
+- [Milnor's finite-generation property in dimension $n$](milnor-finite-generation.md)
+- [Milnor's conjecture in some dimension at least six](milnor-finite-generation-in-some-dimensi.md)
+- [Milnor's conjecture fails in every dimension at least six](milnor-finite-generation-in-some-dimensi-2.md)
+
+## Tori cannot collapse to an interval
+
+- [Manifolds diffeomorphic to the standard torus](is-standard-torus.md)
+- [Statement of tori cannot collapse to an interval](tori-cannot-collapse-to-interval.md)
+- [Tori cannot collapse to an interval](tori-cannot-collapse-to-interval-holds.md)

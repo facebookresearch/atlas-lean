@@ -18,3 +18,7 @@ Optimal arrangements of congruent bodies in space and the smallest sets or fewes
 - [Cylinder covering](cylinder-covering/README.md)
 - [High-dimensional sphere packing](high-dimensional-sphere-packing/README.md)
 - [Spherical code rate bounds](spherical-code-rate-bounds/README.md)
+- [Decomposability of coverings by convex translates](decomposability-of-coverings-by-convex-translate/README.md)
+- [Three-coloring of coverings by convex homothets](three-coloring-of-coverings-by-convex-homothets/README.md)
+- [Sphere packing in dimensions 8 and 24](sphere-packing-in-dimensions-8-and-24/README.md)
+- [Sum of side lengths of squares packed in a square](sum-of-side-lengths-of-squares-packed-in-a-squar/README.md)

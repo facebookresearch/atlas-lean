@@ -1,0 +1,9 @@
+# Perles-Shephard: finitely many projectively unique $d$-polytopes?
+
+Conjecture (Perles and Shephard): for every $d \in \mathbb{N}$ there is a finite collection $L$ of finite subsets of $\mathbb{R}^d$ such that every projectively unique $d$-polytope $V$ is combinatorially equivalent to some $W \in L$. That is, for each fixed $d$ there are only finitely many combinatorial types of projectively unique $d$-polytopes.
+
+Here a $d$-polytope is given by its vertex set: a finite set $V \subseteq \mathbb{R}^d$ whose affine span is $\mathbb{R}^d$ and which is in convex position (no point of $V$ lies in the convex hull of the others). A facet of $V$ (for $d \ge 1$) is a nonempty subset $F \subseteq V$ of the form $F = \{v \in V : \ell(v) = c\}$ for a nonzero linear functional $\ell$ and $c \in \mathbb{R}$ with $\ell \le c$ on $V$, so that $\ell$ attains its maximum over $V$ exactly on $F$, whose affine span has dimension $d - 1$; for $d = 0$ there are no facets. A combinatorial equivalence from $V$ to $W$ is a map $f$ that is a bijection from $V$ onto $W$ such that, for every $F \subseteq V$, $F$ is a facet of $V$ if and only if $f(F)$ is a facet of $W$. A $d$-polytope $V$ is projectively unique when every combinatorial equivalence $f$ from $V$ onto a $d$-polytope $W$ agrees on $V$ with a projective transformation $x \mapsto (y_1, \dots, y_d)/y_{d+1}$, $y = M (x, 1)$, for some invertible $(d + 1) \times (d + 1)$ matrix $M$ with $(M (v, 1))_{d+1} > 0$ for all $v \in V$. It is false; the refutation is [Infinitely many projectively unique polytopes in some dimension](finitely-many-projectively-unique-types-2.md).
+
+## Sources
+
+- G. M. Ziegler (joint work with K. Adiprasito), Polytopes with low-dimensional realization spaces, in Discrete Geometry, Oberwolfach Reports 8 (2011), Report 44/2011, pp. 2522-2525, Question 1, https://doi.org/10.4171/OWR/2011/44

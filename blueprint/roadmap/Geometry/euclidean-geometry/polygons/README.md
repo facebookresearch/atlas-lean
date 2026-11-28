@@ -8,3 +8,4 @@ Theorems about quadrilaterals, cyclic polygons and squares erected on polygon si
 - [Euler's quadrilateral theorem](euler-quadrilateral.md)
 - [Japanese theorem for concyclic quadrilaterals](japanese-theorem-concyclic-quadrilateral.md)
 - [Varignon's theorem](varignon.md)
+- [Illumination of mirrored rooms](illumination-of-mirrored-rooms/README.md)

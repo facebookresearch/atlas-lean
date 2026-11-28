@@ -2,7 +2,7 @@
 
 Finite point configurations and their distances, polytopes and polyhedra, dissections and tilings, lattice points and extremal shape problems.
 
-## [Part 1 of 2](part-01/README.md)
+## [Part 1 of 4](part-01/README.md)
 
 - [Blumenthal's minimax angle problem](part-01/blumenthal-s-minimax-angle-problem/README.md)
 - [Continuous Turán numbers of planar patterns](part-01/continuous-tur-n-numbers-of-planar-patterns/README.md)
@@ -25,7 +25,7 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 - [Euler's polyhedron formula](part-01/euler-polyhedron-formula.md)
 - [Monsky's theorem](part-01/monsky-theorem.md)
 
-## [Part 2 of 2](part-02/README.md)
+## [Part 2 of 4](part-02/README.md)
 
 - [Bravais lattices and lattice relabeling](part-02/bravais-lattices-and-lattice-relabeling/README.md)
 - [Metric tensors, Miller indices and interplanar spacing](part-02/metric-tensors-miller-indices-and-interplanar-sp/README.md)
@@ -39,6 +39,47 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 - [Euclidean affine spaces satisfy the curvature-0 four-point comparison](part-02/euclidean-affine-spaces-are-alexandrov-of-curvat/README.md)
 - [Four-point comparison for curvature bounded below](part-02/four-point-comparison-for-curvature-bounded-belo/README.md)
 
+## [Acute triangulations of the cube to Integral heptagons in general position](part-03/README.md)
+
+- [Acute triangulations of the cube](part-03/acute-triangulations-of-the-cube/README.md)
+- [Bourgain's incidence problem for lines](part-03/bourgain-s-incidence-problem-for-lines/README.md)
+- [Circle squaring by translations](part-03/circle-squaring-by-translations/README.md)
+- [Circumscribing polygons of disjoint segments](part-03/circumscribing-polygons-of-disjoint-segments/README.md)
+- [Lower bound for the number of connecting lines](part-03/lower-bound-for-the-number-of-connecting-lines/README.md)
+- [Distance energy of convex polygons](part-03/distance-energy-of-convex-polygons/README.md)
+- [Distinct distances in convex polygons](part-03/distinct-distances-in-convex-polygons/README.md)
+- [Number of pairs at the diameter](part-03/number-of-pairs-at-the-diameter/README.md)
+- [Unbounded discrepancy for discs](part-03/unbounded-discrepancy-for-discs/README.md)
+- [Energy of distance multiplicities](part-03/energy-of-distance-multiplicities/README.md)
+- [Empty convex polygons in point sets](part-03/empty-convex-polygons-in-point-sets/README.md)
+- [Isosceles-free subsets of point sets](part-03/isosceles-free-subsets-of-point-sets/README.md)
+- [Isosceles trapezoids of area one in sets of infinite measure](part-03/isosceles-trapezoids-of-area-one-in-sets-of-infi/README.md)
+- [Product of the multiplicities of extreme distances](part-03/product-of-the-multiplicities-of-extreme-distanc/README.md)
+- [Cap discrepancy of Fekete points](part-03/cap-discrepancy-of-fekete-points/README.md)
+- [Four points determining at least five distances](part-03/four-points-determining-at-least-five-distances/README.md)
+- [Gallai triangles in line arrangements](part-03/gallai-triangles-in-line-arrangements/README.md)
+- [Integral heptagons in general position](part-03/integral-heptagons-in-general-position/README.md)
+
+## [The joints problem to Unit squares in the complement of a set](part-04/README.md)
+
+- [The joints problem](part-04/the-joints-problem/README.md)
+- [Lines avoiding a set of blockers](part-04/lines-avoiding-a-set-of-blockers/README.md)
+- [Lines in three-dimensional Euclidean space](part-04/lines-in-three-dimensional-euclidean-space/README.md)
+- [Monochromatic rectangles of every area](part-04/monochromatic-rectangles-of-every-area/README.md)
+- [Obtuse angles among points in high dimension](part-04/obtuse-angles-among-points-in-high-dimension/README.md)
+- [Growth of the number of ordinary lines](part-04/growth-of-the-number-of-ordinary-lines/README.md)
+- [Partitioning complete geometric graphs into plane trees](part-04/partitioning-complete-geometric-graphs-into-plan/README.md)
+- [Rich lines and the Szemerédi–Trotter bound](part-04/rich-lines-and-the-szemer-di-trotter-bound/README.md)
+- [Schur's conjecture on diameter simplices](part-04/schur-s-conjecture-on-diameter-simplices/README.md)
+- [Hamiltonian cycles in segment visibility graphs](part-04/hamiltonian-cycles-in-segment-visibility-graphs/README.md)
+- [Hamiltonian polygons of disjoint segments](part-04/hamiltonian-polygons-of-disjoint-segments/README.md)
+- [Visibility among disjoint segments](part-04/visibility-among-disjoint-segments/README.md)
+- [Spherical cap discrepancy](part-04/spherical-cap-discrepancy/README.md)
+- [Distance multiplicities of staircase point sets](part-04/distance-multiplicities-of-staircase-point-sets/README.md)
+- [Steinhaus lattice point problem](part-04/steinhaus-lattice-point-problem/README.md)
+- [Density of sets avoiding unit distances](part-04/density-of-sets-avoiding-unit-distances/README.md)
+- [Unit squares in the complement of a set](part-04/unit-squares-in-the-complement-of-a-set/README.md)
+
 ## Research directions
 
 - [Crystallization for the Lennard-Jones potential in the plane](crystallization-for-the-lennard-jones-potential-in-the-plane.md)
@@ -49,3 +90,4 @@ Finite point configurations and their distances, polytopes and polyhedra, dissec
 ## Contents
 
 - [Euclidean Steinitz–Bergström bound with one constant](euclidean-signed-and-reordered-prefix-bound.md)
+- [Fair partitions of convex polygons](fair-partitions-of-convex-polygons/README.md)

@@ -17,3 +17,4 @@ Manifolds with complex, almost complex, symplectic or contact structures, Rieman
 - [From taming to compatibility on closed four-manifolds](tamed-almost-complex-structure-compatible.md)
 - [A three-fixed-point Hamiltonian counterexample on a projective quadric](quadric-threefold-arnold-counterexample.md)
 - [Negatively pinched Hartogs domains](negatively-pinched-hartogs-domains/README.md)
+- [Picard-type theorems for hyperplanes](picard-type-theorems-for-hyperplanes/README.md)
