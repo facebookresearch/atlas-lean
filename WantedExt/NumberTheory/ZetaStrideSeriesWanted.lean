@@ -175,28 +175,6 @@ public theorem_wanted tendsto_strideSums_dirichletLambda (q t : ℕ) (hq : 0 < q
           (strideAlternatingSum q t (n + 1) + (-1 : ℝ) ^ n * strideSignedSum q t (n + 1)))
       atTop (𝓝 (∑' n : ℕ, 1 / (2 * (n : ℝ) + 1) ^ (t + 1)))
 
-/-- **Alternating stride sum series for $\zeta(p + t + 1)$.** Let $q \ge 1$ and $t \ge 1$ be
-integers, let $p \ge 0$ be an even integer and let $S_{q,t}$ denote the alternating stride sum.
-Then the partial sums
-$$
-\sum_{n=1}^{N} \frac{n^{p+1} + (n + q)^{p+1}}{(n(n + q))^{p+1}} \, S_{q,t}(n)
-$$
-converge to $\zeta(p + t + 1)$ as $N \to \infty$, where $\zeta$ is the Riemann zeta function.
-
-Only the first equality of equation (32) is stated; its second expression uses a quantity
-$A^{(t)}$ that the record does not define.
-
-Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
-Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, Theorem 4,
-equation (32). -/
-public theorem_wanted tendsto_strideAlternatingSum_riemannZeta_add (q t p : ℕ) (hq : 0 < q)
-    (ht : 0 < t) (hp : Even p) :
-    Tendsto (fun N : ℕ => ((∑ n ∈ Finset.range N,
-        (((n : ℝ) + 1) ^ (p + 1) + ((n : ℝ) + 1 + q) ^ (p + 1)) /
-          (((n : ℝ) + 1) * ((n : ℝ) + 1 + q)) ^ (p + 1) *
-            strideAlternatingSum q t (n + 1) : ℝ) : ℂ))
-      atTop (𝓝 (riemannZeta ((p : ℂ) + t + 1)))
-
 /-- **Higher-power stride series for the Dirichlet eta function.** Let $q, t \ge 1$ be integers,
 let $p \ge 0$ be an even integer, and let $T_{q,t}(n)$ denote the signed stride sum. Then the
 partial sums

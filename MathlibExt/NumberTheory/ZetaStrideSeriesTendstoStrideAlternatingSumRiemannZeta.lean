@@ -11,19 +11,25 @@ module
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
 import Mathlib.Analysis.SpecificLimits.Normed
-import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
 # Alternating stride sum series for the Riemann zeta function
 
-This module defines the alternating stride sum and proves convergence of its weighted
-partial sums to the Riemann zeta function at positive integer arguments greater than one.
+This module defines the alternating stride sum. For integers $q,t \ge 1$, it proves that the
+partial sums with weight $1/n + 1/(n+q)$ converge to $\zeta(t+1)$, and that for nonnegative
+even integers $p$ the partial sums with weight $1/n^{p+1} + 1/(n+q)^{p+1}$ converge to
+$\zeta(p+t+1)$. The proof uses the stride recurrence and finite telescoping; it does not
+need the parity hypothesis, which is retained in the statement of Theorem 4.
 
-Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
-Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, Theorem 1,
-equation (9).
+## References
+
+* Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
+  Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, pp. 1–17,
+  Theorem 1, equation (9), and Theorem 4, equation (32), first equality.
+  The higher-power proof generalizes the finite telescoping proof already used here for
+  `tendsto_strideAlternatingSum_riemannZeta`.
 -/
 
 namespace MetaMathlibExt
@@ -139,68 +145,74 @@ private theorem stride_bound (q t n : ℕ) (hq : 0 < q) (hn : 0 < n) :
       norm_sum_range_neg_one_pow_mul_le_two_mul _ K ha hm
     _ ≤ 2 := by linarith
 
-private theorem weighted_term (q t n : ℕ) (hq : 0 < q) (hn : 0 < n) :
-    (2 * (n : ℝ) + q) / ((n : ℝ) * ((n : ℝ) + q)) * strideAlternatingSum q t n =
-      strideAlternatingSum q t n / n -
-        strideAlternatingSum q t (n + q) / (n + q : ℕ) +
-          1 / ((n + q : ℕ) : ℝ) ^ (t + 1) := by
-  rw [strideAlternatingSum_add hq hn, Nat.cast_add, pow_succ]
-  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
-  have hnq0 : (n : ℝ) + q ≠ 0 := by positivity
-  field_simp
+private theorem weighted_term (q t p n : ℕ) (hq : 0 < q) (hn : 0 < n) :
+    ((n : ℝ) ^ (p + 1) + ((n : ℝ) + q) ^ (p + 1)) /
+        ((n : ℝ) * ((n : ℝ) + q)) ^ (p + 1) * strideAlternatingSum q t n =
+      strideAlternatingSum q t n / (n : ℝ) ^ (p + 1) -
+        strideAlternatingSum q t (n + q) / ((n + q : ℕ) : ℝ) ^ (p + 1) +
+          1 / ((n + q : ℕ) : ℝ) ^ (p + t + 1) := by
+  have hn' : 0 < (n : ℝ) := by exact_mod_cast hn
+  have hnq' : 0 < ((n + q : ℕ) : ℝ) := by exact_mod_cast (show 0 < n + q by omega)
+  have hweight :
+      ((n : ℝ) ^ (p + 1) + ((n + q : ℕ) : ℝ) ^ (p + 1)) /
+          ((n : ℝ) * ((n + q : ℕ) : ℝ)) ^ (p + 1) =
+        1 / (n : ℝ) ^ (p + 1) + 1 / ((n + q : ℕ) : ℝ) ^ (p + 1) := by
+    rw [div_add_div 1 1 (pow_ne_zero _ hn'.ne') (pow_ne_zero _ hnq'.ne'), mul_pow]
+    ring
+  rw [← Nat.cast_add, hweight, strideAlternatingSum_add hq hn,
+    show p + t + 1 = t + (p + 1) by omega, pow_add ((n + q : ℕ) : ℝ) t (p + 1)]
+  simp only [div_eq_mul_inv, mul_inv_rev]
   ring
 
-private theorem window_shift (f : ℕ → ℝ) (q N : ℕ) :
-    (∑ j ∈ Finset.range q, f (N + j + 1)) -
-        (∑ j ∈ Finset.range q, f (N + 1 + j + 1)) =
-      f (N + 1) - f (N + q + 1) := by
-  have h := (Finset.sum_range_succ' (fun j => f (N + j + 1)) q).symm.trans
-    (Finset.sum_range_succ (fun j => f (N + j + 1)) q)
-  simp only [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm, Nat.zero_add] at h ⊢
-  linarith
-
-private theorem finite_identity (q t : ℕ) (hq : 0 < q) (N : ℕ) :
+private theorem finite_identity (q t p : ℕ) (hq : 0 < q) (N : ℕ) :
     (∑ n ∈ Finset.range N,
-      (2 * ((n : ℝ) + 1) + q) / (((n : ℝ) + 1) * ((n : ℝ) + 1 + q)) *
-        strideAlternatingSum q t (n + 1)) =
-      (∑ n ∈ Finset.range (N + q), 1 / ((n + 1 : ℕ) : ℝ) ^ (t + 1)) -
+      (((n : ℝ) + 1) ^ (p + 1) + ((n : ℝ) + 1 + q) ^ (p + 1)) /
+        (((n : ℝ) + 1) * ((n : ℝ) + 1 + q)) ^ (p + 1) * strideAlternatingSum q t (n + 1)) =
+      (∑ n ∈ Finset.range (N + q), 1 / ((n + 1 : ℕ) : ℝ) ^ (p + t + 1)) -
         ∑ j ∈ Finset.range q,
-          strideAlternatingSum q t (N + j + 1) / (N + j + 1 : ℕ) := by
-  induction N with
-  | zero =>
-    simp only [Finset.range_zero, Finset.sum_empty, zero_add]
-    symm
-    rw [sub_eq_zero]
-    apply Finset.sum_congr rfl
-    intro j hj
-    rw [strideAlternatingSum_of_le (by omega) (by simpa using Finset.mem_range.mp hj)]
-    simp [pow_succ, div_eq_mul_inv, mul_comm]
-  | succ N ih =>
-    rw [Finset.sum_range_succ, ih]
-    have h := weighted_term q t (N + 1) hq (by omega)
-    simp only [Nat.cast_add, Nat.cast_one] at h
-    rw [h]
-    rw [(by omega : N + 1 + q = N + q + 1), Finset.sum_range_succ]
-    have hw := window_shift (fun n => strideAlternatingSum q t n / (n : ℝ)) q N
-    simp only [Nat.cast_add, Nat.cast_one, add_assoc, add_left_comm, add_comm] at hw ⊢
-    linarith
+          strideAlternatingSum q t (N + j + 1) / ((N + j + 1 : ℕ) : ℝ) ^ (p + 1) := by
+  let f (n : ℕ) := strideAlternatingSum q t (n + 1) / ((n + 1 : ℕ) : ℝ) ^ (p + 1)
+  let g (n : ℕ) := 1 / ((n + 1 : ℕ) : ℝ) ^ (p + t + 1)
+  have h₀ : ∑ n ∈ Finset.range q, f n = ∑ n ∈ Finset.range q, g n := by
+    refine Finset.sum_congr rfl fun n hn => ?_
+    dsimp [f, g]
+    rw [strideAlternatingSum_of_le (Nat.succ_pos n) (Finset.mem_range.mp hn), div_div,
+      ← pow_add, show t + (p + 1) = p + t + 1 by omega]
+  calc
+    _ = ∑ n ∈ Finset.range N, (f n - f (q + n) + g (q + n)) := by
+      refine Finset.sum_congr rfl fun n _ => ?_
+      simpa only [f, g, Nat.cast_add, Nat.cast_one, Nat.add_right_comm, Nat.add_comm q] using
+        weighted_term q t p (n + 1) hq (Nat.succ_pos n)
+    _ = (∑ n ∈ Finset.range (N + q), g n) - ∑ j ∈ Finset.range q, f (N + j) := by
+      rw [Finset.sum_add_distrib, Finset.sum_sub_distrib]
+      have hf := (Finset.sum_range_add f N q).symm.trans
+        (by simpa only [Nat.add_comm q N] using Finset.sum_range_add f q N)
+      have hg := Finset.sum_range_add g q N
+      rw [Nat.add_comm q N] at hg
+      linarith
 
-private theorem stride_div_tendsto_zero (q t j : ℕ) (hq : 0 < q) :
-    Tendsto (fun N : ℕ => strideAlternatingSum q t (N + j + 1) / (N + j + 1 : ℕ))
-      atTop (𝓝 (0 : ℝ)) := by
+private theorem stride_div_tendsto_zero (q t p j : ℕ) (hq : 0 < q) :
+    Tendsto (fun N : ℕ => strideAlternatingSum q t (N + j + 1) /
+      ((N + j + 1 : ℕ) : ℝ) ^ (p + 1)) atTop (𝓝 (0 : ℝ)) := by
   apply squeeze_zero_norm (a := fun N : ℕ => 2 / (N + j + 1 : ℕ))
   · intro N
-    rw [norm_div, Real.norm_natCast]
-    exact div_le_div_of_nonneg_right (stride_bound q t (N + j + 1) hq (by omega))
-      (by positivity)
+    have hn : 1 ≤ ((N + j + 1 : ℕ) : ℝ) := Nat.one_le_cast.mpr (by omega)
+    rw [norm_div, norm_pow, Real.norm_natCast]
+    calc
+      _ ≤ 2 / ((N + j + 1 : ℕ) : ℝ) ^ (p + 1) :=
+        div_le_div_of_nonneg_right (stride_bound q t (N + j + 1) hq (by omega)) (by positivity)
+      _ ≤ 2 / (N + j + 1 : ℕ) := by
+        apply div_le_div_of_nonneg_left (by norm_num) (by positivity)
+        simpa only [pow_one] using pow_le_pow_right₀ hn (show 1 ≤ p + 1 by omega)
   · exact (tendsto_natCast_atTop_atTop (R := ℝ) |>.comp
       (tendsto_add_atTop_nat (j + 1))).const_div_atTop 2
 
-private theorem boundary_tendsto_zero (q t : ℕ) (hq : 0 < q) :
+private theorem boundary_tendsto_zero (q t p : ℕ) (hq : 0 < q) :
     Tendsto (fun N : ℕ => ∑ j ∈ Finset.range q,
-      strideAlternatingSum q t (N + j + 1) / (N + j + 1 : ℕ)) atTop (𝓝 (0 : ℝ)) := by
+      strideAlternatingSum q t (N + j + 1) / ((N + j + 1 : ℕ) : ℝ) ^ (p + 1))
+      atTop (𝓝 (0 : ℝ)) := by
   simpa using tendsto_finsetSum (Finset.range q)
-    (fun j _ => stride_div_tendsto_zero q t j hq)
+    (fun j _ => stride_div_tendsto_zero q t p j hq)
 
 private theorem zeta_partial_sums (t : ℕ) (ht : 0 < t) :
     Tendsto (fun N : ℕ => ((∑ n ∈ Finset.range N,
@@ -217,6 +229,21 @@ private theorem zeta_partial_sums (t : ℕ) (ht : 0 < t) :
   have hshift := (summable_nat_add_iff 1).mpr hsc
   rw [hz]
   simpa using hshift.hasSum.tendsto_sum_nat
+
+private theorem tendsto_strideAlternatingSum_riemannZeta_pow (q t p : ℕ) (hq : 0 < q)
+    (ht : 0 < t) :
+    Tendsto (fun N : ℕ => ((∑ n ∈ Finset.range N,
+        (((n : ℝ) + 1) ^ (p + 1) + ((n : ℝ) + 1 + q) ^ (p + 1)) /
+          (((n : ℝ) + 1) * ((n : ℝ) + 1 + q)) ^ (p + 1) *
+            strideAlternatingSum q t (n + 1) : ℝ) : ℂ))
+      atTop (𝓝 (riemannZeta ((p : ℂ) + t + 1))) := by
+  have hz := (zeta_partial_sums (p + t) (by omega)).comp (tendsto_add_atTop_nat q)
+  have hb := (Complex.continuous_ofReal.tendsto 0).comp (boundary_tendsto_zero q t p hq)
+  have h := hz.sub hb
+  simp only [Complex.ofReal_zero, sub_zero, Nat.cast_add] at h
+  apply h.congr
+  intro N
+  simp only [Function.comp_apply, finite_identity q t p hq N, Complex.ofReal_sub, Nat.cast_add]
 
 /-- **Alternating stride sum series for $\zeta(t + 1)$.** Let $q \ge 1$ and $t \ge 1$ be integers
 and let $S_{q,t}$ denote the alternating stride sum. Then the partial sums
@@ -241,13 +268,31 @@ public theorem tendsto_strideAlternatingSum_riemannZeta (q t : ℕ) (hq : 0 < q)
         (2 * ((n : ℝ) + 1) + q) / (((n : ℝ) + 1) * ((n : ℝ) + 1 + q)) *
           strideAlternatingSum q t (n + 1) : ℝ) : ℂ))
       atTop (𝓝 (riemannZeta ((t : ℂ) + 1))) := by
-  have hz := (zeta_partial_sums t ht).comp (tendsto_add_atTop_nat q)
-  have hb := (Complex.continuous_ofReal.tendsto 0).comp (boundary_tendsto_zero q t hq)
-  have h := hz.sub hb
-  simp only [Complex.ofReal_zero, sub_zero] at h
-  apply h.congr
-  intro N
-  simp only [Function.comp_apply, finite_identity q t hq N, Complex.ofReal_sub]
+  simpa [pow_one, two_mul, add_assoc] using tendsto_strideAlternatingSum_riemannZeta_pow q t 0 hq ht
+
+/-- **Alternating stride sum series for $\zeta(p + t + 1)$.** Let $q \ge 1$ and $t \ge 1$ be
+integers, let $p \ge 0$ be an even integer and let $S_{q,t}$ denote the alternating stride sum.
+Then the partial sums
+$$
+\sum_{n=1}^{N} \frac{n^{p+1} + (n + q)^{p+1}}{(n(n + q))^{p+1}} \, S_{q,t}(n)
+$$
+converge to $\zeta(p + t + 1)$ as $N \to \infty$, where $\zeta$ is the Riemann zeta function.
+
+This theorem formalizes only the first equality of equation (32).
+
+Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
+Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, Theorem 4,
+equation (32). -/
+public theorem tendsto_strideAlternatingSum_riemannZeta_add (q t p : ℕ) (hq : 0 < q)
+    (ht : 0 < t) (hp : Even p) :
+    Tendsto (fun N : ℕ => ((∑ n ∈ Finset.range N,
+        (((n : ℝ) + 1) ^ (p + 1) + ((n : ℝ) + 1 + q) ^ (p + 1)) /
+          (((n : ℝ) + 1) * ((n : ℝ) + 1 + q)) ^ (p + 1) *
+            strideAlternatingSum q t (n + 1) : ℝ) : ℂ))
+      atTop (𝓝 (riemannZeta ((p : ℂ) + t + 1))) := by
+  -- Finite telescoping works without parity; keep the hypothesis of Theorem 4.
+  obtain ⟨k, rfl⟩ := hp
+  exact tendsto_strideAlternatingSum_riemannZeta_pow q t (k + k) hq ht
 
 end
 
