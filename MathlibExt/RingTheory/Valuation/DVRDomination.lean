@@ -22,7 +22,8 @@ its maximal ideal (`IsLocalRing.exists_isDiscreteValuationRing_dominating`).
 This is the case `dim R ≤ 1`, `L/K` finite of the Stacks project, Lemma 10.119.13
 (Tag 00PH), https://stacks.math.columbia.edu/tag/00PH, which is the last step of its proof; the
 general statement (any Noetherian local domain, `L/K` finitely generated) reduces to it there by a
-transcendence basis and Lemma 10.119.1, which are not formalized here. The proof takes a
+transcendence basis and Lemma 10.119.1, and that reduction is formalized in
+`MathlibExt.RingTheory.Valuation.DVRDominationNoetherian`. The proof takes a
 valuation subring of `L` dominating the image of `R` and applies the Krull–Akizuki theorem in the
 form `ValuationSubring.isDiscreteValuationRing_of_algebraMap_mem_of_finite`.
 -/
