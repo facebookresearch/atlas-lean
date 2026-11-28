@@ -1488,6 +1488,7 @@
       "published_sha256": "7d98fbc2fa7bcc1b30645f2e1ed8acbdaef181ebd56fcacb18243ebbbf49f8be",
       "upstream_sha256": "196030c16e4fa0d18f551cdcaeb2a13c5f428b3e6737f52f5e387d95f300bb1a"
     },
+    {"path": "MathlibExt/CategoryTheory/Functor/ComparisonTransport.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a17e245045a1e4efb660939bde61fc4e3477dc77746f3f484b45bb2520362081", "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained. The module and declaration documentation states all mathematical objects, hypotheses, conventions and coordinate laws in Atlas style, preserving noncomment Lean tokens and legal credits.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "ff1b99e48ab025a3826132b4a893738e2426014cb2059aa22e7c8f0956219df5"},
     {
       "path": "MathlibExt/CategoryTheory/Functor/Effaceable.lean",
       "backport": "not-needed",
