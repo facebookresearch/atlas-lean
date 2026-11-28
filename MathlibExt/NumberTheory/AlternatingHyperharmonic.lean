@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MathlibExt.NumberTheory.GeneralizedHarmonicGamma
 import Mathlib.Analysis.PSeries
 import Mathlib.Data.Nat.Choose.Basic
 import MathlibExt.Analysis.Series.StolzCesaro
@@ -17,10 +18,24 @@ import MathlibExt.Analysis.SpecialFunctions.Log.AlternatingHarmonic
 import MathlibExt.NumberTheory.Harmonic.ShiftedChoose
 
 /-!
-# Type II alternating hyperharmonic numbers
+# Generalized hyperharmonic numbers and the type II alternating variant
 
-The type II numbers of order `r` are asymptotic to the alternating zeta value
-times `n ^ (r - 1) / (r - 1)!`.
+For natural $p \ge 2$ and $r \ge 1$, the generalized hyperharmonic number $H_n^{(p,r)}$ is
+asymptotic to $n^{r-1}\zeta(p)/(r-1)!$ as $n$ tends to infinity. For natural $p,r \ge 1$, the
+same estimate holds for the type II alternating numbers with $\bar\zeta(p)$ in place of $\zeta(p)$.
+Both proofs use Stolz–Cesàro: the first differences of the iterated sums and of the shifted
+binomial coefficients give the normalized sums of the preceding order. This avoids the
+coefficient expansion in Li's proofs.
+
+## References
+
+* Rusen Li, [*Sums over Primes II*](https://cs.uwaterloo.ca/journals/JIS/VOL27/Li/li15.html),
+  Journal of Integer Sequences 27 (2024), Article 24.4.1, pp. 1–16, Section 1 and Lemmas 2, 10, 13.
+* Rusen Li, *Sums over Primes*, INTEGERS 21 (2021), Article A94, pp. 1–7, Lemma 3 (the original
+  generalized hyperharmonic asymptotic cited by Lemma 2 of *Sums over Primes II*).
+* The normalized limit uses `stolz_cesaro` from `MathlibExt.Analysis.Series.StolzCesaro`;
+  the shifted binomial asymptotic uses `isEquivalent_add_choose` from
+  `MathlibExt.NumberTheory.Harmonic.ShiftedChoose`.
 -/
 
 namespace MetaMathlibExt
@@ -197,7 +212,44 @@ private theorem iterated_limit {b : ℕ → ℝ} {L : ℝ} (hb : Tendsto b atTop
     ext n
     simp [signedIteratedPartialSum_succ, sum_Icc_succ_top, step]
 
+private theorem iterated_isEquivalent {b : ℕ → ℝ} {L : ℝ} (hb : Tendsto b atTop (𝓝 L))
+    (hL : L ≠ 0) {r : ℕ} (hr : 1 ≤ r) :
+    (fun n : ℕ => signedIteratedPartialSum false b r n) ~[atTop]
+      fun n : ℕ => (n : ℝ) ^ (r - 1) * L / (r - 1).factorial := by
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hr)
+  simp only [Nat.add_one_sub_one]
+  have h := (isEquivalent_const_iff_tendsto hL).2 (iterated_limit hb d)
+  have hprod := h.mul (isEquivalent_add_choose d)
+  refine (hprod.congr_left (.of_forall fun n => ?_)).congr_right (.of_forall fun n => ?_)
+  · exact div_mul_cancel₀ _ (by exact_mod_cast (Nat.choose_pos (Nat.le_add_left d n)).ne')
+  · dsimp [Function.const]
+    ring
+
 end alternatingHyperharmonic_typeII_isEquivalent
+
+open alternatingHyperharmonic_typeII_isEquivalent in
+/-- **Asymptotic of generalized hyperharmonic numbers.** For a natural number $p$ let
+$H_n^{(p)} = \sum_{i=1}^{n} 1/i^p$ be the generalized harmonic numbers, and let the generalized
+hyperharmonic numbers be $H_n^{(p,1)} = H_n^{(p)}$ and $H_n^{(p,r+1)} = \sum_{k=1}^{n} H_k^{(p,r)}$.
+Then for all natural numbers $p \ge 2$ and $r \ge 1$, $H_n^{(p,r)} \sim n^{r-1} \zeta(p) / (r-1)!$
+as $n \to \infty$, where $\zeta(p) = \sum_{i \ge 1} 1/i^p$.
+
+Source: Rusen Li, *Sums over Primes II*, Journal of Integer Sequences 27 (2024),
+Article 24.4.1, Lemma 2 (`jis-2024-24.4.1-lem-2`). -/
+public theorem generalizedHyperharmonic_isEquivalent {p r : ℕ} (hp : 2 ≤ p) (hr : 1 ≤ r) :
+    (fun n : ℕ => signedIteratedPartialSum false (generalizedHarmonic p) r n) ~[atTop]
+      fun n : ℕ => (n : ℝ) ^ (r - 1) * (∑' i : ℕ, 1 / (i : ℝ) ^ p) / (r - 1).factorial := by
+  let f (i : ℕ) : ℝ := 1 / (i : ℝ) ^ p
+  have hs : Summable f := Real.summable_one_div_nat_pow.mpr hp
+  have hsum : HasSum (fun i => f (i + 1)) (∑' i, f i) := by
+    apply (hasSum_nat_add_iff (f := f) 1).2
+    simpa [f, ne_of_gt (show 0 < p by omega)] using hs.hasSum
+  have hlim : Tendsto (generalizedHarmonic p) atTop (𝓝 (∑' i, f i)) := by
+    refine hsum.tendsto_sum_nat.congr' (.of_forall fun n => ?_)
+    simp [f, generalizedHarmonic_eq_sum_range, Real.rpow_natCast, one_div]
+  have hpos : 0 < ∑' i, f i := by
+    exact hs.tsum_pos (fun i => by dsimp [f]; positivity) 1 (by simp [f])
+  exact iterated_isEquivalent hlim hpos.ne' hr
 
 open alternatingHyperharmonic_typeII_isEquivalent in
 /-- **Asymptotic of type II alternating hyperharmonic numbers.** For a natural number $p$ let
@@ -212,15 +264,7 @@ Article 24.4.1, Lemma 13 (`jis-2024-24.4.1-lem-13`). -/
 public theorem alternatingHyperharmonic_typeII_isEquivalent {r p : ℕ} (hr : 1 ≤ r)
     (hp : 1 ≤ p) :
     (fun n : ℕ => signedIteratedPartialSum false (alternatingGeneralizedHarmonic p) r n) ~[atTop]
-      fun n : ℕ => (n : ℝ) ^ (r - 1) * alternatingZeta p / (r - 1).factorial := by
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hr)
-  simp only [Nat.add_one_sub_one]
-  have h := (isEquivalent_const_iff_tendsto (zeta_pos hp).ne').2
-    (iterated_limit (harmonic_limit hp) d)
-  have hprod := h.mul (isEquivalent_add_choose d)
-  refine (hprod.congr_left (.of_forall fun n => ?_)).congr_right (.of_forall fun n => ?_)
-  · exact div_mul_cancel₀ _ (by exact_mod_cast (Nat.choose_pos (Nat.le_add_left d n)).ne')
-  · dsimp [Function.const]
-    ring
+      fun n : ℕ => (n : ℝ) ^ (r - 1) * alternatingZeta p / (r - 1).factorial :=
+  iterated_isEquivalent (harmonic_limit hp) (zeta_pos hp).ne' hr
 
 end MetaMathlibExt

@@ -77,14 +77,16 @@ theorem generalizedHarmonic_succ (s : ℝ) (n : ℕ) :
     generalizedHarmonic s (n + 1) = generalizedHarmonic s n + (((n + 1 : ℕ) : ℝ) ^ s)⁻¹ := by
   simp [generalizedHarmonic, Finset.sum_Icc_succ_top (Nat.le_add_left 1 n)]
 
-namespace generalizedHarmonic_eq_gamma_expectation
-
-/-- The generalized harmonic number $H_n^{(s)}$ as the sum of $1/(k+1)^s$ over $k < n$. -/
-private theorem generalizedHarmonic_eq_sum_range (s : ℝ) (n : ℕ) :
+/-- **Range-sum formula for generalized harmonic numbers.** For every real $s$ and natural
+number $n$, the generalized harmonic number satisfies
+$H_n^{(s)} = \sum_{k=0}^{n-1} 1/(k+1)^s$, with the empty sum at $n = 0$. -/
+theorem generalizedHarmonic_eq_sum_range (s : ℝ) (n : ℕ) :
     generalizedHarmonic s n = ∑ k ∈ Finset.range n, (((k + 1 : ℕ) : ℝ) ^ s)⁻¹ := by
   induction n with
   | zero => simp
   | succ n ih => rw [generalizedHarmonic_succ, ih, Finset.sum_range_succ]
+
+namespace generalizedHarmonic_eq_gamma_expectation
 
 /-- For $s > 0$ and a natural number $k$, the function $x \mapsto e^{-kx}$ is integrable for the
 Gamma distribution of shape $s$ and rate $1$. -/
@@ -143,7 +145,7 @@ theorem generalizedHarmonic_eq_gamma_expectation (s : ℝ) (hs : 0 < s) (n : ℕ
         ∫ x, (1 - Real.exp (-(n * x))) / (1 - Real.exp (-x)) ∂gammaMeasure s 1 := by
   have h₁ : generalizedHarmonic s n =
       ∑ k ∈ Finset.range n, ∫ x, Real.exp (-(k * x)) ∂gammaMeasure s 1 := by
-    rw [generalizedHarmonic_eq_gamma_expectation.generalizedHarmonic_eq_sum_range]
+    rw [generalizedHarmonic_eq_sum_range]
     exact Finset.sum_congr rfl fun k _ =>
       (generalizedHarmonic_eq_gamma_expectation.integral_exp_neg_mul hs k).symm
   refine ⟨h₁, ?_⟩
@@ -169,7 +171,7 @@ theorem generalizedHarmonic_sub_eq_gamma_expectation (s : ℝ) (hs : 0 < s) (u :
     (n : ℕ) :
     generalizedHarmonic (s - u) n =
       ∑ k ∈ Finset.range n, ((k + 1 : ℕ) : ℝ) ^ u * ∫ x, Real.exp (-(k * x)) ∂gammaMeasure s 1 := by
-  rw [generalizedHarmonic_eq_gamma_expectation.generalizedHarmonic_eq_sum_range]
+  rw [generalizedHarmonic_eq_sum_range]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [generalizedHarmonic_eq_gamma_expectation.integral_exp_neg_mul hs,
     Real.rpow_sub (by positivity), inv_div, div_eq_mul_inv]
