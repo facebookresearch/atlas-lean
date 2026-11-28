@@ -15,6 +15,7 @@ Item 1 follows Santhanam's win-win argument with a $\mathsf{PSPACE}$-complete la
 ## Depends on
 
 - [Bounded relativization](bounded-relativization.md)
+- [Polynomial space for decision problems](../../complexity-classes/time-and-space-complexity-classes/pspace.md)
 - [The class MA (Merlin–Arthur)](../../complexity-classes/time-and-space-complexity-classes/ma.md)
 - [Circuit complexity of a Boolean function and truth tables](../../circuit-complexity/minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
 - [Deterministic logarithmic space](../../complexity-classes/time-and-space-complexity-classes/log-space.md)

@@ -23,6 +23,7 @@ Fact 2 writes the tableau of a deterministic oracle computation as the unique pr
 ## Depends on
 
 - [Multilinear extension of a Boolean function](multilinear-ext.md)
+- [The complexity class P](../../complexity-classes/the-classes-p-np-and-conp/p.md)
 - [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
 - [NP relative to an oracle](../../complexity-classes/time-and-space-complexity-classes/npwith-oracle.md)
 - [Polynomial time with an oracle](../../complexity-classes/time-and-space-complexity-classes/pwith-oracle.md)

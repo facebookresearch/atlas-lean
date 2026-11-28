@@ -20,6 +20,7 @@ For item 1, the inclusion $\mathsf{IP}^O\subseteq\mathsf{PSPACE}^O$ relativizes,
 
 - [Baker-Gill-Solovay: oracles separate and collapse P vs NP](baker-gill-solovay.md)
 - [The class IP](../../complexity-classes/time-and-space-complexity-classes/ip.md)
+- [Polynomial space for decision problems](../../complexity-classes/time-and-space-complexity-classes/pspace.md)
 - [The complexity class NEXP](../../complexity-classes/time-and-space-complexity-classes/nexp.md)
 - [Deterministic logarithmic space](../../complexity-classes/time-and-space-complexity-classes/log-space.md)
 - [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
