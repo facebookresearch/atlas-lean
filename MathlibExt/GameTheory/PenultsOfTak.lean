@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Nat.Dist
 public import Mathlib.Logic.Relation
 public import MathlibExt.GameTheory.SpragueGrundy
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
@@ -32,6 +33,22 @@ normal play (the player unable to move loses) becomes `placementFirstPlayerWins`
 negation of `SpragueGrundy.IsP` for the adapter `placementGame`. Penults of the
 dual of Impartial Tic (tokens removed instead of placed) are complements of Impartial Tic
 penults, so their token count is `(Finset.univ \ S).card`.
+
+For Impartial Tak, a move outside a set that contains every occupied edge cell after the move
+and is closed under adjacency to the occupied cells cannot turn a nonterminal position into an
+ult without the position already having a terminal option. This is a cut criterion for ruling out
+penults.
+
+## References
+
+* Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda,
+  [*The Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*](https://math.colgate.edu/~integers/zg1/zg1.pdf),
+  INTEGERS 25 (2025), Article G1, pp. 1–18, Definitions 1 and 2 and Proposition 10.
+* The road contraction adapts the former `road_after_reply` in
+  `MathlibExt.GameTheory.PenultsOfTak.WeightedCrossBound`, in the proof of
+  `impartialTak_penult_card_ge_weightedCross`.
+* `impartialTak_isGreatest_penult_card.road_of_full_row` was originally proved in
+  `MathlibExt.GameTheory.PenultsOfTak.LargestPenult`.
 -/
 
 namespace MetaMathlibExt
@@ -223,6 +240,98 @@ Article G1, Section 1 (rules of Impartial Tak). -/
 public theorem not_takHasRoad_empty {n : ℕ} : ¬ takHasRoad (∅ : Finset (Fin n × Fin n)) := by
   rintro ⟨a, ha, -⟩
   exact Finset.notMem_empty a ha
+
+/-- **Grid adjacency as unit distance.** On the $n \times n$ board, cells $p$ and $q$ are
+orthogonally adjacent if and only if $|p_1 - q_1| + |p_2 - q_2| = 1$, using the ordinary
+absolute differences of their natural-number coordinates. -/
+public theorem takAdjacent_iff_dist_eq_one {n : ℕ} {p q : Fin n × Fin n} :
+    takAdjacent p q ↔ Nat.dist p.1.val q.1.val + Nat.dist p.2.val q.2.val = 1 := by
+  simp only [takAdjacent, Fin.ext_iff, Nat.dist]
+  omega
+
+namespace impartialTak_isGreatest_penult_card
+
+/-- **A full row gives an Impartial Tak road.** Let $S \subseteq \{0,\ldots,n-1\}^2$ be the
+occupied cells of an $n \times n$ board, and let $r \in \{0,\ldots,n-1\}$. If $(r,c) \in S$ for
+all $c \in \{0,\ldots,n-1\}$, then $S$ contains a Tak road: the cells $(r,0),\ldots,(r,n-1)$
+form an orthogonal path from the first column to the last. -/
+public theorem road_of_full_row {n : ℕ} {S : Finset (Fin n × Fin n)} (r : Fin n)
+    (h : ∀ c, (r, c) ∈ S) : takHasRoad S := by
+  have hn := r.isLt
+  let first : Fin n := ⟨0, by omega⟩
+  let last : Fin n := ⟨n - 1, by omega⟩
+  have walk (j : ℕ) (hj : j < n) : Relation.ReflTransGen
+      (fun x y : Fin n × Fin n => takAdjacent x y ∧ y ∈ S) (r, first) (r, ⟨j, hj⟩) := by
+    induction j with
+    | zero => exact .refl
+    | succ i ih => exact (ih (by omega)).tail ⟨Or.inl ⟨rfl, Or.inl rfl⟩, h _⟩
+  exact ⟨(r, first), h _, (r, last), walk _ _, Or.inl ⟨rfl, by dsimp [last]; omega⟩⟩
+
+end impartialTak_isGreatest_penult_card
+
+/-- **A cut obstructs an Impartial Tak penult.** Let $S$ be a position on the $n \times n$ board,
+let $p \notin S$ be an empty cell, and let $A$ be a set of board cells. If $p \notin A$, every
+edge cell of $S \cup \{p\}$ belongs to $A$, and every cell of $S \cup \{p\}$ adjacent to a cell
+in $A$ also belongs to $A$, then $S$ is not a penult. Here an edge cell has at least one coordinate
+in the first or last row or column. -/
+public theorem not_takPenult_of_cut {n : ℕ} {S : Finset (Fin n × Fin n)}
+    {p : Fin n × Fin n} {A : Set (Fin n × Fin n)} (hp : p ∉ S) (hpA : p ∉ A)
+    (hedge : ∀ x ∈ insert p S,
+      x.1.val = 0 ∨ x.1.val + 1 = n ∨ x.2.val = 0 ∨ x.2.val + 1 = n → x ∈ A)
+    (hclosed : ∀ x ∈ A, ∀ y ∈ insert p S, takAdjacent x y → y ∈ A) :
+    ¬ placementPenult takHasRoad S := by
+  classical
+  intro hS
+  obtain ⟨q, hq, hterminal⟩ := (hS.2 p hp).2
+  have hqS : q ∉ S := fun h => hq (Finset.mem_insert_of_mem h)
+  have hroad : takHasRoad (insert q (insert p S)) := by
+    rcases hterminal with h | h
+    · exact h
+    rw [h]
+    exact impartialTak_isGreatest_penult_card.road_of_full_row p.1 (fun _ => Finset.mem_univ _)
+  -- Collapse the side containing p to the reply q; edges either survive or contract.
+  let f (x : Fin n × Fin n) := if x ∈ A then x else q
+  have hmem {x} (hx : x ∈ insert q (insert p S)) : f x ∈ insert q S := by
+    by_cases hxA : x ∈ A
+    · rw [show f x = x by simp [f, hxA]]
+      simp only [Finset.mem_insert] at hx ⊢
+      exact hx.imp_right (fun h => h.resolve_left (fun e => hpA (e ▸ hxA)))
+    · simp [f, hxA]
+  have hfix {x y} (hx : x ∈ A) (hy : y ∈ insert q (insert p S)) (hxy : takAdjacent x y) :
+      f y = y := by
+    rcases Finset.mem_insert.mp hy with rfl | hy
+    · simp [f]
+    · simp [f, hclosed x hx y hy hxy]
+  have hfixEdge {x} (hx : x ∈ insert q (insert p S))
+      (hxE : x.1.val = 0 ∨ x.1.val + 1 = n ∨ x.2.val = 0 ∨ x.2.val + 1 = n) : f x = x := by
+    rcases Finset.mem_insert.mp hx with rfl | hx
+    · simp [f]
+    · simp [f, hedge x hx hxE]
+  obtain ⟨a, ha, b, path, ends⟩ := hroad
+  have walk {z} (w : Relation.ReflTransGen
+      (fun x y => takAdjacent x y ∧ y ∈ insert q (insert p S)) a z) :
+      z ∈ insert q (insert p S) ∧ Relation.ReflTransGen
+        (fun x y => takAdjacent x y ∧ y ∈ insert q S) (f a) (f z) := by
+    induction w with
+    | refl => exact ⟨ha, .refl⟩
+    | @tail x y _ step ih =>
+      obtain ⟨hxy, hy⟩ := step
+      obtain ⟨hx, prev⟩ := ih
+      refine ⟨hy, ?_⟩
+      by_cases hxA : x ∈ A
+      · have e := hfix hxA hy hxy
+        exact prev.tail ⟨by simpa only [e, f, ite_eq_left hxA] using hxy, hmem hy⟩
+      by_cases hyA : y ∈ A
+      · have hyx : takAdjacent y x := by
+          simpa only [takAdjacent_iff_dist_eq_one, Nat.dist_comm] using hxy
+        have e := hfix hyA hx hyx
+        exact prev.tail ⟨by simpa only [e, f, ite_eq_left hyA] using hxy, hmem hy⟩
+      · simpa only [f, ite_eq_right hxA, ite_eq_right hyA] using prev
+  have ea := hfixEdge ha (by tauto)
+  have eb := hfixEdge (walk path).1 (by tauto)
+  have hprev : takHasRoad (insert q S) :=
+    ⟨a, ea ▸ hmem ha, b, by simpa only [ea, eb] using (walk path).2, ends⟩
+  exact (hS.2 q hqS).1 (.inl hprev)
 
 /-- **Weights of the Weighted Cross.** For natural numbers $a$ and $b$, the weight $w(a, b)$ is
 $0$ if $a, b \in \{0, 4\}$; otherwise it is $2$ if $a = 2$ and $1 \le b \le 3$, or $b = 2$ and
