@@ -1,6 +1,6 @@
 # Error bound for minimax weight learning
 
-If the target policy's action-value function lies in the convex hull of the discriminator class, the off-policy estimate given by any weight function $w$ is off by at most $\sup_{f}|L_{\mathrm w}(w,f)|$, and minimax weight learning achieves the smallest such guarantee over the weight class.
+If the target policy's action-value function lies in the convex hull of the discriminator class, the off-policy estimate given by any weight function $w$ is off by at most $\sup_{f}|L_{\mathrm w}(w,f)|$, and the population minimax estimator achieves the smallest such guarantee over the weight class.
 
 Use the setting and notation of [minimax weight learning](minimax-weight-learning.md): finite $\mathcal X=S\times A$, discount $\gamma\in[0,1)$, target policy $\pi_e$, data distribution $d_{\pi_b}$, loss $L_{\mathrm w}$, value estimate $R_{\mathrm w}[w]=\mathbb E_{d_{\pi_b}}[w(s,a)\,r]$ and population estimator $\hat w$, a minimizer of $\Phi(w)=\sup_{f\in\mathcal F}L_{\mathrm w}(w,f)^2$ over $\mathcal W$. Let $Q^{\pi_e}$ be the action value of $\pi_e$ (unnormalized, $Q^{\pi_e}(s,a)=\mathbb E[\sum_{t\ge0}\gamma^t r_t\mid s_0=s,a_0=a]$ with later actions from $\pi_e$), and $R_{\pi_e}$ its normalized return. Let $\operatorname{conv}(\mathcal F)$ be the set of finite convex combinations of elements of $\mathcal F$. Suprema are extended reals and may be $+\infty$; the source writes them as maxima and does not discuss attainment.
 
