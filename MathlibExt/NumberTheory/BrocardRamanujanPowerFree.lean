@@ -9,10 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.IsPrimePow
+public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Set.Finite.Basic
 public import MathlibExt.NumberTheory.PowerFree
-import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.NumberTheory.Padics.PadicVal.Basic
 import Mathlib.Order.Filter.AtTopBot.Finite
@@ -30,16 +30,21 @@ them is `k`-free, every exponent in its prime factorization is below `k`, so Lem
 paper (`MetaMathlibExt.le_exp_of_dvd_factorial`) bounds it by `exp (3 n k / 2)`. Hence
 `n! < x ^ 2 ≤ 4 exp (3 k) ^ n`, which fails for all large `n` because the factorial outgrows
 every exponential. So `n` is bounded, and `x` with it.
+
+## References
+
+* Abderrahim Makki Naciri, *On the Brocard–Ramanujan Equation with 7-Free Integers and Prime
+  Powers*, INTEGERS 25 (2025), Article A71, pp. 1–8, Lemma 1 and Theorem 1(i) and (ii).
 -/
 
 open Nat
 
 namespace MetaMathlibExt
 
-namespace BrocardRamanujanPowerFree
-
-/-- A positive `k`-free natural number dividing `n!` is at most `exp (3 n k / 2)`. -/
-private theorem le_exp_of_isPowerFree_dvd_factorial {n y k : ℕ} (hn : 0 < n)
+/-- **Exponential bound for a power-free divisor of a factorial.**
+Let $n > 0$ and $k \ge 2$ be natural numbers. If a positive $k$-free natural number $y$
+divides $n!$, then $y \le \exp(3 n k / 2)$. -/
+public theorem le_exp_of_isPowerFree_dvd_factorial {n y k : ℕ} (hn : 0 < n)
     (hy : y.IsPowerFree k) (hdvd : y ∣ n !) :
     (y : ℝ) ≤ Real.exp (3 * n * k / 2) := by
   have hy0 : y ≠ 0 := hy.pos.ne'
@@ -54,6 +59,8 @@ private theorem le_exp_of_isPowerFree_dvd_factorial {n y k : ℕ} (hn : 0 < n)
     exact_mod_cast hK.le
   have hn' : (0 : ℝ) ≤ n := Nat.cast_nonneg n
   gcongr
+
+namespace BrocardRamanujanPowerFree
 
 /-- A solution of `n! + 1 = x ^ 2` with `x - 1` or `x + 1` being `k`-free and `n ≥ 1` satisfies
 `n! < 4 ⌈exp (3 k)⌉₊ ^ n`. -/
