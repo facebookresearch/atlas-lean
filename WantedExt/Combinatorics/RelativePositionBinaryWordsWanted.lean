@@ -26,6 +26,7 @@ public import MathlibExt.Combinatorics.Words.EquilibriousWord
 public import MathlibExt.Combinatorics.Words.FibonacciIccanobiF
 public import MathlibExt.Combinatorics.Words.GoldenEigenvector
 public import MathlibExt.Combinatorics.Words.LetterPositionReconstruction
+public import MathlibExt.Combinatorics.Words.MetallicEigenvector
 public import MathlibExt.Combinatorics.Words.MonotoneRelativePosition
 public import MathlibExt.Combinatorics.Words.PeriodicRelativePosition
 public import MathlibExt.Combinatorics.Words.PisaEigenvector
@@ -319,26 +320,6 @@ public theorem_wanted frequency_substitution_image (μ : Bool → List Bool)
         (𝓝 (((μ true).count true * f + (μ false).count true * (1 - f)) / L)) ∧
       Tendsto (fun m : ℕ => (letterCount v false m : ℝ) / m) atTop
         (𝓝 (((μ true).count false * f + (μ false).count false * (1 - f)) / L))
-
-open Polynomial in
-/-- **Integer matrices with a metallic-mean eigenvector.** Let $k \ge 1$ be an integer, let
-$\tau_k = (k + \sqrt{k^2 + 4})/2$ and $\tau_k' = (k - \sqrt{k^2 + 4})/2$, and let $M$ be a
-$2 \times 2$ integer matrix. Then $(\tau_k, 1)^T$ is a right eigenvector of $M$ over $\mathbb{R}$
-if and only if $M$ has rows $(km + n, m)$ and $(m, n)$ for some integers $m, n$. For such $M$ the
-characteristic polynomial of $M$ is $(X - (n + m\tau_k))(X - (n + m\tau_k'))$, so the eigenvalues
-of $M$ are $n + m\tau_k$ and $n + m\tau_k'$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 66
-(`jis-2025-25.1.5-lem-66`). -/
-public theorem_wanted metallic_eigenvector_iff (k : ℕ) (hk : 1 ≤ k)
-    (M : Matrix (Fin 2) (Fin 2) ℤ) :
-    let τ : ℝ := (k + Real.sqrt (k ^ 2 + 4)) / 2
-    let τ' : ℝ := (k - Real.sqrt (k ^ 2 + 4)) / 2
-    ((∃ c : ℝ, (M.map (Int.cast : ℤ → ℝ)).mulVec ![τ, 1] = c • ![τ, 1]) ↔
-        ∃ m n : ℤ, M = !![k * m + n, m; m, n]) ∧
-      ∀ m n : ℤ, M = !![k * m + n, m; m, n] →
-        (M.map (Int.cast : ℤ → ℝ)).charpoly = (X - C ((n : ℝ) + m * τ)) * (X - C ((n : ℝ) + m * τ'))
 
 /-- **Position differences in the Fibonacci word.** Let $f = \ell_0 \ell_1 \ell_2 \cdots =
 abaab\cdots$ be the Fibonacci word, the infinite Fibonacci word with each $0$ written as $a$
