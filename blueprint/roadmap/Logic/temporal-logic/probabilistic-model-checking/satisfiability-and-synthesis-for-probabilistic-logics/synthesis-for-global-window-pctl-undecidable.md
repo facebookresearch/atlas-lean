@@ -6,7 +6,7 @@ Whether a Markov decision process has a history-dependent randomized strategy un
 
 **Theorem (Bordais, Busatto-Gaston, Guha and Raskin).** The synthesis problem for flat, non-strict global window $L$-PCTL formulas is in coRE (Theorem 24 of arXiv:2204.14107v1) and coRE-hard (Theorem 37), hence undecidable.
 
-With strict inequalities allowed, the synthesis problem for flat global window $L$-PCTL formulas is even $\Sigma^1_1$-hard (Theorem 38 of arXiv:2204.14107v1), by a reduction from [recurring computations of two-counter machines](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md). Restricted to deterministic strategies the problem is decidable: NP-complete for memoryless deterministic strategies and in 2EXPTIME for history-dependent deterministic ones; for memoryless randomized strategies it is in PSPACE. Synthesis for full PCTL with history-dependent deterministic strategies was known to be $\Sigma^1_1$-complete (Brázdil, Brožek, Forejt and Kučera), as the source recalls.
+With strict inequalities allowed, the synthesis problem for flat global window $L$-PCTL formulas is even $\Sigma^1_1$-hard (Theorem 38 of arXiv:2204.14107v1), by a reduction from [recurring computations of two-counter machines](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md); $\Sigma^1_1$-hardness is explained on the page [satisfiability of PCTL is Σ¹₁-hard](satisfiability-of-pctl-is-sigma-1-1-hard.md). Restricted to deterministic strategies the problem is decidable: NP-complete for memoryless deterministic strategies and in 2EXPTIME for history-dependent deterministic ones; for memoryless randomized strategies it is in PSPACE. Synthesis for full PCTL with history-dependent deterministic strategies was known to be $\Sigma^1_1$-complete (Brázdil, Brožek, Forejt and Kučera), as the source recalls.
 
 ## Depends on
 
@@ -18,6 +18,8 @@ With strict inequalities allowed, the synthesis problem for flat global window $
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Recurring computations of two-counter machines are Σ¹₁-hard](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md)
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
