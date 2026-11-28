@@ -19,10 +19,21 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# A central binomial series with a complex binomial parameter
+# Series from Nörlund's digamma identity
 
-We evaluate the series by summing Nörlund's rising-factorial expansion of a digamma difference
-at the half-integer base point and applying Euler's reflection formula.
+This module evaluates a central binomial series for complex $h$ with $\operatorname{Re} h > -1/2$
+and $h$ not a nonnegative integer. It also evaluates the product series for $\pi \cot(\pi/k)$
+for integers $k \ge 2$. Both results use Nörlund's expansion of a digamma difference.
+
+## References
+
+* Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of Nörlund*,
+  INTEGERS 25 (2025), Article A18, pp. 1–12, Theorems 1 and 8 (identity (19) in Theorem 8).
+  <https://math.colgate.edu/~integers/z18/z18.pdf>
+* Einar Hille, *On the Logarithmic Derivatives of the Gamma Function*,
+  Mathematisk-fysiske Meddelelser 8 (1927), no. 1, 58 pp., §2, p. 6, equation (22).
+  This is identity (2) in Adegoke and Frontczak; Hille cites N. E. Nörlund,
+  *Vorlesungen über Differenzenrechnung*, Springer (1924), p. 251.
 -/
 
 open Filter Finset Topology
@@ -263,5 +274,86 @@ public theorem tsum_four_pow_div_binom_mul_centralBinom_mul_sq {h : ℂ}
   push_cast
   rw [sub_neg_eq_add, add_comm (1 / 2 : ℂ) h]
   ring
+
+/-- **A product series for $\pi \cot(\pi/k)$.** For every integer $k \ge 2$,
+$$(k - 2)\Bigl(1 + \sum_{n=1}^{\infty} \frac{1}{n + 1}
+\prod_{j=1}^{n} \frac{kj - (k - 2)}{kj + 1}\Bigr) = \pi \cot\frac{\pi}{k}.$$
+
+Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
+Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 1 (`integers-2025-A18-thm-1`). -/
+public theorem sub_two_mul_one_add_tsum_prod_eq_pi_mul_cot {k : ℕ} (hk : 2 ≤ k) :
+    ((k : ℝ) - 2) * (1 + ∑' n : ℕ, 1 / ((n : ℝ) + 2) *
+        ∏ j ∈ Finset.Icc 1 (n + 1), ((k : ℝ) * j - (k - 2)) / (k * j + 1)) =
+      Real.pi * Real.cot (Real.pi / k) := by
+  by_cases he : k = 2
+  · subst k
+    norm_num [Real.cot_eq_cos_div_sin, Real.cos_pi_div_two]
+  have hk₂ : (2 : ℝ) < k := by exact_mod_cast (lt_of_le_of_ne hk (Ne.symm he))
+  have hk₀ : (0 : ℝ) < k := by linarith
+  let w : ℝ := 1 / k
+  let a : ℝ := 2 * w - 1
+  have hw : 0 < w := one_div_pos.mpr hk₀
+  have hw₂ : w < 1 / 2 := (div_lt_iff₀ hk₀).mpr (by linarith)
+  have ha₀ : a < 0 := by dsimp [a]; linarith
+  have ha₁ : -1 < a := by dsimp [a]; linarith
+  have ha (m : ℕ) : (a : ℂ) ≠ -m := by
+    intro h
+    have hr := congrArg Complex.re h
+    simp only [Complex.ofReal_re, Complex.neg_re, Complex.natCast_re] at hr
+    have hm₀ : (0 : ℝ) < m := by linarith
+    have hm₁ : (m : ℝ) < 1 := by linarith
+    exact (not_lt_of_ge (Nat.succ_le_of_lt (by exact_mod_cast hm₀))) (by exact_mod_cast hm₁)
+  have haw : (a : ℂ).re < w := Complex.ofReal_re a ▸ ha₀.trans hw
+  have hwint (m : ℤ) : (w : ℂ) ≠ m := by
+    intro h
+    have hr := congrArg Complex.re h
+    simp only [Complex.ofReal_re, Complex.intCast_re] at hr
+    have hm₀ : (0 : ℤ) < m := by exact_mod_cast (hr ▸ hw)
+    have hm₁ : m < (1 : ℤ) := by exact_mod_cast (hr ▸ (show w < 1 by linarith))
+    omega
+  have harg : (w : ℂ) - (a : ℂ) = 1 - (w : ℂ) := by
+    simp only [a, Complex.ofReal_sub, Complex.ofReal_mul, Complex.ofReal_ofNat, Complex.ofReal_one]
+    ring
+  let f (n : ℕ) : ℝ :=
+    1 / ((n : ℝ) + 1) * ∏ j ∈ Icc 1 n, ((k : ℝ) * j - (k - 2)) / (k * j + 1)
+  -- Scaling numerator and denominator by k writes each rising-factorial factor as in the paper.
+  have hfactor (j : ℕ) : (a + j) / (w + j) =
+      ((k : ℝ) * j - (k - 2)) / (k * j + 1) := by
+    rw [← mul_div_mul_left _ _ hk₀.ne']
+    congr 1 <;> dsimp [a, w] <;> field_simp <;> ring
+  have hratio (n : ℕ) : rising a (n + 1) / rising w (n + 1) =
+      (2 - (k : ℝ)) * (∏ j ∈ Icc 1 n, ((k : ℝ) * j - (k - 2)) / (k * j + 1)) := by
+    rw [← show Ico 1 (n + 1) = Icc 1 n from Ico_succ_right_eq_Icc 1 n,
+      prod_Ico_eq_prod_range, Nat.add_sub_cancel]
+    simp only [rising, prod_range_succ', Nat.cast_zero, add_zero, mul_div_mul_comm,
+      ← prod_div_distrib, hfactor, add_comm 1]
+    rw [show a / w = 2 - (k : ℝ) by dsimp [a, w]; field_simp]
+    exact mul_comm _ _
+  have hterm (n : ℕ) : ratio (a : ℂ) w (n + 1) / ((n : ℂ) + 1) =
+      (2 - (k : ℂ)) * (f n : ℂ) := by
+    have hreal : ratio (a : ℂ) w (n + 1) / ((n : ℂ) + 1) =
+        (↑(rising a (n + 1) / rising w (n + 1) / ((n : ℝ) + 1)) : ℂ) := by
+      simp only [Complex.ofReal_div, rising_cast a, Complex.ofReal_add, Complex.ofReal_natCast,
+        Complex.ofReal_one, ratio]
+    rw [hreal, hratio]
+    simp only [f, Complex.ofReal_div, Complex.ofReal_mul, Complex.ofReal_sub, Complex.ofReal_add,
+      Complex.ofReal_natCast, Complex.ofReal_one, Complex.ofReal_ofNat]
+    ring
+  have hf₀ : f 0 = 1 := by simp [f]
+  -- Split off n = 0 before applying the reflection formula to the digamma difference.
+  have hsum := (summable_ratio ha hw haw).tsum_eq_zero_add
+  rw [norlund ha hw haw, harg, Complex.digamma_one_sub hwint] at hsum
+  simp_rw [hterm] at hsum
+  rw [tsum_mul_left, hf₀, Complex.ofReal_one] at hsum
+  have hshift (n : ℕ) : f (n + 1) = 1 / ((n : ℝ) + 2) *
+      ∏ j ∈ Icc 1 (n + 1), ((k : ℝ) * j - (k - 2)) / (k * j + 1) := by
+    simp only [f, Nat.cast_succ, add_assoc, one_add_one_eq_two]
+  simp_rw [← hshift]
+  apply Complex.ofReal_injective
+  simp only [Complex.ofReal_mul, Complex.ofReal_sub, Complex.ofReal_natCast, Complex.ofReal_ofNat,
+    Complex.ofReal_add, Complex.ofReal_one, Complex.ofReal_tsum, Complex.ofReal_cot,
+    Complex.ofReal_div]
+  rw [show (Real.pi : ℂ) / k = (Real.pi : ℂ) * (w : ℂ) by simp [w, div_eq_mul_inv]]
+  linear_combination hsum
 
 end MetaMathlibExt

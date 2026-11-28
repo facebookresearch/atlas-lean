@@ -1,6 +1,6 @@
 # Rademacher and VC bounds for binary classification
 
-Let $C$ be a class of functions $\alpha \to \{0,1\}$ on a finite domain, $D$ a distribution on $\alpha \times \{0,1\}$ and $\sigma(C) = \{x \mapsto 2c(x) - 1 : c \in C\}$ its sign class. On every labelled sample, the empirical Rademacher complexity of the 0-1 loss class $\{(x,y) \mapsto [c(x) \ne y]\}$ is half that of $\sigma(C)$ on the unlabelled points, and the same holds for the Rademacher complexities under $D$ and its marginal. Consequently, for $m > 0$ and $\delta \in (0,1)$, with probability at least $1 - \delta$ every $h \in C$ satisfies
+Let $C$ be a class of measurable functions $\alpha \to \{0,1\}$ on a measurable space $\alpha$ (with the usual measurability of the suprema involved), $D$ a distribution on $\alpha \times \{0,1\}$ and $\sigma(C) = \{x \mapsto 2c(x) - 1 : c \in C\}$ its sign class. On every labelled sample, the empirical Rademacher complexity of the 0-1 loss class $\{(x,y) \mapsto [c(x) \ne y]\}$ is half that of $\sigma(C)$ on the unlabelled points, and the same holds for the Rademacher complexities under $D$ and its marginal. Consequently, for $m > 0$ and $\delta \in (0,1)$, with probability at least $1 - \delta$ every $h \in C$ satisfies
 
 $$
 \mathrm{err}_D(h) \le \mathrm{err}_S(h) + R_m(\sigma(C)) + \sqrt{\frac{\ln(1/\delta)}{2m}},
@@ -21,12 +21,10 @@ The loss of $h$ at $(x, y)$ is $(1 - y'\,\sigma_h(x))/2$ with $y' = \pm 1$, and 
 
 ## Proof depends on
 
-- [Rademacher generalization bound for bounded function classes](rademacher-generalization-bound.md)
-- [Massart's finite-class lemma](../rademacher-complexity/rademacher-complexity-le-of-finite.md)
 - [Sauer bound for the growth function](../../../not-yet-classified/growth-function/growth-function-le-sum.md)
 - [Two-sided Hoeffding inequality for averages of bounded variables](../../../../Probability/concentration-inequalities/hoeffding-s-inequality/measure-real-abs-avg-sub-ge-le.md)
 
 ## Sources
 
-- M. Mohri, A. Rostamizadeh and A. Talwalkar, "Foundations of Machine Learning", 2nd edition, MIT Press, 2018.
+- M. Mohri, A. Rostamizadeh and A. Talwalkar, "Foundations of Machine Learning", 2nd edition, MIT Press, 2018, Theorem 3.5 and Corollaries 3.8 and 3.18.
 - S. Shalev-Shwartz and S. Ben-David, "Understanding Machine Learning: From Theory to Algorithms", Cambridge University Press, 2014.

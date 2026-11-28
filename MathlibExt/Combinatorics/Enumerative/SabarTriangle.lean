@@ -13,8 +13,10 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.Enumerative.WhittGeneralizedCatalan
 import MathlibExt.Combinatorics.Enumerative.FrischReciprocalBinomial
 import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Tactic.FieldSimp
@@ -30,6 +32,8 @@ the source's Table 1 and a recurrence in small cases, and proves that for every 
 `(1 / (n + 1)) ∑_{i=0}^{n} C(n, i)⁻¹ = 1 + ∑_{i=0}^{n-2} (-1)^{n-i-1} s(n-1, i) / ((n-i)(n+1-i))`
 (`sum_inv_choose_succ_eq_one_add_sum_sabarNumber`) and the harmonic number identity
 `∑_{i=0}^{2n-2} (-1)^i s(2n-1, i) / (i+1) = H_n` (`sum_sabarNumber_div_succ_eq_harmonic`).
+It also expresses the central entries `s(2n, n)` in terms of Whitt's generalized Catalan numbers
+(`sabarNumber_central_eq_whittGeneralizedCatalan`).
 
 ## Proof outline
 
@@ -45,6 +49,10 @@ of Frisch's identity `MetaMathlibExt.frisch_alternating_reciprocal_binomial`
 For the harmonic identity, the same exchange of sums leaves an alternating binomial sum in each
 column. Binomial absorption reduces this inner sum to `(1 - (-1)^j) / (j+1)`, so the even columns
 vanish and the odd columns contribute the consecutive reciprocals of `H_n`.
+
+For Theorem 7, complete each central sum with its omitted first term and use Pascal's identity
+as in Sabar's induction. Subtracting the central binomial contribution leaves a recurrence with
+a Catalan term, which cancels against the consecutive Whitt relation after scaling by `2^(n+1)`.
 
 ## Implementation notes
 
@@ -297,6 +305,98 @@ public theorem sum_sabarNumber_div_succ_eq_harmonic (n : ℕ) (hn : 2 ≤ n) :
   rw [← one_div]
   field_simp
   ring
+
+-- Include the term at the bottom of the column, which `sabarNumber` omits.
+private def alternatingColumn (k m : ℕ) : ℚ :=
+  ∑ j ∈ Finset.range (m + 1), (-1 : ℚ) ^ (m - j) * ((k + j).choose k : ℚ)
+
+private lemma alternatingColumn_succ (k m : ℕ) :
+    alternatingColumn k (m + 1) = ((k + (m + 1)).choose k : ℚ) - alternatingColumn k m := by
+  simp only [alternatingColumn, Finset.sum_range_succ _ (m + 1), Nat.sub_self, pow_zero, one_mul]
+  rw [sub_eq_neg_add, ← Finset.sum_neg_distrib]
+  congr 1
+  refine Finset.sum_congr rfl fun j hj => ?_
+  have hj' := Finset.mem_range.mp hj
+  rw [show m + 1 - j = m - j + 1 by omega, pow_succ, mul_neg_one, neg_mul]
+
+-- Summing Pascal's identity leaves the last coefficient and the previous column.
+private lemma two_mul_alternatingColumn_succ (k m : ℕ) :
+    2 * alternatingColumn (k + 1) m = ((k + 1 + m).choose (k + 1) : ℚ) + alternatingColumn k m := by
+  induction m with
+  | zero => norm_num [alternatingColumn]
+  | succ m ih =>
+    rw [alternatingColumn_succ, alternatingColumn_succ k,
+      Nat.add_right_comm k 1 (m + 1), Nat.choose_succ_succ',
+      show k + (m + 1) = k + 1 + m by omega]
+    push_cast
+    linear_combination -ih
+
+private lemma alternatingColumn_diag (n : ℕ) :
+    alternatingColumn n n = (sabarNumber (2 * n) n : ℚ) + (-1) ^ n := by
+  unfold alternatingColumn sabarNumber
+  push_cast
+  have hIoc : Finset.Ioc n (2 * n) = Finset.Ico (n + 1) (2 * n + 1) := by
+    ext j
+    simp only [Finset.mem_Ioc, Finset.mem_Ico]
+    omega
+  rw [Finset.sum_range_succ', hIoc, Finset.sum_Ico_eq_sum_range,
+    show 2 * n + 1 - (n + 1) = n by omega]
+  simp only [Nat.sub_zero, Nat.add_zero, Nat.choose_self, Nat.cast_one, mul_one]
+  congr 1
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [show n + (j + 1) = n + 1 + j by omega,
+    show 2 * n - (n + 1 + j) = n - (j + 1) by omega]
+
+private def centralColumnDifference (n : ℕ) : ℚ :=
+  3 * alternatingColumn n n - 2 * ((2 * n).choose n : ℚ)
+
+-- After subtracting the central binomial terms, Sabar's recurrence has Catalan forcing.
+private lemma centralColumnDifference_succ (n : ℕ) :
+    2 * centralColumnDifference (n + 1) + centralColumnDifference n = -(catalan n : ℚ) := by
+  have hcolumn := two_mul_alternatingColumn_succ n (n + 1)
+  rw [alternatingColumn_succ n, show n + 1 + (n + 1) = 2 * (n + 1) by omega,
+    show n + (n + 1) = 2 * n + 1 by omega] at hcolumn
+  have hmiddle : ((2 * (n + 1)).choose (n + 1) : ℚ) = 2 * ((2 * n + 1).choose n : ℚ) := by
+    rw [show 2 * (n + 1) = 2 * n + 1 + 1 by omega, Nat.choose_succ_succ', Nat.choose_symm_half,
+      Nat.cast_add, two_mul ((2 * n + 1).choose n : ℚ)]
+  have hnear : ((2 * n + 1).choose n : ℚ) + catalan n = 2 * ((2 * n).choose n : ℚ) := by
+    have habsorb := Nat.choose_mul_succ_eq (2 * n) n
+    rw [show 2 * n + 1 - n = n + 1 by omega] at habsorb
+    have hchoose := congrArg (fun t : ℕ => (t : ℚ)) habsorb
+    have hcatalan := congrArg (fun t : ℕ => (t : ℚ)) (succ_mul_catalan_eq_centralBinom n)
+    simp only [Nat.cast_mul, Nat.cast_add, Nat.cast_one, Nat.cast_ofNat, Nat.centralBinom]
+      at hchoose hcatalan
+    apply mul_left_cancel₀ (show (n : ℚ) + 1 ≠ 0 by positivity)
+    linear_combination hcatalan - hchoose
+  unfold centralColumnDifference
+  linear_combination 3 * hcolumn - hmiddle + hnear
+
+/-- **Central entries of Sabar's triangle and Whitt's numbers.** Let $C(2, m)$ denote Whitt's
+generalized Catalan numbers at $\alpha = 2$. For every natural number $n \ge 1$, the central
+entry $s(2n, n)$ of Sabar's triangle satisfies
+$$s(2n, n) = \frac{2}{3} \binom{2n}{n} - \frac{1}{3} \cdot \frac{C(2, n)}{2^{n+1}} +
+(-1)^{n+1} + \frac{(-1)^n}{2^{n+1}}.$$
+
+Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
+(2026), Article A27, Theorem 7 (`integers-2026-A27-thm-7`). -/
+public theorem sabarNumber_central_eq_whittGeneralizedCatalan (n : ℕ) (hn : 1 ≤ n) :
+    (sabarNumber (2 * n) n : ℚ) =
+      (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * whittGeneralizedCatalan 2 n / 2 ^ (n + 1) +
+        (-1) ^ (n + 1) + (-1) ^ n / 2 ^ (n + 1) := by
+  -- The scaled difference and Whitt's numbers have opposite Catalan terms.
+  have hscaled (m : ℕ) (hm : 1 ≤ m) :
+      2 ^ (m + 1) * centralColumnDifference m = 3 * (-1) ^ m - whittGeneralizedCatalan 2 m := by
+    induction m, hm using Nat.le_induction with
+    | base => decide +kernel
+    | succ m hm ih =>
+      rw [pow_succ (2 : ℚ) (m + 1), pow_succ (-1 : ℚ) m]
+      linear_combination (2 : ℚ) ^ (m + 1) * centralColumnDifference_succ m - ih +
+        whittGeneralizedCatalan_two_add_succ m hm
+  have h := hscaled n hn
+  rw [centralColumnDifference, alternatingColumn_diag] at h
+  rw [pow_succ (-1 : ℚ) n]
+  field_simp
+  linear_combination h
 
 end
 

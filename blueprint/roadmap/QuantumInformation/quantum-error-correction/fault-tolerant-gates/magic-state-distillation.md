@@ -1,7 +1,8 @@
 # Magic-state distillation
 
 Bravyi and Kitaev's distillation theorems: in the model of Clifford unitaries, preparation of $|0\rangle$, one-qubit Pauli
-measurements and adaptive control, with independent copies of a noisy one-qubit state $\rho$, universal quantum
+measurements and adaptive control, in which the choice of each operation is computed from the earlier outcomes by an
+efficient classical algorithm, with independent copies of a noisy one-qubit state $\rho$, universal quantum
 computation can be simulated efficiently whenever
 
 - $F_T(\rho) = \max_{U} \langle T_{\mathrm{BK}} | U^{*} \rho U | T_{\mathrm{BK}} \rangle^{1/2} > F_T = \big(\tfrac12 (1 + \sqrt{3/7})\big)^{1/2} \approx 0.910$,
@@ -19,12 +20,14 @@ $F_T^{*} = \big(\tfrac12(1 + \sqrt{1/3})\big)^{1/2} \approx 0.888$.
 
 ## Expansion
 
-This node is a family. A good expansion adds pages for: the five-qubit distillation subroutine for $T$-type states (Bravyi
-and Kitaev, Section V), with its success probability and output error; the fifteen-qubit subroutine for $H$-type states
-(Section VI), with the weight-enumerator formulas $p_s = W_{L_1^{\perp}}(\varepsilon, 1 - \varepsilon)$ and
-$\varepsilon_{\mathrm{out}} = W_{L_2}(\varepsilon, 1 - \varepsilon) / p_s$ and the expansion $35\varepsilon^3 + O(\varepsilon^4)$;
-the recursion and its threshold; and the error analysis of Section IV, which combines distilled states with
-[magic-state injection](magic-state-injection.md).
+This node is a family. The iteration uses the success probabilities, output errors and thresholds of the five-qubit and
+fifteen-qubit subroutines (linked below); a good expansion adds a page for the error analysis of Bravyi and Kitaev's Section IV, which
+iterates a subroutine, counts the raw magic states used (on the order of $(\log(1/\varepsilon_{\mathrm{out}}))^{\gamma}$
+with $\gamma = \log_3 15$ for the fifteen-qubit scheme) and combines the distilled states with
+gadgets that implement non-Clifford gates: [magic-state injection](magic-state-injection.md) for the $H$-type states,
+and for the $T$-type states the conversion of Bravyi and Kitaev's Section III, in which two $T$-type states and a
+postselected parity measurement give a phase ancilla for the gate $\Lambda(e^{-i\pi/6})$, which together with the Clifford
+operators is universal; the conversion needs its own page.
 
 ## Depends on
 
@@ -32,9 +35,14 @@ the recursion and its threshold; and the error analysis of Section IV, which com
 - [The fifteen-qubit quantum Reed–Muller code](../small-stabilizer-codes/fifteen-qubit-quantum-reed-muller-code.md)
 - [Transversal $T$ preserves the fifteen-qubit code](../small-stabilizer-codes/transversal-t-preserves-the-fifteen-qubit-code.md)
 
-## Background
+## Proof depends on
 
-- [Clifford computations with mixtures of stabilizer states are classically simulable](mixtures-of-stabilizer-states-give-no-quantum-advantage.md)
+- [Five-to-one distillation of $T$-type magic states](five-to-one-distillation-of-t-type-magic-states.md)
+- [Fifteen-to-one distillation of $H$-type magic states](fifteen-to-one-distillation-of-h-type-magic-states.md)
+- [Magic-state injection](magic-state-injection.md): the $H$-type branch
+- [Clifford computations with mixtures of stabilizer states are classically simulable](mixtures-of-stabilizer-states-give-no-quantum-advantage.md): the stabilizer octahedron gives no advantage
+- [Clifford operations with magic states are universal](clifford-operations-with-magic-states-are-universal.md): universality for the ideal H-type resource
+- [Transversal $T$ preserves the fifteen-qubit code](../small-stabilizer-codes/transversal-t-preserves-the-fifteen-qubit-code.md): the logical action used by the $H$-type subroutine
 
 ## Sources
 

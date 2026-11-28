@@ -285,22 +285,6 @@ public theorem_wanted card_diagonalClassOf_truncate (q k : ℕ) (s : ℕ → ℕ
       (diagonalClassOf (k * (k + 1) / 2 + ∑ j ∈ Finset.Icc 1 k, j * s j)
         (diagonalOfList (diagonalNormalForm k s))).card
 
-/-- **Capping the multiplicities of a diagonal sequence at two.** For $m \ge 0$ and a sequence
-$s = (s_1, s_2, \dots)$ of natural numbers, let $d(m, s)$ be the sequence
-$(1, 2, \dots, m, m^{(s_m)}, (m-1)^{(s_{m-1})}, \dots, 1^{(s_1)})$ followed by zeros, where
-$v^{(r)}$ means $r$ copies of $v$, and let $n(m, s) = m(m+1)/2 + \sum_{j=1}^{m} j s_j$. Let
-$q \ge 1$ and $\sigma_j = \min(s_j, 2)$ for all $j$. Then the number of partitions of $n(q, s)$
-with diagonal sequence $d(q, s)$ equals the number of partitions of $n(q, \sigma)$ with diagonal
-sequence $d(q, \sigma)$.
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Corollary 6 (5). -/
-public theorem_wanted card_diagonalClassOf_min_two (q : ℕ) (hq : 1 ≤ q) (s : ℕ → ℕ) :
-    (diagonalClassOf (q * (q + 1) / 2 + ∑ j ∈ Finset.Icc 1 q, j * s j)
-        (diagonalOfList (diagonalNormalForm q s))).card =
-      (diagonalClassOf (q * (q + 1) / 2 + ∑ j ∈ Finset.Icc 1 q, j * min (s j) 2)
-        (diagonalOfList (diagonalNormalForm q fun j => min (s j) 2))).card
-
 /-- **Diagonal classes of size at most three.** Let $\alpha$ be a partition of $n \ge 1$, let
 $d = \delta(\alpha)$ be its diagonal sequence, written without its trailing zeros, and let
 $[\alpha]$ be the set of partitions of $n$ with diagonal sequence $d$, each written by its parts
