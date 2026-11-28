@@ -8,3 +8,4 @@ Undecidability of the first-order theory, or of a fragment of it, of the rationa
 - [The first-order theory of the ring of totally real algebraic integers is undecidable](totally-real-algebraic-integers-are-undecidable.md)
 - [The ring of integers of the totally real numbers adjoined i has undecidable theory](integers-of-totally-real-numbers-adjoined-i.md)
 - [Rings of integers of totally imaginary quadratic extensions of certain totally real fields are undecidable](totally-imaginary-quadratic-integers-undecidable.md)
+- [The non-integers are Diophantine over the rationals with 32 unknowns, so ∀⁹∃³² sentences over the rationals are undecidable](q-minus-z-diophantine-with-32-unknowns.md)

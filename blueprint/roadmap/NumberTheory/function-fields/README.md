@@ -11,3 +11,4 @@ Number-theoretic analogues over $\mathbb{F}_q[T]$ and finite fields: polynomial 
 - [Twin primes and Chowla's conjecture over function fields](twin-primes-and-chowla-s-conjecture-over-functio/README.md)
 - [Odd perfect polynomials over $\mathbb{F}_2$ are squares (Canaday)](odd-perfect-polynomial-is-square.md)
 - [Undecidability in function fields](undecidability-in-function-fields/README.md)
+- [Hilbert's tenth problem for rings of complex analytic functions](hilbert-s-tenth-problem-for-complex-analytic-functions/README.md)

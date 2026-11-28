@@ -25,3 +25,4 @@ p-adic integers and expansions, valuations of integer sequences, Hensel lifting,
 - [The p-adic valuation of a product of nonzero integers is the sum of their p-adic valuations](p-adic-order-integer-additive.md)
 - [Power series identities over complete non-archimedean fields](power-series-identities-over-complete-nonarchimedean-fields.md)
 - [The field of p-adic numbers](p-adic-numbers.md)
+- [Hilbert's tenth problem for rings of non-Archimedean analytic functions](hilbert-s-tenth-problem-for-non-archimedean-functions/README.md)

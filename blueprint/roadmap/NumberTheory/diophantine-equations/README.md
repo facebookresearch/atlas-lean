@@ -7,3 +7,4 @@ Integer and rational solutions of polynomial and exponential equations, Pell equ
 - [Higher-degree Diophantine equations](higher-degree-equations/README.md)
 - [Diophantine tuples and Egyptian fractions](diophantine-tuples-egyptian/README.md)
 - [Hilbert's tenth problem over rings of integers](hilbert-s-tenth-problem-over-number-rings/README.md)
+- [Undecidable Diophantine problems over the integers](undecidable-diophantine-problems-over-the-integers/README.md)
