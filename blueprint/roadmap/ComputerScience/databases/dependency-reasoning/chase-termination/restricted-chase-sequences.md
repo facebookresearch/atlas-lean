@@ -30,4 +30,4 @@ Rules are tuple-generating dependencies without equality. Fairness matters only 
 
 ## Sources
 
-- David Carral, Lukas Gerlach, Lucas Larroque and Michaël Thomazo, "Restricted Chase Termination: You Want More than Fairness", *Proceedings of the ACM on Management of Data* 3(2) (PODS 2025), 1–17, 2025, <https://doi.org/10.1145/3725246>; read as arXiv:2505.16551v1, <https://arxiv.org/abs/2505.16551v1>: Section 2 (Preliminaries), the definition of chase derivations and sequences, and the proposition on fixed databases in Section 4 (Related Work) of that version.
+- David Carral, Lukas Gerlach, Lucas Larroque and Michaël Thomazo, "Restricted Chase Termination: You Want More than Fairness", *Proceedings of the ACM on Management of Data* 3(2) (PODS 2025), 1–17, 2025, <https://doi.org/10.1145/3725246>; read as arXiv:2505.16551v1, <https://arxiv.org/abs/2505.16551v1>: Section 2 (Preliminaries) with Definition 3 (chase derivations and sequences), and Proposition 8 on fixed databases in Section 3 ("Related Work"), in the numbering of that version.

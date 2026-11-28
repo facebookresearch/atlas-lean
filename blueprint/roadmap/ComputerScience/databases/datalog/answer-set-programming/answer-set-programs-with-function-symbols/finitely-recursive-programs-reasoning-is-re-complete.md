@@ -2,7 +2,7 @@
 
 For disjunctive logic programs with function symbols in which every ground atom depends on only finitely many ground atoms, inconsistency checking and skeptical entailment of ground formulas under the stable model semantics are r.e.-complete, already for normal programs. Credulous entailment is co-r.e.-complete.
 
-**Setting (Baselice, Bonatti and Criscuolo).** A *disjunctive program* is a finite set of rules $A_1 \vee \dots \vee A_m \leftarrow L_1, \dots, L_n$ ($m > 0$, $n \ge 0$) whose $A_j$ are atoms and whose $L_i$ are atoms or negated atoms $\mathit{not}\, A$; terms may contain function symbols. It is *normal* if every head has one atom. The stable models are those of its ground instantiation $\mathrm{Ground}(P)$ (Gelfond–Lifschitz). $P$ is *inconsistent* if it has no stable model; a closed formula is a *skeptical* consequence of $P$ if every stable model satisfies it, and a *credulous* consequence if some stable model does. The *dependency graph* $DG(P)$ has the ground atoms as vertices and an edge from $A$ to $B$ whenever some rule of $\mathrm{Ground}(P)$ has $A$ in its head and $B$ in its body (positively or negatively) or in its head. $P$ is *finitely recursive* if each ground atom reaches only finitely many ground atoms in $DG(P)$.
+**Setting (Baselice, Bonatti and Criscuolo).** A *disjunctive program* is a finite set of rules $A_1 \vee \dots \vee A_m \leftarrow L_1, \dots, L_n$ ($m > 0$, $n \ge 0$) whose $A_j$ are atoms and whose $L_i$ are atoms or negated atoms $\mathit{not}\, A$; terms may contain function symbols. It is *normal* if every head has one atom. The stable models are those of its ground instantiation $\mathrm{Ground}(P)$ (Gelfond–Lifschitz). $P$ is *inconsistent* if it has no stable model; a closed formula is a *skeptical* consequence of $P$ if every stable model satisfies it, and a *credulous* consequence if some stable model does. The *dependency graph* $DG(P)$ has the ground atoms as vertices and an edge from $A$ to $B$ whenever some rule of $\mathrm{Ground}(P)$ has $A$ in its head and $B$ in its body (positively or negatively) or in its head. $P$ is *finitely recursive* if each ground atom reaches only finitely many ground atoms in $DG(P)$. Whether a program is finitely recursive is itself undecidable (Bonatti, as cited after Definition 2.1 of the source), so in the problems below the input program is promised to be finitely recursive.
 
 **Theorem (Baselice, Bonatti and Criscuolo).**
 
@@ -17,6 +17,9 @@ Finitely recursive programs extend finitary programs, which additionally have on
 - [Stable models of a normal logic program](../../../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/is-stable-model.md)
 - [The arithmetical class $\Sigma_n$](../../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 - [The arithmetical class $\Pi_n$](../../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Recognizability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

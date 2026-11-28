@@ -7,6 +7,7 @@ Deciding whether every fair restricted chase sequence of a given knowledge base 
 ## Depends on
 
 - [Restricted chase sequences and their termination](restricted-chase-sequences.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,6 +21,8 @@ None.
 
 The source notes that the "sometimes" variant (some chase sequence terminates) is recursively enumerable and complete for it, a result of Deutsch, Nash and Remmel.
 
+A good expansion links the $\Pi^1_1$-completeness of non-recurrence through a state on the empty word for nondeterministic Turing machines and Harel's $\Pi^1_1$-completeness of well-foundedness of computable trees.
+
 ## Sources
 
-- David Carral, Lukas Gerlach, Lucas Larroque and Michaël Thomazo, "Restricted Chase Termination: You Want More than Fairness", *Proceedings of the ACM on Management of Data* 3(2) (PODS 2025), 1–17, 2025, <https://doi.org/10.1145/3725246>; read as arXiv:2505.16551v1, <https://arxiv.org/abs/2505.16551v1>: the theorem opening Section 5 (Knowledge base termination) and its two lemmas, and the propositions of Section 3 on non-recurrence of Turing machines.
+- David Carral, Lukas Gerlach, Lucas Larroque and Michaël Thomazo, "Restricted Chase Termination: You Want More than Fairness", *Proceedings of the ACM on Management of Data* 3(2) (PODS 2025), 1–17, 2025, <https://doi.org/10.1145/3725246>; read as arXiv:2505.16551v1, <https://arxiv.org/abs/2505.16551v1>: Theorem 9 in Section 4 ("Knowledge base termination") with Lemmas 12 and 13, and the completeness of the non-recurrence problems for Turing machines stated in Section 2 (with the reductions in Appendix A), in the numbering of that version.

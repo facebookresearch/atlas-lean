@@ -9,6 +9,7 @@ Here a Datalog rule is $P\bar x \leftarrow Q_1 \bar y_1, \dots, Q_m \bar y_m$ wi
 ## Depends on
 
 - [Datalog programs and the immediate consequence operator](../datalog-programs-and-the-immediate-consequence-operator.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,4 +21,4 @@ The source calls the proof a straightforward Turing machine simulation. If a Dat
 
 ## Sources
 
-- Martin Grohe and Goetz Schwandtner, "The Complexity of Datalog on Linear Orders", *Logical Methods in Computer Science* 5(1), Paper 4, 2009, <https://doi.org/10.2168/LMCS-5(1:4)2009>; arXiv:0902.1179v2, <https://arxiv.org/abs/0902.1179v2>: Section 2 (Datalog and the nonemptiness problem), the definition of successor structures and the proposition on infinite successor structures in Section 4 ("Lower Bounds"), numbered 4.3.
+- Martin Grohe and Goetz Schwandtner, "The Complexity of Datalog on Linear Orders", *Logical Methods in Computer Science* 5(1), Paper 4, 2009, <https://doi.org/10.2168/LMCS-5(1:4)2009>; read in arXiv:0902.1179v2, <https://arxiv.org/abs/0902.1179v2>: Section 2 ("Preliminaries": Datalog and the nonemptiness problem), and the definition of successor structures and Proposition 4.3 in Section 4 ("Lower Bounds"), in the numbering of that version.

@@ -22,6 +22,7 @@ Hom-conservativity implies CQ-conservativity but not conversely. The same paper 
 
 - [Tuple- and equality-generating dependencies and the chase](../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -33,4 +34,4 @@ The reduction is from the problem whether the iteration of a given Conway functi
 
 ## Sources
 
-- Jean Christoph Jung, Carsten Lutz and Jerzy Marcinkowski, "Conservative Extensions for Existential Rules", Proceedings of the 19th International Conference on Principles of Knowledge Representation and Reasoning (KR 2022), pp. 195–204, 2022, <https://doi.org/10.24963/kr.2022/20>; Definition 1 (the conservativity notions), Theorem 2 (main statement) and Section 4 (the reduction) of arXiv:2202.05689v1, read at <https://arxiv.org/abs/2202.05689v1>.
+- Jean Christoph Jung, Carsten Lutz and Jerzy Marcinkowski, "Conservative Extensions for Existential Rules", Proceedings of the 19th International Conference on Principles of Knowledge Representation and Reasoning (KR 2022), pp. 195–204, 2022, <https://doi.org/10.24963/kr.2022/20>; Definition 1 (the conservativity notions), Theorem 2 (main statement), Section 4 (the reduction), Section 5 (triviality for linear TGDs) and Theorem 5 (frontier-one TGDs) of arXiv:2202.05689v1, read at <https://arxiv.org/abs/2202.05689v1>.

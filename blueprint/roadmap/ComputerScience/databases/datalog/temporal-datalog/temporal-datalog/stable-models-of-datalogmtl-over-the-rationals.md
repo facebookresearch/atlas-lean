@@ -28,6 +28,7 @@ Over the rational timeline the same reasoning problems are PSPACE-complete in da
 
 - [Datalog programs and the immediate consequence operator](../../datalog-programs-and-the-immediate-consequence-operator.md)
 - [Stable models of a normal logic program](../../../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/is-stable-model.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

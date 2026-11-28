@@ -12,12 +12,13 @@ whose triple patterns $t_i, t'_j$ use variables and constants but no blank nodes
 
 **Theorem (Joseph, Kuper and Serafini).** The CCQ entailment problem over unrestricted quad-systems is undecidable.
 
-The reduction produces quad-systems with a single context, a single quad, and bridge rules whose heads have one existential variable. The same paper identifies decidable classes, such as context-acyclic quad-systems, on which the chase terminates.
+The proof reduces from non-emptiness of the intersection of the languages of two context-free grammars (Theorem 1 of the source), and the quad-systems it produces have a single context, a single quad, and bridge rules whose heads have at most one existential variable. The same paper identifies decidable classes, such as context-acyclic quad-systems, on which the chase terminates.
 
 ## Depends on
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 - [Tuple- and equality-generating dependencies and the chase](../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -29,4 +30,4 @@ From context-free grammars $G_1, G_2$ over a common terminal set $T$, build a qu
 
 ## Sources
 
-- Mathew Joseph, Gabriel Kuper and Luciano Serafini, "Query Answering over Contextualized RDF/OWL Knowledge with Forall-Existential Bridge Rules: Attaining Decidability Using Acyclicity", Web Reasoning and Rule Systems (RR 2014), Lecture Notes in Computer Science 8741, pp. 60–75, 2014, <https://doi.org/10.1007/978-3-319-11113-1_5>; the definitions of the quad-system section, the CCQ entailment problem and the undecidability theorem of the section "Query Answering on Quad-Systems", with its proof in the appendix, of the full version arXiv:1406.0893v1, <https://arxiv.org/abs/1406.0893v1>.
+- Mathew Joseph, Gabriel Kuper and Luciano Serafini, "Query Answering over Contextualized RDF/OWL Knowledge with Forall-Existential Bridge Rules: Attaining Decidability Using Acyclicity", Web Reasoning and Rule Systems (RR 2014), Lecture Notes in Computer Science 8741, pp. 60–75, 2014, <https://doi.org/10.1007/978-3-319-11113-1_5>; read in the full version arXiv:1406.0893v1, <https://arxiv.org/abs/1406.0893v1>: the definitions of Section 2 ("Contextualized Quad-Systems"), the CCQ entailment problem and Theorem 1 in Section 3 ("Query Answering on Quad-Systems"), with its proof in the appendix, in the numbering of that version.

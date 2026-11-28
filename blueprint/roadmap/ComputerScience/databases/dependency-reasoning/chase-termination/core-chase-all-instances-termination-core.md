@@ -10,6 +10,8 @@ The dependencies are part of the input; constants may occur in them. The same re
 
 - [Chase variants and their termination classes](chase-variants-and-termination-classes.md)
 - [The arithmetical class Πₙ](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -17,8 +19,8 @@ None.
 
 ## Expansion
 
-The reduction is from uniform termination of word rewriting systems (does the system terminate on every input word), which is coRE-complete by Huet and Lankford. A word rewriting system is translated into tgds and each word into an instance so that the system terminates on the word if and only if the core chase terminates on the instance, and the full proof (in the appendix) relates uniform termination of the system to termination of the core chase on all instances. Uniform termination of word rewriting has no page here.
+The reduction is from uniform termination of word rewriting systems (does the system terminate on every input word), which is coRE-complete by Huet and Lankford. A word rewriting system is translated into tgds and each word into an instance so that the system terminates on the word if and only if the core chase terminates on the instance, and the full proof (in the appendix) relates uniform termination of the system to termination of the core chase on all instances. A good expansion links a page for the coRE-completeness of uniform termination of word rewriting.
 
 ## Sources
 
-- Gösta Grahne and Adrian Onet, "Anatomy of the Chase", Fundamenta Informaticae 157(3), pp. 221–270, 2018, <https://doi.org/10.3233/FI-2018-1627>; Theorem 6 (main statement), the corollary after it, and the discussion opening Section 4.2 of arXiv:1303.6682v1 (the copy read), <https://arxiv.org/abs/1303.6682v1>.
+- Gösta Grahne and Adrian Onet, "Anatomy of the Chase", Fundamenta Informaticae 157(3), pp. 221–270, 2018, <https://doi.org/10.3233/FI-2018-1627>; Theorem 6 (main statement) and the discussion before it in Section 4.2, which notes that the same reduction reproves part 2 of Theorem 5 (the RE-completeness of termination on a fixed instance, due to Deutsch, Nash and Remmel) of arXiv:1303.6682v1 (the copy read), <https://arxiv.org/abs/1303.6682v1>.

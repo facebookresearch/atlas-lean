@@ -7,6 +7,8 @@ Deciding whether a finite set of existential rules has only finite fair restrict
 ## Depends on
 
 - [Restricted chase sequences and their termination](restricted-chase-sequences.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [The arithmetical class $\Pi_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 
 ## Proof depends on
 
@@ -22,4 +24,4 @@ Earlier work had claimed that the problem is $\Pi^0_2$-complete; the source show
 
 ## Sources
 
-- David Carral, Lukas Gerlach, Lucas Larroque and Michaël Thomazo, "Restricted Chase Termination: You Want More than Fairness", *Proceedings of the ACM on Management of Data* 3(2) (PODS 2025), 1–17, 2025, <https://doi.org/10.1145/3725246>; read as arXiv:2505.16551v1, <https://arxiv.org/abs/2505.16551v1>: the theorem opening Section 6 (Rule set termination) and its two lemmas, the proposition on robust non-recurrence in Section 3, and the discussion in Section 4 (Related Work).
+- David Carral, Lukas Gerlach, Lucas Larroque and Michaël Thomazo, "Restricted Chase Termination: You Want More than Fairness", *Proceedings of the ACM on Management of Data* 3(2) (PODS 2025), 1–17, 2025, <https://doi.org/10.1145/3725246>; read as arXiv:2505.16551v1, <https://arxiv.org/abs/2505.16551v1>: Theorem 23 in Section 5 ("Rule set termination") with Lemmas 24 and 25, robust non-recurrence in Section 2, and the discussion in Section 3 ("Related Work"), in the numbering of that version.

@@ -20,6 +20,7 @@ The class consists of one rule set $\mathcal{R}_{\mathcal{M}}$ for each three-co
 - [Chase variants and their termination classes](chase-variants-and-termination-classes.md)
 - [Restricted chase sequences and their termination](restricted-chase-sequences.md)
 - [Treewidth of a conjunctive query](../../tractable-conjunctive-queries/treewidth-of-a-conjunctive-query.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

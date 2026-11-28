@@ -6,11 +6,12 @@ On finite trees whose nodes carry labels from an infinite alphabet that can be c
 
 **Theorem (Mazowiecki, Ochremiak and Witkowski).** The boundedness problem for $\mathsf{L\text{-}Datalog}(\downarrow, \downarrow_+)$ is undecidable over words and over ranked or unranked trees.
 
-The same paper proves that containment of an $\mathsf{L\text{-}Datalog}(\downarrow, \downarrow_+)$ program in a union of conjunctive queries is undecidable over ranked and unranked trees, that boundedness for $\mathsf{Datalog}(\downarrow)$ is in PSPACE over words and in 2EXPTIME over ranked trees, and that containment of a linear $\mathsf{Datalog}(\downarrow)$ program in a union of conjunctive queries is EXPSPACE-complete over unranked trees.
+The same paper notes, from the proofs of an earlier undecidability result for containment, that containment of an $\mathsf{L\text{-}Datalog}(\downarrow, \downarrow_+)$ program in a union of conjunctive queries is undecidable over ranked and unranked trees (Proposition 4), and proves that boundedness for $\mathsf{Datalog}(\downarrow)$ is in PSPACE over words and in 2EXPTIME over ranked trees, and that containment of a linear $\mathsf{Datalog}(\downarrow)$ program in a union of conjunctive queries is EXPSPACE-complete over unranked trees.
 
 ## Depends on
 
 - [Datalog programs and the immediate consequence operator](../datalog-programs-and-the-immediate-consequence-operator.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ The reduction asks whether a Turing machine has halting runs from the empty tape
 
 ## Sources
 
-- Filip Mazowiecki, Joanna Ochremiak and Adam Witkowski, "Eliminating Recursion from Monadic Datalog Programs on Trees", Mathematical Foundations of Computer Science 2015 (MFCS 2015), Lecture Notes in Computer Science, pp. 394–406, 2015, <https://doi.org/10.1007/978-3-662-48057-1_31>; the boundedness undecidability theorem of Section 4 ("Boundedness") with its proof in the appendix section "Undecidability of the boundedness problem in general", the definitions in Sections 1 and 2, and the decidability results of Sections 3 and 4, of arXiv:1505.02444v1, read at <https://arxiv.org/abs/1505.02444v1>.
+- Filip Mazowiecki, Joanna Ochremiak and Adam Witkowski, "Eliminating Recursion from Monadic Datalog Programs on Trees", Mathematical Foundations of Computer Science 2015 (MFCS 2015), Lecture Notes in Computer Science, pp. 394–406, 2015, <https://doi.org/10.1007/978-3-662-48057-1_31>; Theorem 11 of Section 4 ("Boundedness") with its proof in the appendix section "Undecidability of the boundedness problem in general", the definitions in Sections 1 and 2, Proposition 4 and Theorem 6 of Section 3, and Theorems 12 and 13 of Section 4, of arXiv:1505.02444v1, read at <https://arxiv.org/abs/1505.02444v1>.

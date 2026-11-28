@@ -22,4 +22,4 @@ This is the stable model semantics of Gelfond and Lifschitz, phrased through lev
 
 ## Sources
 
-- Lukas Gerlach, David Carral and Markus Hecher, "Finite Groundings for ASP with Functions: A Journey through Consistency", in *Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence (IJCAI 2024)*, 2024, pp. 3386–3394, <https://doi.org/10.24963/ijcai.2024/375>; read as arXiv:2405.15794v1, <https://arxiv.org/abs/2405.15794v1>: the Preliminaries (ground and non-ground ASP) and the definition of frugal and non-proliferous programs in Section 4 of that version.
+- Lukas Gerlach, David Carral and Markus Hecher, "Finite Groundings for ASP with Functions: A Journey through Consistency", in *Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence (IJCAI 2024)*, 2024, pp. 3386–3394, <https://doi.org/10.24963/ijcai.2024/375>; read as arXiv:2405.15794v1, <https://arxiv.org/abs/2405.15794v1>: Section 2 (preliminaries: ground and non-ground ASP) and Definition 4 (frugal and non-proliferous programs) in Section 4, in the numbering of that version.

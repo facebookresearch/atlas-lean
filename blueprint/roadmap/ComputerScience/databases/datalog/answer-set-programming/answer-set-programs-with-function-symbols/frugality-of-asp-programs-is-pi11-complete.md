@@ -7,6 +7,7 @@ Deciding whether a normal program with function symbols has only finite answer s
 ## Depends on
 
 - [Answer sets of normal programs with function symbols](answer-sets-of-normal-programs.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ For frugal programs consistency drops to $\Sigma^0_1$, because an answer set, if
 
 ## Sources
 
-- Lukas Gerlach, David Carral and Markus Hecher, "Finite Groundings for ASP with Functions: A Journey through Consistency", in *Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence (IJCAI 2024)*, 2024, pp. 3386–3394, <https://doi.org/10.24963/ijcai.2024/375>; read as arXiv:2405.15794v1, <https://arxiv.org/abs/2405.15794v1>: the $\Pi^1_1$-completeness theorem on frugal programs in Subsection 4.1 and its proof in the appendix of that version.
+- Lukas Gerlach, David Carral and Markus Hecher, "Finite Groundings for ASP with Functions: A Journey through Consistency", in *Proceedings of the Thirty-Third International Joint Conference on Artificial Intelligence (IJCAI 2024)*, 2024, pp. 3386–3394, <https://doi.org/10.24963/ijcai.2024/375>; read as arXiv:2405.15794v1, <https://arxiv.org/abs/2405.15794v1>: Theorem 3 in Section 4.1, with its proof sketch there and in the appendix, in the numbering of that version.

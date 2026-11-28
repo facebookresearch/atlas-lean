@@ -11,6 +11,7 @@ The paper's motivation is a data-dependent termination guarantee: if the constra
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](../../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +23,4 @@ The reduction is from the problem whether a Turing machine started on the empty 
 
 ## Sources
 
-- Michael Meier, Michael Schmidt and Georg Lausen, "On chase termination beyond stratification", Proceedings of the VLDB Endowment 2(1), pp. 970–981, 2009, <https://doi.org/10.14778/1687627.1687737>; the definition of $(I, \Sigma)$-irrelevance and the undecidability theorem with its proof sketch in the subsection "Static Termination Guarantees" of the section "Data-dependent Termination" of arXiv:0906.4228v2, read at <https://arxiv.org/abs/0906.4228v2>.
+- Michael Meier, Michael Schmidt and Georg Lausen, "On chase termination beyond stratification", Proceedings of the VLDB Endowment 2(1), pp. 970–981, 2009, <https://doi.org/10.14778/1687627.1687737>; the definition of $(I, \Sigma)$-irrelevance, Lemma 4 (termination after removing irrelevant constraints), Theorem 8 with its proof sketch and Proposition 7 (a sufficient condition for irrelevance) in Section 4.1, "Static Termination Guarantees", of Section 4, "Data-dependent Termination" of arXiv:0906.4228v2, read at <https://arxiv.org/abs/0906.4228v2>.

@@ -30,4 +30,4 @@ Both variants are eager, in contrast with the standard (restricted) chase, which
 
 ## Sources
 
-- Tomasz Gogacz and Jerzy Marcinkowski, "All-Instances Termination of Chase is Undecidable", in *Automata, Languages, and Programming (ICALP 2014), Part II*, Lecture Notes in Computer Science 8573, Springer, 2014, pp. 293–304, <https://doi.org/10.1007/978-3-662-43951-7_25>; read as arXiv:1401.4840v2, <https://arxiv.org/abs/1401.4840v2>: Section 1 and Section 3.1 ("The well of positivity", Lemma 1) of that version.
+- Tomasz Gogacz and Jerzy Marcinkowski, "All-Instances Termination of Chase is Undecidable", in *Automata, Languages, and Programming (ICALP 2014), Part II*, Lecture Notes in Computer Science 8573, Springer, 2014, pp. 293–304, <https://doi.org/10.1007/978-3-662-43951-7_25>; read as arXiv:1401.4840v2, <https://arxiv.org/abs/1401.4840v2>: Section 1 and Section 3.1 ("The well of positivity", with Lemma 3 on the critical instance), in the numbering of that version.

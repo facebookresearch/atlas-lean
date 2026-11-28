@@ -10,6 +10,8 @@ The reduction behind this theorem does not apply to $\mathsf{CT}^{\mathsf{std}}_
 
 - [Chase variants and their termination classes](chase-variants-and-termination-classes.md)
 - [The arithmetical class Πₙ](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -17,7 +19,7 @@ None.
 
 ## Expansion
 
-As for the core chase, the proof translates word rewriting systems into tgds and words into instances, reducing from uniform termination of word rewriting, which is coRE-complete (Huet and Lankford) and has no page here.
+As for the core chase, the proof translates word rewriting systems into tgds and words into instances, reducing from uniform termination of word rewriting, which is coRE-complete (Huet and Lankford); a good expansion links a page for that result.
 
 ## Sources
 
