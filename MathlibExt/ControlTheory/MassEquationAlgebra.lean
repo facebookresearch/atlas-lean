@@ -32,14 +32,17 @@ Deriving the mechanics equation itself is out of scope.
 namespace ControlTheory
 
 /-- The first-order right-hand side of the mass equation at
-velocity `v` under net force `F`: the pair `(v, M⁻¹ *ᵥ F)` of
-velocity and acceleration. -/
+velocity `v` under net force `F`: the pair `(v, M⁻¹ *ᵥ F)`, where
+`M⁻¹ = 0` for a singular `M`. When `M` is invertible, the second
+component is the acceleration solving the mass equation
+(`eq_firstOrderRhs_iff`); for a singular `M` it is `0` and need not
+solve it. -/
 noncomputable def firstOrderRhs {n : Type*} [Fintype n] [DecidableEq n]
     (M : Matrix n n ℝ) (F v : n → ℝ) : (n → ℝ) × (n → ℝ) :=
   (v, M⁻¹ *ᵥ F)
 
-/-- A derivative pair `(x, y)` is the first-order right-hand side
-if and only if the position derivative is the velocity and the
+/-- For a mass matrix `M` with invertible determinant, a derivative pair `(x, y)` is the
+first-order right-hand side if and only if the position derivative is the velocity and the
 velocity derivative solves the mass equation. -/
 theorem eq_firstOrderRhs_iff {n : Type*} [Fintype n] [DecidableEq n]
     (M : Matrix n n ℝ) (hM : IsUnit M.det) (F v x y : n → ℝ) :

@@ -25,3 +25,6 @@
 - [Membership in the finite-state automorphism group](mem-finite-state-automorphisms-iff.md)
 - [Irreducible generating sets of finite-state automorphism groups (Kourovka 16.86)](finite-state-automorphisms-irreducible-g.md)
 - [Lavrenyuk's theorem on irreducible generators of finite-state automorphism groups](finite-state-automorphisms-irreducible-g-2.md)
+- [Automaton group](automaton-group.md)
+- [Some automaton group has undecidable Engel problem](automaton-group-undecidable-engel-problem.md)
+- [Some automaton group has undecidable order problem](automaton-group-undecidable-order-problem.md)

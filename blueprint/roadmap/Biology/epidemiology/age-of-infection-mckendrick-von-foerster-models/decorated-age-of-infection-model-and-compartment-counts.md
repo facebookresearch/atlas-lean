@@ -14,6 +14,8 @@ $$n_i(t) = \int_0^\infty n(t,a)\,p(a,i)\,da, \qquad i \in \mathcal{S}.$$
 
 $$\dot S = -\beta IS, \qquad \dot I = \beta IS - \gamma I, \qquad \dot R = \gamma I .$$
 
+**Correction of the source.** The source's Eq. (2) prints the last equation as $\dot R = -\gamma I$ (its full display reads $\dot S = -\beta IS,\ \dot I = \beta IS - \gamma I,\ \dot R = -\gamma I$). That sign is a misprint: recovered individuals accumulate at rate $\gamma I$, so $S + I + R$ stays constant only with $\dot R = +\gamma I$, and differentiating $R(t) = \int_0^\infty n(t,a)(1 - e^{-\gamma a})\,da$ as in the Expansion also gives $+\gamma I$. The page states the corrected form.
+
 ## Depends on
 
 - [Solution of the Kermack–McKendrick SIR system](../kermack-mckendrick-sir-model/is-solution.md)

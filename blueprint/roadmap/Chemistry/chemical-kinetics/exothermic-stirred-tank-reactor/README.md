@@ -39,3 +39,7 @@
 - [Steady states and an energy invariant of the dimensionless adiabatic reactor](steady-states-of-the-dimensionless-adiabatic-reactor.md)
 - [Unique steady state of the adiabatic reactor when $\beta b < 4$](unique-steady-state-of-the-adiabatic-reactor.md)
 - [Global dynamics of nonisothermal stirred tanks](global-dynamics-of-nonisothermal-stirred-tanks.md)
+
+## Uniqueness of the dimensionless adiabatic steady state
+
+- [Is Steady State](is-steady-state.md)
