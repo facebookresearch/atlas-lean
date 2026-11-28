@@ -47,7 +47,22 @@
 
 ## IEEE arithmetic, double rounding and compilation
 
+- [Binary floating-point format](binary-format.md)
+- [Rounding modes](rounding-mode.md)
+- [Rounding to an integer in a rounding mode](round-int.md)
+- [Rounding in a bounded format](round.md)
+- [Largest finite number](max-finite.md)
+- [IEEE values of a binary format](value.md)
+- [IEEE status flags](flags.md)
+- [Rounding an exact result](round-result.md)
+- [Basic operations](operation.md)
 - [Total IEEE-style operation semantics with special values and exceptions](total-ieee-style-operation-semantics-with-special-values-and.md)
+- [Four-outcome comparison](compare.md)
+- [`≤` is not a partial order with NaN](not-le-nan-and-not-is-partial-order.md)
+- [Addition is commutative](eval-add-comm.md)
+- [Multiplication is commutative](eval-mul-comm.md)
+- [Addition is not associative](not-add-assoc.md)
+- [Multiplication is not associative](not-mul-assoc.md)
 - [Double rounding through an extended precision](double-rounding-through-an-extended-precision.md)
 - [Semantics preservation of floating-point compilation](semantics-preservation-of-floating-point-compilation.md)
 - [IEEE operations agree with rounding in the normal range](ieee-operations-agree-with-rounding-in-the-normal-range.md)
