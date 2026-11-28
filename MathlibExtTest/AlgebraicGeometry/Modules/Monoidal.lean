@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.Modules.Monoidal
+public import MathlibExt.AlgebraicGeometry.SchemeModulesTensor
 
 @[expose] public section
 
@@ -35,11 +36,17 @@ example : 𝟙_ X.Modules = SheafOfModules.unit X.ringCatSheaf := Scheme.Modules
 /-- The internal hom of the presheaves underlying two sheaves of modules on `X` is a sheaf of
 modules on `X`. -/
 example (L M : X.Modules) : X.Modules :=
-  ⟨PresheafOfModules.ihomObj (R := X.sheaf.obj) L.val M.val,
-    PresheafOfModules.isSheaf_ihomObj (R := X.sheaf.obj) L.val M.val M.isSheaf⟩
+  ⟨(ihom L.val).obj M.val,
+    PresheafOfModules.isSheaf_ihom (R₀ := X.sheaf.obj) L.val M.val M.isSheaf⟩
 
 /-- `L ⊗ M` is the sheafified presheaf tensor product. -/
 example (L M : X.Modules) : (Scheme.Modules.sheafify X).obj (L.val ⊗ M.val) ≅ L ⊗ M :=
   Scheme.Modules.tensorIsoSheafify L M
+
+/-- The sheafified presheaf tensor product is `SchemeModulesTensor.moduleTensor`, and the named
+comparison `moduleTensorIso` is `tensorIsoSheafify`. -/
+example (L M : X.Modules) :
+    Scheme.Modules.moduleTensorIso L M = Scheme.Modules.tensorIsoSheafify L M :=
+  rfl
 
 end

@@ -12,12 +12,13 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.Analysis.SpecialFunctions.Log.IntegralDerivative
 public import MathlibExt.NumberTheory.PrimeCounting.AxlerEffectivePrimeEstimates
+public import MathlibExt.NumberTheory.PrimeCounting.AxlerMertensRemainder
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import Mathlib.NumberTheory.PrimeCounting
 public import WantedExt.NumberTheory.PrimeCounting.DusartMertensLogSumWanted
-public import WantedExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumWanted
+public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 
 namespace MetaMathlibExt
 
@@ -364,48 +365,6 @@ public theorem_wanted abs_primeCounting_sub_logarithmicIntegral_lt (x : ℝ) (hx
     (hx' : x ≤ 1.101 * 10 ^ 26) :
     |(Nat.primeCounting ⌊x⌋₊ : ℝ) - Real.logarithmicIntegralReal x| <
       Real.sqrt x * Real.log x / (8 * Real.pi)
-
-/-- **Tails of prime power sums from a Chebyshev bound.** Let $k \ge 1$ be an integer and let
-$\eta > 0$ and $x_0 > 1$ be reals such that $|\vartheta(y) - y| < \eta y / \log^k y$ for every
-real $y \ge x_0$, where $\vartheta(y) = \sum_{p \le y} \log p$ is Chebyshev's function. Then
-for every integer $n \ge 2$ and every real $x \ge x_0$,
-$$
-\Big|\operatorname{li}(x^{1-n}) + \sum_{p > x} \frac{1}{p^n}\Big| <
-\frac{\eta}{x^{n-1} \log^{k+1} x} \Big(1 + \frac{n}{n-1}\Big),
-$$
-where $\operatorname{li}$ is the logarithmic integral and the sums run over primes $p$.
-
-Source: Christian Axler, *Effective Estimates for Some Functions Defined over Primes*,
-INTEGERS 24 (2024), Article A34, Lemma 6 (`integers-2024-A34-lem-6`). -/
-public theorem_wanted abs_logarithmicIntegral_add_tsum_inv_prime_pow_lt (k : ℕ) (hk : 0 < k)
-    (η x₀ : ℝ) (hη : 0 < η) (hx₀ : 1 < x₀)
-    (hθ : ∀ y : ℝ, x₀ ≤ y → |Chebyshev.theta y - y| < η * y / Real.log y ^ k)
-    (n : ℕ) (hn : 2 ≤ n) (x : ℝ) (hx : x₀ ≤ x) :
-    |Real.logarithmicIntegralReal (x ^ ((1 : ℝ) - n)) +
-        ∑' p : ℕ, if p.Prime ∧ x < p then 1 / (p : ℝ) ^ n else 0| <
-      η / (x ^ (n - 1) * Real.log x ^ (k + 1)) * (1 + n / (n - 1 : ℝ))
-
-/-- **The Mertens remainder from a Chebyshev bound.** Let $k \ge 1$ be an integer and let
-$\eta > 0$ and $x_0 > 1$ be reals such that $|\vartheta(y) - y| < \eta y / \log^k y$ for every
-real $y \ge x_0$, where $\vartheta(y) = \sum_{p \le y} \log p$ is Chebyshev's function. For
-real $x$ let $S(x) = \sum_{p > x} \big(\log(1 - 1/p) + 1/p\big)$, the sum over the primes
-$p > x$. Then for every real $x \ge x_0$,
-$$
-\Big|S(x) - \sum_{m \ge 1} \frac{\operatorname{li}(x^{-m})}{m+1}\Big| <
-\frac{\eta}{\log^{k+1} x} \Big((x+1) \log\frac{x}{x-1} - 1\Big),
-$$
-where $\operatorname{li}$ is the logarithmic integral.
-
-Source: Christian Axler, *Effective Estimates for Some Functions Defined over Primes*,
-INTEGERS 24 (2024), Article A34, Proposition 8 (`integers-2024-A34-prop-8`); `S(x)` as in
-the paper's equation (6.5). -/
-public theorem_wanted abs_mertensRemainder_sub_tsum_logarithmicIntegral_lt (k : ℕ) (hk : 0 < k)
-    (η x₀ : ℝ) (hη : 0 < η) (hx₀ : 1 < x₀)
-    (hθ : ∀ y : ℝ, x₀ ≤ y → |Chebyshev.theta y - y| < η * y / Real.log y ^ k)
-    (x : ℝ) (hx : x₀ ≤ x) :
-    |(∑' p : ℕ, if p.Prime ∧ x < p then Real.log (1 - 1 / (p : ℝ)) + 1 / (p : ℝ) else 0) -
-        ∑' m : ℕ, Real.logarithmicIntegralReal (x ^ (-((m : ℝ) + 1))) / ((m : ℝ) + 2)| <
-      η / Real.log x ^ (k + 1) * ((x + 1) * Real.log (x / (x - 1)) - 1)
 
 /-- **Tails of prime power sums under the Riemann hypothesis.** Assume the Riemann
 hypothesis. Then for every integer $n \ge 2$ and every real $x \ge 599$,

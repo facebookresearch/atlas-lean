@@ -11,8 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
 public import MathlibExt.NumberTheory.Digits.BergmanLucasEvenAdd
+public import MathlibExt.NumberTheory.Digits.BergmanWordFib
 public import MathlibExt.NumberTheory.Digits.FibMemLucasIntervals
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Digits.BasePhiRepresentationsBergmanLowestPositionLucasInterval
 
 /-!
 # Counting base phi representations
@@ -28,19 +30,6 @@ statement about `S` up to translation.
 -/
 
 namespace MetaMathlibExt
-
-/-- **Golden mean flips connect all expansions to the Bergman expansion.** Let $N$ be a natural
-number, let $S$ be a Bergman expansion of $N$ and let $T$ be any finite base phi expansion of
-$N$ with digits $0$ and $1$. Then $T$ is obtained from $S$ by finitely many (possibly zero)
-golden mean flips $100 \to 011$.
-
-Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
-Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Theorem 2.1
-(`fq-2024-dekking11102023-thm-2.1`). -/
-public theorem_wanted reflTransGen_isGoldenMeanFlip_of_isBergmanExpansion (N : ℕ)
-    {S T : Finset ℤ} (hS : IsBergmanExpansion S) (hSN : basePhiValue S = N)
-    (hTN : basePhiValue T = N) :
-    Relation.ReflTransGen IsGoldenMeanFlip S T
 
 /-- **Recursion for the number of Knott expansions.** Let $\varphi$ be the golden ratio, let
 $N \ge 2$ and $n$ be natural numbers, and let $p_0, \dots, p_n$ be integers with
@@ -65,24 +54,6 @@ public theorem_wanted knottExpansionCount_eq_of_recursion (N : ℕ) (hN : 2 ≤ 
       (Even (s k) → 2 * r k = (s k + 2) * r (k - 1)) ∧
       (Odd (s k) → 2 * r k = (s k + 3) * r (k - 1) - 2 * r (k - 2))) :
     (knottExpansionCount N : ℤ) = r n
-
-/-- **Bergman expansions of the Fibonacci numbers.** Let $n \ge 1$ and write $F_m$ for the $m$-th
-Fibonacci number, with $F_1 = F_2 = 1$. Let $S$ be a finite set of integers with no two
-consecutive elements (a Bergman expansion). If the base phi value of $S$ is $F_{2n}$, then
-$S = \{t + 4j : 0 \le j < n\}$ for some integer $t$. If the base phi value of $S$ is
-$F_{2n+1}$, then $S = \{t\} \cup \{t + 3 + 4j : 0 \le j < n\}$ for some integer $t$.
-
-Read from the highest to the lowest position, these are the digit words $(1000)^{n-1}1$ and
-$(1000)^{n-1}1001$; the position of the radix point is not determined.
-
-Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
-Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Proposition 3.1
-(`fq-2024-dekking11102023-prop-3.1`). -/
-public theorem_wanted bergmanWord_fib (n : ℕ) (hn : 1 ≤ n) :
-    (∀ S : Finset ℤ, IsBergmanExpansion S → basePhiValue S = Nat.fib (2 * n) →
-      ∃ t : ℤ, S = (Finset.range n).image fun j : ℕ => 4 * (j : ℤ) + t) ∧
-    (∀ S : Finset ℤ, IsBergmanExpansion S → basePhiValue S = Nat.fib (2 * n + 1) →
-      ∃ t : ℤ, S = insert t ((Finset.range n).image fun j : ℕ => 4 * (j : ℤ) + 3 + t))
 
 /-- **Knott expansions of Fibonacci numbers.** Let $F_n$ be the Fibonacci numbers ($F_0 = 0$,
 $F_1 = 1$). For every $n \ge 1$, the number of Knott expansions of $F_n$ is $F_n$.
@@ -160,22 +131,6 @@ public theorem_wanted bergman_tail_parity_iff_lucasInterval (N : ℕ) (hN : 2 �
     ((∃ n : ℕ, N ∈ Set.Icc (lucasNumber (2 * n)) (lucasNumber (2 * n + 1))) ↔ Odd s) ∧
       ((∃ n : ℕ, N ∈ Set.Icc (lucasNumber (2 * n + 1) + 1) (lucasNumber (2 * n + 2) - 1)) ↔
         Even s)
-
-/-- **Lowest Bergman digit of $N$ from its Lucas interval.** Let $N$ and $n$ be natural numbers,
-let $S$ be a finite set of integers with no two consecutive elements (a Bergman expansion) whose
-base phi value is $N$, and let $R$ be the least element of $S$. Write $L_m$ for the $m$-th Lucas
-number. If $L_{2n} \le N \le L_{2n+1}$, then $-R = 2n$. If $L_{2n+1} + 1 \le N \le L_{2n+2} - 1$,
-then $-R = 2n + 2$.
-
-Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
-Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Proposition 5.1(b)
-(`fq-2024-dekking11102023-prop-5.1`). -/
-public theorem_wanted bergman_lowest_position_lucasInterval (N n : ℕ) {S : Finset ℤ}
-    (hS : IsBergmanExpansion S) (hSN : basePhiValue S = N) {R : ℤ}
-    (hR : IsLeast (S : Set ℤ) R) :
-    (N ∈ Set.Icc (lucasNumber (2 * n)) (lucasNumber (2 * n + 1)) → -R = 2 * n) ∧
-      (N ∈ Set.Icc (lucasNumber (2 * n + 1) + 1) (lucasNumber (2 * n + 2) - 1) →
-        -R = 2 * n + 2)
 
 /-- **Recursive structure of Bergman expansions, odd Lucas case.** Let $n \ge 2$, let $k$ be a
 natural number, and write $L_m$ for the $m$-th Lucas number. Call a finite set of integers with no

@@ -2,6 +2,7 @@
 
 Relations between formal theories and their structures: first-order languages of algebraic structures, quantifier elimination, categoricity and o-minimality.
 
+- [Defining the integers in the rationals](defining-the-integers-in-the-rationals/README.md)
 - [First-order language of groups](first-order-language-of-groups/README.md)
 - [Quantifier elimination for real closed fields](quantifier-elimination-for-real-closed-fields/README.md)
 - [Wilkie's conjecture](wilkie-s-conjecture/README.md)
@@ -13,3 +14,12 @@ Relations between formal theories and their structures: first-order languages of
 - [Vaught's conjecture](vaught-s-conjecture.md)
 
 - [Omitting types theorem](omitting-types-theorem.md)
+
+- [Beth's definability theorem](beth-definability-theorem.md)
+- [Downward Löwenheim–Skolem theorem](downward-lowenheim-skolem-theorem.md)
+- [Compactness theorem for first-order logic](compactness-theorem-for-first-order-logic.md)
+- [Upward Löwenheim–Skolem theorem](upward-lowenheim-skolem-theorem.md)
+- [Quantifier elimination for Presburger arithmetic](quantifier-elimination-for-presburger-arithmetic.md)
+- [A CH obstruction at the countable Hanf threshold](ch-hanf-categoricity-threshold-obstruction.md)
+- [Locality and preservation in the finite](locality-and-preservation-in-the-finite/README.md)
+- [Undecidable theories of geometries and fields](undecidable-theories-of-geometries/README.md)

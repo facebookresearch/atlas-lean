@@ -10,7 +10,10 @@ where $T_i(n)$ is the number of rounds among the first $n$ in which arm $i$ is c
 
 ## Depends on
 
-- [Stochastic k-armed bandits: canonical history law and regret](stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Stochastic k-armed bandits: canonical history law](stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Regret of a bandit policy](canonical-bandit-model/regret.md)
+- [Pull count of an arm](canonical-bandit-model/pull-count.md)
+- [Bandits with finite means](canonical-bandit-model/has-finite-means.md)
 
 ## Sources
 

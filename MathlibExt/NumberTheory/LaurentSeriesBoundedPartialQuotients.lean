@@ -220,6 +220,133 @@ theorem not_laurentIsIrrational_polyToLaurentInv (P : Polynomial K) :
     ¬ LaurentIsIrrational (polyToLaurentInv P) := fun h =>
   h P 1 one_ne_zero (by simp [polyToLaurentInv])
 
+/-- **The denominator at a Möbius–Frobenius fixed point is nonzero.** Let $K$ be a finite field
+with $q$ elements, let $A, B, C, D \in K[x]$, and let $\alpha \in K((x^{-1}))$ be irrational with
+$\alpha = (A \alpha^q + B) / (C \alpha^q + D)$, where division by $0$ gives $0$. Then
+$C \alpha^q + D \ne 0$.
+
+Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
+Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
+Lemma 6 (`integers-2026-A57-lem-6`). -/
+public theorem laurentMobius_den_ne_zero [Fintype K] (A B C D : Polynomial K)
+    (α : LaurentSeries K) (hα : LaurentIsIrrational α)
+    (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
+      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D)) :
+    polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D ≠ 0 := by
+  intro h
+  have hzero : α = 0 := by simpa [h] using hfix
+  exact hα 0 1 one_ne_zero (by simp [hzero, polyToLaurentInv])
+
+/-- **The inverse denominator at a Möbius–Frobenius fixed point is nonzero.** Let $K$ be a finite
+field with $q$ elements, let $A, B, C, D \in K[x]$ with $\Delta = AD - BC \ne 0$, and let
+$\alpha \in K((x^{-1}))$ be irrational with $\alpha = (A \alpha^q + B) / (C \alpha^q + D)$. Then
+$A - C \alpha \ne 0$, since $(A - C \alpha)(C \alpha^q + D) = \Delta$.
+
+Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
+Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
+Lemma 6 (`integers-2026-A57-lem-6`). -/
+public theorem laurentMobius_invDen_ne_zero [Fintype K] (A B C D : Polynomial K)
+    (hΔ : A * D - B * C ≠ 0) (α : LaurentSeries K) (hα : LaurentIsIrrational α)
+    (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
+      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D)) :
+    polyToLaurentInv A - polyToLaurentInv C * α ≠ 0 := by
+  have hden := laurentMobius_den_ne_zero A B C D α hα hfix
+  let e : Polynomial K →ₐ[K] LaurentSeries K := Polynomial.aeval (laurentInvVar K)
+  let q := Fintype.card K
+  change α = (e A * α ^ q + e B) / (e C * α ^ q + e D) at hfix
+  change e C * α ^ q + e D ≠ 0 at hden
+  change e A - e C * α ≠ 0
+  -- If a nonzero polynomial evaluated to zero, it would witness the rational relation Tα = 0.
+  have hnonzero (T : Polynomial K) (hT : T ≠ 0) : e T ≠ 0 := by
+    intro h
+    apply hα 0 T hT
+    change e T * α = e 0
+    rw [h, zero_mul, map_zero]
+  have hcross := (eq_div_iff hden).mp hfix
+  -- The forward and inverse Möbius denominators multiply to the determinant.
+  have hdet : (e A - e C * α) * (e C * α ^ q + e D) = e (A * D - B * C) := by
+    simp only [map_sub, map_mul]
+    linear_combination -e C * hcross
+  exact (mul_ne_zero_iff.mp (hdet.trans_ne (hnonzero _ hΔ))).1
+
+/-- **First difference identity for a Möbius–Frobenius fixed point.** Let $K$ be a finite field
+with $q$ elements, let $A, B, C, D \in K[x]$ with $\Delta = AD - BC \ne 0$, and let
+$\alpha \in K((x^{-1}))$ be irrational with $\alpha = (A \alpha^q + B) / (C \alpha^q + D)$. Let
+$P, Q \in K[x]$, put $R_1 = DP - BQ$ and $S_1 = -CP + AQ$, and assume $S_1 \ne 0$. Then
+$\alpha^q - R_1 / S_1 = \Delta (Q \alpha - P) / ((A - C \alpha) S_1)$.
+
+Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
+Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
+Lemma 6 (`integers-2026-A57-lem-6`). -/
+public theorem laurentMobius_pow_sub_identity [Fintype K] (A B C D : Polynomial K)
+    (hΔ : A * D - B * C ≠ 0) (α : LaurentSeries K) (hα : LaurentIsIrrational α)
+    (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
+      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D))
+    (P Q : Polynomial K) (hS₁ : -C * P + A * Q ≠ 0) :
+    α ^ Fintype.card K - polyToLaurentInv (D * P - B * Q) / polyToLaurentInv (-C * P + A * Q) =
+        polyToLaurentInv (A * D - B * C) * (polyToLaurentInv Q * α - polyToLaurentInv P) /
+          ((polyToLaurentInv A - polyToLaurentInv C * α) * polyToLaurentInv (-C * P + A * Q)) := by
+  have hden := laurentMobius_den_ne_zero A B C D α hα hfix
+  have hinvDen := laurentMobius_invDen_ne_zero A B C D hΔ α hα hfix
+  let e : Polynomial K →ₐ[K] LaurentSeries K := Polynomial.aeval (laurentInvVar K)
+  let q := Fintype.card K
+  change α = (e A * α ^ q + e B) / (e C * α ^ q + e D) at hfix
+  change e C * α ^ q + e D ≠ 0 at hden
+  change e A - e C * α ≠ 0 at hinvDen
+  have hnonzero (T : Polynomial K) (hT : T ≠ 0) : e T ≠ 0 := by
+    intro h
+    apply hα 0 T hT
+    change e T * α = e 0
+    rw [h, zero_mul, map_zero]
+  have hcross := (eq_div_iff hden).mp hfix
+  have hinv : α ^ q = (e D * α - e B) / (e A - e C * α) := by
+    apply (eq_div_iff hinvDen).mpr
+    linear_combination -hcross
+  change α ^ q - e _ / e _ = e _ * (e Q * α - e P) / ((e A - e C * α) * e _)
+  rw [hinv, div_sub_div _ _ hinvDen (hnonzero _ hS₁)]
+  congr 1
+  simp only [map_add, map_sub, map_neg, map_mul]
+  ring
+
+/-- **Second difference identity for a Möbius–Frobenius fixed point.** Let $K$ be a finite field
+with $q$ elements, let $A, B, C, D \in K[x]$, and let $\alpha \in K((x^{-1}))$ be irrational with
+$\alpha = (A \alpha^q + B) / (C \alpha^q + D)$. Let $P, Q \in K[x]$, put $R_2 = AP^q + BQ^q$ and
+$S_2 = CP^q + DQ^q$, and assume $S_2 \ne 0$. Then
+$\alpha - R_2 / S_2 = (AD - BC) (Q \alpha - P)^q / ((C \alpha^q + D) S_2)$.
+
+Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
+Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
+Lemma 6 (`integers-2026-A57-lem-6`). -/
+public theorem laurentMobius_sub_identity [Fintype K] (A B C D : Polynomial K)
+    (α : LaurentSeries K) (hα : LaurentIsIrrational α)
+    (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
+      (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D))
+    (P Q : Polynomial K) (hS₂ : C * P ^ Fintype.card K + D * Q ^ Fintype.card K ≠ 0) :
+    α - polyToLaurentInv (A * P ^ Fintype.card K + B * Q ^ Fintype.card K) /
+          polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K) =
+        polyToLaurentInv (A * D - B * C) *
+            (polyToLaurentInv Q * α - polyToLaurentInv P) ^ Fintype.card K /
+          ((polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D) *
+            polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K)) := by
+  have hden := laurentMobius_den_ne_zero A B C D α hα hfix
+  let e : Polynomial K →ₐ[K] LaurentSeries K := Polynomial.aeval (laurentInvVar K)
+  let q := Fintype.card K
+  change α = (e A * α ^ q + e B) / (e C * α ^ q + e D) at hfix
+  change e C * α ^ q + e D ≠ 0 at hden
+  have hnonzero (T : Polynomial K) (hT : T ≠ 0) : e T ≠ 0 := by
+    intro h
+    apply hα 0 T hT
+    change e T * α = e 0
+    rw [h, zero_mul, map_zero]
+  have hpow (u v : LaurentSeries K) : (u - v) ^ q = u ^ q - v ^ q :=
+    map_sub (FiniteField.frobeniusAlgHom K (LaurentSeries K)) u v
+  change α - e _ / e _ = e _ * (e Q * α - e P) ^ q / ((e C * α ^ q + e D) * e _)
+  nth_rw 1 [hfix]
+  rw [div_sub_div _ _ hden (hnonzero _ hS₂), hpow, mul_pow]
+  congr 1
+  simp only [map_add, map_sub, map_mul, map_pow]
+  ring
+
 /-- **Difference identities for a Möbius–Frobenius fixed point.** Let $K$ be a finite field with
 $q$ elements, let $A, B, C, D \in K[x]$ with $\Delta = AD - BC \ne 0$, and let
 $\alpha \in K((x^{-1}))$ be irrational with $\alpha = (A \alpha^q + B) / (C \alpha^q + D)$. Let
@@ -239,7 +366,7 @@ public theorem laurentMobius_sub_identities [Fintype K] (A B C D : Polynomial K)
     (hΔ : A * D - B * C ≠ 0) (α : LaurentSeries K) (hα : LaurentIsIrrational α)
     (hfix : α = (polyToLaurentInv A * α ^ Fintype.card K + polyToLaurentInv B) /
       (polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D))
-    (P Q : Polynomial K) (hQ : Q ≠ 0) (hS₁ : -C * P + A * Q ≠ 0)
+    (P Q : Polynomial K) (_hQ : Q ≠ 0) (hS₁ : -C * P + A * Q ≠ 0)
     (hS₂ : C * P ^ Fintype.card K + D * Q ^ Fintype.card K ≠ 0) :
     α ^ Fintype.card K - polyToLaurentInv (D * P - B * Q) / polyToLaurentInv (-C * P + A * Q) =
         polyToLaurentInv (A * D - B * C) * (polyToLaurentInv Q * α - polyToLaurentInv P) /
@@ -249,43 +376,9 @@ public theorem laurentMobius_sub_identities [Fintype K] (A B C D : Polynomial K)
         polyToLaurentInv (A * D - B * C) *
             (polyToLaurentInv Q * α - polyToLaurentInv P) ^ Fintype.card K /
           ((polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D) *
-            polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K)) := by
-  let e : Polynomial K →ₐ[K] LaurentSeries K := Polynomial.aeval (laurentInvVar K)
-  let q := Fintype.card K
-  change α = (e A * α ^ q + e B) / (e C * α ^ q + e D) at hfix
-  -- If a nonzero polynomial evaluated to zero, it would witness the rational relation Tα = 0.
-  have hnonzero (T : Polynomial K) (hT : T ≠ 0) : e T ≠ 0 := by
-    intro h
-    apply hα 0 T hT
-    change e T * α = e 0
-    rw [h, zero_mul, map_zero]
-  have hden : e C * α ^ q + e D ≠ 0 := by
-    intro h
-    have hzero : α = 0 := by simpa [h] using hfix
-    exact hα 0 Q hQ (by simp [hzero, polyToLaurentInv])
-  have hcross := (eq_div_iff hden).mp hfix
-  -- The forward and inverse Möbius denominators multiply to the determinant.
-  have hdet : (e A - e C * α) * (e C * α ^ q + e D) = e (A * D - B * C) := by
-    simp only [map_sub, map_mul]
-    linear_combination -e C * hcross
-  have hinvDen := (mul_ne_zero_iff.mp (hdet.trans_ne (hnonzero _ hΔ))).1
-  have hinv : α ^ q = (e D * α - e B) / (e A - e C * α) := by
-    apply (eq_div_iff hinvDen).mpr
-    linear_combination -hcross
-  have hpow (u v : LaurentSeries K) : (u - v) ^ q = u ^ q - v ^ q :=
-    map_sub (FiniteField.frobeniusAlgHom K (LaurentSeries K)) u v
-  change α ^ q - e _ / e _ = e _ * (e Q * α - e P) / ((e A - e C * α) * e _) ∧
-    α - e _ / e _ = e _ * (e Q * α - e P) ^ q / ((e C * α ^ q + e D) * e _)
-  constructor
-  · rw [hinv, div_sub_div _ _ hinvDen (hnonzero _ hS₁)]
-    congr 1
-    simp only [map_add, map_sub, map_neg, map_mul]
-    ring
-  · nth_rw 1 [hfix]
-    rw [div_sub_div _ _ hden (hnonzero _ hS₂), hpow, mul_pow]
-    congr 1
-    simp only [map_add, map_sub, map_mul, map_pow]
-    ring
+            polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K)) :=
+  ⟨laurentMobius_pow_sub_identity A B C D hΔ α hα hfix P Q hS₁,
+    laurentMobius_sub_identity A B C D α hα hfix P Q hS₂⟩
 
 end LaurentContinuedFraction
 

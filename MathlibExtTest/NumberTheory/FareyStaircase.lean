@@ -51,6 +51,34 @@ example : Tendsto (fun n : ℕ => ∑ k ∈ Finset.Icc n (2 * n), (1 / k : ℝ))
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
   simp [integral_inv_of_pos, hn', Nat.cast_mul, ne_of_gt hn']
 
+-- At zero there are no positive floor levels.
+example : Tendsto (fun n : ℕ => fareyZoom n 0) atTop (nhds 0) := by
+  simpa using tendsto_fareyZoom (x := 0) le_rfl
+
+-- At x = 2 the top level is included, and its logarithm is zero.
+example : Tendsto (fun n : ℕ => fareyZoom n 2) atTop (nhds (Real.log 2)) := by
+  have h := tendsto_fareyZoom (x := 2) (by norm_num)
+  have hset : Finset.Icc 1 ⌊(2 : ℝ)⌋₊ = {1, 2} := by norm_num; decide
+  rw [hset] at h
+  convert h using 2
+  norm_num
+
+-- Below the first step the sum of logarithmic contributions is empty.
+example {x : ℝ} (hx : 0 ≤ x) (hx₁ : x < 1) :
+    Tendsto (fun n : ℕ => (n : ℝ) ^ 2 *
+      (fareyStaircase n (x / n) - fareyStaircase (n - 1) (x / n))) atTop (nhds 0) := by
+  simpa [Nat.floor_eq_zero.mpr hx₁] using tendsto_sq_mul_fareyStaircase_sub hx
+
+-- At x = 2 the upper endpoint contributes one, even though its logarithm vanishes.
+example : Tendsto (fun n : ℕ => (n : ℝ) ^ 2 *
+    (fareyStaircase n (2 / n) - fareyStaircase (n - 1) (2 / n))) atTop
+    (nhds (2 - Real.log 2)) := by
+  have h := tendsto_sq_mul_fareyStaircase_sub (x := 2) (by norm_num)
+  have hset : Finset.Icc 1 ⌊(2 : ℝ)⌋₊ = {1, 2} := by norm_num; decide
+  rw [hset] at h
+  convert h using 2
+  norm_num
+
 -- At the origin the limit is the negative of the function value.
 example {f : ℝ → ℝ} {f' : ℝ} (hf : HasDerivAt f f' 0) :
     Tendsto (fun l : ℝ => (l⁻¹ * f 0 - f 0) / (l - 1)) (nhdsWithin 1 {1}ᶜ)

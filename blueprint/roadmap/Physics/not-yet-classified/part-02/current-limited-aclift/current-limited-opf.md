@@ -1,0 +1,3 @@
+# Current-limited AC optimal power flow problem
+
+A current-limited AC optimal power flow instance on $n$ buses and $m$ branches consists of: a real signed node-branch incidence matrix $B \in \mathbb{R}^{n \times m}$; complex branch admittances $y_e$ and shunt admittances $y^s_k$; fixed active and reactive demands $P^d_k, Q^d_k$; lower and upper active-generation limits $P^{\min}_k, P^{\max}_k$ and reactive-generation limits $Q^{\min}_k, Q^{\max}_k$; lower and upper bounds $v^{\min}_k, v^{\max}_k$ on the squared voltage magnitude at each bus; an upper bound $i^{\max}_e$ on the squared current magnitude on each branch; and a linear active-generation cost coefficient $c_k$ per bus.

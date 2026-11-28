@@ -15,6 +15,8 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 public import Mathlib.Topology.MetricSpace.Isometry
 public import MathlibExt.Geometry.LebesgueUniversalCoveringJung
+public import MathlibExt.Geometry.LebesgueUniversalCoveringHansen
+public import MathlibExt.Geometry.LebesgueUniversalCoveringSprague
 
 /-!
 # Lebesgue universal covering constant
@@ -89,20 +91,6 @@ def pal1920TruncatedHexagonUpperBound : Prop :=
   lebesgueUniversalCoveringConstant ≤
     ENNReal.ofReal (2 - 2 / Real.sqrt 3)
 
-/-- **Statement of Sprague's bound.** The proposition that the Lebesgue universal covering
-constant is at most $0.844137708436$. -/
-def sprague1936UpperBound : Prop :=
-  lebesgueUniversalCoveringConstant ≤ ENNReal.ofReal 0.844137708436
-
-/-- **Statement of Hansen's corrected upper bound.** This proposition states that the Lebesgue
-universal covering constant, the infimum of the areas of the nonempty convex sets in the Euclidean
-plane that contain a congruent copy of every nonempty convex planar set of diameter $1$, is at most
-$0.844137708398$.
-
-This is Hansen's finite-decimal upper bound, as corrected by Baez, Bagdasaryan and Gibbs. -/
-def hansen1992CorrectedBBG2015UpperBound : Prop :=
-  lebesgueUniversalCoveringConstant ≤ ENNReal.ofReal 0.844137708398
-
 /-- **Statement of the Baez–Bagdasaryan–Gibbs upper bound.** This is the proposition that there
 is a real number $b$ with $0.844115297128419059 \le b < 0.844115297128419060$ such that the
 Lebesgue universal covering constant (the infimum of the areas of universal convex covers) is at
@@ -174,19 +162,6 @@ $2 - 2/\sqrt{3}$.
 
 Source: Pál, Über ein elementares Variationsproblem (1920), truncated hexagon bound. -/
 theorem_wanted pal1920TruncatedHexagonUpperBound_holds : pal1920TruncatedHexagonUpperBound
-
-/-- **Sprague's bound.** The Lebesgue universal covering constant is at most $0.844137708436$.
-
-Source: Sprague, Über ein elementares Variationsproblem (1936). -/
-theorem_wanted sprague1936UpperBound_holds : sprague1936UpperBound
-
-/-- **Hansen's upper bound for Lebesgue's covering problem, as corrected.** The Lebesgue universal
-covering constant, the infimum of the areas of the nonempty convex sets in the Euclidean plane that
-contain a congruent copy of every nonempty convex planar set of diameter $1$, is at most
-$0.844137708398$.
-
-Source: Hansen (1992), corrected in Baez, Bagdasaryan and Gibbs (2015). -/
-theorem_wanted hansen1992CorrectedBBG2015UpperBound_holds : hansen1992CorrectedBBG2015UpperBound
 
 /-- **Baez–Bagdasaryan–Gibbs upper bound.** There is a real number $b$ with
 $0.844115297128419059 \le b < 0.844115297128419060$ such that the Lebesgue universal covering

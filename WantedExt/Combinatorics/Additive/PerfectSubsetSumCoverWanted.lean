@@ -17,8 +17,11 @@ public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.LinearAlgebra.Span.Defs
 public import Mathlib.Order.Interval.Finset.Fin
+public import MathlibExt.Combinatorics.Additive.PerfectCoverCoordinateOrders
+public import MathlibExt.Combinatorics.Additive.PerfectCoverPrescribedOddCoordinates
 public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverErase
 public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverInit
+public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverOddMultiple
 
 /-!
 # Perfect subset-sum covers of abelian groups of order a power of two
@@ -151,23 +154,6 @@ public theorem_wanted count_elementary_two_three_prod_zmod :
       (2 : ℚ) ^ (3 * (n : ℤ) - 3) * 2 ^ (n * (n - 1) / 2) *
         (28 * (n : ℚ) ^ 3 + 196 * n ^ 2 + 392 * n + 224)
 
-/-- **Shifting by multiples of the last element of a perfect $2^j$-cover.** Let $G$ be an
-abelian group, let $s = (x_1, \dots, x_{k+1})$ be a family in $G$ that is a perfect $2^j$-cover
-of $G$, and let $S_1 = (x_1, \dots, x_k)$. For every $b \in G$, if $S_1$ covers $b$ exactly $c$
-times, then for every integer $t$ it covers $b + 2t\,x_{k+1}$ exactly $c$ times and
-$b + (2t + 1)\,x_{k+1}$ exactly $2^j - c$ times.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Corollary 9
-(`jis-2025-25.7.8-cor-9`). `t` ranges over `ℤ`. -/
-public theorem_wanted coverCount_init_add_zsmul_last {G : Type*} [AddCommGroup G]
-    [DecidableEq G] {j k : ℕ} {s : Fin (k + 1) → G} (hs : IsPerfectMCover (2 ^ j) s)
-    (b : G) (t : ℤ) :
-    coverCount (s ∘ Fin.castSucc) (b + (2 * t) • s (Fin.last k)) =
-        coverCount (s ∘ Fin.castSucc) b ∧
-      coverCount (s ∘ Fin.castSucc) (b + (2 * t + 1) • s (Fin.last k)) =
-        2 ^ j - coverCount (s ∘ Fin.castSucc) b
-
 /-- **Odd multiples and replacement in perfect covers.** Let $G$ be a finite abelian group of order
 $2^n$ and let $a, b \in G$ be nonzero. Then $b = (2j+1)a$ for some integer $j$ if and only if, for
 every perfect cover $S$ of $G$ with $a \in S$, the set $(S \setminus \{a\}) \cup \{b\}$ is again a
@@ -186,20 +172,6 @@ public theorem_wanted oddMultiple_iff_perfectCover_replace {G : Type*} [AddCommG
       ∀ S : Finset G, IsPerfectCover S → a ∈ S → IsPerfectCover (insert b (S.erase a))) ∧
     (a ≠ b → ((∃ j : ℤ, b = (2 * j + 1) • a) ↔
       ∀ S : Finset G, IsPerfectCover S → ¬ (a ∈ S ∧ b ∈ S)))
-
-/-- **Replacing an entry of a perfect $2^k$-cover by an odd multiple.** Let $G$ be an abelian
-group, let $k$ and $N$ be natural numbers, and let $a, b, s_1, \dots, s_N \in G$. If the family
-$(a, s_1, \dots, s_N)$ is a perfect $2^k$-cover of $G$ and $b = (2j + 1)a$ for some integer $j$,
-then the family $(b, s_1, \dots, s_N)$ is also a perfect $2^k$-cover of $G$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 11
-(`jis-2025-25.7.8-lem-11`). The paper's `|G| = 2^n` and length `n + k` are not needed. -/
-public theorem_wanted isPerfectMCover_cons_oddMultiple {G : Type*} [AddCommGroup G]
-    [DecidableEq G] {k N : ℕ} {a b : G} {s : Fin N → G}
-    (hs : IsPerfectMCover (2 ^ k) (Fin.cons a s : Fin (N + 1) → G))
-    (hab : ∃ j : ℤ, b = (2 * j + 1) • a) :
-    IsPerfectMCover (2 ^ k) (Fin.cons b s : Fin (N + 1) → G)
 
 /-- **Which families are perfect $m$-covers of $\mathbb{Z}_{2^n}$.** Let $s = (s_i)_{i \in \iota}$
 be a family in $\mathbb{Z}_{2^n}$ indexed by a finite type $\iota$ (a colored multiset). Then $s$
@@ -225,20 +197,6 @@ of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Corollary 13
 public theorem_wanted exists_perfectCover_subfamily_zmod {n m : ℕ} {ι : Type*} [Fintype ι]
     {s : ι → ZMod (2 ^ n)} (hs : IsPerfectMCover m s) :
     ∃ T : Finset ι, IsPerfectMCover 1 (fun i : T => s i)
-
-/-- **Orders of second coordinates in perfect $m$-covers.** Let $H$ be a finite abelian group of
-order $2^r$ and let $s = (s_i)_{i \in \iota}$ be a family in $H \oplus \mathbb{Z}_{2^n}$ indexed by
-a finite type $\iota$. If $s$ is a perfect $m$-cover of $H \oplus \mathbb{Z}_{2^n}$, then for
-every $j$ with $1 \le j \le n$ the second coordinate of some $s_i$ has additive order $2^j$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Corollary 14
-(`jis-2025-25.7.8-cor-14`). The family has any finite index type (the record reuses `n`
-for its length). -/
-public theorem_wanted exists_snd_addOrderOf_of_isPerfectMCover {H : Type*} [AddCommGroup H]
-    [DecidableEq H] [Fintype H] {r n m : ℕ} (hH : Fintype.card H = 2 ^ r) {ι : Type*}
-    [Fintype ι] {s : ι → H × ZMod (2 ^ n)} (hs : IsPerfectMCover m s) :
-    ∀ j : ℕ, 1 ≤ j → j ≤ n → ∃ i, addOrderOf (s i).2 = 2 ^ j
 
 /-- **Odd combinations of disjoint parts of a perfect cover.** Let $G$ be an abelian group of
 order $2^n$ and $S$ a perfect cover of $G$. For a finite $A \subseteq G$, let $\mathcal{T}(A)$ be
@@ -297,21 +255,6 @@ cover is empty. -/
 public theorem_wanted exists_addOrderOf_eq_two_of_isPerfectCover {m n : ℕ} (hmn : 0 < m + n)
     {S : Finset (ZMod (2 ^ m) × ZMod (2 ^ n))} (hS : IsPerfectCover S) :
     ∃ x ∈ S, addOrderOf x = 2
-
-/-- **Perfect covers with a prescribed number of odd last coordinates.** Let $H$ be a finite
-abelian group of order $2^m$, let $n \ge 1$, and let $G = H \oplus \mathbb{Z}_{2^n}$. For every
-$k$ with $1 \le k \le m + 1$, some perfect cover $S$ of $G$ has exactly $k$ elements $(h, y)$
-whose coordinate $y \in \mathbb{Z}_{2^n}$ is odd.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 20
-(`jis-2025-25.7.8-lem-20`). The setting `G = H ⊕ ℤ_{2^n}`, `|H| = 2^m`, is the one fixed
-before the lemma in Section 5; `y` odd means `y.val` odd; `n ≥ 1` added (for `n = 0` no `y` is
-odd). -/
-public theorem_wanted exists_isPerfectCover_card_odd {H : Type*} [AddCommGroup H]
-    [DecidableEq H] [Fintype H] {m n k : ℕ} (hH : Fintype.card H = 2 ^ m) (hn : 1 ≤ n)
-    (hk : 1 ≤ k) (hkm : k ≤ m + 1) :
-    ∃ S : Finset (H × ZMod (2 ^ n)), IsPerfectCover S ∧ (S.filter fun x => Odd x.2.val).card = k
 
 /-- **Perfect covers with exactly one odd element.** Let $H$ be an abelian group of order $2^m$,
 let $n \ge 1$ and let $G = H \oplus \mathbb{Z}_{2^n}$. Call an element of $G$ odd when its

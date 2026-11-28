@@ -25,3 +25,17 @@ example :
       51 := by
   rw [sum_neg_one_pow_sub_choose_centralBinom]
   decide
+
+-- Knuth's old sum takes the central-binomial value at even degree two.
+example :
+    ∑ k ∈ range (2 + 1), (-1 : ℚ) ^ k * (Nat.choose 2 k : ℚ) * ((2 * k).choose k : ℚ) / 2 ^ k =
+      1 / 2 := by
+  rw [knuth_old_sum, ite_eq_left (by decide : Even 2),
+    show Nat.choose 2 (2 / 2) = 2 from rfl]
+  norm_num
+
+-- At odd degree three, the alternating sum vanishes.
+example :
+    ∑ k ∈ range (3 + 1), (-1 : ℚ) ^ k * (Nat.choose 3 k : ℚ) * ((2 * k).choose k : ℚ) / 2 ^ k =
+      0 := by
+  rw [knuth_old_sum, ite_eq_right (by decide : ¬ Even 3)]

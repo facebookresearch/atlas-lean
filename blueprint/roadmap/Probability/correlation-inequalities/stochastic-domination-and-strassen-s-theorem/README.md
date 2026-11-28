@@ -4,3 +4,4 @@
 - [Monotone couplings and stochastic domination](monotone-couplings-and-stochastic-domination/README.md)
 - [Finite Strassen stochastic domination](finite-strassen-stochastic-domination/README.md)
 - [Strassen's theorem for configurations on a finite set](strassen-s-theorem-for-configurations-on-a-finit/README.md)
+- [Strassen's theorem on a finite poset, with ℝ≥0-valued couplings](strassen-s-theorem-on-a-finite-poset-with-0-valu/README.md)

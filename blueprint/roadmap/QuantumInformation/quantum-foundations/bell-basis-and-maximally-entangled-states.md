@@ -11,18 +11,12 @@ applied to one qubit. Each Bell state is maximally entangled: the reduced densit
 ## Depends on
 
 - [Unitary evolution and elementary gates](unitary-evolution-and-elementary-gates.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Proof depends on
 
 - [Left partial trace of a rank-one matrix](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-left-vec-mul-vec-star.md)
 - [Right partial trace of a rank-one matrix](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-right-vec-mul-vec-star.md)
-
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Finite-dimensional quantum state (pure and mixed).
 
 ## Sources
 

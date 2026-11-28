@@ -17,7 +17,9 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Algebra.Squarefree.Basic
 public import MathlibExt.Combinatorics.Additive.WeightedDavenport
+public import MathlibExt.Combinatorics.Additive.SquareSetPrimePowerCount
 public import MathlibExt.Combinatorics.Additive.SquareWeightedZeroSum
+public import MathlibExt.Combinatorics.Additive.SquareWeightedZeroSumTwoPower
 
 namespace MetaMathlibExt
 
@@ -145,36 +147,6 @@ public theorem_wanted squareSet_primePower_decomposition (p r : ℕ) (hp : p.Pri
       ((p : ZMod (p ^ r)) ^ (2 * (k : ℕ))) • unitSquareSet (p ^ r)
     squareSet (p ^ r) = ⋃ k, pieces k ∧ Set.PairwiseDisjoint Set.univ pieces
 
-/-- **Number of nonzero squares modulo a prime power.** Let $p$ be a prime and $r \ge 1$, and write
-$S(m)$ for the set of nonzero squares and $U(m)^2$ for the set of squares of units in
-$\mathbb{Z}/m\mathbb{Z}$. If $r$ is even, then
-$|S(p^r)| = \sum_{k=0}^{r/2-1} |U(p^{r-2k})^2|$, and if $r$ is odd, then
-$|S(p^r)| = \sum_{k=0}^{(r-1)/2} |U(p^{r-2k})^2|$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Theorem 6. -/
-public theorem_wanted ncard_squareSet_primePower (p r : ℕ) (hp : p.Prime) (hr : 0 < r) :
-    (Even r → (squareSet (p ^ r)).ncard =
-      ∑ k ∈ Finset.range (r / 2), (unitSquareSet (p ^ (r - 2 * k))).ncard) ∧
-    (Odd r → (squareSet (p ^ r)).ncard =
-      ∑ k ∈ Finset.range ((r + 1) / 2), (unitSquareSet (p ^ (r - 2 * k))).ncard)
-
-/-- **Square-weighted zero sums lift from a prime-power component.** Let $n \ge 2$, let $p$ be a
-prime dividing $n$, and let $r$ be the exponent of $p$ in $n$. Write $S(m)$ for the set of
-nonzero squares in $\mathbb{Z}_m$. Let $x_1, \dots, x_k$ be a sequence in $\mathbb{Z}_n$ whose
-reduction $\bar x_1, \dots, \bar x_k$ modulo $p^r$ has an $S(p^r)$-weighted zero sum, that is,
-there are $b_1, \dots, b_k \in S(p^r)$ with $\sum_i b_i \bar x_i = 0$. Then there are
-$a_1, \dots, a_k \in S(n)$ with $\sum_i a_i x_i = 0$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Lemma 7. -/
-public theorem_wanted squareWeightedZeroSum_of_primePower_reduction (n p r k : ℕ)
-    (hn : 2 ≤ n) (hp : p.Prime) (hpn : p ∣ n) (hval : n.factorization p = r)
-    (S : Fin k → ZMod n)
-    (hS : HasWeightedZeroSum (squareSet (p ^ r))
-      (fun i => (ZMod.cast (S i) : ZMod (p ^ r)))) :
-    HasWeightedZeroSum (squareSet n) S
-
 /-- **Prime-power bound for the square-weighted consecutive constant.** Let $n \ge 2$, let $p$ be a
 prime dividing $n$ and let $r = v_p(n)$ be the exponent of $p$ in $n$. For a natural number $m$,
 write $S(m)$ for the set of nonzero squares in $\mathbb{Z}_m = \mathbb{Z}/m\mathbb{Z}$ and
@@ -204,20 +176,6 @@ public theorem_wanted squareWeightedZeroSum_of_reduction_oddPower (p r k : ℕ)
     (hp : 2 ≤ p) (hr : Odd r) (T : Fin k → ZMod (p ^ r))
     (hT : HasWeightedZeroSum (squareSet p) (fun i => (ZMod.cast (T i) : ZMod p))) :
     HasWeightedZeroSum (squareSet (p ^ r)) T
-
-/-- **Square-weighted zero-sum free unit triples modulo even powers of two.** Let $r$ be a nonzero
-even natural number, and let $x_1, x_2, x_3$ be units of $\mathbb{Z}_{2^r}$ that are each
-congruent to $1$ modulo $4$. Write $S(2^r)$ for the set of nonzero squares in $\mathbb{Z}_{2^r}$.
-Then $(x_1, x_2, x_3)$ has no $S(2^r)$-weighted zero-sum subsequence: there are no non-empty set
-$J$ of indices and weights $a_j \in S(2^r)$ for $j \in J$ with $\sum_{j \in J} a_j x_j = 0$.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Lemma 10. -/
-public theorem_wanted no_squareWeightedSubseq_three_units_twoPower (r : ℕ)
-    (hr0 : r ≠ 0) (hrEven : Even r) (S : Fin 3 → ZMod (2 ^ r))
-    (hunit : ∀ i, IsUnit (S i))
-    (hred : ∀ i, (ZMod.cast (S i) : ZMod 4) = 1) :
-    ¬HasWeightedZeroSumSubseq (squareSet (2 ^ r)) S
 
 /-- **Three-term sequences without square-weighted zero-sum subsequences.** Let $p$ be a prime and
 $r$ a nonzero even natural number, and write $S(m)$ for the set of nonzero squares in

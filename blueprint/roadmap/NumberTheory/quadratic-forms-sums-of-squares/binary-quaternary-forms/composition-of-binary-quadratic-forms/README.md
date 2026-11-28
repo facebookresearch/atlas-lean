@@ -1,0 +1,15 @@
+# Composition of binary quadratic forms
+
+- [Proper equivalence by explicit substitutions](properly-equivalent-iff-exists.md)
+- [Gcd eq one](gcd-eq-one.md)
+- [Fst pos iff](fst-pos-iff.md)
+- [Proper equivalence preserves the discriminant, primitivity and positive definiteness](properly-equivalent-invariants.md)
+- [The first coefficient of a form of nonsquare discriminant is not zero](fst-ne-zero-of-not-is-square.md)
+- [The substitution of a translate](properly-equivalent-translate.md)
+- [A translate of a form is properly equivalent to it](translate.md)
+- [Moving a common factor of the last coefficients of properly equivalent forms (Knapp's Lemma 1.11)](mul-fst-div-snd.md)
+- [A primitively represented integer is the first coefficient of a properly equivalent form](exists-properly-equivalent-fst-eq.md)
+- [A primitive form primitively represents an integer prime to any given nonzero integer (Knapp's Lemma 1.10)](exists-gcd-eq-one-value.md)
+- [Coprime first coefficients and equal middle coefficients give an integral multiplier](exists-eq-mul-of-gcd-eq-one.md)
+- [Composition through an integral multiplier (Knapp's Proposition 1.9)](composition-of-aligned.md)
+- [Two classes of primitive forms contain aligned forms (Knapp's Theorem 1.12(a))](exists-aligned.md)

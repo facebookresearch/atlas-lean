@@ -14,28 +14,15 @@ public import Mathlib.Data.Nat.Squarefree
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.Algebra.Polynomial.PrimeValueConditions
 public import MathlibExt.NumberTheory.AbsoluteLucasPseudoprimes
+public import MathlibExt.NumberTheory.JacobiSymbolDiscriminant
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.ThreePrimeDCarmichael
+public import MathlibExt.NumberTheory.ThreePrimeDCarmichaelDivisibility
 import Mathlib.Tactic.NormNum.LegendreSymbol
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Jacobi symbols of a discriminant $D$ agree at odd primes congruent modulo $D$.** Let $p$ and
-$p'$ be odd primes and let $D$ be an integer with $D \equiv 0$ or $1 \pmod 4$ that is coprime to
-$p$. If $p' = p + D x$ for some integer $x$, then the Jacobi symbols agree:
-$\left(\frac{D}{p'}\right) = \left(\frac{D}{p}\right)$.
-
-For an odd prime $p$ the Jacobi symbol $\left(\frac{D}{p}\right)$ is the Legendre symbol and agrees
-with the Kronecker symbol.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Lemma 1 (`integers-2026-A102-lem-1`). -/
-public theorem_wanted jacobiSym_prime_add_mul_eq {p p' : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (hp' : p'.Prime) (hp'2 : p' ≠ 2) {D : ℤ} (hD : D % 4 = 0 ∨ D % 4 = 1)
-    (hDp : IsCoprime D p) {x : ℤ} (hx : (p' : ℤ) = p + D * x) :
-    jacobiSym D p' = jacobiSym D p
 
 /-! ## Absolute Lucas pseudoprimes -/
 
@@ -468,22 +455,6 @@ Theorem 13 (`integers-2026-A102-thm-13`). -/
 public theorem_wanted jacobiSym_eq_of_isDCarmichael_three {D D' : ℤ} {n : ℕ}
     (h3 : n.primeFactors.card = 3) (h : IsDCarmichael D n) (h' : IsDCarmichael D' n) :
     jacobiSym D n = jacobiSym D' n
-
-/-- **Divisibility conditions for $D$-Carmichael numbers $3qr$.** Let $D$ be an integer, let
-$q < r$ be primes with $3 < q$, and write $\alpha = (D \mid 3)$, $\beta = (D \mid q)$ and
-$\gamma = (D \mid r)$ for the Jacobi symbols. If $3qr$ is a $D$-Carmichael number, then
-$q - \beta$ divides $3r - \alpha\gamma$ and $r - \gamma$ divides $3q - \alpha\beta$; moreover
-$r = 3q + 2\gamma$ if $\gamma = -\alpha\beta$, and $2r = 3q + \gamma$ if $\gamma = \alpha\beta$.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Lemma 4 (`integers-2026-A102-lem-4`). -/
-public theorem_wanted threeQR_isDCarmichael_divisibility {D : ℤ} {q r : ℕ} (hq : q.Prime)
-    (hr : r.Prime) (h3q : 3 < q) (hqr : q < r)
-    (h : IsDCarmichael D (3 * q * r)) :
-    ((q : ℤ) - jacobiSym D q) ∣ (3 * r - jacobiSym D 3 * jacobiSym D r) ∧
-    ((r : ℤ) - jacobiSym D r) ∣ (3 * q - jacobiSym D 3 * jacobiSym D q) ∧
-    (jacobiSym D r = -(jacobiSym D 3 * jacobiSym D q) → (r : ℤ) = 3 * q + 2 * jacobiSym D r) ∧
-    (jacobiSym D r = jacobiSym D 3 * jacobiSym D q → 2 * (r : ℤ) = 3 * q + jacobiSym D r)
 
 end
 

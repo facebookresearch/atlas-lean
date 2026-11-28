@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import MathlibExt.Analysis.Series.ThreeAdicMultiples
+public import MathlibExt.Analysis.Series.TwoAdicDoubleMultisection
 public import MathlibExt.Analysis.Series.TwoAdicMultiples
 public import MathlibExt.Analysis.Series.TwoAdicNonmultiples
 public import MathlibExt.Analysis.Series.TwoAdicTruncatedRegroup
@@ -39,25 +40,6 @@ convergence) of each family that the identity regroups.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Parametric two-adic multisection.** Let $q \in \mathbb{C}$ and let $b : \mathbb{N} \to
-\mathbb{C}$ be a sequence (its value at $0$ is not used). Suppose that the families
-$(q^j b_{(2n-1) 2^j})$ and $(q^j (q - 1) b_{2n \cdot 2^j})$, indexed by the pairs $(j, n)$ of
-natural numbers with $n \ge 1$, are summable. Then
-$$\sum_{j \ge 0,\ n \ge 1} \left(q^j b_{(2n-1) 2^j} - q^j (q - 1) b_{2n \cdot 2^j}\right)
-= \sum_{m \ge 1} b_m.$$
-
-The two summability hypotheses imply that $(b_m)_{m \ge 1}$ is summable.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Proposition 1, series version (`jis-2024-24.5.5-prop-1`). -/
-public theorem_wanted tsum_twoAdic_parametric_multisection (q : ℂ) (b : ℕ → ℂ)
-    (hodd : Summable fun x : ℕ × ℕ => q ^ x.1 * b ((2 * x.2 + 1) * 2 ^ x.1))
-    (heven : Summable fun x : ℕ × ℕ => q ^ x.1 * (q - 1) * b ((2 * x.2 + 2) * 2 ^ x.1)) :
-    ∑' x : ℕ × ℕ, (q ^ x.1 * b ((2 * x.2 + 1) * 2 ^ x.1)
-        - q ^ x.1 * (q - 1) * b ((2 * x.2 + 2) * 2 ^ x.1))
-      = ∑' m : ℕ, b (m + 1)
 
 /-- **Parametric 3-adic multisection of a series.** Let $q$ be a complex number and let
 $(b_m)_{m \ge 1}$ be a sequence of complex numbers such that the three families
@@ -121,36 +103,6 @@ public theorem_wanted tsum_baseAdic_weighted_multisection (B : ℕ) (hB : 2 ≤ 
       = ∑' m : ℕ, (φ (padicValNat B (m + 1))
           + ∑ k ∈ Finset.range (padicValNat B (m + 1)), χ k) * c (m + 1)
 
-/-- **Double 2-adic multisection of a double series.** Let $(b_{p,q})_{p, q \ge 1}$ be a double
-sequence of complex numbers such that each of the four families
-$2^{j+k} b_{(2n-1) 2^j, (2m-1) 2^k}$, $2^{j+k} b_{(2n) 2^j, (2m) 2^k}$,
-$2^{j+k} b_{(2n) 2^j, (2m-1) 2^k}$ and $2^{j+k} b_{(2n-1) 2^j, (2m) 2^k}$, indexed by the
-quadruples $(j, k, n, m)$ with $j, k \ge 0$ and $n, m \ge 1$, is summable. Then
-$$\sum_{p, q \ge 1} b_{p,q} = \sum_{j, k \ge 0,\ n, m \ge 1} 2^{j+k} \bigl(
-b_{(2n-1) 2^j, (2m-1) 2^k} + b_{(2n) 2^j, (2m) 2^k} -
-b_{(2n) 2^j, (2m-1) 2^k} - b_{(2n-1) 2^j, (2m) 2^k} \bigr),$$
-where both sides are unconditional sums, over the pairs $(p, q)$ and the quadruples
-$(j, k, n, m)$ respectively.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Proposition 15, sum version (`jis-2024-24.5.5-prop-15`). -/
-public theorem_wanted tsum_twoAdic_double_multisection (b : ℕ → ℕ → ℂ)
-    (h₁ : Summable fun x : (ℕ × ℕ) × (ℕ × ℕ) =>
-      (2 : ℂ) ^ (x.1.1 + x.1.2) * b ((2 * x.2.1 + 1) * 2 ^ x.1.1) ((2 * x.2.2 + 1) * 2 ^ x.1.2))
-    (h₂ : Summable fun x : (ℕ × ℕ) × (ℕ × ℕ) =>
-      (2 : ℂ) ^ (x.1.1 + x.1.2) * b ((2 * x.2.1 + 2) * 2 ^ x.1.1) ((2 * x.2.2 + 2) * 2 ^ x.1.2))
-    (h₃ : Summable fun x : (ℕ × ℕ) × (ℕ × ℕ) =>
-      (2 : ℂ) ^ (x.1.1 + x.1.2) * b ((2 * x.2.1 + 2) * 2 ^ x.1.1) ((2 * x.2.2 + 1) * 2 ^ x.1.2))
-    (h₄ : Summable fun x : (ℕ × ℕ) × (ℕ × ℕ) =>
-      (2 : ℂ) ^ (x.1.1 + x.1.2) * b ((2 * x.2.1 + 1) * 2 ^ x.1.1) ((2 * x.2.2 + 2) * 2 ^ x.1.2)) :
-    ∑' p : ℕ × ℕ, b (p.1 + 1) (p.2 + 1)
-      = ∑' x : (ℕ × ℕ) × (ℕ × ℕ), (2 : ℂ) ^ (x.1.1 + x.1.2)
-          * (b ((2 * x.2.1 + 1) * 2 ^ x.1.1) ((2 * x.2.2 + 1) * 2 ^ x.1.2)
-            + b ((2 * x.2.1 + 2) * 2 ^ x.1.1) ((2 * x.2.2 + 2) * 2 ^ x.1.2)
-            - b ((2 * x.2.1 + 2) * 2 ^ x.1.1) ((2 * x.2.2 + 1) * 2 ^ x.1.2)
-            - b ((2 * x.2.1 + 1) * 2 ^ x.1.1) ((2 * x.2.2 + 2) * 2 ^ x.1.2))
-
 /-- **$2$-adic expansion of the weighted Lambert series $f$.** For every complex number $q$ with
 $|q| < 1$, the weighted Lambert series $f(q) = \sum_{n \ge 1} n q^n / (1 - q^n)$ and
 $g(q) = \sum_{n \ge 1} n q^n / (1 + q^n)$ satisfy
@@ -213,35 +165,6 @@ public theorem_wanted tprod_qPochhammer_threeAdic_parametric (q p : ℝ) (hq₀ 
         * (∏' k : ℕ, (1 - q ^ (2 * 3 ^ j) * (q ^ 3 ^ (j + 1)) ^ k))
         / (∏' k : ℕ, (1 - q ^ 3 ^ (j + 1) * (q ^ 3 ^ (j + 1)) ^ k)) ^ (p - 1)) ^ (p ^ j)
       = ∏' k : ℕ, (1 - q * q ^ k)
-
-/-- **2-adic product factorization of the Euler function.** For every complex number $q$ with
-$|q| < 1$, with the infinite q-Pochhammer symbol $(a; r)_\infty = \prod_{k \ge 0} (1 - a r^k)$,
-the unconditional infinite product over $j \ge 0$ satisfies
-$\prod_{j \ge 0} (q^{2^j}; q^{2^{j+1}})_\infty = (q; q)_\infty$.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Proposition 19, case `p = 1`, base 2 (`jis-2024-24.5.5-prop-19`). -/
-public theorem_wanted tprod_qPochhammer_twoAdic_factorization (q : ℂ) (hq : ‖q‖ < 1) :
-    ∏' j : ℕ, QPochhammer.qPochhammerInf (q ^ 2 ^ j) (q ^ 2 ^ (j + 1))
-        (by rw [norm_pow]; exact pow_lt_one₀ (norm_nonneg q) hq (by positivity))
-      = QPochhammer.qPochhammerInf q q hq
-
-/-- **$3$-adic factorization of the Euler function.** Write
-$(x; y)_\infty = \prod_{k \ge 0} (1 - x y^k)$ for the infinite $q$-Pochhammer symbol, where $x$
-and $y$ are complex and $|y| < 1$. For every complex number $q$ with $|q| < 1$,
-$\prod_{j \ge 0} (q^{3^j}; q^{3^{j+1}})_\infty\, (q^{2 \cdot 3^j}; q^{3^{j+1}})_\infty =
-(q; q)_\infty$.
-
-Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5,
-Proposition 19, case `p = 1`, base 3 (`jis-2024-24.5.5-prop-19`). -/
-public theorem_wanted tprod_qPochhammer_threeAdic_factorization (q : ℂ) (hq : ‖q‖ < 1) :
-    ∏' j : ℕ, (QPochhammer.qPochhammerInf (q ^ 3 ^ j) (q ^ 3 ^ (j + 1))
-          (by rw [norm_pow]; exact pow_lt_one₀ (norm_nonneg q) hq (by positivity))
-        * QPochhammer.qPochhammerInf (q ^ (2 * 3 ^ j)) (q ^ 3 ^ (j + 1))
-          (by rw [norm_pow]; exact pow_lt_one₀ (norm_nonneg q) hq (by positivity)))
-      = QPochhammer.qPochhammerInf q q hq
 
 /-- **$2$-adic multisection of the infinite $q$-Pochhammer symbol.** Write
 $(x; y)_\infty = \prod_{k \ge 0} (1 - x y^k)$ for the infinite $q$-Pochhammer symbol, where $x$

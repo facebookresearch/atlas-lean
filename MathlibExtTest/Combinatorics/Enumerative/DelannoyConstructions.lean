@@ -48,6 +48,16 @@ example : genDelannoyUpper 2 2 1 + genDelannoyUpper 2 3 1 = 44 := by
   rw [genDelannoyUpper_add_succ_left 2 2 1 (by decide)]
   decide
 
+-- At the least positive upper index, the difference gives the index-zero family.
+example (m n : ℕ) : (genDelannoyUpper 1 (m + 1) n : ℤ) - genDelannoyUpper 1 m n =
+    genDelannoyUpper 0 (m + 1) n :=
+  genDelannoyUpper_succ_left_sub 1 m n le_rfl
+
+-- The adjacent entries 14 and 30 have difference 16, the index-one entry at (3, 1).
+example : (genDelannoyUpper 2 3 1 : ℤ) - genDelannoyUpper 2 2 1 = 16 := by
+  rw [genDelannoyUpper_succ_left_sub 2 2 1 (by decide)]
+  decide
+
 -- At the first positive row and column zero, the difference is always two.
 example (k : ℕ) : (genDelannoyUpper k 1 1 : ℤ) - genDelannoyUpper k 1 0 = 2 := by
   rw [genDelannoyUpper_succ_right_sub k 1 0 le_rfl]
@@ -100,5 +110,23 @@ example (m : ℕ) : (2 : ℤ) ∣ seededArray 2 m 0 + seededArray 2 m 1 := by
   have h := delannoyArray_binomial_seeds_horizontalSum_modEq (seededArray 2)
     (fun _ _ => rfl) 2 (by decide) (fun _ => rfl) m 0
   exact h.dvd_iff.mpr (by decide)
+
+local notation "H" => (fun S : ℕ → ℕ → ℤ => fun m n => S m n + S m (n + 1))
+
+-- With zero seed index, three sums give a sharp uniform factor of eight.
+example : (∀ m n, (8 : ℤ) ∣ H^[3] (seededArray 0) m n) ∧
+    ∃ m n, ¬ (16 : ℤ) ∣ H^[3] (seededArray 0) m n :=
+  delannoyArray_binomial_seeds_two_pow_dvd (seededArray 0) (fun _ _ => rfl) 0 3
+    (by decide) (fun _ => rfl)
+
+-- For positive seed index, the origin need not witness sharpness.
+example : (4 : ℤ) ∣ H^[2] (seededArray 1) 0 0 ∧
+    ¬ (4 : ℤ) ∣ H^[2] (seededArray 1) 1 0 := by decide
+
+-- Three extra sums give a uniform factor of eight, but not sixteen.
+example : (∀ m n, (8 : ℤ) ∣ H^[5] (seededArray 2) m n) ∧
+    ∃ m n, ¬ (16 : ℤ) ∣ H^[5] (seededArray 2) m n :=
+  delannoyArray_binomial_seeds_two_pow_dvd (seededArray 2) (fun _ _ => rfl) 2 3
+    (by decide) (fun _ => rfl)
 
 end MetaMathlibExt.DelannoyConstructions
