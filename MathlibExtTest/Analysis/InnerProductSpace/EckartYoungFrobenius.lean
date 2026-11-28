@@ -36,6 +36,38 @@ example {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) (k : ℕ)
         x = frobSq (P * (A - G) * Q)} (singularTailSq (P * A * Q) k) :=
   isLeast_frobSq_whitened A k P Q hP hQ
 
+example {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) {k : ℕ}
+    (hgap : ∀ i < k, (Matrix.toEuclideanLin A).singularValues k <
+      (Matrix.toEuclideanLin A).singularValues i)
+    {B : Matrix (Fin m) (Fin n) ℝ} (hB : B.rank ≤ k)
+    (hle : ‖A - B‖ ^ 2 ≤
+      ∑ i ∈ Finset.Ico k n, (Matrix.toEuclideanLin A).singularValues i ^ 2) :
+    B = truncSVD A k :=
+  eq_truncSVD_of_frobenius_sub_sq_le A hgap hB hle
+
+/-- Under the singular value gap the best rank-`k` approximation is unique. -/
+example {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ) {k : ℕ}
+    (hgap : ∀ i < k, (Matrix.toEuclideanLin A).singularValues k <
+      (Matrix.toEuclideanLin A).singularValues i) :
+    ∃! B : Matrix (Fin m) (Fin n) ℝ, B.rank ≤ k ∧
+      ∀ G : Matrix (Fin m) (Fin n) ℝ, G.rank ≤ k → ‖A - B‖ ≤ ‖A - G‖ := by
+  refine ⟨truncSVD A k, ⟨rank_truncSVD_le A k, fun G hG => ?_⟩, ?_⟩
+  · have h := (isLeast_frobenius_sub_sq A k).2 ⟨G, hG, rfl⟩
+    rw [← frobenius_sub_truncSVD_sq] at h
+    exact (pow_le_pow_iff_left₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).mp h
+  · rintro B ⟨hB, hmin⟩
+    refine eq_truncSVD_of_frobenius_sub_sq_le A hgap hB ?_
+    rw [← frobenius_sub_truncSVD_sq]
+    exact pow_le_pow_left₀ (norm_nonneg _) (hmin _ (rank_truncSVD_le A k)) 2
+
+/-- With `k = 0` the gap condition is void, and the only matrix of rank `0` within the tail
+distance is `truncSVD A 0`. -/
+example {m n : ℕ} (A B : Matrix (Fin m) (Fin n) ℝ) (hB : B.rank ≤ 0)
+    (hle : ‖A - B‖ ^ 2 ≤
+      ∑ i ∈ Finset.Ico 0 n, (Matrix.toEuclideanLin A).singularValues i ^ 2) :
+    B = truncSVD A 0 :=
+  eq_truncSVD_of_frobenius_sub_sq_le A (fun i hi => absurd hi (Nat.not_lt_zero i)) hB hle
+
 /-- Concrete value: for `A = diag(3, 1)`, `frobSq A = 10 = 3² + 1²`, the sum
 of all squared singular values. -/
 example : frobSq (!![3, 0; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ) = 10 := by
