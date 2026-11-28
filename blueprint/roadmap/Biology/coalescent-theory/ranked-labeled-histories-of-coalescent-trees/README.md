@@ -35,4 +35,5 @@
 ## Multifurcating trees
 
 - [Labeled histories and maximally probable topologies of multifurcating trees](labeled-histories-of-multifurcating-trees/README.md)
+- [Ranked tree spaces](ranked-tree-spaces/README.md)
 - [Fréchet summaries of ranked tree shapes](frechet-summaries-of-ranked-tree-shapes/README.md)

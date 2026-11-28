@@ -24,3 +24,4 @@
 - [Genetic contribution of advantaged ancestors](genetic-contribution-of-advantaged-ancestors/README.md)
 - [Ancestral learning graphs](ancestral-learning-graphs/README.md)
 - [Selection, gene drives, and polygenic adaptation](selection-drives-and-polygenic-adaptation/README.md)
+- [Heterozygote advantage on multicopy plasmids](heterozygote-advantage-on-multicopy-plasmids/README.md)

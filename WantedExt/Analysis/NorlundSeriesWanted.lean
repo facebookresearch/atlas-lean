@@ -41,17 +41,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **A product series for $\pi \cot(\pi/k)$.** For every integer $k \ge 2$,
-$$(k - 2)\Bigl(1 + \sum_{n=1}^{\infty} \frac{1}{n + 1}
-\prod_{j=1}^{n} \frac{kj - (k - 2)}{kj + 1}\Bigr) = \pi \cot\frac{\pi}{k}.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 1 (`integers-2025-A18-thm-1`). -/
-public theorem_wanted sub_two_mul_one_add_tsum_prod_eq_pi_mul_cot {k : ℕ} (hk : 2 ≤ k) :
-    ((k : ℝ) - 2) * (1 + ∑' n : ℕ, 1 / ((n : ℝ) + 2) *
-        ∏ j ∈ Finset.Icc 1 (n + 1), ((k : ℝ) * j - (k - 2)) / (k * j + 1)) =
-      Real.pi * Real.cot (Real.pi / k)
-
 /-- **Adegoke–Frontczak series for the tangent.** For every complex number $z$ with
 $-\frac12 < \operatorname{Re} z < \frac12$,
 $$
