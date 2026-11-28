@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CircularArcColoringDefs
 
 @[expose] public section
 
@@ -55,37 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `L` of points on the circle, the arcs (clockwise from the first
-endpoint to the second), and the number `K` of colors. -/
-abbrev CircularArcColoringInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The point `p` lies on the arc `(a, b)` running clockwise from `a` to `b`. -/
-def OnArc (arc : ℕ × ℕ) (p : ℕ) : Prop :=
-  if arc.1 ≤ arc.2 then arc.1 ≤ p ∧ p ≤ arc.2 else arc.1 ≤ p ∨ p ≤ arc.2
-
-/-- Arcs `j` and `k` of the family meet: some point of the circle lies on both. -/
-def Meet (i : CircularArcColoringInstance) (j k : Fin i.2.1.length) : Prop :=
-  ∃ p < i.1, OnArc i.2.1[j] p ∧ OnArc i.2.1[k] p
-
-/-- Well-formedness of an instance: every arc endpoint is one of the `L` points, and
-`0 < K ≤ |V|`, the number of arcs. -/
-def WellFormed (i : CircularArcColoringInstance) : Prop :=
-  (∀ arc ∈ i.2.1, arc.1 < i.1 ∧ arc.2 < i.1) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-/-- The intersection graph is `K`-colorable: the arcs get colors `0, …, K - 1` with any two
-distinct meeting arcs colored differently. -/
-def CircularArcColoringFeasible (i : CircularArcColoringInstance) : Prop :=
-  ∃ f : Fin i.2.1.length → Fin i.2.2, ∀ j k, j ≠ k → Meet i j k → f j ≠ f k
-
-open Classical in
-/-- GRAPH K-COLORABILITY of circular-arc graphs as a decision problem over bitstrings. -/
-noncomputable def circularArcColoringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CircularArcColoringInstance) x with
-  | some i => decide (WellFormed i ∧ CircularArcColoringFeasible i)
-  | none => false
 
 /-- **GRAPH K-COLORABILITY of circular-arc graphs is NP-complete.** Source: Garey and Johnson
 (1979), [GT4]; Garey, Johnson, Miller and Papadimitriou (1980). -/

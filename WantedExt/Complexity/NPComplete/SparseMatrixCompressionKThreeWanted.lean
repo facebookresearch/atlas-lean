@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SparseMatrixCompressionWanted
+public import CSLibExt.Complexity.NPComplete.SparseMatrixCompressionKThreeDefs
 
 @[expose] public section
 
@@ -63,20 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed SPARSE MATRIX COMPRESSION instance
-(every row has `n` entries, `0 < K ≤ mn`) and `K = 3`. -/
-def WellFormed (i : SparseMatrixCompressionInstance) : Prop :=
-  SparseMatrixCompression.WellFormed i ∧ i.2.2 = 3
-
-open Classical in
-/-- SPARSE MATRIX COMPRESSION with `K = 3` as a decision problem over bitstrings. -/
-noncomputable def sparseMatrixCompressionKThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SparseMatrixCompressionInstance) x with
-  | some i => decide (WellFormed i ∧ SparseMatrixCompressionFeasible i)
-  | none => false
 
 /-- **SPARSE MATRIX COMPRESSION with `K = 3` is NP-complete.** Source: Garey and Johnson
 (1979), [SR13]; Even, Lichtenstein and Shiloach (1977). -/

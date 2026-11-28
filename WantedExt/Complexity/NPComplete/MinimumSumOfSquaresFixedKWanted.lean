@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumSumOfSquaresWanted
+public import CSLibExt.Complexity.NPComplete.MinimumSumOfSquaresFixedKDefs
 
 @[expose] public section
 
@@ -66,34 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance for a fixed `K`: the sizes `s(a)` of the elements of `A` (element `a` is the
-`a`-th entry) and the bound `J`. -/
-abbrev MinimumSumOfSquaresFixedKInstance := List ℕ × ℕ
-
-/-- The [SP19] instance with `K` sets. -/
-def withK (K : ℕ) (i : MinimumSumOfSquaresFixedKInstance) :
-    MinimumSumOfSquares.MinimumSumOfSquaresInstance :=
-  (i.1, K, i.2)
-
-/-- Well-formedness of an instance for `K`: the [SP19] instance with `K` sets is well formed
-(every size positive, `0 < K ≤ |A|`, `J` positive). -/
-def WellFormed (K : ℕ) (i : MinimumSumOfSquaresFixedKInstance) : Prop :=
-  MinimumSumOfSquares.WellFormed (withK K i)
-
-/-- Some partition of `A` into `K` disjoint sets has sum of squares at most `J` (the [SP19]
-question). -/
-def MinimumSumOfSquaresFixedKFeasible (K : ℕ) (i : MinimumSumOfSquaresFixedKInstance) : Prop :=
-  MinimumSumOfSquaresFeasible (withK K i)
-
-open Classical in
-/-- MINIMUM SUM OF SQUARES with `K` sets as a decision problem over bitstrings. -/
-noncomputable def minimumSumOfSquaresFixedKDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumSumOfSquaresFixedKInstance) x with
-  | some i => decide (WellFormed K i ∧ MinimumSumOfSquaresFixedKFeasible K i)
-  | none => false
 
 /-- **MINIMUM SUM OF SQUARES with a fixed number `K ≥ 2` of sets is NP-complete.** Source:
 Garey and Johnson (1979), [SP19], comment. -/

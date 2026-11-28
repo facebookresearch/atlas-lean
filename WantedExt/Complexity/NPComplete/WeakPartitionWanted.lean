@@ -21,11 +21,8 @@ vectors in a lattice", Report 81-04, Department of Mathematics, University of Am
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Partition
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.WeakPartitionDefs
 
 @[expose] public section
 
@@ -57,24 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: every size is positive. -/
-def WellFormed (i : PartitionInstance) : Prop :=
-  ∀ a ∈ i, 0 < a
-
-/-- Some two disjoint non-empty sets `A₁`, `A₂` of elements have the same total size. -/
-def WeakPartitionFeasible (i : PartitionInstance) : Prop :=
-  ∃ A₁ A₂ : Finset (Fin i.length), Disjoint A₁ A₂ ∧ A₁.Nonempty ∧ A₂.Nonempty ∧
-    ∑ a ∈ A₁, i.get a = ∑ a ∈ A₂, i.get a
-
-open Classical in
-/-- WEAK PARTITION as a decision problem over bitstrings. -/
-noncomputable def weakPartitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionInstance) x with
-  | some i => decide (WellFormed i ∧ WeakPartitionFeasible i)
-  | none => false
 
 /-- **WEAK PARTITION is NP-complete.** Source: Johnson, NP-completeness column (1982), problem
 [9]; Shamir (1979); van Emde Boas (1981). -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnboundedKnapsackWanted
+public import CSLibExt.Complexity.NPComplete.IntegerKnapsackEqualSizeValueDefs
 
 @[expose] public section
 
@@ -57,20 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: every item `(s(u), v(u))` has `s(u) = v(u)` and
-`0 < s(u)`, and `B` and `K` are positive. -/
-def WellFormed (i : UnboundedKnapsackInstance) : Prop :=
-  (∀ u ∈ i.1, u.1 = u.2 ∧ 0 < u.1) ∧ 0 < i.2.1 ∧ 0 < i.2.2
-
-open Classical in
-/-- INTEGER KNAPSACK with `s(u) = v(u)` as a decision problem over bitstrings. -/
-noncomputable def integerKnapsackEqualSizeValueDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnboundedKnapsackInstance) x with
-  | some i => decide (WellFormed i ∧ UnboundedKnapsackFeasible i)
-  | none => false
 
 /-- **INTEGER KNAPSACK with `s(u) = v(u)` is NP-complete.**
 Source: Garey and Johnson (1979), [MP10], comment; Lueker (1975). -/

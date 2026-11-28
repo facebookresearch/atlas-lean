@@ -26,8 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IntegerProgrammingDefs
 
 @[expose] public section
 
@@ -57,39 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the dimension `m`, the constraint list `X` of pairs (coefficient tuple,
-right-hand side), the objective tuple `c`, and the bound `B`, every integer as a pair
-`(positive part, negative part)`. -/
-abbrev IntegerProgrammingInstance :=
-  ℕ × List (List (ℕ × ℕ) × (ℕ × ℕ)) × List (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- The integer encoded by a pair of naturals. -/
-def toInt (p : ℕ × ℕ) : ℤ := (p.1 : ℤ) - (p.2 : ℤ)
-
-/-- The dot product of an encoded integer tuple with an integer tuple. -/
-def dot (x : List (ℕ × ℕ)) (y : List ℤ) : ℤ :=
-  (List.zipWith (fun a b => toInt a * b) x y).sum
-
-/-- Well-formedness of an instance: every constraint tuple and the objective tuple have length
-`m`. -/
-def WellFormed (i : IntegerProgrammingInstance) : Prop :=
-  (∀ p ∈ i.2.1, p.1.length = i.1) ∧ i.2.2.1.length = i.1
-
-/-- Some integer `m`-tuple `y` satisfies every constraint `x · y ≤ b` and the objective bound
-`c · y ≥ B`. -/
-def IntegerProgrammingFeasible (i : IntegerProgrammingInstance) : Prop :=
-  ∃ y : List ℤ, y.length = i.1 ∧ (∀ p ∈ i.2.1, dot p.1 y ≤ toInt p.2) ∧
-    toInt i.2.2.2 ≤ dot i.2.2.1 y
-
-open Classical in
-/-- INTEGER PROGRAMMING as a decision problem over bitstrings. -/
-noncomputable def integerProgrammingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntegerProgrammingInstance) x with
-  | some i => decide (WellFormed i ∧ IntegerProgrammingFeasible i)
-  | none => false
 
 /-- **INTEGER PROGRAMMING is NP-complete.** Source: Garey and Johnson (1979), [MP1];
 Karp (1972); Borosh and Treybig (1976); Papadimitriou (1981). -/

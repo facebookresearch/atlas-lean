@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Order.Defs.Unbundled
+public import CSLibExt.Complexity.NPComplete.PartiallyOrderedKnapsackDefs
 
 @[expose] public section
 
@@ -52,41 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the (size, value) pairs of the elements `u₀, …, u_{n-1}`, the pairs `(a, b)`
-with `uₐ < u_b`, and the bounds `B` and `K`. -/
-abbrev PartiallyOrderedKnapsackInstance := List (ℕ × ℕ) × List (ℕ × ℕ) × ℕ × ℕ
-
-/-- The order of the instance as a relation on `Fin n`. -/
-def Precedes (i : PartiallyOrderedKnapsackInstance) (a b : Fin i.1.length) : Prop :=
-  ((a : ℕ), (b : ℕ)) ∈ i.2.1
-
-/-- The size of an element. -/
-def size (i : PartiallyOrderedKnapsackInstance) (u : Fin i.1.length) : ℕ := (i.1.get u).1
-
-/-- The value of an element. -/
-def value (i : PartiallyOrderedKnapsackInstance) (u : Fin i.1.length) : ℕ := (i.1.get u).2
-
-/-- Well-formedness of an instance: the order pairs name elements, the relation they list is a
-strict partial order, every size and value is positive, and `B` and `K` are positive. -/
-def WellFormed (i : PartiallyOrderedKnapsackInstance) : Prop :=
-  (∀ p ∈ i.2.1, p.1 < i.1.length ∧ p.2 < i.1.length) ∧ IsStrictOrder (Fin i.1.length) (Precedes i) ∧
-    (∀ u ∈ i.1, 0 < u.1 ∧ 0 < u.2) ∧ 0 < i.2.2.1 ∧ 0 < i.2.2.2
-
-/-- Some subset `U'`, closed under predecessors, has total size at most `B` and total value at
-least `K`. -/
-def PartiallyOrderedKnapsackFeasible (i : PartiallyOrderedKnapsackInstance) : Prop :=
-  ∃ S : Finset (Fin i.1.length), (∀ u ∈ S, ∀ u', Precedes i u' u → u' ∈ S) ∧
-    ∑ u ∈ S, size i u ≤ i.2.2.1 ∧ i.2.2.2 ≤ ∑ u ∈ S, value i u
-
-open Classical in
-/-- PARTIALLY ORDERED KNAPSACK as a decision problem over bitstrings. -/
-noncomputable def partiallyOrderedKnapsackDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartiallyOrderedKnapsackInstance) x with
-  | some i => decide (WellFormed i ∧ PartiallyOrderedKnapsackFeasible i)
-  | none => false
 
 /-- **PARTIALLY ORDERED KNAPSACK is NP-complete.** Source: Garey and Johnson (1979), [MP12];
 Johnson and Niemi (1983). -/

@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Domination
+public import CSLibExt.Complexity.NPComplete.DomaticNumberDefs
 
 @[expose] public section
 
@@ -53,34 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev DomaticNumberInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : DomaticNumberInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |V| = n`. -/
-def WellFormed (i : DomaticNumberInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- The domatic number is at least `K`: for some `k ≥ K` there is a partition of the vertices
-into blocks `c⁻¹(j)`, `j : Fin k`, each of which dominates the graph. -/
-def DomaticNumberFeasible (i : DomaticNumberInstance) : Prop :=
-  ∃ k, i.2.2 ≤ k ∧ ∃ c : Fin i.1 → Fin k, ∀ j : Fin k, (Graph i).IsDominating {v | c v = j}
-
-open Classical in
-/-- DOMATIC NUMBER as a decision problem over bitstrings. -/
-noncomputable def domaticNumberDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DomaticNumberInstance) x with
-  | some i => decide (WellFormed i ∧ DomaticNumberFeasible i)
-  | none => false
 
 /-- **DOMATIC NUMBER is NP-complete.** Source: Garey and Johnson (1979), [GT3];
 Kaplan and Shamir (1994). -/

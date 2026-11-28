@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.Order.Field.Rat
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CoveringIntegerProgrammingDefs
 
 @[expose] public section
 
@@ -68,44 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables, the rows `(Aᵢ, bᵢ)` of the constraints
-`Aᵢ · x ≥ bᵢ`, the cost vector `c`, and the bound `K`; rationals are pairs
-`(numerator, denominator)`. -/
-abbrev CoveringIntegerProgrammingInstance :=
-  ℕ × List (List (ℕ × ℕ) × (ℕ × ℕ)) × List (ℕ × ℕ) × ℕ
-
-/-- The rational number `p / q` encoded by the pair `(p, q)`. -/
-def toRat (q : ℕ × ℕ) : ℚ := (q.1 : ℚ) / (q.2 : ℚ)
-
-/-- The scalar product of an encoded rational vector with a vector of naturals. -/
-def dot (a : List (ℕ × ℕ)) (x : List ℕ) : ℚ :=
-  (List.zipWith (fun q k => toRat q * (k : ℚ)) a x).sum
-
-/-- An encoded rational lies in `[0, 1]`: positive denominator, numerator at most the
-denominator. -/
-def InUnit (q : ℕ × ℕ) : Prop := 0 < q.2 ∧ q.1 ≤ q.2
-
-/-- Well-formedness of an instance: every row `Aᵢ` has `n` entries in `[0, 1]`, every `bᵢ`
-is at least `1`, `c` has `n` entries in `[0, 1]`, and `K` is positive. -/
-def WellFormed (i : CoveringIntegerProgrammingInstance) : Prop :=
-  (∀ r ∈ i.2.1, r.1.length = i.1 ∧ (∀ q ∈ r.1, InUnit q) ∧ 0 < r.2.2 ∧ r.2.2 ≤ r.2.1) ∧
-    i.2.2.1.length = i.1 ∧ (∀ q ∈ i.2.2.1, InUnit q) ∧ 0 < i.2.2.2
-
-/-- Some vector `x` of `n` non-negative integers satisfies `Aᵢ · x ≥ bᵢ` for every row and
-`c · x ≤ K`. -/
-def CoveringIntegerProgrammingFeasible (i : CoveringIntegerProgrammingInstance) : Prop :=
-  ∃ x : List ℕ, x.length = i.1 ∧ (∀ r ∈ i.2.1, toRat r.2 ≤ dot r.1 x) ∧
-    dot i.2.2.1 x ≤ (i.2.2.2 : ℚ)
-
-open Classical in
-/-- COVERING INTEGER PROGRAMMING as a decision problem over bitstrings. -/
-noncomputable def coveringIntegerProgrammingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CoveringIntegerProgrammingInstance) x with
-  | some i => decide (WellFormed i ∧ CoveringIntegerProgrammingFeasible i)
-  | none => false
 
 /-- **COVERING INTEGER PROGRAMMING is NP-complete.** Source: Crescenzi and Kann, MINIMUM COVERING
 INTEGER PROGRAMMING; Srinivasan (1999); Karp (1972). -/

@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ClosestVectorDefs
 
 @[expose] public section
 
@@ -56,47 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the basis vectors `v₁, …, v_k` (each a list of integer coordinates, encoded as
-`(positive part, negative part)` pairs), the target `b` (encoded the same way), and the bound
-`K`. -/
-abbrev ClosestVectorInstance := List (List (ℕ × ℕ)) × List (ℕ × ℕ) × ℕ
-
-/-- The dimension `k`: the number of basis vectors. -/
-def dim (i : ClosestVectorInstance) : ℕ := i.1.length
-
-/-- The integer encoded by a `(positive part, negative part)` pair. -/
-def intOf (p : ℕ × ℕ) : ℤ := (p.1 : ℤ) - (p.2 : ℤ)
-
-/-- The `k × k` integer matrix whose rows are the basis vectors. -/
-def basisMatrix (i : ClosestVectorInstance) : Matrix (Fin (dim i)) (Fin (dim i)) ℤ :=
-  Matrix.of fun a j => intOf ((i.1.getD a []).getD j (0, 0))
-
-/-- The target vector `b`. -/
-def target (i : ClosestVectorInstance) : Fin (dim i) → ℤ :=
-  fun j => intOf (i.2.1.getD j (0, 0))
-
-/-- Well-formedness of an instance: there are `k` basis vectors, each with `k` coordinates, they
-are linearly independent (the determinant is nonzero), the target has `k` coordinates, and `K`
-is positive. -/
-def WellFormed (i : ClosestVectorInstance) : Prop :=
-  (∀ row ∈ i.1, row.length = dim i) ∧ (basisMatrix i).det ≠ 0 ∧ i.2.1.length = dim i ∧
-    0 < i.2.2
-
-/-- Some integer coefficient vector `x` gives a lattice vector
-`v = x₁v₁ + ⋯ + x_kv_k = Matrix.vecMul x (basisMatrix i)` within Euclidean distance `K` of `b`. -/
-def ClosestVectorFeasible (i : ClosestVectorInstance) : Prop :=
-  ∃ x : Fin (dim i) → ℤ,
-    ∑ j, (Matrix.vecMul x (basisMatrix i) j - target i j) ^ 2 ≤ (i.2.2 : ℤ) ^ 2
-
-open Classical in
-/-- CLOSEST VECTOR PROBLEM as a decision problem over bitstrings. -/
-noncomputable def closestVectorDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ClosestVectorInstance) x with
-  | some i => decide (WellFormed i ∧ ClosestVectorFeasible i)
-  | none => false
 
 /-- **CLOSEST VECTOR PROBLEM is NP-complete.** Source: van Emde Boas (1981), Theorem 2;
 Micciancio (2001). -/

@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IntegerKChoiceKnapsackDefs
 
 @[expose] public section
 
@@ -59,36 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `k` of columns, the rows `i = 1, …, n` (row `i` lists the pairs
-`(a_{i,j}, c_{i,j})` for `j = 1, …, k`), the capacity `b`, and the bound `K`. -/
-abbrev IntegerKChoiceKnapsackInstance := ℕ × List (List (ℕ × ℕ)) × ℕ × ℕ
-
-/-- Well-formedness of an instance: every row has exactly `k` entries (so `A` and `C` are
-`n × k` matrices), and `K` is positive. -/
-def WellFormed (i : IntegerKChoiceKnapsackInstance) : Prop :=
-  (∀ r ∈ i.2.1, r.length = i.1) ∧ 0 < i.2.2.2
-
-/-- The pair `(a_{r,j}, c_{r,j})` of row `r` and column `j`. -/
-def entry (i : IntegerKChoiceKnapsackInstance) (r : Fin i.2.1.length) (j : Fin i.1) :
-    ℕ × ℕ :=
-  (i.2.1.get r).getD j (0, 0)
-
-/-- There are a choice `f(r)` of one column in each row and multiplicities `x_r` with
-`∑ a_{r,f(r)} x_r ≤ b` and `∑ c_{r,f(r)} x_r ≥ K`. -/
-def IntegerKChoiceKnapsackFeasible (i : IntegerKChoiceKnapsackInstance) : Prop :=
-  ∃ (f : Fin i.2.1.length → Fin i.1) (x : Fin i.2.1.length → ℕ),
-    ∑ r, (entry i r (f r)).1 * x r ≤ i.2.2.1 ∧
-      i.2.2.2 ≤ ∑ r, (entry i r (f r)).2 * x r
-
-open Classical in
-/-- INTEGER K-CHOICE KNAPSACK as a decision problem over bitstrings. -/
-noncomputable def integerKChoiceKnapsackDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntegerKChoiceKnapsackInstance) x with
-  | some i => decide (WellFormed i ∧ IntegerKChoiceKnapsackFeasible i)
-  | none => false
 
 /-- **INTEGER K-CHOICE KNAPSACK is NP-complete.** Source: Crescenzi and Kann, MAXIMUM INTEGER
 K-CHOICE KNAPSACK; Chandra, Hirschberg and Wong (1976); Garey and Johnson (1979), [MP10] (the case

@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.QuadraticKnapsackDefs
 
 @[expose] public section
 
@@ -56,31 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the weights `w_0, ..., w_{n-1}`, the capacity `c`, the profit matrix `Q` as a
-list of rows, and the bound `K`. -/
-abbrev QuadraticKnapsackInstance := List ℕ × ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every weight is positive, the capacity is positive, and
-`Q` is an `n × n` matrix, where `n` is the number of items. -/
-def WellFormed (i : QuadraticKnapsackInstance) : Prop :=
-  (∀ w ∈ i.1, 0 < w) ∧ 0 < i.2.1 ∧ i.2.2.1.length = i.1.length ∧
-    ∀ row ∈ i.2.2.1, row.length = i.1.length
-
-/-- Some set `S` of items has total weight at most `c` and profit
-`∑_{i ∈ S} ∑_{j ∈ S} q_{i,j}` at least `K`. -/
-def QuadraticKnapsackFeasible (i : QuadraticKnapsackInstance) : Prop :=
-  ∃ S : Finset ℕ, (∀ k ∈ S, k < i.1.length) ∧ ∑ k ∈ S, i.1.getD k 0 ≤ i.2.1 ∧
-    i.2.2.2 ≤ ∑ k ∈ S, ∑ l ∈ S, (i.2.2.1.getD k []).getD l 0
-
-open Classical in
-/-- QUADRATIC KNAPSACK as a decision problem over bitstrings. -/
-noncomputable def quadraticKnapsackDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := QuadraticKnapsackInstance) x with
-  | some i => decide (WellFormed i ∧ QuadraticKnapsackFeasible i)
-  | none => false
 
 /-- **QUADRATIC KNAPSACK is NP-complete.** Source: Gallo, Hammer and Simeone (1980); Galli,
 Martello and Toth (2025). -/

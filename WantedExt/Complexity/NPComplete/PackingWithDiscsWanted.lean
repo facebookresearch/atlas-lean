@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Real.Basic
-public import WantedExt.Complexity.NPComplete.PackingSquaresRectilinearPolygonWanted
+public import CSLibExt.Complexity.NPComplete.PackingWithDiscsDefs
 
 @[expose] public section
 
@@ -63,26 +60,6 @@ reduction from every language in `NP`
 -/
 
 open PackingSquaresRectilinearPolygon
-
-/-- The point `p` lies in the polygon: in some cell `[a, a + 1] × [b, b + 1]` of it. -/
-def InPolygon (i : PackingSquaresRectilinearPolygonInstance) (p : ℝ × ℝ) : Prop :=
-  ∃ q ∈ i.2.1, (q.1 : ℝ) ≤ p.1 ∧ p.1 ≤ q.1 + 1 ∧ (q.2 : ℝ) ≤ p.2 ∧ p.2 ≤ q.2 + 1
-
-/-- `K` discs of diameter `d` with centers `c j` lie in the polygon and do not overlap. -/
-def PackingWithDiscsFeasible (i : PackingSquaresRectilinearPolygonInstance) : Prop :=
-  ∃ c : Fin i.2.2 → ℝ × ℝ,
-    (∀ j, ∀ p : ℝ × ℝ, (p.1 - (c j).1) ^ 2 + (p.2 - (c j).2) ^ 2 ≤ ((i.1 : ℝ) / 2) ^ 2 →
-      InPolygon i p) ∧
-    ∀ j j', j ≠ j' → (i.1 : ℝ) ^ 2 ≤ ((c j).1 - (c j').1) ^ 2 + ((c j).2 - (c j').2) ^ 2
-
-open Classical in
-/-- PACKING WITH DISCS as a decision problem over bitstrings. -/
-noncomputable def packingWithDiscsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PackingSquaresRectilinearPolygonInstance) x with
-  | some i => decide (WellFormed i ∧ PackingWithDiscsFeasible i)
-  | none => false
 
 /-- **PACKING WITH DISCS is NP-complete.** Source: Johnson (1982), problem [14], comment;
 Fowler, Paterson and Tanimoto (1981). -/

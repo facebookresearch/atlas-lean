@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.StripPackingWanted
+public import CSLibExt.Complexity.NPComplete.PackingSquaresIntoSquareDefs
 
 @[expose] public section
 
@@ -57,33 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the side lengths `s₁, ..., sₙ` of the squares and the side `s` of the
-container. -/
-abbrev PackingSquaresIntoSquareInstance := List ℕ × ℕ
-
-/-- The STRIP PACKING instance of the squares in an `s × s` square: rectangles `(sⱼ, sⱼ)`, strip
-width `s`, height bound `s`. -/
-def toStripPacking (i : PackingSquaresIntoSquareInstance) : StripPacking.StripPackingInstance :=
-  (i.1.map fun a => (a, a), i.2, i.2)
-
-/-- Well-formedness of an instance: every side length is positive, and so is `s`. -/
-def WellFormed (i : PackingSquaresIntoSquareInstance) : Prop :=
-  (∀ a ∈ i.1, 0 < a) ∧ 0 < i.2
-
-/-- The squares can be packed into the `s × s` square (`StripPackingFeasible` of
-`toStripPacking`). -/
-def PackingSquaresIntoSquareFeasible (i : PackingSquaresIntoSquareInstance) : Prop :=
-  StripPackingFeasible (toStripPacking i)
-
-open Classical in
-/-- PACKING SQUARES INTO A SQUARE as a decision problem over bitstrings. -/
-noncomputable def packingSquaresIntoSquareDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PackingSquaresIntoSquareInstance) x with
-  | some i => decide (WellFormed i ∧ PackingSquaresIntoSquareFeasible i)
-  | none => false
 
 /-- **PACKING SQUARES INTO A SQUARE is NP-complete.** Source: Leung, Tam, Wong, Young and Chin
 (1990). -/

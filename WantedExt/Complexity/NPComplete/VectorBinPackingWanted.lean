@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Algebra.Order.Field.Rat
+public import CSLibExt.Complexity.NPComplete.VectorBinPackingDefs
 
 @[expose] public section
 
@@ -62,37 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the dimension `d`, the items (each a list of `d` coordinates, coordinate
-`(p, q)` denoting `p / q`), and the number `K` of bins. -/
-abbrev VectorBinPackingInstance := ℕ × List (List (ℕ × ℕ)) × ℕ
-
-/-- The items of the instance, `Fin n` for `n` listed vectors. -/
-abbrev Item (i : VectorBinPackingInstance) : Type := Fin i.2.1.length
-
-/-- Coordinate `c` of item `j`, the rational `p / q` for the listed pair `(p, q)`. -/
-def coord (i : VectorBinPackingInstance) (j : Item i) (c : Fin i.1) : ℚ :=
-  (((i.2.1.get j).getD c (0, 1)).1 : ℚ) / (((i.2.1.get j).getD c (0, 1)).2 : ℚ)
-
-/-- Well-formedness of an instance: `d ≥ 2`, every item lists `d` coordinates, each a pair
-`(p, q)` with `0 < q` and `p ≤ q` (a rational in `[0, 1]`), and `K` is positive. -/
-def WellFormed (i : VectorBinPackingInstance) : Prop :=
-  2 ≤ i.1 ∧ (∀ v ∈ i.2.1, v.length = i.1 ∧ ∀ x ∈ v, 0 < x.2 ∧ x.1 ≤ x.2) ∧ 0 < i.2.2
-
-/-- Some assignment of the items to `K` bins keeps the sum of the vectors in every bin at most
-`1` in every coordinate. -/
-def VectorBinPackingFeasible (i : VectorBinPackingInstance) : Prop :=
-  ∃ σ : Item i → Fin i.2.2, ∀ b : Fin i.2.2, ∀ c : Fin i.1,
-    ∑ j ∈ Finset.univ.filter (fun j => σ j = b), coord i j c ≤ 1
-
-open Classical in
-/-- VECTOR BIN PACKING as a decision problem over bitstrings. -/
-noncomputable def vectorBinPackingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := VectorBinPackingInstance) x with
-  | some i => decide (WellFormed i ∧ VectorBinPackingFeasible i)
-  | none => false
 
 /-- **VECTOR BIN PACKING is NP-complete.** Source: Woeginger (1997); Garey, Graham, Johnson and
 Yao (1976); Garey and Johnson (1979), [SR1] (the case `d = 1`). -/

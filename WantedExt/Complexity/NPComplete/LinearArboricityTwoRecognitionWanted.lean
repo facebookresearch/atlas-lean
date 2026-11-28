@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.LinearArboricityTwoRecognitionDefs
 
 @[expose] public section
 
@@ -65,39 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev LinearArboricityTwoRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : LinearArboricityTwoRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : LinearArboricityTwoRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-open Classical in
-/-- `H` is a linear forest: acyclic, and every vertex has degree at most `2`, so that every
-connected component is a path. -/
-def IsLinearForest {V : Type*} [Fintype V] (H : SimpleGraph V) : Prop :=
-  H.IsAcyclic ∧ ∀ v, H.degree v ≤ 2
-
-/-- The edges of the graph split into two linear forests: edge-disjoint spanning subgraphs
-`H₁`, `H₂` whose union is the graph. -/
-def LinearArboricityTwoRecognitionFeasible (i : LinearArboricityTwoRecognitionInstance) : Prop :=
-  ∃ H₁ H₂ : SimpleGraph (Fin i.1), Disjoint H₁ H₂ ∧ H₁ ⊔ H₂ = Graph i ∧
-    IsLinearForest H₁ ∧ IsLinearForest H₂
-
-open Classical in
-/-- LINEAR ARBORICITY TWO RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def linearArboricityTwoRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := LinearArboricityTwoRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ LinearArboricityTwoRecognitionFeasible i)
-  | none => false
 
 /-- **LINEAR ARBORICITY TWO RECOGNITION is NP-complete.** Source: Shermer (1996), Theorem 3.1;
 Péroche (1982), Théorème 4; ISGCI, class `gc_733`. -/

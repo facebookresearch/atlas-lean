@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Matrix.Mul
-public import Mathlib.Data.ZMod.Defs
-public import Mathlib.InformationTheory.Hamming
+public import CSLibExt.Complexity.NPComplete.DecodingOfLinearCodesDefs
 
 @[expose] public section
 
@@ -53,36 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the rows of `A` (`n` rows, each a list of `m` bits), the vector `y` (`m`
-bits), and the bound `K`. -/
-abbrev DecodingOfLinearCodesInstance := List (List Bool) × List Bool × ℕ
-
-/-- The matrix `A` over `ZMod 2`, with rows indexed by `Fin n` and columns by `Fin m`. -/
-def coeffMatrix (i : DecodingOfLinearCodesInstance) :
-    Matrix (Fin i.1.length) (Fin i.2.1.length) (ZMod 2) :=
-  fun r c => if (i.1.getD r []).getD c false then 1 else 0
-
-/-- The vector `y` over `ZMod 2`. -/
-def target (i : DecodingOfLinearCodesInstance) : Fin i.2.1.length → ZMod 2 :=
-  fun c => if i.2.1.getD c false then 1 else 0
-
-/-- Well-formedness of an instance: every row of `A` has length `m = |y|`, and `0 < K`. -/
-def WellFormed (i : DecodingOfLinearCodesInstance) : Prop :=
-  (∀ row ∈ i.1, row.length = i.2.1.length) ∧ 0 < i.2.2
-
-/-- Some `x ∈ (ZMod 2)ⁿ` with at most `K` nonzero entries satisfies `x ᵥ* A = y`. -/
-def DecodingOfLinearCodesFeasible (i : DecodingOfLinearCodesInstance) : Prop :=
-  ∃ x : Fin i.1.length → ZMod 2, hammingNorm x ≤ i.2.2 ∧ x ᵥ* coeffMatrix i = target i
-
-open Classical in
-/-- DECODING OF LINEAR CODES as a decision problem over bitstrings. -/
-noncomputable def decodingOfLinearCodesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DecodingOfLinearCodesInstance) x with
-  | some i => decide (WellFormed i ∧ DecodingOfLinearCodesFeasible i)
-  | none => false
 
 /-- **DECODING OF LINEAR CODES is NP-complete.** Source: Garey and Johnson (1979), [MS7];
 Berlekamp, McEliece, and van Tilborg (1978). -/

@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DecodingOfLinearCodesWanted
+public import CSLibExt.Complexity.NPComplete.ExactWeightCodewordDefs
 
 @[expose] public section
 
@@ -57,26 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed DECODING OF LINEAR CODES instance (every
-row of `A` has length `m = |y|`, and `0 < K`) whose vector `y` is all zero. -/
-def WellFormed (i : DecodingOfLinearCodes.DecodingOfLinearCodesInstance) : Prop :=
-  DecodingOfLinearCodes.WellFormed i ∧ ∀ b ∈ i.2.1, b = false
-
-/-- Some `x ∈ (ZMod 2)ⁿ` with exactly `K` nonzero entries satisfies `x ᵥ* A = y`. -/
-def ExactWeightCodewordFeasible (i : DecodingOfLinearCodes.DecodingOfLinearCodesInstance) :
-    Prop :=
-  ∃ x : Fin i.1.length → ZMod 2, hammingNorm x = i.2.2 ∧
-    x ᵥ* DecodingOfLinearCodes.coeffMatrix i = DecodingOfLinearCodes.target i
-
-open Classical in
-/-- EXACT-WEIGHT CODEWORD as a decision problem over bitstrings. -/
-noncomputable def exactWeightCodewordDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DecodingOfLinearCodes.DecodingOfLinearCodesInstance) x with
-  | some i => decide (WellFormed i ∧ ExactWeightCodewordFeasible i)
-  | none => false
 
 /-- **EXACT-WEIGHT CODEWORD is NP-complete.** Source: Garey and Johnson (1979), [MS7];
 Berlekamp, McEliece, and van Tilborg (1978). -/

@@ -20,12 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Algebra.Order.Field.Rat
-public import Mathlib.Order.Bounds.Defs
-public import WantedExt.Complexity.NPComplete.IntegerProgrammingWanted
+public import CSLibExt.Complexity.NPComplete.CostParametricLinearProgrammingDefs
 
 @[expose] public section
 
@@ -64,52 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the dimension `m`, the constraint pairs `(x, b)`, the coordinate list `J`, and
-`q` as `(numerator, denominator)`. -/
-abbrev CostParametricLinearProgrammingInstance :=
-  ℕ × List (List (ℕ × ℕ) × (ℕ × ℕ)) × List ℕ × (ℕ × ℕ)
-
-/-- The coordinates in `J`, as a `Finset` of `Fin m`. -/
-def coords (i : CostParametricLinearProgrammingInstance) : Finset (Fin i.1) :=
-  Finset.univ.filter fun j => (j : ℕ) ∈ i.2.2.1
-
-/-- The rational number `q`. -/
-def qVal (i : CostParametricLinearProgrammingInstance) : ℚ :=
-  (i.2.2.2.1 : ℚ) / i.2.2.2.2
-
-/-- The feasible set `Y`: non-negative rational `m`-tuples `y` with `x · y ≥ b` for all
-`(x, b) ∈ X`. -/
-def feasibleSet (i : CostParametricLinearProgrammingInstance) : Set (Fin i.1 → ℚ) :=
-  {y | (∀ j, 0 ≤ y j) ∧
-    ∀ xb ∈ i.2.1, (toInt xb.2 : ℚ) ≤ ∑ j : Fin i.1, (toInt (xb.1.getD j (0, 0)) : ℚ) * y j}
-
-/-- The threshold `½ max {|cⱼ| : j ∈ J} + ∑_{j ∈ J} min {0, cⱼ}`. -/
-def threshold (i : CostParametricLinearProgrammingInstance) (c : Fin i.1 → ℚ) : ℚ :=
-  (coords i).fold max 0 (fun j => |c j|) / 2 + ∑ j ∈ coords i, min 0 (c j)
-
-/-- Well-formedness of an instance: every tuple has length `m`, `J` is a nonempty set of
-coordinates below `m`, and `q` is positive. -/
-def WellFormed (i : CostParametricLinearProgrammingInstance) : Prop :=
-  (∀ xb ∈ i.2.1, xb.1.length = i.1) ∧ i.2.2.1 ≠ [] ∧ (∀ j ∈ i.2.2.1, j < i.1) ∧
-    0 < i.2.2.2.1 ∧ 0 < i.2.2.2.2
-
-/-- A rational cost vector `c` with `c · c ≤ q²` for which the minimum of `∑_{j ∈ J} cⱼ yⱼ` over
-`Y` exists and exceeds the threshold. -/
-def CostParametricLinearProgrammingFeasible (i : CostParametricLinearProgrammingInstance) :
-    Prop :=
-  ∃ c : Fin i.1 → ℚ, ∑ j, c j * c j ≤ qVal i ^ 2 ∧
-    ∃ μ : ℚ, IsLeast ((fun y => ∑ j ∈ coords i, c j * y j) '' feasibleSet i) μ ∧
-      threshold i c < μ
-
-open Classical in
-/-- COST-PARAMETRIC LINEAR PROGRAMMING as a decision problem over bitstrings. -/
-noncomputable def costParametricLinearProgrammingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CostParametricLinearProgrammingInstance) x with
-  | some i => decide (WellFormed i ∧ CostParametricLinearProgrammingFeasible i)
-  | none => false
 
 /-- **COST-PARAMETRIC LINEAR PROGRAMMING is NP-complete.** Source: Garey and Johnson (1979),
 [MP3]; Jeroslow (1976). -/

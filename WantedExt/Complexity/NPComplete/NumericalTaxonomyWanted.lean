@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.TreeMetric
+public import CSLibExt.Complexity.NPComplete.NumericalTaxonomyDefs
 
 @[expose] public section
 
@@ -59,46 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the rows of the `n × n` distance matrix `D`, each entry a nonnegative rational
-`(numerator, denominator)`, and the threshold `Δ` in the same form. -/
-abbrev NumericalTaxonomyInstance := List (List (ℕ × ℕ)) × (ℕ × ℕ)
-
-/-- The rational number `p.1 / p.2` as a real number. -/
-noncomputable def ratValue (p : ℕ × ℕ) : ℝ :=
-  (p.1 : ℝ) / p.2
-
-/-- The pair `(numerator, denominator)` of the entry `D[a, b]`. -/
-def cell (i : NumericalTaxonomyInstance) (a b : ℕ) : ℕ × ℕ :=
-  (i.1.getD a []).getD b (0, 1)
-
-/-- The entry `D[a, b]` of the distance matrix. -/
-noncomputable def entry (i : NumericalTaxonomyInstance) (a b : ℕ) : ℝ :=
-  ratValue (cell i a b)
-
-/-- Well-formedness of an instance: `D` is a square matrix, every entry of `D` and the threshold
-have a positive denominator, `D` is symmetric (`D[a, b] = D[b, a]` as rationals) and its diagonal
-is zero. -/
-def WellFormed (i : NumericalTaxonomyInstance) : Prop :=
-  (∀ row ∈ i.1, row.length = i.1.length ∧ ∀ e ∈ row, 0 < e.2) ∧ 0 < i.2.2 ∧
-    (∀ a < i.1.length, ∀ b < i.1.length,
-      (cell i a b).1 * (cell i b a).2 = (cell i b a).1 * (cell i a b).2) ∧
-    ∀ a < i.1.length, (cell i a a).1 = 0
-
-/-- Some tree metric `T` on the points, with distinct points at positive distance, satisfies
-`|T[a, b] - D[a, b]| ≤ Δ` for all points `a < b`. -/
-def NumericalTaxonomyFeasible (i : NumericalTaxonomyInstance) : Prop :=
-  ∃ T : Fin i.1.length → Fin i.1.length → ℝ, IsTreeMetric T ∧ (∀ a b, a ≠ b → 0 < T a b) ∧
-    ∀ a b : Fin i.1.length, a < b → |T a b - entry i a b| ≤ ratValue i.2
-
-open Classical in
-/-- NUMERICAL TAXONOMY as a decision problem over bitstrings. -/
-noncomputable def numericalTaxonomyDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NumericalTaxonomyInstance) x with
-  | some i => decide (WellFormed i ∧ NumericalTaxonomyFeasible i)
-  | none => false
 
 /-- **NUMERICAL TAXONOMY is NP-complete.** Source: Agarwala, Bafna, Farach, Paterson and Thorup
 (1999), Theorem 5.1. -/

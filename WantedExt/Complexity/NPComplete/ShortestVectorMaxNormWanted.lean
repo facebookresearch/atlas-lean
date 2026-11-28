@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ShortestVectorMaxNormDefs
 
 @[expose] public section
 
@@ -54,41 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the basis vectors `v₁, …, v_k` (each a list of integer coordinates, encoded as
-`(positive part, negative part)` pairs) and the bound `K`. -/
-abbrev ShortestVectorMaxNormInstance := List (List (ℕ × ℕ)) × ℕ
-
-/-- The dimension `k`: the number of basis vectors. -/
-def dim (i : ShortestVectorMaxNormInstance) : ℕ := i.1.length
-
-/-- Coordinate `j` of basis vector `vᵢ`, as an integer. -/
-def entry (i : ShortestVectorMaxNormInstance) (a j : ℕ) : ℤ :=
-  (((i.1.getD a []).getD j (0, 0)).1 : ℤ) - (((i.1.getD a []).getD j (0, 0)).2 : ℤ)
-
-/-- The `k × k` integer matrix whose rows are the basis vectors. -/
-def basisMatrix (i : ShortestVectorMaxNormInstance) : Matrix (Fin (dim i)) (Fin (dim i)) ℤ :=
-  Matrix.of fun a j => entry i a j
-
-/-- Well-formedness of an instance: there are `k` basis vectors, each with `k` coordinates, they
-are linearly independent (the determinant is nonzero), and `K` is positive. -/
-def WellFormed (i : ShortestVectorMaxNormInstance) : Prop :=
-  (∀ row ∈ i.1, row.length = dim i) ∧ (basisMatrix i).det ≠ 0 ∧ 0 < i.2
-
-/-- Some nonzero integer coefficient vector `x` gives a lattice vector
-`v = x₁v₁ + ⋯ + x_kv_k = Matrix.vecMul x (basisMatrix i)` with every coordinate of absolute
-value at most `K`. -/
-def ShortestVectorMaxNormFeasible (i : ShortestVectorMaxNormInstance) : Prop :=
-  ∃ x : Fin (dim i) → ℤ, x ≠ 0 ∧ ∀ j, |Matrix.vecMul x (basisMatrix i) j| ≤ (i.2 : ℤ)
-
-open Classical in
-/-- SHORTEST VECTOR PROBLEM IN THE MAX NORM as a decision problem over bitstrings. -/
-noncomputable def shortestVectorMaxNormDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShortestVectorMaxNormInstance) x with
-  | some i => decide (WellFormed i ∧ ShortestVectorMaxNormFeasible i)
-  | none => false
 
 /-- **SHORTEST VECTOR PROBLEM IN THE MAX NORM is NP-complete.** Source: van Emde Boas (1981),
 Theorem 2; Micciancio (2001). -/

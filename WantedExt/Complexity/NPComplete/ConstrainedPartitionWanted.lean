@@ -23,11 +23,8 @@ NP-Completeness*, W. H. Freeman (1979), problem [SP12] PARTITION (the special ca
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Karp.Partition
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ConstrainedPartitionDefs
 
 @[expose] public section
 
@@ -65,31 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sizes (PARTITION's instance), the element `a₀`, the subset `S`, and the
-bound `K`. -/
-abbrev ConstrainedPartitionInstance := PartitionInstance × ℕ × List ℕ × ℕ
-
-/-- Well-formedness of an instance: every size is positive, `a₀` and the elements of `S` are
-positions of `A`, and `K` is positive. -/
-def WellFormed (i : ConstrainedPartitionInstance) : Prop :=
-  (∀ a ∈ i.1, 0 < a) ∧ i.2.1 < i.1.length ∧ (∀ a ∈ i.2.2.1, a < i.1.length) ∧ 0 < i.2.2.2
-
-/-- Some `A' ⊆ A` has the same total size as `A - A'`, and at least `K` elements of `S` lie on
-the same side as `a₀`. -/
-def ConstrainedPartitionFeasible (i : ConstrainedPartitionInstance) : Prop :=
-  ∃ A' : Finset ℕ, A' ⊆ Finset.range i.1.length ∧
-    ∑ a ∈ A', i.1.getD a 0 = ∑ a ∈ Finset.range i.1.length \ A', i.1.getD a 0 ∧
-    i.2.2.2 ≤ (i.2.2.1.toFinset.filter fun a => (a ∈ A' ↔ i.2.1 ∈ A')).card
-
-open Classical in
-/-- CONSTRAINED PARTITION as a decision problem over bitstrings. -/
-noncomputable def constrainedPartitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConstrainedPartitionInstance) x with
-  | some i => decide (WellFormed i ∧ ConstrainedPartitionFeasible i)
-  | none => false
 
 /-- **CONSTRAINED PARTITION is NP-complete.** Source: Crescenzi and Kann, MAXIMUM CONSTRAINED
 PARTITION; Zuckerman (1996), problem 20. The special case `a₀ ∈ S`, `K = 1` is PARTITION, Garey

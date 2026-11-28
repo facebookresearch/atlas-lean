@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DomaticNumberWanted
+public import CSLibExt.Complexity.NPComplete.DomaticNumberFixedKDefs
 
 @[expose] public section
 
@@ -55,24 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list; the bound `K` is fixed. -/
-abbrev DomaticNumberFixedKInstance := ℕ × List (ℕ × ℕ)
-
-/-- The DOMATIC NUMBER instance `(n, E, K)` of a graph `(n, E)` and the fixed bound `K`. -/
-def withBound (K : ℕ) (i : DomaticNumberFixedKInstance) :
-    DomaticNumber.DomaticNumberInstance :=
-  (i.1, i.2, K)
-
-open Classical in
-/-- DOMATIC NUMBER for a fixed bound `K` as a decision problem over bitstrings. -/
-noncomputable def domaticNumberFixedKDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DomaticNumberFixedKInstance) x with
-  | some i => decide (DomaticNumber.WellFormed (withBound K i) ∧
-      DomaticNumber.DomaticNumberFeasible (withBound K i))
-  | none => false
 
 /-- **DOMATIC NUMBER is NP-complete for every fixed `K ≥ 3`.** Source: Garey and Johnson (1979),
 [GT3], comment (Garey, Johnson, and Tarjan, 1976b). -/

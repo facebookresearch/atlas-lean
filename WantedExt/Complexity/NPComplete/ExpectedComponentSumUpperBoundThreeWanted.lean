@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ExpectedComponentSumZeroOneWanted
+public import CSLibExt.Complexity.NPComplete.ExpectedComponentSumUpperBoundThreeDefs
 
 @[expose] public section
 
@@ -55,26 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the well-formedness of EXPECTED COMPONENT SUM with 0/1
-entries, and `K = 3`. -/
-def WellFormed (i : ExpectedComponentSumInstance) : Prop :=
-  ExpectedComponentSumZeroOne.WellFormed i ∧ i.2.2.1 = 3
-
-/-- Some partition of `C` into `K` non-empty disjoint sets has component sum at most `B`. -/
-def UpperBoundFeasible (i : ExpectedComponentSumInstance) : Prop :=
-  ∃ f : Fin i.2.1.length → Fin i.2.2.1, Function.Surjective f ∧
-    componentSum i.1 i.2.1 f ≤ i.2.2.2
-
-open Classical in
-/-- The upper-bound variant of EXPECTED COMPONENT SUM with `K = 3` and 0/1 entries as a
-decision problem over bitstrings. -/
-noncomputable def expectedComponentSumUpperBoundThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ExpectedComponentSumInstance) x with
-  | some i => decide (WellFormed i ∧ UpperBoundFeasible i)
-  | none => false
 
 /-- **EXPECTED COMPONENT SUM, upper-bound variant with `K = 3` and 0/1 entries, is
 NP-complete.** Source: Garey and Johnson (1979), [SP18], comment. -/

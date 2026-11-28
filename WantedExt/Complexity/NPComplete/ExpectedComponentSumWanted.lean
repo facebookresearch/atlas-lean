@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Finset.Lattice.Fold
+public import CSLibExt.Complexity.NPComplete.ExpectedComponentSumDefs
 
 @[expose] public section
 
@@ -54,35 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the dimension `m`, the vectors of `C` (each a list of `m` entries), the number
-`K` of parts and the bound `B`. -/
-abbrev ExpectedComponentSumInstance := ℕ × List (List ℕ) × ℕ × ℕ
-
-/-- Well-formedness of an instance: every vector has `m` entries, and `K` and `B` are
-positive. -/
-def WellFormed (i : ExpectedComponentSumInstance) : Prop :=
-  (∀ v ∈ i.2.1, v.length = i.1) ∧ 0 < i.2.2.1 ∧ 0 < i.2.2.2
-
-/-- The component sum `∑_{k} max_{j < m} (∑_{v ∈ C_k} v_j)` of the partition of the vectors
-`C` into the parts `C_k = f⁻¹(k)`. -/
-def componentSum (m : ℕ) (C : List (List ℕ)) {K : ℕ} (f : Fin C.length → Fin K) : ℕ :=
-  ∑ k : Fin K, Finset.univ.sup fun j : Fin m =>
-    ∑ c ∈ Finset.univ.filter (fun c => f c = k), (C.get c).getD j 0
-
-/-- Some partition of `C` into `K` non-empty disjoint sets has component sum at least `B`. -/
-def ExpectedComponentSumFeasible (i : ExpectedComponentSumInstance) : Prop :=
-  ∃ f : Fin i.2.1.length → Fin i.2.2.1, Function.Surjective f ∧
-    i.2.2.2 ≤ componentSum i.1 i.2.1 f
-
-open Classical in
-/-- EXPECTED COMPONENT SUM as a decision problem over bitstrings. -/
-noncomputable def expectedComponentSumDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ExpectedComponentSumInstance) x with
-  | some i => decide (WellFormed i ∧ ExpectedComponentSumFeasible i)
-  | none => false
 
 /-- **EXPECTED COMPONENT SUM is NP-complete.** Source: Garey and Johnson (1979), [SP18]. -/
 public theorem_wanted expectedComponentSum_npComplete :

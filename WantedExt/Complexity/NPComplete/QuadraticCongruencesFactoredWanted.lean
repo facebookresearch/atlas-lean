@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.QuadraticCongruencesWanted
-public import Mathlib.Data.Nat.Prime.Defs
+public import CSLibExt.Complexity.NPComplete.QuadraticCongruencesFactoredDefs
 
 @[expose] public section
 
@@ -56,36 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the [AN1] numbers `(a, b, c)` and the factorization of `b` as a list of
-entries `(p, e, S)`: a prime `p`, its exponent `e`, and the solutions `S` of `x² ≡ a`
-modulo `p ^ e`. -/
-abbrev QuadraticCongruencesFactoredInstance :=
-  QuadraticCongruences.QuadraticCongruencesInstance × List (ℕ × ℕ × List ℕ)
-
-/-- An entry `(p, e, S)` of the factorization for the residue `a`: `p` is prime, `e` is
-positive, and `S` lists without repetition exactly the residues `y < p ^ e` with
-`y ^ 2 ≡ a [MOD p ^ e]`. -/
-def FactorEntryWellFormed (a : ℕ) (t : ℕ × ℕ × List ℕ) : Prop :=
-  t.1.Prime ∧ 0 < t.2.1 ∧ t.2.2.Nodup ∧
-    (∀ y ∈ t.2.2, y < t.1 ^ t.2.1 ∧ y ^ 2 ≡ a [MOD t.1 ^ t.2.1]) ∧
-    ∀ y < t.1 ^ t.2.1, y ^ 2 ≡ a [MOD t.1 ^ t.2.1] → y ∈ t.2.2
-
-/-- Well-formedness of an instance: `(a, b, c)` is a well-formed [AN1] instance, every entry
-of the factorization is well formed for `a`, the primes are distinct, and the product of the
-prime powers is `b`. -/
-def WellFormed (i : QuadraticCongruencesFactoredInstance) : Prop :=
-  QuadraticCongruences.WellFormed i.1 ∧ (∀ t ∈ i.2, FactorEntryWellFormed i.1.1 t) ∧
-    (i.2.map Prod.fst).Nodup ∧ (i.2.map fun t => t.1 ^ t.2.1).prod = i.1.2.1
-
-open Classical in
-/-- QUADRATIC CONGRUENCES with a factored modulus as a decision problem over bitstrings. -/
-noncomputable def quadraticCongruencesFactoredDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := QuadraticCongruencesFactoredInstance) x with
-  | some i => decide (WellFormed i ∧ QuadraticCongruences.QuadraticCongruencesFeasible i.1)
-  | none => false
 
 /-- **QUADRATIC CONGRUENCES with a factored modulus is NP-complete.** Source: Garey and
 Johnson (1979), [AN1], comment; Manders and Adleman (1978). -/

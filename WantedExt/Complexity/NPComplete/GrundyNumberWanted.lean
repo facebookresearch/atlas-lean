@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.GrundyNumberDefs
 
 @[expose] public section
 
@@ -58,30 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A Grundy `k`-coloring: a proper coloring `c` whose colors are `1, …, k`, each used by some
-vertex, such that for colors `i < j` every vertex of color `j` has a neighbor of color `i`. -/
-def IsGrundyColoring {V : Type} {G : SimpleGraph V} (k : ℕ) (c : G.Coloring ℕ) : Prop :=
-  (∀ v, 1 ≤ c v ∧ c v ≤ k) ∧ (∀ j ≤ k, 1 ≤ j → ∃ v, c v = j) ∧
-    ∀ v, ∀ i < c v, 1 ≤ i → ∃ u, G.Adj v u ∧ c u = i
-
-/-- Well-formedness of an instance: the GRAPH K-COLORABILITY well-formedness (a simple edge list
-on vertices below `n`), and `K` is positive. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2
-
-/-- `Γ(G) ≥ K`: some Grundy `k`-coloring of the graph has `k ≥ K`. -/
-def GrundyNumberFeasible (i : GraphColoringInstance) : Prop :=
-  ∃ k ≥ i.2.2, ∃ c : (Graph i).Coloring ℕ, IsGrundyColoring k c
-
-open Classical in
-/-- GRUNDY NUMBER as a decision problem over bitstrings. -/
-noncomputable def grundyNumberDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GrundyNumberFeasible i)
-  | none => false
 
 /-- **GRUNDY NUMBER is NP-complete.** Source: Zaker (2006). -/
 public theorem_wanted grundyNumber_npComplete :

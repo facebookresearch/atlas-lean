@@ -19,12 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Matrix.Mul
-public import Mathlib.Data.ZMod.Defs
-public import Mathlib.InformationTheory.Hamming
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DecodingOfLinearCodesWanted
+public import CSLibExt.Complexity.NPComplete.FiniteFieldSubsetSumDefs
 
 @[expose] public section
 
@@ -65,21 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance `(α, β, K)`: `β` has `m > 0` coordinates, every `αᵢ` has
-`m` coordinates (DECODING OF LINEAR CODES' well-formedness, which also gives `0 < K`), and the
-elements `α₁, …, αₙ, β` are pairwise distinct. -/
-def WellFormed (i : DecodingOfLinearCodesInstance) : Prop :=
-  DecodingOfLinearCodes.WellFormed i ∧ 0 < i.2.1.length ∧ (i.1 ++ [i.2.1]).Nodup
-
-open Classical in
-/-- FINITE-FIELD SUBSET SUM as a decision problem over bitstrings. -/
-noncomputable def finiteFieldSubsetSumDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DecodingOfLinearCodesInstance) x with
-  | some i => decide (WellFormed i ∧ DecodingOfLinearCodesFeasible i)
-  | none => false
 
 /-- **FINITE-FIELD SUBSET SUM is NP-complete.** Source: Vardy (1997), as recorded by Johnson
 (2005). -/

@@ -20,8 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.QuadraticDiophantineEquationsDefs
 
 @[expose] public section
 
@@ -46,26 +45,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the coefficients `(a, b, c)`. -/
-abbrev QuadraticDiophantineEquationsInstance := ℕ × ℕ × ℕ
-
-/-- Well-formedness of an instance: `a`, `b` and `c` are positive. -/
-def WellFormed (i : QuadraticDiophantineEquationsInstance) : Prop :=
-  0 < i.1 ∧ 0 < i.2.1 ∧ 0 < i.2.2
-
-/-- Positive integers `x` and `y` with `a x² + b y = c`. -/
-def QuadraticDiophantineEquationsFeasible (i : QuadraticDiophantineEquationsInstance) : Prop :=
-  ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ i.1 * x ^ 2 + i.2.1 * y = i.2.2
-
-open Classical in
-/-- QUADRATIC DIOPHANTINE EQUATIONS as a decision problem over bitstrings. -/
-noncomputable def quadraticDiophantineEquationsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := QuadraticDiophantineEquationsInstance) x with
-  | some i => decide (WellFormed i ∧ QuadraticDiophantineEquationsFeasible i)
-  | none => false
 
 /-- **QUADRATIC DIOPHANTINE EQUATIONS is NP-complete.** Source: Garey and Johnson (1979), [AN8];
 Manders and Adleman (1978). -/

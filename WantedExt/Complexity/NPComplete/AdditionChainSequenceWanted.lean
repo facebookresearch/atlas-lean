@@ -17,8 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.AdditionChainSequenceDefs
 
 @[expose] public section
 
@@ -51,34 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sequence `[n₁, …, nₘ]` and the bound `K`. -/
-abbrev AdditionChainSequenceInstance := List ℕ × ℕ
-
-/-- `a = [a₀, a₁, …, a_r]` is an addition chain: `a₀ = 1`, the entries strictly increase, and
-every entry after the first is the sum of two (not necessarily distinct) earlier entries. -/
-def IsAdditionChain (a : List ℕ) : Prop :=
-  a.head? = some 1 ∧ a.Pairwise (· < ·) ∧
-    ∀ i : Fin a.length, 0 < i.val →
-      ∃ j k : Fin a.length, j < i ∧ k < i ∧ a[i] = a[j] + a[k]
-
-/-- Well-formedness of an instance: the sequence is nonempty, its entries are positive, and the
-bound `K` is positive. -/
-def WellFormed (i : AdditionChainSequenceInstance) : Prop :=
-  i.1 ≠ [] ∧ (∀ n ∈ i.1, 0 < n) ∧ 0 < i.2
-
-/-- Some addition chain `a₀, …, a_r` with `r ≤ K` contains every number of the sequence. -/
-def AdditionChainSequenceFeasible (i : AdditionChainSequenceInstance) : Prop :=
-  ∃ a : List ℕ, IsAdditionChain a ∧ a.length ≤ i.2 + 1 ∧ ∀ n ∈ i.1, n ∈ a
-
-open Classical in
-/-- ADDITION CHAIN FOR A SEQUENCE as a decision problem over bitstrings. -/
-noncomputable def additionChainSequenceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := AdditionChainSequenceInstance) x with
-  | some i => decide (WellFormed i ∧ AdditionChainSequenceFeasible i)
-  | none => false
 
 /-- **ADDITION CHAIN FOR A SEQUENCE is NP-complete.** Source: Downey, Leong and Sethi
 (1981). -/
