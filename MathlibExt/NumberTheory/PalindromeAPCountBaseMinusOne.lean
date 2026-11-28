@@ -11,10 +11,10 @@ module
 public import MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase
 import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Data.List.GetD
-import Mathlib.Data.Int.CardIntervalMod
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.DigitSumCongruenceCount
 
 /-!
 # Palindromes modulo a divisor of the base minus one
@@ -37,6 +37,9 @@ only use congruences at a center, where no division of `r` is needed.
   `palindromeAPCount_eq_prefix_counts` for reindexing by leading halves.
 * `MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase` supplies `palindromicHalfCopy_eq_ofDigits`
   and `div_pow_half_eq_sum_digits` to translate between leading halves and digits.
+* `MathlibExt.NumberTheory.DigitSumCongruenceCount` supplies `Nat.count_intModEq_card`, extracted
+  from its `sum_residueIndicator_range`. The shift and complete-block arguments follow
+  `residueIndicator_add` and `sum_residueIndicator_base` in that module.
 -/
 
 namespace MetaMathlibExt
@@ -58,21 +61,10 @@ private theorem add_modEq_iff_sub {q : ℕ} (s x r : ℤ) :
   conv_lhs => rw [← hs]
   exact ⟨Int.ModEq.add_left_cancel' s, fun h => h.add_left s⟩
 
--- Apply Mathlib's interval count to the least natural representative of an integer residue.
 private theorem residuePrefix_formula {q : ℕ} (hq : 0 < q) (r : ℤ) (n : ℕ) :
     residuePrefix q r n = (↑(n / q) : ℚ) + (if r % q < ((n % q : ℕ) : ℤ) then 1 else 0) := by
-  let u := (r % q).toNat
-  have hu : (u : ℤ) = r % q := Int.toNat_of_nonneg (Int.emod_nonneg _ (by exact_mod_cast hq.ne'))
-  have hmod (i : ℕ) : (i : ℤ) ≡ r [ZMOD q] ↔ i ≡ u [MOD q] := by
-    rw [← Int.natCast_modEq_iff, hu]
-    exact ⟨fun h => h.trans (Int.mod_modEq r q).symm, fun h => h.trans (Int.mod_modEq r q)⟩
-  have hu' : u < q := by
-    rw [← Int.ofNat_lt, hu]
-    exact Int.emod_lt_of_pos _ (by exact_mod_cast hq)
-  have hlt : (u < n % q) ↔ r % q < ((n % q : ℕ) : ℤ) := by
-    rw [← Int.ofNat_lt, hu]
-  simp only [residuePrefix, hmod, Nat.count_modEq_card n hq, Nat.mod_eq_of_lt hu', hlt,
-    Nat.cast_add, Nat.cast_ite, Nat.cast_one, Nat.cast_zero]
+  simp only [residuePrefix, Nat.count_intModEq_card hq, Nat.cast_add, Nat.cast_ite,
+    Nat.cast_one, Nat.cast_zero]
 
 private theorem doubledPrefix_odd {q : ℕ} (hq : Odd q) (r n : ℕ) :
     doubledPrefix q r n = residuePrefix q (((q + 1) / 2 * r : ℕ) : ℤ) n := by
