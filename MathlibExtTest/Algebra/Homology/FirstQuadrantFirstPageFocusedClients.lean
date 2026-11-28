@@ -64,7 +64,6 @@ def sourceCycle : Z ⟶ (HomologicalComplex₂.horizontalDirectColumnCochain K 1
 theorem source_coordinate : sourceCycle ≫
     (HomologicalComplex₂.horizontalDirectColumnCochain K 1).iCycles (-1) ≫
     (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 1 0).hom = 𝟙 Z := by
-  unfold sourceCycle
   have he := HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso_hom_iCycles K 1 0
   have he' : (HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso K 1 0).hom ≫
       (K.X 1).iCycles 0 =
@@ -75,13 +74,27 @@ theorem source_coordinate : sourceCycle ≫
       (HomologicalComplex₂.horizontalDirectColumnCochain K 1).iCycles (-1) ≫
         (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 1 0).hom at he
     exact he
-  change verticalCycle ≫
-    (HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso K 1 0).inv ≫
-    (HomologicalComplex₂.horizontalDirectColumnCochain K 1).iCycles (-1) ≫
-    (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 1 0).hom = 𝟙 Z
-  rw [← he']
-  simp only [Category.assoc, Iso.inv_hom_id_assoc, verticalCycle,
-    HomologicalComplex.liftCycles_i]
+  have hcancel : sourceCycle ≫
+      (HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso K 1 0).hom =
+      verticalCycle := by
+    unfold sourceCycle
+    exact (Category.assoc verticalCycle
+      (HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso K 1 0).inv
+      (HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso K 1 0).hom).trans
+        ((congrArg (fun f => verticalCycle ≫ f)
+          (HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso K 1 0).inv_hom_id).trans
+            (Category.comp_id verticalCycle))
+  have hv : verticalCycle ≫ (K.X 1).iCycles 0 = 𝟙 Z := by
+    change verticalCycle ≫ row.iCycles 0 = 𝟙 Z
+    exact row.liftCycles_i (𝟙 Z) ((ComplexShape.down ℕ).next 0) rfl
+      (by change (𝟙 Z) ≫ 0 = 0; exact comp_zero)
+  have hc := congrArg (fun f => sourceCycle ≫ f) he'.symm
+  have hm : sourceCycle ≫
+      (HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso K 1 0).hom ≫
+      (K.X 1).iCycles 0 = 𝟙 Z := by
+    rw [← Category.assoc, hcancel]
+    exact hv
+  exact hc.trans hm
 
 /-- Recover the preceding coordinate after the finite-stage inclusion. -/
 def lowerRecovery : HomologicalComplex₂.horizontalFilteredTotalObj K 1 0 ⟶ Z :=
@@ -141,8 +154,13 @@ theorem horizontal_cycle_coordinate : sourceCycle ≫
       𝟙 ((K.X 0).X 0) :=
     (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 0 0).inv_hom_id
   rw [hX, horizontal_component] at hc
+  have hZ : (𝟙 ((K.X 0).X 0)) = 𝟙 Z := rfl
+  rw [hZ] at hc
+  have hu : 𝟙 Z ≫ (𝟙 Z + 𝟙 Z) ≫ 𝟙 Z = 𝟙 Z + 𝟙 Z :=
+    (congrArg (fun f : Z ⟶ Z => 𝟙 Z ≫ f) (Category.comp_id (𝟙 Z + 𝟙 Z))).trans
+      (Category.id_comp (𝟙 Z + 𝟙 Z))
   rw [horizontal_component]
-  simpa only [Category.id_comp, Category.comp_id] using hc
+  exact hc.trans (congrArg (fun f : Z ⟶ Z => (1 : ℤ).negOnePow • f) hu)
 
 /-- The finite boundary has the positive horizontal coordinate. -/
 theorem finite_boundary_coordinate : sourceCycle ≫
@@ -172,8 +190,12 @@ theorem finite_boundary_coordinate : sourceCycle ≫
   have hc := congrArg (fun f => sourceCycle ≫ f ≫ lowerRecovery) h'
   simp only [Category.assoc, source_coordinate_assoc, previous_recovery] at hc
   rw [horizontal_component] at hc
+  have hu : 𝟙 Z ≫ (𝟙 Z + 𝟙 Z) ≫ 𝟙 Z = 𝟙 Z + 𝟙 Z :=
+    (congrArg (fun f : Z ⟶ Z => 𝟙 Z ≫ f) (Category.comp_id (𝟙 Z + 𝟙 Z))).trans
+      (Category.id_comp (𝟙 Z + 𝟙 Z))
   rw [horizontal_component]
-  simpa only [Category.id_comp, Category.comp_id, source_coordinate_assoc] using hc
+  have hh := hc.trans hu
+  simpa only [source_coordinate_assoc] using hh
 
 example : (sourceCycle ≫
     HomologicalComplex₂.horizontalDirectColumnHorizontalCyclesMap K 0 0 ≫
@@ -196,6 +218,7 @@ example : ¬ Function.Surjective ((K.d 1 0).f 0).hom := by
   rw [horizontal_component] at h
   change Function.Surjective (fun x : ℤ => x + x) at h
   obtain ⟨x, hx⟩ := h (1 : ℤ)
+  change (x : ℤ) + x = (1 : ℤ) at hx
   omega
 
 end MathlibExtTest.Algebra.Homology.FirstQuadrantFirstPageFocusedClients
