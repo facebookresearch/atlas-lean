@@ -1,0 +1,17 @@
+# The two-point hypercontractive inequality for 2 ≤ q ≤ 4
+
+- [Hclib jensen two point](hclib-jensen-two-point.md)
+- [Hclib Bracket Residue](hclib-bracket-residue.md)
+- [Hclib bracket](hclib-bracket.md)
+- [Hclib Bracket Residue of le four](hclib-bracket-residue-of-le-four.md)
+- [Hclib K](hclib-k.md)
+- [Hclib convex On K](hclib-convex-on-k.md)
+- [Hclib forward core of bracket](hclib-forward-core-of-bracket.md)
+- [Hclib forward core](hclib-forward-core.md)
+- [Hclib forward core 2q](hclib-forward-core-2q.md)
+- [Hclib forward nonneg](hclib-forward-nonneg.md)
+- [Two-point hypercontractive inequality](hclib-two-point-forward.md)
+- [Hclib forward scalar](hclib-forward-scalar.md)
+- [Hclib forward at two](hclib-forward-at-two.md)
+- [Hclib forward at zero](hclib-forward-at-zero.md)
+- [Hclib reverse of bts](hclib-reverse-of-bts.md)

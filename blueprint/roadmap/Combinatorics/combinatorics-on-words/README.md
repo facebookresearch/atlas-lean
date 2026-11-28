@@ -8,3 +8,5 @@ Finite and infinite words over finite alphabets: repetitions and avoidability, m
 - [Finite words](finite-words/README.md)
 - [Self-describing and self-generating sequences](self-describing-sequences/README.md)
 - [Possible positive even Barker lengths](positive-even-barker-lengths.md)
+- [String correlations and pattern occurrences](string-correlations-and-pattern-occurrences/README.md)
+- [Unique decipherability in language monoids](unique-decipherability-in-language-monoids/README.md)
