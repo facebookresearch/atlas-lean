@@ -76,8 +76,10 @@ theorem ramExecNCost_time_eq_sum (prog : List RAMInstr) (budget : ℕ)
       List.sum_nil, Nat.add_zero]
     rfl
 
-/-- Every budget costs its minimum with the first halt index. `h = 0`
-includes empty programs and arbitrary already-halted initial states. -/
+/-- For every `budget`, the run's cost annotation is `(min budget h, 0, 0)`, where `h` is the
+first halt index: the time field counts the in-range dispatches. Space and peak memory are not
+measured by this cost model (their fields are always `0`); the zeros do not report zero usage.
+`h = 0` includes empty programs and arbitrary already-halted initial states. -/
 theorem ramExecNCost_time_eq_min (prog : List RAMInstr) (s : RAMState)
     (h : ℕ) (hrun : ∀ k < h, (ramExecN prog k s).pc < prog.length)
     (hhalt : prog.length ≤ (ramExecN prog h s).pc) (budget : ℕ) :

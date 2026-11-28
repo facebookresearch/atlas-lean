@@ -146,8 +146,13 @@ theorem muxTrace_eq_true_of_le (d1 d2 dor : NNReal) (t : ℝ)
   · have h2 : ¬ (d2 : ℝ) ≤ t - (dor : ℝ) := by linarith
     simp [muxTrace, positivePath, complementedPath, h1, h2]
 
-/-- **Consensus repair.** With the consensus path added, the output is
-true at all times, for all delays. -/
+/-- **Consensus repair.** In the experiment modeled here (both data inputs
+`b` and `c` held true, the select `a` rising once at time `0`, and the
+consensus path initialized true before time `0`), the output with the
+consensus path added is true at every real time `t`, for every choice of
+the three nonnegative delays `d1`, `d2` and `dor`. The repair preserves the
+multiplexer's Boolean function (`consensusFunction_eq_muxFunction`), so with
+both data inputs false the repaired function is false. -/
 theorem repairedTrace_eq_true (d1 d2 dor : NNReal) (t : ℝ) :
     repairedTrace d1 d2 dor t = true := by
   simp [repairedTrace, consensusPath]
