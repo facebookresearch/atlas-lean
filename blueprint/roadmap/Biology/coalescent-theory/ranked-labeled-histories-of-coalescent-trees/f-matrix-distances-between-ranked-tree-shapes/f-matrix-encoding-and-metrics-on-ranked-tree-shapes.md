@@ -6,15 +6,21 @@
 
 $$F_{i,j} = \#\{\text{lineages extant in } (u_{j+1}, u_j) \text{ that do not bifurcate anywhere in } (u_{i+1}, u_j)\}.$$
 
-In particular $F_{i,i} = i+1$, the number of lineages in the $i$-th interval. With $m$ distinct sampling times (heterochronous sampling) the same construction over all $n + m - 2$ change points gives an $(n+m-2)\times(n+m-2)$ matrix.
+In particular $F_{i,i} = i+1$, the number of lineages in the $i$-th interval.
+
+**Heterochronous sampling.** If the $n$ leaves are sampled at $m$ distinct sampling events, let $0 = u_{n+m-1} < u_{n+m-2} < \dots < u_1$ be the $n+m-1$ ordered change points of $T^R$: the $n-1$ coalescence times and the $m$ sampling times, at each of which the number of branches changes by a coalescence or by a sampling event. The F matrix is then the $(n+m-2)\times(n+m-2)$ lower-triangular integer matrix with $F_{i,j} = 0$ for $i < j$ and, for $1 \le j \le i$,
+
+$$F_{i,j} = \#\{\text{lineages extant in } (u_{j+1}, u_j) \text{ that neither bifurcate nor become extinct anywhere in } (u_{i+1}, u_j)\},$$
+
+where, traversing forward in time (tipward), a lineage becomes extinct when it ends in a sample at a sampling event. Branch lengths and the values of the change points do not enter the ranked tree shape, but the order and type (coalescence or sampling) of the change points are part of the data, and the diagonal entries are no longer $i+1$ in general.
 
 **Theorem (unique encoding).** The map sending a ranked tree shape with $n$ samples and $m$ sampling events to its F matrix is injective: an F matrix that encodes a ranked tree shape encodes exactly one.
 
-**Metrics.** For ranked tree shapes with F matrices $F^{(1)}, F^{(2)}$ of size $r \times r$,
+**Metrics.** For ranked tree shapes with F matrices $F^{(1)}, F^{(2)}$ of a common size $r \times r$, $r \ge n-1$,
 
 $$d_1(T_1^R, T_2^R) = \sum_{i=1}^r \sum_{j=1}^i \big|F^{(1)}_{i,j} - F^{(2)}_{i,j}\big|, \qquad d_2(T_1^R, T_2^R) = \Big(\sum_{i=1}^r \sum_{j=1}^i \big(F^{(1)}_{i,j} - F^{(2)}_{i,j}\big)^2\Big)^{1/2}.$$
 
-For ranked genealogies $g^R$ (with branch lengths), the weight matrix $W_{i,j} = u_j - u_{i+1}$ for $j \le i$ (and $0$ otherwise) records the duration of the time span from change point $i+1$ to $j$, and the weighted distances $d_1^w, d_2^w$ replace $F_{i,j}$ by $F_{i,j}W_{i,j}$. All four are metrics.
+For ranked genealogies $g^R$ (with branch lengths) with $n$ samples and $m$ sampling events, the $(n+m-2)\times(n+m-2)$ weight matrix $W_{i,j} = u_j - u_{i+1}$ for $j \le i$ (and $0$ otherwise), over the change points $u_{n+m-1} < \dots < u_1$, records the duration of the time span from change point $i+1$ to $j$, and the weighted distances $d_1^w, d_2^w$ replace $F_{i,j}$ by $F_{i,j}W_{i,j}$. All four are metrics.
 
 **Summary statistics.** For a sample $\{T_1^R, \dots, T_s^R\}$, the $L_2$-medoid set is $\arg\min_{T \in \{T_k^R\}} \sum_k d_i(T, T_k^R)^2$, used as a measure of center, with the corresponding mean squared distance as a measure of dispersion.
 

@@ -10,7 +10,19 @@ dX_t ={}& \sqrt{\Lambda(\{0\})X_t(1-X_t)}\,dW_t + \int z\big(\mathbf{1}_{\{u \le
 
 with: neutral $\Lambda$-reproduction ($W$ a Brownian motion, $\tilde N$ compensated Poisson with intensity $dt\,z^{-2}\Lambda(dz)\,du$, $\Lambda$ a finite measure on $[0,1]$); frequency-dependent selection $d_{\mathbf{s}}(x) = \sum_{\ell=2}^{\kappa}\beta_\ell\sum_{i=0}^{\ell}\binom{\ell}{i}x^i(1-x)^{\ell-i}\big(p_i^{(\ell)} - \frac{i}{\ell}\big)$, $\beta_\ell \ge 0$, $p_i^{(\ell)} \in [0,1]$, $p_0^{(\ell)} = 0$, $p_\ell^{(\ell)} = 1$ (any drift $x(1-x)\sigma(x)$ with polynomial $\sigma$ has this form); coordinated selection by an environment $S$ with intensity $dt\,|z|^{-1}\mu(dz)$ on $(-1,1)$, which may favour either type (bidirectional selection); individual mutation rates $\theta_a, \theta_A \ge 0$; and coordinated mutation $M$ with intensity $dt\,|z|^{-1}\nu(dz)$.
 
-**Bernstein duality.** Write $H(x, v) = \sum_{i=0}^{n} v_i\binom{n}{i}x^i(1-x)^{n-i}$ for $v \in \mathbb{R}^{n+1}$. There is a Markov process $V$ of Bernstein coefficient vectors of varying length $L_t + 1$, driven by coalescence, branching (selection), mutation and environment operators, such that for all $x \in [0,1]$, $v$ and $t \ge 0$,
+**Bernstein duality.** Write $H(x, v) = \sum_{i=0}^{n} v_i\binom{n}{i}x^i(1-x)^{n-i}$ for $v \in \mathbb{R}^{n+1}$. The Bernstein coefficient process $V$ is the continuous-time Markov chain on coefficient vectors (of varying length $L_t + 1$, $L_t = \dim V_t - 1$) that jumps from $w \in \mathbb{R}^{n+1}$ to:
+
+- $C^{n,k}w \in \mathbb{R}^{n-k+2}$, $k \in \{2,\dots,n\}$ (coalescence of $k$ of the $n$ lines), at rate $\binom{n}{k}\lambda_{n,k}$, where $\lambda_{n,k} = \int_{[0,1]} z^{k-2}(1-z)^{n-k}\,\Lambda(dz)$ with $0^0 = 1$, so that $\lambda_{n,2} = \Lambda(\{0\}) + \int_{(0,1]}(1-z)^{n-2}\,\Lambda(dz)$;
+- $D^{n,l}w \in \mathbb{R}^{n+l}$, $l \in \{2,\dots,\kappa\}$ (selective branching), at rate $n\beta_l$;
+- $M_c^{n,\ell}w \in \mathbb{R}^{n-\ell+1}$, $\ell \in \{1,\dots,n\}$ and $c \in \{a, A\}$ (mutation to type $c$), at rate $\binom{n}{\ell}m^c_{n,\ell} + \mathbf{1}_{\{\ell=1\}}\,n\theta_c$, where
+
+    $$m^a_{n,\ell} = \int_{(0,1)} z^{\ell-1}(1-z)^{n-\ell}\,\nu(dz), \qquad m^A_{n,\ell} = \int_{(-1,0)} |z|^{\ell-1}(1-|z|)^{n-\ell}\,\nu(dz);$$
+
+- $S_c^{n,\ell}w \in \mathbb{R}^{n+\ell+1}$, $\ell \in \{1,\dots,n\}$ and $c \in \{a, A\}$ (coordinated selection favouring type $c$), at rate $\binom{n}{\ell}\sigma^c_{n,\ell}$, where
+
+    $$\sigma^a_{n,\ell} = \int_{(0,1)} z^{\ell-1}(1-z)^{n-\ell}\,\mu(dz), \qquad \sigma^A_{n,\ell} = \int_{(-1,0)} |z|^{\ell-1}(1-|z|)^{n-\ell}\,\mu(dz).$$
+
+The operators $C^{n,k}$, $D^{n,l}$, $M_c^{n,\ell}$ and $S_c^{n,\ell}$ are fixed finite-dimensional linear maps (given explicitly in Definition 3.2 of the source), and $V$ lives on the countable set of vectors obtained from $V_0$ by finitely many such maps. Then for all $x \in [0,1]$, $v$ and $t \ge 0$,
 
 $$\mathbb{E}_x\big[H(X_t, v)\big] = \mathbb{E}_v\big[H(x, V_t)\big].$$
 
@@ -36,4 +48,4 @@ Moment duality struggles when selection can favour either type, because the dual
 
 ## Sources
 
-- Fernando Cordero, Sebastian Hummel and Grégoire Véchambre, "Bernstein duality revisited: Frequency-dependent selection, coordinated mutation and opposing environments", *Bernoulli* 32 (2026), 874–900, <https://doi.org/10.3150/25-bej1883>. Numbering as in the preprint arXiv:2407.01242v2, <https://arxiv.org/abs/2407.01242v2>: model (Section 2), Definition 2.1, Theorem 2.2, Proposition 2.3, Theorem 2.4, Proposition 2.5, Theorem 2.6 and Proposition 2.7.
+- Fernando Cordero, Sebastian Hummel and Grégoire Véchambre, "Bernstein duality revisited: Frequency-dependent selection, coordinated mutation and opposing environments", *Bernoulli* 32 (2026), 874–900, <https://doi.org/10.3150/25-bej1883>. Numbering as in the preprint arXiv:2407.01242v2, <https://arxiv.org/abs/2407.01242v2>: model (Section 2), Definition 2.1 (dual transitions and rates, Eqs. (2.7)–(2.9)), Definition 3.2 (operators), Theorem 2.2, Proposition 2.3, Theorem 2.4, Proposition 2.5, Theorem 2.6 and Proposition 2.7.
