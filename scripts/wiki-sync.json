@@ -107025,6 +107025,7 @@
 "ProbabilityTheory.multinomialReal_of_notMem": "9992893639cd3010",
 "ProbabilityTheory.multinomialReal_of_sum_ne": "55e91e695b0de050",
 "ProbabilityTheory.multinomial_apply": "42a9049dbf54564f",
+"ProbabilityTheory.multinomial_proportions_clt": "b466150bfea951de",
 "ProbabilityTheory.n_sub_localDMLIndex_ratio_half": "5a975924442c720a",
 "ProbabilityTheory.n_sub_localDMLIndex_tendsto_atTop": "9abef90503c4f17a",
 "ProbabilityTheory.negBinomialPMF": "780187cfd922ce81",

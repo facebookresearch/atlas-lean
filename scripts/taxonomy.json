@@ -15736,6 +15736,7 @@
   "MathlibExt/Probability/Statistics/MultipleTesting/KnockoffFDR": {"to": "Probability/hypothesis-testing", "title": "Knockoff filter"},
   "MathlibExt/Probability/Statistics/MultipleTesting/MonteCarloPermutationPValue": {"to": "Probability/hypothesis-testing", "title": "Permutation tests"},
   "MathlibExt/Probability/Statistics/MultipleTesting/PermutationPValue": {"to": "Probability/hypothesis-testing", "title": "Permutation tests"},
+  "MathlibExt/Probability/Statistics/MultinomialProportionsCLT": {"to": "Probability/central-limit-theorems", "title": "Multivariate central limit theorem"},
   "MathlibExt/Probability/Statistics/MultivariateCLT": {"to": "Probability/central-limit-theorems", "title": "Multivariate central limit theorem"},
   "MathlibExt/Probability/Statistics/NeymanPearson": {"to": "Probability/hypothesis-testing", "title": "Neyman–Pearson lemma"},
   "MathlibExt/Probability/Statistics/Nonparametric/KernelBias": {"to": "Probability/nonparametric-survival", "title": "Kernel smoothing at a continuity point"},
