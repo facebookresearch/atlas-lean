@@ -16,10 +16,12 @@ public import Mathlib.Data.Nat.Totient
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.GroupTheory.SpecificGroups.Dihedral
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.CylinderReflectionTilings
 public import MathlibExt.Combinatorics.Enumerative.GridReflectionTilings
 public import MathlibExt.Combinatorics.Enumerative.SquareGridFEven
 public import MathlibExt.Combinatorics.Enumerative.SquareGridR2Odd
 public import MathlibExt.Combinatorics.Enumerative.GridSecondReflectionTilings
+public import MathlibExt.Combinatorics.Enumerative.SquareGridSecondReflectionEven
 
 namespace MetaMathlibExt
 
@@ -209,18 +211,6 @@ public theorem_wanted rectangularGrid_r2_odd {T : Type*} [Fintype T] [DecidableE
 -- The even reflection case, `squareGrid_f_even`, is proved in
 -- `MathlibExt.Combinatorics.Enumerative.SquareGridFEven`, which this module imports.
 
-/-- **Square-grid tilings fixed by the reflection $r^2 f$ for even $n$.** Let $n$ be an even
-positive integer, let $T$ be a finite set and let $\sigma$ be a permutation of $T$ with
-$\sigma^2 = 1$. Let $r^2 f$ be the reflection of the grid $(\mathbb{Z}/n\mathbb{Z})^2$ given by
-$(r^2 f)(x, y) = (x, -1 - y)$. Then the number of maps $F : (\mathbb{Z}/n\mathbb{Z})^2 \to T$
-with $F((r^2 f)(c)) = \sigma(F(c))$ for every cell $c$ is $|T|^{n^2/2}$.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 24. -/
-public theorem_wanted squareGrid_r2f_even {T : Type*} [Fintype T] [DecidableEq T]
-    (n : ℕ) [NeZero n] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1) (heven : Even n) :
-    fixedTilingCount (cellR2F n n) σ = Fintype.card T ^ (n ^ 2 / 2)
-
 /-- **Square-grid tilings fixed by the reflection $r^2f$, odd $n$.** Let $n$ be an odd positive
 integer, let $T$ be a finite set of tile designs, and let $\sigma$ be a permutation of $T$ with
 $\sigma^2 = 1$. Let $r^2f$ be the cell map $(x, y) \mapsto (x, -1-y)$ of the $n \times n$ grid
@@ -363,24 +353,6 @@ public theorem_wanted cylinder_r2_odd_odd {T : Type*} [Fintype T] [DecidableEq T
     (hm : Odd m) (hn : Odd n) :
     cylinderShiftSum n m (cellR2 n m) σ =
       n * Fintype.card T ^ ((n * m - 1) / 2) * tileFixedCount σ 1
-
-/-- **Fixed cylinder tilings of the reflection f, n even.** Let $T$ be a finite set of tile
-designs, let $\sigma$ be a permutation of $T$ with $\sigma^2 = 1$, and let $n, m \ge 1$ with $n$
-even. For $a \in \mathbb{Z}/n\mathbb{Z}$ count the tilings
-$F : \mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/m\mathbb{Z} \to T$ with
-$F(-1 - x - a, y) = \sigma(F(x, y))$ for every cell $(x, y)$, and let $N$ be the sum of these
-counts over all $a \in \mathbb{Z}/n\mathbb{Z}$. If $t_f$ is the number of designs $d \in T$ with
-$\sigma(d) = d$, then
-$$2N = n\left(|T|^{nm/2} + |T|^{(nm - 2m)/2} t_f^{2m}\right).$$
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Theorem 30. -/
-public theorem_wanted cylinder_f_even {T : Type*} [Fintype T] [DecidableEq T]
-    (n m : ℕ) [NeZero n] [NeZero m] (σ : Equiv.Perm T) (hσ : σ ^ 2 = 1)
-    (hn : Even n) :
-    2 * cylinderShiftSum n m (cellF n m) σ =
-      n * (Fintype.card T ^ (n * m / 2) +
-        Fintype.card T ^ ((n * m - 2 * m) / 2) * tileFixedCount σ 1 ^ (2 * m))
 
 /-- **Cylinder fixed-tiling count for the reflection $f$ when $n$ is odd.** Let $T$ be a finite set
 of tile designs, let $n, m \ge 1$ with $n$ odd, and let $\sigma$ be a permutation of $T$ with

@@ -11,6 +11,7 @@ Eigenvalues, eigenspaces and characteristic polynomials of matrices and endomorp
 - [Kernels lemma](kernels-lemma-for-coprime-polynomials/README.md)
 - [Newton's identities for traces of matrix powers](newton-s-identities-for-traces-of-matrix-powers/README.md)
 - [Smith normal form](smith-normal-form/README.md)
+- [Trace dispersion of real symmetric matrices](trace-dispersion-of-real-symmetric-matrices/README.md)
 - [Triangularization](triangularization/README.md)
 - [Charpoly pow trace](sum-roots-charpoly-map-pow-eq-trace-pow.md)
 - [Eigenvalues of the inverse matrix](eigenvalues-of-the-inverse/README.md)
