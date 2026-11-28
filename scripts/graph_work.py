@@ -123,9 +123,14 @@ def inventory() -> list[dict]:
         if page.name == "README.md":
             continue
         path = page.relative_to(sync.wiki.ROOT).as_posix()
+        # The row's own id, as each annotation has one (docs/BLUEPRINT.md, What the tools own): an id the folder's
+        # defaults would give is not stable, as `sync_wiki.py ids` gives a row without one its own. An imported page's
+        # is the one its seed gives, which a fresh one would not be.
         article_id = row.get("id")
         if not isinstance(article_id, str) or not sync.ARTICLE_ID.fullmatch(article_id):
-            raise ValueError(f"{path}: expected an article ID of the form af_ followed by 24 lowercase hex digits")
+            fix = ("an imported page's is the one its seed gives (import_mathgraph.article_id), so restore that one"
+                   if "seed" in own else "`python scripts/sync_wiki.py ids` gives one to a row that has none")
+            raise ValueError(f"{path}: expected its own article ID, af_ and 24 lowercase hex digits; {fix}")
         # Only an import lists pending prerequisites, beside the seed of the result it imported.
         if "pending" in own and (invalid := import_problem(own, article_id)):
             raise ValueError(f"{path}: its pending prerequisites are not an import's: {invalid}")

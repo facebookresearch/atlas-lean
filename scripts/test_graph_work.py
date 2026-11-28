@@ -89,8 +89,28 @@ class GraphWorkTests(unittest.TestCase):
                 row = self.row("topic.md")
                 row.pop("id")
                 self.save({**row, **id_fields})
-                with self.assertRaisesRegex(ValueError, r"blueprint/roadmap/topic\.md: expected an article ID"):
+                with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/topic\.md: expected its own article ID"):
                     graph_work.inventory()
+
+    def test_a_listed_row_needs_its_own_id_not_the_defaults(self):
+        row = self.row("topic.md")
+        row.pop("id")
+        (self.links / "_defaults.json").write_text(json.dumps({"object": {"type": "lean", "uri": "../.."},
+                                                               "id": article_id("topic.md")}))
+        self.save(row)
+        with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/topic\.md: expected its own article ID.*"
+                                                r"sync_wiki\.py ids"):
+            graph_work.inventory()
+
+    def test_an_imported_row_without_its_id_is_told_to_restore_the_seeds(self):
+        row = self.row("topic.md", own={"seed": SEED, "pending": PENDING})
+        row.pop("id")
+        self.save(row)
+        with self.assertRaises(ValueError) as raised:
+            graph_work.inventory()
+        self.assertRegex(str(raised.exception), r"^blueprint/roadmap/topic\.md: expected its own article ID")
+        self.assertIn("the one its seed gives", str(raised.exception))
+        self.assertNotIn("sync_wiki.py ids", str(raised.exception))
 
     def test_an_id_two_annotations_share_fails_with_both_pages(self):
         for marked in (True, False):

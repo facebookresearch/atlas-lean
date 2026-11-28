@@ -268,19 +268,27 @@ how to [pick a task](../CONTRIBUTING.md#picking-a-task).
 
 With the pinned Autoform installed as described below, run
 `python -m scripts.graph_work` from the repository root. It reads the authored
-annotations without building Lean or calling GitHub. It stops with an error,
-naming the file and line or the page, when Autoform reads no annotations (a
-missing or symbolically linked links folder), when the links folder holds files
-or lines that Autoform and the sync read differently (as the sync checks the
-folder), or when a page it would list has another annotation, an article ID
-that another annotation also has, the links folder's defaults included, or
-pending prerequisites whose record is not the one the
-[importer](mathgraph-import.md#annotations) writes. So each ID it lists names
-one article. The JSON lists marked
+annotations without building Lean or calling GitHub. The JSON lists marked
 articles and separates expansions from imported pages whose pending prerequisites
 need review. It is not a readiness verdict: read the page and check its sources,
 prerequisites, and any existing PRs before starting. See [Expanding a node](#expanding-a-node)
 and the [mathgraph import policy](mathgraph-import.md#policy) for the two cases.
+
+Each ID it lists names one article. It stops with an error, naming the file
+and line or the page, when:
+
+- Autoform reads no annotations (the links folder is missing or a symbolic
+  link), or the folder holds files or lines that Autoform and the sync read
+  differently, as the sync checks it;
+- a listed row has no article ID of its own: one the folder's defaults would
+  give is not stable, as `sync_wiki.py ids` gives such a row its own
+  ([What the tools own](#what-the-tools-own)), and an imported page's is the
+  one its seed gives;
+- a listed page has another annotation, or another annotation has its ID,
+  including one the folder's defaults give;
+- a listed page's pending prerequisites lack the record that the
+  [importer](mathgraph-import.md#annotations) writes.
+
 Follow [Claim the work you start](../CONTRIBUTING.md#claim-the-work-you-start)
 to coordinate. For a draft PR, name the article ID and link the issue if there
 is one. The formalization task picker remains unchanged.
