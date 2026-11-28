@@ -13,3 +13,5 @@ inclusion problems, and are the languages definable in monadic second-order logi
 - [Monadic logic with a matching relation defines exactly the visibly pushdown languages](mso-with-a-matching-relation-defines-the-visibly-pushdown-languages.md)
 - [Nested words and nested word automata](nested-words-and-nested-word-automata.md)
 - [ω-visibly pushdown languages are closed under complement but not determinizable](omega-visibly-pushdown-languages.md)
+- [Binary flattened tree grammars](binary-flattened-tree-grammars-and-regular-separ.md)
+- [Regular separability of binary flattened tree grammars is undecidable](regular-separability-of-binary-flattened-tree-gr.md)
