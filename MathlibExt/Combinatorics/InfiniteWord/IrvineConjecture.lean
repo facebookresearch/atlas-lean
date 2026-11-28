@@ -481,6 +481,17 @@ public theorem kimberlingOnePosition_kimberlingZeroPosition {n : ℕ} (hn : 1 �
 
 end Positions
 
+/-- **The Kimberling position identity at index zero.** With the conventions $A_0 = B_0 = 0$,
+the equality branch of the identity holds at $n = 0$: $A_{B_0} = A_0 + B_0 = 0$.
+
+Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
+(2024), Article A51, Theorem 3 and Table 3. -/
+public theorem kimberlingOnePosition_kimberlingZeroPosition_zero :
+    kimberlingOnePosition (kimberlingZeroPosition 0) =
+        kimberlingOnePosition 0 + kimberlingZeroPosition 0 ∧
+      kimberlingOnePosition 0 + kimberlingZeroPosition 0 = 0 := by
+  simp [kimberlingOnePosition, kimberlingZeroPosition]
+
 end
 
 end MetaMathlibExt

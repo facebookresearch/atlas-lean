@@ -61,3 +61,11 @@ example : kimberlingOnePosition (kimberlingZeroPosition 2) + 1 =
     kimberlingOnePosition (kimberlingZeroPosition 2) =
       kimberlingOnePosition 2 + kimberlingZeroPosition 2 :=
   kimberlingOnePosition_kimberlingZeroPosition (by decide)
+
+-- Evaluate the composition and sum at zero without using the corollary.
+example : kimberlingOnePosition (kimberlingZeroPosition 0) = 0 ∧
+    kimberlingOnePosition 0 + kimberlingZeroPosition 0 = 0 := by decide +kernel
+
+example : kimberlingOnePosition (kimberlingZeroPosition 0) = 0 :=
+  kimberlingOnePosition_kimberlingZeroPosition_zero.1.trans
+    kimberlingOnePosition_kimberlingZeroPosition_zero.2
