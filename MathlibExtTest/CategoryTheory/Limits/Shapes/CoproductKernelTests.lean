@@ -154,7 +154,7 @@ private def totalMap : kernel (CategoryTheory.Limits.Sigma.map F) ⟶ kernel
     (CategoryTheory.Limits.Sigma.map (fun _ => 𝟙 Z)) (by
       apply CategoryTheory.Limits.Sigma.hom_ext
       intro i
-      simpa only [Category.assoc, CategoryTheory.Limits.Sigma.ι_map,
+      simpa only [F, X, Y, Category.assoc, CategoryTheory.Limits.Sigma.ι_map,
         CategoryTheory.Limits.Sigma.ι_map_assoc] using
         congrArg (fun z : A ⟶ Z => z ≫ CategoryTheory.Limits.Sigma.ι Y i) square)
 
