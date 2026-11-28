@@ -107,6 +107,11 @@ theorem truncationProjection_isoStrictPositive_hom :
   simp only [truncationProjection, strictPositiveProjection,
     truncationQuotientIsoStrictPositiveCokernel, cokernel.mapIso, cokernel.map,
     cokernel.π_desc, Iso.refl_hom, Category.id_comp]
+  have hz : truncationPairing e₊ P ≫ cokernel.π (strictPositivePairing P h₁ h₂) = 0 := by
+    rw [← smartToStrictPositivePairing P h₁ h₂, Category.assoc, cokernel.condition]
+    exact Category.comp_zero _
+  exact cokernel.π_desc (truncationPairing e₊ P)
+    (cokernel.π (strictPositivePairing P h₁ h₂)) hz
 
 /-- For an abelian monoidal category C with additive tensor product and a nonnegative chain
 pairing whose two degree-one boundaries vanish, the strict-positive projection followed by
