@@ -8,6 +8,10 @@ There is a game in which two players alternately choose three natural numbers, w
 
 A computable winning condition does not make winning effective. The survey also notes that, given $m$ and $W$, it is undecidable which player has a winning strategy, already for one-move games.
 
+## Proof sketch
+
+Fix a simple set $S \subseteq \mathbb{N}$, a computably enumerable set whose complement is infinite and contains no infinite computably enumerable set, and a computable $g$ with $g(\mathbb{N}) = S$. In the game, A wins exactly when $x_1 + x_2 = g(x_3)$. Player B wins by choosing $x_2 = t - x_1$ for some $t \notin S$ with $t > x_1$, which exists because the complement of $S$ is infinite. A computable winning strategy $w$ would make $\{x_1 + w(x_1) : x_1 \in \mathbb{N}\}$ an infinite computably enumerable subset of the complement of $S$, a contradiction.
+
 ## Depends on
 
 None.
@@ -15,10 +19,6 @@ None.
 ## Proof depends on
 
 - [Post's theorem: simple sets exist](../halting-problem-and-rice-s-theorem/post-s-theorem-simple-sets-exist.md)
-
-## Expansion
-
-Fix a simple set $S \subseteq \mathbb{N}$, a computably enumerable set whose complement is infinite and contains no infinite computably enumerable set, and a computable $g$ with $g(\mathbb{N}) = S$. In the game, A wins exactly when $x_1 + x_2 = g(x_3)$. Player B wins by choosing $x_2 = t - x_1$ for some $t \notin S$ with $t > x_1$, which exists because the complement of $S$ is infinite. A computable winning strategy $w$ would make $\{x_1 + w(x_1) : x_1 \in \mathbb{N}\}$ an infinite computably enumerable subset of the complement of $S$, a contradiction.
 
 ## Sources
 

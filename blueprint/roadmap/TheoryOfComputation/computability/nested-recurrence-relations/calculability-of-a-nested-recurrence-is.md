@@ -31,7 +31,7 @@ $$
 B(n) = \begin{cases} B(n-2) + 2B(B(n-1)), & n \text{ even}, \\ B\bigl(2B(n - 2 - B(n-1)) + B(n-2)\bigr), & n \text{ odd}, \end{cases}
 $$
 
-with initial conditions that encode the productions and the initial word, computes successive words of the reverse tag system, and becomes non-calculable exactly when the simulated system halts. Finally, initial conditions for $A$ are chosen so that $A(c_0 + 4n + j)$ is $0$ for $j = 0, 2$, equals $B(c_0 + 2n + 1)$ for $j = 1$ and $2B(c_0 + 2n + 2)$ for $j = 3$, and $A$ is calculable if and only if $B$ is.
+with initial conditions that encode the productions and the initial word, computes successive words of the reverse tag system, and becomes non-calculable exactly when the simulated system halts. Finally, initial conditions for $A$ are chosen so that $A(c_0 + 4n + j)$ is $0$ for $j = 0, 2$, equals $B(c_0 + 2n + 1)$ for $j = 1$ and $2B(c_0 + 2n + 2)$ for $j = 3$, and $A$ is calculable if and only if $B$ is. A good expansion links the three steps of the source as pages: the simulation of a tag system by its reverse tag system (Theorem 1), the simulation of the reverse tag system by $B$ (Theorem 2), and the equivalence of the calculability of $A$ and $B$ (Theorem 3).
 
 ## Sources
 

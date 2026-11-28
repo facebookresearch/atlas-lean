@@ -20,6 +20,8 @@ Taking $L_0 = \varnothing$ and $L_0 = a^*$ in the theorem, emptiness and univers
 ## Proof depends on
 
 - [Halting is undecidable](../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+- [Emptiness is not recognizable](../../computability/emptiness-and-equivalence-problems-for-programs/not-tm2-recognizable-empty.md)
+- [Every recognizable predicate many-one reduces to the halting set](../../degrees-and-hierarchies/completeness-of-the-halting-set/many-one-reducible-halting-set.md)
 
 ## Expansion
 

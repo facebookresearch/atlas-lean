@@ -25,6 +25,9 @@ Turing machine halts on every encoding and accepts exactly the encodings of its 
 Here $\mathsf{P}$ denotes the class of polynomial functions and $\mathsf{EXP}$ the class of exponential functions $\mathbb{N} \to \mathbb{R}_{\ge 0}$, as classes of time bounds, not of languages; and for $T : \mathbb{N} \to \mathbb{R}_{\ge 0}$, $O(T(n))$ is the class of $f : \mathbb{N} \to \mathbb{R}_{\ge 0}$ with $f(n) \le c\,T(n)$ for some $c$ and all large enough $n$. So $\mathrm{HALT}_{O(1)}$ is the set of multi-tape machines running in constant time, and $\mathrm{HALT}_{\mathsf{P}}$ the set of those running in polynomial time.
 
 
+If $T(n_0) < n_0 + 1$ for some $n_0$, a machine running in time $T(n)$ never reads past the first $n_0$ input symbols, so it
+runs in constant time; this is why the threshold $T(n) \ge n + 1$ appears in the results of this folder.
+
 ## Depends on
 
 - [Time-bounded multi-tape machine](../../complexity-classes/time-and-space-classes-on-multi-tape-machines/time-bounded-by.md)
@@ -33,11 +36,6 @@ Here $\mathsf{P}$ denotes the class of polynomial functions and $\mathsf{EXP}$ t
 ## Proof depends on
 
 None.
-
-## Expansion
-
-If $T(n_0) < n_0 + 1$ for some $n_0$, a machine running in time $T(n)$ never reads past the first $n_0$ input symbols, so it
-runs in constant time; this is why the threshold $T(n) \ge n + 1$ appears in the results of this folder.
 
 ## Sources
 

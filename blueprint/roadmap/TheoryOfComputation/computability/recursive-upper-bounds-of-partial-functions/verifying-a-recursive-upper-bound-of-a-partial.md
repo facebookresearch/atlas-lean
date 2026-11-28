@@ -13,12 +13,21 @@ $$
 
 **Theorem.** For every total recursive function $F$, the set $SI(F)$ is $\Pi^0_1$-complete: it lies in the class
 [$\Pi_1$ of the arithmetical hierarchy](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md), and the
-$\Pi^0_1$-complete set $\{x \mid \varphi_x(0)\uparrow\}$ many-one reduces to it by a total computable function.
+$\Pi^0_1$-complete set $\{x \mid \varphi_x(0)\uparrow\}$, the complement of the [halting set](../../degrees-and-hierarchies/turing-reducibility/halting-set.md), many-one reduces to it by a total computable function.
 
 The source also shows that no total recursive function decides, for indices $x$ and $y$, whether
 $\varphi_x(z) \le \varphi_y(z)$ wherever $\varphi_x(z)$ is defined; that the least index of a total bound cannot be computed;
 that some partial recursive functions have no recursive sup-interpretation at all; and that the set of indices of partial
 recursive functions that have a recursive sup-interpretation is in $\Sigma^0_3$ (without a matching lower bound).
+
+## Proof sketch
+
+*Membership.* $x \in SI(F)$ iff for all $z$ and all $t$, either $\varphi_x(z)$ has not converged within $t$ steps, or it has
+and its value is at most $F(z)$; the matrix is decidable because $F$ is total recursive.
+
+*Hardness.* By the s-m-n theorem there is a total computable $f$ such that $\varphi_{f(x)}(z) = F(z) + 1$ if $\varphi_x(0)$
+converges and $\varphi_{f(x)}(z)$ is undefined otherwise. Then $\varphi_x(0)\uparrow$ iff $\varphi_{f(x)}$ is nowhere
+defined iff $f(x) \in SI(F)$. The complement of the halting set is $\Pi^0_1$-complete because every recognizable set many-one reduces to the halting set and the recognizable sets are the $\Sigma^0_1$ sets.
 
 ## Depends on
 
@@ -26,19 +35,15 @@ recursive functions that have a recursive sup-interpretation is in $\Sigma^0_3$ 
 - [Decidability by multi-stack machines](../decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Co-recognizability by multi-stack machines](../decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 - [Halting of a code on an input](../halting-problem-and-rice-s-theorem/halts.md)
+- [Halting set](../../degrees-and-hierarchies/turing-reducibility/halting-set.md)
+
 
 ## Proof depends on
 
+- [Parametrized s-m-n theorem](../exists-computable-code.md)
+- [Every recognizable predicate many-one reduces to the halting set](../../degrees-and-hierarchies/completeness-of-the-halting-set/many-one-reducible-halting-set.md)
+- [Σ₁ is the class of recursively enumerable predicates](../../degrees-and-hierarchies/arithmetical-hierarchy/sigma-one-eq-re.md)
 - [The halting problem is not co-recognizable by multi-stack machines](../halting-problem-and-rice-s-theorem/not-tm2-co-recognizable-halting.md)
-
-## Expansion
-
-*Membership.* $x \in SI(F)$ iff for all $z$ and all $t$, either $\varphi_x(z)$ has not converged within $t$ steps, or it has
-and its value is at most $F(z)$; the matrix is decidable because $F$ is total recursive.
-
-*Hardness.* By the s-m-n theorem there is a total computable $f$ such that $\varphi_{f(x)}(z) = F(z) + 1$ if $\varphi_x(0)$
-converges and $\varphi_{f(x)}(z)$ is undefined otherwise. Then $\varphi_x(0)\uparrow$ iff $\varphi_{f(x)}$ is nowhere
-defined iff $f(x) \in SI(F)$.
 
 ## Sources
 

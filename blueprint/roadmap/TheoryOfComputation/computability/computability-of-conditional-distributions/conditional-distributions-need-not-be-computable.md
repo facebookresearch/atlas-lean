@@ -21,7 +21,7 @@ So the joint distribution of $(\mathsf{W}, \mathsf{Y})$ is computable while no v
 
 The construction encodes the halting times of all Turing machines into the conditional distribution while keeping the joint distribution computable. An auxiliary pair $(\mathsf{X}, \mathsf{N})$, with $\mathsf{N}$ a natural number, is built so that the conditional probabilities $\Pr[\mathsf{N} = n \mid \mathsf{X} = x]$ are continuous almost everywhere, yet from them one could compute, for each machine, whether it halts. Taking $\mathsf{Y}$ uniform on $[0,1]$ and $\mathsf{M} = \lfloor -\log_2 \mathsf{Y} \rfloor$ geometric with parameter $\tfrac12$, the variable $\mathsf{W}$ is chosen with $\Pr[\mathsf{W} \mid \mathsf{Y}] = \Pr[\mathsf{X} \mid \mathsf{N} = \mathsf{M}]$, so that $\Pr[\mathsf{Y} \in (2^{-n-1}, 2^{-n}) \mid \mathsf{W} = x] = \Pr[\mathsf{N} = n \mid \mathsf{X} = x]$. An almost computable conditional distribution map would therefore decide the halting problem.
 
-The proof of Theorem 7.6 in the source uses Lemma 7.3 (the conditional distribution map of $\mathsf{N}$ given $\mathsf{X}$ is almost continuous) and Proposition 7.5 (any version computable on a set of measure greater than $5/6$ would decide the halting problem); a good expansion links pages for both.
+The proof of Theorem 7.6 in the source uses Lemma 7.3 (the conditional distribution map of $\mathsf{N}$ given $\mathsf{X}$ is almost continuous) and Proposition 7.5 (any version computable on a set of measure greater than $5/6$ would decide the halting problem); a good expansion links pages for both, and pages defining computable Polish spaces, computable maps between them and almost computable random variables (Definitions 2.1 to 2.12 of the source), which the statement uses.
 
 ## Sources
 

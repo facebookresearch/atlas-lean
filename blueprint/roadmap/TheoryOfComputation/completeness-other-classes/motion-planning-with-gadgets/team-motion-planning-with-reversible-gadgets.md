@@ -1,6 +1,6 @@
 # Team motion planning with reversible deterministic gadgets is RE-complete
 
-Deciding whether a team has a forced win in a team motion-planning game, with unboundedly many moves and imperfect
+Deciding whether the White team has a forced win in a team motion-planning game, with unboundedly many moves and imperfect
 information, is RE-complete already with copies of the locking 2-toggle, and with copies of any interacting-tunnel
 reversible deterministic gadget.
 
@@ -11,7 +11,8 @@ reversible deterministic gadget.
    RE-complete.
 
 The input is a system of copies of the fixed gadget with initial states, the connection graph, the robots with their start
-and goal locations and the partition into two teams; the construction uses three players, one black and two white. Membership
+and goal locations, the partition into the White and Black teams and the cyclic order of the players. Hardness already holds
+with one Black player B and two White players W1, W2 moving in the order B, W1, W2 (proof of Theorem 15 of the source). Membership
 in RE holds for team motion planning with any set of gadgets. With perfect information and two players the problem with the
 same gadgets is EXPTIME-complete instead.
 

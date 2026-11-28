@@ -10,6 +10,10 @@ The four gadgets of the theorem are the *increment gadget* (four states, ten loc
 
 Without spawners, the 0-player problem with a single robot is in PSPACE, since a configuration is described by the gadget states and the robot's position. In the 1-player version, where the player chooses the robots' moves, robot reachability with symmetric self-closing doors and a spawner (optionally a destroyer) is EXPSPACE-complete, by an equivalence with Petri-net coverage (Theorem 4.6 of the source).
 
+## Proof sketch
+
+Membership in RE: after each round the number of robots is finite, so the system can be simulated round by round until a robot reaches the target. Hardness reduces the halting problem of counter machines with three counters and instructions increment, decrement and jump-if-zero, which is undecidable. Each counter is a register gadget whose value is the number of robots stuck at the entrance of its processing branch: a robot passing the decrement path lets one stored robot through to a sink, and if no robot is stored the robot leaves by the other response path, which implements the zero test. Spawners supply fresh robots, and the increment gadget routes one of them into a register to add one to its value. Each instruction of the machine becomes a module of gadgets with execute, pass and jump entrances and exits, built from these gadgets and the UPDSDS gadget, and the halting instruction leads to the target. So some robot reaches the target exactly when the machine halts. Counter machines with three counters halt undecidably because two-counter machines are already universal.
+
 ## Depends on
 
 - [Gadgets and motion-planning games](gadgets-and-motion-planning-games.md)
@@ -19,10 +23,6 @@ Without spawners, the 0-player problem with a single robot is in PSPACE, since a
 ## Proof depends on
 
 - [Two-counter machines are universal](../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
-
-## Expansion
-
-Membership in RE: after each round the number of robots is finite, so the system can be simulated round by round until a robot reaches the target. Hardness reduces the halting problem of counter machines with three counters and instructions increment, decrement and jump-if-zero, which is undecidable. Each counter is a register gadget whose value is the number of robots stuck at the entrance of its processing branch: a robot passing the decrement path lets one stored robot through to a sink, and if no robot is stored the robot leaves by the other response path, which implements the zero test. Spawners supply fresh robots, and the increment gadget routes one of them into a register to add one to its value. Each instruction of the machine becomes a module of gadgets with execute, pass and jump entrances and exits, built from these gadgets and the UPDSDS gadget, and the halting instruction leads to the target. So some robot reaches the target exactly when the machine halts. Counter machines with three counters halt undecidably because two-counter machines are already universal.
 
 ## Sources
 

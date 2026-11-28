@@ -1,6 +1,6 @@
 # The boundedness problem for analytic machines is not decidable relative to the real halting problem
 
-Whether an analytic machine, a real-number machine printing an infinite sequence of vectors, produces a bounded sequence on a given
+Whether an analytic machine, a real-number machine printing a finite or infinite sequence of vectors, produces a bounded sequence on a given
 input can be semidecided, but not decided, by a Blum-Shub-Smale machine with access to the real halting problem.
 
 **Proposition.** Let $\mathbb{H}$ be the BSS halting problem, as in [Blum-Shub-Smale machines and their halting problems](blum-shub-smale-machines-their-halting-problems.md), and let
@@ -33,7 +33,7 @@ ever prints a vector of norm above $n$; the search halts exactly when some bound
 $\mathbb{H}^{\mathbb{H}} = \{\vec x : \exists y \in \mathbb{N}\ \forall z \in \mathbb{N}\ (\vec x, y, z) \in W\}$ with $W$ BSS-decidable, by Cucker's characterization. The
 analytic machine $\mathcal{M}$, on input $\vec x$, tries $y = 1, 2, \ldots$ in turn, searching for some $z$ with $(\vec x, y, z) \notin W$; when it finds one it
 outputs $y$ and moves to $y + 1$. If $\vec x \in \mathbb{H}^{\mathbb{H}}$, some $y$ makes the search run forever and the output is finite, hence bounded; otherwise
-every $y$ is output and the sequence is unbounded. So $\vec x \mapsto (\langle \mathcal{M} \rangle, \vec x)$ reduces $\mathbb{H}^{\mathbb{H}}$ to $\mathbb{B}$.
+every $y$ is output and the sequence is unbounded. So $\vec x \mapsto (\langle \mathcal{M} \rangle, \vec x)$ reduces $\mathbb{H}^{\mathbb{H}}$ to $\mathbb{B}$. A good expansion links Cucker's characterization of the levels of the arithmetical hierarchy over the reals (Fact 1.3 of the source).
 
 ## Sources
 

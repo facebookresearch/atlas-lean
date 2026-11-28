@@ -6,6 +6,8 @@ Over an alphabet with a partial order, words are ordered lexicographically; the 
 
 With the discrete order on $\Sigma$, in which distinct letters are incomparable, antichain growth is the ordinary growth of the language. The size of the largest antichain among the words of length $n$ is the *width* of $L_{=n}$.
 
+Antichain growth measures the information that can leak from a deterministic system modeled as a finite-state transducer, where the order on letters records which outputs an observer can distinguish. Every regular language has either polynomial or exponential antichain growth (Theorem 16 of the source, for NFAs, and Corollary 17), and which one is decidable in polynomial time for NFAs (Theorem 18); every context-free language also has polynomial or exponential antichain growth (Theorem 34).
+
 ## Depends on
 
 - [Partially ordered set](../../../Order/ordered-sets/partial-order.md)
@@ -14,10 +16,6 @@ With the discrete order on $\Sigma$, in which distinct letters are incomparable,
 
 None.
 
-## Expansion
-
-Antichain growth measures the information that can leak from a deterministic system modeled as a finite-state transducer, where the order on letters records which outputs an observer can distinguish. Every regular language has either polynomial or exponential antichain growth, and which one is decidable in polynomial time for NFAs (Theorem 18 of the source); every context-free language also has polynomial or exponential antichain growth (Theorem 34).
-
 ## Sources
 
-- D. Mestel, "Widths of Regular and Context-Free Languages", in *39th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2019)*, Leibniz International Proceedings in Informatics 150, Schloss Dagstuhl–Leibniz-Zentrum für Informatik, 2019, article 49, doi:[10.4230/LIPIcs.FSTTCS.2019.49](https://doi.org/10.4230/LIPIcs.FSTTCS.2019.49); read as arXiv:1709.08696v5, whose numbering is used here: Definitions 1, 2, 7, 8 and 9, Theorem 18 and Theorem 34.
+- D. Mestel, "Widths of Regular and Context-Free Languages", in *39th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2019)*, Leibniz International Proceedings in Informatics 150, Schloss Dagstuhl–Leibniz-Zentrum für Informatik, 2019, article 49, doi:[10.4230/LIPIcs.FSTTCS.2019.49](https://doi.org/10.4230/LIPIcs.FSTTCS.2019.49); read as arXiv:1709.08696v5, whose numbering is used here: Definitions 1, 2, 7, 8 and 9, Theorem 16, Corollary 17, Theorem 18 and Theorem 34.

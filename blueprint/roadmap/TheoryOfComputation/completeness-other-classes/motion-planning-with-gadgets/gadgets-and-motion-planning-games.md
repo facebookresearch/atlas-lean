@@ -17,9 +17,15 @@ locations; a robot moves freely along the connection graph and changes position 
 according to its current state, each traversal counting as one move. In the *one-player game* one asks whether a robot can
 reach a goal location from its start location. In the *two-player game* two players alternately move their own robots, with
 complete information, and one asks whether the first player has a forced win, reaching its goal before the opponent does. In
-a *team game* there are more than two robots, each moved by its own player, partitioned into two teams that move in turn; a
-team wins when one of its robots reaches its goal. After the start each player sees only the states of the gadgets its robot
-can reach through the connection graph, and one asks whether the first team has a forced win.
+a *team game* there are more than two robots, each moved by its own player, and the players are partitioned into two teams,
+White and Black. The players move one at a time, in a fixed cyclic order of all players given with the instance, and a team
+wins when one of its robots reaches its goal. After the start each player sees only the states of the gadgets its robot can
+reach through the connection graph, and one asks whether the White team has a forced win.
+
+Gadgets are local: a traversal changes only the state of the traversed gadget. Deterministic reversible gadgets are those
+whose transition graph is the bidirectional version of a matching. With unboundedly many moves, one-player games with any
+interacting-tunnel reversible deterministic $k$-tunnel gadget are PSPACE-complete and two-player games EXPTIME-complete,
+while gadgets without interacting tunnels make the one-player game solvable in NL.
 
 ## Depends on
 
@@ -28,13 +34,6 @@ None.
 ## Proof depends on
 
 None.
-
-## Expansion
-
-Gadgets are local: a traversal changes only the state of the traversed gadget. Deterministic reversible gadgets are those
-whose transition graph is the bidirectional version of a matching. With unboundedly many moves, one-player games with any
-interacting-tunnel reversible deterministic $k$-tunnel gadget are PSPACE-complete and two-player games EXPTIME-complete,
-while gadgets without interacting tunnels make the one-player game solvable in NL.
 
 ## Sources
 

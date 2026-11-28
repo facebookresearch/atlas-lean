@@ -6,6 +6,10 @@ Deciding, for a given Collatz function, whether the orbit of every positive inte
 
 The problem lies in $\Pi^0_2$ because its defining condition has the form $\forall x\, \exists i$ with a decidable matrix. The classical $3x + 1$ problem is a single instance, whose answer is unknown.
 
+## Proof sketch
+
+Endrullis, Grabmayer and Hendriks obtain the hardness half as an immediate consequence of the $\Pi^0_2$-hardness of uniform halting of Fractran programs. From a [Fractran program](fractran-programs.md) $P = q_1, \dots, q_k$ form the Collatz function $f'_P$ that agrees with $f_P$ where $f_P$ is defined and takes the value $1$ where $f_P$ is undefined; its period is the least common multiple of the denominators of the $q_i$. A program with an integer fraction $q_i$ never halts. For every other program, $P$ halts on every $x > 0$ if and only if every orbit of $f'_P$ reaches $1$. This many-one reduction transfers $\Pi^0_2$-hardness from Fractran programs, a strict subclass of Collatz functions, to the generalized Collatz problem.
+
 ## Depends on
 
 - [Collatz functions](collatz-functions.md)
@@ -15,10 +19,6 @@ The problem lies in $\Pi^0_2$ because its defining condition has the form $\fora
 ## Proof depends on
 
 - [Uniform halting of Fractran programs is Π⁰₂-complete](uniform-halting-of-fractran-programs-is-pi02.md)
-
-## Expansion
-
-Endrullis, Grabmayer and Hendriks obtain the hardness half as an immediate consequence of the $\Pi^0_2$-hardness of uniform halting of Fractran programs. From a [Fractran program](fractran-programs.md) $P = q_1, \dots, q_k$ form the Collatz function $f'_P$ that agrees with $f_P$ where $f_P$ is defined and takes the value $1$ where $f_P$ is undefined; its period is the least common multiple of the denominators of the $q_i$. A program with an integer fraction $q_i$ never halts. For every other program, $P$ halts on every $x > 0$ if and only if every orbit of $f'_P$ reaches $1$. This many-one reduction transfers $\Pi^0_2$-hardness from Fractran programs, a strict subclass of Collatz functions, to the generalized Collatz problem.
 
 ## Sources
 
