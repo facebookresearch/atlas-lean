@@ -5,6 +5,8 @@
 - [Classical Ramsey numbers as an infimum](graph-ramsey-eq-s-inf.md)
 - [Ramsey number of a pair of graphs](graph-pair-ramsey.md)
 - [The pair Ramsey number as an infimum](graph-pair-ramsey-eq-s-inf.md)
+- [Monotonicity of the Ramsey property for a pair of graphs](pair-ramsey-mono.md)
+- [Symmetry of the Ramsey number of a pair of graphs](graph-pair-ramsey-symm.md)
 - [Diagonal Ramsey number of a graph](diagonal-graph-ramsey.md)
 - [Ramsey size linear graphs](is-ramsey-size-linear.md)
 - [Erdős Problem 570 (cycle versus graph Ramsey bound)](conjecture.md)
