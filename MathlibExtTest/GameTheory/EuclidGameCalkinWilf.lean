@@ -115,3 +115,18 @@ example :
   obtain ⟨_, hTopL, hTopR, ⟨hNum, hDen, hL⟩, hPairR, hR⟩ :=
     fibonacci_arch_positions 2 2 (by decide)
   exact ⟨hTopL, hTopR, hNum, hDen, hL, hPairR, hR⟩
+
+-- The root is a P-position, but neither of its children is.
+example : (calkinWilfRow 0).countP (fun p => euclidPPosition p.1 p.2) = 1 ∧
+    (calkinWilfRow 1).countP (fun p => euclidPPosition p.1 p.2) = 0 :=
+  ⟨count_euclidPPosition_calkinWilfRow.1, count_euclidPPosition_calkinWilfRow.2.1⟩
+
+-- Both preceding counts contribute to row four.
+example : (calkinWilfRow 4).countP (fun p => euclidPPosition p.1 p.2) = 6 :=
+  (count_euclidPPosition_calkinWilfRow.2.2.1 2).trans (by decide)
+
+-- The closed form adds two in even rows and subtracts two in odd rows.
+example : 3 * ((calkinWilfRow 4).countP (fun p => euclidPPosition p.1 p.2) : ℤ) = 18 ∧
+    3 * ((calkinWilfRow 5).countP (fun p => euclidPPosition p.1 p.2) : ℤ) = 30 :=
+  ⟨(count_euclidPPosition_calkinWilfRow.2.2.2 4).trans (by decide),
+    (count_euclidPPosition_calkinWilfRow.2.2.2 5).trans (by decide)⟩
