@@ -25,15 +25,14 @@ doi:10.1007/978-1-4684-2001-2_9 (JOB SEQUENCING, the unconstrained problem, an a
 -/
 module
 
-public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Complexity.NPComplete.ConstrainedSequencingToMinimizeTardyTaskWeightDefs
+public import CSLibExt.Computability.Complexity.Defs
+import CSLibExt.Complexity.NPComplete.ConstrainedSequencingToMinimizeTardyTaskWeight.Hardness
+import CSLibExt.Complexity.NPComplete.ConstrainedSequencingToMinimizeTardyTaskWeight.Membership
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.ConstrainedSequencingToMinimizeTardyTaskWeight
-
-open WeightedTardyJobs (WeightedTardyJobsInstance WeightedTardy)
 
 /-!
 # CONSTRAINED SEQUENCING TO MINIMIZE TARDY TASK WEIGHT is NP-complete
@@ -66,16 +65,21 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in
 `MetaMathlibExt.ComplexityTheory.NP`, plus a polynomial-time many-one
 reduction from every language in `NP`
-(`Cslib.CookLevin.PolyManyOneRed`).
+(`Cslib.CookLevin.PolyManyOneRed`). Membership is proved in
+`CSLibExt.Complexity.NPComplete.ConstrainedSequencingToMinimizeTardyTaskWeight.Membership`
+(a polynomial-time verifier for skip/take plans) and NP-hardness in
+`CSLibExt.Complexity.NPComplete.ConstrainedSequencingToMinimizeTardyTaskWeight.Hardness`
+(a reduction from PARTITION).
 -/
 
 /-- **CONSTRAINED SEQUENCING TO MINIMIZE TARDY TASK WEIGHT is NP-complete.** Source: Crescenzi
 and Kann, MAXIMUM CONSTRAINED SEQUENCING TO MINIMIZE TARDY TASK WEIGHT; Zuckerman (1996),
 problem 19. The unconstrained problem is Garey and Johnson (1979), [SS3], and Karp (1972). -/
-public theorem_wanted constrainedSequencing_npComplete :
+public theorem constrainedSequencing_npComplete :
     constrainedSequencingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
         L ∈ MetaMathlibExt.ComplexityTheory.NP →
-          Cslib.CookLevin.PolyManyOneRed L constrainedSequencingDec
+          Cslib.CookLevin.PolyManyOneRed L constrainedSequencingDec :=
+  ⟨constrainedSequencing_mem_NP, constrainedSequencing_npHard⟩
 
 end MetaMathlibExt.Complexity.NPComplete.ConstrainedSequencingToMinimizeTardyTaskWeight
