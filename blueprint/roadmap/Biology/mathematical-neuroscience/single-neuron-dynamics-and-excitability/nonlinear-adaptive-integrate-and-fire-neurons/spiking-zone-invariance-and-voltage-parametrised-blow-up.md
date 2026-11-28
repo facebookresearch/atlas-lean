@@ -15,7 +15,7 @@ where $F$ is $C^3$, strictly convex, $\lim_{x\to-\infty}F'(x) \le 0$, and $F(v) 
 $$\frac{dT}{dv} = \frac{1}{F(v) - W + I(T)}, \qquad \frac{dW}{dv} = \frac{a(bv - W)}{F(v) - W + I(T)},$$
 
 and the spike (explosion) time and the adaptation value at the spike are $\lim_{v\to\infty}T(v)$ and $\lim_{v\to\infty}W(v)$.
-3. *Explicit Euler.* If $(v_0, w_0) \in Z^*$ and the step $\tau$ satisfies $\tau a < 1$, the Euler iterates stay in $Z^*$, $(v_n)$ increases strictly, $(w_n)$ is nondecreasing and increases strictly once $w_n < bv_n$ (from $n = 1$ on when $a, b > 0$; this corrects Lemma 1 of arXiv:1008.1954, which prints "both sequences $(v_n)$ and $(w_n)$ are strictly increasing" without excluding the boundary $w_0 = bv_0$ or $b = 0$), and $v_n \to \infty$ without finite-step blow-up, so fixed-step schemes misplace spike times and the post-spike adaptation value.
+3. *Explicit Euler.* If $(v_0, w_0) \in Z^*$ and the step $\tau$ satisfies $\tau a < 1$, the Euler iterates stay in $Z^*$, $(v_n)$ increases strictly, $(w_n)$ is nondecreasing; if $a > 0$, it increases strictly once $w_n < bv_n$, which holds from $n = 1$ on when also $b > 0$ (this corrects Lemma 1 of arXiv:1008.1954, which prints "both sequences $(v_n)$ and $(w_n)$ are strictly increasing" without excluding $a = 0$, $b = 0$, or the boundary $w_0 = bv_0$), and $v_n \to \infty$ without finite-step blow-up, so fixed-step schemes misplace spike times and the post-spike adaptation value.
 
 ## Proof sketch
 
