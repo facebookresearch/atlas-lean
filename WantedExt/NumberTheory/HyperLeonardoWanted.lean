@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Sequences.LogConcaveConvolution
 public import MathlibExt.NumberTheory.HyperLeonardo
 public import MathlibExt.NumberTheory.HyperLeonardoHyperLeonardoConvex
 public import MathlibExt.NumberTheory.HyperLeonardoHyperFibonacci
@@ -69,23 +70,6 @@ public theorem_wanted hyperLeonardo_recurrence (r : ℕ) :
         ∑ j ∈ Finset.Ico 1 r, (j * (n + r - j).choose (r - j) : ℕ)) ∧
     hyperLeonardo r 0 = 1 ∧ hyperLeonardo r 1 = r + 1
 
-/-- **The convolution of log-concave sequences is log-concave.** Let $(x_n)_{n \ge 0}$ and
-$(y_n)_{n \ge 0}$ be sequences of positive real numbers that are log-concave, that is,
-$x_{j-1} x_{j+1} \le x_j^2$ and $y_{j-1} y_{j+1} \le y_j^2$ for every $j \ge 1$. Let
-$z_n = \sum_{k=0}^{n} x_k y_{n-k}$ be their convolution. Then $z_{j-1} z_{j+1} \le z_j^2$ for
-every $j \ge 1$.
-
-Positivity is the paper's standing assumption on log-concave sequences.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Lemma 3, quoting [1]
-(`integers-2026-A48-lem-3`). -/
-public theorem_wanted logConcave_convolution (x y : ℕ → ℝ) (hx : ∀ n, 0 < x n)
-    (hy : ∀ n, 0 < y n) (hxlc : ∀ j, 1 ≤ j → x (j - 1) * x (j + 1) ≤ x j ^ 2)
-    (hylc : ∀ j, 1 ≤ j → y (j - 1) * y (j + 1) ≤ y j ^ 2) (j : ℕ) (hj : 1 ≤ j) :
-    (∑ k ∈ Finset.range j, x k * y (j - 1 - k)) *
-        (∑ k ∈ Finset.range (j + 2), x k * y (j + 1 - k)) ≤
-      (∑ k ∈ Finset.range (j + 1), x k * y (j - k)) ^ 2
 
 /-- **Log-convexity and log-concavity of the Leonardo numbers.** Let $Le_n$ be the Leonardo
 numbers ($Le_0 = Le_1 = 1$ and $Le_{n+2} = Le_{n+1} + Le_n + 1$). Then
