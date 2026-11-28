@@ -32,7 +32,8 @@ of floor quotients, which is bounded by `N` times the harmonic sum.
 namespace MetaMathlibExt
 
 open Finset in
-/-- The sum of the numbers of positive divisors of `1, …, N` is at most `N * (1 + log N)`. -/
+/-- **Upper bound for the divisor summatory function.**
+The sum of the numbers of positive divisors of `1, …, N` is at most `N * (1 + log N)`. -/
 public theorem sum_card_divisors_le (N : ℕ) :
     ∑ n ∈ Finset.Icc 1 N, ((n.divisors.card : ℕ) : ℝ)
       ≤ (N : ℝ) * (1 + Real.log N) := by

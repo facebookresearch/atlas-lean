@@ -38,7 +38,8 @@ module `WantedExt.NumberTheory.PrimeCounting.LandauAlmostPrimeAsymptoticWanted`.
 noncomputable def almostPrimeCounting (k x : ℕ) : ℕ :=
   ((Finset.Icc 1 x).filter (fun n => Nat.IsAlmostPrime k n)).card
 
-/-- The count of `k`-almost primes up to `x` is the cardinality of the filter on `(0, x]`
+/-- **Finite-filter formula for the almost-prime count.**
+The count of `k`-almost primes up to `x` is the cardinality of the filter on `(0, x]`
 selecting integers with exactly `k` prime factors, counted with multiplicity. -/
 theorem almostPrimeCounting_eq_card_filter (k x : ℕ) :
     almostPrimeCounting k x = ((Finset.Ioc 0 x).filter (Nat.IsAlmostPrime k)).card := by
