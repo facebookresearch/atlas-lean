@@ -11,11 +11,14 @@ A word $w$ is a *subsequence* of $v$, written $w\le v$, if $w$ is obtained from 
 4. (*$\forall$-$k$-universality*) given $L$ and $k$, is every word of $L$ $k$-universal?
 5. (*$\infty$-universality*) given $L$, does $L$ contain an $m$-universal word for every $m\ge1$?
 
+(Theorem 3 of the source, for Problems 1–5.) Here $k$-universality is taken with respect to the terminal alphabet $\Sigma$ of the given grammar, and, following the source, languages do not contain the empty word: whether $\varepsilon \in L$ plays no role for Problems 1, 3 and 5, and makes Problem 2 false unless $w = \varepsilon$ and Problem 4 false unless $k = 0$.
+
 By contrast, the source shows that all five problems are decidable for context-free languages given by grammars in Chomsky normal form, as they are for regular languages.
 
 ## Depends on
 
 - [Context-sensitive grammars](is-context-sensitive.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

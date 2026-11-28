@@ -21,6 +21,7 @@ sub-strategy of one, gives a graph with an undecidable MSO theory. The winning s
 
 - [Pushdown automaton](pushdown-automata/pda.md)
 - [Arenas, strategies and memory structures](../../omega-automata-and-games/muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -35,4 +36,4 @@ so it holds in the marked graph exactly when the machine halts. For arbitrary we
 
 ## Sources
 
-- A. Carayol and O. Serre, "Marking shortest paths on pushdown graphs does not preserve MSO decidability", *Information Processing Letters* 116(10):638–643, 2016, doi:10.1016/j.ipl.2016.04.015; read in arXiv:1510.04000v2: the two theorems of Section 3 (Main results) with their proofs, the definitions of pushdown graphs, ranks and well-formed markings and the cited theorem of Muller and Schupp in Section 2, and the two corollaries of Section 4.
+- A. Carayol and O. Serre, "Marking shortest paths on pushdown graphs does not preserve MSO decidability", *Information Processing Letters* 116(10):638–643, 2016, doi:10.1016/j.ipl.2016.04.015; read in arXiv:1510.04000v2: Theorems 2 and 3 of Section 3 (Main results) with their proofs, the definitions of pushdown graphs, ranks and well-formed markings in Section 2.1 and Theorem 1 (Muller and Schupp) in Section 2.2, and Corollaries 1 and 2 of Section 4, with the numbering of that version.

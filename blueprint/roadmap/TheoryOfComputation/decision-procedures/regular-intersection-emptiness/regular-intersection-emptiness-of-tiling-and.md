@@ -5,7 +5,7 @@ For the NP-complete problems bounded tiling and bounded Post correspondence, and
 **Theorem (Wolf).** The [regular intersection emptiness problem](the-regular-intersection-emptiness-problem.md) $\mathrm{Int}_{\mathrm{Reg}}(P)$ is undecidable for each of the following languages $P$, with the encodings of the source, where $\diamond$ stands for the separator symbol the source writes as a dollar sign:
 1. the machine languages $L_{\mathrm{NL}}=\{\langle M\rangle\diamond x\diamond a^n: M\text{ accepts }x\text{ in space }\log n\}$ and its analogues $L_{\mathrm{NP}}$ and $L_{\mathrm{PSPACE}}$ (Theorem 1);
 2. *bounded tiling*: a tile set $T$ and an edge coloring $l\diamond t\diamond r\diamond b$ of the four sides of an $n\times n$ square, each side a list of $n$ colors, asking for a tiling of the square extending the coloring (Theorem 2), and *corridor tiling*, with only top and bottom colorings of length $n$ given and the height free (Corollary 1);
-3. *bounded PCP*: $a_1\#\cdots\#a_n\diamond b_1\#\cdots\#b_n\diamond \mathrm{bin}(K)$ with $K\le n$, asking for a solution of the correspondence instance of length at most $K$ (Theorem 3).
+3. *bounded PCP*: $a_1\#\cdots\#a_n\diamond b_1\#\cdots\#b_n\diamond \mathrm{bin}(K)$ with $1\le K\le n$ and the $a_i,b_i$ possibly empty words, asking for a nonempty index sequence of length at most $K$ that solves the correspondence instance (Theorem 3; the source writes "a sequence of $k\le K$ indices", and with the empty sequence allowed every instance would be positive).
 
 Each of these problems is decidable on single instances (NL-, NP- or PSPACE-complete respectively).
 
@@ -14,10 +14,12 @@ Each of these problems is decidable on single instances (NL-, NP- or PSPACE-comp
 - [The regular intersection emptiness problem](the-regular-intersection-emptiness-problem.md)
 - [Wang tiles and valid tilings](../../undecidable-problems/wang-tiles/wang-tiles-and-valid-tilings.md)
 - [BOUNDED POST CORRESPONDENCE as a decision problem](../../np-completeness/strings-and-puzzles/bounded-post-correspondence-problem/bounded-post-correspondence-dec.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 - [The Post correspondence problem is undecidable](../../undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [Rice's theorem for languages](../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-language.md)
 
 ## Expansion
 

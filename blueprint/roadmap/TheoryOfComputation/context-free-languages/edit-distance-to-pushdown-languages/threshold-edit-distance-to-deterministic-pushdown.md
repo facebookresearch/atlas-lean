@@ -10,6 +10,7 @@ In the same section the source shows, by reductions from universality of PDA and
 
 - [Edit distance from one language to another](edit-distance-between-languages.md)
 - [Deterministic pushdown automaton](../grammars-and-pushdown-automata/deterministic-context-free-languages/is-deterministic.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ Universality of DPDA is decidable, so a direct reduction from universality is no
 
 ## Sources
 
-- Krishnendu Chatterjee, Thomas A. Henzinger, Rasmus Ibsen-Jensen and Jan Otop, "Edit Distance for Pushdown Automata", *Logical Methods in Computer Science* 13(3), 2017, paper 23, doi:[10.23638/LMCS-13(3:23)2017](https://doi.org/10.23638/LMCS-13(3:23)2017); numbering of arXiv:1504.08259v4 ([arXiv](https://arxiv.org/abs/1504.08259v4)): Section 5 (edit distance to PDA): the first proposition (TED and FED to PDA, FED to DPDA), the definition of nearly-deterministic PDA, the lemma on their universality, the second proposition (TED to DPDA) and the closing conjecture; Section 2.1 for the overview of complexity results.
+- Krishnendu Chatterjee, Thomas A. Henzinger, Rasmus Ibsen-Jensen and Jan Otop, "Edit Distance for Pushdown Automata", *Logical Methods in Computer Science* 13(3), 2017, paper 23, doi:[10.23638/LMCS-13(3:23)2017](https://doi.org/10.23638/LMCS-13(3:23)2017); numbering of arXiv:1504.08259v4 ([arXiv](https://arxiv.org/abs/1504.08259v4)): Section 5 (edit distance to PDA): Proposition 3 (TED and FED to PDA, FED to DPDA), Definition 5.1 (nearly-deterministic PDA), Lemma 5.2 (their universality), Proposition 4 (TED to DPDA) and the closing conjecture; Section 2.2 for the overview of complexity results.

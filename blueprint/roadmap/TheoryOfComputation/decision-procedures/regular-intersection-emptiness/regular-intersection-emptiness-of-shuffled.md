@@ -11,6 +11,7 @@ By contrast, the same problem is decidable for the unary version of item 2 and f
 ## Depends on
 
 - [The regular intersection emptiness problem](the-regular-intersection-emptiness-problem.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -8,6 +8,8 @@ $$
 \mathrm{ed}(L_1,L_2)=\sup_{w_1\in L_1}\ \inf_{w_2\in L_2}\ \mathrm{ed}(w_1,w_2)\in\mathbb N\cup\{\infty\}.
 $$
 
+with the usual conventions $\sup\emptyset = 0$ and $\inf\emptyset = \infty$: thus $\mathrm{ed}(\emptyset, L_2) = 0$ for every $L_2$, and $\mathrm{ed}(L_1, \emptyset) = \infty$ for nonempty $L_1$.
+
 For classes $\mathcal C_1,\mathcal C_2$ among DFA, NFA, deterministic pushdown automata (DPDA) and pushdown automata (PDA), the *threshold edit distance problem* $\mathrm{TED}(\mathcal C_1,\mathcal C_2)$ asks, given $A_1\in\mathcal C_1$, $A_2\in\mathcal C_2$ and an integer $k\ge0$, whether $\mathrm{ed}(L(A_1),L(A_2))\le k$; the *finite edit distance problem* $\mathrm{FED}(\mathcal C_1,\mathcal C_2)$ asks whether $\mathrm{ed}(L(A_1),L(A_2))<\infty$.
 
 ## Depends on
@@ -25,4 +27,4 @@ The edit distance between languages is not a metric: $\mathrm{ed}(\{a\}^*,\{a,b\
 
 ## Sources
 
-- Krishnendu Chatterjee, Thomas A. Henzinger, Rasmus Ibsen-Jensen and Jan Otop, "Edit Distance for Pushdown Automata", *Logical Methods in Computer Science* 13(3), 2017, paper 23, doi:[10.23638/LMCS-13(3:23)2017](https://doi.org/10.23638/LMCS-13(3:23)2017); numbering of arXiv:1504.08259v4 ([arXiv](https://arxiv.org/abs/1504.08259v4)): Section 2 (edit distance between words and between languages) and the definition of the TED, FED and computation problems in Section 2.1 (problem statement).
+- Krishnendu Chatterjee, Thomas A. Henzinger, Rasmus Ibsen-Jensen and Jan Otop, "Edit Distance for Pushdown Automata", *Logical Methods in Computer Science* 13(3), 2017, paper 23, doi:[10.23638/LMCS-13(3:23)2017](https://doi.org/10.23638/LMCS-13(3:23)2017); numbering of arXiv:1504.08259v4 ([arXiv](https://arxiv.org/abs/1504.08259v4)): Section 2 (edit distance between words and between languages) and the definition of the TED, FED and computation problems in Section 2.2 (problem statement).
