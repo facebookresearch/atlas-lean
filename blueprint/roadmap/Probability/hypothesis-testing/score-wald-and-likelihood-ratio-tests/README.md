@@ -1,5 +1,8 @@
 # Score, Wald and likelihood-ratio tests
 
+- [Pearson's chi-square goodness-of-fit test](pearson-s-chi-square-goodness-of-fit-test/README.md)
+- [Two-sample t and variance-ratio F tests](two-sample-t-and-variance-ratio-f-tests/README.md)
+
 ## Chi-square limits
 
 - [Squared normalized Gaussian is chi-square with one degree of freedom](gaussian-real-map-sq-div.md)
