@@ -13,12 +13,12 @@ Author: @toskua
 module
 
 public import MathlibExt.CategoryTheory.Monad.BarEilenbergMoore
-public import MathlibExtTest.CategoryTheory.Monad.BarFocusedClients
+public import Mathlib.CategoryTheory.Monad.Types
 
 /-!
 # Literal Eilenberg–Moore bar clients
 
-Use the existing option algebra on Bool pointed at false. In its actual evaluated-and-
+Use the option algebra on Bool pointed at false. In its actual evaluated-and-
 forgotten free-algebra bar, the two degree-one faces send Some None to None and Some false.
 The literal comparison preserves this element, and the transported augmentation section is
 Some on the algebra carrier. The section followed by augmentation is identity, while their
@@ -33,11 +33,29 @@ set_option warningAsError true
 noncomputable section
 
 open CategoryTheory CategoryTheory.Monad
-open MathlibExtTest.CategoryTheory.Monad.BarFocusedClients
 
 namespace MathlibExtTest.CategoryTheory.Monad.BarEilenbergMoore
 
-/-- The already-defined option algebra pointed at false. -/
+/-- The option monad on types. -/
+abbrev T : Monad Type := ofTypeMonad Option
+
+/-- The option algebra on Bool with the specified default value. -/
+def pointed (b : Bool) : T.Algebra where
+  A := Bool
+  a := ↾fun o => o.getD b
+  unit := by ext x; rfl
+  assoc := by
+    ext o
+    rcases o with _ | _ | x <;> rfl
+
+/-- Negation carries the false-pointed option algebra to the true-pointed algebra. -/
+def notHom : pointed false ⟶ pointed true where
+  f := ↾not
+  h := by
+    ext o
+    rcases o with _ | x <;> rfl
+
+/-- The option algebra pointed at false. -/
 abbrev alg := pointed false
 
 example :

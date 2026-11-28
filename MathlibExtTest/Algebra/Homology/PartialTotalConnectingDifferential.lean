@@ -157,7 +157,7 @@ private lemma component_d (f : verticalRow ⟶ verticalRow) :
   have hs : ComplexShape.ε₁ (ComplexShape.down ℕ) (ComplexShape.down ℕ)
       (ComplexShape.down ℕ) (1, 0) = (1 : ℤˣ) := rfl
   rw [hs, one_smul, add_zero, horizontal_d]
-  rw [(B f).partialTotalComponent_comp_partialTotalι]
+  rw [Category.assoc, (B f).partialTotalComponent_comp_partialTotalι]
 
 private def upperLift (f : verticalRow ⟶ verticalRow) : Q ⟶ (S f).X₂.X (-1) :=
   upperComponent f ≫ ((K₁ f).extendXIso e (i := 1) (i' := -1) rfl).inv
@@ -246,9 +246,27 @@ private lemma connecting_model (f : verticalRow ⟶ verticalRow) :
   rw [step₁_row_iso_refl, adjacent_iso_refl, step₀_row_iso_refl]
   dsimp only
   rw [step₀_quotient]
-  simp only [Nat.zero_add, Nat.add_zero, Nat.cast_one, Nat.cast_zero, neg_zero,
-    HomologicalComplex.homologyMapIso, Iso.refl_hom, Iso.refl_inv,
-    HomologicalComplex.homologyMap_id, Category.id_comp, Category.comp_id]
+  change ((R₁ f).extendHomologyIso e (j := 1) (j' := -1) rfl).inv ≫
+      HomologicalComplex.homologyMap
+        (𝟙 ((R₁ f).extend e) : (R₁ f).extend e ⟶ (R₁ f).extend e) (-1) ≫
+      ((B f).partialTotalStepCochainShortExact 1).δ (-1) 0 (by decide) ≫
+      HomologicalComplex.homologyMap
+        (𝟙 ((K₀ f).extend e) : (K₀ f).extend e ⟶ (K₀ f).extend e) 0 ≫
+      HomologicalComplex.homologyMap (quotient₀ f) 0 ≫
+      HomologicalComplex.homologyMap
+        (𝟙 ((R₀ f).extend e) : (R₀ f).extend e ⟶ (R₀ f).extend e) 0 ≫
+      ((R₀ f).extendHomologyIso e (j := 0) (j' := 0) rfl).hom = _
+  have hs : HomologicalComplex.homologyMap
+      (𝟙 ((R₁ f).extend e) : (R₁ f).extend e ⟶ (R₁ f).extend e) (-1) =
+      𝟙 (((R₁ f).extend e).homology (-1)) := HomologicalComplex.homologyMap_id _ _
+  have hk : HomologicalComplex.homologyMap
+      (𝟙 ((K₀ f).extend e) : (K₀ f).extend e ⟶ (K₀ f).extend e) 0 =
+      𝟙 (((K₀ f).extend e).homology 0) := HomologicalComplex.homologyMap_id _ _
+  have hr : HomologicalComplex.homologyMap
+      (𝟙 ((R₀ f).extend e) : (R₀ f).extend e ⟶ (R₀ f).extend e) 0 =
+      𝟙 (((R₀ f).extend e).homology 0) := HomologicalComplex.homologyMap_id _ _
+  rw [hs, hk, hr]
+  simp only [Category.id_comp]
 
 /-- The actual adjacent-row connecting map in rational coordinates is the horizontal map. -/
 theorem connecting_coordinate (f : verticalRow ⟶ verticalRow) :
@@ -317,7 +335,7 @@ theorem identity_connecting :
   apply LinearMap.ext
   intro x
   have h := congrArg (fun z : Q ⟶ Q => z.hom x) (connecting_coordinate (𝟙 verticalRow))
-  have hp : ((𝟙 verticalRow).f 0).hom x = x := rfl
+  have hp : ((𝟙 verticalRow : verticalRow ⟶ verticalRow).f 0).hom x = x := rfl
   change ((row₁HomologyCoordinate (𝟙 verticalRow)).inv ≫
     (B (𝟙 verticalRow)).partialTotalE₁ConnectingDifferential 0 0 ≫
     (row₀HomologyCoordinate (𝟙 verticalRow)).hom).hom x = x

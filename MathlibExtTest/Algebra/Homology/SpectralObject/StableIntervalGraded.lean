@@ -14,6 +14,7 @@ module
 
 public import MathlibExt.Algebra.Homology.SpectralObject.StableIntervalGraded
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
+public import Mathlib.Algebra.Homology.HomotopyCategory.HomologicalFunctor
 public import Mathlib.Algebra.Homology.HomotopyCategory.SpectralObject
 public import Mathlib.Algebra.Homology.Single
 
@@ -86,7 +87,8 @@ private def zeroH0Iso (K : CochainComplex C ℤ)
   exact h.left.homologyIso
 
 private def topConeXIso : (cone 2).X 0 ≅ Q :=
-  HomologicalComplex.homotopyCofiber.XIsoBiprod _ 0 1 rfl ≪≫
+  HomologicalComplex.homotopyCofiber.XIsoBiprod
+    (filtration.map (homOfLE (bot_le : (⊥ : Fin 3) ≤ (2 : Fin 3)))) 0 1 rfl ≪≫
     (isoZeroBiprod (isZero_zero C)).symm ≪≫
     HomologicalComplex.singleObjXSelf (ComplexShape.up ℤ) 0 Q
 
@@ -144,19 +146,34 @@ private def quotientOne : Y.stableIntervalObj 0 (show (1 : Fin 3) ≤ 2 by decid
 example : quotientOne ≠ 0 := by
   intro h
   have he := congrArg (fun f : Q ⟶ Q => f.hom (1 : ℚ)) stableIso.inv_hom_id
-  have h01 : (0 : ℚ) = 1 := by
-    simpa only [ModuleCat.hom_comp, quotientOne, h, map_zero, ModuleCat.hom_id] using he
-  exact zero_ne_one h01
+  have h1 : stableIso.hom.hom quotientOne = (1 : ℚ) := by
+    simpa only [ModuleCat.hom_comp, LinearMap.comp_apply, quotientOne,
+      ModuleCat.hom_id, LinearMap.id_apply] using he
+  rw [h, map_zero] at h1
+  exact zero_ne_one h1
 
 example :
     (stableIso.hom).hom
       ((Y.stableIntervalImageToStable 0 (show (1 : Fin 3) ≤ 2 by decide)).hom imageOne) =
       (1 : ℚ) := by
-  have h := Y.stableIntervalImageToStable_comp_iso_hom 0
-    (show (1 : Fin 3) ≤ 2 by decide)
-  have hc := congrArg (fun f => (f ≫ strictQuotientIso.hom).hom imageOne) h
-  simpa [stableIso, strictQuotientIso, cokernelIsoOfEq, strictImageMapZero,
-    cokernelZeroIsoTarget, imageOne, Category.assoc] using hc
+  have hπ : cokernel.π
+      (Y.stableIntervalImageMap 0 (show (1 : Fin 3) ≤ 2 by decide)) ≫
+      strictQuotientIso.hom = topImageIso.hom := by
+    simp only [strictQuotientIso, Iso.trans_hom, Category.assoc,
+      π_comp_cokernelIsoOfEq_hom_assoc, cokernelZeroIsoTarget_hom,
+      cokernel.π_desc_assoc, Category.id_comp]
+  have hq : Y.stableIntervalImageToStable 0 (show (1 : Fin 3) ≤ 2 by decide) ≫
+      stableIso.hom = topImageIso.hom := by
+    change Y.stableIntervalImageToStable 0 (show (1 : Fin 3) ≤ 2 by decide) ≫
+      (Y.stableIntervalImageCokernelIso 0 (show (1 : Fin 3) ≤ 2 by decide)).hom ≫
+        strictQuotientIso.hom = topImageIso.hom
+    rw [Y.stableIntervalImageToStable_comp_iso_hom_assoc, hπ]
+  have hc := congrArg (fun f => f.hom imageOne) hq
+  have h1 : topImageIso.hom.hom imageOne = (1 : ℚ) := by
+    have he := congrArg (fun f : Q ⟶ Q => f.hom (1 : ℚ)) topImageIso.inv_hom_id
+    simpa only [ModuleCat.hom_comp, LinearMap.comp_apply, imageOne,
+      ModuleCat.hom_id, LinearMap.id_apply] using he
+  simpa only [ModuleCat.hom_comp, LinearMap.comp_apply] using hc.trans h1
 
 example : IsZero (Y.stableIntervalObj 0 (show (2 : Fin 3) ≤ 2 by decide)) := by
   have hj : Y.stableIntervalImageMap 0 (show (2 : Fin 3) ≤ 2 by decide) = 𝟙 _ := by
