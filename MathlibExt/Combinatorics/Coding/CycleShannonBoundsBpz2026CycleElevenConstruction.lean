@@ -492,24 +492,18 @@ private def c11BaseTuple : PortTuple (@Confusable 11 3) where
       simpa [rawActive, h] using auxSource_active i
     · exact exists_conf_of_rawFoot h
 
-private def appendWords {q m n : ℕ} :
-    ((Fin m → ZMod q) × (Fin n → ZMod q)) ↪ (Fin (m + n) → ZMod q) :=
-  ((Equiv.sumArrowEquivProdArrow (Fin m) (Fin n) (ZMod q)).symm.trans
-    (Equiv.arrowCongr finSumFinEquiv (Equiv.refl _))).toEmbedding
-
-private theorem confusable_appendWords {q m n : ℕ} (x y : (Fin m → ZMod q) × (Fin n → ZMod q)) :
-    Confusable (appendWords x) (appendWords y) ↔
+private theorem confusable_append {q m n : ℕ} (x y : (Fin m → ZMod q) × (Fin n → ZMod q)) :
+    Confusable (Fin.appendEquiv m n x) (Fin.appendEquiv m n y) ↔
       PortTuple.pairRel Confusable Confusable x y := by
-  obtain ⟨a, b⟩ := x
-  obtain ⟨c, d⟩ := y
   constructor
   · intro h
-    exact ⟨fun i => by simpa [appendWords, Equiv.arrowCongr] using h (finSumFinEquiv (.inl i)),
-      fun i => by simpa [appendWords, Equiv.arrowCongr] using h (finSumFinEquiv (.inr i))⟩
+    exact ⟨fun i => by
+      simpa only [Fin.appendEquiv_apply, Fin.append_left] using h (Fin.castAdd n i),
+      fun i => by simpa only [Fin.appendEquiv_apply, Fin.append_right] using h (Fin.natAdd m i)⟩
   · intro h k
     obtain ⟨i | i, rfl⟩ := finSumFinEquiv.surjective k
-    · simpa [appendWords, Equiv.arrowCongr] using h.1 i
-    · simpa [appendWords, Equiv.arrowCongr] using h.2 i
+    · simpa only [finSumFinEquiv_apply_left, Fin.appendEquiv_apply, Fin.append_left] using h.1 i
+    · simpa only [finSumFinEquiv_apply_right, Fin.appendEquiv_apply, Fin.append_right] using h.2 i
 
 private def HasProfile (q n : ℕ) (p : BPZProfile) : Prop :=
   ∃ T : PortTuple (@Confusable q n), T.profile = p
@@ -519,7 +513,7 @@ private theorem HasProfile.star {q m n : ℕ} {p p' : BPZProfile}
   obtain ⟨T, hT⟩ := h
   obtain ⟨U, hU⟩ := h'
   let V := T.product U confusable_refl confusable_refl confusable_symm confusable_symm
-  refine ⟨V.map appendWords confusable_appendWords, ?_⟩
+  refine ⟨V.map (Fin.appendEquiv m n).toEmbedding confusable_append, ?_⟩
   rw [PortTuple.profile_map, PortTuple.profile_product, hT, hU]
 
 attribute [local instance] PortTuple.finiteB PortTuple.finiteP
