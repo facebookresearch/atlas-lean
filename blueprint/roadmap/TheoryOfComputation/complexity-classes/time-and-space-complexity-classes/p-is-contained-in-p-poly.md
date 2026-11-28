@@ -9,6 +9,7 @@ structure is the same for all inputs of length $n$ and can be generated in logar
 ## Depends on
 
 - [Polynomial time with polynomial advice](ppoly.md)
+- [The complexity class P](../the-classes-p-np-and-conp/p.md)
 
 ## Proof depends on
 
@@ -22,7 +23,9 @@ This page becomes ready once:
 - A logarithmic-space head schedule for the construction: for a time-constructible polynomial running-time bound $T(n) \ge n$, the quadratic oblivious simulation can be chosen so that, from $n$ and $i$, the position of each head at step $i$ on inputs of length $n$ is computable in space $O(\log T(n))$ (proof prerequisite; not yet stated). This is a property of the construction, not a consequence of obliviousness alone.
 - Snapshot circuits for such a polynomial-time machine: there are circuits $C_n$, one constant-size block per step and a final constant-size block testing for an accepting snapshot, with $C_n(x)$ equal to the machine's output for every $x$ of length $n$, and every bit of the description of $C_n$ is computable in logarithmic space (proof prerequisite; not yet stated).
 - Evaluation for the converse: a logspace-uniform family of polynomial-size circuits decides a language in polynomial time, including polynomial-time generation of the implicitly logspace-computable description of $C_n$ and evaluation gate by gate (proof prerequisite; not yet stated). The existing [Circuit Value Problem is P-complete](../../completeness-other-classes/circuit-value-problem/cvp-p-complete.md) states membership in P for the repository's gate-list encoding and canonical P; using it here needs the same representation and machine-model agreement.
+- Machine-model agreement: the source proves the theorem for its multitape machines with a read-only input tape, work tapes and an output tape. Relating polynomial-time decision in that model to [the complexity class P](../the-classes-p-np-and-conp/p.md) is required to derive this characterization for the classes named above (proof prerequisite; not yet stated).
+- Circuits and advice: the source's P/poly consists of the languages with polynomial-size circuit families, while [polynomial time with polynomial advice](ppoly.md) uses advice strings. Deriving membership in the advice class from the circuit families of the theorem, for example by supplying a description of $C_n$ as advice and evaluating it in polynomial time, is part of the expansion (proof prerequisite; not yet stated).
 
 ## Sources
 
-- S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, <https://theory.cs.princeton.edu/complexity/>: Definition 6.5 (logspace-uniform circuit families), Remark 6.6 (circuit representations), Theorem 6.7 with its proof sketch, and Remark 6.8.
+- S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, web draft of 2007-01-08, <https://theory.cs.princeton.edu/complexity/>: Definition 6.3 (circuit-based P/poly), Definition 6.5 (logspace-uniform circuit families), Remark 6.6 (circuit representations), Theorem 6.7 with its proof sketch, and Remark 6.8.
