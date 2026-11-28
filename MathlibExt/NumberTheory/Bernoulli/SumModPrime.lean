@@ -80,9 +80,10 @@ private theorem padicValuation_bernoulli_two_mul_le_one {p : ℕ} [Fact p.Prime]
   exact ⟨hq.2.1, fun hqp => hpm (hqp ▸ hq.2.2)⟩
 
 /-- For `p = 2k + 1` an odd prime, every `B_j` with `j ≤ p` and `j ≠ 2k` is `p`-integral. -/
-public theorem padicValuation_bernoulli_le_one {p k j : ℕ} [Fact p.Prime] (hp2 : p ≠ 2)
+public theorem _root_.MetaMathlibExt.padicValuation_bernoulli_le_one {p k j : ℕ} [Fact p.Prime]
     (hk : p = 2 * k + 1) (hj : j ≤ p) (hjk : j ≠ 2 * k) :
     Rat.padicValuation p (bernoulli j) ≤ 1 := by
+  have hp2 : p ≠ 2 := by omega
   rcases Nat.lt_or_ge j 2 with hj2 | hj2
   · interval_cases j
     · simp
@@ -119,7 +120,7 @@ private theorem exists_sum_prime_mul_bernoulli_eq {p : ℕ} [hp : Fact p.Prime] 
     · obtain ⟨hqp, hq⟩ := mem_erase.mp hq
       exact ⟨(mem_filter.mp hq).2.1, hqp⟩
     · obtain ⟨hjk, hj⟩ := mem_erase.mp hj
-      exact padicValuation_bernoulli_le_one hp2 hk (by simpa [Nat.lt_succ_iff] using hj) hjk
+      exact padicValuation_bernoulli_le_one hk (by simpa [Nat.lt_succ_iff] using hj) hjk
   · have hsum : ∑ q ∈ Q, (1 : ℚ) / q = 1 / p + ∑ q ∈ Q.erase p, (1 : ℚ) / q :=
       (add_sum_erase Q _ hpQ).symm
     rw [← mul_sum, ← add_sum_erase _ _ hkp, eq_sub_of_add_eq hz.symm, hsum]

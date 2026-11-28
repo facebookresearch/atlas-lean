@@ -17,7 +17,7 @@ import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Data.Nat.Choose.Dvd
 import Mathlib.NumberTheory.BernoulliPolynomials
-import MathlibExt.Algebra.Polynomial.ZeroOneSquareComposition
+import MathlibExt.Algebra.Polynomial.SquareComposition
 import MathlibExt.NumberTheory.Bernoulli.SumModPrime
 import MathlibExt.NumberTheory.WilsonFermatQuotient
 
@@ -49,7 +49,7 @@ following Corollary 1, with the quadratic coefficient identified by differentiat
 * Z-H. Sun, *Congruences concerning Bernoulli numbers and Bernoulli polynomials*,
   Discrete Applied Mathematics 105 (2000), pp. 193–223 (the power-sum reduction to evaluation
   at `p`, credited to Sun by Levaillant on p. 9 before equation (21)).
-* `MathlibExt.Algebra.Polynomial.ZeroOneSquareComposition`
+* `MathlibExt.Algebra.Polynomial.SquareComposition`
   (`Polynomial.expand_contract_of_comp_neg_X_eq`),
   `MathlibExt.NumberTheory.Bernoulli.SumModPrime` (`padicValuation_bernoulli_le_one`), and
   `MathlibExt.NumberTheory.WilsonFermatQuotient`
@@ -59,7 +59,7 @@ following Corollary 1, with the quadratic coefficient identified by differentiat
 namespace MathlibExt.NumberTheory.WilsonFaulhaberWanted
 
 open Finset Polynomial
-open MetaMathlibExt.sum_prime_mul_bernoulli_mod_prime (padicValuation_bernoulli_le_one)
+open MetaMathlibExt (padicValuation_bernoulli_le_one)
 
 private noncomputable def powerSumPoly (m : ℕ) : ℚ[X] :=
   C ((m + 1 : ℚ)⁻¹) * (Polynomial.bernoulli (m + 1) - C (_root_.bernoulli (m + 1)))
@@ -128,7 +128,7 @@ private theorem powerSumPoly_coeff_integral {p l : ℕ} [Fact p.Prime] (hp2 : p 
       exact_mod_cast Int.padicValuation_le_one p (p + 1 : ℕ)
     · rw [map_mul]
       apply mul_le_one' _ _
-      · exact padicValuation_bernoulli_le_one hp2 hpl (by omega) (by omega)
+      · exact padicValuation_bernoulli_le_one hpl (by omega) (by omega)
       · exact_mod_cast Int.padicValuation_le_one p ((p + 1).choose j)
   · simp
 
@@ -252,7 +252,7 @@ private theorem factorial_sub_power_sum_norm {p : ℕ} [Fact p.Prime] (hp2 : p �
     exact sub_eq_zero.mpr hsum
   exact_mod_cast (padicNorm.dvd_iff_norm_le (p := p)).mp hdvd
 
-private theorem power_sum_sub_bernoulli_norm {p l : ℕ} [Fact p.Prime] (hp2 : p ≠ 2)
+private theorem power_sum_sub_bernoulli_norm {p l : ℕ} [Fact p.Prime]
     (hpl : p = 2 * l + 1) :
     padicNorm p ((∑ k ∈ Icc 1 (p - 1), (k : ℚ) ^ (p - 1)) -
         (p : ℚ) * _root_.bernoulli (p - 1)) ≤ (p : ℚ) ^ (-2 : ℤ) := by
@@ -278,7 +278,7 @@ private theorem power_sum_sub_bernoulli_norm {p l : ℕ} [Fact p.Prime] (hp2 : p
   apply padicNorm.sum_le' _ (zpow_nonneg hP.le _)
   intro i hi
   have hi' := mem_range.mp hi
-  have hbi := valuation_le_one_norm (padicValuation_bernoulli_le_one hp2 hpl
+  have hbi := valuation_le_one_norm (padicValuation_bernoulli_le_one hpl
     (j := i) (by omega) (by omega))
   have hterm : ∃ r : ℚ, padicNorm p r ≤ 1 ∧ a i = (p : ℚ) ^ 2 * r := by
     -- If the power of `p` is only two, the binomial coefficient supplies the canceled `p`.
@@ -353,7 +353,7 @@ public theorem faulhaber_coeff_integral_and_wilson (p l : ℕ) (hp : p.Prime)
   refine ⟨fun i _ => hEQ ▸ valuation_le_one_norm (hint (i + 1)), ?_⟩
   rw [quadratic_coeff hp hpl hQcomp]
   have hw := factorial_sub_power_sum_norm (p := p) hp2
-  have hb := power_sum_sub_bernoulli_norm hp2 hpl
+  have hb := power_sum_sub_bernoulli_norm hpl
   have hbound := padicNorm.nonarchimedean.trans (max_le hw hb)
   convert hbound using 2
   ring

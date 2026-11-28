@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Polynomial.Expand
 public import Mathlib.Data.ZMod.Basic
+public import MathlibExt.Algebra.Polynomial.SquareComposition
 import Mathlib.Algebra.CharP.Two
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.RingTheory.Polynomial.UniqueFactorization
@@ -51,22 +51,6 @@ Non-cyclotomic 0,1-Polynomials", Section 1
 theorem isZeroOnePoly_iff (f : ℤ[X]) :
     IsZeroOnePoly f ↔ ∀ n : ℕ, f.coeff n = 0 ∨ f.coeff n = 1 :=
   Iff.rfl
-
-/-- Over a characteristic-zero domain, a polynomial fixed by `X ↦ -X` has only even powers.
-Thus contracting by two and expanding again recovers the polynomial. -/
-theorem _root_.Polynomial.expand_contract_of_comp_neg_X_eq {R : Type*} [CommRing R] [IsDomain R]
-    [CharZero R] {p : R[X]} (hp : p.comp (-X) = p) : expand R 2 (p.contract 2) = p := by
-  ext n
-  rw [coeff_expand (by decide : 0 < 2), coeff_contract two_ne_zero]
-  split_ifs with hn
-  · rw [Nat.div_mul_cancel hn]
-  · have hodd : Odd n := Nat.not_even_iff_odd.mp (mt even_iff_two_dvd.mp hn)
-    have h := congrArg (fun q : R[X] => q.coeff n) hp
-    rw [show (-X : R[X]) = C (-1) * X by simp, comp_C_mul_X_coeff,
-      hodd.neg_one_pow, mul_neg_one] at h
-    have hzero : (2 : R) * p.coeff n = 0 := by
-      simpa [two_mul] using congrArg (fun r : R => r + p.coeff n) h.symm
-    exact ((mul_eq_zero.mp hzero).resolve_left two_ne_zero).symm
 
 private theorem eq_of_dvd_of_sq_eq_mul {f a b : ℤ[X]} (hirr : Irreducible f)
     (hf0 : f.coeff 0 = 1) (ha0 : a.coeff 0 = 1) (hb : ¬ IsUnit b)
