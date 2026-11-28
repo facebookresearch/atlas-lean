@@ -109,7 +109,7 @@ theorem truncationProjection_isoStrictPositive_hom :
     cokernel.π_desc, Iso.refl_hom, Category.id_comp]
   have hz : truncationPairing e₊ P ≫ cokernel.π (strictPositivePairing P h₁ h₂) = 0 := by
     rw [← smartToStrictPositivePairing P h₁ h₂, Category.assoc, cokernel.condition]
-    exact Category.comp_zero _
+    exact CategoryTheory.comp_zero _
   exact cokernel.π_desc (truncationPairing e₊ P)
     (cokernel.π (strictPositivePairing P h₁ h₂)) hz
 
