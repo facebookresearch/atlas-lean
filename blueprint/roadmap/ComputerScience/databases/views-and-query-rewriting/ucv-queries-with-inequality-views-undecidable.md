@@ -1,13 +1,13 @@
 # Finite satisfiability of first-order queries over unary conjunctive views with inequalities is undecidable
 
 
-Allowing inequalities in the bodies of unary conjunctive views makes finite satisfiability of first-order queries over those views undecidable, although it is decidable when the view bodies are plain conjunctive queries. The source states the same undecidability for recursive unary conjunctive views.
+Allowing inequalities in the bodies of unary conjunctive views makes finite satisfiability of first-order queries over those views undecidable, although it is decidable when the view bodies are plain conjunctive queries. For recursive unary conjunctive views, the source states undecidability of satisfiability over arbitrary structures (its Theorem 5.4).
 
 **Theorem (Bailey, Dong and To).** The following problem is undecidable: given a relational vocabulary $\sigma$, a finite set $\mathcal{V}$ of unary conjunctive$^{\neq}$ views over $\sigma$ (conjunctive bodies with inequality atoms allowed) and a first-order sentence built from atoms $V(x)$, $V \in \mathcal{V}$, by $\neg$, $\wedge$ and $\exists$, is the sentence finitely satisfiable, that is, true in some finite $\sigma$-structure?
 
 This is the finite-model argument in the proof sketch of Theorem 5.1 of the source, not the statement of Theorem 5.1, which reads "Satisfiability is undecidable" for satisfiability over all structures, finite or infinite (the two notions are distinguished in Section 2.1). The sketch, recalled below, checks local conditions on the successor relation, which force a chain from the first to the last element in a finite structure but not in an infinite one, so it establishes the finite version stated here and leaves a gap for infinite structures.
 
-The vocabulary and the views are part of the input. The paper states the same undecidability for unary conjunctive$^{\mathrm{rec}}$ views, whose bodies are conjunctive queries without inequality but whose definitions may be recursive (its Theorem 5.4, with a proof sketch adapting the argument below), and recalls from earlier work that views with safe negation also give undecidability.
+The vocabulary and the views are part of the input. For unary conjunctive$^{\mathrm{rec}}$ views, whose bodies are conjunctive queries without inequality but whose definitions may be recursive, Theorem 5.4 of the paper states undecidability of satisfiability over arbitrary structures, finite or infinite (with a proof sketch adapting the argument below), and recalls from earlier work that views with safe negation also give undecidability.
 
 ## Depends on
 
@@ -26,4 +26,4 @@ The reduction is from halting of two-counter machines started with both counters
 
 ## Sources
 
-- James Bailey, Guozhu Dong and Anthony Widjaja To, "Logical Queries over Views: Decidability and Expressiveness", ACM Transactions on Computational Logic 11(2), pp. 1–35, 2010, <https://doi.org/10.1145/1656242.1656243>; Theorem 5.1 (main statement), Theorem 5.4 (recursive views) and their proofs in Section 5 of arXiv:0803.2559v1 (the copy read), <https://arxiv.org/abs/0803.2559v1>.
+- James Bailey, Guozhu Dong and Anthony Widjaja To, "Logical Queries over Views: Decidability and Expressiveness", ACM Transactions on Computational Logic 11(2), pp. 1–35, 2010, <https://doi.org/10.1145/1656242.1656243>; the proof sketch of Theorem 5.1 (its finite-model argument is the main statement here), Theorem 5.4 (recursive views) and their proofs in Section 5 of arXiv:0803.2559v1 (the copy read), <https://arxiv.org/abs/0803.2559v1>.
