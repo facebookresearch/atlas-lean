@@ -10,7 +10,7 @@ An automaton with $L^\omega = \varnothing$ counts as weakly detectable and weakl
 
 **Theorem (Zhang).** Weak detectability and weak periodic detectability of labeled timed automata are undecidable (Theorem 17 of the source). This holds already for automata with two states, both initial, one event, which is observable, and clock constants $0$ and $1$: the proof reduces from the universality problem for timed automata with a single state, a single event and clock constants $0$ and $1$, which Adams, Ouaknine and Worrell showed undecidable, a restricted variant of the universality problem of Alur and Dill.
 
-Deterministic timed automata satisfy every detectability notion; the same paper gives region-automaton characterizations of strong and strong periodic detectability.
+Deterministic timed automata satisfy every detectability notion; the same paper characterizes strong detectability by region automata (Theorem 15) and shows its verification PSPACE-complete (Theorem 16).
 
 ## Depends on
 

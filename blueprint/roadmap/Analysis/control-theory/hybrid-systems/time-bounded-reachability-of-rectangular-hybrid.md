@@ -2,9 +2,9 @@
 
 Reachability of a location within a fixed time bound is undecidable for rectangular hybrid automata whose singular rates may be positive or negative, and for linear hybrid automata with diagonal guards even when every variable has one fixed positive rate; with non-negative rates and no diagonal constraints it is decidable.
 
-**Constraints.** Let $\mathcal{I}$ be the set of real intervals with endpoints in $\mathbb{Z} \cup \{\pm\infty\}$. Over a finite set $X$ of real variables, a *rectangular constraint* is $x \in I$ with $I \in \mathcal{I}$, and a *diagonal constraint* is $x - y \sim c$ with $c \in \mathbb{Z}$ and ${\sim} \in \{<, \le, =, \ge, >\}$. Guards are finite conjunctions of such constraints over $X$, rate constraints are conjunctions over the derivatives $\dot{x}$, and update constraints are conjunctions over $X \cup X'$.
+**Constraints.** The automata are the [rectangular automata](rectangular-and-initialized-rectangular-automata.md) and linear hybrid automata of the source, with integer rather than rational interval endpoints. Let $\mathcal{I}$ be the set of real intervals with endpoints in $\mathbb{Z} \cup \{\pm\infty\}$. Over a finite set $X$ of real variables, a *rectangular constraint* is $x \in I$ with $I \in \mathcal{I}$, and a *diagonal constraint* is $x - y \sim c$ with $c \in \mathbb{Z}$ and ${\sim} \in \{<, \le, =, \ge, >\}$. Guards are finite conjunctions of such constraints over $X$, rate constraints are conjunctions over the derivatives $\dot{x}$, and update constraints are conjunctions over $X \cup X'$.
 
-**Automata.** A *linear hybrid automaton* (LHA), a special case of [hybrid automata](../../../Analysis/control-theory/hybrid-systems/hybrid-automata-and-their-executions.md), is $\mathcal{H} = (X, L, E, \mathrm{Rate}, \mathrm{Inv}, \ell_{\mathrm{init}})$ with a finite set $L$ of locations, a finite set $E$ of edges $(\ell, g, r, \ell')$ with a guard $g$ and an update $r$, a rate constraint $\mathrm{Rate}(\ell)$ and an invariant (a guard) $\mathrm{Inv}(\ell)$ for each location, and an initial location. A state is $(\ell, \nu)$ with $\nu : X \to \mathbb{R}$; time may elapse by $t \ge 0$ along a rate vector $\dot{\nu}$ satisfying $\mathrm{Rate}(\ell)$ while $\mathrm{Inv}(\ell)$ holds throughout, and an edge may be taken when its guard holds, updating the variables. $\mathcal{H}$ is *rectangular* (an RHA) if all guards, rates and invariants are rectangular (updates assign intervals or keep a variable), *singular* if every rate constraint fixes each $\dot{x}$ to a single value, and *fixed rate* if each variable has the same rate constraint in all locations. The *time-bounded reachability problem* asks, given $\mathcal{H}$, a location $\ell_{\mathrm{goal}}$ and a bound $T \in \mathbb{N}$, whether some finite run from $(\ell_{\mathrm{init}}, \mathbf{0})$ reaches $\ell_{\mathrm{goal}}$ with total duration at most $T$.
+**Automata.** A *linear hybrid automaton* (LHA), a special case of [hybrid automata](hybrid-automata-and-their-executions.md), is $\mathcal{H} = (X, L, E, \mathrm{Rate}, \mathrm{Inv}, \ell_{\mathrm{init}})$ with a finite set $L$ of locations, a finite set $E$ of edges $(\ell, g, r, \ell')$ with a guard $g$ and an update $r$, a rate constraint $\mathrm{Rate}(\ell)$ and an invariant (a guard) $\mathrm{Inv}(\ell)$ for each location, and an initial location. A state is $(\ell, \nu)$ with $\nu : X \to \mathbb{R}$; time may elapse by $t \ge 0$ along a rate vector $\dot{\nu}$ satisfying $\mathrm{Rate}(\ell)$ while $\mathrm{Inv}(\ell)$ holds throughout, and an edge may be taken when its guard holds, updating the variables. $\mathcal{H}$ is *rectangular* (an RHA) if all guards, rates and invariants are rectangular (updates assign intervals or keep a variable), *singular* if every rate constraint fixes each $\dot{x}$ to a single value, and *fixed rate* if each variable has the same rate constraint in all locations. The *time-bounded reachability problem* asks, given $\mathcal{H}$, a location $\ell_{\mathrm{goal}}$ and a bound $T \in \mathbb{N}$, whether some finite run from $(\ell_{\mathrm{init}}, \mathbf{0})$ reaches $\ell_{\mathrm{goal}}$ with total duration at most $T$.
 
 **Theorem (Brihaye, Doyen, Geeraerts, Ouaknine, Raskin and Worrell).**
 
@@ -15,12 +15,13 @@ The same paper shows that time-bounded reachability is decidable for (non-initia
 
 ## Depends on
 
-- [Hybrid automata and their executions](../../../Analysis/control-theory/hybrid-systems/hybrid-automata-and-their-executions.md)
-- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Hybrid automata and their executions](hybrid-automata-and-their-executions.md)
+- [Rectangular and initialized rectangular automata](rectangular-and-initialized-rectangular-automata.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [Two-counter machines are universal](../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 
 ## Expansion
 

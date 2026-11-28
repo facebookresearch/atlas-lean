@@ -8,9 +8,11 @@ $$
 \mathrm{Val}_A(w) = \| s X_{w_1} \cdots X_{w_k} P \|^2 ,
 $$
 
-the probability of observing the state in the accepting subspace after applying $X_{w_1}, \dots, X_{w_k}$; it lies in $[0, 1]$. As inputs, the matrices and the vector have rational entries; the reduction of the source uses rational rotation matrices with entries in $\{0, \pm\tfrac35, \pm\tfrac45, 1\}$.
+the probability of observing the state in the accepting subspace after applying $X_{w_1}, \dots, X_{w_k}$; it lies in $[0, 1]$. As inputs, the matrices and the vector have rational entries. The automata of the source's reduction have the $6 \times 6$ unitary matrices $Y_i = \tfrac12 \begin{pmatrix} X_{u_i} + X_{v_i} & X_{u_i} - X_{v_i} \\ X_{u_i} - X_{v_i} & X_{u_i} + X_{v_i} \end{pmatrix}$, where $X_u$ is a product of two rational rotations of $\mathbb{R}^3$ with entries in $\{0, \pm\tfrac35, \pm\tfrac45, 1\}$; their entries are rationals whose denominators divide $2 \cdot 5^m$.
 
-**Theorem (Blondel, Jeandel, Koiran and Portier).** There is no algorithm that decides, for a given automaton $A$, whether there is a word $w$ with $\mathrm{Val}_A(w) \ge 1$, and there is none that decides whether there is a word $w$ with $\mathrm{Val}_A(w) \le 0$. Both problems remain undecidable for automata given by $7$ matrices of dimension $6$, or by $2$ matrices of dimension $42$ (Theorem 2.1 of the source).
+**Theorem (Blondel, Jeandel, Koiran and Portier).** There is no algorithm that decides, for a given automaton $A$, whether there is a word $w$ with $\mathrm{Val}_A(w) \ge 1$, and there is none that decides whether there is a word $w$ with $\mathrm{Val}_A(w) \le 0$. (Theorem 2.1 of the source.)
+
+The source also states that both problems remain undecidable for automata given by $7$ matrices of dimension $6$, or by $2$ matrices of dimension $42$; these bounds use undecidability of the Post correspondence problem for $7$ pairs (Matiyasevich and Sénizergues) and Blondel's reduction of finitely many matrices to two, which the source cites without proof.
 
 In contrast, for a given automaton $A$ and a rational threshold $\lambda$, it is decidable whether some word $w$ satisfies $\mathrm{Val}_A(w) > \lambda$, and whether some word satisfies $\mathrm{Val}_A(w) < \lambda$ (Theorem 3.2 of the source). For probabilistic automata the situation differs: the strict emptiness problem is undecidable there.
 

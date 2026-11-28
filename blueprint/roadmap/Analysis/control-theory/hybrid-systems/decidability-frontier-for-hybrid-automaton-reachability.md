@@ -11,7 +11,7 @@ A sound expansion has separate pages for:
    automata.
 2. **Uninitialized extensions:** reachability is undecidable already for timed automata with one stopwatch that is not
    reset when its rate changes (Theorem 4.1, slopes $1$ and $0$), and for the other generalizations of Section 4 of the source.
-3. **Time-bounded reachability** (Brihaye et al.): reaching a target location within a fixed time bound is decidable for
+3. **Time-bounded reachability** (Brihaye et al.; [Time-bounded reachability of rectangular hybrid automata is undecidable](time-bounded-reachability-of-rectangular-hybrid.md)): reaching a target location within a fixed time bound is decidable for
    rectangular automata with nonnegative rates, initialized or not, which include stopwatch automata (Theorem 1); it is
    undecidable for rectangular automata with singular rates of both signs (Theorem 2) and for linear hybrid automata with
    singular, strictly positive, fixed-rate variables and diagonal constraints (Theorem 3).

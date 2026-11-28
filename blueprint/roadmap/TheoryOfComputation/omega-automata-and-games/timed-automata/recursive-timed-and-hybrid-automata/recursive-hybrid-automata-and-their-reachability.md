@@ -35,13 +35,15 @@ $ex$ it pops $(b, \nu'')$, moves to $(b, ex)$ without delay and restores the var
 timed action $(t, a)$ with $\delta(q, a)$ defined lets time $t$ pass at rates $F(q)$, with the invariant satisfied throughout and $E(q, a)$ satisfied at the end,
 then takes the transition $\delta(q, a)$ and resets the variables in $J(a)$.
 
-**Games.** A partition of the locations into those of two players, Achilles and the tortoise, gives a turn-based game arena: the owner of the current location chooses the next timed action or call. This differs from [timed games](../timed-games.md) on timed automata, where both players propose delays and the faster move is taken. The *reachability
+**Games.** A partition of the locations into those of two players, Achilles and the tortoise, gives a turn-based game arena in the sense of [arenas and strategies](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md), on the configuration graph: the owner of the current location chooses the next timed action or call. This differs from [timed games](../timed-games.md) on timed automata, where both players propose delays and the faster move is taken. The *reachability
 game problem* asks, for an initial location and valuation with empty stack and a set of final locations, whether Achilles has a
 strategy that reaches a final location against every strategy of the tortoise; under *bounded time*, the final location must be
 reached within total time $T \in \mathbb{N}$. An instance is finite: the automaton, the partition, the final locations, and an initial valuation with rational entries (the source writes $\nu \in \mathbb{R}^{|X|}$, which is not a finite input).
 
 ## Depends on
 
+- [Hybrid automata and their executions](../../../../Analysis/control-theory/hybrid-systems/hybrid-automata-and-their-executions.md)
+- [Arenas, strategies and memory structures](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)
 
 ## Proof depends on
 
