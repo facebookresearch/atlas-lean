@@ -7,11 +7,9 @@ immediate-consequence operator $T_{P,I}$ maps an IDB instance $J$ over $U$ to th
 heads of ground rule instances over $U$ whose bodies hold in $I \cup J$. Monotonicity of $T_{P,I}$ on the
 finite lattice of IDB instances over $U$ is a separate lemma.
 
-## Expansion
+## Depends on
 
-This node states a precise definition. A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: conjunctive queries, answers and canonical databases (for rule bodies and their satisfaction).
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Sources
 

@@ -11,20 +11,15 @@ of $q$ be the tuples of constants that belong to $q(J)$ for every model $J$ of $
 constant-preserving homomorphism from $I$; they are exactly the null-free tuples of $q(J_0)$. Failing chase sequences and
 non-terminating ones are separate cases.
 
-## Expansion
-
-This node states a precise result. The homomorphism into $J$ is built by induction over the chase steps,
-one chase step at a time. The certain-answer clause uses that unions of conjunctive queries are preserved
-under homomorphisms that fix constants.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Conjunctive queries, answers and canonical databases (with unions of conjunctive queries).
-- Proof prerequisite: unions of conjunctive queries are preserved under homomorphisms that fix constants.
-
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Containment of unions of conjunctive queries](../conjunctive-queries/cores-and-minimization/containment-of-unions-of-conjunctive-queries.md)
+
+## Proof depends on
+
+- [Unions of conjunctive queries are preserved under homomorphisms](../conjunctive-queries/cores-and-minimization/unions-of-conjunctive-queries-are-preserved-under-homomorphisms.md)
 
 ## Sources
 
