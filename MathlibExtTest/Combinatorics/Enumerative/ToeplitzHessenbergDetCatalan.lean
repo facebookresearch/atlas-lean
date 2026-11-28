@@ -124,3 +124,40 @@ example : coeff 0 differenceDet = 0 ∧
   rw [coeff_mul_two, hzero]
   norm_num [differenceDet, toeplitzHessenbergDet_one, toeplitzHessenbergDet_two, catalan_one,
     catalan_two, catalan_three, map_sub, coeff_one, h0, h1, h2]
+
+-- Client examples specialize each public conjunct at the boundaries computed above.
+
+example :
+    coeff 0 oddDet = coeff 0 (X ^ 2 * cat ^ 2 * (rescale (-1 : ℚ) cat) ^ 2) ∧
+    coeff 3 oddDet = coeff 3 (X ^ 2 * cat ^ 2 * (rescale (-1 : ℚ) cat) ^ 2) ∧
+    coeff 4 oddDet = coeff 4 (X ^ 2 * cat ^ 2 * (rescale (-1 : ℚ) cat) ^ 2) := by
+  have h := toeplitzHessenbergDet_catalan.1
+  exact ⟨congrArg (coeff 0) h, congrArg (coeff 3) h, congrArg (coeff 4) h⟩
+
+example : coeff 0 (consecutiveDet * (2 - cat ^ 2)) = 1 ∧
+    coeff 2 (consecutiveDet * (2 - cat ^ 2)) = 0 := by
+  have h : consecutiveDet * (2 - cat ^ 2) = 1 := toeplitzHessenbergDet_catalan.2.1
+  rw [h]
+  simp [coeff_one]
+
+example :
+    toeplitzHessenbergDet (fun i => if i = 0 then 1 else (catalan i : ℚ) - catalan (i - 1)) 1 = 0 ∧
+    toeplitzHessenbergDet (fun i => if i = 0 then 1 else (catalan i : ℚ) - catalan (i - 1)) 2 = -1 := by
+  constructor
+  · simpa using toeplitzHessenbergDet_catalan.2.2.1 1 (by decide)
+  · simpa [catalan_one] using toeplitzHessenbergDet_catalan.2.2.1 2 (by decide)
+
+example :
+    toeplitzHessenbergDet (fun i => if i = 0 then 1 else (catalan (i + 1) : ℚ) - catalan i) 1 = 1 ∧
+    toeplitzHessenbergDet (fun i => if i = 0 then 1 else (catalan (i + 1) : ℚ) - catalan i) 2 = -2 := by
+  constructor
+  · simpa [catalan_zero] using toeplitzHessenbergDet_catalan.2.2.2.1 1 (by decide)
+  · have h := toeplitzHessenbergDet_catalan.2.2.2.1 2 (by decide)
+    norm_num [Finset.sum_range_succ, catalan_zero, catalan_one] at h
+    exact h
+
+example :
+    coeff 0 (differenceDet * (1 - X * cat ^ 3)) = coeff 0 (X * cat ^ 3) ∧
+    coeff 2 (differenceDet * (1 - X * cat ^ 3)) = coeff 2 (X * cat ^ 3) := by
+  have h := toeplitzHessenbergDet_catalan.2.2.2.2
+  exact ⟨congrArg (coeff 0) h, congrArg (coeff 2) h⟩
