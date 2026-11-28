@@ -9,10 +9,11 @@ Here $\Sigma^1_1$ is the class of sets of natural numbers definable by an arithm
 ## Depends on
 
 - [Asynchronous HyperLTL](asynchronous-hyperltl.md)
+- [HyperLTL satisfiability is Σ¹₁-complete](../satisfiability-of-hyperltl-and-hyperctl-star/hyperltl-satisfiability-is-sigma-1-1-complete.md)
 
 ## Proof depends on
 
-- [HyperLTL satisfiability is Σ¹₁-complete](../satisfiability-of-hyperltl-and-hyperctl-star/hyperltl-satisfiability-is-sigma-1-1-complete.md)
+None.
 
 ## Expansion
 

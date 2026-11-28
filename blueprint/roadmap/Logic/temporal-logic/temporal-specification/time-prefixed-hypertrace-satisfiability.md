@@ -1,6 +1,6 @@
 # Satisfiability of time-prefixed hypertrace formulas is undecidable
 
-Already for time-prefixed hypertrace formulas with the quantifier prefix ∃∀∃²∀ over time followed by one universal and two existential constrained and one existential unconstrained trace quantifier, no algorithm decides whether some set of traces satisfies the formula.
+Already for time-prefixed hypertrace formulas with the quantifier prefix ∃∀∃²∀ over time followed by one universal and two existential constrained and one existential unconstrained trace quantifier, no algorithm decides whether some nonempty set of traces satisfies the formula.
 
 **Theorem (Chalupa, Henzinger and Oliveira da Costa).** Let $Q$ be the quantifier prefix
 
@@ -8,9 +8,9 @@ $$
 \exists i_1\, \forall i_2\, \exists i_3\, \exists i_4\, \forall i_5\; \forall \pi_1 \mathbin{::} T\; \exists \pi_2 \mathbin{::} T\; \exists \pi_3 \mathbin{::} T\; \exists \pi_4 ,
 $$
 
-with five time quantifiers followed by four trace quantifiers, of which the first three are constrained. It is undecidable, given a quantifier-free formula $\varphi'$, whether the [hypertrace formula](hypertrace-logic.md) $\varphi = Q\, \varphi'$ is satisfiable, that is, whether $[\![\varphi]\!] \ne \varnothing$ (Theorem 22 of the source, Section 6).
+with five time quantifiers followed by four trace quantifiers, of which the first three are constrained. It is undecidable, given a quantifier-free formula $\varphi'$, whether the [hypertrace formula](hypertrace-logic.md) $\varphi = Q\, \varphi'$ is satisfiable by a nonempty set of traces, that is, whether some nonempty $T$ lies in $[\![\varphi]\!]$ (Theorem 22 of the source, Section 6). The set must be nonempty: the empty set is a model of every formula whose first trace quantifier is a constrained universal one, here $\forall \pi_1 \mathbin{::} T$, since the time quantifiers before it range over $\mathbb N$. So the source's question $[\![\varphi]\!] \ne \varnothing$ (Section 3.2) is read for nonempty models, as its proof requires (every model of its formula must contain a trace encoding the initial configuration) and as in Finkbeiner and Hahn's HyperLTL-SAT, from which Proposition 15 is reduced.
 
-The source also shows that trace-prefixed formulas with prefix $\forall \pi_1 \mathbin{::} T\, \forall \pi_2 \mathbin{::} T\, \exists \pi'_1 \mathbin{::} T$ followed by time quantifiers have undecidable satisfiability (Proposition 15), that formulas without constrained trace quantifiers are equivalent to S1S and hence decidable (Theorem 7 and Corollary 8), and that prenex formulas are decidable when their constrained trace quantifiers form one block $\exists\pi_1 \mathbin{::} T \cdots \exists\pi_n \mathbin{::} T\, \forall\pi'_1 \mathbin{::} T \cdots \forall\pi'_m \mathbin{::} T$ preceded only by existential time or unconstrained trace quantifiers (Theorem 12; Corollary 16 for the variant where only existential unconstrained trace quantifiers precede the block).
+The source also shows that trace-prefixed formulas with prefix $\forall \pi_1 \mathbin{::} T\, \forall \pi_2 \mathbin{::} T\, \exists \pi'_1 \mathbin{::} T$ followed by time quantifiers have undecidable satisfiability by nonempty sets of traces (Proposition 15), that formulas without constrained trace quantifiers are equivalent to S1S and hence decidable (Theorem 7 and Corollary 8), and that prenex formulas are decidable when their constrained trace quantifiers form one block $\exists\pi_1 \mathbin{::} T \cdots \exists\pi_n \mathbin{::} T\, \forall\pi'_1 \mathbin{::} T \cdots \forall\pi'_m \mathbin{::} T$ preceded only by existential time or unconstrained trace quantifiers (Theorem 12; Corollary 16 for the variant where only existential unconstrained trace quantifiers precede the block).
 
 ## Depends on
 

@@ -10,6 +10,7 @@ Here $\Sigma^1_1$ is the class of sets of natural numbers definable by an arithm
 
 - [HyperLTL](../hyperltl.md)
 - [Ultimately periodic sequences](../../../../Dynamics/topological-symbolic-dynamics/eventually-periodic-sequences/is-ultimately-periodic.md)
+- [HyperLTL satisfiability is Σ¹₁-complete](hyperltl-satisfiability-is-sigma-1-1-complete.md)
 
 ## Proof depends on
 

@@ -12,10 +12,10 @@ Here $\Sigma^1_1$ is the class of sets of natural numbers definable by an arithm
 
 - [LTL and HyperLTL specifications](ltl-and-hyperltl-specifications.md)
 - [Temporal safety HyperLTL formulas](temporal-safety-hyperltl-formulas.md)
+- [HyperLTL satisfiability is Σ¹₁-complete](../satisfiability-of-hyperltl-and-hyperctl-star/hyperltl-satisfiability-is-sigma-1-1-complete.md)
 
 ## Proof depends on
 
-- [HyperLTL satisfiability is Σ¹₁-complete](../satisfiability-of-hyperltl-and-hyperctl-star/hyperltl-satisfiability-is-sigma-1-1-complete.md)
 - [Recurring computations of two-counter machines are Σ¹₁-hard](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md)
 
 ## Expansion

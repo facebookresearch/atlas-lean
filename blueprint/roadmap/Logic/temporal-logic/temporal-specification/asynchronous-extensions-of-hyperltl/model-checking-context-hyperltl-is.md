@@ -10,7 +10,7 @@ $$
 
 where the context $C$ is a nonempty set of trace variables. A formula is evaluated with a current context: $\mathsf X$ and $\mathsf U$ advance by one, respectively by some number of, positions only the traces bound to variables in the current context, leaving the others in place; $\langle C\rangle\psi$ evaluates $\psi$ with context $C$; at the top level the context is the set of all variables. Let $F_0$ and $F_1$ be the fragments with two trace variables and nesting depth of context modalities $2$ in which, respectively, the quantifier alternation depth is $0$, or it is $1$ and every temporal modality in the scope of a non-global context is $\mathsf F$. Model checking HyperLTL$_C$ is undecidable even for $F_0$ and for $F_1$ (Theorem IV.1 of the source).
 
-The source also identifies a fragment of HyperLTL$_C$ with decidable model checking that is, in a certain sense, as the source puts it,, maximal.
+The source also identifies a fragment of HyperLTL$_C$ with decidable model checking that is, in a certain sense, as the source puts it, maximal.
 
 ## Depends on
 
