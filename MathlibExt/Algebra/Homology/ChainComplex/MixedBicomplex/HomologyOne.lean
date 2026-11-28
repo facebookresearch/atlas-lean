@@ -50,20 +50,7 @@ namespace ChainComplex
 
 universe u v
 
-/-- Let C be an abelian category and z a zero-morphism structure on C. Then C has homology for
-every short complex formed with z, expressed by CategoryWithHomology C. The conclusion is
-independent of the chosen zero-morphism structure, since such structures on a fixed category
-are unique. -/
-private theorem mixedHomologyOneCategoryWithHomology
-    {C₀ : Type u} [hCategory : Category.{v} C₀] [hAbelian : Abelian C₀]
-    (z : HasZeroMorphisms C₀) : @CategoryWithHomology C₀ hCategory z := by
-  let zAbelian : HasZeroMorphisms C₀ :=
-    @Preadditive.preadditiveHasZeroMorphisms C₀ hCategory hAbelian.toPreadditive
-  have hNative : @CategoryWithHomology C₀ hCategory zAbelian :=
-    @CategoryTheory.categoryWithHomology_of_abelian C₀ hCategory hAbelian
-  have hz : zAbelian = z := Subsingleton.elim _ _
-  exact Eq.mp (congrArg
-    (fun z' : HasZeroMorphisms C₀ => @CategoryWithHomology C₀ hCategory z') hz) hNative
+section Preadditive
 
 variable {C : Type u} [Category.{v} C] [Preadditive C] [HasZeroObject C]
   (K : ChainComplex C ℕ) (H : Homotopy (0 : K ⟶ K) 0)
@@ -112,7 +99,8 @@ def mixedTotalZeroIso : (T).X 0 ≅ K.X 0 where
 /-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
 between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
 every n, and assume the mixed bicomplex has its down-ℕ total T. The coprojection from cell (0,
-0), followed by mixedTotalZeroIso.hom, equals (mixedBicomplexCellIso K H hSquare 0 0 (Nat.zero_le 0)).hom :
+0), followed by mixedTotalZeroIso.hom, equals
+(mixedBicomplexCellIso K H hSquare 0 0 (Nat.zero_le 0)).hom :
 (mixedBicomplex.X 0).X 0 ⟶ K.X 0. -/
 @[reassoc]
 lemma mixedTotalZeroIso_ι :
@@ -159,8 +147,9 @@ def mixedTotalOneIso : (T).X 1 ≅ K.X 1 where
 /-- Let C be preadditive with a zero object, K a chain complex indexed by ℕ, and H a homotopy
 between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
 every n, and assume the mixed bicomplex has its down-ℕ total T. The total coprojection from
-cell (0, 1), followed by mixedTotalOneIso.hom, equals (mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).hom, the
-supported-cell comparison to K.X 1. -/
+cell (0, 1), followed by mixedTotalOneIso.hom, equals
+(mixedBicomplexCellIso K H hSquare 0 1 (Nat.zero_le 1)).hom, the supported-cell comparison
+to K.X 1. -/
 @[reassoc]
 lemma mixedTotalOneIso_ι :
     (B).ιTotal (ComplexShape.down ℕ) 0 1 1 rfl ≫ (mixedTotalOneIso K H hSquare).hom =
@@ -256,7 +245,8 @@ def mixedTotalTwoIso : (T).X 2 ≅ K.X 2 ⊞ K.X 0 where
 between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
 every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
 exists. The total coprojection from (0, 2), followed by mixedTotalTwoIso.hom, is
-(mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).hom ≫ biprod.inl. Thus this supported cell is the K₂ summand. -/
+(mixedBicomplexCellIso K H hSquare 0 2 (Nat.zero_le 2)).hom ≫ biprod.inl. Thus this supported
+cell is the K₂ summand. -/
 @[reassoc]
 lemma mixedTotalTwoIso_ι_b :
     (B).ιTotal (ComplexShape.down ℕ) 0 2 2 rfl ≫ (mixedTotalTwoIso K H hSquare).hom =
@@ -269,7 +259,8 @@ lemma mixedTotalTwoIso_ι_b :
 between the zero endomorphisms of K. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0 for
 every n, and assume the mixed bicomplex has its down-ℕ total T. Assume the biproduct K₂ ⊞ K₀
 exists. The total coprojection from (1, 1), followed by mixedTotalTwoIso.hom, is
-(mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).hom ≫ biprod.inr. Thus this supported cell is the K₀ summand. -/
+(mixedBicomplexCellIso K H hSquare 1 1 (Nat.le_refl 1)).hom ≫ biprod.inr. Thus this supported
+cell is the K₀ summand. -/
 @[reassoc]
 lemma mixedTotalTwoIso_ι_B :
     (B).ιTotal (ComplexShape.down ℕ) 1 1 2 rfl ≫ (mixedTotalTwoIso K H hSquare).hom =
@@ -293,7 +284,7 @@ def mixedHomologyOneShortComplex : ShortComplex C :=
       have h := H.comm 0
       rw [HomologicalComplex.zero_f_apply, add_zero,
         dNext_eq_zero H.hom 0 (by simp [ComplexShape.down_Rel]),
-        prevD_eq H.hom (by show (ComplexShape.down ℕ).Rel 1 0; rfl), zero_add] at h
+        prevD_eq H.hom (by rfl), zero_add] at h
       exact h.symm)
 
 omit [HasBinaryBiproduct (K.X 2) (K.X 0)] in
@@ -389,10 +380,10 @@ private lemma horizontalBottom_d :
     ((B).D₁ (ComplexShape.down ℕ) 2 1 + (B).D₂ (ComplexShape.down ℕ) 2 1) = _
   rw [Preadditive.comp_add, HomologicalComplex₂.ι_D₁, HomologicalComplex₂.ι_D₂,
     (B).d₂_eq (ComplexShape.down ℕ) 1
-      (by show (ComplexShape.down ℕ).Rel 1 0; rfl) 1 rfl,
+      (by rfl) 1 rfl,
     hι, comp_zero, smul_zero, add_zero,
     (B).d₁_eq (ComplexShape.down ℕ)
-      (by show (ComplexShape.down ℕ).Rel 1 0; rfl) 1 1 rfl,
+      (by rfl) 1 1 rfl,
     hε, one_smul, hComponent]
   simp only [Category.assoc]
 
@@ -499,15 +490,19 @@ lemma mixedColumnZeroShortComplexMap_eq :
     rw [mixedColumnZeroInclusion_f, Category.assoc, mixedTotalZeroIso_ι,
       Iso.inv_hom_id]
 
+end Preadditive
+
 section Abelian
 
-variable [Abelian C]
+variable {C : Type u} [Category.{v} C] [Abelian C]
+  (K : ChainComplex C ℕ) (H : Homotopy (0 : K ⟶ K) 0)
+  (hSquare : ∀ n, H.hom n (n + 1) ≫ H.hom (n + 1) (n + 2) = 0)
 
-/-- For an abelian category C and any zero-morphism structure z on C, CategoryWithHomology C holds
-with that structure. Thus every short complex formed using z has a homology object; uniqueness
-of zero morphisms identifies it with the abelian-category construction. -/
-local instance mixedHomologyOneOriginalHomology (z : HasZeroMorphisms C) :
-    @CategoryWithHomology C _ z := mixedHomologyOneCategoryWithHomology z
+local notation "T" => HomologicalComplex₂.total
+  (mixedBicomplex K H hSquare) (ComplexShape.down ℕ)
+
+variable [hTotal : HomologicalComplex₂.HasTotal
+  (mixedBicomplex K H hSquare) (ComplexShape.down ℕ)]
 
 /-- In an abelian category C, let K be an ℕ-indexed chain complex and H a homotopy between its
 zero endomorphisms. Write B_n = H.hom n (n + 1), assume B_n ≫ B_(n+1) = 0, and assume the
@@ -516,8 +511,8 @@ K₀ → K₁ → K₀), where the arrows are [K.d 2 1, B₀] and K.d 1 0. Equiv
 total homology with the cycles of b₁ modulo the images of both incoming maps. -/
 def mixedHomologyOneIso : (T).homology 1 ≅ (mixedHomologyOneShortComplex K H).homology :=
   (T).homologyIsoSc' 2 1 0
-    ((ComplexShape.down ℕ).prev_eq' (by show (ComplexShape.down ℕ).Rel 2 1; rfl))
-    ((ComplexShape.down ℕ).next_eq' (by show (ComplexShape.down ℕ).Rel 1 0; rfl)) ≪≫
+    ((ComplexShape.down ℕ).prev_eq' (by rfl))
+    ((ComplexShape.down ℕ).next_eq' (by rfl)) ≪≫
       ShortComplex.homologyMapIso (mixedHomologyOneShortComplexIso K H hSquare)
 
 /-- In an abelian category C, let K be an ℕ-indexed chain complex and H a homotopy between its
@@ -530,14 +525,14 @@ lemma mixedColumnZeroInclusion_homology :
     homologyMap (mixedColumnZeroInclusion K H hSquare) 1 ≫
       (mixedHomologyOneIso K H hSquare).hom =
         (K.homologyIsoSc' 2 1 0
-          ((ComplexShape.down ℕ).prev_eq' (by show (ComplexShape.down ℕ).Rel 2 1; rfl))
-          ((ComplexShape.down ℕ).next_eq' (by show (ComplexShape.down ℕ).Rel 1 0; rfl))).hom ≫
+          ((ComplexShape.down ℕ).prev_eq' (by rfl))
+          ((ComplexShape.down ℕ).next_eq' (by rfl))).hom ≫
             ShortComplex.homologyMap (mixedColumnZeroShortComplexMap K H) := by
   let m : K ⟶ T := mixedColumnZeroInclusion K H hSquare
   let hp : (ComplexShape.down ℕ).prev 1 = 2 :=
-    (ComplexShape.down ℕ).prev_eq' (by show (ComplexShape.down ℕ).Rel 2 1; rfl)
+    (ComplexShape.down ℕ).prev_eq' (by rfl)
   let hn : (ComplexShape.down ℕ).next 1 = 0 :=
-    (ComplexShape.down ℕ).next_eq' (by show (ComplexShape.down ℕ).Rel 1 0; rfl)
+    (ComplexShape.down ℕ).next_eq' (by rfl)
   let e : shortComplexFunctor C (ComplexShape.down ℕ) 1 ≅
       shortComplexFunctor' C (ComplexShape.down ℕ) 2 1 0 :=
     natIsoSc' C (ComplexShape.down ℕ) 2 1 0 hp hn
@@ -567,7 +562,7 @@ lemma mixedColumnZeroInclusion_homology :
       ((Category.assoc eK.hom (ShortComplex.homologyMap φ)
         (ShortComplex.homologyMap ψ)).trans (congrArg (fun f => eK.hom ≫ f) hPH)))
 
-omit hTotal [HasZeroObject C] in
+omit hTotal in
 /-- In an abelian category C, let K be an ℕ-indexed chain complex and H a homotopy between its
 zero endomorphisms, and assume K.d 1 0 = 0. Write P = K.sc' 2 1 0 and S =
 mixedHomologyOneShortComplex K H, and let u : P ⟶ S have components biprod.inl, identity and

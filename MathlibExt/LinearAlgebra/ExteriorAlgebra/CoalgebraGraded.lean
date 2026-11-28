@@ -57,6 +57,7 @@ local notation "E" => ExteriorAlgebra R M
 local notation "P" => E ⊗[R] E
 local notation "𝓔" => gradedExterior R M
 local notation "π" => exteriorPower.projection R M
+local notation "ε" => (ExteriorAlgebra.algebraMapInv : E →ₐ[R] R)
 
 local instance : HasFiniteBiproducts (ModuleCat.{max u v} R) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat.{max u v} R)
@@ -103,36 +104,29 @@ def zeroUnitIso : 𝓔 0 ≅ ModuleCat.of R (ULift.{v} R) :=
     (ULift.moduleEquiv : ULift.{v} R ≃ₗ[R] R).symm).toModuleIso
 
 theorem augmentation_degree_zero (a : ⋀[R]^0 M) :
-    augmentation R M (a : E) = exteriorPower.zeroEquiv R M a := by
-  have h : (augmentation R M).toLinearMap.comp (⋀[R]^0 M).subtype =
+    ε (a : E) = exteriorPower.zeroEquiv R M a := by
+  have h : (ε).toLinearMap.comp (⋀[R]^0 M).subtype =
       (exteriorPower.zeroEquiv R M).toLinearMap := by
     apply exteriorPower.linearMap_ext (R := R) (n := 0) (M := M) (N := R)
     apply AlternatingMap.ext
     intro w
-    change augmentation R M (ιMulti R 0 w) =
+    change ε (ιMulti R 0 w) =
       exteriorPower.zeroEquiv R M (exteriorPower.ιMulti R 0 w)
     rw [ιMulti_zero_apply, map_one]
     exact (exteriorPower.zeroEquiv_ιMulti (R := R) (M := M) w).symm
   exact LinearMap.congr_fun h a
 
-/-- Let R be a commutative ring and M an R-module with additive inverses. Write
-E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). The augmentation E →ₐ[R] R is
-ExteriorAlgebra.algebraMapInv: it retracts the scalar algebra map R → E and sends each exterior
-generator ι(m) to zero. -/
-theorem augmentation_eq_algebraMapInv : augmentation R M =
-    ExteriorAlgebra.algebraMapInv (R := R) (M := M) := rfl
-
 theorem augmentation_ιMulti_positive (n : ℕ) (w : Fin (n + 1) → M) :
-    augmentation R M (ιMulti R (n + 1) w) = 0 := by
+    ε (ιMulti R (n + 1) w) = 0 := by
   rw [ιMulti_succ_apply, map_mul, augmentation_ι, zero_mul]
 
 /-- Let R be a commutative ring and M an R-module with additive inverses. Write
 E=ExteriorAlgebra(R,M), Eₙ=∧ⁿ_RM and Tₙ=⊕ₚ₊q₌ₙ(Eₚ⊗_RE_q). For every a ∈ E,
-ε(a)=zeroEquiv(π₀(a)), where ε is augmentation, π₀ is the degree-zero exterior projection and
+ε(a)=zeroEquiv(π₀(a)), where ε is algebraMapInv, π₀ is the degree-zero exterior projection and
 zeroEquiv identifies E₀ with R. -/
 theorem augmentation_eq_projection (a : E) :
-    augmentation R M a = exteriorPower.zeroEquiv R M (π 0 a) := by
-  have h : (augmentation R M).toLinearMap =
+    ε a = exteriorPower.zeroEquiv R M (π 0 a) := by
+  have h : (ε).toLinearMap =
       (exteriorPower.zeroEquiv R M).toLinearMap.comp (π 0) := by
     apply ExteriorAlgebra.lhom_ext
     intro n
@@ -140,18 +134,18 @@ theorem augmentation_eq_projection (a : E) :
     intro w
     cases n with
     | zero =>
-        change augmentation R M (ιMulti R 0 w) = exteriorPower.zeroEquiv R M (π 0 (ιMulti R 0 w))
+        change ε (ιMulti R 0 w) = exteriorPower.zeroEquiv R M (π 0 (ιMulti R 0 w))
         rw [exteriorPower.projection_ιMulti_self]
         simp only [ιMulti_zero_apply, map_one, exteriorPower.zeroEquiv_ιMulti]
     | succ n =>
-        change augmentation R M (ιMulti R (n + 1) w) =
+        change ε (ιMulti R (n + 1) w) =
           exteriorPower.zeroEquiv R M (π 0 (ιMulti R (n + 1) w))
         rw [augmentation_ιMulti_positive,
           exteriorPower.projection_ιMulti_ne R M 0 (n + 1) (Nat.succ_ne_zero n), map_zero]
   exact LinearMap.congr_fun h a
 
 theorem augmentation_eq_zero_of_mem_positive (n : ℕ) (hn : n ≠ 0)
-    (a : E) (ha : a ∈ ⋀[R]^n M) : augmentation R M a = 0 := by
+    (a : E) (ha : a ∈ ⋀[R]^n M) : ε a = 0 := by
   rw [augmentation_eq_projection, exteriorPower.projection_eq_zero_of_mem R M 0 n hn a ha,
     map_zero]
 
@@ -286,7 +280,7 @@ private theorem unitRightι_unitor (n : ℕ) :
 theorem gradedLeftCounitEvaluation_realize (n : ℕ) :
     gradedLeftCounitEvaluation R M n = tensorDegreeRealize R M n ≫ ModuleCat.ofHom
       ((π n).comp ((TensorProduct.lid R E).toLinearMap.comp
-        ((augmentation R M).toLinearMap.rTensor E))) := by
+        ((ε).toLinearMap.rTensor E))) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) :=
     ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v}
@@ -335,7 +329,7 @@ theorem gradedLeftCounitEvaluation_realize (n : ℕ) :
       apply ModuleCat.hom_ext
       apply TensorProduct.ext'
       intro a b
-      change exteriorPower.zeroEquiv R M a • b = π n (augmentation R M (a : E) • (b : E))
+      change exteriorPower.zeroEquiv R M a • b = π n (ε (a : E) • (b : E))
       rw [map_smul, exteriorPower.projection_subtype_apply, augmentation_degree_zero])
   · rw [gradedCounit_ne R M p hp]
     have hz : (0 : U p ⟶ I p) ⊗ₘ 𝟙 (U q) = 0 :=
@@ -348,13 +342,13 @@ theorem gradedLeftCounitEvaluation_realize (n : ℕ) :
       apply TensorProduct.ext'
       intro a b
       change (0 : ⋀[R]^n M) = π n
-        (augmentation R M (a : E) • (b : E))
+        (ε (a : E) • (b : E))
       rw [augmentation_eq_zero_of_mem_positive R M p hp a a.property, zero_smul, map_zero])
 
 theorem gradedRightCounitEvaluation_realize (n : ℕ) :
     gradedRightCounitEvaluation R M n = tensorDegreeRealize R M n ≫ ModuleCat.ofHom
       ((π n).comp ((TensorProduct.rid R E).toLinearMap.comp
-        ((augmentation R M).toLinearMap.lTensor E))) := by
+        ((ε).toLinearMap.lTensor E))) := by
   letI : MonoidalCategoryStruct (ModuleCat.{max u v} R) :=
     ModuleCat.UniverseTensor.tensorStructure.{u,v} (R := R)
   letI : MonoidalCategory (ModuleCat.{max u v} R) := ModuleCat.UniverseTensor.monoidalCategory.{u,v}
@@ -403,7 +397,7 @@ theorem gradedRightCounitEvaluation_realize (n : ℕ) :
       apply ModuleCat.hom_ext
       apply TensorProduct.ext'
       intro a b
-      change exteriorPower.zeroEquiv R M b • a = π n (augmentation R M (b : E) • (a : E))
+      change exteriorPower.zeroEquiv R M b • a = π n (ε (b : E) • (a : E))
       rw [map_smul, exteriorPower.projection_subtype_apply, augmentation_degree_zero])
   · rw [gradedCounit_ne R M q hq]
     have hz : 𝟙 (U p) ⊗ₘ (0 : U q ⟶ I q) = 0 :=
@@ -416,14 +410,14 @@ theorem gradedRightCounitEvaluation_realize (n : ℕ) :
       apply TensorProduct.ext'
       intro a b
       change (0 : ⋀[R]^n M) = π n
-        (augmentation R M (b : E) • (a : E))
+        (ε (b : E) • (a : E))
       rw [augmentation_eq_zero_of_mem_positive R M q hq b b.property, zero_smul, map_zero])
 
 theorem gradedCoproduct_leftCounit (n : ℕ) :
     gradedCoproduct R M n ≫ gradedLeftCounitEvaluation R M n = 𝟙 (𝓔 n) := by
   have hr := congrArg (fun z => z ≫ ModuleCat.ofHom ((π n).comp ((TensorProduct.lid R
     E).toLinearMap.comp
-    ((augmentation R M).toLinearMap.rTensor E))))
+    ((ε).toLinearMap.rTensor E))))
     (gradedCoproduct_realize R M n)
   simp only [Category.assoc] at hr
   rw [gradedLeftCounitEvaluation_realize]
@@ -431,7 +425,7 @@ theorem gradedCoproduct_leftCounit (n : ℕ) :
     apply ModuleCat.hom_ext
     apply LinearMap.ext
     intro a
-    change π n (TensorProduct.lid R E ((augmentation R M).toLinearMap.rTensor E
+    change π n (TensorProduct.lid R E ((ε).toLinearMap.rTensor E
       (coproduct R M ((show ⋀[R]^n M from a) : E)))) = a
     rw [augmentation_rTensor_coproduct, TensorProduct.lid_tmul, one_smul]
     exact exteriorPower.projection_subtype_apply R M n (show ⋀[R]^n M from a))
@@ -440,7 +434,7 @@ theorem gradedCoproduct_rightCounit (n : ℕ) :
     gradedCoproduct R M n ≫ gradedRightCounitEvaluation R M n = 𝟙 (𝓔 n) := by
   have hr := congrArg (fun z => z ≫ ModuleCat.ofHom ((π n).comp ((TensorProduct.rid R
     E).toLinearMap.comp
-    ((augmentation R M).toLinearMap.lTensor E))))
+    ((ε).toLinearMap.lTensor E))))
     (gradedCoproduct_realize R M n)
   simp only [Category.assoc] at hr
   rw [gradedRightCounitEvaluation_realize]
@@ -448,7 +442,7 @@ theorem gradedCoproduct_rightCounit (n : ℕ) :
     apply ModuleCat.hom_ext
     apply LinearMap.ext
     intro a
-    change π n (TensorProduct.rid R E ((augmentation R M).toLinearMap.lTensor E
+    change π n (TensorProduct.rid R E ((ε).toLinearMap.lTensor E
       (coproduct R M ((show ⋀[R]^n M from a) : E)))) = a
     rw [augmentation_lTensor_coproduct, TensorProduct.rid_tmul, one_smul]
     exact exteriorPower.projection_subtype_apply R M n (show ⋀[R]^n M from a))

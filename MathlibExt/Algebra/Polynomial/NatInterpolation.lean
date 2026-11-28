@@ -35,12 +35,6 @@ namespace Polynomial
 variable {I : Type u} {J : Type v} [Fintype I] [Fintype J]
   {V : Type w} [AddCommGroup V] [Module ℚ V]
 
-/-- For a finite type `I`, a `ℚ`-vector space `V`, exponents `e : I → ℕ`, vectors `v : I → V`, and
-`a : ℚ`, `finiteWeightedPowerCombination e v a = ∑ i : I, a^(e i) • v i`. Repeated exponents
-are allowed. -/
-def finiteWeightedPowerCombination (e : I → ℕ) (v : I → V) (a : ℚ) : V :=
-  ∑ i : I, a ^ e i • v i
-
 /-- Let `I,J` be finite types, `V` a `ℚ`-vector space, and `e : I → ℕ`, `f : J → ℕ`, `v : I → V`,
 `w : J → V`. If the two weighted power sums agree at `(m : ℚ)` for every `m : ℕ`, then `∑ i,
 a^(e i) • v i = ∑ j, a^(f j) • w j` for every `a : ℚ`. -/
