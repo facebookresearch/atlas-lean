@@ -7,7 +7,7 @@ Allowing inequalities in the bodies of unary conjunctive views makes finite sati
 
 This is the finite-model argument in the proof sketch of Theorem 5.1 of the source, not the statement of Theorem 5.1, which reads "Satisfiability is undecidable" for satisfiability over all structures, finite or infinite (the two notions are distinguished in Section 2.1). The sketch, recalled below, checks local conditions on the successor relation, which force a chain from the first to the last element in a finite structure but not in an infinite one, so it establishes the finite version stated here and leaves a gap for infinite structures.
 
-The vocabulary and the views are part of the input. For unary conjunctive$^{\mathrm{rec}}$ views, whose bodies are conjunctive queries without inequality but whose definitions may be recursive, Theorem 5.4 of the paper states undecidability of satisfiability over arbitrary structures, finite or infinite (with a proof sketch adapting the argument below), and recalls from earlier work that views with safe negation also give undecidability.
+The vocabulary and the views are part of the input. For unary conjunctive$^{\mathrm{rec}}$ views, whose bodies are conjunctive queries without inequality but whose definitions may be recursive, Theorem 5.4 of the paper states undecidability of satisfiability over arbitrary structures, finite or infinite (with a proof sketch adapting the argument below). Theorem 5.2 recalls from earlier work that views with safe negation also give undecidability.
 
 ## Depends on
 

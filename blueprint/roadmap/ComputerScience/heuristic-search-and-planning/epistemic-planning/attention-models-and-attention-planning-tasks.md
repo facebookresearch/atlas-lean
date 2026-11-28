@@ -1,6 +1,6 @@
 # Attention models and attention planning tasks
 
-Attention models are epistemic models with a bounded attention resource per agent. Attention actions are event models with a question and a cost per agent; an agent who can afford its question learns its answer, except between events it cannot tell apart anyway. Planning seeks actions reaching an epistemic goal, here only actions with trivial questions, whose updates stay attention states.
+Attention models are epistemic models with a bounded attention resource per agent. Attention actions are event models with a question and a cost per agent; an agent who can afford its question may learn its answer. Planning seeks actions reaching an epistemic goal, here only actions with trivial questions, whose updates stay attention states.
 
 **Language (Belardinelli and Rendsvig).** Fix a finite nonempty set $I$ of agents and an attention bound $N \in \mathbb{N}$. Let $\Phi$ be a countable set of proposition atoms and $\Psi = \{(\alpha_i < n), (\alpha_i = n) : n \le N, i \in I\}$ a set of attention atoms, with $At = \Phi \uplus \Psi$. The language $\mathcal{L}$ is $\varphi ::= \top \mid p \mid \neg\varphi \mid \varphi \wedge \varphi \mid K_i \varphi$ with $p \in At$ and $i \in I$.
 
