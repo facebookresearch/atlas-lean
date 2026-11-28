@@ -33,7 +33,7 @@ None.
 
 ## Expansion
 
-The proof reduces the mixed modification of the Post correspondence problem: given morphisms $h, g : \Sigma^* \to \Delta^*$ with
+The proof reduces the mixed modification of the [Post correspondence problem](../../../undecidable-problems/post-correspondence-problem/pcp.md): given morphisms $h, g : \Sigma^* \to \Delta^*$ with
 $|\Delta| = 2$, is there a word $x_1 \cdots x_k$ with $h_1(x_1) \cdots h_k(x_k) = g_1(x_1) \cdots g_k(x_k)$ for some choices
 $h_j, g_j \in \{h, g\}$ not all equal? It is undecidable for $|\Sigma| \ge 9$ (Cassaigne, Karhumäki and Harju), also for Claus
 instances (Halava, Harju and Hirvensalo). Words are embedded injectively into rational unitary $4 \times 4$ matrices through a free

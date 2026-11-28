@@ -8,7 +8,7 @@ The class X[Y] consists of HCS whose underlying automaton is of type X and whose
 
 ## Depends on
 
-None.
+- [Pushdown automaton](../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
 
 ## Proof depends on
 

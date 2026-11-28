@@ -23,7 +23,7 @@ None.
 
 ## Expansion
 
-The proof reduces universality of timed automata with a single state, a single event and clock constants $0$ and $1$ only, which is undecidable (Adams, Ouaknine and Worrell); that restricted form has no page here. One adds to such an automaton a new initial state with an unconstrained self-loop on the event, which yields a deterministic automaton accepting all timed words, and takes the disjoint union of this automaton with the given one, the event being observable. If some timed word $w$ is rejected by the given automaton, then along $w$ followed by further events the current-state estimate eventually becomes the new initial state alone; hence the union is not weakly (periodically) detectable exactly when the given automaton accepts every timed word.
+The proof reduces universality of timed automata with a single state, a single event and clock constants $0$ and $1$ only, which is undecidable (Adams, Ouaknine and Worrell). One adds to such an automaton a new initial state with an unconstrained self-loop on the event, which yields a deterministic automaton accepting all timed words, and takes the disjoint union of this automaton with the given one, the event being observable. If some timed word $w$ is rejected by the given automaton, then along $w$ followed by further events the current-state estimate eventually becomes the new initial state alone; hence the union is not weakly (periodically) detectable exactly when the given automaton accepts every timed word.
 
 ## Sources
 

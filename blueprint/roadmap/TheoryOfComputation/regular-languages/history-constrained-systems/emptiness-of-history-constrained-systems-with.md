@@ -12,6 +12,7 @@ By contrast, emptiness is decidable, and EXPSPACE-complete, for NFA[Cover-DVASS]
 
 - [History-constrained systems](history-constrained-systems.md)
 - [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Pushdown automaton](../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
 
 ## Proof depends on
 
