@@ -13,6 +13,8 @@ An entangled constraint satisfaction problem asks, for a constraint system built
 
 The variants $\mathrm{SuccinctCSP}_{c\text{-}c}$ and $\mathrm{CSP}_{c\text{-}c}$ use the constraint–constraint game. The source defines the yes and no instances through the defect of finite-dimensional tracial states on algebras attached to $S$; these correspond to the synchronous quantum values above.
 
+Classically, $\mathrm{CSP}(\Gamma)_{1,1}$ is either in P or NP-complete by the CSP dichotomy theorem of Bulatov and Zhuk. When $\Gamma$ has no weak near-unanimity polymorphism, which makes $\mathrm{CSP}(\Gamma)_{1,1}$ NP-complete, the succinct gap problem $\mathrm{SuccinctCSP}(\Gamma)_{1,s}$ is NEXP-complete for some constant $s < 1$ (Corollary 4.8 of the source, whose proof uses the constraint-by-constraint reductions of the hardness side of the dichotomy). The entangled problems replace satisfying assignments by quantum strategies, in which the measurements for different constraints need not commute. 1-in-3-SAT, with the constraint $\{(1,0,0), (0,1,0), (0,0,1)\}$, is NP-complete and TVF; 3SAT is not TVF.
+
 ## Depends on
 
 - [Two-player nonlocal games: classical and entangled values](../../two-player-nonlocal-games-classical-and-entangled-values.md)
@@ -23,10 +25,6 @@ The variants $\mathrm{SuccinctCSP}_{c\text{-}c}$ and $\mathrm{CSP}_{c\text{-}c}$
 
 None.
 
-## Expansion
-
-Classically, $\mathrm{CSP}(\Gamma)_{1,1}$ is either in P or NP-complete by the CSP dichotomy theorem of Bulatov and Zhuk, and when it is NP-complete the succinct gap problem $\mathrm{SuccinctCSP}(\Gamma)_{1,s}$ is NEXP-complete for some constant $s < 1$. The entangled problems replace satisfying assignments by quantum strategies, in which the measurements for different constraints need not commute. 1-in-3-SAT, with the constraint $\{(1,0,0), (0,1,0), (0,0,1)\}$, is NP-complete and TVF; 3SAT is not TVF.
-
 ## Sources
 
-- E. Culf and K. Mastel, "RE-completeness of entangled constraint satisfaction problems", in *2025 IEEE 66th Annual Symposium on Foundations of Computer Science (FOCS 2025)*, IEEE, 2025, pp. 2194–2230, doi:10.1109/FOCS63196.2025.00116; read as arXiv:2410.21223v2, <https://arxiv.org/abs/2410.21223v2>: Section 2 (nonlocal games, synchronous values), Section 3.1 (Definitions 3.1 and 3.2 of constraints and constraint systems, Definition 3.3 and the constraint system games described after it) and Section 4 (Definitions 4.1 and 4.2 of pushforward constraints and $\mathrm{CSP}(\Gamma)$, Definition 4.11 of entangled constraint systems and Definition 4.12 of TVF constraints).
+- E. Culf and K. Mastel, "RE-completeness of entangled constraint satisfaction problems", in *2025 IEEE 66th Annual Symposium on Foundations of Computer Science (FOCS 2025)*, IEEE, 2025, pp. 2194–2230, doi:10.1109/FOCS63196.2025.00116; read as arXiv:2410.21223v2, <https://arxiv.org/abs/2410.21223v2>: Section 2 (nonlocal games, synchronous values), Section 3.1 (Definitions 3.1 and 3.2 of constraints and constraint systems, Definition 3.3 and the constraint system games described after it) and Section 4 (Definitions 4.1 and 4.2 of pushforward constraints and $\mathrm{CSP}(\Gamma)$, Theorem 4.7 and Corollary 4.8, Definition 4.11 of entangled constraint systems and Definition 4.12 of TVF constraints).

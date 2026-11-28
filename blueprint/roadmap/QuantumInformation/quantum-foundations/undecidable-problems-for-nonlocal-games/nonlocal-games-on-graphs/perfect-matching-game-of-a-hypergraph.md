@@ -11,6 +11,8 @@ A perfect classical strategy for $PM_G$ exists if and only if $G$ has a perfect 
 
 **Quantum perfect matching.** $G$ has a *quantum perfect matching* when $PM_G$ has a perfect [quantum strategy](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/entangled-nonlocal-games/entangled-strategies-and-entangled-value.md): finite-dimensional Hilbert spaces $\mathcal{H}_A$, $\mathcal{H}_B$, a state $\psi \in \mathcal{H}_A \otimes \mathcal{H}_B$ and projective measurements for each question, winning with probability 1.
 
+The source also states that quantum perfect matching of hypergraphs is undecidable (Theorem 6.11); its proof applies to hypergraphs the characterization of Theorem 6.4, which is proved for graphs and fails for hypergraphs. The hypergraphs on $\{1, 2, 3\}$ with edge sets $\{\{1,2,3\}, \{1,2\}\}$ and $\{\{1,2\}, \{2,3\}\}$ have the same line graph $K_2$, but only the first has a perfect matching: in the second, questions $1$ and $3$ force the intersecting answers $\{1,2\}$ and $\{2,3\}$, so not even a quantum strategy wins.
+
 ## Depends on
 
 - [Hypergraph](../../../../Combinatorics/extremal-set-theory/hypergraph-colouring-matching/erd-s-faber-lov-sz-conjecture/hypergraph.md)

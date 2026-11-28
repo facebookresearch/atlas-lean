@@ -15,6 +15,8 @@ A strategy is *perfect* when it wins with probability 1. A perfect classical str
 
 Equivalently (Theorem 5.13 of the source), $G \cong_{qc} H$ if and only if some unital [C\*-algebra](../../../../Analysis/operator-algebras/cstar-algebra.md) with a faithful tracial state contains projections $E_{gh}$, for $g \in V(G)$ and $h \in V(H)$, with $\sum_{h} E_{gh} = I$ for every $g$, $\sum_{g} E_{gh} = I$ for every $h$, and $E_{gh} E_{g'h'} = 0$ whenever $\operatorname{rel}(g, g') \ne \operatorname{rel}(h, h')$.
 
+The algebraic characterization follows from the description of perfect commuting-operator strategies of synchronous games by tracial states on the game algebra (Lemma 5.12 of the source): the isomorphism game is synchronous, a perfect strategy is given by projections $E_{xy}$ in a C\*-algebra with a faithful tracial state, and the winning conditions translate into the three families of relations.
+
 ## Depends on
 
 - [Finite simple graph](../../../../GraphTheory/planar-graphs-and-minors/graph-minors/fin-graph.md)
@@ -24,11 +26,7 @@ Equivalently (Theorem 5.13 of the source), $G \cong_{qc} H$ if and only if some 
 
 ## Proof depends on
 
-None.
-
-## Expansion
-
-The algebraic characterization follows from the description of perfect commuting-operator strategies of synchronous games by tracial states on the game algebra (Lemma 5.12 of the source): the isomorphism game is synchronous, a perfect strategy is given by projections $E_{xy}$ in a C\*-algebra with a faithful tracial state, and the winning conditions translate into the three families of relations.
+- [Perfect commuting strategies and the synchronous game algebra](../../../../TheoryOfComputation/randomized-and-quantum-complexity/interactive-proofs/entangled-nonlocal-games/perfect-strategies-and-synchronous-game-algebra.md)
 
 ## Sources
 

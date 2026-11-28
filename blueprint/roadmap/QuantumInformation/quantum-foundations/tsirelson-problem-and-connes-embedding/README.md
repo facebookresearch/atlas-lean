@@ -11,7 +11,7 @@
 - [Equivalence of the Connes, Kirchberg and Tsirelson problems](connes-kirchberg-tsirelson-equivalences.md)
 - [Negative answer to Tsirelson's problem: C_qa is not C_qc](negative-answer-to-tsirelsons-problem.md)
 - [The Connes embedding conjecture is false](refutation-of-the-connes-embedding-conjecture.md)
-- [Deciding whether the commuting-operator value of a nonlocal game is 1 or below 1/2 is coRE-complete](commuting-operator-value-gap-problem-is-core-complete.md)
+- [Deciding whether the commuting-operator value of a nonlocal game is 1 or at most 1/2 is coRE-complete](commuting-operator-value-gap-problem-is-core-complete.md)
 - [Deciding whether the quantum value of a nonlocal game is 1 is Π⁰₂-complete](exact-quantum-value-one-is-pi02-complete.md)
 - [Existence of a perfect commuting-operator strategy for a linear system game is undecidable](perfect-commuting-operator-play-is-undecidable.md)
 - [Membership in a fixed-size quantum correlation set is undecidable](membership-in-fixed-size-correlation-sets.md)
