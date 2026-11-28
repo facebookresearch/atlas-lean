@@ -11,7 +11,7 @@ There is an algorithm that decides, given a [Petri net](place-transition-petri-n
 
 - [Non-reachability in Petri nets has a semilinear inductive invariant](decision-procedures/non-reachability-has-a-semilinear-inductive-invariant.md)
 - [Semilinear sets are the sets definable in Presburger arithmetic](decision-procedures/semilinear-sets-are-the-presburger-definable-sets.md)
-- [Quantifier elimination for Presburger arithmetic](../../../Logic/model-theory/quantifier-elimination-for-presburger-arithmetic.md)
+- [Quantifier elimination for Presburger arithmetic](../../../Logic/first-order-logic/quantifier-elimination-for-presburger-arithmetic/quantifier-elimination-for-presburger-arithmetic.md)
 
 ## Expansion
 
