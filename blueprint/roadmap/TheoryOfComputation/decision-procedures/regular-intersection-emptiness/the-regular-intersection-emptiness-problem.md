@@ -9,6 +9,8 @@ Let $P\subseteq\Sigma^*$ be a fixed language, viewed as the set of encoded posit
 
 It asks whether a possibly infinite regular set of instances, given compactly by an automaton, contains a positive one. The same problem has been studied as the *regular realizability problem* $RR(P)$ with *filter language* $P$. The answer depends on the encoding of instances: two encodings that are equivalent for the classical problem may give different regular intersection emptiness problems.
 
+For context-free $P$ the problem is decidable, since emptiness of the intersection of a context-free and a regular language is decidable; it is decidable for several NP-complete and even PSPACE-complete problems, and every decision problem has a regular realizability problem of the same complexity (Vyalyi). For a unary shuffled encoding of string equality, or for the sequential encoding $s\diamond t$ with erasable padding, it is decidable (Theorems 5 and 6 of the source).
+
 ## Depends on
 
 None.
@@ -16,10 +18,6 @@ None.
 ## Proof depends on
 
 None.
-
-## Expansion
-
-For context-free $P$ the problem is decidable, since emptiness of the intersection of a context-free and a regular language is decidable; it is decidable for several NP-complete and even PSPACE-complete problems, and every decision problem has a regular realizability problem of the same complexity (Vyalyi). For a unary shuffled encoding of string equality, or for the sequential encoding $s\diamond t$ with erasable padding, it is decidable (Theorems 5 and 6 of the source).
 
 ## Sources
 

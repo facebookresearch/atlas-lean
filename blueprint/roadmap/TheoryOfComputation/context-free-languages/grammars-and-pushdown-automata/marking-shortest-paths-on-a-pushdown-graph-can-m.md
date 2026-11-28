@@ -3,14 +3,14 @@
 Every pushdown graph has a decidable monadic second-order theory, but there is a pushdown graph such that marking shortest paths to the final
 configurations, in any admissible way, yields a graph with an undecidable monadic second-order theory.
 
-**Pushdown graphs.** A *deterministic real-time pushdown automaton* $\mathcal{P} = (Q, A, \Gamma, \bot, q_{\mathrm{in}}, Q_F, \delta)$ has a partial transition function $\delta : Q \times \Gamma \times A \to Q \times \Gamma^{\le 2}$ that
-replaces the top stack symbol, never removing or pushing the bottom symbol $\bot$. Its configurations are pairs $(q, \sigma)$ of a state and a stack content ending in $\bot$, the final configurations are the
-$(q_f, \bot)$ with $q_f \in Q_F$, and its *configuration graph* $G_{\mathcal{P}}$ has an $a$-labeled edge from $(q, \sigma)$ to $(q', \sigma')$ when $\delta$ maps $(q, \gamma, a)$ to $(q', u)$ with $\sigma = \gamma\sigma''$ and $\sigma' = u\sigma''$. By a theorem of
-Muller and Schupp, every such graph has a decidable monadic second-order (MSO) theory, in the logic with edge relations for each label.
+**Pushdown graphs.** A *deterministic real-time pushdown automaton* $\mathcal{P} = (Q, A, \Gamma, \bot, q_{\mathrm{in}}, Q_F, \delta)$, with finite sets $Q$ of states, $A$ of input letters and $\Gamma \ni \bot$ of stack symbols, has a partial transition function $\delta : Q \times \Gamma \times A \to Q \times \Gamma^{\le 2}$ that
+replaces the top stack symbol, never removing or pushing the bottom symbol $\bot$. Its configurations are pairs $(q, \sigma)$ of a state and a stack content $\sigma \in (\Gamma \setminus \{\bot\})^*\bot$, the final configurations are the
+$(q_f, \bot)$ with $q_f \in Q_F$, and its *configuration graph* $G_{\mathcal{P}}$ has an $a$-labeled edge from $(q, \sigma)$ to $(q', \sigma')$ when $\delta$ maps $(q, \gamma, a)$ to $(q', u)$ with $\sigma = \gamma\sigma''$ and $\sigma' = u\sigma''$. A graph with edge labels in a finite set $B$ has a *decidable monadic second-order (MSO) theory* if it is decidable whether a given MSO sentence, with an edge relation for each label in $B$, holds in it. By a theorem of
+Muller and Schupp, every such configuration graph has a decidable MSO theory.
 
 **Markings.** The *rank* of a configuration is the length of a shortest path from it to a final configuration, or $\infty$ if none exists, and $W$ is the set of configurations of finite rank. Let $\underline{a}$ be a
 marked copy of each label $a$. A *well-formed marking* of $G_{\mathcal{P}}$ is a graph on the same vertices, with labels in $A \cup \underline{A}$, obtained by replacing the label $a$ of some edges by $\underline{a}$, where only
-edges that decrease the rank by one may be marked and every configuration of $W$ keeps at least one marked outgoing edge. Marking every rank-decreasing edge gives the full marking $\widetilde{G}_{\mathcal{P}}$.
+edges that decrease the rank by one may be marked and every configuration of $W$ of rank at least $1$ keeps at least one marked outgoing edge. Section 2.1 of the source writes this clause for all of $W$, but its Section 3 calls the full marking well formed although a final configuration, of rank $0$, has no marked edge; the clause is read here for the configurations of positive rank, as Section 3 uses it. Marking every rank-decreasing edge gives the full marking $\widetilde{G}_{\mathcal{P}}$.
 
 **Theorem.** There is a pushdown automaton $\mathcal{P}$ such that every well-formed marking of $G_{\mathcal{P}}$, in particular the full marking $\widetilde{G}_{\mathcal{P}}$, has an undecidable MSO theory.
 
@@ -32,7 +32,7 @@ sub-strategy of one, gives a graph with an undecidable MSO theory. The winning s
 The stack alphabet of $\mathcal{P}$ consists of triples in $\{1, 2, 3\}^2 \times \{2\}$, and a stack encodes the three sums $(k_1, k_2, k_3)$ of its components, hence a pair of counters $(k_1 - k_3, k_2 - k_3)$; in its first mode
 $\mathcal{P}$ pushes any triple, which increments, decrements or keeps each counter. In its second mode it pops the stack through states $p_1, p_2, p_3$ at speeds that depend on the chosen component, so the marked
 edges toward these states, which indicate the fastest ways to a final configuration, reveal which of $k_1, k_2, k_3$ are equal. An MSO sentence can then test the counters for zero and simulate any two-counter machine,
-so it holds in the marked graph exactly when the machine halts. For arbitrary well-formed markings, the construction restricts attention to configurations with even sums, where equalities can still be detected.
+so it holds in the marked graph exactly when the machine halts. For arbitrary well-formed markings, the construction restricts attention to configurations with even sums, where equalities can still be detected. A good expansion links a page defining monadic second-order logic over edge-labelled graphs and the decidability of a structure's MSO theory (Section 2.2 of the source); the existing MSO pages are over words, infinite words and trees.
 
 ## Sources
 

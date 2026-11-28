@@ -10,7 +10,7 @@ $$
 N \to t, \qquad N \to \langle\,\rangle, \qquad N \to \langle N_1 N_2 \rangle ,
 $$
 
-with $t \in \Sigma$ and nonterminals $N, N_1, N_2$. A BFG generates the XML-style encodings of a [regular language](../../regular-languages/automata-and-expressions/kleene-s-theorem/is-regular-iff-exists-regex.md) of trees whose inner nodes have
+with $t \in \Sigma$ and nonterminals $N, N_1, N_2$. A BFG generates the XML-style encodings of a [regular language of trees](../../omega-automata-and-games/logic-and-tree-automata/bottom-up-finite-tree-automata.md) whose inner nodes have
 two children, and its language is a [visibly pushdown language](visibly-pushdown-automata.md) with $\langle$ as call and $\rangle$ as return
 symbol.
 
@@ -18,6 +18,8 @@ symbol.
 
 - [Context-free languages](../grammars-and-pushdown-automata/context-free-languages.md)
 - [Visibly pushdown automata and visibly pushdown languages](visibly-pushdown-automata.md)
+- [Bottom-up finite tree automata](../../omega-automata-and-games/logic-and-tree-automata/bottom-up-finite-tree-automata.md)
+
 
 ## Proof depends on
 

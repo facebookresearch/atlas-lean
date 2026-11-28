@@ -7,7 +7,7 @@ For the NP-complete problems bounded tiling and bounded Post correspondence, and
 2. *bounded tiling*: a tile set $T$ and an edge coloring $l\diamond t\diamond r\diamond b$ of the four sides of an $n\times n$ square, each side a list of $n$ colors, asking for a tiling of the square extending the coloring (Theorem 2), and *corridor tiling*, with only top and bottom colorings of length $n$ given and the height free (Corollary 1);
 3. *bounded PCP*: $a_1\#\cdots\#a_n\diamond b_1\#\cdots\#b_n\diamond \mathrm{bin}(K)$ with $1\le K\le n$ and the $a_i,b_i$ possibly empty words, asking for a nonempty index sequence of length at most $K$ that solves the correspondence instance (Theorem 3; the source writes "a sequence of $k\le K$ indices", and with the empty sequence allowed every instance would be positive).
 
-Each of these problems is decidable on single instances (NL-, NP- or PSPACE-complete respectively).
+Each of these problems is decidable on single instances: $L_{\mathrm{NL}}$ is NL-complete; $L_{\mathrm{NP}}$, bounded tiling and bounded PCP are NP-complete; $L_{\mathrm{PSPACE}}$ and corridor tiling are PSPACE-complete.
 
 ## Depends on
 
@@ -23,7 +23,7 @@ Each of these problems is decidable on single instances (NL-, NP- or PSPACE-comp
 
 ## Expansion
 
-Item 1: for a Turing machine $M$ the automaton accepting $\langle M\rangle\diamond \Sigma^*\diamond a^*$ meets $L_{\mathrm{NL}}$ iff $M$ accepts some word, and non-emptiness of recursively enumerable languages is undecidable. Item 2 reuses van Emde Boas's NP-hardness construction of bounded tiling from nondeterministic Turing machines: a regular set of colorings with the encoded initial configuration of $M$ on any input at the bottom, a fixed accepting configuration at the top and white sides of every length contains a tileable instance iff $M$ accepts some input. Item 3 reduces Post's correspondence problem: a regular language contains the given instance padded with dummy pairs together with every bound $K$, so that some member is positive iff the instance has a solution.
+Item 1: for a Turing machine $M$ the automaton accepting $\langle M\rangle\diamond \Sigma^*\diamond a^*$ meets $L_{\mathrm{NL}}$ iff $M$ accepts some word, and non-emptiness of recursively enumerable languages is undecidable. Item 2 reuses van Emde Boas's NP-hardness construction of bounded tiling from nondeterministic Turing machines: a regular set of colorings with the encoded initial configuration of $M$ on any input at the bottom, a fixed accepting configuration at the top and white sides of every length contains a tileable instance iff $M$ accepts some input. Item 3 reduces Post's correspondence problem: a regular language contains the given instance padded with copies of its last pair, together with every bound $K$, so that some member is positive iff the instance has a solution. A good expansion links pages for encoded nondeterministic Turing machines and the machine languages of item 1 with a fixed encoding, and for the source's string encodings of tiling and bounded PCP instances; the linked bounded PCP page decodes instances with the repository's bitstring encoding, not with the encoding of item 3.
 
 ## Sources
 
