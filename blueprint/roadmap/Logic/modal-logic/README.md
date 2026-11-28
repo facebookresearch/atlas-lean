@@ -24,3 +24,4 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [Action model logic](action-model-logic.md)
 - [Modal logics of model change](modal-logics-of-model-change/README.md)
 - [Quantified modal logics](quantified-modal-logics/README.md)
+- [Unification and admissibility in modal logics](unification-and-admissibility/README.md)
