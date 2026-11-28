@@ -10652,6 +10652,7 @@
   "Domains/Biology/StatisticalGenetics/SummaryImputation": {"to": "Biology/statistical-genetics", "title": "Imputation of association summary statistics"},
   "Domains/Biology/StatisticalGenetics/TransmissionTest": {"to": "Biology/statistical-genetics", "title": "Transmission disequilibrium test"},
   "Domains/Chemistry/Aqueous/Balances": {"to": "Chemistry/solutions-and-aqueous-equilibria", "title": "Charge balance, mass balance and the proton condition"},
+  "Domains/Chemistry/Bioreactors/DissolvedOxygen": {"to": "Chemistry/chemical-kinetics", "title": "Bioreactor balances"},
   "Domains/Chemistry/MineralProcessing/BondEnergy": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Mineral-processing balances"},
   "Domains/Chemistry/MineralProcessing/TwoProductFormula": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Mineral-processing balances"},
   "Domains/Chemistry/ParticleBalances/AggregationBreakage": {"to": "Chemistry/chemical-kinetics", "title": "Particle population balances"},
