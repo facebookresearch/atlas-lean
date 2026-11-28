@@ -26,9 +26,11 @@ namespace MathlibExt.Analysis.DilatedMultiplesPositiveMeasureErdosProblem1197Wan
 Source: T. F. Bloom, Erdős Problems, Problem #1197, https://www.erdosproblems.com/1197 (status
 DISPROVED (LEAN)). UnsolvedMath record UM-30007238 (`EP-1197`), dataset ulamai/UnsolvedMath v1.8.0.
 
-`E` is Lebesgue measurable (Borel measurable in Lean; the counterexample is open), its measure may
-be infinite, and `r · E = {r e : e ∈ E}`. Compared with the formal-conjectures statement
-`ErdosProblems/1197.lean` (equivalent; no code imported).
+`E` is Lebesgue measurable (Borel measurable in Lean), its measure may be infinite, and
+`r · E = {r e : e ∈ E}`. No set `E` containing an interval `(a, b)` with `0 < a < b` can be a
+counterexample, so no nonempty open set can: for every `x > 0`, once `n x (1/a - 1/b) > 1` the
+interval `(n x / b, n x / a)` contains an integer `r ≥ 1`, and then `n x / r ∈ (a, b) ⊆ E`. Compared
+with the formal-conjectures statement `ErdosProblems/1197.lean` (equivalent; no code imported).
 -/
 
 open MeasureTheory Filter
@@ -43,10 +45,13 @@ def dilatedMultiplesEventuallyHit : Prop :=
       ∃ r : ℕ, 1 ≤ r ∧ (n : ℝ) * x ∈ (r : ℝ) • E
 
 /--
-Resolved false: erdosproblems.com/1197 records a counterexample by ebarschkis, a variant of the
-Buczolich-Mauldin construction of an open set `E` and an interval `J` such that almost every `x ∈ J`
-has `x ∉ E / n` for all large `n`; the site lists the problem as disproved with a Lean proof
-(plby/lean-proofs, `Erdos1197.lean`). Source: T. F. Bloom, Erdős Problems, Problem #1197,
+Resolved false: erdosproblems.com/1197 records a counterexample by ebarschkis, built from a variant
+of the Buczolich-Mauldin construction: a measurable `E ⊆ (0, ∞)` of positive measure and a set of
+`x > 0` of positive measure such that each such `x` has infinitely many `n` with `n x ∉ r • E` for
+every integer `r ≥ 1`. Avoiding `E` itself, `x ∉ E / n` for all large `n`, is only the case `r = 1`
+and does not suffice, and no set containing an interval can be a counterexample (see the module
+note); the site lists the problem as disproved with a Lean proof (plby/lean-proofs,
+`Erdos1197.lean`). Source: T. F. Bloom, Erdős Problems, Problem #1197,
 https://www.erdosproblems.com/1197 (status DISPROVED (LEAN)); resolution: ebarschkis, negative
 solution in the erdosproblems.com/1197 discussion (a variant of the construction of Z. Buczolich and
 R. D. Mauldin, Mathematika (1999), 337-341); formal proof plby/lean-proofs,

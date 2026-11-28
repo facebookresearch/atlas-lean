@@ -49,13 +49,28 @@ noncomputable def combo {m : ℕ} (a c : Fin m → ℂ) (z : ℂ) : ℂ := ∑ i
 /-- The `L²(dμ)` norm. -/
 noncomputable def l2Norm (f : ℂ → ℂ) : ℝ := (∫ z, ‖f z‖ ^ 2 ∂fockMeasure) ^ (1 / 2 : ℝ)
 
-/-- `T_g` is bounded: `|∫ g f φ̄ dμ| ≤ C ‖f‖ ‖φ‖` for all finite combinations of coherent states. -/
+/-- `T_g` is bounded: `|∫ g f φ̄ dμ| ≤ C ‖f‖ ‖φ‖` for all finite combinations of coherent states.
+The integral is a Bochner integral, read as `0` when `g f φ̄` is not `μ`-integrable, so for an
+arbitrary `g` the inequality need not concern the classical form `⟨T_g f, φ⟩`. Under the
+admissibility hypothesis of `conjecture` (`g` measurable with `g k_a ∈ L²(dμ)` for every `a`), each
+such `g f` lies in `L²(dμ)`, so `g f φ̄` is integrable by the Cauchy–Schwarz inequality and the
+integral is the classical form `⟨T_g f, φ⟩ = ∫ g f φ̄ dμ`; the inequality then says that `T_g`
+extends from the span of the coherent states, which is dense in the Fock space, to a bounded
+operator. -/
 def ToeplitzBounded (g : ℂ → ℂ) : Prop :=
   ∃ C : ℝ, ∀ (m m' : ℕ) (a c : Fin m → ℂ) (b d : Fin m' → ℂ),
     ‖∫ z, g z * combo a c z * (starRingEnd ℂ) (combo b d z) ∂fockMeasure‖ ≤
       C * l2Norm (combo a c) * l2Norm (combo b d)
 
-/-- The heat transform `H_{1/4} g(z) = π^{-1} ∫ g(w) e^{-|z-w|²} dA(w)`. -/
+/-- The heat transform `H_{1/4} g(z) = π^{-1} ∫ g(w) e^{-|z-w|²} dA(w)`. The integral is a Bochner
+integral, read as `0` when `w ↦ g(w) e^{-|z-w|²}` is not integrable, so for an arbitrary `g` this is
+not the classical heat transform: for `g(w) = e^{|w|²}` and `z = 0` the integrand is identically
+`1`, its classical integral diverges, and the definition gives `0`. Under the admissibility
+hypothesis of `conjecture` (`g` measurable with `g k_a ∈ L²(dμ)` for every `a`), the integral
+converges absolutely for every `z` and has its classical meaning: as
+`|k_a(w)|² e^{-|w|²/2} = e^{-|w-a|²/2}`, the Cauchy–Schwarz inequality with `a = z` bounds
+`∫ |g(w)| e^{-|z-w|²} dA(w)` by `(∫ |g(w)|² e^{-|z-w|²/2} dA(w))^{1/2}` times
+`(∫ e^{-3|z-w|²/2} dA(w))^{1/2}`. -/
 noncomputable def heatTransform (g : ℂ → ℂ) (z : ℂ) : ℂ :=
   (Real.pi⁻¹ : ℂ) * ∫ w, g w * (Real.exp (-‖z - w‖ ^ 2) : ℂ)
 
