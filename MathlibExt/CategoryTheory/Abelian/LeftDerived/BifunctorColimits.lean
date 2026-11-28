@@ -229,6 +229,8 @@ theorem leftDerivedBifunctor_obj_preservesColimitsOfShape_of_projective
     (A : C₁) (n : ℕ)
     (hF : ∀ X : C₁, Projective X → PreservesColimitsOfShape J (F.obj X)) :
     PreservesColimitsOfShape J ((F.leftDerivedBifunctor n).obj A) := by
+  let _ : HasExactColimitsOfShape J D :=
+    HomologicalComplex.hasExactColimitsOfShape_of_colim_preservesHomology
   let P := projectiveResolution A
   let : ∀ i : ℕ, PreservesColimitsOfShape J (F.obj (P.complex.X i)) :=
     fun i => hF (P.complex.X i) (P.projective i)
