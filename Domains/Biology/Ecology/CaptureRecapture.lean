@@ -8,15 +8,35 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Fintype.Powerset
 public import MathlibExt.Probability.Distributions.Hypergeometric
 
 import Mathlib.Data.Nat.Choose.Vandermonde
+import MathlibExt.Data.Finset.PowersetCardOverlap
 
 /-!
 # Chapman's capture–recapture estimator
 
-The exact expectation is obtained by shifting the binomial convolution for the
-hypergeometric mass function and subtracting the term at index zero.
+Fix a marked set $A \subseteq \operatorname{Fin}(N)$ with $|A|=n_1$ and choose a second sample
+uniformly among all subsets of size $n_2 \le N$. The number of marked individuals in that sample
+has the hypergeometric mass at every $k \in \mathbb{N}$. For $k \le n_2$, count the subsets by
+choosing their marked and unmarked parts independently. For $k>n_2$ the event is empty;
+the unguarded binomial quotient with truncated natural subtraction can be nonzero in this range.
+The count includes empty populations and samples under the same conventions.
+
+For $n_1 \le N$ and $n_2 \le N$, the exact expectation of Chapman's estimator is obtained by
+shifting the binomial convolution for the hypergeometric mass function and subtracting the term at
+index zero.
+
+## References
+
+* D. G. Chapman, *Some properties of the hypergeometric distribution with applications to zoological
+  sample censuses*, University of California Publications in Statistics 1, no. 7 (1951), 131–160,
+  for the capture–recapture setting and estimator.
+* William Feller, *An Introduction to Probability Theory and Its Applications*, vol. I, 3rd ed.,
+  John Wiley & Sons (1968), §II.6, pp. 43–45, equation (6.1) and example (c), for the recapture law
+  and its counting argument. Feller's convention that binomial coefficients with negative lower
+  indices vanish corresponds here to explicitly assigning mass zero for $k>n_2$.
 -/
 
 @[expose] public section
@@ -24,6 +44,37 @@ hypergeometric mass function and subtracting the term at index zero.
 namespace WantedExt.Biology.Ecology.CaptureRecaptureWanted
 
 open Finset ProbabilityTheory
+
+/-- **The recapture count is hypergeometric.** Let a population `Fin N` contain a
+marked set `A` of size `n₁`, and let the second sample be a uniformly random subset of size
+`n₂ ≤ N`. For every `k : ℕ`, the proportion of `n₂`-subsets `S` with `#(S ∩ A) = k` equals
+`hypergeometricReal N n₁ n₂ k`, which is `C(n₁, k) C(N - n₁, n₂ - k) / C(N, n₂)` for `k ≤ n₂` and
+`0` for `k > n₂` (note that for `k > n₂`, natural-number subtraction would make the unguarded
+binomial quotient nonzero, whereas `hypergeometricReal` is zero outside `k ≤ n₂`).
+
+Sources: D. G. Chapman, "Some properties of the hypergeometric distribution with applications to
+zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160. -/
+public theorem card_filter_inter_eq {N n₁ n₂ : ℕ} (A : Finset (Fin N)) (hA : A.card = n₁)
+    (hn₂ : n₂ ≤ N) (k : ℕ) :
+    (((Finset.univ : Finset (Fin N)).powersetCard n₂).filter fun S => (S ∩ A).card = k).card /
+        (N.choose n₂ : ℝ) = hypergeometricReal N n₁ n₂ k := by
+  by_cases hk : k ≤ n₂
+  · have hden : (N.choose n₂ : ℝ) ≠ 0 := by
+      exact_mod_cast (Nat.choose_pos hn₂).ne'
+    rw [hypergeometricReal_of_le hk, div_left_inj₀ hden]
+    exact_mod_cast (by
+      simpa only [card_univ, Fintype.card_fin, hA] using
+        card_filter_powersetCard_inter_eq_choose (subset_univ A) hk)
+  · have hlt := Nat.lt_of_not_ge hk
+    have hEmpty : ((univ : Finset (Fin N)).powersetCard n₂).filter
+        (fun S => (S ∩ A).card = k) = ∅ := by
+      apply eq_empty_iff_forall_notMem.mpr
+      intro S hS
+      rw [mem_filter, mem_powersetCard] at hS
+      have hle : (S ∩ A).card ≤ S.card := card_le_card inter_subset_left
+      rw [hS.2, hS.1.2] at hle
+      exact hk hle
+    simp only [hEmpty, card_empty, Nat.cast_zero, zero_div, hypergeometricReal_of_lt hlt]
 
 /-- **Chapman's estimate.** The population-size estimate `(n₁ + 1)(n₂ + 1)/(m + 1) - 1`. -/
 noncomputable def chapman (n₁ n₂ m : ℕ) : ℝ :=
@@ -73,7 +124,7 @@ public theorem expectation_chapman {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤ N) (hn�
               ((n₁ + 1).choose (k + 1) : ℝ) := by
             apply (div_eq_iff hk0).2
             exact_mod_cast Nat.add_one_mul_choose_eq n₁ k
-          rw [hypergeometricReal, ite_eq_left hk']
+          rw [hypergeometricReal_of_le hk']
           calc
             _ = (((n₂ : ℝ) + 1) / N.choose n₂) *
                 ((((n₁ : ℝ) + 1) * n₁.choose k / ((k : ℝ) + 1)) *

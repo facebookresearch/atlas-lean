@@ -58,6 +58,14 @@ theorem hypergeometricReal_nonneg (N K n k : ℕ) : 0 ≤ hypergeometricReal N K
   unfold hypergeometricReal
   split_ifs <;> positivity
 
+/-- **Hypergeometric mass for an overlap at most the sample size.** For natural numbers
+$N, K, n, k$ with $k \le n$, the real-valued mass is
+$h_{N,K,n}(k) = \binom{K}{k}\binom{N-K}{n-k}/\binom{N}{n}$, with subtraction in $\mathbb N$
+and division in $\mathbb R$. -/
+theorem hypergeometricReal_of_le {N K n k : ℕ} (hk : k ≤ n) :
+    hypergeometricReal N K n k = (K.choose k * (N - K).choose (n - k) : ℝ) / N.choose n := by
+  simp only [hypergeometricReal, ite_eq_left hk]
+
 /-- The hypergeometric mass function vanishes above the number of draws. -/
 theorem hypergeometricReal_of_lt {N K n k : ℕ} (h : n < k) : hypergeometricReal N K n k = 0 := by
   simp [hypergeometricReal, not_le.2 h]

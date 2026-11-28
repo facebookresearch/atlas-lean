@@ -14,7 +14,7 @@ public import Mathlib.Logic.Embedding.Basic
 import Mathlib.Probability.Independence.Basic
 import Mathlib.Data.Fintype.CardEmbedding
 import Mathlib.MeasureTheory.Integral.Prod
-import Mathlib.Data.Finset.Powerset
+import MathlibExt.Data.Finset.PowersetCardOverlap
 
 /-!
 # Hoeffding's U-statistics: unbiasedness and the variance formula
@@ -371,64 +371,6 @@ private theorem covariance_overlap {α : Type*} [MeasurableSpace α]
   rw [hf, hg, ← he]
   exact covariance_shared_product _ _ hH
 
-open Finset in
-private theorem count_overlap {I : Type*} [DecidableEq I]
-    (U S : Finset I) (hSU : S ⊆ U) {m c : ℕ} (hSm : S.card = m) (hc : c ≤ m) :
-    ((U.powersetCard m).filter (fun T => (S ∩ T).card = c)).card =
-      m.choose c * (U.card - m).choose (m - c) := by
-  let P := (S.powersetCard c) ×ˢ ((U \ S).powersetCard (m - c))
-  have he : ((U.powersetCard m).filter (fun T => (S ∩ T).card = c)) =
-      P.image (fun p => p.1 ∪ p.2) := by
-    ext T
-    simp only [mem_filter, mem_powersetCard, mem_image, mem_product, P]
-    constructor
-    · rintro ⟨⟨hTU, hTm⟩, hST⟩
-      refine ⟨(S ∩ T, T \ S), ⟨⟨inter_subset_left, hST⟩, ?_⟩, ?_⟩
-      · refine ⟨?_, by rw [card_sdiff, hST, hTm]⟩
-        intro i hi
-        exact mem_sdiff.mpr ⟨hTU (mem_sdiff.mp hi).1, (mem_sdiff.mp hi).2⟩
-      · ext i
-        simp only [mem_union, mem_inter, mem_sdiff]
-        tauto
-    · rintro ⟨⟨A, B⟩, ⟨⟨hAS, hAc⟩, ⟨hBU, hBm⟩⟩, rfl⟩
-      have hd : Disjoint A B := disjoint_of_subset_left hAS
-        (disjoint_of_subset_right hBU disjoint_sdiff_self_right)
-      have hi : S ∩ (A ∪ B) = A := by
-        ext i
-        have hb : i ∈ B → i ∉ S := fun hi => (mem_sdiff.mp (hBU hi)).2
-        have ha : i ∈ A → i ∈ S := fun hi => hAS hi
-        simp only [mem_inter, mem_union]
-        tauto
-      refine ⟨⟨union_subset (hAS.trans hSU) (hBU.trans sdiff_subset), ?_⟩, ?_⟩
-      · rw [card_union_of_disjoint hd, hAc, hBm]
-        omega
-      · rw [hi, hAc]
-  have hinj : Set.InjOn (fun p : Finset I × Finset I => p.1 ∪ p.2) P := by
-    rintro ⟨A, B⟩ hp ⟨A', B'⟩ hp' heq
-    have hAS := (mem_powersetCard.mp (mem_product.mp hp).1).1
-    have hBS := (mem_powersetCard.mp (mem_product.mp hp).2).1
-    have hAS' := (mem_powersetCard.mp (mem_product.mp hp').1).1
-    have hBS' := (mem_powersetCard.mp (mem_product.mp hp').2).1
-    apply Prod.ext
-    · ext i
-      have hb : i ∈ B → i ∉ S := fun hi => (mem_sdiff.mp (hBS hi)).2
-      have hb' : i ∈ B' → i ∉ S := fun hi => (mem_sdiff.mp (hBS' hi)).2
-      have hm := congrArg (fun T => i ∈ T) heq
-      simp only [mem_union] at hm
-      have ha : i ∈ A → i ∈ S := fun hi => hAS hi
-      have ha' : i ∈ A' → i ∈ S := fun hi => hAS' hi
-      tauto
-    · ext i
-      have hb : i ∈ B → i ∉ S := fun hi => (mem_sdiff.mp (hBS hi)).2
-      have hb' : i ∈ B' → i ∉ S := fun hi => (mem_sdiff.mp (hBS' hi)).2
-      have hm := congrArg (fun T => i ∈ T) heq
-      simp only [mem_union] at hm
-      have ha : i ∈ A → i ∈ S := fun hi => hAS hi
-      have ha' : i ∈ A' → i ∈ S := fun hi => hAS' hi
-      tauto
-  rw [he, card_image_of_injOn hinj]
-  simp only [P, card_product, card_powersetCard, card_sdiff_of_subset hSU, hSm]
-
 private theorem count_embedding_range {m n : ℕ} (T : Finset (Fin n)) (hTm : T.card = m) :
     ((Finset.univ : Finset (Fin m ↪ Fin n)).filter
       (fun g => Finset.univ.map g = T)).card = m.factorial := by
@@ -489,14 +431,16 @@ private theorem sum_subset_overlaps {m n : ℕ} (S : Finset (Fin n)) (hSm : S.ca
   apply Finset.sum_congr rfl
   intro c hc
   have hm : c ≤ m := by have := Finset.mem_range.mp hc; omega
-  have he := count_overlap Finset.univ S (Finset.subset_univ _) hSm hm
+  have he : ((Finset.univ.powersetCard m).filter (fun T => (S ∩ T).card = c)).card =
+      m.choose c * (n - m).choose (m - c) := by
+    simpa only [Finset.inter_comm S, Finset.card_univ, Fintype.card_fin, hSm] using
+      Finset.card_filter_powersetCard_inter_eq_choose (Finset.subset_univ S) hm
   rw [show (∑ T ∈ ((Finset.univ : Finset (Fin n)).powersetCard m).filter
       (fun T => (S ∩ T).card = c), W (S ∩ T).card) =
       ∑ _T ∈ ((Finset.univ : Finset (Fin n)).powersetCard m).filter
         (fun T => (S ∩ T).card = c), W c from
     Finset.sum_congr rfl (fun T hT => congrArg W (Finset.mem_filter.mp hT).2)]
-  simp only [Finset.sum_const, he, nsmul_eq_mul, Nat.cast_mul, Finset.card_univ,
-    Fintype.card_fin]
+  simp only [Finset.sum_const, he, nsmul_eq_mul, Nat.cast_mul]
 
 private theorem sum_embedding_overlaps {m n : ℕ} (S : Finset (Fin n)) (hSm : S.card = m)
     (W : ℕ → ℝ) :
