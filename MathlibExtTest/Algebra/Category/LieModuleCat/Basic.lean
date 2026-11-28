@@ -52,12 +52,14 @@ example : (LieModuleCat.restrict (0 : Mat →ₗ⁅R⁆ Mat)).Linear R := inferI
 example : (⁅x, (y : adjoint)⁆ : adjoint) 0 0 = 1 := commutator_00
 
 example :
-    (⁅x, (y : LieModuleCat.restrictObj (0 : Mat →ₗ⁅R⁆ Mat) adjoint)⁆ :
-      LieModuleCat.restrictObj (0 : Mat →ₗ⁅R⁆ Mat) adjoint) 0 0 = 0 ∧
+    (@Bracket.bracket Mat
+      (LieModuleCat.restrictObj (0 : Mat →ₗ⁅R⁆ Mat) adjoint).carrier
+      (LieModuleCat.lieRingModule
+        (LieModuleCat.restrictObj (0 : Mat →ₗ⁅R⁆ Mat) adjoint)).toBracket x y) 0 0 = 0 ∧
         (⁅x, y⁆ : Mat) 0 0 = 1 := by
   constructor
-  · rw [LieModuleCat.restrictObj_lie]
-    simp
+  · simpa using congrArg (fun m : adjoint => m 0 0)
+      (LieModuleCat.restrictObj_lie (0 : Mat →ₗ⁅R⁆ Mat) adjoint x y)
   · exact commutator_00
 
 example : ((LieModuleCat.forget R Mat).map ((2 : R) • 𝟙 adjoint)).hom y 1 0 = 2 := by
