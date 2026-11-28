@@ -9,12 +9,13 @@ Present a [separation algebra](../abstract-separation-logic/separation-algebras.
 - *Cross-split*: if $a \oplus b = z$ and $c \oplus d = z$, there are $ac, ad, bc, bd$ with $ac \oplus ad = a$, $bc \oplus bd = b$, $ac \oplus bc = c$ and $ad \oplus bd = d$.
 - *Infinite splittability*: there is a function $\mathrm{split}$ with $\mathrm{split}\,x = (x_1, x_2)$ implying $x_1 \oplus x_2 = x$, and implying $x \oplus x = x$ whenever $x_1 \oplus x_1 = x_1$ or $x_2 \oplus x_2 = x_2$; a non-unit splits into two non-units.
 
-The relation $\preceq$ is a preorder, and it is antisymmetric exactly when the algebra is positive. Disjointness implies positivity, but not conversely: $(\mathbb{N}, +, 0)$ is positive and every $i > 0$ violates disjointness. Addition modulo $3$ on $\{0, 1, 2\}$ is a separation algebra that is not positive, since $1 + 2 = 0$.
+The relation $\preceq$ is reflexive and transitive, and it is a [partial order](../../../../Order/ordered-sets/partial-order.md) exactly when the algebra is positive. Disjointness implies positivity, but not conversely: $(\mathbb{N}, +, 0)$ is positive and every $i > 0$ violates disjointness. Addition modulo $3$ on $\{0, 1, 2\}$ is a separation algebra that is not positive, since $1 + 2 = 0$.
 
 Share models: fractional shares are positive and infinitely splittable, with $\mathrm{split}\,s = (s/2, s/2)$, but not disjoint, as $\tfrac12 \oplus \tfrac12 = 1$; counting shares are positive but not disjoint, as $(-1) \oplus (-1) = -2$; the named shares $(\mathcal{P}(\mathbb{N}), \uplus)$, disjoint union of sets of natural numbers, are disjoint and have cross-splits by intersection but are not infinitely splittable, a singleton having no split into two nonempty sets; and restricting named shares to the infinite subsets of $\mathbb{N}$ together with $\emptyset$ restores splittability, by alternating elements, but loses cross-split, since splitting $\mathbb{N}$ into primes and non-primes and into evens and odds would need the finite share $\{2\}$.
 
 ## Depends on
 
+- [Partially ordered set](../../../../Order/ordered-sets/partial-order.md)
 - [Separation algebras](../abstract-separation-logic/separation-algebras.md)
 - [Fractional and counting permission models](fractional-and-counting-permission-models.md)
 

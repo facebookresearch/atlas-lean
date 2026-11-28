@@ -14,7 +14,7 @@ $$i \star_1 j = \begin{cases} \text{undefined} & \text{if } i \ge 0 \text{ and }
 
 In each model only the write permission allows mutation and disposal, and any permission allows lookup.
 
-With a unit added, the first two become separation algebras of shares: *fractional shares* $[0, 1] \cap \mathbb{Q}$ under addition defined when the sum is at most $1$, with unit $0$; and *counting shares* $\mathbb{Z} \cup \{\bot\}$ with unit $\bot$, where integers $x, y$ join to $x + y$ exactly when ($x < 0$ or $y < 0$) and ($x + y \ge 0$ or both $x < 0$ and $y < 0$), the same definedness condition as $\star_1$. Both share models are positive and not disjoint ([positivity, disjointness and cross-split](positivity-disjointness-and-cross-split.md)).
+With a unit added, the first two become separation algebras of shares: *fractional shares* $[0, 1] \cap \mathbb{Q}$ under addition defined when the sum is at most $1$, with unit $0$; and *counting shares* $\mathbb{Z} \cup \{\bot\}$ with unit $\bot$, where integers $x, y$ join to $x + y$ exactly when ($x < 0$ or $y < 0$) and ($x + y \ge 0$ or both $x < 0$ and $y < 0$), the same definedness condition as $\star_1$.
 
 ## Depends on
 
@@ -26,7 +26,7 @@ None.
 
 ## Expansion
 
-Each write permission combines with nothing: $1 \star_2 q$ is undefined since $1 + q > 1$, and $0 \star_1 j$ is undefined both for $j \ge 0$ (two nonnegative arguments) and for $j < 0$ (a nonnegative argument and a negative sum); the same holds for $\star_3$. Commutativity is evident, and associativity in the partial sense is a case analysis on signs in which each defined side is a sum. The fractional scheme is Boyland's, as the permission-accounting paper says; the counting model mirrors permission counting in reader–writer protocols, and the combined model joins proliferation and divisibility of read permissions in one asymmetric model.
+Each write permission combines with nothing: $1 \star_2 q$ is undefined since $1 + q > 1$, and $0 \star_1 j$ is undefined both for $j \ge 0$ (two nonnegative arguments) and for $j < 0$ (a nonnegative argument and a negative sum); the same holds for $\star_3$. Commutativity is evident, and associativity in the partial sense is a case analysis on signs in which each defined side is a sum. The fractional permissions $(0, 1]$ and the counting permissions $\mathbb{Z}$ are the non-unit elements of these share models, which is how heaps over them become separation algebras ([permission algebras and heaps with permissions](permission-models.md)); the classification of the share models by positivity and disjointness is on [positivity, disjointness and cross-split](positivity-disjointness-and-cross-split.md). The fractional scheme is Boyland's, as the permission-accounting paper says; the counting model mirrors permission counting in reader–writer protocols, and the combined model joins proliferation and divisibility of read permissions in one asymmetric model.
 
 ## Sources
 

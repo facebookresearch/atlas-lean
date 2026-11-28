@@ -1,6 +1,6 @@
 # Operational locality and the frame rule
 
-Safety monotonicity, termination monotonicity and the frame property as the operational content of locality, their equivalence with soundness of the frame rule and with local actions, and the adaptation completeness of the frame rule for local predicate transformers.
+Safety monotonicity and the frame property as the operational content of locality, their equivalence with soundness of the frame rule for partial correctness and with local actions, termination monotonicity as the extra premise of the total-correctness frame rule, and the adaptation completeness of the frame rule for local predicate transformers.
 
 - [Safety monotonicity and the frame property](safety-monotonicity-and-the-frame-property.md)
 - [Heap-language commands are safety monotone, termination monotone and framing](heap-language-commands-satisfy-locality.md)

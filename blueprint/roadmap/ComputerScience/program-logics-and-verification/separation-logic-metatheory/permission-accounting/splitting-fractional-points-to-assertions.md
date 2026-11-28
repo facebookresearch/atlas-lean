@@ -10,7 +10,7 @@ $$E \overset{q}{\mapsto} F \ast E \overset{q'}{\mapsto} F' \implies F = F' \wedg
 
 where $F = F'$ means that both expressions have the same value in the current store.
 
-Consequently $\ast$ no longer implies that the two heaps have disjoint domains: $E \overset{1/2}{\mapsto} F \ast E \overset{1/2}{\mapsto} F$ holds of the one-cell heap that holds the value of $F$ at the address $E$ with permission $1$. An inductive predicate obtained by decorating every points-to of a tree predicate with the same fraction $z$ still satisfies $\mathrm{ztree}\,(z + z') \iff \mathrm{ztree}\,z \ast \mathrm{ztree}\,z'$, but the two halves may describe overlapping structures, so such predicates need not describe disjoint substructures.
+Consequently $\ast$ no longer implies that the two heaps have disjoint domains: $E \overset{1/2}{\mapsto} F \ast E \overset{1/2}{\mapsto} F$ holds of the one-cell heap that holds the value of $F$ at the address $E$ with permission $1$. For the tree predicate obtained by decorating every points-to of the source's tree predicate with the same fraction $z$, the law $\mathrm{ztree}\,(z + z')\,t\,\tau \iff \mathrm{ztree}\,z\,t\,\tau \ast \mathrm{ztree}\,z'\,t\,\tau$ holds, with the same root $t$ and the same abstract tree $\tau$ in all three assertions; but the two halves may describe overlapping structures, so such predicates need not describe disjoint substructures.
 
 ## Depends on
 

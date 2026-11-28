@@ -15,13 +15,14 @@ and $\varphi_{F(f),f} = \{(\{\sigma\}, f(\sigma)) : F_f(\sigma)\}$ is a small [c
 
 ## Proof depends on
 
+- [Well-founded induction](../../../../Order/ordered-sets/well-founded-induction.md)
 - [Footprints are exactly the essential states of complete specifications](essentiality-of-footprints.md)
 - [Footprints of local functions](footprints-of-local-functions.md)
 - [Precise predicates distribute separating conjunction over intersections](../abstract-separation-logic/precise-predicates-distribute-over-meets.md)
 
 ## Expansion
 
-The finite-heap models are well-founded: in the plain heap model disposal of $l$ has the small specification $\{(\{l \mapsto v : v \in \mathit{Val}\}, \{u_H\})\}$, a non-canonical form of $\{(\{l \mapsto v\}, \{u_H\}) : v \in \mathit{Val}\}$. Heaps with fractional permissions are not well-founded, since a permission can be halved indefinitely. Induct along $\prec$, assuming $f(\sigma') = L_{F(f),f}(\sigma')$ for all $\sigma' \prec \sigma$. If $\sigma$ is a footprint, the term $\{u\} \ast f(\sigma)$ occurs in the meet defining $L_{F(f),f}(\sigma)$, so $L_{F(f),f}(\sigma) \sqsubseteq f(\sigma)$, and locality gives the reverse. Otherwise $f(\sigma) = L_f(\sigma)$; substituting the hypothesis for each $f(\sigma')$ and distributing $\{\sigma - \sigma'\} \ast (\cdot)$ over the inner meets, which is allowed because singletons are precise and $\{\sigma\} \ast \top = \top$ covers empty meets, rewrites $L_f(\sigma)$ as the meet over footprints $\sigma'' \prec \sigma$, which equals $L_{F(f),f}(\sigma)$ because $\sigma$ itself is not a footprint. The basis characterization of completeness then makes $\varphi_{F(f),f}$ complete, and essentiality makes its domain least.
+Ordinary finite heaps with disjoint union are well-founded: in the plain heap model disposal of $l$ has the small specification $\{(\{l \mapsto v : v \in \mathit{Val}\}, \{u_H\})\}$, a non-canonical form of $\{(\{l \mapsto v\}, \{u_H\}) : v \in \mathit{Val}\}$. Heaps with fractional permissions are not well-founded, since a permission can be halved indefinitely. Induct along $\prec$, assuming $f(\sigma') = L_{F(f),f}(\sigma')$ for all $\sigma' \prec \sigma$. If $\sigma$ is a footprint, the term $\{u\} \ast f(\sigma)$ occurs in the meet defining $L_{F(f),f}(\sigma)$, so $L_{F(f),f}(\sigma) \sqsubseteq f(\sigma)$, and locality gives the reverse. Otherwise $f(\sigma) = L_f(\sigma)$; substituting the hypothesis for each $f(\sigma')$ and distributing $\{\sigma - \sigma'\} \ast (\cdot)$ over the inner meets, which is allowed because singletons are precise and $\{\sigma\} \ast \top = \top$ covers empty meets, rewrites $L_f(\sigma)$ as the meet over footprints $\sigma'' \prec \sigma$, which equals $L_{F(f),f}(\sigma)$ because $\sigma$ itself is not a footprint. The basis characterization of completeness then makes $\varphi_{F(f),f}$ complete, and essentiality makes its domain least.
 
 ## Sources
 
