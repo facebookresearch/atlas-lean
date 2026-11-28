@@ -25,9 +25,11 @@ import Mathlib.Tactic.SplitIfs
 
 Cooper (1990, Section 4) showed that deciding whether a variable of a Bayesian
 network is true with positive probability is NP-hard, by reducing SAT: one fair
-root per variable, a deterministic clause component built from binary OR nodes,
-and a conjunctive output joined by small AND tables give a network whose output
-is true with positive probability exactly on the satisfiable formulas.
+root per variable, a deterministic clause component, and a conjunctive output
+joined by small AND tables give a network whose output is true with positive
+probability exactly on the satisfiable formulas. In this module each clause
+component is a chain of binary OR nodes that starts at a constant-false node, so
+the component of an empty clause is that node alone.
 
 Networks travel as rational Boolean networks (`RatNet`: parent lists and
 numerator/denominator tables) with a unary bit-string encoding in the style of
@@ -59,15 +61,21 @@ open Convexity Cslib.CookLevin Cslib.MachineLearning.GraphicalModels
 /-! ### Rational Boolean networks and the decode bridge -/
 
 /-- **Node of a rational Boolean network.** A raw pair of lists: the parent list and the table,
-given as rows `(u, (num, den))`, where `u` lists the parents' values in the order of the parent
-list. In general `num / den` is a rational table value; it is the probability
-`P(node = true | u)` only in a well-formed row (`RatNode.WellFormed`: `0 < den` and
-`num ≤ den`). A parentless node with the row `([], 2, 1)` has table entry `2`. -/
+given as rows `(u, (num, den))`, where the key `u` is read as the parents' values in the order of
+the parent list; a raw key need not have that length. Each row stores the rational value
+`num / den`. In a well-formed node (`RatNode.WellFormed`), every assignment to the listed parents
+has exactly one matching row, and that row's value is the probability `P(node = true | u)`. A
+row alone does not make its value that probability: in the table `[([], 0, 1), ([], 1, 1)]`
+both rows have `0 < den` and `num ≤ den`, but `RatNode.prob` reads only the first. The
+single-row table `[([], 2, 1)]` of a parentless node has table entry `2`. -/
 abbrev RatNode := List ℕ × List (List Bool × ℕ × ℕ)
 
 /-- **Rational Boolean network.** A raw list of nodes: node `k` is the `k`-th entry and the output
-node is the last one, so the empty network has no output node. The nodes are in topological order
-(every parent of node `k` below `k`) only in a well-formed network (`RatNet.WellFormed`). -/
+node is the last one, so the empty network has no output node. Well-formedness
+(`RatNet.WellFormed`) guarantees that each listed parent of node `k` is below `k`, so the nodes
+are in topological order; the raw list type does not require this. Topological order alone does
+not make a network well formed: the only node of `[([], [])]` has no parents and no rows, where
+one row is required. -/
 abbrev RatNet := List RatNode
 
 /-- **Well-formed node.** Node `k` has distinct parents below `k`, exactly one row for each
@@ -82,9 +90,11 @@ formed. -/
 def RatNet.WellFormed (r : RatNet) : Prop :=
   r ≠ [] ∧ ∀ k (hk : k < r.length), RatNode.WellFormed k r[k]
 
-/-- **Table entry.** The rational `num / den` of the first row with parent values `u`, and `0`
-when there is none. It is the probability `P(node = true | u)` only for a well-formed node or
-network; for the parentless row `([], 2, 1)` it is `2`. -/
+/-- **Table entry.** The stored value `num / den` of the first row whose key is `u`, and `0` when
+no row has key `u`; a later row with the same key is never read. Well-formedness
+(`RatNode.WellFormed`) guarantees that each assignment `u` to the listed parents matches exactly
+one row, so the entry is then the probability `P(node = true | u)`. For the single-row table
+`[([], 2, 1)]` of a parentless node the entry at `[]` is `2`. -/
 def RatNode.prob (v : RatNode) (u : List Bool) : ℚ :=
   match v.2.find? (fun row => row.1 == u) with
   | some row => (row.2.1 : ℚ) / row.2.2
@@ -125,9 +135,9 @@ noncomputable def bernoulliQ (q : ℚ) : StdSimplex ℝ Bool :=
 /-- **The decoded network as an Atlas `BayesNet` over `ℝ`.** Node `k` has the parent set
 `r.pa k`. Given values `y` of that set, the parent-value list `r.paVals k y` is formed from the
 full listed parent list, in order, writing `false` at listed indices excluded from the parent set;
-node `k` then has the Bernoulli distribution with `P(true) = (r.get k).prob (r.paVals k y)`, the
-first matching row's `num / den` or `0` when no row matches, clamped to `[0, 1]` (which changes
-nothing on a well-formed network). -/
+node `k` then has the Bernoulli distribution with `P(true) = max 0 (min 1 p)`, where
+`p = (r.get k).prob (r.paVals k y)` is the first matching row's `num / den`, or `0` when no row
+matches. The clamp changes nothing on a well-formed network. -/
 noncomputable def RatNet.toBayesNet (r : RatNet) : BayesNet Bool r.length where
   pa := r.pa
   cpt k y := bernoulliQ ((r.get k).prob (r.paVals k y))
@@ -149,8 +159,9 @@ def unary (k : ℕ) : List Bool :=
   List.replicate k true ++ [false]
 
 /-- **Code of a row.** The number of parent values in unary (`k` ones then a zero), the values as
-bits, then `num` and `den` in unary. The row is raw: `num / den` is a rational table value, a
-probability only in a well-formed row. -/
+bits, then `num` and `den` in unary. The row is raw: the code records its stored rational value
+`num / den` as it is; whether that value is a conditional probability depends on the whole node
+(`RatNode.WellFormed`), not on the row alone. -/
 def encodeRow (row : List Bool × ℕ × ℕ) : List Bool :=
   unary row.1.length ++ row.1 ++ unary row.2.1 ++ unary row.2.2
 
@@ -160,8 +171,9 @@ def encodeRatNode (v : RatNode) : List Bool :=
   unary v.1.length ++ v.1.flatMap unary ++ unary v.2.length ++ v.2.flatMap encodeRow
 
 /-- **Code of a network.** The number of nodes in unary (`k` ones then a zero), then the nodes
-from the last (the output) to the first: the order in which a machine that creates the nodes in
-index order pushes them. -/
+from the last (the output) to the first. A machine that creates the nodes in index order and
+prepends each node's code to its output (as `ESt.push` does in the emitter) leaves them in this
+order: it is the order in which that output is read, not the order of the pushes. -/
 def encodeRatNet (r : RatNet) : List Bool :=
   unary r.length ++ r.reverse.flatMap encodeRatNode
 
@@ -238,9 +250,10 @@ structure CoopSt where
   /-- The current output node of the AND chain. -/
   acc : ℕ
 
-/-- **Root of a variable.** The root in the first pair of `s.roots` whose variable is `x`
-(`List.lookup`), or, when there is none, a fresh root node appended now and recorded for `x`.
-The definition takes an arbitrary state. -/
+/-- **Root of a variable.** The index stored in the first pair of `s.roots` whose variable is `x`
+(`List.lookup`), with the state unchanged; when there is none, the index of a fresh root node
+appended now and recorded for `x`. The definition takes an arbitrary state, in which a stored
+index need not name a root node. -/
 def coopRoot (x : ℕ) (s : CoopSt) : CoopSt × ℕ :=
   match List.lookup x s.roots with
   | some v => (s, v)
@@ -1543,10 +1556,13 @@ theorem eval_coopSt_acc (φ : CNF) (σ : ℕ → Bool) :
   rw [List.all_reverse] at hmain
   exact hmain
 
-/-- **Reachable-state shape**: root nodes are exactly the registered roots (each
-variable and index used at most once), and every non-root node's table has all
-denominators `1`. Denominator `1` alone does not make a table deterministic: that also
-needs `num ≤ den`, which this predicate does not ask. -/
+/-- **Reachable-state shape**: every root node is registered (each index `k` with
+`s.nodes[k] = rootNode` occurs in some pair `(x, k)` of `s.roots`), no variable and no
+registered index occurs twice in `s.roots`, and every node other than `rootNode` has all
+denominators `1`. The converse is not asked: a registered index need not name a root node,
+or any node; for constructed states it comes from `CoopSt.Good.roots_ok`. Denominator `1`
+alone does not make a table deterministic: that also needs `num ≤ den`, which this predicate
+does not ask. -/
 def CoopSt.WellShaped (s : CoopSt) : Prop :=
   (∀ k (hk : k < s.nodes.length), s.nodes[k] = rootNode ∨
     ∀ row ∈ (s.nodes[k]).2, row.2.2 = 1) ∧
