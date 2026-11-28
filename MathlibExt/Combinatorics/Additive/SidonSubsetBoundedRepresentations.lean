@@ -214,7 +214,8 @@ private lemma exists_sidon_of_representation_bound {A : Finset ℕ} {k : ℕ}
   obtain ⟨S, hSA, havoids, hsize⟩ := exists_avoiding_supports A E₃ E₄ d
     (fun _ he => (mem_filter.mp he).2) (fun _ he => (mem_filter.mp he).2)
   refine ⟨S, hSA, ?_, ?_⟩
-  · intro a ha b hb c hc v hv hsum
+  · apply Set.isSidon_iff.mpr
+    intro a ha b hb c hc v hv hsum
     by_contra h
     -- If the two sides shared any entry, cancellation would make the collision trivial.
     have hac : a ≠ c := fun e => h (Or.inl ⟨e, by omega⟩)

@@ -9,17 +9,42 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Additive.SidonSubsetBoundedRepresentations
+import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 
 /-! # Tests for Sidon subsets with a bounded representation count -/
 
-open AdditiveCombinatorics Filter Finset
+open AdditiveCombinatorics Finset
 open MathlibExt.NumberTheory.SidonSubsetBoundedRepresentationsErdosProblem772Wanted
 
 -- Both orders of 0 + 2 and the doubled summand 1 + 1 are counted.
 example : orderedRepresentationCount (↑({0, 1, 2} : Finset ℕ) : Set ℕ) 2 = 3 := by
   rw [orderedRepresentationCount_coe_finset]
   decide
+
+private lemma progression_not_sidon : ¬ (↑({0, 1, 2} : Finset ℕ) : Set ℕ).IsSidon := by
+  intro hsidon
+  rcases Set.isSidon_iff.mp hsidon 0 (by decide) 2 (by decide) 1 (by decide) 1 (by decide)
+    (by decide) with h | h
+  all_goals exact (by decide : (0 : ℕ) ≠ 1) h.1
+
+private lemma four_terms_not_sidon : ¬ (↑({0, 1, 4, 5} : Finset ℕ) : Set ℕ).IsSidon := by
+  intro hsidon
+  rcases Set.isSidon_iff.mp hsidon 0 (by decide) 5 (by decide) 1 (by decide) 4 (by decide)
+    (by decide) with h | h
+  · exact (by decide : (0 : ℕ) ≠ 1) h.1
+  · exact (by decide : (0 : ℕ) ≠ 4) h.1
+
+-- An independent witness for the quantitative bound at n = k = 3.
+example : ∃ S ⊆ ({0, 1, 2} : Finset ℕ), (S : Set ℕ).IsSidon ∧
+    (3 : ℝ) ^ ((2 : ℝ) / 3) / (8 * 3) ≤ S.card := by
+  refine ⟨{0}, by decide, Set.isSidon_iff.mpr ?_, ?_⟩
+  · simp
+  · simp only [card_singleton, Nat.cast_one]
+    apply (div_le_iff₀ (by norm_num)).2
+    calc
+      _ ≤ (3 : ℝ) ^ (1 : ℝ) := Real.rpow_le_rpow_of_exponent_le (by norm_num) (by norm_num)
+      _ ≤ _ := by norm_num
 
 -- For a fixed sum, the second summand is determined by the first.
 private lemma reps_le_card (A : Finset ℕ) (m : ℕ) :
@@ -44,25 +69,14 @@ example : ∃ S ⊆ ({0, 1, 2} : Finset ℕ), 0 < S.card ∧ S ≠ {0, 1, 2} := 
   obtain ⟨S, hSA, hsidon, hpos⟩ := quantitative_nonempty (A := {0, 1, 2}) (by decide)
   refine ⟨S, hSA, hpos, ?_⟩
   rintro rfl
-  rcases hsidon 0 (by decide) 2 (by decide) 1 (by decide) 1 (by decide) (by decide) with h | h
-  all_goals exact (by decide : (0 : ℕ) ≠ 1) h.1
+  exact progression_not_sidon hsidon
 
 -- The full set also cannot survive a collision between four distinct summands.
 example : ∃ S ⊆ ({0, 1, 4, 5} : Finset ℕ), 0 < S.card ∧ S ≠ {0, 1, 4, 5} := by
   obtain ⟨S, hSA, hsidon, hpos⟩ := quantitative_nonempty (A := {0, 1, 4, 5}) (by decide)
   refine ⟨S, hSA, hpos, ?_⟩
   rintro rfl
-  rcases hsidon 0 (by decide) 5 (by decide) 1 (by decide) 4 (by decide) (by decide) with h | h
-  · exact (by decide : (0 : ℕ) ≠ 1) h.1
-  · exact (by decide : (0 : ℕ) ≠ 4) h.1
+  exact four_terms_not_sidon hsidon
 
--- The asymptotic corollary supplies one threshold for every ambient set of size n.
-example : ∀ᶠ n : ℕ in atTop, ∀ A : Finset ℕ, A.card = n →
-    (∀ m, orderedRepresentationCount (A : Set ℕ) m ≤ 3) →
-    ∃ S ⊆ A, Real.sqrt n ≤ S.card ∧ ∀ a ∈ S, ∀ b ∈ S, ∀ c ∈ S,
-      a + c = b + b → a = b ∧ c = b := by
-  filter_upwards [sidonSubsetBeyondSqrt_holds 3 (by decide) 1] with n hn A hA hrep
-  obtain ⟨S, hSA, hsidon, hcard⟩ := hn A hA hrep
-  refine ⟨S, hSA, by simpa using hcard, ?_⟩
-  intro a ha b hb c hc hsum
-  exact (hsidon a ha c hc b hb b hb hsum).elim id id
+-- The corollary proves the named proposition without restating its body.
+example : sidonSubsetBeyondSqrt := sidonSubsetBeyondSqrt_holds
