@@ -21,6 +21,7 @@ public import MathlibExt.Combinatorics.Enumerative.AlternatingWeightedCentralBin
 public import MathlibExt.Combinatorics.Enumerative.CatalanBernstein
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 public import MathlibExt.Combinatorics.Enumerative.CosinePowerIntegral
+public import MathlibExt.Combinatorics.Enumerative.OddCatalanBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.ParityWeightedBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.TouchardCatalanIdentity
 public import MathlibExt.Combinatorics.KnuthEvenBinomialReciprocal
@@ -286,17 +287,6 @@ Sums*, INTEGERS 26 (2026), Article A19, Proposition 1 (`integers-2026-A19-prop-1
 public theorem_wanted sum_choose_odd_div_two_mul_add_one (n : ℕ) :
     ∑ k ∈ Icc 1 ((n + 1) / 2), (n.choose (2 * k - 1) : ℚ) / (2 * k + 1) =
       2 ^ (n + 1) / (n + 2) - 2 ^ n / (n + 1)
-
-/-- **Odd-index binomial sum of Catalan numbers.** Write $C_m = \binom{2m}{m}/(m+1)$ for the
-$m$-th Catalan number. For every natural number $n$,
-$$\sum_{k=1}^{\lceil n/2 \rceil} \binom{n}{2k-1} \frac{2^n}{2^{2k}} C_k =
-\frac{1}{2} C_{n+2} - C_{n+1}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 1 (`integers-2026-A19-prop-1`). -/
-public theorem_wanted sum_choose_odd_two_pow_mul_catalan (n : ℕ) :
-    ∑ k ∈ Icc 1 ((n + 1) / 2), (n.choose (2 * k - 1) : ℚ) * 2 ^ n / 2 ^ (2 * k) * catalan k =
-      catalan (n + 2) / 2 - catalan (n + 1)
 
 /-- **Alternating binomial sum of $2^{k+m}/(k+m+1)$.** For all natural numbers $m$ and $n$, the
 rational number $S = \sum_{k=0}^{n} (-1)^k \binom{n}{k} \frac{2^{k+m}}{k+m+1}$ satisfies
