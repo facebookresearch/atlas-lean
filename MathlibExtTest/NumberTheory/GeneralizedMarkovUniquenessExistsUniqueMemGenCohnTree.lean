@@ -58,16 +58,39 @@ example : upperRightEntries (genCohnPath 0 classicalRoot [false, false]) = (1, 5
 example : upperRightEntries (genCohnPath 0 classicalRoot [false, true]) = (2, 5, 1) := by decide
 
 -- Compute the matrix and numerical moves independently on the asymmetric triple $(1,5,2)$.
-example : upperRightEntries (genCohnStep 0 false (genCohnPath 0 classicalRoot [false, false])) =
-    (1, 13, 5) ∧ genMarkovVieta 0 false (1, 5, 2) = (1, 13, 5) := by decide
+private theorem left_step_calculation :
+    upperRightEntries (genCohnStep 0 false (genCohnPath 0 classicalRoot [false, false])) =
+      (1, 13, 5) ∧ genMarkovVieta 0 false (1, 5, 2) = (1, 13, 5) := by decide
 
-example : upperRightEntries (genCohnStep 0 true (genCohnPath 0 classicalRoot [false, false])) =
-    (5, 29, 2) ∧ genMarkovVieta 0 true (1, 5, 2) = (5, 29, 2) := by decide
+private theorem right_step_calculation :
+    upperRightEntries (genCohnStep 0 true (genCohnPath 0 classicalRoot [false, false])) =
+      (5, 29, 2) ∧ genMarkovVieta 0 true (1, 5, 2) = (5, 29, 2) := by decide
 
 -- A client needs only the numerical triple to get a matrix lift.
 example : ∃ P Q R w, IsGenCohnTriple 0 P Q R 1 1 1 ∧
     (let T := genCohnPath 0 (P, Q, R) w
      IsGenCohnTriple 0 T.1 T.2.1 T.2.2 1 1 1) :=
   cohnTriple_reachable.1 1 1 1 (isGenMarkovTriple_one_one_one 0) le_rfl le_rfl
+
+-- Lift the numerical triple, then use both Vieta directions on the certified endpoint.
+example : ∃ P Q R w, IsGenCohnTriple 0 P Q R 1 1 1 ∧
+    (let T := genCohnPath 0 (P, Q, R) w
+     IsGenCohnTriple 0 T.1 T.2.1 T.2.2 1 5 2 ∧
+       upperRightEntries (genCohnStep 0 false T) = (1, 13, 5) ∧
+       upperRightEntries (genCohnStep 0 true T) = (5, 29, 2)) := by
+  have hMarkov : IsGenMarkovTriple 0 1 5 2 := ⟨by decide, by decide, by decide, by decide⟩
+  obtain ⟨P, Q, R, w, hRoot, hLift⟩ := cohnTriple_reachable.1 1 5 2 hMarkov (by decide) (by decide)
+  let T := genCohnPath 0 (P, Q, R) w
+  have hEntries (d : Bool) :
+      upperRightEntries (genCohnStep 0 d T) =
+        (↑(genMarkovVieta 0 d (1, 5, 2)).1, ↑(genMarkovVieta 0 d (1, 5, 2)).2.1,
+          ↑(genMarkovVieta 0 d (1, 5, 2)).2.2) := by
+    obtain ⟨h₁, h₂, h₃⟩ := cohnTriple_reachable.2 T.1 T.2.1 T.2.2 1 5 2 d hLift
+    exact Prod.ext h₁ (Prod.ext h₂ h₃)
+  refine ⟨P, Q, R, w, hRoot, hLift, ?_, ?_⟩
+  · rw [hEntries false, left_step_calculation.2]
+    decide
+  · rw [hEntries true, right_step_calculation.2]
+    decide
 
 end MathlibExtTest.NumberTheory.GeneralizedMarkovUniquenessExistsUniqueMemGenCohnTree
