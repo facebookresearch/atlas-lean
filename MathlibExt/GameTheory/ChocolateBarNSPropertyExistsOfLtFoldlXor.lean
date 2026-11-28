@@ -28,7 +28,9 @@ private theorem foldl_xor_cons (a : ℕ) (l : List ℕ) :
   have h : l.foldl (· ^^^ ·) (a ^^^ 0) = a ^^^ l.foldl (· ^^^ ·) 0 := List.foldl_assoc
   rwa [Nat.xor_zero] at h
 
-private theorem foldl_xor_update {m : ℕ} (x : Fin m → ℕ) (i : Fin m) (d : ℕ) :
+/-- **Change one coordinate of a nim-sum by an XOR mask.** Replacing `x i` by `x i ^^^ d`
+XORs the nim-sum of all coordinates with the same mask `d`. -/
+public theorem foldl_xor_update {m : ℕ} (x : Fin m → ℕ) (i : Fin m) (d : ℕ) :
     (List.ofFn (Function.update x i (x i ^^^ d))).foldl (· ^^^ ·) 0 =
       (List.ofFn x).foldl (· ^^^ ·) 0 ^^^ d := by
   induction m with

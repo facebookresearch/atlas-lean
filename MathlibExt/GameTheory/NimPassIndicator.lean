@@ -38,6 +38,23 @@ Article G3, Lemma 10 and Corollary 2 (the function `F`). -/
 public def nimPassIndicator {s : ℕ} (m x : Fin s → ℕ) : ℕ :=
   if ∃ j, m j ≤ x j then 1 else 0
 
+/-- **When a pile reaches its pass threshold.** The pass indicator is one exactly when
+at least one pile has reached its threshold. -/
+public theorem nimPassIndicator_eq_one_iff {s : ℕ} {m x : Fin s → ℕ} :
+    nimPassIndicator m x = 1 ↔ ∃ j, m j ≤ x j := by
+  by_cases h : ∃ j, m j ≤ x j <;> simp [nimPassIndicator, h]
+
+/-- **When every pile is below its pass threshold.** The pass indicator is zero exactly when
+all piles are strictly below their thresholds. -/
+public theorem nimPassIndicator_eq_zero_iff {s : ℕ} {m x : Fin s → ℕ} :
+    nimPassIndicator m x = 0 ↔ ∀ j, x j < m j := by
+  by_cases h : ∃ j, m j ≤ x j
+  · obtain ⟨j, hj⟩ := h
+    simp [nimPassIndicator, show ∃ k, m k ≤ x k from ⟨j, hj⟩, show ¬ ∀ k, x k < m k from
+      fun hall ↦ (hall j).not_ge hj]
+  · have hall : ∀ j, x j < m j := fun j ↦ Nat.lt_of_not_ge (fun hj ↦ h ⟨j, hj⟩)
+    simp [nimPassIndicator, h, hall]
+
 /-- **Sections of the Nim pass indicator with the NS property.** Let $s \in \mathbb{N}$ and
 $m \in \mathbb{N}^s$ with $m_i > 0$ for every $i < s$, and let $F : \mathbb{N}^s \to \mathbb{N}$ be
 the pass indicator of $m$: $F(x) = 1$ if $m_j \le x_j$ for some $j$, and $F(x) = 0$ otherwise.
