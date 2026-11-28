@@ -7,3 +7,4 @@ Stochastic and game-theoretic models of evolution and of populations inside host
 - [Within-host, microbial and prebiotic population models](within-host-microbial-and-prebiotic-models/README.md)
 - [Adaptive dynamics in fragmented populations](adaptive-dynamics-in-fragmented-populations/README.md)
 - [Cell and tumour populations](cell-and-tumour-populations/README.md)
+- [Ecological, stochastic and evolutionary population models](ecological-stochastic-and-evolutionary-models/README.md)

@@ -1,0 +1,25 @@
+# Ecological interaction models
+
+Deterministic models of predation, competition and resource use: predator–prey models with fear, refuge, additional food or slow–fast structure, Lotka–Volterra and phytoplankton competition, chemostats, Allee effects, and dispersal between patches and along streams.
+
+- [Additional-food biocontrol models](additional-food-biocontrol-models/README.md)
+- [Additional-food predator–pest models](additional-food-predator-pest-models/README.md)
+- [Allee dynamics in gonotrophic cycle mosquito models](allee-dynamics-in-gonotrophic-cycle-mosquito-models/README.md)
+- [Allee fear lotka volterra competition](allee-fear-lotka-volterra-competition/README.md)
+- [Allelopathic phytoplankton competition with fear](allelopathic-phytoplankton-competition-with-fear/README.md)
+- [Almost periodic competitive metapopulations](almost-periodic-competitive-metapopulations/README.md)
+- [Aphid boom bust models](aphid-boom-bust-models/README.md)
+- [Blow up in modified leslie gower predator prey models](blow-up-in-modified-leslie-gower-predator-prey-models/README.md)
+- [Canards in slow–fast predator–prey models](canards-in-slow-fast-predator-prey-models/README.md)
+- [Chemostat with biofilm driven dilution](chemostat-with-biofilm-driven-dilution/README.md)
+- [Competition on stream patch networks](competition-on-stream-patch-networks/README.md)
+- [Dispersal and total population size in two patch models](dispersal-and-total-population-size-in-two-patch-models/README.md)
+- [Dual fear in eco-epidemiological models](dual-fear-in-eco-epidemiological-models/README.md)
+- [Fear, refuge and additional food in predator–prey models](fear-refuge-and-additional-food-in-predator-prey-models/README.md)
+- [Inflation in two-patch periodic sink environments](inflation-in-two-patch-periodic-sink-environments/README.md)
+- [Light spectrum niche differentiation of phytoplankton](light-spectrum-niche-differentiation-of-phytoplankton/README.md)
+- [Lotka–Volterra competition with fear](lotka-volterra-competition-with-fear/README.md)
+- [Partial migration with Allee effects](partial-migration-with-allee-effects/README.md)
+- [Periodic Volterra predator-prey models with degenerate weights](periodic-volterra-predator-prey-with-degenerate-weights/README.md)
+- [Resource allocation in stream competition](resource-allocation-in-stream-competition/README.md)
+- [Two-patch Allee models with nonlinear dispersal](two-patch-allee-models-with-nonlinear-dispersal/README.md)

@@ -1,0 +1,27 @@
+# Stochastic and network epidemic models
+
+Interacting particle systems, contact processes and first passage percolation, epidemics on random and spatial networks and their mean-field, graphon and scaling limits, measure-valued infection-age limits, and inference and tracing on networks.
+
+- [Asymptomatic contact process](asymptomatic-contact-process/README.md)
+- [Contact process on adaptive networks](contact-process-on-adaptive-networks/README.md)
+- [Contact process on power law trees](contact-process-on-power-law-trees/README.md)
+- [Cooperative parasite invasion on spatial host networks](cooperative-parasite-invasion-on-spatial-host-networks/README.md)
+- [Degree penalized first passage percolation](degree-penalized-first-passage-percolation/README.md)
+- [Digital contact tracing in markovian sir epidemics](digital-contact-tracing-in-markovian-sir-epidemics/README.md)
+- [Dissipative contact process](dissipative-contact-process/README.md)
+- [Duality for epidemic particle systems](duality-for-epidemic-particle-systems/README.md)
+- [Epidemics on refining spatial grids](epidemics-on-refining-spatial-grids/README.md)
+- [Epidemics with varying infectivity and susceptibility](epidemics-with-varying-infectivity-and-susceptibility/README.md)
+- [First passage percolation with recovery](first-passage-percolation-with-recovery/README.md)
+- [Fluctuations of varying-infectivity epidemics](fluctuations-of-varying-infectivity-epidemics/README.md)
+- [Infection-age SIR on heterogeneous random graphs](infection-age-sir-on-heterogeneous-random-graphs/README.md)
+- [Invasion of cooperative parasites](invasion-of-cooperative-parasites/README.md)
+- [Large deviations of SIS epidemics on spatial networks](large-deviations-of-sis-epidemics-on-spatial-networks/README.md)
+- [Measure valued infection age sir limits](measure-valued-infection-age-sir-limits/README.md)
+- [N intertwined mean field approximation](n-intertwined-mean-field-approximation/README.md)
+- [Network heterogeneity index](network-heterogeneity-index/README.md)
+- [Network inference from epidemic cascades](network-inference-from-epidemic-cascades/README.md)
+- [Scaling limits of spatial SIR epidemics](scaling-limits-of-spatial-sir-epidemics/README.md)
+- [SI and Bass spreading on networks](si-and-bass-spreading-on-networks/README.md)
+- [SIS epidemics on graphon limits of random networks](sis-epidemics-on-graphon-limits-of-random-networks/README.md)
+- [Stationary concentration of pairwise interaction network models](stationary-concentration-of-pairwise-interaction-network-models/README.md)
