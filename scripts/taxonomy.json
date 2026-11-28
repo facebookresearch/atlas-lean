@@ -17326,7 +17326,15 @@
   "MathlibExt/RingTheory/Kaehler/EtaleFormsBaseChange/Basic": {"to": "RingTheory/algebras-and-differentials", "title": "Relative exterior forms under formally étale scalar extension"},
   "MathlibExt/RingTheory/Length/AnnihilatorQuotient": {"to": "RingTheory/modules", "title": "Finite length from an annihilating quotient"},
   "MathlibExt/RingTheory/Length/ExactEulerChain": {"to": "RingTheory/modules", "title": "Euler identities for finite exact module chains"},
-  "MathlibExt/RingTheory/Localization/AtPrimeSurjective": {"to": "RingTheory/algebras-and-differentials", "title": "Surjectivity after localization at corresponding primes"}
+  "MathlibExt/RingTheory/Localization/AtPrimeSurjective": {"to": "RingTheory/algebras-and-differentials", "title": "Surjectivity after localization at corresponding primes"},
+  "MathlibExt/Analysis/MellinTransform/Gaussian": {"to": "Analysis/harmonic-analysis/integral-transforms", "title": "Mellin transform of the Gaussian"},
+  "MathlibExt/Analysis/MellinTransform/GaussianContinuation": {"to": "Analysis/harmonic-analysis/integral-transforms", "title": "Meromorphic continuation of the Gaussian Laplace Mellin transform"},
+  "MathlibExt/Analysis/MellinTransform/GaussianLaplace": {"to": "Analysis/harmonic-analysis/integral-transforms", "title": "Mellin convergence of the Gaussian with a linear exponent"},
+  "MathlibExt/Analysis/MellinTransform/GaussianLaplaceSeries": {"to": "Analysis/harmonic-analysis/integral-transforms", "title": "Power series for the Gaussian Laplace Mellin integral"},
+  "MathlibExt/Analysis/SpecialFunctions/ParabolicCylinder/Basic": {"to": "Analysis/special-functions/hypergeometric-functions", "title": "Parabolic cylinder function U(a,z)"},
+  "MathlibExt/Analysis/SpecialFunctions/ParabolicCylinder/GammaProduct": {"to": "Analysis/special-functions/hypergeometric-functions", "title": "Gamma products at the origin"},
+  "MathlibExt/Analysis/SpecialFunctions/ParabolicCylinder/IntegralRepresentation": {"to": "Analysis/special-functions/hypergeometric-functions", "title": "Integral representation of the parabolic cylinder function"},
+  "MathlibExt/Analysis/SpecialFunctions/ParabolicCylinder/OrderAnalyticity": {"to": "Analysis/special-functions/hypergeometric-functions", "title": "Analytic dependence on the parabolic cylinder order"}
  },
  "mathlib_exclusions": {
   "Mathlib/Algebra/AddTorsor": "Deprecated re-export of the corresponding torsor module",

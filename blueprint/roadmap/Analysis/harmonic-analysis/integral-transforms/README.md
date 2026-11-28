@@ -9,3 +9,8 @@ Laplace, Mellin and Radon transforms (Ramanujan's master theorem, Fourier slice 
 - [Stieltjes moment problem](stieltjes-moment-problem/README.md)
 - [Ramanujan's master theorem](ramanujan-master-theorem.md)
 - [The z-transform: region of convergence, shifts and convolution](z-transform-region-of-convergence-shift-and-convolution.md)
+
+- [Meromorphic continuation of the Gaussian Laplace Mellin transform](meromorphic-continuation-of-the-gaussian-laplace/README.md)
+- [Convergence of the tilted Gaussian Mellin integral](mellin-convergent-gaussian-laplace.md)
+- [Mellin transform of a positive scaled Gaussian](has-mellin-exp-neg-mul-sq.md)
+- [Power series for a tilted Gaussian Mellin transform](has-sum-gaussian-laplace-mellin.md)

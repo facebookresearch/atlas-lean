@@ -1,0 +1,12 @@
+{
+  "groups": [
+    {
+      "directory": "provenance/functional-analysis/residual-analysis",
+      "source_revision": "f386092a56f2b7b2f57a83548b841f93c6addd31",
+      "file_count": 8,
+      "source_content_binding": "The versioned active-source-snapshot-v2 archive preserves the exact original versions of the eight installed Gaussian, Mellin and parabolic-cylinder sources. Each row retains its original SHA256, attribution and preceding complete 56-source archive binding. The complete original dataset remains in private publication custody.",
+      "source_snapshot_manifest": "provenance/functional-analysis/residual-analysis/active-source-snapshot-v2/manifest.json",
+      "preceding_full_archive_manifest_sha256": "cae502bcd32c04c264f5a42b033354ef5abc4786a569bc662d7dc69994940143"
+    }
+  ]
+}
