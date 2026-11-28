@@ -807,8 +807,8 @@
       "path": "MathlibExt/Algebra/Homology/CochainComplex/TensorHom/Coordinates.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "ecf4d2af33dc0edb3c2bbba214abe96b7af35f227e5fb2f0b03f6965e2122592",
-      "rationale": "Canonical tensor-total cell inclusions and projections select equal factor-degree pairs and kill unequal pairs. The original independent carrier universes and unbounded direct-sum totalization are retained. Original upstream pin and digest are preserved.",
+      "published_sha256": "57dd904d3e177625c8e55ce5e3d73b7b0c58c24c7b75b1202c38b0896a2358f7",
+      "rationale": "Canonical tensor-total cell inclusions and projections select equal factor-degree pairs and kill unequal pairs. The provider's explicitly named scoped tensorHasMapBifunctorAt instance replaces the obsolete generated declaration name. Independent carrier universes and unbounded direct-sum totalization are retained. Original upstream pin and digest are preserved.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "396d64301c59951f1e62c6e844120cf9bd2b951798621b510f2a259d64bfa1c4"
     },
