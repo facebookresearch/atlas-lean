@@ -1,0 +1,3 @@
+# Free-monoid homomorphisms as word homomorphisms on lists
+
+Words over an alphabet are finite lists of letters, and a language is a set of words. A word homomorphism from words over $\Sigma$ to words over $\Gamma$ is a map $h$ with $h(\varepsilon) = \varepsilon$ and $h(xy) = h(x)h(y)$; the same maps can be presented either as monoid homomorphisms between free monoids or as maps on lists preserving the empty list and concatenation. Every monoid homomorphism $h$ between the free monoids over $\Sigma$ and $\Gamma$ gives a word homomorphism on lists: read a list as an element of the free monoid, apply $h$, and read the result back as a list. It sends the empty list to the empty list and concatenations to concatenations because $h$ preserves the unit and products.

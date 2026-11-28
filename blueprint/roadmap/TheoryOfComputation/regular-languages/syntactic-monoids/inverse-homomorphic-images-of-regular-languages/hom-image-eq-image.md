@@ -1,0 +1,3 @@
+# Image under letter substitution
+
+Words over an alphabet are finite lists of letters, and a language is a set of words. A word homomorphism from words over $\Sigma$ to words over $\Gamma$ is a map $h$ with $h(\varepsilon) = \varepsilon$ and $h(xy) = h(x)h(y)$; the same maps can be presented either as monoid homomorphisms between free monoids or as maps on lists preserving the empty list and concatenation. For a substitution $\varphi$ sending each letter of $\Sigma$ to a word over $\Gamma$ and a language $L$ over $\Sigma$, the set of words $\varphi(a_1) \cdots \varphi(a_n)$ for $a_1 \cdots a_n \in L$ equals the image of $L$ under the word homomorphism extending $\varphi$.

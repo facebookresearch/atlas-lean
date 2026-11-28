@@ -1,0 +1,3 @@
+# Over an infinite alphabet the empty-word language is not locally star-free
+
+Over an alphabet $\alpha$, the locally star-free languages are the smallest class containing the empty language and every one-letter language $\{a\}$, and closed under complement, union and concatenation. A generalized regular expression may use complement as well as union, concatenation and Kleene star; its generalized star height is the largest nesting depth of stars, and a language has generalized star height at most $n$ when some generalized regular expression of star height at most $n$ denotes it. If $\alpha$ is infinite, then the language containing only the empty word is not locally star-free, although it has generalized star height $0$.

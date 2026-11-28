@@ -1,0 +1,3 @@
+# Letterwise preimage is preimage under the letter map
+
+Words over an alphabet are finite lists of letters, and a language is a set of words. A word homomorphism from words over $\Sigma$ to words over $\Gamma$ is a map $h$ with $h(\varepsilon) = \varepsilon$ and $h(xy) = h(x)h(y)$; the same maps can be presented either as monoid homomorphisms between free monoids or as maps on lists preserving the empty list and concatenation. For a map $f : \Sigma \to \Gamma$ of letters and a language $L$ over $\Gamma$, the letterwise preimage of $L$, the set of words $a_1 \cdots a_n$ over $\Sigma$ with $f(a_1) \cdots f(a_n) \in L$, equals the preimage of $L$ under the word map that applies $f$ to every letter.

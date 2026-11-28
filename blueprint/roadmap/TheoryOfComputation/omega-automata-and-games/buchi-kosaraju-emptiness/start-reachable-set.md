@@ -1,0 +1,3 @@
+# The start-reachable vertices as a hash set
+
+A directed graph is given by a duplicate-free list of all its vertices and, for each vertex, a list of its successors (its adjacency list); there is an edge from $s$ to $t$ when $t$ occurs in the adjacency list of $s$. The vertex type has a Boolean equality test that agrees with equality and a hash function, so finite sets of vertices can be stored in hash sets. The start-reachable list is the preorder of one depth-first search of the graph whose roots are the vertices satisfying a decidable start predicate, taken in vertex-list order. The start-reachable set is the hash set built once from the start-reachable list, so that each later membership query is a single hash-set test.

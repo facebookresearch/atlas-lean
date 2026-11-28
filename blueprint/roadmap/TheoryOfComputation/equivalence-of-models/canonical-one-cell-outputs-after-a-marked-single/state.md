@@ -1,0 +1,3 @@
+# Control states of the canonical one-cell computer
+
+For source states $Q$, the canonical one-cell computer has the states: start (normalize the initial head cell); run $q$ for $q \in Q$ (execute one source transition); mark $q$ for $q$ a source state or halting (normalize the cell just reached, then resume or start cleanup); cleanup (save the answer anchor and start sweeping left); erase left (erase until the first unvisited cell); return right (move back through the erased cells to the answer anchor); erase right (erase until the first unvisited cell); and the final return that restores the answer as an ordinary cell.

@@ -1,0 +1,3 @@
+# The machine of a code on a finite alphabet
+
+For a machine code $c$, let $B = m + 3$, where $m$ is the largest action number in the table of $c$ ($0$ if the table has no transition), so that every symbol a run of $c$ on bits can hold is below $B$. The machine of $c$ over the alphabet $\{0, \dots, B - 1\}$ reads a symbol as its value and, from each state and symbol, takes the transition of the machine of $c$: where $c$ has no transition the machine halts, a move left or right is kept, and a write of a symbol writes that symbol reduced modulo $B$. For an empty table the alphabet is $\{0, 1, 2\}$.

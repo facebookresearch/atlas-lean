@@ -14,6 +14,7 @@
 - [Final state of a sequential transducer on a concatenation](run-state-append.md)
 - [Output of a sequential transducer on a concatenation](run-out-append.md)
 - [Translation by a sequential transducer](translates.md)
+- [The general translation of a sequential transducer is its own translation](translates-iff.md)
 - [Composition of sequential transducers](comp.md)
 - [One step of a composite transducer: the successor state](comp-step-fst.md)
 - [One step of a composite transducer: the output](comp-step-snd.md)

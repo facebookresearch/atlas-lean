@@ -1,0 +1,3 @@
+# The two presentations of an automaton with empty moves accept the same language
+
+Let $M$ be a nondeterministic finite-word automaton with empty moves with set-valued transitions, sending a state and a letter or the empty label to a set of states, together with a set of start states and a set of accepting states. Its translation into a relation-valued-transition automaton (a labelled transition relation with start and accepting sets) accepts the same language as $M$. Equivalently, for the inverse translation, the set-valued-transition form of a relation-valued-transition automaton with empty moves accepts exactly the words $w$ for which some start state reaches some accepting state by a run whose letters, ignoring empty moves, spell $w$.

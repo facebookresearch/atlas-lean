@@ -17,6 +17,7 @@
 - [Step bound of the tape update](act-time.md)
 - [The tape update](act-run.md)
 - [Cost of scanning past one entry](entry-cost.md)
+- [The cells of a list of table entries](cells-entry-nums-cons.md)
 - [Step bound of one simulated step](step-time.md)
 - [One simulated step, running case](step-run-of-step-eq-some.md)
 - [One simulated step, halting case](step-run-of-step-eq-none.md)

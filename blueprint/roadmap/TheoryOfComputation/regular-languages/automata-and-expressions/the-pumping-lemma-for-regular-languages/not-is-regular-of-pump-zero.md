@@ -1,0 +1,3 @@
+# Non-regularity by deleting the middle part
+
+Words are finite lists over an alphabet, and a language is a set of words. A language is regular when it is recognized by a deterministic finite automaton. For words $x, y, z$ and $i \ge 0$, pumping gives the word $x y^i z$, in which $y$ is repeated $i$ times. A natural number $n$ is a pumping length for a language $L$ when every word $w \in L$ with $|w| \ge n$ can be written as $w = xyz$ with $|xy| \le n$ and $y$ nonempty, such that $x y^i z \in L$ for every $i \ge 0$. Let $L$ be a language such that for every $n$ there is a word $w \in L$ with $|w| \ge n$ such that, for every decomposition $w = xyz$ with $|x| + |y| \le n$ and $y$ nonempty, the word $xz$ is not in $L$. Then $L$ is not regular.
