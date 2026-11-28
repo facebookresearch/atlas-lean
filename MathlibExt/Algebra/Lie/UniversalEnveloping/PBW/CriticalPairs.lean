@@ -21,11 +21,14 @@ Let `R` be a commutative ring, `L` an `R`-Lie algebra, and `τ : L → T_R(L)` t
 inclusion. The defining relation error is `r(x,y) = τ(x)τ(y) - τ(y)τ(x) - τ([x,y])`. It is
 bilinear, vanishes when `x=y`, and changes sign when the two arguments are exchanged.
 
-The two adjacent-pair reductions of a three-letter word differ by `r([y,z],x) + r(y,[x,z]) +
-r([x,y],z)`: Jacobi cancels the remaining degree-one term. With any `R`-basis, these errors
-expand as finite linear combinations of basis-pair errors, also in fixed left and right tensor
-contexts. Disjoint reductions commute by distributivity, and the enveloping quotient kills
-every relation error.
+The full left-first and right-first three-swap expansions `overlapLeft` and `overlapRight`
+of a three-letter word differ by `r([y,z],x) + r(y,[x,z]) + r([x,y],z)`: Jacobi cancels the
+remaining degree-one term. With any `R`-basis, these errors expand as finite linear combinations
+of basis-pair errors, also in fixed left and right tensor contexts. The enveloping quotient
+kills every relation error.
+
+Reference: G. M. Bergman, `The Diamond Lemma for Ring Theory`, Advances in Mathematics
+29 (1978), 178–218.
 -/
 
 @[expose] public section
@@ -200,10 +203,10 @@ theorem tensorContext_overlap_difference_mem_span {I : Type w}
       (tensorContext_relationError_mem_span R L b p s y ⁅x, z⁆))
     (tensorContext_relationError_mem_span R L b p s ⁅x, y⁆ z)
 
-/-- Commutation of disjoint additive tensor reductions.
-
-The four terms obtained by distributing two independent two-term reductions can be grouped by
-either reduction order, giving the same tensor-algebra element. -/
+/-- Let R be a commutative ring, L an R-Lie algebra, and T = TensorAlgebra R L.
+For arbitrary a, b, c, d, m ∈ T,
+(a*m*c + a*m*d) + (b*m*c + b*m*d) = (a*m*c + b*m*c) + (a*m*d + b*m*d).
+Both sides regroup the same four products by commutativity of addition. -/
 theorem disjoint_reductions_commute (a b c d m : T) :
     ((a * m * c + a * m * d) + (b * m * c + b * m * d)) =
       ((a * m * c + b * m * c) + (a * m * d + b * m * d)) := by
