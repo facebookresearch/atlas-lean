@@ -100,20 +100,12 @@ private theorem next {K q r : ℕ} {lam mu₁ mu₂ ga₁ ga₂ ga₃ : ℤ} {xs
     dsimp [value, List.getD, List.getElem?_cons_zero, Option.getD_some] <;>
     (try simp only [pow_succ]) <;> ring
 
-private theorem lookup_push (xs : Array ℤ) (v j : ℤ) :
-    threeTermHofstadterLookup true (xs.push v) j =
-      if j = (xs.size : ℤ) + 1 then some v else threeTermHofstadterLookup true xs j := by
-  by_cases hj : j ≤ 0
-  · simp [threeTermHofstadterLookup, hj, show j ≠ (xs.size : ℤ) + 1 by omega]
-  · simp only [threeTermHofstadterLookup, hj, ite_false, Array.getElem?_push,
-      show (j - 1).toNat = xs.size ↔ j = (xs.size : ℤ) + 1 by omega]
-
 private theorem pattern_push {K k r : ℕ} {lam mu₁ mu₂ ga₁ ga₂ ga₃ : ℤ} {xs : Array ℤ}
     (p : Pattern K lam mu₁ mu₂ ga₁ ga₂ ga₃ xs) (hr : r < 16)
     (hn : (xs.size : ℤ) + 1 = K + 16 * (k : ℤ) + r) :
     Pattern K lam mu₁ mu₂ ga₁ ga₂ ga₃ (xs.push (value lam mu₁ mu₂ ga₁ ga₂ ga₃ k r)) := by
   intro q s hs hlo hhi
-  rw [lookup_push]
+  rw [threeTermHofstadterLookup_push]
   split
   · have hq : q = k := by omega
     have hs' : s = r := by omega
