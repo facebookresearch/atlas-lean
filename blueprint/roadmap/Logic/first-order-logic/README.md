@@ -18,3 +18,8 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Equational logic](equational-logic/README.md)
 - [Superposition](superposition/README.md)
 - [Herbrand's theorem](herbrand-s-theorem.md)
+- [Decision problems for fragments of set theory](fragments-of-set-theory/README.md)
+- [Equational unification](equational-unification/README.md)
+- [First-order many-valued logics](first-order-many-valued-logics/README.md)
+- [Logics with Henkin quantifiers](logics-with-henkin-quantifiers/README.md)
+- [Probability logics](probability-logics/README.md)
