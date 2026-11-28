@@ -559,15 +559,14 @@ theorem emUnderlying_hom_zero_eq (alg : T.Algebra) :
     (emUnderlyingAugmented alg).hom.app
       (Opposite.op (SimplexCategory.mk 0)) =
       (resolutionAugmented alg).hom.app
-        (Opposite.op (SimplexCategory.mk 0)) := by
-  rw [emUnderlyingAugmented_hom_zero, resolutionAugmented_hom_zero]
+        (Opposite.op (SimplexCategory.mk 0)) :=
+  rfl
 
 /-- Let T be a monad on C and alg a T-algebra. There is an isomorphism emUnderlyingBar(alg) ≅
 resolutionAugmented(alg).left. It compares the bar of the forgotten free right module with the
 underlying simplicial object of the regular-right monadic augmentation. -/
 noncomputable def emUnderlyingBar_iso_resLeft (alg : T.Algebra) :
     emUnderlyingBar alg ≅ (resolutionAugmented alg).left := by
-  rw [resolutionAugmented_left]
   exact emUnderlyingBarIso alg
 
 /-- For a monad T on C and algebra morphism φ : alg → alg′, define a natural transformation
@@ -650,7 +649,7 @@ monadic bar maps. -/
 theorem emNaturality_left {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
     (emUnderlyingHom φ).left ≫ (emUnderlyingBarIso alg').hom =
       (emUnderlyingBarIso alg).hom ≫ (resolutionHom φ).left := by
-  rw [emUnderlyingHom_left, resolutionHom_left]
+  rw [emUnderlyingHom_left]
   change Functor.whiskerRight
       (twoSidedBarHom (𝟙 (emRightModule.postcomp T.forget))
         (algebraLeftModuleHom φ)) resolutionEvalPoint ≫
@@ -669,8 +668,8 @@ theorem emNaturality_left {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
 emUnderlyingHom(φ) and resolutionHom(φ) are equal. Both are the underlying map φ.f between the
 algebra carriers. -/
 theorem emNaturality_right {alg alg' : T.Algebra} (φ : alg ⟶ alg') :
-    (emUnderlyingHom φ).right = (resolutionHom φ).right := by
-  rw [emUnderlyingHom_right, resolutionHom_right]
+    (emUnderlyingHom φ).right = (resolutionHom φ).right :=
+  rfl
 
 /-- For a monad T on C and a T-algebra alg, the simplicial projection of emAugmentedIso(alg).hom
 equals emUnderlyingBarIso(alg).hom. Thus the augmented comparison retains the specified
@@ -938,7 +937,7 @@ private theorem emLiteralHomAgree_app (alg : T.Algebra) (n : ℕ) :
       (emUnderlyingAugmented alg).hom.app
         (Opposite.op (SimplexCategory.mk n)) := by
   unfold emLiteralAugmented emEvaluatedAugmented emAugmented
-    emUnderlyingAugmented
+    emUnderlyingAugmented resolutionAugmented
   simp only [SimplicialObject.Augmented.whiskeringObj_obj_hom_app_mk,
     BalancedPairing.toSimplicialAugmented_hom_app_mk]
   change T.forget.map (emEvalAlgebra.map
@@ -1134,7 +1133,9 @@ theorem emLiteralResolutionIso_hom_left_app (alg : T.Algebra)
     (emLiteralResolutionIso alg).hom.left.app Δ = 𝟙 _ := by
   change (emLiteralBarIso alg).hom.app Δ ≫
     (emUnderlyingBarIso alg).hom.app Δ = 𝟙 _
-  rw [emLiteralBarIso_hom_app, emUnderlyingBarIso_hom_app_id, Category.id_comp]
+  rw [emLiteralBarIso_hom_app, emUnderlyingBarIso_hom_app_id]
+  change 𝟙 ((resolutionBar alg).obj Δ) ≫ 𝟙 ((resolutionBar alg).obj Δ) = 𝟙 _
+  exact Category.id_comp _
 
 section UnderlyingContraction
 
@@ -1154,7 +1155,11 @@ theorem emExtra_s' (alg : T.Algebra) : (emExtra alg).s' = T.η.app alg.A := by
   change (emLiteralResolutionIso alg).hom.right ≫ T.η.app alg.A ≫
     (emLiteralResolutionIso alg).inv.left.app
       (Opposite.op (SimplexCategory.mk 0)) = T.η.app alg.A
-  rw [emLiteralResolutionIso_hom_right, Category.id_comp]
+  rw [emLiteralResolutionIso_hom_right]
+  change 𝟙 alg.A ≫ T.η.app alg.A ≫
+    (emLiteralResolutionIso alg).inv.left.app (Opposite.op (SimplexCategory.mk 0)) =
+      T.η.app alg.A
+  rw [Category.id_comp]
   have hi := congrArg
     (fun f : emLiteralAugmented alg ⟶ emLiteralAugmented alg =>
       f.left.app (Opposite.op (SimplexCategory.mk 0)))

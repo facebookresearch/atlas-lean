@@ -268,7 +268,7 @@ private theorem stableIntervalKernelExact (n : ℤ) (i₂ : ι) :
     (ShortComplex.mk
       (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
         (n - 1) n (by omega))
-      (Y.stableIntervalStepToAbutment n i₂) (Y.stableIntervalKernelZero n i₂)).Exact :=
+      (Y.stableIntervalStepToAbutment n i₂) (stableIntervalKernelZero Y n i₂)).Exact :=
   Y.exact₁ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
     (stableIntervalFull (ι := ι)) (Subsingleton.elim _ _) (n - 1) n (by omega)
 
@@ -279,7 +279,7 @@ private theorem stableIntervalCokernelSequence_exact
     (stableIntervalRight i₂) (stableIntervalLeftMiddle i₂)
     (stableIntervalLeft_comp_middle h) (n - 1) n (n + 1) (by omega) (by omega)
 
-private noncomputable def stableIntervalStepCokernelIso
+noncomputable def stableIntervalStepCokernelIso
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     Y.stableIntervalObj n h ≅ cokernel (Y.stableIntervalCokernelSequence n h).f := by
   let _ : Epi (Y.stableIntervalCokernelSequence n h).g := by
@@ -287,7 +287,7 @@ private noncomputable def stableIntervalStepCokernelIso
     infer_instance
   exact (IsColimit.coconePointUniqueUpToIso
     (cokernelIsCokernel (Y.stableIntervalCokernelSequence n h).f)
-    (Y.stableIntervalCokernelSequence_exact n h).gIsCokernel).symm
+    (stableIntervalCokernelSequence_exact Y n h).gIsCokernel).symm
 
 private theorem cokernel_π_stableIntervalStepCokernelIso_inv
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
@@ -296,17 +296,18 @@ private theorem cokernel_π_stableIntervalStepCokernelIso_inv
   let _ : Epi (Y.stableIntervalCokernelSequence n h).g := by
     change Epi (Y.stableIntervalStepToStable n h)
     infer_instance
-  simpa only [stableIntervalStepCokernelIso, Iso.symm_inv, parallelPair_obj_one,
+  simpa only [stableIntervalStepCokernelIso, stableIntervalStepToStable,
+    stableIntervalObj, stableIntervalCokernelSequence, Iso.symm_inv, parallelPair_obj_one,
     Cofork.app_one_eq_π, Cofork.ofπ_pt, Cofork.π_ofπ] using
     (IsColimit.comp_coconePointUniqueUpToIso_hom
       (cokernelIsCokernel (Y.stableIntervalCokernelSequence n h).f)
-      (Y.stableIntervalCokernelSequence_exact n h).gIsCokernel WalkingParallelPair.one)
+      (stableIntervalCokernelSequence_exact Y n h).gIsCokernel WalkingParallelPair.one)
 
 private theorem stableIntervalStepToStable_comp_stepCokernelIso
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     Y.stableIntervalStepToStable n h ≫ (Y.stableIntervalStepCokernelIso n h).hom =
       cokernel.π (Y.stableIntervalCokernelSequence n h).f := by
-  rw [← Y.cokernel_π_stableIntervalStepCokernelIso_inv n h, Category.assoc,
+  rw [← cokernel_π_stableIntervalStepCokernelIso_inv Y n h, Category.assoc,
     Iso.inv_hom_id, Category.comp_id]
 
 /-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
@@ -324,12 +325,12 @@ noncomputable def stableIntervalImageToStableLift
   let x := Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
     (n - 1) n (by omega)
   let b := Y.stableIntervalStepToAbutment n i₂
-  let q := imageToBiprodQuotient a x b (Y.stableIntervalKernelZero n i₂)
-    (Y.stableIntervalKernelExact n i₂) ≫ (Y.stableIntervalStepCokernelIso n h).inv
+  let q := imageToBiprodQuotient a x b (stableIntervalKernelZero Y n i₂)
+    (stableIntervalKernelExact Y n i₂) ≫ (Y.stableIntervalStepCokernelIso n h).inv
   refine ⟨q, ?_⟩
   dsimp only [q, stableIntervalStepToImage]
   rw [← Category.assoc, factorThruImage_imageToBiprodQuotient]
-  exact Y.cokernel_π_stableIntervalStepCokernelIso_inv n h
+  exact cokernel_π_stableIntervalStepCokernelIso_inv Y n h
 
 /-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
 indexed by ι. For n∈ℤ and i₁≤i₂, this is the descended epimorphism q:image
@@ -375,7 +376,7 @@ theorem stableIntervalDelta_comp_toImage_zero
   comp_factorThruImage_eq_zero
     (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
       (n - 1) n (by omega))
-    (Y.stableIntervalStepToAbutment n i₂) (Y.stableIntervalKernelZero n i₂)
+    (Y.stableIntervalStepToAbutment n i₂) (stableIntervalKernelZero Y n i₂)
 
 /-- Let D be an abelian category, ι a preorder with bottom and top, and Y a spectral object in D
 indexed by ι. For n∈ℤ and i₁≤i₂, let j:image u_{i₁}→image u_{i₂} be the ordered image inclusion
@@ -394,7 +395,7 @@ theorem stableIntervalImageMap_comp_imageToStable_zero
     Y.stableIntervalStepMap_comp_toStable_zero n h,
     comp_zero]
 
-private noncomputable def stableIntervalOrderedImageCokernelIso
+noncomputable def stableIntervalOrderedImageCokernelIso
     (n : ℤ) {i₁ i₂ : ι} (h : i₁ ≤ i₂) :
     cokernel (Y.stableIntervalImageMap n h) ≅
       cokernel (imageCompMap (Y.stableIntervalStepMap n h)
@@ -431,7 +432,7 @@ noncomputable def stableIntervalImageCokernelIso
       (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
         (n - 1) n (by omega))
       (Y.stableIntervalStepToAbutment n i₂)
-      (Y.stableIntervalKernelZero n i₂) (Y.stableIntervalKernelExact n i₂) ≪≫
+      (stableIntervalKernelZero Y n i₂) (stableIntervalKernelExact Y n i₂) ≪≫
     (Y.stableIntervalOrderedImageCokernelIso n h).symm
 
 /-- The spectral comparison computes on the full image quotient projection. -/
@@ -447,11 +448,11 @@ theorem stableIntervalImageToStable_comp_iso_hom
       imageQuotientForward (Y.stableIntervalStepMap n h)
         (Y.δ (stableIntervalLeftMiddle i₂) (stableIntervalRight i₂)
           (n - 1) n (by omega))
-        (Y.stableIntervalStepToAbutment n i₂) (Y.stableIntervalKernelZero n i₂) ≫
+        (Y.stableIntervalStepToAbutment n i₂) (stableIntervalKernelZero Y n i₂) ≫
       (Y.stableIntervalOrderedImageCokernelIso n h).inv = _
-  rw [← Category.assoc, Y.stableIntervalStepToStable_comp_stepCokernelIso,
+  rw [← Category.assoc, stableIntervalStepToStable_comp_stepCokernelIso Y,
     ← Category.assoc, cokernel_π_imageQuotientForward, Category.assoc,
-    Y.cokernel_π_stableIntervalOrderedImageCokernelIso_inv]
+    cokernel_π_stableIntervalOrderedImageCokernelIso_inv Y]
 
 /-- The descended stable quotient is a cokernel of the ordered image inclusion.
 
