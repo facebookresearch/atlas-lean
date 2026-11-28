@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceElementarySymmetric
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceMatrixB
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceMatrixProduct
 public import MathlibExt.Combinatorics.Enumerative.MitrinovicNumbers
 public import WantedExt.Combinatorics.Enumerative.HypersequenceWeightedSumsWanted
 
@@ -33,25 +34,6 @@ The signed entries `b_{j,k}(n) = (-1)^k e_{j,j-k}(n)` of `B(n)` are `hyperseqB`;
 `a^{(r)}_n` is `hypersequence a r n`, both from the first paper's module; Mitrinović's numbers
 `R^k_j(a, b)` (Section 4) are `mitrinovicR`.
 -/
-
-/-- **Elementary symmetric functions of the first integers via Stirling numbers.** For
-$j, k \in \mathbb{N}$ let $e_{j,k}$ be the elementary symmetric polynomial of degree $k$ evaluated
-at $1, 2, \dots, j$ (the source's $e_{j,k}(0)$), and let $c(j, i)$ be the unsigned Stirling number
-of the first kind. Then $e_{0,k} = 1$ if $k = 0$ and $e_{0,k} = 0$ otherwise; for all $j, k$,
-$e_{j+1,k+1} = e_{j,k+1} + (j + 1)\, e_{j,k}$; and for all $k \le j$,
-$$e_{j,k} = \sum_{\ell=0}^{k} \binom{j-k+\ell}{\ell}\, c(j, j-k+\ell) = c(j + 1, j + 1 - k).$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36, Corollary 3 (`integers-2026-A36-cor-3`). -/
-public theorem_wanted hyperseq_esymm_zero_recurrence_stirling :
-    (∀ k : ℕ, ((Finset.Icc 1 0).val).esymm k = if k = 0 then 1 else 0) ∧
-    (∀ j k : ℕ, ((Finset.Icc 1 (j + 1)).val).esymm (k + 1) =
-      ((Finset.Icc 1 j).val).esymm (k + 1) +
-        (j + 1) * ((Finset.Icc 1 j).val).esymm k) ∧
-    ∀ j k : ℕ, k ≤ j →
-      ((Finset.Icc 1 j).val).esymm k =
-          ∑ ℓ ∈ Finset.range (k + 1), (j - k + ℓ).choose ℓ * Nat.stirlingFirst j (j - k + ℓ) ∧
-        ((Finset.Icc 1 j).val).esymm k = Nat.stirlingFirst (j + 1) (j + 1 - k)
 
 /-- **The inverse of Parisse's matrix $C(n)$.** Let $n \in \mathbb{N}$. Let $e_{j,i}(n)$ be the
 elementary symmetric polynomial of degree $i$ in $n + 1, \dots, n + j$, let
@@ -95,44 +77,6 @@ public theorem_wanted hyperseqB_inv_eq_hyperseqC_div_factorial (n j m : ℕ) :
         (alternatingBinomialPowerSum k m 1 (n + 1) / m.factorial) = (if j = m then 1 else 0) ∧
       ∑ k ∈ Finset.range (j + 1), alternatingBinomialPowerSum j k 1 (n + 1) / k.factorial *
         (hyperseqB n k m : ℂ) = if j = m then 1 else 0
-
-/-- **The product of Parisse's matrices B(n) and C(n).** For $n, j, m \in \mathbb{N}$ let
-$b_{j,i}(n) = (-1)^i e_{j-i}(n + 1, \dots, n + j)$ for $i \le j$ be the entries of Parisse's
-matrix $B(n)$, where $e_d$ is the elementary symmetric polynomial of degree $d$, and let
-$c_{i,m}(n) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (k + n + 1)^i$ be the entries
-of $C(n)$. Then $\sum_{i=0}^{j} b_{j,i}(n)\, c_{i,m}(n)$ equals $j!$ if $j = m$ and $0$ otherwise.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36,
-Corollary 2 (`integers-2026-A36-cor-2`). -/
-public theorem_wanted sum_hyperseqB_mul_hyperseqC (n j m : ℕ) :
-    ∑ i ∈ Finset.range (j + 1), (hyperseqB n j i : ℂ) * alternatingBinomialPowerSum i m 1 (n + 1) =
-      if j = m then (j.factorial : ℂ) else 0
-
-/-- **Recurrence, closed form and row sums of Parisse's $b_{j,k}(n)$.** Let $n \in \mathbb{N}$ and
-let $b_{j,k}(n)$ be the entries of Parisse's matrix $B(n)$. Write $[j, \ell]$ for the unsigned
-Stirling numbers of the first kind and $x^{\overline{j}} = x (x + 1) \cdots (x + j - 1)$ for the
-rising factorial. Then $b_{0,k}(n) = \delta_{0,k}$ for all $k$; for all $j, k \in \mathbb{N}$,
-$b_{j+1,0}(n) = (n + j + 1) \, b_{j,0}(n)$ and
-$b_{j+1,k+1}(n) = (n + j + 1) \, b_{j,k+1}(n) - b_{j,k}(n)$;
-$b_{j,k}(n) = (-1)^k \sum_{\ell=k}^{j} \binom{\ell}{k} [j, \ell] \, (n + 1)^{\ell-k}$ for all
-$j, k$ (an empty sum for $k > j$); and for all $j$,
-$\sum_{k=0}^{j} b_{j,k}(n) = n^{\overline{j}}$ and
-$\sum_{k=0}^{j} (-1)^k b_{j,k}(n) = (n + 2)^{\overline{j}}$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36,
-Proposition 2 (`integers-2026-A36-prop-2`). -/
-public theorem_wanted hyperseqB_recurrence_closed_form_row_sums (n : ℕ) :
-    (∀ k : ℕ, hyperseqB n 0 k = if k = 0 then 1 else 0) ∧
-    (∀ j : ℕ, hyperseqB n (j + 1) 0 = (n + (j + 1)) * hyperseqB n j 0) ∧
-    (∀ j k : ℕ, hyperseqB n (j + 1) (k + 1) =
-      (n + (j + 1)) * hyperseqB n j (k + 1) - hyperseqB n j k) ∧
-    (∀ j k : ℕ, hyperseqB n j k = (-1) ^ k * ∑ ℓ ∈ Finset.Icc k j,
-      (ℓ.choose k * Nat.stirlingFirst j ℓ : ℤ) * ((n : ℤ) + 1) ^ (ℓ - k)) ∧
-    (∀ j : ℕ, ∑ k ∈ Finset.range (j + 1), hyperseqB n j k = (n.ascFactorial j : ℤ)) ∧
-    ∀ j : ℕ, ∑ k ∈ Finset.range (j + 1), (-1) ^ k * hyperseqB n j k =
-      ((n + 2).ascFactorial j : ℤ)
 
 /-- **Parisse's coefficients at $n$ from their values at $-1$.** Let $n \in \mathbb{Z}$. For
 $j, k \in \mathbb{N}$ let $e_{j,k}(n)$ be the elementary symmetric polynomial of degree $k$ in

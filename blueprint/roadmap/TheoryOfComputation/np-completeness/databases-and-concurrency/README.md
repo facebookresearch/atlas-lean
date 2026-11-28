@@ -4,3 +4,8 @@ Relational database design and querying (keys, prime attributes, normal forms, c
 
 - [Locking policies and serializability](locking-policies-and-serializability/README.md)
 - [Serializability of database histories](serializability-of-database-histories/README.md)
+- [Deadlock exposure in packet switching networks](deadlock-exposure-in-packet-switching-networks/README.md)
+- [Deadlock potential](deadlock-potential/README.md)
+- [k-anonymity](k-anonymity/README.md)
+- [Minimum cardinality key](minimum-cardinality-key/README.md)
+- [Storage, registers and deadlock](storage-registers-and-deadlock/README.md)

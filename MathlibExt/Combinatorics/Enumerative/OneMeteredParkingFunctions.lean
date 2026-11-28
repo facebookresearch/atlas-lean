@@ -15,9 +15,9 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # 1-metered parking functions
 
-This file proves `meteredParkingCount_one_binet`, a Binet formula for the number
-`meteredParkingCount 1 m n` of 1-metered `(m, n)`-parking functions when `m ≤ n + 1` and
-`2 < n`.
+This file proves the Lucas-type recursion `meteredParkingCount_one_recursion` for the number
+`meteredParkingCount 1 m n` of 1-metered `(m, n)`-parking functions, and the Binet formula
+`meteredParkingCount_one_binet` when `m ≤ n + 1` and `2 < n`.
 
 In the 1-metered scheme a car parks in its preferred spot unless the previous car holds that spot;
 then it parks in the next spot, or fails if there is none. Counting the 1-metered parking functions
@@ -26,6 +26,13 @@ parks in the last spot are as many as the 1-metered parking functions with `m - 
 the counts satisfy `mpf (m + 1) = n * mpf m - mpf (m - 1)` for `1 ≤ m ≤ n`, with `mpf 0 = 1` and
 `mpf 1 = n`, and the formula follows from the roots `(n ± √(n ^ 2 - 4)) / 2` of
 `x ^ 2 - n * x + 1`.
+
+## References
+
+* Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
+  Functions*, INTEGERS 25 (2025), Article A73, pp. 1–37. See Lemmas 2–3 (pp. 13–14) for the
+  last-spot counts, Theorem 2 (p. 15) for the recurrence, Corollary 5 (p. 16) for the Binet
+  formula, and Proposition 7 (p. 19) for the three-car count.
 -/
 
 namespace MetaMathlibExt
@@ -366,6 +373,31 @@ private theorem binet_of_recursion (N : ℕ) {n s : ℝ} (hn : 3 ≤ n) (hs2 : s
 
 end meteredParkingCount_one_binet
 
+/-- **Lucas-type recursion for 1-metered parking functions.** Write $\mathrm{mpf}_{m,n}(1)$ for
+the number of $1$-metered $(m, n)$-parking functions. For every natural number $n$,
+$\mathrm{mpf}_{1,n}(1) = n$ and $\mathrm{mpf}_{0,n}(1) = 1$, and for every natural number $m$
+with $1 \le m \le n$,
+$$\mathrm{mpf}_{m+1,n}(1) = n \cdot \mathrm{mpf}_{m,n}(1) - \mathrm{mpf}_{m-1,n}(1),$$
+where the subtraction is taken in the integers.
+
+Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
+Functions*, INTEGERS 25 (2025), Article A73, Theorem 2 (`integers-2025-A73-thm-2`). -/
+public theorem meteredParkingCount_one_recursion (n : ℕ) :
+    meteredParkingCount 1 1 n = n ∧ meteredParkingCount 1 0 n = 1 ∧
+      ∀ m, 1 ≤ m → m ≤ n →
+        (meteredParkingCount 1 (m + 1) n : ℤ) =
+          n * meteredParkingCount 1 m n - meteredParkingCount 1 (m - 1) n := by
+  refine ⟨?_, meteredParkingCount_one_binet.count_zero n, ?_⟩
+  · cases n with
+    | zero =>
+      rw [meteredParkingCount, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+      intro f _ _
+      exact Fin.elim0 (f 0)
+    | succ n => exact meteredParkingCount_one_binet.count_one (Nat.succ_pos n)
+  · intro m hm hmn
+    apply eq_sub_iff_add_eq.mpr
+    exact_mod_cast meteredParkingCount_one_binet.count_recursion hm hmn
+
 /-- **Binet formula for 1-metered parking functions.** Let $m, n$ be natural numbers with
 $m \le n + 1$ and $n > 2$. Then the number $\mathrm{mpf}_{m,n}(1)$ of $1$-metered
 $(m, n)$-parking functions satisfies, as real numbers,
@@ -395,5 +427,28 @@ public theorem meteredParkingCount_one_binet {m n : ℕ} (hm : m ≤ n + 1) (hn 
     have h' : (meteredParkingCount 1 (k + 2) n : ℝ) + meteredParkingCount 1 k n =
         n * meteredParkingCount 1 (k + 1) n := by exact_mod_cast h
     linarith
+
+/-- **1-metered parking functions with three cars.** For every natural number $n \ge 2$, the
+number of $1$-metered $(3, n)$-parking functions is $\mathrm{mpf}_{3,n}(1) = n^3 - 2n$.
+
+Source: Spencer Daugherty, Pamela E. Harris, Ian Klein, and Matt McClinton, *Metered Parking
+Functions*, INTEGERS 25 (2025), Article A73, Proposition 7 (`integers-2025-A73-prop-7`). -/
+public theorem meteredParkingCount_one_three {n : ℕ} (hn : 2 ≤ n) :
+    meteredParkingCount 1 3 n = n ^ 3 - 2 * n := by
+  have hone := meteredParkingCount_one_binet.count_one (by omega : 0 < n)
+  have htwo : meteredParkingCount 1 2 n + 1 = n ^ 2 := by
+    have h := meteredParkingCount_one_binet.count_recursion (m := 1) (n := n) (by decide)
+      (by omega)
+    change meteredParkingCount 1 2 n + meteredParkingCount 1 0 n =
+      n * meteredParkingCount 1 1 n at h
+    simpa only [meteredParkingCount_one_binet.count_zero, hone, pow_two] using h
+  have hthree : meteredParkingCount 1 3 n + n = n * meteredParkingCount 1 2 n := by
+    have h := meteredParkingCount_one_binet.count_recursion (m := 2) (n := n) (by decide) hn
+    change meteredParkingCount 1 3 n + meteredParkingCount 1 1 n =
+      n * meteredParkingCount 1 2 n at h
+    simpa only [hone] using h
+  have hscaled : n * meteredParkingCount 1 2 n + n = n ^ 3 := by
+    simpa only [Nat.mul_add, Nat.mul_one, pow_succ' n 2] using congrArg (n * ·) htwo
+  omega
 
 end MetaMathlibExt

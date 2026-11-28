@@ -45,10 +45,11 @@ operators form a semilinear group action (`completedHodgeGalois_one`,
 `completedHodgeGalois_mul`, `completedHodgeGalois_smul`). The completed
 étale operators are semilinear (`completedEtaleGalois_smul`) and inherit
 the action laws from those of the étale operators
-(`completedEtaleGalois_one`, `completedEtaleGalois_mul`); the identity and
-composition laws of the étale inverse images themselves are requested in
-`WantedExt.AlgebraicGeometry.HodgeTateComparison`. The geometric
-comparison is a separate construction.
+(`completedEtaleGalois_one`, `completedEtaleGalois_mul`); the identity law
+of the étale inverse images themselves is proved in
+`HodgeTateComparisonEtaleGaloisOne`, and their composition law is
+`WantedExt.AlgebraicGeometry.HodgeTateComparison.etaleGalois_mul`. The
+geometric comparison is a separate construction.
 -/
 
 @[expose] public noncomputable section

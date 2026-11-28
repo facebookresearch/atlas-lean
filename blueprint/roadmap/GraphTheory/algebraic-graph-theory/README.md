@@ -2,6 +2,12 @@
 
 Graphs studied through groups and matrices: Cayley and vertex-transitive graphs, strongly regular and Moore graphs, graph homomorphisms, Laplacians and the matrix-tree theorem, and named graphs such as the Petersen and Coxeter graphs.
 
+- [High-Dimensional Expanders and Local Spectral Expansion](local-spectral-expansion-of-simplicial-complexes/README.md)
+- [Homomorphism indistinguishability](homomorphism-indistinguishability/README.md)
+- [Interlacing Families, Ramanujan Lifts and Bipartite Ramanujan Graphs](interlacing-families-and-ramanujan-lifts/README.md)
+- [Random walks on regular graphs](random-walks-on-regular-graphs/README.md)
+- [Spectral expansion and connectivity](spectral-expansion-and-connectivity/README.md)
+
 ## [Part 1 of 2](part-01/README.md)
 
 - [Arc-transitive graphs](part-01/arc-transitive-graphs/README.md)

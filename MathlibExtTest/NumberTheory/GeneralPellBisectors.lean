@@ -34,10 +34,43 @@ example : Even (2 : ℤ) ∧ Even (-2 : ℤ) :=
 example (x y : ℤ) (h : x ^ 2 = 5 * y ^ 2) : Even x ∧ Even y :=
   even_of_abs_sq_sub_mul_sq_zero_mod_eight 5 0 rfl rfl x y (by rw [h, sub_self, abs_zero])
 
+-- A negative coefficient in the residue class d ≡ 1 gives a positive difference of 116.
+example : Even (2 : ℤ) ∧ Even (-4 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_four_mod_eight (-7) 116 rfl rfl 2 (-4) (by decide)
+
+-- The difference is −20 before taking its absolute value.
+example : Even (-4 : ℤ) ∧ Even (2 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_four_mod_eight 9 20 rfl rfl (-4) 2 (by decide)
+
+-- The smallest possible z is 4, and a coordinate may be zero.
+example : Even (0 : ℤ) ∧ Even (2 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_four_mod_eight 1 4 rfl rfl 0 2 (by decide)
+
+#print axioms even_of_abs_sq_sub_mul_sq_four_mod_eight
+
 -- The horizontal line and the line of slope 3/4 have an external bisector of slope -3.
 example : ((0 : ℝ) - (-3)) ^ 2 * ((3 / 4) ^ 2 + 1) =
     (3 / 4 - (-3)) ^ 2 * (0 ^ 2 + 1) := by
   apply bisector_slope_equation 0 (3 / 4) (-3) <;> norm_num
+
+-- For slopes 1 and 7 with bisector slope 2, the other bisector has slope -1/2.
+-- Simultaneous negation and swapping the input slopes also preserve the equation.
+example :
+    ((1 : ℝ) - (-1 / 2)) ^ 2 * (7 ^ 2 + 1) = (7 - (-1 / 2)) ^ 2 * (1 ^ 2 + 1) ∧
+      ((-1 : ℝ) - (-2)) ^ 2 * ((-7) ^ 2 + 1) = (-7 - (-2)) ^ 2 * ((-1) ^ 2 + 1) ∧
+      ((7 : ℝ) - 2) ^ 2 * (1 ^ 2 + 1) = (1 - 2) ^ 2 * (7 ^ 2 + 1) := by
+  have h := bisector_equation_symm 1 7 2 (by norm_num)
+  have hrec : -(2 : ℝ)⁻¹ = -1 / 2 := by norm_num
+  exact ⟨by simpa only [hrec] using h.1 (by norm_num), h.2⟩
+
+-- A horizontal bisector still admits negation and swapping, without a nonzero hypothesis.
+example (a b : ℝ) (h : a ^ 2 * (b ^ 2 + 1) = b ^ 2 * (a ^ 2 + 1)) :
+    (-a) ^ 2 * ((-b) ^ 2 + 1) = (-b) ^ 2 * ((-a) ^ 2 + 1) ∧
+      b ^ 2 * (a ^ 2 + 1) = a ^ 2 * (b ^ 2 + 1) := by
+  have h₀ := bisector_equation_symm a b 0 (by simpa only [sub_zero] using h)
+  simpa only [neg_zero, sub_zero] using h₀.2
+
+#print axioms bisector_equation_symm
 
 -- The Pell points (1, 1) and (1/7, 5/7) admit both the slope 1/2 and its negative reciprocal.
 example (c : ℚ) (hc : c ∈ ({1 / 2, -2} : Set ℚ)) :

@@ -16,12 +16,8 @@ Integer Sequences* 28 (2025), Article 25.6.2
 
 The sequence `s` is defined by the paper's `2`-regular
 recursion (`shakovSeq`; the value at `0` is a
-dummy, the paper's domain is `n ≥ 1`). All statements
-were verified numerically: the fibers of `s` match
-`τ(m^2 + 1)` for `m ≤ 12`, the block-average formula
-for `n ≤ 8`, the primality criterion for `n ≤ 12`,
-and `s (a n) = Nat.fib (n - 1)` for `n ≤ 15` (the
-paper's `F_n` is `Nat.fib (n - 1)`).
+dummy, the paper's domain is `n ≥ 1`). The primality
+criterion was verified numerically for `n ≤ 12`.
 
 Lemmas 5 and 6 are stated for the integer pair tree
 (`integerPairTree`, a
@@ -38,7 +34,7 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.FibonacciSquareAddOne
-public import MathlibExt.NumberTheory.ShakovTwoRegular
+public import MathlibExt.NumberTheory.ShakovBlockAverage
 public import MathlibExt.NumberTheory.TripSternTree
 
 set_option autoImplicit false
@@ -46,61 +42,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.ShakovTwoRegularWanted
-
-/-- **Shakov's auxiliary sequence.** The integer sequence $a$ with $a(0) = 0$, $a(1) = 1$ and,
-for every $n \ge 2$, $a(n) = 2a(n-1)$ if $n \equiv 0 \pmod 4$, $a(n) = a(n-1) + 1$ if
-$n \equiv 1 \pmod 4$, $a(n) = 2a(n-1) + 1$ if $n \equiv 2 \pmod 4$, and $a(n) = a(n-1) - 1$ if
-$n \equiv 3 \pmod 4$.
-
-The value $a(0)$ plays no role in the recursion; the source's sequence starts at $n = 1$. -/
-def shakovA : ℕ → ℤ
-  | 0 => 0
-  | 1 => 1
-  | n + 2 =>
-      if (n + 2) % 4 = 0 then 2 * shakovA (n + 1)
-      else if (n + 2) % 4 = 1 then shakovA (n + 1) + 1
-      else if (n + 2) % 4 = 2 then 2 * shakovA (n + 1) + 1
-      else shakovA (n + 1) - 1
-
-/-- **Block averages of Shakov's sequence.** Let $s$ be Shakov's $2$-regular sequence.
-For every natural number $n$,
-$$
-\frac{1}{2^n} \sum_{2^n \le t < 2^{n+1}} s(t) =
-\frac{(5 + \sqrt{17})^n - (5 - \sqrt{17})^n}{2^{2n-1} \sqrt{17}},
-$$
-where the exponent $2n - 1$ is read as $0$ when $n = 0$ (both sides are then $0$).
-
-Source: Anton Shakov, "A 2-Regular Sequence That
-Counts The Divisors of `n^2 + 1`", Proposition 7. -/
-theorem_wanted block_average (n : ℕ) :
-    (1 / (2 : ℝ) ^ n) *
-        (∑ t ∈ Finset.Ico (2 ^ n) (2 ^ (n + 1)),
-          (shakovSeq t : ℝ)) =
-      ((5 + Real.sqrt 17) ^ n - (5 - Real.sqrt 17) ^ n) /
-        ((2 : ℝ) ^ (2 * n - 1) * Real.sqrt 17)
-
-/-- **Primality of $n^2 + 1$ from the fibers of Shakov's sequence.** Let $s$ be Shakov's
-$2$-regular sequence. For every natural number $n \ge 1$, the number $n^2 + 1$ is prime if and
-only if the set of natural numbers $m$ with $s(m) = n$ is exactly $\{2^n, 2^{n+1} - 1\}$.
-
-Source: Anton Shakov, "A 2-Regular Sequence That
-Counts The Divisors of `n^2 + 1`", Proposition 8. -/
-theorem_wanted prime_iff_fiber (n : ℕ) (hn : 1 ≤ n) :
-    Nat.Prime (n ^ 2 + 1) ↔
-      {m : ℕ | shakovSeq m = (n : ℤ)} = {2 ^ n, 2 ^ (n + 1) - 1}
-
-/-- **Shakov's sequence takes Fibonacci values along the auxiliary sequence.** Let $s$ be
-Shakov's $2$-regular sequence, let $a$ be Shakov's auxiliary sequence, and let $F_k$ denote the
-$k$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. For every natural number $n \ge 1$,
-$s(\max(a(n), 0)) = F_{n-1}$.
-
-The source shows that $a(n)$ is a positive integer and numbers the Fibonacci numbers so that
-this reads $s(a(n)) = F_n$.
-
-Source: Anton Shakov, "A 2-Regular Sequence That
-Counts The Divisors of `n^2 + 1`", Proposition 9. -/
-theorem_wanted shakovSeq_shakovA (n : ℕ) (hn : 1 ≤ n) :
-    shakovSeq (shakovA n).toNat = (Nat.fib (n - 1) : ℤ)
 
 /-- The integer pair tree as a `TripSternTree (ℚ × ℚ)`: the
 root is `(1, 0)` and each pair `(d, m)` has children
