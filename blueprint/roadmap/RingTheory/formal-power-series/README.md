@@ -13,3 +13,6 @@ Rings of formal power series in one or several variables and Hahn series, with f
 - [Tate's determinant formula for power series quotients](tate-s-determinant-formula-for-power-series-quot/README.md)
 - [Multiplicativity of formal binomial powers](binomial-series-subst-mul.md)
 - [Taylor's formula for formal power series](taylor-formula.md)
+- [Majorants, convergence and coefficient bounds](majorants-convergence-and-coefficient-bounds/README.md)
+- [Formal differential equations and Cole–Hopf series](formal-differential-equations-and-cole-hopf-series/README.md)
+- [Quotients, automorphisms and subrings of power-series rings](power-series-quotients-and-subrings/README.md)

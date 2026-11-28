@@ -41,7 +41,6 @@ Topics added since this subject's fields were last revised.
 - [Hochschild Cochains](hochschild-cochains/README.md)
 - [Hopf Galois](hopf-galois/README.md)
 - [Hopf Ker](hopf-ker/README.md)
-- [Inertia Cyclotomic](inertia-cyclotomic/README.md)
 - [Inertia Fixed Field](inertia-fixed-field/README.md)
 - [Infinite Sum](infinite-sum/README.md)
 - [Integrally Closed](integrally-closed/README.md)

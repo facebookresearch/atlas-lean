@@ -23,3 +23,5 @@ Local rings and their residue fields, Krull dimension, adic completion, regular 
 - [The Krull dimension of a Noetherian local ring is at most the number of generators of its maximal ideal](noetherian-local-dimension-bound.md)
 - [Dutta multiplicity bounds Hilbert–Samuel multiplicity for complete domains](dutta-multiplicity-complete-domain.md)
 - [Ring-theoretic properties of the completed surface-cone candidate](complete-normal-threefold-local-domain.md)
+- [Adic completion: scalars, inverse limits and localization](adic-completion-scalars-inverse-limits-and-local/README.md)
+- [Units, residues, dimension and depth of local rings](units-residues-dimension-and-depth-of-local-ring/README.md)

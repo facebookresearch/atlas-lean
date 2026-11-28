@@ -1,0 +1,18 @@
+# Geometric majorants of rational multivariate power series
+
+- [Weight of an exponent at given radii](radii-weight.md)
+- [Positivity of radii weights](radii-weight-pos.md)
+- [Multiplicativity of radii weights](radii-weight-add.md)
+- [Geometric majorant](geometric-majorant.md)
+- [Majorization of a power series](is-majorized.md)
+- [Weakening a majorant](mono.md)
+- [Majorant of a scaled power series](c-mul.md)
+- [Ratio power of an exponent](qpow.md)
+- [Ratio power of the zero exponent](qpow-zero.md)
+- [Comparing weights at two radii](radii-weight-eq-radii-weight-mul-qpow.md)
+- [Antidiagonal sums of ratio powers](sum-antidiagonal-qpow.md)
+- [Size of the antidiagonal of an exponent](card-antidiagonal-eq.md)
+- [Bound on the size of an antidiagonal](card-antidiagonal-le.md)
+- [Majorant of a product of power series](mul.md)
+- [Bound on antidiagonal sums of ratio powers](sum-antidiagonal-qpow-lt-le.md)
+- [Coefficient bound for the inverse of a power series](coeff-inv-le.md)

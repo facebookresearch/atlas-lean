@@ -1,0 +1,16 @@
+# Block encodings and their products
+
+- [Ancilla block of a matrix](ancilla-block.md)
+- [Qubit block-encoding](is-qubit-block-encoding.md)
+- [Norm bound for a block-encoded matrix](norm-le.md)
+- [A unitary block-encodes itself](is-block-encoding-self.md)
+- [One-ancilla encoding of a projection](proj-encoding.md)
+- [Block-encoding of a scaled projection](is-block-encoding-smul-projection.md)
+- [Reordering two ancilla registers](swap-ancilla-equiv.md)
+- [Product unitary of two block-encodings](ancilla-mul.md)
+- [Product of block-encodings](mul.md)
+- [Product of block-encodings under a norm bound](mul-of-norm-le.md)
+- [Merging two qubit ancilla registers](qubit-ancilla-equiv.md)
+- [Product of qubit block-encodings](mul-2.md)
+- [Block encoding](is-block-encoding.md)
+- [Trivial block encoding](trivial-encoding.md)

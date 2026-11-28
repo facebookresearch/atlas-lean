@@ -9,3 +9,6 @@ Discrete valuation rings and general valuation rings, their completions and fini
 - [Krull–Akizuki theorem](krull-akizuki-theorem/README.md)
 - [Residue fields of valuation rings](residue-fields-of-valuation-rings/README.md)
 - [Valuation rings of one-variable function fields are PIDs](is-principal-ideal-ring-of-finite-dimens.md)
+- [Inertia, residue fields and places above a prime](inertia-and-places-above-a-prime/README.md)
+- [Valuation subrings of field extensions](valuation-subrings-of-field-extensions/README.md)
+- [Quotients and finite algebras of discrete valuation rings](quotients-and-finite-algebras-of-dvrs/README.md)

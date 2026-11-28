@@ -25,3 +25,4 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Independent commuting derivations with a coordinate-free joint kernel](commuting-locally-nilpotent-derivations.md)
 - [Difference equations in sequences](difference-equations-in-sequences/README.md)
 - [Theories of polynomial rings](theories-of-polynomial-rings/README.md)
+- [Resultants, linear factors and polynomial ideals](resultants-linear-factors-and-polynomial-ideals/README.md)

@@ -14,6 +14,8 @@ Inequalities relating entropies, divergences and mutual information, such as the
 - [Binary Pinsker inequality on the closed interval](binary-pinsker-of-mem-icc.md)
 - [I-projections](i-projections/README.md)
 - [f-divergences](f-divergences/README.md)
+- [Classical Fuchs–van de Graaf inequalities](classical-fuchs-van-de-graaf-inequalities/README.md)
+- [Data processing for the classical fidelity](bhattacharyya-coeff-le-bhattacharyya-coe.md)
 - [Bosonic Fock states and the passive beam-splitter output condition](beam-splitter-fock-model.md)
 
 ## Related topics

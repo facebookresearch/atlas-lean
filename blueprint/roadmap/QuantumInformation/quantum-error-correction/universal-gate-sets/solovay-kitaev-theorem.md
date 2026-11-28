@@ -29,7 +29,7 @@ arbitrary $n$-qubit unitary.
 - [Finite nets from an instruction set](epsilon-nets-from-an-instruction-set.md)
 - [The Solovay–Kitaev recursion step](solovay-kitaev-recursion-step.md)
 - [Approximate balanced group commutators in $SU(d)$](approximate-balanced-group-commutators-in-sud.md)
-- [Telescoping bound for products of contractions](../../not-yet-classified/part-01/unitary-error-budget/norm-list-of-fn-prod-sub-le.md)
+- [Telescoping bound for products of contractions](../../../ComputerScience/quantum-algorithms/fourier-transforms-block-encodings-and-error-budgets/unitary-error-budgets/norm-list-of-fn-prod-sub-le.md)
 
 ## Background
 

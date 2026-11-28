@@ -4,6 +4,7 @@ Quantum operations and channels covers the physically allowed transformations of
 
 - [Quantum circuits as unitary channels](quantum-circuits-as-unitary-channels/README.md)
 - [Quantum Fourier transform](quantum-fourier-transform/README.md)
+- [Purification overlap and the Bhattacharyya coefficient](purification-overlap-and-the-bhattacharyya-coeff/README.md)
 - [No-cloning theorem for two states](no-cloning-two-state.md)
 - [No-cloning theorem (linear form)](no-cloning-linear.md)
 
