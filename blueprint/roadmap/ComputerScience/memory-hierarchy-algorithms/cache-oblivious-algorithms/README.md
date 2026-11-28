@@ -11,3 +11,5 @@
 - [Cache-oblivious distribution sort](cache-oblivious-distribution-sort.md)
 - [Cache-complexity lower bound for sorting](cache-complexity-lower-bound-for-sorting.md)
 - [LRU simulates the ideal cache up to a factor of two](lru-simulates-the-ideal-cache-up-to-a-factor-of.md)
+- [Run legal](run-legal.md)
+- [Cache Misses le](cache-misses-le.md)

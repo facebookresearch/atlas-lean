@@ -12,21 +12,20 @@ $C_2^{\perp} = C^{\perp}$ have minimum distance at least $\delta n$. So there ar
 relative number of correctable errors both stay bounded away from $0$. The lengths must be even: $1^n \in C^{\perp}$ means
 $1^n \cdot 1^n = n \equiv 0 \pmod 2$.
 
-## Expansion
-
-A good expansion adds pages for the two counting steps of Calderbank and Shor's proof: the greedy lemma (their Lemma 3):
-a family of $[n_i, k_i]$ codes with $k_i/n_i > R$ in which every nonzero word lies in the same number of codes contains
-codes meeting the Gilbert–Varshamov bound, applied here inside the even-weight words with $1^n$ set aside, since $1^n$
-lies in every $C^{\perp}$ and odd-weight words lie in none; and the count needed for the dual distance, from MacWilliams,
-Sloane and Thompson (Theorem 2.1 there): for an even-weight word $v$ outside the span of $1^n$, the number of
-$k$-dimensional weakly self-dual codes $C$ with $v \in C^{\perp}$, equivalently $C \subseteq v^{\perp}$, does not depend
-on $v$.
-
 ## Depends on
 
 - [CSS codes correct $\lfloor (d - 1) / 2 \rfloor$ errors](../css-codes/is-correctable-css.md)
 - [Linear code](../../../InformationTheory/error-correcting-codes/linear-codes/linear-code.md)
 - [Dual code](../../../InformationTheory/error-correcting-codes/linear-codes/dual.md)
+
+## Proof depends on
+
+- [Counting weakly self-dual codes](counting-weakly-self-dual-codes.md)
+- [Volume of a Hamming ball, entropy upper bound](../../../InformationTheory/error-correcting-codes/bounds-on-code-size/sum-choose-mul-pow-le-exp.md): the entropy bound on the number of low-weight words
+
+## Related topics
+
+- [The greedy Gilbert–Varshamov lemma for code families](greedy-gilbert-varshamov-lemma-for-code-families.md): the same greedy argument on the full space
 
 ## Sources
 

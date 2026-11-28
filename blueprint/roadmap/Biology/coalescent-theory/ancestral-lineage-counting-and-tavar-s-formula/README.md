@@ -28,3 +28,4 @@
 - [Ancestral counts in Feller diffusions](ancestral-counts-in-feller-diffusions/README.md)
 - [Coalescence times of Galton–Watson processes with immigration](coalescence-times-of-galton-watson-processes-with-immigration/README.md)
 - [Coalescent point process of linear-fractional Galton–Watson trees](coalescent-point-process-of-linear-fractional-galton-watson-trees/README.md)
+- [Coalescence times in Galton–Watson genealogies](coalescence-times-in-galton-watson-genealogies/README.md)

@@ -1,0 +1,18 @@
+# Connectivity is preserved by a star–triangle replacement
+
+- [Bypass vertex](bypass-vertex.md)
+- [Reach collapse](reach-collapse.md)
+- [Tri Cell](tri-cell.md)
+- [Star Cell](star-cell.md)
+- [Tri Cell adj imp](tri-cell-adj-imp.md)
+- [Star Cell adj imp](star-cell-adj-imp.md)
+- [Tri Cell reach BC](tri-cell-reach-bc.md)
+- [Tri Cell reach AC](tri-cell-reach-ac.md)
+- [Tri Cell reach AB](tri-cell-reach-ab.md)
+- [Star Cell reach AB](star-cell-reach-ab.md)
+- [Star Cell reach AC](star-cell-reach-ac.md)
+- [Star Cell reach BC](star-cell-reach-bc.md)
+- [Matches Pattern](matches-pattern.md)
+- [Reach tri to star](reach-tri-to-star.md)
+- [Reach star to tri](reach-star-to-tri.md)
+- [Star Triangle reach iff](star-triangle-reach-iff.md)

@@ -108,6 +108,18 @@ example (g : ℤ) (hg : IsGenFrobeniusNumber ![9, 11] 1 g) :
   exact frobeniusRepCount_triangular_reduced_at_pair_frobenius 8 2 1 (by decide)
     (by decide +kernel) g hg
 
+-- Even index: the first coefficient of the strict slice is two.
+example : IsGenFrobeniusNumber ![9, 11] 1 178 ∧ IsGenFrobeniusNumber ![36, 9, 11] 7 250 :=
+  isGenFrobeniusNumber_triangular_reduced 8 2 1 (by decide) (by decide +kernel)
+
+-- Odd index, in the branch i > k.
+example : IsGenFrobeniusNumber ![4, 5] 1 31 ∧ IsGenFrobeniusNumber ![28, 4, 5] 4 59 :=
+  isGenFrobeniusNumber_triangular_reduced 7 1 2 (by decide) (by decide +kernel)
+
+-- At the smallest index the reduced triple has a negative Frobenius number.
+example : IsGenFrobeniusNumber ![1, 2] 0 (-1) ∧ IsGenFrobeniusNumber ![1, 1, 2] 0 (-1) :=
+  isGenFrobeniusNumber_triangular_reduced 1 0 0 (by decide) (by decide +kernel)
+
 -- The even high branch uses the shifted odd boundary of the cutoff triangle.
 example (g : ℤ) (hg : IsGenFrobeniusNumber ![15, 17] 1 g) :
     frobeniusRepCount ![105, 15, 17] (g + 315) = 10 := by

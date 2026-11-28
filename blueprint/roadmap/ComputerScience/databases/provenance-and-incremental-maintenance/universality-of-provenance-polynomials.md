@@ -14,6 +14,10 @@ where $\mathrm{Eval}_v : \mathbb{N}[X] \to K$ is the unique semiring homomorphis
 
 - [K-relations and positive relational algebra over a semiring](k-relations-and-positive-relational-algebra-over-a-semiring.md)
 
+## Proof depends on
+
+- [Semiring homomorphisms commute with positive relational algebra](annotation-maps-commuting-with-positive-relational-algebra.md)
+
 ## Sources
 
 - T. J. Green, G. Karvounarakis and V. Tannen, *Provenance semirings*, PODS 2007, Proposition 3.5, Proposition 4.2 and Theorem 4.3. <http://www.cs.ucdavis.edu/~green/papers/pods07.pdf>

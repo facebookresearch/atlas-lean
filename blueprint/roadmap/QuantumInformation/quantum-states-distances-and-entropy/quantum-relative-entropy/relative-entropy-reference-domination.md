@@ -12,6 +12,7 @@ For part 1, $\sigma\le\tau$ forces $\ker\tau\subseteq\ker\sigma$, and the resolv
 
 ## Depends on
 
+- [Density matrices, pure states and reduced states](../density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 - [Support inclusion and Umegaki relative entropy](umegaki-relative-entropy.md)
 
 ## Proof depends on

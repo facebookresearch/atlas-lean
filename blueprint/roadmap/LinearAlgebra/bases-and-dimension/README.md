@@ -4,3 +4,4 @@ Linear independence, spanning families and bases of modules and vector spaces, r
 
 - [Bases and coordinates](bases-and-coordinates/README.md)
 - [Free module](free-module.md)
+- [Filtered vector spaces](filtered-vector-spaces/README.md)

@@ -33,5 +33,6 @@
 - [A lower bound for the KLS constant](sqrt-pi-div-two-le-kls-constant.md)
 - [Lower Poincaré–Cheeger comparison with coefficient 1/π](catalogue-poincare-lower-bound.md)
 - [Lower Poincaré–Cheeger comparison with coefficient 1/9](klartag2023-poincare-lower-bound.md)
+- [Cheeger's inequality](smooth-poincare-constant-le-four-mul-inv.md)
 - [Cheeger's inequality for isotropic log-concave measures](poincare-cheeger-upper-bound.md)
 - [Dimensional KLS constant versus thin-shell variance, up to a squared logarithm](kls-le-thin-shell-variance-log-squared.md)

@@ -17,6 +17,7 @@ public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutCount
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutSubdivision
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTree
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTwoLeaves
+public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutUnsmoothedLeaves
 public import MathlibExt.Combinatorics.ArithmeticalStructureStar
 public import MathlibExt.Combinatorics.EuclideanChainLength
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTreeCoconutSmoothPath
@@ -35,24 +36,6 @@ The coconut tree `CT(p, s)` has vertex type `Fin p ⊕ Fin s`: the path vertex
 `v_p` is `.inl ⟨p - 1, _⟩`. A structure `(d, r)` is a pair of labelings of the
 vertices. Counts `|Arith(G)|` and `|SArith(G)|` are `Set.ncard` of the sets of
 pairs `(d, r)`. -/
-
-/-- **Monotonicity criteria for arithmetical structures on coconut trees.** Let $(d, r)$ be an
-arithmetical structure on the coconut tree $CT(p, s)$ with path vertices $v_1, \dots, v_p$, and
-write $d_k = d(v_k)$ and $r_k = r(v_k)$. The following are equivalent: (1) $d_k \ge 2$ for
-$1 \le k \le p - 1$; (2) $0 < r_2 - r_1 \le r_3 - r_2 \le \cdots \le r_p - r_{p-1}$; (3)
-$r_1 < r_2 < \cdots < r_p$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Lemma 1
-(`integers-2025-A82-lem-1`). -/
-public theorem_wanted IsArithmeticalStructure.coconut_tfae {p s : ℕ}
-    {d r : Fin p ⊕ Fin s → ℕ} (h : IsArithmeticalStructure (coconutTree p s) d r) :
-    [∀ i : Fin p, i.val + 1 < p → 2 ≤ d (.inl i),
-      (∀ hp : 1 < p, r (.inl ⟨0, by omega⟩) < r (.inl ⟨1, hp⟩)) ∧
-        ∀ (i : ℕ) (hi : i + 2 < p),
-          (r (.inl ⟨i + 1, by omega⟩) : ℤ) - r (.inl ⟨i, by omega⟩)
-            ≤ (r (.inl ⟨i + 2, hi⟩) : ℤ) - r (.inl ⟨i + 1, by omega⟩),
-      StrictMono fun i : Fin p => r (.inl i)].TFAE
 
 /-- **Smooth coconut structures with prescribed labels.** Let $s \ge 1$ and let $c$ and
 $a_1, \dots, a_s$ be natural numbers with $a_i > 0$, $a_i \mid c$ and $a_i < c$ for every $i$, such
@@ -176,23 +159,6 @@ public theorem_wanted ncard_coconutDescendants {p s i : ℕ} (hs : 2 ≤ s) (hi 
     Set.ncard {x : (Fin p ⊕ Fin s → ℕ) × (Fin p ⊕ Fin s → ℕ) |
       IsArithmeticalStructure (coconutTree p s) x.1 x.2 ∧ CoconutAncestor p s x i s y}
       = ballotNumber (p - 1) (p - i)
-
-/-- **Counting coconut structures whose leaves cannot be smoothed.** For $p \ge 1$ and $s \ge 2$,
-the number of arithmetical structures $(d, r)$ on the coconut tree $CT(p, s)$ with $d(\ell_j) \ge 2$
-at every leaf $\ell_j$ is
-$$\sum_{i=1}^{p} B(p - 1, p - i)\, N(i),$$
-where $B(n, k)$ is the ballot number and $N(i)$ is the number of smooth arithmetical structures on
-$CT(i, s)$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 4.6
-(`integers-2025-A82-cor-1`). -/
-public theorem_wanted ncard_arithmeticalStructure_coconutTree_leaves_ge_two {p s : ℕ}
-    (hp : 1 ≤ p) (hs : 2 ≤ s) :
-    Set.ncard {x : (Fin p ⊕ Fin s → ℕ) × (Fin p ⊕ Fin s → ℕ) |
-      IsArithmeticalStructure (coconutTree p s) x.1 x.2 ∧ ∀ j, 2 ≤ x.1 (.inr j)}
-      = ∑ i ∈ Finset.Icc 1 p, ballotNumber (p - 1) (p - i) *
-          Set.ncard {z : (Fin i ⊕ Fin s → ℕ) × (Fin i ⊕ Fin s → ℕ) | IsSmoothCoconut i s z.1 z.2}
 
 end
 
