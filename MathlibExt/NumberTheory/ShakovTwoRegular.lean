@@ -18,6 +18,15 @@ import Mathlib.Tactic.Linarith
 
 We show that the sequence is nonnegative at positive indices, counts the divisors of
 `m ^ 2 + 1` through its fibers, and takes Fibonacci values along Shakov's auxiliary sequence.
+For positive `n`, the fiber at `n` is exactly the two endpoints
+of the `n`th dyadic block if and only if `n ^ 2 + 1` is prime.
+
+## References
+
+* Anton Shakov, *A 2-Regular Sequence That Counts The Divisors of* `n^2 + 1`,
+  Journal of Integer Sequences 28 (2025), Article 25.6.2, pp. 1–10,
+  Theorem 4 (p. 2), Proposition 8 (pp. 6–7), and Proposition 9.
+  <https://cs.uwaterloo.ca/journals/JIS/VOL28/Shakov/shakov5.html>
 -/
 
 @[expose] public section
@@ -201,6 +210,30 @@ private theorem existsUnique_label (m : ℕ) (d e : ℤ)
         have hjk := huniq j ⟨hj, by omega, by omega, by omega⟩
         rw [hjk]
 
+private theorem left_endpoint (n : ℕ) :
+    shakovSeq (2 ^ n) = (n : ℤ) ∧ leftGap (2 ^ n) = 1 := by
+  induction n with
+  | zero => norm_num [leftGap, shakovSeq.eq_2, shakovSeq.eq_3]
+  | succ n ih =>
+    have hk : 1 ≤ (2 : ℕ) ^ n := Nat.one_le_pow n 2 (by decide)
+    obtain ⟨hval, hgap, _⟩ := left_child (2 ^ n) hk
+    rw [pow_succ', hval, hgap, ih.1, ih.2, Nat.cast_succ]
+    exact ⟨rfl, rfl⟩
+
+private theorem right_endpoint (n : ℕ) :
+    shakovSeq (2 ^ (n + 1) - 1) = (n : ℤ) ∧ rightGap (2 ^ (n + 1) - 1) = 1 := by
+  induction n with
+  | zero => norm_num [rightGap, shakovSeq.eq_2, shakovSeq.eq_4]
+  | succ n ih =>
+    have hpos : 0 < (2 : ℕ) ^ n := by positivity
+    have hk : 1 ≤ (2 : ℕ) ^ (n + 1) - 1 := by rw [pow_succ']; omega
+    have hstep : (2 : ℕ) ^ (n.succ + 1) - 1 = 2 * (2 ^ (n + 1) - 1) + 1 := by
+      rw [pow_succ' (2 : ℕ) (n + 1)]
+      omega
+    obtain ⟨hval, _, hgap⟩ := right_child _ hk
+    rw [hstep, hval, hgap, ih.1, ih.2, Nat.cast_succ]
+    exact ⟨rfl, rfl⟩
+
 end fiber_card
 
 open fiber_card in
@@ -382,5 +415,52 @@ theorem shakovSeq_shakovA (n : ℕ) (hn : 1 ≤ n) :
     ⟨(n - 1) / 2, by omega⟩
   · exact (shakovA_fib_triple k).2.1
   · exact (shakovA_fib_triple k).2.2.1
+
+open fiber_card in
+/-- **Primality of $n^2 + 1$ from the fibers of Shakov's sequence.** Let $s$ be Shakov's
+$2$-regular sequence. For every natural number $n \ge 1$, the number $n^2 + 1$ is prime if and
+only if the set of natural numbers $m$ with $s(m) = n$ is exactly $\{2^n, 2^{n+1} - 1\}$.
+
+Source: Anton Shakov, "A 2-Regular Sequence That
+Counts The Divisors of `n^2 + 1`", Proposition 8. -/
+theorem prime_iff_fiber (n : ℕ) (hn : 1 ≤ n) :
+    Nat.Prime (n ^ 2 + 1) ↔
+      {m : ℕ | shakovSeq m = (n : ℤ)} = {2 ^ n, 2 ^ (n + 1) - 1} := by
+  obtain ⟨_, F, hF, hcard⟩ := fiber_card n
+  have hFiber : (F : Set ℕ) = {m : ℕ | shakovSeq m = (n : ℤ)} := by
+    ext m
+    change m ∈ F ↔ shakovSeq m = (n : ℤ)
+    rw [hF]
+    refine ⟨And.right, fun hm ↦ ⟨?_, hm⟩⟩
+    by_contra! h
+    have hm₀ : m = 0 := by omega
+    rw [hm₀, shakovSeq.eq_1] at hm
+    omega
+  have hpow : 2 ≤ (2 : ℕ) ^ n := by
+    simpa using (Nat.pow_le_pow_right (by decide : 0 < (2 : ℕ)) hn)
+  let E : Finset ℕ := {2 ^ n, 2 ^ (n + 1) - 1}
+  have hE : (E : Set ℕ) = {2 ^ n, 2 ^ (n + 1) - 1} := by simp [E]
+  have hEcard : E.card = 2 := Finset.card_pair_eq_two_iff.mpr (by rw [pow_succ']; omega)
+  have hEF : E ⊆ F := by
+    simp only [E, Finset.insert_subset_iff, Finset.singleton_subset_iff, hF]
+    exact ⟨⟨hpow.trans' (by decide), (left_endpoint n).1⟩,
+      ⟨by rw [pow_succ']; omega, (right_endpoint n).1⟩⟩
+  rw [← hFiber, ← hE, Finset.coe_inj]
+  constructor
+  · intro hp
+    refine (Finset.eq_of_subset_of_card_le hEF ?_).symm
+    rw [hcard, hp.divisors, hEcard, Finset.card_pair_eq_two_iff.mpr hp.ne_one.symm]
+  · intro h
+    have hDcard : (n ^ 2 + 1).divisors.card = 2 := by rw [← hcard, h, hEcard]
+    have hq : 1 < n ^ 2 + 1 := Nat.succ_lt_succ (pow_pos hn 2)
+    have hq₀ : n ^ 2 + 1 ≠ 0 := by positivity
+    have hD : ({1, n ^ 2 + 1} : Finset ℕ) = (n ^ 2 + 1).divisors := by
+      apply Finset.eq_of_subset_of_card_le
+      · rw [Finset.insert_subset_iff, Finset.singleton_subset_iff]
+        exact ⟨Nat.one_mem_divisors.mpr hq₀, Nat.mem_divisors_self _ hq₀⟩
+      · rw [hDcard, Finset.card_pair_eq_two_iff.mpr hq.ne]
+    refine Nat.prime_def.mpr ⟨hq, fun d hdvd ↦ ?_⟩
+    have hd : d ∈ (n ^ 2 + 1).divisors := Nat.mem_divisors.mpr ⟨hdvd, hq₀⟩
+    simpa only [← hD, Finset.mem_insert, Finset.mem_singleton] using hd
 
 end MathlibExt.NumberTheory.ShakovTwoRegularWanted

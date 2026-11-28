@@ -8,6 +8,7 @@
 - [Dodgson score](dodgson-score/README.md)
 - [Envy-free pricing for unit-demand consumers](envy-free-pricing-for-unit-demand-consumers/README.md)
 - [Euclidean line cover](euclidean-line-cover/README.md)
+- [Decision trees and testing](decision-trees-and-testing/README.md)
 - [Exact cover](exact-cover/README.md)
 - [Exact cover by 3-sets](exact-cover-by-3-sets/README.md)
 - [Exact cover by 3-sets with at most three occurrences per element](exact-cover-by-3-sets-with-at-most-three-occurre/README.md)

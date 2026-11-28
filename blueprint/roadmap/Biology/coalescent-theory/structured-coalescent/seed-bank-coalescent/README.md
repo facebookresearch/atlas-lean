@@ -13,3 +13,5 @@
 - [Wright–Fisher diffusion with a strong seed bank](wright-fisher-diffusion-with-a-strong-seed-bank.md)
 - [Seed-bank Cannings graphs](seed-bank-cannings-graphs/README.md)
 - [Seed bank diffusion with simultaneous switching](seed-bank-diffusion-with-simultaneous-switching/README.md)
+- [Seed bank coalescent with simultaneous switching](seed-bank-coalescent-with-simultaneous-switching/README.md)
+- [F_ST and site frequency spectrum of seed-bank coalescents](fst-and-site-frequency-spectrum-of-seed-bank-coalescents/README.md)

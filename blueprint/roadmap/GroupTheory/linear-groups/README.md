@@ -21,3 +21,4 @@ Groups of matrices over fields and rings: SL2, PGL2 and SU(2) and their conjugac
 - [Every square matrix is a product of transvections and a diagonal matrix](transvection-diagonal-factorization.md)
 - [Relative roots, root space decompositions and root subgroups of reductive groups](relative-root-systems-and-root-subgroups.md)
 - [Unipotent groups in characteristic zero: central series, exponential map and sections](unipotent-groups-in-characteristic-zero.md)
+- [Decision problems for matrix groups](decision-problems-for-matrix-groups/README.md)

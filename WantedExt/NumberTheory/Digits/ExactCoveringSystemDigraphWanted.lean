@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.Digits.PositiveTwoCubeDvd
 public import MathlibExt.NumberTheory.Digits.ThreePowCubeBound
 public import MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTypeOneRelIso
 public import MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTypeThreeRelIso
+public import MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTwoNegTwoDescendants
 
 /-!
 # Exact covering system digraphs of degree 2
@@ -26,7 +27,9 @@ public import MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTypeT
 Statements from Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and
 Non-Standard Binary Representations of Integers*, INTEGERS 26 (2026), Article A107.
 The theorem `ecsd_type_three_relIso` is proved in
-`MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTypeThreeRelIso`.
+`MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTypeThreeRelIso`, and the
+theorem `ecsd_two_neg_two_descendants` is proved in
+`MathlibExt.NumberTheory.Digits.ExactCoveringSystemDigraphEcsdTwoNegTwoDescendants`.
 
 For a representative set `S = {(aᵢ, dᵢ)}` of an exact covering system, the exact
 covering system digraph (ECSD) `G_S` has vertex set `ℤ` and an edge `n → dᵢ n + aᵢ`
@@ -79,25 +82,6 @@ theorem_wanted ecsd_two_two_sub_cycles (a : ℕ) (ha : Odd a) :
     ∀ a' t : ℕ, a = t * a' → ∀ c : List ℤ,
       (IsDigraphCycle (ecsdAdj ![2, 2] ![0, -(a' : ℤ)]) c ↔
         IsDigraphCycle (ecsdAdj ![2, 2] ![0, -(a : ℤ)]) (c.map ((t : ℤ) * ·)))
-
-/-- **Descendants in the digraph $G(2n, -2n + a)$.** Let $a$ and $m$ be integers and let
-$k \ge 1$. In the digraph $G(2n, -2n + a)$ on $\mathbb{Z}$, with an edge $x \to 2x$ and an edge
-$x \to -2x + a$ for every integer $x$, the $k$-descendants of $m$ (the ends of directed walks of
-exactly $k$ edges from $m$) are exactly the integers $2^k m$, the integers $2^k m - ba$ and
-$-(2^k m - ba)$ for natural numbers $b$ with $1 \le b < 2^{k-1}$, and $-(2^k m - 2^{k-1} a)$.
-
-This holds for every integer $a$, not only for odd $a$, for which $G(2n, -2n + a)$ is an exact
-covering system digraph.
-
-Source: Dana Neidmann, *Exact Covering System Digraphs of Degree 2 and Non-Standard
-Binary Representations of Integers*, INTEGERS 26 (2026), Article A107, Proposition 1
-(`integers-2026-A107-prop-1`). -/
-theorem_wanted ecsd_two_neg_two_descendants (a m n : ℤ) (k : ℕ) (hk : 1 ≤ k) :
-    IsKDescendant (ecsdAdj ![2, -2] ![0, a]) k m n ↔
-      n = 2 ^ k * m ∨
-        (∃ b : ℕ, 1 ≤ b ∧ b < 2 ^ (k - 1) ∧
-          (n = 2 ^ k * m - b * a ∨ n = -(2 ^ k * m - b * a))) ∨
-        n = -(2 ^ k * m - 2 ^ (k - 1) * a)
 
 /-- **Cycles of the digraph $G(2n, -2n + a)$.** For an integer $b$ write $G_b$ for the digraph
 $G(2n, -2n + b)$ on $\mathbb{Z}$, with an edge $m \to 2m$ and an edge $m \to -2m + b$ for every

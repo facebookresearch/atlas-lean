@@ -4,6 +4,7 @@ Clique, independent set, vertex cover, domination variants, feedback vertex and 
 
 - [Balanced biclique](balanced-biclique/README.md)
 - [Biclique edge cover](biclique-edge-cover/README.md)
+- [Burning, firefighting and hull number](burning-firefighting-and-hull-number/README.md)
 - [Clique, independent set and vertex cover](clique-independent-set-and-vertex-cover/README.md)
 - [Connected dominating set](connected-dominating-set/README.md)
 - [Densest k-subgraph](densest-k-subgraph/README.md)
