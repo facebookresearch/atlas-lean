@@ -63,8 +63,9 @@ lemma tensor_homologyπ_hom_ext {Z : C}
     (w : (K₁.homologyπ j₁ ⊗ₘ K₂.homologyπ j₂) ≫ f =
       (K₁.homologyπ j₁ ⊗ₘ K₂.homologyπ j₂) ≫ g) : f = g := by
   let _ : PreservesColimit (parallelPair (K₂.toCycles i₂ j₂) 0)
-      (tensorLeft (CokernelCofork.ofπ (K₁.homologyπ j₁) (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) :=
-        by
+      (tensorLeft
+        (CokernelCofork.ofπ (K₁.homologyπ j₁)
+          (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (K₁.homology j₁))
     infer_instance
   exact CokernelCofork.tensor_hom_ext
@@ -94,8 +95,9 @@ noncomputable def tensorHomologyDesc {Z : C}
       (K₁.cycles j₁ ◁ K₂.toCycles i₂ j₂) ≫ k = 0) :
     K₁.homology j₁ ⊗ K₂.homology j₂ ⟶ Z := by
   let _ : PreservesColimit (parallelPair (K₂.toCycles i₂ j₂) 0)
-      (tensorLeft (CokernelCofork.ofπ (K₁.homologyπ j₁) (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) :=
-        by
+      (tensorLeft
+        (CokernelCofork.ofπ (K₁.homologyπ j₁)
+          (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (K₁.homology j₁))
     infer_instance
   exact (CokernelCofork.isColimitTensor
@@ -119,8 +121,9 @@ lemma tensor_homologyπ_comp_tensorHomologyDesc {Z : C}
     (K₁.homologyπ j₁ ⊗ₘ K₂.homologyπ j₂) ≫
         tensorHomologyDesc K₁ i₁ j₁ h₁ K₂ i₂ j₂ h₂ k hk = k := by
   let _ : PreservesColimit (parallelPair (K₂.toCycles i₂ j₂) 0)
-      (tensorLeft (CokernelCofork.ofπ (K₁.homologyπ j₁) (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) :=
-        by
+      (tensorLeft
+        (CokernelCofork.ofπ (K₁.homologyπ j₁)
+          (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (K₁.homology j₁))
     infer_instance
   exact (CokernelCofork.isColimitTensor
@@ -165,13 +168,15 @@ lemma tensorHomologyDesc_naturality
         tensorHomologyDesc L₁ i₁ j₁ h₁ L₂ i₂ j₂ h₂ k' hk' =
       tensorHomologyDesc K₁ i₁ j₁ h₁ K₂ i₂ j₂ h₂ k hk ≫ z := by
   let _ : PreservesColimit (parallelPair (K₂.toCycles i₂ j₂) 0)
-      (tensorLeft (CokernelCofork.ofπ (K₁.homologyπ j₁) (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) :=
-        by
+      (tensorLeft
+        (CokernelCofork.ofπ (K₁.homologyπ j₁)
+          (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (K₁.homology j₁))
     infer_instance
   let _ : PreservesColimit (parallelPair (L₂.toCycles i₂ j₂) 0)
-      (tensorLeft (CokernelCofork.ofπ (L₁.homologyπ j₁) (L₁.toCycles_comp_homologyπ i₁ j₁)).pt) :=
-        by
+      (tensorLeft
+        (CokernelCofork.ofπ (L₁.homologyπ j₁)
+          (L₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (L₁.homology j₁))
     infer_instance
   exact CokernelCofork.tensorDesc_naturality
