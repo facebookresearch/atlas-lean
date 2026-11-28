@@ -17,6 +17,7 @@ module
 public import Mathlib.Algebra.Homology.Embedding.Basic
 public import MathlibExt.Algebra.Homology.Embedding.PositiveNat
 public import Mathlib.Algebra.Homology.Embedding.TruncLE
+public import MathlibExt.CategoryTheory.DGSourceMore.HomologyEmbeddingTruncLE
 public import Mathlib.Algebra.Homology.Embedding.StupidTrunc
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import MathlibExt.Algebra.Homology.Embedding.PositiveStupidTruncInclusion
@@ -55,64 +56,8 @@ variable [HasZeroMorphisms C]
 variable (K : HomologicalComplex C c') (e : c.Embedding c') [e.IsTruncLE]
   [∀ i', K.HasHomology i']
 
-/--
-Let C have zero morphisms, let K be a c'-complex with homology in every degree, and let e:c→c'
-preserve and reflect relations with image closed under incoming differentials (IsTruncLE). Let
-κ:K.truncLE' e→K.restriction e be the comparison from the good restricted truncation. For
-e(i)=i' with i an outgoing boundary of the image, the good term is the cycles Z_{i'}(K). Its
-comparison component is θ_Z.hom ≫ K.iCycles i' ≫ θ_R.inv, where θ_Z identifies the good term
-with cycles and θ_R identifies the restricted term with K_{i'}.
--/
-@[reassoc]
-theorem truncLE'ToRestriction_f_eq_iso_hom_iCycles_iso_inv
-    {i : ι} {i' : ι'} (hi' : e.f i = i') (hi : e.BoundaryLE i) :
-    (K.truncLE'ToRestriction e).f i =
-      (K.truncLE'XIsoCycles e hi' hi).hom ≫ K.iCycles i' ≫
-        (K.restrictionXIso e hi').inv := by
-  subst hi'
-  have h : (K.op.restrictionToTruncGE' e.op).f i =
-      (K.op.restrictionXIso e.op rfl).hom ≫ (K.iCycles (e.f i)).op ≫
-        (K.opcyclesOpIso (e.f i)).inv ≫
-          (K.op.truncGE'XIsoOpcycles e.op rfl (by simpa using hi)).inv := by
-    have hn := K.op.restrictionToTruncGE'_f_eq_iso_hom_pOpcycles_iso_inv
-      e.op (i := i) (i' := e.f i) rfl (by simpa using hi)
-    have hb := congrArg
-      (fun f => (K.op.restrictionXIso e.op rfl).hom ≫ f ≫
-        (K.opcyclesOpIso (e.f i)).inv ≫
-          (K.op.truncGE'XIsoOpcycles e.op rfl (by simpa using hi)).inv)
-      (CategoryTheory.ShortComplex.op_pOpcycles_opcyclesOpIso_hom (K.sc (e.f i)))
-    change (K.op.restrictionXIso e.op (i := i) (i' := e.f i) rfl).hom ≫
-        (K.op.pOpcycles (e.f i) ≫ (K.opcyclesOpIso (e.f i)).hom) ≫
-          (K.opcyclesOpIso (e.f i)).inv ≫
-            (K.op.truncGE'XIsoOpcycles e.op (i := i) (i' := e.f i)
-              rfl (by simpa using hi)).inv =
-      (K.op.restrictionXIso e.op (i := i) (i' := e.f i) rfl).hom ≫
-        (K.iCycles (e.f i)).op ≫ (K.opcyclesOpIso (e.f i)).inv ≫
-          (K.op.truncGE'XIsoOpcycles e.op (i := i) (i' := e.f i)
-            rfl (by simpa using hi)).inv at hb
-    simp only [Category.assoc, Iso.hom_inv_id_assoc] at hb
-    exact hn.trans hb
-  apply Quiver.Hom.op_inj
-  simpa [truncLE'ToRestriction, unopFunctor, truncLE'XIsoCycles,
-    truncLE', restriction, restrictionXIso, Category.assoc] using! h
-
-/--
-Let C have zero morphisms, let K be a c'-complex with homology in every degree, and let e:c→c'
-preserve and reflect relations with image closed under incoming differentials (IsTruncLE). Let
-κ:K.truncLE' e→K.restriction e be the comparison from the good restricted truncation. If
-e(i)=i' and i is not an outgoing boundary, both terms identify with K_{i'}. The component is
-θ_G.hom ≫ θ_R.inv, using the good-term and restriction coordinate isomorphisms.
--/
-@[reassoc]
-theorem truncLE'ToRestriction_f_eq_iso_hom_iso_inv
-    {i : ι} {i' : ι'} (hi' : e.f i = i') (hi : ¬ e.BoundaryLE i) :
-    (K.truncLE'ToRestriction e).f i =
-      (K.truncLE'XIso e hi' hi).hom ≫ (K.restrictionXIso e hi').inv := by
-  subst hi'
-  apply Quiver.Hom.op_inj
-  simpa [truncLE'ToRestriction, unopFunctor, truncLE'XIso, truncLE',
-    restriction, restrictionXIso] using!
-    K.op.restrictionToTruncGE'_f_eq_iso_hom_iso_inv e.op rfl (by simpa using hi)
+attribute [reassoc] truncLE'ToRestriction_f_eq_iso_hom_iCycles_iso_inv
+attribute [reassoc] truncLE'ToRestriction_f_eq_iso_hom_iso_inv
 
 variable [HasZeroObject C]
 
