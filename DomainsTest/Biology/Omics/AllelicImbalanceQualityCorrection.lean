@@ -22,7 +22,8 @@ import Mathlib.Tactic.NormNum
   `BB(2; 2, 2)(1) = 2/5` and `BB(2; 1/2, 1/2)(1) = 1/4`, so the pooled count `1` has probability
   `13/40`.
 * **The M-step.** `BetaBin(2, 2, 2)` has variance `2 (4 + 2) / (4 · 5) = 3/5`, and the
-  moment-matching shape of `3/5` is `((2)² - 4 · 3/5) / (8 · 3/5 - 4) = 2`.
+  moment-matching shape of `3/5` is `((2)² - 4 · 3/5) / (8 · 3/5 - 4) = 2`. With no reads the
+  formula gives `-1/2` for every nonzero variance, and `0` at variance `0`.
 * **The expected law.** For the mixture `θ₀` that is `BetaBin(·, 2, 2)` alone (`ω₁ = 1`) and two
   reads per replicate, the pooled count of `4` reads has law `1/7, 8/35, 9/35, 8/35, 1/7`, the
   pair `(j₁, j₂)` has probability `C(2, j₁) C(2, j₂) / C(4, j₁ + j₂)` times that of `j₁ + j₂`,
@@ -35,7 +36,8 @@ import Mathlib.Tactic.NormNum
   `19/20`. The ratio at `1/5` is undefined (`Q^exp = 0`) and left out; the others are
   `1 / (1/2) = 2` and `1 / 1 = 1`, so the QCC is `3/2`, and the effective coverage of a gene of
   coverage `9` is `9 / (3/2) ^ 2 = 4`.
-* **More replicates.** Three replicates have `3` pairs; with two, the QCC is the pair's.
+* **More replicates.** Three replicates have `3` pairs, and the QCC is the mean of the three
+  pairwise QCCs, each with its own bins; with two, the QCC is the pair's; with one, it is `0`.
 * **Junk values.** A fit with no defined ratio is `0`, and an empty bin contributes nothing. -/
 
 open MeasureTheory ProbabilityTheory Finset
@@ -106,9 +108,15 @@ example : momentMatchingShape 1 (3 / 5) = 2 := by
 example : momentMatchingShape 1 (3 / 5) = 2 :=
   (momentMatchingShape_eq_iff le_rfl (by norm_num : (0 : ℝ) < 2)).mpr (by norm_num)
 
-/-- With `c = 0` reads the shape is the junk value `0`, whatever the variance. -/
-example (v : ℝ) (hv : v = 0) : momentMatchingShape 0 v = 0 := by
-  simp [momentMatchingShape, hv]
+/-- With `c = 0` reads, no shape matches: the formula gives `-4 v / (8 v) = -1/2` for every
+variance `v ≠ 0`, and the junk value `0` at `v = 0`. -/
+example (v : ℝ) (hv : v ≠ 0) : momentMatchingShape 0 v = -1 / 2 := by
+  simp only [momentMatchingShape, Nat.cast_zero, mul_zero, sub_zero]
+  field_simp
+  ring
+
+example : momentMatchingShape 0 0 = 0 := by
+  simp [momentMatchingShape]
 
 /-- The M-step recovers the shape `2` from the exact law of `BetaBin(6, 2, 2)`. -/
 example : mStepShape 3 (range 7) (betaBinomialPMF 6 2 2) (fun k => k) = 2 :=
@@ -318,8 +326,9 @@ theorem pairQualityCorrectionConstant_example :
   simp only [binReadCoverage_two_one, e₂, e₃, o₂, o₃]
   norm_num
 
-/-- With two replicates the QCC is that of the pair. -/
-example : qualityCorrectionConstant 2 {1, 2} levels (fun _ _ _ => θ₀) mat pat = 3 / 2 := by
+/-- With two replicates the QCC is that of the pair, with the pair's bins. -/
+example : qualityCorrectionConstant 2 (fun _ _ => {1, 2}) levels (fun _ _ _ => θ₀) mat pat =
+    3 / 2 := by
   rw [qualityCorrectionConstant_two]
   exact pairQualityCorrectionConstant_example
 
@@ -337,17 +346,24 @@ example : (replicatePairs 3).card = 3 := by
   rw [card_replicatePairs]
   rfl
 
-/-- With three replicates the QCC is the mean of the three pairwise QCCs. -/
-example {γ : Type*} [Fintype γ] (b : ℝ) (bins : Finset ℕ) (lv : Finset ℝ)
+/-- With three replicates the QCC is the mean of the three pairwise QCCs, each with its own bins
+and fitted mixtures. -/
+example {γ : Type*} [Fintype γ] (b : ℝ) (bins : Fin 3 → Fin 3 → Finset ℕ) (lv : Finset ℝ)
     (fit : Fin 3 → Fin 3 → ℕ → AIMixture) (m p : Fin 3 → γ → ℕ) :
     qualityCorrectionConstant b bins lv fit m p =
-      (pairQualityCorrectionConstant b bins lv (fit 0 1) m p 0 1 +
-        pairQualityCorrectionConstant b bins lv (fit 0 2) m p 0 2 +
-        pairQualityCorrectionConstant b bins lv (fit 1 2) m p 1 2) / 3 := by
+      (pairQualityCorrectionConstant b (bins 0 1) lv (fit 0 1) m p 0 1 +
+        pairQualityCorrectionConstant b (bins 0 2) lv (fit 0 2) m p 0 2 +
+        pairQualityCorrectionConstant b (bins 1 2) lv (fit 1 2) m p 1 2) / 3 := by
   have : replicatePairs 3 = {(0, 1), (0, 2), (1, 2)} := by decide
   rw [qualityCorrectionConstant, this, expect_eq_sum_div_card, sum_insert (by decide),
     sum_pair (by decide)]
   norm_num [add_assoc]
+
+/-- With one replicate there is no pair, and the QCC is the junk value `0`. -/
+example {γ : Type*} [Fintype γ] (b : ℝ) (bins : Fin 1 → Fin 1 → Finset ℕ) (lv : Finset ℝ)
+    (fit : Fin 1 → Fin 1 → ℕ → AIMixture) (m p : Fin 1 → γ → ℕ) :
+    qualityCorrectionConstant b bins lv fit m p = 0 :=
+  qualityCorrectionConstant_of_lt_two (by norm_num) b bins lv fit m p
 
 /-! ### The fit -/
 

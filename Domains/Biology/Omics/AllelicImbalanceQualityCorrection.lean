@@ -70,9 +70,11 @@ treat the AI of a gene of coverage `C` as a binomial proportion of effective cov
   genes, is undefined and left out of the fit, as the reference implementation drops non-finite
   ratios; the fit of no ratio is `0`.
 * **More replicates.** With replicates `0, …, M - 1`, the QCC is the mean, over the `C(M, 2)`
-  pairs `r < r'`, of the pairwise QCCs, each pair with its own fitted mixtures
-  (`card_replicatePairs`). For `M = 2` it is the QCC of the one pair
-  (`qualityCorrectionConstant_two`).
+  pairs `r < r'`, of the pairwise QCCs (`card_replicatePairs`). Each pair has its own bins and
+  fitted mixtures, as the source bins the genes by the pair's mean coverage and keeps the bins
+  with enough of the pair's genes. For `M = 2` it is the QCC of the one pair
+  (`qualityCorrectionConstant_two`); for `M < 2` there is no pair and it is `0`
+  (`qualityCorrectionConstant_of_lt_two`).
 
 ## Main definitions
 
@@ -91,7 +93,7 @@ treat the AI of a gene of coverage `C` as a binomial proportion of effective cov
 ## Main results
 
 * `existsUnique_inCoverageBin`, `representativeCoverage_mem_Icc`: for `b > 1` the bins partition
-  the coverages above `1`, and `Ĉ_i` lies in the closure of `B_i`.
+  the coverages above `1`, and `Ĉ_i` lies in `[C̄_{i-1}, C̄_i]`.
 * `sum_pooledMass`, `pooledMass_symm`, `sum_mul_pooledMass`: the pooled AI law is a symmetric
   probability law with mean count `c`.
 * `momentMatchingShape_eq_iff`: the moment-matching shape inverts the variance
@@ -662,12 +664,13 @@ end quantileRatioFit
 /-- The **quality correction constant of two replicates** `r` and `r'` (Mendelevich et al. 2021,
 "Calculation of quality correction constant for 2 replicates" to "Quantile analysis and QCC
 value"). The data are the maternal and paternal read counts `mat r g` and `pat r g` of each gene
-`g` in each replicate `r`; `b` is the base of the coverage bins, `bins` the bins used, `levels`
-the quantile levels (the source's are `0.2, 0.35, 0.5, 0.65, 0.8, 0.9, 0.95`), and `fit i` the
-two-component symmetric beta-binomial mixture fitted to the pooled AI of the genes of bin `i`
-(the output of the source's EM algorithm). The QCC is the least-squares constant
-(`quantileRatioFit`) fitted to the ratios `Q^obs_{q,i} / Q^exp_{q,i}`, over the bins of `bins`
-that have genes and the levels `q` with `Q^exp_{q,i} ≠ 0`, of
+`g` in each replicate `r`; `b` is the base of the coverage bins, `bins` the bins used for this
+pair (the source keeps the bins above a coverage threshold with more than 40 of the pair's
+genes), `levels` the quantile levels (the source's are `0.2, 0.35, 0.5, 0.65, 0.8, 0.9, 0.95`),
+and `fit i` the two-component symmetric beta-binomial mixture fitted to the pooled AI of the
+pair's genes in bin `i` (the output of the source's EM algorithm). The QCC is the least-squares
+constant (`quantileRatioFit`) fitted to the ratios `Q^obs_{q,i} / Q^exp_{q,i}`, over the bins of
+`bins` that have genes and the levels `q` with `Q^exp_{q,i} ≠ 0`, of
 
 * the observed quantile `Q^obs_{q,i}`: the lower `q`-quantile (`cdfQuantile`) of the empirical
   law of `ΔAI = |AI_{r g} - AI_{r' g}|` over the genes of bin `i` (`observedDeltaAILaw`), to
@@ -711,25 +714,37 @@ theorem card_replicatePairs (M : ℕ) : (replicatePairs M).card = M.choose 2 := 
 
 /-- The **quality correction constant** (QCC) of `M` replicates `0, …, M - 1` (Mendelevich et al.
 2021, Methods, Eqs. (3)–(10)): the mean, over the `C(M, 2)` pairs of replicates `r < r'`
-(`replicatePairs`), of the pairwise constants `pairQualityCorrectionConstant` of `r` and `r'`,
-each with the mixtures `fit r r' i` fitted to the pooled AI of the pair's genes in bin `i`. The
-data are the maternal and paternal read counts `mat r g` and `pat r g` of each gene `g` in each
-replicate `r`, `b` is the base of the coverage bins, `bins` the bins used and `levels` the
-quantile levels. With two replicates it is the QCC of the one pair
-(`qualityCorrectionConstant_two`). Confidence intervals for the AI of a gene of coverage `C` then
-treat it as a binomial proportion of effective coverage `C / QCC ^ 2` (`effectiveCoverage`). -/
-noncomputable def qualityCorrectionConstant {M : ℕ} (b : ℝ) (bins : Finset ℕ) (levels : Finset ℝ)
-    (fit : Fin M → Fin M → ℕ → AIMixture) (mat pat : Fin M → γ → ℕ) : ℝ :=
-  𝔼 rr ∈ replicatePairs M, pairQualityCorrectionConstant b bins levels (fit rr.1 rr.2) mat pat
-    rr.1 rr.2
+(`replicatePairs`), of the pairwise constants `pairQualityCorrectionConstant` of `r` and `r'`.
+Each pair has its own bins `bins r r'`, as the source bins the genes by the pair's mean coverage
+and keeps the bins above a coverage threshold with more than 40 of the pair's genes, and its own
+mixtures `fit r r' i`, fitted to the pooled AI of the pair's genes in bin `i`. The data are the
+maternal and paternal read counts `mat r g` and `pat r g` of each gene `g` in each replicate `r`,
+`b` is the base of the coverage bins and `levels` the quantile levels. With two replicates it is
+the QCC of the one pair (`qualityCorrectionConstant_two`); with fewer than two there is no pair,
+and it is `0` (`qualityCorrectionConstant_of_lt_two`). Confidence intervals for the AI of a gene
+of coverage `C` then treat it as a binomial proportion of effective coverage `C / QCC ^ 2`
+(`effectiveCoverage`). -/
+noncomputable def qualityCorrectionConstant {M : ℕ} (b : ℝ) (bins : Fin M → Fin M → Finset ℕ)
+    (levels : Finset ℝ) (fit : Fin M → Fin M → ℕ → AIMixture) (mat pat : Fin M → γ → ℕ) : ℝ :=
+  𝔼 rr ∈ replicatePairs M,
+    pairQualityCorrectionConstant b (bins rr.1 rr.2) levels (fit rr.1 rr.2) mat pat rr.1 rr.2
 
 /-- With two replicates, the QCC is the QCC of the one pair. -/
-theorem qualityCorrectionConstant_two (b : ℝ) (bins : Finset ℕ) (levels : Finset ℝ)
-    (fit : Fin 2 → Fin 2 → ℕ → AIMixture) (mat pat : Fin 2 → γ → ℕ) :
+theorem qualityCorrectionConstant_two (b : ℝ) (bins : Fin 2 → Fin 2 → Finset ℕ)
+    (levels : Finset ℝ) (fit : Fin 2 → Fin 2 → ℕ → AIMixture) (mat pat : Fin 2 → γ → ℕ) :
     qualityCorrectionConstant b bins levels fit mat pat =
-      pairQualityCorrectionConstant b bins levels (fit 0 1) mat pat 0 1 := by
+      pairQualityCorrectionConstant b (bins 0 1) levels (fit 0 1) mat pat 0 1 := by
   have : replicatePairs 2 = {(0, 1)} := by decide
   rw [qualityCorrectionConstant, this, expect_singleton]
+
+/-- With fewer than two replicates there is no pair, and the QCC is the junk value `0`. -/
+theorem qualityCorrectionConstant_of_lt_two {M : ℕ} (hM : M < 2) (b : ℝ)
+    (bins : Fin M → Fin M → Finset ℕ) (levels : Finset ℝ) (fit : Fin M → Fin M → ℕ → AIMixture)
+    (mat pat : Fin M → γ → ℕ) :
+    qualityCorrectionConstant b bins levels fit mat pat = 0 := by
+  have : replicatePairs M = ∅ := by
+    rw [← card_eq_zero, card_replicatePairs, Nat.choose_eq_zero_of_lt hM]
+  rw [qualityCorrectionConstant, this, expect_empty]
 
 /-! ### Corrected confidence intervals -/
 
