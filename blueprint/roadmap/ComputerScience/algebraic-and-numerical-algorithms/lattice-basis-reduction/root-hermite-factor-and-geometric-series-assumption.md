@@ -1,6 +1,6 @@
 # Root-Hermite factor and the geometric series assumption
 
-The root-Hermite factor $\delta_0$ of a basis is defined by $\|b_1\|=\delta_0^{d}\operatorname{vol}(\Lambda)^{1/d}$. The geometric series assumption models the Gram–Schmidt norms of a BKZ-reduced basis as decaying geometrically. Both enter concrete estimates of lattice attacks as modelling assumptions.
+The root-Hermite factor $\delta_0$ of a basis is defined by $\|b_1\|=\delta_0^{d}\operatorname{vol}(\Lambda)^{1/d}$. The geometric series assumption models the Gram–Schmidt norms of a BKZ-reduced basis as decaying geometrically. The factor of a given basis is a definition; its predicted values for reduced bases and the geometric series assumption are models used in concrete attack estimates.
 
 Let $B=(b_1,\dots,b_d)$ be a basis of a lattice $\Lambda$ of rank $d$, with Gram–Schmidt vectors $b_i^*$.
 

@@ -22,7 +22,7 @@ The index updates and the counter are those of Algorithm 1; step 3 follows the d
 
 ## Remarks
 
-The algorithm is due to Schnorr and Euchner (1994); BKZ 2.0 keeps this loop and adds early abort, pruned enumeration and preprocessing of local blocks. Step 3 uses the variant of LLL that accepts a linearly dependent generating set and removes the dependency, which is more than LLL on a basis. No bound on the number of loop iterations is stated in the source. The cost of each subroutine call depends on the instance and the method; no per-call bound is claimed here.
+The algorithm is due to Schnorr and Euchner (1994); BKZ 2.0 keeps this loop and adds early abort, pruned enumeration and preprocessing of local blocks. Step 3 uses the variant of LLL that accepts a linearly dependent generating set and removes the dependency, which is more than LLL on a basis. This page asserts no bound on the number of loop iterations. The cost of each subroutine call depends on the instance and the method; no per-call bound is claimed here.
 
 ## Expansion
 

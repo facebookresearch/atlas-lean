@@ -10,7 +10,7 @@ $$
 \begin{pmatrix} I_n & A' & 0\\ 0 & qI_{m-n} & 0\\ c^{\mathsf T} & & t\end{pmatrix},
 $$
 
-with entries of $A'$ and $c$ taken as integer representatives and the last row $(c^{\mathsf T},t)$. It has dimension $d=m+1$, volume $t\,q^{m-n}$, and contains $(\bar e,t)$. The HE Standard describes this vector, of norm $\sqrt{\|\bar e\|^2+t^2}$, as unusually short, with a large gap $\lambda_2(\Lambda)/\lambda_1(\Lambda)$ between the first two successive minima.
+with entries of $A'$ and $c$ taken as integer representatives and the last row $(c^{\mathsf T},t)$. It has dimension $d=m+1$, volume $t\,q^{m-n}$, and contains $(\bar e,t)$, of norm $\sqrt{\|\bar e\|^2+t^2}$. In the uSVP formulation the HE Standard describes, one assumes that this vector is unusually short and that the gap $\lambda_2(\Lambda)/\lambda_1(\Lambda)$ between the first two successive minima is large; neither property follows from the embedding alone.
 
 **Attack and 2016 estimate.** Take $t=1$ and run BKZ with block size $\beta$ on this basis. The HE Standard states the prediction of Alkim, Ducas, Pöppelmann and Schwabe (2016) that $\bar e$ is found when
 

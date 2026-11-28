@@ -18,7 +18,7 @@ $$
 
 ## Proof sketch
 
-The companion bound follows from Minkowski's convex body theorem, which needs strict volume inequality: for every $r>2\operatorname{GH}(L)$ the ball of radius $r$ is convex, symmetric and has volume $r^nV_n(1)>2^n\operatorname{vol}(L)$, so it contains a nonzero lattice vector; hence $\lambda_1(L)<r$ for all such $r$, and $\lambda_1(L)\le2\operatorname{GH}(L)$. Chen and Nguyen state the bound and the heuristic; the heuristic itself has no proof.
+The companion bound follows from Minkowski's convex body theorem, which needs strict volume inequality: for every $r>2\operatorname{GH}(L)$ the ball of radius $r$ is convex, symmetric and has volume $r^nV_n(1)>2^n\operatorname{vol}(L)$, so it contains a nonzero lattice vector; hence $\lambda_1(L)<r$ for all such $r$, and $\lambda_1(L)\le2\operatorname{GH}(L)$. Chen and Nguyen state the bound and the heuristic, and note that in some cases the heuristic can be proved and in others refuted; it is not a theorem for general lattices and sets.
 
 ## Depends on
 
