@@ -15,4 +15,3 @@ Bayesian inference and nonparametric priors: the Dirichlet process and stick-bre
 
 - [The posterior predictive distribution](posterior-predictive-distribution.md)
 - [Bayesian filtering equations](bayesian-filtering-equations.md)
-- [Decidability of probability logics](decidability-of-probability-logics/README.md)

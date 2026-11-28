@@ -1,4 +1,4 @@
-# Decidability of probability logics
+# Satisfiability of probability logics
 
 Satisfiability and entailment for logics that compare polynomials in probabilities, with summation over values, causal interventions and free range variables.
 
