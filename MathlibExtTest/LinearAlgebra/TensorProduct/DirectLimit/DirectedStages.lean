@@ -14,7 +14,6 @@ module
 public import MathlibExt.LinearAlgebra.TensorPower.DirectLimit
 public import MathlibExt.Algebra.Colimit.Module
 public import Mathlib.Order.Lattice
-public meta import Lean.Elab.Tactic.Omega
 public meta import Mathlib.Tactic.NormNum
 
 /-!
@@ -36,7 +35,7 @@ open Module Module.DirectLimit
 namespace DirectedStagesTests
 
 -- These test-local priorities retain the exact native scalar dictionaries on ℕ tensor carriers.
-local attribute [instance 10000] Semiring.toModule PiTensorProduct.instModule
+attribute [local instance 10000] Semiring.toModule PiTensorProduct.instModule
   TensorProduct.instModule Module.DirectLimit.module
 
 private abbrev I := ℕ × ℕ
@@ -75,7 +74,6 @@ example :
         Module.DirectLimit.of ℕ I G constantMap b 3 := by
   rw [← TensorProduct.diagonalStage_eq constantMap constantMap a b c (by decide) (by decide)]
   rw [← TensorProduct.directLimitDiagonal_tmul_of_of, LinearEquiv.symm_apply_apply]
-  rfl
 
 private def killedMap (i j : I) (_h : i ≤ j) : ℕ →ₗ[ℕ] ℕ :=
   if i.1 = 0 ∧ 0 < j.1 then 0 else LinearMap.id
@@ -159,13 +157,26 @@ example :
       Module.DirectLimit.of ℕ I
         (fun i : I => G i ⊗[ℕ] (⨂[ℕ] q : Fin 0, emptyFamily q i))
         (TensorProduct.finiteDiagonalTransition constantMap emptyTransition) a
-          (4 ⊗ₜ[ℕ] PiTensorProduct.tprod ℕ (fun q : Fin 0 => nomatch q)) :=
-  TensorProduct.directLimitFinite_of_tprod constantMap emptyTransition a 4
-    (fun q : Fin 0 => nomatch q)
-
+          (4 ⊗ₜ[ℕ] PiTensorProduct.tprod ℕ (fun q : Fin 0 => nomatch q)) := by
+  have h := TensorProduct.directLimitFinite_of_tprod (M := G) (V := emptyFamily)
+    constantMap emptyTransition a 4 (fun q : Fin 0 => nomatch q)
+  have hv :
+      (fun q : Fin 0 => Module.DirectLimit.of ℕ I (emptyFamily q) (emptyTransition q) a
+        (show emptyFamily q a from nomatch q)) =
+      (fun q : Fin 0 => (show Module.DirectLimit (emptyFamily q) (emptyTransition q) from
+        nomatch q)) := by
+    funext q
+    nomatch q
+  rw [hv] at h
+  exact h
 private def constantLimitValue : Module.DirectLimit G constantMap →ₗ[ℕ] ℕ :=
   Module.DirectLimit.lift ℕ I G constantMap (fun _ => LinearMap.id)
     (fun _ _ _ _ => rfl)
+
+private theorem constantLimitValue_of (i : I) (x : G i) :
+    constantLimitValue (Module.DirectLimit.of ℕ I G constantMap i x) = x := by
+  unfold constantLimitValue
+  exact Module.DirectLimit.lift_of (fun _ => LinearMap.id) (fun _ _ _ _ => rfl) x
 
 private def emptyValue :
     Module.DirectLimit G constantMap ⊗[ℕ]
@@ -178,7 +189,7 @@ private theorem empty_coefficient_value :
     emptyValue
       (Module.DirectLimit.of ℕ I G constantMap a 4 ⊗ₜ[ℕ]
         PiTensorProduct.tprod ℕ (fun q : Fin 0 => nomatch q)) = 4 := by
-  simp [emptyValue, constantLimitValue]
+  simp [emptyValue, constantLimitValue_of]
 
 example :
     (Module.DirectLimit.of ℕ I G constantMap a 4 ⊗ₜ[ℕ]

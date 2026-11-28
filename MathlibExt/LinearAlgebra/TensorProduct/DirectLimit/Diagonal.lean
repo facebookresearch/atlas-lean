@@ -237,7 +237,7 @@ omit [IsDirectedOrder ι] [DirectedSystem M (f · · ·)]
 equality, and M_a, N_a R-modules with additive commutative monoid structures.
 Let f_ab : M_a → M_b and g_ab : N_a → N_b be R-linear transitions
 for a ≤ b. Write D for their simultaneous tensor direct-limit module.
-The R-linear forward comparison D → (lim M) ⊗[R] (lim N)
+The R-linear stage comparison D → (lim M) ⊗[R] (lim N)
 sends the class of x ⊗ y at stage a to [x]_a ⊗ [y]_a.
 Its construction uses the transition relations alone and does not
 require directedness or the factor-system laws. -/
@@ -264,7 +264,7 @@ omit [IsDirectedOrder ι] [DirectedSystem M (f · · ·)]
 equality, and M_a, N_a R-modules with additive commutative monoid structures.
 Let f_ab : M_a → M_b and g_ab : N_a → N_b be R-linear transitions
 for a ≤ b. Write D for their simultaneous tensor direct-limit module.
-For z ∈ M_a ⊗[R] N_a, the forward comparison satisfies
+For z ∈ M_a ⊗[R] N_a, the stage comparison from D satisfies
 comparison(of_a(z)) = (of_a^M ⊗ of_a^N)(z).
 This stage formula holds for arbitrary linear transition families. -/
 @[simp]
@@ -366,7 +366,7 @@ Assume both transition families satisfy identity and composition.
 Assume also that ι is directed.
 This R-linear map (lim M) ⊗[R] (lim N) → D sends
 [x]_a ⊗ [y]_b to the mixed-stage class at a common upper index.
-It is the inverse of the forward tensor comparison. -/
+It is the common-upper-stage map from the tensor of limits to D. -/
 def tensorToDiagonal :
     Module.DirectLimit M f ⊗[R] Module.DirectLimit N g →ₗ[R] diagonalLimit f g :=
   (Module.DirectLimit.lift R ι (fun a => M a ⊗[R] Module.DirectLimit N g)
@@ -382,7 +382,7 @@ Let f_ab : M_a → M_b and g_ab : N_a → N_b be R-linear transitions
 for a ≤ b. Write D for their simultaneous tensor direct-limit module.
 Assume both transition families satisfy identity and composition.
 Assume also that ι is directed.
-The return map has pure mixed-stage value
+The common-upper-stage map has pure mixed-stage value
 [x]_a ⊗ [y]_b ↦ stage_(a,b)(x ⊗ y)
 = [f_ac(x) ⊗ g_bc(y)]_c for any c ≥ a, b. -/
 @[simp]
@@ -416,7 +416,7 @@ Let f_ab : M_a → M_b and g_ab : N_a → N_b be R-linear transitions
 for a ≤ b. Write D for their simultaneous tensor direct-limit module.
 Assume both transition families satisfy identity and composition.
 Assume also that ι is directed.
-The forward comparison sends the mixed-stage class
+The stage comparison from D sends the mixed-stage class
 stage_(a,b)(x ⊗ y) to [x]_a ⊗ [y]_b in
 (lim M) ⊗[R] (lim N). -/
 theorem diagonalToTensor_diagonalStage (a b : ι) (x : M a) (y : N b) :
@@ -432,7 +432,7 @@ Let f_ab : M_a → M_b and g_ab : N_a → N_b be R-linear transitions
 for a ≤ b. Write D for their simultaneous tensor direct-limit module.
 Assume both transition families satisfy identity and composition.
 Assume also that ι is directed.
-The return map followed by the forward comparison is the identity
+The common-upper-stage map followed by the stage comparison is the identity
 of (lim M) ⊗[R] (lim N). -/
 theorem diagonalToTensor_comp_tensorToDiagonal :
     (diagonalToTensor f g).comp (tensorToDiagonal f g) = LinearMap.id := by
@@ -464,7 +464,7 @@ Let f_ab : M_a → M_b and g_ab : N_a → N_b be R-linear transitions
 for a ≤ b. Write D for their simultaneous tensor direct-limit module.
 Assume both transition families satisfy identity and composition.
 Assume also that ι is directed.
-The forward comparison followed by the return map is the identity
+The stage comparison followed by the common-upper-stage map is the identity
 of the simultaneous tensor direct limit D. -/
 theorem tensorToDiagonal_comp_diagonalToTensor :
     (tensorToDiagonal f g).comp (diagonalToTensor f g) = LinearMap.id := by
