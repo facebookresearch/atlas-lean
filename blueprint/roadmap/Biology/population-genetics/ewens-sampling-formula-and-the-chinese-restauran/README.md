@@ -19,6 +19,11 @@
 - [Almost-sure l1 convergence of nested Ewens frequencies to GEM and PD](ranked-ewens-frequencies-converge-to-pd-theta.md)
 - [Expected counting measure of GEM and Poisson–Dirichlet masses](poisson-dirichlet-gem-limit-of-ewens-allele-freq.md)
 
+## Further results
+
+- [Ewens–Pitman partitions with large concentration](ewens-pitman-partitions-with-large-concentration/README.md)
+- [Multi-class Ewens sampling formula](multi-class-ewens-sampling-formula/README.md)
+
 ## Related topics
 
 - [Infinite mixture models](../../../Probability/bayesian-statistics/infinite-mixture-models/README.md): the closed-form partition probability of finite symmetric Dirichlet mixtures tends to the Chinese restaurant process law, which is how machine learning obtains the prior of infinite mixture models.
@@ -31,3 +36,5 @@
 - [Ewens–Pitman large deviations](ewens-pitman-large-deviations/README.md)
 - [Martingale limit theorems for the Ewens–Pitman model](martingale-limit-theorems-for-the-ewens-pitman-model/README.md)
 - [Yule process with immigration](yule-process-with-immigration/README.md)
+- [Occupancy sampling from Gibbs–Poisson abundance models](occupancy-sampling-from-gibbs-poisson-abundance-models/README.md)
+- [Expected allelic partition of splitting trees](expected-allelic-partition-of-splitting-trees/README.md)

@@ -7,6 +7,8 @@ A splitting $A = M - N$ turns $Ax = b$ into the fixed-point iteration $x_{k+1} =
 - [Splitting iteration](splitting-iteration.md)
 - [Powers of a matrix tend to zero exactly when its spectral radius is less than one](matrix-powers-tend-to-zero.md)
 - [Convergence of stationary iterations](convergence-of-stationary-iterations.md)
+- [Convergence of Richardson's iteration](richardson-iteration-converges.md)
+- [Regular splittings and M-matrices](regular-splittings-and-m-matrices/README.md)
 
 ## Jacobi and Gauss–Seidel
 
@@ -25,6 +27,10 @@ A splitting $A = M - N$ turns $Ax = b$ into the fixed-point iteration $x_{k+1} =
 - [Young's relation between SOR and Jacobi eigenvalues](young-sor-jacobi-eigenvalue-relation.md)
 - [For two-cyclic matrices the Gauss–Seidel spectral radius is the square of the Jacobi one](gauss-seidel-spectral-radius-is-the-square-of-jacobi.md)
 - [Optimal SOR parameter](optimal-sor-parameter.md)
+
+## Projection methods
+
+- [Projection methods for linear systems](projection-methods-for-linear-systems/README.md)
 
 ## Related topics
 

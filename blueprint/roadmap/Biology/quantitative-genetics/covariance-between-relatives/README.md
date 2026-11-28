@@ -35,3 +35,8 @@
 - [Single-locus covariance between relatives in Cockerham form](rel-cov-eq-cov.md)
 - [One-locus phantom heritability](falconer-eq-of-locus.md)
 - [Infinitesimal model with dominance](infinitesimal-model-with-dominance/README.md)
+- [Classical twin design and the ACE model](classical-twin-design-and-the-ace-model/README.md)
+- [Alpha model of frequency-dependent effect sizes](alpha-model-of-frequency-dependent-effect-sizes/README.md)
+- [Cross-validated forward search QTL mapping](cross-validated-forward-search-qtl-mapping/README.md)
+- [Heritability from relatedness classes](heritability-from-relatedness-classes/README.md)
+- [Haley–Knott regression with additive and dominance effects](haley-knott-regression-with-additive-and-dominance-effects.md)
