@@ -10,7 +10,6 @@ of a composite, and the constancy of the degree.
 - [Belyi's theorem](belyi-s-theorem.md)
 - [A curve has a finite morphism to the projective line](finite-morphism-to-the-projective-line.md)
 - [Finitely many branch points in characteristic zero](branch-points-of-a-finite-morphism-of-curves.md)
-- [Branch locus of a composite](branch-locus-of-a-composite.md)
 - [Critical values of a rational polynomial are roots of a rational polynomial of smaller degree](critical-values-of-a-rational-polynomial.md)
 - [Polynomial with rational critical values](polynomial-with-rational-critical-values.md)
 - [Branch points of a polynomial map of the projective line](branch-points-of-a-polynomial-map.md)

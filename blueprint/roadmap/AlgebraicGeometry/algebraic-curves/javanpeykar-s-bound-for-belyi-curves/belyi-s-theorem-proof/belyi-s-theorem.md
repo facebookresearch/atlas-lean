@@ -33,7 +33,7 @@ $\{0, 1, \infty\}$ turns that morphism into a Belyi map of the same degree. So t
   for $q$ over $\mathbb{C}$, whose construction is run over $\bar K$
 - [Values and derivative of the polynomial $c \, z^m (1 - z)^n$](belyi-polynomial.md), for the
   polynomials $q_1$ of that construction over $\bar K$
-- [Branch locus of a composite](branch-locus-of-a-composite.md), for $p \circ t'$
+- [Branch locus of a composite](../../../schemes-and-morphisms/branch-locus-of-a-composite.md), for $p \circ t'$
   and $q \circ p \circ t'$
 - [A finite morphism of curves has constant degree](degree-of-a-finite-morphism-of-curves.md),
   for the degree $d$ of $t$

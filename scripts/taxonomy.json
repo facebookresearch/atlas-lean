@@ -9508,6 +9508,7 @@
   "MathlibExt/AlgebraicGeometry/GeometricallyReduced": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Geometric properties of schemes over a field"},
   "MathlibExt/AlgebraicGeometry/Immersions": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Closed and open immersions"},
   "MathlibExt/AlgebraicGeometry/LineArrangement": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Line arrangements in the projective plane"},
+  "MathlibExt/AlgebraicGeometry/Morphisms/FormallyUnramifiedRestrict": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Formally unramified morphisms"},
   "MathlibExt/AlgebraicGeometry/PointMultiplicity": {"to": "AlgebraicGeometry/varieties-and-projective-geometry", "title": "Multiplicity of a hypersurface at a point"},
   "MathlibExt/AlgebraicGeometry/PullbackPoints": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},
   "MathlibExt/AlgebraicGeometry/Sections": {"to": "AlgebraicGeometry/schemes-and-morphisms", "title": "Points and sections of schemes"},

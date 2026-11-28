@@ -21,7 +21,7 @@ $0, 1, \infty \in T$, and his proof of Theorem 3.3 applies it to a set containin
   polynomial $q_1$ that maps $0$, $\frac{m}{m + n}$, $1$ and $\infty$ into $\{0, 1, \infty\}$
 - [Branch points of a polynomial map of the projective line](branch-points-of-a-polynomial-map.md),
   so that $q_1$ is unramified over $\mathbb{P}^1_{\mathbb{C}} \setminus \{0, 1, \infty\}$
-- [Branch locus of a composite](branch-locus-of-a-composite.md), for $q = q_2 \circ q_1$
+- [Branch locus of a composite](../../../schemes-and-morphisms/branch-locus-of-a-composite.md), for $q = q_2 \circ q_1$
 
 The other inputs are listed under Expansion.
 
