@@ -68,7 +68,8 @@ example : detected (0 : Fin 1) (0 : Fin 1) = (1 : ℤ) := by
 example : D.d 0 1 ≠ 0 := by
   intro hz
   have hzero : detected = 0 := by
-    simp only [detected, hz, Category.assoc, comp_zero, zero_comp]
+    rw [detected, hz]
+    erw [Limits.zero_comp, Limits.comp_zero, Limits.comp_zero]
   have h := congrArg (fun f : N ⟶ N => f (0 : Fin 1) (0 : Fin 1))
     (detected_eq.symm.trans hzero)
   rw [Mat_.id_apply_self] at h
