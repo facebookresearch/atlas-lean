@@ -7,6 +7,7 @@ Weyl equidistribution, three-gap theorem, Duffin–Schaeffer, normal numbers, Be
 - [Coprimality with integer parts of powers](coprimality-with-integer-parts-of-powers/README.md)
 - [Discrepancy of fractional parts](discrepancy-of-fractional-parts/README.md)
 - [Duffin–Schaeffer conjecture](duffin-schaeffer-conjecture/README.md)
+- [First and last minima of Euclidean lattices](first-and-last-minima-of-euclidean-lattices/README.md)
 - [Floor and ceiling function sums](floor-and-ceiling-function-sums/README.md)
 - [Fractional parts of multiples of primes](fractional-parts-of-multiples-of-primes/README.md)
 - [Irregularities of distribution of sequences](irregularities-of-distribution-of-sequences/README.md)

@@ -39,7 +39,8 @@ instance : CoeSort SumRelCat.{u} (Type u) := ⟨SumRelCat.carrier⟩
 /-- Regard a type as an object of the disjoint-union relation category. -/
 abbrev of (X : Type u) : SumRelCat.{u} := ⟨X⟩
 
-/-- Relational morphisms retain their source and target object tags. -/
+/-- A morphism `X ⟶ Y` is an arbitrary relation between the underlying sets of `X` and `Y`,
+tagged with its source and target objects. -/
 structure Hom (X Y : SumRelCat.{u}) : Type u where
   /-- Construct a morphism from a relation. -/
   ofRel ::
@@ -74,10 +75,12 @@ abbrev sum (X Y : SumRelCat.{u}) : SumRelCat.{u} := of (Sum X Y)
 /-- The empty relation object. -/
 abbrev zero : SumRelCat.{u} := of PEmpty
 
-/-- The first relational projection is defined exactly on the left summand. -/
+/-- The first relational projection relates `s : X ⊕ Y` to `x : X` exactly when
+`s = Sum.inl x`, so it is defined only on the left summand. -/
 def fst (X Y : SumRelCat.{u}) : sum X Y ⟶ X := .ofRel {p | p.1 = Sum.inl p.2}
 
-/-- The second relational projection is defined exactly on the right summand. -/
+/-- The second relational projection relates `s : X ⊕ Y` to `y : Y` exactly when
+`s = Sum.inr y`, so it is defined only on the right summand. -/
 def snd (X Y : SumRelCat.{u}) : sum X Y ⟶ Y := .ofRel {p | p.1 = Sum.inr p.2}
 
 /-- Pair two relations by selecting the relation indexed by the output summand. -/
@@ -201,7 +204,8 @@ def desc {X Y Z : SumRelCat.{u}} (f : X ⟶ Z) (g : Y ⟶ Z) : sum X Y ⟶ Z :=
   rw [inr_comp_rel]
   rfl
 
-/-- A relation out of a sum is determined by its two injections. -/
+/-- Two relations `f g : sum X Y ⟶ Z` out of a sum are equal when their composites with the
+injections agree: `inl X Y ≫ f = inl X Y ≫ g` and `inr X Y ≫ f = inr X Y ≫ g`. -/
 theorem hom_ext_out {X Y Z : SumRelCat.{u}} {f g : sum X Y ⟶ Z}
     (hf : inl X Y ≫ f = inl X Y ≫ g) (hg : inr X Y ≫ f = inr X Y ≫ g) : f = g := by
   apply Hom.ext

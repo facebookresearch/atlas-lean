@@ -58,22 +58,6 @@ public theorem_wanted reverse_symmetric_of_eq_gaussKuzmin_at_length (μ : Measur
       μ (cfCylinder a) = ENNReal.ofReal (gaussKuzminMass a)) :
     ∀ a : List ℕ, (∀ x ∈ a, 0 < x) → a.length ≤ N → μ (cfCylinder a) = μ (cfCylinder a.reverse)
 
-/-- **Families of stable strings.** (i) For every positive integer $t$, the strings $(t, 2t)$ and
-$(t, 1, 2t + 1)$ are stable. (ii) If $a = (a_1, \dots, a_m)$ is a stable string of positive
-integers, then for every positive integer $t$ the string $(t, a_m, \dots, a_1, 2t)$, obtained from
-the reverse of $a$ by adding $t$ at the front and $2t$ at the end, is stable. (iii) For every
-$n \ge 2$ there are infinitely many stable strings of $n$ positive integers.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Lemma 5.5 (`integers-2025-A89-lem-5-5`). -/
-public theorem_wanted isStableString_families :
-    (∀ t : ℕ, 1 ≤ t → IsStableString [t, 2 * t] ∧ IsStableString [t, 1, 2 * t + 1]) ∧
-      (∀ a : List ℕ, (∀ x ∈ a, 0 < x) → IsStableString a → ∀ t : ℕ, 1 ≤ t →
-        IsStableString (t :: a.reverse ++ [2 * t])) ∧
-      ∀ n : ℕ, 2 ≤ n →
-        {a : List ℕ | a.length = n ∧ (∀ x ∈ a, 0 < x) ∧ IsStableString a}.Infinite
-
 end
 
 end MetaMathlibExt
