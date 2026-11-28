@@ -3,9 +3,9 @@
 Let $N$ be a positive integer, $\Gamma$ a group of level $N$, $J$ the Jacobian of its modular curve,
 $\mathfrak{T}_{\mathbb{C}} = \mathfrak{T} \otimes_{\mathbb{Q}} \mathbb{C}$ for its [Hecke algebra](hecke-algebra-of-the-modular-jacobian.md)
 $\mathfrak{T}$, acting on $D_J$ through $\delta$, and $\mu \colon S_2(\Gamma) \to D_J$ the isomorphism of
-[weight-two cusp forms with holomorphic $1$-forms](cusp-forms-as-one-forms-on-the-modular-jacobian.md). Through $\mu$,
+[weight-two cusp forms with holomorphic $1$-forms](cusp-forms-as-one-forms-steps/cusp-forms-as-one-forms-on-the-modular-jacobian.md). Through $\mu$,
 $\mathfrak{T}_{\mathbb{C}}$ acts on $S_2(\Gamma)$, $\xi_n$ acting as the [Hecke operator $T_n$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md)
-([comparison](hecke-operators-and-hecke-endomorphisms-under-mu.md)).
+([comparison](hecke-operators-under-mu-steps/hecke-operators-and-hecke-endomorphisms-under-mu.md)).
 
 Then $S_2(\Gamma)$ is isomorphic to $\mathfrak{T}_{\mathbb{C}}$ as a $\mathfrak{T}_{\mathbb{C}}$-module, hence $D_J$ is, via $\delta$,
 $\mathfrak{T}_{\mathbb{C}}$-isomorphic to $\mathfrak{T}_{\mathbb{C}}$.
@@ -16,13 +16,13 @@ functions*, as cited by Shimura (1973), p. 526.
 ## Depends on
 
 - [Hecke algebra of the Jacobian of a modular curve](hecke-algebra-of-the-modular-jacobian.md)
-- [Weight-two cusp forms as holomorphic $1$-forms on the modular Jacobian](cusp-forms-as-one-forms-on-the-modular-jacobian.md)
+- [Weight-two cusp forms as holomorphic $1$-forms on the modular Jacobian](cusp-forms-as-one-forms-steps/cusp-forms-as-one-forms-on-the-modular-jacobian.md)
 - [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../NumberTheory/modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md)
-- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian](hecke-operators-and-hecke-endomorphisms-under-mu.md), for the action of $\xi_n$ as $T_n$
+- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian](hecke-operators-under-mu-steps/hecke-operators-and-hecke-endomorphisms-under-mu.md), for the action of $\xi_n$ as $T_n$
 
 ## Proof depends on
 
-- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian](hecke-operators-and-hecke-endomorphisms-under-mu.md)
+- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian](hecke-operators-under-mu-steps/hecke-operators-and-hecke-endomorphisms-under-mu.md)
 
 ## Expansion
 

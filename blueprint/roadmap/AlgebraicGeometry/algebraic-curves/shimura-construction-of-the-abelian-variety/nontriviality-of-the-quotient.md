@@ -25,7 +25,7 @@ side contains $\mathfrak{K}_1 \mathfrak{R}^q$, a contradiction.
 - [Weight-two cusp forms are free of rank one over the Hecke algebra](cusp-forms-free-of-rank-one-over-the-hecke-algebra.md)
 - [Decomposition of the Hecke algebra of the modular Jacobian](decomposition-of-the-hecke-algebra.md), for $\mathfrak{T} = \mathfrak{R} \oplus \mathfrak{K}_1 \oplus \dots \oplus \mathfrak{K}_r$
 - [The ideal $\mathfrak{U}$ of the Hecke algebra attached to an eigenform](ideal-of-the-hecke-algebra-attached-to-an-eigenform.md), for $\mathfrak{U}$
-- [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-and-tangent-space.md), for the injectivity of $\delta$ of a surjective homomorphism
+- [Holomorphic $1$-forms and tangent space of a complex abelian variety](holomorphic-one-forms-steps/holomorphic-one-forms-and-tangent-space.md), for the injectivity of $\delta$ of a surjective homomorphism
 - [Quotient of an abelian variety by an abelian subvariety](../../abelian-varieties/quotient-by-an-abelian-subvariety.md), for $\dim A = \dim J - \dim C$
 
 ## Expansion

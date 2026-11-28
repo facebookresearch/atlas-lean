@@ -12,7 +12,7 @@ $\varphi \circ \nu = \nu'$ and $\theta'(a) \circ \varphi = \varphi \circ \theta(
 
 Shimura's proof: by [multiplicity one](multiplicity-one-and-the-dimension.md),
 $\delta\nu(D_A) = \delta\nu'(D_{A'}) = \mu(\sum_{\sigma \in I} \mathbb{C} f_\sigma)$, so by
-[(1.2)](tangent-space-of-the-kernel-of-a-quotient.md) the tangent spaces at the origin of $\mathrm{Ker}(\nu)$ and
+[(1.2)](tangent-space-of-the-kernel-steps/tangent-space-of-the-kernel-of-a-quotient.md) the tangent spaces at the origin of $\mathrm{Ker}(\nu)$ and
 $\mathrm{Ker}(\nu')$ are both the annihilator of $\mu(\sum_{\sigma \in I} \mathbb{C} f_\sigma)$.
 
 ## Depends on
@@ -26,7 +26,7 @@ $\mathrm{Ker}(\nu')$ are both the annihilator of $\mu(\sum_{\sigma \in I} \mathb
 ## Proof depends on
 
 - [Multiplicity one and the dimension of Shimura's quotient](multiplicity-one-and-the-dimension.md)
-- [Tangent space of the kernel of a quotient of abelian varieties](tangent-space-of-the-kernel-of-a-quotient.md)
+- [Tangent space of the kernel of a quotient of abelian varieties](tangent-space-of-the-kernel-steps/tangent-space-of-the-kernel-of-a-quotient.md)
 - [Quotient of an abelian variety by an abelian subvariety](../../abelian-varieties/quotient-by-an-abelian-subvariety.md), for the uniqueness of a quotient up to isomorphism over $\mathbb{Q}$
 
 ## Expansion

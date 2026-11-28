@@ -20,7 +20,7 @@ dimensionality, implicit there, comes from that of $\mathrm{End}(J) \otimes \mat
 ## Proof depends on
 
 - [Hecke algebra of the Jacobian of a modular curve](hecke-algebra-of-the-modular-jacobian.md)
-- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian](hecke-operators-and-hecke-endomorphisms-under-mu.md), for the comparison of the $\xi_n$ with the $T_n$
+- [Hecke operators on cusp forms and Hecke endomorphisms of the Jacobian](hecke-operators-under-mu-steps/hecke-operators-and-hecke-endomorphisms-under-mu.md), for the comparison of the $\xi_n$ with the $T_n$
 
 ## Expansion
 
