@@ -22,7 +22,7 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Log
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
-import MathlibExt.Analysis.SpecialFunctions.ArcsinCentralBinomialReciprocal
+import MathlibExt.Analysis.SpecialFunctions.ArcsinSquareSeries
 import MathlibExt.Analysis.SpecialFunctions.ArcsinTaylorSeries
 
 @[expose] public section
@@ -36,6 +36,12 @@ Statements of entries from B. C. Berndt, *Ramanujan's Notebooks, Part I*
 
 This module proves `ramanujan_part1_ch9_entry22_chudnovsky`, Entry 22 on the
 corrected range `0 ≤ x ≤ π / 4`.
+
+## References
+
+* B. C. Berndt, *Ramanujan's Notebooks, Part I* (Springer, 1985), Chapter 9, Entry 22.
+* The arcsine-square identity is `MetaMathlibExt.hasSum_arcsin_sq_div_two` in
+  `MathlibExt.Analysis.SpecialFunctions.ArcsinSquareSeries`.
 -/
 
 namespace MathlibExt.Analysis.Ramanujan.Part1Ch9
@@ -133,262 +139,31 @@ private lemma aCoeff_le_one (k : ℕ) : aCoeff k ≤ 1 := by
   unfold aCoeff
   exact Entry20Piseries1.two_pow_mul_factorial_sq_div_factorial_le_one k
 
-private lemma e22_recip_term_eq (x : ℝ) (m : ℕ) :
-    (2 * x) ^ (2 * (m + 1)) / ((((m + 1 : ℕ)) : ℝ) * (Nat.choose (2 * (m + 1)) (m + 1) : ℝ))
-      = 2 * aCoeff m * x ^ (2 * (m + 1)) := by
-  have hle : m + 1 ≤ 2 * (m + 1) := by omega
-  have hch := Nat.choose_mul_factorial_mul_factorial hle
-  have hsub : 2 * (m + 1) - (m + 1) = m + 1 := by omega
-  rw [hsub] at hch
-  have hchr : (Nat.choose (2 * (m + 1)) (m + 1) : ℝ)
-        * (((m + 1).factorial : ℕ) : ℝ) * (((m + 1).factorial : ℕ) : ℝ)
-        = ((((2 * (m + 1)).factorial : ℕ)) : ℝ) := by exact_mod_cast hch
-  have hCf : (Nat.choose (2 * (m + 1)) (m + 1) : ℝ) ≠ 0 := by
-    have h : 0 < Nat.choose (2 * (m + 1)) (m + 1) := Nat.choose_pos hle
-    exact_mod_cast ne_of_gt h
-  have hm1 : ((m + 1 : ℕ) : ℝ) ≠ 0 := by
-    exact_mod_cast Nat.succ_ne_zero m
-  have hFn : ((((m + 1).factorial : ℕ)) : ℝ) ≠ 0 :=
-    Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero _)
-  have hCeq : (Nat.choose (2 * (m + 1)) (m + 1) : ℝ)
-      = ((((2 * (m + 1)).factorial : ℕ)) : ℝ)
-        / (((((m + 1).factorial : ℕ)) : ℝ) * ((((m + 1).factorial : ℕ)) : ℝ)) := by
-    rw [eq_div_iff (mul_ne_zero hFn hFn)]
-    linear_combination hchr
-  have hF1 : ((((m + 1).factorial : ℕ)) : ℝ) = ((m : ℝ) + 1) * ((m.factorial : ℕ) : ℝ) := by
+-- The integrated factorial coefficient is the inverse central binomial coefficient
+-- in the shared arcsine-square series.
+private lemma e22_square_term_eq (y : ℝ) (m : ℕ) :
+    aCoeff m * y ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ) =
+      ((4 : ℝ) ^ m / (((m + 1).centralBinom : ℝ) * ((m : ℝ) + 1) ^ 2)) * y ^ (2 * m + 2) := by
+  have hchoose : (m.centralBinom : ℝ) * (m.factorial : ℝ) ^ 2 = ((2 * m).factorial : ℝ) := by
+    have h := congrArg (fun n : ℕ => (n : ℝ)) (Nat.add_choose_mul_factorial_mul_factorial m m)
+    simpa only [Nat.cast_mul, ← two_mul, ← Nat.centralBinom_eq_two_mul_choose, pow_two, mul_assoc]
+      using h
+  have hrec := congrArg (fun n : ℕ => (n : ℝ)) (Nat.succ_mul_centralBinom_succ m)
+  push_cast at hrec
+  have hbinom : ((m + 1).centralBinom : ℝ) * ((m : ℝ) + 1) * (m.factorial : ℝ) ^ 2 =
+      2 * ((2 * m + 1).factorial : ℝ) := by
     rw [Nat.factorial_succ]
     push_cast
-    ring
-  have hF2 : ((((2 * (m + 1)).factorial : ℕ)) : ℝ)
-      = (2 * ((m : ℝ) + 1)) * ((((2 * m + 1).factorial : ℕ)) : ℝ) := by
-    have e1 : 2 * (m + 1) = (2 * m + 1) + 1 := by omega
-    conv_lhs => rw [e1]
-    rw [Nat.factorial_succ]
-    push_cast
-    ring
-  have hF1ne : ((m.factorial : ℕ) : ℝ) ≠ 0 :=
-    Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero _)
-  have hF2ne : ((((2 * m + 1).factorial : ℕ)) : ℝ) ≠ 0 :=
-    Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero _)
-  have hMne : (m : ℝ) + 1 ≠ 0 := by positivity
-  have hcastm : ((m + 1 : ℕ) : ℝ) = (m : ℝ) + 1 := by push_cast; ring
-  have hpow : (2 * x) ^ (2 * (m + 1)) = (2 : ℝ) ^ (2 * (m + 1)) * x ^ (2 * (m + 1)) := by
-    rw [mul_pow]
-  have h2pow : (2 : ℝ) ^ (2 * (m + 1)) = 4 * (2 : ℝ) ^ (2 * m) := by
-    rw [show 2 * (m + 1) = 2 * m + 2 by ring, pow_add]
-    ring
+    linear_combination (m.factorial : ℝ) ^ 2 * hrec + 2 * (2 * (m : ℝ) + 1) * hchoose
+  have hb : ((m + 1).centralBinom : ℝ) ≠ 0 := by
+    exact_mod_cast Nat.centralBinom_ne_zero (m + 1)
+  have hf : ((2 * m + 1).factorial : ℝ) ≠ 0 := by
+    exact_mod_cast Nat.factorial_ne_zero (2 * m + 1)
   unfold aCoeff
-  rw [hpow, h2pow, hCeq, hF1, hF2, hcastm]
+  rw [pow_mul (2 : ℝ), show (2 : ℝ) ^ 2 = 4 by norm_num]
+  push_cast
   field_simp
-  ring
-
-private lemma e22a_hasSum_ne {x : ℝ} (hx : |x| < 1) (hx0 : x ≠ 0) :
-    HasSum (fun m : ℕ => aCoeff m * x ^ (2 * m + 1))
-      (Real.arcsin x / Real.sqrt (1 - x ^ 2)) := by
-  have H := MetaMathlibExt.arcsin_central_binomial_reciprocal_series x hx
-  have H2 : HasSum (fun m : ℕ => 2 * aCoeff m * x ^ (2 * (m + 1)))
-      ((2 * x / Real.sqrt (1 - x ^ 2)) * Real.arcsin x) :=
-    H.congr_fun (fun m => (e22_recip_term_eq x m).symm)
-  have h2x : (2 : ℝ) * x ≠ 0 := mul_ne_zero (by norm_num) hx0
-  have hx2 : (0 : ℝ) < 1 - x ^ 2 := by
-    have hsq1 : x ^ 2 < 1 := by nlinarith [hx, abs_nonneg x, sq_abs x]
-    linarith
-  have hsq : Real.sqrt (1 - x ^ 2) ≠ 0 := Real.sqrt_ne_zero'.mpr hx2
-  have H3 := H2.div_const (2 * x)
-  have hterm : (fun m : ℕ => (2 * aCoeff m * x ^ (2 * (m + 1))) / (2 * x))
-      = (fun m : ℕ => aCoeff m * x ^ (2 * m + 1)) := by
-    funext m
-    have hpow : x ^ (2 * (m + 1)) = x ^ (2 * m + 1) * x := by
-      rw [show 2 * (m + 1) = (2 * m + 1) + 1 by ring, pow_succ]
-    rw [hpow]
-    field_simp
-  have hval : (((2 * x / Real.sqrt (1 - x ^ 2)) * Real.arcsin x) / (2 * x))
-      = Real.arcsin x / Real.sqrt (1 - x ^ 2) := by
-    field_simp
-  rw [hterm, hval] at H3
-  exact H3
-
-private lemma e22a_hasSum_zero :
-    HasSum (fun m : ℕ => aCoeff m * (0 : ℝ) ^ (2 * m + 1))
-      (Real.arcsin 0 / Real.sqrt (1 - (0 : ℝ) ^ 2)) := by
-  have hfun : (fun m : ℕ => aCoeff m * (0 : ℝ) ^ (2 * m + 1)) = fun _ => 0 := by
-    funext m
-    have hz : (0 : ℝ) ^ (2 * m + 1) = 0 := zero_pow (by omega)
-    rw [hz, mul_zero]
-  rw [hfun]
-  have hval : Real.arcsin 0 / Real.sqrt (1 - (0 : ℝ) ^ 2) = 0 := by
-    rw [Real.arcsin_zero, zero_div]
-  rw [hval]
-  exact hasSum_zero
-
-private lemma e22a_hasSum {x : ℝ} (hx : |x| < 1) :
-    HasSum (fun m : ℕ => aCoeff m * x ^ (2 * m + 1))
-      (Real.arcsin x / Real.sqrt (1 - x ^ 2)) := by
-  by_cases hx0 : x = 0
-  · subst hx0
-    exact e22a_hasSum_zero
-  · exact e22a_hasSum_ne hx hx0
-
-private def e22A (t : ℝ) : ℝ :=
-  ∑' m : ℕ, aCoeff m * t ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ)
-
-private lemma e22A_term_hasDerivAt (m : ℕ) (t : ℝ) :
-    HasDerivAt (fun s : ℝ => aCoeff m * s ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ))
-      (aCoeff m * t ^ (2 * m + 1)) t := by
-  have hpow : HasDerivAt (fun s : ℝ => s ^ (2 * m + 2))
-      (((2 * m + 2 : ℕ) : ℝ) * t ^ (2 * m + 1)) t := by
-    have h := hasDerivAt_pow (2 * m + 2) t
-    have heq : (2 * m + 2) - 1 = 2 * m + 1 := by omega
-    rwa [heq] at h
-  have hmul := hpow.const_mul (aCoeff m)
-  have hdiv := hmul.div_const ((2 * m + 2 : ℕ) : ℝ)
-  have hsimp : aCoeff m * (((2 * m + 2 : ℕ) : ℝ) * t ^ (2 * m + 1)) /
-        ((2 * m + 2 : ℕ) : ℝ) = aCoeff m * t ^ (2 * m + 1) := by
-    field_simp
-  rwa [hsimp] at hdiv
-
-private lemma e22A_majorant (r : ℝ) (_hr0 : 0 < r) (hr1 : r < 1) (m : ℕ) (y : ℝ)
-    (hy : y ∈ Set.Ioo (-r) r) :
-    ‖aCoeff m * y ^ (2 * m + 1)‖ ≤ (r ^ 2) ^ m := by
-  have hyr : ‖y‖ < r := by
-    rw [Real.norm_eq_abs]
-    rw [Set.mem_Ioo] at hy
-    rw [abs_lt]
-    constructor <;> linarith [hy.1, hy.2]
-  have hc : ‖aCoeff m‖ ≤ 1 := by
-    rw [Real.norm_eq_abs, abs_of_nonneg (aCoeff_nonneg m)]
-    exact aCoeff_le_one m
-  have hpow_le : ‖y‖ ^ (2 * m + 1) ≤ r ^ (2 * m + 1) :=
-    pow_le_pow_left₀ (norm_nonneg _) (le_of_lt hyr) _
-  have h1 : ‖aCoeff m‖ * ‖y‖ ^ (2 * m + 1) ≤ 1 * r ^ (2 * m + 1) :=
-    mul_le_mul hc hpow_le (by positivity) (by norm_num)
-  have hrr : r ^ (2 * m + 1) ≤ (r ^ 2) ^ m := by
-    have hle : r ≤ 1 := le_of_lt hr1
-    have hnn : (0 : ℝ) ≤ r ^ (2 * m) := by positivity
-    have heq : r ^ (2 * m + 1) = r ^ (2 * m) * r := by rw [pow_succ]
-    have heq2 : (r ^ 2) ^ m = r ^ (2 * m) * 1 := by
-      rw [← pow_mul, mul_one]
-    rw [heq, heq2]
-    exact mul_le_mul_of_nonneg_left hle hnn
-  calc ‖aCoeff m * y ^ (2 * m + 1)‖
-        = ‖aCoeff m‖ * ‖y‖ ^ (2 * m + 1) := by rw [norm_mul, norm_pow]
-      _ ≤ 1 * r ^ (2 * m + 1) := h1
-      _ = r ^ (2 * m + 1) := by ring
-      _ ≤ (r ^ 2) ^ m := hrr
-
-private lemma e22A_hasDerivAt_of_mem {r y : ℝ} (hr0 : 0 < r) (hr1 : r < 1)
-    (hy : y ∈ Set.Ioo (-r) r) :
-    HasDerivAt e22A (∑' m : ℕ, aCoeff m * y ^ (2 * m + 1)) y := by
-  have hu : Summable (fun m : ℕ => (r ^ 2) ^ m) := by
-    apply summable_geometric_of_norm_lt_one
-    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-    nlinarith [hr0, hr1]
-  have hopen : IsOpen (Set.Ioo (-r : ℝ) r) := isOpen_Ioo
-  have hpre : IsPreconnected (Set.Ioo (-r : ℝ) r) := isPreconnected_Ioo
-  have hderiv : ∀ m : ℕ, ∀ z ∈ Set.Ioo (-r : ℝ) r,
-      HasDerivAt (fun s : ℝ => aCoeff m * s ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ))
-        (aCoeff m * z ^ (2 * m + 1)) z :=
-    fun m z _ => e22A_term_hasDerivAt m z
-  have hbound : ∀ m : ℕ, ∀ z ∈ Set.Ioo (-r : ℝ) r,
-      ‖aCoeff m * z ^ (2 * m + 1)‖ ≤ (r ^ 2) ^ m :=
-    fun m z hz => e22A_majorant r hr0 hr1 m z hz
-  have hy0 : (0 : ℝ) ∈ Set.Ioo (-r : ℝ) r := by simp [Set.mem_Ioo, hr0]
-  have hsum0 : Summable (fun m : ℕ =>
-      aCoeff m * (0 : ℝ) ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ)) := by
-    have hzero : (fun m : ℕ => aCoeff m * (0 : ℝ) ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ))
-        = fun _ => 0 := by
-      funext m
-      have hz : (0 : ℝ) ^ (2 * m + 2) = 0 := zero_pow (by omega)
-      rw [hz, mul_zero, zero_div]
-    rw [hzero]
-    exact summable_zero
-  exact hasDerivAt_tsum_of_isPreconnected hu hopen hpre hderiv hbound hy0 hsum0 hy
-
-private lemma e22A_zero : e22A 0 = 0 := by
-  unfold e22A
-  have hzero : (fun m : ℕ => aCoeff m * (0 : ℝ) ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ))
-      = fun _ => 0 := by
-    funext m
-    have hz : (0 : ℝ) ^ (2 * m + 2) = 0 := zero_pow (by omega)
-    rw [hz, mul_zero, zero_div]
-  rw [hzero, tsum_zero]
-
-private lemma e22A_hasDerivAt_arcsin {y : ℝ} (hy : ‖y‖ < 1) :
-    HasDerivAt e22A (Real.arcsin y / Real.sqrt (1 - y ^ 2)) y := by
-  have hr1 : (‖y‖ + 1) / 2 < 1 := by
-    have hnn : (0 : ℝ) ≤ ‖y‖ := norm_nonneg _
-    linarith [hy]
-  have hr0 : (0 : ℝ) < (‖y‖ + 1) / 2 := by
-    have hnn : (0 : ℝ) ≤ ‖y‖ := norm_nonneg _
-    linarith
-  have habs : |y| < (‖y‖ + 1) / 2 := by
-    rw [← Real.norm_eq_abs]
-    linarith [hy]
-  rw [abs_lt] at habs
-  have hymem : y ∈ Set.Ioo (-((‖y‖ + 1) / 2)) ((‖y‖ + 1) / 2) := by
-    rw [Set.mem_Ioo]
-    constructor <;> linarith [habs.1, habs.2]
-  have hder := e22A_hasDerivAt_of_mem hr0 hr1 hymem
-  have habs1 : |y| < 1 := by
-    rw [← Real.norm_eq_abs]
-    exact hy
-  have hsum := e22a_hasSum habs1
-  rw [hsum.tsum_eq] at hder
-  exact hder
-
-private lemma e22_arcsin_sq_hasDerivAt {x : ℝ} (hx : x ∈ Set.Ioo (-1 : ℝ) 1) :
-    HasDerivAt (fun t : ℝ => Real.arcsin t ^ 2 / 2)
-      (Real.arcsin x / Real.sqrt (1 - x ^ 2)) x := by
-  rw [Set.mem_Ioo] at hx
-  have h1 : x ≠ -1 := by linarith [hx.1]
-  have h2 : x ≠ 1 := by linarith [hx.2]
-  have h_arc : HasDerivAt Real.arcsin (1 / Real.sqrt (1 - x ^ 2)) x :=
-    Real.hasDerivAt_arcsin h1 h2
-  have h_sq : HasDerivAt (fun t : ℝ => Real.arcsin t ^ 2)
-      (2 * Real.arcsin x * (1 / Real.sqrt (1 - x ^ 2))) x := by
-    have h2 := h_arc.mul h_arc
-    have heq : (Real.arcsin * Real.arcsin)
-        = (fun t : ℝ => Real.arcsin t ^ 2) := by
-      funext t
-      rw [Pi.mul_apply, pow_two]
-    rw [heq] at h2
-    refine h2.congr_deriv ?_
-    ring
-  have h_div := h_sq.div_const (2 : ℝ)
-  have hsimp : (2 * Real.arcsin x * (1 / Real.sqrt (1 - x ^ 2))) / 2
-      = Real.arcsin x / Real.sqrt (1 - x ^ 2) := by
-    ring
-  rwa [hsimp] at h_div
-
-private lemma e22A_eq_arcsin_sq :
-    Set.EqOn e22A (fun t : ℝ => Real.arcsin t ^ 2 / 2) (Set.Ioo (-1 : ℝ) 1) := by
-  have hopen : IsOpen (Set.Ioo (-1 : ℝ) 1) := isOpen_Ioo
-  have hpre : IsPreconnected (Set.Ioo (-1 : ℝ) 1) := isPreconnected_Ioo
-  have hAdiff : DifferentiableOn ℝ e22A (Set.Ioo (-1 : ℝ) 1) := by
-    intro x hx
-    have hnorm : ‖x‖ < 1 := by
-      rw [Real.norm_eq_abs, abs_lt]
-      exact hx
-    have h := e22A_hasDerivAt_arcsin hnorm
-    exact (h.differentiableAt).differentiableWithinAt
-  have hsq_diff : DifferentiableOn ℝ (fun t : ℝ => Real.arcsin t ^ 2 / 2)
-      (Set.Ioo (-1 : ℝ) 1) := by
-    intro x hx
-    exact ((e22_arcsin_sq_hasDerivAt hx).differentiableAt).differentiableWithinAt
-  have hderiv_eq : Set.EqOn (deriv e22A)
-      (deriv (fun t : ℝ => Real.arcsin t ^ 2 / 2)) (Set.Ioo (-1 : ℝ) 1) := by
-    intro x hx
-    have hnorm : ‖x‖ < 1 := by
-      rw [Real.norm_eq_abs, abs_lt]
-      exact hx
-    have hA := e22A_hasDerivAt_arcsin hnorm
-    have hS := e22_arcsin_sq_hasDerivAt hx
-    rw [hA.deriv, hS.deriv]
-  have h0mem : (0 : ℝ) ∈ Set.Ioo (-1 : ℝ) 1 := by norm_num
-  have h0eq : e22A 0 = Real.arcsin 0 ^ 2 / 2 := by
-    rw [e22A_zero, Real.arcsin_zero]
-    norm_num
-  exact IsOpen.eqOn_of_deriv_eq hopen hpre hAdiff hsq_diff hderiv_eq h0mem h0eq
+  linear_combination y ^ (2 * m + 2) * hbinom
 
 private def e22S (t : ℝ) : ℝ :=
   ∑' m : ℕ, aCoeff m * t ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ) ^ 2
@@ -497,59 +272,6 @@ private lemma e22S_hasDerivAt_of_mem {r y : ℝ} (hr0 : 0 < r) (hr1 : r < 1)
     exact summable_zero
   exact hasDerivAt_tsum_of_isPreconnected hu hopen hpre hderiv hbound hy0 hsum0 hy
 
-private lemma e22A_summable_at {y : ℝ} (hy : ‖y‖ < 1) :
-    Summable (fun m : ℕ => aCoeff m * y ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ)) := by
-  have hr1 : (‖y‖ + 1) / 2 < 1 := by
-    have hnn : (0 : ℝ) ≤ ‖y‖ := norm_nonneg _
-    linarith [hy]
-  have hr0 : (0 : ℝ) < (‖y‖ + 1) / 2 := by
-    have hnn : (0 : ℝ) ≤ ‖y‖ := norm_nonneg _
-    linarith
-  have hr : ‖y‖ < (‖y‖ + 1) / 2 := by
-    have hnn : (0 : ℝ) ≤ ‖y‖ := norm_nonneg _
-    linarith [hy]
-  have hu : Summable (fun m : ℕ => ((((‖y‖ + 1) / 2) ^ 2) ^ m)) := by
-    apply summable_geometric_of_norm_lt_one
-    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-    nlinarith [hr0, hr1]
-  apply Summable.of_norm
-  apply Summable.of_nonneg_of_le (fun m => norm_nonneg _) (fun m => ?_) hu
-  have hyr : ‖y‖ < (‖y‖ + 1) / 2 := hr
-  have hc : ‖aCoeff m‖ ≤ 1 := by
-    rw [Real.norm_eq_abs, abs_of_nonneg (aCoeff_nonneg m)]
-    exact aCoeff_le_one m
-  have hd : ‖(1 : ℝ) / ((2 * m + 2 : ℕ) : ℝ)‖ ≤ 1 := by
-    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-    exact e22_one_div_two_le m
-  have hpow : ‖y‖ ^ (2 * m + 2) ≤ ((‖y‖ + 1) / 2) ^ (2 * m + 2) :=
-    pow_le_pow_left₀ (norm_nonneg _) (le_of_lt hyr) _
-  have hpow2 : ((‖y‖ + 1) / 2) ^ (2 * m + 2) ≤ ((‖y‖ + 1) / 2) ^ (2 * m) := by
-    have hr1' : ((‖y‖ + 1) / 2) ^ 2 ≤ 1 := by nlinarith [hr0, hr1]
-    have hnn : (0 : ℝ) ≤ ((‖y‖ + 1) / 2) ^ (2 * m) := by positivity
-    have heq1 : ((‖y‖ + 1) / 2) ^ (2 * m + 2)
-        = ((‖y‖ + 1) / 2) ^ (2 * m) * (((‖y‖ + 1) / 2) ^ 2) := by
-      rw [pow_add]
-    rw [heq1]
-    calc ((‖y‖ + 1) / 2) ^ (2 * m) * (((‖y‖ + 1) / 2) ^ 2)
-          ≤ ((‖y‖ + 1) / 2) ^ (2 * m) * 1 :=
-            mul_le_mul_of_nonneg_left hr1' hnn
-        _ = ((‖y‖ + 1) / 2) ^ (2 * m) := by ring
-  calc ‖aCoeff m * y ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ)‖
-        = (‖aCoeff m‖ * ‖y‖ ^ (2 * m + 2)) * ‖(1 : ℝ) / ((2 * m + 2 : ℕ) : ℝ)‖ := by
-          rw [div_eq_mul_one_div]
-          simp [norm_mul, norm_pow, mul_assoc]
-      _ ≤ (1 * ((‖y‖ + 1) / 2) ^ (2 * m + 2)) * 1 := by
-          have h1 : ‖aCoeff m‖ * ‖y‖ ^ (2 * m + 2) ≤
-              1 * ((‖y‖ + 1) / 2) ^ (2 * m + 2) :=
-            mul_le_mul hc hpow (by positivity) (by norm_num)
-          exact mul_le_mul h1 hd (by positivity) (by positivity)
-      _ ≤ ((((‖y‖ + 1) / 2) ^ 2) ^ m) := by
-          calc (1 * ((‖y‖ + 1) / 2) ^ (2 * m + 2)) * 1
-                = ((‖y‖ + 1) / 2) ^ (2 * m + 2) := by ring
-            _ ≤ ((‖y‖ + 1) / 2) ^ (2 * m) := hpow2
-            _ = ((((‖y‖ + 1) / 2) ^ 2) ^ m) := by
-              exact pow_mul _ 2 m
-
 private lemma e22S_hasDerivAt_arcsin_sq {y : ℝ} (hy : ‖y‖ < 1) (hy0 : y ≠ 0) :
     HasDerivAt e22S (Real.arcsin y ^ 2 / (2 * y)) y := by
   have hr1 : (‖y‖ + 1) / 2 < 1 := by
@@ -567,7 +289,8 @@ private lemma e22S_hasDerivAt_arcsin_sq {y : ℝ} (hy : ‖y‖ < 1) (hy0 : y �
     rw [Set.mem_Ioo]
     constructor <;> linarith [habs.1, habs.2]
   have hS := e22S_hasDerivAt_of_mem hr0 hr1 hymem
-  have hAsum := e22A_summable_at hy
+  have hA := (MetaMathlibExt.hasSum_arcsin_sq_div_two
+    (by simpa only [Real.norm_eq_abs] using hy)).congr_fun (e22_square_term_eq y)
   have hterm : (fun m : ℕ => aCoeff m * y ^ (2 * m + 1) / ((2 * m + 2 : ℕ) : ℝ))
       = (fun m : ℕ => (aCoeff m * y ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ)) * y⁻¹) := by
     funext m
@@ -576,18 +299,7 @@ private lemma e22S_hasDerivAt_arcsin_sq {y : ℝ} (hy : ‖y‖ < 1) (hy0 : y �
       rw [show 2 * m + 2 = (2 * m + 1) + 1 by ring, pow_succ]
     rw [hpow]
     field_simp
-  have hsum_eq : (∑' m : ℕ, aCoeff m * y ^ (2 * m + 1) / ((2 * m + 2 : ℕ) : ℝ))
-      = (∑' m : ℕ, aCoeff m * y ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ)) / y := by
-    rw [hterm, hAsum.tsum_mul_right, div_eq_mul_inv]
-  have hAval : (∑' m : ℕ, aCoeff m * y ^ (2 * m + 2) / ((2 * m + 2 : ℕ) : ℝ))
-      = Real.arcsin y ^ 2 / 2 := by
-    have heq : e22A y = Real.arcsin y ^ 2 / 2 :=
-      e22A_eq_arcsin_sq (by
-        rw [Set.mem_Ioo, ← abs_lt, ← Real.norm_eq_abs]
-        exact hy)
-    unfold e22A at heq
-    exact heq
-  rw [hsum_eq, hAval] at hS
+  rw [hterm, hA.summable.tsum_mul_right, hA.tsum_eq, ← div_eq_mul_inv] at hS
   have hsimp : (Real.arcsin y ^ 2 / 2) / y = Real.arcsin y ^ 2 / (2 * y) := by
     ring
   rw [hsimp] at hS
