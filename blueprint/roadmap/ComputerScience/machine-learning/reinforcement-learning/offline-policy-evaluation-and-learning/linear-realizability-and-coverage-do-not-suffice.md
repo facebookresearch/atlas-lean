@@ -1,6 +1,6 @@
 # Linear realizability and feature coverage do not suffice for offline evaluation
 
-Even when every policy's action-value function is linear in known $d$-dimensional features and every data distribution has the best possible feature covariance, any offline evaluation algorithm needs $\Omega((d/2)^H)$ samples on some deterministic-transition MDP of horizon $H$ to estimate a policy's value to constant accuracy.
+Even when every policy's action-value function is linear in known $d$-dimensional features and every data distribution has the best possible feature covariance, any offline evaluation algorithm needs $\Omega((d/2)^H)$ samples on some deterministic-transition MDP of horizon $H$ to estimate a policy's value to constant accuracy with probability at least $0.9$.
 
 **Setting.** An episodic MDP $M=(S,A,P,R,H)$ has a fixed initial state $s_1$, state levels $S_1,\ldots,S_H\subseteq S$ that are pairwise disjoint, transitions $P(\cdot\mid s,a)$ from level $h$ to level $h+1$, reward distributions $R(s,a)$, and rewards $r_h\in[-1,1]$ almost surely. A stochastic policy $\pi$ chooses $a_h\sim\pi(\cdot\mid s_h)$, with action values $Q^\pi_h(s,a)=\mathbb E[\sum_{h'=h}^{H}r_{h'}\mid s_h=s,a_h=a,\pi]$ and value $V^\pi=\mathbb E[\sum_{h=1}^{H}r_h\mid s_1,\pi]$. The learner is given a policy $\pi$, a feature map $\phi:S\times A\to\mathbb R^{d}$, and for each level $h$ a dataset $D_h$ of independent tuples $(s,a,r,s')$ with $(s,a)\sim\mu_h\in\Delta(S_h\times A)$, $r\sim R(s,a)$ and $s'\sim P(\cdot\mid s,a)$; it must output an estimate of $V^\pi$.
 

@@ -1,6 +1,6 @@
 # Unbiasedness and variance of the sequential doubly robust estimator
 
-The sequential doubly robust estimate is unbiased for the $H$-step value of the target policy, and its conditional variance at each step splits into a state-transition term, an action term that depends on the model only through $\widehat Q-Q$, a reward term, and the variance carried from later steps.
+With a model and target policy fixed independently of the evaluation data, behavior-policy coverage and the stated finite-variance Markov reward model, the sequential doubly robust estimator is unbiased for the target's $H$-step value. Its conditional variance has an action term using $\widehat Q-Q$, plus terms for transitions, rewards and later-step variance.
 
 Use the setting and notation of the [sequential doubly robust estimator](sequential-doubly-robust-estimator.md): a trajectory from $(\mu,\pi_0)$, target policy $\pi_1$, ratios $\rho_t$, values $Q=Q^{H+1-t}$ and $V=V^{H+1-t}$ of $\pi_1$ with the remaining number of steps left implicit, model functions $\widehat Q$ and $\widehat V(s)=\sum_a\pi_1(a\mid s)\widehat Q(s,a)$, and the estimates $V^{H+1-t}_{\mathrm{DR}}$. Assume:
 
