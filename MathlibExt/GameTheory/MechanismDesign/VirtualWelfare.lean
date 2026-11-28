@@ -42,25 +42,32 @@ namespace MathlibExt.GameTheory.MechanismDesign.SingleParameter
 
 open MeasureTheory Set
 
-/-- Bidder `i`'s value law: the density `f i` on `[a i, b i]`. -/
+/-- **Value law.** The measure with density `f i` on `[a i, b i]` (negative values are
+clipped by `ENNReal.ofReal`). It is bidder `i`'s value law when `f i` is a probability
+density on that interval, as in `isProbabilityMeasure_valueLaw`. -/
 noncomputable def valueLaw {ι : Type*} (f : ι → ℝ → ℝ) (a b : ι → ℝ) (i : ι) : Measure ℝ :=
   (volume.restrict (Icc (a i) (b i))).withDensity fun t => ENNReal.ofReal (f i t)
 
 /-- **Interim allocation** (Myerson 1981, (4.1)): `Qᵢ(s) = ∫ pᵢ(t₋ᵢ, s) dF₋ᵢ`,
-written as an integral over the whole profile law, whose `i`-th coordinate is
-overwritten by `s`. -/
+written as an integral over the whole profile law `μ`, whose `i`-th coordinate is
+overwritten by `s`. When `μ` is the product of the bidders' value laws, the overwritten
+`i`-th factor has mass `1` and integrates out, leaving (4.1); for a general `μ` this is
+just the displayed integral. -/
 noncomputable def interimAlloc {ι : Type*} [DecidableEq ι] (μ : Measure (ι → ℝ))
     (p : (ι → ℝ) → ι → ℝ) (i : ι) (s : ℝ) : ℝ :=
   ∫ t, p (Function.update t i s) i ∂μ
 
-/-- **Interim payment**: the expected payment of bidder `i` reporting `s`
-when the others report truthfully. -/
+/-- **Interim payment.** The integral of `x`'s `i`-th payment when bidder `i` reports
+`s` and the profile is drawn from `μ` with coordinate `i` overwritten by `s`. When `μ`
+is the product of the value laws and the slice `t ↦ x (update t i s) i` is integrable,
+this is the expected payment of bidder `i` reporting `s` against truthful others; when
+the slice is not integrable, the Bochner integral is `0`, which is no expected payment. -/
 noncomputable def interimPayment {ι : Type*} [DecidableEq ι] (μ : Measure (ι → ℝ))
     (x : (ι → ℝ) → ι → ℝ) (i : ι) (s : ℝ) : ℝ :=
   ∫ t, x (Function.update t i s) i ∂μ
 
-/-- A bidder's value law is a probability measure when the density is
-continuous, positive, and integrates to `1` on its interval. -/
+/-- **The value law is a probability measure** when the density is continuous,
+positive, and integrates to `1` on its interval. -/
 theorem isProbabilityMeasure_valueLaw {ι : Type*} {f : ι → ℝ → ℝ} {a b : ι → ℝ}
     {i : ι} (hab : a i < b i) (hfc : ContinuousOn (f i) (Icc (a i) (b i)))
     (hfpos : ∀ t ∈ Icc (a i) (b i), 0 < f i t) (hf1 : ∫ t in a i..b i, f i t = 1) :
@@ -79,24 +86,12 @@ theorem isProbabilityMeasure_valueLaw {ι : Type*} {f : ι → ℝ → ℝ} {a b
 
 /-- Overwriting coordinate `i` of an independent profile with an independent
 draw from the `i`-th law preserves the product law. -/
-theorem measurePreserving_update_pi {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem measurePreserving_update_pi {ι : Type*} [Fintype ι] [DecidableEq ι]
     (ν : ι → Measure ℝ) [∀ j, IsProbabilityMeasure (ν j)] (i : ι) :
     MeasurePreserving (fun p : (ι → ℝ) × ℝ => Function.update p.1 i p.2)
       ((Measure.pi ν).prod (ν i)) (Measure.pi ν) := by
-  have hMeas : Measurable (fun p : (ι → ℝ) × ℝ => Function.update p.1 i p.2) := by
-    rw [measurable_pi_iff]
-    intro j
-    by_cases hj : j = i
-    · have heq : (fun p : (ι → ℝ) × ℝ => Function.update p.1 i p.2 j) = Prod.snd := by
-        ext p
-        simp [Function.update, hj]
-      rw [heq]
-      exact measurable_snd
-    · have heq : (fun p : (ι → ℝ) × ℝ => Function.update p.1 i p.2 j) = fun p => p.1 j := by
-        ext p
-        simp [Function.update, hj]
-      rw [heq]
-      exact (measurable_pi_apply j).comp measurable_fst
+  have hMeas : Measurable (fun p : (ι → ℝ) × ℝ => Function.update p.1 i p.2) :=
+    measurable_update'
   refine ⟨hMeas, ?_⟩
   symm
   apply Measure.pi_eq
@@ -132,10 +127,10 @@ theorem measurePreserving_update_pi {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [hprod]
   exact Finset.prod_erase_mul _ _ (Finset.mem_univ i)
 
-/-- **Marginalization.** Under independent laws, integrating a profile
+/-- **Marginalization.** Under independent laws, integrating an integrable profile
 function equals first integrating out the other coordinates at a fixed
 `i`-th value `s`, then integrating `s` against the `i`-th law. -/
-theorem integral_eq_integral_integral_update {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem integral_eq_integral_integral_update {ι : Type*} [Fintype ι] [DecidableEq ι]
     (ν : ι → Measure ℝ) [∀ j, IsProbabilityMeasure (ν j)] (i : ι)
     {g : (ι → ℝ) → ℝ} (hg : Integrable g (Measure.pi ν)) :
     ∫ t, g t ∂(Measure.pi ν) =
@@ -172,13 +167,16 @@ private theorem integral_valueLaw_eq_interval {ι : Type*} (f : ι → ℝ → �
     rw [integral_Icc_eq_integral_Ioc, ← intervalIntegral.integral_of_le hab.le]
   exact (integral_congr_ae hae).trans hIcc
 
-/-- **Myerson's revenue identity (4.12)**, for independent values with
-continuous positive densities on bounded intervals, seller value `t₀ = 0` and
-no revision effects: for a Bayesian incentive-compatible mechanism `(p, x)`,
-expected revenue is expected virtual surplus minus the utilities of the
-lowest types. The slice-integrability hypothesis only delimits the mechanisms
-counted (interim payments are defined at every legal report); the identity
-itself needs just joint integrability `hx`. -/
+/-- **Myerson's revenue identity (4.12).** Let the bidders' values be independent,
+bidder `i`'s value having a continuous positive density `f i` on `[a i, b i]` that
+integrates to `1`. Let `(p, x)` be a mechanism whose interim allocation and payment
+rules are Bayesian incentive-compatible on each `[a i, b i]`, with measurable
+allocations taking values in `[0, 1]` and payments integrable jointly and in every
+fixed-report slice `t ↦ x (update t i s) i`, so that interim payments are genuine
+expectations. With seller value `t₀ = 0` and no revision effects, expected revenue is
+expected virtual surplus minus the utilities of the lowest types:
+`∫ t, ∑ i, x t i = ∫ t, ∑ i, φᵢ(t i) * p t i - ∑ i, Uᵢ(a i)`, all integrals against
+the product of the value laws. -/
 theorem integral_sum_payment_eq {ι : Type*} [Fintype ι] [DecidableEq ι]
     (f : ι → ℝ → ℝ) (a b : ι → ℝ) (hab : ∀ i, a i < b i)
     (hfc : ∀ i, ContinuousOn (f i) (Icc (a i) (b i)))

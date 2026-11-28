@@ -40,5 +40,3 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 
 - [Menu-size complexity of revenue approximation](menu-size-complexity-of-revenue-approximation.md)
 - [Optimal prophet-secretary ratio](optimal-prophet-secretary-ratio.md)
-
-- [Myerson's revenue identity](myerson-s-revenue-identity/README.md)
