@@ -89,19 +89,6 @@ theorem_wanted card_avoid_321_3412 (n : ℕ) (hn : 1 ≤ n) :
       ¬ HasPattern σ pat321 ∧ ¬ HasPattern σ pat3412} =
       Nat.fib (2 * n - 1)
 
-/-- **$(231, 3124)$-avoiding permutations are counted by odd-indexed Fibonacci numbers.** For
-every $n \ge 1$, the number of permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
-$231$ and $3124$, that is, contain neither of them, is the Fibonacci number $F_{2n-1}$, where
-$F_0 = 0$ and $F_1 = 1$.
-
-Source: Juan B. Gil, Felix H. Xu, and William Y. Zhu,
-"Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
-Permutations", Proposition 10. -/
-theorem_wanted card_avoid_231_3124 (n : ℕ) (hn : 1 ≤ n) :
-    Nat.card {σ : Equiv.Perm (Fin n) //
-      ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124} =
-      Nat.fib (2 * n - 1)
-
 /-- **Position of the smallest entry in $(321, 4123)$-avoiding permutations.** For a natural
 number $m$, write $S_m(321, 4123)$ for the set of permutations of $\{0, 1, \dots, m-1\}$ that
 avoid both patterns $321$ and $4123$, that is, contain neither of them. Let $n \ge 1$ and let
