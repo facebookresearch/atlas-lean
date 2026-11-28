@@ -43,6 +43,7 @@ noncomputable section
 open CategoryTheory Limits Preadditive Opposite
 open CategoryTheory.Abelian
 open CochainComplex.HomComplex
+open scoped ZeroObject
 
 namespace CategoryTheory.Abelian.FiniteResolution.TransportTests
 
