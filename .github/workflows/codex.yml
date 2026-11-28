@@ -1048,7 +1048,7 @@ jobs:
             # Fetch it from the trusted base repo (public read, no
             # credentials). Best-effort: git show below is the gate, and
             # the object is already present for same-repo PRs.
-            git fetch --no-tags "https://github.com/${{ github.repository }}.git" "$BASE_SHA" || true
+            git fetch --no-tags --filter=blob:none "https://github.com/${{ github.repository }}.git" "$BASE_SHA" || true
             git show "$BASE_SHA:REVIEWING.md" > "$guide"
           else
             git show "HEAD:REVIEWING.md" > "$guide"
