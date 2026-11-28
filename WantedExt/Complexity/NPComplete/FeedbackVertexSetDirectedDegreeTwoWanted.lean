@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Dichromatic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetDirectedDegreeTwoDefs
 
 @[expose] public section
 
@@ -58,48 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), the arc list, and the bound `K`. -/
-abbrev FeedbackVertexSetDirectedInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The arc list describes a digraph on `0, …, n - 1` without loops or multiple arcs: no arc is
-listed twice, both endpoints of every arc are below `n`, and no arc joins a vertex to
-itself. -/
-def SimpleArcs (i : FeedbackVertexSetDirectedInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2
-
-/-- Every vertex has in-degree at most `d` (at most `d` listed arcs end at it) and out-degree
-at most `d` (at most `d` listed arcs start at it). -/
-def DegreeAtMost (i : FeedbackVertexSetDirectedInstance) (d : ℕ) : Prop :=
-  ∀ v < i.1, (i.2.1.filter fun a => a.2 = v).length ≤ d ∧
-    (i.2.1.filter fun a => a.1 = v).length ≤ d
-
-/-- The arc relation of the digraph on `Fin n`: `Arc i u v` when `(u, v)` is a listed arc. -/
-def Arc (i : FeedbackVertexSetDirectedInstance) (u v : Fin i.1) : Prop :=
-  ((u : ℕ), (v : ℕ)) ∈ i.2.1
-
-/-- Well-formedness of an instance: the digraph has no loops or multiple arcs, every vertex has
-in-degree and out-degree at most 2, and `0 < K ≤ |V|`. -/
-def WellFormed (i : FeedbackVertexSetDirectedInstance) : Prop :=
-  SimpleArcs i ∧ DegreeAtMost i 2 ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- A feedback vertex set of at most `K` vertices: a set `V'` of at most `K` vertices
-containing at least one vertex of every directed cycle (closed directed walk of positive
-length, `SimpleGraph.IsDirectedCycle`). -/
-def FeedbackVertexSetDirectedFeasible (i : FeedbackVertexSetDirectedInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card ≤ i.2.2 ∧
-    ∀ (m : ℕ) (f : Fin (m + 2) → Fin i.1), SimpleGraph.IsDirectedCycle (Arc i) m f →
-      ∃ j, f j ∈ S
-
-open Classical in
-/-- FEEDBACK VERTEX SET on digraphs with in- and out-degree at most 2, as a decision problem
-over bitstrings. -/
-noncomputable def feedbackVertexSetDirectedDegreeTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FeedbackVertexSetDirectedInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetDirectedFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET is NP-complete on digraphs with in- and out-degree at most 2.**
 Source: Garey and Johnson (1979), [GT7], comment; Bai, Cao and Xiao (2026), Corollary 3. -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackArcSetWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackArcSetDegreeThreeDefs
 
 @[expose] public section
 
@@ -66,22 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed FEEDBACK ARC SET instance in which every
-vertex has in-degree plus out-degree at most 3, with `0 < K ≤ |A|`. -/
-def WellFormed (i : FeedbackArcSetInstance) : Prop :=
-  FeedbackArcSet.WellFormed i ∧
-    (∀ v : ℕ, i.2.1.countP (fun e => e.2 = v) + i.2.1.countP (fun e => e.1 = v) ≤ 3) ∧
-      0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-open Classical in
-/-- FEEDBACK ARC SET with total degree at most 3 as a decision problem over bitstrings. -/
-noncomputable def feedbackArcSetDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FeedbackArcSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackArcSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK ARC SET with total degree at most 3 is NP-complete.** Source: Garey and Johnson
 (1979), [GT8]; Gavril (1977). -/

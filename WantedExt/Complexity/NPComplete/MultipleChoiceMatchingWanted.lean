@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Matching
+public import CSLibExt.Complexity.NPComplete.MultipleChoiceMatchingDefs
 
 @[expose] public section
 
@@ -54,43 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, the edges as triples `(u, v, c)` (edge `{u, v}` in class
-`E_c`), and the bound `K`. -/
-abbrev MultipleChoiceMatchingInstance := ℕ × List (ℕ × ℕ × ℕ) × ℕ
-
-/-- The edge list of the instance, without class labels. -/
-def edgeList (i : MultipleChoiceMatchingInstance) : List (ℕ × ℕ) :=
-  i.2.1.map fun e => (e.1, e.2.1)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MultipleChoiceMatchingInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (edgeList i)
-
-/-- Well-formedness of an instance: the edge list is simple (in range, no loops, no repeated
-edge in either orientation, so each edge has exactly one class), and `K` is positive. -/
-def WellFormed (i : MultipleChoiceMatchingInstance) : Prop :=
-  (edgeList i).Nodup ∧
-    (∀ e ∈ edgeList i, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ edgeList i) ∧
-      0 < i.2.2
-
-/-- A matching of `G` with at least `K` edges and at most one edge from each class: two
-listed edges with the same class that both lie in the matching are the same edge. -/
-def MultipleChoiceMatchingFeasible (i : MultipleChoiceMatchingInstance) : Prop :=
-  ∃ M : (Graph i).Subgraph, M.IsMatching ∧ i.2.2 ≤ M.edgeSet.ncard ∧
-    ∀ e ∈ i.2.1, ∀ e' ∈ i.2.1, e.2.2 = e'.2.2 →
-      (∃ (hu : e.1 < i.1) (hv : e.2.1 < i.1), M.Adj ⟨e.1, hu⟩ ⟨e.2.1, hv⟩) →
-      (∃ (hu : e'.1 < i.1) (hv : e'.2.1 < i.1), M.Adj ⟨e'.1, hu⟩ ⟨e'.2.1, hv⟩) →
-      e = e'
-
-open Classical in
-/-- MULTIPLE CHOICE MATCHING as a decision problem over bitstrings. -/
-noncomputable def multipleChoiceMatchingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipleChoiceMatchingInstance) x with
-  | some i => decide (WellFormed i ∧ MultipleChoiceMatchingFeasible i)
-  | none => false
 
 /-- **MULTIPLE CHOICE MATCHING is NP-complete.** Source: Garey and Johnson (1979), [GT55];
 Itai, Rodeh and Tanimoto (1978); Itai and Rodeh (1977). -/

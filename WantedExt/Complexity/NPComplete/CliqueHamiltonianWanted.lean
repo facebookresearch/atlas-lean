@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.CliqueHamiltonianDefs
 
 @[expose] public section
 
@@ -73,24 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), `0 < K ≤ n`, and the
-graph is Hamiltonian (`n ≥ 3` and a Hamiltonian cycle exists). -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1 ∧ 3 ≤ i.1 ∧ (Graph i).IsHamiltonian
-
-/-- The graph has a clique of size `K` or more. -/
-def CliqueHamiltonianFeasible (i : GraphColoringInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), i.2.2 ≤ S.card ∧ (Graph i).IsClique (S : Set (Fin i.1))
-
-open Classical in
-/-- CLIQUE on Hamiltonian graphs as a decision problem over bitstrings. -/
-noncomputable def cliqueHamiltonianDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ CliqueHamiltonianFeasible i)
-  | none => false
 
 /-- **CLIQUE on Hamiltonian graphs is NP-complete.** Source: Cavallaro (2019), Theorem 6.2;
 Garey and Johnson (1979), [GT19] (parent problem). -/

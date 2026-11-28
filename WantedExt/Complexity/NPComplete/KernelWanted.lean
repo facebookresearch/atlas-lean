@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.Digraph.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.KernelDefs
 
 @[expose] public section
 
@@ -50,34 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the vertex count `n` and the arc list `A` (pairs `(u, v)` for arcs `u → v`). -/
-abbrev KernelInstance := ℕ × List (ℕ × ℕ)
-
-/-- The digraph of the instance on `Fin n`: `u → v` is an arc iff `(u, v)` is in the arc
-list. -/
-def Graph (i : KernelInstance) : Digraph (Fin i.1) where
-  Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2
-
-/-- Well-formedness of an instance: the arc list has no repeated arcs, its endpoints are
-vertices, and it has no loops. -/
-def WellFormed (i : KernelInstance) : Prop :=
-  i.2.Nodup ∧ ∀ a ∈ i.2, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2
-
-/-- A kernel: a vertex set with no arc between any two of its vertices, such that every vertex
-outside it has an arc into it. -/
-def KernelFeasible (i : KernelInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), (∀ u ∈ S, ∀ v ∈ S, ¬ (Graph i).Adj u v) ∧
-    ∀ u ∉ S, ∃ v ∈ S, (Graph i).Adj u v
-
-open Classical in
-/-- KERNEL as a decision problem over bitstrings. -/
-noncomputable def kernelDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KernelInstance) x with
-  | some i => decide (WellFormed i ∧ KernelFeasible i)
-  | none => false
 
 /-- **KERNEL is NP-complete.** Source: Garey and Johnson (1979), [GT57]; Chvátal (1973);
 Fraenkel (1981). -/

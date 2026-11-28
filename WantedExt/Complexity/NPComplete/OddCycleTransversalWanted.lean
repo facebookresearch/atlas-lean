@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
+public import CSLibExt.Complexity.NPComplete.OddCycleTransversalDefs
 
 @[expose] public section
 
@@ -42,48 +39,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- **Odd cycle transversal instances.** An odd cycle transversal instance is a triple
-$(n, es, K)$ of a natural number $n$ (the number of vertices), a list $es$ of pairs of natural
-numbers (the edges) and a natural number $K$ (the bound on the number of removed vertices). -/
-abbrev OddCycleTransversalInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- **Graph of an odd cycle transversal instance.** For an odd cycle transversal instance
-$(n, es, K)$, its graph is the graph of the edge list $es$ on $n$ vertices: the simple graph on
-$\{0, \dots, n-1\}$ in which distinct vertices $i$ and $j$ are adjacent when $(i, j)$ or $(j, i)$
-belongs to $es$. -/
-def Graph (i : OddCycleTransversalInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-
-/-- **Well-formed odd cycle transversal instances.** An odd cycle transversal instance
-$(n, es, K)$ is well formed when the list $es$ has no repeated entries and every pair $(u, v)$ in
-$es$ satisfies $u < n$, $v < n$ and $u \ne v$, and $(v, u)$ does not belong to $es$. -/
-def WellFormed (i : OddCycleTransversalInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- **Feasible odd cycle transversal instances.** An odd cycle transversal instance $(n, es, K)$
-is feasible when there is a set $S$ of at most $K$ vertices of its graph such that the subgraph
-induced on the vertices outside $S$ is bipartite. -/
-def OddCycleTransversalFeasible
-    (i : OddCycleTransversalInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), S.card ≤ i.2.2 ∧
-    ((Graph i).induce (↑Sᶜ : Set (Fin i.1))).IsBipartite
-
-open Classical in
-/-- **ODD CYCLE TRANSVERSAL as a decision problem.** The decision problem ODD CYCLE TRANSVERSAL
-accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding, to an
-odd cycle transversal instance $(n, es, K)$ that is well formed and feasible. Well formed means
-that $es$ has no repeated entries and every pair $(u, v)$ in $es$ satisfies $u < n$, $v < n$,
-$u \ne v$ and $(v, u) \notin es$; feasible means that some set of at most $K$ vertices can be
-removed from the graph of the instance so that the remaining induced subgraph is bipartite.
-Bitstrings that do not decode to an instance are rejected. -/
-noncomputable def oddCycleTransversalDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OddCycleTransversalInstance) x with
-  | some i => decide (WellFormed i ∧ OddCycleTransversalFeasible i)
-  | none => false
 
 /-- **ODD CYCLE TRANSVERSAL is NP-complete.** The decision problem ODD CYCLE TRANSVERSAL, which
 accepts a bitstring exactly when it decodes to a well-formed instance $(n, es, K)$ whose graph

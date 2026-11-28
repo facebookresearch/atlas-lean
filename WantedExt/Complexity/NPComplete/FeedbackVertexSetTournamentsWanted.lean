@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetDirectedDegreeTwoWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetTournamentsDefs
 
 @[expose] public section
 
@@ -59,25 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The digraph is a tournament: for every two distinct vertices `u ≠ v` below `n`, exactly one
-of the arcs `u → v` and `v → u` is listed. -/
-def IsTournament (i : FeedbackVertexSetDirectedInstance) : Prop :=
-  ∀ u < i.1, ∀ v < i.1, u ≠ v → ((u, v) ∈ i.2.1 ↔ (v, u) ∉ i.2.1)
-
-/-- Well-formedness of an instance: the arc list is a digraph without loops or repeated arcs,
-the digraph is a tournament, and `0 < K ≤ |V|`. -/
-def WellFormed (i : FeedbackVertexSetDirectedInstance) : Prop :=
-  SimpleArcs i ∧ IsTournament i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- FEEDBACK VERTEX SET in tournaments as a decision problem over bitstrings. -/
-noncomputable def feedbackVertexSetTournamentsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FeedbackVertexSetDirectedInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetDirectedFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET is NP-complete on tournaments.** Source: Garey and Johnson (1979),
 [GT7]; Speckenmeyer (1990); Mnich, Vassilevska Williams and Végh (2015). -/

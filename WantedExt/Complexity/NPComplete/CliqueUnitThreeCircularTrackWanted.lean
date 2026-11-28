@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Topology.Instances.AddCircle.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CliqueUnitThreeTrackWanted
+public import CSLibExt.Complexity.NPComplete.CliqueUnitThreeCircularTrackDefs
 
 @[expose] public section
 
@@ -85,32 +82,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `H` is a unit `d`-circular track graph: for each track `j : Fin d` there is a circle
-`AddCircle (c j)` with `c j > 0`, each vertex `v` is assigned on it the closed unit arc from the
-point `l v j` to `l v j + 1` (the image of `[l v j, l v j + 1]`), and two distinct vertices are
-adjacent in `H` exactly when their arcs on some track meet. -/
-def IsUnitCircularTrackGraph (d : ℕ) {n : ℕ} (H : SimpleGraph (Fin n)) : Prop :=
-  ∃ (c : Fin d → ℝ) (l : Fin n → Fin d → ℝ), (∀ j, 0 < c j) ∧
-    ∀ u v, u ≠ v → (H.Adj u v ↔ ∃ j,
-      (((↑) : ℝ → AddCircle (c j)) '' Set.Icc (l u j) (l u j + 1) ∩
-        ((↑) : ℝ → AddCircle (c j)) '' Set.Icc (l v j) (l v j + 1)).Nonempty)
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), the graph is a unit
-3-circular track graph, and `0 < K ≤ n`. -/
-def WellFormed (i : CliqueUnitThreeTrackInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    IsUnitCircularTrackGraph 3 (Graph i) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- CLIQUE on unit 3-circular track graphs as a decision problem over bitstrings. -/
-noncomputable def cliqueUnitThreeCircularTrackDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CliqueUnitThreeTrackInstance) x with
-  | some i => decide (WellFormed i ∧ CliqueUnitThreeTrackFeasible i)
-  | none => false
 
 /-- **CLIQUE on unit 3-circular track graphs is NP-complete.** Source: ISGCI, class gc_1089;
 Francis, Gonçalves and Ochem (2015), Theorem 10; Garey and Johnson (1979), [GT19]. -/

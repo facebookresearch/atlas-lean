@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IndependentSetCubicPlanarDefs
 
 @[expose] public section
 
@@ -66,35 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev IndependentSetCubicPlanarInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : IndependentSetCubicPlanarInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-open Classical in
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`, the graph
-is cubic and planar, and `0 < K ≤ |V|`. -/
-def WellFormed (i : IndependentSetCubicPlanarInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (Graph i).IsRegularOfDegree 3 ∧ (Graph i).IsPlanar ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some set of at least `K` vertices contains no two adjacent vertices. -/
-def IndependentSetCubicPlanarFeasible
-    (i : IndependentSetCubicPlanarInstance) : Prop :=
-  ∃ s : Finset (Fin i.1), i.2.2 ≤ s.card ∧ (Graph i).IsIndepSet (s : Set (Fin i.1))
-
-open Classical in
-/-- INDEPENDENT SET on cubic planar graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetCubicPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IndependentSetCubicPlanarInstance) x with
-  | some i => decide (WellFormed i ∧ IndependentSetCubicPlanarFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on cubic planar graphs is NP-complete.**
 Source: Garey and Johnson (1979), [GT20], comment;

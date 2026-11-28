@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaximumInducedMatchingWanted
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
+public import CSLibExt.Complexity.NPComplete.MaximumInducedMatchingBipartiteDefs
 
 @[expose] public section
 
@@ -57,21 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed MAXIMUM INDUCED MATCHING instance
-(simple edge list), its graph is bipartite, and `K` is positive. -/
-def WellFormed (i : MaximumInducedMatching.MaximumInducedMatchingInstance) : Prop :=
-  MaximumInducedMatching.WellFormed i ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 i.2.1).IsBipartite ∧ 0 < i.2.2
-
-open Classical in
-/-- INDUCED MATCHING ON BIPARTITE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def maximumInducedMatchingBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumInducedMatching.MaximumInducedMatchingInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumInducedMatching.MaximumInducedMatchingFeasible i)
-  | none => false
 
 /-- **INDUCED MATCHING is NP-complete on bipartite graphs.** Source: Cameron (1989);
 Stockmeyer and Vazirani (1982). -/

@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetDirectedDegreeTwoWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackVertexSetDirectedPlanarDegreeThreeDefs
 
 @[expose] public section
 
@@ -65,26 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The underlying undirected simple graph: `u` and `v` are adjacent when `u ≠ v` and `u → v`
-or `v → u` is an arc. -/
-def UnderlyingGraph (i : FeedbackVertexSetDirectedInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the digraph has no loops or multiple arcs, its underlying
-graph is planar, every vertex has in-degree and out-degree at most 3, and `0 < K ≤ |V|`. -/
-def WellFormed (i : FeedbackVertexSetDirectedInstance) : Prop :=
-  SimpleArcs i ∧ (UnderlyingGraph i).IsPlanar ∧ DegreeAtMost i 3 ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- FEEDBACK VERTEX SET on planar digraphs with in- and out-degree at most 3, as a decision
-problem over bitstrings. -/
-noncomputable def feedbackVertexSetDirectedPlanarDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FeedbackVertexSetDirectedInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackVertexSetDirectedFeasible i)
-  | none => false
 
 /-- **FEEDBACK VERTEX SET is NP-complete on planar digraphs with in- and out-degree at most
 3.** Source: Garey and Johnson (1979), [GT7], comment; Bai, Cao and Xiao (2026), Theorem 8. -/

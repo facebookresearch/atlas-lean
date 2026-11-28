@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeedbackArcSetWanted
-public import WantedExt.Complexity.NPComplete.FeedbackVertexSetEdgeDigraphWanted
+public import CSLibExt.Complexity.NPComplete.FeedbackArcSetEdgeDigraphDefs
 
 @[expose] public section
 
@@ -72,20 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed FEEDBACK ARC SET instance whose digraph is an
-edge digraph, with `0 < K ≤ |A|`. -/
-def WellFormed (i : FeedbackArcSetInstance) : Prop :=
-  FeedbackArcSet.WellFormed i ∧ IsEdgeDigraph i.1 i.2.1 ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-open Classical in
-/-- FEEDBACK ARC SET on edge digraphs as a decision problem over bitstrings. -/
-noncomputable def feedbackArcSetEdgeDigraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FeedbackArcSetInstance) x with
-  | some i => decide (WellFormed i ∧ FeedbackArcSetFeasible i)
-  | none => false
 
 /-- **FEEDBACK ARC SET on edge digraphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT8]; Gavril (1977). -/

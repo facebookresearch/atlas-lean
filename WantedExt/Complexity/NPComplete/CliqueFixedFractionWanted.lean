@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Clique
+public import CSLibExt.Complexity.NPComplete.CliqueFixedFractionDefs
 
 @[expose] public section
 
@@ -54,32 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count, edge list. -/
-abbrev CliqueFixedFractionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CliqueFixedFractionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: a simple edge list on the vertices `0, …, n - 1` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : CliqueFixedFractionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The graph has a clique of size at least `(p / q) |V|`: a clique of `k` vertices with
-`p * |V| ≤ q * k`. -/
-def CliqueFixedFractionFeasible (p q : ℕ) (i : CliqueFixedFractionInstance) : Prop :=
-  ∃ k, p * i.1 ≤ q * k ∧ ∃ s, (Graph i).IsNClique k s
-
-open Classical in
-/-- CLIQUE of size at least `(p / q) |V|` as a decision problem over bitstrings. -/
-noncomputable def cliqueFixedFractionDec (p q : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CliqueFixedFractionInstance) x with
-  | some i => decide (WellFormed i ∧ CliqueFixedFractionFeasible p q i)
-  | none => false
 
 /-- **CLIQUE of linear size is NP-complete** for every fixed fraction `r = p / q`, `0 < r < 1`.
 Source: Garey and Johnson (1979), [GT19], comment. -/

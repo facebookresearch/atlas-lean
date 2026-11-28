@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetBipartiteWanted
-public import WantedExt.Complexity.NPComplete.IndependentDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentDominatingSetBipartiteDefs
 
 @[expose] public section
 
@@ -66,15 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- INDEPENDENT DOMINATING SET on bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def independentDominatingSetBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IndependentDominatingSetInstance) x with
-  | some i => decide (DominatingSetBipartite.WellFormed i ∧ IndependentDominatingSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT DOMINATING SET on bipartite graphs is NP-complete.** Source: Corneil and Perl
 (1984); ISGCI (gc_69). -/

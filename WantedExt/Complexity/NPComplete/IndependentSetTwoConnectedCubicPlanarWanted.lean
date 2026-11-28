@@ -20,13 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IndependentSetTwoConnectedCubicPlanarDefs
 
 @[expose] public section
 
@@ -67,35 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev IndependentSetTwoConnectedCubicPlanarInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : IndependentSetTwoConnectedCubicPlanarInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-open Classical in
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`, the graph
-is 2-connected, cubic and planar, and `0 < K ≤ |V|`. -/
-def WellFormed (i : IndependentSetTwoConnectedCubicPlanarInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (Graph i).IsVertexConnected 2 ∧ (Graph i).IsRegularOfDegree 3 ∧ (Graph i).IsPlanar ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some set of at least `K` vertices contains no two adjacent vertices. -/
-def IndependentSetTwoConnectedCubicPlanarFeasible
-    (i : IndependentSetTwoConnectedCubicPlanarInstance) : Prop :=
-  ∃ s : Finset (Fin i.1), i.2.2 ≤ s.card ∧ (Graph i).IsIndepSet (s : Set (Fin i.1))
-
-open Classical in
-/-- INDEPENDENT SET on 2-connected cubic planar graphs as a decision problem over bitstrings. -/
-noncomputable def independentSetTwoConnectedCubicPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IndependentSetTwoConnectedCubicPlanarInstance) x with
-  | some i => decide (WellFormed i ∧ IndependentSetTwoConnectedCubicPlanarFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on 2-connected cubic planar graphs is NP-complete.**
 Source: Garey and Johnson (1979), [GT20];

@@ -25,11 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Domination
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingSetDominationPerfectTriangleFreeDefs
 
 @[expose] public section
 
@@ -75,29 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A graph on `Fin n` is domination perfect: every induced subgraph has equal domination
-number and independent domination number (Zverovich and Zverovich 1995). -/
-def IsDominationPerfect {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∀ U : Finset (Fin n),
-    (G.induce (U : Set (Fin n))).dominationNumber =
-      (G.induce (U : Set (Fin n))).indepDominationNumber
-
-/-- Well-formedness of an instance: a well-formed DOMINATING SET instance with `0 < K ≤ |V|`
-whose graph is triangle-free and domination perfect. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1 ∧ (Graph i).CliqueFree 3 ∧
-    IsDominationPerfect (Graph i)
-
-open Classical in
-/-- DOMINATING SET on domination perfect triangle-free graphs as a decision problem over
-bitstrings. -/
-noncomputable def dominatingSetDominationPerfectTriangleFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET on domination perfect triangle-free graphs is NP-complete.** Source: Garey
 and Johnson (1979), [GT2], comment, with edge subdivision; Zverovich and Zverovich (1995); ISGCI

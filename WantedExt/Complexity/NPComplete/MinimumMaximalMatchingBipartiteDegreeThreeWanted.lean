@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumMaximalMatchingWanted
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.MinimumMaximalMatchingBipartiteDegreeThreeDefs
 
 @[expose] public section
 
@@ -54,24 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: it is a well-formed MINIMUM MAXIMAL MATCHING instance
-(simple edge list, `0 < K ≤ |E|`), and its graph is bipartite with every vertex of degree at
-most 3. -/
-def WellFormed (i : MinimumMaximalMatching.MinimumMaximalMatchingInstance) : Prop :=
-  MinimumMaximalMatching.WellFormed i ∧ (MinimumMaximalMatching.Graph i).IsBipartite ∧
-    ∀ v, (MinimumMaximalMatching.Graph i).degree v ≤ 3
-
-open Classical in
-/-- MINIMUM MAXIMAL MATCHING on bipartite graphs of maximum degree 3 as a decision problem over
-bitstrings. -/
-noncomputable def minimumMaximalMatchingBipartiteDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumMaximalMatching.MinimumMaximalMatchingInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumMaximalMatching.MinimumMaximalMatchingFeasible i)
-  | none => false
 
 /-- **MINIMUM MAXIMAL MATCHING is NP-complete on bipartite graphs of maximum degree 3.**
 Source: Garey and Johnson (1979), [GT10]; Yannakakis and Gavril (1980). -/

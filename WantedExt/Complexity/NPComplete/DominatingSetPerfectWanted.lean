@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.PerfectGraph
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingSetPerfectDefs
 
 @[expose] public section
 
@@ -80,20 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed DOMINATING SET instance (a simple edge list
-on the vertices `0, ..., n - 1`) whose graph is perfect, and `0 < K ≤ n`. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ IsPerfect (Graph i) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- DOMINATING SET for perfect graphs as a decision problem over bitstrings. -/
-noncomputable def dominatingSetPerfectDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET for perfect graphs is NP-complete.** Source: Garey and Johnson (1979), [GT2];
 Bertossi (1984); de Figueiredo, de Melo, Sasaki and Silva (2022), Table 1. -/

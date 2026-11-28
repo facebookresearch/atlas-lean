@@ -25,11 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import CSLibExt.Complexity.NPComplete.DominatingSetDefs
+public import CSLibExt.Complexity.NPComplete.DominatingSetBipartiteMaxDegreeThreeDefs
 
 @[expose] public section
 
@@ -69,23 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed DOMINATING SET instance with `0 < K ≤ |V|`
-whose graph is bipartite and of maximum degree at most `3`. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1 ∧ (Graph i).IsBipartite ∧
-    ∀ v, (Graph i).degree v ≤ 3
-
-open Classical in
-/-- DOMINATING SET on bipartite graphs of maximum degree 3 as a decision problem over
-bitstrings. -/
-noncomputable def dominatingSetBipartiteMaxDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET on bipartite graphs of maximum degree 3 is NP-complete.** Source: Garey
 and Johnson (1979), [GT2], comment; Zverovich and Zverovich (1995); ISGCI (`gc_941`). -/

@@ -20,14 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.LineGraph
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import Mathlib.Combinatorics.SimpleGraph.Sum
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IndependentSetTotalGraphBipartiteDefs
 
 @[expose] public section
 
@@ -90,39 +83,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev IndependentSetTotalGraphBipartiteInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : IndependentSetTotalGraphBipartiteInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`, the graph
-is isomorphic to the total graph of a bipartite graph `H` (on vertices `Fin m`): the disjoint sum
-of `H` and its line graph, together with the edges joining each vertex `a` of `H` to each edge
-`e` of `H` containing it; and `0 < K ≤ |V|`. -/
-def WellFormed (i : IndependentSetTotalGraphBipartiteInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∃ (m : ℕ) (H : SimpleGraph (Fin m)), H.IsBipartite ∧
-      Nonempty (Graph i ≃g (H ⊕g H.lineGraph) ⊔ SimpleGraph.fromRel fun x y =>
-        ∃ (a : Fin m) (e : H.edgeSet), x = Sum.inl a ∧ y = Sum.inr e ∧ a ∈ (e : Sym2 (Fin m)))) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some set of at least `K` vertices contains no two adjacent vertices. -/
-def IndependentSetTotalGraphBipartiteFeasible
-    (i : IndependentSetTotalGraphBipartiteInstance) : Prop :=
-  ∃ s : Finset (Fin i.1), i.2.2 ≤ s.card ∧ (Graph i).IsIndepSet (s : Set (Fin i.1))
-
-open Classical in
-/-- INDEPENDENT SET on total graphs of bipartite graphs as a decision problem over
-bitstrings. -/
-noncomputable def independentSetTotalGraphBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IndependentSetTotalGraphBipartiteInstance) x with
-  | some i => decide (WellFormed i ∧ IndependentSetTotalGraphBipartiteFeasible i)
-  | none => false
 
 /-- **INDEPENDENT SET on total graphs of bipartite graphs is NP-complete.**
 Source: Garey and Johnson (1979), [GT20], comment; Yannakakis and Gavril (1980). -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MatrixDominationWanted
+public import CSLibExt.Complexity.NPComplete.MatrixDominationUpperTriangularDefs
 
 @[expose] public section
 
@@ -56,20 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The matrix is upper triangular: every entry below the main diagonal is `0`, i.e., every
-non-zero entry `(r, c)` has `r ≤ c`. -/
-def UpperTriangular (i : MatrixDominationInstance) : Prop :=
-  ∀ r c, Entry i r c → r ≤ c
-
-open Classical in
-/-- MATRIX DOMINATION for upper triangular matrices as a decision problem over bitstrings. -/
-noncomputable def matrixDominationUpperTriangularDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MatrixDominationInstance) x with
-  | some i => decide (WellFormed i ∧ UpperTriangular i ∧ MatrixDominationFeasible i)
-  | none => false
 
 /-- **MATRIX DOMINATION is NP-complete for upper triangular matrices.** Source: Garey and
 Johnson (1979), [MS12], comment; Yannakakis and Gavril (1980). -/

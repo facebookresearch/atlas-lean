@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import WantedExt.Complexity.NPComplete.IndependentDominatingSetWanted
+public import CSLibExt.Complexity.NPComplete.IndependentDominatingSetHereditarySatDefs
 
 @[expose] public section
 
@@ -59,29 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is a hereditary sat graph: for some set `A` with complement `B`, `A` is a clique, every
-vertex of `B` has at most one neighbour in `B`, and there is no triangle with one vertex in `A`
-and two in `B`. -/
-def IsHereditarySat {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ A : Finset (Fin n), G.IsClique (A : Set (Fin n)) ∧
-    (∀ v w₁ w₂, v ∉ A → w₁ ∉ A → w₂ ∉ A → G.Adj v w₁ → G.Adj v w₂ → w₁ = w₂) ∧
-      ∀ a b c, a ∈ A → b ∉ A → c ∉ A → G.Adj a b → G.Adj a c → ¬ G.Adj b c
-
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`), the graph is a
-hereditary sat graph, and `0 < K ≤ n`. -/
-def WellFormed (i : IndependentDominatingSet.IndependentDominatingSetInstance) : Prop :=
-  IndependentDominatingSet.WellFormed i ∧ IsHereditarySat (IndependentDominatingSet.Graph i) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-open Classical in
-/-- INDEPENDENT DOMINATING SET for hereditary sat graphs as a decision problem over bitstrings. -/
-noncomputable def independentDominatingSetHereditarySatDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IndependentDominatingSet.IndependentDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ IndependentDominatingSet.IndependentDominatingSetFeasible i)
-  | none => false
 
 /-- **INDEPENDENT DOMINATING SET for hereditary sat graphs is NP-complete.** Source: Zverovich
 (2006); ISGCI (gc_1218). -/

@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import WantedExt.Complexity.NPComplete.MultipleChoiceMatchingWanted
+public import CSLibExt.Complexity.NPComplete.MultipleChoiceMatchingBipartiteDefs
 
 @[expose] public section
 
@@ -65,23 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (a simple edge list in range, each edge
-listed once with one class label, `K` positive), the graph is bipartite, every class contains
-at most 2 edges, and `K = |V|/2`. -/
-def WellFormed (i : MultipleChoiceMatchingInstance) : Prop :=
-  MultipleChoiceMatching.WellFormed i ∧ (Graph i).IsBipartite ∧
-    (∀ c, (i.2.1.filter fun e => e.2.2 = c).length ≤ 2) ∧ 2 * i.2.2 = i.1
-
-open Classical in
-/-- MULTIPLE CHOICE MATCHING restricted to bipartite graphs, classes of at most 2 edges and
-`K = |V|/2`, as a decision problem over bitstrings. -/
-noncomputable def multipleChoiceMatchingBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipleChoiceMatchingInstance) x with
-  | some i => decide (WellFormed i ∧ MultipleChoiceMatchingFeasible i)
-  | none => false
 
 /-- **MULTIPLE CHOICE MATCHING is NP-complete for bipartite graphs, classes of at most 2
 edges and `K = |V|/2`.** Source: Garey and Johnson (1979), [GT55], comment; Itai, Rodeh and

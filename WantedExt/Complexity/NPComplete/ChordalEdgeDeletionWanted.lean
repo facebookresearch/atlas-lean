@@ -18,12 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import Mathlib.Data.Set.Card
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ChordalEdgeDeletionDefs
 
 @[expose] public section
 
@@ -54,34 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, and the bound `K`. -/
-abbrev ChordalEdgeDeletionInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : ChordalEdgeDeletionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate edges
-in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : ChordalEdgeDeletionInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1
-
-/-- Deleting at most `K` edges of `G` leaves a chordal graph (no induced cycle of length at
-least `4`). -/
-def ChordalEdgeDeletionFeasible (i : ChordalEdgeDeletionInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), H ≤ Graph i ∧
-    ((Graph i).edgeSet \ H.edgeSet).ncard ≤ i.2.2 ∧
-      ∀ k, 4 ≤ k → ¬ (SimpleGraph.cycleGraph k).IsIndContained H
-
-open Classical in
-/-- CHORDAL EDGE DELETION as a decision problem over bitstrings. -/
-noncomputable def chordalEdgeDeletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ChordalEdgeDeletionInstance) x with
-  | some i => decide (WellFormed i ∧ ChordalEdgeDeletionFeasible i)
-  | none => false
 
 /-- **CHORDAL EDGE DELETION is NP-complete.** Source: Natanzon, Shamir and Sharan (2001),
 Theorem 3.6. -/

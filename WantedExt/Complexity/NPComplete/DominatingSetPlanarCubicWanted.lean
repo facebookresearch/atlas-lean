@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DominatingSetPlanarMaxDegreeThreeWanted
+public import CSLibExt.Complexity.NPComplete.DominatingSetPlanarCubicDefs
 
 @[expose] public section
 
@@ -63,22 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed instance of DOMINATING SET on planar graphs of
-maximum degree `3` (so `0 < K ≤ |V|` and the graph is planar) whose graph is regular of
-degree `3`. -/
-def WellFormed (i : DominatingSetInstance) : Prop :=
-  DominatingSetPlanarMaxDegreeThree.WellFormed i ∧ (Graph i).IsRegularOfDegree 3
-
-open Classical in
-/-- DOMINATING SET on planar cubic graphs as a decision problem over bitstrings. -/
-noncomputable def dominatingSetPlanarCubicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ DominatingSetFeasible i)
-  | none => false
 
 /-- **DOMINATING SET on planar cubic graphs is NP-complete.** Source: Johnson (1984),
 DOMINATING SET [GT2] (Garey and Johnson, unpublished; Kikuno and Kakuda, manuscript). -/
