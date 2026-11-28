@@ -11,7 +11,7 @@ module
 import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresIntegralIrwinMeasureSucc
 
 /-!
-# Tests for digit decomposition of the Irwin measures, positive index
+# Tests for digit decomposition of the Irwin measures
 -/
 
 namespace MathlibExtTest.NumberTheory.Digits.IrwinSeriesMeasuresIntegralIrwinMeasureSucc
@@ -50,5 +50,21 @@ example : (∫ x in Set.Ico (0 : ℝ) 1, (2 : ℝ) * x
   have h := MetaMathlibExt.integral_irwinMeasure_succ 2 0 (by decide) (by decide) id
     measurable_id (isBounded_id_image_Ico 2) 2 (by decide)
   simpa using h
+
+-- In the binary case excluding `1`, only the unshifted fiber remains besides the empty string.
+example (f : ℝ → ℝ) (hf : Measurable f)
+    (hbounded : Bornology.IsBounded (f '' Set.Ico (0 : ℝ) 2)) :
+    (∫ x in Set.Ico (0 : ℝ) 1, f (2 * x) ∂irwinMeasure 2 1 0 (by decide)) =
+      f 0 + (1 / (2 : ℝ)) * ∫ x in Set.Ico (0 : ℝ) 1, f x ∂irwinMeasure 2 1 0 (by decide) := by
+  simpa [Finset.sum_range_succ] using
+    integral_irwinMeasure_zero 2 1 (by decide) (by decide) f hf hbounded
+
+-- Excluding `0` instead keeps the fiber shifted by `1` and still adds the empty-string term.
+example (f : ℝ → ℝ) (hf : Measurable f)
+    (hbounded : Bornology.IsBounded (f '' Set.Ico (0 : ℝ) 2)) :
+    (∫ x in Set.Ico (0 : ℝ) 1, f (2 * x) ∂irwinMeasure 2 0 0 (by decide)) =
+      f 0 + (1 / (2 : ℝ)) * ∫ x in Set.Ico (0 : ℝ) 1, f (1 + x) ∂irwinMeasure 2 0 0 (by decide) := by
+  simpa [Finset.sum_range_succ] using
+    integral_irwinMeasure_zero 2 0 (by decide) (by decide) f hf hbounded
 
 end MathlibExtTest.NumberTheory.Digits.IrwinSeriesMeasuresIntegralIrwinMeasureSucc
