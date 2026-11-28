@@ -16,3 +16,7 @@ Models of excitable membranes and neurons: the Nernst potential and passive cabl
 - [Leaky integrate-and-fire neuron](leaky-integrate-and-fire-neuron/README.md)
 - [Wilson–Cowan neural population model](wilson-cowan-neural-population-model/README.md)
 - [Coupled biological oscillators](coupled-oscillators/README.md)
+- [Single-neuron dynamics and excitability](single-neuron-dynamics-and-excitability/README.md)
+- [Spiking network dynamics](spiking-network-dynamics/README.md)
+- [Mean-field limits and neural fields](mean-field-limits-and-neural-fields/README.md)
+- [Learning, connectivity and behaviour](learning-connectivity-and-behaviour/README.md)

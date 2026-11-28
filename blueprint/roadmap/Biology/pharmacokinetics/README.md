@@ -11,3 +11,6 @@ models of concentration measurements. Enzyme kinetics as such is under Systems b
 - [Pharmacokinetic observation models](pharmacokinetic-observation-models/README.md)
 - [Saturable Michaelis–Menten elimination](saturable-michaelis-menten-elimination/README.md)
 - [Two-compartment pharmacokinetics](two-compartment-pharmacokinetics/README.md)
+- [Branching-process models of antibiotic killing](branching-process-models-of-antibiotic-killing/README.md)
+- [Medication nonadherence](medication-nonadherence/README.md)
+- [Missed-dose protocols under random nonadherence](missed-dose-protocols-under-random-nonadherence/README.md)

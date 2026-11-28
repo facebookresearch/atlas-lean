@@ -15,14 +15,11 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 
 - [Extended Permanence Conjecture](extended-permanence-conjecture.md)
 - [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
-- [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
-- [Leak removal in linear compartmental models](leak-removal-in-linear-compartmental-models.md)
 
 - [Gene regulatory network dynamics](gene-regulatory-network-dynamics/README.md)
 - [Stochastic reaction networks](stochastic-reaction-networks/README.md)
 - [Chemical reaction network theory](chemical-reaction-network-theory/README.md)
 
-- [Minimal experiments for identifiable compartmental models](minimal-experiments-for-identifiable-compartmental-models.md)
 - [Three-variable repressilator](three-variable-repressilator/README.md)
 - [CRNs as computing devices](crns-as-computing-devices.md)
 - [Gillespie propensities and the mass-action Markov chain of a reaction network](remaining-clauses-of-stochastic-chemical-reaction-networks.md)
@@ -35,3 +32,5 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Identifiability and inference](identifiability-and-inference/README.md)
 - [Stochastic biochemical dynamics](stochastic-biochemical-dynamics/README.md)
 - [Regulatory and signalling circuits](regulatory-and-signalling-circuits/README.md)
+- [Model reduction and identifiability](model-reduction-and-identifiability/README.md)
+- [Cellular and biochemical dynamics](cellular-and-biochemical-dynamics/README.md)

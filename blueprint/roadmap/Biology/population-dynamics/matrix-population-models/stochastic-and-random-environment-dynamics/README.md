@@ -6,3 +6,4 @@ Invasion rates, stochastic persistence and exclusion, random-environment branchi
 - [Competitive exclusion in stochastic environments](competitive-exclusion-in-stochastic-environments/README.md)
 - [Dispersal-induced growth in periodic environments](dispersal-induced-growth-in-periodic-environments/README.md)
 - [Stochastic coexistence and invasion rates](stochastic-coexistence-and-invasion-rates/README.md)
+- [Stochastic population models](stochastic-population-models/README.md)
