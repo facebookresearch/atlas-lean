@@ -27,6 +27,17 @@ example : ∀ t : ℝ, (∑ i, |sample i - 3|) ≤ ∑ i, |sample i - t| := by
   change sample (1 : Fin 4) ≤ 3 ∧ 3 ≤ sample (2 : Fin 4)
   norm_num [sample]
 
+-- Both middle observations (2 and 4) also minimize absolute deviation.
+example : ∀ t : ℝ, (∑ i, |sample i - 2|) ≤ ∑ i, |sample i - t| := by
+  apply (sample_median_interval_iff_minimizes sample_mono 2).2
+  change sample (1 : Fin 4) ≤ 2 ∧ 2 ≤ sample (2 : Fin 4)
+  norm_num [sample]
+
+example : ∀ t : ℝ, (∑ i, |sample i - 4|) ≤ ∑ i, |sample i - t| := by
+  apply (sample_median_interval_iff_minimizes sample_mono 4).2
+  change sample (1 : Fin 4) ≤ 4 ∧ 4 ≤ sample (2 : Fin 4)
+  norm_num [sample]
+
 -- A point below the lower middle observation is not a minimizer.
 example : ¬ (∀ t : ℝ, (∑ i, |sample i - 1|) ≤ ∑ i, |sample i - t|) := by
   intro h
