@@ -1,6 +1,6 @@
 # Randomized protocol for greater-than with logarithmic cost
 
-For integers $a, b \in \{0, 1, \dots, 2^{n} - 1\}$ held by Alice and Bob, there is a public-coin randomized protocol deciding whether $a \ge b$ with error at most $\varepsilon$ and communication $O(\log n + \log(1/\varepsilon)\log\log n)$; for error $1/\operatorname{poly}(n)$ this gives $O(\log n\log\log n)$. Deterministically, greater-than requires $n + 1$ bits.
+For integers $a, b \in \{0, 1, \dots, 2^{n} - 1\}$ held by Alice and Bob, there is a public-coin randomized protocol deciding whether $a \ge b$ with error at most $\varepsilon$ and communication $O(\log n + \log(1/\varepsilon))$ (Nisan, §3.1, Theorem 1a); in particular, for error $1/\operatorname{poly}(n)$ this gives $O(\log n)$ communication. Deterministically, greater-than requires $n + 1$ bits.
 
 ## Proof sketch
 

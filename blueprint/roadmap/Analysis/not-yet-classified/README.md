@@ -222,3 +222,5 @@ Topics added since this subject's fields were last revised.
 - [Arch Datum RLinear Combination](exists-lincomb.md)
 - [BSpline](bspline/README.md)
 - [Jensen's inequality for the logarithm of an analytic function](log-norm-le-circle-average-log-norm.md)
+- [Unit Add Torus Volume](unit-add-torus-volume/README.md)
+- [Finite Nonnegative Matrix Rate](finite-nonnegative-matrix-rate/README.md)

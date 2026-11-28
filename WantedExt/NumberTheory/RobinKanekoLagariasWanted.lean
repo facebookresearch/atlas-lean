@@ -22,27 +22,13 @@ public import Mathlib.NumberTheory.Primorial
 public import MathlibExt.NumberTheory.PrimeCounting.DusartMertensReciprocalSumDefs
 public import MathlibExt.NumberTheory.RobinKanekoLagariasExpFiveDivLogBoundLt
 public import MathlibExt.NumberTheory.RobinKanekoLagariasExpHarmonicMulLogDivMonotoneOn
+public import MathlibExt.NumberTheory.HarmonicExtensionNatCast
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Filter Topology Real
-
-/-- **The real extension of the harmonic numbers.** For a real number $x$, let
-
-$$H(x) = \int_0^1 \frac{t^x - 1}{t - 1}\,dt,$$
-
-where $t^x$ is the real power and the integral is the Lebesgue integral over $[0, 1]$, taken to be
-$0$ when the integrand is not integrable.
-
-This extends the harmonic numbers: $H(n) = 1 + \frac{1}{2} + \cdots + \frac{1}{n}$ for every
-natural number $n$.
-
-Source: Idris Assani, Aiden Chester, and Alex Paschal, *On Robin's Inequality and the
-Kaneko-Lagarias Inequality*, INTEGERS 26 (2026), Article A86, Section 3.1 (definition of `H(x)`). -/
-noncomputable def harmonicExtension (x : ℝ) : ℝ :=
-  ∫ t in (0 : ℝ)..1, (t ^ x - 1) / (t - 1)
 
 /-- **The real extension of the harmonic numbers vanishes at zero.** The real extension
 $H(x) = \int_0^1 \frac{t^x - 1}{t - 1}\,dt$ of the harmonic numbers satisfies $H(0) = 0$.
@@ -51,16 +37,6 @@ Source: Assani, Chester, and Paschal, INTEGERS 26 (2026), Article A86, Section 3
 `H(x)`). -/
 theorem harmonicExtension_zero : harmonicExtension 0 = 0 := by
   simp [harmonicExtension]
-
-/-- **The real extension agrees with the harmonic numbers.** Let
-$H(x) = \int_0^1 \frac{t^x - 1}{t - 1}\,dt$ for real $x$ be the real extension of the harmonic
-numbers. For every natural number $n$, $H(n) = H_n$, where $H_n = \sum_{i=1}^n 1/i$ is the
-$n$-th harmonic number.
-
-Source: Assani, Chester, and Paschal, INTEGERS 26 (2026), Article A86, Section 3.1 ("`H(n) = H_n`
-for all `n ∈ ℕ`"). -/
-public theorem_wanted harmonicExtension_natCast (n : ℕ) :
-    harmonicExtension n = harmonic n
 
 /-- **Rosser–Schoenfeld and Dusart bounds for the $k$-th prime.** Let $p_k$ be the $k$-th prime
 ($p_1 = 2$) and $\log$ the natural logarithm. For every natural number $k \ge 6$,

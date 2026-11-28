@@ -7,21 +7,20 @@ null-free output tuples, yields exactly the certain answers of $q$ on $D$ under 
 infinite supply of constants is needed: with constants $1, 2$ only, $R = \{(\bot)\}$, $S = \{(1), (2)\}$
 and the Boolean query $\exists x\, (R(x) \wedge S(x))$, naive evaluation returns false although every
 valuation makes the query true. The theorem is distinct from Libkin's Proposition 3.2, which states that
-SQL's three-valued evaluation, in which every comparison involving a null is unknown, returns only
-certain answers on such queries.
-
-## Expansion
-
-This node states a precise result.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Conjunctive queries, answers and canonical databases.
-- Proof prerequisite: Chandra-Merlin homomorphism theorem.
+SQL's three-valued evaluation, in which every comparison involving a null is unknown, returns tuples of
+which every null-free one is a certain answer on such queries.
 
 ## Depends on
 
 - [Incomplete databases, possible worlds and certain answers](incomplete-databases-possible-worlds-and-certain-answers.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Containment of unions of conjunctive queries](../conjunctive-queries/cores-and-minimization/containment-of-unions-of-conjunctive-queries.md)
+
+## Proof depends on
+
+- [Homomorphism theorem for conjunctive queries with constants](../conjunctive-queries/cores-and-minimization/homomorphism-theorem-for-conjunctive-queries-with-constants.md)
+- [Unions of conjunctive queries are preserved under homomorphisms](../conjunctive-queries/cores-and-minimization/unions-of-conjunctive-queries-are-preserved-under-homomorphisms.md)
+- [Naive evaluation is exact for homomorphism-preserved queries](naive-evaluation-is-exact-for-homomorphism-preserved-queries.md)
 
 ## Sources
 

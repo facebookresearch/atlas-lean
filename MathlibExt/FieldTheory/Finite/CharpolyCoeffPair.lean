@@ -190,29 +190,29 @@ private theorem tripleCount_eq_sum (e : F × F × F) :
   simp only [Fintype.sum_prod_type]
   refine sum_congr rfl fun α _ => ?_
   by_cases hα : IsRoot e α
-  · rw [if_pos hα, Finset.card_eq_sum_ones, Finset.sum_filter]
+  · rw [ite_eq_left hα, Finset.card_eq_sum_ones, Finset.sum_filter]
     refine sum_congr rfl fun β _ => ?_
     by_cases hβ : β ^ 2 - (cofactor e α).1 * β + (cofactor e α).2 = 0
-    · rw [if_pos hβ]
+    · rw [ite_eq_left hβ]
       rw [Finset.sum_eq_single ((cofactor e α).1 - β)]
-      · rw [if_pos]
+      · rw [ite_eq_left]
         rw [sigma3_eq_iff]
         exact ⟨hα, by ring, by linear_combination -hβ⟩
       · intro γ _ hγ
-        rw [if_neg]
+        rw [ite_eq_right]
         rw [sigma3_eq_iff]
         rintro ⟨-, h1, -⟩
         exact hγ (by linear_combination h1)
       · intro h; exact absurd (mem_univ _) h
-    · rw [if_neg hβ]
+    · rw [ite_eq_right hβ]
       refine Finset.sum_eq_zero fun γ _ => ?_
-      rw [if_neg]
+      rw [ite_eq_right]
       rw [sigma3_eq_iff]
       rintro ⟨-, h1, h2⟩
       exact hβ (by linear_combination -h2 + β * h1)
-  · rw [if_neg hα]
+  · rw [ite_eq_right hα]
     refine Finset.sum_eq_zero fun β _ => Finset.sum_eq_zero fun γ _ => ?_
-    rw [if_neg]
+    rw [ite_eq_right]
     rw [sigma3_eq_iff]
     exact fun h => hα h.1
 
@@ -229,12 +229,12 @@ private theorem card_cofactor_roots {e : F × F × F} {α : F} (hα : IsRoot e �
   unfold rootCount
   rw [hroots, Finset.card_insert_eq_ite]
   by_cases hm : α ^ 2 - (cofactor e α).1 * α + (cofactor e α).2 = 0
-  · rw [if_pos hm, if_pos (by simpa using hm)]
+  · rw [ite_eq_left hm, ite_eq_left (by simpa using hm)]
     have : 0 < (univ.filter fun β : F => β ^ 2 - (cofactor e α).1 * β + (cofactor e α).2 = 0).card
         :=
       Finset.card_pos.mpr ⟨α, by simpa using hm⟩
     omega
-  · rw [if_neg hm, if_neg (by simpa using hm)]
+  · rw [ite_eq_right hm, ite_eq_right (by simpa using hm)]
     omega
 
 private theorem tripleCount_eq (e : F × F × F) :
@@ -359,26 +359,26 @@ private theorem card_multiple_roots_sigma3 (α β γ : F) :
     · subst hαγ
       simp [cubeCount_sigma3_of_eq, Finset.filter_singleton]
     · have hγα : ¬γ = α := fun h => hαγ h.symm
-      rw [if_pos (by simp [Finset.card_pair hαγ])]
+      rw [ite_eq_left (by simp [Finset.card_pair hαγ])]
       rw [Finset.card_eq_one]
       exact ⟨α, by ext x; simp only [mem_filter, mem_insert, mem_singleton]; first | tauto | aesop⟩
   · have hβα : ¬β = α := fun h => hαβ h.symm
     by_cases hαγ : α = γ
     · subst hαγ
-      rw [if_pos (by simp [Finset.card_pair hαβ, Finset.card_pair (Ne.symm hαβ)])]
+      rw [ite_eq_left (by simp [Finset.card_pair hαβ, Finset.card_pair (Ne.symm hαβ)])]
       rw [Finset.card_eq_one]
       exact ⟨α, by ext x; simp only [mem_filter, mem_insert, mem_singleton]; first | tauto | aesop⟩
     · have hγα : ¬γ = α := fun h => hαγ h.symm
       by_cases hβγ : β = γ
       · subst hβγ
-        rw [if_pos (by simp [Finset.card_pair hαβ])]
+        rw [ite_eq_left (by simp [Finset.card_pair hαβ])]
         rw [Finset.card_eq_one]
         exact ⟨β, by ext x; simp only [mem_filter, mem_insert, mem_singleton]; first | tauto |
             aesop⟩
       · have hγβ : ¬γ = β := fun h => hβγ h.symm
         have h3 : ({α, β, γ} : Finset F).card = 3 := Finset.card_eq_three.mpr ⟨α, β, γ, hαβ, hαγ,
             hβγ, rfl⟩
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
         have hcc : cubeCount (sigma3 (α, β, γ)) = 0 := by
           unfold cubeCount
           rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
@@ -421,7 +421,7 @@ private theorem card_multiple_roots (e : F × F × F) :
         unfold cofactor cube
         simp only
         ring
-      rw [hrc, if_neg (by omega), hcc, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+      rw [hrc, ite_eq_right (by omega), hcc, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
       rintro x - ⟨hx, hd⟩
       have hxα : x = α := by
         have := (mem_filter.mp (show x ∈ univ.filter fun a : F => IsRoot e a from by simp [hx])).2
@@ -443,7 +443,7 @@ private theorem card_multiple_roots (e : F × F × F) :
       unfold IsRoot cube
       simp only
       ring
-    rw [hrc, if_neg (by omega), hcc, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+    rw [hrc, ite_eq_right (by omega), hcc, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
     rintro x - ⟨hx, -⟩
     exact hex ⟨x, hx⟩
 

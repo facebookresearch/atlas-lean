@@ -1,6 +1,6 @@
 # Marriott-Watrous: QIP equals QMAM
 
-$\mathrm{QIP}(3) = \mathrm{QMAM}$, and hence $\mathrm{QIP} = \mathrm{QMAM}$. Moreover, for every polynomial $r$, every problem in $\mathrm{QIP}$ has a QMAM protocol with completeness $1$ and soundness $1/2 + 2^{-r(n)}$, and parallel repetition reduces the soundness to $2^{-r(n)}$.
+$\mathrm{QIP}(3) = \mathrm{QMAM}$, and hence $\mathrm{QIP} = \mathrm{QMAM}$. Specifically, for every polynomial $r$, every problem in $\mathrm{QIP}$ admits a **single-coin** QMAM protocol (where Arthur's public message is a single uniformly random bit) with completeness $1$ and soundness at most $1/2 + 2^{-r(n)}$ (Marriott–Watrous, Theorem 5.4), and parallel repetition yields a multi-coin QMAM protocol with completeness $1$ and soundness at most $2^{-r(n)}$, giving $\mathrm{QIP} = \mathrm{QMAM}(1, 2^{-r(n)})$ (Corollary 5.6).
 
 ## Proof sketch
 

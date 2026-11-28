@@ -34,10 +34,13 @@ than chaining an unconditional one-step theorem.
 The result is an identity between parameter formulas. It involves no random
 variables, Gaussian-law assumptions, noise independence, or conditional
 distributions, and it does not show that the law of the recursive belief is a
-version of `condDistrib x1 (y0, y1)`. That law-level statement needs a
-probabilistic model with the noise independence assumptions and the
-conditional independence of the past given the current state (see the module
-note in `KalmanFilter`); it is not proved here.
+version of `condDistrib x1 (y0, y1)`. The law-level result, for the matrix
+signal model over a finite horizon, is
+`KalmanFilter.condDistrib_observationHistory`: for a Gaussian initial state and
+centred Gaussian noises, mutually independent, with positive definite
+observation-noise covariances, the laws of the filter's beliefs are the
+conditional laws of the state given the observation history, for almost every
+history under its law.
 
 ## Key results
 
