@@ -6,6 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+import MathlibExt.Analysis.AbsoluteValue.WeakApproximation
 import MathlibExt.NumberTheory.NumberField.RayClass.FiniteCongruence
 import Mathlib.Analysis.AbsoluteValue.Equivalence
 import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
@@ -37,32 +38,6 @@ namespace Modulus
 
 variable {F : Type*} [Field F] {ι : Type*} [Finite ι]
 
-/-- Weak approximation for finitely many inequivalent nontrivial absolute values. -/
-private theorem exists_forall_abv_sub_lt (v : ι → AbsoluteValue F ℝ)
-    (h : ∀ i, (v i).IsNontrivial)
-    (hv : Pairwise fun i j => ¬(v i).IsEquiv (v j)) (target : ι → F)
-    {ε : ℝ} (hε : 0 < ε) :
-    ∃ x : F, ∀ i, v i (x - target i) < ε := by
-  classical
-  let _ := Fintype.ofFinite ι
-  have hdense := AbsoluteValue.denseRange_algebraMap_pi h hv
-  rw [Metric.denseRange_iff] at hdense
-  obtain ⟨y, hy⟩ :=
-    hdense (fun i => WithAbs.toAbs (v i) (target i)) ε hε
-  by_cases hempty : IsEmpty ι
-  · exact ⟨y, fun i => (hempty.false i).elim⟩
-  · let _ : Nonempty ι := not_isEmpty_iff.mp hempty
-    rw [dist_pi_lt_iff hε] at hy
-    refine ⟨y, fun i => ?_⟩
-    have e1 : (algebraMap F ((i : ι) → WithAbs (v i)) y) i
-        = WithAbs.toAbs (v i) y := rfl
-    have hdist : dist (WithAbs.toAbs (v i) (target i))
-        ((algebraMap F ((i : ι) → WithAbs (v i)) y) i) = v i (y - target i) := by
-      rw [dist_comm, e1, dist_eq_norm, ← WithAbs.toAbs_sub, WithAbs.norm_toAbs_eq]
-    have hi := hy i
-    rw [hdist] at hi
-    exact hi
-
 /-- Weak approximation with place-dependent positive tolerances.
 
 Reduces pointwise tolerances to a single uniform radius via the finite minimum,
@@ -84,7 +59,8 @@ private theorem exists_forall_abv_sub_lt_of_eps (v : ι → AbsoluteValue F ℝ)
     have hε₀_mem : ε₀ ∈ s := Finset.min'_mem s hs_ne
     obtain ⟨j, _, hj⟩ := Finset.mem_image.mp hε₀_mem
     have hε₀_pos : 0 < ε₀ := hj ▸ hε j
-    obtain ⟨x, hx⟩ := exists_forall_abv_sub_lt v h hv target hε₀_pos
+    obtain ⟨x, hx⟩ :=
+      AbsoluteValue.exists_forall_sub_lt_of_pairwise_not_isEquiv h hv target hε₀_pos
     refine ⟨x, fun i => ?_⟩
     exact lt_of_lt_of_le (hx i)
       (Finset.min'_le _ _ (Finset.mem_image_of_mem ε (Finset.mem_univ i)))
