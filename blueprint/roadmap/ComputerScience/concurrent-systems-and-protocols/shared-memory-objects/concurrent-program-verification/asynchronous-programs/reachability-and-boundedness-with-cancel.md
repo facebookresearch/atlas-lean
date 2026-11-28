@@ -22,7 +22,7 @@ None.
 
 The proof reduces the reachability and boundedness problems for Petri nets with reset arcs, both undecidable by Dufourd, Finkel and Schnoebelen. As for ordinary Petri nets, a net is simulated by a program in which a pending instance of handler $p$ stands for a token in place $p$: a dispatcher handler picks a transition and records its preset in the global state, the handlers of the places consume the required tokens one by one, and the outputs are posted; cancel implements the resets. The reset net is unbounded exactly when the program is, and a marking is reachable exactly when the corresponding configuration is. Decidability of safety comes from the converse translation of programs with cancel into reset nets, where coverability is decidable.
 
-A good expansion links pages for the undecidability of reachability and boundedness for reset nets, which has no page yet, and for the simulation of reset nets by asynchronous programs with cancel.
+A good expansion links pages for the undecidability of reachability and boundedness for reset nets, and for the simulation of reset nets by asynchronous programs with cancel.
 
 ## Sources
 

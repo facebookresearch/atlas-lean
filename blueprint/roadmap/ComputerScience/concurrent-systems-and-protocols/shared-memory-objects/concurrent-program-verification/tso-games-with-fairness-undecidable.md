@@ -24,7 +24,7 @@ None.
 
 Both proofs reduce from state reachability in perfect channel systems, finite-state machines with an unbounded reliable FIFO channel, which is undecidable. The buffer of one process stores the channel contents; a protocol between two processes rotates messages through the buffer and memory using memory fences and an auxiliary variable, so that each channel message is received once and only once. The fairness conditions are what forces the opponent to complete each rotation, so that the game simulates the channel system faithfully, and the winning condition is induced by the final states of the channel system.
 
-A good expansion links pages for the undecidability of the channel-system problem the reduction starts from, which has no page yet, and for the rotation protocol that lets one process buffer simulate the channel.
+A good expansion links pages for the undecidability of the channel-system problem the reduction starts from, and for the rotation protocol that lets one process buffer simulate the channel.
 
 ## Sources
 

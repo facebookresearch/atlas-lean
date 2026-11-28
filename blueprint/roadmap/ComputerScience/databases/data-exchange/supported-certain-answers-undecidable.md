@@ -22,7 +22,7 @@ None.
 
 The reduction is from the embedding problem for finite semigroups: given a finite set $A$ and a partial function $f : A \times A \to A$, is there a finite $B \supseteq A$ with a total associative $g : B \times B \to B$ extending $f$? This problem is undecidable (Kolaitis, Panttaja and Tan). The setting copies a ternary source relation $F$, the graph of $f$, into a target relation $G$, and one target TGD extends $G$ with new terms; the query, taken from the proof of Proposition 6.1 of Hernich, Libkin and Schweikardt ("Closed world data exchange", 2011), is true when $G$ fails to encode a total associative function. Then the empty tuple is not a supported certain answer on the instance encoding $(A, f)$ exactly when $(A, f)$ embeds into a finite semigroup.
 
-A good expansion links pages for the undecidability of the embedding problem for finite semigroups (Kolaitis, Panttaja and Tan), which has no page yet, and for the query of Hernich, Libkin and Schweikardt that detects when $G$ fails to encode a total associative function.
+A good expansion links pages for the undecidability of the embedding problem for finite semigroups (Kolaitis, Panttaja and Tan), and for the query of Hernich, Libkin and Schweikardt that detects when $G$ fails to encode a total associative function.
 
 ## Sources
 

@@ -29,4 +29,3 @@ A good expansion links the undecidability of Hilbert's tenth problem over the in
 ## Sources
 
 - Leopoldo Bertossi, Loreto Bravo, Enrico Franconi and Andrei Lopatenko, "Complexity and Approximation of Fixing Numerical Attributes in Databases Under Integrity Constraints", Database Programming Languages (DBPL 2005), Lecture Notes in Computer Science 3774, pp. 262–278, Springer, 2005, <https://doi.org/10.1007/11601524_17>. Read in arXiv:cs/0503032v3, <https://arxiv.org/abs/cs/0503032v3>; Theorem 1 (undecidability), Propositions 1 and 2, Theorems 2 and 3, the proof of Theorem 1 in Appendix A.1 and its worked example in Appendix A.2, numbering of arXiv:cs/0503032v3.
-- Leopoldo Bertossi, Loreto Bravo, Enrico Franconi and Andrei Lopatenko, "The complexity and approximation of fixing numerical attributes in databases under integrity constraints", Information Systems 33(4–5), pp. 407–434, 2008, <https://doi.org/10.1016/j.is.2008.01.005> (journal version, not read).

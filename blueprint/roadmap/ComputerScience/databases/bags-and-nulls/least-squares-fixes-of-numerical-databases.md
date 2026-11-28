@@ -36,4 +36,3 @@ LS-fixes model the correction of erroneous measurements, such as census forms or
 ## Sources
 
 - Leopoldo Bertossi, Loreto Bravo, Enrico Franconi and Andrei Lopatenko, "Complexity and Approximation of Fixing Numerical Attributes in Databases Under Integrity Constraints", Database Programming Languages (DBPL 2005), Lecture Notes in Computer Science 3774, pp. 262–278, Springer, 2005, <https://doi.org/10.1007/11601524_17>. Read in arXiv:cs/0503032v3, <https://arxiv.org/abs/cs/0503032v3>; Section 2 (schema, linear denials, aggregation constraints), Definitions 1–4, Example 6 and Proposition 1, numbering of arXiv:cs/0503032v3.
-- Leopoldo Bertossi, Loreto Bravo, Enrico Franconi and Andrei Lopatenko, "The complexity and approximation of fixing numerical attributes in databases under integrity constraints", Information Systems 33(4–5), pp. 407–434, 2008, <https://doi.org/10.1016/j.is.2008.01.005> (journal version, not read).

@@ -27,4 +27,3 @@ A good expansion links a page for the gadget of Section 3 that uses one inequali
 ## Sources
 
 - Jerzy Marcinkowski and Mateusz Orda, "Bag Semantics Conjunctive Query Containment. Four Small Steps Towards Undecidability", Proceedings of the ACM on Management of Data 2(2) (PODS 2024), Article 103, 2024, <https://doi.org/10.1145/3651604>; Theorem 3 (main statement), Theorem 5 (equivalence with the inequality-free problem) and Section 3 of arXiv:2503.18003v1, <https://arxiv.org/abs/2503.18003v1>.
-- T. S. Jayram, Phokion G. Kolaitis and Erik Vee, "The Containment Problem for Real Conjunctive Queries with Inequalities", Proceedings of the 25th ACM SIGMOD-SIGACT-SIGART Symposium on Principles of Database Systems (PODS 2006), pp. 80–89, 2006, <https://doi.org/10.1145/1142351.1142363>; the earlier bound, not read: the clause rests on Section 1 of the version read of the first source above, which recalls it.
