@@ -34,7 +34,7 @@ example : negRFibonacci 2 x y 9 = (↑y⁻¹ : A) ^ 4 + 3 * (↑y⁻¹ : A) ^ 3 
 
 -- Order zero takes the zero branch at the first positive index.
 example : negRLucas 0 x y 1 = 0 := by
-  rw [negRLucas.eq_2]
+  rw [negRLucas.eq_def]
   simp
 
 -- At order one the recurrence at index two uses both initial values.
