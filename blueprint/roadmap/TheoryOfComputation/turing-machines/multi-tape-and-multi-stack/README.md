@@ -7,3 +7,4 @@ Multi-tape and multi-stack Turing machines and how to program them: bit primitiv
 - [Composition of multi-stack machines](composition-of-multi-stack-machines/README.md)
 - [Simulating component machines in a host machine](simulating-component-machines-in-a-host-machine/README.md)
 - [Finite-alphabet TM2 with binary input and output](finite-alphabet-tm2-binary-abi.md)
+- [Oblivious simulation of a Turing machine in quadratic time](oblivious-simulation-in-quadratic-time.md)

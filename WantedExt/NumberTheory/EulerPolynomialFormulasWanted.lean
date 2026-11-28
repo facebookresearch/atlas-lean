@@ -62,6 +62,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyGenRecurrence
 public import MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyHalfEqSum
 public import MathlibExt.NumberTheory.EulerPolynomialGeneralizedStirling
+public import MathlibExt.NumberTheory.EulerPolynomialFormulasDoubleSum
 
 set_option autoImplicit false
 
@@ -70,24 +71,6 @@ set_option autoImplicit false
 open Polynomial
 
 namespace MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/-- **Double-sum formula for Euler polynomials.** Let $E_n(x)$ denote the Euler polynomial and
-$S(n, k, x) = \frac{1}{k!} \sum_{j=0}^{k} \binom{k}{j} (-1)^{k-j} (x + j)^n$ the generalized
-Stirling polynomial. For every $n \ge 0$, as polynomials in $x$ with rational coefficients,
-$2^n E_n(x) = \sum_{\ell=0}^{n} \frac{(-1)^\ell}{\ell + 1}
-\sum_{k=0}^{n-\ell} \frac{(k + \ell + 1)!}{2^k} \binom{\ell + 1}{k} S(n, k + \ell, 2x - 1)$.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", Theorem 4.3. -/
-theorem_wanted eulerPoly_eq_double_sum (n : ℕ) :
-    (2 : ℚ) ^ n • eulerPoly n =
-      ∑ l ∈ Finset.range (n + 1),
-        ((-1) ^ l / (l + 1 : ℚ)) •
-          ∑ k ∈ Finset.range (n - l + 1),
-            ((Nat.factorial (k + l + 1) : ℚ) / (2 : ℚ) ^ k *
-                (Nat.choose (l + 1) k : ℚ)) •
-              (genStirlingPoly n (k + l)).comp (C 2 * X - 1)
 
 /-- The composition operator `S(D) = ∑_k s_k D^k` of a formal
 power series `S = ∑_k s_k z^k`, applied to a polynomial `p`
@@ -131,24 +114,6 @@ theorem_wanted powerSeriesOp_appell_identities
         powerSeriesOp
           (PowerSeries.rescale (-lam) (PowerSeries.exp ℂ) *
             PowerSeries.rescale (-1) S) (X ^ n)
-
-/-- **Lemma 2.2**: `(2 + 2z) / (2 + 2z + z²) = ∑ α_k z^k`
-with `α_k = ((k + 1) / 2^k) ∑_{ℓ=0}^k (-1)^ℓ (2^ℓ / (ℓ + 1))
-(ℓ + 1 choose k - ℓ)`; the generating function is stated
-multiplicatively.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", INTEGERS 25 (2025), Article A65, Lemma 2.2. -/
-theorem_wanted eulerAlpha_gf_and_closed_form :
-    PowerSeries.mk eulerAlpha *
-          (2 + 2 * PowerSeries.X + PowerSeries.X ^ 2) =
-        2 + 2 * PowerSeries.X ∧
-      ∀ k : ℕ, eulerAlpha k =
-        (k + 1 : ℚ) / 2 ^ k *
-          ∑ l ∈ Finset.range (k + 1),
-            (-1) ^ l * 2 ^ l / (l + 1 : ℚ) *
-              (Nat.choose (l + 1) (k - l) : ℚ)
 
 /-- **Lemma 2.3** (corrected reading): with
 `S(z) = 2e^z / (1 + e^{2z}) = e^z S_E(2z)`,

@@ -12,6 +12,16 @@ import MathlibExt.Combinatorics.Enumerative.Partition.KTupleRegularPartitions
 
 open MetaMathlibExt
 
+-- A client can rewrite a positive-degree coefficient directly to a single-partition count.
+example : PowerSeries.coeff 1 (lRegularPartitionSeries ℤ 2) = (lRegularPartitionCount 2 1 : ℤ) :=
+  coeff_lRegularPartitionSeries ℤ 2 1
+
+-- Independently check the degree-two coefficient via the power formula and tuple recurrence.
+example : PowerSeries.coeff 2 (lRegularPartitionSeries ℤ 2) = (lRegularPartitionCount 2 2 : ℤ) := by
+  rw [← pow_one (lRegularPartitionSeries ℤ 2), coeff_lRegularPartitionSeries_pow,
+    kTupleRegularPartitionCount_succ 2 0 2]
+  simp [Finset.sum_range_succ, kTupleRegularPartitionCount_zero]
+
 -- At total zero, all three partitions are empty.
 example : tripleRegularPartitionCount 2 0 = 1 := kTupleRegularPartitionCount_at_zero 2 3
 
