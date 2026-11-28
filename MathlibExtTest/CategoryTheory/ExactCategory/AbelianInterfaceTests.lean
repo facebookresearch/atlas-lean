@@ -119,7 +119,9 @@ def splitting : Functor.AugmentationSplit U Q Z (𝟙 Q) where
   section_ := 𝟙 Z
   s _ := 0
   section_comp := by simp
-  zero := by simp
+  zero := by
+    simp only [HomologicalComplex.id_f, Functor.map_id, Category.id_comp]
+    rw [Limits.zero_comp, add_zero]
   succ n := by
     have hz : IsZero (Q.X (n + 1)) :=
       HomologicalComplex.isZero_single_obj_X (ComplexShape.down ℕ) 0 Z (n + 1) (by simp)
@@ -130,11 +132,18 @@ lemma relativeTerms (n : ℕ) : U.IsRelativeProjective (Q.X n) :=
   (Adjunction.id (C := ModuleCat ℤ)).isRelativeProjective_obj (Q.X n)
 
 /-- Identity restriction preserves each displayed differential kernel. -/
-def preservesKernels (n : ℕ) : PreservesLimit (parallelPair (Q.d (n + 1) n) 0) U :=
+lemma preservesKernels (n : ℕ) : PreservesLimit (parallelPair (Q.d (n + 1) n) 0) U :=
   inferInstance
 
 /-- The prescribed endpoint map doubles integers. -/
 def twice : Z ⟶ Z := (2 : ℤ) • 𝟙 Z
+
+/-- The prescribed module map sends the integer `1` to `2`. -/
+lemma twice_one : twice.hom (1 : ℤ) = (2 : ℤ) := by
+  unfold twice
+  rw [ModuleCat.hom_zsmul]
+  change (2 : ℤ) • (1 : ℤ) = (2 : ℤ)
+  norm_num
 
 /-- The general relative-resolution constructor lifts the doubling map. -/
 def comparisonTwice : Q ⟶ Q :=
@@ -151,12 +160,12 @@ lemma comparisonTwice_eq : comparisonTwice =
     (ChainComplex.single₀ (ModuleCat ℤ)).map twice := by
   have h := Functor.comparison_augmentation U Q Q Z Z (𝟙 Q) (𝟙 Q)
     splitting relativeTerms preservesKernels twice
-  simpa only [Category.comp_id, Category.id_comp] using h
+  simpa only [comparisonTwice, Q, Category.comp_id, Category.id_comp] using h
 
 /-- The chain comparison has a nonzero degree-zero coordinate. -/
-example : (comparisonTwice.f 0).hom (1 : ℤ) = 2 := by
+example : (comparisonTwice.f 0).hom (1 : ℤ) = (2 : ℤ) := by
   rw [comparisonTwice_eq, ChainComplex.single₀_map_f_zero]
-  norm_num [twice]
+  exact twice_one
 
 /-- The general homology API induces the comparison map in degree zero. -/
 def homologyTwice : (Functor.mappedResolution U Q).homology 0 ⟶
@@ -183,10 +192,11 @@ def homologyIso : (Functor.mappedResolution U Q).homology 0 ≅ Z :=
 /-- The comparison homology map retains doubling under that canonical coordinate. -/
 lemma homologyTwice_naturality : homologyTwice ≫ homologyIso.hom = homologyIso.hom ≫ twice := by
   rw [homologyTwice_eq]
-  have hn := (isoWhiskerRight
-    (Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ))
-    (HomologicalComplex.homologyFunctor (ModuleCat ℤ) (ComplexShape.down ℕ) 0)).hom.naturality
-      ((ChainComplex.single₀ (ModuleCat ℤ)).map twice)
+  have hn := congrArg
+    (HomologicalComplex.homologyFunctor (ModuleCat ℤ) (ComplexShape.down ℕ) 0).map
+    ((Functor.mapHomologicalComplexIdIso (ModuleCat ℤ) (ComplexShape.down ℕ)).hom.naturality
+      ((ChainComplex.single₀ (ModuleCat ℤ)).map twice))
+  simp only [Functor.map_comp] at hn
   change HomologicalComplex.homologyMap
       ((U.mapHomologicalComplex (ComplexShape.down ℕ)).map
         ((ChainComplex.single₀ (ModuleCat ℤ)).map twice)) 0 ≫
@@ -201,20 +211,19 @@ lemma homologyTwice_naturality : homologyTwice ≫ homologyIso.hom = homologyIso
 
 /-- Conjugating the comparison homology map by its canonical coordinate gives doubling. -/
 lemma homologyTwice_coordinate : homologyIso.inv ≫ homologyTwice ≫ homologyIso.hom = twice := by
-  rw [Category.assoc, homologyTwice_naturality]
-  simp
+  rw [homologyTwice_naturality, ← Category.assoc, Iso.inv_hom_id, Category.id_comp]
 
 /-- The actual degree-zero homology map sends the coordinate `1` to `2`. -/
-example : (homologyIso.inv ≫ homologyTwice ≫ homologyIso.hom).hom (1 : ℤ) = 2 := by
+example : (homologyIso.inv ≫ homologyTwice ≫ homologyIso.hom).hom (1 : ℤ) = (2 : ℤ) := by
   rw [homologyTwice_coordinate]
-  norm_num [twice]
+  exact twice_one
 
 /-- The induced homology map is genuinely nonzero. -/
 example : homologyTwice ≠ 0 := by
   intro h
-  have hc : (homologyIso.inv ≫ homologyTwice ≫ homologyIso.hom).hom (1 : ℤ) = 2 := by
+  have hc : (homologyIso.inv ≫ homologyTwice ≫ homologyIso.hom).hom (1 : ℤ) = (2 : ℤ) := by
     rw [homologyTwice_coordinate]
-    norm_num [twice]
+    exact twice_one
   rw [h] at hc
   norm_num at hc
 
