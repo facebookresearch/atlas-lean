@@ -8,13 +8,14 @@ $$
 C, D ::= A \mid \neg C \mid \{o\} \mid C \sqcap D \mid \exists R.C \mid \lozenge_e C, \qquad R ::= P \mid P^-,
 $$
 
-with concept names $A$, constants $o$, role names $P$ and standpoint expressions $e$ (Boolean combinations of standpoint symbols), where $(\lozenge_e C)$ at $\pi$ is the set of elements in $C$ at some $\pi' \in \sigma(e)$, and $\square_e C = \neg\lozenge_e\neg C$; a *TBox* is a finite set of general concept inclusions $C \sqsubseteq D$ together with functionality statements $\mathit{func}(P)$, that is $\top \sqsubseteq \neg{\geqslant}2\,P.\top$. A TBox is satisfiable if some standpoint structure satisfies all its axioms in every precisification. Satisfiability of $\mathbb S^{\mathrm{mon}}_{\mathcal{ALCOIF}}$ TBoxes in which one distinguished role name is required to be rigid is undecidable, even for TBoxes with just one nominal and one functionality statement (the theorem of the subsection "Lifting Monodicity Causes Undecidability" of the source).
+with concept names $A$, constants $o$, role names $P$ and standpoint expressions $e$ (Boolean combinations of standpoint symbols), where $(\lozenge_e C)$ at $\pi$ is the set of elements in $C$ at some $\pi' \in \sigma(e)$, and $\square_e C = \neg\lozenge_e\neg C$; a *TBox* is a finite set of general concept inclusions $C \sqsubseteq D$ together with functionality statements $\mathit{func}(P)$, that is $\top \sqsubseteq \neg{\geqslant}2\,P.\top$. A TBox is satisfiable if some standpoint structure satisfies all its axioms in every precisification. Satisfiability of $\mathbb S^{\mathrm{mon}}_{\mathcal{ALCOIF}}$ TBoxes in which one distinguished role name is required to be rigid is undecidable, even for TBoxes with just one nominal and one functionality statement (Theorem 29 of the source). The proof reduces the problem whether, for a fixed tiling system $T_{\mathrm{und}}$, a given initial condition extends to a tiling of $\mathbb N \times \mathbb N$.
 
 Without the rigid role, satisfiability of monodic standpoint $\mathcal{ALCOIQB}^{\mathsf{Self}}$, $\mathcal{SHOIQB}_s$ and $\mathcal{SROIQB}_s$ has the same complexity as for the underlying description logics, so the standpoint extension of OWL is complexity-neutral; rigidity of a role $E$ is expressed by the first-order standpoint formula $\forall x, y.\,(E(x, y) \to \square_* E(x, y))$, which is not monodic. By contrast, as the source recalls after its proof, satisfiability of ALCIQ TBoxes with arbitrarily many rigid roles and one S5 modality allowed in front of concept and role expressions is decidable in 2EXPTIME (Artale, Lutz and Toman).
 
 ## Depends on
 
 - [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

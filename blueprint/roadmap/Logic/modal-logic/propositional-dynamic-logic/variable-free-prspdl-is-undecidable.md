@@ -9,6 +9,7 @@ The same source shows that variable-free fragments do not lower complexity for r
 ## Depends on
 
 - [PDL with parallel composition (PRSPDL)](pdl-with-parallel-composition-prspdl.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

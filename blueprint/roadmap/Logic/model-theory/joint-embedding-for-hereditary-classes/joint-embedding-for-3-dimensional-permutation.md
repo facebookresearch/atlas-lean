@@ -4,7 +4,7 @@ No algorithm decides, given finitely many forbidden 3-dimensional permutations, 
 
 **Definition.** An *$n$-dimensional permutation* is a finite structure $(A, <_1, \dots, <_n)$ with $n$ linear orders on the same set $A$; ordinary permutations are the case $n = 2$, and embeddings are injective maps preserving all $n$ orders. An *$n$-dimensional permutation class* is a class of finite $n$-dimensional permutations closed under isomorphism and substructures; it is *finitely constrained* if it consists of all structures that embed none of finitely many given forbidden $n$-dimensional permutations.
 
-**Theorem (Braunfeld).** There is no algorithm that, given a finite set of forbidden 3-dimensional permutations, decides whether the corresponding 3-dimensional permutation class has the [joint embedding property](joint-embedding-and-joint-homomorphism.md).
+**Theorem (Braunfeld).** There is no algorithm that, given a finite set of forbidden 3-dimensional permutations, decides whether the corresponding 3-dimensional permutation class has the [joint embedding property](joint-embedding-property.md).
 
 **Corollary.** For every $n \geq 3$, the joint embedding property is undecidable for $n$-dimensional permutation classes given by finitely many forbidden $n$-dimensional permutations.
 
@@ -12,7 +12,8 @@ For hereditary classes of permutations, the joint embedding property is the same
 
 ## Depends on
 
-- [Joint embedding and joint homomorphism properties](joint-embedding-and-joint-homomorphism.md)
+- [Joint embedding property](joint-embedding-property.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

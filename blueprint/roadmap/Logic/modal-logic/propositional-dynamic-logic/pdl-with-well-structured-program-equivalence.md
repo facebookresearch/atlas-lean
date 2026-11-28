@@ -13,6 +13,8 @@ Every variant of propositional dynamic logic that can express program compositio
 
 - [PDL programs](propositional-dynamic-logic-pdl/program.md)
 - [PDL formulas](propositional-dynamic-logic-pdl/formula.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -20,7 +22,7 @@ None.
 
 ## Expansion
 
-The proof reduces a $\Sigma^1_1$-complete tiling problem: given a finite set of tiles with a distinguished subset of "neon" tiles, is there a tiling of the quadrant $\omega \times \omega$ with a fixed tile at $(0, 0)$ and infinitely many neon tiles on the diagonal? For a tile set a formula $\gamma = \alpha_0 \wedge \rho_1 \wedge \rho_2 \wedge \rho_3$ is built, with programs $N$ and $E$ for the two grid directions: $[x^*]\alpha$ is expressed as $[\mathsf{while}\ \alpha\ \mathsf{do}\ x]\mathsf F$, $\mathrm{fix}$ forces the squares of the grid to close, and $\rho_3 = [(N ; E)^*]\langle(N ; E)^*\rangle\mathit{neon}$ demands infinitely many neon tiles on the diagonal. The tile set has such a tiling iff $\gamma$ is satisfiable, iff it is satisfiable with deterministic (even injective) atomic programs; hence validity is $\Pi^1_1$-hard. Part 2 reduces the recursive inseparability of the tile sets that tile $\mathbb Z \times \mathbb Z$ periodically from those that tile nothing. A good expansion links the $\Sigma^1_1$-completeness of this recurrent tiling problem, which has no page yet.
+The proof reduces a $\Sigma^1_1$-complete tiling problem: given a finite set of tiles with a distinguished subset of "neon" tiles, is there a tiling of the quadrant $\omega \times \omega$ with a fixed tile at $(0, 0)$ and infinitely many neon tiles on the diagonal? For a tile set a formula $\gamma = \alpha_0 \wedge \rho_1 \wedge \rho_2 \wedge \rho_3$ is built, with programs $N$ and $E$ for the two grid directions: $[x^*]\alpha$ is expressed as $[\mathsf{while}\ \alpha\ \mathsf{do}\ x]\mathsf F$, $\mathrm{fix}$ forces the squares of the grid to close, and $\rho_3 = [(N ; E)^*]\langle(N ; E)^*\rangle\mathit{neon}$ demands infinitely many neon tiles on the diagonal. The tile set has such a tiling iff $\gamma$ is satisfiable, iff it is satisfiable with deterministic (even injective) atomic programs; hence validity is $\Pi^1_1$-hard. Part 2 reduces the recursive inseparability of the tile sets that tile $\mathbb Z \times \mathbb Z$ periodically from those that tile nothing. A good expansion links the $\Sigma^1_1$-completeness of this recurrent tiling problem (Tiling Fact 1 of the source).
 
 ## Sources
 

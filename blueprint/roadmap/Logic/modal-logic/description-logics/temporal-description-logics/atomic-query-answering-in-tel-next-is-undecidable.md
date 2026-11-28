@@ -19,7 +19,8 @@ By contrast, TAQA for TBoxes of the future fragment, without rigid concept names
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Semilinear set of vectors](../../../../TheoryOfComputation/context-free-languages/closure-and-pumping/parikh-images-and-semilinear-sets/is-semilinear.md)
 
 ## Proof depends on
 
@@ -27,7 +28,7 @@ None.
 
 ## Expansion
 
-For every unary conjunctive grammar $G$ over the letter $c$ one constructs a TBox $\mathcal T_G$ of the future fragment and concept names $A$, $B$ with $\mathcal T_G\models A\sqsubseteq\bigcirc^n B$ exactly when $c^n$ belongs to the language of $G$: concept inclusions $A\sqsubseteq\bigcirc^n B$ shift in time like concatenation of unary words, and conjunctions $A\sqcap A'\sqsubseteq B$ intersect. Emptiness of unary conjunctive languages, which is undecidable by Jeż and Okhotin, then reduces to TAQA for TEL◯-TBoxes and for future TBoxes with rigid concept names, where the existence of some shift $n$ with $\mathcal T_G\models A\sqsubseteq\bigcirc^n B$ can be turned into the entailment of a single fact. Regularity of unary conjunctive languages, also undecidable, reduces to semilinearity of the entailed time shifts. A good expansion links a page for the theorem of Jeż and Okhotin that emptiness, finiteness and regularity of unary conjunctive grammars are undecidable (Theorem 9 of the source), which has no page on main yet.
+For every unary conjunctive grammar $G$ over the letter $c$ one constructs a TBox $\mathcal T_G$ of the future fragment and concept names $A$, $B$ with $\mathcal T_G\models A\sqsubseteq\bigcirc^n B$ exactly when $c^n$ belongs to the language of $G$: concept inclusions $A\sqsubseteq\bigcirc^n B$ shift in time like concatenation of unary words, and conjunctions $A\sqcap A'\sqsubseteq B$ intersect. Emptiness of unary conjunctive languages, which is undecidable by Jeż and Okhotin, then reduces to TAQA for TEL◯-TBoxes and for future TBoxes with rigid concept names, where the existence of some shift $n$ with $\mathcal T_G\models A\sqsubseteq\bigcirc^n B$ can be turned into the entailment of a single fact. Regularity of unary conjunctive languages, also undecidable, reduces to semilinearity of the entailed time shifts. A good expansion links a page for the theorem of Jeż and Okhotin that emptiness, finiteness and regularity of unary conjunctive grammars are undecidable (Theorem 9 of the source).
 
 ## Sources
 

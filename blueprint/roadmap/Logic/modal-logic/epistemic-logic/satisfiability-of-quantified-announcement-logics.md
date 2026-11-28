@@ -4,12 +4,13 @@ For two or more agents, satisfiability is undecidable for arbitrary public annou
 
 **Theorem (Ågotnes, van Ditmarsch and French).** Let the set $A$ of agents have at least two elements. Then the satisfiability problem for each of the [logics APAL, GAL and CAL](quantified-public-announcement-logics.md) over $A$ is undecidable: no algorithm decides, given a formula of the respective language, whether it holds at some world of some model with an equivalence relation for each agent. When $|A| = 1$, all three satisfiability problems are decidable.
 
-The proof shows more: the satisfiability problems are equivalent to the complement of a tiling problem and therefore are not recursively enumerable, so none of the three logics has a recursively enumerable set of validities. Undecidability of APAL was first shown by French and van Ditmarsch (2008) and of GAL by Ågotnes, van Ditmarsch and French (2014); the source treats all three uniformly and is the first proof for CAL. The version read corrects an error in the published proof of the group case (the definition of the formula $c_{ga}(X)$), pointed out by Asami; the statement is unchanged.
+The proof shows more: the satisfiability problems are equivalent to the problem whether a finite set of tiles tiles the plane (Lemmas 6.2 and 6.3), and therefore are not recursively enumerable. Since APAL and GAL have complete axiomatizations, their validities are recursively enumerable, and the source concludes that their satisfiability problems are co-r.e.-complete (Section 1). Undecidability of APAL was first shown by French and van Ditmarsch (2008) and of GAL by Ågotnes, van Ditmarsch and French (2014); the source treats all three uniformly and is the first proof for CAL. The version read corrects an error in the published proof of the group case (the definition of the formula $c_{ga}(X)$), pointed out by Asami; the statement is unchanged.
 
 ## Depends on
 
 - [Arbitrary, group and coalition announcement logics](quantified-public-announcement-logics.md)
 - [Epistemic models](model.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,4 +22,4 @@ Given a finite set $\Gamma$ of tiles, the proof builds for each logic a formula 
 
 ## Sources
 
-- T. Ågotnes, H. van Ditmarsch and T. French, "The undecidability of quantified announcements", *Studia Logica* 104(4):597–640, 2016, doi:10.1007/s11225-016-9657-0; read as the corrected version arXiv:2405.15671v2, <https://arxiv.org/abs/2405.15671v2>: Theorem 6.4 of arXiv:2405.15671v2, with Lemmas 6.2 and 6.3.
+- T. Ågotnes, H. van Ditmarsch and T. French, "The undecidability of quantified announcements", *Studia Logica* 104(4):597–640, 2016, doi:10.1007/s11225-016-9657-0; read as the corrected version arXiv:2405.15671v2, <https://arxiv.org/abs/2405.15671v2>: Theorem 6.4 of arXiv:2405.15671v2, with Lemmas 6.2 and 6.3, and the summary of results in Section 1.

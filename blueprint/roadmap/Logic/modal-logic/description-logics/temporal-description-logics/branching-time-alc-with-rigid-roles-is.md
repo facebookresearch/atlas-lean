@@ -16,6 +16,7 @@ The same paper shows that concept subsumption with respect to general TBoxes is 
 
 - [ALC syntax, semantics and reasoning tasks](../../alc-syntax-semantics-and-reasoning-tasks.md)
 - [CTL formulas](../../../temporal-logic/computation-tree-logic/formula.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,7 +24,7 @@ None.
 
 ## Expansion
 
-The proof starts from the result of Gabelaia et al. that satisfiability is undecidable for a family of transitive products of modal logics including $\mathrm{S4} \times \mathrm{K4}$: rephrased in this notation, it is undecidable whether a $\mathrm{CTL}^{\mathsf E\Diamond, \mathsf A\Box}_{\mathcal{ALC}}$ concept with one rigid role $r$ and no other roles is satisfiable in a temporal interpretation in which $r$ is transitive at every node (Theorem 1 of the source). Using a technique of Tobies, transitivity of $r$ is then simulated by a general TBox, which reduces this problem to concept satisfiability with respect to general TBoxes. A good expansion links the undecidability of the product logics of Gabelaia et al., which has no page yet.
+The proof starts from the result of Gabelaia et al. that satisfiability is undecidable for a family of transitive products of modal logics including $\mathrm{S4} \times \mathrm{K4}$: rephrased in this notation, it is undecidable whether a $\mathrm{CTL}^{\mathsf E\Diamond, \mathsf A\Box}_{\mathcal{ALC}}$ concept with one rigid role $r$ and no other roles is satisfiable in a temporal interpretation in which $r$ is transitive at every node (Theorem 1 of the source). Using a technique of Tobies, transitivity of $r$ is then simulated by a general TBox, which reduces this problem to concept satisfiability with respect to general TBoxes. A good expansion links the undecidability of the product logics of Gabelaia et al.
 
 ## Sources
 

@@ -11,6 +11,7 @@ Hence all standard inference problems for SHN⁺ are undecidable. With number re
 ## Depends on
 
 - [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,7 +19,7 @@ Hence all standard inference problems for SHN⁺ are undecidable. With number re
 
 ## Expansion
 
-The proof reduces the $\mathbb{N} \times \mathbb{N}$ domino problem, adapting a construction of Baader and Sattler. Two horizontal roles $X_1, X_2$ and two vertical roles $Y_1, Y_2$ alternate in the grid, disjoint concepts $A, B, C, D$ mark the four kinds of points, and for each combination of an $X$-role and a $Y$-role a transitive super-role $S^\oplus_{ij}$ connects each point exactly to its right, upper and diagonal neighbors; the number restriction $(\leq 3\; S^\oplus_{ij})$ then forces the $X \circ Y$ and $Y \circ X$ successors to coincide. Axioms for the local matching conditions complete the reduction: $A$ is satisfiable with respect to the axioms iff the domino system tiles the grid.
+The proof reduces the $\mathbb{N} \times \mathbb{N}$ domino problem, adapting a construction of Baader and Sattler. Two horizontal roles $X_1, X_2$ and two vertical roles $Y_1, Y_2$ alternate in the grid, disjoint concepts $A, B, C, D$ mark the four kinds of points, and for each combination of an $X$-role and a $Y$-role a transitive super-role $S^\oplus_{ij}$ connects each point exactly to its right, upper and diagonal neighbors; the number restriction $(\leq 3\; S^\oplus_{ij})$ then forces the $X \circ Y$ and $Y \circ X$ successors to coincide. Axioms for the local matching conditions complete the reduction: $A$ is satisfiable with respect to the axioms iff the domino system tiles the grid. The domino problem of Definition 5.1 asks for a tiling of $\mathbb{N} \times \mathbb{N}$ by a nonempty finite set of domino types. A finite tile set tiles $\mathbb{N} \times \mathbb{N}$ exactly when it tiles every finite square, which by the compactness statement of the linked page holds exactly when it tiles the plane, so the linked undecidability is the one the reduction needs; matching relations $H, V$ on domino types include Wang tiles as the special case of matching edge colours.
 
 ## Sources
 

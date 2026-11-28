@@ -9,6 +9,7 @@ The language here has nominals and the universal role but no definite descriptio
 ## Depends on
 
 - [Modal free description logics with non-rigid designators](modal-free-description-logics-with-non-rigid.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -2,13 +2,14 @@
 
 There is no algorithm that decides, given a universal Horn sentence in a finite relational signature with relation symbols of arity at most two, whether its class of finite models has the joint embedding property.
 
-**Theorem (Bodirsky, Rydval and Schrottenloher).** Let $\tau$ be a finite relational signature. A *universal sentence* is $\forall x_1 \cdots \forall x_n\,\psi$ with $\psi$ quantifier-free, written as a conjunction of clauses (disjunctions of atomic and negated atomic formulas, including equalities); it is *Horn* if every clause contains at most one positive literal. For a universal sentence $\Phi$ let $[\![\Phi]\!]_{<\omega}$ be the class of finite models of $\Phi$; it is closed under substructures. There is no algorithm that decides, given a universal Horn sentence $\Phi$, whether $[\![\Phi]\!]_{<\omega}$ has the [joint embedding property](joint-embedding-and-joint-homomorphism.md), even if the signature contains only relation symbols of arity at most two.
+**Theorem (Bodirsky, Rydval and Schrottenloher).** Let $\tau$ be a finite relational signature. A *universal sentence* is $\forall x_1 \cdots \forall x_n\,\psi$ with $\psi$ quantifier-free, written as a conjunction of clauses (disjunctions of atomic and negated atomic formulas, including equalities); it is *Horn* if every clause contains at most one positive literal. For a universal sentence $\Phi$ let $[\![\Phi]\!]_{<\omega}$ be the class of finite models of $\Phi$; it is closed under substructures. There is no algorithm that decides, given a finite relational signature $\tau$ and a universal Horn sentence $\Phi$ over $\tau$, whether $[\![\Phi]\!]_{<\omega}$ has the [joint embedding property](joint-embedding-property.md), even if $\tau$ contains only relation symbols of arity at most two (Theorem 3 of the source). The signature is part of the input: the proof reduces universality of context-free grammars and uses one binary symbol for each symbol of the grammar.
 
 The finite models of a universal sentence in a finite relational signature form the age of a structure iff they have the joint embedding property, so it is undecidable whether such a class is an age. By contrast, deciding whether a given universal sentence is equivalent to a universal Horn sentence is $\Pi^p_2$-complete (Proposition 1 of the source).
 
 ## Depends on
 
-- [Joint embedding and joint homomorphism properties](joint-embedding-and-joint-homomorphism.md)
+- [Joint embedding property](joint-embedding-property.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

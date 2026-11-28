@@ -14,6 +14,7 @@ By contrast, inseparability between $\mathcal{ALC}$ KBs becomes decidable, and 2
 ## Depends on
 
 - [ALC syntax, semantics and reasoning tasks](../alc-syntax-semantics-and-reasoning-tasks.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,7 +22,7 @@ None.
 
 ## Expansion
 
-The proofs reduce the rectangle tiling problem: given tile types with colors, an initial tile type and a border color, is there a tiling of some finite $N\times M$ rectangle with the initial tile in a corner and the border color on the right and top edges? This problem is undecidable. From a tile set one builds an $\mathcal{ALC}$ KB whose models encode grids and an $\mathcal{EL}$ KB such that a CQ over $\Sigma$ separates them exactly when a tiling of some rectangle exists, using the model-theoretic characterization of $\Sigma$-CQ entailment by homomorphisms of materializations into models of the other KB; the inseparability and TBox versions modify these KBs. A good expansion links a page for the undecidability of the rectangle tiling problem; none exists yet.
+The proofs reduce the rectangle tiling problem: given tile types with colors, an initial tile type and a border color, is there a tiling of some finite $N\times M$ rectangle with the initial tile in a corner and the border color on the right and top edges? This problem is undecidable. From a tile set one builds an $\mathcal{ALC}$ KB whose models encode grids and an $\mathcal{EL}$ KB such that a CQ over $\Sigma$ separates them exactly when a tiling of some rectangle exists, using the model-theoretic characterization of $\Sigma$-CQ entailment by homomorphisms of materializations into models of the other KB; the inseparability and TBox versions modify these KBs. A good expansion links a page for the undecidability of the rectangle tiling problem.
 
 ## Sources
 

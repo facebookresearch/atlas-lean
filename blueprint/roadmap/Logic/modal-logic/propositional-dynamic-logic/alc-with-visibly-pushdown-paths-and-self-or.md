@@ -12,6 +12,7 @@ Without Self and nominals, concept satisfiability for $\mathcal{ALC}_{vpl}$ is 2
 ## Depends on
 
 - [ALC with visibly pushdown path expressions](alc-with-visibly-pushdown-path-expressions.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,7 +24,7 @@ None.
 
 *Part 2.* The proof reduces the solvability of domino tiling systems: for a domino system $\mathcal D$ a concept $C_{\mathcal D}$ is built whose models contain a structure from which a solution of $\mathcal D$ is read off, and conversely (Lemmas 4.4, 4.11 and 4.13).
 
-A good expansion links the undecidability of non-emptiness of the intersection of deterministic one-counter languages and of the domino tiling problem used, which have no pages yet.
+A good expansion links the undecidability of non-emptiness of the intersection of deterministic one-counter languages and of the domino tiling problem used.
 
 ## Sources
 

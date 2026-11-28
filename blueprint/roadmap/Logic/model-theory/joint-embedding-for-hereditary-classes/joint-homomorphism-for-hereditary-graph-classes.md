@@ -2,13 +2,14 @@
 
 There is no algorithm that decides, given finitely many forbidden induced subgraphs, whether any two finite graphs avoiding them map homomorphically into a common such graph.
 
-**Theorem (Braunfeld).** There is no algorithm that, given a finite set $\mathcal F$ of finite graphs, decides whether the hereditary graph class $\mathrm{Forb}(\mathcal F)$ of finite graphs with no induced subgraph isomorphic to a member of $\mathcal F$ has the [joint homomorphism property](joint-embedding-and-joint-homomorphism.md), that is, whether for all $A, B \in \mathrm{Forb}(\mathcal F)$ some $C \in \mathrm{Forb}(\mathcal F)$ admits graph homomorphisms from $A$ and from $B$.
+**Theorem (Braunfeld).** There is no algorithm that, given a finite set $\mathcal F$ of finite graphs, decides whether the hereditary graph class $\mathrm{Forb}(\mathcal F)$ of finite graphs with no induced subgraph isomorphic to a member of $\mathcal F$ has the [joint homomorphism property](joint-homomorphism-property.md), that is, whether for all $A, B \in \mathrm{Forb}(\mathcal F)$ some $C \in \mathrm{Forb}(\mathcal F)$ admits graph homomorphisms from $A$ and from $B$. This is Theorem 1.3 of arXiv:1903.11932v4, proved by a reduction from the tiling problem.
 
 Graphs are in the language with the edge relation only. In a language with relations for both edges and non-edges the analogous statement follows directly from the undecidability of the joint embedding property, since the forbidden structures can be chosen so that every homomorphism is an embedding (Proposition 5.2 of the source); in the pure graph language more work is needed, because the JHP is not invariant under quantifier-free interdefinable changes of language. This answers a question of Bodirsky.
 
 ## Depends on
 
-- [Joint embedding and joint homomorphism properties](joint-embedding-and-joint-homomorphism.md)
+- [Joint homomorphism property](joint-homomorphism-property.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

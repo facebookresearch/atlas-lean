@@ -2,13 +2,16 @@
 
 There is no algorithm that decides, given finitely many forbidden induced subgraphs, whether the class of finite graphs avoiding them has the joint embedding property, that is, whether that hereditary class is atomic.
 
-**Theorem (Braunfeld).** There is no algorithm that, given a finite set $\mathcal F$ of finite graphs, decides whether the hereditary graph class $\mathrm{Forb}(\mathcal F)$ of finite graphs with no induced subgraph isomorphic to a member of $\mathcal F$ has the [joint embedding property](joint-embedding-and-joint-homomorphism.md).
+**Theorem (Braunfeld).** There is no algorithm that, given a finite set $\mathcal F$ of finite graphs, decides whether the hereditary graph class $\mathrm{Forb}(\mathcal F)$ of finite graphs with no induced subgraph isomorphic to a member of $\mathcal F$ has the [joint embedding property](joint-embedding-property.md). This is Theorem 1.2 of arXiv:1903.11932v4, proved by a reduction from the tiling problem.
 
 Graphs here are finite simple graphs, so $\mathrm{Forb}(\mathcal F)$ is given by finitely many forbidden induced subgraphs. The complementary problem, failure of the JEP, is recursively enumerable, so the JEP problem is co-recursively enumerable and undecidable.
 
 ## Depends on
 
-- [Joint embedding and joint homomorphism properties](joint-embedding-and-joint-homomorphism.md)
+- [Joint embedding property](joint-embedding-property.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 

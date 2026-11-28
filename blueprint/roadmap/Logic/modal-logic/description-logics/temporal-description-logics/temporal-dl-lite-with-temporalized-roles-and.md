@@ -20,7 +20,7 @@ The source attributes the undecidability to the interaction of functionality con
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
