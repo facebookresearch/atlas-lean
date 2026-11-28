@@ -29,8 +29,10 @@ public import CSLibExt.Computability.Distributed.CausalDelivery
   the update issued at `0` to the update issued at `3`, and causal delivery holds; but the
   receipt makes the issue at `0` happen before the issue at `3` in Lamport's sense, and the
   condition stated with Lamport's happened-before fails.
-* `early`: a receipt that names a later issue is a delivery of that update; delivering an update
-  before the earlier update of the same replica breaks causal delivery.
+* `receiveBeforeIssue`: the order-only test holds, but causal delivery fails because a receipt
+  names a later issue.
+* `early`: the same forward reference also fails the order-only test when the received update
+  has a causal predecessor that was not yet delivered.
 * `backward`: a receipt that names a later issue makes that update directly precede an earlier
   one, which Lamport's happened-before never does; so the bridge theorem needs well-formedness.
 -/
@@ -61,6 +63,7 @@ theorem db02 : DirectlyBefore tr 0 2 :=
   ⟨_, _, rfl, rfl, rfl, rfl, 1, by decide, _, rfl, rfl, Or.inr rfl⟩
 
 example : CausalDelivery tr := by
+  refine ⟨tr_wellFormed, ?_⟩
   intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
   have hlt := lt_of_transGen_directlyBefore tr_wellFormed hhb
   rcases j with _ | _ | _ | _ | _ | _ | j <;> simp [tr] at hj <;> subst hj <;>
@@ -81,7 +84,7 @@ def bad : List (Event (Fin 3)) :=
 /-- Replica `2` delivers `v` although it has not delivered `u`, which happened before `v`. -/
 example : ¬ CausalDelivery bad := by
   intro h
-  obtain ⟨k, hk, ek, hek, hp, -⟩ := h 3 0 2 _ _ _ rfl rfl rfl rfl rfl rfl
+  obtain ⟨k, hk, ek, hek, hp, -⟩ := h.2 3 0 2 _ _ _ rfl rfl rfl rfl rfl rfl
     (.single ⟨_, _, rfl, rfl, rfl, rfl, 1, by decide, _, rfl, rfl, Or.inr rfl⟩)
   rcases k with _ | _ | _ | k
   · simp [bad] at hek; subst hek; simp at hp
@@ -109,15 +112,22 @@ example : ¬ Relation.TransGen (DirectlyBefore conc) 0 1 ∧
     fun h => (exists_of_transGen h).elim fun _ h => conc_not_directlyBefore (by decide) h⟩
 
 example : CausalDelivery conc := by
-  intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
-  obtain ⟨c, hc⟩ := exists_of_transGen hhb
-  rcases j with _ | _ | _ | _ | _ | _ | j <;> simp [conc] at hj <;> subst hj <;>
-    simp at hr <;> subst hr
-  all_goals exact absurd hc (conc_not_directlyBefore (by decide))
+  refine ⟨?_, ?_⟩
+  · intro j ej i hj hr
+    rcases j with _ | _ | _ | _ | _ | _ | j <;> simp [conc] at hj <;> subst hj <;>
+      simp at hr <;> omega
+  · intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
+    obtain ⟨c, hc⟩ := exists_of_transGen hhb
+    rcases j with _ | _ | _ | _ | _ | _ | j <;> simp [conc] at hj <;> subst hj <;>
+      simp at hr <;> subst hr
+    all_goals exact absurd hc (conc_not_directlyBefore (by decide))
 
 example : CausalDelivery ([] : List (Event (Fin 3))) := by
-  intro j _ _ _ _ _ hj
-  simp at hj
+  refine ⟨?_, ?_⟩
+  · intro j _ _ hj
+    simp at hj
+  · intro j _ _ _ _ _ hj
+    simp at hj
 
 /-! ## Lamport's happened-before -/
 
@@ -135,10 +145,14 @@ theorem causalDelivery_iff_lamport {R : Type*} {tr : List (Event R)} (hwf : Well
     (hiss : ∀ (j i : ℕ) (ej : Event R), tr[j]? = some ej → ej.recvFrom = some i →
       ∃ ei : Event R, tr[i]? = some ei ∧ ei.recvFrom = none) :
     CausalDelivery tr ↔ LamportCausalDelivery tr := by
-  constructor <;> intro h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
-  · exact h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁
+  constructor
+  · intro h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
+    exact h.2 j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁
       ((happensBefore_iff_transGen_directlyBefore hwf hiss h₁ hn₁ h₂ hn₂).mp hhb)
-  · exact h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁
+  · intro h
+    refine ⟨hwf, ?_⟩
+    intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
+    exact h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁
       ((happensBefore_iff_transGen_directlyBefore hwf hiss h₁ hn₁ h₂ hn₂).mpr hhb)
 
 theorem tr_receipts : ∀ (j i : ℕ) (ej : Event (Fin 3)), tr[j]? = some ej →
@@ -167,7 +181,7 @@ replica `3` delivers the update issued at position `3`. -/
 def relay : List (Event (Fin 4)) :=
   [⟨0, none⟩, ⟨1, some 0⟩, ⟨2, some 1⟩, ⟨2, none⟩, ⟨3, some 3⟩]
 
-example : WellFormed relay := by
+theorem relay_wellFormed : WellFormed relay := by
   intro j ej i hj hr
   rcases j with _ | _ | _ | _ | _ | j <;> simp [relay] at hj <;> subst hj <;> simp at hr <;>
     omega
@@ -199,6 +213,7 @@ example : ¬ Relation.TransGen (DirectlyBefore relay) 0 3 := fun h =>
 /-- Causal delivery holds: the receipt at position `2` delivers nothing, and nothing happened
 before the updates delivered at positions `1` and `4`. -/
 example : CausalDelivery relay := by
+  refine ⟨relay_wellFormed, ?_⟩
   intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
   obtain ⟨c, hc⟩ := exists_of_transGen hhb
   rcases j with _ | _ | _ | _ | _ | j <;> simp [relay] at hj <;> subst hj <;>
@@ -220,16 +235,34 @@ example : ¬ LamportCausalDelivery relay := by
   · simp [relay] at hek; subst hek; simp at hp
   · omega
 
-/-- An execution that is not well formed: replica `1` delivers the update issued at position `2`
-before it is issued, and replica `0` issues updates at positions `1` and `2`. -/
+/-- The order-only test does not reject a receipt of the sole update before it is issued. -/
+private def receiveBeforeIssue : List (Event (Fin 2)) := [⟨0, some 1⟩, ⟨1, none⟩]
+
+example : DeliveryOrder receiveBeforeIssue := by
+  intro j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
+  obtain ⟨_, eb, _, _, hb, _, k, hk, ek, hek, hp, _⟩ := (exists_of_transGen hhb).choose_spec
+  rcases i₂ with _ | _ | i₂
+  · omega
+  · obtain rfl : k = 0 := by omega
+    simp [receiveBeforeIssue] at hb hek
+    subst eb ek
+    simp at hp
+  · simp [receiveBeforeIssue] at h₂
+
+/-- Causal delivery rejects the same list because its receipt points forward. -/
+example : ¬ CausalDelivery receiveBeforeIssue := fun h =>
+  absurd (h.1 0 _ 1 rfl rfl) (by decide)
+
+/-- An event list that is not well formed: the receipt at position `0` names the update issued
+at position `2`, and replica `0` issues updates at positions `1` and `2`. -/
 def early : List (Event (Fin 2)) :=
   [⟨1, some 2⟩, ⟨0, none⟩, ⟨0, none⟩]
 
 example : ¬ WellFormed early := fun h => absurd (h 0 _ 2 rfl rfl) (by decide)
 
-/-- The receipt at position `0` is a delivery: the update issued at `1` happened before the one
-issued at `2`, and replica `1` has delivered nothing before position `0`. -/
-example : ¬ CausalDelivery early := by
+/-- In the order-only test, this receipt is a delivery: the update issued at `1` happened
+before the one issued at `2`, and replica `1` has delivered nothing before position `0`. -/
+example : ¬ DeliveryOrder early := by
   intro h
   obtain ⟨k, hk, -⟩ := h 0 1 2 _ _ _ rfl rfl rfl rfl rfl rfl
     (.single ⟨_, _, rfl, rfl, rfl, rfl, 1, by decide, _, rfl, rfl, Or.inl rfl⟩)

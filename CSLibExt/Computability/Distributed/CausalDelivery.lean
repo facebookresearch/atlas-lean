@@ -28,9 +28,10 @@ a position holding no issue delivers nothing: it stands for a message that carri
 * `DirectlyBefore`: an update directly precedes another when the replica that issues the second
   has issued or delivered the first before; this is the order by which Shapiro et al. define
   happened-before between updates.
-* `CausalDelivery`: every replica delivers an update only after it has issued or delivered every
-  update that happened before it, where happened-before is the transitive closure of
-  `DirectlyBefore`.
+* `DeliveryOrder`: the order-only test on arbitrary event lists.
+* `CausalDelivery`: a well-formed execution satisfies `DeliveryOrder`: every replica delivers an
+  update only after it has issued or delivered every update that happened before it, where
+  happened-before is the transitive closure of `DirectlyBefore`.
 * `happensBefore_iff_transGen_directlyBefore`: when every receipt names an earlier issue, the
   transitive closure of `DirectlyBefore` is Lamport's happened-before (`LamportClock.HappensBefore`)
   between the issues. Without that hypothesis the two can differ (see the tests): a receipt from
@@ -74,33 +75,28 @@ theorem lt_of_transGen_directlyBefore {tr : List (Event R)} (hwf : WellFormed tr
   | single h => exact h.lt hwf
   | tail _ h ih => exact ih.trans (h.lt hwf)
 
-/-- **Causal delivery of updates.** Read an execution $e_0, \dots, e_{n-1}$, whose events each
-belong to a process and may receive the message of the event at some position, as an execution
-of a replicated system whose replicas are the processes: an event that receives no message issues
-a new update, identified with the position of that event, and an event that receives from
-position $i$ delivers the update issued at position $i$. An update $u_1$ happened before an
-update $u_2$ when there is a chain of updates $u_1 = v_0, v_1, \dots, v_m = u_2$ with $m \ge 1$
-in which each $v_l$ directly precedes $v_{l+1}$: the replica that issues $v_{l+1}$ has issued or
-delivered $v_l$ before it issues $v_{l+1}$. So happened-before is the transitive closure of the
-replica-local order and of the order from delivering an update to issuing a later one. The
-execution provides causal delivery when every replica delivers an update $u_2$ only after it has
-delivered every update $u_1$ that happened before $u_2$, where a replica counts the updates it
-issues as delivered. That is, whenever the event at position $j$, of replica $r$, delivers the
-update $u_2$ issued at position $i_2$, and the update $u_1$ issued at position $i_1$ happened
-before $u_2$, some position $k < j$ holds an event of $r$ that either issues $u_1$ ($k = i_1$) or
-delivers it.
-
-This constrains only the order of deliveries within one finite execution: a replica may deliver
-an update more than once, or never. A receipt from a position that holds no issue delivers
-nothing, and plays no part. The execution need not be well formed: a receipt may name a later
-position, and a receipt that names a later issue delivers that update, both for causal delivery
-and for direct precedence. -/
-def CausalDelivery (tr : List (Event R)) : Prop :=
+/-- **Order of update deliveries.** In an event list, each receipt of an update must be
+preceded at the same replica by the issue or delivery of each update in its causal history.
+The causal history is given by the transitive closure of `DirectlyBefore`. A receipt delivers
+an update only if it names a position holding an issue. This predicate checks delivery order
+alone; it does not require receipts to refer to earlier positions. -/
+def DeliveryOrder (tr : List (Event R)) : Prop :=
   ∀ (j i₁ i₂ : ℕ) (ej e₁ e₂ : Event R), tr[j]? = some ej → ej.recvFrom = some i₂ →
     tr[i₂]? = some e₂ → e₂.recvFrom = none → tr[i₁]? = some e₁ → e₁.recvFrom = none →
     Relation.TransGen (DirectlyBefore tr) i₁ i₂ →
     ∃ k < j, ∃ ek : Event R, tr[k]? = some ek ∧ ek.proc = ej.proc ∧
       (k = i₁ ∨ ek.recvFrom = some i₁)
+
+/-- **Causal delivery of updates.** In a finite list of replica events, a receipt is well formed
+only if it names an earlier event. A receipt of an update issued at that earlier position must
+be preceded at the same replica by the issue or delivery of each update in its causal history.
+That history is given by nonempty chains of `DirectlyBefore`: an update directly precedes another
+when the replica issuing the latter has already issued or received the former.
+
+This is only a safety condition: an update can be delivered more than once, or never. A receipt
+of a message that carries no update does not count as an update delivery. -/
+def CausalDelivery (tr : List (Event R)) : Prop :=
+  WellFormed tr ∧ DeliveryOrder tr
 
 /-- **Happened-before between updates, by delivery.** Read a well-formed execution, one in which
 every receipt names an earlier position, as an execution of a replicated system whose replicas
