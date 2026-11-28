@@ -593,9 +593,15 @@ private theorem lift_pow {j₀ κ : ℕ} {d α c : ℝ} (hj₀ : j₀ ≤ κ) (h
     _ = (d * α ^ 2 ^ j₀) ^ 2 ^ s := (mul_pow _ _ _).symm
     _ ≤ (c ^ 2 ^ j₀) ^ 2 ^ s := pow_le_pow_left₀ (by positivity) hc _
 
-/-- The output of `hbcAdmissible_exists_prefix_bound` and `d α ^ 2 ^ κ ≤ c ^ 2 ^ κ` give
-`X ≤ c ^ 2 ^ m - c ^ 2 ^ (m - 1)`. -/
-private theorem range_bound {m κ : ℕ} {X d α c : ℝ} (hκ1 : 1 ≤ κ) (hκm : κ ≤ m)
+end hbcAdmissible_half_prime_prod_le_of_five_le
+
+open hbcAdmissible_half_prime_prod_le_of_five_le in
+/-- **Transferring an HBC prefix bound to a new base.** Let $1 \le \kappa \le m$ be integers and
+let $X,d,\alpha,c$ be real numbers with $d \ge 1$ and $\alpha \ge 1$. Set
+$F_j(t) = t^{2^j} - t^{2^{j-1}}$ for $j \ge 1$. Suppose that if $\kappa < m$, then
+$X \le F_{m-\kappa}(d\alpha^{2^\kappa})$, and if $\kappa = m$, then $X \le d F_m(\alpha)$.
+If $d\alpha^{2^\kappa} \le c^{2^\kappa}$, then $X \le F_m(c)$. -/
+public theorem hbcAdmissible_range_bound {m κ : ℕ} {X d α c : ℝ} (hκ1 : 1 ≤ κ) (hκm : κ ≤ m)
     (hd : 1 ≤ d) (hα : 1 ≤ α)
     (hlt : κ < m → X ≤ (d * α ^ 2 ^ κ) ^ 2 ^ (m - κ) - (d * α ^ 2 ^ κ) ^ 2 ^ (m - κ - 1))
     (heq : κ = m → X ≤ d * (α ^ 2 ^ m - α ^ 2 ^ (m - 1)))
@@ -615,6 +621,8 @@ private theorem range_bound {m κ : ℕ} {X d α c : ℝ} (hκ1 : 1 ≤ κ) (hκ
     rw [Nat.add_sub_cancel]
     rw [pow_succ, pow_mul, pow_mul] at hc ⊢
     exact mul_sq_sub_le' hd (one_le_pow₀ hα) hc
+
+namespace hbcAdmissible_half_prime_prod_le_of_five_le
 
 /-- The index from `hbcAdmissible_exists_prefix_bound` is at least `j₀` when a lower bound `L`
 for the prefix products excludes every smaller index. -/
@@ -793,7 +801,7 @@ public theorem hbcAdmissible_half_prime_prod_le_of_five_le (k : ℕ) (y : ℕ �
       simp only [F]
       rw [Nat.add_sub_cancel, hn, Nat.add_sub_cancel, sqrt_pow_two_pow hc, sqrt_pow_two_pow hc]
     rw [hX, hF]
-    exact range_bound hκ1 hκm hd1 hα1 hκlt hκeq hcκ
+    exact hbcAdmissible_range_bound hκ1 hκm hd1 hα1 hκlt hκeq hcκ
   have hPlow : ∀ q : ℝ, 0 ≤ q → q ≤ p → ∀ j ≤ m,
       ∏ i ∈ range j, (q + 2 * ((i : ℝ) + 1)) ≤ ∏ i ∈ range j, (y (i + 2) : ℝ) := by
     intro q hq hqp j hj
@@ -1022,7 +1030,7 @@ public theorem hbcAdmissible_prod_le_sqrt (a d k : ℕ) (ha : 0 < a) (hd : 0 < d
     rw [hceq, mul_pow, mul_comm (d : ℝ)]
     exact mul_le_mul_of_nonneg_left hds (pow_nonneg (by linarith) _)
   rw [hI (fun i => (y i : ℝ)) k]
-  exact range_bound hκ1 hκm hd1 hα1 hκlt hκeq hc
+  exact hbcAdmissible_range_bound hκ1 hκm hd1 hα1 hκlt hκeq hc
 
 open hbcAdmissible_half_prime_prod_le_of_five_le in
 /-- **Product bound for prime tuples at $1/2$ starting at $5$.** Let $p_1 < p_2 < \dots < p_k$ be
@@ -1153,7 +1161,7 @@ public theorem hbcAdmissible_half_prime_prod_le_of_eq_five (k : ℕ) (y : ℕ �
       change (3 : ℝ) * (8 / 3) ^ 32 ≤ c ^ 32
       rw [hc32]
       norm_num
-    exact range_bound hκ1 hκm (by norm_num) (by norm_num) hκlt hκeq hpow
+    exact hbcAdmissible_range_bound hκ1 hκm (by norm_num) (by norm_num) hκlt hκeq hpow
   · -- For `7 ≤ p₂ < 41`, remove the second prime before using the recursion.
     have hq7R : (7 : ℝ) ≤ y 2 := by exact_mod_cast hq7
     have hm2 : 2 ≤ m := by
@@ -1271,7 +1279,7 @@ public theorem hbcAdmissible_half_prime_prod_le_of_eq_five (k : ℕ) (y : ℕ �
         _ ≤ 7 ^ 8 := by norm_num
         _ ≤ _ := pow_le_pow_left₀ (by norm_num) hc7 _
     rw [hsplit (fun j => (y j : ℝ)) n, ← mul_assoc, ← haR, Nat.add_sub_cancel]
-    have hres := range_bound hκ1 hκn hd1 hα1 hκlt hκeq hpow
+    have hres := hbcAdmissible_range_bound hκ1 hκn hd1 hα1 hκlt hκeq hpow
     rw [← pow_mul, ← pow_mul, ← pow_succ', ← pow_succ', Nat.sub_add_cancel hn1] at hres
     exact hres
 

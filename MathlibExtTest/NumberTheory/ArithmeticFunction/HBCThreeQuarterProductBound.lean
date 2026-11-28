@@ -59,6 +59,15 @@ example : (1 - 1 / (2 : ℝ)) * (1 - 1 / 31) = 15 / 31 ∧
       15 * (2 * 31) := by
   norm_num [sixteen_rpow_three_quarters, Nat.floor_eq_iff]
 
+-- At `d = 4`, `α = 2`, `c = 3` and `κ = 2`, the new base dominates the prefix bound.
+-- The tight full-prefix estimate at `m = 2` and the tight proper-prefix estimate at `m = 3`
+-- both fit the corresponding bound at the new base.
+example : (4 : ℝ) * 2 ^ (2 ^ 2 : ℕ) ≤ 3 ^ (2 ^ 2 : ℕ) ∧
+    (4 : ℝ) * (2 ^ (2 ^ 2 : ℕ) - 2 ^ (2 ^ 1 : ℕ)) ≤ 3 ^ (2 ^ 2 : ℕ) - 3 ^ (2 ^ 1 : ℕ) ∧
+    ((4 : ℝ) * 2 ^ (2 ^ 2 : ℕ)) ^ 2 - 4 * 2 ^ (2 ^ 2 : ℕ) ≤
+      3 ^ (2 ^ 3 : ℕ) - 3 ^ (2 ^ 2 : ℕ) := by
+  norm_num
+
 -- A client of the public bound at the shortest allowed length.
 example : (2 : ℝ) * (5 * 6) ≤ 3 ^ 4 - 3 ^ 2 := by
   have h := hbcAdmissible_prod_le_of_ne_floor 2 1 2 (by decide) (by decide) (by decide)

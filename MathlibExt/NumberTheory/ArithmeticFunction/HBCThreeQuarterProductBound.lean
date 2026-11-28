@@ -14,6 +14,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 import Mathlib.Algebra.Order.Floor.Semiring
+import Mathlib.Data.Nat.Cast.Order.Field
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
@@ -34,7 +35,7 @@ the factor $d$ to be absorbed using the base $(a+d)/d^{3/4}$ in the product boun
 
 * Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers – Part I*, INTEGERS 24 (2024),
   Article A114, pp. 1–38, Corollary 2; the argument uses Theorem 1 and Remark 4.
-* The prefix estimate and the reindexing used in `hbcAdmissible_prod_le_sqrt` are from
+* The prefix estimate, range bound, and reindexing used in `hbcAdmissible_prod_le_sqrt` are from
   `MathlibExt.NumberTheory.ArithmeticFunction.HBCHalfPrimeProductBounds`.
 -/
 
@@ -76,14 +77,10 @@ public theorem hbcAdmissible_prod_le_of_ne_floor (a d k : ℕ) (ha : 0 < a) (hd 
   change (a : ℝ) * (∏ i ∈ range κ, (y (1 + i) : ℝ)) + d ≤ d * α ^ 2 ^ κ at hpre
   -- The strict prefix inequality forces the first term to exceed `α`.
   have hyR : (0 : ℝ) < y 1 := by exact_mod_cast hy0
-  have hfactor (n : ℕ) : 0 ≤ 1 - 1 / (n : ℝ) := by
-    rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp
-    · exact sub_nonneg.mpr ((div_le_one (by exact_mod_cast hn)).mpr (by exact_mod_cast hn))
   have hproduct : (a : ℝ) / (a + d) < 1 - 1 / (y 1 : ℝ) := by
     rw [hI, show k - 1 = (k - 2) + 1 by omega, prod_range_succ', Nat.add_zero] at hlt
-    exact hlt.trans_le (mul_le_of_le_one_left (hfactor _) (prod_le_one₀
-      (fun i _ => hfactor _) (fun i _ => sub_le_self _ (by positivity))))
+    exact hlt.trans_le (mul_le_of_le_one_left (Nat.one_sub_one_div_cast_nonneg _) (prod_le_one₀
+      (fun i _ => Nat.one_sub_one_div_cast_nonneg _) (fun i _ => sub_le_self _ (by positivity))))
   have hyα : α < (y 1 : ℝ) := by
     by_contra! h
     rw [hr] at hproduct
@@ -115,48 +112,6 @@ public theorem hbcAdmissible_prod_le_of_ne_floor (a d k : ℕ) (ha : 0 < a) (hd 
     rw [← ht4]
     exact pow_le_pow_right₀ ht1 (by simpa using Nat.pow_le_pow_right (by decide : 0 < 2) hκ2)
   rw [hI (fun i => (y i : ℝ)) k]
-  let X : ℝ := a * ∏ i ∈ range k, (y (1 + i) : ℝ)
-  change X ≤ β ^ 2 ^ k - β ^ 2 ^ (k - 1)
-  change κ < k → X ≤ (d * α ^ 2 ^ κ) ^ 2 ^ (k - κ) -
-    (d * α ^ 2 ^ κ) ^ 2 ^ (k - κ - 1) at hproper
-  change κ = k → X ≤ d * (α ^ 2 ^ k - α ^ 2 ^ (k - 1)) at hfull
-  let V : ℝ := β ^ 2 ^ (k - 1)
-  have hV : V ^ 2 = β ^ 2 ^ k := by
-    dsimp [V]
-    rw [← pow_mul, ← pow_succ, Nat.sub_add_cancel (by omega : 1 ≤ k)]
-  have ⟨U, D, hU, hD, hDU, hX⟩ :
-      ∃ U D : ℝ, 1 ≤ U ∧ 1 ≤ D ∧ D * U ^ 2 ≤ V ^ 2 ∧ X ≤ D * (U ^ 2 - U) := by
-    rcases hκk.lt_or_eq with hκk' | hκeq
-    · let B : ℝ := d * α ^ 2 ^ κ
-      have hB : 1 ≤ B := one_le_mul_of_one_le_of_one_le hd1 (one_le_pow₀ hα.le)
-      have hpow : (B ^ 2 ^ (k - κ - 1)) ^ 2 = B ^ 2 ^ (k - κ) := by
-        rw [← pow_mul, ← pow_succ, Nat.sub_add_cancel (by omega : 1 ≤ k - κ)]
-      refine ⟨B ^ 2 ^ (k - κ - 1), 1, one_le_pow₀ hB, le_rfl, ?_, ?_⟩
-      · rw [one_mul, hpow, hV]
-        calc
-          _ ≤ (β ^ 2 ^ κ) ^ 2 ^ (k - κ) :=
-            pow_le_pow_left₀ (zero_le_one.trans hB) hc _
-          _ = _ := by rw [← pow_mul, ← pow_add, Nat.add_sub_cancel' hκk]
-      · simpa only [one_mul, hpow] using hproper hκk'
-    · have hpow : (α ^ 2 ^ (k - 1)) ^ 2 = α ^ 2 ^ k := by
-        rw [← pow_mul, ← pow_succ, Nat.sub_add_cancel (by omega : 1 ≤ k)]
-      refine ⟨α ^ 2 ^ (k - 1), d, one_le_pow₀ hα.le, hd1, ?_, ?_⟩
-      · rw [hpow, hV]
-        simpa only [hκeq] using hc
-      · simpa only [hpow] using hfull hκeq
-  -- Factor both differences of powers before comparing their factors.
-  have hU0 : 0 < U := zero_lt_one.trans_le hU
-  have hV0 : 0 ≤ V := by dsimp [V, β]; positivity
-  have hUV : U ≤ V := (pow_le_pow_iff_left₀ hU0.le hV0 (by decide : (2 : ℕ) ≠ 0)).mp
-    ((le_mul_of_one_le_left (sq_nonneg U) hD).trans hDU)
-  change X ≤ β ^ 2 ^ k - V
-  rw [← hV]
-  calc
-    X ≤ D * (U ^ 2 - U) := hX
-    _ = (D * U ^ 2) * (1 - 1 / U) := by field_simp
-    _ ≤ V ^ 2 * (1 - 1 / V) := mul_le_mul hDU
-      (sub_le_sub_left (one_div_le_one_div_of_le hU0 hUV) _)
-      (sub_nonneg.mpr ((div_le_one hU0).mpr hU)) (sq_nonneg V)
-    _ = V ^ 2 - V := by have : 0 < V := hU0.trans_le hUV; field_simp
+  exact hbcAdmissible_range_bound hκ1 hκk hd1 hα.le hproper hfull hc
 
 end MetaMathlibExt
