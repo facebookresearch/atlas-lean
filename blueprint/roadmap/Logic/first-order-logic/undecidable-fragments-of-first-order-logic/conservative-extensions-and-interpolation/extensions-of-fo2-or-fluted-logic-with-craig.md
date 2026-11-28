@@ -9,7 +9,7 @@ Any abstract logic that extends two-variable first-order logic or the fluted fra
 1. If $L$ extends the [fluted fragment](../guarded-and-fluted-fragments/fluted-fragment.md) $\mathrm{FL}$ and there is an effective translation from $\mathrm{FL}$ to $L$, then satisfiability for $L$ is undecidable provided $L$ can express ordered quantification or negation.
 2. If $L$ extends [two-variable logic](../two-variable-logic-and-its-extensions/two-variable-logic-and-its-counting-extension.md) $\mathrm{FO}^2$ and there is an effective translation from $\mathrm{FO}^2$ to $L$, then satisfiability for $L$ is undecidable provided $L$ can express universal quantification or negation.
 
-(Both are the two theorems of Section 6.) Earlier sections of the source show that forward logics with CIP, the natural extensions of the forward fragment, can express all of first-order logic; Section 6 extracts undecidability under much weaker expressive assumptions.
+(Theorem 6.4 and Theorem 6.5 of the source.) Earlier sections of the source show that forward logics with CIP, the natural extensions of the forward fragment, can express all of first-order logic; Section 6 extracts undecidability under much weaker expressive assumptions.
 
 ## Depends on
 

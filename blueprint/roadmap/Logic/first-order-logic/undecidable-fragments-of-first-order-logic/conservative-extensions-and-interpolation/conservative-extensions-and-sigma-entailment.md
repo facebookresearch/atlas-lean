@@ -9,7 +9,7 @@ Let $F$ be a fragment of first-order logic, $\varphi_1, \varphi_2$ $F$-sentences
 3. $\varphi_1 \wedge \varphi_2$ is a *conservative extension* of $\varphi_1$ if $\varphi_1$ $\mathrm{sig}(\varphi_1)$-entails $\varphi_1 \wedge \varphi_2$, where $\mathrm{sig}(\varphi_1)$ is the set of symbols of $\varphi_1$.
 4. $\varphi_1$ *strongly $\Sigma$-entails* $\varphi_2$ if $\varphi_1$ $\Sigma'$-entails $\varphi_2$ for every signature $\Sigma'$ with $\Sigma' \cap \mathrm{sig}(\varphi_2) \subseteq \Sigma$.
 
-The notions depend on $F$, because the witness sentences $\psi$ range over $F(\Sigma)$. The decision problems take $\varphi_1$, $\varphi_2$ and, where it occurs, $\Sigma$ as input. Signatures are relational, with predicates of arity one and two.
+The notions depend on $F$, because the witness sentences $\psi$ range over $F(\Sigma)$. The decision problems take $\varphi_1$, $\varphi_2$ and, where it occurs, $\Sigma$ as input. As in the source, sentences may use equality, which is a logical symbol and not part of any signature, and contain no function symbols or constants; signatures are finite sets of predicates, and in $\mathrm{FO}^2$ and its fragments only predicates of arity one and two are used, which the source notes loses no generality.
 
 ## Depends on
 

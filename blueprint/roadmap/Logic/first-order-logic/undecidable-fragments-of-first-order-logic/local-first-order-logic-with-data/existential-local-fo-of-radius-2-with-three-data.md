@@ -2,9 +2,9 @@
 
 Satisfiability of existential local first-order sentences of radius $2$ over finite structures whose nodes carry three data values is undecidable, although the same radius with two data values is decidable.
 
-**Theorem (Bollig, Sangnier and Stietel).** The problem $\mathrm{DataSat}(\exists\text{-}2\text{-}\mathrm{Loc}\text{-}\mathrm{dFO}, 3)$ is undecidable: no algorithm decides, given a finite set $\Sigma$ of unary predicates and a sentence of the [existential local fragment of radius 2](local-first-order-logic-over-data-structures.md) over $3$-data structures, whether some finite $3$-data structure over $\Sigma$ satisfies it.
+**Theorem (Bollig, Sangnier and Stietel).** The problem $\mathrm{DataSat}(\exists\text{-}2\text{-}\mathrm{Loc}\text{-}\mathrm{dFO}, 3)$ is undecidable: no algorithm decides, given a finite set $\Sigma$ of unary predicates and a sentence of the [existential local fragment of radius 2](local-first-order-logic-over-data-structures.md) over $3$-data structures, whether some finite $3$-data structure over $\Sigma$ satisfies it (Theorem 7 of the source).
 
-The radius is fixed at $2$ and the number of data values at $3$. With two data values the same fragment is N2EXPTIME-complete (Theorem 3 of the source).
+The radius is fixed at $2$ and the number of data values at $3$. With two data values the same fragment is N2EXPTIME-complete (Theorem 4 of the source).
 
 ## Depends on
 

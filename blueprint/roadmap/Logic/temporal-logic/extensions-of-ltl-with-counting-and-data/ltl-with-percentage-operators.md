@@ -2,7 +2,7 @@
 
 Percentage operators extend the finally-only fragment of linear temporal logic over finite words with past counting: "at least half of the earlier positions satisfy φ" (majority in the past), "exactly half of them do", or "letter σ has been among the most frequent so far".
 
-**Base logic.** Over a finite set $\mathrm{AP}$ of atomic propositions, $\mathrm{LTL}_{\mathbf{F}}$ formulas are given by $\varphi ::= a \mid \neg\varphi \mid \varphi \wedge \varphi \mid \mathbf{F}\varphi$ with $a \in \mathrm{AP}$. They are evaluated at positions $i$ of nonempty finite words $w = w_0 w_1 \cdots w_{|w|-1}$ over $2^{\mathrm{AP}}$: $w, i \models a$ iff $a \in w_i$, Boolean connectives as usual, and $w, i \models \mathbf{F}\varphi$ iff $w, j \models \varphi$ for some $j$ with $i \leq j < |w|$. A word satisfies $\varphi$ if $w, 0 \models \varphi$; $\mathbf{G}\varphi = \neg\mathbf{F}\neg\varphi$.
+**Base logic.** Over a countably infinite set $\mathrm{AP}$ of atomic propositions (letters), $\mathrm{LTL}_{\mathbf{F}}$ formulas are given by $\varphi ::= a \mid \neg\varphi \mid \varphi \wedge \varphi \mid \mathbf{F}\varphi$ with $a \in \mathrm{AP}$. They are evaluated at positions $i$ of nonempty finite words $w = w_0 w_1 \cdots w_{|w|-1}$ over $2^{\mathrm{AP}}$: $w, i \models a$ iff $a \in w_i$, Boolean connectives as usual, and $w, i \models \mathbf{F}\varphi$ iff $w, j \models \varphi$ for some $j$ with $i \leq j < |w|$. A word satisfies $\varphi$ if $w, 0 \models \varphi$; $\mathbf{G}\varphi = \neg\mathbf{F}\neg\varphi$.
 
 **Percentage operators.** For a position $i$ let $\#_\varphi(i) = |\{j < i : w, j \models \varphi\}|$; the operators are defined by
 
@@ -12,7 +12,7 @@ $$
 
 for formulas $\varphi$ and letters $\sigma \in \mathrm{AP}$: majority in the past, exactly half in the past, and most frequent letter in the past. At $i = 0$ the counts are $0$, so $\mathbf{M}\varphi$ and $\mathbf{H}\varphi$ are true there; $\mathbf{H}\varphi$ is true only at even positions and equals $\mathbf{M}\varphi \wedge \mathbf{M}\neg\varphi$. $\mathrm{LTL}_{\mathbf{F}}[\mathbf{M}]$, $\mathrm{LTL}_{\mathbf{F}}[\mathbf{H}]$ and $\mathrm{LTL}_{\mathbf{F}}[\mathbf{MF}]$ add the respective operator.
 
-**Problems.** A Kripke structure has finite sets of states and initial states, a total transition relation and a labelling of states by subsets of $\mathrm{AP}$; its traces are the finite words labelling finite paths from initial states. *Satisfiability* asks whether a formula has a finite model word; *model checking* asks whether some trace of a given Kripke structure satisfies a given formula.
+**Problems.** A Kripke structure has a finite set of states, a set of initial states, a total transition relation and a labelling of each state by a finite subset of $\mathrm{AP}$ (Section 2.3 of the source); its traces are the finite words labelling finite paths from initial states. *Satisfiability* asks whether a formula has a finite model word; *model checking* asks whether some trace of a given Kripke structure satisfies a given formula.
 
 ## Depends on
 

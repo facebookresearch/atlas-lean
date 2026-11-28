@@ -16,7 +16,7 @@ In every fragment of first-order logic that contains two-variable logic FO², it
 
 ## Expansion
 
-The proof reduces a tiling problem that asks for a tiling of some rectangle, of any size, whose borders carry designated tiles; the reduction is given in the appendix of the source. A complete expansion links the undecidability of this bordered rectangle tiling problem, which is a variant of the tiling problem on main and has no page here.
+The proof reduces a tiling problem that asks for a tiling of some rectangle, of any size, whose borders carry designated tiles; the reduction is given in the appendix of the source. A complete expansion links the undecidability of this bordered rectangle tiling problem, a variant of the tiling problem.
 
 ## Sources
 

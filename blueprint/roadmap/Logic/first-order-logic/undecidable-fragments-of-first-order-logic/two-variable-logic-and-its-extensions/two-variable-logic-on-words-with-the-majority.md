@@ -2,13 +2,13 @@
 
 Satisfiability of two-variable first-order logic over finite words with the linear order, extended by a majority quantifier ("at least half of all positions satisfy φ"), is undecidable.
 
-**Logic.** $\mathrm{FO}^2[<]$ is first-order logic over finite words with the two variables $x$ and $y$, ranging over positions, the linear order $<$ on positions, equality and unary letter predicates. $\mathrm{FO}^2_{\mathrm{Maj}}[<]$ adds the *majority quantifier*: for a word $w$,
+**Logic.** $\mathrm{FO}^2[<]$ is first-order logic over nonempty finite words, whose positions are labelled by sets of letters, with the two variables $x$ and $y$, ranging over positions, the linear order $<$ on positions, equality and unary letter predicates. $\mathrm{FO}^2_{\mathrm{Maj}}[<]$ adds the *majority quantifier*: for a word $w$,
 
 $$
 w \models \mathrm{Maj}\,x.\,\varphi \iff \tfrac{|w|}{2} \leq |\{p : w, p \models \varphi[x/p]\}| ,
 $$
 
-where $\varphi$ may contain $y$ free. Satisfiability asks whether a sentence has a finite model word.
+where $\varphi$ may contain $y$ free. Satisfiability asks whether a sentence has a model, a nonempty finite word (words are nonempty in the source, Section 2.1).
 
 **Theorem (Bednarczyk and Michaliszyn).** The satisfiability problem for $\mathrm{FO}^2_{\mathrm{Maj}}[<]$ is undecidable (Theorem 6.3).
 
