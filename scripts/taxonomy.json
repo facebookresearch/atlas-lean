@@ -2358,7 +2358,7 @@
   "CSLibExt/Security/Noninterference/Typing": {"to": "ComputerScience/computer-security", "title": "Security judgments and confinement"},
   "CSLibExt/Security/QuantitativeInformationFlow": {"to": "ComputerScience/computer-security", "title": "Min-entropy leakage"},
   "CSLibExt/Specs/InsertionSort": {"to": "ComputerScience/sorting-and-searching", "title": "Ordered insertion and insertion sort"},
-  "CSLibExt/Specs/SelectionSort": {"to": "ComputerScience/program-logics-and-verification", "title": "Selection sort satisfies the sorting contract"},
+  "CSLibExt/Specs/SelectionSort": {"to": "ComputerScience/sorting-and-searching", "title": "Selection sort satisfies the sorting contract"},
   "CSLibExt/Specs/Sorting": {"to": "ComputerScience/sorting-and-searching", "title": "A relational sorting contract"},
   "CSLibExt/Testing/BoundedExhaustive": {"to": "ComputerScience/program-logics-and-verification", "title": "Testing and runtime verification"},
   "Domains/MaterialsScience/Quantities/Composition": {"to": "Chemistry/amounts-and-stoichiometry", "title": "Arrhenius coordinates and composition percentages"},
