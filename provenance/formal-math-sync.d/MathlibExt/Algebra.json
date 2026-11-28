@@ -149,6 +149,15 @@
       "upstream_sha256": "e64ec16522c770dc6f684221d789ab41e598bc23e4f932bba15f2ceaf20c4078"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedAdmissiblePushout.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "2eff4efd2c6450068f6fa39e5c9b4a1693ab21df136b8493555e024df118cb48",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "399bed2d7cee65b57cf9aaf1df8be099531230ec34cfbc09530a3e5d3d58fb12"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/CochainComplex/BoundedFunctor.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -349,6 +358,24 @@
     {"path": "MathlibExt/Algebra/Homology/KoszulComplexRegularResolution.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "3e7347c6e03670d3d594789d817ac55ca89a2c57014ae6bb3a21c8193bae16e5", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary; the declaration docstrings of the Koszul resolution results describe their hypothesis as a weakly regular family (RingTheory.Sequence.IsWeaklyRegular), not a regular one.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "a81dbe05d3ef76ca810d813e35d310b4a38006115b064961f85afb9be5fda37c"},
     {"path": "MathlibExt/Algebra/Homology/KoszulComplexRegularSequence.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "e37784136b48e1b0cdb97bb2e8cc8ed7121b313e8f9bb5b2d9ad7c8ceff03e16", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary; the declaration docstrings of the Koszul resolution results describe their hypothesis as a weakly regular family (RingTheory.Sequence.IsWeaklyRegular), not a regular one.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "8299ed6945ca9285df2f2c89c7e39d4140a6c25edef3b77e715448fd1b488e07"},
     {"path": "MathlibExt/Algebra/Homology/KoszulComplexResidueReduction.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "56dd6332036d869b3fde26570c63e524cba47c0c01a51e66d18bf6a451f1fa55", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "dcbc8fadef3b71b5eb14e3d64303f2e2a111fc28e2b8764a6da46e67dce6e2fd"},
+    {
+      "path": "MathlibExt/Algebra/Homology/LiftCyclesPushforward.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "1d1ccff8c1bb57a6f227442cee694b787de6321e4f3406aa29e48e2cc637b38c",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ecaf50b09669e8b5465b999c1ee96c364eea76e0a2934f1d31ce5b09af1fada8"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/LiftedTailComposition.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "182497ac685f99271d8084adb9a6abc9bd58b7417c2226846d826e88203d695b",
+      "rationale": "General bounded-admissible pushout, lifted-cycle/tail transport and Waldhausen coproduct/exact/fibration APIs retained from the recorded immutable MathlibExt source. All declaration names, mathematical hypotheses, independent worlds, maps, signs, proof tokens, authors and license notices are preserved. Only required 100-column mathematical comment wraps were applied; hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f95b2eef659251e6a2d6414c7c71a02c5304ff186d958b7b2f293fbb4225e72e"
+    },
     {"path": "MathlibExt/Algebra/Homology/Linear.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "bb06949098eace296b9340bbc707c9ac90214929089a57f10018f19184ea32e7", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "efcc95c10f51e0ebb315ef523a863c2dc2342b536375bfe71dc691eac7edf856"},
     {"path": "MathlibExt/Algebra/Homology/MappingConeCokernelConnecting.lean", "disposition": "identical", "published_sha256": "9d0d0380ecf8ad70fc64e2efc271514cd862a2118abe23bc653cde9f615b9d46", "upstream_sha256": "28ded7bb46d822971f9af0803e0a99495fc5ed1f91f330c1c417c074e070f1c9"},
     {"path": "MathlibExt/Algebra/Homology/MixedComplex/Basic.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "2fae2253a314dfa43cc62d9886b740e6afc01129b878f1c83b6c5ebf95d95485", "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "7f3f482a5a8a3e70aa2bf899de44c9120ca9c3c25d447bd95d5b4cd767aa253e"},
