@@ -19,15 +19,17 @@ module
 public import MathlibExt.RingTheory.AdicCompletion.PowerSeriesEvalMap
 public import MathlibExt.RingTheory.Perfectoid.CrystallinePeriodRingBasic
 public import MathlibExt.RingTheory.Perfectoid.DeRhamPeriodRing
+public import Mathlib.RingTheory.PowerSeries.Log
 import Mathlib.RingTheory.ReesAlgebra
 import Mathlib.RingTheory.WittVector.DiscreteValuationRing
 
 /-!
 # Logarithms in `B_dR^+`
 
-For `y` in the kernel of Fontaine's map `θ` with `p` inverted, the logarithm series
-`log(1 + X) = Σ_{n ≥ 1} (-1)^(n+1) X^n / n` converges at `y` in `B_dR^+ = BDeRhamPlus 𝓞_ℂ_[p] p`,
-the completion along that kernel; its value is `log(1 + y)` (`PadicComplexInt.logOneAdd`). We
+Let `p` be a prime. For `y` in the kernel of Fontaine's map `θ` with `p` inverted, the logarithm
+series `log(1 + X) = Σ_{n ≥ 1} (-1)^(n+1) X^n / n` (the image of Mathlib's `PowerSeries.log` over
+`ℚ_[p]`, `PadicComplexInt.logSeries`) converges at `y` in `B_dR^+ = BDeRhamPlus 𝓞_ℂ_[p] p`, the
+completion along that kernel; its value is `log(1 + y)` (`PadicComplexInt.logOneAdd`). We
 show that `log` is additive: `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)`
 (`PadicComplexInt.logOneAdd_add`). Its special values are
 
@@ -93,10 +95,23 @@ theorem teichmuller_pFlat_div_sub_one :
 
 /-! ### The logarithm series -/
 
-/-- The logarithm series `log(1 + X) = Σ_{n ≥ 1} (-1)^(n+1) X^n / n` over
-`W(𝓞_ℂ_[p]♭)[1/p]`, a `ℚ_[p]`-algebra. -/
+/-- The logarithm series `log(1 + X) = Σ_{n ≥ 1} (-1)^(n+1) X^n / n` over `W(𝓞_ℂ_[p]♭)[1/p]`, for
+a prime `p`: the image of Mathlib's `PowerSeries.log ℚ_[p]` under `ℚ_[p] → W(𝓞_ℂ_[p]♭)[1/p]`.
+`PowerSeries.log` needs a `ℚ`-algebra, and `W(𝓞_ℂ_[p]♭)[1/p]` is given only its `ℚ_[p]`-algebra
+structure. -/
 def logSeries : 𝔸ₚ⟦X⟧ :=
-  PowerSeries.mk fun n => if n = 0 then 0 else (-1) ^ (n + 1) * algebraMap ℚ_[p] 𝔸ₚ (n : ℚ_[p])⁻¹
+  PowerSeries.map (algebraMap ℚ_[p] 𝔸ₚ) (PowerSeries.log ℚ_[p])
+
+/-- For a prime `p`, the coefficient of `Xⁿ` in the logarithm series over `W(𝓞_ℂ_[p]♭)[1/p]` is `0`
+for `n = 0` and `(-1)^(n+1)/n` for `n ≥ 1`, where `1/n` is the image of `(n : ℚ_[p])⁻¹`. -/
+theorem coeff_logSeries (n : ℕ) :
+    PowerSeries.coeff n (logSeries p) =
+      if n = 0 then 0 else (-1) ^ (n + 1) * algebraMap ℚ_[p] 𝔸ₚ (n : ℚ_[p])⁻¹ := by
+  rw [logSeries, PowerSeries.coeff_map, PowerSeries.coeff_log]
+  split_ifs
+  · exact map_zero _
+  · rw [map_div₀, map_pow, map_neg, map_one, map_natCast, div_eq_mul_inv, map_mul, map_pow,
+      map_neg, map_one]
 
 /-- **`log(1 + y)`** for `y` in the kernel of `θ` with `p` inverted: the value in `B_dR^+` of the
 logarithm series at `y`. -/
@@ -117,8 +132,8 @@ private theorem derivative_logPoly (M : ℕ) :
   simp only [Polynomial.coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq (Finset.range M) m]
   by_cases hm : m < M
-  · rw [ite_eq_left (by omega), ite_eq_left (Finset.mem_range.mpr hm), logSeries,
-      PowerSeries.coeff_mk, ite_eq_right (by omega)]
+  · rw [ite_eq_left (by omega), ite_eq_left (Finset.mem_range.mpr hm), coeff_logSeries,
+      ite_eq_right (by omega)]
     have h := natCast_mul_algebraMap_inv p (k := m + 1) (by omega)
     rw [← Nat.cast_succ]
     linear_combination (-1 : 𝔸ₚ) ^ m * h
@@ -151,7 +166,7 @@ private theorem X_pow_dvd_of_X_pow_dvd_one_add_X_mul {R : Type*} [CommRing R] (M
 private theorem coeff_zero_logPoly (N : ℕ) : (logPoly p N).coeff 0 = 0 := by
   rw [coeff_trunc]
   split_ifs
-  · rw [logSeries, PowerSeries.coeff_mk, ite_eq_left rfl]
+  · rw [coeff_logSeries, ite_eq_left rfl]
   · rfl
 
 /-- The key polynomial identity: with `Y = yT`, `Z = zT` and `W = Y + Z + YZ` in
@@ -375,7 +390,7 @@ private theorem exists_trunc_logSeries_sub_X (N : ℕ) :
   change (Polynomial.X : Polynomial 𝔸ₚ) ^ 2 ∣ trunc (N + 2) (logSeries p) - Polynomial.X
   rw [Polynomial.X_pow_dvd_iff]
   intro d hd
-  rw [Polynomial.coeff_sub, coeff_trunc, ite_eq_left (by omega), logSeries, PowerSeries.coeff_mk,
+  rw [Polynomial.coeff_sub, coeff_trunc, ite_eq_left (by omega), coeff_logSeries,
     Polynomial.coeff_X]
   rcases d with _ | _ | d
   · simp

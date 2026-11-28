@@ -162,7 +162,7 @@ theorem logTeichmuller_mem_aMax {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1
     rw [hd, map_mul, map_pow, map_natCast]
   rw [RingHom.comp_apply, logTeichmuller, logOneAdd, evalBDeRhamPlus, evalBDeRhamPlus]
   refine AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq _ _ _ _ _ fun n => ?_
-  rw [PowerSeries.coeff_map, PowerSeries.coeff_mk, logSeries, PowerSeries.coeff_mk]
+  rw [PowerSeries.coeff_map, PowerSeries.coeff_mk, coeff_logSeries]
   by_cases hn : n = 0
   · simp [hn]
   rw [ite_eq_right hn, ite_eq_right hn, ← hc]
@@ -197,11 +197,10 @@ theorem galoisLocalization_mem_ker (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl
 private theorem map_logSeries (f : PreTilt 𝓞_ℂ_[p] p →+* PreTilt 𝓞_ℂ_[p] p) :
     PowerSeries.map (Localization.awayMapNatCast (WittVector.map f) p) (logSeries p) =
       logSeries p := by
-  ext n
-  rw [PowerSeries.coeff_map, logSeries, PowerSeries.coeff_mk]
-  split_ifs
-  · exact map_zero _
-  · rw [map_mul, map_pow, map_neg, map_one, awayMapNatCast_algebraMap_padic]
+  have h : (Localization.awayMapNatCast (WittVector.map f) p).comp (algebraMap ℚ_[p] 𝔸ₚ) =
+      algebraMap ℚ_[p] 𝔸ₚ :=
+    RingHom.ext (awayMapNatCast_algebraMap_padic p f)
+  rw [logSeries, ← RingHom.comp_apply, ← PowerSeries.map_comp, h]
 
 /-- `σ(Σ aₖ xᵏ) = Σ σ(aₖ) σ(x)ᵏ` in `B_dR^+`. -/
 theorem galoisBDeRhamPlus_evalBDeRhamPlus (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p)

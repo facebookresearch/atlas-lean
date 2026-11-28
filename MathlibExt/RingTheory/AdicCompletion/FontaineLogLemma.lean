@@ -18,6 +18,7 @@ module
 
 public import MathlibExt.RingTheory.AdicCompletion.PowerSeriesEvalMap
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import Mathlib.RingTheory.PowerSeries.Log
 
 /-!
 # Fontaine's lemma on `log(1 - β)`
@@ -34,6 +35,11 @@ that `p` and the positive integers `n` are invertible in `P`, with `p^{v_p(n)}/n
 `A ∩ I^k = ξ^k A`, that `⋂_k (p^k A + ξ^m A) = ξ^m A`, and that `ξ` is a non-zero-divisor of the
 completion. Then for every nonzero `a ∈ S`, `a · log(1 - β) ∉ S`, where
 `log(1 - β) = -Σ_{n ≥ 1} βⁿ/n` (`AdicCompletion.mul_evalPowerSeries_logOneSubSeries_not_mem`).
+
+The series `log(1 - X)` is written over `P` with given inverses of the positive integers
+(`AdicCompletion.logOneSubSeries`), as `P` is not assumed to be a `ℚ`-algebra; when these inverses
+come from a field `K` with `[Algebra ℚ K]`, it is the image of Mathlib's `PowerSeries.log K` at
+`-X` (`AdicCompletion.logOneSubSeries_eq_map_rescale_log`).
 
 ## Proof
 
@@ -65,10 +71,32 @@ theorem mem_evalPowerSeriesRange {β : P} (hβ : β ∈ I) {y : AdicCompletion I
       ∃ f : A⟦X⟧, evalPowerSeries I hβ (PowerSeries.map (algebraMap A P) f) = y :=
   RingHom.mem_range
 
-/-- The series `log(1 - X) = -Σ_{n ≥ 1} Xⁿ/n`, written with given elements `inv n` (in the
-application, the inverses of the positive integers `n`). -/
+/-- The series `log(1 - X) = -Σ_{n ≥ 1} Xⁿ/n` over a commutative ring `P`, written with given
+elements `inv n` for `1/n`: its coefficient in degree `n ≥ 1` is `-inv n`, and in degree `0` it
+is `0`. It is not built from Mathlib's `PowerSeries.log`, which needs a `ℚ`-algebra, as `P` is not
+assumed to be one (in the application, `P = W(𝓞_ℂ_[p]♭)[1/p]` has no `ℚ`-algebra instance and
+`inv n` is the image of `(n : ℚ_[p])⁻¹`); when the `inv n` are the images of the `(n : K)⁻¹` of a
+field `K` with `[Algebra ℚ K]`, it is the image of `PowerSeries.log K` at `-X`
+(`AdicCompletion.logOneSubSeries_eq_map_rescale_log`). -/
 def logOneSubSeries (inv : ℕ → P) : P⟦X⟧ :=
   PowerSeries.mk fun n => if n = 0 then 0 else -inv n
+
+/-- For a field `K` with `[Algebra ℚ K]` and a commutative `K`-algebra `P`, the series
+`logOneSubSeries` with `inv n` the image of `(n : K)⁻¹` is the image in `P⟦X⟧` of Mathlib's
+`log(1 + X)` over `K` (`PowerSeries.log K`) at `-X`, i.e. of the series `log(1 - X)` over `K`. -/
+theorem logOneSubSeries_eq_map_rescale_log {K : Type*} [Field K] [Algebra ℚ K] [Algebra K P] :
+    logOneSubSeries (fun n => algebraMap K P (n : K)⁻¹) =
+      PowerSeries.map (algebraMap K P) (rescale (-1) (PowerSeries.log K)) := by
+  ext n
+  rw [logOneSubSeries, coeff_mk, coeff_map, coeff_rescale, coeff_log]
+  split_ifs with hn
+  · rw [mul_zero, map_zero]
+  · have h1 : ((-1 : K) ^ n) * (-1) ^ (n + 1) = -1 := by
+      rw [← pow_add]
+      exact Odd.neg_one_pow ⟨n, by ring⟩
+    rw [map_div₀, map_pow, map_neg, map_one, map_natCast, ← map_neg (algebraMap K P)]
+    congr 1
+    rw [div_eq_mul_inv, ← mul_assoc, h1, neg_one_mul]
 
 /-- The image of `y ∈ P` in the completion is its image under the algebra map. -/
 private theorem of_eq_algebraMap (y : P) : of I P y = algebraMap P (AdicCompletion I P) y := by

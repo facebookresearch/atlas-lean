@@ -315,19 +315,16 @@ private theorem eq_zero_of_algebraMap_xi_mul_eq_zero (x : AdicCompletion 𝕀 �
   have h : algebraMap 𝔸 𝔹⁺ (xi p) * (show 𝔹⁺ from x) = 0 := hx
   exact (mul_eq_zero.mp h).resolve_left (algebraMap_xi_ne_zero p)
 
-/-- `log [p̃] = log(1 - ξ/p) = -Σ_{n ≥ 1} (ξ/p)ⁿ/n`. -/
+/-- `log [p̃] = log(1 - ξ/p) = -Σ_{n ≥ 1} (ξ/p)ⁿ/n`: the value of `log(1 + X)` at `-ξ/p` is that of
+`log(1 - X)` at `ξ/p`. -/
 private theorem logPTilde_eq_evalPowerSeries :
     logPTilde p = AdicCompletion.evalPowerSeries 𝕀 (xiDivP_mem_ker p)
       (AdicCompletion.logOneSubSeries fun n => algebraMap ℚ_[p] 𝔸ₚ (n : ℚ_[p])⁻¹) := by
+  rw [AdicCompletion.logOneSubSeries_eq_map_rescale_log]
   refine AdicCompletion.evalPowerSeries_eq_of_coeff_mul_pow_eq _ _ _ _ _ fun k => ?_
-  simp only [logSeries, AdicCompletion.logOneSubSeries, PowerSeries.coeff_mk]
-  split_ifs
-  · simp
-  · have h1 : ((-1 : 𝔸ₚ) ^ (k + 1)) * (-1) ^ k = -1 := by
-      rw [← pow_add]
-      exact Odd.neg_one_pow ⟨k, by ring⟩
-    rw [neg_pow]
-    linear_combination (algebraMap ℚ_[p] 𝔸ₚ (k : ℚ_[p])⁻¹ * xiDivP p ^ k) * h1
+  rw [logSeries, PowerSeries.coeff_map, PowerSeries.coeff_map, PowerSeries.coeff_rescale, map_mul,
+    map_pow, map_neg, map_one, neg_pow (xiDivP p)]
+  ring
 
 /-- **Fontaine's Lemme 4.3.1, for `B_max`**: `log [p̃]` is not in the fraction field of `B_max`
 inside `B_dR`: if `a, b ∈ B_max` and `a ≠ 0`, then `a · log [p̃] ≠ b`. -/
