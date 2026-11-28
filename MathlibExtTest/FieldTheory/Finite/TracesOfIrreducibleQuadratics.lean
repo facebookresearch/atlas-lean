@@ -37,7 +37,7 @@ example : (2 : ZMod 5) ∉ tracesOfIrreducibleQuadratics (ZMod 5) := by
   rw [mem_tracesOfIrreducibleQuadratics_iff]
   decide
 
-/-- $U_7 = \{3, 4, 5\}$ up to the symmetry $s \mapsto -s$: $3 \in U_7$ and $-3 = 4 \in U_7$. -/
+/-- $3 \in U_7$ and $-3 = 4 \in U_7$. -/
 example : (3 : ZMod 7) ∈ tracesOfIrreducibleQuadratics (ZMod 7) ∧
     (4 : ZMod 7) ∈ tracesOfIrreducibleQuadratics (ZMod 7) := by
   have h3 : (3 : ZMod 7) ∈ tracesOfIrreducibleQuadratics (ZMod 7) :=
