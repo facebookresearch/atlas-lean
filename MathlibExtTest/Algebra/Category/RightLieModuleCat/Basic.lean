@@ -41,12 +41,16 @@ example : right.action x y 0 0 = (-1 : R) ∧ right.action x y ≠ 0 := by
   intro hz
   have h' := congrArg (fun a : Mat => a 0 0) hz
   rw [h] at h'
+  change (-1 : R) = 0 at h'
   norm_num at h'
 
 example : (⁅x, (y : RightLieModuleCat.toLeft right)⁆ :
     RightLieModuleCat.toLeft right) 0 0 = 1 := by
-  rw [RightLieModuleCat.toLeft_lie, RightLieModuleCat.fromLeft_action]
-  simpa only [neg_neg] using commutator_00
+  have hleft := RightLieModuleCat.toLeft_lie right x y
+  have hright := congrArg (fun a : Mat => -a)
+    (RightLieModuleCat.fromLeft_action adjoint x y)
+  have restored := hleft.trans (hright.trans (neg_neg (⁅x, y⁆ : Mat)))
+  exact (congrArg (fun a : Mat => a 0 0) restored).trans commutator_00
 
 example :
     ((RightLieModuleCat.equivalence (R := R) (L := Mat)).unitIso.hom.app right).toLinearMap
