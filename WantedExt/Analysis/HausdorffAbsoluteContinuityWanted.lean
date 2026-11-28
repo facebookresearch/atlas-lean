@@ -50,16 +50,13 @@ namespace Analysis.HausdorffAbsoluteContinuity
 /-!
 # Hausdorff moment problem: absolute-continuity criterion
 
-`hausdorff_absolute_continuity`: a positive probability measure `μ` on the unit
-cube is uniformly absolutely continuous with respect to Lebesgue measure iff its
-moment differences are dominated by those of Lebesgue measure. This is the third
-statement of §115 of the Knill survey (the moment realizability and positivity
-criteria are the companion lean-eval problems). The trusted helpers (`cube`,
-`monomial`, `momentOf`, `multiChoose`, `diff`, `UniformlyAbsolutelyContinuous`)
-are non-holes. Mathlib has `SignedMeasure`, finite measures, and set integrals
-but no moment-problem machinery.
+This module re-exports `hausdorff_absolute_continuity` and `UniformlyAbsolutelyContinuous`
+from `MathlibExt.Analysis.HausdorffAbsoluteContinuity`. The theorem is stated with the
+shared definitions from `MathlibExt.Analysis.HausdorffMoments`.
 
-Category-(b) candidate from §115 of the Knill survey (additional statement 2).
+The five definitions below (`cube`, `monomial`, `momentOf`, `multiChoose`, and `diff`) are
+the original lean-eval helpers. They duplicate the corresponding shared definitions and are
+not used by the re-exported theorem.
 -/
 
 open MeasureTheory
