@@ -1,8 +1,8 @@
 # Temperature, pH and pMg derivatives of the standard transformed Gibbs energy of a reactant
 
-Differentiating the standard transformed Gibbs energy of a reactant in pH gives its average number of bound hydrogen atoms, and differentiating in temperature gives its transformed entropy and enthalpy. When pMg is also specified, the mixed derivatives give the reciprocal effect: the pMg-dependence of hydrogen binding equals the pH-dependence of magnesium binding.
+Differentiating the standard transformed Gibbs energy of a reactant in pH gives its average number of bound hydrogen atoms, and differentiating in temperature gives its transformed entropy and enthalpy. The mixed derivatives in pH and pMg give the reciprocal effect: the pMg-dependence of hydrogen binding equals the pH-dependence of magnesium binding.
 
-**Setting.** Let $J_i$ be a pseudoisomer group at fixed $P$ and $I$, as in [the standard transformed Gibbs energy of a pseudoisomer group](standard-transformed-gibbs-energy-of-a-reactant.md), with fractions $r_j$. Assume that the standard Gibbs energies of formation $\Delta_fG_j^\circ(T)$ of its species and $\Delta_fG^\circ(\mathrm{H^+})(T)$ are twice continuously differentiable on an open interval of temperatures $T>0$. Write $g_i(T,\mathrm{pH})=\Delta_fG_i'^\circ$ on that interval times $\mathbb R$, and set
+**Setting.** Let $J_i$ be a pseudoisomer group at fixed $P$, $I$ and pMg, as in [the standard transformed Gibbs energy of a pseudoisomer group](standard-transformed-gibbs-energy-of-a-reactant.md), with fractions $r_j$. Its species energies are those of the [species page](standard-transformed-gibbs-energy-of-a-species.md). Assume that the standard Gibbs energies of formation $\Delta_fG_j^\circ(T)$ of its species, $\Delta_fG^\circ(\mathrm{H^+})(T)$ and $\Delta_fG^\circ(\mathrm{Mg^{2+}})(T)$ are twice continuously differentiable on an open interval of temperatures $T>0$. Write $g_i(T,\mathrm{pH})=\Delta_fG_i'^\circ$ at the fixed pMg, on that interval times $\mathbb R$, and set
 
 $$
 \bar N_{\mathrm H}(i)=\sum_{j\in J_i}r_jN_{\mathrm H}(j),
@@ -12,7 +12,7 @@ $$
 \Delta_fS_i'^\circ=-\frac{\partial g_i}{\partial T},\qquad \Delta_fH_i'^\circ=-T^2\frac{\partial(g_i/T)}{\partial T},\qquad \Delta_fH_j'^\circ=-T^2\frac{\partial(\Delta_fG_j'^\circ/T)}{\partial T},
 $$
 
-with $T$-derivatives at fixed pH and $I$.
+with $T$-derivatives at fixed pH, pMg and $I$.
 
 **Statement.** The function $g_i$ is twice continuously differentiable, and:
 
@@ -34,7 +34,7 @@ with $T$-derivatives at fixed pH and $I$.
     \frac{\partial\Delta_fH_i'^\circ}{\partial\,\mathrm{pH}}=-RT^2\ln(10)\frac{\partial\bar N_{\mathrm H}(i)}{\partial T},\qquad -\frac{\partial\Delta_fS_i'^\circ}{\partial\,\mathrm{pH}}=R\ln(10)\frac{\partial\bigl(T\bar N_{\mathrm H}(i)\bigr)}{\partial T};
     $$
 
-4. (reciprocal effect) if pMg is also specified, with the species energies of the magnesium extension of the [species page](standard-transformed-gibbs-energy-of-a-species.md), $g_i=g_i(T,\mathrm{pH},\mathrm{pMg})$ on the interval times $\mathbb R^2$ and $\bar N_{\mathrm{Mg}}(i)=\sum_{j\in J_i}r_jN_{\mathrm{Mg}}(j)$, then, the first derivative at fixed pH and the second at fixed pMg,
+4. (reciprocal effect) with $g_i=g_i(T,\mathrm{pH},\mathrm{pMg})$ regarded as a function on the interval times $\mathbb R^2$ and $\bar N_{\mathrm{Mg}}(i)=\sum_{j\in J_i}r_jN_{\mathrm{Mg}}(j)$, then, the first derivative at fixed pH and the second at fixed pMg,
 
     $$
     \frac{\partial\bar N_{\mathrm H}(i)}{\partial\,\mathrm{pMg}}=\frac{\partial\bar N_{\mathrm{Mg}}(i)}{\partial\,\mathrm{pH}}.
@@ -44,7 +44,7 @@ The source prints the entropy relation in part 3 with $\partial/\partial T$ on t
 
 ## Derived extensions
 
-These statements are not printed in the source; each is proved here and used in the proof of the main statement.
+These statements are not printed in the source, and each is proved here. Only the magnesium-binding extension is used in the main proof, for part 4.
 
 **Magnesium binding.** In the setting of part 4, $\partial g_i/\partial\,\mathrm{pMg}=RT\ln(10)\,\bar N_{\mathrm{Mg}}(i)$. *Proof.* As for part 1, with $\partial\Delta_fG_j'^\circ/\partial\,\mathrm{pMg}=RT\ln(10)N_{\mathrm{Mg}}(j)$.
 
@@ -56,7 +56,7 @@ $$
 
 *Proof.* Since $\ln r_j=(g_i-\Delta_fG_j'^\circ)/RT$, the pMg-extension of part 1 gives $\partial\ln r_j/\partial\,\mathrm{pMg}=-\ln(10)(N_{\mathrm{Mg}}(j)-\bar N_{\mathrm{Mg}}(i))$, and differentiating $\bar N_{\mathrm H}(i)=\sum_jr_jN_{\mathrm H}(j)$ gives the covariance; exchanging the two counts gives the other side.
 
-**Species transformed enthalpy.** With $\Delta_fH^\circ=-T^2\,\partial(\Delta_fG^\circ/T)/\partial T$ for each untransformed standard energy, $\Delta_fH_j'^\circ=\Delta_fH_j^\circ-N_{\mathrm H}(j)\Delta_fH^\circ(\mathrm{H^+})$, independent of pH (with the magnesium extension, also $-N_{\mathrm{Mg}}(j)\Delta_fH^\circ(\mathrm{Mg^{2+}})$, independent of pMg). *Proof.* The term $N_{\mathrm H}(j)R\ln(10)\,\mathrm{pH}$ of $\Delta_fG_j'^\circ/T$ does not depend on $T$, and the other terms are linear in the untransformed standard energies.
+**Species transformed enthalpy.** With $\Delta_fH^\circ=-T^2\,\partial(\Delta_fG^\circ/T)/\partial T$ for each untransformed standard energy, $\Delta_fH_j'^\circ=\Delta_fH_j^\circ-N_{\mathrm H}(j)\Delta_fH^\circ(\mathrm{H^+})-N_{\mathrm{Mg}}(j)\Delta_fH^\circ(\mathrm{Mg^{2+}})$, independent of pH and pMg. *Proof.* The terms $N_{\mathrm H}(j)R\ln(10)\,\mathrm{pH}$ and $N_{\mathrm{Mg}}(j)R\ln(10)\,\mathrm{pMg}$ of $\Delta_fG_j'^\circ/T$ do not depend on $T$, and the other terms are linear in the untransformed standard energies.
 
 ## Depends on
 

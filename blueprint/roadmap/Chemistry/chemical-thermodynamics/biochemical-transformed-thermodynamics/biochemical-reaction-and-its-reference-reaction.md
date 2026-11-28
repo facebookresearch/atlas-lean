@@ -34,7 +34,7 @@ Consequently:
 
 ## Derived extensions
 
-These statements generalize the theorem. They are not printed in the source, and each is proved here.
+These statements generalize the theorem. They are not printed in the source, and each is proved here. The general reference identity is also used in the proof of consequence 2.
 
 **General reference reaction.** Let $\nu'$ be any biochemical reaction at specified pH, with pMg not specified, whose non-water reactants are pseudoisomer groups $J_i$ differing only in hydrogen count, with fractions $r_j=\exp((\Delta_fG_i'^\circ-\Delta_fG_j'^\circ)/RT)$ built from the [species energies](standard-transformed-gibbs-energy-of-a-species.md) (water is a one-species group with $r=1$). Choose representatives $j(i)\in J_i$, let $n_{\mathrm H}=-\sum_i\nu_i'N_{\mathrm H}(j(i))$, and let $\Delta_rG^\circ_{\mathrm{ref}}=\sum_i\nu_i'\Delta_fG^\circ_{j(i)}+n_{\mathrm H}\Delta_fG^\circ(\mathrm{H^+})$ and $K_{\mathrm{ref}}=\exp(-\Delta_rG^\circ_{\mathrm{ref}}/RT)$ for the reference reaction $\sum_i\nu_i'\mathrm B_{j(i)}+n_{\mathrm H}\mathrm{H^+}=0$. Then
 
@@ -44,11 +44,11 @@ $$
 
 *Proof.* By the definition of the species energies, $\sum_i\nu_i'\Delta_fG'^\circ_{j(i)}=\Delta_rG^\circ_{\mathrm{ref}}-n_{\mathrm H}RT\ln(10)\,\mathrm{pH}$. The fraction formula gives $\Delta_fG_i'^\circ=\Delta_fG'^\circ_{j(i)}+RT\ln r_{j(i)}$. Sum with weights $\nu_i'$, divide by $-RT$ and exponentiate.
 
-**Equal reaction Gibbs energies.** In that setting, at pseudoisomer equilibrium with concentrations $[\mathrm B_j]>0$, $\Delta_rG_{\mathrm{ref}}=\sum_i\nu_i'(\Delta_fG^\circ_{j(i)}+RT\ln[\mathrm B_{j(i)}])+n_{\mathrm H}\mu(\mathrm{H^+})$ equals $\Delta_rG'$. *Proof.* Substituting $n_{\mathrm H}$ gives $\sum_i\nu_i'\Delta_fG'_{j(i)}$, and pseudoisomer equilibrium gives $\Delta_fG'_{j(i)}=\Delta_fG_i'$.
+**Equal reaction Gibbs energies.** In that setting, at pseudoisomer equilibrium with solute concentrations $[\mathrm B_j]>0$, let $\Delta_fG_j=\Delta_fG_j^\circ+RT\ln[\mathrm B_j]$ for each solute species and $\Delta_fG(\mathrm{H_2O})=\Delta_fG^\circ(\mathrm{H_2O})$ for solvent water, which in the pure-solvent convention has activity $1$ and no concentration term. Then $\Delta_rG_{\mathrm{ref}}=\sum_i\nu_i'\Delta_fG_{j(i)}+n_{\mathrm H}\mu(\mathrm{H^+})$ equals $\Delta_rG'$. *Proof.* Substituting $n_{\mathrm H}$ gives $\sum_i\nu_i'\Delta_fG'_{j(i)}$ with $\Delta_fG'_j=\Delta_fG_j-N_{\mathrm H}(j)\mu(\mathrm{H^+})$. Pseudoisomer equilibrium gives $\Delta_fG'_{j(i)}=\Delta_fG_i'$ for each solute reactant, and for water $\Delta_fG'(\mathrm{H_2O})=\Delta_fG^\circ(\mathrm{H_2O})-2\mu(\mathrm{H^+})=\Delta_fG'^\circ(\mathrm{H_2O})$, the term the apparent-constant page uses. Writing $RT\ln[\mathrm{H_2O}]$ for water instead would shift the left side by $\nu'_{\mathrm{H_2O}}RT\ln[\mathrm{H_2O}]$, about $10\ \mathrm{kJ\,mol^{-1}}$ at $298.15\ \mathrm K$ for $[\mathrm{H_2O}]\approx55.3$.
 
 **Choice of representatives.** $K'$ does not depend on the representatives, while $K_{\mathrm{ref}}$, $n_{\mathrm H}$ and the product of fractions in general do. This makes precise the source's remark that the reference reaction is arbitrary and $n$ has no mechanistic significance. *Proof.* $K'$ is defined from $\Delta_rG'^\circ$ alone, and two representatives of one group with different hydrogen counts give different $n_{\mathrm H}$.
 
-**Magnesium factor.** If pMg is also specified and the species energies carry the magnesium terms of the species page's derived extension, add $n_{\mathrm{Mg}}=-\sum_i\nu_i'N_{\mathrm{Mg}}(j(i))$ magnesium ions to the reference reaction and $n_{\mathrm{Mg}}\Delta_fG^\circ(\mathrm{Mg^{2+}})$ to $\Delta_rG^\circ_{\mathrm{ref}}$. Then $K'=K_{\mathrm{ref}}\,10^{\,n_{\mathrm H}\mathrm{pH}+n_{\mathrm{Mg}}\mathrm{pMg}}\prod_ir_{j(i)}^{-\nu_i'}$. *Proof.* The proof of the general identity, with the magnesium term carried along.
+**Magnesium factor.** If pMg is also specified, the groups may also differ in magnesium count and the species energies carry their magnesium terms. Add $n_{\mathrm{Mg}}=-\sum_i\nu_i'N_{\mathrm{Mg}}(j(i))$ magnesium ions to the reference reaction and $n_{\mathrm{Mg}}\Delta_fG^\circ(\mathrm{Mg^{2+}})$ to $\Delta_rG^\circ_{\mathrm{ref}}$. Then $K'=K_{\mathrm{ref}}\,10^{\,n_{\mathrm H}\mathrm{pH}+n_{\mathrm{Mg}}\mathrm{pMg}}\prod_ir_{j(i)}^{-\nu_i'}$. *Proof.* The proof of the general identity, with the magnesium term carried along.
 
 ## Depends on
 
@@ -72,7 +72,7 @@ $$
 K=\frac{r(\mathrm{ADP^{3-}})\,r(\mathrm{HPO_4^{2-}})}{r(\mathrm{ATP^{4-}})}\,K'\,[\mathrm{H^+}],
 $$
 
-and $[\mathrm{H^+}]=10^{-\mathrm{pH}}$. All quantities are positive, so the identity can be solved for $K'$, and consequence 1 takes $\log_{10}$. Consequence 2 uses the fraction formula of the pseudoisomer-group page, whose standard transformed energies depend on $T$, $I$ and pH. Consequence 3 takes $-RT\ln$ of the theorem. Element balance of the reference reaction uses the formulas $\mathrm{C_{10}H_{12}N_5O_{13}P_3^{4-}}$, $\mathrm{C_{10}H_{12}N_5O_{10}P_2^{3-}}$, $\mathrm{HPO_4^{2-}}$ and $\mathrm{H_2O}$.
+and $[\mathrm{H^+}]=10^{-\mathrm{pH}}$. All quantities are positive, so the identity can be solved for $K'$, and consequence 1 takes $\log_{10}$. For consequence 2, at equilibrium the concentration fractions are the fractions of the pseudoisomer-group page, which depend only on $T$, $I$ and pH, and $K'$ is the equilibrium value of the biochemical reaction quotient. The general reference identity below, with representatives $\mathrm{ATP^{4-}}$, $\mathrm{H_2O}$, $\mathrm{ADP^{3-}}$ and $\mathrm{HPO_4^{2-}}$, so that $n_{\mathrm H}=1$, gives $K'=K_{\mathrm{ref}}\,10^{\mathrm{pH}}\,r(\mathrm{ATP^{4-}})/(r(\mathrm{ADP^{3-}})\,r(\mathrm{HPO_4^{2-}}))$. Comparing with the theorem gives $K=K_{\mathrm{ref}}=\exp(-\Delta_rG^\circ_{\mathrm{ref}}/RT)$, which depends only on $T$ and $I$ through the standard Gibbs energies of formation of the species; so $K'$ depends only on $T$, $I$ and pH. Consequence 3 takes $-RT\ln$ of the theorem. Element balance of the reference reaction uses the formulas $\mathrm{C_{10}H_{12}N_5O_{13}P_3^{4-}}$, $\mathrm{C_{10}H_{12}N_5O_{10}P_2^{3-}}$, $\mathrm{HPO_4^{2-}}$ and $\mathrm{H_2O}$.
 
 ## Sources
 
