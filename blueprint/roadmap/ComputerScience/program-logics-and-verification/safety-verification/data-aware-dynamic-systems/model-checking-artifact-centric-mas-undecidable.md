@@ -6,6 +6,8 @@ Artifact-centric multi-agent systems describe agents and an environment whose lo
 
 **Theorem (Belardinelli, Lomuscio and Patrizi).** The model checking problem for artifact-centric multi-agent systems with respect to FO-CTLK is undecidable.
 
+An AC-MAS over an infinite domain is an infinite object, and the source does not fix how one is given to an algorithm. The statement proved is about the systems its reduction builds: from a Turing machine $T$ and an input $I$ one effectively constructs an AC-MAS $P_{T,I}$, and with an FO-CTLK formula $\varphi$ expressing termination, $P_{T,I}$ satisfies $\varphi$ exactly when $T$ halts on $I$ (proof sketch of Theorem 2.11, following Theorem 4.10 of Deutsch, Sui and Vianu). So no algorithm decides model checking for the systems so constructed, given by $(T, I)$.
+
 When $U$ is finite the system is finite-state and the problem is decidable; the same paper identifies bounded and uniform systems, and a syntactic class of artifact-centric programs, for which model checking reduces to the finite-state case.
 
 ## Depends on

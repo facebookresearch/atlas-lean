@@ -7,7 +7,7 @@ Whether a database-manipulating system can ever make a given proposition true is
 1. DMSs whose schema contains a binary relation, even when all guards are unions of conjunctive queries (the construction uses one binary and three unary relations besides propositions);
 2. DMSs whose schema consists of two unary relations besides propositions, with first-order guards.
 
-Consequently, model checking DMSs against the source's monadic second-order specification language is undecidable.
+Both cases reduce from control-state reachability of two-counter Minsky machines (Appendix D of the source). Consequently, model checking DMSs against the source's monadic second-order specification language is undecidable.
 
 ## Depends on
 
