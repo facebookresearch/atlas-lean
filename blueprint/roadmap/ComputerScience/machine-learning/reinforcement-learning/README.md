@@ -27,6 +27,8 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [AIXI is incomputable, and its optimal policies are arithmetically hard](aixi-is-incomputable-and-arithmetically-hard.md)
 
 
+- [PAC exploration and generative planning](pac-and-generative-planning/README.md)
+
 - [Preference and group-relative policy optimization](preference-and-group-relative-optimization/README.md)
 
 ## Related topics
