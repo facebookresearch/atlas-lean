@@ -70,8 +70,9 @@ def edgeClass (i : GraphThicknessInstance) (f : Fin i.2.1.length → Fin i.2.2) 
     List (ℕ × ℕ) :=
   ((List.finRange i.2.1.length).filter fun e => f e = c).map i.2.1.get
 
-/-- The edges can be partitioned into `K` classes, each spanning a planar subgraph
-`(V, Eᵢ)`. -/
+/-- Each position of the edge list can be assigned to one of `K` possibly empty layers so that the
+graph on `Fin n` of each layer's entries is planar; that graph drops loops and out-of-range
+pairs, and repeated or reversed pairs give one edge. -/
 def GraphThicknessFeasible (i : GraphThicknessInstance) : Prop :=
   ∃ f : Fin i.2.1.length → Fin i.2.2, ∀ c,
     (Cslib.Complexity.Karp.edgeGraph i.1 (edgeClass i f c)).IsPlanar

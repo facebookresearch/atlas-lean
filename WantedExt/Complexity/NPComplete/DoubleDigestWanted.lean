@@ -103,8 +103,9 @@ noncomputable def doubleDigestDec :
   | some i => decide (WellFormed i ∧ DoubleDigestFeasible i)
   | none => false
 
-/-- **DOUBLE DIGEST is NP-complete.** Source: Goldstein and Waterman (1987); Kao, Samet and Sung
-(2001); Cieliebak, Eidenbenz and Woeginger (2003). -/
+/-- **DOUBLE DIGEST is NP-complete.** Source: Cieliebak, Eidenbenz and Woeginger (2003), for
+this variant with no coincident internal cuts; Goldstein and Waterman (1987), Section 4, for the
+variant allowing coincident cuts; Kao, Samet and Sung (2001). -/
 public theorem_wanted doubleDigest_npComplete :
     doubleDigestDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

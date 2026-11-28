@@ -86,7 +86,8 @@ noncomputable def hourGlassDec :
   | some i => decide (WellFormed i ∧ HourGlassFeasible i)
   | none => false
 
-/-- **THE HOUR-GLASS is NP-complete.** Source: Petersen (2015), Theorem 2. -/
+/-- **THE HOUR-GLASS is NP-complete.** Source: Petersen (2015), Theorem 2, an unrefereed
+preprint. -/
 public theorem_wanted hourGlass_npComplete :
     hourGlassDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

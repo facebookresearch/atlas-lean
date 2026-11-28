@@ -78,7 +78,9 @@ def label (i : DosunFuwariInstance) (p : Fin (rows i) × Fin (cols i)) : ℕ :=
 abbrev grid (h w : ℕ) : SimpleGraph (Fin h × Fin w) :=
   SimpleGraph.pathGraph h □ SimpleGraph.pathGraph w
 
-/-- The grid edges between cells with the same entry. -/
+/-- The grid edges between cells with the same entry, `0` included; its components are maximal
+connected same-label sets. Feasibility counts objects per positive label; only for well-formed
+grids, where each label's cells are mutually reachable, are the positive components the rooms. -/
 def roomGraph (i : DosunFuwariInstance) : SimpleGraph (Fin (rows i) × Fin (cols i)) :=
   grid (rows i) (cols i) ⊓ SimpleGraph.fromRel fun p q => label i p = label i q
 

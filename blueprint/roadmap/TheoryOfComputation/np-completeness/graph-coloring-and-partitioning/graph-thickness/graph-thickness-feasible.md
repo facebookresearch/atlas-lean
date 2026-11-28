@@ -1,0 +1,3 @@
+# Feasible GRAPH THICKNESS instances
+
+An instance $(n, E, K)$ is feasible when each **position** of the list $E$ can be assigned to one of $K$ possibly empty layers so that, for every layer, the graph on the vertices $0, \dots, n-1$ formed from the entries assigned to it is planar. That graph discards loops and pairs with an endpoint out of range, and a repeated or reversed pair gives a single edge. For example, with $n = 1$ and all ten pairs among the labels $1, \dots, 5$, the list looks like $K_5$, but each tested graph is a single isolated vertex. On validated input (a simple edge list) this is the usual condition: the edges split into at most $K$ planar layers, not every layer being used.

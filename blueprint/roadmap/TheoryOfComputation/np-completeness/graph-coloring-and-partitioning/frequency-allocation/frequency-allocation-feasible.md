@@ -1,0 +1,3 @@
+# Feasible FREQUENCY ALLOCATION instances
+
+A FREQUENCY ALLOCATION instance with $n$ nodes, frequency lists $L(u)$, bounds $M_u$ and target $K$ is feasible when some allocation $S$ assigns every node $u < n$ a list $S(u)$ of distinct frequencies from $L(u)$ with $1 \le |S(u)| \le M_u$, gives the two ends of every listed edge disjoint lists, and has total size $\sum_u |S(u)| \ge K$ (the stability number). A list $L(u)$ or a bound $M_u$ missing from the instance is read as empty or as $0$, so such a node admits no allocation; a [well-formed](well-formed.md) instance lists both for every node. Independently, a listed edge with an endpoint at least $n$ reads that endpoint's allocation as empty, so the disjointness test for that edge holds.

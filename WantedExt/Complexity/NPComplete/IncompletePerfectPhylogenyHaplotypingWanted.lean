@@ -80,8 +80,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `m` of sites and the genotypes, each a list of `m` entries in
-`{0, 1, 2, 3}` (`3` stands for the missing entry `?`). -/
+/-- An instance: the number `m` of sites and the genotypes, each a list of naturals (`3` stands
+for the missing entry `?`); that each has `m` entries in `{0, 1, 2, 3}` is checked by
+`WellFormed`. -/
 abbrev IncompletePerfectPhylogenyHaplotypingInstance := ℕ × List (List ℕ)
 
 /-- Well-formedness of an instance: there is at least one genotype, and every genotype has `m`
@@ -95,8 +96,11 @@ def Completes (g g' : List ℕ) : Prop :=
   g'.length = g.length ∧ (∀ x ∈ g', x ≤ 2) ∧
     ∀ k < g.length, g.getD k 0 ≠ 3 → g'.getD k 0 = g.getD k 0
 
-/-- Some completion `c` of the genotypes has an expansion `H` (two haplotypes `H (j, false)`
-and `H (j, true)` explaining each completed genotype `c j`) that admits a perfect phylogeny. -/
+/-- Some completion `c` of the genotypes has an expansion `H` (two haplotypes `H (j, false)` and
+`H (j, true)` explaining each completed genotype `c j`) that admits an unrooted binary perfect
+phylogeny whose leaves are the indexed haplotypes `(j, b)`, two per genotype: every nonconstant
+site changes on exactly one edge, constant sites impose nothing, and an edge need not carry a
+site, so equal haplotypes may sit at distinct leaves. -/
 def IncompletePerfectPhylogenyHaplotypingFeasible
     (i : IncompletePerfectPhylogenyHaplotypingInstance) : Prop :=
   ∃ c : Fin i.2.length → List ℕ, ∃ H : Fin i.2.length × Bool → Fin i.1 → Bool,

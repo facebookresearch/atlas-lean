@@ -81,8 +81,8 @@ positive. -/
 def WellFormed (i : GeometricConnectedDominatingSetInstance) : Prop :=
   (i.1.map point).Nodup ∧ 0 < i.2.1 ∧ 0 < i.2.2
 
-/-- Some subset `P' ⊆ P` of at most `K` points dominates the distance-`B` graph, and the
-subgraph it induces is connected. -/
+/-- Some set of at most `K` positions of `P` dominates the distance-`B` graph on the positions,
+and the subgraph it induces is connected. -/
 def GeometricConnectedDominatingSetFeasible (i : GeometricConnectedDominatingSetInstance) :
     Prop :=
   ∃ P' : Finset (Fin i.1.length), P'.card ≤ i.2.2 ∧ (Graph i).IsDominating ↑P' ∧

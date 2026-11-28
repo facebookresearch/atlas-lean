@@ -103,9 +103,11 @@ def WellFormed (i : GeneralizedSteinerNetworkInstance) : Prop :=
     (i.2.2.1.map fun q => (q.1, q.2.1)).Nodup ∧
     (∀ q ∈ i.2.2.1, q.1 < i.1 ∧ q.2.1 < i.1 ∧ q.1 ≠ q.2.1) ∧ 0 < i.2.2.2
 
-/-- Some `f` within the capacities and of cost at most `K` meets every requirement: for each
-listed `(a, b, r)` there are `r` paths from `a` to `b` in `G` such that every edge `e` lies on
-at most `f(e)` of them. -/
+/-- Some purchase `f k` for each position `k` of the edge list, within that entry's capacity and
+of total weighted cost at most `K`, meets every requirement: for each listed `(a, b, r)` with
+both endpoints in range there is an indexed family of `r` paths from `a` to `b`, not
+necessarily distinct, such that for each position `k` at most `f k` of them use the unordered
+pair at position `k`. -/
 def GeneralizedSteinerNetworkFeasible (i : GeneralizedSteinerNetworkInstance) : Prop :=
   ∃ f : Fin i.2.1.length → ℕ,
     (∀ k, f k ≤ (i.2.1.get k).2.2.2) ∧

@@ -82,7 +82,7 @@ reduction from every language in `NP`
 `[vᵢ(0), …, vᵢ(m - 1)]`), and the revenue bound `R`. -/
 abbrev EnvyFreePricingInstance := ℕ × List (List ℕ) × ℕ
 
-/-- Well-formedness of an instance: every consumer values each of the `m` items. -/
+/-- Well-formedness of an instance: every consumer's valuation row has exactly `m` entries. -/
 def WellFormed (i : EnvyFreePricingInstance) : Prop :=
   ∀ v ∈ i.2.1, v.length = i.1
 

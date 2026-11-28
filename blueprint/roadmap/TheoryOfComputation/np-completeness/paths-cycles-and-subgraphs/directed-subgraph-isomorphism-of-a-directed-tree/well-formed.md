@@ -1,0 +1,3 @@
+# Well-formed DIRECTED SUBGRAPH ISOMORPHISM (G acyclic, H a directed tree) instances
+
+An instance of DIRECTED SUBGRAPH ISOMORPHISM (G acyclic, H a directed tree) is well-formed when both the host and the pattern arc lists are [arc lists](is-arc-list.md) on their vertex sets: no repeated ordered pair, unequal endpoints, and both endpoints in the respective range. Two copies of $(0, 1)$ describe the same acyclic relation as one copy but fail this test. In addition $G$ is acyclic (a permutation of its vertices along which every arc goes forward), and $H$ is a directed tree (no antiparallel arcs, and the underlying undirected graph is a tree).

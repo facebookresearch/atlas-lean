@@ -1,6 +1,7 @@
 # Macro data compression
 
 - [Instances of macro data compression with a fixed pointer cost](external-macro-data-compression-fixed-po.md)
+- [Inserting a fixed pointer cost](with-cost.md)
 - [The EXTERNAL MACRO DATA COMPRESSION decision problem with a fixed pointer cost](external-macro-data-compression-fixed-po-2.md)
 - [EXTERNAL MACRO DATA COMPRESSION with a fixed pointer cost $h \ge 2$ is NP-complete](external-macro-data-compression-fixed-po-3.md)
 - [Instances of macro data compression](external-macro-data-compression-instance.md)

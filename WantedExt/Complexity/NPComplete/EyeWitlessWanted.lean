@@ -140,7 +140,7 @@ noncomputable def eyeWitlessDec :
   | some i => decide (WellFormed i ∧ EyeWitlessFeasible i)
   | none => false
 
-/-- **EYE-WITLESS is NP-complete.** Source: Tang (2020), Section 3.1. -/
+/-- **EYE-WITLESS is NP-complete.** Source: Tang (2020), Section 3.1, an unrefereed preprint. -/
 public theorem_wanted eyeWitless_npComplete :
     eyeWitlessDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

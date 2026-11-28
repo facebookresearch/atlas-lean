@@ -140,7 +140,8 @@ noncomputable def hotaruBeamDec :
   | some i => decide (WellFormed i ∧ HotaruBeamFeasible i)
   | none => false
 
-/-- **HOTARU BEAM is NP-complete.** Source: Otsuji, Fulla and Fukunaga (2026), Theorem 1. -/
+/-- **HOTARU BEAM is NP-complete.** Source: Otsuji, Fulla and Fukunaga, COCOON 2024 (LNCS,
+2025), pp. 239-251, Theorem 1. -/
 public theorem_wanted hotaruBeam_npComplete :
     hotaruBeamDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

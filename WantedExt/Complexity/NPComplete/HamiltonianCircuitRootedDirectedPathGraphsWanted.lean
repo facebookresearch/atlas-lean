@@ -91,8 +91,10 @@ noncomputable def hamiltonianCircuitRootedDirectedPathGraphsDec :
   | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
   | none => false
 
-/-- **HAMILTONIAN CIRCUIT for rooted directed path graphs is NP-complete.** Source: Panda and
-Pradhan (2008); Johnson (1985), Table 1; de Figueiredo, de Melo, Sasaki and Silva (2022). -/
+/-- **HAMILTONIAN CIRCUIT for rooted directed path graphs is NP-complete.** Claimed by Panda and
+Pradhan (2008); Bergougnoux and Jaffke (IPEC 2025, §2.1) give a counterexample to that
+reduction, so this statement currently has no accepted proof. See also Johnson (1985), Table 1;
+de Figueiredo, de Melo, Sasaki and Silva (2022). -/
 public theorem_wanted hamiltonianCircuitRootedDirectedPathGraphs_npComplete :
     hamiltonianCircuitRootedDirectedPathGraphsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

@@ -1,0 +1,3 @@
+# Feasible DOMINO TATAMI COVERING instances
+
+The region has a domino tatami covering: some list of dominoes whose flattened list of cells is a permutation of the instance list, so that each listed cell entry is covered once counting multiplicity and nothing else is covered, and every $2 \times 2$ block of cells of the region contains a whole domino of the covering, so no four dominoes meet at a point. Multiplicities matter: for $[(0,0), (1,0), (0,0)]$ the two distinct cells can be tiled by one domino, but three entries cannot be the cells of a list of dominoes. On a well-formed instance, with distinct cells, this says that each cell is covered exactly once.

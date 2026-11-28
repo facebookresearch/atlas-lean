@@ -1,0 +1,3 @@
+# Is Subtree Iso
+
+The subtree-matching test for a map $\varphi$ on the vertices and vertices $u$, $v$, on the raw instance: $\varphi(u) = v$, and for every descendant $w$ of $u$ and each side, every child of $w$ on that side is sent to a child of $\varphi(w)$ on the same side, and $\varphi(w)$ has a child on that side only if $w$ has one. The test does not require $\varphi$ to be a bijection: if $0$ has two left leaves $1$ and $2$, the map fixing $0$ and $1$ and sending $2$ to $1$ passes the test at $(0, 0)$. On a well-formed instance, where the entries describe a binary tree, a map passing the test is an isomorphism of the subtree at $u$ onto the subtree at $v$.

@@ -69,7 +69,8 @@ list. -/
 def Graph (i : FaultDetectionWithTestPointsInstance) : Digraph (Fin i.1) where
   Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2.1
 
-/-- `v` lies on a directed path from `u₁` to `u₂`: `u₁` reaches `v` and `v` reaches `u₂`. -/
+/-- `u₁` reaches `v` and `v` reaches `u₂`, so `v` lies on a directed walk from `u₁` to `u₂`; on
+an acyclic graph that walk is a directed path. -/
 def OnPath (i : FaultDetectionWithTestPointsInstance) (u₁ v u₂ : Fin i.1) : Prop :=
   Relation.ReflTransGen (Graph i).Adj u₁ v ∧ Relation.ReflTransGen (Graph i).Adj v u₂
 
@@ -83,10 +84,9 @@ def WellFormed (i : FaultDetectionWithTestPointsInstance) : Prop :=
     (∃ t : Fin i.1, (t : ℕ) = i.2.2.2.1 ∧ ∀ v, (∀ w, ¬ (Graph i).Adj v w) ↔ v = t) ∧
     0 < i.2.2.2.2
 
-/-- Some set `A'` of at most `K` arcs makes the test set
-`T = ({s} ∪ {tails of A'}) × ({t} ∪ {heads of A'})` locate every single fault: for all distinct
-`v, v' ∉ {s, t}` some `(u₁, u₂) ∈ T` has `v` on a directed path from `u₁` to `u₂` and `v'` on
-no such path. -/
+/-- Some set `A'` of at most `K` arcs makes the test set `T = ({s} ∪ {tails of A'}) × ({t} ∪
+{heads of A'})` locate every single fault: for all distinct `v, v' ∉ {s, t}` some `(u₁, u₂) ∈ T`
+has `OnPath u₁ v u₂` and not `OnPath u₁ v' u₂` (two reachability tests). -/
 def FaultDetectionWithTestPointsFeasible (i : FaultDetectionWithTestPointsInstance) : Prop :=
   ∃ A' : Finset (Fin i.1 × Fin i.1), (∀ a ∈ A', (Graph i).Adj a.1 a.2) ∧ A'.card ≤ i.2.2.2.2 ∧
     ∀ v v' : Fin i.1, (v : ℕ) ≠ i.2.2.1 → (v : ℕ) ≠ i.2.2.2.1 → (v' : ℕ) ≠ i.2.2.1 →

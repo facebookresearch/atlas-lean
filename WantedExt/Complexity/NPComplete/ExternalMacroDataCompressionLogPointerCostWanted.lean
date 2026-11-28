@@ -84,8 +84,9 @@ and `h` and `B` are positive. -/
 def WellFormed (k : ℕ) (i : ExternalMacroDataCompressionLogPointerCostInstance) : Prop :=
   (∀ a ∈ i.1, a < k) ∧ 0 < i.2.1 ∧ 0 < i.2.2
 
-/-- `s` has an external macro compression with pointer cost `⌈h · log₂ |s|⌉` within the bound
-`B`. -/
+/-- For a natural alphabet size `k`, `s` has an external macro compression over the literals
+`0, …, k - 1` within the bound `B` with pointer parameter `c = ⌈h · log₂ |s|⌉`; each pointer
+occurrence is charged `max 1 c` (one symbol plus `c - 1` in ℕ). -/
 def ExternalMacroDataCompressionLogPointerCostFeasible (k : ℕ)
     (i : ExternalMacroDataCompressionLogPointerCostInstance) : Prop :=
   Compresses k i.1 (pointerCost i.1 i.2.1) i.2.2

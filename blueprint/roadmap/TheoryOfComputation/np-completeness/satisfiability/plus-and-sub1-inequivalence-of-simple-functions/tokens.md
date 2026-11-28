@@ -1,0 +1,3 @@
+# Prefix token list of a plus and sub1 expression
+
+For INEQUIVALENCE OF SIMPLE FUNCTIONS with the operators $\mathrm{plus}$ and $\mathrm{sub1}$, an expression is a tree built from variables $x_k$, natural-number constants $c$, $\mathrm{plus}(e, e')$ and $\mathrm{sub1}(e)$. Its prefix token list is $[(0, k)]$ for the variable $x_k$, $[(1, c)]$ for the constant $c$, the token $(2, 0)$ followed by the token lists of $e$ and then $e'$ for $\mathrm{plus}(e, e')$, and the token $(3, 0)$ followed by the token list of $e$ for $\mathrm{sub1}(e)$. Each token fixes the arity of its operator, so the token list determines the expression.

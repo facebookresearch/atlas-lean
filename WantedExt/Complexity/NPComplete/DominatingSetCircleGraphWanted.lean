@@ -53,7 +53,8 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the chords (endpoints `a < b`), one per vertex, and the bound `K`. -/
+/-- An instance: the chords as pairs of endpoint positions, one per vertex, and the bound `K`;
+increasing and distinct endpoints are checked by `WellFormed`. -/
 abbrev DominatingSetCircleGraphInstance := List (ℕ × ℕ) × ℕ
 
 /-- The circle graph of a chord model: two distinct chords are adjacent when their endpoints

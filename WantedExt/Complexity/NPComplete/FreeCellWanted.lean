@@ -104,7 +104,7 @@ def Move (i : FreeCellInstance) (s s' : State) : Prop :=
   ∃ x t, Pickup s x t ∧ Drop i.2.1 i.2.2.1 t x s'
 
 /-- Well-formedness of an instance: the initial tableau has at most `w` piles, every pile is
-non-empty, and every card of the `n`-deck appears exactly once. -/
+non-empty, and the flattened tableau is a permutation of the `n`-deck. -/
 def WellFormed (i : FreeCellInstance) : Prop :=
   i.2.2.2.length ≤ i.2.1 ∧ (∀ p ∈ i.2.2.2, p ≠ []) ∧ i.2.2.2.flatten.Perm (deck i.1)
 

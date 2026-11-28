@@ -8,7 +8,7 @@
 - [Same-color adjacency of a painting](area-graph.md)
 - [Rectangle areas](is-rectangle.md)
 - [Connected area of a cell](area.md)
-- [Well-formed CHOCO BANANA instances](well-formed.md)
+- [Well-formed rectangular grid instances](well-formed.md)
 - [Feasible CHOCO BANANA instances](choco-banana-feasible.md)
 - [CHOCO BANANA as a decision problem](choco-banana-dec.md)
 - [CHOCO BANANA is NP-complete](choco-banana-np-complete.md)

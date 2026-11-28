@@ -1,0 +1,3 @@
+# Feasible GEOMETRIC STEINER TREE instances
+
+An instance consists of a finite set $P \subseteq \mathbb{Z} \times \mathbb{Z}$ of points, given as a list in which repetitions do not matter, and a bound $B$. The weight of an edge between points $(x_1, y_1)$ and $(x_2, y_2)$ is the discretized Euclidean length $\bigl\lceil \sqrt{(x_1 - x_2)^2 + (y_1 - y_2)^2} \bigr\rceil$: each edge length is rounded up to an integer separately, and the weight of a tree is the sum of these rounded edge lengths, not the rounded sum of the raw lengths. The instance is feasible when there are a finite set $Q \subseteq \mathbb{Z} \times \mathbb{Z}$ and a tree $T$ whose vertex set is exactly $P \cup Q$ such that the total weight of the edges of $T$ is at most $B$.

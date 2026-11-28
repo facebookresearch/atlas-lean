@@ -90,7 +90,8 @@ def IsTriangulation (i : FlipDistancePointSetTriangulationInstance)
     (T : SimpleGraph (Fin i.1)) : Prop :=
   Maximal (SegmentsMeetAtEndpoints (pointSet i)) T
 
-/-- `T'` arises from `T` by removing an edge `e` of `T` and adding a different edge `f`. -/
+/-- The raw flip relation: the edge set of `T'` is `(E \ {e}) ∪ {f}` for an edge `e` of `T` and
+some `f ≠ e`; if `f` is already an edge this merely removes `e`. -/
 def IsFlip {n : ℕ} (T T' : SimpleGraph (Fin n)) : Prop :=
   ∃ e ∈ T.edgeSet, ∃ f, f ≠ e ∧ T'.edgeSet = insert f (T.edgeSet \ {e})
 
@@ -100,11 +101,13 @@ def flipGraph (i : FlipDistancePointSetTriangulationInstance) :
     SimpleGraph (SimpleGraph (Fin i.1)) :=
   SimpleGraph.fromRel fun T T' => IsTriangulation i T ∧ IsTriangulation i T' ∧ IsFlip T T'
 
-/-- The triangulation `T₁` of the instance. -/
+/-- The first candidate graph `T₁` of the instance; `WellFormed` checks that it is a
+triangulation. -/
 def T₁ (i : FlipDistancePointSetTriangulationInstance) : SimpleGraph (Fin i.1) :=
   Cslib.Complexity.Karp.edgeGraph i.1 i.2.2.1
 
-/-- The triangulation `T₂` of the instance. -/
+/-- The second candidate graph `T₂` of the instance; `WellFormed` checks that it is a
+triangulation. -/
 def T₂ (i : FlipDistancePointSetTriangulationInstance) : SimpleGraph (Fin i.1) :=
   Cslib.Complexity.Karp.edgeGraph i.1 i.2.2.2.1
 

@@ -1,0 +1,3 @@
+# Feasible DOSUN-FUWARI instances
+
+A DOSUN-FUWARI instance is feasible when some placement of balloons and iron balls satisfies the rules: objects sit in distinct in-grid cells with a positive label; for each occurring positive label, the in-grid cells with that label together hold exactly one balloon and exactly one iron ball; every balloon is in the top row or right under a black cell or a balloon; and every iron ball is in the bottom row or right over a black cell or an iron ball. Objects are counted per label, not per connected component: on `[[1, 0, 1]]` the two separated singletons together can hold the required pair.

@@ -1,0 +1,5 @@
+# Feasible DISTANCE-d PARTITION OF POINTS IN THE PLANE instances
+
+A DISTANCE-d PARTITION OF POINTS IN THE PLANE instance, with point list $p_0, \dots, p_{m-1}$ (integer coordinates), distance $d$ and number of sets $K$, is feasible when some map $c$ from the list positions $0, \dots, m-1$ onto the sets $0, \dots, K-1$ (every set receives a position) satisfies: for any two distinct positions $a \ne b$ with $c(a) = c(b)$, $d^2 < (x_a - x_b)^2 + (y_a - y_b)^2$, where $p_a = (x_a, y_a)$.
+
+The test is applied to distinct list positions, not to distinct points: two positions holding the same coordinates are at distance $0$, so a feasible map must put them in different sets. For a [well-formed](well-formed.md) instance the listed points are distinct and $d, K > 0$; then the positions are the points of $P$, the condition reads "two distinct points in the same set are at Euclidean distance greater than $d$", and feasibility says that $P$ can be partitioned into $K$ nonempty sets with this property.

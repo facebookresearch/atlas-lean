@@ -70,7 +70,8 @@ def Explains {m : ℕ} (g : List ℕ) (h₁ h₂ : Fin m → Bool) : Prop :=
   ∀ k : Fin m, (g.getD k 0 = 0 → h₁ k = false ∧ h₂ k = false) ∧
     (g.getD k 0 = 1 → h₁ k = true ∧ h₂ k = true) ∧ (g.getD k 0 = 2 → h₁ k ≠ h₂ k)
 
-/-- Some set of at most `K` haplotypes explains every genotype by two of its members. -/
+/-- Some set of at most `K` haplotypes explains every genotype by two not necessarily distinct
+members. -/
 def HaplotypeInferencePureParsimonyFeasible (i : HaplotypeInferencePureParsimonyInstance) :
     Prop :=
   ∃ H : Finset (Fin i.1 → Bool), H.card ≤ i.2.2 ∧

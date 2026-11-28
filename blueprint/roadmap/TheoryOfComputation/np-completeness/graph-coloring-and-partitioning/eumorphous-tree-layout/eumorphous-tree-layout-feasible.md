@@ -1,0 +1,14 @@
+# Feasible EUMORPHOUS TREE LAYOUT instances
+
+An instance $(n, \rho, E, K)$ consists of a vertex count $n$ (vertices $0, \dots, n-1$), a root index $\rho$, a list $E$ of child entries $(p, c, b)$, read as "$c$ is the right child ($b$ true) or the left child ($b$ false) of $p$" whenever $p, c < n$, and a width bound $K$. Feasibility is a predicate on the raw instance and does not check [well-formedness](well-formed.md). The instance is feasible when there is an injective assignment of a grid point $(x_v, y_v) \in \mathbb{Z} \times \mathbb{Z}$ to every vertex $v < n$ such that:
+
+- (width) for some integer $a$, every vertex has $a \le x_v \le a + K$; the height is not bounded;
+- (levels) the vertex $\rho$, if $\rho < n$, has $y$-coordinate $0$, and every child lies one unit above its parent, $y_c = y_p + 1$;
+- (spacing) any two distinct vertices with the same $y$-coordinate satisfy $|x_u - x_v| \ge 2$;
+- (sides) a right child $c$ of $p$ has $x_p < x_c$, a left child $c$ of $p$ has $x_c < x_p$, and a parent with a left child $\ell$ and a right child $r$ is centred between them, $x_p - x_\ell = x_r - x_p$;
+- (no crossings) whenever $c_1$ is a child of $p_1$ and $c_2$ is a child of $p_2$, with $y_{p_1} = y_{p_2}$ and $x_{p_1} < x_{p_2}$, then $x_{c_1} < x_{c_2}$: children of parents on one level appear in the same left-to-right order as their parents, which for straight-line edges says that no two edges cross;
+- (matching subtrees) for every map $\varphi$ passing the [subtree-matching test](is-subtree-iso.md) at $(u, v)$ (it sends $u$ to $v$, every child on each side of a descendant $w$ to a child on the same side of $\varphi(w)$, and $\varphi(w)$ has a child on a side only if $w$ does; on a well-formed instance these maps are the isomorphisms of the subtree at $u$ onto the subtree at $v$), there is a vector $d \in \mathbb{Z} \times \mathbb{Z}$ with $(x_{\varphi(w)}, y_{\varphi(w)}) = (x_w, y_w) + d$ for every descendant $w$ of $u$, including $u$ itself.
+
+On raw input the conditions constrain only what the entries name: entries with a vertex $\ge n$ are ignored, a root index $\rho \ge n$ fixes no $y$-coordinate, and with $n = 0$ the empty layout satisfies every condition vacuously, for every $K$ including $K = 0$. Such an instance is not well-formed, so the [decision problem](eumorphous-tree-layout-dec.md) rejects it even though it is feasible in this raw sense.
+
+For a [well-formed](well-formed.md) instance the entries form a binary tree rooted at $\rho$, with each child marked as the left or the right child of its parent, every vertex descends from the root, and $K$ is positive. Then the (levels) condition says that $y_v$ is the level of $v$, its depth below the root (the root has level $0$ and a child has its parent's level plus one), and the conditions are those of a eumorphous layout of the tree in a grid of width at most $K$.

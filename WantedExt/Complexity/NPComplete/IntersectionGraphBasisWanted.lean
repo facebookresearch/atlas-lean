@@ -57,7 +57,8 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count `n`, edge list over `Fin n`, and the bound `K`. -/
+/-- An instance: vertex count `n`, an edge list (endpoints may be out of range), and the bound
+`K`; `WellFormed` checks the edges. -/
 abbrev IntersectionGraphBasisInstance := ℕ × List (ℕ × ℕ) × ℕ
 
 /-- The graph of the instance as a `SimpleGraph (Fin n)`. -/

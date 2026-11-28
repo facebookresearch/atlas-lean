@@ -62,8 +62,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number of vertices `n` (vertices `Fin n`) and the hyperedges, each a list of
-vertices. -/
+/-- An instance: a natural number `n` and the hyperedges, each a list of natural labels that need
+not be below `n` (validation checks the range); hyperedges are identified by their position in
+the list. -/
 abbrev GeneralizedHypertreeWidthThreeInstance := ℕ × List (List ℕ)
 
 /-- The vertex set of hyperedge `e`. -/
@@ -76,7 +77,8 @@ def WellFormed (i : GeneralizedHypertreeWidthThreeInstance) : Prop :=
   ∀ e ∈ i.2, ∀ v ∈ e, v < i.1
 
 /-- `⟨T, B, Λ⟩` is a generalized hypertree decomposition of width at most 3: conditions (1)-(3),
-and every `Λ u` (the hyperedges `e` with `λ_u(e) = 1`) has at most 3 elements. -/
+and every `Λ u`, a set of hyperedge indices, has at most 3 elements; repeated hyperedge entries
+count separately. -/
 def IsGHDWidthAtMostThree (i : GeneralizedHypertreeWidthThreeInstance) {N : ℕ}
     (T : SimpleGraph (Fin N)) (B : Fin N → Finset (Fin i.1)) (Λ : Fin N → Finset (Fin i.2.length)) :
     Prop :=

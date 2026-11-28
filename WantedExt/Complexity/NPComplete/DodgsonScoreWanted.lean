@@ -69,22 +69,22 @@ abbrev DodgsonScoreInstance := ℕ × ℕ × List (List ℕ) × ℕ
 def switchAt (l : List ℕ) (p : ℕ) : List ℕ :=
   (l.set p (l.getD (p + 1) 0)).set (p + 1) (l.getD p 0)
 
-/-- Apply the switch `(v, p)`: exchange the candidates at positions `p` and `p + 1` of voter
-`v`'s preference list. -/
+/-- Apply the switch `(v, p)`: replace voter `v`'s list by `switchAt` at `p`, an exchange of
+positions `p` and `p + 1` when both exist. At the last position a missing entry reads as `0`. -/
 def applySwitch (V : List (List ℕ)) (s : ℕ × ℕ) : List (List ℕ) :=
   V.set s.1 (switchAt (V.getD s.1 []) s.2)
 
-/-- `c` is a Condorcet winner for the preference lists `V` over `m` candidates: the lists are
-the orders of a profile `R` (voter `v` strictly prefers `a` to `b` exactly when `a` comes before
-`b` in `v`'s list), and in `R` the candidate `c` beats every other candidate by pairwise
-majority. -/
+/-- There is a profile `R` over `m` candidates whose strict comparisons for voter `v` are exactly
+the comparisons of ranks in `v`'s list, the rank of a candidate being its first occurrence, or
+the list length if it is absent; and in `R` every candidate with value `c` beats every other
+candidate by pairwise majority. For `c ≥ m` the majority tests are vacuous. -/
 def IsCondorcetWinner (m : ℕ) (V : List (List ℕ)) (c : ℕ) : Prop :=
   ∃ R : Profile (Fin m) (Fin V.length),
     (∀ v a b, (R v).lt a b ↔ (V.get v).idxOf a.1 < (V.get v).idxOf b.1) ∧
       ∀ a d : Fin m, a.1 = c → d ≠ a → MajorityPrefers R a d
 
-/-- Well-formedness of an instance: `c` is a candidate, every voter's list contains every
-candidate exactly once, and `k` is positive. -/
+/-- Well-formedness of an instance: `c` is a candidate, every voter's list is a permutation of
+`0, …, m - 1`, and `k` is positive. -/
 def WellFormed (i : DodgsonScoreInstance) : Prop :=
   i.2.1 < i.1 ∧ (∀ l ∈ i.2.2.1, l.Perm (List.range i.1)) ∧ 0 < i.2.2.2
 
