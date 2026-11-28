@@ -16,6 +16,7 @@ public import Mathlib.Data.Fintype.Pi
 public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.RingTheory.Polynomial.Resultant.Basic
 public import MathlibExt.NumberTheory.ValuationOnePoints
+public import MathlibExt.NumberTheory.ValuationOnePointsCardCommonLiftPadicValOfGradientsIndependent
 
 /-!
 # Points of valuation 1 for a polynomial in two variables
@@ -49,40 +50,6 @@ public theorem_wanted card_padicVal_gt_one_le_natDegree (g : Polynomial ℤ) (hg
     (hdisc : g.discr ≠ 0) :
     ∃ P : ℕ, ∀ p : ℕ, p.Prime → P ≤ p →
       ((Finset.range (p ^ 2)).filter fun x : ℕ => (p : ℤ) ^ 2 ∣ g.eval (x : ℤ)).card ≤ g.natDegree
-
-/-- **Common lifts of two points with independent gradients.** Let $p$ be a prime, let
-$f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$, and let $(r_1, s_1)$ and
-$(r_2, s_2)$ be pairs of integers in $\{0, \dots, p - 1\}$ with $p \mid f(r_i, s_i)$ for
-$i = 1, 2$ and
-$$
-p \nmid f_x(r_1, s_1) f_y(r_2, s_2) - f_y(r_1, s_1) f_x(r_2, s_2).
-$$
-Write $F_i(k, l) = f(r_i + kp, s_i + lp)$. Among the pairs $(k, l)$ with $0 \le k, l < p$,
-exactly $(p - 1)^2$ have $p \mid F_i(k, l)$ and $p^2 \nmid F_i(k, l)$ for both $i$, exactly
-$p - 1$ have $p^2 \mid F_1(k, l)$, $p \mid F_2(k, l)$ and $p^2 \nmid F_2(k, l)$, and exactly
-one has $p^2 \mid F_1(k, l)$ and $p^2 \mid F_2(k, l)$.
-
-Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
-Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Proposition 3
-(`integers-2026-A82-prop-3`). -/
-public theorem_wanted card_common_lift_padicVal_of_gradients_independent {p : ℕ} (hp : p.Prime)
-    (f : MvPolynomial (Fin 2) ℤ) {r₁ s₁ r₂ s₂ : ℕ} (hr₁ : r₁ < p) (hs₁ : s₁ < p) (hr₂ : r₂ < p)
-    (hs₂ : s₂ < p) (h₁ : (p : ℤ) ∣ MvPolynomial.eval ![(r₁ : ℤ), s₁] f)
-    (h₂ : (p : ℤ) ∣ MvPolynomial.eval ![(r₂ : ℤ), s₂] f)
-    (hind : ¬ (p : ℤ) ∣
-      MvPolynomial.eval ![(r₁ : ℤ), s₁] (MvPolynomial.pderiv 0 f) *
-          MvPolynomial.eval ![(r₂ : ℤ), s₂] (MvPolynomial.pderiv 1 f) -
-        MvPolynomial.eval ![(r₁ : ℤ), s₁] (MvPolynomial.pderiv 1 f) *
-          MvPolynomial.eval ![(r₂ : ℤ), s₂] (MvPolynomial.pderiv 0 f)) :
-    let F₁ : ℕ × ℕ → ℤ := fun kl => MvPolynomial.eval ![(r₁ : ℤ) + kl.1 * p, (s₁ : ℤ) + kl.2 * p] f
-    let F₂ : ℕ × ℕ → ℤ := fun kl => MvPolynomial.eval ![(r₂ : ℤ) + kl.1 * p, (s₂ : ℤ) + kl.2 * p] f
-    let one : ℤ → Prop := fun v => (p : ℤ) ∣ v ∧ ¬ (p : ℤ) ^ 2 ∣ v
-    ((Finset.range p ×ˢ Finset.range p).filter fun kl : ℕ × ℕ => one (F₁ kl) ∧ one (F₂ kl)).card =
-        (p - 1) ^ 2 ∧
-      ((Finset.range p ×ˢ Finset.range p).filter fun kl : ℕ × ℕ =>
-          (p : ℤ) ^ 2 ∣ F₁ kl ∧ one (F₂ kl)).card = p - 1 ∧
-      ((Finset.range p ×ˢ Finset.range p).filter fun kl : ℕ × ℕ =>
-          (p : ℤ) ^ 2 ∣ F₁ kl ∧ (p : ℤ) ^ 2 ∣ F₂ kl).card = 1
 
 /-- **Number of points of valuation one modulo $p^2$.** Let $p$ be a prime and let
 $f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$. Suppose that for all integers
