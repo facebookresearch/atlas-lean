@@ -16,3 +16,8 @@ Groups defined by laws and quasi-identities: varieties, relatively free groups, 
 - [Test ranks of relatively free groups](test-ranks-of-relatively-free-groups/README.md)
 - [Torsion groups of unbounded exponent in proper varieties](torsion-groups-of-unbounded-exponent-in-proper-v/README.md)
 - [Locally finite variety](is-locally-finite-variety.md)
+- [Elementary theories of groups](elementary-theories-of-groups/README.md)
+- [Equations in Kac–Moody groups](equations-in-kac-moody-groups/README.md)
+- [Equations in solvable and nilpotent groups](equations-in-solvable-and-nilpotent-groups/README.md)
+- [Equations with abelian predicates](equations-with-abelian-predicates/README.md)
+- [Universal theories of classes of groups](universal-theories-of-classes-of-groups/README.md)

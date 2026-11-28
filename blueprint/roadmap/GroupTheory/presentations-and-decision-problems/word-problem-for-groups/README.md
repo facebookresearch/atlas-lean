@@ -19,3 +19,5 @@
 - [Infinite finitely generated algorithmically finite groups have unsolvable generic word problem](algorithmically-finite-group-unsolvable-generic-word-problem.md)
 - [Some finitely presented solvable group has unsolvable generic equality problem](solvable-group-unsolvable-generic-equality.md)
 - [A finitely presented amenable group with unsolvable word problem has unsolvable word problem on every exponentially generic set](amenable-unsolvable-word-problem-not-exponentially-generic.md)
+- [Some finitely presented group has unsolvable conjugacy problem](unsolvable-conjugacy-problem-novikov.md)
+- [Word and conjugacy problems of finitely presented groups realize every pair of comparable c.e. degrees](word-and-conjugacy-degrees-collins.md)
