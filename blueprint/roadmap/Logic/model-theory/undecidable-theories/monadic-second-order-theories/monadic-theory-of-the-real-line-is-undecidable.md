@@ -13,6 +13,7 @@ The source states that the continuum hypothesis can be weakened to the hypothesi
 
 - [Monadic second-order theory of linear orders](monadic-second-order-theory-of-linear-orders.md)
 - [Continuum hypothesis](../../../../SetTheory/cardinal-arithmetic/continuum-hypothesis/continuum-hypothesis.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -20,8 +21,8 @@ The source states that the continuum hypothesis can be weakened to the hypothesi
 
 ## Expansion
 
-The proof shows that true first-order arithmetic is recursive in the monadic theory of order (Conclusion 7.11): for every first-order sentence $\theta$ it effectively builds a monadic sentence $G(\theta)$ such that $(\mathbb{R}, <) \models G(\theta)$ iff $\theta$ has an $\omega$-model, a model whose universe with its first binary relation is isomorphic to $(\omega, x + 1 = y)$ (Theorem 7.10). The construction codes, inside $\mathbb{R}$, a family of $2^{\aleph_0}$ pairwise disjoint countable dense sets and a set $Q$ that meets perfect sets in a prescribed way (Lemmas 7.4 and 7.5); building $Q$ by transfinite recursion over an enumeration of the perfect sets is where the continuum hypothesis, or the weaker covering hypothesis, is used. Since true arithmetic is not decidable (it is not even arithmetical, by Tarski's undefinability theorem), neither is the monadic theory of the reals or of the class of all orders.
+The proof shows that true first-order arithmetic is recursive in the monadic theory of order (Conclusion 7.15): for every first-order sentence $\theta$ it effectively builds a monadic sentence $G(\theta)$ such that $(\mathbb{R}, <) \models G(\theta)$ iff $\theta$ has an $\omega$-model, a model whose universe with its first binary relation is isomorphic to $(\omega, x + 1 = y)$ (Theorem 7.14). The construction codes, inside $\mathbb{R}$, a family of $2^{\aleph_0}$ pairwise disjoint countable dense sets and a set $Q$ that meets perfect sets in a prescribed way (Lemmas 7.4 and 7.5); building $Q$ by transfinite recursion over an enumeration of the perfect sets is where the continuum hypothesis, or the weaker covering hypothesis, is used. Since true arithmetic is not decidable (it is not even arithmetical, by Tarski's undefinability theorem), neither is the monadic theory of the reals or of the class of all orders.
 
 ## Sources
 
-- S. Shelah, "The monadic theory of order", *Annals of Mathematics* (2) 102(3):379–419, 1975, doi:10.2307/1971037; read as the slightly corrected version arXiv:2305.00968v1, <https://arxiv.org/abs/2305.00968v1>: Theorem 7.1 of arXiv:2305.00968v1, with Theorems 7.3 and 7.10, Conclusion 7.11 and Lemmas 7.4–7.5.
+- S. Shelah, "The monadic theory of order", *Annals of Mathematics* (2) 102(3):379–419, 1975, doi:10.2307/1971037; read as the slightly corrected version arXiv:2305.00968v1, <https://arxiv.org/abs/2305.00968v1>: Theorem 7.1 of arXiv:2305.00968v1, with Theorems 7.3 and 7.14, Conclusion 7.15 and Lemmas 7.4–7.5.

@@ -12,6 +12,7 @@ The set of $\Sigma_2$ sentences, of the form $\exists\forall$, true in all finit
 ## Depends on
 
 - [Hereditarily undecidable theories of classes of structures](interpretability-and-hereditary-undecidability.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

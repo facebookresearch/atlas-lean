@@ -9,6 +9,7 @@ Equivalently, the MSO+P theory of $(\mathbb{N}, <)$ expanded by finitely many un
 ## Depends on
 
 - [Monadic second-order logic with the ultimately periodic quantifier](mso-with-the-ultimately-periodic-quantifier.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

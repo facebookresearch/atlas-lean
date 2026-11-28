@@ -15,6 +15,7 @@ The first-order theory of the class of finite graphs of vertex-degree at most 3,
 - [Hereditarily undecidable theories of classes of structures](interpretability-and-hereditary-undecidability.md)
 - [Finite simple graph](../../../../GraphTheory/planar-graphs-and-minors/graph-minors/fin-graph.md)
 - [Finite-dimensional vector space](../../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/dimension/finite-dimensional.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

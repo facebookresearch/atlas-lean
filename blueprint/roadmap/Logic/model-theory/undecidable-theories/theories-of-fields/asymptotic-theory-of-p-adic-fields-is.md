@@ -6,13 +6,14 @@ For a fixed prime $p$, the set of sentences of the language of valued fields wit
 
 **Asymptotic theory.** For a class $\mathcal{C}$ of structures, the *asymptotic theory* of $\mathcal{C}$ is the set of sentences true in all but finitely many members of $\mathcal{C}$ (up to isomorphism).
 
-**Theorem (Kartas).** Fix a prime $p$. The asymptotic $L_{\mathrm{val},\times}$-theory of $\{K : [K : \mathbb{Q}_p] < \infty\}$ is undecidable (Theorem 1). More precisely, its restriction to $\exists\forall$-sentences is already undecidable (the restatement of Theorem 1 in Section 4.3), and so is the asymptotic $\exists\forall$-theory of the totally ramified extensions $\{K : [K:\mathbb{Q}_p] = e(K/\mathbb{Q}_p) < \infty\}$ (Section 4.2).
+**Theorem (Kartas).** Fix a prime $p$. The asymptotic $L_{\mathrm{val},\times}$-theory of $\{K : [K : \mathbb{Q}_p] < \infty\}$ is undecidable (Theorem A). More precisely, its restriction to $\exists\forall$-sentences is already undecidable (the restatement of Theorem A in Section 4.3), and so is the asymptotic $\exists\forall$-theory of the totally ramified extensions $\{K : [K:\mathbb{Q}_p] = e(K/\mathbb{Q}_p) < \infty\}$ (Section 4.2).
 
 By contrast, by Ax–Kochen and Ershov each finite extension of $\mathbb{Q}_p$, with a suitable cross-section, has a decidable $L_{\mathrm{val},\times}$-theory.
 
 ## Depends on
 
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -24,4 +25,4 @@ Highly ramified extensions approximate $\mathbb{F}_p((t))$ in the sense of Krasn
 
 ## Sources
 
-- Konstantinos Kartas, "An undecidability result for the asymptotic theory of p-adic fields", *Annals of Pure and Applied Logic* 174(2):103203, 2023, doi:10.1016/j.apal.2022.103203; read as arXiv:2105.03771v4, <https://arxiv.org/abs/2105.03771v4>: Theorem 1 of the introduction, Section 1.3 (languages and cross-sections), Section 3.3 (undecidability of fragments) and Sections 4.1–4.3 (the restated Theorem 1 for $\exists\forall$-sentences) of arXiv:2105.03771v4.
+- Konstantinos Kartas, "An undecidability result for the asymptotic theory of p-adic fields", *Annals of Pure and Applied Logic* 174(2):103203, 2023, doi:10.1016/j.apal.2022.103203; read as arXiv:2105.03771v4, <https://arxiv.org/abs/2105.03771v4>: Theorem A of the introduction, Section 1.3 (languages and cross-sections), Section 3.3 (undecidability of fragments) and Sections 4.1–4.3 (the restated Theorem A for $\exists\forall$-sentences) of arXiv:2105.03771v4.

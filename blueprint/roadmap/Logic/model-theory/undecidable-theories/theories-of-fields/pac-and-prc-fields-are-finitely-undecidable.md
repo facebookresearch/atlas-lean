@@ -15,6 +15,7 @@ Moreover no PAC field is finitely axiomatizable, even among the PAC fields of th
 
 - [Finitely undecidable theories](finitely-undecidable-theories.md)
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

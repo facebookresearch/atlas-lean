@@ -9,6 +9,7 @@ Since $\mathrm{Th}(\mathcal{G})$ is undecidable and finitely axiomatizable, it i
 ## Depends on
 
 - [Hereditarily undecidable theories of classes of structures](interpretability-and-hereditary-undecidability.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

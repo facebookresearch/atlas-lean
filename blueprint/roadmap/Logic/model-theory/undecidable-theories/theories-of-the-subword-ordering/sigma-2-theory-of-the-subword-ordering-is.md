@@ -13,6 +13,7 @@ In particular the $\mathrm{FO}^3$ theory is undecidable, whereas the $\Sigma_1$ 
 ## Depends on
 
 - [First-order logic of the subword ordering](first-order-logic-of-the-subword-ordering.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

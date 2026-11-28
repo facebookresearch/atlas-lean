@@ -13,6 +13,8 @@ By contrast, the universal fragment of $T[F]$ is decidable for every sufficientl
 
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

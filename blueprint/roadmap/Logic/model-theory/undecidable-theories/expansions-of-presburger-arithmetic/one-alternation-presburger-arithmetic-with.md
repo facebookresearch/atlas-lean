@@ -17,6 +17,7 @@ The second statement corrects an earlier claim that the positive fragment is dec
 ## Depends on
 
 - [Quantifier elimination for Presburger arithmetic](../../quantifier-elimination-for-presburger-arithmetic.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

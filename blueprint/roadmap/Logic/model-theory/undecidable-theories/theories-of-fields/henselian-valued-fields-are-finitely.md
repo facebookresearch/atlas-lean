@@ -22,6 +22,7 @@ Assuming Shelah's conjecture on NIP fields, every infinite NIP field is finitely
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Field](../../../../Algebra/rings-and-fields/field.md)
 - [Separable extension](../../../../FieldTheory/extensions-and-closure/separable-extension.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

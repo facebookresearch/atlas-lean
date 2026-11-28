@@ -16,8 +16,8 @@ Without sine the truth of such sentences is decidable, since [Presburger arithme
 
 ## Depends on
 
-- [Quantifier elimination for Presburger arithmetic](../../quantifier-elimination-for-presburger-arithmetic.md)
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

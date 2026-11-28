@@ -9,6 +9,7 @@ The result uses no set-theoretic hypothesis. It improves an earlier theorem of B
 ## Depends on
 
 - [Monadic second-order logic with the unbounding quantifier](monadic-second-order-logic-with-the-unbounding.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

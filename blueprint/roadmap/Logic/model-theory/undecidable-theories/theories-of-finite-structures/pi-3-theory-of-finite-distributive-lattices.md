@@ -12,6 +12,7 @@ In particular both fragments are undecidable. According to the source, $\Pi_2\te
 ## Depends on
 
 - [Hereditarily undecidable theories of classes of structures](interpretability-and-hereditary-undecidability.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

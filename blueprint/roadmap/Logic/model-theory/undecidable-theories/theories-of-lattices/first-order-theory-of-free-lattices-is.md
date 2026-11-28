@@ -13,6 +13,7 @@ For $\kappa = 1, 2$ the free lattice is finite (one or four elements), so its th
 ## Depends on
 
 - [Free lattices](free-lattices.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

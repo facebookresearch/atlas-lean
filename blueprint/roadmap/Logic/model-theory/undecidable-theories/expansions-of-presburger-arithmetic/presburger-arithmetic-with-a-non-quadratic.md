@@ -9,6 +9,7 @@ Here $\alpha$ is fixed and the sentence is the input. For quadratic irrational $
 ## Depends on
 
 - [Presburger arithmetic with scalar multiplications](presburger-arithmetic-with-scalar-multiplication.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

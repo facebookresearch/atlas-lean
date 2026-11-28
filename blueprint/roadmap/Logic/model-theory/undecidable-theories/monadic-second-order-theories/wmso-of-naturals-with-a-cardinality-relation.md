@@ -10,6 +10,7 @@ Here $\mathcal{F}$ is the set of finite subsets of $\mathbb{N}$, and set quantif
 
 - [Cardinality relations on finite sets of naturals](cardinality-relations-on-finite-sets.md)
 - [Ultimately periodic sets of natural numbers](../../../../NumberTheory/digits-numeration/numeration-automatic/cobham-s-theorems-on-recognizable-sets/is-ultimately-periodic-set.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

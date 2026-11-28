@@ -10,13 +10,14 @@ $$
 
 and the first-order theories $\mathrm{Th}(\mathbb Z;<,+,g)$ and $\mathrm{Th}(\mathbb Z;+,1,g)$, with $g$ a unary function symbol.
 
-**Theorem (Konieczny).** Let $\alpha,\beta\in\mathbb R$ with $\beta\neq0$ be such that $1,\alpha,\alpha^2$ are linearly independent over $\mathbb Q$. Then the first-order theory of $(\mathbb Z;<,+,g)$ is undecidable, and so is the first-order theory of $(\mathbb Z;+,1,g)$.
+**Theorem (Konieczny).** Let $\alpha,\beta\in\mathbb R$ with $\beta\neq0$ be such that $1,\alpha,\alpha^2$ are linearly independent over $\mathbb Q$. Then the first-order theory of $(\mathbb Z;<,+,g)$ is undecidable (Theorem A of the source), and so is the first-order theory of $(\mathbb Z;+,1,g)$ (Corollary 1.2).
 
 For an ordinary polynomial $f$ of degree at least $2$, multiplication is definable in $(\mathbb Z;+,f)$, so undecidability is immediate; for generalized polynomials no such definition is available, and the source conjectures that $\mathrm{Th}(\mathbb Z;<,+,g)$ is undecidable for every generalized polynomial $g$ with $\liminf_{n\to\infty}|g(n)|/n^2>0$. The theorem verifies this for one family. The source also proves undecidability of $\mathrm{Th}(\mathbb Z;<,+,g)$ for a bounded generalized polynomial, the quadratic Sturmian-type sequence $g(n)=1$ if the fractional part of $\alpha n^2$ is less than $\rho$ and $g(n)=0$ otherwise, whenever $0<\rho<1/4$ and $\alpha$ is not a rational linear combination of $1$ and $\rho$ (Theorem B).
 
 ## Depends on
 
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,4 +29,4 @@ The core is a "poor man's multiplication" lemma: if $Q\subseteq\mathbb Z^4$ cont
 
 ## Sources
 
-- J. Konieczny, "Decidability of extensions of Presburger arithmetic by generalised polynomials", *Logical Methods in Computer Science* 21(4), paper 1, 2025, doi:[10.46298/lmcs-21(4:1)2025](https://doi.org/10.46298/lmcs-21(4:1)2025); read in arXiv:2402.09647v4 ([arXiv](https://arxiv.org/abs/2402.09647v4)): Theorems A and B of the introduction and the corollary after Theorem A, the conjecture before them, and the proposition on poor man's multiplication opening the section "Multiplication".
+- J. Konieczny, "Decidability of extensions of Presburger arithmetic by generalised polynomials", *Logical Methods in Computer Science* 21(4), paper 1, 2025, doi:[10.46298/lmcs-21(4:1)2025](https://doi.org/10.46298/lmcs-21(4:1)2025); read in arXiv:2402.09647v4 ([arXiv](https://arxiv.org/abs/2402.09647v4)): Theorems A and B and Corollary 1.2 in the introduction, the conjecture before them, and Proposition 2.1 (poor man's multiplication) opening Section 2.

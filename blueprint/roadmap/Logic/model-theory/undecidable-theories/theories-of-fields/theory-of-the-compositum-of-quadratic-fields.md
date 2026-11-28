@@ -11,6 +11,7 @@ This places $\mathbb Q^{(2)}$ among the infinite algebraic extensions of $\mathb
 - [Robinson's arithmetic Q](../../../first-order-logic/peano-arithmetic-and-robinson-s-q/qtheory.md)
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

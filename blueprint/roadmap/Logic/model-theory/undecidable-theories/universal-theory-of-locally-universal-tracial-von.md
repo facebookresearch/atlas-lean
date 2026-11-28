@@ -10,7 +10,7 @@ By the Pavelka-style completeness theorem of continuous logic, $\sup_{\mathcal N
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +22,4 @@ The proof combines Lin's theorem $\mathrm{MIP}^{\mathrm{co}}=\mathrm{coRE}$ with
 
 ## Sources
 
-- J. Arulseelan and A. Manzoor, "The universal theory of locally universal tracial von Neumann algebras is not computable", *International Mathematics Research Notices* 2026(7), article rnag060, 2026, doi:[10.1093/imrn/rnag060](https://doi.org/10.1093/imrn/rnag060); read in arXiv:2508.21709v2 ([arXiv](https://arxiv.org/abs/2508.21709v2)): the definition of local universality and the two theorems of the subsection "Locally Universal Models", with the proofs and the remarks after them.
+- J. Arulseelan and A. Manzoor, "The universal theory of locally universal tracial von Neumann algebras is not computable", *International Mathematics Research Notices* 2026(7), article rnag060, 2026, doi:[10.1093/imrn/rnag060](https://doi.org/10.1093/imrn/rnag060); read in arXiv:2508.21709v2 ([arXiv](https://arxiv.org/abs/2508.21709v2)): the definition of local universality and Theorems 4.2 and 4.3 with their proofs in the subsection "Locally Universal Models" of Section 4, the remarks after them, and Definition 2.1 (computable theories).

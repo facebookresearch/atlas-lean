@@ -13,6 +13,7 @@ The source defines $\sim$, $\prec$ combinatorially and proves the agreement with
 ## Depends on
 
 - [Complete theory of a first-order structure](../../first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

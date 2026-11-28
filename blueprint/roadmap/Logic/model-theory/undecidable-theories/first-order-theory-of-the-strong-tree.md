@@ -10,6 +10,7 @@ By contrast, for the weak iteration $\mathcal{S}^\#_E$ the chain theory with FO 
 
 - [Tree iterations with the equal-level relation](tree-iterations-with-the-equal-level-relation.md)
 - [Complete theory of a first-order structure](../../first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

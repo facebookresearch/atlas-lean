@@ -13,6 +13,7 @@ Hardy field functions include all logarithmico-exponential functions. Presburger
 
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Subfield](../../../../Algebra/rings-and-fields/subfield.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

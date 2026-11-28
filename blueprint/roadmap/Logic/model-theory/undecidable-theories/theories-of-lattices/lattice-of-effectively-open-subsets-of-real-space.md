@@ -15,6 +15,7 @@ More generally, the theory of the lattice of effectively open sets is *hereditar
 ## Depends on
 
 - [Standard enumeration of the recursively enumerable sets](../../../../TheoryOfComputation/degrees-and-hierarchies/productive-creative-simple-and-immune-sets/enum-re.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

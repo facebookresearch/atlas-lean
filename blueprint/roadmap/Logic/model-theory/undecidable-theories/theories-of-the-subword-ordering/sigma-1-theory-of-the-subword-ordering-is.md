@@ -11,6 +11,8 @@ The thresholds are sharp in the source's sense: the $\Sigma_{1,2}$ fragment is d
 ## Depends on
 
 - [First-order logic of the subword ordering](first-order-logic-of-the-subword-ordering.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

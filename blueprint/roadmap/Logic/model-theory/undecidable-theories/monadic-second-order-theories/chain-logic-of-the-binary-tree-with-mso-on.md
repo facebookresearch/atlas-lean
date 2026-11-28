@@ -10,6 +10,7 @@ Here set quantifiers range over chains (subsets of paths), and in addition over 
 
 - [Tree iterations with the equal-level relation](../tree-iterations-with-the-equal-level-relation.md)
 - [Monadic second-order logic of two successors](../../../../TheoryOfComputation/omega-automata-and-games/automata-on-infinite-trees/monadic-second-order-logic-of-two-successors.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

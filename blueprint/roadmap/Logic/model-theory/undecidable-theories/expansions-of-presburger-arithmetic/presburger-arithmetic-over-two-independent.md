@@ -10,6 +10,7 @@ Here $\alpha$ and $\beta$ are fixed and the sentence is the input.
 
 - [Presburger arithmetic with scalar multiplications](presburger-arithmetic-with-scalar-multiplication.md)
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

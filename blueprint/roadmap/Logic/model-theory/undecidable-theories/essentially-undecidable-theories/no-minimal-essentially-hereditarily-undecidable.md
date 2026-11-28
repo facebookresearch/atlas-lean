@@ -11,14 +11,15 @@ Examples of essentially hereditarily undecidable theories are Robinson's theory 
 
 ## Depends on
 
-- [Theories interpreting an essentially undecidable theory are undecidable](theories-interpreting-an-essentially.md)
-- [Robinson's theory R is essentially undecidable](robinson-s-theory-r-is-essentially-undecidable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 None.
 
 ## Expansion
+
+Related results: [theories interpreting an essentially undecidable theory are undecidable](theories-interpreting-an-essentially.md), and [Robinson's theory R is essentially undecidable](robinson-s-theory-r-is-essentially-undecidable.md), which Cobham strengthened to essential hereditary undecidability.
 
 *Part 1.* Essentially hereditarily undecidable theories are closed under the disjoint sum $U_0 \ovee U_1$, a theory that chooses by a $0$-ary predicate between $U_0$ and $U_1$ and is interpretable in both (Theorem 3.3); so a minimal such theory would be a minimum, and it suffices to exclude a minimum $U^\star$. By Shoenfield, from an index $i$ of an RE set $W_i$ one effectively finds a theory $\mathsf{sh}(i)$ that is essentially undecidable iff $W_i$ is not recursive, and by Peretyat'kin a finitely axiomatized theory $\mathsf{shpe}(i)$ recursively Boolean isomorphic to it; a finitely axiomatized essentially undecidable theory is essentially hereditarily undecidable. If $U^\star$ were a minimum, then $W_i$ would be non-recursive iff $\mathsf{shpe}(i)$ interprets $U^\star$, a $\Sigma^0_3$ condition, whereas the set of indices of non-recursive RE sets is $\Pi^0_3$-complete (Rogers; Mostowski), a contradiction.
 

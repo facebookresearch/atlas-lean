@@ -14,7 +14,7 @@ Grzegorczyk had interpreted first-order arithmetic in the lattice of closed subs
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

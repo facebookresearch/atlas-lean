@@ -14,6 +14,7 @@ In contrast, the $\mathrm{FO(TC)}^1_{(1)}$-theory of $\mathcal{G}$, parameters a
 
 - [Formulas of first-order logic with transitive closure](../../../TheoryOfComputation/descriptive-complexity/transitive-closure-logic-and-nl/tcfo.md)
 - [Complete theory of a first-order structure](../../first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

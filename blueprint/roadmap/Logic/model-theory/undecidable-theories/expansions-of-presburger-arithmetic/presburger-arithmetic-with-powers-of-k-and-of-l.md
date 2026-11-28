@@ -14,6 +14,7 @@ By Büchi's theorem, each $\mathrm{FO}(\mathbb N, +, V_k)$ is decidable, where $
 - [Multiplicatively independent bases](../../../../NumberTheory/digits-numeration/numeration-automatic/cobham-s-theorems-on-recognizable-sets/bases-multiplicatively-independent.md)
 - [Sets recognizable in base k](../../../../NumberTheory/digits-numeration/numeration-automatic/cobham-s-theorems-on-recognizable-sets/is-base-recognizable.md)
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

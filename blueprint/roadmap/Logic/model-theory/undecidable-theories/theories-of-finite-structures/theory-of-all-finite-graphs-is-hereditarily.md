@@ -10,6 +10,7 @@ According to the source, known proofs of hereditary undecidability of pseudovari
 
 - [Hereditarily undecidable theories of classes of structures](interpretability-and-hereditary-undecidability.md)
 - [Finite simple graph](../../../../GraphTheory/planar-graphs-and-minors/graph-minors/fin-graph.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -14,6 +14,7 @@ The case $e = 0$, algebraically closed fields of characteristic $p$, is Ziegler'
 - [Complete theory of a first-order structure](../../../first-order-logic/theory-of-structure.md)
 - [Field](../../../../Algebra/rings-and-fields/field.md)
 - [Separable extension](../../../../FieldTheory/extensions-and-closure/separable-extension.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

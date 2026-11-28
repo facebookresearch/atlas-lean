@@ -12,6 +12,7 @@ For the signature $\{<\}$ alone the problem is decidable (Proposition 4.1).
 
 - [Cardinality relations on finite sets of naturals](cardinality-relations-on-finite-sets.md)
 - [Monadic second-order logic over words](../../../../TheoryOfComputation/omega-automata-and-games/logic-and-tree-automata/monadic-second-order-logic-over-words.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -11,6 +11,7 @@ The construction also gives (Theorem 3.6): for the specific field $\mathbf{K}$ b
 ## Depends on
 
 - [Field](../../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

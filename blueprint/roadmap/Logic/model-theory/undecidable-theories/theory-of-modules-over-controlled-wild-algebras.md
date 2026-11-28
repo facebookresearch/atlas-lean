@@ -17,6 +17,7 @@ When $k$ is algebraically closed, every local wild $k$-algebra and every wild $k
 ## Depends on
 
 - [Field](../../../Algebra/rings-and-fields/field.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
