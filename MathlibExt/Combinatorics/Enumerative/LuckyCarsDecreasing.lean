@@ -349,7 +349,7 @@ public theorem card_dec_lucky_spot_eq_sum_catalan (n : ℕ)
     _ = (Nat.card (Σ i : Fin n, { f : Fin n → Fin n //
           IsParkingFunction n f ∧ Antitone f ∧ f i = j ∧ IsLuckyCar f i }) : ℚ) := by
       rw [Nat.card_sigma, Nat.cast_sum]
-      rfl
+      simp only [qDec_eq_card]
     _ = (Nat.card (CatalanPairs n j.val) : ℚ) := by
       rw [Nat.card_congr (luckySpotEquiv j), hcard]
     _ = _ := by

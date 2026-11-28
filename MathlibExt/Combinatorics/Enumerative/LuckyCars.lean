@@ -252,6 +252,12 @@ noncomputable def qDec (n : ℕ) (i j : Fin n) : ℕ :=
     IsParkingFunction n f ∧ Antitone f ∧ f i = j ∧
       IsLuckyCar f i }
 
+/-- `qDec n i j` counts the weakly decreasing parking functions in which car `i` prefers `j`
+and is lucky. -/
+theorem qDec_eq_card (n : ℕ) (i j : Fin n) :
+    qDec n i j = Nat.card {f : Fin n → Fin n //
+      IsParkingFunction n f ∧ Antitone f ∧ f i = j ∧ IsLuckyCar f i} := rfl
+
 /-- **Lucky-car polynomial.** For $n \in \mathbb{N}$, $f_n \in \mathbb{Q}[x]$ is the polynomial
 $$f_n(x) = \frac{1}{n+1} \prod_{i=0}^{n-1} \bigl((n+1-i)\,x + i\bigr).$$
 

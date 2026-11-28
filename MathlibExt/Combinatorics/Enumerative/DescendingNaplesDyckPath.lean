@@ -429,7 +429,7 @@ private abbrev DecreasingParking (n : ℕ) :=
 
 private lemma good_zero_iff_parking {n : ℕ} (f : Fin n → Fin n) (hf : Antitone f) :
     Good 0 (fun i => (f i).val + 1) ↔ IsParkingFunction n f := by
-  rw [IsParkingFunction, IsPartialParkingFunction]
+  rw [isParkingFunction_iff_card_filter_ge]
   constructor
   · intro hg j
     have hsub : Finset.univ.filter (fun i => j ≤ f i) ⊆ Finset.Iic j.rev := by
