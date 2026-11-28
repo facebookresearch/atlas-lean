@@ -13,7 +13,7 @@ $R$ is *consistent* if $\sum_{s \in \Sigma^*} R(s) = 1$.
 **Theorem (Chen, Gilroy, Maletti, May and Knight).** The following problems are undecidable:
 
 1. *consistency*: given an RNN $R$, is $R$ consistent?
-2. *best string*: given an RNN $R$ and $c \in (0, 1)$, is there $s \in \Sigma^*$ with $R(s) > c$?
+2. *best string*: given an RNN $R$ and a rational $c \in (0, 1)$, is there $s \in \Sigma^*$ with $R(s) > c$?
 3. *equivalence*: given RNNs $R$ and $R'$, is $R(s) = R'(s)$ for all $s \in \Sigma^*$?
 4. *minimization*: given an RNN $R$ and $n \in \mathbb{N}$, is there an RNN with at most $n$ neurons computing the same weighted language?
 
@@ -29,7 +29,7 @@ Moreover, no computable function bounds the length of a highest-weighted string 
 
 ## Expansion
 
-All four reductions start from Siegelmann and Sontag's theorem that, for every deterministic Turing machine $M$, a network with saturated linear activation over a one-letter alphabet has a neuron that takes the value $1$ exactly at step $T$ if $M$ halts on empty input after $T$ steps, and stays $0$ if $M$ does not halt. Since saturated linear activation is a difference of two ReLUs, a ReLU network with two designated neurons simulates it. Feeding the difference of these neurons into the predictions of a small example network yields an RNN that is consistent, has a string of weight above $0.25$, differs from a fixed trivial network, and needs at least one neuron, each exactly when $M$ halts. A good expansion adds and links a page for the Siegelmann–Sontag simulation of Turing machines by recurrent networks.
+All four reductions start from Siegelmann and Sontag's theorem that, for every deterministic Turing machine $M$, a network with saturated linear activation over a one-letter alphabet has a neuron that takes the value $1$ exactly at step $T$ if $M$ halts on empty input after $T$ steps, and stays $0$ if $M$ does not halt. Since saturated linear activation is a difference of two ReLUs, a ReLU network with two designated neurons simulates it. Feeding the difference of these neurons into the predictions of a small example network yields an RNN that is consistent, has a string of weight above $0.25$, differs from a fixed trivial network, and needs at least one neuron, each exactly when $M$ halts. A good expansion links a page for the Siegelmann–Sontag simulation of Turing machines by recurrent networks.
 
 ## Sources
 

@@ -23,6 +23,7 @@ These lower bounds complement the paper's upper bounds: for every $\nu \in \math
 - [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 - [The arithmetical class $\Pi_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [The class Δₙ of the arithmetical hierarchy](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-delta.md)
 
 ## Proof depends on
 
@@ -30,7 +31,7 @@ None.
 
 ## Expansion
 
-For clause 1, if some AIXI policy $\pi^*_\xi$ were computable, the deterministic environment that gives reward $0$ while the agent follows $\pi^*_\xi$ and reward $1$ forever once it deviates would belong to $\mathcal{M}$; since AIXI learns to predict any environment in $\mathcal{M}$ on its own policy, it would eventually deviate, a contradiction. Clause 2 encodes a $\Pi^0_2$ set $A$, with $n \in A$ iff $\forall i\, \exists k\, \eta(n, i, k)$, into a mixture $\nu$ of environments in which, after observing $1^n 0$, the preferred action $\alpha$ ties with the alternative $\beta$ exactly when $n \in A$ and is strictly worse otherwise, so AINU takes $\alpha$ there exactly when $n \in A$. Clause 3 builds a universal machine whose mixture places enough weight on an environment that forces any $\varepsilon$-optimal policy to decide a $\Sigma^0_1$ set. A good expansion adds and links a page for the on-policy value convergence of AIXI in every environment of $\mathcal{M}$, the learning property clause 1 uses.
+For clause 1, if some AIXI policy $\pi^*_\xi$ were computable, the deterministic environment that gives reward $0$ while the agent follows $\pi^*_\xi$ and reward $1$ forever once it deviates would belong to $\mathcal{M}$; since AIXI learns to predict any environment in $\mathcal{M}$ on its own policy, it would eventually deviate, a contradiction. Clause 2 encodes a $\Pi^0_2$ set $A$, with $n \in A$ iff $\forall i\, \exists k\, \eta(n, i, k)$, into a mixture $\nu$ of environments in which, after observing $1^n 0$, the preferred action $\alpha$ ties with the alternative $\beta$ exactly when $n \in A$ and is strictly worse otherwise, so AINU takes $\alpha$ there exactly when $n \in A$. Clause 3 builds a universal machine whose mixture places enough weight on an environment that forces any $\varepsilon$-optimal policy to decide a $\Sigma^0_1$ set. A good expansion links a page for the on-policy value convergence of AIXI in every environment of $\mathcal{M}$, the learning property clause 1 uses.
 
 ## Sources
 

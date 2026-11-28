@@ -18,7 +18,7 @@ On the image-finite fragment $\mathrm{MA}_{\mathrm{IF}}$, the same paper charact
 
 ## Expansion
 
-The proof encodes Turing machines in the syntactic image-finite fragment of MA, representing the tape as a ribbon of ambients and simulating each transition by a sequence of reductions. The construction yields processes $P_0$ and $P_1$, built from a machine $\mathcal{M}$ and a word $w$ and differing in the length of a growing ribbon, such that $P_0$ always reduces to $P_1$, while $P_1$ reduces to $P_0$ exactly when $\mathcal{M}$ accepts $w$ on some finite, sufficiently long tape. The authors show that $\mathsf{open}\, n.P_0 =_L \mathsf{open}\, n.P_1$ holds exactly when $P_0$ and $P_1$ reduce to each other, so deciding logical equivalence would decide acceptance. A good expansion adds and links a page for the encoding of Turing machines in mobile ambients and its correctness lemma.
+The proof encodes Turing machines in the syntactic image-finite fragment of MA, representing the tape as a ribbon of ambients and simulating each transition by a sequence of reductions. The construction yields processes $P_0$ and $P_1$, built from a machine $\mathcal{M}$ and a word $w$ and differing in the length of a growing ribbon, such that $P_0$ always reduces to $P_1$, while $P_1$ reduces to $P_0$ exactly when $\mathcal{M}$ accepts $w$ on some finite, sufficiently long tape. The authors show that $\mathsf{open}\, n.P_0 =_L \mathsf{open}\, n.P_1$ holds exactly when $P_0$ and $P_1$ reduce to each other, so deciding logical equivalence would decide acceptance. A good expansion links a page for the encoding of Turing machines in mobile ambients and its correctness lemma.
 
 ## Sources
 
