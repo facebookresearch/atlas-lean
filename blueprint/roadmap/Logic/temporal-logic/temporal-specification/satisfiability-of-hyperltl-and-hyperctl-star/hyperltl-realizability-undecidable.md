@@ -22,7 +22,7 @@ Both results are in Section 3 of the source. By contrast, realizability is PSPAC
 
 ## Expansion
 
-For the universal fragment, universal trace quantifiers express that one output may depend only on certain inputs, which encodes a distributed architecture with two processes receiving different inputs; LTL synthesis for that architecture is undecidable (Finkbeiner and Schewe, LICS 2005, as cited by the source). For $\forall^1\exists^1$, a reduction from the Post correspondence problem lets the existential trace check the next step of a candidate solution, following Finkbeiner and Hahn's undecidability proof for HyperLTL satisfiability. A complete expansion of the universal case links the undecidability of LTL synthesis for distributed architectures with information forks, which has no page here.
+For the universal fragment, universal trace quantifiers express that one output may depend only on certain inputs, which encodes a distributed architecture with two processes receiving different inputs; LTL synthesis for that architecture is undecidable (Finkbeiner and Schewe, LICS 2005, as cited by the source). For $\forall^1\exists^1$, a reduction from the Post correspondence problem lets the existential trace check the next step of a candidate solution, following Finkbeiner and Hahn's undecidability proof for HyperLTL satisfiability. A complete expansion of the universal case links the undecidability of LTL synthesis for distributed architectures with information forks.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 Asynchronous HyperLTL (AHLTL) quantifies over traces and then over a trajectory, which decides at each step which of the quantified traces advance, so that the traces can be compared asynchronously.
 
-**Definition.** Traces are infinite words over $2^{AP}$. A *transition system* $\mathcal T = (V, E, I, \ell)$ is finite, every vertex has a successor, and $\mathrm{Tr}(\mathcal T)$ is the set of label sequences of its runs from initial vertices. AHLTL formulas are
+**Definition.** Traces are infinite words over $2^{AP}$. A *transition system* $\mathcal T = (V, E, I, \ell)$ has a nonempty finite set $V$ of vertices and a nonempty set $I \subseteq V$ of initial vertices, every vertex has a successor, and $\mathrm{Tr}(\mathcal T)$ is the set of label sequences of its runs from initial vertices. AHLTL formulas are
 
 $$
 \varphi ::= \exists x\,\varphi \mid \forall x\,\varphi \mid \mathsf E\psi \mid \mathsf A\psi, \qquad \psi ::= p_x \mid \neg\psi \mid \psi \vee \psi \mid \mathsf X\psi \mid \psi\,\mathsf U\,\psi,

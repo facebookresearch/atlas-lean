@@ -8,6 +8,7 @@ With $\Gamma = \emptyset$ the modalities are those of HyperLTL, whose model chec
 
 ## Depends on
 
+- [Kripke structures with initial states](../kripke-structures-with-initial-states.md)
 - [HyperLTL](../hyperltl.md)
 - [Formulas of linear temporal logic](../../linear-temporal-logic/formula.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
@@ -18,7 +19,7 @@ With $\Gamma = \emptyset$ the modalities are those of HyperLTL, whose model chec
 
 ## Expansion
 
-The proof reduces the Post correspondence problem, assuming all words have length at least $2$. For a sequence of indices $i_1, \ldots, i_k$ and $\ell \in \{1, 2\}$, a well-formed trace writes $u^\ell_{i_1} \cdots u^\ell_{i_k}$, marking each letter of $u^\ell_i$ with propositions $p_i$ and $q_\ell$ and the last letter of each block with $\#$. For $\Gamma = \{\#, p_1, \ldots, p_n\}$ the $\Gamma$-stutter trace of such a trace records just the index sequence. The instance has a solution iff there are well-formed traces $\pi_1$ (marked $q_1$) and $\pi_2$ (marked $q_2$) with the same letters position by position and with $\Gamma$-stutter traces that agree on $\Gamma$ (Proposition III.3); an existential sentence with modalities relativized to $\emptyset$ and to $\Gamma$ expresses this over a suitable Kripke structure (Proposition III.4).
+The proof reduces the Post correspondence problem, assuming, without loss of generality as the source notes, that all words of the instance have length at least $2$. For a sequence of indices $i_1, \ldots, i_k$ and $\ell \in \{1, 2\}$, a well-formed trace writes $u^\ell_{i_1} \cdots u^\ell_{i_k}$, marking each letter of $u^\ell_i$ with propositions $p_i$ and $q_\ell$ and the last letter of each block with $\#$. For $\Gamma = \{\#, p_1, \ldots, p_n\}$ the $\Gamma$-stutter trace of such a trace records just the index sequence. The instance has a solution iff there are well-formed traces $\pi_1$ (marked $q_1$) and $\pi_2$ (marked $q_2$) with the same letters position by position and with $\Gamma$-stutter traces that agree on $\Gamma$ (Proposition III.3); an existential sentence with modalities relativized to $\emptyset$ and to $\Gamma$ expresses this over a suitable Kripke structure (Proposition III.4).
 
 ## Sources
 
