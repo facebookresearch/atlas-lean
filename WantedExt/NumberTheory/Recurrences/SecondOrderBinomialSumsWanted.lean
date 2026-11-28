@@ -19,6 +19,7 @@ public import WantedExt.NumberTheory.SecondOrderGenFunIntegerValuesWanted
 public import MathlibExt.NumberTheory.Recurrences.SecondOrderBinomialSumsSecondOrderBiSeqSumCentralChooseMul
 public import MathlibExt.NumberTheory.Recurrences.LucasTripleBinomialConvolution
 public import MathlibExt.NumberTheory.Recurrences.LucasEvenCatalanConvolution
+public import MathlibExt.NumberTheory.Recurrences.LucasBinomialCatalanConvolution
 
 /-!
 # Binomial sums involving `U_n = p U_{n-1} + U_{n-2}` and `V_n = p V_{n-1} + V_{n-2}`
@@ -108,21 +109,6 @@ public theorem_wanted lucasU_lucasV_sum_choose_inv_alternating (p : ℤ) (n : �
         ((2 * n).choose k : ℚ) / ((4 * n).choose k * (4 * n).choose (2 * n + k)) * (-1) ^ k *
           lucasU ⟨p, -1, by decide⟩ k * lucasV ⟨p, -1, by decide⟩ (2 * n - k) =
       (4 * n + 1 : ℚ) / (3 * n + 1) / (4 * n).choose (2 * n) * lucasU ⟨p, -1, by decide⟩ (2 * n)
-
-/-- **Binomial-Catalan sum with Lucas sequences.** Let $p$ be an integer, let $U_n$ and $V_n$ be
-the Lucas sequences $U(p, -1)$ and $V(p, -1)$, so $U_0 = 0$, $U_1 = 1$, $V_0 = 2$, $V_1 = p$ and
-both satisfy $X_{j+2} = p X_{j+1} + X_j$, and let $C_j$ be the $j$-th Catalan number. Then for
-every natural number $n$,
-$$\sum_{k=0}^{n} \binom{2n}{2k} C_k C_{n-k} U_{n-k} V_k = C_n C_{n+1} U_n.$$
-
-Source: John M. Campbell and Emrah Kılıç, *Binomial Sums Involving Second-Order Linearly Recurrent
-Sequences*, The Fibonacci Quarterly 62 (2024), Article 62-1/campbell10202023,
-Proposition 2.11. -/
-public theorem_wanted lucasU_lucasV_sum_choose_catalan (p : ℤ) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        ((2 * n).choose (2 * k) * catalan k * catalan (n - k) : ℤ) *
-          lucasU ⟨p, -1, by decide⟩ (n - k) * lucasV ⟨p, -1, by decide⟩ k =
-      (catalan n * catalan (n + 1) : ℤ) * lucasU ⟨p, -1, by decide⟩ n
 
 /-- **Alternating binomial-Catalan sum with Lucas sequences.** Let $p$ be an integer, let $U_n$
 and $V_n$ be the Lucas sequences $U(p, -1)$ and $V(p, -1)$, so $U_0 = 0$, $U_1 = 1$, $V_0 = 2$,

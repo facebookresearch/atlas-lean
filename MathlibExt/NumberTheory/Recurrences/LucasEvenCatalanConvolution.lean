@@ -20,7 +20,7 @@ import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
 import all MathlibExt.Combinatorics.Enumerative.GeneralizedCatalanSchroeder
 import all MathlibExt.Combinatorics.Enumerative.TouchardCatalanIdentity
-import all MathlibExt.NumberTheory.Recurrences.LucasAlternatingSquaredBinomialSum
+import MathlibExt.NumberTheory.Recurrences.LucasAlternatingSquaredBinomialSum
 
 /-!
 # Even-index Catalan convolution with Lucas sequences
@@ -141,7 +141,7 @@ public theorem lucasU_lucasV_sum_catalan_even (p : ℤ) (n : ℕ) :
       (∑ k ∈ range (n + 1), a k) * lucasU P n := by
     rw [← sum_range_reflect]
     refine (sum_congr rfl fun k hk => ?_).trans
-      (lucasU_lucasV_sum_choose_sq_alternating.sum_mul_lucasU_mul_lucasV_of_symm P n a ha)
+      (sum_mul_lucasU_mul_lucasV_of_symm P n a ha)
     have hkn := mem_range_succ_iff.mp hk
     rw [Nat.add_sub_cancel, Nat.sub_sub_self hkn, ha k hkn]
   have hweightedQ := congrArg (Int.castRingHom ℚ) hweighted
