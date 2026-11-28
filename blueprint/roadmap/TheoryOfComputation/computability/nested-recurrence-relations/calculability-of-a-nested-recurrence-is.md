@@ -12,7 +12,7 @@ $$
 
 there is no algorithm that decides, given a finite set of initial conditions for $A$, whether $A$ is calculable.
 
-The recurrence is fixed; only the initial conditions are the input, given as a finite list of pairs $(n, A(n))$ of natural numbers (the reduction uses only natural-number values; later values computed by the recurrence may be negative). Calculability can fail when an argument falls outside $\{0, \dots, n - 1\}$, for instance when it is negative.
+The recurrence is fixed; only the initial conditions are the input, given as a finite list of pairs $(n, A(n))$ with $n \in \mathbb{N}$ and $A(n) \in \mathbb{Z}$; the reduction uses initial values including $1 - d(s) \in \{1, -1\}$ (equation (5) and Section 6 of the source). Calculability can fail when an argument falls outside $\{0, \dots, n - 1\}$, for instance when it is negative.
 
 ## Depends on
 
