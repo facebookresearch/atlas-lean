@@ -14,6 +14,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.FibonacciGeneratingFunctions
+public import MathlibExt.NumberTheory.FibonacciGeneratingFunctionsClassification
 public import MathlibExt.NumberTheory.FibonacciGeneratingFunctionsKnappMRelations
 public import MathlibExt.NumberTheory.GibonacciNumber
 public import MathlibExt.NumberTheory.GibonacciPowerSeries
@@ -58,31 +59,6 @@ public theorem_wanted knappM_small_of_pos (a b p q : ℤ) (hD : 0 < a ^ 2 + a * 
     (hcop : Int.gcd p q = 1) (hq : q ≠ 0) (hgood : IsGibonacciGood a b ((p : ℚ) / q)) :
     ∃ v ∈ fibonacciPairOrbit (p, q),
       5 * knappM a b v.1 v.2 ^ 2 ≤ ((a ^ 2 + a * b - b ^ 2 : ℤ) : ℚ)
-
-/-- Theorem 4: for `(a, b) ≠ (0, 0)`, (i) every integer solution `(M, k)`,
-`k ≠ 0`, of `M² = 5k² + (2b - 6a)k + (a - b)²` gives a good value
-`x = (a - b - k + M) / 2k` (whose family is good by Theorem 1); (ii) every
-family of good values other than the Fibonacci family (the one containing
-`0`) and the family containing a zero of `G^{(a,b)}` has a member
-`x = (a - b - k + M) / 2k` with `k ≠ 0`, `M² = 5k² + (2b - 6a)k + (a - b)²`,
-`|M| ≤ C` (written `M² ≤ |a² + ab - b²|` if `a² + ab - b² < 0` and
-`5M² ≤ a² + ab - b²` if it is positive) and an integer `N` with
-`M² + 3MN + N² = a² + ab - b²`.
-
-Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
-Sequences 27 (2024), Article 24.3.1, Theorem 4 (`jis-2024-24.3.1-thm-4`). -/
-public theorem_wanted gibonacci_good_families_classification (a b : ℤ) (hab : (a, b) ≠ (0, 0)) :
-    (∀ M k : ℤ, k ≠ 0 → M ^ 2 = 5 * k ^ 2 + (2 * b - 6 * a) * k + (a - b) ^ 2 →
-        IsGibonacciGood a b (((a - b - k + M : ℤ) : ℚ) / (2 * k))) ∧
-      ∀ p q : ℤ, Int.gcd p q = 1 → q ≠ 0 → IsGibonacciGood a b ((p : ℚ) / q) →
-        (∀ v ∈ fibonacciPairOrbit (p, q), v.2 ≠ 0 →
-          (v.1 : ℚ) / v.2 ≠ 0 ∧ gibonacciGeneratingValue a b ((v.1 : ℚ) / v.2) ≠ 0) →
-        ∃ v ∈ fibonacciPairOrbit (p, q), v.2 ≠ 0 ∧ ∃ M k N : ℤ, k ≠ 0 ∧
-          (a ^ 2 + a * b - b ^ 2 < 0 → M ^ 2 ≤ -(a ^ 2 + a * b - b ^ 2)) ∧
-          (0 < a ^ 2 + a * b - b ^ 2 → 5 * M ^ 2 ≤ a ^ 2 + a * b - b ^ 2) ∧
-          M ^ 2 + 3 * M * N + N ^ 2 = a ^ 2 + a * b - b ^ 2 ∧
-          M ^ 2 = 5 * k ^ 2 + (2 * b - 6 * a) * k + (a - b) ^ 2 ∧
-          (v.1 : ℚ) / v.2 = ((a - b - k + M : ℤ) : ℚ) / (2 * k)
 
 end
 

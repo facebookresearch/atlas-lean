@@ -15,6 +15,15 @@ open MathlibExt.GroupTheory.FinitelyGeneratedBranchGroupsKourovka15Problem14Want
 example : fgBranchGroupContainingFreeGroup :=
   fgBranchGroupContainingFreeGroup_holds
 
+example : fgBranchGroupOfExponentialGrowth :=
+  fgBranchGroupOfExponentialGrowth_holds
+
+-- The witness has growth rate greater than one for an arbitrary finite generating family.
+example : ∃ (G : Type) (_ : Group G), Group.FG G ∧ IsBranchGroup G ∧
+    ∀ (k : ℕ) (P : Group.Generators G (Fin k)), 1 < growthRate P := by
+  obtain ⟨G, hG, hfg, hbranch, _, hgrowth⟩ := fgBranchGroupOfExponentialGrowth_holds
+  exact ⟨G, hG, hfg, hbranch, hgrowth⟩
+
 example {m : ℕ → ℕ} {G : Type} [Group G] (ρ : G →* Equiv.Perm (TreeVertex m)) :
     rigidLevelStabilizer ρ 0 = ⊤ := by
   apply top_unique

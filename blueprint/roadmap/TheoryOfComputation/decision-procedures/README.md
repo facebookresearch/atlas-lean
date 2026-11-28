@@ -14,3 +14,5 @@ Algorithms deciding questions about finite automata, regular expressions and con
 
 - [Presburger arithmetic and real addition](presburger-arithmetic-and-real-addition/README.md)
 - [Satisfiability modulo theories](satisfiability-modulo-theories/README.md)
+- [Word equation algorithms](word-equation-algorithms/README.md)
+- [Word equations with length and regular constraints](word-equations-with-length/README.md)

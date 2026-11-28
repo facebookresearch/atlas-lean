@@ -10,4 +10,6 @@
 - [Bounded sets in Scottish Book Problem 26](is-bounded-set-2.md)
 - [Spaces of type $\{F_o\}$](is-type-fo.md)
 - [Scottish Book Problem 26 (Mazur and Orlicz's claim)](scottish-book-problem26-claim.md)
+- [Scottish Book Problem 26 (Mazur and Orlicz's claim)](scottish-book-problem26-continuous-claim.md)
+- [Mazur and Orlicz's Problem 26 has a negative answer](fo-bounded-uniform-neighborhood-continuo.md)
 - [Mazur and Orlicz's Problem 26 has a negative answer](fo-bounded-uniform-neighborhood-refuted.md)
