@@ -2,7 +2,7 @@
 
 No algorithm decides whether one linear inequality between the joint entropies of finitely many random variables follows from another; the same holds when either inequality is replaced by an equality.
 
-For random variables $X_1, \dots, X_k$ with finite support let $\mathbf{h}(X_1, \dots, X_k) \in \mathbb{R}^{2^k - 1}$ be the vector of [joint entropies](../shearer-s-entropy-inequality/shearer-full-entropy.md) $H(X_{\mathcal{U}})$ of the subtuples $X_{\mathcal{U}}$, $\emptyset \ne \mathcal{U} \subseteq \{1, \dots, k\}$, each the [Shannon entropy](../../entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy.md) of the joint distribution.
+For random variables $X_1, \dots, X_k$ with finite support let $\mathbf{h}(X_1, \dots, X_k) \in \mathbb{R}^{2^k - 1}$ be the vector of joint entropies $H(X_{\mathcal{U}})$ of the subtuples $X_{\mathcal{U}}$, $\emptyset \ne \mathcal{U} \subseteq \{1, \dots, k\}$, each the [Shannon entropy](../../entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy.md) in bits of the joint distribution of $X_{\mathcal{U}}$. The conditions are homogeneous in $\mathbf{h}$, so the choice of the logarithm base does not change the problem.
 
 **Theorem (Li).** The following problem is undecidable: given $k \in \mathbb{Z}_{>0}$ and $\mathbf{a}, \mathbf{b} \in \mathbb{Q}^{2^k - 1}$, decide whether the implication
 
@@ -16,7 +16,6 @@ The corollary also holds for discrete random variables with finite or countably 
 
 ## Depends on
 
-- [Joint entropy](../shearer-s-entropy-inequality/shearer-full-entropy.md)
 - [Shannon entropy](../../entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

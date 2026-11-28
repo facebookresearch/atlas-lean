@@ -21,12 +21,12 @@ The theorem also holds for discrete random variables with finite or countably in
 
 ## Proof depends on
 
-None.
+- [Word consequences over all monoids and over finite monoids](../../../ComputerScience/databases/dependencies-and-the-chase/implication-proofs/monoid-word-consequences.md)
 
 ## Expansion
 
-The proof follows Herrmann's undecidability proof for embedded multivalued dependencies and reduces from the uniform word problem for finite monoids: conditional independence constraints express a "Fano-non-Fano" condition (Section 2 of the source), and Section 3 represents endomorphisms of an abelian group by random variables, embedding finite monoids into endomorphism monoids, so that the implication holds exactly when the given relations imply the given equation in every finite monoid. Non-disjoint statements used in the construction are removed by an earlier reduction of the same author. The uniform word problem for finite monoids (Gurevich) has no page here.
+The proof follows Herrmann's undecidability proof for embedded multivalued dependencies and reduces from the uniform word problem for finite monoids: conditional independence constraints express a "Fano-non-Fano" condition (Section II of the source), and Section III represents endomorphisms of an abelian group by random variables, embedding finite monoids into endomorphism monoids, so that the implication holds exactly when the given relations imply the given equation in every finite monoid. Non-disjoint statements used in the construction are removed by an earlier reduction of the same author. The undecidability of the uniform word problem for finite monoids is Gurevich's theorem (reference [79] of the source). A good expansion links pages for the Fano-non-Fano condition and for the representation of finite monoids by random variables.
 
 ## Sources
 
-- C. T. Li, "Undecidability of network coding, conditional information inequalities, and conditional independence implication", IEEE Transactions on Information Theory 69 (2023), no. 6, 3493–3510, https://doi.org/10.1109/TIT.2023.3247570; read in arXiv:2205.11461v3 (Theorem 3, its footnote, the introduction and Sections 2 and 3 of arXiv:2205.11461v3).
+- C. T. Li, "Undecidability of network coding, conditional information inequalities, and conditional independence implication", IEEE Transactions on Information Theory 69 (2023), no. 6, 3493–3510, https://doi.org/10.1109/TIT.2023.3247570; read in arXiv:2205.11461v3 (Theorem 3, its footnote, the introduction and Sections II and III of arXiv:2205.11461v3).
