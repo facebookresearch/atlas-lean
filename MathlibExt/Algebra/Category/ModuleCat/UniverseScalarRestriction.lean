@@ -12,6 +12,7 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.RingEquivTensorUniverse
 public import MathlibExt.Algebra.Category.ModuleCat.Monoidal.Universe
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
+public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRingsExact
 public import Mathlib.CategoryTheory.Monoidal.Functor
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
 
@@ -69,12 +70,12 @@ instance coeSort : CoeSort (Modules.{u,v} R) (Type (max u v)) :=
 
 Each coefficient carrier has the additive commutative group structure of its underlying
 `R`-module. -/
-instance addCommGroup (M : Modules.{u,v} R) : AddCommGroup M :=
+instance addCommGroup (M : Modules.{u, v} R) : AddCommGroup M :=
   (show ModuleCat.{max u v} R from M).isAddCommGroup
 /-- The ground action on a universe scalar module.
 
 Each coefficient carrier has its given module structure over `R`. -/
-instance module (M : Modules.{u,v} R) : Module R M :=
+instance module (M : Modules.{u, v} R) : Module R M :=
   (show ModuleCat.{max u v} R from M).isModule
 /-- The concrete structure of the universe scalar-module category.
 
@@ -155,6 +156,8 @@ instance toOriginal_isEquivalence : (toOriginal.{u,v} R).IsEquivalence := by
 The additive equivalence from lifted-scalar modules to ground-scalar modules preserves
 homology of short complexes. -/
 instance toOriginal_preservesHomology : (toOriginal.{u,v} R).PreservesHomology := by
+  change (ModuleCat.restrictScalars.{max u v}
+    (scalarEquiv.{u,v} R).toRingHom).PreservesHomology
   infer_instance
 
 
@@ -192,7 +195,7 @@ theorem unitIso_inv_value (x : ULift.{v} R) : (unitIso.{u,v} R).inv x = x := rfl
 
 For modules `M, N` over `R' = ULift.{v} R`, this identifies `Res(M) ⊗[R] Res(N)` with `Res(M
 ⊗[R'] N)` by retaining both pure-tensor values. -/
-def tensorIso (M N : ModuleCat.{max u v} (LiftedRing.{u,v} R)) : (toOriginal.{u,v} R).obj M ⊗
+def tensorIso (M N : ModuleCat.{max u v} (LiftedRing.{u, v} R)) : (toOriginal.{u, v} R).obj M ⊗
   (toOriginal.{u,v} R).obj N ≅ (toOriginal.{u,v} R).obj (M ⊗ N) :=
   ModuleCat.RingEquivUniverse.tensorIso.{u,max u v,0} (scalarEquiv.{u,v} R) M N
 
@@ -200,8 +203,8 @@ def tensorIso (M N : ModuleCat.{max u v} (LiftedRing.{u,v} R)) : (toOriginal.{u,
 
 The tensor comparison sends `m ⊗ₜ[R] n` to `m ⊗ₜ[ULift.{v} R] n`. -/
 @[simp]
-theorem tensorIso_hom_tmul (M N : ModuleCat.{max u v} (LiftedRing.{u,v} R))
-    (m : (toOriginal.{u,v} R).obj M) (n : (toOriginal.{u,v} R).obj N) :
+theorem tensorIso_hom_tmul (M N : ModuleCat.{max u v} (LiftedRing.{u, v} R))
+    (m : (toOriginal.{u, v} R).obj M) (n : (toOriginal.{u, v} R).obj N) :
     (tensorIso.{u,v} R M N).hom (m ⊗ₜ[R] n) = m ⊗ₜ[(LiftedRing.{u,v} R)] n :=
   ModuleCat.RingEquivUniverse.tensorIso_hom_tmul (scalarEquiv.{u,v} R) M N m n
 
@@ -210,7 +213,7 @@ theorem tensorIso_hom_tmul (M N : ModuleCat.{max u v} (LiftedRing.{u,v} R))
 The inverse tensor comparison sends `m ⊗ₜ[ULift.{v} R] n` to the pure `R`-tensor of the same
 coefficient elements. -/
 @[simp]
-theorem tensorIso_inv_tmul (M N : ModuleCat.{max u v} (LiftedRing.{u,v} R)) (m : M) (n : N) :
+theorem tensorIso_inv_tmul (M N : ModuleCat.{max u v} (LiftedRing.{u, v} R)) (m : M) (n : N) :
     (tensorIso.{u,v} R M N).inv (m ⊗ₜ[(LiftedRing.{u,v} R)] n) =
       (show (toOriginal.{u,v} R).obj M from m) ⊗ₜ[R]
         (show (toOriginal.{u,v} R).obj N from n) :=
@@ -221,7 +224,7 @@ theorem tensorIso_inv_tmul (M N : ModuleCat.{max u v} (LiftedRing.{u,v} R)) (m :
 For module maps `f` and `g` over the lifted ring, tensoring their restrictions over `R` and
 then comparing equals comparing first and restricting their tensor map over the lifted ring. -/
 @[reassoc]
-theorem tensorIso_naturality {M N M' N' : ModuleCat.{max u v} (LiftedRing.{u,v} R)}
+theorem tensorIso_naturality {M N M' N' : ModuleCat.{max u v} (LiftedRing.{u, v} R)}
     (f : M ⟶ M') (g : N ⟶ N') :
     ((toOriginal.{u,v} R).map f ⊗ₘ (toOriginal.{u,v} R).map g) ≫ (tensorIso.{u,v} R M' N').hom =
       (tensorIso.{u,v} R M N).hom ≫ (toOriginal.{u,v} R).map (f ⊗ₘ g) :=
@@ -272,7 +275,7 @@ def monoidal : (toOriginal.{u,v} R).Monoidal :=
 The tensor comparison commutes with the braidings of the lifted-ring and ground-ring module
 tensor categories. -/
 @[reassoc]
-theorem tensorIso_braiding (M N : ModuleCat.{max u v} (LiftedRing.{u,v} R)) :
+theorem tensorIso_braiding (M N : ModuleCat.{max u v} (LiftedRing.{u, v} R)) :
     (tensorIso.{u,v} R M N).hom ≫ (toOriginal.{u,v} R).map (β_ M N).hom =
       (β_ ((toOriginal.{u,v} R).obj M) ((toOriginal.{u,v} R).obj N)).hom ≫
         (tensorIso.{u,v} R N M).hom := by
