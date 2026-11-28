@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
 import MathlibExt.NumberTheory.RamanujanKFunction
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.LinearCombination
@@ -53,6 +54,37 @@ example :
 -- Independently group a progression with leading exponent 3 and stride 2
 -- into its three progressions with stride 6.
 example : poch 3 2 (2 : R) = poch 3 6 2 * poch 5 6 2 * poch 7 6 2 := by decide
+
+private def finiteTheta (a b : R) : R :=
+  ((List.range 17).map fun i =>
+    let n := (i : ℤ) - 8
+    a ^ (n * (n + 1) / 2).toNat * b ^ (n * (n - 1) / 2).toNat).sum
+
+private def finitePochhammer (a q : R) : R :=
+  ((List.range 32).map fun n => 1 - a * q ^ n).prod
+
+-- Compare the bilateral theta sum and the three products by computing them separately.
+-- For these inputs terms outside [-8, 8] and factors beyond index 31 do not contribute.
+example :
+    let x : R := 2
+    finiteTheta x (x ^ 2) =
+      finitePochhammer (x ^ 3) (x ^ 3) * finitePochhammer (-x) (x ^ 3) *
+        finitePochhammer (-x ^ 2) (x ^ 3) := by
+  decide
+
+-- At a zero base the first factor is the only one that can differ from one.
+example : finitePochhammer 4 0 = -3 := by decide
+
+-- Either theta parameter may be zero. The only surviving terms are at 0 and ±1.
+example : finiteTheta 0 (4 : R) = 5 ∧ finiteTheta (4 : R) 0 = 5 := by decide
+
+example : ramanujanThetaRaw 0 (1 / 2) = (3 / 2 : ℂ) := by
+  rw [ramanujanThetaRaw_eq_qPochhammerInfRaw (a := 0) (b := 1 / 2) (by simp)]
+  simp only [zero_mul, neg_zero, qPochhammerInfRaw_eq_tprod, sub_zero, tprod_one, one_mul]
+  rw [tprod_eq_prod (s := {0})]
+  · norm_num
+  · intro n hn
+    simp [zero_pow (by simpa using hn : n ≠ 0)]
 
 -- The public complex identity also applies at a nonreal point of the disk.
 example :

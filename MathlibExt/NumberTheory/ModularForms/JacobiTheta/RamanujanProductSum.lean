@@ -21,21 +21,15 @@ from the two-term formula for a theta function with one zero parameter.
 
 namespace MetaMathlibExt
 
+open QPochhammer
+
 private theorem ramanujanThetaRaw_zero_left (b : ℂ) : ramanujanThetaRaw 0 b = 1 + b := by
-  unfold ramanujanThetaRaw
-  rw [tsum_eq_sum (s := {0, -1})]
+  rw [ramanujanThetaRaw_eq_qPochhammerInfRaw (a := 0) (b := b) (by simp)]
+  simp only [zero_mul, neg_zero, qPochhammerInfRaw_eq_tprod, tprod_one, sub_zero, one_mul]
+  rw [tprod_eq_prod (s := {0})]
   · simp
   · intro n hn
-    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hn
-    have hprod : 0 ≤ (n - 1) * (n + 2) := by
-      rcases le_or_gt n (-2) with h | h
-      · exact mul_nonneg_of_nonpos_of_nonpos (by omega) (by omega)
-      · exact mul_nonneg (by omega) (by omega)
-    have htwo : 2 ≤ n * (n + 1) := calc
-      2 ≤ (n - 1) * (n + 2) + 2 := le_add_of_nonneg_left hprod
-      _ = n * (n + 1) := by ring
-    have hexp : (n * (n + 1) / 2).toNat ≠ 0 := by omega
-    simp [ramanujanThetaTerm, zero_pow hexp]
+    simp [zero_pow (by simpa using hn : n ≠ 0)]
 
 private theorem ramanujanTheta_mul_add_mul_neg_of_ne_zero {a b c d : ℂ} (ha : a ≠ 0)
     (habcd : a * b = c * d) (hab : ‖a * b‖ < 1) :

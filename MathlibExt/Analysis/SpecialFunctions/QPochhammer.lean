@@ -37,7 +37,9 @@ out-of-domain `q` cannot be passed silently.
 
 ## References
 
-The residue-class splitting proof generalizes the former `diagonal_split` in
+The residue-class splitting proof moves `pochhammer_split` from
+`MathlibExt.Combinatorics.Enumerative.Partition.SlaterOrderEighteenThetaRamanujanThetaEtaQuotients`
+and replaces the former `diagonal_split` in
 `MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanOneTwo`.
 -/
 
@@ -51,6 +53,11 @@ defined for every $q$: when this product does not converge unconditionally (in p
 most $q$ with $|q| \ge 1$), its value is $1$ by convention. -/
 noncomputable def qPochhammerInfRaw (a q : ℂ) : ℂ :=
   tprod (fun n : ℕ => (1 - a * q ^ n))
+
+/-- **Product formula for the raw q-Pochhammer symbol.** The total infinite product
+`qPochhammerInfRaw a q` has factors `1 - a * q ^ n`, indexed by the natural numbers. -/
+theorem qPochhammerInfRaw_eq_tprod (a q : ℂ) :
+    qPochhammerInfRaw a q = ∏' n : ℕ, (1 - a * q ^ n) := rfl
 
 /-- **Infinite q-Pochhammer symbol.** For complex numbers $a$ and $q$ with $|q| < 1$, the infinite
 q-Pochhammer symbol is $(a;q)_\infty = \prod_{n=0}^{\infty} (1 - a q^n)$, the unconditional
@@ -89,17 +96,18 @@ theorem hasProd_qPochhammerInf (a q : ℂ) (hq : ‖q‖ < 1) :
     Complex.multipliable_one_add_of_summable hsa
   simpa [qPochhammerInf, qPochhammerInfRaw, sub_eq_add_neg] using hm.hasProd
 
-/-- For `‖q‖ < 1` and a positive modulus `d`, splitting the indices into their residue classes
-modulo `d` expresses `(a; q)∞` as the product of `(a * q^i; q^d)∞` for `0 ≤ i < d`. -/
+/-- **Residue-class split of the infinite q-Pochhammer product.** For $|q| < 1$ and a positive
+natural number $d$, the product $(a;q)_\infty$ equals the product of $(a q^i;q^d)_\infty$
+over $0 \le i < d$. -/
 theorem qPochhammerInfRaw_split (a q : ℂ) (hq : ‖q‖ < 1) (d : ℕ) [NeZero d] :
     qPochhammerInfRaw a q = ∏ i : Fin d, qPochhammerInfRaw (a * q ^ i.val) (q ^ d) := by
   let e := (Equiv.prodComm (Fin d) ℕ).trans (Nat.divModEquiv d).symm
   have hp := e.hasProd_iff.mpr (hasProd_qPochhammerInf a q hq)
-  have hd : ‖q ^ d‖ < 1 := by
-    rw [norm_pow]
-    exact pow_lt_one₀ (norm_nonneg _) hq (NeZero.ne d)
   have hf := hp.prod_fiberwise (g := fun i : Fin d => qPochhammerInfRaw (a * q ^ i.val) (q ^ d)) (by
     intro i
+    have hd : ‖q ^ d‖ < 1 := by
+      rw [norm_pow]
+      exact pow_lt_one₀ (norm_nonneg _) hq (NeZero.ne d)
     apply (hasProd_qPochhammerInf _ _ hd).congr_fun
     intro n
     simp [e, pow_add, pow_mul, mul_comm n d]
