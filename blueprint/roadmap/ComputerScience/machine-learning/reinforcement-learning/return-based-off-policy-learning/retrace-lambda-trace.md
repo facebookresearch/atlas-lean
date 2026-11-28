@@ -10,7 +10,7 @@ the second line being a convention for actions the behaviour never draws (any va
 
 $$\mu(b \mid y)\, c(b,y) = \lambda \min\bigl(\mu(b \mid y), \pi(b \mid y)\bigr) \le \pi(b \mid y),$$
 
-so it is admissible for $(\pi, \mu)$. If $\pi(\cdot \mid y)$ is the point mass at an action $g(y)$, then $c(b, y) = \lambda\, \mathbf{1}\{b = g(y)\}$ for every action $b$ with $\mu(b \mid y) > 0$: the trace is cut at the first action that differs from $g$.
+so it is admissible for $(\pi, \mu)$. If, for every state $y$, $\pi(\cdot \mid y)$ is the point mass at an action $g(y)$, then $c(b, y) = \lambda\, \mathbf{1}\{b = g(y)\}$ for every action $b$ with $\mu(b \mid y) > 0$. Along a behaviour trajectory, which for $s \ge 1$ draws only actions with $\mu(a_s \mid x_s) > 0$, the trace product $\prod_{s=1}^t c_s$ is then $\lambda^t$ while $a_s = g(x_s)$ for $1 \le s \le t$, and $0$ from the first time $s \ge 1$ with $a_s \ne g(x_s)$. The initial action $a_0$ carries no coefficient, so a forced initial action that differs from $g(x_0)$ does not cut the trace.
 
 Other traces of the same form, for comparison: importance sampling, $c = \pi/\mu$ on actions with $\mu > 0$, is admissible, with equality $\mu c = \pi$ on those actions, and makes the return-based operator return $Q^\pi$ for every $Q$ when every $\pi(\cdot \mid y)$ charges only actions with $\mu(\cdot \mid y) > 0$ (the source states this without the support condition); the off-policy $Q^\pi(\lambda)$ trace $c = \lambda$ is admissible only when $\lambda \mu \le \pi$; and tree-backup, $c = \lambda \pi(a_s \mid x_s)$, is admissible since $\lambda \mu \pi \le \pi$. Because $\min(1, \pi/\mu) \ge \pi$, Retrace(λ) cuts traces no more than tree-backup with the same $\lambda$.
 
