@@ -15,11 +15,12 @@ public import MathlibExt.GameTheory.SpragueGrundy
 /-!
 # Smith's remoteness function
 
-Smith's remoteness of a position of a finite impartial game (`SpragueGrundy.ImpartialGame`):
-the length of play when the winner hurries and the loser delays. It is `0` at terminal
-positions; otherwise one more than the least even remoteness of an option, if some option has
-even remoteness, and one more than the largest remoteness of an option otherwise. A position is
-a P-position exactly when its remoteness is even.
+Smith's remoteness is the length of play when the winner hurries and the loser delays. We
+consider finitely branching normal-play impartial games (`SpragueGrundy.ImpartialGame`) with
+a natural-number rank that strictly decreases on every move. Remoteness is `0` at terminal
+positions; otherwise it is one more than the least even remoteness of an option, if some option
+has even remoteness, and one more than the largest remoteness of an option otherwise. A position
+is a P-position exactly when its remoteness is even.
 
 ## References
 
@@ -81,7 +82,8 @@ theorem smithRemoteness_of_moves_eq_empty (G : ImpartialGame) (p : G.Pos)
   rw [smithRemoteness_eq]
   simp [h]
 
-/-- **Even remoteness characterizes P-positions.** In an impartial game $G$, a position $p$ is a
+/-- **Even remoteness characterizes P-positions.** In a finitely branching normal-play impartial
+game $G$ with a natural-number rank that strictly decreases on every move, a position $p$ is a
 P-position if and only if its Smith remoteness $R(p)$ is even.
 
 Source: C. A. B. Smith, *Graphs and composite games*, J. Combin. Theory 1 (1966), 51–81; as
