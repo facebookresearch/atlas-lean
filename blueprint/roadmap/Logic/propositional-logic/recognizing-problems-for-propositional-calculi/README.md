@@ -11,3 +11,4 @@ Finitely axiomatized propositional calculi with modus ponens and substitution, a
 - [Equivalence of finite non-deterministic matrices is undecidable](equivalence-of-finite-nmatrices-undecidable.md)
 - [Monadicity of finite non-deterministic logical matrices is undecidable](monadicity-of-non-deterministic-logical-matrices.md)
 - [Weak soundness for a finite-valued logic is undecidable](weak-soundness-for-a-finite-valued-logic-is.md)
+- [Some superintuitionistic propositional calculus with three-variable axioms is undecidable](three-variable-superintuitionistic-calculus.md)
