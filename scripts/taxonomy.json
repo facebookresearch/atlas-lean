@@ -12883,6 +12883,7 @@
   "MathlibExt/Geometry/EllipticBilliard602": {"to": "Geometry/euclidean-geometry/circles-and-conics", "title": "Mathematical billiards"},
   "MathlibExt/Geometry/ErdosMordell": {"to": "Geometry/euclidean-geometry/triangle-geometry", "title": "Erdős–Mordell inequality"},
   "MathlibExt/Geometry/ErdosProblem652": {"to": "Geometry/discrete-geometry", "title": "Distinct and unit distances"},
+  "MathlibExt/Geometry/ErdosProblem755": {"to": "Geometry/discrete-geometry", "title": "Equilateral triangles in planar point sets"},
   "MathlibExt/Geometry/Euclidean/AngleBisector": {"to": "Geometry/euclidean-geometry/triangle-geometry", "title": "Angle bisector theorem"},
   "MathlibExt/Geometry/Euclidean/AngleTrisectionImpossible": {"to": "Geometry/euclidean-geometry/foundations-and-constructions", "title": "Angle trisection"},
   "MathlibExt/Geometry/Euclidean/ApollonianCirclePacking": {"to": "Geometry/euclidean-geometry/circles-and-conics", "title": "Apollonian circle packings"},
