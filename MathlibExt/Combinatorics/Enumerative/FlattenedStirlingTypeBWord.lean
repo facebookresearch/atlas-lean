@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingPermutations
-import all MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBRuns
+import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBRuns
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Data.List.GetD
 import Mathlib.Data.List.Infix
@@ -24,8 +24,6 @@ Every descent returns to the shifted minimum of the current block.
 
 namespace MetaMathlibExt
 namespace typeBFlattenedWord_mem_flattenedStirling
-
-open wordRunCount_typeBFlattenedWord
 
 /-! ### The two positions of each letter -/
 
@@ -80,8 +78,8 @@ private theorem paired_list (hP : IsTypeBSetPartition P) {v : ℕ} (hv : v ∈ F
     exact Finset.mem_image.mpr ⟨(k : ℤ), Finset.mem_filter.mpr ⟨h0, by omega⟩, rfl⟩
   · have hk0 : k ≠ 0 := by
       rintro rfl
-      exact h0 (P.mem_part zero_mem_Icc)
-    obtain ⟨p, hp, hsign⟩ := exists_label hP hkI h0
+      exact h0 (P.mem_part (by simp))
+    obtain ⟨p, hp, hsign⟩ := hP.exists_mem_adlerBlockLabels hkI h0
     apply Paired.infix _ List.infix_append_right
     have hlabel := (List.singleton_infix_iff _ _).mpr ((Finset.mem_sort (· ≤ ·)).mpr hp)
     apply Paired.infix (l := blockWord P p) _ (by simpa using hlabel.flatMap (blockWord P))
@@ -201,29 +199,26 @@ private theorem ordered_double {lo : ℕ} {tail : List ℕ} (htail : ∀ q, Orde
 private theorem ordered_wrap {S : Finset ℕ} {t lo : ℕ} {tail : List ℕ} (ht : t ∈ S)
     (hmin : ∀ x ∈ S, t ≤ x) (hle : lo ≤ t) (htail : OrderedFrom t t tail) (prev : ℕ) :
     OrderedFrom lo prev (wrappedWord S ++ tail) := by
-  have hhead := (wrapped ht hmin prev).2.2
-  have hs := Finset.pairwise_sort S (· ≤ ·)
-  cases hsort : S.sort (· ≤ ·) with
-  | nil => simp [wrappedWord, hsort] at hhead
-  | cons x xs =>
-    have heq : x = t := by simpa [wrappedWord, hsort] using hhead
-    subst x
-    rw [hsort] at hs
-    obtain ⟨hxs, hs⟩ := List.pairwise_cons.mp hs
-    simp only [wrappedWord, hsort, List.cons_append, List.append_assoc, List.nil_append]
-    apply ordered_cons (next := t) _ hle (fun _ => ⟨hle, le_rfl⟩)
-    apply ordered_double _ xs hs t hxs
-    intro q
-    exact ordered_cons htail le_rfl (fun _ => ⟨le_rfl, le_rfl⟩)
+  let xs := (S.erase t).sort (· ≤ ·)
+  have hxs : ∀ x ∈ xs, t ≤ x := fun x hx =>
+    hmin x (Finset.mem_of_mem_erase ((Finset.mem_sort _).mp hx))
+  have hsort := Finset.sort_insert (s := S.erase t) (· ≤ ·)
+    (fun x hx => hmin x (Finset.mem_of_mem_erase hx)) (by simp)
+  rw [Finset.insert_erase ht] at hsort
+  simp only [wrappedWord_eq_of_sort_eq hsort, List.cons_append, List.append_assoc]
+  apply ordered_cons (next := t) _ hle (fun _ => ⟨hle, le_rfl⟩)
+  apply ordered_double _ xs (Finset.pairwise_sort _ _) t hxs
+  intro q
+  exact ordered_cons htail le_rfl (fun _ => ⟨le_rfl, le_rfl⟩)
 
 private theorem ordered_block {p : ℤ} (hp : p ∈ adlerBlockLabels P) {lo : ℕ} {tail : List ℕ}
     (hle : lo ≤ p.natAbs + 1) (htail : OrderedFrom (p.natAbs + 1) (p.natAbs + 1) tail) :
     OrderedFrom lo lo (blockWord P p ++ tail) := by
-  obtain ⟨hpI, hcond⟩ := mem_labels.mp hp
+  obtain ⟨hpI, hcond⟩ := mem_adlerBlockLabels.mp hp
   have hp' := Finset.mem_Icc.mp hpI
   have ht : p.natAbs + 1 ∈ typeBShift ((P.part p).filter (0 < ·)) :=
-    Finset.mem_image.mpr ⟨p, Finset.mem_filter.mpr ⟨P.mem_part (mem_Icc_of_label hp), by omega⟩,
-      rfl⟩
+    mem_typeBShift.mpr ⟨p, Finset.mem_filter.mpr
+      ⟨P.mem_part (mem_Icc_of_mem_adlerBlockLabels hp), by omega⟩, rfl⟩
   rw [blockWord, List.append_assoc]
   apply ordered_double _ _ (Finset.pairwise_sort _ _) lo
   · intro x hx
@@ -245,7 +240,7 @@ private theorem ordered_blocks (ps : List ℤ) (hmem : ∀ p ∈ ps, p ∈ adler
   | nil => exact ⟨by simp, by simp⟩
   | cons p ps ih =>
     obtain ⟨hp, hs⟩ := List.pairwise_cons.mp hs
-    have hp' := Finset.mem_Icc.mp (mem_labels.mp (hmem p List.mem_cons_self)).1
+    have hp' := Finset.mem_Icc.mp (mem_adlerBlockLabels.mp (hmem p List.mem_cons_self)).1
     apply ordered_block (hmem p List.mem_cons_self) (hlo p List.mem_cons_self)
     apply ih (fun q hq => hmem q (List.mem_cons_of_mem _ hq)) hs
     intro q hq
@@ -260,7 +255,7 @@ private theorem flattened_list (hP : IsTypeBSetPartition P) :
     · apply ordered_blocks _ (fun _ => (Finset.mem_sort _).mp) (Finset.pairwise_sort _ _)
       simp
     · exact Finset.mem_image.mpr
-        ⟨0, Finset.mem_filter.mpr ⟨P.mem_part zero_mem_Icc, le_rfl⟩, rfl⟩
+        ⟨0, Finset.mem_filter.mpr ⟨P.mem_part (by simp), le_rfl⟩, rfl⟩
     · intro x hx
       obtain ⟨q, -, rfl⟩ := Finset.mem_image.mp hx
       omega
@@ -271,12 +266,13 @@ private theorem flattened_list (hP : IsTypeBSetPartition P) :
     · change l.getD i 0 < l.getD j 0 at hd
       simpa [DropAt, ← hj] using hd
   intro i j hij hi hj
-  exact h.ordered i j hij (by rw [show l.length = _ from length_list hP]; exact j.isLt)
+  exact h.ordered i j hij
+    (by rw [show l.length = _ from hP.length_typeBFlattenedWordList]; exact j.isLt)
     (drop i hi) (drop j hj)
 
 end typeBFlattenedWord_mem_flattenedStirling
 
-open typeBFlattenedWord_mem_flattenedStirling wordRunCount_typeBFlattenedWord in
+open typeBFlattenedWord_mem_flattenedStirling in
 /-- **The word of a type $B$ set partition is a flattened Stirling permutation.** For every
 natural number $n$ and every type $B$ set partition $P$ of $[-n, n] = \{-n, \dots, n\}$, the word
 $\varphi(P) = w_1 w_2 \cdots w_{2(n+1)}$ of $P$ is a Stirling permutation of order $n + 1$ and is
@@ -291,7 +287,7 @@ public theorem typeBFlattenedWord_mem_flattenedStirling {n : ℕ}
     (P : Finpartition (Finset.Icc (-(n : ℤ)) n)) (hP : IsTypeBSetPartition P) :
     IsStirlingPermutation (n + 1) (typeBFlattenedWord P) ∧
       IsFlattenedWord (typeBFlattenedWord P) := by
-  exact ⟨stirling_of_pairs (fun v hv => positions (length_list hP) (paired_list hP hv)),
-    flattened_list hP⟩
+  exact ⟨stirling_of_pairs (fun v hv =>
+    positions hP.length_typeBFlattenedWordList (paired_list hP hv)), flattened_list hP⟩
 
 end MetaMathlibExt

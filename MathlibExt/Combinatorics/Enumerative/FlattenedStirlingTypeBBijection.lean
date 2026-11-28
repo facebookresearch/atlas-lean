@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBWord
-import Mathlib.Data.List.GetD
 import Mathlib.Data.List.TakeWhile
 import MathlibExt.Combinatorics.Enumerative.FlattenedStirlingTypeBRuns
 
@@ -36,8 +35,10 @@ strictly smaller. The cuts are unique, and unshifting the letters reconstructs t
   no. 3, pp. 455–486, §4 (canonical representation of type B partitions).
 
 The forward direction uses `typeBFlattenedWord_mem_flattenedStirling` from
-`FlattenedStirlingTypeBWord`. The length and Adler block facts are from
-`FlattenedStirlingTypeBRuns` (`length_list`, `part_neg`, `exists_label`, and `label_eq_of_part_eq`).
+`FlattenedStirlingTypeBWord`. For the inverse, the block facts from `FlattenedStirlingTypeBRuns`
+include `IsTypeBSetPartition.part_neg`, `IsTypeBSetPartition.exists_mem_adlerBlockLabels` and
+`eq_of_part_eq_of_mem_adlerBlockLabels`. The indexed word agrees with its word list by
+`IsTypeBSetPartition.length_typeBFlattenedWordList` and `ofFn_typeBFlattenedWord_of_length_eq`.
 -/
 
 namespace MetaMathlibExt
@@ -112,56 +113,16 @@ private theorem Twice.right {l r : List ℕ} (h : Twice (l ++ r)) (hd : ∀ x �
 
 /-! ### The canonical block decomposition -/
 
-private theorem count_double (x : ℕ) {l : List ℕ} (h : l.Nodup) :
-    (l.flatMap fun a => [a, a]).count x = if x ∈ l then 2 else 0 := by
-  induction l with
-  | nil => simp
-  | cons a l ih =>
-    obtain ⟨ha, hl⟩ := List.nodup_cons.mp h
-    by_cases hx : x = a
-    · subst x
-      simp [ih hl, ha]
-    · simp [ih hl, hx, Ne.symm hx]
-
-private theorem count_doubled (s : Finset ℕ) (x : ℕ) :
-    (doubledWord s).count x = if x ∈ s then 2 else 0 := by
-  rw [doubledWord_eq_flatMap, count_double _ (Finset.sort_nodup _ _)]
-  simp
-
 private theorem mem_doubled {s : Finset ℕ} {x : ℕ} : x ∈ doubledWord s ↔ x ∈ s := by
-  simp [doubledWord_eq_flatMap, List.mem_flatMap]
-
-private theorem sorted_doubled (s : Finset ℕ) : (doubledWord s).SortedLE := by
-  have hs := (Finset.sortedLT_sort s).sortedLE.pairwise
-  rw [doubledWord_eq_flatMap]
-  generalize s.sort (· ≤ ·) = l at *
-  apply List.sortedLE_iff_pairwise.mpr
-  induction l with
-  | nil => simp
-  | cons a l ih =>
-    have ⟨ha, hl⟩ := List.pairwise_cons.mp hs
-    simp only [List.flatMap_cons, List.cons_append, List.nil_append, List.pairwise_cons,
-      List.mem_cons, List.mem_flatMap]
-    refine ⟨fun x hx => ?_, fun x ⟨b, hb, h⟩ => ?_, ih hl⟩
-    · rcases hx with rfl | ⟨b, hb, h⟩
-      · exact le_rfl
-      · have e : x = b := by simpa using h
-        exact e.symm ▸ ha _ hb
-    · have e : x = b := by simpa using h
-      exact e.symm ▸ ha _ hb
-
-private theorem wrap_insert {s : Finset ℕ} {a : ℕ} (ha : ∀ b ∈ s, a < b) :
-    wrappedWord (insert a s) = a :: doubledWord s ++ [a] := by
-  have hn : a ∉ s := fun h => (ha a h).false
-  rw [wrappedWord_eq_of_sort_eq (Finset.sort_insert (· ≤ ·) (fun b hb => (ha b hb).le) hn),
-    doubledWord_eq_flatMap]
+  rw [← List.count_pos_iff, count_doubledWord]
+  split <;> simp_all
 
 private theorem eq_doubled_reverse {l : List ℕ} (hs : l.SortedGE) (ht : Twice l) :
     l = (doubledWord l.toFinset).reverse := by
-  apply List.Perm.eq_of_sortedGE hs (sorted_doubled _).reverse
+  apply List.Perm.eq_of_sortedGE hs (sortedLE_doubledWord _).reverse
   apply List.perm_iff_count.mpr
   intro a
-  simp only [List.count_reverse, count_doubled, List.mem_toFinset]
+  simp only [List.count_reverse, count_doubledWord, List.mem_toFinset]
   by_cases ha : a ∈ l
   · exact by simpa [ha] using (ht a).resolve_left (fun e => List.count_eq_zero.mp e ha)
   · rw [ite_eq_right ha, List.count_eq_zero.mpr ha]
@@ -375,7 +336,7 @@ private theorem layout_inj {bs cs : List WordBlock}
 private theorem WordBlock.two_le_count {b : WordBlock} {x : ℕ} (hx : x ∈ b.support) :
     2 ≤ b.word.count x := by
   simp only [WordBlock.word, List.count_cons, List.count_append, List.count_reverse,
-    count_doubled, WordBlock.support, Finset.mem_insert, Finset.mem_union] at hx ⊢
+    count_doubledWord, WordBlock.support, Finset.mem_insert, Finset.mem_union] at hx ⊢
   rcases hx with rfl | hx | hx <;> simp [*] <;> omega
 
 private theorem layout_disjoint {bs : List WordBlock} (ht : Twice (bs.flatMap WordBlock.word)) :
@@ -388,7 +349,7 @@ private theorem layout_disjoint {bs : List WordBlock} (ht : Twice (bs.flatMap Wo
     obtain ⟨u, v, rfl⟩ := List.mem_iff_append.mp hb
     have h := hle x
     simp only [List.flatMap_append, List.flatMap_cons, List.count_append, WordBlock.word,
-      List.count_cons, List.count_reverse, count_doubled, hp, hn, ite_true] at h
+      List.count_cons, List.count_reverse, count_doubledWord, hp, hn, ite_true] at h
     omega
   refine ⟨internal, ?_⟩
   clear internal ht
@@ -437,7 +398,7 @@ private theorem eq_of_at_reverse {m i a : ℕ} {w : Fin m → ℕ}
 private theorem twice_reverse_ofFn {n : ℕ} {w : Fin (2 * n) → ℕ}
     (h : IsStirlingPermutation n w) : Twice (List.ofFn w).reverse := by
   intro a
-  rw [List.count_reverse, count_ofFn_stirling h]
+  rw [List.count_reverse, h.count_ofFn]
   split <;> simp
 
 private theorem between_reverse_ofFn {n : ℕ} {w : Fin (2 * n) → ℕ}
@@ -461,13 +422,11 @@ private theorem between_reverse_ofFn {n : ℕ} {w : Fin (2 * n) → ℕ}
   have hA : w A = a := eq_of_at_reverse hk
   have hB : w B = x := eq_of_at_reverse hj
   have hC : w C = a := eq_of_at_reverse hi
-  obtain ⟨hmem, _, hbetween⟩ := isStirlingPermutation_iff.mp h
-  have ha : a ∈ Finset.Icc 1 n := hA ▸ hmem A
   have hij : i < j := by simp [i, j]
   have hjk : j < k := by simp [j, k]
   have hab : A < B := by change 2 * n - 1 - k < 2 * n - 1 - j; omega
   have hbc : B < C := by change 2 * n - 1 - j < 2 * n - 1 - i; omega
-  simpa [hB] using hbetween a ha A B C hab hbc hA hC
+  simpa [hA, hB] using h.lt_of_eq_of_between hab hbc (hA.trans hC.symm)
 
 private theorem flat_reverse_ofFn {m : ℕ} {w : Fin m → ℕ} (h : IsFlattenedWord w) :
     ReverseFlat (List.ofFn w).reverse := by
@@ -481,36 +440,25 @@ private theorem flat_reverse_ofFn {m : ℕ} {w : Fin m → ℕ} (h : IsFlattened
   have hB : w B = b := eq_of_at_reverse hb
   have hC : w C = c := eq_of_at_reverse hc
   have hD : w D = d := eq_of_at_reverse hd
-  have hsA : wordRunStart w A := wordRunStart_iff.mpr (Or.inr
-    ⟨B, by simp [A, B]; omega, by simpa [hA, hB] using hab⟩)
-  have hsC : wordRunStart w C := wordRunStart_iff.mpr (Or.inr
-    ⟨D, by simp [C, D]; omega, by simpa [hC, hD] using hcd⟩)
   have hCA : C < A := by change m - 1 - j < m - 1 - i; omega
-  simpa [hA, hC] using isFlattenedWord_iff.mp h C A hCA hsC hsA
+  simpa [hA, hC] using h.le_of_descents hCA (i' := D) (j' := B)
+    (by simp [C, D]; omega) (by simp [A, B]; omega)
+    (by simpa [hC, hD] using hcd) (by simpa [hA, hB] using hab)
+
+private theorem mem_ofFn_stirling {n : ℕ} {w : Fin (2 * n) → ℕ}
+    (hw : IsStirlingPermutation n w) (a : ℕ) : a ∈ List.ofFn w ↔ a ∈ Finset.Icc 1 n := by
+  rw [← List.count_pos_iff, hw.count_ofFn]
+  split <;> simp_all
 
 private theorem first_one {n : ℕ} {w : Fin (2 * (n + 1)) → ℕ}
     (hw : IsStirlingPermutation (n + 1) w) (hf : IsFlattenedWord w) : w 0 = 1 := by
-  obtain ⟨hrange, hc, _⟩ := isStirlingPermutation_iff.mp hw
-  let s := Finset.univ.filter (fun i => w i = 1)
-  have hs : s.Nonempty := Finset.card_pos.mp (by rw [hc 1 (by simp)]; decide)
-  let i := s.min' hs
-  have hi : w i = 1 := (Finset.mem_filter.mp (s.min'_mem hs)).2
-  by_cases hz : i = 0
-  · simpa [hz] using hi
-  have hlt : 0 < i.val := Nat.pos_of_ne_zero (fun he => hz (Fin.ext he))
-  let j : Fin (2 * (n + 1)) := ⟨i.val - 1, by have := i.isLt; omega⟩
-  have hj : j < i := by change i.val - 1 < i.val; omega
-  have hne : w j ≠ 1 := fun e => hj.not_ge (s.min'_le _ (Finset.mem_filter.mpr ⟨by simp, e⟩))
-  have hjgt : 1 < w j := lt_of_le_of_ne (Finset.mem_Icc.mp (hrange j)).1 (Ne.symm hne)
-  have hr : wordRunStart w i := wordRunStart_iff.mpr (Or.inr
-    ⟨j, by change i.val - 1 + 1 = i.val; omega, by simpa only [hi] using hjgt⟩)
-  have h₀ : wordRunStart w 0 := wordRunStart_iff.mpr (Or.inl rfl)
-  have hle := isFlattenedWord_iff.mp hf 0 i (by exact hlt) h₀ hr
-  exact le_antisymm (by simpa only [hi] using hle) (Finset.mem_Icc.mp (hrange 0)).1
+  have hm : 1 ∈ List.ofFn w := (mem_ofFn_stirling hw 1).mpr (by simp)
+  obtain ⟨i, hi⟩ := List.mem_ofFn.mp hm
+  have h0 : w 0 ∈ List.ofFn w := List.mem_ofFn.mpr ⟨0, rfl⟩
+  exact le_antisymm (by simpa only [hi] using hf.first_le i)
+    (Finset.mem_Icc.mp ((mem_ofFn_stirling hw _).mp h0)).1
 
 /-! ### The signed partition associated to a layout -/
-
-open wordRunCount_typeBFlattenedWord
 
 private abbrev Partition (n : ℕ) := Finpartition (Finset.Icc (-(n : ℤ)) n)
 
@@ -720,16 +668,13 @@ private theorem fromLayout_typeB {n : ℕ} {bs : List WordBlock} (hv : ∀ b ∈
     IsTypeBSetPartition (fromLayout hv hi hd ha) := by
   let P : Partition n := fromLayout hv hi hd ha
   have parts : P.parts = layoutParts bs := rfl
-  apply isTypeBSetPartition_iff.mpr
+  apply isTypeBSetPartition_iff_neg_closed_and_zero_mem.mpr
   have closed (s : Finset ℤ) (hs : s ∈ P.parts) : mirror s ∈ P.parts := by
     rw [parts, mem_layoutParts] at hs ⊢
     obtain ⟨b, hb, hs⟩ := hs
     exact ⟨b, hb, b.mirror_mem_parts hs⟩
-  refine ⟨closed, P.part 0, ⟨P.part_mem.mpr (by simp), ?_⟩, ?_⟩
-  · have h₀ : (0 : ℤ) ∈ Finset.Icc (-(n : ℤ)) n := by simp
-    exact (P.part_eq_of_mem (closed _ (P.part_mem.mpr h₀))
-      (mem_mirror.mpr (by simp [h₀]))).symm
-  · rintro s ⟨hs, he⟩
+  refine ⟨closed, ?_⟩
+  · intro s hs he
     have hroot {b : WordBlock} (hb : b ∈ bs) : 1 ≤ b.label :=
       (Finset.mem_Icc.mp ((ha _).mp (mem_support_of_layout.mp
         ⟨b, hb, Finset.mem_insert_self _ _⟩))).1
@@ -737,7 +682,7 @@ private theorem fromLayout_typeB {n : ℕ} {bs : List WordBlock} (hv : ∀ b ∈
     by_cases h : b.label = 1
     · have e : s = b.signed ∪ mirror b.signed := by simpa [WordBlock.parts, h] using hbs
       have hz := b.root_mem_signed
-      exact (P.part_eq_of_mem hs (e ▸ Finset.mem_union_left _ (by simpa [h] using hz))).symm
+      exact e ▸ Finset.mem_union_left _ (by simpa [h] using hz)
     · have dis := b.signed_disjoint_mirror (hv b hb) (by have := hroot hb; omega) (hi b hb)
       have hm : s = b.signed ∨ s = mirror b.signed := by simpa [WordBlock.parts, h] using hbs
       have hne : mirror b.signed ≠ b.signed := by
@@ -768,8 +713,8 @@ private theorem zero_shift_mem {n : ℕ} (P : Partition n) :
 private theorem adler_shift_mem {n : ℕ} {P : Partition n} {p : ℤ} (hp : p ∈ adlerBlockLabels P) :
     p.toNat + 1 ∈ typeBShift ((P.part p).filter (0 < ·)) := by
   have hp₀ := (Finset.mem_Icc.mp (adlerBlockLabels_subset P hp)).1
-  exact mem_typeBShift.mpr ⟨p, Finset.mem_filter.mpr ⟨P.mem_part (mem_Icc_of_label hp), by omega⟩,
-    by omega⟩
+  exact mem_typeBShift.mpr ⟨p, Finset.mem_filter.mpr
+    ⟨P.mem_part (mem_Icc_of_mem_adlerBlockLabels hp), by omega⟩, by omega⟩
 
 private theorem zeroWordBlock_valid {n : ℕ} (P : Partition n) : (zeroWordBlock P).Valid := by
   intro a ha
@@ -779,7 +724,7 @@ private theorem zeroWordBlock_valid {n : ℕ} (P : Partition n) : (zeroWordBlock
 
 private theorem adlerWordBlock_valid {n : ℕ} {P : Partition n} {p : ℤ}
     (hp : p ∈ adlerBlockLabels P) : (adlerWordBlock P p).Valid := by
-  obtain ⟨hp₀, hmin⟩ := mem_labels.mp hp
+  obtain ⟨hp₀, hmin⟩ := mem_adlerBlockLabels.mp hp
   have hp₁ := (Finset.mem_Icc.mp hp₀).1
   intro a ha
   simp only [adlerWordBlock, Finset.mem_union, Finset.mem_erase] at ha ⊢
@@ -801,22 +746,22 @@ private theorem adlerWordBlock_label_gt {n : ℕ} {P : Partition n} {p : ℤ}
 
 private theorem WordBlock.word_eq_reverse {b : WordBlock} (hb : b.Valid) :
     b.word = (doubledWord b.neg ++ wrappedWord (insert b.label b.pos)).reverse := by
-  rw [wrap_insert (fun x hx => hb x (Finset.mem_union_left _ hx))]
+  rw [wrappedWord_insert_of_lt (fun x hx => hb x (Finset.mem_union_left _ hx))]
   simp [WordBlock.word, List.reverse_append, List.reverse_cons, List.append_assoc]
 
 private theorem doubledWord_empty : doubledWord ∅ = [] := by
-  simp [doubledWord_eq_flatMap]
+  exact List.length_eq_zero_iff.mp (by simp [length_doubledWord])
 
 private theorem partitionLayout_word {n : ℕ} (P : Partition n) :
     (partitionLayout P).flatMap WordBlock.word = (typeBFlattenedWordList P).reverse := by
-  rw [typeBFlattenedWordList_eq, List.reverse_append, partitionLayout, List.flatMap_append,
-    List.flatMap_map, List.flatMap_singleton, List.reverse_flatMap]
+  rw [reverse_typeBFlattenedWordList, partitionLayout, List.flatMap_append,
+    List.flatMap_map, List.flatMap_singleton]
   congr 1
   · apply List.flatMap_congr
     intro p hp
     have hp' : p ∈ adlerBlockLabels P := by simpa using hp
-    rw [Function.comp_apply, (adlerWordBlock P p).word_eq_reverse (adlerWordBlock_valid hp')]
-    simp [adlerWordBlock, Finset.insert_erase (adler_shift_mem hp')]
+    rw [(adlerWordBlock P p).word_eq_reverse (adlerWordBlock_valid hp')]
+    simp [adlerWordBlock, Finset.insert_erase (adler_shift_mem hp'), List.reverse_append]
   · rw [(zeroWordBlock P).word_eq_reverse (zeroWordBlock_valid P)]
     simp [zeroWordBlock, doubledWord_empty, Finset.insert_erase (zero_shift_mem P)]
 
@@ -892,7 +837,7 @@ private theorem adlerWordBlock_signed {n : ℕ} {P : Partition n} (hP : IsTypeBS
     rw [mem_shift_of_sign (fun y hy => by have := (Finset.mem_filter.mp hy).2; omega)]
     simp [hx]
   · have hne : b.label ≠ 1 := hb₁.ne'
-    simp [b.zero_mem_signed hb hb₁.le, hne, zero_notMem_label hP hp]
+    simp [b.zero_mem_signed hb hb₁.le, hne, hP.zero_notMem_part_of_mem_adlerBlockLabels hp]
   · rw [b.mem_signed hb hb₁.le]
     simp only [hx.le, hx.not_gt, true_and, false_and, or_false]
     change x.natAbs + 1 ∈ insert (p.toNat + 1)
@@ -924,16 +869,20 @@ private theorem partitionLayout_parts {n : ℕ} {P : Partition n} (hP : IsTypeBS
     constructor
     · rintro (⟨hx, -⟩ | ⟨hx, -⟩)
       · exact hx
-      · simpa only [neg_neg] using neg_mem_part_zero hP hx
+      · simpa only [neg_neg] using hP.neg_mem_part_zero hx
     · intro hx
       by_cases he : 0 ≤ x
       · exact Or.inl ⟨hx, he⟩
-      · exact Or.inr ⟨neg_mem_part_zero hP hx, by omega⟩
+      · exact Or.inr ⟨hP.neg_mem_part_zero hx, by omega⟩
   have adler_parts {p : ℤ} (hp : p ∈ adlerBlockLabels P) :
       (adlerWordBlock P p).parts = {P.part p, P.part (-p)} := by
     rw [WordBlock.parts, ite_eq_right (adlerWordBlock_label_gt hp).ne',
-      adlerWordBlock_signed hP hp, part_neg hP (mem_Icc_of_label hp)]
+      adlerWordBlock_signed hP hp, hP.part_neg (mem_Icc_of_mem_adlerBlockLabels hp)]
     rfl
+  have mem_neg {p : ℤ} (hp : p ∈ adlerBlockLabels P) : P.part (-p) ∈ P.parts := by
+    apply P.part_mem.mpr
+    have hpI := Finset.mem_Icc.mp (mem_Icc_of_mem_adlerBlockLabels hp)
+    exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩
   have mem₀ : P.part 0 ∈ P.parts := P.part_mem.mpr (by simp)
   ext s
   rw [mem_layoutParts]
@@ -944,10 +893,9 @@ private theorem partitionLayout_parts {n : ℕ} {P : Partition n} (hP : IsTypeBS
     rcases hb with ⟨p, hp, rfl⟩ | rfl
     · rw [adler_parts hp] at hs
       rcases Finset.mem_insert.mp hs with rfl | hs
-      · exact P.part_mem.mpr (mem_Icc_of_label hp)
+      · exact P.part_mem.mpr (mem_Icc_of_mem_adlerBlockLabels hp)
       · obtain rfl := Finset.mem_singleton.mp hs
-        rw [part_neg hP (mem_Icc_of_label hp)]
-        exact (isTypeBSetPartition_iff.mp hP).1 _ (P.part_mem.mpr (mem_Icc_of_label hp))
+        exact mem_neg hp
     · rw [zero_parts, Finset.mem_singleton] at hs
       exact hs ▸ mem₀
   · intro hs
@@ -956,21 +904,20 @@ private theorem partitionLayout_parts {n : ℕ} {P : Partition n} (hP : IsTypeBS
     by_cases hz : x ∈ P.part 0
     · have e := P.eq_of_mem_parts hs mem₀ hx hz
       exact ⟨zeroWordBlock P, by simp [partitionLayout], by simpa [zero_parts] using e⟩
-    · obtain ⟨p, hp, hxp⟩ := exists_label hP hx₀ hz
+    · obtain ⟨p, hp, hxp⟩ := hP.exists_mem_adlerBlockLabels hx₀ hz
       refine ⟨adlerWordBlock P p, by
         simp only [partitionLayout, List.mem_append, List.mem_map, List.mem_reverse,
           Finset.mem_sort]
         exact Or.inl ⟨p, hp, rfl⟩, ?_⟩
       rw [adler_parts hp]
       rcases hxp with hxp | hxp
-      · rw [← P.part_eq_of_mem hs hx, P.part_eq_of_mem (P.part_mem.mpr (mem_Icc_of_label hp)) hxp]
+      · have hp' := P.part_mem.mpr (mem_Icc_of_mem_adlerBlockLabels hp)
+        rw [← P.part_eq_of_mem hs hx, P.part_eq_of_mem hp' hxp]
         simp
       · have hmem : x ∈ P.part (-p) := by
-          rw [part_neg hP (mem_Icc_of_label hp)]
+          rw [hP.part_neg (mem_Icc_of_mem_adlerBlockLabels hp)]
           exact mem_mirror.mpr hxp
-        have hpart := (isTypeBSetPartition_iff.mp hP).1 _ (P.part_mem.mpr (mem_Icc_of_label hp))
-        have hmem' : P.part (-p) ∈ P.parts := by rwa [part_neg hP (mem_Icc_of_label hp)]
-        rw [← P.part_eq_of_mem hs hx, P.part_eq_of_mem hmem' hmem]
+        rw [← P.part_eq_of_mem hs hx, P.part_eq_of_mem (mem_neg hp) hmem]
         simp
 
 /-! ### Recovering the layout of a decoded partition -/
@@ -1050,7 +997,7 @@ private theorem WordBlock.recover_adler {n : ℕ} {P : Partition n} {b : WordBlo
   have hkey : Finpartition.part P b.key = b.signed := P.part_eq_of_mem hs b.root_mem_signed
   have hl : b.key.toNat + 1 = b.label := by dsimp [WordBlock.key]; omega
   have hp : b.key ∈ adlerBlockLabels P := by
-    apply mem_labels.mpr
+    apply mem_adlerBlockLabels.mpr
     refine ⟨Finset.mem_Icc.mpr ⟨?_, ?_⟩, ?_⟩
     · dsimp [WordBlock.key]; omega
     · dsimp [WordBlock.key]; omega
@@ -1137,21 +1084,24 @@ private theorem fromLayout_recovers {n : ℕ} {cs : List WordBlock} {b₀ : Word
   have labels (p : ℤ) : p ∈ adlerBlockLabels P ↔ p ∈ cs.map WordBlock.key := by
     constructor
     · intro hp
-      obtain ⟨b, hb, hpart⟩ := mem_layoutParts.mp (Pparts ▸ P.part_mem.mpr (mem_Icc_of_label hp))
+      have hmem := P.part_mem.mpr (mem_Icc_of_mem_adlerBlockLabels hp)
+      obtain ⟨b, hb, hpart⟩ := mem_layoutParts.mp (Pparts ▸ hmem)
       rcases List.mem_append.mp hb with hb | hb
       · obtain ⟨hl, _, he⟩ := recovers hb
         have hlt : 1 < b.label := h₀ ▸ (List.pairwise_append.mp hs).2.2 b hb b₀ (by simp)
         simp only [WordBlock.parts, ite_eq_right hlt.ne', Finset.mem_insert,
           Finset.mem_singleton] at hpart
         rcases hpart with hpart | hpart
-        · exact List.mem_map.mpr ⟨b, hb, (label_eq_of_part_eq hp hl (hpart.trans he.symm)).symm⟩
+        · have heq := eq_of_part_eq_of_mem_adlerBlockLabels hp hl (hpart.trans he.symm)
+          exact List.mem_map.mpr ⟨b, hb, heq.symm⟩
         · rw [← he] at hpart
-          exact (part_ne_neg_part hl hp hpart).elim
+          exact (part_ne_neg_part_of_mem_adlerBlockLabels hl hp hpart).elim
       · have e := List.mem_singleton.mp hb
         subst b
         have hpart : P.part p = b₀.signed ∪ mirror b₀.signed := by
           simpa [WordBlock.parts, h₀] using hpart
-        exact (zero_notMem_label Ptype hp (hpart.trans hzblock.symm ▸ P.mem_part (by simp))).elim
+        have hzero : (0 : ℤ) ∈ P.part p := hpart.trans hzblock.symm ▸ P.mem_part (by simp)
+        exact (Ptype.zero_notMem_part_of_mem_adlerBlockLabels hp hzero).elim
     · rintro h
       obtain ⟨b, hb, rfl⟩ := List.mem_map.mp h
       exact (recovers hb).1
@@ -1172,10 +1122,8 @@ private theorem fromLayout_recovers {n : ℕ} {cs : List WordBlock} {b₀ : Word
 /-! ### The bijection -/
 
 private theorem ofFn_typeBFlattenedWord {n : ℕ} {P : Partition n} (hP : IsTypeBSetPartition P) :
-    List.ofFn (typeBFlattenedWord P) = typeBFlattenedWordList P := by
-  apply List.ext_getElem (by simp only [List.length_ofFn, length_list hP])
-  intro i hi hi'
-  rw [List.getElem_ofFn, typeBFlattenedWord_apply, List.getD_eq_getElem _ _ hi']
+    List.ofFn (typeBFlattenedWord P) = typeBFlattenedWordList P :=
+  ofFn_typeBFlattenedWord_of_length_eq P hP.length_typeBFlattenedWordList
 
 /-- **The map $\varphi$ is a bijection from type $B$ set partitions onto flattened Stirling
 permutations.** For a natural number $n$, let $\varphi$ be the map of Buck et al.
@@ -1213,8 +1161,7 @@ public theorem bijOn_typeBFlattenedWord (n : ℕ) :
         List.getElem?_eq_getElem (by simp), List.getElem_ofFn]
       exact congrArg some (first_one hw hf)
     have ha (a : ℕ) : a ∈ bs.flatMap WordBlock.word ↔ a ∈ Finset.Icc 1 (n + 1) := by
-      rw [hword, List.mem_reverse, ← List.count_pos_iff, count_ofFn_stirling hw]
-      split <;> simp_all
+      rw [hword, List.mem_reverse, mem_ofFn_stirling hw]
     have hpos (b : WordBlock) (hb : b ∈ bs) : 1 ≤ b.label :=
       (Finset.mem_Icc.mp ((ha _).mp (mem_support_of_layout.mp
         ⟨b, hb, Finset.mem_insert_self _ _⟩))).1

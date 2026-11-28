@@ -189,7 +189,11 @@ private theorem wrapped {T : Finset ℕ} {t : ℕ} (ht : t ∈ T) (hmin : ∀ y 
       simp [hlt, h2]
   · simp [lastOr, lastOr_append]
 
+end wordRunCount_typeBFlattenedWord
+
 /-! ### Type `B` set partitions and Adler labels -/
+
+section TypeBPartitions
 
 variable {n : ℕ} {P : Finpartition (Finset.Icc (-(n : ℤ)) n)}
 
@@ -203,16 +207,18 @@ private theorem mem_neg_image {s : Finset ℤ} {y : ℤ} : y ∈ s.image (fun x 
 
 private theorem zero_mem_Icc : (0 : ℤ) ∈ Finset.Icc (-(n : ℤ)) n := by simp
 
-/-- In a type B set partition, the block containing the negative of an element of the
-signed interval is the negation of its block. -/
-public theorem part_neg (hP : IsTypeBSetPartition P) {x : ℤ}
+/-- **Negation of a block in a type $B$ partition.** If `P` is a type $B$ partition of `[-n, n]`
+and `x ∈ [-n, n]`, the block containing `-x` consists of the negatives of the elements of the
+block containing `x`. -/
+public theorem IsTypeBSetPartition.part_neg (hP : IsTypeBSetPartition P) {x : ℤ}
     (hx : x ∈ Finset.Icc (-(n : ℤ)) n) : P.part (-x) = (P.part x).image (fun x => -x) :=
   P.part_eq_of_mem (hP.1 _ (P.part_mem.mpr hx)) (mem_neg_image.mpr (by simpa using P.mem_part hx))
 
-/-- The zero block of a type B set partition is closed under negation. -/
-public theorem neg_mem_part_zero (hP : IsTypeBSetPartition P) {x : ℤ} (hx : x ∈ P.part 0) :
-    -x ∈ P.part 0 := by
-  have h := part_neg hP (zero_mem_Icc (n := n))
+/-- **The zero block is closed under negation.** If an integer belongs to the block containing
+zero in a type $B$ partition of `[-n, n]`, then its negative belongs to that block as well. -/
+public theorem IsTypeBSetPartition.neg_mem_part_zero (hP : IsTypeBSetPartition P)
+    {x : ℤ} (hx : x ∈ P.part 0) : -x ∈ P.part 0 := by
+  have h := hP.part_neg (zero_mem_Icc (n := n))
   rw [neg_zero] at h
   rw [h, mem_neg_image, neg_neg]
   exact hx
@@ -221,39 +227,27 @@ public theorem neg_mem_part_zero (hP : IsTypeBSetPartition P) {x : ℤ} (hx : x 
 private theorem part_eq_part_zero (hP : IsTypeBSetPartition P) {x : ℤ}
     (hx : x ∈ Finset.Icc (-(n : ℤ)) n) (h : -x ∈ P.part x) : P.part x = P.part 0 := by
   have hself : (P.part x).image (fun x => -x) = P.part x := by
-    rw [← part_neg hP hx]
+    rw [← hP.part_neg hx]
     exact P.part_eq_of_mem (P.part_mem.mpr hx) h
   have hzero : (P.part 0).image (fun x => -x) = P.part 0 := by
-    rw [← part_neg hP zero_mem_Icc, neg_zero]
+    rw [← hP.part_neg zero_mem_Icc, neg_zero]
   exact hP.2.unique ⟨P.part_mem.mpr hx, hself⟩ ⟨P.part_mem.mpr zero_mem_Icc, hzero⟩
 
-/-- An Adler label is a positive element of the interval that is minimal among the
-positive elements of its block and strictly smaller than the magnitudes of its negative elements. -/
-public theorem mem_labels {p : ℤ} : p ∈ adlerBlockLabels P ↔
-    p ∈ Finset.Icc 1 (n : ℤ) ∧ ∀ q ∈ P.part p, (0 < q → p ≤ q) ∧ (q < 0 → p < -q) :=
-  Finset.mem_filter
-
-/-- Every Adler label belongs to the signed interval being partitioned. -/
-public theorem mem_Icc_of_label {p : ℤ} (hp : p ∈ adlerBlockLabels P) :
-    p ∈ Finset.Icc (-(n : ℤ)) n := by
-  have := Finset.mem_Icc.mp (mem_labels.mp hp).1
-  simp only [Finset.mem_Icc]
-  omega
-
-/-- In a type B set partition, no Adler-labelled block contains zero. -/
-public theorem zero_notMem_label (hP : IsTypeBSetPartition P) {p : ℤ}
-    (hp : p ∈ adlerBlockLabels P) : (0 : ℤ) ∉ P.part p := by
+/-- **Adler-labelled blocks exclude zero.** In a type $B$ partition of `[-n, n]`, the block
+containing any Adler label `p` does not contain zero. -/
+public theorem IsTypeBSetPartition.zero_notMem_part_of_mem_adlerBlockLabels
+    (hP : IsTypeBSetPartition P) {p : ℤ} (hp : p ∈ adlerBlockLabels P) : (0 : ℤ) ∉ P.part p := by
   intro h0
-  have hpI := mem_Icc_of_label hp
+  have hpI := mem_Icc_of_mem_adlerBlockLabels hp
   have heq : P.part 0 = P.part p := (P.mem_part_iff_part_eq_part zero_mem_Icc hpI).mp h0
   have hp0 : p ∈ P.part 0 := by
     rw [heq]
     exact P.mem_part hpI
   have hneg : -p ∈ P.part p := by
     rw [← heq]
-    exact neg_mem_part_zero hP hp0
-  have := ((mem_labels.mp hp).2 _ hneg).2
-  have := Finset.mem_Icc.mp (mem_labels.mp hp).1
+    exact hP.neg_mem_part_zero hp0
+  have := ((mem_adlerBlockLabels.mp hp).2 _ hneg).2
+  have := Finset.mem_Icc.mp (mem_adlerBlockLabels.mp hp).1
   omega
 
 private theorem natAbs_injOn (hP : IsTypeBSetPartition P) {p : ℤ}
@@ -262,14 +256,14 @@ private theorem natAbs_injOn (hP : IsTypeBSetPartition P) {p : ℤ}
   rcases Int.natAbs_eq_natAbs_iff.mp h with h | h
   · exact h
   · exfalso
-    have hpI := mem_Icc_of_label hp
+    have hpI := mem_Icc_of_mem_adlerBlockLabels hp
     have hzI : z ∈ Finset.Icc (-(n : ℤ)) n := P.part_subset p hz
     have hz' : P.part z = P.part p := P.part_eq_of_mem (P.part_mem.mpr hpI) hz
     have hneg : -z ∈ P.part z := by
       rw [hz', ← h]
       exact hy
     have h0 := part_eq_part_zero hP hzI hneg
-    apply zero_notMem_label hP hp
+    apply hP.zero_notMem_part_of_mem_adlerBlockLabels hp
     rw [← hz', h0]
     exact P.mem_part zero_mem_Icc
 
@@ -284,52 +278,56 @@ private theorem card_typeBShift {S : Finset ℤ} (h : Set.InjOn Int.natAbs (S : 
     (typeBShift S).card = S.card :=
   Finset.card_image_of_injOn fun _ ha _ hb hab => h ha hb (Nat.add_right_cancel hab)
 
-/-- Two Adler labels of the same partition that label the same block coincide. -/
-public theorem label_eq_of_part_eq {p p' : ℤ} (hp : p ∈ adlerBlockLabels P)
+/-- **An Adler label is unique in its block.** If `p` and `p'` are Adler labels of a partition
+of `[-n, n]` and their blocks coincide, then `p = p'`. -/
+public theorem eq_of_part_eq_of_mem_adlerBlockLabels {p p' : ℤ} (hp : p ∈ adlerBlockLabels P)
     (hp' : p' ∈ adlerBlockLabels P) (h : P.part p = P.part p') : p = p' := by
   have hmem : p' ∈ P.part p := by
     rw [h]
-    exact P.mem_part (mem_Icc_of_label hp')
+    exact P.mem_part (mem_Icc_of_mem_adlerBlockLabels hp')
   have hmem' : p ∈ P.part p' := by
     rw [← h]
-    exact P.mem_part (mem_Icc_of_label hp)
-  have h1 := Finset.mem_Icc.mp (mem_labels.mp hp).1
-  have h2 := Finset.mem_Icc.mp (mem_labels.mp hp').1
-  have := ((mem_labels.mp hp).2 p' hmem).1 (by omega)
-  have := ((mem_labels.mp hp').2 p hmem').1 (by omega)
+    exact P.mem_part (mem_Icc_of_mem_adlerBlockLabels hp)
+  have h1 := Finset.mem_Icc.mp (mem_adlerBlockLabels.mp hp).1
+  have h2 := Finset.mem_Icc.mp (mem_adlerBlockLabels.mp hp').1
+  have := ((mem_adlerBlockLabels.mp hp).2 p' hmem).1 (by omega)
+  have := ((mem_adlerBlockLabels.mp hp').2 p hmem').1 (by omega)
   omega
 
-/-- Two Adler-labelled blocks of a partition are never negatives of one another. -/
-public theorem part_ne_neg_part {p p' : ℤ} (hp : p ∈ adlerBlockLabels P)
+/-- **Adler-labelled blocks are not negatives of each other.** For any two Adler labels `p`
+and `p'` of a partition of `[-n, n]`, the block of `p'` is not the image of the block of `p`
+under negation, even when the two labels are the same. -/
+public theorem part_ne_neg_part_of_mem_adlerBlockLabels {p p' : ℤ} (hp : p ∈ adlerBlockLabels P)
     (hp' : p' ∈ adlerBlockLabels P) : P.part p' ≠ (P.part p).image (fun x => -x) := by
   intro h
   have h1 : -p' ∈ P.part p := by
-    have := P.mem_part (mem_Icc_of_label hp')
+    have := P.mem_part (mem_Icc_of_mem_adlerBlockLabels hp')
     rw [h, mem_neg_image] at this
     exact this
   have h2 : -p ∈ P.part p' := by
     rw [h, mem_neg_image, neg_neg]
-    exact P.mem_part (mem_Icc_of_label hp)
-  have h3 := Finset.mem_Icc.mp (mem_labels.mp hp).1
-  have h4 := Finset.mem_Icc.mp (mem_labels.mp hp').1
-  have := ((mem_labels.mp hp).2 _ h1).2 (by omega)
-  have := ((mem_labels.mp hp').2 _ h2).2 (by omega)
+    exact P.mem_part (mem_Icc_of_mem_adlerBlockLabels hp)
+  have h3 := Finset.mem_Icc.mp (mem_adlerBlockLabels.mp hp).1
+  have h4 := Finset.mem_Icc.mp (mem_adlerBlockLabels.mp hp').1
+  have := ((mem_adlerBlockLabels.mp hp).2 _ h1).2 (by omega)
+  have := ((mem_adlerBlockLabels.mp hp').2 _ h2).2 (by omega)
   omega
 
 private theorem mem_labels_of {p : ℤ} (hp : p ∈ Finset.Icc 1 (n : ℤ))
     (hmin : ∀ q ∈ P.part p, p.natAbs ≤ q.natAbs) (hneg : -p ∉ P.part p) :
     p ∈ adlerBlockLabels P := by
   have hp' := Finset.mem_Icc.mp hp
-  refine mem_labels.mpr ⟨hp, fun q hq => ⟨fun hq0 => ?_, fun hq0 => ?_⟩⟩
+  refine mem_adlerBlockLabels.mpr ⟨hp, fun q hq => ⟨fun hq0 => ?_, fun hq0 => ?_⟩⟩
   · have := hmin q hq
     omega
   · have := hmin q hq
     have hne : q ≠ -p := fun h => hneg (h ▸ hq)
     omega
 
-/-- An element of the signed interval outside the zero block of a type B set
-partition belongs, up to negation, to an Adler-labelled block. -/
-public theorem exists_label (hP : IsTypeBSetPartition P) {x : ℤ}
+/-- **Adler-labelled blocks represent every nonzero block pair.** Given a type $B$ partition
+of `[-n, n]`, if `x` belongs to the interval but not to the zero block, there is an Adler label
+whose block contains `x` or `-x`. -/
+public theorem IsTypeBSetPartition.exists_mem_adlerBlockLabels (hP : IsTypeBSetPartition P) {x : ℤ}
     (hx : x ∈ Finset.Icc (-(n : ℤ)) n) (hx0 : x ∉ P.part 0) :
     ∃ p ∈ adlerBlockLabels P, x ∈ P.part p ∨ -x ∈ P.part p := by
   obtain ⟨z, hz, hmin⟩ := Finset.exists_min_image (P.part x) Int.natAbs ⟨x, P.mem_part hx⟩
@@ -352,12 +350,12 @@ public theorem exists_label (hP : IsTypeBSetPartition P) {x : ℤ}
   · -- The labelled block of the pair is the negative of the block of `x`.
     refine ⟨-z, mem_labels_of (Finset.mem_Icc.mpr ⟨by omega, by omega⟩) ?_ ?_, Or.inr ?_⟩
     · intro q hq
-      rw [part_neg hP hzI, hpz, mem_neg_image] at hq
+      rw [hP.part_neg hzI, hpz, mem_neg_image] at hq
       have := hmin _ hq
       simpa only [Int.natAbs_neg] using this
-    · rw [neg_neg, part_neg hP hzI, hpz, mem_neg_image]
+    · rw [neg_neg, hP.part_neg hzI, hpz, mem_neg_image]
       exact hnz
-    · rw [part_neg hP hzI, hpz, mem_neg_image, neg_neg]
+    · rw [hP.part_neg hzI, hpz, mem_neg_image, neg_neg]
       exact P.mem_part hx
   · refine ⟨z, mem_labels_of (Finset.mem_Icc.mpr ⟨by omega, by omega⟩) ?_ ?_, Or.inl ?_⟩
     · intro q hq
@@ -388,7 +386,7 @@ private theorem card_partition (hP : IsTypeBSetPartition P) :
       have hyI : (y : ℤ) ∈ Finset.Icc (-(n : ℤ)) n := Finset.mem_Icc.mpr ⟨by omega, by omega⟩
       by_cases h0 : (y : ℤ) ∈ P.part 0
       · exact Or.inl ⟨y, ⟨h0, by omega⟩, by simp⟩
-      · obtain ⟨p, hp, h | h⟩ := exists_label hP hyI h0
+      · obtain ⟨p, hp, h | h⟩ := hP.exists_mem_adlerBlockLabels hyI h0
         · exact Or.inr ⟨p, hp, y, h, by simp⟩
         · exact Or.inr ⟨p, hp, -y, h, by simp⟩
   have hdisj : Disjoint (((P.part 0).filter (0 ≤ ·)).image Int.natAbs)
@@ -403,11 +401,11 @@ private theorem card_partition (hP : IsTypeBSetPartition P) :
     have hz0 : z ∈ P.part 0 := by
       rcases Int.natAbs_eq_natAbs_iff.mp hzx with rfl | rfl
       · exact hx0
-      · exact neg_mem_part_zero hP hx0
+      · exact hP.neg_mem_part_zero hx0
     have hpz : P.part p = P.part 0 :=
-      (P.part_eq_of_mem (P.part_mem.mpr (mem_Icc_of_label hp)) hz).symm.trans
+      (P.part_eq_of_mem (P.part_mem.mpr (mem_Icc_of_mem_adlerBlockLabels hp)) hz).symm.trans
         (P.part_eq_of_mem (P.part_mem.mpr zero_mem_Icc) hz0)
-    apply zero_notMem_label hP hp
+    apply hP.zero_notMem_part_of_mem_adlerBlockLabels hp
     rw [hpz]
     exact P.mem_part zero_mem_Icc
   have hpair : (adlerBlockLabels P : Set ℤ).PairwiseDisjoint
@@ -420,12 +418,12 @@ private theorem card_partition (hP : IsTypeBSetPartition P) :
     obtain ⟨z', hz', hzz⟩ := Finset.mem_image.mp hy'
     have hzI : z ∈ Finset.Icc (-(n : ℤ)) n := P.part_subset p hz
     have hpz : P.part z = P.part p :=
-      P.part_eq_of_mem (P.part_mem.mpr (mem_Icc_of_label hp)) hz
+      P.part_eq_of_mem (P.part_mem.mpr (mem_Icc_of_mem_adlerBlockLabels hp)) hz
     have hpz' : P.part z' = P.part p' :=
-      P.part_eq_of_mem (P.part_mem.mpr (mem_Icc_of_label hp')) hz'
+      P.part_eq_of_mem (P.part_mem.mpr (mem_Icc_of_mem_adlerBlockLabels hp')) hz'
     rcases Int.natAbs_eq_natAbs_iff.mp hzz with rfl | rfl
-    · exact hne (label_eq_of_part_eq hp hp' (hpz.symm.trans hpz'))
-    · exact part_ne_neg_part hp hp' (by rw [← hpz', part_neg hP hzI, hpz])
+    · exact hne (eq_of_part_eq_of_mem_adlerBlockLabels hp hp' (hpz.symm.trans hpz'))
+    · exact part_ne_neg_part_of_mem_adlerBlockLabels hp hp' (by rw [← hpz', hP.part_neg hzI, hpz])
   have hcard := congrArg Finset.card hA
   rw [Finset.card_union_of_disjoint hdisj, Finset.card_biUnion hpair, Finset.card_range,
     Finset.card_image_of_injOn (natAbs_injOn_nonneg _)] at hcard
@@ -439,14 +437,15 @@ private theorem card_neg_add_card_pos (hP : IsTypeBSetPartition P) {p : ℤ}
     ((P.part p).filter (· < 0)).card + ((P.part p).filter (0 < ·)).card = (P.part p).card := by
   have hfilter : (P.part p).filter (fun x => ¬ x < 0) = (P.part p).filter (0 < ·) :=
     Finset.filter_congr fun x hx => by
-      have : x ≠ 0 := fun h => zero_notMem_label hP hp (h ▸ hx)
+      have : x ≠ 0 := fun h => hP.zero_notMem_part_of_mem_adlerBlockLabels hp (h ▸ hx)
       omega
   rw [← hfilter]
   exact Finset.card_filter_add_card_filter_not _
 
-/-- The word list of a type B partition of the integer interval `[-n, n]`
-has length `2 * (n + 1)`. -/
-public theorem length_list (hP : IsTypeBSetPartition P) :
+open wordRunCount_typeBFlattenedWord in
+/-- **Length of the word list of a type $B$ partition.** If `P` is a type $B$ partition of
+`[-n, n]`, its word list has length `2 * (n + 1)`. -/
+public theorem IsTypeBSetPartition.length_typeBFlattenedWordList (hP : IsTypeBSetPartition P) :
     (typeBFlattenedWordList P).length = 2 * (n + 1) := by
   have hblock : ∀ p ∈ adlerBlockLabels P,
       (doubledWord (typeBShift ((P.part p).filter (· < 0))) ++
@@ -464,6 +463,12 @@ public theorem length_list (hP : IsTypeBSetPartition P) :
   have := card_partition hP
   omega
 
+end TypeBPartitions
+
+namespace wordRunCount_typeBFlattenedWord
+
+variable {n : ℕ} {P : Finpartition (Finset.Icc (-(n : ℤ)) n)}
+
 -- A labelled block contributes a descent for a nonempty negative part and one for a positive
 -- part with at least two elements, and its word ends with `|p| + 1`.
 private theorem block (hP : IsTypeBSetPartition P) {p : ℤ} (hp : p ∈ adlerBlockLabels P)
@@ -474,8 +479,8 @@ private theorem block (hP : IsTypeBSetPartition P) {p : ℤ} (hp : p ∈ adlerBl
         (if 2 ≤ ((P.part p).filter (0 < ·)).card then 1 else 0) ∧
     lastOr q (doubledWord (typeBShift ((P.part p).filter (· < 0))) ++
         wrappedWord (typeBShift ((P.part p).filter (0 < ·)))) = p.natAbs + 1 := by
-  have hpI := mem_Icc_of_label hp
-  obtain ⟨hp1, hcond⟩ := mem_labels.mp hp
+  have hpI := mem_Icc_of_mem_adlerBlockLabels hp
+  obtain ⟨hp1, hcond⟩ := mem_adlerBlockLabels.mp hp
   have hp1' := Finset.mem_Icc.mp hp1
   have hN : ∀ y ∈ typeBShift ((P.part p).filter (· < 0)), p.natAbs + 1 < y := by
     intro y hy
@@ -538,15 +543,15 @@ public theorem wordRunCount_typeBFlattenedWord {n : ℕ}
   obtain ⟨hd0, hl0, hh0⟩ := wrapped ht0 hmin0 2
   have hrun : wordRunCount (typeBFlattenedWord P) =
       descentsAfter 2 (typeBFlattenedWordList P) := by
-    refine wordRunCount_ofList (length_list hP) fun a ha => ?_
+    refine wordRunCount_ofList (hP.length_typeBFlattenedWordList) fun a ha => ?_
     rw [typeBFlattenedWordList, List.head?_append, hh0] at ha
     simp only [Option.some_or, Option.mem_def, Option.some.injEq] at ha
     omega
   have hpw : ((adlerBlockLabels P).sort (· ≤ ·)).Pairwise
       (fun a b => a.natAbs + 1 ≤ b.natAbs + 1) := by
     refine (Finset.pairwise_sort _ _).imp_of_mem fun ha hb hab => ?_
-    have := Finset.mem_Icc.mp (mem_labels.mp ((Finset.mem_sort _).mp ha)).1
-    have := Finset.mem_Icc.mp (mem_labels.mp ((Finset.mem_sort _).mp hb)).1
+    have := Finset.mem_Icc.mp (mem_adlerBlockLabels.mp ((Finset.mem_sort _).mp ha)).1
+    have := Finset.mem_Icc.mp (mem_adlerBlockLabels.mp ((Finset.mem_sort _).mp hb)).1
     omega
   rw [hrun, typeBFlattenedWordList, descentsAfter_append, hd0, hl0,
     descentsAfter_flatMap _ _ _ _ hpw 1 (fun _ _ => by omega)
@@ -557,7 +562,7 @@ public theorem wordRunCount_typeBFlattenedWord {n : ℕ}
       ∑ p ∈ adlerBlockLabels P, if ((P.part p).filter (· < 0)).Nonempty then 1 else 0 :=
     Finset.card_filter _ _
   have h0 : (0 : ℤ) ∉ adlerBlockLabels P := fun h => by
-    have := Finset.mem_Icc.mp (mem_labels.mp h).1
+    have := Finset.mem_Icc.mp (mem_adlerBlockLabels.mp h).1
     omega
   have hQ : ((insert 0 (adlerBlockLabels P)).filter fun p =>
         2 ≤ ((P.part p).filter (0 ≤ ·)).card).card =
@@ -570,7 +575,7 @@ public theorem wordRunCount_typeBFlattenedWord {n : ℕ}
     -- A labelled block does not contain `0`.
     have hf : (P.part p).filter (0 ≤ ·) = (P.part p).filter (0 < ·) :=
       Finset.filter_congr fun x hx => by
-        have : x ≠ 0 := fun h => zero_notMem_label hP hp (h ▸ hx)
+        have : x ≠ 0 := fun h => hP.zero_notMem_part_of_mem_adlerBlockLabels hp (h ▸ hx)
         omega
     rw [hf]
   rw [hN, hQ]
