@@ -153,6 +153,19 @@ public def wideGenCohnTree (k : ℕ) (ℓ : ℤ) (w : List Bool) :
     Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ × Matrix (Fin 2) (Fin 2) ℤ :=
   genCohnPath k (genCohnP1 k ℓ, genCohnQ1 k ℓ, genCohnR1 k ℓ) w
 
+/-- **Children in the wide generalized Cohn tree.** Let $k$ be a natural number, $\ell$ an
+integer, and $S$ the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. For every path $w$
+in the wide $k$-generalized Cohn tree $\mathrm{WGCT}(k, \ell)$, if $(P, Q, R)$ is the vertex at
+$w$, then the vertex at $w$ followed by a left step is $(P, PQ - S, Q)$ and the vertex at $w$
+followed by a right step is $(Q, QR - S, R)$; that is, each child is obtained from its parent by
+one generalized Cohn step.
+
+Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
+Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.1. -/
+public theorem wideGenCohnTree_append_singleton (k : ℕ) (ℓ : ℤ) (w : List Bool) (d : Bool) :
+    wideGenCohnTree k ℓ (w ++ [d]) = genCohnStep k d (wideGenCohnTree k ℓ w) := by
+  simp [wideGenCohnTree, genCohnPath, List.foldl_append]
+
 /-- **The $k$-generalized Cohn tree.** For $k \in \mathbb{N}$ and $\ell \in \mathbb{Z}$, the
 $k$-generalized Cohn tree $\mathrm{GCT}(k, \ell)$ is the full subtree of the wide
 $k$-generalized Cohn tree $\mathrm{WGCT}(k, \ell)$ rooted at the left child of its root. For a
@@ -777,9 +790,6 @@ private theorem cohn_lift_classical {a b c : ℕ} (h : IsGenMarkovTriple 0 a b c
     (hab : a ≤ b) (hcb : c ≤ b) :
     ∃ w, IsGenCohnTriple 0 (wideGenCohnTree 0 0 w).1 (wideGenCohnTree 0 0 w).2.1
       (wideGenCohnTree 0 0 w).2.2 a b c := by
-  have extend (w : List Bool) (dir : Bool) :
-      wideGenCohnTree 0 0 (w ++ [dir]) = genCohnStep 0 dir (wideGenCohnTree 0 0 w) := by
-    simp only [wideGenCohnTree, genCohnPath, List.foldl_append, List.foldl_cons, List.foldl_nil]
   induction b using Nat.strong_induction_on generalizing a c with
   | ind b ih =>
     by_cases ha : a = b
@@ -810,7 +820,7 @@ private theorem cohn_lift_classical {a b c : ℕ} (h : IsGenMarkovTriple 0 a b c
     · obtain ⟨w, hw⟩ := ih c hcb' (markov_swap (markov_rotate hjump)) hac.le
         (markov_descent_lt h hac hcb').le
       refine ⟨w ++ [false], ?_⟩
-      rw [extend]
+      rw [wideGenCohnTree_append_singleton]
       simpa only [genCohnStep, hback] using hw.step.1
     · have hca : c < a := by omega
       have hdiv : (c ^ 2 + 0 * c * a + a ^ 2) / b = d := by
@@ -821,7 +831,7 @@ private theorem cohn_lift_classical {a b c : ℕ} (h : IsGenMarkovTriple 0 a b c
         simpa only [hdiv] using markov_descent_lt (markov_swap h) hca hab'
       obtain ⟨w, hw⟩ := ih a hab' (markov_rotate (markov_swap hjump)) hda.le hca.le
       refine ⟨w ++ [true], ?_⟩
-      rw [extend]
+      rw [wideGenCohnTree_append_singleton]
       simpa only [genCohnStep, hback] using hw.step.2
 
 /-- **Cohn steps reach every classical Markov triple whose middle entry is largest.** A Cohn

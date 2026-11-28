@@ -289,19 +289,6 @@ public theorem genCohnPQR1_det (k : ℕ) (ℓ : ℤ) :
   refine ⟨?_, ?_, ?_⟩ <;>
     simp [genCohnP1, genCohnQ1, genCohnR1, Matrix.det_fin_two_of] <;> ring
 
-/-- **Children in the wide generalized Cohn tree.** Let $k$ be a natural number, $\ell$ an
-integer, and $S$ the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$. For every path $w$
-in the wide $k$-generalized Cohn tree $\mathrm{WGCT}(k, \ell)$, if $(P, Q, R)$ is the vertex at
-$w$, then the vertex at $w$ followed by a left step is $(P, PQ - S, Q)$ and the vertex at $w$
-followed by a right step is $(Q, QR - S, R)$; that is, each child is obtained from its parent by
-one generalized Cohn step.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.1. -/
-public theorem wideGenCohnTree_append_singleton (k : ℕ) (ℓ : ℤ) (w : List Bool) (d : Bool) :
-    wideGenCohnTree k ℓ (w ++ [d]) = genCohnStep k d (wideGenCohnTree k ℓ w) := by
-  simp [wideGenCohnTree, genCohnPath, List.foldl_append]
-
 /-- **Cohn steps reach every generalized Markov triple whose middle entry is largest.** Let
 $k \in \mathbb{N}$ and let $S$ be the integer matrix with rows $(k, 0)$ and $(3k^2 + 3k, k)$.
 Call $(P, Q, R) \mapsto (P, PQ - S, Q)$ the left step and $(P, Q, R) \mapsto (Q, QR - S, R)$ the
