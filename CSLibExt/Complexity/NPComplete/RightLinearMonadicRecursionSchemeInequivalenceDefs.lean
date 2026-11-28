@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# STRONG INEQUIVALENCE FOR MONADIC RECURSION SCHEMES (identity versus right linear) is: definitions
-# NP-complete
+# STRONG INEQUIVALENCE FOR MONADIC RECURSION SCHEMES (identity versus right linear): definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
