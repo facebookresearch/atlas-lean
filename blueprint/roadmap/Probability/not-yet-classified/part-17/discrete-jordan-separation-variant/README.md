@@ -1,0 +1,15 @@
+# Discrete Jordan Separation Variant
+
+- [Djfx Discrete Jordan Separation'](djfx-discrete-jordan-separation.md)
+- [Djfx separation' holds empty](djfx-separation-holds-empty.md)
+- [Djfx face Boundary Graph edge Cycle](djfx-face-boundary-graph-edge-cycle.md)
+- [Djfx edge Cycle self](djfx-edge-cycle-self.md)
+- [Djfx exit Face Up edge endpoint](djfx-exit-face-up-edge-endpoint.md)
+- [Djfx bowtie](djfx-bowtie.md)
+- [Djfx mem bowtie](djfx-mem-bowtie.md)
+- [Djfx bowtie adj](djfx-bowtie-adj.md)
+- [Djfx petal](djfx-petal.md)
+- [Djfx petal closed](djfx-petal-closed.md)
+- [Djfx walk hits](djfx-walk-hits.md)
+- [Djfx bowtie adj of](djfx-bowtie-adj-of.md)
+- [Not djfx Discrete Jordan Separation'](not-djfx-discrete-jordan-separation.md)

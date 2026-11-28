@@ -61,6 +61,32 @@ example :
 
 open MetaMathlibExt PowerSeries
 
+-- No forbidden differences: the board is unshifted and two of three cells are chosen.
+example : restrictedOverlapTilingCount ∅ 3 2 = 3 := by
+  have h := (restrictedCombinationCount_eq_restrictedOverlapTilingCount ∅ 3 2).1
+  simp only [Finset.sup_empty, bot_eq_zero, Nat.add_zero] at h
+  rw [← h]
+  decide
+
+-- A 3-board has no tiling with three combs for the gap set {1}, even though
+-- three is a summation index on the tiling side. Four is above both cutoffs.
+example : restrictedOverlapTilingCount {1} 3 3 = 0 ∧
+    restrictedOverlapTilingCount {1} 3 4 = 0 := by
+  have h₃ := (restrictedCombinationCount_eq_restrictedOverlapTilingCount {1} 2 3).1
+  have h₄ := (restrictedCombinationCount_eq_restrictedOverlapTilingCount {1} 2 4).1
+  change restrictedCombinationCount {1} 2 3 = restrictedOverlapTilingCount {1} 3 3 at h₃
+  change restrictedCombinationCount {1} 2 4 = restrictedOverlapTilingCount {1} 3 4 at h₄
+  rw [← h₃, ← h₄]
+  decide
+
+-- The total is one tiling with no dominoes plus two tilings with one domino.
+example : (∑ j ∈ Finset.range 4, restrictedOverlapTilingCount {1} 3 j) = 3 := by
+  have h := (restrictedCombinationCount_eq_restrictedOverlapTilingCount {1} 2 0).2
+  change restrictedCombinationTotal {1} 2 =
+    ∑ j ∈ Finset.range 4, restrictedOverlapTilingCount {1} 3 j at h
+  rw [← h]
+  decide
+
 -- The constant term counts the empty subset of the empty interval.
 example : restrictedCombinationTotal {1, 4} 0 = 1 := by
   simpa using congrArg (constantCoeff (R := ℤ)) restrictedCombinationTotal_one_four_genFun
