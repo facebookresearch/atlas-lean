@@ -24,3 +24,5 @@ Non-asymptotic tail and moment bounds: Hoeffding, Azuma, McDiarmid, Kim–Vu, Ta
 - [Chernoff Bounds and Bernoulli Comparison](chernoff-and-bernoulli-comparison-bounds/README.md)
 - [Majority-Vote Amplification](majority-vote-amplification/README.md)
 - [Tail Bounds for Adaptive Discrete Processes](adaptive-martingale-tail-bounds/README.md)
+- [Tail bounds for heterogeneous Bernoulli products](tail-bounds-for-heterogeneous-bernoulli-products/README.md)
+- [Boolean cube moment bounds](boolean-cube-moment-bounds/README.md)

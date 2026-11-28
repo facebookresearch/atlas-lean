@@ -26,6 +26,7 @@ statistics (Wainwright, *High-Dimensional Statistics*, 2019, Chapter 2).
 - [Bernstein's inequality for bounded variables, two-sided](measure-real-abs-ge-le-bernstein.md)
 - [Bernstein's moment generating function bound](mgf-le-of-bernstein-condition.md)
 - [Bernstein's inequality under the Bernstein condition](measure-real-abs-ge-le-of-bernstein-cond.md)
+- [Bernstein's inequality](bernstein-inequality.md)
 
 ## Chi-square and Gaussian concentration
 

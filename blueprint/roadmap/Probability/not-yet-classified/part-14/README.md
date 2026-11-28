@@ -2,7 +2,6 @@
 
 - [Shortfall Consequence](shortfall-consequence/README.md)
 - [Spatial Predictor](spatial-predictor/README.md)
-- [Standardization](standardization/README.md)
 - [Structural Equation](structural-equation/README.md)
 - [Symmetrization](symmetrization/README.md)
 - [System Lifetime](system-lifetime/README.md)

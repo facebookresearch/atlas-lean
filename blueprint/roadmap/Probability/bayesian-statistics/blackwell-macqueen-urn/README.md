@@ -41,6 +41,8 @@
 - [Consistency of the Chinese restaurant process](crp-map-restrict.md)
 - [Consistency for every sample size](crp-map-restrict-cast-le.md)
 - [Allelic partition of a set partition](block-sizes.md)
+- [Block Sizes new Table](block-sizes-new-table.md)
+- [Block Sizes join Table](block-sizes-join-table.md)
 
 ## Related topics
 

@@ -12,40 +12,26 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 2 of 17](part-02/README.md)
 
-- [Binary](part-02/binary/README.md)
-- [Binary Cost Adapter](part-02/binary-cost-adapter/README.md)
 - [Bootstrap](part-02/bootstrap/README.md)
 - [Bootstrap Mean CLT](part-02/bootstrap-mean-clt/README.md)
 - [Canonical](part-02/canonical/README.md)
-- [Common Covariance Likelihood](part-02/common-covariance-likelihood/README.md)
 - [Component Observations](part-02/component-observations/README.md)
-
-## [Part 3 of 17](part-03/README.md)
-
-- [Continuous Tightness](part-03/continuous-tightness/README.md)
 
 ## [Part 4 of 17](part-04/README.md)
 
 - [De Groot](part-04/de-groot/README.md)
-- [Double Robustness](part-04/double-robustness/README.md)
 - [Estimating Equations](part-04/estimating-equations/README.md)
 
 ## [Part 5 of 17](part-05/README.md)
 
 - [Expected Consequence](part-05/expected-consequence/README.md)
 - [Expected Duration](part-05/expected-duration/README.md)
-- [Exposure Mapping](part-05/exposure-mapping/README.md)
 - [Failure Bracket](part-05/failure-bracket/README.md)
-- [Finite Argmin](part-05/finite-argmin/README.md)
-- [Finite Conditioning](part-05/finite-conditioning/README.md)
 - [Finite Covariance PSD](part-05/finite-covariance-psd/README.md)
 
 ## [Part 6 of 17](part-06/README.md)
 
 - [Finite Linking](part-06/finite-linking/README.md)
-- [Finite Prefix](part-06/finite-prefix/README.md)
-- [Finite Prefix Geometric](part-06/finite-prefix-geometric/README.md)
-- [Finite Prefix Stopping](part-06/finite-prefix-stopping/README.md)
 - [Finite Risk](part-06/finite-risk/README.md)
 - [Fixed Grid Intervals](part-06/fixed-grid-intervals/README.md)
 - [Gaussian Affine Failure](part-06/gaussian-affine-failure/README.md)
@@ -60,7 +46,6 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 8 of 17](part-08/README.md)
 
-- [Identification](part-08/identification/README.md)
 - [Information Inequality Identification](part-08/information-inequality-identification/README.md)
 - [Item Information](part-08/item-information/README.md)
 - [Item Score](part-08/item-score/README.md)
@@ -74,26 +59,19 @@ Topics added since this subject's fields were last revised.
 
 - [Misspecified MLE](part-10/misspecified-mle/README.md)
 - [MLEConsistency](part-10/mleconsistency/README.md)
-- [MNARCounterexample](part-10/mnarcounterexample/README.md)
 
 ## [Part 11 of 17](part-11/README.md)
 
-- [Observed Likelihood](part-11/observed-likelihood/README.md)
 - [One Step](part-11/one-step/README.md)
 
 ## [Part 12 of 17](part-12/README.md)
 
 - [Product Moments](part-12/product-moments/README.md)
 
-## [Part 13 of 17](part-13/README.md)
-
-- [Selection Bias](part-13/selection-bias/README.md)
-
 ## [Part 14 of 17](part-14/README.md)
 
 - [Shortfall Consequence](part-14/shortfall-consequence/README.md)
 - [Spatial Predictor](part-14/spatial-predictor/README.md)
-- [Standardization](part-14/standardization/README.md)
 - [Structural Equation](part-14/structural-equation/README.md)
 - [Symmetrization](part-14/symmetrization/README.md)
 - [System Lifetime](part-14/system-lifetime/README.md)
@@ -103,7 +81,6 @@ Topics added since this subject's fields were last revised.
 ## [Part 15 of 17](part-15/README.md)
 
 - [True Score](part-15/true-score/README.md)
-- [Value Of Information](part-15/value-of-information/README.md)
 - [Wald Envelope](part-15/wald-envelope/README.md)
 
 ## [Part 16 of 17](part-16/README.md)

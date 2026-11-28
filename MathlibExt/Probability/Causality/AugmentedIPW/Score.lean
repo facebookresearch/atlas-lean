@@ -155,10 +155,12 @@ structure AIPWAssumptions (μ : Measure Ω) (T : Set Ω) (X : Ω → 𝒳) (Y Y�
   positivity : ∃ ε : ℝ, 0 < ε ∧ ∀ᵐ ω ∂μ, ε ≤ μ[T.indicator (1 : Ω → ℝ) | m𝒳.comap X] ω ∧
     μ[T.indicator (1 : Ω → ℝ) | m𝒳.comap X] ω ≤ 1 - ε
 
-/-- **Correct propensity: the augmentation has conditional mean zero.** If the candidate
-propensity is the true one, `e(X) = μ[1_T | σ(X)]` a.s., then for every bounded measurable
-`h`, `E[(1_T - e(X)) h(X) | X] = 0`. With `h = m₁ / e + m₀ / (1 - e)` this is the term that
-`aipwScore_eq_ipw_sub` subtracts from the IPW contrast. -/
+/-- **Correct propensity: the augmentation has conditional mean zero.** For a finite measure `μ`
+and measurable `T`, `X` and `e`, if the candidate propensity is the true one,
+`e(X) = μ[1_T | σ(X)]` a.s., then for every bounded measurable `h`,
+`E[(1_T - e(X)) h(X) | X] = 0`. Where `e(X) ≠ 0` and `e(X) ≠ 1`, which `aipwScore_eq_ipw_sub`
+requires, `h = m₁ / e + m₀ / (1 - e)` gives the term that lemma subtracts from the IPW
+contrast. -/
 theorem condExp_propensityResidual_mul [IsFiniteMeasure μ] {T : Set Ω} (hT : MeasurableSet T)
     {X : Ω → 𝒳} (hX : Measurable X) {e h : 𝒳 → ℝ} (he : Measurable e) (hh : Measurable h)
     {C : ℝ} (hC : ∀ x, ‖h x‖ ≤ C)

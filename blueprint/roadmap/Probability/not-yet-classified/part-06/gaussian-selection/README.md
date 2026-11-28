@@ -1,6 +1,5 @@
 # Gaussian Selection
 
-- [Selected-sample mean under Gaussian selection](integral-cond-selected-outcome-eq.md)
 - [Standardizing a Gaussian score](has-law-standardized-value.md)
 - [The selected proportion of a Gaussian score](measure-real-standardized-upper-event.md)
 - [Every finite threshold selects a proper fraction](gaussian-upper-tail-mem-ioo.md)

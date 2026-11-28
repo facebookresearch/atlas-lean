@@ -354,9 +354,11 @@ theorem eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵] {P Q : Measure (Bool
       hodds, h1]
   · exact h1 y z
 
-/-- **Every outcome mean is identified**: under the hypotheses of `eq_of_map_shadowObs_eq`, the
-mean of `f(Y)` is the same under both laws. Contrast `exists_map_obsRY_eq_integral_eq`, where
-without a shadow variable the identified set of the mean is all of `ℝ`. -/
+/-- **Every outcome integral is identified**: for finite measures `P` and `Q` satisfying the
+hypotheses of `eq_of_map_shadowObs_eq`, the integrals of `f(Y)` under `P` and `Q` are equal. When
+`P` and `Q` are probability measures these are the means of `f(Y)`. Contrast
+`exists_map_obsRY_eq_integral_eq`, where without a shadow variable the identified set of the mean
+is all of `ℝ`. -/
 theorem integral_eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵]
     {P Q : Measure (Bool × 𝒴 × 𝒵)}
     [IsFiniteMeasure P] [IsFiniteMeasure Q] (hP : ShadowVariable P) (hQ : ShadowVariable Q)

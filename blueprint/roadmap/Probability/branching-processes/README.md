@@ -6,6 +6,7 @@ Galton–Watson processes, extinction probabilities, total progeny and the hitti
 - [Linear birth–death process](linear-birth-death-process/README.md)
 - [Total progeny and the hitting-time theorem](total-progeny-and-the-hitting-time-theorem/README.md)
 - [Random series-parallel graphs](random-series-parallel-graphs/README.md)
+- [Binary offspring instance of Galton--Watson theory](binary-offspring-instance-of-galton-watson-theor/README.md)
 - [Genealogy of the Feller diffusion](genealogy-of-the-feller-diffusion/README.md)
 
 ## Related topics

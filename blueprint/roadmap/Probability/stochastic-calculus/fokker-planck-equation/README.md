@@ -19,6 +19,7 @@
 - [Flux of the Gibbs density under a rotational gradient drift](flux-rotational-gibbs.md)
 - [Rotational drifts share the Gibbs stationary density](divergence-flux-rotational-gibbs.md)
 - [An explicit rotational drift with nonzero flux](exists-rotational-flux-ne-zero.md)
+- [Differentiation under the integral sign](integral-has-deriv-at.md)
 
 ## Related topics
 

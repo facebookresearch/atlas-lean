@@ -25,11 +25,12 @@ namespace MathlibExt.Probability.Causality.MissingOutcomes
 
 variable {Ω 𝒳 : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-/-- **Missing at random** (Rubin 1976), for a discrete covariate: the response event `R` is
-conditionally independent of the outcome `Y` given `X`, stated through joint probabilities,
-`P(R, Y ∈ B, X = x) P(X = x) = P(R, X = x) P(Y ∈ B, X = x)`. It holds vacuously when every
-level set `{X = x}` is null (an atomless `X`); interpret it as conditional independence only
-for a covariate with countably many values. -/
+/-- **Missing at random** (Rubin 1976), in the discrete-covariate sense, for any measure `μ`,
+response set `R` and covariate type: for every measurable `B` and every `x`,
+`μ(R ∩ {Y ∈ B} ∩ {X = x}) μ(X = x) = μ(R ∩ {X = x}) μ({Y ∈ B} ∩ {X = x})`, with real-valued
+masses (`0` when infinite). For a finite measure, a covariate with countably many values and
+measurable singletons, and measurable `R`, `X` and `Y`, this is conditional independence of `R`
+and `Y` given `X`. It holds vacuously where every level set `{X = x}` is null. -/
 def MissingAtRandom (μ : Measure Ω) (R : Set Ω) (Y : Ω → ℝ) (X : Ω → 𝒳) : Prop :=
   CondIndepDiscrete μ R Y X
 

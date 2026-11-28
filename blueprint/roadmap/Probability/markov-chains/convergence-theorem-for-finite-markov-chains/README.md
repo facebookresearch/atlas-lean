@@ -28,6 +28,7 @@
 - [Convergence of matrix powers to the stationary distribution](tendsto-pow-apply.md)
 - [Uniqueness of the stationary distribution of a primitive chain](stationary-unique.md)
 - [Stationary distribution of a primitive chain has full support](stationary-pos.md)
+- [Perron-Frobenius for primitive stochastic matrices](perron-frobenius-primitive.md)
 
 - [Strong law for finite irreducible Markov chains, including periodic chains](strong-law-for-additive-functionals-of-finite-ir.md)
 

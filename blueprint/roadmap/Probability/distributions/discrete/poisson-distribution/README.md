@@ -17,6 +17,8 @@ Induction on the finite set $s$ extends this closure from two summands to finite
 ## Statements
 
 - [Finite sums of independent Poisson variables are Poisson](has-law-sum-poisson-measure.md)
+- [Sums of independent Poisson variables over a nonempty finite set](has-law-sum-poisson-measure-of-nonempty.md): the same closure stated for a nonempty set of summands
+- [The total of independent Poisson counts is Poisson](map-sum-pi-poisson-measure.md): the same closure for the coordinates of a product of Poisson laws
 
 ## Related topics
 

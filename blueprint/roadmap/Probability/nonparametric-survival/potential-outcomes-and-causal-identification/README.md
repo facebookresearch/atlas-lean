@@ -70,6 +70,10 @@
 - [An event time at or before the horizon is its own truncated endpoint](truncated-endpoint-eq-of-le.md)
 - [An event time at or beyond the horizon truncates to the horizon](truncated-endpoint-eq-of-ge.md)
 - [Truncation changes event times beyond the horizon](truncation-changes-value.md)
+- [Integral indicator div eq](integral-indicator-div-eq.md)
+- [Measure Real inter preimage eq propensity mul](measure-real-inter-preimage-eq-propensit.md)
+- [Set Integral inter eq propensity mul](set-integral-inter-eq-propensity-mul.md)
+- [Sum powerset Card ite mem](sum-powerset-card-ite-mem.md)
 
 ## Failures of identifying assumptions and partial identification
 

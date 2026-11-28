@@ -2,6 +2,7 @@
 
 Bayesian inference and nonparametric priors: the Dirichlet process and stick-breaking, Pólya and Blackwell–MacQueen urns, Ferguson conjugacy, infinite limits of finite mixture and feature models (the Chinese restaurant and Indian buffet processes), and posterior computations; the Bayesian approach to inverse problems, with function-space MCMC and ensemble Kalman inversion. Parametric conjugate models, Bayesian linear regression, expectation–maximization, mean-field variational inference, and Monte Carlo and Markov chain Monte Carlo sampling are under [Bayesian inference and sampling](../../ComputerScience/machine-learning/bayesian-inference-and-sampling/README.md) in Machine learning. The two-groups model for large-scale testing, in which the local false discovery rate is the posterior probability of the null, is under [Hypothesis testing](../hypothesis-testing/two-groups-model-and-local-false-discovery-rates/README.md).
 
+- [Bayesian decision theory](decision-theory/README.md)
 - [Dirichlet process](dirichlet-process/README.md)
 - [Blackwell–MacQueen urn](blackwell-macqueen-urn/README.md)
 - [Infinite mixture models](infinite-mixture-models/README.md)
