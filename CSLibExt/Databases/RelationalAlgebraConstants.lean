@@ -21,8 +21,9 @@ are the underlying `Expr` operations on the extended database (`extDb`) and sche
 (`extSchema`); typing is sound (`ConstExpr.eval_isOver`); every `Expr` rewrite law lifts in one
 line through `ConstExpr.Equiv.of_expr`; and the extension is conservative
 (`ConstExpr.equiv_ofExpr_iff`). Queries with constants create no values beyond their own
-constants (`ConstExpr.adom_eval_subset`). Throughout, the relation-name and attribute types
-are finite, with decidable attribute and value equality.
+constants (`ConstExpr.adom_eval_subset`). The active-domain bound needs a finite relation-name
+type; the remaining results need only a finite attribute type, with decidable attribute and
+value equality where stated.
 
 ## References
 
@@ -98,7 +99,7 @@ theorem single_isOver [DecidableEq A] (a : A) (d : D) : (single a d).IsOver {a} 
 /-- The unary singleton constant query `{⟨a : d⟩}`. -/
 def const (a : A) (d : D) : ConstExpr N A D := .rel (.inr (a, d))
 
-/-- A constant-free query, read as a query with constants. -/
+/-- An original query, read as a query with constants. -/
 def ofExpr (e : Expr N A D) : ConstExpr N A D := e.mapRel Sum.inl
 
 /-- The database schema extended to the constant names: `(a, d)` has schema `{a}`. -/
@@ -177,14 +178,14 @@ type is finite, and attribute and value equality are decidable. -/
     (const a d : ConstExpr N A D).eval db = {single a d} := by
   rfl
 
-/-- A constant-free query keeps its schema when read as a query with constants. Attribute
+/-- An original query keeps its schema when read as a query with constants. Attribute
 equality is decidable. -/
 @[simp] theorem schema_ofExpr [DecidableEq A] (sch : N → Finset A) (e : Expr N A D) :
     (ofExpr e).schema sch = e.schema sch := by
   have h : (extSchema (D := D) sch) ∘ Sum.inl = sch := funext fun _ => rfl
   simp [schema, ofExpr, Expr.schema_mapRel, h]
 
-/-- A constant-free query keeps its value when read as a query with constants. The attribute
+/-- An original query keeps its value when read as a query with constants. The attribute
 type is finite, and attribute and value equality are decidable. -/
 @[simp] theorem eval_ofExpr [DecidableEq D] [Fintype A] [DecidableEq A]
     (db : N → Finset (Tuple A D)) (e : Expr N A D) :
@@ -197,7 +198,8 @@ type is finite, and attribute and value equality are decidable. -/
     (const a d : ConstExpr N A D).consts = {d} := by
   rfl
 
-/-- A constant-free query has no constant values. Value equality is decidable. -/
+/-- Embedding an `Expr` introduces no singleton relation constants; literals in selection
+conditions are preserved (and are not counted by `consts`). Value equality is decidable. -/
 @[simp] theorem consts_ofExpr [DecidableEq D] (e : Expr N A D) : (ofExpr e).consts = ∅ := by
   induction e with
   | rel n => rfl
@@ -240,7 +242,7 @@ theorem Equiv.of_expr [DecidableEq D] [Fintype A] [DecidableEq A] {sch : N → F
   obtain ⟨S, h1, h2, h3⟩ := h
   exact ⟨S, h1, h2, fun db hdb => h3 (extDb db) (conforms_extDb hdb)⟩
 
-/-- **Conservativity**: on constant-free queries the two equivalences coincide. The attribute
+/-- **Conservativity**: on original queries the two equivalences coincide. The attribute
 type is finite, and attribute and value equality are decidable. -/
 theorem equiv_ofExpr_iff [DecidableEq D] [Fintype A] [DecidableEq A] {sch : N → Finset A}
     {e e' : Expr N A D} :
@@ -398,12 +400,6 @@ theorem select_join_right {e e' : ConstExpr N A D} {S S' : Finset A}
 
 end Laws
 
-private theorem adom_mono [Fintype A] [DecidableEq D] {r s : Finset (Tuple A D)} (h : r ⊆ s) :
-    adom r ⊆ adom s := by
-  intro d hd
-  obtain ⟨t, ht, a, ha⟩ := mem_adom.mp hd
-  exact mem_adom.mpr ⟨t, h ht, a, ha⟩
-
 /-- **Constants are the only new values**: `adom(q(db)) ⊆ adom(db) ∪ consts(q)`, for every
 database `db`, conforming or not. Both the relation-name type and the attribute type are
 finite, and attribute and value equality are decidable. The source's bound also allows the
@@ -437,7 +433,10 @@ theorem adom_eval_subset [Fintype N] [Fintype A] [DecidableEq A] [DecidableEq D]
       · simp [hba] at hb
   | hselect c e ih =>
       change adom (Databases.select c (e.eval db)) ⊆ adomDB db ∪ e.consts
-      exact (adom_mono (Finset.filter_subset _ _)).trans ih
+      have hsub : adom (Databases.select c (e.eval db)) ⊆ adom (e.eval db) := by
+        unfold adom
+        exact Finset.biUnion_subset_biUnion_of_subset_left (Finset.filter_subset _ _)
+      exact hsub.trans ih
   | hproject T e ih =>
       change adom (Databases.project T (e.eval db)) ⊆ adomDB db ∪ e.consts
       intro d hd
@@ -494,8 +493,9 @@ theorem adom_eval_subset [Fintype N] [Fintype A] [DecidableEq A] [DecidableEq D]
         · exact Or.inr (Finset.mem_union.mpr (Or.inr h'))
   | hdiff e e' ih _ =>
       change adom (e.eval db \ e'.eval db) ⊆ adomDB db ∪ (e.consts ∪ e'.consts)
-      have hsub : adom (e.eval db \ e'.eval db) ⊆ adom (e.eval db) :=
-        adom_mono Finset.sdiff_subset
+      have hsub : adom (e.eval db \ e'.eval db) ⊆ adom (e.eval db) := by
+        unfold adom
+        exact Finset.biUnion_subset_biUnion_of_subset_left Finset.sdiff_subset
       intro d hd
       have hmem := ih (hsub hd)
       rw [Finset.mem_union] at hmem

@@ -19,10 +19,10 @@ Attributes are `0, 1 : Fin 2` (think `A`, `B`); values are natural numbers.
 - The one-relation database `db` over `R(A)`, and the proof that it conforms to its schema.
 - The constant queries `q₁` (a cross product with `{⟨B : 5⟩}`) and `q₂` (`R` extended by
   `{⟨A : 7⟩}`): schemas, values and constants, all by evaluation.
-- The active-domain bound on `q₂`, and strictness of the extension: no constant-free query
+- The active-domain bound on `q₂`, and strictness of the extension: no original query
   computes `q₂` on this database.
 - A lifted rewrite on a query with a constant, selection pushdown into a constant operand,
-  and conservativity on a constant-free query.
+  and conservativity on an original query.
 -/
 
 @[expose] public section
@@ -81,13 +81,14 @@ theorem seven_not_mem_adom : 7 ∉ adomDB db := by
 theorem seven_mem_adom_eval : 7 ∈ adom (q₂.eval db) := by
   decide
 
-/-- `ConstExpr.adom_eval_subset` instantiated: the only new value of `q₂` is its constant `7`. -/
+/-- `ConstExpr.adom_eval_subset` instantiated: any value of `q₂` not already in `db` must be
+its constant `7`. -/
 theorem adom_eval_q₂ : adom (q₂.eval db) ⊆ adomDB db ∪ {7} := by
   have h := ConstExpr.adom_eval_subset db q₂
   rw [consts_q₂] at h
   exact h
 
-/-- The extension is strict: no constant-free query computes `q₂` on `db`. -/
+/-- The extension is strict: no original query computes `q₂` on `db`. -/
 theorem not_exists_expr_eval_eq : ¬ ∃ e : Expr (Fin 1) (Fin 2) ℕ, e.eval db = q₂.eval db := by
   rintro ⟨e, he⟩
   have hsub := Cslib.Databases.adom_eval_subset db e
@@ -105,7 +106,7 @@ theorem select_join_right_q₁ :
       (.join (.rel (.inl 0)) (.select (.eqConst 1 5) (const 1 5))) := by
   exact ConstExpr.select_join_right (S := {0}) (S' := {1}) (by decide) (by decide) _ (by decide)
 
-/-- Conservativity on a constant-free query. -/
+/-- Conservativity on an original query. -/
 theorem eval_ofExpr_rel :
     (ofExpr (.rel 0) : ConstExpr (Fin 1) (Fin 2) ℕ).eval db = db 0 := by
   exact eval_ofExpr db (.rel 0)
