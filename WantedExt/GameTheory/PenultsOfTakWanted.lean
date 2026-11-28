@@ -86,21 +86,6 @@ public theorem_wanted impartialTak_penult_thickCross {n : ℕ} {S : Finset (Fin 
       (p.2 : ℕ) < c + 4 ∧
       ¬(((p.1 : ℕ) = r ∨ (p.1 : ℕ) = r + 3) ∧ ((p.2 : ℕ) = c ∨ (p.2 : ℕ) = c + 3))).card
 
-/-- **Weighted Cross bound for Impartial Tak penults.** Let $S$ be a penult of Impartial Tak on
-the $n \times n$ board, with rows and columns numbered from $0$. For all natural numbers $r, c$
-with $r + 5 \le n$ and $c + 5 \le n$, consider the $5 \times 5$ window of rows $r, \dots, r + 4$
-and columns $c, \dots, c + 4$, and give each token of $S$ in the window, lying in row $i$ and
-column $j$ of the board, the Weighted Cross weight of position $(i - r, j - c)$. Then the tokens
-of $S$ in the window have total weight at least $7$.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Proposition 13 (`integers-2025-G1-prop-13`). -/
-public theorem_wanted impartialTak_penult_weightedCross {n : ℕ} {S : Finset (Fin n × Fin n)}
-    (hS : placementPenult takHasRoad S) {r c : ℕ} (hr : r + 5 ≤ n) (hc : c + 5 ≤ n) :
-    7 ≤ ∑ p ∈ S.filter (fun p => r ≤ (p.1 : ℕ) ∧ (p.1 : ℕ) < r + 5 ∧ c ≤ (p.2 : ℕ) ∧
-      (p.2 : ℕ) < c + 5), weightedCrossWeight ((p.1 : ℕ) - r) ((p.2 : ℕ) - c)
-
 end
 
 end MetaMathlibExt
