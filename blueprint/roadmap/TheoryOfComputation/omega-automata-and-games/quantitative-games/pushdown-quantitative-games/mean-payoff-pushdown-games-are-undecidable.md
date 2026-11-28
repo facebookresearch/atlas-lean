@@ -5,6 +5,7 @@ No algorithm decides whether the first player of a two-player game on the config
 A *weighted pushdown system* $(Q,\Gamma,q_0,E,w)$ has finitely many states with initial state $q_0$, a stack alphabet $\Gamma$ with a bottom symbol $\bot$ that is never pushed or popped, transitions that read the state and the top stack symbol and change the state and apply a push, pop or skip command, and integer weights $w$ on transitions (in binary). In a *weighted pushdown game* the states are partitioned between player 1 and player 2; the infinite game graph has the configurations (stack, state) as vertices, starting from $(\bot,q_0)$, and the owner of the current state picks the next transition. Strategies may depend on the whole history (*global strategies*); *finite-memory* strategies are finite-state transducers over transitions. For an infinite play $\pi$, $\mathrm{LimInfAvg}(\pi)$ and $\mathrm{LimSupAvg}(\pi)$ are the lower and upper limits of the average weights of its prefixes (see [classical quantitative objectives](../classical-quantitative-objectives.md)).
 
 **Theorem.** Given a weighted pushdown game, it is undecidable whether player 1 has a winning strategy, and whether player 1 has a finite-memory winning strategy,
+
 1. for the objective $\Phi\bowtie0$, with $\Phi\in\{\mathrm{LimInfAvg},\mathrm{LimSupAvg}\}$ and $\bowtie\in\{\ge,>\}$;
 2. for the same objectives together with *stack boundedness* (the stack height along the play stays bounded).
 

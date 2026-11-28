@@ -1,12 +1,12 @@
 # Mean-payoff games with partial observation are undecidable
 
-No algorithm decides whether the first player of a finite mean-payoff game with partial observation has an observation-based strategy ensuring liminf mean payoff at least zero; whether such a game with limited observation is forcibly terminating is undecidable as well.
+No algorithm decides whether the first player of a finite mean-payoff game with partial observation has an observation-based strategy ensuring liminf mean payoff at least zero.
 
 A *mean-payoff game with partial observation* is a tuple $G=(Q,q_I,\Sigma,\Delta,w,\mathrm{Obs})$ with a finite set $Q$ of states, an initial state $q_I$, a finite set $\Sigma$ of actions, a total transition relation $\Delta\subseteq Q\times\Sigma\times Q$, integer weights $w$ on transitions, and a partition $\mathrm{Obs}$ of $Q$ into observations. In each round Eve chooses an action and Adam resolves the nondeterminism; Eve sees only the observations and plays *observation-based* strategies, which depend only on the sequence of observations and actions. For a play $\pi$, $\underline{\mathrm{MP}}(\pi)$ is the $\liminf$ of the average weights of its prefixes. The game has *limited observation* if $\{q_I\}$ is an observation and the $\sigma$-successors of an observation always form a union of observations.
 
 **Theorem.** Determining whether Eve has an observation-based strategy ensuring $\underline{\mathrm{MP}}\ge0$ in a mean-payoff game with partial observation is undecidable (Theorem 1 of the source); for the threshold $\underline{\mathrm{MP}}>0$ this was shown by Degorre, Doyen, Gentilini, Raskin and Toruńczyk.
 
-The source also shows that determining whether a mean-payoff game with limited observation is *forcibly terminating*, i.e. whether the reachability game on abstract plays that the source associates with it is won by one of the players, is undecidable (Theorem 6).
+The source also shows that a further property of games with limited observation, being *forcibly terminating*, defined through a reachability game on abstract plays built from belief functions (Section 5 and Definition 3 of Section 6), is undecidable (Theorem 6); that result is not stated here.
 
 Eve may need infinite memory to ensure $\underline{\mathrm{MP}}\ge0$, and these games are not determined under concrete strategies, though they are determined when Adam may play observation-based strategies (Theorem 2, for limited observation). Winning a forcibly terminating game is decidable, and the source identifies subclasses (forcibly first abstract cycle games, first abstract cycle games) whose membership and winner problems are decidable.
 

@@ -17,6 +17,7 @@ accepting state; it is *deterministic* if the transition relation is a partial f
 
 - $\mathrm{NCSACM}(k)$ (resp. $\mathrm{DCSACM}(k)$) is the class of one-way nondeterministic (resp. deterministic) machines
   with one checking stack and $k$ counters, each $l$-reversal-bounded for some $l$.
+
 - $\mathrm{NCSA}$ and $\mathrm{DCSA}$ are the checking stack automata without counters; $2\mathrm{DCM}(k)$ denotes two-way
   deterministic finite automata with $k$ reversal-bounded counters.
 

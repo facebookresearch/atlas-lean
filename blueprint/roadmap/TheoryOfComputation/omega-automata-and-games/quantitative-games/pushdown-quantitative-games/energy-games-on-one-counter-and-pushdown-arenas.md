@@ -12,7 +12,7 @@ By contrast, for one-counter energy games of energy dimension $1$ the winning se
 
 ## Depends on
 
-- [Mean-payoff games and energy games are interreducible](../mean-payoff-games-and-energy-games.md)
+- [Shortest-path, mean-payoff, total-payoff, energy and discounted-payoff objectives](../classical-quantitative-objectives.md)
 - [Pushdown automaton](../../../context-free-languages/grammars-and-pushdown-automata/pushdown-automata/pda.md)
 - [One-counter automata and one-counter nets](../../../undecidable-problems/extended-finite-automata/regular-separability-of-one-counter-automata/one-counter-automata-and-one-counter-nets.md)
 - [Arenas, strategies and memory structures](../../muller-rabin-and-streett-games/arenas-strategies-and-memory-structures.md)

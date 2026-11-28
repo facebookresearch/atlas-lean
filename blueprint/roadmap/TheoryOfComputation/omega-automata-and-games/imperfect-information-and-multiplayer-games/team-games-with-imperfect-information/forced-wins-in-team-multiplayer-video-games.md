@@ -21,6 +21,8 @@ In all these games the map size and the number of players are unbounded, and tea
 
 ## Expansion
 
+The source defines the team graph game informally (Definition 2), so a complete expansion first fixes its rules precisely: what each player observes in a frame through the visibility relation, how simultaneous moves along weighted edges are timed, exactly when the attack relation eliminates a token crossing a guarded edge, the order in which eliminations and arrivals at $w$ are resolved within a frame, and the strategies of each team member as functions of that member's own observation history.
+
 The map $h$ builds the graph from gadgets. The state of the DFA is the position of one blue player, the runner, inside a state transition gadget; the other blue players, the executors, supply the blue team's input bits by choosing among unguarded paths in choice gadgets, and red players supply the red team's input by guarding some of those paths. Delay gadgets, in which a red guard blocks the runner until an executor arrives to threaten it, synchronize all players so that inputs and transitions occur in the right order, and an initializer gadget sends players from their start nodes to their places. An accepting state of the DFA leaves the runner a free path to $w$. Each video game then realizes the gadgets with its own mechanics: hallways, glass walls, Demoman grenades and Sniper rifles in Team Fortress 2, Pikachu's Thunder attack in Super Smash Bros., and Bob-ombs on a battle course in Mario Kart.
 
 ## Sources

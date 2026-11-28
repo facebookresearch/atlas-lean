@@ -12,6 +12,7 @@ observation-based strategy $\pi$ of player $2$ (Adam) gives the objective positi
 
 1. it is undecidable whether Eve positively wins a given safety game, and whether she positively wins a given coBüchi game, even when Eve observes nothing (all states look
    the same to her);
+
 2. it is undecidable whether Eve almost-surely wins a given coBüchi game, and whether she positively wins a given Büchi game, even when Adam has a single action.
 
 In contrast, the source shows that, for pure strategies, positive winning of reachability games is decidable when Adam is perfectly informed, and almost-sure winning of

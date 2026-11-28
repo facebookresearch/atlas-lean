@@ -1,7 +1,7 @@
-# Comparison of max-plus automata is undecidable with 553 states or with weights ±1
+# Comparison of max-plus automata is undecidable with weights ±1
 
-No algorithm decides whether a max-plus automaton computes only nonnegative values, already for two letters and weights $-1$ and $1$, or for
-six letters and 553 states, and also when all states are initial and final.
+No algorithm decides whether a max-plus automaton computes only nonnegative values, already for two letters and weights $-1$ and $1$, and for
+three letters and weights $-1$, $0$ and $1$ when all states are initial and final.
 
 A *max-plus automaton* over an alphabet $\Sigma$ with $d$ states, a [weighted automaton](../weighted-automata-over-a-semiring.md) over the semiring
 $(\mathbb{Z} \cup \{-\infty\}, \max, +)$, is a morphism $\mu$ from $\Sigma^+$ to $d \times d$ matrices over $\mathbb{Z} \cup \{-\infty\}$ with an initial row vector $I$ and a final
@@ -11,12 +11,10 @@ $f_{\mathcal{A}}(w) \ge 0$ for every nonempty word $w$. An instance is given by 
 
 **Theorem.**
 
-1. $\mathrm{Pos}_2(\{-1, 1\})$ and $\mathrm{Pos}^{553}_6(\mathbb{Z} \cup \{-\infty\})$ are undecidable.
-2. The restrictions of $\mathrm{Pos}_3(\{-1, 0, 1\})$ and of $\mathrm{Pos}^{554}_7(\mathbb{Z} \cup \{-\infty\})$ to automata whose states are all initial and final are undecidable.
+1. $\mathrm{Pos}_2(\{-1, 1\})$ is undecidable (first part of Theorem 1).
+2. The restriction of $\mathrm{Pos}_3(\{-1, 0, 1\})$ to automata whose states are all initial and final is undecidable (first part of Theorem 2).
 
-The first part of item 1 follows directly from the two-counter-machine proof of
-Colcombet; the bounded number of states in the second part needs unbounded weights, since with bounded weights and a bounded number of states the problem
-becomes decidable.
+Item 1 follows directly from the two-counter-machine proof of Colcombet. With a bounded number of states instead of bounded weights the problem stays undecidable, by [a separate result](comparison-of-max-plus-automata-with-553-states.md).
 
 ## Depends on
 
@@ -29,12 +27,10 @@ becomes decidable.
 
 ## Expansion
 
-The proof embeds two-counter machines into max-plus automata, following Colcombet, so that the automaton takes a negative value on some word exactly when the
-machine halts. For the bounded number of states, the construction
-also simulates the machine on an arbitrary initial counter value $n$, encoded by a widget with two edges of weights $n$ and $-n$, and reduces the halting problem of
-a universal two-counter machine. For item 2, a reduction from the general case turns an automaton into one with all states initial and final, at the cost of
+The proof embeds two-counter machines started with both counters at $0$ into max-plus automata, following Colcombet, so that the automaton takes a negative value on some word exactly when the
+machine halts; weight-$0$ transitions are replaced, after encoding the alphabet, by a transition of weight $-1$ followed by one of weight $1$. For item 2, a reduction from the general case turns an automaton into one with all states initial and final, at the cost of
 one more letter and one more state.
 
 ## Sources
 
-- L. Daviaud, P. Guillon and G. Merlet, "Comparison of max-plus automata and joint spectral radius of tropical matrices", in *42nd International Symposium on Mathematical Foundations of Computer Science (MFCS 2017)*, LIPIcs 83, paper 19, 2017, doi:10.4230/LIPIcs.MFCS.2017.19; read in arXiv:1612.02647v2: Theorems 1 and 2 of Section 3, the definition of max-plus automata in Section 2.2 and the encoding of two-counter machines in Section 5.
+- L. Daviaud, P. Guillon and G. Merlet, "Comparison of max-plus automata and joint spectral radius of tropical matrices", in *42nd International Symposium on Mathematical Foundations of Computer Science (MFCS 2017)*, LIPIcs 83, paper 19, 2017, doi:10.4230/LIPIcs.MFCS.2017.19; read in arXiv:1612.02647v2: the first parts of Theorems 1 and 2 of Section 3 with the remarks after them, and the definition of max-plus automata in Section 2.2.

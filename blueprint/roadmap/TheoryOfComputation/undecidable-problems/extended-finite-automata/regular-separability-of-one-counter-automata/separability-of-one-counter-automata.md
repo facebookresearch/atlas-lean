@@ -16,6 +16,7 @@ For one-counter nets, without zero tests, regular separability is decidable and 
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Space hierarchy theorem for space-constructible bounds](../../../hierarchy-theorems-and-barriers/space-hierarchy-theorem/space-hierarchy-theorem-for-space-constructible.md)
 
 ## Expansion
 
