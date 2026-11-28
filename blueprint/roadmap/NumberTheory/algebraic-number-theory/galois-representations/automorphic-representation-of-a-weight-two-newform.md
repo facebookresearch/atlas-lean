@@ -27,10 +27,14 @@ $$\varphi_f(\gamma g_\infty k) = f(g_\infty(i))\,(ci + d)^{-2}\,\det(g_\infty)\,
 for $\gamma \in \mathrm{GL}_2(\mathbb{Q})$, $g_\infty = \left(\begin{smallmatrix} a & b \\ c & d \end{smallmatrix}\right) \in \mathrm{GL}_2(\mathbb{R})$
 with $\det(g_\infty) > 0$, and $k \in K_0(N)$. Then:
 
-1. $\varphi_f$ is an automorphic form on $\mathrm{GL}_2(\mathbb{A}_{\mathbb{Q}})$ with central character $\omega$, and the
-   representation $\pi$ of $\mathrm{GL}_2(\mathbb{A}_{\mathbb{Q}})$ by right translation on the span of the translates of $\varphi_f$
-   is an irreducible automorphic representation, a restricted tensor product $\pi \cong \bigotimes_v \pi_v$ of irreducible
-   admissible representations $\pi_v$ of $\mathrm{GL}_2(\mathbb{Q}_v)$;
+1. For the maximal compact subgroup $K = K_\infty\,\mathrm{GL}_2(\widehat{\mathbb{Z}})$ of $\mathrm{GL}_2(\mathbb{A}_{\mathbb{Q}})$, $K_\infty = \mathrm{O}(2)$, the
+   function $\varphi_f$ is an automorphic form with central character $\omega$; the
+   $\mathcal{H}$-submodule $\pi = \varphi_f \ast \mathcal{H}$ of the space $\mathcal{A}(\mathrm{GL}_2)$ of automorphic forms that it generates under
+   right convolution by the global Hecke algebra $\mathcal{H}$, spanned by the functions $D\,R(k_\infty g_f)\varphi_f$ with
+   $D \in \mathcal{U}(\mathfrak{g})$, $k_\infty \in K_\infty$ and $g_f \in \mathrm{GL}_2(\mathbb{A}_f)$, where $R$ is right translation and $\mathfrak{g}$
+   the complexified Lie algebra of $\mathrm{GL}_2(\mathbb{R})$, is irreducible, an automorphic representation; so, by the
+   tensor product theorem, $\pi \cong \bigotimes'_v \pi_v$, with $\pi_p$ an irreducible admissible representation of
+   $\mathrm{GL}_2(\mathbb{Q}_p)$ for every prime $p$ and $\pi_\infty$ an irreducible admissible $(\mathfrak{g}, K_\infty)$-module;
 2. for every prime $p$, $\varphi_f$ is a new vector of $\pi_p$: the conductor of $\pi_p$ in the sense of
    [Casselman's theorem on local newforms](local-newforms-for-gl-2.md) is $\mathfrak{c}(\pi_p) = p^{v_p(N)}\mathbb{Z}_p$;
 3. for every prime $p \nmid N$, $\pi_p \cong \mathrm{Ind}(\xi_1, \xi_2)$ for unramified characters $\xi_1, \xi_2$ of
@@ -42,7 +46,11 @@ with $\det(g_\infty) > 0$, and $k \in K_0(N)$. Then:
    $\phi\bigl(\left(\begin{smallmatrix} a & x \\ 0 & b \end{smallmatrix}\right) g\bigr) = \xi_1(a)\xi_2(b)\lvert a/b \rvert^{1/2} \phi(g)$,
    under right translation.
 
-This is Loeffler and Weinstein's construction for weight $k = 2$ and character $\varepsilon = \psi$. Their new vectors
+This is Loeffler and Weinstein's construction for weight $k = 2$ and character $\varepsilon = \psi$. They write $\pi$ as the
+span of the right translates of $\varphi_f$ under all of $\mathrm{GL}_2(\mathbb{A}_{\mathbb{Q}})$; but right translation by $\mathrm{GL}_2(\mathbb{R})$
+does not preserve $K_\infty$-finiteness, so the space of automorphic forms is a module over $\mathcal{H}$ rather than a
+representation of $\mathrm{GL}_2(\mathbb{A}_{\mathbb{Q}})$, and the representation of clause 1 is the $\mathcal{H}$-module that $\varphi_f$
+generates, which is admissible (Cogdell, Lecture 2, §3, Lecture 3, §1, and Theorem 3.1). Their new vectors
 are those of Casselman's theorem with $\omega(d)$ in place of Casselman's $\omega(a)$, which they note is equivalent, so
 that their conductor of $\pi_p$ is the exponent of $\mathfrak{c}(\pi_p)$. Their principal series $\pi(\xi_1, \xi_2)$, defined when
 $\xi_1/\xi_2 \neq \lvert\cdot\rvert^{\pm 1}$ and with central character $\xi_1\xi_2$, is Casselman's principal series: his
@@ -76,8 +84,8 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Depends on
 
-- [Automorphic forms, cusp forms and automorphic representations](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md), for automorphic forms and automorphic representations of $\mathrm{GL}_2(\mathbb{A}_{\mathbb{Q}})$
-- [Tensor product theorem for automorphic representations](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/tensor-product-theorem.md), for the local components $\pi_v$
+- [Automorphic forms, cusp forms and automorphic representations](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md), for automorphic forms on $\mathrm{GL}_2(\mathbb{A}_{\mathbb{Q}})$, the global Hecke algebra $\mathcal{H}$ acting on them by right convolution, and automorphic representations
+- [Tensor product theorem for automorphic representations](../../../RepresentationTheory/automorphic-representations/automorphic-forms-on-reductive-groups/tensor-product-theorem.md), for the local components $\pi_v$, irreducible admissible representations of $\mathrm{GL}_2(\mathbb{Q}_p)$ at the primes and a $(\mathfrak{g}, K_\infty)$-module at the real place
 - [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), for the operators $T_p$ ($p \nmid N$) and $U_q = T_q$ ($q \mid N$) on $S_2(\Gamma_1(N))$
 - [Galois representations attached to normalized eigenforms](../../not-yet-classified/exists-galois-rep-charpoly-frob.md), for the nebentypus convention $f \mid_2 \gamma = \psi(d) f$, $\gamma \in \Gamma_0(N)$
 - [Casselman's theorem on local newforms for GL₂](local-newforms-for-gl-2.md), for the new vectors and the conductor $\mathfrak{c}(\pi_p)$
@@ -99,8 +107,9 @@ This node is still to be broken down. A good expansion states and links:
   - §2.1, pp. 1180–1181: "Let $\omega$ be the adelization of $\varepsilon$; that is, $\omega$ is the unique character of $Z_{\mathbb{A}}/Z_{\mathbb{Q}}$
     such that $\omega(\varpi_p) = \varepsilon(p)$ for primes $p \nmid N$"; $K_0(N)$, the character $\lambda$ and the function
     $\varphi_f(\gamma g_\infty k_0) = f(g_\infty(i)) \cdot (ci + d)^{-k} \cdot (\det g_\infty)^{k/2} \cdot \lambda(k_0)$; "The function $\varphi_f$ in fact
-    lies in the space $\mathcal{A}_0(\omega)$ of automorphic forms on $G_{\mathbb{A}}$ of central character $\omega$ … If $f$ is an
-    eigenform, then it is well known that this representation is irreducible and decomposes as a restricted tensor
+    lies in the space $\mathcal{A}_0(\omega)$ of automorphic forms on $G_{\mathbb{A}}$ of central character $\omega$ … We define $\pi_f$ to
+    be the linear span of the right translates of $f$ under $G_{\mathbb{A}}$ … If $f$ is an eigenform, then it is well known
+    that this representation is irreducible and decomposes as a restricted tensor
     product $\bigotimes'_v \pi_{f,v}$ of admissible irreducible representations of $\mathrm{GL}_2(\mathbb{Q}_v)$";
   - §2.2, pp. 1181–1182: Theorem 2.2 (Casselman's theorem, with $\pi\left(\begin{smallmatrix} a & b \\ c & d \end{smallmatrix}\right)v = \omega(d)v$),
     Remark 2.3 ("Casselman uses $\omega(a)$ rather than $\omega(d)$, but his theorem and Theorem 2.2 are clearly
@@ -111,6 +120,21 @@ This node is still to be broken down. A good expansion states and links:
     particular, if $p \nmid N$, then $\pi_{f,p} \cong \pi(\chi_1, \chi_2)$ with $\chi_1$ and $\chi_2$ the unramified characters whose
     values at $p$ are $\{\alpha/p^{(k-1)/2}, \beta/p^{(k-1)/2}\}$, for $\alpha$ and $\beta$ the roots of $X^2 - a_pX + \omega(p)p^{k-1}$"
     (p. 1182).
+- J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in J. W. Cogdell,
+  H. H. Kim and M. R. Murty, *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American
+  Mathematical Society, 2004; page numbers of the author's version at
+  <https://people.math.osu.edu/cogdell.1/fields-www.pdf>:
+  - Lecture 2, §3, p. 17: "One would hope to be able to analyze $A$ as a representation of $\mathrm{GL}_n(\mathbb{A})$ acting by
+    right translation. Unfortunately, this is not possible since condition (ii) in the definition of automorphic
+    forms is not preserved under right translation. More specifically, it is being $K_\infty$-finite that is not
+    preserved under right translation by $G_\infty$.";
+  - Lecture 3, §1, p. 21: "the space $A$ of ($K$-finite) automorphic forms does not give a representation of $G(\mathbb{A})$.
+    It will be a representation space for the global Hecke algebra $H$"; §1.0.1, pp. 21–22 (the restricted tensor
+    product $H = \otimes' H_v$, with $H_v = U(\mathfrak{g}_v) \otimes_{U(\mathfrak{k}_v)} A(K_v)$ at an archimedean place); §1.0.2, p. 22
+    ("The space $A$ of $K$-finite automorphic forms is naturally an $H$-module by right convolution");
+  - Theorem 3.1, p. 23: "Suppose $\phi \in A$. Then the $H$-module generated by $\phi$, namely
+    $V_\phi = R(H)\phi = \phi \ast H \subset A$, is an admissible $H$-module", and Definition 3.2, p. 23 (automorphic
+    representations as irreducible subquotients of $A$).
 - W. Casselman, "On some results of Atkin and Lehner", Math. Ann. 201 (1973), 301–314:
   - §1: Theorem 1, p. 302, and the Corollary to the Proof, p. 306; p. 304, the space $\mathcal{B}(\mu_1, \mu_2)$ of
     locally constant functions $f$ on $\mathrm{GL}_2(k)$ with $f\bigl(\left(\begin{smallmatrix} a & x \\ 0 & b \end{smallmatrix}\right) g\bigr) =
