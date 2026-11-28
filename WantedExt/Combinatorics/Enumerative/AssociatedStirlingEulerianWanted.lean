@@ -14,6 +14,7 @@ public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.Combinatorics.AssociatedStirlingEulerian
+public import MathlibExt.Combinatorics.RCyclePermCount
 
 namespace MetaMathlibExt
 
@@ -487,20 +488,6 @@ public theorem_wanted sum_rCyclePerm_cycleCount_eq {R : Type*} [CommRing R] (x q
       (((r * k).factorial / (r.factorial ^ k * k.factorial) : ℕ) : R) * x ^ k * q ^ k *
         (∑ σ : Equiv.Perm (Fin (r - 1)), x ^ excedanceCount (r - 1) σ) ^ k
     else 0
-
-/-- **Number of permutations with all cycles of length $r$.** Let $r \ge 2$ and $n \ge 0$. The
-number of permutations of $n$ objects all of whose cycles, fixed points counted as cycles of
-length one, have length exactly $r$ equals $n!/(r^{n/r}\,(n/r)!)$ if $r$ divides $n$, and $0$
-otherwise.
-
-When $r$ divides $n$ the quotient is an integer, so the natural-number division is exact.
-
-Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated
-Stirling Eulerian Numbers and Their q-Analogues*, Journal of Integer Sequences 28
-(2025), Article 25.5.7, Corollary 25 (`jis-2025-25.5.7-cor-25`). -/
-public theorem_wanted card_rCyclePerm (r n : ℕ) (hr : 2 ≤ r) :
-    (Finset.univ.filter (IsRCyclePerm r n)).card =
-      if r ∣ n then n.factorial / (r ^ (n / r) * (n / r).factorial) else 0
 
 /-- **Exponential generating function for permutations with all cycles of length $r$.** Let
 $r \ge 2$ and, for each $n$, let $S_n^r$ be the set of permutations of $\{0, \dots, n-1\}$ all

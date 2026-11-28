@@ -12129,6 +12129,7 @@
   "MathlibExt/Combinatorics/ProgressionDifferenceSetErdosProblem1185": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Progressions with differences from a difference set"},
   "MathlibExt/Combinatorics/Poset/OrderPolynomialReciprocity": {"to": "Combinatorics/partially-ordered-sets", "title": "Order polynomials"},
   "MathlibExt/Combinatorics/ProgressionFreeRamseySetErdosProblem966": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Progression-free Ramsey sets"},
+  "MathlibExt/Combinatorics/RCyclePermCount": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Associated Stirling–Eulerian numbers"},
   "MathlibExt/Combinatorics/Ramsey": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Ramsey's theorem"},
   "MathlibExt/Combinatorics/RamseyFamily": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Arithmetic progressions in CR-sets"},
   "MathlibExt/Combinatorics/RamseyFamilyDecreasingSequenceIdempotent": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Arithmetic progressions in CR-sets"},
