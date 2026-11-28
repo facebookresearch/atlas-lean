@@ -104,6 +104,8 @@ The field need not be infinite or of characteristic zero.
 
 * Hermann Weyl, *The Classical Groups: Their Invariants and Representations*, Princeton University
   Press (1939; 2nd ed. with supplement, 1953), Theorems (3.5.B), (4.4.E), and Chapter V, §1, p. 138.
+  Weyl's treatment of Schur–Weyl duality is in characteristic zero. The result here holds over any
+  field in which `k!` is invertible, including finite fields.
 * I. Schur, *Über die rationalen Darstellungen der allgemeinen linearen Gruppe* (1927), reprinted
   in *Gesammelte Abhandlungen*, vol. III, Springer-Verlag (1973), pp. 68–85.
 * Heinrich Maschke, *Beweis des Satzes, dass diejenigen endlichen linearen Substitutionsgruppen,

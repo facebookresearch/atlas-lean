@@ -34,4 +34,33 @@ statements are unchanged. Source: H. Weyl, The Classical Groups, 1939; I. Schur,
 -/
 module
 
+public import Batteries.Util.ProofWanted
+public import Mathlib
 public import MathlibExt.GroupTheory.SchurWeyl
+
+@[expose] public section
+
+namespace MathlibExt.GroupTheory.SchurWeylWanted
+namespace RepresentationTheory
+
+open scoped TensorProduct
+
+/-!
+Schur–Weyl duality on `V^⊗k`.
+
+Two commuting actions on `V^⊗k`:
+
+* `symAction`: the symmetric group `S_k` acts by permuting tensor factors.
+* `glAction`: the general linear group `GL(V)` acts diagonally as `g · (v₁ ⊗ ⋯ ⊗ v_k) =
+  (g v₁) ⊗ ⋯ ⊗ (g v_k)`.
+
+Schur–Weyl duality says their images in `End(V^⊗k)` generate mutual centralizers. We state
+the two directions as separate `eval_problem`s.
+
+The two actions and the general linear side of the duality are proved in
+`MathlibExt.GroupTheory.SchurWeyl`, which this module imports.
+-/
+
+end RepresentationTheory
+
+end MathlibExt.GroupTheory.SchurWeylWanted
