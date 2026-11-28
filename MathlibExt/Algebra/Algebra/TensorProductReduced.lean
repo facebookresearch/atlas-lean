@@ -41,7 +41,9 @@ public import Mathlib.RingTheory.Nilpotent.GeometricallyReduced
 Tensoring a reduced algebra with a field extension over a perfect field
 preserves reducedness: reduce to finite-type algebras, decompose into
 domains via minimal primes, and use a transcendence basis to reduce to the
-separable case, where formal unramifiedness applies.
+separable case, where formal unramifiedness applies. The same reduction gives
+that the tensor product of two reduced algebras over a perfect field is reduced
+(`Algebra.isReduced_tensorProduct_of_perfectField_of_isReduced`).
 -/
 
 @[expose] public section
@@ -150,10 +152,16 @@ private theorem isReduced_tensorProduct_field_of_essFiniteType
   exact isReduced_tensorProduct_of_isSeparable_of_isDomain k
     (IntermediateField.adjoin k (s : Set K)) K L
 
-private theorem isReduced_tensorProduct_of_finiteType
-    (k B L : Type*) [Field k] [PerfectField k] [CommRing B] [Algebra k B] [IsReduced B]
-    [Algebra.FiniteType k B] [Field L] [Algebra k L] :
-    IsReduced (L ⊗[k] B) := by
+/-- Let `B` be a reduced `k`-algebra of finite type and `C` a `k`-algebra such that `C ⊗[k] L` is
+reduced for every field extension `L` of `k` that is essentially of finite type. Then
+`C ⊗[k] B` is reduced: `B` embeds into the product of the fraction fields of its quotients by
+its finitely many minimal primes. -/
+private theorem isReduced_tensorProduct_of_finiteType_of_forall_field.{u₀}
+    (k : Type*) (B : Type u₀) (C : Type*) [Field k] [CommRing B] [Algebra k B] [IsReduced B]
+    [Algebra.FiniteType k B] [CommRing C] [Algebra k C]
+    (hC : ∀ (L : Type u₀) [Field L] [Algebra k L] [Algebra.EssFiniteType k L],
+      IsReduced (C ⊗[k] L)) :
+    IsReduced (C ⊗[k] B) := by
   classical
   have : IsNoetherianRing B := Algebra.FiniteType.isNoetherianRing k B
   have hfin : (minimalPrimes B).Finite := minimalPrimes.finite_of_isNoetherianRing B
@@ -180,13 +188,15 @@ private theorem isReduced_tensorProduct_of_finiteType
       exact nilradical_eq_zero B
     rw [hsInf] at hmem
     exact (Submodule.mem_bot B).mp hmem
-  have hinj : Function.Injective (Algebra.TensorProduct.map (AlgHom.id L L) φ) :=
-    Module.Flat.lTensor_preserves_injective_linearMap (M := L) φ.toLinearMap hφ
-  have : ∀ p, IsReduced (L ⊗[k] K p) := fun p =>
-    isReduced_tensorProduct_field_of_essFiniteType k (K p) L
-  have : IsReduced (L ⊗[k] (∀ p, K p)) :=
-    isReduced_of_injective (Algebra.TensorProduct.piRight k k L K)
-      (Algebra.TensorProduct.piRight k k L K).injective
+  have hinj : Function.Injective (Algebra.TensorProduct.map (AlgHom.id C C) φ) :=
+    Module.Flat.lTensor_preserves_injective_linearMap (M := C) φ.toLinearMap hφ
+  have : ∀ p, IsReduced (C ⊗[k] K p) := fun p =>
+    have : Algebra.EssFiniteType (B ⧸ p.1) (K p) := .of_isLocalization _ (nonZeroDivisors _)
+    have : Algebra.EssFiniteType k (K p) := .comp k (B ⧸ p.1) (K p)
+    hC (K p)
+  have : IsReduced (C ⊗[k] (∀ p, K p)) :=
+    isReduced_of_injective (Algebra.TensorProduct.piRight k k C K)
+      (Algebra.TensorProduct.piRight k k C K).injective
   exact isReduced_of_injective _ hinj
 
 end GredPerfect
@@ -202,4 +212,27 @@ theorem Algebra.isReduced_tensorProduct_of_perfectField
   refine IsReduced.tensorProduct_of_flat_of_forall_fg fun B hB => ?_
   have : IsReduced B := isReduced_of_injective B.val Subtype.val_injective
   have : Algebra.FiniteType k B := ⟨(Subalgebra.fg_top B).mpr hB⟩
-  exact GredPerfect.isReduced_tensorProduct_of_finiteType k B L
+  exact GredPerfect.isReduced_tensorProduct_of_finiteType_of_forall_field k B L fun K _ _ _ =>
+    GredPerfect.isReduced_tensorProduct_field_of_essFiniteType k K L
+
+/-- Over a perfect field `k`, the tensor product `A ⊗[k] B` of two reduced `k`-algebras is
+reduced.
+
+This is the Stacks project, Algebra, Lemma 10.43.5 (Tag 034N): "Let `k` be a field. Let `S` be a
+geometrically reduced `k`-algebra. Let `R` be any reduced `k`-algebra. Then `R ⊗_k S` is
+reduced", for a perfect field, where every reduced algebra is geometrically reduced
+(`Algebra.isReduced_tensorProduct_of_perfectField`); it gives Varieties, Lemma 33.6.7 (4)
+(Tag 035Z) for affine schemes. The proof follows that of Lemma 10.43.5: reduce to `B` of
+finite type, which embeds into a finite product of fields. -/
+theorem Algebra.isReduced_tensorProduct_of_perfectField_of_isReduced
+    (k : Type u) [Field k] [PerfectField k] (A : Type v) [CommRing A] [Algebra k A]
+    [IsReduced A] (B : Type w) [CommRing B] [Algebra k B] [IsReduced B] :
+    IsReduced (A ⊗[k] B) := by
+  refine IsReduced.tensorProduct_of_flat_of_forall_fg fun B' hB' => ?_
+  have : IsReduced B' := isReduced_of_injective B'.val Subtype.val_injective
+  have : Algebra.FiniteType k B' := ⟨(Subalgebra.fg_top B').mpr hB'⟩
+  refine GredPerfect.isReduced_tensorProduct_of_finiteType_of_forall_field k B' A
+    fun L _ _ _ => ?_
+  have : IsReduced (L ⊗[k] A) := Algebra.isReduced_tensorProduct_of_perfectField k A L
+  exact isReduced_of_injective (Algebra.TensorProduct.comm k A L)
+    (Algebra.TensorProduct.comm k A L).injective
