@@ -92,7 +92,9 @@ def walkLength (i : MaximumCoverageLocationInstance) {u v : Fin i.1}
 def gain (i : MaximumCoverageLocationInstance) (v : Fin i.1) : ℕ :=
   (i.2.2.1.getD v (0, 0, 1)).1
 
-/-- The threshold radius `r(v) = a / b` of the customer at vertex `v`. -/
+/-- The threshold radius `r(v) = a / b` of the customer `(w, a, b)` listed for vertex `v`, with
+`a / b` computed in the reals, so a listed customer `(w, a, 0)` has radius `0`; only `WellFormed`
+requires `0 < a` and `0 < b`. A vertex with no listed customer has radius `0`. -/
 noncomputable def radius (i : MaximumCoverageLocationInstance) (v : Fin i.1) : ℝ :=
   ((i.2.2.1.getD v (0, 0, 1)).2.1 : ℝ) / (i.2.2.1.getD v (0, 0, 1)).2.2
 

@@ -88,7 +88,7 @@ noncomputable def faultDetectionDirectedGraphsDec :
   | none => false
 
 /-- **FAULT DETECTION IN DIRECTED GRAPHS is NP-complete.** Source: Garey and Johnson (1979),
-[MS18]; Ibaraki, Kameda and Toida (1977). -/
+[MS18]; Ibaraki, Kameda and Toida, *Transactions of the IECE of Japan* E62 (1979), 81–88. -/
 public theorem_wanted faultDetectionDirectedGraphs_npComplete :
     faultDetectionDirectedGraphsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

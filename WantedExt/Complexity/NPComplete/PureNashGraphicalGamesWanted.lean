@@ -91,13 +91,16 @@ def WellFormed (i : PureNashGraphicalGamesInstance) : Prop :=
     (∀ q ∈ neighbours i p, q < i.length ∧ q ≠ p) ∧ (neighbours i p).length ≤ 3 ∧
     ((table i p).map Prod.fst).Perm (combinedStrategies i p)
 
-/-- The actions of a global strategy, as natural numbers indexed by player. -/
+/-- The actions of a global strategy, as natural numbers indexed by player. An index `q ≥ n`
+is not a player and gets action `0`, so a neighbour index that is not a player contributes
+action `0` to the key that `utility` looks up. -/
 def profileActions (i : PureNashGraphicalGamesInstance)
     (σ : ∀ p : Fin i.length, Fin (numActions i p)) (q : ℕ) : ℕ :=
   if h : q < i.length then (σ ⟨q, h⟩ : ℕ) else 0
 
-/-- Player `p`'s utility under the actions `x`: the table cell for the actions of `p` and its
-neighbours. -/
+/-- Player `p`'s utility under the actions `x`: the utility of the first cell of `p`'s table
+whose key is the list of the action of `p` and then those of its neighbours, in the listed order
+(`(scope i p).map x`), and `0` when no cell has that key. -/
 def utility (i : PureNashGraphicalGamesInstance) (p : ℕ) (x : ℕ → ℕ) : ℕ :=
   ((table i p).lookup ((scope i p).map x)).getD 0
 

@@ -74,7 +74,9 @@ abbrev TriangularSlitherLinkInstance := List (List ℕ)
 /-- The number of rows `h`. -/
 def height (i : TriangularSlitherLinkInstance) : ℕ := i.length
 
-/-- The row length `w` (half the number of triangles in the first row). -/
+/-- The row length `w = ⌊ℓ / 2⌋` (natural-number division) for a first row of `ℓ` entries (`0`
+when there are no rows). `TriangularSlitherLinkFeasible` reads only the entries `k < 2w` of a
+row, so with an odd `ℓ` the clue of the last triangle of the first row is never checked. -/
 def width (i : TriangularSlitherLinkInstance) : ℕ := (i.headD []).length / 2
 
 /-- The clue entry of triangle `k` of row `y`. -/
@@ -86,7 +88,9 @@ def GridEdge (p q : ℕ × ℕ) : Prop :=
   (q.2 = p.2 ∧ q.1 = p.1 + 1) ∨
     (q.2 = p.2 + 1 ∧ (q.1 = p.1 ∨ if p.2 % 2 = 0 then p.1 = q.1 + 1 else q.1 = p.1 + 1))
 
-/-- The triangular grid with `h` rows of length `w`, on vertices `(x, y)`, `x ≤ w`, `y ≤ h`. -/
+/-- The triangular grid with `h` rows of length `w`, as a graph on all of `ℕ × ℕ`: inside the
+rectangle `0 ≤ x ≤ w`, `0 ≤ y ≤ h` the edges are those of the triangular grid, and every vertex
+outside it is isolated. -/
 def Graph (i : TriangularSlitherLinkInstance) : SimpleGraph (ℕ × ℕ) :=
   SimpleGraph.fromRel fun p q =>
     p.1 ≤ width i ∧ p.2 ≤ height i ∧ q.1 ≤ width i ∧ q.2 ≤ height i ∧ GridEdge p q

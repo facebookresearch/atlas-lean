@@ -92,8 +92,11 @@ def WellFormed (i : OptimalLeftDeepJoinTreeCrossProductsInstance) : Prop :=
     (∀ e ∈ i.2.1, e.1 < e.2.1 ∧ e.2.1 < i.1.length ∧ 0 < e.2.2.1 ∧ e.2.2.1 ≤ e.2.2.2) ∧
     (i.2.1.map fun e => (e.1, e.2.1)).Nodup
 
-/-- The selectivity `f_{a,b}`: `p / q` for the entry `(min a b, max a b, p, q)`, and `1` when no
-entry lists the pair (no join predicate, a cross product; in particular `f_{a,a} = 1`). -/
+/-- The selectivity `f_{a,b}`: `p / q`, computed in the rationals (so `0` when `q = 0`), for the
+first entry `(i, j, p, q)` with `i = min a b` and `j = max a b`, and `1` when there is no such
+entry (no join predicate, a cross product). An entry with `i > j` is never read, and one with
+`i = j` only for `f_{i,i}`, which `cOut` never uses; without such an entry, as under `WellFormed`,
+`f_{a,a} = 1`. -/
 def selectivity (i : OptimalLeftDeepJoinTreeCrossProductsInstance) (a b : Relation i) : ℚ :=
   match i.2.1.find? (fun e => decide (e.1 = min (a : ℕ) b ∧ e.2.1 = max (a : ℕ) b)) with
   | some e => (e.2.2.1 : ℚ) / e.2.2.2

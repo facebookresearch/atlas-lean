@@ -85,8 +85,9 @@ def WellFormed (i : FirefighterInstance) : Prop :=
     (Graph i).IsTree ∧ (∀ v, (Graph i).degree v ≤ 3) ∧ i.2.2.1 < i.1 ∧ 0 < i.2.2.2
 
 open Classical in
-/-- There is a strategy, defending at each time a vertex not on fire and running until the fire
-can no longer spread, under which at most `k` vertices burn. -/
+/-- The root `r` is a vertex (`r < n`), and, with the fire starting at `r`, there is a strategy,
+defending at each time a vertex not on fire and running until the fire can no longer spread,
+under which at most `k` vertices burn. -/
 def FirefighterFeasible (i : FirefighterInstance) : Prop :=
   ∃ h : i.2.2.1 < i.1, ∃ d : List (Fin i.1),
     (∀ t (ht : t < d.length), ¬ Burning (Graph i) ⟨i.2.2.1, h⟩ d t d[t]) ∧
