@@ -23,7 +23,10 @@ Its displacement vectors span a real subspace and its source monomials give a po
 vector field. The difference between the graph rank and the dimension of this subspace
 is the deficiency. Both equilibrium statements and graph calculations use these definitions.
 
-See M. Feinberg, *Foundations of Chemical Reaction Network Theory* (2019), chapters 3 and 6.
+## References
+
+* Martin Feinberg, *Foundations of Chemical Reaction Network Theory*, Springer (2019),
+  chapters 3 and 6.
 -/
 
 @[expose] public section
@@ -69,6 +72,29 @@ product `y'`.
 Source: Feinberg (2019), §3.1. -/
 def Reacts (y y' : S → ℕ) : Prop :=
   ∃ r, N.src r = y ∧ N.prod r = y'
+
+/-- **Complex membership.** A complex occurs exactly when it is the source or product of a
+reaction. -/
+theorem mem_complexes_iff {y : S → ℕ} :
+    y ∈ N.complexes ↔ ∃ r, N.src r = y ∨ N.prod r = y := by
+  constructor
+  · rintro (⟨r, hr⟩ | ⟨r, hr⟩)
+    · exact ⟨r, Or.inl hr⟩
+    · exact ⟨r, Or.inr hr⟩
+  · rintro ⟨r, hr | hr⟩
+    · exact Or.inl ⟨r, hr⟩
+    · exact Or.inr ⟨r, hr⟩
+
+/-- **Backward propagation along reaction paths.** A property that propagates from the product
+of each reaction to its source also propagates from the end of any directed path to its start. -/
+theorem prop_of_reaches {p : (S → ℕ) → Prop} {y y' : S → ℕ}
+    (hpath : Relation.ReflTransGen N.Reacts y y')
+    (hstep : ∀ r, p (N.prod r) → p (N.src r)) (hy' : p y') : p y := by
+  induction hpath using Relation.ReflTransGen.head_induction_on with
+  | refl => exact hy'
+  | head hedge _ ih =>
+      obtain ⟨r, rfl, rfl⟩ := hedge
+      exact hstep r ih
 
 /-- The undirected reaction graph on the complexes: distinct complexes are adjacent when one
 reacts to the other.
