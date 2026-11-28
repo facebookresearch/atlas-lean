@@ -25,6 +25,7 @@ The weighted Laplacian $L = B \operatorname{diag}(w) B^{\mathsf T}$ of a finite 
 - [The grounded weighted Laplacian of an arc network is invertible](grounded-weighted-laplacian-is-unit.md)
 - [The Laplacian as a symmetric operator](is-symmetric-to-euclidean-lin-laplacian.md)
 - [Algebraic connectivity](algebraic-connectivity.md)
+- [Rayleigh form of a real matrix as a quadratic form](rayleigh-form-to-lp.md)
 - [$\lambda_2$ bounds the Rayleigh quotient on vectors orthogonal to the constants](algebraic-connectivity-mul-le.md)
 - [Easy direction of Cheeger's inequality, eigenvalue form](algebraic-connectivity-mul-card-mul-card.md)
 - [$\lambda_2 > 0$ exactly for connected multigraphs](algebraic-connectivity-pos-iff.md)

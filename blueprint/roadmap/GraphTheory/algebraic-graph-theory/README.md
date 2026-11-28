@@ -36,6 +36,13 @@ Graphs studied through groups and matrices: Cayley and vertex-transitive graphs,
 
 ## [Part 2 of 2](part-02/README.md)
 
-- [Conductance and Cheeger's inequality](part-02/conductance-and-cheeger-s-inequality/README.md)
-- [Spectral sparsification](part-02/spectral-sparsification/README.md)
+- [Integral Dirichlet problem on chains with a correction at depth one](part-02/exists-depth-one-correction-dirichlet.md)
 - [Vertex-transitive graph](part-02/is-vertex-transitive.md)
+- [Spectral sparsification](part-02/spectral-sparsification/README.md)
+- [Vertex types and type-preserving group actions](part-02/vertex-types-and-type-preserving-group-actions/README.md)
+- [Abelian spoke graphs](part-02/abelian-spoke-graphs/README.md)
+- [Conductance and Cheeger's inequality](part-02/conductance-and-cheeger-s-inequality/README.md)
+- [Hyper-regular graphs](part-02/hyper-regular-graphs/README.md)
+- [Infinite vertex-transitive graphs](part-02/infinite-vertex-transitive-graphs/README.md)
+- [Laplacian spectrum of path graphs](part-02/laplacian-spectrum-of-path-graphs/README.md)
+- [Spectral inequalities for graphs](part-02/spectral-inequalities-for-graphs/README.md)

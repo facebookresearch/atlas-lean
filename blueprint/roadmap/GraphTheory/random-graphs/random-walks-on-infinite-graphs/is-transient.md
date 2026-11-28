@@ -1,0 +1,3 @@
+# Transient graph
+
+Let $G$ be a simple graph on a vertex set $V$. $G$ is transient when $V$ is infinite and for some vertex $o$ the sum $\sum_{n \ge 0} p_n(o, o)$ is finite, where $p_n(o, o)$, the [weighted return sum](return-prob.md), is the sum over closed walks $w_0 = o, w_1, \dots, w_n = o$ in $G$ of $\prod_{i < n} 1/\deg w_i$ ($1/0 = \infty$, and a vertex with infinitely many neighbours has degree $0$). When every vertex has finitely many neighbours and at least one, as in a connected infinite graph of bounded degree, this sum is the expected number of visits of simple random walk from $o$ to $o$. The infinite graph with no edges also satisfies the definition.
