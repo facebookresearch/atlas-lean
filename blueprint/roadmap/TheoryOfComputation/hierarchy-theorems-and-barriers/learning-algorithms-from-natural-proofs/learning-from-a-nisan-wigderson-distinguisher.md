@@ -9,10 +9,6 @@ Apply best-of-$k$ selection with per-run failure probability $1 - \varepsilon/(2
 ## Depends on
 
 - [Nisan-Wigderson reconstruction as a membership-query weak learner (one run)](nisan-wigderson-reconstruction-weak-learner.md)
-
-## Proof depends on
-
-- [Nisan-Wigderson reconstruction as a membership-query weak learner (one run)](nisan-wigderson-reconstruction-weak-learner.md)
 - [Best-of-k selection boosts the confidence of a membership-query learner](../../circuit-complexity/learning-under-the-uniform-distribution/best-of-k-confidence-boosting.md)
 
 ## Sources

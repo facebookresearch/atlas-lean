@@ -10,3 +10,4 @@ Elementary theory of semirings, rings, division rings and fields: homomorphisms 
 - [Triangular integer signs](triangular-integer-signs/README.md)
 - [Subrings not required to contain 1](subring.md)
 - [Subfield](subfield.md)
+- [Amalgams of finite rings](amalgams-of-finite-rings/README.md)

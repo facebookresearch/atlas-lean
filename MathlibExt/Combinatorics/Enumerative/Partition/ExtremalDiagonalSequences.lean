@@ -31,6 +31,19 @@ leaves a word of the same kind; the deleted letters stand in blocks immediately 
 letters `a + 1`, so the word is recovered from the shorter word and the sizes of the blocks.
 When the number of parts is the staircase height, the zero rows form a fixed suffix, and
 removing it leaves an arrangement with one fewer copy of each letter and no prescribed ending.
+
+For a diagonal normal form of staircase height `q ≥ 1` with arbitrary natural multiplicities
+`s₁, …, s_q` after the staircase, capping each at two preserves the size of the diagonal class.
+In the binomial product, deleting a copy from three equal consecutive heights removes a unit
+factor.
+
+## References
+
+* Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*, INTEGERS 25
+  (2025), Article A60, pp. 1–17. Corollary 3 (p. 5), Proposition 8 (p. 10), Theorem 1 (p. 12),
+  and Corollary 6 (5) (p. 13).
+* The staircase sum uses the same reduction to `Finset.sum_range_id` as `staircase_sum` in
+  `MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionMexSum`.
 -/
 
 namespace MetaMathlibExt
@@ -1321,5 +1334,174 @@ public theorem card_diagonalClass_filter_card_parts_eq_q {n : ℕ} (p : Nat.Part
     (fun i => diagonalSequence p.parts i - diagonalSequence p.parts (i + 1))
   rw [Nat.add_sub_of_le (staircase_le_last hq hL')] at h
   exact h
+
+namespace card_diagonalClassOf_min_two
+
+open Finset diagonalSequence_max_eq_min_and_multiset
+
+-- Start at the last staircase entry. The default 0 accounts for the final drop to zero.
+private def tailWeight (l : List ℕ) : ℕ :=
+  ∏ i ∈ range (l.length - 1),
+    let a := l.getD i 0 - l.getD (i + 1) 0
+    let b := l.getD (i + 1) 0 - l.getD (i + 2) 0
+    (a + b + 1).choose (a + 1)
+
+private theorem tailWeight_cons_cons (a b : ℕ) (l : List ℕ) :
+    tailWeight (a :: b :: l) =
+      ((a - b) + (b - l.getD 0 0) + 1).choose (a - b + 1) * tailWeight (b :: l) := by
+  unfold tailWeight
+  rw [show (a :: b :: l).length - 1 = ((b :: l).length - 1) + 1 by simp,
+    prod_range_succ', mul_comm]
+  rfl
+
+-- Removing one of three equal entries deletes the factor for two consecutive zero drops.
+private theorem tailWeight_triple (pre suf : List ℕ) (x : ℕ) :
+    tailWeight (pre ++ x :: x :: x :: suf) = tailWeight (pre ++ x :: x :: suf) := by
+  induction pre with
+  | nil =>
+    simp only [List.nil_append, tailWeight_cons_cons, List.getD_cons_zero, Nat.sub_self,
+      Nat.zero_add, Nat.choose_self, one_mul]
+  | cons a pre ih =>
+    cases pre with
+    | nil =>
+      simp only [List.cons_append, List.nil_append] at ih ⊢
+      rw [tailWeight_cons_cons a, tailWeight_cons_cons a, ih]
+      simp only [List.getD_cons_zero]
+    | cons b pre =>
+      simp only [List.cons_append] at ih ⊢
+      rw [tailWeight_cons_cons a, tailWeight_cons_cons a, ih]
+      cases pre <;> rfl
+
+private theorem tailWeight_replicate_min_two (pre suf : List ℕ) (x k : ℕ) :
+    tailWeight (pre ++ List.replicate k x ++ suf) =
+      tailWeight (pre ++ List.replicate (min k 2) x ++ suf) := by
+  by_cases hk : k ≤ 2
+  · rw [min_eq_left hk]
+  have hk' : 2 ≤ k := by omega
+  rw [min_eq_right hk']
+  clear hk
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le hk'
+  clear hk'
+  induction m with
+  | zero => rfl
+  | succ m ih =>
+    rw [← ih, show 2 + (m + 1) = m + 3 by omega, show 2 + m = m + 2 by omega]
+    simpa only [List.replicate_succ, List.cons_append, List.append_assoc] using
+      tailWeight_triple pre (List.replicate m x ++ suf) x
+
+private theorem tailWeight_blocks_min_two (q : ℕ) (s : ℕ → ℕ) (pre : List ℕ) :
+    tailWeight (pre ++ blocks q s) = tailWeight (pre ++ blocks q (fun j => min (s j) 2)) := by
+  induction q generalizing pre with
+  | zero => rfl
+  | succ q ih =>
+    simp only [blocks_succ, ← List.append_assoc]
+    rw [tailWeight_replicate_min_two, ih]
+
+private theorem sum_blocks (q : ℕ) (s : ℕ → ℕ) :
+    (blocks q s).sum = ∑ j ∈ Icc 1 q, j * s j := by
+  induction q with
+  | zero => simp [blocks]
+  | succ q ih =>
+    rw [blocks_succ, List.sum_append, List.sum_const_nat, ih,
+      sum_Icc_succ_top (by omega : 1 ≤ q + 1), Nat.mul_comm (s (q + 1)), Nat.add_comm]
+
+private theorem card_eq_tailWeight (q : ℕ) (s : ℕ → ℕ) :
+    (diagonalClassOf ((q + 1) * (q + 2) / 2 + ∑ j ∈ Icc 1 (q + 1), j * s j)
+      (diagonalOfList (diagonalNormalForm (q + 1) s))).card =
+        tailWeight ((q + 1) :: blocks (q + 1) s) := by
+  have hpos (x : ℕ) (hx : x ∈ diagonalMinPartition (q + 1) s) : 0 < x := by
+    unfold diagonalMinPartition at hx
+    obtain ⟨j, _, hxj⟩ := List.mem_flatMap.mp hx
+    rw [(List.mem_replicate.mp hxj).2]
+    exact Nat.succ_pos _
+  have hsum : (diagonalMinPartition (q + 1) s).sum =
+      (q + 1) * (q + 2) / 2 + ∑ j ∈ Icc 1 (q + 1), j * s j := by
+    change (blocks (q + 1) (fun j => s j + 1)).sum = _
+    rw [sum_blocks]
+    conv_lhs => simp only [Nat.mul_add, Nat.mul_one, sum_add_distrib]
+    have htri : ∑ j ∈ Icc 1 (q + 1), j = (q + 1) * (q + 2) / 2 := by
+      simpa [sum_range_id, Ico_add_one_right_eq_Icc, Nat.mul_comm] using
+        (sum_range_eq_add_Ico id (Nat.zero_lt_succ (q + 1))).symm
+    rw [htri, Nat.add_comm]
+  let p : Nat.Partition ((q + 1) * (q + 2) / 2 + ∑ j ∈ Icc 1 (q + 1), j * s j) :=
+    { parts := ↑(diagonalMinPartition (q + 1) s)
+      parts_pos := fun hx => hpos _ (Multiset.mem_coe.mp hx)
+      parts_sum := by simpa using hsum }
+  obtain ⟨_, hd, hparts⟩ := diagonalSequence_max_eq_min_and_multiset (q + 1) s
+  change diagonalSequence p.parts = _ at hd
+  have hclass : diagonalClassOf _ (diagonalOfList (diagonalNormalForm (q + 1) s)) =
+      diagonalClass p := by
+    rw [← hd]
+    rfl
+  have hsplit : diagonalNormalForm (q + 1) s =
+      List.range' 1 q ++ ((q + 1) :: blocks (q + 1) s) := by
+    change List.range' 1 (q + 1) ++ blocks (q + 1) s = _
+    rw [List.range'_concat]
+    simp [List.append_assoc, Nat.add_comm]
+  let L := (diagonalNormalForm (q + 1) s).length
+  have hlen : L - (q + 1) = ((q + 1) :: blocks (q + 1) s).length - 1 := by
+    simp only [L, hsplit, List.length_append, List.length_range', List.length_cons]
+    omega
+  have hget (i : ℕ) : diagonalOfList (diagonalNormalForm (q + 1) s) (q + 1 + i) =
+      ((q + 1) :: blocks (q + 1) s).getD i 0 := by
+    rw [diagonalOfList, hsplit]
+    change ((0 :: List.range' 1 q) ++ _).getD _ _ = _
+    rw [List.getD_append_right _ _ _ _ (by simp)]
+    simp
+  have hstair (j : ℕ) (hj : j ∈ Icc 1 (q + 1)) : diagonalSequence p.parts j = j := by
+    rw [hd]
+    obtain ⟨hj₁, hj₂⟩ := mem_Icc.mp hj
+    have hlo := (le_normalForm (q + 1) s j j hj₁).mpr ⟨le_rfl, hj₂, by omega⟩
+    by_contra hne
+    have hhi : j + 1 ≤ diagonalOfList (diagonalNormalForm (q + 1) s) j := by omega
+    have := (le_normalForm (q + 1) s (j + 1) j (by omega)).mp hhi
+    omega
+  have hnext : diagonalSequence p.parts (q + 1 + 1) ≠ q + 1 + 1 := by
+    rw [hd]
+    intro heq
+    have hle : q + 1 + 1 ≤ diagonalOfList (diagonalNormalForm (q + 1) s) (q + 1 + 1) :=
+      heq.ge
+    have := (le_normalForm (q + 1) s _ _ (by omega)).mp hle
+    omega
+  have hlast : diagonalSequence p.parts L ≠ 0 := by
+    rw [hd, diagonalOfList]
+    have hL : 0 < L := by simp [L, hsplit]
+    obtain ⟨m, hm⟩ := Nat.exists_eq_succ_of_ne_zero hL.ne'
+    have hm' : m < (diagonalNormalForm (q + 1) s).length := by omega
+    rw [hm, List.getD_cons_succ, List.getD_eq_getElem _ _ hm']
+    have hmem := List.getElem_mem hm'
+    rw [← Multiset.mem_coe, hparts] at hmem
+    exact (hpos _ (Multiset.mem_coe.mp hmem)).ne'
+  have hend : diagonalSequence p.parts (L + 1) = 0 := by
+    rw [hd, diagonalOfList, List.getD_cons_succ]
+    exact List.getD_eq_default _ _ le_rfl
+  rw [hclass, card_diagonalClass_eq_prod_choose p (q + 1) L hstair hnext hlast hend, hd,
+    prod_Ico_eq_prod_range, hlen, tailWeight]
+  apply prod_congr rfl
+  intro i _
+  rw [Nat.add_assoc (q + 1) i 1, Nat.add_assoc (q + 1) i 2]
+  simp only [hget]
+
+end card_diagonalClassOf_min_two
+
+open card_diagonalClassOf_min_two diagonalSequence_max_eq_min_and_multiset in
+/-- **Capping the multiplicities of a diagonal sequence at two.** For $m \ge 0$ and a sequence
+$s = (s_1, s_2, \dots)$ of natural numbers, let $d(m, s)$ be the sequence
+$(1, 2, \dots, m, m^{(s_m)}, (m-1)^{(s_{m-1})}, \dots, 1^{(s_1)})$ followed by zeros, where
+$v^{(r)}$ means $r$ copies of $v$, and let $n(m, s) = m(m+1)/2 + \sum_{j=1}^{m} j s_j$. Let
+$q \ge 1$ and $\sigma_j = \min(s_j, 2)$ for all $j$. Then the number of partitions of $n(q, s)$
+with diagonal sequence $d(q, s)$ equals the number of partitions of $n(q, \sigma)$ with diagonal
+sequence $d(q, \sigma)$.
+
+Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
+INTEGERS 25 (2025), Article A60, Corollary 6 (5). -/
+public theorem card_diagonalClassOf_min_two (q : ℕ) (hq : 1 ≤ q) (s : ℕ → ℕ) :
+    (diagonalClassOf (q * (q + 1) / 2 + ∑ j ∈ Finset.Icc 1 q, j * s j)
+        (diagonalOfList (diagonalNormalForm q s))).card =
+      (diagonalClassOf (q * (q + 1) / 2 + ∑ j ∈ Finset.Icc 1 q, j * min (s j) 2)
+        (diagonalOfList (diagonalNormalForm q fun j => min (s j) 2))).card := by
+  obtain ⟨q, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : q ≠ 0)
+  rw [card_eq_tailWeight, card_eq_tailWeight]
+  exact tailWeight_blocks_min_two (q + 1) s [q + 1]
 
 end MetaMathlibExt

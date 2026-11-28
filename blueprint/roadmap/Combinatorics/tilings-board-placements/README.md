@@ -17,3 +17,4 @@ Covering and placement problems on lattices and boards: domino and lozenge tilin
 - [Weighted file placements on Ferrers boards](weighted-file-placements-on-ferrers-boards/README.md)
 - [Quarter-period factorizations of the triangular tiling numbers](quarter-period-factorizations.md)
 - [Tauraso's Cassini-type identity](domino-tilings-l-grid-via-fibonacci.md)
+- [Common multiple shapes of polyominoes](common-multiple-shapes-of-polyominoes/README.md)

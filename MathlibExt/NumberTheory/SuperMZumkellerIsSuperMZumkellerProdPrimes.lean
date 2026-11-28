@@ -23,15 +23,25 @@ import Mathlib.NumberTheory.Divisors
 import Mathlib.Tactic.Ring
 
 /-!
-# Products of at least three distinct primes are super-m-Zumkeller
+# Super-m-Zumkeller numbers from distinct primes
 
 For every finite set `S` of at least three primes, the product `∏ p ∈ S, p` is super-m-Zumkeller.
 The divisor product of such a number is a product of prime powers whose exponents are divisible
 by four; the divisors of each such prime power split into two complementary sets with equal
 products, and splits of coprime factors combine.
 
-Source: Harish Patodia, "Super m-Zumkeller Numbers", *INTEGERS* 26 (2026), Article A79
-(<https://math.colgate.edu/~integers/aa79/aa79.pdf>), DOI `10.5281/zenodo.20931172`.
+The same construction applies to `2^k * (p * q)` when `k` is odd and `p` and `q` are
+distinct odd primes: the divisor product again has all prime exponents divisible by four.
+
+## References
+
+- Harish Patodia, "Super-m-Zumkeller Numbers", *INTEGERS* 26 (2026), Article A79, pp. 1–9,
+  Lemma 1, Corollary 1 and Corollary 2(i)
+  (<https://math.colgate.edu/~integers/aa79/aa79.pdf>), DOI `10.5281/zenodo.20931172`.
+- David M. Burton, *Elementary Number Theory*, McGraw Hill Education (India), 2012,
+  cited by Patodia for the divisor-product formula in Lemma 1.
+- H. Patodia and H. K. Saikia, "On m-Zumkeller numbers", *Bull. Calcutta Math. Soc.* 113 (1)
+  (2021), 53–60, cited by Patodia for the definition of m-Zumkeller numbers.
 -/
 
 set_option autoImplicit false
@@ -364,5 +374,52 @@ theorem isSuperMZumkeller_prod_primes (s : Finset ℕ)
     (∏ x ∈ A, x) = ∏ x ∈ (divisorProd (∏ p ∈ s, p)).divisors \ A, x
   rw [hT]
   exact exists_split_prod_prime_pow s (2 ^ (s.card - 1)) h4 hs
+
+/-- **Odd powers of $2$ times two distinct odd primes are super-m-Zumkeller.** Let $k$ be an odd
+natural number and let $p$ and $q$ be distinct odd primes. Then $2^k p q$ is super-m-Zumkeller.
+
+The primes are required to be odd because the paper's proof uses that this number has
+$(k+1) \cdot 2^2$ divisors.
+
+Source: Harish Patodia, "Super m-Zumkeller Numbers",
+Corollary 2. -/
+theorem isSuperMZumkeller_two_pow_mul_two_primes (k : ℕ)
+    (hk : Odd k) (p q : ℕ) (hp : p.Prime) (hq : q.Prime)
+    (hp2 : p ≠ 2) (hq2 : q ≠ 2) (hpq : p ≠ q) :
+    IsSuperMZumkeller ((2 : ℕ) ^ k * (p * q)) := by
+  have hcopP : (2 : ℕ).Coprime p := (Nat.coprime_primes Nat.prime_two hp).mpr hp2.symm
+  have hcopQ : (2 : ℕ).Coprime q := (Nat.coprime_primes Nat.prime_two hq).mpr hq2.symm
+  have hcopPQ : p.Coprime q := (Nat.coprime_primes hp hq).mpr hpq
+  have hcop : (2 : ℕ).Coprime (p * q) := hcopP.mul_right hcopQ
+  have hcard : ((2 : ℕ) ^ k * (p * q)).divisors.card = (k + 1) * 4 := by
+    rw [(hcop.pow_left k).divisors_mul, Finset.card_map, Finset.card_attach,
+      Finset.card_product, hcopPQ.divisors_mul, Finset.card_map, Finset.card_attach,
+      Finset.card_product, Nat.divisors_prime_pow Nat.prime_two, Finset.card_map,
+      Finset.card_range, hp.divisors, hq.divisors]
+    simp [hp.ne_one.symm, hq.ne_one.symm]
+  let e := 2 * (k + 1)
+  have hT : divisorProd ((2 : ℕ) ^ k * (p * q)) = 2 ^ (k * e) * (p ^ e * q ^ e) := by
+    have hpos : 0 < (2 : ℕ) ^ k * (p * q) :=
+      Nat.mul_pos (pow_pos (by decide) _) (Nat.mul_pos hp.pos hq.pos)
+    apply pow_left_injective (n := 2) (by decide)
+    change divisorProd (2 ^ k * (p * q)) ^ 2 = (2 ^ (k * e) * (p ^ e * q ^ e)) ^ 2
+    rw [divisorProd_sq _ hpos, hcard]
+    have he : (k + 1) * 4 = e * 2 := by dsimp [e]; omega
+    rw [he, pow_mul, mul_pow, mul_pow (p : ℕ), ← pow_mul]
+  obtain ⟨i, hi⟩ := hk
+  have he : e = 4 * (i + 1) := by dsimp [e]; omega
+  have h4 : 4 ∣ e := ⟨i + 1, he⟩
+  have h4k : 4 ∣ k * e := ⟨k * (i + 1), by rw [he]; ac_rfl⟩
+  obtain ⟨A, hA, hAsplit⟩ := exists_split_prime_pow Nat.prime_two h4k
+  obtain ⟨B, hB, hBsplit⟩ := exists_split_prime_pow hp h4
+  obtain ⟨C, hC, hCsplit⟩ := exists_split_prime_pow hq h4
+  obtain ⟨D, hD, hDsplit⟩ := exists_split_mul ((hcopPQ.pow_left e).pow_right e)
+    B hB hBsplit C hC hCsplit
+  have hcop' : ((2 : ℕ) ^ (k * e)).Coprime (p ^ e * q ^ e) := by
+    rw [← mul_pow]
+    exact (hcop.pow_left (k * e)).pow_right e
+  unfold IsSuperMZumkeller
+  rw [hT]
+  exact exists_split_mul hcop' A hA hAsplit D hD hDsplit
 
 end MathlibExt.NumberTheory.SuperMZumkellerWanted

@@ -16,6 +16,7 @@ public import MathlibExt.GameTheory.SlowANimEvenParity
 public import MathlibExt.GameTheory.SlowANimGeneralReduction
 public import MathlibExt.GameTheory.SlowANimParity
 public import MathlibExt.GameTheory.SlowANimReducedMin
+public import MathlibExt.GameTheory.SlowANimReductionOutcome
 public import MathlibExt.GameTheory.SlowANimThreeStacks
 public import MathlibExt.Combinatorics.SlowANimIsPPositionSetExtend
 
@@ -72,18 +73,6 @@ Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Lemma 1. -/
 public theorem_wanted slowANimLegalSeq_reduction_iff (n : ℕ) (A : Finset ℕ)
     (hA : A ⊆ Finset.Icc 1 n) (p : Fin n → ℕ) (ss : List (Finset (Fin n))) :
     SlowANimLegalSeq A (slowANimReduction A p) ss ↔ SlowANimLegalSeq A p ss
-
-/-- **Positions with the same reduction have the same outcome.** Let
-$A \subseteq \{1, \dots, n\}$. If two positions $p$ and $q$ of Slow$A$-Nim $\mathrm{SN}(n, A)$
-have the same reduction, $r(p) = r(q)$, then $p$ is a P-position if and only if $q$ is a
-P-position.
-
-Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
-Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Corollary 1. -/
-public theorem_wanted slowANim_isP_iff_of_reduction_eq (n : ℕ) (A : Finset ℕ)
-    (hA : A ⊆ Finset.Icc 1 n) (p q : Fin n → ℕ)
-    (h : slowANimReduction A p = slowANimReduction A q) :
-    SpragueGrundy.IsP (slowANimGame n A) p ↔ SpragueGrundy.IsP (slowANimGame n A) q
 
 /-- **The reduction chops at the largest reduced height.** Let $A \subseteq \{1, \dots, n\}$ and
 let $p$ be a position of Slow$A$-Nim on $n$ stacks, with largest stack height $M = \max_i p_i$
