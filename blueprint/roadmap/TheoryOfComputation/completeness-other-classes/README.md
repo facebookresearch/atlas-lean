@@ -15,3 +15,4 @@ Problems complete for classes other than NP: P (circuit value), NL (s-t connecti
 - [Succinct circuit value problem](succinct-circuit-value-problem/README.md)
 - [True quantified Boolean formulas](true-quantified-boolean-formulas/README.md)
 - [Unsatisfiability](unsatisfiability/README.md)
+- [Motion planning with gadgets](motion-planning-with-gadgets/README.md)

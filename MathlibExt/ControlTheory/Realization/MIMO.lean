@@ -27,8 +27,7 @@ realization; no realization is constructed here. The common denominator
 is not claimed minimal (it need not be the lcm of the entry
 denominators).
 
-Provenance: the classical proper-rational-matrix normal form;
-control-theory roadmap leaf `SSC-G08.T17` (clause `SSC-G08.c03`).
+Provenance: the classical proper-rational-matrix normal form.
 -/
 
 open Polynomial Matrix
@@ -46,9 +45,9 @@ def IsProper {𝕜 : Type*} [Field 𝕜] {p m : Type*}
     (G : Matrix p m (RatFunc 𝕜)) : Prop :=
   ∀ i j, (G i j).intDegree ≤ 0
 
-/-- Common-denominator form of a proper rational matrix (roadmap leaf
-`SSC-G08.T17`, clause `SSC-G08.c03`): every proper rational matrix `G`
-splits as `G = D + N / d` with a constant matrix `D`, a polynomial matrix
+/-- Common-denominator form of a proper rational matrix: every proper
+rational matrix `G` with finitely many rows and columns splits as `G = D + N / d` with a
+constant matrix `D`, a polynomial matrix
 `N`, and a single common monic denominator `d` whose degree strictly
 exceeds the degree of every entry of `N` (polynomial `degree`, so the
 zero polynomial, of degree `⊥`, is allowed in `N` even when `d = 1`). -/
