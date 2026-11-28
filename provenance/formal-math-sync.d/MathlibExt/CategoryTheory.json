@@ -760,6 +760,15 @@
       "upstream_sha256": "dc7d4ecd46a4dd9c2f346a98fef1ba35c1da5d877540731ddf57967c44ba04eb"
     },
     {
+      "path": "MathlibExt/CategoryTheory/Comonad/BarResolution.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "54b0122a4e2bef72fc530987cdf35db9b54e337d317bd3771566d662858de41f",
+      "rationale": "Import the general Hochschild, Eulerian, and Chevalley–Eilenberg API with Atlas mathematical documentation, preserving its original hypotheses, signs, and source attribution. State the exact commutative scalar ring, variable maps, comonad faces and degeneracies, and all mathematical hypotheses in self-contained docstrings. All noncomment tokens and public declarations are unchanged. Wrap six mathematical docstring lines to satisfy the 100-column Lean linter; all nonwhitespace source tokens are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "5d58481e21f072b4023e0b8a130ba3f8393dad891c2aa1310a955b6c37b28c3c"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/Comonad/Cobar.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -2416,6 +2425,24 @@
       "upstream_sha256": "ac8ac48e684be006443f990b1744e8291a35ba89328726b24dddce6556020581"
     },
     {
+      "path": "MathlibExt/CategoryTheory/Monad/Coresolution.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "1ce53b2081772b101db7307e68c7e501754af622f3e0def95ec68e881c3550bc",
+      "rationale": "General homological algebra API adapted to canonical Atlas owners and mathematical documentation; original maps, statements and independent universes are retained. The module and declaration documentation states all mathematical objects, hypotheses, conventions and coordinate laws in Atlas style, preserving noncomment Lean tokens and legal credits.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "5cbf7332e8722849ddee274423546e87c42da6eb2a39a27f00294ba842183680"
+    },
+    {
+      "path": "MathlibExt/CategoryTheory/Monad/CrossPowerTransport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "0f46c173ba6c5d0081d56a6932711155b93889dae24cde7c1adf8c055879d62b",
+      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds. Mathematical documentation now states the classifying-space, continuous-action, cup-product, cyclic-resolution and degree-transport contracts with all coefficient worlds, group hypotheses and signs; all noncomment tokens and legal credits are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a42b418dde838050e8db52fe309e1153687d5c9c829e0a0cc4051523737b007f"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/Monad/Module.lean",
       "backport": "not-needed",
       "disposition": "diverged",
@@ -2486,6 +2513,15 @@
       "rationale": "Expose the same coefficient or cotensor maps in a descriptive CategoryTheory namespace. Update the related imports and references for the renamed API.",
       "upstream_commit": "efb0b86f464b1cd2243085ad50810fd0ac3c0d07",
       "upstream_sha256": "98a169bd4b7231374c312274e4c1a8b5bf50540ac5a42ec5587ee67a2fcd3f2c"
+    },
+    {
+      "path": "MathlibExt/CategoryTheory/Monoidal/TensorPowerFunctor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "ea68c16d6c7a823d73e502600d2fb5dd5a269b3121d5eae0b3114bf68693c286",
+      "rationale": "Actual published TensorPowerFunctor caller migration for PR11297’s canonical tensorPowAddIso interface. Rename generic block-splitting calls and use the pinned native MonoidalCategory.eqToHom_whiskerRight law instead of the removed wrapper. All public caller declaration names, hypotheses, universes, power/factor order and structure maps are retained; 100-column wraps are whitespace only. This is an explicit API/proof adaptation, not an unchanged-token copy of the earlier source. The head-tail cast proof fixes the entire Hom type before applying the native whiskering equality, retaining the same cast and factor maps. The typed cast proof retains tensor-morphism syntax until applying tensorHom_id as a propositional law, then applies native equality whiskering; no object, factor, index or public statement changes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9ddd659357a45835ebb7abf51d3838a19379540cb26363d3e04d68e675f1cbb5"
     },
     {
       "path": "MathlibExt/CategoryTheory/Monoidal/TensorPowers.lean",
