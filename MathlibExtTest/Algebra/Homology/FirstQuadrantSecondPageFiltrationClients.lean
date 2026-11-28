@@ -55,6 +55,10 @@ lemma vertical_doubling : V.d 1 0 = 𝟙 (row.homology 0) + 𝟙 (row.homology 0
 
 lemma vertical_zero : V.d 0 0 = 0 := V.shape 0 0 (by decide)
 
+private lemma integer_double_ne_one (n : ℤ) : Int.add n n ≠ (1 : ℤ) := by
+  intro h
+  omega
+
 lemma vertical_not_surjective : ¬ Function.Surjective (V.d 1 0).hom := by
   intro hs
   obtain ⟨x, hx⟩ := hs (rowHomologyIso.inv.hom (1 : ℤ))
@@ -70,7 +74,7 @@ lemma vertical_not_surjective : ¬ Function.Surjective (V.d 1 0).hom := by
     (rowHomologyIso.hom.hom.map_add x x).symm.trans (hv.trans he)
   let z : ℤ := rowHomologyIso.hom.hom x
   have hz : Int.add z z = (1 : ℤ) := hsum
-  omega
+  exact integer_double_ne_one z hz
 
 lemma vertical_homology_nonzero : ¬ IsZero (V.homology 0) := by
   intro hz
