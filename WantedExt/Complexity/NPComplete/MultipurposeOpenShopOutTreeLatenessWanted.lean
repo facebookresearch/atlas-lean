@@ -26,10 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopOutTreeLatenessWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeOpenShopOutTreeLatenessDefs
 
 @[expose] public section
 
@@ -97,23 +94,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some MPM open-shop schedule of the unit-time jobs obeys the precedence constraints and has
-maximum lateness at most `K`: `C_j - d_j ≤ K` for every job `j`. -/
-def MultipurposeOpenShopOutTreeLatenessFeasible
-    (i : MultipurposeFlowShopOutTreeLatenessInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
-    IsMPMOpenShopPrecedenceSchedule i.1 i.2.1 i.2.2.2.1 σ a ∧
-      ∀ j, (completionTime (fun _ _ => 1) σ j : ℤ) - dueDate i j ≤ bound i
-
-open Classical in
-/-- `OMPM|outtree; p_ij = 1|L_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeOpenShopOutTreeLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopOutTreeLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeOpenShopOutTreeLatenessFeasible i)
-  | none => false
 
 /-- **`OMPM|outtree; p_ij = 1|L_max` is NP-complete.** Source: Brucker, Garey and Johnson
 (1977), via the case of one stage `{M_1, …, M_m}`; Timkovsky (2003), as recorded in the

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import CSLibExt.Complexity.NPComplete.UnitFlowShopDelaysWeightedDefs
 
 @[expose] public section
 
@@ -56,32 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs `(tⱼ, wⱼ)` (transportation delay, weight) and the bound `K`. -/
-abbrev UnitFlowShopDelaysWeightedInstance := List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness: every instance (all data are non-negative integers). -/
-def WellFormed (_ : UnitFlowShopDelaysWeightedInstance) : Prop := True
-
-/-- Some unit-time schedule `s₁, s₂` (start times on `M₁`, `M₂`) without overlaps on either
-machine and respecting the transportation delays has `Σⱼ wⱼ (s₂ⱼ + 1) ≤ K`. -/
-def UnitFlowShopDelaysWeightedFeasible (i : UnitFlowShopDelaysWeightedInstance) :
-    Prop :=
-  ∃ s₁ s₂ : Fin i.1.length → ℕ,
-    (∀ j k, j ≠ k → s₁ j + 1 ≤ s₁ k ∨ s₁ k + 1 ≤ s₁ j) ∧
-    (∀ j k, j ≠ k → s₂ j + 1 ≤ s₂ k ∨ s₂ k + 1 ≤ s₂ j) ∧
-    (∀ j, s₁ j + 1 + (i.1.get j).1 ≤ s₂ j) ∧
-    ∑ j, (i.1.get j).2 * (s₂ j + 1) ≤ i.2
-
-open Classical in
-/-- F2|p_ij=1;t_j|Σw_jC_j as a decision
-problem over bitstrings. -/
-noncomputable def unitFlowShopDelaysWeightedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopDelaysWeightedInstance) x with
-  | some i => decide (WellFormed i ∧ UnitFlowShopDelaysWeightedFeasible i)
-  | none => false
 
 /-- **F2|p_ij=1;t_j|Σw_jC_j is NP-complete.**
 Source: Brucker, Cheng, Knust and Shakhlevich (2004). -/

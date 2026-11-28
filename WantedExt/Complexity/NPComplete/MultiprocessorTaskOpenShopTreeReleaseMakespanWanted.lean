@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskFlowShopTreeReleaseMakespanWanted
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskOpenShopTreeReleaseMakespanDefs
 
 @[expose] public section
 
@@ -75,23 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some MPT open-shop schedule of the unit-time jobs obeys the tree precedence constraints,
-starts no operation of a job before its release date, and has makespan at most `K`. -/
-def MultiprocessorTaskOpenShopTreeReleaseMakespanFeasible
-    (i : MultiprocessorTaskFlowShopTreeReleaseMakespanInstance) : Prop :=
-  ∃ σ : Fin i.2.2.1.length → Fin i.2.1.length → ℕ,
-    IsMPTOpenShopPrecedenceSchedule i.2.1 i.2.2.2.1 σ ∧ (∀ j s, releaseDate i j ≤ σ j s) ∧
-      ∀ j, completionTime (fun _ _ => 1) σ j ≤ i.2.2.2.2
-
-open Classical in
-/-- `OMPT|tree; r_i; p_ij = 1|C_max` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskOpenShopTreeReleaseMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiprocessorTaskFlowShopTreeReleaseMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorTaskOpenShopTreeReleaseMakespanFeasible i)
-  | none => false
 
 /-- **`OMPT|tree; r_i; p_ij = 1|C_max` is NP-complete.** Source: Timkovsky (2003); Brucker and
 Knust, *Complexity results for scheduling problems*; Brucker (2004), Chapter 11. -/

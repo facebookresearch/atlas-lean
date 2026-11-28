@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Finset.Lattice.Fold
-public import WantedExt.Complexity.NPComplete.OpenShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorNoWaitOpenShopTotalCompletionDefs
 
 @[expose] public section
 
@@ -71,27 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: two machines, and every job consists of two tasks. -/
-def WellFormed (i : OpenShopSchedulingInstance) : Prop :=
-  i.1 = 2 ∧ ∀ job ∈ i.2.1, job.length = i.1
-
-/-- Some no-wait open-shop schedule has total completion time at most `K`: one task of each job
-starts exactly when the job's other task ends, and the completion times
-`C_j = max_p (σ p j + l(t_p[j]))` sum to at most `K`. -/
-def TwoProcessorNoWaitOpenShopTotalCompletionFeasible (i : OpenShopSchedulingInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsOpenShopSchedule i σ ∧
-    (∀ j, ∃ p q : Fin i.1, p ≠ q ∧ σ q j = σ p j + taskLength i p j) ∧
-    ∑ j, Finset.univ.sup (fun p => σ p j + taskLength i p j) ≤ i.2.2
-
-open Classical in
-/-- NO-WAIT OPEN SHOP `O2|no-wait|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def twoProcessorNoWaitOpenShopTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OpenShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorNoWaitOpenShopTotalCompletionFeasible i)
-  | none => false
 
 /-- **NO-WAIT OPEN SHOP `O2|no-wait|ΣC_i` is NP-complete.** Source: Kubiak, Sriskandarajah and
 Zaras (1991), as recorded in the Brucker-Knust classification of scheduling problems. -/

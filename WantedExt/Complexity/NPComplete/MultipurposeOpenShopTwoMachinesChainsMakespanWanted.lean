@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.F3UnitChainsLateJobsWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeOpenShopTwoMachinesChainsMakespanDefs
 
 @[expose] public section
 
@@ -75,35 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an `OMPM||C_max` instance (the number `m` of machines, the stage machine sets,
-one list of processing times per job, the bound `K`) and the chain arcs `(i, k)`. -/
-abbrev MultipurposeOpenShopTwoMachinesChainsMakespanInstance :=
-  MultipurposeOpenShopMakespanInstance × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: a well-formed `OMPM||C_max` instance with `m = 2` machines,
-whose arcs form chains on the jobs. -/
-def WellFormed (i : MultipurposeOpenShopTwoMachinesChainsMakespanInstance) : Prop :=
-  MultipurposeOpenShopMakespan.WellFormed i.1 ∧ i.1.1 = 2 ∧
-    ChainsWellFormed i.1.2.2.1.length i.2
-
-/-- Some MPM open-shop schedule of the jobs respects the chains (if `J_i` immediately precedes
-`J_k`, no operation of `k` starts before `C_i`) and has makespan at most `K`. -/
-def MultipurposeOpenShopTwoMachinesChainsMakespanFeasible
-    (i : MultipurposeOpenShopTwoMachinesChainsMakespanInstance) : Prop :=
-  ∃ σ : Job i.1 → Stage i.1 → ℕ, ∃ a : Job i.1 → Stage i.1 → Fin i.1.1,
-    IsMPMOpenShopSchedule i.1.1 i.1.2.1 (processingTime i.1) σ a ∧
-      (∀ j k, Prec i.2 j k → ∀ s, completionTime (processingTime i.1) σ j ≤ σ k s) ∧
-      ∀ j, completionTime (processingTime i.1) σ j ≤ i.1.2.2.2
-
-open Classical in
-/-- `OMPM2|chains|C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeOpenShopTwoMachinesChainsMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeOpenShopTwoMachinesChainsMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeOpenShopTwoMachinesChainsMakespanFeasible i)
-  | none => false
 
 /-- **`OMPM2|chains|C_max` is NP-complete.** Source: Brucker and Knust's classification; Tanaev,
 Sotskov, and Strusevich (1994). -/

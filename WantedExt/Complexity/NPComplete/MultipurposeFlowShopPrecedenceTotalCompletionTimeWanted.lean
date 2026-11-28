@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceTotalCompletionTimeDefs
 
 @[expose] public section
 
@@ -69,45 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of machines `m`, the stage machine sets `[μ_1, …, μ_r]`, one list
-`[p_i1, …, p_ir]` of processing times per job (all `1`), the pairs `(i, k)` with `i → k`, and the
-bound `K` on `Σ_i C_i`. -/
-abbrev MultipurposeFlowShopPrecedenceTotalCompletionTimeInstance :=
-  ℕ × List (List ℕ) × List (List ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed jobs. -/
-abbrev Job (i : MultipurposeFlowShopPrecedenceTotalCompletionTimeInstance) : Type :=
-  Fin i.2.2.1.length
-
-/-- The stages of the instance, `Fin r` for `r` machine sets. -/
-abbrev Stage (i : MultipurposeFlowShopPrecedenceTotalCompletionTimeInstance) : Type :=
-  Fin i.2.1.length
-
-/-- Well-formedness of an instance: the machine environment is well formed and every stage
-machine set is nonempty, every job lists one processing time per stage and all of them are `1`,
-and the listed pairs describe a precedence relation on the jobs. -/
-def WellFormed (i : MultipurposeFlowShopPrecedenceTotalCompletionTimeInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ (∀ M ∈ i.2.1, M ≠ []) ∧
-    (∀ job ∈ i.2.2.1, job.length = i.2.1.length ∧ ∀ p ∈ job, p = 1) ∧
-    PrecedenceWellFormed i.2.2.1.length i.2.2.2.1
-
-/-- Some MPM flow-shop schedule of the unit-time jobs obeys the precedence constraints and has
-total completion time `Σ_i C_i` at most `K`. -/
-def MultipurposeFlowShopPrecedenceTotalCompletionTimeFeasible
-    (i : MultipurposeFlowShopPrecedenceTotalCompletionTimeInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
-    IsPrecedenceSchedule i.1 i.2.1 i.2.2.2.1 σ a ∧
-      ∑ j, completionTime (fun _ _ => 1) σ j ≤ i.2.2.2.2
-
-open Classical in
-/-- `FMPM|prec; p_ij = 1|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def multipurposeFlowShopPrecedenceTotalCompletionTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopPrecedenceTotalCompletionTimeInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeFlowShopPrecedenceTotalCompletionTimeFeasible i)
-  | none => false
 
 /-- **`FMPM|prec; p_ij = 1|ΣC_i` is NP-complete.** Source: Brucker (2007), Chapter 10 and
 Table 5.3; Lenstra and Rinnooy Kan (1978); Brucker and Knust, *Complexity results for scheduling

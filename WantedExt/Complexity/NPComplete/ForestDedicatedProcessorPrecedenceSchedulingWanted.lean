@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import WantedExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingOpposingForestsWanted
-public import WantedExt.Complexity.NPComplete.TwoDedicatedProcessorPrecedenceSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.ForestDedicatedProcessorPrecedenceSchedulingDefs
 
 @[expose] public section
 
@@ -74,25 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The partial order is a forest: its Hasse diagram, the undirected graph of the immediate
-predecessor relation, is acyclic. -/
-def IsForest (i : PrecedenceConstrainedSchedulingInstance) : Prop :=
-  (SimpleGraph.fromRel (ImmediatePredecessor i)).IsAcyclic
-
-/-- Well-formedness of an instance: `DedicatedWellFormed` (any number `m` of processors) and the
-partial order is a forest. -/
-def WellFormed (i : DedicatedProcessorsInstance) : Prop :=
-  DedicatedWellFormed i ∧ IsForest i.1
-
-open Classical in
-/-- PRECEDENCE CONSTRAINED SCHEDULING on dedicated processors for forests as a decision problem
-over bitstrings. -/
-noncomputable def forestDedicatedProcessorPrecedenceSchedulingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := DedicatedProcessorsInstance) x with
-  | some i => decide (WellFormed i ∧ DedicatedProcessorsFeasible i)
-  | none => false
 
 /-- **PRECEDENCE CONSTRAINED SCHEDULING is NP-complete on dedicated processors for forests.**
 Source: Garey and Johnson (1979), [SS9], comment (Goyal, 1976). -/

@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FlowShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.RobotFlowShopEqualProcessingDefs
 
 @[expose] public section
 
@@ -61,34 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the processing time `p`, the transport times `tⱼ`, and the bound `K`. -/
-abbrev RobotFlowShopEqualProcessingInstance := ℕ × List ℕ × ℕ
-
-/-- The three-machine flow shop `M₁`, robot, `M₂`: job `j` has task lengths `[p, tⱼ, p]`, and
-the deadline is `K`. -/
-def toFlowShop (i : RobotFlowShopEqualProcessingInstance) :
-    FlowShopScheduling.FlowShopSchedulingInstance :=
-  (3, i.2.1.map (fun t => [i.1, t, i.1]), i.2.2)
-
-/-- Well-formedness: every instance (all data are non-negative integers). -/
-def WellFormed (_ : RobotFlowShopEqualProcessingInstance) : Prop := True
-
-/-- Some schedule of `M₁`, the robot and `M₂` (a flow-shop schedule of `toFlowShop i`) has
-makespan at most `K`. -/
-def RobotFlowShopEqualProcessingFeasible (i : RobotFlowShopEqualProcessingInstance) :
-    Prop :=
-  FlowShopScheduling.FlowShopSchedulingFeasible (toFlowShop i)
-
-open Classical in
-/-- F2;R1|p_ij=p;t_j|C_max as a decision
-problem over bitstrings. -/
-noncomputable def robotFlowShopEqualProcessingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RobotFlowShopEqualProcessingInstance) x with
-  | some i => decide (WellFormed i ∧ RobotFlowShopEqualProcessingFeasible i)
-  | none => false
 
 /-- **F2;R1|p_ij=p;t_j|C_max is NP-complete.**
 Source: Hurink and Knust (2001), Theorem 2. -/

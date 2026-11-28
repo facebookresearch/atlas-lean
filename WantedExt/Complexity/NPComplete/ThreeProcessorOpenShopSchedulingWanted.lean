@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OpenShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.ThreeProcessorOpenShopSchedulingDefs
 
 @[expose] public section
 
@@ -56,20 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed OPEN-SHOP SCHEDULING instance (`0 < m`,
-every job has `m` tasks, `0 < D`) with `m = 3` processors. -/
-def WellFormed (i : OpenShopScheduling.OpenShopSchedulingInstance) : Prop :=
-  NoWaitFlowShopScheduling.WellFormed i ∧ i.1 = 3
-
-open Classical in
-/-- THREE-PROCESSOR OPEN-SHOP SCHEDULING as a decision problem over bitstrings. -/
-noncomputable def threeProcessorOpenShopSchedulingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OpenShopScheduling.OpenShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ OpenShopScheduling.OpenShopSchedulingFeasible i)
-  | none => false
 
 /-- **THREE-PROCESSOR OPEN-SHOP SCHEDULING is NP-complete.** Source: Garey and Johnson (1979),
 [SS14], comment; Gonzalez and Sahni (1976). -/

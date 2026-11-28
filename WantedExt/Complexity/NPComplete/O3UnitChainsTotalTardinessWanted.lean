@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.F3UnitChainsLateJobsWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.O3UnitChainsTotalTardinessDefs
 
 @[expose] public section
 
@@ -84,22 +79,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some unit-time three-machine open-shop schedule obeying the chain arcs has total tardiness at
-most `K`: the sum over the jobs `j` of `C_j - d_j` truncated at `0` (natural-number subtraction),
-where `C_j` is the latest `σ k j + 1`. -/
-def O3UnitChainsTotalTardinessFeasible (i : F3UnitChainsLateJobsInstance) : Prop :=
-  ∃ σ : Fin 3 → Fin i.1.length → ℕ, IsUnitOpenShopSchedule 3 i.1.length i.2.1 σ ∧
-    ∑ j, (completionTime (fun _ _ => 1) (fun j k => σ k j) j - i.1.get j) ≤ i.2.2
-
-open Classical in
-/-- `O3|p_ij=1;chains|ΣT_i` as a decision problem over bitstrings. -/
-noncomputable def o3UnitChainsTotalTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := F3UnitChainsLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ O3UnitChainsTotalTardinessFeasible i)
-  | none => false
 
 /-- **OPEN SHOP `O3|p_ij=1;chains|ΣT_i` is NP-complete.** Source: Brucker and Knust's
 classification (strongly NP-hard), citing Timkovsky (2003). -/

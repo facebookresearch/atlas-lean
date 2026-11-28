@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.F3UnitChainsLateJobsWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.O3UnitChainsNoWaitLateJobsDefs
 
 @[expose] public section
 
@@ -77,31 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `σ k j` (start of job `j`'s unit operation on machine `k`) is a no-wait unit-time open-shop
-schedule on `m` machines for the precedence arcs `A`, job `j` starting at `S j`: `σ` is a
-unit-time open-shop schedule (`UnitOpenShopOutTreeMaxLateness.IsUnitOpenShopSchedule`), and every
-operation of job `j` starts in `[S j, S j + m)`, so that the `m` operations of the job run back to
-back from `S j` on. -/
-def IsNoWaitSchedule (m n : ℕ) (A : List (ℕ × ℕ)) (S : Fin n → ℕ) (σ : Fin m → Fin n → ℕ) :
-    Prop :=
-  IsUnitOpenShopSchedule m n A σ ∧ ∀ k j, S j ≤ σ k j ∧ σ k j < S j + m
-
-/-- Some no-wait schedule has at most `K` late jobs: jobs `j` with completion time
-`C_j = S j + 3` greater than the due date `d_j`. -/
-def O3UnitChainsNoWaitLateJobsFeasible (i : F3UnitChainsLateJobsInstance) : Prop :=
-  ∃ (S : Fin i.1.length → ℕ) (σ : Fin 3 → Fin i.1.length → ℕ),
-    IsNoWaitSchedule 3 i.1.length i.2.1 S σ ∧
-      (Finset.univ.filter fun j : Fin i.1.length => i.1.get j < S j + 3).card ≤ i.2.2
-
-open Classical in
-/-- `O3|p_ij=1;chains;no-wait|ΣU_i` as a decision problem over bitstrings. -/
-noncomputable def o3UnitChainsNoWaitLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := F3UnitChainsLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ O3UnitChainsNoWaitLateJobsFeasible i)
-  | none => false
 
 /-- **NO-WAIT OPEN SHOP `O3|p_ij=1;chains;no-wait|ΣU_i` is NP-complete.** Source: Brucker and
 Knust's classification (strongly NP-hard), citing Timkovsky (2003); membership in NP is the

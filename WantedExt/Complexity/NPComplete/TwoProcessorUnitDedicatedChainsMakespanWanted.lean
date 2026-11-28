@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.F3UnitChainsLateJobsWanted
-public import WantedExt.Complexity.NPComplete.UnitDedicatedProcessorMakespanWanted
+public import CSLibExt.Complexity.NPComplete.TwoProcessorUnitDedicatedChainsMakespanDefs
 
 @[expose] public section
 
@@ -70,40 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an instance `(m, fix, K)` of `P|fix_j, p_j = 1|C_max` and the chain arcs
-`(i, j)` (task `i` immediately precedes task `j`). -/
-abbrev TwoProcessorUnitDedicatedChainsInstance := UnitDedicatedProcessorInstance × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: it is well-formed for `P|fix_j, p_j = 1|C_max` (nonempty
-processor sets without repetitions, processors below `m`, `0 < m`, `0 < K`), `m = 2`, and the
-arcs form chains on the tasks. -/
-def WellFormed (i : TwoProcessorUnitDedicatedChainsInstance) : Prop :=
-  UnitDedicatedProcessorMakespan.WellFormed i.1 ∧ i.1.1 = 2 ∧
-    ChainsWellFormed i.1.2.1.length i.2
-
-/-- `s` (start times of the unit tasks) is a schedule: two different tasks with a common
-processor run in disjoint unit time intervals, and every chain arc `(j, j')` has
-`s j + 1 ≤ s j'`. -/
-def IsSchedule (i : TwoProcessorUnitDedicatedChainsInstance) (s : Fin i.1.2.1.length → ℕ) :
-    Prop :=
-  (∀ j j', j ≠ j' → (∃ k ∈ i.1.2.1.get j, k ∈ i.1.2.1.get j') →
-    s j + 1 ≤ s j' ∨ s j' + 1 ≤ s j) ∧
-    ∀ j j' : Fin i.1.2.1.length, ((j : ℕ), (j' : ℕ)) ∈ i.2 → s j + 1 ≤ s j'
-
-/-- Some schedule has makespan at most `K`: every `s j + 1 ≤ K`. -/
-def TwoProcessorUnitDedicatedChainsMakespanFeasible
-    (i : TwoProcessorUnitDedicatedChainsInstance) : Prop :=
-  ∃ s, IsSchedule i s ∧ ∀ j, s j + 1 ≤ i.1.2.2
-
-open Classical in
-/-- `P2|chains;p_i=1;fix_i|C_max` as a decision problem over bitstrings. -/
-noncomputable def twoProcessorUnitDedicatedChainsMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoProcessorUnitDedicatedChainsInstance) x with
-  | some i => decide (WellFormed i ∧ TwoProcessorUnitDedicatedChainsMakespanFeasible i)
-  | none => false
 
 /-- **DEDICATED-PROCESSOR SCHEDULING `P2|chains;p_i=1;fix_i|C_max` is NP-complete.** Source:
 Hoogeveen, van de Velde and Veltman (1994), Theorem 2.7. -/

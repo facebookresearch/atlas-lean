@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingDeadlineThreeDefs
 
 @[expose] public section
 
@@ -52,23 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed PRECEDENCE CONSTRAINED SCHEDULING instance
-whose deadline `D` is `3`. -/
-def WellFormed (i : PrecedenceConstrainedScheduling.PrecedenceConstrainedSchedulingInstance) :
-    Prop :=
-  PrecedenceConstrainedScheduling.WellFormed i ∧ i.2.2.2 = 3
-
-open Classical in
-/-- PRECEDENCE CONSTRAINED SCHEDULING (deadline 3) as a decision problem over bitstrings. -/
-noncomputable def precedenceConstrainedSchedulingDeadlineThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PrecedenceConstrainedScheduling.PrecedenceConstrainedSchedulingInstance) x with
-  | some i =>
-    decide (WellFormed i ∧
-      PrecedenceConstrainedScheduling.PrecedenceConstrainedSchedulingFeasible i)
-  | none => false
 
 /-- **PRECEDENCE CONSTRAINED SCHEDULING (deadline 3) is NP-complete.** Source: Garey and
 Johnson (1979), [SS9]; Lenstra and Rinnooy Kan (1978). -/

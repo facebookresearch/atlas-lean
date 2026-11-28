@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceTotalCompletionTimeDefs
 
 @[expose] public section
 
@@ -73,23 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some MPM open-shop schedule of the unit-time jobs obeys the precedence constraints and has
-total completion time `Σ_i C_i` at most `K`. -/
-def MultipurposeOpenShopPrecedenceTotalCompletionTimeFeasible
-    (i : MultipurposeFlowShopPrecedenceMakespanInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
-    IsMPMOpenShopPrecedenceSchedule i.1 i.2.1 i.2.2.2.1 σ a ∧
-      ∑ j, completionTime (fun _ _ => 1) σ j ≤ i.2.2.2.2
-
-open Classical in
-/-- `OMPM|prec; p_ij = 1|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def multipurposeOpenShopPrecedenceTotalCompletionTimeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopPrecedenceMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeOpenShopPrecedenceTotalCompletionTimeFeasible i)
-  | none => false
 
 /-- **`OMPM|prec; p_ij = 1|ΣC_i` is NP-complete.** Source: Brucker (2007), Chapter 10 and
 Table 5.3; Lenstra and Rinnooy Kan (1978); Brucker and Knust, *Complexity results for scheduling

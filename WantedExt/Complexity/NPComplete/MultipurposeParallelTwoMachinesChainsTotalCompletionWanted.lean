@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeParallelPrecedenceTotalCompletionWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesChainsMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesChainsTotalCompletionDefs
 
 @[expose] public section
 
@@ -80,16 +77,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- `PMPM2|chains|ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def multipurposeParallelTwoMachinesChainsTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeParallelTwoMachinesChainsMakespanInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MultipurposeParallelPrecedenceTotalCompletionFeasible i)
-  | none => false
 
 /-- **`PMPM2|chains|ΣC_i` is NP-complete.** Source: Du, Leung and Young (1991), via the case
 `μᵢ = {M₁, M₂}`; Brucker and Knust's classification; Brucker (2007), Chapter 10. -/

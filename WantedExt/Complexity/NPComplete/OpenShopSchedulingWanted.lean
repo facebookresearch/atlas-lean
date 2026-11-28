@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.NoWaitFlowShopSchedulingWanted
+public import CSLibExt.Complexity.NPComplete.OpenShopSchedulingDefs
 
 @[expose] public section
 
@@ -58,27 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of processors `m`, one list of task lengths
-`(l(t_1[j]), …, l(t_m[j]))` per job `j`, and the deadline `D` (the instance type of
-`NoWaitFlowShopSchedulingWanted`). -/
-abbrev OpenShopSchedulingInstance := NoWaitFlowShopScheduling.NoWaitFlowShopSchedulingInstance
-
-/-- Some open-shop schedule `σ p j` (start of job `j`'s task on processor `p`) meets the
-deadline: `NoWaitFlowShopScheduling.IsOpenShopSchedule`, i.e., every `σ p` is one-to-one,
-`σ p k < σ p j` implies `σ p k + l(t_p[k]) ≤ σ p j`, the tasks of each job occupy pairwise
-disjoint intervals, and every task ends by `D`. -/
-def OpenShopSchedulingFeasible (i : OpenShopSchedulingInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, NoWaitFlowShopScheduling.IsOpenShopSchedule i σ
-
-open Classical in
-/-- OPEN-SHOP SCHEDULING as a decision problem over bitstrings. -/
-noncomputable def openShopSchedulingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OpenShopSchedulingInstance) x with
-  | some i => decide (NoWaitFlowShopScheduling.WellFormed i ∧ OpenShopSchedulingFeasible i)
-  | none => false
 
 /-- **OPEN-SHOP SCHEDULING is NP-complete.** Source: Garey and Johnson (1979), [SS14];
 Gonzalez and Sahni (1976). -/

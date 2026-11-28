@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.UnitFlowShopOutTreeMaxLatenessDefs
 
 @[expose] public section
 
@@ -65,42 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(m, J, A, K)`: the number of machines `m`, the jobs `J` (job `j` listed as its
-processing times `(p_j1, …, p_jm)` and its due date `d_j`), the precedence arcs `A` (`(i, j)`:
-job `i` precedes job `j`), and the bound `K`; `d_j` and `K` are integers given as pairs `(a, b)`
-standing for `a - b`. -/
-abbrev UnitFlowShopOutTreeMaxLatenessInstance :=
-  ℕ × List (List ℕ × (ℕ × ℕ)) × List (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- The integer `a - b` encoded by the pair `(a, b)`. -/
-def toInt (z : ℕ × ℕ) : ℤ := (z.1 : ℤ) - (z.2 : ℤ)
-
-/-- Well-formedness of an instance `(m, J, A, K)`: `m ≥ 1`, every job has `m` unit operations,
-the arcs are well formed (they name jobs and are acyclic), and the precedence relation is an
-out-tree: each job has at most one immediate predecessor. -/
-def WellFormed (i : UnitFlowShopOutTreeMaxLatenessInstance) : Prop :=
-  0 < i.1 ∧ UnitJobs i.1 (i.2.1.map Prod.fst) ∧ PrecWellFormed i.2.1.length i.2.2.1 ∧
-    let lt := Relation.TransGen (Prec (n := i.2.1.length) i.2.2.1)
-    ∀ j a b, (lt a j ∧ ∀ c, ¬ (lt a c ∧ lt c j)) → (lt b j ∧ ∀ c, ¬ (lt b c ∧ lt c j)) →
-      a = b
-
-/-- Some schedule completes every operation of every job `j` by time `d_j + K` (maximum
-lateness `max_j (C_j - d_j) ≤ K`). -/
-def UnitFlowShopOutTreeMaxLatenessFeasible (i : UnitFlowShopOutTreeMaxLatenessInstance) :
-    Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsSchedule i.1 i.2.1.length i.2.2.1 σ ∧
-    ∀ (k : Fin i.1) (j : Fin i.2.1.length),
-      ((σ k j + 1 : ℕ) : ℤ) - toInt (i.2.1.getD j ([], (0, 0))).2 ≤ toInt i.2.2.2
-
-open Classical in
-/-- FLOW SHOP F|p_ij=1;outtree|Lmax as a decision problem over bitstrings. -/
-noncomputable def unitFlowShopOutTreeMaxLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopOutTreeMaxLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ UnitFlowShopOutTreeMaxLatenessFeasible i)
-  | none => false
 
 /-- **FLOW SHOP F|p_ij=1;outtree|Lmax is NP-complete.** Source: Brucker and Knust's
 classification (strongly NP-hard), citing Brucker and Knust (1999); membership in NP is the

@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeOpenShopTwoMachinesReleaseMakespanDefs
 
 @[expose] public section
 
@@ -71,34 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an `OMPM||C_max` instance (the number `m` of machines, the stage machine sets,
-one list of processing times per job, the bound `K`) and the release dates `r_i`, one per job. -/
-abbrev MultipurposeOpenShopTwoMachinesReleaseMakespanInstance :=
-  MultipurposeOpenShopMakespanInstance × List ℕ
-
-/-- Well-formedness of an instance: a well-formed `OMPM||C_max` instance with `m = 2` machines
-and one release date per job. -/
-def WellFormed (i : MultipurposeOpenShopTwoMachinesReleaseMakespanInstance) : Prop :=
-  MultipurposeOpenShopMakespan.WellFormed i.1 ∧ i.1.1 = 2 ∧ i.2.length = i.1.2.2.1.length
-
-/-- Some MPM open-shop schedule of the jobs starts no operation of job `i` before `r_i` and has
-makespan at most `K`. -/
-def MultipurposeOpenShopTwoMachinesReleaseMakespanFeasible
-    (i : MultipurposeOpenShopTwoMachinesReleaseMakespanInstance) : Prop :=
-  ∃ σ : Job i.1 → Stage i.1 → ℕ, ∃ a : Job i.1 → Stage i.1 → Fin i.1.1,
-    IsMPMOpenShopSchedule i.1.1 i.1.2.1 (processingTime i.1) σ a ∧
-      (∀ (j : Job i.1) (s : Stage i.1), i.2.getD j 0 ≤ σ j s) ∧
-      ∀ j, completionTime (processingTime i.1) σ j ≤ i.1.2.2.2
-
-open Classical in
-/-- `OMPM2|r_i|C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeOpenShopTwoMachinesReleaseMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeOpenShopTwoMachinesReleaseMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeOpenShopTwoMachinesReleaseMakespanFeasible i)
-  | none => false
 
 /-- **`OMPM2|r_i|C_max` is NP-complete.** Source: Brucker and Knust's classification; Lawler,
 Lenstra, and Rinnooy Kan (1981; erratum 1982). -/

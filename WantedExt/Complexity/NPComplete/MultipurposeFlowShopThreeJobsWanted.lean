@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeFlowShopThreeJobsDefs
 
 @[expose] public section
 
@@ -63,40 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of machines `m`, the stage machine sets `[μ_1, …, μ_r]`, one list
-`[p_i1, …, p_ir]` of processing times per job, and the bound `K`. -/
-abbrev MultipurposeFlowShopThreeJobsInstance := ℕ × List (List ℕ) × List (List ℕ) × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed jobs (`n = 3` in a well-formed instance). -/
-abbrev Job (i : MultipurposeFlowShopThreeJobsInstance) : Type := Fin i.2.2.1.length
-
-/-- The stages of the instance, `Fin r` for `r` machine sets. -/
-abbrev Stage (i : MultipurposeFlowShopThreeJobsInstance) : Type := Fin i.2.1.length
-
-/-- The processing time `p_js` of the operation of job `j` in stage `s`. -/
-def processingTime (i : MultipurposeFlowShopThreeJobsInstance) (j : Job i) (s : Stage i) : ℕ :=
-  (i.2.2.1.get j).getD s 0
-
-/-- Well-formedness of an instance: the machine environment is well formed, there are exactly
-three jobs, and every job lists one processing time per stage. -/
-def WellFormed (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ i.2.2.1.length = 3 ∧ ∀ job ∈ i.2.2.1, job.length = i.2.1.length
-
-/-- Some MPM flow-shop schedule of the jobs has makespan at most `K`. -/
-def MultipurposeFlowShopThreeJobsFeasible (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
-    IsMPMFlowShopSchedule i.1 i.2.1 (processingTime i) σ a ∧
-      ∀ j, completionTime (processingTime i) σ j ≤ i.2.2.2
-
-open Classical in
-/-- `FMPM|n = 3|C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeFlowShopThreeJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopThreeJobsInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeFlowShopThreeJobsFeasible i)
-  | none => false
 
 /-- **`FMPM|n = 3|C_max` is NP-complete.** Source: Brucker (2007), Chapter 10; Brucker, Jurisch
 and Krämer (1997); Brucker and Knust, *Complexity results for scheduling problems*. -/

@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Order.Interval.Set.Basic
+public import CSLibExt.Complexity.NPComplete.NoWaitFlowShopSchedulingDefs
 
 @[expose] public section
 
@@ -59,55 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of processors, the jobs (job `j` is the list
-`[l(t₁[j]), …, l(tₘ[j])]` of its task lengths), and the overall deadline `D`. -/
-abbrev NoWaitFlowShopSchedulingInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: `m ∈ ℤ⁺`, every job consists of exactly `m` tasks, and
-`D ∈ ℤ⁺`. -/
-def WellFormed (i : NoWaitFlowShopSchedulingInstance) : Prop :=
-  0 < i.1 ∧ (∀ job ∈ i.2.1, job.length = i.1) ∧ 0 < i.2.2
-
-/-- The length `l(t_p[j])` of the task of job `j` executed by processor `p`. -/
-def taskLength (i : NoWaitFlowShopSchedulingInstance) (p : Fin i.1) (j : Fin i.2.1.length) :
-    ℕ :=
-  (i.2.1.get j).getD p 0
-
-/-- `σ` is an open-shop schedule meeting the deadline [SS14]: each `σ p` is a one-processor
-schedule [SS1] (one-to-one, and `σ p j > σ p k` implies `σ p j ≥ σ p k + l(t_p[k])`), the
-tasks of each job occupy pairwise disjoint intervals, and every task finishes by `D`. -/
-def IsOpenShopSchedule (i : NoWaitFlowShopSchedulingInstance)
-    (σ : Fin i.1 → Fin i.2.1.length → ℕ) : Prop :=
-  (∀ p, Function.Injective (σ p)) ∧
-    (∀ p j k, σ p k < σ p j → σ p k + taskLength i p k ≤ σ p j) ∧
-    (∀ j p q, p ≠ q →
-      Disjoint (Set.Ico (σ p j) (σ p j + taskLength i p j))
-        (Set.Ico (σ q j) (σ q j + taskLength i q j))) ∧
-    ∀ p j, σ p j + taskLength i p j ≤ i.2.2
-
-/-- `σ` is a flow-shop schedule meeting the deadline [SS15]: an open-shop schedule in which
-each job's task on processor `p + 1` starts no earlier than its task on processor `p`
-finishes. -/
-def IsFlowShopSchedule (i : NoWaitFlowShopSchedulingInstance)
-    (σ : Fin i.1 → Fin i.2.1.length → ℕ) : Prop :=
-  IsOpenShopSchedule i σ ∧
-    ∀ j p q, q.1 = p.1 + 1 → σ p j + taskLength i p j ≤ σ q j
-
-/-- There is a flow-shop schedule meeting the deadline with no waiting: each job's task on
-processor `p + 1` starts exactly when its task on processor `p` finishes. -/
-def NoWaitFlowShopSchedulingFeasible (i : NoWaitFlowShopSchedulingInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsFlowShopSchedule i σ ∧
-    ∀ j p q, q.1 = p.1 + 1 → σ q j = σ p j + taskLength i p j
-
-open Classical in
-/-- NO-WAIT FLOW-SHOP SCHEDULING as a decision problem over bitstrings. -/
-noncomputable def noWaitFlowShopSchedulingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NoWaitFlowShopSchedulingInstance) x with
-  | some i => decide (WellFormed i ∧ NoWaitFlowShopSchedulingFeasible i)
-  | none => false
 
 /-- **NO-WAIT FLOW-SHOP SCHEDULING is NP-complete.** Source: Garey and Johnson (1979),
 [SS16]; Lenstra, Rinnooy Kan, and Brucker (1977); Papadimitriou and Kanellakis (1980). -/

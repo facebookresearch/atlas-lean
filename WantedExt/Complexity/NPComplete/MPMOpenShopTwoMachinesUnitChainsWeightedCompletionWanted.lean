@@ -25,11 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.F3UnitChainsLateJobsWanted
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MPMOpenShopTwoMachinesUnitChainsWeightedCompletionDefs
 
 @[expose] public section
 
@@ -86,34 +82,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(μ, w, chains, K)`: the stage machine sets `[μ_1, …, μ_r]` (lists of machine
-indices), the weights `w_i` of the jobs `0, …, n - 1` (`n` is the length of the list), the chain
-arcs `(i, k)` (job `i` immediately precedes job `k`), and the bound `K`. -/
-abbrev MPMOpenShopTwoMachinesUnitChainsWeightedCompletionInstance :=
-  List (List ℕ) × List ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness: a two-machine MPM environment with nonempty machine sets, and chain arcs on the
-jobs. -/
-def WellFormed (i : MPMOpenShopTwoMachinesUnitChainsWeightedCompletionInstance) : Prop :=
-  StagesWellFormed 2 i.1 ∧ (∀ M ∈ i.1, M ≠ []) ∧ ChainsWellFormed i.2.1.length i.2.2.1
-
-/-- Some MPM open-shop schedule of the unit-time jobs on the two machines obeying the chain arcs has
-total weighted completion time `Σ_i w_i C_i ≤ K`. -/
-def MPMOpenShopTwoMachinesUnitChainsWeightedCompletionFeasible
-    (i : MPMOpenShopTwoMachinesUnitChainsWeightedCompletionInstance) : Prop :=
-  ∃ σ : Fin i.2.1.length → Fin i.1.length → ℕ, ∃ a : Fin i.2.1.length → Fin i.1.length → Fin 2,
-    IsMPMOpenShopPrecedenceSchedule 2 i.1 i.2.2.1 σ a ∧
-      ∑ j, i.2.1.get j * completionTime (fun _ _ => 1) σ j ≤ i.2.2.2
-
-open Classical in
-/-- `OMPM2|chains;p_ij=1|Σw_iC_i` as a decision problem over bitstrings. -/
-noncomputable def mpmOpenShopTwoMachinesUnitChainsWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MPMOpenShopTwoMachinesUnitChainsWeightedCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ MPMOpenShopTwoMachinesUnitChainsWeightedCompletionFeasible i)
-  | none => false
 
 /-- **MPM OPEN SHOP OMPM2|chains;p_ij=1|Σw_iC_i is NP-complete.** Source: Timkovsky (2003), as
 recorded in the Brucker-Knust classification (with the special case `O2|p_ij=1;chains|Σw_iC_i`);

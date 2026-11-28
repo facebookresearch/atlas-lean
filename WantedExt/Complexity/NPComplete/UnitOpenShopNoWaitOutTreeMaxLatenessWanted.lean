@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnitFlowShopOutTreeMaxLatenessWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.UnitOpenShopNoWaitOutTreeMaxLatenessDefs
 
 @[expose] public section
 
@@ -74,25 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some no-wait open-shop schedule completes every operation of every job `j` by time
-`d_j + K`: each job's operations fill `m` consecutive unit slots, and the maximum lateness
-`max_j (C_j - d_j)` is at most `K`. -/
-def UnitOpenShopNoWaitOutTreeMaxLatenessFeasible (i : UnitFlowShopOutTreeMaxLatenessInstance) :
-    Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length i.2.2.1 σ ∧
-    (∀ j, ∃ s, ∀ k, s ≤ σ k j ∧ σ k j < s + i.1) ∧
-    ∀ (k : Fin i.1) (j : Fin i.2.1.length),
-      ((σ k j + 1 : ℕ) : ℤ) - toInt (i.2.1.getD j ([], (0, 0))).2 ≤ toInt i.2.2.2
-
-open Classical in
-/-- NO-WAIT OPEN SHOP O|p_ij=1;outtree;no-wait|Lmax as a decision problem over bitstrings. -/
-noncomputable def unitOpenShopNoWaitOutTreeMaxLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopOutTreeMaxLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ UnitOpenShopNoWaitOutTreeMaxLatenessFeasible i)
-  | none => false
 
 /-- **NO-WAIT OPEN SHOP O|p_ij=1;outtree;no-wait|Lmax is NP-complete.** Source: Brucker and
 Knust's classification (strongly NP-hard), citing Brucker, Garey and Johnson (1977); membership

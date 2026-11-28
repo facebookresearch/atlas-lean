@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskOpenShopReleaseLateJobsDefs
 
 @[expose] public section
 
@@ -87,45 +84,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of machines `m`, the stage machine sets `[μ_1, …, μ_r]`, the jobs
-(job `i` listed by its processing times `(p_i1, …, p_ir)` and the pair `(r_i, d_i)` of release
-date and due date), and the bound `K`. -/
-abbrev MultiprocessorTaskOpenShopReleaseLateJobsInstance :=
-  ℕ × List (List ℕ) × List (List ℕ × (ℕ × ℕ)) × ℕ
-
-/-- The release date `r_i` of job `i`. -/
-def releaseDate (i : MultiprocessorTaskOpenShopReleaseLateJobsInstance)
-    (j : Fin i.2.2.1.length) : ℕ :=
-  (i.2.2.1.get j).2.1
-
-/-- The due date `d_i` of job `i`. -/
-def dueDate (i : MultiprocessorTaskOpenShopReleaseLateJobsInstance)
-    (j : Fin i.2.2.1.length) : ℕ :=
-  (i.2.2.1.get j).2.2
-
-/-- Well-formedness of an instance: the machine environment is well formed
-(`StagesWellFormed`), and every job has `r` unit processing times (`UnitJobs`). -/
-def WellFormed (i : MultiprocessorTaskOpenShopReleaseLateJobsInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ UnitJobs i.2.1.length (i.2.2.1.map Prod.fst)
-
-/-- Some MPT open-shop schedule of the unit-time jobs starts no operation of a job before its
-release date and has at most `K` late jobs (`d_j < C_j`). -/
-def MultiprocessorTaskOpenShopReleaseLateJobsFeasible
-    (i : MultiprocessorTaskOpenShopReleaseLateJobsInstance) : Prop :=
-  ∃ σ : Fin i.2.2.1.length → Fin i.2.1.length → ℕ,
-    IsMPTOpenShopSchedule i.2.1 (fun _ _ => 1) σ ∧ (∀ j s, releaseDate i j ≤ σ j s) ∧
-      (Finset.univ.filter fun j => dueDate i j < completionTime (fun _ _ => 1) σ j).card ≤
-        i.2.2.2
-
-open Classical in
-/-- `OMPT|r_i; p_ij = 1|∑ U_i` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskOpenShopReleaseLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultiprocessorTaskOpenShopReleaseLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ MultiprocessorTaskOpenShopReleaseLateJobsFeasible i)
-  | none => false
 
 /-- **`OMPT|r_i; p_ij = 1|∑ U_i` is NP-complete.** Source: Kravchenko (2000); Brucker and Knust,
 *Complexity results for scheduling problems*; Brucker (2004), Chapter 11. -/

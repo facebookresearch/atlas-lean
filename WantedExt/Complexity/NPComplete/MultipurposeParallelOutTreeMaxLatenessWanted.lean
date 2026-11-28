@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskFlowShopTreeLatenessWanted
-public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
-public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeParallelOutTreeMaxLatenessDefs
 
 @[expose] public section
 
@@ -91,40 +87,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an MPM job-shop instance (`m`, the jobs as lists of operations `(pᵢ, μᵢ)`, an
-unused bound slot), the precedence arcs `(i, k)`, the due dates (the `i`-th for job `i`), and the
-bound `y` as a pair `(y⁺, y⁻)` with `y = y⁺ - y⁻`. -/
-abbrev MultipurposeParallelOutTreeMaxLatenessInstance :=
-  MPMJobShopInstance × List (ℕ × ℕ) × List ℕ × (ℕ × ℕ)
-
-/-- Well-formedness of an instance: a well-formed MPM job-shop instance (machines `1, …, m`,
-nonempty machine sets) with at least one job, every job having exactly one operation, of
-processing time `1`, and an unused bound slot `0`; one due date per job; arcs that name jobs and
-form an acyclic digraph; and an out-forest (every job has at most one immediate predecessor). -/
-def WellFormed (i : MultipurposeParallelOutTreeMaxLatenessInstance) : Prop :=
-  MPMWellFormed i.1.1 i.1 ∧ i.1.2.1 ≠ [] ∧
-    (∀ job ∈ i.1.2.1, job.length = 1 ∧ ∀ o ∈ job, o.1 = 1) ∧ i.1.2.2 = 0 ∧
-    i.2.2.1.length = i.1.2.1.length ∧ PrecWellFormed i.1.2.1.length i.2.1 ∧
-    ∀ k a b : Fin i.1.2.1.length, ImmediatePredecessor i.2.1 a k →
-      ImmediatePredecessor i.2.1 b k → a = b
-
-/-- Some MPM schedule of the jobs obeys the precedence arcs and completes every job `j` with
-lateness `Cⱼ - dⱼ ≤ y⁺ - y⁻`. -/
-def MultipurposeParallelOutTreeMaxLatenessFeasible
-    (i : MultipurposeParallelOutTreeMaxLatenessInstance) : Prop :=
-  ∃ a σ : Operation i.1 → ℕ, IsMPMJobShopSchedule i.1 a σ ∧
-    (∀ t t' : Operation i.1, Prec i.2.1 t.1 t'.1 → σ t + opLength i.1 t ≤ σ t') ∧
-    ∀ t, σ t + opLength i.1 t + i.2.2.2.2 ≤ i.2.2.1.getD t.1 0 + i.2.2.2.1
-
-open Classical in
-/-- `PMPM|outtree; pᵢ = 1|L_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeParallelOutTreeMaxLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeParallelOutTreeMaxLatenessInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeParallelOutTreeMaxLatenessFeasible i)
-  | none => false
 
 /-- **`PMPM|outtree; pᵢ = 1|L_max` is NP-complete.**
 Source: Brucker, Garey and Johnson (1977),

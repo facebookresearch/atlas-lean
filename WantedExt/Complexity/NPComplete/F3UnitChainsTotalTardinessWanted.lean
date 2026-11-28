@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.F3UnitChainsLateJobsWanted
+public import CSLibExt.Complexity.NPComplete.F3UnitChainsTotalTardinessDefs
 
 @[expose] public section
 
@@ -57,30 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(d, chains, K)`: due dates, chain arcs `(i, j)` (job `i` immediately precedes job
-`j`) and the bound `K`, as in `F3UnitChainsLateJobs.F3UnitChainsLateJobsInstance`. -/
-abbrev F3UnitChainsTotalTardinessInstance := F3UnitChainsLateJobs.F3UnitChainsLateJobsInstance
-
-/-- Well-formedness: the arcs form chains on the jobs (`F3UnitChainsLateJobs.WellFormed`). -/
-def WellFormed (i : F3UnitChainsTotalTardinessInstance) : Prop :=
-  F3UnitChainsLateJobs.WellFormed i
-
-/-- Some feasible schedule (`F3UnitChainsLateJobs.IsSchedule`) has total tardiness at most `K`:
-the sum over the jobs of `C_j - d_j` truncated at `0` (natural-number subtraction), with
-`C_j = S j 2 + 1`. -/
-def F3UnitChainsTotalTardinessFeasible (i : F3UnitChainsTotalTardinessInstance) : Prop :=
-  ∃ S : Fin i.1.length → Fin 3 → ℕ, IsSchedule i.1.length i.2.1 S ∧
-    ∑ j, (S j 2 + 1 - i.1.get j) ≤ i.2.2
-
-open Classical in
-/-- `F3|p_ij=1;chains|ΣT_i` as a decision problem over bitstrings. -/
-noncomputable def f3UnitChainsTotalTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := F3UnitChainsTotalTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ F3UnitChainsTotalTardinessFeasible i)
-  | none => false
 
 /-- **FLOW SHOP `F3|p_ij=1;chains|ΣT_i` is NP-complete.** Source: Brucker and Knust (1999),
 as recorded in the Brucker-Knust classification of scheduling problems. -/

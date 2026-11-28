@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.JobShopSchedulingDefs
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.JobShopFixedJobsWeightedTardinessDefs
 
 @[expose] public section
 
@@ -87,69 +84,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: a JOB-SHOP SCHEDULING instance (`m`, each job's operations `(p_jl, μ_jl)`, the
-bound `K`), one triple `(r_j, d_j, w_j)` (release date, due date, weight) per job, and the
-precedence pairs `(i, j)` with `i → j`. -/
-abbrev JobShopFixedJobsWeightedTardinessInstance :=
-  JobShopSchedulingInstance × List (ℕ × ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- The jobs of the instance, `Fin n` for `n` listed jobs. -/
-abbrev Job (i : JobShopFixedJobsWeightedTardinessInstance) : Type := Fin i.1.2.1.length
-
-/-- The release date `r_j` of job `j`. -/
-def releaseDate (i : JobShopFixedJobsWeightedTardinessInstance) (j : Job i) : ℕ :=
-  (i.2.1.getD j (0, 0, 0)).1
-
-/-- The due date `d_j` of job `j`. -/
-def dueDate (i : JobShopFixedJobsWeightedTardinessInstance) (j : Job i) : ℕ :=
-  (i.2.1.getD j (0, 0, 0)).2.1
-
-/-- The weight `w_j` of job `j`. -/
-def weight (i : JobShopFixedJobsWeightedTardinessInstance) (j : Job i) : ℕ :=
-  (i.2.1.getD j (0, 0, 0)).2.2
-
-/-- Well-formedness of an instance with `k` jobs: exactly `k` jobs, `m ≥ 1`, every job has at
-least one operation, every machine lies in `{1, …, m}`, consecutive operations of a job use
-different machines, one triple `(r_j, d_j, w_j)` per job, and the precedence pairs name jobs and
-form a strict partial order. -/
-def WellFormed (k : ℕ) (i : JobShopFixedJobsWeightedTardinessInstance) : Prop :=
-  i.1.2.1.length = k ∧ 0 < i.1.1 ∧ (∀ job ∈ i.1.2.1, job ≠ []) ∧
-    (∀ job ∈ i.1.2.1, ∀ t ∈ job, 1 ≤ t.2 ∧ t.2 ≤ i.1.1) ∧
-    (∀ job ∈ i.1.2.1, job.IsChain fun t t' => t.2 ≠ t'.2) ∧
-    i.2.1.length = i.1.2.1.length ∧ PrecedenceWellFormed i.1.2.1.length i.2.2
-
-/-- `σ` (start times of the operations) is a feasible schedule with job completion times `C`:
-the job-shop conditions of [SS18] (start times one-to-one on each machine, an operation starting
-after another one on its machine starts no earlier than that one ends, operations of a job in
-order), the first operation of each job `j` starting no earlier than `r_j`, `C j` the end of the
-last operation of `j`, and every operation of `j` starting no earlier than `C i` when `i → j`. -/
-def IsSchedule (i : JobShopFixedJobsWeightedTardinessInstance) (σ : Task i.1 → ℕ)
-    (C : Job i → ℕ) : Prop :=
-  (∀ t t', taskProcessor i.1 t = taskProcessor i.1 t' → σ t = σ t' → t = t') ∧
-    (∀ t t', taskProcessor i.1 t = taskProcessor i.1 t' → σ t' < σ t →
-      σ t' + taskLength i.1 t' ≤ σ t) ∧
-    (∀ j (l l' : Fin (i.1.2.1.get j).length), l'.1 = l.1 + 1 →
-      σ ⟨j, l⟩ + taskLength i.1 ⟨j, l⟩ ≤ σ ⟨j, l'⟩) ∧
-    (∀ j (l : Fin (i.1.2.1.get j).length), l.1 = 0 → releaseDate i j ≤ σ ⟨j, l⟩) ∧
-    (∀ j (l : Fin (i.1.2.1.get j).length), l.1 + 1 = (i.1.2.1.get j).length →
-      C j = σ ⟨j, l⟩ + taskLength i.1 ⟨j, l⟩) ∧
-    ∀ a b, Prec i.2.2 a b → ∀ l : Fin (i.1.2.1.get b).length, C a ≤ σ ⟨b, l⟩
-
-/-- Some feasible schedule has total weighted tardiness `∑_j w_j (C_j - d_j)` at most `K`
-(natural subtraction: the tardiness `max(0, C_j - d_j)`). -/
-def JobShopFixedJobsWeightedTardinessFeasible (i : JobShopFixedJobsWeightedTardinessInstance) :
-    Prop :=
-  ∃ σ C, IsSchedule i σ C ∧ ∑ j, weight i j * (C j - dueDate i j) ≤ i.1.2.2
-
-open Classical in
-/-- `J|prec;r_i;n=k|Σw_iT_i` as a decision problem over bitstrings. -/
-noncomputable def jobShopFixedJobsWeightedTardinessDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := JobShopFixedJobsWeightedTardinessInstance) x with
-  | some i => decide (WellFormed k i ∧ JobShopFixedJobsWeightedTardinessFeasible i)
-  | none => false
 
 /-- **JOB SHOP WITH `k` JOBS, TOTAL WEIGHTED TARDINESS `J|prec;r_i;n=k|Σw_iT_i` is NP-complete
 for every fixed `k ≥ 3`.** Source: Sotskov and Shakhlevich (1995) (`J3|n=3|C_max`); Middendorf

@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskFlowShopTreeLatenessWanted
-public import CSLibExt.Complexity.NPComplete.MultiPurposeJobShopThreeJobsDefs
-public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesChainsMakespanDefs
 
 @[expose] public section
 
@@ -84,41 +80,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: an MPM job-shop instance (`m`, the jobs as lists of operations `(pᵢ, μᵢ)`, the
-bound `K`) and the precedence arcs `(i, k)`. -/
-abbrev MultipurposeParallelTwoMachinesChainsMakespanInstance := MPMJobShopInstance × List (ℕ × ℕ)
-
-/-- The precedence relation of the arcs is a set of chains: every job has at most one immediate
-successor and at most one immediate predecessor. -/
-def IsChains (i : MultipurposeParallelTwoMachinesChainsMakespanInstance) : Prop :=
-  (∀ j a b : Fin i.1.2.1.length, ImmediatePredecessor i.2 j a → ImmediatePredecessor i.2 j b →
-    a = b) ∧
-    ∀ j a b : Fin i.1.2.1.length, ImmediatePredecessor i.2 a j → ImmediatePredecessor i.2 b j →
-      a = b
-
-/-- Well-formedness of an instance: a well-formed MPM job-shop instance with `m = 2` machines
-(nonempty machine sets in `{1, 2}`) in which every job has exactly one operation, of positive
-processing time, and the arcs name jobs, form an acyclic digraph, and describe a set of chains. -/
-def WellFormed (i : MultipurposeParallelTwoMachinesChainsMakespanInstance) : Prop :=
-  MPMWellFormed 2 i.1 ∧ (∀ job ∈ i.1.2.1, job.length = 1 ∧ ∀ o ∈ job, 0 < o.1) ∧
-    PrecWellFormed i.1.2.1.length i.2 ∧ IsChains i
-
-/-- Some MPM schedule of the jobs obeys the precedence arcs and completes every job by `K`. -/
-def MultipurposeParallelTwoMachinesChainsMakespanFeasible
-    (i : MultipurposeParallelTwoMachinesChainsMakespanInstance) : Prop :=
-  ∃ a σ : Operation i.1 → ℕ, IsMPMJobShopSchedule i.1 a σ ∧
-    (∀ t t' : Operation i.1, Prec i.2 t.1 t'.1 → σ t + opLength i.1 t ≤ σ t') ∧
-    ∀ t, σ t + opLength i.1 t ≤ i.1.2.2
-
-open Classical in
-/-- `PMPM2|chains|C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeParallelTwoMachinesChainsMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeParallelTwoMachinesChainsMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeParallelTwoMachinesChainsMakespanFeasible i)
-  | none => false
 
 /-- **`PMPM2|chains|C_max` is NP-complete.**
 Source: Du, Leung and Young (1991), via the case

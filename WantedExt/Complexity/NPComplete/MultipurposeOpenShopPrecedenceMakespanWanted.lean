@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceMakespanDefs
 
 @[expose] public section
 
@@ -85,44 +83,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `σ` (start times) and `a` (machines) form an MPM open-shop schedule of `n` jobs with
-processing times `p i s` on `m` machines with stage machine sets `μ`: each operation `(i, s)`
-runs on a machine of `μ_s`; two different operations of the same job occupy disjoint time
-intervals `[σ i s, σ i s + p i s)`; and two different operations on the same machine occupy
-disjoint time intervals. -/
-def IsMPMOpenShopSchedule {n : ℕ} (m : ℕ) (μ : List (List ℕ)) (p : Fin n → Fin μ.length → ℕ)
-    (σ : Fin n → Fin μ.length → ℕ) (a : Fin n → Fin μ.length → Fin m) : Prop :=
-  (∀ i s, (a i s : ℕ) ∈ μ.get s) ∧
-    (∀ i s s', s ≠ s' →
-      Disjoint (Finset.Ico (σ i s) (σ i s + p i s)) (Finset.Ico (σ i s') (σ i s' + p i s'))) ∧
-    ∀ i s i' s', (i, s) ≠ (i', s') → a i s = a i' s' →
-      Disjoint (Finset.Ico (σ i s) (σ i s + p i s)) (Finset.Ico (σ i' s') (σ i' s' + p i' s'))
-
-/-- `σ` and `a` form an MPM open-shop schedule of `n` unit-time jobs (`p_ij = 1`) on `m`
-machines with stage machine sets `μ` that obeys the precedence constraints of the listed pairs:
-if `i → k`, then no operation of `k` starts before `C_i`. -/
-def IsMPMOpenShopPrecedenceSchedule {n : ℕ} (m : ℕ) (μ : List (List ℕ)) (prs : List (ℕ × ℕ))
-    (σ : Fin n → Fin μ.length → ℕ) (a : Fin n → Fin μ.length → Fin m) : Prop :=
-  IsMPMOpenShopSchedule m μ (fun _ _ => 1) σ a ∧
-    ∀ i k, Prec prs i k → ∀ s, completionTime (fun _ _ => 1) σ i ≤ σ k s
-
-/-- Some MPM open-shop schedule of the unit-time jobs obeys the precedence constraints and has
-makespan at most `K`. -/
-def MultipurposeOpenShopPrecedenceMakespanFeasible
-    (i : MultipurposeFlowShopPrecedenceMakespanInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
-    IsMPMOpenShopPrecedenceSchedule i.1 i.2.1 i.2.2.2.1 σ a ∧
-      ∀ j, completionTime (fun _ _ => 1) σ j ≤ i.2.2.2.2
-
-open Classical in
-/-- `OMPM|prec; p_ij = 1|C_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeOpenShopPrecedenceMakespanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopPrecedenceMakespanInstance) x with
-  | some i => decide (WellFormed i ∧ MultipurposeOpenShopPrecedenceMakespanFeasible i)
-  | none => false
 
 /-- **`OMPM|prec; p_ij = 1|C_max` is NP-complete.** Source: Brucker (2007), Chapter 10 and
 Table 5.3; Ullman (1975); Brucker and Knust, *Complexity results for scheduling problems*

@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.UnitFlowShopTransportationDelaysWanted
+public import CSLibExt.Complexity.NPComplete.UnitFlowShopTransportationDelaysReleaseTimesDefs
 
 @[expose] public section
 
@@ -67,45 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs, job `j` being the `j`-th pair `(r_j, t_j)` of release date and
-delay, and the bound `K`. -/
-abbrev UnitFlowShopTransportationDelaysReleaseTimesInstance := List (ℕ × ℕ) × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed pairs. -/
-abbrev Job (i : UnitFlowShopTransportationDelaysReleaseTimesInstance) : Type :=
-  Fin i.1.length
-
-/-- The release date `r_j` of job `j`. -/
-def releaseDate (i : UnitFlowShopTransportationDelaysReleaseTimesInstance) (j : Job i) : ℕ :=
-  (i.1.get j).1
-
-/-- The delay `t_j` of job `j`. -/
-def delay (i : UnitFlowShopTransportationDelaysReleaseTimesInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2
-
-/-- Well-formedness of an instance: every list of pairs with a bound is an instance (release
-dates and delays are non-negative integers, and the bound needs no condition). -/
-def WellFormed (_i : UnitFlowShopTransportationDelaysReleaseTimesInstance) : Prop :=
-  True
-
-/-- Some schedule with the job delays starts every job no earlier than its release date and
-has total completion time `∑_j C_j` at most `K`, where `C_j = σ 1 j + 1`. -/
-def UnitFlowShopTransportationDelaysReleaseTimesFeasible
-    (i : UnitFlowShopTransportationDelaysReleaseTimesInstance) : Prop :=
-  ∃ σ : Fin 2 → Job i → ℕ, IsUnitFlowShopSchedule (delay i) σ ∧
-    (∀ j, releaseDate i j ≤ σ 0 j) ∧
-    ∑ j, (σ 1 j + 1) ≤ i.2
-
-open Classical in
-/-- FLOW SHOP WITH TRANSPORTATION DELAYS `F2|p_ij=1;t_i;r_i|∑ C_i` as a decision problem over
-bitstrings. -/
-noncomputable def unitFlowShopTransportationDelaysReleaseTimesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopTransportationDelaysReleaseTimesInstance) x with
-  | some i => decide (WellFormed i ∧ UnitFlowShopTransportationDelaysReleaseTimesFeasible i)
-  | none => false
 
 /-- **FLOW SHOP WITH TRANSPORTATION DELAYS `F2|p_ij=1;t_i;r_i|∑ C_i` is NP-complete.** Source:
 Brucker, Cheng, Knust and Shakhlevich (2004); Brucker and Knust, scheduling classification,

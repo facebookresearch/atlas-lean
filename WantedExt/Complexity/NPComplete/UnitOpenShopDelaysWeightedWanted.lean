@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.UnitFlowShopDelaysWeightedWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopTransportationDelaysWanted
+public import CSLibExt.Complexity.NPComplete.UnitOpenShopDelaysWeightedDefs
 
 @[expose] public section
 
@@ -73,24 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some open-shop schedule with the job delays `t_j = (i.1.get j).1` has total weighted
-completion time `∑_j w_j C_j` at most `K`, where `w_j = (i.1.get j).2` and
-`C_j = max (σ 0 j) (σ 1 j) + 1`. -/
-def UnitOpenShopDelaysWeightedFeasible (i : UnitFlowShopDelaysWeightedInstance) : Prop :=
-  ∃ σ : Fin 2 → Fin i.1.length → ℕ,
-    IsUnitOpenShopScheduleWithDelays (fun j => (i.1.get j).1) σ ∧
-    ∑ j, (i.1.get j).2 * (max (σ 0 j) (σ 1 j) + 1) ≤ i.2
-
-open Classical in
-/-- OPEN SHOP WITH TRANSPORTATION DELAYS `O2|p_ij=1;t_i|∑ w_i C_i` as a decision problem over
-bitstrings. -/
-noncomputable def unitOpenShopDelaysWeightedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopDelaysWeightedInstance) x with
-  | some i => decide (WellFormed i ∧ UnitOpenShopDelaysWeightedFeasible i)
-  | none => false
 
 /-- **OPEN SHOP WITH TRANSPORTATION DELAYS `O2|p_ij=1;t_i|∑ w_i C_i` is NP-complete.** Source:
 Brucker, Cheng, Knust and Shakhlevich (2004); Brucker and Knust, scheduling classification,

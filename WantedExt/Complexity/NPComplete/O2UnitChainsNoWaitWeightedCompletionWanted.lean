@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.F3UnitChainsWeightedCompletionWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.O2UnitChainsNoWaitWeightedCompletionDefs
 
 @[expose] public section
 
@@ -75,24 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some two-machine unit-time open-shop schedule `σ` obeying the chain arcs
-(`IsUnitOpenShopSchedule 2`) in which every job runs its two operations back to back has total
-weighted completion time at most `K`, with `C_j = max (σ 0 j) (σ 1 j) + 1`. -/
-def O2UnitChainsNoWaitWeightedCompletionFeasible
-    (i : F3UnitChainsWeightedCompletionInstance) : Prop :=
-  ∃ σ : Fin 2 → Fin i.1.length → ℕ, IsUnitOpenShopSchedule 2 i.1.length i.2.1 σ ∧
-    (∀ j, σ 0 j + 1 = σ 1 j ∨ σ 1 j + 1 = σ 0 j) ∧
-    ∑ j, i.1.get j * (max (σ 0 j) (σ 1 j) + 1) ≤ i.2.2
-
-open Classical in
-/-- `O2|p_ij=1;chains;no-wait|Σw_iC_i` as a decision problem over bitstrings. -/
-noncomputable def o2UnitChainsNoWaitWeightedCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := F3UnitChainsWeightedCompletionInstance) x with
-  | some i => decide (WellFormed i ∧ O2UnitChainsNoWaitWeightedCompletionFeasible i)
-  | none => false
 
 /-- **NO-WAIT OPEN SHOP `O2|p_ij=1;chains;no-wait|Σw_iC_i` is NP-complete.** Source: Timkovsky
 (2003), as recorded in the Brucker-Knust classification of scheduling problems. -/

@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import WantedExt.Complexity.NPComplete.RobotFlowShopUnitWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.RobotFlowShopUnitTotalTardinessDefs
 
 @[expose] public section
 
@@ -75,41 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the jobs, job `j` being the `j`-th pair `(tⱼ, dⱼ)` of its transport time and
-due date, and the bound `K`. -/
-abbrev RobotFlowShopUnitTotalTardinessInstance := List (ℕ × ℕ) × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed pairs. -/
-abbrev Job (i : RobotFlowShopUnitTotalTardinessInstance) : Type := Fin i.1.length
-
-/-- The transport time `tⱼ` of job `j`. -/
-def transportTime (i : RobotFlowShopUnitTotalTardinessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).1
-
-/-- The due date `dⱼ` of job `j`. -/
-def dueDate (i : RobotFlowShopUnitTotalTardinessInstance) (j : Job i) : ℕ :=
-  (i.1.get j).2
-
-/-- Well-formedness: every instance (all data are non-negative integers). -/
-def WellFormed (_ : RobotFlowShopUnitTotalTardinessInstance) : Prop := True
-
-/-- Some single-robot schedule has total tardiness `Σⱼ max(0, Cⱼ - dⱼ)` at most `K`, where
-`Cⱼ = σ 1 j + 1`. -/
-def RobotFlowShopUnitTotalTardinessFeasible (i : RobotFlowShopUnitTotalTardinessInstance) :
-    Prop :=
-  ∃ σ : Fin 2 → Job i → ℕ, ∃ ρ : Job i → ℕ,
-    IsUnitRobotFlowShopSchedule (transportTime i) σ ρ ∧
-      ∑ j, (σ 1 j + 1 - dueDate i j) ≤ i.2
-
-open Classical in
-/-- F2;R1|p_ij=1;t_i|ΣT_i as a decision problem over bitstrings. -/
-noncomputable def robotFlowShopUnitTotalTardinessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RobotFlowShopUnitTotalTardinessInstance) x with
-  | some i => decide (WellFormed i ∧ RobotFlowShopUnitTotalTardinessFeasible i)
-  | none => false
 
 /-- **F2;R1|p_ij=1;t_i|ΣT_i is NP-complete.**
 Source: Brucker and Knust's classification, class `f_1ro`, citing Knust (1999); robot model of

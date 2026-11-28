@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import WantedExt.Complexity.NPComplete.MultipurposeFlowShopThreeJobsWanted
-public import WantedExt.Complexity.NPComplete.MultiprocessorTaskOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultiprocessorTaskOpenShopTwoMachinesTotalCompletionDefs
 
 @[expose] public section
 
@@ -84,29 +80,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: there are two processors (`m = 2`), the stage processor sets
-are well formed (`StagesWellFormed`), every job lists one processing time per stage, and there is
-at least one job (as in `TwoProcessorOpenShopMeanFlowTimeWanted`). -/
-def WellFormed (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
-  i.1 = 2 ∧ StagesWellFormed i.1 i.2.1 ∧ (∀ job ∈ i.2.2.1, job.length = i.2.1.length) ∧
-    0 < i.2.2.1.length
-
-/-- Some MPT open-shop schedule of the jobs has total completion time at most `K`. -/
-def MultiprocessorTaskOpenShopTwoMachinesTotalCompletionFeasible
-    (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, IsMPTOpenShopSchedule i.2.1 (processingTime i) σ ∧
-    ∑ j, completionTime (processingTime i) σ j ≤ i.2.2.2
-
-open Classical in
-/-- `OMPT2||ΣC_i` as a decision problem over bitstrings. -/
-noncomputable def multiprocessorTaskOpenShopTwoMachinesTotalCompletionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopThreeJobsInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MultiprocessorTaskOpenShopTwoMachinesTotalCompletionFeasible i)
-  | none => false
 
 /-- **`OMPT2||ΣC_i` is NP-complete.** Source: Brucker (2007), Chapter 11; Achugbue and Chin
 (1982); Brucker and Knust, *Complexity results for scheduling problems*. -/

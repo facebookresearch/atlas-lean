@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.JobShopFixedJobsWeightedTardinessWanted
+public import CSLibExt.Complexity.NPComplete.JobShopFixedJobsWeightedLateJobsDefs
 
 @[expose] public section
 
@@ -77,22 +75,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some feasible schedule has late jobs (`d_j < C_j`) of total weight at most `K`. -/
-def JobShopFixedJobsWeightedLateJobsFeasible (i : JobShopFixedJobsWeightedTardinessInstance) :
-    Prop :=
-  ∃ σ C, IsSchedule i σ C ∧
-    ∑ j ∈ Finset.univ.filter (fun j => dueDate i j < C j), weight i j ≤ i.1.2.2
-
-open Classical in
-/-- `J|prec;r_i;n=k|Σw_iU_i` as a decision problem over bitstrings. -/
-noncomputable def jobShopFixedJobsWeightedLateJobsDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := JobShopFixedJobsWeightedTardinessInstance) x with
-  | some i => decide (JobShopFixedJobsWeightedTardiness.WellFormed k i ∧
-      JobShopFixedJobsWeightedLateJobsFeasible i)
-  | none => false
 
 /-- **JOB SHOP WITH `k` JOBS, WEIGHTED NUMBER OF LATE JOBS `J|prec;r_i;n=k|Σw_iU_i` is
 NP-complete for every fixed `k ≥ 3`.** Source: Sotskov and Shakhlevich (1995)

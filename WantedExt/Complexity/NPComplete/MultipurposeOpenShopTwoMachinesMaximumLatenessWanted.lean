@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultipurposeOpenShopPrecedenceMakespanWanted
+public import CSLibExt.Complexity.NPComplete.MultipurposeOpenShopTwoMachinesMaximumLatenessDefs
 
 @[expose] public section
 
@@ -74,50 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the stage machine sets `[μ_1, …, μ_r]` (machine indices `0, 1`), one list
-`[p_i1, …, p_ir]` of processing times per job, one due date `d_i` per job, and the bound `y` as a
-pair `(y⁺, y⁻)` with `y = y⁺ - y⁻`. -/
-abbrev MultipurposeOpenShopTwoMachinesMaximumLatenessInstance :=
-  List (List ℕ) × List (List ℕ) × List ℕ × (ℕ × ℕ)
-
-/-- The jobs of the instance, `Fin n` for `n` listed jobs. -/
-abbrev Job (i : MultipurposeOpenShopTwoMachinesMaximumLatenessInstance) : Type :=
-  Fin i.2.1.length
-
-/-- The stages of the instance, `Fin r` for `r` machine sets. -/
-abbrev Stage (i : MultipurposeOpenShopTwoMachinesMaximumLatenessInstance) : Type :=
-  Fin i.1.length
-
-/-- The processing time `p_is` of the operation of job `i` in stage `s`. -/
-def processingTime (i : MultipurposeOpenShopTwoMachinesMaximumLatenessInstance) (j : Job i)
-    (s : Stage i) : ℕ :=
-  (i.2.1.get j).getD s 0
-
-/-- Well-formedness of an instance: a well-formed machine environment on `m = 2` machines with
-nonempty machine sets, at least one job, one processing time per stage for every job, and one due
-date per job. -/
-def WellFormed (i : MultipurposeOpenShopTwoMachinesMaximumLatenessInstance) : Prop :=
-  StagesWellFormed 2 i.1 ∧ (∀ M ∈ i.1, M ≠ []) ∧ i.2.1 ≠ [] ∧
-    (∀ job ∈ i.2.1, job.length = i.1.length) ∧ i.2.2.1.length = i.2.1.length
-
-/-- Some MPM open-shop schedule of the jobs on the two machines completes every job `i` with
-lateness `C_i - d_i ≤ y⁺ - y⁻`. -/
-def MultipurposeOpenShopTwoMachinesMaximumLatenessFeasible
-    (i : MultipurposeOpenShopTwoMachinesMaximumLatenessInstance) : Prop :=
-  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin 2,
-    IsMPMOpenShopSchedule 2 i.1 (processingTime i) σ a ∧
-      ∀ j, completionTime (processingTime i) σ j + i.2.2.2.2 ≤ i.2.2.1.getD j 0 + i.2.2.2.1
-
-open Classical in
-/-- `OMPM2||L_max` as a decision problem over bitstrings. -/
-noncomputable def multipurposeOpenShopTwoMachinesMaximumLatenessDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeOpenShopTwoMachinesMaximumLatenessInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ MultipurposeOpenShopTwoMachinesMaximumLatenessFeasible i)
-  | none => false
 
 /-- **`OMPM2||L_max` is NP-complete.** Source: Brucker and Knust's classification; Lawler,
 Lenstra, and Rinnooy Kan (1981; erratum 1982). -/

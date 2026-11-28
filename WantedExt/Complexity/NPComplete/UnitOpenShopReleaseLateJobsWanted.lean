@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
+public import CSLibExt.Complexity.NPComplete.UnitOpenShopReleaseLateJobsDefs
 
 @[expose] public section
 
@@ -70,39 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(m, J, K)`: the number `m` of machines, the jobs (job `j` is the triple of its
-processing times `(p_j1, …, p_jm)`, its release date `r_j` and its due date `d_j`), and the bound
-`K` on the number of late jobs. -/
-abbrev UnitOpenShopReleaseLateJobsInstance := ℕ × List (List ℕ × ℕ × ℕ) × ℕ
-
-/-- The release date `r_j` of job `j`. -/
-def releaseDate (i : UnitOpenShopReleaseLateJobsInstance) (j : Fin i.2.1.length) : ℕ :=
-  (i.2.1.get j).2.1
-
-/-- The due date `d_j` of job `j`. -/
-def dueDate (i : UnitOpenShopReleaseLateJobsInstance) (j : Fin i.2.1.length) : ℕ :=
-  (i.2.1.get j).2.2
-
-/-- Well-formedness of an instance: `m ≥ 1`, and every job has `m` unit operations. -/
-def WellFormed (i : UnitOpenShopReleaseLateJobsInstance) : Prop :=
-  0 < i.1 ∧ UnitJobs i.1 (i.2.1.map Prod.fst)
-
-/-- Some open-shop schedule of the unit operations starts no operation of a job before its
-release date and has at most `K` late jobs: jobs `j` with an operation completing after `d_j`. -/
-def UnitOpenShopReleaseLateJobsFeasible (i : UnitOpenShopReleaseLateJobsInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length [] σ ∧
-    (∀ k j, releaseDate i j ≤ σ k j) ∧
-    (Finset.univ.filter fun j => ∃ k, dueDate i j < σ k j + 1).card ≤ i.2.2
-
-open Classical in
-/-- OPEN SHOP `O|p_ij=1;r_i|ΣU_i` as a decision problem over bitstrings. -/
-noncomputable def unitOpenShopReleaseLateJobsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitOpenShopReleaseLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ UnitOpenShopReleaseLateJobsFeasible i)
-  | none => false
 
 /-- **OPEN SHOP `O|p_ij=1;r_i|ΣU_i` is NP-complete.** Source: Kravchenko (2000), as recorded in
 the Brucker-Knust classification of scheduling problems. -/

@@ -1,0 +1,70 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# MPM FLOW SHOP WITH THREE JOBS (FMPM|n = 3|C_max): definitions
+
+Source:
+P. Brucker, *Scheduling Algorithms*, 5th ed., Springer (2007), Chapter 10 (the MPM flow-shop
+model; Section 10.2: "Proceeding as for problem JMPM2|n = 3|C_max, FMPM|n = 3|C_max and
+OMPM|n = 3|C_max can be shown to be NP-hard");
+P. Brucker, B. Jurisch and A. Krämer, "Complexity of scheduling problems with multi-purpose
+machines", Annals of Operations Research 70 (1997), 57-73, doi:10.1023/A:1018950911030;
+P. Brucker and S. Knust, *Complexity results for scheduling problems*,
+http://www2.informatik.uni-osnabrueck.de/knust/class/, class "Shop problems with multipurpose
+machines", which lists `FMPM|n = 3|C_max` as NP-hard with the attribution to Brucker, Jurisch
+and Krämer (1997).
+-/
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MultipurposeFlowShopPrecedenceMakespanDefs
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.MultipurposeFlowShopThreeJobs
+
+open MultipurposeFlowShopPrecedenceMakespan (StagesWellFormed IsMPMFlowShopSchedule
+  completionTime)
+
+/-- An instance: the number of machines `m`, the stage machine sets `[μ_1, …, μ_r]`, one list
+`[p_i1, …, p_ir]` of processing times per job, and the bound `K`. -/
+abbrev MultipurposeFlowShopThreeJobsInstance := ℕ × List (List ℕ) × List (List ℕ) × ℕ
+
+/-- The jobs of the instance, `Fin n` for `n` listed jobs (`n = 3` in a well-formed instance). -/
+abbrev Job (i : MultipurposeFlowShopThreeJobsInstance) : Type := Fin i.2.2.1.length
+
+/-- The stages of the instance, `Fin r` for `r` machine sets. -/
+abbrev Stage (i : MultipurposeFlowShopThreeJobsInstance) : Type := Fin i.2.1.length
+
+/-- The processing time `p_js` of the operation of job `j` in stage `s`. -/
+def processingTime (i : MultipurposeFlowShopThreeJobsInstance) (j : Job i) (s : Stage i) : ℕ :=
+  (i.2.2.1.get j).getD s 0
+
+/-- Well-formedness of an instance: the machine environment is well formed, there are exactly
+three jobs, and every job lists one processing time per stage. -/
+def WellFormed (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
+  StagesWellFormed i.1 i.2.1 ∧ i.2.2.1.length = 3 ∧ ∀ job ∈ i.2.2.1, job.length = i.2.1.length
+
+/-- Some MPM flow-shop schedule of the jobs has makespan at most `K`. -/
+def MultipurposeFlowShopThreeJobsFeasible (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
+  ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
+    IsMPMFlowShopSchedule i.1 i.2.1 (processingTime i) σ a ∧
+      ∀ j, completionTime (processingTime i) σ j ≤ i.2.2.2
+
+open Classical in
+/-- `FMPM|n = 3|C_max` as a decision problem over bitstrings. -/
+noncomputable def multipurposeFlowShopThreeJobsDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := MultipurposeFlowShopThreeJobsInstance) x with
+  | some i => decide (WellFormed i ∧ MultipurposeFlowShopThreeJobsFeasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.MultipurposeFlowShopThreeJobs
