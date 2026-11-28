@@ -47,7 +47,7 @@ theorem quasiIso_of_isColimit_of_objectwise
     (hτ : ∀ j, QuasiIso (τ.app j)) :
     QuasiIso f := by
   let _ : HasExactColimitsOfShape J C :=
-    hasExactColimitsOfShape_of_colim_preservesHomology
+    CategoryTheory.HasExactColimitsOfShape.of_colim_preservesHomology
   rw [quasiIso_iff]
   intro n
   rw [quasiIsoAt_iff_isIso_homologyMap]
