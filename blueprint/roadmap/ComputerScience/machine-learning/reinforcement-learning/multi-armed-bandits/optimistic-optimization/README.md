@@ -5,7 +5,8 @@ with a hierarchical partition of $\mathcal X$ given to the algorithm. Following 
 expand the cells that may contain a maximizer, given the values seen so far and an assumption on the smoothness of $f$
 around a maximizer, and they return a point whose loss is bounded through the near-optimality dimension, a measure of
 the quantity of near-optimal points. The pages below set up the partitions, the assumptions and the dimension; the
-algorithms are in the subfolder [Deterministic case](deterministic/README.md).
+algorithms are in the subfolders [Deterministic case](deterministic/README.md) and
+[Stochastic case](stochastic/README.md).
 
 - [Hierarchical partition](hierarchical-partition.md)
 - [Exploration trees](exploration-trees.md)
@@ -17,6 +18,7 @@ algorithms are in the subfolder [Deterministic case](deterministic/README.md).
 - [Loss of a returned point](loss.md)
 - [Number of near-optimal cells at a given depth](number-of-near-optimal-cells.md)
 - [Deterministic case](deterministic/README.md)
+- [Stochastic case](stochastic/README.md)
 
 ## Sources
 
