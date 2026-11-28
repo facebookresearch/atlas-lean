@@ -1,6 +1,7 @@
 # Bracha's Byzantine reliable broadcast
 
 Consider an asynchronous system of $n$ parties with authenticated point-to-point channels, one of which is the designated *leader* with an input value $v$. A fixed set $F$ of at most $f$ parties is faulty, with $n > 3f$. A faulty party may send any message to any party at any time, but only under its own name, since the channels are authenticated. Bracha's protocol is, with thresholds computed from $f$:
+
 - the leader sends $\langle v\rangle$ to all parties;
 - on receiving $\langle v\rangle$ from the leader, a party sends $\langle \mathrm{echo}, v\rangle$ to all, unless it has already sent an echo;
 - a party sends $\langle \mathrm{vote}, v\rangle$ to all, unless it has already sent a vote, after receiving $\langle \mathrm{echo}, v\rangle$ from $n - f$ distinct parties or $\langle \mathrm{vote}, v\rangle$ from $f + 1$ distinct parties;
@@ -9,6 +10,7 @@ Consider an asynchronous system of $n$ parties with authenticated point-to-point
 Delivering at most once is a convention that loses nothing, since by the proof below no non-faulty party receives $\langle \mathrm{vote}, \cdot\rangle$ for two different values from $n - f$ parties each. A non-faulty party applies these rules as soon as the message it has just received makes one of them apply. The protocol is a [transition system](bracha-lts.md) whose executions start from the initial state, in which nothing has been received and the leader, if it is non-faulty, has sent $\langle v\rangle$ to all parties. Each step is either a stuttering step, which changes nothing, or the receipt by a non-faulty party of a message it has not received before, sent to it by a non-faulty party or made up by a faulty one. Messages are thus received in any order and after any delay. An infinite execution is [*fair*](bracha-fair.md) when every message that a non-faulty party sends to a non-faulty party is received by it at some point; nothing constrains when, or whether, the messages of faulty parties arrive.
 
 It satisfies:
+
 1. **Validity.** If the leader is non-faulty, then in every fair infinite execution every non-faulty party eventually delivers the leader's input.
 2. **Agreement.** In every reachable state, all non-faulty parties that have delivered a value have delivered the same value.
 3. **Totality.** In every fair infinite execution, if some non-faulty party delivers a value, every non-faulty party eventually delivers a value.
