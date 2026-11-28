@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.NumberTheory.NicomacheanAdjoinedProgression
 public import MathlibExt.NumberTheory.NicomacheanLargeTopGap
+public import MathlibExt.NumberTheory.NicomacheanSameQuadraticFactor
 public import MathlibExt.NumberTheory.NicomacheanTranslations
 public import MathlibExt.NumberTheory.NicomacheanTranslationsExistsGoldenRatioNicomacheanSequence
 public import MathlibExt.NumberTheory.NicomacheanTwoValuedLargeGap
@@ -125,27 +126,6 @@ public theorem_wanted nicomacheanAlpha_posIntRoot_iff {n : ℕ} (hn : 1 ≤ n) :
       ((∃ h : ℕ, 0 < h ∧ nicomacheanAlpha n 2 h = 0) ↔ ∃ k : ℕ, 1 ≤ k ∧ n = Nat.fib (2 * k)) ∧
       ∀ k h : ℕ, 1 ≤ k → n = Nat.fib (2 * k) → 0 < h → nicomacheanAlpha n 2 h = 0 →
         h = Nat.fib (2 * k - 1) + 1
-
-/-- **Nicomachean families sharing a quadratic factor.** Write
-$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
-of a finite sequence. For every natural number $N$ there are finite sequences
-$\sigma_1, \dots, \sigma_N$ of positive integers, pairwise distinct as multisets, and an integer
-$c$ such that for every $i$ we have $\nu(\sigma_i) = 0$ and, for all integers $a$ and $b$, the
-sequence $(\sigma_i, a, b)$ obtained by appending $a$ and $b$ to $\sigma_i$ satisfies
-$\nu(\sigma_i, a, b) = -(a + b)(a^2 - ab + b^2 - a - b - 2c)$.
-
-Since $\nu(\sigma_i) = 0$, the identity forces $c$ to be the sum of the entries of every
-$\sigma_i$. Positivity of the entries, the paper's setting, excludes trivial families such as
-$(k, -k, 1)$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 12
-(`jis-2024-24.6.3-prop-12`). -/
-public theorem_wanted exists_nicomachean_family_same_quadratic_factor (N : ℕ) :
-    ∃ σ : Fin N → List ℤ, Function.Injective (fun i => (σ i : Multiset ℤ)) ∧ ∃ c : ℤ, ∀ i,
-      (∀ x ∈ σ i, 0 < x) ∧ nicomacheanNu (σ i) = 0 ∧
-        ∀ a b : ℤ, nicomacheanNu (σ i ++ [a, b]) =
-          -(a + b) * (a ^ 2 - a * b + b ^ 2 - a - b - 2 * c)
 
 end
 
