@@ -28,4 +28,4 @@ A definition. Ducas and Stehlé's realization, a separate result, iterates $\mat
 
 ## Sources
 
-- Léo Ducas, Damien Stehlé, "Sanitization of FHE Ciphertexts", EUROCRYPT 2016, LNCS 9665, pp. 294–310, DOI 10.1007/978-3-662-49890-3_12, [publisher chapter](https://link.springer.com/chapter/10.1007/978-3-662-49890-3_12); same numbering in the authors' [IACR ePrint 2016/164](https://eprint.iacr.org/2016/164): §1, §2 (every ciphertext decrypts to a message), §3 Definition 3.1, §3.1 Eq. (1) and Lemma 3.2, §3.2 Theorem 3.3.
+- Léo Ducas, Damien Stehlé, "Sanitization of FHE Ciphertexts", EUROCRYPT 2016, LNCS 9665, pp. 294–310, DOI 10.1007/978-3-662-49890-3_12, numbers from the open-access [publisher chapter](https://link.springer.com/chapter/10.1007/978-3-662-49890-3_12): §1, §2.1 (every ciphertext decrypts to a message), §3 Definition 3.1, §3.1 Eq. (1) and Lemma 3.2, §3.2 Theorem 3.3.

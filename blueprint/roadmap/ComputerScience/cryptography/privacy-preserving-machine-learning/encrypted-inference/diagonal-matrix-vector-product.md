@@ -31,5 +31,4 @@ As $i$ runs over $\mathbb{Z}/n$, the column index $k=j+i$ runs over $\mathbb{Z}/
 ## Sources
 
 - Xiaoqian Jiang, Miran Kim, Kristin Lauter, Yongsoo Song, "Secure Outsourced Matrix Computation and Application to Neural Networks", ACM CCS 2018, DOI 10.1145/3243734.3243837, [authors' copy](https://yongsoosong.github.io/files/papers/matrix.pdf), §2.2 (plaintext slots in $R^n$ over a ring $R$), §2.3, Equation (1) and Algorithm 1: the identity for $U\in R^{n\times n}$, with $\rho(m;\ell)=(m_\ell,\dots,m_{n-1},m_0,\dots,m_{\ell-1})$.
-- Shai Halevi, Victor Shoup, "Algorithms in HElib", CRYPTO 2014, LNCS 8616, DOI 10.1007/978-3-662-44371-2_31; numbers from IACR ePrint 2014/106: §4.3 ("Matrix in diagonal order"), for slots in a finite field.
 - Chiraag Juvekar, Vinod Vaikuntanathan, Anantha Chandrakasan, "GAZELLE: A Low Latency Framework for Secure Neural Network Inference", 27th USENIX Security Symposium (2018), [USENIX copy](https://www.usenix.org/conference/usenixsecurity18/presentation/juvekar); preprint arXiv:1801.05507v1. Section 5 ("The Diagonal Method"), for slots in $\mathbb{Z}_p$ and the ciphertext operation count.

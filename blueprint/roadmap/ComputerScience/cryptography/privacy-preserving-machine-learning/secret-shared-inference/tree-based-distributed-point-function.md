@@ -19,4 +19,4 @@ Not ready: the expansion must add defining pages for $\mathrm{Gen}^\bullet$, $\m
 
 ## Sources
 
-- Elette Boyle, Niv Gilboa, Yuval Ishai, "Function Secret Sharing: Improvements and Extensions", ACM CCS 2016, DOI 10.1145/2976749.2978429; numbers from the full version, IACR ePrint 2018/707, read in the [author-hosted copy](https://tzin.bgu.ac.il/~gilboan/publications/FSS-CCS-full.pdf): §3.2.2, Theorem 3.3 and Figure 1 (pp. 9–10), Claims 3.5–3.8 (Claim 3.8 on p. 14), Figure 3 (p. 16) (in this version the root control bits are fixed deterministically, one bit fewer than the conference version).
+- Elette Boyle, Niv Gilboa, Yuval Ishai, "Function Secret Sharing: Improvements and Extensions", ACM CCS 2016, DOI 10.1145/2976749.2978429; numbers from the full version (May 7, 2020), read in the [author-hosted copy](https://tzin.bgu.ac.il/~gilboan/publications/FSS-CCS-full.pdf): §3.2.2, Theorem 3.3 and Figure 1 (pp. 9–10), Claims 3.5–3.8 (Claim 3.8 on p. 14), Figure 3 (p. 16) (in this version the root control bits are fixed deterministically, one bit fewer than the conference version).

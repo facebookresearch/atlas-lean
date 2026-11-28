@@ -23,4 +23,4 @@ A definition. Its first construction result is the [PRG-based two-party DPF](tre
 
 ## Sources
 
-- Elette Boyle, Niv Gilboa, Yuval Ishai, "Function Secret Sharing: Improvements and Extensions", ACM CCS 2016, DOI 10.1145/2976749.2978429; numbers from the full version, IACR ePrint 2018/707: pp. 5–6, Definitions 2.1, 2.2 and 2.3 of the full version (author-hosted copy).
+- Elette Boyle, Niv Gilboa, Yuval Ishai, "Function Secret Sharing: Improvements and Extensions", ACM CCS 2016, DOI 10.1145/2976749.2978429; numbers from the full version (May 7, 2020), read in the [author-hosted copy](https://tzin.bgu.ac.il/~gilboan/publications/FSS-CCS-full.pdf): pp. 5–6, Definitions 2.1, 2.2 and 2.3.
