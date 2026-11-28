@@ -35,7 +35,8 @@ namespace IntConstruction
 @[simp] theorem mapCrossed_idFunctor {A U V W : C} (f : A ⊗ W ⟶ V ⊗ U) :
     mapCrossed (𝟭 C) f = f := by simp [mapCrossed]
 
-/-- Applying a composite functor to a crossed map agrees with two successive applications. -/
+/-- For braided strong monoidal functors `F : C ⥤ D` and `G : D ⥤ E`, applying `F ⋙ G` to a
+crossed map agrees with applying `F` and then `G`. No trace preservation is needed. -/
 theorem mapCrossed_compFunctor (F : C ⥤ D) (G : D ⥤ E) [F.Braided] [G.Braided]
     {A U V W : C} (f : A ⊗ W ⟶ V ⊗ U) :
     mapCrossed (F ⋙ G) f = mapCrossed G (mapCrossed F f) := by
@@ -54,7 +55,10 @@ def mapIdIso : map T T (𝟭 C) T.preserves_id ≅ 𝟭 (IntConstruction T) :=
 variable (F : C ⥤ D) (G : D ⥤ E) [F.Braided] [G.Braided]
   (hF : T.Preserves S F) (hG : S.Preserves R G)
 
-/-- Int of a composite functor is naturally isomorphic to the composite of the Int functors. -/
+/-- For braided strong monoidal functors `F : C ⥤ D` and `G : D ⥤ E` that preserve the traces,
+`hF : T.Preserves S F` and `hG : S.Preserves R G`, the comparison `L(F ⋙ G) ≅ L(F) ⋙ L(G)`
+between the lift of the composite and the composite of the lifts, where `L` is `map`. Its
+components are identities. -/
 def mapCompIso : map T R (F ⋙ G) (hF.comp hG) ≅ map T S F hF ⋙ map S R G hG :=
   NatIso.ofComponents (fun _ => Iso.refl _) (by
     intro X Y f
@@ -117,7 +121,11 @@ instance mapCompIso_hom_isMonoidal :
     simp only [tensorHom_id, id_whiskerRight, Category.id_comp, Category.comp_id]
     rfl
 
-/-- The two ways of separating a triple composite agree after the functor associator. -/
+/-- Associativity of `mapCompIso` for a third such functor `H : E ⥤ B`, `hH : R.Preserves Q H`.
+It states that two composites `L((F ⋙ G) ⋙ H) ≅ L(F) ⋙ (L(G) ⋙ L(H))` are equal: the
+comparisons `mapCompIso` followed by the associator of the lifts
+`Functor.associator (L F) (L G) (L H)`, and the lift `mapIso (Functor.associator F G H)` of the
+input functors' associator followed by the comparisons. -/
 theorem mapCompIso_assoc (Q : SymmetricTrace B) (H : E ⥤ B) [H.Braided]
     (hH : R.Preserves Q H) :
     mapCompIso T R Q (F ⋙ G) H (hF.comp hG) hH ≪≫
@@ -138,7 +146,10 @@ theorem mapCompIso_assoc (Q : SymmetricTrace B) (H : E ⥤ B) [H.Braided]
   simp only [Functor.map_id, Category.id_comp]
   rfl
 
-/-- The identity comparison is compatible with composition on the source side. -/
+/-- Left unit law for `mapCompIso`. The composite
+`L(𝟭 C ⋙ F) ≅ L(𝟭 C) ⋙ L(F) ≅ 𝟭 _ ⋙ L(F) ≅ L(F)` of the comparison, `mapIdIso` and the left
+unitor `(L F).leftUnitor` of the lift equals the lift `mapIso F.leftUnitor` of the input
+functor's left unitor. -/
 theorem mapCompIso_left_unit :
     mapCompIso T T S (𝟭 C) F T.preserves_id hF ≪≫
       Functor.isoWhiskerRight (mapIdIso T) (map T S F hF) ≪≫ (map T S F hF).leftUnitor =
@@ -152,7 +163,10 @@ theorem mapCompIso_left_unit :
   simp only [Functor.map_id, Category.id_comp]
   rfl
 
-/-- The identity comparison is compatible with composition on the target side. -/
+/-- Right unit law for `mapCompIso`. The composite
+`L(F ⋙ 𝟭 D) ≅ L(F) ⋙ L(𝟭 D) ≅ L(F) ⋙ 𝟭 _ ≅ L(F)` of the comparison, `mapIdIso` and the right
+unitor `(L F).rightUnitor` of the lift equals the lift `mapIso F.rightUnitor` of the input
+functor's right unitor. -/
 theorem mapCompIso_right_unit :
     mapCompIso T S S F (𝟭 D) hF S.preserves_id ≪≫
       Functor.isoWhiskerLeft (map T S F hF) (mapIdIso S) ≪≫ (map T S F hF).rightUnitor =

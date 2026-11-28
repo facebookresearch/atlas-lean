@@ -196,7 +196,9 @@ def positivePairing (A : C) :
   coevaluation_evaluation' := by exact snake_neg T A
   evaluation_coevaluation' := by exact snake_pos T A
 
-/-- Every Int object decomposes into its positive and negative components. -/
+/-- Every Int object `X` is a tensor product inside Int of its positive and negative parts:
+the isomorphism `X ≅ (X.positive, 𝟙_ C) ⊗ (𝟙_ C, X.negative)` is
+`pairIso T (ρ_ X.positive).symm (ρ_ X.negative)`. -/
 def decomposition (X : IntConstruction T) :
     X ≅ (⟨X.positive, 𝟙_ C⟩ : IntConstruction T) ⊗ ⟨𝟙_ C, X.negative⟩ :=
   pairIso T (ρ_ X.positive).symm (ρ_ X.negative)

@@ -34,12 +34,15 @@ variable [RightRigidCategory C]
 namespace IntConstruction
 variable (T : SymmetricTrace C)
 
-/-- A formal negative object is represented by an embedded right dual. -/
+/-- For a right rigid source category `C`, the formal negative object `(𝟙_ C, U)` is isomorphic
+to `J(Uᘁ)`, the embedding `J = embedding T` of the right dual of `U`. -/
 def negativeIso (U : C) :
     (⟨𝟙_ C, U⟩ : IntConstruction T) ≅ (embedding T).obj (Uᘁ) :=
   rightDualIso (positivePairing T U) (ExactPairing.map (embedding T) U (Uᘁ))
 
-/-- Every formal pair has a representative in the source when source duals exist. -/
+/-- For a right rigid source category `C`, every Int object `X` is isomorphic to the embedded
+representative `J(X.positive ⊗ X.negativeᘁ)`, where `J = embedding T`: the composite of
+`decomposition`, `negativeIso` on the negative factor, and the tensor comparison of `J`. -/
 def representativeIso (X : IntConstruction T) :
     X ≅ (embedding T).obj (X.positive ⊗ X.negativeᘁ) :=
   decomposition T X ≪≫
@@ -57,7 +60,9 @@ instance embeddingIsEquivalence : (embedding T).IsEquivalence where
 noncomputable abbrev rigidEquivalence : C ≌ IntConstruction T :=
   (embedding T).asEquivalence
 
-/-- The chosen inverse represents a pair by its positive object tensored with the dual negative. -/
+/-- For a right rigid source category `C`, the inverse of `rigidEquivalence T` sends `X` to an
+object isomorphic to `X.positive ⊗ X.negativeᘁ`, the object whose embedding
+`J(X.positive ⊗ X.negativeᘁ)` represents `X` in `representativeIso`. -/
 noncomputable def rigidInverseObjIso (X : IntConstruction T) :
     (rigidEquivalence T).inverse.obj X ≅ X.positive ⊗ X.negativeᘁ :=
   (rigidEquivalence T).inverse.mapIso (representativeIso T X) ≪≫

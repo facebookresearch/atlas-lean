@@ -108,7 +108,9 @@ def mapPair {X Y : IntConstruction T}
   rw [compose_tensor_left]
   simp only [tensorHom_def, comp_whiskerRight, whiskerLeft_comp, Category.assoc]
 
-/-- Component isomorphisms induce an isomorphism of Int objects. -/
+/-- Isomorphisms `f : X.positive ≅ Y.positive` and `g : Y.negative ≅ X.negative` of components
+induce an isomorphism `X ≅ Y` of Int objects, with forward map `mapPair T f.hom g.hom` and
+inverse map `mapPair T f.inv g.inv`. -/
 def pairIso {X Y : IntConstruction T}
     (f : X.positive ≅ Y.positive) (g : Y.negative ≅ X.negative) : X ≅ Y where
   hom := mapPair T f.hom g.hom
@@ -544,7 +546,11 @@ theorem embedding_map_eq_mapPair {X Y : C} (f : X ⟶ Y) :
   change f ▷ (𝟙_ C) = f ⊗ₘ 𝟙 (𝟙_ C)
   simp
 
-/-- Explicit unit and tensor comparison isomorphisms for the Int embedding. -/
+/-- The strong monoidal structure on the Int embedding. The unit isomorphism is
+`pairIso T (Iso.refl _) (Iso.refl _)`, with forward and inverse maps `mapPair T (𝟙 _) (𝟙 _)`.
+The tensor isomorphism at `X` and `Y` is `pairIso T (Iso.refl (X ⊗ Y)) (λ_ (𝟙_ C)).symm`, with
+forward map `mapPair T (𝟙 (X ⊗ Y)) (λ_ (𝟙_ C)).inv` and inverse map
+`mapPair T (𝟙 (X ⊗ Y)) (λ_ (𝟙_ C)).hom`. -/
 def embeddingCoreMonoidal : (embedding T).CoreMonoidal where
   εIso := pairIso T (Iso.refl _) (Iso.refl _)
   μIso X Y := pairIso T (Iso.refl (X ⊗ Y)) (λ_ (𝟙_ C)).symm
@@ -591,7 +597,9 @@ def embeddingCoreMonoidal : (embedding T).CoreMonoidal where
 instance embeddingMonoidal : (embedding T).Monoidal :=
   Functor.CoreMonoidal.toMonoidal (by exact embeddingCoreMonoidal T)
 
-/-- The tensor comparison inserts the unit on the negative component. -/
+/-- The tensor comparison of the Int embedding at `X` and `Y` is
+`mapPair T (𝟙 (X ⊗ Y)) (λ_ (𝟙_ C)).inv`: the identity on the positive component `X ⊗ Y` and
+the inverse left unitor `𝟙_ C ⟶ 𝟙_ C ⊗ 𝟙_ C` on the negative component. -/
 theorem embedding_μ (X Y : C) :
     Functor.LaxMonoidal.μ (embedding T) X Y =
       mapPair T (𝟙 (X ⊗ Y)) (λ_ (𝟙_ C)).inv := rfl

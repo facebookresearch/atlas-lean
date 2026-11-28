@@ -160,7 +160,9 @@ theorem preserves_ofFullyFaithful (S : SymmetricTrace D) (F : C ⥤ D)
   intro X Y U f
   exact F.map_preimage _
 
-/-- The transported trace is the only trace making the functor trace-preserving. -/
+/-- For a fully faithful braided strong monoidal functor `F : C ⥤ D` and a fixed trace `S` on
+`D`, the transported trace `ofFullyFaithful S F` is the only trace `T` on `C` that `F` carries
+to `S`, that is, with `T.Preserves S F`. -/
 theorem ofFullyFaithful_unique (S : SymmetricTrace D) (F : C ⥤ D)
     [F.Braided] [F.Full] [F.Faithful] (T : SymmetricTrace C) (h : T.Preserves S F) :
     T = ofFullyFaithful S F := by
@@ -176,7 +178,9 @@ theorem ofFullyFaithful_unique (S : SymmetricTrace D) (F : C ⥤ D)
 universe v'' u''
 variable {E : Type u''} [Category.{v''} E] [MonoidalCategory E] [SymmetricCategory E]
 
-/-- Successive transport agrees with transport along the composite functor. -/
+/-- For fully faithful braided strong monoidal functors `F : C ⥤ D` and `G : D ⥤ E` and a fixed
+trace `S` on `E`, transporting `S` along `G` and then along `F` agrees with transporting it
+along `F ⋙ G`. -/
 @[simp] theorem ofFullyFaithful_comp (S : SymmetricTrace E) (F : C ⥤ D) (G : D ⥤ E)
     [F.Braided] [G.Braided] [F.Full] [F.Faithful] [G.Full] [G.Faithful] :
     (S.ofFullyFaithful G).ofFullyFaithful F = S.ofFullyFaithful (F ⋙ G) :=
@@ -184,7 +188,9 @@ variable {E : Type u''} [Category.{v''} E] [MonoidalCategory E] [SymmetricCatego
     (Preserves.comp ((S.ofFullyFaithful G).preserves_ofFullyFaithful F)
       (S.preserves_ofFullyFaithful G))
 
-/-- Between right rigid categories, transport recovers the canonical trace. -/
+/-- For a fully faithful braided strong monoidal functor `F : C ⥤ D` between right rigid
+categories, transporting the canonical trace `symmetricTraceOfRigid D` along `F` gives the
+canonical trace `symmetricTraceOfRigid C`. -/
 theorem ofFullyFaithful_rigid [RightRigidCategory C] [RightRigidCategory D]
     (F : C ⥤ D) [F.Braided] [F.Full] [F.Faithful] :
     (symmetricTraceOfRigid D).ofFullyFaithful F = symmetricTraceOfRigid C :=
