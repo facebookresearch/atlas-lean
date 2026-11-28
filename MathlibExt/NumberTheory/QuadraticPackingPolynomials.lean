@@ -94,8 +94,9 @@ private theorem IsQuadraticPackingPolynomial.shear {S : Set (ℝ × ℝ)} {P : �
       simp
     exact hP.bijOn.comp (himage ▸ hInv.injOn.bijOn_image)
 
-/-- Shearing the domain by `(x, y) ↦ (x - c * y, y)` and substituting the inverse shear
-into the polynomial preserves and reflects the quadratic packing property. -/
+/-- For any real `c`, the shear `(x, y) ↦ (x - c * y, y)` has inverse
+`(x, y) ↦ (x + c * y, y)`. The function `(x, y) ↦ P (x + c * y) y` is a quadratic packing
+polynomial on the sheared image of `S` if and only if `P` is one on `S`. -/
 public theorem isQuadraticPackingPolynomial_shear_iff {S : Set (ℝ × ℝ)} {P : ℝ → ℝ → ℝ}
     (c : ℝ) :
     IsQuadraticPackingPolynomial ((fun p : ℝ × ℝ => (p.1 - c * p.2, p.2)) '' S)
@@ -169,8 +170,10 @@ R^2*, INTEGERS 25 (2025), Article A81, Section 2 (definition of `k`). -/
 public noncomputable def consecutiveStepDifference (m n : ℕ) (P : ℝ → ℝ → ℝ) : ℝ :=
   P (((m : ℝ) - 1) / Nat.gcd (m - 1) n) ((n : ℝ) / Nat.gcd (m - 1) n) - P 0 0
 
-/-- If the sheared form is `f x + c * y`, the step difference is `c` times the
-vertical spacing `n / gcd (m - 1) n`. -/
+/-- Let `m, n : ℕ` with `0 < n`, and put `l = Nat.gcd (m - 1) n`, using natural subtraction in
+the gcd. Suppose `P (x + ((m : ℝ) - 1) / n * y) y = f x + c * y` for all real `x` and `y`,
+where `(x, y) ↦ (x + ((m : ℝ) - 1) / n * y, y)` is the inverse shear. Then the step difference
+`consecutiveStepDifference m n P` is `c * ((n : ℝ) / l)`. -/
 public theorem consecutiveStepDifference_of_sheared_form {m n : ℕ} (hn : 0 < n)
     {P : ℝ → ℝ → ℝ} {f : ℝ → ℝ} {c : ℝ}
     (h : ∀ x y, P (x + ((m : ℝ) - 1) / n * y) y = f x + c * y) :
