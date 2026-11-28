@@ -10,6 +10,7 @@ By earlier work, observational equivalence is also undecidable at every third-or
 
 ## Depends on
 
+- [Simple types](../../../type-systems-and-lambda-calculi/simply-typed-lambda-calculus/ty.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

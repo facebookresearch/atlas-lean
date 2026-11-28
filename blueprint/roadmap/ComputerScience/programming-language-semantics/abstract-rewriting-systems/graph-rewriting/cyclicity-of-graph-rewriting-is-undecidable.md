@@ -15,7 +15,7 @@ There is no algorithm that decides, given a graph rewriting system in the double
 
 ## Expansion
 
-The reduction is the one used for [termination](termination-of-graph-rewriting-is-undecidable.md). If the Post instance $L$ has a solution, the derivation of Lemma 3.1 for $\mathcal{G}(L)$ is cyclic. Conversely, a cyclic system is non-terminating, and the argument for termination shows that non-termination of $\mathcal{G}(L)$ yields a solution of $L$. So $\mathcal{G}(L)$ is cyclic exactly when $L$ is solvable. A good expansion links pages for Lemmas 3.1 to 3.3 of the source on the system $\mathcal{G}(L)$.
+The reduction is the one used for [termination](termination-of-graph-rewriting-is-undecidable.md). If the Post instance $L$ has a solution, the derivation of Lemma 3.1 for $\mathcal{G}(L)$ is cyclic. Conversely, a cyclic system is non-terminating, and the argument for termination shows that non-termination of $\mathcal{G}(L)$ yields a solution of $L$. So $\mathcal{G}(L)$ is cyclic exactly when $L$ is solvable. A good expansion links pages for Lemmas 3.1 to 3.4 of the source on the system $\mathcal{G}(L)$; Lemma 3.4 supplies the converse direction.
 
 ## Sources
 

@@ -17,13 +17,13 @@ The record size $\kappa$ is a fixed parameter of the logic; the reduction in the
 
 ## Expansion
 
-The proof reduces from universality of context-free grammars $G = (N, T, S, \Delta)$: whether $T^* \subseteq L(G)$. One may assume $T = \{0, 1\}$ (encode each terminal in binary), that $\epsilon \notin L(G)$ (pass to a grammar for $L(G) \cap T^+$ and ask $T^+ \subseteq L(G')$ instead), and that $G$ is in Greibach normal form, with productions $A_0 \to a A_1 \dots A_n$. Two special variables $\hat{0}$, $\hat{1}$ stand for the bits. Each nonterminal $A_0$ becomes a predicate $A_0(x, y, \hat{0}, \hat{1})$ with one rule
+The proof reduces from universality of context-free grammars $G = (N, T, S, \Delta)$: whether $T^* \subseteq L(G)$. Since $T^* \subseteq L(G)$ holds iff $\epsilon \in L(G)$, which is decidable, and $T^+ \subseteq L(G)$, it suffices to decide $T^+ \subseteq L(G)$. One may assume $T = \{0, 1\}$: encode each terminal by a binary block of a fixed length $m$ and add to the image of $L(G)$ the regular set of nonempty binary words that are not concatenations of codewords, so that the new grammar generates every nonempty binary word iff $G$ generates every nonempty word over $T$. Finally, pass to a grammar $G'$ for the nonempty words of the language in Greibach normal form, with productions $A_0 \to a A_1 \dots A_n$ ($n \ge 0$). Two special variables $\hat{0}$, $\hat{1}$ stand for the bits. Each nonterminal $A_0$ becomes a predicate $A_0(x, y, \hat{0}, \hat{1})$ with one rule
 
 $$
 A_0(x, y, \hat{0}, \hat{1}) \Leftarrow x \mapsto (\hat{a}, x_1) * A_1(x_1, x_2, \hat{0}, \hat{1}) * \dots * A_n(x_n, y, \hat{0}, \hat{1})
 $$
 
-per production $A_0 \to a A_1 \dots A_n$, and a predicate $T$ describes all nonempty bit lists, by the rules $T(x, y, \hat{0}, \hat{1}) \Leftarrow x \mapsto (\hat{a}, z) * T(z, y, \hat{0}, \hat{1})$ and $T(x, y, \hat{0}, \hat{1}) \Leftarrow x \mapsto (\hat{a}, y)$ for $a \in \{0, 1\}$. The SID is progressing and established, and the rules for $T$ are connected. The entailment $\hat{0} \not\approx \hat{1} * T(x, y) \vdash_{\mathcal{R}} S(x, y)$ is valid exactly when $T^+ \subseteq L(G')$.
+per production $A_0 \to a A_1 \dots A_n$ with $n \ge 1$, and the rule $A_0(x, y, \hat{0}, \hat{1}) \Leftarrow x \mapsto (\hat{a}, y)$ per production $A_0 \to a$; a predicate $T$ describes all nonempty bit lists, by the rules $T(x, y, \hat{0}, \hat{1}) \Leftarrow x \mapsto (\hat{a}, z) * T(z, y, \hat{0}, \hat{1})$ and $T(x, y, \hat{0}, \hat{1}) \Leftarrow x \mapsto (\hat{a}, y)$ for $a \in \{0, 1\}$. The SID is progressing and established, and the rules for $T$ are connected. The entailment $\hat{0} \not\approx \hat{1} * T(x, y, \hat{0}, \hat{1}) \vdash_{\mathcal{R}} S(x, y, \hat{0}, \hat{1})$, with $S$ the predicate of the start symbol of $G'$, is valid exactly when $G'$ generates every nonempty binary word.
 
 A good expansion links, besides the universality page, the existence of an equivalent Greibach normal form grammar for every context-free language without the empty word, and the closure steps that reduce universality to the binary, $\epsilon$-free case.
 

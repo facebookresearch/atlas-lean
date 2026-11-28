@@ -8,6 +8,16 @@ Observation consistency and its modified form are conditions under which hierarc
 
 For plants given by finite automata, the same paper proves both problems PSPACE-hard and leaves their decidability open.
 
+## Proof sketch
+
+The proof reduces the Post correspondence problem. For lists $(w_1, \dots, w_n)$ and $(u_1, \dots, u_n)$ of words over an alphabet $\Delta$, with $w_i \ne u_i$, let $E = \{1, \dots, n\}$ and
+
+$$
+L = \{ i_1 \cdots i_m \,\diamond\, w_{i_m}^R \cdots w_{i_1}^R \,@ : m \ge 1 \} \cup \{ i_1 \cdots i_m \,\diamond'\, u_{i_m}^R \cdots u_{i_1}^R \,\# : m \ge 1 \},
+$$
+
+where $x^R$ is the reversal of $x$ and $\diamond, \diamond', @, \#$ are new letters, so that the plant alphabet is $\Sigma = \Delta \cup E \cup \{\diamond, \diamond', @, \#\}$. A one-turn deterministic pushdown automaton pushes the indices and then pops them while reading the reversed words, and accepts the prefix closure $\overline{L}$. With $\Sigma_{hi} = \Delta \cup E \cup \{@, \#\}$ and $\Sigma_o = \Delta \cup E \cup \{\diamond, \diamond'\}$, a solution $i_1, \dots, i_k$ gives two high-level strings with equal high-level observations whose low-level preimages are told apart by $\diamond$ and $\diamond'$, so $\overline{L}$ is not OC and hence not MOC; if the instance has no solution, $\overline{L}$ is MOC and hence OC.
+
 ## Depends on
 
 - [Deterministic pushdown automaton](../../../../TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata/deterministic-context-free-languages/is-deterministic.md)
@@ -20,16 +30,6 @@ For plants given by finite automata, the same paper proves both problems PSPACE-
 ## Proof depends on
 
 - [The Post correspondence problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
-
-## Expansion
-
-The proof reduces the Post correspondence problem. For lists $(w_1, \dots, w_n)$ and $(u_1, \dots, u_n)$ with $w_i \ne u_i$, let $E = \{1, \dots, n\}$ and
-
-$$
-L = \{ i_1 \cdots i_m \,\diamond\, w_{i_m}^R \cdots w_{i_1}^R \,@ : m \ge 1 \} \cup \{ i_1 \cdots i_m \,\diamond'\, u_{i_m}^R \cdots u_{i_1}^R \,\# : m \ge 1 \},
-$$
-
-where $x^R$ is the reversal of $x$ and $\diamond, \diamond', @, \#$ are new letters. A one-turn deterministic pushdown automaton pushes the indices and then pops them while reading the reversed words, and accepts the prefix closure $\overline{L}$. With $\Sigma_{hi} = \Sigma \cup E \cup \{@, \#\}$ and $\Sigma_o = \Sigma \cup E \cup \{\diamond, \diamond'\}$, a solution $i_1, \dots, i_k$ gives two high-level strings with equal high-level observations whose low-level preimages are told apart by $\diamond$ and $\diamond'$, so $\overline{L}$ is not OC and hence not MOC; if the instance has no solution, $\overline{L}$ is MOC and hence OC.
 
 ## Sources
 

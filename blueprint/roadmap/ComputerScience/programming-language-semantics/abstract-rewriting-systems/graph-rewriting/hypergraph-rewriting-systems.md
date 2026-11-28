@@ -8,17 +8,15 @@ A hypergraph rewriting system has a signature of node labels and typed hyperedge
 
 **Termination and confluence.** Write $\Rightarrow$ for the union of the direct derivations of $\mathcal{G}$ on finite hypergraphs over $\mathcal{C}$, taken up to isomorphism, and $\Rightarrow^*$ for its reflexive transitive closure. $\mathcal{G}$ is terminating if there is no infinite sequence $G_0 \Rightarrow G_1 \Rightarrow \cdots$, and confluent if whenever $H_1 \Leftarrow^* G \Rightarrow^* H_2$ there is $M$ with $H_1 \Rightarrow^* M \Leftarrow^* H_2$.
 
+When all morphisms $b$ are inclusions and every hyperedge has one source and one target, this specializes to [double-pushout graph rewriting](double-pushout-graph-rewriting-systems.md), except that node labels are prescribed by the edge labels; to encode arbitrary labelled graphs, refine each edge label by the labels of its endpoints. For terminating hypergraph rewriting, joinability of all critical pairs does not imply local confluence, so the Knuth–Bendix critical pair test of term rewriting does not carry over; the same source proves a critical pair lemma under a stronger joinability condition.
+
 ## Depends on
 
-None.
+- [Confluence of a relation](../../../../Logic/first-order-logic/term-rewriting/confluence-of-a-relation.md)
 
 ## Proof depends on
 
 None.
-
-## Expansion
-
-When all morphisms $b$ are inclusions and every hyperedge has one source and one target, this specializes to [double-pushout graph rewriting](double-pushout-graph-rewriting-systems.md). For terminating hypergraph rewriting, joinability of all critical pairs does not imply local confluence, so the Knuth–Bendix critical pair test of term rewriting does not carry over; the same source proves a critical pair lemma under a stronger joinability condition.
 
 ## Sources
 

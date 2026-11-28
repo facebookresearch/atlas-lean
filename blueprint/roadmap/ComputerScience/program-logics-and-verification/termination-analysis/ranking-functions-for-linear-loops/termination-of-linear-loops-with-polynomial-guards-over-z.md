@@ -21,6 +21,8 @@ The same paper gives, under an additional assumption, an algorithm deciding term
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Lagrange's four-square theorem](../../../../NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares/lagrange-four-square-theorem.md)
+
 
 ## Expansion
 

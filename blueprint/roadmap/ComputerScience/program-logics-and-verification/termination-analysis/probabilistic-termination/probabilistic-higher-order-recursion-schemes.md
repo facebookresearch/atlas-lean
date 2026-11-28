@@ -20,6 +20,8 @@ $$
 
 $\mathcal{G}$ is *almost surely terminating* if $\mathcal{P}(\mathcal{G}) = 1$.
 
+Order-1 schemes have essentially the expressive power of probabilistic pushdown systems and recursive Markov chains, whose termination probabilities are least solutions of polynomial fixpoint equations over the reals. At order $2$ and above non-terminals take functions as arguments, and almost-sure termination becomes undecidable.
+
 ## Depends on
 
 - [Simple types](../../../type-systems-and-lambda-calculi/simply-typed-lambda-calculus/ty.md)
@@ -27,10 +29,6 @@ $\mathcal{G}$ is *almost surely terminating* if $\mathcal{P}(\mathcal{G}) = 1$.
 ## Proof depends on
 
 None.
-
-## Expansion
-
-Order-1 schemes have essentially the expressive power of probabilistic pushdown systems and recursive Markov chains, whose termination probabilities are least solutions of polynomial fixpoint equations over the reals. At order $2$ and above non-terminals take functions as arguments, and almost-sure termination becomes undecidable.
 
 ## Sources
 

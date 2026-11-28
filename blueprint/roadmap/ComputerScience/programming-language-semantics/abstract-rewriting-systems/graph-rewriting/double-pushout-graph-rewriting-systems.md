@@ -13,17 +13,15 @@ Then $G$ directly derives $H$ by $r$, written $G \Rightarrow_r H$, if $H$ is iso
 
 **Termination and cyclicity.** $\mathcal{G}$ is terminating if there is no infinite sequence $G_0 \Rightarrow_{\mathcal{R}} G_1 \Rightarrow_{\mathcal{R}} \cdots$ of finite graphs over $\mathcal{C}$, starting from any graph. $\mathcal{G}$ is cyclic if it admits a derivation in which some graph occurs twice (up to isomorphism); a cyclic system is non-terminating, but not conversely.
 
+This is the double-pushout ("Berlin") approach of Ehrig and coauthors, with injective inclusions $K \subseteq L$ and $K \subseteq R$. Unlike term or string rewriting, graph rewriting acts on arbitrary graphs, including cyclic ones: the single rule that rewrites a path labeled $ab$ into a path labeled $ba$ terminates on string graphs but not on a cycle labeled $a, b$, which is why termination of string rewriting does not transfer directly.
+
 ## Depends on
 
-None.
+- [Abstract reduction system](../../../../Logic/first-order-logic/term-rewriting/abstract-reduction-system.md)
 
 ## Proof depends on
 
 None.
-
-## Expansion
-
-This is the double-pushout ("Berlin") approach of Ehrig and coauthors, with injective inclusions $K \subseteq L$ and $K \subseteq R$. Unlike term or string rewriting, graph rewriting acts on arbitrary graphs, including cyclic ones: the single rule that rewrites a path labeled $ab$ into a path labeled $ba$ terminates on string graphs but not on a cycle labeled $a, b$, which is why termination of string rewriting does not transfer directly.
 
 ## Sources
 

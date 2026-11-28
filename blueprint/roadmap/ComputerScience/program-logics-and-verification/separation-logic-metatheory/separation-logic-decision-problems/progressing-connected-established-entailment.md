@@ -12,7 +12,7 @@ where $p$ has arity $n$, the $x$'s are variables and each $y_i$ is a variable or
 
 **Inductive definitions.** A set of inductive definitions (SID) $\mathcal{R}$ is a finite set of rules $p(x_1, \dots, x_n) \Leftarrow \pi$ with pairwise distinct $x_1, \dots, x_n$ and a quantifier-free symbolic heap $\pi$; the variables of $\pi$ other than $x_1, \dots, x_n$ are the rule's existential variables. Replacing a predicate atom $p(u_1, \dots, u_n)$ in a formula by the body of a rule for $p$, with $x_i$ replaced by $u_i$ and existential variables renamed apart, is one unfolding step; an unfolding is the result of finitely many steps.
 
-**Semantics.** Fix a countably infinite set of locations containing a special location for $\bot$. A structure $(s, h)$ is a store $s$, a partial map from variables and $\bot$ to locations defined on $\bot$, and a heap $h$, a finite partial map from locations to $\kappa$-tuples of locations, undefined at the location of $\bot$. Equational atoms hold in the empty heap when the store makes them true; $x \mapsto (y_1, \dots, y_\kappa)$ holds exactly in the one-cell heap mapping $s(x)$ to $(s(y_1), \dots, s(y_\kappa))$; $\phi_1 * \phi_2$ holds when the heap splits into two disjoint heaps satisfying $\phi_1$ and $\phi_2$; $\vee$ and $\exists$ are as usual; and $(s, h) \models_{\mathcal{R}} p(x_1, \dots, x_n)$ is the least relation such that some rule $p(x_1, \dots, x_n) \Leftarrow \pi$ of $\mathcal{R}$ and some store agreeing with $s$ on $x_1, \dots, x_n$ satisfy $\pi$ in $h$. Write $\phi \models_{\mathcal{R}} \psi$ when every structure satisfying $\phi$ satisfies $\psi$.
+**Semantics.** Fix a countably infinite set of locations containing a special location for $\bot$. A structure $(s, h)$ is a store $s$, a partial map from variables and $\bot$ to locations that is defined on $\bot$ and maps $x$ to the location of $\bot$ exactly when $x = \bot$, and a heap $h$, a finite partial map from locations to $\kappa$-tuples of locations, undefined at the location of $\bot$. Satisfaction of a formula $\phi$ by $(s, h)$ requires that $s$ is defined on every free variable of $\phi$. Equational atoms hold in the empty heap when the store makes them true; $x \mapsto (y_1, \dots, y_\kappa)$ holds exactly in the one-cell heap mapping $s(x)$ to $(s(y_1), \dots, s(y_\kappa))$; $\phi_1 * \phi_2$ holds when the heap splits into two disjoint heaps satisfying $\phi_1$ and $\phi_2$; $\vee$ and $\exists$ are as usual; and $(s, h) \models_{\mathcal{R}} p(x_1, \dots, x_n)$ is the least relation such that some rule $p(x_1, \dots, x_n) \Leftarrow \pi$ of $\mathcal{R}$ and some store agreeing with $s$ on $x_1, \dots, x_n$ satisfy $\pi$ in $h$. Write $\phi \models_{\mathcal{R}} \psi$ when every structure satisfying $\phi$ satisfies $\psi$.
 
 **Entailment problems.** An entailment problem is a triple $\phi \vdash_{\mathcal{R}} \psi$ with $\phi$ a quantifier-free formula, $\psi$ a formula and $\mathcal{R}$ an SID; it is valid if $\phi \models_{\mathcal{R}} \psi$.
 
@@ -24,6 +24,8 @@ where $p$ has arity $n$, the $x$'s are variables and each $y_i$ is a variable or
 
 $\mathcal{R}$ is progressing (connected, established) for a formula $\phi$ if every rule for every predicate on which a predicate of $\phi$ depends, itself included, is progressing (connected, established). The problem $\phi \vdash_{\mathcal{R}} \psi$ is left-progressing (left-connected, left-established) if $\mathcal{R}$ has that property for $\phi$, right-progressing (and so on) if it has it for $\psi$, and progressing (connected, established) if it is both left- and right-progressing (connected, established).
 
+A progressing rule allocates exactly the first parameter of its head and nothing else directly, so every unfolding step adds one heap cell. Connectivity makes the cells allocated by a predicate form a tree reachable from its first parameter. Establishment forces every existentially introduced variable to name an allocated cell. The progressing, connected and left-established entailment problems are decidable and complete for doubly exponential time (Theorem 5 of the report version cited below). The same report shows that dropping right-connectivity makes the problem undecidable.
+
 ## Depends on
 
 None.
@@ -31,10 +33,6 @@ None.
 ## Proof depends on
 
 None.
-
-## Expansion
-
-A progressing rule allocates exactly the first parameter of its head and nothing else directly, so every unfolding step adds one heap cell. Connectivity makes the cells allocated by a predicate form a tree reachable from its first parameter. Establishment forces every existentially introduced variable to name an allocated cell. The progressing, connected and left-established entailment problems are decidable and complete for doubly exponential time (Theorem 5 of the report version cited below). The same report shows that dropping right-connectivity makes the problem undecidable.
 
 ## Sources
 
