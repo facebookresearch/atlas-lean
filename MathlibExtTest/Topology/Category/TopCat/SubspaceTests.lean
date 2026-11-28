@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Topology.Category.TopCat.PreimageSubspacePullback
+import Mathlib.Topology.Instances.Real.Lemmas
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.FunProp
 
@@ -28,13 +29,21 @@ private def plusTwo : X ⟶ X := TopCat.ofHom ⟨fun x => x + 2, by fun_prop⟩
 
 private lemma one_maps : Set.MapsTo plusOne S S := by
   intro x hx
+  change (0 : ℝ) ≤ x at hx
+  change (0 : ℝ) ≤ x + 1
   exact add_nonneg hx (by norm_num)
 
 private lemma two_maps : Set.MapsTo plusTwo S S := by
   intro x hx
+  change (0 : ℝ) ≤ x at hx
+  change (0 : ℝ) ≤ x + 2
   exact add_nonneg hx (by norm_num)
 
-example : subspaceMap (𝟙 X) (fun _ hx => hx : Set.MapsTo (𝟙 X) S S) = 𝟙 (TopCat.of S) := by
+private lemma identity_maps : Set.MapsTo (𝟙 X) S S := by
+  intro x hx
+  simpa only [ConcreteCategory.id_apply] using hx
+
+example : subspaceMap (𝟙 X) identity_maps = 𝟙 (TopCat.of S) := by
   simp
 
 example : subspaceMap plusOne one_maps ≫ subspaceMap plusTwo two_maps =
@@ -57,14 +66,21 @@ private def realToPoint : X ⟶ Q := TopCat.ofHom ⟨fun _ => PUnit.unit, contin
 
 private lemma point_square_commutes : (𝟙 Q) ≫ (𝟙 Q) = pointToReal ≫ realToPoint := by
   apply TopCat.hom_ext
-  ext x
+  apply ContinuousMap.ext
+  intro x
   exact Subsingleton.elim _ _
+
+private lemma point_identity_maps :
+    Set.MapsTo (𝟙 Q) (Set.univ : Set Q) (Set.univ : Set Q) := by
+  intro x hx
+  simpa only [ConcreteCategory.id_apply] using hx
 
 example : IsPullback
     (subspaceMap (𝟙 Q)
-      (fun _ hx => hx : Set.MapsTo (𝟙 Q) (Set.univ : Set Q) (Set.univ : Set Q)))
+      point_identity_maps)
     (subspaceIncl (Set.univ : Set Q)) (subspaceIncl (Set.univ : Set Q)) (𝟙 Q) := by
-  simpa using isPullback_preimageSubspace_of_comm
+  simpa only [Set.preimage_univ, TopCat.subspaceMap_id] using
+    isPullback_preimageSubspace_of_comm
     (e₁ := 𝟙 Q) (p₁ := pointToReal) (p := 𝟙 Q) (b₁ := realToPoint)
     point_square_commutes (Set.univ : Set Q) (Set.univ : Set X) (by simp)
 

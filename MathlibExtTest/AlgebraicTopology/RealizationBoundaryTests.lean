@@ -34,7 +34,7 @@ private def zeroVertex : SSet.toTop.obj (Δ[0] : SSet.{0}) :=
 
 example : (SSet.realizedBoundaryZeroComplSubspaceIso.hom zeroVertex).val = zeroVertex := rfl
 
-example (x : (Set.range (SSet.toTop.map (SSet.boundary.{0} 0).ι).hom)ᶜ) :
+example (x : ↥((Set.range (SSet.toTop.map (SSet.boundary.{0} 0).ι).hom)ᶜ)) :
     SSet.realizedBoundaryZeroComplSubspaceIso.inv x = x.val := rfl
 
 end MathlibExtTest.RealizationBoundary
