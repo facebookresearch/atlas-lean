@@ -27,6 +27,10 @@
 - [The decoder fails exactly when no codeword is close](decode-eq-none-iff.md)
 - [Berlekamp-Welch corrects every error of weight at most $\lfloor (n-k)/2 \rfloor$](decode-encode-add.md)
 
+## Interpolation for list decoding
+
+- [Bivariate interpolation: closed-form degree choices](bivariate-interpolation-closed-form-degree-choic/README.md)
+
 ## Related topics
 
 - [List decoding](../list-decoding/README.md): beyond half the minimum distance, Reed–Solomon codes of rate $R$ are list decodable up to a $1 - \sqrt{R}$ fraction of errors (Johnson bound), and the Guruswami–Sudan algorithm is proved correct for any admissible parameters.

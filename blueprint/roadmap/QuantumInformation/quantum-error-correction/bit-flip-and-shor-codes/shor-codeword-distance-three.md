@@ -31,7 +31,7 @@ $|\bar 0\rangle$ and $|\bar 1\rangle$ to $-|\bar 1\rangle$ (Preskill, equation (
 ## Background
 
 - [Distance of a quantum code (lower bound)](../distance-of-a-quantum-code/has-distance-at-least.md): the projector form of the first statement.
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md): Shor's code is the stabilizer code of eight generators on nine qubits, of dimension $2^{9-8} = 2$.
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md): Shor's code is the stabilizer code of eight generators on nine qubits, of dimension $2^{9-8} = 2$.
 
 ## Sources
 

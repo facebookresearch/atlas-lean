@@ -7,3 +7,4 @@
 - [Pseudodeterministic Algorithms and Constructions](pseudodeterministic-algorithms/README.md)
 - [BPP is closed under complement](bpp-closed-under-complement.md)
 - [P is contained in BPP](p-subset-bpp.md)
+- [BPP error amplification](bpp-error-amplification/README.md)

@@ -1,0 +1,18 @@
+# String overlap and merge
+
+- [Matching overlap length](overlap-match.md)
+- [Bounded overlap search](overlap-aux.md)
+- [Largest overlap of two lists](overlap.md)
+- [Overlap of two lists is the greatest matching length](overlap-spec.md)
+- [Merge along the overlap](merge.md)
+- [Left-to-right overlap merge of a list of strings](merge-all.md)
+- [Every input string occurs in the left-to-right merge](mem-merge-all-contains.md)
+- [Merging along concatenated orderings](merge-all-append.md)
+- [Length of a merge fold, one step](length-foldl-merge-cons.md)
+- [Length of the left-to-right merge of a nonempty list](length-merge-all-cons.md)
+- [Merge step tracking the length](merge-len-step.md)
+- [The tracked length is the merged length](foldl-merge-len-step-snd.md)
+- [Length of the left-to-right merge as a tracked fold](length-merge-all-fold.md)
+- [Merging is not associative](merge-not-associative.md)
+- [Full overlap means a suffix](overlap-eq-right-length-iff-suffix.md)
+- [Substring-free pairs overlap below full length](overlap-lt-of-substring-free.md)

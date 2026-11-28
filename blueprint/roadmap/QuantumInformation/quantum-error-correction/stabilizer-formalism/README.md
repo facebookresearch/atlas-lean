@@ -31,7 +31,7 @@ definitions of the Pauli and Clifford groups are on the pages linked under relat
 
 ## Related topics
 
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md): the dimension $2^{n-r}$ of a stabilizer code with $r$ independent generators.
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md): the dimension $2^{n-r}$ of a stabilizer code with $r$ independent generators.
 - [Stabilizer codes: correctability criterion and distance](../stabilizer-codes-correctability-criterion-and-distance.md): correctability and distance in terms of the normalizer.
 - [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md): the Pauli group and its binary representation.
 - [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md): the Clifford group and the projective Clifford group

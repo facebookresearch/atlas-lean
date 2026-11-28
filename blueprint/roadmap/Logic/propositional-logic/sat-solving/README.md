@@ -1,5 +1,7 @@
 # SAT solving
 
+Algorithms that decide propositional satisfiability and the proof systems behind them: DPLL search with learning and its correspondence with tree-like resolution, the soundness of conflict-driven clause learning and the termination of CDCL without restarts or clause deletion within fixed finite variable and clause sets, clause learning as a proof system and its p-simulation of general resolution, and blocked clauses, RAT clauses, DRAT proofs and extended resolution.
+
 - [Failing DPLL search trees give tree-like resolution refutations](failing-dpll-search-trees-give-tree-like.md)
 - [DPLL search trees and tree-like resolution simulate each other](dpll-search-trees-and-tree-like-resolution.md)
 - [Abstract DPLL with learning](abstract-dpll-with-learning.md)
@@ -7,6 +9,8 @@
 - [DPLL with learning and restarts decides satisfiability](dpll-with-learning-and-restarts-decides-satisfiability.md)
 - [Final states of abstract DPLL with learning](final-states-of-abstract-dpll-with-learning.md)
 - [Termination of abstract DPLL with learning](termination-of-abstract-dpll-with-learning.md)
+- [Conflict-driven clause learning](conflict-driven-clause-learning/README.md)
+- [Termination of CDCL without restarts or clause deletion](termination-of-cdcl-without-restarts-or-clause-d/README.md)
 - [Unit resolution and SAT-solver states](unit-resolution-and-sat-solver-states.md)
 - [Conflict clauses and asserting clauses](conflict-clauses-and-asserting-clauses.md)
 - [Clause learning as a proof system](clause-learning-as-a-proof-system.md)

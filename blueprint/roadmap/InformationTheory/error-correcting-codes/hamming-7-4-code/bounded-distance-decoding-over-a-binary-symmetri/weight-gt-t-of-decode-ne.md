@@ -1,0 +1,3 @@
+# A block error has weight above the radius
+
+Let $n$ be the block length, $\mathrm{enc} : \mathbb{F}_2^k \to \mathbb{F}_2^n$ and $\mathrm{dec} : \mathbb{F}_2^n \to \mathbb{F}_2^n$ maps such that $\mathrm{dec}(\mathrm{enc}(x) + e) = \mathrm{enc}(x)$ for every message $x$ and every error word $e$ of Hamming weight at most $t$, as in the [bounded-distance error bound](bounded-distance-bsc-error-le-binom-tail.md). For a fixed message $m$, a block error is an error word $e$ with $\mathrm{dec}(\mathrm{enc}(m) + e) \ne \mathrm{enc}(m)$: the decoder returns an $n$-bit word, and the event compares words, not the recovered $k$-bit message (a constant-zero encoder and decoder satisfy the hypothesis for every $t$). Every block error has Hamming weight at least $t + 1$.

@@ -9,3 +9,4 @@
 - [NEXP is contained in EXPSPACE](nexp-subset-expspace.md)
 - [NL is contained in P](nl-subset-p.md)
 - [NP is contained in PSPACE](np-subset-pspace.md)
+- [Savitch's midpoint recursion for bounded reachability](savitch-s-midpoint-recursion-for-bounded-reachab/README.md)

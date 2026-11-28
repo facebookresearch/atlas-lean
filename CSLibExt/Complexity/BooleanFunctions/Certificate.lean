@@ -51,8 +51,8 @@ def depth : DecisionTree E → ℕ
 
 variable [DecidableEq E]
 
-/-- At most `T.depth` variables are queried on any input. A variable queried twice on the
-computation path counts once, so the bound can be strict. -/
+/-- For a decision tree `T` and an input `ω`, at most `depth T` variables are queried on `ω`. A
+variable queried twice on the computation path counts once, so the bound can be strict. -/
 theorem card_queried_le_depth (T : DecisionTree E) (ω : ConfigSpace E) :
     (T.queried ω).card ≤ T.depth := by
   induction T with
@@ -66,8 +66,8 @@ theorem card_queried_le_depth (T : DecisionTree E) (ω : ConfigSpace E) :
     · have := le_max_right t.depth f.depth
       omega
 
-/-- **The computation path is a certificate.** An input `ω'` that agrees with `ω` on the variables
-`T.queried ω` queried on input `ω` evaluates like `ω`. -/
+/-- **The computation path is a certificate.** If `ω'` agrees with `ω` on every variable the
+decision tree `T` queries on `ω`, then `T` outputs the same value on `ω'` as on `ω`. -/
 theorem eval_eq_of_agree_on_queried (T : DecisionTree E) (ω ω' : ConfigSpace E)
     (h : ∀ e ∈ T.queried ω, ω' e = ω e) : T.eval ω' = T.eval ω := by
   induction T with

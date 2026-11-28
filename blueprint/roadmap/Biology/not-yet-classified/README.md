@@ -45,7 +45,6 @@ Topics added since this subject's fields were last revised.
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [Toric Dynamical Systems](toric-dynamical-systems/README.md)
 - [Toric Steady States](toric-steady-states/README.md)
-- [String Overlap](string-overlap/README.md)
 - [Strongly Endotactic Permanence](strongly-endotactic-permanence/README.md)
 - [Case-control sampling shifts only the logistic intercept](case-control-logistic.md)
 - [Boros's existence theorem](exists-pos-steady-state-mem-class.md)

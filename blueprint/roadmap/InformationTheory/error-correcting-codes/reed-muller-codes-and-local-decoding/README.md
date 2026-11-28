@@ -8,3 +8,4 @@
 - [Local decoding of Reed-Muller codes from punctured lines](local-decoding-of-reed-muller-codes-along-lines.md)
 - [Local list decoding of Reed-Muller codes along lines with advice](local-list-decoding-of-reed-muller-codes.md)
 - [Self-correction of Reed-Muller codes by interpolation along lines](self-correction-of-reed-muller-codes.md)
+- [The binary Hadamard code](the-binary-hadamard-code/README.md)

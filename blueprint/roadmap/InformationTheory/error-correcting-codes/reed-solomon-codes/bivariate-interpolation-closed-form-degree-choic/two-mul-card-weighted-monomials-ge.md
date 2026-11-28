@@ -1,0 +1,3 @@
+# Lower bound from the row sums on the weighted monomial count
+
+For natural numbers $w \ge 1$ and $D$, the number $N$ of pairs $(i, j)$ with $0 \le i, j \le D$ and $i + wj \le D$ satisfies $D(D + 2) \le 2wN$. The weight must be a natural number; for a fractional weight the bound fails, e.g. at $D = 1$ and $w = 1/5$ the set has three elements, while $D(D + 2)/(2w) = 15/2$. This is the monomial count in V. Guruswami and M. Sudan, [*Improved Decoding of Reed–Solomon and Algebraic-Geometry Codes*](https://people.csail.mit.edu/madhu/papers/1998/venkat-journ.pdf), Lemma 6 and its proof, with $w$ their weight $k$ (the degree bound of the messages).

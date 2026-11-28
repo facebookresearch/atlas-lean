@@ -62,7 +62,7 @@ correctness of satisfiable answers are out of scope.
 - `not_cnfSat_of_reachable_nil_mem`, `not_cnfSat_of_reachable_conflict_nil`: a reachable state
   that has learned the empty clause, or whose conflict clause is empty, refutes the input.
 - `not_cnfSat_of_reachable_conflict`: a reachable state in conflict whose trail has no
-  decision refutes the input; CDCL reports unsatisfiability on such a conflict.
+  decision refutes the input, so it is sound to report unsatisfiability in such a state.
 
 ## References
 
@@ -76,8 +76,8 @@ correctness of satisfiable answers are out of scope.
 
 namespace Cslib.Logic.LegacyPL.CNF
 
-/-- Resolution derivations compose: if every clause of `ψ` is derivable from `φ`, then so is
-every clause derivable from `ψ`. -/
+/-- Transitivity: for CNF formulas `φ` and `ψ` with every clause of `ψ` resolution-derivable
+from `φ`, every clause resolution-derivable from `ψ` is resolution-derivable from `φ`. -/
 theorem ResolutionDerivable.trans {φ ψ : CNF} {C : CNFClause} (h : ψ.ResolutionDerivable C)
     (hψ : ∀ D ∈ ψ, φ.ResolutionDerivable D) : φ.ResolutionDerivable C := by
   induction h with
@@ -103,7 +103,8 @@ def TrailEntry.lit : TrailEntry → Nat × Bool
   | .decided literal => literal
   | .propagated literal _ => literal
 
-/-- The trail sets `literal` false: it sets the complementary literal true. -/
+/-- A trail falsifies a literal `(x, b)` when `(x, !b)` is the literal of some decided or
+propagated entry. -/
 abbrev Falsifies (trail : List TrailEntry) (literal : Nat × Bool) : Prop :=
   (literal.1, !literal.2) ∈ trail.map TrailEntry.lit
 
@@ -123,14 +124,15 @@ structure State where
 /-- The initial state: an empty trail, no learned clauses, and no conflict. -/
 def State.initial : State := ⟨[], [], none⟩
 
-/-- Resolve a reason clause containing `literal` with a conflict clause containing the
-complement of `literal`, on the variable of `literal`. -/
+/-- Resolve `reason` with `conflict` on the variable of `literal`: drop the pivot from the reason
+and its complement from the conflict, keeping order and multiplicity; the reason comes first for a
+positive pivot and the conflict first for a negative one. Total: no occurrence is required. -/
 def resolveOn : Nat × Bool → CNFClause → CNFClause → CNFClause
   | (x, true), reason, conflict => CNFClause.resolvent x reason conflict
   | (x, false), reason, conflict => CNFClause.resolvent x conflict reason
 
-/-- The literals of `resolveOn literal reason conflict` are those of `reason` other than
-`literal` and those of `conflict` other than the complement of `literal`. -/
+/-- For clauses `R`, `C` and a literal `ℓ = (x, p)`, `m` is in the resolution of `R` and `C` on
+`ℓ` iff `m ∈ R` and `m ≠ ℓ`, or `m ∈ C` and `m ≠ (x, !p)`; no occurrence is required. -/
 theorem mem_resolveOn {literal m : Nat × Bool} {reason conflict : CNFClause} :
     m ∈ resolveOn literal reason conflict ↔
       (m ∈ reason ∧ m ≠ literal) ∨ (m ∈ conflict ∧ m ≠ (literal.1, !literal.2)) := by
@@ -139,8 +141,8 @@ theorem mem_resolveOn {literal m : Nat × Bool} {reason conflict : CNFClause} :
     exact or_comm
   · simp only [resolveOn, CNFClause.mem_resolvent, Bool.not_true]
 
-/-- Resolving two derivable clauses on a literal of the first whose complement is in the
-second gives a derivable clause. -/
+/-- For clauses `R`, `C` resolution-derivable from `φ` and `ℓ ∈ R` with its complement in `C`,
+the resolution of `R` and `C` on `ℓ` is resolution-derivable from `φ`. -/
 theorem resolutionDerivable_resolveOn {φ : CNF} {literal : Nat × Bool}
     {reason conflict : CNFClause} (hreason : φ.ResolutionDerivable reason)
     (hconflict : φ.ResolutionDerivable conflict) (hlit : literal ∈ reason)
@@ -157,8 +159,8 @@ inductive Step (F : CNF) : State → State → Prop
   | decide {trail : List TrailEntry} {learned : CNF} {literal : Nat × Bool}
       (hvar : literal.1 ∈ F.vars) (hfree : ¬Assigns trail literal.1) :
       Step F ⟨trail, learned, none⟩ ⟨.decided literal :: trail, learned, none⟩
-  /-- Unit propagation: every literal of a current clause other than `literal` is false on the
-  trail, and the variable of `literal` is unassigned. -/
+  /-- Unit propagation: `literal ∈ clause` for a current clause, every literal of the clause other
+  than `literal` is false on the trail, and the variable of `literal` is unassigned. -/
   | propagate {trail : List TrailEntry} {learned : CNF} {clause : CNFClause}
       {literal : Nat × Bool} (hclause : clause ∈ F ++ learned) (hlit : literal ∈ clause)
       (hrest : ∀ m ∈ clause, m ≠ literal → Falsifies trail m)
@@ -168,8 +170,9 @@ inductive Step (F : CNF) : State → State → Prop
   | conflict {trail : List TrailEntry} {learned : CNF} {clause : CNFClause}
       (hclause : clause ∈ F ++ learned) (hfalse : ∀ m ∈ clause, Falsifies trail m) :
       Step F ⟨trail, learned, none⟩ ⟨trail, learned, some clause⟩
-  /-- Conflict analysis: resolve the conflict clause with the reason of the most recent
-  literal, whose complement it contains, and pop that literal. -/
+  /-- Conflict analysis: when the most recent entry is `literal` with reason `reason` and the
+  conflict clause contains its complement, replace the conflict by `resolveOn literal reason
+  conflict`, the resolution of the reason and the conflict on `literal`, and pop the entry. -/
   | resolve {trail : List TrailEntry} {learned : CNF} {literal : Nat × Bool}
       {reason conflict : CNFClause} (hcompl : (literal.1, !literal.2) ∈ conflict) :
       Step F ⟨.propagated literal reason :: trail, learned, some conflict⟩
@@ -180,11 +183,11 @@ inductive Step (F : CNF) : State → State → Prop
       {reason conflict : CNFClause} (hcompl : (literal.1, !literal.2) ∉ conflict) :
       Step F ⟨.propagated literal reason :: trail, learned, some conflict⟩
         ⟨trail, learned, some conflict⟩
-  /-- Backjump: learn the conflict clause, cut the trail back to a suffix `kept` on which every
-  literal of the clause other than `literal` is false and the variable of `literal` is
-  unassigned, and propagate `literal` with the learned clause as its reason. The conflict
-  clause comes from the input or learned clauses by `resolve` steps, so it is
-  resolution-derivable from the input (`Invariant.conflict`). -/
+  /-- Backjump: for `literal`, a literal of the conflict clause, learn the conflict clause, cut
+  the trail back to a suffix `kept` on which every literal of the clause other than `literal` is
+  false and the variable of `literal` is unassigned, and propagate `literal` with the learned
+  clause as its reason. The conflict clause comes from the input or learned clauses by `resolve`
+  steps, so it is resolution-derivable from the input (`Invariant.conflict`). -/
   | backjump {dropped kept : List TrailEntry} {learned : CNF} {conflict : CNFClause}
       {literal : Nat × Bool} (hlit : literal ∈ conflict)
       (hrest : ∀ m ∈ conflict, m ≠ literal → Falsifies kept m)
@@ -200,8 +203,8 @@ inductive Step (F : CNF) : State → State → Prop
   | restart {trail : List TrailEntry} {learned : CNF} :
       Step F ⟨trail, learned, none⟩ ⟨[], learned, none⟩
 
-/-- Every propagated entry of the trail is justified: its reason clause is resolution-derivable
-from `F` and contains the propagated literal, and every other literal of the reason is false on
+/-- For a CNF formula `F`, every propagation on a trail is justified: each propagated entry
+`(ℓ, R)` has `R` resolution-derivable from `F`, `ℓ ∈ R`, and every other literal of `R` false on
 the older part of the trail. -/
 inductive ReasonsValid (F : CNF) : List TrailEntry → Prop
   /-- The empty trail. -/
@@ -225,7 +228,8 @@ structure Invariant (F : CNF) (s : State) : Prop where
   /-- Every propagated literal on the trail is justified by its reason clause. -/
   reasons : ReasonsValid F s.trail
 
-/-- Justified propagations stay justified when newer trail entries are dropped. -/
+/-- For a CNF formula `F`, if every propagation on a trail is justified, so is every
+propagation on the trail left after dropping any number of its newest entries. -/
 theorem ReasonsValid.of_append {F : CNF} {dropped kept : List TrailEntry}
     (h : ReasonsValid F (dropped ++ kept)) : ReasonsValid F kept := by
   induction dropped with
@@ -235,8 +239,8 @@ theorem ReasonsValid.of_append {F : CNF} {dropped kept : List TrailEntry}
     | decided h => exact ih h
     | propagated _ _ _ h => exact ih h
 
-/-- A literal false on `entry :: trail` other than the complement of `entry` is false on
-`trail`. -/
+/-- Let `e` be a trail entry with literal `(y, c)` and `m ≠ (y, !c)`. If the trail `e` followed
+by `t` falsifies `m`, then `t` falsifies `m`. -/
 theorem Falsifies.of_cons {entry : TrailEntry} {trail : List TrailEntry} {m : Nat × Bool}
     (h : Falsifies (entry :: trail) m) (hne : m ≠ (entry.lit.1, !entry.lit.2)) :
     Falsifies trail m := by
@@ -257,8 +261,8 @@ theorem not_satisfies_of_falsifies {σ : Nat → Bool} {trail : List TrailEntry}
   rw [hsat] at hcompl
   simp at hcompl
 
-/-- An assignment satisfying `F` sets true every literal of a trail without decisions whose
-propagations are justified. -/
+/-- Let `σ` satisfy the CNF formula `F`. If a trail has no decided entry and its propagations
+are justified for `F`, then `σ` sets every entry's literal true. -/
 theorem ReasonsValid.satisfies {F : CNF} {σ : Nat → Bool} (hσ : F.Satisfies σ)
     {trail : List TrailEntry} (h : ReasonsValid F trail) :
     (∀ literal, TrailEntry.decided literal ∉ trail) →
@@ -278,13 +282,13 @@ theorem ReasonsValid.satisfies {F : CNF} {σ : Nat → Bool} (hσ : F.Satisfies 
       · exact absurd hsat (not_satisfies_of_falsifies htrail (hrest m hm hml))
     · exact htrail entry hentry
 
-/-- The invariant holds at the initial state. -/
+/-- For a CNF formula `F`, the initial state satisfies the soundness invariant `Invariant F`. -/
 theorem invariant_initial (F : CNF) : Invariant F State.initial where
   learned := by simp [State.initial]
   conflict := by simp [State.initial]
   reasons := .nil
 
-/-- Every CDCL step preserves the invariant. -/
+/-- For a CNF formula `F`, one transition `Step F` preserves the soundness invariant. -/
 theorem Invariant.step {F : CNF} {s t : State} (hs : Invariant F s) (h : Step F s t) :
     Invariant F t := by
   have hcur : ∀ C ∈ F ++ s.learned, F.ResolutionDerivable C := fun C hC ↦
@@ -331,20 +335,22 @@ theorem Invariant.step {F : CNF} {s t : State} (hs : Invariant F s) (h : Step F 
     · exact hs.learned C hC
   | restart => exact ⟨hs.learned, by simp, .nil⟩
 
-/-- The invariant holds along every run from a state that satisfies it. -/
+/-- For a CNF formula `F`, every state reachable by `Step F` from a state satisfying the
+soundness invariant satisfies it. -/
 theorem Invariant.reflTransGen {F : CNF} {s t : State} (hs : Invariant F s)
     (h : Relation.ReflTransGen (Step F) s t) : Invariant F t := by
   induction h with
   | refl => exact hs
   | tail _ hstep ih => exact ih.step hstep
 
-/-- Every state reachable from the initial state satisfies the invariant. -/
+/-- For a CNF formula `F`, every state reachable from the initial state by `Step F` satisfies
+the soundness invariant. -/
 theorem invariant_of_reachable {F : CNF} {s : State}
     (h : Relation.ReflTransGen (Step F) State.initial s) : Invariant F s :=
   (invariant_initial F).reflTransGen h
 
-/-- Every current clause of a reachable state, input or learned, is resolution-derivable from
-the input formula. -/
+/-- For a CNF formula `F`, every current clause, input or learned, of a state reachable from
+the initial state by `Step F` is resolution-derivable from `F`. -/
 theorem resolutionDerivable_of_reachable {F : CNF} {s : State}
     (h : Relation.ReflTransGen (Step F) State.initial s) {C : CNFClause}
     (hC : C ∈ F ++ s.learned) : F.ResolutionDerivable C :=
@@ -365,7 +371,7 @@ theorem not_cnfSat_of_reachable_conflict_nil {F : CNF} {s : State}
   CNF.not_cnfSat_of_resolutionDerivable_nil ((invariant_of_reachable h).conflict [] hs).1
 
 /-- **Soundness of CDCL**: a reachable state in conflict whose trail has no decision refutes
-the input formula. CDCL reports unsatisfiability on such a conflict. -/
+the input formula. It is therefore sound to report unsatisfiability in this state. -/
 theorem not_cnfSat_of_reachable_conflict {F : CNF} {s : State} {C : CNFClause}
     (h : Relation.ReflTransGen (Step F) State.initial s) (hs : s.conflict = some C)
     (hdec : ∀ literal, TrailEntry.decided literal ∉ s.trail) : ¬CNFSat F := by

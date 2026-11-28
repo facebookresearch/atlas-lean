@@ -15,7 +15,7 @@ $|+\rangle$ (stabilized by $X$) and the Bell state $(|00\rangle + |11\rangle)/\s
 
 ## Proof depends on
 
-- [Dimension of a stabilizer code](../../../QuantumInformation/quantum-error-correction/finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../../../QuantumInformation/quantum-error-correction/stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Sources
 

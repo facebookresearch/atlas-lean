@@ -2,8 +2,6 @@
 
 - [AEP](aep/README.md)
 - [AWGNConverse](awgnconverse/README.md)
-- [Bounded Distance BSC](bounded-distance-bsc/README.md)
-- [Codec Instances](codec-instances/README.md)
 - [Gaussian Channel Log Det](gaussian-channel-log-det/README.md)
 - [Gaussian Distortion Converse](gaussian-distortion-converse/README.md)
 - [Gaussian Distortion Feasibility](gaussian-distortion-feasibility/README.md)

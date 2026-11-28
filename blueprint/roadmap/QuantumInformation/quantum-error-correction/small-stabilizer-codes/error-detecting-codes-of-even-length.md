@@ -24,7 +24,7 @@ $X_1 X_2$, $Z_1 Z_2$ and $-Y_1 Y_2$, all of weight $2$.
 ## Proof depends on
 
 - [Stabilizer codes: correctability criterion and distance](../stabilizer-codes-correctability-criterion-and-distance.md)
-- [Dimension of a stabilizer code](../finrank-stabilizer-code.md)
+- [Dimension of a stabilizer code](../stabilizer-codes/finrank-stabilizer-code.md)
 
 ## Sources
 
