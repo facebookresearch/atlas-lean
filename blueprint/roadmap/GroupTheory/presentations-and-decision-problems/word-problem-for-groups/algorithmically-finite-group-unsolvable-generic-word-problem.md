@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-The source characterizes groups with solvable UB-generic word problem: $\Gamma$ has it with respect to $X$ exactly when there is an infinite computably enumerable sequence of words representing elements of strictly increasing length in $\Gamma$ (Theorem 4.1 of the source, a result without a page here). In an infinite algorithmically finite group no such sequence exists, since it would list infinitely many distinct elements. The source also proves that solvability of the equality problem on squares of UB-generic sets implies solvability of the whole word problem.
+The source characterizes groups with solvable UB-generic word problem: $\Gamma$ has it with respect to $X$ exactly when there is an infinite computably enumerable sequence of words representing elements of strictly increasing length in $\Gamma$ (Theorem 4.1 of the source; a good expansion links a page for it). In an infinite algorithmically finite group no such sequence exists, since it would list infinitely many distinct elements. The source also proves that solvability of the equality problem on squares of UB-generic sets implies solvability of the whole word problem.
 
 ## Sources
 

@@ -23,7 +23,7 @@ None.
 
 ## Expansion
 
-The proof applies the embedding theorem to a group of Miller: a finitely presented residually finite group $H$ with unsolvable conjugacy problem (Miller's theorem; a good expansion links a page for it). Being finitely presented and residually finite, $H$ is recursively presented and effectively residually finite with co-semi-decidable word problem, so the embedding theorem gives a finitely generated branch group $\Gamma$ that is recursively presented and effectively residually finite with co-semi-decidable word problem, hence has solvable word problem (Corollary 2.3), and in which $H$ is Frattini embedded, hence has unsolvable conjugacy problem. Both Miller's theorem and the embedding theorem are results without pages.
+The proof applies the embedding theorem to a group of Miller: a finitely presented residually finite group $H$ with unsolvable conjugacy problem (Miller's theorem). Being finitely presented and residually finite, $H$ is recursively presented and effectively residually finite with co-semi-decidable word problem, so the embedding theorem gives a finitely generated branch group $\Gamma$ that is recursively presented and effectively residually finite with co-semi-decidable word problem, hence has solvable word problem (Corollary 2.3), and in which $H$ is Frattini embedded, hence has unsolvable conjugacy problem. A good expansion links pages for Miller's theorem and for the embedding theorem (Theorem B).
 
 ## Sources
 

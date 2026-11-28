@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-Suppose a correct partial algorithm $\mathcal{A}$ halts on an exponentially generic set $D$. Run $\mathcal{A}$ on all products $w v$ with $v$ enumerated among the words trivial in $G$ (possible since $G$ is finitely presented); if this halts for every $w$, the word problem is solvable. Otherwise some $w$ has $w v \notin D$ for every trivial $v$, so $W_n \setminus D$ contains $w V_{n - |w|}$, where $V_k$ is the set of trivial words of length $k$. Amenability gives $(|V_k| / |W_k|)^{1/k} \to 1$ along even $k$ (Kesten, Grigorchuk), which contradicts the exponential decay of $|W_n \setminus D| / |W_n|$. A good expansion links a page for the Kesten–Grigorchuk cogrowth criterion for amenability. Finitely presented amenable groups with unsolvable word problem exist (Kharlampovich's solvable groups).
+Suppose a partial algorithm $\mathcal{A}$ halts with an answer ($w = 1$ or $w \ne 1$) on every word of an exponentially generic set $D$. Run $\mathcal{A}$ on all products $w v$ with $v$ enumerated among the words trivial in $G$ (possible since $G$ is finitely presented); if for every $w$ some $w v$ gets such an answer, the word problem is solvable. Otherwise some $w$ has $w v \notin D$ for every trivial $v$, so $W_n \setminus D$ contains $w V_{n - |w|}$, where $V_k$ is the set of trivial words of length $k$. Amenability gives $(|V_k| / |W_k|)^{1/k} \to 1$ along even $k$ (Kesten, Grigorchuk), which contradicts the exponential decay of $|W_n \setminus D| / |W_n|$. A good expansion links a page for the Kesten–Grigorchuk cogrowth criterion for amenability. Finitely presented amenable groups with unsolvable word problem exist (Kharlampovich's solvable groups).
 
 ## Sources
 
