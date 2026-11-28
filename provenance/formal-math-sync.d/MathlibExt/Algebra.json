@@ -1920,6 +1920,7 @@
       "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #264)",
       "upstream_sha256": "252e6171c9ae9b1dded9e099f6be90a780772e6811d0e7c5a280ba24e102c6b6"
     },
+    {"path": "MathlibExt/Algebra/Module/TensorPowerOuterAction.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "3f10b66bc602311a775d4777c355ed2685b58bb1bef28053ba25a68a8fe33650", "rationale": "Export the original outer left/right module actions on finite tensor powers, with the same ordered factors, ring/module hypotheses and independent worlds; preserve legal attribution and mathematical source documentation. Exact originating body hash is verified against immutable9a495da; backport and Native verification pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "8a390237b9e27be78c25b3f3b720afa44c704f80ce177c7b7e259ed6741439b4"},
     {
       "path": "MathlibExt/Algebra/Monoid/CofinalElementLocalization.lean",
       "disposition": "identical",
