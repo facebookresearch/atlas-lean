@@ -15,7 +15,7 @@ Together with the fact that polynomial-size constant-free IPS refutations of all
 
 ## Proof sketch
 
-Write the unsatisfiable CNF as $\kappa_1 \wedge \dots \wedge \kappa_m$ and translate $\kappa_i$ to the product $C_i(\vec{x})$ of factors $b(f, x) = fx + (1-f)(1-x)$, so $C_i(\vec{e}) = 1$ exactly when $\vec{e}$ falsifies $\kappa_i$. Start from the identity
+Write the unsatisfiable CNF as $\kappa_1 \wedge \dots \wedge \kappa_m$, discarding any repeated literals within a clause (and any tautological clause containing both a variable and its negation), and translate $\kappa_i$ to the product $C_i(\vec{x})$ over its distinct literals of factors $b(f, x) = fx + (1-f)(1-x)$, so $C_i(\vec{e}) = 1$ exactly when $\vec{e}$ falsifies $\kappa_i$ and $C_i$ is squarefree. Start from the identity
 
 $$
 1 = \sum_{\vec{e} \in \{0,1\}^n} \prod_{i=1}^{n} b(e_i, x_i)

@@ -7,7 +7,7 @@ A degree-$d$, size-$s$ Sherali-Adams derivation converts into a degree-$2d$ Sums
 1. If $p(x) \ge 0$ has a Sherali-Adams derivation of degree $d$ and size $s$ from a set $\mathcal{P}$ of polynomial inequalities, then it has a Sums-of-Squares derivation from $\mathcal{P}$ of degree $2d$ and size $\mathrm{poly}(s)$.
 2. (Berkholz.) Let $\mathcal{F} = \{f_1 = 0, \dots, f_m = 0\}$ be a system of polynomial equations with $f_i \in \mathbb{R}[x_1, \dots, x_n]$, with the Boolean axioms $x_j^2 - x_j = 0$ present in both systems. If $\mathcal{F}$ has a Polynomial Calculus refutation over $\mathbb{R}$ of degree $d$ and size $S$, then it has a Sums-of-Squares refutation in the equational form of degree $2d$ and size $\mathrm{poly}(S)$, that is, an identity $\sum_i g_i f_i + \sum_j h_j (x_j^2 - x_j) = -1 - s$ with $s$ a sum of squares and $g_i, h_j$ arbitrary polynomials, where $\deg s$, $\deg(g_i f_i)$ and $\deg(h_j (x_j^2 - x_j))$ are at most $2d$. Size is the total bit size of the polynomials written as sums of monomials, as in the source; the statement also holds with twin variables.
 
-Part 1 uses the inequality form of the linked definition, in which hypotheses and the Boolean axioms $\pm(x_j^2 - x_j) \ge 0$ carry sum-of-squares multipliers and the degree of a derivation is $\max(\deg q_0, \max_i \deg(p_i q_i))$. Part 2 uses Berkholz's equational form, in which the equations, including the Boolean axioms, carry arbitrary multipliers; at a fixed degree budget this is not the same as writing each equation as two inequalities with sum-of-squares multipliers, and the exact bound $2d$ refers to the equational form. Part 2 needs the real field: over $\mathbb{F}_2$, Polynomial Calculus refutes every unsatisfiable 3-XOR system in constant degree and polynomial size by Gaussian elimination, while random 3-XOR instances of constant density need Sums-of-Squares degree linear in $n$ ([Sum-of-Squares lower bounds for refuting random CSPs](../sum-of-squares-average-case-lower-bounds/random-csp-sum-of-squares-lower-bound.md)).
+Part 1 uses the inequality form of the linked definition, in which hypotheses and the Boolean axioms $\pm(x_j^2 - x_j) \ge 0$ carry sum-of-squares multipliers and the degree of a derivation is $\max(\deg q_0, \max_i \deg(p_i q_i))$. Part 2 uses Berkholz's equational form, in which the equations, including the Boolean axioms, carry arbitrary multipliers; at a fixed degree budget this is not the same as writing each equation as two inequalities with sum-of-squares multipliers, and the exact bound $2d$ refers to the equational form. *Remark (field restriction):* part 2 needs the real field, because over $\mathbb{F}_2$ Polynomial Calculus refutes every unsatisfiable 3-XOR system in constant degree and polynomial size by Gaussian elimination, whereas random 3-XOR instances of constant density need Sums-of-Squares degree linear in $n$ ([Sum-of-Squares lower bounds for refuting random CSPs](../sum-of-squares-average-case-lower-bounds/random-csp-sum-of-squares-lower-bound.md)).
 
 ## Proof sketch
 
@@ -21,7 +21,7 @@ For part 1 it suffices to treat one term $p_i(x) J_{S,T}(x)$ with a nonnegative 
 
 ## Proof depends on
 
-- [Sum-of-Squares lower bounds for refuting random CSPs](../sum-of-squares-average-case-lower-bounds/random-csp-sum-of-squares-lower-bound.md)
+None.
 
 ## Sources
 
