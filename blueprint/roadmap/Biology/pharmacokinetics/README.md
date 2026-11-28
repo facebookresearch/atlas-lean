@@ -11,3 +11,4 @@ models of concentration measurements. Enzyme kinetics as such is under Systems b
 - [Pharmacokinetic observation models](pharmacokinetic-observation-models/README.md)
 - [Saturable Michaelis–Menten elimination](saturable-michaelis-menten-elimination/README.md)
 - [Two-compartment pharmacokinetics](two-compartment-pharmacokinetics/README.md)
+- [Optimal combination therapy for positive bilinear systems](optimal-combination-therapy-for-positive-bilinear-systems/README.md)

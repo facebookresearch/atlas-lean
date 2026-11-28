@@ -25,3 +25,6 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Controllability of adaptive cancer therapy](controllability-of-adaptive-cancer-therapy/README.md)
 - [Immune extinction threshold models](immune-extinction-threshold-models/README.md)
 - [Minimum uncovering branching](minimum-uncovering-branching/README.md)
+- [CAR-T and temozolomide therapy of malignant gliomas](car-t-and-temozolomide-therapy-of-malignant-gliomas/README.md)
+- [Neutral mutations in exponentially growing tumours](neutral-mutations-in-exponentially-growing-tumours/README.md)
+- [Quasispecies model of tumorigenesis](quasispecies-model-of-tumorigenesis/README.md)

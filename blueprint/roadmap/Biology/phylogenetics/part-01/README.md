@@ -1,0 +1,18 @@
+# Models of sequence, trait and lineage evolution
+
+- [Anagenetic and cladogenetic trait change on Yule trees](anagenetic-and-cladogenetic-trait-change-on-yule-trees/README.md)
+- [Disentangling number of tree mixtures](disentangling-number-of-tree-mixtures/README.md)
+- [Hadamard conjugation for group-based models](hadamard-conjugation-for-group-based-models/README.md)
+- [Large-tree limit of phylogenetic mixtures](large-tree-limit-of-phylogenetic-mixtures/README.md)
+- [Lie group structure of two-state Markov matrices](lie-group-structure-of-two-state-markov-matrices/README.md)
+- [Liggett–Schinazi viral type model](liggett-schinazi-viral-type-model/README.md)
+- [Microergodicity of Ornstein–Uhlenbeck tree models](microergodicity-of-ornstein-uhlenbeck-tree-models/README.md)
+- [Mimicking by phylogenetic mixture models](mimicking-by-phylogenetic-mixture-models/README.md)
+- [Multi-type ERM and Yule trees](multi-type-erm-and-yule-trees/README.md)
+- [Ornstein–Uhlenbeck trait evolution on trees](ornstein-uhlenbeck-trait-evolution-on-trees/README.md)
+- [Phylogenetic invariants](phylogenetic-invariants/README.md)
+- [Protracted speciation](protracted-speciation/README.md)
+- [Rank-$n$ tensors and the three-leaf general Markov model](rank-n-tensors-and-the-three-leaf-general-markov-model/README.md)
+- [Sampled trees of epidemics with age-dependent removal](sampled-trees-of-epidemics-with-age-dependent-removal/README.md)
+- [Semialgebraic description of the general Markov model](semialgebraic-description-of-the-general-markov-model/README.md)
+- [Symmetry classification of Lie Markov models](symmetry-classification-of-lie-markov-models/README.md)
