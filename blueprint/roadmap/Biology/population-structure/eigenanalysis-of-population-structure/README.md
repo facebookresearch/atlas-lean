@@ -4,3 +4,5 @@
 - [Tracy–Widom limit of the trace-normalized largest Wishart eigenvalue](trace-normalized-wishart-tracy-widom-limit.md)
 - [Eigenstructure of the K-population genotype covariance matrix](eigenstructure-of-k-population-covariance-matrix.md)
 - [Eigenvalue effective size of structured populations](eigenvalue-effective-size-of-structured-populations/README.md)
+- [Effective Count](effective-count.md)
+- [Fitted Variance](fitted-variance.md)

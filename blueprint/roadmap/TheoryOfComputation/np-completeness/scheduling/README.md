@@ -2,6 +2,7 @@
 
 Single-machine, parallel-machine, flow-shop, precedence-constrained and resource-constrained scheduling with deadlines, tardiness or weighted completion objectives.
 
+- [A polynomial-time verifier for three-machine flow-shop scheduling](a-polynomial-time-verifier-for-three-machine-flo/README.md)
 - [Batch scheduling](batch-scheduling/README.md)
 - [Dedicated processors and two-processor unit job shops](dedicated-processors-and-two-processor-unit-job/README.md)
 - [Flow-shop scheduling](flow-shop-scheduling/README.md)
@@ -43,3 +44,4 @@ Single-machine, parallel-machine, flow-shop, precedence-constrained and resource
 - [Multipurpose-machine flow shop](multipurpose-machine-flow-shop/README.md)
 - [Multipurpose-machine open shop](multipurpose-machine-open-shop/README.md)
 - [Multipurpose-machine parallel scheduling](multipurpose-machine-parallel-scheduling/README.md)
+- [NP-hardness of three-machine flow-shop scheduling](flow-shop-hard.md)
