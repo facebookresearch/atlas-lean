@@ -26,3 +26,5 @@ rate below the mutual information.
 - [Generalized amplitude-damping Kraus channel and finite codes](generalized-amplitude-damping-model.md)
 - [Polar Codes: Polarization Speed and Scaling Exponents](polarization-speed-and-scaling-exponents/README.md)
 - [Nearest-codeword decoding](nearest-codeword-decoding/README.md)
+- [Computability of channel capacity](computability-of-channel-capacity/README.md)
+- [Network coding solvability](network-coding-solvability/README.md)

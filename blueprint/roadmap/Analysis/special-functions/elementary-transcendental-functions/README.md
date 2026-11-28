@@ -9,6 +9,7 @@ Exponential, logarithmic and trigonometric-type functions and their relatives: e
 - [Logarithmic integral](logarithmic-integral/README.md)
 - [Mittag-Leffler expansion of 1/(e^u − 1)](mittag-leffler-expansion-of-1-e-u-1/README.md)
 - [Modified Bessel functions of the first kind](modified-bessel-functions-of-the-first-kind/README.md)
+- [Real powers](real-powers/README.md)
 - [Sine integral](sine-integral/README.md)
 - [Taylor bounds for the complex exponential](taylor-bounds-for-the-complex-exponential/README.md)
 - [Exponential sums have full column rank](eq-zero-of-sum-mul-exp-eq-zero.md)
