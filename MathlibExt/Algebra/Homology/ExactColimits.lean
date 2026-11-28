@@ -66,23 +66,30 @@ abbrev homologyColimitIso (K : J ⥤ HomologicalComplex C c) (i : ι) :
     (colimit K).homology i ≅ colimit (K ⋙ homologyFunctor C c i) :=
   preservesColimitIso (homologyFunctor C c i) K
 
-/-- Homology of a diagram injection followed by the comparison is its homology-diagram injection. -/
-abbrev map_ι_comp_homologyColimitIso_hom
+/-- Let C be abelian with exact J-shaped colimits, and K a J-indexed diagram of
+complexes of any shape. In degree i, homology of the injection from K(j), followed
+by the homology-colimit comparison, is the injection from H_i(K(j)) into its colimit. -/
+@[reassoc (attr := simp)]
+theorem map_ι_comp_homologyColimitIso_hom
     (K : J ⥤ HomologicalComplex C c) (i : ι) (j : J) :
     (homologyFunctor C c i).map (colimit.ι K j) ≫ (homologyColimitIso K i).hom =
       colimit.ι (K ⋙ homologyFunctor C c i) j :=
   ι_preservesColimitIso_hom (G := homologyFunctor C c i) (F := K) j
 
-/-- A homology-diagram injection followed by the inverse comparison is homology of the injection. -/
-abbrev ι_comp_homologyColimitIso_inv
+/-- Let C be abelian with exact J-shaped colimits, and K a J-indexed diagram of
+complexes of any shape. In degree i, the injection of H_i(K(j)) into the colimit,
+followed by the inverse homology-colimit comparison, is homology of the injection K(j). -/
+@[reassoc (attr := simp)]
+theorem ι_comp_homologyColimitIso_inv
     (K : J ⥤ HomologicalComplex C c) (i : ι) (j : J) :
     colimit.ι (K ⋙ homologyFunctor C c i) j ≫ (homologyColimitIso K i).inv =
       (homologyFunctor C c i).map (colimit.ι K j) :=
   ι_preservesColimitIso_inv (G := homologyFunctor C c i) (F := K) j
 
-/-- The inverse comparison colim Hᵢ(K) → Hᵢ(colim K) is induced by applying homology
-to the colimit injections of K. -/
-abbrev homologyColimitIso_inv_eq_colimit_post
+/-- Let C be abelian with exact J-shaped colimits, and K a J-indexed diagram of
+complexes of any shape. The inverse comparison colim H_i(K) → H_i(colim K)
+is the colimit map induced by applying degree-i homology to every diagram injection. -/
+theorem homologyColimitIso_inv_eq_colimit_post
     (K : J ⥤ HomologicalComplex C c) (i : ι) :
     (homologyColimitIso K i).inv = colimit.post K (homologyFunctor C c i) := rfl
 

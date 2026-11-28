@@ -166,7 +166,9 @@ theorem truncGETransition_f_comp_truncGEXIsoOpcycles_hom (lo hi : ℤ) (h : lo <
   simpa only [Category.assoc, Iso.hom_inv_id_assoc, Iso.inv_hom_id, Category.comp_id] using
     congrArg (fun f => (K.truncGEXIso lo hi h).hom ≫ f ≫ (K.truncGEXIsoOpcycles hi).hom) hf
 
-/-- The transition between equal good-truncation cutoffs is the identity map. -/
+/-- In an abelian category C, let K be an integer cochain complex and n an integer.
+The transition between the two good truncations of K at the same cutoff n
+is the identity of K.truncGE n. -/
 @[simp]
 theorem truncGETransition_self (n : ℤ) :
     K.truncGETransition n n le_rfl = 𝟙 (K.truncGE n) := by
