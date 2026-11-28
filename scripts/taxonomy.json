@@ -11497,6 +11497,7 @@
   "MathlibExt/Combinatorics/Enumerative/HypersequenceElementarySymmetric": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
   "MathlibExt/Combinatorics/Enumerative/HypersequenceLucasClosedForm": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
   "MathlibExt/Combinatorics/Enumerative/HypersequenceMatrixB": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
+  "MathlibExt/Combinatorics/Enumerative/HypersequenceMatrixProduct": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
   "MathlibExt/Combinatorics/Enumerative/HypersequenceRecurrence": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
   "MathlibExt/Combinatorics/Enumerative/HypersequenceWeightedSums": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Hypersequences"},
   "MathlibExt/Combinatorics/Enumerative/IdentityProductNecklace": {"to": "Combinatorics/elementary-enumeration", "title": "Necklaces over a group with identity product"},
