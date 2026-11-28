@@ -313,7 +313,8 @@ private theorem Proc.exists_eq_liftAt_add {c : ℕ} (p : Proc Atom) :
     obtain ⟨x₀, rfl⟩ := exists_eq_liftName_add h
     exact ⟨.emptyChoice x₀, rfl⟩
 
-/-- The continuation of a `⊥` action on the cut channel does not use that channel. -/
+/-- In a well-typed cut premise, the continuation of an empty input on the cut channel is a lift
+at zero, so it does not use that channel. -/
 private theorem HasType.exists_liftAt_of_emptyInput_var_zero {C : Context Atom}
     {a : Logic.CLL.Proposition Atom} {r : Proc Atom}
     (h : HasType (C.lift.insert (.var 0) a) (.emptyInput (.var 0) r)) :
