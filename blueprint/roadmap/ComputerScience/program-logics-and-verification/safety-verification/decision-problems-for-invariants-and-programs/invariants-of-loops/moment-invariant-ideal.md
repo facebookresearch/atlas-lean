@@ -22,7 +22,7 @@ Its elements are the *polynomial moment invariants* of the loop. It is an ideal 
 
 ## Depends on
 
-- [Ideal over $k$ of a subset of affine space](../../../../AlgebraicGeometry/varieties-and-projective-geometry/fields-of-definition-of-algebraic-sets/ideal-over-k.md)
+- [Ideal over $k$ of a subset of affine space](../../../../../AlgebraicGeometry/varieties-and-projective-geometry/fields-of-definition-of-algebraic-sets/ideal-over-k.md)
 
 ## Proof depends on
 

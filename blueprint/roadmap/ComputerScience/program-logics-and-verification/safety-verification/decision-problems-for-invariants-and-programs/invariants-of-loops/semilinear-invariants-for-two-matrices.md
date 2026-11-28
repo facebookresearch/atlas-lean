@@ -9,7 +9,7 @@ The authors remark that their proof gives undecidability already for the fixed d
 ## Depends on
 
 - [Semilinear invariant problem](semilinear-invariant-problem.md)
-- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

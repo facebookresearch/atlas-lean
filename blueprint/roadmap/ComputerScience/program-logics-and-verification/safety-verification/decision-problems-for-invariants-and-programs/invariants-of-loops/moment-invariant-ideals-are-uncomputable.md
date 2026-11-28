@@ -10,9 +10,9 @@ For guarded probabilistic loops with affine updates, no algorithm computes a bas
 
 ## Proof depends on
 
-- [The Post correspondence problem is undecidable over the binary alphabet](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/not-tm2-decidable-pcp-bool.md)
-- [An injective word homomorphism preserves and reflects PCP solvability](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/pcp-map-iff.md)
-- [Ideal membership by remainder zero](../../../../RingTheory/ideals-and-constructions/gr-bner-bases/mem-iff-remainder-eq-zero.md)
+- [The Post correspondence problem is undecidable over the binary alphabet](../../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/not-tm2-decidable-pcp-bool.md)
+- [An injective word homomorphism preserves and reflects PCP solvability](../../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/pcp-map-iff.md)
+- [Ideal membership by remainder zero](../../../../../RingTheory/ideals-and-constructions/gr-bner-bases/mem-iff-remainder-eq-zero.md)
 
 ## Expansion
 

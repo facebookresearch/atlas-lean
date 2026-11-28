@@ -7,11 +7,11 @@ The verification problem stays undecidable for uninterpreted programs all of who
 ## Depends on
 
 - [Uninterpreted programs and their verification problem](uninterpreted-programs-and-their-verification.md)
-- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [Two-counter machines are universal](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Two-counter machines are universal](../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 
 ## Proof sketch
 

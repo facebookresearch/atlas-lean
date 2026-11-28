@@ -12,12 +12,12 @@ In part 1 the axiom set is fixed and even a single coherent execution cannot be 
 ## Depends on
 
 - [Verification of uninterpreted programs modulo axioms](verification-modulo-axioms.md)
-- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [The uniform word problem for Thue systems is undecidable](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-thue-wp.md)
-- [The Post correspondence problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [The uniform word problem for Thue systems is undecidable](../../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-thue-wp.md)
+- [The Post correspondence problem is undecidable](../../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
 
 ## Expansion
 

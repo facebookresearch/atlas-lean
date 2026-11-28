@@ -9,11 +9,11 @@ The number of matrices ($9$) and the dimension ($3$) are fixed; only the entries
 ## Depends on
 
 - [Semilinear invariant problem](semilinear-invariant-problem.md)
-- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [König's lemma for finitely branching graphs](../../../concurrent-systems-and-protocols/petri-nets/decision-procedures/konig-s-lemma-for-finitely-branching-graphs.md)
+- [König's lemma for finitely branching graphs](../../../../concurrent-systems-and-protocols/petri-nets/decision-procedures/konig-s-lemma-for-finitely-branching-graphs.md)
 
 ## Expansion
 
