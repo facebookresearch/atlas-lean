@@ -11,6 +11,7 @@ module
 public import Mathlib.Data.Finsupp.Multiset
 public import Mathlib.Data.Finsupp.Order
 public import Mathlib.Data.Nat.Fib.Zeckendorf
+import Mathlib.Order.WellFounded
 
 /-!
 # The Accelerated Zeckendorf Game
@@ -28,6 +29,12 @@ index `k` of the largest term of the Zeckendorf decomposition of `n` is
 Losing states are defined inductively (a state is losing when every move leads to a state
 with a move to a losing state). The repository's `SpragueGrundy.ImpartialGame` is not used
 because building one requires a proved termination rank, which is part of Theorem 1.3.
+
+## References
+
+* Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and Ajmain Yamin,
+  *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1, pp. 3–14,
+  Definition 1.2 and Theorem 1.3.
 -/
 
 namespace MetaMathlibExt
@@ -59,6 +66,21 @@ public def AccelZeckMove (s t : ℕ →₀ ℕ) : Prop :=
       (∃ i, 3 ≤ i ∧ 2 * m ≤ s i ∧
         t = s - Finsupp.single i (2 * m) + Finsupp.single (i - 2) m +
           Finsupp.single (i + 1) m))
+
+/-- An accelerated move is one of the four legal batches: combine adjacent indices, combine
+ones, split twos, or split two copies per unit at an index at least three. -/
+public theorem accelZeckMove_iff {s t : ℕ →₀ ℕ} :
+    AccelZeckMove s t ↔
+      ∃ m, 0 < m ∧
+        ((∃ i, 2 ≤ i ∧ m ≤ s (i - 1) ∧ m ≤ s i ∧
+            t = s - Finsupp.single (i - 1) m - Finsupp.single i m + Finsupp.single (i + 1) m) ∨
+          (2 * m ≤ s 1 ∧ t = s - Finsupp.single 1 (2 * m) + Finsupp.single 2 m) ∨
+          (2 * m ≤ s 2 ∧ t = s - Finsupp.single 2 (2 * m) + Finsupp.single 1 m +
+            Finsupp.single 3 m) ∨
+          (∃ i, 3 ≤ i ∧ 2 * m ≤ s i ∧
+            t = s - Finsupp.single i (2 * m) + Finsupp.single (i - 2) m +
+              Finsupp.single (i + 1) m)) :=
+  Iff.rfl
 
 /-- **Moving a Fibonacci number of pairs in the Accelerated Zeckendorf Game.** Index the
 Fibonacci numbers as $F_1 = 1$, $F_2 = 2$, $F_{j+1} = F_j + F_{j-1}$, extended by $F_0 = 1$ and
@@ -120,6 +142,14 @@ Article milleretal04072023, Definition 1.2. -/
 public def IsAccelZeckGame (n L : ℕ) (g : ℕ → ℕ →₀ ℕ) : Prop :=
   g 0 = Finsupp.single 1 n ∧ (∀ j < L, AccelZeckMove (g j) (g (j + 1))) ∧
     ∀ t, ¬ AccelZeckMove (g L) t
+
+/-- A complete accelerated game starts with `n` ones, has a legal move at each step strictly
+before `L`, and admits no move at step `L`. -/
+public theorem isAccelZeckGame_iff {n L : ℕ} {g : ℕ → ℕ →₀ ℕ} :
+    IsAccelZeckGame n L g ↔
+      g 0 = Finsupp.single 1 n ∧ (∀ j < L, AccelZeckMove (g j) (g (j + 1))) ∧
+        ∀ t, ¬ AccelZeckMove (g L) t :=
+  Iff.rfl
 
 /-- **The complete game on $0$.** The sequence whose states are all the empty state is a
 complete Accelerated Zeckendorf Game on $0$ with $0$ moves.
@@ -209,6 +239,12 @@ Article milleretal04072023, Section 1.1 and Theorem 1.3. -/
 public def zeckendorfState (n : ℕ) : ℕ →₀ ℕ :=
   Multiset.toFinsupp (((Nat.zeckendorf n).map (· - 1) : List ℕ) : Multiset ℕ)
 
+/-- The count at paper index `i` in the Zeckendorf state of `n` is the number of occurrences
+of `i` in the list obtained by shifting Mathlib's indices down by one. -/
+public theorem zeckendorfState_apply (n i : ℕ) :
+    zeckendorfState n i = ((Nat.zeckendorf n).map (· - 1)).count i := by
+  rw [zeckendorfState, Multiset.toFinsupp_apply, Multiset.coe_count]
+
 /-- **The Zeckendorf state of zero is empty.** The Zeckendorf state of $0$ is the empty game
 state, with no copies of any Fibonacci number.
 
@@ -290,6 +326,14 @@ private theorem accelZeckRank_lt {s t : ℕ →₀ ℕ} (h : AccelZeckMove s t) 
     rw [Nat.mul_add, ← Nat.mul_assoc, Nat.mul_comm m 2] at hlt
     simp only [map_add, accelZeckRank_single]
     omega
+
+/-- No infinite sequence of accelerated moves exists, regardless of its initial state. -/
+public theorem AccelZeckMove.not_infinite_play (g : ℕ → ℕ →₀ ℕ) :
+    ¬ ∀ j, AccelZeckMove (g j) (g (j + 1)) := by
+  intro hmove
+  obtain ⟨j, hj⟩ := WellFounded.not_rel_apply_succ (r := (· < ·))
+    (fun j => accelZeckRank (g j))
+  exact hj (accelZeckRank_lt (hmove j))
 
 private theorem accelZeckLosing_iff_not_winning (s : ℕ →₀ ℕ) :
     AccelZeckLosing s ↔ ¬ AccelZeckWinning s := by
@@ -481,6 +525,51 @@ public theorem accelZeck_odd_unique_losing_move (k n : ℕ) (hk : Odd k) (hn : 2
   obtain ⟨t, hmove, ht⟩ := (accelZeckWinning_iff s).mp hs
   obtain ⟨hbound, rfl⟩ := hforced hmove ht
   exact ⟨hbound, hmove, ht, fun _ hmove' ht' => (hforced hmove' ht').2⟩
+
+private theorem accelZeckMove_from_ones {n : ℕ} {t : ℕ →₀ ℕ}
+    (h : AccelZeckMove (Finsupp.single 1 n) t) :
+    ∃ m, 0 < m ∧ 2 * m ≤ n ∧ t = Finsupp.single 1 (n - 2 * m) + Finsupp.single 2 m := by
+  rcases h with ⟨m, hm, ⟨i, hi, -, hs, -⟩ | ⟨hs, rfl⟩ | ⟨hs, -⟩ | ⟨i, hi, hs, -⟩⟩
+  · simp [Finsupp.single_eq_of_ne (show i ≠ 1 by omega)] at hs
+    omega
+  · exact ⟨m, hm, by simpa using hs, by rw [Finsupp.single_tsub]⟩
+  · simp at hs
+    omega
+  · simp [Finsupp.single_eq_of_ne (show i ≠ 1 by omega)] at hs
+    omega
+
+-- Combining the additional pairs of ones reaches the larger opening position.
+private theorem accelZeckMove_between_openings {n a b : ℕ} (hab : a < b) (hb : 2 * b ≤ n) :
+    AccelZeckMove (Finsupp.single 1 (n - 2 * a) + Finsupp.single 2 a)
+      (Finsupp.single 1 (n - 2 * b) + Finsupp.single 2 b) := by
+  refine ⟨b - a, by omega, Or.inr (Or.inl ⟨?_, ?_⟩)⟩
+  · simp
+    omega
+  · ext i
+    simp only [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply]
+    split_ifs <;> omega
+
+/-- **Unique winning first move.** For every $n$, if the state consisting of $n$ copies of $F_1$
+is winning, then exactly one state reachable from it in one move is losing: when the first
+player has a winning strategy in the game on $n$, exactly one first move preserves it.
+
+Source: Diego Garcia-Fernandezsesma, Steven J. Miller, Thomas Rascon, Risa Vandegrift, and
+Ajmain Yamin, *The Accelerated Zeckendorf Game*, The Fibonacci Quarterly 62 (2024), no. 1,
+Article milleretal04072023, Proposition 1.5. -/
+public theorem accelZeck_unique_winning_first_move (n : ℕ)
+    (h : AccelZeckWinning (Finsupp.single 1 n)) :
+    ∃! t, AccelZeckMove (Finsupp.single 1 n) t ∧ AccelZeckLosing t := by
+  obtain ⟨t, ht, htl⟩ := (accelZeckWinning_iff _).mp h
+  refine ⟨t, ⟨ht, htl⟩, ?_⟩
+  rintro u ⟨hu, hul⟩
+  obtain ⟨a, _, ha, rfl⟩ := accelZeckMove_from_ones ht
+  obtain ⟨b, _, hb, rfl⟩ := accelZeckMove_from_ones hu
+  rcases lt_trichotomy a b with hab | rfl | hba
+  · exact ((accelZeckLosing_iff_not_winning _).mp htl
+      (.intro _ _ (accelZeckMove_between_openings hab hb) hul)).elim
+  · rfl
+  · exact ((accelZeckLosing_iff_not_winning _).mp hul
+      (.intro _ _ (accelZeckMove_between_openings hba ha) htl)).elim
 
 end
 

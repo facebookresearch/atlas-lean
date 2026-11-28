@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.PrimeCounting.CalzadoSieveEulerProduct
+public import MathlibExt.NumberTheory.PrimeCounting.CalzadoTotientsFifthToHalf
 public import MathlibExt.NumberTheory.PrimeCounting.CalzadoTotientsNearSqrt
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -21,8 +22,7 @@ public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 # Calzado, a Bombieri–Vinogradov result and the parity problem — wishlist
 
 Statement-only records for the sieve lemmas of Calzado's INTEGERS 26 (2026)
-paper that are stated over explicit objects: the Mertens-type sums over primes
-in `x^{1/5} < p ≤ x^{1/2}` (Lemma 1), and the sifting bounds for the shifted primes
+paper that are stated over explicit objects: the sifting bounds for the shifted primes
 `{p + a : p ≤ x}` with `a` even and nonzero (Lemmas 4 and 6).
 
 For the shifted primes, `S(A, P, z)` is the number of primes `n ≤ x` such that
@@ -36,23 +36,6 @@ open Filter Topology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Reciprocal totients of the primes between $x^{1/5}$ and $x^{1/2}$.** As the real number $x$
-tends to infinity, the sum of $1/\varphi(p)$ over the primes $p$ with $x^{1/5} < p \le x^{1/2}$
-tends to $\log(5/2)$, where $\varphi$ is Euler's totient function.
-
-The paper prints the limit as $0.916\ldots$; the exact value $\log(5/2) = 0.91629\ldots$ is
-forced by Mertens' theorem.
-
-Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
-Problem*, INTEGERS 26 (2026), Article A117, Lemma 1
-(`integers-2026-A117-lem-1`). -/
-public theorem_wanted calzado_sum_inv_totient_fifth_to_half_tendsto :
-    Tendsto (fun x : ℝ =>
-      ∑ p ∈ (Finset.range (⌊x⌋₊ + 1)).filter (fun p : ℕ => p.Prime ∧
-          x ^ ((1 : ℝ) / 5) < (p : ℝ) ∧ (p : ℝ) ≤ x ^ ((1 : ℝ) / 2)),
-        1 / (Nat.totient p : ℝ))
-      atTop (𝓝 (Real.log (5 / 2)))
 
 open Classical in
 /-- **Upper bound for sifted shifted primes divisible by a large prime.** Let $a$ be a nonzero

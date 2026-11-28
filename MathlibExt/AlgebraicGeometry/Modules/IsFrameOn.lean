@@ -1,13 +1,15 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 /-
-Portions of this file are adapted from:
+Adapted from:
 
 `Theorems/Thm_AlgebraicGeometry_Scheme_Modules_IsInvertible_bijective_lift_
 tensorSectionsBilin_monoidalV2.lean`,
@@ -22,16 +24,11 @@ tensorSectionsBilin_monoidalV2.lean`,
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The upstream NOTICE also credits:
-Mathlib — https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -45,7 +42,8 @@ A section `s` of a sheaf of modules `M` over an open `U` is a frame on an open `
 (`Scheme.Modules.IsFrameOn`) when multiplication by its restrictions identifies the sections of
 the structure sheaf with those of `M` over every open `W ≤ U ⊓ V`. A frame gives a unique
 coordinate to every section over such `W`; frames restrict to smaller opens and along restriction
-maps.
+maps. For a section `τ` over `W`, `Scheme.Modules.smulSectionHom W τ` is the morphism from the
+structure sheaf of `W` to the restriction of `M` to `W` that multiplies by the restrictions of `τ`.
 -/
 
 @[expose] public section
@@ -113,5 +111,37 @@ lemma smul_eq_zero_iff (h : IsFrameOn s V) {W : X.Opens} (hWU : W ≤ U) (hWV : 
 end IsFrameOn
 
 end Frame
+
+section SMulSectionHom
+
+variable {M : X.Modules} (W : X.Opens) (τ : Γ(M, W))
+
+/-- **Multiplication by a section.** For a section `τ` of `M` over an open `W`, the morphism from
+the structure sheaf of `W` to the restriction of `M` to `W` that multiplies by the restrictions of
+`τ`. It is the morphism that `SheafOfModules.unitHomEquiv` assigns to the global section of the
+restriction formed by these restrictions. A section over a larger open is restricted to `W`
+first. -/
+noncomputable def smulSectionHom :
+    Quiver.Hom (V := (W : Scheme.{u}).Modules)
+      (SheafOfModules.unit (W : Scheme.{u}).ringCatSheaf) (M.restrict W.ι) :=
+  (SheafOfModules.unitHomEquiv (M.restrict W.ι)).symm
+    (PresheafOfModules.sectionsMk
+      (fun W' => (M.restrictAppIso W.ι W'.unop).inv
+        (M.presheaf.map (homOfLE (W.ι_image_le W'.unop)).op τ))
+      (fun W₁ W₂ i => by
+        change (M.restrict W.ι).presheaf.map i ((M.restrictAppIso W.ι W₁.unop).inv _) = _
+        rw [restrictAppIso_inv_map_apply]
+        congr 1
+        rw [← ConcreteCategory.comp_apply, ← Functor.map_comp]
+        rfl))
+
+theorem smulSectionHom_app_apply (W' : (W : Scheme.{u}).Opens) (a : Γ(W, W')) :
+    (smulSectionHom W τ).app W' a =
+      (M.restrictAppIso W.ι W').inv ((W.ι.appIso W').inv a •
+        M.presheaf.map (homOfLE (W.ι_image_le W')).op τ) := by
+  rw [smul_restrictAppIso_inv_apply, Iso.inv_hom_id_apply]
+  rfl
+
+end SMulSectionHom
 
 end AlgebraicGeometry.Scheme.Modules

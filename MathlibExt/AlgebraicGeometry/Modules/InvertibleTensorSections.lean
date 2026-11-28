@@ -1,13 +1,15 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Anthropic, PBC. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The upstream NOTICE also credits:
+Mathlib — https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in the headers of the
+Mathlib source files.
+Released under the Apache License, Version 2.0.
 -/
 
 /-
-Portions of this file are adapted from:
+Adapted from:
 
 `Theorems/Thm_AlgebraicGeometry_Scheme_Modules_IsInvertible_bijective_lift_
 tensorSectionsBilin_monoidalV2.lean`,
@@ -22,16 +24,11 @@ tensorSectionsBilin_monoidalV2.lean`,
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
-Copyright (c) 2026 Anthropic, PBC. All rights reserved.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-The upstream NOTICE also credits:
-Mathlib — https://github.com/leanprover-community/mathlib4
-Copyright (c) the respective Mathlib authors, as recorded in the headers of the
-Mathlib source files.
-Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+Adaptations copyright (c) Meta Platforms, Inc. and affiliates, under the
+license in the root LICENSE file.
 -/
 
 module
@@ -62,7 +59,7 @@ set_option backward.isDefEq.respectTransparency false
 universe u
 
 open CategoryTheory MonoidalCategory Opposite TensorProduct TopologicalSpace
-open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries (IsLineBundle)
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries (IsLineBundle structureModule)
 
 noncomputable section
 
@@ -263,38 +260,9 @@ private lemma image_preimage_of_le {W W₂ : X.Opens} (h : W₂ ≤ W) :
 
 end restrict
 
--- The structure sheaf of `W`, as an object of `W.Modules`.
-private abbrev unitW (W : X.Opens) : (W : Scheme.{u}).Modules :=
-  SheafOfModules.unit (W : Scheme.{u}).ringCatSheaf
-
 section smulHom
 
-variable (N : X.Modules) (W : X.Opens) (τ : Γ(N, W))
-
--- The restrictions of `τ` to the opens of `W`, as a global section of `N.restrict W.ι`.
-private def restrictSection : (N.restrict W.ι).sections :=
-  PresheafOfModules.sectionsMk
-    (fun W' => (N.restrictAppIso W.ι W'.unop).inv
-      (N.presheaf.map (homOfLE (W.ι_image_le W'.unop)).op τ))
-    (fun W₁ W₂ i => by
-      change (N.restrict W.ι).presheaf.map i ((N.restrictAppIso W.ι W₁.unop).inv _) = _
-      rw [restrictAppIso_inv_map_apply]
-      congr 1
-      rw [← ConcreteCategory.comp_apply, ← Functor.map_comp]
-      rfl)
-
--- Multiplication by the restrictions of `τ`, as a morphism out of the structure sheaf of `W`.
-private def smulHom : unitW W ⟶ N.restrict W.ι :=
-  (SheafOfModules.unitHomEquiv (N.restrict W.ι)).symm (restrictSection N W τ)
-
-private lemma smulHom_app_apply (W' : (W : Scheme.{u}).Opens) (a : Γ(W, W')) :
-    (smulHom N W τ).app W' a =
-      (N.restrictAppIso W.ι W').inv ((W.ι.appIso W').inv a •
-        N.presheaf.map (homOfLE (W.ι_image_le W')).op τ) := by
-  rw [smul_restrictAppIso_inv_apply, Iso.inv_hom_id_apply]
-  rfl
-
-variable {N W τ}
+variable {N : X.Modules} {W : X.Opens} {τ : Γ(N, W)}
 
 private lemma bijective_smul_map_iff_of_eq {A B : X.Opens} (q : A = B) (τ : Γ(N, B)) :
     (Function.Bijective fun a : Γ(X, A) => a • N.presheaf.map (homOfLE q.le).op τ) ↔
@@ -305,14 +273,14 @@ private lemma bijective_smul_map_iff_of_eq {A B : X.Opens} (q : A = B) (τ : Γ(
     rfl
   simp only [e]
 
-private lemma bijective_smul_of_isIso (h : IsIso (smulHom N W τ)) :
+private lemma bijective_smul_of_isIso (h : IsIso (smulSectionHom W τ)) :
     Function.Bijective fun g : Γ(X, W) => g • τ := by
-  have e : ⇑(ConcreteCategory.hom ((smulHom N W τ).app ⊤)) =
+  have e : ⇑(ConcreteCategory.hom ((smulSectionHom W τ).app ⊤)) =
       (N.restrictAppIso W.ι ⊤).inv ∘
         (fun g : Γ(X, W.ι ''ᵁ ⊤) => g • N.presheaf.map (homOfLE (W.ι_image_le ⊤)).op τ) ∘
         (W.ι.appIso ⊤).inv :=
-    funext (smulHom_app_apply N W τ ⊤)
-  have hb := ConcreteCategory.bijective_of_isIso ((smulHom N W τ).app ⊤)
+    funext (smulSectionHom_app_apply W τ ⊤)
+  have hb := ConcreteCategory.bijective_of_isIso ((smulSectionHom W τ).app ⊤)
   rw [e, Function.Bijective.of_comp_iff' (ConcreteCategory.bijective_of_isIso _),
     Function.Bijective.of_comp_iff _ (ConcreteCategory.bijective_of_isIso _)] at hb
   exact (bijective_smul_map_iff_of_eq (Scheme.Opens.ι_image_top W) τ).1 hb
@@ -355,9 +323,9 @@ private lemma map_τW (W' : X.Opens) (h : W' ≤ W) :
     rw [← M.presheaf.map_comp]
     rfl
 
-private theorem isIso_smulHom (hs : IsFrameOn s V) (ht : IsFrameOn t V) (hWV : W ≤ V) :
-    IsIso (smulHom (L ⊗ M) W (τW (s := s) (t := t) W hWU)) := by
-  set ψ := smulHom (L ⊗ M) W (τW (s := s) (t := t) W hWU)
+private theorem isIso_smulSectionHom (hs : IsFrameOn s V) (ht : IsFrameOn t V) (hWV : W ≤ V) :
+    IsIso (smulSectionHom W (τW (s := s) (t := t) W hWU)) := by
+  set ψ := smulSectionHom W (τW (s := s) (t := t) W hWU)
   let J := Opens.grothendieckTopology ((W : X.Opens) : Scheme.{u})
   have pre_le : ∀ (W' : (W : Scheme.{u}).Opens) (W₂ : X.Opens), W₂ ≤ W.ι ''ᵁ W' → W.ι ⁻¹ᵁ W₂ ≤ W'
     := by
@@ -384,7 +352,7 @@ private theorem isIso_smulHom (hs : IsFrameOn s V) (ht : IsFrameOn t V) (hWV : W
     rw [Scheme.Modules.map_smul] at key'
     change ψ.app (W.ι ⁻¹ᵁ W₂) ((W.ι.appIso _).hom (X.presheaf.map (homOfLE e₃).op g)) =
       (L ⊗ M).presheaf.map (W.ι.opensFunctor.map (homOfLE (pre_le W' W₂ i₂.le))).op y
-    rw [smulHom_app_apply, Iso.hom_inv_id_apply]
+    rw [smulSectionHom_app_apply, Iso.hom_inv_id_apply]
     change X.presheaf.map (homOfLE e₃).op g •
         (L ⊗ M).presheaf.map (homOfLE (W.ι_image_le (W.ι ⁻¹ᵁ W₂))).op
           (τW (s := s) (t := t) W hWU) = _
@@ -400,7 +368,7 @@ private theorem isIso_smulHom (hs : IsFrameOn s V) (ht : IsFrameOn t V) (hWV : W
     intro W' a b hab
     refine fun x hx => ?_
     have hab₀ : ψ.app W'.unop a = ψ.app W'.unop b := hab
-    rw [smulHom_app_apply, smulHom_app_apply] at hab₀
+    rw [smulSectionHom_app_apply, smulSectionHom_app_apply] at hab₀
     have hab' := (ConcreteCategory.bijective_of_isIso
       ((L ⊗ M).restrictAppIso W.ι W'.unop).inv).1 hab₀
     simp only [Scheme.Opens.ι_appIso, Iso.refl_inv] at hab'
@@ -437,7 +405,7 @@ private theorem isFrameOn_tensorSections {L M : X.Modules} {U V : X.Opens} {s : 
   U)}
     (hs : IsFrameOn s V) (ht : IsFrameOn t V) : IsFrameOn (Modules.tensorSections s t) V := by
   intro W hWU hWV
-  have h := bijective_smul_of_isIso (isIso_smulHom W hWU hs ht hWV)
+  have h := bijective_smul_of_isIso (isIso_smulSectionHom W hWU hs ht hWV)
   simp only [Modules.map_homOfLE_tensorSections]
   exact h
 
@@ -484,7 +452,8 @@ private lemma gen_bijective (W : (U : Scheme.{u}).Opens) :
 
 private lemma gen_map {W₁ W₂ : (U : Scheme.{u}).Opens} (i : W₁ ⟶ W₂) :
     L.presheaf.map (homOfLE (U.ι.image_mono i.le)).op (gen e W₂) = gen e W₁ := by
-  have h1 : (unitW U).presheaf.map i.op (1 : Γ(U, W₂)) = (1 : Γ(U, W₁)) :=
+  have h1 : (structureModule (U : Scheme.{u})).presheaf.map i.op (1 : Γ(U, W₂)) =
+      (1 : Γ(U, W₁)) :=
     ((U : Scheme.{u}).presheaf.map i.op).hom.map_one
   have hnat : e.inv.app W₁ (1 : Γ(U, W₁)) =
       (L.restrict U.ι).presheaf.map i.op (e.inv.app W₂ (1 : Γ(U, W₂))) := by
@@ -500,7 +469,8 @@ structure sheaf of `U`, then `M` has a section over `U` that is a frame on `U`. 
 theorem exists_isFrameOn_of_pullback_iso_unit {X : Scheme.{u}} {M : X.Modules} (U : X.Opens)
     (eU : (Modules.pullback U.ι).obj M ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf) :
     ∃ s : Γ(M, U), IsFrameOn s U := by
-  let e : M.restrict U.ι ≅ unitW U := (restrictFunctorIsoPullback U.ι).app M ≪≫ eU
+  let e : M.restrict U.ι ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf :=
+    (restrictFunctorIsoPullback U.ι).app M ≪≫ eU
   refine ⟨M.presheaf.map (homOfLE (Scheme.Opens.ι_image_top U).ge).op (gen e ⊤), ?_⟩
   intro W hWU _
   have q : U.ι ''ᵁ (U.ι ⁻¹ᵁ W) = W := image_preimage_of_le hWU

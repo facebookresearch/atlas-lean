@@ -20,24 +20,11 @@ public import MathlibExt.NumberTheory.HelouTerjanianLargePrime
 public import MathlibExt.NumberTheory.HelouTerjanianTwo
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import MathlibExt.NumberTheory.RealizableCombinatorialSequencesNotIsAlmostRealizableSeqCatalanMotzkinSchroder
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Almost realizable sequences.** A sequence $a$ of natural numbers $a(0), a(1), \dots$ is
-almost realizable when there is an integer $m \ge 1$ such that the integer sequence
-$(m\, a(n))_{n \ge 0}$ is Dold realizable: for every $n \ge 1$, the sum
-$\sum_{d \mid n} \mu(d)\, m\, a(n/d)$ over the positive divisors $d$ of $n$, where $\mu$ is the
-Möbius function, is non-negative and divisible by $n$.
-
-This is Miska and Ward's notion that some positive integer multiple of $a$ is realizable. The
-value $a(0)$ is not used.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Definition 3. -/
-def IsAlmostRealizableSeq (a : ℕ → ℕ) : Prop :=
-  ∃ m : ℕ, 0 < m ∧ doldRealizable fun n => ((m * a n : ℕ) : ℤ)
 
 /-- **The zero sequence is almost realizable.** The constant sequence $a(n) = 0$ is almost
 realizable.
@@ -72,17 +59,6 @@ Sequences 27 (2024), Article 24.3.3, Theorem 15 (`jis-2024-24.3.3-thm-15`). -/
 public theorem_wanted doldRealizable_dombTypeSum (r s t : ℕ) (hr : 1 ≤ r) :
     doldRealizable fun n => ((dombTypeSum n r s t : ℕ) : ℤ)
 
-/-- **The Catalan, Motzkin and large Schröder numbers are not almost realizable.** None of the
-following three sequences of non-negative integers is almost realizable: the Catalan numbers
-$C_n = \frac{1}{n+1}\binom{2n}{n}$, the Motzkin numbers $M(n)$, and the large Schröder numbers
-$S(n)$ (OEIS A006318), given by $S(0) = 1$ and $S(n+1) = S(n) + \sum_{i=0}^{n} S(i) S(n-i)$.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Theorem 21 (`jis-2024-24.3.3-thm-21`). -/
-public theorem_wanted not_isAlmostRealizableSeq_catalan_motzkin_schroder :
-    ¬ IsAlmostRealizableSeq catalan ∧ ¬ IsAlmostRealizableSeq motzkinNumber ∧
-      ¬ IsAlmostRealizableSeq Nat.largeSchroder
-
 /-- **Helou–Terjanian congruence for $p = 3$.** Let $m$ and $n$ be integers with $0 < m < n$.
 Then $\binom{3n}{3m} \equiv \binom{n}{m} \pmod{3^e}$, where
 $e = 2 + \max(\nu_3(m), \nu_3(n - m)) + \nu_3\big(\binom{n}{m}\big)$ and $\nu_3$ is the $3$-adic
@@ -94,23 +70,6 @@ public theorem_wanted choose_three_mul_modEq (n m : ℕ) (hm : 0 < m) (hmn : m <
     (3 * n).choose (3 * m) ≡ n.choose m
       [MOD 3 ^ (2 + max (padicValNat 3 m) (padicValNat 3 (n - m)) +
         padicValNat 3 (n.choose m))]
-
-/-- **Binomial coefficients at multiples of a prime divisor.** Let $p$ be a prime and let
-$n \ge 1$ be an integer divisible by $p$. Then for every integer $\lambda \ge 0$ with
-$\lambda p \ne n$,
-
-$$\binom{n}{\lambda p} \equiv \binom{n/p}{\lambda} \pmod{p^e},$$
-
-where $e = \max(\nu_p(n), \nu_p(n - \lambda p))$ and $\nu_p$ is the $p$-adic valuation; the
-integer $n - \lambda p$ may be negative, and $\nu_p(n - \lambda p)$ is the valuation of its
-absolute value.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Lemma 27 (`jis-2024-24.3.3-lem-27`). -/
-public theorem_wanted choose_mul_prime_modEq_choose_div (n p l : ℕ) (hp : p.Prime) (hpn : p ∣ n)
-    (hn : 0 < n) (hl : l * p ≠ n) :
-    (n.choose (l * p) : ℤ) ≡ ((n / p).choose l : ℤ)
-      [ZMOD (p : ℤ) ^ max (padicValNat p n) (padicValInt p ((n : ℤ) - l * p))]
 
 /-- **Even-binomial-type sums are Dold realizable.** Let $r \ge 1$, $s$, $t$ and $u$ be natural
 numbers with $t + u \ge 1$, and let

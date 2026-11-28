@@ -9,3 +9,4 @@ is $1$, $3$, $9$, $24$, $56$ and $132$ respectively.
 ## Sources
 
 - OEIS A245762; `ex(Q₆, C₄) = 132` is H. Harborth and H. Nienborg, *Maximum number of edges in squarefree subgraphs of the n-cube*, Bull. Inst. Combin. Appl. 12 (1994), 55–60; listed in leansolving/SqueezeBench `SqueezeBench/Problems/HypercubeC4/README.md`.
+- Minamo Minamoto, [six-cube witness data](https://github.com/minamominamoto/c4free-hypercube/blob/918025df85b509c4311675e0d1ba65f26f23d98d/q6_odd_square_132.json), described in [arXiv:2603.29127v5](https://arxiv.org/html/2603.29127v5). Restricting this witness to coordinate faces gives the lower bounds in dimensions one through five.

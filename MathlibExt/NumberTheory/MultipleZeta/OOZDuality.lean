@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.LinearAlgebra.Finsupp.Supported
 public import Mathlib.RingTheory.PowerSeries.Inverse
@@ -15,15 +16,26 @@ import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.RingTheory.Ideal.Quotient.Basic
 
 /-!
-# Duality for Ohno–Okuda–Zudilin q-multiple zeta values
+# Duality for Schlesinger–Zudilin and Ohno–Okuda–Zudilin q-multiple zeta values
 
-OOZ evaluation is invariant under the duality transported from Schlesinger–Zudilin words
-by the binomial change of basis.
+For Schlesinger–Zudilin values, reversing a word and exchanging its letters amounts to
+reversing the block list and exchanging the two entries of each block. OOZ evaluation is
+invariant under the duality transported from Schlesinger–Zudilin words by the binomial
+change of basis.
 
 To check the coefficient of degree `N`, we work modulo `X ^ (N + 1)`. In an SZ word,
 a letter `p` multiplies by a geometric series and a letter `y` sums over smaller indices.
 These operations are adjoint for the symmetric pairing with kernel `X ^ (m * n)`.
 Moving the letters across the pairing reverses the word and exchanges `p` and `y`.
+
+## References
+
+* Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024), Article A6,
+  pp. 1–41, Theorem 5 (word and block formulations of SZ duality).
+* Jianqiang Zhao, *Uniform Approach to Double Shuffle and Duality Relations of Various
+  q-Analogs of Multiple Zeta Values via Rota–Baxter Algebras*, in *Periods in Quantum
+  Field Theory and Arithmetic*, Springer Proceedings in Mathematics & Statistics 314
+  (2020), pp. 259–292, Theorem 8.3 (SZ duality).
 -/
 
 open PowerSeries
@@ -149,6 +161,16 @@ public theorem coeff_zero_oozQMZV_cons (k : ℕ) (ks : List ℕ) :
     coeff 0 (oozQMZV (k :: ks)) = 0 := by
   have h : Finset.Ioo 0 1 = ∅ := by decide
   simp [oozQMZV, h]
+
+/-- **Block indices for Schlesinger–Zudilin qMZVs.** For a list of pairs of natural numbers
+$(k_1, d_1), \dots, (k_r, d_r)$, the block index is the index
+$(k_1, \{0\}^{d_1 - 1}, \dots, k_r, \{0\}^{d_r - 1})$ obtained by concatenating, for
+$j = 1, \dots, r$, the entry $k_j$ followed by $d_j - 1$ zeros (no zeros when $d_j = 0$).
+
+Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
+Article A6, Theorem 4 and Theorem 5 (SZ duality), index notation. -/
+public def szBlockIndex (kd : List (ℕ × ℕ)) : List ℕ :=
+  (kd.map fun p => p.1 :: List.replicate (p.2 - 1) 0).flatten
 
 /-- **Word of an index.** The word of an index $(k_1, \dots, k_r)$ of natural numbers is the word
 $p^{k_1} y \cdots p^{k_r} y$ in the letters $p$ and $y$.
@@ -500,6 +522,59 @@ end sum_oozQMZV_eq_of_oozToSZ_eq_szDual
 
 open sum_oozQMZV_eq_of_oozToSZ_eq_szDual
 
+private lemma szWord_replicate_zero_append (n : ℕ) (ks : List ℕ) :
+    szWord (List.replicate n 0 ++ ks) = List.replicate n false ++ szWord ks := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp [List.replicate_succ, word_cons, ih]
+
+private lemma szWord_szBlockIndex (kd : List (ℕ × ℕ)) (hd : ∀ p ∈ kd, 1 ≤ p.2) :
+    szWord (szBlockIndex kd) =
+      kd.flatMap (fun p => List.replicate p.1 true ++ List.replicate p.2 false) := by
+  induction kd with
+  | nil => rfl
+  | cons p kd ih =>
+    obtain ⟨k, d⟩ := p
+    have h := hd (k, d) List.mem_cons_self
+    have ht : ∀ p ∈ kd, 1 ≤ p.2 := fun p hp => hd p (List.mem_cons_of_mem _ hp)
+    change szWord (k :: (List.replicate (d - 1) 0 ++ szBlockIndex kd)) = _
+    rw [word_cons, szWord_replicate_zero_append, ih ht, ← List.cons_append,
+      ← List.replicate_succ, Nat.sub_add_cancel h, ← List.append_assoc, List.flatMap_cons]
+
+private lemma szWord_szBlockIndex_dual (kd : List (ℕ × ℕ))
+    (hkd : ∀ p ∈ kd, 1 ≤ p.1 ∧ 1 ≤ p.2) :
+    (szWord (szBlockIndex kd)).reverse.map not =
+      szWord (szBlockIndex (kd.reverse.map Prod.swap)) := by
+  have hd : ∀ p ∈ kd.reverse.map Prod.swap, 1 ≤ p.2 := by
+    intro p hp
+    obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hp
+    exact (hkd q (List.mem_reverse.mp hq)).1
+  rw [szWord_szBlockIndex kd (fun p hp => (hkd p hp).2), szWord_szBlockIndex _ hd]
+  simp [-List.map_reverse, List.reverse_flatMap, List.map_flatMap, List.flatMap_map,
+    Function.comp_def]
+
+/-- **Schlesinger–Zudilin duality.** Let $\zeta_q^{SZ}$ denote the Schlesinger–Zudilin qMZV, let
+$(k_1, d_1), \dots, (k_r, d_r)$ be pairs of natural numbers with $k_j \ge 1$ and $d_j \ge 1$
+for all $j$, and let $\{0\}^n$ denote $n$ zeros. Then
+$$\zeta_q^{SZ}(k_1, \{0\}^{d_1 - 1}, \dots, k_r, \{0\}^{d_r - 1}) =
+\zeta_q^{SZ}(d_r, \{0\}^{k_r - 1}, \dots, d_1, \{0\}^{k_1 - 1}).$$
+That is, $\zeta_q^{SZ}$ takes the same value at the block index of the list of pairs and at
+the block index of the reversed list with each pair swapped.
+
+Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
+Article A6, Theorem 5 (SZ duality, Zhao) (`integers-2024-A6-thm-5`). -/
+public theorem szQMZV_szBlockIndex_dual (kd : List (ℕ × ℕ))
+    (hkd : ∀ p ∈ kd, 1 ≤ p.1 ∧ 1 ≤ p.2) :
+    szQMZV (szBlockIndex kd) = szQMZV (szBlockIndex (kd.reverse.map Prod.swap)) := by
+  have hhead : ∀ a ∈ (szBlockIndex kd).head?, 1 ≤ a := by
+    cases kd with
+    | nil => simp [szBlockIndex]
+    | cons p kd =>
+      have hp := (hkd p List.mem_cons_self).1
+      simpa [szBlockIndex] using hp
+  simpa only [szDualIndex, szWord_szBlockIndex_dual kd hkd, decode_word] using
+    (dual_value (szBlockIndex kd) hhead).symm
+
 /-- **Duality for OOZ-qMZVs.** Call an index $(k_1, \dots, k_r)$ of natural numbers SZ-admissible
 if it is empty or $k_1 \ge 1$. Extend $\zeta_q^{\mathrm{OOZ}}$ and the map $V$ linearly to formal
 $\mathbb{Q}$-linear combinations of indices, and let $\tilde\tau$ act on such a combination by
@@ -531,5 +606,164 @@ public theorem sum_oozQMZV_eq_of_oozToSZ_eq_szDual (w : List ℕ)
     _ = _ := by
       rw [hVx]
       exact (eval_dual_image w).trans (conversion w hw₁)
+
+section Partitions
+
+open Finset
+
+-- At positive depth there are not enough possible sizes if the depth exceeds the bound.
+private lemma partial_replicate_one_eq_zero {r M : ℕ} (h : M < r) :
+    szQMZVPartial (List.replicate r 1) (M + 1) = 0 := by
+  induction r generalizing M with
+  | zero => omega
+  | succ r ih =>
+    rw [List.replicate_succ, szQMZVPartial_cons]
+    apply sum_eq_zero
+    intro m hm
+    obtain ⟨hm₀, hmM⟩ := mem_Ioo.mp hm
+    obtain ⟨a, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm₀.ne'
+    rw [ih (by omega), mul_zero]
+
+-- A new largest size `M + 1` can be skipped, or used with positive multiplicity.
+private lemma partial_replicate_one_succ_bound (r M : ℕ) :
+    szQMZVPartial (List.replicate (r + 1) 1) (M + 2) =
+      szQMZVPartial (List.replicate (r + 1) 1) (M + 1) +
+        geom (M + 1) * szQMZVPartial (List.replicate r 1) (M + 1) := by
+  have hI : Ioo 0 (M + 2) = insert (M + 1) (Ioo 0 (M + 1)) := by
+    ext m
+    simp only [mem_Ioo, mem_insert]
+    omega
+  simp only [List.replicate_succ, szQMZVPartial_cons, hI, pow_one]
+  rw [sum_insert (by simp), add_comm]
+
+private lemma sum_partial_replicate_one (M : ℕ) :
+    (∑ r ∈ range (M + 1), szQMZVPartial (List.replicate r 1) (M + 1)) =
+      ∏ m ∈ Icc 1 M, (1 + geom m) := by
+  induction M with
+  | zero => simp [szQMZVPartial]
+  | succ M ih =>
+    have hI : Icc 1 (M + 1) = insert (M + 1) (Icc 1 M) := by
+      ext m
+      simp only [mem_Icc, mem_insert]
+      omega
+    rw [hI, prod_insert (by simp), add_mul, one_mul, ← ih]
+    rw [sum_range_succ' (fun r => szQMZVPartial (List.replicate r 1) (M + 2)) (M + 1)]
+    simp_rw [partial_replicate_one_succ_bound, sum_add_distrib, ← mul_sum]
+    have hnil : szQMZVPartial (List.replicate 0 1) (M + 2) =
+        szQMZVPartial (List.replicate 0 1) (M + 1) := rfl
+    rw [add_right_comm, hnil,
+      ← sum_range_succ' (fun r => szQMZVPartial (List.replicate r 1) (M + 1)) (M + 1),
+      sum_range_succ (fun r => szQMZVPartial (List.replicate r 1) (M + 1)) (M + 1),
+      partial_replicate_one_eq_zero (Nat.lt_succ_self M), add_zero]
+
+-- The coefficient is one precisely when a nonnegative multiplicity of size `m` gives degree `d`.
+private lemma coeff_one_add_geom {m : ℕ} (hm : 0 < m) (d : ℕ) :
+    coeff d (1 + geom m) = if m ∣ d then 1 else 0 := by
+  let g : ℚ⟦X⟧ := PowerSeries.mk fun n => if m ∣ n then 1 else 0
+  have hg : (1 - X ^ m) * g = 1 := by
+    ext n
+    rw [sub_mul, one_mul, map_sub, coeff_X_pow_mul', coeff_one]
+    by_cases hn : m ≤ n
+    · have hd : m ∣ n - m ↔ m ∣ n := by
+        constructor
+        · intro h
+          simpa [Nat.sub_add_cancel hn] using Nat.dvd_add h (dvd_refl m)
+        · exact fun h => Nat.dvd_sub h (dvd_refl m)
+      simp [hn, hd, g, show n ≠ 0 by omega]
+    · obtain rfl | hn₀ := Nat.eq_zero_or_pos n
+      · simp [g, hm.ne']
+      · have hd : ¬ m ∣ n := fun h => hn (Nat.le_of_dvd hn₀ h)
+        simp [hn, hd, g, hn₀.ne']
+  have hgeom : (1 - X ^ m) * (1 + geom m) = 1 := by
+    unfold geom
+    linear_combination (X ^ m : ℚ⟦X⟧) * unit_factor hm
+  have hunit : IsUnit (1 - X ^ m : ℚ⟦X⟧) := IsUnit.of_mul_eq_one _ (unit_factor hm)
+  rw [hunit.mul_left_cancel (hgeom.trans hg.symm)]
+  exact coeff_mk _ _
+
+-- Divide the degree allocated to each size by that size to recover its multiplicity.
+private lemma exists_partition_of_weights {N : ℕ} {w : ℕ →₀ ℕ}
+    (hw : w ∈ (Icc 1 N).finsuppAntidiag N) (hd : ∀ i ∈ Icc 1 N, i ∣ w i) :
+    ∃ p : N.Partition, p.toFinsuppAntidiag = w := by
+  obtain ⟨hsum, hsupport⟩ := mem_finsuppAntidiag.mp hw
+  let c : ℕ →₀ ℕ := Finsupp.onFinset (Icc 1 N) (fun i => w i / i) (by
+    intro i hi
+    apply hsupport
+    exact Finsupp.mem_support_iff.mpr (fun h => hi (by simp [h])))
+  have hc (i : ℕ) : c i * i = w i := by
+    change w i / i * i = w i
+    by_cases hi : i ∈ Icc 1 N
+    · exact Nat.div_mul_cancel (hd i hi)
+    · rw [Finsupp.notMem_support_iff.mp (fun h => hi (hsupport h)), Nat.zero_div, zero_mul]
+  have hc_support : c.support ⊆ Icc 1 N := Finsupp.support_onFinset_subset
+  have hsum_c : c.toMultiset.sum = N := by
+    rw [Finsupp.sum_toMultiset, Finsupp.sum, ← hsum]
+    refine (sum_subset hc_support (fun i _ hi => ?_)).trans ?_
+    · rw [Finsupp.notMem_support_iff.mp hi, zero_smul]
+    · exact sum_congr rfl (fun i _ => by simpa only [nsmul_eq_mul, Nat.cast_id] using hc i)
+  let p : N.Partition := ⟨c.toMultiset, fun {i} hi =>
+    (mem_Icc.mp (hc_support ((Finsupp.mem_toMultiset c i).mp hi))).1, hsum_c⟩
+  refine ⟨p, Finsupp.ext fun i => ?_⟩
+  change c.toMultiset.count i * i = w i
+  rw [Finsupp.count_toMultiset, hc]
+
+private lemma coeff_prod_one_add_geom (N : ℕ) :
+    coeff N (∏ m ∈ Icc 1 N, (1 + geom m)) = (Fintype.card N.Partition : ℚ) := by
+  classical
+  have hcard : (∑ _p : N.Partition, (1 : ℚ)) = (Fintype.card N.Partition : ℚ) := by simp
+  rw [coeff_prod, ← hcard]
+  refine (sum_of_injOn Nat.Partition.toFinsuppAntidiag
+    (Nat.Partition.toFinsuppAntidiag_injective N).injOn ?_ ?_ ?_).symm
+  · exact fun p _ => p.toFinsuppAntidiag_mem_finsuppAntidiag
+  · intro w hw hnot
+    have h : ¬ ∀ m ∈ Icc 1 N, m ∣ w m := by
+      intro hd
+      obtain ⟨p, hp⟩ := exists_partition_of_weights hw hd
+      exact hnot ⟨p, mem_univ _, hp⟩
+    push Not at h
+    obtain ⟨m, hm, hd⟩ := h
+    exact prod_eq_zero hm (by rw [coeff_one_add_geom (mem_Icc.mp hm).1, ite_eq_right hd])
+  · intro p _
+    symm
+    apply prod_eq_one
+    intro m hm
+    rw [coeff_one_add_geom (mem_Icc.mp hm).1, ite_eq_left]
+    exact ⟨p.parts.count m, Nat.mul_comm _ _⟩
+
+/-- **Partitions from Schlesinger–Zudilin qMZVs.** Let $\zeta_q^{SZ}$ denote the
+Schlesinger–Zudilin qMZV, $\{1\}^r$ the index of $r$ ones and $p(N)$ the number of
+partitions of $N$. For all natural numbers $N \ge 1$ and $R \ge N$, the coefficient of $q^N$ in
+$\sum_{r=1}^{R} \zeta_q^{SZ}(\{1\}^r)$ equals $p(N)$.
+
+Since the summands with $r > N$ have no $q^N$ term, this is the coefficientwise form of
+$\sum_{r \ge 1} \zeta_q^{SZ}(\{1\}^r) = \sum_{N \ge 1} p(N) q^N$.
+
+Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
+Article A6, Lemma 3 (`integers-2024-A6-lem-3`). -/
+public theorem sum_coeff_szQMZV_replicate_one_eq_card_partition (N R : ℕ)
+    (hN : 1 ≤ N) (hR : N ≤ R) :
+    ∑ r ∈ Finset.Icc 1 R, coeff N (szQMZV (List.replicate r 1)) =
+      Fintype.card N.Partition := by
+  simp only [szQMZV, coeff_mk]
+  calc
+    _ = ∑ r ∈ Icc 1 N, coeff N (szQMZVPartial (List.replicate r 1) (N + 1)) := by
+      symm
+      refine sum_subset (fun r hr => mem_Icc.mpr ⟨(mem_Icc.mp hr).1, (mem_Icc.mp hr).2.trans hR⟩) ?_
+      intro r hr hrN
+      have hNr : N < r := by
+        simp only [mem_Icc] at hr hrN
+        omega
+      rw [partial_replicate_one_eq_zero hNr, map_zero]
+    _ = ∑ r ∈ range (N + 1), coeff N (szQMZVPartial (List.replicate r 1) (N + 1)) := by
+      have hI : Icc 1 N = (range (N + 1)).erase 0 := by
+        ext r
+        simp only [mem_Icc, mem_erase, mem_range]
+        omega
+      rw [hI]
+      apply sum_erase
+      simp [szQMZVPartial, coeff_one, show N ≠ 0 by omega]
+    _ = _ := by rw [← map_sum, sum_partial_replicate_one, coeff_prod_one_add_geom]
+
+end Partitions
 
 end MetaMathlibExt
