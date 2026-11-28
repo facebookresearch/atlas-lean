@@ -97,3 +97,10 @@ example : sevenColor vertex = 0 ∨ sevenColor vertex = 1 ∨ sevenColor vertex 
     rw [h]
     apply Fin.ext
     norm_num [residue_val]
+
+-- The named coloring separates the endpoints of a unit edge starting at the same boundary vertex.
+example : sevenColor vertex ≠
+    sevenColor (WithLp.toLp 2 ![(7 / 5 : ℝ), 2 / 15 * Real.sqrt 3]) := by
+  apply sevenColor_ne_of_dist_eq_one
+  apply (sq_eq_sq₀ dist_nonneg (by norm_num : (0 : ℝ) ≤ 1)).1
+  norm_num [vertex, EuclideanSpace.dist_sq_eq, Fin.sum_univ_two, Real.dist_eq, sq_abs]

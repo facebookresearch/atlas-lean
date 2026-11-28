@@ -228,8 +228,11 @@ private lemma two_lt_dist_center_of_same_residue {i j : ℤ × ℤ} (hij : i ≠
   have hle := pow_le_pow_left₀ dist_nonneg h 2
   nlinarith only [hsq, hle, hreal]
 
-private lemma sevenColor_ne_of_dist_eq_one {x y : Plane} (hxy : dist x y = 1) :
-    sevenColor x ≠ sevenColor y := by
+/-- **The named seven-coloring separates points at unit distance.** For any $x, y \in \mathbb{R}^2$
+with $\operatorname{dist}(x, y) = 1$, the coloring $c$ given by `sevenColor` satisfies
+$c(x) \ne c(y)$. -/
+public theorem sevenColor_ne_of_dist_eq_one {x y : EuclideanSpace ℝ (Fin 2)}
+    (hxy : dist x y = 1) : sevenColor x ≠ sevenColor y := by
   rw [sevenColor_eq, sevenColor_eq]
   intro hcolor
   let i := nearestCenter
