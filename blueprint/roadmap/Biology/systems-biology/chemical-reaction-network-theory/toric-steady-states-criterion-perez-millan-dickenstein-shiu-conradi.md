@@ -6,6 +6,11 @@ For a mass action system with $s$ species, $m$ complexes $y_1, \dots, y_m \in \m
 
 - [Mass-action vector field](../../../Dynamics/smooth-dynamics/mass-action-field.md)
 
+## Proof depends on
+
+- [Existence of positive toric steady states](../../not-yet-classified/toric-steady-states/exists-pos-steady-state-iff.md)
+- [Monomial parametrization of the positive steady states](../../not-yet-classified/toric-steady-states/pos-solutions-eq-monomial-image.md)
+
 ## Expansion
 
 1. The model: mass action systems, the matrix $\Sigma$, the steady-state ideal and toric steady states.

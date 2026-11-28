@@ -8,6 +8,7 @@ Gopalkrishnan, Miller and Shiu (2014) prove that every strongly endotactic react
 - [Weakly reversible reaction network](../../../Dynamics/smooth-dynamics/is-weakly-reversible.md)
 - [Number of linkage classes of a reaction network](../../../Dynamics/smooth-dynamics/num-linkage-classes.md)
 - [Stoichiometric subspace](../../../Dynamics/smooth-dynamics/stoichiometric-subspace.md)
+- [Is Strongly Endotactic](../../not-yet-classified/strongly-endotactic-permanence/is-strongly-endotactic.md)
 
 ## Proof depends on
 
