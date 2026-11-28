@@ -97,4 +97,3 @@ tape cell holds a symbol of $\Sigma$ or the blank.
 - [Halting of a linear bounded automaton is decidable](computable-pred-halts-on-2.md)
 - [Halting of a linear bounded automaton on binary codes is decidable](computable-pred-halts-on-encode-nat.md)
 - [A single-tape machine decides the halting problem of a linear bounded automaton](single-tape-decidable-halts-on-encode-na.md)
-- [Soundness of the grammar of an LBA](lba-grammar-derives-implies-accepts.md)

@@ -19,4 +19,3 @@
 - [The empty set is semilinear](is-semilinear-empty.md)
 - [A singleton set of vectors is semilinear](is-semilinear-singleton.md)
 - [Semilinear sets are closed under union](union.md)
-- [Parikh's theorem: the Parikh image of every context-free language is semilinear](parikh-image-is-semilinear.md)

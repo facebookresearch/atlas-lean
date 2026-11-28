@@ -20,5 +20,3 @@
 - [End-marker encodings form a regular language](is-regular-encoded-words.md)
 - [Deterministic context-free language](is-deterministic-context-free.md)
 - [Deterministic context-free languages are context-free](is-context-free.md)
-- [Some context-free language is not deterministic](exists-is-context-free-not-is-determinis.md)
-- [Deterministic context-free languages are closed under complement](is-deterministic-context-free-compl.md)

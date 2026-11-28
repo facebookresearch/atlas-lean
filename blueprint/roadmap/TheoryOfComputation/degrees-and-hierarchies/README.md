@@ -8,7 +8,6 @@ Turing and many-one reducibility, Turing degrees and the jump, recursive isomorp
 - [Arithmetical hierarchy](arithmetical-hierarchy/README.md)
 - [Completeness of the halting set](completeness-of-the-halting-set/README.md)
 - [Turing degrees and the Turing jump](turing-degrees-and-the-turing-jump/README.md)
-- [Creative sets are many-one complete for the RE sets](creative-complete.md)
 - [The Friedberg–Muchnik theorem](friedberg-muchnik.md)
 - [The arithmetical hierarchy is strict](hierarchy-strict.md)
 - [An immune set exists](immune-exists.md)

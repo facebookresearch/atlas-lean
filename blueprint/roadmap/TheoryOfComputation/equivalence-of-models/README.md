@@ -15,7 +15,6 @@ Register (URM), counter and RAM machines, and theorems that Turing machines and 
 - [Tag systems](tag-systems/README.md)
 - [Cellular automata](cellular-automata/README.md)
 - [Computable predicates are decidable by multi-tape machines](tm2-decidable-implies-multi-tape-decidab.md)
-- [Multi-tape polynomial time equals the canonical class P](multi-tape-p-eq-canonical-p.md)
 - [Recognizable predicates are recognizable by multi-tape machines](tm2-recognizable-implies-multi-tape-reco.md)
 - [Every partial recursive function is URM-computable](partrec-to-urm.md)
 - [RAM machines compute exactly the computable predicates](ram-decidable-iff-computable-pred.md)

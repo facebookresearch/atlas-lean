@@ -7,4 +7,3 @@ Context-sensitive grammars, linear bounded automata and space-bounded single-tap
 - [Complementation and the LBA problems](complementation-and-the-lba-problems/README.md)
 - [Chomsky hierarchy](chomsky-hierarchy/README.md)
 - [Every context-sensitive grammar over a finite alphabet has an LBA recognizing it](csg-implies-lba.md)
-- [Context-sensitive membership is decidable, in PSPACE](csl-membership-decidable-pspace.md)

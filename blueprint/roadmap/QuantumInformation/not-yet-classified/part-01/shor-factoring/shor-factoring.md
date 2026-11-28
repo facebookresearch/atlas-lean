@@ -1,4 +1,4 @@
-# Shor's algorithm factors integers in quantum polynomial time
+# Shor factoring
 
 There are polynomials $a$ and $s$, a polynomial-time gate generator and a polynomial-time classical post-processing map such that the following holds for every integer $N > 1$. On the least-significant-bit-first binary expansion of $N$, the generator outputs a circuit of at most $s$ gates (as a function of the input length), each well formed on the input qubits plus $a$ ancilla qubits. Running the circuit on the standard input state for $N$ and measuring in the computational basis gives, with probability at least $2/3$, an outcome whose post-processed decoding is either a nontrivial factor $d$ of $N$ ($1 < d < N$ and $d \mid N$) or $0$ with $N$ prime.
 

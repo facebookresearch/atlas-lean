@@ -7,7 +7,6 @@
 - [Church numerals](church.md)
 - [Church booleans](church-bool.md)
 - [Lambda-decidable predicates](lambda-decidable.md)
-- [Lambda calculus computes exactly the computable predicates](lambda-decidable-iff-computable-pred.md)
 
 ## Related topics
 

@@ -41,4 +41,3 @@
 - [Well-formed weighted independent set instances ($K_{1,4}$, diamond)](well-formed-12.md)
 - [Instances with a heavy independent set](weighted-independent-set-feasible.md)
 - [Weighted independent set on $K_{1,4}$- and diamond-free graphs (decision)](weighted-independent-set-k14-diamond-fre.md)
-- [Weighted independent set on $K_{1,4}$- and diamond-free graphs is NP-complete](weighted-independent-set-k14-diamond-fre-2.md)

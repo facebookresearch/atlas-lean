@@ -1,4 +1,4 @@
-# LR(1) grammars generate deterministic context-free languages
+# LR(1) grammars
 
 - [Rightmost derivation steps](rightmost-step.md)
 - [Rightmost derivations](rightmost-derives.md)
@@ -6,5 +6,3 @@
 - [Viable prefixes](is-viable-prefix.md)
 - [Reduce actions of an LR(1) parser](is-reduce-action.md)
 - [Shift actions of an LR(1) parser](is-shift-action.md)
-- [LR(1) grammars](is-lr1.md)
-- [LR(1) grammars generate deterministic context-free languages](is-deterministic-context-free-of-is-lr1.md)

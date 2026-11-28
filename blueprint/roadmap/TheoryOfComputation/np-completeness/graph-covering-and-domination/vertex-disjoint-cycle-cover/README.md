@@ -5,7 +5,6 @@ The graph of an instance is the [simple graph of its vertex count and edge list]
 - [Instances of VERTEX DISJOINT CYCLE COVER](vertex-disjoint-cycle-cover-instance.md)
 - [Feasibility for VERTEX DISJOINT CYCLE COVER](vertex-disjoint-cycle-cover-feasible.md)
 - [VERTEX DISJOINT CYCLE COVER as a decision problem](vertex-disjoint-cycle-cover-dec.md)
-- [VERTEX DISJOINT CYCLE COVER is NP-complete](vertex-disjoint-cycle-cover-np-complete.md)
 
 ## Related topics
 
