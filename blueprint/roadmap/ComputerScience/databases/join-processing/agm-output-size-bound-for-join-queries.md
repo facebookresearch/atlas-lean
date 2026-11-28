@@ -9,6 +9,14 @@ $$|Q(D)| \le \prod_{e} |R_e(D)|^{x_e}.$$
 In particular $|Q(D)| \le |D|^{\rho^*(Q)}$, where $|D| = \sum_e |R_e(D)|$ is the total number of tuples and $\rho^*(Q)$ is the fractional edge cover number of
 $H(Q)$.
 
+## Depends on
+
+- [Natural join queries, their hypergraphs and fractional edge covers](natural-join-queries-their-hypergraphs-and-fractional-edge-c.md)
+
+## Proof depends on
+
+- [Query decomposition lemma for the AGM bound](../tractable-conjunctive-queries/join-processing-proof-ingredients/query-decomposition-lemma-for-the-agm-bound.md)
+
 ## Sources
 
 - A. Atserias, M. Grohe and D. Marx, *Size bounds and query plans for relational joins*, SIAM J. Comput. 42(4) (2013) 1737–1767, Lemma 2, §3.1. <http://www.cs.bme.hu/~dmarx/papers/atserias-sicomp2013-joins.pdf>
