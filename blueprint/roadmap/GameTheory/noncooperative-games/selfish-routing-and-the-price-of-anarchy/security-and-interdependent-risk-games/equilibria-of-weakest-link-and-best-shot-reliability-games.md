@@ -1,6 +1,6 @@
 # Equilibria of weakest-link and best-shot reliability games
 
-Assume the reliability function $P$ is concave. In a weakest-link game every common effort level up to the smallest stand-alone optimum $\min_i \bar x_i$ is a pure Nash equilibrium (and the profile with all agents at that level is the best one); with identical agents the social optimum is an equilibrium, and liability or negligence rules can make the efficient common level an equilibrium. In a best-shot game every pure Nash equilibrium has at most one agent exerting positive effort, equal to its stand-alone optimum, and the profile where the agent with the highest benefit-cost ratio provides its stand-alone effort is an equilibrium. If moreover $P$ is differentiable and strictly concave, equilibrium reliability is at most the socially optimal reliability, and with at least two agents it falls strictly short of it whenever the socially optimal effort is positive.
+Assume the reliability function $P$ is concave. In a weakest-link game every common effort level up to the smallest stand-alone optimum $\min_i \bar x_i$ is a pure Nash equilibrium (and the profile with all agents at that level is the best one); with identical agents the social optimum is an equilibrium, and liability or negligence rules can make the efficient common level an equilibrium. In a best-shot game every pure Nash equilibrium has at most one agent exerting positive effort, equal to its stand-alone optimum, and the profile where the agent with the highest benefit-cost ratio provides its stand-alone effort is an equilibrium. For two agents, if moreover $P$ is differentiable and strictly concave, equilibrium reliability is at most the socially optimal reliability, and falls strictly short of it whenever the socially optimal effort is positive (Varian 2004, Sections 2, 4.1 and 4.2, Fact 3).
 
 ## Proof sketch
 
@@ -16,4 +16,4 @@ Under weakest link, raising effort above the current minimum is wasted and lower
 
 ## Sources
 
-- Hal R. Varian, "System Reliability and Free Riding", Economics of Information Security, Springer, 2004.
+- Hal R. Varian, "System Reliability and Free Riding", Economics of Information Security, Springer, 2004, Sections 2, 4.1 and 4.2 (Fact 3).
