@@ -20,6 +20,7 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.HigherANumbersPeriodicSumFloorMulPowModEq
 public import MathlibExt.NumberTheory.HigherANumbersTowerTauAdjacentDigits
+public import MathlibExt.NumberTheory.HigherANumbersDeltaDigitCriterion
 
 /-!
 # Higher `a`-numbers in `ℤ_p`-towers via lattice points
@@ -106,51 +107,6 @@ Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 1 (`p = 5`, 
 `r = 2`). -/
 theorem towerTau_towerGamma_five_four : towerTau 5 4 = 3 / 2 ∧ towerGamma 5 4 2 = 7 / 2 := by
   constructor <;> norm_num [towerTau, towerGamma]
-
-/-- **Lexicographic order on integer sequences.** For sequences
-$a, b \colon \mathbb{N} \to \mathbb{Z}$, $a$ is lexicographically larger than $b$ when there is
-an index $m$ with $a_j = b_j$ for all $j < m$ and $a_m > b_m$. This is the order used in
-Definition 1.
-
-Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
-Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Equation (1). -/
-def SeqLexGt (a b : ℕ → ℤ) : Prop := ∃ m, (∀ j < m, a j = b j) ∧ b m < a m
-
-/-- **The rounding indicator $\delta$.** Let $p$, $d$ and $i$ be natural numbers and let
-$\tau = (p + 1)/d$. For a rational $x$ and an integer $k$, write $[p^k](x)$ for the residue of
-$\lfloor x / p^k \rfloor$ modulo $p$, the $k$-th base-$p$ digit of $x$. Then $\delta(i) = 0$ if
-the integer-part digits $([p^n](\tau i))_{n \ge 0}$ are lexicographically larger than the
-fractional digits $([p^{-1-n}](\tau i))_{n \ge 0}$, that is, the two sequences agree at every
-index below some $m$ and the first is larger at $m$; otherwise $\delta(i) = 1$.
-
-Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
-Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Definition of `δ`. -/
-noncomputable def higherANumberDelta (p d i : ℕ) : ℕ :=
-  open Classical in
-  if SeqLexGt (fun n => basePDigit p (towerTau p d * i) n)
-      (fun n => basePDigit p (towerTau p d * i) (-1 - n)) then 0 else 1
-
-/-- **Two values of $\delta$ for $p = 5$ and $d = 4$.** For $p = 5$ and $d = 4$, so that
-$\tau = (p + 1)/d = 3/2$, the rounding indicator satisfies $\delta(1) = 1$ and $\delta(2) = 0$.
-
-Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
-Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Table 1 (`δ(1) = 1`, `δ(2) = 0` for
-`p = 5`, `d = 4`). -/
-theorem higherANumberDelta_five_four :
-    higherANumberDelta 5 4 1 = 1 ∧ higherANumberDelta 5 4 2 = 0 := by
-  constructor
-  · unfold higherANumberDelta
-    split_ifs with h
-    · obtain ⟨m, hm, hlt⟩ := h
-      rcases m with _ | m
-      · norm_num [basePDigit, towerTau, zpow_neg] at hlt
-      · have := hm 0 (by omega)
-        norm_num [basePDigit, towerTau, zpow_neg] at this
-    · rfl
-  · unfold higherANumberDelta
-    split_ifs with h
-    · rfl
-    · exact absurd ⟨0, by simp, by norm_num [basePDigit, towerTau, zpow_neg]⟩ h
 
 /-- **The denominator $\tau_D$.** For natural numbers $p$ and $d$, $\tau_D$ is the denominator in
 lowest terms of the rational number $\tau = (p + 1)/d$ (when $d = 0$, $\tau$ is taken to be $0$,
@@ -355,20 +311,6 @@ public theorem_wanted basePDigit_eventually_periodic_iff (p : ℕ) [Fact p.Prime
     (hx : 0 < x) (D : ℤ) {L : ℕ} (hL : 0 < L) :
     (∀ k : ℤ, D + 1 ≤ k → basePDigit p x (-(k + L)) = basePDigit p x (-k)) ↔
       basePPeriod p x ∣ L ∧ basePDelay p x ≤ D
-
-/-- **A digit criterion for $\delta(i) = 1$.** Let $p$ be a prime, $d$ a divisor of $p - 1$ and
-$\tau = (p + 1)/d$. For a rational $t$ and an integer $k$ write $[p^k](t)$ for the $k$-th base-$p$
-digit of $t$, the residue of $\lfloor t / p^k \rfloor$ modulo $p$ in
-$\lbrace 0, \dots, p - 1 \rbrace$, and let $\delta$ be the rounding indicator. If $i$ is a natural
-number not divisible by $p$, then $[p^0](\tau i) < [p^{-1}](\tau i)$ if and only if $\delta(i) = 1$.
-
-Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
-*Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
-Lemma 4 (`integers-2026-A78-lem-4`). -/
-public theorem_wanted higherANumberDelta_eq_one_iff (p d : ℕ) [Fact p.Prime] (hd : d ∣ p - 1)
-    {i : ℕ} (hi : ¬ p ∣ i) :
-    basePDigit p (towerTau p d * i) 0 < basePDigit p (towerTau p d * i) (-1) ↔
-      higherANumberDelta p d i = 1
 
 /-- **Reflection symmetry of the rounding indicator.** Let $p$ be a prime, let $d$ be a natural
 number dividing $p - 1$, let $\tau_D$ be the denominator of $(p + 1)/d$ in lowest terms, and let
