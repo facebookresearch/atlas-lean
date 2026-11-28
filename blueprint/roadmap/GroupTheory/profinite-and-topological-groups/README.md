@@ -18,3 +18,4 @@ Groups with topology or approximated by finite quotients: profinite and pro-p gr
 - [Totally disconnected locally compact groups](totally-disconnected-locally-compact-groups/README.md)
 - [Upper composition factors of finitely generated groups](upper-composition-factors-of-finitely-generated/README.md)
 - [Two elements generate a dense subgroup of a connected semisimple Lie group](semisimple-lie-group-two-generators-dens.md)
+- [Triviality problem for profinite completions](triviality-problem-for-profinite-completions/README.md)

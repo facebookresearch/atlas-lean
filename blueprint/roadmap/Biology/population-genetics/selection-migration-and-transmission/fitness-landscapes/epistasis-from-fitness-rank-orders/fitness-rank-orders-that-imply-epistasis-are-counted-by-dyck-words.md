@@ -12,12 +12,13 @@ coordinates, Walsh coefficients and circuits are examples). A **rank order** is 
 the $2^n$ fitness values, the only information available in many comparative fitness experiments. A
 rank order **implies** $f \ne 0$ if $f \ne 0$ for every landscape compatible with it.
 
-**Word map.** Let $f$ have integer coefficients summing to zero. Map a rank order (highest fitness
+**Word map.** Let $f$ be a nonzero linear form (not all coefficients $0$) with integer coefficients summing to zero. Map a rank order (highest fitness
 first) to a word in $\{P, N\}$ by replacing each variable with coefficient $c > 0$ by $P^{c}$, each with
-coefficient $c < 0$ by $N^{|c|}$, and deleting variables with coefficient $0$. A **Dyck word** is a word
+coefficient $c < 0$ by $N^{|c|}$, and deleting variables with coefficient $0$. The zero form must be excluded: its word is empty,
+hence trivially Dyck, yet $f = 0$ on every landscape. A **Dyck word** is a word
 with equally many $P$ and $N$ in which no prefix has more $N$ than $P$.
 
-**Theorem.** A rank order implies $f \ne 0$ if and only if its word, or the word with $P$ and $N$
+**Theorem.** For such a nonzero $f$, a rank order implies $f \ne 0$ if and only if its word, or the word with $P$ and $N$
 exchanged, is a Dyck word; in the first case $f > 0$ on every compatible landscape.
 
 **Corollary (counting).** Exactly
@@ -28,8 +29,9 @@ rank orders imply total $n$-way epistasis, half of them positive and half negati
 16,128 for $n = 3$. The fraction of all rank orders that imply it is $2 / (2^{n-1} + 1)$, decaying like
 $2^{2-n}$. The check is linear in the number of genotypes.
 
-**Further consequences.** For three loci no rank order determines the shape (the full sign pattern of
-the interaction coordinates) of the landscape, and for any $n$, total $n$-way epistasis is implied whenever the
+**Further consequences.** For three loci no rank order determines the shape of the landscape (its
+triangulation of the 3-cube, one of 74, which is fixed by the sign pattern of the 20 circuits, not by the signs of
+the interaction coordinates), and for any $n$, total $n$-way epistasis is implied whenever the
 fitness values can be paired as (even genotype, odd genotype) with the even one fitter in every pair.
 
 ## Depends on

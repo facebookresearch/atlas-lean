@@ -1,0 +1,3 @@
+# Feasible instances of CAPACITATED VEHICLE ROUTING ON TREES
+
+An instance of CAPACITATED VEHICLE ROUTING ON TREES is feasible when there are $m$ closed walks $C_k$ at the depot $v_0 = 0$ and an assignment $s$ of every vertex of positive weight to one walk, such that every such vertex lies on its walk, the weight assigned to each walk is at most $Q$, and $α \cdot m + β \cdot (\text{total walk length}) \le B$. An edge's length is read from the first entry of the edge list with the same endpoints, and is $0$ when no entry has them. A vertex with no entry in the weight list counts as having weight $0$.
