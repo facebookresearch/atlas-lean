@@ -1211,3 +1211,5 @@ Topics added since this subject's fields were last revised.
 - [QMCoarse Moduli](qmcoarse-moduli/README.md)
 - [Relative Group Law Etale](relative-group-law-etale/README.md)
 - [Structure Constants](structure-constants/README.md)
+- [Ideal Sheaf Open Cover Glue](exists-comap-eq-of-open-cover.md)
+- [Tensor Pow Section Support](tensor-pow-section-support/README.md)
