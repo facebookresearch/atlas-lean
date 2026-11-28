@@ -1,0 +1,21 @@
+# Absorption and metastability of the cellular Potts model
+
+**Model.** Let $\Lambda$ be a finite lattice with neighbourhood relation and $\{1, \dots, n\}$ a set of cell indices (possibly including a medium index). A configuration $\eta : \Lambda \to \{1, \dots, n\}$ assigns each site to a cell. A Hamiltonian $H$ on configurations typically combines an adhesion term summing surface energies $J(\tau(\eta(x)), \tau(\eta(y)))$ over neighbouring sites $x \sim y$ in different cells (with $\tau$ the cell type) and a volume constraint $\sum_{\sigma} \lambda\,(V_\sigma(\eta) - V_\sigma^{\text{target}})^2$. A *cellular Potts model* (CPM) is the discrete-time Markov chain whose transitions follow the *modified Metropolis algorithm*: pick a target site $x$ and a neighbouring site $y$ at random, propose replacing $\eta(x)$ by $\eta(y)$, and accept with a probability that depends on the energy change $\Delta H$, a temperature $T$ and a transition threshold. Only indices already present at a neighbouring site can be copied.
+
+**Structure.** For $A \subseteq \{1, \dots, n\}$ let $\mathcal E_A$ be the configurations whose set of present indices is exactly $A$. Then the sets $\mathcal E_A$ are the communication classes of the chain; $\mathcal E_A$ is closed iff $|A| = 1$; the constant configurations $\eta \equiv \sigma$ are the absorbing states and all other states are transient. Ordering states accordingly, the transition matrix has the block form $\begin{pmatrix} I & 0 \\ R & Q \end{pmatrix}$ with $Q$ substochastic.
+
+**Theorem 1.** (1) From any initial distribution the chain is absorbed in a constant configuration almost surely. (2) The probability of absorption in $\eta \equiv \sigma$ from configuration $\eta_0$ is the corresponding entry of $(I - Q)^{-1} R$. (3) The set of stationary distributions of a CPM is the convex hull of the point masses on the $n$ constant configurations.
+
+**Theorem 2 (metastable exit times).** Restricted to the class $\mathcal E_A$ with $|A| \ge 2$, if the substochastic block $Q_A$ is primitive, its Perron eigenvalue $\lambda_A \in (0, 1)$ governs the exit time: $\Pr(\text{exit after } k \text{ steps}) \approx c\, \lambda_A^{k}$, i.e. the time until the first cell disappears is approximately geometric with parameter $1 - \lambda_A$. The time to full absorption is a sum of such stages as indices disappear one at a time.
+
+## Depends on
+
+- [Perron–Frobenius theorem for primitive nonnegative matrices](../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius-for-primitive-nonnegative-matri.md)
+
+## Expansion
+
+Copying an index from a neighbour can never introduce an index that is absent from the configuration, so the set of present indices is non-increasing along trajectories; it decreases whenever the last site of some cell is overwritten, which has positive probability from every non-constant configuration under the modified algorithm. This gives the communication-class structure and almost-sure absorption; absorption probabilities and the convex-hull description of stationary laws follow from standard finite absorbing-chain theory. Perron–Frobenius applied to the primitive substochastic block gives a dominant eigenvalue with positive eigenvectors, so $Q_A^k \approx \lambda_A^k v u^{\mathsf T}$ and exit times are asymptotically geometric. At infinite temperature every proposal is accepted and the CPM is a multi-type voter model, whose cells die out; the standard (unmodified) Metropolis algorithm, which can assign arbitrary indices, does not have this degeneracy. Biologically meaningful CPM behaviour therefore lives on the metastable time scale before the first cell disappears, and the volume constraint violates the finite-range locality needed to treat the CPM as an interacting particle system.
+
+## Sources
+
+- A. Voss-Böhme, "Multi-scale modeling in morphogenesis: a critical analysis of the cellular Potts model", PLoS ONE (2012), Results (definition of the CPM and the modified Metropolis algorithm, Hamiltonian Eqs. 1–4, voter-model limit) and Methods (Proposition 1, transition matrix Eq. 6; Proposition 2; Theorem 1; Proposition 3, Eq. 11; Theorem 2, Eq. 12; Proposition 4 on locality). <https://doi.org/10.1371/journal.pone.0042852> (PMC3439478).

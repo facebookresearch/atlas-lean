@@ -17,3 +17,7 @@
 - [Invariance of the simplex (Hofbauer–Sigmund 1998, §7.1)](mem-simplex.md)
 
 - [Lyapunov characterization of evolutionarily stable states for the replicator equation](ess-lyapunov-function-for-the-replicator-equation.md)
+
+- [Collective-level heredity in nested populations](collective-level-heredity-in-nested-populations/README.md)
+- [PDE models of multilevel selection](pde-models-of-multilevel-selection/README.md)
+- [Robustness of weak-selection rankings](robustness-of-weak-selection-rankings/README.md)

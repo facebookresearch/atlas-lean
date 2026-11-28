@@ -1,0 +1,19 @@
+# Unique least resolved tree and triple characterization of best match graphs
+
+**Definitions.** Let $T$ be a rooted phylogenetic (gene) tree with leaf set $L$ and $\sigma : L \to S$ a surjective map assigning genes to species. For $x, y \in L$ with $\sigma(x) \ne \sigma(y)$, $y$ is a **best match** of $x$, written $x \to y$, if $\mathrm{lca}(x, y) \preceq \mathrm{lca}(x, y')$ for all $y'$ with $\sigma(y') = \sigma(y)$. The **colored best match graph** (cBMG) $G(T, \sigma)$ has vertex set $L$, vertex colors $\sigma$ and arcs $x \to y$. A vertex-colored digraph $(G, \sigma)$ is an $n$-cBMG if it equals $G(T, \sigma)$ for some tree with $|S| = n$; $(T, \sigma)$ then *explains* $(G, \sigma)$. An inner edge $e$ of an explaining tree is *redundant* if the tree $T_e$ obtained by contracting $e$ still explains $(G, \sigma)$; a tree is *least resolved* if no nonempty set of inner edges can be contracted without changing the explained graph.
+
+**Theorem 1 (connectedness).** $G(T, \sigma)$ is connected iff some child $v$ of the root satisfies $\sigma(L(T(v))) \ne S$; otherwise every connected component lies below a single child of the root.
+
+**Theorem 2 (least resolved tree).** Every connected 2-cBMG $(G, \sigma)$ is explained by a unique least resolved tree $(T', \sigma)$. It is obtained from any explaining tree $(T, \sigma)$ by contracting all redundant edges, in any order, and it is displayed by $(T, \sigma)$. An inner edge $uv$ of $(T, \sigma)$ is redundant iff $v$ is not the root $\rho_\alpha$ of any class $\alpha$, where classes are sets of vertices with identical in- and out-neighbourhoods and $\rho_\alpha = \max_{x \in \alpha,\, y \in N(\alpha)} \mathrm{lca}(x, y)$.
+
+**Theorem 6 (triples).** Let $R(G, \sigma)$ be the set of informative rooted triples read off the three-vertex induced subgraphs of $(G, \sigma)$ of the four informative types. A connected 2-colored digraph $(G, \sigma)$ is a 2-cBMG iff $(G, \sigma) = G(\mathrm{Aho}(R(G, \sigma)), \sigma)$, where $\mathrm{Aho}(R)$ is the tree produced by the BUILD algorithm; consistency of $R(G, \sigma)$ alone is not sufficient.
+
+**Theorem 9 ($n$ colors).** A connected colored digraph $(G, \sigma)$ is an $n$-cBMG iff (i) every induced subgraph on two colors $s, t$ is a 2-cBMG, and (ii) the union $R$ of the triples displayed by the least resolved trees of these 2-colored subgraphs is consistent. Then $\mathrm{Aho}(R)$ is the unique least resolved tree explaining $(G, \sigma)$; unique least resolved trees exist also for disconnected $n$-cBMGs.
+
+## Expansion
+
+Best matches depend only on the tree topology and the species labels, not on branch lengths, and coincide with closest relatives under an ultrametric (time) distance; in practice they are approximated by best hits in sequence similarity, so characterizing which digraphs can arise from some gene tree allows correcting noisy best-hit data. Contracting an edge $uv$ can only change best matches whose last common ancestor passes through $v$, which happens exactly when $v$ is the root of some class, giving Theorem 2; since redundant edges can be contracted independently, the contraction result is unique. The informative triples are constraints of the form "$x$ and $y$ are closer than $y'$" forced by arcs present or absent among three vertices; BUILD returns the least resolved tree displaying a consistent triple set, so when $G$ is a cBMG it recovers $T'$. The 2-colour reduction in Theorem 9 works because best matches between species $s$ and $t$ depend only on the subtree spanned by genes of those two species.
+
+## Sources
+
+- M. Geiß, E. Chávez, M. González Laffitte, A. López Sánchez, B. M. R. Stadler, D. I. Valdivia, M. Hellmuth, M. Hernández Rosales, P. F. Stadler, "Best match graphs", Journal of Mathematical Biology 78 (2019) 2015–2057, Definitions 1–6, Theorems 1, 2, 6 and 9 (with Lemma 5 on redundant edges), <https://doi.org/10.1007/s00285-019-01332-9>.

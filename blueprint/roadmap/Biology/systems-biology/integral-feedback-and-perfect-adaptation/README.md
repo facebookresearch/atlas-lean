@@ -22,3 +22,4 @@ See [single-input single-output linear systems](../../../Analysis/control-theory
 
 - [The integral-feedback loop as a linear system and its equilibrium](the-integral-feedback-loop-as-a-linear-system-and-its-equilibrium.md)
 - [Exponential perfect adaptation of the integral-feedback loop](exponential-perfect-adaptation-of-the-integral-feedback-loop.md)
+- [Kinetic pairing and the RPA polynomial of reaction networks](kinetic-pairing-and-the-rpa-polynomial-of-reaction-networks.md)

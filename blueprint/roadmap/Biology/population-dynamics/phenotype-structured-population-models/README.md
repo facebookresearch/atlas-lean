@@ -4,3 +4,7 @@ Non-local partial differential equations for a population density $n(t,x,y)$ str
 
 - [Gaussian solutions of the phenotype-structured logistic model](gaussian-solutions-of-the-phenotype-structured-logistic-model.md)
 - [Monomorphic invasion fronts in phenotype-structured pressure-driven models](monomorphic-invasion-fronts-in-phenotype-structured-models.md)
+
+- [Competing phenotype-structured populations](competing-phenotype-structured-populations/README.md)
+- [Motility and resistance evolution in antibiotic gradients](motility-and-resistance-evolution-in-antibiotic-gradients/README.md)
+- [Parametrically heterogeneous population models](parametrically-heterogeneous-population-models/README.md)

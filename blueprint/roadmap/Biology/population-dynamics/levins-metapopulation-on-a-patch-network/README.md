@@ -33,3 +33,5 @@
 
 - [Uniform states follow the well-mixed Levins equation](is-solution-uniform.md)
 - [Persistence number with constant row sums and a common extinction rate](persistence-number-of-row-sum.md)
+
+- [Moran effect and spatial synchrony](moran-effect-and-spatial-synchrony/README.md)

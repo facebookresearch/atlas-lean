@@ -16,7 +16,7 @@ defining a map $T\colon \mathbb{R}^{\#\mathcal{R}_G}_{>0} \to \mathbb{R}^{\#\mat
 
 ## Depends on
 
-- [Network transformations transfer injectivity and multistationarity](../../chemical-reaction-network-theory/network-transformations-transfer-injectivity-and-multistationarity.md)
+- [Network transformations transfer injectivity and multistationarity](../../part-01/chemical-reaction-network-theory/network-transformations-transfer-injectivity-and-multistationarity.md)
 
 ## Expansion
 

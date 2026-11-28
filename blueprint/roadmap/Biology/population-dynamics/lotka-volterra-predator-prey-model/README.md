@@ -11,3 +11,6 @@
 
 - [Spatial, Allee, tumour, and eco-evolutionary population dynamics](spatial-and-game-population-dynamics/README.md)
 - [Interacting species](interacting-species/README.md)
+- [Ecological network inference from steady-state samples](ecological-network-inference-from-steady-state-samples/README.md)
+- [Invasion graphs and permanence](invasion-graphs-and-permanence/README.md)
+- [Marginal value theorem of optimal foraging](marginal-value-theorem-of-optimal-foraging/README.md)

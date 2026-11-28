@@ -19,3 +19,7 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Reaction–diffusion on concentration-dependent growing domains](reaction-diffusion-on-concentration-dependent-growing-domains/README.md)
 - [Turing and wave instabilities in n-component systems](turing-and-wave-instabilities-in-n-component-systems/README.md)
 - [Turing instabilities for three interacting species](turing-instabilities-for-three-interacting-species/README.md)
+- [Bayesian parameter identification for Turing systems](bayesian-parameter-identification-for-turing-systems/README.md)
+- [Cellular Potts model](cellular-potts-model/README.md)
+- [Reaction–diffusion waves of blood coagulation](reaction-diffusion-waves-of-blood-coagulation/README.md)
+- [Reaction-diffusion waves of viral infection in tissue](reaction-diffusion-waves-of-viral-infection-in-tissue/README.md)
