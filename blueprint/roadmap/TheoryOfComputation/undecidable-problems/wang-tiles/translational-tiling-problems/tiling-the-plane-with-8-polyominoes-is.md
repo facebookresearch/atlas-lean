@@ -29,6 +29,8 @@ rotated by $\pi/4$, and the colors are encoded by binary strings of normal and d
 blocks; links can only join a normal dent to a deeper one, which forces adjacent simulated edges to carry equal colors. A
 tiling by the eight polyominoes exists exactly when the Wang tile set tiles the plane.
 
+A good expansion links a page for Ollinger's framework encoding a Wang tile set in one meat polyomino and the lemma that the eight polyominoes tile the plane exactly when the Wang tile set does.
+
 ## Sources
 
 - C. Yang, Z. Zhang, "Translational tiling with 8 polyominoes is undecidable", *Discrete & Computational Geometry* 75(4):1048–1059, 2026, doi:[10.1007/s00454-024-00706-1](https://doi.org/10.1007/s00454-024-00706-1). Numbering of the version read, arXiv:2403.13472v1 (titled "A proof of Ollinger's conjecture: undecidability of tiling the plane with a set of 8 polyominoes"): Theorem 3 (the main theorem), Theorem 2 (Ollinger's eleven polyominoes, restated with its citation), Problem 1, and Section 1 (the earlier bound of ten polyominoes and Ollinger's conjecture).

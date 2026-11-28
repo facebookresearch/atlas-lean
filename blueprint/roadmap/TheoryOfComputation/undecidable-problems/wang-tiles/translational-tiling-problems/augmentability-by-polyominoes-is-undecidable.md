@@ -1,12 +1,12 @@
 # Augmentability of a region by polyominoes is undecidable
 
-No algorithm decides, given polyominoes and a finite region, whether the region can be enlarged to a finite simply connected region that is tileable and whose added part is tileable too; this holds already with the region fixed, or with the tileset fixed.
+No algorithm decides, given polyominoes and a finite region, whether the region can be enlarged to a finite simply connected region that is tileable and whose added part is tileable too; this holds already for one suitable fixed region, or for one suitable fixed tileset.
 
 Following the source, a *region* is a subset of $\mathbb Z^2$, viewed as a union of closed unit squares centered at its points; a *tile* (polyomino) is a finite region whose shape is simply connected, and a *tileset* $\mathcal T$ is a finite set of tiles. A $\mathcal T$-*tiling* of a region $\Gamma$ is a partition of $\Gamma$ into translated copies of tiles of $\mathcal T$ (no rotations or reflections), as in [translational tilings](translational-tilings-by-finitely-many-tiles.md).
 
 A finite region $\Gamma$ is *augmentable* by $\mathcal T$ if there is a finite simply connected region $\Gamma'\supseteq\Gamma$ such that both $\Gamma'\setminus\Gamma$ and $\Gamma'$ are $\mathcal T$-tileable. The empty region counts as tiled by the empty tiling; the source writes $\Gamma'\supset\Gamma$, and with $\Gamma'=\Gamma$ allowed a simply connected $\mathcal T$-tileable $\Gamma$ is augmentable trivially. The regions $\Gamma_x$ of the reduction below are not tileable, so the theorem holds under either reading. An instance is $\mathcal T$ and $\Gamma$ given as finite lists of cells of $\mathbb Z^2$.
 
-**Theorem (Yang).** It is undecidable, given a tileset $\mathcal T$ and a finite region $\Gamma$, whether $\Gamma$ is augmentable by $\mathcal T$. It remains undecidable when $\Gamma$ is fixed, and there is a tileset $\mathcal T$ for which it is undecidable with $\mathcal T$ fixed.
+**Theorem (Yang).** It is undecidable, given a tileset $\mathcal T$ and a finite region $\Gamma$, whether $\Gamma$ is augmentable by $\mathcal T$. There is a finite region $\Gamma$ for which it is undecidable with $\Gamma$ fixed, and there is a tileset $\mathcal T$ for which it is undecidable with $\mathcal T$ fixed (Theorem 6.1, whose proof at the end of Section 6 fixes one particular region).
 
 For dominoes, an augmentable region must be balanced (equally many black and white squares in the checkerboard coloring), but balance is not sufficient (Korn).
 

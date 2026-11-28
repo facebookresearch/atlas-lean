@@ -1,6 +1,6 @@
 # Translational tiling problems
 
-Tiling a region by translated copies of finitely many tiles is undecidable already for a single tile in virtually two-dimensional groups and in periodic subsets of higher-dimensional lattices, and for eight polyominoes in the plane.
+Tiling a region by translated copies of finitely many tiles is undecidable already for a single tile in virtually two-dimensional groups and in periodic subsets of higher-dimensional lattices, and for seven polyominoes in the plane.
 
 - [Translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md)
 - [Translational monotiling of virtually ℤ² spaces is undecidable](translational-monotiling-of-virtually-z2-spaces.md)

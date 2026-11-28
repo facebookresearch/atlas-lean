@@ -41,6 +41,8 @@ Aanderaa–Lewis construction. Third, the Sudoku puzzle is expressed in the tili
 to the periodic tiling conjecture, which turns it into a single-tile problem in $\mathbb{Z}^2 \times G_0$ for a finite
 abelian group $G_0$ depending on the instance. The domino problem is solvable exactly when the monotiling problem is.
 
+A good expansion links pages for the domino problem on $\mathbb{N}^2$, for decorated $p_1 \times p_2$-adic Sudoku puzzles and their encoding of domino problems, and for the tiling language that expresses such puzzles as single-tile problems.
+
 ## Sources
 
 - R. Greenfeld, T. Tao, "Undecidability of translational monotilings", *Journal of the European Mathematical Society*, published online 2025, doi:[10.4171/JEMS/1673](https://doi.org/10.4171/JEMS/1673). Numbering of the version read, arXiv:2309.09504v2: Theorem 1.3 (the main theorem), Remark 1.4 (Turing degree), Corollary 2.7 (the domino problem), Theorems 3.2 and 3.3 (the two encodings) and Question 7.1 (fixed $G_0$).

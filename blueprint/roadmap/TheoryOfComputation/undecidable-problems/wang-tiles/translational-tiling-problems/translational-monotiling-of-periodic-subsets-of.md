@@ -31,6 +31,8 @@ The undecidable problem in $\mathbb{Z}^2 \times G_0$ is pulled back to $\mathbb{
 $\mathbb{Z}^2 \times G_0$ for the region $\mathbb{Z}^2 \times E$ is turned into an equivalent monotiling problem in some
 $\mathbb{Z}^d$ for a periodic region and a finite tile. The source cites the pull-back theorem of Meyerovitch, Sanadhya and Solomon (Theorem 1.1 of their note on reduction of tiling problems), or the argument of Section 9 of the earlier Greenfeld–Tao paper on tilings with two tiles.
 
+A good expansion links a page for the pull-back of tiling problems from $\mathbb{Z}^2 \times G_0$ to periodic subsets of $\mathbb{Z}^d$.
+
 ## Sources
 
 - R. Greenfeld, T. Tao, "Undecidability of translational monotilings", *Journal of the European Mathematical Society*, published online 2025, doi:[10.4171/JEMS/1673](https://doi.org/10.4171/JEMS/1673). Numbering of the version read, arXiv:2309.09504v2: Corollary 1.5 and the paragraphs after Remark 1.6.

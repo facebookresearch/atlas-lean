@@ -29,6 +29,8 @@ Item 1 reduces Wang's domino problem through a new reduction framework: from a s
 whose bumps and dents force translational tilings of $\mathbb{Z}^3$ to simulate valid Wang tilings. Item 2 applies a lifting technique, reading the fourth dimension as time, to the three-dimensional tile set and its
 tilings, which reduces the number of tiles by one.
 
+A good expansion links a page for the four-polycube construction from $10 \times 10 \times 10$ building blocks and the lemma that its tilings simulate valid Wang tilings (Section 2 of the source), and a page for the lifting technique that turns it into three polyhypercubes (Section 3).
+
 ## Sources
 
 - C. Yang and Z. Zhang, "Undecidability of translational tiling with three tiles", *Mathematics of Computation*, published online 2026, doi:10.1090/mcom/4290; read in arXiv:2412.10646v1: Theorem 1 (three tiles in dimension $4$) and Theorem 2 (four tiles in dimension $3$), stated in Section 1 and proved in Sections 3 and 2 respectively, and the survey of known cases in Section 1, with the numbering of that version.

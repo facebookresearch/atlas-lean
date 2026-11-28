@@ -22,6 +22,8 @@ The number of tiles is fixed at $5$; their shapes are the input. This improves t
 
 The proof reduces Wang's domino problem directly in dimension three, without lifting a planar construction. Tiles are assembled from $8\times8\times8$ functional cubes with bumps and dents that encode Wang tile colors; the construction is designed to be compatible with the lifting technique, which trades one tile for one extra dimension and is used afterwards for the four-dimensional result.
 
+A good expansion links a page for the five polycubes built from functional cubes (Section 2.1 of the source) and the lemma that they tile $\mathbb Z^3$ exactly when the simulated Wang tiles tile the plane.
+
 ## Sources
 
 - Chao Yang and Zhujun Zhang, "Undecidability of translational tiling of the 4-dimensional space with a set of 4 polyhypercubes", *Science China Mathematics* 68(9), 2025, pp. 2173–2188, doi:[10.1007/s11425-024-2365-2](https://doi.org/10.1007/s11425-024-2365-2); numbering of arXiv:2409.00846v2 ([arXiv](https://arxiv.org/abs/2409.00846v2)): Theorem 4 (undecidability with five tiles) and Sections 2.1 (polycubes) and 2 (its proof); Theorem 2 (six polycubes, the earlier bound).

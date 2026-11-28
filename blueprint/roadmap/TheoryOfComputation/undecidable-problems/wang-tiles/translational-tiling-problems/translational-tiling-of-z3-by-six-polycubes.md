@@ -20,6 +20,8 @@ The source notes that the theorem gives undecidability of translational tiling o
 
 The proof reduces Wang's domino problem. Following Ollinger's framework for tiling the plane with a fixed number of polyominoes, and the eight-polyomino construction of Yang and Zhang, a set $W$ of Wang tiles is turned into a set $P$ of six polycubes built from $8 \times 8 \times 8$ functional cubes and half cubes carrying bumps and dents: one polycube (the *meat*) encodes all the tiles of $W$ at once, with colors encoded by half cubes attached above or below its main part, and the other five (a jaw, a filler, a tooth and two links) force the copies of the meat into an arrangement in which adjacent colors match. The third dimension replaces the rotated copies of a tile that the planar framework needs. Then $P$ tiles $\mathbb{Z}^3$ by translation if and only if $W$ tiles the plane, and since the domino problem is undecidable so is the tiling problem for six polycubes.
 
+A good expansion links a page for the six-polycube construction (meat, jaw, filler, tooth and links) and the lemma that it tiles $\mathbb{Z}^3$ exactly when the simulated Wang tile set tiles the plane.
+
 ## Sources
 
 - C. Yang and Z. Zhang, "Undecidability of translational tiling of the 3-dimensional space with a set of 6 polycubes", *Proceedings of the American Mathematical Society* 153(8):3541–3554, 2025, doi:[10.1090/proc/17186](https://doi.org/10.1090/proc/17186); numbering of arXiv:2408.02196v1: Theorem 4 (the main theorem) with its proof in Section 3, Remark 2 after it, and the open questions in Section 4.
