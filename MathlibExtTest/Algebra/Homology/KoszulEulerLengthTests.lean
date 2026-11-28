@@ -19,6 +19,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Field.Rat
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Algebra.Field.ZMod
+import Mathlib.Algebra.Module.Submodule.Ker
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
@@ -46,6 +47,18 @@ private def standardPair : Fin 2 → (Fin 2 → R6) := fun i => Pi.single i 1
 private def orderedWedge : ⋀[R6]^2 (Fin 2 → R6) :=
   exteriorPower.ιMulti R6 2 standardPair
 
+private lemma shortComplexIso_f_value {R : Type*} [Ring R]
+    {S T : ShortComplex (ModuleCat R)} (e : S ≅ T) (x : T.X₁) :
+    e.hom.τ₂ (S.f (e.inv.τ₁ x)) = T.f x := by
+  have hτ : e.inv.τ₁ ≫ e.hom.τ₁ = 𝟙 T.X₁ :=
+    congrArg (fun f : T ⟶ T => f.τ₁) e.inv_hom_id
+  have he : e.inv.τ₁ ≫ (S.f ≫ e.hom.τ₂) = T.f := by
+    calc
+      e.inv.τ₁ ≫ (S.f ≫ e.hom.τ₂) = e.inv.τ₁ ≫ (e.hom.τ₁ ≫ T.f) :=
+        congrArg (fun f : S.X₁ ⟶ T.X₂ => e.inv.τ₁ ≫ f) e.hom.comm₁₂.symm
+      _ = T.f := by rw [← Category.assoc, hτ, Category.id_comp]
+  simpa only [ModuleCat.comp_apply] using ConcreteCategory.congr_hom he x
+
 private lemma top_one : KoszulComplex.pairTopEquiv R6 orderedWedge = 1 := by
   rw [orderedWedge, KoszulComplex.pairTopEquiv_apply_ιMulti]
   norm_num [standardPair, Pi.single_apply]
@@ -68,19 +81,8 @@ example :
     e.hom.τ₂.hom ((K.sc 1).f.hom (e.inv.τ₁.hom (1 : R6))) =
       KoszulComplex.pairFamily R6 4 3 := by
   dsimp only
-  let e := KoszulComplex.pairCoordinateShortComplexIso R6 3 2
-  have h := LinearMap.congr_fun (congrArg ModuleCat.Hom.hom e.hom.comm₁₂)
-    (e.inv.τ₁.hom (1 : R6))
-  simp only [ModuleCat.hom_comp, LinearMap.comp_apply] at h
-  have hc := congrArg
-    (fun f : KoszulComplex.pairCoordinateShortComplex R6 3 2 ⟶
-      KoszulComplex.pairCoordinateShortComplex R6 3 2 => f.τ₁) e.inv_hom_id
-  change e.inv.τ₁ ≫ e.hom.τ₁ = 𝟙 _ at hc
-  have hv := LinearMap.congr_fun (congrArg ModuleCat.Hom.hom hc) (1 : R6)
-  simp only [ModuleCat.hom_comp, ModuleCat.hom_id, LinearMap.comp_apply,
-    LinearMap.id_apply] at hv
-  rw [hv] at h
-  exact h.symm.trans coordinate_top_one
+  exact (shortComplexIso_f_value (KoszulComplex.pairCoordinateShortComplexIso R6 3 2)
+    (1 : R6)).trans coordinate_top_one
 
 example :
     exteriorPower.oneEquiv R6 (Fin 2 → R6)
@@ -90,9 +92,12 @@ example :
   have h := LinearMap.congr_fun
     (KoszulComplex.pair_differential_one_coordinates R6 3 2) orderedWedge
   simp only [LinearMap.comp_apply] at h
-  rw [top_one] at h
-  simpa only [LinearMap.toSpanSingleton_apply,
-    one_smul, show (-2 : R6) = 4 from by decide] using h
+  have ht : (KoszulComplex.pairTopEquiv R6).toLinearMap orderedWedge = (1 : R6) :=
+    top_one
+  have hv := congrArg
+    (LinearMap.toSpanSingleton R6 (Fin 2 → R6) (KoszulComplex.pairFamily R6 (-2) 3)) ht
+  simpa only [LinearMap.toSpanSingleton_apply_one,
+    show (-2 : R6) = 4 from by decide] using h.trans hv
 
 section EmptyFamily
 
@@ -133,7 +138,7 @@ example :
     KoszulComplex.familyEulerCharacteristicOfQuotient ℚ emptyFamily quotient_finite = 1 := by
   rw [KoszulComplex.familyEulerCharacteristicOfQuotient_eq]
   simpa only [Fintype.card_fin, zero_add, Finset.sum_range_one, pow_zero,
-    one_mul, empty_homology_length, ENat.toNat_one] using (show (1 : ℤ) = 1 from rfl)
+    one_mul, empty_homology_length, ENat.toNat_one, Nat.cast_one] using (show (1 : ℤ) = 1 from rfl)
 
 end EmptyFamily
 
@@ -173,11 +178,7 @@ example : Module.length ℚ M = 2 ∧ Module.length ℚ axis = 1 ∧
 example :
     Module.length ℚ (M ⧸ (⊥ : Submodule ℚ M)) =
       Module.length ℚ (axis ⧸ (⊥ : Submodule ℚ axis)) + 1 := by
-  have hker : axis.subtype.ker = (⊥ : Submodule ℚ axis) := by
-    ext x
-    change (x : M) = 0 ↔ x = 0
-    exact ⟨fun hx => Subtype.ext hx, fun hx => congrArg Subtype.val hx⟩
-  simpa [axis_quotient_length, hker] using
+  simpa only [Submodule.comap_bot, Submodule.ker_subtype, axis_quotient_length] using
     Submodule.length_quotient_eq_add_of_le (⊥ : Submodule ℚ M) axis bot_le
 
 example :
@@ -192,7 +193,8 @@ example :
     Submodule.fractionScalarMap (R := ℤ) (K := ZMod 2) ⊤ (by simp) 0 =
       Submodule.fractionScalarMap (R := ℤ) (K := ZMod 2) ⊤ (by simp) 2 := by
   apply Subtype.ext
-  norm_num [Submodule.fractionScalarMap_apply]
+  change algebraMap ℤ (ZMod 2) (0 : ℤ) = algebraMap ℤ (ZMod 2) (2 : ℤ)
+  decide
 
 example :
     Module.length ℤ ((ℤ ⧸ Ideal.span {(4 : ℤ)}) ⧸
@@ -276,7 +278,7 @@ example : (identityComplex.d 1 0).hom (1 : ℚ) = (1 : ℚ) ∧
     identityComplex.d 0 1 = 0 := by
   constructor
   · change (edge (1 : ZMod 2) 0).hom (1 : ℚ) = (1 : ℚ)
-    simp only [edge, if_pos (And.intro rfl rfl), ModuleCat.hom_id, LinearMap.id_apply]
+    simp [edge]
   · change edge (0 : ZMod 2) 1 = 0
     have hbad : ¬ ((0 : ZMod 2) = 1 ∧ (1 : ZMod 2) = 0) := fun h => zero_ne_one h.1
     simp only [edge, if_neg hbad]
