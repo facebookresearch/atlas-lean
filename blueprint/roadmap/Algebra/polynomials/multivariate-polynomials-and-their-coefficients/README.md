@@ -5,3 +5,4 @@
 - [Support aeval X add C subset](support-aeval-x-add-c-subset.md)
 - [Total Degree aeval X add C](total-degree-aeval-x-add-c.md)
 - [Bij On aeval X add C of is Lower Set](bij-on-aeval-x-add-c-of-is-lower-set.md)
+- [Homogeneity from scaling on the integer grid](is-homogeneous-of-forall-eval-int-cast-m.md)
