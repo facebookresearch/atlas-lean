@@ -815,8 +815,8 @@ theorem tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc
                     (fun _ : Fin (n + 2) => A.V)).symm
                       (tensorPowObjPositiveCarrierEquiv A n y ⊗ₜ[k] a))) at h
           rw [LinearEquiv.apply_symm_apply, TensorProduct.map_tmul] at h
-          simpa only [tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc f phi n y]
-            using h.symm
+          simpa only [Representation.IntertwiningMap.toLinearMap_apply,
+            tensorPowObjPositiveCarrierEquiv_resTensorPowMapSucc f phi n y] using h.symm
       | add x y hx hy => simp only [map_add, hx, hy]
 
 set_option backward.isDefEq.respectTransparency false in

@@ -1,35 +1,8 @@
 {
   "rows": [
-    {
-      "path": "MathlibExt/RepresentationTheory/CoinvariantsReflection.lean",
-      "disposition": "identical",
-      "published_sha256": "a9cda1e5a152efe06056a1d7f90fa0ebb89effe97a4d6e06233211427a0b90ef",
-      "upstream_sha256": "b89dd29a8d2465629d5744a5f7680c99536dcd1c7a864fd03f064d359e6879e9"
-    },
-    {
-      "path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/FiniteCyclic.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "aed6252ce08ecf620bd203971b20f0c854c7800b0d34637ca9bfd9575cde0fe9",
-      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
-      "upstream_sha256": "bd66d6300025449758307189276cb8e3f666e0ad8a6cbaff51f29e86a5cd8aa3"
-    },
-    {
-      "path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/HerbrandQuotient.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "84ba16c66410b8dc628e7b72593b9dab37ec0847cfd2e0a844c961a3c1d20056",
-      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
-      "upstream_sha256": "560baa3a22336e4ec92c3009d4cc3a2fc14888f686cc555145ab39a9d4da93ef"
-    },
-    {
-      "path": "MathlibExt/RepresentationTheory/Rep/ResTensor.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "7c5742e18f73974b68c3bc710e00bc35ab47febaf82f3e1ccebf60a001cf235d",
-      "rationale": "The original categorical representation tensor powers use the native positive-power carrier and the canonical leading-unit and ordered FinSnoc transports. The zero and successor tensor formulas and coefficient naturality use explicit equivalence applications; two redundant reflexivity steps are removed. All original restrictions, objects, coefficients, signs and universe conditions are retained. Original upstream pin and digest are preserved.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "e6b7166f6b1c407c9e9736adfb574e0a1458ff43077d425a955a3f89c082d304"
-    }
+    {"path": "MathlibExt/RepresentationTheory/CoinvariantsReflection.lean", "disposition": "identical", "published_sha256": "a9cda1e5a152efe06056a1d7f90fa0ebb89effe97a4d6e06233211427a0b90ef", "upstream_sha256": "b89dd29a8d2465629d5744a5f7680c99536dcd1c7a864fd03f064d359e6879e9"},
+    {"path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/FiniteCyclic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "aed6252ce08ecf620bd203971b20f0c854c7800b0d34637ca9bfd9575cde0fe9", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "bd66d6300025449758307189276cb8e3f666e0ad8a6cbaff51f29e86a5cd8aa3"},
+    {"path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/HerbrandQuotient.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "84ba16c66410b8dc628e7b72593b9dab37ec0847cfd2e0a844c961a3c1d20056", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "560baa3a22336e4ec92c3009d4cc3a2fc14888f686cc555145ab39a9d4da93ef"},
+    {"path": "MathlibExt/RepresentationTheory/Rep/ResTensor.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "aee6e5e9f284749296647d3ab39a5df883d2c2b48b72b668a9329a1b1db43991", "rationale": "The original categorical representation tensor powers use the native positive-power carrier and canonical leading-unit and ordered FinSnoc transports. Explicit equivalence applications and the canonical intertwining-map projection identity prove coefficient naturality, with the same restrictions, objects, coefficients, signs and universe conditions. Original upstream pin and digest are preserved.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "e6b7166f6b1c407c9e9736adfb574e0a1458ff43077d425a955a3f89c082d304"}
   ]
 }
