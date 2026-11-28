@@ -12,8 +12,12 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Mathlib.LinearAlgebra.Finsupp.Supported
 public import Mathlib.RingTheory.PowerSeries.Inverse
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Ring.GeomSum
+import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.RingTheory.Ideal.Quotient.Basic
+import Mathlib.RingTheory.PowerSeries.Expand
+import Mathlib.RingTheory.PowerSeries.WellKnown
 
 /-!
 # Duality for Schlesinger–Zudilin and Ohno–Okuda–Zudilin q-multiple zeta values
@@ -23,6 +27,12 @@ reversing the block list and exchanging the two entries of each block. OOZ evalu
 invariant under the duality transported from Schlesinger–Zudilin words by the binomial
 change of basis.
 
+For any number $r \ge 0$ of blocks with positive entries $k_j, d_j$, the coefficient of $q^N$
+in the Schlesinger–Zudilin qMZV of $(k_1, \{0\}^{d_1-1}, \dots, k_r, \{0\}^{d_r-1})$ is a sum
+of binomial products over $m_1 > \dots > m_r > 0$ and $n_j \ge 1$ with $\sum_j m_j n_j = N$,
+where the last gap is measured from $m_{r+1} = 0$. The paper states the generating series for
+$r \ge 1$; at $r = 0$ both sides give the coefficient of the constant series $1$.
+
 To check the coefficient of degree `N`, we work modulo `X ^ (N + 1)`. In an SZ word,
 a letter `p` multiplies by a geometric series and a letter `y` sums over smaller indices.
 These operations are adjoint for the symmetric pairing with kernel `X ^ (m * n)`.
@@ -31,7 +41,10 @@ Moving the letters across the pairing reverses the word and exchanges `p` and `y
 ## References
 
 * Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024), Article A6,
-  pp. 1–41, Theorem 5 (word and block formulations of SZ duality).
+  pp. 1–41, Theorem 4 (SZ generating series) and Theorem 5 (word and block formulations
+  of SZ duality).
+* Benjamin Brindle, *Dualities of q-analogs of multiple zeta values*, Master's thesis,
+  University of Hamburg (2021), Theorem 2.9 (the source of Theorem 4).
 * Jianqiang Zhao, *Uniform Approach to Double Shuffle and Duality Relations of Various
   q-Analogs of Multiple Zeta Values via Rota–Baxter Algebras*, in *Periods in Quantum
   Field Theory and Arithmetic*, Springer Proceedings in Mathematics & Statistics 314
@@ -74,6 +87,18 @@ Article A6, Definition of Schlesinger–Zudilin qMZVs (extended version of
 Ebrahimi-Fard, Manchon and Singer, allowing `kⱼ = 0` for `j ≥ 2`). -/
 public noncomputable def szQMZV (k : List ℕ) : ℚ⟦X⟧ :=
   PowerSeries.mk fun N => coeff N (szQMZVPartial k (N + 1))
+
+/-- **Empty partial Schlesinger–Zudilin sum.** For every natural number $M$, the partial
+Schlesinger–Zudilin qMZV sum at bound $M$ and empty index is the constant series $1$:
+$Z_M(\varnothing) = 1$. -/
+public theorem szQMZVPartial_nil (M : ℕ) : szQMZVPartial [] M = 1 := rfl
+
+/-- **Schlesinger–Zudilin coefficients from finite partial sums.** For every list $k$ of
+natural numbers and every natural number $N$, the coefficient of $q^N$ in $\zeta_q^{SZ}(k)$
+is the coefficient of $q^N$ in the partial sum $Z_{N+1}(k)$, taken over first indices $m < N+1$. -/
+public theorem coeff_szQMZV_eq_coeff_partial (k : List ℕ) (N : ℕ) :
+    coeff N (szQMZV k) = coeff N (szQMZVPartial k (N + 1)) :=
+  coeff_mk _ _
 
 /-- **The empty Schlesinger–Zudilin qMZV.** The Schlesinger–Zudilin qMZV of the empty index is
 $1$: $\zeta_q^{SZ}(\emptyset) = 1$.
@@ -765,5 +790,313 @@ public theorem sum_coeff_szQMZV_replicate_one_eq_card_partition (N R : ℕ)
     _ = _ := by rw [← map_sum, sum_partial_replicate_one, coeff_prod_one_add_geom]
 
 end Partitions
+
+section BlockCoefficients
+
+open Finset
+
+-- Shift the open gap to an initial interval and use the hockey-stick identity.
+private lemma sum_gap_choose (l M t : ℕ) :
+    ∑ a ∈ Ioo l M, (a - l - 1).choose t = (M - l - 1).choose (t + 1) := by
+  rw [← Ico_add_one_left_eq_Ioo, sum_Ico_eq_sum_range]
+  simp only [show ∀ i : ℕ, l + 1 + i - l - 1 = i by omega,
+    show M - (l + 1) = M - l - 1 by omega]
+  generalize M - l - 1 = b
+  cases b with
+  | zero => simp
+  | succ b =>
+    rw [← Nat.sum_Icc_choose b t]
+    symm
+    refine sum_subset (fun a ha => mem_range.mpr (by have := (mem_Icc.mp ha).2; omega)) ?_
+    intro a ha hat
+    exact Nat.choose_eq_zero_of_lt (by
+      simp only [mem_range, mem_Icc, not_and_or] at ha hat
+      omega)
+
+private lemma partial_zero_prefix_nil (t M : ℕ) :
+    szQMZVPartial (List.replicate t 0) M = C ((M - 1).choose t : ℚ) := by
+  induction t generalizing M with
+  | zero => simp [szQMZVPartial]
+  | succ t ih =>
+    simp only [List.replicate_succ, szQMZVPartial_cons, pow_zero, one_mul, ih, ← map_sum,
+      ← Nat.cast_sum]
+    simpa using congrArg (fun n : ℕ => C (n : ℚ)) (sum_gap_choose 0 M t)
+
+-- At a fixed first retained size, the deleted zero slots can be filled independently.
+private lemma partial_zero_prefix_cons (t k : ℕ) (ks : List ℕ) (M : ℕ) :
+    szQMZVPartial (List.replicate t 0 ++ k :: ks) M =
+      ∑ m ∈ Ioo 0 M, C ((M - m - 1).choose t : ℚ) * (geom m ^ k * szQMZVPartial ks m) := by
+  induction t generalizing M with
+  | zero => simp [szQMZVPartial_cons]
+  | succ t ih =>
+    simp only [List.replicate_succ, List.cons_append, szQMZVPartial_cons, pow_zero, one_mul, ih]
+    simp only [← Ico_add_one_left_eq_Ioo, zero_add]
+    rw [← sum_Ico_Ico_comm']
+    apply sum_congr rfl
+    intro m _
+    rw [← sum_mul, ← map_sum, ← Nat.cast_sum, Ico_add_one_left_eq_Ioo, sum_gap_choose]
+
+private def descendingTuples (r M : ℕ) : Finset (Fin r → ℕ) := by
+  classical
+  exact (Fintype.piFinset fun _ : Fin r => Ioo 0 M).filter StrictAnti
+
+private lemma mem_descendingTuples {r M : ℕ} {m : Fin r → ℕ} :
+    m ∈ descendingTuples r M ↔ StrictAnti m ∧ ∀ j, 0 < m j ∧ m j < M := by
+  simp only [descendingTuples, mem_filter, Fintype.mem_piFinset, mem_Ioo, and_comm]
+
+private def firstSize {r : ℕ} (m : Fin r → ℕ) : ℕ :=
+  if h : 0 < r then m ⟨0, h⟩ else 0
+
+private def nextSize {r : ℕ} (m : Fin r → ℕ) (j : Fin r) : ℕ :=
+  if h : j.val + 1 < r then m ⟨j.val + 1, h⟩ else 0
+
+private lemma nextSize_cons_zero {r : ℕ} (a : ℕ) (m : Fin r → ℕ) :
+    nextSize (Fin.cons a m) 0 = firstSize m := by
+  by_cases h : 0 < r
+  · simp only [nextSize, firstSize, Fin.val_zero, zero_add, dite_eq_left h,
+      dite_eq_left (show 1 < r + 1 by omega)]
+    exact @Fin.cons_succ r (fun _ => ℕ) a m (⟨0, h⟩ : Fin r)
+  · simp only [nextSize, firstSize, Fin.val_zero, zero_add, dite_eq_right h,
+      dite_eq_right (show ¬ 1 < r + 1 by omega)]
+
+private lemma nextSize_cons_succ {r : ℕ} (a : ℕ) (m : Fin r → ℕ) (j : Fin r) :
+    nextSize (Fin.cons a m) j.succ = nextSize m j := by
+  have hs : j.succ.val + 1 < r + 1 ↔ j.val + 1 < r := by
+    simp only [Fin.val_succ]
+    omega
+  by_cases h : j.val + 1 < r
+  · simp only [nextSize, dite_eq_left h, dite_eq_left (hs.mpr h)]
+    exact @Fin.cons_succ r (fun _ => ℕ) a m (⟨j.val + 1, h⟩ : Fin r)
+  · simp only [nextSize, dite_eq_right h, dite_eq_right (h ∘ hs.mp)]
+
+private lemma mem_descendingTuples_cons {r M a : ℕ} {m : Fin r → ℕ} :
+    Fin.cons a m ∈ descendingTuples (r + 1) M ↔
+      a ∈ Ioo 0 M ∧ m ∈ descendingTuples r a := by
+  rw [mem_descendingTuples, mem_descendingTuples, mem_Ioo]
+  constructor
+  · rintro ⟨hs, hb⟩
+    refine ⟨by simpa only [Fin.cons_zero] using hb 0, ?_, ?_⟩
+    · intro i j hij
+      simpa only [Fin.cons_succ] using hs (Fin.succ_lt_succ_iff.mpr hij)
+    · intro j
+      simpa only [Fin.cons_zero, Fin.cons_succ] using ⟨(hb j.succ).1, hs (Fin.succ_pos j)⟩
+  · rintro ⟨ha, hs, hb⟩
+    refine ⟨?_, Fin.cases ?_ (fun j => ?_)⟩
+    · intro i j
+      refine Fin.cases ?_ (fun j' => ?_) j
+      · exact fun h => (Nat.not_lt_zero i.val h).elim
+      · refine Fin.cases ?_ (fun i' h => ?_) i
+        · intro _
+          simpa only [Fin.cons_zero, Fin.cons_succ] using (hb j').2
+        · simpa only [Fin.cons_succ] using hs (Fin.succ_lt_succ_iff.mp h)
+    · simpa only [Fin.cons_zero] using ha
+    · simpa only [Fin.cons_succ] using ⟨(hb j).1, (hb j).2.trans ha.2⟩
+
+private lemma sum_descendingTuples_succ {A : Type*} [AddCommMonoid A] (r M : ℕ)
+    (f : (Fin (r + 1) → ℕ) → A) :
+    ∑ m ∈ descendingTuples (r + 1) M, f m =
+      ∑ a ∈ Ioo 0 M, ∑ m ∈ descendingTuples r a, f (Fin.cons a m) := by
+  classical
+  rw [sum_sigma' (Ioo 0 M) (descendingTuples r) (fun a m => f (Fin.cons a m))]
+  symm
+  refine sum_nbij' (fun p : Σ _ : ℕ, Fin r → ℕ => Fin.cons p.1 p.2)
+    (fun m : Fin (r + 1) → ℕ => ⟨m 0, Fin.tail m⟩) ?_ ?_ ?_ ?_ (fun _ _ => rfl)
+  · intro p hp
+    exact mem_descendingTuples_cons.mpr (mem_sigma.mp hp)
+  · intro m hm
+    have he := mem_descendingTuples_cons.mp (Fin.cons_self_tail m ▸ hm)
+    exact mem_sigma.mpr he
+  · intro p _
+    simp
+  · intro m _
+    exact Fin.cons_self_tail m
+
+-- The prefixed zero slots contribute one more open-gap binomial.
+private lemma partial_blocks (r : ℕ) (k d : Fin r → ℕ) (t M : ℕ) :
+    szQMZVPartial (List.replicate t 0 ++ szBlockIndex (List.ofFn fun j => (k j, d j + 1))) M =
+      ∑ m ∈ descendingTuples r M, C ((M - firstSize m - 1).choose t : ℚ) *
+        ∏ j : Fin r, C ((m j - nextSize m j - 1).choose (d j) : ℚ) * geom (m j) ^ k j := by
+  classical
+  induction r generalizing t M with
+  | zero =>
+    simpa [firstSize, descendingTuples, szBlockIndex, Fintype.piFinset_of_isEmpty,
+      show ∀ m : Fin 0 → ℕ, StrictAnti m from fun m i => Fin.elim0 i] using
+      partial_zero_prefix_nil t M
+  | succ r ih =>
+    rw [List.ofFn_succ]
+    have hb : szBlockIndex ((k 0, d 0 + 1) ::
+        List.ofFn (fun j : Fin r => (k j.succ, d j.succ + 1))) =
+        k 0 :: (List.replicate (d 0) 0 ++ szBlockIndex
+          (List.ofFn fun j : Fin r => (k j.succ, d j.succ + 1))) := by simp [szBlockIndex]
+    rw [hb, partial_zero_prefix_cons, sum_descendingTuples_succ]
+    apply sum_congr rfl
+    intro a _
+    rw [ih (fun j => k j.succ) (fun j => d j.succ), mul_sum, mul_sum]
+    apply sum_congr rfl
+    intro m _
+    rw [Fin.prod_univ_succ]
+    simp only [firstSize, Nat.zero_lt_succ, dite_true, Fin.cons_zero, Fin.cons_succ,
+      nextSize_cons_zero, nextSize_cons_succ]
+    ac_rfl
+
+-- Substitution by X^m stretches the degrees of the binomial series by a factor of m.
+private lemma coeff_geom_pow {m : ℕ} (hm : 0 < m) (k a : ℕ) :
+    coeff a (geom m ^ (k + 1)) =
+      if 0 < a ∧ m ∣ a then ((a / m - 1).choose k : ℚ) else 0 := by
+  have hInv : expand m hm.ne' ((1 - X : ℚ⟦X⟧)⁻¹) = (1 - X ^ m)⁻¹ := by
+    symm
+    rw [PowerSeries.inv_eq_iff_mul_eq_one (by simp [hm.ne'])]
+    simpa only [map_mul, map_sub, map_one, expand_X, pow_one, mul_comm] using
+      congrArg (expand m hm.ne') (unit_factor (m := 1) (by decide))
+  have hBase : ((1 - X : ℚ⟦X⟧)⁻¹) ^ (k + 1) = (invOneSubPow ℚ (k + 1)).val := by
+    rw [invOneSubPow_eq_inv_one_sub_pow, Units.val_pow_eq_pow_val]
+    congr 1
+    change ((1 - X : ℚ⟦X⟧)⁻¹) = PowerSeries.mk 1
+    exact (PowerSeries.inv_eq_iff_mul_eq_one (by simp)).2 (mk_one_mul_one_sub_eq_one ℚ)
+  have hGeom : geom m ^ (k + 1) =
+      expand m hm.ne' ((X : ℚ⟦X⟧) ^ (k + 1) * (invOneSubPow ℚ (k + 1)).val) := by
+    rw [← hBase, map_mul, map_pow, map_pow, expand_X, hInv, geom, mul_pow]
+  rw [hGeom, coeff_expand]
+  by_cases hd : m ∣ a
+  · obtain ⟨n, rfl⟩ := hd
+    rw [ite_eq_left (dvd_mul_right m n), Nat.mul_div_cancel_left _ hm,
+      coeff_X_pow_mul', invOneSubPow_val_succ_eq_mk_add_choose]
+    by_cases hn : k + 1 ≤ n
+    · rw [ite_eq_left hn, ite_eq_left ⟨Nat.mul_pos hm (by omega), dvd_mul_right _ _⟩, coeff_mk]
+      congr 2
+      omega
+    · rw [ite_eq_right hn]
+      cases n with
+      | zero => simp
+      | succ n =>
+        rw [ite_eq_left ⟨Nat.mul_pos hm (Nat.succ_pos _), dvd_mul_right _ _⟩]
+        exact_mod_cast (Nat.choose_eq_zero_of_lt (by omega) : (n + 1 - 1).choose k = 0).symm
+  · rw [ite_eq_right hd, ite_eq_right (fun h => hd h.2)]
+
+-- Working in the existing quotient by X^(N+1) makes each multiplicity sum finite.
+private lemma residue_eq_iff_coeff (N : ℕ) (p q : ℚ⟦X⟧) :
+    residue N p = residue N q ↔ ∀ a ≤ N, coeff a p = coeff a q := by
+  rw [← sub_eq_zero, ← map_sub, Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton,
+    X_pow_dvd_iff]
+  simp only [map_sub, sub_eq_zero, Nat.lt_succ_iff]
+
+private lemma residue_geom_pow (N m k : ℕ) (hm : 0 < m) (hk : 0 < k) :
+    residue N (geom m ^ k) =
+      ∑ n ∈ Icc 1 N, residue N (monomial (m * n) ((n - 1).choose (k - 1) : ℚ)) := by
+  rw [← map_sum, residue_eq_iff_coeff]
+  intro a ha
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hk.ne'
+  simp only [coeff_geom_pow hm, map_sum, coeff_monomial, Nat.succ_sub_one]
+  split_ifs with hd
+  · obtain ⟨n, rfl⟩ := hd.2
+    have hn : 0 < n := Nat.pos_of_ne_zero fun h => by simpa [h] using hd.1
+    rw [sum_eq_single n, ite_eq_left rfl, Nat.mul_div_cancel_left _ hm]
+    · intro j _ hj
+      exact ite_eq_right (fun h => hj ((Nat.eq_of_mul_eq_mul_left hm h).symm))
+    · exact fun h => (h (mem_Icc.mpr ⟨hn, (Nat.le_mul_of_pos_left n hm).trans ha⟩)).elim
+  · symm
+    apply sum_eq_zero
+    intro n hn
+    refine ite_eq_right (fun h : a = m * n => hd ⟨?_, ⟨n, h⟩⟩)
+    rw [h]
+    exact Nat.mul_pos hm (mem_Icc.mp hn).1
+
+private lemma coeff_partial_blocks (r : ℕ) (k d : Fin r → ℕ) (hk : ∀ j, 0 < k j) (N : ℕ) :
+    coeff N (szQMZVPartial (szBlockIndex (List.ofFn fun j => (k j, d j + 1))) (N + 1)) =
+      ∑ m ∈ descendingTuples r (N + 1),
+        ∑ n ∈ (Fintype.piFinset fun _ : Fin r => Icc 1 N) with ∑ j, m j * n j = N,
+          ∏ j : Fin r,
+            (((m j - nextSize m j - 1).choose (d j) : ℚ) *
+              ((n j - 1).choose (k j - 1) : ℚ)) := by
+  classical
+  have h := partial_blocks r k d 0 (N + 1)
+  simp only [List.replicate_zero, List.nil_append, Nat.choose_zero_right, Nat.cast_one, map_one,
+    one_mul] at h
+  rw [h, map_sum]
+  apply sum_congr rfl
+  intro m hm
+  let g (j : Fin r) := ((m j - nextSize m j - 1).choose (d j) : ℚ)
+  let c (j : Fin r) (n : ℕ) := ((n - 1).choose (k j - 1) : ℚ)
+  let T := Fintype.piFinset fun _ : Fin r => Icc 1 N
+  have hr : residue N (∏ j : Fin r, C (g j) * geom (m j) ^ k j) =
+      residue N (∑ n ∈ T, ∏ j : Fin r, monomial (m j * n j) (g j * c j (n j))) := by
+    simp only [map_prod, map_sum, map_mul]
+    trans ∏ j : Fin r, ∑ n ∈ Icc 1 N, residue N (monomial (m j * n) (g j * c j n))
+    · apply prod_congr rfl
+      intro j _
+      rw [residue_geom_pow N (m j) (k j) ((mem_descendingTuples.mp hm).2 j).1 (hk j), mul_sum]
+      apply sum_congr rfl
+      intro n _
+      rw [← map_mul, ← monomial_zero_eq_C_apply, monomial_mul_monomial, zero_add]
+    · exact Finset.prod_univ_sum _ _
+  have hc := (residue_eq_iff_coeff _ _ _).mp hr N le_rfl
+  change coeff N (∏ j : Fin r, C (g j) * geom (m j) ^ k j) = _
+  rw [hc, map_sum, sum_filter]
+  apply sum_congr rfl
+  intro n _
+  rw [prod_monomial, coeff_monomial]
+  by_cases hn : ∑ j, m j * n j = N
+  · rw [ite_eq_left hn.symm, ite_eq_left hn]
+  · rw [ite_eq_right (Ne.symm hn), ite_eq_right hn]
+
+/-- **Coefficients of Schlesinger–Zudilin qMZVs as sums of binomial products.** Let $r \ge 0$,
+and let $k_1, \dots, k_r$ and $d_1, \dots, d_r$ be positive integers. For every natural number
+$N$, the coefficient of $q^N$ in the Schlesinger–Zudilin qMZV
+$\zeta_q^{\mathrm{SZ}}(k_1, \{0\}^{d_1 - 1}, \dots, k_r, \{0\}^{d_r - 1})$, whose index lists each
+$k_j$ followed by $d_j - 1$ zeros, equals
+$$\sum \prod_{j=1}^{r} \binom{n_j - 1}{k_j - 1} \binom{m_j - m_{j+1} - 1}{d_j - 1},$$
+where the sum runs over all integers $m_1 > \dots > m_r > 0$ and $n_1, \dots, n_r \ge 1$ with
+$m_1 n_1 + \dots + m_r n_r = N$, and where $m_{r+1} = 0$.
+
+These are the coefficients of $X_1^{k_1 - 1} \cdots X_r^{k_r - 1} Y_1^{d_1 - 1} \cdots
+Y_r^{d_r - 1} q^N$ on both sides of the paper's identity expressing the generating series
+$s(X; Y)$ of these qMZVs as
+$\sum \prod_j (1 + X_j)^{n_j - 1} (1 + Y_j)^{m_j - m_{j+1} - 1} q^{m_j n_j}$.
+
+Source: Benjamin Brindle, *A Unified Approach to qMZVs*, INTEGERS 24 (2024),
+Article A6, Theorem 4 (`integers-2024-A6-thm-4`). -/
+public theorem coeff_szQMZV_szBlockIndex_eq_sum_choose (r : ℕ) (k d : Fin r → ℕ)
+    (hk : ∀ j, 1 ≤ k j) (hd : ∀ j, 1 ≤ d j) (N : ℕ) :
+    coeff N (szQMZV (szBlockIndex (List.ofFn fun j => (k j, d j)))) =
+      ∑ mn ∈ (Fintype.piFinset fun _ : Fin r => Finset.range (N + 1)) ×ˢ
+          (Fintype.piFinset fun _ : Fin r => Finset.range (N + 1)) with
+          StrictAnti mn.1 ∧ (∀ j, 0 < mn.1 j) ∧ (∀ j, 0 < mn.2 j) ∧
+            ∑ j, mn.1 j * mn.2 j = N,
+        ∏ j : Fin r, ((((mn.2 j - 1).choose (k j - 1)) *
+          ((mn.1 j - (if h : j.val + 1 < r then mn.1 ⟨j.val + 1, h⟩ else 0) - 1).choose
+            (d j - 1)) : ℕ) : ℚ) := by
+  classical
+  have hpos (j : Fin r) : d j - 1 + 1 = d j := Nat.sub_add_cancel (hd j)
+  have h := coeff_partial_blocks r k (fun j => d j - 1) hk N
+  simp only [hpos] at h
+  rw [coeff_szQMZV_eq_coeff_partial, h]
+  let T := Fintype.piFinset fun _ : Fin r => Icc 1 N
+  have h₁ : (∑ m ∈ descendingTuples r (N + 1),
+      ∑ n ∈ T with ∑ j, m j * n j = N,
+        ∏ j, ((m j - nextSize m j - 1).choose (d j - 1) : ℚ) *
+          ((n j - 1).choose (k j - 1) : ℚ)) =
+      ∑ mn ∈ descendingTuples r (N + 1) ×ˢ T with ∑ j, mn.1 j * mn.2 j = N,
+        ∏ j, ((mn.1 j - nextSize mn.1 j - 1).choose (d j - 1) : ℚ) *
+          ((mn.2 j - 1).choose (k j - 1) : ℚ) := by
+    rw [sum_filter, sum_product]
+    simp only [sum_filter]
+  rw [h₁]
+  refine sum_congr ?_ (fun mn _ => ?_)
+  · ext mn
+    simp only [mem_filter, mem_product, mem_descendingTuples, T, Fintype.mem_piFinset,
+      mem_Icc, mem_range]
+    constructor
+    · rintro ⟨⟨⟨ha, hm⟩, hn⟩, hs⟩
+      exact ⟨⟨fun j => (hm j).2, fun j => Nat.lt_succ_of_le (hn j).2⟩, ha,
+        fun j => (hm j).1, fun j => (hn j).1, hs⟩
+    · rintro ⟨⟨hm, hn⟩, ha, hm₀, hn₀, hs⟩
+      exact ⟨⟨⟨ha, fun j => ⟨hm₀ j, hm j⟩⟩,
+        fun j => ⟨hn₀ j, Nat.le_of_lt_succ (hn j)⟩⟩, hs⟩
+  · apply prod_congr rfl
+    intro j _
+    rw [Nat.cast_mul, mul_comm]
+    rfl
+
+end BlockCoefficients
 
 end MetaMathlibExt
