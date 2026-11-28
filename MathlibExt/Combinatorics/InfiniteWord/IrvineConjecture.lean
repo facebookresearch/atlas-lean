@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.Log
+public import Mathlib.Data.Nat.Nth
 public import MathlibExt.Combinatorics.InfiniteWord.Gutkovskiy
 public import MathlibExt.Combinatorics.InfiniteWord.KimberlingBlock
 import Mathlib.Tactic.NormNum
@@ -16,7 +17,19 @@ import Mathlib.Tactic.NormNum
 /-! # Irvine's conjecture for Gutkovskiy's sequence
 
 The successive differences of Gutkovskiy's sequence form Kimberling's word. We identify their
-finite prefixes using the morphism `0 ↦ 11`, `1 ↦ 110`, then sum the differences.
+finite prefixes using the morphism `0 ↦ 11`, `1 ↦ 110`, then sum the differences. For `n ≥ 1`,
+if `A_n` and `B_n` are the one-based positions of the `n`-th one and zero, respectively, then
+`A_(B_n)` is either `A_n + B_n - 1` or `A_n + B_n`. The index zero is immediate from the
+convention `A_0 = B_0 = 0`.
+
+## References
+
+* Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24 (2024),
+  Article A51, pp. 1–17, Section 2 and Theorems 1 and 3. We use prefix counts instead of Walnut
+  for Theorem 3; Section 8 gives the same auxiliary identity `B_n = 2 * A_n + n`.
+* Robbert Fokkink, Gerard Francis Ortega, and Dan Rust, *Corner the empress*, in *Games of No
+  Chance 6*, MSRI Publications 71 (2025), pp. 475–489, Sections 4 and 5. Table 4 gives the
+  auxiliary identity, and Section 5 records the conjecture for the morphism `1 ↦ 110`, `0 ↦ 11`.
 -/
 
 namespace MetaMathlibExt
@@ -247,6 +260,226 @@ public theorem gutkovskiy_eq_sum_kimberlingWord (n : ℕ) :
   | succ n ih =>
     rw [Finset.sum_range_succ, kimberlingWord_eq_increment, ← ih,
       gutkovskiy_succ_eq_add_increment]
+
+/-- **Positions of the ones in Kimberling's word.** Let $k = k_1 k_2 k_3 \cdots$ be Kimberling's
+word over $\{0, 1\}$. For $n \ge 1$, $A_n$ is the position of the $n$-th $1$ in $k$, that is, the
+$n$-th smallest index $j \ge 1$ with $k_j = 1$; by convention $A_0 = 0$.
+
+Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
+(2024), Article A51, Section 8 (the sequence `A_n`). -/
+public noncomputable def kimberlingOnePosition (n : ℕ) : ℕ :=
+  if n = 0 then 0 else Nat.nth (fun i ↦ kimberlingWord i = true) (n - 1) + 1
+
+/-- **Positions of the zeros in Kimberling's word.** Let $k = k_1 k_2 k_3 \cdots$ be Kimberling's
+word over $\{0, 1\}$. For $n \ge 1$, $B_n$ is the position of the $n$-th $0$ in $k$, that is, the
+$n$-th smallest index $j \ge 1$ with $k_j = 0$; by convention $B_0 = 0$.
+
+Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
+(2024), Article A51, Section 8 (the sequence `B_n`). -/
+public noncomputable def kimberlingZeroPosition (n : ℕ) : ℕ :=
+  if n = 0 then 0 else Nat.nth (fun i ↦ kimberlingWord i = false) (n - 1) + 1
+
+/-- If the letter at zero-based index `i` is a one and the preceding prefix contains `n` ones,
+then the one-based position of the `(n + 1)`-st one is `i + 1`. -/
+public theorem kimberlingOnePosition_eq_succ_of_count {n i : ℕ} (hi : kimberlingWord i = true)
+    (hc : Nat.count (fun j ↦ kimberlingWord j = true) i = n) :
+    kimberlingOnePosition (n + 1) = i + 1 := by
+  simp only [kimberlingOnePosition, Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel]
+  rw [← hc, Nat.nth_count hi]
+
+/-- If the letter at zero-based index `i` is a zero and the preceding prefix contains `n` zeros,
+then the one-based position of the `(n + 1)`-st zero is `i + 1`. -/
+public theorem kimberlingZeroPosition_eq_succ_of_count {n i : ℕ} (hi : kimberlingWord i = false)
+    (hc : Nat.count (fun j ↦ kimberlingWord j = false) i = n) :
+    kimberlingZeroPosition (n + 1) = i + 1 := by
+  simp only [kimberlingZeroPosition, Nat.add_one_ne_zero, ite_false, Nat.add_sub_cancel]
+  rw [← hc, Nat.nth_count hi]
+
+/-- **Position of the first one in Kimberling's word.** The position $A_1$ of the first $1$ in
+Kimberling's word $k = k_1 k_2 k_3 \cdots$, counted from $1$, is $A_1 = 1$.
+
+Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
+(2024), Article A51, Table 3. -/
+public theorem kimberlingOnePosition_one : kimberlingOnePosition 1 = 1 :=
+  kimberlingOnePosition_eq_succ_of_count (n := 0) (i := 0) (by decide) (by decide)
+
+/-- **The first zero of Kimberling's word.** Let $B_n$ be the position of the $n$-th $0$ in
+Kimberling's word $k = k_1 k_2 k_3 \cdots$. Then $B_1 = 3$: the first $0$ of $k$ is $k_3$.
+
+Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
+(2024), Article A51, Table 3. -/
+public theorem kimberlingZeroPosition_one : kimberlingZeroPosition 1 = 3 :=
+  kimberlingZeroPosition_eq_succ_of_count (n := 0) (i := 2) (by decide) (by decide)
+
+section Positions
+
+local notation "g" => gutkovskiy
+
+private theorem count_kimberlingWord (b : Bool) (n : ℕ) :
+    Nat.count (fun i ↦ kimberlingWord i = b) n = if b then g n else n - g n := by
+  induction n with
+  | zero => simp [gutkovskiy_initial.1]
+  | succ n ih =>
+    rw [Nat.count_succ, ih, kimberlingWord_eq_increment, gutkovskiy_succ_eq_add_increment]
+    have h := gutkovskiy_le n
+    cases b <;> cases increment n
+    all_goals simp
+    omega
+
+-- Each substituted letter contributes its two initial ones, at the first two steps of its block.
+private theorem kimberlingOnePosition_spec (n : ℕ) (hn : 1 ≤ n) :
+    kimberlingOnePosition n = n + g ((n - 1) / 2) ∧
+      g (kimberlingOnePosition n - 1) = n - 1 ∧ g (kimberlingOnePosition n) = n := by
+  let m := (n - 1) / 2
+  let i := n + g m - 1
+  have h₀ := gutkovskiy_at_blockStart m
+  obtain ⟨h₁, h₂⟩ := next_two_at_blockStart m h₀
+  have hstart : blockStart m = 2 * m + g m := rfl
+  have hm : 2 * m + 1 ≤ n ∧ n ≤ 2 * m + 2 := by dsimp [m]; omega
+  have ⟨hpre, hpost⟩ : g i = n - 1 ∧ g (i + 1) = n := by
+    by_cases h : n = 2 * m + 1
+    · rw [show i = blockStart m by dsimp [i]; omega, h₀, h₁]
+      omega
+    · rw [show i = blockStart m + 1 by dsimp [i]; omega, h₁, Nat.add_assoc, h₂]
+      omega
+  have hw : kimberlingWord i = true := by
+    rw [kimberlingWord_eq_increment, increment]
+    exact decide_eq_true (by omega)
+  have hc : Nat.count (fun j ↦ kimberlingWord j = true) i = n - 1 := by
+    simpa [count_kimberlingWord] using hpre
+  have hpos := kimberlingOnePosition_eq_succ_of_count hw hc
+  rw [show n - 1 + 1 = n by omega] at hpos
+  rw [hpos]
+  refine ⟨?_, by simpa only [Nat.add_sub_cancel] using hpre, hpost⟩
+  change n + g m - 1 + 1 = n + g m
+  omega
+
+-- The `n`-th zero is the final letter of the substituted block of the `n`-th one.
+private theorem kimberlingZeroPosition_spec (n : ℕ) (hn : 1 ≤ n) :
+    kimberlingZeroPosition n = 2 * kimberlingOnePosition n + n ∧
+      kimberlingZeroPosition n - 1 - g (kimberlingZeroPosition n - 1) = n - 1 ∧
+      kimberlingZeroPosition n - g (kimberlingZeroPosition n) = n := by
+  obtain ⟨hA, hpre, hpost⟩ := kimberlingOnePosition_spec n hn
+  let a := kimberlingOnePosition n
+  change g (a - 1) = n - 1 at hpre
+  change g a = n at hpost
+  have ha : 0 < a := by dsimp [a]; omega
+  let t := blockStart a
+  have ht : t = 2 * a + n := by simp only [t, blockStart, hpost]
+  have hbefore : t - 1 = blockStart (a - 1) + 2 := by
+    rw [blockStart, hpre]
+    omega
+  have hg : g (t - 1) = 2 * a := by
+    rw [hbefore, (next_two_at_blockStart _ (gutkovskiy_at_blockStart _)).2]
+    omega
+  have hgt : g t = 2 * a := gutkovskiy_at_blockStart a
+  have hs : t - 1 + 1 = t := by omega
+  have hw : kimberlingWord (t - 1) = false := by
+    rw [kimberlingWord_eq_increment, increment, hs, hg, hgt]
+    simp
+  have hc : Nat.count (fun j ↦ kimberlingWord j = false) (t - 1) = n - 1 := by
+    simp only [count_kimberlingWord, Bool.false_eq_true, ite_false, hg]
+    omega
+  have hpos := kimberlingZeroPosition_eq_succ_of_count hw hc
+  rw [show n - 1 + 1 = n by omega, hs] at hpos
+  rw [hpos]
+  exact ⟨ht, by omega, by omega⟩
+
+-- The recurrence makes `m + 1 - g (m + 1) = g k` at `k = g m / 2`.
+-- The two successive values `g m` and `g (m + 1)` locate `2 * k + 1` between
+-- `g (m + 1) - 1` and `g (m + 1) + 1`, letting the two bounds feed each other.
+private theorem gutkovskiy_bounds_odd (m : ℕ) :
+    2 * g m - 1 ≤ g (2 * m + 1) ∧ g (2 * m + 1) ≤ 2 * g m + 2 := by
+  induction m using Nat.strong_induction_on with
+  | ind m ih =>
+    cases m with
+    | zero => simp [gutkovskiy_initial.1, gutkovskiy_initial.2.1]
+    | succ m =>
+      let k := g m / 2
+      have hm := gutkovskiy_le m
+      have hk : k < m + 1 := by dsimp [k]; omega
+      obtain ⟨hlow, hhigh⟩ := ih k hk
+      have hstep := gutkovskiy_succ_le m
+      have hmono : g m ≤ g (m + 1) := gutkovskiy_monotone (Nat.le_succ m)
+      have hrec : g (m + 1) = m + 1 - g k := gutkovskiy_succ m
+      have hgk := gutkovskiy_le k
+      have hbetween : g (m + 1) - 1 ≤ 2 * k + 1 ∧ 2 * k + 1 ≤ g (m + 1) + 1 := by
+        dsimp [k]
+        omega
+      constructor
+      · by_cases h : g (m + 1) = 0
+        · simp [h]
+        · obtain ⟨hpos, _, hcount⟩ := kimberlingOnePosition_spec (2 * g (m + 1) - 1) (by omega)
+          rw [show (2 * g (m + 1) - 1 - 1) / 2 = g (m + 1) - 1 by omega] at hpos
+          have hsmall := gutkovskiy_monotone hbetween.1
+          rw [← hcount]
+          exact gutkovskiy_monotone (by omega)
+      · obtain ⟨hpos, hcount, _⟩ := kimberlingOnePosition_spec (2 * g (m + 1) + 3) (by omega)
+        rw [show (2 * g (m + 1) + 3 - 1) / 2 = g (m + 1) + 1 by omega] at hpos
+        have hlarge := gutkovskiy_monotone hbetween.2
+        have hle : 2 * (m + 1) + 1 ≤ kimberlingOnePosition (2 * g (m + 1) + 3) - 1 := by
+          omega
+        have := gutkovskiy_monotone hle
+        omega
+
+/-- **Positions of ones at the positions of zeros in Kimberling's word.** Let
+$k = k_1 k_2 k_3 \cdots$ be Kimberling's word, and for $n \ge 1$ let $A_n$ and $B_n$ be the
+positions (counted from $1$) of the $n$-th $1$ and of the $n$-th $0$ in $k$. Then for every
+$n \ge 1$, either $A_{B_n} = A_n + B_n - 1$ or $A_{B_n} = A_n + B_n$.
+
+This answers a problem of Fokkink, Ortega and Rust.
+
+Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
+(2024), Article A51, Theorem 3 (`integers-2024-A51-thm-3`). -/
+public theorem kimberlingOnePosition_kimberlingZeroPosition {n : ℕ} (hn : 1 ≤ n) :
+    kimberlingOnePosition (kimberlingZeroPosition n) + 1 =
+        kimberlingOnePosition n + kimberlingZeroPosition n ∨
+      kimberlingOnePosition (kimberlingZeroPosition n) =
+        kimberlingOnePosition n + kimberlingZeroPosition n := by
+  let r := (n - 1) / 2
+  let s := kimberlingOnePosition n + r
+  have hA : kimberlingOnePosition n = n + g r := (kimberlingOnePosition_spec n hn).1
+  have hB := (kimberlingZeroPosition_spec n hn).1
+  have hAB := (kimberlingOnePosition_spec (kimberlingZeroPosition n) (by omega)).1
+  rw [show (kimberlingZeroPosition n - 1) / 2 = s by rw [hB]; dsimp [s, r]; omega] at hAB
+  -- The prefix of length `s` lies after at least `r` zeros but before the `(r + 2)`-nd zero.
+  suffices r ≤ s - g s ∧ s - g s ≤ r + 1 by
+    have hgs := gutkovskiy_le s
+    dsimp [s] at *
+    omega
+  have hs : 3 * r + g r + 1 ≤ s ∧ s ≤ 3 * r + g r + 2 := by
+    dsimp [s, r] at *
+    omega
+  by_cases hr : r = 0
+  · rw [hr, gutkovskiy_initial.1] at hs
+    have : s = 1 ∨ s = 2 := by omega
+    rcases this with h | h <;> simp [hr, h, gutkovskiy_initial.2.1, gutkovskiy_initial.2.2.1]
+  let p := (r - 1) / 2
+  have hparity : 2 * p + 1 ≤ r ∧ r ≤ 2 * p + 2 := by dsimp [p]; omega
+  obtain ⟨hlow, hhigh⟩ := gutkovskiy_bounds_odd p
+  have hmono₁ := gutkovskiy_monotone hparity.1
+  have hmono₂ := gutkovskiy_monotone hparity.2
+  have hstep : g (2 * p + 2) ≤ g (2 * p + 1) + 1 := gutkovskiy_succ_le (2 * p + 1)
+  have hnext : g p ≤ g (p + 1) := gutkovskiy_monotone (Nat.le_succ p)
+  obtain ⟨hleft, _, hcount₁⟩ := kimberlingZeroPosition_spec r (by omega)
+  obtain ⟨hright, hcount₂, _⟩ := kimberlingZeroPosition_spec (r + 2) (by omega)
+  rw [(kimberlingOnePosition_spec r (by omega)).1] at hleft
+  change kimberlingZeroPosition r = 2 * (r + g p) + r at hleft
+  rw [(kimberlingOnePosition_spec (r + 2) (by omega)).1,
+    show (r + 2 - 1) / 2 = p + 1 by dsimp [p]; omega] at hright
+  have hzeros : Monotone (fun j : ℕ ↦ j - g j) := by
+    intro a b hab
+    simpa [count_kimberlingWord] using Nat.count_monotone (fun i ↦ kimberlingWord i = false) hab
+  have hlo : kimberlingZeroPosition r ≤ s := by omega
+  have hhi : s ≤ kimberlingZeroPosition (r + 2) - 1 := by omega
+  have hlower : kimberlingZeroPosition r - g (kimberlingZeroPosition r) ≤ s - g s := hzeros hlo
+  have hupper : s - g s ≤
+      kimberlingZeroPosition (r + 2) - 1 - g (kimberlingZeroPosition (r + 2) - 1) := hzeros hhi
+  rw [hcount₁] at hlower
+  rw [hcount₂] at hupper
+  exact ⟨hlower, by omega⟩
+
+end Positions
 
 end
 

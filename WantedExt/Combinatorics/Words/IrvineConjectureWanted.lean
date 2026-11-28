@@ -66,60 +66,6 @@ Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*,
 public theorem kimberlingWord_hundred : kimberlingWord 100 = false := by
   decide +kernel
 
-/-- **Positions of the ones in Kimberling's word.** Let $k = k_1 k_2 k_3 \cdots$ be Kimberling's
-word over $\{0, 1\}$. For $n \ge 1$, $A_n$ is the position of the $n$-th $1$ in $k$, that is, the
-$n$-th smallest index $j \ge 1$ with $k_j = 1$; by convention $A_0 = 0$.
-
-Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
-(2024), Article A51, Section 8 (the sequence `A_n`). -/
-public noncomputable def kimberlingOnePosition (n : ℕ) : ℕ :=
-  if n = 0 then 0 else Nat.nth (fun i ↦ kimberlingWord i = true) (n - 1) + 1
-
-/-- **Positions of the zeros in Kimberling's word.** Let $k = k_1 k_2 k_3 \cdots$ be Kimberling's
-word over $\{0, 1\}$. For $n \ge 1$, $B_n$ is the position of the $n$-th $0$ in $k$, that is, the
-$n$-th smallest index $j \ge 1$ with $k_j = 0$; by convention $B_0 = 0$.
-
-Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
-(2024), Article A51, Section 8 (the sequence `B_n`). -/
-public noncomputable def kimberlingZeroPosition (n : ℕ) : ℕ :=
-  if n = 0 then 0 else Nat.nth (fun i ↦ kimberlingWord i = false) (n - 1) + 1
-
-/-- **Position of the first one in Kimberling's word.** The position $A_1$ of the first $1$ in
-Kimberling's word $k = k_1 k_2 k_3 \cdots$, counted from $1$, is $A_1 = 1$.
-
-Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
-(2024), Article A51, Table 3. -/
-public theorem kimberlingOnePosition_one : kimberlingOnePosition 1 = 1 := by
-  simp only [kimberlingOnePosition, one_ne_zero, ↓reduceIte, Nat.sub_self]
-  rw [Nat.nth_zero_of_zero (p := fun i ↦ kimberlingWord i = true) kimberlingWord_initial.1]
-
-/-- **The first zero of Kimberling's word.** Let $B_n$ be the position of the $n$-th $0$ in
-Kimberling's word $k = k_1 k_2 k_3 \cdots$. Then $B_1 = 3$: the first $0$ of $k$ is $k_3$.
-
-Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
-(2024), Article A51, Table 3. -/
-public theorem kimberlingZeroPosition_one : kimberlingZeroPosition 1 = 3 := by
-  have hc : Nat.count (fun i ↦ kimberlingWord i = false) 2 = 0 := by decide
-  have h := Nat.nth_count (p := fun i ↦ kimberlingWord i = false) kimberlingWord_initial.2.2.1
-  rw [hc] at h
-  simp only [kimberlingZeroPosition, one_ne_zero, ↓reduceIte, Nat.sub_self]
-  rw [h]
-
-/-- **Positions of ones at the positions of zeros in Kimberling's word.** Let
-$k = k_1 k_2 k_3 \cdots$ be Kimberling's word, and for $n \ge 1$ let $A_n$ and $B_n$ be the
-positions (counted from $1$) of the $n$-th $1$ and of the $n$-th $0$ in $k$. Then for every
-$n \ge 1$, either $A_{B_n} = A_n + B_n - 1$ or $A_{B_n} = A_n + B_n$.
-
-This answers a problem of Fokkink, Ortega and Rust.
-
-Source: Jeffrey Shallit, *Proof of Irvine's Conjecture via Mechanized Guessing*, INTEGERS 24
-(2024), Article A51, Theorem 3 (`integers-2024-A51-thm-3`). -/
-public theorem_wanted kimberlingOnePosition_kimberlingZeroPosition {n : ℕ} (hn : 1 ≤ n) :
-    kimberlingOnePosition (kimberlingZeroPosition n) + 1 =
-        kimberlingOnePosition n + kimberlingZeroPosition n ∨
-      kimberlingOnePosition (kimberlingZeroPosition n) =
-        kimberlingOnePosition n + kimberlingZeroPosition n
-
 /-- **Lengths with two right-special factors in Kimberling's word.** Let $k$ be Kimberling's word
 and write $K_m$ for the length of the $m$-th Kimberling block. A word $u$ is a right-special factor
 of $k$ if both $u0$ and $u1$ are factors of $k$. For every $n \ge 0$, $k$ has exactly two
