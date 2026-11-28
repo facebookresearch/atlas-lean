@@ -8,7 +8,7 @@ Satisfiability in description logics with abstraction and refinement is decidabl
 2. under the DAG semantics, satisfiability is undecidable in $\mathcal{ALC}^{abs}[ca, cr]$ and $\mathcal{EL}^{abs}[ca, cr, rr]$ (Theorem 7);
 3. in the extension with quantified variables, satisfiability is undecidable in $\mathcal{ALCI}^{abs}[ca, cr]$ and $\mathcal{EL}^{abs}[ca, cr, rr]$ (Theorem 8).
 
-The KR 2023 version of the paper states part 3 for $\mathcal{ALC}^{abs}[ca, cr]$, without inverse roles. The version read withdraws that claim: its footnote 2 says the conference construction contains a mistake and that it is not known whether the result holds for $\mathcal{ALC}^{abs}[ca, cr]$. Part 3 is therefore stated here for $\mathcal{ALCI}^{abs}[ca, cr]$ only.
+The KR 2023 version of the paper states part 3 for $\mathcal{ALC}^{abs}[ca, cr]$, without inverse roles. The version read withdraws that claim: its footnote 2 says the conference construction contains a mistake and that it is not known whether the result holds for $\mathcal{ALC}^{abs}[ca, cr]$. Part 3 is therefore stated here for $\mathcal{ALCI}^{abs}[ca, cr]$ rather than $\mathcal{ALC}^{abs}[ca, cr]$.
 
 Under the original semantics, satisfiability in $\mathcal{ALCHI}^{abs}$ is decidable in 2EXPTIME (Theorem 2 of the source). With only concept and role refinement, satisfiability under the repetition-free semantics coincides with satisfiability under the original semantics (Proposition 1), so abstraction statements are needed for part 1.
 

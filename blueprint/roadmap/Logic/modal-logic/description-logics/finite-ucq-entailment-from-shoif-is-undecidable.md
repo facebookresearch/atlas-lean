@@ -26,7 +26,7 @@ Finite and unrestricted entailment differ: the SHOIF knowledge base with $\mathr
 
 ## Expansion
 
-For a PCP instance $P$, a finite list of pairs of nonempty words over the two-letter alphabet $\{a, b\}$ (Definition 2), a SHOIF knowledge base $\mathcal{K}_P$ has finite models that spell a candidate solution letter by letter along a chain, with a correspondence relation between the two spelled words, and two conjunctive queries $q_1, q_2$ are matched exactly in the finite models that do not encode a solution; then $P$ has a solution iff $\mathcal{K}_P \not\models_{\mathrm{fin}} \{q_1, q_2\}$ (Theorem 2). Complex role inclusions merge the two queries into one, and a reduction of the source turns the one-atom query into a two-way regular path query over ALCOIF.
+For a PCP instance $P$, a finite list of pairs of nonempty words over the two-letter alphabet $\{a, b\}$ (Definition 2), a SHOIF knowledge base $\mathcal{K}_P$ has finite models that spell a candidate solution letter by letter along a chain, with a correspondence relation between the two spelled words, and two conjunctive queries $q_1, q_2$ are matched exactly in the finite models that do not encode a solution; then $P$ has a solution iff $\mathcal{K}_P \not\models_{\mathrm{fin}} \{q_1, q_2\}$ (Theorem 2). Complex role inclusions merge the two queries into one, and a reduction of the source turns the one-atom query into a two-way regular path query over ALCOIF. The reduction starts from PCP over $\{a, b\}$ restricted to pairs of non-empty words, as in Definition 2; a good expansion links the undecidability of that restriction, which the linked undecidability of PCP over a two-letter alphabet, whose instances may contain empty words, does not give by itself.
 
 ## Sources
 
