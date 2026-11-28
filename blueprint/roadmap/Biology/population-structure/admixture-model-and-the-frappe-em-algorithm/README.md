@@ -54,3 +54,11 @@
 - [The FRAPPE update maximizes the EM objective](em-q-le-em-step.md)
 - [Each FRAPPE EM step does not decrease the admixture log-likelihood](admixture-log-lik-le-em-step.md)
 - [The admixture log-likelihood is monotone along the FRAPPE EM iterates](admixture-log-lik-iterate-em-step-monoto.md)
+
+## Latent subspace estimation
+
+- [Latent subspace estimation of admixture](latent-subspace-estimation-of-admixture/README.md)
+- [Uncertainty of supervised individual admixture estimates](uncertainty-of-supervised-individual-admixture-estimates/README.md)
+- [Spectral estimation of admixture models](spectral-estimation-of-admixture-models/README.md)
+- [Cross-validated choice of the number of ancestral populations](cross-validated-choice-of-the-number-of-ancestral-populations.md)
+- [Maximum likelihood in the admixture model](maximum-likelihood-in-the-admixture-model/README.md)

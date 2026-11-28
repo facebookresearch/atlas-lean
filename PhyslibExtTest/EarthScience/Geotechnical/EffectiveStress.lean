@@ -72,7 +72,7 @@ example : compressionPositiveTraction
     = ![-1, 0] := by
   rw [effectiveStress_traction]
   ext i
-  fin_cases i <;> simp [traction, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.smul_apply, Matrix.one_apply] <;> norm_num
+  fin_cases i <;> simp [traction, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.smul_apply, Matrix.one_apply]; norm_num
 
 /-- Effective traction on the reversed normal flips sign. -/
 example : compressionPositiveTraction
@@ -82,7 +82,7 @@ example : compressionPositiveTraction
     = ![1, 0] := by
   rw [effectiveStress_traction]
   ext i
-  fin_cases i <;> simp [traction, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.smul_apply, Matrix.one_apply] <;> norm_num
+  fin_cases i <;> simp [traction, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.smul_apply, Matrix.one_apply]; norm_num
 
 /-- Zero pore pressure reduces to total stress. -/
 example : effectiveStressTensionPositive

@@ -8,6 +8,7 @@ Parity games, the special case with priorities, are in [parity games](../parity-
 [parity game algorithms](../parity-game-algorithms/README.md).
 
 - [Arenas, strategies and memory structures](arenas-strategies-and-memory-structures.md)
+- [Reachability and safety games are positionally determined and solvable in linear time](reachability-and-safety-games.md)
 - [Muller, Rabin and Streett objectives](muller-rabin-and-streett-objectives.md)
 - [Zielonka tree of a Muller condition](zielonka-tree-of-a-muller-condition.md)
 - [Büchi games are positionally determined and solvable in quadratic time](buchi-games-are-positionally-determined.md)
