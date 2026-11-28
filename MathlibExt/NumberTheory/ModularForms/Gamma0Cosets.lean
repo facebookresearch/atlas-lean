@@ -36,6 +36,10 @@ matrices `!![a, b; 0, d]` with `a > 0`, `0 ≤ b < d`, `a d = N` and `gcd(a, b, 
   with `ModularCurve.Gamma0_index` the number of elements of `C_N` is the Dedekind psi value
   `ψ(N) = N ∏_{p ∣ N} (1 + 1/p)` (`WLight.card_modularPolynomialReps`).
 
+As an application, which also uses the modular invariance `j(δ z) = j(z)` for `δ ∈ SL₂(ℤ)`: for
+a set `{γ₁, …, γₙ}` of right coset representatives of `Γ₀(N)`, the functions `j(N γᵢ τ)` are the
+functions `j(M τ)`, `M ∈ C_N`.
+
 Source: Andrew V. Sutherland, *18.783 Elliptic Curves*, lecture notes, MIT, Fall 2025,
 Lecture 19, Theorem 19.14 (p. 6) and its proof (pp. 6–7), and Definition 19.15 (p. 7).
 -/
@@ -228,8 +232,7 @@ that `!![N, 0; 0, 1] γ = δ M` for some `δ ∈ SL₂(ℤ)`
 (`WLight.gamma0RightCosetsEquiv_mk_eq_iff`).
 
 So a set `{γ₁, …, γₙ}` of right coset representatives of `Γ₀(N)` gives the matrices
-`!![N, 0; 0, 1] γᵢ ∈ SL₂(ℤ) Mᵢ` with `{M₁, …, Mₙ} = C_N`; in particular the functions
-`j(N γᵢ τ)` are the functions `j(M τ)`, `M ∈ C_N`.
+`!![N, 0; 0, 1] γᵢ ∈ SL₂(ℤ) Mᵢ` with `{M₁, …, Mₙ} = C_N`.
 
 Source: Andrew V. Sutherland, *18.783 Elliptic Curves*, lecture notes, MIT, Fall 2025,
 Lecture 19, Definition 19.15, p. 7: "The modular polynomial ΦN is the minimal polynomial of jN
