@@ -14,3 +14,4 @@
 - [Weak monadic second-order logic of $k$ successors](weak-monadic-second-order-logic-of-k-successors.md)
 - [The WS$k$S-definable tree languages are the recognizable ones](wsks-definable-tree-languages-are-the-recognizable-ones.md)
 - [Decidability of WS$k$S](decidability-of-wsks.md)
+- [Separability of regular tree languages by deterministic tree-walking automata is undecidable](separability-of-regular-tree-languages-by-determ.md)

@@ -28,3 +28,4 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 
 - [Proof certificates](proof-certificates/README.md)
 - [SAT solving](sat-solving/README.md)
+- [Recognizing problems for propositional calculi](recognizing-problems-for-propositional-calculi/README.md)
