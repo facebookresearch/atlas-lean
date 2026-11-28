@@ -114,8 +114,6 @@ public theorem mem_simplifiedPrincessRosesMoves {a b c d a' b' c' d' : ℕ} :
   · rintro ⟨h₁, h₂, h₃, h₄, h₅, h₆, h₇, hm⟩
     exact ⟨a - a', b - b', c - c', d - d', ⟨hm, by omega⟩, by omega⟩
 
--- Keep the moved proof unchanged, including its existing `show` step.
-set_option linter.style.show false in
 /-- **Simplified P&R moves decrease the number of objects.** For all quadruples $(a, b, c, d)$
 and $(a', b', c', d')$ of natural numbers, if $(a', b', c', d')$ is an option of $(a, b, c, d)$
 in simplified Princess and the Roses, then $a' + b' + c' + d' < a + b + c + d$.
@@ -130,7 +128,7 @@ public theorem simplifiedPrincessRosesMoves_rank_lt {p q : ℕ × ℕ × ℕ × 
   have := mem_simplifiedPrincessRosesMoves.mp h
   simp only [simplifiedPrincessRosesMoveList, List.mem_cons, List.not_mem_nil, or_false,
     Prod.mk.injEq] at this
-  show a' + b' + c' + d' < a + b + c + d
+  change a' + b' + c' + d' < a + b + c + d
   omega
 
 /-- **Simplified Princess and the Roses.** For a quadruple $p$ of natural numbers, simplified
