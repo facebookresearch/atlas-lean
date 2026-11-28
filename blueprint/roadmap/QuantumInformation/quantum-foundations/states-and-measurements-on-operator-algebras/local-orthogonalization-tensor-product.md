@@ -14,6 +14,7 @@ Pull $\varphi$ back along the star-homomorphisms $X\mapsto X\otimes I$ and $Y\ma
 
 ## Depends on
 
+- [States on star-ordered algebras, state-dependent norm and approximation](algebraic-states-and-state-dependent-norm.md)
 - [Measurements, agreement and character observables in a star-ordered algebra](algebraic-measurements-and-agreement.md)
 
 ## Proof depends on

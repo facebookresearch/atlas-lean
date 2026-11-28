@@ -1,0 +1,16 @@
+# Reimer Butterfly Counterexample
+
+- [Rbi cfg](rbi-cfg.md)
+- [Rbi A](rbi-a.md)
+- [Rbi B](rbi-b.md)
+- [Rbi fin2 cases](rbi-fin2-cases.md)
+- [Rbi FF in box](rbi-ff-in-box.md)
+- [Rbi FT in box](rbi-ft-in-box.md)
+- [Rbi force FF](rbi-force-ff.md)
+- [Rbi force FT](rbi-force-ft.md)
+- [Rbi collision fst](rbi-collision-fst.md)
+- [Rbi collision snd](rbi-collision-snd.md)
+- [Rbi pairs ne](rbi-pairs-ne.md)
+- [Rbi double Cover false](rbi-double-cover-false.md)
+- [Rbi double Cover All false](rbi-double-cover-all-false.md)
+- [Rbi box eq](rbi-box-eq.md)
