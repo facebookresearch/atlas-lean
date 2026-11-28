@@ -20,7 +20,7 @@ None.
 
 ## Remarks
 
-The same tensor sits at every site. For a fixed $n$ the operator is an explicit finite matrix, so positivity for one system size is a finite computation; the problems become hard when positivity is asked for all system sizes at once. When every $M_{i,j}$ is diagonal, $\rho(L, M, R, n)$ is diagonal in the product basis, with entry $\langle L \rvert A^{(w_1)} \cdots A^{(w_n)} \lvert R\rangle$ at $\lvert w_1 \cdots w_n\rangle$, where $A^{(\alpha)}$ is the $D \times D$ matrix with entries $M^{(\alpha,\alpha)}_{i,j}$.
+The same tensor sits at every site. For a fixed $n$ the operator is an explicit finite matrix, so positivity for one system size is a finite computation; the problems become hard when positivity is asked for all system sizes at once. When every $M_{i,j}$ is diagonal, $\rho(L, M, R, n)$ is diagonal in the product basis, with entry $L^{\mathsf{T}} A^{(w_1)} \cdots A^{(w_n)} R$ at $\lvert w_1 \cdots w_n\rangle$ (the coordinates of $\lvert L\rangle$ enter without complex conjugation, so for real $\lvert L\rangle$ this is $\langle L \rvert A^{(w_1)} \cdots A^{(w_n)} \lvert R\rangle$), where $A^{(\alpha)}$ is the $D \times D$ matrix with entries $M^{(\alpha,\alpha)}_{i,j}$.
 
 ## Sources
 

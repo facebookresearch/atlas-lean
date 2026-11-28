@@ -5,7 +5,7 @@ No algorithm decides, given a linear system over $\mathbb{F}_2$, whether senders
 **Theorem (Leditzky, Alhejji, Levin and Smith).** Let $Ax = b$ be an $m \times n$ linear system over $\mathbb{F}_2$, and let $V_i = \{j \in [n] : A_{ij} \neq 0\}$ be the variables of equation $i$. Its *linear system game* $G_{\mathrm{LS}}$ is the promise-free [nonlocal game](../../quantum-foundations/two-player-nonlocal-games-classical-and-entangled-values.md) with question sets $\mathcal{X}_1 = [m]$ and $\mathcal{X}_2 = [n]$, answer sets $\mathcal{Y}_1 = \mathbb{F}_2^n$ and $\mathcal{Y}_2 = \mathbb{F}_2$, and winning set
 
 $$
-W = \Bigl\{ (i, j, y, z) : \textstyle\sum_{k \in V_i} y_k = b_i, \text{ and } j \notin V_i \text{ or } z = y_j \Bigr\}.
+W = \Bigl\{ (i, j, y, z) : \textstyle\sum_{k \in V_i} y_k = b_i \text{ and } \bigl(j \notin V_i \text{ or } z = y_j\bigr) \Bigr\}.
 $$
 
 Let $N_{G_{\mathrm{LS}}}$ be the [multiple access channel of this game](multiple-access-channel-of-a-nonlocal-game.md). It is undecidable to determine, given $A$ and $b$, whether the rate pair $(\log m, \log n)$ belongs to the [entanglement-assisted achievable rate region](entanglement-assisted-rate-region-of-a-multiple-access-channel.md) $\mathcal{C}^{(1)}_{\mathrm{EA}}(N_{G_{\mathrm{LS}}})$ (Proposition 8 of the source).
