@@ -1,0 +1,155 @@
+{
+  "lean_toolchain": "leanprover/lean4:v4.36.0",
+  "mathlib_repository": "https://github.com/leanprover-community/mathlib4",
+  "mathlib_commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842",
+  "source_files": [
+    {
+      "path": "MathlibExt/Analysis/Fourier/DFTMatrix.lean",
+      "source_sha256": "504f2a177dbc65858c1b34436c90e268c97c8df47b19e52d78b0206d6a1d8e7a",
+      "source_bytes": 5906,
+      "author_notice": "Author: @toskua, Avocado",
+      "project_imports": [
+        "MathlibExt/QuantumInformation/Finite/QuantumFourierTransform.lean"
+      ],
+      "origin": "MathlibExt source",
+      "original_library": "MathlibExt",
+      "original_sha256": "0bcd3335a009eddb37174b5691acb18122719ba24118c71bd0b7b0c4276e608f",
+      "original_bytes": 26524,
+      "snapshot_path": "provenance/functional-analysis/fourier-frame-distribution-apis/source-originals.jsonl",
+      "snapshot_line": 2,
+      "snapshot_entry_path": "/source_text",
+      "adaptations": [
+        "Add the Meta copyright and license header and retain original author notices.",
+        "Use self-contained mathematical module and declaration documentation.",
+        "Reuse the canonical qftMatrix and its star for signs 1 and -1; keep the exponential entry formula for every other integer sign.",
+        "Use canonical QFT unitary membership for the signed unitary bundles, allowing every natural dimension, including zero.",
+        "Express the unrestricted integer-sign fallback with Matrix.of and a typed matrix equality; retain the matrix-entry values and adjoint orientation."
+      ]
+    },
+    {
+      "path": "MathlibExt/Analysis/Fourier/RegularTwoFrame.lean",
+      "source_sha256": "7c317ebf8f7156905f9339d624a3f350e7ca410ed98b3ed9e93b126bd5b474a9",
+      "source_bytes": 21356,
+      "author_notice": "Author: @toskua, Avocado",
+      "project_imports": [],
+      "origin": "MathlibExt source",
+      "original_library": "MathlibExt",
+      "original_sha256": "96bf1650c5ce2a30b8658b2ff671cfafc6f10585c2a12b4609d9c8cff4a4e21d",
+      "original_bytes": 20955,
+      "snapshot_path": "provenance/functional-analysis/fourier-frame-distribution-apis/source-originals.jsonl",
+      "snapshot_line": 5,
+      "snapshot_entry_path": "/source_text",
+      "adaptations": [
+        "Add the Meta copyright and license header and retain original author notices.",
+        "Use self-contained mathematical module and declaration documentation."
+      ]
+    },
+    {
+      "path": "MathlibExt/Analysis/Fourier/PontryaginDualIntegral.lean",
+      "source_sha256": "0832afd1892b35adb886b5e3ad227205a23741e19263eafcaa36e48f4cb22624",
+      "source_bytes": 5769,
+      "author_notice": "Author: @toskua",
+      "project_imports": [],
+      "origin": "MathlibExt source",
+      "original_library": "MathlibExt",
+      "original_sha256": "40d758cc9f8a4e94182c99cced3a6659032aedd6732a5d46d733d1ec179aa48d",
+      "original_bytes": 3726,
+      "snapshot_path": "provenance/functional-analysis/fourier-frame-distribution-apis/source-originals.jsonl",
+      "snapshot_line": 4,
+      "snapshot_entry_path": "/source_text",
+      "adaptations": [
+        "Add the Meta copyright and license header and retain original author notices.",
+        "Use self-contained mathematical module and declaration documentation."
+      ]
+    },
+    {
+      "path": "MathlibExt/Analysis/Fourier/Pontryagin/IntegralData.lean",
+      "source_sha256": "0aca1c092dc972954435a11adf07320081ef659f38154fe6dca1e89b8c2b2d38",
+      "source_bytes": 2407,
+      "author_notice": "Author: @toskua",
+      "project_imports": [
+        "MathlibExt/Analysis/Fourier/PontryaginDualIntegral.lean",
+        "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/CompactSupport.lean"
+      ],
+      "origin": "MathlibExt source",
+      "original_library": "MathlibExt",
+      "original_sha256": "f6e97866b9309d5228ecd4d2f0d27a1cc18aedc258def1739f33b5249a8eafdb",
+      "original_bytes": 1918,
+      "snapshot_path": "provenance/functional-analysis/fourier-frame-distribution-apis/source-originals.jsonl",
+      "snapshot_line": 3,
+      "snapshot_entry_path": "/source_text",
+      "adaptations": [
+        "Add the Meta copyright and license header and retain original author notices.",
+        "Use self-contained mathematical module and declaration documentation."
+      ]
+    },
+    {
+      "path": "MathlibExt/Analysis/Distribution/Scaling.lean",
+      "source_sha256": "8f26219d1c8b2a8e9db93857804c89a90b6a6ff3d566d046b701ca1b8db2a10f",
+      "source_bytes": 13412,
+      "author_notice": "Author: @toskua",
+      "project_imports": [],
+      "origin": "MathlibExt source",
+      "original_library": "MathlibExt",
+      "original_sha256": "3fdfff7dfc8ee783c4997f90411c35c391aee26b7e3a2c8098d52f46fc7e46be",
+      "original_bytes": 7339,
+      "snapshot_path": "provenance/functional-analysis/fourier-frame-distribution-apis/source-originals.jsonl",
+      "snapshot_line": 1,
+      "snapshot_entry_path": "/source_text",
+      "adaptations": [
+        "Add the Meta copyright and license header and retain original author notices.",
+        "Use self-contained mathematical module and declaration documentation."
+      ]
+    },
+    {
+      "path": "MathlibExtTest/Analysis/Fourier/CanonicalDFTSmoke.lean",
+      "source_sha256": "84bc4c6828b949ef98c36415513837e21850cc178a872556153592c7e0d8a8c7",
+      "source_bytes": 5030,
+      "author_notice": "/- Author: @toskua -/",
+      "project_imports": [
+        "MathlibExt/Analysis/Fourier/DFTMatrix.lean",
+        "MathlibExt/QuantumInformation/Finite/QuantumFourierTransform.lean"
+      ],
+      "origin": "MathlibExtTest consumer"
+    },
+    {
+      "path": "MathlibExtTest/Analysis/Fourier/RegularTwoFrameSmoke.lean",
+      "source_sha256": "21c9598fef28075ac94e37b1810b6eadceb4ec247cd8b9e878d076e416a08692",
+      "source_bytes": 3401,
+      "author_notice": "/- Author: @toskua -/",
+      "project_imports": [
+        "MathlibExt/Analysis/Fourier/RegularTwoFrame.lean"
+      ],
+      "origin": "MathlibExtTest consumer"
+    },
+    {
+      "path": "MathlibExtTest/Analysis/Distribution/Scaling.lean",
+      "source_sha256": "90704efc0a882f10f432f092663f78e8fe4721bbdeffd033beb66323dd6c5738",
+      "source_bytes": 5856,
+      "project_imports": [
+        "MathlibExt/Analysis/Distribution/Scaling.lean"
+      ],
+      "origin": "MathlibExtTest consumer",
+      "copyright_notice": "Meta Platforms, Inc. and affiliates."
+    }
+  ],
+  "existing_project_dependencies": [
+    {
+      "path": "MathlibExt/QuantumInformation/Finite/QuantumFourierTransform.lean",
+      "source_sha256": "2760899f27c54655979f9cc0379255eec8b56a8ce653970e750a13fb066b9d58",
+      "project_imports": []
+    },
+    {
+      "path": "MathlibExt/Analysis/InnerProductSpace/Group/HaarL2/CompactSupport.lean",
+      "source_sha256": "6376ea061d66a85a1d60a5557693300880c2c0ebbb7554fd8ed7778f13326a95",
+      "project_imports": [
+        "MathlibExt/MeasureTheory/Function/CompactApproximation.lean"
+      ]
+    },
+    {
+      "path": "MathlibExt/MeasureTheory/Function/CompactApproximation.lean",
+      "source_sha256": "9329a32ef5dc779f9ef955f54b7fb78b1bab73f355cb4c62bd474fe2eebecb20",
+      "project_imports": []
+    }
+  ]
+}
