@@ -14,16 +14,20 @@ public import Mathlib.Order.SetNotation
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Order.Lattice.Nat
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Order.Interval.Finset.Nat
 
 /-!
 # Piecewise syndetic sets in `ℕ^t`
 
 This module proves Brown’s dense color class lemma for lattice cubes, and its consequence that
 some color class is `d`-dense in a subcube of side `m > f(d)` inside a cube `[1, A]^t` whose
-size `A` depends only on `r`, `t` and `f` (Lemmas 1 and 2). It also proves that piecewise
-syndeticity is partition regular: when a piecewise syndetic set is the union of finitely many
-sets, one of them is piecewise syndetic. The proof shows that a union of two sets that are not
-piecewise syndetic is not piecewise syndetic. The definitions follow
+size `A` depends only on `r`, `t` and `f` (Lemmas 1 and 2). For `t ≥ 1` and nondecreasing `f`,
+Theorem 2 uses this density to find a finite monochromatic set `S` in a box `[0, B)^t` with
+`|S| > f(gs(S))`, where `gs(S)` is its gap size and `B` depends only on `r`, `t` and `f`.
+This module also proves that piecewise syndeticity is partition regular: when a piecewise syndetic
+set is the union of finitely many sets, one of them is piecewise syndetic. The proof shows that a
+union of two sets that are not piecewise syndetic is not piecewise syndetic. The definitions follow
 Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*,
 INTEGERS 24 (2024), Article A2.
 
@@ -33,8 +37,8 @@ every subcube of `M` of size `d^t` meets `C` (Lemma 1 of the paper). A set `C` i
 piecewise syndetic when, for some fixed `d`, `C + [0, d]^t` contains arbitrarily
 large subcubes (Proof 1 of Theorem 2 of the paper).
 
-Here `ℕ` contains `0`, while the paper works in positive integers; translating by
-the all-ones vector identifies the two settings and preserves all notions above.
+Here `ℕ` contains `0`. Theorem 2 uses the zero-based box `[0, B)^t`, which becomes the
+paper's `[1, B]^t` when the all-ones vector is added to the points and cube corners.
 -/
 
 namespace MetaMathlibExt
@@ -356,6 +360,81 @@ public theorem cubeGapSize_singleton {t : ℕ} (x : Fin t → ℕ) : cubeGapSize
   have hne : {d : ℕ | 0 < d ∧ ∃ (a : Fin t → ℕ) (m : ℕ), ({x} : Set (Fin t → ℕ)) ⊆
       latticeCube a m ∧ IsDenseInCubes d {x} (latticeCube a m)}.Nonempty := ⟨1, hmem⟩
   exact (Nat.sInf_mem hne).1
+
+/-- **Monochromatic sets that are large relative to their gap size.** Let $r, t \in \mathbb{N}$ with
+$t \ge 1$, and let $f : \mathbb{N} \to \mathbb{N}$ be nondecreasing. There is $B \in \mathbb{N}$
+such that for every coloring of $\mathbb{N}^t$ with $r$ colors there is a finite monochromatic set
+$S \subseteq [0, B)^t$ with $|S| > f(\operatorname{gs}(S))$, where $\operatorname{gs}(S)$ is the gap
+size of $S$ and $[0, B)^t$ is the set of points $x$ with $0 \le x_i < B$ for every coordinate $i$.
+This box is the translate of the paper's $[1, B]^t$ by subtracting one in each coordinate.
+
+The paper's "(a smallest)" is omitted: it follows from existence. Only the restriction of the
+coloring to $[0, B)^t$ matters. The hypothesis $t \ge 1$ is the paper's; for $t = 0$ and $r \ge 1$
+the statement fails when $f(1) \ge 1$, since the only point gives $|S| = 1 = \operatorname{gs}(S)$.
+The paper's hypothesis $r \ge 1$ is dropped: for $r = 0$ there is no coloring and the statement
+holds vacuously.
+
+Source: Tom C. Brown, *Piecewise Syndetic Sets in `N^t` and `N^X`*, INTEGERS 24
+(2024), Article A2, Theorem 2 (`integers-2024-A2-thm-2`). -/
+public theorem exists_cube_bound_monochromatic_card_gt_gapSize (r t : ℕ) (ht : 1 ≤ t)
+    (f : ℕ → ℕ) (hf : Monotone f) :
+    ∃ B : ℕ, ∀ c : (Fin t → ℕ) → Fin r, ∃ j : Fin r, ∃ S : Finset (Fin t → ℕ),
+      (S : Set (Fin t → ℕ)) ⊆ latticeCube 0 B ∧ (∀ x ∈ S, c x = j) ∧
+        f (cubeGapSize (S : Set (Fin t → ℕ))) < S.card := by
+  classical
+  obtain ⟨A, hA⟩ := exists_cube_bound_isDenseInCubes r t (fun d => d * (f d + 1))
+  refine ⟨A + 1, fun c => ?_⟩
+  obtain ⟨d, m, hd, hm, j, a, hsub, hdense⟩ := hA c
+  have hbox : latticeCube (fun _ : Fin t => 1) A ⊆ latticeCube 0 (A + 1) := by
+    intro x hx
+    rw [mem_latticeCube] at hx ⊢
+    intro i
+    refine ⟨Nat.zero_le _, ?_⟩
+    simpa only [Pi.zero_apply, zero_add, Nat.add_comm 1 A] using (hx i).2
+  let S := (Fintype.piFinset fun i => Finset.Ico (a i) (a i + m)).filter fun x => c x = j
+  have mem_S {x : Fin t → ℕ} : x ∈ S ↔ x ∈ latticeCube a m ∧ c x = j := by
+    simp only [S, Finset.mem_filter, Fintype.mem_piFinset, mem_latticeCube, Finset.mem_Ico]
+  have hS : (S : Set (Fin t → ℕ)) ⊆ latticeCube a m := fun _ hx => (mem_S.mp hx).1
+  -- Restricting the color class to the cube preserves density inside it.
+  have hdenseS : IsDenseInCubes d (S : Set (Fin t → ℕ)) (latticeCube a m) := by
+    intro b hb
+    obtain ⟨x, hx, hcolor⟩ := hdense b hb
+    exact ⟨x, hx, mem_S.mpr ⟨hb hx, hcolor⟩⟩
+  have hgap := cubeGapSize_le_of_isDenseInCubes hd hS hdenseS
+  -- Pack `f d + 1` side-`d` cubes by moving along a single coordinate.
+  let i₀ : Fin t := ⟨0, ht⟩
+  let b (k : Fin (f d + 1)) (i : Fin t) : ℕ := a i + if i = i₀ then d * (k : ℕ) else 0
+  have hb (k : Fin (f d + 1)) : latticeCube (b k) d ⊆ latticeCube a m := by
+    intro x hx
+    rw [mem_latticeCube] at hx ⊢
+    intro i
+    have hxi := hx i
+    have hk := Nat.mul_le_mul_left d (show (k : ℕ) + 1 ≤ f d + 1 from k.isLt)
+    rw [Nat.mul_add, Nat.mul_one] at hk
+    by_cases hi : i = i₀
+    · subst i
+      simp [b] at hxi
+      omega
+    · simp [b, hi] at hxi
+      omega
+  let p (k : Fin (f d + 1)) := Classical.choose (hdenseS (b k) (hb k))
+  have hp (k : Fin (f d + 1)) : p k ∈ latticeCube (b k) d ∧ p k ∈ S :=
+    Classical.choose_spec (hdenseS (b k) (hb k))
+  -- Along that coordinate, every point of an earlier cube precedes every point of a later one.
+  have hpMono : StrictMono fun k => p k i₀ := by
+    intro k l hkl
+    have hmul := Nat.mul_le_mul_left d (show (k : ℕ) + 1 ≤ (l : ℕ) from hkl)
+    rw [Nat.mul_add, Nat.mul_one] at hmul
+    have hk := (mem_latticeCube.mp (hp k).1 i₀).2
+    have hl := (mem_latticeCube.mp (hp l).1 i₀).1
+    simp [b] at hk hl
+    change p k i₀ < p l i₀
+    omega
+  have hcard : f d + 1 ≤ S.card := by
+    simpa using Fintype.card_le_of_injective (fun k => (⟨p k, (hp k).2⟩ : S))
+      (fun _ _ heq => hpMono.injective (congrArg (fun x : S => (x : Fin t → ℕ) i₀) heq))
+  exact ⟨j, S, (hS.trans hsub).trans hbox, fun x hx => (mem_S.mp hx).2,
+    (hf hgap).trans_lt (Nat.lt_of_succ_le hcard)⟩
 
 end
 

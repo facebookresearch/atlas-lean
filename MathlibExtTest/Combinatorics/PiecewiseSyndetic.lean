@@ -105,3 +105,19 @@ example (t : ℕ) (B C : Set (Fin t → ℕ)) (hB : ¬ IsPiecewiseSyndetic B)
 example (t : ℕ) (A : Set (Fin t → ℕ)) (hA : IsPiecewiseSyndetic A)
     (B : Fin 0 → Set (Fin t → ℕ)) : A ≠ ⋃ i, B i := fun hAB =>
   (hA.exists_of_eq_iUnion B hAB).elim fun i _ => i.elim0
+
+-- In dimension one, taking `f = id` gives strictly more points than the gap size.
+example : ∃ B : ℕ, ∀ c : (Fin 1 → ℕ) → Fin 2, ∃ j : Fin 2, ∃ S : Finset (Fin 1 → ℕ),
+    (S : Set (Fin 1 → ℕ)) ⊆ latticeCube 0 B ∧
+      (∀ x ∈ S, c x = j) ∧ cubeGapSize (S : Set (Fin 1 → ℕ)) < S.card :=
+  exists_cube_bound_monochromatic_card_gt_gapSize 2 1 le_rfl id monotone_id
+
+-- For the checkerboard coloring, some finite set of constant parity exceeds any fixed size.
+example (k : ℕ) : ∃ (B : ℕ) (j : Fin 2) (S : Finset (Fin 2 → ℕ)),
+    (S : Set (Fin 2 → ℕ)) ⊆ latticeCube 0 B ∧
+      (∀ x ∈ S, (x 0 + x 1) % 2 = j.val) ∧ k < S.card := by
+  let c (x : Fin 2 → ℕ) : Fin 2 := ⟨(x 0 + x 1) % 2, Nat.mod_lt _ (by decide)⟩
+  obtain ⟨B, hB⟩ :=
+    exists_cube_bound_monochromatic_card_gt_gapSize 2 2 (by decide) (fun _ => k) monotone_const
+  obtain ⟨j, S, hS, hcolor, hcard⟩ := hB c
+  exact ⟨B, j, S, hS, fun x hx => congrArg Fin.val (hcolor x hx), hcard⟩
