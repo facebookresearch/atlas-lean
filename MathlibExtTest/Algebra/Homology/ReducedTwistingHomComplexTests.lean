@@ -15,6 +15,7 @@ import Mathlib.Algebra.Category.ModuleCat.Abelian
 import Mathlib.Algebra.Category.ModuleCat.Monoidal.Closed
 import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 import Mathlib.CategoryTheory.Monoidal.Internal.Limits
+import Mathlib.CategoryTheory.Monoidal.Closed.Braided
 import Mathlib.CategoryTheory.Limits.Opposites
 import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts
 import Mathlib.Tactic.NormNum
@@ -34,7 +35,8 @@ the odd Hom differential used by the twisting construction.
 
 noncomputable section
 
-open CategoryTheory CategoryTheory.Limits MonoidalCategory HomologicalComplex Opposite
+open CategoryTheory CategoryTheory.Limits MonoidalCategory HomologicalComplex
+open CochainComplex Opposite
 
 namespace MathlibExtTest.ReducedTwistingHom
 
@@ -50,6 +52,34 @@ private def unitProduct (D : Type*) [Category D] [MonoidalCategory D]
   ⟨Mon.limitCone F c hc, Mon.limitConeIsLimit F c hc⟩
 
 private abbrev M := ModuleCat.{0} ℤ
+
+local instance : ∀ (X Y : GradedObject ℤ M), GradedObject.HasTensor X Y := by
+  intros
+  infer_instance
+
+local instance : ∀ (X : M), PreservesColimit (Functor.empty.{0} M)
+    ((curriedTensor M).obj X) := by
+  intros
+  infer_instance
+
+local instance : ∀ (X : M), PreservesColimit (Functor.empty.{0} M)
+    ((curriedTensor M).flip.obj X) := by
+  intros
+  infer_instance
+
+local instance : ∀ (X Y Z : GradedObject ℤ M), GradedObject.HasGoodTensor₁₂Tensor X Y Z := by
+  intros
+  infer_instance
+
+local instance : ∀ (X Y Z : GradedObject ℤ M), GradedObject.HasGoodTensorTensor₂₃ X Y Z := by
+  intros
+  infer_instance
+
+local instance : ∀ (W X Y Z : GradedObject ℤ M),
+    GradedObject.HasTensor₄ObjExt W X Y Z := by
+  intros
+  infer_instance
+
 private abbrev H := CochainComplex M ℤ
 private abbrev I : H := HomologicalComplex.tensorUnit M (ComplexShape.up ℤ)
 private abbrev algebra : Mon H := (unitProduct H).cone.pt
@@ -76,13 +106,13 @@ private abbrev ι₁ : I ⟶ C :=
   ((unitProduct Hᵒᵖ).cone.π.app ⟨WalkingPair.right⟩).hom.unop
 
 private def secondScalar : I ⟶ A := prod.lift 0 ((2 : ℤ) • 𝟙 I)
-private def scalarMap : C ⟶ A := (prod.lift (0 : A ⟶ I).op secondScalar.op).unop
+private def scalarMap : C ⟶ A := (prod.lift (0 : I ⟶ A).op secondScalar.op).unop
 private abbrev scalarCochain : HomComplex.Cochain C A 0 :=
   HomComplex.Cochain.ofHom scalarMap
 
 private lemma first_zero : ι₀ ≫ scalarMap = 0 := by
   change (prod.fst : oppositeAlgebra.X ⟶ op I).unop ≫
-    (prod.lift (0 : A ⟶ I).op secondScalar.op).unop = 0
+    (prod.lift (0 : I ⟶ A).op secondScalar.op).unop = 0
   rw [← unop_comp, prod.lift_fst]
   rfl
 
@@ -92,7 +122,7 @@ private lemma scalar_first_zero : scalarMap ≫ p₀ = 0 := by
 
 private lemma second_coordinate : ι₁ ≫ scalarMap ≫ p₁ = (2 : ℤ) • 𝟙 I := by
   change (prod.snd : oppositeAlgebra.X ⟶ op I).unop ≫
-    (prod.lift (0 : A ⟶ I).op secondScalar.op).unop ≫ p₁ = _
+    (prod.lift (0 : I ⟶ A).op secondScalar.op).unop ≫ p₁ = _
   rw [← unop_comp, prod.lift_snd]
   simp [secondScalar]
 
