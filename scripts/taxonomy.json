@@ -14363,6 +14363,7 @@
   "MathlibExt/NumberTheory/SPerfect": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Weighted perfect numbers"},
   "MathlibExt/NumberTheory/Schatunowsky": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Schatunowsky-type theorems"},
   "MathlibExt/NumberTheory/SchatunowskyImaginaryQuadratic": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Schatunowsky-type theorems"},
+  "MathlibExt/NumberTheory/SecondOrderGenFunIntegerValuesExistsSmallSecondOrderMValueOfNeg": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/SecondOrderGenValue": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/SecondOrderGenValueNeighbors": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/SecondOrderGenValueTrivialFamilies": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
