@@ -91,10 +91,15 @@ theorem directLimit_symm_of_tprod (n : ℕ) (i : ι) (x : Fin (n + 1) → G i) :
       PiTensorProduct.tprod R (fun a => Module.DirectLimit.of R ι G f i (x a)) := by
   apply (consEquiv R (Module.DirectLimit G f) n).symm.injective
   simp only [directLimit, LinearEquiv.trans_symm, LinearEquiv.symm_symm,
-    LinearEquiv.trans_apply, LinearEquiv.symm_apply_apply,
-    Module.DirectLimit.congr_symm_apply_of, consEquiv_symm_tprod,
-    TensorProduct.directLimitFinite_symm_of_tprod]
-
+    LinearEquiv.trans_apply, LinearEquiv.symm_apply_apply, consEquiv_symm_tprod]
+  have h := Module.DirectLimit.congr_symm_apply_of
+    (f := TensorProduct.finiteDiagonalTransition f (fun _ : Fin n => f))
+    (f' := directedTransition f n)
+    (fun j => consEquiv R (G j) n)
+    (fun i j h => consEquiv_naturality (f i j h) n)
+    (PiTensorProduct.tprod R x)
+  rw [h, consEquiv_symm_tprod, TensorProduct.directLimitFinite_symm_of_tprod]
+  rfl
 /-- The comparison sends a pure tensor of same-stage classes to its stage tensor. -/
 @[simp]
 theorem directLimit_tprod_of (n : ℕ) (i : ι) (x : Fin (n + 1) → G i) :
@@ -116,11 +121,19 @@ theorem exists_eq_zero_of_map_to_directLimit_eq_zero (n : ℕ) {i : ι}
     apply MultilinearMap.ext
     intro y
     simp only [LinearMap.compMultilinearMap_apply, LinearMap.comp_apply,
-      directLimit_symm_of_tprod, PiTensorProduct.map_tprod]
+      PiTensorProduct.map_tprod]
+    exact directLimit_symm_of_tprod f n i y
   have hz : Module.DirectLimit.of R ι (fun j => TensorPower R (n + 1) (G j))
       (directedTransition f n) i x = 0 := by
     apply (directLimit f n).symm.injective
-    rw [← LinearMap.comp_apply, hmap, hx, map_zero]
+    have hvalue := LinearMap.congr_fun hmap x
+    simp only [LinearMap.comp_apply] at hvalue
+    change (directLimit f n).symm
+      (Module.DirectLimit.of R ι (fun j => TensorPower R (n + 1) (G j))
+        (directedTransition f n) i x) =
+      PiTensorProduct.map (fun _ : Fin (n + 1) => Module.DirectLimit.of R ι G f i) x at hvalue
+    rw [map_zero]
+    exact hvalue.trans hx
   exact Module.DirectLimit.of.zero_exact hz
 
 end TensorPower
