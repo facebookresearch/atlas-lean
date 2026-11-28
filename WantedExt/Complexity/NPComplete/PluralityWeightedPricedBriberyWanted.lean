@@ -74,7 +74,8 @@ def WellFormed (i : PluralityWeightedPricedBriberyInstance) : Prop :=
   i.2.1 < i.1 ∧ ∀ v ∈ i.2.2.1, v.1.Perm (List.range i.1)
 
 /-- Some set `B` of voters of total price at most `k` can be bribed to cast preference lists
-`P` (arbitrary for `B`, unchanged outside `B`) under which `p` has maximum weighted plurality
+`P` (any permutation of the candidates for `B`, unchanged outside `B`) under which `p` has
+maximum weighted plurality
 score. -/
 def PluralityWeightedPricedBriberyFeasible (i : PluralityWeightedPricedBriberyInstance) : Prop :=
   ∃ B : Finset (Voter i), ∑ v ∈ B, (i.2.2.1.get v).2.2 ≤ i.2.2.2 ∧

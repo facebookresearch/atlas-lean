@@ -1,8 +1,8 @@
 # When V ≤ M the integrated discrepancy is nonnegative on u ≥ 0
 
 For counts `k₁, …, kₙ` (`n ≥ 1`) with
-[sample mean](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/count-mean.md) `M` and
-[biased sample variance](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/count-var.md) `V` such
+[sample mean](../likelihood-equations-and-efficiency-of-the-gamma/count-mean.md) `M` and
+[biased sample variance](../likelihood-equations-and-efficiency-of-the-gamma/count-var.md) `V` such
 that `V ≤ M`, and every `u ≥ 0`, Levin and Reeds's [integrated discrepancy](smoothed-discrepancy.md)
 satisfies `H(u) ≥ 0`. A negative value at some `u ≥ 0` would persist
 ([once negative, it stays negative](smoothed-discrepancy-neg-of-le.md)) up to a `T` beyond every

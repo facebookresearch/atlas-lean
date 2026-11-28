@@ -82,3 +82,8 @@
 - [Well-formed unbounded parallel batching without release dates](well-formed-11.md)
 - [UNBOUNDED PARALLEL BATCHING, WEIGHTED TARDINESS as a decision problem](unbounded-parallel-batching-weighted-tar.md)
 - [UNBOUNDED PARALLEL BATCHING, WEIGHTED TARDINESS is NP-complete](unbounded-parallel-batching-weighted-tar-2.md)
+- [Instances of PARALLEL BATCHING `1|outtree;p_i=1;p-batch;b<n|L_max`](out-tree-unit-parallel-batching-max-late.md)
+- [Well-formed instances of PARALLEL BATCHING `1|outtree;p_i=1;p-batch;b<n|L_max`](well-formed-7.md)
+- [Feasible instances of PARALLEL BATCHING `1|outtree;p_i=1;p-batch;b<n|L_max`](out-tree-unit-parallel-batching-max-late-2.md)
+- [PARALLEL BATCHING `1|outtree;p_i=1;p-batch;b<n|L_max` as a decision problem](out-tree-unit-parallel-batching-max-late-3.md)
+- [PARALLEL BATCHING `1|outtree;p_i=1;p-batch;b<n|L_max` is NP-complete](out-tree-unit-parallel-batching-max-late-4.md)

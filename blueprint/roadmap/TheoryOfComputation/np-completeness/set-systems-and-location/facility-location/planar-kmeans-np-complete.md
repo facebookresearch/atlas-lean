@@ -1,0 +1,3 @@
+# PLANAR k-MEANS is NP-complete
+
+PLANAR k-MEANS is NP-complete: the decision problem over bitstrings that accepts exactly the bitstrings that decode to a well-formed instance with a solution lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it. Mahajan, Nimbhorkar and Varadarajan (2012), Theorem 1, prove the NP-hardness of the planar $k$-means optimization problem. Membership of the decision problem in NP holds because an optimal clustering has the centroids of its clusters as centers, which are rational, so a partition of the points into at most $k$ clusters is a certificate.

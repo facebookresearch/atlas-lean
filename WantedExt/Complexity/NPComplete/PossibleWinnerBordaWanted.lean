@@ -72,7 +72,8 @@ def Pref (i : PossibleWinnerBordaInstance) (v : Voter i) (a b : ℕ) : Prop :=
   (a, b) ∈ i.2.1.get v
 
 /-- The Borda score of `a` when voter `v` casts the linear order `P v`: the sum over the votes of
-`m - 1 - (position of a)`, for `m = |C|` alternatives. -/
+`m - 1 - (position of a)`, for `m = |C|` alternatives, with truncated subtraction. An alternative
+missing from a vote has that vote's length as its position. -/
 def bordaScore (i : PossibleWinnerBordaInstance) (P : Voter i → List ℕ) (a : ℕ) : ℕ :=
   ∑ v, (i.1.length - 1 - (P v).idxOf a)
 

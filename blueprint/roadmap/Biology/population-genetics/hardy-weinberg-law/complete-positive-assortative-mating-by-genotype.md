@@ -7,7 +7,7 @@ $(AA,AA),(Aa,Aa),(aa,aa)$ probabilities $P_t,H_t,Q_t$, respectively,
 and all other pairs probability zero. Thus every genotype class contributes
 in proportion to its frequency, not in proportion to its squared frequency.
 All pairs have the same expected offspring number, gametes segregate by
-[Mendel's law](../hardy-weinberg-law/transmit.md), and the two gametes of a
+[Mendel's law](transmit.md), and the two gametes of a
 pair are independent. There is no mutation, selection or drift beyond this
 specified mating rule.
 
@@ -29,7 +29,7 @@ not identify the two pedigrees or their identity-by-descent relations.
 
 ## Depends on
 
-- [Mendelian transmission](../hardy-weinberg-law/transmit.md)
+- [Mendelian transmission](transmit.md)
 
 ## Expansion
 

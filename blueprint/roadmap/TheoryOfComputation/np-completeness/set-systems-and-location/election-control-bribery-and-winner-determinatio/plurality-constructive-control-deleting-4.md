@@ -1,0 +1,3 @@
+# PLURALITY CONSTRUCTIVE CONTROL BY DELETING CANDIDATES is NP-complete
+
+PLURALITY CONSTRUCTIVE CONTROL BY DELETING CANDIDATES is NP-complete: the decision problem over bitstrings that accepts exactly the bitstrings that decode to a well-formed instance with a solution lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it. Source: Bartholdi, Tovey and Trick (1992); Faliszewski, Hemaspaandra, Hemaspaandra and Rothe (2009), Table 1.

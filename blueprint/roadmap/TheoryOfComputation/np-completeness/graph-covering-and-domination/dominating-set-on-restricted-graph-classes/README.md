@@ -72,3 +72,6 @@
 - [Feasible instances of UPPER DOMINATION](upper-domination-feasible.md)
 - [UPPER DOMINATION as a decision problem](upper-domination-dec.md)
 - [UPPER DOMINATION is NP-complete](upper-domination-np-complete.md)
+- [Well-formed instances of DOMINATING SET IN PENNY GRAPHS](well-formed-23.md)
+- [DOMINATING SET IN PENNY GRAPHS as a decision problem](penny-graph-dominating-set-dec.md)
+- [DOMINATING SET IN PENNY GRAPHS is NP-complete](penny-graph-dominating-set-np-complete.md)

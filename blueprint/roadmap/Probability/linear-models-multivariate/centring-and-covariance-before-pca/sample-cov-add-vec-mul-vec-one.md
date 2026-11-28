@@ -1,7 +1,7 @@
 # Sample covariance is invariant under a common shift of all samples
 
 Let $X$ be a real $n \times p$ data matrix whose rows are the $n$ samples, and write $S(Y)$ for the
-[sample covariance matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/sample-cov.md)
+[sample covariance matrix](../principal-component-analysis/sample-cov.md)
 $(n-1)^{-1} Y_c^\top Y_c$ of a data matrix $Y$ with centred matrix $Y_c$. For every $n$ and every
 $c \in \mathbb{R}^p$, adding $c$ to every sample leaves the sample covariance unchanged:
 

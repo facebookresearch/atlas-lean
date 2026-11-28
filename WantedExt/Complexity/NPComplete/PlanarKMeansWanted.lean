@@ -73,7 +73,7 @@ def WellFormed (i : PlanarKMeansInstance) : Prop :=
   (∀ p ∈ i.1, 0 < p.1.2 ∧ 0 < p.2.2) ∧ 1 ≤ i.2.1 ∧ 0 < i.2.2.2
 
 /-- Some `k` centers in the plane give every point its squared distance to the nearest center,
-with total at most `R`. -/
+with total at most `R`; the total is over the input list, so repeated points count repeatedly. -/
 def PlanarKMeansFeasible (i : PlanarKMeansInstance) : Prop :=
   ∃ c : Fin i.2.1 → EuclideanSpace ℝ (Fin 2),
     (i.1.map fun p => ⨅ j, dist (point p) (c j) ^ 2).sum ≤ (i.2.2.val : ℝ)

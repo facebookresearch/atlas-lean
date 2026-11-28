@@ -2,7 +2,7 @@
 
 Let $X$ be a real $n \times p$ data matrix with at least one feature, $p \ge 1$, and no more samples
 (rows) than features, $n \le p$, the usual regime of omics data. Then its
-[sample covariance matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/sample-cov.md)
+[sample covariance matrix](../principal-component-analysis/sample-cov.md)
 $S = (n-1)^{-1} X_c^\top X_c$, where $X_c = X - \mathbf 1 \bar x^\top$, is singular:
 
 $$\det S = 0.$$

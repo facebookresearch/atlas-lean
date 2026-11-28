@@ -56,3 +56,6 @@
 - [Feasible instances of WEIGHTED EARLINESS-TARDINESS ABOUT A COMMON DUE DATE](weighted-earliness-tardiness-common-due-2.md)
 - [WEIGHTED EARLINESS-TARDINESS ABOUT A COMMON DUE DATE as a decision problem](weighted-earliness-tardiness-common-due-3.md)
 - [WEIGHTED EARLINESS-TARDINESS ABOUT A COMMON DUE DATE is NP-complete](weighted-earliness-tardiness-common-due-4.md)
+- [Well-formed instances of CODE GENERATION ON A ONE-REGISTER MACHINE (shared vertices have arcs only to leaves) is](well-formed-11.md)
+- [CODE GENERATION ON A ONE-REGISTER MACHINE (shared vertices have arcs only to leaves) is as a decision problem](one-register-code-generation-shared-leaf-3.md)
+- [CODE GENERATION ON A ONE-REGISTER MACHINE (shared vertices have arcs only to leaves) is NP-complete](one-register-code-generation-shared-leaf-4.md)

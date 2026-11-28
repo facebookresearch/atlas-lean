@@ -32,3 +32,8 @@
 - [Well-formed instances of THREE-PROCESSOR RESOURCE CONSTRAINED SCHEDULING WITH UNIT BOUNDS](well-formed-6.md)
 - [THREE-PROCESSOR RESOURCE CONSTRAINED SCHEDULING WITH UNIT BOUNDS as a decision problem](three-processor-unit-resource-scheduling.md)
 - [THREE-PROCESSOR RESOURCE CONSTRAINED SCHEDULING WITH UNIT BOUNDS is NP-complete](three-processor-unit-resource-scheduling-2.md)
+- [Immediate predecessor in RESOURCE CONSTRAINED SCHEDULING with forest precedence](immediate-predecessor.md)
+- [Is forest in RESOURCE CONSTRAINED SCHEDULING with forest precedence](is-forest.md)
+- [Well-formed instances of RESOURCE CONSTRAINED SCHEDULING with forest precedence](well-formed-7.md)
+- [RESOURCE CONSTRAINED SCHEDULING with forest precedence as a decision problem](resource-constrained-scheduling-forest-p.md)
+- [RESOURCE CONSTRAINED SCHEDULING with `r = 1`, `m = 2` and a forest partial order is NP-complete](resource-constrained-scheduling-forest-p-2.md)

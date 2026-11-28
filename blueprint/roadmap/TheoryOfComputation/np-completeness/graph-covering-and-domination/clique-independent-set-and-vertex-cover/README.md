@@ -191,6 +191,14 @@
 - [Kőnig's theorem](../../../../GraphTheory/matchings-and-flows/k-nig-s-theorem/README.md): in bipartite graphs a minimum vertex cover has the size of a maximum matching, so VERTEX-COVER restricted to bipartite graphs is solved by matching algorithms such as Hopcroft–Karp.
 - [Vertex cover 2-approximation](../../../../ComputerScience/approximation-algorithms/vertex-cover-2-approximation/README.md): the endpoints of a maximal matching form a vertex cover at most twice the minimum.
 - [Weighted vertex cover by the pricing method](../../../../ComputerScience/approximation-algorithms/weighted-vertex-cover-by-the-pricing-method/README.md): a primal-dual 2-approximation for the weighted version.
+- [Ray in CLIQUE in ray intersection graphs](ray.md)
+- [Instances of CLIQUE in ray intersection graphs](ray-intersection-clique-instance.md)
+- [Ray points in CLIQUE in ray intersection graphs](ray-points.md)
+- [Graph of an instance of CLIQUE in ray intersection graphs](graph-3.md)
+- [Well-formed instances of CLIQUE in ray intersection graphs](well-formed-3.md)
+- [Feasible instances of CLIQUE in ray intersection graphs](ray-intersection-clique-feasible.md)
+- [CLIQUE in ray intersection graphs as a decision problem](ray-intersection-clique-dec.md)
+- [CLIQUE in ray intersection graphs is NP-complete](ray-intersection-clique-np-complete.md)
 - [Instances of CLIQUE of linear size](clique-fixed-fraction-instance.md)
 - [Graph of a CLIQUE of linear size instance](graph.md)
 - [Well-formed CLIQUE of linear size instances](well-formed.md)

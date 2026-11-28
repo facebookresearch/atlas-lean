@@ -191,3 +191,6 @@
 - [The SAT-to-3-COLOR reduction is polynomial-time](part-09/is-poly-time-reduce-col.md)
 - [3-COLOR is NP-hard](part-09/col3-dec-np-hard.md)
 - [3-COLOR is NP-complete](part-09/col3-dec-np-complete.md)
+- [Well-formed instances of PLANAR 4-REGULAR GRAPH 3-COLORABILITY](well-formed.md)
+- [PLANAR 4-REGULAR GRAPH 3-COLORABILITY as a decision problem](planar-four-regular-three-colorability-d.md)
+- [PLANAR 4-REGULAR GRAPH 3-COLORABILITY is NP-complete](planar-four-regular-three-colorability-n.md)

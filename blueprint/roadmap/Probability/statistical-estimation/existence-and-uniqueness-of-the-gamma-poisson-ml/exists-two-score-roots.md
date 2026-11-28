@@ -2,14 +2,14 @@
 
 Let `k₁, …, kₙ` (`n ≥ 1`) be counts observed at positive size factors `s₁, …, sₙ`, and let `ℓ(a, b)`
 be their
-[log marginal likelihood](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/log-marginal-lik.md)
+[log marginal likelihood](../likelihood-equations-and-efficiency-of-the-gamma/log-marginal-lik.md)
 in the shape `a` and the rate `b`. Assume some count is positive, and let `0 < a₁ < a₂ < a₃` be such
 that `0` lies between the values of the
 [profile shape score along the rate root](profile-shape-score-varying.md) at `a₁` and `a₂`, and
 between its values at `a₂` and `a₃` (endpoints included), and the profile does not vanish at `a₂`.
 Then the joint score equations have two solutions `(a, b)` and `(a', b')` with `a, b, a', b' > 0`
-and `a < a'`: the [shape score](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/shape-score.md)
-`∂ℓ/∂a` and the [rate score](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/rate-score.md)
+and `a < a'`: the [shape score](../likelihood-equations-and-efficiency-of-the-gamma/shape-score.md)
+`∂ℓ/∂a` and the [rate score](../likelihood-equations-and-efficiency-of-the-gamma/rate-score.md)
 `∂ℓ/∂b` both vanish at both.
 
 For example, at size factors `(1000, 1/100, 100)` and counts `(12, 1, 6)` the profile changes sign

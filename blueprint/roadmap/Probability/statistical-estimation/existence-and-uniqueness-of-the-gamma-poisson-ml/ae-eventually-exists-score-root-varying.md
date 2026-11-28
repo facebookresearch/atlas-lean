@@ -14,9 +14,9 @@ identifiability of the shape: for every sufficiently small `η > 0` there is `c 
 Then, almost surely, for every `ε > 0` and all large `n`, the joint score equations of the first `n`
 cells (the counts `X₀(ω), …, X₍ₙ₋₁₎(ω)` at the size factors `S₀(ω), …, S₍ₙ₋₁₎(ω)`) have a solution
 `(â, b̂)` with `â > 0`, `b̂ > 0`, `|â - a₀| < ε` and `|b̂ - b₀| < ε`: the
-[shape score](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/shape-score.md) `∂ℓ/∂a` and the
-[rate score](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/rate-score.md) `∂ℓ/∂b` both vanish
+[shape score](../likelihood-equations-and-efficiency-of-the-gamma/shape-score.md) `∂ℓ/∂a` and the
+[rate score](../likelihood-equations-and-efficiency-of-the-gamma/rate-score.md) `∂ℓ/∂b` both vanish
 at `(â, b̂)`, where `ℓ` is the
-[log marginal likelihood](../../../Probability/statistical-estimation/likelihood-equations-and-efficiency-of-the-gamma/log-marginal-lik.md)
+[log marginal likelihood](../likelihood-equations-and-efficiency-of-the-gamma/log-marginal-lik.md)
 of these cells (Cramér 1946). The sign condition is a hypothesis; `R(a₀, b₀) = 0` holds, for
 example, under a [matching conditional mean](pop-rate-score-log-eq-zero-of-cond-mean.md).

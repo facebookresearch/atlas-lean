@@ -2,7 +2,7 @@
 
 Let $X$ be a real $n \times p$ data matrix whose rows are the $n$ samples, with column means
 $\bar x$ and
-[centred matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/center.md)
+[centred matrix](../principal-component-analysis/center.md)
 $X_c = X - \mathbf 1 \bar x^\top$. For every $n$,
 
 $$\operatorname{rank} X \le \operatorname{rank} X_c + 1,$$

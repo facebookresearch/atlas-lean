@@ -69,7 +69,8 @@ abbrev PathConstrainedNetworkFlowInstance :=
 def arcs (i : PathConstrainedNetworkFlowInstance) : List (ℕ × ℕ) :=
   i.2.1.map fun a => (a.1, a.2.1)
 
-/-- The capacity `c(u, v)` of the arc from `u` to `v`, and `0` when there is no such arc. -/
+/-- The capacity `c(u, v)` of the first listed arc from `u` to `v`, and `0` when there is no such
+arc. -/
 def capacity (i : PathConstrainedNetworkFlowInstance) (u v : ℕ) : ℕ :=
   ((i.2.1.find? fun a => a.1 = u ∧ a.2.1 = v).map fun a => a.2.2).getD 0
 

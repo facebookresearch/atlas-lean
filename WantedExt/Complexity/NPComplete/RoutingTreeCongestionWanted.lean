@@ -101,9 +101,9 @@ noncomputable def routedWeight {n m : ℕ} (T : SimpleGraph (Fin m)) (τ : Fin n
 
 open Classical in
 /-- `(T, τ)` is a routing tree for the graph on `0, …, n - 1` with weighted edges `es`, of
-congestion at most `K`: a binary phylogenetic tree with taxa `τ v` (a tree whose degree-one
-vertices are exactly the `τ v`, every other vertex of degree three), with at most `K` weight
-routed along every edge of `T`. -/
+congestion at most `K`: a binary phylogenetic tree with taxa `τ v` (a tree, with `τ` a bijection
+from the graph vertices onto its degree-one vertices, every other vertex of degree three), with
+at most `K` weight routed along every edge of `T`. -/
 def IsRoutingTreeOfCongestion (n : ℕ) (es : List ((ℕ × ℕ) × ℕ)) (K : ℕ) {m : ℕ}
     (T : SimpleGraph (Fin m)) (τ : Fin n → Fin m) : Prop :=
   IsBinaryPhylogeneticTree T τ ∧ ∀ x y, T.Adj x y → routedWeight T τ x y es ≤ K

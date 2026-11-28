@@ -78,7 +78,8 @@ abbrev RayIntersectionCliqueInstance := List Ray × ℕ
 def toInt (z : ℕ × ℕ) : ℤ := (z.1 : ℤ) - z.2
 
 /-- The point set of the open ray with origin `(x, y)` and direction `(d, e)`:
-`{(x + t d, y + t e) : t > 0}` (the origin itself is excluded). -/
+`{(x + t d, y + t e) : t > 0}`. For a nonzero direction the origin is excluded; for the direction
+`(0, 0)` it is the single point `(x, y)` (`WellFormed` requires nonzero directions). -/
 def rayPoints (ρ : Ray) : Set (ℝ × ℝ) :=
   {p | ∃ t : ℝ, 0 < t ∧
     p = ((toInt ρ.1.1 : ℝ) + t * (toInt ρ.2.1 : ℝ), (toInt ρ.1.2 : ℝ) + t * (toInt ρ.2.2 : ℝ))}

@@ -72,8 +72,9 @@ def WellFormed (i : PointToPointConnectionInstance) : Prop :=
       (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)) ∧
     (∀ q ∈ i.2.2.1, q.1 < i.1 ∧ q.2 < i.1) ∧ 0 < i.2.2.2
 
-/-- Some sublist `E'` of the edges has total weight at most `K` and connects every pair: in the
-graph with edge set `E'`, each destination `dⱼ` is reachable from its source `sⱼ`. -/
+/-- Some sublist `E'` of the edges has total weight at most `K` and connects every pair whose
+endpoints are both vertices: in the graph with edge set `E'`, each destination `dⱼ < n` is
+reachable from its source `sⱼ < n` (`WellFormed` rejects pairs with an endpoint out of range). -/
 def PointToPointConnectionFeasible (i : PointToPointConnectionInstance) : Prop :=
   ∃ E' : List (ℕ × ℕ × ℕ), E'.Sublist i.2.1 ∧ (E'.map fun e => e.2.2).sum ≤ i.2.2.2 ∧
     ∀ q ∈ i.2.2.1, ∀ (hs : q.1 < i.1) (hd : q.2 < i.1),

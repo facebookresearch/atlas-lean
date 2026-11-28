@@ -53,3 +53,8 @@
 - [UNIT-TIME PARALLEL BATCHING WITH PRECEDENCE, TOTAL COMPLETION TIME as a decision problem](unit-precedence-parallel-batching-total.md)
 - [UNIT-TIME PARALLEL BATCHING WITH PRECEDENCE, TOTAL COMPLETION TIME is NP-complete](unit-precedence-parallel-batching-total-2.md)
 - [Unit-time precedence scheduling on three identical machines](three-identical-machines-unit-precedence-algorithm.md)
+- [Immediate predecessor in PRECEDENCE CONSTRAINED SCHEDULING for opposing forests](immediate-predecessor.md)
+- [Is opposing forest in PRECEDENCE CONSTRAINED SCHEDULING for opposing forests](is-opposing-forest.md)
+- [Well-formed instances of PRECEDENCE CONSTRAINED SCHEDULING for opposing forests](well-formed-11.md)
+- [PRECEDENCE CONSTRAINED SCHEDULING for opposing forests as a decision problem](precedence-constrained-scheduling-opposi.md)
+- [PRECEDENCE CONSTRAINED SCHEDULING is NP-complete for opposing forests](precedence-constrained-scheduling-opposi-2.md)

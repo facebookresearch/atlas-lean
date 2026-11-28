@@ -17,3 +17,8 @@
 - [Well-formed instances of INDEPENDENT DOMINATING SET ON 2P_3-FREE GRAPHS](well-formed-4.md)
 - [INDEPENDENT DOMINATING SET ON 2P_3-FREE GRAPHS as a decision problem](independent-dominating-set-two-p3-free-d.md)
 - [INDEPENDENT DOMINATING SET ON 2P_3-FREE GRAPHS is NP-complete](independent-dominating-set-two-p3-free-n.md)
+- [Out degree in KERNEL for planar digraphs with degree bounds](out-degree.md)
+- [In degree in KERNEL for planar digraphs with degree bounds](in-degree.md)
+- [Well-formed instances of KERNEL for planar digraphs with degree bounds](well-formed-3.md)
+- [KERNEL for planar digraphs with degree bounds as a decision problem](planar-kernel-degree-bounded-dec.md)
+- [KERNEL for planar digraphs with degree bounds is NP-complete](planar-kernel-degree-bounded-np-complete.md)

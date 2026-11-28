@@ -65,11 +65,13 @@ reduction from every language in `NP`
 matrix `r`, bound `B`. -/
 abbrev OptimumCommunicationSpanningTreeInstance := ℕ × List (List ℕ) × List (List ℕ) × ℕ
 
-/-- The weight `w({u, v})` of the edge between `u` and `v`. -/
+/-- The weight of `u` and `v`: entry `(u, v)` of the weight matrix (an ordered lookup;
+`WellFormed` requires the matrix to be symmetric). -/
 def weight (i : OptimumCommunicationSpanningTreeInstance) (u v : Fin i.1) : ℕ :=
   (i.2.1.getD u []).getD v 0
 
-/-- The requirement `r({u, v})` of the pair `u, v`. -/
+/-- The requirement of `u` and `v`: entry `(u, v)` of the requirement matrix (an ordered lookup;
+`WellFormed` requires the matrix to be symmetric). -/
 def requirement (i : OptimumCommunicationSpanningTreeInstance) (u v : Fin i.1) : ℕ :=
   (i.2.2.1.getD u []).getD v 0
 

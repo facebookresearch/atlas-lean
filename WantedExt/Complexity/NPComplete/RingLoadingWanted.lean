@@ -70,7 +70,8 @@ abbrev RingLoadingInstance := List (List ℕ) × ℕ
 /-- The ring size `n`: the number of rows of the demand table. -/
 def size (i : RingLoadingInstance) : ℕ := i.1.length
 
-/-- The demand `d_{a,b}` between nodes `a < b`: entry `b - a - 1` of row `a`. -/
+/-- The demand `d_{a,b}` between nodes `a < b`: entry `b - a - 1` of row `a` (truncated
+subtraction, so entry `0` of row `a` when `b ≤ a`). -/
 def demand (i : RingLoadingInstance) (a b : ℕ) : ℕ :=
   (i.1.getD a []).getD (b - a - 1) 0
 

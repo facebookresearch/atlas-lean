@@ -1,0 +1,3 @@
+# PARTIAL DIGEST SUPERSET is NP-complete
+
+PARTIAL DIGEST SUPERSET is NP-complete: the decision problem over bitstrings that accepts exactly the bitstrings that decode to a well-formed instance with a solution lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it. Cieliebak, Eidenbenz and Penna (2003), Theorem 1, prove NP-hardness, by a reduction from EQUAL SUM SUBSETS. Membership in NP holds because a solution can be taken with integer coordinates in $[0, \Sigma D + t]$, where $\Sigma D$ is the sum of the distances, so it is a certificate of polynomial size.

@@ -1,0 +1,3 @@
+# PRECEDENCE CONSTRAINED SCHEDULING is NP-complete for opposing forests
+
+PRECEDENCE CONSTRAINED SCHEDULING is NP-complete for opposing forests when the number of processors is part of the input: the decision problem over bitstrings that accepts exactly the bitstrings that decode to a well-formed instance with a solution lies in NP, and every decision problem in NP has a polynomial-time many-one reduction to it. Source: Garey and Johnson (1979), [SS9]; Garey, Johnson, Tarjan and Yannakakis (1983), who also show that the problem is solvable in polynomial time for each fixed number of processors.
