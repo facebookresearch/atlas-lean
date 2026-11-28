@@ -33,9 +33,10 @@ an ordered pair of Dyck words; the column determines where to insert the removed
 * Richard P. Stanley, *Catalan Numbers*, Cambridge University Press (2015), and Catherine H. Yan,
   *Parking functions*, in *Handbook of Enumerative Combinatorics*, CRC Press (2015), pp. 835–893,
   cited in Section 4 for the Catalan enumeration.
-* ATLAS modules `LuckyCars` (`le_nextFreeSpot`, `nextFreeSpot_of_notMem`),
+* ATLAS modules `LuckyCars` (`exists_lucky_of_preferred`, `isLuckyCar_iff_parkSpots_eq`),
   `LuckyCarFactorialMoments` (`parkSpots_injective`), and `DescendingNaplesPaddedDyckWord`
-  (`decreasingParkingPreferenceEquivDyckWord`, `stepHeight`, `stepHeight_append`).
+  (`decreasingParkingPreferenceEquivDyckWord`, `stepHeight_eq`, `stepHeight_nil`,
+  `stepHeight_cons_up`, `stepHeight_append`).
 -/
 
 set_option autoImplicit false
@@ -43,44 +44,6 @@ set_option autoImplicit false
 namespace MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
 
 open MetaMathlibExt DyckStep
-
-private lemma getD_parkSpotsFrom_of_lt_before {n : ℕ} (l : List (Fin n)) (i : ℕ)
-    (hi : i < l.length) (occ : Finset (Fin n)) (d : Fin n) (hfree : l[i] ∉ occ)
-    (hprev : ∀ k, (hk : k < i) → l[i] < l[k]) :
-    (parkSpotsFrom l occ).getD i d = l[i] := by
-  induction l generalizing i occ with
-  | nil => simp at hi
-  | cons a l ih =>
-    cases i with
-    | zero => exact nextFreeSpot_of_notMem hfree
-    | succ i =>
-      have hit : i < l.length := by simpa using hi
-      have ha : l[i] < a := hprev 0 (Nat.zero_lt_succ i)
-      rw [parkSpotsFrom, List.getD_cons_succ]
-      exact ih i hit _ (by
-        rw [Finset.mem_insert, not_or]
-        exact ⟨(ha.trans_le (le_nextFreeSpot occ a)).ne, hfree⟩)
-        (fun k hk => hprev (k + 1) (Nat.succ_lt_succ hk))
-
-private lemma exists_lucky_of_preferred {n : ℕ} {f : Fin n → Fin n} (hf : Antitone f)
-    {j : Fin n} (hj : ∃ i, f i = j) : ∃ i, f i = j ∧ IsLuckyCar f i := by
-  classical
-  let s := Finset.univ.filter fun i => f i = j
-  have hs : s.Nonempty := by simpa [s, Finset.Nonempty] using hj
-  let i := s.min' hs
-  have hi : f i = j := (Finset.mem_filter.mp (Finset.min'_mem s hs)).2
-  refine ⟨i, hi, ?_⟩
-  unfold IsLuckyCar parkSpots
-  convert getD_parkSpotsFrom_of_lt_before (List.ofFn f) i.val (by simp) ∅ i (by simp) ?_ using 1
-  · simp
-  · intro k hk
-    let k' : Fin n := ⟨k, hk.trans i.isLt⟩
-    have hki : k' < i := hk
-    have hne : f i ≠ f k' := by
-      intro he
-      have hm : k' ∈ s := by simp [s, ← he, hi]
-      exact (not_le_of_gt hki) (Finset.min'_le s _ hm)
-    simpa only [List.getElem_ofFn] using lt_of_le_of_ne (hf hki.le) hne
 
 private abbrev Decreasing (n : ℕ) :=
   {f : Fin n → Fin n // IsParkingFunction n f ∧ Antitone f}
@@ -96,7 +59,9 @@ private noncomputable def luckySpotEquiv {n : ℕ} (j : Fin n) :
     · rintro ⟨i, f, hp, ha, hj, hl⟩ ⟨k, g, _, _, hgj, hgl⟩ h
       have he : f = g := congrArg (fun x : {f : Decreasing n // Prefers f j} => x.1.1) h
       subst g
-      have hik : i = k := parkSpots_injective hp ((hl.trans hj).trans (hgl.trans hgj).symm)
+      have hi := (isLuckyCar_iff_parkSpots_eq f i).mp hl
+      have hk := (isLuckyCar_iff_parkSpots_eq f k).mp hgl
+      have hik : i = k := parkSpots_injective hp ((hi.trans hj).trans (hk.trans hgj).symm)
       subst k
       rfl
     · rintro ⟨⟨f, hp, ha⟩, h⟩
@@ -110,11 +75,11 @@ private def HasColumn (j : ℕ) (p : List DyckStep) : Prop :=
   ∃ a t, p = a ++ U :: t ∧ a.count D = j
 
 private lemma dyck_height (p : DyckWord) : stepHeight p.toList = 0 := by
-  simp [stepHeight, p.count_U_eq_count_D]
+  simp [stepHeight_eq, p.count_U_eq_count_D]
 
 private lemma dyck_prefix_height (p : DyckWord) (i : ℕ) : 0 ≤ stepHeight (p.toList.take i) := by
   have := p.count_D_le_count_U i
-  unfold stepHeight
+  rw [stepHeight_eq]
   omega
 
 -- A walk with negative final height crosses down from its starting height. Everything before
@@ -122,12 +87,11 @@ private lemma dyck_prefix_height (p : DyckWord) (i : ℕ) : 0 ≤ stepHeight (p.
 private lemma split_negative (t : List DyckStep) (h : stepHeight t < 0) :
     ∃ (b : DyckWord) (c : List DyckStep), t = b.toList ++ D :: c := by
   match t with
-  | [] => simp [stepHeight] at h
+  | [] => simp [stepHeight_nil] at h
   | D :: t => exact ⟨0, t, rfl⟩
   | U :: t =>
     have ht : stepHeight t < 0 := by
-      unfold stepHeight at h ⊢
-      simp at h
+      rw [stepHeight_cons_up] at h
       omega
     obtain ⟨b, c, hb⟩ := split_negative t ht
     have hnest : U :: t = b.nest.toList ++ c := by
@@ -213,7 +177,7 @@ private lemma stepHeight_take_splice (a b c : List DyckStep) (i : ℕ) :
         stepHeight (b.take (i - a.length)) := by
   by_cases hi : i ≤ a.length
   · rw [List.append_assoc, List.take_append_of_le_length hi, Nat.sub_eq_zero_of_le hi]
-    simp [List.take_append_of_le_length hi, stepHeight]
+    simp [List.take_append_of_le_length hi, stepHeight_nil]
   · have h₁ : a.length ≤ i - min (i - a.length) b.length := by omega
     have h₂ : i - min (i - a.length) b.length - a.length = i - a.length - b.length := by omega
     simp only [List.append_assoc, List.take_append, stepHeight_append,
@@ -222,10 +186,13 @@ private lemma stepHeight_take_splice (a b c : List DyckStep) (i : ℕ) :
 
 private lemma dyck_of_height (w : List DyckStep) (h : stepHeight w = 0)
     (hp : ∀ i, 0 ≤ stepHeight (w.take i)) : ∃ p : DyckWord, p.toList = w := by
-  exact ⟨⟨w, by unfold stepHeight at h; omega, fun i => by
-    have := hp i
-    unfold stepHeight at this
-    omega⟩, rfl⟩
+  refine ⟨⟨w, ?_, ?_⟩, rfl⟩
+  · rw [stepHeight_eq] at h
+    omega
+  · intro i
+    have hi := hp i
+    rw [stepHeight_eq] at hi
+    omega
 
 private lemma splice_dyck (p b : DyckWord) {a c : List DyckStep} (h : p.toList = a ++ c) :
     ∃ w : DyckWord, w.toList = a ++ b.toList ++ c := by
@@ -328,8 +295,7 @@ private noncomputable def spliceColumnEquiv (n j : ℕ) : CatalanPairs n j ≃ C
       have hbal := dyck_height p
       have hpre := dyck_prefix_height p a.length
       rw [hcut, List.take_left] at hpre
-      rw [hcut, stepHeight_append] at hbal
-      have hhead : stepHeight (U :: t) = stepHeight t + 1 := by simp [stepHeight]; omega
+      rw [hcut, stepHeight_append, stepHeight_cons_up] at hbal
       omega
     obtain ⟨b, c, hbc⟩ := split_negative t ht
     have hs : p.toList = a ++ b.nest.toList ++ c := by

@@ -91,6 +91,53 @@ For a parking function a free spot always exists. -/
 def IsLuckyCar {n : ℕ} (f : Fin n → Fin n) (i : Fin n) : Prop :=
   parkSpots f i = f i
 
+/-- A car is lucky exactly when its assigned spot is its preferred spot. -/
+theorem isLuckyCar_iff_parkSpots_eq {n : ℕ} (f : Fin n → Fin n) (i : Fin n) :
+    IsLuckyCar f i ↔ parkSpots f i = f i := Iff.rfl
+
+private lemma getD_parkSpotsFrom_of_lt_before {n : ℕ} (l : List (Fin n)) (i : ℕ)
+    (hi : i < l.length) (occ : Finset (Fin n)) (d : Fin n) (hfree : l[i] ∉ occ)
+    (hprev : ∀ k, (hk : k < i) → l[i] < l[k]) :
+    (parkSpotsFrom l occ).getD i d = l[i] := by
+  induction l generalizing i occ with
+  | nil => simp at hi
+  | cons a l ih =>
+    cases i with
+    | zero => exact nextFreeSpot_of_notMem hfree
+    | succ i =>
+      have hit : i < l.length := by simpa using hi
+      have ha : l[i] < a := hprev 0 (Nat.zero_lt_succ i)
+      rw [parkSpotsFrom, List.getD_cons_succ]
+      exact ih i hit _ (by
+        rw [Finset.mem_insert, not_or]
+        exact ⟨(ha.trans_le (le_nextFreeSpot occ a)).ne, hfree⟩)
+        (fun k hk => hprev (k + 1) (Nat.succ_lt_succ hk))
+
+/-- If the preferences are weakly decreasing and some car prefers spot `j`, a car preferring
+`j` is lucky. The first such car finds `j` free because all earlier preferences are larger.
+
+Source: Steve Butler et al., *Lucky Cars and Lucky Spots in Parking Functions*,
+Journal of Integer Sequences 29 (2026), Article 26.1.1, Section 4.2. -/
+theorem exists_lucky_of_preferred {n : ℕ} {f : Fin n → Fin n} (hf : Antitone f)
+    {j : Fin n} (hj : ∃ i, f i = j) : ∃ i, f i = j ∧ IsLuckyCar f i := by
+  classical
+  let s := Finset.univ.filter fun i => f i = j
+  have hs : s.Nonempty := by simpa [s, Finset.Nonempty] using hj
+  let i := s.min' hs
+  have hi : f i = j := (Finset.mem_filter.mp (Finset.min'_mem s hs)).2
+  refine ⟨i, hi, ?_⟩
+  unfold IsLuckyCar parkSpots
+  convert getD_parkSpotsFrom_of_lt_before (List.ofFn f) i.val (by simp) ∅ i (by simp) ?_ using 1
+  · simp
+  · intro k hk
+    let k' : Fin n := ⟨k, hk.trans i.isLt⟩
+    have hki : k' < i := hk
+    have hne : f i ≠ f k' := by
+      intro he
+      have hm : k' ∈ s := by simp [s, ← he, hi]
+      exact (not_le_of_gt hki) (Finset.min'_le s _ hm)
+    simpa only [List.getElem_ofFn] using lt_of_le_of_ne (hf hki.le) hne
+
 /-- **Number of lucky cars.** Let $f : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$ give the preferred
 spot of each of $n$ cars, and let cars $0, 1, \dots, n-1$ arrive in order, each taking the least
 spot at or after its preference not taken by an earlier car, or its preferred spot itself when

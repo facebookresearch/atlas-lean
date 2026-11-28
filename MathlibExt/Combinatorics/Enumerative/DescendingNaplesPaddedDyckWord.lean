@@ -55,6 +55,20 @@ private def steps {m : ℕ} (p : Fin m → Bool) : List DyckStep :=
 the number of Down steps. -/
 @[expose] public def stepHeight (l : List DyckStep) : ℤ := (l.count U : ℤ) - (l.count D : ℤ)
 
+/-- The signed height of a word is its Up count minus its Down count, as integers. -/
+public theorem stepHeight_eq (l : List DyckStep) :
+    stepHeight l = (l.count U : ℤ) - (l.count D : ℤ) := rfl
+
+/-- The empty word has zero signed height. -/
+public theorem stepHeight_nil : stepHeight [] = 0 := by
+  simp [stepHeight]
+
+/-- Prepending an Up step increases the signed height by one. -/
+public theorem stepHeight_cons_up (l : List DyckStep) :
+    stepHeight (U :: l) = stepHeight l + 1 := by
+  simp [stepHeight]
+  omega
+
 /-- The signed change in height of a concatenation is the sum of the two changes. -/
 @[simp] public theorem stepHeight_append (l r : List DyckStep) :
     stepHeight (l ++ r) = stepHeight l + stepHeight r := by
