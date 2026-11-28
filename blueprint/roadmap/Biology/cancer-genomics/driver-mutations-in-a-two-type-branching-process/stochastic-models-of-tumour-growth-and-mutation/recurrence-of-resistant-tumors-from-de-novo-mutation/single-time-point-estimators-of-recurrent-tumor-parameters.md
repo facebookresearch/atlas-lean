@@ -26,7 +26,7 @@ The condition $\alpha < -\lambda_1/\lambda_0$ ensures that sensitive cells are s
 
 ## Proof depends on
 
-- [Delta method](../../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/delta-method.md)
+- [Delta method](../../../../../Probability/convergence-of-measures/slutsky-s-theorem-and-the-delta-method/delta-method.md)
 
 ## Expansion
 

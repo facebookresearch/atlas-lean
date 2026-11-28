@@ -21,7 +21,7 @@ $$q_i=\frac{d}{\delta(i)}+\frac{\nu}{\delta(i)}q_{i-1}+\frac{b(i)}{\delta(i)}q_i
 
 ## Proof depends on
 
-- [Foster's criterion for positive recurrence](../../../../Probability/markov-chains/foster-lyapunov-criteria/foster-s-criterion-for-positive-recurrence.md)
+- [Foster's criterion for positive recurrence](../../../../../Probability/markov-chains/foster-lyapunov-criteria/foster-s-criterion-for-positive-recurrence.md)
 
 ## Expansion
 

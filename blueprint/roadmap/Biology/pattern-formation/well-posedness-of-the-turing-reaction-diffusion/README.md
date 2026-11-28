@@ -41,3 +41,7 @@ kinetics, singular at $v = 0$, do not.
 - [The Schnakenberg kinetics are smooth](cont-diff-schnakenberg.md)
 - [Local well-posedness of the Schnakenberg–Turing system](schnakenberg-local-flow.md)
 - [The Gierer–Meinhardt kinetics are not Lipschitz on the unit ball](not-lipschitz-on-with-gierer-meinhardt.md)
+
+## Subtopics
+
+- [Discretized reaction diffusion systems](discretized-reaction-diffusion-systems/README.md)
