@@ -60,4 +60,19 @@ example (μ : {μ : ℕ // 1 ≤ μ}) : lambertFMu zeroDisk μ = 0 ∧
     Subtype.ext (zero_pow (by positivity))
   simp only [h, lambertGMu_at_zero, mul_zero, sub_zero, tsum_zero]
 
-#check lambertMu_sigma_eq_tsum_twoAdic
+private theorem norm_half_lt_one : ‖(1 / 2 : ℂ)‖ < 1 := by
+  norm_num [norm_div, Complex.norm_ofNat]
+
+private noncomputable def halfDyadic (n : ℕ) : {q : ℂ // ‖q‖ < 1} :=
+  ⟨(1 / 2 : ℂ) ^ 2 ^ n, by
+    rw [norm_pow]
+    exact pow_lt_one₀ (norm_nonneg _) norm_half_lt_one (by positivity)⟩
+
+-- Exercise the analytic identity at μ = 2 and q = 1/2 with the corrected weights.
+example : lambertFMu ⟨1 / 2, norm_half_lt_one⟩ ⟨2, by decide⟩ =
+    ∑' p : ℕ × ℕ, (2 : ℂ) ^ (3 * p.1 + p.2) *
+      (lambertGMu (halfDyadic (p.1 + p.2)) ⟨2, by decide⟩ -
+        8 * lambertGMu (halfDyadic (p.1 + p.2 + 1)) ⟨2, by decide⟩) := by
+  have h8 : (2 : ℂ) ^ 3 = 8 := by norm_num
+  simpa only [halfDyadic, Nat.reduceAdd, h8] using
+    lambertMu_sigma_eq_tsum_twoAdic ⟨2, by decide⟩ (1 / 2) norm_half_lt_one
