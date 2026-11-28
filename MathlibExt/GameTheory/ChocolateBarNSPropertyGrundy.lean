@@ -22,6 +22,10 @@ import MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorXorEq
 
 For monotone shape functions `g` and `h`, both functions have the NS property exactly when the
 Grundy number is `x ^^^ y ^^^ z` at every legal bar, with `x ≤ g z` and `y ≤ h z`.
+Taking `g = f` for a monotone shape function `f` and `h` constantly zero forces `y = 0`:
+`f` has the NS property exactly when the Grundy number is `x ^^^ z` for every `x ≤ f z`.
+As in the proof of Theorem 4, the height and depth bounds are the bounds at width `z`;
+this is the legal-coordinate convention for Theorem 2.
 
 ## References
 
@@ -31,7 +35,8 @@ Grundy number is `x ^^^ y ^^^ z` at every legal bar, with `x ≤ g z` and `y ≤
   and Theorems 2 and 4.
 * Ryohei Miyadera, Shunsuke Nakamura and Yushi Nakaya,
   *Grundy Numbers of Impartial Chocolate Bar Games*, INTEGERS 20 (2020), Article G1,
-  pp. 1–30, Lemmas 10 and 11 and Theorem 5 (the one-coordinate converse).
+  pp. 1–30, Definition 1.2 and Theorems 4 and 5 (the original one-function result cited by
+  Theorem 2); also Lemmas 10 and 11 (for the one-coordinate converse).
 * The Lean proof uses `HasNSProperty.exists_of_lt_xor_xor` from
   `MathlibExt.GameTheory.ChocolateBarNSPropertyExistsOfLtXorXor`,
   `HasNSProperty.image_xor_xor_eq` from `MathlibExt.GameTheory.ChocolateBarNSPropertyImageXorXorEq`,
@@ -335,6 +340,29 @@ public theorem hasNSProperty_and_iff_chocolateBarGrundy_eq_xor {g h : ℕ → �
         rw [chocolateBarGrundy_two_eq]
         simp
       · simpa [G] using hxor 0 y z (Nat.zero_le _) hy
+
+/-- **The NS property characterises nim-sum Grundy numbers of two-dimensional chocolate bars.**
+Let $f : \mathbb{N} \to \mathbb{N}$ be monotone. Then $f$ has the NS property if and only if, for
+all $x, z \in \mathbb{N}$ with $x \le f(z)$, the chocolate bar $\mathrm{CB}(f, 0, x, 0, z)$ of
+width $z$ (first function $f$, first coordinate $x$, second function constantly $0$, second
+coordinate $0$) has Grundy number $x \oplus z$, where $\oplus$ denotes nim-sum (bitwise exclusive
+or).
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Theorem 2 (`integers-2025-G3-thm-2`). -/
+public theorem hasNSProperty_iff_chocolateBarGrundy_depth_zero {f : ℕ → ℕ}
+    (hf : Monotone f) :
+    HasNSProperty f ↔
+      ∀ x z, x ≤ f z → chocolateBarGrundy ![f, fun _ ↦ 0] ![x, 0] z = x ^^^ z := by
+  have htwo := hasNSProperty_and_iff_chocolateBarGrundy_eq_xor (h := fun _ ↦ 0) hf monotone_const
+  constructor
+  · intro hns x z hx
+    simpa only [Nat.xor_zero] using htwo.mp ⟨hns, hasNSProperty_const 0⟩ x 0 z hx le_rfl
+  · intro hxor
+    refine (htwo.mpr (fun x y z hx hy ↦ ?_)).1
+    obtain rfl := Nat.eq_zero_of_le_zero hy
+    simpa only [Nat.xor_zero] using hxor x z hx
 
 end
 

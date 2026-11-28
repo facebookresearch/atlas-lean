@@ -141,21 +141,6 @@ public theorem nimPassIndicator_zero {s : ℕ} {m : Fin s → ℕ} (hm : ∀ i, 
   rintro ⟨j, hj⟩
   exact absurd hj (Nat.not_le.mpr (hm j))
 
-/-- **The NS property characterises nim-sum Grundy numbers of two-dimensional chocolate bars.**
-Let $f : \mathbb{N} \to \mathbb{N}$ be monotone. Then $f$ has the NS property if and only if, for
-all $x, z \in \mathbb{N}$ with $x \le f(z)$, the chocolate bar $\mathrm{CB}(f, 0, x, 0, z)$ of
-width $z$ (first function $f$, first coordinate $x$, second function constantly $0$, second
-coordinate $0$) has Grundy number $x \oplus z$, where $\oplus$ denotes nim-sum (bitwise exclusive
-or).
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Theorem 2 (`integers-2025-G3-thm-2`). -/
-public theorem_wanted hasNSProperty_iff_chocolateBarGrundy_depth_zero {f : ℕ → ℕ}
-    (hf : Monotone f) :
-    HasNSProperty f ↔
-      ∀ x z, x ≤ f z → chocolateBarGrundy ![f, fun _ ↦ 0] ![x, 0] z = x ^^^ z
-
 /-- **NS property of sections and the three-dimensional chocolate bar.** Let
 $F : \mathbb{N} \times \mathbb{N} \to \mathbb{N}$ be monotone for the componentwise order. Then
 the sections $x \mapsto F(n, x)$ and $w \mapsto F(w, n)$ have the NS property for every
