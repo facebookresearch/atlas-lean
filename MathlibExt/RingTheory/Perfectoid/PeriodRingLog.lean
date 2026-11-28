@@ -19,15 +19,17 @@ module
 public import MathlibExt.RingTheory.AdicCompletion.PowerSeriesEvalMap
 public import MathlibExt.RingTheory.Perfectoid.CrystallinePeriodRingBasic
 public import MathlibExt.RingTheory.Perfectoid.DeRhamPeriodRing
+public import Mathlib.RingTheory.PowerSeries.Log
 import Mathlib.RingTheory.ReesAlgebra
 import Mathlib.RingTheory.WittVector.DiscreteValuationRing
 
 /-!
 # Logarithms in `B_dR^+`
 
-For `y` in the kernel of Fontaine's map `θ` with `p` inverted, the logarithm series
-`log(1 + X) = Σ_{n ≥ 1} (-1)^(n+1) X^n / n` converges at `y` in `B_dR^+ = BDeRhamPlus 𝓞_ℂ_[p] p`,
-the completion along that kernel; its value is `log(1 + y)` (`PadicComplexInt.logOneAdd`). We
+Let `p` be a prime. For `y` in the kernel of Fontaine's map `θ` with `p` inverted, the logarithm
+series `log(1 + X) = Σ_{n ≥ 1} (-1)^(n+1) X^n / n` (the image of Mathlib's `PowerSeries.log` over
+`ℚ_[p]`, `PadicComplexInt.logSeries`) converges at `y` in `B_dR^+ = BDeRhamPlus 𝓞_ℂ_[p] p`, the
+completion along that kernel; its value is `log(1 + y)` (`PadicComplexInt.logOneAdd`). We
 show that `log` is additive: `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)`
 (`PadicComplexInt.logOneAdd_add`). Its special values are
 
@@ -35,8 +37,9 @@ show that `log` is additive: `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)`
   (`PadicComplexInt.logTeichmuller`), which is nonzero for `ε ≠ 1`
   (`PadicComplexInt.logTeichmuller_ne_zero`); for `ε = (1, ζ_p, ζ_{p²}, …)` this is Fontaine's
   period `t` of `ℤ_p(1)`;
-* `log [p̃] = log([p̃]/p) = log(1 - ξ/p)` (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is a
-  chosen element of the tilt with `p̃♯ = p` (`PadicComplexInt.pFlat`) and `ξ = p - [p̃]`.
+* `log [p̃] = log([p̃]/p) = log(1 - ξ/p)` for the normalization `log p = 0` (Fontaine, Exposé II,
+  §4.2.2 p. 85 and §4.2.5 c) p. 86) (`PadicComplexInt.logPTilde`), where `p̃ = p♭` is a chosen
+  element of the tilt with `p̃♯ = p` (`PadicComplexInt.pFlat`) and `ξ = p - [p̃]`.
 
 These are the logarithms of J.-M. Fontaine, *Le corps des périodes p-adiques*, Astérisque 223
 (1994), Exposé II, §1.5.4 (the period `t`) and §4.3.1 (the element `log([u₀]/p)`).
@@ -64,26 +67,26 @@ local notation "𝔹⁺" => BDeRhamPlus 𝓞_ℂ_[p] p
 
 /-! ### The element `ξ/p` -/
 
-/-- The element `ξ/p` of `W(𝓞_ℂ_[p]♭)[1/p]`, where `ξ = p - [p♭]`. -/
+/-- For a prime `p`, the element `ξ/p` of `W(𝓞_ℂ_[p]♭)[1/p]`, where `ξ = p - [p♭]`. -/
 def xiDivP : 𝔸ₚ :=
   algebraMap 𝔸 𝔸ₚ (xi p) * algebraMap ℚ_[p] 𝔸ₚ (p : ℚ_[p])⁻¹
 
-/-- `k · k⁻¹ = 1` in `W(𝓞_ℂ_[p]♭)[1/p]` for a nonzero natural number `k`, where `k⁻¹` is the
-image of `(k : ℚ_[p])⁻¹`. -/
+/-- For a prime `p` and a nonzero natural number `k`, `k · k⁻¹ = 1` in `W(𝓞_ℂ_[p]♭)[1/p]`, where
+`k⁻¹` is the image of `(k : ℚ_[p])⁻¹`. -/
 theorem natCast_mul_algebraMap_inv {k : ℕ} (hk : k ≠ 0) :
     (k : 𝔸ₚ) * algebraMap ℚ_[p] 𝔸ₚ (k : ℚ_[p])⁻¹ = 1 := by
   rw [← map_natCast (algebraMap ℚ_[p] 𝔸ₚ) k, ← map_mul,
     mul_inv_cancel₀ (Nat.cast_ne_zero.mpr hk), map_one]
 
-/-- `p · (ξ/p) = ξ`. -/
+/-- For a prime `p`, `p · (ξ/p) = ξ` in `W(𝓞_ℂ_[p]♭)[1/p]`. -/
 theorem natCast_mul_xiDivP : (p : 𝔸ₚ) * xiDivP p = algebraMap 𝔸 𝔸ₚ (xi p) := by
   rw [xiDivP, mul_left_comm, natCast_mul_algebraMap_inv p hp.out.ne_zero, mul_one]
 
-/-- `ξ/p` lies in the kernel of `θ` with `p` inverted. -/
+/-- For a prime `p`, `ξ/p` lies in the kernel of `θ` with `p` inverted. -/
 theorem xiDivP_mem_ker : xiDivP p ∈ 𝕀 :=
   Ideal.mul_mem_right _ _ (algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_xi p))
 
-/-- `[p♭]/p - 1 = -ξ/p` in `W(𝓞_ℂ_[p]♭)[1/p]`. -/
+/-- For a prime `p`, `[p♭]/p - 1 = -ξ/p` in `W(𝓞_ℂ_[p]♭)[1/p]`. -/
 theorem teichmuller_pFlat_div_sub_one :
     algebraMap 𝔸 𝔸ₚ (teichmuller p (pFlat p)) * algebraMap ℚ_[p] 𝔸ₚ (p : ℚ_[p])⁻¹ - 1 =
       -xiDivP p := by
@@ -93,13 +96,26 @@ theorem teichmuller_pFlat_div_sub_one :
 
 /-! ### The logarithm series -/
 
-/-- The logarithm series `log(1 + X) = Σ_{n ≥ 1} (-1)^(n+1) X^n / n` over
-`W(𝓞_ℂ_[p]♭)[1/p]`, a `ℚ_[p]`-algebra. -/
+/-- The logarithm series `log(1 + X) = Σ_{n ≥ 1} (-1)^(n+1) X^n / n` over `W(𝓞_ℂ_[p]♭)[1/p]`, for
+a prime `p`: the image of Mathlib's `PowerSeries.log ℚ_[p]` under `ℚ_[p] → W(𝓞_ℂ_[p]♭)[1/p]`.
+`PowerSeries.log` needs a `ℚ`-algebra, and `W(𝓞_ℂ_[p]♭)[1/p]` is given only its `ℚ_[p]`-algebra
+structure. -/
 def logSeries : 𝔸ₚ⟦X⟧ :=
-  PowerSeries.mk fun n => if n = 0 then 0 else (-1) ^ (n + 1) * algebraMap ℚ_[p] 𝔸ₚ (n : ℚ_[p])⁻¹
+  PowerSeries.map (algebraMap ℚ_[p] 𝔸ₚ) (PowerSeries.log ℚ_[p])
 
-/-- **`log(1 + y)`** for `y` in the kernel of `θ` with `p` inverted: the value in `B_dR^+` of the
-logarithm series at `y`. -/
+/-- For a prime `p`, the coefficient of `Xⁿ` in the logarithm series over `W(𝓞_ℂ_[p]♭)[1/p]` is `0`
+for `n = 0` and `(-1)^(n+1)/n` for `n ≥ 1`, where `1/n` is the image of `(n : ℚ_[p])⁻¹`. -/
+theorem coeff_logSeries (n : ℕ) :
+    PowerSeries.coeff n (logSeries p) =
+      if n = 0 then 0 else (-1) ^ (n + 1) * algebraMap ℚ_[p] 𝔸ₚ (n : ℚ_[p])⁻¹ := by
+  rw [logSeries, PowerSeries.coeff_map, PowerSeries.coeff_log]
+  split_ifs
+  · exact map_zero _
+  · rw [map_div₀, map_pow, map_neg, map_one, map_natCast, div_eq_mul_inv, map_mul, map_pow,
+      map_neg, map_one]
+
+/-- **`log(1 + y)`**, for a prime `p` and `y` in the kernel of `θ` with `p` inverted: the value in
+`B_dR^+` of the logarithm series at `y`. -/
 def logOneAdd {y : 𝔸ₚ} (hy : y ∈ 𝕀) : 𝔹⁺ :=
   evalBDeRhamPlus p hy (logSeries p)
 
@@ -117,8 +133,8 @@ private theorem derivative_logPoly (M : ℕ) :
   simp only [Polynomial.coeff_C_mul_X_pow]
   rw [Finset.sum_ite_eq (Finset.range M) m]
   by_cases hm : m < M
-  · rw [ite_eq_left (by omega), ite_eq_left (Finset.mem_range.mpr hm), logSeries,
-      PowerSeries.coeff_mk, ite_eq_right (by omega)]
+  · rw [ite_eq_left (by omega), ite_eq_left (Finset.mem_range.mpr hm), coeff_logSeries,
+      ite_eq_right (by omega)]
     have h := natCast_mul_algebraMap_inv p (k := m + 1) (by omega)
     rw [← Nat.cast_succ]
     linear_combination (-1 : 𝔸ₚ) ^ m * h
@@ -151,7 +167,7 @@ private theorem X_pow_dvd_of_X_pow_dvd_one_add_X_mul {R : Type*} [CommRing R] (M
 private theorem coeff_zero_logPoly (N : ℕ) : (logPoly p N).coeff 0 = 0 := by
   rw [coeff_trunc]
   split_ifs
-  · rw [logSeries, PowerSeries.coeff_mk, ite_eq_left rfl]
+  · rw [coeff_logSeries, ite_eq_left rfl]
   · rfl
 
 /-- The key polynomial identity: with `Y = yT`, `Z = zT` and `W = Y + Z + YZ` in
@@ -248,8 +264,9 @@ private theorem comp_mem_reesAlgebra {R : Type*} [CommRing R] (I : Ideal R) (P :
   exact Algebra.adjoin_le (Set.singleton_subset_iff.mpr hW)
     (Polynomial.aeval_mem_adjoin_singleton _ _)
 
-/-- **Additivity of the logarithm**: `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)` for `y`, `z`
-in the kernel of `θ` with `p` inverted. -/
+/-- **Additivity of the logarithm**: for a prime `p` and `y`, `z` in the kernel of `θ` with `p`
+inverted, `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)`, where `(1 + y)(1 + z) = 1 + w` with
+`w = y + z + yz` (also in the kernel). -/
 theorem logOneAdd_add {y z : 𝔸ₚ} (hy : y ∈ 𝕀) (hz : z ∈ 𝕀) (hyz : y + z + y * z ∈ 𝕀) :
     logOneAdd p hyz = logOneAdd p hy + logOneAdd p hz := by
   change AdicCompletion.evalPowerSeries 𝕀 hyz (logSeries p) =
@@ -272,7 +289,8 @@ theorem logOneAdd_add {y z : 𝔸ₚ} (hy : y ∈ 𝕀) (hz : z ∈ 𝕀) (hyz :
   convert hQ using 1
   ring
 
-/-- `log(1 + y)` depends only on `y`. -/
+/-- For a prime `p`, `log(1 + y)` depends only on `y`: `log(1 + y) = log(1 + z)` for `y = z` in
+the kernel of `θ` with `p` inverted. -/
 theorem logOneAdd_congr {y z : 𝔸ₚ} (hy : y ∈ 𝕀) (hz : z ∈ 𝕀) (h : y = z) :
     logOneAdd p hy = logOneAdd p hz := by
   subst h
@@ -280,14 +298,15 @@ theorem logOneAdd_congr {y z : 𝔸ₚ} (hy : y ∈ 𝕀) (hz : z ∈ 𝕀) (h :
 
 /-! ### `log [ε]` and `log [p̃]` -/
 
-/-- For `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1`, the element `[ε] - 1` lies in the kernel of `θ` (with `p`
-inverted). -/
+/-- For a prime `p` and `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1`, the element `[ε] - 1` lies in the kernel of
+`θ` (with `p` inverted). -/
 theorem algebraMap_teichmuller_sub_one_mem_ker {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) :
     algebraMap 𝔸 𝔸ₚ (teichmuller p ε - 1) ∈ 𝕀 :=
   algebraMap_mem_ker_fontaineThetaInvertP p (by
     rw [map_sub, fontaineTheta_teichmuller, h, map_one, sub_self])
 
-/-- **`log [ε]`** for `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1`: the value `log(1 + ([ε] - 1)) ∈ B_dR^+`. -/
+/-- **`log [ε]`**, for a prime `p` and `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1`: the value
+`log(1 + ([ε] - 1)) ∈ B_dR^+`. -/
 def logTeichmuller {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) : 𝔹⁺ :=
   logOneAdd p (algebraMap_teichmuller_sub_one_mem_ker p h)
 
@@ -375,15 +394,16 @@ private theorem exists_trunc_logSeries_sub_X (N : ℕ) :
   change (Polynomial.X : Polynomial 𝔸ₚ) ^ 2 ∣ trunc (N + 2) (logSeries p) - Polynomial.X
   rw [Polynomial.X_pow_dvd_iff]
   intro d hd
-  rw [Polynomial.coeff_sub, coeff_trunc, ite_eq_left (by omega), logSeries, PowerSeries.coeff_mk,
+  rw [Polynomial.coeff_sub, coeff_trunc, ite_eq_left (by omega), coeff_logSeries,
     Polynomial.coeff_X]
   rcases d with _ | _ | d
   · simp
   · simp
   · omega
 
-/-- **`log [ε] ≠ 0` for `ε ≠ 1`**: write `[ε] - 1 = ξ^s w` with `θ(w) ≠ 0` and `s ≥ 1`; modulo
-`(ker θ)^(s+1)`, `log [ε] ≡ [ε] - 1 ≢ 0`. -/
+/-- **`log [ε] ≠ 0` for `ε ≠ 1`**: for a prime `p` and `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1` and `ε ≠ 1`,
+`log [ε] ≠ 0`. Write `[ε] - 1 = ξ^s w` with `θ(w) ≠ 0` and `s ≥ 1`; modulo `(ker θ)^(s+1)`,
+`log [ε] ≡ [ε] - 1 ≢ 0`. -/
 theorem logTeichmuller_ne_zero {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) (hne : ε ≠ 1) :
     logTeichmuller p h ≠ 0 := by
   intro h0
@@ -429,8 +449,10 @@ theorem logTeichmuller_ne_zero {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1)
   apply hw
   rw [hw', map_mul, fontaineTheta_xi, zero_mul]
 
-/-- **`log [p̃]`**, Fontaine's `log([p̃]/p) = Σ_{n ≥ 1} (-1)^(n+1) ([p̃]/p - 1)^n / n ∈ B_dR^+`,
-where `p̃ = p♭ = (p, p^{1/p}, …)` (`PadicComplexInt.pFlat`) and `[p̃]/p - 1 = -ξ/p`. -/
+/-- **`log [p̃]`**, for a prime `p`: the element
+`log([p̃]/p) = Σ_{n ≥ 1} (-1)^(n+1) ([p̃]/p - 1)^n / n ∈ B_dR^+`, which is Fontaine's `log [p̃]` for
+the normalization `log p = 0` (Exposé II, §4.2.2 p. 85 and §4.2.5 c) p. 86), where
+`p̃ = p♭ = (p, p^{1/p}, …)` (`PadicComplexInt.pFlat`) and `[p̃]/p - 1 = -ξ/p`. -/
 def logPTilde : 𝔹⁺ :=
   logOneAdd p (neg_mem (xiDivP_mem_ker p))
 
