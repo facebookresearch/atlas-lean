@@ -111,7 +111,8 @@ public theorem valid_serve {κ : Type u} {ρ : Type v} [DecidableEq κ]
       rw [serve_of_lookup_eq_none handler key t hmem]
       exact HashTable.valid_insert key (handler key) t hvalid
 
-/-- On a handler-agreeing table, serving answers the handler value. -/
+/-- If every value a lookup returns equals the handler's value, serving answers the handler
+value. -/
 public theorem fst_serve_of_agree {κ : Type u} {ρ : Type v}
     [DecidableEq κ] {hash : κ → Nat} (handler : κ → ρ) (key : κ)
     (t : HashTable κ ρ hash)
@@ -124,7 +125,8 @@ public theorem fst_serve_of_agree {κ : Type u} {ρ : Type v}
   | none =>
       rw [serve_of_lookup_eq_none handler key t hmem]
 
-/-- Serving a key preserves handler agreement for every key. -/
+/-- If every value a lookup returns equals the handler's value, the same holds after
+serving any key. -/
 public theorem agree_serve {κ : Type u} {ρ : Type v} [DecidableEq κ]
     {hash : κ → Nat} (handler : κ → ρ) (key : κ)
     (t : HashTable κ ρ hash)

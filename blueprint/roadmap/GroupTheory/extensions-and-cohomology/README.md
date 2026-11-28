@@ -11,3 +11,7 @@ Extensions and complements (Schur–Zassenhaus), splitting of extensions, homolo
 - [Self-extensions of groups](self-extensions-of-groups/README.md)
 - [Surjections injective on no nontrivial subgroup](surjections-injective-on-no-nontrivial-subgroup/README.md)
 - [Schur–Zassenhaus theorem: conjugacy of complements](schur-zassenhaus-conjugate-complements.md)
+
+- [Cohomological dimension two but geometric dimension three](eilenberg-ganea-counterexample.md)
+- [Bounded cohomology of groups](bounded-cohomology-of-groups/README.md)
+- [Computability of group homology](computability-of-group-homology/README.md)

@@ -2,10 +2,19 @@
 
 - [Tensorization of two-point hypercontractivity on the uniform cube](tensorization-of-two-point-hypercontractivity-on/README.md)
 - [The two-point Bonami inequality](the-two-point-bonami-inequality/README.md)
+- [Comparing exponential decay rates](comparing-exponential-decay-rates/README.md)
 - [The p-biased two-point inequality, reduced to one variable](the-p-biased-two-point-inequality-reduced-to-one/README.md)
+- [Integrating a noise-stability bound over the noise parameter](integrating-a-noise-stability-bound-over-the-noi/README.md)
+- [A log-Sobolev inequality on the two-point space](a-log-sobolev-inequality-on-the-two-point-space/README.md)
 - [The one-variable p-biased inequality from a pointwise bound](the-one-variable-p-biased-inequality-from-a-poin/README.md)
 - [The p-biased two-point inequality](the-p-biased-two-point-inequality/README.md)
+- [The two-point hypercontractive inequality for 2 ≤ q ≤ 4](the-two-point-hypercontractive-inequality-for-2/README.md)
 - [Bonami–Beckner hypercontractivity on the uniform cube](bonami-beckner-hypercontractivity-on-the-uniform/README.md)
+- [Refutations for the coupled-tensorization route to p-biased KKL](refutations-for-the-coupled-tensorization-route/README.md)
+- [The two-bit OR witness for the per-coordinate high-noise route](the-two-bit-or-witness-for-the-per-coordinate-hi/README.md)
+- [Log-Sobolev inequalities by Fourier expansion](log-sobolev-inequalities-by-fourier-expansion/README.md)
+- [Tensorization of the two-point hypercontractive inequality](tensorization-of-the-two-point-hypercontractive/README.md)
+- [Damped-mass estimates and the damping-witness route](damped-mass-estimates-and-the-damping-witness-ro/README.md)
 - [Tensorization of $p$-biased hypercontractivity](pbiased-tensorize/README.md)
 - [Bonami Lemma](bonami-lemma.md)
 - [(p,2)-hypercontractivity in noise-stability form](bool-noise-stab-le-bnt-qnorm-sq.md)
@@ -13,6 +22,10 @@
 - [Hypercontractivity Theorem (Bonami–Beckner)](hypercontractivity-theorem.md)
 - [Squared $L^2$ norm on the cube](bnt-qnorm-two-sq.md)
 - [(2,4)-Hypercontractivity Theorem](expect-bool-noise-op-pow-four-le.md)
+- [Bonami Tensor Step](bvtp-tensor-step.md)
+- [Decoupled Two Point Refutation](dtpc-pbiased-hclib-nine-tenths-false.md)
+- [Entropy Subadditivity](esa-damping-hard.md)
+- [Global LSI](gls-global-lsi.md)
 
 ## Related topics
 

@@ -42,6 +42,7 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.NumberTheory.ArithmeticFunction.UnitaryConvolution
 public import MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentities
+public import MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesConvolutionLucasABFibAB
 
 set_option autoImplicit false
 
@@ -50,19 +51,6 @@ set_option autoImplicit false
 namespace MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesWanted
 
 open MetaMathlibExt (powOmega unitaryConv multiplicativeOfPrimePowers)
-
-/-- **Discriminant times an (a, b)-Fibonacci number.** Let $a$ and $b$ be complex numbers with
-$a^2 + 4b \ne 0$, and write $F_n$ and $L_n$ for the $(a,b)$-Fibonacci and $(a,b)$-Lucas
-numbers. Then for every natural number $m$,
-$$(a^2 + 4b) F_{m+1} = L_{m+2} + b L_m.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Corollary 4. -/
-theorem_wanted disc_mul_fibAB (a b : ℂ) (hΔ : a ^ 2 + 4 * b ≠ 0)
-    (m : ℕ) :
-    (a ^ 2 + 4 * b) * fibAB a b (m + 1) =
-      lucasAB a b (m + 2) + b * lucasAB a b m
 
 /-- **Sums of (a, b)-Lucas numbers weighted by powers of -b.** Let $a, b$ be complex numbers
 with $b \ne 0$, and let $(F_n)$ and $(L_n)$ be the $(a, b)$-Fibonacci and $(a, b)$-Lucas
@@ -150,27 +138,6 @@ theorem_wanted sum_neg_one_pow_k_lucasAB (k : ℂ) (m n : ℕ)
     ∑ i ∈ Finset.range (n + 1),
         (-1 : ℂ) ^ i * lucasAB k 1 (2 * (i + m)) =
       (-1) ^ n * fibAB k 1 (2 * (n + m) + 1) + fibAB k 1 (2 * m - 1)
-
-/-- **A convolution of (a, b)-Lucas and (a, d)-Fibonacci numbers.** Let $a, b, d$ be complex
-numbers with $b \ne d$, and write $L^{a,b}_n$ for the $(a,b)$-Lucas numbers and $F^{a,b}_n$ for
-the $(a,b)$-Fibonacci numbers. Then for every natural number $n$,
-$$(b - d) \sum_{i=1}^{n} L^{a,b}_{n-i} F^{a,d}_i = L^{a,b}_{n+1} - L^{a,d}_{n+1}$$
-and
-$$\sum_{i=1}^{n} L^{a,b}_{n-i} F^{a,d}_i = \sum_{i=1}^{n} L^{a,d}_{n-i} F^{a,b}_i.$$
-
-The source states the first identity in divided form,
-$\sum_{i=1}^{n} L^{a,b}_{n-i} F^{a,d}_i = (L^{a,b}_{n+1} - L^{a,d}_{n+1})/(b - d)$.
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Corollary 14(a). -/
-theorem_wanted convolution_lucasAB_fibAB (a b d : ℂ) (hbd : b ≠ d)
-    (n : ℕ) :
-    (b - d) * ∑ i ∈ Finset.Icc 1 n,
-          lucasAB a b (n - i) * fibAB a d i =
-        lucasAB a b (n + 1) - lucasAB a d (n + 1) ∧
-      ∑ i ∈ Finset.Icc 1 n, lucasAB a b (n - i) * fibAB a d i =
-        ∑ i ∈ Finset.Icc 1 n, lucasAB a d (n - i) * fibAB a b i
 
 /-- **Fibonacci, Jacobsthal and Pell convolution identities.** Write $F_n$ and $L_n$ for the
 Fibonacci and Lucas numbers (the $(1,1)$-Fibonacci and $(1,1)$-Lucas numbers), $J_n$ and $j_n$

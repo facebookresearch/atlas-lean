@@ -125,4 +125,69 @@ example (n : ℕ) : 16 * powerSum 4 n =
   norm_num [show arrayR 2 1 = 1 by decide, show arrayR 2 2 = 12 by decide, Nat.add_assoc] at h
   exact h
 
+-- In the forward direction, the two columns for k = 2 have different scaling factors.
+example (a : ℕ → ℝ) (h : ∀ n : ℕ, (powerSum 4 n : ℝ) / (2 * (n : ℝ) + 1) =
+    ∑ m ∈ Finset.Icc 1 (2 : ℕ), a m * ((n + m).choose (2 * m) : ℝ)) :
+    (powerSum 3 3 : ℝ) = 18 * a 1 + (25 / 2) * a 2 := by
+  have h₃ := (powerSum_even_div_iff_odd 2 (by decide) a).mp h 3
+  rw [show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide] at h₃
+  norm_num [Nat.choose] at h₃
+  rw [h₃]
+  ring
+
+-- In the reverse direction at k = 1, the same coefficient works at zero and at n = 2.
+example (a : ℕ → ℝ) (h : ∀ n : ℕ, (powerSum 1 n : ℝ) =
+    3 * a 1 * ((n + 1).choose 2 : ℝ)) :
+    (powerSum 2 0 : ℝ) = 0 ∧ (powerSum 2 2 : ℝ) / 5 = 3 * a 1 := by
+  have he := (powerSum_even_div_iff_odd 1 le_rfl a).mpr (fun n ↦ by
+    norm_num
+    exact h n)
+  constructor
+  · have h₀ := he 0
+    norm_num [Nat.choose] at h₀
+    exact_mod_cast h₀
+  · have h₂ := he 2
+    norm_num [Nat.choose] at h₂
+    simpa [mul_comm (a 1)] using h₂
+
+-- The upper binomial column vanishes when the endpoint is smaller than its index.
+example : powerSum 4 1 = 1 := by
+  rw [powerSum_even_eq_sum 2 (by decide)]
+  rw [show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide]
+  norm_num [Nat.choose, show arrayR 2 1 = 1 by decide]
+
+-- Both columns contribute to the sum of the first three fourth powers.
+example : powerSum 4 3 = 98 := by
+  rw [powerSum_even_eq_sum 2 (by decide)]
+  rw [show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide]
+  norm_num [Nat.choose, show arrayR 2 1 = 1 by decide, show arrayR 2 2 = 12 by decide]
+
+-- At n = 0 the expansion has no nonzero summands, for any positive k.
+example (k : ℕ) (hk : 1 ≤ k) :
+    (∑ m ∈ Finset.Icc 1 k, (arrayR k m : ℚ) * (1 / (2 * (m : ℚ) + 1)) *
+      (m.choose (2 * m) : ℚ)) = 0 := by
+  simpa [powerSum] using (powerSum_even_eq_sum k hk 0).symm
+
+-- The factor S₂ vanishes at the empty endpoint for every positive k.
+example (k : ℕ) (hk : 1 ≤ k) : powerSum (2 * k) 0 = 0 := by
+  rw [powerSum_even_faulhaber (k := k) (hk := hk) (n := 0)]
+  simp [powerSum]
+
+-- The quartic Faulhaber form has coefficients −1/5 and 6/5.
+example (n : ℕ) : powerSum 4 n = powerSum 2 n * (-1 / 5 + (6 / 5) * powerSum 1 n) := by
+  have h11 := MetaMathlibExt.legendreStirlingFirst_diag 1
+  have h22 := MetaMathlibExt.legendreStirlingFirst_diag 2
+  have h10 : MetaMathlibExt.legendreStirlingFirst 1 0 = 0 := by
+    simp [MetaMathlibExt.legendreStirlingFirst, MetaMathlibExt.jacobiStirlingFirst,
+      MetaMathlibExt.jacobiStirlingFirstPoly]
+  have h21 : MetaMathlibExt.legendreStirlingFirst 2 1 = -2 := by
+    rw [MetaMathlibExt.legendreStirlingFirst_succ 1 0]
+    norm_num [h10, h11]
+  have h := powerSum_even_faulhaber (k := 2) (hk := by decide) (n := n)
+  rw [show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide] at h
+  norm_num [faulhaberB, show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide, h11, h21, h22,
+    show arrayR 2 1 = 1 by decide, show arrayR 2 2 = 12 by decide, Nat.factorial] at h
+  rw [h]
+  ring
+
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted

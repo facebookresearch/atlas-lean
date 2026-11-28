@@ -34,8 +34,24 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}
+
+      # On a pull request, whether it needs the tool tests of scripts/test_scripts.sh,
+      # which read only scripts, workflows and the pins (scripts/ci_scope.py). Every
+      # other check here runs, and other runs never ask; a failure here runs them.
+      - name: Decide whether to run the tool tests
+        id: scope
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          # `--` ends the revisions: a file named HEAD must not make them ambiguous.
+          git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > "$RUNNER_TEMP/changed-paths"
+          python3 -I scripts/ci_scope.py "$RUNNER_TEMP/changed-paths" >> "$GITHUB_OUTPUT"
 
       - name: Run deterministic repository checks
+        env:
+          ATLAS_TOOL_TESTS: ${{ (github.event_name == 'pull_request' && steps.scope.outputs.tool_tests == 'false') && 'skip' || 'run' }}
         run: scripts/check.sh preflight
 
       - name: Test v1 metadata inventory
@@ -68,9 +84,12 @@ jobs:
     runs-on: ${{ github.event_name == 'merge_group' && '16-core-ubuntu' || 'ubuntu-24.04' }}
     timeout-minutes: 15
     steps:
+      # Two commits deep: a pull request's merge commit and its first parent,
+      # the base the move ledger is checked against.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 2
           sparse-checkout: |
             /*
             !/v1/
@@ -94,10 +113,61 @@ jobs:
           uvx --from "git+https://github.com/facebookresearch/autoform-bot.git@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
+      # The card move ledger's integrity as this checkout combines it, on every
+      # pull request and merge group: fragments have distinct names, so Git
+      # merges them without the shared end-of-file conflict of one file, and
+      # only this step checks them together before they merge. It runs
+      # scripts/card_moves.py, which needs no package and reads the ledger's
+      # files and, of the rest of the tree, only Git tree-entry metadata (names,
+      # modes and types) for regular roadmap README.md files, not page contents:
+      # its rows are checked as one logical ledger, by the
+      # rules among them; its frozen file and every fragment of the base commit
+      # stay unchanged; and its new fragments, the ones the base lacks, are
+      # independent of each other and of the base's fragments that sort after
+      # them. What needs the rest of the tree, whether each move ends at a live
+      # page of its article and whether every move since the base has its row,
+      # is the card script's, in the site build and `check the cards`. The base
+      # is the commit this checkout was made from: a pull request's merge
+      # commit's first parent, and a merge group's base commit; one that cannot
+      # be read stops the step. A push to main and a manual run check the
+      # combined ledger alone: a push carries fragments that merge groups
+      # checked, which may build on one another. It reads no Lean and writes
+      # nothing.
+      - name: Check the move ledger
+        env:
+          EVENT: ${{ github.event_name }}
+          GROUP_BASE: ${{ github.event.merge_group.base_sha || '' }}
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          base=()
+          case "$EVENT" in
+            pull_request)
+              # The merge commit GitHub tests, with both parents in the checkout.
+              if ! git rev-parse --verify --quiet 'HEAD^2' > /dev/null; then
+                echo "HEAD is no merge commit with both of its parents here: the pull request's base cannot be read" >&2
+                exit 1
+              fi
+              base=(--base "$(git rev-parse --verify 'HEAD^1')")
+              ;;
+            merge_group)
+              [[ "$GROUP_BASE" =~ ^[0-9a-f]{40}$ ]] || { echo "The merge group names no base commit" >&2; exit 1; }
+              if ! git cat-file -e "$GROUP_BASE^{commit}" 2> /dev/null \
+                  && ! git fetch --no-tags --depth=1 origin "$GROUP_BASE"; then
+                echo "The merge group's base commit $GROUP_BASE cannot be fetched" >&2
+                exit 1
+              fi
+              base=(--base "$GROUP_BASE")
+              ;;
+          esac
+          python3 scripts/card_moves.py check "${base[@]}"
+
   # On a pull request, whether it needs `build` (scripts/ci_scope.py): one that
-  # changes only graph data and documentation does not. Other runs never ask.
+  # changes only graph data and documentation does not. Other runs skip this
+  # job, so that `build` starts without waiting for a runner to run it.
   changes:
     name: decide which checks to run
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     outputs:
@@ -123,7 +193,8 @@ jobs:
 
   # A skipped required check counts as passed, so only a pull request can skip
   # `build`, and only when `changes` succeeds and says it needs none. Merge
-  # groups, pushes and manual runs always build.
+  # groups, pushes and manual runs always build: `!cancelled()` runs `build`
+  # when `changes` is skipped.
   build:
     needs: changes
     if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.build != 'false') }}
@@ -177,6 +248,7 @@ jobs:
           mkdir -p "$installer_dir"
           curl --fail --silent --show-error --location \
             --proto '=https' --tlsv1.2 \
+            --retry 5 --retry-all-errors --retry-delay 10 --connect-timeout 30 \
             https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
             --output "$archive"
           echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
