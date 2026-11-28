@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MathlibExt.Analysis.SpecialFunctions.LambertWFunction
 public import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds
-import Mathlib.Analysis.Complex.ExponentialBounds
 import MathlibExt.NumberTheory.GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds
 
 /-!
@@ -33,52 +33,13 @@ term by term with the remainder at the one-parameter cutoff.
   module `GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds`, and
   `sum_factorial_sub_kurepaPartialIntegral` and `kurepaPartialIntegral_lt_sum_factorial` from
   `GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds`.
-  It uses `lambertCutoff_pow_mul_exp`, `lambertMap_strictAntiOn_Iic`, and
-  `existsUnique_lambertMap_lower_preimage` from the module
-  `MathlibExt.Analysis.SpecialFunctions.LambertWFunction`.
+  It uses `exists_lambertSequence`, `lambertCutoff_pow_mul_exp`, and `lambertMap_strictAntiOn_Iic`
+  from `MathlibExt.Analysis.SpecialFunctions.LambertWFunction`.
 -/
 
 namespace MetaMathlibExt
 
 open Real
-
-/-- **Existence of the Lambert sequences.** Let $h(y) = y e^y$ be the Lambert map. For every
-natural number $n \ge 4$ and every real number $c$ with $0 < c \le 1$ there is a real number
-$a \ge n - 1$ with
-$$h\left(-\frac{a}{n-1}\right) = -\frac{1}{n-1} \, c^{1/(n-1)}.$$
-
-Equivalently, $a = -(n-1) \, W_{-1}\left(-\frac{1}{n-1} c^{1/(n-1)}\right)$, where $W_{-1}$ is the
-lower real branch of the Lambert W function. Allowing any real $c$ with $0 < c \le 1$
-generalizes the following cutoffs from the paper:
-
-* $c = 4/7$ gives $a_n$ for $n \ge 4$ (Section 2.1, Equation (3)).
-* $c = 4/(7m)$ gives $A_{n,m}$ for integers $n \ge 5$ and $m \ge 1$ (Section 3.3).
-
-Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
-Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),
-Article 24.5.7. -/
-public theorem exists_lambertSequence {n : ℕ} (hn : 4 ≤ n) {c : ℝ} (hc0 : 0 < c)
-    (hc1 : c ≤ 1) :
-    ∃ a : ℝ, (n : ℝ) - 1 ≤ a ∧
-      lambertMap (-a / ((n : ℝ) - 1)) = -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1)) := by
-  have hn' : (4 : ℝ) ≤ n := by exact_mod_cast hn
-  have hpos : (0 : ℝ) < (n : ℝ) - 1 := by linarith
-  have hcp : 0 < c ^ (1 / ((n : ℝ) - 1)) := Real.rpow_pos_of_pos hc0 _
-  have hcle : c ^ (1 / ((n : ℝ) - 1)) ≤ 1 := Real.rpow_le_one hc0.le hc1 (by positivity)
-  have he : (1 / 3 : ℝ) < Real.exp (-1) := by
-    rw [Real.exp_neg, lt_inv_comm₀ (by norm_num) (Real.exp_pos 1)]
-    have := Real.exp_one_lt_d9
-    norm_num at this ⊢
-    linarith
-  have hq : 1 / ((n : ℝ) - 1) ≤ 1 / 3 := by
-    rw [div_le_div_iff₀ hpos (by norm_num)]
-    linarith
-  obtain ⟨⟨y, hy⟩, hyx⟩ := (existsUnique_lambertMap_lower_preimage
-    (x := -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1)))
-    (by nlinarith [one_div_pos.2 hpos]) (by nlinarith [one_div_pos.2 hpos])).exists
-  refine ⟨-((n : ℝ) - 1) * y, by nlinarith, ?_⟩
-  rw [show -(-((n : ℝ) - 1) * y) / ((n : ℝ) - 1) = y by field_simp]
-  exact hyx
 
 /-- **Two-parameter Lambert bounds for the left factorial.** Let $n \ge 5$ and $m \ge 1$ be
 integers, let $!n = \sum_{k=0}^{n-1} k!$ be the left factorial, let
