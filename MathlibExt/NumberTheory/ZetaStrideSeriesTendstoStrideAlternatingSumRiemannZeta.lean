@@ -278,8 +278,7 @@ $$
 $$
 converge to $\zeta(p + t + 1)$ as $N \to \infty$, where $\zeta$ is the Riemann zeta function.
 
-Only the first equality of equation (32) is stated; its second expression uses a quantity
-$A^{(t)}$ that the record does not define.
+This theorem formalizes only the first equality of equation (32).
 
 Source: Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta
 Function and Its Associated Functions*, INTEGERS 24 (2024), Article A45, Theorem 4,
