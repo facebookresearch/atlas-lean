@@ -8,8 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.GroupTheory.FreeGroup.Reduce
 import MathlibExt.GroupTheory.FinitelyGeneratedBranchGroupsKourovka15Problem14
 
+open scoped Pointwise symmDiff
 open MathlibExt.GroupTheory.FinitelyGeneratedBranchGroupsKourovka15Problem14Wanted
 
 example : fgBranchGroupContainingFreeGroup :=
@@ -34,3 +36,25 @@ example {m : ℕ → ℕ} {G : Type} [Group G] (ρ : G →* Equiv.Perm (TreeVert
   refine ⟨root, Set.mem_iUnion.mpr ⟨rfl, ?_⟩⟩
   intro w hw
   exact (hw List.nil_prefix).elim
+
+private def a : FreeGroup (Fin 2) := FreeGroup.of 0
+private def b : FreeGroup (Fin 2) := FreeGroup.of 1
+
+private def ballOne : Finset (FreeGroup (Fin 2)) := {1, a, a⁻¹, b, b⁻¹}
+
+-- Check both branches of left multiplication on reduced words independently of amenability.
+example : (a * (a⁻¹ * b)).toWord = [(1, true)] := by decide
+
+example : (a * (b⁻¹ * a)).toWord = [(0, true), (1, false), (0, true)] := by decide
+
+-- Neither generator leaves this concrete finite set almost invariant.
+example : ballOne.card = 5 := by decide
+
+example : ((a • ballOne) ∆ ballOne).card = 6 := by decide
+
+example : ((b • ballOne) ∆ ballOne).card = 6 := by decide
+
+example : ¬ IsAmenable (FreeGroup (Fin 2)) :=
+  not_isAmenable_of_freeGroupRankTwo_embedding (MonoidHom.id _) Function.injective_id
+
+example : fgNonamenableBranchGroup := fgNonamenableBranchGroup_holds
