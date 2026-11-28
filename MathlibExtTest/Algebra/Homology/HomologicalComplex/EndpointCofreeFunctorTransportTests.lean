@@ -37,6 +37,7 @@ set_option autoImplicit false
 noncomputable section
 
 open CategoryTheory CategoryTheory.Limits HomologicalComplex
+open scoped ZeroObject
 
 namespace MathlibExtTest.EndpointCofreeFunctorTransport
 
@@ -98,7 +99,7 @@ private lemma originalPoint_ne_zero : originalPoint ≠ 0 := by
   have hinj := (ModuleCat.mono_iff_injective (presentation.f.f 0)).1 inferInstance
   have hzero : (1 : ZMod 6) = 0 :=
     hinj (h.trans ((presentation.f.f 0).hom.map_zero).symm)
-  exact one_ne_zero hzero
+  exact (by decide : (1 : ZMod 6) ≠ 0) hzero
 
 example : Injective E := presentation.injective
 
