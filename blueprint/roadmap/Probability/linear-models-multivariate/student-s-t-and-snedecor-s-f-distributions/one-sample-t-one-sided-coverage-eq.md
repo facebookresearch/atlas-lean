@@ -1,0 +1,3 @@
+# One-sided t confidence bounds at the exact quantile
+
+Let $n \ge 2$, $\mu \in \mathbb{R}$ and $v > 0$, and let $X_1, \dots, X_n$ be i.i.d. $\mathcal N(\mu, v)$ on a probability space. Write $\bar X = \frac1n\sum_i X_i$, $S = \sqrt{\frac{1}{n-1}\sum_i(X_i - \bar X)^2}$, and $F_{n-1}$ for the distribution function of Student's $t$ law with $n - 1$ degrees of freedom. Let $\alpha \in (0, 1)$ and $c = q_{n-1}(1 - \alpha)$, the quantile $q_{n-1}(u)$ of Student's $t$ law with $n - 1$ degrees of freedom, a generalized inverse of $F_{n-1}$. Then $P(\bar X - cS/\sqrt n \le \mu) = 1 - \alpha$ and $P(\mu \le \bar X + cS/\sqrt n) = 1 - \alpha$.

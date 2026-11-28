@@ -75,4 +75,61 @@ theorem bounds_sound (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Set Ω)
   · linarith only [h₀Tc_nonneg, h₁T_le]
   · linarith only [h₀Tc_le, h₁T_nonneg]
 
+/-- **Sharpness of the no-assumption bounds.** Let `μ` be a probability measure on
+`Ω`, `T` a measurable event, and `Y₀, Y₁ : Ω → ℝ` measurable with values in `[0, 1]`. Then there
+are measurable potential outcomes `Y₀', Y₁'` with values in `[0, 1]` that agree with the observed
+ones (`Y₁' = Y₁` on `T` and `Y₀' = Y₀` on `Tᶜ`) and whose average treatment effect equals
+`lowerBound μ T Y₀ Y₁`, and likewise a pair whose average treatment effect equals
+`upperBound μ T Y₀ Y₁`.
+
+Sources: C. F. Manski, "Nonparametric bounds on treatment effects", Am. Econ. Rev. 80(2) (1990)
+319–323. -/
+theorem bounds_sharp (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Set Ω)
+    (hT : MeasurableSet T) (Y₀ Y₁ : Ω → ℝ) (h₀ : Measurable Y₀) (h₁ : Measurable Y₁)
+    (h₀01 : ∀ ω, 0 ≤ Y₀ ω ∧ Y₀ ω ≤ 1) (h₁01 : ∀ ω, 0 ≤ Y₁ ω ∧ Y₁ ω ≤ 1) :
+    (∃ Y₀' Y₁' : Ω → ℝ, Measurable Y₀' ∧ Measurable Y₁' ∧
+        (∀ ω, 0 ≤ Y₀' ω ∧ Y₀' ω ≤ 1) ∧ (∀ ω, 0 ≤ Y₁' ω ∧ Y₁' ω ≤ 1) ∧
+        (∀ ω ∈ T, Y₁' ω = Y₁ ω) ∧ (∀ ω ∈ Tᶜ, Y₀' ω = Y₀ ω) ∧
+        (∫ ω, Y₁' ω ∂μ) - ∫ ω, Y₀' ω ∂μ = lowerBound μ T Y₀ Y₁) ∧
+      ∃ Y₀' Y₁' : Ω → ℝ, Measurable Y₀' ∧ Measurable Y₁' ∧
+        (∀ ω, 0 ≤ Y₀' ω ∧ Y₀' ω ≤ 1) ∧ (∀ ω, 0 ≤ Y₁' ω ∧ Y₁' ω ≤ 1) ∧
+        (∀ ω ∈ T, Y₁' ω = Y₁ ω) ∧ (∀ ω ∈ Tᶜ, Y₀' ω = Y₀ ω) ∧
+        (∫ ω, Y₁' ω ∂μ) - ∫ ω, Y₀' ω ∂μ = upperBound μ T Y₀ Y₁ := by
+  classical
+  have complete {s : Set Ω} (hs : MeasurableSet s) {Y : Ω → ℝ} (hY : Measurable Y)
+      (hY01 : ∀ ω, 0 ≤ Y ω ∧ Y ω ≤ 1) (c : ℝ) (hc : 0 ≤ c ∧ c ≤ 1) :
+      ∃ Y' : Ω → ℝ, Measurable Y' ∧ (∀ ω, 0 ≤ Y' ω ∧ Y' ω ≤ 1) ∧
+        (∀ ω ∈ s, Y' ω = Y ω) ∧
+        (∫ ω, Y' ω ∂μ) = (∫ ω in s, Y ω ∂μ) + μ.real sᶜ * c := by
+    let Y' : Ω → ℝ := s.piecewise Y (fun _ => c)
+    have hm : Measurable Y' := hY.piecewise hs measurable_const
+    have hobs : Set.EqOn Y' Y s := fun ω hω => by simp [Y', hω]
+    have hmiss : Set.EqOn Y' (fun _ => c) sᶜ := fun ω hω => by
+      have hω' : ω ∉ s := hω
+      simp [Y', hω']
+    have h01 (ω : Ω) : 0 ≤ Y' ω ∧ Y' ω ≤ 1 := by
+      by_cases hω : ω ∈ s
+      · rw [hobs hω]
+        exact hY01 ω
+      · rw [hmiss hω]
+        exact hc
+    have hi : Integrable Y' μ :=
+      Integrable.of_bound hm.aestronglyMeasurable 1
+        (Filter.Eventually.of_forall fun ω => by
+          rw [Real.norm_eq_abs, abs_of_nonneg (h01 ω).1]
+          exact (h01 ω).2)
+    refine ⟨Y', hm, h01, fun _ hω => hobs hω, ?_⟩
+    rw [← integral_add_compl hs hi, setIntegral_congr_fun hs hobs,
+      setIntegral_congr_fun hs.compl hmiss, integral_const, smul_eq_mul,
+      measureReal_restrict_apply_univ]
+  constructor
+  · obtain ⟨Y₀', hm₀, hb₀, ho₀, hi₀⟩ := complete hT.compl h₀ h₀01 1 (by simp)
+    obtain ⟨Y₁', hm₁, hb₁, ho₁, hi₁⟩ := complete hT h₁ h₁01 0 (by simp)
+    refine ⟨Y₀', Y₁', hm₀, hm₁, hb₀, hb₁, ho₁, ho₀, ?_⟩
+    simp [hi₀, hi₁, lowerBound]
+  · obtain ⟨Y₀', hm₀, hb₀, ho₀, hi₀⟩ := complete hT.compl h₀ h₀01 0 (by simp)
+    obtain ⟨Y₁', hm₁, hb₁, ho₁, hi₁⟩ := complete hT h₁ h₁01 1 (by simp)
+    refine ⟨Y₀', Y₁', hm₀, hm₁, hb₀, hb₁, ho₁, ho₀, ?_⟩
+    simp [hi₀, hi₁, upperBound]
+
 end WantedExt.Probability.Statistics.ManskiTreatmentBoundsWanted

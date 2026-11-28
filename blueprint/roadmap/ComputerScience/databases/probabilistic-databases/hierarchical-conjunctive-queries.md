@@ -11,7 +11,11 @@ $\mathrm{sg}(y) = \{S, T\}$.
 ## Depends on
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
-- [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
+- [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
+
+## Proof depends on
+
+- [Minimizations of a conjunctive query are isomorphic](../conjunctive-queries/cores-and-minimization/minimizations-of-a-conjunctive-query-are-isomorphic.md)
 
 ## Sources
 

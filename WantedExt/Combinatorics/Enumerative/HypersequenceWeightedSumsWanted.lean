@@ -21,6 +21,7 @@ public import MathlibExt.Combinatorics.Enumerative.HypersequenceBinomial
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceLucasClosedForm
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceRecurrence
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceWeightedSums
+public import MathlibExt.Combinatorics.Enumerative.PowerSumRisingStirling
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
@@ -137,30 +138,6 @@ public theorem_wanted sum_pow_mul_eq (a : ℕ → ℂ) (ℓ n : ℕ) :
           (∑ m ∈ range (j + 1), (-1) ^ m * (m.factorial : ℂ) * (Nat.stirlingSecond j m : ℂ) *
             hypersequence a (m + 1) n) * ((n : ℂ) + 1) ^ (ℓ - j)
 
-/-- **Special values of alternating binomial power sums.** Let
-$p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$, with $0^0 = 1$, and let
-$S(j, m)$ denote the Stirling numbers of the second kind. For all complex numbers $x, y$ and
-natural numbers $\ell, m$:
-(i) $p_{\ell,m}(x, x) = (-1)^m m!\, S(\ell + 1, m + 1)\, x^\ell$, and in particular
-$p_{\ell,m}(1, 1) = (-1)^m m!\, S(\ell + 1, m + 1)$;
-(ii) $p_{\ell,m}(0, y) = 0^m y^\ell$;
-(iii) $p_{\ell,m}(x, 0) = (-1)^m m!\, S(\ell, m)\, x^\ell$, and in particular
-$p_{m+1,m}(1, 0) = (-1)^m m! \binom{m+1}{2}$;
-(iv) $p_{\ell,m}(-1, m) = m!\, S(\ell, m)$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Proposition 2 (i)–(iv) (`integers-2024-A70-prop-2`). -/
-public theorem_wanted alternatingBinomialPowerSum_special_values (x y : ℂ) (ℓ m : ℕ) :
-    alternatingBinomialPowerSum ℓ m x x =
-        (-1) ^ m * (m.factorial : ℂ) * (Nat.stirlingSecond (ℓ + 1) (m + 1) : ℂ) * x ^ ℓ ∧
-      alternatingBinomialPowerSum ℓ m 1 1 =
-        (-1) ^ m * (m.factorial : ℂ) * (Nat.stirlingSecond (ℓ + 1) (m + 1) : ℂ) ∧
-      alternatingBinomialPowerSum ℓ m 0 y = 0 ^ m * y ^ ℓ ∧
-      alternatingBinomialPowerSum ℓ m x 0 =
-        (-1) ^ m * (m.factorial : ℂ) * (Nat.stirlingSecond ℓ m : ℂ) * x ^ ℓ ∧
-      alternatingBinomialPowerSum (m + 1) m 1 0 =
-        (-1) ^ m * (m.factorial : ℂ) * ((m + 1).choose 2 : ℂ) ∧
-      alternatingBinomialPowerSum ℓ m (-1) m = (m.factorial : ℂ) * (Nat.stirlingSecond ℓ m : ℂ)
 
 /-- **Derivative and recurrence of the shifted alternating binomial power sums.** Let
 $p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$ and, for a complex number
@@ -179,21 +156,6 @@ public theorem_wanted carlitzSum_deriv_and_recurrence {ℓ m : ℕ} (hℓ : 1 �
       alternatingBinomialPowerSum ℓ m 1 (n + 1) =
         (m + n + 1) * alternatingBinomialPowerSum (ℓ - 1) m 1 (n + 1) -
           m * alternatingBinomialPowerSum (ℓ - 1) (m - 1) 1 (n + 1)
-
-/-- **Sums of $m$th powers via Stirling numbers of the second kind.** For all natural numbers
-$n$ and $m$,
-$$\sum_{k=1}^{n} k^m = \sum_{k=0}^{m} (-1)^{m-k}\, k!\, \binom{n + k}{k + 1}\, S(m, k),$$
-where $S(m, k)$ denotes the Stirling numbers of the second kind.
-
-The paper takes $n \ge 1$; for $n = 0$ both sides vanish, so that case is included.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Corollary 5, Equation (4.4) (`integers-2024-A70-cor-5`). -/
-public theorem_wanted sum_pow_eq_sum_stirlingSecond (n m : ℕ) :
-    ∑ k ∈ Icc 1 n, (k : ℤ) ^ m =
-      ∑ k ∈ range (m + 1),
-        (-1) ^ (m - k) * (k.factorial : ℤ) * ((n + k).choose (k + 1) : ℤ) *
-          (Nat.stirlingSecond m k : ℤ)
 
 /-- **Power-weighted sums of Fibonacci numbers.** Let $F_k$ denote the Fibonacci numbers and let
 $p_{\ell,m}(x, y) = \sum_{i=0}^{m} (-1)^i \binom{m}{i} (ix + y)^\ell$ be the alternating binomial
