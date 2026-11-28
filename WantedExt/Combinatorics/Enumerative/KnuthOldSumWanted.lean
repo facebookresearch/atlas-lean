@@ -277,16 +277,6 @@ public theorem_wanted sum_choose_two_mul_sub_one_inv_gammaBinom (n : ℕ) (v : �
           (gammaBinom (n + v + 1) (v / 2))⁻¹ -
         gammaBinom (2 * n + v) ((2 * n + v) / 2) * (gammaBinom (n + v) (v / 2))⁻¹
 
-/-- **Odd-index binomial sum with odd reciprocal weights.** For every natural number $n$,
-$$\sum_{k=1}^{\lceil n/2 \rceil} \frac{1}{2k+1} \binom{n}{2k-1} =
-\frac{2^{n+1}}{n+2} - \frac{2^n}{n+1}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 1 (`integers-2026-A19-prop-1`). -/
-public theorem_wanted sum_choose_odd_div_two_mul_add_one (n : ℕ) :
-    ∑ k ∈ Icc 1 ((n + 1) / 2), (n.choose (2 * k - 1) : ℚ) / (2 * k + 1) =
-      2 ^ (n + 1) / (n + 2) - 2 ^ n / (n + 1)
-
 /-- **Odd-index binomial sum of Catalan numbers.** Write $C_m = \binom{2m}{m}/(m+1)$ for the
 $m$-th Catalan number. For every natural number $n$,
 $$\sum_{k=1}^{\lceil n/2 \rceil} \binom{n}{2k-1} \frac{2^n}{2^{2k}} C_k =
