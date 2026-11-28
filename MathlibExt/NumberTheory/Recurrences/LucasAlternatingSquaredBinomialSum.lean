@@ -57,7 +57,6 @@ namespace MetaMathlibExt
 namespace lucasU_lucasV_sum_choose_sq_alternating
 
 open Finset Polynomial
-open MathlibExt.NumberTheory.Recurrences.KruchininPerminovaHadamardWanted (two_mul_lucasU_add)
 
 /-- For `k ≤ 2n`, the signs `(-1)^(2n - k)` and `(-1)^k` agree. -/
 private theorem neg_one_pow_two_mul_sub {n k : ℕ} (hk : k ≤ 2 * n) :
@@ -89,6 +88,10 @@ private theorem sum_choose_sq_mul_neg_one_pow (n : ℕ) :
   rw [coeff_X_add_one_pow, coeff_X_add_C_pow, Nat.sub_sub_self hk', Nat.choose_symm hk']
   ring
 
+end lucasU_lucasV_sum_choose_sq_alternating
+
+open Finset in
+open MathlibExt.NumberTheory.Recurrences.KruchininPerminovaHadamardWanted (two_mul_lucasU_add) in
 /-- **Lucas convolution with symmetric weights.** Let $P,Q$ be integers with $Q \ne 0$, and let
 $U = U(P,Q)$ and $V = V(P,Q)$ be the associated Lucas sequences. For a natural number $m$ and
 integer weights $a_k$ satisfying $a_{m-k}=a_k$ for every $0\le k\le m$,
@@ -121,8 +124,6 @@ public theorem sum_mul_lucasU_mul_lucasV_of_symm (P : LucasSequenceParams) (m : 
         rw [← sum_mul]
         ring
 
-end lucasU_lucasV_sum_choose_sq_alternating
-
 -- Keep the nonzero proofs in the Lucas parameters inline, as in the wanted statement.
 set_option backward.proofsInPublic true in
 open lucasU_lucasV_sum_choose_sq_alternating in
@@ -145,7 +146,6 @@ public theorem lucasU_lucasV_sum_choose_sq_alternating (p : ℤ) (n : ℕ) :
   simp only [Nat.choose_symm hk, neg_one_pow_two_mul_sub hk]
 
 set_option backward.proofsInPublic true in
-open lucasU_lucasV_sum_choose_sq_alternating in
 /-- **Squared-binomial convolution of the Lucas sequences U and V.** Let $p$ be an integer and let
 $U$ and $V$ be the Lucas sequences $U(p, -1)$ and $V(p, -1)$, so that $U_0 = 0$, $U_1 = 1$,
 $V_0 = 2$, $V_1 = p$, and both satisfy $X_{j+2} = p X_{j+1} + X_j$. Then for every natural

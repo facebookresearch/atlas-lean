@@ -11,7 +11,7 @@ module
 import Mathlib.Tactic.NormNum
 import MathlibExt.NumberTheory.Recurrences.LucasBinomialCatalanConvolution
 
-/-! # Tests for the binomial-Catalan convolution and its symmetric-weight reduction -/
+/-! # Tests for the binomial-Catalan convolution -/
 
 open Finset MetaMathlibExt
 
@@ -41,16 +41,3 @@ example :
   rw [lucasU_lucasV_sum_choose_catalan]
   norm_num [catalan_two, catalan_three]
   decide
-
-private def weights (k : ℕ) : ℤ := if k = 1 then -5 else 2
-
--- Test the symmetric-weight identity directly with nonconstant signed weights and `Q = 2`.
-example :
-    (∀ k ≤ 2, weights (2 - k) = weights k) ∧
-      (∑ k ∈ range (2 + 1), weights k * lucasU ⟨3, 2, by decide⟩ (2 - k) *
-        lucasV ⟨3, 2, by decide⟩ k) = -3 ∧
-      (∑ k ∈ range (2 + 1), weights k) * lucasU ⟨3, 2, by decide⟩ 2 = -3 := by
-  refine ⟨?_, by decide, by decide⟩
-  intro k hk
-  have h : k = 0 ∨ k = 1 ∨ k = 2 := by omega
-  rcases h with rfl | rfl | rfl <;> decide

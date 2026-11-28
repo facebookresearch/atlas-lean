@@ -79,3 +79,19 @@ example (n : ℕ) :
       (-1) ^ n * ((2 * n).choose n : ℤ) * Nat.fib (2 * n) := by
   simp only [← lucasU_fibonacciLucasParams, ← lucasV_fibonacciLucasParams]
   exact lucasU_lucasV_sum_choose_sq_alternating 1 n
+
+private def symmWeights (k : ℕ) : ℤ := if k = 1 then -5 else 2
+
+-- At `P = 3`, `Q = 2`, and `m = 2`, the signed weights give summands `12`, `-15`, and `0`.
+-- Exercise the public lemma and independently compute both sides.
+example :
+    let lhs := ∑ k ∈ Finset.range (2 + 1), symmWeights k * lucasU ⟨3, 2, by decide⟩ (2 - k) *
+      lucasV ⟨3, 2, by decide⟩ k
+    let rhs := (∑ k ∈ Finset.range (2 + 1), symmWeights k) * lucasU ⟨3, 2, by decide⟩ 2
+    lhs = rhs ∧ lhs = -3 ∧ rhs = -3 := by
+  have hsym : ∀ k ≤ 2, symmWeights (2 - k) = symmWeights k := by
+    intro k hk
+    have h : k = 0 ∨ k = 1 ∨ k = 2 := by omega
+    rcases h with rfl | rfl | rfl <;> decide
+  exact ⟨sum_mul_lucasU_mul_lucasV_of_symm ⟨3, 2, by decide⟩ 2 symmWeights hsym,
+    by decide, by decide⟩

@@ -44,7 +44,6 @@ sum to Vandermonde's identity with upper indices $n$ and $n+2$.
 namespace MetaMathlibExt
 
 open Finset
-open lucasU_lucasV_sum_choose_sq_alternating (sum_mul_lucasU_mul_lucasV_of_symm)
 
 private theorem cast_catalan_factorial (n : ℕ) :
     (catalan n : ℚ) = ((2 * n).factorial : ℚ) / (n.factorial * (n + 1).factorial) := by
