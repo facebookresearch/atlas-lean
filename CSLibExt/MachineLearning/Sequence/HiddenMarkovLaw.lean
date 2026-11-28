@@ -225,14 +225,15 @@ theorem sum_forward_eq_one (S O : Type*) [Fintype S] [Fintype O]
   simp only [← likelihood_eq_sum_forward]
   exact sum_likelihood_eq_one S O h hN t
 
-/-- The joint law on paths and observation strings (Jurafsky and Martin
+/-- The joint weight of a path and an observation string (Jurafsky and Martin
 eq. (A.8)): the path weight at the observed string. -/
 def jointProb (S O : Type*) [Fintype S] [Fintype O]
     (h : HMM S O ℝ) (t : ℕ)
     (zx : (Fin (t + 1) → S) × (Fin (t + 1) → O)) : ℝ :=
   pathProb h (extend t zx.2) t zx.1
 
-/-- The joint law is a finite PMF: nonnegative and summing to one. -/
+/-- Under `Normalized`, the joint weight sums to one over paths and observation
+strings; with `pathProb_nonneg_extend`, it is a finite PMF. -/
 theorem sum_jointProb_eq_one (S O : Type*) [Fintype S] [Fintype O]
     (h : HMM S O ℝ) (hN : Normalized h) (t : ℕ) :
     ∑ zx : (Fin (t + 1) → S) × (Fin (t + 1) → O),
@@ -241,7 +242,7 @@ theorem sum_jointProb_eq_one (S O : Type*) [Fintype S] [Fintype O]
   rw [Fintype.sum_prod_type_right]
   exact sum_joint_eq_one S O h hN t
 
-/-- The likelihood is the marginal of the joint law (Jurafsky and Martin
+/-- The likelihood is the sum of the joint weight over paths (Jurafsky and Martin
 eq. (A.10)): summing paths out recovers `likelihood`. -/
 theorem likelihood_eq_sum_jointProb (S O : Type*) [Fintype S]
     [Fintype O] (h : HMM S O ℝ) (t : ℕ)

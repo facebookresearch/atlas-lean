@@ -50,7 +50,7 @@ variable {S O : Type*} [Fintype S] [Fintype O]
 /-! ## Proof helpers for the finite real-valued total
 
 Small `Fin.snoc` and `extend` facts supporting the `snoc` recurrence of
-the joint law and, through it, the factorization below. -/
+the joint weight and, through it, the factorization below. -/
 
 /-- `Fin.snoc` applied at a `castSucc` index. -/
 private theorem snoc_castSucc_apply {α : Type*} (t : ℕ) (p : Fin (t + 1) → α)
@@ -76,7 +76,7 @@ theorem extend_apply_le (t : ℕ) (v : Fin (t + 1) → O) (i : ℕ)
   simp only [extend]
   rw [dite_eq_left hi]
 
-/-- Multi-time `snoc` recurrence for the joint law: extending path and
+/-- Multi-time `snoc` recurrence for the joint weight: extending path and
 string by one step multiplies the joint weight by the transition and
 emission weights of the new step. -/
 theorem jointProb_snoc (h : HMM S O ℝ) (t : ℕ)
@@ -375,7 +375,7 @@ theorem obsPMF_apply (h : HMM S O ℝ) (hN : Normalized h) (t : ℕ)
       rw [hzz, hxx]
       exact step _ _ _ _
 
-/-- Prior/emission factorization of the joint law. No positivity
+/-- Prior/emission factorization of the joint weight. No positivity
 hypothesis: zero transition or emission cells are allowed and make
 both sides zero through the corresponding factor. -/
 theorem jointProb_factor (h : HMM S O ℝ) (t : ℕ)
