@@ -47,6 +47,8 @@ under complement, and timed Muller automata accept only timed $\omega$-regular l
 would be timed $\omega$-regular (the source cites Alur and Dill for the closure of deterministic regular timed
 $\omega$-languages under complement).
 
+The linked prerequisites are stated for timed words with strictly increasing, unbounded time stamps, while the source's words have positive delays and need not diverge, so a good expansion adds pages for these results over the source's timed words. For universality, the convergent words are accepted by a timed Büchi automaton that guesses a position, resets a clock there and accepts while the clock stays below $1$; adding this automaton to a given one turns universality over divergent words into universality over all of the source's words, so $\Pi^1_1$-hardness transfers. The complement closure of deterministic timed Muller automata and the equal expressiveness of timed Büchi and timed Muller automata are proved by constructions on automata that do not use divergence, and carry over with the same constructions.
+
 ## Sources
 
 - O. Finkel, "Undecidable problems about timed automata", in *Formal Modeling and Analysis of Timed Systems (FORMATS 2006)*, Lecture Notes in Computer Science 4202, pp. 187–199, Springer, 2006, doi:10.1007/11867340_14; Theorem 9 of the version arXiv:0712.1363v1 with its proof, and the paragraph after it on Problems A and B.

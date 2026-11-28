@@ -44,4 +44,4 @@ construction works unchanged over discrete time and for integer parameters.
 
 ## Sources
 
-- É. André, D. Lime, N. Markey, "Language preservation problems in parametric timed automata", *Logical Methods in Computer Science* 16(1), article 5, 2020, doi:[10.23638/LMCS-16(1:5)2020](https://doi.org/10.23638/LMCS-16(1:5)2020). Numbering of the version read, arXiv:1807.07091v3: Theorem 3.1 (language preservation), Lemma 3.2 (the reduction to EF-emptiness), Propositions 3.4 and 3.5 (inclusion variants) Definition 2.7 (the problems), and Definition 5.1 and Theorem 5.7 (extended one-clock PTAs).
+- É. André, D. Lime, N. Markey, "Language preservation problems in parametric timed automata", *Logical Methods in Computer Science* 16(1), article 5, 2020, doi:[10.23638/LMCS-16(1:5)2020](https://doi.org/10.23638/LMCS-16(1:5)2020). Numbering of the version read, arXiv:1807.07091v3: Theorem 3.1 (language preservation), Lemma 3.2 (the reduction to EF-emptiness), Propositions 3.4 and 3.5 (inclusion variants), Definition 2.7 (the problems), and Definition 5.1 and Theorem 5.7 (extended one-clock PTAs).

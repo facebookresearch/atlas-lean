@@ -11,7 +11,7 @@ is $|j|$.
 environment and one data variable of the system, and every local test has distance at most $3$ (Theorem 4.1).
 
 In contrast, the problem becomes decidable when the formula contains no data variable of the environment (*single-sided* games), by a reduction to single-sided games on vector addition systems with states, and
-even with nested formulas that use only past modalities. Single-sided games stay undecidable when nested formulas may use the future modality $\mathsf{F}$, even without future obligations (Section 8, by Lemma 8.2 from the reset lossy counter machines of Theorem 8.1), and single-sided games with future obligations, $\mathrm{LRV}[\top, \approx, \rightarrow]$, are undecidable too (Theorem 6.1).
+even with nested formulas that use only past modalities. Single-sided games become undecidable when nested formulas may use the future modality $\mathsf{F}$, even without future obligations (Section 8, by Lemma 8.2 from the reset lossy counter machines of Theorem 8.1), and single-sided games with future obligations, $\mathrm{LRV}[\top, \approx, \rightarrow]$, are undecidable too (Theorem 6.1).
 
 ## Depends on
 
