@@ -123,12 +123,13 @@ example :
 
 example : (U.f 1).hom one ≠ 0 := by
   intro h
-  have hv := unit_second_value
-  change (endpointCofreeNextTermIso I rel_one_zero).hom.hom
-    ((endpointCofreeSecondProjection (c := c) I 1).hom ((U.f 1).hom one)) =
-      ULift.up (2 : ZMod 6) at hv
-  rw [h, map_zero, map_zero] at hv
-  exact (by decide : (0 : ZMod 6) ≠ 2) (congrArg ULift.down hv)
+  let p : D.X 1 ⟶ I 0 := endpointCofreeSecondProjection (c := c) I 1 ≫
+    (endpointCofreeNextTermIso I rel_one_zero).hom
+  have hv : p.hom ((U.f 1).hom one) = ULift.up (2 : ZMod 6) := unit_second_value
+  have hz : p.hom ((U.f 1).hom one) = 0 :=
+    (congrArg p.hom h).trans (_root_.map_zero p.hom)
+  exact (by decide : (0 : ZMod 6) ≠ 2)
+    (congrArg ULift.down (hz.symm.trans hv))
 
 example :
     (((endpointCofreeCounit A c).app I) 0).hom ((U.f 0).hom one) = one := by
@@ -165,25 +166,26 @@ example : U ≫ (endpointCofreeFunctor A c).map doubleCoefficients = mate := rfl
 example :
     (mate.f 0 ≫ endpointCofreeProjection (c := c) I 0).hom one =
       ULift.up (2 : ZMod 6) := by
-  change (((endpointCofreeAdjunction A c).homEquiv K I doubleCoefficients).f 0 ≫
-    endpointCofreeProjection (c := c) I 0).hom one = _
-  rw [endpointCofreeAdjunction_homEquiv_apply, endpointCofreeHom_fst]
-  exact twice_one
+  have hm : mate = endpointCofreeHom K I doubleCoefficients :=
+    endpointCofreeAdjunction_homEquiv_apply A c K I doubleCoefficients
+  have hf : mate.f 0 ≫ endpointCofreeProjection (c := c) I 0 = twice := by
+    rw [hm]
+    exact endpointCofreeHom_fst K I doubleCoefficients 0
+  exact (ConcreteCategory.congr_hom hf one).trans twice_one
 
 example :
     ((mate.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
       (endpointCofreeNextTermIso I rel_one_zero).hom).hom one =
         ULift.up (4 : ZMod 6) := by
-  change ((((endpointCofreeAdjunction A c).homEquiv K I doubleCoefficients).f 1 ≫
-    endpointCofreeSecondProjection (c := c) I 1) ≫
-      (endpointCofreeNextTermIso I rel_one_zero).hom).hom one = _
-  rw [endpointCofreeAdjunction_homEquiv_apply,
-    endpointCofreeHom_snd_of_rel K I doubleCoefficients rel_one_zero]
-  change twice.hom ((K.d 1 0).hom one) = _
-  rw [differential_one_zero]
-  change (2 : ℤ) • (ULift.up (2 : ZMod 6) : V) = ULift.up (4 : ZMod 6)
-  apply ULift.ext
-  decide
+  have hm : mate = endpointCofreeHom K I doubleCoefficients :=
+    endpointCofreeAdjunction_homEquiv_apply A c K I doubleCoefficients
+  have hs : ((mate.f 1 ≫ endpointCofreeSecondProjection (c := c) I 1) ≫
+      (endpointCofreeNextTermIso I rel_one_zero).hom) = K.d 1 0 ≫ twice := by
+    rw [hm]
+    exact endpointCofreeHom_snd_of_rel K I doubleCoefficients rel_one_zero
+  have hv := ConcreteCategory.congr_hom hs one
+  have ht : twice.hom (ULift.up (2 : ZMod 6)) = ULift.up (4 : ZMod 6) := by decide
+  exact hv.trans ((congrArg twice.hom differential_one_zero).trans ht)
 
 example :
     ((((endpointCofreeAdjunction A c).homEquiv K I).symm mate) 0).hom one =
