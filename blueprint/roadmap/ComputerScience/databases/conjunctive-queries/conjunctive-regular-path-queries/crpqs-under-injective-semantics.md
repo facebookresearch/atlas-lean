@@ -13,6 +13,7 @@ A conjunctive regular path query joins atoms that ask for paths with labels in r
 ## Depends on
 
 - [Answers of a conjunctive query](../answers-of-a-conjunctive-query.md)
+- [Language denoted by a regular expression](../../../../TheoryOfComputation/regular-languages/automata-and-expressions/kleene-s-theorem/is-regex-denoted.md)
 
 ## Proof depends on
 

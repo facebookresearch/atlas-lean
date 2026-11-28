@@ -13,9 +13,9 @@ For a program $P_\epsilon$ depending on a privacy budget $\epsilon$ in an interv
 - *Accuracy-at-an-input*: given $u$, is $P_\epsilon$ $(\alpha, \beta, \gamma)$-accurate at $u$ for all $\epsilon \in I$ and all $(\alpha, \beta, \gamma) \in \mathrm{reg}(\epsilon, u)$?
 - *Accuracy-at-all-inputs*: does this hold for every input $u$?
 
-**Theorem (Barthe, Chadha, Krogmeier, Sistla and Viswanathan).** Both Accuracy-at-an-input and Accuracy-at-all-inputs are undecidable for the general class of randomized programs (Theorem 8).
+**Theorem (Barthe, Chadha, Krogmeier, Sistla and Viswanathan).** Both Accuracy-at-an-input and Accuracy-at-all-inputs are undecidable for the general class of randomized programs (Theorem 8). In the finite-input form the proof gives: instances are probabilistic while programs $P$ over natural-number variables with fair coin flips, given by their text, with inputs and outputs in $\{0, 1\}$, $\det(P)$ the identity on $\{0, 1\}$, both distances discrete ($d(0, 1) = d'_u(0, 1) = 1$), $\mathrm{reg} = \{(0, 0, 0)\}$ and no dependence on $\epsilon$; then it is undecidable whether $P$ is $(0, 0, 0)$-accurate at input $0$, or equivalently at all inputs, since every such program that outputs $1$ on input $1$ is accurate there.
 
-The source does not fix a syntax for the general class of randomized programs; $I$ is an interval with rational end-points. The finite-input version the proof gives is the following: the program is a probabilistic while program with integer variables and choices of probability $1/2$ that simulates a given two-counter machine. The proof in the appendix of the source uses only programs independent of $\epsilon$ with $\mathcal{U} = \mathcal{V} = \{0, 1\}$, both distances equal to $1$ between distinct points, and the single triple $(0, 0, 0)$; such a program is $(0,0,0)$-accurate at input $0$ exactly when the machine does not halt from zero counters. By contrast, the source identifies a non-trivial class of probabilistic programs for which accuracy is decidable, unconditionally or assuming Schanuel's conjecture (Section 6).
+The source does not fix a syntax for the general class of randomized programs, and its Theorem 8 is stated for that class; $I$ is an interval with rational end-points. By contrast, the source identifies a non-trivial class of probabilistic programs for which accuracy is decidable, unconditionally or assuming Schanuel's conjecture (Section 6).
 
 ## Depends on
 
@@ -24,10 +24,13 @@ The source does not fix a syntax for the general class of randomized programs; $
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-Given a two-counter machine $M$, build a program $P$ with input $\mathit{in} \in \{0,1\}$ that outputs $1$ at once on input $1$. On input $0$ it repeats: if the stored control state is final, output $1$ and stop; otherwise, with probability $1/2$ jump to the final state, and with probability $1/2$ simulate one step of $M$ on stored counters. Then on input $0$ the output is $0$ with probability $1$ iff $M$ does not halt from zero counters. With $\det(P)$ the identity on $\{0,1\}$, $P$ is $(0,0,0)$-accurate at input $0$ iff $M$ does not halt.
+Given a two-counter machine $M$, build a program $P$ with input $\mathit{in} \in \{0,1\}$ that outputs $1$ at once on input $1$. On input $0$ it repeats: if the stored control state is final, output $1$ and stop; otherwise, with probability $1/2$ output $0$ and stop, and with probability $1/2$ simulate one step of $M$ on stored counters. If $M$ halts from zero counters after $k$ steps, the output on input $0$ is $1$ with probability $2^{-k} > 0$; if it never halts, the output is $0$ with probability $1$. With $\det(P)$ the identity on $\{0,1\}$, the disagreement distance at $0$ is $1 > 0$, so $P$ is $(0,0,0)$-accurate at input $0$ iff $M$ does not halt. The appendix of the source (proof of Theorem 8) lets the coin jump to the final state instead, which makes the output $1$ with probability $1$ on every machine; the stop-with-output-$0$ step is the correction that makes the reduction work.
+
+A good expansion adds and links a page defining the probabilistic while programs and their output distributions, the semantics the statement is about.
 
 ## Sources
 

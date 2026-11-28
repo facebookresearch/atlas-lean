@@ -34,4 +34,4 @@ A control-flow graph program with finite-data abstraction yields an asynchronous
 
 ## Sources
 
-- Pierre Ganty and Rupak Majumdar, "Algorithmic verification of asynchronous programs", *ACM Transactions on Programming Languages and Systems* 34(1), Article 6, 48 pages, 2012, <https://doi.org/10.1145/2160910.2160915>; read as arXiv:1011.0551v3, <https://arxiv.org/abs/1011.0551v3>: Section 4.1 (asynchronous programs), Section 7.1 (asynchronous programs with cancel and the problems for them), Section 6.1 (safety, boundedness and configuration reachability).
+- Pierre Ganty and Rupak Majumdar, "Algorithmic verification of asynchronous programs", *ACM Transactions on Programming Languages and Systems* 34(1), Article 6, 48 pages, 2012, <https://doi.org/10.1145/2160910.2160915>; read as arXiv:1011.0551v3, <https://arxiv.org/abs/1011.0551v3>: Section 4.1 (asynchronous programs), Section 4.4 (Definitions 4.6 and 4.7, the problems), Section 7.1 (asynchronous programs with cancel and the problems for them), Section 6.1 (safety, boundedness and configuration reachability).

@@ -1,6 +1,6 @@
 # Concurrent program verification
 
-Decision problems for models of concurrent programs: asynchronous programs with a task buffer, pushdown threads synchronizing through locks, phaser programs, ground tree rewrite systems, and programs under weak memory semantics.
+Decision problems for models of concurrent programs: asynchronous programs with a task buffer, pushdown threads synchronizing through locks, phaser programs, and programs under weak memory semantics.
 
 - [Asynchronous programs](asynchronous-programs/README.md)
 - [Lock-synchronized pushdown systems](lock-synchronized-pushdown-systems/README.md)

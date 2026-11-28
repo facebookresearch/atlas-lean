@@ -23,6 +23,7 @@ Unlike the tuple-level repairs of Arenas, Bertossi and Chomicki, for which a con
 - [Relational schema](../dependencies-and-the-chase/relational-schema.md)
 - [Database instance](../dependencies-and-the-chase/instance.md)
 - [Grouping and aggregation semantics](grouping-and-aggregation-semantics.md)
+- [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
 
 ## Proof depends on
 

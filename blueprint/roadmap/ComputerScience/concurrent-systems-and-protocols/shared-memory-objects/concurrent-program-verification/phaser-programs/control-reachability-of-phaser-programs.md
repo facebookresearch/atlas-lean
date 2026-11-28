@@ -6,7 +6,7 @@ Phasers are barriers to which dynamically spawned tasks register and on which th
 
 **Theorem (Ganjei, Rezine, Henrio, Eles and Peng).** The following problem is undecidable: given a phaser program and a control partial configuration, is some configuration that includes it (up to renaming of task instances and phasers) reachable from the initial configuration?
 
-The program is part of the input; executions may create arbitrarily many task instances and phasers. The paper proves further limits, each by a reduction from two-counter machines: control reachability stays undecidable when only executions whose configurations have at most $K$ phasers referenced by task variables are considered ($K$-control-reachability; the proof uses $K = 4$), and for programs generating finitely many phasers when atomic blocks $\mathtt{next}(v)\{s\}$ are allowed; plain reachability, which also constrains wait and signal values, is undecidable for non-atomic programs generating finitely many phasers when the gaps between those values are not bounded.
+The program is part of the input; executions may create arbitrarily many task instances and phasers. The paper states further limits: control reachability stays undecidable when only executions whose configurations have at most $K$ phasers referenced by task variables are considered ($K$-control-reachability; the proof uses $K = 4$), and for programs generating finitely many phasers when atomic blocks $\mathtt{next}(v)\{s\}$ are allowed; plain reachability, which also constrains wait and signal values, is undecidable for non-atomic programs generating finitely many phasers when the gaps between those values are not bounded. The first two come with proof sketches by reductions from two-counter (Minsky) machines (Theorems 8 and 9); the third is only stated, with its proof attributed to earlier work of the authors (Theorem 10).
 
 ## Depends on
 
@@ -15,10 +15,13 @@ The program is part of the input; executions may create arbitrarily many task in
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
 The reduction encodes state reachability of a two-counter Minsky machine. The program has tasks $\mathtt{main}$, $\mathtt{xUnit}$ and $\mathtt{yUnit}$; Boolean variables hold the machine state and pass information between task instances. Each counter is a chain that alternates phasers and task instances, and its value is the length of the chain. Increments extend a chain, decrements shorten it and zero tests inspect its end, using signals and waits along the chain. The final machine state is reachable exactly when a configuration whose Boolean variables encode it is reachable, which a control partial configuration expresses.
+
+A good expansion links a page for the encoding of a counter of a Minsky machine by a chain of phasers and task instances, with its increment, decrement and zero-test operations.
 
 ## Sources
 

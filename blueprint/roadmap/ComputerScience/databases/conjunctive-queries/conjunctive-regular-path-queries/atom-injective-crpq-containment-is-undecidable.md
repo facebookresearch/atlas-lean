@@ -19,6 +19,8 @@ The proof reduces from the Post correspondence problem. From an instance $(u_1, 
 
 The same source shows that under query-injective semantics CRPQ/CRPQ containment is in PSPACE (and PSPACE-complete).
 
+A good expansion links pages for the characterization of atom-injective containment by atom-injective expansions and for the encoding of Post correspondence instances into the queries $Q_1$ and $Q_2$.
+
 ## Sources
 
 - Diego Figueira and Miguel Romero, "Conjunctive Regular Path Queries under Injective Semantics", in *Proceedings of the 42nd ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems (PODS 2023)*, ACM, 2023, pp. 231–240, <https://doi.org/10.1145/3584372.3588664>; read as arXiv:2304.06232v1, <https://arxiv.org/abs/2304.06232v1>: Theorem 5.2 in Section 5 ("Containment for unrestricted CRPQs") with its full proof in the appendix, and Theorem 5.1 (query-injective containment in PSPACE), in the numbering of that version.

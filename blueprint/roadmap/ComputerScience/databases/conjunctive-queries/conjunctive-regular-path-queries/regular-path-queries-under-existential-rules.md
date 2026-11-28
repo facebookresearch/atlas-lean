@@ -12,7 +12,6 @@ An existential rule derives a new atom, possibly with fresh existentially quanti
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](../../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
-- [Graph databases and regular path queries](../../datalog/graph-databases-and-regular-path-queries.md)
 - [Language denoted by a regular expression](../../../../TheoryOfComputation/regular-languages/automata-and-expressions/kleene-s-theorem/is-regex-denoted.md)
 
 ## Proof depends on

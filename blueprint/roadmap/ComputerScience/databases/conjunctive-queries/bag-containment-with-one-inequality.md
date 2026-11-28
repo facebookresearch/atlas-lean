@@ -22,6 +22,8 @@ Since non-triviality can be enforced by adding the atom $\mathfrak{m} \ne \mathf
 
 The theorem follows from the constant-factor version: a combinatorial gadget uses the single inequality in $\psi_b$ to simulate multiplication of the count of $\psi_s$ by the constant $c$, so that $c \cdot \phi_s(D) \le \phi_b(D)$ on non-trivial databases reduces to $\psi_s(D) \le \psi_b(D)$ (Section 3 of the arXiv version).
 
+A good expansion links a page for the gadget of Section 3 that uses one inequality to multiply the count of a query by a constant $c$.
+
 ## Sources
 
 - Jerzy Marcinkowski and Mateusz Orda, "Bag Semantics Conjunctive Query Containment. Four Small Steps Towards Undecidability", Proceedings of the ACM on Management of Data 2(2) (PODS 2024), Article 103, 2024, <https://doi.org/10.1145/3651604>; Theorem 3 (main statement), Theorem 5 (equivalence with the inequality-free problem) and Section 3 of arXiv:2503.18003v1, <https://arxiv.org/abs/2503.18003v1>.

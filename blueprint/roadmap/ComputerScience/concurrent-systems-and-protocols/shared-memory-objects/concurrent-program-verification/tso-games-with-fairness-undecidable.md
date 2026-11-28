@@ -9,7 +9,7 @@ When the execution of a concurrent program under total store order is viewed as 
 1. The safety problem for TSO games with process fairness is undecidable.
 2. The reachability problem for TSO games with update fairness is undecidable.
 
-Without these fairness conditions, the same paper reduces both problems to games on single-process programs and shows them PSPACE-complete.
+Without these fairness conditions, the same paper reduces both problems to games on single-process programs and states that they are PSPACE-complete, leaving the proofs of both bounds to its extended version (Section 6).
 
 ## Depends on
 

@@ -17,10 +17,12 @@ The restriction to non-trivial databases matters: on the one-element database in
 ## Proof depends on
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [Some multi-stack machine has an undecidable halting set](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/exists-not-tm2-decidable-tm2-halts-on.md)
+- [Bag containment of Boolean conjunctive queries up to a constant factor is undecidable](bag-containment-up-to-a-constant-factor.md)
 
 ## Expansion
 
-The authors note that the theorem follows from the main result of Marcinkowski and Orda and give a short direct proof: they "CQ-ize" one of the unions of conjunctive queries in the undecidability proof of Ioannidis and Ramakrishnan for bag containment of UCQs, replacing it by a single conjunctive query whose count on a database depends predictably on the count of the union. Both proofs rest on Hilbert's tenth problem.
+The authors note that the theorem follows from the main result of Marcinkowski and Orda, linked above: with constant $c$, take as the union $c$ copies of $\phi_s$. They also give a short direct proof: they "CQ-ize" one of the unions of conjunctive queries in the undecidability proof of Ioannidis and Ramakrishnan for bag containment of UCQs, replacing it by a single conjunctive query whose count on a database depends predictably on the count of the union. Both proofs rest on Hilbert's tenth problem.
 
 ## Sources
 

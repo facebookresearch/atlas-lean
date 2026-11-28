@@ -17,10 +17,13 @@ Rules have single-atom heads, but the authors note that their results transfer t
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
 The reduction is from halting of two-counter automata. The ruleset builds an infinite grid whose points carry their coordinates, with edges for incrementing and decrementing either coordinate and for zero tests; the query's regular language describes the instruction sequence of an accepting run, so that the chase of the constructed database satisfies the query exactly when the automaton halts from $(0, 0)$ in its initial state (Lemma 10 of the arXiv version). For part 2 the last rules are changed so that the increment, decrement and zero-test predicates carry the coordinates as extra arguments, which makes the ruleset sticky; projecting these predicates to their first two positions recovers the earlier construction.
+
+A good expansion links pages for the grid-building fus ruleset and for Lemma 10, which ties the query on its chase to halting of the two-counter automaton.
 
 ## Sources
 
