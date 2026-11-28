@@ -5,7 +5,7 @@ $f = \sum_{n \ge 1} a_n(f) q^n \in S_k(\Gamma_1(N))$, $q = e^{2\pi i \tau}$, be 
 nebentypus $\chi$: a [cusp form](../../../modular-forms-q-series/modular-forms/cusp-form.md) of weight $k$ for
 [$\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma1.md) with $a_1(f) = 1$ that is an
 eigenvector of every Hecke operator $T_n$ and every diamond operator $\langle d \rangle$
-([Hecke eigenforms and newforms for Γ₁(N)](../../../modular-forms-q-series/modular-forms/hecke-eigenforms-and-newforms-for-gamma1-n.md)),
+(Hecke eigenforms and newforms for Γ₁(N)),
 with $f \mid_k \gamma = \chi(d) f$ for every
 $\gamma = \left(\begin{smallmatrix} a & b \\ c & d \end{smallmatrix}\right)$ in
 [$\Gamma_0(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md). Let
@@ -30,7 +30,6 @@ $k \ge 3$ of
 - [Cusp form](../../../modular-forms-q-series/modular-forms/cusp-form.md), for $S_k(\Gamma_1(N))$
 - [Congruence subgroup $\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma1.md)
 - [Congruence subgroup $\Gamma_0(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md), for the nebentypus
-- [Hecke eigenforms and newforms for Γ₁(N)](../../../modular-forms-q-series/modular-forms/hecke-eigenforms-and-newforms-for-gamma1-n.md), for the operators $T_n$ and $\langle d \rangle$ on $S_k(\Gamma_1(N))$
 
 ## Proof depends on
 
@@ -49,11 +48,11 @@ This node is still to be broken down. A good expansion states and links:
   from the good reduction of the modular curves and the smoothness of the universal elliptic curve there, which give
   the characteristic polynomial;
 - the comparison with Kato's representation $V_{F_\lambda}(f)$ of a newform, in the geometric-Frobenius normalization of
-  [Galois representations attached to newforms and their Hodge filtration at p](../galois-representations-attached-to-newforms.md),
+  Galois representations attached to newforms and their Hodge filtration at p,
   whose dual has the characteristic polynomials above;
 - the reduction from normalized eigenforms to newforms: the representation depends only on the newform associated to
   $f$ (Diamond–Im, Remark 12.5.3), with the newform theory planned on
-  [Hecke eigenforms and newforms for Γ₁(N)](../../../modular-forms-q-series/modular-forms/hecke-eigenforms-and-newforms-for-gamma1-n.md);
+  Hecke eigenforms and newforms for Γ₁(N);
 - irreducibility (Ribet, Theorem 2.3, as cited by Diamond–Im, Remark 12.5.4).
 
 ## Sources

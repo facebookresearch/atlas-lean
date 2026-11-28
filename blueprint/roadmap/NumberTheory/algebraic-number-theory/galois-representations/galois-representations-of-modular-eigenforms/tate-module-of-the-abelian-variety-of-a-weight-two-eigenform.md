@@ -24,17 +24,17 @@ abelian variety over $\mathbb{Q}$, and $\mathbb{T}_1(N)$ acts on it through $\ma
 $K_f$, identified with $(\mathbb{T}_1(N)/\mathfrak{p}_f) \otimes_{\mathbb{Z}} \mathbb{Q}$ by $\theta_f$, on $A_f$ in the isogeny category.
 Then, for every prime $\ell$:
 
-1. $\dim A_f = [K_f : \mathbb{Q}]$;
-2. $V_\ell(A_f) = \mathbb{Q}_\ell \otimes_{\mathbb{Z}_\ell} \varprojlim_n A_f[\ell^n](\overline{\mathbb{Q}})$ is a free
+1. $V_\ell(A_f) = \mathbb{Q}_\ell \otimes_{\mathbb{Z}_\ell} \varprojlim_n A_f[\ell^n](\overline{\mathbb{Q}})$ is a free
    $\mathbb{Q}_\ell \otimes_{\mathbb{Q}} K_f$-module of rank $2$, on which $G_{\mathbb{Q}} = \operatorname{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ acts
    continuously and $\mathbb{Q}_\ell \otimes K_f$-linearly, unramified at every prime $p \nmid N\ell$;
-3. for every prime $p \nmid N\ell$ and every arithmetic Frobenius element $\mathrm{Frob}_p$ at a prime over $p$, the
+2. for every prime $p \nmid N\ell$ and every arithmetic Frobenius element $\mathrm{Frob}_p$ at a prime over $p$, the
    characteristic polynomial of $\mathrm{Frob}_p$ on $V_\ell(A_f)$ over $\mathbb{Q}_\ell \otimes_{\mathbb{Q}} K_f$ is
 
     $$X^2 - (1 \otimes a_p(f)) X + 1 \otimes p\,\chi(p).$$
 
 Diamond and Im introduce this quotient with a reference to Shimura's Theorem 1, the subject of
-[Shimura's abelian variety attached to a weight-two eigenform](../../../modular-forms-q-series/modular-forms/shimura-abelian-variety-of-an-eigenform.md).
+[Shimura's abelian variety attached to a weight-two eigenform](../../../modular-forms-q-series/modular-forms/shimura-abelian-variety-of-an-eigenform.md),
+whose part (iii) gives $\dim A_f = [K_f : \mathbb{Q}]$ (Conrad, Theorem 5.14).
 
 ## Depends on
 
@@ -43,7 +43,7 @@ Diamond and Im introduce this quotient with a reference to Shimura's Theorem 1, 
 - [Congruence subgroup $\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma1.md)
 - [Hecke operators $T_n$ on weight-two cusp forms for a group of level $N$](../../../modular-forms-q-series/modular-forms/hecke-operators-of-level-n.md), for the eigenform condition
 - [Quotient of an abelian variety by an abelian subvariety](../../../../AlgebraicGeometry/abelian-varieties/quotient-by-an-abelian-subvariety.md), for $A_f$
-- [Abelian scheme](../../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md), for abelian varieties over $\mathbb{Q}$ and their dimension
+- [Abelian scheme](../../../../AlgebraicGeometry/abelian-varieties/abelian-scheme.md), for abelian varieties over $\mathbb{Q}$
 
 ## Proof depends on
 
@@ -60,9 +60,9 @@ This node is still to be broken down. A good expansion states and links:
   $\theta_f$ (the eigenvalues of the $(T_p)_*$ and $\langle n \rangle_*$ generate $K_f$, as $a_n(f)$ is a polynomial in them);
 - Poincaré's reducibility theorem over an algebraically closed field and the resulting exactness of $V_\ell$ on
   exact sequences of abelian varieties in characteristic prime to $\ell$ (Conrad, proof of Theorem 5.14);
-- the identification $V_\ell(A_f) = V_\ell(N) / \mathfrak{p}_f V_\ell(N)$, and $\dim V_\ell(A_f) = 2 \dim A_f$, which give 1 and 2;
+- the identification $V_\ell(A_f) = V_\ell(N) / \mathfrak{p}_f V_\ell(N)$, which gives 1;
 - the passage from the characteristic polynomial over $\mathbb{Q}_\ell \otimes \mathbb{T}_1(N)$ to the quotient
-  $\mathbb{Q}_\ell \otimes K_f$, which gives 3.
+  $\mathbb{Q}_\ell \otimes K_f$, which gives 2.
 
 ## Sources
 
