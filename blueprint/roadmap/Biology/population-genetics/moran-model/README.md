@@ -46,3 +46,4 @@
 - [Moran process fixation times](moran-process-fixation-times/README.md)
 - [Poissonian interacting trajectories of clonal interference](poissonian-interacting-trajectories-of-clonal-interference/README.md)
 - [Voter model and coalescing random walks](voter-model-and-coalescing-random-walks/README.md)
+- [Isothermal theorem for every initial set of mutants](isothermal-theorem-for-evolutionary-graphs.md)

@@ -43,3 +43,4 @@ rates into a rate effect and a composition effect.
 ## Related topics
 
 - [Weighted mean](../../statistical-genetics/mendelian-randomization/weighted-mean.md): the crude rate and the directly standardized rate are weighted means of the category rates, with the sizes of the population or of the standard as weights.
+- [Stable population theory](stable-population-theory/README.md)

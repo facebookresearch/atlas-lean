@@ -30,3 +30,4 @@
 
 - [Conditional moment duality between the Λ-Wright–Fisher process and the Λ-coalescent](conditional-lambda-wright-fisher-lambda-coalesce.md)
 - [Infinite lookdown, de Finetti limit and the Λ-Fleming–Viot process](infinite-lookdown-de-finetti-limit-and-lambda-fl.md)
+- [Poisson construction of the Λ-coalescent](poisson-construction-of-lambda-coalescents.md)

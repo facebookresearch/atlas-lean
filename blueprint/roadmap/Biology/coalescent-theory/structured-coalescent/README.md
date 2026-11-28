@@ -57,3 +57,14 @@
 - [Coalescence time of coalescing random walks on graphs](coalescence-time-of-coalescing-random-walks-on-graphs/README.md)
 - [Coalescence time of reversible random walks](coalescence-time-of-reversible-random-walks/README.md)
 - [Spectral-gap bounds for coalescing random walks](spectral-gap-bounds-for-coalescing-random-walks/README.md)
+
+## Further structured ancestral models
+
+- [Genealogies of samples from a large torus](large-space-genealogical-limits.md)
+- [Genealogies within a fixed pedigree](fixed-pedigree-versus-averaged-genealogy.md)
+- [Genealogies at unlinked loci are conditionally independent given the pedigree](unlinked-does-not-mean-universally-independent.md)
+- [Backward migration probabilities from forward migration and deme sizes](backward-versus-forward-migration.md)
+- [Distribution of the pairwise coalescence time in the island model](island-coalescence-time-distribution.md)
+- [Scattering and collecting phases of the many-demes coalescent](many-demes-scattering-collecting-phases.md)
+- [Isolation with migration: piecewise structured histories and gene-tree likelihoods](isolation-with-migration-and-population-splits.md)
+- [Exact structured-coalescent likelihood and its approximations](exact-versus-approximate-structured-likelihood.md)

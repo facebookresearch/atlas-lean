@@ -40,3 +40,7 @@
 - [Cross-validated forward search QTL mapping](cross-validated-forward-search-qtl-mapping/README.md)
 - [Heritability from relatedness classes](heritability-from-relatedness-classes/README.md)
 - [Haley–Knott regression with additive and dominance effects](haley-knott-regression-with-additive-and-dominance-effects.md)
+
+## Recurrence risks of relatives
+
+- [Risch's recurrence-risk ratios for relatives](risch-recurrence-risk-ratios-lambda-r-1-halves-per-degree-of-relations.md)

@@ -18,6 +18,7 @@
 - [First-allele frequency in an Ewens sample and its Beta limit](size-biased-allele-frequency-in-an-ewens-sample.md)
 - [Almost-sure l1 convergence of nested Ewens frequencies to GEM and PD](ranked-ewens-frequencies-converge-to-pd-theta.md)
 - [Expected counting measure of GEM and Poisson–Dirichlet masses](poisson-dirichlet-gem-limit-of-ewens-allele-freq.md)
+- [Paintbox sampling from GEM weights gives the Ewens partition](paintbox-sampling-from-gem-gives-the-ewens-partition.md)
 
 ## Further results
 

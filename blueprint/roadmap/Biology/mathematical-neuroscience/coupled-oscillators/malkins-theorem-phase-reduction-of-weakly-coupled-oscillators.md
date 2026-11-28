@@ -1,0 +1,19 @@
+# Malkin's theorem on phase reduction of weakly coupled oscillators
+
+Consider oscillators $\dot X_j = F(X_j) + \varepsilon\bigl[f_j(X_j) + \sum_k G_{jk}(X_j, X_k)\bigr]$, $j = 1, \dots, N$, where $\dot X = F(X)$ has an exponentially stable limit cycle $X_0(\theta)$ of frequency $\omega$, parametrized by the phase $\theta \in [0, 2\pi)$, and $\varepsilon$ is small. Nakao (2016, Section 3.4) describes the phase sensitivity function $Z(\theta)$ as the $2\pi$-periodic solution of the adjoint equation $\omega\,\frac{d}{d\theta}Z(\theta) = -J(\theta)^{T}Z(\theta)$, where $J(\theta)$ is the Jacobian of $F$ at $X_0(\theta)$, normalized by $Z(\theta)\cdot\frac{dX_0}{d\theta}(\theta) = 1$, and notes that this adjoint equation is the key part of Malkin's theorem, which justifies the phase description. In Section 5 he reduces the coupled system to the phase equations $\dot\theta_j = \omega + \varepsilon\bigl[Z(\theta_j)\cdot f_j(\theta_j) + \sum_k Z(\theta_j)\cdot G_{jk}(\theta_j, \theta_k)\bigr]$ with error $O(\varepsilon^2)$ in the vector field. Averaging over one period does not apply to $\theta_j$ itself but to new phases $\vartheta_j$, related to the old ones by a near-identity transformation $\theta_j = \vartheta_j + \varepsilon h_j(\vartheta_1, \dots, \vartheta_N, t)$ with $h_j$ bounded and periodic, chosen to remove the oscillating part of the right-hand side. The transformed phases satisfy
+
+$$\dot\vartheta_j = \omega + \varepsilon\Bigl[\Delta_j + \sum_k \Gamma_{jk}(\vartheta_j - \vartheta_k)\Bigr] + O(\varepsilon^2), \quad \Delta_j = \frac{1}{2\pi}\int_0^{2\pi} Z(\psi)\cdot f_j(\psi)\,d\psi, \quad \Gamma_{jk}(\phi) = \frac{1}{2\pi}\int_0^{2\pi} Z(\phi + \psi)\cdot G_{jk}(\phi + \psi, \psi)\,d\psi$$
+
+(Eqs. (48)–(52), and the averaging remark in Nakao's footnote 4), so the coupling acts only through phase differences. The $O(\varepsilon^2)$ is the remainder of the transformed equation, not a bound on $\theta_j - \vartheta_j$: the correction $\varepsilon h_j$ has mean zero but is pointwise of order $\varepsilon$ (for instance $\varepsilon\cos\theta$). The averaging theorem then gives that a solution of the truncated averaged equation stays within $O(\varepsilon)$ of the original phases $\theta_j(t)$ on time intervals of length $O(1/\varepsilon)$, a separate trajectory-error statement.
+
+## Expansion
+
+1. The model: smooth vector fields with an exponentially stable limit cycle of a common frequency, weak heterogeneity and weak coupling.
+2. The adjoint equation along the limit cycle: existence and uniqueness of the normalized periodic solution $Z$ from the simplicity of the Floquet multiplier $1$, and $Z$ as the gradient of the asymptotic phase (the infinitesimal phase response curve).
+3. The reduction to phase equations with its $O(\varepsilon^2)$ remainder; the near-identity transformation to the averaged phases $\vartheta_j$ and the $O(\varepsilon^2)$ remainder of the transformed equation; and, separately, the $O(\varepsilon)$ trajectory error between the truncated averaged solution and the original phases on time scales of order $1/\varepsilon$, as in Malkin's formulation.
+4. The coupling functions $\Gamma_{jk}$ and their dependence only on phase differences; the case of commensurable frequencies, as a separate statement.
+
+## Sources
+
+- H. Nakao, Phase reduction approach to synchronisation of nonlinear oscillators, Contemp. Phys. 57 (2016), 188–214; Section 3.4 (Eqs. (12)–(13)), Section 5 (Eqs. (48)–(52)) and footnote 4 in the numbering of the arXiv version, arXiv:1704.03293. <https://doi.org/10.1080/00107514.2015.1094987>
+- Original result: F. C. Hoppensteadt and E. M. Izhikevich, Weakly Connected Neural Networks, Springer, 1997, Ch. 9 (Malkin's theorem). <https://doi.org/10.1007/978-1-4612-1828-9> The adjoint equation and the averaged phase equations follow Nakao (2016).

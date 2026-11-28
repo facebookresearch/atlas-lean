@@ -46,3 +46,9 @@
 - [Wright–Fisher diffusion under strong selection](wright-fisher-diffusion-under-strong-selection/README.md)
 - [Wright–Fisher graph model](wright-fisher-graph-model/README.md)
 - [Logistic branching processes with selection](logistic-branching-processes-with-selection/README.md)
+
+## Further stationary laws
+
+- [Stationary law of the multi-allele diffusion with diploid selection](diploid-selection-potential.md)
+- [Reversibility and the Dirichlet form of the Wright–Fisher diffusion](reversibility-and-dirichlet-form.md)
+- [Small-mutation limits of stationary laws](small-mutation-limits.md)

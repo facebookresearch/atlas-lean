@@ -16,3 +16,4 @@
 - [SIR model with imperfect testing and quarantine](sir-model-with-imperfect-testing-and-quarantine.md)
 - [Dominant eigenvalue and real-time growth for the next-generation operator of a heterogeneous population](next-generation-operator-and-r0-in-heterogeneous-populations.md)
 - [$R_0$ under separable mixing with within-group enhancement](r0-under-separable-and-preferential-mixing.md)
+- [Global stability of compartmental models](global-stability-of-compartmental-models/README.md)

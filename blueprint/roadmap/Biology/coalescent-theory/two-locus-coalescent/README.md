@@ -41,6 +41,7 @@
 - [Mean coalescence time at locus B, path form](lintegral-coalescence-time-b.md)
 - [Product moment of the two coalescence times, path form](lintegral-coalescence-time-a-mul-coalesc.md)
 - [Covariance of the coalescence times, path form](covariance-coalescence-times.md)
+- [Two-locus Wright–Fisher diffusion and coalescent limits, and the coalescence-time side of their duality](two-locus-diffusion-coalescent-duality.md)
 - [The ancestral line count with recombination is positive recurrent](lineage-count-birth-death-chain-rho-0-positive-r.md)
 - [Coalescence records encode a sequence of local trees exactly](tree-sequence-encoding-represents-local-trees-ex.md)
 

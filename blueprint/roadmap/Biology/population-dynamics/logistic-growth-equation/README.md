@@ -12,3 +12,5 @@
 - [Logistic transit time from $1/(2N)$ to $1 - 1/(2N)$](logistic-transit-time-two-n.md)
 - [Logistic solution is strictly increasing](strict-mono-logistic.md)
 - [Structural non-identifiability of logistic growth with harvesting](structural-non-identifiability-of-logistic-growth-with-harvesting.md)
+- [Schaefer maximum sustainable yield and the Gordon bionomic equilibrium](schaefer-maximum-sustainable-yield-rk-4-at-k-2-and-gordon-bionomic-equ.md)
+- [Discrete-time population models](discrete-population-models/README.md)

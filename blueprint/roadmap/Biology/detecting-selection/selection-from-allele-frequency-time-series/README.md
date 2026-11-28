@@ -5,3 +5,4 @@
 - [Temporal covariance of allele frequency change and the G(t) statistic](temporal-covariance-of-allele-frequency-change-and-g-t.md)
 - [Initial relative fitness from an allele-frequency trajectory](initial-relative-fitness-from-an-allele-frequency-trajectory.md)
 - [Likelihood inference for selection in Wright–Fisher diffusions](likelihood-inference-for-selection-in-wright-fisher-diffusions/README.md)
+- [Forward recursion for allele-frequency time series with absorbing transitions](temporal-sampling-likelihood.md)

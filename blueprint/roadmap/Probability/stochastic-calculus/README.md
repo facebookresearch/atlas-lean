@@ -21,6 +21,7 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Ornstein–Uhlenbeck process](ornstein-uhlenbeck-process/README.md)
 - [Capacity-two chordal Loewner trace and Hausdorff gauge](capacity-two-sle-trace.md)
 - [Yamada–Watanabe approximating functions](yamada-watanabe-approximating-functions/README.md)
+- [One-dimensional diffusions](one-dimensional-diffusions/README.md)
 
 ## Related topics
 

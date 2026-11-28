@@ -41,3 +41,5 @@
 - [Cherries and pitchforks of ranked coalescent trees](cherries-and-pitchforks-of-ranked-coalescent-trees/README.md)
 - [Evolving Moran genealogy](evolving-moran-genealogy/README.md)
 - [Fréchet summaries of ranked tree shapes](frechet-summaries-of-ranked-tree-shapes/README.md)
+## Further results
+- [Cherry-count recursions and external branch length of the Kingman genealogy](external-branches-and-cherries.md)

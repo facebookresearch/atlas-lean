@@ -1,0 +1,15 @@
+# Non-explosivity of complex-balanced networks: further results
+
+Anderson, Cappelletti, Koyama and Kurtz (2018) prove a general non-explosivity criterion. Let $(X_t)$ be a process on a countable state space $E \subset \mathbb{Z}^d$ with transition rates $q(x, y)$ satisfying their Condition 1 (finite rates, finite total exit rate $q(x) = \sum_{y \ne x}q(x, y)$ from each state, and bounded entrance rates into each state). If a probability distribution $\pi$ is a constant solution of the Kolmogorov forward equation ($\sum_y\pi(y)q(y, x) = \pi(x)q(x)$ for all $x$) and $\sum_x\pi(x)q(x) < \infty$, then the process is non-explosive whenever the support of the initial distribution is contained in the support of $\pi$ (their Theorem 2). When the support of $\pi$ is a single irreducible class of nonabsorbing states ($q(x) > 0$), the summability condition holds if and only if the embedded discrete-time chain is positive recurrent on that class (their Remark 1, via the stationary law proportional to $\pi(x)q(x)$). When $\pi$ is a mixture over several classes, summability is a separate hypothesis: positive recurrence of the embedded chain on each class does not imply it. For example, disjoint two-state classes indexed by $n \ge 1$, with jump rate $n^2$ each way and $\pi$ giving mass proportional to $n^{-2}$ to class $n$, have embedded chains returning in two steps, yet $\sum_x\pi(x)q(x)$ diverges. For a stochastic reaction system the condition reads $\sum_x\pi(x)\sum_k\lambda_k(x) < \infty$ (their Corollary 1).
+
+## Expansion
+
+1. Condition 1 on the rates, explosion, and the minimal process.
+2. Theorem 2: construction of a stationary process with marginal $\pi$ and the finiteness of the expected number of jumps per unit time.
+3. Remark 1: the equivalence with positive recurrence of the embedded chain on a single nonabsorbing irreducible class. Summability makes the normalized $\pi(x)q(x)$ a stationary law of the embedded chain, since $\sum_y\pi(y)q(y)\,q(y, x)/q(y) = \pi(x)q(x)$, so the irreducible chain is positive recurrent. Conversely, if the embedded chain is positive recurrent, then $\pi(x)q(x)$ is an invariant measure of an irreducible recurrent chain, and the uniqueness of such invariant measures up to a constant factor makes it a multiple of the stationary law, hence summable. Summability as a separate hypothesis for mixtures.
+4. Corollary 1 for reaction networks.
+5. Application, as a separate statement: the product-form Poisson distribution of a complex-balanced system (Theorem 1 of Anderson, Craciun and Kurtz) satisfies the summability condition, which gives the [non-explosivity of complex-balanced stochastic reaction networks](non-explosivity-of-complex-balanced-stochastic-reaction-networks.md) for every initial distribution (Theorem 3 of the source).
+
+## Sources
+
+- D. F. Anderson, D. Cappelletti, M. Koyama and T. G. Kurtz, Non-explosivity of stochastically modeled reaction networks that are complex balanced, Bull. Math. Biol. 80 (2018), 2561–2579. <https://doi.org/10.1007/s11538-018-0473-8>

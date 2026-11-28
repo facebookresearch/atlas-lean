@@ -11,3 +11,5 @@
 
 - [Spatial, Allee, tumour, and eco-evolutionary population dynamics](spatial-and-game-population-dynamics/README.md)
 - [Interacting species](interacting-species/README.md)
+- [Rosenzweig–MacArthur model: the paradox of enrichment](rosenzweig-macarthur-hopf-threshold-paradox-of-enrichment-and-chengs-u.md)
+- [Competition and coexistence](competition-and-coexistence/README.md)

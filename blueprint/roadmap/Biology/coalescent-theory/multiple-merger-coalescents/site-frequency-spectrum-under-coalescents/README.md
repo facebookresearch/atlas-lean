@@ -14,6 +14,7 @@
 - [Branch length subtending i copies accumulated in one state](holding-count.md)
 - [Expected length of branches subtending i sample copies](expected-length.md)
 - [Expected site frequency spectrum under a Λ-coalescent](expected-sfs.md)
+- [Level decomposition of the expected site-frequency spectrum under Λ-coalescents](level-decomposition-of-the-expected-spectrum.md)
 
 ## Rates
 

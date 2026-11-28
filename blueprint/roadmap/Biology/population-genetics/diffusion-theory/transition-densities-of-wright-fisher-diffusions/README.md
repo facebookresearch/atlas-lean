@@ -17,3 +17,8 @@
 - [Dual-process filtering of Wright–Fisher hidden Markov models](dual-process-filtering-of-wright-fisher-hidden-markov-models/README.md)
 - [Filtering Fleming–Viot population frequencies](filtering-fleming-viot-population-frequencies/README.md)
 - [Exact likelihood inference for the Wright–Fisher diffusion](exact-likelihood-inference-for-the-wright-fisher-diffusion/README.md)
+- [Spectral expansion of the neutral multi-allele transition density](multi-allele-spectral-expansion.md)
+- [Exact simulation of the Wright–Fisher diffusion with selection](exact-selected-simulation.md)
+- [Wright–Fisher diffusion bridges](diffusion-bridges.md)
+- [Boundary-preserving discretization of the Wright–Fisher SDE](sde-discretization-near-boundaries.md)
+- [Time-dependent Wright–Fisher diffusions](time-dependent-wright-fisher-diffusions/README.md)

@@ -47,3 +47,6 @@
 - [Mean time as a sum of sojourn times](lintegral-mul-eq-lintegral-sojourn-mul.md)
 
 - [Process interpretation of allele age via time reversal](process-interpretation-of-allele-age-via-time-re.md)
+- [A retrospective sampling model for allele age](retrospective-sampling-model.md)
+- [Higher moments of allele age and comparison with first arrival](age-moments-variance-and-first-arrival-comparison.md)
+- [Alternative definitions of allele age](alternative-age-definitions-and-limits-of-the-effect.md)

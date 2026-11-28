@@ -7,3 +7,4 @@
 - [Likelihood ratios and posttest probability for ontology-coded phenotypes](likelihood-ratio-posttest-probability-for-phenotype-driven-diagnosis.md)
 
 - [Causal inference and biostatistics](causal-inference-and-biostatistics/README.md)
+- [Case-control studies](case-control-studies/README.md)

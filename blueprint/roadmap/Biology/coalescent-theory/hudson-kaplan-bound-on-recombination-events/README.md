@@ -19,3 +19,4 @@
 - [$R_m$ is the maximum number of disjoint four-gamete intervals](exists-is-disjoint-family-card-eq-rm.md)
 - [Characterization of site pairs failing the four-gamete test](not-four-gametes-iff.md)
 - [Hudson and Kaplan's bound for tree-like blocks](rm-le-card-of-nested-or-disjoint.md)
+- [Recurrent mutation can mimic recombination in the four-gamete test](recurrent-mutation-versus-recombination.md)

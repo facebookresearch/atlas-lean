@@ -1,6 +1,6 @@
 # Mathematical neuroscience
 
-Models of excitable membranes and neurons: the Nernst potential and passive cable theory, the Hodgkin–Huxley and FitzHugh–Nagumo equations, integrate-and-fire neurons and Wilson–Cowan models of neural populations.
+Models of excitable membranes and neurons: the Nernst potential and passive cable theory, the Hodgkin–Huxley and FitzHugh–Nagumo equations, integrate-and-fire neurons and Wilson–Cowan models of neural populations. Also coupled biological oscillators and their synchronization, Hopfield and other attractor networks, neural field models, neural coding, and first-passage times of neuron models.
 
 - [Nernst potential and the steady-state cable equation](nernst-potential-and-the-steady-state-cable-equa/README.md)
 - [Siegert mean first-passage formula](siegert-mean-first-passage-formula/README.md)
@@ -16,3 +16,9 @@ Models of excitable membranes and neurons: the Nernst potential and passive cabl
 - [Leaky integrate-and-fire neuron](leaky-integrate-and-fire-neuron/README.md)
 - [Wilson–Cowan neural population model](wilson-cowan-neural-population-model/README.md)
 - [Coupled biological oscillators](coupled-oscillators/README.md)
+- [Hopfield networks](hopfield-networks/README.md)
+- [Excitable membrane models](excitable-membrane-models/README.md)
+- [Cable theory of dendrites](cable-theory-of-dendrites/README.md)
+- [First-passage times of neuron models](neuronal-first-passage-times/README.md)
+- [Neural field models](neural-field-models/README.md)
+- [Neural coding](neural-coding/README.md)

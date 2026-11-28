@@ -11,3 +11,7 @@
 - [Conserved quantity behind the final-size relation](susceptible-mul-exp-eq.md)
 - [Final-size relation (Kermack–McKendrick 1927)](final-size.md)
 - [Final-size equation (Kermack–McKendrick 1927)](final-size-eq.md)
+
+## Spatial spread
+
+- [Asymptotic speed of propagation for the spatial Kermack–McKendrick epidemic](asymptotic-speed-of-propagation-for-the-spatial-kendall-type-epidemic.md)

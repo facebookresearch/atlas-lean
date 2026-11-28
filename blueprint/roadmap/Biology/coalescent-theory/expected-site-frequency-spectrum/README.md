@@ -43,3 +43,7 @@
 - [Expected total age of mutations of a given size in Kingman's coalescent](expected-total-age-of-size-i-mutations-explicit.md)
 - [Simulation-based composite likelihood of the site frequency spectrum](simulation-based-sfs-composite-likelihood.md)
 - [Truncated site frequency spectrum](truncated-site-frequency-spectrum/README.md)
+
+## Further results
+
+- [Hypergeometric projection of the site-frequency spectrum](spectrum-subsampling-operator.md)
