@@ -1,0 +1,18 @@
+# Monotonic
+
+- [Agree](agree.md)
+- [Agree self](agree-self.md)
+- [Agree inf](agree-inf.md)
+- [Agree sup](agree-sup.md)
+- [Cond Norm](cond-norm.md)
+- [Cond Mass](cond-mass.md)
+- [Cond Norm pos](cond-norm-pos.md)
+- [Cond Mass nonneg](cond-mass-nonneg.md)
+- [Cond Mass sum](cond-mass-sum.md)
+- [Cross restricted](cross-restricted.md)
+- [Cross cond Mass](cross-cond-mass.md)
+- [Open At](open-at.md)
+- [Is Increasing open At](is-increasing-open-at.md)
+- [Cond Prob Open](cond-prob-open.md)
+- [Is Monotonic Measure](is-monotonic-measure.md)
+- [Fkg implies monotonic](fkg-implies-monotonic.md)
