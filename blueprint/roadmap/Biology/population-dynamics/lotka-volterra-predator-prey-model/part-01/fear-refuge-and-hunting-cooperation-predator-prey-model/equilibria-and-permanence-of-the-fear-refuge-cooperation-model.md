@@ -18,9 +18,17 @@ $$\lambda_P=\frac{\alpha_1\alpha N_1}{a+N_1}-d_1-\frac{q}{c_1}.$$
 
 Hence $E_1$ is locally asymptotically stable if $\lambda_P<0$, i.e. if $(r_0-r_1)\,[c_1(d_1-\alpha\alpha_1)+q]+a r_2\,(c_1d_1+q)>0$, and unstable if $\lambda_P>0$ (the predator can invade when this inequality is strictly reversed); at $\lambda_P=0$ the linearization does not decide. The source's Theorem 1(2) says only that $E_1$ "is stable if the following conditions hold", and prints those conditions as $c_1(d_1-\alpha\alpha_1)-q>0$, $(r_0-r_1)[c_1(d_1-\alpha\alpha_1)-q]+ar_2(c_1d_1-q)>0$; the page writes $+q$ because that is what the eigenvalue $\lambda_P$ above gives: multiplying $\lambda_P<0$ by $c_1r_2(a+N_1)>0$ and substituting $N_1=(r_0-r_1)/r_2$ yields exactly the displayed inequality.
 
-(4) An interior equilibrium $E^*$, when it exists, is locally asymptotically stable iff $A_1=-\operatorname{tr}J(E^*)>0$ and $A_2=\det J(E^*)>0$; a Hopf bifurcation in a parameter $r_0$ occurs at $r_0^c$ with $A_1(r_0^c)=0$, $A_2(r_0^c)>0$ and transversality $\big(2v^2\,dA_1/dr_0+A_1\,dA_2/dr_0\big)|_{r_0^c}\ne 0$, $v^2=A_2(r_0^c)$.
+(4) An interior equilibrium $E^*$, when it exists, is locally asymptotically stable if $A_1=-\operatorname{tr}J(E^*)>0$ and $A_2=\det J(E^*)>0$, and unstable if $A_1<0$ or $A_2<0$ (the source's Theorem 1(3) prints "iff"; the page drops the "only if" because at a supercritical Hopf point, such as the source's $r_{0h1}=0.4233$ for its Table 1 values, $A_1=0<A_2$ and $E^*$ is still asymptotically stable); a Hopf bifurcation in a parameter $r_0$ occurs at $r_0^c$ with $A_1(r_0^c)=0$, $A_2(r_0^c)>0$ and transversality $\big(2v^2\,dA_1/dr_0+A_1\,dA_2/dr_0\big)|_{r_0^c}\ne 0$, $v^2=A_2(r_0^c)$.
 
-**Theorem (permanence of the seasonal model).** Let $r_0,k_1,k_2,m,c,E$ be continuous, positive, $\omega$-periodic functions, and write $f^M=\sup f$, $f^L=\inf f$. Every solution with positive initial data satisfies $\limsup N\le M_1=(r_0^M-r_1)/r_2$ and $\limsup P\le 1/m^L$, and the system is permanent under two explicit inequalities: the minimal fear-reduced prey birth rate $m^Lr_0^L/(m^L+k_1^M)$ (fear evaluated at the predator cap $1/m^L$) must exceed $r_1$ plus the maximal per-capita predation pressure, and predator conversion at the resulting prey lower bound $m_1$ must exceed natural mortality plus maximal harvesting. The positive lower bounds for $\liminf N$ and $\liminf P$ are then explicit in the seasonal extremes.
+**Theorem (permanence of the seasonal model).** Let $r_0,k_1,k_2,m,c,E$ be continuous, positive, $\omega$-periodic functions, and write $f^M=\sup f$, $f^L=\inf f$. Every solution with positive initial data satisfies $\limsup N\le M_1=(r_0^M-r_1)/r_2$ and $\limsup P\le 1/m^L$, and the system is permanent if (source Eq. (13))
+
+$$\frac{m^Lr_0^L}{m^L+k_1^M}>r_1+\frac{\alpha}{m^L}\Bigl(1+\frac{c^M}{m^L}\Bigr),\qquad \alpha_1\alpha m_1>(a+M_1)\Bigl(d_1+\frac{q}{c_1}\Bigr),$$
+
+where
+
+$$m_1=\frac{\dfrac{m^Lr_0^L}{m^L+k_1^M}-r_1-\dfrac{\alpha}{m^L}\Bigl(1+\dfrac{c^M}{m^L}\Bigr)}{r_2\Bigl(1+\dfrac{k_2^M}{m^L}\Bigr)}$$
+
+is the lower bound $\liminf N\ge m_1$ obtained in the proof. In words, the minimal fear-reduced prey birth rate (fear evaluated at the predator cap $1/m^L$) must exceed $r_1$ plus the maximal per-capita predation pressure, and predator conversion at the prey lower bound $m_1$ must exceed natural mortality plus maximal harvesting; the proof also gives an explicit positive lower bound for $\liminf P$.
 
 ## Proof depends on
 

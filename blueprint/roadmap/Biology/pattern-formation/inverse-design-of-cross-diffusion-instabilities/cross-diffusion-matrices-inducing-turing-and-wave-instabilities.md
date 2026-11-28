@@ -5,7 +5,7 @@
 - a *Turing instability* if some $\mu > 0$ gives a real root $\lambda > 0$;
 - a *wave instability* if some $\mu > 0$ gives a complex-conjugate pair $\lambda$ with positive real part and non-zero imaginary part.
 
-**Theorem 1.** Let $J$ be a non-scalar stable matrix. Then there is a diagonalisable diffusion matrix $\hat D$ for which the system exhibits a Turing instability. If moreover $n \ge 3$ and $J$ has $\ell$ distinct eigenvalues, $1 \le \ell \le 3$, with at least $3 - \ell$ corresponding generalised eigenvectors, then there is also a diagonalisable diffusion matrix $\hat D$ for which the system exhibits a wave instability.
+**Theorem 1.** Let $J$ be a non-scalar stable matrix. Then there is a diagonalisable diffusion matrix $\hat D$ with strictly positive real eigenvalues for which the system exhibits a Turing instability. If moreover $n \ge 3$ and $J$ has at least $\ell$ distinct eigenvalues, $1 \le \ell \le 3$, with at least $3 - \ell$ corresponding generalised eigenvectors, then there is also a diagonalisable diffusion matrix $\hat D$ with strictly positive real eigenvalues for which the system exhibits a wave instability. (As in the source, which assumes throughout that $\hat D$ has strictly positive real eigenvalues and hence is invertible.)
 
 **Theorem 2.** Let $\hat D$ be a non-scalar diagonalisable matrix with strictly positive real eigenvalues. Then there is a stable matrix $J$ for which the system exhibits a Turing instability, and if $n \ge 3$ there is also a stable $J$ for which it exhibits a wave instability.
 

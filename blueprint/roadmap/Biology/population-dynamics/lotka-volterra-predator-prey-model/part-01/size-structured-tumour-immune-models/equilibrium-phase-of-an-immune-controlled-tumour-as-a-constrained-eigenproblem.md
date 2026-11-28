@@ -18,7 +18,7 @@ where $-K\Delta_x\Phi = \sigma - |\Omega|^{-1}\int_\Omega\sigma$ with homogeneou
 
 $$\int_\Omega \delta(x)\,C(x)\,dx = \lambda .$$
 
-If $R \in L^2(\Omega)$ is nonnegative and $\lambda > 0$ is small enough, there is a unique mass $\mu_1(\lambda) > 0$ for which the solution $C_{\mu_1}$ of the stationary problem satisfies the constraint; it is the residual tumour mass of the equilibrium phase.
+If $R \in L^2(\Omega)$ is nonnegative, $R \not\equiv 0$, $\delta \not\equiv 0$ and $\lambda > 0$ is small enough, there is a unique mass $\mu_1(\lambda) > 0$ for which the solution $C_{\mu_1}$ of the stationary problem satisfies the constraint; it is the residual tumour mass of the equilibrium phase. The source's Theorem 2.1 assumes only $R \ge 0$ and $\delta \ge 0$; the page adds $R \not\equiv 0$ and $\delta \not\equiv 0$, the nondegeneracy that the theorem's implicit-function argument needs (a positive derivative of $\mu_1 \mapsto \int\delta C_{\mu_1}$ at $0$): if $R \equiv 0$ or $\delta \equiv 0$, then $\int_\Omega\delta C_{\mu_1} = 0 \ne \lambda$ for every $\mu_1$.
 
 ## Expansion
 

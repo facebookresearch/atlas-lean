@@ -14,7 +14,7 @@ with independent Brownian motions $B^i$ and $G:\mathbb R_+\to\mathbb R_+$ bounde
 
 $$\partial_t\varrho=\Delta\big(F(W*\varrho)\,\varrho\big),\qquad F=\tfrac12G^2,$$
 
-which is also the diffusive limit of the kinetic Fokker–Planck equation of the second-order model, with local temperature $T=G(W*\varrho)^2/(2H(W*\varrho))$.
+The diffusive limit of the kinetic Fokker–Planck equation of the second-order model is $\partial_t\varrho=\frac d2\nabla\cdot\bigl(H(W*\varrho)^{-1}\nabla(T\varrho)\bigr)$ with local temperature $T=G(W*\varrho)^2/(2H(W*\varrho))$ (source Eq. (3.13)); for constant $H$ it is the mean-field equation up to a linear rescaling of time.
 
 **Theorem.** Let $F$ be bounded, nonnegative, nonincreasing and $C^1$ with globally Lipschitz derivative, with $G=\sqrt{2F}$ globally Lipschitz, and let $W\in W^{1,\infty}(\mathbb R^d)\cap H^2(\mathbb R^d)$.
 

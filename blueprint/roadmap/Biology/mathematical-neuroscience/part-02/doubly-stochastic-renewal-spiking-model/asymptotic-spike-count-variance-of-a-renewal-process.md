@@ -1,6 +1,6 @@
 # Asymptotic spike-count variance of a renewal process
 
-Let spikes form a stationary renewal process whose inter-spike intervals are i.i.d. with mean $\mu$, variance $\sigma^2$ and third central moment $\mu_3$, and let $N_T$ be the number of spikes in a window of length $T$. Then, as $T \to \infty$,
+Let spikes form a stationary (equilibrium) renewal process whose inter-spike intervals are i.i.d. with a probability density $f$, mean $\mu$, variance $\sigma^2$ and third central moment $\mu_3$, and let $N_T$ be the number of spikes in a window of length $T$. Then, as $T \to \infty$,
 
 $$\mathbb{E}(N_T) = \frac{T}{\mu}, \qquad \operatorname{Var}(N_T) = \frac{\sigma^2}{\mu^3}\,T + \left(\frac{\sigma^4}{2\mu^4} + \frac{1}{6} - \frac{\mu_3}{3\mu^3}\right) + O(T^{-1})$$
 

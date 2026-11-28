@@ -2,7 +2,7 @@
 
 Consider the star network of adaptive phase oscillators of the dependency below with the specific coupling functions $g(x) = \sin x$, $h(x) = \big((\mu^2 - x^2)/\mu^2\big)^{\sigma}$ for $|x| < \mu$ and $h(x) = 0$ for $\mu \le |x| \le \pi$ (with $\sigma \gg 1$, $0 < \mu < \pi$), and the odd interaction function $f(x) = \sin\!\big(|x - \pi|^{\nu}/\pi^{\nu - 1}\big)$ for $x \in [0, \pi]$ (extended oddly), $\nu > 1$, which has $f'(0) = \nu$, $f'(\pi) = 0$ and its maximum at $x_{max} = \pi(1 - 2^{-1/\nu}) \to 0$ as $\nu \to \infty$. Let the POs be slightly detuned, $\omega_i = \omega + \Delta_i$ with $|\Delta_i| < |b|$, and let $b < 0$ with the WTA points of the identical case stable.
 
-**Statement.** For $\nu$ large and $\mu < \pi/2$, the system has $n$ fixed points $Q_l$, $l = 1, \dots, n$, obtained by continuation of the hyperbolic WTA points $P_{1,l}$; they keep the stability of $P_{1,l}$. At $Q_l$ the central oscillator adopts the frequency of the winner, $\omega_0 \approx \omega_l$, the winner is nearly in phase with the CO, $\phi_l \approx 0$, $a_l = c + \gamma$, and every loser $i \ne l$ has amplitude $a_i = c$ and phase difference
+**Statement.** For $\nu$ large and $\mu < \pi/2$, the system has $n$ fixed points $Q_l$, $l = 1, \dots, n$, obtained by continuation of the hyperbolic WTA points $P_{1,l}$; they keep the stability of $P_{1,l}$. At $Q_l$ the central oscillator adopts the frequency of the winner, $\omega_0 \approx \omega_l$, the winner is nearly in phase with the CO, $\phi_l \approx 0$, $a_l \approx c + \gamma$ (exactly, $a_l = c + \gamma h(\phi_l)$), and every loser $i \ne l$ has amplitude $a_i = c$ and phase difference
 
 $$\bar\phi_i \approx \pi - \arcsin\!\Big(\frac{\omega_i - \omega_l}{b}\Big),$$
 

@@ -12,7 +12,13 @@ $$C_0 = \left\{(E,n) : E = 0\ \text{ or }\ n^M = E^* - \frac{1}{2E(1-\delta E)}\
 
 normally hyperbolic except at the generic fold point $p_F = (2, 1)$, with attracting outer branches and a repelling middle branch. There are three equilibria: a stable one at the origin (rest), a saddle where the repelling branch meets the $E$-axis, and an unstable equilibrium on the repelling branch. Every candidate orbit is a concatenation of fast jumps to the outer branches and slow drift along them; it converges to the rest state unless it is one of the two unstable equilibria or the unique heteroclinic orbit between them (Theorem 3). Away from the heteroclinic segment, candidate orbits persist as true orbits for small $\varepsilon > 0$ (Theorem 4), and the heteroclinic segment persists as a heteroclinic orbit (Theorem 5).
 
-**Theorem ($I > 0$).** The critical manifold becomes $n^M = E^* - \frac{E - I}{2E^2(1-\delta E)}$. For $I < I_0 \approx 0.08718$ there are three equilibria; for $I_0 < I < I_1 = 4/9$ a unique equilibrium, unstable with a stable relaxation oscillation below a threshold $I_2$; for $I > I_1$ the repelling branch disappears and the unique equilibrium is globally stable (Theorems 6–7).
+**Theorem ($I > 0$; Theorem 6).** In the singular limit the critical manifold becomes $n^M = E^* - \frac{E - I}{2E^2(1-\delta E)}$, and every candidate orbit is a concatenation of fast segments converging to the attracting outer branches and slow segments on the critical manifold. Let $I_2$ be the value of $I$ at which the equilibrium with $n > 0$ changes from unstable to stable as $I$ increases. Then:
+
+- for $I < I_0 \approx 0.08718$ there are three equilibria, with a stable node and a saddle on the $E$-axis; if $I < I_2$ the behaviour is equivalent to the case $I = 0$, and otherwise the system is bistable;
+- for $I_0 < I < I_1 = 4/9$ there is a unique equilibrium; if $I < I_2$ it is unstable and the system has a stable relaxation oscillation, and otherwise the equilibrium is globally stable although there are relaxation pulses;
+- for $I > I_1$ ($> I_2$) the middle branch disappears, the critical manifold is attracting everywhere and the unique equilibrium is globally stable.
+
+**Persistence (Theorem 7).** Let $E_-(I) = \bigl((4 + 3I) - \sqrt{(4+3I)^2 - 64I}\bigr)/4$ be the lower curve of non-hyperbolic equilibria of the layer problem (source Eq. (3.13), for $\delta = 0.25$). Whenever $E_-(I) \ne 1$, candidate orbits of the singular limit with $I > 0$, away from the bifurcation points $I_0$ and $I_2$, can be perturbed to solution curves of the full system with $\varepsilon > 0$.
 
 Unlike FitzHugh–Nagumo, whose cubic critical manifold has a single equilibrium at rest, the Karma model has a saddle and an unstable node on the repelling branch and a non-smooth slow flow at $E = 1$, which produces the heteroclinic connection and the different excitability thresholds.
 

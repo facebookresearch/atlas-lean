@@ -1,6 +1,6 @@
 # Global frequency and linear stability of the delayed Kuramoto network
 
-Let $N \ge 2$ phase oscillators with common natural frequency $\omega_0 \in \mathbb{R}$, coupling gain $g > 0$, adjacency coefficients $a_{ij} \in \{0,1\}$ and fixed conduction delays $\tau^0_{ij} \ge 0$ evolve by
+Let $N \ge 2$ phase oscillators with common natural frequency $\omega_0 \in \mathbb{R}$, coupling gain $g > 0$, adjacency coefficients $a_{ij} \in \{0,1\}$ with no self-coupling ($a_{ii} = 0$ for every $i$) and fixed conduction delays $\tau^0_{ij} \ge 0$ evolve by
 
 $$\frac{d\theta_i}{dt}(t) = \omega_0 + \frac{g}{N}\sum_{j=1}^N a_{ij}\,\sin\bigl(\theta_j(t-\tau^0_{ij}) - \theta_i(t)\bigr), \qquad 1 \le i \le N.$$
 
@@ -16,7 +16,7 @@ and $\lambda \in \mathbb{C}$ is a characteristic root iff $\det M_\lambda = 0$ f
 
 $$(M_\lambda)_{ii} = \lambda + \frac{g}{N}\sum_{j} a_{ij}\cos(\Omega\tau^0_{ij}), \qquad (M_\lambda)_{ij} = -\frac{g}{N}\,a_{ij}\cos(\Omega\tau^0_{ij})\,e^{-\lambda\tau^0_{ij}} \quad (i \ne j).$$
 
-The synchronized state is linearly stable if every root other than the neutral root $\lambda = 0$ (common phase shift) has $\operatorname{Re}\lambda < 0$; a Lyapunov-functional sufficient condition is $\cos(\Omega\tau^0_{ij}) > 0$ for all connected pairs.
+The synchronized state is linearly stable if every root other than the neutral root $\lambda = 0$ (common phase shift) has $\operatorname{Re}\lambda < 0$; a Lyapunov-functional sufficient condition is $\cos(\Omega\tau^0_{ij}) > 0$ for all connected pairs. The source's model, Eq. (1), sums over all $j$ and does not exclude $a_{ii} = 1$, but the diagonal of its matrix, Eq. (17), printed as $\lambda + \frac{g}{N}\sum_j a_{ij}\cos(\Omega\tau^0_{ij})$, omits the $j = i$ term $-\frac{g}{N}a_{ii}\cos(\Omega\tau^0_{ii})e^{-\lambda\tau^0_{ii}}$ of the linear delay system; the page therefore assumes no self-coupling, under which Eq. (17) holds as printed.
 
 ## Expansion
 

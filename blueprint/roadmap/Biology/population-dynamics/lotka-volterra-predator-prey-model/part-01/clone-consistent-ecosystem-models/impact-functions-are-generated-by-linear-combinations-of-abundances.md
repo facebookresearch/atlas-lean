@@ -15,7 +15,7 @@ $$
 \phi(x,a)=\chi\bigl(\omega_1(x,a),\dots,\omega_l(x,a)\bigr),\qquad \omega_r(x,a)=\sum_{i=1}^n\zeta_r(a_i)\,x_i,\ \ \zeta_r(0)=0,
 $$
 
-with an arbitrary combining function $\chi$, and conversely every such composition is an impact function.
+for some $l$, continuous $\zeta_r$ and some function $\chi$, and conversely every such composition with continuous $\chi$ and continuous $\zeta_r$ is an impact function. (The source's definition, which has no continuity requirement, allows an arbitrary $\chi$ in the converse; under the page's definition the converse needs continuity, since for example $\mathbf 1_{(0,\infty)}(\sum_ia_ix_i)$ satisfies (I1)–(I4) but is discontinuous.)
 
 **Remark (vector parameters, $m\ge2$; not in the source).** For a multi-index $p=(p_1,\dots,p_m)\in\mathbb N^m$ with $|p|=p_1+\dots+p_m\ge1$ write $a_i^p=a_{i1}^{p_1}\cdots a_{im}^{p_m}$. The same conclusion is expected with $\Lambda$ replaced by the mixed power sums $\{\sum_i a_i^p x_i : p\in\mathbb N^m,\ |p|\ge1\}$; this needs an argument the source does not give (moment determinacy of finitely supported measures on $\mathbb R^m$, sketched in the Expansion) and is not part of the statement. The source states its theorem for $m\ge2$ with the coordinatewise sums $\bigcup_{k=1}^m\{\sum_ia_{ik}^px_i : p\ge1\}$, a version that is false (Expansion).
 

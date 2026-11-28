@@ -12,7 +12,7 @@ In a **powerstroke–recovery** system, $t = 0$ is the start of the powerstroke 
 
 $$\dot\gamma_1 = DF_0(\gamma_0(t))\,\gamma_1 + \nu_1(t)\,F_0(\gamma_0(t)) + \partial_\kappa F_\kappa(\gamma_0(t))\big|_{\kappa_0}, \qquad \nu_1 = \partial_\epsilon\partial_t \tau_\epsilon\big|_{\epsilon=0},$$
 
-with $\gamma_1(0)$ the displacement of the cycle's crossing point on a transverse section. For rescaling that is linear within each phase, $\nu_1 = T_1^{i}/T_0^{i}$ on phase $i \in \{ps, re\}$.
+with $\gamma_1(0)$ the displacement of the cycle's crossing point on a transverse section. Take $\tau_\epsilon$ linear within each phase: $\tau_\epsilon(t) = (T^{ps}_\epsilon/T^{ps}_0)\,t$ on $[0, T^{ps}_0)$ and $\tau_\epsilon(t) = T^{ps}_\epsilon + (T^{re}_\epsilon/T^{re}_0)(t - T^{ps}_0)$ on $[T^{ps}_0, T_0)$; then $\nu_1 = T_1^{i}/T_0^{i}$ on phase $i \in \{ps, re\}$. This is the time scaling the source fixes in Sec. 2.2 before Eq. (10) and uses in Appendix C.3; the first sensitivity formula below depends on the rescaling and uses the iSRC $\gamma_1$ of this phase-wise linear rescaling.
 
 **Local timing response curve (lTRC).** The gradient $\eta_i$ of the time remaining in phase $i$ solves the adjoint equation $\dot\eta_i = -DF_0(\gamma_0(t))^{\mathsf T}\eta_i$ with $\eta_i(z^{out}_0) = -n^{out}/\bigl((n^{out})^{\mathsf T} F_0(z^{out}_0)\bigr)$, where $n^{out}$ is normal to the exit surface. The first-order change of the phase duration is
 

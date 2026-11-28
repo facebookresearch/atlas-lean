@@ -14,7 +14,9 @@
 2. from a unique $M\in\mathrm{TCN}_k(n)$ by
    (a) inserting a reticulation $r$ with child $n+1$ into one tree edge or straddling two tree edges;
    (b) inserting $r$ into one tree edge $(u,v)$ and then rotating so that $v$ becomes the child of $r$ and $n+1$ the child of the inserted tree node above $v$; or
-   (c) inserting $r$ straddling tree edges $(u',v')$ and $(u'',v'')$ and then rotating so that $v''$ becomes the child of $r$ (allowed if $u''$ is not an ancestor of $u'$), or symmetrically $v'$ (allowed if $u'$ is not an ancestor of $u''$).
+   (c) inserting $r$ straddling tree edges $(u',v')$ and $(u'',v'')$ and then rotating so that $v''$ becomes the child of $r$ (allowed if $v''$ is not an ancestor of $v'$), or symmetrically $v'$ (allowed if $v'$ is not an ancestor of $v''$).
+
+The source's Theorem 1(c) prints the side condition as "if $u''$ (resp. $u'$) is not an ancestor of $u'$ (resp. $u''$)". The page states the condition of its own CRotate step instead: the rotation is $\mathrm{CRotate}$ at the node $w''$ inserted in $(u'',v'')$, which requires that $w''$ is not an ancestor of the other parent $w'$ of $r$, that is, that $v''$ is not an ancestor of $v'$. With the printed condition some networks arise in no way (for example, from $M$ with edges $\rho\to a$, $a\to b$, $a\to3$, $b\to1$, $b\to2$, inserting $r$ straddling $(b,1)$ and $(a,3)$ and rotating $3$ under $r$), and the count of $\mathrm{TCN}_1(4)$ comes out as $222$ rather than $228$.
 
 **Theorem (normal networks).** Every normal network in $\mathrm{TCN}_{k+1}(n+1)$ arises either from a unique normal network in $\mathrm{TCN}_{k+1}(n)$ by leaf insertion, or from a unique normal $N\in\mathrm{TCN}_k(n)$ and a pair of incomparable edges $e_1=(u_1,v_1)$, $e_2=(u_2,v_2)$ by inserting $r$ straddling $e_1,e_2$ and optionally rotating $v_1$ (resp. $v_2$) to be the child of $r$. The rotation onto $v_1$ is excluded exactly when $N$ has a reticulate edge $(x,y)$ with $y$ below $v_1$, $x$ not an ancestor of $v_1$, and $x$ an ancestor of $v_2$, and symmetrically for $v_2$.
 

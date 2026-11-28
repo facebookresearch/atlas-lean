@@ -8,9 +8,9 @@ where $\sigma(E, \underline{E}) = \tfrac12\left(\tanh(wE - \underline{E}) + 1\ri
 
 **Proposition.** The domain $\{(q, E) : q \in [0,1],\ E \in [0,\bar E]\}$ is forward invariant, and, writing $\kappa = -z\log\!\left(1 - p\,\sigma(\bar E, \underline{E})\right)$:
 
-1. if $\kappa \le 1$, the only fixed point is $(q_1^*, E_1^*) = (0, \bar E)$;
-2. if $\kappa > 1$ and $\bar E / r \ge 1$, there are at most two fixed points: $(0, \bar E)$, which is a repeller, and possibly one further fixed point $(q_2^*, E_2^*)$;
-3. if $\kappa > 1$ and $\bar E / r < 1$, there are at most three fixed points: $(0, \bar E)$, a repeller; possibly $(q_2^*, E_2^*)$; and possibly $(q_3^*, \bar E)$ with $1 > q_3^* > \bar E / r$ solving $q_3^* = 1 - \left(1 - p\,\sigma(\bar E, \underline{E})\right)^{z q_3^*}$, which, if it exists, is a stable attractor.
+1. if $\kappa \le 1$, the only fixed point is $(q_1^*, E_1^*) = (0, \bar E)$, and it is an attractor when $\kappa < 1$;
+2. if $\kappa > 1$ and $\bar E / r \ge 1$, there are at most two fixed points: $(0, \bar E)$, which is a repeller, and possibly one further fixed point $(q_2^*, E_2^*)$ specified by $0 < q_2^* \le \bar E/\bigl(r(1 + 1/\varepsilon)\bigr)$, $q_2^* < 1$, $q_2^* = 1 - \bigl(1 - p\,\sigma(\bar E - r q_2^*/\varepsilon, \underline{E})\bigr)^{q_2^* z}$ and $E_2^* = \bar E - r q_2^*/\varepsilon$ (source Eq. (6));
+3. if $\kappa > 1$ and $\bar E / r < 1$, there are at most three fixed points: $(0, \bar E)$, a repeller; possibly $(q_2^*, E_2^*)$ specified by Eq. (6) as in item 2; and possibly $(q_3^*, \bar E)$ with $1 > q_3^* > \bar E / r$ solving $q_3^* = 1 - \left(1 - p\,\sigma(\bar E, \underline{E})\right)^{z q_3^*}$, which, if it exists, is a stable attractor.
 
 Despite this simple equilibrium structure, the map produces bursts, periodic and irregular activity resembling recordings from developing neuronal cultures.
 

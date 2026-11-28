@@ -6,7 +6,7 @@ $$\dot x_1(t) = -x_1(t) - \alpha_1 S\big(\beta_1 x_1(t - \tau_1)\big) + \alpha_2
 
 $$\dot x_2(t) = -x_2(t) - \alpha_1 S\big(\beta_1 x_2(t - \tau_1)\big) + \alpha_2 S\big(\beta_2 x_1(t - \tau_2)\big),$$
 
-with $\alpha_i, \beta_i, \tau_i > 0$ and $S$ smooth, strictly increasing, $S(0) = 0$, $S'(0) = 1$. The system is equivariant under the swap $\xi(x_1, x_2) = (x_2, x_1)$.
+with $\alpha_i, \beta_i, \tau_i > 0$ and $S$ smooth with $S' > 0$ (so strictly increasing), $S(0) = 0$, $S'(0) = 1$. The system is equivariant under the swap $\xi(x_1, x_2) = (x_2, x_1)$.
 
 **Theorem (equilibria).** Every equilibrium is symmetric: $f(x^*) = 0$ implies $x^* = (x^*, x^*)$. The origin is always an equilibrium.
 

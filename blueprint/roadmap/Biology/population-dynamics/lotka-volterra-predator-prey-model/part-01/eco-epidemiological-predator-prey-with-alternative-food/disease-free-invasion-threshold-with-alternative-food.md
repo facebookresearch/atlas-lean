@@ -10,7 +10,7 @@ with all parameters positive. Here $\gamma$ is the infection rate, predation on 
 
 **Facts.**
 
-1. All solutions starting in $\mathbb{R}^3_+$ are uniformly bounded (Theorem 1).
+1. If $e > \epsilon c\xi$, $a \ge \epsilon$ and $\beta \ge \eta$, all solutions starting in $\mathbb{R}^3_+$ are uniformly bounded, with $\limsup_{t\to\infty}(s+i+p) \le 1/\theta$, $\theta = \min\{1, d, e - \epsilon c\xi\}$. The source's Theorem 1 prints boundedness for all positive parameters, but its proof needs $\theta > 0$ and drops the terms $-(a-\epsilon)sp/(1+\alpha\xi+bs)$ and $-(\beta-\eta)ip/(1+\alpha\xi)$, which requires $a \ge \epsilon$ and $\beta \ge \eta$; the page states the corrected form, which follows line by line from the theorem's own estimate. Without these conditions the claim fails: the face $s = i = 0$ is invariant, and on it $\dot p = p\bigl(\epsilon c\xi/(1+\alpha\xi) - e\bigr)$ grows exponentially when $\epsilon c\xi > e(1+\alpha\xi)$.
 2. The trivial equilibrium $(0,0,0)$ is always unstable, and the axial equilibrium $(1,0,0)$ is unstable if $\gamma > d$ (disease can invade the predator-free prey population) or $e < \epsilon(1 + c\xi)/(1 + \alpha\xi + b)$ (predators can invade) (Theorem 2).
 3. At a disease-free equilibrium $E_D = (\bar s, 0, \bar p)$ the Jacobian has $a_{21} = a_{23} = 0$, so one eigenvalue is
 
@@ -26,7 +26,7 @@ Condition 3 shows the mechanism of control: alternative food changes $(\bar s, \
 
 ## Expansion
 
-Boundedness follows from a linear differential inequality for $w = s + i + p$. At $E_T$ the eigenvalues are $1$, $-d$ and $\epsilon c\xi/(1+\alpha\xi) - e$; at $E_A$ they are $-1$, $\gamma - d$ and $\epsilon(1+c\xi)/(1+\alpha\xi+b) - e$. At $E_D$ the infected equation decouples to first order because $\dot i$ is proportional to $i$, giving the separable eigenvalue $a_{22}$, which is the per-capita growth rate of a rare infection.
+Under the hypotheses of Fact 1, boundedness follows from the linear differential inequality $\dot w + \theta w \le 1$ for $w = s + i + p$. At $E_T$ the eigenvalues are $1$, $-d$ and $\epsilon c\xi/(1+\alpha\xi) - e$; at $E_A$ they are $-1$, $\gamma - d$ and $\epsilon(1+c\xi)/(1+\alpha\xi+b) - e$. At $E_D$ the infected equation decouples to first order because $\dot i$ is proportional to $i$, giving the separable eigenvalue $a_{22}$, which is the per-capita growth rate of a rare infection.
 
 ## Sources
 

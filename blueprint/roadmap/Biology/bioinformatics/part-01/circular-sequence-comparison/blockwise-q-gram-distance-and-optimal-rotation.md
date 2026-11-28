@@ -16,7 +16,7 @@ $\beta = 1$ recovers $D_q$; larger $\beta$ forces $q$-grams to match in roughly 
 
 **Lemma 2.** With $O(|\Sigma|^q)$ space available, $D_{\beta,q}(x,y)$ can be computed in $O(m+n)$ time and $O((m+n)/\beta)$ extra space.
 
-**Lemma 3 (naive algorithm).** Evaluating $D_{\beta,q}(x'[i..i+m-1], y)$ for $x' = xx$ and every $0 \le i < m$ solves CSC in $O(m(m+n))$ time and $O((m+n)/\beta)$ extra space.
+**Lemma 3 (naive algorithm).** With $O(|\Sigma|^q)$ space available, evaluating $D_{\beta,q}(x'[i..i+m-1], y)$ for $x' = xx$ and every $0 \le i < m$ solves CSC in $O(m(m+n))$ time and $O((m+n)/\beta)$ extra space.
 
 **Theorem 1 (suffix-array algorithm).** CSC can be solved exactly in $O(\beta m + n)$ time and space.
 

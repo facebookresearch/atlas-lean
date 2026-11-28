@@ -8,13 +8,21 @@ for a constant $c>0$. The number of long edges at a vertex is then asymptoticall
 
 $$\chi_v(t+1)=\mathbf 1\Big(\sum_{u\in N(v)}\chi_u(t)\ge k\Big),$$
 
-where $N(v)$ is the closed neighbourhood of $v$ in $G$ ($v$ together with its neighbours) and $k\in\{0,\dots,5\}$ is the activation threshold. Let $\rho_t=|A(t)|/N^2$ be the active fraction.
+where $N(v)$ is the closed neighbourhood of $v$ in $G$ ($v$ together with its neighbours) and $k\in\{0,\dots,5\}$ is the activation threshold. Let $A(t)$ be the set of active vertices and $\hat\rho_t=|A(t)|/N^2$ the true active fraction.
 
-**Theorem (mean-field phase transition).** Let $\bar f_k(x)=\mathbb P[\mathrm{Bin}(Y+5,x)\ge k]$ with $Y\sim\mathrm{Po}(\lambda)$, the mean-field map for $\rho_t$. There is a critical initial activation probability $p_c=p_c(k,\lambda)$ such that for fixed $p_0$, with high probability as $N\to\infty$, every vertex is eventually active if $p_0>p_c$, and every vertex is eventually inactive if $p_0<p_c$. Explicitly:
+**Mean-field approximation.** In the mean-field approximation of the activation process (Janson et al., Section 5), each vertex samples a new set of neighbours at every step, so the state is described by the mean-field density $\rho_t$ alone: $\rho_0=p_0$ and, given $\rho_t$,
+
+$$N^2\rho_{t+1}=\mathrm{Bin}\bigl(N^2\rho_t,\,f^+(\rho_t)\bigr)+\mathrm{Bin}\bigl(N^2(1-\rho_t),\,f^-(\rho_t)\bigr)$$
+
+(source Eq. (5.1)), where $f^+(x)$ (resp. $f^-(x)$) is the probability that an active (resp. inactive) vertex, whose $4$ lattice neighbours and long-edge neighbours are each independently active with probability $x$, has at least $k$ active vertices in its closed neighbourhood. As $N\to\infty$, $\rho_t$ becomes deterministic with $\rho_{t+1}=\bar f_k(\rho_t)$, where $\bar f_k(x)=\mathbb P[\mathrm{Bin}(Y+5,x)\ge k]$ with $Y\sim\mathrm{Po}(\lambda)$ is the mean-field map for $\rho_t$.
+
+**Theorem (mean-field phase transition).** In the mean-field approximation of the activation process, there is a critical initial activation probability $p_c=p_c(k,\lambda)$ such that for fixed $p_0$, with high probability as $N\to\infty$, every vertex is eventually active if $p_0>p_c$, and every vertex is eventually inactive if $p_0<p_c$. Explicitly:
 
 1. $p_c=0$ for $k\le1$;
 2. $p_c=x_k(\lambda)$ for $k=2,3,4$, where $x_k(\lambda)\in(0,1)$ is the nontrivial solution of $x=\bar f_k(x)$;
 3. for $k=5$, $p_c=x_5(\lambda)$, the nontrivial solution of $x=\bar f_5(x)$ in $(0,1)$, if $\lambda>\ln5$, and $p_c=1$ if $\lambda\le\ln5$.
+
+These values describe the mean-field approximation only. For the true process $\hat\rho_t$, Janson et al. prove (Proposition 1) that, with high probability, $p_c=o(1)$ for $0\le k\le2$ and $p_c=1-o(1)$ for $3\le k\le5$, for every $\lambda\ge0$.
 
 ## Expansion
 

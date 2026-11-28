@@ -9,7 +9,9 @@ with independent standard Wiener processes $B_1,B_2$, bounded noise strengths $\
 - *Stochastic forward Euler (SFE):* $P^{k+1}_j=D_1(P^k_{j+1}+P^k_{j-1})+(1-2D_1)P^k_j+\Delta\tau\,P^k_j(a-bP^k_j)-\Delta\tau\,\frac{cP^k_jQ^k_j}{mQ^k_j+P^k_j}+\eta_1P^k_j\Delta B_1^k$, and analogously for $Q$.
 - *Stochastic nonstandard finite differences (Mickens type):* the diagonal and loss terms move to the new time level,
 
-$$P^{k+1}_j=\frac{D_1(P^k_{j+1}+P^k_{j-1})+(1+a\Delta\tau)P^k_j+\eta_1P^k_j\Delta B_1^k}{1+2D_1+b\Delta\tau P^k_j+c\Delta\tau\,Q^k_j/(mQ^k_j+P^k_j)},\quad Q^{k+1}_j=\frac{D_2(Q^k_{j+1}+Q^k_{j-1})+f\Delta\tau\,\frac{P^k_jQ^k_j}{mQ^k_j+P^k_j}+\eta_2Q^k_j\Delta B_2^k}{1+2D_2+d\Delta\tau}.$$
+$$P^{k+1}_j=\frac{D_1(P^k_{j+1}+P^k_{j-1})+(1+a\Delta\tau)P^k_j+\eta_1P^k_j\Delta B_1^k}{1+2D_1+b\Delta\tau P^k_j+c\Delta\tau\,Q^k_j/(mQ^k_j+P^k_j)},\quad Q^{k+1}_j=\frac{D_2(Q^k_{j+1}+Q^k_{j-1})+Q^k_j+f\Delta\tau\,\frac{P^k_jQ^k_j}{mQ^k_j+P^k_j}+\eta_2Q^k_j\Delta B_2^k}{1+2D_2+d\Delta\tau}.$$
+
+The source's Eq. (14) prints the predator numerator without the term $Q^k_j$; the page restores it as the source's own consistency computation (26) and linearization (28) contain it. Without it, inserting a smooth solution leaves an $O(1)$ residual $Q(x_j,t_k)$ in the truncation error, and the predator scheme is not consistent.
 
 **Statement (von Neumann analysis in mean square, linearized prey equation).** For a Fourier mode $e^{\iota j\theta}$, $\theta\in[-\pi,\pi]$, the amplification factors are
 

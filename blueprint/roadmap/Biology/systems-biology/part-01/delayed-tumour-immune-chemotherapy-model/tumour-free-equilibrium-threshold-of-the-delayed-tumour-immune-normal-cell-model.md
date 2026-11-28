@@ -24,13 +24,13 @@ $$
 r_2<\frac{n\sigma}{\delta}+c_1 ,
 $$
 
-and unstable if $\lambda_2>0$, i.e. if $r_2>n\sigma/\delta+c_1$; at $\lambda_2=0$ the linearization does not decide. (The source states the sufficient direction: "$E_0$ is locally stable if $\lambda_2<0$ if and only if $r_2<n\sigma/\delta+c_1$, $\forall\tau\ge0$", Eq. (13).)
+(The source states only this sufficient direction: "$E_0$ is locally stable if $\lambda_2<0$ if and only if $r_2<n\sigma/\delta+c_1$, $\forall\tau\ge0$", Eq. (13).)
 
 The lethal state $(\sigma/\delta,0,0)$ has eigenvalues $-\delta$, $r_2-n\sigma/\delta$ and $r_3>0$, so it is always an unstable saddle.
 
 ## Expansion
 
-At $E_0$ the factor $T$ multiplies every delayed term, so the characteristic matrix is upper triangular apart from $e^{-\lambda\tau}$ factors in the $(E,T)$ entry, and the delay cannot move the eigenvalues. The quantity $n\sigma/\delta$ is the per-capita kill exerted by the tumour-free immune equilibrium $\sigma/\delta$; the condition says immune kill plus competition from normal tissue must exceed intrinsic tumour growth. If the condition fails, no therapy can drive the system to a stable tumour-free state, which motivates the optimal control formulation of the companion article. Coexisting equilibria $(f(T^*),T^*,1-(c_2/r_3)T^*)$ solve a cubic in $T^*$ and can number zero to three; for those, stability can be lost at a critical delay through a Hopf bifurcation.
+At $E_0$ the factor $T$ multiplies every delayed term, so the characteristic matrix is upper triangular apart from $e^{-\lambda\tau}$ factors in the $(E,T)$ entry, and the delay cannot move the eigenvalues. The quantity $n\sigma/\delta$ is the per-capita kill exerted by the tumour-free immune equilibrium $\sigma/\delta$; the condition says immune kill plus competition from normal tissue must exceed intrinsic tumour growth. If the condition fails, this criterion no longer guarantees a stable tumour-free state, which motivates the optimal control formulation of the companion article. Coexisting equilibria $(f(T^*),T^*,1-(c_2/r_3)T^*)$ solve a cubic in $T^*$ and can number zero to three; for those, stability can be lost at a critical delay through a Hopf bifurcation.
 
 ## Sources
 

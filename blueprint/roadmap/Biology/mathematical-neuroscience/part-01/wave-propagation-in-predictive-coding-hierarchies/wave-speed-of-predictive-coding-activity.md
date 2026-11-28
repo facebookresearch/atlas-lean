@@ -6,11 +6,11 @@ $$c_0=\frac{\beta+\alpha-\lambda}{1-\beta},\quad\sigma_0=\frac{\beta(1-\alpha-\l
 
 with $\sigma_0,\sigma_\pi>0$.
 
-**Result.** The fundamental solution is, to leading order, a Gaussian wave travelling at speed $c_0$ layers per step:
+**Result.** If $0\le\alpha+\lambda<1$, the fundamental solution is, to leading order, a Gaussian wave travelling at speed $c_0$ layers per step: there are constants $C,\kappa>0$, depending only on the hyper-parameters and not on $n$ and $j$ (and, for $\beta>0$, a constant $L>0$), such that
 
-$$G_j^n\approx\frac{1}{\sqrt{4\pi\sigma_0n}}\exp\Big(-\frac{(j-c_0n)^2}{4\sigma_0n}\Big)$$
+$$G_j^n=\frac{1}{\sqrt{4\pi\sigma_0n}}\exp\Big(-\frac{|j-c_0n|^2}{4\sigma_0n}\Big)+\mathcal N_j^n,\qquad |\mathcal N_j^n|\le\frac Cn\exp\Big(-\kappa\frac{|j-c_0n|^2}{n}\Big),$$
 
-up to a remainder with a Gaussian bound in $(j-c_0n)/\sqrt n$ (and, for $\beta>0$, an exponentially small tail far ahead). Activity propagates forward (up the hierarchy) iff $\alpha+\beta>\lambda$, backward iff $\alpha+\beta<\lambda$, and stalls when $\alpha+\beta=\lambda$. When $\alpha+\lambda=1$ a secondary wave at speed $c_\pi$ appears, with $c_\pi<0$ iff $\alpha<\beta+\lambda$, $0<c_\pi<c_0$ when $\beta+\lambda<\alpha$, and $c_\pi=0$ (blocked) when $\beta+\lambda=\alpha$; for $\beta=0$ the two waves coincide and the profile carries a factor $1+(-1)^{n+j}$.
+for $|j|\le n$ when $\beta=0$, and for $-n\le j\le Ln$ when $\beta>0$, in which case moreover $|G_j^n|\le Ce^{-\kappa n-\kappa j}$ for $j>Ln$. If $\alpha+\lambda=1$ and $\beta=0$, then $c_0=c_\pi$, $\sigma_0=\sigma_\pi$, and the same holds for $|j|\le n$ with the Gaussian multiplied by $1+(-1)^{n+j}$. Activity propagates forward (up the hierarchy) iff $\alpha+\beta>\lambda$, backward iff $\alpha+\beta<\lambda$, and stalls when $\alpha+\beta=\lambda$. When $\alpha+\lambda=1$ and $\beta>0$, the source states only qualitatively that a secondary wave at speed $c_\pi$ appears, with $c_\pi<0$ iff $\alpha<\beta+\lambda$, $0<c_\pi<c_0$ when $\beta+\lambda<\alpha$, and $c_\pi=0$ (blocked) when $\beta+\lambda=\alpha$.
 
 For $\beta=0$ the scheme is explicit: solutions stay non-negative for non-negative data and $G_j^n=0$ for $|j|>n$, so $c_0=\alpha-\lambda\in(-1,1)$. For $\beta>0$ it is implicit, $G_j^n=0$ only for $j<-n$, and $c_0\to+\infty$ as $\beta\to1^-$.
 

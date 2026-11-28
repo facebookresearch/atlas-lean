@@ -16,7 +16,7 @@ $$D_{0,t}^{\alpha}I=c\,I-\frac{\beta}{N}I^2,\qquad I(0)=I_0,\qquad c=\beta-(e+\g
 
 $$I(t)=\frac{cI_0}{\frac{\beta}{N}I_0+\big(c-\frac{\beta}{N}I_0\big)e^{-ct}}\quad(c\ne0),\qquad I(t)=\frac{I_0}{1+\beta I_0t/N}\quad(c=0).$$
 
-(4) *Isolated infecteds.* If $\beta=0$ the equation is linear, $D^\alpha_{0,t}I=-(e+\gamma)I$, and the iteration sums exactly to $I(t)=I_0\,E_{\alpha}\!\big(-(e+\gamma)t^{\alpha}\big)$, a Mittag-Leffler decay that is slower than exponential for $\alpha<1$ (memory delays eradication).
+(4) *Isolated infecteds.* If $\beta=0$ the equation is linear, $D^\alpha_{0,t}I=-(e+\gamma)I$, and the iteration sums exactly to $I(t)=I_0\,E_{\alpha}\!\big(-(e+\gamma)t^{\alpha}\big)$, a Mittag-Leffler decay; as the source notes, the smaller $\alpha$, the more time the infection takes to vanish.
 
 ## Expansion
 

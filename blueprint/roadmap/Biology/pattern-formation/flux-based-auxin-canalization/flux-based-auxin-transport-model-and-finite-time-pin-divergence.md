@@ -16,7 +16,7 @@ $$\frac{da_i}{dt}=\alpha_{a_i}-\beta_{a_i}a_i+\sum_{k\sim i}\big(a_kp_{ki}-a_ip_
 
 with $J_{i\to j}=a_ip_{ij}-a_jp_{ji}$. If a solution of the slow system converges to an equilibrium, then for small enough $\varepsilon$ the solution of the PIN-cycling model with the same initial condition stays in a small neighbourhood of that slow solution for all $t\ge0$.
 
-**Proposition.** If $\alpha_{a_i},\beta_{a_i},\mu,\lambda,\alpha_p/\beta_p>0$ and $\Phi$ is bounded, the slow system has a unique solution defined for all $t\ge0$. If $\Phi$ is unbounded, the solution either exists for all $t\ge0$ or only on a bounded interval $[0,\delta)$, on which it diverges to $\infty$ as $t\to\delta$; finite-time divergence of PIN concentrations does occur for unbounded $\Phi$ (e.g. quadratic).
+**Proposition.** Assume $\alpha_{a_i},\beta_{a_i},\mu,\lambda,\alpha_p/\beta_p>0$ and that $\Phi$ is locally Lipschitz (as the linear and quadratic responses are). If $\Phi$ is bounded, the slow system has a unique solution defined for all $t\ge0$. If $\Phi$ is unbounded, the solution either exists for all $t\ge0$ or only on a bounded interval $[0,\delta)$, on which it diverges to $\infty$ as $t\to\delta$; finite-time divergence of PIN concentrations does occur for unbounded $\Phi$ (e.g. quadratic).
 
 ## Expansion
 

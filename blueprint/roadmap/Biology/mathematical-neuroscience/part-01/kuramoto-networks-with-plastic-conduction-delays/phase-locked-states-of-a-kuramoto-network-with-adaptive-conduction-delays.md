@@ -1,6 +1,6 @@
 # Phase-locked states of a Kuramoto network with adaptive conduction delays
 
-Consider the delayed Kuramoto network of the [non-plastic model](global-frequency-and-linear-stability-of-the-delayed-kuramoto-network.md), but with time-dependent delays $\tau_{ij}(t) \ge 0$ obeying the phase-dependent plasticity rule (time scale set to one)
+Consider the delayed Kuramoto network of the [non-plastic model](global-frequency-and-linear-stability-of-the-delayed-kuramoto-network.md), with no self-coupling ($a_{ii} = 0$ for every $i$), but with time-dependent delays $\tau_{ij}(t) \ge 0$ obeying the phase-dependent plasticity rule (time scale set to one)
 
 $$\frac{d\tau_{ij}}{dt} = H(\tau_{ij})\bigl[-(\tau_{ij} - \tau^0_{ij}) + \kappa\,\sin(\theta_j - \theta_i)\bigr], \qquad \tau_{ij}(0) = \tau^0_{ij} \ge 0,$$
 
@@ -14,7 +14,7 @@ $$(M_\lambda)_{ii} = \lambda(\lambda+1) + \frac{g}{N}\sum_j a_{ij}C_{ij}\bigl(\l
 
 $$(M_\lambda)_{ij} = \frac{g}{N}\,a_{ij}C_{ij}\bigl[\Omega\kappa C^0_{ij}H_{ij} - (\lambda+1)e^{-\lambda\tau^E_{ij}}\bigr] \quad (i \ne j).$$
 
-The state is linearly stable when every non-neutral root of $\det M_\lambda = 0$ has negative real part. For $\kappa = 0$ the delays stay at $\tau^0_{ij}$, the offsets vanish, and the criterion reduces to the non-plastic one.
+The state is linearly stable when every non-neutral root of $\det M_\lambda = 0$ has negative real part. For $\kappa = 0$ the delays stay at $\tau^0_{ij}$, the offsets vanish, and the criterion reduces to the non-plastic one. The source's Eq. (1) does not exclude $a_{ii} = 1$ (its two-oscillator section sets $a_{11} = a_{22} = 0$ "to remove all self-integration terms"), and its Eq. (14) gives the diagonal entry exactly as displayed above, dropping the $j = i$ term $\frac{g}{N}a_{ii}C_{ii}\bigl[\Omega\kappa C^0_{ii}H_{ii} - (\lambda+1)e^{-\lambda\tau^E_{ii}}\bigr]$ that Eq. (13) produces when $a_{ii} = 1$; with no self-coupling, as assumed here, Eq. (14) holds as printed.
 
 ## Depends on
 
