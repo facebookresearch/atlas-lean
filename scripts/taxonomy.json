@@ -11723,6 +11723,7 @@
   "MathlibExt/Combinatorics/Enumerative/Partition/DiagonalSequences": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Diagonal sequences of integer partitions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/DistinctConstantBlockPartitions": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "Distinct constant-block partitions and colored compositions"},
   "MathlibExt/Combinatorics/Enumerative/Partition/DistinctOddPartsTriangularParity": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Overpartitions into odd parts"},
+  "MathlibExt/Combinatorics/Enumerative/Partition/EulerQuotientInversePsiThreeDissection": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Overpartition congruences"},
   "MathlibExt/Combinatorics/Enumerative/Partition/EulerQuotientSixNineIdentity": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Overpartition congruences"},
   "MathlibExt/Combinatorics/Enumerative/Partition/EulerQuotientThreeDissection": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Overpartitions with even parts distinct"},
   "MathlibExt/Combinatorics/Enumerative/Partition/ExponentialLowerBound": {"to": "Combinatorics/integer-partitions/counting-partitions", "title": "Bounds on the partition function"},
