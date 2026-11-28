@@ -1,6 +1,6 @@
 # Return distributions and policy evaluation
 
-The return distribution of a policy in a finite MDP with a joint reward and next-state kernel, the distributional Bellman operator, the maximal Wasserstein metric, and the γ-contraction that makes the return distribution the limit of distributional Bellman iterates.
+The return distribution of a policy in a finite MDP with a joint reward and next-state kernel, the distributional Bellman operator, the maximal Wasserstein metric, and, under finite reward moments, the γ-contraction that makes the return distribution the limit of distributional Bellman iterates.
 
 - [Finite MDP with a joint reward and next-state kernel](reward-and-transition-kernel-mdp.md)
 - [Return-distribution function](return-distribution-function.md)

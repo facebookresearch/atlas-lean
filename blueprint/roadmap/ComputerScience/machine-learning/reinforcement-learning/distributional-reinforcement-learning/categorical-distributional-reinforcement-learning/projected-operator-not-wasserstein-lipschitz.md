@@ -1,17 +1,22 @@
-# The projected categorical operator is not Lipschitz in the maximal Wasserstein metric
+# The projected categorical operator is not a contraction in the maximal Wasserstein metric
 
-For $1 < p < \infty$ and every discount $\gamma \in (0,1)$, the projected categorical operator can expand maximal Wasserstein distances by an arbitrarily large factor. It is not a contraction in $\bar d_p$.
+For $1 < p < \infty$ the categorical projection can expand $p$-Wasserstein distances, so the projected categorical operator is in general not a contraction in $\bar d_p$.
 
-Let $1 < p < \infty$, $\gamma \in (0,1)$ and a grid $z_1 < \dots < z_K$ with $K \ge 2$; write $\Delta = z_2 - z_1$ and $c = (z_1 + z_2)/2$. Take the MDP with one state $x$, one action $a$ and the [reward–transition kernel](../return-distributions-and-policy-evaluation/reward-and-transition-kernel-mdp.md) $\delta_c \otimes \delta_x$, so the reward is the constant $c$. Let $\Pi_{\mathcal{C}}$ be the [categorical projection](../categorical-distributional-reinforcement-learning/categorical-projection.md), $\mathcal{T}^\pi$ the [distributional Bellman operator](../return-distributions-and-policy-evaluation/distributional-bellman-operator.md) of the only policy, and $\bar d_p$ the [maximal Wasserstein metric](../return-distributions-and-policy-evaluation/maximal-wasserstein-metric.md). For $0 < h < \Delta/(2\gamma)$ let $\eta = \delta_0$ and $\mu = \delta_h$. Then
+Let $1 < p < \infty$, let $\Pi_{\mathcal{C}}$ be the [categorical projection](../categorical-distributional-reinforcement-learning/categorical-projection.md) onto the grid $\{0, 1\}$ and $W_p$ the [Wasserstein distance of order $p$](../../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein.md). Then
 
-$$\bar d_p(\eta, \mu) = h, \qquad \bar d_p(\Pi_{\mathcal{C}} \mathcal{T}^\pi \eta, \Pi_{\mathcal{C}} \mathcal{T}^\pi \mu) = (\gamma h)^{1/p} \Delta^{1 - 1/p}.$$
+$$W_p(\delta_{1/4}, \delta_{3/4}) = \tfrac12, \qquad W_p(\Pi_{\mathcal{C}} \delta_{1/4}, \Pi_{\mathcal{C}} \delta_{3/4}) = 2^{-1/p} > \tfrac12.$$
 
-The ratio $\gamma^{1/p} \Delta^{1 - 1/p} h^{1/p - 1}$ tends to $\infty$ as $h \to 0$. So for every $L \ge 0$ there are $\eta, \mu \in \mathscr{P}_p(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$ with $\bar d_p(\Pi_{\mathcal{C}} \mathcal{T}^\pi \eta, \Pi_{\mathcal{C}} \mathcal{T}^\pi \mu) > L \, \bar d_p(\eta, \mu)$.
+Consequently, take the MDP with one state $x$, one action $a$, reward $0$ (the [reward–transition kernel](../return-distributions-and-policy-evaluation/reward-and-transition-kernel-mdp.md) $\delta_0 \otimes \delta_x$), a discount $\gamma \in (2^{1/p - 1}, 1)$, the [distributional Bellman operator](../return-distributions-and-policy-evaluation/distributional-bellman-operator.md) $\mathcal{T}^\pi$ of the only policy and the [maximal Wasserstein metric](../return-distributions-and-policy-evaluation/maximal-wasserstein-metric.md) $\bar d_p$. For $\eta = \delta_{1/(4\gamma)}$ and $\mu = \delta_{3/(4\gamma)}$,
+
+$$\bar d_p(\eta, \mu) = \frac{1}{2\gamma} < 2^{-1/p} = \bar d_p(\Pi_{\mathcal{C}} \mathcal{T}^\pi \eta, \Pi_{\mathcal{C}} \mathcal{T}^\pi \mu),$$
+
+so $\Pi_{\mathcal{C}} \mathcal{T}^\pi$ is not a non-expansion, and in particular not a contraction, in $\bar d_p$.
 
 ## Depends on
 
-- [Finite MDP with a joint reward and next-state kernel](../return-distributions-and-policy-evaluation/reward-and-transition-kernel-mdp.md)
 - [Categorical projection onto a fixed grid](../categorical-distributional-reinforcement-learning/categorical-projection.md)
+- [Wasserstein distance of order p](../../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein.md)
+- [Finite MDP with a joint reward and next-state kernel](../return-distributions-and-policy-evaluation/reward-and-transition-kernel-mdp.md)
 - [Distributional Bellman operator](../return-distributions-and-policy-evaluation/distributional-bellman-operator.md)
 - [Maximal Wasserstein metric](../return-distributions-and-policy-evaluation/maximal-wasserstein-metric.md)
 
@@ -26,9 +31,9 @@ The ratio $\gamma^{1/p} \Delta^{1 - 1/p} h^{1/p - 1}$ tends to $\infty$ as $h \t
 
 ## Expansion
 
-$\bar d_p(\delta_0, \delta_h) = h$ is the [distance between Dirac masses](../../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein-dirac.md). The images are $\mathcal{T}^\pi \eta = \delta_c$ and $\mathcal{T}^\pi \mu = \delta_{c + \gamma h}$, and $z_1 < c < c + \gamma h < z_2$. Their projections are $\frac12 \delta_{z_1} + \frac12 \delta_{z_2}$ and $(\frac12 - \frac{\gamma h}{\Delta}) \delta_{z_1} + (\frac12 + \frac{\gamma h}{\Delta}) \delta_{z_2}$. For two laws on $\{z_1, z_2\}$ whose masses at $z_1$ differ by $s$, every coupling moves at least mass $s$ across distance $\Delta$, and moving exactly that mass is a coupling; so $W_p^p = s \Delta^p$ ([every coupling bounds the distance](../../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein-le-of-is-coupling.md) for the upper bound). With $s = \gamma h/\Delta$ this gives the display.
+$W_p(\delta_{1/4}, \delta_{3/4}) = \frac12$ is the [distance between Dirac masses](../../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein-dirac.md). The projections are $\frac34 \delta_0 + \frac14 \delta_1$ and $\frac14 \delta_0 + \frac34 \delta_1$. For two laws on $\{0, 1\}$ whose masses at $0$ differ by $s$, every coupling moves at least mass $s$ across distance $1$, and moving exactly that mass is a coupling ([every coupling bounds the distance](../../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein-le-of-is-coupling.md)); so $W_p^p = s$, here $s = \frac12$, giving $2^{-1/p}$, which exceeds $\frac12$ exactly when $p > 1$. In the MDP, $\mathcal{T}^\pi \eta = (S_\gamma)_\# \eta = \delta_{1/4}$ and $\mathcal{T}^\pi \mu = \delta_{3/4}$, while $\bar d_p(\eta, \mu) = 1/(2\gamma)$; the condition $\gamma > 2^{1/p - 1}$ is $1/(2\gamma) < 2^{-1/p}$.
 
-Rowland and coauthors prove their Lemma 2 by showing that $\Pi_{\mathcal{C}}$ alone expands $\delta_{1/4}, \delta_{3/4}$ on the grid $\{0, 1\}$: the $d_p$-distance goes from $\frac12$ to $2^{-1/p} > \frac12$. They call that enough, but embedding those Dirac masses in a one-state MDP gives the ratio $\gamma \, 2^{1 - 1/p}$, which exceeds $1$ only when $\gamma > 2^{1/p - 1}$. The family above, with inputs approaching each other, covers every $\gamma \in (0,1)$. The statement is existential: it exhibits one MDP. At $\gamma = 0$ the operator is constant. For $p = 1$ the same computation gives the ratio $\gamma$; the source's remark that contractivity in $\bar d_1$ is maintained is not proved there and is not stated here.
+Rowland and coauthors state that $\Pi_{\mathcal{C}} \mathcal{T}^\pi$ is "in general" not a contraction for $p > 1$ and prove it by exhibiting the expansion of $\Pi_{\mathcal{C}}$ on $\delta_{1/4}, \delta_{3/4}$, which they call enough. The one-state MDP above is the step that turns their witness into a pair for $\Pi_{\mathcal{C}} \mathcal{T}^\pi$; it needs $\gamma > 2^{1/p - 1}$, and $\gamma = 0$ would make the operator constant. A remark derived here and not part of the statement: with inputs $\delta_0$ and $\delta_h$, a reward at the midpoint of the grid cell and $h \to 0$, the ratio of output to input distance is unbounded for every $\gamma \in (0,1)$. For $p = 1$ the source's remark that contractivity in $\bar d_1$ is maintained is not proved there and is not stated here.
 
 ## Sources
 

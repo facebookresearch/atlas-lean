@@ -12,7 +12,7 @@ Bellemare, Dabney and Munos call such an object a value distribution and write i
 
 ## Depends on
 
-None.
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 

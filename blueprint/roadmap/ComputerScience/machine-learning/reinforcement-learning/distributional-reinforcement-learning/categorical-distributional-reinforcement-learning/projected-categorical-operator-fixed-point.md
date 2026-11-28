@@ -6,11 +6,9 @@ Fix a grid $z_1 < z_2 < \dots < z_K$ with $K \ge 2$. Let $\mathsf{p}$ be a rewar
 
 1. for all $\eta, \mu \in \mathscr{P}(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$, $\bar \ell_2(\Pi_{\mathcal{C}} \mathcal{T}^\pi \eta, \Pi_{\mathcal{C}} \mathcal{T}^\pi \mu) \le \sqrt{\gamma} \, \bar \ell_2(\eta, \mu)$;
 2. there is exactly one $\eta_{\mathcal{C}} \in \mathscr{P}(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$ with $\Pi_{\mathcal{C}} \mathcal{T}^\pi \eta_{\mathcal{C}} = \eta_{\mathcal{C}}$, and it lies in $\mathscr{P}_{\mathcal{C}}^{\mathcal{X} \times \mathcal{A}}$;
-3. for every $\eta_0 \in \mathscr{P}(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$ and $m \ge 1$,
+3. for every $\eta_0 \in \mathscr{P}(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$, $(\Pi_{\mathcal{C}} \mathcal{T}^\pi)^m \eta_0 \to \eta_{\mathcal{C}}$ in $\bar \ell_2$ as $m \to \infty$.
 
-$$\bar \ell_2\bigl((\Pi_{\mathcal{C}} \mathcal{T}^\pi)^m \eta_0, \eta_{\mathcal{C}}\bigr) \le \gamma^{(m-1)/2} \, (z_K - z_1)^{1/2},$$
-
-so $(\Pi_{\mathcal{C}} \mathcal{T}^\pi)^m \eta_0 \to \eta_{\mathcal{C}}$ in $\bar \ell_2$. No moment condition on the rewards is needed.
+No moment condition on the rewards is needed.
 
 ## Depends on
 
@@ -31,7 +29,7 @@ Item 1 composes the [$\sqrt{\gamma}$-contraction of $\mathcal{T}^\pi$](../catego
 
 **Existence.** A law $\nu$ on the grid is determined by the vector $(F_\nu(z_1), \dots, F_\nu(z_{K-1}))$, which ranges over the closed set of nondecreasing vectors in $[0,1]^{K-1}$, and $\ell_2^2(\nu, \nu') = \sum_{i<K} (z_{i+1} - z_i) (F_\nu(z_i) - F_{\nu'}(z_i))^2$. So $(\mathscr{P}_{\mathcal{C}}^{\mathcal{X} \times \mathcal{A}}, \bar \ell_2)$ is isometric to a closed bounded subset of a finite-dimensional normed space, with the maximum of weighted Euclidean norms. It is therefore compact, and in particular complete. $\Pi_{\mathcal{C}} \mathcal{T}^\pi$ maps it into itself and is a $\sqrt{\gamma}$-contraction with $\sqrt{\gamma} < 1$. The contraction mapping theorem (Mathlib's `ContractingWith.fixedPoint`) gives a fixed point $\eta_{\mathcal{C}}$ there.
 
-**Uniqueness and rate.** Every fixed point lies in the image of $\Pi_{\mathcal{C}}$, so on the grid. Two return-distribution functions on the grid are at $\bar \ell_2$-distance at most $(z_K - z_1)^{1/2}$, since the distribution-function difference vanishes off $[z_1, z_K)$ and is at most $1$. A contraction has at most one fixed point at finite distance. For any $\eta_0$, $\eta_1 = \Pi_{\mathcal{C}} \mathcal{T}^\pi \eta_0$ is on the grid, so $\bar \ell_2(\eta_1, \eta_{\mathcal{C}}) \le (z_K - z_1)^{1/2}$, and item 1 applied $m - 1$ more times gives the rate.
+**Uniqueness and rate.** Every fixed point lies in the image of $\Pi_{\mathcal{C}}$, so on the grid. Two return-distribution functions on the grid are at $\bar \ell_2$-distance at most $(z_K - z_1)^{1/2}$, since the distribution-function difference vanishes off $[z_1, z_K)$ and is at most $1$. A contraction has at most one fixed point at finite distance. For any $\eta_0$, $\eta_1 = \Pi_{\mathcal{C}} \mathcal{T}^\pi \eta_0$ is on the grid, so $\bar \ell_2(\eta_1, \eta_{\mathcal{C}}) \le (z_K - z_1)^{1/2}$, and item 1 applied $m - 1$ more times gives $\bar \ell_2((\Pi_{\mathcal{C}} \mathcal{T}^\pi)^m \eta_0, \eta_{\mathcal{C}}) \le \gamma^{(m-1)/2} (z_K - z_1)^{1/2}$, hence the convergence. That explicit rate is derived here and is not part of the statement, which follows Rowland and coauthors' convergence claim.
 
 Rowland and coauthors write that the second claim "follows immediately from the Banach fixed point theorem" without naming a complete space; on $\mathscr{P}(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$ the metric $\bar \ell_2$ takes infinite values. The argument above supplies the space. Their claim for any initial $\eta_0$ is correct here, because the first step lands on the grid. Extraction of the PDF text displaces the radical in this proposition; the factor is $\sqrt{\gamma}$, as the source TeX shows.
 

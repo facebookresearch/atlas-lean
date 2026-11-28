@@ -1,6 +1,6 @@
 # Distributional control
 
-Distributional Bellman optimality operators built from greedy selection rules: their means contract to the optimal action values, but the operators themselves need not contract or have fixed points.
+Distributional Bellman optimality operators built from greedy selection rules: for product kernels with finite moments their means contract to the optimal action values, but the operators themselves need not contract or have fixed points.
 
 - [Greedy policies for a return-distribution function](greedy-policies-for-return-distributions.md)
 - [Distributional Bellman optimality operator](distributional-bellman-optimality-operator.md)

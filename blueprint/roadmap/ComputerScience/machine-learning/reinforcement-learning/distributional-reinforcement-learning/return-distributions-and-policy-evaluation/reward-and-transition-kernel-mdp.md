@@ -18,13 +18,14 @@ $$M_q = \max_{(x,a) \in \mathcal{X} \times \mathcal{A}} \Bigl( \int_{\mathbb{R} 
 
 No moment condition is standing: a page that uses $M_1 < \infty$ or $M_q < \infty$ assumes it explicitly, and $M_q < \infty$ gives $M_1 \le M_q$ by Jensen's inequality. The Cramér-distance, projection, projected-operator and categorical evaluation pages need no moment condition; the categorical error bounds and categorical Q-learning assume $M_1 < \infty$. When $M_1 < \infty$, the mean reward is $\bar r(x,a) = \int r \, \mathsf{p}(dr, dx' \mid x,a)$; without that condition the integral may be undefined (for example for Cauchy rewards), and no page uses $\bar r$ without assuming $M_1 < \infty$.
 
-**Product kernels.** Bellemare, Dabney and Munos model the reward $R(x,a)$ as a random variable independent of the next state, that is $\mathsf{p}(\cdot \mid x,a) = R(x,a) \otimes P(\cdot \mid x,a)$, so that $\rho_{x,a,x'}$ is the law of $R(x,a)$ for every $x'$ with $P(x' \mid x,a) > 0$. That is a special case: a joint kernel whose reward law depends on the next state is not a product kernel, and the pages of this topic never replace one by the other. Every positive result of the topic is stated for joint kernels, so it covers product kernels; every counterexample uses a product kernel, so it is a counterexample for joint kernels too.
+**Product kernels.** Bellemare, Dabney and Munos model the reward $R(x,a)$ as a random variable independent of the next state, that is $\mathsf{p}(\cdot \mid x,a) = R(x,a) \otimes P(\cdot \mid x,a)$, so that $\rho_{x,a,x'}$ is the law of $R(x,a)$ for every $x'$ with $P(x' \mid x,a) > 0$. That is a special case: a joint kernel whose reward law depends on the next state is not a product kernel, and the pages of this topic never replace one by the other. Results stated for joint kernels cover product kernels, and every counterexample uses a product kernel, so it is a counterexample for joint kernels too. The two pages on means of distributional updates state the source's product-kernel identities; their joint-kernel computation is a remark in their expansions.
 
 Policies are [stochastic policies](../../stochastic-policies-and-discounted-occupancy/stochastic-policy.md) $\pi(\cdot \mid x)$ on $\mathcal{A}$.
 
 ## Depends on
 
 - [Stochastic Markov decision process](../../../../heuristic-search-and-planning/value-iteration/stochastic.md)
+- [Probability measure](../../../../../Probability/foundations/probability-measures/is-probability-measure.md)
 
 ## Proof depends on
 
@@ -32,7 +33,7 @@ None.
 
 ## Expansion
 
-Rowland, Bellemare, Dabney, Munos and Teh work with exactly this object: a joint kernel $\mathsf{p} : \mathcal{X} \times \mathcal{A} \to \mathscr{P}(\mathbb{R} \times \mathcal{X})$ on finite $\mathcal{X}$ and $\mathcal{A}$ with $\gamma \in [0,1)$. Bellemare, Dabney and Munos allow general state spaces and $\gamma \in [0,1]$, and assume that the reward, the transition and the next-state return are independent; the topic keeps finite spaces and $\gamma < 1$, which every fixed-point and convergence statement needs. Neither source names a moment condition on the rewards; $M_1$ and $M_q$ make explicit what the return distribution and the Wasserstein results use. The conditional laws $\rho_{x,a,x'}$ exist because $\mathcal{X}$ is finite, so no disintegration theorem is needed.
+Rowland, Bellemare, Dabney, Munos and Teh work with exactly this object: a joint kernel $\mathsf{p} : \mathcal{X} \times \mathcal{A} \to \mathscr{P}(\mathbb{R} \times \mathcal{X})$ on finite $\mathcal{X}$ and $\mathcal{A}$ with $\gamma \in [0,1)$. Bellemare, Dabney and Munos allow general state spaces and $\gamma \in [0,1]$ and write that the reward, the transition and the next-state value are independent. Read literally that cannot hold in general, since the next-state value is selected by the successor; the intended model, used throughout this topic, draws the reward independently of the successor and then draws the next return freshly, conditionally on the selected successor and action. The topic keeps finite spaces and $\gamma < 1$, which every fixed-point and convergence statement needs. Bellemare, Dabney and Munos work in a space of value distributions with bounded moments (their Section 3.2) and take the reward vector in that space (Section 3.3); Rowland and coauthors name no moment condition. $M_1$ and $M_q$ make explicit what the return distribution and the Wasserstein results use. The conditional laws $\rho_{x,a,x'}$ exist because $\mathcal{X}$ is finite, so no disintegration theorem is needed.
 
 ## Sources
 

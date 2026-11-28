@@ -1,6 +1,6 @@
 # Distributional Bellman optimality operator
 
-A distributional Bellman optimality operator applies to each return-distribution function the distributional Bellman operator of some policy that is greedy for it. Different greedy selection rules give different operators.
+A distributional Bellman optimality operator applies to each return-distribution function the distributional Bellman operator of some policy that is greedy for it. Different greedy selection rules can give different operators; rules that select actions with identical laws give the same update.
 
 Let $\mathsf{p}$ be a [reward–transition kernel](../return-distributions-and-policy-evaluation/reward-and-transition-kernel-mdp.md) with $M_1 < \infty$ and $\gamma \in [0,1)$. A *greedy selection rule* assigns to each $\eta \in \mathscr{P}_1(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$ a policy $\pi_\eta \in \mathcal{G}_\eta$, a [greedy policy](../distributional-control/greedy-policies-for-return-distributions.md) for $\eta$; the rule may depend on all of $\eta$, not only on its means. The *distributional Bellman optimality operator* of the rule is
 

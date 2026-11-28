@@ -13,6 +13,7 @@ $$W_p^p\bigl(\mathrm{Law}(U), \mathrm{Law}(V)\bigr) \le \sum_{i \in I} \Pr(A_i) 
 ## Depends on
 
 - [Wasserstein distance of order p](../../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein.md)
+- [Law of a random element](../../../../../Probability/foundations/probability-measures/probability-measure-map.md)
 
 ## Proof depends on
 

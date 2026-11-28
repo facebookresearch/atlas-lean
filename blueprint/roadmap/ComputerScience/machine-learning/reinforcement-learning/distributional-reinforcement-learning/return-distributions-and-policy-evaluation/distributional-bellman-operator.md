@@ -10,7 +10,7 @@ for Borel sets $B \subseteq \mathbb{R}$. Writing $S_\gamma(t) = \gamma t$ and $*
 
 $$(\mathcal{T}^\pi \eta)^{(x,a)} = \sum_{(x',a') : P(x' \mid x,a) > 0} P(x' \mid x,a) \, \pi(a' \mid x') \; \rho_{x,a,x'} * (S_\gamma)_\# \eta^{(x',a')}.$$
 
-In random-variable form this is $(\mathcal{T}^\pi \eta)^{(x,a)} = \text{law of } R + \gamma G'$ with $(R, X') \sim \mathsf{p}(\cdot \mid x,a)$, $A' \sim \pi(\cdot \mid X')$, and $G'$ of law $\eta^{(x',a')}$ conditionally on $(R, X', A') = (r, x', a')$. For a product kernel this is the operator of Bellemare, Dabney and Munos, in which reward, transition and next-state return are independent; for a joint kernel $R$ and $X'$ may be dependent, while $G'$ is still conditionally independent of $R$ given $(X', A')$.
+In random-variable form this is $(\mathcal{T}^\pi \eta)^{(x,a)} = \text{law of } R + \gamma G'$ with $(R, X') \sim \mathsf{p}(\cdot \mid x,a)$, $A' \sim \pi(\cdot \mid X')$, and $G'$ of law $\eta^{(x',a')}$ conditionally on $(R, X', A') = (r, x', a')$. The next return $G'$ is drawn with fresh randomness conditionally on the selected pair $(X', A')$, and it is conditionally independent of $R$ given $(X', A')$. It is not independent of $X'$ in general, even for a product kernel: with reward $0$, one action, two equally likely successors $x'_0, x'_1$ and $\eta^{(x'_0, a)} = \delta_0$, $\eta^{(x'_1, a)} = \delta_1$, the pair $(X', G')$ takes only the values $(x'_0, 0)$ and $(x'_1, 1)$. For a product kernel this is the operator of Bellemare, Dabney and Munos, in which the reward is independent of the successor $X'$; for a joint kernel $R$ and $X'$ may be dependent.
 
 $\mathcal{T}^\pi$ is defined on all return-distribution functions. If $1 \le q < \infty$ and $M_q < \infty$, it maps $\mathscr{P}_q(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$ into itself. For $\gamma = 0$, $(\mathcal{T}^\pi \eta)^{(x,a)}$ is the reward marginal $\mathsf{p}(\cdot \times \mathcal{X} \mid x,a)$ whatever $\eta$ is.
 
@@ -19,6 +19,8 @@ $\mathcal{T}^\pi$ is defined on all return-distribution functions. If $1 \le q <
 - [Finite MDP with a joint reward and next-state kernel](../return-distributions-and-policy-evaluation/reward-and-transition-kernel-mdp.md)
 - [Return-distribution function](../return-distributions-and-policy-evaluation/return-distribution-function.md)
 - [Stochastic policy](../../stochastic-policies-and-discounted-occupancy/stochastic-policy.md)
+- [Law of a random element](../../../../../Probability/foundations/probability-measures/probability-measure-map.md)
+- [Convolution of probability measures](../../../../../Probability/statistical-estimation/bootstrap-and-the-mallows-metric/conv.md)
 
 ## Proof depends on
 

@@ -1,6 +1,6 @@
 # Categorical distributional reinforcement learning
 
-The Cramér distance and the projection onto a fixed grid of returns used by categorical algorithms: the projected operator is a √γ-contraction with an explicit approximation error, and its sample-based mixture updates converge.
+The Cramér distance and the projection onto a fixed grid of returns used by categorical algorithms: the projected operator is a √γ-contraction whose fixed point is within an explicit distance of the return distribution when returns lie in or near the grid interval, and its sample-based mixture updates converge under Robbins–Monro step sizes.
 
 - [Cramér distance](cramer-distance.md)
 - [Categorical projection onto a fixed grid](categorical-projection.md)
@@ -11,7 +11,7 @@ The Cramér distance and the projection onto a fixed grid of returns used by cat
 - [The projected categorical operator is a √γ-contraction with a unique fixed point](projected-categorical-operator-fixed-point.md)
 - [Error bound for the categorical fixed point](categorical-fixed-point-error-bound.md)
 - [Error bound for the categorical fixed point with mass outside the grid](categorical-error-bound-with-excess-mass.md)
-- [The projected categorical operator is not Lipschitz in the maximal Wasserstein metric](projected-operator-not-wasserstein-lipschitz.md)
+- [The projected categorical operator is not a contraction in the maximal Wasserstein metric](projected-operator-not-wasserstein-lipschitz.md)
 - [Distributional Bellman and categorical operators are monotone for stochastic dominance](categorical-operators-are-monotone.md)
 - [Sample-based categorical evaluation and Q-learning with mixture updates](categorical-evaluation-with-mixture-updates.md)
 - [The sampled projected categorical target is conditionally unbiased](sampled-categorical-target-is-unbiased.md)

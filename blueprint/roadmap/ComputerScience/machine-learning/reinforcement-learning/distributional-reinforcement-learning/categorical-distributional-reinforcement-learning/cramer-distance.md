@@ -10,7 +10,7 @@ and for [return-distribution functions](../return-distributions-and-policy-evalu
 
 $$\bar \ell_2(\eta, \mu) = \max_{(x,a) \in \mathcal{X} \times \mathcal{A}} \ell_2\bigl(\eta^{(x,a)}, \mu^{(x,a)}\bigr).$$
 
-$\ell_2$ is an extended metric on Borel probability measures on $\mathbb{R}$, and $\bar \ell_2$ one on $\mathscr{P}(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$. They are finite on laws with finite first moments, where $\ell_2^2(\nu_1, \nu_2) \le \int |t| \, \nu_1(dt) + \int |t| \, \nu_2(dt)$, and on laws supported in a common interval $[c, d]$, where $\ell_2^2 \le d - c$. Only differences of distribution functions are square integrable: a single $F_\nu$ never is, since it tends to $1$.
+$\ell_2$ is an extended metric on Borel probability measures on $\mathbb{R}$, and $\bar \ell_2$ one on $\mathscr{P}(\mathbb{R})^{\mathcal{X} \times \mathcal{A}}$. They are finite on laws with finite first moments, where $\ell_2^2(\nu_1, \nu_2) \le \int |t| \, \nu_1(dt) + \int |t| \, \nu_2(dt)$, and on laws supported in a common interval $[c, d]$, where $\ell_2^2 \le d - c$. A difference of two distribution functions can be square integrable, though not every pair is at finite distance; a single $F_\nu$ never is, since it tends to $1$.
 
 ## Depends on
 

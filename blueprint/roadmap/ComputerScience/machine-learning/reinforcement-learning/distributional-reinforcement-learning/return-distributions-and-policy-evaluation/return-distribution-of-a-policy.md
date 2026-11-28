@@ -22,6 +22,7 @@ Under $M_1 < \infty$ the series is absolutely summable $\mathbb{P}_{x,a}$-almost
 - [Return-distribution function](../return-distributions-and-policy-evaluation/return-distribution-function.md)
 - [Stochastic policy](../../stochastic-policies-and-discounted-occupancy/stochastic-policy.md)
 - [Markov chain path measure](../../../../../Probability/markov-chains/construction-of-markov-chains/markov-chain-path-measure.md)
+- [Law of a random element](../../../../../Probability/foundations/probability-measures/probability-measure-map.md)
 
 ## Proof depends on
 

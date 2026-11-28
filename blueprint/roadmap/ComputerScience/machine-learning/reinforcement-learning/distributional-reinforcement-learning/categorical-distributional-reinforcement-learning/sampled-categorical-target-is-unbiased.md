@@ -6,13 +6,14 @@ Let $\mathsf{p}$ be a reward–transition kernel, $\gamma \in [0,1)$, $\pi$ a st
 
 $$N = \Pi_{\mathcal{C}} (f_{R,\gamma})_\# \eta^{(X',A')} - (\Pi_{\mathcal{C}} \mathcal{T}^\pi \eta)^{(x,a)}.$$
 
-Then $N$ is a random signed measure on the grid with $N(\mathbb{R}) = 0$, $|N((-\infty, y])| \le 1$, and $\mathbb{E}[N(B)] = 0$ for every Borel $B$. In the evaluation variant of the [categorical algorithm](../categorical-distributional-reinforcement-learning/categorical-evaluation-with-mixture-updates.md), with $\eta = \eta_t$ and $(x,a) = (x_t, a_t)$, this gives $\mathbb{E}[N_t((-\infty, y]) \mid \mathcal{F}_t] = 0$ almost surely for every $y$.
+Then $N$ is a random signed measure on the grid with $N(\mathbb{R}) = 0$, $|N((-\infty, y])| \le 1$, and $\mathbb{E}[N(B)] = 0$ for every Borel $B$. In the evaluation variant of the [categorical algorithm](../categorical-distributional-reinforcement-learning/categorical-evaluation-with-mixture-updates.md), with $\eta = \eta_t$ and $(x,a) = (x_t, a_t)$, this gives $\mathbb{E}[N_t((-\infty, y]) \mid \mathcal{F}_t] = 0$ almost surely for every $y$, a [conditional expectation given the σ-field](../../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md) $\mathcal{F}_t$, which contains the real-valued past rewards.
 
 ## Depends on
 
 - [Distributional Bellman operator](../return-distributions-and-policy-evaluation/distributional-bellman-operator.md)
 - [Categorical projection onto a fixed grid](../categorical-distributional-reinforcement-learning/categorical-projection.md)
 - [Sample-based categorical evaluation and Q-learning with mixture updates](../categorical-distributional-reinforcement-learning/categorical-evaluation-with-mixture-updates.md)
+- [Conditional expectation given a σ-field](../../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
 
 ## Proof depends on
 

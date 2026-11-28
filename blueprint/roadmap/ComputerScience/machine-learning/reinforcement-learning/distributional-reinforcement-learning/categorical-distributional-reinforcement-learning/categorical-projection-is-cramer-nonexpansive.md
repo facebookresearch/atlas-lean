@@ -24,7 +24,7 @@ Let $D = F_{\nu_1} - F_{\nu_2}$. By the distribution-function form of the projec
 
 $$\ell_2^2(\Pi_{\mathcal{C}} \nu_1, \Pi_{\mathcal{C}} \nu_2) = \sum_{i=1}^{K-1} (z_{i+1} - z_i) \bar D_i^2 \le \int_{z_1}^{z_K} D^2 \le \ell_2^2(\nu_1, \nu_2).$$
 
-When the right side is infinite there is nothing to prove. Rowland and coauthors argue instead that $\Pi_{\mathcal{C}}$ is the orthogonal projection in an affine "Hilbert space" of signed measures. That space is an inner-product space, but its completeness is not established, and the argument covers only laws with $\int_{-\infty}^0 F_\nu^2 < \infty$ and $\int_0^\infty (1 - F_\nu)^2 < \infty$. The per-cell argument needs neither. The orthogonal-projection property itself is the [Pythagorean identity](../categorical-distributional-reinforcement-learning/cramer-pythagorean-identity.md).
+When the right side is infinite there is nothing to prove. Rowland and coauthors argue instead that $\Pi_{\mathcal{C}}$ is the orthogonal projection in an affine "Hilbert space" of signed measures with square-integrable tails, $\int_{-\infty}^0 F_\nu^2 < \infty$ and $\int_0^\infty (1 - F_\nu)^2 < \infty$. That space is an inner-product space whose completeness is not established, and the argument in it is not, on its own, an argument about every pair of laws. The per-cell argument needs neither. The orthogonal-projection property itself is the [Pythagorean identity](../categorical-distributional-reinforcement-learning/cramer-pythagorean-identity.md).
 
 ## Sources
 
