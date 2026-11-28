@@ -4,14 +4,14 @@ For any class of finite modular lattices containing subspace lattices of arbitra
 
 **Setting (Herrmann).** A finite *presentation* $(\Pi, \bar c)$ consists of generator symbols $\bar c = (c_1, \ldots, c_n)$ and finitely many relations $t(\bar c) = s(\bar c)$ between lattice terms. A *model* of $\Pi$ in a lattice $A$ is a tuple $\bar a$ in $A$ satisfying all relations of $\Pi$. For a class $\mathcal C$ of lattices, a relation $\rho(\bar c)$ is a *consequence* of $\Pi$ in $\mathcal C$ if every model of $\Pi$ in a member of $\mathcal C$ satisfies $\rho$. The *restricted word problem* for $\mathcal C$ is *unsolvable* if there is a finite presentation $\Pi$ such that no algorithm decides, for every relation $\rho(\bar c)$, whether $\rho$ is a consequence of $\Pi$ in $\mathcal C$.
 
-**Theorem (Herrmann).** Let $\mathcal C$ be a class of finite [modular lattices](../modular-lattice.md) such that for every $d \in \mathbb N$ some [subspace lattice](submodule.md) $\mathrm L(V_d)$ of a vector space $V_d$ over a division ring $F_d$ with $\dim V_d \ge d$ belongs to $\mathcal C$. Then the restricted word problem for $\mathcal C$ is unsolvable (Corollary 9.1 of the source).
+**Theorem (Herrmann).** Let $\mathcal C$ be a class of finite [modular lattices](../modular-lattice.md) such that for every $d \in \mathbb N$ some [subspace lattice](../../../Algebra/modules/submodule.md) $\mathrm L(V_d)$ of a vector space $V_d$ over a division ring $F_d$ with $\dim V_d \ge d$ belongs to $\mathcal C$. Then the restricted word problem for $\mathcal C$ is unsolvable (Corollary 9.1 of the source).
 
 The number of generators of the presentation can be reduced to $5$. In particular this holds for the class of all finite modular lattices and for the class of all subspace lattices of finite vector spaces.
 
 ## Depends on
 
 - [Modular lattice](../modular-lattice.md)
-- [Submodule](submodule.md)
+- [Submodule](../../../Algebra/modules/submodule.md)
 - [Finite-dimensional vector space](../../../LinearAlgebra/bases-and-dimension/bases-and-coordinates/dimension/finite-dimensional.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

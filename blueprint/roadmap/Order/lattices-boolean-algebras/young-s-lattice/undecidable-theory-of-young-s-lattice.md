@@ -2,6 +2,8 @@
 
 The first-order theory of Young's lattice, as an ordered set, is undecidable; with the constant [1]+[1] added, already its Σ₄ part is undecidable.
 
+Let $\mathcal P$ be the set of all integer partitions, including the empty partition, ordered by containment of their Young diagrams as on the page for [Young's lattice](young-s-lattice.md); this is Wires's notation (Section 2 of the source).
+
 **Theorem (Wires).** The elementary (first-order) theory of [Young's lattice](young-s-lattice.md) $\mathbf Y = \langle \mathcal P, \le \rangle$ in the language of the order relation is undecidable (Theorem 3.16 of the source).
 
 The proof goes through a sharper result: with $\mathbf Y^\ast = \langle \mathcal P, \le, [1] + [1] \rangle$, Young's lattice with a constant for the partition $(1, 1)$, the set of $\Sigma_4$ sentences true in $\mathbf Y^\ast$ is undecidable (Theorem 3.15).

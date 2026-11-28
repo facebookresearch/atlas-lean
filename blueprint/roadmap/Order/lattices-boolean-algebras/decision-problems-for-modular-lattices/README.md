@@ -2,7 +2,6 @@
 
 Algorithmic questions about equations in modular lattices and in lattices of subspaces of vector spaces: consistency of conjunctions of equations, word problems and equational theories.
 
-- [Submodule](submodule.md)
 - [The consistency problem for modular lattices is unsolvable](consistency-problem-for-modular-lattices.md)
 - [Satisfiability of an equation in finite-dimensional Hilbert space ortholattices is undecidable](equations-in-hilbert-space-ortholattices.md)
 - [A finitely presented modular ortholattice with unsolvable word problem](word-problem-for-modular-ortholattices.md)
