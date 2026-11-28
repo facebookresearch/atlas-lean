@@ -261,8 +261,10 @@ $t \mapsto g(z_0 + \omega_2 + t\omega_1)\,\omega_1$ and $t \mapsto g(z_0 + t\ome
 interval-integrable on $[0, 1]$, the curve integral of $g(z)\,dz$ along it is
 `parallelogramBoundaryIntegral g z₀ ω₁ ω₂` (`curveIntegral_parallelogramPath`); this holds in
 particular when $g$ is continuous on the boundary
-(`curveIntegral_parallelogramPath_of_continuousOn`). Without integrability the two can differ, as
-each is a Bochner integral that is $0$ when its integrand is not integrable. -/
+(`curveIntegral_parallelogramPath_of_continuousOn`). Without integrability the two can differ:
+the curve integral is one Bochner integral over $[0, 1]$, which is $0$ as soon as one side's
+integrand is not integrable, while `parallelogramBoundaryIntegral` sets only that side's integral
+to $0$. -/
 noncomputable def parallelogramPath (z₀ ω₁ ω₂ : ℂ) : Path z₀ z₀ :=
   ((Path.segment z₀ (z₀ + ω₁)).trans (Path.segment (z₀ + ω₁) (z₀ + ω₁ + ω₂))).trans
     ((Path.segment (z₀ + ω₂) (z₀ + ω₁ + ω₂)).symm.trans (Path.segment z₀ (z₀ + ω₂)).symm)
