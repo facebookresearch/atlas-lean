@@ -1,0 +1,32 @@
+# Error identity for return-based operators
+
+The error $\mathcal{R}Q - Q^\pi$ of a return-based operator is an expected discounted sum, from time $1$ on, of trace-weighted differences between the target-policy average of $Q - Q^\pi$ at the current state and the trace-weighted value of $Q - Q^\pi$ at the sampled pair.
+
+Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $\pi$ (target) and $\mu$ (behaviour) be stochastic policies, $Q^\pi$ the action value of $\pi$, and $c$ a causal trace with finite expected discounted trace mass at every pair. For every Q-function $Q$, with $\Delta Q = Q - Q^\pi$, and every pair $(x,a)$,
+
+$$\mathcal{R}Q(x,a) - Q^\pi(x,a) = \sum_{t \ge 1} \gamma^t\, \mathbb{E}^\mu_{x,a}\Bigl[\Bigl(\prod_{i=1}^{t-1} c_i\Bigr)\bigl((\mathbb{E}_\pi \Delta Q)(x_t) - c_t\, \Delta Q(x_t, a_t)\bigr)\Bigr],$$
+
+where $(\mathbb{E}_\pi \Delta Q)(y) = \sum_b \pi(b \mid y) \Delta Q(y,b)$; the series is absolutely convergent.
+
+## Depends on
+
+- [Return-based off-policy operator](return-based-off-policy-operator.md)
+- [Action value of a stochastic policy](../performance-difference-lemma/stoch-qvalue.md)
+- [Causal trace](causal-trace.md)
+
+## Proof depends on
+
+- [The action value is a fixed point of every return-based operator](action-value-fixes-return-based-operators.md)
+- [Return-based off-policy operator](return-based-off-policy-operator.md)
+
+## Expansion
+
+Since $\mathcal{R}Q^\pi = Q^\pi$ and $\mathcal{R}$ is affine with the rewards cancelling,
+
+$$\mathcal{R}Q(x,a) - Q^\pi(x,a) = \Delta Q(x,a) + \sum_{t \ge 0} \gamma^t\, \mathbb{E}^\mu_{x,a}\Bigl[\Bigl(\prod_{s=1}^t c_s\Bigr)\bigl(\gamma (\mathbb{E}_\pi \Delta Q)(x_{t+1}) - \Delta Q(x_t,a_t)\bigr)\Bigr].$$
+
+Both parts of the bracket give series whose terms are at most $\|\Delta Q\|\, \gamma^t\, \mathbb{E}[\prod_{s \le t} c_s]$, summable by finite trace mass, so they may be split. The $t = 0$ term of the second part is $-\Delta Q(x,a)$, which cancels the first term; shifting the index of the first part by one and collecting the terms with the same $t \ge 1$ gives the identity. Absolute convergence of the result: its bracket is at most $(1 + c_t)\|\Delta Q\|$, and $\sum_{t \ge 1} \gamma^t (\prod_{i<t} c_i)(1 + c_t)$ splits into $\gamma \sum_{t \ge 0} \gamma^t \prod_{i \le t} c_i$ and $\sum_{t \ge 1} \gamma^t \prod_{i \le t} c_i$ (in expectation), both summable by finite trace mass. The source proves the identity by first regrouping the rewards; it states the lemma without a summability hypothesis.
+
+## Sources
+
+- R. Munos, T. Stepleton, A. Harutyunyan, M. G. Bellemare, *Safe and Efficient Off-Policy Reinforcement Learning*, Advances in Neural Information Processing Systems 29 (NIPS 2016), arXiv:1606.02647v2, <https://arxiv.org/abs/1606.02647v2>: Section 3.1, Lemma 1; proof in Appendix A.
