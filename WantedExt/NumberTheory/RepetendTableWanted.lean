@@ -28,6 +28,7 @@ public import MathlibExt.NumberTheory.RepetendTable.OrderCount
 public import MathlibExt.NumberTheory.RepetendTable.OrderSix
 public import MathlibExt.NumberTheory.RepetendTable.PrimePowerValuation
 public import MathlibExt.Analysis.Series.InversePowerTail
+public import MathlibExt.NumberTheory.RepetendTableRepetendColumnsNeOfThreePowOfSix
 public import MathlibExt.NumberTheory.RepetendTableSmallBaseConstraint
 
 /-!
@@ -69,6 +70,9 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 
 `MetaMathlibExt.tsum_inv_pow_succ_lt` is proved in
 `MathlibExt.Analysis.Series.InversePowerTail`.
+
+`MetaMathlibExt.repetend_columns_ne_of_three_pow_of_six` is proved in
+`MathlibExt.NumberTheory.RepetendTableRepetendColumnsNeOfThreePowOfSix`.
 -/
 
 namespace MetaMathlibExt
@@ -394,21 +398,6 @@ public theorem_wanted eq_of_card_small_bases_orderOf_six_eq_two (n : ℕ)
     (h : ((Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = 6).card = 2) :
     (∃ k t : ℕ, (t = 1 ∨ t = 2) ∧ n = 3 ^ k * t ∧ 9 ≤ n) ∨
       ∃ p k t : ℕ, p.Prime ∧ p % 6 = 1 ∧ 0 < k ∧ (t = 1 ∨ t = 2) ∧ n = p ^ k * t
-
-/-- **Order-$6$ repetend tables of $3^k t$ have no matched columns.** Let $k \ge 2$ and
-$t \in \{1, 2\}$, and put $n = 3^k t$. Let the rows be the integers $b$ with $1 \le b < n$,
-$\gcd(b, n) = 1$ and multiplicative order $6$ modulo $n$, and let column $j$ be the multiset of
-the digits $\lfloor b^{j+1}/n \rfloor \bmod b$ over these rows. Then for all distinct $i, j < 6$
-columns $i$ and $j$ are different.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 34 (`integers-2025-A26-lem-34`). -/
-public theorem_wanted repetend_columns_ne_of_three_pow_of_six (k t : ℕ) (hk : 2 ≤ k)
-    (ht : t = 1 ∨ t = 2) :
-    let n := 3 ^ k * t
-    let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = 6
-    ∀ i < 6, ∀ j < 6, i ≠ j →
-      (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
 /-- **Powers of a base of order $6$ modulo $tp^k$.** Let $p$ be a prime with $p \equiv 1 \pmod 6$,
 let $k \ge 1$ and $t \in \{1, 2\}$ be natural numbers, and put $n = tp^k$. Let $b_1 < n$ be a
