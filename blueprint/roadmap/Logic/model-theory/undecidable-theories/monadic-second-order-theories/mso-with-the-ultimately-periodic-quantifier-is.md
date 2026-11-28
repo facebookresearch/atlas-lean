@@ -21,4 +21,4 @@ The main theorem of the source shows that MSO+U and MSO+U$_1$ define the same la
 
 ## Sources
 
-- M. Bojańczyk, L. Daviaud, B. Guillon, V. Penelle and A. V. Sreejith, "Undecidability of a weak version of MSO+U", *Logical Methods in Computer Science* 16(1), 2020, paper 12, doi:10.23638/LMCS-16(1:12)2020; read as arXiv:1807.08506v5, <https://arxiv.org/abs/1807.08506v5>: Theorem 1.4 (MSO+P) and Theorem 1.3 (MSO+U and MSO+U$_1$ define the same languages) in Section 1, with the reduction in the proof of that theorem in Section 4 ("How MSO+U may talk about ultimate periodicity").
+- M. Bojańczyk, L. Daviaud, B. Guillon, V. Penelle and A. V. Sreejith, "Undecidability of a weak version of MSO+U", *Logical Methods in Computer Science* 16(1), 2020, paper 12, doi:10.23638/LMCS-16(1:12)2020; read as arXiv:1807.08506v5, <https://arxiv.org/abs/1807.08506v5>: Theorem 1.4 (MSO+P) and Theorem 1.3 (MSO+U and MSO+U$_1$ define the same languages) in Section 1, with the proof of Theorem 1.3 in Sections 2 and 3 and the reduction from MSO+U$_1$ to MSO+P in the proof of Theorem 1.4 in Section 4 ("How MSO+U may talk about ultimate periodicity").

@@ -10,6 +10,7 @@ In particular Q itself, and every consistent theory in the language of arithmeti
 
 - [Robinson's arithmetic Q](../../../first-order-logic/peano-arithmetic-and-robinson-s-q/qtheory.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Consistent set of formulas](../../../first-order-logic/g-del-s-completeness-theorem/consistent.md)
 
 ## Proof depends on
 

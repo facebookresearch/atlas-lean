@@ -20,6 +20,7 @@ Cobham strengthened this: R is essentially hereditarily undecidable, that is, ev
 - [Numerals](../../../first-order-logic/peano-arithmetic-and-robinson-s-q/numeral.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Consistent set of formulas](../../../first-order-logic/g-del-s-completeness-theorem/consistent.md)
 
 ## Proof depends on
 
@@ -33,4 +34,4 @@ R is strong enough to represent every recursive function, since representability
 
 - A. Tarski, A. Mostowski and R. M. Robinson, *Undecidable Theories*, Studies in Logic and the Foundations of Mathematics, North-Holland, 1953 (original source, cited beside the copy read).
 - J. Murwanashyaka, F. Pakhomov and A. Visser, "There are no minimal essentially undecidable theories", *Journal of Logic and Computation* 34(6):1159–1171, 2024, doi:10.1093/logcom/exad005; read as arXiv:2207.08174v2, <https://arxiv.org/abs/2207.08174v2>: Section 2 ("Salient examples of essentially undecidable theories are R and Q").
-- A. Visser, "Essential hereditary undecidability", *Archive for Mathematical Logic* 63(5–6):529–562, 2024, doi:10.1007/s00153-024-00911-y; read as arXiv:2212.03565v2, <https://arxiv.org/abs/2212.03565v2>: Section 2.2 (the axioms of R and the remark after them on the original version, with $\leq$ defined by $u \leq t$ iff $\exists w\, w + u = t$) Theorem 3.1 (characterization of essential hereditary undecidability) and Theorem 3.11 (Cobham), proved in Section 4.
+- A. Visser, "Essential hereditary undecidability", *Archive for Mathematical Logic* 63(5–6):529–562, 2024, doi:10.1007/s00153-024-00911-y; read as arXiv:2212.03565v2, <https://arxiv.org/abs/2212.03565v2>: Section 2.2 (the axioms of R and the remark after them on the original version, with $\leq$ defined by $u \leq t$ iff $\exists w\, w + u = t$); Theorem 3.1 (characterization of essential hereditary undecidability) and Theorem 3.11 (Cobham), proved in Section 4.

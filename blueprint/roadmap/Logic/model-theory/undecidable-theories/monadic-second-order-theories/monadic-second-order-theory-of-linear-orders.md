@@ -9,6 +9,7 @@ The monadic theory of a linear order, or of a class of linear orders, is the set
 ## Depends on
 
 - [Partially ordered set](../../../../Order/ordered-sets/partial-order.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -13,6 +13,7 @@ Examples of essentially hereditarily undecidable theories are Robinson's theory 
 
 - [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Consistent set of formulas](../../../first-order-logic/g-del-s-completeness-theorem/consistent.md)
 
 ## Proof depends on
 

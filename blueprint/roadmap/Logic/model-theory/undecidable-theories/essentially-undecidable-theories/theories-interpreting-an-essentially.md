@@ -16,6 +16,7 @@ In particular every consistent theory that interprets [Robinson arithmetic Q](ro
 
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Consistent set of formulas](../../../first-order-logic/g-del-s-completeness-theorem/consistent.md)
 
 ## Proof depends on
 
