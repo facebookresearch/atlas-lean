@@ -63,7 +63,8 @@ means, which keeps the adjustment stable for small batches.
   and `d = (θ̄ i + ∑ j, (Z i j g - γ) ^ 2 / 2) / (n i / 2 + λ̄ i - 1)`. `δ* i g ^ 2` is the limit of
   the `d` (`limUnder`), `γ* i g` the location at it, and `δ* i g = √(δ* i g ^ 2)`. When the
   `δ̂' i g ^ 2` of batch `i` have positive variance over the genes, the limit exists, is positive
-  and solves both equations (`empiricalBayes_fixedPoint`).
+  and solves both equations (`empiricalBayes_fixedPoint`, which applies to `adjust` through
+  `adjust_eq_of_standardized`).
 * The definition is total, with Lean's `x / 0 = 0`. The method needs at least two samples in each
   batch, an identifiable design, `σ̂ g > 0` and, in each batch, gene-wise variances `δ̂' i g ^ 2`
   of positive variance over the genes; each theorem assumes what it uses.
@@ -86,6 +87,8 @@ means, which keeps the adjustment stable for small batches.
   whose location shrinks the gene-wise estimate towards the batch-wide mean.
 * `adjust_update_affine`: rescaling one gene by a positive affine map leaves every other gene's
   adjustment unchanged and rescales its own in the same way.
+* `adjust_eq_of_standardized`: `adjust` written through the standardized data and the estimates of
+  `empiricalBayes_fixedPoint`.
 
 ## References
 
@@ -130,7 +133,7 @@ where:
   `(θ̄ i + ∑ s ∈ batch i, (Z g s - γ) ^ 2 / 2) / (n i / 2 + λ̄ i - 1)` with
   `γ = (n i τ̄² i γ̂' i g + d γ̄ i) / (n i τ̄² i + d)`, and `γ* i g` is that `γ` at `d = δ*² i g`.
   These are the two conditional posterior means, which hold jointly at the limit
-  (`empiricalBayes_fixedPoint`).
+  (`empiricalBayes_fixedPoint` and `adjust_eq_of_standardized`).
 
 The definition is total: a limit that does not exist and divisions by zero give junk values.
 The source assumes at least two samples in each batch, an identifiable design (in particular no
@@ -595,7 +598,8 @@ hyperparameters `λ̄ = (V² + 2 S²) / S²` and `θ̄ = (V³ + V S²) / S²`. I
 `d = (θ̄ + ∑ s ∈ batch i, (Z g s - γ) ^ 2 / 2) / (n / 2 + λ̄ - 1)`
 converges to a limit `(γ*, δ*²)` with `δ*² > 0` that solves both equations. The estimate `γ*` is
 a weighted average of `γ̂' g` and `γ̄` with weight less than `1` on `γ̂' g`: it shrinks the
-gene-wise estimate towards the batch-wide mean. -/
+gene-wise estimate towards the batch-wide mean. With `Z` the standardized data, these are the
+estimates of `adjust` (`adjust_eq_of_standardized`). -/
 theorem empiricalBayes_fixedPoint (batch : Sample → Batch) (Z : Gene → Sample → ℝ)
     (i : Batch) (g : Gene) :
     let n : ℝ := #{s | batch s = i}
@@ -687,5 +691,50 @@ theorem empiricalBayes_fixedPoint (batch : Sample → Batch) (Z : Gene → Sampl
       simp only [post]
       field_simp
       ring
+
+/-! ### `adjust` through its standardized data -/
+
+/-- **ComBat's adjusted data in terms of the standardized data.** Let `α̂`, `β̂` and `σ̂` be the
+standardization's estimates for `Y` (as in `adjust` and `leastSquares_standardization`), and `Z`
+the standardized data, `Z h t = (Y h t - α̂ h - ∑ k, x t k * β̂ h k) / σ̂ h`. Then
+
+  `adjust batch x Y g s = σ̂ g / √δ*² * (Z g s - γ*) + α̂ g + ∑ k, x s k * β̂ g k`,
+
+where `δ*²` and `γ*` are the empirical Bayes estimates of `empiricalBayes_fixedPoint` for `Z`, the
+batch `batch s` of the sample and the gene `g`, written with the same expressions: that theorem
+describes the estimates that `adjust` uses. -/
+theorem adjust_eq_of_standardized (batch : Sample → Batch) (x : Sample → Covariate → ℝ)
+    (Y Z : Gene → Sample → ℝ) (g : Gene) (s : Sample) :
+    let size : Batch → ℝ := fun i => #{t | batch t = i}
+    let N : ℝ := Fintype.card Sample
+    let B : Gene → Batch ⊕ Covariate → ℝ := fun h =>
+      olsEstimator (Matrix.of fun t => Sum.elim (fun i => if batch t = i then 1 else 0) (x t)) (Y h)
+    let αHat : Gene → ℝ := fun h => ∑ i, size i / N * B h (.inl i)
+    let βHat : Gene → Covariate → ℝ := fun h k => B h (.inr k)
+    let γTilde : Batch → Gene → ℝ := fun i h => B h (.inl i) - αHat h
+    let σHat : Gene → ℝ := fun h =>
+      √((∑ t, (Y h t - αHat h - ∑ k, x t k * βHat h k - γTilde (batch t) h) ^ 2) / N)
+    (∀ h t, Z h t = (Y h t - αHat h - ∑ k, x t k * βHat h k) / σHat h) →
+    let n : ℝ := #{t | batch t = batch s}
+    let G : ℝ := Fintype.card Gene
+    let γHat : Gene → ℝ := fun h => (∑ t with batch t = batch s, Z h t) / n
+    let δHat2 : Gene → ℝ := fun h =>
+      (∑ t with batch t = batch s, (Z h t - γHat h) ^ 2) / (n - 1)
+    let γBar : ℝ := (∑ h, γHat h) / G
+    let τBar2 : ℝ := (∑ h, (γHat h - γBar) ^ 2) / (G - 1)
+    let V : ℝ := (∑ h, δHat2 h) / G
+    let S2 : ℝ := (∑ h, (δHat2 h - V) ^ 2) / (G - 1)
+    let lamBar : ℝ := (V ^ 2 + 2 * S2) / S2
+    let θBar : ℝ := (V ^ 3 + V * S2) / S2
+    let post : ℝ → ℝ := fun d => (n * τBar2 * γHat g + d * γBar) / (n * τBar2 + d)
+    let next : ℝ → ℝ := fun d =>
+      (θBar + (∑ t with batch t = batch s, (Z g t - post d) ^ 2) / 2) / (n / 2 + lamBar - 1)
+    let δStar2 : ℝ := limUnder atTop fun k => next^[k] (δHat2 g)
+    let γStar : ℝ := post δStar2
+    adjust batch x Y g s = σHat g / √δStar2 * (Z g s - γStar) + αHat g + ∑ k, x s k * βHat g k := by
+  intro size N B αHat βHat γTilde σHat hZ
+  obtain rfl : Z = fun h t => (Y h t - αHat h - ∑ k, x t k * βHat h k) / σHat h :=
+    funext fun h => funext fun t => hZ h t
+  rfl
 
 end Domains.Biology.Omics.ComBat

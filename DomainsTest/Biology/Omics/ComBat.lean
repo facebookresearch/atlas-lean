@@ -37,6 +37,8 @@ import Mathlib.Tactic.NormNum
   from the definition: gene `0` in sample `0` is adjusted to its residual `1` divided by
   `√(129818/48625)`, gene `1` in sample `0` to `7 / √(27346/9725) + 10` and in sample `3` to
   `-1 / √(2434/3725) + 10`.
+* `Z₂` is the standardized data of `Y₂`, so `adjust_eq_of_standardized` expresses the adjusted data
+  of `Y₂` through `Z₂` and the estimates of `empiricalBayes_fixedPoint` for `Z₂`.
 * The same residuals without the batch mean shifts (`Y₃`) give the same adjusted value of gene `0`
   in sample `0`: the shifts are removed.
 * Rescaling gene `1` by `y ↦ 2 y + 3` leaves gene `0` unchanged, and rescaling gene `0` rescales
@@ -237,6 +239,15 @@ theorem adjust_Y₂_one_three : adjust batch₂ x₂ Y₂ 1 3 = -1 / √(2434 / 
 the genes, so `empiricalBayes_fixedPoint` applies to the standardized data `Z₂`. -/
 example (g : Fin 2) := empiricalBayes_fixedPoint batch₂ Z₂ 0 g
   (by norm_num [Z₂, batch₂_apply, filter_batch₂, Fin.sum_univ_two])
+
+/-- `Z₂` is the standardized data of `Y₂`, so `adjust_eq_of_standardized` writes the adjusted data
+of `Y₂` through `Z₂` and the estimates of `empiricalBayes_fixedPoint` for `Z₂`. -/
+example (g : Fin 2) (s : Fin 4) := adjust_eq_of_standardized batch₂ x₂ Y₂ Z₂ g s (by
+  intro h t
+  simp only [coef₂]
+  fin_cases h <;> fin_cases t <;>
+    norm_num [Z₂, Y₂, batch₂_apply, filter_batch₂, Fin.sum_univ_two, Fin.sum_univ_four,
+      sqrt_four, sqrt_twentyFive])
 
 /-- Rescaling gene `1` by `y ↦ 2 y + 3` leaves the adjusted data of gene `0` unchanged. -/
 theorem adjust_update_one : adjust batch₂ x₂ (Function.update Y₂ 1 fun s => 2 * Y₂ 1 s + 3) 0 0 =
