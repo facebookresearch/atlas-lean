@@ -11,7 +11,7 @@ with the [reduced Jacobian](conserved-pool-reduced-jacobian.md) of the network. 
 1. $\sigma(e_0)=s_0$ and $\sigma$ is a [regular steady state with pool totals](conserved-pool-regular-steady-state.md) $T$ at $e_0$. In particular, $\sigma$ is differentiable at $e_0$, and on some open neighbourhood $U\ni e_0$ one has $\sigma(e)\in W$, $L\sigma(e)=T$ and $Nv(e,\sigma(e))=0$.
 2. With $f(s_0)=(f_i(s_0))_{i\in R}$, its derivative is
 
-$$D\sigma(e_0)=-B\,J_{\mathrm{red}}^{-1}N_R\operatorname{diag}\bigl(f(s_0)\bigr).$$
+    $$D\sigma(e_0)=-B\,J_{\mathrm{red}}^{-1}N_R\operatorname{diag}\bigl(f(s_0)\bigr).$$
 
 The regularity conclusion concerns differentiability at the base point $e_0$; it does not specify the other steady states in the pool class.
 
