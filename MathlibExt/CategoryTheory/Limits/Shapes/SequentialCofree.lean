@@ -284,7 +284,7 @@ def sequentialCofreePrefixSection (F : ℕᵒᵖ ⥤ C) (n : ℕ) :
     (fun i : Fin (n + 1) => Pi.π _ i))
 
 /-- Zero insertion followed by the finite-prefix projection is the identity on the shorter prefix.
-  -/
+-/
 @[reassoc (attr := simp)]
 theorem sequentialCofreePrefixSection_projection (F : ℕᵒᵖ ⥤ C) (n : ℕ) :
     sequentialCofreePrefixSection C F n ≫ sequentialCofreePrefixProjection C F n =
