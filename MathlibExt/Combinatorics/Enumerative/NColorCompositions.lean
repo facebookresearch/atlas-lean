@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Data.Int.Interval
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.LinearCombination
 
@@ -20,7 +21,15 @@ The theorem `trib_three_mul` expresses `t(3k)` as one plus the sum of the two
 preceding terms at each multiple of three from `0` through `3k`. The theorems
 `trib_add_two_sub_three_mul` and `trib_add_two_sub_three_mul_add_two` express `t(n) + t(n-2)` as
 `2 ∑_{i=0}^{k-1} t(n-3i-1)` for `n = 3k, 3k + 1`, and as `2 + 2 ∑_{i=0}^{k-1} t(n-3i-1)` for
-`n = 3k + 2`, respectively, with `k ≥ 1` in each case.
+`n = 3k + 2`, respectively, with `k ≥ 1` in each case. The theorem `trib_eq_add_sum` writes
+`t(n)` for `n ≥ 3` as `t(n-2) + 2 ∑_{i=3}^{n} t(n-i)`.
+
+## Proof outline for `trib_eq_add_sum`
+
+Write `n = m + 3` and reverse the index, so the sum becomes `t(0) + ⋯ + t(m)`. Induct on `m`.
+For `m = 0` both sides equal `t(3) = 2 = t(1) + 2 t(0)`. Passing from `m` to `m + 1` adds
+`2 t(m+1)` to the right side and turns `t(m+1)` into `t(m+2)`; by the recurrence
+`t(m+4) = t(m+3) + t(m+2) + t(m+1)` and the case `m`, the two sides agree.
 
 ## Proof outline for `trib_add_two_sub_three_mul_add_two`
 
@@ -270,5 +279,55 @@ theorem trib_three_mul_add_two (k : ℕ) :
     rw [hrec]
     simp only [term, Nat.cast_zero, mul_zero, sub_zero]
     ac_rfl
+
+/-- The identity for `tribNat`, with the sum written as `t(0) + t(1) + ⋯ + t(m)`. -/
+private theorem tribNat_eq_add_sum_range (m : ℕ) :
+    tribNat (m + 3) = tribNat (m + 1) + 2 * ∑ j ∈ Finset.range (m + 1), tribNat j := by
+  induction m with
+  | zero => decide
+  | succ m ih =>
+    have h4 := tribNat_add_three (m + 1)
+    rw [Finset.sum_range_succ]
+    simp only [show m + 1 + 3 = m + 4 from rfl, show m + 1 + 2 = m + 3 from rfl,
+      show m + 1 + 1 = m + 2 from rfl] at h4 ⊢
+    linear_combination h4 + ih
+
+/-- Reversing the summation index: `∑_{i=3}^{m+3} t(m+3-i) = t(0) + t(1) + ⋯ + t(m)`. -/
+private theorem sum_Icc_trib_sub_eq_sum_range (m : ℕ) :
+    ∑ i ∈ Finset.Icc (3 : ℤ) ((m : ℤ) + 3), trib ((m : ℤ) + 3 - i) =
+      ∑ j ∈ Finset.range (m + 1), tribNat j := by
+  refine Finset.sum_nbij' (fun i => ((m : ℤ) + 3 - i).toNat) (fun j => (m : ℤ) + 3 - j)
+    ?_ ?_ ?_ ?_ ?_
+  · intro i hi
+    simp only [Finset.mem_Icc, Finset.mem_range] at hi ⊢
+    omega
+  · intro j hj
+    simp only [Finset.mem_Icc, Finset.mem_range] at hj ⊢
+    omega
+  · intro i hi
+    simp only [Finset.mem_Icc] at hi
+    omega
+  · intro j _
+    show ((m : ℤ) + 3 - ((m : ℤ) + 3 - (j : ℤ))).toNat = j
+    omega
+  · intro i hi
+    simp only [Finset.mem_Icc] at hi
+    exact trib_eq_tribNat (by omega)
+
+/-- **Tribonacci numbers from $t(n-2)$ and a partial sum.** Let $t$ be the tribonacci numbers
+with $t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
+extended by $t(n) = 0$ for $n < 0$. For every integer $n \ge 3$,
+$$t(n) = t(n-2) + 2 \sum_{i=3}^{n} t(n-i).$$
+
+Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
+Two Consecutive Colors in `n`-Color Compositions",
+Proposition 6. -/
+theorem trib_eq_add_sum (n : ℤ) (hn : 3 ≤ n) :
+    trib n = trib (n - 2) +
+      2 * ∑ i ∈ Finset.Icc 3 n, trib (n - i) := by
+  obtain ⟨m, rfl⟩ : ∃ m : ℕ, n = (m : ℤ) + 3 := ⟨(n - 3).toNat, by omega⟩
+  rw [sum_Icc_trib_sub_eq_sum_range, trib_eq_tribNat (m := m + 3) (by omega),
+    trib_eq_tribNat (m := m + 1) (by omega)]
+  exact tribNat_eq_add_sum_range m
 
 end MathlibExt.Combinatorics.Enumerative.NColorCompositionsWanted
