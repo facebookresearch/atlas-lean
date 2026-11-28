@@ -56,7 +56,7 @@ public theorem descLexLT_maxLStarBlock_iff (L : List ℕ) (hL : 2 ≤ L.length)
   constructor
   · rintro ⟨k, hk, hbefore⟩
     have hbk : b ≤ k := Nat.le_of_not_gt fun hkb => by
-      simp [maxLStarBlock, hkb] at hk
+      simp [maxLStarBlock_of_lt hkb] at hk
     refine ⟨k, hbk, hbk, ?_, ?_, ?_⟩
     · intro i hi
       simpa only [ite_eq_left hi.le] using hbefore i hi

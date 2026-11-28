@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Algebra.Notation.Support
 public import Mathlib.Data.Set.Card
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Basic.Finite.Sigma
@@ -26,6 +27,11 @@ paper's prose restricts $S_n$ to the nonzero collection $E^*$. A bounded decompo
 that ends before the paper's one-based index `n` can be extended to that endpoint by
 appending a zero singleton block at `n`, since $e_1 > 0$. Thus the bounded collection
 counted here is exactly $S_n \cup \{0\}$ for `n > 0`.
+
+## References
+
+* Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
+  pp. 1–45, Definition 17 and Proposition 4.
 -/
 
 namespace MetaMathlibExt
@@ -42,6 +48,18 @@ Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (20
 Section 2 (arXiv:2308.12872v1, Section 2.3). -/
 public def maxLStarBlock (L : List ℕ) (s i : ℕ) : ℕ :=
   if i < s then 0 else L.getD ((i - s) % L.length) 0
+
+/-- **Digits before the start of a maximal block.** A maximal $L^*$-block has digit zero at
+any index strictly before its starting index. -/
+public theorem maxLStarBlock_of_lt {L : List ℕ} {s i : ℕ} (h : i < s) :
+    maxLStarBlock L s i = 0 := by
+  simp [maxLStarBlock, h]
+
+/-- **Digits at and after the start of a maximal block.** From its starting index onward, a
+maximal $L^*$-block repeats the entries of `L`, taking the default digit zero if `L` is empty. -/
+public theorem maxLStarBlock_of_le {L : List ℕ} {s i : ℕ} (h : s ≤ i) :
+    maxLStarBlock L s i = L.getD ((i - s) % L.length) 0 := by
+  simp [maxLStarBlock, not_lt.mpr h]
 
 /-- **Sums of disjoint proper $L^\ast$-blocks.** Let $L$ be a list of natural numbers, and for
 each $s$ let $\bar\beta^{s+1}$ be the maximal $L^*$-block starting at (zero-based) index $s$. Let
@@ -60,6 +78,33 @@ public def IsLStarBlockSum (L : List ℕ) (I : Set (ℕ × ℕ)) (ε : ℕ → �
     (∀ p ∈ I, (∀ i, p.1 ≤ i → i < p.2 → ε i = maxLStarBlock L p.1 i) ∧
       ε p.2 < maxLStarBlock L p.1 p.2) ∧
     ∀ i, (∀ p ∈ I, i ∉ Set.Icc p.1 p.2) → ε i = 0
+
+/-- **Block sums by disjoint intervals and support.** A coefficient function is a sum of
+proper $L^*$-blocks on `I` precisely when the intervals are disjoint, each interval has
+ordered endpoints and the prescribed digits, and their union contains every nonzero digit. -/
+public theorem isLStarBlockSum_iff {L : List ℕ} {I : Set (ℕ × ℕ)} {ε : ℕ → ℕ} :
+    IsLStarBlockSum L I ε ↔
+      I.PairwiseDisjoint (fun p => Set.Icc p.1 p.2) ∧
+      (∀ p ∈ I, p.1 ≤ p.2 ∧ Set.EqOn ε (maxLStarBlock L p.1) (Set.Ico p.1 p.2) ∧
+        ε p.2 < maxLStarBlock L p.1 p.2) ∧
+      Function.support ε ⊆ ⋃ p ∈ I, Set.Icc p.1 p.2 := by
+  classical
+  constructor
+  · rintro ⟨horder, hdisj, hdigit, hzero⟩
+    refine ⟨hdisj, fun p hp => ⟨horder p hp, fun _ h => (hdigit p hp).1 _ h.1 h.2,
+      (hdigit p hp).2⟩, fun i hi => ?_⟩
+    simp only [Set.mem_iUnion, exists_prop]
+    by_contra! h
+    exact hi (hzero i h)
+  · rintro ⟨hdisj, hdigit, hsupport⟩
+    refine ⟨fun p hp => (hdigit p hp).1, hdisj,
+      fun p hp => ⟨fun i hlo hhi => (hdigit p hp).2.1 ⟨hlo, hhi⟩, (hdigit p hp).2.2⟩,
+      fun i hi => ?_⟩
+    by_contra h
+    have hmem := hsupport (show i ∈ Function.support ε from h)
+    simp only [Set.mem_iUnion, exists_prop] at hmem
+    obtain ⟨p, hp, hpi⟩ := hmem
+    exact hi p hp hpi
 
 /-- **Number of $L^*$-block sums of length $n$.** For a list $L$ of natural numbers and $n \ge 0$,
 with coefficient functions indexed from $1$, $C_n$ is the number of functions

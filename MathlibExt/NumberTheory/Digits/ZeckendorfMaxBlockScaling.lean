@@ -78,28 +78,22 @@ private structure FundHyp (L : List ℕ) (Q : ℕ → ℝ) : Prop where
 
 variable {L : List ℕ} {Q : ℕ → ℝ}
 
-private theorem mlb_of_lt {s i : ℕ} (h : i < s) : maxLStarBlock L s i = 0 := by
-  simp [maxLStarBlock, h]
-
-private theorem mlb_of_le {s i : ℕ} (h : s ≤ i) :
-    maxLStarBlock L s i = L.getD ((i - s) % L.length) 0 := by
-  simp [maxLStarBlock, Nat.not_lt.mpr h]
-
 private theorem mlb_add (s j : ℕ) : maxLStarBlock L s (j + s) = maxLStarBlock L 0 j := by
-  simp [maxLStarBlock]
+  rw [maxLStarBlock_of_le (Nat.le_add_left s j), maxLStarBlock_of_le (Nat.zero_le j)]
+  simp
 
 private theorem mlb_self (s : ℕ) : maxLStarBlock L s s = L.getD 0 0 := by
-  simp [maxLStarBlock]
+  simp [maxLStarBlock_of_le (le_refl s)]
 
 private theorem mlb_add_mul (s k : ℕ) : maxLStarBlock L s (s + L.length * k) = L.getD 0 0 := by
-  simp [maxLStarBlock]
+  simp [maxLStarBlock_of_le (Nat.le_add_right s (L.length * k))]
 
 /-- Past index `m + N`, the maximal blocks starting at `m` and at `m + N` agree. -/
 private theorem mlb_tail (m i : ℕ) :
     maxLStarBlock L m (i + (m + L.length)) =
       maxLStarBlock L (m + L.length) (i + (m + L.length)) := by
-  simp only [maxLStarBlock, show ¬ i + (m + L.length) < m by omega,
-    show ¬ i + (m + L.length) < m + L.length by omega, ite_false]
+  rw [maxLStarBlock_of_le (show m ≤ i + (m + L.length) by omega),
+    maxLStarBlock_of_le (Nat.le_add_left (m + L.length) i)]
   congr 1
   rw [show i + (m + L.length) - m = i + L.length by omega,
     show i + (m + L.length) - (m + L.length) = i by omega, Nat.add_mod_right]
@@ -206,7 +200,7 @@ private theorem unit_mem (hL : 1 ≤ L.length) (he : L.getD 0 0 ≠ 0) (j : ℕ)
   · intro i hi1 hi2
     have hmin := Nat.find_min hex (show i - j < r by omega)
     push Not at hmin
-    rw [mlb_of_le hi1]
+    rw [maxLStarBlock_of_le hi1]
     refine le_antisymm ?_ ?_
     · by_cases hij : i = j
       · subst hij
@@ -216,7 +210,7 @@ private theorem unit_mem (hL : 1 ≤ L.length) (he : L.getD 0 0 ≠ 0) (j : ℕ)
       · subst hij
         simpa using hmin
       · simpa [hij, show i - j ≠ 0 by omega] using hmin
-  · rw [mlb_of_le (by omega), show j + r - j = r by omega]
+  · rw [maxLStarBlock_of_le (by omega), show j + r - j = r by omega]
     by_cases hr0 : r = 0
     · simpa [hr0] using hrspec
     · simpa [hr0, show j + r ≠ j by omega] using hrspec
@@ -285,7 +279,7 @@ private theorem sum_range_mlb_eq_sum_Ico (s n : ℕ) (hsn : s ≤ n) :
     ∑ k ∈ range n, (maxLStarBlock L s k : ℝ) * Q k =
       ∑ k ∈ Ico s n, (maxLStarBlock L s k : ℝ) * Q k := by
   rw [← sum_range_add_sum_Ico _ hsn, sum_eq_zero (fun k hk => ?_), zero_add]
-  simp [mlb_of_lt (mem_range.mp hk)]
+  simp [maxLStarBlock_of_lt (mem_range.mp hk)]
 
 /-- **Partial sums of a maximal block** (Chang 2021, Lemma 38 of arXiv:2007.12169v3). Every
 partial sum of $\sum_k (\bar\beta_m)_k Q_k$ is at most $p_m$. For `m = 0` the truncations of
@@ -357,8 +351,8 @@ private theorem FundHyp.sum_range_mlb_le (h : FundHyp L Q) (m n : ℕ) :
       by_contra hlt
       push Not at hlt
       have h0 : S = 0 := sum_eq_zero fun k hk => by
-        simp [mlb_of_lt (show k < m + 1 by have := mem_range.mp hk; omega)]
-      rw [h0, mlb_of_lt hlt] at hspec
+        simp [maxLStarBlock_of_lt (show k < m + 1 by have := mem_range.mp hk; omega)]
+      rw [h0, maxLStarBlock_of_lt hlt] at hspec
       simp at hspec
       linarith [h.pos m]
     have hQM := h.pos M
@@ -382,7 +376,7 @@ private theorem FundHyp.sum_range_mlb_le (h : FundHyp L Q) (m n : ℕ) :
       refine isLStarBlockSum_single hmM (fun i _ hi => by simp [hζ, hi]) ?_ (fun i hi => ?_)
       · simpa [hζ] using hcβ
       · rcases hi with hi | hi
-        · simp [hζ, show i < M by omega, mlb_of_lt hi]
+        · simp [hζ, show i < M by omega, maxLStarBlock_of_lt hi]
         · simp [hζ, show ¬ i < M by omega, show i ≠ M by omega]
     have hζout : ∀ i, M < i → ζ i = 0 := fun i hi => by
       simp [hζ, show ¬ i < M by omega, show i ≠ M by omega]
@@ -392,7 +386,7 @@ private theorem FundHyp.sum_range_mlb_le (h : FundHyp L Q) (m n : ℕ) :
       · exact sum_congr rfl fun k hk => by simp [hζ, mem_range.mp hk]
       · simp [hζ]
     have hζm : ζ m = 0 := by
-      simp [hζ, show m < M by omega, mlb_of_lt (show m < m + 1 by omega)]
+      simp [hζ, show m < M by omega, maxLStarBlock_of_lt (show m < m + 1 by omega)]
     -- a member of `E*` vanishing at `m` with value `Q m`
     have key : ∃ η ∈ lStarCollection L, η m = 0 ∧ ∑' k, (η k : ℝ) * Q k = Q m := by
       rcases eq_or_lt_of_le (show S + c * Q M ≤ Q m by linarith) with heq | hlt
@@ -633,7 +627,7 @@ private theorem FundHyp.tsum_mlb (h : FundHyp L Q) (m : ℕ) :
       sum_congr rfl fun k hk => by
         have hk' := mem_range.mp hk
         by_cases hkm : k < m
-        · rw [hbelow' k hkm, mlb_of_lt hkm]
+        · rw [hbelow' k hkm, maxLStarBlock_of_lt hkm]
         · rw [hmid k (by omega) hk']
     have hlast : (ε a : ℝ) + 1 ≤ maxLStarBlock L m a := by exact_mod_cast hend
     rw [hsum]
@@ -664,17 +658,17 @@ private theorem FundHyp.pSeq_rec (h : FundHyp L Q) (m : ℕ) :
   rw [← h.tsum_mlb m, ← h.tsum_mlb (m + L.length), h.tsum_mlb_split m (m + L.length),
     h.tsum_mlb_split (m + L.length) (m + L.length)]
   have hzero : ∑ k ∈ range (m + L.length), (maxLStarBlock L (m + L.length) k : ℝ) * Q k = 0 :=
-    sum_eq_zero fun k hk => by simp [mlb_of_lt (mem_range.mp hk)]
+    sum_eq_zero fun k hk => by simp [maxLStarBlock_of_lt (mem_range.mp hk)]
   have htail : ∑' i, (maxLStarBlock L m (i + (m + L.length)) : ℝ) * Q (i + (m + L.length)) =
       ∑' i, (maxLStarBlock L (m + L.length) (i + (m + L.length)) : ℝ) *
         Q (i + (m + L.length)) :=
     tsum_congr fun i => by rw [mlb_tail]
   have hhead : ∑ k ∈ range (m + L.length), (maxLStarBlock L m k : ℝ) * Q k =
       ∑ k ∈ range L.length, (L.getD k 0 : ℝ) * pSeq Q (m + k + 1) := by
-    rw [sum_range_add, sum_eq_zero (fun k hk => by simp [mlb_of_lt (mem_range.mp hk)]),
+    rw [sum_range_add, sum_eq_zero (fun k hk => by simp [maxLStarBlock_of_lt (mem_range.mp hk)]),
       zero_add]
     refine sum_congr rfl fun k hk => ?_
-    rw [pSeq_succ, mlb_of_le (by omega), show m + k - m = k by omega,
+    rw [pSeq_succ, maxLStarBlock_of_le (by omega), show m + k - m = k by omega,
       Nat.mod_eq_of_lt (mem_range.mp hk)]
   rw [hzero, zero_add, htail, hhead]
 
@@ -871,7 +865,7 @@ public theorem tsum_maxLStarBlock_mul_eq (L L' : List ℕ) (hL : 2 ≤ L.length)
       by_contra hks
       push Not at hks
       exact hnot ⟨k - s, by simp only; omega⟩
-    exact hk (by simp [mlb_of_lt hks])
+    exact hk (by simp [maxLStarBlock_of_lt hks])
   rw [← (add_left_injective s).tsum_eq hsupp, ← tsum_mul_left]
   refine tsum_congr fun j => ?_
   rw [mlb_add, hgeom (j + s), hgeom j]
