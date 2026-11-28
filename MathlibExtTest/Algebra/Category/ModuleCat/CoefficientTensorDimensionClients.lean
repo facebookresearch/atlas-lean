@@ -91,10 +91,13 @@ example : projectiveDimension (swapEquivalence.functor.obj regularP) =
 example :
     (((swapEquivalence.functor.obj regularP).smul ((3, 5) : P)).asHom).hom
         ((7, 11) : P) = ((35, 33) : P) := by
+  change @Eq P
+    (((((ModuleCat.restrictScalars swapRing.toRingHom).obj regularP).smul
+      ((3, 5) : P)).asHom).hom ((7, 11) : P)) ((35, 33) : P)
   have h := congrArg
     (fun f : End ((forget₂ (ModuleCat P) AddCommGrpCat).obj regularP) =>
       f.asHom.hom ((7, 11) : P))
     (ModuleCat.smul_restrictScalars swapRing.toRingHom ((3, 5) : P) regularP)
-  simpa [swapEquivalence, swapRing, ModuleCat.smul] using h
+  simpa [swapRing, ModuleCat.smul] using h
 
 end CoefficientTensorDimensionClients
