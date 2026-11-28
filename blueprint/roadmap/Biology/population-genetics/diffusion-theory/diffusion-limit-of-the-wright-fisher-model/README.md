@@ -7,3 +7,4 @@
 
 - [Diffusion approximation of Wright–Fisher models](diffusion-approximation-of-wright-fisher-models/README.md)
 - [Diffusion approximation error for the Moran model](diffusion-approximation-error-for-the-moran-model/README.md)
+- [Forward-time clocks for diffusion limits of Moran and Cannings models](moran-and-cannings-universality.md)

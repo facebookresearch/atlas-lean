@@ -64,3 +64,7 @@
 - [Forward-time theory of strong background selection](forward-time-theory-of-strong-background-selection/README.md)
 - [Ancestral structures of the mutation–selection equation](ancestral-structures-of-the-mutation-selection-equation/README.md)
 - [Mutation–selection with pairwise interaction](mutation-selection-with-pairwise-interaction/README.md)
+
+- [Mutation load in finite populations](finite-population-mutation-load.md)
+
+- [The mutational load with epistatic gene interactions](multilocus-epistatic-mutation-load.md)

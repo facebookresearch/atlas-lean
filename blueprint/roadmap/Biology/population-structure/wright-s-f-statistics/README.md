@@ -11,3 +11,4 @@
 - [Large-sample limits of two-population $F_{ST}$ estimators under population-specific drift](large-sample-limits-of-two-population-fst-estimators.md)
 - [Ratio of averages versus average of ratios for genome-wide $F_{ST}$](ratio-of-averages-versus-average-of-ratios-for-fst.md)
 - [X-to-autosome genetic drift](x-to-autosome-genetic-drift/README.md)
+- [Weir–Cockerham estimator of $F_{ST}$ from allele samples as a ratio of unbiased estimators](weir-cockerham-theta-estimator-as-a-ratio-of-unbiased-estimators.md)

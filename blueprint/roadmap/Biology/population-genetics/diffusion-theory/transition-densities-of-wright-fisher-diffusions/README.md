@@ -17,3 +17,6 @@
 - [Dual-process filtering of Wright–Fisher hidden Markov models](dual-process-filtering-of-wright-fisher-hidden-markov-models/README.md)
 - [Filtering Fleming–Viot population frequencies](filtering-fleming-viot-population-frequencies/README.md)
 - [Exact likelihood inference for the Wright–Fisher diffusion](exact-likelihood-inference-for-the-wright-fisher-diffusion/README.md)
+- [Weak-selection perturbation of the Wright–Fisher spectrum](kimura-selection-perturbation.md)
+- [The Kolmogorov backward equation for Wright–Fisher diffusions](kolmogorov-backward-equation.md)
+- [Nonperturbative spectral method for general diploid selection](nonperturbative-selected-spectral-method.md)

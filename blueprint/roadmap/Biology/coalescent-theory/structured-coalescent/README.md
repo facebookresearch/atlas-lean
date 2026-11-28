@@ -56,3 +56,7 @@
 - [IBD block sharing under spatial diffusion](ibd-block-sharing-under-spatial-diffusion/README.md)
 - [Coalescence time of coalescing random walks on graphs](coalescence-time-of-coalescing-random-walks-on-graphs/README.md)
 - [Coalescence time of reversible random walks](coalescence-time-of-reversible-random-walks/README.md)
+
+- [The coalescent with partial self-fertilization](partial-selfing-coalescent.md)
+
+- [Duality between structured diffusions and the structured coalescent](structured-coalescent-duality.md)

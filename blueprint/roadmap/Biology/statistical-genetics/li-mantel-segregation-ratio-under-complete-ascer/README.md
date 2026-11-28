@@ -6,3 +6,4 @@
 - [Li Mantel](li-mantel.md)
 - [The zero-truncated binomial law and its mean](trunc-binom-law-mean.md)
 - [Consistency of the Li–Mantel estimator](li-mantel-tendsto-ae.md)
+- [Segregation ratio under complete ascertainment with sibships of different sizes](segregation-ratio-under-complete-ascertainment-truncated-binomial-li-m.md)
