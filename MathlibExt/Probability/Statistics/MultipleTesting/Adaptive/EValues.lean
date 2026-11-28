@@ -607,8 +607,8 @@ theorem measurable_falseDiscoveryProportion_eBHRejections {α : ℝ} {E : Fin m 
   rw [heq]
   exact (hcount H0).div ((hcount Finset.univ).max measurable_const)
 
-/-- **e-BH controls the FDR under arbitrary dependence.** If every true-null statistic is an
-e-value and every false-null statistic is measurable, the e-BH FDP is integrable and
+/-- **e-BH controls the FDR under arbitrary dependence.** If `α ≥ 0`, every true-null statistic
+is an e-value and every false-null statistic is measurable, the e-BH FDP is integrable and
 `E[FDP] ≤ α`.
 
 Source: Wang and Ramdas (2022). -/
@@ -641,8 +641,8 @@ theorem lintegral_falseDiscoveryProportion_eBHRejections_stoppedValue_le {α : �
 
 /-- **e-BH at a stopping time.** If every true-null endpoint carries an e-process for a common
 filtration, `τ` is a bounded stopping time, and the false-null stopped values `E i τ` are
-measurable, then the e-BH procedure applied to the stopped values has an integrable FDP and
-`E[FDP] ≤ α`: the analyst may choose when to stop, using all data so far, and still
+measurable and `α ≥ 0`, then the e-BH procedure applied to the stopped values has an integrable
+FDP and `E[FDP] ≤ α`: the analyst may choose when to stop, using all data so far, and still
 control the FDR. -/
 theorem integral_falseDiscoveryProportion_eBHRejections_stoppedValue_le {α : ℝ}
     (hα : 0 ≤ α) {𝒢 : Filtration ℕ m0} (E : Fin m → ℕ → Ω → ℝ) (H0 : Finset (Fin m))
