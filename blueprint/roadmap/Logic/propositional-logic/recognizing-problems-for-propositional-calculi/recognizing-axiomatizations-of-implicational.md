@@ -4,7 +4,7 @@ For every finitely axiomatized calculus containing the intuitionistic implicatio
 
 **Theorem (Bokov, 2015).** Fix a signature $\Sigma \supseteq \{\to\}$ and a [$\Sigma$-calculus](propositional-calculi-with-modus-ponens-and.md) $P_0$ with $P_0 \geq \mathbf{Int}_{\{\to\}}$. Then the problems of recognizing axiomatizations (Axm: given a $\Sigma$-calculus $P$, is $P \sim P_0$?) and of recognizing completeness (Cmpl: given $P \leq P_0$, is $P_0 \leq P$?) are undecidable (Theorem 2.7).
 
-Here $P_0$ is fixed and $P$ ranges over finite sets of $\Sigma$-formulas, with modus ponens and substitution as rules. For instance, Axm and Cmpl are undecidable for $\mathbf{Int}_{\{\to\}}$ and $\mathbf{Cl}_{\{\to\}}$ themselves; for $\mathbf{Cl}_{\{\to\}}$, Axm is Markov's 1961 problem, first shown undecidable by Marcinkowski (1994).
+Here $P_0$ is fixed and $P$ ranges over finite sets of $\Sigma$-formulas, with modus ponens and substitution as rules. For instance, Axm and Cmpl are undecidable for $\mathbf{Int}_{\{\to\}}$ and $\mathbf{Cl}_{\{\to\}}$ themselves; for $\mathbf{Cl}_{\{\to\}}$, Axm is Markov's 1961 problem, shown undecidable by Marcinkowski (1994).
 
 ## Depends on
 

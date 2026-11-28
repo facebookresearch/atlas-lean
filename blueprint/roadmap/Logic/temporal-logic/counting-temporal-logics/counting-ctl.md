@@ -2,7 +2,7 @@
 
 Counting CTL extends CTL with until modalities constrained by linear conditions on how many states along the path, before the target state, satisfy given subformulas.
 
-**Definition.** A *Kripke structure* $S = (Q, R, \ell)$ has a finite set $Q$ of states, a total transition relation $R \subseteq Q \times Q$ (every state has a successor) and a labeling $\ell : Q \to 2^{AP}$; a *run* is an infinite sequence $q_0 q_1 \cdots$ with $(q_i, q_{i+1}) \in R$. Formulas of *CCTL* are
+**Definition.** A *Kripke structure* $S = (Q, R, \ell)$ is a finite total [Kripke structure](../temporal-specification/kripke-structures-with-initial-states.md) without initial states: a finite set $Q$ of states, a total transition relation $R \subseteq Q \times Q$ and a labeling $\ell : Q \to 2^{AP}$; a *run* is an infinite sequence $q_0 q_1 \cdots$ with $(q_i, q_{i+1}) \in R$. Formulas of *CCTL* are
 
 $$
 \varphi, \psi ::= P \mid \varphi \wedge \psi \mid \neg\varphi \mid \mathsf E\varphi\,\mathsf U_{[C]}\,\psi \mid \mathsf A\varphi\,\mathsf U_{[C]}\,\psi, \qquad C ::= \Big(\sum_{i=1}^m \alpha_i \cdot \sharp\varphi_i\Big) \sim k,
@@ -19,6 +19,7 @@ and their combinations, such as CCTL$_{\pm 1}$ (coefficients in $\{-1, 1\}$) and
 ## Depends on
 
 - [CTL formulas](../computation-tree-logic/formula.md)
+- [Kripke structures with initial states](../temporal-specification/kripke-structures-with-initial-states.md)
 
 ## Proof depends on
 

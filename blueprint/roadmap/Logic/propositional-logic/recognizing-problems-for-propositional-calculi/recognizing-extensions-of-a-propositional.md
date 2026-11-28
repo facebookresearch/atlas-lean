@@ -1,6 +1,6 @@
 # Recognizing extensions of a propositional calculus is undecidable
 
-For every fixed propositional calculus with implication, no algorithm decides whether a given calculus derives all of its theorems; if the fixed calculus derives $x \to (y \to x)$, recognizing its axiomatizations and the completeness of its subcalculi is undecidable as well.
+For every fixed propositional calculus with implication and at least one axiom, no algorithm decides whether a given calculus derives all of its theorems; if the fixed calculus derives $x \to (y \to x)$, recognizing its axiomatizations and the completeness of its subcalculi is undecidable as well.
 
 **Theorem (Bokov, 2016).** Fix a signature $\Sigma \supseteq \{\to\}$ and a [$\Sigma$-calculus](propositional-calculi-with-modus-ponens-and.md) $P_0$ with at least one axiom. Then (Theorem 2.10):
 
@@ -20,7 +20,7 @@ The source states clause 1 for every fixed calculus; for the calculus with no ax
 
 ## Expansion
 
-As in the 2015 paper, the proof simulates Post tag systems: for a tag system $T$ with undecidable halting problem (Minsky) and a word $\xi$ one builds a calculus $P_{T,P_0,\xi}$ such that $P_0 \leq P_{T,P_0,\xi}$ iff $T$ halts on $\xi$, which gives clause 1 with no assumption on $P_0$. If $\{x \to (y \to x)\} \leq P_0$, then $P_{T,P_0,\xi} \leq P_0$, so the same instances witness clause 2. Clause 2 strengthens the earlier result for $P_0 \geq \mathbf{Int}_{\{\to\}}$, and clause 1 strengthens Marcinkowski's theorem for one-axiom calculi. The source also states, with proof left to the reader, that Axm and Cmpl remain undecidable for $P_0 \geq \{x \to (F \to x)\}$ whenever $F$ does not contain $x$ (Theorem 5.1).
+As in the 2015 paper, the proof simulates Post tag systems: for a tag system $T$ with undecidable halting problem (Minsky) and a word $\xi$ one builds a calculus $P_{T,P_0,\xi}$ such that $P_0 \leq P_{T,P_0,\xi}$ iff $T$ halts on $\xi$, which gives clause 1 for every $P_0$ with an axiom. If $\{x \to (y \to x)\} \leq P_0$, then $P_{T,P_0,\xi} \leq P_0$, so the same instances witness clause 2. Clause 2 strengthens the earlier result for $P_0 \geq \mathbf{Int}_{\{\to\}}$, and clause 1 strengthens Marcinkowski's theorem for one-axiom calculi. The source also states, with proof left to the reader, that Axm and Cmpl remain undecidable for $P_0 \geq \{x \to (F \to x)\}$ whenever $F$ does not contain $x$ (Theorem 5.1).
 
 ## Sources
 

@@ -1,10 +1,10 @@
 # Monadicity of finite non-deterministic logical matrices is undecidable
 
-For finite logical matrices it is decidable whether any two truth values can be separated by a formula in one variable, but once connectives may be interpreted as multi-functions no algorithm decides this property; as a consequence the multi-functions expressible in a finite non-deterministic matrix are not computable.
+For finite logical matrices it is decidable whether any two truth values can be separated by a formula in one variable, but once connectives may be interpreted as multi-functions no algorithm decides this property; as a consequence no algorithm computes the set of unary multi-functions expressible in a given finite non-deterministic matrix.
 
-**Non-deterministic matrices.** Let $\Sigma$ be a propositional signature. A *$\Sigma$-Nmatrix* $\mathbb M=\langle A,\cdot_{\mathbb M},D\rangle$ has a set $A$ of truth values, a set $D\subseteq A$ of designated values, and for each $k$-ary connective $\circledcirc$ a multi-function $\circledcirc_{\mathbb M}:A^k\to\wp(A)\setminus\{\emptyset\}$; it is *finite* if $A$ and $\Sigma$ are finite, and it is a logical matrix when all values $\circledcirc_{\mathbb M}(a_1,\dots,a_k)$ are singletons. A *valuation* $v$ maps formulas to $A$ with $v(\circledcirc(\varphi_1,\dots,\varphi_k))\in\circledcirc_{\mathbb M}(v(\varphi_1),\dots,v(\varphi_k))$. The induced logic is $\Gamma\vdash_{\mathbb M}\varphi$ if every valuation designating all of $\Gamma$ designates $\varphi$; $\varphi$ is a *theorem* if $\emptyset\vdash_{\mathbb M}\varphi$. A formula $\varphi$ in one variable $p$ defines the multi-function $\varphi_{\mathbb M}(a)=\{v(\varphi):v(p)=a\}$, and it *separates* $a$ and $b$ if one of $\varphi_{\mathbb M}(a)$, $\varphi_{\mathbb M}(b)$ is contained in $D$ and the other in $A\setminus D$. $\mathbb M$ is *monadic* if every pair of distinct truth values is separated by some formula in one variable.
+**Monadicity.** For a finite signature $\Sigma$ and a [$\Sigma$-Nmatrix](non-deterministic-logical-matrices.md) $\mathbb M = \langle V, D, \cdot_{\mathbb M}\rangle$, a formula $\varphi$ in one variable $p$ expresses the multi-function $\varphi_{\mathbb M}(a)=\{v(\varphi):v \text{ a valuation with } v(p)=a\}$, and it *separates* $a$ and $b$ if one of $\varphi_{\mathbb M}(a)$, $\varphi_{\mathbb M}(b)$ is contained in $D$ and the other in $V\setminus D$. $\mathbb M$ is *monadic* if every pair of distinct truth values is separated by some formula in one variable.
 
-**Theorem (Filipe, Caleiro and Marcelino).** The problem of determining whether a given finite $\Sigma$-Nmatrix is monadic is undecidable (Theorem 4.8 of the source).
+**Theorem (Filipe, Caleiro and Marcelino).** The problem of determining, given a finite signature $\Sigma$ and a finite $\Sigma$-Nmatrix, whether the Nmatrix is monadic is undecidable (Theorem 4.8 of the source); the signature is part of the input, and the proof's signatures grow with the machine.
 
 The proof rests on the source's Theorem 4.6: for each deterministic counter machine $\mathcal C$ there is an effectively constructed finite Nmatrix $\mathbb M_{\mathcal C}$ whose theorems are exactly the closed formulas encoding finite computations of $\mathcal C$.
 
@@ -12,6 +12,7 @@ Consequently, there is no algorithm computing the set of unary multi-functions e
 
 ## Depends on
 
+- [Non-deterministic logical matrices and their decision problems](non-deterministic-logical-matrices.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

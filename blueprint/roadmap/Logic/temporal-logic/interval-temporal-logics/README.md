@@ -7,5 +7,5 @@ The Halpern–Shoham logic of Allen's interval relations and its Horn fragments,
 - [Difference HS over traces with constraints for A, L or O is Σ¹₁-hard](difference-hs-over-traces-sigma-1-1-hard.md)
 - [Logic of subintervals](logic-of-subintervals.md)
 - [Satisfiability of the logic of subintervals over discrete orders is undecidable](satisfiability-of-the-logic-of-subintervals-over.md)
-- [Synthesis for fragments of interval temporal logic is undecidable](synthesis-for-fragments-of-interval-temporal.md)
 - [Synthesis problem for interval temporal logic with an equivalence over points](synthesis-problem-for-interval-temporal-logic.md)
+- [Synthesis for fragments of interval temporal logic is undecidable](synthesis-for-fragments-of-interval-temporal.md)
