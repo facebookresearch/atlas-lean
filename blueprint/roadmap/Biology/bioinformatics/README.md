@@ -38,6 +38,7 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Statistical models of genomic data](statistical-models-of-genomic-data/README.md)
 - [Sequence design and binding prediction](sequence-design-and-binding-prediction/README.md)
 - [Variant edges in bidirected pangenome graphs](variant-edges-in-bidirected-pangenome-graphs/README.md)
+- [Aberrant splicing detection](aberrant-splicing-detection/README.md)
 - [Batch optimization for array dna synthesis](algorithms-and-statistics-for-omics-data/batch-optimization-for-array-dna-synthesis/README.md)
 - [Bidimensionally linked matrix factorization](algorithms-and-statistics-for-omics-data/bidimensionally-linked-matrix-factorization/README.md)
 - [Merge-tree realizations of barcodes](algorithms-and-statistics-for-omics-data/merge-tree-realizations-of-barcodes/README.md)

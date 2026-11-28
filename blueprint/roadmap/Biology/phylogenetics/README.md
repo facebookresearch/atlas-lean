@@ -30,5 +30,12 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Displayed-tree measures on phylogenetic networks](displayed-tree-measures-on-phylogenetic-networks/README.md)
 - [Trinet encoding of phylogenetic networks](trinet-encoding-of-phylogenetic-networks/README.md)
+- [ASTRAL weighted-quartet species-tree estimation](astral-weighted-quartet-species-tree-estimation/README.md)
+- [Best match graphs and orthology](best-match-graphs-and-orthology/README.md)
+- [Classes of phylogenetic networks](classes-of-phylogenetic-networks/README.md)
+- [Enumeration of level-k phylogenetic networks](enumeration-of-level-k-phylogenetic-networks/README.md)
+- [Orchard phylogenetic networks](orchard-phylogenetic-networks/README.md)
+- [Ranked nearest neighbour interchange](ranked-nearest-neighbour-interchange/README.md)
+- [Tree balance indices](tree-balance-indices/README.md)
 - [Phylogenetic networks](phylogenetic-networks/README.md)
 - [Tree shapes, characters and parsimony](tree-shapes-characters-and-parsimony/README.md)
