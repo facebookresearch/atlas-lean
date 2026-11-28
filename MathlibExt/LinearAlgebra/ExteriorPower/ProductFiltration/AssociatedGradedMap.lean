@@ -41,6 +41,17 @@ variable (R : Type u) [CommRing R]
   (M : Type v) [AddCommGroup M] [Module R M]
   (N : Type w) [AddCommGroup N] [Module R N]
 
+-- Use the canonical native subgroup data with its scalar and carrier explicit.
+local instance (X : Type*) [AddCommGroup X] [Module R X] (m : ℕ) :
+    AddCommGroup (⋀[R]^m X) :=
+  Submodule.addCommGroup (R := R) (M := ExteriorAlgebra R X)
+    (ExteriorAlgebra.exteriorPower R m X)
+
+local instance (m q : ℕ) : AddCommGroup (filtration R M N m q) :=
+  Submodule.addCommGroup (R := R) (M := ⋀[R]^m (M × N))
+    (filtration R M N m q)
+
+
 /-- Let R be a commutative ring and M and N R-modules. In exterior degree m, let F_m^q consist of
 elements whose mixed coordinates of first degree below q are zero. For q ≤ m, mixedClass R M N
 m q hq is the R-linear map from ⋀[R]^q M ⊗[R] ⋀[R]^(m−q) N to F_m^q/nextStage obtained by
@@ -52,14 +63,15 @@ def mixedClass (m q : ℕ) (hq : q ≤ m) :
     let s : Piece R M N m (index m q hq) →ₗ[R] filtration R M N m q :=
       gradeSection R M N m q hq
     let π : filtration R M N m q →ₗ[R] associatedGraded R M N m q :=
-      (nextStage R M N m q).mkQ
+      Submodule.mkQ (R := R) (M := filtration R M N m q) (nextStage R M N m q)
     exact π.comp s
 
 theorem associatedGradedEquiv_mixedClass (m q : ℕ) (hq : q ≤ m)
     (z : Piece R M N m (index m q hq)) :
     associatedGradedEquiv R M N m q hq (mixedClass R M N m q hq z) = z := by
   change associatedGradedEquiv R M N m q hq
-    (Submodule.Quotient.mk (gradeSection R M N m q hq z)) = z
+    (Submodule.Quotient.mk (p := nextStage R M N m q)
+      (gradeSection R M N m q hq z)) = z
   rw [associatedGradedEquiv_mk]
   exact gradeProjection_section R M N m q hq z
 
@@ -81,6 +93,21 @@ variable {R : Type u} [CommRing R]
   {M' : Type v'} [AddCommGroup M'] [Module R M']
   {N' : Type w'} [AddCommGroup N'] [Module R N']
   (f : FirstSummandMap (R := R) (M := M) (N := N) (M' := M') (N' := N'))
+
+-- Both native stage subgroups retain the given source and target module worlds.
+local instance (X : Type*) [AddCommGroup X] [Module R X] (m : ℕ) :
+    AddCommGroup (⋀[R]^m X) :=
+  Submodule.addCommGroup (R := R) (M := ExteriorAlgebra R X)
+    (ExteriorAlgebra.exteriorPower R m X)
+
+local instance (m q : ℕ) : AddCommGroup (filtration R M N m q) :=
+  Submodule.addCommGroup (R := R) (M := ⋀[R]^m (M × N))
+    (filtration R M N m q)
+
+local instance (m q : ℕ) : AddCommGroup (filtration R M' N' m q) :=
+  Submodule.addCommGroup (R := R) (M := ⋀[R]^m (M' × N'))
+    (filtration R M' N' m q)
+
 
 /-- Let R be a commutative ring and M, N, M', N' R-modules. Let f.map : M × N →ₗ[R] M' × N' and
 f.first : M →ₗ[R] M' satisfy f.map ∘ inl = inl' ∘ f.first. Put f.relative = snd' ∘ f.map ∘
@@ -111,10 +138,13 @@ def gradeMap (m q : ℕ) :
   by
     let g : filtration R M N m q →ₗ[R] filtration R M' N' m q := f.stageMap m q
     let h : nextStage R M N m q ≤ (nextStage R M' N' m q).comap g := f.stageMap_next m q
-    exact (nextStage R M N m q).mapQ (nextStage R M' N' m q) g h
+    exact Submodule.mapQ (R := R) (R₂ := R)
+      (M := filtration R M N m q) (M₂ := filtration R M' N' m q)
+      (nextStage R M N m q) (nextStage R M' N' m q) g h
 
 theorem gradeMap_mk (m q : ℕ) (z : filtration R M N m q) :
-    f.gradeMap m q (Submodule.Quotient.mk z) = Submodule.Quotient.mk (f.stageMap m q z) := by
+    f.gradeMap m q (Submodule.Quotient.mk (p := nextStage R M N m q) z) =
+      Submodule.Quotient.mk (p := nextStage R M' N' m q) (f.stageMap m q z) := by
   rw [gradeMap, Submodule.mapQ_apply]
 
 /-- Let R be a commutative ring and M, N, M', N' R-modules. Let f.map : M × N →ₗ[R] M' × N' and
@@ -210,7 +240,7 @@ theorem gradeMap_id (m q : ℕ) :
     (FirstSummandMap.id (R := R) (M := M) (N := N)).gradeMap m q = LinearMap.id := by
   apply LinearMap.ext
   intro z
-  refine Submodule.Quotient.induction_on _ z (fun x => ?_)
+  refine Submodule.Quotient.induction_on (nextStage R M N m q) z (fun x => ?_)
   rw [gradeMap_mk, stageMap_id, LinearMap.id_apply]
   rfl
 
@@ -232,7 +262,7 @@ theorem gradeMap_comp
     (f.comp g).gradeMap m q = (g.gradeMap m q).comp (f.gradeMap m q) := by
   apply LinearMap.ext
   intro z
-  refine Submodule.Quotient.induction_on _ z (fun x => ?_)
+  refine Submodule.Quotient.induction_on (nextStage R M N m q) z (fun x => ?_)
   rw [gradeMap_mk, LinearMap.comp_apply, gradeMap_mk, gradeMap_mk, stageMap_comp]
   rfl
 
