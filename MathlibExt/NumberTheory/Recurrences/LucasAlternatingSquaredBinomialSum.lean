@@ -42,6 +42,14 @@ by the addition formula `2 U_{m+n} = U_m V_n + V_m U_n` of
 `MathlibExt.NumberTheory.Recurrences.LucasSequenceAddition`. It remains to evaluate
 `∑_k (-1)^k C(2n, k)^2 = (-1)^n C(2n, n)`, the coefficient of `X^{2n}` in
 `(X + 1)^{2n} (X - 1)^{2n} = (X^2 - 1)^{2n}`.
+
+## References
+
+* John M. Campbell and Emrah Kılıç, *Binomial Sums Involving Second-Order Linearly Recurrent
+  Sequences*, The Fibonacci Quarterly 62 (2024), no. 1, 57–64, Theorem 2.1 and Proposition 2.3.
+* Vladimir V. Kruchinin and Maria Y. Perminova, *Identities and Hadamard Product of the Generalized
+  Fibonacci, Lucas, Catalan, and Harmonic Numbers*, Journal of Integer Sequences 28 (2025),
+  Article 25.8.8, 1–17, Proposition 1 (Lucas addition) and Theorem 2 (symmetric weights).
 -/
 
 namespace MetaMathlibExt
@@ -81,10 +89,12 @@ private theorem sum_choose_sq_mul_neg_one_pow (n : ℕ) :
   rw [coeff_X_add_one_pow, coeff_X_add_C_pow, Nat.sub_sub_self hk', Nat.choose_symm hk']
   ring
 
-/-- For weights symmetric under `k ↦ m - k`, the sum of `a_k U_{m-k} V_k` is `(∑_k a_k) U_m`:
-reflecting the sum and adding gives `∑_k a_k (U_{m-k} V_k + V_{m-k} U_k)`, and each bracket is
-`2 U_m` by the addition formula. -/
-private theorem sum_mul_lucasU_mul_lucasV_of_symm (P : LucasSequenceParams) (m : ℕ)
+/-- **Lucas convolution with symmetric weights.** Let $P,Q$ be integers with $Q \ne 0$, and let
+$U = U(P,Q)$ and $V = V(P,Q)$ be the associated Lucas sequences. For a natural number $m$ and
+integer weights $a_k$ satisfying $a_{m-k}=a_k$ for every $0\le k\le m$,
+
+$$\sum_{k=0}^{m} a_k U_{m-k} V_k = \left(\sum_{k=0}^{m} a_k\right) U_m.$$ -/
+public theorem sum_mul_lucasU_mul_lucasV_of_symm (P : LucasSequenceParams) (m : ℕ)
     (a : ℕ → ℤ) (ha : ∀ k ≤ m, a (m - k) = a k) :
     ∑ k ∈ range (m + 1), a k * lucasU P (m - k) * lucasV P k =
       (∑ k ∈ range (m + 1), a k) * lucasU P m := by
