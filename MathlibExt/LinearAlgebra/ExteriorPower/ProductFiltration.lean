@@ -187,7 +187,7 @@ theorem gradeProjection_ker (m q : ℕ) (hq : q ≤ m) :
 elements whose mixed coordinates of first degree below q are zero. For m, q : ℕ,
 associatedGraded R M N m q is F_m^q ⧸ nextStage R M N m q, the quotient of the current stage
 by the next stage viewed inside it. -/
-abbrev associatedGraded (m q : ℕ) :=
+def associatedGraded (m q : ℕ) :=
   _root_.Quotient (Submodule.quotientRel (R := R) (M := filtration R M N m q)
     (nextStage R M N m q))
 
@@ -313,7 +313,7 @@ theorem transportedGradeProjection_ker (m q : ℕ) (hq : q ≤ m) :
     exteriorPower.mapEquiv R W m e x.val ∈ filtration R M N m (q + 1)
   rfl
 
-abbrev transportedAssociatedGraded (m q : ℕ) :=
+def transportedAssociatedGraded (m q : ℕ) :=
   _root_.Quotient (Submodule.quotientRel (R := R) (M := transportedFiltration R M N e m q)
     (transportedNextStage R M N e m q))
 
