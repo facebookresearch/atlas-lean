@@ -24,8 +24,10 @@ Closed checks, by `decide`, reusing the tree-CSP fixtures:
   a forest; along the index ordering greedy returns an assignment that is no solution (every arc
   is consistent, as the tree-CSP tests check), and no ordering makes every arc a parent edge;
 * countermodels: a self-arc (acyclic, width zero, unsolvable, yet the algorithm succeeds), an
-  asymmetric relation (the child-to-parent arc is never checked), and arcs listed in one
-  orientation only (no parent map lists every parent edge parent first);
+  asymmetric relation (for the prescribed index order the child-to-parent arc is never checked;
+  with both directions listed and opposite relations, neither rooting detects the conflict), and,
+  for `0 → 1 ← 2`, no parent map both covers every listed arc and has every parent edge listed
+  parent first;
 * both phases charged on the path.
 -/
 
@@ -172,7 +174,8 @@ example : ¬ArcConsistency.Symmetric asymCSP := by
   decide
 example : asymCSP.orderWidth ord2 ≤ 1 := by
   decide
-/-- Without `hsym` the forest theorem fails. -/
+/-- Without `hsym` the prescribed-order result fails for the index order: the listed arc is
+checked only parent-to-child. The existential form is refuted by `eqNeCSP` below. -/
 example : ¬(treeSolve asymCSP (asymCSP.orderParent ord2) (List.ofFn ord2.symm) minSel
     (fun _ => Finset.univ) ≠ none ↔ ∃ σ, IsSolution asymCSP (fun _ => Finset.univ) σ) := by
   have htree : treeSolve asymCSP (asymCSP.orderParent ord2) (List.ofFn ord2.symm) minSel
@@ -184,12 +187,34 @@ example : ¬(treeSolve asymCSP (asymCSP.orderParent ord2) (List.ofFn ord2.symm) 
   rw [htree] at h
   exact hnosol (h.mp (by decide))
 
+/-- Both directions listed: equality from `0` to `1`, disequality from `1` to `0`. -/
+def eqNeCSP : BinaryCSP (Fin 2) (Fin 2) where
+  arcs := [(0, 1), (1, 0)]
+  allowed x y a b := if x = 0 ∧ y = 1 then decide (a = b) else decide (a ≠ b)
+
+example : ¬ ArcConsistency.Symmetric eqNeCSP := by
+  unfold ArcConsistency.Symmetric
+  decide
+example : ¬ ∃ σ, IsSolution eqNeCSP (fun _ => Finset.univ) σ := by
+  unfold IsSolution
+  decide
+/-- Rooted at `0`, the algorithm succeeds although there is no solution. -/
+example : treeSolve eqNeCSP ![none, some 0] [(0 : Fin 2), 1] minSel
+    (fun _ => Finset.univ) ≠ none := by
+  decide
+/-- Rooted at `1`, the algorithm also succeeds: neither rooting detects the conflict, so
+symmetry is necessary for the existential forest theorem, not only for a prescribed order. -/
+example : treeSolve eqNeCSP ![some 1, none] [(1 : Fin 2), 0] minSel
+    (fun _ => Finset.univ) ≠ none := by
+  decide
+
 /-- The path `0 - 1 - 2` listed as `(0, 1)`, `(2, 1)`. -/
 def oneWay : BinaryCSP (Fin 3) (Fin 2) := ⟨[(0, 1), (2, 1)], fun _ _ _ _ => true⟩
 
 example : oneWay.orderWidth ord3 ≤ 1 := by
   decide
-/-- No parent map has every arc a parent edge and every parent edge listed parent first. -/
+/-- For `0 → 1 ← 2`, no parent map both covers every listed arc and has every parent edge
+listed parent first. -/
 example : ¬∃ parent : Fin 3 → Option (Fin 3), IsTreeArcs oneWay parent ∧
     ∀ x p, parent x = some p → (p, x) ∈ oneWay.arcs := by
   unfold IsTreeArcs
