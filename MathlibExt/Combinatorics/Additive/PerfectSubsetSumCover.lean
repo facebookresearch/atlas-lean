@@ -10,6 +10,8 @@ module
 
 import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 public import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Data.Finset.Preimage
+import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Order.Interval.Finset.Fin
@@ -21,6 +23,17 @@ public import Mathlib.SetTheory.Cardinal.Finite
 A perfect `l`-cover represents each group element as a subset sum of the indexed family
 in exactly `l` ways. Projecting a perfect cover of a product onto one factor multiplies
 the cover multiplicity by the order of the other factor.
+
+For a finite abelian group `H` of order `2^m` and `n ≥ 1`, perfect covers of
+`H × ZMod (2^n)` with exactly one odd last-coordinate representative correspond to a
+choice of that odd element and a perfect cover of `H × ZMod (2^(n-1))`. The latter
+is embedded by doubling the last coordinate.
+
+## References
+
+* John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power of 2*,
+  Journal of Integer Sequences 28 (2025), Article 25.7.8, pp. 1–18, especially §1 for the cover
+  definitions, §2, Lemmas 5 and 6, §3, Theorem 15(c) and Lemma 16, and §4, Lemma 21 (p. 12).
 -/
 
 namespace MetaMathlibExt
@@ -357,5 +370,227 @@ theorem coverCount_le_one_of_not_mem_oddCombinations {G : Type*}
   exact Finset.card_pos.mpr ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hs⟩⟩
 
 end
+
+open PerfectSubsetSumCover
+
+private theorem coverCount_reindex {ι κ G : Type*} [Fintype ι] [Fintype κ] [AddCommGroup G]
+    [DecidableEq G] (e : ι ≃ κ) (s : κ → G) (x : G) :
+    coverCount (s ∘ e) x = coverCount s x := by
+  unfold coverCount
+  rw [← Fintype.card_subtype, ← Fintype.card_subtype]
+  apply Fintype.card_congr (Equiv.subtypeEquiv (Equiv.finsetCongr e) ?_)
+  intro I
+  simp [Equiv.finsetCongr_apply, Finset.sum_map]
+
+private theorem coverCount_insert_eq {G : Type*} [AddCommGroup G] [DecidableEq G]
+    (S : Finset G) {z : G} (hz : z ∉ S) (x : G) :
+    coverCount (fun a : ↥(insert z S) => (a : G)) x =
+      coverCount (fun a : S => (a : G)) x + coverCount (fun a : S => (a : G)) (x - z) := by
+  let e := S.equivFin.symm
+  let s : Fin S.card → G := fun i => (e i : G)
+  let EFun (i : Fin (S.card + 1)) : ↥(insert z S) :=
+    Fin.cases ⟨z, Finset.mem_insert_self _ _⟩ (fun j => ⟨e j, Finset.mem_insert_of_mem (e j).2⟩) i
+  have hval (i : Fin (S.card + 1)) :
+      (EFun i : G) = (Fin.cons z s : Fin (S.card + 1) → G) i := by
+    refine Fin.cases ?_ (fun j => ?_) i <;> simp [EFun, s]
+  have hhead : z ∉ Set.range s := by
+    rintro ⟨i, hi⟩
+    exact hz (hi ▸ (e i).2)
+  have htail : Function.Injective s := fun _ _ h => e.injective (Subtype.ext h)
+  have hinj : Function.Injective EFun := by
+    intro i j h
+    apply Fin.cons_injective_of_injective hhead htail
+    simpa only [hval] using congrArg (fun a : ↥(insert z S) => (a : G)) h
+  let E := Equiv.ofBijective EFun ((Fintype.bijective_iff_injective_and_card _).mpr
+    ⟨hinj, by simp [Finset.card_insert_of_notMem hz]⟩)
+  have hE : (fun a : ↥(insert z S) => (a : G)) ∘ E = Fin.cons z s := by
+    funext i
+    simpa only [E, Function.comp_apply, Equiv.ofBijective_apply] using hval i
+  rw [← coverCount_reindex E, hE, coverCount_cons]
+  exact congrArg₂ (· + ·) (coverCount_reindex e _ _) (coverCount_reindex e _ _)
+
+private theorem coverCount_map_finset {G K : Type*} [AddCommGroup G] [AddCommGroup K]
+    [DecidableEq K] (f : G →+ K) (hf : Function.Injective f)
+    (S : Finset G) (x : K) :
+    coverCount (fun a : S.map ⟨f, hf⟩ => (a : K)) x =
+      (Finset.univ.filter fun I : Finset S => f (∑ a ∈ I, (a : G)) = x).card := by
+  rw [← coverCount_reindex (S.equivMap (⟨f, hf⟩ : G ↪ K))]
+  simp [coverCount, ← map_sum]
+
+-- A perfect cover with a single element over `1` is determined by that element and its tail.
+private noncomputable def perfectCoverOneOddEquiv {G K : Type*} [AddCommGroup G] [AddCommGroup K]
+    [DecidableEq G] [DecidableEq K] (f : G →+ K) (hf : Function.Injective f)
+    (p : K →+ ZMod 2) (hp : ∀ x, x ∈ Set.range f ↔ p x = 0) :
+    ({z : K // p z = 1} × {S : Finset G // IsPerfectCover S}) ≃
+      {T : Finset K // IsPerfectCover T ∧ (T.filter fun z => p z = 1).card = 1} := by
+  let e : G ↪ K := ⟨f, hf⟩
+  have hzero (a : G) : p (f a) = 0 := (hp _).mp ⟨a, rfl⟩
+  have hnotMem (z : {z : K // p z = 1}) (S : Finset G) : (z : K) ∉ S.map e := by
+    rintro hz
+    obtain ⟨a, -, ha⟩ := Finset.mem_map.mp hz
+    exact zero_ne_one ((hzero a).symm.trans ((congrArg p ha).trans z.2))
+  have hfilter (z : {z : K // p z = 1}) (S : Finset G) :
+      (insert (z : K) (S.map e)).filter (fun x => p x = 1) = {z.val} := by
+    have htail : (S.map e).filter (fun x => p x = 1) = ∅ := by
+      apply Finset.filter_eq_empty_iff.mpr
+      rintro _ hx
+      obtain ⟨a, -, rfl⟩ := Finset.mem_map.mp hx
+      simp [e, hzero]
+    simp [Finset.filter_insert, z.2, htail]
+  have hcover (z : {z : K // p z = 1}) (S : Finset G) :
+      IsPerfectCover (insert (z : K) (S.map e)) ↔ IsPerfectCover S := by
+    let c := coverCount (fun a : S.map e => (a : K))
+    have hcount (x : G) : c (f x) = coverCount (fun a : S => (a : G)) x := by
+      rw [show c (f x) = (Finset.univ.filter fun I : Finset S =>
+        f (∑ a ∈ I, (a : G)) = f x).card from coverCount_map_finset f hf S _]
+      simp only [hf.eq_iff, coverCount]
+    have houtside (x : K) (hx : p x ≠ 0) : c x = 0 := by
+      change coverCount (fun a : S.map ⟨f, hf⟩ => (a : K)) x = 0
+      rw [coverCount_map_finset f hf, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+      exact fun I _ h => hx (h ▸ hzero (∑ a ∈ I, (a : G)))
+    have hsplit (x : K) :
+        coverCount (fun a : ↥(insert (z : K) (S.map e)) => (a : K)) x = c x + c (x - z) :=
+      coverCount_insert_eq _ (hnotMem z S) x
+    constructor
+    · intro h x
+      have hx : p (f x - z) ≠ 0 := by simp [map_sub, hzero, z.2]
+      have hfx : coverCount (fun a : ↥(insert (z : K) (S.map e)) => (a : K)) (f x) = 1 :=
+        h (f x)
+      simpa only [hsplit, houtside _ hx, add_zero, hcount] using hfx
+    · intro h x
+      change coverCount (fun a : ↥(insert (z : K) (S.map e)) => (a : K)) x = 1
+      rw [hsplit]
+      rcases (by decide : ∀ a : ZMod 2, a = 0 ∨ a = 1) (p x) with hx | hx
+      · obtain ⟨y, rfl⟩ := (hp x).mpr hx
+        rw [hcount, h y, houtside _ (by simp [map_sub, hzero, z.2]), add_zero]
+      · obtain ⟨y, hy⟩ := (hp (x - z)).mpr (by rw [map_sub, hx, z.2, sub_self])
+        rw [houtside _ (by rw [hx]; exact one_ne_zero), ← hy, hcount, h y, zero_add]
+  let liftCover : ({z : K // p z = 1} × {S : Finset G // IsPerfectCover S}) →
+      {T : Finset K // IsPerfectCover T ∧ (T.filter fun z => p z = 1).card = 1} :=
+    fun ⟨z, S⟩ => ⟨insert z.val (S.val.map e), (hcover z S).mpr S.2, by simp [hfilter]⟩
+  refine Equiv.ofBijective liftCover ⟨?_, ?_⟩
+  · rintro ⟨z, S⟩ ⟨w, T⟩ h
+    have heq : insert z.val (S.val.map e) = insert w.val (T.val.map e) := congrArg Subtype.val h
+    have hzw : z = w := by
+      apply Subtype.ext
+      simpa only [hfilter, Finset.singleton_inj] using
+        congrArg (Finset.filter fun x : K => p x = 1) heq
+    subst w
+    congr 1
+    apply Subtype.ext
+    apply Finset.map_injective e
+    simpa only [Finset.erase_insert (hnotMem z S), Finset.erase_insert (hnotMem z T)] using
+      congrArg (fun U : Finset K => U.erase z.val) heq
+  · rintro ⟨T, hT, hodd⟩
+    obtain ⟨z, hz⟩ := Finset.card_eq_one.mp hodd
+    have hz' : z ∈ T ∧ p z = 1 := Finset.mem_filter.mp (hz.symm ▸ Finset.mem_singleton_self z)
+    let S := (T.erase z).preimage e e.injective.injOn
+    have hmap : S.map e = T.erase z := by
+      classical
+      rw [Finset.map_eq_image, Finset.image_preimage, Finset.filter_eq_self]
+      intro x hx
+      apply (hp x).mpr
+      rcases (by decide : ∀ a : ZMod 2, a = 0 ∨ a = 1) (p x) with h | h
+      · exact h
+      · have hx' : x ∈ T.filter (fun a => p a = 1) :=
+          Finset.mem_filter.mpr ⟨Finset.mem_of_mem_erase hx, h⟩
+        rw [hz, Finset.mem_singleton] at hx'
+        exact (Finset.ne_of_mem_erase hx hx').elim
+    have hfull : insert z (S.map e) = T := by rw [hmap, Finset.insert_erase hz'.1]
+    exact ⟨(⟨z, hz'.2⟩, ⟨S, (hcover ⟨z, hz'.2⟩ S).mp (hfull.symm ▸ hT)⟩),
+      Subtype.ext hfull⟩
+
+private def doubleZMod (q : ℕ) : ZMod q →+ ZMod (q * 2) :=
+  ZMod.lift q ⟨(Int.castAddHom (ZMod (q * 2))).comp (AddMonoidHom.mulLeft (2 : ℤ)), by
+    simp only [AddMonoidHom.comp_apply, AddMonoidHom.coe_mulLeft, Int.coe_castAddHom]
+    exact_mod_cast (show ((2 * q : ℕ) : ZMod (q * 2)) = 0 by rw [mul_comm, ZMod.natCast_self])⟩
+
+private theorem doubleZMod_val {q : ℕ} [NeZero q] (x : ZMod q) :
+    (doubleZMod q x).val = 2 * x.val := by
+  have heq : doubleZMod q x = ((2 * x.val : ℕ) : ZMod (q * 2)) := by
+    conv_lhs => rw [← ZMod.natCast_zmod_val x, ← Int.cast_natCast]
+    rw [doubleZMod, ZMod.lift_coe]
+    simp only [AddMonoidHom.comp_apply, AddMonoidHom.coe_mulLeft, Int.coe_castAddHom]
+    push_cast
+    rfl
+  rw [heq, ZMod.val_natCast_of_lt (by have := ZMod.val_lt x; omega)]
+
+/-- **Perfect covers with exactly one odd element.** Let $H$ be an abelian group of order $2^m$,
+let $n \ge 1$ and let $G = H \oplus \mathbb{Z}_{2^n}$. Call an element of $G$ odd when its
+$\mathbb{Z}_{2^n}$-coordinate, taken as a representative in $\{0, 1, \dots, 2^n - 1\}$, is odd.
+Then the number of perfect covers of $G$ with exactly one odd element is
+$2^m \cdot 2^{n-1} \cdot C(H \oplus \mathbb{Z}_{2^{n-1}})$, where $C(K)$ denotes the number of
+perfect covers of a group $K$.
+
+Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 21
+(`jis-2025-25.7.8-lem-21`). "`y_1` odd, all other `y_i` even" is read as "exactly one odd
+`y`" for the unordered set; `y` odd means `y.val` odd; `n ≥ 1` added (`ℤ_{2^{n-1}}`). -/
+public theorem card_perfectCover_one_odd {H : Type*} [AddCommGroup H] [DecidableEq H]
+    [Fintype H] {m n : ℕ} (hH : Fintype.card H = 2 ^ m) (hn : 1 ≤ n) :
+    Nat.card {S : Finset (H × ZMod (2 ^ n)) // IsPerfectCover S ∧
+        (S.filter fun x => Odd x.2.val).card = 1} =
+      2 ^ m * 2 ^ (n - 1) * count (H × ZMod (2 ^ (n - 1))) := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  simp only [Nat.pow_succ, Nat.succ_sub_one]
+  let q : ℕ := 2 ^ n
+  have : NeZero q := ⟨pow_ne_zero _ (by decide)⟩
+  let f : (H × ZMod q) →+ H × ZMod (q * 2) := (AddMonoidHom.id H).prodMap (doubleZMod q)
+  have hf_apply (a : H × ZMod q) : f a = (a.1, doubleZMod q a.2) := by
+    cases a
+    simp only [f, AddMonoidHom.coe_prodMap, Prod.map_apply, AddMonoidHom.id_apply]
+  have hf : Function.Injective f := by
+    intro a b h
+    rw [hf_apply, hf_apply, Prod.mk.injEq] at h
+    refine Prod.ext h.1 (ZMod.val_injective _ ?_)
+    have hv := congrArg ZMod.val h.2
+    rw [doubleZMod_val, doubleZMod_val] at hv
+    omega
+  let p : (H × ZMod (q * 2)) →+ ZMod 2 :=
+    (ZMod.castHom (dvd_mul_left 2 q) (ZMod 2)).toAddMonoidHom.comp (AddMonoidHom.snd H _)
+  have hpval (a : H × ZMod (q * 2)) : p a = (a.2.val : ZMod 2) := by
+    simp only [p, AddMonoidHom.comp_apply, AddMonoidHom.coe_snd]
+    exact (ZMod.castHom_apply (h := dvd_mul_left 2 q) a.2).trans (ZMod.natCast_val a.2).symm
+  have hp (a : H × ZMod (q * 2)) : a ∈ Set.range f ↔ p a = 0 := by
+    rw [hpval, ZMod.natCast_eq_zero_iff_even]
+    constructor
+    · rintro ⟨b, rfl⟩
+      rw [hf_apply, doubleZMod_val]
+      exact even_two.mul_right _
+    · rintro ⟨k, hk⟩
+      have hlt := ZMod.val_lt a.2
+      have hkq : k < q := by omega
+      refine ⟨(a.1, (k : ZMod q)), ?_⟩
+      rw [hf_apply]
+      refine Prod.ext ?_ (ZMod.val_injective _ ?_)
+      · rfl
+      · simp only [doubleZMod_val, ZMod.val_natCast_of_lt hkq]
+        omega
+  have hodd (a : H × ZMod (q * 2)) : Odd a.2.val ↔ p a = 1 := by
+    rw [hpval, ZMod.natCast_eq_one_iff_odd]
+  -- Translation by `(0, 1)` identifies the even and odd fibers.
+  let u : H × ZMod (q * 2) := (0, 1)
+  have hu : p u = 1 := by simp [p, u]
+  let oddEquiv : (H × ZMod q) ≃ {a : H × ZMod (q * 2) // p a = 1} := by
+    refine Equiv.ofBijective (fun b => ⟨f b + u, by rw [map_add, (hp _).mp ⟨b, rfl⟩, hu, zero_add]⟩)
+      ⟨?_, ?_⟩
+    · intro b c h
+      exact hf (add_right_cancel (congrArg Subtype.val h))
+    · intro ⟨a, ha⟩
+      obtain ⟨b, hb⟩ := (hp (a - u)).mpr (by rw [map_sub, ha, hu, sub_self])
+      exact ⟨b, Subtype.ext (eq_sub_iff_add_eq.mp hb)⟩
+  let parityEquiv :
+      {S : Finset (H × ZMod (q * 2)) // IsPerfectCover S ∧
+        (S.filter fun a => Odd a.2.val).card = 1} ≃
+      {S : Finset (H × ZMod (q * 2)) // IsPerfectCover S ∧
+        (S.filter fun a => p a = 1).card = 1} :=
+    Equiv.subtypeEquivRight fun S => by
+      rw [Finset.filter_congr (fun a _ => hodd a)]
+  change Nat.card {S : Finset (H × ZMod (q * 2)) // IsPerfectCover S ∧
+      (S.filter fun a => Odd a.2.val).card = 1} = 2 ^ m * q * count (H × ZMod q)
+  rw [Nat.card_congr parityEquiv, ← Nat.card_congr (perfectCoverOneOddEquiv f hf p hp),
+    Nat.card_prod, ← Nat.card_congr oddEquiv, Nat.card_prod,
+    Nat.card_eq_fintype_card (α := H), Nat.card_eq_fintype_card (α := ZMod q), ZMod.card, hH]
+  rfl
 
 end MetaMathlibExt

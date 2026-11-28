@@ -80,4 +80,23 @@ example : (-3 : ℤ) ∈ oddCombinations {1, 2} := by
 example (j : ℤ) : (2 * j + 1) • (0 : ℤ) ∈ oddCombinations ∅ :=
   zsmul_mem_oddCombinations ∅ (zero_mem_oddCombinations ∅) j
 
+-- At `n = 1` the even tail has trivial last coordinate. Enumerate the qualifying covers directly.
+example : Nat.card {S : Finset (ZMod 2 × ZMod 2) // IsPerfectCover S ∧
+    (S.filter fun x => Odd x.2.val).card = 1} = 2 := by
+  rw [Nat.card_eq_fintype_card, Fintype.card_subtype]
+  decide
+
+-- A perfect cover with two odd last coordinates is not counted.
+example : let S : Finset (ZMod 2 × ZMod 2) := {(0, 1), (1, 1)}
+    IsPerfectCover S ∧ (S.filter fun x => Odd x.2.val).card = 2 := by
+  decide
+
+-- At `n = 2`, doubling sends the smaller cover's last coordinate 1 to 2.
+-- Either odd residue (1 or 3) can be adjoined, and these are exactly the qualifying covers.
+example : (Finset.univ.filter fun S : Finset (ZMod 1 × ZMod 4) => IsPerfectCover S ∧
+    (S.filter fun x => Odd x.2.val).card = 1) = {{(0, 1), (0, 2)}, {(0, 3), (0, 2)}} := by
+  decide
+
+#check @card_perfectCover_one_odd
+
 end MetaMathlibExt
