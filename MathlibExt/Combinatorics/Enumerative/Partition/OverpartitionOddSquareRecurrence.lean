@@ -186,43 +186,11 @@ private lemma series_identity : shiftedTheta * oddSeries = squareThetaSeries := 
           linear_combination -(shiftedTheta * oddSeries) * h
     _ = squareThetaSeries := by rw [odd_mul_rescale_all, he, one_mul]
 
-private lemma coeff_theta (n : ℕ) :
-    squareThetaSeries.coeff n =
-      if n = 0 then 1 else if n ∈ (Finset.Icc 1 n).image (fun m => m ^ 2) then 2 else 0 := by
-  by_cases hn : n = 0
-  · subst n
-    simpa using coeff_squareThetaSeries_small.1
-  rw [ite_eq_right hn, squareThetaSeries, coeff_mk]
-  split_ifs with hs
-  · obtain ⟨m, hm, rfl⟩ := Finset.mem_image.mp hs
-    obtain ⟨hm₁, hm₂⟩ := Finset.mem_Icc.mp hm
-    have hset : ((Finset.Icc (-(↑(m ^ 2) : ℤ)) ↑(m ^ 2)).filter
-        fun x : ℤ => x ^ 2 = ↑(m ^ 2)) = {(m : ℤ), -(m : ℤ)} := by
-      ext x
-      simp only [Finset.mem_filter, Finset.mem_Icc, Nat.cast_pow, sq_eq_sq_iff_eq_or_eq_neg,
-        Finset.mem_insert, Finset.mem_singleton]
-      have hm' : (m : ℤ) ≤ (m : ℤ) ^ 2 := Int.le_self_sq _
-      omega
-    rw [hset]
-    simp [show (m : ℤ) ≠ -(m : ℤ) by omega]
-  · have hset : ((Finset.Icc (-(n : ℤ)) n).filter fun x : ℤ => x ^ 2 = n) = ∅ := by
-      apply Finset.eq_empty_iff_forall_notMem.mpr
-      intro x hx
-      obtain ⟨_, hx⟩ := Finset.mem_filter.mp hx
-      have he : x.natAbs ^ 2 = n := by exact_mod_cast (Int.natAbs_sq x).trans hx
-      refine hs (Finset.mem_image.mpr ⟨x.natAbs, Finset.mem_Icc.mpr ⟨?_, ?_⟩, he⟩)
-      · by_contra! hz
-        simp [show x.natAbs = 0 by omega] at he
-        omega
-      · rw [← he]
-        exact Nat.le_self_pow (by decide) _
-    simp [hset]
-
 private lemma shifted_at_square (k : ℕ) (hk : k ≠ 0) :
     shiftedTheta.coeff (2 * k ^ 2) = 2 * (-1 : ℤ) ^ k := by
   have hm : k ^ 2 ∈ (Finset.Icc 1 (k ^ 2)).image (fun m => m ^ 2) :=
     Finset.mem_image.mpr ⟨k, Finset.mem_Icc.mpr ⟨by omega, Nat.le_self_pow (by decide) _⟩, rfl⟩
-  rw [coeff_expand_mul, coeff_rescale, coeff_theta, ite_eq_right (pow_ne_zero _ hk),
+  rw [coeff_expand_mul, coeff_rescale, coeff_squareThetaSeries, ite_eq_right (pow_ne_zero _ hk),
     ite_eq_left hm, mul_comm]
   congr 1
   apply neg_one_pow_congr
@@ -237,7 +205,8 @@ private lemma shifted_off_square (i : ℕ) (hi : i ≠ 0) (h : ∀ k : ℕ, 2 * 
       rintro hm
       obtain ⟨m, _, rfl⟩ := Finset.mem_image.mp hm
       exact h m rfl
-    rw [coeff_expand_mul, coeff_rescale, coeff_theta, ite_eq_right hj, ite_eq_right hs, mul_zero]
+    rw [coeff_expand_mul, coeff_rescale, coeff_squareThetaSeries, ite_eq_right hj,
+      ite_eq_right hs, mul_zero]
   · exact coeff_expand_of_not_dvd _ _ _ hd
 
 end overpartitionOdd_square_recurrence
@@ -255,7 +224,7 @@ public theorem overpartitionOdd_square_recurrence (n : ℕ) :
         + 2 * ∑ k ∈ (Finset.Icc 1 n).filter (fun k => 2 * k ^ 2 ≤ n),
           (-1 : ℤ) ^ k * (overpartitionOddPartsCount (n - 2 * k ^ 2) : ℤ)
       = if n = 0 then 1 else if n ∈ (Finset.Icc 1 n).image (fun m => m ^ 2) then 2 else 0 := by
-  rw [← coeff_theta, ← series_identity, PowerSeries.coeff_mul,
+  rw [← coeff_squareThetaSeries, ← series_identity, PowerSeries.coeff_mul,
     Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk]
   -- Only degree zero and twice the positive squares contribute to the convolution.
   let S := (Finset.Icc 1 n).filter fun k => 2 * k ^ 2 ≤ n
