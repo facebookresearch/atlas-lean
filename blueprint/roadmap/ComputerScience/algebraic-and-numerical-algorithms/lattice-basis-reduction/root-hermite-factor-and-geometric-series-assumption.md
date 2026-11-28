@@ -1,6 +1,6 @@
 # Root-Hermite factor and the geometric series assumption
 
-The root-Hermite factor $\delta_0$ of a basis is defined by $\|b_1\|=\delta_0^{d}\operatorname{vol}(\Lambda)^{1/d}$. The geometric series assumption models the Gram–Schmidt norms of a reduced basis as a geometric sequence; if it holds, the ratio must be $\delta_0^{-2d/(d-1)}$.
+The root-Hermite factor $\delta_0$ of a basis is defined by $\|b_1\|=\delta_0^{d}\operatorname{vol}(\Lambda)^{1/d}$. The geometric series assumption models the Gram–Schmidt norms of a BKZ-reduced basis as decaying geometrically. Both enter concrete estimates of lattice attacks as modelling assumptions.
 
 Let $B=(b_1,\dots,b_d)$ be a basis of a lattice $\Lambda$ of rank $d$, with Gram–Schmidt vectors $b_i^*$.
 
@@ -10,25 +10,19 @@ $$
 \|b_1\| = \delta_0^{\,d}\,\operatorname{vol}(\Lambda)^{1/d}.
 $$
 
-**Geometric series assumption (GSA).** A basis satisfies the GSA if there is $0<\alpha<1$ with $\|b_i^*\| = \alpha^{\,i-1}\|b_1\|$ for $1\le i\le d$. If $d\ge2$ and the GSA holds, then, because $\prod_{i=1}^{d}\|b_i^*\|=\operatorname{vol}(\Lambda)$,
+**Geometric series assumption (GSA).** A basis satisfies the GSA if there is $0<\alpha<1$ with $\|b_i^*\| = \alpha^{\,i-1}\|b_1\|$ for $1\le i\le d$. It is Schnorr's assumption that the Gram–Schmidt norms of a BKZ-reduced basis decay geometrically, used for instance in Lindner and Peikert's analysis of decoding; it is not a consequence of being reduced.
+
+**BKZ model.** Concrete estimates relate the root-Hermite factor achievable by BKZ with block size $\beta$ to $\beta$ by
 
 $$
-\alpha=\delta_0^{-2d/(d-1)} .
+\delta_0=\Bigl(\frac{\beta}{2\pi e}\,(\pi\beta)^{1/\beta}\Bigr)^{1/(2(\beta-1))},
 $$
 
-The GSA is an assumption about bases produced by lattice reduction, not a consequence of being reduced.
-
-**BKZ model.** Concrete analyses assume that a BKZ-$\beta$-reduced basis satisfies the GSA and has
-
-$$
-\delta_0\approx\Bigl(\frac{\beta}{2\pi e}\,(\pi\beta)^{1/\beta}\Bigr)^{1/(2(\beta-1))},
-$$
-
-a formula Albrecht, Göpfert, Virdia and Wunderer take from Chen's thesis. Both are modelling assumptions.
+which the HE Standard solves for $\beta$, following Chen's thesis. Chen and Nguyen report that the Gram–Schmidt norms of LLL- or BKZ-reduced bases of sufficiently randomized inputs typically have $\|b_i^*\|/\|b_{i+1}^*\|$ roughly constant except for the first indices, so that the Hermite factor is typically exponential in the dimension. Both are modelling assumptions and experimental observations, not theorems.
 
 ## Proof sketch
 
-Given the GSA, $\prod_{i=1}^d\|b_i^*\|=\|b_1\|^d\alpha^{d(d-1)/2}$ and $\|b_1\|^d=\delta_0^{d^2}\operatorname{vol}(\Lambda)$, so $\delta_0^{d^2}\alpha^{d(d-1)/2}=1$, i.e. $\alpha=\delta_0^{-2d/(d-1)}$. The $\delta_0(\beta)$ formula is recorded as the model the cited papers use, attributed there to Chen's thesis; no claim about its accuracy is made, and it is not meant for very small block sizes.
+Combining the two definitions: if $d\ge2$ and the GSA holds with ratio $\alpha$, then $\prod_{i=1}^d\|b_i^*\|=\|b_1\|^d\alpha^{d(d-1)/2}$ equals $\operatorname{vol}(\Lambda)$, and $\|b_1\|^d=\delta_0^{d^2}\operatorname{vol}(\Lambda)$, so $\delta_0^{d^2}\alpha^{d(d-1)/2}=1$, i.e. $\alpha=\delta_0^{-2d/(d-1)}$. The $\delta_0(\beta)$ relation is recorded as the model the HE Standard uses; no claim about its accuracy is made.
 
 ## Depends on
 
@@ -40,6 +34,5 @@ None.
 
 ## Sources
 
-- Martin R. Albrecht, Florian Göpfert, Fernando Virdia, Thomas Wunderer, "Revisiting the Expected Cost of Solving uSVP and Applications to LWE", ASIACRYPT 2017, Lecture Notes in Computer Science 10624; IACR ePrint 2017/815, [https://eprint.iacr.org/2017/815](https://eprint.iacr.org/2017/815), Section 2.3 and Definition 3.
-- Yuanmi Chen, Phong Q. Nguyen, "BKZ 2.0: Better Lattice Security Estimates", ASIACRYPT 2011, Lecture Notes in Computer Science 7073, pp. 1–20, [https://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf](https://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf), Section 2 (Hermite factor and the typical shape of reduced Gram–Schmidt norms).
-- Martin Albrecht, Melissa Chase, Hao Chen, Jintai Ding, Shafi Goldwasser, Sergey Gorbunov, Shai Halevi, Jeffrey Hoffstein, Kim Laine, Kristin Lauter, Satya Lokam, Daniele Micciancio, Dustin Moody, Travis Morrison, Amit Sahai, Vinod Vaikuntanathan, "Homomorphic Encryption Standard", in Protecting Privacy through Homomorphic Encryption, Springer, 2021, pp. 31–62; IACR ePrint 2019/939, [https://eprint.iacr.org/2019/939](https://eprint.iacr.org/2019/939), Section 2.1.2.
+- Martin Albrecht, Melissa Chase, Hao Chen, Jintai Ding, Shafi Goldwasser, Sergey Gorbunov, Shai Halevi, Jeffrey Hoffstein, Kim Laine, Kristin Lauter, Satya Lokam, Daniele Micciancio, Dustin Moody, Travis Morrison, Amit Sahai, Vinod Vaikuntanathan, "Homomorphic Encryption Standard", version of November 21, 2018, HomomorphicEncryption.org, [https://homomorphicencryption.org/wp-content/uploads/2018/11/HomomorphicEncryptionStandardv1.1.pdf](https://homomorphicencryption.org/wp-content/uploads/2018/11/HomomorphicEncryptionStandardv1.1.pdf), Section 2.1.2: b. Primal by BDD enumeration (GSA, PDF p. 20), c. Dual (first vector of norm $\delta_0^m\operatorname{Vol}^{1/m}$, PDF p. 20) and Lattice Reduction algorithm: BKZ, a. Block Size (PDF p. 21).
+- Yuanmi Chen, Phong Q. Nguyen, "BKZ 2.0: Better Lattice Security Estimates", ASIACRYPT 2011, Lecture Notes in Computer Science 7073, pp. 1–20, Springer, https://doi.org/10.1007/978-3-642-25385-0_1, Section 2 (Hermite factor and the typical shape of reduced Gram–Schmidt norms, p. 5).

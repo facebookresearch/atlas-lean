@@ -14,7 +14,7 @@ $$
 \lambda_1(L)\approx \operatorname{GH}(L) := \operatorname{vol}(L)^{1/n}\,V_n(1)^{-1/n}.
 $$
 
-"Nice" is not made precise, and the prediction is not valid for every lattice or every set. A rigorous companion bound holds for every lattice of rank $n$: $\lambda_1(L)\le 2\operatorname{GH}(L)$. Concrete lattice attacks use the heuristic to predict, for instance, the second minimum of an embedding lattice or the lengths found by enumeration.
+"Nice" is not made precise, and the prediction is not valid for every lattice or every set. A rigorous companion bound holds for every lattice of rank $n$: $\lambda_1(L)\le 2\operatorname{GH}(L)$. Chen and Nguyen use it to estimate the number of nodes of enumeration trees and, in their simulation of BKZ 2.0, the Gram–Schmidt norms of reduced blocks.
 
 ## Proof sketch
 
@@ -30,6 +30,4 @@ The companion bound follows from Minkowski's convex body theorem, which needs st
 
 ## Sources
 
-- Yuanmi Chen, Phong Q. Nguyen, "BKZ 2.0: Better Lattice Security Estimates", ASIACRYPT 2011, Lecture Notes in Computer Science 7073, pp. 1–20, [https://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf](https://www.iacr.org/archive/asiacrypt2011/70730001/70730001.pdf), Section 2, Equation (1) and the Minkowski remark that follows it.
-- Martin R. Albrecht, Florian Göpfert, Fernando Virdia, Thomas Wunderer, "Revisiting the Expected Cost of Solving uSVP and Applications to LWE", ASIACRYPT 2017, Lecture Notes in Computer Science 10624; IACR ePrint 2017/815, [https://eprint.iacr.org/2017/815](https://eprint.iacr.org/2017/815), Section 3.1 (second minimum modelled by the Gaussian heuristic).
-- Martin R. Albrecht, Shi Bai, Pierre-Alain Fouque, Paul Kirchner, Damien Stehlé, Weiqiang Wen, "Faster Enumeration-based Lattice Reduction: Root Hermite Factor $k^{1/(2k)}$ in Time $k^{k/8+o(k)}$", CRYPTO 2020, Lecture Notes in Computer Science 12171, [https://iacr.org/archive/crypto2020/12171096/12171096.pdf](https://iacr.org/archive/crypto2020/12171096/12171096.pdf), Section 2.1 (Gaussian heuristic $\mathrm{GH}(L)=v_n^{-1/n}\operatorname{vol}(L)^{1/n}$ and Minkowski's bound).
+- Yuanmi Chen, Phong Q. Nguyen, "BKZ 2.0: Better Lattice Security Estimates", ASIACRYPT 2011, Lecture Notes in Computer Science 7073, pp. 1–20, Springer, https://doi.org/10.1007/978-3-642-25385-0_1, Section 2 (Gaussian heuristic, $\mathrm{GH}(L)$ and Minkowski's bound, p. 5), Section 3.2 Equation (1) and Section 6 (uses of the heuristic).
