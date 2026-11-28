@@ -290,6 +290,7 @@ Topics added since this subject's fields were last revised.
 - [Differential Positive](shuffle-bidegree-comp-obj-d-positive.md)
 - [Shuffle Retraction Combinatorics](shuffle-retraction-combinatorics/README.md)
 - [Shuffle](shuffle/README.md)
+- [Shuffle Coset](shuffle-coset/README.md)
 - [Sigma Component](sigma-component/README.md)
 - [Sigma Subtype Fullness](sigma-subtype-fullness/README.md)
 - [Simplex](simplex/README.md)

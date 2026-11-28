@@ -1,0 +1,5 @@
+# Exterior, tensor and matrix APIs
+
+These content-hash records identify the original MathlibExt files and their exported forms. The immutable snapshots preserve the original source bytes. Exported mathematical statements, hypotheses, universe parameters and attribution are retained. Compatibility adaptations include the public semiring-general Pi equivalence name and explicit matrix-multiplication proof rewrites, alongside copyright headers and mathematical documentation. Each file record describes its API, proof and documentation changes.
+
+This component provides exterior-power contraction and base change, graded exterior coalgebra and tensor constructions, and the finite matrix and group-extension interfaces used by the surrounding functional-analysis constructions. Existing Atlas and preceding functional-analysis contributions supply its remaining dependencies. No source-organized textbook or paper modules are exported. Native validation is recorded by the required pull-request checks.

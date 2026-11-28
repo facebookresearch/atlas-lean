@@ -39,6 +39,7 @@ Topics added since this subject's fields were last revised.
 - [Nilpotent](nilpotent/README.md)
 - [Ordinary De Rham Algebra Models](ordinary-de-rham-algebra-models/README.md)
 - [Projective Hilbert Growth](projective-hilbert-growth/README.md)
+- [Quasiregular](quasiregular/README.md)
 - [Resolution Cotangent](resolution-cotangent/README.md)
 - [Semiperfect Crystalline Period Rings](semiperfect-crystalline-period-rings/README.md)
 - [Semiperfect Crystalline Residues](semiperfect-crystalline-residues/README.md)

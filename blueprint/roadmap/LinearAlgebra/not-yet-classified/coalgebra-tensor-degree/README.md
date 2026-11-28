@@ -1,0 +1,15 @@
+# Coalgebra Tensor Degree
+
+- [Graded Exterior](graded-exterior.md)
+- [Tensor Degree](tensor-degree.md)
+- [Tensor Degreeι](tensor-degree-2.md)
+- [Tensor Degree Desc](tensor-degree-desc.md)
+- [Tensor Degree Realize](tensor-degree-realize.md)
+- [Tensor Degree Lift](tensor-degree-lift.md)
+- [Tensor Degree Lift realize](tensor-degree-lift-realize.md)
+- [Tensor Degree Realize lift](tensor-degree-realize-lift.md)
+- [Tensor Degree Realize injective](tensor-degree-realize-injective.md)
+- [Tensor Degree Realize lift of mem](tensor-degree-realize-lift-of-mem.md)
+- [Graded Tensor Square](graded-tensor-square.md)
+- [Graded Coproduct](graded-coproduct.md)
+- [Graded Coproduct realize](graded-coproduct-realize.md)
