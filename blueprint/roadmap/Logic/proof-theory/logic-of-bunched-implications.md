@@ -14,15 +14,12 @@ Beth's clause for disjunction.
 A sound expansion fixes one presentation of BI (formulas, bunches and a sequent calculus) and has
 separate pages for: BI-algebras and soundness and completeness of the calculus for them; a relational
 or resource semantics with its soundness and completeness theorem, as stated in a source fixed for
-that page; cut elimination; and decidability or undecidability of provability. Boolean BI and the
+that page; cut elimination; and [the undecidability of provability](undecidable-substructural-calculi/provability-in-bunched-implications-is.md). Boolean BI and the
 non-commutative variant are separate logics.
 
 ## Status
 
-A 2026 preprint by Galatos, Jipsen, Knudstorp and Ramanayake states that provability in BI is
-undecidable, by encoding Wang tilings into its ternary relational semantics, contrary to a
-long-standing expectation that BI might be decidable, and identifies gaps in earlier publications
-claiming decidability; the statement here follows the preprint's abstract.
+Provability in BI is undecidable (Galatos, Jipsen, Knudstorp and Ramanayake); see [Provability in the logic of bunched implications is undecidable](undecidable-substructural-calculi/provability-in-bunched-implications-is.md).
 
 ## Sources
 
