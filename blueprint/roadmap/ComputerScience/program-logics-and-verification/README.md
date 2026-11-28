@@ -9,6 +9,7 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 - [Kleene algebra with tests](kleene-algebra-with-tests/README.md)
 - [Safe backward rules for heap IMP](safe-backward-rules-for-heap-imp/README.md)
 - [Separation logic](separation-logic/README.md)
+- [Successful array-read credits](successful-array-read-credits/README.md)
 - [Metatheory of separation logic](separation-logic-metatheory/README.md)
 - [Verification-condition generation](verification-condition-generation/README.md)
 - [Hoare logic for typed traced diagrams](hoare-logic-for-typed-traced-diagrams/README.md)

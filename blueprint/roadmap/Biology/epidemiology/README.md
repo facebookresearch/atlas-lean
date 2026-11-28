@@ -2,6 +2,9 @@
 
 Compartmental, renewal and branching-process models of infectious disease transmission and their reproduction numbers, the reporting of incidence, and the accuracy of diagnostic tests.
 
+- [Parasite relatedness and genomic epidemiology](parasite-relatedness-and-genomic-epidemiology/README.md)
+- [Treatment, drug resistance and immune escape](treatment-resistance-and-immune-escape/README.md)
+- [Chronic disease and social contagion](chronic-disease-and-social-contagion/README.md)
 - [Branching-process approximation of early epidemics](branching-process-approximation-of-early-epidemi/README.md)
 - [Contact process on power-law random graphs](contact-process-on-power-law-random-graphs/README.md)
 - [Diffusion approximation of the stochastic SIR epidemic](diffusion-approximation-of-the-stochastic-sir-ep/README.md)
@@ -35,3 +38,12 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Two-strain competition with delayed cross-immunity](two-strain-competition-with-delayed-cross-immunity/README.md)
 - [Two-variant logistic replacement and the selection coefficient](two-variant-logistic-replacement-and-the-selection-coefficient.md)
 - [Epidemic coalescent models](epidemic-coalescent-models/README.md)
+- [Deterministic transmission models](deterministic-transmission-models/README.md)
+- [Stochastic epidemic models](stochastic-epidemic-models/README.md)
+- [Behavior and control](behavior-and-control/README.md)
+- [Epidemic inference and testing](epidemic-inference-and-testing/README.md)
+- [Kinetic crowd evacuation with contagion](kinetic-crowd-evacuation-with-contagion/README.md)
+- [Multi-strain co-colonization SIS model](multi-strain-co-colonization-sis-model/README.md)
+- [Multi-strain diffusive SIS model](multi-strain-diffusive-sis-model/README.md)
+- [Separable heterogeneity in Kermack–McKendrick models](separable-heterogeneity-in-kermack-mckendrick-models/README.md)
+- [SIR model on metric graphs](sir-model-on-metric-graphs/README.md)

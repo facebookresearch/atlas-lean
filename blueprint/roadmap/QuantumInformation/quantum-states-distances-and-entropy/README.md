@@ -9,3 +9,4 @@
 - [Shadow Tomography and Classical Shadows](classical-shadows-and-shadow-tomography/README.md)
 - [Density Matrices, Fidelity and Purification Alignment](density-matrices-and-fidelity/README.md)
 - [Quantum Relative Entropy](quantum-relative-entropy/README.md)
+- [Tensor network states](tensor-network-states/README.md)

@@ -75,6 +75,25 @@ theorem bisector_slope_equation (a b c : ℝ) (hab : |a| ≠ |b|) (hc : c ≠ 0)
   apply_fun (fun x : ℝ ↦ x ^ 2) at h
   simpa (disch := positivity) only [mul_pow, sq_abs, Real.sq_sqrt] using h
 
+/-- **Symmetries of the bisector equation.** Let $a, b, c$ be real numbers with
+$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1)$. Then the triples $(-a, -b, -c)$ and $(b, a, c)$
+satisfy the same equation, and so does $(a, b, -c^{-1})$ when $c \ne 0$.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 2(a)
+(`integers-2024-A111-prop-2`). -/
+theorem bisector_equation_symm (a b c : ℝ)
+    (h : (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)) :
+    (c ≠ 0 → (a - -c⁻¹) ^ 2 * (b ^ 2 + 1) = (b - -c⁻¹) ^ 2 * (a ^ 2 + 1)) ∧
+      (-a - -c) ^ 2 * ((-b) ^ 2 + 1) = (-b - -c) ^ 2 * ((-a) ^ 2 + 1) ∧
+      (b - c) ^ 2 * (a ^ 2 + 1) = (a - c) ^ 2 * (b ^ 2 + 1) := by
+  refine ⟨?_, ?_, h.symm⟩
+  · intro hc
+    -- After clearing denominators, the difference is the negative of the original difference.
+    field_simp [hc]
+    linear_combination -h
+  · linear_combination h
+
 -- Squarefreeness is part of the source statement. The sign choice uses only the Pell equations.
 set_option linter.unusedVariables false in
 /-- **Rational solutions of the bisector equation for square-free $d > 1$.** Let $d > 1$ be a

@@ -95,4 +95,16 @@ example : ((diagonalClass (Nat.Partition.ofMultiset {3, 2, 1})).filter
     (by decide +kernel) (by decide +kernel)]
   rfl
 
+-- At the minimum height, only the four extra copies of the peak are capped.
+example :
+    (diagonalClassOf 5 (diagonalOfList [1, 1, 1, 1, 1])).card =
+      (diagonalClassOf 3 (diagonalOfList [1, 1, 1])).card :=
+  card_diagonalClassOf_min_two 1 (by decide) (fun _ => 4)
+
+-- Cap both the peak and the terminal height while retaining the singleton and the skipped level.
+example :
+    (diagonalClassOf 28 (diagonalOfList [1, 2, 3, 4, 4, 4, 4, 2, 1, 1, 1, 1])).card =
+      (diagonalClassOf 22 (diagonalOfList [1, 2, 3, 4, 4, 4, 2, 1, 1])).card :=
+  card_diagonalClassOf_min_two 4 (by decide) (fun k => [0, 4, 1, 0, 3].getD k 0)
+
 end MetaMathlibExt
