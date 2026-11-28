@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Complexity.Algebraic.BilinearRecursion
+public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 /-!
 # Gate counts for recursive bilinear matrix-multiplication circuits
@@ -270,6 +271,39 @@ theorem IsMatrixMultiplication.exists_size_le_of_le {F : Type u} [Field F]
     have hP : (@padProject F _ n N hnN).size = 0 := rfl
     rw [ArithmeticCircuit.size_subst, ArithmeticCircuit.size_subst, hE, hP,
       zero_add, add_zero]
+
+/-- **Rpow size bound.** The recursive-circuit size is bounded by the
+`r`-exponential rewritten as a power of `q ^ k` through `Real.logb`. -/
+theorem recursiveCircuit_size_le_rpow {F : Type u} [Field F] {q : ℕ}
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)))
+    {r : ℕ} (hq : 2 ≤ q) (hlen : terms.length ≤ r) (hqr : q ^ 2 < r) (k : ℕ) :
+    ((recursiveCircuit terms k).size : ℝ) ≤
+      (1 + 6 * r * q ^ 2) * ((q ^ k : ℕ) : ℝ) ^ Real.logb q r := by
+  have hle := recursiveCircuit_size_le terms hlen hqr k
+  have hleR : ((recursiveCircuit terms k).size : ℝ)
+      + 6 * (r : ℝ) * (q : ℝ) ^ 2 * (q : ℝ) ^ (2 * k) ≤
+      (1 + 6 * (r : ℝ) * (q : ℝ) ^ 2) * (r : ℝ) ^ k := by
+    exact_mod_cast hle
+  have hnn : (0 : ℝ) ≤ 6 * (r : ℝ) * (q : ℝ) ^ 2 * (q : ℝ) ^ (2 * k) := by
+    positivity
+  have hdrop : ((recursiveCircuit terms k).size : ℝ) ≤
+      (1 + 6 * (r : ℝ) * (q : ℝ) ^ 2) * (r : ℝ) ^ k := by
+    linarith
+  have hqpos : (0 : ℝ) < (q : ℝ) := by
+    exact_mod_cast (by omega : 0 < q)
+  have hq1 : (q : ℝ) ≠ 1 := by
+    exact_mod_cast (by omega : q ≠ 1)
+  have hrpos : (0 : ℝ) < (r : ℝ) := by
+    exact_mod_cast lt_of_le_of_lt (Nat.zero_le (q ^ 2)) hqr
+  have hident : (r : ℝ) ^ k = ((q ^ k : ℕ) : ℝ) ^ Real.logb (q : ℝ) (r : ℝ) := by
+    rw [Nat.cast_pow, ← Real.rpow_natCast, ← Real.rpow_natCast,
+      ← Real.rpow_mul hqpos.le, mul_comm ((k : ℕ) : ℝ),
+      Real.rpow_mul hqpos.le, Real.rpow_logb hqpos hq1 hrpos]
+  rw [hident] at hdrop
+  exact hdrop
 
 end
 

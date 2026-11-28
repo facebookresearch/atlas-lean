@@ -69,4 +69,16 @@ example {F : Type u} [Field F] (c : MatrixArithmeticCircuit F 4 4 4)
       c'.size ≤ c.size :=
   IsMatrixMultiplication.exists_size_le_of_le (by norm_num) hc
 
+#check @recursiveCircuit_size_le_rpow
+
+example {F : Type u} [Field F]
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)))
+    (hlen : terms.length ≤ 7) (k : ℕ) :
+    ((recursiveCircuit terms k).size : ℝ) ≤
+      (1 + 6 * 7 * 2 ^ 2) * ((2 ^ k : ℕ) : ℝ) ^ Real.logb 2 7 :=
+  recursiveCircuit_size_le_rpow terms (by norm_num) hlen (by decide) k
+
 end Cslib.Complexity.Algebraic
