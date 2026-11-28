@@ -10964,6 +10964,8 @@
 "Chemistry.Aqueous.mem_ker_balanceMatrix_iff": "6e81e4d3c2d396d9",
 "Chemistry.Aqueous.solutionSet_basisChange": "ab64c7eb4459699e",
 "Chemistry.Aqueous.sum_balanceCombination_mul_eq": "c94963aa65b6cdea",
+"Chemistry.Bioreactors.FedBatch.IsSolution": "3fbd6e36a2d23d71",
+"Chemistry.Bioreactors.FedBatch.IsSolution.substrate_biomass_account": "43e43086a0df15a4",
 "Chemistry.Calibration.calibration_blue": "d0d1c99007a9e48e",
 "Chemistry.Calibration.calibration_covariance_minimality": "b0868fcd666e4b11",
 "Chemistry.Calibration.covMatrix_add_const": "28fa05eeeff60c52",
