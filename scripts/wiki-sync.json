@@ -28782,7 +28782,7 @@
 "Cslib.Logic.ChurchWanted.codeSentence": "8fc01e3f18c2ee10",
 "Cslib.Logic.ChurchWanted.codeTerm": "4d2d0785a7a9ed00",
 "Cslib.Logic.ChurchWanted.codeTuple": "6dc5fae3259ddc17",
-"Cslib.Logic.DownwardLSWanted.downward_lowenheim_skolem": "5aeed293a9b6ca8f",
+"Cslib.Logic.DownwardLSWanted.downward_lowenheim_skolem": "dc12a7b6614cbfb8",
 "Cslib.Logic.FOL.Arithmetic.PATheory": "25ccb49502169c4c",
 "Cslib.Logic.FOL.Arithmetic.QTheory": "95a4154641e27553",
 "Cslib.Logic.FOL.Arithmetic.addTerm": "71d706fc61795180",
