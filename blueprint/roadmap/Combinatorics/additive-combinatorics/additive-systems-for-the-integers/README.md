@@ -4,3 +4,4 @@ Collections of sets whose direct sumset is the whole of $\mathbb Z$, the integer
 
 - [Additive systems for a commutative monoid](additive-systems-for-a-commutative-monoid.md)
 - [Canonical collections for the integers](canonical-collections-for-the-integers.md)
+- [Completeness of Fractran-type canonical collections is undecidable](canonical-collection-completeness-undecidable.md)

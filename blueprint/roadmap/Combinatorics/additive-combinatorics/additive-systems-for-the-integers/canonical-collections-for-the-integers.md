@@ -27,4 +27,4 @@ Directness: if $n=a_0+a_1+\cdots$ with $a_i\in b_0\cdots b_{i-1}T_i$, then $a_0$
 
 ## Sources
 
-- Andrei Zabolotskii, "Additive systems for $\mathbb Z$ are undecidable", *Journal of Combinatorial Mathematics and Combinatorial Computing* 130:241–253, 2026, doi:[10.61091/jcmcc130-16](https://doi.org/10.61091/jcmcc130-16); read in arXiv:2508.17285v2, whose numbering is used here: Examples 4 and 5 (negabinary and balanced ternary), Definition 4 and Fact 1 after it (directness), Equation (2) and Definition 5 in Section 4, Proposition 1 and Corollary 1.
+- Andrei Zabolotskii, "Additive systems for $\mathbb Z$ are undecidable", *Journal of Combinatorial Mathematics and Combinatorial Computing* 130:241–253, 2026, doi:[10.61091/jcmcc130-16](https://doi.org/10.61091/jcmcc130-16); read in arXiv:2508.17285v2, whose numbering is used here: Examples 4 and 5 (negabinary and balanced ternary), Definition 4 with the facts after it (Fact 1, directness; Fact 5 and Non-example 1, the dependence on the ordering), Equation (2) and Definition 5 in Section 4, Proposition 1 and Corollary 1.

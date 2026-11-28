@@ -11,3 +11,4 @@ The additive structure of sets in integers and abelian groups: sumsets and inver
 - [Arithmetic progressions in dense sets](progressions-dense-sets/README.md)
 - [Combinatorial Nullstellensatz](combinatorial-nullstellensatz/README.md)
 - [Additive systems for the integers](additive-systems-for-the-integers/README.md)
+- [Polynomial inequalities in subset densities](polynomial-inequalities-in-subset-densities/README.md)
