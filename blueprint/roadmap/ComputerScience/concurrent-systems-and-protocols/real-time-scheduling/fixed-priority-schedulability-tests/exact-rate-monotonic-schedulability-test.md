@@ -6,7 +6,7 @@ $$
 \min_{(k,l) \in R_i} \ \sum_{j=1}^{i} \frac{C_j}{l T_k} \left\lceil \frac{l T_k}{T_j} \right\rceil \le 1 .
 $$
 
-The sum is the processor demand of $\tau_1, \dots, \tau_i$ in the window $[0, lT_k]$ after a critical instant, divided by the window length; the test checks whether that demand is met at some scheduling point no later than the deadline $T_i$.
+The sum is the processor demand of jobs of $\tau_1, \dots, \tau_i$ released in the half-open window $[0, lT_k)$ after a critical instant, divided by the window length. A release at $lT_k$ does not count towards this demand. The test checks whether the demand is met at some scheduling point no later than the deadline $T_i$.
 
 ## Depends on
 
