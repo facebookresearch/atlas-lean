@@ -17,7 +17,7 @@ None.
 
 ## Expansion
 
-The lower bound reduces from a variant of the recurring tiling problem that Harel showed $\Sigma^1_1$-complete: tile the part $\{(i, j) \in \mathbb N^2 \mid i \ge j\}$ of the quadrant below the diagonal so that a designated tile $\tau_0$ occurs in every row. The encoding is the one used for general satisfiability, with columns as traces and rows as time points, modified so that every time point after the column marker $x$ carries a special "null" tile (which makes each trace ultimately periodic), the matching constraints are checked only up to the marker, and for every trace there is a trace carrying $\tau_0$ at the time of its marker. Membership in $\Sigma^1_1$ follows as for general satisfiability, from the existence of countable models coded by functions on $\mathbb N$.
+The lower bound reduces from a variant of the recurring tiling problem that Harel showed $\Sigma^1_1$-complete: tile the part $\{(i, j) \in \mathbb N^2 \mid i \ge j\}$ of the quadrant below the diagonal so that a designated tile $\tau_0$ occurs in every row. The encoding is the one used for general satisfiability, with columns as traces and rows as time points, modified so that every time point after the column marker $x$ carries a special "null" tile (which makes each trace ultimately periodic), the matching constraints are checked only up to the marker, and for every trace there is a trace carrying $\tau_0$ at the time of its marker. Membership in $\Sigma^1_1$ follows as for general satisfiability, from the existence of countable models coded by functions on $\mathbb N$. A good expansion adds a page for the $\Sigma^1_1$-completeness of Harel's variant of the recurring tiling problem below the diagonal.
 
 ## Sources
 

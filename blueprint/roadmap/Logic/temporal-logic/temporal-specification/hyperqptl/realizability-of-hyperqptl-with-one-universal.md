@@ -15,10 +15,11 @@ Realizability is decidable on the fragment $\exists_{q/\pi}^*\forall_q^*\forall_
 ## Proof depends on
 
 - [The Post correspondence problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [Realizability of ∀∃ HyperLTL is undecidable](../satisfiability-of-hyperltl-and-hyperctl-star/hyperltl-realizability-undecidable.md)
 
 ## Expansion
 
-A formula with one universal trace quantifier outside the decidable fragment either has a universal trace quantifier followed by an existential one, where undecidability is inherited from HyperLTL realizability (Finkbeiner, Hahn, Lukert, Stenger and Tentrup), or contains $\forall_q^*\exists_q^*\forall_\pi$. For the latter the proof reduces the Post correspondence problem: the universally quantified propositions $q_i, \vec{q}$ and the existentially quantified $p_i, \vec{p}$ simulate a universally and an existentially quantified trace of the strategy tree, and the body, following Finkbeiner and Hahn's $\forall\exists$ construction for HyperLTL, forces the strategy to write a sequence of dominoes on the relevant branches, each existential copy extending the universal one by one domino, so that the formula is realizable iff the instance has a solution.
+A formula with one universal trace quantifier outside the decidable fragment either has a universal trace quantifier followed by an existential one, where undecidability is inherited from HyperLTL realizability (Finkbeiner, Hahn, Lukert, Stenger and Tentrup), or contains $\forall_q^*\exists_q^*\forall_\pi$. For the latter the proof reduces the Post correspondence problem: the universally quantified propositions $q_i, \vec{q}$ and the existentially quantified $p_i, \vec{p}$ simulate a universally and an existentially quantified trace of the strategy tree, and the body, following Finkbeiner and Hahn's $\forall\exists$ construction for HyperLTL, forces the strategy to write a sequence of dominoes on the relevant branches, each existential copy extending the universal one by one domino, so that the formula is realizable iff the instance has a solution. A good expansion adds a lemma stating the correctness of this encoding of the Post correspondence problem (proof of Theorem 4 of the source).
 
 ## Sources
 

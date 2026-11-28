@@ -20,7 +20,7 @@ None.
 
 *Hardness.* A satisfiable sentence $\varphi_c$ forces its models to contain pairwise disjoint paths realizing every trace over a fixed set of propositions, so every model has cardinality at least that of the continuum (Lemma 5.4); a HyperLTL sentence pins down an encoding of addition and multiplication (Lemma 5.5). On top of these, every sentence of existential third-order arithmetic is translated effectively into an equisatisfiable HyperCTL* sentence (Lemma 5.6), with sets of sets of numbers represented by sets of paths. Applying this to the sentences $\exists F_0\cdots\exists F_k\,\psi(n, F_0,\ldots,F_k)$ gives a computable map from $n$ to a sentence that is satisfiable iff $n$ belongs to the given $\Sigma^2_1$ set (Lemma 5.7).
 
-This strengthens the $\Sigma^1_1$-hardness of [HyperCTL* satisfiability](../hyperctl-star-satisfiability-is-undecidable.md) shown by Clarkson, Finkbeiner, Koleini, Micinski, Rabe and Sánchez.
+This strengthens the $\Sigma^1_1$-hardness of [HyperCTL* satisfiability](../hyperctl-star-satisfiability-is-undecidable.md) shown by Clarkson, Finkbeiner, Koleini, Micinski, Rabe and Sánchez. A good expansion adds pages for the class $\Sigma^2_1$ of existential third-order arithmetic with its many-one hardness, and for Lemmas 5.2 to 5.6 of the source.
 
 ## Sources
 

@@ -6,10 +6,13 @@ Unlike temporal safety, restricting HyperLTL bodies to liveness properties does 
 
 With the $\Sigma^1_1$ upper bound for HyperLTL satisfiability (Fortin, Kuijer, Totzke and Zimmermann), the problem is $\Sigma^1_1$-complete, as Table 1 of the source records.
 
+Here $\Sigma^1_1$ is the class of sets of natural numbers definable by an arithmetic formula preceded by a block of existential quantifiers over functions $\mathbb N \to \mathbb N$, as on the page [HyperLTL satisfiability is Σ¹₁-complete](../satisfiability-of-hyperltl-and-hyperctl-star/hyperltl-satisfiability-is-sigma-1-1-complete.md), and a problem is $\Sigma^1_1$-hard if every $\Sigma^1_1$ set many-one reduces to it by a computable function.
+
 ## Depends on
 
 - [Temporal liveness HyperLTL formulas](temporal-liveness-hyperltl-formulas.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [HyperLTL satisfiability is Σ¹₁-complete](../satisfiability-of-hyperltl-and-hyperctl-star/hyperltl-satisfiability-is-sigma-1-1-complete.md)
 
 ## Proof depends on
 
@@ -17,7 +20,7 @@ With the $\Sigma^1_1$ upper bound for HyperLTL satisfiability (Fortin, Kuijer, T
 
 ## Expansion
 
-The proof shows more (Theorem 4.3): every specification $(\psi, \varphi)$ with $\varphi = \forall^n\exists^m.\,\phi$ and $\psi$, $\phi$ satisfiable LTL formulas is equisatisfiable with an effectively computable $(\psi', \varphi')$ in which $\psi'$ is an LTL liveness property and $\varphi'$ a $\forall^n\exists^m$ temporal liveness formula. A fresh proposition $\dagger$ marks a start position: $\varphi'$ and $\psi'$ put the original bodies under $F$ at the last position where $\dagger$ holds, which makes the bodies liveness properties, and a minimal model can be taken in which this position is the same on all traces. By the $\Sigma^1_1$-hardness of specifications $(\psi, \forall\exists^*.\,G)$ (Theorem 3.11), and since a specification with at least one universal quantifier becomes an equivalent HyperLTL formula by moving $\psi$ into the body, satisfiability of $\forall\exists^*$ HyperLTL is $\Sigma^1_1$-hard; the transformation then carries this hardness to the temporal liveness fragment.
+The proof shows more (Theorem 4.3): every specification $(\psi, \varphi)$ with $\varphi = \forall^n\exists^m.\,\phi$ and $\psi$, $\phi$ satisfiable LTL formulas is equisatisfiable with an effectively computable $(\psi', \varphi')$ in which $\psi'$ is an LTL liveness property and $\varphi'$ a $\forall^n\exists^m$ temporal liveness formula. A fresh proposition $\dagger$ marks a start position: $\varphi'$ and $\psi'$ put the original bodies under $F$ at the last position where $\dagger$ holds, which makes the bodies liveness properties, and a minimal model can be taken in which this position is the same on all traces. By the $\Sigma^1_1$-hardness of specifications $(\psi, \forall\exists^*.\,G)$ (Theorem 3.11), and since a specification with at least one universal quantifier becomes an equivalent HyperLTL formula by moving $\psi$ into the body, satisfiability of $\forall\exists^*$ HyperLTL is $\Sigma^1_1$-hard; the transformation then carries this hardness to the temporal liveness fragment. A good expansion adds a page for the analytical hierarchy, its levels $\Sigma^1_n$ and $\Pi^1_n$ and completeness under many-one reductions, which this statement uses.
 
 ## Sources
 

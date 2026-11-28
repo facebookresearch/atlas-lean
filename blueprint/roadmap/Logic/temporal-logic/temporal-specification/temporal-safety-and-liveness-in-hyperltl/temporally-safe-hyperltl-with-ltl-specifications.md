@@ -6,6 +6,8 @@ Once an arbitrary LTL property that every trace must satisfy is added, satisfiab
 
 If $\psi$ is itself a safety property, it can be merged into $\varphi$ and the problem stays co-r.e.; the jump comes from non-safety LTL specifications.
 
+Here $\Sigma^1_1$ is the class of sets of natural numbers definable by an arithmetic formula preceded by a block of existential quantifiers over functions $\mathbb N \to \mathbb N$, as on the page [HyperLTL satisfiability is Σ¹₁-complete](../satisfiability-of-hyperltl-and-hyperctl-star/hyperltl-satisfiability-is-sigma-1-1-complete.md), and a problem is $\Sigma^1_1$-hard if every $\Sigma^1_1$ set many-one reduces to it by a computable function.
+
 ## Depends on
 
 - [LTL and HyperLTL specifications](ltl-and-hyperltl-specifications.md)
@@ -18,7 +20,7 @@ If $\psi$ is itself a safety property, it can be merged into $\varphi$ and the p
 
 ## Expansion
 
-Membership in $\Sigma^1_1$ follows from the $\Sigma^1_1$ upper bound for HyperLTL satisfiability (Fortin, Kuijer, Totzke and Zimmermann). For hardness the proof encodes recurring computations of nondeterministic two-counter machines. A counter value $v$ is encoded by a proposition holding exactly at position $v$, and a third counter decreasing at each step forces the initial instruction to recur. Each trace carries two consecutive configurations on disjoint copies of the propositions; the LTL specification $\psi$ checks that the second is a successor of the first and that the third counter decreases or the initial instruction occurs, and the $\forall\exists$ formula requires an initial configuration and, for each trace $\pi$, a trace $\pi'$ whose first configuration equals the second configuration of $\pi$, a condition expressible with one $G$.
+Membership in $\Sigma^1_1$ follows from the $\Sigma^1_1$ upper bound for HyperLTL satisfiability (Fortin, Kuijer, Totzke and Zimmermann). For hardness the proof encodes recurring computations of nondeterministic two-counter machines. A counter value $v$ is encoded by a proposition holding exactly at position $v$, and a third counter decreasing at each step forces the initial instruction to recur. Each trace carries two consecutive configurations on disjoint copies of the propositions; the LTL specification $\psi$ checks that the second is a successor of the first and that the third counter decreases or the initial instruction occurs, and the $\forall\exists$ formula requires an initial configuration and, for each trace $\pi$, a trace $\pi'$ whose first configuration equals the second configuration of $\pi$, a condition expressible with one $G$. A good expansion adds a page for the analytical hierarchy, its levels $\Sigma^1_n$ and $\Pi^1_n$ and completeness under many-one reductions, which this statement uses.
 
 ## Sources
 

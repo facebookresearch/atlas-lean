@@ -1,8 +1,8 @@
 # Satisfiability of ∀∃ HyperQPTL is undecidable
 
-Already for HyperQPTL formulas with one universal trace quantifier followed by one existential trace quantifier, no algorithm decides whether some set of traces satisfies the formula; the $\exists^*\forall^*$ fragment, by contrast, is decidable.
+Already for HyperQPTL formulas with one universal trace quantifier followed by one existential trace quantifier, no algorithm decides whether some nonempty set of traces satisfies the formula; the $\exists^*\forall^*$ fragment, by contrast, is decidable.
 
-**Theorem (Coenen, Finkbeiner, Hahn and Hofmann).** The satisfiability problem for [HyperQPTL](hyperqptl.md) formulas in the $\forall\exists$ fragment is undecidable: there is no algorithm that decides, for a closed HyperQPTL formula whose trace quantifier prefix is $\forall\pi\,\exists\pi'$, whether some nonempty set of traces satisfies it. The set must be nonempty: the empty set satisfies every formula whose first trace quantifier is universal, so the source's question, whether a trace set $T$ with $T \models \varphi$ exists, is read for nonempty $T$, as in the HyperLTL literature.
+**Theorem (Coenen, Finkbeiner, Hahn and Hofmann).** The satisfiability problem for [HyperQPTL](hyperqptl.md) formulas in the $\forall\exists$ fragment is undecidable: there is no algorithm that decides, for a closed HyperQPTL formula whose trace quantifier prefix is $\forall\pi\,\exists\pi'$, whether some nonempty set of traces satisfies it. The set must be nonempty: the empty set satisfies every formula whose first trace quantifier is universal, so the source's question, whether a trace set $T$ with $T \models \varphi$ exists, is read for nonempty $T$, as in Finkbeiner and Hahn's HyperLTL-SAT, from which the source inherits the result.
 
 The $\exists^*\forall^*$ fragment of HyperQPTL has decidable satisfiability (Theorem 4.2 of the source), so it is the largest decidable fragment determined by the trace quantifier prefix.
 
@@ -13,7 +13,7 @@ The $\exists^*\forall^*$ fragment of HyperQPTL has decidable satisfiability (The
 
 ## Proof depends on
 
-None.
+- [Satisfiability of ∀∃ HyperLTL is undecidable](../satisfiability-of-hyperltl-and-hyperctl-star/satisfiability-of-forall-exists-hyperltl.md)
 
 ## Expansion
 

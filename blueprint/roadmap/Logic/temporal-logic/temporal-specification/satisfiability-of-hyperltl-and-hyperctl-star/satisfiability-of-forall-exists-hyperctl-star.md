@@ -2,7 +2,7 @@
 
 Satisfiability of HyperCTL* is undecidable already for formulas with one universal followed by one existential path quantifier, while the $\exists^*\forall^*$ fragment is decidable.
 
-**Theorem (Coenen, Finkbeiner, Hahn and Hofmann).** The satisfiability problem for [HyperCTL*](../hyperctl-star.md) formulas in the $\forall\exists$ fragment is undecidable: there is no algorithm that decides, for a HyperCTL* formula whose path quantifier prefix is $\forall\pi\,\exists\pi'$, whether some tree satisfies it.
+**Theorem (Coenen, Finkbeiner, Hahn and Hofmann).** The satisfiability problem for [HyperCTL*](../hyperctl-star.md) formulas in the $\forall\exists$ fragment is undecidable: there is no algorithm that decides, for a HyperCTL* formula whose path quantifier prefix is $\forall\pi\,\exists\pi'$, whether some tree satisfies it, where trees are rooted $AP$-labelled trees and path quantifiers range over the paths of the tree from the current node (Section 2.1 of the source).
 
 This sharpens the undecidability of general HyperCTL* satisfiability. The $\exists^*\forall^*$ fragment of HyperCTL* has decidable satisfiability (Theorem 4.7 of the source).
 
@@ -13,11 +13,11 @@ This sharpens the undecidability of general HyperCTL* satisfiability. The $\exis
 
 ## Proof depends on
 
-None.
+- [Satisfiability of ∀∃ HyperLTL is undecidable](satisfiability-of-forall-exists-hyperltl.md)
 
 ## Expansion
 
-HyperCTL* subsumes HyperLTL as a syntactic fragment, and satisfiability of HyperLTL is undecidable for formulas with a $\forall\exists$ trace quantifier prefix (Finkbeiner and Hahn), which gives the result.
+HyperCTL* subsumes HyperLTL as a syntactic fragment, and satisfiability of HyperLTL is undecidable for formulas with a $\forall\exists$ trace quantifier prefix (Finkbeiner and Hahn), which the source says gives the result (proof of Theorem 4.8). A HyperLTL model is a set of traces while a HyperCTL* model is a tree, and not every set of traces is the path set of a tree, so the transfer needs one more step; a good expansion adds a page showing that the $\forall\exists$ HyperLTL satisfiability problem remains undecidable over the path sets of trees (for instance by checking that the models built in Finkbeiner and Hahn's reduction can be taken to be such path sets).
 
 ## Sources
 

@@ -10,7 +10,7 @@ $$
 
 with five time quantifiers followed by four trace quantifiers, of which the first three are constrained. It is undecidable, given a quantifier-free formula $\varphi'$, whether the [hypertrace formula](hypertrace-logic.md) $\varphi = Q\, \varphi'$ is satisfiable, that is, whether $[\![\varphi]\!] \ne \varnothing$ (Theorem 22 of the source, Section 6).
 
-The source also shows that trace-prefixed formulas with prefix $\forall \pi_1 \mathbin{::} T\, \forall \pi_2 \mathbin{::} T\, \exists \pi'_1 \mathbin{::} T$ followed by time quantifiers have undecidable satisfiability (Proposition 15), that formulas without constrained trace quantifiers are equivalent to S1S and hence decidable (Theorem 7 and Corollary 8), and that formulas whose only alternation between constrained trace quantifiers is from existential to universal are decidable (Theorem 12 and Corollary 16).
+The source also shows that trace-prefixed formulas with prefix $\forall \pi_1 \mathbin{::} T\, \forall \pi_2 \mathbin{::} T\, \exists \pi'_1 \mathbin{::} T$ followed by time quantifiers have undecidable satisfiability (Proposition 15), that formulas without constrained trace quantifiers are equivalent to S1S and hence decidable (Theorem 7 and Corollary 8), and that prenex formulas are decidable when their constrained trace quantifiers form one block $\exists\pi_1 \mathbin{::} T \cdots \exists\pi_n \mathbin{::} T\, \forall\pi'_1 \mathbin{::} T \cdots \forall\pi'_m \mathbin{::} T$ preceded only by existential time or unconstrained trace quantifiers (Theorem 12; Corollary 16 for the variant where only existential unconstrained trace quantifiers precede the block).
 
 ## Depends on
 
@@ -28,4 +28,4 @@ The proof reduces the non-halting problem for two-counter Minsky machines. Each 
 
 ## Sources
 
-- Marek Chalupa, Thomas A. Henzinger and Ana Oliveira da Costa, "Flavors of quantifiers in hyperlogics", in *45th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2025)*, LIPIcs 360, 20:1–20:18, 2025, doi:[10.4230/LIPIcs.FSTTCS.2025.20](https://doi.org/10.4230/LIPIcs.FSTTCS.2025.20). Numbering of the version read, arXiv:2510.12298v1: Theorem 7, Corollary 8, Theorem 12, Proposition 15, Corollary 16 and Theorem 22 (Sections 4 to 6), with the full proofs in the appendix.
+- Marek Chalupa, Thomas A. Henzinger and Ana Oliveira da Costa, "Flavors of quantifiers in hyperlogics", in *45th IARCS Annual Conference on Foundations of Software Technology and Theoretical Computer Science (FSTTCS 2025)*, LIPIcs 360, 20:1–20:18, 2025, doi:[10.4230/LIPIcs.FSTTCS.2025.20](https://doi.org/10.4230/LIPIcs.FSTTCS.2025.20). Numbering of the version read, arXiv:2510.12298v1: Theorem 7, Corollary 8, Theorem 12, Proposition 15, Corollary 16 and Theorem 22 (Sections 4 to 6), with their proofs in Sections 4 to 6.
