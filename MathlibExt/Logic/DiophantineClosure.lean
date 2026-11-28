@@ -12,6 +12,7 @@ public import MathlibExt.Logic.Diophantine
 public import Mathlib.Algebra.MvPolynomial.CommRing
 public import Mathlib.Algebra.MvPolynomial.Monad
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Algebra.Ring.IsFormallyReal
 
 /-!
 # Closure properties of Diophantine sets
@@ -21,15 +22,16 @@ from $A$ are closed under the usual operations of positive-existential logic:
 
 * `MetaMathlibExt.isDiophantine_of_finite`: any finite type of auxiliary variables and any finite
   family of polynomials may be used in place of `Fin n` and a `Finset`;
-* `MetaMathlibExt.isDiophantine_setOf_forall_eval_eq_zero`: zero sets of finitely many
+* `MetaMathlibExt.isDiophantine_setOf_forall_eval₂_eq_zero`: zero sets of finitely many
   polynomials, with no auxiliary variables;
 * `MetaMathlibExt.IsDiophantine.inter` and, over a ring without zero divisors,
   `MetaMathlibExt.IsDiophantine.union`;
-* `MetaMathlibExt.IsDiophantine.preimage_eval`: preimages under polynomial maps, in particular
+* `MetaMathlibExt.IsDiophantine.preimage_eval₂`: preimages under polynomial maps, in particular
   under coordinate maps $x \mapsto x \circ \sigma$ (`MetaMathlibExt.IsDiophantine.comp`);
-* `MetaMathlibExt.IsDiophantine.image_eval`: images under polynomial maps, in particular
+* `MetaMathlibExt.IsDiophantine.image_eval₂`: images under polynomial maps, in particular
   projections (`MetaMathlibExt.IsDiophantine.exists_proj`);
-* over an ordered ring, one polynomial suffices (`MetaMathlibExt.IsDiophantine.iff_single`), and
+* over a formally real ring (for instance a linearly ordered ring such as $\mathbb{Q}$), one
+  polynomial suffices (`MetaMathlibExt.IsDiophantine.iff_single`), and
   over a field, $\{x \mid x_i \neq 0\}$ is Diophantine
   (`MetaMathlibExt.isDiophantine_setOf_ne_zero`).
 
@@ -96,7 +98,7 @@ homomorphism of commutative rings and let $P$ be a finite set of polynomials wit
 $A$ in the variables $x_1, \dots, x_k$. The set of $x \in R^k$ with $p(x) = 0$ for all $p \in P$
 is Diophantine over $R$ with coefficients from $A$ through $\varphi$, with no auxiliary
 variables. -/
-theorem isDiophantine_setOf_forall_eval_eq_zero (φ : A →+* R) {k : ℕ}
+theorem isDiophantine_setOf_forall_eval₂_eq_zero (φ : A →+* R) {k : ℕ}
     (P : Finset (MvPolynomial (Fin k) A)) :
     IsDiophantine φ {x : Fin k → R | ∀ p ∈ P, eval₂ φ x p = 0} := by
   refine isDiophantine_of_finite φ (ι := Fin 0) (fun p : P => rename Sum.inl p.1) fun x => ?_
@@ -107,10 +109,10 @@ theorem isDiophantine_setOf_forall_eval_eq_zero (φ : A →+* R) {k : ℕ}
 homomorphism of commutative rings and let $p$ be a polynomial with coefficients in $A$ in the
 variables $x_1, \dots, x_k$. The set of $x \in R^k$ with $p(x) = 0$ is Diophantine over $R$ with
 coefficients from $A$ through $\varphi$. -/
-theorem isDiophantine_setOf_eval_eq_zero (φ : A →+* R) {k : ℕ} (p : MvPolynomial (Fin k) A) :
+theorem isDiophantine_setOf_eval₂_eq_zero (φ : A →+* R) {k : ℕ} (p : MvPolynomial (Fin k) A) :
     IsDiophantine φ {x : Fin k → R | eval₂ φ x p = 0} := by
   classical
-  simpa using isDiophantine_setOf_forall_eval_eq_zero (R := R) φ {p}
+  simpa using isDiophantine_setOf_forall_eval₂_eq_zero (R := R) φ {p}
 
 /-- **Intersections of Diophantine sets are Diophantine.** Let $\varphi : A \to R$ be a ring
 homomorphism of commutative rings. If $S, T \subseteq R^k$ are Diophantine over $R$ with
@@ -176,7 +178,7 @@ $\{x \in R^{k'} \mid (f_1(x), \dots, f_k(x)) \in T\}$ is Diophantine over $R$ wi
 from $A$ through $\varphi$.
 
 The system for $T$ is composed with $f$ (`MvPolynomial.bind₁`). -/
-theorem IsDiophantine.preimage_eval {φ : A →+* R} {k k' : ℕ} {T : Set (Fin k → R)}
+theorem IsDiophantine.preimage_eval₂ {φ : A →+* R} {k k' : ℕ} {T : Set (Fin k → R)}
     (hT : IsDiophantine φ T) (f : Fin k → MvPolynomial (Fin k') A) :
     IsDiophantine φ {x : Fin k' → R | (fun i => eval₂ φ x (f i)) ∈ T} := by
   obtain ⟨n, κ, _, p, hp⟩ := hT.exists_family
@@ -203,7 +205,7 @@ through $\varphi$. This covers permutations, duplications and omissions of coord
 theorem IsDiophantine.comp {φ : A →+* R} {k k' : ℕ} {T : Set (Fin k → R)}
     (hT : IsDiophantine φ T) (σ : Fin k → Fin k') :
     IsDiophantine φ {x : Fin k' → R | x ∘ σ ∈ T} := by
-  simpa [Function.comp_def] using hT.preimage_eval fun i => X (σ i)
+  simpa [Function.comp_def] using hT.preimage_eval₂ fun i => X (σ i)
 
 /-- **Images of Diophantine sets under polynomial maps are Diophantine.** Let
 $\varphi : A \to R$ be a ring homomorphism of commutative rings, let $T \subseteq R^m$ be
@@ -215,7 +217,7 @@ $\varphi$.
 
 The point $t$ becomes a block of auxiliary variables, joined by the equations
 $x_i - f_i(t) = 0$. -/
-theorem IsDiophantine.image_eval {φ : A →+* R} {k m : ℕ} {T : Set (Fin m → R)}
+theorem IsDiophantine.image_eval₂ {φ : A →+* R} {k m : ℕ} {T : Set (Fin m → R)}
     (hT : IsDiophantine φ T) (f : Fin k → MvPolynomial (Fin m) A) :
     IsDiophantine φ {x : Fin k → R | ∃ t ∈ T, ∀ i, x i = eval₂ φ t (f i)} := by
   obtain ⟨n, κ, _, p, hp⟩ := hT.exists_family
@@ -240,7 +242,7 @@ coordinates are those of $x$, the last $m$ those of $z$. -/
 theorem IsDiophantine.exists_proj {φ : A →+* R} {k m : ℕ} {S : Set (Fin (k + m) → R)}
     (hS : IsDiophantine φ S) :
     IsDiophantine φ {x : Fin k → R | ∃ z : Fin m → R, Fin.append x z ∈ S} := by
-  convert hS.image_eval (fun i : Fin k => X (Fin.castAdd m i)) using 1
+  convert hS.image_eval₂ (fun i : Fin k => X (Fin.castAdd m i)) using 1
   ext x
   simp only [Set.mem_ofPred_eq, eval₂_X]
   constructor
@@ -251,9 +253,30 @@ theorem IsDiophantine.exists_proj {φ : A →+* R} {k m : ℕ} {S : Set (Fin (k 
     have : x = fun i => t (Fin.castAdd m i) := funext hx
     rwa [this, Fin.append_castAdd_natAdd]
 
-/-- **One polynomial suffices over an ordered ring.** Let $\varphi : A \to R$ be a ring
-homomorphism of commutative rings, where $R$ is a strictly ordered ring (for instance
-$R = \mathbb{Q}$, $A = \mathbb{Z}$). A set $S \subseteq R^k$ is Diophantine over $R$ with
+/-- In a formally real commutative ring, a finite sum of squares vanishes only if every term
+does. -/
+private theorem sum_sq_eq_zero_iff [IsFormallyReal R] {ι : Type*} (I : Finset ι) (a : ι → R) :
+    ∑ i ∈ I, a i ^ 2 = 0 ↔ ∀ i ∈ I, a i = 0 := by
+  classical
+  induction I using Finset.induction_on with
+  | empty => simp
+  | insert j I hj ih =>
+    rw [Finset.sum_insert hj, Finset.forall_mem_insert, ← ih]
+    have hj2 : IsSumSq (a j ^ 2) := by
+      have := IsSumSq.sum_sq {j} a
+      rwa [Finset.sum_singleton] at this
+    constructor
+    · intro h
+      exact ⟨IsReduced.eq_zero _ ⟨2, IsFormallyReal.eq_zero_of_add_right hj2
+          (IsSumSq.sum_sq I a) h⟩,
+        IsFormallyReal.eq_zero_of_add_left hj2 (IsSumSq.sum_sq I a) h⟩
+    · rintro ⟨h1, h2⟩
+      simp [h1, h2]
+
+/-- **One polynomial suffices over a formally real ring.** Let $\varphi : A \to R$ be a ring
+homomorphism of commutative rings, where $R$ is formally real: a sum of squares in $R$ vanishes
+only if each square does (for instance a linearly ordered ring such as $R = \mathbb{Q}$, with
+$A = \mathbb{Z}$). A set $S \subseteq R^k$ is Diophantine over $R$ with
 coefficients from $A$ through $\varphi$ if and only if there are $n \in \mathbb{N}$ and one
 polynomial $p$ with coefficients in $A$ in the variables $x_1, \dots, x_k, y_1, \dots, y_n$ such
 that $x \in S$ if and only if $p(x, y) = 0$ for some $y \in R^n$.
@@ -265,7 +288,7 @@ Proposition 8.5 and its proof, p. 7: "Transform each conjunction of polynomial e
 $(p = 0) \wedge (q = 0)$ to $f(p, q) = 0$", here with $f(x, y) = x^2 + y^2$; see also
 Example 6.3, p. 4, where three equations are combined into
 "$(a - bc)^2 + (bp + 2q - 1)^2 + (cr + 3s - 1)^2 = 0$". -/
-theorem IsDiophantine.iff_single [LinearOrder R] [IsStrictOrderedRing R] (φ : A →+* R) {k : ℕ}
+theorem IsDiophantine.iff_single [IsFormallyReal R] (φ : A →+* R) {k : ℕ}
     (S : Set (Fin k → R)) :
     IsDiophantine φ S ↔ ∃ (n : ℕ) (p : MvPolynomial (Fin k ⊕ Fin n) A),
       ∀ x : Fin k → R, x ∈ S ↔ ∃ y : Fin n → R, eval₂ φ (Sum.elim x y) p = 0 := by
@@ -273,8 +296,7 @@ theorem IsDiophantine.iff_single [LinearOrder R] [IsStrictOrderedRing R] (φ : A
   constructor
   · rintro ⟨n, P, hP⟩
     refine ⟨n, ∑ q ∈ P, q ^ 2, fun x => ?_⟩
-    simp only [hP, eval₂_sum, eval₂_pow,
-      Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => sq_nonneg _), pow_eq_zero_iff two_ne_zero]
+    simp only [hP, eval₂_sum, eval₂_pow, sum_sq_eq_zero_iff]
   · rintro ⟨n, p, hp⟩
     exact ⟨n, {p}, fun x => by simp [hp]⟩
 

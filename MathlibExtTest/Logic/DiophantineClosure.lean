@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Logic.DiophantineClosure
 public import Mathlib.Algebra.Order.Ring.Rat
+public import Mathlib.Algebra.Order.Ring.Int
 public import Mathlib.Data.Fin.VecNotation
 
 /-!
@@ -26,13 +27,13 @@ open MetaMathlibExt MvPolynomial
 
 #check @isDiophantine_of_finite
 #check @IsDiophantine.exists_family
-#check @isDiophantine_setOf_forall_eval_eq_zero
-#check @isDiophantine_setOf_eval_eq_zero
+#check @isDiophantine_setOf_forall_eval₂_eq_zero
+#check @isDiophantine_setOf_eval₂_eq_zero
 #check @IsDiophantine.inter
 #check @IsDiophantine.union
-#check @IsDiophantine.preimage_eval
+#check @IsDiophantine.preimage_eval₂
 #check @IsDiophantine.comp
-#check @IsDiophantine.image_eval
+#check @IsDiophantine.image_eval₂
 #check @IsDiophantine.exists_proj
 #check @IsDiophantine.iff_single
 #check @isDiophantine_setOf_ne_zero
@@ -40,7 +41,7 @@ open MetaMathlibExt MvPolynomial
 /-- The diagonal $\{(x, y) \mid x = y\} \subseteq \mathbb{Q}^2$ is a zero set. -/
 example : IsDiophantine (Int.castRingHom ℚ) {x : Fin 2 → ℚ | eval₂ (Int.castRingHom ℚ) x
     (X 0 - X 1 : MvPolynomial (Fin 2) ℤ) = 0} :=
-  isDiophantine_setOf_eval_eq_zero _ _
+  isDiophantine_setOf_eval₂_eq_zero _ _
 
 /-- The points of $\mathbb{Q}^2$ with both coordinates nonzero. -/
 example : IsDiophantine (Int.castRingHom ℚ) ({x : Fin 2 → ℚ | x 0 ≠ 0} ∩ {x | x 1 ≠ 0}) :=
@@ -50,7 +51,7 @@ example : IsDiophantine (Int.castRingHom ℚ) ({x : Fin 2 → ℚ | x 0 ≠ 0} �
 example : IsDiophantine (RingHom.id ℤ)
     ({x : Fin 2 → ℤ | eval₂ (RingHom.id ℤ) x (X 0) = 0} ∪
       {x | eval₂ (RingHom.id ℤ) x (X 1) = 0}) :=
-  (isDiophantine_setOf_eval_eq_zero _ _).union (isDiophantine_setOf_eval_eq_zero _ _)
+  (isDiophantine_setOf_eval₂_eq_zero _ _).union (isDiophantine_setOf_eval₂_eq_zero _ _)
 
 /-- Swapping the two coordinates preserves Diophantine sets. -/
 example (T : Set (Fin 2 → ℚ)) (hT : IsDiophantine (Int.castRingHom ℚ) T) :
@@ -66,12 +67,19 @@ example (S : Set (Fin (1 + 1) → ℚ)) (hS : IsDiophantine (Int.castRingHom ℚ
 example : IsDiophantine (Int.castRingHom ℚ)
     {x : Fin 1 → ℚ | ∃ t ∈ (Set.univ : Set (Fin 1 → ℚ)),
       ∀ i, x i = eval₂ (Int.castRingHom ℚ) t (![X 0 ^ 2] i)} :=
-  (isDiophantine_univ _ 1).image_eval _
+  (isDiophantine_univ _ 1).image_eval₂ _
 
 /-- Over $\mathbb{Q}$ a Diophantine set is cut out by a single polynomial. -/
 example (S : Set (Fin 2 → ℚ)) (hS : IsDiophantine (Int.castRingHom ℚ) S) :
     ∃ (n : ℕ) (p : MvPolynomial (Fin 2 ⊕ Fin n) ℤ), ∀ x : Fin 2 → ℚ,
       x ∈ S ↔ ∃ y : Fin n → ℚ, eval₂ (Int.castRingHom ℚ) (Sum.elim x y) p = 0 :=
+  (IsDiophantine.iff_single _ S).1 hS
+
+/-- Over $\mathbb{Z}$, a linearly ordered and hence formally real ring, a Diophantine set is also
+cut out by a single polynomial. -/
+example (S : Set (Fin 1 → ℤ)) (hS : IsDiophantine (RingHom.id ℤ) S) :
+    ∃ (n : ℕ) (p : MvPolynomial (Fin 1 ⊕ Fin n) ℤ), ∀ x : Fin 1 → ℤ,
+      x ∈ S ↔ ∃ y : Fin n → ℤ, eval₂ (RingHom.id ℤ) (Sum.elim x y) p = 0 :=
   (IsDiophantine.iff_single _ S).1 hS
 
 end DiophantineClosureTest
