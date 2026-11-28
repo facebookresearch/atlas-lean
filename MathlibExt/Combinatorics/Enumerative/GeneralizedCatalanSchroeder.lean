@@ -25,6 +25,14 @@ namespace MetaMathlibExt
 This module proves, with one source typo corrected, the ordinary
 generating function of the generalized Catalan-Schroeder recurrence, including
 the Riordan-array form acting on the Catalan generating series.
+
+## References
+
+* Paul Barry, *Generalized Catalan Recurrences, Riordan Arrays, Elliptic Curves, and Orthogonal
+  Polynomials*, Journal of Integer Sequences 24 (2021), Article 21.5.1, pp. 1–48, Section 2, p. 7
+  (the Catalan equation) and Proposition 3, p. 13 (the generalized generating function).
+* Mathlib's `PowerSeries.catalanSeries_sq_mul_X_add_one` gives the equation over `ℕ`;
+  coefficientwise casting gives the equation over a commutative ring.
 -/
 
 open scoped BigOperators
@@ -100,7 +108,9 @@ public theorem generalizedCatalanSchroeder_recurrence_functionalEquation
             PowerSeries.C t * PowerSeries.X * (PowerSeries.mk a - 1) ^ 2 := by
       ring
 
-private theorem generalizedCatalanSchroeder_catalan_equation
+/-- Let `R` be a commutative ring and let `C` be the formal power series whose coefficients are
+Catalan numbers cast to `R`. Then `C = 1 + X * C ^ 2`. -/
+public theorem generalizedCatalanSchroeder_catalan_equation
     (R : Type) [CommRing R] :
     PowerSeries.mk (fun n => (catalan n : R)) =
       1 + PowerSeries.X * PowerSeries.mk (fun n => (catalan n : R)) ^ 2 := by

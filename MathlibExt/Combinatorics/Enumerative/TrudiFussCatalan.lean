@@ -15,7 +15,7 @@ public import MathlibExt.LinearAlgebra.Matrix.TrudiBrioschiDeterminant
 public import MathlibExt.NumberTheory.GeneralizedFussCatalanNumbersFMNK
 import Mathlib.Algebra.BigOperators.NatAntidiagonal
 import Mathlib.RingTheory.PowerSeries.Binomial
-import Mathlib.RingTheory.PowerSeries.Catalan
+import MathlibExt.Combinatorics.Enumerative.GeneralizedCatalanSchroeder
 import MathlibExt.RingTheory.PowerSeries.LagrangeBurmannCoefficient
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
@@ -26,35 +26,26 @@ import Mathlib.Tactic.Ring
 
 The theorem `trudiPartitionSum_fussCatalan` evaluates five partition sums by extracting
 coefficients from the reciprocals of Catalan and Fuss–Catalan generating functions. The module
-also records the Catalan equation over `ℚ` and the coefficients of the square of that series.
+also records the coefficients of the square of the rational Catalan series.
 
 ## References
 
 * Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with Fuss-Catalan
   Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, pp. 1–23, Corollary 9 (the
   partition sums) and the proof of Theorem 6 (the Catalan equation and coefficient shift).
-* Mathlib's `PowerSeries.catalanSeries_sq_mul_X_add_one` supplies the Catalan equation over `ℕ`.
+* The general Catalan equation is `generalizedCatalanSchroeder_catalan_equation` in
+  `MathlibExt/Combinatorics/Enumerative/GeneralizedCatalanSchroeder.lean`.
 -/
 
 namespace MetaMathlibExt
 
 open PowerSeries
 
-/-- Over `ℚ`, the Catalan generating function `C` satisfies `C = 1 + X * C ^ 2`. -/
-public lemma catalanSeries_rat_eq_one_add_X_mul_sq :
-    let c : PowerSeries ℚ := mk fun n => (catalan n : ℚ)
-    c = 1 + X * c ^ 2 := by
-  have hmap : map (Nat.castRingHom ℚ) catalanSeries = mk (fun n => (catalan n : ℚ)) := by
-    ext n
-    simp
-  simpa only [map_add, map_mul, map_pow, map_one, map_X, hmap, add_comm, mul_comm] using
-    congrArg (map (Nat.castRingHom ℚ)) catalanSeries_sq_mul_X_add_one.symm
-
 /-- The coefficient of degree `n` in the square of the rational Catalan generating function
 is the Catalan number of index `n + 1`. -/
 public lemma coeff_catalanSeries_rat_sq (n : ℕ) :
     coeff n (mk (fun k => (catalan k : ℚ)) ^ 2) = (catalan (n + 1) : ℚ) := by
-  have h := congrArg (coeff (n + 1)) catalanSeries_rat_eq_one_add_X_mul_sq
+  have h := congrArg (coeff (n + 1)) (generalizedCatalanSchroeder_catalan_equation ℚ)
   simpa [coeff_one, coeff_succ_X_mul] using h.symm
 
 namespace trudiPartitionSum_fussCatalan
@@ -265,7 +256,8 @@ private lemma trudi_catalan_diff (n : ℕ) (hn : 1 ≤ n) :
   let D := (1 - X) * cat
   let F := geom - X * (cat * geom)
   have hinv : D * F = 1 := by
-    have hcat : cat = 1 + X * cat ^ 2 := catalanSeries_rat_eq_one_add_X_mul_sq
+    have hcat : cat = 1 + X * cat ^ 2 :=
+      generalizedCatalanSchroeder_catalan_equation ℚ
     have hc : cat * (1 - X * cat) = 1 := by linear_combination hcat
     calc
       D * F = geom * (1 - X) * (cat * (1 - X * cat)) := by dsimp [D, F]; ring
@@ -286,7 +278,8 @@ private lemma trudi_catalan_shift (n : ℕ) (hn : 1 ≤ n) :
   let D := 1 + cat ^ 2 - cat
   let F := 1 - X * (cat * geom)
   have hD : D * (1 - X - X * cat) = 1 - X := by
-    have hcat : cat = 1 + X * cat ^ 2 := catalanSeries_rat_eq_one_add_X_mul_sq
+    have hcat : cat = 1 + X * cat ^ 2 :=
+      generalizedCatalanSchroeder_catalan_equation ℚ
     dsimp [D]
     linear_combination cat * hcat
   have hF : F = geom * (1 - X - X * cat) := by

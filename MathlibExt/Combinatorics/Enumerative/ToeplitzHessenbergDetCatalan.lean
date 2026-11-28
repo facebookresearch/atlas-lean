@@ -14,6 +14,7 @@ public import MathlibExt.LinearAlgebra.Matrix.TrudiBrioschiDeterminant
 import Mathlib.RingTheory.PowerSeries.Expand
 import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.Tactic.LinearCombination
+import MathlibExt.Combinatorics.Enumerative.GeneralizedCatalanSchroeder
 import MathlibExt.Combinatorics.Enumerative.ToeplitzHessenbergDetGenFun
 import MathlibExt.Combinatorics.Enumerative.TrudiFussCatalan
 
@@ -40,8 +41,10 @@ consecutive differences starting at `C₁ - C₀` and at `C₂ - C₁`.
   A026674 (the generating functions used in the paper's equations (12) and (16)).
 * The reduction to positive composition blocks follows `toeplitzHessenbergDet_fussCatalan` in
   `MathlibExt/Combinatorics/Enumerative/ToeplitzHessenbergDetFussCatalan.lean`.
-* The Catalan equation and coefficient shift use `catalanSeries_rat_eq_one_add_X_mul_sq` and
-  `coeff_catalanSeries_rat_sq` from `MathlibExt/Combinatorics/Enumerative/TrudiFussCatalan.lean`.
+* The Catalan equation uses `generalizedCatalanSchroeder_catalan_equation` from
+  `MathlibExt/Combinatorics/Enumerative/GeneralizedCatalanSchroeder.lean`.
+  The coefficient shift uses `coeff_catalanSeries_rat_sq` from
+  `MathlibExt/Combinatorics/Enumerative/TrudiFussCatalan.lean`.
 -/
 
 namespace MetaMathlibExt
@@ -116,7 +119,7 @@ private lemma odd_entries :
   have hF : E (positiveSeries (toeplitzHessenbergDet a)) * (1 - A) = A := by
     simpa only [map_mul, map_sub, map_one, hA] using
       congrArg E (positive_det_mul a (by simp [a]))
-  have cat_eq : cat = 1 + X * cat ^ 2 := catalanSeries_rat_eq_one_add_X_mul_sq
+  have cat_eq : cat = 1 + X * cat ^ 2 := generalizedCatalanSchroeder_catalan_equation ℚ
   have hd : d = 1 - X * d ^ 2 := by
     simpa [d, rescale_neg_one_X, sub_eq_add_neg] using congrArg (rescale (-1 : ℚ)) cat_eq
   have hcInv : cat * (1 - X * cat) = 1 := by linear_combination cat_eq
@@ -176,7 +179,7 @@ private lemma difference_entries :
     ext n
     rw [map_sub, coeff_catalanSeries_rat_sq]
     cases n <;> simp [positiveSeries, cat, a, catalan_zero, catalan_one]
-  have cat_eq : cat = 1 + X * cat ^ 2 := catalanSeries_rat_eq_one_add_X_mul_sq
+  have cat_eq : cat = 1 + X * cat ^ 2 := generalizedCatalanSchroeder_catalan_equation ℚ
   have hcube : cat ^ 2 - cat = X * cat ^ 3 := by linear_combination cat * cat_eq
   rw [hcube] at hA
   simpa only [hA] using positive_det_mul a (by simp [a])
