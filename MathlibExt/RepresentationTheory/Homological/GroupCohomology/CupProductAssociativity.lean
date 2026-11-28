@@ -160,7 +160,9 @@ theorem barCochainCupPairing_assoc
     rw [show HomologicalComplex.tensorHom (𝟙 (Rep.barComplex k G))
         (barComplexDiagonal G k) =
           Rep.barComplex k G ◁ barComplexDiagonal G k by rfl]
-    simpa only [Category.id_comp] using (barComplexDiagonal_assoc G k).symm
+    set_option backward.isDefEq.respectTransparency false in
+      set_option backward.isDefEq.respectTransparency.types false in
+        simpa only [Category.id_comp] using (barComplexDiagonal_assoc G k).symm
   · simp
 
 /-- Let `G` be a group, `k` a commutative ring, `A,B,D` representations, and `p,q,r : ℕ`. For the
