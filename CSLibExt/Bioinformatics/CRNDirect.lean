@@ -94,8 +94,11 @@ selects the first index with `thresh ≤ cumulative` and positive propensity.
 Total: returns `none` on `[]`. For nonnegative rates (`0 ≤ k r` for all `r`),
 a threshold above the total propensity is never reached (`none`; in
 particular `u2 * a0 > a0`, i.e. `u2 > 1` with `a0 > 0`), while a positive
-threshold at or below the total always selects a reaction. Neither threshold
-claim holds for general (possibly negative) rates. -/
+threshold at or below the total always selects a reaction. A threshold above the
+total can still be reached with signed rates, but a positive threshold at or
+below the total selects a reaction for any rates: the first cumulative
+propensity that reaches a positive threshold has a positive increment, and
+`selectAux_some_of_le_total` proves it under nonnegative rates. -/
 noncomputable def selectAux {S ρ : Type*} [Fintype S]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) (rs : List ρ) (x : S → ℕ)
     (thresh : ℝ) : Option ρ :=
@@ -240,17 +243,17 @@ theorem selectAux_some_of_le_total {S ρ : Type*} [Fintype S]
 /-- Direct-method step as a function of uniforms `u1 u2`, with draw domains
 `0 < u1 ≤ 1` and `0 < u2 ≤ 1`: `step` is `none` when the total weight `a0` is
 zero. For nonnegative rates (`0 ≤ k r` for all `r`), a zero total means every
-listed reaction has zero propensity (`totalPropensity_eq_zero_iff`), an
-absorbing state; with in-range draws `none` happens exactly there
-(`step_eq_none_iff`). For signed rates the total can cancel to zero while a
-listed reaction has positive propensity, so `none` then records only the zero
-total. For nonnegative rates (`0 ≤ k r` for all `r`), a positive total gives
-`(τ, r, N.fire r x)` with `τ = log (1 / u1) / a0` and `r` the first reaction
-whose cumulative propensity reaches `u2 * a0` (upper-inclusive inverse CDF).
-Out-of-range `u2` (nonnegative rates, positive total): `u2 ≤ 0` selects the
-first positive-propensity reaction (a threshold at or below zero is reached
-immediately); `u2 > 1` yields `none` (a threshold above the total is never
-reached). -/
+listed reaction has zero propensity (`totalPropensity_eq_zero_iff`), a state
+absorbing for the listed reactions; with in-range draws `none` happens exactly
+there (`step_eq_none_iff`). With signed rates `none` does not imply absorption:
+the total can cancel to zero while a listed reaction has positive propensity,
+and selection can also fail at a nonzero total. For nonnegative rates, a
+positive total gives `(τ, r, N.fire r x)` with `τ = log (1 / u1) / a0`
+and `r` the first reaction whose cumulative propensity reaches `u2 * a0`
+(upper-inclusive inverse CDF). Out-of-range `u2` (nonnegative rates, positive
+total): `u2 ≤ 0` selects the first positive-propensity reaction (a threshold at
+or below zero is reached immediately); `u2 > 1` yields `none` (a threshold above
+the total is never reached). -/
 noncomputable def step {S ρ : Type*} [Fintype S]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) (rs : List ρ) (x : S → ℕ)
     (u1 u2 : ℝ) : Option (ℝ × ρ × (S → ℕ)) :=
@@ -338,8 +341,9 @@ theorem step_some_of_pos {S ρ : Type*} [Fintype S]
   rw [hsel]
   exact ⟨_, _, rfl⟩
 
-/-- For nonnegative rates and `0 < u2 ≤ 1`, `step` is `none` exactly when
-every listed reaction has zero propensity, an absorbing state. -/
+/-- For nonnegative rates and `0 < u2 ≤ 1`, `step` is `none` exactly
+when every listed reaction has zero propensity, a state absorbing for the
+listed reactions. -/
 theorem step_eq_none_iff {S ρ : Type*} [Fintype S]
     (N : ReactionNetwork S ρ) (k : ρ → ℝ) (hk : ∀ r, 0 ≤ k r)
     (rs : List ρ) (x : S → ℕ) (u1 u2 : ℝ) (h2a : 0 < u2) (h2b : u2 ≤ 1) :

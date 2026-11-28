@@ -154,9 +154,9 @@ theorem step_boundary_selects_first (u1 : ℝ) :
 /-- Signed rates `1` and `-1` on the two source-free reactions of `boundaryNet`. -/
 def signedK : Fin 2 → ℝ := fun i => if i = 0 then 1 else -1
 
-/-- With signed rates the total cancels to zero while reaction `0` has positive
-propensity, so `step` returns `none` at a state that is not absorbing; this is
-why `step_eq_none_iff` needs nonnegative rates. -/
+/-- With signed rates the total cancels to zero although reaction `0` has positive
+propensity, so `step` returns `none`; with signed rates `none` therefore does not mean that every
+listed propensity is zero, which is why `step_eq_none_iff` needs nonnegative rates. -/
 theorem signed_step_none (u1 u2 : ℝ) :
     0 < boundaryNet.propensity signedK 0 (fun _ => 0) ∧
       totalPropensity boundaryNet signedK [0, 1] (fun _ => 0) = 0 ∧
