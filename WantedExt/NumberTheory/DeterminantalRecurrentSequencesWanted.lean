@@ -21,6 +21,7 @@ public import MathlibExt.NumberTheory.GibonacciNumber
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.PellPellLucasCompositionSumsSqrtTwo
+public import MathlibExt.NumberTheory.DeterminantalRecurrentSequencesCompositionSumSuccMulTwoZpow
 
 namespace MetaMathlibExt
 
@@ -96,20 +97,6 @@ public theorem_wanted fib_pell_composition_sums (n : ℕ) (hn : 1 ≤ n) :
       (pellNumber (n - 1) : ℚ) = 2 ^ (n - 1) *
         ∑ c : Composition n, ∏ i : Fin c.length,
           ((c.blocksFun i : ℚ) - 1) / 2 ^ (c.blocksFun i - 1)
-
-/-- **A composition sum with weights $(c_i + 1) 2^{c_i - 2}$ in terms of Fibonacci and Lucas
-numbers.** Let $F_k$ be the Fibonacci numbers and $L_k$ the Lucas numbers. For every $n \ge 1$,
-the sum of $\prod_{i=1}^{r} (c_i + 1) 2^{c_i - 2}$ over all compositions $(c_1, \dots, c_r)$ of
-$n$ (tuples of positive integers with $c_1 + \dots + c_r = n$) equals $5^{(n-1)/2} F_{n+1}$ if $n$
-is odd and $5^{(n-2)/2} L_{n+1}$ if $n$ is even.
-
-Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
-Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 1, equation (8). -/
-public theorem_wanted composition_sum_succ_mul_two_zpow (n : ℕ) (hn : 1 ≤ n) :
-    ∑ c : Composition n, ∏ i : Fin c.length,
-        ((c.blocksFun i : ℚ) + 1) * (2 : ℚ) ^ ((c.blocksFun i : ℤ) - 2) =
-      if Odd n then 5 ^ ((n - 1) / 2) * (Nat.fib (n + 1) : ℚ)
-      else 5 ^ ((n - 2) / 2) * (lucasNumber (n + 1) : ℚ)
 
 /-- **Composition-sum formulas for $F_{n+3}$, $F_{3n+1}$ and Jacobsthal and Pell numbers.** Let
 $F_k$ be the Fibonacci numbers, $P_k$ the Pell numbers and $J_k$ the Jacobsthal numbers, that is,
