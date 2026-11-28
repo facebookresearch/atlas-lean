@@ -59,14 +59,14 @@ by the identity on finitely supported coefficient functions. -/
 def projectiveFreeCoverEquiv : ProjectiveFreeCover R L ≃ₗ[R] (L →₀ R) :=
   LinearEquiv.refl R (L →₀ R)
 
-/-- The canonical cover equivalence retains every coefficient of the finitely supported vector. -/
 omit [LieRing L] [LieAlgebra R L] in
+/-- The canonical cover equivalence retains every coefficient of the finitely supported vector. -/
 @[simp]
 theorem projectiveFreeCoverEquiv_apply (x : ProjectiveFreeCover R L) :
     projectiveFreeCoverEquiv R L x = (x : L →₀ R) := rfl
 
-/-- The inverse cover equivalence retains every coefficient of the finitely supported vector. -/
 omit [LieRing L] [LieAlgebra R L] in
+/-- The inverse cover equivalence retains every coefficient of the finitely supported vector. -/
 @[simp]
 theorem projectiveFreeCoverEquiv_symm_apply (x : L →₀ R) :
     (projectiveFreeCoverEquiv R L).symm x = (x : ProjectiveFreeCover R L) := rfl
