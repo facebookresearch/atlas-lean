@@ -26,7 +26,7 @@ pure-tensor coordinates. The in-universe module lift retains the value seven.
 noncomputable section
 
 open CategoryTheory
-open scoped TensorProduct
+open scoped TensorProduct ChangeOfRings
 
 namespace MathlibExtTest.ExteriorTransport
 
@@ -55,9 +55,7 @@ example :
       (ULift.up (2 : ℤ) : S) • exteriorPower.ιMulti S 1
         (M := (ModuleCat.extendScalars (algebraMap ℤ S)).obj M)
         (fun i => (1 : S) ⊗ₜ[ℤ, algebraMap ℤ S] vectors i) := by
-  change ((ModuleCat.exteriorPowerBaseChangeComponent.{0, 2, 1} ℤ S 1 M).hom).hom
-    _ = _
-  exact ModuleCat.exteriorPowerBaseChangeComponent_hom_tmul_ιMulti
+  exact ModuleCat.exteriorPowerBaseChangeComponent_hom_tmul_ιMulti.{0, 2, 1}
     ℤ S 1 M (ULift.up 2) vectors
 
 private abbrev e : ℤ ≃+* S := ULift.ringEquiv.symm
@@ -69,11 +67,11 @@ private abbrev y : U₀ := ULift.up (ULift.up (3 : ℤ))
 example :
     (ModuleCat.RingEquivUniverse.tensorIso.{0, 1, 2} e U U).hom (x ⊗ₜ[ℤ] y) =
       (show U from x) ⊗ₜ[S] (show U from y) :=
-  ModuleCat.RingEquivUniverse.tensorIso_hom_tmul e U U x y
+  ModuleCat.RingEquivUniverse.tensorIso_hom_tmul.{0, 1, 2} e U U x y
 
 example :
     ((ModuleCat.uliftFunctorWithinIso.{0, 0, 2} ℤ).hom.app M).hom
         (ULift.up (ULift.up (7 : ℤ) : M)) = ULift.up (7 : ℤ) :=
-  ModuleCat.uliftFunctorWithinIso_hom_up (R := ℤ) M (ULift.up 7)
+  ModuleCat.uliftFunctorWithinIso_hom_up.{0, 0, 2} (R := ℤ) M (ULift.up 7)
 
 end MathlibExtTest.ExteriorTransport
