@@ -10,7 +10,7 @@ Token-passing systems run copies of one finite-state process on the vertices of 
 2. For $\mathcal{F}$ equal to $\{\forall\}^9$-$\mathrm{LTL}\backslash\mathrm{X}$ or $\{\exists\}^9$-$\mathrm{CTL}\backslash\mathrm{X}$ and $\mathcal{P}$ equal to $\mathcal{P}_{\mathsf{snd}}$ or $\mathcal{P}_{\mathsf{rcv}}$, there is a set of topologies $\mathcal{G}$ for which $\mathrm{PMCP}_{\mathcal{G}}(\mathcal{P}, \mathcal{F})$ is undecidable.
 3. There are a single direction-unaware process template $P$ and computable sets of topologies $\mathcal{G}$, $\mathcal{H}$ such that $\mathrm{PMCP}_{\mathcal{G}}(\{P\}, \cdot)$ restricted to prenex indexed LTL without next-time, and $\mathrm{PMCP}_{\mathcal{H}}(\{P\}, \cdot)$ restricted to $2$-indexed CTL without next-time, are undecidable.
 
-For direction-unaware processes the same paper proves cutoffs, hence decidability, for $k$-indexed CTL* without next-time on every set of topologies and for prenex universal CTL* without next-time on rings, cliques and stars.
+For direction-unaware processes the same paper proves, for every set of topologies and all $k$ and $d$, a cutoff and hence decidability for $k$-indexed $\mathrm{CTL}^\ast_d\backslash\mathrm{X}$, the formulas of CTL* without next-time whose path quantifiers nest to depth at most $d$ (Theorem 7 and Corollary 8); without the depth bound this fails, as clause 3 shows (Theorem 14). For prenex universal CTL* without next-time it computes cutoffs on uni- and bi-directional rings, cliques and stars, so that problem is decidable there (Theorem 15).
 
 ## Depends on
 

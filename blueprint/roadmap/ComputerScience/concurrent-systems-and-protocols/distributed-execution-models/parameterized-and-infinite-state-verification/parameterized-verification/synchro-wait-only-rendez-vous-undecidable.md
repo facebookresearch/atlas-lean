@@ -12,6 +12,7 @@ For networks of any number of identical processes communicating by rendez-vous w
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
@@ -23,4 +24,4 @@ In contrast, the source shows that coverability of a configuration under the sam
 
 ## Sources
 
-- Lucie Guillou, Arnaud Sangnier and Nathalie Sznajder, "Safety Analysis of Parameterised Networks with Non-Blocking Rendez-Vous", in *34th International Conference on Concurrency Theory (CONCUR 2023)*, Leibniz International Proceedings in Informatics 279, article 7, pp. 7:1–7:17, 2023, doi:[10.4230/LIPIcs.CONCUR.2023.7](https://doi.org/10.4230/LIPIcs.CONCUR.2023.7); read in arXiv:2307.04546v1 ([arXiv](https://arxiv.org/abs/2307.04546v1)): Theorem 6.1 (Section 6) of that version, with the reduction and its figures in the appendix.
+- Lucie Guillou, Arnaud Sangnier and Nathalie Sznajder, "Safety Analysis of Parameterised Networks with Non-Blocking Rendez-Vous", in *34th International Conference on Concurrency Theory (CONCUR 2023)*, Leibniz International Proceedings in Informatics 279, article 7, pp. 7:1–7:17, 2023, doi:[10.4230/LIPIcs.CONCUR.2023.7](https://doi.org/10.4230/LIPIcs.CONCUR.2023.7); read in arXiv:2307.04546v1 ([arXiv](https://arxiv.org/abs/2307.04546v1)): Theorem 6.1 of that version, with the reduction and its Figures 14–17 in Section 6.

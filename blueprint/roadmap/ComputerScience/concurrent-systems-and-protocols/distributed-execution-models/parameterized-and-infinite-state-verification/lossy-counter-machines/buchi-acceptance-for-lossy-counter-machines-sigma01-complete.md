@@ -9,7 +9,7 @@ Whether a lossy counter machine has a run from a given configuration that visits
 
 **Theorem (Schnoebelen).** Büchi and looping on location are $\Sigma^0_1$-complete for lossy counter machines.
 
-The two problems coincide: by Dickson's lemma an infinite run visiting $\ell$ infinitely often passes through $\langle \ell, \vec{a}_i \rangle$ and later $\langle \ell, \vec{a}_j \rangle$ with $\vec{a}_i \le \vec{a}_j$, and monotonicity of lossy steps turns this into a loop on $\ell$. A loop is a finite witness, which gives membership in $\Sigma^0_1$; unlike termination, the absence of Büchi runs has no finite witness, so Büchi is not decidable.
+The two problems coincide: by Dickson's lemma an infinite run visiting $\ell$ infinitely often passes through $\langle \ell, \vec{a}_i \rangle$ and later $\langle \ell, \vec{a}_j \rangle$ with $\vec{a}_i \le \vec{a}_j$, and monotonicity of lossy steps turns this into a loop on $\ell$. A loop is a finite witness, which gives membership in $\Sigma^0_1$; unlike termination, the absence of Büchi runs has no finite witness, so the argument used for termination does not apply; undecidability follows from the reduction below (Corollary 7.4).
 
 ## Depends on
 
@@ -20,6 +20,7 @@ The two problems coincide: by Dickson's lemma an infinite run visiting $\ell$ in
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

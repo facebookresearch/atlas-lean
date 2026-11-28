@@ -14,8 +14,7 @@ that is, a reliable step possibly preceded and followed by losses. A *lossy coun
 
 ## Depends on
 
-- [Counter-machine instructions](../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/counter-instr.md)
-- [One step of a counter machine](../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/counter-step.md)
+None.
 
 ## Proof depends on
 

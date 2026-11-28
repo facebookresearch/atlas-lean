@@ -19,6 +19,7 @@ In the proof the template has jump bound $b = 1$. For a fixed parameter valuatio
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

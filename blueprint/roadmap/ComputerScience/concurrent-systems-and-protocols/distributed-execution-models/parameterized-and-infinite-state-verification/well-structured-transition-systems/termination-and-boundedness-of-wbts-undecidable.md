@@ -6,7 +6,7 @@ Well behaved transition systems relax well-structured ones by asking only that t
 
 **Theorem (Blondin, Finkel and McKenzie).** There is a post-effective class of finitely branching WBTS with strong and strict monotonicity and a partial ordering for which termination and boundedness are undecidable.
 
-Under the analogous monotonicity and effectiveness hypotheses both problems are decidable for well-structured transition systems; the same paper identifies a subclass of WBTS, defined through an antichain tree, for which they are decidable.
+Under the analogous monotonicity and effectiveness hypotheses both problems are decidable for well-structured transition systems; for WBTS the same paper shows termination decidable for post-effective classes of finitely branching WBTS with upward and downward transitive monotonicity, and boundedness decidable for post-effective classes of finitely branching WBTS with upward and downward strict monotonicity and a partial ordering (Theorem 5.7); its decision procedure explores a finite antichain tree (Definition 5.2).
 
 ## Depends on
 
