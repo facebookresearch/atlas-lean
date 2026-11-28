@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Bernoulli
@@ -289,13 +290,19 @@ private abbrev deltaUnit : ℚ⟦X⟧ := pentagonalSeries ℚ ^ 24
 
 private lemma deltaRat_eq_X_mul : deltaRat = X * deltaUnit := map_deltaZ ℚ
 
-private lemma deltaUnit_coeff_zero : coeff 0 deltaUnit = 1 := by
+/-- The constant coefficient of the unit factor $\prod_{j\ge1}(1-q^j)^{24}$ of
+Ramanujan's discriminant is $1$. -/
+public lemma ramanujan_discriminant_unit_coeff_zero :
+    coeff 0 (pentagonalSeries ℚ ^ 24) = 1 := by
   have hp : coeff 0 (pentagonalSeries ℚ) = 1 := by
     rw [show (0 : ℕ) = pentagonal 0 by norm_num [pentagonal_def], coeff_pentagonalSeries_pentagonal]
     decide
   rw [coeff_zero_eq_constantCoeff_apply, map_pow, ← coeff_zero_eq_constantCoeff_apply, hp, one_pow]
 
-private lemma deltaUnit_coeff_one_two : coeff 1 deltaUnit = -24 ∧ coeff 2 deltaUnit = 252 := by
+/-- The coefficients of degrees $1$ and $2$ in the unit factor $\prod_{j\ge1}(1-q^j)^{24}$
+of Ramanujan's discriminant are $-24$ and $252$, respectively. -/
+public lemma ramanujan_discriminant_unit_coeff_one_two :
+    coeff 1 (pentagonalSeries ℚ ^ 24) = -24 ∧ coeff 2 (pentagonalSeries ℚ ^ 24) = 252 := by
   let P := pentagonalSeries ℚ
   have hp₀ : coeff 0 P = 1 := by
     dsimp [P]
@@ -351,7 +358,8 @@ private lemma coeff_basisRat_le (k i n : ℕ) (hn : n ≤ i)
     (hc : sigma (k - 12 * i) 0 ≠ 0) : coeff n (basisRat k i) = if n = i then 1 else 0 := by
   rcases hn.eq_or_lt with rfl | hn
   · rw [coeff_basisRat, ite_eq_left le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply,
-      map_mul, map_pow, ← coeff_zero_eq_constantCoeff_apply deltaUnit, deltaUnit_coeff_zero,
+      map_mul, map_pow, ← coeff_zero_eq_constantCoeff_apply deltaUnit,
+      ramanujan_discriminant_unit_coeff_zero,
       ← coeff_zero_eq_constantCoeff_apply (eisensteinRat _), coeff_eisensteinRat, div_self hc]
     simp
   · simp [coeff_basisRat, hn.ne, not_le.mpr hn]
@@ -361,23 +369,25 @@ private lemma basisRat_first_coeffs {k : ℕ} (hk : 36 ≤ k)
     coeff 2 (basisRat k 1) = 1 / sigma (k - 12) 0 - 24 ∧
     coeff 3 (basisRat k 1) = 252 + (2 ^ (k - 13) - 23) / sigma (k - 12) 0 ∧
     coeff 3 (basisRat k 2) = 1 / sigma (k - 24) 0 - 48 := by
-  have h₁ := deltaUnit_coeff_one_two.1
-  have h₂ := deltaUnit_coeff_one_two.2
+  have h₁ := ramanujan_discriminant_unit_coeff_one_two.1
+  have h₂ := ramanujan_discriminant_unit_coeff_one_two.2
   have hw₁ : k - 12 ≠ 0 := by omega
   have hw₂ : k - 24 ≠ 0 := by omega
   have hE₁ : coeff 0 (eisensteinRat (k - 12)) = 1 := by simp [coeff_eisensteinRat, hs₁]
   have hE₂ : coeff 0 (eisensteinRat (k - 24)) = 1 := by simp [coeff_eisensteinRat, hs₂]
   have hD₂ : coeff 1 (deltaUnit ^ 2) = -48 := by
-    norm_num [coeff_one_pow, h₁, ← coeff_zero_eq_constantCoeff_apply, deltaUnit_coeff_zero]
+    norm_num [coeff_one_pow, h₁, ← coeff_zero_eq_constantCoeff_apply,
+      ramanujan_discriminant_unit_coeff_zero]
   have hD₀ : constantCoeff (deltaUnit ^ 2) = 1 := by
-    simp [← coeff_zero_eq_constantCoeff_apply deltaUnit, deltaUnit_coeff_zero]
+    simp [← coeff_zero_eq_constantCoeff_apply deltaUnit, ramanujan_discriminant_unit_coeff_zero]
   constructor
   · norm_num [coeff_basisRat, coeff_one_mul, ← coeff_zero_eq_constantCoeff_apply, h₁, hE₁,
-      deltaUnit_coeff_zero, coeff_eisensteinRat, sigma_one hw₁]
+      ramanujan_discriminant_unit_coeff_zero, coeff_eisensteinRat, sigma_one hw₁]
     ring
   constructor
-  · norm_num [coeff_basisRat, coeff_two_mul_rat, h₁, h₂, hE₁, deltaUnit_coeff_zero,
-      coeff_eisensteinRat, sigma_one hw₁, sigma_prime hw₁ Nat.prime_two,
+  · norm_num [coeff_basisRat, coeff_two_mul_rat, h₁, h₂, hE₁,
+      ramanujan_discriminant_unit_coeff_zero, coeff_eisensteinRat, sigma_one hw₁,
+      sigma_prime hw₁ Nat.prime_two,
       show k - 12 - 1 = k - 13 by omega]
     ring
   · norm_num [coeff_basisRat, coeff_one_mul, hD₂, hD₀, ← coeff_zero_eq_constantCoeff_apply
@@ -1259,7 +1269,7 @@ private lemma coefficient_congruence_general (k m N : ℕ) (hk : 12 ≤ k) (he :
     intro u hu
     have heu : Even u := by fin_cases hu <;> decide
     rw [dimension_level_one u heu]
-    fin_cases hu <;> norm_num [Nat.ModEq]
+    fin_cases hu <;> norm_num [Nat.modEq_iff_dvd]
   have hEq : A = T A := sub_eq_zero.mp ((PowerSeries.map_eq_zero _ ratToComplex).mp
     (hF'.symm.trans (qExpansion_eq_zero_of_order H hH₀ hr m F' hOrder)))
   have hvA : v A = v G - sigma k 0 • v L := by
