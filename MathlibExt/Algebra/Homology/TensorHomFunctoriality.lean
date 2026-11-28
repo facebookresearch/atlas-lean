@@ -11,6 +11,7 @@ module
 
 public import Mathlib.Algebra.Homology.Additive
 public import Mathlib.Algebra.Homology.Monoidal
+public import MathlibExt.CategoryTheory.DGSource.CochainTensorSummands
 
 /-!
 # Functoriality and additivity of tensor maps of complexes
@@ -66,43 +67,7 @@ theorem tensorHom_id_id (K L : HomologicalComplex C c) [HasTensor K L] :
   intro p q h
   simp
 
-/-- Let C be a preadditive monoidal category with tensor product additive in each variable, I an
-additive monoid with decidable equality, and c a complex shape on I equipped with tensor signs.
-For c-shaped complexes K₁,L₁,K₂,L₂ with K₁ ⊗ K₂ and L₁ ⊗ L₂ defined, and f : K₁ → L₁, the
-induced map tensorHom(f,0) : K₁ ⊗ K₂ → L₁ ⊗ L₂ is zero. -/
-@[simp]
-theorem tensorHom_zero
-    {K₁ L₁ K₂ L₂ : HomologicalComplex C c}
-    [HasTensor K₁ K₂] [HasTensor L₁ L₂]
-    (f : K₁ ⟶ L₁) :
-    tensorHom f (0 : K₂ ⟶ L₂) = 0 := by
-  apply hom_ext
-  intro n
-  apply mapBifunctor.hom_ext
-  intro p q h
-  simp only [curriedTensor_obj_obj, ι_mapBifunctorMap, zero_f,
-    curriedTensor_map_app, curriedTensor_obj_map, comp_zero]
-  change _ ≫ (tensorLeft (L₁.X p)).map (0 : K₂.X q ⟶ L₂.X q) ≫ _ = 0
-  rw [Functor.map_zero, zero_comp, comp_zero]
-
-/-- Let C be a preadditive monoidal category with tensor product additive in each variable, I an
-additive monoid with decidable equality, and c a complex shape on I equipped with tensor signs.
-For c-shaped complexes K₁,L₁,K₂,L₂ with the source and target tensor complexes defined, and g :
-K₂ → L₂, tensorHom(0,g) : K₁ ⊗ K₂ → L₁ ⊗ L₂ is zero. -/
-@[simp]
-theorem zero_tensorHom
-    {K₁ L₁ K₂ L₂ : HomologicalComplex C c}
-    [HasTensor K₁ K₂] [HasTensor L₁ L₂]
-    (g : K₂ ⟶ L₂) :
-    tensorHom (0 : K₁ ⟶ L₁) g = 0 := by
-  apply hom_ext
-  intro n
-  apply mapBifunctor.hom_ext
-  intro p q h
-  simp only [curriedTensor_obj_obj, ι_mapBifunctorMap, zero_f,
-    curriedTensor_map_app, curriedTensor_obj_map, comp_zero]
-  change (tensorRight (K₂.X q)).map (0 : K₁.X p ⟶ L₁.X p) ≫ _ ≫ _ = 0
-  rw [Functor.map_zero, zero_comp]
+attribute [simp] tensorHom_zero zero_tensorHom
 
 /-- Let C be a preadditive monoidal category with tensor product additive in each variable, I an
 additive monoid with decidable equality, and c a complex shape on I equipped with tensor signs.
