@@ -60,7 +60,14 @@ theorem leadingUnitEquiv_naturality
   apply MultilinearMap.ext
   intro x
   simp only [LinearMap.compMultilinearMap_apply, LinearMap.comp_apply,
-    PiTensorProduct.map_tprod, leadingUnitEquiv_tprod, TensorProduct.map_tmul,
-    LinearMap.id_apply]
-
+    PiTensorProduct.map_tprod]
+  change leadingUnitEquiv (R := R) N (PiTensorProduct.tprod R (fun i => f (x i))) =
+    TensorProduct.map (LinearMap.id : R →ₗ[R] R) f
+      (leadingUnitEquiv (R := R) M (PiTensorProduct.tprod R x))
+  calc
+    _ = (1 : R) ⊗ₜ[R] f (x 0) := leadingUnitEquiv_tprod N (fun i => f (x i))
+    _ = TensorProduct.map (LinearMap.id : R →ₗ[R] R) f ((1 : R) ⊗ₜ[R] x 0) := by
+      rw [TensorProduct.map_tmul, LinearMap.id_apply]
+    _ = _ := congrArg (TensorProduct.map (LinearMap.id : R →ₗ[R] R) f)
+      (leadingUnitEquiv_tprod M x).symm
 end TensorPower
