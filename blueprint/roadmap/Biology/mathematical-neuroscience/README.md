@@ -16,3 +16,8 @@ Models of excitable membranes and neurons: the Nernst potential and passive cabl
 - [Leaky integrate-and-fire neuron](leaky-integrate-and-fire-neuron/README.md)
 - [Wilson–Cowan neural population model](wilson-cowan-neural-population-model/README.md)
 - [Coupled biological oscillators](coupled-oscillators/README.md)
+- [Channel-noise-induced excitability in Morris–Lecar](channel-noise-induced-excitability-in-morris-lecar/README.md)
+- [Deterministic noise in Nagumo nerve-fibre models](deterministic-noise-in-nagumo-nerve-fibre-models/README.md)
+- [Direct-method information estimates for spike trains](direct-method-information-estimates-for-spike-trains/README.md)
+- [GnRH pulse and surge generator](gnrh-pulse-and-surge-generator/README.md)
+- [Motif-cumulant expansion of network coherence](motif-cumulant-expansion-of-network-coherence/README.md)

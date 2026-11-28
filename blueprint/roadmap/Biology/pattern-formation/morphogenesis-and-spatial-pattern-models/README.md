@@ -1,0 +1,28 @@
+# Morphogenesis and spatial pattern models
+
+Reaction–diffusion, chemotaxis, tissue mechanics, and spatial morphogenesis models.
+
+## [Chemotaxis systems: analysis and inverse problems](part-01/README.md)
+- [Bacterial chemotaxis to two stimuli](part-01/bacterial-chemotaxis-to-two-stimuli/README.md)
+- [Chemotactic tumour–immune models](part-01/chemotactic-tumour-immune-models/README.md)
+- [Flux-limited models of glioma invasion](part-01/flux-limited-models-of-glioma-invasion/README.md)
+- [Haptotactic models of Buruli ulcer tissue invasion](part-01/haptotactic-models-of-buruli-ulcer-tissue-invasion/README.md)
+- [Inverse problems for attraction–repulsion chemotaxis](part-01/inverse-problems-for-attraction-repulsion-chemotaxis/README.md)
+- [Steady states of chemotaxis–consumption systems](part-01/steady-states-of-chemotaxis-consumption-systems/README.md)
+- [Stochastic homogenization of chemotaxis](part-01/stochastic-homogenization-of-chemotaxis/README.md)
+## [Kinetic and transport models of cell motion](part-02/README.md)
+- [Anisotropic interaction models of fingerprint ridges](part-02/anisotropic-interaction-models-of-fingerprint-ridges/README.md)
+- [Kinetic chemotaxis in slab geometry](part-02/kinetic-chemotaxis-in-slab-geometry/README.md)
+- [Kinetic chemotaxis models of bacterial travelling pulses](part-02/kinetic-chemotaxis-models-of-bacterial-travelling-pulses/README.md)
+- [Kinetic models of non-local cell adhesion](part-02/kinetic-models-of-non-local-cell-adhesion/README.md)
+- [Self-organized hydrodynamics of myxobacteria](part-02/self-organized-hydrodynamics-of-myxobacteria/README.md)
+## [Morphogens, Turing patterns and developmental patterning](part-03/README.md)
+- [Auxin peaks in concentration-based transport models](part-03/auxin-peaks-in-concentration-based-transport-models/README.md)
+- [Bulk-surface wave-pinning](part-03/bulk-surface-wave-pinning/README.md)
+- [Lateral-inhibition patterns on stratified bilayers](part-03/lateral-inhibition-patterns-on-stratified-bilayers/README.md)
+- [Morphogen gradients with nonlinear degradation](part-03/morphogen-gradients-with-nonlinear-degradation/README.md)
+- [Nonlocal membrane GTPase Turing model](part-03/nonlocal-membrane-gtpase-turing-model/README.md)
+- [Reaction-diffusion waves of blood coagulation](part-03/reaction-diffusion-waves-of-blood-coagulation/README.md)
+- [Reaction-diffusion with line-supported production](part-03/reaction-diffusion-with-line-supported-production/README.md)
+- [Receptor-mediated morphogen transport](part-03/receptor-mediated-morphogen-transport/README.md)
+- [Turing patterns in inflammation models](part-03/turing-patterns-in-inflammation-models/README.md)

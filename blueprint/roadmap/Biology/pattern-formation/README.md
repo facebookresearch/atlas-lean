@@ -26,3 +26,4 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Nonlocal taxis and its local limit](nonlocal-taxis-and-its-local-limit/README.md)
 - [Wave-pinning and local perturbation analysis](wave-pinning-and-local-perturbation-analysis/README.md)
 - [Unstable principal subsystems enable diffusion-driven instability](unstable-principal-subsystems-enable-turing-instability.md)
+- [Morphogenesis and spatial pattern models](morphogenesis-and-spatial-pattern-models/README.md)

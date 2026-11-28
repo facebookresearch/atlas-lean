@@ -1,0 +1,18 @@
+# Assembly graphs, pangenomes, indexing and alignment
+
+- [Aho–Corasick automata for motif counting](aho-corasick-automata-for-motif-counting/README.md)
+- [Axiomatic string-graph representations of pangenomes](axiomatic-string-graph-representations-of-pangenomes/README.md)
+- [Coding sequence alignment with frameshifts](coding-sequence-alignment-with-frameshifts/README.md)
+- [Compacted de Bruijn graphs of complete genomes](compacted-de-bruijn-graphs-of-complete-genomes/README.md)
+- [Context-dependent pair hidden Markov models](context-dependent-pair-hidden-markov-models/README.md)
+- [Decycling-set-based minimizer orders](decycling-set-based-minimizer-orders/README.md)
+- [Maximal exact match seeding](maximal-exact-match-seeding/README.md)
+- [Min-hash read mapping](min-hash-read-mapping/README.md)
+- [Minimum flow decomposition in graphs with cycles](minimum-flow-decomposition-in-graphs-with-cycles/README.md)
+- [Monge–Elkan read-set distance](monge-elkan-read-set-distance/README.md)
+- [Readability of overlap digraphs](readability-of-overlap-digraphs/README.md)
+- [Safe paths for minimum flow decomposition](safe-paths-for-minimum-flow-decomposition/README.md)
+- [Safety of flow decompositions](safety-of-flow-decompositions/README.md)
+- [Shortest common superstring model of assembly](shortest-common-superstring-model-of-assembly/README.md)
+- [Variable-order de Bruijn graphs](variable-order-de-bruijn-graphs/README.md)
+- [XBWT indexing of aligned readsets](xbwt-indexing-of-aligned-readsets/README.md)

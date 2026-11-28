@@ -34,3 +34,15 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
 - [Phylogenetic network identifiability, recombination tests, and tree-space geometry](phylogenetic-network-identifiability-and-geometry/README.md)
+
+## [Tree reconstruction, tree-based networks and phylogenetic invariants](part-01/README.md)
+
+- [Phylogenetic invariants](part-01/phylogenetic-invariants/README.md)
+- [Bayesian triplet and quartet species tree inference](part-01/bayesian-triplet-and-quartet-species-tree-inference/README.md)
+- [Common refinement of rooted trees](part-01/common-refinement-of-rooted-trees/README.md)
+- [Distance estimation from sequence lengths under TKF91](part-01/distance-estimation-from-sequence-lengths-under-tkf91/README.md)
+- [Maximum likelihood supertrees](part-01/maximum-likelihood-supertrees/README.md)
+- [NNI connectivity of tree-based networks](part-01/nni-connectivity-of-tree-based-networks/README.md)
+- [Phylogenetic network generators](part-01/phylogenetic-network-generators/README.md)
+- [Root identifiability under strand-symmetric models](part-01/root-identifiability-under-strand-symmetric-models/README.md)
+- [Universal tree-based networks](part-01/universal-tree-based-networks/README.md)

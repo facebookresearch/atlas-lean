@@ -73,3 +73,4 @@
 
 - [Extinction time of the stochastic logistic SIS epidemic](extinction-time-of-the-stochastic-logistic-epidemic.md)
 - [Genetic variation in susceptibility in the SIS model and liability-scale heritability](genetic-variation-in-susceptibility-in-the-sis-model.md)
+- [Global phase portrait of the SIS model on the Poincaré disc](global-phase-portrait-of-the-sis-model-on-the-poincare-disc.md)
