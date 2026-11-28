@@ -24,7 +24,9 @@ MathlibExt's `lucasNumber`, `Bₙ` is Mathlib's `bernoulli`,
 `chapter5EulerEven`. Several printed statements are false
 as printed; each is stated below in a corrected form verified
 by exact symbolic evaluation in `ℚ(√5)`, with the correction
-documented at the declaration:
+documented at the declaration, except Theorem 11, whose
+corrected form is proved in
+`MathlibExt.NumberTheory.FiniteSumsFibLucasAddFibBetaPowEqSumGenLucasCoeff`:
 
 * Corollary 2's factor `β⁻ⁿ` gives the sum `2ᵐ`, not `0`;
   the `x = -β` specialization of Theorem 1 has `(-β)^{m-n}`.
@@ -32,7 +34,9 @@ documented at the declaration:
 * Theorem 11's inner sum omits the contribution of the
   `2/D` term of `(e^{αD} + e^{βD})/D`; the corrected inner
   coefficient (with the extra `2√5^{n+1} G_{n+1}/(n+1)`
-  term) is `genLucasCoeff`. Corollaries 12–14 and Theorem 20
+  term) is `genLucasCoeff`, defined in
+  `MathlibExt.NumberTheory.FiniteSumsFibLucasAddFibBetaPowEqSumGenLucasCoeff`.
+  Corollaries 12–14 and Theorem 20
   inherit this correction; Corollary 12 also has
   `β^{m-n}` for `(-β)^{m-n}` as printed.
 * Theorems 15 and 18 need the full multinomial coefficient
@@ -62,6 +66,7 @@ public import MathlibExt.NumberTheory.EulerLucasBinomialSum
 public import MathlibExt.NumberTheory.ForwardDiffPow
 public import MathlibExt.NumberTheory.GenocchiNumber
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.FiniteSumsFibLucasAddFibBetaPowEqSumGenLucasCoeff
 
 set_option autoImplicit false
 
@@ -70,24 +75,6 @@ set_option autoImplicit false
 namespace MathlibExt.NumberTheory.FiniteSumsFibLucasWanted
 
 open MetaMathlibExt
-
-/-- **Genocchi–Lucas coefficients.** For a natural number $n$, the Genocchi–Lucas coefficient is
-the real number
-$$
-c_n = \sum_{k=0}^{n} \sqrt{5}^{\,k} \binom{n}{k} G_k \frac{L_{n-k+1}}{n-k+1} +
-2 \sqrt{5}^{\,n+1} \frac{G_{n+1}}{n+1},
-$$
-where $G_k$ are the Genocchi numbers and $L_k$ the Lucas numbers.
-
-These are the inner coefficients of the corrected Theorem 11 of Bensaci, Boumahdi and Khaldi,
-"Finite Sums Involving Fibonacci and Lucas Numbers"; the paper's printed coefficient omits the
-last term. -/
-noncomputable def genLucasCoeff (n : ℕ) : ℝ :=
-  (∑ k ∈ Finset.range (n + 1), (Real.sqrt 5) ^ k *
-      (Nat.choose n k : ℝ) * (genocchiNumber k : ℝ) *
-      ((lucasNumber (n - k + 1) : ℝ) / (n - k + 1 : ℕ))) +
-    2 * (Real.sqrt 5) ^ (n + 1) *
-      ((genocchiNumber (n + 1) : ℝ) / (n + 1 : ℕ))
 
 /-- **Bernoulli–Fibonacci double sum with weights $(-2)^n$.** Let $B_k$ be the Bernoulli
 numbers, with $B_1 = -1/2$, and let $F_k$ be the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). For every
@@ -188,31 +175,6 @@ theorem_wanted sum_eulerSec_lucas_eq_two_fibBeta_pow (m : ℕ) :
           (Nat.choose n k : ℝ) * (Nat.choose m n : ℝ) *
           (eulerSecNumber k : ℝ) * (lucasNumber (n - k) : ℝ) =
       2 * fibBeta ^ m
-
-/-- **Genocchi–Lucas expansion of $(x + \beta)^m$.** Let $\beta = (1 - \sqrt{5})/2$, and for every
-natural number $n$ let
-$$
-c_n = \sum_{k=0}^{n} \sqrt{5}^{\,k} \binom{n}{k} G_k \frac{L_{n-k+1}}{n-k+1} +
-2 \sqrt{5}^{\,n+1} \frac{G_{n+1}}{n+1}
-$$
-be the Genocchi–Lucas coefficient, where $G_k$ are the Genocchi numbers and $L_k$ the Lucas
-numbers. Then for every natural number $m$ and every real number $x$,
-$$
-(x + \beta)^m = \frac{1}{2\sqrt{5}} \sum_{n=0}^{m} \binom{m}{n} c_n x^{m-n}.
-$$
-
-This corrects the paper's Theorem 11, whose inner sum omits the term
-$2 \sqrt{5}^{\,n+1} G_{n+1}/(n+1)$; without it the identity already fails at $m = 0$, giving $0$
-instead of $1$.
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Theorem 11. -/
-theorem_wanted add_fibBeta_pow_eq_sum_genLucasCoeff (m : ℕ)
-    (x : ℝ) :
-    (x + fibBeta) ^ m =
-      (1 / (2 * Real.sqrt 5)) * ∑ n ∈ Finset.range (m + 1),
-        (Nat.choose m n : ℝ) * genLucasCoeff n * x ^ (m - n)
 
 /-- **A vanishing sum of the corrected Genocchi–Lucas coefficients.** Let
 $\beta = (1 - \sqrt{5})/2$, let $G_k$ be the Genocchi numbers and $L_n$ the Lucas numbers, and for
