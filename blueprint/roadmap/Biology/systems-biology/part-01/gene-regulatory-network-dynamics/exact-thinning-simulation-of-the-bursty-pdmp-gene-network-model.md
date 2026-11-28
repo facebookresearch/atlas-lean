@@ -20,7 +20,7 @@ Thinning (uniformization) works because the total burst intensity is bounded by 
 
 ## Depends on
 
-- [Strongly continuous contraction semigroups, generators and cores](../../../Analysis/operator-theory/strongly-continuous-contraction-semigroups.md)
+- [Strongly continuous contraction semigroups, generators and cores](../../../../Analysis/operator-theory/strongly-continuous-contraction-semigroups.md)
 
 ## Sources
 

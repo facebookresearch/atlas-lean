@@ -14,7 +14,7 @@ $$\mathscr R_{\mathbf x^*}=\rho(FV^{-1}).$$
 
 ## Depends on
 
-- [R0 as a threshold for the linearized infected subsystem](../../epidemiology/next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
+- [R0 as a threshold for the linearized infected subsystem](../../../epidemiology/next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
 
 ## Expansion
 

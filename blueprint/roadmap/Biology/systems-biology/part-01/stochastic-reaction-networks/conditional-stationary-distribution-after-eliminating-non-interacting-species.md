@@ -17,7 +17,7 @@ The conclusions also hold when $\mathcal N_{\mathcal U}$ has finitely many react
 
 ## Depends on
 
-- [Complex-balanced concentrations](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
 - [Non-explosivity of complex-balanced stochastic reaction networks](non-explosivity-of-complex-balanced-stochastic-reaction-networks.md)
 
 ## Expansion

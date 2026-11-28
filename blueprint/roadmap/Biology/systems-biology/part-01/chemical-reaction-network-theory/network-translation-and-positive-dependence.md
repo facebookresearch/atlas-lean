@@ -22,7 +22,7 @@ In particular every weakly reversible network is positively dependent, and for a
 
 ## Depends on
 
-- [Weak reversibility is equivalent to strongly connected linkage classes](../complex-balancing-and-the-deficiency-zero-theore/is-weakly-reversible-iff-reachable.md)
+- [Weak reversibility is equivalent to strongly connected linkage classes](../../complex-balancing-and-the-deficiency-zero-theore/is-weakly-reversible-iff-reachable.md)
 
 ## Expansion
 

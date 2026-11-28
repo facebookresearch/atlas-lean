@@ -18,8 +18,8 @@ is a homeomorphism. Consequently $\mathcal{K}_{\mathrm{disg}}(G)$ is a contracti
 
 ## Depends on
 
-- [Complex-balanced concentrations](../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
-- [Horn-Jackson: the positive equilibria](../complex-balancing-and-the-deficiency-zero-theore/positive-equilibria-eq.md)
+- [Complex-balanced concentrations](../../complex-balancing-and-the-deficiency-zero-theore/is-complex-balanced.md)
+- [Horn-Jackson: the positive equilibria](../../complex-balancing-and-the-deficiency-zero-theore/positive-equilibria-eq.md)
 
 ## Expansion
 
