@@ -830,6 +830,7 @@ if [[ "$tool_tests" == run ]]; then
   python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
   python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_reference_workflow.py -v
   python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_bump_cache_workflow.py -v
+  python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_tech_debt.py -v
   python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
   python3 "$REPO_ROOT/scripts/bump/test_bump_branch.py"
 else

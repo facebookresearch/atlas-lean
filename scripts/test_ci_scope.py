@@ -91,6 +91,7 @@ TOOL_TESTS = [
     "scripts test_public_references.py",
     "scripts test_public_reference_workflow.py",
     "scripts test_bump_cache_workflow.py",
+    "scripts test_tech_debt.py",
     "scripts/bump/test_pinned_bump.py",
     "scripts/bump/test_bump_branch.py",
 ]

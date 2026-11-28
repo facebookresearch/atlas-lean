@@ -58,6 +58,15 @@ For the Formal-Math sync manifest, its offline checker (run by preflight on
 files synced from Formal-Math), the divergence helper and the refresh script, see
 [`provenance/README.md`](../provenance/README.md).
 
+For the weekly technical-debt counts, run `python3 scripts/tech_debt.py` from the repository
+root. It counts debt markers in the tracked Lean files of the five libraries (`erw`,
+heartbeat raises, disabled linters, `open Classical`, wanted declarations, files over
+1500 lines, Formal-Math divergences awaiting a backport and others) and, given a
+`lake build` log with `--build-log`, the compiler warnings by linter and by library;
+`--base` compares with an earlier `--json` report. The `Technical debt` workflow runs
+it every Monday on main with the build log of main's newest successful CI run, writes
+the table to the job summary and keeps the report as an artifact for the next run.
+
 For opt-in import optimization, see [`import_optimizer/README.md`](import_optimizer/README.md).
 The inventory generator and optimizer use the pinned Lean tools, compile isolated
 candidates, and compare owned declarations before saving patches. They never apply
