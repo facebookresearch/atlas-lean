@@ -75,7 +75,14 @@ example :
   have hv := congrArg
     (fun g : regularComplex.X 0 ⟶ originalComplex.homology 0 =>
       g ((3 : R) ⊗ₜ[R] zeroCoordinate 1)) h
-  simp only [CategoryTheory.comp_apply] at hv
+  rw [ConcreteCategory.comp_apply, ConcreteCategory.comp_apply] at hv
+  change (HomologicalComplex.homologyMap
+    (ChainComplex.TensorCoefficient.regularIso R originalComplex).hom 0).hom
+      ((ChainComplex.homologyZeroClass regularComplex).hom
+        ((3 : R) ⊗ₜ[R] zeroCoordinate 1)) =
+    (ChainComplex.homologyZeroClass originalComplex).hom
+      (((ChainComplex.TensorCoefficient.regularIso R originalComplex).hom.f 0).hom
+        ((3 : R) ⊗ₜ[R] zeroCoordinate 1)) at hv
   have hc : (3 : R) • zeroCoordinate 1 = zeroCoordinate 3 := by
     apply (ModuleCat.mono_iff_injective zeroTermIso.hom).mp inferInstance
     change zeroTermIso.hom.hom ((3 : R) • zeroCoordinate 1) =
