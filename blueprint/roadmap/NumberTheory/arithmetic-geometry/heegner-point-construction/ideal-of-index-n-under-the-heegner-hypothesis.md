@@ -4,9 +4,9 @@ Let $K$ be an imaginary quadratic field with ring of integers $\mathcal{O}_K$ an
 every prime factor $p$ of $N$ splits in $K$: $p\mathcal{O}_K = PQ$ with $P \ne Q$ prime ideals. Then there is an ideal
 $\mathcal{N}$ of $\mathcal{O}_K$ such that the additive group $\mathcal{O}_K / \mathcal{N}$ is cyclic of order $N$.
 
-The ideal $\mathcal{N} = \prod_{p \mid N} P_p^{v_p(N)}$ does this, and the imaginary hypothesis is not needed: in every
-quadratic field in which the prime factors of $N$ split, it gives a ring isomorphism
-$\mathcal{O}_K / \mathcal{N} \cong \mathbb{Z}/N\mathbb{Z}$.
+The ideal $\mathcal{N} = \prod_{p \mid N} P_p^{v_p(N)}$ does this. The imaginary hypothesis is not needed:
+[an ideal of index $N$ in a quadratic field](ideal-of-index-n-in-a-quadratic-field.md) gives, in every quadratic field in
+which the prime factors of $N$ split, an ideal with $\mathcal{O}_K / \mathcal{N} \cong \mathbb{Z}/N\mathbb{Z}$ as rings.
 
 ## Sources
 

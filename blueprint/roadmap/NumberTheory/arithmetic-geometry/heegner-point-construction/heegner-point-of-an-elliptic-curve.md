@@ -23,21 +23,12 @@ torsion point of $E(K)$.
 The page defines $y_K$ and asserts the two facts it rests on: that $x_1$ is rational over $K_1$, and that $y_K$
 depends on $\mathcal{N}$ only up to sign and torsion.
 
-## Expansion
-
-This node is still to be broken down. A good expansion states and links:
-
-- the action of the Atkin–Lehner involutions $w_d$ on the parametrization, $\varphi \circ w_d = \pm \varphi + c_d$ with $c_d$ a
-  point of finite order, which turns the simply transitive action of $W \times \operatorname{Gal}(K_1/K)$ on the Heegner
-  points into the independence of $y_K$ from $\mathcal{N}$ up to sign and torsion (Gross and Zagier, Chapter V, §2,
-  p. 310, state the independence).
-
-The construction itself is laid out on the pages beside this one: the
+Proof: the two facts are the [rationality of $x_1$ over $K_1$](rationality-of-heegner-points.md) and the
+[independence of the choice of $\mathcal{N}$](independence-of-the-heegner-point-from-the-ideal.md), for discriminants of
+either parity. The construction is laid out on the pages beside this one: the
 [ideal $\mathcal{N}$](ideal-of-index-n-under-the-heegner-hypothesis.md), the
-[cyclic isogeny](kernel-of-the-heegner-isogeny.md), the
-[point $x_1$ of $X_0(N)$](complex-points-of-x0-n-as-cyclic-isogenies.md), its
-[rationality over $K_1$](rationality-of-heegner-points.md) and the
-[action on Heegner points](galois-and-atkin-lehner-action-on-heegner-points.md).
+[cyclic isogeny](kernel-of-the-heegner-isogeny.md) and the
+[point $x_1$ of $X_0(N)$](complex-points-of-x0-n-as-cyclic-isogenies.md).
 
 ## Depends on
 
@@ -51,9 +42,7 @@ The construction itself is laid out on the pages beside this one: the
 ## Proof depends on
 
 - [Heegner points are rational over the Hilbert class field](rationality-of-heegner-points.md), for $x_1 \in X_0(N)(K_1)$
-- [Galois and Atkin–Lehner action on Heegner points](galois-and-atkin-lehner-action-on-heegner-points.md), for the other choices of $\mathcal{N}$
-
-The rest of its proof is that of the sources below, as the Expansion describes.
+- [The Heegner point does not depend on the ideal, up to sign and torsion](independence-of-the-heegner-point-from-the-ideal.md), for the other choices of $\mathcal{N}$
 
 ## Sources
 

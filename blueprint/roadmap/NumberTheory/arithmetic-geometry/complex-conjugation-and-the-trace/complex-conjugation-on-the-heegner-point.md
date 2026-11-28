@@ -14,7 +14,7 @@ torsion point, so $E(\mathbb{Q})$ has a point of infinite order when $y_K$ has i
 
 Gross's proof, with $n = 1$: by [complex conjugation on Heegner points](complex-conjugation-on-heegner-points-of-x0-n.md),
 $x_1^\tau = w_N(x_1^{\sigma'})$ for some $\sigma' \in \operatorname{Gal}(K_1/K)$; applying the parametrization $\varphi$ and
-[the action of the Fricke involution on it](fricke-involution-on-the-newform-quotient.md),
+[the Fricke involution on it](atkin-lehner-involutions-on-a-modular-parametrization.md) (the case $Q = N$),
 $y_1^\tau = \varepsilon \, y_1^{\sigma'} + \varphi(0)$, where $\varphi(0)$ has finite order by the
 [finiteness of the cuspidal class](cuspidal-divisor-of-x0-n-has-finite-order.md) and
 $\varepsilon$ is the Fricke eigenvalue of the newform of $E$. Summing over $\operatorname{Gal}(K_1/K)$ by
@@ -31,7 +31,7 @@ $w(E) = -1$, the point $y_K + \tau(y_K) = 2y_K + t$ is fixed by $\operatorname{G
 ## Proof depends on
 
 - [Complex conjugation on Heegner points of $X_0(N)$](complex-conjugation-on-heegner-points-of-x0-n.md), for $x_1^\tau = w_N(x_1^{\sigma'})$
-- [The Fricke involution acts on the newform quotient by its eigenvalue](fricke-involution-on-the-newform-quotient.md), for $\varphi(w_N x) = \varepsilon \varphi(x) + \varphi(0)$
+- [Atkin–Lehner involutions on a modular parametrization](atkin-lehner-involutions-on-a-modular-parametrization.md), for $\varphi(w_N x) = \varepsilon \varphi(x) + \varphi(0)$, its case $Q = N$
 - [The cuspidal divisor $(0) - (\infty)$ has finite order](cuspidal-divisor-of-x0-n-has-finite-order.md), for $\varphi(0)$ of finite order
 - [Traces under a dihedral action](trace-under-a-dihedral-action.md), for the passage from $y_1$ to $y_K$
 - [The Heegner point of an elliptic curve over an imaginary quadratic field](../heegner-point-construction/heegner-point-of-an-elliptic-curve.md), for $x_1$, $y_1$ and the trace

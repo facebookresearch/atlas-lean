@@ -10,8 +10,10 @@ the cusp $0$.
 
 This node is still to be broken down. A good expansion states and links:
 
-- the theorem of Manin and Drinfeld that the divisor classes of degree zero supported on the cusps of $X_0(N)$ have
-  finite order, through the Hecke operators $T_p$, $p \nmid N$, which act on such classes by $p + 1$;
+- the finite order of the class of the rational divisor $(0) - (\infty)$, through the Hecke operators $T_p$,
+  $p \nmid N$, which fix each of the two rational cusps with multiplicity $p + 1$, so act on that class by $p + 1$ (the
+  theorem of Manin and Drinfeld covers every cuspidal divisor class of degree zero, but at nonsquarefree level not all
+  cusps are rational, and for those the same argument needs $p \equiv 1 \pmod N$);
 - the action of $w_N$ on the cusps, from $w_N(z) = -1/(Nz)$ on $\mathfrak{H}^*$.
 
 ## Depends on

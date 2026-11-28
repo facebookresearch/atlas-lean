@@ -8,6 +8,9 @@ factors of $N$ and $W \cong (\mathbb{Z}/2\mathbb{Z})^s$ the group of Atkin–Leh
 $d \mid N$ with $(d, N/d) = 1$. Then there are exactly $2^s h$ Heegner points of discriminant $D$, all rational over
 $H$, and the group $W \times \operatorname{Gal}(H/K)$ permutes them simply transitively.
 
+For a discriminant of either parity, the consequence that the Heegner point needs is
+[its independence of the ideal](independence-of-the-heegner-point-from-the-ideal.md).
+
 ## Expansion
 
 This node is still to be broken down. A good expansion states and links:
@@ -26,6 +29,7 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Proof depends on
 
+- [Decomposition of rational primes in a quadratic field](../../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md), for the splitting of the prime factors of $N$ when $D$ is a square modulo $4N$ (at $2$, an odd discriminant that is a square modulo $8$ is $1$ modulo $8$)
 - [Heegner points are rational over the Hilbert class field](rationality-of-heegner-points.md), for the rationality over $H$
 - [Main theorem of complex multiplication for elliptic curves](../../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/main-theorem-of-complex-multiplication.md), for the Galois action on the CM curves and their torsion
 

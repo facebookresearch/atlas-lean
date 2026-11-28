@@ -25,3 +25,7 @@ allows the sum and the integral to be exchanged.
   printed in that version: (2.11), p. 17 ("A direct calculation (cf. Exercise 8) shows that
   $\Lambda(f, s) := (2\pi)^{-s}\Gamma(s)N^{s/2}L(f, s) = N^{s/2}\int_0^\infty f(it)t^{s-1}dt$"), stated there for a newform
   without a domain of validity, and Exercise 8 of Chapter 2, p. 27 ("Check formula (2.11) in the text.").
+- P. Garrett, *Dirichlet series from automorphic forms*, lecture notes (23 October 2018),
+  <https://www-users.cse.umn.edu/~garrett/m/mfms/notes/14_mellin.pdf>, p. 1: for $f(y) = \sum_{n \ge 1} c_n e^{-2\pi n y}$,
+  the identity $(2\pi)^{-s}\Gamma(s)\sum_{n \ge 1} c_n n^{-s} = \int_0^\infty f(y)\, y^s \, dy/y$, "assuming convergence",
+  for an arbitrary such series; with $c_n = a_n$ and $y = t$ it is the identity above divided by $N^{s/2}$.

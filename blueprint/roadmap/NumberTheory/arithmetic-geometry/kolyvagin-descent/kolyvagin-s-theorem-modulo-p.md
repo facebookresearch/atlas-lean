@@ -25,6 +25,7 @@ This node is still to be broken down. A good expansion states and links:
 
 - [The Heegner point of an elliptic curve over an imaginary quadratic field](../heegner-point-construction/heegner-point-of-an-elliptic-curve.md), for $y_K$
 - [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](../cassels-tate-pairing/selmer-groups-of-abelian-varieties.md), for $S^{(p)}(K, E)$ and $\delta$
+- [The mod-$p$ Galois representation](../../../AlgebraicGeometry/elliptic-curves/galois-action-on-torsion-points/gal-rep.md), for the hypothesis $\operatorname{Gal}(\mathbb{Q}(E_p)/\mathbb{Q}) \cong \mathrm{GL}_2(\mathbb{Z}/p\mathbb{Z})$
 
 ## Proof depends on
 
@@ -32,6 +33,7 @@ This node is still to be broken down. A good expansion states and links:
 - [Local Tate duality](../../algebraic-number-theory/galois-representations/galois-cohomology-of-local-fields/local-tate-duality.md), for the duality of $H^1(K_\lambda, E_p)$ with itself through the Weil pairing
 - [Chebotarev density theorem](../../algebraic-number-theory/adeles-class-field-theory/chebotarev-density-theorem.md), for the Kolyvagin primes
 - [No rational $p$-torsion under surjective mod-$p$ Galois image](no-p-torsion-under-surjective-galois-image.md), for $E(K)_p = 0$
+- [Decomposition of rational primes in a quadratic field](../../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md), for the primes dividing $N$, which split and so are unramified and prime to $D_K$, so that $D_K$ is prime to $Np$ when $p \nmid D_K$
 
 The rest of its proof is that of the sources below, as the Expansion describes.
 

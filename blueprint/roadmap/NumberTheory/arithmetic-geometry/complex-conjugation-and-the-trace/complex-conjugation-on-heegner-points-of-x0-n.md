@@ -15,9 +15,16 @@ this page is the case $n = 1$.
 
 This node is still to be broken down. A good expansion states and links:
 
-- the action of $\tau$ on the CM curves $\mathbb{C}/\mathfrak{a}$, by complex conjugation of the lattice, and the
-  identification of $\mathbb{C}/\bar{\mathcal{N}}^{-1} \to \mathbb{C}/\mathcal{O}_K$ with the dual of a Heegner isogeny
-  of the same class group orbit, as in Gross, *Heegner points on $X_0(N)$*, §5.
+- the action of $\tau$ on the CM curves $\mathbb{C}/\mathfrak{a}$, by complex conjugation of the lattice, which sends the
+  defining isogeny $\mathbb{C}/\mathcal{O}_K \to \mathbb{C}/\mathcal{N}^{-1}$ of $x_1$ to
+  $\mathbb{C}/\mathcal{O}_K \to \mathbb{C}/\bar{\mathcal{N}}^{-1}$;
+- the identification of this conjugate with the dual of a Galois translate of $x_1$, worked out here: the translate
+  $\mathbb{C}/\mathcal{N} \to \mathbb{C}/\mathcal{O}_K$, induced by the identity, has dual
+  $\mathbb{C}/\mathcal{O}_K \to \mathbb{C}/\mathcal{N}$, $z \mapsto Nz$, which is
+  $\mathbb{C}/\mathcal{O}_K \to \mathbb{C}/\bar{\mathcal{N}}^{-1}$ after the target lattice is divided by $N$, as
+  $\mathcal{N}\bar{\mathcal{N}} = N\mathcal{O}_K$; and $\mathbb{C}/\mathcal{N} \to \mathbb{C}/\mathcal{O}_K$ is $x_1^{\sigma'}$ for the
+  element $\sigma'$ of $\operatorname{Gal}(K_1/K)$ attached to the class of $\mathcal{N}$ by the main theorem of complex
+  multiplication. Gross, *Heegner points on $X_0(N)$*, §5, proves the identity (as Gross (1991) cites it).
 
 ## Depends on
 
@@ -26,7 +33,8 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Proof depends on
 
-- [Galois and Atkin–Lehner action on Heegner points](../heegner-point-construction/galois-and-atkin-lehner-action-on-heegner-points.md), for the transitive action of $W \times \operatorname{Gal}(K_1/K)$ on Heegner points
+- [Main theorem of complex multiplication for elliptic curves](../../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/main-theorem-of-complex-multiplication.md), for the action of $\operatorname{Gal}(K_1/K)$ on the curves $\mathbb{C}/\mathfrak{a}$ through the class group, for every discriminant
+- [Decomposition of rational primes in a quadratic field](../../algebraic-number-theory/quadratic-fields/quadratic-field-prime-decomposition.md), for $\mathcal{N}\bar{\mathcal{N}} = N\mathcal{O}_K$, as the primes dividing $N$ split
 
 The rest of its proof is that of the sources below, as the Expansion describes.
 

@@ -39,7 +39,6 @@ Darmon (p. 21) gives the same map as a complex uniformisation $\Phi_N$ of $E(\ma
 - [Abel–Jacobi map](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-curves/of-curve.md), for the map $X_0(N) \to J_0(N)$ based at the cusp $\infty$, $P \mapsto$ the class of $(P) - (\infty)$ (Darmon, p. 19)
 - [The Abel–Jacobi map sends the base point to zero](../../../AlgebraicGeometry/algebraic-curves/jacobians-of-curves/comp-of-curve.md), for the image $0$ of $\infty$, so that the composite with the quotient sends $\infty$ to the origin
 - [Shimura's abelian variety attached to a weight-two eigenform](shimura-abelian-variety-of-an-eigenform.md), its item (i) for $\Gamma = \Gamma_0(N)$ and $f$: the quotient $\nu \colon J_0(N) \to E_0$ over $\mathbb{Q}$ of the Jacobian of $X_0(N)$ (Darmon, §2.5, pp. 18–19), an elliptic curve by its item (iii) as the $a_n(f)$ are integers, through which $X_0(N) \to E_0$, $P \mapsto \nu((P) - (\infty))$, sends $\infty$ to the origin
-- [Hecke endomorphisms $\xi_n$ of the Jacobian of a modular curve](hecke-endomorphisms-of-the-modular-jacobian.md), for the Jacobian $J_0(N)$ of $X_0(N)$ over $\mathbb{Q}$
 - [Modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s) = L(f, s)$ and the isogeny from $E$ to the Eichler–Shimura curve of $f$
 
 The rest of its proof is that of the sources below, as the Expansion describes.

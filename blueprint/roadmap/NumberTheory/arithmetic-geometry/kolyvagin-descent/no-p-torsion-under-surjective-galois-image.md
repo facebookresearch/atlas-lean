@@ -10,8 +10,9 @@ This node is still to be broken down. A good expansion states and links:
 
 - the observation that a nonzero $K$-rational point of $E_p$ is fixed by $\operatorname{Gal}(\overline{\mathbb{Q}}/K)$, whose image
   in $\mathrm{GL}_2(\mathbb{Z}/p\mathbb{Z})$ has index at most $2$;
-- the group-theoretic fact that no subgroup of index at most $2$ of $\mathrm{GL}_2(\mathbb{Z}/p\mathbb{Z})$, $p$ odd, fixes a
-  nonzero vector of $(\mathbb{Z}/p\mathbb{Z})^2$, with its source.
+- the fact that, with full mod-$p$ image, $\operatorname{Gal}(\overline{\mathbb{Q}}/\mathbb{Q})$ acts transitively on the
+  $p^2 - 1$ points of order $p$, so that each is defined over a field of degree $p^2 - 1$ over $\mathbb{Q}$ (Cremona,
+  Fisher, O'Neil, Simon and Stoll, §2.1), which exceeds $2$ for odd $p$.
 
 ## Depends on
 
@@ -19,10 +20,16 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Proof depends on
 
-Its proof is that of the source below, as the Expansion describes.
+Its proof is that of the sources below, as the Expansion describes.
 
 ## Sources
 
 - B. H. Gross, *Kolyvagin's work on modular elliptic curves*, in *L-functions and arithmetic* (Durham, 1989),
   London Math. Soc. Lecture Note Ser. 153, Cambridge Univ. Press, 1991, 235–256: §2, p. 237 ("By our hypothesis on $\mathbb{Q}(E_p)$, the group $E(K)$ contains no $p$-torsion"), under the
   hypothesis of Propositions 2.1 and 2.3 that $\mathbb{Q}(E_p)$ has Galois group $\mathrm{GL}_2(\mathbb{Z}/p\mathbb{Z})$.
+- J. E. Cremona, T. A. Fisher, C. O'Neil, D. Simon and M. Stoll, *Explicit $n$-descent on elliptic curves III.
+  Algorithms*, Math. Comp. 84 (2015), no. 292, 895–922, arXiv:1107.3516: §2, opening paragraph, the "generic case", in
+  which the Galois action on $E[n]$ "induces a surjective homomorphism of $G_K$ onto
+  $\operatorname{Aut}_{\mathbb{Z}/n\mathbb{Z}}(E[n]) \cong \mathrm{GL}_2(\mathbb{Z}/n\mathbb{Z})$", and §2.1 ("If $n$ is a prime $p$,
+  then generically the Galois action is transitive on the points of order $p$, and $L/K$ is a field extension of
+  degree $p^2 - 1$."), applied with base field $\mathbb{Q}$.

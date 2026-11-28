@@ -25,23 +25,23 @@ $L(E, s) = L(f, s)$, so $\Lambda(E, s) = \Lambda(f, s)$, the [Mellin transform](
 of $f$ on the half-plane where the Euler product converges, and the
 [functional equation of $L(f, s)$](functional-equation-of-the-l-function-of-a-newform.md) gives
 items 1 and 2 with $w(E) = -\varepsilon$, $\varepsilon$ the [Fricke eigenvalue](fricke-eigenvalue-of-a-newform.md)
-of $f$, normalised by $w_N^*\omega_f = \varepsilon\omega_f$ as in item 2. Item 3 follows from
-[the parity lemma](parity-of-the-order-of-vanishing.md) applied to $\Lambda(E, s)$, which is not
-identically zero, as $(2\pi)^{-s}\Gamma(s)N^{s/2}$ is holomorphic and nonzero at $s = 1$ ($\Gamma(1) = 1$), so that
-$L(E, s)$ and $\Lambda(E, s)$ vanish to the same order there.
+of $f$, normalised by $w_N^*\omega_f = \varepsilon\omega_f$ as in item 2. For item 3 (worked out here; Darmon states the conclusion,
+p. 21): $\Lambda(E, s)$ is not identically zero, as $a_1 = 1$ and so $L(E, s) \to 1$ as $s \to +\infty$ along the real
+axis; as $(2\pi)^{-s}\Gamma(s)N^{s/2}$ is holomorphic and nonzero at $s = 1$ ($\Gamma(1) = 1$), $L(E, s)$ and
+$\Lambda(E, s)$ vanish to the same order $m$ there. Writing $\Lambda(E, 1 + h) = \sum_{k \ge 0} c_k h^k$, the functional
+equation gives $c_k = w(E)(-1)^k c_k$ for every $k$, and $c_m \ne 0$ forces $(-1)^m = w(E)$.
 
 ## Depends on
 
 - [Modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s)$ and the newform $f$ of item 2
 - [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for $X_0(N) = X_{\Gamma_0(N)}$ over $\mathbb{Q}$, on which $w_N$ acts in item 2
+- [Fricke eigenvalue of a newform](fricke-eigenvalue-of-a-newform.md), for the eigenvalue $\varepsilon$ of item 2 and its description by $w_N^*\omega_f = \varepsilon\omega_f$
 
 ## Proof depends on
 
 - [Modularity of elliptic curves over $\mathbb{Q}$](../../../AlgebraicGeometry/elliptic-curves/modularity-of-elliptic-curves-over-q.md), for $L(E, s) = L(f, s)$
 - [Mellin transform of a weight-two cusp form](mellin-transform-of-a-weight-two-cusp-form.md), for $\Lambda(f, s)$ as an integral
 - [Functional equation of the $L$-function of a newform](functional-equation-of-the-l-function-of-a-newform.md), for the continuation and $\Lambda(f, s) = -\varepsilon\Lambda(f, 2 - s)$
-- [Fricke eigenvalue of a newform](fricke-eigenvalue-of-a-newform.md), for $\varepsilon$ and its equivalent description by $w_N^*\omega_f = \varepsilon\omega_f$
-- [Parity of the order of vanishing from a functional equation](parity-of-the-order-of-vanishing.md), for item 3
 
 ## Sources
 
