@@ -7,9 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import MathlibExtTest.LinearAlgebra.Determinant.QuotientBaseChange
-import MathlibExt.LinearAlgebra.Charpoly.Quotient
-import Mathlib.Algebra.Field.ULift
+public import MathlibExtTest.LinearAlgebra.Determinant.QuotientBaseChange
+public import MathlibExt.LinearAlgebra.Charpoly.Quotient
+public import Mathlib.Algebra.Field.ULift
+public import MathlibExt.LinearAlgebra.Determinant.MapCoeffs
+public import Mathlib.LinearAlgebra.Matrix.ToLin
+public import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
