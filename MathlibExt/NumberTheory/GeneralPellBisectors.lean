@@ -44,6 +44,17 @@ The fundamental solution of the negative Pell equation and the coordinates of it
 (`MetaMathlibExt.negPellF`, `MetaMathlibExt.negPellG`) satisfy the norm identity
 $f_n^2 - d g_n^2 = (-1)^n$ and the comparison $g_n \le f_n$
 (`MetaMathlibExt.negPellG_le_negPellF`).
+
+## References
+
+- Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+  Rational Slopes*, INTEGERS 24 (2024), Article A111, pp. 1–26. The negative Pell identities
+  used here are Proposition 5, equations (23) and (24), and Proposition 6(a), equations (27)
+  and (28).
+- Thomas Koshy, *Pell and Pell–Lucas Numbers with Applications*, Springer, 2014, §2.4, cited
+  by Hirotsu for Proposition 5.
+- Paulo Ribenboim, *The New Book of Prime Number Records*, Springer, 1996, Chapter 2, IV,
+  cited by Hirotsu for the more general Lucas-sequence formulas behind Proposition 6.
 -/
 
 @[expose] public section
@@ -441,6 +452,18 @@ theorem negPell_succ (d n : ℕ) :
       negPellG d (n + 1) = negPellF d n * negPellFundY d + negPellG d n * negPellFundX d := by
   simp [negPellF, negPellG, pow_succ]
 
+/-- **Addition of indices in the negative Pell sequences.** For every natural number $d$ and
+natural indices $i, j$, the coordinates of the power at index $i+j$ are obtained by multiplying
+those at $i$ and $j$ in $\mathbb{Z}[\sqrt d]$. The identities apply even when the negative Pell
+sequences use the zero base because no solution exists.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 6(a), equations (27) and (28). -/
+theorem negPell_add (d i j : ℕ) :
+    negPellF d (i + j) = negPellF d i * negPellF d j + d * negPellG d i * negPellG d j ∧
+      negPellG d (i + j) = negPellF d i * negPellG d j + negPellG d i * negPellF d j := by
+  constructor <;> simp only [negPellF, negPellG, pow_add, Zsqrtd.re_mul, Zsqrtd.im_mul]
+
 /-- **The negative Pell sequences for d = 2 at n = 1.** Let $(X, Y)$ be the solution of
 $x^2 - 2y^2 = -1$ in natural numbers with the least positive $Y$, and for each $n$ let $f_n$ and
 $g_n$ be the integers with $(X + Y\sqrt 2)^n = f_n + g_n \sqrt 2$. Then $f_1 = g_1 = 1$.
@@ -556,6 +579,17 @@ private theorem growth {d : ℕ} (hd : 1 < d)
         linarith [hterm]
 
 end negPellG_le_negPellF
+
+/-- **Signed norm of a negative Pell power.** If $d > 1$ and $x^2 - d y^2 = -1$ has an integer
+solution, the coordinates of the $n$-th power of its fundamental solution satisfy
+$f_n^2 - d g_n^2 = (-1)^n$ for every natural number $n$.
+
+Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
+Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, equation (24). -/
+theorem negPell_norm_of_solvable (d : ℕ) (hd : 1 < d)
+    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (n : ℕ) :
+    negPellF d n ^ 2 - d * negPellG d n ^ 2 = (-1) ^ n :=
+  negPellG_le_negPellF.norm (negPellG_le_negPellF.fund hd hneg).2.2 n
 
 /-- **Comparison of the negative Pell sequences.** Let $d > 1$ be a natural number such that
 $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its fundamental solution (the one with

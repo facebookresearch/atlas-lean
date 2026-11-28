@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.Diophantine.NegativePellRational
 public import MathlibExt.NumberTheory.GeneralPellBisectors
 public import MathlibExt.NumberTheory.NegativePellDivisibility
 public import MathlibExt.NumberTheory.GeneralPellBisectorsBisectorEquationFormTen
+public import MathlibExt.NumberTheory.GeneralPellBisectorsBisectorEquationFormNine
 
 namespace MetaMathlibExt
 
@@ -71,27 +72,6 @@ public theorem_wanted bisector_equation_int_solution (a b c : ℤ) (hab : |a| �
           let t : ℤ × ℤ × ℤ := (s * negPellF 2 (2 * n - 1), -(s * negPellF 2 (2 * n + 1)),
             s * negPellF 2 (2 * n))
           (a, b, c) = t ∨ (b, a, c) = t)
-
-/-- **Bisector-equation solutions from the negative Pell sequences.** Let $d > 1$ be a natural
-number such that $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its solution in
-positive integers with $Y$ least, and define integers $f_k$ and $g_k$ by
-$f_k + g_k \sqrt{d} = (X + Y \sqrt{d})^k$ for natural numbers $k$. Let $m, n > 0$ be natural
-numbers and put $a = f_{(2m-1)(2n-1)}$, $b = f_{(2m-1)(2n+1)}$ and
-$c = g_{(2m-1) 2n} / g_{2m-1}$. Then $g_{2m-1}$ divides $g_{(2m-1) 2n}$, so $c$ is an integer, and
-$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1).$$
-
-Source: converse of Theorem 3 for Form (9); the square-freeness of $d$ is not needed here.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 3, converse for (9)
-(`integers-2024-A111-thm-3`). -/
-public theorem_wanted bisector_equation_form_nine (d m n : ℕ) (hd : 1 < d)
-    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (hm : 0 < m) (hn : 0 < n) :
-    let a := negPellF d ((2 * m - 1) * (2 * n - 1))
-    let b := negPellF d ((2 * m - 1) * (2 * n + 1))
-    let c := negPellG d ((2 * m - 1) * (2 * n)) / negPellG d (2 * m - 1)
-    negPellG d (2 * m - 1) ∣ negPellG d ((2 * m - 1) * (2 * n)) ∧
-      (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)
 
 /-- **Finitely many classes of solutions of a general Pell equation.** Let $d > 0$ be an integer
 that is not a perfect square, let $\varepsilon$ be the fundamental solution of $x^2 - dy^2 = 1$,

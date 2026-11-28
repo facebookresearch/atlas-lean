@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.GeneralPellBisectors
-import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Linarith
 
 /-!
 # Divisibility in the negative Pell sequence
@@ -59,30 +59,12 @@ private theorem negPellG_strictMono {d : ℕ} (hX : 0 < negPellFundX d)
   rw [mul_one] at hmul
   exact hmul.trans_lt (lt_add_of_pos_left _ (mul_pos (hpos n).1 (by exact_mod_cast hY)))
 
-private theorem negPellG_add (d a b : ℕ) :
-    negPellG d (a + b) = negPellF d a * negPellG d b + negPellG d a * negPellF d b := by
-  simp only [negPellG, negPellF, pow_add, Zsqrtd.im_mul]
-
 private theorem negPellG_dvd_mul_index (d n q : ℕ) : negPellG d n ∣ negPellG d (n * q) := by
   induction q with
   | zero => simp [negPellF_zero_negPellG_zero]
   | succ q ih =>
-    rw [Nat.mul_succ, negPellG_add]
+    rw [Nat.mul_succ, (negPell_add d (n * q) n).2]
     exact dvd_add (dvd_mul_left _ _) (ih.mul_right _)
-
-private theorem negPell_norm {d : ℕ}
-    (hfund : negPellFundX d ^ 2 + 1 = d * negPellFundY d ^ 2) (k : ℕ) :
-    negPellF d k ^ 2 - d * negPellG d k ^ 2 = (-1) ^ k := by
-  let u : ℤ√(d : ℤ) := ⟨negPellFundX d, negPellFundY d⟩
-  have hcast : (negPellFundX d : ℤ) ^ 2 + 1 = (d : ℤ) * (negPellFundY d : ℤ) ^ 2 := by
-    exact_mod_cast hfund
-  have hu : u.norm = -1 := by
-    change (negPellFundX d : ℤ) * negPellFundX d - (d : ℤ) * negPellFundY d * negPellFundY d = -1
-    linear_combination hcast
-  have hk := map_pow (Zsqrtd.normMonoidHom (d := (d : ℤ))) u k
-  change (u ^ k).norm = u.norm ^ k at hk
-  rw [hu, Zsqrtd.norm_def, ← sq, mul_assoc, ← sq] at hk
-  exact hk
 
 /-- **Divisibility of the second coordinates of negative Pell powers.** Let $d > 1$ be a natural
 number such that $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its fundamental
@@ -97,17 +79,17 @@ public theorem negPellG_dvd_iff (d : ℕ) (hd : 1 < d)
     negPellG d n ∣ negPellG d m ↔ n ∣ m := by
   refine ⟨?_, ?_⟩
   · intro hdiv
-    obtain ⟨hX, hY, hfund⟩ := negPellFund_pos_spec hd hneg
+    obtain ⟨hX, hY, -⟩ := negPellFund_pos_spec hd hneg
     have hmono := negPellG_strictMono hX hY
     let k := n * (m / n)
     let r := m % n
     have hsplit : k + r = m := Nat.div_add_mod m n
     have hk : negPellG d n ∣ negPellG d k := negPellG_dvd_mul_index d n (m / n)
-    rw [← hsplit, negPellG_add] at hdiv
+    rw [← hsplit, (negPell_add d k r).2] at hdiv
     have hprod : negPellG d n ∣ negPellF d k * negPellG d r := by
       simpa only [add_sub_cancel_right] using dvd_sub hdiv (hk.mul_right (negPellF d r))
     -- The signed norm gives an inverse for the first coordinate modulo `negPellG d n`.
-    have hnorm := negPell_norm hfund k
+    have hnorm := negPell_norm_of_solvable d hd hneg k
     have hsigned : negPellG d n ∣ (-1 : ℤ) ^ k * negPellG d r := by
       rw [← hnorm, sub_mul]
       have hsq := (hk.mul_right (negPellG d k)).mul_left (d : ℤ)
