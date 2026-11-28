@@ -10,3 +10,5 @@
 - [Pedigree reconstruction from sequences](pedigree-reconstruction-from-sequences/README.md)
 - [Gene diversity in samples of relatives](gene-diversity-in-samples-of-relatives/README.md)
 - [Pedigree-conditioned coalescence under selfing](pedigree-conditioned-coalescence-under-selfing/README.md)
+- [Lethal equivalents and the inbreeding load](lethal-equivalents-and-the-inbreeding-load.md)
+- [Runs of homozygosity](runs-of-homozygosity/README.md)

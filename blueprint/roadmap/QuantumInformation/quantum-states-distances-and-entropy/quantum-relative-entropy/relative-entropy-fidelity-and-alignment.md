@@ -12,6 +12,7 @@ By the eigenbasis representation, $D$ is a classical KL divergence and $\operato
 
 ## Depends on
 
+- [Density matrices, pure states and reduced states](../density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 - [Support inclusion and Umegaki relative entropy](umegaki-relative-entropy.md)
 - [Fidelity of positive semidefinite matrices](../density-matrices-and-fidelity/root-fidelity.md)
 

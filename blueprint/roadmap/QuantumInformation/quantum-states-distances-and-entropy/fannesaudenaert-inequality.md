@@ -7,17 +7,11 @@ $$|S(\rho_0) - S(\rho_1)| \le \delta \log(n-1) + h(\delta),$$
 
 where $S$ is the von Neumann entropy and $h$ the binary entropy function.
 
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Von Neumann entropy.
-- Statement prerequisite: Trace distance and contractivity.
-
 ## Depends on
 
+- [Trace norm and trace distance](density-matrices-and-fidelity/trace-norm-and-trace-distance.md)
 - [Shannon entropy](../../InformationTheory/entropy-and-mutual-information/shannon-entropy-and-kullback-leibler-divergence/shannon-entropy.md)
+- [Von Neumann entropy and Holevo information](../quantum-shannon-theory/classical-quantum-information/von-neumann-entropy-and-holevo-information.md)
 
 ## Sources
 

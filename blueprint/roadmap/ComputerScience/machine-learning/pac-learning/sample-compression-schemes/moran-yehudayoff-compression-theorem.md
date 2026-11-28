@@ -1,16 +1,12 @@
 # Moran-Yehudayoff: every class of finite VC dimension has a finite compression scheme
 
-Let $C$ be a class of functions $X \to \{0,1\}$ on an arbitrary set $X$, all of whose finite shattered sets have at most $d$ points, and whose dual class shatters no finite family of more than $d^*$ concepts. Then $C$ has a sample compression scheme of size at most
-
-$$
-(5184\, d^* + 1440)(120\, d + 60) = O(d^* d),
-$$
-
-which reconstructs by a strict majority vote of a consistent learner over consecutive subsamples. Using Assouad's bound $d^* \le 2^{d+1} - 1$, $C$ has a scheme of size at most $(5184 \cdot 2^{d+1} + 1440)(120\,d + 60) = O(d\,2^d)$. Hence a binary class has a sample compression scheme of finite size if and only if it has finite VC dimension, and on a countable domain with measurable singletons finite-size compressibility is equivalent to each of the six conditions of the fundamental theorem of statistical learning.
+Let $C$ be a class of functions $X \to \{0,1\}$ on an arbitrary set $X$ with VC dimension $d$. Then $C$ has a sample compression scheme of size $2^{O(d)}$ (Moran and Yehudayoff, Theorem 1.3). If $d > 0$ and the dual class $C^*$ has VC dimension $d^* > 0$, then $C$ has a sample compression scheme of size $k \log k$ with $k = O(d^* \cdot d)$, where the size counts the side information as well as the kept examples (Theorem 1.4); Theorem 1.3 follows through Assouad's bound $d^* < 2^{d+1}$ (Claim 1.5). The reconstruction is a majority vote of the hypotheses that a proper learning map for $C$ produces on subsets of the compressed sample (Section 3).
 
 ## Proof sketch
 
-By the subsample lemma at accuracy $1/3$ and confidence $1/2$ there is a distribution $\mu$ on subsamples of size $s = O(d)$ that is correct at every position with probability at least $2/3$. Apply the epsilon-approximation theorem to the dual class, of VC dimension at most $d^*$, under $\mu$: some $t = O(d^*)$ subsamples form a $1/6$-approximation, so their strict majority vote is correct at every position. The kept examples are the $t \cdot s$ examples of these subsamples. The converse is the counting bound, and the equivalences follow from the fundamental theorem.
+By the PAC sample complexity bound there are $s = O(d)$ and a proper learning map that, for every distribution $q$ on the sample, is correct on $q$-probability at least $2/3$ from some subset of at most $s$ examples. The minimax theorem gives a distribution $p$ on the resulting hypotheses that is correct at every position with probability at least $2/3$, and the epsilon-approximation theorem applied to the dual class, of VC dimension $d^*$, gives $T = O(d^*)$ hypotheses whose majority vote is correct at every position (proof of Theorem 1.4 and Claim 3.1).
+
+Derived (not stated in the cited source, which gives only $O(\cdot)$ bounds): under the ordered-list definition of a compression scheme, in which the order of the kept examples can carry the side information, $C$ has a scheme of size at most $(5184\, d^* + 1440)(120\, d + 60) = O(d^* d)$, and with $d^* \le 2^{d+1} - 1$ of size at most $(5184 \cdot 2^{d+1} + 1440)(120\,d + 60) = O(d\,2^d)$. Combined with the counting bound of compression schemes on the VC dimension, a binary class has a sample compression scheme of finite size if and only if it has finite VC dimension, and on a countable domain with measurable singletons finite-size compressibility is equivalent to each of the six conditions of the fundamental theorem of statistical learning.
 
 ## Depends on
 
@@ -27,5 +23,5 @@ By the subsample lemma at accuracy $1/3$ and confidence $1/2$ there is a distrib
 
 ## Sources
 
-- S. Moran and A. Yehudayoff, "Sample Compression Schemes for VC Classes", Journal of the ACM, 2016.
+- S. Moran and A. Yehudayoff, "Sample Compression Schemes for VC Classes", Journal of the ACM, 2016, Theorems 1.3 and 1.4, Claim 1.5 and Section 3; open copy: <https://arxiv.org/abs/1503.06960>.
 - N. Littlestone and M. K. Warmuth, "Relating Data Compression and Learnability", unpublished manuscript, 1986.

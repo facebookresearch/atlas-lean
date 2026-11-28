@@ -13,7 +13,8 @@ This node states a precise result. A good expansion adds a page for the pending 
 
 ## Depends on
 
-- [Stochastic k-armed bandits: canonical history law and regret](stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Stochastic k-armed bandits: canonical history law](stochastic-k-armed-bandits-canonical-history-law-and-regret.md)
+- [Regret of a bandit policy](canonical-bandit-model/regret.md)
 
 ## Proof depends on
 
