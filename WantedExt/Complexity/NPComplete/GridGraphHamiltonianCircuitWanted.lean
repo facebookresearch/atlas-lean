@@ -84,8 +84,9 @@ instance (x y : StatMech.Lattice.Site 2) :
 def WellFormed (i : GridGraphHamiltonianCircuitInstance) : Prop :=
   (i.map site).Nodup
 
-/-- The edges of the grid graph: the pairs `(u, v)` with `u < v < |V|` whose sites are adjacent
-in the infinite grid `hypercubicLattice 2`. -/
+/-- The edges of the grid graph: the pairs `(u, v)` of list positions with `u < v` below the length
+of the list (`|V|` under `WellFormed`) whose sites are adjacent in the infinite grid
+`hypercubicLattice 2`. -/
 def gridEdges (i : GridGraphHamiltonianCircuitInstance) : List (ℕ × ℕ) :=
   (List.range i.length).flatMap fun u =>
     ((List.range i.length).filter fun v =>

@@ -87,13 +87,19 @@ def WellFormed (k : ℕ) (i : FixedVertexDirectedSubgraphHomeomorphismInstance) 
   (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2) ∧
     i.2.2.length = k ∧ i.2.2.Nodup ∧ ∀ v ∈ i.2.2, v < i.1
 
-/-- `G` contains a subdivision of the pattern with arc list `AH` and branch vertices `m`: the
-`j`-th path is a directed path from `m u` to `m v` for the `j`-th arc `(u, v)` of `AH`, every
-prescribed vertex on it is one of its two ends, and two different paths share only prescribed
-vertices. A path is a nonempty list of distinct natural labels in which each consecutive pair is
-an entry of the arc list of `G` (`IsDirectedPath`). The vertex count `n` is not read, so labels
-are not checked against it here (under `WellFormed` every arc has both ends below `n`). The
-image `m u` is entry `u` of the image list, read as `0` past its end. -/
+/-- For the `j`-th arc `(u, v)` of `AH`, the `j`-th path is a directed path from `m u` to `m v`,
+every prescribed vertex on it is one of its two ends, and two paths at different positions share
+only prescribed vertices. When the pattern is well formed (`PatternWellFormed k AH`) and the
+instance is well formed for `k`, this says that `G` contains a subdivision of the pattern with arc
+list `AH` and branch vertices `m`. On other input it can hold without such a subdivision: a
+one-vertex path, which uses no arc, serves an arc of `AH` whose two ends resolve to the same label
+(for instance a loop of `AH`, two indices past the end of the image list, or two indices with the
+same image), and a single one-arc path may serve two arcs whose ends resolve to the same pair of
+labels, such as the two copies of a repeated arc of `AH`. A path is a nonempty list of distinct
+natural labels in which each consecutive pair is an entry of the arc list of `G`
+(`IsDirectedPath`). The vertex count `n` is not read, so labels are not checked against it here
+(under `WellFormed` every arc has both ends below `n`). The image `m u` is entry `u` of the image
+list, read as `0` past its end. -/
 def FixedVertexDirectedSubgraphHomeomorphismFeasible (AH : List (ℕ × ℕ))
     (i : FixedVertexDirectedSubgraphHomeomorphismInstance) : Prop :=
   ∃ paths : List (List ℕ),
