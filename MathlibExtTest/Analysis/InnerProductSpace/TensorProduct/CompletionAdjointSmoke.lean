@@ -58,7 +58,7 @@ private theorem adjoint_f_b : f.adjoint b = star (1 + Complex.I) • a := by
 private theorem adjoint_g_d : g.adjoint d = star (2 + Complex.I) • c := by
   unfold g
   rw [InnerProductSpace.adjoint_rankOne, InnerProductSpace.rankOne_apply, inner_smul_left]
-  simp [d]
+  simp [d, RCLike.conj_ofNat]
 
 private theorem adjoint_coefficient :
     star (1 + Complex.I) * star (2 + Complex.I) = (1 - 3 * Complex.I : ℂ) := by
