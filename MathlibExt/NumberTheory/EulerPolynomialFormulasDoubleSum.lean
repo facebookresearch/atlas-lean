@@ -9,9 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.EulerPolynomialGeneralizedStirling
+public import Mathlib.RingTheory.PowerSeries.Basic
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Polynomial.Eval.SMul
 import Mathlib.RingTheory.PowerSeries.Log
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
@@ -55,17 +58,16 @@ private theorem mk_eulerAlpha_mul :
   apply PowerSeries.ext
   intro n
   cases n with
-  | zero => simp [eulerAlpha]
+  | zero => simp [eulerAlpha_zero]
   | succ n =>
     cases n with
-    | zero => norm_num [eulerAlpha, coeff_mul_X_pow']
+    | zero => norm_num [eulerAlpha_zero, eulerAlpha_one, coeff_mul_X_pow']
     | succ n =>
       have hcoeff : coeff (n + 2) (mk eulerAlpha * X ^ 2) = eulerAlpha n := by
         rw [coeff_mul_X_pow, coeff_mk]
       simp only [map_add, coeff_succ_mul_X, coeff_mul_C, hcoeff, coeff_mk,
         coeff_one, coeff_X, Nat.succ_ne_zero, Nat.succ.injEq, ite_false, add_zero]
-      rw [eulerAlpha]
-      ring
+      linear_combination (eulerAlpha_rec n) / 2
 
 private theorem derivative_log_subst :
     derivative ((log ℚ).subst logArg) = mk eulerAlpha := by
@@ -122,6 +124,41 @@ private theorem eulerAlpha_eq_sum (j : ℕ) :
 
 end Coefficients
 
+/-- **Lemma 2.2**: `(2 + 2z) / (2 + 2z + z²) = ∑ α_k z^k`
+with `α_k = ((k + 1) / 2^k) ∑_{ℓ=0}^k (-1)^ℓ (2^ℓ / (ℓ + 1))
+(ℓ + 1 choose k - ℓ)`; the generating function is stated
+multiplicatively.
+
+Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
+Bencherif, "Generalizations of Several Explicit Formulas
+for Euler Polynomials", INTEGERS 25 (2025), Article A65, Lemma 2.2. -/
+public theorem eulerAlpha_gf_and_closed_form :
+    PowerSeries.mk eulerAlpha *
+          (2 + 2 * PowerSeries.X + PowerSeries.X ^ 2) =
+        2 + 2 * PowerSeries.X ∧
+      ∀ k : ℕ, eulerAlpha k =
+        (k + 1 : ℚ) / 2 ^ k *
+          ∑ l ∈ Finset.range (k + 1),
+            (-1) ^ l * 2 ^ l / (l + 1 : ℚ) *
+              (Nat.choose (l + 1) (k - l) : ℚ) := by
+  constructor
+  · let z : PowerSeries ℚ := PowerSeries.X
+    change PowerSeries.mk eulerAlpha * (2 + 2 * z + z ^ 2) = 2 + 2 * z
+    have hhalf : (2 : PowerSeries ℚ) * PowerSeries.C (1 / 2 : ℚ) = 1 := by
+      rw [← map_ofNat (PowerSeries.C (R := ℚ)) 2, ← map_mul]
+      norm_num
+    have hdouble : 2 * (1 + logArg) = 2 + 2 * z + z ^ 2 := by
+      rw [logArg_eq, mul_add, mul_add, mul_one, ← mul_assoc, hhalf, one_mul]
+      simp [z, add_assoc]
+    rw [← hdouble, mul_left_comm, mk_eulerAlpha_mul, mul_add, mul_one]
+  · intro k
+    rw [eulerAlpha_eq_sum, Finset.mul_sum, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro l hl
+    have hle : l ≤ k := Nat.le_of_lt_succ (Finset.mem_range.mp hl)
+    rw [pow_sub₀ (2 : ℚ) (by norm_num) hle]
+    field_simp
+
 open Polynomial
 
 @[expose] public section
@@ -144,10 +181,10 @@ theorem eulerPoly_eq_double_sum (n : ℕ) :
                 (Nat.choose (l + 1) k : ℚ)) •
               (genStirlingPoly n (k + l)).comp (C 2 * X - 1) := by
   rcases n with _ | n
-  · apply Polynomial.funext
+  · rw [eulerPoly_eq_binomial_average 0 0 (by decide)]
+    apply Polynomial.funext
     intro x
-    norm_num [eulerPoly, genStirlingPoly, eval_smul, smul_eq_mul]
-    ring
+    norm_num [genStirlingPoly_eval, eval_smul, smul_eq_mul]
   rw [eulerPoly_eq_sum_genStirling (n + 1) (by omega)]
   let f (j : ℕ) := (genStirlingPoly (n + 1) j).comp (C 2 * X - 1)
   let g (l j : ℕ) := ((-1) ^ l / (l + 1 : ℚ)) •

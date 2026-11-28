@@ -115,24 +115,6 @@ theorem_wanted powerSeriesOp_appell_identities
           (PowerSeries.rescale (-lam) (PowerSeries.exp ℂ) *
             PowerSeries.rescale (-1) S) (X ^ n)
 
-/-- **Lemma 2.2**: `(2 + 2z) / (2 + 2z + z²) = ∑ α_k z^k`
-with `α_k = ((k + 1) / 2^k) ∑_{ℓ=0}^k (-1)^ℓ (2^ℓ / (ℓ + 1))
-(ℓ + 1 choose k - ℓ)`; the generating function is stated
-multiplicatively.
-
-Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
-Bencherif, "Generalizations of Several Explicit Formulas
-for Euler Polynomials", INTEGERS 25 (2025), Article A65, Lemma 2.2. -/
-theorem_wanted eulerAlpha_gf_and_closed_form :
-    PowerSeries.mk eulerAlpha *
-          (2 + 2 * PowerSeries.X + PowerSeries.X ^ 2) =
-        2 + 2 * PowerSeries.X ∧
-      ∀ k : ℕ, eulerAlpha k =
-        (k + 1 : ℚ) / 2 ^ k *
-          ∑ l ∈ Finset.range (k + 1),
-            (-1) ^ l * 2 ^ l / (l + 1 : ℚ) *
-              (Nat.choose (l + 1) (k - l) : ℚ)
-
 /-- **Lemma 2.3** (corrected reading): with
 `S(z) = 2e^z / (1 + e^{2z}) = e^z S_E(2z)`,
 `2ⁿ E_n((x + 1)/2) = S(D)(xⁿ)`, and with `Δ = e^z - 1`,
