@@ -15,6 +15,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.NumberTheory.InitialRepetitionsC3
+public import MathlibExt.NumberTheory.InitialRepetitionsC3ElevenMulAddEven
 public import MathlibExt.NumberTheory.InitialRepetitionsC8
 public import MathlibExt.NumberTheory.InitialRepetitionsC8Prime
 public import MathlibExt.NumberTheory.InitialRepetitionsQuadraticNonresidues
@@ -123,20 +124,6 @@ public theorem_wanted initialRepetitionsC2_prime_mul_add_even (p r n : ℕ) (hp 
     (hp5 : 5 ≤ p) (hr : r ∈ Finset.Icc 1 (p - 1))
     (h16 : ¬ IsSquare ((16 * r + 1 : ℕ) : ZMod p)) (h8 : ¬ IsSquare ((8 * r + 1 : ℕ) : ZMod p)) :
     Even (initialRepetitionsC2 (p * n + r))
-
-/-- **Parity of $c_3(11n + 5)$, $c_3(11n + 7)$ and $c_3(11n + 9)$.** Let $c_3(m)$ be the number
-of partitions of $m$ for which there is an integer $j$ with $1 \le j \le m$ such that the part $1$
-appears exactly $j^2$ or $j^2 + 1$ times, the odd parts greater than $1$ are distinct, the even
-parts are distinct, and every even part greater than $2j$ is divisible by $4$ and at least
-$4j + 4$. Nyirenda and Mugwangwavari: for every integer $n \ge 0$, the numbers $c_3(11n + 5)$,
-$c_3(11n + 7)$ and $c_3(11n + 9)$ are all even.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 6 (`integers-2025-A32-thm-6`). -/
-public theorem_wanted initialRepetitionsC3_eleven_mul_add_even (n : ℕ) :
-    Even (initialRepetitionsC3 (11 * n + 5)) ∧ Even (initialRepetitionsC3 (11 * n + 7)) ∧
-      Even (initialRepetitionsC3 (11 * n + 9))
 
 /-- **$c_8$ is even on six residue classes modulo $49$.** Let $c_8$ be the initial-repetitions
 partition function of Nyirenda and Mugwangwavari. For every integer $n \ge 0$ and every
