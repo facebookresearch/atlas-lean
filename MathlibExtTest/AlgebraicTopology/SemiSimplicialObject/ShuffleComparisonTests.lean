@@ -13,6 +13,7 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.EilenbergZilber.Shuf
 public import MathlibExt.AlgebraicTopology.SemiSimplicialObject.SimplicialComparison
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.FinCases
 
 /-!
 # Small shuffle cosets and simplicial restriction
@@ -68,7 +69,13 @@ example : SimplexCategory.pullbackEdges (SimplexCategory.σ (0 : Fin 1))
 example : SimplexCategory.pullbackEdges (SimplexCategory.σ (1 : Fin 2))
     ![(7 : ℤ)] = ![7, 1] := by
   have h := SimplexCategory.pullbackEdges_σ_comp (𝟙 ⦋1⦌) (1 : Fin 2) ![(7 : ℤ)]
-  simpa only [Category.comp_id, SimplexCategory.pullbackEdges_id] using h
+  calc
+    SimplexCategory.pullbackEdges (SimplexCategory.σ (1 : Fin 2)) ![(7 : ℤ)] =
+        Fin.insertNth (1 : Fin 2) (1 : ℤ) ![7] := by
+      simpa only [Category.comp_id, SimplexCategory.pullbackEdges_id] using h
+    _ = ![7, 1] := by
+      funext i
+      fin_cases i <;> rfl
 
 private abbrev Z : ModuleCat.{0} ℤ := ModuleCat.of ℤ ℤ
 private abbrev X : SimplicialObject (ModuleCat.{0} ℤ) :=
@@ -76,14 +83,38 @@ private abbrev X : SimplicialObject (ModuleCat.{0} ℤ) :=
 private def double : Z ⟶ Z := ModuleCat.ofHom (LinearMap.lsmul ℤ ℤ (2 : ℤ))
 private def f : X ⟶ X := (Functor.const SimplexCategoryᵒᵖ).map double
 
+-- These component views are earned from the native object-coordinate laws.
+private def constantTermIso (n : ℕ) : X.obj (Opposite.op ⦋n⦌) ≅ Z :=
+  eqToIso (by rfl)
+
+private def semiTermIso (n : ℕ) :
+    ((semiSimplicialAlternatingFaceMapComplex (ModuleCat.{0} ℤ)).obj
+      (SemiSimplexCategory.toSimplexCategory.op ⋙ X)).X n ≅ Z :=
+  eqToIso ((semiSimplicialAlternatingFaceMapComplex_obj_X
+    (SemiSimplexCategory.toSimplexCategory.op ⋙ X) n).trans (by rfl))
+
+private def fullTermIso (n : ℕ) :
+    ((alternatingFaceMapComplex (ModuleCat.{0} ℤ)).obj X).X n ≅ Z :=
+  eqToIso ((alternatingFaceMapComplex_obj_X X n).trans (by rfl))
+
+private def comparisonCoordinate (n : ℕ) : Z ⟶ Z :=
+  (semiTermIso n).inv ≫
+    (SemiSimplicialAlternatingFaceMapComplex.ofSimplicialIso X).hom.f n ≫
+      (fullTermIso n).hom
+
+private def doublingCoordinate (n : ℕ) : Z ⟶ Z :=
+  (constantTermIso n).inv ≫ f.app (Opposite.op ⦋n⦌) ≫ (constantTermIso n).hom
+
 example :
-    ((SemiSimplicialAlternatingFaceMapComplex.ofSimplicialIso X).hom.f 2).hom 3 = 3 ∧
-      (f.app (Opposite.op ⦋2⦌)).hom 3 = 6 := by
+    (comparisonCoordinate 2).hom (3 : ℤ) = (3 : ℤ) ∧
+      (doublingCoordinate 2).hom (3 : ℤ) = (6 : ℤ) := by
   constructor
-  · have h := SemiSimplicialAlternatingFaceMapComplex.ofSimplicialIso_hom_f X 2
-    simpa using congrArg (fun k : Z ⟶ Z => k.hom 3) h
-  · change (2 : ℤ) • 3 = 6
-    norm_num
+  · have h : comparisonCoordinate 2 = 𝟙 Z := by rfl
+    simpa using congrArg (fun k : Z ⟶ Z => k.hom (3 : ℤ)) h
+  · have h : doublingCoordinate 2 = double := by rfl
+    have hv := congrArg (fun k : Z ⟶ Z => k.hom (3 : ℤ)) h
+    change (doublingCoordinate 2).hom (3 : ℤ) = (2 : ℤ) • (3 : ℤ) at hv
+    exact hv.trans (by norm_num)
 
 example :
     (semiSimplicialAlternatingFaceMapComplex (ModuleCat.{0} ℤ)).map
