@@ -2,7 +2,7 @@
 
 A set of views is said to determine a query when any two databases on which every view returns the same answer also give the same answer to the query. Finite determinacy quantifies over finite databases only; unrestricted determinacy over arbitrary, possibly infinite, structures.
 
-Fix a relational schema. A database instance is a finite relational structure over it. Let $\mathcal{Q} = \{Q_1, \dots, Q_k\}$ be a finite set of queries (the views) and $Q_0$ a query, all over the same schema, and write $Q(\mathbb{D})$ for the answer of $Q$ on $\mathbb{D}$.
+Fix a relational schema, which may contain constants as well as relation symbols, the constants being interpreted in every structure and allowed in queries. Structures over the schema are finite or infinite; a database instance is a finite one. Let $\mathcal{Q} = \{Q_1, \dots, Q_k\}$ be a finite set of queries (the views) and $Q_0$ a query, all over the same schema, and write $Q(\mathbb{D})$ for the answer of $Q$ on $\mathbb{D}$.
 
 - $\mathcal{Q}$ *finitely determines* $Q_0$ if for all finite structures $\mathbb{D}_1, \mathbb{D}_2$,
 

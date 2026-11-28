@@ -19,7 +19,7 @@ The source states the theorem for a level $i$ without a lower bound; its proof u
 
 The proof reduces from the Post correspondence problem. For an instance $\{(u_1, v_1), \dots, (u_n, v_n)\}$, a solution is encoded by a data word $w_1 \# z \# w_2$ with $z \in L(r_i)$, $w_1$ a sequence of blocks $\flat_{l_j} u_{l_j}$ and $w_2$ the matching blocks $\flat_{l_j} v_{l_j}$ (the source writes a dollar sign where this page writes $\flat$), where equal data values link the $j$-th dollar and the $p$-th letter on the two sides. An expression $\Delta$ in $E_{i+1}$ (it binds a value to the left of $\# r_i \#$ and tests it to the right) defines all words $w_1' \# z \# w_2'$ with $z \in L(r_i)$ that do not encode a solution. If the instance has no solution, $\Delta$ is equivalent to $\Gamma^\ast \# r_i \# \Gamma^\ast$, which lies in $F_i$. If it has a solution, a pumping argument on the automaton of a hypothetical equivalent $F_i$ expression, as in the strictness proof for the hierarchy (Lemma 3.2), produces a word that $\Delta$ must accept but that encodes a solution, a contradiction.
 
-A good expansion links the pumping lemma for $E_i$ expressions (Lemma 3.2 of the source) and the correctness lemma for $\Delta$ (Lemma A.2), which have no pages; the undecidability of the Post correspondence problem is linked above.
+A good expansion links the pumping lemma for $E_i$ expressions (Lemma 3.2 of the source) and the correctness lemma for $\Delta$ (Lemma A.2); the undecidability of the Post correspondence problem is linked above.
 
 ## Sources
 

@@ -28,7 +28,7 @@ None.
 
 The source of undecidability is recursive inseparability. The sets of Turing machines that, started on the empty tape, return 1 and return 0 are recursively inseparable, and a standard encoding transfers this to a grid tiling problem: an instance is a set of shades containing gray and black and a set of forbidden pairs of shaded edges; let $\mathcal{A}$ be the instances admitting a proper shading of some finite square grid and $\mathcal{B}$ those admitting no proper shading of any square grid, finite or the infinite quarter plane. A computable map sends each instance $I$ to $(\mathcal{Q}, Q_0)$ such that $I \in \mathcal{A}$ implies that $\mathcal{Q}$ does not finitely determine $Q_0$, and $I \in \mathcal{B}$ implies that $\mathcal{Q}$ determines $Q_0$. Since unrestricted determinacy implies finite determinacy, an algorithm for either version would separate $\mathcal{A}$ from $\mathcal{B}$. The correctness of the map rests on a red-green signature and a two-player game of Escape that characterizes determinacy for regular path queries.
 
-A good expansion links the recursive inseparability of the machines returning 1 and returning 0, the recursive inseparability of the two sets of tiling instances, and the lemma that the game of Escape characterizes determinacy; none of them has a page yet.
+A good expansion links the recursive inseparability of the machines returning 1 and returning 0, the recursive inseparability of the two sets of tiling instances, and the lemma that the game of Escape characterizes determinacy.
 
 ## Sources
 
