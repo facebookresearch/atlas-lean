@@ -7,7 +7,7 @@ Use the setting and notation of the [sequential doubly robust estimator](sequent
 - the model functions $\widehat Q^{h}$ and the target policy $\pi_1$ are fixed: they do not depend on the trajectory, nor, for an average over a dataset, on any of the trajectories being averaged (the source's independence requirement, met for example by fitting $\widehat Q$ on a separate split of the data);
 - every ratio is defined and $\mathbb E_{a\sim\pi_0(\cdot\mid s)}[\rho\, g(s,a)]=\mathbb E_{a\sim\pi_1(\cdot\mid s)}[g(s,a)]$ for the functions $g$ involved, which holds when $\pi_0(a\mid s)>0$ whenever $\pi_1(a\mid s)>0$;
 - the trajectory follows the Markov reward model the source's proof uses: given the history $s_1,a_1,\ldots,s_t,a_t$, the next state has law $P(\cdot\mid s_t,a_t)$, and the reward $r_t$ has conditional mean $R(s_t,a_t)$ and is conditionally independent of $(s_{t+1},a_{t+1},r_{t+1},\ldots)$;
-- the expectations and variances below are finite, for example because the state and action sets are finite.
+- the expectations and variances below are finite.
 
 All expectations are under the law of the trajectory from $(\mu,\pi_0)$. Write $\mathbb E_t[\cdot]=\mathbb E[\cdot\mid s_1,a_1,\ldots,s_{t-1},a_{t-1}]$ and $\mathbb V_t$ for the corresponding conditional variance, so that $\mathbb E_1$ and $\mathbb V_1$ are unconditional and $\mathbb E_{t+1}$, $\mathbb V_{t+1}$ condition on the history through $a_t$.
 
