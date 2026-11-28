@@ -208,7 +208,8 @@ theorem coproduct_comp_boundary :
   LinearMap.ext (coproduct_boundary R L)
 
 theorem augmentation_adjointAction (x : L) (a : E) :
-    ExteriorAlgebra.augmentation R L (adjointAction R L x a) = 0 := by
+    (ExteriorAlgebra.algebraMapInv : ExteriorAlgebra R L →ₐ[R] R)
+      (adjointAction R L x a) = 0 := by
   induction a using CliffordAlgebra.left_induction with
   | algebraMap r => simp only [adjointAction_algebraMap, map_zero]
   | add a b ha hb => simp only [map_add, ha, hb, zero_add]
@@ -222,7 +223,8 @@ boundary, Δ its primitive coproduct and γ its grade involution.
 The exterior augmentation ε:E→R annihilates the boundary:
 ε(∂a)=0 for every a∈E. -/
 theorem augmentation_boundary (a : E) :
-    ExteriorAlgebra.augmentation R L (boundary R L a) = 0 := by
+    (ExteriorAlgebra.algebraMapInv : ExteriorAlgebra R L →ₐ[R] R)
+      (boundary R L a) = 0 := by
   induction a using CliffordAlgebra.left_induction with
   | algebraMap r => simp only [boundary_algebraMap, map_zero]
   | add a b ha hb => simp only [map_add, ha, hb, zero_add]

@@ -281,7 +281,7 @@ variable {K : Type u} [Field K]
 variable {P : Type v} [AddCommGroup P] [Module K P]
 variable {Q : Type w} [AddCommGroup Q] [Module K Q]
 
-/-- Let `K` be a field, `P,Q` be `K`-vector spaces with `Q` free, and `f : P →ₗ[K] Q` nonzero.
+/-- Let `K` be a field, `P,Q` be `K`-vector spaces, and `f : P →ₗ[K] Q` nonzero.
 Then `f.coefficientIdeal=⊤`. -/
 theorem coefficientIdeal_eq_top_of_ne_zero
     [Module.Free K Q] (f : P →ₗ[K] Q) (hf : f ≠ 0) :
@@ -296,7 +296,7 @@ theorem coefficientIdeal_eq_top_of_ne_zero
   exact Ideal.eq_top_of_isUnit_mem _ hmem (isUnit_iff_ne_zero.mpr (by
     simpa [Module.Basis.coord_apply] using hi))
 
-/-- Let `K` be a field, `P` a finite free `K`-vector space, `Q` a free `K`-vector space, and `f :
+/-- Let `K` be a field, `P` a finite-dimensional `K`-vector space, `Q` a `K`-vector space, and `f :
 P →ₗ[K] Q` injective. Then `I_(finrank K P)(f)=⊤`. -/
 theorem determinantalIdeal_finrank_eq_top_of_injective
     [Module.Free K P] [Module.Finite K P] [Module.Free K Q]
