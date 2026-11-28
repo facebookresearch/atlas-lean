@@ -11,7 +11,7 @@ $1 - \prod_a \big(1 - p(R(a, a))\big)$ is computable in polynomial time.
 - [Tuple-independent probabilistic databases and query probability](tuple-independent-probabilistic-databases.md)
 - [Hierarchical conjunctive queries](hierarchical-conjunctive-queries.md)
 - [$\#P$-complete functions](../../../TheoryOfComputation/complexity-classes/time-and-space-complexity-classes/sharp-pcomplete.md)
-- [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
+- [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 
 ## Proof depends on
 

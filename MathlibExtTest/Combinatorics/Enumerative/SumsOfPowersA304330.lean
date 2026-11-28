@@ -168,4 +168,26 @@ example (k : ℕ) (hk : 1 ≤ k) :
       (m.choose (2 * m) : ℚ)) = 0 := by
   simpa [powerSum] using (powerSum_even_eq_sum k hk 0).symm
 
+-- The factor S₂ vanishes at the empty endpoint for every positive k.
+example (k : ℕ) (hk : 1 ≤ k) : powerSum (2 * k) 0 = 0 := by
+  rw [powerSum_even_faulhaber (k := k) (hk := hk) (n := 0)]
+  simp [powerSum]
+
+-- The quartic Faulhaber form has coefficients −1/5 and 6/5.
+example (n : ℕ) : powerSum 4 n = powerSum 2 n * (-1 / 5 + (6 / 5) * powerSum 1 n) := by
+  have h11 := MetaMathlibExt.legendreStirlingFirst_diag 1
+  have h22 := MetaMathlibExt.legendreStirlingFirst_diag 2
+  have h10 : MetaMathlibExt.legendreStirlingFirst 1 0 = 0 := by
+    simp [MetaMathlibExt.legendreStirlingFirst, MetaMathlibExt.jacobiStirlingFirst,
+      MetaMathlibExt.jacobiStirlingFirstPoly]
+  have h21 : MetaMathlibExt.legendreStirlingFirst 2 1 = -2 := by
+    rw [MetaMathlibExt.legendreStirlingFirst_succ 1 0]
+    norm_num [h10, h11]
+  have h := powerSum_even_faulhaber (k := 2) (hk := by decide) (n := n)
+  rw [show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide] at h
+  norm_num [faulhaberB, show Finset.Icc 1 (2 : ℕ) = {1, 2} by decide, h11, h21, h22,
+    show arrayR 2 1 = 1 by decide, show arrayR 2 2 = 12 by decide, Nat.factorial] at h
+  rw [h]
+  ring
+
 end MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
