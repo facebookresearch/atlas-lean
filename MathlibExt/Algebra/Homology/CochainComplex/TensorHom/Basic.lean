@@ -142,7 +142,8 @@ theorem mapAt_precomp_postcomp
     {Q Q' : CochainComplex (ModuleCat.{w} R) ℤ}
     (f : P ⟶ P') (g : Q ⟶ Q') :
     mapAt R f (𝟙 Q) ≫ mapAt R (𝟙 P') g = mapAt R f g := by
-  simpa only [mapAt, Category.comp_id, Category.id_comp] using
+  simpa only [mapAt, complexAt, bifunctorAt, Functor.map₂HomologicalComplex,
+    Category.comp_id, Category.id_comp] using
     (HomologicalComplex.mapBifunctorMap_comp (ModuleCat.tensorBifunctorAt R) (.up ℤ)
       f (𝟙 P') (𝟙 Q) g).symm
 

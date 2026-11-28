@@ -31,8 +31,14 @@ abbrev upShape (q : ℕ) := (ComplexShape.downNatInitialSegment q).symm
 abbrev upEmbedding (q : ℕ) : (upShape q).Embedding (ComplexShape.up ℕ) :=
   (ComplexShape.embeddingDownNatInitialSegment q).op
 
-instance upEmbedding_isRelIff (q : ℕ) : (upEmbedding q).IsRelIff := inferInstance
-instance upEmbedding_isTruncLE (q : ℕ) : (upEmbedding q).IsTruncLE := inferInstance
+instance upEmbedding_isRelIff (q : ℕ) : (upEmbedding q).IsRelIff where
+  rel' _ _ h := h
+
+instance upEmbedding_isTruncLE (q : ℕ) : (upEmbedding q).IsTruncLE where
+  toIsRelIff := inferInstance
+  mem_prev {i j} h := by
+    change i + 1 = j.val at h
+    exact ⟨⟨i, by omega⟩, rfl⟩
 
 /-- The range of the finite cochain inclusion is exactly the degrees at most `q`. -/
 theorem upEmbedding_range (q i : ℕ) :
