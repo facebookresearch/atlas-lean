@@ -14,7 +14,14 @@ public import Mathlib.LinearAlgebra.Matrix.Adjugate
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.Topology.Instances.Matrix
 
-/-! # Jacobi's formula for a real matrix curve -/
+import Mathlib.Analysis.Calculus.Deriv.Polynomial
+import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
+
+/-! # Jacobi's formula for a real matrix curve
+
+`Matrix.deriv_det_eq_trace_adjugate_mul` is Jacobi's formula. `Matrix.hasDerivAt_det_one_add_smul`
+is its first-order term at the identity, over any nontrivially normed field: the derivative of
+`s ↦ det (1 + s • M)` at `0` is `tr M`. -/
 
 @[expose] public section
 
@@ -46,3 +53,18 @@ theorem Matrix.deriv_det_eq_trace_adjugate_mul {n : Type*} [Fintype n] [Decidabl
       simp_rw [← Matrix.cramer_transpose_apply, Matrix.cramer_eq_adjugate_mulVec,
         ← Matrix.adjugate_transpose, Matrix.mulVec, dotProduct, Matrix.transpose_apply,
         Matrix.trace, Matrix.diag_apply, Matrix.mul_apply, mul_comm]
+
+/-- The derivative of `s ↦ det (1 + s • M)` at `s = 0` is the trace of `M`. The determinant is the
+polynomial `det (1 + X • M)` evaluated at `s`, whose linear coefficient is `tr M`
+(`Matrix.derivative_det_one_add_X_smul`). -/
+theorem Matrix.hasDerivAt_det_one_add_smul {𝕜 n : Type*} [NontriviallyNormedField 𝕜] [Fintype n]
+    [DecidableEq n] (M : Matrix n n 𝕜) :
+    HasDerivAt (fun s : 𝕜 => (1 + s • M).det) M.trace 0 := by
+  let p : Polynomial 𝕜 :=
+    (1 + (Polynomial.X : Polynomial 𝕜) • M.map (Polynomial.C : 𝕜 → Polynomial 𝕜)).det
+  have hp : HasDerivAt (fun s => p.eval s) M.trace 0 :=
+    (p.hasDerivAt 0).congr_deriv (Matrix.derivative_det_one_add_X_smul M)
+  apply hp.congr_of_eventuallyEq
+  filter_upwards with s
+  dsimp [p]
+  simp [eval_det, ← Matrix.smul_eq_mul_diagonal]

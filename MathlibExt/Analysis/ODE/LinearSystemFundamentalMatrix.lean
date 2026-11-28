@@ -16,14 +16,13 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 import Mathlib.Analysis.Calculus.Deriv.Mul
-import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.LinearAlgebra.Matrix.Bilinear
-import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Topology.Order.ProjIcc
+import MathlibExt.Analysis.Matrix.DeterminantDerivative
 import MathlibExt.Analysis.ODE.MaximalSolution
 import Mathlib.Analysis.Calculus.Deriv.Prod
 
@@ -227,18 +226,6 @@ private lemma fundMatrix_hasDerivAt_det {n : ℕ}
   simpa only [Matrix.det_apply', fundMatrix_detDifferential] using
     HasDerivAt.fun_sum (u := Finset.univ) (fun σ _ ↦ hterm σ)
 
-private lemma fundMatrix_hasDerivAt_det_one_add_smul {n : ℕ}
-    (A : Matrix (Fin n) (Fin n) ℝ) :
-    HasDerivAt (fun s : ℝ ↦ (1 + s • A).det) A.trace 0 := by
-  let p : Polynomial ℝ :=
-    (1 + (Polynomial.X : Polynomial ℝ) • A.map (Polynomial.C : ℝ → Polynomial ℝ)).det
-  have hp : HasDerivAt (fun s ↦ p.eval s) A.trace 0 :=
-    (p.hasDerivAt 0).congr_deriv (Matrix.derivative_det_one_add_X_smul A)
-  apply hp.congr_of_eventuallyEq
-  filter_upwards with s
-  dsimp [p]
-  simp [eval_det, ← Matrix.smul_eq_mul_diagonal]
-
 private lemma fundMatrix_detDifferential_mul {n : ℕ}
     (A M : Matrix (Fin n) (Fin n) ℝ) :
     fundMatrix_detDifferential M (A * M) = A.trace * M.det := by
@@ -255,7 +242,7 @@ private lemma fundMatrix_detDifferential_mul {n : ℕ}
       (fundMatrix_detDifferential M (A * M)) 0 := by
     simpa [ψ] using fundMatrix_hasDerivAt_det hψ
   have hright : HasDerivAt (fun s ↦ (ψ s).det) (A.trace * M.det) 0 := by
-    apply (fundMatrix_hasDerivAt_det_one_add_smul A).mul_const M.det |>.congr_of_eventuallyEq
+    apply (Matrix.hasDerivAt_det_one_add_smul A).mul_const M.det |>.congr_of_eventuallyEq
     filter_upwards with s
     rw [show ψ s = (1 + s • A) * M by simp [ψ, add_mul], Matrix.det_mul]
   exact hleft.unique hright
