@@ -8,3 +8,4 @@ best upper bounds known are cubic.
 - [The Černý automata reach reset threshold $(n-1)^2$](the-cerny-automata.md)
 - [Cubic upper bounds on the reset threshold](cubic-upper-bounds-on-reset-thresholds.md)
 - [The Černý conjecture](the-cerny-conjecture.md)
+- [Synchronizability of deterministic one-counter automata is undecidable](synchronizability-of-deterministic-one-counter.md)
