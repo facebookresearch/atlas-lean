@@ -10,6 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.GameTheory.ExactSlowNimRemoteness
+public import MathlibExt.GameTheory.ExactSlowNimA0Moves
+public import MathlibExt.GameTheory.ExactSlowNimCritical
 public import WantedExt.Combinatorics.SlowANimWanted
 
 /-!
@@ -31,44 +33,6 @@ every `y < x`" is equivalent to the same condition for the componentwise (`Pi`) 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **$m$-critical positions of exact slow $k$-NIM with $k + 1$ piles (Theorem 1).** Let $k \ge 1$
-and $m$ be natural numbers, and let $x = (x_0, \dots, x_k)$ be a position of
-$\mathrm{NIM}(k + 1, k)$, the game on $k + 1$ piles in which a move removes one stone from each
-of exactly $k$ nonempty piles. Call $x$ $m$-critical when its Smith remoteness is $m$ and no
-position $y < x$ (that is, $y_i \le x_i$ for every $i$ and $y \ne x$) has remoteness $m$. Then
-$x$ is $m$-critical if and only if either
-(A) $x_0 + \dots + x_k = km$, $x_i \le m$ for every $i$, every $x_i$ is even if $m$ is even,
-and exactly one $x_i$ is even if $m$ is odd; or
-(B) $x_0 + \dots + x_k = km + k - 1$, $x_i < m$ for every $i$, $m$ is even, and every $x_i$ is
-odd.
-
-Source: Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
-Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
-Theorem 1. -/
-public theorem_wanted isExactSlowNimCritical_iff {k : ℕ} (hk : 0 < k) (m : ℕ)
-    (x : Fin (k + 1) → ℕ) :
-    IsExactSlowNimCritical k m x ↔
-      (∑ i, x i = k * m ∧ (∀ i, x i ≤ m) ∧ (Even m → ∀ i, Even (x i)) ∧
-          (Odd m → ∃! i, Even (x i))) ∨
-        (∑ i, x i = k * m + k - 1 ∧ (∀ i, x i < m) ∧ Even m ∧ ∀ i, Odd (x i))
-
-/-- **Unique critical-lowering move for odd parameter (Corollary 1 (ii)).** Let $k \ge 2$, let
-$m$ be odd, and let $x \in \mathbb{N}^{k+1}$ be an $m$-critical position of Slow$\{k\}$-Nim on
-$k + 1$ stacks. Then $x$ has exactly one even entry $x_i$. The position $x'$ obtained from $x$ by
-removing one token from every pile other than $i$ is an option of $x$, it is the only option of
-$x$ that is $(m - 1)$-critical, and it is the position reached from $x$ by the M-move.
-
-Source: Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
-Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
-Corollary 1 (ii). -/
-public theorem_wanted exactSlowNim_critical_of_odd {k m : ℕ} (hk : 2 ≤ k) (hm : Odd m)
-    (x : Fin (k + 1) → ℕ) (hx : IsExactSlowNimCritical k m x) :
-    ∃ i, Even (x i) ∧ (∀ j, Even (x j) → j = i) ∧
-      slowANimAfter x (Finset.univ.erase i) ∈ slowANimMoves {k} x ∧
-      (∀ y ∈ slowANimMoves {k} x,
-        IsExactSlowNimCritical k (m - 1) y ↔ y = slowANimAfter x (Finset.univ.erase i)) ∧
-      exactSlowNimMRuleMove x = slowANimAfter x (Finset.univ.erase i)
 
 /-- **Proposition 1 (odd P-positions of exact slow k-NIM).** Let $0 < k$ and let
 $\mathrm{NIM}(k + 1, k)$ be Slow$A$-Nim on $k + 1$ stacks with $A = \{k\}$. A position
@@ -96,30 +60,6 @@ Theorem 2. -/
 public theorem_wanted exactSlowNimMRuleLength_eq_smithRemoteness {k : ℕ} (hk : 0 < k)
     (x : Fin (k + 1) → ℕ) :
     exactSlowNimMRuleLength k x = SpragueGrundy.smithRemoteness (slowANimGame (k + 1) {k}) x
-
-/-- **Moves at a position supported by an (A0) basic vector (Lemma 2).** Let $k \ge 1$, let
-$B$ be the basic-vector value on $\mathbb{N}^{k+1}$, and let $x, z \in \mathbb{N}^{k+1}$ with
-$z \le x$ componentwise, where $z$ is a basic vector of type (A0) with parameter $B(x)$. Let $j$
-be a pile with $x_i > 0$ for every $i \ne j$, and let $x'$ be obtained from $x$ by removing one
-token from every pile other than $j$. Then $B(x') \le B(x) - 1$ and $B(x')$ is odd. Moreover, if
-$z_j < B(x)$, or if $z_j = B(x)$ and $z_i < \min(B(x), x_i)$ for some $i$, then
-$B(x') = B(x) - 1$. Here $B(x) - 1$ is truncated subtraction in $\mathbb{N}$.
-
-Source: Vladimir Gurvich, Denis Martynov, Vladislav Maximchuk, and Michael Vyalyi, *On
-Remoteness Functions of Exact Slow k-NIM with k+1 Piles*, INTEGERS 24 (2024), Article G1,
-Lemma 2. -/
-public theorem_wanted exactSlowNimBasicValue_of_supports_basicA0 {k : ℕ} (hk : 0 < k)
-    (x z : Fin (k + 1) → ℕ) (hzx : z ≤ x)
-    (hz : IsExactSlowNimBasicA0 k (exactSlowNimBasicValue k x) z) (j : Fin (k + 1))
-    (hj : ∀ i, i ≠ j → 0 < x i) :
-    exactSlowNimBasicValue k (slowANimAfter x (Finset.univ.erase j)) ≤
-        exactSlowNimBasicValue k x - 1 ∧
-      Odd (exactSlowNimBasicValue k (slowANimAfter x (Finset.univ.erase j))) ∧
-      (z j < exactSlowNimBasicValue k x ∨
-          (z j = exactSlowNimBasicValue k x ∧
-            ∃ i, z i < min (exactSlowNimBasicValue k x) (x i)) →
-        exactSlowNimBasicValue k (slowANimAfter x (Finset.univ.erase j)) =
-          exactSlowNimBasicValue k x - 1)
 
 /-- **Theorem 3 (Smith's remoteness of exact slow k-NIM is polynomial-time computable).** The map
 sending a list $(x_0, \dots, x_{n-1})$ of natural numbers of length $n$ to Smith's remoteness of

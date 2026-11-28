@@ -67,4 +67,44 @@ example : (diagonalClass (Nat.Partition.ofMultiset {4, 3, 2})).card = 4 := by
     (by decide +kernel) (by decide +kernel)]
   decide +kernel
 
+-- The class of `(3, 1)` has two partitions with two parts: `(3, 1)` and `(2, 2)`.
+example : ((diagonalClass (Nat.Partition.ofMultiset {3, 1})).filter
+    fun β => β.parts.card = 2).card = 2 := by
+  rw [card_diagonalClass_filter_card_parts_eq_q _ 2 3 (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)]
+  decide +kernel
+
+-- The paper's running example tests several levels, including two initial zero drops.
+example : ((diagonalClass (Nat.Partition.ofMultiset {7, 7, 4, 1, 1, 1})).filter
+    fun β => β.parts.card = 4).card = 6 := by
+  rw [card_diagonalClass_filter_card_parts_eq_q _ 4 8 (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)]
+  decide +kernel
+
+-- For `(4, 1)`, the drops are `1, 0, 1`: the missing middle letter gives factors of `1`.
+example : ((diagonalClass (Nat.Partition.ofMultiset {4, 1})).filter
+    fun β => β.parts.card = 2).card = 1 := by
+  rw [card_diagonalClass_filter_card_parts_eq_q _ 2 4 (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)]
+  decide +kernel
+
+-- A staircase has `q = L`, so the product is empty.
+example : ((diagonalClass (Nat.Partition.ofMultiset {3, 2, 1})).filter
+    fun β => β.parts.card = 3).card = 1 := by
+  rw [card_diagonalClass_filter_card_parts_eq_q _ 3 3 (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)]
+  rfl
+
+-- At the minimum height, only the four extra copies of the peak are capped.
+example :
+    (diagonalClassOf 5 (diagonalOfList [1, 1, 1, 1, 1])).card =
+      (diagonalClassOf 3 (diagonalOfList [1, 1, 1])).card :=
+  card_diagonalClassOf_min_two 1 (by decide) (fun _ => 4)
+
+-- Cap both the peak and the terminal height while retaining the singleton and the skipped level.
+example :
+    (diagonalClassOf 28 (diagonalOfList [1, 2, 3, 4, 4, 4, 4, 2, 1, 1, 1, 1])).card =
+      (diagonalClassOf 22 (diagonalOfList [1, 2, 3, 4, 4, 4, 2, 1, 1])).card :=
+  card_diagonalClassOf_min_two 4 (by decide) (fun k => [0, 4, 1, 0, 3].getD k 0)
+
 end MetaMathlibExt
