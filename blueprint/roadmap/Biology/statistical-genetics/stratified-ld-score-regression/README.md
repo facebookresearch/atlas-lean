@@ -33,3 +33,5 @@
 
 - [Joint pleiotropic and epigenomic partitioning](joint-pleiotropic-and-epigenomic-partitioning/README.md)
 - [Standardized annotation effect size $\tau^*$ in stratified LD-score regression](standardized-annotation-effect-size.md)
+- [Functional enrichment of GWAS signals](functional-enrichment-of-gwas-signals/README.md)
+- [Stratified trans-ethnic genetic correlation](stratified-trans-ethnic-genetic-correlation/README.md)

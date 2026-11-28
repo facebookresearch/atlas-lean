@@ -1,10 +1,12 @@
 # Denotational semantics of CSP
 
-The denotational semantics of CSP maps each CSP term $P$, in an environment $\xi$ that binds its free process identifiers, to values $S_T[\![P]\!]\xi \in \mathcal{T}$, $S_F[\![P]\!]\xi \in \mathcal{F}$ and $S_N[\![P]\!]\xi \in \mathcal{N}$ in the [traces](the-traces-model.md), [stable failures](the-stable-failures-model.md) and [failures-divergences](the-failures-divergences-model.md) models. Each operator of CSP is given by a clause that computes the value of a compound term from the values of its parts, and a recursion $\mu p . P$ denotes a least fixed point: with respect to the subset order in $\mathcal{T}$ and $\mathcal{F}$, and with respect to failures-divergences refinement in $\mathcal{N}$. Over $\mathcal{T}$ and $\mathcal{F}$ every operator other than recursion is the lifting of a family of relations on behaviours. Over $\mathcal{N}$ the hiding operator adds the divergences that hiding an infinite sequence of events creates, which is why $\mathcal{N}$ gives accurate semantics only to finitely nondeterministic CSP: terms with no infinite hiding, no infinite-to-one renaming and no infinite nondeterministic choice.
+The denotational semantics of CSP maps each CSP term $P$, in an environment $\xi$ that binds its free process identifiers, to values $S_T[\![P]\!]\xi \in \mathcal{T}$, $S_F[\![P]\!]\xi \in \mathcal{F}$ and $S_N[\![P]\!]\xi \in \mathcal{N}$ in the [traces](the-traces-model.md), [stable failures](the-stable-failures-model.md) and [failures-divergences](the-failures-divergences-model.md) models. Each operator of the core grammar of [the operational semantics](csp-operational-semantics.md), which omits Roscoe's Boolean conditional, is given by a clause that computes the value of a compound term from the values of its parts, and a recursion $\mu p . P$ denotes a least fixed point: with respect to the subset order in $\mathcal{T}$ and $\mathcal{F}$, and with respect to failures-divergences refinement in $\mathcal{N}$. Over $\mathcal{T}$ and $\mathcal{F}$ every operator other than recursion is the lifting of a family of relations on behaviours. Over $\mathcal{N}$ the hiding operator adds the divergences that hiding an infinite sequence of events creates, which is why $\mathcal{N}$ gives accurate semantics only to finitely nondeterministic CSP: terms with no infinite hiding, no infinite-to-one renaming and no infinite nondeterministic choice.
 
 ## Expansion
 
-This page is a family. A good expansion states, each on its own page, the clause of every CSP operator over $\mathcal{T}$ (Sections 1.3.1 and 8.2 of the source), over $\mathcal{N}$ (Section 8.3.2) and over $\mathcal{F}$ (Section 8.4), and the fixed-point clause for recursion in each model.
+This page is a family. The clauses over $\mathcal{T}$ and $\mathcal{F}$ are stated in the [trace semantics](trace-semantics-of-the-csp-operators.md) and the [stable failures semantics](stable-failures-semantics-of-the-csp-operators.md) of the CSP operators. It becomes ready once:
+
+- The clauses of every CSP operator over $\mathcal{N}$, with the fixed-point clause for recursion with respect to failures-divergences refinement (Section 8.3.2 of the source), stated on a page of their own (statement prerequisite)
 
 ## Depends on
 
@@ -12,6 +14,8 @@ This page is a family. A good expansion states, each on its own page, the clause
 - [The traces model of CSP](the-traces-model.md)
 - [The stable failures model of CSP](the-stable-failures-model.md)
 - [The failures-divergences model of CSP](the-failures-divergences-model.md)
+- [Trace semantics of the CSP operators](trace-semantics-of-the-csp-operators.md)
+- [Stable failures semantics of the CSP operators](stable-failures-semantics-of-the-csp-operators.md)
 
 ## Sources
 

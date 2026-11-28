@@ -18,6 +18,7 @@ Reaction–diffusion models of biological spread and spatial patterning, includi
 - [Nonlocal multi-species advection–diffusion](nonlocal-multi-species-advection-diffusion/README.md)
 - [Reaction–diffusion on concentration-dependent growing domains](reaction-diffusion-on-concentration-dependent-growing-domains/README.md)
 - [Turing and wave instabilities in n-component systems](turing-and-wave-instabilities-in-n-component-systems/README.md)
+- [Turing instabilities for three interacting species](turing-instabilities-for-three-interacting-species/README.md)
 - [Phenotypic segregation across invasion fronts](phenotypic-segregation-across-invasion-fronts/README.md)
 - [Savanna–forest pattern formation](savanna-forest-pattern-formation/README.md)
 - [Self-propelled particles among tethered obstacles](self-propelled-particles-among-tethered-obstacles/README.md)

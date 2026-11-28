@@ -6,3 +6,7 @@
 - [Predictive parity, error-rate balance and their relations](remaining-clauses-of-group-fairness-criteria-for-risk-scores.md)
 - [Individual fairness: maximal bias and the linear-programming formulation](remaining-clauses-of-individual-fairness-as-a-lipschitz-cond.md)
 - [Lipschitz randomized classifiers form a convex set](lipschitz-randomized-classifiers-form-a-convex-set.md)
+- [Prevalence](prevalence.md)
+- [False-positive rate](false-positive-rate.md)
+- [False-negative rate](false-negative-rate.md)
+- [Positive predictive value](positive-predictive-value.md)
