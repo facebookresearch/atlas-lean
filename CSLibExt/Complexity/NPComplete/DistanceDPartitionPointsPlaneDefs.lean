@@ -6,8 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanDefs
+
+/-!
 # DISTANCE-d PARTITION OF POINTS IN THE PLANE: definitions
+
+Johnson's column, problem [3]: INSTANCE: finite set `P ⊂ Z × Z` of integer-coordinate points in
+the plane, positive integers `d` and `K`. QUESTION: is there a partition `P = P₁ ∪ ⋯ ∪ P_K` such
+that if `u` and `v` are distinct points in some set `Pᵢ` of the partition, then the Euclidean
+distance `d(u, v) > d`?
+
+Comment there: NP-complete for fixed `K = 3`, also for the rectilinear metric; as a special case
+of CHROMATIC NUMBER the problem is solvable in polynomial time for `K ≤ 2`.
+
+The points are a list of distinct points; each point is a pair of integer coordinates, each given
+as a pair `(p, q)` of naturals standing for `p - q`, decoded by `GeometricTravelingSalesman.point`
+as in `GeometricTravelingSalesmanDefs`. Numbers are in binary. The partition is a surjective
+map `c : Fin |P| → Fin K` on the positions of the list, with the nonempty blocks
+`Pᵢ = c⁻¹ {i}` (so an instance with `K > |P|` is a no-instance). As the points are distinct,
+distinct positions are distinct points. For `d ≥ 0` the
+condition `d(u, v) > d` is `d² < (u₁ - v₁)² + (u₂ - v₂)²`, which is how it is written, over `ℤ`.
+
+Membership in NP: the map `c` is a certificate of polynomial size.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 D. S. Johnson, "The NP-completeness column: an ongoing guide", J. Algorithms 3 (1982), 182-195,
@@ -18,11 +46,6 @@ D. S. Johnson, "The NP-completeness column: an ongoing guide", J. Algorithms 5 (
 doi:10.1016/0196-6774(84)90045-2, Section 2 (the result "should also be attributed to J. Orlin",
 private communication).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanDefs
 
 @[expose] public section
 

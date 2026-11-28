@@ -6,8 +6,37 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.BoundedComponentSpanningForestDefs
+
+/-!
 # BOUNDED COMPONENT SPANNING FOREST with unit weights and fixed `B ≥ 3`: definitions
+
+For a fixed integer `B ≥ 3`: INSTANCE: a graph `G = (V, E)`, a weight `w(v) = 1` for each
+`v ∈ V`, and a positive integer `K ≤ |V|`. QUESTION: can the vertices in `V` be partitioned
+into `k ≤ K` disjoint sets `V₁, V₂, …, V_k` such that, for `1 ≤ i ≤ k`, the subgraph of `G`
+induced by `Vᵢ` is connected and the sum of the weights of the vertices in `Vᵢ` (its number of
+vertices) does not exceed `B`?
+
+This is BOUNDED COMPONENT SPANNING FOREST (`BoundedComponentSpanningForestWanted`, [ND10]) with
+`B` no longer part of the instance. The instance is the graph, the weights and `K`, and
+`withBound i B` appends the fixed `B` to obtain an instance of that problem, whose `WellFormed`
+(simple edge list, one weight per vertex, `0 < K ≤ |V|`, `0 < B`) and question are reused
+unchanged; `WellFormed` here adds that every weight equals `1`. The problem is polynomial for
+unit weights and `B = 2` (Hadlock, by matching), so `3` is where hardness starts.
+
+Hardness: Dyer and Frieze, Theorem 2.1(a), prove that deciding whether the vertices of a planar
+bipartite graph can be partitioned into sets of exactly `k` vertices, each inducing a connected
+subgraph, is NP-complete for every fixed `k ≥ 3`. With unit weights, `B = k` and `K = |V| / k`
+(when `k` divides `|V|`), a partition into at most `K` connected sets of at most `B` vertices
+must consist of exactly `K` sets of exactly `k` vertices, so their problem reduces to this one.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
@@ -18,11 +47,6 @@ M. E. Dyer and A. M. Frieze, "On the complexity of partitioning graphs into conn
 subgraphs", Discrete Applied Mathematics 10 (1985), 139-153, doi:10.1016/0166-218X(85)90008-3,
 Theorem 2.1(a).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.BoundedComponentSpanningForestDefs
 
 @[expose] public section
 

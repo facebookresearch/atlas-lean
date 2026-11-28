@@ -6,8 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanDefs
+public import CSLibExt.Complexity.NPComplete.TspDefs
+
+/-!
 # RECTILINEAR TRAVELING SALESMAN: definitions
+
+Given a set `P ⊆ Z × Z` of points in the plane and a positive integer `B`, is there a tour of
+length `B` or less for the TRAVELING SALESMAN instance with `C = P` and
+`d((x₁, y₁), (x₂, y₂))` equal to the `L₁` ("rectilinear") distance `|x₁ - x₂| + |y₁ - y₂|`?
+
+This is GEOMETRIC TRAVELING SALESMAN
+(`MetaMathlibExt.Complexity.NPComplete.GeometricTravelingSalesman`) with the discretized
+Euclidean distance replaced by the `L₁` distance. The instance format (a nonempty list of
+distinct integer points, each coordinate a pair `(p, q)` of naturals standing for `p - q`, and
+`B`) and its well-formedness are those of GEOMETRIC TRAVELING SALESMAN. The question is
+TRAVELING SALESMAN (`MetaMathlibExt.Complexity.NPComplete.Tsp`) on the matrix of pairwise
+`L₁` distances: a tour visits every point exactly once, and its length is the sum of the
+distances between consecutive points, including the return from the last point to the first.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,12 +41,6 @@ is replaced by the L₁ "rectilinear" metric";
 M. R. Garey, R. L. Graham, and D. S. Johnson, "Some NP-complete geometric problems", Proc. 8th
 Annual ACM Symposium on Theory of Computing (1976), 10-22, doi:10.1145/800113.803626.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanDefs
-public import CSLibExt.Complexity.NPComplete.TspDefs
 
 @[expose] public section
 

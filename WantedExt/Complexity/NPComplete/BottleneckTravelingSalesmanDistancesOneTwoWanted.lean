@@ -35,7 +35,7 @@ longer than `B`, i.e., a permutation `⟨c_π(1), ..., c_π(m)⟩` of `C` with
 `d(c_π(i), c_π(i+1)) ≤ B` for `1 ≤ i < m` and `d(c_π(m), c_π(1)) ≤ B`?
 
 This is BOTTLENECK TRAVELING SALESMAN
-(`WantedExt.Complexity.NPComplete.BottleneckTravelingSalesmanWanted`, Garey and Johnson [ND24])
+(`CSLibExt.Complexity.NPComplete.BottleneckTravelingSalesmanDefs`, Garey and Johnson [ND24])
 restricted as in the [ND24] comment: "Remains NP-complete even if `d(cᵢ, cⱼ) ∈ {1,2}` for all
 `cᵢ, cⱼ ∈ C`." Garey and Johnson give no separate reference: the entry's transformation from
 HAMILTONIAN CIRCUIT (NP-complete by Karp (1972)) already yields such instances, with distance

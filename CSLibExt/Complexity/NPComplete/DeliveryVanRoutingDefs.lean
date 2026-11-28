@@ -6,8 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # DELIVERY VAN ROUTING: definitions
+
+INSTANCE: a directed graph `G = (V, A)`, each arc `a` of which has an associated (possibly
+negative) integer weight `w(a)`, and a vertex `s ∈ V`.
+QUESTION: is there a permutation `P = (a₁, ..., a_m)` of the arcs in `A` such that (i) for all
+`i`, `1 ≤ i < m`, the head of `aᵢ` coincides with the tail of `aᵢ₊₁` (i.e. `P` is an Euler tour
+of `G`), (ii) `s` is the tail of `a₁` and the head of `a_m`, and (iii) for all `j`, `1 ≤ j ≤ m`,
+`∑_{i=1}^{j} w(aᵢ) ≤ 0`?
+
+Johnson reports the problem NP-complete (Boers, by a transformation from 3SAT), even when every
+vertex has in-degree equal to out-degree and all weights are in `{-1, 1}`.
+
+The vertices are `0, ..., n - 1`, and the arcs are a list of entries `(tail, head, w)` without
+two arcs with the same tail and head and without loops (the convention of the directed graphs in
+this directory, e.g. `FeedbackArcSetWanted`). A weight is an integer given as a (positive part,
+negative part) pair, as in `ZeroOneILPWanted`; numbers use the binary encoding. The permutation
+`P` is a list of arc indices that is a permutation of all of them. Condition (ii) refers to
+`a₁`, so the tour is nonempty: an instance with no arcs is a no-instance. Condition (iii) is
+stated for the prefixes of every length `j ≤ m` (the empty prefix has weight `0`).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 D. S. Johnson, "The NP-completeness column: an ongoing guide", Journal of Algorithms 3 (1982),
@@ -15,10 +42,6 @@ D. S. Johnson, "The NP-completeness column: an ongoing guide", Journal of Algori
 "The 'race graph': an NP-complete problem", manuscript, 1982, not available; transformation from
 3SAT).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

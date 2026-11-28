@@ -6,14 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# PLANAR POINT-SET EMBEDDABILITY: definitions
-
-Source:
-S. Cabello, "Planar embeddability of the vertices of a graph using a fixed point set is
-NP-hard", Journal of Graph Algorithms and Applications 10 (2006), 353-363,
-doi:10.7155/jgaa.00132 (Theorem 1).
--/
 module
 
 public import CSLibExt.Computability.Complexity.Defs
@@ -22,6 +14,39 @@ public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanDefs
+
+/-!
+# PLANAR POINT-SET EMBEDDABILITY: definitions
+
+INSTANCE: a graph `G` with `n` vertices and a set `P` of `n` points in the plane. QUESTION: is
+there a planar straight-line embedding of `G` whose vertices are mapped onto `P`, that is, a
+bijection from the vertices to `P` such that the straight-line segments drawn for the edges
+intersect only at common endpoints?
+
+This is Cabello's Theorem 1 (a geometric planar embedding `H` of `G` with `V(H) = P`). The points
+have integer coordinates in the encoding of `GeometricTravelingSalesmanDefs` (each coordinate a
+pair `(a, b)` of naturals standing for `a - b`, `GeometricTravelingSalesman.point`); Cabello's
+reduction outputs integer points with polynomially bounded coordinates, and rational points
+reduce to integer ones by scaling, which preserves straight-line drawings. The vertices of `G` are
+`0, ..., n - 1`, where `n` is the number of points, and `G` is `edgeGraph n E` for an edge list `E`.
+Segments are the repository's `SimpleGraph.Segment`. For the drawing that puts vertex `v` at the
+point `σ v`, the conditions are those of `RectilinearPlanarity.IsRectilinearDrawing` without
+its axis-parallel clause: the crossing condition of `SimpleGraph.IsPlanar`, and no vertex
+(isolated ones included) lies on an edge except at its endpoints.
+
+Cabello proves the problem NP-complete, even for 2-connected 2-outerplanar `G` (Theorem 1, by a
+reduction from 3-PARTITION); membership in NP: the bijection is a certificate, checked by
+polynomially many segment intersection tests.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+Source:
+S. Cabello, "Planar embeddability of the vertices of a graph using a fixed point set is
+NP-hard", Journal of Graph Algorithms and Applications 10 (2006), 353-363,
+doi:10.7155/jgaa.00132 (Theorem 1).
+-/
 
 @[expose] public section
 

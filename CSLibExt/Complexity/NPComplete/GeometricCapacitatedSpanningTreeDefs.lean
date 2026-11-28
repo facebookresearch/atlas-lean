@@ -6,8 +6,38 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanDefs
+
+/-!
 # GEOMETRIC CAPACITATED SPANNING TREE: definitions
+
+INSTANCE: a set `P ⊆ Z × Z` of points in the plane, a specified point `p₀ ∈ P`, a requirement
+`r(p) ∈ Z₀⁺` for each `p ∈ P - p₀`, a capacity `c ∈ Z⁺`, and a bound `B ∈ Z⁺`. QUESTION: is
+there a spanning tree `T = (P, E')` for the complete graph `G = (P, E)` such that
+`∑_{e ∈ E'} d(e) ≤ B`, where `d((x₁, y₁), (x₂, y₂))` is the discretized Euclidean distance
+`⌈((x₁ - x₂)² + (y₁ - y₂)²)^(1/2)⌉`, and such that for each `e ∈ E'`, if `U(e)` is the set of
+vertices whose paths to `p₀` pass through `e`, then `∑_{u ∈ U(e)} r(u) ≤ c`?
+
+The points are listed as in GEOMETRIC TRAVELING SALESMAN
+(`WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted`): each coordinate is a pair
+`(p, q)` of naturals standing for `p - q`, and the points must be distinct. The distance is that
+module's `discreteDist`. Points are indexed by their position `Fin m` in the list; `p₀` is
+given by its index. A spanning tree of the complete graph on `P` is any `SimpleGraph` `T` on
+`Fin m` with `T.IsTree` (Mathlib); its edge sum counts each edge `{a, b}` once, as the
+summand for `a < b`. As in `CapacitatedSpanningTreeDefs`, the path from `u` to `p₀` in `T`
+is a `SimpleGraph.Walk` with `IsPath` (unique in a tree), so `u ∈ U(e)` is stated as "some path
+from `u` to `p₀` in `T` contains `e`". The requirement list has one entry per point; the entry
+of `p₀` is never read, since `p₀ ∉ U(e)`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -16,13 +46,6 @@ TREE (reference [Papadimitriou, 1976c], transformation from X3C);
 C. H. Papadimitriou, "The complexity of the capacitated tree problem", Networks 8 (1978),
 217-230, doi:10.1002/net.3230080306.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanDefs
 
 @[expose] public section
 

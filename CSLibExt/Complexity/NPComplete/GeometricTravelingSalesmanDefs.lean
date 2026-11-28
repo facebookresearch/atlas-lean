@@ -6,8 +6,30 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.Algebra.Order.Floor.Semiring
+
+/-!
 # GEOMETRIC TRAVELING SALESMAN: definitions
+
+Given a set `P ⊆ Z × Z` of points in the plane and a positive integer `B`, is there a tour
+of length `B` or less for the TRAVELING SALESMAN instance with `C = P` and
+`d((x₁, y₁), (x₂, y₂))` equal to the discretized Euclidean distance
+`⌈((x₁ - x₂)² + (y₁ - y₂)²)^(1/2)⌉`?
+
+Each coordinate is an integer given as a pair `(p, q)` of naturals standing for `p - q`.
+`P` is a nonempty list of distinct points. A tour is a permutation of the `m` points, given
+as a list of their positions; its length is the sum of the distances between consecutive
+points, including the return from the last point to the first, as in TRAVELING SALESMAN.
+The distance is `Nat.ceil` of `Real.sqrt` of the integer `(x₁ - x₂)² + (y₁ - y₂)²`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,12 +39,6 @@ Computer Science 4 (1977), 237-244, doi:10.1016/0304-3975(77)90012-3;
 M. R. Garey, R. L. Graham and D. S. Johnson, "Some NP-complete geometric problems", Proc.
 8th Annual ACM Symposium on Theory of Computing (1976), 10-22, doi:10.1145/800113.803626.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Algebra.Order.Floor.Semiring
 
 @[expose] public section
 
@@ -46,7 +62,8 @@ noncomputable def discreteDist (p q : ℤ × ℤ) : ℕ :=
 consecutive points, including the return to the first. -/
 noncomputable def tourLength (P : List (ℤ × ℤ)) (tour : List ℕ) : ℕ :=
   ((List.range tour.length).map fun j =>
-    discreteDist (P.getD (tour.getD j 0) (0, 0)) (P.getD (tour.getD ((j + 1) % tour.length) 0) (0, 0))).sum
+    discreteDist (P.getD (tour.getD j 0) (0, 0))
+      (P.getD (tour.getD ((j + 1) % tour.length) 0) (0, 0))).sum
 
 /-- Well-formedness of an instance: `P` is a nonempty set of distinct points, and `B` is
 positive. -/

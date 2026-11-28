@@ -6,8 +6,37 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Computability.Complexity.Defs
+public import CSLibExt.Computability.Complexity.Karp.Color
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.BoundedDiameterSpanningTreeDefs
+
+/-!
 # k-CAPACITATED TREE PARTITION: definitions
+
+INSTANCE: a graph `G = (V, E)`, a weight function `w : E → ℕ`, a positive integer `k`, and a
+positive integer `K`. QUESTION: is there a `k`-capacitated tree partition of `G`, i.e. a
+collection of vertex-disjoint edge sets `E₁, …, E_m ⊆ E` covering the vertices, each forming a
+tree with at least `k` vertices, of total weight `∑ᵢ ∑_{e ∈ Eᵢ} w(e)` at most `K`?
+
+This is the decision version of MINIMUM K-CAPACITATED TREE PARTITION in the compendium of
+Crescenzi and Kann, the lower capacitated tree partitioning problem of Goemans and Williamson
+("vertex-disjoint trees ... that cover all vertices", each with at least `k` vertices).
+
+The instance reuses the type of `BoundedDiameterSpanningTreeDefs` (vertex count `n`, edge list
+of triples `(u, v, w)`, two numbers, here `k` and `K`). The union `F` of `E₁, …, E_m` is a
+sublist of the edge list (a choice of edges, since the list has no repeated edge); the graph
+`forest i F` on all of `V` with the edges of `F` is acyclic (a forest), its connected components
+are the trees, each component has at least `k` vertices, and the weight is the sum of `w` over
+`F`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
@@ -20,14 +49,6 @@ M. X. Goemans and D. P. Williamson, "A general approximation technique for const
 problems", SIAM Journal on Computing 24 (1995), 296-317, doi:10.1137/S0097539793242618
 (lower capacitated tree partitioning).
 -/
-module
-
-public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.BoundedDiameterSpanningTreeDefs
 
 @[expose] public section
 

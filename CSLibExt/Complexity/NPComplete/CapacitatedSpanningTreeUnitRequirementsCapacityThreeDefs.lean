@@ -6,8 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CapacitatedSpanningTreeDefs
+
+/-!
 # CAPACITATED SPANNING TREE with unit requirements and capacities 3: definitions
+
+INSTANCE: a graph `G = (V, E)`, a specified vertex `v₀ ∈ V`, a capacity `c(e) = 3` and a length
+`l(e) ∈ ℤ₀⁺` for each `e ∈ E`, a requirement `r(v) = 1` for each `v ∈ V - {v₀}`, and a bound
+`B ∈ ℤ₀⁺`. QUESTION: is there a spanning tree `T` for `G` such that the sum of the lengths of
+the edges in `T` does not exceed `B` and such that for each edge `e` in `T`, if `U(e)` is the
+set of vertices whose path to `v₀` in `T` contains `e`, then `∑_{u ∈ U(e)} r(u) ≤ c(e)`?
+
+This is the restriction of CAPACITATED SPANNING TREE
+(`WantedExt.Complexity.NPComplete.CapacitatedSpanningTreeWanted`, GJ [ND5]) stated in the comment
+of [ND5], where it is NP-complete in the strong sense. With all requirements `1` the capacity
+condition says that every subtree of `T` hanging below an edge (away from `v₀`) has at most `3`
+vertices. The instance type, `CapacitatedSpanningTree.WellFormed` (simple edge list, `v₀` a
+vertex, one requirement per vertex) and `CapacitatedSpanningTreeFeasible` are reused unchanged;
+the restriction is added to well-formedness: every edge entry has capacity `3`, and every vertex
+other than `v₀` has requirement `1`. The requirement entry of `v₀` is not constrained, since the
+parent never reads it. Lengths and the bound are arbitrary, in binary. The same comment notes
+that with all requirements `1` and all capacities `2` the problem is solvable by weighted
+matching.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,11 +45,6 @@ capacities are equal to 3");
 C. H. Papadimitriou, "The complexity of the capacitated tree problem", Networks 8 (1978),
 217-230, doi:10.1002/net.3230080306.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.CapacitatedSpanningTreeDefs
 
 @[expose] public section
 

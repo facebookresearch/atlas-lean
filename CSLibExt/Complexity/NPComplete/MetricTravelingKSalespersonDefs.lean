@@ -6,8 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TravelingRepairmanDefs
+
+/-!
 # METRIC TRAVELING K-SALESPERSON: definitions
+
+INSTANCE: a set `C` of `m` cities with an initial city `s ∈ C`, a distance `d(cᵢ, cⱼ) ∈ ℤ⁺` for
+each pair of distinct cities, satisfying the triangle inequality, a positive integer `k` of
+salespersons, and a positive integer bound `K`. QUESTION: is there a collection of `k` subtours,
+each a closed tour that starts and ends at `s`, such that every city lies on at least one
+subtour and every subtour has length at most `K`?
+
+This is the decision version of the compendium's MINIMUM METRIC TRAVELING K-SALESPERSON PROBLEM
+(measure: the maximum length of the `k` subtours), the min-max `k`-person traveling salesman problem
+of Frederickson, Hecht, and Kim (1978), who list it among NP-complete routing problems. With `k = 1`
+it is the metric traveling salesman problem, NP-complete by Garey and Johnson [ND22] already with
+distances in `{1, 2}`; that is the reduction behind the theorem.
+
+The metric part of the instance (an `m × m` distance matrix with zero diagonal, symmetric,
+satisfying the triangle inequality, and `s < m`) is checked by `TravelingRepairmanWanted`'s
+`WellFormed`, and its `routeLength` is reused; as in `MetricTravelingSalespersonDefs`,
+distances between distinct cities and the bound are positive, and so is `k`. A subtour is listed
+as the distinct cities it visits, starting with `s`; its length is that of the closed route back
+to `s` (the subtour `[s]` has length `0`). With the triangle inequality, revisiting a city never
+shortens a subtour, so distinct cities suffice. The collection has at most `k` subtours: padding
+with `[s]` makes "at most" and "exactly" agree, and it keeps certificates short when `k` is
+large (`k` is written in binary). Binary encoding of all numbers.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
@@ -19,11 +51,6 @@ M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the The
 NP-Completeness*, W. H. Freeman (1979), problem [ND22] TRAVELING SALESMAN (NP-complete with
 distances in `{1, 2}`, which satisfy the triangle inequality).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.TravelingRepairmanDefs
 
 @[expose] public section
 
@@ -36,8 +63,8 @@ open TravelingRepairman (TravelingRepairmanInstance routeLength)
 bound `K`. -/
 abbrev MetricTravelingKSalespersonInstance := ℕ × List (List ℕ) × ℕ × ℕ × ℕ
 
-/-- The metric part of an instance, as a `TravelingRepairmanWanted` instance (cities, matrix,
-initial city, bound). -/
+/-- The cities, matrix, initial city and bound as a
+`TravelingRepairman.TravelingRepairmanInstance`. -/
 def toMetric (i : MetricTravelingKSalespersonInstance) : TravelingRepairmanInstance :=
   (i.1, i.2.1, i.2.2.1, i.2.2.2.2)
 

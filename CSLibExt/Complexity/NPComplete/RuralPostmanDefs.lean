@@ -6,8 +6,30 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Computability.Complexity.Defs
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Computability.Complexity.Karp.Color
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
+
+/-!
 # RURAL POSTMAN: definitions
+
+INSTANCE: a graph `G = (V, E)`, a length `l(e) ∈ ℤ₀⁺` for each `e ∈ E`, a subset `E' ⊆ E`, and
+a positive integer `B`. QUESTION: is there a circuit in `G` that includes each edge in `E'` and
+that has total length no more than `B`?
+
+A circuit here is a closed walk that may repeat vertices and edges, as in the source's
+"postman's tour (i.e. an undirected cycle traversing each arc in a given subset R ⊆ A at least
+once)" (Lenstra and Rinnooy Kan); its length counts every traversal of an edge. It is a Mathlib
+`SimpleGraph.Walk v v`, and its total length is the sum of the edge lengths along
+`SimpleGraph.Walk.edges` (with repetitions).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -16,13 +38,6 @@ J. K. Lenstra and A. H. G. Rinnooy Kan, "On general routing problems",
 Networks 6 (1976), 273-280, doi:10.1002/net.3230060305 (Theorem: the rural
 postman problem is polynomial complete for undirected and for directed graphs).
 -/
-module
-
-public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
 
 @[expose] public section
 

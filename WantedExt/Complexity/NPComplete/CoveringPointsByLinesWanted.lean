@@ -42,7 +42,7 @@ decide whether a set of points in the plane can be covered by `k` lines".
 
 The points are listed explicitly, each as a pair of integer coordinates, each integer a pair
 `(p, q)` of naturals standing for `p - q`, decoded by `GeometricTravelingSalesman.point` (reused
-from `GeometricTravelingSalesmanWanted`). `P` is a set, so the decoded points are distinct. A
+from `GeometricTravelingSalesmanDefs`). `P` is a set, so the decoded points are distinct. A
 point `(x, y)` is placed in the real plane `ℝ × ℝ`; a straight line is Mathlib's
 `line[ℝ, a, b]` (the affine span of two distinct points `a ≠ b`). A family of `K` lines may
 repeat a line, so "at most `K` lines" is a family indexed by `Fin K`. A bound `K ≥ |P|` makes

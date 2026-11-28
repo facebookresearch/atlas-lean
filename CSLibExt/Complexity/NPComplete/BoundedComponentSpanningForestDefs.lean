@@ -6,8 +6,30 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Computability.Complexity.Defs
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Computability.Complexity.Karp.Color
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+
+/-!
 # BOUNDED COMPONENT SPANNING FOREST: definitions
+
+INSTANCE: a graph `G = (V, E)`, a weight `w(v) ∈ ℤ₀⁺` for each `v ∈ V`, and positive integers
+`K ≤ |V|` and `B`. QUESTION: can the vertices in `V` be partitioned into `k ≤ K` disjoint sets
+`V₁, ..., V_k` such that, for `1 ≤ i ≤ k`, the subgraph of `G` induced by `Vᵢ` is connected and
+the sum of the weights of the vertices in `Vᵢ` does not exceed `B`?
+
+The partition is a surjective block map `c : Fin n → Fin k` (parts are nonempty, as Mathlib's
+`SimpleGraph.Connected` requires); each part induces a connected subgraph (`SimpleGraph.induce`)
+and has weight at most `B`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -18,14 +40,6 @@ Southeastern Conference on Combinatorics, Graph Theory and Computing, Utilitas M
 connected subgraphs", Discrete Applied Mathematics 10 (1985), 139-153,
 doi:10.1016/0166-218X(85)90008-3.
 -/
-module
-
-public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 
 @[expose] public section
 

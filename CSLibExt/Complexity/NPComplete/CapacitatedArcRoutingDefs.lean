@@ -6,8 +6,37 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Computability.Complexity.Defs
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Computability.Complexity.Karp.Color
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
+
+/-!
 # CAPACITATED ARC ROUTING: definitions
+
+INSTANCE: an undirected graph `G = (V, E)`, a vehicle depot vertex `v₀ ∈ V`, edge costs
+`c(e) ≥ 0` and edge demands `d(e) ≥ 0` for every `e ∈ E`, a vehicle capacity `W`, and a bound
+`B`. QUESTION: is there a collection of routes, each a closed walk in `G` through the depot
+`v₀` (the route of one vehicle), and a serving assignment, such that each route serves a set
+of edges on it of total demand at most `W`, each edge `e` with `d(e) > 0` is served by exactly
+one route, and the total cost of the routes is at most `B`?
+
+This is the decision version of the optimization problem of Golden and Wong, as stated by
+van Bevern, Hartung, Nichterlein, and Sorge. A route may traverse an edge without serving it,
+and may traverse an edge several times; its cost counts the cost of every traversal. Routes
+are given as a family indexed by the vehicles `Fin m` (two vehicles may drive the same walk),
+each a Mathlib `SimpleGraph.Walk v₀ v₀`. The serving assignment maps every edge to the vehicle
+that serves it; an edge of demand `0` need not lie on that route and adds `0` to its load, so
+only the edges with `d(e) > 0` are constrained, as in the source. Binary encoding of all
+numbers.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 B. L. Golden and R. T. Wong, "Capacitated arc routing problems", Networks 11 (1981), 305-315,
@@ -19,14 +48,6 @@ M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the The
 NP-Completeness*, W. H. Freeman (1979), problem [ND27] RURAL POSTMAN (the special case with
 unbounded capacity; J. K. Lenstra and A. H. G. Rinnooy Kan, Networks 6 (1976), 273-280).
 -/
-module
-
-public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
 
 @[expose] public section
 

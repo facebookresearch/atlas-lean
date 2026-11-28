@@ -42,4 +42,16 @@ example :
   exact (by decide : ¬ (3 : Nat) ≤ 2)
     (h.2.2.1 0 (by decide) 2 (by decide) 1 (by decide))
 
+/-- Traversing the edge in each direction gives a two-city tour of total length two. -/
+example : metricTravelingSalespersonDec (bitEncode ((2, [[0, 1], [1, 0]], 2) : TspInstance)) =
+    true := by
+  let i : TspInstance := (2, [[0, 1], [1, 0]], 2)
+  have hw : WellFormed i := by
+    unfold WellFormed Tsp.WellFormed
+    decide
+  have hf : Tsp.TspFeasible i := by
+    refine ⟨[0, 1], ?_, ?_, ?_, ?_⟩ <;> decide
+  change metricTravelingSalespersonDec (bitEncode i) = true
+  simp [metricTravelingSalespersonDec, hw, hf]
+
 end MetaMathlibExt.Complexity.NPComplete.MetricTravelingSalesperson

@@ -6,8 +6,38 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanDefs
+
+/-!
 # HIROIMONO (Goishi Hiroi): definitions
+
+Andersson, Definition 1: "HIROIMONO is the problem of deciding for a given nonempty list of
+distinct points in `Z²` representing a set of stones on the Cartesian grid, whether the
+corresponding Hiroimono puzzle is solvable under rules (1-4)", where the puzzle asks to "move
+along the grid lines and collect all the stones, while respecting the following rules: (1) We may
+start at any stone. (2) When a stone is encountered, we must pick it up. (3) We may change
+direction only when we pick up a stone. (4) We may not make 180° turns." Theorem 1 proves it
+NP-complete (by a reduction from 3-SAT; membership is "obvious").
+
+A solution is recorded by the order in which the stones are picked up, a permutation `order` of
+the stones. By rule (3) the path between two consecutive pickups `order[k]` and `order[k + 1]`
+is a straight move along one grid line, so the two stones share a row or a column; by rule (2)
+every stone strictly between them on that line has already been picked up (it is among
+`order.take k`), since otherwise it would be encountered first; by rule (4) the move from
+`order[k]` to `order[k + 1]` does not reverse the move into `order[k]` (the componentwise signs
+of the two displacement vectors are not opposite). Rule (1) leaves the first stone free.
+
+Points of `Z²` are encoded as pairs of encoded integers `(p, q) ↦ p - q`, the encoding
+`GeometricTravelingSalesman.point` of
+`WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 D. Andersson, "HIROIMONO is NP-complete", BRICS Report Series RS-07-1, University of Aarhus
@@ -15,11 +45,6 @@ D. Andersson, "HIROIMONO is NP-complete", BRICS Report Series RS-07-1, Universit
 Algorithms (FUN 2007), Lecture Notes in Computer Science 4475 (2007), 30-39,
 doi:10.1007/978-3-540-72914-3_5).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanDefs
 
 @[expose] public section
 

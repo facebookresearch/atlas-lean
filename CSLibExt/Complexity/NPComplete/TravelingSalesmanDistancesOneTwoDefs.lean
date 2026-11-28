@@ -6,8 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TspDefs
+
+/-!
 # TRAVELING SALESMAN with distances 1 and 2: definitions
+
+INSTANCE: a set `C` of `m` cities, a distance `d(cᵢ, cⱼ) ∈ {1, 2}` for each pair of distinct
+cities, and a positive integer `B`. QUESTION: is there a tour of `C` having length `B` or less,
+i.e., a permutation `⟨c_π(1), ..., c_π(m)⟩` of `C` with
+`∑_{i < m} d(c_π(i), c_π(i+1)) + d(c_π(m), c_π(1)) ≤ B`?
+
+This is TRAVELING SALESMAN (`WantedExt.Complexity.NPComplete.TspWanted`, Garey and Johnson
+[ND22]) restricted as in the [ND22] comment: "Remains NP-complete even if `d(cᵢ, cⱼ) ∈ {1,2}`
+for all `cᵢ, cⱼ ∈ C`." Garey and Johnson give no separate reference: the entry's
+transformation from HAMILTONIAN CIRCUIT (NP-complete by Karp (1972)) already yields such
+instances, with distance `1` between adjacent and `2` between non-adjacent vertices and
+`B = m`, so that a tour of length `m` uses only edges of the graph. Papadimitriou and
+Yannakakis (1993) study this special case as TSP(1,2).
+
+The instance (city count `m`, distance matrix, bound), `Tsp.WellFormed` (`0 < m`, a symmetric
+`m × m` matrix with zero diagonal) and `Tsp.TspFeasible` are reused unchanged; the restriction
+adds to well-formedness that the distance between distinct cities is `1` or `2`, and Garey and
+Johnson's positive bound `B`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,11 +45,6 @@ Computations*, Plenum (1972), 85-103, doi:10.1007/978-1-4684-2001-2_9 (HAMILTONI
 C. H. Papadimitriou and M. Yannakakis, "The traveling salesman problem with distances one and
 two", Mathematics of Operations Research 18 (1993), 1-11, doi:10.1287/moor.18.1.1.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.TspDefs
 
 @[expose] public section
 

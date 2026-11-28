@@ -6,8 +6,36 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.BottleneckTravelingSalesmanDefs
+
+/-!
 # METRIC BOTTLENECK WANDERING SALESPERSON: definitions
+
+INSTANCE: a set `C` of `m` cities, an initial city `s ∈ C`, a final city `f ∈ C`, distances
+`d(cᵢ, cⱼ) ∈ ℕ` satisfying the triangle inequality (a metric), and a positive integer `K`.
+QUESTION: is there a simple path from `s` to `f` through all cities of `C`, i.e. a permutation
+`c_π(1), …, c_π(m)` of `C` with `c_π(1) = s` and `c_π(m) = f`, whose largest distance
+`max_{1 ≤ i < m} d(c_π(i), c_π(i+1))` is at most `K`?
+
+This is the decision version of MINIMUM METRIC BOTTLENECK WANDERING SALESPERSON PROBLEM in the
+compendium of Crescenzi and Kann. With distances `1` and `2` (a metric) and `K = 1`, the
+question is whether the graph of the pairs at distance `1` has a Hamiltonian path from `s` to
+`f`.
+
+The instance extends the one of `BottleneckTravelingSalesmanWanted` (number of cities `m`,
+distance matrix, bound `K`; `BottleneckTravelingSalesman.dist` reads the matrix) with `s` and
+`f`. The cities are `0, …, m - 1` with `m ≥ 1`; the distances form an `m × m` symmetric matrix
+with zero diagonal and positive off-diagonal entries (`BottleneckTravelingSalesman.WellFormed`),
+so they are a metric when they also satisfy the triangle inequality. A path is a permutation of
+the cities, given as a list.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
@@ -20,11 +48,6 @@ NP-Completeness*, W. H. Freeman (1979), problem [GT39] HAMILTONIAN PATH BETWEEN 
 special case with distances 1 and 2 described below); the tour version is [ND24] BOTTLENECK
 TRAVELING SALESMAN.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.BottleneckTravelingSalesmanDefs
 
 @[expose] public section
 
@@ -33,8 +56,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.MetricBottleneckWanderingSalesper
 open BottleneckTravelingSalesman (BottleneckTravelingSalesmanInstance dist)
 
 /-- An instance: the number of cities `m`, the distance matrix and the bound `K`
-(`BottleneckTravelingSalesmanWanted`'s instance), the initial city `s`, and the final city
-`f`. -/
+(`BottleneckTravelingSalesman.BottleneckTravelingSalesmanInstance`), and the initial and final
+cities `s` and `f`. -/
 abbrev MetricBottleneckWanderingSalespersonInstance :=
   BottleneckTravelingSalesmanInstance × ℕ × ℕ
 

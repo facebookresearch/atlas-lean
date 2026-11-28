@@ -6,8 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TspDefs
+
+/-!
 # METRIC TRAVELING SALESPERSON: definitions
+
+INSTANCE: a set `C` of `m` cities, a distance `d(cᵢ, cⱼ) ∈ ℤ⁺` for each pair of distinct cities,
+satisfying the triangle inequality, and a positive integer `B`.
+QUESTION: is there a tour of `C`, i.e. a permutation `π` of the cities, of length
+`∑ᵢ d(c_π(i), c_π(i+1)) + d(c_π(m), c_π(1)) ≤ B`?
+
+This is TRAVELING SALESPERSON (`TspWanted`, Garey and Johnson [ND22]) restricted to distances
+that satisfy the triangle inequality `d(a, c) ≤ d(a, b) + d(b, c)`, the decision version of the
+compendium's MINIMUM METRIC TRAVELING SALESPERSON PROBLEM. Garey and Johnson record that TSP
+remains NP-complete when every distance is `1` or `2`; such distances satisfy the triangle
+inequality (`2 ≤ 1 + 1`), so the hard instances (from HAMILTONIAN CIRCUIT, NP-complete by Karp,
+"Reducibility among combinatorial problems" (1972): distance `1` on edges, `2` on non-edges,
+`B = m`) are metric. The instance (city count, symmetric distance matrix with zero
+diagonal, bound), the parent's well-formedness and the question are those of `TspDefs`; the
+restriction adds to `WellFormed` Garey and Johnson's positive distances between distinct cities
+(`d(cᵢ, cⱼ) ∈ ℤ⁺`), the triangle inequality, and their positive bound `B` (the zero diagonal is
+the parent's encoding of the distance from a city to itself).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,11 +44,6 @@ HAMILTONIAN CIRCUIT);
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
 2000), MINIMUM METRIC TRAVELING SALESPERSON PROBLEM.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.TspDefs
 
 @[expose] public section
 

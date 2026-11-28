@@ -6,16 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# BOUNDED DIAMETER AUGMENTATION: definitions
-
-Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
-(2000), problem MINIMUM BOUNDED DIAMETER AUGMENTATION;
-C.-L. Li, S. T. McCormick and D. Simchi-Levi, "On the minimum-cardinality-bounded-diameter and
-the bounded-cardinality-minimum-diameter edge addition problems", Operations Research Letters
-11 (1992), 303-308, doi:10.1016/0167-6377(92)90007-P.
--/
 module
 
 public import CSLibExt.Computability.Complexity.Defs
@@ -24,6 +14,49 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Diam
 public import Mathlib.Data.Set.Card
+
+/-!
+# BOUNDED DIAMETER AUGMENTATION: definitions
+
+INSTANCE: a graph `G = (V, E)`, a positive integer `D < |V|`, and a positive integer `K`.
+QUESTION: is there an augmenting set `E'` for `G`, a set of unordered pairs of vertices from `V`,
+such that `G' = (V, E ∪ E')` has diameter at most `D` (the maximum distance of any pair of
+vertices is at most `D`) and `|E'| ≤ K`?
+
+This is the decision version, with bound `K`, of Crescenzi and Kann's MINIMUM BOUNDED
+DIAMETER AUGMENTATION, the minimum-cardinality-bounded-diameter (MCBD) edge addition problem of
+Li, McCormick and Simchi-Levi (1992): "Given a graph `G = (V, E)`, positive integer `D < |V|`
+[…], find a superset of edges `E′ ⊇ E` such that the graph `G′ = (V, E′)` has diameter no greater
+than `D` and the total number of the new edges is minimized." They prove MCBD NP-hard even
+when `D = 2`. It is in NP: the added edges, at most `|V|²` of them, are a certificate, and the
+diameter is computed by breadth-first search.
+
+The graph is given by its number of vertices `n = |V|`, written in unary as the length of a
+list `[true, …, true]` (as the bound in `BoundedStripsPlanningWanted`), and an edge list on
+`Fin n`. A graph is given with its vertex set, so the input length is at least `|V|`; a binary
+`n` would make the problem succinct, since an edgeless graph on `2^m` vertices would take `O(m)`
+bits while every augmenting set reaching finite diameter has at least `2^m - 1` pairs.
+
+The augmenting set is a `SimpleGraph (Fin n)` `H`, `G'` is `G ⊔ H`, and `|E'|` is
+`H.edgeSet.ncard`. Pairs `{v, v}` cannot shorten a distance and pairs already in `E` change
+nothing in `G ⊔ H`, so dropping them keeps a solution; counting all edges of `H` therefore gives
+the same answer as counting only the new ones. The diameter is
+Mathlib's `SimpleGraph.ediam`, the supremum of the distances `SimpleGraph.edist`, which is `⊤`
+for a disconnected graph. `K` is a positive integer, following the Garey-Johnson convention for
+decision versions; for `K = 0` the question is whether `G` itself has diameter at most `D`,
+which breadth-first search decides.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+Source:
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
+(2000), problem MINIMUM BOUNDED DIAMETER AUGMENTATION;
+C.-L. Li, S. T. McCormick and D. Simchi-Levi, "On the minimum-cardinality-bounded-diameter and
+the bounded-cardinality-minimum-diameter edge addition problems", Operations Research Letters
+11 (1992), 303-308, doi:10.1016/0167-6377(92)90007-P.
+-/
 
 @[expose] public section
 

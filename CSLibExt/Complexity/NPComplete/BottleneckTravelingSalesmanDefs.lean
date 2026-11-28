@@ -6,8 +6,27 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # BOTTLENECK TRAVELING SALESMAN: definitions
+
+Given a set `C` of `m` cities, a distance `d(cᵢ, cⱼ) ∈ Z⁺` for each pair of cities, and a
+positive integer `B`, is there a tour of `C` whose longest edge is no longer than `B`, i.e.,
+a permutation `⟨c_π(1), ..., c_π(m)⟩` of `C` with `d(c_π(i), c_π(i+1)) ≤ B` for `1 ≤ i < m`
+and `d(c_π(m), c_π(1)) ≤ B`?
+
+The cities are `0, ..., m - 1` with `m ≥ 1`, and the distances are an `m × m` symmetric
+matrix with positive off-diagonal entries and zero diagonal (the diagonal only enters the
+return edge of the one-city tour), as in `TspDefs`. A tour is a permutation of the cities,
+given as a list.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -15,10 +34,6 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [ND24] BOTTLENECK TRAV
 SALESMAN (transformation from HAMILTONIAN CIRCUIT; NP-complete even with all distances in
 `{1, 2}`).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

@@ -6,8 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Algorithms.Lean.SortingNetworks.ZeroOne
+public import Mathlib.Data.Int.Order.Basic
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # DEFECTIVE SORTING NETWORK: definitions
+
+INSTANCE: a sequence `x₁, x₂, …, xₙ` of input variables and a program `P` consisting of a
+sequence of statements of the form "if `xᵢ ≥ xⱼ`, then interchange their values", where `i < j`.
+QUESTION: is there an input to program `P` which `P` fails to sort into nondecreasing order,
+i.e., are there integer input values `xᵢ = zᵢ`, `1 ≤ i ≤ n`, and an index `k`, `1 ≤ k < n`,
+such that, after program `P` has been executed, `x_k > x_{k+1}`?
+
+The program is a comparator network in the sense of
+`CSLibExt.Algorithms.Lean.SortingNetworks.ZeroOne` (Knuth, *The Art of Computer Programming*,
+Vol. 3, Section 5.3.4, as in Johnson's column): the comparator `(i, j)`
+(`Cslib.Algorithms.Lean.SortingNetworks.comparator`) puts the minimum of wires `i` and `j` on
+wire `i` and the maximum on wire `j`, which for `i < j` is the statement "if `xᵢ ≥ xⱼ`, then
+interchange their values" (an interchange of equal values changes nothing), and `run` executes
+the statements in order. The question is the negation of `Sorts (network i) ℤ`: some integer
+input has an output that is not monotone in the wire order. For outputs indexed by `Fin n`,
+monotone is equivalent to `x_k ≤ x_{k+1}` for all consecutive `k` (`Fin.monotone_iff_le_succ`),
+so this is the source's question.
+
+The variables are indexed `0, …, n - 1` and the program is a list of index pairs `(i, j)`;
+`WellFormed` asks `i < j < n` for every statement (statements may repeat). Membership in NP:
+the certificate is the input (by the 0-1 principle, a `0`/`1` input suffices).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 D. S. Johnson, "The NP-completeness column: an ongoing guide", Journal of Algorithms 3(3)
@@ -19,12 +51,6 @@ I. Parberry, "On the computational complexity of optimal sorting network verific
 (1991), 252-269, doi:10.1007/978-3-662-25209-3_18 (problem NONSORT: "Is there an input which C
 does not sort?", proved NP-complete).
 -/
-module
-
-public import CSLibExt.Algorithms.Lean.SortingNetworks.ZeroOne
-public import Mathlib.Data.Int.Order.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

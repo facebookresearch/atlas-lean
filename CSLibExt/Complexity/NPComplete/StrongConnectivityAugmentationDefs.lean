@@ -6,8 +6,30 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Combinatorics.Digraph.Basic
+public import Mathlib.Logic.Relation
+
+/-!
 # STRONG CONNECTIVITY AUGMENTATION: definitions
+
+Given a directed graph `G = (V, A)`, a weight `w(u, v) ∈ Z⁺` for each ordered pair
+`(u, v) ∈ V × V`, and a positive integer `B`, is there a set `A'` of ordered pairs of
+vertices from `V` such that `∑_{a ∈ A'} w(a) ≤ B` and the graph `G' = (V, A ∪ A')` is
+strongly connected?
+
+The vertices are `0, ..., n - 1`; as in the repository's other directed-graph problems,
+`G` has no loops. The weights are an `n × n` matrix of positive entries. `A'` is a list of
+ordered pairs of vertices; listing a pair twice only adds its weight twice. Strong
+connectivity: every vertex reaches every vertex along arcs of `G'`
+(`Relation.ReflTransGen` of the adjacency of a Mathlib `Digraph`).
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -16,12 +38,6 @@ AUGMENTATION;
 K. P. Eswaran and R. E. Tarjan, "Augmentation problems", SIAM Journal on Computing 5 (1976),
 653-665, doi:10.1137/0205044.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Logic.Relation
 
 @[expose] public section
 

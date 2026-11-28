@@ -6,8 +6,41 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import MathlibExt.Combinatorics.Graph.MaxFlowMinCut
+
+/-!
 # MINIMUM QUADRATIC-COST FLOW: definitions
+
+INSTANCE: a directed graph `G = (V, A)`, specified vertices `s` and `t`, a capacity
+`c(a) ∈ ℤ⁺` and integer coefficients `p₁(a), p₂(a)` for each `a ∈ A`, a requirement `R ∈ ℤ⁺`, and a
+bound `B ∈ ℤ⁺`.
+QUESTION: is there a flow function `f : A → ℤ₀⁺` such that (1) `f(a) ≤ c(a)` for all `a ∈ A`,
+(2) flow is conserved at each `v ∈ V - {s, t}`, (3) the net flow into `t` is at least `R`, and
+(4') `∑_{a ∈ A} (p₁(a) f(a)² + p₂(a) f(a)) ≤ B`?
+
+This is MINIMUM EDGE-COST FLOW ([ND32], `MinimumEdgeCostFlowWanted`) with condition (4), a bound
+on the total price of the arcs carrying flow, replaced by the quadratic cost bound (4'), as in
+Garey and Johnson's comment. With a linear cost `∑ p(a) f(a)` the problem is solvable in
+polynomial time; the quadratic cost makes it NP-complete again. Garey and Johnson do not restrict
+the signs of `p₁, p₂`, and the coefficients are arbitrary integers here: with `p₁ ≥ 0` the cost is
+separable convex, and integral convex-cost flow is solvable in polynomial time, so the hardness
+lies in the concave terms. (For instance, on an arc of capacity `2` the cost `-p f² + 3 p f` is
+`0` at `f = 0` and `2p` at `f = 1, 2`, twice the fixed charge `p` of MINIMUM EDGE-COST FLOW, which
+[ND32] records as NP-complete for capacities `2` and prices `p ∈ {0, 1}`.) Integers are encoded as
+pairs `(positive part, negative part)` (`intOf`), as in `ZeroOneILPWanted`.
+
+Vertices are `0, ..., n - 1`, and arcs are listed as `(tail, head, capacity, p₁, p₂)`. A flow is
+a function `f : Fin n → Fin n → ℕ`; conditions (1) and (2) are MathlibExt's `IsFeasibleFlow` for
+the capacity `(arcData i u v).1` (`0` off the arcs, so `f` vanishes there), as in
+`DirectedTwoCommodityIntegralFlowWanted`. Numbers use the binary encoding.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -15,11 +48,6 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [ND32] MINIMUM EDGE-CO
 comment "However, becomes NP-complete once more if (4) is replaced by
 ∑_{a ∈ A} (p₁(a) f(a)² + p₂(a) f(a)) ≤ B" (credited there to P. P. Herrmann, 1973).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.Graph.MaxFlowMinCut
 
 @[expose] public section
 

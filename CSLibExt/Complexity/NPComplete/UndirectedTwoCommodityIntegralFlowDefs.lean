@@ -6,8 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import CSLibExt.Computability.Complexity.Defs
+public import CSLibExt.Computability.Complexity.Karp.Color
+public import MathlibExt.Combinatorics.Graph.MaxFlowMinCut
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # UNDIRECTED TWO-COMMODITY INTEGRAL FLOW: definitions
+
+INSTANCE: a graph `G = (V, E)`, specified vertices `s₁`, `s₂`, `t₁`, `t₂`, a capacity
+`c(e) ∈ ℤ⁺` for each `e ∈ E`, and requirements `R₁, R₂ ∈ ℤ⁺`. QUESTION: are there two flow
+functions `f₁, f₂ : {(u, v), (v, u) : {u, v} ∈ E} → ℤ₀⁺` such that, for each `{u, v} ∈ E`,
+`f₁(u, v) + f₁(v, u) + f₂(u, v) + f₂(v, u) ≤ c({u, v})`, each `fᵢ` is conserved at every vertex
+other than `sᵢ` and `tᵢ`, and the net flow of `fᵢ` into `tᵢ` is at least `Rᵢ`, for `i = 1, 2`?
+
+The vertices are `0, ..., n - 1`. Each edge is a record `(u, v, c)`: the edge `{u, v}` with
+capacity `c`; there are no self-loops and at most one record per unordered pair. Commodity `i`
+is the triple `(sᵢ, tᵢ, Rᵢ)`. A flow is a function `f : Fin n → Fin n → ℕ` (integral and
+nonnegative) on ordered pairs. Each commodity's flow is checked with `IsFeasibleFlow` from
+`MathlibExt.Combinatorics.Graph.MaxFlowMinCut` against the symmetric capacity `capacity`
+(`c({u, v})` on both orientations of an edge, `0` elsewhere), so it vanishes off the two
+orientations of the edges and is conserved at every vertex other than its own source and sink.
+The joint capacity condition and the requirement on the net flow into `tᵢ` are stated directly.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,13 +44,6 @@ S. Even, A. Itai, and A. Shamir, "On the complexity of timetable and
 multicommodity flow problems", SIAM Journal on Computing 5 (1976), 691-703,
 doi:10.1137/0205048.
 -/
-module
-
-public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.Graph.MaxFlowMinCut
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

@@ -6,19 +6,45 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# UNCONSTRAINED TRAVELING TOURNAMENT PROBLEM: definitions
-
-Source:
-R. Bhattacharyya, "Complexity of the unconstrained traveling tournament problem", Operations
-Research Letters 44(5) (2016), 649-654, doi:10.1016/j.orl.2016.07.011, Theorem 1.1.
--/
 module
 
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Group.Nat.Even
+
+/-!
+# UNCONSTRAINED TRAVELING TOURNAMENT PROBLEM: definitions
+
+INSTANCE: an even number `n` of teams, an `n × n` matrix `D` of distances between their home
+venues, and an integer `K`.
+QUESTION: is there a double round robin league schedule of the `n` teams with total distance
+traveled by all the teams at most `K`?
+
+A double round robin league schedule has `2(n - 1)` rounds; in every round each team plays
+exactly one match, at home or away, and each team plays every other team twice, once at home
+and once away. No bound is put on the number of consecutive home or away matches (that is what
+"unconstrained" means). Each team starts at its home venue, travels to the venue of each of its
+matches in turn (the home venue of the team it plays away), and returns home after the last
+round; the total distance is the sum over all teams. Bhattacharyya assumes without loss of
+generality that `D` is a metric; `WellFormed` requires `D` symmetric with zero diagonal and
+satisfying the triangle inequality, and allows distance `0` between distinct teams, because his
+reduction from (1,2)-TSP places many teams at the same vertex ("(m + 1)(10m + 9) teams are
+placed at vertex u"). Distances and `K` are natural numbers; binary encoding.
+
+A schedule is given by `opp t r`, the opponent of team `t` in round `r`, and `home t r`, whether
+`t` plays at home in round `r` (teams `0, …, n - 1`, rounds `0, …, 2n - 3`).
+`IsDoubleRoundRobin` and `totalTravel` are stated for any distance function, for reuse by
+other traveling tournament variants.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+Source:
+R. Bhattacharyya, "Complexity of the unconstrained traveling tournament problem", Operations
+Research Letters 44(5) (2016), 649-654, doi:10.1016/j.orl.2016.07.011, Theorem 1.1.
+-/
 
 @[expose] public section
 

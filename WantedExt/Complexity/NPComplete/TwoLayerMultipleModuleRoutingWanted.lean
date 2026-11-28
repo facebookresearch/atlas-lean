@@ -40,7 +40,7 @@ grid segments is contained in any of the modules, (2) for each `i`, the segments
 a tree whose leaves are the points in net `Nᵢ`, and (3) no two trees `Tᵢ` and `Tⱼ` have any
 non-orthogonal intersections?
 
-The column states TWO-LAYER CHANNEL ROUTING ([8], `TwoLayerChannelRoutingWanted`) through
+The column states TWO-LAYER CHANNEL ROUTING ([8], `TwoLayerChannelRoutingDefs`) through
 properties (2) and (3) of this problem, so this file reuses that file's grid, the hypercubic
 lattice `StatMech.Lattice.hypercubicLattice 2` on `ℤ²` (a point `v` has `x`-coordinate `v 0` and
 `y`-coordinate `v 1`), its leaves (`IsLeaf`), its orthogonal intersections (`RunsVertically`,
