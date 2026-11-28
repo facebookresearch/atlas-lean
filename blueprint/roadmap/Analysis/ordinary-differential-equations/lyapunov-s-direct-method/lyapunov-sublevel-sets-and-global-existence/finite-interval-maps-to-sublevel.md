@@ -1,0 +1,3 @@
+# Sublevel sets are invariant on a finite interval
+
+Let $E$ be a real normed space, $V : E \to \mathbb{R}$, $\gamma : \mathbb{R} \to E$, $f : \mathbb{R} \times E \to E$ and $a \le b$. Suppose $V \circ \gamma$ is continuous on $[a, b]$ and, for every $t \in (a, b)$, $\gamma$ is differentiable at $t$ with $\gamma'(t) = f(t, \gamma(t))$, $V$ is differentiable at $\gamma(t)$, and $DV(\gamma(t))\,f(t, \gamma(t)) \le 0$. If $V(\gamma(a)) \le c$, then $V(\gamma(t)) \le c$ for every $t \in [a, b]$: $\gamma$ maps $[a, b]$ into the sublevel set $\{x : V(x) \le c\}$. This follows from the [monotonicity of $V$ along the path](finite-interval-antitone-on-v-comp.md).

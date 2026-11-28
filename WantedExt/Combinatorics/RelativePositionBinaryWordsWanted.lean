@@ -202,27 +202,6 @@ public theorem_wanted letterPosition_prepend_equilibrious (u : List Bool) {k : �
       letterPosition (u ++ₛ w) false (n + k) = letterPosition w false n + 2 * k ∧
       relativePosition (u ++ₛ w) (n + k) = relativePosition w n
 
-open Filter Topology in
-/-- **Letter frequency and growth of letter positions.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be
-an infinite word over the letters $a$ and $b$ in which both letters occur infinitely often, and
-let $\alpha$ be a letter. Write $\#_\alpha(m)$ for the number of occurrences of $\alpha$ among
-$\ell_0, \ldots, \ell_{m-1}$, and for $n \ge 1$ write $p_\alpha(n)$ for the position of the
-$n$-th occurrence of $\alpha$ in $w$, counting positions from $0$. Then (a) for every real $d$
-with $0 < d \le 1$, $\#_\alpha(m)/m \to d$ as $m \to \infty$ if and only if
-$p_\alpha(n)/n \to 1/d$ as $n \to \infty$; and (b) $\#_\alpha(m)/m \to 0$ as $m \to \infty$ if and
-only if $p_\alpha(n)/n \to \infty$ as $n \to \infty$.
-
-Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
-Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 28
-(`jis-2025-25.1.5-lem-28`). -/
-public theorem_wanted tendsto_letterCount_div_iff_tendsto_letterPosition_div {w : ℕ → Bool}
-    (hw : BothLettersInfinite w) (α : Bool) :
-    (∀ d : ℝ, 0 < d → d ≤ 1 →
-      (Tendsto (fun m : ℕ => (letterCount w α m : ℝ) / m) atTop (𝓝 d) ↔
-        Tendsto (fun n : ℕ => (letterPosition w α n : ℝ) / n) atTop (𝓝 (1 / d)))) ∧
-      (Tendsto (fun m : ℕ => (letterCount w α m : ℝ) / m) atTop (𝓝 0) ↔
-        Tendsto (fun n : ℕ => (letterPosition w α n : ℝ) / n) atTop atTop)
-
 open Filter in
 /-- **Upper and lower densities of a letter from its position function.** Let $w$ be an infinite
 binary word in which both letters occur infinitely often and let $\alpha$ be a letter. Write

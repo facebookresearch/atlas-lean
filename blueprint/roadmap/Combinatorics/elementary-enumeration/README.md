@@ -8,5 +8,6 @@ Counting basic objects under simple constraints: subsets, multisets and function
 - [Fibre and double counting](fibre-and-double-counting/README.md)
 - [Functions with prescribed values](functions-with-prescribed-values/README.md)
 - [Necklaces over a group with identity product](necklaces-over-a-group-with-identity-product/README.md)
+- [Rectangles in the Boolean cube](rectangles-in-the-boolean-cube/README.md)
 - [Schreier sets](schreier-sets/README.md)
 - [Special counting sequences](special-counting-sequences/README.md)

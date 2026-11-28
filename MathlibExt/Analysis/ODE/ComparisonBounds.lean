@@ -47,8 +47,8 @@ theorem le_of_lt_on_eq {f f' B B' : ℝ → ℝ} {T : ℝ}
     (fun t ht ↦ (hB t ht).continuousAt.continuousWithinAt)
     (fun t ht ↦ (hB t (Ico_subset_Icc_self ht)).hasDerivWithinAt) hbd
 
-/-- One-sided decay estimate: if `w' = -a w + g` with `a ≥ λ > 0` and `g ≤ G`, then
-`w(t) ≤ |w(0)| e^{-λ t} + G/λ`. -/
+/-- One-sided decay estimate: if `w' = -a w + g`, `a ≥ λ > 0` and `g ≤ G` on `t ≥ 0`, with
+`G ≥ 0`, then `w(t) ≤ |w(0)| e^{-λ t} + G/λ` for every `t ≥ 0`. -/
 theorem le_of_decay {w a g : ℝ → ℝ} {lam G : ℝ} (hlam : 0 < lam) (hG : 0 ≤ G)
     (hw : ∀ t, 0 ≤ t → HasDerivAt w (-a t * w t + g t) t)
     (ha : ∀ t, 0 ≤ t → lam ≤ a t) (hg : ∀ t, 0 ≤ t → g t ≤ G) {t : ℝ} (ht : 0 ≤ t) :
@@ -71,8 +71,8 @@ theorem le_of_decay {w a g : ℝ → ℝ} {lam G : ℝ} (hlam : 0 < lam) (hG : 0
   rw [h3]
   nlinarith [mul_pos hlam hδ]
 
-/-- Two-sided decay estimate: if `w' = -a w + g` with `a ≥ λ > 0` and `|g| ≤ G`, then
-`|w(t)| ≤ |w(0)| e^{-λ t} + G/λ`. -/
+/-- Two-sided decay estimate: if `w' = -a w + g`, `a ≥ λ > 0` and `|g| ≤ G` on `t ≥ 0`, then
+`|w(t)| ≤ |w(0)| e^{-λ t} + G/λ` for every `t ≥ 0`. -/
 theorem abs_le_of_decay {w a g : ℝ → ℝ} {lam G : ℝ} (hlam : 0 < lam)
     (hw : ∀ t, 0 ≤ t → HasDerivAt w (-a t * w t + g t) t)
     (ha : ∀ t, 0 ≤ t → lam ≤ a t) (hg : ∀ t, 0 ≤ t → |g t| ≤ G) {t : ℝ} (ht : 0 ≤ t) :
@@ -87,8 +87,8 @@ theorem abs_le_of_decay {w a g : ℝ → ℝ} {lam G : ℝ} (hlam : 0 < lam)
     linarith
   · exact le_of_decay hlam hG hw ha (fun r hr ↦ (le_abs_self _).trans (hg r hr)) ht
 
-/-- One-sided drift estimate: if `d' ≤ h` wherever `d ≥ 0`, and `H' = h`, `H(0) = 0`,
-`H ≥ 0`, then `d(t) ≤ |d(0)| + H(t)`. -/
+/-- One-sided drift estimate: if, on `t ≥ 0`, `d' ≤ h` wherever `d ≥ 0`, `H' = h` and `H ≥ 0`,
+with `H(0) = 0`, then `d(t) ≤ |d(0)| + H(t)` for every `t ≥ 0`. -/
 theorem le_of_drift {d d' H h : ℝ → ℝ}
     (hd : ∀ t, 0 ≤ t → HasDerivAt d (d' t) t) (hH : ∀ t, 0 ≤ t → HasDerivAt H (h t) t)
     (hH0 : H 0 = 0) (hHnn : ∀ t, 0 ≤ t → 0 ≤ H t)

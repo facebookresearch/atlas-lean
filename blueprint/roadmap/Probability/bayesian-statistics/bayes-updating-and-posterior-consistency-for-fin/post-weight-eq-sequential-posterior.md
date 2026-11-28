@@ -1,0 +1,3 @@
+# Posterior weights are the sequential posterior
+
+Let $\Theta$ be a finite set, $\pi : \Theta \to \mathbb{R}$ prior weights, $f : \Theta \times \mathcal X \to \mathbb{R}$ likelihoods and $X_0, X_1, \dots$ observations in $\mathcal X$. Write $w_n(\theta) = \pi(\theta)\prod_{i<n} f(\theta, X_i) / \sum_{\theta'} \pi(\theta')\prod_{i<n} f(\theta', X_i)$ for the posterior weight after $n$ observations (with $x/0 = 0$). If $\pi \ge 0$, $\sum_\theta \pi(\theta) = 1$ and $f \ge 0$, then $w_n$ is the sequential posterior of $\pi$ on the likelihoods $f(\cdot, X_0), \dots, f(\cdot, X_{n-1})$, for every $n$ and every sample.

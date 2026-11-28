@@ -15,7 +15,7 @@ gates are products of $H$, $S$ and CNOT.
 
 ## Depends on
 
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
 - [Unitary evolution and elementary gates](../../quantum-foundations/unitary-evolution-and-elementary-gates.md)
 
 ## Proof depends on
@@ -23,6 +23,7 @@ gates are products of $H$, $S$ and CNOT.
 - [Conjugation of Pauli operators by $H$, $S$ and CNOT](conjugation-of-pauli-operators-by-h-s-and-cnot.md)
 - [A unitary is determined up to phase by its conjugation action on Pauli operators](unitary-determined-up-to-phase-by-conjugation-of-paulis.md)
 - [Stabilizer measurement rule](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-measurement-rule.md)
+- [One- and two-qubit Clifford gates are products of $H$, $S$ and CNOT](one-and-two-qubit-clifford-gates-from-h-s-and-cnot.md)
 
 ## Sources
 
