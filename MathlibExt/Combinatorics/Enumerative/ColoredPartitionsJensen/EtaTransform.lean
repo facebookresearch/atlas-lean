@@ -1,19 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`PartitionsJensen/EtaTransform.lean`
-(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
 Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: Sky (GitHub: ChironTheCentaur)
+
+Adapted from `PartitionsJensen/EtaTransform.lean` of
+https://github.com/ChironTheCentaur/rh-lab-partitions-jensen at commit
+57beb8dbff7b84e125931fe2e53080f325f4f108.
 -/
 
 module
@@ -218,8 +210,8 @@ private theorem norm_partGen_sub_one_le {q : ℂ} (hq : ‖q‖ ≤ 1 / 8) : ‖
 `‖E‖ ≤ 4 e^{−Re(4π²/τ)}`. -/
 private theorem partGen_main {τ : ℂ} (hτ : 0 < τ.re) (hd : 3 ≤ (4 * π ^ 2 / τ).re) :
     ∃ E : ℂ, ‖E‖ ≤ 4 * Real.exp (-(4 * π ^ 2 / τ).re) ∧
-      partGen (cexp (-τ)) = (τ / (2 * π)) ^ (2⁻¹ : ℂ) * cexp (π ^ 2 / (6 * τ) - τ / 24) * (1 + E)
-          := by
+      partGen (cexp (-τ)) = (τ / (2 * π)) ^ (2⁻¹ : ℂ) * cexp (π ^ 2 / (6 * τ) - τ / 24) *
+          (1 + E) := by
   refine ⟨partGen (cexp (-(4 * π ^ 2 / τ))) - 1, ?_, ?_⟩
   · have hn : ‖cexp (-(4 * π ^ 2 / τ))‖ = Real.exp (-(4 * π ^ 2 / τ).re) := by
       rw [norm_exp, neg_re]
@@ -260,8 +252,8 @@ private lemma re_dual_ge {M : ℝ} {τ : ℂ} (hτ : 0 < τ.re) (hcone : |τ.im|
 theorem partGen_cone {M : ℝ} {τ : ℂ} (hτ : 0 < τ.re) (hcone : |τ.im| ≤ M * τ.re)
     (hsmall : τ.re ≤ 4 * π ^ 2 / (3 * (1 + M ^ 2))) :
     ∃ E : ℂ, ‖E‖ ≤ 4 * Real.exp (-(4 * π ^ 2 / ((1 + M ^ 2) * τ.re))) ∧
-      partGen (cexp (-τ)) = (τ / (2 * π)) ^ (2⁻¹ : ℂ) * cexp (π ^ 2 / (6 * τ) - τ / 24) * (1 + E)
-          := by
+      partGen (cexp (-τ)) = (τ / (2 * π)) ^ (2⁻¹ : ℂ) * cexp (π ^ 2 / (6 * τ) - τ / 24) *
+          (1 + E) := by
   have key := re_dual_ge hτ hcone
   have hM : 0 < 1 + M ^ 2 := by positivity
   have h3 : 3 ≤ 4 * π ^ 2 / ((1 + M ^ 2) * τ.re) := by
@@ -275,8 +267,8 @@ theorem partGen_cone {M : ℝ} {τ : ℂ} (hτ : 0 < τ.re) (hcone : |τ.im| ≤
 /-- If `F(e^{−τ}) = (τ/2π)^{1/2} e^{π²/(6τ) − τ/24} (1 + E)`, then
 `F(e^{−τ})^r = (τ/2π)^{r/2} e^{r(π²/(6τ) − τ/24)} (1 + E)^r`. -/
 theorem partGen_pow_eq (r : ℕ) {τ E : ℂ}
-    (hF : partGen (cexp (-τ)) = (τ / (2 * π)) ^ (2⁻¹ : ℂ) * cexp (π ^ 2 / (6 * τ) - τ / 24) * (1 +
-        E)) :
+    (hF : partGen (cexp (-τ)) =
+      (τ / (2 * π)) ^ (2⁻¹ : ℂ) * cexp (π ^ 2 / (6 * τ) - τ / 24) * (1 + E)) :
     partGen (cexp (-τ)) ^ r =
       (τ / (2 * π)) ^ ((r : ℂ) / 2) * cexp (r * (π ^ 2 / (6 * τ) - τ / 24)) * (1 + E) ^ r := by
   rw [hF, mul_pow, mul_pow, Complex.exp_nat_mul, div_eq_mul_inv (r : ℂ), cpow_nat_mul]

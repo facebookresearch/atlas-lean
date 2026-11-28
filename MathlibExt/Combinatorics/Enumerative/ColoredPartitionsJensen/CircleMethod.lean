@@ -1,19 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`PartitionsJensen/CircleMethod.lean`
-(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
 Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: Sky (GitHub: ChironTheCentaur)
+
+Adapted from `PartitionsJensen/CircleMethod.lean` of
+https://github.com/ChironTheCentaur/rh-lab-partitions-jensen at commit
+57beb8dbff7b84e125931fe2e53080f325f4f108.
 -/
 
 module
@@ -245,8 +237,8 @@ private theorem norm_partGen_le {q : ℂ} (hq : ‖q‖ < 1) :
 private lemma saving_eq {y θ : ℝ} (hy : 0 < y) :
     Real.exp (-y) / (1 - Real.exp (-y)) - (cexp (-(y + θ * I)) / (1 - cexp (-(y + θ * I)))).re =
       Real.exp (-y) * (1 + Real.exp (-y)) * (1 - Real.cos θ) /
-        ((1 - Real.exp (-y)) * ((1 - Real.exp (-y)) ^ 2 + 2 * Real.exp (-y) * (1 - Real.cos θ)))
-            := by
+        ((1 - Real.exp (-y)) *
+            ((1 - Real.exp (-y)) ^ 2 + 2 * Real.exp (-y) * (1 - Real.cos θ))) := by
   set ρ := Real.exp (-y) with hρ
   set c := Real.cos θ with hc
   set s := Real.sin θ with hs
@@ -281,8 +273,8 @@ private lemma saving_eq {y θ : ℝ} (hy : 0 < y) :
 private theorem minorArc_saving {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) (hθ1 : y ≤ |θ|)
     (hθ2 : |θ| ≤ π) :
     1 / (8 * y) ≤
-      Real.exp (-y) / (1 - Real.exp (-y)) - (cexp (-(y + θ * I)) / (1 - cexp (-(y + θ * I)))).re
-          := by
+      Real.exp (-y) / (1 - Real.exp (-y)) -
+          (cexp (-(y + θ * I)) / (1 - cexp (-(y + θ * I)))).re := by
   rw [saving_eq hy]
   set ρ := Real.exp (-y) with hρ
   have hρ1 : ρ < 1 := Real.exp_lt_one_iff.2 (by linarith)

@@ -1,19 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`PartitionsJensen/Count.lean`
-(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
 Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: Sky (GitHub: ChironTheCentaur)
+
+Adapted from `PartitionsJensen/Count.lean` of
+https://github.com/ChironTheCentaur/rh-lab-partitions-jensen at commit
+57beb8dbff7b84e125931fe2e53080f325f4f108.
 -/
 
 module
@@ -146,8 +138,8 @@ lemma psum_fac {𝕜 : Type*} [RCLike 𝕜] (i : ℕ) {q : 𝕜} (hq : ‖q‖ <
 
 /- The `i`-th factor as a formal power series is Mathlib's. -/
 private lemma mk_facCoef (i : ℕ) :
-    PowerSeries.mk (facCoef P i) = if P (i + 1) then ∑' j : ℕ, (X : ℝ⟦X⟧) ^ ((i + 1) * j) else 1
-        := by
+    PowerSeries.mk (facCoef P i) =
+        if P (i + 1) then ∑' j : ℕ, (X : ℝ⟦X⟧) ^ ((i + 1) * j) else 1 := by
   unfold facCoef
   split_ifs with h
   · symm
@@ -380,8 +372,8 @@ private lemma coef_eq_of_psum (r : ℕ) (a : ℕ → ℝ) (h : ∀ q : ℂ, ‖q
   rw [coef, ← h2, h1.eq_formalMultilinearSeries hP.hasFPowerSeriesAt,
     FormalMultilinearSeries.coeff_ofScalars]
 
-/-- **Count bridge.** `coef r n` (`CircleMethod`) is the colored-partition count of the statement.
--/
+/-- **Count bridge.** The `n`-th Taylor coefficient of `F(q)^r`, `F(q) = ∏_{k ≥ 1} (1 − qᵏ)⁻¹`, is
+`∑_{m₁ + ⋯ + m_r = n} p(m₁) ⋯ p(m_r)`. -/
 theorem coef_eq_cnt (r n : ℕ) : coef r n = (cnt r n : ℂ) := by
   have := coef_eq_of_psum r (fun n => (cnt r n : ℝ)) (fun q hq => psum_cnt r hq) n
   simpa using this

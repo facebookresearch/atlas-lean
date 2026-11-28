@@ -1,19 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`PartitionsJensen/Reduction.lean`
-(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
 Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: Sky (GitHub: ChironTheCentaur)
+
+Adapted from `PartitionsJensen/Reduction.lean` of
+https://github.com/ChironTheCentaur/rh-lab-partitions-jensen at commit
+57beb8dbff7b84e125931fe2e53080f325f4f108.
 -/
 
 module
@@ -108,8 +100,8 @@ theorem coeff_descPochhammer_of_lt {k i : ℕ} (h : k < i) : (descPochhammer ℝ
   coeff_eq_zero_of_natDegree_lt (by rw [descPochhammer_natDegree]; exact h)
 
 /- `δ^k = O(δ^i)` for `i ≤ k` when `δ → 0`. -/
-private theorem isBigO_pow_pow_of_le {δ : ℕ → ℝ} (hδ : Tendsto δ atTop (𝓝 0)) {i k : ℕ} (h : i ≤ k)
-    :
+private theorem isBigO_pow_pow_of_le {δ : ℕ → ℝ} (hδ : Tendsto δ atTop (𝓝 0)) {i k : ℕ}
+    (h : i ≤ k) :
     (fun n => δ n ^ k) =O[atTop] (fun n => δ n ^ i) := by
   have h1 : (fun n => δ n ^ (k - i)) =O[atTop] (fun _ => (1 : ℝ)) := by
     have : Tendsto (fun n => δ n ^ (k - i)) atTop (𝓝 (0 ^ (k - i))) := hδ.pow _

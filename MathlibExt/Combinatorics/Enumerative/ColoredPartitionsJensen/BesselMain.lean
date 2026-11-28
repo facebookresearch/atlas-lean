@@ -1,19 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`PartitionsJensen/BesselMain.lean`
-(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
 Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: Sky (GitHub: ChironTheCentaur)
+
+Adapted from `PartitionsJensen/BesselMain.lean` of
+https://github.com/ChironTheCentaur/rh-lab-partitions-jensen at commit
+57beb8dbff7b84e125931fe2e53080f325f4f108.
 -/
 
 module
@@ -196,8 +188,8 @@ noncomputable def bN (a : ℝ) (j : ℕ) (z : ℝ) : ℝ :=
 /-- The normalised moments `M_j = N_j / N_0`. -/
 noncomputable def bM (a : ℝ) (j : ℕ) (z : ℝ) : ℝ := bN a j z / bN a 0 z
 
-/-- **The Bessel-type integral** `∫_{−1}^{1} (1 − t²)^a e^{zt} dt`. For `a = ν − 1/2` this is
-`√π Γ(ν + 1/2) (z/2)^{−ν} I_ν(z)`. -/
+/-- **The Bessel-type integral** `∫_{−1}^{1} (1 − t²)^a e^{zt} dt`. For `a > −1` and `a = ν − 1/2`
+this is `√π Γ(ν + 1/2) (z/2)^{−ν} I_ν(z)`. -/
 noncomputable def besselInt (a z : ℝ) : ℝ := ∫ t in (-1 : ℝ)..1, (1 - t ^ 2) ^ a * Real.exp (z * t)
 
 section Moments
@@ -458,8 +450,8 @@ theorem le_bN_zero (ha : 0 ≤ a) {z : ℝ} (hz : 0 ≤ z) :
   nlinarith
 
 /- **`log besselInt ∈ S_1` in `z`**, to every order. -/
-private theorem inS_logBesselInt (ha : 0 ≤ a) (d : ℕ) : InS 1 d (fun z => Real.log (besselInt a z))
-    := by
+private theorem inS_logBesselInt (ha : 0 ≤ a) (d : ℕ) :
+    InS 1 d (fun z => Real.log (besselInt a z)) := by
   set L := Real.log (bN a 0 0) with hL
   have hder : ∀ z, HasDerivAt (fun z => z + Real.log (bN a 0 z)) (1 - bM a 1 z) z := fun z =>
     ((hasDerivAt_id' z).add ((hasDerivAt_bN ha 0 z).log (bN_zero_pos ha z).ne')).congr_deriv

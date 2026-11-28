@@ -1,19 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`PartitionsJensen/MajorArc.lean`
-(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
 Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: Sky (GitHub: ChironTheCentaur)
+
+Adapted from `PartitionsJensen/MajorArc.lean` of
+https://github.com/ChironTheCentaur/rh-lab-partitions-jensen at commit
+57beb8dbff7b84e125931fe2e53080f325f4f108.
 -/
 
 module
@@ -115,7 +107,8 @@ theorem bT_rec (s w : ℝ) : bT s w = s * bT (s + 1) w + w * bT (s + 2) w := by
 
 /-! ### The reflection defect `bH ν w = bT (1−ν) w − w^ν bT (1+ν) w` -/
 
-/-- The reflection defect (`= Γ`-normalised `I_{−ν} − I_ν`). -/
+/-- The reflection defect `bH ν w = bT (1 − ν) w − w^ν · bT (1 + ν) w`; for `w > 0` it equals
+`w^{ν/2} (I_{−ν} − I_ν)(2√w)`. -/
 def bH (ν w : ℝ) : ℝ := bT (1 - ν) w - w ^ ν * bT (1 + ν) w
 
 theorem bH_rec {w : ℝ} (hw : 0 < w) (ν : ℝ) :
@@ -149,8 +142,8 @@ theorem bH_nat {w : ℝ} (hw : 0 < w) (n : ℕ) : bH n w = 0 := by
     rw [bH_rec hw, show ((n + 1 : ℕ) : ℝ) - 1 = n by push_cast; ring]
     push_cast; rw [ih.2, ih.1]; ring
 
-theorem bH_neg_half {w : ℝ} (hw : 0 < w) : bH (-(1 / 2)) w = -(w ^ (-(1 / 2) : ℝ)) * bH (1 / 2) w
-    := by
+theorem bH_neg_half {w : ℝ} (hw : 0 < w) : bH (-(1 / 2)) w = -(w ^ (-(1 / 2) : ℝ)) *
+    bH (1 / 2) w := by
   simp only [bH]
   have : w ^ (-(1 / 2) : ℝ) * w ^ (1 / 2 : ℝ) = 1 := by
     rw [← Real.rpow_add hw]; norm_num
@@ -214,8 +207,8 @@ private theorem bMom_succ (ha : 0 ≤ a) (k : ℕ) :
     ring
   have hr : ∫ x in (-1 : ℝ)..1, ((2 * k + 1 : ℕ) : ℝ) * x ^ (2 * k) * (-(1 - x ^ 2) ^ (a + 1) / (2
       * (a + 1)))
-      = -((2 * k + 1) / (2 * (a + 1))) * ∫ t in (-1 : ℝ)..1, (1 - t ^ 2) ^ (a + 1) * t ^ (2 * k)
-          := by
+      = -((2 * k + 1) / (2 * (a + 1))) * ∫ t in (-1 : ℝ)..1, (1 - t ^ 2) ^ (a + 1) *
+          t ^ (2 * k) := by
     rw [← intervalIntegral.integral_const_mul]
     refine intervalIntegral.integral_congr fun t _ => ?_
     push_cast; ring
@@ -241,8 +234,8 @@ private theorem bMom_closed (ha : 0 ≤ a) (k : ℕ) :
   | zero => simp
   | succ k ih =>
     have hs := bMom_succ ha k
-    have hG : Real.Gamma (a + 3 / 2 + (k + 1 : ℕ)) = (a + 3 / 2 + k) * Real.Gamma (a + 3 / 2 + k)
-        := by
+    have hG : Real.Gamma (a + 3 / 2 + (k + 1 : ℕ)) = (a + 3 / 2 + k) *
+        Real.Gamma (a + 3 / 2 + k) := by
       rw [show a + 3 / 2 + ((k + 1 : ℕ) : ℝ) = (a + 3 / 2 + k) + 1 by push_cast; ring]
       exact Real.Gamma_add_one (by positivity)
     rw [hG, show 2 * (k + 1) = (2 * k + 1) + 1 by ring, Nat.factorial_succ (2 * k + 1),
@@ -255,8 +248,8 @@ private theorem bMom_closed (ha : 0 ≤ a) (k : ℕ) :
 private theorem hasSum_besselInt_all (ha : 0 ≤ a) (z : ℝ) :
     HasSum (fun n : ℕ => z ^ n / n ! * ∫ t in (-1 : ℝ)..1, (1 - t ^ 2) ^ a * t ^ n) (besselInt a
         z) := by
-  have key := intervalIntegral.hasSum_integral_of_dominated_convergence (μ := volume) (a := -1) (b
-      := 1)
+  have key := intervalIntegral.hasSum_integral_of_dominated_convergence (μ := volume) (a := -1)
+    (b := 1)
     (F := fun (n : ℕ) (t : ℝ) => z ^ n / n ! * ((1 - t ^ 2) ^ a * t ^ n))
     (f := fun t => (1 - t ^ 2) ^ a * Real.exp (z * t))
     (fun n _ => |z| ^ n / n !)
@@ -418,8 +411,8 @@ theorem abs_bH_half_le {w : ℝ} (hw : 1 ≤ w) (n : ℕ) :
             gcongr
             · exact ih.1
             · exact ih.2
-        _ ≤ (n + 1) * ((n + 1)! * (w + 1) ^ (n + 1) * E) + (w + 1) * ((n + 1)! * (w + 1) ^ n * E)
-            := by
+        _ ≤ (n + 1) * ((n + 1)! * (w + 1) ^ (n + 1) * E) + (w + 1) *
+            ((n + 1)! * (w + 1) ^ n * E) := by
             have h1 : (n + 1)! * (w + 1) ^ n * E ≤ (n + 1)! * (w + 1) ^ (n + 1) * E := by gcongr
             have h2 : (n ! : ℝ) * (w + 1) ^ n * E ≤ (n + 1)! * (w + 1) ^ n * E := by gcongr
             have h3 : 0 ≤ ((n + 1)! : ℝ) * (w + 1) ^ n * E := by positivity
@@ -446,9 +439,9 @@ theorem abs_bH_le (r : ℕ) {w : ℝ} (hw : 1 ≤ w) :
     have hp : (w + 1) ^ (k + 1) ≤ (w + 1) ^ (2 * k + 1 + 1) := pow_le_pow_right₀ hw1 (by omega)
     gcongr
 
-/-- **The major-arc series at `s = −r/2`** is the `BesselMain` model plus the reflection defect: for
-`w > 0`,
-`bT (−r/2) w = w^{r/2+1} besselInt ((r+1)/2) (2√w) / (M₀ Γ(r/2+2)) + bH (r/2+1) w`. -/
+/-- **The major-arc series at `s = −r/2`.** For `w > 0`,
+`bT (−r/2) w = w^{r/2+1} besselInt ((r+1)/2) (2√w) / (M₀((r+1)/2) Γ(r/2+2)) + bH (r/2+1) w`, where
+`M₀(a) = ∫_{−1}^{1} (1 − t²)^a dt`. -/
 theorem bT_neg_half_eq (r : ℕ) {w : ℝ} (hw : 0 < w) :
     bT (-((r : ℝ) / 2)) w = w ^ ((r : ℝ) / 2 + 1) * besselInt (((r : ℝ) + 1) / 2) (2 * √w) /
       (bMom (((r : ℝ) + 1) / 2) 0 * Real.Gamma ((r : ℝ) / 2 + 2)) + bH ((r : ℝ) / 2 + 1) w := by

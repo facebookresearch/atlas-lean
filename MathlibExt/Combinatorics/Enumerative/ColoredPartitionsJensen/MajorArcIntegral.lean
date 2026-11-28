@@ -1,19 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`PartitionsJensen/MajorArcIntegral.lean`
-(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
 Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: Sky (GitHub: ChironTheCentaur)
+
+Adapted from `PartitionsJensen/MajorArcIntegral.lean` of
+https://github.com/ChironTheCentaur/rh-lab-partitions-jensen at commit
+57beb8dbff7b84e125931fe2e53080f325f4f108.
 -/
 
 module
@@ -151,8 +143,8 @@ private theorem laplace_cpow {a : ℂ} (ha : 0 < a.re) {τ : ℂ} (hτ : 0 < τ.
     refine (DifferentiableAt.const_mul ?_ _).differentiableWithinAt
     exact differentiableAt_id.cpow_const (mem_slitPlane_iff.2 (Or.inl hz))
   have hreal : ∀ t : ℝ, 0 < t →
-      (∫ u in Ioi (0 : ℝ), (u : ℂ) ^ (a - 1) * cexp (-((t : ℂ) * u))) = Gamma a * (t : ℂ) ^ (-a)
-          := by
+      (∫ u in Ioi (0 : ℝ), (u : ℂ) ^ (a - 1) * cexp (-((t : ℂ) * u))) = Gamma a *
+          (t : ℂ) ^ (-a) := by
     intro t ht
     rw [integral_cpow_mul_exp_neg_mul_Ioi ha ht, one_div, Complex.inv_cpow _ _ (by
       rw [Complex.arg_ofReal_of_nonneg ht.le]; exact Real.pi_ne_zero.symm), ← Complex.cpow_neg,
@@ -244,8 +236,8 @@ theorem integrable_tauL_cpow {y s : ℝ} (hy : 0 < y) (hs : 1 < s) :
 /-! ### Fourier inversion: `(2π)⁻¹ ∫ τ^{−s} e^{mτ} dθ = m^{s−1}/Γ(s)` -/
 
 /-- `g(u) = 1_{u>0} u^{s−1} e^{−yu}`. -/
-def gL (s y : ℝ) : ℝ → ℂ := Set.indicator (Ioi 0) fun u => (u : ℂ) ^ ((s : ℂ) - 1) * cexp (-((y :
-    ℂ) * u))
+def gL (s y : ℝ) : ℝ → ℂ :=
+  Set.indicator (Ioi 0) fun u => (u : ℂ) ^ ((s : ℂ) - 1) * cexp (-((y : ℂ) * u))
 
 theorem integrable_gL {s y : ℝ} (hs : 0 < s) (hy : 0 < y) : Integrable (gL s y) :=
   (integrable_indicator_iff measurableSet_Ioi).2 (integrable_laplace (by simpa using hs)
@@ -659,8 +651,8 @@ provided `|t| + A ≤ m` on `[s₀ − k, s₀]` and `m ≥ 1`. -/
 private theorem norm_iArc_sub_sSer_le {A m y s₀ : ℝ} (k : ℕ) (hA : 0 ≤ A) (hy : 0 < y) (hm : 1 ≤ m)
     (hs₀ : 1 < s₀) (hsize : ∀ t, s₀ - k ≤ t → t ≤ s₀ → |t| + A ≤ m) :
     ‖iArc A m y (s₀ - k) - sSer A m (s₀ - k)‖ ≤ Real.exp (A / (2 * y) + m * y) / Real.pi *
-      (y ^ (1 - s₀) / (s₀ - 1) + y ^ (-s₀) / s₀ + k * ((√2 * y) ^ (-s₀) + (√2 * y) ^ (-(s₀ - k))))
-          := by
+      (y ^ (1 - s₀) / (s₀ - 1) + y ^ (-s₀) / s₀ + k *
+          ((√2 * y) ^ (-s₀) + (√2 * y) ^ (-(s₀ - k)))) := by
   set E := Real.exp (A / (2 * y) + m * y) with hE
   have hm0 : 0 < m := by linarith
   have hpi := Real.pi_pos
@@ -703,8 +695,8 @@ private theorem norm_iArc_sub_sSer_le {A m y s₀ : ℝ} (k : ℕ) (hA : 0 ≤ A
     refine (norm_bArc_le m hA hy _).trans ?_
     have hx := rpow_neg_le_add hx0 (hjk j hj) (show s₀ - (j + 1) ≤ s₀ by
       have := Nat.cast_nonneg (α := ℝ) j; linarith)
-    calc (√2 * y) ^ (-(s₀ - (j + 1))) * E / Real.pi = E / Real.pi * (√2 * y) ^ (-(s₀ - (j + 1)))
-        := by ring
+    calc (√2 * y) ^ (-(s₀ - (j + 1))) * E / Real.pi = E / Real.pi *
+        (√2 * y) ^ (-(s₀ - (j + 1))) := by ring
       _ ≤ β := by rw [hβdef]; gcongr
   have hsz : ∀ j : ℕ, j < k → |s₀ - (j + 1)| + A ≤ m := fun j hj =>
     hsize _ (hjk j hj) (by have := Nat.cast_nonneg (α := ℝ) j; linarith)
@@ -765,8 +757,8 @@ private theorem norm_iArc_sub_sSer_neg_half (r : ℕ) {A m y : ℝ} (hA : 0 ≤ 
     ‖iArc A m y (-((r : ℝ) / 2)) - sSer A m (-((r : ℝ) / 2))‖ ≤
       Real.exp (A / (2 * y) + m * y) / Real.pi *
         (2 * (y ^ (-(1 : ℝ)) + y ^ (-(1 / 2 : ℝ))) + (y ^ (-(2 : ℝ)) + y ^ (-(3 / 2 : ℝ))) +
-          ((r : ℝ) / 2 + 2) * ((√2 * y) ^ (-(2 : ℝ)) + (√2 * y) ^ (-(3 / 2 : ℝ)) + (√2 * y) ^ ((r
-              : ℝ) / 2))) := by
+          ((r : ℝ) / 2 + 2) *
+              ((√2 * y) ^ (-(2 : ℝ)) + (√2 * y) ^ (-(3 / 2 : ℝ)) + (√2 * y) ^ ((r : ℝ) / 2))) := by
   set k : ℕ := r / 2 + 2 with hkdef
   set s₀ : ℝ := k - r / 2 with hs₀def
   have hk : (k : ℝ) = ((r / 2 : ℕ) : ℝ) + 2 := by simp [hkdef]
@@ -803,8 +795,10 @@ private theorem saddle_exp {A m : ℝ} (hA : 0 < A) (hm : 0 < m) :
   field_simp
   ring
 
-/-- **At the saddle** `y = √(A/m)`, for `A > 0` and `m ≥ A + r/2 + 2`: `‖I_y(−r/2) − S(−r/2, m)‖` is
-at most `e^{(3/2)√(Am)} / π` times the explicit sum of powers of `y` and `√2 y` in the statement. -/
+/-- **At the saddle** `y = √(A/m)`, for `A > 0` and `m ≥ A + r/2 + 2`:
+`‖iArc A m y (−r/2) − sSer A m (−r/2)‖ ≤ e^{(3/2)√(Am)} P_r(y) / π`, where
+`P_r(y) = 2(y^{−1} + y^{−1/2}) + y^{−2} + y^{−3/2} +
+(r/2 + 2)((√2 y)^{−2} + (√2 y)^{−3/2} + (√2 y)^{r/2})`. -/
 theorem norm_iArc_sub_sSer_saddle (r : ℕ) {A m : ℝ} (hA : 0 < A) (hm : A + (r : ℝ) / 2 + 2 ≤ m) :
     ‖iArc A m (√(A / m)) (-((r : ℝ) / 2)) - sSer A m (-((r : ℝ) / 2))‖ ≤
       Real.exp (3 / 2 * √(A * m)) / Real.pi *

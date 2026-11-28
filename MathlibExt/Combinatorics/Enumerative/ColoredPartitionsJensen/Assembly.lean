@@ -1,19 +1,11 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`PartitionsJensen/Assembly.lean`
-(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
 Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: Sky (GitHub: ChironTheCentaur)
+
+Adapted from `PartitionsJensen/Assembly.lean` of
+https://github.com/ChironTheCentaur/rh-lab-partitions-jensen at commit
+57beb8dbff7b84e125931fe2e53080f325f4f108.
 -/
 
 module
@@ -96,10 +88,6 @@ private theorem tau_div_cpow {τ : ℂ} (hτ : τ ≠ 0) (r : ℕ) :
 
 /-! ### Pointwise bounds -/
 
-theorem tauL_re' (y θ : ℝ) : (tauL y θ).re = y := by simp [tauL]
-
-theorem tauL_im' (y θ : ℝ) : (tauL y θ).im = θ := by simp [tauL]
-
 /- **Major arc, pointwise.** For `0 < y ≤ 1`, `|θ| ≤ y`:
 `F(e^{−τ})^r e^{nτ} = (2π)^{−r/2} v_{−r/2}(θ) (1 + E)^r`, `‖E‖ ≤ 4e^{−2π²/y}`, with `A = rπ²/6`,
 `m = n − r/24`. -/
@@ -110,14 +98,14 @@ private theorem major_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy1 : y ≤ 1) (
           vInt (cA r) ((n : ℝ) - r / 24) y (-((r : ℝ) / 2)) θ * (1 + E) ^ r := by
   have hπ := Real.pi_pos
   have hτ := tauL_ne_zero hy θ
-  obtain ⟨E, hE, hF⟩ := partGen_cone (M := 1) (τ := tauL y θ) (by rw [tauL_re']; exact hy)
-    (by rw [tauL_re', tauL_im', one_mul]; exact hθ)
+  obtain ⟨E, hE, hF⟩ := partGen_cone (M := 1) (τ := tauL y θ) (by rw [tauL_re]; exact hy)
+    (by rw [tauL_re, tauL_im, one_mul]; exact hθ)
     (by
-      rw [tauL_re', le_div_iff₀ (by positivity)]
+      rw [tauL_re, le_div_iff₀ (by positivity)]
       nlinarith [Real.pi_gt_three])
   refine ⟨E, ?_, ?_⟩
   · refine hE.trans (le_of_eq ?_)
-    rw [tauL_re']
+    rw [tauL_re]
     congr 2
     field_simp
     ring
@@ -171,8 +159,8 @@ theorem norm_tauL_le {y θ : ℝ} (hy : 0 < y) (hθ : |θ| ≤ y) : ‖tauL y θ
 `‖integrand − (2π)^{−r/2} v‖ ≤ (2π)^{−r/2} (√2y)^{r/2} e^{A/y + my} r 2^r 4e^{−2π²/y}`. -/
 private theorem major_err_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy1 : y ≤ 1) (hθ : |θ| ≤ y) :
     ‖partGen (cexp (-tauL y θ)) ^ r * cexp (n * tauL y θ) -
-        (((2 * Real.pi) ^ (-((r : ℝ) / 2)) : ℝ) : ℂ) * vInt (cA r) ((n : ℝ) - r / 24) y (-((r : ℝ)
-            / 2)) θ‖ ≤
+        (((2 * Real.pi) ^ (-((r : ℝ) / 2)) : ℝ) : ℂ) *
+          vInt (cA r) ((n : ℝ) - r / 24) y (-((r : ℝ) / 2)) θ‖ ≤
       (2 * Real.pi) ^ (-((r : ℝ) / 2)) * ((√2 * y) ^ ((r : ℝ) / 2) *
         Real.exp (cA r / y + ((n : ℝ) - r / 24) * y)) * (r * 2 ^ r * (4 * Real.exp (-(2 * Real.pi ^
             2 / y)))) := by
@@ -242,27 +230,26 @@ private theorem minor_pt (r n : ℕ) {y θ : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 
 
 /-! ### The integrals -/
 
-/-- The circle integrand at `τ = y + iθ`. -/
-def circ (r n : ℕ) (y θ : ℝ) : ℂ := partGen (cexp (-tauL y θ)) ^ r * cexp (n * tauL y θ)
+private def circ (r n : ℕ) (y θ : ℝ) : ℂ := partGen (cexp (-tauL y θ)) ^ r * cexp (n * tauL y θ)
 
-theorem continuous_circ (r n : ℕ) {y : ℝ} (hy : 0 < y) : Continuous (circ r n y) := by
+private theorem continuous_circ (r n : ℕ) {y : ℝ} (hy : 0 < y) : Continuous (circ r n y) := by
   unfold circ
   refine Continuous.mul ?_ ((continuous_const.mul (continuous_tauL y)).cexp)
   have h := (differentiableOn_partGen_pow r).continuousOn
   exact h.comp_continuous ((continuous_tauL y).neg.cexp) fun θ => by
-    rw [Metric.mem_ball, dist_zero_right, Complex.norm_exp, neg_re, tauL_re']
+    rw [Metric.mem_ball, dist_zero_right, Complex.norm_exp, neg_re, tauL_re]
     exact Real.exp_lt_one_iff.2 (by linarith)
 
-/-- `P_r(y)` of `MajorArcIntegral`. -/
+/-- `P_r(y) = 2(y^{−1} + y^{−1/2}) + y^{−2} + y^{−3/2} +
+(r/2 + 2)((√2 y)^{−2} + (√2 y)^{−3/2} + (√2 y)^{r/2})`. -/
 def Pr (r : ℕ) (y : ℝ) : ℝ :=
   2 * (y ^ (-(1 : ℝ)) + y ^ (-(1 / 2 : ℝ))) + (y ^ (-(2 : ℝ)) + y ^ (-(3 / 2 : ℝ))) +
     ((r : ℝ) / 2 + 2) * ((√2 * y) ^ (-(2 : ℝ)) + (√2 * y) ^ (-(3 / 2 : ℝ)) + (√2 * y) ^ ((r : ℝ) /
         2))
 
 /- `P_r(y) ≤ (2r + 12) y^{−2}` for `0 < y ≤ 1/2`. -/
-private theorem Pr_le (r : ℕ) {y : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) : Pr r y ≤ (2 * r + 12) * y ^
-    (-(2 :
-    ℝ)) := by
+private theorem Pr_le (r : ℕ) {y : ℝ} (hy : 0 < y) (hy2 : y ≤ 1 / 2) :
+    Pr r y ≤ (2 * r + 12) * y ^ (-(2 : ℝ)) := by
   have hy1 : y ≤ 1 := by linarith
   have hs2 : √2 ≤ 2 := by
     rw [Real.sqrt_le_left (by norm_num)]; norm_num
@@ -330,8 +317,8 @@ private theorem sSer_neg_half_eq (r : ℕ) (hr : 1 ≤ r) {m : ℝ} (hm : 0 < m)
   + (2π)⁻¹ K (√2y)^{r/2} e^{2√(Am)} r 2^r 4e^{−2π²/y} · 2y + e^{2√(Am) + r − r/(8y)}`. -/
 private theorem coef_sub_main_le (r n : ℕ) (hr : 1 ≤ r) (hm : cA r + r / 2 + 2 ≤ (n : ℝ) - r / 24)
     (hm4 : 4 * cA r ≤ (n : ℝ) - r / 24) (hAm : 1 ≤ cA r * ((n : ℝ) - r / 24)) :
-    ‖coef r n - ((cPrime r * besselInt (((r : ℝ) + 1) / 2) (2 * √(cA r * ((n : ℝ) - r / 24))) : ℝ)
-        : ℂ)‖ ≤
+    ‖coef r n - ((cPrime r *
+        besselInt (((r : ℝ) + 1) / 2) (2 * √(cA r * ((n : ℝ) - r / 24))) : ℝ) : ℂ)‖ ≤
       (2 * Real.pi) ^ (-((r : ℝ) / 2)) * (Real.exp (3 / 2 * √(cA r * ((n : ℝ) - r / 24))) / Real.pi
           *
           Pr r (√(cA r / ((n : ℝ) - r / 24)))) +
@@ -373,8 +360,8 @@ private theorem coef_sub_main_le (r n : ℕ) (hr : 1 ≤ r) (hm : cA r + r / 2 +
   set I1 := ∫ θ in (-Real.pi)..(-y), circ r n y θ
   set I3 := ∫ θ in y..Real.pi, circ r n y θ
   set G := ∫ θ in (-y)..y, (circ r n y θ - (K : ℂ) * v θ) with hG
-  have hGeq : G = (∫ θ in (-y)..y, circ r n y θ) - (K : ℂ) * ((2 * Real.pi : ℂ) * iArc A m y (-((r
-      : ℝ) / 2))) := by
+  have hGeq : G = (∫ θ in (-y)..y, circ r n y θ) - (K : ℂ) *
+      ((2 * Real.pi : ℂ) * iArc A m y (-((r : ℝ) / 2))) := by
     rw [hG, intervalIntegral.integral_sub (f := circ r n y) (g := fun θ => (K : ℂ) * v θ)
         (hc.intervalIntegrable (μ := volume) _ _)
       ((continuous_const.mul hvc).intervalIntegrable (μ := volume) _
@@ -489,9 +476,8 @@ private theorem ev_poly_exp (C : ℝ) (k : ℕ) {c₀ c : ℝ} (hc₀ : 0 < c₀
     _ = Real.exp (-(c * t)) / 4 := by ring
 
 /- `κ_r √m = 2√(Am)`. -/
-private theorem coloredKappa_mul_sqrt (r : ℕ) {m : ℝ} (hm : 0 ≤ m)
-    : coloredKappa r * √m = 2 * √(cA r *
-    m) := by
+private theorem coloredKappa_mul_sqrt (r : ℕ) {m : ℝ} (hm : 0 ≤ m) :
+    coloredKappa r * √m = 2 * √(cA r * m) := by
   have hπ := Real.pi_pos
   rw [Real.sqrt_mul' _ hm]
   unfold coloredKappa cA
@@ -544,9 +530,8 @@ theorem term2_le (r : ℕ) {K A a t m : ℝ} (hK : 0 ≤ K) (hA : 0 ≤ A) (hm1 
             pow_mul]
         ring
 
-theorem term3_le (r : ℕ) {K y a t : ℝ} (hK : 0 ≤ K) (hy : 0 < y) (hy2 : y ≤ 1 / 2) (ha : 0 < a) (ht
-    : 0 < t)
-    (hyt : y = a / t) :
+theorem term3_le (r : ℕ) {K y a t : ℝ} (hK : 0 ≤ K) (hy : 0 < y) (hy2 : y ≤ 1 / 2)
+    (ha : 0 < a) (ht : 0 < t) (hyt : y = a / t) :
     (2 * Real.pi)⁻¹ * (K * ((√2 * y) ^ ((r : ℝ) / 2) * Real.exp (2 * (a * t))) *
         (r * 2 ^ r * (4 * Real.exp (-(2 * Real.pi ^ 2 / y)))) * (2 * y)) ≤
       Real.exp (2 * a * t) * ((2 * Real.pi)⁻¹ * K * (r * 2 ^ r * 4) * Real.exp (-(2 * Real.pi ^ 2 /
@@ -750,8 +735,9 @@ private theorem coef_asymp_abs (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : 
 (`c'_r > 0`: `cPrime_pos`). -/
 private theorem coef_asymp (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop, ∃ ρ : ℂ,
     ‖ρ‖ ≤ Real.exp (-(c * √n)) ∧
-      coef r n = ((cPrime r * besselInt (((r : ℝ) + 1) / 2) (coloredKappa r * √((n : ℝ) - r / 24))
-          : ℝ) : ℂ) * (1 + ρ) := by
+      coef r n = ((cPrime r *
+          besselInt (((r : ℝ) + 1) / 2) (coloredKappa r * √((n : ℝ) - r / 24)) : ℝ) : ℂ) *
+              (1 + ρ) := by
   obtain ⟨c, hc, hev⟩ := coef_asymp_abs r hr
   refine ⟨c, hc, hev.mono fun n hn => ?_⟩
   set M := cPrime r * besselInt (((r : ℝ) + 1) / 2) (coloredKappa r * √((n : ℝ) - r / 24))
@@ -765,8 +751,9 @@ private theorem coef_asymp (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ 
 `Re C_r(n) = c'_r · besselInt ((r + 1)/2) (κ_r √(n − r/24)) · (1 + ρ)` for some `|ρ| ≤ e^{−c√n}`. -/
 theorem coef_re_asymp (r : ℕ) (hr : 1 ≤ r) : ∃ c > 0, ∀ᶠ n : ℕ in atTop, ∃ ρ : ℝ,
     |ρ| ≤ Real.exp (-(c * √n)) ∧
-      (coef r n).re = cPrime r * besselInt (((r : ℝ) + 1) / 2) (coloredKappa r * √((n : ℝ) - r /
-          24)) * (1 + ρ) := by
+      (coef r n).re =
+        cPrime r * besselInt (((r : ℝ) + 1) / 2) (coloredKappa r * √((n : ℝ) - r / 24)) *
+          (1 + ρ) := by
   obtain ⟨c, hc, hev⟩ := coef_asymp r hr
   refine ⟨c, hc, hev.mono fun n ⟨ρ, hρ, h⟩ => ⟨ρ.re, (Complex.abs_re_le_norm ρ).trans hρ, ?_⟩⟩
   rw [h, ← ofReal_one, ← ofReal_re 1, re_ofReal_mul]

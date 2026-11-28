@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`PartitionsJensen/Bridge.lean`
+(ChironTheCentaur/rh-lab-partitions-jensen, commit 57beb8dbff7b84e125931fe2e53080f325f4f108):
+Copyright (c) 2026 Sky (GitHub: ChironTheCentaur). All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Sky (GitHub: ChironTheCentaur)
+-/
+
 module
 
 public import MathlibExt.Combinatorics.Enumerative.JensenHyperbolicity
@@ -14,9 +24,9 @@ import Mathlib.Tactic.IntervalCases
 /-!
 # The log-ratio expansion of Griffin, Ono, Rolen and Zagier
 
-`HasLogRatioExpansion α d` is the hypothesis of
-`MetaMathlibExt.eventually_jensen_hyperbolic_of_log_ratio_expansion` with its functions left
-existential:
+`HasLogRatioExpansion α d` is the expansion in the hypothesis of
+`MetaMathlibExt.eventually_jensen_hyperbolic_of_log_ratio_expansion`, with `A`, `δ` and `g`
+existential and without that theorem's positivity of `α` and `A` (`A` may be any real sequence):
 `log (α (n + k) / α n) = A n k − δ n ² k² + ∑_{j=3}^{d} g j n kʲ + o(δ n ^ d)` for `k ≤ d`, where
 `δ > 0`, `δ → 0` and `g j = o(δʲ)`.
 
@@ -37,9 +47,12 @@ namespace MetaMathlibExt.ColoredPartitionsJensen
 
 @[expose] public section
 
-/-- The log-ratio expansion of Griffin, Ono, Rolen and Zagier in degree `d`: the hypothesis of
-`MetaMathlibExt.eventually_jensen_hyperbolic_of_log_ratio_expansion`, with `A`, `δ` and `g`
-existential. -/
+/-- The log-ratio expansion of Griffin, Ono, Rolen and Zagier in degree `d`: there are real
+sequences `A` and `δ` and `g : ℕ → ℕ → ℝ` with `δ > 0`, `δ → 0`, `g j = o(δʲ)` for `3 ≤ j ≤ d`, and
+`log (α (n + k) / α n) = A n k − δ n ² k² + ∑_{j=3}^{d} g j n kʲ + o(δ n ^ d)` for every `k ≤ d`.
+This is the expansion in the hypothesis of
+`MetaMathlibExt.eventually_jensen_hyperbolic_of_log_ratio_expansion`, without that theorem's
+positivity of `α` and `A` (`A` may be any real sequence). -/
 def HasLogRatioExpansion (α : ℕ → ℝ) (d : ℕ) : Prop :=
   ∃ (A δ : ℕ → ℝ) (g : ℕ → ℕ → ℝ), Tendsto δ atTop (𝓝 0) ∧ (∀ n, 0 < δ n) ∧
     (∀ j ∈ Icc 3 d, g j =o[atTop] fun n => δ n ^ j) ∧
