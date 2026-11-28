@@ -2,7 +2,7 @@
 
 For a stochastic policy $\pi$, the operator $P^\pi$ averages a Q-function over the next state and the policy's next action, and the Bellman operator $T^\pi Q = r + \gamma P^\pi Q$ is defined on Q-functions rather than on state values.
 
-Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. A Q-function is a map $Q : X \times A \to \mathbb{R}$; the reward $r$ is one. For a stochastic policy $\pi$ and a Q-function $Q$, write $(\mathbb{E}_\pi Q)(x') = \sum_{a' \in A} \pi(a' \mid x')\, Q(x',a')$ and define
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. A Q-function is a map $Q : X \times A \to \mathbb{R}$; the reward $r$ is one. For a stochastic policy $\pi$ and a Q-function $Q$, write $(\mathbb{E}_\pi Q)(x') = \sum_{a' \in A} \pi(a' \mid x')\, Q(x',a')$ and define
 
 $$(P^\pi Q)(x,a) = \sum_{x' \in X} \sum_{a' \in A} P(x' \mid x,a)\, \pi(a' \mid x')\, Q(x',a') = \sum_{x' \in X} P(x' \mid x,a)\, (\mathbb{E}_\pi Q)(x'),$$
 

@@ -2,7 +2,7 @@
 
 For iterates $Q_{k+1} = \mathcal{R}_kQ_k$ with Markovian admissible traces, arbitrary behaviour policies, increasingly greedy targets with $T^{\pi_k}Q_k \ge TQ_k - \varepsilon_k\|Q_k\|e$, and $T^{\pi_0}Q_0 \ge Q_0$, the error obeys $\|Q_{k+1} - Q^*\| \le \gamma\|Q_k - Q^*\| + \varepsilon_k\|Q_k\|$.
 
-Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $T$ be the Bellman optimality operator on Q-functions, $Q^*$ the optimal action value, $\|\cdot\|$ the sup norm and $e$ the Q-function equal to $1$. For $k \ge 0$ let $\mu_k$ (behaviour) and $\pi_k$ (target) be stochastic policies, which may depend on $Q_0, \dots, Q_k$, and let $c_k : A \times X \to [0,\infty)$ be Markovian traces with $\mu_k(b \mid y)\, c_k(b,y) \le \pi_k(b \mid y)$ for all $y, b$. Let $\mathcal{R}_k$ be the return-based operator of $(\pi_k, \mu_k, c_k)$ and $Q_{k+1} = \mathcal{R}_kQ_k$. Assume:
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $T$ be the Bellman optimality operator on Q-functions, $Q^*$ the optimal action value, $\|\cdot\|$ the sup norm and $e$ the Q-function equal to $1$. For $k \ge 0$ let $\mu_k$ (behaviour) and $\pi_k$ (target) be stochastic policies, which may depend on $Q_0, \dots, Q_k$, and let $c_k : A \times X \to [0,\infty)$ be Markovian traces with $\mu_k(b \mid y)\, c_k(b,y) \le \pi_k(b \mid y)$ for all $y, b$. Let $\mathcal{R}_k$ be the return-based operator of $(\pi_k, \mu_k, c_k)$ and $Q_{k+1} = \mathcal{R}_kQ_k$. Assume:
 
 1. $(\pi_k)$ is increasingly greedy with respect to $(Q_k)$;
 2. there are reals $\varepsilon_k \ge 0$ with $T^{\pi_k}Q_k \ge TQ_k - \varepsilon_k\|Q_k\|\,e$ for every $k$;
@@ -12,7 +12,7 @@ Then for every $k \ge 0$,
 
 $$\|Q_{k+1} - Q^*\| \le \gamma\, \|Q_k - Q^*\| + \varepsilon_k\, \|Q_k\| .$$
 
-Hypothesis 3 holds for the pessimistic start $Q_0 = -\frac{R}{1-\gamma}e$ whenever $|r| \le R$. Hypothesis 2 holds with the same $\varepsilon_k$ when $\sum_b |\pi_k(b \mid y) - \pi^g_k(b \mid y)| \le \varepsilon_k$ at every state, for a policy $\pi^g_k$ supported on maximizers of $Q_k$. The traces must be Markovian here; history-dependent traces are covered only by the policy-evaluation result.
+Hypothesis 3 holds for the pessimistic start $Q_0 = -\frac{R}{1-\gamma}e$ whenever $|r| \le R$. Hypothesis 2 holds with the same $\varepsilon_k$ when $\sum_b |\pi_k(b \mid y) - \pi^g_k(b \mid y)| \le \varepsilon_k$ at every state, for a policy $\pi^g_k$ supported on maximizers of $Q_k$. The traces must be Markovian here; in Munos et al., history-dependent traces are covered only by their policy-evaluation result.
 
 ## Depends on
 

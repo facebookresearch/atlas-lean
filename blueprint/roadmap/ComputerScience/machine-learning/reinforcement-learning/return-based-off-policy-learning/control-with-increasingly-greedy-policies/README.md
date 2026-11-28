@@ -1,6 +1,6 @@
 # Control with increasingly greedy policies
 
-Return-based control with Markovian traces: target policies that become greedier along the iterates keep the Bellman residual nonnegative, which gives a one-step error bound around the optimal action value and convergence to it for arbitrary behaviour policies.
+For admissible Markovian traces and increasingly greedy targets, a nonnegative initial Bellman residual stays nonnegative. From such a start, the target's greediness error enters a one-step error bound around the optimal action value; if that error parameter tends to zero, the iterates converge to the optimal action value for arbitrary behaviour policies.
 
 - [Increasingly greedy sequence of policies](increasingly-greedy-policies.md)
 - [Epsilon-greedy policies with non-increasing epsilon are increasingly greedy](epsilon-greedy-policies-are-increasingly-greedy.md)

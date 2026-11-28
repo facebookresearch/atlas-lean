@@ -2,7 +2,7 @@
 
 The error $\mathcal{R}Q - Q^\pi$ of a return-based operator is an expected discounted sum, from time $1$ on, of trace-weighted differences between the target-policy average of $Q - Q^\pi$ at the current state and the trace-weighted value of $Q - Q^\pi$ at the sampled pair.
 
-Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $\pi$ (target) and $\mu$ (behaviour) be stochastic policies, $Q^\pi$ the action value of $\pi$, and $c$ a causal trace with finite expected discounted trace mass at every pair. For every Q-function $Q$, with $\Delta Q = Q - Q^\pi$, and every pair $(x,a)$,
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $\pi$ (target) and $\mu$ (behaviour) be stochastic policies, $Q^\pi$ the action value of $\pi$, and $c$ a causal trace with finite expected discounted trace mass at every pair. For every Q-function $Q$, with $\Delta Q = Q - Q^\pi$, and every pair $(x,a)$,
 
 $$\mathcal{R}Q(x,a) - Q^\pi(x,a) = \sum_{t \ge 1} \gamma^t\, \mathbb{E}^\mu_{x,a}\Bigl[\Bigl(\prod_{i=1}^{t-1} c_i\Bigr)\bigl((\mathbb{E}_\pi \Delta Q)(x_t) - c_t\, \Delta Q(x_t, a_t)\bigr)\Bigr],$$
 
@@ -13,11 +13,13 @@ where $(\mathbb{E}_\pi \Delta Q)(y) = \sum_b \pi(b \mid y) \Delta Q(y,b)$; the s
 - [Return-based off-policy operator](return-based-off-policy-operator.md)
 - [Action value of a stochastic policy](../performance-difference-lemma/stoch-qvalue.md)
 - [Causal trace](causal-trace.md)
+- [Q-function Bellman operator of a stochastic policy](q-function-bellman-operator.md)
 
 ## Proof depends on
 
 - [The action value is a fixed point of every return-based operator](action-value-fixes-return-based-operators.md)
 - [Return-based off-policy operator](return-based-off-policy-operator.md)
+- [Q-function Bellman operator of a stochastic policy](q-function-bellman-operator.md)
 
 ## Expansion
 

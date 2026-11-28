@@ -2,7 +2,7 @@
 
 A sequence of stochastic policies $(\pi_k)$ is called increasingly greedy with respect to a sequence of Q-functions $(Q_k)$ when $P^{\pi_{k+1}}Q_{k+1} \ge P^{\pi_k}Q_{k+1}$ for every $k$: each new policy is at least as greedy as the previous one for the new Q-function.
 
-Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$. Let $(\pi_k)_{k \ge 0}$ be stochastic policies and $(Q_k)_{k \ge 0}$ Q-functions $X \times A \to \mathbb{R}$. The sequence $(\pi_k)$ is defined to be increasingly greedy with respect to $(Q_k)$ when, for every $k \ge 0$ and every pair $(x,a)$,
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$, a finite nonempty set of actions $A$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$. Let $(\pi_k)_{k \ge 0}$ be stochastic policies and $(Q_k)_{k \ge 0}$ Q-functions $X \times A \to \mathbb{R}$. The sequence $(\pi_k)$ is defined to be increasingly greedy with respect to $(Q_k)$ when, for every $k \ge 0$ and every pair $(x,a)$,
 
 $$(P^{\pi_{k+1}}Q_{k+1})(x,a) \ge (P^{\pi_k}Q_{k+1})(x,a) .$$
 

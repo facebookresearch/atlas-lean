@@ -2,7 +2,7 @@
 
 Under the hypotheses of the one-step error bound for return-based control, if $\varepsilon_k \to 0$ then the iterates stay bounded and $Q_k \to Q^*$ in sup norm, for arbitrary behaviour policies.
 
-Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$, real rewards and transition probabilities that are nonnegative and sum to $1$, and let $0 \le \gamma < 1$. Let $(\mu_k)$, $(\pi_k)$, Markovian traces $(c_k)$ with $\mu_k c_k \le \pi_k$, and iterates $Q_{k+1} = \mathcal{R}_kQ_k$ satisfy the hypotheses of the one-step error bound: $(\pi_k)$ increasingly greedy with respect to $(Q_k)$, $T^{\pi_k}Q_k \ge TQ_k - \varepsilon_k\|Q_k\|e$ with $\varepsilon_k \ge 0$, and $T^{\pi_0}Q_0 \ge Q_0$. If moreover $\varepsilon_k \to 0$, then $\sup_k \|Q_k\| < \infty$, more precisely $\limsup_k \|Q_k\| \le \frac{2(1+\gamma)}{1-\gamma}\|Q^*\|$, and
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$, a finite nonempty set of actions $A$, real rewards and transition probabilities that are nonnegative and sum to $1$, and let $0 \le \gamma < 1$. Let $(\mu_k)$, $(\pi_k)$, Markovian traces $(c_k)$ with $\mu_k c_k \le \pi_k$, and iterates $Q_{k+1} = \mathcal{R}_kQ_k$ satisfy the hypotheses of the one-step error bound: $(\pi_k)$ increasingly greedy with respect to $(Q_k)$, $T^{\pi_k}Q_k \ge TQ_k - \varepsilon_k\|Q_k\|e$ with $\varepsilon_k \ge 0$, and $T^{\pi_0}Q_0 \ge Q_0$. If moreover $\varepsilon_k \to 0$, then $\sup_k \|Q_k\| < \infty$, more precisely $\limsup_k \|Q_k\| \le \frac{2(1+\gamma)}{1-\gamma}\|Q^*\|$, and
 
 $$\lim_{k \to \infty} \|Q_k - Q^*\| = 0 .$$
 
@@ -23,6 +23,7 @@ The behaviour policies need not become greedy, so no greedy-in-the-limit explora
 
 - [One-step error bound for return-based control with increasingly greedy targets](control-error-recursion.md)
 - [The optimal action value is the unique fixed point of the Q-function optimality operator](../optimal-action-value-fixed-point.md)
+- [Q-function Bellman operator of a stochastic policy](../q-function-bellman-operator.md)
 
 ## Expansion
 

@@ -1,6 +1,6 @@
 # Return-based off-policy learning
 
-Off-policy evaluation and control in finite discounted Markov decision processes with return-based operators, whose traces correct returns sampled under a behaviour policy: Q-function Bellman operators, causal traces and the Retrace(λ) trace, contraction of the return-based operator around the action value, and convergence of return-based control with increasingly greedy targets.
+Off-policy evaluation and control in finite discounted Markov decision processes with return-based operators: Bellman operators on Q-functions, admissible causal traces, the Retrace(λ) trace, and contraction around a policy's action value. Sufficient conditions for control convergence are admissible Markovian traces, a nonnegative initial Bellman residual, increasingly greedy targets and vanishing greediness error.
 
 - [Q-function Bellman operator of a stochastic policy](q-function-bellman-operator.md)
 - [The action value is the unique fixed point of the Q-function Bellman operator](q-function-bellman-operator-fixed-point.md)

@@ -2,7 +2,7 @@
 
 The Bellman optimality operator on Q-functions is defined by replacing the policy average of the next action with a maximum: $(TQ)(x,a) = r(x,a) + \gamma \sum_{x'} P(x' \mid x,a) \max_{a'} Q(x',a')$.
 
-Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. For a Q-function $Q : X \times A \to \mathbb{R}$ define
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. For a Q-function $Q : X \times A \to \mathbb{R}$ define
 
 $$(TQ)(x,a) = r(x,a) + \gamma \sum_{x' \in X} P(x' \mid x,a) \max_{a' \in A} Q(x',a') .$$
 

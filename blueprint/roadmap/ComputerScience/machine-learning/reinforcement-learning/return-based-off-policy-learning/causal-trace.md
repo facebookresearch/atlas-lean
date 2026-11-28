@@ -2,7 +2,7 @@
 
 A sequence of nonnegative coefficients $c_s(a_s, h_s)$, $s \ge 1$, each a fixed function of the current action and the history up to the current state, is called a causal trace; it is called admissible for a target $\pi$ and a behaviour $\mu$ when $\mu(b \mid x_s)\, c_s(b, h_s) \le \pi(b \mid x_s)$ for every action $b$.
 
-Let $M$ be a Markov decision process with a finite set of states $X$ and a finite nonempty set of actions $A$, every action available in every state. For $s \ge 1$ let $H_s$ be the finite set of histories $h_s = (x_0, a_0, \dots, x_{s-1}, a_{s-1}, x_s)$ of length $s$; a history ends with a state and does not contain the action taken there. A causal trace is a sequence $c = (c_s)_{s \ge 1}$ of functions
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$ and a finite nonempty set of actions $A$, every action available in every state. For $s \ge 1$ let $H_s$ be the finite set of histories $h_s = (x_0, a_0, \dots, x_{s-1}, a_{s-1}, x_s)$ of length $s$; a history ends with a state and does not contain the action taken there. A causal trace is a sequence $c = (c_s)_{s \ge 1}$ of functions
 
 $$c_s : A \times H_s \to [0, \infty) .$$
 

@@ -2,7 +2,7 @@
 
 For a Markovian admissible trace, $P^\pi - P^{c\mu}$ has nonnegative entries, and $E = \gamma(I - \gamma P^{c\mu})^{-1}(P^\pi - P^{c\mu})$ is a nonnegative matrix whose rows sum to at most $\gamma$.
 
-Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $\pi$ (target) and $\mu$ (behaviour) be stochastic policies and $c : A \times X \to [0,\infty)$ a Markovian trace with $\mu(b \mid y)\, c(b,y) \le \pi(b \mid y)$ for all $y, b$; let $P^\pi$ and $P^{c\mu}$ be the corresponding operators on Q-functions and $e$ the Q-function equal to $1$. Then $P^\pi - P^{c\mu}$ has nonnegative entries, and the matrix
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$, a finite nonempty set of actions $A$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $\pi$ (target) and $\mu$ (behaviour) be stochastic policies and $c : A \times X \to [0,\infty)$ a Markovian trace with $\mu(b \mid y)\, c(b,y) \le \pi(b \mid y)$ for all $y, b$; let $P^\pi$ and $P^{c\mu}$ be the corresponding operators on Q-functions and $e$ the Q-function equal to $1$. Then $P^\pi - P^{c\mu}$ has nonnegative entries, and the matrix
 
 $$E = \gamma (I - \gamma P^{c\mu})^{-1} (P^\pi - P^{c\mu})$$
 

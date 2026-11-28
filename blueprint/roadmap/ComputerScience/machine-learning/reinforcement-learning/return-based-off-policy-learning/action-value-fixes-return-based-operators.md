@@ -2,7 +2,7 @@
 
 For any causal trace with finite expected discounted trace mass, and any behaviour policy, the return-based operator built from the target $\pi$ fixes the action value: $\mathcal{R}Q^\pi = Q^\pi$.
 
-Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $\pi$ (target) and $\mu$ (behaviour) be stochastic policies, $Q^\pi$ the action value of $\pi$, and $c$ a causal trace whose expected discounted trace mass $C(x,a)$ is finite at every pair. Then the return-based operator $\mathcal{R}$ of $(\pi, \mu, c)$ satisfies
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $\pi$ (target) and $\mu$ (behaviour) be stochastic policies, $Q^\pi$ the action value of $\pi$, and $c$ a causal trace whose expected discounted trace mass $C(x,a)$ is finite at every pair. Then the return-based operator $\mathcal{R}$ of $(\pi, \mu, c)$ satisfies
 
 $$\mathcal{R}Q^\pi = Q^\pi .$$
 
@@ -20,10 +20,11 @@ No admissibility is assumed, and the behaviour policy may give probability zero 
 - [History-dependent randomized policies and trajectory laws](../../../heuristic-search-and-planning/markov-decision-processes/history-dependent-randomized-policies-and-trajectory-laws.md)
 - [Return-based off-policy operator](return-based-off-policy-operator.md)
 - [Q-function Bellman operator of a stochastic policy](q-function-bellman-operator.md)
+- [Conditional expectation given a σ-field](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
 
 ## Expansion
 
-Let $\delta^\pi_t = r_t + \gamma (\mathbb{E}_\pi Q^\pi)(x_{t+1}) - Q^\pi(x_t,a_t)$. Given the history $h_t$ and the action $a_t$ (for $t = 0$, given $(x_0,a_0) = (x,a)$), the next state has law $P(\cdot \mid x_t, a_t)$, so $\mathbb{E}[\delta^\pi_t \mid h_t, a_t] = (T^\pi Q^\pi - Q^\pi)(x_t,a_t) = 0$. The weight $\prod_{s=1}^t c_s$ is a function of $(h_t, a_t)$, so the $t$-th term of the series defining $\mathcal{R}Q^\pi - Q^\pi$ is $\gamma^t\, \mathbb{E}[(\prod_{s \le t} c_s)\, \mathbb{E}[\delta^\pi_t \mid h_t, a_t]] = 0$; finite trace mass makes the series well defined.
+Let $\delta^\pi_t = r_t + \gamma (\mathbb{E}_\pi Q^\pi)(x_{t+1}) - Q^\pi(x_t,a_t)$. By the product form of the law, given the history $h_t$ and the action $a_t$ (for $t = 0$, given $(x_0,a_0) = (x,a)$) the next state has law $P(\cdot \mid x_t, a_t)$; so the finite sum over $x_{t+1}$, which equals $(T^\pi Q^\pi - Q^\pi)(x_t,a_t) = 0$, is a version of $\mathbb{E}[\delta^\pi_t \mid h_t, a_t]$, and $\delta^\pi_t$ has integral zero on every event $\{(h_t, a_t) = (h, b)\}$. The weight $\prod_{s=1}^t c_s$ is a function of $(h_t, a_t)$, constant on each such event, so summing over the finitely many events shows that the $t$-th term $\gamma^t\, \mathbb{E}[(\prod_{s \le t} c_s)\, \delta^\pi_t]$ of the series defining $\mathcal{R}Q^\pi - Q^\pi$ is $0$; finite trace mass makes the series well defined.
 
 ## Sources
 

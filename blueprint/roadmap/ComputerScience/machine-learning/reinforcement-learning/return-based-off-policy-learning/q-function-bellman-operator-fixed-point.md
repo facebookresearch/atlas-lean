@@ -2,7 +2,7 @@
 
 The action value $Q^\pi$ of a stochastic policy is the only Q-function $Q$ with $T^\pi Q = Q$; equivalently, $Q^\pi = \sum_{t \ge 0} \gamma^t (P^\pi)^t r = (I - \gamma P^\pi)^{-1} r$.
 
-Let $M$ be a Markov decision process with a finite set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $\pi$ be a stochastic policy, $V^\pi$ its value, and
+Let $M$ be a Markov decision process with a finite nonempty set of states $X$, a finite nonempty set of actions $A$, real rewards $r(x,a)$ and transition probabilities $P(x' \mid x,a)$ that are nonnegative and sum to $1$ over $x'$, and let $0 \le \gamma < 1$. Let $\pi$ be a stochastic policy, $V^\pi$ its value, and
 
 $$Q^\pi(x,a) = r(x,a) + \gamma \sum_{x'} P(x' \mid x,a)\, V^\pi(x')$$
 
@@ -10,7 +10,7 @@ its action value. Let $P^\pi$ and $T^\pi Q = r + \gamma P^\pi Q$ be the operator
 
 1. $T^\pi Q^\pi = Q^\pi$;
 2. every Q-function $Q$ with $T^\pi Q = Q$ equals $Q^\pi$;
-3. the matrix $I - \gamma P^\pi$ is invertible, the series $\sum_{t \ge 0} \gamma^t (P^\pi)^t$ is absolutely convergent with sum $(I - \gamma P^\pi)^{-1}$, and $Q^\pi = \sum_{t \ge 0} \gamma^t (P^\pi)^t r$.
+3. the matrix $I - \gamma P^\pi$ is invertible, the series $\sum_{t \ge 0} \gamma^t (P^\pi)^t$ is absolutely convergent with sum $(I - \gamma P^\pi)^{-1}$ (the Neumann series of the nonnegative matrix $\gamma P^\pi$, whose row sums equal $\gamma < 1$), and $Q^\pi = \sum_{t \ge 0} \gamma^t (P^\pi)^t r$.
 
 Item 3 is the form in which the source defines $Q^\pi$; items 1 and 2 identify that definition with the action value defined from $V^\pi$.
 
@@ -19,6 +19,7 @@ Item 3 is the form in which the source defines $Q^\pi$; items 1 and 2 identify t
 - [Q-function Bellman operator of a stochastic policy](q-function-bellman-operator.md)
 - [Action value of a stochastic policy](../performance-difference-lemma/stoch-qvalue.md)
 - [Value of a stochastic policy](../stochastic-policies-and-discounted-occupancy/stoch-value.md)
+- [Neumann series for the Leontief inverse when row sums are below one](../../../../Economics/general-equilibrium/leontief-input-output-model/has-sum-pow-of-row-sum-lt-one.md)
 
 ## Proof depends on
 
