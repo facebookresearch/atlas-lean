@@ -1,3 +1,4 @@
 # To RWValuation
 
-A piecewise-constant density of total mass one gives a Robertson–Webb valuation.
+A piecewise-constant density of mass one on `[0, 1]` gives a Robertson–Webb
+valuation.

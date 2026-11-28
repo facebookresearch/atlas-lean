@@ -1,3 +1,4 @@
 # Density
 
-A finite sum of interval indicators weighted by their heights. Overlapping terms add.
+A finite sum of indicators of the intervals `(lo i, hi i]`, weighted by their
+heights. Overlapping terms add.
