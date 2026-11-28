@@ -1,4 +1,4 @@
-# The analytical class Σ¹₁
+# The analytical class Σ¹₁ and Σ¹₁-hardness under many-one reductions
 
 A decision problem on the natural numbers is in $\Sigma^1_1$ if it asks for the existence of an infinite binary sequence satisfying an arithmetical condition; $\Sigma^1_1$-complete problems are not arithmetical, and in particular not decidable.
 

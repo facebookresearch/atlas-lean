@@ -12,9 +12,9 @@ None.
 
 None.
 
-## Expansion
+## Remarks
 
-These walks are the embedded chains of many Markovian queueing networks. A good expansion adds separate definition pages for their stability (positive recurrence) and for linear Lyapunov functions, which the theorem pages of this folder currently define in place.
+These walks are the embedded chains of many Markovian queueing networks. Their stability (positive recurrence) and linear Lyapunov functions are defined on the theorem pages of this folder that use them.
 
 ## Sources
 

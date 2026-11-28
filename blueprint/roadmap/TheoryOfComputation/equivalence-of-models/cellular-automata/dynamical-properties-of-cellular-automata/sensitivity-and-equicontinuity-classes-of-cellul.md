@@ -23,7 +23,7 @@ For the complexity of sensitivity in dimensions one and three see the page on [s
 
 - [The tiling problem is undecidable](../../../undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 
-## Expansion
+## Remarks
 
 The core construction turns a two-dimensional tile set $\tau$ into cellular automata whose dynamics are governed by whether $\tau$ tiles the plane: a solid phase that erodes along tiling errors spreads through a liquid phase, so that valid tilings yield configurations that block information flow. The paper builds three recursive maps: one whose image has no equicontinuous point and is sensitive exactly when $\tau$ does not tile the plane; one ("onion" construction) that is sensitive when $\tau$ does not tile and has equicontinuous points when it does; and a combination that is never sensitive and has equicontinuous points exactly when $\tau$ tiles. Since the tile sets that tile the plane form a co-recursively enumerable set that is not recursive, hence not recursively enumerable, each map transfers non-enumerability and inseparability to the corresponding pair of classes. The canonical lift of a $d$-dimensional automaton to dimension $d + 1$ preserves both properties, which extends the result from $d = 2$ to all $d \ge 2$.
 

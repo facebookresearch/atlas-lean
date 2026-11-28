@@ -16,7 +16,7 @@ None.
 
 None.
 
-## Expansion
+## Remarks
 
 Over a free monoid $\Sigma^*$ the freeness problem is decidable (Sardinas and Patterson), and over $\mathbb W\times\mathbb W$ it is decidable for two-element sets, since $\{x,y\}$ is not a code iff its two elements commute. For a single matrix the problem is decidable in polynomial time over $\mathbb Q^{d\times d}$. Over $\mathbb N^{3\times3}$ it is undecidable (Klarner, Birget and Satterfield, 1991).
 

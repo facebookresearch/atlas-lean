@@ -15,7 +15,7 @@ This answers a question of Rosenfeld.
 
 - [Mortality is undecidable for six 3 × 3 or two 18 × 18 integer matrices](../matrix-mortality-and-freeness/mortality-is-undecidable-for-six-3-3-or-two-18-1.md)
 
-## Expansion
+## Remarks
 
 The proof reduces mortality of a pair of matrices $\{A,B\}$, of size $d$: is some product of matrices from $\{A,B\}$ the zero matrix? In $\mathbb R^{d^2+2}$, write vectors as $(C,i,j)$ with $C$ a $d\times d$ matrix, let $s=(\mathbf I,1,0)$ and
 

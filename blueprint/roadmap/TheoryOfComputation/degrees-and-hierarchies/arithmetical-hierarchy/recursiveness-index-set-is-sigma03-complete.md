@@ -21,10 +21,11 @@ is $\Sigma^0_3$-m-complete (Proposition 40.4 of the notes).
 - [Parametrized s-m-n theorem](../../computability/exists-computable-code.md)
 - [The cofiniteness index set is Σ⁰₃-complete](cofiniteness-index-set-is-sigma03-complete.md)
 - [The halting set](../turing-reducibility/halting-set.md)
+- [The halting set is not Turing reducible to a decidable set](../turing-reducibility/not-turing-reducible-halting.md)
 
 ## Expansion
 
-Membership: $W_e$ is computable iff its complement is c.e., that is, iff $\exists e'\,(W_e\cup W_{e'}=\mathbb N\wedge W_e\cap W_{e'}=\emptyset)$; the union condition is $\Pi^0_2$ and the disjointness condition $\Pi^0_1$. Hardness reuses the moving-marker construction of the cofiniteness proof with one more reason to bump the $e$-th marker: whenever $\varphi_e(e)$ converges, the marker is bumped so that its final position $p_e$ bounds the halting time. If $B_x$ ends up coinfinite, then $\varphi_e(e)$ converges iff it converges within $p_e$ steps, so the halting set is computable from $B_x$ and $B_x$ is not computable; if $B_x$ is cofinite it is computable. Hence $A(x)\iff f(x)\in\mathrm{REC}$ for the same kind of computable $f$.
+Membership: $W_e$ is computable iff its complement is c.e., that is, iff $\exists e'\,(W_e\cup W_{e'}=\mathbb N\wedge W_e\cap W_{e'}=\emptyset)$; the union condition is $\Pi^0_2$ and the disjointness condition $\Pi^0_1$. Hardness reuses the moving-marker construction of the cofiniteness proof with one more reason to bump the $e$-th marker: whenever $\varphi_e(0)$ converges, the marker is bumped so that its final position $p_e$ bounds the halting time. If $B_x$ ends up coinfinite, then $\varphi_e(0)$ converges iff it converges within $p_e$ steps, so the [halting set](../turing-reducibility/halting-set.md) $\{e : \varphi_e(0)\downarrow\}$ is computable from $B_x$, and since the halting set is not computable, $B_x$ is not computable; the notes use the diagonal set $\{e : \varphi_e(e)\downarrow\}$ instead, and the argument is the same for any noncomputable c.e. set; if $B_x$ is cofinite it is computable. Hence $A(x)\iff f(x)\in\mathrm{REC}$ for the same kind of computable $f$.
 
 ## Sources
 

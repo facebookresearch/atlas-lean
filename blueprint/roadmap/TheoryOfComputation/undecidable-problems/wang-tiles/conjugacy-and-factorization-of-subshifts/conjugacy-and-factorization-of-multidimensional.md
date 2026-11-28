@@ -18,6 +18,7 @@ Already for fixed simple targets factorization is hard: whether a given SFT fact
 ## Proof depends on
 
 - [The tiling problem is undecidable](../the-tiling-problem-is-undecidable.md)
+- [The cofiniteness index set is Σ⁰₃-complete](../../../degrees-and-hierarchies/arithmetical-hierarchy/cofiniteness-index-set-is-sigma03-complete.md)
 
 ## Expansion
 

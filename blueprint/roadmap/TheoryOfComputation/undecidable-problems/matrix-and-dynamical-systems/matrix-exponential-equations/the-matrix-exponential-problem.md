@@ -20,7 +20,7 @@ None.
 
 None.
 
-## Expansion
+## Remarks
 
 In the commutative case the problem is decidable, even in a generalized form with complex algebraic entries and with linear constraints on the real and imaginary parts of the $t_i$; the proof reduces it to a linear-exponential problem and then to integer programming with linear forms in logarithms, using theorems of Baker, Kronecker, Lindemann and Masser.
 

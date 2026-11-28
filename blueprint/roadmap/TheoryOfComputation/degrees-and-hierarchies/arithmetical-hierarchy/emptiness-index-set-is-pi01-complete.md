@@ -24,7 +24,7 @@ So the emptiness problem is exactly as hard as the complement of the halting pro
 
 - [Parametrized s-m-n theorem](../../computability/exists-computable-code.md)
 
-## Expansion
+## Remarks
 
 Membership: $e\in\mathrm{EMP}$ iff for all $x$ and all $s$, the computation of $\varphi_e(x)$ has not halted within $s$ steps, a universal quantifier over a computable relation. Hardness: if $A$ is $\Pi^0_1$, there is a computable $R$ with $A(x)\iff\forall y\,R(x,y)$; by the s-m-n theorem there is a total computable $f$ with $W_{f(x)}=\{y:\neg R(x,y)\}$, and then $x\in A\iff f(x)\in\mathrm{EMP}$.
 

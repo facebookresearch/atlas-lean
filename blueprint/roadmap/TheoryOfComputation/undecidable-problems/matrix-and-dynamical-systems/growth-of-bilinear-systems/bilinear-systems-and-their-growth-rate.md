@@ -20,7 +20,7 @@ None.
 
 None.
 
-## Expansion
+## Remarks
 
 Matrix products are a special case: embedding $d\times d$ matrices in $\mathbb R^{d^2}$, the bilinear map $(C,C')\mapsto CC'$ turns questions about products of a finite set of matrices, such as the joint spectral radius, into questions about bilinear systems. The growth rate counts, for instance, the maximum number of minimal dominating sets in trees with $n$ leaves (Rote). In the nonnegative setting the growth rate is computable, and deciding $\lambda\le1$ is Turing equivalent to the halting problem.
 

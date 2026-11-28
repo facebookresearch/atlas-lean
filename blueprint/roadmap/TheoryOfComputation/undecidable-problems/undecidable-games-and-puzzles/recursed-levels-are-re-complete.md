@@ -19,6 +19,8 @@ Membership in RE holds because the game can be simulated from an initial state a
 
 ## Expansion
 
+A good expansion adds and links definition pages for the model the statement quantifies over, as Section 2 of the source fixes it: levels (rooms, tiles and objects), the player's moves, the semantics of treasure chests, green flames, jars and cauldrons, and the goal of reaching the crystal.
+
 The hardness proof reduces the Post correspondence problem, with a prescribed first domino, by implementing a nondeterministic algorithm: repeatedly choose a domino and push its top half onto a stack $S_A$ and its bottom half onto a stack $S_B$, then pop both stacks symbol by symbol and check that they agree and empty together. In the level, $S_A$ is the call stack of rooms entered through chests and $S_B$ is a chain of nested jars that the player carries. In the pushing phase the player selects dominoes and adds the corresponding rooms and jars; in the checking phase the player climbs back up the chests, performing for each pair of top symbols a handshake between the matching rooms of the two stacks, and gets stuck if the symbols differ. A global-lock gadget, one-time-traversal gadgets and prove and verify gadgets enforce the intended order (Lemmas 3.2 and 3.3). Only when both stacks are emptied together does the player return to the start room carrying the initial block, which is needed to jump up to the crystal; so the crystal is reachable exactly when the instance has a solution.
 
 ## Sources

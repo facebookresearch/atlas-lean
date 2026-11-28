@@ -13,11 +13,11 @@ In higher dimension fewer matrices suffice: for every $h\in\mathbb N$, $\mathrm{
 
 ## Proof depends on
 
-- [The Post correspondence problem is undecidable](../../post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [The Post correspondence problem is undecidable for Claus instances of size 7](../../post-correspondence-problem/pcp-is-undecidable-for-claus-instances-of-size-7.md)
 
 ## Expansion
 
-By Matiyasevich and Sénizergues, accessibility in semi-Thue systems with $3$ rules is undecidable, and Claus's reduction then makes Post's correspondence problem undecidable for $7$ pairs, even on *Claus instances*, which have a prescribed first and last pair (Corollary 7.9); the mixed modification of the problem is undecidable on Claus instances with $7$ pairs as well (Halava, Harju and Hirvensalo). Theorem 7.18 shows that decidability of $\mathrm{Free}(2k-1)[\mathbb W\times\mathbb W]$ would decide both problems for $k$ pairs on Claus instances, which gives undecidability for $2\cdot7-1=13$ elements, and Proposition 7.1 extends it to every $k\ge13$. Pairs of binary words embed into $\mathbb N^{3\times3}$ by a multiplicative injective morphism (Theorem 7.21). The higher-dimensional bounds come from Theorem 8.1, which reduces $\mathrm{Free}(kd+1)[D]$ to $\mathrm{Free}(k+1)[D^{d\times d}]$.
+By Matiyasevich and Sénizergues, accessibility in semi-Thue systems with $3$ rules is undecidable, and Claus's reduction then makes Post's correspondence problem undecidable for $7$ pairs, even on [Claus instances](../../post-correspondence-problem/pcp-is-undecidable-for-claus-instances-of-size-7.md), which have a prescribed first and last pair (Corollary 7.9); the mixed modification of the problem is undecidable on Claus instances with $7$ pairs as well (Halava, Harju and Hirvensalo). Theorem 7.18 shows that decidability of $\mathrm{Free}(2k-1)[\mathbb W\times\mathbb W]$ would decide both problems for $k$ pairs on Claus instances, which gives undecidability for $2\cdot7-1=13$ elements, and Proposition 7.1 extends it to every $k\ge13$. Pairs of binary words embed into $\mathbb N^{3\times3}$ by a multiplicative injective morphism (Theorem 7.21). The higher-dimensional bounds come from Theorem 8.1, which reduces $\mathrm{Free}(kd+1)[D]$ to $\mathrm{Free}(k+1)[D^{d\times d}]$.
 
 ## Sources
 

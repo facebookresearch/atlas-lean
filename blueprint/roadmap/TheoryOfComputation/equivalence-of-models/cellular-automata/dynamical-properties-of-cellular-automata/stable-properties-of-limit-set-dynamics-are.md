@@ -18,7 +18,7 @@ Consequently there is no algorithm that decides, given $F$, whether $F$ restrict
 
 - [Nilpotency of cellular automata is undecidable](../nilpotency-of-cellular-automata-is-undecidable.md)
 
-## Expansion
+## Remarks
 
 Both parts reduce nilpotency of cellular automata with a spreading state $s$, a state such that the local rule outputs $s$ whenever $s$ occurs in its neighborhood. First, such an automaton can be modified, with a new spreading state, so that it is stable iff it is nilpotent (Lemma 3.3). Given a member $(A^{\mathbb Z}, F)$ of $P$ and an automaton $(B^{\mathbb Z}, G)$ with a spreading state, a product construction gives $(C^{\mathbb Z}, H)$ with $\Omega_H = \Omega_F$ and $H|_{\Omega_H} = F|_{\Omega_F}$ iff $G$ is nilpotent; if $G$ is not nilpotent, $H$ is unstable, respectively has two distinct subshift attractors, so it is not in $P$. Hence $H \in P$ iff $G$ is nilpotent.
 

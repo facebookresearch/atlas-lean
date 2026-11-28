@@ -12,7 +12,7 @@ Let $(S^{\mathbb{Z}^d}, G)$ be a [cellular automaton on $\mathbb{Z}^d$](../cellu
 
 None.
 
-## Expansion
+## Remarks
 
 An automaton with an equicontinuous point is never sensitive, so the three classes are disjoint and cover all automata; in dimension one Kůrka showed that every automaton is either sensitive or has equicontinuous points, so the third class is empty there.
 

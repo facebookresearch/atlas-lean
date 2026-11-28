@@ -6,7 +6,7 @@ There are a semi-Thue system with three rules and a fixed word $w_0$ such that n
 
 **Theorem (Matiyasevich and Sénizergues).** There exist a semi-Thue system with three rules and a word $w_0$ for which the individual word problem is undecidable.
 
-Through Claus's reduction of semi-Thue systems to the Post correspondence problem, this theorem gives the undecidability of the Post correspondence problem for instances of size $7$ of a special form ([mortality and freeness bounds from Claus instances](../matrix-and-dynamical-systems/matrix-mortality-and-freeness/mortality-and-freeness-bounds-from-claus.md)).
+Through Claus's reduction of semi-Thue systems to the Post correspondence problem, this theorem gives the undecidability of the Post correspondence problem for instances of size $7$ of a special form ([the Post correspondence problem for Claus instances of size 7](../post-correspondence-problem/pcp-is-undecidable-for-claus-instances-of-size-7.md)).
 
 ## Depends on
 

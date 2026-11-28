@@ -10,7 +10,7 @@ $$
 
 and its *periodic set* is $\Pi=\bigcup_{p\ge1}\Pi^p$. A *local lattice language* (LLL) is the set of configurations of $A^{\mathbb Z\times\mathbb Z}$ in which every block of a given finite shape belongs to a given finite set of allowed blocks.
 
-**Theorem (Lindgren, Moore and Nordahl).** For every LLL and every $p\ge1$ there is a cellular automaton whose period-$p$ set is that LLL. Therefore, for each fixed $p\ge1$, it is undecidable, given a two-dimensional cellular automaton, whether it has a configuration $c$ with $F^p(c)=c$, that is, whether $\Pi^p$ is nonempty. (Configurations of least period dividing $p$ count; the source's period-$p$ set is defined by $F^p(c)=c$.)
+**Theorem (Lindgren, Moore and Nordahl).** Let $L$ be an LLL over an alphabet $A$ with $\lvert A\rvert\ge2$. There is a cellular automaton on $A^{\mathbb Z\times\mathbb Z}$ whose fixed-point set $\Pi^1$ is $L$; and for every $p\ge2$ there is a cellular automaton on $(A\times\{0,\dots,p\})^{\mathbb Z\times\mathbb Z}$ whose period-$p$ set is $L\times\{0,\dots,p-1\}^{\mathbb Z\times\mathbb Z}$, which is nonempty exactly when $L$ is. Both automata are computable from $L$ and $p$. Therefore, for each fixed $p\ge1$, it is undecidable, given a two-dimensional cellular automaton, whether it has a configuration $c$ with $F^p(c)=c$, that is, whether $\Pi^p$ is nonempty. (Configurations of least period dividing $p$ count; the source's period-$p$ set is defined by $F^p(c)=c$.) The source states that the period-$p$ set of its automaton for $p\ge2$ is the LLL itself; what its construction gives is the product above, which suffices for the undecidability.
 
 Since homogeneous configurations are mapped to homogeneous configurations, a cellular automaton with $k$ states always has a periodic orbit of some period $p\le k$, so the question whether $\Pi$ is nonempty is trivial. Conversely, the period-$p$ set of a cellular automaton of radius $r$ is itself an LLL, of range $2pr+1$.
 
@@ -23,9 +23,9 @@ Since homogeneous configurations are mapped to homogeneous configurations, a cel
 
 - [The tiling problem is undecidable](../../../undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 
-## Expansion
+## Remarks
 
-For $p=1$, let the automaton change the state of a cell exactly when the cell belongs to a forbidden block of the LLL; then a configuration is fixed if and only if it contains only allowed blocks. For $p>1$, enlarge the alphabet to $A\times\{0,\dots,p\}$ and let the second component count modulo $p+1$ at cells in a forbidden block and modulo $p$ elsewhere, leaving the first component unchanged; every configuration is then periodic, the configurations with only allowed blocks have period $p$, and all others have period $p+1$ or $p(p+1)$, so $\Pi^p$ is the given LLL. Wang tile sets are special LLLs, so by the undecidability of the tiling problem it is undecidable whether an LLL is nonempty, and hence whether $\Pi^p$ is nonempty.
+For $p=1$, let the automaton change the state of a cell exactly when the cell belongs to a forbidden block of the LLL; then a configuration is fixed if and only if it contains only allowed blocks. For $p\ge2$, enlarge the alphabet to $A\times\{0,\dots,p\}$, keep the first component, and let the second component $n$ become $(n+1)\bmod(p+1)$ at cells whose first component lies in a forbidden block and $(n+1)\bmod p$ elsewhere. Forbidden status depends only on the first components, which never change. A cell in a forbidden block has period $p+1$, so a configuration with such a cell is not in $\Pi^p$; a cell outside forbidden blocks with second component $p$ moves to $1$ and never returns to $p$; and a configuration whose first components form a configuration of $L$ and whose second components lie in $\{0,\dots,p-1\}$ has period $p$. Hence $\Pi^p=L\times\{0,\dots,p-1\}^{\mathbb Z\times\mathbb Z}$. Wang tile sets are special LLLs, so by the undecidability of the tiling problem it is undecidable whether an LLL is nonempty, and hence whether $\Pi^p$ is nonempty.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 For every $d \ge 4$, deciding whether the subshift of $\Sigma^{\mathbb{Z}^d}$ defined by a given finite set of forbidden patterns contains an aperiodic configuration is $\Sigma^1_1$-complete; the problem lies outside the arithmetical hierarchy and is in particular undecidable.
 
-**Theorem.** Let $d \ge 4$. The [aperiodic domino problem](aperiodic-domino-problem.md) for $\mathbb{Z}^d$ subshifts of finite type, whose input is a finite family $\mathcal{F}$ of $d$-dimensional patterns and whose question is whether $X_{\mathcal{F}}$ contains a configuration with no nonzero period, is [$\Sigma^1_1$-complete](analytical-class-sigma-1-1.md) under many-one reductions.
+**Theorem.** Let $d \ge 4$. The [aperiodic domino problem](aperiodic-domino-problem.md) for $\mathbb{Z}^d$ subshifts of finite type, whose input is a finite family $\mathcal{F}$ of $d$-dimensional patterns and whose question is whether $X_{\mathcal{F}}$ contains a configuration with no nonzero period, is [$\Sigma^1_1$-complete](../../../degrees-and-hierarchies/analytical-class-sigma-1-1.md) under many-one reductions.
 
 The three-dimensional case for SFTs is open in the source, which conjectures that it lies in the arithmetical hierarchy; in dimension $2$ the problem is $\Pi^0_1$-complete.
 
@@ -10,7 +10,7 @@ The three-dimensional case for SFTs is open in the source, which conjectures tha
 
 - [The aperiodic domino problem](aperiodic-domino-problem.md)
 - [Subshifts of finite type, sofic and effective subshifts](subshifts-and-the-aperiodic-domino-problem.md)
-- [The analytical class Σ¹₁](analytical-class-sigma-1-1.md)
+- [The analytical class Σ¹₁ and Σ¹₁-hardness under many-one reductions](../../../degrees-and-hierarchies/analytical-class-sigma-1-1.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

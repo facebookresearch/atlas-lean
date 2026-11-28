@@ -2,7 +2,7 @@
 
 For every $d \ge 3$, deciding whether a given sofic subshift of $\Sigma^{\mathbb{Z}^d}$ contains an aperiodic configuration is $\Sigma^1_1$-complete; the problem lies outside the arithmetical hierarchy and is in particular undecidable.
 
-**Theorem.** Let $d \ge 3$. The [aperiodic domino problem](aperiodic-domino-problem.md) for $\mathbb{Z}^d$ sofic subshifts, whose input is an SFT $X$ given by a finite family of forbidden patterns together with a letter-to-letter map $\pi$ and whose question is whether $\pi(X)$ contains a configuration with no nonzero period, is [$\Sigma^1_1$-complete](analytical-class-sigma-1-1.md) under many-one reductions.
+**Theorem.** Let $d \ge 3$. The [aperiodic domino problem](aperiodic-domino-problem.md) for $\mathbb{Z}^d$ sofic subshifts, whose input is an SFT $X$ given by a finite family of forbidden patterns together with a letter-to-letter map $\pi$ and whose question is whether $\pi(X)$ contains a configuration with no nonzero period, is [$\Sigma^1_1$-complete](../../../degrees-and-hierarchies/analytical-class-sigma-1-1.md) under many-one reductions.
 
 In dimension $2$ the problem is $\Pi^0_1$-complete for SFTs, sofic and effective subshifts alike, so the complexity jumps between dimensions $2$ and $3$; for SFTs the jump is at the next dimension (see [the SFT case](aperiodic-domino-problem-for-sfts.md)), and the three-dimensional SFT case is left open by the source.
 
@@ -10,7 +10,7 @@ In dimension $2$ the problem is $\Pi^0_1$-complete for SFTs, sofic and effective
 
 - [The aperiodic domino problem](aperiodic-domino-problem.md)
 - [Subshifts of finite type, sofic and effective subshifts](subshifts-and-the-aperiodic-domino-problem.md)
-- [The analytical class Σ¹₁](analytical-class-sigma-1-1.md)
+- [The analytical class Σ¹₁ and Σ¹₁-hardness under many-one reductions](../../../degrees-and-hierarchies/analytical-class-sigma-1-1.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

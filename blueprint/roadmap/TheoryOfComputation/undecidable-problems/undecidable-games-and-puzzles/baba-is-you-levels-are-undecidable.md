@@ -18,6 +18,8 @@ The source notes that other small modifications should suffice as well, for inst
 
 ## Expansion
 
+A good expansion adds and links definition pages for the model the statement quantifies over, as Sections 1 and 2.1 of the source fix it: baba+2 levels (the finite level, the two-tile hallway and the cap on copies of an object per tile), the rule sentences formed by text blocks, the moves and their effect on objects and rules, and the win condition.
+
 An instance of the Post correspondence problem with five pairs over any finite alphabet becomes one over $\{0,1\}$ by replacing each letter with a binary block of fixed length, so the binary problem with five pairs is undecidable. From such an instance $(\alpha_i,\beta_i)_{i\le5}$ the level contains five button gadgets, one for each pair, together with a timer gadget and a duplication gadget per pair, whose arrangement of lava and ice objects is read off the two words of the pair. Until the player pushes a wall text down, the only possible interactions are pushing the text "is" up in the button gadgets, in some order, and each push replicates the lava and ice tiles of the corresponding pair in two rows at the bottom of the level, which extend into the hallway; the top words, read in the reverse order of the pushes, appear in one row with lava for $1$, and the bottom words in the other row with lava for $0$. The only winning rule is "level without lava and without ice is win", and pushing the wall down removes the tiles exactly when the two rows are complementary in every column, that is, when the chosen sequence of indices solves the instance. The level has size polynomial in the instance.
 
 ## Sources
