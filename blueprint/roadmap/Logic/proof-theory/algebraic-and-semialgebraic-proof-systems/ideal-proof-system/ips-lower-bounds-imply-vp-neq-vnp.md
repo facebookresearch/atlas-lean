@@ -1,17 +1,17 @@
 # IPS lower bounds imply VP ≠ VNP
 
-A super-polynomial lower bound on Hilbert-like IPS refutations of any family of unsatisfiable CNFs implies $\mathrm{VNP} \ne \mathrm{VP}$, because every unsatisfiable CNF already has Hilbert-like IPS certificates in $\mathrm{VNP}$; lower bounds on the number of lines of Polynomial Calculus refutations imply the permanent versus determinant conjecture.
+A super-polynomial lower bound on Hilbert-like $\mathrm{VP}$-IPS refutations of any family of unsatisfiable CNFs implies $\mathrm{VNP} \ne \mathrm{VP}$, because every unsatisfiable CNF already has Hilbert-like IPS certificates in $\mathrm{VNP}$; lower bounds on the number of lines of Polynomial Calculus refutations imply the permanent versus determinant conjecture.
 
 Following the source, a family of tautologies here means the negations $\neg\varphi_n$ of a family of unsatisfiable CNFs $\varphi_n$, and an IPS proof of $\neg\varphi_n$ is an IPS refutation of the polynomial translation of $\varphi_n$: its clause polynomials, with the Boolean axioms $x_j^2 - x_j$ among the equations.
 
 **Theorem.** For any ring $R$:
 
-1. a super-polynomial lower bound on (constant-free) Hilbert-like $\mathrm{IPS}_R$ refutations of any family of unsatisfiable CNFs, i.e. proofs of the tautologies obtained by negating them, implies $\mathrm{VNP}_R \ne \mathrm{VP}_R$ (respectively $\mathrm{VNP}^0_R \ne \mathrm{VP}^0_R$);
+1. a super-polynomial lower bound on (constant-free) Hilbert-like $\mathrm{VP}$-$\mathrm{IPS}_R$ refutations of any family of unsatisfiable CNFs, i.e. proofs of the tautologies obtained by negating them, implies $\mathrm{VNP}_R \ne \mathrm{VP}_R$ (respectively $\mathrm{VNP}^0_R \ne \mathrm{VP}^0_R$);
 2. a super-polynomial lower bound on the number of lines in Polynomial Calculus refutations of unsatisfiable CNFs implies the permanent versus determinant conjecture $\mathrm{VNP} \ne \mathrm{VP}_{ws}$.
 
 **Key lemma.** For every family $(\varphi_n)$ of unsatisfiable CNFs, the translations of $\varphi_n$ have a Hilbert-like family of IPS certificates $(C_n)$ in $\mathrm{VNP}^0_R$. The hypothesis is unsatisfiability: a satisfiable CNF, such as the single clause $x \vee \neg x$ (a tautology read as a formula), has a common $0$-$1$ root of its clause polynomials and Boolean axioms, so it has no certificate.
 
-Together with the fact that polynomial-size constant-free IPS refutations of all unsatisfiable CNFs over any field would give $\mathrm{NP} \subseteq \mathrm{coMA}$ (Merlin guesses the proof, Arthur checks both defining identities by randomized PIT), this yields: if $\mathrm{NP} \not\subseteq \mathrm{coMA}$, then $\mathrm{VNP}^0_R \ne \mathrm{VP}^0_R$ for every ring $R$.
+Together with the fact that polynomial-size constant-free IPS refutations of all unsatisfiable CNFs over any field would give $\mathrm{NP} \subseteq \mathrm{coMA}$ (Merlin guesses the proof, Arthur checks both defining identities by randomized PIT), this yields: if $\mathrm{NP} \not\subseteq \mathrm{coMA}$, then $\mathrm{VNP}^0_{\mathbb{F}} \ne \mathrm{VP}^0_{\mathbb{F}}$ for every field $\mathbb{F}$.
 
 ## Proof sketch
 
@@ -44,4 +44,4 @@ whose summand is a polynomial-size constant-depth formula using only the constan
 
 ## Sources
 
-- Joshua A. Grochow, Toniann Pitassi, "Circuit complexity, proof complexity, and polynomial identity testing: the Ideal Proof System", *Journal of the ACM* 65(6), 2018, https://doi.org/10.1145/3230742; numbering of arXiv:1404.3820v1 (Theorem 3.1, Lemma 3.2, whose proof begins with an unsatisfiable CNF, Section 1.1 for the translation of tautologies, Proposition 1.4, Corollary 1.6, Proposition 2.2).
+- Joshua A. Grochow, Toniann Pitassi, "Circuit complexity, proof complexity, and polynomial identity testing: the Ideal Proof System", *Journal of the ACM* 65(6), 2018, https://doi.org/10.1145/3230742 (Theorem 1.2 for Hilbert-like $\mathrm{VP}$-$\mathrm{IPS}_R$, Proposition 3.1, Corollary 4.1 for fields $\mathbb{F}$, Lemma 4.2, Proposition 3.4); arXiv:1404.3820v1 (Theorem 3.1, Lemma 3.2, Section 1.1, Proposition 1.4, Corollary 1.6, Proposition 2.2).

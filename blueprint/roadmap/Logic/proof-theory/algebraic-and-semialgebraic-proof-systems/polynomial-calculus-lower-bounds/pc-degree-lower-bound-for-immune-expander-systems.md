@@ -9,7 +9,7 @@ Polynomials are multilinear over a field $\mathbb{F}$ and semantic implication $
 
 **Theorem.** Let $A$ be an $(r, s, c)$-expander, let $\ell$ be an integer with $s \le r(\ell/4 - (s - c))$, and let $f_1, \dots, f_m$ be $\ell$-immune polynomials over an arbitrary field with $\mathrm{Vars}(f_i) \subseteq X_i(A)$. Then every polynomial calculus refutation of $f_1 = \dots = f_m = 0$ has degree greater than $r(\ell/4 - (s - c))$.
 
-**Maximal-immunity case.** If $A$ is an $(r, s, c)$-expander with $|J_i(A)| = s$ for all rows and $\epsilon(i) \in \{0,1\}^{X_i(A)}$, then every polynomial calculus refutation of $\{\chi_{\epsilon(i)}(X_i(A)) : i \in [m]\}$ has degree greater than $rc/2$, where $\chi_{\epsilon}(\vec{v})$ is the multilinear polynomial equal to $1$ if $\vec{v} = \epsilon$ and $0$ otherwise.
+**Maximal-immunity case.** If $A$ is an $(r, s, c)$-expander and $\epsilon(i) \in \{0,1\}^{X_i(A)}$, then every polynomial calculus refutation of $\{\chi_{\epsilon(i)}(X_i(A)) : i \in [m]\}$ has degree greater than $rc/2$, where $\chi_{\epsilon}(\vec{v})$ is the multilinear polynomial equal to $1$ if $\vec{v} = \epsilon$ and $0$ otherwise.
 
 ## Proof sketch
 
@@ -25,4 +25,4 @@ None.
 
 ## Sources
 
-- Michael Alekhnovich, Alexander A. Razborov, "Lower bounds for polynomial calculus: non-binomial case", *42nd IEEE Symposium on Foundations of Computer Science (FOCS 2001)*, 2001, https://doi.org/10.1109/SFCS.2001.959893; theorem numbering of the authors' full version dated September 27, 2000 (Definitions 2.2 and 2.3, Lemma 2.4, Theorems 3.1, 3.8 and 3.13).
+- Michael Alekhnovich, Alexander A. Razborov, "Lower bounds for polynomial calculus: non-binomial case", *Proceedings of the Steklov Institute of Mathematics* 242, 2003, pp. 18–35 (extended abstract *FOCS 2001*, https://doi.org/10.1109/SFCS.2001.959893; journal numbering: Definitions 2.2 and 2.3, Lemma 2.7(1), Theorems 3.1, 3.8 and 3.13).

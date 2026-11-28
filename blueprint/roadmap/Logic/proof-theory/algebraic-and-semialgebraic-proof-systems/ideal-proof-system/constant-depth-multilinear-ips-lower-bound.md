@@ -14,7 +14,7 @@ $$
 n^{\Omega\left( \frac{(\log n)^{2^{1 - 2\Delta}}}{\Delta} \right)} .
 $$
 
-By the functional lower bound method this gives the same lower bound, over the same field and for the same $\beta$, for multilinear constant-depth IPS refutations of $\sum_{i,j,k,\ell} z_{ijk\ell} x_i x_j x_k x_\ell - \beta$ together with the Boolean axioms.
+By the functional lower bound method this gives the same lower bound, over the same field and for the same $\beta$, for product-depth-$\Delta$ multilinear $\mathrm{IPS}_{\mathrm{LIN}'}$ refutations (the individual-degree $\delta = 1$ case) of $\sum_{i,j,k,\ell} z_{ijk\ell} x_i x_j x_k x_\ell - \beta$ together with the Boolean axioms.
 
 ## Proof sketch
 

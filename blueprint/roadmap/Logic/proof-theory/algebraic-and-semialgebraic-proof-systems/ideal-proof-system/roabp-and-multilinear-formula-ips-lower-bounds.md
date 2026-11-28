@@ -12,7 +12,7 @@ in $\mathbb{F}[x_1, \dots, x_{2n}, z_1, \dots, z_{\binom{2n}{2}}]$ is unsatisfia
 
 1. any roABP-$\mathrm{IPS}_{\mathrm{LIN}}$ refutation, in any variable order, has size $\exp(\Omega(n))$;
 2. any multilinear-formula-IPS refutation has size $n^{\Omega(\log n)}$;
-3. any product-depth-$d$ multilinear-formula-IPS refutation has size $n^{\Omega((n/\log n)^{1/d}/d^2)}$.
+3. for $d = o(\log n / \log \log n)$, any product-depth-$d$ multilinear-formula-IPS refutation has size $n^{\Omega((n/\log n)^{1/d}/d^2)}$ (the printed Corollary 5.15 omits the $d = o(\log n / \log \log n)$ restriction, although its proof goes through Corollary 5.14 and Raz–Yehudayoff Theorem 3.13, which require it).
 
 **Contrast.** If $\mathrm{char}(\mathbb{F}) > n$ and $\beta \in \mathbb{F} \setminus \{0, \dots, n\}$, the plain subset-sum system $\sum_{i=1}^n x_i - \beta, \vec{x}^2 - \vec{x}$ has explicit $\mathrm{poly}(n)$-size refutations in roABP-$\mathrm{IPS}_{\mathrm{LIN}}$ and in depth-3 multilinear-formula-$\mathrm{IPS}_{\mathrm{LIN}}$.
 
@@ -30,4 +30,4 @@ Unsatisfiability holds because on Boolean inputs the sum is an integer in $\{0, 
 
 ## Sources
 
-- Michael A. Forbes, Amir Shpilka, Iddo Tzameret, Avi Wigderson, "Proof complexity lower bounds from algebraic circuit complexity", *31st Computational Complexity Conference (CCC 2016)*, LIPIcs 50, 2016, https://doi.org/10.4230/LIPIcs.CCC.2016.32; numbering of arXiv:1606.05050v1 (Corollaries 5.14 and 5.15; subset-sum upper bounds, Corollary 4.18 and Proposition 4.19).
+- Michael A. Forbes, Amir Shpilka, Iddo Tzameret, Avi Wigderson, "Proof complexity lower bounds from algebraic circuit complexity", *Theory of Computing* 17(10), 2021, https://doi.org/10.4086/toc.2021.v017a010 (extended abstract *CCC 2016*, LIPIcs 50, https://doi.org/10.4230/LIPIcs.CCC.2016.32; arXiv:1606.05050v1; Theorem 3.13, Corollaries 5.14 and 5.15, Corollary 4.18 and Proposition 4.19).
