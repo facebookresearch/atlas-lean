@@ -108,6 +108,16 @@ noncomputable def perPairInterceptLogLik {n₁₀ n₀₁ : ℕ} (α₁₀ : Fin
   (∑ i, Real.log (Real.sigmoid (α₁₀ i + β) * (1 - Real.sigmoid (α₁₀ i)))) +
     ∑ i, Real.log (Real.sigmoid (α₀₁ i) * (1 - Real.sigmoid (α₀₁ i + β)))
 
+/-- **Log-likelihood with an intercept constant within each discordant pair type.** If all pairs of
+one type share an intercept, the corresponding log-probability is weighted by that type's count.
+The intercepts `a₁₀` and `a₀₁` may differ. -/
+public theorem perPairInterceptLogLik_const (n₁₀ n₀₁ : ℕ) (a₁₀ a₀₁ β : ℝ) :
+    perPairInterceptLogLik (fun _ : Fin n₁₀ => a₁₀) (fun _ : Fin n₀₁ => a₀₁) β =
+      n₁₀ * Real.log (Real.sigmoid (a₁₀ + β) * (1 - Real.sigmoid a₁₀)) +
+        n₀₁ * Real.log (Real.sigmoid a₀₁ * (1 - Real.sigmoid (a₀₁ + β))) := by
+  simp only [perPairInterceptLogLik, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
+    nsmul_eq_mul]
+
 private theorem log_sigmoid_mul_le_midpoint (x y : ℝ) :
     Real.log (Real.sigmoid x * Real.sigmoid y) ≤ 2 * Real.log (Real.sigmoid ((x + y) / 2)) := by
   let a := Real.exp (-((x + y) / 2))
@@ -198,10 +208,9 @@ public theorem perPairInterceptLogLik_le {n₁₀ n₀₁ : ℕ} (h₁₀ : 0 < 
     _ ≤ 2 * (a * Real.log (a / (a + b)) + b * Real.log (b / (a + b))) := by
       linarith only [hweighted]
     _ = perPairInterceptLogLik (fun _ : Fin n₁₀ => -s) (fun _ : Fin n₀₁ => -s) (2 * s) := by
-      rw [← hσ₁₀, ← hσ₀₁]
-      simp only [perPairInterceptLogLik, show -s + 2 * s = s by ring, ← Real.sigmoid_neg, neg_neg,
-        Real.log_mul (Real.sigmoid_pos _).ne' (Real.sigmoid_pos _).ne', Finset.sum_const,
-        Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+      rw [← hσ₁₀, ← hσ₀₁, perPairInterceptLogLik_const]
+      simp only [show -s + 2 * s = s by ring, ← Real.sigmoid_neg, neg_neg,
+        Real.log_mul (Real.sigmoid_pos _).ne' (Real.sigmoid_pos _).ne']
       ring
 
 end WantedExt.Biology.StatisticalGenetics.ConditionalLogisticMatchedSetsWanted

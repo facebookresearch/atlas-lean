@@ -42,17 +42,31 @@ private theorem sigmoid_neg_log_two : Real.sigmoid (-Real.log 2) = 1 / 3 := by
   rw [Real.sigmoid_neg, sigmoid_log_two]
   norm_num
 
-example :
+private theorem fitted_pair_probs :
     Real.sigmoid (-Real.log 2 + 2 * Real.log 2) * (1 - Real.sigmoid (-Real.log 2)) = 4 / 9 ∧
       Real.sigmoid (-Real.log 2) * (1 - Real.sigmoid (-Real.log 2 + 2 * Real.log 2)) = 1 / 9 := by
   rw [show -Real.log 2 + 2 * Real.log 2 = Real.log 2 by ring,
     sigmoid_log_two, sigmoid_neg_log_two]
   norm_num
 
--- Both pair probabilities at zero slope and zero intercepts are 1/4, so the product is smaller.
-example : (Real.sigmoid 0 * (1 - Real.sigmoid 0)) ^ 3 < ((4 / 9 : ℝ) ^ 2) * (1 / 9) := by
-  rw [Real.sigmoid_zero]
-  norm_num
+-- Compute the public likelihood at zero and at the fit, independently of the maximizer theorem.
+example : perPairInterceptLogLik (fun _ : Fin 2 => 0) (fun _ : Fin 1 => 0) 0 <
+    perPairInterceptLogLik (fun _ : Fin 2 => -Real.log 2) (fun _ : Fin 1 => -Real.log 2)
+      (2 * Real.log 2) := by
+  calc
+    _ = Real.log (1 / 64) := by
+      rw [perPairInterceptLogLik_const]
+      norm_num [Real.sigmoid_zero]
+      rw [two_mul, ← Real.log_mul (x := 1 / 4) (y := 1 / 4) (by norm_num) (by norm_num),
+        ← Real.log_mul (x := 1 / 4 * (1 / 4)) (y := 1 / 4) (by norm_num) (by norm_num)]
+      norm_num
+    _ < Real.log (16 / 729) := Real.log_lt_log (by norm_num) (by norm_num)
+    _ = _ := by
+      rw [perPairInterceptLogLik_const, fitted_pair_probs.1, fitted_pair_probs.2]
+      norm_num
+      rw [two_mul, ← Real.log_mul (x := 4 / 9) (y := 4 / 9) (by norm_num) (by norm_num),
+        ← Real.log_mul (x := 4 / 9 * (4 / 9)) (y := 1 / 9) (by norm_num) (by norm_num)]
+      norm_num
 
 -- At zero slope, displacing an intercept from zero strictly decreases that pair's probability.
 example : Real.sigmoid (Real.log 2) * (1 - Real.sigmoid (Real.log 2)) = 2 / 9 ∧
