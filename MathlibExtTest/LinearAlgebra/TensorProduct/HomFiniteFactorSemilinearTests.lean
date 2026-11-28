@@ -12,6 +12,7 @@ Author: @toskua
 module
 
 public import MathlibExt.LinearAlgebra.TensorProduct.HomFiniteFactorScalar
+public import MathlibExt.LinearAlgebra.TensorProduct.SurjectiveScalarHom
 public import Mathlib.Data.Rat.Cast.CharZero
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Tactic.NormNum
