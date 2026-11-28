@@ -1014,6 +1014,7 @@
   "CSLibExt/Algorithms/Concurrency/DiningPhilosophers": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Dining philosophers problem"},
   "CSLibExt/Algorithms/Concurrency/DiningPhilosophersVariants": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Dining philosophers problem"},
   "CSLibExt/Algorithms/Lean/AStar/Consistent": {"to": "ComputerScience/heuristic-search-and-planning", "title": "A* search algorithm"},
+  "CSLibExt/Algorithms/Lean/Approximation/ApproximationGuarantee": {"to": "ComputerScience/approximation-algorithms", "title": "Approximation guarantees"},
   "CSLibExt/Algorithms/Lean/Approximation/ListScheduling": {"to": "ComputerScience/approximation-algorithms", "title": "List scheduling on identical machines"},
   "CSLibExt/Algorithms/Lean/Approximation/MaxNTimesCoverage": {"to": "ComputerScience/approximation-algorithms", "title": "Maximum n-times coverage"},
   "CSLibExt/Algorithms/Lean/Approximation/MaxSatRounding": {"to": "ComputerScience/approximation-algorithms", "title": "Randomized rounding for MAX-SAT"},
