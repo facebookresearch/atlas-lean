@@ -40,29 +40,10 @@ namespace WantedExt.Probability.Statistics.NeymanScottWanted
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal
 
-/-- **Maximum-likelihood variance estimate.** The estimate
-`σ̂² = (1 / (4n)) ∑_i (y_{i1} - y_{i2})²`. -/
-noncomputable def mleVariance {n : ℕ} (y : Fin n → Fin 2 → ℝ) : ℝ :=
-  (∑ i, (y i 0 - y i 1) ^ 2) / (4 * n)
-
 /-- **Difference-based variance estimate.** The conditional (difference-based) estimate
 `σ̃² = (1 / (2n)) ∑_i (y_{i1} - y_{i2})²`. -/
 noncomputable def conditionalVariance {n : ℕ} (y : Fin n → Fin 2 → ℝ) : ℝ :=
   (∑ i, (y i 0 - y i 1) ^ 2) / (2 * n)
-
-/-- **The joint maximum-likelihood estimate.** For real pairs
-`y i 0, y i 1`, `i < n`, with `∑_i (y_{i1} - y_{i2})² > 0`, the log-likelihood over pair means
-`α ∈ ℝⁿ` and variance `s > 0` is maximized exactly at `α̂_i = (y_{i1} + y_{i2}) / 2` and
-`s = σ̂² = (1 / (4n)) ∑_i (y_{i1} - y_{i2})²`: for every `α` and every `s > 0` the log-likelihood
-is at most its value there, with equality only when `α = α̂` and `s = σ̂²`.
-
-Sources: J. Neyman and E. L. Scott, "Consistent estimates based on partially consistent
-observations", Econometrica 16 (1948) 1–32; the characterization is derived. -/
-public theorem_wanted logLik_max {n : ℕ} (y : Fin n → Fin 2 → ℝ)
-    (hd : 0 < ∑ i, (y i 0 - y i 1) ^ 2) (α : Fin n → ℝ) (s : ℝ) (hs : 0 < s) :
-    logLik y α s ≤ logLik y (fun i => (y i 0 + y i 1) / 2) (mleVariance y) ∧
-      (logLik y α s = logLik y (fun i => (y i 0 + y i 1) / 2) (mleVariance y) ↔
-        α = (fun i => (y i 0 + y i 1) / 2) ∧ s = mleVariance y)
 
 /-- **Inconsistency of the maximum-likelihood variance.** Let `μ` be a
 probability measure and `y i t`, `i ∈ ℕ`, `t ∈ {0, 1}`, independent real random variables with
