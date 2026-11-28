@@ -240,21 +240,21 @@ private theorem active_cutoff {b m k : ℕ} (hb : 2 ≤ b) (hk : (b.digits m).le
     simp only [h, ite_false, add_zero]
     omega
 
-private theorem inactive_cutoff {b m k : ℕ} (hb : 2 ≤ b) (hm : 1 ≤ m)
-    (hk : (b.digits m).length = k + 1) :
+private theorem inactive_cutoff {b m k : ℕ} (hb : 2 ≤ b) (hk : (b.digits m).length = k + 1) :
     cutoff b (k % 2) m + 1 = b ^ ((k + 1) / 2) := by
-  have hm' := (length_digits_eq hb (by omega : m ≠ 0)).mp hk
+  have hlt : m < b ^ (k + 1) := (Nat.digits_length_le_iff hb m).mp hk.le
   have hmono : Monotone (cutoff b (k % 2)) := fun _ _ h =>
     (le_cutoff hb).mpr (((le_cutoff hb).mp le_rfl).trans h)
   have he : k % 2 ≤ 1 := by omega
-  have hupper := hmono hm'.2.le
+  have hupper := hmono hlt.le
   rw [cutoff_base_pow hb (by omega) he, show (k + 1 + k % 2) / 2 = (k + 1) / 2 by omega]
     at hupper
   have hpos : 0 < b ^ ((k + 1) / 2) := by positivity
   by_cases hz : k = 0
   · simp [hz] at hupper ⊢
     omega
-  · have hlower := hmono hm'.1
+  · have hle : b ^ k ≤ m := (Nat.lt_digits_length_iff hb m).mp (by rw [hk]; omega)
+    have hlower := hmono hle
     rw [cutoff_base_pow hb (by omega) he, show (k + k % 2) / 2 = (k + 1) / 2 by omega]
       at hlower
     omega
@@ -281,7 +281,7 @@ private theorem mirror_zero_modEq {b q : ℕ} (hb : 2 ≤ b) (hbq : b ≡ 1 [MOD
     mirror b 0 x ≡ 2 * x [MOD q] := by
   simpa [two_mul] using mirror_modEq hb hbq 0 x
 
-private theorem count_mirrorPrefixes {b m q r k : ℕ} (hb : 2 ≤ b) (hm : 1 ≤ m)
+private theorem count_mirrorPrefixes {b m q r k : ℕ} (hb : 2 ≤ b)
     (hk : (b.digits m).length = k + 1) (hr : r < q) (hbq : b ≡ 1 [MOD q]) :
     let H := m / b ^ ((k + 1) / 2)
     let P := b ^ ((k + 1) / 2)
@@ -300,7 +300,7 @@ private theorem count_mirrorPrefixes {b m q r k : ℕ} (hb : 2 ≤ b) (hm : 1 �
   have hsum (e : ℕ) := sum_range_eq_filter_Ioc (cutoff b e m) (fun x => mirror b e x ≡ r [MOD q])
   have hactive := active_cutoff hb hk
   change mirror b ((k + 1) % 2) H = C ∧ cutoff b ((k + 1) % 2) m + 1 = H + _ at hactive
-  have hinactive := inactive_cutoff hb hm hk
+  have hinactive := inactive_cutoff hb hk
   have hactiveSum :
       (∑ x ∈ range (cutoff b ((k + 1) % 2) m + 1),
         if mirror b ((k + 1) % 2) x ≡ r [MOD q] then (1 : ℚ) else 0) =
@@ -646,7 +646,7 @@ public theorem palindromeAPCount_of_modEq_one {b m q r : ℕ} (hb : 2 ≤ b) (hm
   have hCb : H % b = a n := by rw [hHu, Nat.mul_add_mod, Nat.mod_eq_of_lt ha]
   have hC := (active_cutoff hb hlen).1.symm
   change C = mirror b ((k + 1) % 2) H at hC
-  have hcount := count_mirrorPrefixes hb hm hlen hr hbq
+  have hcount := count_mirrorPrefixes hb hlen hr hbq
   change (palindromeAPCount b m q r : ℚ) =
     doubledPrefix q r (if Odd k then H else P) + centeredPrefix b q r (if Odd k then P else H) -
       (if r = 0 then 2 else 0) + w at hcount

@@ -27,6 +27,32 @@ example : palindromeAPCount 4 38 3 2 = 5 ∧ palindromeAPCount 5 17 4 1 = 1 ∧
     palindromeAPCount 5 17 4 2 = 2 ∧ palindromeAPCount 5 88 4 3 = 4 := by
   decide +kernel
 
+-- Apply the formula to the same one-digit inputs and compare with the direct counts above.
+example : (palindromeAPCount 2 1 1 0 : ℚ) = 1 ∧ (palindromeAPCount 5 4 4 0 : ℚ) = 1 := by
+  have hone := (palindromeAPCount_of_modEq_one (b := 2) (m := 1) (q := 1) (r := 0)
+    (by decide) (by decide) (by decide) (by decide) (by decide)).1 (by decide)
+  have heven := (palindromeAPCount_of_modEq_one (b := 5) (m := 4) (q := 4) (r := 0)
+    (by decide) (by decide) (by decide) (by decide) (by decide)).2 (by decide)
+  have hd₁ : Nat.digits 2 1 = [1] := by decide
+  have hd₄ : Nat.digits 5 4 = [4] := by decide
+  have hc₁ : palindromicHalfCopy 2 1 ≤ 1 := by decide
+  have hc₄ : palindromicHalfCopy 5 4 ≤ 4 := by decide
+  norm_num [hd₁, hd₄, hc₁, hc₄, Nat.odd_iff, Nat.even_iff, Finset.sum_range_succ] at hone heven ⊢
+  exact ⟨hone, heven⟩
+
+-- Just below the reflected cutoff the formula excludes it; at the cutoff it contributes one.
+example : (palindromeAPCount 5 87 4 0 : ℚ) = 6 ∧ (palindromeAPCount 5 88 4 0 : ℚ) = 7 := by
+  have hbelow := (palindromeAPCount_of_modEq_one (b := 5) (m := 87) (q := 4) (r := 0)
+    (by decide) (by decide) (by decide) (by decide) (by decide)).2 (by decide)
+  have hat := (palindromeAPCount_of_modEq_one (b := 5) (m := 88) (q := 4) (r := 0)
+    (by decide) (by decide) (by decide) (by decide) (by decide)).2 (by decide)
+  have hd₈₇ : Nat.digits 5 87 = [2, 2, 3] := by decide
+  have hd₈₈ : Nat.digits 5 88 = [3, 2, 3] := by decide
+  have hc₈₇ : ¬ palindromicHalfCopy 5 87 ≤ 87 := by decide
+  have hc₈₈ : palindromicHalfCopy 5 88 ≤ 88 := by decide
+  norm_num [hd₈₇, hd₈₈, hc₈₇, hc₈₈, Nat.odd_iff, Nat.even_iff, Finset.sum_range_succ] at hbelow hat
+  exact ⟨hbelow, hat⟩
+
 -- Odd modulus, with a center and an included endpoint.
 example : (palindromeAPCount 4 38 3 2 : ℚ) = 5 := by
   have h := (palindromeAPCount_of_modEq_one (b := 4) (m := 38) (q := 3) (r := 2)
@@ -53,13 +79,11 @@ example : (palindromeAPCount 5 17 4 2 : ℚ) = 2 := by
   norm_num [hd, hc, Nat.odd_iff, Nat.even_iff, Finset.sum_range_succ] at h
   exact h
 
--- At odd digit length, check both center parities and the residue-zero correction.
-example : (palindromeAPCount 5 88 4 3 : ℚ) = 4 ∧ (palindromeAPCount 5 88 4 0 : ℚ) = 7 := by
-  have ho := (palindromeAPCount_of_modEq_one (b := 5) (m := 88) (q := 4) (r := 3)
-    (by decide) (by decide) (by decide) (by decide) (by decide)).2 (by decide)
-  have he := (palindromeAPCount_of_modEq_one (b := 5) (m := 88) (q := 4) (r := 0)
+-- An odd residue at odd digit length uses the single center digit.
+example : (palindromeAPCount 5 88 4 3 : ℚ) = 4 := by
+  have h := (palindromeAPCount_of_modEq_one (b := 5) (m := 88) (q := 4) (r := 3)
     (by decide) (by decide) (by decide) (by decide) (by decide)).2 (by decide)
   have hd : Nat.digits 5 88 = [3, 2, 3] := by decide
   have hc : palindromicHalfCopy 5 88 ≤ 88 := by decide
-  norm_num [hd, hc, Nat.odd_iff, Nat.even_iff, Finset.sum_range_succ] at ho he
-  exact ⟨ho, he⟩
+  norm_num [hd, hc, Nat.odd_iff, Nat.even_iff, Finset.sum_range_succ] at h
+  exact h

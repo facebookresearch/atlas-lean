@@ -191,9 +191,7 @@ private theorem halfCopy_eq_of_prefix {b x y : ℕ} (hb : 2 ≤ b)
   simp only [digits_drop_div hb, hlen] at hd
   simp only [halfCopy_ofDigits, reflectDigits, ← List.drop_drop, hlen, hd]
 
-/-- For `b ≥ 2` and `n ≠ 0`, the base-`b` expansion of `n` has `k + 1` digits precisely when
-`b ^ k ≤ n < b ^ (k + 1)`. -/
-public theorem length_digits_eq {b n k : ℕ} (hb : 2 ≤ b) (hn : n ≠ 0) :
+private theorem length_digits_eq {b n k : ℕ} (hb : 2 ≤ b) (hn : n ≠ 0) :
     (b.digits n).length = k + 1 ↔ b ^ k ≤ n ∧ n < b ^ (k + 1) := by
   rw [Nat.length_digits b n hb hn, ← Nat.le_log_iff_pow_le hb hn,
     ← Nat.log_lt_iff_lt_pow hb hn]
