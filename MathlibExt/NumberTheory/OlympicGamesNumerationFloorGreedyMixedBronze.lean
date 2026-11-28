@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import MathlibExt.NumberTheory.BronzeMetallicIdentities
+import MathlibExt.NumberTheory.Recurrences.SubsequenceSecondOrderRecurrence
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
@@ -37,6 +38,8 @@ can occur only after such a prefix.
 * The two-bound block induction adapts the strategy of `floor_greedy_bronze_companion_sum_mul`
   in `MathlibExt.NumberTheory.OlympicGamesNumerationFloorGreedyBronzeCompanionSumMul`
   (Theorem 10 (1)).
+* The even-subsequence recurrence uses `subsequence_secondOrderRecurrence` from
+  `MathlibExt.NumberTheory.Recurrences.SubsequenceSecondOrderRecurrence`.
 -/
 
 namespace MetaMathlibExt
@@ -71,18 +74,8 @@ private theorem bronzePair_bounds (m : ℕ) :
       rw [hp, hb]
       omega
 
--- Taking every second term of the recurrence gives Xᵢ₊₄ = 11 Xᵢ₊₂ - Xᵢ.
-private theorem bronzeEven_recurrence {S : ℕ → ℤ}
-    (hS : ∀ j, S (j + 2) = 3 * S (j + 1) + S j) (i : ℕ) :
-    S (2 * (i + 2)) = 11 * S (2 * (i + 1)) - S (2 * i) := by
-  have h₀ := hS (2 * i)
-  have h₁ := hS (2 * i + 1)
-  have h₂ := hS (2 * i + 2)
-  simp only [Nat.mul_add, Nat.mul_one, Nat.add_assoc, Nat.reduceAdd, Nat.reduceMul] at h₁ h₂ ⊢
-  omega
-
--- Only the even-indexed companions enter the mixed weights. Compute them from their public
--- recurrences and initial values, using the common two-step recurrence of the even subsequences.
+-- Only the even-indexed companions enter the mixed weights. Their subsequences obey the same
+-- recurrence as the shifted bronze subsequences, so the initial values suffice.
 private theorem mixedBronze_even_weights (m : ℕ) :
     D (2 * m) = B (2 * m + 1) - B (2 * m) ∧
       B (2 * m + 1) + C (2 * m + 2) = 5 * B (2 * m + 1) + B (2 * m) := by
@@ -90,14 +83,19 @@ private theorem mixedBronze_even_weights (m : ℕ) :
   | zero => decide
   | one => decide
   | more m h₀ h₁ =>
-      have hD := bronzeEven_recurrence bronzeCompanionSecond_add_two m
-      have hC := bronzeEven_recurrence bronzeCompanionFirst_add_two (m + 1)
-      have hp := bronzeEven_recurrence lucasU_bronzeLucasParams_add_two m
-      have hb := bronzeEven_recurrence
-        (S := fun k => B (k + 1)) (fun k => lucasU_bronzeLucasParams_add_two (k + 1)) m
-      have hC' : C (2 * (m + 2) + 2) = 11 * C (2 * (m + 1) + 2) - C (2 * m + 2) := by
-        simpa only [Nat.mul_add, Nat.mul_one, Nat.add_assoc, Nat.reduceAdd, Nat.reduceMul]
-          using hC
+      let params : LucasSequenceParams := ⟨3, -1, by decide⟩
+      have ht : 0 < (2 : ℕ) := by decide
+      have hB := subsequence_secondOrderRecurrence params B
+        (by simpa [params] using lucasU_bronzeLucasParams_add_two) 2
+      have hp := (hB 0 ht).1 m
+      have hb := (hB 1 ht).1 m
+      have hD := (subsequence_secondOrderRecurrence params D
+        (by simpa [params] using bronzeCompanionSecond_add_two) 2 0 ht).1 m
+      have hC := (subsequence_secondOrderRecurrence params C
+        (by simpa [params] using bronzeCompanionFirst_add_two) 2 2 ht).1 m
+      have hV : lucasV params 2 = 11 := by decide
+      have hQ : params.q ^ 2 = 1 := by decide
+      simp only [hV, hQ, Nat.add_zero, one_mul] at hp hb hD hC
       constructor <;> omega
 
 -- If the block uses one digit more than its usual budget, the incoming prefix must be small.
