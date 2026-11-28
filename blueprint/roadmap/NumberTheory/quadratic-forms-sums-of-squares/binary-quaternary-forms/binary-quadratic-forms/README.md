@@ -40,4 +40,3 @@
 - [Proper equivalence and the orbits of roots](properly-equivalent-iff-exists-smul.md)
 - [Reduced forms and the fundamental domain](is-gauss-reduced-iff-root-mem.md)
 - [Roots in Mathlib's closed fundamental domain](root-mem-fd-iff.md)
-- [Form classes and proper ideal classes of an imaginary quadratic order](form-classes-proper-ideal-classes.md)
