@@ -36,6 +36,18 @@ private abbrev unit3 (i j : I3) : Matrix I3 I3 ℤ := Matrix.single i j 1
 private abbrev loopTail : Fin 2 → Matrix I3 I3 ℤ := ![unit3 1 2, unit3 2 0]
 private abbrev reversedTail : Fin 2 → Matrix I3 I3 ℤ := ![unit3 2 0, unit3 1 2]
 
+private theorem map_one_matrix {I : Type*} (U : Matrix I I ℤ) :
+    U.map (fun c => c • (1 : ℤ)) = U := by
+  ext i j
+  simp only [Matrix.map_apply, smul_eq_mul, mul_one]
+
+private theorem map_single_smul {I M : Type*} [DecidableEq I]
+    [AddCommGroup M] [Module ℤ M] (i j : I) (m : M) :
+    (Matrix.single i j (1 : ℤ)).map (fun c => c • m) = Matrix.single i j m := by
+  change (Matrix.single i j (1 : ℤ)).map (LinearMap.toSpanSingleton ℤ M m) = _
+  simpa only [LinearMap.toSpanSingleton_apply, one_smul] using
+    (Matrix.map_single i j (1 : ℤ) (LinearMap.toSpanSingleton ℤ M m))
+
 private theorem const_fin_one {B : Type*} (x : B) :
     (fun _ : Fin 1 => x) = ![x] := by
   funext i
@@ -52,14 +64,16 @@ example :
       (1 : ℤ) ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ (fun _ : Fin 2 => (1 : ℤ)) := by
   have h := generalizedTrace_scaled ℤ I3 2 (unit3 0 1) loopTail
     (1 : ℤ) (fun _ : Fin 2 => (1 : ℤ))
-  simpa [unit3, loopTail, Matrix.map, Matrix.of, Matrix.single, Matrix.trace, Matrix.mul_apply,
+  simp only [map_one_matrix] at h
+  simpa [unit3, loopTail, Matrix.trace, Matrix.mul_apply,
     Fin.sum_univ_succ, List.ofFn_succ, Matrix.single_apply, smul_eq_mul] using h
 
 example :
     generalizedTrace ℤ I3 2 (unit3 0 1 ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ reversedTail) = 0 := by
   have h := generalizedTrace_scaled ℤ I3 2 (unit3 0 1) reversedTail
     (1 : ℤ) (fun _ : Fin 2 => (1 : ℤ))
-  simpa [unit3, reversedTail, Matrix.map, Matrix.of, Matrix.single, Matrix.trace, Matrix.mul_apply,
+  simp only [map_one_matrix] at h
+  simpa [unit3, reversedTail, Matrix.trace, Matrix.mul_apply,
     Fin.sum_univ_succ, List.ofFn_succ, Matrix.single_apply, smul_eq_mul] using h
 
 private abbrev outerCoefficient : Matrix I2 I2 A := Matrix.single 0 1 (unit2 0 1)
@@ -71,9 +85,18 @@ private theorem matchedTrace :
       unit2 0 1 ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ ![unit2 1 0] := by
   have h := generalizedTrace_scaled ℤ I2 1 (Matrix.single 0 1 (1 : ℤ))
     ![Matrix.single 1 0 (1 : ℤ)] (unit2 0 1) ![unit2 1 0]
-  simpa [outerCoefficient, outerAlgebra, Matrix.map, Matrix.of, Matrix.single,
-    const_fin_one, Matrix.trace, Matrix.mul_apply,
-    Matrix.single_apply, Fin.sum_univ_succ, List.ofFn_succ] using h
+  have h0 :
+      (Matrix.single 0 1 (1 : ℤ)).map (fun c => c • unit2 0 1) = outerCoefficient :=
+    map_single_smul 0 1 (unit2 0 1)
+  have ht :
+      (fun t : Fin 1 => (![Matrix.single 1 0 (1 : ℤ)] t).map
+        (fun c => c • (![unit2 1 0] t))) = ![outerAlgebra] := by
+    funext t
+    fin_cases t
+    exact map_single_smul 1 0 (unit2 1 0)
+  rw [h0, ht] at h
+  simpa [Matrix.trace, Matrix.mul_apply, Matrix.single_apply,
+    Fin.sum_univ_succ, List.ofFn_succ] using h
 
 example :
     generalizedTrace ℤ I2 1
@@ -86,8 +109,19 @@ example :
         PiTensorProduct.tprod ℤ ![Matrix.single 0 1 (3 : ℤ)]) = 0 := by
   have h := generalizedTrace_scaled ℤ I2 1 (Matrix.single 0 1 (1 : ℤ))
     ![Matrix.single 0 1 (1 : ℤ)] (2 : ℤ) ![(3 : ℤ)]
-  simpa [Matrix.map, Matrix.of, Matrix.single, const_fin_one, Matrix.trace, Matrix.mul_apply,
-    Matrix.single_apply, Fin.sum_univ_succ, List.ofFn_succ] using h
+  have h0 :
+      (Matrix.single 0 1 (1 : ℤ)).map (fun c => c • (2 : ℤ)) =
+        Matrix.single 0 1 (2 : ℤ) :=
+    map_single_smul 0 1 (2 : ℤ)
+  have ht :
+      (fun t : Fin 1 => (![Matrix.single 0 1 (1 : ℤ)] t).map
+        (fun c => c • (![(3 : ℤ)] t))) = ![Matrix.single 0 1 (3 : ℤ)] := by
+    funext t
+    fin_cases t
+    exact map_single_smul 0 1 (3 : ℤ)
+  rw [h0, ht] at h
+  simpa [Matrix.trace, Matrix.mul_apply, Matrix.single_apply,
+    Fin.sum_univ_succ, List.ofFn_succ] using h
 
 private def zeroCoordinate :
     A ⊗[ℤ] TensorPower ℤ 0 A →ₗ[ℤ] A :=
@@ -119,6 +153,7 @@ example :
       unit2 0 0 - unit2 1 1 := by
   have h := LinearMap.congr_fun (trace_boundary_comm ℤ A A I2 0)
     (outerCoefficient ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ ![outerAlgebra])
+  simp only [LinearMap.comp_apply] at h
   change zeroCoordinate (_) = _
   rw [h, matchedTrace, ModuleCat.Algebra.Hochschild.boundary_one_tprod]
   simp [zeroCoordinate, LinearMap.comp_apply, TensorProduct.map_tmul,
@@ -158,13 +193,14 @@ example :
     (fun _ : Fin 1 => Matrix.single 1 0 (3 : ℤ))
   have h := generalizedTrace_scaled ℤ I2 1 (Matrix.single 0 1 (1 : ℤ))
     (fun _ : Fin 1 => Matrix.single 1 0 (1 : ℤ)) (2 : ℤ) (fun _ : Fin 1 => (3 : ℤ))
+  simp only [map_single_smul] at h
   have ht :
       generalizedTrace ℤ I2 1
         (Matrix.single 0 1 (2 : ℤ) ⊗ₜ[ℤ]
           PiTensorProduct.tprod ℤ (fun _ : Fin 1 => Matrix.single 1 0 (3 : ℤ))) =
         (2 : ℤ) ⊗ₜ[ℤ] PiTensorProduct.tprod ℤ (fun _ : Fin 1 => (3 : ℤ)) := by
-    simpa [Matrix.map, Matrix.of, Matrix.single, Matrix.trace, Matrix.mul_apply,
-      Matrix.single_apply, Fin.sum_univ_succ, List.ofFn_succ] using h
+    simpa [Matrix.trace, Matrix.mul_apply, Matrix.single_apply,
+      Fin.sum_univ_succ, List.ofFn_succ] using h
   simpa only [const_fin_one] using hb.trans ht
 
 
