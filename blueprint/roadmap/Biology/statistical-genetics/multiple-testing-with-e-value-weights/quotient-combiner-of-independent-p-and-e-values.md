@@ -4,7 +4,7 @@ For a null hypothesis $H$, a p-value is a random variable $P$ that is [valid](..
 
 $$Q(p, e) = \frac{p}{e} \wedge 1$$
 
-(with $p/0 = \infty$). **Theorem.** If $P$ and $E$ are independent under $H$, then $Q(P, E)$ is a valid p-value, and $Q$ is admissible among combiners of independent p- and e-values that return p-values.
+(with $0/0 = 0$ and $p/0 = \infty$ for $p > 0$, so $Q(0, 0) = 0$; setting $Q(0, 0) = 1$ would make $Q$ inadmissible since replacing $Q(0, 0)$ by $0$ preserves validity because $\Pr(P = 0) = 0$ for every valid p-value $P$). **Theorem.** If $P$ and $E$ are independent under $H$, then $Q(P, E)$ is a valid p-value, and $Q$ is admissible among combiners of independent p- and e-values that return p-values.
 
 ## Depends on
 
