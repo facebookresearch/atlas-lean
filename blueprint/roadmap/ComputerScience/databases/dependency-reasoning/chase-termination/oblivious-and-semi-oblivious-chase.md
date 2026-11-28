@@ -21,7 +21,6 @@ Both variants are eager, in contrast with the [standard (restricted) chase](rest
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](../../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
-- [Restricted chase sequences and their termination](restricted-chase-sequences.md)
 
 ## Proof depends on
 

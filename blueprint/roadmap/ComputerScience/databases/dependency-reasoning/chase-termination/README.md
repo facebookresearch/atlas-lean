@@ -1,6 +1,6 @@
 # Chase termination
 
-Termination of the oblivious, semi-oblivious and restricted chase for existential rules (tuple-generating dependencies), and how undecidable it is: r.e.-complete for the eager variants and $\Pi^1_1$-complete for the fair restricted chase.
+Termination of the oblivious, semi-oblivious and restricted chase for existential rules (tuple-generating dependencies), and how undecidable it is: RE-complete for termination of the oblivious and semi-oblivious chase on all instances, $\Pi^0_2$-complete for some-sequence termination of the standard (restricted) chase on all instances and for all-instances termination of the core chase, and $\Pi^1_1$-complete for universal termination of the restricted chase.
 
 - [Restricted chase sequences and their termination](restricted-chase-sequences.md)
 - [Universal restricted chase termination of knowledge bases is Π¹₁-complete](restricted-chase-kb-termination-is-pi11-complete.md)

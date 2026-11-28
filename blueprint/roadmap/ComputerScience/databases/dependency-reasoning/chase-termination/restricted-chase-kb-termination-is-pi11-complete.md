@@ -19,7 +19,7 @@ None.
 
 *Hardness.* Conversely, from a machine $M$ the source builds a database $D_\varepsilon$ and a rule set $R_M$ whose restricted chase simulates the runs of $M$ on the empty word, so that a non-terminating chase sequence exists exactly when some run visits $q_r$ infinitely often. The difficulty is that runs visiting $q_r$ finitely often, including non-halting ones, must yield terminating chase sequences although no computable bound on their length exists. The construction uses "emergency brakes" (a technique of Krötzsch, Marx and Rudolph): every new term is linked to a special brake term that is not yet marked as real; fairness eventually marks the brake real, after which all existential requirements are satisfied and the chase stops. The source stacks such brakes, each one responsible for stopping the simulation of runs that do not go on through $q_r$, so that only runs with infinitely many $q_r$-visits keep the chase growing forever.
 
-The source notes that the "sometimes" variant (some chase sequence terminates) is recursively enumerable and complete for it, a result of Deutsch, Nash and Remmel.
+The source notes that the "sometimes" variant (some chase sequence terminates) is RE-complete, a result of Deutsch, Nash and Remmel.
 
 A good expansion links the $\Pi^1_1$-completeness of non-recurrence through a state on the empty word for nondeterministic Turing machines (Proposition 39 of the source), Harel's $\Pi^1_1$-completeness of non-recurrence of computable marked b-trees and Rogers' $\Pi^1_1$-completeness of well-foundedness of computable $\omega$-trees.
 
