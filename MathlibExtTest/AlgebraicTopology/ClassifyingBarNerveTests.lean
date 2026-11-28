@@ -84,16 +84,29 @@ private lemma barTwo_coordinate (J : Type) [TopologicalSpace J] [Monoid J]
   funext i
   fin_cases i <;> rfl
 
+private lemma powOne_component (X : TopCat.{0}) :
+    (monadPowHom (topTensorMonadHom G π) 1).app X = (topTensorMonadHom G π).app X := by
+  simpa only [monadPowHom_zero_app, monadPow_zero, Functor.id_map, Category.id_comp] using
+    (monadPowHom_succ_app (topTensorMonadHom G π) 0 X)
+
 private lemma map_barOne (x : G) :
     (BBarMap G π).app (op (SimplexCategory.mk 1)) (barOne G x) = barOne H (π x) := by
   refine (ConcreteCategory.congr_hom (BBarMap_app_op_mk G π 1) (barOne G x)).trans ?_
-  rfl
+  rw [powOne_component]
+  change (topPoint ◁ (topTensorMonadHom G π).app topPoint) (barOne G x) = barOne H (π x)
+  rw [TopCat.whiskerLeft_apply]
+  simp only [barOne, topTensorMonadHom_app]
 
 private lemma map_barTwo (x y : G) :
     (BBarMap G π).app (op (SimplexCategory.mk 2)) (barTwo G x y) =
       barTwo H (π x) (π y) := by
   refine (ConcreteCategory.congr_hom (BBarMap_app_op_mk G π 2) (barTwo G x y)).trans ?_
-  rfl
+  rw [monadPowHom_succ_app, powOne_component]
+  change (PUnit.unit,
+    (GTop H ◁ (topTensorMonadHom G π).app topPoint)
+      ((topTensorMonadHom G π).app (GTop G ⊗ topPoint) (x, (y, PUnit.unit)))) =
+    (PUnit.unit, (π x, (π y, PUnit.unit)))
+  rw [topTensorMonadHom_app, TopCat.whiskerLeft_apply, topTensorMonadHom_app]
 
 private abbrev imageOne :=
   (BBarMap G π).app (op (SimplexCategory.mk 1)) (barOne G g)
