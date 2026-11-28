@@ -10,7 +10,7 @@ The input is promised to be weakly synchronous. Since an MSC is weakly synchrono
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,8 +18,8 @@ None.
 
 ## Expansion
 
-The reduction is from emptiness of FIFO automata, finite-state machines with one FIFO queue, undecidable by Finkel and Lozes. A FIFO automaton is turned into a weakly synchronous system of three processes $a$, $b$, $c$ in which $a$ follows the automaton's transitions and sends its enqueued messages to both $b$ and $c$, and the other two processes are forced to forward messages in matching orders; the paper proves that the FIFO automaton has an accepting run if and only if the three-process system does. The construction is guided by an earlier result of the paper that the treewidth of weakly synchronous point-to-point MSCs is unbounded, witnessed by MSCs with arbitrarily large grids as minors. Emptiness of FIFO automata has no page here.
+The reduction is from emptiness of FIFO automata, finite-state machines with one FIFO queue, undecidable by Finkel and Lozes. A FIFO automaton is turned into a weakly synchronous system of three processes $a$, $b$, $c$ in which $a$ follows the automaton's transitions and sends its enqueued messages to both $b$ and $c$, and the other two processes are forced to forward messages in matching orders; the paper proves that the FIFO automaton has an accepting run if and only if the three-process system does. The construction is guided by an earlier result of the paper that the treewidth of weakly synchronous point-to-point MSCs is unbounded, witnessed by MSCs with arbitrarily large grids as minors. A good expansion links a page for the emptiness of FIFO automata (Lemma 2.1 of the source).
 
 ## Sources
 
-- Cinzia Di Giusto, Davide Ferré, Étienne Lozes and Nicolas Nisse, "Weakly Synchronous Systems with Three Machines Are Turing Powerful", Reachability Problems (RP 2023), Lecture Notes in Computer Science 14235, pp. 28–41, Springer, 2023, <https://doi.org/10.1007/978-3-031-45286-4_3>; the definitions of Section 2 (MSCs, weakly synchronous MSCs, communicating systems and emptiness), the main theorem and its corollary in Section 4, and the appendix on causally ordered MSCs of arXiv:2308.10578v1 (the copy read), <https://arxiv.org/abs/2308.10578v1>.
+- Cinzia Di Giusto, Davide Ferré, Étienne Lozes and Nicolas Nisse, "Weakly Synchronous Systems with Three Machines Are Turing Powerful", Reachability Problems (RP 2023), Lecture Notes in Computer Science 14235, pp. 28–41, Springer, 2023, <https://doi.org/10.1007/978-3-031-45286-4_3>; the definitions of Section 2 (MSCs, weakly synchronous MSCs, communicating systems and emptiness), Lemma 2.1 (emptiness of FIFO automata), Theorems 3.3 and 3.4 (unbounded treewidth), Theorem 4.1, Theorem 4.2 (the main theorem) and Corollary 4.2.1 (causally ordered communication) in Section 4, and Appendix D on causally ordered MSCs of arXiv:2308.10578v1 (the copy read), <https://arxiv.org/abs/2308.10578v1>.

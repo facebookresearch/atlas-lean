@@ -11,6 +11,7 @@ By contrast, reachability of a control state or of a finite set of global states
 ## Depends on
 
 - [Lossy channel systems](lossy-channel-systems.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -17,6 +17,7 @@ In particular, qualitative LTL model checking over all schedulers is undecidable
 - [Formulas of linear temporal logic](../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
 - [Markov decision processes and adversaries](../../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
 - [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

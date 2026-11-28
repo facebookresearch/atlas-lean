@@ -10,7 +10,7 @@ The accepting states are essential to the proof. For the synchronizability probl
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

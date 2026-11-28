@@ -16,6 +16,7 @@ Both already fail for one fixed formula: $\Diamond \Box \neg p$ for PTL and $\ma
 - [Lossy channel systems](lossy-channel-systems.md)
 - [Formulas of linear temporal logic](../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
 - [CTL formulas](../../../../Logic/temporal-logic/computation-tree-logic/formula.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

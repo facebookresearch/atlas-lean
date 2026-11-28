@@ -13,7 +13,8 @@ For dense time without emptiness tests, the same paper shows reachability decida
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Timed Büchi automata and timed regular languages](../../../../TheoryOfComputation/omega-automata-and-games/timed-automata/timed-buchi-automata.md)
 
 ## Proof depends on
 
@@ -25,4 +26,4 @@ The proofs are topology-preserving reductions between communicating tick automat
 
 ## Sources
 
-- Lorenzo Clemente, Frédéric Herbreteau, Amelie Stainer and Grégoire Sutre, "Reachability of Communicating Timed Processes", Foundations of Software Science and Computation Structures (FoSSaCS 2013), Lecture Notes in Computer Science, pp. 81–96, 2013, <https://doi.org/10.1007/978-3-642-37075-5_6>; Definitions 1 and 2, the definition of polyforests, Theorem 3 (part 1), Theorem 5 and Theorem 6 (part 2) of arXiv:1209.0571v2, read at <https://arxiv.org/abs/1209.0571v2>.
+- Lorenzo Clemente, Frédéric Herbreteau, Amelie Stainer and Grégoire Sutre, "Reachability of Communicating Timed Processes", Foundations of Software Science and Computation Structures (FoSSaCS 2013), Lecture Notes in Computer Science, pp. 81–96, 2013, <https://doi.org/10.1007/978-3-642-37075-5_6>; Definitions 1 and 2, the definition of polyforests, Theorem 3 (clause 1 above), Theorem 5 and Theorem 6 (clause 2 above) of arXiv:1209.0571v2, read at <https://arxiv.org/abs/1209.0571v2>.

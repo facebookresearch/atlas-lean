@@ -8,11 +8,11 @@ Whether a high-level message sequence chart over FIFO channels generates any com
 1. Satisfiability of loop-connected HMSCs with at least two processes is undecidable; it remains undecidable for flat loop-connected HMSCs, in the sense of the source, with three processes.
 2. Satisfiability of HMSCs whose message set $\mathcal M$ is a singleton is undecidable.
 
-In contrast, the same paper shows that every loop-connected HMSC can be effectively translated into an equivalent communicating finite-state machine, which extends the realizability of globally cooperative HMSCs by Genest, Kuske and Muscholl to behaviors with unbounded channels. HMSCs whose labels are complete MSCs are the [MSC graphs](msc-graphs-and-weak-realizability.md) of earlier work.
+In contrast, the same paper shows that every loop-connected HMSC can be effectively translated into an equivalent communicating finite-state machine, which extends the realizability of globally cooperative HMSCs by Genest, Kuske and Muscholl to behaviors with unbounded channels. HMSCs whose labels are complete MSCs are the [MSC graphs](msc-graphs.md) of earlier work.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

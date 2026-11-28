@@ -10,7 +10,7 @@ In contrast, the problem is decidable over clique graphs (diameter $1$), where i
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

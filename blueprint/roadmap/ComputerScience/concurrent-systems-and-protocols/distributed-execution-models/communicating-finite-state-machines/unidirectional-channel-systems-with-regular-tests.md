@@ -11,6 +11,7 @@ Without tests, E-E-Reach is decidable (a result of Chambart and Schnoebelen). Th
 ## Depends on
 
 - [Lossy channel systems](lossy-channel-systems.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

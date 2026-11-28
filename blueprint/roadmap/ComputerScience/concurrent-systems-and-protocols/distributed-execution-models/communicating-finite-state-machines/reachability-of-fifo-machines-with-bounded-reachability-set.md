@@ -17,6 +17,7 @@ In contrast, the same paper shows that reachability is decidable when only runs 
 ## Depends on
 
 - [Message channel semantics](../message-channel-semantics.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

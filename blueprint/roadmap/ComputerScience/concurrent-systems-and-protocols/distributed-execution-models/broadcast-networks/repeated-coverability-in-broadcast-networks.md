@@ -11,6 +11,7 @@ It is a liveness question, while coverability of a state (a safety question) is 
 ## Depends on
 
 - [Broadcast protocols and their networks](broadcast-protocols-and-their-networks.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

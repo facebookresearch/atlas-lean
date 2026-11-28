@@ -12,8 +12,7 @@ In networks of identical finite-state processes that broadcast messages to their
 For unrestricted protocols all three problems were already known to be undecidable (Delzanno, Sangnier and Zavattaro). The same paper shows that for $1$-phase-bounded protocols coverability over all topologies is EXPSPACE-complete, for $2$-phase-bounded protocols it is decidable, and over lines it is in polynomial time for $k \le 2$.
 
 ## Depends on
-
-None.
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -25,4 +24,4 @@ The reduction is from the halting problem of two-counter Minsky machines. The pr
 
 ## Sources
 
-- Lucie Guillou, Arnaud Sangnier and Nathalie Sznajder, "Phase-Bounded Broadcast Networks over Topologies of Communication", 35th International Conference on Concurrency Theory (CONCUR 2024), LIPIcs 311, Article 26, 2024, <https://doi.org/10.4230/LIPIcs.CONCUR.2024.26>; the definitions of Sections 2 and 3, the two theorems of the section "Undecidability Results" and the summary table of arXiv:2406.15202v2, <https://arxiv.org/abs/2406.15202v2>.
+- Lucie Guillou, Arnaud Sangnier and Nathalie Sznajder, "Phase-Bounded Broadcast Networks over Topologies of Communication", 35th International Conference on Concurrency Theory (CONCUR 2024), LIPIcs 311, Article 26, 2024, <https://doi.org/10.4230/LIPIcs.CONCUR.2024.26>; read in arXiv:2406.15202v2, <https://arxiv.org/abs/2406.15202v2>: the definitions of Sections 2 and 3, Theorems 4.2 ($k \ge 6$, all topologies and trees) and 4.3 ($k \ge 4$, lines) in Section 4 ("Undecidability Results"), Theorem 5.6, and the summary table, in the numbering of that version.

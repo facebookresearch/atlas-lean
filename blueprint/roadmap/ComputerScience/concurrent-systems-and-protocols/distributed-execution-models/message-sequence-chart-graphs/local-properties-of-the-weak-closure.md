@@ -4,13 +4,15 @@ There is a fixed Boolean combination of local properties of message sequence cha
 
 **Local properties.** A property of MSCs is *local* if it refers only to the events of one process $P_i$, such as "event $x$ eventually occurs on $P_i$" or "event $x$ never occurs on $P_i$"; local properties and their Boolean combinations do not depend on the chosen linearization of an MSC.
 
-**Theorem (Alur, Etessami and Yannakakis).** There is a Boolean combination $\varphi$ of local properties such that, given a bounded [MSC graph](msc-graphs-and-weak-realizability.md) $G$, it is undecidable whether every MSC in the weak closure $L^w(G)$ satisfies $\varphi$ (Theorem 9).
+**Theorem (Alur, Etessami and Yannakakis).** There is a Boolean combination $\varphi$ of local properties such that, given a bounded [MSC graph](msc-graphs.md) $G$, it is undecidable whether every MSC in the weak closure $L^w(G)$ satisfies $\varphi$ (Theorem 9).
 
 The property is fixed and the graph is the input. By contrast, checking LTL properties of $L(G)$ itself is PSPACE-complete for bounded graphs, and there are local properties $\varphi_1, \varphi_2$ such that, for a finite set of MSCs, checking $\varphi_1 \vee \varphi_2$ on every MSC of the weak closure is coNP-complete (Theorem 8).
 
 ## Depends on
 
-- [MSC graphs and weak realizability](msc-graphs-and-weak-realizability.md)
+- [MSC graphs](msc-graphs.md)
+- [Weak closure and weak realizability of sets of MSCs](weak-closure-and-weak-realizability.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -7,6 +7,7 @@ It is undecidable whether a system of communicating finite-state machines with p
 ## Depends on
 
 - [Synchronizability of communicating machines](synchronizability-of-communicating-machines.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -11,6 +11,7 @@ The number of processes is existentially quantified: it is not part of the input
 ## Depends on
 
 - [Broadcast protocols and their networks](broadcast-protocols-and-their-networks.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
