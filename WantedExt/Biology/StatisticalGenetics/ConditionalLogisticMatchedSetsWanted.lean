@@ -85,33 +85,4 @@ public theorem_wanted pairedConditionalLogLik_max {n₁₀ n₀₁ : ℕ} (h₁�
           pairedConditionalLogLik n₁₀ n₀₁ (Real.log (n₁₀ / n₀₁)) ↔
         β = Real.log (n₁₀ / n₀₁))
 
-/-- **Incidental-parameter log-likelihood of independent pairs.** The log-likelihood of the
-discordant pairs, with a separate nuisance intercept for every pair (not a valid estimating
-likelihood for `β`): a pair with the case exposed and the control unexposed contributes
-`log (σ(α + β) (1 - σ α))`, and a pair with the reverse contributes `log (σ α (1 - σ(α + β)))`.
-Each term takes the two subjects of a pair to be independent, and the sum is the joint
-log-likelihood when the pairs are independent of one another. Here `σ` is the logistic function
-`Real.sigmoid`. -/
-noncomputable def perPairInterceptLogLik {n₁₀ n₀₁ : ℕ} (α₁₀ : Fin n₁₀ → ℝ)
-    (α₀₁ : Fin n₀₁ → ℝ) (β : ℝ) : ℝ :=
-  (∑ i, Real.log (Real.sigmoid (α₁₀ i + β) * (1 - Real.sigmoid (α₁₀ i)))) +
-    ∑ i, Real.log (Real.sigmoid (α₀₁ i) * (1 - Real.sigmoid (α₀₁ i + β)))
-
-/-- **Maximizer of the incidental-parameter log-likelihood** (Breslow and Day 1980, p. 250). For
-`n₁₀ > 0` discordant pairs with the case exposed and `n₀₁ > 0` with the control exposed, let
-`β̂ = 2 log (n₁₀ / n₀₁)`, so that `e^β̂ = (n₁₀ / n₀₁)²`. Then the incidental-parameter
-log-likelihood, with a separate intercept for every pair, is maximized at `β = β̂` with every
-intercept equal to `-β̂ / 2`: for all intercepts `α₁₀, α₀₁` and every `β`, its value is at most
-the value at that point. Thus the maximizing odds ratio `(n₁₀ / n₀₁)²` is the square of the
-conditional estimate `n₁₀ / n₀₁` of `pairedConditionalLogLik_max` (moving any positive estimate
-`≠ 1` farther from `1`; this algebraic identity for the maximizer does not by itself state a
-statistical expectation/bias theorem).
-
-Source: Breslow and Day (1980), p. 250. -/
-public theorem_wanted perPairInterceptLogLik_le {n₁₀ n₀₁ : ℕ} (h₁₀ : 0 < n₁₀) (h₀₁ : 0 < n₀₁)
-    (α₁₀ : Fin n₁₀ → ℝ) (α₀₁ : Fin n₀₁ → ℝ) (β : ℝ) :
-    perPairInterceptLogLik α₁₀ α₀₁ β ≤
-      perPairInterceptLogLik (fun _ : Fin n₁₀ => -Real.log (n₁₀ / n₀₁))
-        (fun _ : Fin n₀₁ => -Real.log (n₁₀ / n₀₁)) (2 * Real.log (n₁₀ / n₀₁))
-
 end WantedExt.Biology.StatisticalGenetics.ConditionalLogisticMatchedSetsWanted
