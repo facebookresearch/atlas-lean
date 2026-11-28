@@ -28,6 +28,7 @@ public import MathlibExt.NumberTheory.Digits.ZeckendorfBinaryRank
 public import MathlibExt.NumberTheory.Digits.ZeckendorfBlockCountRecurrence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfFundamentalSequence
 public import MathlibExt.NumberTheory.Digits.ZeckendorfMaxBlockScaling
+public import MathlibExt.NumberTheory.Digits.ZeckendorfPeriodicBlocks
 public import MathlibExt.NumberTheory.Digits.ZeckendorfProperBlockCount
 public import MathlibExt.NumberTheory.Digits.ZeckendorfProperBlockLex
 public import MathlibExt.NumberTheory.Digits.ZeckendorfSubcollection
@@ -80,60 +81,6 @@ Section 2 (arXiv:2308.12872v1, Section 2.2). -/
 public theorem IsZeckendorfCollection.zero_mem {E : Set (ℕ →₀ ℕ)} (h : IsZeckendorfCollection E) :
     0 ∈ E :=
   h.1
-
-/-- **The maximal $L$-block $\theta^{m+1}$.** Let $L = (e_1, \dots, e_N)$ be a list of natural
-numbers and $m \in \mathbb N$, with indices of coefficient functions starting at $0$. The maximal
-$L$-block $\theta^{m+1}$ is the finitely supported coefficient function whose entry at each index
-$i < m$ is $e_j$, where $j - 1 = (m - 1 - i) \bmod N$, and whose entries at the indices $i \ge m$
-are $0$ (every entry is $0$ when $L$ is empty).
-
-In the paper's one-based indexing, $\theta^n = \mathrm{rev}_{n-1}(\beta^*)$, where $\beta^*$ is
-the coefficient function with $\beta^*_k = e_j$ for $k \equiv j \pmod N$ and
-$\mathrm{rev}_{n-1}(\beta^*)$ lists the first $n - 1$ entries of $\beta^*$ in reverse order,
-followed by zeros.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Definition 10 (arXiv:2308.12872v1, Section 2.2). -/
-public noncomputable def periodicTheta (L : List ℕ) (m : ℕ) : ℕ →₀ ℕ :=
-  ∑ i ∈ Finset.range m, Finsupp.single i (L.getD ((m - 1 - i) % L.length) 0)
-
-/-- **The maximal block $\theta^4$ in the Fibonacci case.** For $L = (1, 0)$, the maximal $L$-block
-$\theta^4$ is $(1, 0, 1)$: its entries at indices $0$, $1$, $2$ are $1$, $0$, $1$, and all its
-entries from index $3$ on are $0$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Definition 10 (arXiv:2308.12872v1, Section 2.2). -/
-public theorem periodicTheta_one_zero_three :
-    periodicTheta [1, 0] 3 = Finsupp.single 0 1 + Finsupp.single 2 1 := by
-  simp [periodicTheta, Finset.sum_range_succ]
-
-/-- **L-blocks.** Let $L$ be a list of natural numbers, and for each $m$ let $\theta^{m+1}$ be the
-maximal $L$-block, which vanishes from index $m$ on (indices are zero-based). A finitely supported
-coefficient function $\zeta$ is an $L$-block with support interval $[s, m - 1]$ if $1 \le m$,
-$s < m$, and either $s = 0$ and $\zeta = \theta^{m+1}$, or $\zeta_i = \theta^{m+1}_i$ for every
-$i > s$, $\zeta_s < \theta^{m+1}_s$ and $\zeta_i = 0$ for every $i < s$.
-
-In the paper's indexing this is a block at index $n - 1$ with $n = m + 1 \ge 2$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Definition 10 (arXiv:2308.12872v1, Section 2.2). -/
-public def IsLBlock (L : List ℕ) (ζ : ℕ →₀ ℕ) (lo m : ℕ) : Prop :=
-  1 ≤ m ∧ lo < m ∧
-    ((lo = 0 ∧ ζ = periodicTheta L m) ∨
-      (ζ.filter (lo < ·) = (periodicTheta L m).filter (lo < ·) ∧ ζ lo < periodicTheta L m lo ∧
-        ζ.filter (· < lo) = 0))
-
-/-- **Periodic Zeckendorf collection.** For a list $L$ of natural numbers, the periodic Zeckendorf
-collection determined by $L$ is the set of finitely supported coefficient functions $\mu$ that
-can be written as a sum $\mu = \zeta_1 + \dots + \zeta_r$ of finitely many $L$-blocks
-$\zeta_1, \dots, \zeta_r$ (possibly none, which gives $\mu = 0$) whose support intervals are
-pairwise disjoint.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Theorem 4 and the definition following it (arXiv:2308.12872v1, Section 2.2). -/
-public def periodicZeckendorfCollection (L : List ℕ) : Set (ℕ →₀ ℕ) :=
-  {μ | ∃ blocks : List ((ℕ →₀ ℕ) × ℕ × ℕ), (∀ b ∈ blocks, IsLBlock L b.1 b.2.1 b.2.2) ∧
-    blocks.Pairwise (fun a b => a.2.2 ≤ b.2.1 ∨ b.2.2 ≤ a.2.1) ∧ μ = (blocks.map Prod.fst).sum}
 
 /-- **Zeckendorf collections are determined by their immediate predecessors.** Index
 coefficient functions from $0$, and for $m \in \mathbb N$ let $\beta^{(m)}$ be the coefficient
@@ -443,20 +390,6 @@ public theorem_wanted exists_prefix_eq_of_lStar_near (L : List ℕ) (hL : 2 ≤ 
         ∑' k, (ε' k : ℝ) * Q k < ∑' k, (ε k : ℝ) * Q k + δ → ∀ i ≤ n, ε' i = ε i) ∧
       (∀ ε' ∈ lStarCollection L, ∑' k, (ε k : ℝ) * Q k - δ < ∑' k, (ε' k : ℝ) * Q k →
         ∑' k, (ε' k : ℝ) * Q k < ∑' k, (ε k : ℝ) * Q k → ∀ i ≤ n, ε' i = lStarInf L ε i)
-
-/-- **Decomposing $L^*$-blocks into $\tilde L^*$-blocks.** Let $L$ and $\tilde L$ be lists of
-natural numbers of length at least $2$ with nonzero first entries whose periodic Zeckendorf
-collections satisfy $E \subsetneq \tilde E$. If $\zeta$ is a nonzero proper $L^*$-block with
-support interval $[i, b]$, then $\zeta$ is a sum of disjoint proper $\tilde L^*$-blocks whose
-support intervals all lie in $[0, b]$, one of which has support interval $[a, b]$ for some $a$.
-
-Source: Sungkon Chang, *Distribution of Zeckendorf Expressions*, INTEGERS 25 (2025), Article A25,
-Lemma 9 (`integers-2025-A25-lem-9`; arXiv:2308.12872v1, Section 3.3). -/
-public theorem_wanted exists_lStarBlockSum_of_properLStarBlock (L L' : List ℕ)
-    (hL : 2 ≤ L.length) (he : L.getD 0 0 ≠ 0) (hL' : 2 ≤ L'.length) (he' : L'.getD 0 0 ≠ 0)
-    (hsub : periodicZeckendorfCollection L ⊂ periodicZeckendorfCollection L') {ζ : ℕ → ℕ}
-    {i b : ℕ} (hζ : IsProperLStarBlock L ζ i b) (hζ0 : ζ ≠ 0) :
-    ∃ I, IsLStarBlockSum L' I ζ ∧ (∀ p ∈ I, p.2 ≤ b) ∧ ∃ a, (a, b) ∈ I
 
 /-- **The tail of an $L^\ast$-block decomposition lies in $\tilde E^\ast$.** Let $L$ and
 $\tilde L$ be lists of natural numbers of length at least $2$ with nonzero first entries, such
