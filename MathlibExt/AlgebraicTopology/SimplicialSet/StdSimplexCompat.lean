@@ -95,17 +95,20 @@ representation identifies its simplices naturally with ordinal maps into `⦋n�
 isomorphism `Subcomplex.toOfSimplex x : Δ[n] ⟶ Subcomplex.ofSimplex x`. -/
 noncomputable def ofSimplexRepresentableBy :
     (Subcomplex.ofSimplex x : SSet.{u}).RepresentableBy ⦋n⦌ := by
-  letI : IsIso (toOfSimplex x) := (isIso_toOfSimplex_iff x).2 inferInstance
-  exact (Functor.RepresentableBy.equivUliftYonedaIso
-    (ofSimplex x : SSet.{u}) ⦋n⦌).symm (asIso (toOfSimplex x))
+  exact (Functor.RepresentableBy.equivUliftYonedaIso.{u, 0, 0}
+    (ofSimplex x : SSet.{u}) ⦋n⦌).symm
+    (@asIso SSet.{u} _ (Δ[n] : SSet.{u}) (ofSimplex x) (toOfSimplex x)
+      ((isIso_toOfSimplex_iff x).2 inferInstance))
 
 /-- The identity ordinal map represents the original simplex x in its generated subcomplex. -/
 @[simp]
 lemma ofSimplexRepresentableBy_id :
     dsimp% (ofSimplexRepresentableBy x).homEquiv (𝟙 ⦋n⦌) = x := by
-  haveI : IsIso (toOfSimplex x) := (isIso_toOfSimplex_iff x).2 inferInstance
-  change (yonedaEquiv (toOfSimplex x)).val = x
-  exact congrArg Subtype.val (yonedaEquiv_toOfSimplex x)
+  simpa only [ofSimplexRepresentableBy,
+    Functor.RepresentableBy.equivUliftYonedaIso, Equiv.trans_apply,
+    equivEquivIso_inv, Iso.toEquiv, asIso, SSet.yonedaEquiv,
+    CategoryTheory.uliftYonedaEquiv]
+    using congrArg Subtype.val (yonedaEquiv_toOfSimplex x)
 
 /-- The representing isomorphism followed by the subcomplex inclusion evaluates to x. -/
 @[simp]
