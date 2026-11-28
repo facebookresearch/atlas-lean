@@ -28,12 +28,14 @@ private theorem abundancyIndex_mul_of_coprime {m n : ℕ} (hc : m.Coprime n) :
     abundancyIndex (m * n) = abundancyIndex m * abundancyIndex n := by
   simp only [abundancyIndex, hc.sum_divisors_mul, Nat.cast_mul, mul_div_mul_comm]
 
-private theorem one_le_abundancyIndex {n : ℕ} (hn : 0 < n) : 1 ≤ abundancyIndex n := by
+/-- The abundancy index of a positive natural number is at least one. -/
+lemma one_le_abundancyIndex {n : ℕ} (hn : 0 < n) : 1 ≤ abundancyIndex n := by
   rw [abundancyIndex, one_le_div (by exact_mod_cast hn)]
   exact_mod_cast Finset.single_le_sum (f := id) (fun _ _ => Nat.zero_le _)
     (Nat.mem_divisors_self n hn.ne')
 
-private theorem abundancyIndex_prime_pow_succ {p : ℕ} (hp : p.Prime) (k : ℕ) :
+/-- For prime `p`, the abundancy of `p ^ (k + 1)` exceeds that of `p ^ k` by `1 / p ^ (k + 1)`. -/
+lemma abundancyIndex_prime_pow_succ {p : ℕ} (hp : p.Prime) (k : ℕ) :
     abundancyIndex (p ^ (k + 1)) = abundancyIndex (p ^ k) + 1 / (p : ℚ) ^ (k + 1) := by
   simp only [abundancyIndex, ← ArithmeticFunction.sigma_one_apply,
     ArithmeticFunction.sigma_one_apply_prime_pow hp, Nat.cast_pow]

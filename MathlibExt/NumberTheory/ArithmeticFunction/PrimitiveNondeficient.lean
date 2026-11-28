@@ -46,6 +46,10 @@ index is only meaningful for positive $n$. -/
 noncomputable def abundancyIndex (n : ℕ) : ℚ :=
   ((∑ d ∈ Nat.divisors n, d : ℕ) : ℚ) / (n : ℚ)
 
+/-- The abundancy index is the sum of the positive divisors divided by the number, in `ℚ`. -/
+lemma abundancyIndex_eq_sum_divisors_div (n : ℕ) :
+    abundancyIndex n = ((∑ d ∈ Nat.divisors n, d : ℕ) : ℚ) / (n : ℚ) := rfl
+
 /-- **Product of $p/(p-1)$ over the prime factors.** For a natural number $n$, let
 $H(n) = \prod_p p/(p-1)$ in $\mathbb{Q}$, the product over the distinct primes $p$ dividing $n$.
 For $n = 0$ the product is empty ($0$ is taken to have no prime factors), so $H(0) = 1$. -/

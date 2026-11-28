@@ -10,13 +10,14 @@ module
 
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.NumberTheory.Divisors
+import Mathlib.Algebra.BigOperators.Associated
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Data.Nat.PrimeFin
 import Mathlib.Order.WellQuasiOrder
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
-import all MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
-import all MathlibExt.NumberTheory.PrimitiveNondeficient
+import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
+import MathlibExt.NumberTheory.PrimitiveNondeficient
 
 /-!
 # Dickson's finiteness theorem for odd perfect numbers
@@ -156,7 +157,7 @@ public theorem finite_setOf_oddPerfect_card_primeFactors_eq (m : ℕ) :
     change (∏ i, (abundancyIndex (p n i ^ a n i) : ℝ)) = 2
     rw [← Rat.cast_prod, hReindex n (fun q => abundancyIndex (q ^ k.factorization q)),
       ← abundancyIndex_prod _ _ hcop, ← Nat.prod_primeFactors_pow_factorization hk.2.ne']
-    simp [abundancyIndex, (Nat.perfect_iff_sum_divisors_eq_two_mul hk.2).mp hk,
+    simp [abundancyIndex_eq_sum_divisors_div, (Nat.perfect_iff_sum_divisors_eq_two_mul hk.2).mp hk,
       Nat.cast_ne_zero.mpr hk.2.ne']
   let fixed := univ.filter fun i : Fin m => ¬ Tendsto (p · i) atTop atTop
   let growing := fixed.filter fun i => Tendsto (a · i) atTop atTop
@@ -201,7 +202,7 @@ public theorem finite_setOf_oddPerfect_card_primeFactors_eq (m : ℕ) :
       · simp only [limit, num, den, hi, hg, ite_true, ite_false]
         refine tendsto_const_nhds.congr' ?_
         filter_upwards [hP i hi, hA i hi hg] with n hn he
-        simp [abund, abundancyIndex, hn, he]
+        simp [abund, abundancyIndex_eq_sum_divisors_div, hn, he]
     · have hpTop : Tendsto (p · i) atTop atTop := by simpa [fixed] using hi
       simpa [limit, num, den, hi] using
         tendsto_abundancyIndex_prime_pow_of_prime_tendsto (fun n => hp n i) hpTop
@@ -251,7 +252,8 @@ public theorem finite_setOf_oddPerfect_card_primeFactors_eq (m : ℕ) :
     obtain ⟨i, hi⟩ := hnot
     obtain ⟨n, hn⟩ := hStable.exists
     have hmatch (j : Fin m) (hj : j ∈ fixed) : limit j = abund n j := by
-      simp [limit, num, den, hj, hGrowing, abund, abundancyIndex, (hn j hj).1, (hn j hj).2]
+      simp [limit, num, den, hj, hGrowing, abund, abundancyIndex_eq_sum_divisors_div,
+        (hn j hj).1, (hn j hj).2]
     have hunit (j : Fin m) (hj : j ∉ fixed) : limit j = 1 := by simp [limit, num, den, hj]
     have hlt (j : Fin m) : 1 < abund n j := one_lt_abundancyIndex_prime_pow (hp n j) (ha n j)
     have hstrict : ∏ j, limit j < ∏ j, abund n j := prod_lt_prod₀

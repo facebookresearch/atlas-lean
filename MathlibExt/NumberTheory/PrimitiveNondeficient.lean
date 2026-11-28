@@ -84,8 +84,8 @@ private theorem abundancyIndex_mul_of_coprime {m n : ℕ} (hc : m.Coprime n) :
     abundancyIndex (m * n) = abundancyIndex m * abundancyIndex n := by
   simp only [abundancyIndex, hc.sum_divisors_mul, Nat.cast_mul, mul_div_mul_comm]
 
-/-- The abundancy index of a product of pairwise coprime factors. -/
-private theorem abundancyIndex_prod (s : Finset ℕ) (f : ℕ → ℕ)
+/-- The abundancy index of a product of pairwise coprime factors is the product of their indices. -/
+lemma abundancyIndex_prod (s : Finset ℕ) (f : ℕ → ℕ)
     (hcop : ∀ p ∈ s, ∀ q ∈ s, p ≠ q → (f p).Coprime (f q)) :
     abundancyIndex (∏ p ∈ s, f p) = ∏ p ∈ s, abundancyIndex (f p) := by
   revert hcop
@@ -105,8 +105,9 @@ private theorem abundancyIndex_prod (s : Finset ℕ) (f : ℕ → ℕ)
       exact hcop a (Finset.mem_insert_self a t) q (Finset.mem_insert_of_mem hq)
         (fun heq => ha (heq ▸ hq))
 
-/-- Abundancy of a prime power via the geometric sum. -/
-private theorem abundancyIndex_prime_pow_eq (p a : ℕ) (hp : p.Prime) :
+/-- For a prime `p`, the abundancy index of `p ^ a` is `p / (p - 1)` times `1 - 1 / p ^ (a + 1)`,
+with the divisions taken in `ℚ`. -/
+lemma abundancyIndex_prime_pow_eq (p a : ℕ) (hp : p.Prime) :
     abundancyIndex (p ^ a)
       = (p : ℚ) / ((p : ℚ) - 1) * (1 - 1 / (p : ℚ) ^ (a + 1)) := by
   have hgeom : ((∑ i ∈ Finset.range (a + 1), p ^ i : ℕ) : ℚ) * ((p : ℚ) - 1)
