@@ -50,17 +50,18 @@ example : subspaceMap plusOne one_maps ≫ subspaceMap plusTwo two_maps =
     subspaceMap (plusOne ≫ plusTwo) (fun _ hx => two_maps (one_maps hx)) := by
   simp
 
-private def zeroPoint : S := ⟨0, le_rfl⟩
+private def zeroPoint : S :=
+  ⟨0, by simpa only [S, Set.mem_setOf_eq] using (le_refl (0 : ℝ))⟩
 
 example : ((subspaceMap plusOne one_maps ≫ subspaceMap plusTwo two_maps) zeroPoint).val = 3 := by
-  change (0 : ℝ) + 1 + 2 = 3
-  norm_num
+  norm_num [TopCat.comp_app, TopCat.subspaceMap, TopCat.ofHom_apply,
+    plusOne, plusTwo, zeroPoint]
 
 example : subspaceInclOfSubset (show S ⊆ Set.univ from Set.subset_univ _) ≫
     subspaceIncl (Set.univ : Set X) = subspaceIncl S := by
   exact subspaceInclOfSubset_comp _
 
-private abbrev Q : TopCat := TopCat.of PUnit
+private abbrev Q : TopCat.{0} := TopCat.of PUnit
 private def pointToReal : Q ⟶ X := TopCat.ofHom ⟨fun _ => 0, continuous_const⟩
 private def realToPoint : X ⟶ Q := TopCat.ofHom ⟨fun _ => PUnit.unit, continuous_const⟩
 
