@@ -18,6 +18,8 @@ Runs start from $\langle I_0, \emptyset \rangle$; as in the source, a run is an 
 
 - [Relational schema](../../../databases/dependencies-and-the-chase/relational-schema.md)
 - [Database instance](../../../databases/dependencies-and-the-chase/instance.md)
+- [Active domain of a database instance](../../../databases/dependencies-and-the-chase/active-domain.md)
+- [Relational calculus and domain independence](../../../databases/relational-calculus/relational-calculus-and-domain-independence.md)
 
 ## Proof depends on
 

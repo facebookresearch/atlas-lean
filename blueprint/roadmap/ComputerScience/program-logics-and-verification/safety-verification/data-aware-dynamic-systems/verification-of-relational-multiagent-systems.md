@@ -10,6 +10,8 @@ In contrast, the same paper shows that verification of all closed $\mu\mathcal{L
 
 ## Depends on
 
+- [Relational schema](../../../databases/dependencies-and-the-chase/relational-schema.md)
+- [Database instance](../../../databases/dependencies-and-the-chase/instance.md)
 - [Relational calculus and domain independence](../../../databases/relational-calculus/relational-calculus-and-domain-independence.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

@@ -12,6 +12,7 @@ The same paper shows that, for DCDSs with deterministic services, verification i
 
 - [Relational schema](../../../databases/dependencies-and-the-chase/relational-schema.md)
 - [Database instance](../../../databases/dependencies-and-the-chase/instance.md)
+- [Active domain of a database instance](../../../databases/dependencies-and-the-chase/active-domain.md)
 - [Relational calculus and domain independence](../../../databases/relational-calculus/relational-calculus-and-domain-independence.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
