@@ -30,10 +30,6 @@ $$R_0 = \frac{m \beta \lambda_1 \lambda_2}{d_T d_E d_V} = \frac{m\beta T_0 E_0}{
 - [$R_0$ as a threshold for the linearized infected subsystem](../../next-generation-matrix-and-the-basic-reproductio/is-hurwitz-sub-iff-r0-lt-one.md)
 - [Unstable mode of the infected subsystem exactly when $R_0 > 1$](../../next-generation-matrix-and-the-basic-reproductio/exists-re-pos-iff-one-lt-r0.md)
 
-## Proof depends on
-
-- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
-
 ## Expansion
 
 At the infection-free state the infected subsystem is $I' = \beta E_0 T_0 V - d_I I$, $V' = m d_I I - d_V V$ (the CTL equation decouples with eigenvalue $-d_c$, and $T$, $E$ relax at rates $d_T$, $d_E$). Its next-generation matrix has spectral radius $\beta E_0 T_0 \cdot m d_I/(d_I d_V) = R_0$, which gives item 1. For item 2, the $I$ and $V$ equations at equilibrium give $\beta \bar E \bar V \bar T = d_I \bar I$ and $\bar T = d_V/(\beta m \bar E)$; the receptor equation becomes $\lambda_2 - \theta(\lambda_1 - d_T \bar T) - d_E \bar E = 0$, i.e. $q(\bar E) = d_E \bar E^2 - (\lambda_2 - \theta\lambda_1)\bar E - \theta d_T d_V/(\beta m) = 0$. Positivity of $\bar I$ requires $\bar E > E_c = d_T d_V/(\beta m \lambda_1)$, and since $q(E_c) = E_c (d_E E_c - \lambda_2)$, this holds iff $E_c < E_0$, iff $R_0 > 1$. Item 3 is the $(5,5)$ entry $\alpha I(1 - 2C/C_{\max}) - d_c$ of the Jacobian at $C = 0$. The source further shows a coexistence equilibrium with $I^*$ a positive root of a cubic, feasible only when $I^* > d_c/\alpha$, and gives Routh–Hurwitz conditions for the stability of both infected equilibria.
