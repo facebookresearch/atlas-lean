@@ -12,6 +12,7 @@ public import MathlibExt.Algebra.Polynomial.ChebyshevCPartialSumLaurent
 public import MathlibExt.Algebra.Polynomial.KasselReutenauerTopCoefficient
 import Mathlib.Algebra.BigOperators.Finsupp.Basic
 import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Tactic.LinearCombination
 
 /-!
@@ -21,13 +22,16 @@ For `n ≥ 1`, the absolute coefficient sum of the Laurent polynomial `Cₙ(q) /
 the number of odd divisors of `n`. We obtain a weighted sum of Chebyshev partial sums by
 cancelling the even-divisor endpoints of the divisor-count formula. Each odd divisor then
 contributes two signed pairs of monomials, with disjoint support between the pairs.
+Consequently, for `n ≥ 1`, the Kassel–Reutenauer polynomial equals the `(n - 1)`st Chebyshev
+partial sum exactly when `n` is a power of two: that partial sum accounts for just the contribution
+of the divisor `1`.
 
 ## References
 
 * Christian Kassel and Christophe Reutenauer, *Pairs of Intertwined Integer Sequences*,
   Journal of Integer Sequences 29 (2026), Article 26.4.4, pp. 1–25, Lemma 14, Theorem 16,
-  Lemma 22, Theorem 23, Corollary 24, and Lemma 26. We derive the odd-divisor formula directly
-  from the divisor counts, then use the exponent uniqueness argument of Lemma 22.
+  Corollary 17, Lemma 22, Theorem 23, Corollary 24, and Lemma 26. We derive the odd-divisor formula
+  directly from the divisor counts, then use the exponent uniqueness argument of Lemma 22.
 * Christian Kassel and Christophe Reutenauer, *Complete determination of the zeta function of the
   Hilbert scheme of n points on a two-dimensional torus*, The Ramanujan Journal 46 (2018),
   pp. 633–655, Theorem 1.3 (divisor counts) and Lemma 3.5(ii) (exponent uniqueness).
@@ -381,28 +385,20 @@ private theorem abs_eq_of_mem_pair_support {n : ℕ} {p : ℕ × Bool} {i : ℤ}
   · rw [Finset.mem_singleton.mp (Finsupp.support_single_subset h)]
   · rw [Finset.mem_singleton.mp (Finsupp.support_single_subset h), abs_neg]
 
-/-- **The absolute coefficient sum of $C_n$ counts odd divisors.** Let $n \ge 1$, let $\bar P_n$ be
-the Kassel–Reutenauer polynomial, and write $C_n(q)/q^n$ for the Laurent polynomial
-$(q - 2 + q^{-1})\,\bar P_n(q + q^{-1})$ in $\mathbb{Z}[q, q^{-1}]$. Then the sum of the absolute
-values of the coefficients of $C_n(q)/q^n$ equals four times the number of odd divisors of $n$.
-
-Multiplying by $q^n$ does not change the coefficients, so this is the source's statement about
-the polynomial $C_n(q)$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 24
-(`jis-2026-26.4.4-cor-24`). -/
-public theorem kasselReutenauer_C_abs_coeff_sum (n : ℕ) (hn : 1 ≤ n) :
-    ((LaurentPolynomial.T 1 - 2 + LaurentPolynomial.T (-1)) *
-        aeval (LaurentPolynomial.T 1 + LaurentPolynomial.T (-1) : LaurentPolynomial ℤ)
-          (kasselReutenauerPoly n)).coeff.sum (fun _ c => |c|) =
-      4 * (((Nat.divisors n).filter Odd).card : ℤ) := by
+-- Each selected odd divisor contributes four to the absolute coefficient sum.
+private theorem sum_abs_odd_prefixes {n : ℕ} (hn : 1 ≤ n) {s : Finset ℕ}
+    (hs : s ⊆ n.divisors.filter Odd) :
+    ((T 1 - 2 + T (-1)) * aeval (T 1 + T (-1) : LaurentPolynomial ℤ)
+        (∑ d ∈ s, (chebyshevPrefix (divisorEndpoint n d) -
+          chebyshevPrefix (-divisorEndpoint n d - 1)))).coeff.sum (fun _ c => |c|) =
+      4 * (s.card : ℤ) := by
   classical
-  let oddDivisors := n.divisors.filter Odd
-  let pairs := oddDivisors ×ˢ (Finset.univ : Finset Bool)
+  let pairs := s ×ˢ (Finset.univ : Finset Bool)
   have hcoeff : ((T 1 - 2 + T (-1)) * aeval (T 1 + T (-1) : LaurentPolynomial ℤ)
-      (kasselReutenauerPoly n)).coeff = ∑ p ∈ pairs, signedPairCoeffs n p := by
-    rw [kasselReutenauerPoly_eq_odd_prefixes n hn, map_sum, Finset.mul_sum]
+      (∑ d ∈ s, (chebyshevPrefix (divisorEndpoint n d) -
+        chebyshevPrefix (-divisorEndpoint n d - 1)))).coeff =
+      ∑ p ∈ pairs, signedPairCoeffs n p := by
+    rw [map_sum, Finset.mul_sum]
     simp_rw [prefix_sub_laurent, AddMonoidAlgebra.coeff_sum]
     rw [Finset.sum_product]
     apply Finset.sum_congr rfl
@@ -419,15 +415,84 @@ public theorem kasselReutenauer_C_abs_coeff_sum (n : ℕ) (hn : 1 ≤ n) :
         unfold signedPairCoeffs
         rw [sum_abs_single_pair]
         cases p.2 <;> norm_num
-      _ = 4 * (oddDivisors.card : ℤ) := by
+      _ = 4 * (s.card : ℤ) := by
         simp [pairs, Finset.card_product]
         ring
   · intro p hp q hq hpq
     apply Finset.disjoint_left.mpr
     intro i hi hj
-    have hp' := (Finset.mem_product.mp hp).1
-    have hq' := (Finset.mem_product.mp hq).1
-    exact hpq (progressionOffset_injOn hn hp' hq'
+    exact hpq (progressionOffset_injOn hn (hs (Finset.mem_product.mp hp).1)
+      (hs (Finset.mem_product.mp hq).1)
       ((abs_eq_of_mem_pair_support hi).symm.trans (abs_eq_of_mem_pair_support hj)))
+
+/-- **The absolute coefficient sum of $C_n$ counts odd divisors.** Let $n \ge 1$, let $\bar P_n$ be
+the Kassel–Reutenauer polynomial, and write $C_n(q)/q^n$ for the Laurent polynomial
+$(q - 2 + q^{-1})\,\bar P_n(q + q^{-1})$ in $\mathbb{Z}[q, q^{-1}]$. Then the sum of the absolute
+values of the coefficients of $C_n(q)/q^n$ equals four times the number of odd divisors of $n$.
+
+Multiplying by $q^n$ does not change the coefficients, so this is the source's statement about
+the polynomial $C_n(q)$.
+
+Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
+Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 24
+(`jis-2026-26.4.4-cor-24`). -/
+public theorem kasselReutenauer_C_abs_coeff_sum (n : ℕ) (hn : 1 ≤ n) :
+    ((LaurentPolynomial.T 1 - 2 + LaurentPolynomial.T (-1)) *
+        aeval (LaurentPolynomial.T 1 + LaurentPolynomial.T (-1) : LaurentPolynomial ℤ)
+          (kasselReutenauerPoly n)).coeff.sum (fun _ c => |c|) =
+      4 * (((Nat.divisors n).filter Odd).card : ℤ) := by
+  rw [kasselReutenauerPoly_eq_odd_prefixes n hn]
+  exact sum_abs_odd_prefixes hn (Finset.Subset.refl _)
+
+private theorem oddDivisors_eq_singleton_iff {n : ℕ} (hn : n ≠ 0) :
+    n.divisors.filter Odd = {1} ↔ ∃ k : ℕ, n = 2 ^ k := by
+  constructor
+  · intro h
+    obtain ⟨k, m, hm, heq⟩ := Nat.exists_eq_two_pow_mul_odd hn
+    have hmem : m ∈ n.divisors.filter Odd := by
+      refine Finset.mem_filter.mpr ⟨Nat.mem_divisors.mpr ⟨?_, hn⟩, hm⟩
+      rw [heq]
+      exact dvd_mul_left _ _
+    rw [h, Finset.mem_singleton] at hmem
+    exact ⟨k, by simpa only [hmem, mul_one] using heq⟩
+  · rintro ⟨k, rfl⟩
+    refine Finset.eq_singleton_iff_unique_mem.mpr ⟨?_, ?_⟩
+    · simp
+    · intro d hd
+      obtain ⟨hd, hodd⟩ := Finset.mem_filter.mp hd
+      exact Nat.eq_one_of_dvd_coprimes ((Nat.coprime_two_right.mpr hodd).pow_right k) dvd_rfl
+        (Nat.dvd_of_mem_divisors hd)
+
+/-- **$\bar P_n$ equals $F_{n-1}$ exactly for powers of two.** Let $n \ge 1$, let $\bar P_n$ be the
+Kassel–Reutenauer polynomial, and let $F_{n-1} = 1 + \sum_{k=1}^{n-1} \bar T_k$ be the partial
+sum of the monic Chebyshev polynomials. Then $\bar P_n = F_{n-1}$ if and only if $n = 2^k$ for
+some natural number $k$.
+
+Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
+Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 17
+(`jis-2026-26.4.4-cor-17`). -/
+public theorem kasselReutenauerPoly_eq_chebyshevCPartialSum_iff (n : ℕ) (hn : 1 ≤ n) :
+    kasselReutenauerPoly n = chebyshevCPartialSum (n - 1) ↔ ∃ k : ℕ, n = 2 ^ k := by
+  classical
+  have hn₀ : n ≠ 0 := Nat.ne_of_gt hn
+  have h1 : 1 ∈ n.divisors.filter Odd := by simp [hn₀]
+  have hprefix : (∑ d ∈ ({1} : Finset ℕ), (chebyshevPrefix (divisorEndpoint n d) -
+      chebyshevPrefix (-divisorEndpoint n d - 1))) = chebyshevCPartialSum (n - 1) := by
+    simp only [Finset.sum_singleton, divisorEndpoint, Nat.div_one, Nat.cast_one,
+      show ((1 : ℤ) + 1) / 2 = 1 by decide]
+    rw [chebyshevPrefix, ite_eq_left (by omega), chebyshevPrefix, ite_eq_right (by omega), sub_zero]
+    congr 1
+    omega
+  rw [← oddDivisors_eq_singleton_iff hn₀]
+  constructor
+  · intro h
+    have hcard := sum_abs_odd_prefixes hn (Finset.singleton_subset_iff.mpr h1)
+    rw [hprefix, ← h, kasselReutenauer_C_abs_coeff_sum n hn, Finset.card_singleton] at hcard
+    have hc : (n.divisors.filter Odd).card = 1 := by omega
+    obtain ⟨d, hd⟩ := Finset.card_eq_one.mp hc
+    rw [hd, Finset.mem_singleton] at h1
+    rwa [← h1] at hd
+  · intro h
+    rw [kasselReutenauerPoly_eq_odd_prefixes n hn, h, hprefix]
 
 end MetaMathlibExt

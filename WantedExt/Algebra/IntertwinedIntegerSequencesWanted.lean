@@ -242,17 +242,6 @@ public theorem_wanted kasselReutenauerPoly_eq_oddDivisor_sum (n : ℕ) (hn : 1 �
         ∑ d ∈ (Nat.divisors n).filter (fun d => Odd d ∧ ((n / d : ℕ) : ℤ) - ((d + 1) / 2 : ℕ) < 0),
           chebyshevCPartialSum (-(((n / d : ℕ) : ℤ) - ((d + 1) / 2 : ℕ)) - 1).toNat
 
-/-- **$\bar P_n$ equals $F_{n-1}$ exactly for powers of two.** Let $n \ge 1$, let $\bar P_n$ be the
-Kassel–Reutenauer polynomial, and let $F_{n-1} = 1 + \sum_{k=1}^{n-1} \bar T_k$ be the partial
-sum of the monic Chebyshev polynomials. Then $\bar P_n = F_{n-1}$ if and only if $n = 2^k$ for
-some natural number $k$.
-
-Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
-Journal of Integer Sequences 29 (2026), Article 26.4.4, Corollary 4.5
-(`jis-2026-26.4.4-cor-17`). -/
-public theorem_wanted kasselReutenauerPoly_eq_chebyshevCPartialSum_iff (n : ℕ) (hn : 1 ≤ n) :
-    kasselReutenauerPoly n = chebyshevCPartialSum (n - 1) ↔ ∃ k : ℕ, n = 2 ^ k
-
 /-- **$C_n(q)/q^n$ as a sum over the solutions of $h(h + 1 + 2a) = 2n$.** Let $n \ge 1$, let
 $\bar P_n$ be the Kassel–Reutenauer polynomial, and write $C_n(q)/q^n$ for the Laurent polynomial
 $(q - 2 + q^{-1})\,\bar P_n(q + q^{-1})$ in $\mathbb{Z}[q, q^{-1}]$. Then
