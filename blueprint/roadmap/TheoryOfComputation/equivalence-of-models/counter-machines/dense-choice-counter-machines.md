@@ -23,8 +23,7 @@ counters; a DCM whose actions are all $1$ is an ordinary counter machine. For $k
 $(x > i)$ and $\mathit{true}$ for $i \in [0, k]$, and its counters are called *$k$-testable*. A counter is *$b$-bounded* if its value stays at most $b$
 along every run, and *bounded* if it is $b$-bounded for some $b$.
 
-**Problems.** The *state reachability problem* asks, for a DCM, an initial configuration and a control state, whether the control state is
-reachable on some accepting run, one that ends in the final state $s_{\mathrm{fin}}$.
+**Problems.** A *run* is a finite sequence of transitions $(s_0, \mathbf{x}_0) \to \cdots \to (s_l, \mathbf{x}_l)$, $l \ge 0$; it is *accepting* if it ends in the final state $s_{\mathrm{fin}}$, whatever configuration it starts from. The *state reachability problem* asks, for a DCM (a finite object, its transitions carrying integer coefficients) and a control state $s$, whether $s$ occurs on some accepting run. No initial configuration is part of the input.
 
 ## Depends on
 
@@ -36,4 +35,4 @@ None.
 
 ## Sources
 
-- F. Bouchy, A. Finkel and P. San Pietro, "Dense-choice counter machines revisited", in *Proceedings of the International Workshop on Verification of Infinite-State Systems (INFINITY 2009)*, Electronic Proceedings in Theoretical Computer Science 10, pp. 3–22, 2009, doi:10.4204/EPTCS.10.1; journal version *Theoretical Computer Science* 542:17–31, 2014, doi:10.1016/j.tcs.2014.04.029. Read in arXiv:0911.3405v1: the two definitions of the subsection "Definitions and properties of Dense-choice Counter Machines" (DCMs and their semantics, the state reachability problem), the definition of $k$-DCMs, the definition of purely dense-choice counters, and the definition of bounded counters at the start of the subsection "Undecidability for bounded purely dense-choice counters".
+- F. Bouchy, A. Finkel and P. San Pietro, "Dense-choice counter machines revisited", in *Proceedings of the International Workshop on Verification of Infinite-State Systems (INFINITY 2009)*, Electronic Proceedings in Theoretical Computer Science 10, pp. 3–22, 2009, doi:10.4204/EPTCS.10.1; journal version *Theoretical Computer Science* 542:17–31, 2014, doi:10.1016/j.tcs.2014.04.029. Read in arXiv:0911.3405v1: Definitions 2.4 and 2.5 in Section 2.2 (DCMs and their semantics, the state reachability problem), the definition of $k$-DCMs in Section 2.2, Definition 2.7 (purely dense-choice counters), and the definition of bounded counters at the start of Section 3.1.

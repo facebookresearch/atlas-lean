@@ -33,6 +33,7 @@ $\Sigma^0_1$-computable, and *limit computable* means $\Delta^0_2$-computable. $
 
 - [The arithmetical class Σₙ](../../degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 - [The class Δₙ of the arithmetical hierarchy](../../degrees-and-hierarchies/arithmetical-hierarchy/is-delta.md)
+- [Recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -41,4 +42,4 @@ None.
 ## Sources
 
 - J. Leike and M. Hutter, "On the computability of Solomonoff induction and knowledge-seeking", in *Algorithmic Learning Theory (ALT 2015)*, Lecture Notes in Computer Science 9355, pp. 364–378, Springer, 2015, doi:10.1007/978-3-319-24486-0_24; numbering of the version arXiv:1507.04124v1: Section 2.2 (strings), Definition 1 ($\Sigma^0_n$-, $\Pi^0_n$-, $\Delta^0_n$-computable functions) and the beginning of Section 3 (semimeasures, Solomonoff's prior, the measure mixture, conditional probabilities).
-- M. Li and P. Vitányi, *An Introduction to Kolmogorov Complexity and Its Applications*, 3rd ed., Springer, 2008: Section 4.5 (universal monotone machines and Solomonoff's prior, Lemma 4.5.3).
+- M. Li and P. Vitányi, *An Introduction to Kolmogorov Complexity and Its Applications*, 3rd ed., Springer, 2008: the section on continuous sample spaces (universal monotone machines and Solomonoff's prior); this book was not read here, so it is cited by topic.

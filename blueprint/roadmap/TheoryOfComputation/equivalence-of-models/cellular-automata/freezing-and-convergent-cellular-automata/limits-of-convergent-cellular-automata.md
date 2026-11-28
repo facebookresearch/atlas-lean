@@ -2,18 +2,22 @@
 
 There are freezing cellular automata whose limit value and freezing time are uncomputable, convergent automata whose limit from a computable configuration is uncomputable, and two-dimensional freezing automata whose limit state sets are neither recursively enumerable nor co-recursively enumerable.
 
-Let $F$ range over [freezing, bounded-change and convergent cellular automata](freezing-bounded-change-and-convergent-cellular.md), and for a configuration $c$ and state $q$ let $\chi_q(c)=\{z: c_z=q\}$.
-
-**Theorem (Ollinger and Theyssier).**
-1. There is a freezing cellular automaton $F$ for which both $\mathrm{LIMIT}_F$ and $\mathrm{TIME}_F$ are uncomputable (Theorem 7).
+**Theorem (Ollinger and Theyssier).** For a [convergent](convergent-cellular-automata.md) cellular automaton $F$ with limit configurations $F^\omega(c)$ and freezing times $\tau(c,z)$, the *limit value problem* $\mathrm{LIMIT}_F$ maps a computable configuration $c$, given by a Turing machine, to $F^\omega(c)_0$, and the *freezing time problem* $\mathrm{TIME}_F$ maps it to $\tau(c,0)$; for a configuration $c$ and state $q$, $\chi_q(c)=\{z: c_z=q\}$.
+1. There is a [freezing](freezing-cellular-automata.md) cellular automaton $F$ for which both $\mathrm{LIMIT}_F$ and $\mathrm{TIME}_F$ are uncomputable (Theorem 7).
 2. There is a one-dimensional convergent cellular automaton $F$ and a computable configuration $c$ such that $F^\omega(c)$ is uncomputable (Theorem 9).
 3. There is a two-dimensional freezing cellular automaton $F$, a finite configuration $c$ and a state $q$ such that $\chi_q(F^\omega(c))$ is neither recursively enumerable nor co-recursively enumerable (Corollary 1).
 
-These are sharp in the following sense (Proposition 9): for convergent $F$ and computable $c$, each $\chi_q(F^\omega(c))$ is in $\Delta^0_2$, and for freezing $F$ it is recursively enumerable if $q$ is minimal and co-recursively enumerable if $q$ is maximal for the freezing order. In dimension one, bounded-change automata map computable configurations to computable limits (Theorem 8), so item 2 needs convergent automata.
+These are sharp in the following sense (Proposition 9): for convergent $F$ and computable $c$, each $\chi_q(F^\omega(c))$ is in $\Delta^0_2$, and for freezing $F$ it is recursively enumerable if $q$ is minimal and co-recursively enumerable if $q$ is maximal for the freezing order. In dimension one, [bounded-change](bounded-change-cellular-automata.md) automata map computable configurations to computable limits (Theorem 8), so item 2 needs convergent automata.
 
 ## Depends on
 
-- [Freezing, bounded-change and convergent cellular automata](freezing-bounded-change-and-convergent-cellular.md)
+- [Freezing cellular automata](freezing-cellular-automata.md)
+- [Bounded-change cellular automata](bounded-change-cellular-automata.md)
+- [Convergent cellular automata](convergent-cellular-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Arithmetical class $\Delta_n$](../../../degrees-and-hierarchies/arithmetical-hierarchy/is-delta.md)
 
 ## Proof depends on
 

@@ -2,13 +2,15 @@
 
 For some fixed $k$, no algorithm decides whether a given freezing cellular automaton changes the state of each cell at most $k$ times, although a freezing automaton with $n$ states is always $(n-1)$-change.
 
-**Theorem (Ollinger and Theyssier).** There exists $k\in\mathbb N$ such that it is undecidable, given a freezing cellular automaton $F$, whether $F$ is $k$-change (see [freezing, bounded-change and convergent cellular automata](freezing-bounded-change-and-convergent-cellular.md)).
+**Theorem (Ollinger and Theyssier).** There exists $k\in\mathbb N$ such that it is undecidable, given a [freezing](freezing-cellular-automata.md) cellular automaton $F$, whether $F$ is [$k$-change](bounded-change-cellular-automata.md).
 
 The proof uses one-dimensional automata. The bound $n-1$ for an $n$-state freezing automaton depends on the automaton, so the theorem is not in conflict with it: $k$ is fixed while the automata vary.
 
 ## Depends on
 
-- [Freezing, bounded-change and convergent cellular automata](freezing-bounded-change-and-convergent-cellular.md)
+- [Freezing cellular automata](freezing-cellular-automata.md)
+- [Bounded-change cellular automata](bounded-change-cellular-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

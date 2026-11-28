@@ -16,14 +16,15 @@ $$
 
 that computes from each configuration its unique predecessor, so the computation can be stepped back deterministically. It works in *real time* if it halts on every accepted input $w$ within $|w| + 2$ steps. A problem is *semidecidable* if its set of yes-instances is computably enumerable.
 
-**Theorem.** Let $k \ge 2$, and let $M$ and $M'$ range over real-time $\mathrm{REV\text{-}DCA}(k)$. None of the following questions is semidecidable: whether $L(M) = \emptyset$; whether $L(M)$ is finite; whether $L(M)$ is infinite; whether $L(M) \subseteq L(M')$; whether $L(M) = L(M')$; whether $L(M)$ is regular; whether $L(M)$ is context-free.
+**Theorem.** Let $k \ge 2$, and let $M$ and $M'$ range over real-time $\mathrm{REV\text{-}DCA}(k)$. None of the following questions is semidecidable: whether $L(M) = \emptyset$; whether $L(M)$ is finite; whether $L(M)$ is infinite; whether $L(M) \subseteq L(M')$; whether $L(M) = L(M')$; whether $L(M)$ is regular; whether $L(M)$ is context-free (Theorem 14 of the source).
 
-In particular all of them are undecidable.
+Being real-time is a condition on accepted inputs, so the inputs are promised to be real-time machines; the reduction of the source produces such machines, and the questions are not semidecidable already on them. In particular all of them are undecidable.
 
 ## Depends on
 
 - [Context-free languages](../../context-free-languages/grammars-and-pushdown-automata/context-free-languages.md)
 - [Recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -33,7 +34,7 @@ In particular all of them are undecidable.
 
 ## Expansion
 
-The reduction is from emptiness, finiteness and infiniteness of the languages of Turing machines, none of which is semidecidable. By a result of Hartmanis and Hopcroft, which has no page here, every computably enumerable set of words over $\{1, 2\}$, suitably encoded as numbers, is the domain of a multiplying counter machine: a one-register machine that multiplies its register by one of $2, 3, 5, 7, \tfrac12, \tfrac13, \tfrac15, \tfrac17$ and branches when the product is not an integer. The set of suitably formatted valid computations of such a machine is the intersection of two languages accepted by real-time reversible one-counter automata, and running both in parallel gives a real-time $\mathrm{REV\text{-}DCA}(2)$ accepting exactly the valid computations. This language is empty, finite or infinite exactly when the Turing machine accepts the empty, a finite or an infinite set. Inclusion and equivalence follow by comparing with an automaton for the empty set, and regularity and context-freeness because the set of valid computations is regular, equivalently context-free, exactly when it is finite.
+The reduction is from emptiness, finiteness and infiniteness of the languages of Turing machines, none of which is semidecidable. By a result of Hartmanis and Hopcroft, every computably enumerable set of words over $\{1, 2\}$, suitably encoded as numbers, is the domain of a multiplying counter machine: a one-register machine that multiplies its register by one of $2, 3, 5, 7, \tfrac12, \tfrac13, \tfrac15, \tfrac17$ and branches when the product is not an integer. The set of suitably formatted valid computations of such a machine is the intersection of two languages accepted by real-time reversible one-counter automata, and running both in parallel gives a real-time $\mathrm{REV\text{-}DCA}(2)$ accepting exactly the valid computations. This language is empty, finite or infinite exactly when the Turing machine accepts the empty, a finite or an infinite set. Inclusion and equivalence follow by comparing with an automaton for the empty set, and regularity and context-freeness because the set of valid computations is regular, equivalently context-free, exactly when it is finite.
 
 ## Sources
 

@@ -2,17 +2,18 @@
 
 It is undecidable whether two given one-dimensional cellular automata are topologically conjugate, whether one is a factor of the other, and whether one embeds into the other, already for one-sided automata, and the same holds for reversible two-dimensional automata.
 
-**Theorem.** Let $\mathbb M = \mathbb N$ or $\mathbb M = \mathbb Z$, and consider [cellular automata](cellular-automata-on-z-d.md) $F : A^{\mathbb M} \to A^{\mathbb M}$ and $G : B^{\mathbb M} \to B^{\mathbb M}$ as dynamical systems. A *homomorphism* from $(A^{\mathbb M}, F)$ to $(B^{\mathbb M}, G)$ is a continuous map $H$ with $H \circ F = G \circ H$; it is a *factor map* if surjective, an *embedding* if injective and a *conjugacy* if bijective, and it is *strong* if it also commutes with the shift. There is no algorithm that decides, given two cellular automata $F$ and $G$ on $A^{\mathbb M}$:
+**Theorem.** Let $\mathbb M = \mathbb N$ or $\mathbb M = \mathbb Z$, and consider [cellular automata](cellular-automata-on-z-d.md) $F : A^{\mathbb M} \to A^{\mathbb M}$ and $G : B^{\mathbb M} \to B^{\mathbb M}$ as dynamical systems. For $\mathbb M=\mathbb N$ these are *one-sided* automata, defined as on the linked page but on configurations indexed by $\mathbb N$ with a neighborhood $\{0,1,\dots,r\}$, so that $F(c)_i=f(c_i,\dots,c_{i+r})$; an instance is the finite local rule. A *homomorphism* from $(A^{\mathbb M}, F)$ to $(B^{\mathbb M}, G)$ is a continuous map $H$ with $H \circ F = G \circ H$; it is a *factor map* if surjective, an *embedding* if injective and a *conjugacy* if bijective, and it is *strong* if it also commutes with the shift. There is no algorithm that decides, given two cellular automata $F$ and $G$ on $A^{\mathbb M}$:
 
 1. whether $F$ and $G$ are conjugate, or strongly conjugate;
 2. whether $F$ is a factor, or a strong factor, of $G$;
-3. whether one of them is a subsystem, or a strong subsystem, of the other, that is, whether it embeds into the other by a homomorphism, or a strong one.
+3. whether $F$ is a subsystem, or a strong subsystem, of $G$, that is, whether $F$ embeds into $G$ by a homomorphism, or a strong one.
 
-The same three statements hold for reversible cellular automata on $A^{\mathbb Z^2}$ (Corollary 2 of the source). In contrast, conjugacy is decidable for periodic one-dimensional cellular automata, and for positively expansive ones it reduces to conjugacy of subshifts of finite type (Theorem 3 and Proposition 7).
+The same three statements hold for reversible cellular automata on $A^{\mathbb Z^2}$ (Corollary 2 of the source). In contrast, conjugacy is decidable for periodic cellular automata on one- or two-sided subshifts of finite type (Theorem 3 of the source, recalled from earlier work) and for positively expansive cellular automata on one- or two-sided full shifts (Proposition 7).
 
 ## Depends on
 
 - [Cellular automata on $\mathbb{Z}^d$](cellular-automata-on-z-d.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

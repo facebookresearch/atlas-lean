@@ -2,7 +2,7 @@
 
 Sand automata act on configurations of sand grains, one column per cell, by a local rule that reads height differences in a bounded neighborhood; no algorithm decides whether a given one-dimensional sand automaton empties every finite configuration, or every periodic one.
 
-**Sand automata.** A *configuration* is an element of $\widetilde{\mathbb Z}^{\mathbb Z}$, where $\widetilde{\mathbb Z}=\mathbb Z\cup\{-\infty,+\infty\}$ and $c_i$ is the number of grains in column $i$ ($-\infty$ is a sink, $+\infty$ a source). A configuration is *finite* if $c_i=0$ for all $|i|$ large enough, and *periodic* if there is $p\neq0$ with $c_i=c_{i+tp}$ for all $i$ and $t\in\mathbb Z$. For $l\ge1$ and an integer $m$, the *measuring device* $\beta^m_l(n)$ equals $n-m$ if $|n-m|\le l$, and $+\infty$ (respectively $-\infty$) if $n>m+l$ (respectively $n<m-l$); for a column $i$ with $c_i$ finite, $d^i_l(c)$ is the vector $(\beta^{c_i}_l(c_{i-l}),\dots,\beta^{c_i}_l(c_{i-1}),\beta^{c_i}_l(c_{i+1}),\dots,\beta^{c_i}_l(c_{i+l}))$ of measured differences to the $2l$ neighboring columns. A *sand automaton* $\langle r,\lambda\rangle$ has a radius $r\ge1$ and a local rule $\lambda:\widetilde{[-r,r]}^{2r}\to[-r,r]$, and its global map is
+**Sand automata.** A *configuration* is an element of $\widetilde{\mathbb Z}^{\mathbb Z}$, where $\widetilde{\mathbb Z}=\mathbb Z\cup\{-\infty,+\infty\}$ and $c_i$ is the number of grains in column $i$ ($-\infty$ is a sink, $+\infty$ a source). A configuration is *finite* if $c_i=0$ for all $|i|$ large enough, and *periodic* if there is $p\neq0$ with $c_i=c_{i+tp}$ for all $i$ and $t\in\mathbb Z$. Two conventions are needed for the theorem below to say what is meant. The source does not require $p\ne0$, but with $p=0$ every configuration would be periodic. Its definitions also let finite and periodic configurations contain columns $\pm\infty$; since the global map never changes such a column, such a configuration never reaches the empty configuration, so in the nilpotency problems below $\mathcal F$ and $\mathcal P$ are the finite and the periodic configurations in $\mathbb Z^{\mathbb Z}$, with every column holding an integer number of grains. For $l\ge1$ and an integer $m$, the *measuring device* $\beta^m_l(n)$ equals $n-m$ if $|n-m|\le l$, and $+\infty$ (respectively $-\infty$) if $n>m+l$ (respectively $n<m-l$); for a column $i$ with $c_i$ finite, $d^i_l(c)$ is the vector $(\beta^{c_i}_l(c_{i-l}),\dots,\beta^{c_i}_l(c_{i-1}),\beta^{c_i}_l(c_{i+1}),\dots,\beta^{c_i}_l(c_{i+l}))$ of measured differences to the $2l$ neighboring columns. A *sand automaton* $\langle r,\lambda\rangle$, given as an instance by $r$ and the finite table of $\lambda$, has a radius $r\ge1$ and a local rule $\lambda:\widetilde{[-r,r]}^{2r}\to[-r,r]$, and its global map is
 
 $$
 f(c)_i=\begin{cases}c_i&\text{if }c_i=\pm\infty,\\ c_i+\lambda(d^i_r(c))&\text{otherwise.}\end{cases}
@@ -16,7 +16,7 @@ For cellular automata, the undecidability of nilpotency ([nilpotency of cellular
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -28,4 +28,4 @@ The proof reduces the halting problem on empty input for two-counter machines wi
 
 ## Sources
 
-- J. Cervelle, E. Formenti and B. Masson, "Basic properties for sand automata", in *Mathematical Foundations of Computer Science 2005 (MFCS 2005)*, Lecture Notes in Computer Science 3618, pp. 192–211, Springer, 2005, doi:[10.1007/11549345_18](https://doi.org/10.1007/11549345_18); read in arXiv:cs/0411007v1 ([arXiv](https://arxiv.org/abs/cs/0411007v1)), whose numbering is used: the configurations and the topology of Section 2, the definition of sand automata in Section 3, and Theorem 18 with its proof sketch in the section "Nilpotency".
+- J. Cervelle, E. Formenti and B. Masson, "Basic properties for sand automata", in *Mathematical Foundations of Computer Science 2005 (MFCS 2005)*, Lecture Notes in Computer Science 3618, pp. 192–211, Springer, 2005, doi:[10.1007/11549345_18](https://doi.org/10.1007/11549345_18); read in arXiv:cs/0411007v1 ([arXiv](https://arxiv.org/abs/cs/0411007v1)), whose numbering is used: the configurations and the topology of Section 2, the definition of sand automata in Section 3, and Theorem 18 with its proof sketch in Section 6 (Nilpotency).

@@ -15,6 +15,8 @@ By Theorem 2.1 (Barto, Bulín, Krokhin and Opršal; Brakensiek et al.), $\mathca
 
 - [Promise constraint satisfaction PCSP(A,B) for a pair of finite templates](promise-csp-of-a-template-pair.md)
 - [The polymorphism minion Pol(A,B) of a promise template](polymorphism-minion-of-a-promise-template.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Minions, minion homomorphisms and pp-constructions](../finite-domain-csp-dichotomy/minions-minion-homomorphisms-pp-constructions.md)
 
 ## Proof depends on
 

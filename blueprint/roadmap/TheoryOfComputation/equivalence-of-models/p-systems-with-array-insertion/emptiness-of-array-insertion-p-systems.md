@@ -12,7 +12,7 @@ With array deletion as well, the systems are computationally complete; in dimens
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

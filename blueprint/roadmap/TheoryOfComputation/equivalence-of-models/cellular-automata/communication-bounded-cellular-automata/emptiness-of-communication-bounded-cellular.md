@@ -2,13 +2,14 @@
 
 No algorithm decides whether a real-time one-way cellular automaton accepting a bounded language accepts anything, already when its cells communicate only logarithmically often per link or linearly often in total.
 
-**Theorem.** Given a real-time $\mathrm{SC}(n)$-OCA or a real-time $\mathrm{MC}(\log n)$-OCA $\mathcal M$ (see [communication-bounded one-way cellular automata](communication-bounded-one-way-cellular-automata.md)) that accepts a bounded language, it is undecidable whether $L(\mathcal M)$ is empty.
+**Theorem.** Given a real-time $\mathrm{SC}(n)$-OCA or a real-time $\mathrm{MC}(\log n)$-OCA $\mathcal M$ (see [communication-bounded one-way cellular automata](communication-bounded-one-way-cellular-automata.md)) that accepts a bounded language, it is undecidable whether $L(\mathcal M)$ is empty. An instance is the finite description $\langle S,F,A,B,\#,b_l,b_r,\delta\rangle$ of the automaton; being real time, being communication bounded and accepting a bounded language are semantic properties of it, so this is a promise problem: no algorithm answers correctly on every automaton with these properties. The automata built in the proof have them by construction, with explicit constants in the communication bounds.
 
 For the same classes the source states (Theorem 10) that finiteness, infiniteness, universality, inclusion, equivalence, regularity and context-freedom are undecidable as well, by standard techniques.
 
 ## Depends on
 
 - [Communication-bounded one-way cellular automata](communication-bounded-one-way-cellular-automata.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

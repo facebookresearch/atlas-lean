@@ -13,12 +13,14 @@ $$
 
 with positive versions $I_{TD^+}$, $I_{TD^+}^{\forall}$ and $I_{TD^+}^{\forall^\infty}$, in the arithmetical hierarchy of classes $\Sigma^0_n$ and $\Pi^0_n$.
 
-**Theorem.**
+A family is a set of sets, so equal members count once. A set $S \subseteq \mathbb{N}$ is a *specifying set* for an arbitrary $L \subseteq \mathbb{N}$ with respect to $\mathcal{L}$ if at most one $L' \in \mathcal{L}$ has $L' \cap S = L \cap S$, and a *positive specifying set* if $S \subseteq L$ and at most one member of $\mathcal{L}$ contains $S$; the *extended teaching dimension* $\mathrm{XTD}(\mathcal{L})$ is the least $d$ such that every $L \subseteq \mathbb{N}$ has a specifying set of at most $d$ elements, and $\mathrm{XTD}^+(\mathcal{L})$ the least $d$ such that every nonempty $L \subseteq \mathbb{N}$ has a positive specifying set of at most $d$ elements ($\infty$ if there is none). A *positive teaching sequence* for $\mathcal{L}$ is a partition of $\mathcal{L}$ into nonempty subfamilies $\mathcal{F}_0, \mathcal{F}_1, \dots$ with numbers $d_i$ such that each $L \in \mathcal{F}_i$ has a subset of size $d_i$ contained in no other member of $\mathcal{F}_i \cup \mathcal{F}_{i+1} \cup \cdots$; its *order* is $\sup_i d_i$, and the *positive recursive teaching dimension* $\mathrm{RTD}^+(\mathcal{L})$ is the least order of such a sequence. A *positive teaching plan* is a positive teaching sequence whose subfamilies are singletons, and $\mathrm{RTD}^+_1(\mathcal{L})$ is the least order of a positive teaching plan.
 
-1. $I_{TD}$, $I_{TD}^{\forall^\infty}$, $I_{TD^+}$ and $I_{TD^+}^{\forall^\infty}$ are $\Sigma^0_5$-complete;
-2. $I_{TD}^{\forall}$ and $I_{TD^+}^{\forall}$ are $\Pi^0_4$-complete;
-3. the index set of families with finite extended teaching dimension is $\Sigma^0_3$-complete, and with finite positive extended teaching dimension $\Pi^0_2$-complete;
-4. the index set of families whose positive recursive teaching dimension is finite, witnessed by a uniformly c.e. teaching sequence, is $\Sigma^0_5$-complete; with teaching sequences of order one it is $\Sigma^0_4$-complete.
+**Theorem (Beros, Gao and Zilles).**
+
+1. $I_{TD}$, $I_{TD}^{\forall^\infty}$, $I_{TD^+}$ and $I_{TD^+}^{\forall^\infty}$ are $\Sigma^0_5$-complete (Theorems 15, 14, 18 and 19 of the source);
+2. $I_{TD}^{\forall}$ and $I_{TD^+}^{\forall}$ are $\Pi^0_4$-complete (Theorems 13 and 17);
+3. the index set $\{e : \mathrm{XTD}(\mathcal{L}_e) < \infty\}$ is $\Sigma^0_3$-complete, and $\{e : \mathrm{XTD}^+(\mathcal{L}_e) < \infty\}$ is $\Pi^0_2$-complete (Theorems 16 and 20);
+4. the index set of families $\mathcal{L}_e$ with $\mathrm{RTD}^+(\mathcal{L}_e) < \infty$ witnessed by a uniformly c.e. positive teaching sequence is $\Sigma^0_5$-complete (Theorem 29), and $\{e : \mathrm{RTD}^+_1(\mathcal{L}_e) < \infty\}$ is $\Sigma^0_4$-complete (Theorem 24).
 
 The source also shows that the set of triples $(e, x, d)$ with $\mathrm{TD}(L^e_x, \mathcal{L}_e) \le d$ is $\Sigma^0_3$-complete, and the set of triples $(e, x, u)$ such that the $u$-th finite set distinguishes $L^e_x$ from the other members of $\mathcal{L}_e$ is $\Pi^0_2$-complete.
 
@@ -26,6 +28,7 @@ The source also shows that the set of triples $(e, x, d)$ with $\mathrm{TD}(L^e_
 
 - [The arithmetical class $\Sigma_n$](is-sigma.md)
 - [The arithmetical class $\Pi_n$](is-pi.md)
+- [Recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ Likewise it is undecidable in dimension $d \ge 2$ whether a given stochastic cel
 ## Depends on
 
 - [Cellular automata on $\mathbb{Z}^d$](cellular-automata-on-z-d.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
