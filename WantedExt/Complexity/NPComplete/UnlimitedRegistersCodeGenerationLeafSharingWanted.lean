@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CodeGenerationWithUnlimitedRegistersWanted
+public import CSLibExt.Complexity.NPComplete.UnlimitedRegistersCodeGenerationLeafSharingDefs
 
 @[expose] public section
 
@@ -49,33 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance, as in `CodeGenerationWithUnlimitedRegistersWanted`: vertex count, arcs labelled
-`L`/`R`, bound `K`. -/
-abbrev UnlimitedRegistersCodeGenerationLeafSharingInstance :=
-  CodeGenerationWithUnlimitedRegisters.CodeGenerationWithUnlimitedRegistersInstance
-
-/-- Well-formedness of an instance: the instance of CODE GENERATION WITH UNLIMITED REGISTERS is
-well-formed, and every vertex with more than one incoming arc is a leaf. -/
-def WellFormed (i : UnlimitedRegistersCodeGenerationLeafSharingInstance) : Prop :=
-  CodeGenerationWithUnlimitedRegisters.WellFormed i ∧
-    ∀ v, 1 < {w | (Graph i).Adj w v}.ncard → IsLeaf i v
-
-/-- A program of at most `K` instructions computing all roots, exactly as in
-`CodeGenerationWithUnlimitedRegistersWanted`. -/
-def UnlimitedRegistersCodeGenerationLeafSharingFeasible
-    (i : UnlimitedRegistersCodeGenerationLeafSharingInstance) : Prop :=
-  CodeGenerationWithUnlimitedRegisters.CodeGenerationWithUnlimitedRegistersFeasible i
-
-open Classical in
-/-- CODE GENERATION WITH UNLIMITED REGISTERS (only leaves shared) as a decision problem over
-bitstrings. -/
-noncomputable def unlimitedRegistersCodeGenerationLeafSharingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnlimitedRegistersCodeGenerationLeafSharingInstance) x with
-  | some i => decide (WellFormed i ∧ UnlimitedRegistersCodeGenerationLeafSharingFeasible i)
-  | none => false
 
 /-- **CODE GENERATION WITH UNLIMITED REGISTERS (only leaves shared) is NP-complete.** Source: Garey
 and Johnson (1979), [PO5]; Aho, Johnson and Ullman (1977). -/

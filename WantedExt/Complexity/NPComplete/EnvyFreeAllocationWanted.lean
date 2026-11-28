@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Fin
+public import CSLibExt.Complexity.NPComplete.EnvyFreeAllocationDefs
 
 @[expose] public section
 
@@ -56,37 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of goods `m` and the utility matrix `V`, one row of `m` values per
-player. -/
-abbrev EnvyFreeAllocationInstance := ℕ × List (List ℕ)
-
-/-- The utility `v_{p,g}` of good `g` for player `p`. -/
-def utility (i : EnvyFreeAllocationInstance) (p : Fin i.2.length) (g : Fin i.1) : ℕ :=
-  (i.2.get p).getD g 0
-
-/-- Player `p`'s additive utility `v_p(A_q)` for the bundle `A_q = A⁻¹(q)` of player `q`. -/
-def bundleUtility (i : EnvyFreeAllocationInstance) (A : Fin i.1 → Fin i.2.length)
-    (p q : Fin i.2.length) : ℕ :=
-  ∑ g ∈ Finset.univ.filter (fun g => A g = q), utility i p g
-
-/-- Well-formedness of an instance: every row of `V` lists one utility per good. -/
-def WellFormed (i : EnvyFreeAllocationInstance) : Prop :=
-  ∀ row ∈ i.2, row.length = i.1
-
-/-- Some allocation of all goods is envy-free: no player values another player's bundle more
-than her own. -/
-def EnvyFreeAllocationFeasible (i : EnvyFreeAllocationInstance) : Prop :=
-  ∃ A : Fin i.1 → Fin i.2.length, ∀ p q, bundleUtility i A p q ≤ bundleUtility i A p p
-
-open Classical in
-/-- ENVY-FREE ALLOCATION OF INDIVISIBLE GOODS as a decision problem over bitstrings. -/
-noncomputable def envyFreeAllocationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EnvyFreeAllocationInstance) x with
-  | some i => decide (WellFormed i ∧ EnvyFreeAllocationFeasible i)
-  | none => false
 
 /-- **ENVY-FREE ALLOCATION OF INDIVISIBLE GOODS is NP-complete.** Source: Lipton, Markakis,
 Mossel, and Saberi (2004), Section 3.1.1. -/

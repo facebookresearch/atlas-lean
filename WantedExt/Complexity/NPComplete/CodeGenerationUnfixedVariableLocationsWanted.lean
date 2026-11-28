@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Set.Basic
+public import CSLibExt.Complexity.NPComplete.CodeGenerationUnfixedVariableLocationsDefs
 
 @[expose] public section
 
@@ -59,45 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(m, g, B, M)`: the number `m` of variables, the list `g` of instruction
-targets `g(I₁), …, g(Iₙ)` (see the module docstring), and natural numbers `B` and `M`. -/
-abbrev CodeGenerationUnfixedVariableLocationsInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ
-
-/-- Well-formedness of an instance: every `g(Iᵢ)` names an instruction `(0, j)` with `j < n`
-or a variable `(1, j)` with `j < m`, and `B` and `M` are positive. -/
-def WellFormed (i : CodeGenerationUnfixedVariableLocationsInstance) : Prop :=
-  (∀ e ∈ i.2.1, (e.1 = 0 ∧ e.2 < i.2.1.length) ∨ (e.1 = 1 ∧ e.2 < i.1)) ∧
-    0 < i.2.2.1 ∧ 0 < i.2.2.2
-
-/-- The location `f(g(Iᵢ))` of the target of instruction `x` under `f`. -/
-def targetLocation (i : CodeGenerationUnfixedVariableLocationsInstance)
-    (f : Fin i.2.1.length ⊕ Fin i.1 → ℕ) (x : Fin i.2.1.length) : ℕ :=
-  let e := i.2.1[x]
-  if e.1 = 0 then (if h : e.2 < i.2.1.length then f (Sum.inl ⟨e.2, h⟩) else 0)
-  else if h : e.2 < i.1 then f (Sum.inr ⟨e.2, h⟩) else 0
-
-/-- There is a one-to-one `f : I ∪ V → {1, …, M}`, increasing on the instructions, under which
-every instruction `Iᵢ` has `|f(Iᵢ) - f(g(Iᵢ))| < B` (a one-byte instruction) or has
-`f(Iᵢ) + 1` outside the range of `f` and at most `M` (room for a two-byte instruction within
-the `M` bytes of memory). -/
-def CodeGenerationUnfixedVariableLocationsFeasible
-    (i : CodeGenerationUnfixedVariableLocationsInstance) : Prop :=
-  ∃ f : Fin i.2.1.length ⊕ Fin i.1 → ℕ,
-    (∀ x, 1 ≤ f x ∧ f x ≤ i.2.2.2) ∧ Function.Injective f ∧
-      (∀ x y : Fin i.2.1.length, x < y → f (Sum.inl x) < f (Sum.inl y)) ∧
-      ∀ x : Fin i.2.1.length,
-        ((f (Sum.inl x) : ℤ) - targetLocation i f x).natAbs < i.2.2.1 ∨
-          (f (Sum.inl x) + 1 ≤ i.2.2.2 ∧ f (Sum.inl x) + 1 ∉ Set.range f)
-
-open Classical in
-/-- CODE GENERATION WITH UNFIXED VARIABLE LOCATIONS as a decision problem over bitstrings. -/
-noncomputable def codeGenerationUnfixedVariableLocationsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CodeGenerationUnfixedVariableLocationsInstance) x with
-  | some i => decide (WellFormed i ∧ CodeGenerationUnfixedVariableLocationsFeasible i)
-  | none => false
 
 /-- **CODE GENERATION WITH UNFIXED VARIABLE LOCATIONS is NP-complete.** Source: Garey and
 Johnson (1979), [PO8]; Robertson (1977, 1979). -/

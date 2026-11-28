@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CodeGenerationParallelAssignmentsWanted
+public import CSLibExt.Complexity.NPComplete.CodeGenerationParallelAssignmentsTwoOperandsDefs
 
 @[expose] public section
 
@@ -56,21 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed CODE GENERATION FOR PARALLEL ASSIGNMENTS
-instance (exactly `n` operand sets, each a list of distinct variables in range, and `0 < K`) in
-which every operand set has at most two elements. -/
-def WellFormed (i : CodeGenerationParallelAssignmentsInstance) : Prop :=
-  CodeGenerationParallelAssignments.WellFormed i ∧ ∀ b ∈ i.2.1, b.length ≤ 2
-
-open Classical in
-/-- CODE GENERATION FOR PARALLEL ASSIGNMENTS with at most two operands as a decision problem over bitstrings. -/
-noncomputable def codeGenerationParallelAssignmentsTwoOperandsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CodeGenerationParallelAssignmentsInstance) x with
-  | some i => decide (WellFormed i ∧ CodeGenerationParallelAssignmentsFeasible i)
-  | none => false
 
 /-- **CODE GENERATION FOR PARALLEL ASSIGNMENTS with at most two operands is NP-complete.** Source: Garey and Johnson (1979), [PO6], comment; Sethi (1973). -/
 public theorem_wanted codeGenerationParallelAssignmentsTwoOperands_npComplete :

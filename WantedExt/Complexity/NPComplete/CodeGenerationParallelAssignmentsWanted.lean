@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.CodeGenerationParallelAssignmentsDefs
 
 @[expose] public section
 
@@ -53,32 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(n, B, K)`: the number `n` of variables `v₀, …, v_{n-1}`, a 0-based list `B`
-of operand sets as lists of variable indices (written `B₀, …, B_{n-1}` when there are `n`
-assignments, with assignment `i` being `vᵢ ← op(Bᵢ)`), and the bound `K`. -/
-abbrev CodeGenerationParallelAssignmentsInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: there are exactly `n` operand sets, each a list of
-distinct variables in range (a subset of `V`), and `K` is positive. -/
-def WellFormed (i : CodeGenerationParallelAssignmentsInstance) : Prop :=
-  i.2.1.length = i.1 ∧ (∀ b ∈ i.2.1, b.Nodup ∧ ∀ v ∈ b, v < i.1) ∧ 0 < i.2.2
-
-/-- An ordering `π` of the variables with at most `K` positions `i` whose variable `v_π(i)`
-lies in `B_π(j)` for some later position `j > i`. -/
-def CodeGenerationParallelAssignmentsFeasible (i : CodeGenerationParallelAssignmentsInstance) :
-    Prop :=
-  ∃ π : Equiv.Perm (Fin i.1),
-    {p : Fin i.1 | ∃ q, p < q ∧ ((π p : ℕ) ∈ i.2.1.getD (π q) [])}.ncard ≤ i.2.2
-
-open Classical in
-/-- CODE GENERATION FOR PARALLEL ASSIGNMENTS as a decision problem over bitstrings. -/
-noncomputable def codeGenerationParallelAssignmentsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CodeGenerationParallelAssignmentsInstance) x with
-  | some i => decide (WellFormed i ∧ CodeGenerationParallelAssignmentsFeasible i)
-  | none => false
 
 /-- **CODE GENERATION FOR PARALLEL ASSIGNMENTS is NP-complete.** Source: Garey and Johnson
 (1979), [PO6]; Sethi (1973). -/

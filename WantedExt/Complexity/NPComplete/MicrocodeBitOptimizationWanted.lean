@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Nat.Log
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MicrocodeBitOptimizationDefs
 
 @[expose] public section
 
@@ -53,32 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `a` of micro-commands, the micro-instructions `C₁, …, Cₘ` (lists of
-micro-commands), and the bound `K`. -/
-abbrev MicrocodeBitOptimizationInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every micro-instruction lists distinct micro-commands
-`< a`, and the bound `K` is positive. -/
-def WellFormed (i : MicrocodeBitOptimizationInstance) : Prop :=
-  (∀ c ∈ i.2.1, c.Nodup ∧ ∀ x ∈ c, x < i.1) ∧ 0 < i.2.2
-
-/-- A partition of the micro-commands, as a block map `f`, in which every block shares at most
-one micro-command with every micro-instruction, and whose total field width
-`∑ ⌈log₂(|block| + 1)⌉` is at most `K`. -/
-def MicrocodeBitOptimizationFeasible (i : MicrocodeBitOptimizationInstance) : Prop :=
-  ∃ f : Fin i.1 → Fin i.1,
-    (∀ b, ∀ c ∈ i.2.1, (Finset.univ.filter fun x => f x = b ∧ (x : ℕ) ∈ c).card ≤ 1) ∧
-      ∑ b, Nat.clog 2 ((Finset.univ.filter fun x => f x = b).card + 1) ≤ i.2.2
-
-open Classical in
-/-- MICROCODE BIT OPTIMIZATION as a decision problem over bitstrings. -/
-noncomputable def microcodeBitOptimizationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MicrocodeBitOptimizationInstance) x with
-  | some i => decide (WellFormed i ∧ MicrocodeBitOptimizationFeasible i)
-  | none => false
 
 /-- **MICROCODE BIT OPTIMIZATION is NP-complete.** Source: Garey and Johnson (1979), [PO10];
 Robertson (1979). -/
