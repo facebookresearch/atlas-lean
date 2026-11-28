@@ -24,4 +24,5 @@ uniform bound of Dimitrov, Gao and Habegger on the rational points of curves of 
 - [Abelian varieties and abelian schemes](abelian-varieties/README.md)
 - [Arithmetic geometry](arithmetic-geometry/README.md)
 - [Arakelov geometry](arakelov-geometry/README.md)
+- [Derived algebraic geometry](derived-algebraic-geometry/README.md)
 - [Not yet classified](not-yet-classified/README.md)
