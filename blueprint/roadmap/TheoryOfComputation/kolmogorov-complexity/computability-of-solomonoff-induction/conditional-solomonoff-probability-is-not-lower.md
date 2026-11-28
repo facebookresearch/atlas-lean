@@ -3,7 +3,7 @@
 The conditional probability $M(xy \mid x) = M(xy) / M(x)$ of Solomonoff's prior is not lower semicomputable: the set of triples
 $(x, xy, q)$ with $M(xy \mid x) > q$ is not recursively enumerable.
 
-**Theorem.** For [Solomonoff's prior](solomonoff-s-prior-and-the-measure-mixture.md) $M$, the set
+**Theorem.** Over an alphabet $\mathcal X$ with at least two symbols, for [Solomonoff's prior](solomonoff-s-prior-and-the-measure-mixture.md) $M$, the set
 
 $$
 \{ (x, xy, q) : M(xy \mid x) > q \} ,

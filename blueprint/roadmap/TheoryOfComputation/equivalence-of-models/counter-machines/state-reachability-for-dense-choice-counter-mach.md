@@ -9,7 +9,7 @@ $1$-bounded, $1$-testable counters (Proposition 3.1 of the source).
 
 For integer counters, boundedness makes a machine finite-state; dense-choice counters keep infinitely many values even when bounded, which
 is why boundedness does not restore decidability. With a single bounded $k$-testable counter the binary reachability relation is
-definable in a decidable logic, and the cases of two and three purely dense-choice bounded counters are open.
+definable in a decidable logic, and the source lists the cases of two and three purely dense-choice bounded counters as open (the table of Section 3).
 
 ## Depends on
 

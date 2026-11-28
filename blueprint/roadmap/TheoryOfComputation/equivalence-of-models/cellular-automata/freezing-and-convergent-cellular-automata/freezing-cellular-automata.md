@@ -7,6 +7,7 @@ A cellular automaton is freezing when some partial order on its states is never 
 ## Depends on
 
 - [Cellular automata on ℤ^d](../cellular-automata-on-z-d.md)
+- [Partially ordered set](../../../../Order/ordered-sets/partial-order.md)
 
 ## Proof depends on
 

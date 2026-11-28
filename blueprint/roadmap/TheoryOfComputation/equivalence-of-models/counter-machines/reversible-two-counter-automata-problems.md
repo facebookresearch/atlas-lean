@@ -14,7 +14,7 @@ $$
 \delta^{\leftarrow} : Q \times (\Sigma \cup \{\triangleright, \triangleleft\}) \times \{+, \bot\}^k \to Q \times \{0, -1\} \times \{-1, 0, 1\}^k
 $$
 
-that computes from each configuration its unique predecessor, so the computation can be stepped back deterministically. It works in *real time* if it halts on every accepted input $w$ within $|w| + 2$ steps. A problem is *semidecidable* if its set of yes-instances is computably enumerable.
+whose induced relation $\vdash^{\leftarrow}_M$ is exactly the converse of the step relation: $(q', w, h', c'_1, \dots, c'_k) \vdash^{\leftarrow}_M (q, w, h, c_1, \dots, c_k)$ if and only if $(q, w, h, c_1, \dots, c_k) \vdash_M (q', w, h', c'_1, \dots, c'_k)$ (Section 2 of the source). So every configuration has at most one predecessor, which $\delta^{\leftarrow}$ computes when it exists, and the computation can be stepped back deterministically; initial configurations need not have a predecessor. It works in *real time* if it halts on every accepted input $w$ within $|w| + 2$ steps. A problem is *semidecidable* if its set of yes-instances is computably enumerable.
 
 **Theorem.** Let $k \ge 2$, and let $M$ and $M'$ range over real-time $\mathrm{REV\text{-}DCA}(k)$. None of the following questions is semidecidable: whether $L(M) = \emptyset$; whether $L(M)$ is finite; whether $L(M)$ is infinite; whether $L(M) \subseteq L(M')$; whether $L(M) = L(M')$; whether $L(M)$ is regular; whether $L(M)$ is context-free (Theorem 14 of the source).
 

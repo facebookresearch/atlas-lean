@@ -3,7 +3,7 @@
 For some universal monotone machine, the measure mixture $\overline{M}$, the part of Solomonoff's prior coming from programs that
 output infinite strings, is not limit computable: the set of pairs $(x, q)$ with $\overline{M}(x) > q$ is not in $\Delta^0_2$.
 
-**Theorem.** There is a [universal monotone machine](solomonoff-s-prior-and-the-measure-mixture.md) $U'$ such that the set
+**Theorem.** Over an alphabet $\mathcal X$ with at least two symbols, there is a [universal monotone machine](solomonoff-s-prior-and-the-measure-mixture.md) $U'$ such that the set
 
 $$
 \{ (x, q) : \overline{M}_{U'}(x) > q \} ,

@@ -26,6 +26,5 @@ automata as continuous shift-commuting maps are in
 - [Conjugacy of cellular automata is undecidable](conjugacy-of-cellular-automata-is-undecidable.md)
 - [Equality of stochastic cellular automata is undecidable in dimension two and higher](equality-of-stochastic-cellular-automata.md)
 - [Freezing and convergent cellular automata](freezing-and-convergent-cellular-automata/README.md)
-- [Nilpotency of sand automata is undecidable](nilpotency-of-sand-automata-is-undecidable.md)
 - [Whether a periodic configuration has a periodic preimage under the Game of Life is Σ⁰₁-complete](whether-a-periodic-configuration-has-a-periodic.md)
 - [Whether a periodic configuration has a preimage under the Game of Life is Π⁰₁-complete](whether-a-periodic-configuration-has-a-preimage.md)

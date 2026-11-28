@@ -3,7 +3,7 @@
 Solomonoff's prior $M(x)$ is the probability that a universal monotone Turing machine fed with uniformly random bits outputs a
 string beginning with $x$; the measure mixture $\overline{M}$ keeps only the contribution of programs that output infinite strings.
 
-Let $\mathcal{X}$ be a finite alphabet, $\mathcal{X}^*$ the finite and $\mathcal{X}^\infty$ the infinite strings over it, $\epsilon$ the
+Let $\mathcal{X}$ be a finite alphabet with at least two symbols (the source fixes only a finite alphabet, but its constructions output two distinct symbols $0$ and $1$; over a one-letter alphabet the measure mixture is constant and the source's proofs do not apply), $\mathcal{X}^*$ the finite and $\mathcal{X}^\infty$ the infinite strings over it, $\epsilon$ the
 empty string, and $x \sqsubseteq y$ the prefix relation. A *semimeasure* is a function $\nu : \mathcal{X}^* \to [0, 1]$ with
 $\nu(\epsilon) \le 1$ and $\nu(x) \ge \sum_{a \in \mathcal{X}} \nu(xa)$ for all $x$; it is a *measure* if both are equalities.
 
@@ -15,7 +15,7 @@ $$
 M(x) = \lambda\{ \omega \in \{0, 1\}^{\mathbb{N}} : x \sqsubseteq U(\omega) \} = \sum_{p \in P_x} 2^{-|p|} ,
 $$
 
-where $\lambda$ is the uniform measure and $P_x$ is the set of *minimal* programs for $x$, the finite binary strings $p$ with $x \sqsubseteq U(p)$ such that no proper prefix $q$ of $p$ has $x \sqsubseteq U(q)$. The source writes the sum over all $p$ with $x \sqsubseteq U(p)$ as shorthand; since every extension of such a $p$ also qualifies, only the minimal ones are counted, and $P_x$ is prefix-free, so $M(x) \le 1$. $M$ is a semimeasure but not a measure. The *measure mixture*
+where $\lambda$ is the uniform measure and $P_x$ is the set of *minimal* programs for $x$, the finite binary strings $p$ with $x \sqsubseteq U(p)$ such that no proper prefix $q$ of $p$ has $x \sqsubseteq U(q)$. The source writes the sum over all $p$ with $x \sqsubseteq U(p)$ as shorthand; since every extension of such a $p$ also qualifies, only the minimal ones are counted, and $P_x$ is prefix-free, so $M(x) \le 1$. $M$ is a semimeasure, a function $\nu : \mathcal X^* \to [0, 1]$ with $\nu(\epsilon) \le 1$ and $\nu(x) \ge \sum_{a \in \mathcal X} \nu(xa)$ for every $x$, but not a measure, for which these inequalities are equalities. The *measure mixture*
 is
 
 $$

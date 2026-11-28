@@ -15,6 +15,7 @@ These are sharp in the following sense (Proposition 9): for convergent $F$ and c
 - [Freezing cellular automata](freezing-cellular-automata.md)
 - [Bounded-change cellular automata](bounded-change-cellular-automata.md)
 - [Convergent cellular automata](convergent-cellular-automata.md)
+- [Finite, periodic and Garden-of-Eden configurations](../finite-periodic-and-garden-of-eden-configurations.md)
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 - [Co-recognizability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
