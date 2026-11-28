@@ -16,11 +16,11 @@ Here $L_\emptyset(Q)$ is first-order logic with equality and no other non-logica
 
 ## Proof depends on
 
-- [The uniform word problem for Thue systems is undecidable](../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-thue-wp.md)
+- [Some finite Thue system has an undecidable word problem](../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-eqv-gen.md)
 
 ## Expansion
 
-The proof adapts Krynicki and Mostowski's reduction of the word problem for semigroups to the tautology problem. Fix a finitely presented semigroup $E$ over $\{a, b\}$ with undecidable word problem. A single Henkin prefix provides functions $f_a, f_b, \dots$ on the universe, and a formula under it expresses that these functions satisfy the defining relations of $E$ under composition; an instance $v = w$ then corresponds to a sentence of $L_\emptyset(Q)$ that is valid iff $E \models v = w$. For clause 2 the fixed semigroup is Tseitin's semigroup with five generators and seven relations, whose word problem is undecidable, which bounds the size of the quantifier.
+The proof adapts Krynicki and Mostowski's reduction of the word problem for semigroups to the tautology problem. Fix one finitely presented semigroup $E$ over $\{a, b\}$ whose word problem (the set of equations $v = w$ between nonempty words that hold in every semigroup satisfying the defining relations of $E$) is undecidable; the reduction starts from this fixed word problem, not from the uniform one. A single Henkin prefix provides functions $f_a, f_b, \dots$ on the universe, and a formula under it expresses that these functions satisfy the defining relations of $E$ under composition; an instance $v = w$ then corresponds to a sentence of $L_\emptyset(Q)$ that is valid iff $E \models v = w$. For clause 2 the fixed semigroup is Tseitin's semigroup $C$ with generators $a, b, c, d, e$ and the seven relations $ac = ca$, $ad = da$, $bc = cb$, $bd = db$, $eca = ce$, $edb = de$, $cca = ccae$, whose word problem is undecidable (Theorem 7 of the source), which bounds the size of the quantifier.
 
 ## Sources
 

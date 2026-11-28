@@ -2,7 +2,7 @@
 
 Second-order unification stays undecidable with only two second-order variables and no first-order variables, and with a single second-order variable whose arguments are ground when first-order variables are allowed.
 
-**Theorem (Levy and Veanes).** [Second-order unification](higher-order-unification-and-its-order.md) is undecidable for each of the following fragments:
+**Theorem (Levy and Veanes).** [Second-order unification](second-order-unification-problems.md), with function variables as the second-order variables and individual variables as the first-order variables, is undecidable for each of the following fragments:
 
 1. problems with two second-order variables and no first-order variables;
 2. problems with one second-order variable, applied only to ground arguments, together with first-order variables.
@@ -11,7 +11,7 @@ Levy and Veanes also translate arbitrary second-order equations into equations w
 
 ## Depends on
 
-- [Higher-order unification and its order](higher-order-unification-and-its-order.md)
+- [Second-order unification problems](second-order-unification-problems.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
