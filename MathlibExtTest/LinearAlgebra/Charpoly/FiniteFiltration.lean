@@ -92,12 +92,13 @@ theorem scalar_charpoly (c : ℚ) :
   let b : Module.Basis (Fin 1) ℚ ℚ := Module.Basis.singleton (Fin 1) ℚ
   have hm : LinearMap.toMatrix b b (c • LinearMap.id) =
       Matrix.diagonal (fun _ : Fin 1 => c) := by
-    ext i j
-    have hij : i = j := Subsingleton.elim _ _
-    subst j
-    rw [LinearMap.toMatrix_singleton, Matrix.diagonal_apply_eq]
-    change c * 1 = c
-    exact mul_one c
+    calc
+      _ = c • LinearMap.toMatrix b b (LinearMap.id : ℚ →ₗ[ℚ] ℚ) :=
+        map_smul (LinearMap.toMatrix b b) c (LinearMap.id : ℚ →ₗ[ℚ] ℚ)
+      _ = c • (1 : Matrix (Fin 1) (Fin 1) ℚ) :=
+        congrArg (fun A : Matrix (Fin 1) (Fin 1) ℚ => c • A)
+          (LinearMap.toMatrix_id b)
+      _ = _ := Matrix.smul_one_eq_diagonal c
   rw [← LinearMap.charpoly_toMatrix (c • LinearMap.id) b, hm, Matrix.charpoly_diagonal]
   simp
 
