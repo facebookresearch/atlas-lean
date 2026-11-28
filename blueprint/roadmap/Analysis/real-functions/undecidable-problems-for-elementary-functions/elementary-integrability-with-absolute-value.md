@@ -2,7 +2,7 @@
 
 Once the absolute value may be used, no algorithm decides whether an explicit function of one real variable built from sine expressions and the Gaussian has an elementary antiderivative on the whole real line, in contrast with Risch's algorithm for elementary towers.
 
-**Theorem (Richardson).** Let $\sigma(x) = \tfrac12 (|x| - |x - 1| + 1)$, which is $0$ for $x \le 0$, $x$ for $0 < x < 1$ and $1$ for $x \ge 1$, and let $F_a$ be the computable family of one-variable sine expressions for which it is undecidable whether $F_a > 1$ everywhere or $F_a$ takes values below $-1$ and above $1$. Then it is impossible to decide, given $a \in \mathbb Z$, whether
+**Theorem (Richardson; π-free form by Laczkovich).** Let $\sigma(x) = \tfrac12 (|x| - |x - 1| + 1)$, which is $0$ for $x \le 0$, $x$ for $0 < x < 1$ and $1$ for $x \ge 1$, and let $F_a$ be the computable family of one-variable sine expressions, in the class $\mathscr S$ built from the integers and $x$ by addition, multiplication and composition with $\sin$, for which it is undecidable whether $F_a > 1$ everywhere or $F_a$ takes values below $-1$ and above $1$. Then it is impossible to decide, given $a \in \mathbb Z$, whether
 
 $$
 \int \sigma(-F_a(x))\, e^{x^2} \, dx
@@ -12,6 +12,7 @@ is an elementary function on all of $\mathbb R$.
 
 ## Depends on
 
+- [Nonnegativity, positivity and zeros of one-variable sine expressions are undecidable](sign-and-zeros-of-one-variable-sine-terms.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -20,7 +21,7 @@ is an elementary function on all of $\mathbb R$.
 
 ## Expansion
 
-If $F_a > 1$ on $\mathbb R$, then $\sigma(-F_a)$ is identically $0$ and the integral is $0$. Otherwise $F_a < -1$ on some open interval, where $\sigma(-F_a) = 1$, and there an antiderivative of $e^{x^2}$ would have to be elementary, which Liouville's theorem forbids (there is no elementary antiderivative of $e^{x^2}$ on any interval); Liouville's theorem has no page here. Deciding which case holds would decide the sign behavior of $F_a$.
+If $F_a > 1$ on $\mathbb R$, then $\sigma(-F_a)$ is identically $0$ and the integral is $0$. Otherwise $F_a < -1$ on some open interval, where $\sigma(-F_a) = 1$, and there an antiderivative of $e^{x^2}$ would have to be elementary, which Liouville's theorem forbids (there is no elementary antiderivative of $e^{x^2}$ on any interval). A good expansion links a page for this theorem of Liouville. Deciding which case holds would decide the sign behavior of $F_a$.
 
 ## Sources
 

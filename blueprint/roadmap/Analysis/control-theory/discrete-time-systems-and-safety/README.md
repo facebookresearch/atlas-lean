@@ -16,3 +16,4 @@
 
 - [Round-off versus truncation in time stepping](round-off-versus-truncation-in-time-stepping.md)
 - [Runtime assurance](runtime-assurance/README.md)
+- [Reachability and stability decision problems](reachability-and-stability-decision-problems/README.md)

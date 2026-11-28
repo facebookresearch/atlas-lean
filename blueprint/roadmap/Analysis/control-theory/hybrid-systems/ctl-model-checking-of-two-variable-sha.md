@@ -2,7 +2,7 @@
 
 Model checking branching-time temporal logic over singular hybrid automata is undecidable already with two continuous variables, one of which is a clock; with one variable reachability and LTL model checking are decidable.
 
-**Singular hybrid automata.** A singular hybrid automaton has finitely many control modes (some of them initial), finitely many real-valued variables, mode invariants that are polytopes, and transitions between modes, each with a polytope guard and a set of variables reset to $0$; in each mode every variable grows at a constant rational rate fixed by the mode. A run alternates time elapse in a mode, respecting its invariant, with transitions whose guards hold. The reachability problem asks, given a starting valuation and a target polytope, whether some finite run reaches a valuation in the target. Given atomic propositions and a labeling of modes, traces of non-Zeno runs are evaluated against CTL formulas with the standard semantics, and the CTL model-checking problem asks whether all initial modes satisfy a given formula.
+**Singular hybrid automata.** A *polyhedral constraint* over the variables $x_1, \ldots, x_n$ is a finite conjunction of linear constraints $a_1 x_1 + \cdots + a_n x_n \bowtie k$ with integers $a_1, \ldots, a_n, k$ and $\bowtie\, \in \{<, \le, =, \ge, >\}$; the constraints $\top$ (always true) and $\bot$ (never true) are included, and a bounded polyhedral constraint is a *convex polytope*. A singular hybrid automaton has finitely many control modes (some of them initial), finitely many real-valued variables, mode invariants that are polyhedral constraints, and transitions between modes, each with a polyhedral guard and a set of variables reset to $0$; in each mode every variable grows at a constant rational rate fixed by the mode. Rational numbers are given by numerator and denominator in binary. A run alternates time elapse in a mode, respecting its invariant, with transitions whose guards hold. The reachability problem asks, given a rational starting valuation and a target convex polytope, whether some finite run from the starting valuation reaches a valuation in the target. Given atomic propositions and a labeling of modes, traces of non-Zeno runs are evaluated against CTL formulas with the standard semantics, and the CTL model-checking problem asks whether all initial modes satisfy a given formula.
 
 **Theorem (Krishna, Mathur and Trivedi).** The CTL model-checking problem for singular hybrid automata with two variables is undecidable.
 
@@ -19,7 +19,7 @@ For singular hybrid automata with one variable, reachability and schedulability 
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 
-## Expansion
+## Proof sketch
 
 Given a two-counter machine, the proof builds a two-variable singular hybrid automaton and a CTL formula that holds exactly when the machine halts. Both counter values are stored in one variable as $x = 2 - 1/(2^{c_1} 3^{c_2})$; the second variable $y$ has rate $1$ everywhere and is used for bookkeeping, and each instruction becomes a widget whose exit edge has guard $y = 1$ and resets $y$, so every simulated step lets at least one time unit elapse. The branching modalities of CTL check that the widgets updated $x$ correctly.
 

@@ -17,7 +17,7 @@ This contrasts with the real case, where, assuming Schanuel's conjecture, Macint
 
 ## Expansion
 
-The proof reduces Hilbert's tenth problem, the undecidability of solvability of Diophantine equations over $\mathbb Z$, which follows from the Davis–Putnam–Robinson–Matiyasevich theorem and the undecidability of halting. It uses two observations: $\mathbb Q$ is the set of ratios of zeros of $e^z - 1$ in $\mathbb C$, and $\mathbb Z$ is the set of $x \in \mathbb Q$ for which there is $z \in \mathbb C$ with $e^z = 2$ and $e^{zx} \in \mathbb Q$. With these characterizations, solvability of a Diophantine equation is expressed as the existence of a common zero of explicit functions in $\mathcal E$; the details of the construction are in the source.
+The proof reduces Hilbert's tenth problem, the undecidability of solvability of Diophantine equations over $\mathbb Z$, which follows from the Davis–Putnam–Robinson–Matiyasevich theorem and the undecidability of halting. It uses two observations: $\mathbb Q$ is the set of ratios of zeros of $e^z - 1$ in $\mathbb C$, and $\mathbb Z$ is the set of $x \in \mathbb Q$ for which there is $z \in \mathbb C$ with $e^z = 2$ and $e^{zx} \in \mathbb Q$. With these characterizations, solvability of a Diophantine equation is expressed as the existence of a common zero of explicit functions in $\mathcal E$; the details of the construction are in the source. A good expansion links pages for Hilbert's tenth problem over $\mathbb Z$ and for the two characterizations of $\mathbb Q$ and $\mathbb Z$ above.
 
 ## Sources
 

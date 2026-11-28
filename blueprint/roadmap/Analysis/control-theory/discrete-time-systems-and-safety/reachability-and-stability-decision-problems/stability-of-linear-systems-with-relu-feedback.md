@@ -27,7 +27,7 @@ The dimensions $n$, $m$, the number of layers and their widths are part of the i
 
 - [Global asymptotic stability of saturated linear systems is undecidable](stability-of-saturated-linear-systems-undecidable.md)
 
-## Expansion
+## Proof sketch
 
 The proof reduces stability of saturated linear systems $x^+ = \mathrm{sat}(Dx)$, $D \in \mathbb Q^{n \times n}$, where $\mathrm{sat}(z) = \min(\max(z, -1), 1)$ componentwise. Since $\mathrm{sat}(z) = \mathrm{ReLU}(z + 1) - \mathrm{ReLU}(z - 1) - 1$, the saturated system is the closed loop with $A = 0$, $B = I$ and the two-layer network with
 

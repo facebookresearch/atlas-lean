@@ -16,7 +16,7 @@ More precisely, there are functions $F_a \in \mathscr S$ depending computably on
 
 ## Expansion
 
-Laczkovich's variant of the several-variable theorem replaces $\sin \pi x_i$ by $\sin x_i$. Composing a multivariable function with a function $h : \mathbb R \to \mathbb R^n$ with dense image, such as $h(x) = (x \sin x, x \sin x^3, \ldots, x \sin x^{2n-1})$ (used by Denef and Lipshitz), turns it into a function of one variable with the same sign behavior; the density of the image of $h$ and Laczkovich's variant with $\sin x_i$ in place of $\sin \pi x_i$ have no page here.
+Laczkovich's variant of the several-variable theorem replaces $\sin \pi x_i$ by $\sin x_i$. Composing a multivariable function with a function $h : \mathbb R \to \mathbb R^n$ with dense image, such as $h(x) = (x \sin x, x \sin x^3, \ldots, x \sin x^{2n-1})$ (used by Denef and Lipshitz), turns it into a function of one variable with the same sign behavior. A good expansion links pages for the density of the image of $h$ and for Laczkovich's variant with $\sin x_i$ in place of $\sin \pi x_i$.
 
 ## Sources
 

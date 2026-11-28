@@ -2,7 +2,7 @@
 
 There is an integer polynomial P such that, for an integer parameter a, the function P(a, x, sin πx) on ℝⁿ is either everywhere greater than 1 or takes values below −1 and above 1, and no algorithm decides which, given a. This is a form of Richardson's theorem.
 
-**Theorem (Richardson).** There is a polynomial $P \in \mathbb Z[t, x_1, \ldots, x_n, y_1, \ldots, y_n]$ such that for each $a \in \mathbb Z$ the real analytic function
+**Theorem (a variant of Richardson's theorem).** There is a polynomial $P \in \mathbb Z[t, x_1, \ldots, x_n, y_1, \ldots, y_n]$ such that for each $a \in \mathbb Z$ the real analytic function
 
 $$
 x \mapsto P(a, x_1, \ldots, x_n, \sin \pi x_1, \ldots, \sin \pi x_n)
@@ -23,13 +23,13 @@ In particular, no algorithm decides whether a function in $\mathbb Z[x_1, \ldots
 
 ## Expansion
 
-By the Davis–Putnam–Robinson–Matiyasevich theorem there is a polynomial $p \in \mathbb Z[t, x_1, \ldots, x_n]$ defining a Diophantine subset $A$ of $\mathbb Z$ that is not computable (take a Diophantine representation of a recursively enumerable set that is not decidable, such as the halting set). One then chooses a second polynomial $G \in \mathbb Z[t, x_1, \ldots, x_n]$ with positive and fast-growing values (an analytic lemma without a page here) and sets
+By the Davis–Putnam–Robinson–Matiyasevich theorem there is a polynomial $p \in \mathbb Z[t, x_1, \ldots, x_n]$ defining a Diophantine subset $A$ of $\mathbb Z$ that is not computable (take a Diophantine representation of a recursively enumerable set that is not decidable, such as the halting set). One then chooses a second polynomial $G \in \mathbb Z[t, x_1, \ldots, x_n]$ with positive and fast-growing values and sets
 
 $$
 L_a(x) = -2 + 4\, p(a, x)^2 + G(a, x) \sum_{i=1}^n \sin^2 \pi x_i .
 $$
 
-Then $L_a(x) \le 1$ only in small neighborhoods of the integer zeros of $p(a, \cdot)$: if $a \in A$, the function $L_a$ equals $-2$ at such a zero and is large at some half-integer points; otherwise $L_a > 1$ on $\mathbb R^n$. Richardson's original proof predates the solution of Hilbert's tenth problem and used the undecidability of exponential Diophantine equations instead.
+Then $L_a(x) \le 1$ only in small neighborhoods of the integer zeros of $p(a, \cdot)$: if $a \in A$, the function $L_a$ equals $-2$ at such a zero and is large at some half-integer points; otherwise $L_a > 1$ on $\mathbb R^n$. Richardson's original statement and proof predate the solution of Hilbert's tenth problem and used the undecidability of exponential Diophantine equations instead (Remark 9.3 of the survey). A good expansion links a page for the analytic lemma giving the fast-growing polynomial $G$.
 
 ## Sources
 

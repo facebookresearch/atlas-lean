@@ -23,7 +23,7 @@ None.
 
 ## Expansion
 
-The proof reduces the Turing machine immortality problem, whether a given Turing machine has a configuration from which it never halts, which Hooper proved undecidable. It first simulates any Turing machine by a saturated linear system with a strong notion of simulation, then shows that it is undecidable whether a given continuous piecewise affine system has a trajectory contained in a given hyperplane, and finally reduces this problem to stability, global convergence, mortality and nilpotence of saturated linear systems. The source proves all four properties undecidable in the same theorem. Through the identity $\mathrm{sat}(z) = \mathrm{ReLU}(z + 1) - \mathrm{ReLU}(z - 1) - 1$ the result also reduces to stability of linear plants with ReLU neural-network feedback.
+The proof reduces the Turing machine immortality problem, whether a given Turing machine has a configuration from which it never halts, which Hooper proved undecidable. It first simulates any Turing machine by a saturated linear system with a strong notion of simulation, then shows that it is undecidable whether a given continuous piecewise affine system has a trajectory contained in a given hyperplane, and finally reduces this problem to stability, global convergence, mortality and nilpotence of saturated linear systems. The source proves all four properties undecidable in the same theorem. A good expansion links a page for Hooper's theorem that Turing machine immortality is undecidable, and states the simulation of Turing machines by saturated linear systems. Through the identity $\mathrm{sat}(z) = \mathrm{ReLU}(z + 1) - \mathrm{ReLU}(z - 1) - 1$ the result also reduces to stability of linear plants with ReLU neural-network feedback.
 
 ## Sources
 

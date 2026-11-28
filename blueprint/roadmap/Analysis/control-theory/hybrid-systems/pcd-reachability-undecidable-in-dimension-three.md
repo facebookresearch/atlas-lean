@@ -16,7 +16,7 @@ None.
 
 ## Expansion
 
-The undecidability proof, a simulation of computation by three-dimensional PCD systems, is in the original paper and is not reproduced in the survey read; it has no page here. Asarin and Maler later observed that, because PCD systems can make Zeno runs, every set of the arithmetical hierarchy is recognized by a PCD system of some finite dimension. The decidability in dimension two was extended to piecewise-Hamiltonian systems by Cerans and Viksna and to simple planar differential inclusions by Asarin, Schneider and Yovine.
+The undecidability proof, a simulation of computation by three-dimensional PCD systems, is in the original paper and is not reproduced in the survey read. A good expansion fixes the input format (rational data for the regions, the rate vectors and the source and target) and links a page for the simulation of computation by three-dimensional PCD systems that the proof uses. Asarin and Maler later observed that, because PCD systems can make Zeno runs, every set of the arithmetical hierarchy is recognized by a PCD system of some finite dimension. The decidability in dimension two was extended to piecewise-Hamiltonian systems by Cerans and Viksna and to simple planar differential inclusions by Asarin, Schneider and Yovine.
 
 ## Sources
 

@@ -10,20 +10,18 @@ $$
 
 satisfies $x_T = t$. The case $T = 0$ is allowed, so every state can reach itself.
 
-**The LTI Reachability Problem.** Given an LTI system $(A, U)$, a source state $s$ and a target state $t$, decide whether $s$ can reach $t$. Variants are distinguished by the class of allowed control sets, given by finite data with rational coefficients: linear or affine subspaces, finite unions of affine subspaces, convex polytopes, sets of the form $V \cup \{0\}$ with $V$ an affine subspace.
+**The LTI Reachability Problem.** Given an LTI system $(A, U)$, a source state $s$ and a target state $t$, decide whether $s$ can reach $t$. As an input, $A$ is a rational matrix, $s$ and $t$ are rational vectors, and $U$ is given by finite data with rational coefficients from a fixed class of control sets; the variants are distinguished by that class: linear or affine subspaces, finite unions of affine subspaces, convex polytopes, sets of the form $V \cup \{0\}$ with $V$ an affine subspace.
+
+An LTI system is the discrete-time dynamical system with state set $\mathbb R^d$, input set $U$ and update map $f(x, u) = A x + u$. When $U$ is a linear subspace, the problem is Harrison's accessibility problem for linear sequential machines, which Kannan and Lipton solved in polynomial time; affine control sets reduce to linear ones by homogenization. Null reachability (can every state be reached from the origin?) and null controllability (can the origin be reached from every state?) are different, universally quantified problems, decidable in polynomial time by linear algebra.
 
 ## Depends on
 
-- [Discrete-time dynamical system](../../discrete-time-systems-and-safety/discrete-time-dynamical-system.md)
+- [Discrete-time dynamical system](../discrete-time-dynamical-system.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
 None.
-
-## Expansion
-
-An LTI system is the discrete-time dynamical system with state set $\mathbb R^d$, input set $U$ and update map $f(x, u) = A x + u$. When $U$ is a linear subspace, the problem is Harrison's accessibility problem for linear sequential machines, which Kannan and Lipton solved in polynomial time; affine control sets reduce to linear ones by homogenization. Null reachability (can every state be reached from the origin?) and null controllability (can the origin be reached from every state?) are different, universally quantified problems, decidable in polynomial time by linear algebra.
 
 ## Sources
 
