@@ -6,7 +6,7 @@ A family $\{|\phi_k\rangle\}$ of $n(\lambda)$-qubit states with key length $\ell
 
 **Theorem.** EFI pairs exist if and only if non-uniform 1PRS with advice size $O(\log\lambda)$ exist. Moreover, if EFI pairs exist then there is such a non-uniform 1PRS of $n(\lambda)$ qubits whose stretch is at least $\sqrt{n(\lambda)}$.
 
-As a corollary there is an explicit universal EFI construction: EFI exist iff, for some efficiently computable $T,n=\mathrm{poly}(\lambda)$ and $r=n-\omega(\log n)$, the pair consisting of the uniform mixture $\rho^{T}_r$ of the outputs of all programs of length at most $r$ run for time $T$ and the maximally mixed state $2^{-n}I$ is an $(\epsilon,\delta)$-weak EFI with $\epsilon=\mathrm{negl}(\lambda)$ and $\delta=1-\Omega(1/\lambda)$.
+As a corollary there is an explicit universal EFI construction: an $(\epsilon,\delta)$-weak EFI pair is a pair of efficiently generated state families $(\rho_0,\rho_1)$ with trace distance $D(\rho_0,\rho_1)\ge 1-\epsilon(\lambda)$ against which every quantum polynomial-time distinguisher has advantage at most $\delta(\lambda)+\mathrm{negl}(\lambda)$; EFI pairs exist iff, for some efficiently computable $T,n=\mathrm{poly}(\lambda)$ and $r=n-\omega(\log n)$, the pair consisting of the uniform mixture $\rho^{T}_r$ of the outputs of all programs of length at most $r$ run for time $T$ and the maximally mixed state $2^{-n}I$ is an $(\epsilon,\delta)$-weak EFI pair with $\epsilon=\mathrm{negl}(\lambda)$ and $\delta=1-\Omega(1/\lambda)$.
 
 ## Expansion
 
