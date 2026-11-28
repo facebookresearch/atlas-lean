@@ -128,20 +128,21 @@ private theorem nonneg_of_hasDerivWithinAt {f f' : ℝ → ℝ} {a b L : ℝ}
   simp only [hhalf] at key
   linarith
 
-/-- The Monod rate stays below `μm` above its pole: `μm s / (Ks + s) < μm` for `s > -Ks`. -/
+/-- For `0 < μm`, `0 < Ks` and `-Ks < s`, the Monod rate `μm s / (Ks + s)` is below `μm`. -/
 private theorem mmRate_lt_of_neg_lt {μm Ks s : ℝ} (hμ : 0 < μm) (hK : 0 < Ks) (hs : -Ks < s) :
     mmRate μm Ks s < μm := by
   unfold mmRate
   rw [div_lt_iff₀ (by linarith)]
   nlinarith
 
-/-- The Monod rate is nonpositive between its pole and `0`. -/
+/-- The Monod rate is nonpositive when `0 ≤ μm` and `-Ks < s ≤ 0`. -/
 private theorem mmRate_nonpos {μm Ks s : ℝ} (hμ : 0 ≤ μm) (hs : -Ks < s) (hs0 : s ≤ 0) :
     mmRate μm Ks s ≤ 0 := by
   unfold mmRate
   exact div_nonpos_of_nonpos_of_nonneg (mul_nonpos_of_nonneg_of_nonpos hμ hs0) (by linarith)
 
-/-- Clause 1: the volume never falls below its initial value. -/
+/-- Clause 1: if the balances hold on an interval `I` containing zero and `F` is nonnegative
+on its forward part, then `V 0 ≤ V t` for `t ∈ I` with `0 ≤ t`. -/
 private theorem IsSolution.volume_ge {μ : ℝ → ℝ} {Sin Y : ℝ} {F : ℝ → ℝ} {I : Set ℝ}
     {V S X : ℝ → ℝ} (h : IsSolution μ Sin Y F I V S X) (hI : I.OrdConnected) (h0 : 0 ∈ I)
     (hF : ∀ t ∈ I, 0 ≤ t → 0 ≤ F t) {t : ℝ} (ht : t ∈ I) (ht0 : 0 ≤ t) : V 0 ≤ V t := by
@@ -153,7 +154,10 @@ private theorem IsSolution.volume_ge {μ : ℝ → ℝ} {Sin Y : ℝ} {F : ℝ �
       exact hF u (hsub (Ico_subset_Icc_self hu)) hu.1) (right_mem_Icc.2 ht0)
   linarith
 
-/-- Clause 3: for Monod growth, the substrate and the biomass stay nonnegative. -/
+/-- Clause 3: a Monod solution on an interval `I` containing zero has nonnegative substrate
+and biomass at each `t ∈ I` with `0 ≤ t`, provided `μm`, `Ks` and `Y` are positive, `Sin ≥ 0`,
+`F` is nonnegative on the forward part of `I`, and the initial volume is positive and initial
+concentrations are nonnegative. -/
 private theorem IsSolution.nonneg {μm Ks Sin Y : ℝ} {F : ℝ → ℝ} {I : Set ℝ} {V S X : ℝ → ℝ}
     (h : IsSolution (mmRate μm Ks) Sin Y F I V S X) (hI : I.OrdConnected) (h0 : 0 ∈ I)
     (hμ : 0 < μm) (hK : 0 < Ks) (hSin : 0 ≤ Sin) (hY : 0 < Y)

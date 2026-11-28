@@ -26,9 +26,8 @@ open MathlibExt.Biology.Dynamics.MichaelisMenten (mmRate)
 
 namespace DomainsTest.Chemistry.Bioreactors.FedBatch
 
-/-- With `V(0) = 1`, `F = 1`, `S_in = 2`, `S(0) = 0` and no biomass, the reactor fills linearly,
-`V(t) = 1 + t`, and the substrate mixes in as `S(t) = 2 t / (1 + t)`, for any Monod rate and
-yield. -/
+/-- With `V(0) = 1`, `F = 1`, `S_in = 2` and `S(0) = 0`, a solution on `[0, ∞)` is
+`V(t) = 1 + t`, `S(t) = 2 t / (1 + t)` and `X(t) = 0`, for any Monod rate and yield. -/
 theorem sterileFeed_isSolution (μm Ks Y : ℝ) :
     IsSolution (mmRate μm Ks) 2 Y (fun _ ↦ 1) (Ici 0) (fun t ↦ 1 + t)
       (fun t ↦ 2 * t / (1 + t)) (fun _ ↦ 0) where
@@ -42,8 +41,8 @@ theorem sterileFeed_isSolution (μm Ks Y : ℝ) :
   hasDerivWithinAt_biomass t _ := by
     simpa using (hasDerivWithinAt_const t (Ici 0) (0 : ℝ))
 
-/-- The account theorem applies to the sterile feed: the volume grows, the substrate stock
-`V S = 2 t` grows at `F S_in = 2`, and the substrate stays nonnegative. -/
+/-- At each `t ≥ 0`, the sterile-feed solution has volume at least `V(0)`, substrate stock
+`V S = 2 t` with derivative `F S_in = 2` within `[0, ∞)`, and nonnegative substrate. -/
 example (t : ℝ) (ht : 0 ≤ t) :
     1 + (0 : ℝ) ≤ 1 + t ∧
     HasDerivWithinAt (fun t ↦ (1 + t) * (2 * t / (1 + t)) + (1 + t) * 0 / 3) (1 * 2) (Ici 0) t ∧
