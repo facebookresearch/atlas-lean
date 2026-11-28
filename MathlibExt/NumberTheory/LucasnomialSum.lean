@@ -28,10 +28,6 @@ namespace lucasnomial_succ_eq_sum_lucasPolytopic
 
 variable (P : LucasParameters) {x y : ℝ} (hs : x + y = P.s) (ht : x * y = -P.t)
 
-private theorem factorial_succ (n : ℕ) :
-    lucasFactorial P (n + 1) = lucasFactorial P n * lucasBracket P (n + 1) :=
-  Finset.prod_range_succ _ _
-
 include hs ht
 
 private theorem bracket_succ (n : ℕ) :
@@ -58,9 +54,9 @@ private theorem pascal (n d : ℕ) :
       y ^ (n + 1) * lucasnomial P ((n + 1) + d) d := by
   simp (disch := omega) only [lucasnomial, ite_eq_left, Nat.add_sub_cancel,
     show n + 1 + d - (d + 1) = n by omega]
-  rw [← Nat.add_assoc, factorial_succ P (n + 1 + d),
+  rw [← Nat.add_assoc, lucasFactorial_succ P (n + 1 + d),
     Nat.add_assoc (n + 1) d 1, bracket_add P hs ht (n + 1) (d + 1)]
-  rw [factorial_succ P d, factorial_succ P n]
+  rw [lucasFactorial_succ P d, lucasFactorial_succ P n]
   field_simp [lucasFactorial_ne_zero, lucasBracket_ne_zero P (Nat.succ_ne_zero _)]
 
 private theorem sum_formula (n d : ℕ) (hn : 1 ≤ n) :
@@ -71,8 +67,7 @@ private theorem sum_formula (n d : ℕ) (hn : 1 ≤ n) :
   clear hn
   induction m with
   | zero =>
-    simp [Nat.add_comm 1 d, lucasnomial, lucasFactorial_ne_zero,
-      show lucasFactorial P 0 = 1 by rfl]
+    simp [Nat.add_comm 1 d, lucasnomial, lucasFactorial_ne_zero]
   | succ m ih =>
     rw [show (m + 1) + 1 + d = (m + 1) + (d + 1) by omega, pascal P hs ht m d,
       ih, Finset.mul_sum, Finset.sum_Icc_succ_top (by omega : 1 ≤ m + 1 + 1)]
