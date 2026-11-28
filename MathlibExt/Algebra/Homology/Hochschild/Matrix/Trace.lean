@@ -122,23 +122,8 @@ variable (A : Type v) [Ring A] [Algebra k A]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
   (ι : Type z) [Fintype ι] [DecidableEq ι]
 
-/-- Coefficient matrices over a k-module M carry the pointwise
-ground action (λ • X)ᵢⱼ = λ • Xᵢⱼ. -/
-local instance traceGroundMatrixModule : Module k (Matrix ι ι M) := inferInstance
-/-- For a left A-module M and finite ι, the left matrix-algebra
-action on Mat_ι(M) is (B • X)ᵢⱼ = ∑ₚ Bᵢₚ • Xₚⱼ. -/
-local instance traceActorLeftModule : Module (Matrix ι ι A) (Matrix ι ι M) :=
-  Coefficients.leftModule A M ι
-/-- For a right A-module M and finite ι, the opposite matrix-algebra
-action on Mat_ι(M) is (op B • X)ᵢⱼ = ∑ₚ op(Bₚⱼ) • Xᵢₚ. -/
-local instance traceActorRightModule : Module (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) :=
-  Coefficients.rightModule A M ι
-local instance : SMulCommClass (Matrix ι ι A) (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) :=
-  Coefficients.commute A M ι
-local instance : IsScalarTower k (Matrix ι ι A) (Matrix ι ι M) :=
-  Coefficients.leftTower A M ι k
-local instance : IsScalarTower k (Matrix ι ι A)ᵐᵒᵖ (Matrix ι ι M) :=
-  Coefficients.rightTower A M ι k
+open scoped ModuleCat.Algebra.Hochschild.Matrix.Coefficients
+
 omit [DecidableEq ι] in
 private theorem scaled_mul (U V : Matrix ι ι k) (a b : A) :
     (U.map (fun c => c • a)) * (V.map (fun c => c • b)) =
@@ -549,8 +534,8 @@ theorem cornerChainMap_comp_trace (b : ι) :
     eT (ULift.up m ⊗ₜ[k] PiTensorProduct.tprod k a)
   rw [cornerChainMap_f_tprod, traceChainMap_f_tprod,
     ModuleCat.Algebra.Hochschild.coefficientUnliftEquiv_tprod]
-  exact (generalizedTrace_tmul_tprod k ι n (cornerLinear k ι b m)
-    (fun j => cornerLinear k ι b (a j))).symm.trans
+  exact (generalizedTrace_tmul_tprod k ι n (Matrix.singleLinearMap k b b m)
+    (fun j => Matrix.singleLinearMap k b b (a j))).symm.trans
       (generalizedTrace_corner_tprod k ι b n m a)
 
 end ModuleCat.Algebra.Hochschild.Matrix

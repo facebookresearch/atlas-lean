@@ -23,7 +23,8 @@ inverted pair removes exactly one inversion. The weight
 `inversionOffset (n + 1) = inversionOffset n + n*n + 1`, also decreases when
 two adjacent letters are replaced by one arbitrary letter. The order on
 the alphabet need not be a well-order, and the alphabet may be infinite.
--/
+The natural-valued weight below encodes length first and inversion count second;\nits explicit
+inequalities let contraction lower the measure without comparing letters.\n\n-/
 
 @[expose] public section
 
@@ -136,7 +137,7 @@ theorem inversionCount_adjacent_swap (p : List I) (i j : I) (s : List I)
     inversionCount (p ++ j :: i :: s) + 1 = inversionCount (p ++ i :: j :: s) := by
   induction p with
   | nil =>
-      simp [inversionCount, hji, not_lt_of_gt hji] <;> omega
+      simp [inversionCount, hji, not_lt_of_gt hji] ; omega
   | cons a p ih =>
       have hc := countP_adjacent_swap (fun b : I => decide (b < a)) p i j s
       simp only [cons_append, inversionCount]
