@@ -14,6 +14,7 @@ An effect satisfies $E^2\le E$, so $\|P_a-Q_a\|_\varphi^2 = \varphi(P_a^2)+\varp
 
 ## Depends on
 
+- [States on star-ordered algebras, state-dependent norm and approximation](algebraic-states-and-state-dependent-norm.md)
 - [Measurements, agreement and character observables in a star-ordered algebra](algebraic-measurements-and-agreement.md)
 
 ## Sources

@@ -1,6 +1,6 @@
 # OPDC is UEOPL-complete, even on the Boolean hypercube, and its promise version is PromiseUEOPL-complete
 
-There is a polynomial-time promise-preserving reduction from UNIQUE-EOPL to OPDC whose output has point set $P=\{0,1\}^n$. Hence OPDC is UEOPL-complete, the violation-free variant of OPDC is PromiseUEOPL-complete, and OPDC is the first non-trivial UEOPL-complete problem. Hardness of contraction or of USO would follow from producing such instances in which every slice, not only every $i$-slice, has a unique fixpoint.
+There is a polynomial-time promise-preserving reduction from UNIQUE-EOPL to OPDC whose output has point set $P=\{0,1\}^n$. Hence OPDC is UEOPL-complete, the violation-free variant of OPDC is PromiseUEOPL-complete, and OPDC is the first non-trivial UEOPL-complete problem. Producing such instances in which every slice, not only every $i$-slice, has a unique fixpoint would be a necessary step towards UEOPL-hardness of contraction or of USO; for contraction one would further have to turn the discrete instance into a continuous contraction map.
 
 ## Proof sketch
 

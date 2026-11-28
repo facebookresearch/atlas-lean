@@ -14,3 +14,5 @@ The percolation probability $\theta$, bounds $0 < p_c < 1$ (Peierls and enclosur
 - [Peierls argument for bond percolation](peierls-argument-for-bond-percolation/README.md)
 - [Sharp thresholds from influences](sharp-thresholds-from-influences/README.md)
 - [Uniqueness of the infinite cluster](uniqueness-of-the-infinite-cluster/README.md)
+
+- [Critical behavior of labelled bond percolation](labeled-bond-percolation/README.md)

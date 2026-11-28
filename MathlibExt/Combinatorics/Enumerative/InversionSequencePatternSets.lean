@@ -23,6 +23,11 @@ import Mathlib.Tactic.FinCases
 
 We define containment, avoidance counts and generating functions for length-three patterns, and
 prove that exchanging `101` and `110` alongside `000`, `010`, `100` and `120` preserves the counts.
+
+## References
+
+* Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24 (2024),
+  Article A76, pp. 1–112, Introduction and Theorem 4.
 -/
 
 namespace MetaMathlibExt
@@ -41,6 +46,45 @@ Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns
 (2024), Article A76, Introduction. -/
 def InvSeqContainsPattern {n : ℕ} (e : Fin n → ℕ) (p : Fin 3 → ℕ) : Prop :=
   ∃ f : Fin 3 ↪o Fin n, ∀ a b, e (f a) < e (f b) ↔ p a < p b
+
+/-- The triple `(x, y, z)` is order-isomorphic to the length-three pattern `p`: all strict
+comparisons between positions agree, including when some of the entries are equal. -/
+def InvSeqPatternSameOrder (x y z : ℕ) (p : Fin 3 → ℕ) : Prop :=
+  ∀ i j, (![x, y, z] : Fin 3 → ℕ) i < ![x, y, z] j ↔ p i < p j
+
+/-- A triple has the same order as `p` exactly when all six directed comparisons between
+its distinct positions agree with the corresponding comparisons in `p`. -/
+theorem invSeqPatternSameOrder_iff {x y z : ℕ} {p : Fin 3 → ℕ} :
+    InvSeqPatternSameOrder x y z p ↔
+      (x < y ↔ p 0 < p 1) ∧ (x < z ↔ p 0 < p 2) ∧
+      (y < x ↔ p 1 < p 0) ∧ (y < z ↔ p 1 < p 2) ∧
+      (z < x ↔ p 2 < p 0) ∧ (z < y ↔ p 2 < p 1) := by
+  simp [InvSeqPatternSameOrder, Fin.forall_fin_succ, and_assoc]
+
+/-- A sequence contains a length-three pattern if and only if some three strictly increasing
+indices select entries that have the same order as the pattern. -/
+theorem invSeqContainsPattern_iff_exists_indices {n : ℕ} (e : Fin n → ℕ) (p : Fin 3 → ℕ) :
+    InvSeqContainsPattern e p ↔
+      ∃ (i j k : Fin n), i < j ∧ j < k ∧ InvSeqPatternSameOrder (e i) (e j) (e k) p := by
+  constructor
+  · rintro ⟨f, hf⟩
+    refine ⟨f 0, f 1, f 2, f.strictMono (by decide), f.strictMono (by decide), ?_⟩
+    have hval (i : Fin 3) : ![e (f 0), e (f 1), e (f 2)] i = e (f i) := by
+      fin_cases i <;> rfl
+    simpa only [InvSeqPatternSameOrder, hval] using hf
+  · rintro ⟨i, j, k, hij, hjk, hs⟩
+    let f : Fin 3 → Fin n := ![i, j, k]
+    have hmono : StrictMono f := by
+      intro a b hab
+      fin_cases a <;> fin_cases b <;> simp at hab
+      · exact hij
+      · exact hij.trans hjk
+      · exact hjk
+    refine ⟨OrderEmbedding.ofStrictMono f hmono, ?_⟩
+    have hval (a : Fin 3) : ![e i, e j, e k] a = e (f a) := by
+      fin_cases a <;> rfl
+    change ∀ a b, e (f a) < e (f b) ↔ p a < p b
+    simpa only [InvSeqPatternSameOrder, hval] using hs
 
 /-- **Short sequences contain no length-3 pattern.** If $n < 3$, then no sequence
 $e_0 e_1 \cdots e_{n-1}$ of natural numbers contains a length-3 pattern $p$.
@@ -448,53 +492,27 @@ private def patterns (atEnd : Bool) : Set (Fin 3 → ℕ) :=
   if atEnd then {![0, 0, 0], ![0, 1, 0], ![1, 0, 0], ![1, 1, 0], ![1, 2, 0]}
   else {![0, 0, 0], ![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 2, 0]}
 
-private def SameOrder (x y z : ℕ) (p : Fin 3 → ℕ) : Prop :=
-  ∀ i j, (![x, y, z] : Fin 3 → ℕ) i < ![x, y, z] j ↔ p i < p j
-
 private theorem allowed_iff (atEnd : Bool) (x y z : ℕ) :
-    Allowed atEnd x y z ↔ ∀ p ∈ patterns atEnd, ¬ SameOrder x y z p := by
-  have h000 : SameOrder x y z ![0, 0, 0] ↔ x = y ∧ y = z := by
-    simp [SameOrder, Fin.forall_fin_succ]
+    Allowed atEnd x y z ↔ ∀ p ∈ patterns atEnd, ¬ InvSeqPatternSameOrder x y z p := by
+  have h000 : InvSeqPatternSameOrder x y z ![0, 0, 0] ↔ x = y ∧ y = z := by
+    simp [invSeqPatternSameOrder_iff]
     omega
-  have h010 : SameOrder x y z ![0, 1, 0] ↔ x = z ∧ x < y := by
-    simp [SameOrder, Fin.forall_fin_succ]
+  have h010 : InvSeqPatternSameOrder x y z ![0, 1, 0] ↔ x = z ∧ x < y := by
+    simp [invSeqPatternSameOrder_iff]
     omega
-  have h100 : SameOrder x y z ![1, 0, 0] ↔ y = z ∧ y < x := by
-    simp [SameOrder, Fin.forall_fin_succ]
+  have h100 : InvSeqPatternSameOrder x y z ![1, 0, 0] ↔ y = z ∧ y < x := by
+    simp [invSeqPatternSameOrder_iff]
     omega
-  have h101 : SameOrder x y z ![1, 0, 1] ↔ x = z ∧ y < x := by
-    simp [SameOrder, Fin.forall_fin_succ]
+  have h101 : InvSeqPatternSameOrder x y z ![1, 0, 1] ↔ x = z ∧ y < x := by
+    simp [invSeqPatternSameOrder_iff]
     omega
-  have h110 : SameOrder x y z ![1, 1, 0] ↔ x = y ∧ z < x := by
-    simp [SameOrder, Fin.forall_fin_succ]
+  have h110 : InvSeqPatternSameOrder x y z ![1, 1, 0] ↔ x = y ∧ z < x := by
+    simp [invSeqPatternSameOrder_iff]
     omega
-  have h120 : SameOrder x y z ![1, 2, 0] ↔ x < y ∧ z < x := by
-    simp [SameOrder, Fin.forall_fin_succ]
+  have h120 : InvSeqPatternSameOrder x y z ![1, 2, 0] ↔ x < y ∧ z < x := by
+    simp [invSeqPatternSameOrder_iff]
     omega
   cases atEnd <;> simp [Allowed, patterns, h000, h010, h100, h101, h110, h120] <;> omega
-
-private theorem contains_iff {n : ℕ} (e : Fin n → ℕ) (p : Fin 3 → ℕ) :
-    InvSeqContainsPattern e p ↔
-      ∃ (i j k : Fin n), i < j ∧ j < k ∧ SameOrder (e i) (e j) (e k) p := by
-  constructor
-  · rintro ⟨f, hf⟩
-    refine ⟨f 0, f 1, f 2, f.strictMono (by decide), f.strictMono (by decide), ?_⟩
-    have hval (i : Fin 3) : ![e (f 0), e (f 1), e (f 2)] i = e (f i) := by
-      fin_cases i <;> rfl
-    simpa only [SameOrder, hval] using hf
-  · rintro ⟨i, j, k, hij, hjk, hs⟩
-    let f : Fin 3 → Fin n := ![i, j, k]
-    have hmono : StrictMono f := by
-      intro a b hab
-      fin_cases a <;> fin_cases b <;> simp at hab
-      · exact hij
-      · exact hij.trans hjk
-      · exact hjk
-    refine ⟨OrderEmbedding.ofStrictMono f hmono, ?_⟩
-    have hval (a : Fin 3) : ![e i, e j, e k] a = e (f a) := by
-      fin_cases a <;> rfl
-    change ∀ a b, e (f a) < e (f b) ↔ p a < p b
-    simpa only [SameOrder, hval] using hs
 
 private theorem valid_ofFn_iff {n : ℕ} (atEnd : Bool) (e : Fin n → ℕ) :
     Valid atEnd (List.ofFn e) ↔
@@ -513,11 +531,11 @@ private theorem valid_ofFn_iff {n : ℕ} (atEnd : Bool) (e : Fin n → ℕ) :
   rw [Valid, hbound, htrip, and_comm]
   refine and_congr_right' ⟨?_, ?_⟩
   · intro h p hp hc
-    obtain ⟨i, j, k, hij, hjk, hs⟩ := (contains_iff e p).mp hc
+    obtain ⟨i, j, k, hij, hjk, hs⟩ := (invSeqContainsPattern_iff_exists_indices e p).mp hc
     exact (allowed_iff _ _ _ _).mp (h i j k hij hjk) p hp hs
   · intro h i j k hij hjk
     exact (allowed_iff _ _ _ _).mpr fun p hp hs =>
-      h p hp ((contains_iff e p).mpr ⟨i, j, k, hij, hjk, hs⟩)
+      h p hp ((invSeqContainsPattern_iff_exists_indices e p).mpr ⟨i, j, k, hij, hjk, hs⟩)
 
 private noncomputable def listEquiv (atEnd : Bool) (n : ℕ) :
     {e : Fin n → ℕ // (∀ i, e i ≤ i) ∧ ∀ p ∈ patterns atEnd, ¬ InvSeqContainsPattern e p} ≃
