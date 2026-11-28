@@ -329,18 +329,6 @@ private theorem eq_of_supports {k : ℕ} (hk : 0 < k) {x z : Fin (k + 1) → ℕ
       exact (Nat.not_even_iff_odd.mpr (hodd i)) (by simpa [y, hij] using hi)
   exact (Nat.not_succ_le_self b) (le_value_of_basicA1 hk hyx hy)
 
-private theorem sum_after_add_card {k : ℕ} (z : Fin (k + 1) → ℕ) (s : Finset (Fin (k + 1)))
-    (hpos : ∀ i ∈ s, 1 ≤ z i) : (∑ i, slowANimAfter z s i) + s.card = ∑ i, z i := by
-  calc
-    _ = ∑ i, (slowANimAfter z s i + if i ∈ s then 1 else 0) := by
-      simp [Finset.sum_add_distrib]
-    _ = _ := by
-      apply Finset.sum_congr rfl
-      intro i _
-      by_cases hi : i ∈ s
-      · simp [slowANimAfter, hi, Nat.sub_add_cancel (hpos i hi)]
-      · simp [slowANimAfter, hi]
-
 -- The other k piles each contain strictly fewer than b tokens.
 private theorem le_pile_of_basicB {k b : ℕ} (hk : 0 < k) {z : Fin (k + 1) → ℕ}
     (hz : IsExactSlowNimBasicB k b z) (i : Fin (k + 1)) : k ≤ z i := by
@@ -360,7 +348,7 @@ private theorem value_after {k b : ℕ} (hk : 0 < k) {z : Fin (k + 1) → ℕ}
     (hpos : ∀ i ∈ s, 1 ≤ z i) : exactSlowNimBasicValue k (slowANimAfter z s) = b - 1 := by
   let q := slowANimAfter z s
   have hsum : (∑ i, q i) + k = ∑ i, z i := by
-    simpa only [hcard] using sum_after_add_card z s hpos
+    simpa only [hcard] using sum_slowANimAfter_add_card z s hpos
   rw [hz.1] at hsum
   apply le_antisymm
   · have hmass := mul_value_le_sum hk q
@@ -387,7 +375,7 @@ private theorem value_after {k b : ℕ} (hk : 0 < k) {z : Fin (k + 1) → ℕ}
     apply le_value_of_basicA1 hk hyq
     have hbpos : 0 < b := Nat.zero_lt_of_lt (hz.2.1 p)
     refine ⟨?_, ?_, ?_, p, ?_, ?_⟩
-    · have hysum := sum_after_add_card q t hqpos
+    · have hysum := sum_slowANimAfter_add_card q t hqpos
       change (∑ i, y i) + t.card = ∑ i, q i at hysum
       rw [ht] at hysum
       have hmul : k * (b - 1) + k = k * b := by
@@ -472,7 +460,8 @@ private theorem after_sum {k : ℕ} (x : Fin (k + 1) → ℕ) (j : Fin (k + 1))
     (hpos : ∀ i, i ≠ j → 0 < x i) : (∑ i, after x j i) + k = ∑ i, x i := by
   simpa only [Finset.card_erase_of_mem (Finset.mem_univ j), Finset.card_univ, Fintype.card_fin,
     Nat.add_sub_cancel] using
-    sum_after_add_card x (Finset.univ.erase j) (fun i hi => hpos i (Finset.mem_erase.mp hi).1)
+    sum_slowANimAfter_add_card x (Finset.univ.erase j)
+      (fun i hi => hpos i (Finset.mem_erase.mp hi).1)
 
 private theorem mem_moves_iff {k : ℕ} (hk : 0 < k) {x y : Fin (k + 1) → ℕ} :
     y ∈ slowANimMoves {k} x ↔ ∃ j, (∀ i, i ≠ j → 0 < x i) ∧ y = after x j := by

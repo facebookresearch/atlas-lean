@@ -29,7 +29,7 @@ example : Equiv (princessRoses ![2, 1, 1, 1]) (simplifiedPrincessRoses (4, 3, 3,
   princessRoses_equiv_simplifiedPrincessRoses 2 1 1 1 2 (by decide) le_rfl le_rfl
 
 -- Even with four distinct piles, the ordinary game has moves the simplified game forbids.
-example : ![4, 3, 1, 1] ∈ (slowANimGame 4 {1, 2}).moves ![4, 3, 2, 1] := by
+example : ![4, 3, 1, 1] ∈ (princessRoses ![4, 3, 2, 1]).moves ![4, 3, 2, 1] := by
   apply mem_slowANimGame_moves_one_two_iff.mpr
   decide
 
