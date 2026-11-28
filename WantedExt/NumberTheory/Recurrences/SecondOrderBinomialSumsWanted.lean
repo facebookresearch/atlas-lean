@@ -19,6 +19,7 @@ public import WantedExt.NumberTheory.SecondOrderGenFunIntegerValuesWanted
 public import MathlibExt.NumberTheory.Recurrences.SecondOrderBinomialSumsSecondOrderBiSeqSumCentralChooseMul
 public import MathlibExt.NumberTheory.Recurrences.LucasTripleBinomialConvolution
 public import MathlibExt.NumberTheory.Recurrences.LucasEvenCatalanConvolution
+public import MathlibExt.NumberTheory.Recurrences.LucasChooseTwoSignConvolution
 
 /-!
 # Binomial sums involving `U_n = p U_{n-1} + U_{n-2}` and `V_n = p V_{n-1} + V_{n-2}`
@@ -156,26 +157,6 @@ public theorem_wanted lucasU_lucasV_sum_choose_sq_catalan_alternating (p : ℤ) 
           lucasU ⟨p, -1, by decide⟩ (2 * n - k) * lucasV ⟨p, -1, by decide⟩ k =
       (-1) ^ n * ((3 * n + 1).choose n * catalan n * catalan (2 * n) : ℤ) *
         lucasU ⟨p, -1, by decide⟩ (2 * n)
-
-/-- **Binomial sums with signs $(-1)^{\binom{k}{2}}$ and Lucas sequences.** Let $p$ be an integer
-and let $U_n$ and $V_n$ be the Lucas sequences $U(p, -1)$ and $V(p, -1)$, so $U_0 = 0$,
-$U_1 = 1$, $V_0 = 2$, $V_1 = p$ and both satisfy $X_{j+2} = p X_{j+1} + X_j$. Then for every
-natural number $n$,
-$$\sum_{k=0}^{4n+1} (-1)^{\binom{k}{2}} \binom{4n+1}{k} U_k V_{4n+1-k} = (-1)^n 2^{2n+1} U_{4n+1}$$
-and
-$$\sum_{k=0}^{4n+1} (-1)^{\binom{k}{2}} \binom{4n+1}{k} V_k U_{4n+1-k} = (-1)^n 2^{2n+1} U_{4n+1}.$$
-
-Source: John M. Campbell and Emrah Kılıç, *Binomial Sums Involving Second-Order Linearly Recurrent
-Sequences*, The Fibonacci Quarterly 62 (2024), Article 62-1/campbell10202023, Proposition 3.1. -/
-public theorem_wanted lucasU_lucasV_sum_choose_sign_choose_two (p : ℤ) (n : ℕ) :
-    (∑ k ∈ Finset.range (4 * n + 2),
-        ((4 * n + 1).choose k : ℤ) * (-1) ^ k.choose 2 *
-          lucasU ⟨p, -1, by decide⟩ k * lucasV ⟨p, -1, by decide⟩ (4 * n + 1 - k) =
-      (-1) ^ n * 2 ^ (2 * n + 1) * lucasU ⟨p, -1, by decide⟩ (4 * n + 1)) ∧
-    ∑ k ∈ Finset.range (4 * n + 2),
-        ((4 * n + 1).choose k : ℤ) * (-1) ^ k.choose 2 *
-          lucasV ⟨p, -1, by decide⟩ k * lucasU ⟨p, -1, by decide⟩ (4 * n + 1 - k) =
-      (-1) ^ n * 2 ^ (2 * n + 1) * lucasU ⟨p, -1, by decide⟩ (4 * n + 1)
 
 /-- **Weighted two-sided binomial sums of products of Lucas sequences.** Let $p$ be an integer,
 let $U$ and $V$ be the two-sided second-order sequences for $p$ with $U_0 = 0$, $U_1 = 1$,
