@@ -8,3 +8,4 @@ Distance-preserving maps of Euclidean space, their classification, and discrete 
 - [Discrete groups of plane isometries](discrete-groups-of-plane-isometries/README.md)
 - [Isometries of Euclidean space](isometries-of-euclidean-space/README.md)
 - [Beckman–Quarles theorem](beckman-quarles.md)
+- [Orthogonal 3 × 3 matrices preserve the squared radius](rotation-preserves-radius-sq.md)

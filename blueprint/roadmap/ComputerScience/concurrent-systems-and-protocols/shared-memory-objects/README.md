@@ -20,3 +20,6 @@
 - [Locality of linearizability](locality-of-linearizability.md)
 - [Separation in the wait-free hierarchy](separation-in-the-wait-free-hierarchy.md)
 - [Sampled registers and polling drivers](sampled-registers-and-polling-drivers/README.md)
+- [Iterated Immediate Snapshot and Set Agreement](iterated-immediate-snapshot-and-set-agreement/README.md)
+- [Shared-Memory Synchronization](shared-memory-synchronization/README.md)
+- [Concurrent program verification](concurrent-program-verification/README.md)

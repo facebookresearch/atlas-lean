@@ -19,7 +19,7 @@ import Mathlib.Tactic.LinearCombination
 
 This module proves the Fibonacci and Lucas cross-product identities and uses them to relate
 consecutive FiboCatalan numbers and consecutive Lucas Catalan numbers. It also proves the
-integrality of a fibonomial quotient.
+integrality of a fibonomial quotient and of the super FiboCatalan numbers.
 -/
 
 public section
@@ -51,6 +51,31 @@ theorem fib_mul_sub_mul (n : ℕ) :
   linear_combination shift n
 
 open MetaMathlibExt
+
+/-- A carry from adding the two remainders forces a carry when at least one is doubled. -/
+private theorem superFibonacciCatalan_floor_le (m n d : ℕ) (hd : 0 < d) :
+    m / d + n / d + (m + n) / d ≤ (2 * m) / d + (2 * n) / d := by
+  rw [two_mul m, two_mul n, Nat.add_div (a := m) (b := n) hd,
+    Nat.add_div (a := m) (b := m) hd, Nat.add_div (a := n) (b := n) hd]
+  split_ifs <;> omega
+
+/-- **Super FiboCatalan numbers are positive integers.** For all natural numbers $m$ and $n$, the
+super FiboCatalan number
+
+$$S(m, n)_F = \frac{F_{2m}!\, F_{2n}!}{F_m!\, F_n!\, F_{m+n}!},$$
+
+where $F_j!$ denotes the Fibonacci factorial, is a positive integer: it equals $k$ for some
+natural number $k \ge 1$.
+
+Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
+Their Lucas Analogues", Corollary 5. -/
+theorem superFibonacciCatalan_isPosInt (m n : ℕ) :
+    ∃ k : ℕ, 0 < k ∧ (k : ℚ) =
+      fibonacciFactorial (2 * m) * fibonacciFactorial (2 * n) /
+        (fibonacciFactorial m * fibonacciFactorial n *
+          fibonacciFactorial (m + n)) :=
+  fibonacciFactorial_ratio_isPosInt_of_floor_le m n (m + n) (2 * m) (2 * n)
+    (superFibonacciCatalan_floor_le m n)
 
 /-- **FiboCatalan numbers.** For a natural number $n$, the FiboCatalan number is the rational
 number $C_{n,F} = F_{2n}!/(F_n! \, F_{n+1}!)$, where $F_j$ is the $j$-th Fibonacci number and

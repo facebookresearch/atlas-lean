@@ -23,5 +23,20 @@
 - [Random joining](random-joining.md)
 - [Every ranked history is equally likely under random joining](random-joining-singleton-eq-inv.md)
 - [Each ranked labeled history has probability $2^{n-1} / (n!(n-1)!)$](random-joining-singleton.md)
+- [The ancestral partitions determine the ranked labeled history](partitions-of-injective.md)
 
 - [The common ancestor of a subsample is that of the whole sample with probability (n+1)(m−1)/((n−1)(m+1))](mrca-of-a-subsample-equals-sample-mrca-with-prob.md)
+
+## Ranked tree shapes
+
+- [F-matrix distances between ranked tree shapes](f-matrix-distances-between-ranked-tree-shapes/README.md)
+- [Tajima's genealogies](tajima-genealogies/README.md)
+
+## Multifurcating trees
+
+- [Labeled histories and maximally probable topologies of multifurcating trees](labeled-histories-of-multifurcating-trees/README.md)
+- [Ranked tree spaces](ranked-tree-spaces/README.md)
+- [Horton–Strahler structure of coalescent trees](horton-strahler-structure-of-coalescent-trees/README.md)
+- [Kingman comb and the Brownian coalescent point process](kingman-comb-and-the-brownian-coalescent-point-process/README.md)
+- [Cherries and pitchforks of ranked coalescent trees](cherries-and-pitchforks-of-ranked-coalescent-trees/README.md)
+- [Evolving Moran genealogy](evolving-moran-genealogy/README.md)

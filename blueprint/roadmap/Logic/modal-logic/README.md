@@ -19,5 +19,8 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [Intuitionistic modal logics CK and IK](intuitionistic-modal-logics-ck-and-ik.md)
 - [ALC as multimodal K_m](alc-as-multimodal-k-m.md)
 - [ALC syntax, semantics and reasoning tasks](alc-syntax-semantics-and-reasoning-tasks.md)
+- [Description logics](description-logics/README.md)
 
 - [Action model logic](action-model-logic.md)
+- [Modal logics of model change](modal-logics-of-model-change/README.md)
+- [Quantified modal logics](quantified-modal-logics/README.md)

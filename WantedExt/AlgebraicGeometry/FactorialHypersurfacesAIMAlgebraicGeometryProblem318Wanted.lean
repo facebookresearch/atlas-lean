@@ -48,9 +48,12 @@ range of `k` and hypotheses on `Xₙ` are not stated.
 
 open MvPolynomial
 
-/-- The singular locus of the hypersurface `{f = 0} ⊆ ℙ⁴(ℂ)`: the points at which all partial
-derivatives of `f` vanish (for homogeneous `f` of positive degree these lie on the hypersurface by
-Euler's formula, and the condition does not depend on the representative). -/
+/-- The points `P` of `ℙ⁴(ℂ)` at which all partial derivatives of `f` vanish at the fixed
+representative `P.rep`. For nonzero `f` homogeneous of positive degree this is the singular locus
+of the hypersurface `{f = 0}`: the condition does not depend on the representative, and these
+points lie on the hypersurface by Euler's formula. For other `f` the test can depend on the
+representative: for `f = x₀² - x₀` the gradient vanishes at `(1/2, 0, 0, 0, 0)` but not at
+`(1, 0, 0, 0, 0)`, which represent the same point. -/
 def singularLocus (f : MvPolynomial (Fin 5) ℂ) : Set (Projectivization ℂ (Fin 5 → ℂ)) :=
   {P | ∀ i, eval P.rep (pderiv i f) = 0}
 
@@ -59,9 +62,12 @@ noncomputable def hessianAt (f : MvPolynomial (Fin 5) ℂ) (a : Fin 5 → ℂ) :
     Matrix (Fin 5) (Fin 5) ℂ :=
   fun i j => eval a (pderiv j (pderiv i f))
 
-/-- The hypersurface `{f = 0} ⊆ ℙ⁴` has at most isolated ordinary double points: finitely many
-singular points, at each of which the Hessian of `f` has rank `4` (the maximum, since the point
-itself lies in the kernel by Euler's formula). -/
+/-- Finitely many points lie in `singularLocus f`, and at each of them the Hessian of `f` at the
+representative has rank `4`. For nonzero `f` homogeneous of positive degree this says that the
+hypersurface `{f = 0} ⊆ ℙ⁴` has at most isolated ordinary double points, and `4` is the maximum
+rank at a singular point, since the representative lies in the kernel of the Hessian by Euler's
+formula. Without homogeneity the rank can be `5`: for a fixed representative `a`, the polynomial
+`∑ᵢ (xᵢ - aᵢ)²` has zero gradient and twice the identity matrix as Hessian at `a`. -/
 def HasOnlyFinitelyManyNodes (f : MvPolynomial (Fin 5) ℂ) : Prop :=
   (singularLocus f).Finite ∧ ∀ P ∈ singularLocus f, (hessianAt f P.rep).rank = 4
 
