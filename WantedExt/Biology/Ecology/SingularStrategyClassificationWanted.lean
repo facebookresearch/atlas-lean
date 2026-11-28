@@ -64,17 +64,4 @@ public theorem_wanted invades_nearby_residents {s : ℝ → ℝ → ℝ} {xs : �
     (h : IsSingular s xs) (hxx : 0 < sxx s xs xs) :
     ∃ δ > 0, ∀ x, 0 < |x - xs| → |x - xs| < δ → 0 < s x xs
 
-/-- **Mutual invasibility** (Geritz et al. 1998, eq. (11)). For an invasion fitness `s` with
-singular strategy `x*`: if `s_xx + s_yy > 0` at `(x*, x*)`, there is `δ > 0` such that for
-every `h` with `0 < h < δ` the strategies `x* - h` and `x* + h` invade each other; if
-`s_xx + s_yy < 0`, there is `δ > 0` such that no two distinct strategies within `δ` of `x*`
-invade each other.
-
-Source: Geritz et al. (1998), eq. (11). -/
-public theorem_wanted mutual_invasibility {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s xs) :
-    (0 < sxx s xs xs + syy s xs xs → ∃ δ > 0, ∀ e, 0 < e → e < δ →
-        0 < s (xs - e) (xs + e) ∧ 0 < s (xs + e) (xs - e)) ∧
-      (sxx s xs xs + syy s xs xs < 0 → ∃ δ > 0, ∀ x y, |x - xs| < δ → |y - xs| < δ →
-        x ≠ y → ¬ (0 < s x y ∧ 0 < s y x))
-
 end WantedExt.Biology.Ecology.SingularStrategyClassificationWanted
