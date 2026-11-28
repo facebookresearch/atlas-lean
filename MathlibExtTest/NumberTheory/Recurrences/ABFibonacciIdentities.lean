@@ -13,6 +13,17 @@ import Mathlib.Tactic.NormNum
 
 open MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesWanted
 
+-- At m = 0 the Jacobsthal parameters give F₁ = 1 and L₂ + 2L₀ = 9.
+example : ((1 : ℂ) ^ 2 + 4 * 2) * fibAB 1 2 1 = lucasAB 1 2 2 + 2 * lucasAB 1 2 0 := by
+  norm_num [lucasAB]
+
+-- Apply the public theorem at m = 1, with negative discriminant and nonzero Lucas terms.
+example : lucasAB 2 (-2) 3 + (-2) * lucasAB 2 (-2) 1 = -8 := by
+  calc
+    _ = ((2 : ℂ) ^ 2 + 4 * (-2)) * fibAB 2 (-2) 2 :=
+      (disc_mul_fibAB 2 (-2) (hΔ := by norm_num) 1).symm
+    _ = -8 := by norm_num [fibAB]
+
 -- At b = 0, the last weight is still 1.
 example (a : ℂ) :
     ∑ i ∈ Finset.range 4, (0 : ℂ) ^ (3 - i) * fibAB a 0 (2 * i) = a ^ 5 := by

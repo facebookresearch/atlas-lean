@@ -3,7 +3,7 @@
 Consider polar codes with Arikan's kernel under successive cancellation (SC) decoding on a BMS channel $W$ with $I(W) \in (0, 1)$, block length $N$ and rate $R$, and let the information set be chosen by the polar construction.
 
 - *Converse (Hassani-Alishahi-Urbanke, Theorem 16).* There are $P_e, \alpha > 0$ depending only on $I(W)$ such that if the sum of the bit-error probabilities of the synthesized subchannels in the information set is at most $P_e$, then $R < I(W) - \alpha N^{-1/\mu}$ with $\mu = 3.579$. This hypothesis is on the sum, not on the SC block error probability: the sum bounds the block error probability from above, but a small block error probability does not make the sum small, so the converse does not directly bound block-error scaling.
-- *Achievability.* Hassani-Alishahi-Urbanke show that the same sum criterion, with Bhattacharyya parameters, can be met at rates $I(W) - \beta N^{-1/6}$. Mondelli-Hassani-Urbanke show that for every BMS channel the SC block error probability can be kept at most a given $P_e$ at rates $I(W) - \beta N^{-1/\mu}$ with $\mu = 4.714$, where $\beta$ depends on $P_e$ and $I(W)$.
+- *Achievability.* Hassani-Alishahi-Urbanke show that the same sum criterion, with Bhattacharyya parameters, can be met at rates $I(W) - \beta N^{-1/6}$. Mondelli-Hassani-Urbanke show that for every BMS channel the SC block error probability can be kept at most a given $P_e$ at rates $I(W) - \beta N^{-1/\mu}$ with $\mu = 4.714$, where $\beta$ is a universal constant that depends only on $P_e$, not on $W$.
 
 ## Proof sketch
 
@@ -22,4 +22,4 @@ Track the number of subchannels whose Bhattacharyya parameter (or entropy) lies 
 ## Sources
 
 - S. Hamed Hassani, Kasra Alishahi, Rudiger Urbanke, "Finite-length scaling for polar codes", IEEE Transactions on Information Theory 60(10) (2014); arXiv:1304.4778.
-- Marco Mondelli, S. Hamed Hassani, Rudiger Urbanke, "Unified scaling of polar codes: error exponent, scaling exponent, moderate deviations, and error floors", IEEE Transactions on Information Theory 62(12) (2016); arXiv:1501.02444.
+- Marco Mondelli, S. Hamed Hassani, Rudiger Urbanke, "Unified scaling of polar codes: error exponent, scaling exponent, moderate deviations, and error floors", IEEE Transactions on Information Theory 62(12) (2016); arXiv:1501.02444 (Theorems 1 and 2).

@@ -21,6 +21,7 @@ public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2Harmonic
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2LastBars
 public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2SuffixBars
+public import MathlibExt.Combinatorics.Enumerative.SignedInversionSequenceLength2TwoFactorial
 
 /-!
 # Signed inversion sequences avoiding sets of length-2 signed patterns
@@ -158,18 +159,6 @@ public theorem_wanted signedInvAvoidCount_eq_factorial_succ :
     signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, false, true⟩} n = (n + 1)! ∧
     signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} n = (n + 1)! ∧
     signedInvAvoidCount {⟨.gt, true, false⟩, ⟨.eq, false, true⟩, ⟨.lt, false, true⟩} n = (n + 1)!
-
-/-- **Mansour–Safadi Lemma 10.** Write $\bar{I}_n(B)$ for the set of signed inversion
-sequences of length $n$ that avoid every length-2 signed pattern in $B$, where a pattern is
-one of $00$, $01$, $10$ with a bar over each barred letter. Then for every $n \ge 0$,
-$|\bar{I}_n(\{\bar{1}\bar{0}, \bar{0}\bar{0}, 1\bar{0}\})| =
-|\bar{I}_n(\{\bar{1}\bar{0}, 0\bar{0}, 1\bar{0}\})|$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Lemma 10 (`integers-2026-A74-lem-10`). -/
-public theorem_wanted signedInvSeq_wilf_b1b0_b0b0_1b0 :
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.gt, false, true⟩} =
-      signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, false, true⟩, ⟨.gt, false, true⟩}
 
 /-- **Signed Wilf classes of sets of three to twelve patterns.** Let $\mathrm{sw}_k$ be the number
 of Wilf-equivalence classes among the sets of $k$ length-2 signed patterns. Then
@@ -782,27 +771,6 @@ public theorem_wanted signedInvSeq_wilf_b1b0_b00_b01_0b0_1b0 :
         ⟨.eq, false, true⟩, ⟨.gt, false, true⟩} =
       signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.eq, true, true⟩, ⟨.lt, true, false⟩,
           ⟨.eq, false, true⟩, ⟨.gt, false, true⟩}
-
-/-- **Three six-pattern sets with 2 · n! avoiders (Theorem 17).** Write a length-2 signed pattern
-as $\tau_1\tau_2$, where $00$, $01$ and $10$ record whether $|\tau_1|$ is equal to, smaller than
-or larger than $|\tau_2|$ and a bar marks a barred letter, and write $|\bar I_n(A)|$ for the
-number of signed inversion sequences of length $n$ avoiding every pattern of a set $A$ of such
-patterns. For every $n \ge 1$ and each of the three sets
-$A = \lbrace \bar 1\bar 0, \bar 1 0, \bar 0\bar 1, \bar 0\bar 0, \bar 0 0, 0\bar 1 \rbrace$,
-$\lbrace \bar 1\bar 0, \bar 1 0, \bar 0\bar 1, \bar 0\bar 0, \bar 0 0, 0\bar 0 \rbrace$ and
-$\lbrace \bar 1\bar 0, \bar 0\bar 1, \bar 0\bar 0, \bar 0 0, \bar 0 1, 1\bar 0 \rbrace$, we have
-$|\bar I_n(A)| = 2 \cdot n!$.
-
-Source: Toufik Mansour and Amir Safadi, *Signed Inversion Sequences Avoiding a Set of Length-2
-Signed Patterns*, INTEGERS 26 (2026), Article A74, Theorem 17 (`integers-2026-A74-thm-17`). -/
-public theorem_wanted signedInvAvoidCount_eq_two_mul_factorial :
-    ∀ n, 1 ≤ n →
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩,
-        ⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.lt, false, true⟩} n = 2 * n ! ∧
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.gt, true, false⟩, ⟨.lt, true, true⟩,
-        ⟨.eq, true, true⟩, ⟨.eq, true, false⟩, ⟨.eq, false, true⟩} n = 2 * n ! ∧
-    signedInvAvoidCount {⟨.gt, true, true⟩, ⟨.lt, true, true⟩, ⟨.eq, true, true⟩,
-        ⟨.eq, true, false⟩, ⟨.lt, true, false⟩, ⟨.gt, false, true⟩} n = 2 * n !
 
 end
 

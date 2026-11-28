@@ -20,5 +20,6 @@ Finite posets as combinatorial objects: Dilworth's and Mirsky's theorems, Erdős
 - [Incidence algebras and the Möbius function](../../Order/ordered-sets/incidence-algebras-and-the-m-bius-function/README.md):
   the Möbius function of a locally finite poset, Möbius inversion and Philip Hall's theorem, under
   Order.
+- [Combinatorial invariance of equal-parameter Kazhdan–Lusztig polynomials](kazhdan-lusztig-combinatorial-invariance.md)
 
 - [Stanley's formula for the Möbius number of the odd partition poset](odd-partition-poset-mobius-number.md)

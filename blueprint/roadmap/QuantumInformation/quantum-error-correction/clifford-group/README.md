@@ -14,10 +14,16 @@ a universal set.
 - [Clifford hierarchy](clifford-hierarchy.md)
 - [The $T$ gate is in the third level of the Clifford hierarchy](t-gate-is-in-the-third-level-of-the-clifford-hierarchy.md)
 - [Clifford gates are not universal](clifford-gates-are-not-universal.md)
+- [One- and two-qubit Clifford gates are products of $H$, $S$ and CNOT](one-and-two-qubit-clifford-gates-from-h-s-and-cnot.md)
+- [A symmetric binary matrix plus a diagonal is a Gram matrix](symmetric-binary-matrix-plus-a-diagonal-is-a-gram-matrix.md)
+- [Canonical form of Clifford circuits](canonical-form-of-clifford-circuits.md)
+- [Tableau simulation of Clifford circuits](tableau-simulation-of-clifford-circuits.md)
+- [Characterizations of stabilizer states](characterizations-of-stabilizer-states.md)
+- [The Pauli twirl of a channel is a Pauli channel](pauli-twirl-of-a-channel-is-a-pauli-channel.md)
 
 ## Related topics
 
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md): the definition of the Clifford group and of stabilizer states.
+- [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md): the definition of the Clifford group.
 - [Gottesman–Knill theorem](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/gottesmanknill-theorem.md): classical simulation of Clifford circuits.
 
 ## Sources
