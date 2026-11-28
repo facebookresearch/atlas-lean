@@ -2781,6 +2781,7 @@
       "published_sha256": "ff866e843c9da94076ae17fb26076d52ee23563b5a504ae582dde73712f1b15d",
       "rationale": "Moved from WantedExt/Combinatorics/Enumerative/HypersequenceElementarySymmetricWanted.lean when the recurrence and Stirling formulas at zero were proved, with the same names and statements for the theorem, the matrix entries and their row lemmas. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/HypersequenceElementarySymmetricWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Move and prove `hyperseqB_recurrence_closed_form_row_sums` here, preserving its name, statement and docstring."
     },
+    {"path": "MathlibExt/Combinatorics/Enumerative/HypersequenceMatrixProduct.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "86c2e67a11803cc334be3cc054d46dbf0a039ea3c158ba498c788e95e59c5fa7", "rationale": "Move the proved sum_hyperseqB_mul_hyperseqC from WantedExt/Combinatorics/Enumerative/HypersequenceElementarySymmetricWanted.lean, preserving its full name, statement, and docstring."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/HypersequenceRecurrence.lean",
       "backport": "not-needed",
