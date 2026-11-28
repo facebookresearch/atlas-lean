@@ -45,6 +45,8 @@ theorem hasExactColimitsOfShape_of_colim_preservesHomology
     [(colim (J := J) (C := C)).PreservesHomology] :
     HasExactColimitsOfShape J C where
   preservesFiniteLimits := by
+    let _ : HasBinaryBiproducts (J ⥤ C) :=
+      HasBinaryBiproducts.of_hasBinaryProducts
     let _ : (colim (J := J) (C := C)).Additive :=
       preservesFiniteColimits_le_additiveFunctor (J ⥤ C) C _ (by infer_instance)
     exact Functor.preservesFiniteLimits_of_preservesHomology (colim (J := J) (C := C))
