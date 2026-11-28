@@ -28,12 +28,13 @@ found so far at the split point of largest `|g_{(s,b,e)}ᵀ y|`, where `{s, …,
 of that partition containing `b` and `b + 1`, and records the location `b̂_ℓ` and the direction
 `d̂_ℓ = sign(g_{(s,b̂_ℓ,e)}ᵀ y)`, with a fixed rule for ties and a fixed value of `sign 0`.
 
-Hyun, Lin, G'Sell and Tibshirani (2021, Proposition 1) show that, for fixed locations `b_{1:k}`
-and directions `d_{1:k}`, the event that binary segmentation selects them is a convex polyhedral
-cone `{y : Γ y ≥ 0}` up to the boundary hyperplanes, whatever the tie-breaking rule. Step `ℓ`
-contributes the sign row `d_ℓ g_ℓ` and, for every competing split point `c`, the two rows
-`d_ℓ g_ℓ ∓ g_c`, where `g_ℓ` and `g_c` are the CUSUM contrasts of `b_ℓ` and `c` in their
-segments.
+For fixed locations `b_{1:k}` and directions `d_{1:k}`, the event that binary segmentation
+selects them lies between the open and the closed convex polyhedral cones `{y : Γ y > 0}` and
+`{y : Γ y ≥ 0}` of an explicit matrix `Γ`, whatever the tie-breaking rule, so it is the closed cone
+up to its boundary hyperplanes. Step `ℓ` contributes the sign row `d_ℓ g_ℓ` and, for every
+competing split point `c`, the two rows `d_ℓ g_ℓ ∓ g_c`, where `g_ℓ` and `g_c` are the CUSUM
+contrasts of `b_ℓ` and `c` in their segments. This corrects the statement of Hyun, Lin, G'Sell
+and Tibshirani (2021, Proposition 1), as the implementation notes explain.
 
 ## Main definitions
 
@@ -64,6 +65,15 @@ and a split point `b ∈ {s_j, …, e_j - 1}` of it, correspond one to one to th
 and `b + 1`, which `segmentStart` and `segmentEnd` compute. So the algorithm chooses among those
 split points, and intervals of length one, which have no split point, never compete. A
 tie-breaking rule may depend on the history of the run, hence on the partition.
+
+The source's Proposition 1 states that the selection event equals `{y : Γ y ≥ 0}` for a matrix
+with `2 ∑_{ℓ=1}^{k} (n - ℓ - 1)` rows, the comparison rows only, and does not deal with ties.
+Ties break that equality: on a tie the tie-breaking rule may pick another split point, or the
+direction of a zero CUSUM statistic is the fixed value of `sign 0`, while `Γ y ≥ 0` still holds.
+A step with no competitor (`n - ℓ = 1`) has no comparison rows, so without a sign row its
+direction would be unconstrained. So this module proves the two-sided inclusion
+`{y : Γ y > 0} ⊆ {y : M^{BS}_{1:k}(y) = {b_{1:k}, d_{1:k}}} ⊆ {y : Γ y ≥ 0}`, with one sign row per
+step, which gives `∑_{ℓ=1}^{k} (2 (n - ℓ - 1) + 1)` rows.
 
 Locations are natural numbers, positions are numbered from `1`, and position `i` of
 `y : Fin n → ℝ` is the coordinate `y ⟨i - 1, _⟩`. Directions are units of `ℤ`, that is `±1`.
@@ -665,12 +675,17 @@ rows, none of them zero, such that for every tie-breaking rule and every value o
 `{y : Γ y > 0} ⊆ {y : M^{BS}_{1:k}(y) = {b_{1:k}, d_{1:k}}} ⊆ {y : Γ y ≥ 0}` (componentwise),
 where `M^{BS}_{1:k}` is `k`-step binary segmentation (`model`). In particular the selection event
 differs from the cone `{y : Γ y ≥ 0}` only within the hyperplanes `{y : γᵀ y = 0}`, one for each
-row `γ` of `Γ`, so by a Lebesgue-null set. The rows of `Γ` are those of `selectionRow`, in the
-order of an enumeration of their indices. For `k ≤ n - 1` the selection event of infeasible
-locations is empty (`selectionEvent_eq_empty`). -/
+row `γ` of `Γ`, so by a Lebesgue-null set. The matrix is explicit: its rows are those of
+`selectionRow`, listed through an equivalence `e` of their indices with `Fin` of the row count.
+The source states exact equality with the closed cone and `2 ∑_{ℓ=1}^{k} (n - ℓ - 1)` rows; ties
+and steps with no competitor break it, hence the two inclusions and the sign rows. For
+`k ≤ n - 1` the selection event of infeasible locations is empty (`selectionEvent_eq_empty`). -/
 theorem exists_polyhedral_selectionEvent (b : Fin k → ℕ) (d : Fin k → ℤˣ)
     (hb : Function.Injective b) (hbn : ∀ ℓ, b ℓ ∈ Icc 1 (n - 1)) :
     ∃ Γ : Matrix (Fin (∑ ℓ ∈ Icc 1 k, (2 * (n - ℓ - 1) + 1))) (Fin n) ℝ,
+      (∃ e : (Σ ℓ : Fin k, Option (competitors n b ℓ × Bool)) ≃
+          Fin (∑ ℓ ∈ Icc 1 k, (2 * (n - ℓ - 1) + 1)),
+        ∀ i, Γ i = selectionRow n b d (e.symm i)) ∧
       (∀ i, Γ i ≠ 0) ∧ ∀ (rule : TieBreak) (sign0 : ℤˣ),
         {y | ∀ i, 0 < (Γ *ᵥ y) i} ⊆ selectionEvent n rule sign0 b d ∧
         selectionEvent n rule sign0 b d ⊆ {y | ∀ i, 0 ≤ (Γ *ᵥ y) i} ∧
@@ -682,7 +697,7 @@ theorem exists_polyhedral_selectionEvent (b : Fin k → ℕ) (d : Fin k → ℤ�
     Matrix.of fun i => selectionRow n b d (e.symm i)
   have hΓ : ∀ i y, (Γ *ᵥ y) i = selectionRow n b d (e.symm i) ⬝ᵥ y := fun _ _ => rfl
   have hrow : ∀ i, Γ i ≠ 0 := fun i => selectionRow_ne_zero hb hbn d (e.symm i)
-  refine ⟨Γ, hrow, fun rule sign0 => ?_⟩
+  refine ⟨Γ, ⟨e, fun _ => rfl⟩, hrow, fun rule sign0 => ?_⟩
   have hlow : {y | ∀ i, 0 < (Γ *ᵥ y) i} ⊆ selectionEvent n rule sign0 b d := fun y hy =>
     mem_selectionEvent_of_pos hb hbn d rule sign0 fun r => by
       simpa [hΓ] using hy (e r)

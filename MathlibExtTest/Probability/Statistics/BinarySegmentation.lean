@@ -128,9 +128,12 @@ example (rule : TieBreak) (sign0 : ℤˣ) :
     exact sub_nonneg.1 ((mul_nonneg_iff_of_pos_left hc).1 this)
 
 /-- The theorem applies to the feasible locations `b = (2, 1)` on `n = 3` points: `Γ` has
-`3 + 1 = 4` rows. -/
+`3 + 1 = 4` rows, those of `selectionRow`. -/
 example (d : Fin 2 → ℤˣ) :
     ∃ Γ : Matrix (Fin (∑ ℓ ∈ Icc 1 2, (2 * (3 - ℓ - 1) + 1))) (Fin 3) ℝ,
+      (∃ e : (Σ ℓ : Fin 2, Option (competitors 3 ![2, 1] ℓ × Bool)) ≃
+          Fin (∑ ℓ ∈ Icc 1 2, (2 * (3 - ℓ - 1) + 1)),
+        ∀ i, Γ i = selectionRow 3 ![2, 1] d (e.symm i)) ∧
       (∀ i, Γ i ≠ 0) ∧ ∀ (rule : TieBreak) (sign0 : ℤˣ),
         {y | ∀ i, 0 < (Γ *ᵥ y) i} ⊆ selectionEvent 3 rule sign0 ![2, 1] d ∧
         selectionEvent 3 rule sign0 ![2, 1] d ⊆ {y | ∀ i, 0 ≤ (Γ *ᵥ y) i} ∧
