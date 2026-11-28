@@ -18,6 +18,7 @@ For dominoes, an augmentable region must be balanced (equally many black and whi
 ## Proof depends on
 
 - [The halting problem is undecidable by multi-stack machines](../../../computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
+- [Wang tiles and valid tilings](../wang-tiles-and-valid-tilings.md)
 
 ## Expansion
 

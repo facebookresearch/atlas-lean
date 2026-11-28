@@ -16,6 +16,7 @@ The rectangle is not part of the input: for a fixed rectangle the question is a 
 ## Proof depends on
 
 - [The Post correspondence problem is undecidable](../../post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [Wang tiles and valid tilings](../wang-tiles-and-valid-tilings.md)
 
 ## Expansion
 

@@ -15,11 +15,12 @@ The number of polyominoes is fixed at $7$ and their shapes are the input. A poly
 ## Proof depends on
 
 - [The tiling problem is undecidable](../the-tiling-problem-is-undecidable.md)
+- [Aperiodic tile sets exist](../aperiodic-tile-sets-exist.md)
 
 ## Expansion
 
-The proof reduces Wang's domino problem: for each finite set of Wang tiles it builds $7$ polyominoes that tile the plane if and only if the Wang tiles do. The polyominoes are assembled from $10\times10$ functional squares carrying bumps and dents; pairs of building blocks encode the colors of Wang tile edges in binary, and the techniques of the authors' earlier three- and four-dimensional constructions are combined with new gadgets to reduce the eight polyominoes of the previous bound to seven. Since every set of polyominoes that tiles periodically could be found by enumeration, undecidability forces the existence of aperiodic sets of size $7$.
+The proof reduces Wang's domino problem: for each finite set of Wang tiles it builds $7$ polyominoes that tile the plane if and only if the Wang tiles do. The polyominoes are assembled from $10\times10$ functional squares carrying bumps and dents; pairs of building blocks encode the colors of Wang tile edges in binary, and the techniques of the authors' earlier three- and four-dimensional constructions are combined with new gadgets to reduce the eight polyominoes of the previous bound to seven. For Corollary 1 the source starts from an aperiodic set $W$ of Wang tiles: the $7$ polyominoes built to simulate $W$ tile the plane, and a periodic tiling by them would decode to a periodic tiling by $W$, so they tile only non-periodically.
 
 ## Sources
 
-- Chao Yang and Zhujun Zhang, "Translational aperiodic sets of 7 polyominoes", *Science China Mathematics*, 2026 (published online), doi:[10.1007/s11425-025-2593-4](https://doi.org/10.1007/s11425-025-2593-4); numbering of arXiv:2412.17382v1 ([arXiv](https://arxiv.org/abs/2412.17382v1)): Theorem 2 (undecidability with seven polyominoes), Corollary 1 (aperiodicity) and Section 2 (the proof).
+- Chao Yang and Zhujun Zhang, "Translational aperiodic sets of 7 polyominoes", *Science China Mathematics*, 2026 (published online), doi:[10.1007/s11425-025-2593-4](https://doi.org/10.1007/s11425-025-2593-4); numbering of arXiv:2412.17382v1 ([arXiv](https://arxiv.org/abs/2412.17382v1)): Theorem 2 (undecidability with seven polyominoes), Corollary 1 (aperiodicity) and Section 2 (the proof, with the aperiodicity transfer at its end).

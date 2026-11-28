@@ -2,7 +2,7 @@
 
 No algorithm decides, given a set of five polycubes, whether translated copies of them tile three-dimensional space.
 
-A *polycube* is a finite union of unit cubes of the integer lattice in $\mathbb R^3$ glued face to face; equivalently, a finite tile in $\mathbb Z^3$ in the sense of [translational tilings](translational-tilings-by-finitely-many-tiles.md), with $G=E=\mathbb Z^3$.
+A *polycube* is a nonempty finite face-connected set of cells of $\mathbb Z^3$ (a [polycube](../../../../Combinatorics/tilings-board-placements/fixed-polycubes/is-polycube-cells.md) in dimension three), identified with the union of its closed unit cubes in $\mathbb R^3$, which are glued face to face; it is a finite tile in $\mathbb Z^3$ in the sense of [translational tilings](translational-tilings-by-finitely-many-tiles.md), with $G=E=\mathbb Z^3$, but not every finite tile is a polycube. The input ranges over polycubes, so the theorem holds already for connected tiles.
 
 **Theorem.** There is no algorithm which, given a set of $5$ polycubes, decides whether $\mathbb R^3$ (equivalently $\mathbb Z^3$) can be tiled by translated copies of polycubes from the set (translations only).
 
@@ -24,4 +24,4 @@ The proof reduces Wang's domino problem directly in dimension three, without lif
 
 ## Sources
 
-- Chao Yang and Zhujun Zhang, "Undecidability of translational tiling of the 4-dimensional space with a set of 4 polyhypercubes", *Science China Mathematics* 68(9), 2025, pp. 2173–2188, doi:[10.1007/s11425-024-2365-2](https://doi.org/10.1007/s11425-024-2365-2); numbering of arXiv:2409.00846v2 ([arXiv](https://arxiv.org/abs/2409.00846v2)): Theorem 4 (undecidability with five tiles) and Section 2 (its proof); Theorem 2 (six polycubes, the earlier bound).
+- Chao Yang and Zhujun Zhang, "Undecidability of translational tiling of the 4-dimensional space with a set of 4 polyhypercubes", *Science China Mathematics* 68(9), 2025, pp. 2173–2188, doi:[10.1007/s11425-024-2365-2](https://doi.org/10.1007/s11425-024-2365-2); numbering of arXiv:2409.00846v2 ([arXiv](https://arxiv.org/abs/2409.00846v2)): Theorem 4 (undecidability with five tiles) and Sections 2.1 (polycubes) and 2 (its proof); Theorem 2 (six polycubes, the earlier bound).

@@ -3,7 +3,7 @@
 No algorithm decides whether translated copies of three given polyhypercubes tile four-dimensional space, nor whether translated copies of four
 given polycubes tile three-dimensional space.
 
-Tiles are finite subsets of $\mathbb{Z}^n$, equivalently unions of unit cubes $\prod_{i=1}^n [z_i, z_i + 1]$ in $\mathbb{R}^n$, called *polycubes* for $n = 3$ and *polyhypercubes* for $n = 4$. A set of tiles tiles $\mathbb{Z}^n$ when
+A tile is a finite subset of $\mathbb{Z}^n$, equivalently a union of unit cubes $\prod_{i=1}^n [z_i, z_i + 1]$ in $\mathbb{R}^n$; it need not be connected. A *polycube* ($n = 3$) or *polyhypercube* ($n = 4$) is a nonempty finite face-connected set of cells, a [polycube](../../../../Combinatorics/tilings-board-placements/fixed-polycubes/is-polycube-cells.md) in dimension $n$, identified with the union of its closed unit cubes. The theorem restricts the input to these connected tiles, as Theorems 1 and 2 of the source do, in contrast with the arbitrary tiles of its Problem 1. A set of tiles tiles $\mathbb{Z}^n$ when
 $\mathbb{Z}^n$ is the disjoint union of translates of the tiles, as for [translational tilings by finitely many tiles](translational-tilings-by-finitely-many-tiles.md); rotations and reflections are not allowed.
 
 **Theorem.**
@@ -11,8 +11,7 @@ $\mathbb{Z}^n$ is the disjoint union of translates of the tiles, as for [transla
 1. It is undecidable, given a set of $4$ polycubes, whether translated copies of them tile $\mathbb{Z}^3$.
 2. It is undecidable, given a set of $3$ polyhypercubes, whether translated copies of them tile $\mathbb{Z}^4$.
 
-The tiles constructed in the proofs are connected. Translational tiling is decidable in dimension $1$ and for a single tile in the plane; whether it is undecidable for a single tile in some fixed dimension
-remains open, while Greenfeld and Tao showed undecidability for a single tile when the dimension is part of the input.
+Translational tiling is decidable in dimension $1$ and for a single tile in the plane. Whether it is undecidable for a single tile in some fixed dimension was open when the source appeared; Greenfeld and Tao had shown that, with the dimension $d \ge 3$ part of the input, it is undecidable whether a single finite tile tiles a given periodic subset of $\mathbb{Z}^d$ ([translational monotiling of periodic subsets](translational-monotiling-of-periodic-subsets-of.md)).
 
 ## Depends on
 
