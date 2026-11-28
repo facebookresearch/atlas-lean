@@ -9,6 +9,18 @@ is unramified over the [complement of $0$, $1$ and $\infty$](../belyi-locus.md).
 This is Köck's Lemma 3.6. He states it for a finite subset $T$ of $\mathbb{Q}$; his proof assumes
 $0, 1, \infty \in T$, and his proof of Theorem 3.3 applies it to a set containing $\infty$.
 
+Köck's proof builds $q$ by induction on the number $r$ of elements of $T$ from fractional linear
+transformations and the polynomials $c \, z^m (1 - z)^n$: "If $r \le 3$, there is a fractional
+linear transformation $q$ with $q(T) \subseteq \{0, 1, \infty\}$. So, let $r > 3$. After composing
+with an appropriate fractional linear transformation, we may assume that $0, 1, \infty \in T$ and
+that there is a fourth point in $T$ which lies in the interval between $0$ and $1$, i.e., which is
+of the form $\frac{m}{m+n}$ where $m, n \in \mathbb{N}$. We now consider the polynomial
+$q_1(z) := \frac{(m+n)^{m+n}}{m^m n^n} z^m (1 - z)^n \in \mathbb{Q}[z]$", and then $q = q_2 \circ
+q_1$ with $q_2$ given by the induction applied to $q_1(T)$. So every map of the construction is
+defined over $\mathbb{Q}$: the polynomials $q_1$ are in $\mathbb{Q}[z]$, and the fractional linear
+transformations move points of $\mathbb{P}^1(\mathbb{Q})$ to $0$, $1$, $\infty$ and
+$\frac{m}{m+n}$.
+
 ## Depends on
 
 - [Belyi map](../is-belyi-map.md), for the property of $q$

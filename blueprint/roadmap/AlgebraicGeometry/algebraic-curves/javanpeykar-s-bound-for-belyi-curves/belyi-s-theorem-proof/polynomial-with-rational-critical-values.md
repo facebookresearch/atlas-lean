@@ -8,9 +8,6 @@ such that $p(s) \in \mathbb{Q}$ for every $s \in S$ and $p(r) \in \mathbb{Q}$ fo
 Köck states that $p(S)$ and the critical values of $p \colon \mathbb{P}^1 \to \mathbb{P}^1$ lie in
 $\mathbb{Q} \cup \{\infty\}$; the critical values other than $\infty$ are the values of $p$ at the
 zeros of $p'$, as in his proof ("$S_1 \cup \{\infty\}$ is the set of critical values of $p_1$").
-The same statement holds in any field $K$ with an algebra structure over $\mathbb{Q}$, for a finite
-set of elements algebraic over $\mathbb{Q}$, and for the roots in $K$ of a nonzero $f \in
-\mathbb{Q}[X]$; with $K = \mathbb{C}$ it is Köck's own formulation.
 
 ## Sources
 

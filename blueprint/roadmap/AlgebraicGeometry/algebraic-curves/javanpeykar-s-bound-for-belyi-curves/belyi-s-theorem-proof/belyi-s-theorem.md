@@ -28,13 +28,13 @@ $\{0, 1, \infty\}$ turns that morphism into a Belyi map of the same degree. So t
 - [Polynomial with rational critical values](polynomial-with-rational-critical-values.md),
   for $p$
 - [Branch points of a polynomial map of the projective line](branch-points-of-a-polynomial-map.md),
-  for the branch points of $p$ and $p(\infty) = \infty$
+  for the branch points of $p$ and of each $q_1$ over $\bar K$, and $p(\infty) = \infty$
 - [Moving finitely many rational points to $0$, $1$ and $\infty$](three-point-reduction.md),
-  for $q$ over $\mathbb{C}$, whose construction is run over $\bar K$
+  for Köck's construction of $q$, whose maps are defined over $\mathbb{Q}$, taken over $\bar K$
 - [Values and derivative of the polynomial $c \, z^m (1 - z)^n$](belyi-polynomial.md), for the
-  polynomials $q_1$ of that construction over $\bar K$
-- [Branch locus of a composite](../../../schemes-and-morphisms/branch-locus-of-a-composite.md), for $p \circ t'$
-  and $q \circ p \circ t'$
+  values of the polynomials $q_1$ of that construction and the zeros of $q_1'$ in $\bar K$
+- [Branch locus of a composite](../../../schemes-and-morphisms/branch-locus-of-a-composite.md), for $p \circ t'$,
+  the composites that make up $q$, and $q \circ p \circ t'$
 - [A finite morphism of curves has constant degree](degree-of-a-finite-morphism-of-curves.md),
   for the degree $d$ of $t$
 
@@ -47,12 +47,15 @@ closure of $\mathbb{Q}$, there is a nonconstant $p \in \mathbb{Q}[z]$ with $p(S 
 \{\infty\}) \subset \mathbb{Q}$ and $p(r) \in \mathbb{Q}$ at the zeros $r$ of $p'$; the morphism
 $p \circ t'$ is then unramified outside the finite set $T = p(S) \cup \{p(r) : p'(r) = 0\} \cup
 \{\infty\} \subset \mathbb{P}^1(\mathbb{Q})$. Köck's Lemma 3.6 gives a finite $q$ with $q(T) \subset \{0, 1, \infty\}$
-and critical values in $\{0, 1, \infty\}$ over $\mathbb{C}$. His proof builds $q$ from fractional
-linear transformations and the polynomials $q_1 = c \, z^m (1 - z)^n \in \mathbb{Q}[z]$; the same
-construction over $\bar K$, where the values and derivative of $q_1$, the branch points of a
-polynomial map and the branch locus of a composite are as over $\mathbb{C}$, gives a Belyi map $q
-\colon \mathbb{P}^1_{\bar K} \to \mathbb{P}^1_{\bar K}$ over $\bar K$ with $q(T) \subset \{0, 1,
-\infty\}$. Then $t = q \circ p \circ t'$ is unramified outside $\{0, 1, \infty\}$. It is finite, as
+and critical values in $\{0, 1, \infty\}$ over $\mathbb{C}$, and his construction of it is a
+composite of fractional linear transformations and polynomials $q_1 = c \, z^m (1 - z)^n$, all
+defined over $\mathbb{Q}$. The same composite over $\bar K$ is a finite morphism $q \colon
+\mathbb{P}^1_{\bar K} \to \mathbb{P}^1_{\bar K}$ over $\bar K$ with $q(T) \subset \{0, 1,
+\infty\}$, as $T$ and the points it moves are rational. It is a Belyi map, by induction on the
+number of elements of $T$ as in Köck's proof: a fractional linear transformation is an
+automorphism, so it is unramified everywhere; each $q_1$ maps $\infty$ to $\infty$ and is
+unramified outside $\infty$ and the values $q_1(0) = q_1(1) = 0$ and $q_1(\frac{m}{m+n}) = 1$ at
+the zeros of $q_1'$ in $\bar K$; and the branch locus of a composite gives the rest. Then $t = q \circ p \circ t'$ is unramified outside $\{0, 1, \infty\}$. It is finite, as
 a composite of finite morphisms, and has constant degree.
 
 ## Sources

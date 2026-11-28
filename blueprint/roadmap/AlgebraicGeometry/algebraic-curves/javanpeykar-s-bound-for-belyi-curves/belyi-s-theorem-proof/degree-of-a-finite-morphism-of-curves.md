@@ -6,7 +6,7 @@ a natural number $d$ such that the rank of $f$ (`Scheme.Hom.finrank`) is $d$ at 
 
 ## Depends on
 
-None among the pages.
+- [Flat morphisms of schemes](../../../schemes-and-morphisms/flat-morphism-of-schemes.md), for the flatness of $f$
 
 ## Proof depends on
 

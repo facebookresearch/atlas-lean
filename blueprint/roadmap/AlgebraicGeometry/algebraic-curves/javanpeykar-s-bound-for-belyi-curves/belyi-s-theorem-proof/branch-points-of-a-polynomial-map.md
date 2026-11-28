@@ -11,7 +11,8 @@ $$\mathbb{P}^1_k \setminus \bigl( \{\infty\} \cup \{p(r) : r \in k, \ p'(r) = 0\
 
 ## Depends on
 
-None among the pages.
+- [Étale morphisms of schemes](../../../schemes-and-morphisms/etale-morphism-of-schemes.md), for the étale
+  restriction
 
 ## Proof depends on
 
