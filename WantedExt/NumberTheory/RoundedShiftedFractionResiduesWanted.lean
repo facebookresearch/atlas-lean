@@ -22,6 +22,7 @@ public import MathlibExt.NumberTheory.RoundQuotientOddCount
 public import MathlibExt.NumberTheory.RoundedQuotientLatticeDisc
 public import MathlibExt.NumberTheory.RoundedQuotientThresholdCounts
 public import MathlibExt.NumberTheory.ShiftedFloorThresholdCounts
+public import MathlibExt.NumberTheory.RoundedShiftedFractionResiduesFloorQuotientOddCountAsymptotic
 
 namespace MetaMathlibExt
 
@@ -75,20 +76,6 @@ public theorem_wanted divisor_summatory_asymptotic :
       |(∑ m ∈ Finset.Icc 1 ⌊x⌋₊, (m.divisors.card : ℝ)) -
           (x * Real.log x + (2 * Real.eulerMascheroniConstant - 1) * x)| ≤
         C * Real.sqrt x
-
-/-- **Asymptotics of the floor parity count.** Let $\mathcal{F}_n$ be the number of integers $k$
-with $1 \le k \le n$ for which $\lfloor n/k \rfloor$ is odd. There is a real constant $C$ such
-that $|\mathcal{F}_n - n \log 2| \le C \sqrt{n}$ for every integer $n \ge 1$, and
-$\mathcal{F}_n / n \to \log 2$ as $n \to \infty$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 7 (`jis-2024-24.2.5-prop-7`). -/
-public theorem_wanted floorQuotientOddCount_asymptotic :
-    (∃ C : ℝ, ∀ n : ℕ, 1 ≤ n →
-      |(floorQuotientOddCount n : ℝ) - n * Real.log 2| ≤ C * Real.sqrt n) ∧
-    Tendsto (fun n : ℕ => (floorQuotientOddCount n : ℝ) / n) atTop
-      (𝓝 (Real.log 2))
 
 /-- **Asymptotics of the ceiling parity count.** Let $\mathcal{C}_n$ be the number of integers
 $k$ with $1 \le k \le n$ for which $\lceil n/k \rceil$ is odd. There is a real constant $C$ such
