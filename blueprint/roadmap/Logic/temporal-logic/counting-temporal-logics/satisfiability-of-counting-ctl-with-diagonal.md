@@ -2,7 +2,7 @@
 
 Whether some Kripke structure satisfies a counting CTL formula is undecidable once constraints may compare two counts with coefficients ±1, even without Boolean combinations in constraints.
 
-**Theorem (Laroussinie, Meyer and Petonnet).** The [satisfiability problem](counting-ctl.md) for CCTL$_{\pm 1}$ is undecidable: there is no algorithm that decides, given a CCTL$_{\pm 1}$ formula $\Phi$, whose constraints are single linear constraints with coefficients in $\{-1, 1\}$, whether some finite Kripke structure has a state satisfying $\Phi$.
+**Theorem (Laroussinie, Meyer and Petonnet).** The [satisfiability problem](counting-ctl.md) for CCTL$_{\pm 1}$ is undecidable: there is no algorithm that decides, given a CCTL$_{\pm 1}$ formula $\Phi$, whose constraints are single linear constraints with coefficients in $\{-1, 1\}$, whether some finite Kripke structure has a state satisfying $\Phi$ (Theorem 5.1 of the source, by a reduction from the halting problem for two-counter machines).
 
 Without diagonal constraints, satisfiability is 2EXPTIME-complete for every logic from CCTL$_1$ to CCTL$_\wedge$ (Theorem 5.2), and the same picture holds for the cumulative-semantics variants (Theorem 6.24: 2EXPTIME-complete from CCTL$^c_1$ to CCTL$^c_\wedge$, undecidable for CCTL$^c_{\pm 1}$).
 

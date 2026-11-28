@@ -2,12 +2,12 @@
 
 For every fixed propositional calculus with implication, no algorithm decides whether a given calculus derives all of its theorems; if the fixed calculus derives $x \to (y \to x)$, recognizing its axiomatizations and the completeness of its subcalculi is undecidable as well.
 
-**Theorem (Bokov, 2016).** Fix a signature $\Sigma \supseteq \{\to\}$ and a [$\Sigma$-calculus](propositional-calculi-with-modus-ponens-and.md) $P_0$. Then (Theorem 2.10):
+**Theorem (Bokov, 2016).** Fix a signature $\Sigma \supseteq \{\to\}$ and a [$\Sigma$-calculus](propositional-calculi-with-modus-ponens-and.md) $P_0$ with at least one axiom. Then (Theorem 2.10):
 
 1. recognizing extensions (Ext: given a $\Sigma$-calculus $P$, is $P_0 \leq P$?) is undecidable;
 2. recognizing completeness (Cmpl: given $P$ with $P \leq P_0$, is $P_0 \leq P$?) is undecidable if $P_0 \geq \{x \to (y \to x)\}$.
 
-Consequently, recognizing axiomatizations (Axm: given $P$, is $P \sim P_0$?) is undecidable whenever $P_0 \geq \{x \to (y \to x)\}$ (Corollary 2.11), and for every fixed $\Sigma$-formula $A$ the derivability problem "given a $\Sigma$-calculus $P$, does $P \vdash A$?" is undecidable (Corollary 2.12, the case $P_0 = \{A\}$ of clause 1), even when $A$ has the form $B \to B$.
+The source states clause 1 for every fixed calculus; for the calculus with no axioms every $P$ is an extension, so Ext is trivially decidable there, and the construction in the proof needs an axiom of $P_0$. Consequently, recognizing axiomatizations (Axm: given $P$, is $P \sim P_0$?) is undecidable whenever $P_0 \geq \{x \to (y \to x)\}$ (Corollary 2.11), and for every fixed $\Sigma$-formula $A$ the derivability problem "given a $\Sigma$-calculus $P$, does $P \vdash A$?" is undecidable (Corollary 2.12, the case $P_0 = \{A\}$ of clause 1), even when $A$ has the form $B \to B$.
 
 ## Depends on
 

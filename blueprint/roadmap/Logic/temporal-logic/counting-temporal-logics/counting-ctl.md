@@ -11,10 +11,10 @@ $$
 with $P \in AP$, CCTL formulas $\varphi_i$, $\alpha_i, k \in \mathbb N$ and ${\sim} \in \{<, \le, =, \ge, >\}$; integer constants are written in binary. For a finite run prefix $\sigma = q_0 \cdots q_i$, $|\sigma|_\varphi$ is the number of positions $j \le i$ with $q_j \models \varphi$, and $\sigma \models C$ evaluates $C$ with $\sharp\varphi_i := |\sigma|_{\varphi_i}$. Then $\rho \models \varphi\,\mathsf U_{[C]}\,\psi$ iff there is $i \ge 0$ with $\rho(i) \models \psi$, $\rho(0)\cdots\rho(i-1) \models C$ and $\rho(j) \models \varphi$ for all $j < i$; $\mathsf E$ and $\mathsf A$ quantify over runs from the current state. The variants are:
 
 - *CCTL$_1$*: every coefficient $\alpha_i$ equals $1$;
-- *CCTL$_\pm$*: coefficients $\alpha_i \in \mathbb Z$, which allows *diagonal* constraints such as $\sharp\varphi - \sharp\psi \sim k$;
+- *CCTL$_\pm$*: coefficients $\alpha_i \in \mathbb Z$ and constants $k \in \mathbb Z$, which allows *diagonal* constraints such as $\sharp\varphi - \sharp\psi \sim k$;
 - *CCTL$_\wedge$*: Boolean combinations of constraints;
 
-and their combinations, such as CCTL$_{\pm 1}$ (coefficients in $\{-1, 1\}$) and CCTL$_{\wedge\pm 1}$. The *model-checking problem* asks, given $S$, a state $q$ and a formula $\Phi$, whether $q \models \Phi$; the *satisfiability problem* asks whether some Kripke structure has a state satisfying $\Phi$.
+and their combinations, such as CCTL$_{\pm 1}$ (coefficients in $\{-1, 1\}$) and CCTL$_{\wedge\pm 1}$. The *model-checking problem* asks, given $S$, a state $q$ and a formula $\Phi$, whether $q \models \Phi$; the *satisfiability problem* asks whether some (finite) Kripke structure has a state satisfying $\Phi$.
 
 ## Depends on
 

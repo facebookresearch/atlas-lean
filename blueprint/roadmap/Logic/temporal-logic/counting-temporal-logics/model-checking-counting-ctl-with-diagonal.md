@@ -2,7 +2,7 @@
 
 Model checking finite Kripke structures against counting CTL becomes undecidable as soon as constraints may compare two counts, with coefficients ±1, inside Boolean combinations.
 
-**Theorem (Laroussinie, Meyer and Petonnet).** The [model-checking problem](counting-ctl.md) for CCTL$_{\wedge\pm 1}$ is undecidable: there is no algorithm that decides, given a finite Kripke structure $S$, a state $q$ and a CCTL$_{\wedge\pm 1}$ formula $\Phi$, whose constraints are Boolean combinations of linear constraints with coefficients in $\{-1, 1\}$, whether $q \models \Phi$.
+**Theorem (Laroussinie, Meyer and Petonnet).** The [model-checking problem](counting-ctl.md) for CCTL$_{\wedge\pm 1}$ is undecidable: there is no algorithm that decides, given a finite Kripke structure $S$, a state $q$ and a CCTL$_{\wedge\pm 1}$ formula $\Phi$, whose constraints are Boolean combinations of linear constraints with coefficients in $\{-1, 1\}$, whether $q \models \Phi$ (Theorem 4.12 of the source, by a reduction from the halting problem for two-counter machines).
 
 In contrast, model checking CCTL$_{\pm 1}$, with diagonal constraints but no Boolean combinations inside a constraint, is P-complete (Theorem 4.4), and model checking CCTL$_\wedge$ is $\Delta^P_2$-complete (Corollary 4.11). The same undecidability holds for the variant CCTL$^c_{\pm 1}$ with cumulative semantics (Theorem 6.23 of the source).
 

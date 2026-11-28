@@ -2,7 +2,7 @@
 
 Adding the average operator $\varphi \oplus \psi$ to discounted LTL makes threshold validity undecidable, for every nonempty set of discounting functions, whereas discounted LTL without averaging has decidable threshold problems.
 
-**Theorem (Almagor, Boker and Kupferman).** For every nonempty set $\mathcal{D}$ of discounting functions, the validity problem for [$\mathrm{LTL}^{\mathrm{disc}\oplus}[\mathcal{D}]$](discounted-ltl.md) is undecidable: no algorithm decides, given a formula $\varphi$ and a threshold $v \in [0,1]$, whether $[\![\pi, \varphi]\!] > v$ for every computation $\pi$.
+**Theorem (Almagor, Boker and Kupferman).** For every nonempty set $\mathcal{D}$ of discounting functions, the validity problem for [$\mathrm{LTL}^{\mathrm{disc}\oplus}[\mathcal{D}]$](discounted-ltl.md) is undecidable: no algorithm decides, given a formula $\varphi$ and a rational threshold $v \in [0,1]$, whether $[\![\pi, \varphi]\!] > v$ for every computation $\pi$ (Theorem 5 of the source). The proof reduces the 0-halting problem for two-counter machines and uses only the threshold $v = 1/2$.
 
 Undecidability already holds with a single discounting function, so it is the combination of one discounting operator with averaging that causes it.
 

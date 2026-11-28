@@ -24,7 +24,7 @@ $$
 
 and $[\![\pi, \varphi \oplus \psi]\!] = \tfrac{1}{2}\big([\![\pi, \varphi]\!] + [\![\pi, \psi]\!]\big)$.
 
-**Validity.** The *validity problem* asks, given a formula $\varphi$ over $AP$ and a threshold $v \in [0,1]$, whether $[\![\pi, \varphi]\!] > v$ for every $\pi \in (2^{AP})^\omega$.
+**Validity.** For a fixed set $\mathcal{D}$, whose functions occur in formulas as symbols, the *validity problem* asks, given a formula $\varphi$ over $AP$ and a threshold $v \in [0,1]$, whether $[\![\pi, \varphi]\!] > v$ for every $\pi \in (2^{AP})^\omega$; as an input, $v$ is a rational number.
 
 ## Depends on
 
