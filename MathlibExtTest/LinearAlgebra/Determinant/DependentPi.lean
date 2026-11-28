@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.LinearAlgebra.Determinant.DependentPi
 import Mathlib.LinearAlgebra.Matrix.ToLin
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
@@ -44,14 +45,22 @@ example : LinearMap.dependentPiBlock productMap false true = 0 := by
 
 example :
     LinearMap.dependentPiBlock productMap true true ![(1 : ℚ), 2] = ![(3 : ℚ), 10] := by
+  simp only [LinearMap.dependentPiBlock, productMap, LinearMap.coe_comp,
+    Function.comp_apply, LinearMap.pi_apply, LinearMap.coe_proj, Function.eval,
+    LinearMap.single_apply, Pi.single_eq_same]
+  change Matrix.toLin' (Matrix.diagonal ![(3 : ℚ), 5]) ![(1 : ℚ), 2] = ![(3 : ℚ), 10]
+  rw [Matrix.toLin'_apply]
   ext j
   fin_cases j <;>
-    norm_num [LinearMap.dependentPiBlock, productMap, componentMap, Matrix.mulVec,
-      dotProduct, Fin.sum_univ_two]
+    norm_num [Matrix.mulVec, Matrix.diagonal_apply, dotProduct, Fin.sum_univ_two]
 
 theorem product_det : productMap.det = 30 := by
-  rw [productMap, LinearMap.det_pi_dependent]
-  norm_num [componentMap, Fin.prod_univ_two]
+  rw [productMap, LinearMap.det_pi_dependent, Fintype.prod_bool]
+  change (Matrix.toLin' (Matrix.diagonal ![(3 : ℚ), 5])).det *
+    (Matrix.toLin' (Matrix.diagonal ![(2 : ℚ)])).det = 30
+  rw [LinearMap.det_toLin', LinearMap.det_toLin', Matrix.det_diagonal, Matrix.det_diagonal,
+    Fin.prod_univ_two, Fin.prod_univ_one]
+  norm_num
 
 def emptySize : Bool → ℕ
   | false => 0
@@ -62,15 +71,24 @@ def blocks : (i : Bool) → Matrix (Fin (emptySize i)) (Fin (emptySize i)) ℤ
   | true => Matrix.diagonal ![(3 : ℤ), 5]
 
 example : (Matrix.blockDiagonal' blocks).det = 15 := by
-  rw [Matrix.det_blockDiagonal']
-  norm_num [blocks, Fin.prod_univ_two]
+  rw [Matrix.det_blockDiagonal', Fintype.prod_bool]
+  change (Matrix.diagonal ![(3 : ℤ), 5]).det *
+    (0 : Matrix (Fin 0) (Fin 0) ℤ).det = 15
+  rw [Matrix.det_diagonal, Matrix.det_isEmpty, Fin.prod_univ_two]
+  norm_num
 
 example :
-    Matrix.blockDiagonal' blocks ⟨true, (0 : Fin 2)⟩ ⟨true, (1 : Fin 2)⟩ = 0 := by
-  simp [blocks]
+    Matrix.blockDiagonal' (m' := fun i : Bool => Fin (emptySize i))
+      (n' := fun i : Bool => Fin (emptySize i)) blocks
+      (⟨true, (0 : Fin 2)⟩ : Σ i : Bool, Fin (emptySize i))
+      (⟨true, (1 : Fin 2)⟩ : Σ i : Bool, Fin (emptySize i)) = 0 := by
+  rw [Matrix.blockDiagonal'_apply_eq]
+  change (Matrix.diagonal ![(3 : ℤ), 5] : Matrix (Fin 2) (Fin 2) ℤ) 0 1 = 0
+  simp
 
 example :
-    (Matrix.blockDiagonal' (fun i : Fin 0 => (0 : Matrix (Fin 1) (Fin 1) ℤ))).det = 1 := by
+    (Matrix.blockDiagonal' (m' := fun _ : Fin 0 => Fin 1) (n' := fun _ : Fin 0 => Fin 1)
+      (fun _ : Fin 0 => (0 : Matrix (Fin 1) (Fin 1) ℤ))).det = 1 := by
   rw [Matrix.det_blockDiagonal']
   simp
 

@@ -98,7 +98,8 @@ theorem charpoly_quotientBaseChange (f : S →ₗ[R] S) (I : Ideal R)
     (f.quotientBaseChange I).charpoly = f.charpoly.map (Ideal.Quotient.mk I) := by
   let e := Algebra.TensorProduct.quotIdealMapEquivQuotTensor S I
   change (e.symm.toLinearEquiv.conj (f.baseChange (R ⧸ I))).charpoly = _
-  rw [LinearEquiv.charpoly_conj, LinearMap.charpoly_baseChange]
+  rw [LinearEquiv.charpoly_conj, LinearMap.charpoly_baseChange,
+    Ideal.Quotient.algebraMap_eq I]
 
 section Local
 

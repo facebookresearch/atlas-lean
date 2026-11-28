@@ -84,7 +84,9 @@ theorem exists_det_eq_pow_sum_mul_det_of_exists_apply_basis
   let g : M →ₗ[R] M := b.constr R fun i ↦ Classical.choose (h i)
   have hg : ∀ i, f (b i) = π ^ c i • g (b i) := by
     intro i
-    rw [g, Module.Basis.constr_basis]
+    change f (b i) = π ^ c i •
+      (b.constr R (fun j ↦ Classical.choose (h j))) (b i)
+    rw [Module.Basis.constr_basis]
     exact Classical.choose_spec (h i)
   exact ⟨g, hg, det_eq_pow_sum_mul_det_of_apply_basis b π c f g hg⟩
 
