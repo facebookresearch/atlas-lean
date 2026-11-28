@@ -2,7 +2,7 @@
 
 A translation-invariant nearest-neighbor Hamiltonian on a square lattice or a chain is fixed by finitely many matrices: one on-site term and one interaction per lattice direction, repeated over every site and bond, giving one Hamiltonian for each nonempty system size.
 
-**Lattices and Hilbert spaces.** Fix a local dimension $d\ge2$, so that every system below has at least two energy levels. Let $\Lambda(L)$ be either the $L\times L$ square lattice $\{1,\dots,L\}^2\subset\mathbb Z^2$ for a side length $L\in\mathbb N$ with $L\ge2$, as in the source, or the chain $\{1,\dots,L\}$ for a length $L\ge1$, with *open boundary conditions*: the bonds $\mathcal E$ join lattice neighbors inside $\Lambda(L)$ and do not wrap around. Each site $k$ carries a copy $\mathcal H^{(k)}\cong\mathbb C^d$, and the system lives on $\bigotimes_{k\in\Lambda(L)}\mathcal H^{(k)}$.
+**Lattices and Hilbert spaces.** Fix a local dimension $d\ge2$, so that every system below has at least two eigenvalues counted with multiplicity. Let $\Lambda(L)$ be either the $L\times L$ square lattice $\{1,\dots,L\}^2\subset\mathbb Z^2$ for a side length $L\in\mathbb N$ with $L\ge2$, as in the source, or the chain $\{1,\dots,L\}$ for a length $L\ge1$, with *open boundary conditions*: the bonds $\mathcal E$ join lattice neighbors inside $\Lambda(L)$ and do not wrap around. Each site $k$ carries a copy $\mathcal H^{(k)}\cong\mathbb C^d$, and the system lives on $\bigotimes_{k\in\Lambda(L)}\mathcal H^{(k)}$.
 
 **Interactions.** A *translation-invariant nearest-neighbor Hamiltonian* on the square lattice is given by a Hermitian $d\times d$ matrix $h_1$ and Hermitian $d^2\times d^2$ matrices $h_{\mathrm{row}}$ and $h_{\mathrm{col}}$, and is the family
 
