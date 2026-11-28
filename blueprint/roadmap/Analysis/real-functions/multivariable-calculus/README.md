@@ -2,6 +2,7 @@
 
 Functions on R^n: partial derivatives, gradients, Jacobians, Hessians, implicit functions, regular level sets and tangent spaces, curve length, Green's theorem, multivariable Taylor expansions and counterexamples about mixed partials or continuity at the origin.
 
+- [Analytic derivatives of multivariate polynomials](analytic-derivatives-of-multivariate-polynomials/README.md)
 - [Continuity and differentiability at the origin in the plane](continuity-and-differentiability-at-the-origin-i/README.md)
 - [Existence of mixed partial derivatives](existence-of-mixed-partial-derivatives/README.md)
 - [Gradient](gradient/README.md)
