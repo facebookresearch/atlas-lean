@@ -55,23 +55,20 @@ def endpointCofreeFunctor : GradedObject ι C ⥤ HomologicalComplex C c where
   map_id I := endpointCofreeMap_id (c := c) I
   map_comp a b := (endpointCofreeMap_comp (c := c) a b).symm
 
-private def endpointCofreeAdjunctionCore :
-    Adjunction.CoreHomEquiv (forget C c) (endpointCofreeFunctor C c) where
-  homEquiv K I := (endpointCofreeHomEquiv K I).symm
-  homEquiv_naturality_left_symm := by
-    intro K' K I f g
-    funext i
-    change (f.f i ≫ g.f i) ≫ endpointCofreeProjection (c := c) I i =
-      f.f i ≫ (g.f i ≫ endpointCofreeProjection (c := c) I i)
-    exact Category.assoc _ _ _
-  homEquiv_naturality_right := by
-    intro K I J a b
-    exact (endpointCofreeHom_naturality K a b).symm
-
 /-- Forgetting the differential is left adjoint to the endpoint cofree functor,
 using the existing bijection between complex maps and coefficient families. -/
 def endpointCofreeAdjunction : forget C c ⊣ endpointCofreeFunctor C c :=
-  Adjunction.mkOfHomEquiv (endpointCofreeAdjunctionCore C c)
+  Adjunction.mkOfHomEquiv
+    { homEquiv K I := (endpointCofreeHomEquiv K I).symm
+      homEquiv_naturality_left_symm := by
+        intro K' K I f g
+        funext i
+        change (f.f i ≫ g.f i) ≫ endpointCofreeProjection (c := c) I i =
+          f.f i ≫ (g.f i ≫ endpointCofreeProjection (c := c) I i)
+        exact Category.assoc _ _ _
+      homEquiv_naturality_right := by
+        intro K I J a b
+        exact (endpointCofreeHom_naturality K a b).symm }
 
 /-- The forgetful functor on complexes of an arbitrary shape has the endpoint
 cofree complex functor as a right adjoint. -/
@@ -88,9 +85,9 @@ instance endpointCofreeFunctor_isRightAdjoint :
 equivalence with its orientation reversed. -/
 theorem endpointCofreeAdjunction_homEquiv (K : HomologicalComplex C c)
     (I : GradedObject ι C) :
-    (endpointCofreeAdjunction C c).homEquiv K I = (endpointCofreeHomEquiv K I).symm :=
-  congrFun (congrFun
-    (Adjunction.mkOfHomEquiv_homEquiv (endpointCofreeAdjunctionCore C c)) K) I
+    (endpointCofreeAdjunction C c).homEquiv K I = (endpointCofreeHomEquiv K I).symm := by
+  unfold endpointCofreeAdjunction
+  exact congrFun (congrFun (Adjunction.mkOfHomEquiv_homEquiv _) K) I
 
 /-- A coefficient family is sent by the native adjunction equivalence to the
 existing prescribed cofree complex morphism. -/
@@ -129,15 +126,20 @@ abbrev endpointCofreeCounit :
 @[simp]
 theorem endpointCofreeUnit_app (K : HomologicalComplex C c) :
     (endpointCofreeUnit C c).app K =
-      endpointCofreeHom K K.X (fun i => 𝟙 (K.X i)) :=
-  rfl
+      endpointCofreeHom K K.X (fun i => 𝟙 (K.X i)) := by
+  calc
+    _ = (endpointCofreeAdjunction C c).homEquiv K ((forget C c).obj K) (𝟙 _) :=
+      ((endpointCofreeAdjunction C c).homEquiv_id K).symm
+    _ = _ :=
+      endpointCofreeAdjunction_homEquiv_apply C c K ((forget C c).obj K) (𝟙 _)
 
 /-- The first coefficient of the unit is the identity in every degree. -/
 @[reassoc (attr := simp)]
 theorem endpointCofreeUnit_fst (K : HomologicalComplex C c) (i : ι) :
     ((endpointCofreeUnit C c).app K).f i ≫
-        endpointCofreeProjection (c := c) K.X i = 𝟙 (K.X i) :=
-  endpointCofreeHom_fst K K.X (fun i => 𝟙 (K.X i)) i
+        endpointCofreeProjection (c := c) K.X i = 𝟙 (K.X i) := by
+  simpa only [endpointCofreeUnit_app, Functor.id_obj] using
+    endpointCofreeHom_fst K K.X (fun i => 𝟙 (K.X i)) i
 
 /-- Along an outgoing edge, the second coefficient of the unit, identified with
 the next source term, is the source differential. -/
@@ -147,8 +149,7 @@ theorem endpointCofreeUnit_snd_of_rel (K : HomologicalComplex C c)
     (((endpointCofreeUnit C c).app K).f i ≫
         endpointCofreeSecondProjection (c := c) K.X i) ≫
         (endpointCofreeNextTermIso K.X hij).hom = K.d i j := by
-  rw [endpointCofreeUnit_app]
-  simpa only [Category.comp_id] using
+  simpa only [endpointCofreeUnit_app, Functor.id_obj, Category.comp_id] using
     endpointCofreeHom_snd_of_rel K K.X (fun i => 𝟙 (K.X i)) hij
 
 /-- At an index without an outgoing edge, the second coefficient of the unit is
@@ -171,9 +172,11 @@ coefficient object Iᵢ. -/
 @[simp]
 theorem endpointCofreeCounit_app (I : GradedObject ι C) (i : ι) :
     ((endpointCofreeCounit C c).app I) i = endpointCofreeProjection (c := c) I i := by
-  change (𝟙 (endpointCofree (c := c) I)).f i ≫
-    endpointCofreeProjection (c := c) I i = endpointCofreeProjection (c := c) I i
-  simp only [HomologicalComplex.id_f, Category.id_comp]
+  have h := (endpointCofreeAdjunction C c).homEquiv_symm_id I
+  have h' := endpointCofreeAdjunction_homEquiv_symm_apply C c
+    ((endpointCofreeFunctor C c).obj I) I (𝟙 _)
+  simpa only [endpointCofreeFunctor, Functor.id_obj,
+    HomologicalComplex.id_f, Category.id_comp] using congrFun (h.symm.trans h') i
 
 /-- A cofree functor map followed by the first projection is the first projection
 followed by the corresponding coefficient map. -/
