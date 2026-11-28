@@ -10,7 +10,7 @@ The same paper proves the corresponding undecidability when the attacker observe
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -22,4 +22,4 @@ The proof first shows that reachability of a location is undecidable for discret
 
 ## Sources
 
-- Étienne André and Lydia Bakiri, "Opacity problems in multi-energy timed automata", Proceedings of the 41st ACM/SIGAPP Symposium on Applied Computing (SAC 2026), pp. 317–324, 2026, <https://doi.org/10.1145/3748522.3779881>; the definitions of Sections 2 and 3, the undecidability proposition for two energy variables in Section 5 ("Opacity problems for discrete METAs") and its proof in the appendix (two-counter machines and the reachability lemma) of arXiv:2512.04950v1, read at <https://arxiv.org/abs/2512.04950v1>.
+- Étienne André and Lydia Bakiri, "Opacity problems in multi-energy timed automata", Proceedings of the 41st ACM/SIGAPP Symposium on Applied Computing (SAC 2026), pp. 317–324, 2026, <https://doi.org/10.1145/3748522.3779881>; the definitions of Sections 2 and 3 (Definitions 3 and 4, ET- and EN-opacity), Proposition 2 in Section 5 ("Opacity problems for discrete METAs") with Theorems 1 and 2 (decidability for discrete positive METAs), and the proof of Proposition 2 in the appendix (two-counter machines and the reachability lemma, Lemma 1 in Section E.1.2) of arXiv:2512.04950v1, read at <https://arxiv.org/abs/2512.04950v1>.

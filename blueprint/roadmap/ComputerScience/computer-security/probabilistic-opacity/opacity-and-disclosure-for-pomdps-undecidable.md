@@ -26,6 +26,7 @@ For MDPs with perfect observation and secrets given as DPA, the value is computa
 - [Finite POMDPs](../../heuristic-search-and-planning/partially-observable-planning/finite-pomdps.md)
 - [Büchi acceptance condition](../../../TheoryOfComputation/omega-automata-and-games/emptiness-of-b-chi-automata/mem-language-iff.md)
 - [Nondeterministic parity automaton](../../../TheoryOfComputation/omega-automata-and-games/parity-automata/parity.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -9,6 +9,7 @@ The proof applies whether or not strategies are required to be finitely varying,
 ## Depends on
 
 - [Execution-time opacity control of timed automata](execution-time-opacity-control.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

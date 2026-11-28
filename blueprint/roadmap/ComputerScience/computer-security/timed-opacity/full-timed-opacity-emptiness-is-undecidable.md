@@ -7,6 +7,7 @@ It is undecidable whether some parameter valuation makes a parametric timed auto
 ## Depends on
 
 - [Timed opacity of parametric timed automata](timed-opacity-of-parametric-timed-automata.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

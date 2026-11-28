@@ -9,6 +9,7 @@ By the inter-reducibility of the variants for a fixed ring (Theorem 17 of the ar
 ## Depends on
 
 - [Orbit-finite systems of linear inequalities](orbit-finite-systems-of-linear-inequalities.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

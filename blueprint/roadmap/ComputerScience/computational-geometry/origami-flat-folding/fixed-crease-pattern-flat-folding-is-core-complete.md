@@ -4,12 +4,14 @@ There is one fixed tame infinite crease pattern on a square of paper such that d
 
 **Theorem (Eppstein).** There exists a fixed tame crease pattern $P$ on an open square of origami paper (with labeled creases, and also one with unlabeled creases) such that the following problem is undecidable and $\mathsf{coRE}$-complete: given a finite set $F$ of decisions about how to fold creases on the boundary of $P$, can $P$ be flat-folded consistently with $F$?
 
-The crease pattern is fixed; only the finite boundary specification $F$ is the input. $P$ consists of scaled copies of one finite crease pattern placed in the rectangles of a binary tiling of the square, so it has a finite description.
+The crease pattern is fixed; only the finite boundary specification $F$ is the input: a finite list of above–below relations between the layers of specified folds at the boundary of $P$ (the source uses them to fix the input tape of a universal Turing machine and to mark the top rectangle of the tiling as active). $P$ consists of scaled copies of one finite crease pattern placed in the rectangles of a binary tiling of the square, so it has a finite description.
 
 ## Depends on
 
 - [Flat foldings of crease patterns](flat-foldings-of-crease-patterns.md)
 - [The arithmetical class $\Pi_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 
@@ -21,4 +23,4 @@ Fix a universal Turing machine $\mathcal{U}$ that directly simulates other machi
 
 ## Sources
 
-- David Eppstein, "Computational Complexities of Folding", Journal of Information Processing 33, pp. 954–973, 2025, <https://doi.org/10.2197/ipsjjip.33.954>; Theorem 6 and Section 6 of arXiv:2410.07666v1, <https://arxiv.org/abs/2410.07666v1>.
+- David Eppstein, "Computational Complexities of Folding", Journal of Information Processing 33, pp. 954–973, 2025, <https://doi.org/10.2197/ipsjjip.33.954>; read in arXiv:2410.07666v1, <https://arxiv.org/abs/2410.07666v1>: Theorem 6 and Section 6 ("Infinite crease patterns"), in the numbering of that version.

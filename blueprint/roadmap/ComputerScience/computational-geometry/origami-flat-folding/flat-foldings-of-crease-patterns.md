@@ -22,4 +22,4 @@ Tameness is what makes infinite crease patterns tractable: a finite-length curve
 
 ## Sources
 
-- David Eppstein, "Computational Complexities of Folding", Journal of Information Processing 33, pp. 954–973, 2025, <https://doi.org/10.2197/ipsjjip.33.954>; Section 2 (local flat foldings, layerings, flat foldings and the uncrossed-layering lemma) and Section 6.1 (tame crease patterns) of arXiv:2410.07666v1, <https://arxiv.org/abs/2410.07666v1>.
+- David Eppstein, "Computational Complexities of Folding", Journal of Information Processing 33, pp. 954–973, 2025, <https://doi.org/10.2197/ipsjjip.33.954>; read in arXiv:2410.07666v1, <https://arxiv.org/abs/2410.07666v1>: Section 2 ("Preliminaries: Finite and infinite flat foldings": local flat foldings, layerings, flat foldings and uncrossed layerings) and Section 6.1 ("Fundamentals": tame crease patterns), in the numbering of that version.

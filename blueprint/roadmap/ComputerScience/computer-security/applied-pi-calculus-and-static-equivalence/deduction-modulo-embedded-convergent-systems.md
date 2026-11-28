@@ -13,6 +13,7 @@ The paper derives the same undecidability for its larger class of graph-embedded
 - [Frames and static equivalence](frames-and-static-equivalence.md)
 - [Equational theories and convergent subterm theories](equational-theories-and-convergent-subterm-theories.md)
 - [Term rewriting systems](../../../Logic/first-order-logic/automated-deduction/term-rewriting-systems.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

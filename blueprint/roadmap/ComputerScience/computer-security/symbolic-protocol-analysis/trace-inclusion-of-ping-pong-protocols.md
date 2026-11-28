@@ -4,7 +4,7 @@ For deterministic ping-pong protocols with an unbounded number of sessions, stan
 
 **Theorem (Chrétien, Cortier and Delaune).** For protocols of the class $C_{pp}$ of [ping-pong protocols with one message variable per rule](ping-pong-protocols-with-one-variable.md):
 
-1. it is undecidable, given two protocols $P$ and $Q$ in $C_{pp}$, whether $P \sqsubseteq Q$ (Theorem 3.6);
+1. it is undecidable, given two protocols $P$ and $Q$ in $C_{pp}$, whether $P$ is [trace included](trace-inclusion-and-trace-equivalence.md) in $Q$, $P \sqsubseteq Q$ (Theorem 3.6);
 2. it is undecidable, given three protocols $P$, $Q_1$, $Q_2$ in $C_{pp}$, whether $P$ is trace equivalent to $Q_1 + Q_2$, where $+$ is nondeterministic choice, which silently becomes $Q_1$ or $Q_2$ (Corollary 3.7).
 
 The protocols are the input; replication allows unboundedly many sessions. By contrast, trace equivalence of two protocols of $C_{pp}$ is decidable (Theorem 3.5), and the secrecy problem is decidable for this class.
@@ -12,6 +12,8 @@ The protocols are the input; replication allows unboundedly many sessions. By co
 ## Depends on
 
 - [Ping-pong protocols with one message variable per rule](ping-pong-protocols-with-one-variable.md)
+- [Trace inclusion and trace equivalence of security protocols](trace-inclusion-and-trace-equivalence.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

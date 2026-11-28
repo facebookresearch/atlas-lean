@@ -15,7 +15,8 @@ The automata, the secret and the observable alphabet are all part of the input.
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Timed Büchi automata and timed regular languages](../../../TheoryOfComputation/omega-automata-and-games/timed-automata/timed-buchi-automata.md)
 
 ## Proof depends on
 

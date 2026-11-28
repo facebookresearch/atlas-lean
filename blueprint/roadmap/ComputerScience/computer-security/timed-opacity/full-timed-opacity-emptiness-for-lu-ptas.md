@@ -7,6 +7,7 @@ Full timed opacity emptiness stays undecidable for L/U parametric timed automata
 ## Depends on
 
 - [Timed opacity of parametric timed automata](timed-opacity-of-parametric-timed-automata.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

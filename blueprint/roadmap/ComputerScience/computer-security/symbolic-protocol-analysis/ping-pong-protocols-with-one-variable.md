@@ -1,6 +1,6 @@
 # Ping-pong protocols with one message variable per rule
 
-Ping-pong protocols are replicated security protocols in which each rule receives one message, matches it against a pattern built from encryption and signature with at most one unknown message, and answers with a message built from that pattern and fresh randomness; trace inclusion asks whether an attacker can tell one protocol's runs from another's.
+Ping-pong protocols are replicated security protocols in which each rule receives one message, matches it against a pattern built from encryption and signature with at most one unknown message, and answers with a message built from that pattern and fresh randomness.
 
 **Terms.** Messages are terms over a sorted signature with sorts for random numbers, keys (symmetric, private, public) and messages, built from names (random numbers), constants and the randomized constructors $\mathrm{senc}(m, k, r)$, $\mathrm{aenc}(m, k, r)$ and $\mathrm{sign}(m, k, r)$, with destructors $\mathrm{sdec}$, $\mathrm{adec}$ and $\mathrm{check}$ and the rewrite rules $\mathrm{sdec}(\mathrm{senc}(x, k, z), k) \to x$, $\mathrm{adec}(\mathrm{aenc}(x, k, z), k^{-1}) \to x$, $\mathrm{check}(\mathrm{sign}(x, k, z), k^{-1}) \to x$. There is no pairing and no hash function. Names are split into those drawn by the attacker and those drawn by the participants.
 
@@ -14,7 +14,6 @@ $$
 
 where the names of each output term are among the freshly generated ones, and two branches on the same channel have input terms that are not unifiable after renaming (determinism).
 
-**Trace inclusion.** $P \sqsubseteq Q$ if for every trace $(\mathrm{tr}, \sigma)$ of $P$ there is a trace $(\mathrm{tr}', \sigma')$ of $Q$ with $\mathrm{tr} = \mathrm{tr}'$ and $\sigma$ statically equivalent to $\sigma'$ (no pair of recipes distinguishes the two frames by an equality test); $P$ and $Q$ are trace equivalent if $P \sqsubseteq Q$ and $Q \sqsubseteq P$.
 
 ## Depends on
 
@@ -26,7 +25,7 @@ None.
 
 ## Expansion
 
-The restrictions keep the secrecy problem decidable for this class with unboundedly many sessions, and the determinism condition makes trace equivalence of two $C_{pp}$ protocols decidable, by reduction to language equivalence of real-time generalized deterministic pushdown automata. Static equivalence is the notion of indistinguishability of attacker knowledge used throughout symbolic protocol analysis.
+The restrictions keep the secrecy problem decidable for this class with unboundedly many sessions, and the determinism condition makes trace equivalence of two $C_{pp}$ protocols decidable, by reduction to language equivalence of real-time generalized deterministic pushdown automata. Trace inclusion and trace equivalence of such protocols are defined on their own page.
 
 ## Sources
 
