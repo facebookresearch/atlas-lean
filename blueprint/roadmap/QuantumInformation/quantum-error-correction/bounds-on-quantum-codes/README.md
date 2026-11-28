@@ -11,6 +11,9 @@ violations for qubit codes of distance below $127$. For erasures, four qubits ar
 - [Good CSS codes exist](good-css-codes-exist.md)
 - [Degenerate codes and the quantum Hamming bound](degenerate-codes-and-the-quantum-hamming-bound.md)
 - [Four qubits are needed to correct one erasure](four-qubits-are-needed-to-correct-one-erasure.md)
+- [The quantum MacWilliams identity](quantum-macwilliams-identity.md)
+- [The greedy Gilbert–Varshamov lemma for code families](greedy-gilbert-varshamov-lemma-for-code-families.md)
+- [Counting weakly self-dual codes](counting-weakly-self-dual-codes.md)
 
 ## Related topics
 

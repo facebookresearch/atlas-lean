@@ -6,7 +6,7 @@ $$
 1 - 2k\exp\Big(-\frac{\ell\,\delta^{2\lambda}}{2}\Big) \le \delta(r_0, r_1) \le \big(\ell\,\delta^{\lambda}\big)^{k}.
 $$
 
-Consequently, for constants $0 \le \beta < \alpha^2 \le 1$ there are constants $m \ge 1$ and $b$ such that with $\lambda = m(\lfloor\log_2 k\rfloor + 1)$ and $\ell = 2^{b(\lfloor\log_2 k\rfloor + 1)}$ (both polynomial in $k$), every pair with $\delta \ge \alpha$ is mapped to a pair at distance at least $1 - 2^{-k}$ and every pair with $\delta \le \beta$ to a pair at distance at most $2^{-k}$.
+Consequently, for constants $0 \le \beta < \alpha^2 \le 1$ with $\alpha > 0$ there are constants $m \ge 1$ and $b$ such that with $\lambda = m(\lfloor\log_2 k\rfloor + 1)$ and $\ell = 2^{b(\lfloor\log_2 k\rfloor + 1)}$ (both polynomial in $k$), every pair with $\delta \ge \alpha$ is mapped to a pair at distance at least $1 - 2^{-k}$ and every pair with $\delta \le \beta$ to a pair at distance at most $2^{-k}$.
 
 ## Proof sketch
 
@@ -15,6 +15,7 @@ By the XOR lemma, $\delta(q_0, q_1)$ lies between the direct-product lower bound
 ## Depends on
 
 - [XOR construction of two distributions](xor-construction.md)
+- [Total variation distance between finite measures](../../convergence-of-measures/total-variation-distance/total-variation-dist.md)
 
 ## Proof depends on
 
