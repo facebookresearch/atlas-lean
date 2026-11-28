@@ -15255,6 +15255,7 @@
   "MathlibExt/Order/ScottContinuity/GraphModel": {"to": "Order/fixed-points-domain-theory", "title": "Scott's graph model"},
   "MathlibExt/Order/StrictTotalOrder": {"to": "Order/ordered-sets", "title": "Strict total orders"},
   "MathlibExt/Probability/AdditiveNoiseModelIdentifiability": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Additive noise models and causal identifiability"},
+  "MathlibExt/Probability/AffineMeansVariances": {"to": "Probability/moments", "title": "Means and variances under affine change of scale"},
   "MathlibExt/Probability/AzumaInequality": {"to": "Probability/concentration-inequalities", "title": "Azuma's inequality"},
   "MathlibExt/Probability/BSDE": {"to": "Probability/stochastic-calculus", "title": "Backward stochastic differential equations"},
   "MathlibExt/Probability/BackwardsMartingale": {"to": "Probability/martingales", "title": "Backwards martingales and Lévy's downward theorem"},
