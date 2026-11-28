@@ -21,8 +21,23 @@ import MathlibExt.NumberTheory.ModularForms.QParamProduct
 /-!
 # Two-dissections of reciprocal powers of the Euler product
 
-Splitting the square of the Jacobi theta series by parity gives the two-dissection of
-`1 / f₁⁴`. Squaring and cubing it gives the identities for `1 / f₁⁸` and `1 / f₁¹²`.
+Splitting the Jacobi theta series by parity gives the two-dissection of `1 / f₁²`; the
+analytic identity on `0 < |q| < 1` transfers to integer formal power series after clearing
+Euler-product denominators. Splitting the square of the theta series gives the two-dissection
+of `1 / f₁⁴`. Squaring and cubing it gives the identities for `1 / f₁⁸` and `1 / f₁¹²`.
+
+## References
+
+* S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility Properties for
+  Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, pp. 1–9, Lemma 1, eq. (40).
+* Bruce C. Berndt, *Ramanujan’s Notebooks: Part III*, Springer-Verlag, New York, 1991,
+  p. 40, Entry 25, the source cited for Lemma 1.
+* Manjil P. Saikia and James A. Sellers, *Generalizing Recent Results of Kathiravan, Majumdar,
+  Sangale, and Srinivas on `(ℓ, k)`-regular Partitions*, Journal of Integer Sequences 28 (2025),
+  Article 25.6.1, Lemma 10.
+* The reciprocal-square proof reuses the theta evaluations `theta_sum` and `shifted_sum`
+  and the transfer lemmas `represents_euler` and `Represents.eq_of_eval` of the reciprocal
+  fourth-power proof in this module.
 -/
 
 open PowerSeries
@@ -217,18 +232,7 @@ private lemma Represents.pow {F : ℤ⟦X⟧} {f : ℂ → ℂ} (hf : Represents
 
 private lemma represents_euler (k : ℕ) (hk : k ≠ 0) :
     Represents (qEulerProduct k) (fun q ↦ eulerFunction (q ^ k)) := by
-  have cont : Continuous (expand k hk : ℤ⟦X⟧ → ℤ⟦X⟧) := by
-    rw [continuous_iff_continuousAt]
-    intro F
-    rw [ContinuousAt, WithPiTopology.tendsto_iff_coeff_tendsto]
-    intro n
-    by_cases hd : k ∣ n
-    · simpa [coeff_expand, hd] using (WithPiTopology.continuous_coeff ℤ (n / k)).tendsto F
-    · simp [coeff_expand, hd]
-  have prod := (WithPiTopology.hasProd_one_sub_X_pow ℤ).map (expand k hk) cont
-  have eqn : qEulerProduct k = expand k hk (pentagonalSeries ℤ) := by
-    simpa [qEulerProduct, Function.comp_def, pow_mul] using prod.tprod_eq
-  rw [eqn]
+  rw [qEulerProduct_eq_expand k hk]
   intro τ
   have lt1 : ‖𝕢 τ‖ < 1 := Periodic.norm_qParam_lt_one one_pos τ.im_pos
   have hk1 : ‖𝕢 τ ^ k‖ < 1 := by
@@ -281,9 +285,74 @@ private lemma fourth_power :
   have hcorr := (hlinear.mul (h4.pow 2)).mul (h8.pow 8)
   exact ((h2.pow 14).mul (h8.pow 4)).eq_of_eval (hmain.add hcorr) (fun _ ↦ analytic_dissection)
 
+private lemma analytic_reciprocal_square {q : ℂ} (hq : q ≠ 0) (h : ‖q‖ < 1) :
+    eulerFunction (q ^ 2) ^ 5 * eulerFunction (q ^ 8) * eulerFunction (q ^ 16) ^ 2 =
+      eulerFunction q ^ 2 * eulerFunction (q ^ 8) ^ 6 +
+        2 * q * eulerFunction q ^ 2 * eulerFunction (q ^ 4) ^ 2 * eulerFunction (q ^ 16) ^ 4 := by
+  have h4 : ‖q ^ 4‖ < 1 := by
+    rw [norm_pow]
+    exact pow_lt_one₀ (norm_nonneg q) h (by decide)
+  have hq4 := pow_ne_zero 4 hq
+  let e : ℤ ⊕ ℤ ≃ ℤ :=
+    { toFun := Sum.elim (fun i ↦ 2 * i) (fun i ↦ 2 * i + 1)
+      invFun := fun n ↦ if n % 2 = 0 then .inl (n / 2) else .inr (n / 2)
+      left_inv := by
+        rintro (i | i) <;> dsimp <;> split <;> first | omega | (congr 1; omega)
+      right_inv := by
+        intro n
+        dsimp
+        split <;> dsimp <;> omega }
+  -- The odd square is `4 * (i * i + i) + 1`, hence the factor `q`.
+  let term (n : ℤ) := q ^ (n * n)
+  have he := (theta_sum h4).congr_fun fun i ↦ show term (e (.inl i)) = _ by
+    change q ^ ((2 * i) * (2 * i)) = (q ^ (4 : ℕ)) ^ (i * i)
+    rw [← zpow_natCast q 4, ← zpow_mul]
+    congr 1
+    ring
+  have ho := ((shifted_sum hq4 h4).mul_left q).congr_fun fun i ↦
+    show term (e (.inr i)) = _ by
+      change q ^ ((2 * i + 1) * (2 * i + 1)) = q * (q ^ (4 : ℕ)) ^ (i * i + i)
+      rw [← zpow_natCast q 4, ← zpow_mul, ← zpow_one_add₀ hq]
+      congr 1
+      ring
+  have hid := (theta_sum h).unique (e.hasSum_iff.mp (HasSum.sum he ho))
+  have h2ne := euler_ne (norm_sq_lt h)
+  have h4ne := euler_ne h4
+  have h8ne := euler_ne (norm_sq_lt h4)
+  have h16ne := euler_ne (norm_sq_lt (norm_sq_lt h4))
+  simp only [← pow_mul] at hid h8ne h16ne
+  norm_num1 at hid h8ne h16ne
+  field_simp [euler_ne h, h2ne, h4ne, h8ne, h16ne] at hid
+  linear_combination hid
+
 end one_div_f1_pow_four_eight_twelve_two_dissection
 
 local notation "𝔣" => qEulerProduct
+
+open one_div_f1_pow_four_eight_twelve_two_dissection in
+/-- **The 2-dissection of $1/f_1^2$.** For $k \ge 1$ let
+$f_k = \prod_{m \ge 1} (1 - q^{km})$, an integer power series in $q$. Then
+$$f_2^5 f_8 f_{16}^2 = f_1^2 f_8^6 + 2 q f_1^2 f_4^2 f_{16}^4.$$
+Dividing by $f_1^2 f_2^5 f_8 f_{16}^2$ gives
+$\frac{1}{f_1^2} = \frac{f_8^5}{f_2^5 f_{16}^2} + 2q \frac{f_4^2 f_{16}^2}{f_2^5 f_8}$.
+
+Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
+Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Lemma 1, eq. (40)
+(`integers-2024-A80-lem-1`). -/
+public theorem one_div_f1_sq_two_dissection :
+    𝔣 2 ^ 5 * 𝔣 8 * 𝔣 16 ^ 2 =
+      𝔣 1 ^ 2 * 𝔣 8 ^ 6 + 2 * X * 𝔣 1 ^ 2 * 𝔣 4 ^ 2 * 𝔣 16 ^ 4 := by
+  have h1 := represents_euler 1 one_ne_zero
+  simp only [pow_one] at h1
+  have h2 := represents_euler 2 two_ne_zero
+  have h4 := represents_euler 4 (by decide)
+  have h8 := represents_euler 8 (by decide)
+  have h16 := represents_euler 16 (by decide)
+  have hc : Represents 2 (fun _ ↦ 2) := by simpa using represents_const 2
+  have hleft := ((h2.pow 5).mul h8).mul (h16.pow 2)
+  have hmain := (h1.pow 2).mul (h8.pow 6)
+  have hcorr := (((hc.mul represents_X).mul (h1.pow 2)).mul (h4.pow 2)).mul (h16.pow 4)
+  exact hleft.eq_of_eval (hmain.add hcorr) (fun _ ↦ analytic_reciprocal_square)
 
 /-- **The 2-dissections of $1/f_1^4$, $1/f_1^8$ and $1/f_1^{12}$.** Write
 $f_k = (q^k; q^k)_\infty$ for the Euler products. In the ring of integer power series in $q$,

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
+public import Mathlib.RingTheory.PowerSeries.Expand
 
 /-!
 # The Euler products `f_k = (q^k; q^k)_∞`
@@ -16,8 +17,12 @@ public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 The integer power series `f_k = ∏_{m ≥ 1} (1 - q^{k m})`, the standard shorthand of partition
 congruence papers, as an infinite product in the coefficientwise topology.
 
-Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
-Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 2.
+## References
+
+* James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,
+  Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 2 (Euler product notation).
+* The proof of `qEulerProduct_eq_expand` is extracted from `represents_euler` in
+  `MathlibExt.Combinatorics.Enumerative.Partition.ReciprocalEulerDissection`.
 -/
 
 open PowerSeries
@@ -45,6 +50,21 @@ Journal of Integer Sequences 27 (2024), Article 24.4.7, Section 2. -/
 theorem qEulerProduct_one : qEulerProduct 1 = pentagonalSeries ℤ := by
   simp only [qEulerProduct, one_mul]
   exact WithPiTopology.tprod_one_sub_X_pow ℤ
+
+/-- **Pentagonal series expansion of an Euler product.** For `k ≠ 0`, the Euler product
+$f_k$ is obtained from Euler's pentagonal series by substituting $q^k$ for $q$. -/
+theorem qEulerProduct_eq_expand (k : ℕ) (hk : k ≠ 0) :
+    qEulerProduct k = expand k hk (pentagonalSeries ℤ) := by
+  have cont : Continuous (expand k hk : ℤ⟦X⟧ → ℤ⟦X⟧) := by
+    rw [continuous_iff_continuousAt]
+    intro F
+    rw [ContinuousAt, WithPiTopology.tendsto_iff_coeff_tendsto]
+    intro n
+    by_cases hd : k ∣ n
+    · simpa [coeff_expand, hd] using (WithPiTopology.continuous_coeff ℤ (n / k)).tendsto F
+    · simp [coeff_expand, hd]
+  have prod := (WithPiTopology.hasProd_one_sub_X_pow ℤ).map (expand k hk) cont
+  simpa [qEulerProduct, Function.comp_def, pow_mul] using prod.tprod_eq
 
 /-- **Constant term of the Euler products.** For every natural number $k \ge 1$, the integer power
 series $f_k = \prod_{m \ge 1} (1 - q^{km})$ has constant coefficient $1$.

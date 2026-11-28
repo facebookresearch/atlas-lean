@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.Partition.OvercubicPartitionTriples
+public import MathlibExt.Combinatorics.Enumerative.Partition.ReciprocalEulerDissection
 
 /-!
 # Congruences for overcubic partition triples
@@ -46,19 +47,6 @@ Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Le
 public theorem_wanted f1_sq_two_dissection :
     𝔣 1 ^ 2 * 𝔣 4 ^ 2 * 𝔣 8 * 𝔣 16 ^ 2 =
       𝔣 2 * 𝔣 8 ^ 6 - 2 * X * 𝔣 2 * 𝔣 4 ^ 2 * 𝔣 16 ^ 4
-
-/-- **The 2-dissection of $1/f_1^2$.** For $k \ge 1$ let
-$f_k = \prod_{m \ge 1} (1 - q^{km})$, an integer power series in $q$. Then
-$$f_2^5 f_8 f_{16}^2 = f_1^2 f_8^6 + 2 q f_1^2 f_4^2 f_{16}^4.$$
-Dividing by $f_1^2 f_2^5 f_8 f_{16}^2$ gives
-$\frac{1}{f_1^2} = \frac{f_8^5}{f_2^5 f_{16}^2} + 2q \frac{f_4^2 f_{16}^2}{f_2^5 f_8}$.
-
-Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
-Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Lemma 1, eq. (40)
-(`integers-2024-A80-lem-1`). -/
-public theorem_wanted one_div_f1_sq_two_dissection :
-    𝔣 2 ^ 5 * 𝔣 8 * 𝔣 16 ^ 2 =
-      𝔣 1 ^ 2 * 𝔣 8 ^ 6 + 2 * X * 𝔣 1 ^ 2 * 𝔣 4 ^ 2 * 𝔣 16 ^ 4
 
 /-- **The 3-dissection of $f_1^3$.** For $k \ge 1$ let $f_k = \prod_{m \ge 1} (1 - q^{km})$, an
 integer power series in $q$. Then
