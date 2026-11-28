@@ -16,7 +16,9 @@ public import Domains.Biology.PopulationGenetics.MultispeciesCoalescentSitePatte
 The classification of sites into patterns, the pattern probabilities on a gene tree at zero
 ages and their normalization, the gene-tree probabilities and total mass of the density at Zhu
 and Yang's parameter values, Theorem 3 in the page's notation for `S₁ = ((A, B), C)`, and isml
-on two count vectors, one of them Zhu and Yang's example `(4, 13, 12, 11, 50)`.
+on two count vectors. One of them is Zhu and Yang's extreme-divergence example
+`(4, 13, 12, 11, 50)`: no isml estimate exists for it, but `S₁` still beats each other tree at
+every parameter value.
 -/
 
 @[expose] public section
@@ -93,7 +95,7 @@ example (p : Params) :
   ⟨(isml_selects_majority_site_pattern .ab).1 p .bc (by decide),
     (isml_selects_majority_site_pattern .ab).2.1 p .bc .ca (by decide) (by decide)⟩
 
-/-- Zhu and Yang's counts `(x₀, …, x₄) = (4, 13, 12, 11, 50)`. -/
+/-- Zhu and Yang's extreme-divergence counts `(x₀, …, x₄) = (4, 13, 12, 11, 50)`. -/
 def zyCounts : SitePattern → ℕ
   | .xxx => 4
   | .xxy => 13
@@ -101,12 +103,13 @@ def zyCounts : SitePattern → ℕ
   | .xyx => 11
   | .xyz => 50
 
-/-- Part 2: with `x₁ = 13 > max (12, 11)`, `S₁` beats `S₂` at every parameter value and every
-isml estimate is `S₁`. -/
-example : (∀ p, ismlLikelihood zyCounts .bc p < ismlLikelihood zyCounts .ab p) ∧
-    ∀ S p, IsIsmlEstimate zyCounts S p → S = .ab := by
-  obtain ⟨h, h'⟩ := (isml_selects_majority_site_pattern .ab).2.2 zyCounts (by decide)
-  exact ⟨fun p => h p .bc (by decide), h'⟩
+/-- Part 2 on Zhu and Yang's extreme-divergence counts: with `x₁ = 13 > max (12, 11)`, `S₁`
+beats `S₂` and `S₃` at every parameter value. No isml estimate exists for these counts: their
+`xyz` share `50 / 90` exceeds `3 / 8`, which every gene tree's `xyz` probability stays below, so
+the likelihood only approaches its supremum as the divergence times grow. -/
+example (p : Params) : ismlLikelihood zyCounts .bc p < ismlLikelihood zyCounts .ab p ∧
+    ismlLikelihood zyCounts .ca p < ismlLikelihood zyCounts .ab p :=
+  ⟨ismlLikelihood_lt (by decide) p (by decide), ismlLikelihood_lt (by decide) p (by decide)⟩
 
 /-- The symmetric case: when `xyx` is the most frequent of the three patterns in which two
 sequences agree, every isml estimate is `S₃ = ((C, A), B)`. -/

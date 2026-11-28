@@ -215,7 +215,8 @@ def ismlLikelihood (x : SitePattern → ℕ) (S : RootedTriple) (p : Params) : �
 
 /-- The species tree `S` with parameters `p` is an *isml estimate* for the pooled site-pattern
 counts `x`: it maximizes the independent-sites likelihood over the three species trees and
-all their parameters. -/
+all their parameters. An estimate need not exist, as the likelihood may only approach its
+supremum, for example as the divergence times grow. -/
 def IsIsmlEstimate (x : SitePattern → ℕ) (S : RootedTriple) (p : Params) : Prop :=
   ∀ S' p', ismlLikelihood x S' p' ≤ ismlLikelihood x S p
 
