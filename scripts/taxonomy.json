@@ -1446,6 +1446,7 @@
   "CSLibExt/Bioinformatics/Assembly/Omnitig": {"to": "Biology/bioinformatics", "title": "Omnitigs and safe walks in genome assembly"},
   "CSLibExt/Bioinformatics/Clustering/OptimalLeafOrdering": {"to": "Biology/bioinformatics", "title": "Optimal leaf ordering of dendrograms"},
   "CSLibExt/Bioinformatics/CollinearChaining": {"to": "Biology/bioinformatics", "title": "Collinear block detection"},
+  "CSLibExt/Bioinformatics/Filtering/QGramLemma": {"to": "Biology/bioinformatics", "title": "Bioinformatics"},
   "CSLibExt/Bioinformatics/GeneNetworks/Aracne": {"to": "Biology/bioinformatics", "title": "ARACNE gene network reconstruction"},
   "CSLibExt/Bioinformatics/HMM/PairHMM": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Pair hidden Markov models"},
   "CSLibExt/Bioinformatics/HMM/ProfileHMM": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Profile hidden Markov models"},
