@@ -31,7 +31,7 @@ The conditional sub-Gaussian condition implies $\mathbb{E}[\eta_t \mid \mathcal{
 
 ## Proof depends on
 
-- [Ville's maximal inequality](../../../../Probability/not-yet-classified/part-15/ville/ville-maximal-ineq.md)
+- [Ville's maximal inequality](../../../../Probability/hypothesis-testing/sequential-tests-and-quickest-change-detection/anytime-valid-confidence-sequences/ville/ville-maximal-ineq.md)
 
 ## Expansion
 
