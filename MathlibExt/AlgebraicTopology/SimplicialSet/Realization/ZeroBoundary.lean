@@ -76,7 +76,8 @@ homeomorphic to |Δ[0]| by the full-subspace homeomorphism. -/
 noncomputable def realizedBoundaryZeroComplSubspaceHomeo :
     (TopCat.of ↥((Set.range (SSet.toTop.map (SSet.boundary.{u} (0 : ℕ)).ι).hom)ᶜ)) ≃ₜ
       SSet.toTop.obj (Δ[0] : SSet.{u}) :=
-  (Homeomorph.setCongr realizedBoundaryZero_compl_range_univ).trans (Homeomorph.Set.univ _)
+  (Homeomorph.setCongr (by
+    rw [realizedBoundaryZero_range_empty, Set.compl_empty])).trans (Homeomorph.Set.univ _)
 
 /-- Isomorphism from the ambient zero-simplex to its boundary complement.
 

@@ -91,19 +91,15 @@ noncomputable def baseChange (g : B' ⟶ B) (a : FixedFiberGauge B F) :
           hom_inv_id := by
             apply CartesianMonoidalCategory.hom_ext
             · simp [hom, inv]
-            · change hom ≫
-                  (reindex ≫ a.e.inv ≫
-                    CartesianMonoidalCategory.snd B F) =
-                CartesianMonoidalCategory.snd B' F
+            · simp only [Category.assoc, Category.id_comp, inv,
+                CartesianMonoidalCategory.lift_snd]
               rw [← Category.assoc, hom_reindex]
               simp [Category.assoc, reindex]
           inv_hom_id := by
             apply CartesianMonoidalCategory.hom_ext
             · simp [hom, inv]
-            · change inv ≫
-                  (reindex ≫ a.e.hom ≫
-                    CartesianMonoidalCategory.snd B F) =
-                CartesianMonoidalCategory.snd B' F
+            · simp only [Category.assoc, Category.id_comp, hom,
+                CartesianMonoidalCategory.lift_snd]
               rw [← Category.assoc, inv_reindex]
               simp [Category.assoc, reindex] }
       hom_fst := by simp [hom] }
@@ -189,10 +185,9 @@ theorem productIso_inv (h : TrivialBundleWithFiber F p) :
 presentation of the same map `p`, obtained by composing the chart of `h` with `a`. -/
 noncomputable def gauge (h : TrivialBundleWithFiber F p)
     (a : FixedFiberGauge B F) : TrivialBundleWithFiber F p := by
-  exact ofIso (h.productIso ≪≫ a.e) (by
-      change CartesianMonoidalCategory.lift p h.r ≫
-        (a.e.hom ≫ CartesianMonoidalCategory.fst B F) = p
-      rw [a.hom_fst, CartesianMonoidalCategory.lift_fst])
+  exact ofIso (p' := CartesianMonoidalCategory.fst B F) (h.productIso ≪≫ a.e) (by
+      simp only [Iso.trans_hom, productIso_hom, Category.assoc, a.hom_fst,
+        CartesianMonoidalCategory.lift_fst])
     { r := CartesianMonoidalCategory.snd B F
       isLimit := CartesianMonoidalCategory.tensorProductIsBinaryProduct B F }
 
@@ -225,17 +220,10 @@ noncomputable def transitionGauge (h₀ h₁ : TrivialBundleWithFiber F p) :
   exact
     { e := h₁.productIso.symm ≪≫ h₀.productIso
       hom_fst := by
-        change BinaryFan.IsLimit.lift h₁.isLimit
-            (CartesianMonoidalCategory.fst B F)
-            (CartesianMonoidalCategory.snd B F) ≫
-          (CartesianMonoidalCategory.lift p h₀.r ≫
-            CartesianMonoidalCategory.fst B F) =
-              CartesianMonoidalCategory.fst B F
-        rw [CartesianMonoidalCategory.lift_fst]
-        simpa only [BinaryFan.mk_fst] using
-          BinaryFan.IsLimit.lift_fst h₁.isLimit
-            (CartesianMonoidalCategory.fst B F)
-            (CartesianMonoidalCategory.snd B F) }
+        simp only [Iso.trans_hom, Iso.symm_hom, productIso_hom, productIso_inv,
+          Category.assoc, CartesianMonoidalCategory.lift_fst]
+        simpa only [BinaryFan.mk_fst] using BinaryFan.IsLimit.lift_fst h₁.isLimit
+          (CartesianMonoidalCategory.fst B F) (CartesianMonoidalCategory.snd B F) }
 
 /-- For two fixed-fiber product presentations `h₀`, `h₁` of `p : E → B`, the
 forward transition gauge is exactly the inverse chart `B × F → E` of `h₁`
@@ -247,7 +235,7 @@ theorem transitionGauge_hom (h₀ h₁ : TrivialBundleWithFiber F p) :
           (CartesianMonoidalCategory.fst B F)
           (CartesianMonoidalCategory.snd B F) ≫
         CartesianMonoidalCategory.lift p h₀.r := by
-  rfl
+  simp only [transitionGauge, Iso.trans_hom, Iso.symm_hom, productIso_hom, productIso_inv]
 
 /-- For product presentations `h₀`, `h₁` of the same morphism `p : E → B`
 with fixed fiber `F`, applying their transition gauge to `h₁` gives exactly

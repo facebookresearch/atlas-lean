@@ -11,6 +11,7 @@ module
 
 public import MathlibExt.Topology.Category.TopCat.Subspace
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
+public import Mathlib.Topology.Homeomorph.Lemmas
 
 /-! # Preimage subspaces and pullback squares
 
