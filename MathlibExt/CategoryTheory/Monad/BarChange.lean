@@ -26,6 +26,10 @@ The bar maps preserve identity and composition through the canonical isomorphism
 and composite module restriction. They are natural, covariantly in both module variables. The
 three categories may have independent object and morphism universes; T and S act on the same
 base category C.
+
+The functor on bar triples and its functor-valued left input are described in J. P. May,
+*The Geometry of Iterated Loop Spaces*, Lecture Notes in Mathematics 271, Springer, 1972,
+Chapter 9, Construction 9.6 and Remark 9.12, <https://doi.org/10.1007/BFb0067491>.
 -/
 
 @[expose] public section
@@ -59,8 +63,8 @@ lemma monadPowHom_zero_app {T S : Monad C} (h : T ⟶ S) (X : C) :
     (monadPowHom h 0).app X = 𝟙 X := rfl
 
 /-- Let h : T → S be a monad morphism on a category C, n ∈ ℕ, and X ∈ C. The power comparison
-satisfies h^{n+1}_X = h^n_{T(X)} ≫ S^n(h_X). The first map compares the n inner powers at
-T(X), and the second applies S^n to the remaining component h_X. -/
+satisfies h^{n+1}_X = h^n_{T(X)} ≫ S^n(h_X). The first map compares the outer n factors at
+T(X), and the second applies S^n to the innermost component h_X. -/
 @[simp]
 lemma monadPowHom_succ_app {T S : Monad C} (h : T ⟶ S) (n : ℕ) (X : C) :
     (monadPowHom h (n + 1)).app X =
@@ -82,20 +86,6 @@ lemma monadPowHom_succ_app' {T S : Monad C} (h : T ⟶ S) (n : ℕ) (X : C) :
           monadPowHom_succ_app h n X
     _ = (monadPow T n).map (h.app X) ≫ (monadPowHom h n).app (S.obj X) := by
       rw [nat]
-
-@[simp]
-lemma monadPowHom_app_naturality {T S : Monad C} (h : T ⟶ S) (n : ℕ)
-    {X Y : C} (f : X ⟶ Y) :
-    (monadPow T n).map f ≫ (monadPowHom h n).app Y =
-      (monadPowHom h n).app X ≫ (monadPow S n).map f :=
-  (monadPowHom h n).naturality f
-
-@[simp]
-lemma monadPowHom_naturality_assoc {T S : Monad C} (h : T ⟶ S) (n : ℕ)
-    {X Y Z : C} (f : X ⟶ Y) (g : (monadPow S n).obj Y ⟶ Z) :
-    (monadPow T n).map f ≫ (monadPowHom h n).app Y ≫ g =
-      (monadPowHom h n).app X ≫ (monadPow S n).map f ≫ g := by
-  rw [← Category.assoc, monadPowHom_app_naturality, Category.assoc]
 
 /-- For a monad T on a category C and n ∈ ℕ, the power comparison induced by the identity monad
 morphism equals id_{T^n}. Thus monadPowHom(𝟙_T,n) is the identity natural transformation of
@@ -180,7 +170,7 @@ theorem monadPowHom_etaAtPos_app (h : T ⟶ S) (n : ℕ) (i : Fin (n + 1)) (X : 
           (monadPowHom h (n + 1)).app (T.obj X) =
           (monadPowHom h (n + 1)).app X ≫
             (monadPow S (n + 1)).map (T.η.app X) :=
-        monadPowHom_app_naturality h (n + 1) (T.η.app X)
+        (monadPowHom h (n + 1)).naturality (T.η.app X)
       calc
         etaAtPos T (n + 1) ⟨0, hi0⟩ X ≫ (monadPowHom h (n + 2)).app X
             = (monadPow T (n + 1)).map (T.η.app X) ≫
@@ -298,12 +288,12 @@ theorem monadPowHom_muAtPos_app (h : T ⟶ S) (n : ℕ) (i : Fin n) (X : C) :
           (monadPowHom h n).app (T.obj X) =
           (monadPowHom h n).app (T.obj (T.obj X)) ≫
             (monadPow S n).map (T.μ.app X) :=
-        monadPowHom_app_naturality h n (T.μ.app X)
+        (monadPowHom h n).naturality (T.μ.app X)
       have natPowTmap : (monadPow T n).map (T.map (h.app X)) ≫
           (monadPowHom h n).app (T.obj (S.obj X)) =
           (monadPowHom h n).app (T.obj (T.obj X)) ≫
             (monadPow S n).map (T.map (h.app X)) :=
-        monadPowHom_app_naturality h n (T.map (h.app X))
+        (monadPowHom h n).naturality (T.map (h.app X))
       have hComp : (monadPow T (n + 1)).map (h.app X) =
           (monadPow T n).map (T.map (h.app X)) := rfl
       calc
@@ -439,30 +429,18 @@ variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 variable {T S : Monad C}
 
+/-- A monad morphism induces the degreewise comparison of two-sided bars.
+
+For `h : T ⟶ S`, a right `S`-module `R : C ⥤ D` and a left `S`-module `L : A ⥤ C`, the map
+in degree `n` is the double whiskering of `monadPowHom h n`. Its component at `a` is
+`R(h^n_{L(a)})`, from the bar of the restricted modules to the original bar. -/
 noncomputable def barChangeMap {T S : Monad C} (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) (n : ℕ) :
     barObj T ((rightModuleRestrictAlongHom (D := D) h).obj R)
       ((leftModuleRestrictAlongHom (A := A) h).obj L) n ⟶
-      barObj S R L n where
-  app a := R.functor.map ((monadPowHom h n).app (L.functor.obj a))
-  naturality a b f := by
-    have h_pow_nat :
-        (monadPow T n).map (L.functor.map f) ≫
-          (monadPowHom h n).app (L.functor.obj b) =
-        (monadPowHom h n).app (L.functor.obj a) ≫ (monadPow S n).map (L.functor.map f) :=
-      (monadPowHom h n).naturality (L.functor.map f)
-    calc
-      R.functor.map ((monadPow T n).map (L.functor.map f)) ≫
-          R.functor.map ((monadPowHom h n).app (L.functor.obj b))
-          = R.functor.map ((monadPow T n).map (L.functor.map f) ≫
-              (monadPowHom h n).app (L.functor.obj b)) := by
-            rw [← R.functor.map_comp]
-      _ = R.functor.map ((monadPowHom h n).app (L.functor.obj a) ≫
-              (monadPow S n).map (L.functor.map f)) := by
-            rw [h_pow_nat]
-      _ = R.functor.map ((monadPowHom h n).app (L.functor.obj a)) ≫
-              R.functor.map ((monadPow S n).map (L.functor.map f)) := by
-            rw [R.functor.map_comp]
+      barObj S R L n :=
+  Functor.whiskerRight
+    (Functor.whiskerLeft L.functor (monadPowHom h n)) R.functor
 
 @[simp]
 lemma barChangeMap_app {T S : Monad C} {D : Type u₂} [Category.{v₂} D] {A : Type u₃}
@@ -471,7 +449,7 @@ lemma barChangeMap_app {T S : Monad C} {D : Type u₂} [Category.{v₂} D] {A : 
     (barChangeMap (D := D) (A := A) h R L n).app a =
       R.functor.map ((monadPowHom h n).app (L.functor.obj a)) := rfl
 
-/-!
+/--
 For a monad morphism h : T → S on C, a right S-module R : C → D, and a left S-module L : A →
 C, the maps c_n=R(h^n_{L(-)}) commute with every bar degeneracy. Thus c_n ≫ s_i^S = s_i^T ≫
 c_{n+1} for i ∈ Fin(n+1), where the source actions are restricted along h and s_i inserts a
@@ -503,7 +481,7 @@ theorem barChangeMap_barDegeneracy (h : T ⟶ S) (R : RightModule S D)
             R.functor.map ((monadPowHom h (n + 1)).app (L.functor.obj a)) := by
           rw [R.functor.map_comp]
 
-/-!
+/--
 For h : T → S and S-modules R,L, the degreewise bar-change maps commute with each middle face.
 These faces multiply two adjacent monad factors, and the identity is the compatibility of h^n
 with the multiplication insertions of T and S.
@@ -571,7 +549,7 @@ theorem barChangeMap_barFace_middle (h : T ⟶ S) (R : RightModule S D)
             R.functor.map ((monadPowHom h n).app (L.functor.obj a)) := by
           rw [R.functor.map_comp]
 
-/-!
+/--
 Let h : T → S be a monad morphism and R : C → D a right S-module. For n ∈ ℕ and X ∈ C,
 R(h^{n+1}_X) followed by the iterated S-action equals the iterated action of the restricted
 T-module followed by R(h^n_X). This is the right-action compatibility used at the first bar
@@ -667,7 +645,7 @@ theorem rightActionPow_restrictAlongHom {T S : Monad C} {D : Type u₂} [Categor
     exact step1.trans (step2.trans (step3.trans (step4.trans
       (step5.trans (step6.trans step7')))))
 
-/-!
+/--
 The bar-change map commutes with the right endpoint face d_0. For every n, c_{n+1} ≫ d_0^S =
 d_0^T ≫ c_n, where the source right-module action is restricted along the monad morphism and c
 is the degreewise map induced by h^n.
@@ -685,7 +663,7 @@ theorem barChangeMap_barFace_zero (h : T ⟶ S) (R : RightModule S D)
   simp only [barChangeMap_app, NatTrans.comp_app, barFace_right]
   exact rightActionPow_restrictAlongHom (D := D) h R n (L.functor.obj a)
 
-/-!
+/--
 The bar-change map commutes with the left endpoint face d_{n+1}. For every n, c_{n+1} ≫
 d_{n+1}^S = d_{n+1}^T ≫ c_n, using the left S-module action and its restriction along h : T →
 S.
@@ -732,7 +710,7 @@ theorem barChangeMap_barFace_last (h : T ⟶ S) (R : RightModule S D)
     _ = R.functor.map ((monadPow T n).map (h.app (L.functor.obj a) ≫ L.action.app a)) ≫
           R.functor.map ((monadPowHom h n).app (L.functor.obj a)) := by rw [R.functor.map_comp]
 
-/-!
+/--
 For a monad morphism h : T → S and right and left S-modules R,L, the degreewise change maps
 satisfy c_{n+1} ≫ d_j^S = d_j^T ≫ c_n for every n ∈ ℕ and j ∈ Fin(n+2). This includes the two
 endpoint faces and every middle multiplication face.
@@ -767,7 +745,7 @@ theorem barChangeMap_barFace (h : T ⟶ S) (R : RightModule S D)
       rw [hj_eq]
       exact barChangeMap_barFace_middle h R L n k
 
-/-!
+/--
 The degree maps c_n=R(h^n_{L(-)}) and their face and degeneracy equations define a morphism of
 two-sided bar simplicial data from the T-bar of the restricted modules to the S-bar of R,L.
 Passing to simplicial objects gives the same degreewise maps.
@@ -824,6 +802,7 @@ theorem barChangeHom_app_op_mk (h : T ⟶ S) (R : RightModule S D)
       barChangeMap (D := D) (A := A) h R L n :=
   rfl
 
+@[simp]
 theorem barChangeHom_app (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) (Δ : SimplexCategoryᵒᵖ) :
     (barChangeHom (D := D) (A := A) h R L).app Δ =
@@ -832,32 +811,19 @@ theorem barChangeHom_app (h : T ⟶ S) (R : RightModule S D)
   rfl
 
 @[simp]
-theorem barChangeHom_app_len (h : T ⟶ S) (R : RightModule S D)
-    (L : LeftModule A S) (Δ : SimplexCategoryᵒᵖ) :
-    (barChangeHom (D := D) (A := A) h R L).app Δ =
-      barChangeMap (D := D) (A := A) h R L (Opposite.unop Δ).len :=
-  barChangeHom_app (D := D) (A := A) h R L Δ
-
-@[simp]
 theorem barChangeHom_app_app_op_mk (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) (n : ℕ) (a : A) :
     ((barChangeHom (D := D) (A := A) h R L).app (Opposite.op (SimplexCategory.mk n))).app a =
       R.functor.map ((monadPowHom h n).app (L.functor.obj a)) :=
   rfl
 
+@[simp]
 theorem barChangeHom_app_app (h : T ⟶ S) (R : RightModule S D)
     (L : LeftModule A S) (Δ : SimplexCategoryᵒᵖ) (a : A) :
     ((barChangeHom (D := D) (A := A) h R L).app Δ).app a =
       R.functor.map ((monadPowHom h (Opposite.unop Δ).len).app (L.functor.obj a)) := by
   obtain ⟨Δ⟩ := Δ
   rfl
-
-@[simp]
-theorem barChangeHom_app_app_len (h : T ⟶ S) (R : RightModule S D)
-    (L : LeftModule A S) (Δ : SimplexCategoryᵒᵖ) (a : A) :
-    ((barChangeHom (D := D) (A := A) h R L).app Δ).app a =
-      R.functor.map ((monadPowHom h (Opposite.unop Δ).len).app (L.functor.obj a)) :=
-  barChangeHom_app_app (D := D) (A := A) h R L Δ a
 
 end BarChangeHom
 
@@ -1079,8 +1045,8 @@ noncomputable def twoSidedBarRestrictIdIso (R : RightModule T D) (L : LeftModule
     twoSidedBar T ((rightModuleRestrictAlongHom (D := D) (𝟙 T)).obj R)
       ((leftModuleRestrictAlongHom (A := A) (𝟙 T)).obj L) ≅
       twoSidedBar T R L :=
-  (SimplicialObject.Data.toSimplicialFunctor (C := A ⥤ D)).mapIso
-    (barDataRestrictIdIso (D := D) (A := A) (T := T) R L)
+  twoSidedBarIso (RightModule.restrictAlongHomIdIsoComponent R)
+    (LeftModule.restrictAlongHomIdIsoComponent L)
 
 /-- Let h : T → S and k : S → U be monad morphisms on C, and R : C → D and L : A → C be U-modules.
 There is a simplicial isomorphism from the T-bar of the modules restricted along h≫k to the
@@ -1094,8 +1060,8 @@ noncomputable def twoSidedBarRestrictCompIso {S U : Monad C} (h : T ⟶ S) (k : 
         ((rightModuleRestrictAlongHom (D := D) k).obj R))
       ((leftModuleRestrictAlongHom (A := A) h).obj
         ((leftModuleRestrictAlongHom (A := A) k).obj L)) :=
-  (SimplicialObject.Data.toSimplicialFunctor (C := A ⥤ D)).mapIso
-    (barDataRestrictCompIso (D := D) (A := A) h k R L)
+  twoSidedBarIso (RightModule.restrictAlongHomCompIsoComponent R h k)
+    (LeftModule.restrictAlongHomCompIsoComponent L h k)
 
 @[simp]
 theorem twoSidedBarRestrictIdIso_hom_app_op_mk (R : RightModule T D) (L : LeftModule A T)

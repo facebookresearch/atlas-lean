@@ -12,7 +12,7 @@ Author: @toskua
 module
 
 public import Mathlib.RingTheory.FilteredAlgebra.Basic
-public import Mathlib.LinearAlgebra.Quotient.Basic
+public import Mathlib.LinearAlgebra.Quotient.Bilinear
 public import Mathlib.Algebra.DirectSum.Algebra
 
 /-!
@@ -31,6 +31,10 @@ graded an `R`-algebra structure.
 The symbol maps generate the direct sum additively. If every filtered commutator `x*y - y*x`
 lies in `lower F (n + m)`, the associated graded multiplication is commutative. The scalar and
 algebra-carrier universes are independent.
+
+For the preceding-stage convention `F₋₁ = 0` and adjacent quotients, see J. F. Jardine,
+*K-theory*, Lecture 009, §21. This is background for the construction; the Lean API does not
+assume exhaustivity of the filtration.
 -/
 
 @[expose] public section
@@ -173,46 +177,28 @@ theorem stageProduct_mem_lower_right (n m : ℕ) (x : F n) (y : F m)
       change x.val * y.val ∈ F (n + m)
       exact SetLike.mul_mem_graded x.property hy
 
-/-- Filtered multiplication descends in the right variable.
+/-- Multiplication on associated graded quotient layers.
 
-For a ring filtration, fix a representative in `F n` and quotient the right factor by
-`lowerInStage F m`. This gives an `R`-bilinear map `F n →ₗ[R] Grade F m →ₗ[R] Grade F (n +
-m)`. -/
-def productAfterRightQuotient (n m : ℕ) :
-    F n →ₗ[R] Grade F m →ₗ[R] Grade F (n + m) where
-  toFun x := (lowerInStage F m).liftQ
-    ((lowerInStage F (n + m)).mkQ.comp (stageProduct F n m x)) (by
+Postcompose filtered stage multiplication with the output quotient projection, then use
+`LinearMap.liftQ₂` to descend both inputs by their preceding stages. The lower-left and
+lower-right filtration laws give the two kernel conditions, including when a degree is zero. -/
+def gradeProduct (n m : ℕ) : Grade F n →ₗ[R] Grade F m →ₗ[R] Grade F (n + m) :=
+  LinearMap.liftQ₂ (lowerInStage F n) (lowerInStage F m)
+    ((stageProduct F n m).compr₂ (lowerInStage F (n + m)).mkQ)
+    (by
+      intro x hx
+      apply LinearMap.ext
+      intro y
+      change (lowerInStage F (n + m)).mkQ (stageProduct F n m x y) = 0
+      exact (Submodule.Quotient.mk_eq_zero (lowerInStage F (n + m))).mpr
+        (stageProduct_mem_lower_left F n m x y hx))
+    (by
       intro y hy
+      apply LinearMap.ext
+      intro x
       change (lowerInStage F (n + m)).mkQ (stageProduct F n m x y) = 0
       exact (Submodule.Quotient.mk_eq_zero (lowerInStage F (n + m))).mpr
         (stageProduct_mem_lower_right F n m x y hy))
-  map_add' x y := by
-    apply Submodule.linearMap_qext
-    apply LinearMap.ext
-    intro z
-    simp only [LinearMap.comp_apply, Submodule.mkQ_apply, Submodule.liftQ_apply,
-      map_add, LinearMap.add_apply]
-  map_smul' r x := by
-    apply Submodule.linearMap_qext
-    apply LinearMap.ext
-    intro y
-    simp only [LinearMap.comp_apply, Submodule.mkQ_apply, Submodule.liftQ_apply,
-      map_smul, LinearMap.smul_apply, RingHom.id_apply]
-
-/-- Multiplication on associated graded quotient layers.
-
-Filtered stage multiplication descends through both preceding-stage quotients, giving `Grade F
-n →ₗ[R] Grade F m →ₗ[R] Grade F (n + m)`. -/
-def gradeProduct (n m : ℕ) : Grade F n →ₗ[R] Grade F m →ₗ[R] Grade F (n + m) :=
-  (lowerInStage F n).liftQ (productAfterRightQuotient F n m) (by
-    intro x hx
-    change productAfterRightQuotient F n m x = 0
-    apply Submodule.linearMap_qext
-    apply LinearMap.ext
-    intro y
-    change (lowerInStage F (n + m)).mkQ (stageProduct F n m x y) = 0
-    exact (Submodule.Quotient.mk_eq_zero (lowerInStage F (n + m))).mpr
-      (stageProduct_mem_lower_left F n m x y hx))
 
 /-- Representative formula for quotient-layer multiplication.
 
@@ -222,8 +208,8 @@ theorem gradeProduct_mk (n m : ℕ) (x : F n) (y : F m) :
     gradeProduct F n m ((lowerInStage F n).mkQ x) ((lowerInStage F m).mkQ y) =
       (lowerInStage F (n + m)).mkQ
         ⟨x.val * y.val, SetLike.mul_mem_graded x.property y.property⟩ := by
-  simp only [gradeProduct, productAfterRightQuotient, Submodule.liftQ_apply, LinearMap.comp_apply]
-  rfl
+  simpa only [gradeProduct, Submodule.mkQ_apply, LinearMap.liftQ₂_mk,
+    LinearMap.compr₂_apply]
 
 /-- Algebra scalars restricted to filtration degree zero.
 
@@ -480,6 +466,7 @@ For `r : R`, the symbol of `scalarStage F r` equals `algebraMap R (AssociatedGra
 theorem symbol_algebraMap (r : R) :
     symbol F 0 (scalarStage F r) = algebraMap R (AssociatedGraded F) r := rfl
 
+omit [IsRingFiltration F (lower F)] in
 /-- Additive induction on homogeneous symbols.
 
 A property of associated-graded elements holds everywhere if it holds at zero and at every
@@ -496,6 +483,7 @@ theorem symbol_induction {motive : AssociatedGraded F → Prop}
       exact symbol n u
   | add x y hx hy => exact add x y hx hy
 
+omit [IsRingFiltration F (lower F)] in
 /-- Linear maps from the associated graded are determined by symbols.
 
 Two `R`-linear maps from `AssociatedGraded F` to an `R`-module are equal if their values agree

@@ -36,3 +36,4 @@ f-statistics, admixture graphs, ancestry models and linkage-disequilibrium metho
 - [STRUCTURE Bayesian clustering of multilocus genotypes](structure-bayesian-clustering/README.md)
 - [Population structure and eigenanalysis](eigenanalysis-of-population-structure/README.md)
 - [Spatial Λ-Fleming–Viot process with varying population size](spatial-lambda-fleming-viot-with-varying-population-size/README.md)
+- [Graph-structured populations and speciation graphs](graph-structured-populations-and-speciation/README.md)

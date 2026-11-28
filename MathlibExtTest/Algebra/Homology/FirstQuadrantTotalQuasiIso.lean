@@ -63,13 +63,6 @@ example : IsIso (HomologicalComplex.homologyMap
     quasiIso_totalMap_of_objwise_firstQuadrant φ hφ
   infer_instance
 
-/-! The rowwise hypothesis does not require objectwise component
-isomorphisms. -/
-
-example (p q : ℕ) (_hnot : ¬ IsIso ((φ.f p).f q)) :
-    QuasiIso (B.partialTotalHom φ p) :=
-  quasiIso_partialTotalHom_of_objwise φ hφ p
-
 /-! ## Identity and zero bicomplexes -/
 
 example (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
