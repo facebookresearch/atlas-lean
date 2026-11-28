@@ -24,19 +24,16 @@ Stable models are defined through here-and-there interpretations. An *HT-interpr
 
 Over the rational timeline the same reasoning problems are PSPACE-complete in data complexity for programs without negation and for stratified negation. Over the integer timeline existence of a stable model is decidable in EXPSPACE in data complexity, and PSPACE-complete in data complexity for forward-propagating programs and bounded datasets (Theorems 5.14 and 5.18 of the copy read).
 
+*Proof sketch.* The reduction is from halting of a fixed deterministic single-tape Turing machine $M$ on input words, where $M$ is chosen with an undecidable halting problem and, without loss of generality, never moves left of its first cell. A fixed propositional forward-propagating program $\Pi_M$ is built, and each input word $w$ is mapped (in $\mathrm{AC}^0$) to a bounded dataset $\mathcal{D}_w$ such that $M$ halts on $w$ if and only if $\Pi_M$ and $\mathcal{D}_w$ have no stable model. The $i$-th configuration occupies the interval $[2i, 2i+2)$: a proposition $S_q$ at a point of $[2i, 2i+1]$ records the state $q$, and $|w| + i$ points of $(2i+1, 2i+2)$ carry propositions $C_s$ for the cell contents and $H$ for the head position. A proposition $N$ holds at a single new point of $(2i+1, 2i+2)$ beyond the last encoded cell, which lets the number of encoded cells grow by one per configuration; propositions $\overline{N}$ and $\overline{H}$ simulate the negations of $N$ and $H$, $\overline{C}$ marks points not used for cells, and $L$ serves left-moving transitions. The rules copy each configuration to the next one according to the transition function, and the construction ensures that a stable model exists exactly when the computation never reaches the halting state.
+
 ## Depends on
 
-- [Datalog programs and the immediate consequence operator](../../datalog-programs-and-the-immediate-consequence-operator.md)
-- [Stable models of a normal logic program](../../../../../TheoryOfComputation/np-completeness/satisfiability/stable-model-existence/is-stable-model.md)
-- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [The halting problem for single-tape machines is undecidable](../../../../../TheoryOfComputation/computability/halting-problem-for-single-tape-turing-machines/exists-not-tm2-decidable-tm0-halts-on.md)
+- [The halting problem for single-tape machines is undecidable](../../../../TheoryOfComputation/computability/halting-problem-for-single-tape-turing-machines/exists-not-tm2-decidable-tm0-halts-on.md)
 
-## Expansion
-
-The reduction is from halting of a fixed deterministic single-tape Turing machine $M$ on input words, where $M$ is chosen with an undecidable halting problem and, without loss of generality, never moves left of its first cell. A fixed propositional forward-propagating program $\Pi_M$ is built, and each input word $w$ is mapped (in $\mathrm{AC}^0$) to a bounded dataset $\mathcal{D}_w$ such that $M$ halts on $w$ if and only if $\Pi_M$ and $\mathcal{D}_w$ have no stable model. The $i$-th configuration occupies the interval $[2i, 2i+2)$: a proposition $S_q$ at a point of $[2i, 2i+1]$ records the state $q$, and $|w| + i$ points of $(2i+1, 2i+2)$ carry propositions $C_s$ for the cell contents and $H$ for the head position. A proposition $N$ holds at a single new point of $(2i+1, 2i+2)$ beyond the last encoded cell, which lets the number of encoded cells grow by one per configuration; propositions $\overline{N}$ and $\overline{H}$ simulate the negations of $N$ and $H$, $\overline{C}$ marks points not used for cells, and $L$ serves left-moving transitions. The rules copy each configuration to the next one according to the transition function, and the construction ensures that a stable model exists exactly when the computation never reaches the halting state.
 
 ## Sources
 

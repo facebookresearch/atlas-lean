@@ -1,0 +1,26 @@
+# Boundedness of linear monadic datalog on data trees is undecidable
+
+On finite trees whose nodes carry labels from an infinite alphabet that can be compared for equality, it is undecidable whether a linear monadic datalog program using the child and descendant relations is bounded, that is, whether its depth of recursion is at most a constant independent of the database. Without the descendant relation the problem is decidable over words and ranked trees.
+
+**Setting (Mazowiecki, Ochremiak and Witkowski).** Databases are finite words, or finite ranked or unranked trees, whose nodes carry labels from an infinite alphabet; programs can test a node for a fixed label and test whether two nodes carry equal labels. A datalog program is *monadic* if all intensional predicates in rule heads are unary, *linear* if every rule body uses at most one intensional predicate, and *connected* if within each rule all variables are connected; only connected monadic programs are considered. $\mathsf{Datalog}(\downarrow, \downarrow_+)$ allows the child relation $\downarrow$ and the descendant relation $\downarrow_+$ in rule bodies, $\mathsf{Datalog}(\downarrow)$ only the child relation, and $\mathsf{L\text{-}Datalog}(\downarrow, \downarrow_+)$ is the linear fragment of the former. For a program $P$ and a database $D$ write $P^n(D)$ for the result of $n$ applications of the immediate consequence operator of $P$ to $D$ and $P(D)$ for its least fixpoint. $P$ is *bounded* if there is a number $n$, depending only on $P$, such that $P(D) = P^n(D)$ for every database $D$ of the considered class (Section 4 of the source); the *boundedness problem* asks whether a given program is bounded. For $\mathsf{Datalog}(\downarrow)$ a program is bounded exactly when it is equivalent to a union of conjunctive queries (Proposition 9), but with the descendant relation the two notions differ: a $\mathsf{Datalog}(\downarrow, \downarrow_+)$ program can be unbounded and still equivalent to a union of conjunctive queries (Example 10).
+
+**Theorem (Mazowiecki, Ochremiak and Witkowski).** The boundedness problem for $\mathsf{L\text{-}Datalog}(\downarrow, \downarrow_+)$ is undecidable over words and over ranked or unranked trees.
+
+The same paper notes, from the proofs of an earlier undecidability result for containment, that containment of an $\mathsf{L\text{-}Datalog}(\downarrow, \downarrow_+)$ program in a union of conjunctive queries is undecidable over ranked and unranked trees (Proposition 4), and proves that boundedness for $\mathsf{Datalog}(\downarrow)$ is in PSPACE over words and in 2EXPTIME over ranked trees, and that containment of a linear $\mathsf{Datalog}(\downarrow)$ program in a union of conjunctive queries is EXPSPACE-complete over unranked trees.
+
+## Depends on
+
+- [Datalog programs and the immediate consequence operator](../datalog-programs-and-the-immediate-consequence-operator.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+
+## Proof depends on
+
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
+
+## Expansion
+
+The reduction asks whether a Turing machine has halting runs from the empty tape of arbitrary length, which is undecidable because a halting machine can be modified to idle arbitrarily long before halting. A tree encodes a run as a word of configurations separated by $\#$, each tape cell written as four consecutive nodes giving the row number, the next row number, the column number and the tape symbol, placed on a path from some node up to the root. The program is the disjunction of a recursive program $P$ that follows a correct encoding and a program $Q$, equivalent to a union of conjunctive queries, that detects errors in the encoding; on any tree with an error the combined program holds everywhere after three steps. The combined program is unbounded if and only if the machine has arbitrarily long halting runs.
+
+## Sources
+
+- Filip Mazowiecki, Joanna Ochremiak and Adam Witkowski, "Eliminating Recursion from Monadic Datalog Programs on Trees", Mathematical Foundations of Computer Science 2015 (MFCS 2015), Lecture Notes in Computer Science, pp. 394–406, 2015, <https://doi.org/10.1007/978-3-662-48057-1_31>; Theorem 11, Proposition 9 and Example 10 of Section 4 ("Boundedness"), with the proof of Theorem 11 in the appendix section "Undecidability of the boundedness problem in general", the definitions in Sections 1 and 2, Proposition 4 and Theorem 6 of Section 3, and Theorems 12 and 13 of Section 4, of arXiv:1505.02444v1, read at <https://arxiv.org/abs/1505.02444v1>.

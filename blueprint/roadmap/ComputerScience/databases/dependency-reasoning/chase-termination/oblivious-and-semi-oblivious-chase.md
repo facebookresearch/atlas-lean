@@ -16,17 +16,17 @@ where $\Phi$ and $\Psi$ are conjunctions of relational atoms without equality ov
 
 **Termination.** For either variant, the $\mathcal T$-chase *terminates on* $D$ if $\mathrm{Chase}(D, \mathcal T)$ is finite, equivalently if its terms have bounded depth. The order in which matches are processed does not affect the result, provided every match is eventually processed. The *all-instances termination problem* asks, for a given program $\mathcal T$, whether the $\mathcal T$-chase terminates on every finite database instance $D$.
 
+Both variants are eager, in contrast with the [standard (restricted) chase](restricted-chase-sequences.md), which adds witnesses only for matches whose head is not yet satisfied and therefore depends on the order of steps. In terms of triggers (pairs of a TGD and a match of its body), the oblivious chase applies every trigger exactly once and the semi-oblivious chase one trigger for each match of the frontier, whether or not the head is already satisfied; the Skolemized programs above compute the same result. An element $a_\Sigma$ of $D$ is a *well of positivity* if $R(a_\Sigma, \dots, a_\Sigma)$ holds for every $R \in \Sigma$; let $D_\Sigma$ be the one-element instance whose element is a well of positivity. Marnette's critical-instance lemma states that the oblivious $\mathcal T$-chase terminates on every instance if and only if it terminates on $D_\Sigma$: a derivation of a deep term from any $D$ becomes, after identifying all elements of $D$ with $a_\Sigma$, a derivation of a term of the same depth from $D_\Sigma$. Consequently all-instances termination of the oblivious and semi-oblivious chase is recursively enumerable.
+
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](../../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Restricted chase sequences and their termination](restricted-chase-sequences.md)
 
 ## Proof depends on
 
 None.
 
-## Expansion
-
-Both variants are eager, in contrast with the standard (restricted) chase, which adds witnesses only for matches whose head is not yet satisfied and therefore depends on the order of steps. An element $a_\Sigma$ of $D$ is a *well of positivity* if $R(a_\Sigma, \dots, a_\Sigma)$ holds for every $R \in \Sigma$; let $D_\Sigma$ be the one-element instance whose element is a well of positivity. Marnette's critical-instance lemma states that the oblivious $\mathcal T$-chase terminates on every instance if and only if it terminates on $D_\Sigma$: a derivation of a deep term from any $D$ becomes, after identifying all elements of $D$ with $a_\Sigma$, a derivation of a term of the same depth from $D_\Sigma$. Consequently all-instances termination of the oblivious and semi-oblivious chase is recursively enumerable.
 
 ## Sources
 

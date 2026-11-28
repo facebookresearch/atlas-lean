@@ -8,3 +8,4 @@ Normal logic programs with function symbols under the answer set semantics, and 
 - [Deciding whether an answer set program is frugal is Π¹₁-complete](frugality-of-asp-programs-is-pi11-complete.md)
 - [Deciding whether an answer set program is non-proliferous is Σ⁰₂-complete](non-proliferous-asp-programs-sigma02-complete.md)
 - [Reasoning with finitely recursive logic programs is r.e.-complete](finitely-recursive-programs-reasoning-is-re-complete.md)
+- [Stable models of disjunctive programs with function symbols](stable-models-of-disjunctive-programs.md)

@@ -16,6 +16,8 @@ where $\vec x, \vec y, \vec z$ are pairwise disjoint lists of variables and $B$,
 
 **Termination classes.** A KB *existentially terminates* if it admits a terminating chase sequence and *universally terminates* if all its chase sequences terminate. A rule set $R$ existentially (universally) terminates if every KB $\langle R, D \rangle$ does. The classes of universally terminating KBs and rule sets are written $\mathsf{CT}^{\mathrm{rest}}_{\mathrm{KB}\,\forall}$ and $\mathsf{CT}^{\mathrm{rest}}_{R\,\forall}$.
 
+Rules are tuple-generating dependencies without equality. Fairness matters only for infinite sequences: without it an infinite derivation can starve a trigger forever, its result need not be a model of the KB, and the termination classes change. The result of any chase sequence is a universal model of the KB. Each step applies a restricted chase step in the sense of [tuple-generating dependencies and the chase](../../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md). This is the standard chase of Grahne and Onet: their class $\mathsf{CT}^{\mathsf{std}}_{\forall\forall}$ is $\mathsf{CT}^{\mathrm{rest}}_{R\,\forall}$, and their $\mathsf{CT}^{\mathsf{std}}_{\forall\exists}$ is the class of existentially terminating rule sets (Section 3 of the source). The source compares these classes with the earlier notation, where a rule set is classified for one fixed database at a time, and shows by a many-one reduction in each direction that fixing the database changes nothing up to reducibility.
+
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](../../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
@@ -24,9 +26,6 @@ where $\vec x, \vec y, \vec z$ are pairwise disjoint lists of variables and $B$,
 
 None.
 
-## Expansion
-
-Rules are tuple-generating dependencies without equality. Fairness matters only for infinite sequences: without it an infinite derivation can starve a trigger forever, its result need not be a model of the KB, and the termination classes change. The result of any chase sequence is a universal model of the KB. The source compares these classes with the earlier notation, where a rule set is classified for one fixed database at a time, and shows by a many-one reduction in each direction that fixing the database changes nothing up to reducibility.
 
 ## Sources
 

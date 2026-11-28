@@ -8,6 +8,8 @@ A normal logic program with function symbols is grounded over its Herbrand unive
 
 **Properties.** $P$ is *consistent* if it has an answer set. $P$ is *frugal* if all its answer sets are finite, and *non-proliferous* if it has only finitely many finite answer sets (it may have arbitrarily many infinite ones).
 
+This is the stable model semantics of Gelfond and Lifschitz, phrased through levels of proof: requiring each atom to be supported by a rule whose positive body atoms come earlier rules out self-supporting loops. For ground programs consistency is NP-complete, and for function-free non-ground programs it is NEXPTIME-complete; with function symbols the grounding can be infinite and the problem leaves the arithmetical hierarchy. Not every frugal program is non-proliferous: a program can generate finite chains of every length, each closed off by a marker atom, while a constraint kills the infinite chain.
+
 ## Depends on
 
 None.
@@ -16,9 +18,6 @@ None.
 
 None.
 
-## Expansion
-
-This is the stable model semantics of Gelfond and Lifschitz, phrased through levels of proof: requiring each atom to be supported by a rule whose positive body atoms come earlier rules out self-supporting loops. For ground programs consistency is NP-complete, and for function-free non-ground programs it is NEXPTIME-complete; with function symbols the grounding can be infinite and the problem leaves the arithmetical hierarchy. Not every frugal program is non-proliferous: a program can generate finite chains of every length, each closed off by a marker atom, while a constraint kills the infinite chain.
 
 ## Sources
 

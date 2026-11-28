@@ -16,12 +16,11 @@ For datalogMTL itself (no diamonds in heads) consistency checking is EXPSPACE-co
 
 ## Depends on
 
-- [Datalog programs and the immediate consequence operator](../../datalog-programs-and-the-immediate-consequence-operator.md)
-- [Decidability by multi-stack machines](../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [Two-counter machines are universal](../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Two-counter machines are universal](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 
 ## Expansion
 
