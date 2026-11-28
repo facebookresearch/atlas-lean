@@ -5,4 +5,3 @@
 - [Well-formed HAMILTONIAN CIRCUIT given a Hamiltonian path instances](well-formed.md)
 - [Feasible instances: a Hamiltonian circuit exists](hamiltonian-circuit-given-hamiltonian-pa-2.md)
 - [HAMILTONIAN CIRCUIT given a Hamiltonian path as a decision problem](hamiltonian-circuit-given-hamiltonian-pa-3.md)
-- [HAMILTONIAN CIRCUIT given a Hamiltonian path is NP-complete](hamiltonian-circuit-given-hamiltonian-pa-4.md)

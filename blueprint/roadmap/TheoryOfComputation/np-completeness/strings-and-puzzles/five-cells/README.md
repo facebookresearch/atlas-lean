@@ -1,7 +1,6 @@
 # Five Cells
 
 - [Instances of FIVE CELLS](five-cells-instance.md)
-- [Numbers in FIVE CELLS cells](cell.md)
 - [Well-formed FIVE CELLS instances](well-formed.md)
 - [Feasible FIVE CELLS instances](five-cells-feasible.md)
 - [FIVE CELLS as a decision problem](five-cells-dec.md)

@@ -1,7 +1,6 @@
 # Hexagonal Slither Link
 
 - [Instances of HEXAGONAL SLITHER LINK](hexagonal-slither-link-instance.md)
-- [Hexagon clues](clue.md)
 - [Sides](sides.md)
 - [Graph](graph.md)
 - [Feasible HEXAGONAL SLITHER LINK instances](hexagonal-slither-link-feasible.md)
