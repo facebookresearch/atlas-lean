@@ -1,0 +1,3 @@
+# Squared t statistic as a one-restriction F statistic
+
+Let $X$ be a real $m \times k$ matrix, $a, \beta \in \mathbb{R}^k$ and $y \in \mathbb{R}^m$. The square of the contrast $t$ statistic $T_a(y) = (a^\top\hat\beta(y) - a^\top\beta)/\sqrt{s^2(y)\,a^\top(X^\top X)^{-1}a}$, where $\hat\beta(y) = (X^\top X)^{-1}X^\top y$ and $s^2(y) = \|y - X\hat\beta(y)\|^2/(m - k)$, equals the $F$ statistic of the single restriction $a^\top\beta' = a^\top\beta$ (hypothesis matrix the row $a^\top$), with the conventions $x/0 = 0$, $\sqrt x = 0$ for $x \le 0$, truncated subtraction in $m - k$ and matrix inverses zero when singular.

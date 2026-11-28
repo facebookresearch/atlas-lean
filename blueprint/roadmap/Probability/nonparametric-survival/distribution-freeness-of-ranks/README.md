@@ -3,6 +3,7 @@
 - [Rank vector of a permutation](perm-vec.md)
 - [Uniform law on rank vectors](rank-law.md)
 - [Each rank vector has probability one over n factorial](rank-law-singleton-perm-vec.md)
+- [The uniform rank law charges only rank vectors](rank-law-singleton-of-not-mem.md)
 - [Ranks of a sample from an atomless law are uniform](sample-rank-uniform-of-nonatomic.md)
 - [Ranks are independent of the order statistics](rank-indep-of-sorted.md)
 

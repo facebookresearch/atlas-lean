@@ -9,6 +9,7 @@
 - [Gap-free regret bound for UCB](gap-free-regret-bound-for-ucb.md)
 - [Regret bound for UCB](regret-bound-for-ucb.md)
 - [Anytime regret bound for UCB1](anytime-regret-bound-for-ucb1.md)
+- [Optimistic optimization](optimistic-optimization/README.md)
 - [Regret of Exp3 for adversarial bandits](regret-of-exp3-for-adversarial-bandits.md)
 - [Divergence decomposition for stochastic bandits](divergence-decomposition-for-stochastic-bandits.md)
 - [Equality in law of the reward-stack and canonical bandit models](equality-in-law-of-the-reward-stack-and-canonical-bandit-models.md)
