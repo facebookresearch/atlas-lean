@@ -6,6 +6,7 @@ variance-component test with relatedness, genomic control) and the exact and asy
 Hardy–Weinberg equilibrium of genotype counts that accompany them. Fisher's exact test, the burden
 test and SKAT-O, multiple testing across genes, and genomic control with an estimated inflation
 factor are under [Hypothesis testing](../../../Probability/hypothesis-testing/README.md) in
+Probability.
 
 - [Cochran–Armitage trend test](cochran-armitage-trend-test/README.md)
 - [Genomic control](genomic-control/README.md)
