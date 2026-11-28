@@ -9,6 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.QuadraticPackingPolynomials
+import MathlibExt.NumberTheory.QuadraticPackingPolynomialRationalForm
+import MathlibExt.NumberTheory.QuadraticPackingPolynomialsStaircaseCongruence
+import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Nat.ModEq
@@ -23,11 +28,26 @@ import Mathlib.Tactic.Ring
 /-!
 # Sheared criterion for quadratic packing polynomials
 
-The sheared polynomial attached to a rational sector is a quadratic packing
-polynomial on the sheared lattice exactly when its values at the first steps
-of the first `k` staircases are `0, 1, …, k - 1`. The proof parametrizes the
-sheared lattice by its staircases and shows that the values on each staircase
-form a step-`k` progression whose successive blocks tile the natural numbers.
+For positive coprime `m` and `n`, put `l = gcd (m - 1) n`. Suppose `n / l ∣ l` and the
+positive step difference `k` satisfies `k ≡ (m - 1) / l [MOD n / l]`. For any real constant
+term `F`, the polynomial in the standard sheared form packs the sheared lattice of slope
+`n / m` exactly when its values at the first steps of the first `k` staircases are
+`0, 1, …, k - 1` in some order.
+
+Conversely, for any quadratic packing polynomial on the lattice sector of slope `n / m` with
+positive coprime `m, n` and positive step difference `k`, the staircase blocks force that form.
+Summing the values at the first steps then determines the constant term.
+
+## References
+
+- Madeline Brandt and Kåre Schou Gjaldbæk, *Classification of Quadratic Packing Polynomials on
+  Sectors of R^2*, INTEGERS 25 (2025), Article A81, pp. 1–23, Lemmas 1–5 and Proposition 1.
+- Caitlin Stanton, *Packing Polynomials on Sectors of R^2*, INTEGERS 14 (2014), Article A67,
+  pp. 1–13, Theorem 2 (the initial quadratic form).
+- The proof uses `quadraticPackingPolynomial_rational_sector_form` from
+  `MathlibExt.NumberTheory.QuadraticPackingPolynomialRationalForm` and
+  `quadraticPackingPolynomial_staircase_congruence` from
+  `MathlibExt.NumberTheory.QuadraticPackingPolynomialsStaircaseCongruence`.
 -/
 
 namespace MetaMathlibExt
@@ -1008,6 +1028,443 @@ public theorem isQuadraticPackingPolynomial_sheared_iff {m n k : ℕ} (hm : 0 < 
       push_cast
       rw [hM']
       ring
+
+
+namespace QuadraticPackingConstantTerm
+
+-- Consecutive nonempty blocks in the same residue class must abut once their starts
+-- are ordered by their indices (including comparison with the finite prefix).
+private theorem adjacent_blocks {k R : ℕ} (hk : 0 < k) {B C : ℕ → ℕ}
+    (hC : ∀ i, 0 < C i) (hperiod : ∀ i, B (i + k) ≡ B i [MOD k])
+    (hinj : ∀ {i j t u}, t < C i → u < C j → B i + k * t = B j + k * u → i = j)
+    (hsurj : ∀ v, ∃ i t, t < C i ∧ v = B i + k * t)
+    (horder : ∀ {i j}, i < j → R ≤ j → B i < B j) {i : ℕ} (hi : R ≤ i) :
+    B (i + k) = B i + k * C i := by
+  have hmod (r q : ℕ) : B (r + q * k) ≡ B r [MOD k] := by
+    induction q with
+    | zero => simpa only [Nat.zero_mul, Nat.add_zero] using Nat.ModEq.refl (B r)
+    | succ q ih => simpa only [Nat.succ_mul, ← Nat.add_assoc] using
+        (hperiod (r + q * k)).trans ih
+  have hreduce (j : ℕ) : B j ≡ B (j % k) [MOD k] := by
+    simpa only [Nat.mul_comm (j / k), Nat.mod_add_div] using hmod (j % k) (j / k)
+  have hstep (a b : ℕ) : a + k * b ≡ a [MOD k] := by
+    rw [Nat.mul_comm k, Nat.add_mul_modulus_modEq_iff]
+  let r (j : Fin k) : Fin k := ⟨B j % k, Nat.mod_lt _ hk⟩
+  have hr : Function.Injective r := Finite.injective_iff_surjective.mpr (by
+    intro v
+    obtain ⟨j, t, _, hv⟩ := hsurj v
+    refine ⟨⟨j % k, Nat.mod_lt _ hk⟩, Fin.ext ?_⟩
+    change B (j % k) % k = v.val
+    have h : B j ≡ (v : ℕ) [MOD k] := hv ▸ (hstep (B j) t).symm
+    have h' : B (j % k) % k = v.val % k := (hreduce j).symm.trans h
+    simpa only [Nat.mod_eq_of_lt v.isLt] using h')
+  have hindex {j l : ℕ} (h : B j ≡ B l [MOD k]) : j ≡ l [MOD k] := by
+    have e := (hreduce j).symm.trans (h.trans (hreduce l))
+    exact congrArg Fin.val (hr (a₁ := ⟨j % k, Nat.mod_lt _ hk⟩)
+      (a₂ := ⟨l % k, Nat.mod_lt _ hk⟩) (Fin.ext e))
+  have nonoverlap {j l : ℕ} (h : B j < B l) (he : B j ≡ B l [MOD k]) :
+      B j + k * C j ≤ B l := by
+    obtain ⟨t, ht⟩ := (Nat.modEq_iff_dvd' h.le).mp he
+    have heq : B j + k * t = B l := by omega
+    have hle : C j ≤ t := by
+      by_contra! hlt
+      have hjl := hinj hlt (hC l) (by simpa using heq)
+      exact h.ne (congrArg B hjl)
+    exact heq ▸ Nat.add_le_add_left (Nat.mul_le_mul_left k hle) (B j)
+  have hi' : R ≤ i + k := by omega
+  have hle := nonoverlap (horder (by omega : i < i + k) hi') (hperiod i).symm
+  apply le_antisymm _ hle
+  obtain ⟨j, t, ht, he⟩ := hsurj (B i + k * C i)
+  have hres : B i ≡ B j [MOD k] := by
+    exact (hstep (B i) (C i)).symm.trans (he.symm ▸ hstep (B j) t)
+  rcases lt_trichotomy j i with hj | rfl | hj
+  · have hj' := nonoverlap (horder hj hi) hres.symm
+    have ht' := (Nat.mul_lt_mul_left hk).mpr ht
+    omega
+  · have ht' := (Nat.mul_lt_mul_left hk).mpr ht
+    omega
+  · obtain ⟨q, hq⟩ := (Nat.modEq_iff_dvd' hj.le).mp (hindex hres)
+    have hqpos : 0 < q := by by_contra! h; rw [Nat.eq_zero_of_le_zero h, mul_zero] at hq; omega
+    have hj' : i + k ≤ j := by
+      have := Nat.le_mul_of_pos_right k hqpos
+      omega
+    have hBj : B (i + k) ≤ B j := by
+      rcases hj'.eq_or_lt with h | h
+      · rw [h]
+      · exact (horder h (hi'.trans hj')).le
+    omega
+
+-- In the initial sheared form only the horizontal linear coefficient is unknown.
+private theorem initial_sheared_form {m n k : ℕ} (hm : 0 < m) (hn : 0 < n)
+    (hmn : Nat.Coprime m n) {P : ℝ → ℝ → ℝ}
+    (hP : IsQuadraticPackingPolynomial (sectorLatticePoints ((n : ℝ) / m)) P)
+    (hkP : consecutiveStepDifference m n P = k) :
+    (n / Nat.gcd (m - 1) n ∣ Nat.gcd (m - 1) n) ∧
+      ∃ b : ℝ, ∀ x y, P (x + ((m : ℝ) - 1) / n * y) y =
+        (n : ℝ) / 2 * x ^ 2 + b * x + k / ((n : ℝ) / Nat.gcd (m - 1) n) * y + P 0 0 := by
+  obtain ⟨hdiv, D, E, F, hform⟩ := quadraticPackingPolynomial_rational_sector_form hm hn hmn hP
+  have hdiv' : n ∣ (m - 1) ^ 2 := by
+    rw [← Nat.cast_one (R := ℤ), ← Nat.cast_sub hm, ← Nat.cast_pow] at hdiv
+    exact_mod_cast hdiv
+  refine ⟨?_, ?_⟩
+  · let l := Nat.gcd (m - 1) n
+    let d := n / l
+    let a := (m - 1) / l
+    have hdiv'' : d * l ∣ (a * l) ^ 2 := by
+      rw [← (show n = d * l from n_eq), ← (show m - 1 = a * l from msub_eq)]
+      exact hdiv'
+    have hd : d ∣ a ^ 2 * l := Nat.dvd_of_mul_dvd_mul_right (gcd_pos (m := m) hn) (by
+      rwa [show a ^ 2 * l * l = (a * l) ^ 2 by ring])
+    exact ((coprime_ad (m := m) hn).pow_left 2).symm.dvd_of_dvd_mul_left hd
+  let b : ℝ := D - (n : ℝ) / 2
+  let c : ℝ := b * (((m : ℝ) - 1) / n) + (E - (((m : ℝ) - 1) ^ 2 / n) / 2)
+  have hF : (F : ℝ) = P 0 0 := by simpa using (hform 0 0).symm
+  have hprep (x y : ℝ) : P (x + ((m : ℝ) - 1) / n * y) y =
+      ((n : ℝ) / 2 * x ^ 2 + b * x + P 0 0) + c * y := by
+    nth_rw 1 [hform]
+    rw [add_sub_cancel_right, hF]
+    dsimp only [b, c]
+    ring
+  have hk := consecutiveStepDifference_of_sheared_form hn hprep
+  rw [hkP] at hk
+  have hne : ((n : ℝ) / Nat.gcd (m - 1) n) ≠ 0 := by positivity
+  refine ⟨b, fun x y => ?_⟩
+  rw [hprep, ← (eq_div_iff hne).mpr hk.symm]
+  ring
+
+private theorem first_height_zmod {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
+    (hl : n / Nat.gcd (m - 1) n ∣ Nat.gcd (m - 1) n) (i : ℕ) :
+    let d := n / Nat.gcd (m - 1) n
+    let a := (m - 1) / Nat.gcd (m - 1) n
+    (i : ZMod d) + (a : ZMod d) * (staircaseFirstHeight m n i : ZMod d) = 0 := by
+  dsimp only
+  have h := dvd_of_mem hm hn (ybar_mem (i := i) hm hn hl)
+  simpa only [Nat.cast_add, Nat.cast_mul] using (ZMod.natCast_eq_zero_iff _ _).mpr h
+
+private theorem first_height_eq_of_zmod {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
+    (hl : n / Nat.gcd (m - 1) n ∣ Nat.gcd (m - 1) n) {i v : ℕ}
+    (hv : v < n / Nat.gcd (m - 1) n)
+    (he : let d := n / Nat.gcd (m - 1) n; let a := (m - 1) / Nat.gcd (m - 1) n
+      (i : ZMod d) + (a : ZMod d) * (v : ZMod d) = 0) : staircaseFirstHeight m n i = v := by
+  let d := n / Nat.gcd (m - 1) n
+  let a := (m - 1) / Nat.gcd (m - 1) n
+  let y := staircaseFirstHeight m n
+  have hcancel : (a : ZMod d) * (y i : ZMod d) = (a : ZMod d) * (v : ZMod d) :=
+    add_left_cancel ((first_height_zmod hm hn hl i).trans he.symm)
+  have hinv := ZMod.coe_mul_inv_eq_one (n := d) a (coprime_ad (m := m) hn)
+  have hcast : (y i : ZMod d) = v := by
+    linear_combination (a : ZMod d)⁻¹ * hcancel - ((y i : ZMod d) - v) * hinv
+  simpa only [ZMod.val_natCast_of_lt (show y i < d from ybar_lt hm hn hl),
+    ZMod.val_natCast_of_lt hv] using congrArg ZMod.val hcast
+
+end QuadraticPackingConstantTerm
+
+open QuadraticPackingConstantTerm
+
+/-- **Step-difference form of a quadratic packing polynomial on a rational sector.** Let $m, n$
+be coprime positive integers, let $l = \gcd(m - 1, n)$, and let $P$ be a quadratic packing
+polynomial on the lattice points $I(n/m)$ of the sector of slope $n/m$ whose step difference
+for $m, n$ is a positive integer $k$. Then $n/l$ divides $l$, $k \equiv (m - 1)/l \pmod{n/l}$,
+and for all real $x, y$ one has $P(x + \frac{m - 1}{n} y, y) =
+\frac{n}{2} x \left(x - \frac{k}{n/l}\right) + x + \frac{k}{n/l} y + P(0, 0)$.
+
+Source: Brandt and Gjaldbæk, *Classification of Quadratic Packing Polynomials on Sectors of
+R^2*, INTEGERS 25 (2025), Article A81, Proposition 1 (`integers-2025-A81-prop-1`). -/
+public theorem quadraticPackingPolynomial_necessary_form {m n k : ℕ} (hm : 0 < m)
+    (hn : 0 < n) (hmn : Nat.Coprime m n) {P : ℝ → ℝ → ℝ}
+    (hP : IsQuadraticPackingPolynomial (sectorLatticePoints ((n : ℝ) / m)) P)
+    (hk : 0 < k) (hkP : consecutiveStepDifference m n P = k) :
+    n / Nat.gcd (m - 1) n ∣ Nat.gcd (m - 1) n ∧
+      k ≡ (m - 1) / Nat.gcd (m - 1) n [MOD n / Nat.gcd (m - 1) n] ∧
+      ∀ x y, P (x + ((m : ℝ) - 1) / n * y) y =
+        (n : ℝ) / 2 * x * (x - k / (n / (Nat.gcd (m - 1) n : ℝ))) + x +
+          k / (n / (Nat.gcd (m - 1) n : ℝ)) * y + P 0 0 := by
+  obtain ⟨hl, b, hb⟩ := initial_sheared_form hm hn hmn hP hkP
+  let l := Nat.gcd (m - 1) n
+  let d := n / l
+  let a := (m - 1) / l
+  let s := l / d
+  let y := staircaseFirstHeight m n
+  let C := shearedCount m n
+  let Q (x z : ℝ) := P (x + ((m : ℝ) - 1) / n * z) z
+  let S := (fun p : ℝ × ℝ => (p.1 - ((m : ℝ) - 1) / n * p.2, p.2)) ''
+    sectorLatticePoints ((n : ℝ) / m)
+  have hd : 0 < d := d_pos hn
+  have hdR : 0 < (d : ℝ) := by exact_mod_cast hd
+  have hsR : 0 < (s : ℝ) := by exact_mod_cast s_pos hn hl
+  have hlR : (l : ℝ) = (d : ℝ) * s := by exact_mod_cast l_eq hl
+  have hnR : (n : ℝ) = (d : ℝ) * l := by exact_mod_cast n_eq (m := m) (n := n)
+  have hd' : (n : ℝ) / l = d := by
+    apply (div_eq_iff (by exact_mod_cast (gcd_pos (m := m) hn).ne' : (l : ℝ) ≠ 0)).mpr
+    exact hnR
+  have hkR : 0 < (k : ℝ) := by exact_mod_cast hk
+  have hC := shearedCount_pos hn hl
+  have hmem {i t : ℕ} (ht : t < C i) : ((i : ℝ) / d, ↑(y i + d * t)) ∈ S := by
+    rw [← hd']
+    exact (sheared_mem_iff hm hn hl).mpr ⟨i, t, ht, rfl⟩
+  have hQ : IsQuadraticPackingPolynomial S Q :=
+    (isQuadraticPackingPolynomial_image_shear_iff _).mpr hP
+  choose B hB using fun i => hQ.exists_nat_eq (hmem (hC i))
+  have hstart (i : ℕ) : (B i : ℝ) = (s : ℝ) / 2 * (i : ℝ) ^ 2 + b / d * i +
+      (k : ℝ) / d * y i + P 0 0 := by
+    specialize hB i
+    dsimp only at hB
+    rw [mul_zero, add_zero] at hB
+    rw [hB, show Q ((i : ℝ) / d) (y i) = _ from hb _ _, hd', hnR, hlR]
+    field_simp
+  have hval (i t : ℕ) : Q ((i : ℝ) / d) ↑(y i + d * t) = (B i : ℝ) + k * t := by
+    rw [hstart]
+    change P ((i : ℝ) / d + ((m : ℝ) - 1) / n * ↑(y i + d * t)) ↑(y i + d * t) = _
+    rw [hb, hd', hnR, hlR]
+    push_cast
+    field_simp
+    ring
+  have hperiod (i : ℕ) : B (i + k) ≡ B i [MOD k] := by
+    have hpoint (j : ℕ) : ∃ x : ℝ, (x, (y j : ℝ)) ∈ sectorStaircase m n j ∧
+        P x (y j) = B j := by
+      obtain ⟨x, hx⟩ := ybar_mem (i := j) hm hn hl
+      have hx' : x - ((m : ℝ) - 1) / n * y j = (j : ℝ) / d := by
+        rw [← hd']
+        exact congrArg Prod.fst (staircase_image hn hx)
+      refine ⟨x, hx, ?_⟩
+      have he := hval j 0
+      simp only [mul_zero, add_zero, Nat.cast_zero] at he
+      change P ((j : ℝ) / d + ((m : ℝ) - 1) / n * y j) (y j) = _ at he
+      rwa [← hx', sub_add_cancel] at he
+    obtain ⟨x, hx, hxB⟩ := hpoint i
+    obtain ⟨z, hz, hzB⟩ := hpoint (i + k)
+    obtain ⟨w, hw⟩ := quadraticPackingPolynomial_staircase_congruence hm hn hmn hP hk hkP i hx hz
+    dsimp only at hw
+    rw [hxB, hzB] at hw
+    exact (Nat.modEq_iff_dvd.mpr ⟨w, by rw [mul_comm]; exact_mod_cast hw⟩).symm
+  have hylt (i : ℕ) : y i < d := ybar_lt hm hn hl
+  have hybound (i : ℕ) : (k : ℝ) / d * y i ≤ k := by
+    calc (k : ℝ) / d * y i ≤ (k : ℝ) / d * d := by
+          gcongr
+          exact_mod_cast (hylt i).le
+      _ = k := div_mul_cancel₀ _ hdR.ne'
+  obtain ⟨R, hR⟩ := exists_nat_gt (((k : ℝ) + 1 - b / d) / ((s : ℝ) / 2))
+  have hR' := (div_lt_iff₀ (half_pos hsR)).mp hR
+  have horder {i j : ℕ} (hij : i < j) (hj : R ≤ j) : B i < B j := by
+    have hji : (1 : ℝ) ≤ (j : ℝ) - i := by
+      linarith [show (i : ℝ) + 1 ≤ j by exact_mod_cast hij]
+    have hjR : (R : ℝ) ≤ (j : ℝ) + i := by
+      exact_mod_cast (show R ≤ j + i by omega)
+    have hbig : (k : ℝ) + 1 ≤ (s : ℝ) / 2 * (j + (i : ℝ)) + b / d := by
+      linarith [mul_le_mul_of_nonneg_left hjR (half_pos hsR).le]
+    have hgrowth := mul_le_mul hji hbig (by positivity : (0 : ℝ) ≤ k + 1) (by linarith)
+    have hynonneg : 0 ≤ (k : ℝ) / d * y j := by positivity
+    exact_mod_cast (show (B i : ℝ) < B j by nlinarith [hstart i, hstart j, hybound i])
+  have hgap {i : ℕ} (hi : R ≤ i) : B (i + k) = B i + k * C i := by
+    refine adjacent_blocks hk hC hperiod ?_ ?_ horder hi
+    · intro j l t u ht hu he
+      have hsame := hQ.bijOn.injOn (hmem ht) (hmem hu) (by
+        dsimp only
+        rw [hval, hval]
+        exact_mod_cast he)
+      have he' := congrArg Prod.fst hsame
+      change (j : ℝ) / d = (l : ℝ) / d at he'
+      exact_mod_cast ((div_left_inj₀ hdR.ne').mp he')
+    · intro v
+      obtain ⟨p, hp, hv⟩ := hQ.bijOn.surjOn (Set.mem_range_self v)
+      obtain ⟨j, t, ht, rfl⟩ := (sheared_mem_iff hm hn hl).mp hp
+      refine ⟨j, t, ht, ?_⟩
+      dsimp only at hv
+      rw [hd', hval] at hv
+      exact_mod_cast hv.symm
+  -- Cancel the common quadratic increment and the common step size from the gap equation.
+  have hlinear {i : ℕ} (hi : R ≤ i) : b + (l : ℝ) * k / 2 =
+      (d : ℝ) * (if y i = 0 then (1 : ℝ) else 0) + y i - y (i + k) := by
+    have h := congrArg (Nat.cast (R := ℝ)) (hgap hi)
+    have hc : (C i : ℝ) = (s : ℝ) * i + (if y i = 0 then (1 : ℝ) else 0) := by
+      by_cases hy : y i = 0 <;> simp [C, shearedCount, s, d, l, y] at hy ⊢
+    push_cast at h
+    rw [hstart, hstart, hc] at h
+    push_cast at h
+    field_simp [hdR.ne'] at h
+    have hs : (k : ℝ) * (2 * b + (d : ℝ) * s * k) =
+        (k : ℝ) * (2 * ((d : ℝ) * (if y i = 0 then (1 : ℝ) else 0) + y i - y (i + k))) := by
+      linear_combination h
+    rw [hlR]
+    linarith [mul_left_cancel₀ hkR.ne' hs]
+  let _ : NeZero d := ⟨hd.ne'⟩
+  have hycongr := first_height_zmod hm hn hl
+  have hyunique {i v : ℕ} (hv : v < d)
+      (he : (i : ZMod d) + (a : ZMod d) * (v : ZMod d) = 0) : y i = v :=
+    first_height_eq_of_zmod hm hn hl hv he
+  -- On the integral abscissae the first height is zero, giving a first value for the coefficient.
+  let I := R * d
+  have hI : R ≤ I := Nat.le_mul_of_pos_right R hd
+  have hIZ : (I : ZMod d) = 0 := by simp [I]
+  have hyI : y I = 0 := hyunique hd (by simp [hIZ])
+  have hyIk : y (I + k) = y k := hyunique (hylt k) (by simpa [hIZ] using hycongr k)
+  have hcoef : b + (l : ℝ) * k / 2 = (d : ℝ) - y k := by
+    simpa [hyI, hyIk] using hlinear hI
+  -- Choose a late index whose successor by k has the largest possible first height.
+  let J := (R + k) * d + a
+  have hJ : R + k ≤ J := (Nat.le_mul_of_pos_right (R + k) hd).trans (Nat.le_add_right ..)
+  have hJZ : (J : ZMod d) = a := by simp [J]
+  have hd₁ : ((d - 1 : ℕ) : ZMod d) = -1 := by simp [Nat.cast_sub hd]
+  have hyJ : y J = d - 1 := hyunique (by omega) (by rw [hJZ, hd₁]; ring)
+  have hjk : J - k + k = J := Nat.sub_add_cancel (by omega)
+  have hcomp := hlinear (i := J - k) (by omega)
+  rw [hjk, hcoef, hyJ, Nat.cast_sub hd] at hcomp
+  have hyk : y k = d - 1 := by
+    have hle : (y k : ℝ) ≤ (d : ℝ) - 1 := by
+      rw [← Nat.cast_one (R := ℝ), ← Nat.cast_sub hd]
+      exact_mod_cast (show y k ≤ d - 1 by have := hylt k; omega)
+    have hval : (y k : ℝ) = (d : ℝ) - 1 := by
+      by_cases hz : y (J - k) = 0
+      · simp [hz] at hcomp
+        linarith
+      · simp [hz] at hcomp
+        have := (show (y (J - k) : ℝ) < d by exact_mod_cast hylt (J - k))
+        linarith
+    rw [← Nat.cast_one (R := ℝ), ← Nat.cast_sub hd] at hval
+    exact_mod_cast hval
+  have hkZ : (k : ZMod d) = a := by
+    have he : (k : ZMod d) + (a : ZMod d) * (y k : ZMod d) = 0 := hycongr k
+    rw [hyk, hd₁] at he
+    linear_combination he
+  have hb' : b = 1 - (l : ℝ) * k / 2 := by
+    rw [hyk, Nat.cast_sub hd, Nat.cast_one] at hcoef
+    linarith
+  refine ⟨hl, (ZMod.natCast_eq_natCast_iff k a d).mp hkZ, fun x z => ?_⟩
+  rw [hb, hb']
+  simp only [← show (Nat.gcd (m - 1) n : ℝ) = l from rfl, hnR]
+  field_simp
+  ring
+
+-- Reflect the nonzero indices below k by i ↦ k - i; their first heights are complementary.
+private theorem sum_first_heights {m n k : ℕ} (hm : 0 < m) (hn : 0 < n)
+    (hl : n / Nat.gcd (m - 1) n ∣ Nat.gcd (m - 1) n) (hk : 0 < k)
+    (hkm : k ≡ (m - 1) / Nat.gcd (m - 1) n [MOD n / Nat.gcd (m - 1) n]) :
+    (∑ i ∈ Finset.range k, (staircaseFirstHeight m n i : ℝ)) =
+      ((k : ℝ) - 1) * (((n / Nat.gcd (m - 1) n : ℕ) : ℝ) - 1) / 2 := by
+  let d := n / Nat.gcd (m - 1) n
+  let a := (m - 1) / Nat.gcd (m - 1) n
+  let y := staircaseFirstHeight m n
+  have hd : 0 < d := d_pos hn
+  let _ : NeZero d := ⟨hd.ne'⟩
+  have hkZ : (k : ZMod d) = a := (ZMod.natCast_eq_natCast_iff k a d).mpr hkm
+  have hreflect (i : ℕ) (hi : i ≤ k) : (y i : ℝ) + y (k - i) = (d : ℝ) - 1 := by
+    have hlt : y i < d := ybar_lt hm hn hl
+    have hv : d - 1 - y i < d := by omega
+    have hz : ((d - 1 - y i : ℕ) : ZMod d) = -1 - (y i : ZMod d) := by
+      rw [Nat.cast_sub (by omega : y i ≤ d - 1), Nat.cast_sub hd, ZMod.natCast_self, zero_sub,
+        Nat.cast_one]
+    have he : y (k - i) = d - 1 - y i := by
+      apply first_height_eq_of_zmod hm hn hl hv
+      change ((k - i : ℕ) : ZMod d) + (a : ZMod d) * ((d - 1 - y i : ℕ) : ZMod d) = 0
+      rw [Nat.cast_sub hi, hkZ, hz]
+      linear_combination -(first_height_zmod hm hn hl i)
+    rw [he, Nat.cast_sub (by omega : y i ≤ d - 1), Nat.cast_sub hd, Nat.cast_one]
+    ring
+  have hIco : (∑ i ∈ Finset.Ico 1 k, (y i : ℝ)) = ∑ i ∈ Finset.range k, (y i : ℝ) := by
+    refine Finset.sum_subset (f := fun i => (y i : ℝ))
+      (fun i hi => Finset.mem_range.mpr (Finset.mem_Ico.mp hi).2) ?_
+    intro i hi hni
+    have : i = 0 := by
+      simp only [Finset.mem_range, Finset.mem_Ico] at hi hni
+      omega
+    simp [y, this, staircaseFirstHeight_zero]
+  have hrev : (∑ i ∈ Finset.Ico 1 k, (y (k - i) : ℝ)) = ∑ i ∈ Finset.Ico 1 k, (y i : ℝ) := by
+    simpa using Finset.sum_Ico_reflect (fun i => (y i : ℝ)) 1 (m := k) (n := k) (Nat.le_succ k)
+  have hs : 2 * (∑ i ∈ Finset.Ico 1 k, (y i : ℝ)) = ((k : ℝ) - 1) * ((d : ℝ) - 1) := by
+    calc
+      _ = (∑ i ∈ Finset.Ico 1 k, (y i : ℝ)) + ∑ i ∈ Finset.Ico 1 k, (y (k - i) : ℝ) := by
+        rw [hrev, two_mul]
+      _ = ∑ _ ∈ Finset.Ico 1 k, ((d : ℝ) - 1) := by
+        rw [← Finset.sum_add_distrib]
+        exact Finset.sum_congr rfl fun i hi => hreflect i (Finset.mem_Ico.mp hi).2.le
+      _ = _ := by simp [Nat.card_Ico, nsmul_eq_mul, Nat.cast_sub hk, mul_sub]
+  change ∑ i ∈ Finset.range k, (y i : ℝ) = _
+  rw [← hIco]
+  linarith
+
+/-- **Constant term of a quadratic packing polynomial on a rational sector.** Let $m, n$ be
+coprime positive integers, let $l = \gcd(m - 1, n)$, and let $P$ be a quadratic packing
+polynomial on the lattice points $I(n/m)$ of the sector of slope $n/m$. If the step difference
+of $P$ for $m, n$ is a positive integer $k$, then $P(0, 0) = \frac{l^2}{n} (k - 1)(k + 1)/12$.
+
+Source: Brandt and Gjaldbæk, *Classification of Quadratic Packing Polynomials on Sectors of
+R^2*, INTEGERS 25 (2025), Article A81, Lemma 5 (`integers-2025-A81-lem-5`). -/
+public theorem quadraticPackingPolynomial_constant_term {m n k : ℕ} (hm : 0 < m)
+    (hn : 0 < n) (hmn : Nat.Coprime m n) {P : ℝ → ℝ → ℝ}
+    (hP : IsQuadraticPackingPolynomial (sectorLatticePoints ((n : ℝ) / m)) P)
+    (hk : 0 < k) (hkP : consecutiveStepDifference m n P = k) :
+    P 0 0 = ((Nat.gcd (m - 1) n : ℝ) ^ 2 / n) * (k - 1) * (k + 1) / 12 := by
+  classical
+  obtain ⟨hl, hkm, hform⟩ := quadraticPackingPolynomial_necessary_form hm hn hmn hP hk hkP
+  let F := P 0 0
+  have hshear : (fun x y => P (x + ((m : ℝ) - 1) / n * y) y) = phat m n k F :=
+    funext fun x => funext (hform x)
+  let l := Nat.gcd (m - 1) n
+  let d := n / l
+  let y := staircaseFirstHeight m n
+  let start (i : ℕ) := phat m n k F ((i : ℝ) / ((n : ℝ) / l)) (y i)
+  have hdR : 0 < (d : ℝ) := by exact_mod_cast d_pos (m := m) hn
+  have hlR : 0 < (l : ℝ) := by exact_mod_cast gcd_pos (m := m) hn
+  have hnR : (n : ℝ) = (d : ℝ) * l := by exact_mod_cast n_eq (m := m) (n := n)
+  have hd' : (n : ℝ) / l = d := (div_eq_iff hlR.ne').mpr hnR
+  have hSheared : IsQuadraticPackingPolynomial
+      ((fun p : ℝ × ℝ => (p.1 - ((m : ℝ) - 1) / n * p.2, p.2)) ''
+        sectorLatticePoints ((n : ℝ) / m)) (phat m n k F) := by
+    rw [← hshear]
+    exact (isQuadraticPackingPolynomial_image_shear_iff _).mpr hP
+  have hset : start '' Set.Iio k = ((↑) : ℕ → ℝ) '' Set.Iio k :=
+    (isQuadraticPackingPolynomial_sheared_iff hm hn hmn hl hk hkm F).mp hSheared
+  have hmem (i : ℕ) : ((i : ℝ) / ((n : ℝ) / l), (y i : ℝ)) ∈
+      (fun p : ℝ × ℝ => (p.1 - ((m : ℝ) - 1) / n * p.2, p.2)) ''
+        sectorLatticePoints ((n : ℝ) / m) := by
+    refine (sheared_mem_iff hm hn hl).mpr ⟨i, 0, shearedCount_pos hn hl i, ?_⟩
+    simp [y, l]
+  have hstartInj : Function.Injective start := by
+    intro i j hij
+    have he := hSheared.bijOn.injOn (hmem i) (hmem j) hij
+    have h : (i : ℝ) / ((n : ℝ) / l) = (j : ℝ) / ((n : ℝ) / l) := congrArg Prod.fst he
+    rw [hd'] at h
+    exact_mod_cast ((div_left_inj₀ hdR.ne').mp h)
+  have hImage : (Finset.range k).image start = (Finset.range k).image ((↑) : ℕ → ℝ) := by
+    ext z
+    simpa only [Finset.mem_image, Finset.mem_range, Set.mem_image, Set.mem_Iio] using
+      Set.ext_iff.mp hset z
+  have hsum : ∑ i ∈ Finset.range k, start i = ∑ i ∈ Finset.range k, (i : ℝ) := by
+    calc
+      _ = ∑ z ∈ (Finset.range k).image start, z := (Finset.sum_image hstartInj.injOn).symm
+      _ = ∑ z ∈ (Finset.range k).image ((↑) : ℕ → ℝ), z := by rw [hImage]
+      _ = _ := Finset.sum_image (Nat.cast_injective (R := ℝ)).injOn
+  have hsum₁ : ∑ i ∈ Finset.range k, (i : ℝ) = (k : ℝ) * ((k : ℝ) - 1) / 2 := by
+    have h := congrArg (Nat.cast (R := ℝ)) (Finset.sum_range_id_mul_two k)
+    push_cast [Nat.cast_sub hk, Nat.cast_sum] at h
+    linarith
+  have hsum₂ : ∑ i ∈ Finset.range k, (i : ℝ) ^ 2 =
+      (k : ℝ) * ((k : ℝ) - 1) * (2 * k - 1) / 6 := by
+    have h := Finset.sum_range_sub (fun i : ℕ => (i : ℝ) ^ 3) k
+    have hdiff (i : ℕ) : ((i + 1 : ℕ) : ℝ) ^ 3 - (i : ℝ) ^ 3 =
+        3 * (i : ℝ) ^ 2 + 3 * i + 1 := by push_cast; ring
+    simp_rw [hdiff, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, Finset.card_range,
+      nsmul_eq_mul, mul_one, Nat.cast_zero, zero_pow (by decide : 3 ≠ 0), sub_zero, hsum₁] at h
+    linarith
+  have hstart (i : ℕ) : start i = (l : ℝ) / d / 2 * (i : ℝ) ^ 2 +
+      (1 - (l : ℝ) * k / 2) / d * i + (k : ℝ) / d * y i + F := by
+    dsimp only [start, phat]
+    rw [hd', hnR]
+    field_simp
+    ring
+  simp_rw [hstart, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, Finset.card_range,
+    nsmul_eq_mul, hsum₁, hsum₂] at hsum
+  have hheight : ∑ i ∈ Finset.range k, (y i : ℝ) = ((k : ℝ) - 1) * ((d : ℝ) - 1) / 2 :=
+    sum_first_heights hm hn hl hk hkm
+  rw [hheight] at hsum
+  have h : F = ((l : ℝ) / d) * (k - 1) * (k + 1) / 12 := by
+    have hkR : (k : ℝ) ≠ 0 := by exact_mod_cast hk.ne'
+    apply mul_left_cancel₀ hkR
+    field_simp [hdR.ne'] at hsum ⊢
+    linear_combination hsum / 2
+  change F = ((l : ℝ) ^ 2 / n) * (k - 1) * (k + 1) / 12
+  rw [h, hnR]
+  field_simp
 
 end
 

@@ -87,38 +87,6 @@ public theorem_wanted quadraticPackingPolynomial_staircaseFirstHeight {m n k : �
     (hk : 0 < k) (hkP : consecutiveStepDifference m n P = k) :
     staircaseFirstHeight m n k = n / Nat.gcd (m - 1) n - 1
 
-/-- **Constant term of a quadratic packing polynomial on a rational sector.** Let $m, n$ be
-coprime positive integers, let $l = \gcd(m - 1, n)$, and let $P$ be a quadratic packing
-polynomial on the lattice points $I(n/m)$ of the sector of slope $n/m$. If the step difference
-of $P$ for $m, n$ is a positive integer $k$, then $P(0, 0) = \frac{l^2}{n} (k - 1)(k + 1)/12$.
-
-Source: Brandt and Gjaldbæk, *Classification of Quadratic Packing Polynomials on Sectors of
-R^2*, INTEGERS 25 (2025), Article A81, Lemma 5 (`integers-2025-A81-lem-5`). -/
-public theorem_wanted quadraticPackingPolynomial_constant_term {m n k : ℕ} (hm : 0 < m)
-    (hn : 0 < n) (hmn : Nat.Coprime m n) {P : ℝ → ℝ → ℝ}
-    (hP : IsQuadraticPackingPolynomial (sectorLatticePoints ((n : ℝ) / m)) P)
-    (hk : 0 < k) (hkP : consecutiveStepDifference m n P = k) :
-    P 0 0 = ((Nat.gcd (m - 1) n : ℝ) ^ 2 / n) * (k - 1) * (k + 1) / 12
-
-/-- **Step-difference form of a quadratic packing polynomial on a rational sector.** Let $m, n$
-be coprime positive integers, let $l = \gcd(m - 1, n)$, and let $P$ be a quadratic packing
-polynomial on the lattice points $I(n/m)$ of the sector of slope $n/m$ whose step difference
-for $m, n$ is a positive integer $k$. Then $n/l$ divides $l$, $k \equiv (m - 1)/l \pmod{n/l}$,
-and for all real $x, y$ one has $P(x + \frac{m - 1}{n} y, y) =
-\frac{n}{2} x \left(x - \frac{k}{n/l}\right) + x + \frac{k}{n/l} y + P(0, 0)$.
-
-Source: Brandt and Gjaldbæk, *Classification of Quadratic Packing Polynomials on Sectors of
-R^2*, INTEGERS 25 (2025), Article A81, Proposition 1 (`integers-2025-A81-prop-1`). -/
-public theorem_wanted quadraticPackingPolynomial_necessary_form {m n k : ℕ} (hm : 0 < m)
-    (hn : 0 < n) (hmn : Nat.Coprime m n) {P : ℝ → ℝ → ℝ}
-    (hP : IsQuadraticPackingPolynomial (sectorLatticePoints ((n : ℝ) / m)) P)
-    (hk : 0 < k) (hkP : consecutiveStepDifference m n P = k) :
-    n / Nat.gcd (m - 1) n ∣ Nat.gcd (m - 1) n ∧
-      k ≡ (m - 1) / Nat.gcd (m - 1) n [MOD n / Nat.gcd (m - 1) n] ∧
-      ∀ x y, P (x + ((m : ℝ) - 1) / n * y) y =
-        (n : ℝ) / 2 * x * (x - k / (n / (Nat.gcd (m - 1) n : ℝ))) + x +
-          k / (n / (Nat.gcd (m - 1) n : ℝ)) * y + P 0 0
-
 end
 
 end MetaMathlibExt
