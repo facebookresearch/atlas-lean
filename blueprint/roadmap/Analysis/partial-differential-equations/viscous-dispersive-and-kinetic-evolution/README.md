@@ -8,3 +8,4 @@
 - [Global classical relativistic Vlasov–Maxwell solutions in three dimensions](global-classical-relativistic-vlasov-maxwell.md)
 - [Nonuniqueness of global renormalized periodic hard-sphere Boltzmann flow](nonuniqueness-of-periodic-hard-sphere-boltzmann-flow.md)
 - [Global regularity of the three-dimensional Navier–Stokes equations](global-regularity-of-the-navier-stokes-equations.md)
+- [Viscous Burgers equation and the Cole–Hopf transform](viscous-burgers-equation-and-the-cole-hopf-trans/README.md)

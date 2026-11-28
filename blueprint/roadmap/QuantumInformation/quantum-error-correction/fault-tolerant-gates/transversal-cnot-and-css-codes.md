@@ -15,7 +15,8 @@ $Z^b$ lie in $S$. The same rules applied to $\bar X_j$ and $\bar Z_j$ give the l
 
 ## Depends on
 
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
+- [Stabilizer groups and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/stabilizer-groups-and-stabilizer-states.md)
 - [Logical Pauli operators of a stabilizer code](../stabilizer-formalism/logical-pauli-operators-of-a-stabilizer-code.md)
 - [Transversal gate](transversal-gate.md)
 
@@ -23,6 +24,7 @@ $Z^b$ lie in $S$. The same rules applied to $\bar X_j$ and $\bar Z_j$ give the l
 
 - [Conjugation of Pauli operators by $H$, $S$ and CNOT](../clifford-group/conjugation-of-pauli-operators-by-h-s-and-cnot.md)
 - [The normalizer of a stabilizer group is its centralizer](../stabilizer-formalism/normalizer-of-a-stabilizer-group-equals-its-centralizer.md)
+- [Logical Pauli operators of a stabilizer code](../stabilizer-formalism/logical-pauli-operators-of-a-stabilizer-code.md): canonical logical pairs; the CSS argument supplies the further choice of pure $X$ and pure $Z$ representatives
 
 ## Sources
 

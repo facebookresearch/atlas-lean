@@ -16,6 +16,16 @@ be distilled, while mixtures of stabilizer states give no advantage.
 - [Clifford operations with magic states are universal](clifford-operations-with-magic-states-are-universal.md)
 - [Clifford computations with mixtures of stabilizer states are classically simulable](mixtures-of-stabilizer-states-give-no-quantum-advantage.md)
 - [Magic-state distillation](magic-state-distillation.md)
+- [The logical unitaries of a code form a group](logical-unitaries-of-a-code-form-a-group.md)
+- [The logical unitaries in a compact Lie group form a Lie subgroup](logical-unitaries-in-a-lie-group-form-a-lie-subgroup.md)
+- [The identity component of the logical product unitaries acts on the code as a phase](identity-component-of-logical-product-unitaries-acts-as-a-phase.md)
+- [Transversal gates are fault tolerant](transversal-gates-are-fault-tolerant.md)
+- [Fault-tolerant preparation of encoded ancilla states for the seven-qubit code](fault-tolerant-preparation-of-encoded-ancilla-states.md)
+- [Fifteen-to-one distillation of $H$-type magic states](fifteen-to-one-distillation-of-h-type-magic-states.md)
+- [Five-to-one distillation of $T$-type magic states](five-to-one-distillation-of-t-type-magic-states.md)
+- [Gate teleportation](gate-teleportation.md)
+- [Universality from transversal gates and gauge fixing](universality-from-transversal-gates-and-gauge-fixing.md)
+- [Robustness of magic](robustness-of-magic.md)
 
 ## Related topics
 

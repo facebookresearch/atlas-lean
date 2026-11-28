@@ -44,7 +44,9 @@ open SimpleGraph
 noncomputable def cutSize {V E : Type} (M : EdgeIndexedMultigraph V E) (X : Set V) : ℕ :=
   {e | ∃ u ∈ M.ends e, ∃ w ∈ M.ends e, u ∈ X ∧ w ∉ X}.ncard
 
-/-- `M` is an `r`-graph: `r`-regular, with `|∂(X)| ≥ r` for every vertex set `X` of odd size. -/
+/-- `M` is an `r`-graph: `r`-regular, with `|∂(X)| ≥ r` for every finite vertex set `X` of odd
+size. Degrees (`M.degree v`) and cut sizes (`cutSize M X`) are natural cardinalities
+(`Set.ncard`), so they are `0` when infinite. -/
 def IsRGraph {V E : Type} (M : EdgeIndexedMultigraph V E) (r : ℕ) : Prop :=
   (∀ v, M.degree v = r) ∧ ∀ X : Finset V, Odd X.card → r ≤ cutSize M X
 
