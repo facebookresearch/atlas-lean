@@ -53,28 +53,28 @@ private abbrev Y : ℤ → ModuleCat.{0} ℤ := fun _ => Z
 private abbrev K : ℤ → ModuleCat.{0} ℤ := fun _ => kernel f
 private def F : ∀ i : ℤ, X i ⟶ Y i := fun _ => f
 
-private def e : (∐ K) ≅ kernel (Sigma.map F) := coproductKernelIso F
+private def e : ((∐ K) : ModuleCat.{0} ℤ) ≅ kernel (CategoryTheory.Limits.Sigma.map F) := coproductKernelIso F
 
-private def projection (j : ℤ) : (∐ X) ⟶ Z :=
-  Sigma.desc (fun i : ℤ => if i = j then q else 0)
+private def projection (j : ℤ) : ((∐ X) : ModuleCat.{0} ℤ) ⟶ Z :=
+  CategoryTheory.Limits.Sigma.desc (fun i : ℤ => if i = j then q else 0)
 
-private def evaluate (j : ℤ) : kernel (Sigma.map F) ⟶ Z :=
-  kernel.ι (Sigma.map F) ≫ projection j
+private def evaluate (j : ℤ) : kernel (CategoryTheory.Limits.Sigma.map F) ⟶ Z :=
+  kernel.ι (CategoryTheory.Limits.Sigma.map F) ≫ projection j
 
 private theorem component_value (i j a : ℤ) :
-    (evaluate j).hom (e.hom.hom ((Sigma.ι K i).hom (k.hom a))) =
+    (evaluate j).hom (e.hom.hom ((CategoryTheory.Limits.Sigma.ι K i).hom (k.hom a))) =
       if i = j then a else 0 := by
-  have hκ : Sigma.ι K i ≫ e.hom ≫ kernel.ι (Sigma.map F) =
-      kernel.ι f ≫ Sigma.ι X i :=
+  have hκ : CategoryTheory.Limits.Sigma.ι K i ≫ e.hom ≫ kernel.ι (CategoryTheory.Limits.Sigma.map F) =
+      kernel.ι f ≫ CategoryTheory.Limits.Sigma.ι X i :=
     coproductKernelIso_hom_ι F i
   have hk : k ≫ kernel.ι f = b := kernel.lift_ι f b b_f
-  have hp : Sigma.ι X i ≫ projection j = if i = j then q else 0 :=
-    Sigma.ι_desc (fun i : ℤ => if i = j then q else 0) i
+  have hp : CategoryTheory.Limits.Sigma.ι X i ≫ projection j = if i = j then q else 0 :=
+    CategoryTheory.Limits.Sigma.ι_desc (fun i : ℤ => if i = j then q else 0) i
   have h :
-      k ≫ Sigma.ι K i ≫ e.hom ≫ kernel.ι (Sigma.map F) ≫ projection j =
+      k ≫ CategoryTheory.Limits.Sigma.ι K i ≫ e.hom ≫ kernel.ι (CategoryTheory.Limits.Sigma.map F) ≫ projection j =
         if i = j then 𝟙 Z else 0 := by
     calc
-      _ = (k ≫ kernel.ι f) ≫ Sigma.ι X i ≫ projection j := by
+      _ = (k ≫ kernel.ι f) ≫ CategoryTheory.Limits.Sigma.ι X i ≫ projection j := by
         simpa only [Category.assoc] using
           congrArg (fun z : kernel f ⟶ ∐ X => k ≫ z ≫ projection j) hκ
       _ = b ≫ (if i = j then q else 0) := by rw [hk, hp]
@@ -83,26 +83,29 @@ private theorem component_value (i j a : ℤ) :
         · simpa only [if_pos hi] using b_q
         · simp only [if_neg hi, comp_zero]
   have hpoint := ConcreteCategory.congr_hom h a
-  change (evaluate j).hom (e.hom.hom ((Sigma.ι K i).hom (k.hom a))) =
+  change (evaluate j).hom (e.hom.hom ((CategoryTheory.Limits.Sigma.ι K i).hom (k.hom a))) =
     (if i = j then (𝟙 Z) else 0).hom a at hpoint
   by_cases hi : i = j
   · simpa only [if_pos hi, ModuleCat.hom_id, LinearMap.id_apply] using hpoint
   · simpa only [if_neg hi, ModuleCat.hom_zero, LinearMap.zero_apply] using hpoint
 
-private def source (a b : ℤ) : ∐ K :=
-  (Sigma.ι K (-1)).hom (k.hom a) + (Sigma.ι K 2).hom (k.hom b)
+private def source (a b : ℤ) : ((∐ K) : ModuleCat.{0} ℤ) :=
+  (CategoryTheory.Limits.Sigma.ι K (-1)).hom (k.hom a) + (CategoryTheory.Limits.Sigma.ι K 2).hom (k.hom b)
 
-private def totalKernel (a b : ℤ) : kernel (Sigma.map F) := e.hom.hom (source a b)
+private def totalKernel (a b : ℤ) :
+    (kernel (CategoryTheory.Limits.Sigma.map F) : ModuleCat.{0} ℤ) := e.hom.hom (source a b)
 
 theorem negative_coordinate (a b : ℤ) : (evaluate (-1)).hom (totalKernel a b) = a := by
   change (evaluate (-1)).hom
-    (e.hom.hom ((Sigma.ι K (-1)).hom (k.hom a) + (Sigma.ι K 2).hom (k.hom b))) = a
+    (e.hom.hom ((CategoryTheory.Limits.Sigma.ι K (-1)).hom (k.hom a) + (CategoryTheory.Limits.Sigma.ι K 2).hom (k.hom
+      b))) = a
   rw [map_add, map_add, component_value, component_value]
   norm_num
 
 theorem positive_coordinate (a b : ℤ) : (evaluate 2).hom (totalKernel a b) = b := by
   change (evaluate 2).hom
-    (e.hom.hom ((Sigma.ι K (-1)).hom (k.hom a) + (Sigma.ι K 2).hom (k.hom b))) = b
+    (e.hom.hom ((CategoryTheory.Limits.Sigma.ι K (-1)).hom (k.hom a) + (CategoryTheory.Limits.Sigma.ι K 2).hom (k.hom
+      b))) = b
   rw [map_add, map_add, component_value, component_value]
   norm_num
 
@@ -117,7 +120,8 @@ private def u : A ⟶ A :=
 
 private theorem square : f ≫ 𝟙 Z = u ≫ f := by
   apply ModuleCat.hom_ext
-  ext x
+  apply LinearMap.ext
+  intro x
   rfl
 
 private def m : kernel f ⟶ kernel f := kernel.map f f u (𝟙 Z) square
@@ -136,34 +140,36 @@ private theorem m_value (a : ℤ) : m.hom (k.hom a) = k.hom (-3 * a) := by
   have h := ConcreteCategory.congr_hom k_scale a
   exact h
 
-private def totalMap : kernel (Sigma.map F) ⟶ kernel (Sigma.map F) :=
-  kernel.map (Sigma.map F) (Sigma.map F) (Sigma.map (fun _ => u))
-    (Sigma.map (fun _ => 𝟙 Z)) (by
-      apply Sigma.hom_ext
+private def totalMap : kernel (CategoryTheory.Limits.Sigma.map F) ⟶ kernel (CategoryTheory.Limits.Sigma.map F) :=
+  kernel.map (CategoryTheory.Limits.Sigma.map F) (CategoryTheory.Limits.Sigma.map F) (CategoryTheory.Limits.Sigma.map
+    (fun _ => u))
+    (CategoryTheory.Limits.Sigma.map (fun _ => 𝟙 Z)) (by
+      apply CategoryTheory.Limits.Sigma.hom_ext
       intro i
-      simpa only [Category.assoc, Sigma.ι_map, Sigma.ι_map_assoc] using
-        congrArg (fun z : A ⟶ Z => z ≫ Sigma.ι Y i) square)
+      simpa only [Category.assoc, CategoryTheory.Limits.Sigma.ι_map, CategoryTheory.Limits.Sigma.ι_map_assoc] using
+        congrArg (fun z : A ⟶ Z => z ≫ CategoryTheory.Limits.Sigma.ι Y i) square)
 
-private theorem naturality : Sigma.map (fun _ : ℤ => m) ≫ e.hom = e.hom ≫ totalMap :=
+private theorem naturality : CategoryTheory.Limits.Sigma.map (fun _ : ℤ => m) ≫ e.hom = e.hom ≫ totalMap :=
   coproductKernelIso_naturality F F (fun _ => u) (fun _ => 𝟙 Z) (fun _ => square)
 
 private theorem component_map (i a : ℤ) :
-    (Sigma.map (fun _ : ℤ => m)).hom ((Sigma.ι K i).hom (k.hom a)) =
-      (Sigma.ι K i).hom (k.hom (-3 * a)) := by
-  have h := ConcreteCategory.congr_hom (Sigma.ι_map (fun _ : ℤ => m) i) (k.hom a)
-  exact h.trans (congrArg (Sigma.ι K i).hom (m_value a))
+    (CategoryTheory.Limits.Sigma.map (fun _ : ℤ => m)).hom ((CategoryTheory.Limits.Sigma.ι K i).hom (k.hom a)) =
+      (CategoryTheory.Limits.Sigma.ι K i).hom (k.hom (-3 * a)) := by
+  have h := ConcreteCategory.congr_hom (CategoryTheory.Limits.Sigma.ι_map (fun _ : ℤ => m) i) (k.hom a)
+  exact h.trans (congrArg (CategoryTheory.Limits.Sigma.ι K i).hom (m_value a))
 
 private theorem source_map (a b : ℤ) :
-    (Sigma.map (fun _ : ℤ => m)).hom (source a b) = source (-3 * a) (-3 * b) := by
-  change (Sigma.map (fun _ : ℤ => m)).hom
-      ((Sigma.ι K (-1)).hom (k.hom a) + (Sigma.ι K 2).hom (k.hom b)) =
-    (Sigma.ι K (-1)).hom (k.hom (-3 * a)) + (Sigma.ι K 2).hom (k.hom (-3 * b))
+    (CategoryTheory.Limits.Sigma.map (fun _ : ℤ => m)).hom (source a b) = source (-3 * a) (-3 * b) := by
+  change (CategoryTheory.Limits.Sigma.map (fun _ : ℤ => m)).hom
+      ((CategoryTheory.Limits.Sigma.ι K (-1)).hom (k.hom a) + (CategoryTheory.Limits.Sigma.ι K 2).hom (k.hom b)) =
+    (CategoryTheory.Limits.Sigma.ι K (-1)).hom (k.hom (-3 * a)) + (CategoryTheory.Limits.Sigma.ι K 2).hom (k.hom (-3 *
+      b))
   rw [map_add, component_map, component_map]
 
 private theorem total_map (a b : ℤ) :
     totalMap.hom (totalKernel a b) = totalKernel (-3 * a) (-3 * b) := by
   have h := ConcreteCategory.congr_hom naturality (source a b)
-  change e.hom.hom ((Sigma.map (fun _ : ℤ => m)).hom (source a b)) =
+  change e.hom.hom ((CategoryTheory.Limits.Sigma.map (fun _ : ℤ => m)).hom (source a b)) =
     totalMap.hom (totalKernel a b) at h
   rw [source_map] at h
   exact h.symm

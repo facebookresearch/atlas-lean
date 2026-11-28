@@ -82,7 +82,7 @@ theorem endpointCofreeNextTerm_isZero (I : ι → C) (i : ι)
     (hi : ¬ c.Rel i (c.next i)) :
     IsZero (endpointCofreeNextTerm (c := c) I i) := by
   rw [endpointCofreeNextTerm_of_no_next I i hi]
-  exact isZero_zero
+  exact CategoryTheory.Limits.isZero_zero C
 
 /-- For a family I in an abelian category and any complex shape c, form
 the complex with term Iᵢ ⊕ Eᵢ, where Eᵢ is I(c.next i) on an outgoing
