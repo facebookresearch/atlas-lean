@@ -45,7 +45,8 @@ after a raise. There are no equations on this signature. -/
 inductive ExceptF (E : Type u) : Type u → Type u where
   | raise (e : E) : ExceptF E (PEmpty : Type u)
 
-/-- The free carrier for exceptions: programs that may raise `E`. -/
+/-- The free carrier for exceptions: programs that return a value of `α` or raise some
+`e : E`, after which no continuation runs. -/
 abbrev FreeExcept (E : Type u) (α : Type v) := FreeM (ExceptF E) α
 
 /-- Raw explicit-nondeterminism signature: failure `fail : 0` and
@@ -58,7 +59,8 @@ inductive NondetF : Type → Type where
   | fail : NondetF Empty
   | choice : NondetF Bool
 
-/-- The free carrier for nondeterminism: failure and choice programs over `α`. -/
+/-- Raw failure-and-choice trees over `α`: the free monad on `NondetF`, with no quotient by the
+Section 6.4 monoid laws. -/
 abbrev FreeNondet (α : Type v) := FreeM NondetF α
 
 namespace FreeExcept
@@ -129,20 +131,21 @@ exceptions becoming `Except.error`. -/
 def run {E : Type u} {α : Type v} : FreeExcept E α → Except E α :=
   handle Except.ok Except.error
 
-/-- Running a pure return gives `Except.ok`. -/
+/-- Running a pure return gives `Except.ok`: `run (pure x) = Except.ok x`. -/
 theorem run_pure {E : Type u} {α : Type v} (x : α) :
     run (pure x : FreeExcept E α) = (Except.ok x : Except E α) := by
   unfold run
   rw [handle_pure]
 
-/-- Running a raise gives `Except.error`. -/
+/-- Running a raise gives `Except.error`: `run (raise e) = Except.error e`. -/
 theorem run_raise {E : Type u} {α : Type v} (e : E) :
     run (raise e : FreeExcept E α) = (Except.error e : Except E α) := by
   unfold run
   have hbind := (FreeM.bind_pure (raise e : FreeExcept E α)).symm
   rw [hbind, handle_raise_bind]
 
-/-- A first error short-circuits the rest of a bind. -/
+/-- A first error short-circuits the rest of a bind: if `run m = Except.error e`, then
+`run (m.bind k) = Except.error e` for every continuation `k`. -/
 theorem run_bind_error {E : Type u} {α : Type v} {γ : Type w'}
     (m : FreeExcept E α) (k : α → FreeExcept E γ) (e : E)
     (h : run m = Except.error e) :
@@ -231,7 +234,8 @@ theorem run_get_set_pure {σ : Type u} (s0 : σ) :
   rw [FreeM.FreeState.run_set]
 
 /-- Put-get equation after running, with an arbitrary continuation:
-a read right after writing `s` hands `s` to the continuation. Stated
+a read right after writing `s` hands `s` to the continuation, which also
+runs in state `s`: the write is kept and only the read is removed. Stated
 only for `run`, proved from the pinned run lemmas; not an equality of
 raw `FreeM` syntax. -/
 theorem run_set_get {σ : Type u} {α : Type v} (s : σ)

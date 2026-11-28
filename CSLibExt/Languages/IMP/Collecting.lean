@@ -44,8 +44,8 @@ def stepPost (configs : Set Config) : Set Config :=
   {next | ∃ config ∈ configs, Step config next}
 
 /-- The collecting transformer for a fixed set of initial
-configurations: retain the initial configurations and add one-step
-successors. -/
+configurations: `collectingStep I X = I ∪ stepPost X` keeps the initial
+configurations and adds the one-step successors of the configurations in `X`. -/
 def collectingStep (initial configs : Set Config) : Set Config :=
   initial ∪ stepPost configs
 

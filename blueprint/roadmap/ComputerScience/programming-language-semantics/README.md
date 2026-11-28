@@ -38,3 +38,7 @@ Operational and denotational semantics of programming languages and correctness 
 - [Domain theoretic models](domain-theoretic-models/README.md)
 - [Intermediate representations](intermediate-representations/README.md)
 - [Garbage collection](garbage-collection/README.md)
+- [A heap language for pointer analysis](a-heap-language-for-pointer-analysis/README.md)
+- [Collecting semantics of IMP](collecting-semantics-of-imp/README.md)
+- [Free-model handlers: exceptions, state run laws, explicit nondeterminism](free-model-handlers-exceptions-state-run-laws-ex/README.md)
+- [Operational semantics and program equivalence](operational-semantics-and-program-equivalence/README.md)

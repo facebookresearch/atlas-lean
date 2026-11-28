@@ -1,0 +1,3 @@
+# Fuel-bounded superclass chain
+
+For a class table, a fuel bound $n$ and a class name $C$, the fuel-bounded superclass chain is defined by recursion on $n$. With fuel $0$ it is empty, even at $\mathtt{Object}$. With fuel $n + 1$ it is $[\mathtt{Object}]$ if $C$ is $\mathtt{Object}$; $[C]$ if the table has no declaration named $C$; and otherwise $C$ followed by the chain with fuel $n$ from the superclass of the first declaration named $C$. So positive fuel always emits the current name, and the chain follows only the first declaration of each class. It is used to define field, method body and method type lookup.

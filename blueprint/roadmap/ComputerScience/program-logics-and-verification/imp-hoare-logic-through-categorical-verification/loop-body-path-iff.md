@@ -1,0 +1,5 @@
+# Feedback paths of the loop body are terminating while executions
+
+For a boolean expression $b$, an IMP command $c$, a start point $s$ on either input wire of the [loop body](loop-body.md) of $b$ and $c$, external or feedback, and a state $t$, a finite feedback path of the loop body runs from $s$ to the external output $t$ if and only if $\mathtt{while}\ b\ \mathtt{do}\ c$ executes from the [control state](control-state.md) of $s$, the state it carries, to $t$. A feedback path takes finitely many loop-body edges into the feedback wire and then one edge to the external output.
+
+Restricted to start points on the external wire, this is a morphism equality in the relation category of IMP states: the [execution relation](command-rel.md) of $\mathtt{while}\ b\ \mathtt{do}\ c$ equals the symmetric trace, finite-path feedback, of the loop body. Conversely the morphism equality gives the statement for start points on the feedback wire too, because the loop body ignores the wire a state arrives on: its edges out of a state on the feedback wire are those out of the same state on the external wire.

@@ -38,7 +38,7 @@ abbrev Store := Nat -> Addr
 /-- Total heap mapping each address to its stored address. -/
 abbrev Heap := Nat -> Addr
 
-/-- Heap language statements: skip, sequencing, and heap operations. -/
+/-- Heap language statements: skip, sequencing, allocation `new`, copy, load and store. -/
 inductive Stmt where
   | skip
   | seq (first second : Stmt)

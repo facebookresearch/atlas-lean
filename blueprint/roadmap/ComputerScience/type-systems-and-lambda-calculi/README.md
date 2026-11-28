@@ -10,6 +10,7 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [De Bruijn and locally nameless terms](de-bruijn-and-locally-nameless-terms/README.md)
 - [Curry–Howard correspondence for the simply typed lambda calculus](curry-howard-correspondence-for-the-simply-typed/README.md)
 - [Deciding beta-eta conversion by normalization by evaluation](deciding-beta-eta-conversion-by-normalization-by/README.md)
+- [Featherweight Java core](featherweight-java-core/README.md)
 - [Hindley–Milner type inference](hindley-milner-type-inference/README.md)
 - [Iso-recursive types](iso-recursive-types/README.md)
 - [Locally nameless embedding of the simply typed lambda calculus](locally-nameless-embedding-of-the-simply-typed-l/README.md)

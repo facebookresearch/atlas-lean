@@ -40,7 +40,8 @@ def pcfSem : OpSem (Tm [] Ty.nat) Unit where
     intro c hv μ s' h
     exact Tm.Value.not_step hv h
 
-/-- Context algebra from PCF terms and one-hole contexts. -/
+/-- Context algebra from PCF terms and one-hole contexts at every judgment `(Γ, A)`, open
+contexts included. -/
 def pcfAlgebra : CtxAlgebra (List Ty × Ty) where
   Tm := fun j => Tm j.1 j.2
   Ctx := fun j k => Ctx j.1 j.2 k.1 k.2
@@ -50,7 +51,8 @@ def pcfAlgebra : CtxAlgebra (List Ty × Ty) where
   plug_hole := fun t => Ctx.plug_hole t
   plug_comp := fun D C t => Ctx.plug_comp D C t
 
-/-- Observations for PCF: closed ground programs with numeral outcomes. -/
+/-- Observations for PCF: the one program judgment `([], nat)` with unit labels and `pcfSem`; a
+closed ground term `q` has outcome `n` exactly when `q` is syntactically `Tm.numeral n`. -/
 def pcfObs : CtxObs pcfAlgebra where
   Prog := fun j => j = ([], Ty.nat)
   Outcome := Nat

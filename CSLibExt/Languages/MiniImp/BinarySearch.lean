@@ -38,8 +38,8 @@ open Cslib.Algorithms.Lean.TimeM
 /-- The loop guard `lo < hi`, written `¬ (hi ≤ lo)` in MiniImp's comparison syntax. -/
 def guard : BExp := .not (.le (.var "hi") (.var "lo"))
 
-/-- One actual MiniImp iteration: compute midpoint, read, then narrow the
-interval. -/
+/-- One actual MiniImp iteration: `mid := lo + (hi - lo) / 2`, `value := xs[mid]`, then
+`lo := mid + 1` if `value < key` and `hi := mid` otherwise, so equality moves `hi`. -/
 def body (xs : Array Nat) (key : Nat) : Stmt :=
   .seq (.assign "mid"
       (.add (.var "lo") (.div (.sub (.var "hi") (.var "lo")) (.lit 2))))

@@ -1,0 +1,3 @@
+# While validity as a tensor triple with an invariant
+
+For a guard $b$, a body $c$ and assertions $P$, $Q$, the triple $\{P\}\ \mathtt{while}\ b\ \mathtt{do}\ c\ \{Q\}$ is valid if and only if there is a set of states $I$ such that the categorical loop body of $b$ and $c$ satisfies the powerset tensor triple from $(P, I)$ to $(Q, I)$. The loop body has an external wire, carrying $P$ in and $Q$ out, and a feedback wire carrying $I$ both ways. An invariant alone is not enough: $I$ = all states is preserved by any loop, while $\{\mathrm{True}\}\ \mathtt{while}\ \mathrm{false}\ \mathtt{do}\ \mathtt{skip}\ \{\mathrm{False}\}$ is not valid.

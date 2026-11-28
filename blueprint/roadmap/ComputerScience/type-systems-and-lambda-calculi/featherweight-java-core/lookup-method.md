@@ -1,0 +1,3 @@
+# Method lookup
+
+Walks the [superclass chain](supers.md) of `C` upward, skipping `Object` and names without a declaration. At each other name it searches only the method list of that name's first declaration in the table and takes the first method named `m` there; the first match along the chain is returned, or nothing. A later declaration with the same class name is never consulted: for a table with `C extends D` declaring no methods followed by `C extends E` declaring `m`, where `C`, `D` and `E` are distinct, none is `Object` and `D` is undeclared, the chain is `[C, D]` and lookup of `m` in `C` fails. It returns the method declaration, not the class that declares it (MB-CLASS/MB-SUPER).
