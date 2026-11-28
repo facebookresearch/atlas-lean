@@ -12,11 +12,12 @@ A category of partitions is a set of partitions of finite point sets, drawn with
 
 **Definition.** A *category of partitions* is a subset $\mathcal C\subseteq\mathcal P$ that contains the identity partition in $\mathcal P(1,1)$, joining its two points, and the pair partition in $\mathcal P(0,2)$, joining its two lower points, and that is closed under tensor products, involutions and compositions. Write $\mathcal C(k,\ell)=\mathcal C\cap\mathcal P(k,\ell)$. Such a category is automatically closed under rotations and vertical reflections. It is *recursively enumerable* if some Turing machine enumerates its elements.
 
-Examples are all partitions $\mathcal P$, the pair partitions (every block of size two), the non-crossing partitions, and the balanced partitions; intersections of categories of partitions are again categories of partitions. Categories of partitions arise in the representation theory of compact quantum groups (easy quantum groups) and contain diagram algebras such as the Temperley–Lieb algebra.
+Examples are all partitions $\mathcal P$, the pair partitions (every block of size two), the non-crossing partitions, and the balanced partitions; intersections of categories of partitions are again categories of partitions. Categories of partitions arise in the representation theory of compact quantum groups (easy quantum groups) and are linked to diagram algebras such as the Temperley–Lieb algebra.
 
 ## Depends on
 
 - [Partition of a set into nonempty pairwise disjoint blocks](../../../SetTheory/sets-functions-relations/set-partition.md)
+- [Enumerating a predicate](../../../TheoryOfComputation/computability/enumerators/enumerates.md)
 
 ## Proof depends on
 
