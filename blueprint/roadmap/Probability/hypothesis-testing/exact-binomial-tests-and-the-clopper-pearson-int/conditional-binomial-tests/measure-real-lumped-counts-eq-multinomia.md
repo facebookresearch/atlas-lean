@@ -1,0 +1,3 @@
+# Lumping cells of a multinomial sample
+
+Let $\iota$ be a finite set of cells, $X_0, X_1, \dots$ mutually independent measurable random elements of $\iota$ on a probability space with $P(X_k = i) = p_i$ for every $k$ and $i$, and $C_i = \#\{k < n : X_k = i\}$ the cell counts of the first $n$ draws. Write $M_n(p; x) = \frac{n!}{\prod_i x_i!}\prod_i p_i^{x_i}$ if $\sum_i x_i = n$ and $M_n(p; x) = 0$ otherwise. Let $f : \iota \to \kappa$ be a map to a finite set and $q_j = \sum_{i : f(i) = j} p_i$. Then for every $y \in \mathbb{N}^\kappa$, $P\big(\#\{k < n : f(X_k) = j\} = y_j \text{ for all } j\big) = M_n(q; y)$.
