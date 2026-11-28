@@ -2344,6 +2344,7 @@
   "CSLibExt/Privacy/DifferentialPrivacyKFold": {"to": "ComputerScience/cryptography", "title": "k-fold adaptive composition and group privacy"},
   "CSLibExt/Privacy/DiscreteMechanisms": {"to": "ComputerScience/cryptography", "title": "Discrete privacy mechanisms"},
   "CSLibExt/Privacy/HypothesisTesting": {"to": "ComputerScience/cryptography", "title": "Hypothesis-testing characterization of differential privacy"},
+  "CSLibExt/Privacy/RandomizedResponseDominance": {"to": "ComputerScience/cryptography", "title": "Hypothesis-testing characterization of differential privacy"},
   "CSLibExt/Privacy/MaxDivergenceDecomposition": {"to": "ComputerScience/cryptography", "title": "Approximate max-divergence decomposition on finite spaces"},
   "CSLibExt/Privacy/MeasureDifferentialPrivacy": {"to": "ComputerScience/cryptography", "title": "Measure differential privacy"},
   "CSLibExt/Privacy/PrivacyLoss": {"to": "ComputerScience/cryptography", "title": "Privacy-loss random variable and KL bound"},
