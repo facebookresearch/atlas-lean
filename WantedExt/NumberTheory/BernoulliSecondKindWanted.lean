@@ -49,28 +49,13 @@ public import MathlibExt.NumberTheory.Bernoulli.StirlingInversion
 public import MathlibExt.NumberTheory.Bernoulli.WeightedStirlingSum
 public import MathlibExt.NumberTheory.BernoulliSecondKindBernoulliSecondEqNegSum
 public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirlingSum
+public import MathlibExt.NumberTheory.Bernoulli.FallingFactorialBernoulliPolynomial
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.BernoulliSecondKindWanted
-
-/-- **Falling factorials in the Bernoulli polynomial basis.** Let $B_m^*$ be the Bernoulli
-numbers of the second kind, $B_k(X)$ the Bernoulli polynomials over $\mathbb{Q}$ (so that
-$B_1(X) = X - 1/2$), $s(m, j)$ the signed Stirling numbers of the first kind and
-$X^{\underline{n}} = X(X-1)\cdots(X-n+1)$ the falling factorial. For every natural number
-$n$, in $\mathbb{Q}[X]$,
-$$X^{\underline{n}} = B_n^* + \sum_{k=1}^{n} \frac{n}{k} \, s(n-1, k-1) \, B_k(X).$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Theorem 5. -/
-theorem_wanted descPochhammer_eq (n : ℕ) :
-    descPochhammer ℚ n =
-      Polynomial.C (MetaMathlibExt.bernoulliSecond n) +
-        ∑ k ∈ Finset.Icc 1 n, Polynomial.C
-          ((n : ℚ) / k * (MetaMathlibExt.signedStirlingFirst (n - 1) (k - 1) : ℚ)) *
-          Polynomial.bernoulli k
 
 /-- **Shifted Stirling convolution formula for Bernoulli numbers.** For natural numbers $k$ and $n$
 with $1 \le k \le n$, write $S(m,j)$ for the Stirling numbers of the second kind, $s(m,j)$ for
