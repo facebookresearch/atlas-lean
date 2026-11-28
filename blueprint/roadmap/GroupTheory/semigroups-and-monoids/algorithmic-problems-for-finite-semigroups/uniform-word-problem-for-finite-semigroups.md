@@ -11,6 +11,7 @@ Each single finite semigroup has decidable word problem; the theorem says there 
 ## Depends on
 
 - [Semigroup presentations and the word problem](../decision-problems-in-semigroups/semigroup-presentations-and-the-word-problem.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,7 +19,7 @@ Each single finite semigroup has decidable word problem; the theorem says there 
 
 ## Expansion
 
-The proof simulates a two-counter (Minsky) machine $M$ in a finitely presented semigroup with an extra counter that counts how often the first counter is emptied, the counter being a subgroup isomorphic to $\mathbb Z$. For the quasi-identity $L \to W = 0$, where $L$ is the conjunction of the defining relations and $W$ encodes the input configuration $(1; 2^m, 0)$: if $M$ accepts this input, only finitely many elements divide $W$, which yields a finite semigroup satisfying $L$ in which $W \ne 0$; if $M$ runs forever, every periodic semigroup satisfying $L$ has $W = 0$. So the quasi-identities holding in all finite semigroups are recursively inseparable from those holding in all periodic semigroups, using a Minsky machine whose set of accepted inputs is not recursive. The finiteness of the set of divisors of $W$ for accepting runs, and the existence of the required Minsky machine (Theorem 2.3 of the survey), have no pages.
+The proof simulates a two-counter (Minsky) machine $M$ in a finitely presented semigroup with an extra counter that counts how often the first counter is emptied, the counter being a subgroup isomorphic to $\mathbb Z$. For the quasi-identity $L \to W = 0$, where $L$ is the conjunction of the defining relations and $W$ encodes the input configuration $(1; 2^m, 0)$: if $M$ accepts this input, only finitely many elements divide $W$, which yields a finite semigroup satisfying $L$ in which $W \ne 0$; if $M$ runs forever, every periodic semigroup satisfying $L$ has $W = 0$. So the quasi-identities holding in all finite semigroups are recursively inseparable from those holding in all periodic semigroups, using a Minsky machine whose set of accepted inputs is not recursive. A good expansion links the finiteness of the set of divisors of $W$ for accepting runs and the existence of the required Minsky machine (Theorem 2.3 of the survey).
 
 ## Sources
 

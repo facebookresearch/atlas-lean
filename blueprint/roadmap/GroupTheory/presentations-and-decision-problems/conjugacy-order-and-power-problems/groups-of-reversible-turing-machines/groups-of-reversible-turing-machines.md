@@ -20,6 +20,7 @@ A machine is *classical* when $d = 1$, $F_{\mathrm{in}} = F_{\mathrm{out}} = \{0
 ## Depends on
 
 - [Group](../../../group-basics/group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -31,4 +32,4 @@ Adding a configuration without a head turns the machines into endomorphisms of t
 
 ## Sources
 
-- Sebastián Barbieri, Jarkko Kari and Ville Salo, *The group of reversible Turing machines: subgroups, generators, and computability*, Forum of Mathematics, Sigma 13 (2025), e176, https://doi.org/10.1017/fms.2025.10118; read in the open-access copy at https://www.cambridge.org/core/services/aop-cambridge-core/content/view/211ADC1F9478BC66C81233336975AC7F/S2050509425101187a.pdf: Definition 2.1 and Proposition 2.4 (machines and reversibility), Definitions 3.1, 3.3 and 3.9 (local permutations, finite-state automata, elementary machines), Theorems 1.1, 3.5 and 3.11 (generation), and Lemma 4.1 and Proposition 4.2 (computability of local rules).
+- Sebastián Barbieri, Jarkko Kari and Ville Salo, *The group of reversible Turing machines: subgroups, generators, and computability*, Forum of Mathematics, Sigma 13 (2025), e176, https://doi.org/10.1017/fms.2025.10118; read in the open-access copy at https://www.cambridge.org/core/services/aop-cambridge-core/content/view/211ADC1F9478BC66C81233336975AC7F/S2050509425101187a.pdf: Definition 2.1, Proposition 2.4 and Corollary 2.6 (machines, reversibility and the group structure), Definitions 3.1, 3.3 and 3.9 (local permutations, finite-state automata, elementary machines), Theorems 1.1, 3.5 and 3.11 (generation), Lemma 4.1 and Proposition 4.2 (computability of local rules), and Proposition 4.4 (reversible classical machines are elementary).

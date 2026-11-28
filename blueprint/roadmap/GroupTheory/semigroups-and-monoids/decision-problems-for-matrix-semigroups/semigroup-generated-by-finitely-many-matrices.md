@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-The membership, vector reachability, scalar reachability, zero-in-the-upper-left-corner and semigroup intersection problems each have their own page in this folder. Undecidability results for them are usually proved by encoding pairs of words as matrices and reducing the Post correspondence problem.
+The membership, vector reachability, scalar reachability, zero-in-the-upper-left-corner and semigroup intersection problems are decision problems about such semigroups. Undecidability results for them are usually proved by encoding pairs of words as matrices and reducing the Post correspondence problem.
 
 ## Sources
 

@@ -2,7 +2,7 @@
 
 The semigroup intersection problem asks, given two finite sets of square matrices of the same size, whether the semigroups they generate have a common element.
 
-**Semigroup intersection.** Input: two finite sets $\mathcal{G}$ and $\mathcal{H}$ of $n \times n$ integer matrices. Question: is $\langle \mathcal{G} \rangle \cap \langle \mathcal{H} \rangle \neq \varnothing$? (The source states the complementary question, whether the intersection is empty; the two have the same decidability.)
+**Semigroup intersection.** Input: two finite sets $\mathcal{G}$ and $\mathcal{H}$ of $n \times n$ integer matrices. Question: is $\langle \mathcal{G} \rangle \cap \langle \mathcal{H} \rangle \neq \varnothing$? (The source states the complementary question, whether the intersection is empty, and poses it for finite subsets of a fixed group, such as a group of invertible integer matrices; the two questions have the same decidability, and the version above asks the same question for arbitrary integer matrices.)
 
 ## Depends on
 
