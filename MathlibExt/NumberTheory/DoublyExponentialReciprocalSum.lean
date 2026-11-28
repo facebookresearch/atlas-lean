@@ -19,6 +19,12 @@ The remainders of Koizumi's pseudo-greedy expansion tend to zero for every posit
 initial value, so the reciprocals of the expansion terms sum to that value. The gap
 sequence gives a recurrence for successive expansion terms, and a zero gap stays zero at the
 next step.
+
+## References
+
+* Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential Sequences*,
+  *INTEGERS* 26 (2026), Article A28, pp. 1–17, Section 2, Definitions 1–2 and Lemmas 1–3.
+  <https://math.colgate.edu/~integers/aa28/aa28.pdf>
 -/
 
 open Filter Topology
@@ -127,6 +133,13 @@ private theorem remainder_pos {r : ℝ} (hr : 0 < r) (n : ℕ) : 0 < pseudoGreed
     rw [pseudoGreedyRemainder_succ, sub_pos, one_div]
     exact inv_lt_of_inv_lt₀ ih (inv_remainder_lt_expansion r n)
 
+/-- **Positivity of the pseudo-greedy expansion.** If $r > 0$, every term $a_n$ of its
+pseudo-greedy expansion is a positive integer. This follows from positivity of the remainders
+and the nearest-integer rule in Junnosuke Koizumi's Definition 1. -/
+theorem pseudoGreedyExpansion_pos {r : ℝ} (hr : 0 < r) (n : ℕ) :
+    0 < pseudoGreedyExpansion r n := by
+  exact_mod_cast (inv_pos.mpr (remainder_pos hr n)).trans (inv_remainder_lt_expansion r n)
+
 /-- **Convergence of the pseudo-greedy expansion.** For every real number $r > 0$, the
 pseudo-greedy expansion $(a_n)_{n \ge 0}$ of $r$ satisfies $\sum_n 1 / a_n = r$.
 
@@ -138,7 +151,9 @@ theorem hasSum_one_div_pseudoGreedyExpansion {r : ℝ} (hr : 0 < r) :
   let a (n : ℕ) : ℝ := pseudoGreedyExpansion r n
   have hstep (n) : x (n + 1) = x n - 1 / a n := pseudoGreedyRemainder_succ r n
   have hx (n) : 0 < x n := remainder_pos hr n
-  have ha (n) : 0 < a n := (inv_pos.mpr (hx n)).trans (inv_remainder_lt_expansion r n)
+  have ha (n) : 0 < a n := by
+    dsimp only [a]
+    exact_mod_cast pseudoGreedyExpansion_pos hr n
   have hterm (n) : 0 ≤ 1 / a n := (one_div_pos.mpr (ha n)).le
   have hsum (n) : ∑ k ∈ Finset.range n, 1 / a k = r - x n := by
     induction n with
