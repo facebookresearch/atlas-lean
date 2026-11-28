@@ -18,7 +18,7 @@ $$
 L_E(p, r_p) = \{ h(p) : h \text{ an } r_p\text{-valid substitution} \}
 $$
 
-is the *erasing pattern language with regular constraints*; the non-erasing version $L_{NE}(p, r_p)$ also requires $h(x) \ne \varepsilon$. A pattern is *terminal-free* if it
+is the *erasing pattern language with regular constraints*; the non-erasing version $L_{NE}(p, r_p)$ also requires $h(x) \ne \varepsilon$. As an input, each constraint $r_p(x)$ is given by a finite automaton. A pattern is *terminal-free* if it
 contains no letters. Without constraints, take $r_p(x) = \Sigma^*$ for every variable.
 
 Inclusion of pattern languages, $L_E(\alpha) \subseteq L_E(\beta)$ or $L_{NE}(\alpha) \subseteq L_{NE}(\beta)$, is undecidable for every alphabet with at least two letters (Jiang

@@ -5,8 +5,7 @@ For every bound $k \ge 1$, no algorithm decides whether a finite length-increasi
 **Theorem (Durand and Sénizergues).** For every $k \ge 1$, it is undecidable whether a given finite length-increasing semi-Thue system is $\mathrm{BU}(k)$, in the sense of
 [bottom-up semi-Thue systems](bottom-up-semi-thue-systems.md), and likewise whether it is $\mathrm{BU}^-(k)$.
 
-The bound $k$ is fixed and the system is the input. The source shows that, for semi-Thue systems satisfying a condition that makes their set of minimal $k$-right-overlaps finite and
-constructible, membership in $\mathrm{BU}(k)$ is decidable by checking that all these overlaps are resolved.
+The bound $k$ is fixed and the system is the input. The source shows that $\mathrm{BU}(k)$ is decidable for length-increasing semi-Thue systems with no right-linear recursion, that is, with no sequence of rules $l_1 \to r_1, \dots, l_n \to r_n$, $n \ge 2$, such that each $l_{i+1}$ is a suffix of $r_i$ and $l_1 = l_n$ (Proposition 5.7).
 
 ## Depends on
 

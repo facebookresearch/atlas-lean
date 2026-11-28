@@ -10,11 +10,13 @@ solution $\sigma \in R$ with $u(\sigma) \sqsubseteq v(\sigma)$:
 - $\mathrm{PEP}^{\mathrm{dir\text{-}codir}}$: $u(\tau) \sqsubseteq v(\tau)$ and $u(\tau') \sqsubseteq v(\tau')$ for every decomposition $\sigma = \tau\tau'$ (the solution is both direct and codirect);
 - $\mathrm{PEP}^{\mathrm{partial\text{-}codir}}$ with an extra language $R'$: $u(\tau) \sqsubseteq v(\tau)$ for every suffix $\tau$ of $\sigma$ that belongs to $R'$; with $R'$ regular this problem, like its prefix version, is decidable.
 
-**Theorem.**
+An instance gives the alphabets $\Sigma, \Gamma$, the morphisms $u, v$ by the images of the letters, $R$ by a finite automaton and, where present, $R'$ by a deterministic pushdown automaton or by a Presburger formula (equivalently a semilinear set given by base and period vectors) for its Parikh images.
 
-1. $\mathrm{PEP}^{\mathrm{dir\text{-}codir}}$ is $\Sigma^0_1$-complete.
+**Theorem (Karandikar and Schnoebelen).**
+
+1. $\mathrm{PEP}^{\mathrm{dir\text{-}codir}}$ is $\Sigma^0_1$-complete (Theorem 20 of the source).
 2. $\mathrm{PEP}^{\mathrm{partial\text{-}codir}}$ is $\Sigma^0_1$-complete when $R'$ may be any deterministic context-free language, and when $R'$ may be any Presburger-definable language (all words whose Parikh image lies in a given semilinear set), $R$ still being
-   regular.
+   regular (Theorem 18).
 
 Both problems are clearly in $\Sigma^0_1$, so the content is hardness. In contrast, PEP itself is decidable but not primitive recursive, and the same holds for PEP with partial directness or partial codirectness given by regular languages, which the
 source proves decidable through Higman's lemma and a length function theorem.
@@ -33,7 +35,7 @@ source proves decidable through Higman's lemma and a length function theorem.
 ## Expansion
 
 Item 2 reduces the Post correspondence problem: from an instance $(u, v)$ one builds an instance with two marker letters and a set $R'$ of suffixes whose images have different lengths, which is deterministic context-free and Presburger-definable, so that
-codirectness on $R'$ forces equal lengths and hence equality $u(\sigma) = v(\sigma)$. Item 1 reduces the reachability problem for length-preserving semi-Thue systems, which has no page; a complete expansion links it.
+codirectness on $R'$ forces equal lengths and hence equality $u(\sigma) = v(\sigma)$. Item 1 reduces the reachability problem for length-preserving semi-Thue systems; a complete expansion links it.
 
 ## Sources
 

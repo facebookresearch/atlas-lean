@@ -4,7 +4,7 @@ No algorithm decides, given two morphisms between free monoids, whether some non
 
 Two words $x, y$ are *conjugate* if $x = uv$ and $y = vu$ for some words $u, v$. For words $u, v$ and $m \ge 1$ write $u \sim_m v$ if $u = u_1 \cdots u_m$ and $v = u_{\tau(1)} \cdots u_{\tau(m)}$ for some words $u_1, \dots, u_m$ and a permutation $\tau$ of $\{1, \dots, m\}$; so $u \sim_2 v$ says that $u$ and $v$ are conjugate.
 
-**Problems.** Let $A$ and $B$ be finite alphabets. The *conjugate Post correspondence problem* asks, given morphisms $h, g : A^* \to B^*$, whether there is a word $w \in A^+$ such that $h(w)$ and $g(w)$ are conjugate, that is, $h(w) = uv$ and $g(w) = vu$ for some $u, v \in B^*$. The *$(m, n)$-permutational Post correspondence problem* asks whether there are words $u, v \in A^*$ with $u \sim_m v$ and $g(u) \sim_n h(v)$; the conjugate problem is the $(1,2)$-permutational one.
+**Problems.** Let $A$ and $B$ be finite alphabets. The *conjugate Post correspondence problem* asks, given morphisms $h, g : A^* \to B^*$, whether there is a word $w \in A^+$ such that $h(w)$ and $g(w)$ are conjugate, that is, $h(w) = uv$ and $g(w) = vu$ for some $u, v \in B^*$. The *$(m, n)$-permutational Post correspondence problem* asks whether there are nonempty words $u, v \in A^+$ with $u \sim_m v$ and $g(u) \sim_n h(v)$; the conjugate problem is the $(1,2)$-permutational one. The source's Problem 4 writes $u, v \in A^*$, but the empty words would then always be a solution, so nonempty words are meant, as in its conjugate problem.
 
 **Theorem (Finkel, Halava, Harju and Sahla).** The conjugate Post correspondence problem is undecidable (Theorem 1 of the source). Since an instance has a solution of the $(1,2)$-permutational problem if and only if it has one of the $(2,2)$-permutational problem (Lemma 1), the $(2,2)$-permutational Post correspondence problem is undecidable as well.
 
@@ -21,7 +21,7 @@ Ruohonen proved undecidability of the $(m, n)$-permutational problems by simulat
 
 ## Expansion
 
-The proof reduces the halting problem of a deterministic Turing machine on the empty tape. A semi-Thue system with end markers simulates the machine (Huet and Lankford); adding letter-by-letter cancellation rules and a rule from the halting word back to the initial word gives a system with an undecidable circular word problem, whether some word derives itself in at least one step. The source doubles the alphabet with an overlined copy, replaces the restart rule by two rules switching between the copies, and builds morphisms $h, g$ whose conjugate solutions correspond to such cyclic derivations, using desynchronizing letters and border markers. The circular word problem for these special semi-Thue systems has no page.
+The proof reduces the halting problem of a deterministic Turing machine on the empty tape. A semi-Thue system with end markers simulates the machine (Huet and Lankford); adding letter-by-letter cancellation rules and a rule from the halting word back to the initial word gives a system with an undecidable circular word problem, whether some word derives itself in at least one step. The source doubles the alphabet with an overlined copy, replaces the restart rule by two rules switching between the copies, and builds morphisms $h, g$ whose conjugate solutions correspond to such cyclic derivations, using desynchronizing letters and border markers. A good expansion links a page for the circular word problem of these special semi-Thue systems.
 
 ## Sources
 

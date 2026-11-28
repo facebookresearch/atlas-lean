@@ -8,7 +8,7 @@ Whether the language of a given context-free grammar satisfies the context-free 
 
 The undecidability, stated separately as Theorem 11, also holds for linear context-free grammars with the pumping lemma for linear context-free languages.
 
-The constant $p$ is part of the input. When the language is given by a finite automaton, the pumping problem for this lemma is decidable (Theorem 7 of the source).
+The constant $p$ is part of the input. For $p = 0$ no word admits such a decomposition, since $|vx| \ge 1$ and $|vwx| \le 0$ are incompatible, so the condition holds exactly when $L = \varnothing$. When the language is given by a finite automaton, the pumping problem for this lemma is decidable (Theorem 7 of the source).
 
 ## Depends on
 

@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-The survey read states the theorem without proof, and the original proof in Friedman's paper was not read, so the results that proof uses are not listed here. Since simple grammars are deterministic, language inclusion for them coincides with trace preorder, and hence with simulation preorder, of the corresponding BPA processes.
+The survey read states the theorem without proof; the results Friedman's original proof uses are those a good expansion links. Since simple grammars are deterministic, language inclusion for them coincides with trace preorder, and hence with simulation preorder, of the corresponding BPA processes.
 
 ## Sources
 

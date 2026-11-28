@@ -8,8 +8,8 @@ Let $D = \{d_1, \dots, d_n\}$ be a finite set of dominoes $d_i = (\alpha_i, \bet
 $u(w) = \ell(w)^R$, where $x^R$ is the reversal of $x$. In the *opposite direction PCP* the lower parts are placed from right to left, $\ell'(w) = \beta_{i_k} \cdots \beta_{i_1}$, and a solution is a $w \in D^+$ with
 $u(w) = \ell'(w)$; replacing each $\beta_i$ by its reversal shows that the two problems are equivalent.
 
-**Theorem.** It is undecidable, given a finite set $D$ of dominoes and a regular language $L$ (the *regular filter*), whether the opposite direction PCP for $D$ has a solution belonging to $L$;
-equivalently, whether the reverse PCP for $D$ has a solution belonging to $L$. In the proof, the filter constrains the common word written by the solution.
+**Theorem.** It is undecidable, given a finite set $D$ of dominoes over $\Sigma$ and a regular language $L \subseteq \Sigma^*$ (the *regular filter*, given by a finite automaton), whether the opposite direction PCP for $D$ has a solution $w$ whose common word $u(w)$ belongs to $L$;
+equivalently, whether the reverse PCP for $D$ has such a solution, the reversal of the lower words leaving $u(w)$ unchanged (Theorem 5 and Corollary 1 of the source).
 
 For dominoes over a unary alphabet, the reverse PCP (without a filter) is decidable; whether the filter can be removed in general is left open. The source uses the construction to show that emptiness is undecidable for $5' \to 3'$ string assembly systems,
 a model of DNA strand assembly in which the two strands grow in opposite directions, and that every recursively enumerable language is the image under an erasing morphism of the language of such a
