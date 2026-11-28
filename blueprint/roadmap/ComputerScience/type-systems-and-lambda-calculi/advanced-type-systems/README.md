@@ -13,3 +13,7 @@
 - [Gradual typing](gradual-typing/README.md)
 - [Classical logic and control in λΔ](classical-logic-and-control-in-lambda-delta/README.md)
 - [Martin-Löf type theory with one universe](martin-lof-type-theory-with-one-universe/README.md)
+- [Dependent object types](dependent-object-types/README.md)
+- [Equality in extensional type theory and in the free locally cartesian closed category is undecidable](equality-in-the-free-lccc-is-undecidable.md)
+- [Higher-order subtyping with type intervals](higher-order-subtyping-with-type-intervals/README.md)
+- [Type checking for DFuzz is undecidable](type-checking-for-dfuzz-is-undecidable.md)

@@ -1,10 +1,9 @@
 # Support characterization of mixed best responses
 
-In a finite game, fix a mixed profile $\sigma_{-i}$ of the other players and let $U(a) = u_i(a, \sigma_{-i})$ be player $i$'s expected payoff from each pure action $a$. A mixed strategy $\sigma_i$ is a best response to $\sigma_{-i}$ if and only if every pure action in its support attains $\max_a U(a)$. In particular a best response may mix arbitrarily among maximizing actions, including when several are tied, and the set of best responses is the face of the simplex spanned by the maximizers. Proof: $u_i(\sigma_i, \sigma_{-i}) = \sum_a \sigma_i(a)U(a) \le \max_a U(a)$, with equality exactly when $\sigma_i$ puts no weight on a non-maximizer.
-
-## Proof depends on
-
-- [Mixed Nash equilibrium](is-mixed-nash.md): expected payoffs of mixed profiles.
+**Support characterization of mixed best responses** (Savani and von Stengel 2006, Lemma 1,
+for `n` players). Against the mixed strategies `σ_{-i}` of the other players, the mixed strategy
+`τ` of player `i` is a best response if and only if every pure action in the support of `τ`
+earns at least as much as every pure action of `i`.
 
 ## Sources
 

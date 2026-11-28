@@ -1,20 +1,9 @@
 # Best-response (support) condition
 
-In a finite game with finitely many players and nonempty finite pure-strategy sets, a mixed profile $\sigma$ is a
-[Nash equilibrium](nash-s-theorem/is-mixed-nash.md) if and only if, for every player $i$, every pure strategy in the support of $\sigma_i$
-maximizes $i$'s [expected payoff](nash-s-theorem/expected-payoff.md) against $\sigma_{-i}$ among all pure strategies. For a bimatrix game
-$(A, B)$ with the row player receiving $x^{\mathsf T} A y$ and the column player $x^{\mathsf T} B y$, $(x, y)$ is a
-[Nash equilibrium](bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash.md) if and only if $x_k > 0$ implies
-$(Ay)_k = \max_l (Ay)_l$ and $y_k > 0$ implies $(B^{\mathsf T} x)_k = \max_l (B^{\mathsf T} x)_l$. The reason is that
-$U_i(\tau, \sigma_{-i}) = \sum_a \tau(a)\, U_i(a, \sigma_{-i}) \le \max_a U_i(a, \sigma_{-i})$ for every mixed strategy $\tau$ of $i$, with
-equality exactly when $\tau$ puts no weight on a non-maximizing pure strategy.
-
-## Depends on
-
-- [Expected payoff of a mixed profile](nash-s-theorem/expected-payoff.md)
-- [Mixed Nash equilibrium](nash-s-theorem/is-mixed-nash.md)
-- [Expected payoffs in a bimatrix game](bimatrix-games-and-the-lemke-howson-algorithm/bilin-payoff.md)
-- [Nash equilibrium of a bimatrix game](bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash.md)
+**Best-response (support) condition** (Nash 1951; Savani and von Stengel 2006, Lemma 1,
+applied to each player). `σ` is a mixed Nash equilibrium if and only if, for every player `i`,
+every pure action in the support of `σ i` earns at least as much against `σ_{-i}` as every pure
+action of `i`.
 
 ## Related topics
 

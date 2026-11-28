@@ -34,3 +34,11 @@ the model case, listed directly under concentration inequalities.
 - [Large deviations](../../large-deviations/README.md): Sanov's theorem has the relative entropy
   as rate function, the quantity that transport inequalities compare with $W_2$.
 - [Dirichlet forms](../../markov-chains/dirichlet-forms/README.md): the log-Sobolev constant of a finite Markov chain, defined through its Dirichlet form (Diaconis and Saloff-Coste).
+
+- [Squared norm of an affine combination](convex-comb-norm-sq.md)
+
+- [Prékopa–Leindler inequality for the standard Gaussian measure](lintegral-rpow-mul-le-std-gaussian.md)
+
+- [Prékopa–Leindler inequality for the standard Gaussian on Euclidean space](lintegral-rpow-mul-le-std-gaussian-eucli.md)
+
+- [Interpolation identity for the standard Gaussian density](std-gaussian-pdfreal-rpow-mul-rpow.md)

@@ -36,7 +36,7 @@ links it under the dependency sections:
 ## Proof depends on
 
 - [Nash's theorem](../nash-s-theorem/exists-is-mixed-nash.md)
-- [Best-response (support) condition](../best-response-condition.md)
+- [Best response condition](is-bimatrix-nash-iff.md)
 
 ## Sources
 

@@ -17,7 +17,7 @@ commitment value is at least this.
 
 ## Proof depends on
 
-- [Best-response (support) condition](best-response-condition.md)
+- [Best response condition](bimatrix-games-and-the-lemke-howson-algorithm/is-bimatrix-nash-iff.md)
 
 ## Sources
 
