@@ -11,11 +11,9 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Nat.Choose.Central
-import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.Normed.Group.FunctionSeries
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.InverseDeriv
 import Mathlib.Topology.Algebra.InfiniteSum.Real
-import MathlibExt.Analysis.SpecialFunctions.ArcsinCentralBinomialReciprocal
+import MathlibExt.Analysis.SpecialFunctions.ArcsinSquareSeries
 import MathlibExt.Analysis.SpecialFunctions.Log.AlternatingHarmonic
 
 /-!
@@ -31,11 +29,8 @@ terms in finite partial sums of the alternating harmonic series.
   INTEGERS **25** (2025), Article A18, pp. 1–12, Theorem 8, identities (17) and (18).
 * D. H. Lehmer, *Interesting Series Involving the Central Binomial Coefficient*,
   The American Mathematical Monthly **92** (1985), pp. 449–457, equation (13).
-* The interior arcsine calculation uses `arcsin_central_binomial_reciprocal_series` from
-  `MathlibExt.Analysis.SpecialFunctions.ArcsinCentralBinomialReciprocal` and follows the
-  integration argument in `e22A_eq_arcsin_sq` in
-  `MathlibExt.Analysis.Ramanujan.Part1Ch9Entry22Chudnovsky`, using central binomial coefficients
-  and a summable bound obtained directly from Lehmer's series.
+* `hasSum_arcsin_sq_div_two` in `MathlibExt.Analysis.SpecialFunctions.ArcsinSquareSeries`
+  gives the interior identity; here a telescoping bound permits evaluation at the endpoint.
 -/
 
 open Filter Finset Set
@@ -86,66 +81,11 @@ private lemma summable_squareCoeff : Summable squareCoeff := by
 
 private noncomputable def squareTerm (n : ℕ) (x : ℝ) : ℝ := squareCoeff n * x ^ (2 * n + 2)
 
-private noncomputable def derivTerm (n : ℕ) (x : ℝ) : ℝ :=
-  2 * firstCoeff n * x ^ (2 * n + 1)
-
-private lemma hasDerivAt_squareTerm (n : ℕ) (x : ℝ) :
-    HasDerivAt (squareTerm n) (derivTerm n x) x := by
-  refine ((hasDerivAt_pow (2 * n + 2) x).const_mul (squareCoeff n)).congr_deriv ?_
-  rw [derivTerm, squareCoeff, show 2 * n + 2 - 1 = 2 * n + 1 by omega]
-  push_cast
-  field_simp
-
-private lemma hasSum_derivTerm {x : ℝ} (hx : |x| < 1) :
-    HasSum (fun n => derivTerm n x) (Real.arcsin x / Real.sqrt (1 - x ^ 2)) := by
-  rcases eq_or_ne x 0 with rfl | hx0
-  · simp [derivTerm, zero_pow (Nat.succ_ne_zero _)]
-  have h := (arcsin_central_binomial_reciprocal_series x hx).div_const (2 * x)
-  convert h using 1
-  · funext n
-    have hxpow : (2 * x) ^ (2 * (n + 1)) = (4 : ℝ) ^ n * 4 * (x ^ (2 * n + 1) * x) := by
-      rw [mul_pow, pow_mul (2 : ℝ), show (2 : ℝ) ^ 2 = 4 by norm_num, pow_succ (4 : ℝ),
-        show 2 * (n + 1) = (2 * n + 1) + 1 by omega, pow_succ x]
-    have hb : ((n + 1).centralBinom : ℝ) ≠ 0 := by
-      exact_mod_cast Nat.centralBinom_ne_zero (n + 1)
-    rw [derivTerm, firstCoeff, hxpow, ← Nat.centralBinom_eq_two_mul_choose]
-    push_cast
-    field_simp
-    ring
-  · rw [div_mul_eq_mul_div, mul_div_assoc (2 * x),
-      mul_div_cancel_left₀ _ (mul_ne_zero two_ne_zero hx0)]
-
-private lemma hasDerivAt_squareSeries {x : ℝ} (hx : x ∈ Ioo (-1 : ℝ) 1) :
-    HasDerivAt (fun y => ∑' n, squareTerm n y) (Real.arcsin x / Real.sqrt (1 - x ^ 2)) x := by
-  obtain ⟨r, hxr, hr1⟩ := exists_between (abs_lt.mpr hx)
-  have hr0 : 0 < r := (abs_nonneg x).trans_lt hxr
-  have hr : |r| < 1 := by simpa only [abs_of_pos hr0] using hr1
-  have hu := (hasSum_derivTerm hr).summable
-  have hsum0 : Summable (fun n => squareTerm n 0) := by
-    simp [squareTerm]
-  have hd := hasDerivAt_tsum_of_isPreconnected hu (t := Ioo (-r) r) isOpen_Ioo isPreconnected_Ioo
-    (fun n y _ => hasDerivAt_squareTerm n y) (fun n y hy => ?_) (by simp [hr0]) hsum0
-    (abs_lt.mp hxr)
-  · rwa [(hasSum_derivTerm (abs_lt.mpr hx)).tsum_eq] at hd
-  · have hcoeff : 0 ≤ 2 * firstCoeff n := mul_nonneg zero_le_two (firstCoeff_nonneg n)
-    rw [derivTerm, norm_mul, norm_pow, Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg hcoeff,
-      derivTerm]
-    exact mul_le_mul_of_nonneg_left
-      (pow_le_pow_left₀ (abs_nonneg y) (abs_lt.mpr hy).le _) hcoeff
-
-private lemma squareSeries_eq_arcsin_sq :
-    EqOn (fun x => ∑' n, squareTerm n x) (fun x => Real.arcsin x ^ 2 / 2) (Ioo (-1 : ℝ) 1) := by
-  have hd (x : ℝ) (hx : x ∈ Ioo (-1 : ℝ) 1) :
-      HasDerivAt (fun y => Real.arcsin y ^ 2 / 2) (Real.arcsin x / Real.sqrt (1 - x ^ 2)) x := by
-    refine (((Real.hasDerivAt_arcsin hx.1.ne' hx.2.ne).pow 2).div_const 2).congr_deriv ?_
-    simp only [Nat.cast_ofNat]
-    ring
-  refine isOpen_Ioo.eqOn_of_deriv_eq isPreconnected_Ioo
-    (fun x hx => (hasDerivAt_squareSeries hx).differentiableAt.differentiableWithinAt)
-    (fun x hx => (hd x hx).differentiableAt.differentiableWithinAt)
-    (fun x hx => (hasDerivAt_squareSeries hx).deriv.trans (hd x hx).deriv.symm)
-    (x := 0) (by norm_num) ?_
-  simp [squareTerm]
+private lemma squareCoeff_eq (n : ℕ) :
+    squareCoeff n = (4 : ℝ) ^ n / (((n + 1).centralBinom : ℝ) * ((n : ℝ) + 1) ^ 2) := by
+  rw [squareCoeff, firstCoeff, div_div, pow_two]
+  congr 1
+  ac_rfl
 
 private lemma tsum_squareCoeff : ∑' n, squareCoeff n = Real.pi ^ 2 / 8 := by
   have hs : ContinuousOn (fun x => ∑' n, squareTerm n x) (Icc (-1 : ℝ) 1) := by
@@ -157,7 +97,11 @@ private lemma tsum_squareCoeff : ∑' n, squareCoeff n = Real.pi ^ 2 / 8 := by
         (pow_le_one₀ (abs_nonneg x) (abs_le.mpr hx) (n := 2 * n + 2)) (squareCoeff_nonneg n)
     · unfold squareTerm
       fun_prop
-  have heq := squareSeries_eq_arcsin_sq.of_subset_closure hs (by fun_prop) Ioo_subset_Icc_self
+  have hinterior :
+      EqOn (fun x => ∑' n, squareTerm n x) (fun x => Real.arcsin x ^ 2 / 2) (Ioo (-1 : ℝ) 1) := by
+    intro x hx
+    simpa only [squareTerm, squareCoeff_eq] using (hasSum_arcsin_sq_div_two (abs_lt.mpr hx)).tsum_eq
+  have heq := hinterior.of_subset_closure hs (by fun_prop) Ioo_subset_Icc_self
     (by rw [closure_Ioo (by norm_num : (-1 : ℝ) ≠ 1)])
   have h := heq (right_mem_Icc.mpr (by norm_num : (-1 : ℝ) ≤ 1))
   calc
@@ -202,11 +146,6 @@ public theorem tsum_four_pow_div_centralBinom_mul_sq_special :
     ∑' n : ℕ, (4 : ℝ) ^ n / (((n + 1).centralBinom : ℝ) * ((n : ℝ) + 1) ^ 2) = Real.pi ^ 2 / 8 ∧
       ∑' n : ℕ, 1 / ((2 * (n : ℝ) + 1) * ((n : ℝ) + 1)) = 2 * Real.log 2 := by
   refine ⟨?_, hasSum_odd_mul_succ_reciprocal.tsum_eq⟩
-  rw [← tsum_squareCoeff]
-  apply tsum_congr
-  intro n
-  rw [squareCoeff, firstCoeff, div_div, pow_two]
-  congr 1
-  ac_rfl
+  simpa only [squareCoeff_eq] using tsum_squareCoeff
 
 end MetaMathlibExt
