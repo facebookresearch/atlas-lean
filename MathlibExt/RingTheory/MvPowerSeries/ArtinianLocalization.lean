@@ -162,7 +162,7 @@ namespace MvPolynomial
 
 open MvPolynomialLocalizationAux
 
-/-- An Artinian local polynomial quotient at the origin is canonically the
+/-- For a field `K`, an Artinian local polynomial quotient at the origin is canonically the
 quotient of the corresponding formal power-series ring by the same finite
 equations: the localization of `K[X]/(g)` at a maximal ideal containing
 every variable class, when finite over `K`, is `K`-algebra isomorphic to
