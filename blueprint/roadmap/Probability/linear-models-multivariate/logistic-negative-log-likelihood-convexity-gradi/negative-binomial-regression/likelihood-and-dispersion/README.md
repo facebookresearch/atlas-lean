@@ -28,7 +28,6 @@
 - [Fisher information of one negative binomial regression observation](nb-fisher-info-row.md)
 - [Positivity of the negative binomial Fisher weight](nb-fisher-weight-pos.md)
 - [Negative binomial Fisher-information weight](nb-fisher-weight.md)
-- [Components of the negative binomial score vector](nb-gradient-apply.md)
 - [No root of the negative binomial score equation for all-zero counts](nb-gradient-zero-neg.md)
 - [Negative binomial regression score vector](nb-gradient.md)
 - [The joint negative binomial Fisher information is block diagonal](nb-joint-fisher-info-eq-from-blocks.md)

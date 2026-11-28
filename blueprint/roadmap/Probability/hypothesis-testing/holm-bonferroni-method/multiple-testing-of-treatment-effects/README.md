@@ -21,7 +21,6 @@
 - [Benjamini–Hochberg over causal nulls in a randomized trial under positive regression dependence](integral-false-discovery-proportion-bh-r-5.md)
 - [Benjamini–Yekutieli over causal nulls in a randomized trial](integral-false-discovery-proportion-by-r-2.md)
 - [Holm error control fails without positivity](measure-holm-familywise-error-untreated.md)
-- [Benjamini–Yekutieli error control fails without positivity](integral-false-discovery-proportion-by-r-3.md)
 - [Positive regression dependence from a monotone representation](is-prdson-of-eq-comp-indep-fun.md)
 - [Holm rejects everything Bonferroni rejects](bonferroni-rejections-subset-holm-reject.md)
 - [Benjamini–Hochberg rejects everything Bonferroni rejects](bonferroni-rejections-subset-bh-rejectio.md)
