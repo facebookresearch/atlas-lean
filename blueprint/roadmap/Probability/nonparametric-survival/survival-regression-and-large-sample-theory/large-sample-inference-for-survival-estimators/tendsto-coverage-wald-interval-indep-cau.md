@@ -1,0 +1,3 @@
+# Wald coverage of survival estimands under independent censoring
+
+Let subjects $W_i = ((T_i, J_i), C_i)$ on a finite grid be independent and identically distributed, with $(T, J) \sim p_{TJ}$ independent of the censoring time $C \sim p_C$, and $P(\min(T, C) \ge m) \ne 0$. For a survival or cumulative-incidence coordinate $a$ at a grid time $j \le m$, with asymptotic variance $v_a > 0$ and standard errors $s_n$, each almost everywhere measurable, with $s_n \to \sqrt{v_a}$ in probability, the Wald interval $\hat\theta_{n,a} \pm zs_n/\sqrt n$ covers the estimand ($P(T > j)$ or $P(T \le j, J = c)$) with probability tending to $N(0, 1)([-z, z])$.

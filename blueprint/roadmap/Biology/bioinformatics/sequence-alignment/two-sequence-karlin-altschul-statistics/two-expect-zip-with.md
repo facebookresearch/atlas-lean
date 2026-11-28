@@ -1,7 +1,7 @@
 # Letter-by-letter scores of two independent iid words are iid
 
 Let `p` and `q` be
-[probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+[probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet, `s` a real score on pairs of letters, `m` and `n` natural numbers and `F` a
 real functional of score lists. For independent words `u` and `v` of `m` and `n` independent
 letters with laws `p` and `q` ([two-sequence model](two-expect.md)), the expectation of

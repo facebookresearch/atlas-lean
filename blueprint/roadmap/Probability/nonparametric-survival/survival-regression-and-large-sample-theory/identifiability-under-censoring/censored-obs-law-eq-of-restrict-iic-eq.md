@@ -1,0 +1,3 @@
+# Redistributing mass beyond the censoring horizon preserves the observed law
+
+For measures $F$ and $G$ on $\mathbb{R}$, the observed-data measure of $(F, G)$ is the image of $F \otimes G$ under $(t, c) \mapsto (t \wedge c, \mathbf 1\{t \le c\})$, the law of $(T \wedge C, \mathbf 1\{T \le C\})$ for independent $T \sim F$ and $C \sim G$ when $F$ and $G$ are probability laws. Let $F, F'$ be probability measures and $G$ a finite measure with $G(h, \infty) = 0$. If $F$ and $F'$ agree on $(-\infty, h]$, the observed-data measures of $(F, G)$ and $(F', G)$ agree, however $F$ and $F'$ distribute their mass on $(h, \infty)$.

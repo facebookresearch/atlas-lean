@@ -1,0 +1,3 @@
+# Kaplan–Meier grid limit with the Greenwood covariance
+
+Let $\hat A_n$ and $\hat S_n$ be the Nelson–Aalen and Kaplan–Meier processes on the grid $1, \dots, K$, suppose $\sqrt n(\hat A_n - \Lambda) \Rightarrow G$ in $\mathbb{R}^K$ (sup norm), and let $S_j = \prod_{i\le j}(1 - \Delta\Lambda_i)$. If $G$ is the cumulative sum of square-integrable uncorrelated increments $W_i$ with variances $v_i$ and no $\Delta\Lambda_i$ equals $1$, then $\sqrt n(\hat S_n - S)$ converges in distribution to the Kaplan–Meier limit functional of $W$, $\mathrm{Cov}(G_a, G_b) = \sum_{i\le\min(a,b)}v_i$, and the Kaplan–Meier limit has covariance $S_aS_b\sum_{i\le\min(a,b)}v_i/(1 - \Delta\Lambda_i)^2$.

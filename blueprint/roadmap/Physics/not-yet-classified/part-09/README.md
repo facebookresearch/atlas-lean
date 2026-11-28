@@ -9,5 +9,4 @@
 - [Vehicle Accounting](vehicle-accounting/README.md)
 - [Ventilation Balance](ventilation-balance/README.md)
 - [Water Hammer](water-hammer/README.md)
-- [Weak And Virtual Work](weak-and-virtual-work/README.md)
 - [Zone Heat Inventory](zone-heat-inventory/README.md)

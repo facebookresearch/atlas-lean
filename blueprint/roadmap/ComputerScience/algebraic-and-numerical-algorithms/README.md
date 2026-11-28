@@ -6,6 +6,8 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Communication lower bounds](communication-lower-bounds/README.md)
 - [Binary polynomial arithmetic on bitvectors](binary-polynomial-arithmetic-on-bitvectors/README.md)
 - [Fast Fourier transform](fast-fourier-transform/README.md)
+- [Support-bounded zero padding for cyclic convolution](support-bounded-zero-padding-for-cyclic-convolut/README.md)
+- [Overlap-add block convolution with a finite FFT size](overlap-add-block-convolution-with-a-finite-fft/README.md)
 - [Fixed-width binary encodings](fixed-width-binary-encodings/README.md)
 - [Floating-point rounding](floating-point-rounding/README.md)
 - [Horner's method](horner-s-method/README.md)

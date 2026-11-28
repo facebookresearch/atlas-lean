@@ -1,0 +1,3 @@
+# Coverage of a fixed-grid Wald interval
+
+Let subjects $W_i = ((T_i, J_i), C_i)$ (event time, cause, censoring time on a finite grid) be independent and identically distributed with law $\mu$, with $P(\min(T, C) \ge m) \ne 0$, and consider the joint Kaplan–Meier and Aalen–Johansen estimator at grid indices up to $m$; for a coordinate $a$ (a survival or cumulative-incidence value at some $j \le m$), let $v_a$ be its asymptotic variance and $\theta_a$ its plug-in limit. Let $v_a > 0$ and $s_n \to \sqrt{v_a}$ in probability, each $s_n$ almost everywhere measurable. Then $\hat\theta_{n,a} \pm zs_n/\sqrt n$ covers $\theta_a$ with probability tending to $N(0, 1)([-z, z])$; no independence of event and censoring is assumed.

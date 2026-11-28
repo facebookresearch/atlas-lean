@@ -98,13 +98,15 @@ count as failures, as in `countingProcess`). -/
 noncomputable def censoredObsMap (ω : ℝ × ℝ) : ℝ × Bool :=
   (obsTime Prod.fst Prod.snd ω, decide (ω.1 ≤ ω.2))
 
-/-- The **observed-data law** of right-censored data under independent censoring: the law of
-`(T ∧ C, 1{T ≤ C})` when `T ~ F` and `C ~ G` are independent. -/
+/-- The **observed-data law** of right-censored data under independent censoring: for any
+measures `F` and `G` on `ℝ`, the pushforward of `F ⊗ G` along `censoredObsMap`. When `F` and `G`
+are the laws of independent `T` and `C`, it is the law of `(T ∧ C, 1{T ≤ C})`. -/
 noncomputable def censoredObsLaw (F G : Measure ℝ) : Measure (ℝ × Bool) :=
   (F.prod G).map censoredObsMap
 
-/-- The **observable set** of the censoring law `G`: the times `s` with `G[s, ∞) ≠ 0`, at which
-a subject failing at `s` is still under observation with positive probability. -/
+/-- The **observable set** of a measure `G` on `ℝ`: the times `s` with `G[s, ∞) ≠ 0`. When `G` is
+the censoring law, these are the times at which a subject failing at `s` is still under
+observation with positive probability. -/
 def observableSet (G : Measure ℝ) : Set ℝ := {s | G (Ici s) ≠ 0}
 
 /-- The observation map is measurable. -/
@@ -137,7 +139,9 @@ theorem observableSet_subset_Iic {G : Measure ℝ} {h : ℝ} (hG : G (Ioi h) = 0
   by_contra hsh
   exact hs (measure_mono_null (Ici_subset_Ioi.2 (not_le.1 hsh)) hG)
 
-/-- **Observed failures**: `P(X ∈ A, δ = 1) = ∫_A G[t, ∞) dF(t)`. -/
+/-- **Observed failures**: for any measure `F`, an s-finite `G` and measurable `A`, the mass of
+`A × {true}` under `censoredObsLaw F G` is `∫_A G[t, ∞) dF(t)` in `[0, ∞]`; for probability laws
+this is `P(X ∈ A, δ = 1)`. -/
 theorem censoredObsLaw_apply_prod_true (F G : Measure ℝ) [SFinite G] {A : Set ℝ}
     (hA : MeasurableSet A) :
     censoredObsLaw F G (A ×ˢ {true}) = ∫⁻ t in A, G (Ici t) ∂F := by
@@ -168,7 +172,9 @@ theorem censoredObsLaw_apply_prod_true (F G : Measure ℝ) [SFinite G] {A : Set 
     ext c
     simp [ht]
 
-/-- **Observed censorings**: `P(X ∈ B, δ = 0) = ∫_B F(c, ∞) dG(c)`. -/
+/-- **Observed censorings**: for s-finite `F`, `G` and measurable `B`, the mass of `B × {false}`
+under `censoredObsLaw F G` is `∫_B F(c, ∞) dG(c)` in `[0, ∞]`; for probability laws this is
+`P(X ∈ B, δ = 0)`. -/
 theorem censoredObsLaw_apply_prod_false (F G : Measure ℝ) [SFinite F] [SFinite G] {B : Set ℝ}
     (hB : MeasurableSet B) :
     censoredObsLaw F G (B ×ˢ {false}) = ∫⁻ c in B, F (Ioi c) ∂G := by
@@ -229,7 +235,9 @@ private lemma withDensity_eq_of_censoredObsLaw_eq [SFinite G]
   rw [withDensity_apply _ hA, withDensity_apply _ hA, ← censoredObsLaw_apply_prod_true F G hA,
     ← censoredObsLaw_apply_prod_true F' G hA, heq]
 
-/-- **The observed-data law identifies the failure-time law on the observable set.** -/
+/-- **The observed-data measure identifies the failure measure on the observable set**: for a
+finite `G`, any measures `F` and `F'` with `censoredObsLaw F G = censoredObsLaw F' G` agree on
+`observableSet G`. -/
 theorem restrict_observableSet_eq_of_censoredObsLaw_eq [IsFiniteMeasure G]
     (heq : censoredObsLaw F G = censoredObsLaw F' G) :
     F.restrict (observableSet G) = F'.restrict (observableSet G) := by
@@ -290,8 +298,9 @@ theorem censoredObsLaw_eq_iff [IsProbabilityMeasure F] [IsProbabilityMeasure F']
   ⟨restrict_observableSet_eq_of_censoredObsLaw_eq,
     censoredObsLaw_eq_of_restrict_observableSet_eq⟩
 
-/-- **Identification up to the horizon.** If the censoring law has positive mass at or after `h`,
-the observed-data law determines the failure-time law on `(-∞, h]`. -/
+/-- **Identification up to the horizon.** If the finite measure `G` has positive mass at or after
+`h`, any measures `F` and `F'` with the same observed-data measure under `G` agree on `(-∞, h]`.
+-/
 theorem restrict_Iic_eq_of_censoredObsLaw_eq [IsFiniteMeasure G] {h : ℝ} (hG : G (Ici h) ≠ 0)
     (heq : censoredObsLaw F G = censoredObsLaw F' G) :
     F.restrict (Iic h) = F'.restrict (Iic h) := by
@@ -299,9 +308,10 @@ theorem restrict_Iic_eq_of_censoredObsLaw_eq [IsFiniteMeasure G] {h : ℝ} (hG :
     ← Measure.restrict_restrict_of_subset (Iic_subset_observableSet hG) (μ := F'),
     restrict_observableSet_eq_of_censoredObsLaw_eq heq]
 
-/-- **Nothing beyond the horizon is identified.** If the censoring law puts no mass after `h`,
-two failure-time laws that agree on `(-∞, h]` give the same observed-data law, however they
-distribute the mass `P(T > h)`. -/
+/-- **Redistributing mass beyond the censoring horizon preserves the observed law.** If the
+finite censoring measure `G` puts no mass after `h`, two failure-time probability laws that agree
+on `(-∞, h]` give the same observed-data measure, however they distribute the mass `P(T > h)`.
+This does not assert that two distinct such laws exist. -/
 theorem censoredObsLaw_eq_of_restrict_Iic_eq [IsProbabilityMeasure F] [IsProbabilityMeasure F']
     [IsFiniteMeasure G] {h : ℝ} (hG : G (Ioi h) = 0)
     (hF : F.restrict (Iic h) = F'.restrict (Iic h)) :

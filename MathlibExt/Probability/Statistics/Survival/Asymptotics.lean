@@ -112,13 +112,15 @@ abbrev CellSpace (k : ℕ) := EuclideanSpace ℝ (Fin k × Bool)
 /-- The indicator vector of the observed cell of a subject: the basis vector at `cell z`. -/
 noncomputable def cellVec (z : Fin k × Fin k) : CellSpace k := EuclideanSpace.single (cell z) 1
 
-/-- The observed **censoring mass** at grid point `j` under the joint law `μ` of `(T, C)`:
-`P(min T C = j, ¬ T ≤ C)`. -/
+/-- The observed **censoring mass** at grid point `j` of a measure `μ` on grid pairs `(T, C)`: the
+real mass of `{min T C = j, ¬ T ≤ C}` (an infinite mass is read as `0`); for the joint law of
+`(T, C)` it is `P(min T C = j, ¬ T ≤ C)`. -/
 noncomputable def obsCensMass (μ : Measure (Fin k × Fin k)) (j : Fin k) : ℝ :=
   μ.real {z | min z.1 z.2 = j ∧ ¬ z.1 ≤ z.2}
 
-/-- The vector of cell probabilities of the law `μ` of `(T, C)`: the cell `(j, true)` has mass
-`obsEventMass μ j` and the cell `(j, false)` has mass `obsCensMass μ j`. -/
+/-- The vector of real cell masses of a measure `μ` on grid pairs `(T, C)`: the cell `(j, true)`
+has mass `obsEventMass μ j` and the cell `(j, false)` has mass `obsCensMass μ j`. For the joint
+law of `(T, C)` these are the cell probabilities. -/
 noncomputable def cellProbs (μ : Measure (Fin k × Fin k)) : CellSpace k :=
   WithLp.toLp 2 fun c => μ.real (cell ⁻¹' {c})
 
@@ -128,8 +130,8 @@ noncomputable def cellProportions {Ω : Type*} (Z : ℕ → Ω → Fin k × Fin 
   (n : ℝ)⁻¹ • ∑ i ∈ range n, cellVec (Z i ω)
 
 /-- The total mass of the cells at or after grid index `j`, as a linear functional. At the cell
-probabilities it is the at-risk mass `P(min T C ≥ j)`; at the empirical proportions it is the
-at-risk proportion `nⱼ / n`. -/
+probabilities of a joint law of `(T, C)` it is the at-risk probability `P(min T C ≥ j)`; at the
+empirical proportions it is the at-risk proportion `nⱼ / n`. -/
 noncomputable def cellAtRisk (j : Fin k) : CellSpace k →L[ℝ] ℝ :=
   ∑ c with j ≤ c.1, EuclideanSpace.proj c
 
@@ -179,7 +181,8 @@ theorem cellProbs_false (μ : Measure (Fin k × Fin k)) (j : Fin k) :
 
 theorem measurable_cellVec : Measurable (cellVec (k := k)) := measurable_of_finite _
 
-/-- The mean of the cell indicator vector is the vector of cell probabilities. -/
+/-- For a finite measure `μ`, the integral of the cell indicator vector is `cellProbs μ`; for a
+joint law of `(T, C)`, the mean of the cell indicator is the vector of cell probabilities. -/
 theorem integral_cellVec (μ : Measure (Fin k × Fin k)) [IsFiniteMeasure μ] :
     ∫ z, cellVec z ∂μ = cellProbs μ := by
   ext c
@@ -282,7 +285,8 @@ probabilities of the independent censoring model it is `P(T > m)` (`kmMap_cellPr
 noncomputable def kmMap (m : Fin k) (v : CellSpace k) : ℝ :=
   ∏ j with j ≤ m, (1 - v (j, true) / cellAtRisk j v)
 
-/-- The derivative of `kmMap m` at `p`, in product-rule form:
+/-- The product-rule linear map at `p`, defined for every `p` (division by zero gives `0`); it is
+the derivative of `kmMap m` at `p` when `Yⱼ ≠ 0` for every `j ≤ m` (`hasFDerivAt_kmMap`):
 `L v = ∑_{j ≤ m} (∏_{l ≤ m, l ≠ j} (1 - eₗ / Yₗ)) · (eⱼ Aⱼ(v) - Yⱼ v(j, true)) / Yⱼ²`,
 where `eⱼ = p(j, true)`, `Aⱼ = cellAtRisk j` and `Yⱼ = Aⱼ(p)`. See `kmMapDeriv_eq_logForm` for the
 log-derivative form. -/
@@ -324,7 +328,8 @@ theorem hasFDerivAt_kmMap (m : Fin k) {p : CellSpace k}
     ring
   exact HasFDerivAt.finsetProd hfac
 
-/-- The derivative of the Kaplan–Meier map vanishes at its own base point: `L p = 0`. -/
+/-- The linear map `kmMapDeriv m p` vanishes at its own base point, `L p = 0`, for every `p`;
+when every at-risk mass through `m` is nonzero it is the derivative of the Kaplan–Meier map. -/
 theorem kmMapDeriv_self (m : Fin k) (p : CellSpace k) : kmMapDeriv m p p = 0 := by
   rw [kmMapDeriv_apply]
   refine sum_eq_zero fun j _ => ?_
@@ -688,10 +693,11 @@ theorem hasLaw_apply_of_hasLaw_inner {Ω' : Type*} [MeasurableSpace Ω'] {P' : M
   simp only [h] at this
   exact this
 
-/-- **The limit law of the Kaplan–Meier estimator**: under the hypotheses of
-`tendstoInDistribution_kmSurvival` and `P(T > m) ≠ 0`, the limit `L Y` is the centered real
-Gaussian with variance `S² τ²`, `S = P(T > m)` and `τ² = greenwoodSum m p` the population
-Greenwood sum (`greenwoodSum_cellProbs`). -/
+/-- **The limit law of the Kaplan–Meier estimator**: for event and censoring laws with
+`P(min T C ≥ m) ≠ 0` and `P(T > m) ≠ 0`, if every projection `⟪Y, t⟫` is centered normal with the
+variance of `⟪cellVec z, t⟫` under the independent subject law (no sample is needed), then `L Y`
+is the centered real Gaussian with variance `S² τ²`, `S = P(T > m)` and `τ² = greenwoodSum m p`
+the population Greenwood sum (`greenwoodSum_cellProbs`). -/
 theorem hasLaw_kmMapDeriv_limit (pT pC : PMF (Fin k)) (m : Fin k)
     (hm : obsAtRiskMass (indepLaw pT pC) m ≠ 0) (hS : pT.toMeasure.real {t | m < t} ≠ 0)
     {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} {Y : Ω' → CellSpace k}

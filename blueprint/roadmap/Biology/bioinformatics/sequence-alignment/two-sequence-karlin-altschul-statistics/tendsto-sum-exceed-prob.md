@@ -1,7 +1,7 @@
 # Limit of the expected number of diagonals exceeding the threshold
 
 Let `p` and `q` be
-[probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+[probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet and `s` a real score on pairs of letters. Let `θ > 0` with
 `∑_{a, b} p_a q_b e^{θ s(a, b)} = 1` ([pair law](pair-law.md), [pair score](pair-score.md)), and
 suppose the pair score under the pair law satisfies the [one-sequence tail](one-sequence-tail.md)

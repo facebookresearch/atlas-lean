@@ -25,3 +25,4 @@ Distribution-free and semiparametric methods: empirical distribution functions (
 - [U-statistics](u-statistics/README.md)
 - [Reliability and monitoring](reliability-and-monitoring/README.md)
 - [Sensitivity analysis for unmeasured confounding](sensitivity-analysis-for-unmeasured-confounding/README.md)
+- [Survival regression, identifiability and large-sample theory](survival-regression-and-large-sample-theory/README.md)

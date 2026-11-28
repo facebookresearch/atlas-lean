@@ -1,0 +1,3 @@
+# Feasible instances of ZIG-ZAG NUMBERLINK
+
+An instance, a board of natural-number labels with $0$ for an empty square, is feasible when there is an owner function assigning to every square a label that occurs on some square with a positive label, such that for every two distinct squares $s \ne t$ carrying the same positive label $c$, some path in the grid from $s$ to $t$ passes through exactly the squares whose owner is $c$. On well-formed boards, where every positive label occurs on exactly two squares, these are paths connecting every terminal pair and covering every square exactly once. On a board such as $[[1]]$ there is no pair of distinct equally labelled squares, and the owner $1$ alone makes it feasible.

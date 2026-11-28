@@ -1,0 +1,3 @@
+# Instances of RUBIK'S SQUARE
+
+An instance $(n, \mathit{top}, \mathit{bottom}, \mathit{east}, \mathit{west}, \mathit{north}, \mathit{south}, k)$ gives a side length $n$, the colours (numbers below $6$) of the stickers of the $n \times n$ array of cubies $(x, y)$, indexed by column $x$ and row $y$, and a move budget $k$: $\mathit{top}[y][x]$ and $\mathit{bottom}[y][x]$ are the $+z$ and $-z$ stickers of cubie $(x, y)$, $\mathit{east}[y]$ and $\mathit{west}[y]$ the $+x$ and $-x$ side stickers of cubies $(n - 1, y)$ and $(0, y)$, and $\mathit{north}[x]$ and $\mathit{south}[x]$ the $+y$ and $-y$ side stickers of cubies $(x, n - 1)$ and $(x, 0)$.

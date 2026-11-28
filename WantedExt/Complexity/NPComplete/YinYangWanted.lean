@@ -82,9 +82,10 @@ def WellFormed (i : YinYangInstance) : Prop :=
   ∀ row ∈ i.2, row.length = i.1 ∧ ∀ e ∈ row, e ≤ 2
 
 /-- The puzzle has a solution: a coloring `black` of the cells (`true` for black) that keeps
-the given circles, whose black cells and whose white cells each induce a connected subgraph of
-the grid, and with no `2 × 2` square of four cells of one color (the square with top left cell
-`u` consists of `u` and its neighbors below, to the right, and diagonally below right). -/
+the given circles, in which both colors occur, whose black cells and whose white cells each
+induce a connected subgraph of the grid, and with no `2 × 2` square of four cells of one color
+(the square with top left cell `u` consists of `u` and its neighbors below, to the right, and
+diagonally below right). -/
 def YinYangFeasible (i : YinYangInstance) : Prop :=
   ∃ black : Cell i → Bool,
     (∀ u, entry i u = 1 → black u = true) ∧ (∀ u, entry i u = 2 → black u = false) ∧

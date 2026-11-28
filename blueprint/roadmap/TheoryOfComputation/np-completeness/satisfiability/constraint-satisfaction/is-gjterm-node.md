@@ -1,0 +1,3 @@
+# Garey–Johnson term shapes
+
+A term node, a triple of a kind, a pair of natural numbers and a list of argument indices into the node list, has one of Garey and Johnson's restricted shapes when: if its kind is $1$ (a constant node), its stored pair is $(0, 0)$ or $(1, 0)$, so its constant is $0$ or $1$; and if its kind is $2$ (an application node), it has exactly one argument index, and the node at that index has kind $0$ (a variable) or $1$ (a constant), where an index beyond the node list counts as a variable node. Nodes of other kinds are not restricted. The test is on the stored pair, not on its value: the pair $(2, 1)$ also evaluates to $1$ but fails the shape test.

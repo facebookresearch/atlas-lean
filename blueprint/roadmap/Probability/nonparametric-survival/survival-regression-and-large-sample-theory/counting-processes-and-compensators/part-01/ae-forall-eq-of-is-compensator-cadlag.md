@@ -1,0 +1,3 @@
+# Uniqueness of càdlàg compensators for a single-jump history
+
+On a finite measure space, let $(\mathcal F_t)_{t\in\mathbb{R}}$ be a filtration and $X$ a random time with $\{X > s\} \in \mathcal F_s$ such that every $\mathcal F_s$-event contains $\{X > s\}$ or misses it. Suppose also $B \cap \{X \le s\} \in \mathcal F_s$ for $B \in \mathcal F_t$, $s \le t$. A càdlàg compensator of $N$ here is an $\mathcal F_{t-}$-measurable process $A$ with right-continuous paths, almost every path of locally finite variation tending to $0$ at $-\infty$, such that $N - A$ is a martingale. Then two càdlàg compensators of the same process are indistinguishable.

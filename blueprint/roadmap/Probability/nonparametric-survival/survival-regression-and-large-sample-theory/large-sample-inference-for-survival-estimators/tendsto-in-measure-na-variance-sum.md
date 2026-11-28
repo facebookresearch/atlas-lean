@@ -1,0 +1,3 @@
+# Variance identification from a law of large numbers
+
+Let $\mu$ be a measure and, for each $n$, let $Y_n$ be a real array (an at-risk process in the application) and $\alpha_n$ a real sequence (a cumulative hazard in the application) on a grid with $k_n$ steps, and $\bar y_n \ge \varepsilon > 0$ deterministic. Suppose the hazard increments are nonnegative, eventually uniformly small and of total at most $L$; $\mu(\exists i < k_n : |Y_n(i+1)/n - \bar y_n(i+1)| > \delta) \to 0$ for every $\delta > 0$; and $\sum_{i<k_n}\Delta\alpha_n/\bar y_n \to \sigma^2$. Then the Nelson–Aalen variance sums converge to $\sigma^2$ in $\mu$-measure (in probability when $\mu$ is a probability measure).

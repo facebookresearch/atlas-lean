@@ -1,0 +1,3 @@
+# Conditioning on inclusion
+
+Let $\mu$ be a measure on the grid triples $((T, C), L)$, $I = \{L < \min(T, C)\}$ the inclusion event and $\mu[\,\cdot \mid I] = \mu(I)^{-1}\mu(\,\cdot \cap I)$ the conditioned measure, computed in $[0, \infty]$ with $0^{-1} = \infty$, $\infty^{-1} = 0$ and $0 \cdot \infty = 0$. For every event $E \subseteq I$, $\mu[E \mid I] = \mu(I)^{-1}\mu(E)$ as real numbers, where each mass is read as a real number (an infinite mass as $0$) and the real inverse has $0^{-1} = 0$. When $\mu$ is a probability measure with $\mu(I) \ne 0$, this is the conditional probability $P(E \mid L < \min(T, C)) = P(E)/P(L < \min(T, C))$.

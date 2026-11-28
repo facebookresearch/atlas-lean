@@ -1,0 +1,3 @@
+# MINIMUM INFERRED FINITE STATE AUTOMATON FOR NEARLY COMPLETE SAMPLES as a decision problem
+
+Fix natural numbers $p$ and $q$. The decision problem MINIMUM INFERRED FINITE STATE AUTOMATON FOR NEARLY COMPLETE SAMPLES accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(m, S, T, K)$ of an alphabet size, strings to accept, strings to reject and a state bound, to an instance that is [well-formed](well-formed-3-2.md) for $p, q$ and feasible for MINIMUM INFERRED FINITE STATE AUTOMATON. It rejects every bitstring that does not decode to such an instance.

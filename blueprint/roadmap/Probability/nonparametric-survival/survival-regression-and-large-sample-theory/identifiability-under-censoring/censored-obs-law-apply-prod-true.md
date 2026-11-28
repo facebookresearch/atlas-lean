@@ -1,0 +1,3 @@
+# Law of observed failures under censoring
+
+For measures $F$ and $G$ on $\mathbb{R}$, the observed-data measure of $(F, G)$ is the image of $F \otimes G$ under $(t, c) \mapsto (t \wedge c, \mathbf 1\{t \le c\})$, the law of $(T \wedge C, \mathbf 1\{T \le C\})$ for independent $T \sim F$ and $C \sim G$ when $F$ and $G$ are probability laws; two measures $F, F'$ are compared under the same $G$. If $G$ is s-finite, the observed-data measure $P$ of $(F, G)$ satisfies $P(A \times \{1\}) = \int_AG[t, \infty)\,dF(t)$ in $[0, \infty]$ for every measurable $A$; for probability laws this is $P(T \wedge C \in A, T \le C)$.

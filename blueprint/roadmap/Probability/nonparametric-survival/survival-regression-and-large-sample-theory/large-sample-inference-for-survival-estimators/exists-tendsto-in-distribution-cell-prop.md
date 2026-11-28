@@ -1,0 +1,3 @@
+# Joint central limit theorem for cell proportions with a constructed limit
+
+Let subjects $Z_i = (T_i, C_i)$ take values in $\{0, \dots, k-1\}^2$, with observed cell $(\min(T_i, C_i), \mathbf 1\{T_i \le C_i\})$; let $p$ be the vector of cell probabilities, $\hat p_n$ the empirical cell proportions of the first $n$ subjects, $e_j = p(j, 1)$ and $Y_j = \sum_{l\ge j}(p(l, 1) + p(l, 0))$. If the $Z_i$ are independent with common law $\mu$, then $\sqrt n(\hat p_n - p)$ converges in distribution to a centered Gaussian vector $AW$, $W$ standard Gaussian on cell space, whose projections have the variances of the projections of the cell indicator.

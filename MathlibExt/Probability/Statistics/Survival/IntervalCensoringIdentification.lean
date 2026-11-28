@@ -334,7 +334,10 @@ theorem exists_hazard_ne_of_prev_notMem {pS : PMF (Finset (Fin k))} {i j : Fin k
 
 /-- **Characterization of hazard identifiability under interval censoring.** The observed-data
 law determines the hazard at `j` for every pair of event-time laws iff `F(j)` and `F(j - 1)` are
-identified: `j` is inspected or is the last grid point, and `j - 1` is inspected or `j = 0`. -/
+identified: `j` is inspected or is the last grid point, and `j - 1` is inspected or `j = 0`. Here
+the hazard is `h(j) = P(T = j) / P(T ≥ j)` with `0 / 0 = 0` (`Censoring.hazard`); at the last grid
+point the necessity of the `j - 1` condition comes only from that convention (there the hazard is
+`1` whenever `P(T ≥ j) > 0`; see the module docstring). -/
 theorem hazard_identified_iff {pS : PMF (Finset (Fin k))} {j : Fin k} :
     (∀ pT pT' : PMF (Fin k), icObsLaw pT pS = icObsLaw pT' pS → hazard pT j = hazard pT' j) ↔
       (j ∈ inspSupport pS ∨ j.val + 1 = k) ∧

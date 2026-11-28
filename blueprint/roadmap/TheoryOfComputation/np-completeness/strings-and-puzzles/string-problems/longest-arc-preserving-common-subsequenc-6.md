@@ -1,0 +1,3 @@
+# Feasible instances of LONGEST ARC-PRESERVING COMMON SUBSEQUENCE FOR NESTED ARCS
+
+An instance $(S_1, P_1, S_2, P_2, k)$ is feasible when there is an arc-preserving common subsequence of length at least $k$: a number $\ell \ge k$ and strictly increasing maps $f$ and $g$ from $\{0, \dots, \ell - 1\}$ into the positions of $S_1$ and of $S_2$ such that $S_1[f(s)] = S_2[g(s)]$ for every $s$ and, for all selected indices $s$ and $t$, $(f(s), f(t)) \in P_1$ exactly when $(g(s), g(t)) \in P_2$. Arcs with an unselected endpoint impose nothing: if $S_1 = aa$ has the arc $(0, 1)$ and $S_2 = a$ has no arcs, a common subsequence of length one is feasible.

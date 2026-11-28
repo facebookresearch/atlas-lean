@@ -4,7 +4,7 @@ EM is a minorize–maximize (MM) algorithm. For any distribution $q$ on the late
 
 ## Gibbs' inequality
 
-- [Probability distributions on a finite set](is-dist.md)
+- [Probability distributions on a finite set](../../../../Probability/not-yet-classified/is-dist.md)
 - [Gibbs' inequality (evidence lower bound form)](sum-mul-log-sub-le.md)
 - [Equality case of Gibbs' inequality](sum-div-mul-log-sub.md)
 

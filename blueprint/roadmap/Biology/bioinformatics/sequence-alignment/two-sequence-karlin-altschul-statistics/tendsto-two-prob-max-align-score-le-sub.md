@@ -1,6 +1,6 @@
 # Gumbel approximation with periodic correction for lattice scores
 
-Let `p` and `q` be [probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+Let `p` and `q` be [probability vectors](../../../../Probability/not-yet-classified/is-dist.md)
 on a finite alphabet and `s` a real score on letter pairs, and consider two independent words of
 lengths `m_N` and `n_N` with letter laws `p` and `q` ([two-sequence model](two-prob.md)). Let
 `θ > 0` be a Cramér root of the pair score, `∑_{a,b} p_a q_b e^{θ s(a, b)} = 1`, and suppose the
