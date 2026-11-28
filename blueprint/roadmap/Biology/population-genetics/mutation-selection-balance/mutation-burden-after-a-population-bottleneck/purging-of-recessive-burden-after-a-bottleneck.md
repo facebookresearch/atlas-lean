@@ -12,7 +12,7 @@ $$\langle x\rangle_0 \approx \theta_0 \int_0^\infty e^{-2N_0 s x^2}\,dx = U_d\sq
 
 of order $U_d\sqrt{N_0/s}$, much larger than the additive burden $2U_d/s$.
 
-**Moment equation.** For recessive selection the first moment obeys, after dropping a term in $\langle x^3\rangle$ of relative order $1/(N_0 s)$,
+**Moment equation.** For recessive selection the first moment obeys, after dropping a selection term in $\langle x^3\rangle$ of order $O(1/\sqrt{N_0 s})$ (the order the source states after its Eq. (13)),
 
 $$\partial_t \langle x\rangle \approx U_d - s\,\langle x^2\rangle,$$
 
@@ -22,11 +22,11 @@ so the burden is driven by the *second* moment, the variance of the spectrum, ra
 
 $$\mathbb{E}\Bigl[\tfrac{k}{2N_B}\Bigr] = y, \qquad \mathbb{E}\Bigl[\bigl(\tfrac{k}{2N_B}\bigr)^2\Bigr] = y^2 + \frac{y(1-y)}{2N_B},$$
 
-so immediately after re-expansion $\langle x\rangle$ is unchanged while $\langle x^2\rangle$ has grown by $\bigl(\langle x\rangle - \langle x^2\rangle\bigr)/(2N_B)$. By the moment equation, purging accelerates: derived homozygotes created by drift are removed, the burden falls below its equilibrium value, reaches a minimum on a time scale set by selection (short compared with the drift time $2N_0$), and then slowly recovers as new mutations drift up. In the strong-selection, low-intensity regime ($2N_B > 2N_0 s > 1$) this gives
+so immediately after re-expansion $\langle x\rangle$ is unchanged while $\langle x^2\rangle$ has grown by $\bigl(\langle x\rangle - \langle x^2\rangle\bigr)/(2N_B)$. By the moment equation, purging accelerates: derived homozygotes created by drift are removed, the burden falls below its equilibrium value, reaches a minimum on a time scale set by selection (short compared with the drift time $2N_0$), and then slowly recovers as new mutations drift up. In the strong-selection, low-intensity regime $2N_B > \sqrt{2N_0 s} > 1$, purging gives
 
-$$B_R(t_{\min}) > 1,$$
+$$B_R(t_{\min}) > 1.$$
 
-with an explicit expansion in the source (Eqs. (15)–(19)); for short bottlenecks the single-generation result extends by replacing $(2N_B)^{-1}$ with the intensity $I_B = T_B/(2N_B)$, and simulations show the approximation holds for $I_B \lesssim 1/10$.
+Under the scale-separation regime of a strong single-generation bottleneck ($N_0 \gg N_B$) with $N_B \gg \sqrt{N_0 s}$ and strong selection ($2N_0 s \gg 1$), the source derives an explicit expansion (Eqs. (15)–(19)); for short bottlenecks the single-generation result extends by replacing $(2N_B)^{-1}$ with the intensity $I_B = T_B/(2N_B)$, and simulations show the approximation holds for $I_B \lesssim 1/10$.
 
 **Signature.** Additive alleles give $B_R \le 1$ after a bottleneck, recessive alleles give $B_R > 1$; a burden ratio above $1$ in a gene set compared between a bottlenecked and a non-bottlenecked population therefore indicates predominantly recessive selection.
 

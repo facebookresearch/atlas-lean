@@ -1,6 +1,6 @@
 # mash posterior, local false sign rate and the exchangeable-Z model
 
-In the [mash model](mash-mixture-prior-and-marginal-likelihood.md) with fitted weights $\hat\pi$ and components $\Sigma_p$, the posterior of each effect vector is again a normal mixture. For a single component, if $b \sim N_R(0, U)$ and $\hat b \mid b \sim N_R(b, V)$ then
+In the [mash model](mash-mixture-prior-and-marginal-likelihood.md) with fitted weights $\hat\pi$ and components $\Sigma_p$, the posterior of each effect vector is again a normal mixture. As in the source, every error covariance $V_j = S_j C S_j$ (and $V$ below) is symmetric positive definite; this is what makes $V^{-1}$, $(U + V)^{-1}$ and the Gaussian densities $N_R(\,\cdot\,; 0, \Sigma_p + V_j)$ in the responsibilities well defined and nondegenerate for every positive semidefinite $U$ and $\Sigma_p$. For a single component, if $b \sim N_R(0, U)$ with $U$ positive definite and $\hat b \mid b \sim N_R(b, V)$ then
 
 $$b \mid \hat b \sim N_R(\tilde\mu, \tilde U), \qquad \tilde U = (U^{-1} + V^{-1})^{-1}, \quad \tilde\mu = \tilde U V^{-1}\hat b. \tag{6, 7}$$
 
@@ -29,6 +29,7 @@ Equations (6)–(7) are the normal–normal conjugate update: the posterior prec
 ## Depends on
 
 - [The mash mixture prior and its marginal likelihood](mash-mixture-prior-and-marginal-likelihood.md)
+- [Multivariate Gaussian density function](../../../../Probability/distributions/continuous/multivariate-normal-distribution/gaussian-density/multivariate-gaussian-pdfreal.md)
 
 ## Sources
 

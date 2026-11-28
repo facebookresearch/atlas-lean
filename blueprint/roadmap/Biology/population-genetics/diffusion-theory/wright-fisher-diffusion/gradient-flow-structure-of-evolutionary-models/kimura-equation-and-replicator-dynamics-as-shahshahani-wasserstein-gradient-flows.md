@@ -1,6 +1,6 @@
 # Kimura equation and replicator dynamics as Shahshahani–Wasserstein gradient flows
 
-**Setting.** For two types with frequency $x \in [0,1]$, let $\Theta(x) = x(1-x)$ (more generally a coefficient vanishing linearly at $0$ and $1$) and let $V$ be the fitness potential. The **Kimura equation**, the diffusion limit of the Moran process with diffusion coefficient $\kappa > 0$, is
+**Setting.** For two types with frequency $x \in [0,1]$, let $\Theta(x) = x(1-x)$ (more generally a smooth coefficient $\Theta \in C^k([0, 1])$ ($k \ge 2$) positive on $(0, 1)$ with simple zeros at $0$ and $1$, $\partial_x\Theta(0) > 0$ and $\partial_x\Theta(1) < 0$ (the source's (36))) and let $V:[0,1]\to\mathbb R$ be the fitness potential, assumed smooth up to the boundary, as throughout the source (its well-posedness and regularity results take $\Theta,V\in C^k([0,1])$, and its JKO convergence theorem rests on "our smoothness assumptions on the potential $V$"). The **Kimura equation**, the diffusion limit of the Moran process with diffusion coefficient $\kappa > 0$, is
 
 $$ \partial_t p = \frac{\kappa}{2}\partial^2_{xx}\big(\Theta p\big) + \partial_x\big(\Theta\,\partial_xV\,p\big), \qquad t > 0,\ x \in [0,1], $$
 
@@ -16,12 +16,15 @@ that is, $q$ is the $W_{\mathsf d}$-gradient flow of the relative entropy $\frac
 
 $$ X^{n+1} \in \operatorname*{arg\,min}_{X \in [0,1]}\Big\{ \frac{1}{2h}\mathsf{d}(X,X^n)^2 + V(X) \Big\}, \qquad X^0 = X^I, $$
 
-has piecewise-constant interpolants $X_h$ that converge uniformly on every $[0,T]$, as $h \to 0$, to the unique solution of $\dot X = -\Theta(X)V'(X)$, $X(0) = X^I$. The replicator equation is thus the gradient flow of $V$ for the Shahshahani metric.
+has piecewise-constant interpolants $X_h$ that converge uniformly on every $[0,T]$, as $h \to 0$, to the unique solution of $\dot X = -\Theta(X)V'(X)$, $X(0) = X^I$. The replicator equation is thus the gradient flow of $V$ for the Shahshahani metric. The smoothness of $V$ cannot be dropped: for $\Theta(x)=x(1-x)$ and $V(x)=-\frac23|x-\frac12|^{3/2}$, whose derivative $V'(x)=-\operatorname{sgn}(x-\frac12)\,|x-\frac12|^{1/2}$ is not Lipschitz at $\frac12$, the equation $\dot X=\Theta(X)\operatorname{sgn}(X-\frac12)|X-\frac12|^{1/2}$ with $X^I=\frac12$ has the constant solution and also solutions leaving $\frac12$ with $|X(t)-\frac12|\sim t^2/64$, so the limit is not unique; correspondingly the JKO step from $X^0=\frac12$ has two minimizers, both different from $\frac12$, because $-\frac23|y|^{3/2}$ beats the quadratic penalty for small $|y|$.
 
-Section 6 argues, without a complete proof, that these structures are compatible in the limits $N\to\infty$ and $\kappa\to0$: it proves $\Gamma$-convergence of the driving entropies, $H(\cdot\mid\pi_N)\to H(\cdot\mid\pi)$ when $\pi_N\rightharpoonup\pi$ (Lemma 11), and $\frac{\kappa}{2}\int q\log(q/\pi_\kappa)\to\int V\,dq$ (up to $\min V$) when $\pi_\kappa$ satisfies a large deviation principle with rate $V$ (Proposition 3).
+Section 6 argues, without a complete proof, that these structures are compatible in the limits $N\to\infty$ and $\kappa\to0$: it proves $\Gamma$-convergence of the driving entropies, $H(\cdot\mid\pi_N)\to H(\cdot\mid\pi)$ when $\pi_N\rightharpoonup\pi$ (Lemma 11), and $\frac{\kappa}{2}\int q\log(q/\pi_\kappa)\to\int V\,dq$ (up to $\min V$) when $\pi_\kappa$ satisfies a large deviation principle with speed $2/\kappa$ and rate function $V$ (Proposition 3), that is, $-\inf_{\mathring E}V\le\liminf_{\kappa\to0}\frac{\kappa}{2}\log\pi_\kappa(E)\le\limsup_{\kappa\to0}\frac{\kappa}{2}\log\pi_\kappa(E)\le-\inf_{\overline E}V$ for every Borel set $E\subset[0,1]$. The source notes that this hypothesis must be checked case by case; for $\Theta(x)=x(1-x)$ and $V\equiv0$ (a constant potential normalized by subtracting its minimum), $\pi_\kappa(x)=6x(1-x)$ for every $\kappa$, so (68) holds.
 
 ## Depends on
 
+- [Minimizing movement step](../../../../../MeasureTheory/optimal-transport/wasserstein-gradient-flows-and-the-jko-scheme/minimizing-movements/is-minimizing-movement-step.md)
+- [Minimizing movement scheme](../../../../../MeasureTheory/optimal-transport/wasserstein-gradient-flows-and-the-jko-scheme/minimizing-movements/is-minimizing-movement.md)
+- [Quadratic Wasserstein distance](../../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein.md)
 - [Gradient-flow structure of absorbing evolutionary Markov chains via the Q-process](gradient-flow-structure-of-absorbing-evolutionary-markov-chains-via-the-q-process.md)
 - [Backward generator of the Wright–Fisher diffusion with selection](../generator.md)
 

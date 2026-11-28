@@ -4,11 +4,11 @@ Keep the wild type $w$, uphill genotype $u$ (advantage $s_u$, mutation rate $\mu
 
 $$\frac{\partial f_u}{\partial t} = \mu_u (1 - f_u) + s_u f_u (1 - f_u),$$
 
-the rate at which successful double-mutant lineages appear is $\lambda_v(t) = N f_i(t) \mu_v \pi_{iv} \approx 2 N f_i(t) \mu_v \bigl(s_v - s_u f_u(t)\bigr)$ with $f_i = f_i^{*}(1 - f_u)$, and integrating the inhomogeneous Poisson rate over the whole sweep gives
+the rate at which successful double-mutant lineages appear is $\lambda_v(t) = N f_i(t) \mu_v \pi_{iv} \approx 2 N f_i(t) \mu_v \bigl(s_v - s_u f_u(t)\bigr)$ with $f_i = f_i^{*}(1 - f_u)$, and integrating the inhomogeneous Poisson rate over the whole sweep, assuming $\mu_u \ll s_u$ as the source does for its Eq. (30), gives
 
 $$P_{\mathrm{cross}} = 1 - \exp\left( - \int_0^{\infty} \lambda_v(t)\, dt \right) = 1 - \exp(-2 N \Gamma), \qquad \Gamma \equiv \frac{\mu_i \mu_v s_v \gamma}{s_u},$$
 
-where $\gamma$ is an explicit function of $s_u$, $\mu_u$, $s_v$ and $\delta_i$ with separate closed forms in the two regimes $\delta_i \ll 2\sqrt{\mu_v s_v}$ and $\delta_i \gg 2\sqrt{\mu_v s_v}$. Hence in this regime $P_{\mathrm{cross}}$ **increases** with $N$ and tends to one: sufficiently large populations always cross the valley rather than taking the immediately beneficial path, and inverting the expression gives the size $N = -\log(1 - P_{\mathrm{cross}})/(2\Gamma)$ at which a given crossing probability is reached.
+where $\gamma$ is an explicit function of $s_u$, $\mu_u$, $s_v$ and $\delta_i$ with separate closed forms in the two regimes $\delta_i \ll 2\sqrt{\mu_v s_v}$ and $\delta_i \gg 2\sqrt{\mu_v s_v}$, both built from $\log(s_u/\mu_u)$. The condition $\mu_u \ll s_u$ is part of the result, not a convenience: at $\mu_u = s_u$ the large-cost form gives $\gamma = 0$, hence $\Gamma = 0$ and $P_{\mathrm{cross}} = 0$ for every $N$, and the small-cost form gives $\gamma = +\pi^2/(6 s_u) > 0$, which no longer approximates the integral (26) when $\mu_u$ is not small compared with $s_u$. Hence in this regime, with the other parameters fixed and $\mu_u \ll s_u$ (so that $\Gamma > 0$), $P_{\mathrm{cross}}$ **increases** with $N$ and tends to one: sufficiently large populations always cross the valley rather than taking the immediately beneficial path, and inverting the expression gives the size $N = -\log(1 - P_{\mathrm{cross}})/(2\Gamma)$ at which a given crossing probability is reached.
 
 At intermediate sizes, where the Poisson approximation for the appearance of intermediate lineages still holds, the crossing probability instead splits as $P_{\mathrm{cross}} = P_{v,1} + (1 - P_{v,1}) P_{v,2}$, with $P_{v,1}$ the probability that a successful valley-crossing lineage appears before the uphill mutant establishes — a race between two exponential clocks of rates $\lambda_v = N\mu_i p_v$ and $\lambda_u = N \mu_u \pi_{wu} \approx 2 N \mu_u s_u$, offset by the delay $\Delta\tau = \tau_{\mathrm{drift}} - \tau_{\mathrm{est}}$:
 
@@ -28,4 +28,4 @@ The sweeping uphill mutation acts on the valley-crossing lineage in three ways, 
 
 ## Sources
 
-- I. E. Ochs, M. M. Desai, "The competition between simple and complex evolutionary trajectories in asexual populations", *BMC Evolutionary Biology* 15 (2015), 55, <https://doi.org/10.1186/s12862-015-0334-0> (PMC4391547). Results, "Stochastic tunneling" and the large-population regime, Equations (13)–(34).
+- I. E. Ochs, M. M. Desai, "The competition between simple and complex evolutionary trajectories in asexual populations", *BMC Evolutionary Biology* 15 (2015), 55, <https://doi.org/10.1186/s12862-015-0334-0> (PMC4391547). Results, "Stochastic tunneling" and the large-population regime, Equations (13)–(34), in particular the assumption $\mu_u \ll s_u$ stated with Eq. (30).
