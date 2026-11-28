@@ -692,7 +692,6 @@ variable {A B : Type*} [CommRing A] [CommRing B] [Algebra A B]
 with `d (b₀ · d b₁ ∧ ⋯ ∧ d b_p) = d b₀ ∧ d b₁ ∧ ⋯ ∧ d b_p` for all `b₀, …, b_p ∈ B`, where
 `d : B → Ω[B⁄A]` is the universal `A`-derivation.  That rule is
 `deRhamDifferential_smul_ιMulti_D` and `deRhamDifferential_unique` says it pins the map down. -/
-
 public noncomputable def deRhamDifferential (p : ℕ) :
     ⋀[B]^p (Ω[B⁄A]) →ₗ[A] ⋀[B]^(p + 1) (Ω[B⁄A]) :=
   LinearMap.codRestrict (Submodule.restrictScalars A (⋀[B]^(p + 1) (Ω[B⁄A]))) (dp p) (dp_mem p)
@@ -703,7 +702,6 @@ private lemma coe_deRhamDifferential (p : ℕ) (ξ : ⋀[B]^p (Ω[B⁄A])) :
 /-- The defining rule of the de Rham differential:
 `d (b₀ · d b₁ ∧ ⋯ ∧ d b_p) = d b₀ ∧ d b₁ ∧ ⋯ ∧ d b_p`.  The leading scalar `b₀` contributes the
 factor `d b₀` through `dp_apply_smul`, and `G_exact` kills the wedge of exact forms. -/
-
 public lemma deRhamDifferential_smul_ιMulti_D (p : ℕ) (b : Fin (p + 1) → B) :
     deRhamDifferential p (b 0 • exteriorPower.ιMulti B p fun i ↦ D A B (b i.succ)) =
       exteriorPower.ιMulti B (p + 1) fun i ↦ D A B (b i) := by
@@ -721,7 +719,6 @@ public lemma deRhamDifferential_smul_ιMulti_D (p : ℕ) (b : Fin (p + 1) → B)
 /-- `deRhamDifferential p` is the only `A`-linear map `Ω^p_{B/A} → Ω^{p+1}_{B/A}` with
 `d (b₀ · d b₁ ∧ ⋯ ∧ d b_p) = d b₀ ∧ d b₁ ∧ ⋯ ∧ d b_p`, because those elements span
 `Ω^p_{B/A}` over `A`. -/
-
 public theorem deRhamDifferential_unique (p : ℕ)
     (d : ⋀[B]^p (Ω[B⁄A]) →ₗ[A] ⋀[B]^(p + 1) (Ω[B⁄A]))
     (hd : ∀ b : Fin (p + 1) → B,
@@ -744,7 +741,6 @@ private lemma deRhamDifferential_ιMulti_D (p : ℕ) (c : Fin p → B) :
 /-- **The de Rham differential of `B` over `A` squares to zero.**  The elements
 `b₀ · (d b₁ ∧ ⋯ ∧ d b_p)` span `Ω^p_{B/A}` over `A`, and on such an element the defining rule
 computes the composite as a wedge whose first factor is `d 1 = 0`. -/
-
 public theorem deRhamDifferential_comp_self (p : ℕ) (ξ : ⋀[B]^p (Ω[B⁄A])) :
     deRhamDifferential (A := A) (p + 1) (deRhamDifferential p ξ) = 0 := by
   have hmem : ξ ∈ Submodule.span A (Set.range fun b : Fin (p + 1) → B ↦
@@ -761,7 +757,6 @@ public theorem deRhamDifferential_comp_self (p : ℕ) (ξ : ⋀[B]^p (Ω[B⁄A])
 
 /-- **Consecutive de Rham differentials compose to zero**, as an equality of `A`-linear maps.
 This is the complex property of the de Rham complex of `B` over `A`. -/
-
 public theorem deRhamDifferential_comp_deRhamDifferential (p : ℕ) :
     (deRhamDifferential (A := A) (B := B) (p + 1)).comp (deRhamDifferential p) = 0 :=
   LinearMap.ext fun ξ ↦ deRhamDifferential_comp_self p ξ
@@ -985,7 +980,6 @@ the canonical map `⋀^p (KaehlerDifferential.map A A' B B')`.  Then `ψ` exhibi
 `Ω^•_{B'/A'}` as the base change of `Ω^•_{B/A}` along `A → A'`, i.e.
 `Ω^•_{B/A} ⊗_A A' = Ω^•_{B'/A'}`, and it is a map of complexes for the de Rham differentials
 of `B` over `A` and of `B'` over `A'`. -/
-
 public theorem isBaseChange_exteriorPower_and_deRhamDifferential_comm
     {A A' B B' : Type*} [CommRing A] [CommRing A'] [CommRing B] [CommRing B']
     [Algebra A A'] [Algebra A B] [Algebra A B'] [Algebra A' B'] [Algebra B B']
@@ -1108,7 +1102,6 @@ obey the defining rule on generators by
 of Tag 07HY is produced here, and its complex property is the theorem
 `KaehlerDifferential.deRhamDifferential_comp_deRhamDifferential`, reached through the default
 value of the field `complex`. -/
-
 noncomputable def sourceDeRham (A B : Type u) [CommRing A] [CommRing B] [Algebra A B] :
     SourceDeRham A B where
   d p := KaehlerDifferential.deRhamDifferential (A := A) p
@@ -1863,7 +1856,6 @@ open Stacks.DeRham.DifferentialDescent Stacks.DeRham.DifferentialDescent.SourceD
 `Ω^p = ⋀[B]^p Ω → Ω^{p+1}` making the squares `d ∘ (⋀^p π) = (⋀^{p+1} π) ∘ d_{B/A}` commute;
 it obeys the same rule `d (f₀ · d f₁ ∧ ⋯ ∧ d f_p) = d f₀ ∧ ⋯ ∧ d f_p` on generators, with
 `d f = π (d_{B/A} f)`, and it is again a complex. -/
-
 theorem exists_unique_quotient_deRhamDifferential
     (S : SourceDeRham A B)
     {Ω : Type u} [AddCommGroup Ω] [Module B Ω] (π : Ω[B⁄A] →ₗ[B] Ω)

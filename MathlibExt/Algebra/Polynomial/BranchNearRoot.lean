@@ -113,12 +113,10 @@ private theorem root_bound {n : ℕ} (hn : 0 < n) {c : ℂ} (hc : c ≠ 0) (f : 
   have hxpos : 0 < ‖x‖ := lt_of_le_of_lt (by positivity) hxM
   have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
   have hMx : M ≤ ‖x‖ := by nlinarith
-
   rw [sum_range_succ, hf] at hx
   have heq : ‖c‖ * ‖x‖ ^ n = ‖∑ k ∈ range n, f k * x ^ k‖ := by
     rw [← norm_pow, ← norm_mul, ← norm_neg, show -(c * x ^ n) = ∑ k ∈ range n, f k * x ^ k by
       rw [eq_comm, ← sub_eq_zero, sub_neg_eq_add, hx]]
-
   have hterm : ∀ k ∈ range n, ‖f k * x ^ k‖ ≤ ‖c‖ * (M * ‖x‖ ^ (n - 1)) := by
     intro k hk
     have hkn := mem_range.mp hk
@@ -137,7 +135,6 @@ private theorem root_bound {n : ℕ} (hn : 0 < n) {c : ℂ} (hc : c ≠ 0) (f : 
     refine (norm_sum_le _ _).trans ?_
     have := sum_le_sum hterm
     rwa [sum_const, card_range, nsmul_eq_mul] at this
-
   have hlt : n * (‖c‖ * (M * ‖x‖ ^ (n - 1))) < ‖c‖ * ‖x‖ ^ n := by
     have : ‖x‖ ^ n = ‖x‖ * ‖x‖ ^ (n - 1) := by
       rw [← pow_succ', show n - 1 + 1 = n by lia]

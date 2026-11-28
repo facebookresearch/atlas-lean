@@ -447,7 +447,6 @@ theorem mcdiarmid_product_two_sided {n : ℕ} {α : Fin n → Type*} [∀ i, Fin
     (∑ x ∈ Finset.univ.filter
         (fun x => t ≤ |f x - ∑ y, (∏ i, p i (y i)) * f y|),
         ∏ i, p i (x i)) ≤ 2 * Real.exp (-2 * t ^ 2 / ∑ i, c i ^ 2) := by
-
   classical
   set μ : ℝ := ∑ y, (∏ i, p i (y i)) * f y with hμ_def
   set V : ℝ := ∑ i, c i ^ 2 with hV_def

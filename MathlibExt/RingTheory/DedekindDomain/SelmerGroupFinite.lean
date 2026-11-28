@@ -158,7 +158,6 @@ private theorem rootUnit_mul {n : ℕ} (hn : n ≠ 0) (x y : Kˣ) (hx : Dvble (R
   rw [mul_pow, rootUnit_pow, rootUnit_pow, rootUnit_pow, ← map_mul]
 
 open Classical in
-
 private noncomputable def classOf (n : ℕ) (x : Kˣ) : ClassGroup R :=
   if h : Dvble (R := R) n x then ClassGroup.mk K (rootUnit x h) else 1
 
@@ -220,7 +219,6 @@ private noncomputable def selmerToClass {n : ℕ} (hn : n ≠ 0) :
       exact classOf_mul hn (dvble_of_mem hq) (dvble_of_mem hr))
 
 omit [IsDedekindDomain R] in
-
 private theorem exists_unit_of_spanSingleton_eq {a b : K}
     (h : spanSingleton R⁰ a = spanSingleton R⁰ b) :
     ∃ u : Rˣ, b = algebraMap R K ((u : Rˣ) : R) * a := by

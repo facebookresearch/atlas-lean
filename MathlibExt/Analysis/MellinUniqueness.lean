@@ -126,7 +126,6 @@ private theorem lvqZero {C : Type*} [Group C] [TopologicalSpace C] [CompactSpace
       simp_rw [e]
       exact h χ hχ
     simpa [hKr] using h0
-
   set A : StarSubalgebra ℂ C(C, ℂ) := StarAlgebra.adjoin ℂ S with hA
   let M : Submonoid C(C, ℂ) :=
     { carrier := S
@@ -144,7 +143,6 @@ private theorem lvqZero {C : Type*} [Group C] [TopologicalSpace C] [CompactSpace
       exact hg
     rw [Algebra.adjoin_eq_span] at hg'
     exact Submodule.span_le.2 (hcl.trans hSker) hg'
-
   have hsepA : A.SeparatesPoints := by
     intro x y hxy
     obtain ⟨χ, hχ, hne⟩ := hsep (x * y⁻¹) (mul_inv_eq_one.not.2 hxy)
@@ -162,7 +160,6 @@ private theorem lvqZero {C : Type*} [Group C] [TopologicalSpace C] [CompactSpace
     rw [StarSubalgebra.topologicalClosure_coe] at hg
     have hgK := closure_minimal hAker ℓ.isClosed_ker hg
     simpa [hKr] using hgK
-
   have h0 : ∫ x, (‖F x‖ ^ 2 : ℝ) ∂μ = 0 := by
     have h1 := hall (star Fc)
     rw [hℓ, lvqPair_apply] at h1
@@ -238,7 +235,6 @@ theorem eq_of_forall_continuous_char_laplace_eq
     exact LanglandsTunnell.Converse.MellinUniqueness.eq_of_laplace_eq_of_boundedOnStrips _ _
       (lvqCont μ _ hk₁) (lvqCont μ _ hk₂) c (Λ χ) (hΛ χ hχ) (hb χ hχ)
       (fun s hs => lvqData μ _ s _ (h₁ χ hχ s hs)) (fun s hs => lvqData μ _ s _ (h₂ χ hχ s hs))
-
   have key : ∀ t : ℝ, (fun x => f₁ (x, t) - f₂ (x, t)) = 0 := by
     intro t
     have hc₁ : Continuous fun x => f₁ (x, t) := hf₁.comp (Continuous.prodMk_left t)
@@ -288,7 +284,6 @@ theorem eq_of_forall_continuous_char_exists_laplace_eq
     exact LanglandsTunnell.Converse.MellinUniqueness.eq_of_laplace_eq_of_boundedOnStrips _ _
       (lvqCont μ _ hk₁) (lvqCont μ _ hk₂) c (Λ χ) (hΛ χ hχ) (hb χ hχ)
       (fun s hs => lvqData μ _ s _ (h₁χ s hs)) (fun s hs => lvqData μ _ s _ (h₂χ s hs))
-
   have key : ∀ t : ℝ, (fun x => f₁ (x, t) - f₂ (x, t)) = 0 := by
     intro t
     have hc₁ : Continuous fun x => f₁ (x, t) := hf₁.comp (Continuous.prodMk_left t)

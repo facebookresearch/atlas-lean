@@ -171,7 +171,6 @@ variable {𝒪 : Type*} [CommRing 𝒪] [IsLocalRing 𝒪] [IsNoetherianRing �
   (A : Type*) [CommRing A] [Algebra 𝒪 A] [Module.Finite 𝒪 A]
 
 omit [IsNoetherianRing 𝒪] [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪] in
-
 private lemma mapMax_le (P : Ideal A) [P.IsMaximal] :
     (IsLocalRing.maximalIdeal 𝒪).map (algebraMap 𝒪 A) ≤ P := by
   have hint : Algebra.IsIntegral 𝒪 A := Algebra.IsIntegral.of_finite 𝒪 A
@@ -182,7 +181,6 @@ private lemma mapMax_le (P : Ideal A) [P.IsMaximal] :
 
 omit [IsNoetherianRing 𝒪] [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪]
   [Module.Finite 𝒪 A] in
-
 private lemma mem_pow_iff (x : A) (n : ℕ) :
     x ∈ ((IsLocalRing.maximalIdeal 𝒪).map (algebraMap 𝒪 A)) ^ n ↔
       x ∈ ((IsLocalRing.maximalIdeal 𝒪) ^ n • ⊤ : Submodule 𝒪 A) := by

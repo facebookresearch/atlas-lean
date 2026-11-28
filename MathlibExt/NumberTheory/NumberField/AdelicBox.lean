@@ -197,18 +197,15 @@ theorem exists_mul_mem_adicCompletionIntegers (x : v.adicCompletion K) :
       (algebraMap_mem_adicCompletionIntegers R K v a)
 
 omit v in
-
 theorem algebraMap_mul_apply (r : R) (y : FiniteAdeleRing R K) (v : HeightOneSpectrum R) :
     (algebraMap R (FiniteAdeleRing R K) r * y) v =
       algebraMap K (v.adicCompletion K) (algebraMap R K r) * y v := rfl
 
 omit v in
-
 theorem algebraMap_add_apply (k : K) (y : FiniteAdeleRing R K) (v : HeightOneSpectrum R) :
     (algebraMap K (FiniteAdeleRing R K) k + y) v = algebraMap K (v.adicCompletion K) k + y v := rfl
 
 omit v in
-
 theorem exists_mul_mem_integralFiniteAdeles (y : FiniteAdeleRing R K) :
     ∃ s : R, s ≠ 0 ∧ algebraMap R (FiniteAdeleRing R K) s * y ∈ integralFiniteAdeles R K := by
   classical
@@ -227,14 +224,12 @@ theorem exists_mul_mem_integralFiniteAdeles (y : FiniteAdeleRing R K) :
     exact mul_mem (algebraMap_mem_adicCompletionIntegers R K v _) hyv
 
 omit v in
-
 theorem exists_forall_valued_sub_le {z : FiniteAdeleRing R K} (hz : z ∈ integralFiniteAdeles R K)
     {s : R} (hs : s ≠ 0) :
     ∃ a : R, ∀ v : HeightOneSpectrum R,
       Valued.v (z v - algebraMap K (v.adicCompletion K) (algebraMap R K a)) ≤
         Valued.v (algebraMap K (v.adicCompletion K) (algebraMap R K s)) := by
   classical
-
   have hI : (Ideal.span {s} : Ideal R) ≠ 0 := by
     simpa [Ideal.zero_eq_bot, Ideal.span_singleton_eq_bot] using hs
   set T := (Ideal.finite_factors hI).toFinset with hT
@@ -246,10 +241,8 @@ theorem exists_forall_valued_sub_le {z : FiniteAdeleRing R K} (hz : z ∈ integr
   have hS : ∀ v : HeightOneSpectrum R,
       algebraMap K (v.adicCompletion K) (algebraMap R K s) ≠ 0 := fun v =>
     (Valuation.ne_zero_iff _).mp (hvs v)
-
   choose a ha using fun v : HeightOneSpectrum R =>
     exists_valued_algebraMap_sub_lt R K v ⟨z v, hz v⟩ _ (hS v)
-
   obtain ⟨b, hb⟩ := IsDedekindDomain.exists_forall_sub_mem_ideal (s := T)
     (fun v : HeightOneSpectrum R => v.asIdeal) e (fun v _ => v.prime)
     (fun v _ w _ hvw h => hvw (HeightOneSpectrum.ext h)) (fun v => a v.1)
@@ -278,7 +271,6 @@ theorem exists_forall_valued_sub_le {z : FiniteAdeleRing R K} (hz : z ∈ integr
       exact v.intValuation_le_one _
 
 omit v in
-
 theorem exists_algebraMap_add_mem_integralFiniteAdeles (y : FiniteAdeleRing R K) :
     ∃ k : K, algebraMap K (FiniteAdeleRing R K) k + y ∈ integralFiniteAdeles R K := by
   obtain ⟨s, hs, hsy⟩ := exists_mul_mem_integralFiniteAdeles R K y
@@ -310,13 +302,11 @@ section Infinite
 variable (K : Type*) [Field K] [NumberField K]
 
 open scoped Classical in
-
 def infiniteBox : Set (InfiniteAdeleRing K) :=
   InfiniteAdeleRing.ringEquiv_mixedSpace K ⁻¹'
     ZSpan.fundamentalDomain (mixedEmbedding.latticeBasis K)
 
 omit [NumberField K] in
-
 theorem continuous_ringEquiv_mixedSpace :
     Continuous (InfiniteAdeleRing.ringEquiv_mixedSpace K) := by
   have h : (InfiniteAdeleRing.ringEquiv_mixedSpace K :
@@ -379,9 +369,7 @@ def adelicBox : Set (AdeleRing (𝓞 K) K) :=
 
 theorem existsUnique_algebraMap_add_mem_adelicBox (x : AdeleRing (𝓞 K) K) :
     ∃! k : K, algebraMap K (AdeleRing (𝓞 K) K) k + x ∈ adelicBox K := by
-
   obtain ⟨k₁, hk₁⟩ := exists_algebraMap_add_mem_integralFiniteAdeles (𝓞 K) K x.2
-
   obtain ⟨o, ho, _⟩ := existsUnique_int_add_mem_infiniteBox K
     (algebraMap K (InfiniteAdeleRing K) k₁ + x.1)
   have hfst : ∀ k : K, (algebraMap K (AdeleRing (𝓞 K) K) k + x).1 =
@@ -408,7 +396,6 @@ theorem existsUnique_algebraMap_add_mem_adelicBox (x : AdeleRing (𝓞 K) K) :
         show algebraMap K (v.adicCompletion K) (k' - k₁) = ((k' - k₁ : K) : v.adicCompletion K)
           from rfl, HeightOneSpectrum.valuedAdicCompletion_eq_valuation'] at this
     obtain ⟨o', ho'⟩ := HeightOneSpectrum.mem_integers_of_valuation_le_one K (k' - k₁) hdiff
-
     have hk'o : k' = (o' : K) + k₁ := by
       rw [show ((o' : 𝓞 K) : K) = algebraMap (𝓞 K) K o' from rfl, ho']; ring
     rw [hfst, hk'o, map_add, add_assoc] at hk'1
@@ -484,7 +471,6 @@ theorem properSpace_completion (v : InfinitePlace K) : ProperSpace v.Completion 
       (InfinitePlace.Completion.isometryEquivComplexOfIsComplex hc).symm.surjective
 
 open scoped Classical in
-
 theorem norm_apply_le_of_isReal (x : InfiniteAdeleRing K) {v : InfinitePlace K} (hv : v.IsReal) :
     ‖x v‖ ≤ ‖InfiniteAdeleRing.ringEquiv_mixedSpace K x‖ := by
   have h1 : ‖InfinitePlace.Completion.extensionEmbeddingOfIsReal hv (x v)‖ = ‖x v‖ :=
@@ -497,7 +483,6 @@ theorem norm_apply_le_of_isReal (x : InfiniteAdeleRing K) {v : InfinitePlace K} 
     (norm_fst_le (InfiniteAdeleRing.ringEquiv_mixedSpace K x))
 
 open scoped Classical in
-
 theorem norm_apply_le_of_isComplex (x : InfiniteAdeleRing K) {v : InfinitePlace K}
     (hv : v.IsComplex) : ‖x v‖ ≤ ‖InfiniteAdeleRing.ringEquiv_mixedSpace K x‖ := by
   have h1 : ‖InfinitePlace.Completion.extensionEmbedding v (x v)‖ = ‖x v‖ :=
@@ -510,7 +495,6 @@ theorem norm_apply_le_of_isComplex (x : InfiniteAdeleRing K) {v : InfinitePlace 
     (norm_snd_le (InfiniteAdeleRing.ringEquiv_mixedSpace K x))
 
 open scoped Classical in
-
 theorem exists_forall_norm_apply_le_of_mem_infiniteBox :
     ∃ r : ℝ, ∀ x ∈ infiniteBox K, ∀ v : InfinitePlace K, ‖x v‖ ≤ r := by
   obtain ⟨r, hr⟩ := isBounded_iff_forall_norm_le.mp
@@ -619,7 +603,6 @@ theorem adelicAddHaar_adelicBox_pos :
   measure_adelicBox_pos K _
 
 open scoped ProbabilityTheory in
-
 theorem isProbabilityMeasure_cond_adelicBox :
     IsProbabilityMeasure ((NumberField.AdelicHaar.adelicAddHaar (𝓞 K) K)[|adelicBox K]) :=
   ProbabilityTheory.cond_isProbabilityMeasure_of_finite (adelicAddHaar_adelicBox_pos K).ne'

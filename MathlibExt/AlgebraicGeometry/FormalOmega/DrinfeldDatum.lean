@@ -76,7 +76,6 @@ theorem coe_smulInto_apply {N N' : Submodule 𝒪 (Fin 2 → K)} (h : ∀ v ∈ 
     ((smulInto π h v : ↥N') : Fin 2 → K) = algebraMap 𝒪 K π • (v : Fin 2 → K) := rfl
 
 variable (B) in
-
 structure DrinfeldDatum : Type 1 where
 
   N₀ : PrimeSpectrum B → Submodule 𝒪 (Fin 2 → K)

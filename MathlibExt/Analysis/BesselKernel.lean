@@ -61,18 +61,15 @@ theorem integrableOn_exp_neg_mul_add_inv_mul_cpow (ν : ℂ) (x : ℝ) (hx : 0 <
     IntegrableOn
       (fun t : ℝ => (Real.exp (-(x * (t + t⁻¹) / 2)) : ℂ) * ((t : ℂ) ^ (ν - 1))) (Set.Ioi 0) := by
   set a : ℝ := ν.re with ha
-
   set m : ℕ := ⌈-a⌉₊ + 1 with hm
   have hma : -1 < (m : ℝ) + a - 1 := by
     rw [hm]; have := Nat.le_ceil (-a); push_cast; linarith
   have hx2 : 0 < x / 2 := by linarith
-
   set C : ℝ := (m.factorial : ℝ) * (2 / x) ^ m with hC
   have hC0 : 0 ≤ C := by positivity
   have hg : MeasureTheory.IntegrableOn (fun t : ℝ => C * (t ^ ((m : ℝ) + a - 1) * Real.exp (-(x /
     2) * t ^ (1 : ℝ)))) (Set.Ioi 0) :=
     (integrableOn_rpow_mul_exp_neg_mul_rpow hma one_pos hx2).const_mul C
-
   have hcont : ContinuousOn (fun t : ℝ => (Real.exp (-(x * (t + t⁻¹) / 2)) : ℂ) * ((t : ℂ) ^ (ν -
     1))) (Set.Ioi 0) := by
     intro t ht
@@ -88,11 +85,9 @@ theorem integrableOn_exp_neg_mul_add_inv_mul_cpow (ν : ℂ) (x : ℝ) (hx : 0 <
   rw [MeasureTheory.ae_restrict_iff' measurableSet_Ioi]
   refine Filter.Eventually.of_forall fun t (ht : t ∈ Set.Ioi (0 : ℝ)) => ?_
   have ht' : 0 < t := ht
-
   rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, Real.abs_exp,
     Complex.norm_cpow_eq_rpow_re_of_pos ht',
     Complex.sub_re, Complex.one_re, ← ha, Real.rpow_one]
-
   have hsplit : Real.exp (-(x * (t + t⁻¹) / 2)) = Real.exp (-(x / 2) * t) * Real.exp (-((x / 2) /
     t)) := by
     rw [← Real.exp_add]; congr 1; field_simp; ring
@@ -102,7 +97,6 @@ theorem integrableOn_exp_neg_mul_add_inv_mul_cpow (ν : ℂ) (x : ℝ) (hx : 0 <
     have hfac : (0 : ℝ) < m.factorial := by positivity
     rw [div_le_iff₀ hfac] at h1
     rw [Real.exp_neg, inv_le_iff_one_le_mul₀ (Real.exp_pos _)]
-
     have h2 : ((x / 2) / t) ^ m * ((2 / x) ^ m * t ^ m) = 1 := by
       rw [← mul_pow, ← mul_pow]; rw [show (x / 2) / t * (2 / x * t) = 1 by field_simp]; simp
     calc (1 : ℝ) = ((x / 2) / t) ^ m * ((2 / x) ^ m * t ^ m) := h2.symm
@@ -522,7 +516,6 @@ private theorem integrableOn_rpow_mul_exp_neg_mul_add_inv {c : ℝ} (hc : 0 < c)
   refine (ae_restrict_mem measurableSet_Ioi).mono (fun t ht => ?_)
   have ht : 0 < t := ht
   have hct : 0 < c / t := div_pos hc ht
-
   have hexp : Real.exp (-(c * t⁻¹)) ≤ (k.factorial : ℝ) / c ^ k * t ^ (k : ℝ) := by
     have h1 := Real.pow_div_factorial_le_exp (c / t) hct.le k
     have hfac : (0 : ℝ) < k.factorial := by exact_mod_cast Nat.factorial_pos k
@@ -748,7 +741,6 @@ theorem mellin_besselKernel_eq_mul_Gamma_mul_Gamma (ν s : ℂ) (hs : |ν.re| < 
   obtain ⟨hconv, hmel⟩ := MellinK.mellin_besselKernel_eq_integral ν s hs
   refine ⟨hconv, ?_⟩
   rw [hmel]
-
   have step1 : ∫ t in Ioi (0 : ℝ), ∫ x in Ioi (0 : ℝ), MellinK.F ν s (x, t) =
       ∫ t in Ioi (0 : ℝ), (2 : ℂ) ^ s * ∫ y in Ioi (0 : ℝ), MellinK.G ν s (t, y) := by
     refine setIntegral_congr_fun measurableSet_Ioi (fun t ht => ?_)
@@ -760,7 +752,6 @@ theorem mellin_besselKernel_eq_mul_Gamma_mul_Gamma (ν s : ℂ) (hs : |ν.re| < 
           x => MellinK.F_eq ν s x t,
       integral_const_mul, Complex.integral_cpow_mul_exp_neg_mul_Ioi hσ hc, MellinK.integral_G_snd ν
         s hσ ht]
-
     have e1 : (1 : ℂ) / ((((t + t⁻¹) / 2 : ℝ)) : ℂ) = (((2 * t : ℝ)) : ℂ) * ((((1 + t ^ 2)⁻¹ : ℝ))
       : ℂ) := by
       have : (1 : ℝ) / ((t + t⁻¹) / 2) = (2 * t) * (1 + t ^ 2)⁻¹ := by field_simp; ring
@@ -782,7 +773,6 @@ theorem mellin_besselKernel_eq_mul_Gamma_mul_Gamma (ν s : ℂ) (hs : |ν.re| < 
           ring
       _ = _ := by rw [e3]
   rw [step1, integral_const_mul, MellinK.integral_G_swap ν s hs]
-
   have step2 : ∫ y in Ioi (0 : ℝ), ∫ t in Ioi (0 : ℝ), MellinK.G ν s (t, y) =
       ∫ y in Ioi (0 : ℝ), ((1 / 2 : ℂ) * Complex.Gamma ((ν + s) / 2)) *
         ((y : ℂ) ^ ((s - ν) / 2 - 1) * Complex.exp (-((((1 : ℝ)) : ℂ) * (y : ℂ)))) := by
@@ -853,7 +843,6 @@ theorem hasDerivAt_besselKernel_and_hasDerivAt_deriv_besselKernel
         ((1 + ν ^ 2 / (x : ℂ) ^ 2) * besselKernel ν x - (deriv (fun x : ℝ => besselKernel ν x) x) /
           (x : ℂ)) x := by
   have hx0 : (x : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hx.ne'
-
   have clause1 : ∀ (μ : ℂ) (y : ℝ), 0 < y →
       HasDerivAt (fun x : ℝ => besselKernel μ x) (-besselKernel (μ + 1) y + μ / (y : ℂ) *
         besselKernel μ y) y := by
@@ -895,7 +884,6 @@ theorem hasDerivAt_besselKernel_and_hasDerivAt_deriv_besselKernel
     refine h4.congr_of_eventuallyEq (Filter.Eventually.of_forall fun y => ?_)
     simp only [hg, Pi.add_apply, Pi.neg_apply]
     ring
-
   have h2' := mul_besselKernel_eq_mul_sub (ν + 1) x hx
   rw [show ν + 1 - 1 = ν by ring] at h2'
   have hk2 : besselKernel (ν + 1 + 1) x = besselKernel ν x + 2 * ((ν + 1) / (x : ℂ) * besselKernel

@@ -56,7 +56,6 @@ private theorem rat_int_of_pow_int
     (h : ∀ n : ℕ, ∃ m : ℤ, (d : ℚ) * r ^ n = ↑m) :
     ∃ z : ℤ, r = ↑z := by
   suffices r.den = 1 from ⟨r.num, ((Rat.den_eq_one_iff r).mp this).symm⟩
-
   have hden_dvd : ∀ n : ℕ, (r.den : ℤ) ^ n ∣ d := by
     intro n
     obtain ⟨m, hm⟩ := h n
@@ -74,7 +73,6 @@ private theorem rat_int_of_pow_int
     have hdvd_prod : (r.den : ℤ) ^ n ∣ d * r.num ^ n := ⟨m, by linarith⟩
     rw [mul_comm] at hdvd_prod
     exact hcop_pow.symm.dvd_of_dvd_mul_left hdvd_prod
-
   by_contra hden_ne_one
   have hbpos : 1 < r.den := by have := r.den_pos; omega
   have hle : ∀ n : ℕ, r.den ^ n ≤ d.natAbs := by
@@ -161,24 +159,19 @@ private theorem rep_conj_char_eq_scalar
     (ρ : Representation k G V) [ρ.IsIrreducible] :
     ∃ c : k, repOfFun ρ (fun g => ρ.character g⁻¹) = c • LinearMap.id ∧
       c * (Module.finrank k V : k) = (Nat.card G : k) := by
-
   have hcf : ∀ g h : G, ρ.character (h * g * h⁻¹)⁻¹ = ρ.character g⁻¹ := by
     intro g h
     rw [show (h * g * h⁻¹)⁻¹ = h * g⁻¹ * h⁻¹ from by group]
     exact Representation.char_conj ρ g⁻¹ h
-
   obtain ⟨c, heq⟩ := irred_rep_class_fun_scalar ρ (fun g => ρ.character g⁻¹) hcf
   refine ⟨c, heq, ?_⟩
-
   have htrace := congr_arg (LinearMap.trace k V) heq
   rw [LinearMap.map_smul_of_tower, LinearMap.trace_id, smul_eq_mul] at htrace
   simp only [repOfFun, map_sum, LinearMap.map_smul_of_tower, smul_eq_mul] at htrace
-
   have key : ∑ g : G, ρ.character g * ρ.character g⁻¹ = c * ↑(Module.finrank k V) := by
     rw [← htrace]
     simp only [Representation.character]
     exact Fintype.sum_equiv (Equiv.inv G) _ _ (fun g => by simp [inv_inv])
-
   have hortho : ∑ g : G, ρ.character g * ρ.character g⁻¹ = (Nat.card G : k) := by
     have h := Representation.char_orthonormal ρ ρ
     simp only [show Nonempty (ρ.Equiv ρ) from ⟨Representation.Equiv.refl ρ⟩, ite_true] at h

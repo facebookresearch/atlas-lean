@@ -184,14 +184,12 @@ private theorem one_le_order_toNat (u : W⟦X⟧) (hu0 : constantCoeff u = 0) (h
   exact_mod_cast h1
 
 omit [IsAdicComplete (IsLocalRing.maximalIdeal W) W] in
-
 private theorem subst_injective (u : W⟦X⟧) (hu0 : constantCoeff u = 0) (hu : u.map
   (IsLocalRing.residue W) ≠ 0) :
     Function.Injective fun c : W⟦X⟧ => c.subst u := by
   classical
   have ha : HasSubst u := HasSubst.of_constantCoeff_zero' hu0
   have hm := one_le_order_toNat u hu0 hu
-
   suffices key : ∀ c : W⟦X⟧, c.subst u = 0 → c = 0 by
     intro c c' h
     have := key (c - c') (by rw [subst_sub ha]; exact sub_eq_zero.mpr h)
@@ -216,14 +214,12 @@ private theorem subst_injective (u : W⟦X⟧) (hu0 : constantCoeff u = 0) (hu :
     rw [← hqw, coeff_zero_eq_constantCoeff_apply]
     exact eq_X_mul_shift_add_const q
   have hu_ne : u ≠ 0 := by rintro rfl; exact hu (by simp)
-
   have e1 : c.subst u = u ^ j * (u * q₁.subst u + C w) := by
     rw [hq, hq', subst_mul ha, subst_pow ha, subst_X ha, subst_add ha, subst_mul ha, subst_X ha,
       subst_C]
     rfl
   rw [e1] at hc
   have e2 : u * q₁.subst u + C w = 0 := (mul_eq_zero.mp hc).resolve_left (pow_ne_zero _ hu_ne)
-
   have hdeg : (Polynomial.C w).degree < (u.map (IsLocalRing.residue W)).order.toNat := by
     refine (Polynomial.degree_C_le).trans_lt ?_
     exact_mod_cast hm

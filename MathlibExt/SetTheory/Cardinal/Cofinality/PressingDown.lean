@@ -178,7 +178,6 @@ theorem exists_stationary_lt_of_regressive (hα : ℵ₀ < Order.cof α) {S : Se
   exact hmem
 
 omit [WellFoundedLT α] in
-
 theorem isClub_Ici (z : α) : IsClub (Ici z) :=
   ⟨fun _ ht ht0 _ _ hx => ht0.elim fun _ hy => (ht hy).trans (hx.1 hy),
     fun y => ⟨max y z, le_max_right _ _, le_max_left _ _⟩⟩

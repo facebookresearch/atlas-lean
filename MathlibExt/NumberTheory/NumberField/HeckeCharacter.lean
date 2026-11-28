@@ -451,7 +451,6 @@ private theorem denseRange_algebraMap_adicCompletion_pi_prod_infinitePlace_pi {K
   obtain ⟨t₁, ht₁, t₂, ht₂, hsub⟩ := mem_nhds_prod_iff.1 ht
   obtain ⟨ε₁, hε₁, hb₁⟩ := Metric.mem_nhds_iff.1 ht₁
   obtain ⟨ε₂, hε₂, hb₂⟩ := Metric.mem_nhds_iff.1 ht₂
-
   have hd₁ : ∀ v : S, ∃ k : K, dist (algebraMap K (v.1.adicCompletion K) k) (z.1 v) < ε₁ / 2 := by
     intro v
     obtain ⟨k, hk⟩ := (IsDedekindDomain.HeightOneSpectrum.denseRange_algebraMap (K := K) (v :=
@@ -465,7 +464,6 @@ private theorem denseRange_algebraMap_adicCompletion_pi_prod_infinitePlace_pi {K
     exact ⟨k, by rw [dist_comm]; exact hk⟩
   choose k₁ hk₁ using hd₁
   choose k₂ hk₂ using hd₂
-
   obtain ⟨x, hx⟩ := exists_forall_sub_lt_of_pairwise_not_isEquiv hV hne (Sum.elim k₁ k₂)
     (lt_min (half_pos hε₁) (half_pos hε₂))
   refine ⟨_, hsub ⟨hb₁ ?_, hb₂ ?_⟩, Set.mem_range_self x⟩
@@ -662,7 +660,6 @@ private theorem ideleChar_finIncl_eq_one (θ : (AdeleRing (𝓞 F) F)ˣ →* ℂ
     intro v h1 hv
     rw [Set.Finite.mem_toFinset, Set.mem_ofPred_eq] at hv
     exact hv h1
-
   obtain ⟨c, hc⟩ : ∃ c : (FiniteAdeleRing (𝓞 F) F)ˣ,
       c = ∏ v ∈ hZ.toFinset, localUnit (𝓞 F) F v (uniformizerUnit (𝓞 F) F v ^ (-(k v))) := ⟨_, rfl⟩
   have hθc : θ (Units.map (finIncl (𝓞 F) F) c) = 1 := by
@@ -685,7 +682,6 @@ private theorem ideleChar_finIncl_eq_one (θ : (AdeleRing (𝓞 F) F)ˣ →* ℂ
     refine ideleChar_component_localUnit_of_ne (fun hvw => hv ?_) _
     rw [hvw]
     exact hw
-
   obtain ⟨u, hu⟩ : ∃ u : (FiniteAdeleRing (𝓞 F) F)ˣ, u = y * c⁻¹ := ⟨_, rfl⟩
   have hyu : y = u * c := by
     rw [hu]
@@ -742,7 +738,6 @@ private theorem ideleChar_eq_one_of_denseRange_core (F : Type*) [Field F] [Numbe
   classical
   refine MonoidHom.ext fun x => ?_
   rw [MonoidHom.one_apply]
-
   obtain ⟨T, hT⟩ : ∃ T : Finset (HeightOneSpectrum (𝓞 F)), T = S ∪ (ideleChar_finite_supp
     h𝔣).toFinset :=
     ⟨_, rfl⟩
@@ -755,7 +750,6 @@ private theorem ideleChar_eq_one_of_denseRange_core (F : Type*) [Field F] [Numbe
     · right
       rw [Set.Finite.mem_toFinset, Set.mem_ofPred_eq]
       exact h
-
   have hx2 : ∀ v : HeightOneSpectrum (𝓞 F), (x : AdeleRing (𝓞 F) F).2 v ≠ 0 :=
     ideleChar_fin_apply_ne_zero x
   obtain ⟨x₁, hx₁⟩ : ∃ x₁ : (InfiniteAdeleRing F)ˣ, x₁ = Units.map (adeleArch (𝓞 F) F) x := ⟨_, rfl⟩
@@ -769,7 +763,6 @@ private theorem ideleChar_eq_one_of_denseRange_core (F : Type*) [Field F] [Numbe
   have hψ_one : ψ x₁ = 1 := by
     rw [hψ]
     simp
-
   have hstepA : ∀ N ∈ nhds (x₁ : InfiniteAdeleRing F),
       ∃ z : (InfiniteAdeleRing F)ˣ, (z : InfiniteAdeleRing F) ∈ N ∧ θ x = ψ z := by
     intro N hN
@@ -803,7 +796,6 @@ private theorem ideleChar_eq_one_of_denseRange_core (F : Type*) [Field F] [Numbe
       rw [hE, Set.mem_preimage, Set.mem_ofPred_eq, archEval_apply] at h2
       subst h
       exact h2 (map_zero (algebraMap F w₀.Completion))
-
     obtain ⟨P, hP⟩ : ∃ P : (AdeleRing (𝓞 F) F)ˣ,
         P = Units.map (algebraMap F (AdeleRing (𝓞 F) F)) (Units.mk0 α hα0) := ⟨_, rfl⟩
     have hθP : θ P = 1 := by
@@ -830,7 +822,6 @@ private theorem ideleChar_eq_one_of_denseRange_core (F : Type*) [Field F] [Numbe
       exact ideleChar_congruence (hx2 v) _ hb
     have hθfin : θ (Units.map (finIncl (𝓞 F) F) (Units.map (adeleFin (𝓞 F) F) (x * P⁻¹))) = 1 :=
       ideleChar_finIncl_eq_one θ hmod hS _ hyf
-
     refine ⟨Units.map (adeleArch (𝓞 F) F) P, ?_, ?_⟩
     · rw [hP]
       exact harch.1
@@ -840,7 +831,6 @@ private theorem ideleChar_eq_one_of_denseRange_core (F : Type*) [Field F] [Numbe
         := by
         rw [map_mul, map_inv, hx₁]
       rw [h1, ideleChar_idele_decomp (x * P⁻¹), map_mul, hθfin, mul_one, hψ, h3]
-
   refine Specializes.eq ?_
   rw [specializes_iff_forall_open]
   intro V hV h1V

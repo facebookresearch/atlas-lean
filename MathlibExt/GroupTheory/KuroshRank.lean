@@ -148,7 +148,6 @@ instance finite_range_of (i : Fin 2) : Finite ((Monoid.CoprodI.of (i := i)).rang
   Finite.of_equiv (G i) (MonoidHom.ofInjective (Monoid.CoprodI.of_injective i)).toEquiv
 
 omit [∀ i, Finite (G i)] in
-
 theorem card_range_of (i : Fin 2) :
     Nat.card ((Monoid.CoprodI.of (i := i)).range : Subgroup (Monoid.CoprodI G))
       = Nat.card (G i) :=
@@ -191,7 +190,6 @@ abbrev Vertex : Type _ :=
   (i : ι) × (CoprodI G ⧸ (Monoid.CoprodI.of (M := G) (i := i)).range)
 
 variable {G} in
-
 abbrev Vertex.mk (i : ι) (g : CoprodI G) : Vertex G :=
   ⟨i, QuotientGroup.mk g⟩
 
@@ -441,7 +439,6 @@ section DecEq
 variable [DecidableEq ι] [∀ i, DecidableEq (G i)]
 
 omit [DecidableEq ι] in
-
 theorem lastIdx_rcons_getD {i : ι} (p : Word.Pair G i) :
     (lastIdx (Word.rcons p)).getD i = (lastIdx p.tail).getD i := by
   rw [Word.rcons]
@@ -510,7 +507,6 @@ theorem side_mk_one (i : ι) : side (Vertex.mk i (1 : CoprodI G)) = i := by
   rw [side_mk, sideAux_one]
 
 omit [DecidableEq ι] [∀ i, DecidableEq (G i)] in
-
 theorem sym2_mk_eq_sym2_mk (htwo : ∀ a b c : ι, a = b ∨ a = c ∨ b = c) {i j k l : ι}
     (hij : i ≠ j) (hkl : k ≠ l) (g : CoprodI G) :
     s(Vertex.mk i g, Vertex.mk j g) = s(Vertex.mk k g, Vertex.mk l g) := by
@@ -664,7 +660,6 @@ theorem exists_isConnectedTransversal
     (hpre : T.Preconnected) (v₀ : V) :
     ∃ D : Set V, v₀ ∈ D ∧ IsConnectedTransversal T Γ D := by
   classical
-
   obtain ⟨D, hsub, hDmem, hDmax⟩ := zorn_subset_nonempty
     {s : Set V | v₀ ∈ s ∧ WalkConnected T s ∧ ∀ v ∈ s, ∀ w ∈ s, v ∈ orbit Γ w → v = w}
     (fun c hc hchain hcne => by
@@ -679,20 +674,16 @@ theorem exists_isConnectedTransversal
       rw [Set.mem_singleton_iff] at hv hw
       rw [hv, hw]⟩
   have hv₀D : v₀ ∈ D := hsub (Set.mem_singleton v₀)
-
   refine ⟨D, hv₀D, hDmem.2.1, hDmem.2.2, fun u => ?_⟩
   by_contra hu
-
   obtain ⟨p⟩ := hpre v₀ u
   obtain ⟨v, hvD, w, hadj, hw⟩ :=
     exists_adj_of_walk hsmul p ⟨v₀, hv₀D, MulAction.mem_orbit_self v₀⟩ hu
-
   have hwD : w ∉ D := fun hwD => hw ⟨w, hwD, MulAction.mem_orbit_self w⟩
   have hins : insert w D ∈
       {s : Set V | v₀ ∈ s ∧ WalkConnected T s ∧ ∀ v ∈ s, ∀ w ∈ s, v ∈ orbit Γ w → v = w} :=
     ⟨Set.mem_insert_of_mem _ hv₀D, hDmem.2.1.insert_of_adj hvD hadj,
       eq_of_mem_orbit_insert hDmem.2.2 hw⟩
-
   exact hwD (hDmax hins (Set.subset_insert w D) (Set.mem_insert w D))
 
 variable {D : Set V}
@@ -1084,7 +1075,6 @@ open SimpleGraph
 variable {V : Type*} {G : SimpleGraph V} {a b u v w : V}
 
 variable (G a b) in
-
 def farSide : Set V :=
   {v | ¬ (G.deleteEdges {s(a, b)}).Reachable a v}
 
@@ -1209,7 +1199,6 @@ theorem exists_walk_of_transl_eq (hfree : ∀ (η : H) (v : Vertex G), η • v 
     rw [transl_coe_smul hD hfree, transl_eq_one hD hfree (hp₀ d hd), mul_one]
 
 include hD in
-
 theorem notMem_farSide_of_mem {p q : Vertex G} (hp : p ∈ D) (hq : q ∉ D) {v : Vertex G}
     (hv : v ∈ D) : v ∉ (graph G).farSide p q := by
   intro hcon
@@ -1230,7 +1219,6 @@ theorem mem_farSide_of_transl_eq (hfree : ∀ (η : H) (v : Vertex G), η • v 
   exact hq (mem_of_transl_eq_one hD h1.symm)
 
 variable (H) in
-
 def nonTreeRep (hD : IsConnectedTransversal (graph G) H D) : Set (CoprodI G) :=
   {g | Vertex.mk 0 g ∈ D ∧ edgeGen hD g ≠ 1}
 
@@ -1260,7 +1248,6 @@ theorem eq_of_mk_zero_mem (hfree : ∀ (η : H) (v : Vertex G), η • v = v →
   rw [← hη, hone, OneMemClass.coe_one, one_mul]
 
 variable (H) in
-
 noncomputable def letterImage (hD : IsConnectedTransversal (graph G) H D)
     (x : nonTreeRep H hD × Bool) :
     H :=
@@ -1282,7 +1269,6 @@ theorem letterImage_ne_one (x : nonTreeRep H hD × Bool) : letterImage H hD x �
   · exact g.2.2
 
 variable (H) in
-
 noncomputable def exitSrc (hD : IsConnectedTransversal (graph G) H D) :
     nonTreeRep H hD × Bool → Vertex G
   | (g, true) => Vertex.mk 0 (g : CoprodI G)
@@ -1290,7 +1276,6 @@ noncomputable def exitSrc (hD : IsConnectedTransversal (graph G) H D) :
       Vertex.mk 1 ((((edgeGen hD (g : CoprodI G))⁻¹ : H) : CoprodI G) * (g : CoprodI G))
 
 variable (H) in
-
 noncomputable def exitTgt (hD : IsConnectedTransversal (graph G) H D) :
     nonTreeRep H hD × Bool → Vertex G
   | (g, true) => Vertex.mk 1 (g : CoprodI G)
@@ -1482,7 +1467,6 @@ variable {G : Fin 2 → Type*} [∀ i, Group (G i)] {H : Subgroup (CoprodI G)}
   {D : Set (Vertex G)} (hD : IsConnectedTransversal (graph G) H D)
 
 variable (H) in
-
 noncomputable def basisFun (hD : IsConnectedTransversal (graph G) H D) (g : nonTreeRep H hD) :
     H :=
   edgeGen hD (g : CoprodI G)
@@ -1577,12 +1561,10 @@ variable {G : Fin 2 → Type*} [∀ i, Group (G i)] {H : Subgroup (CoprodI G)}
   {D : Set (Vertex G)} (hD : IsConnectedTransversal (graph G) H D)
 
 variable (H) in
-
 def baseRep (_hD : IsConnectedTransversal (graph G) H D) : Set (CoprodI G) :=
   {g | Vertex.mk 0 g ∈ D}
 
 variable (H) in
-
 def treeRep (hD : IsConnectedTransversal (graph G) H D) : Set (CoprodI G) :=
   {g | Vertex.mk 0 g ∈ D ∧ edgeGen hD g = 1}
 
@@ -1630,7 +1612,6 @@ theorem finite_baseRep [H.FiniteIndex]
   Finite.of_equiv _ (baseRepEquivQuotient hD hfree).symm
 
 include hD in
-
 noncomputable def transversalEquivOrbits :
     D ≃ MulAction.orbitRel.Quotient H (Vertex G) := by
   refine Equiv.ofBijective (fun d => Quotient.mk'' (d : Vertex G)) ⟨?_, ?_⟩
@@ -1803,7 +1784,6 @@ public theorem CoprodI.nonempty_freeGroupBasis_fin_kuroshRank
       g⁻¹ * Monoid.CoprodI.of x * g ∈ H → x = 1) :
     Nonempty (FreeGroupBasis
       (Fin (1 + H.index - H.index / Nat.card (G 0) - H.index / Nat.card (G 1))) H) := by
-
   have hCT : ∀ i, GroupTheory.Kurosh.ConjTrivial (Monoid.CoprodI.of (M := G) (i := i)).range H := by
     rintro i g x ⟨a, rfl⟩ h
     rw [hH i g a h, map_one]

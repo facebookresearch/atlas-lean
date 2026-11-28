@@ -52,7 +52,6 @@ private theorem scaledGammaIntegral {a : ℂ} (ha : 0 < a.re) {r : ℝ} (hr : 0 
     have hΓ : (∫ u in Ioi (0 : ℝ), ((Real.exp (-u) : ℝ) : ℂ) * ((u : ℝ) : ℂ) ^ (a - 1))
         = Complex.Gamma a := (Complex.Gamma_eq_integral ha).symm
     rw [hΓ] at hsub
-
     have hpt : ∀ t ∈ Ioi (0 : ℝ),
         (r : ℝ) • (((Real.exp (-(r * t)) : ℝ) : ℂ) * ((r * t : ℝ) : ℂ) ^ (a - 1))
           = ((r : ℝ) : ℂ) ^ a *
@@ -141,7 +140,6 @@ private theorem integrableOn_scaledGamma {a : ℂ} (ha : 0 < a.re) {r : ℝ} (hr
 private theorem integrable_one_add_sq_rpow_neg {c : ℝ} (hc : 1 / 2 < c) :
     Integrable (fun x : ℝ => (1 + x ^ 2) ^ (-c)) := by
   have hpt : ∀ x : ℝ, (0 : ℝ) < 1 + x ^ 2 := fun x => by positivity
-
   have htail : ∀ x : ℝ, 1 ≤ |x| → (1 + x ^ 2) ^ (-c) ≤ |x| ^ (-(2 * c)) := by
     intro x hx
     have hx0 : (0 : ℝ) < |x| := lt_of_lt_of_le one_pos hx
@@ -155,10 +153,8 @@ private theorem integrable_one_add_sq_rpow_neg {c : ℝ} (hc : 1 / 2 < c) :
           ring_nf
   have hcont : Continuous (fun x : ℝ => (1 + x ^ 2) ^ (-c)) :=
     (continuous_const.add (continuous_pow 2)).rpow_const fun x => Or.inl (hpt x).ne'
-
   have hmid : IntegrableOn (fun x : ℝ => (1 + x ^ 2) ^ (-c)) (Icc (-1) 1) :=
     hcont.continuousOn.integrableOn_Icc
-
   have hright : IntegrableOn (fun x : ℝ => (1 + x ^ 2) ^ (-c)) (Ioi 1) := by
     refine Integrable.mono' ((integrableOn_Ioi_rpow_of_lt (by linarith : -(2*c) < -1)
       one_pos)) (hcont.measurable.aestronglyMeasurable.restrict) ?_
@@ -168,13 +164,11 @@ private theorem integrable_one_add_sq_rpow_neg {c : ℝ} (hc : 1 / 2 < c) :
       rw [le_abs]; left; exact le_of_lt hx
     calc (1 + x ^ 2) ^ (-c) ≤ |x| ^ (-(2 * c)) := htail x h1x
       _ = x ^ (-(2 * c)) := by rw [abs_of_pos (lt_trans one_pos hx)]
-
   have hleft : IntegrableOn (fun x : ℝ => (1 + x ^ 2) ^ (-c)) (Iio (-1)) := by
     have : IntegrableOn (fun x : ℝ => (1 + (-x) ^ 2) ^ (-c)) (Ioi 1) := by
       simpa [neg_sq] using hright
     have hneg := this.comp_neg
     simpa [neg_sq, Set.neg_Ioi] using hneg
-
   have hunion : IntegrableOn (fun x : ℝ => (1 + x ^ 2) ^ (-c))
       (Iio (-1) ∪ Icc (-1) 1 ∪ Ioi 1) := (hleft.union hmid).union hright
   have hcover : Iio (-1 : ℝ) ∪ Icc (-1) 1 ∪ Ioi 1 = Set.univ := by
@@ -248,20 +242,17 @@ private theorem integral_cpow_neg_one_add_sq {a : ℂ} (ha : 1 / 2 < a.re) :
     linarith
   have hpt : ∀ x : ℝ, (0 : ℝ) < 1 + x ^ 2 := fun x => by positivity
   have hΓne : Complex.Gamma a ≠ 0 := Complex.Gamma_ne_zero_of_re_pos ha0
-
   have h1 : ∫ x : ℝ, (((1 + x ^ 2 : ℝ)) : ℂ) ^ (-a)
       = (Complex.Gamma a)⁻¹ * ∫ x : ℝ, ∫ t in Ioi (0 : ℝ),
           ((Real.exp (-((1 + x ^ 2) * t)) : ℝ) : ℂ) * ((t : ℝ) : ℂ) ^ (a - 1) := by
     rw [← MeasureTheory.integral_const_mul]
     exact MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall fun x => by
       simpa using cpow_neg_eq_gamma_inv_mul_integral ha0 x)
-
   have h2 : ∫ x : ℝ, ∫ t in Ioi (0 : ℝ),
         ((Real.exp (-((1 + x ^ 2) * t)) : ℝ) : ℂ) * ((t : ℝ) : ℂ) ^ (a - 1)
       = ∫ t in Ioi (0 : ℝ), ∫ x : ℝ,
           ((Real.exp (-((1 + x ^ 2) * t)) : ℝ) : ℂ) * ((t : ℝ) : ℂ) ^ (a - 1) :=
     MeasureTheory.integral_integral_swap (integrable_uncurry_kernel ha)
-
   have h3 : ∀ t ∈ Ioi (0 : ℝ),
       (∫ x : ℝ, ((Real.exp (-((1 + x ^ 2) * t)) : ℝ) : ℂ) * ((t : ℝ) : ℂ) ^ (a - 1))
         = ((Real.exp (-t) : ℝ) : ℂ) * ((t : ℝ) : ℂ) ^ (a - 1)
@@ -281,7 +272,6 @@ private theorem integral_cpow_neg_one_add_sq {a : ℂ} (ha : 1 / 2 < a.re) :
       ring_nf
     rw [MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall hsplit),
       MeasureTheory.integral_const_mul, integral_gaussian_complex (by simpa using htC)]
-
   have h4 : ∫ t in Ioi (0 : ℝ), ((Real.exp (-t) : ℝ) : ℂ) * ((t : ℝ) : ℂ) ^ (a - 1)
         * ((Real.pi : ℂ) / ((t : ℝ) : ℂ)) ^ (1 / 2 : ℂ)
       = (Real.pi : ℂ) ^ (1 / 2 : ℂ) * Complex.Gamma (a - 1 / 2) := by
@@ -311,7 +301,6 @@ private theorem integral_cpow_neg_one_add_sq {a : ℂ} (ha : 1 / 2 < a.re) :
       MeasureTheory.integral_const_mul]
     congr 1
     exact (Complex.Gamma_eq_integral ha12).symm
-
   rw [h1, h2, MeasureTheory.setIntegral_congr_fun measurableSet_Ioi h3, h4]
   field_simp
 

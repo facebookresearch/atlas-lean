@@ -404,7 +404,6 @@ theorem IsFullLattice.of_homothetic {L L' : Submodule R (Fin 2 → K)}
   exact IsFullLattice.map hL _
 
 variable (R K) in
-
 def FullLattice : Type _ := {L : Submodule R (Fin 2 → K) // Submodule.IsFullLattice K L}
 
 

@@ -435,7 +435,6 @@ private theorem norm_coeff_f_pow_mul_le (a N m : ℕ) {r : ℝ} (hr0 : 0 ≤ r) 
 private theorem main (a : ℕ) {q : ℂ} (hq : ‖q‖ < 1) :
     HasSum (fun m : ℕ => ((PowerSeries.coeff m (etaProd ^ a) : ℤ) : ℂ) * q ^ m)
       ((∏' n : ℕ, (1 - q ^ (n + 1))) ^ a) := by
-
   set r : ℝ := (‖q‖ + 1) / 2 with hr
   have hr0 : 0 ≤ r := by rw [hr]; positivity
   have hqr : ‖q‖ < r := by rw [hr]; linarith
@@ -445,7 +444,6 @@ private theorem main (a : ℕ) {q : ℂ} (hq : ‖q‖ < 1) :
   have hρ0 : 0 ≤ ρ := div_nonneg (norm_nonneg q) hr0
   have hρ1 : ρ < 1 := (div_lt_one hrpos).mpr hqr
   set C : ℝ := Real.exp (∑' n : ℕ, r ^ (n + 1)) ^ a with hC
-
   let F : ℕ → ℕ → ℂ := fun N m => ((PowerSeries.coeff m (f N ^ a) : ℤ) : ℂ) * q ^ m
   let g : ℕ → ℂ := fun m => ((PowerSeries.coeff m (etaProd ^ a) : ℤ) : ℂ) * q ^ m
   have hbound : ∀ N m, ‖F N m‖ ≤ C * ρ ^ m := by
@@ -464,17 +462,14 @@ private theorem main (a : ℕ) {q : ℂ} (hq : ‖q‖ < 1) :
     apply tendsto_const_nhds.congr'
     filter_upwards [eventually_gt_atTop m] with N hN
     simp only [F, g, coeff_etaProd_pow_eq_coeff_f a m N hN]
-
   have hT : Tendsto (fun N => ∑' m, F N m) atTop (𝓝 (∑' m, g m)) :=
     tendsto_tsum_of_dominated_convergence hsumm hlim (Eventually.of_forall hbound)
-
   have hP : ∀ N, ∑' m, F N m = (∏ n ∈ Finset.range N, (1 - q ^ (n + 1))) ^ a :=
     fun N => (hasSum_partial a N q).tsum_eq
   have hA : Tendsto (fun N => ∑' m, F N m) atTop (𝓝 ((∏' n : ℕ, (1 - q ^ (n + 1))) ^ a)) := by
     simp_rw [hP]
     exact ((ModularForm.multipliable_one_sub_pow hq).hasProd.tendsto_prod_nat).pow a
   have heq : ∑' m, g m = (∏' n : ℕ, (1 - q ^ (n + 1))) ^ a := tendsto_nhds_unique hT hA
-
   have hg : Summable g := by
     refine Summable.of_norm_bounded hsumm (fun m => ?_)
     have := hbound (m + 1) m
@@ -819,11 +814,9 @@ private lemma mem_H_of_four_dvd : ∀ (n : ℕ) (A : SL(2, ℤ)), (A 1 0).natAbs
   intro A hn h4
   by_cases hc : A 1 0 = 0
   · exact mem_H_of_apply_one_zero_eq_zero A hc
-
   set c := A 1 0 with hc_def
   set d := A 1 1 with hd_def
   have hdet := det_eq A
-
   have hd2 : ¬ (2 : ℤ) ∣ d := by
     intro hd
     have : (2 : ℤ) ∣ A 0 0 * A 1 1 - A 0 1 * A 1 0 :=
@@ -831,7 +824,6 @@ private lemma mem_H_of_four_dvd : ∀ (n : ℕ) (A : SL(2, ℤ)), (A 1 0).natAbs
         h4) _)
     rw [hdet] at this
     norm_num at this
-
   have hm0 : 0 < c.natAbs := Int.natAbs_pos.mpr hc
   have hmc : ((c.natAbs : ℕ) : ℤ) = |c| := Int.natCast_natAbs c
   set d₁ : ℤ := Int.bmod d c.natAbs with hd₁
@@ -840,7 +832,6 @@ private lemma mem_H_of_four_dvd : ∀ (n : ℕ) (A : SL(2, ℤ)), (A 1 0).natAbs
     rw [hd₁]; linarith
   have hd₁_lb : -(((c.natAbs : ℕ) : ℤ) / 2) ≤ d₁ := Int.le_bmod hm0
   have hd₁_ub : d₁ < (((c.natAbs : ℕ) : ℤ) + 1) / 2 := Int.bmod_lt hm0
-
   obtain ⟨n₁, hn₁⟩ : ∃ n₁ : ℤ, c * n₁ = -((c.natAbs : ℤ) * Int.bdiv d c.natAbs) := by
     rw [hmc]
     rcases abs_cases c with ⟨h, -⟩ | ⟨h, -⟩ <;> rw [h]
@@ -848,7 +839,6 @@ private lemma mem_H_of_four_dvd : ∀ (n : ℕ) (A : SL(2, ℤ)), (A 1 0).natAbs
   set A₁ := A * ModularGroup.T ^ n₁ with hA₁
   obtain ⟨hA₁c, hA₁d, -, -⟩ := mul_T_zpow_apply A n₁
   have hA₁d' : A₁ 1 1 = d₁ := by rw [hA₁d, hd₁_eq, ← hc_def, ← hd_def, hn₁]; ring
-
   have hm4 : (4 : ℤ) ∣ ((c.natAbs : ℕ) : ℤ) := Int.dvd_natAbs.mpr h4
   have hd₁2 : ¬ (2 : ℤ) ∣ d₁ := by
     intro h2
@@ -858,7 +848,6 @@ private lemma mem_H_of_four_dvd : ∀ (n : ℕ) (A : SL(2, ℤ)), (A 1 0).natAbs
     have := dvd_add h2 this
     rwa [hd₁_eq, sub_add_cancel] at this
   have hd₁0 : d₁ ≠ 0 := by rintro h0; exact hd₁2 (h0 ▸ dvd_zero 2)
-
   have hm'0 : 0 < (4 * d₁).natAbs := Int.natAbs_pos.mpr (by positivity)
   have hmm' : (((4 * d₁).natAbs : ℕ) : ℤ) = 4 * |d₁| := by
     rw [Int.natCast_natAbs, abs_mul]
@@ -877,7 +866,6 @@ private lemma mem_H_of_four_dvd : ∀ (n : ℕ) (A : SL(2, ℤ)), (A 1 0).natAbs
   set A₂ := A₁ * R ^ n₂ with hA₂
   obtain ⟨hA₂c, hA₂d, -, -⟩ := mul_R_zpow_apply A₁ n₂
   have hA₂c' : A₂ 1 0 = c' := by rw [hA₂c, hA₁c, hA₁d', ← hc_def, hn₂, hc'_eq]; ring
-
   have h4c' : (4 : ℤ) ∣ c' := by
     rw [hc'_eq]
     exact dvd_sub h4 (dvd_mul_of_dvd_left (Int.dvd_natAbs.mpr (dvd_mul_right 4 d₁)) _)
@@ -890,7 +878,6 @@ private lemma mem_H_of_four_dvd : ∀ (n : ℕ) (A : SL(2, ℤ)), (A 1 0).natAbs
     rcases abs_cases c with ⟨habs, _⟩ | ⟨habs, _⟩ <;> rcases abs_cases d₁ with ⟨habs₁, _⟩ | ⟨habs₁,
       _⟩ <;>
       rcases abs_cases c' with ⟨habs', _⟩ | ⟨habs', _⟩ <;> omega
-
   have hA₂H : A₂ ∈ H := ih _ hlt A₂ (by rw [hA₂c']) (by rw [hA₂c']; exact h4c')
   have : A = A₂ * R ^ (-n₂) * ModularGroup.T ^ (-n₁) := by
     rw [hA₂, hA₁]; group
@@ -1104,7 +1091,6 @@ private lemma F_isZeroAt (α β γ : ℕ) (hE : 0 < α + β + γ)
       congr 1
       simp only [F, Fc, one_mul]
       ring
-
     rw [show ((2 * E : ℕ) : ℤ) - 1 = ((2 * E : ℕ) : ℤ) + (-1) by ring, zpow_add₀ hD, zpow_natCast,
       zpow_neg_one,
       zpow_neg, zpow_natCast, show (12 : ℤ) - 1 = 11 by norm_num, zpow_ofNat, zpow_neg, zpow_ofNat]
@@ -1607,7 +1593,6 @@ private theorem A2p_weight24 (z : UpperHalfPlane) :
           (4 * (z : ℂ)) ^ 16) +
         256 * (ModularForm.eta (z : ℂ) ^ 16 * ModularForm.eta (2 * (z : ℂ)) ^ 0 * ModularForm.eta
           (4 * (z : ℂ)) ^ 32) := by
-
   obtain ⟨G, hG⟩ := exists_gamma0_qExpansion_eq_of_levelOne 4 ModularForm.E₄
   obtain ⟨f0, hf0⟩ := exists_gamma0_four_apply_eq_eta_pow_mul 16 8 16 (by norm_num) (by norm_num)
     (by norm_num) (by decide) (by norm_num)
@@ -1618,7 +1603,6 @@ private theorem A2p_weight24 (z : UpperHalfPlane) :
   obtain ⟨f3, hf3⟩ := exists_gamma0_four_apply_eq_eta_pow_mul 16 0 32 (by norm_num) (by norm_num)
     (by norm_num) (by decide) (by norm_num)
   have hGz : ∀ z : UpperHalfPlane, G z = ModularForm.E₄ z := fun z => congrFun hG z
-
   let F : ModularForm (CongruenceSubgroup.Gamma0 4) 24 :=
     ModularForm.mcast (by norm_num) (G.mul (toMF f0)) -
       (ModularForm.mcast (by norm_num) (toMF f1) + (224 : ℂ) • ModularForm.mcast (by norm_num)
@@ -1626,7 +1610,6 @@ private theorem A2p_weight24 (z : UpperHalfPlane) :
         (256 : ℂ) • ModularForm.mcast (by norm_num) (toMF f3))
   have hFz : ∀ z : UpperHalfPlane, F z = G z * f0 z - (f1 z + 224 * f2 z + 256 * f3 z) := fun z =>
     rfl
-
   let c : ℕ → ℂ := fun m => ((PowerSeries.coeff m SE : ℤ) : ℂ) -
     (((PowerSeries.coeff m (S 0 48 0 4) : ℤ) : ℂ) + 224 * ((PowerSeries.coeff m (S 8 24 16 5) : ℤ)
       : ℂ) +
@@ -1641,7 +1624,6 @@ private theorem A2p_weight24 (z : UpperHalfPlane) :
     funext m
     simp only [c, smul_eq_mul]
     ring
-
   have hF0 : F = 0 := by
     refine ModularForm.sturm_bound_Gamma0 4 F (fun n hn => ?_)
     rw [index_Gamma0_four] at hn

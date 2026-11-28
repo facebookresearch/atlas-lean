@@ -162,7 +162,6 @@ private theorem stepProps_update_self {T : H →L[𝕜] H} {pad : Bool}
     apply h4 x hx1
     intro j hj
     simpa only [Function.update_of_ne (ne_of_lt hj)] using hxorth j hj
-
   · intro h0 x hxorth
     rw [Function.update_self] at h0
     apply h5 h0 x

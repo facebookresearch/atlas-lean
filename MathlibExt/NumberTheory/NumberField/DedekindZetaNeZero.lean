@@ -311,7 +311,6 @@ private theorem tendsto_tsum_primeSet_of_summable {f : Ideal (𝓞 K) → ℂ}
     (hf : Summable fun I => ‖f I‖) (hf0 : f 0 = 0) :
     Tendsto (fun T : Finset (Primes K) => ∑' I : primeSet K T, f I) atTop (𝓝 (∑' I, f I)) := by
   have hfs : Summable f := hf.of_norm
-
   have htail : Tendsto (fun F : Finset (Ideal (𝓞 K)) =>
       ∑' I, ((↑F : Set (Ideal (𝓞 K)))ᶜ).indicator (fun I => ‖f I‖) I) atTop (𝓝 0) := by
     refine (tendsto_tsum_compl_atTop_zero (fun I => ‖f I‖)).congr fun F => ?_
@@ -321,12 +320,10 @@ private theorem tendsto_tsum_primeSet_of_summable {f : Ideal (𝓞 K) → ℂ}
   obtain ⟨F₀, hF₀⟩ := Metric.tendsto_atTop.mp htail ε hε
   refine ⟨F₀.biUnion (fun I =>
       ((UniqueFactorizationMonoid.factors I).toFinset).subtype (fun Q => Prime Q)), fun T hT => ?_⟩
-
   have hin : ∀ I ∈ F₀, I ≠ 0 → I ∈ primeSet K T := by
     intro I hI hI0
     refine mem_primeSet_of_factors K hI0 fun Q hQ => hT ?_
     exact Finset.mem_biUnion.mpr ⟨I, hI, Finset.mem_subtype.mpr (Multiset.mem_toFinset.mpr hQ)⟩
-
   have hdom : ∀ I : Ideal (𝓞 K), ((primeSet K T)ᶜ).indicator (fun I => ‖f I‖) I
       ≤ ((↑F₀ : Set (Ideal (𝓞 K)))ᶜ).indicator (fun I => ‖f I‖) I := by
     intro I

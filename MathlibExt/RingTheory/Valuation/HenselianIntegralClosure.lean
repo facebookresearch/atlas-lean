@@ -1146,7 +1146,6 @@ private lemma isUnit_incl_iff (O : ValuationSubring K) (V : ValuationSubring L)
         simp [h0]
       rw [this] at hu
       exact not_isUnit_zero hu
-
     have hinvV : (algebraMap K L (o : K))⁻¹ ∈ V := by
       obtain ⟨u, hu'⟩ := hu
       have h1 : (((u⁻¹ : Vˣ) : V) : L) * ((u : V) : L) = 1 := by

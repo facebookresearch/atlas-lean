@@ -122,7 +122,6 @@ private theorem exists_comb_mul_u (hab : a < b) (c : Fin b → ℤ) :
     ∃ c' : Fin b → ℤ, comb (p := p) (n := n) (a := a) c * u = comb c' := by
   classical
   obtain ⟨b', rfl⟩ : ∃ b', b = b' + 1 := ⟨b - 1, by omega⟩
-
   refine ⟨Fin.cons 0 (fun i : Fin b' => c (Fin.castSucc i)) +
     Pi.single ⟨a, hab⟩ (c (Fin.last b')), ?_⟩
   rw [comb_add, comb_single]

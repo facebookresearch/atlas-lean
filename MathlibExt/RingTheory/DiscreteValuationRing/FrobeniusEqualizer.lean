@@ -534,12 +534,10 @@ private theorem F3a_core
 one element `α` with `Fr₂ α - α` a unit and a quadratic relation over
 `𝒪`, and `Fr₂` is an involution on that quotient. -/
 public theorem frobTwo_frobTwo_and_exists_generator
-
     {r : ℕ} [Fact r.Prime]
     (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] (hdvr : IsDiscreteValuationRing 𝒪)
     (π : 𝒪) (hπ : Irreducible π) (hcomplete : IsAdicComplete (Ideal.span {π}) 𝒪)
     (hres : Nat.card (𝒪 ⧸ Ideal.span {π}) = r) (hunr : Ideal.span {((r : ℕ) : 𝒪)} = Ideal.span {π})
-
     (Onr : Type u) [CommRing Onr] [IsDomain Onr] [CharZero Onr] [Algebra 𝒪 Onr] (Fr : Onr ≃ₐ[𝒪] Onr)
     (hOnr_complete : IsAdicComplete (Ideal.span {algebraMap 𝒪 Onr π}) Onr)
     (hOnr_max : (Ideal.span {algebraMap 𝒪 Onr π}).IsMaximal)
@@ -548,7 +546,6 @@ public theorem frobTwo_frobTwo_and_exists_generator
     (hOnr_closed : ∀ p : Polynomial Onr, p.Monic → 0 < p.natDegree → ∃ x : Onr, Polynomial.eval x p
       ∈ Ideal.span {algebraMap 𝒪 Onr π})
     (hFr : ∀ x : Onr, Fr x - x ^ r ∈ Ideal.span {algebraMap 𝒪 Onr π})
-
     (n : ℕ)
     (Fr₂ : (↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr) (AlgHom.id 𝒪 Onr)) ⧸
       Ideal.span {(algebraMap 𝒪 ↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr)
@@ -566,7 +563,6 @@ public theorem frobTwo_frobTwo_and_exists_generator
       Algebra.adjoin 𝒪 {α} = ⊤ ∧
       ∃ s t : 𝒪, α ^ 2 = algebraMap 𝒪 _ s * α + algebraMap 𝒪 _ t := by
   classical
-
   have memE : ∀ y : Onr, y ∈ AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr)
     (AlgHom.id 𝒪 Onr) ↔ Fr (Fr y) = y := by
     intro y; rw [AlgHom.mem_equalizer]; rfl
@@ -593,7 +589,6 @@ public theorem frobTwo_frobTwo_and_exists_generator
     ·
       rw [hFr₂ ζE ζE' rfl, ← map_sub]
       apply IsUnit.map
-
       obtain ⟨u, hu⟩ := hunit
       have hwE : ((u⁻¹ : Onrˣ) : Onr) ∈ AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪]
         Onr) (AlgHom.id 𝒪 Onr) := by
@@ -668,12 +663,10 @@ end O2Rigid
 /-- Two `𝒪`-algebra maps from the Frobenius-square equalizer quotient
 to a local ring are equal or differ by precomposition with `Fr₂`. -/
 public theorem algHom_eq_or_eq_comp_frobTwo_of_isLocalRing
-
     {r : ℕ} [Fact r.Prime]
     (𝒪 : Type u) [CommRing 𝒪] [IsDomain 𝒪] [CharZero 𝒪] (hdvr : IsDiscreteValuationRing 𝒪)
     (π : 𝒪) (hπ : Irreducible π) (hcomplete : IsAdicComplete (Ideal.span {π}) 𝒪)
     (hres : Nat.card (𝒪 ⧸ Ideal.span {π}) = r) (hunr : Ideal.span {((r : ℕ) : 𝒪)} = Ideal.span {π})
-
     (Onr : Type u) [CommRing Onr] [IsDomain Onr] [CharZero Onr] [Algebra 𝒪 Onr] (Fr : Onr ≃ₐ[𝒪] Onr)
     (hOnr_complete : IsAdicComplete (Ideal.span {algebraMap 𝒪 Onr π}) Onr)
     (hOnr_max : (Ideal.span {algebraMap 𝒪 Onr π}).IsMaximal)
@@ -682,7 +675,6 @@ public theorem algHom_eq_or_eq_comp_frobTwo_of_isLocalRing
     (hOnr_closed : ∀ p : Polynomial Onr, p.Monic → 0 < p.natDegree → ∃ x : Onr, Polynomial.eval x p
       ∈ Ideal.span {algebraMap 𝒪 Onr π})
     (hFr : ∀ x : Onr, Fr x - x ^ r ∈ Ideal.span {algebraMap 𝒪 Onr π})
-
     (n : ℕ)
     (Fr₂ : (↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr) (AlgHom.id 𝒪 Onr)) ⧸
       Ideal.span {(algebraMap 𝒪 ↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr)
@@ -700,7 +692,6 @@ public theorem algHom_eq_or_eq_comp_frobTwo_of_isLocalRing
     IsDiscreteValuationRing.frobTwo_frobTwo_and_exists_generator 𝒪 hdvr π hπ hcomplete hres
       hunr Onr Fr hOnr_complete hOnr_max
       hOnr_alg hOnr_closed hFr n Fr₂ hFr₂
-
   have hα' : (Fr₂ α) ^ 2 = algebraMap 𝒪 _ s * Fr₂ α + algebraMap 𝒪 _ t := by
     have := congrArg Fr₂ hα
     rwa [map_pow, map_add, map_mul, AlgEquiv.commutes, AlgEquiv.commutes] at this
@@ -720,7 +711,6 @@ public theorem algHom_eq_or_eq_comp_frobTwo_of_isLocalRing
     rw [this]; linear_combination (-1 : (↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr
       →ₐ[𝒪] Onr) (AlgHom.id 𝒪 Onr)) ⧸ Ideal.span {(algebraMap 𝒪 ↥(AlgHom.equalizer ((Fr.trans Fr :
         Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr) (AlgHom.id 𝒪 Onr)) π) ^ (n + 1)})) * hα
-
   set a := ε α with ha
   set a' := ε (Fr₂ α) with ha'
   set b := ε' α with hb
@@ -736,7 +726,6 @@ public theorem algHom_eq_or_eq_comp_frobTwo_of_isLocalRing
     rw [ha, ha', ← map_sub]
     have : IsUnit (α - Fr₂ α) := by rw [← neg_sub]; exact hunit.neg
     exact this.map ε
-
   have hext : ∀ (φ ψ : (↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪] Onr) : Onr →ₐ[𝒪] Onr)
     (AlgHom.id 𝒪 Onr)) ⧸ Ideal.span {(algebraMap 𝒪 ↥(AlgHom.equalizer ((Fr.trans Fr : Onr ≃ₐ[𝒪]
       Onr) : Onr →ₐ[𝒪] Onr) (AlgHom.id 𝒪 Onr)) π) ^ (n + 1)}) →ₐ[𝒪] B), φ α = ψ α → φ = ψ := by

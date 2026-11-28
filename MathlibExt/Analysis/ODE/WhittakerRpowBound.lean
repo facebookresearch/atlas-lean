@@ -187,7 +187,6 @@ private lemma rate_bound (p q g S m lre Li cp cm : ℝ) (hp : 0 ≤ p) (hq : 0 �
   have hl2 : -lre ≤ |lre| := neg_le_abs lre
   have hpq : 0 ≤ p * p := mul_nonneg hp hp
   have hqq : 0 ≤ q * q := mul_nonneg hq hq
-
   have hSg : 0 ≤ S * g := mul_nonneg hS hg0
   have h1 : cp + cm ≤ S * g * (p + q) := by nlinarith
   have h2 : 2 * (S * g * (p + q)) ≤ S * (Li * (p + q)) * (p + q) := by
@@ -255,7 +254,6 @@ private lemma Efun_hasDerivAt_le (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 
   have hEp := nsq_hasDerivAt hvp
   have hEm := nsq_hasDerivAt hvm
   refine ⟨_, hEp.add hEm, ?_⟩
-
   set w := sfun ν l k t * Gf f t with hw
   have hdp := cross_decomp (vp l f t) l w
   have hdm := cross_decomp (vm l f t) (-l) w
@@ -266,13 +264,11 @@ private lemma Efun_hasDerivAt_le (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 
   have hS0 : 0 ≤ ‖sfun ν l k t‖ := norm_nonneg _
   have hLi : 0 ≤ ‖l‖⁻¹ := inv_nonneg.mpr (norm_nonneg _)
   have hl0 : 0 < ‖l‖ := norm_pos_iff.mpr hl
-
   have hg : 2 * ‖Gf f t‖ ≤ ‖l‖⁻¹ * (‖vp l f t‖ + ‖vm l f t‖) := by
     have h1 : ‖vp l f t - vm l f t‖ ≤ ‖vp l f t‖ + ‖vm l f t‖ := norm_sub_le _ _
     rw [vp_sub_vm, norm_mul, norm_mul] at h1
     have h2 : ‖(2 : ℂ)‖ = 2 := by simp
     rw [h2] at h1
-
     have h3 := mul_le_mul_of_nonneg_left h1 hLi
     calc 2 * ‖Gf f t‖ = ‖l‖⁻¹ * (2 * ‖l‖ * ‖Gf f t‖) := by field_simp
       _ ≤ ‖l‖⁻¹ * (‖vp l f t‖ + ‖vm l f t‖) := h3
@@ -280,7 +276,6 @@ private lemma Efun_hasDerivAt_le (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 
     ((vp l f t).re * w.re + (vp l f t).im * w.im) ((vm l f t).re * w.re + (vm l f t).im * w.im)
     (norm_nonneg _) (norm_nonneg _) (norm_nonneg _) hS0 hS hLi hg (by rw [← hwn]; exact hcp) (by
       rw [← hwn]; exact hcm)
-
   have hnp : (vp l f t).re * (vp l f t).re + (vp l f t).im * (vp l f t).im = ‖vp l f t‖ * ‖vp l f
     t‖ := by
     have := nsq_eq (vp l f) t; unfold nsq at this; rw [this]; ring
@@ -330,10 +325,8 @@ private lemma Phi_le (m₀ : ℝ) {t : ℝ} (ht : 0 ≤ t) :
   nlinarith [mul_le_mul_of_nonneg_left (add_le_add e1 e2) hLi]
 
 include hf hf' hfeq in
-
 private lemma Efun_le (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 - l ^ 2‖ ≤ m₀) {t : ℝ} (ht : 0 ≤ t) :
     Efun l f t ≤ Efun l f 0 * Real.exp (Phi l k m₀ t) := by
-
   set Z : ℝ → ℝ := fun x => Efun l f x * Real.exp (-(Phi l k m₀ x)) with hZdef
   have hZ : ∀ x : ℝ, ∃ Z' : ℝ, HasDerivAt Z Z' x ∧ Z' ≤ 0 := by
     intro x
@@ -362,7 +355,6 @@ private lemma Efun_le (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 - l ^ 2‖ 
   have h0 : Z t ≤ Z 0 := hanti Set.self_mem_Ici ht ht
   have hZ0 : Z 0 = Efun l f 0 := by simp [hZdef, Phi_zero]
   rw [hZ0] at h0
-
   have hZt : Z t = Efun l f t * Real.exp (-(Phi l k m₀ t)) := rfl
   rw [hZt] at h0
   have hpos : 0 < Real.exp (Phi l k m₀ t) := Real.exp_pos _
@@ -370,7 +362,6 @@ private lemma Efun_le (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 - l ^ 2‖ 
   rwa [mul_assoc, ← Real.exp_add, neg_add_cancel, Real.exp_zero, mul_one] at this
 
 include hf hf' hfeq in
-
 private theorem engine (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 - l ^ 2‖ ≤ m₀)
     (hρ : 2 * |l.re| + 2 * ‖l‖⁻¹ * m₀ < 1) :
     ∃ δ : ℝ, 0 < δ ∧ ∃ C : ℝ, ∀ y : ℝ, 0 < y → y ≤ 1 → ‖f y‖ ≤ C * y ^ δ := by
@@ -382,17 +373,14 @@ private theorem engine (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 - l ^ 2‖
     have := Efun_nonneg l f 0; have := Real.exp_pos K; positivity
   refine ⟨(1 - ρ) / 2, by linarith, Real.sqrt Cst, ?_⟩
   intro y hy hy1
-
   set t : ℝ := -Real.log y with htdef
   have ht : 0 ≤ t := by have := Real.log_nonpos hy.le hy1; linarith
   have hAt : eA t = y := by unfold eA; rw [htdef, neg_neg, Real.exp_log hy]
-
   have hG : Gf f t = ((eB t : ℝ) : ℂ) * f y := by unfold Gf; rw [hAt]
   have hGn : ‖Gf f t‖ = eB t * ‖f y‖ := by
     rw [hG, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (eB_pos t)]
   have hfy_sq : ‖f y‖ ^ 2 = y * ‖Gf f t‖ ^ 2 := by
     rw [hGn, mul_pow, ← hAt, ← mul_assoc, eA_mul_eB_sq, one_mul]
-
   have hE := Efun_le ν l k f hf hf' hfeq hl m₀ hm₀ ht
   have hgl : 2 * ‖Gf f t‖ ≤ ‖l‖⁻¹ * (‖vp l f t‖ + ‖vm l f t‖) := by
     have h1 : ‖vp l f t - vm l f t‖ ≤ ‖vp l f t‖ + ‖vm l f t‖ := norm_sub_le _ _
@@ -414,7 +402,6 @@ private theorem engine (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 - l ^ 2‖
       pow_le_pow_left₀ (by positivity) hgl 2
     have hLi2 : 0 ≤ ‖l‖⁻¹ * ‖l‖⁻¹ := mul_nonneg hLi hLi
     nlinarith [mul_le_mul_of_nonneg_left hsum hLi2]
-
   have hPhi := Phi_le l k m₀ ht
   have hexp : Real.exp (Phi l k m₀ t) ≤ Real.exp K * y ^ (-ρ) := by
     rw [Real.rpow_def_of_pos hy, ← Real.exp_add]
@@ -422,7 +409,6 @@ private theorem engine (hl : l ≠ 0) (m₀ : ℝ) (hm₀ : ‖ν ^ 2 - l ^ 2‖
     have : K + Real.log y * -ρ = ρ * t + K := by rw [htdef]; ring
     rw [this]; exact hPhi
   have hE0 := Efun_nonneg l f 0
-
   have hsq : ‖f y‖ ^ 2 ≤ Cst * (y * y ^ (-ρ)) := by
     rw [hfy_sq, hCst]
     have hLi2 : 0 ≤ ‖l‖⁻¹ * ‖l‖⁻¹ / 2 := by positivity

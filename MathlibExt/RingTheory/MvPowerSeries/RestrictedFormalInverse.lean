@@ -130,7 +130,6 @@ private theorem prod_add_pow_eq [DecidableEq σ] (h δ : σ → B) (hδ : ∀ j 
   | insert b s hb IH =>
     rw [Finset.prod_insert hb, Finset.prod_insert hb, Finset.sum_insert hb, IH,
       add_pow_of_sq_eq_zero _ _ (hδ b b), Finset.erase_insert hb]
-
     have hs : ∑ j ∈ s, (m j : B) * h j ^ (m j - 1) * (∏ j' ∈ (insert b s).erase j, h j' ^ m j') * δ
       j
         = h b ^ m b * ∑ j ∈ s, (m j : B) * h j ^ (m j - 1) * (∏ j' ∈ s.erase j, h j' ^ m j') * δ j
@@ -142,7 +141,6 @@ private theorem prod_add_pow_eq [DecidableEq σ] (h δ : σ → B) (hδ : ∀ j 
         h))]
       ring
     rw [hs]
-
     have hcross : (∑ j ∈ s, (m j : B) * h j ^ (m j - 1) * (∏ j' ∈ s.erase j, h j' ^ m j') * δ j) *
       δ b = 0 := by
       rw [Finset.sum_mul]
@@ -351,13 +349,11 @@ private theorem restricted_subst {p : R} {f : MvPowerSeries (Fin d) R} (hf : Res
   classical
   intro N
   have hGS := hasSubst_of_constantCoeff_zero hG0
-
   have hSf := Filter.eventually_cofinite.mp (hf N)
   set M₀ : ℕ := hSf.toFinset.sup Finsupp.degree with hM₀
   have hTG : ∀ j, {n : Fin d →₀ ℕ | ¬ coeff n (G j) ∈ Ideal.span {p ^ N}}.Finite := fun j =>
     Filter.eventually_cofinite.mp (hG j N)
   set K : ℕ := Finset.univ.sup fun j => (hTG j).toFinset.sup Finsupp.degree with hK
-
   have key : ∀ n : Fin d →₀ ℕ, M₀ * K < n.degree → coeff n (MvPowerSeries.subst G f) ∈ Ideal.span
     {p ^ N} := by
     intro n hn
@@ -377,7 +373,6 @@ private theorem restricted_subst {p : R} {f : MvPowerSeries (Fin d) R} (hf : Res
       rw [Finset.mem_finsuppAntidiag] at hv
       obtain ⟨hsum, -⟩ := hv
       set I := m.support.sigma fun l => Finset.range (m l) with hI
-
       obtain ⟨x, hxI, hxK⟩ : ∃ x ∈ I, K < (v x).degree := by
         by_contra hcon
         push Not at hcon

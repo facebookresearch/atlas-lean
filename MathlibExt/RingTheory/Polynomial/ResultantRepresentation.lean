@@ -96,7 +96,6 @@ private theorem eval_map_Pof (N₁ : MvPolynomial (Fin 1) ℚ) (c : R) :
     ((Pof N₁).map (algebraMap ℚ R)).eval c = Nev N₁ (X - C c) := by
   unfold Pof Nev
   rw [coeff_vec_X_sub_C]
-
   have key : ((evalRingHom c).comp (mapRingHom (algebraMap ℚ R))).comp
       (MvPolynomial.aeval fun _ : Fin 1 => -(X : ℚ[X])).toRingHom =
       (MvPolynomial.aeval (R := ℚ) (fun _ : Fin 1 => -c)).toRingHom := by
@@ -279,7 +278,6 @@ private theorem Nf_succ_spec (m : ℕ) :
   (hpoly m).choose_spec
 
 include h1 in
-
 private theorem Nev_Nf_eq (m : ℕ) (G : ℤ[X]) (hG : G.Monic) (hdeg : G.natDegree = m)
     (hG0 : ((G.coeff 0 : ℤ) : K) ≠ 0) :
     Nev (Nf D n hpoly m) (G.map (Int.castRingHom ℚ)) = D G := by
@@ -294,13 +292,11 @@ private theorem Nev_Nf_eq (m : ℕ) (G : ℤ[X]) (hG : G.Monic) (hdeg : G.natDeg
     exact (Nf_succ_spec D n hpoly m).2.2 G hG hdeg hG0
 
 include h1 hmul in
-
 private theorem Psi_eq_zero (b : ℕ) :
     Psi b (Nf D n hpoly 1) (Nf D n hpoly b) (Nf D n hpoly (b + 1)) = 0 := by
   refine MvPolynomial.funext_set (fun _ => (fun c : ℤ => (c : ℚ)) '' {c : ℤ | ((c : ℤ) : K) ≠ 0})
     (fun _ => infinite_SQ K) (fun x hx => ?_)
   rw [map_zero]
-
   have hx' : ∀ i, ∃ c : ℤ, ((c : ℤ) : K) ≠ 0 ∧ (c : ℚ) = x i := fun i => by
     obtain ⟨c, hc, hcx⟩ := hx i (Set.mem_univ i)
     exact ⟨c, hc, hcx⟩
@@ -316,7 +312,6 @@ private theorem Psi_eq_zero (b : ℕ) :
   have hW : (W b).map (jA : _ →+* ℚ) = G₂.map (Int.castRingHom ℚ) := by
     rw [map_W, hG₂, Polynomial.map_add, Polynomial.map_pow, Polynomial.map_X, Polynomial.map_sum]
     simp [hjx, Polynomial.map_mul]
-
   have hmon₁ : G₁.Monic := monic_X_add_C (c 0)
   have hdeg₁ : G₁.natDegree = 1 := natDegree_X_add_C _
   have hc₁ : ((G₁.coeff 0 : ℤ) : K) ≠ 0 := by rw [hG₁]; simpa using hcK 0
@@ -340,7 +335,6 @@ private theorem Psi_eq_zero (b : ℕ) :
     hmul G₁ G₂ hmon₁ hmon₂.1 hc₁ hc₂, sub_self]
 
 include h1 hmul in
-
 private theorem Nev_linear_mul (b : ℕ) (γ : ℂ) (H : ℂ[X]) (hH : H.Monic) (hb : H.natDegree = b) :
     Nev (Nf D n hpoly (b + 1)) ((X - C γ) * H) =
       Nev (Nf D n hpoly 1) (X - C γ) * Nev (Nf D n hpoly b) H := by
@@ -399,7 +393,6 @@ private theorem Nev_eq_prod_roots : ∀ (b : ℕ) (H : ℂ[X]), H.Monic → H.na
     rw [Multiset.singleton_add, Multiset.map_cons, Multiset.prod_cons]
 
 include h1 hmul hn in
-
 private theorem eq_resultant (G : ℤ[X]) (hG : G.Monic) (hG0 : ((G.coeff 0 : ℤ) : K) ≠ 0) :
     D G = (G.map (Int.castRingHom ℚ)).resultant (P D n hpoly) := by
   set ι := algebraMap ℚ ℂ with hι

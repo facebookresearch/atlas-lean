@@ -79,7 +79,6 @@ private theorem exists_factor_algHom [Finite J] [IsDomain Ω] (φ : (Π j, A j) 
     ∃ (j : J) (φ₀ : A j →ₐ[K] Ω), φ = φ₀.comp (Pi.evalAlgHom K A j) := by
   cases nonempty_fintype J
   classical
-
   have hidem : ∀ j, φ (Pi.single j 1) = 0 ∨ φ (Pi.single j 1) = 1 := by
     intro j
     have h2 : φ (Pi.single j 1) * φ (Pi.single j 1) = φ (Pi.single j 1) := by
@@ -89,7 +88,6 @@ private theorem exists_factor_algHom [Finite J] [IsDomain Ω] (φ : (Π j, A j) 
     rcases mul_eq_zero.mp h3 with h | h
     · exact Or.inl h
     · exact Or.inr (sub_eq_zero.mp h)
-
   have hsum : (∑ j, φ (Pi.single j 1)) = 1 := by
     rw [← map_sum]
     have h1 : (∑ j, (Pi.single j 1 : Π j, A j)) = 1 := by

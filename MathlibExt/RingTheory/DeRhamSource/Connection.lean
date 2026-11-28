@@ -267,7 +267,6 @@ open scoped TensorProduct
 
 /-- An additive connection on a `B`-module `M` relative to a map from the Kähler
 differentials of `B` over `A` to a `B`-module `Ω`. -/
-
 public structure Connection
     (A B : Type*) [CommRing A] [CommRing B] [Algebra A B]
     {Omega : Type*} [AddCommGroup Omega] [Module B Omega]
@@ -622,7 +621,6 @@ complex of `B` over `A` ([Stacks, Tag 0FKF]) and
 defining rule on generators by `Stacks.DeRham.DifferentialDescent.comp_eq_zero_of_gen`.  The
 quotient `π : Ω[B⁄A] → Omega` with `hπ` and `hgen` is the setting [Stacks, Tag 07I0] itself
 fixes, by reference to [Stacks, Tag 07HY]. -/
-
 public noncomputable def extendedConnection
     (S : SourceDeRham A B) (π : Ω[B⁄A] →ₗ[B] Omega)
     (hπ : Function.Surjective π) (hgen : S.GenerationHypothesis π)
@@ -679,7 +677,6 @@ two-forms is zero.
 As in `Crystalline.extendedConnection`, `S` is not de Rham data: it can only be
 `Stacks.DeRham.DifferentialDescent.sourceDeRham A B`, the de Rham complex of [Stacks, Tag 0FKF],
 by `Stacks.DeRham.DifferentialDescent.SourceDeRham.eq_sourceDeRham`. -/
-
 public noncomputable def IsIntegrable
     (S : SourceDeRham A B) (pi : Ω[B⁄A] →ₗ[B] Omega)
     (hpi : Function.Surjective pi) (hgen : S.GenerationHypothesis pi)

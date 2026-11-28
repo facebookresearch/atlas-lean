@@ -451,11 +451,9 @@ private theorem summable_norm_restrict_schwartz_comp_addRight
       ‖(h.toContinuousMap.comp (ContinuousMap.addRight (intVec n))).restrict K‖ := by
   classical
   set N := Fintype.card d + 1
-
   set C := (2:ℝ)^N * (Finset.Iic (N, 0)).sup (fun m => SchwartzMap.seminorm ℝ m.1 m.2) h
     with hC_def
   have hC_nonneg : 0 ≤ C := mul_nonneg (by positivity) (apply_nonneg _ _)
-
   have hKbdd : Bornology.IsBounded (K : Set (d → ℝ)) := K.2.isBounded
   obtain ⟨R, hR_nonneg, hKR⟩ : ∃ R ≥ 0, (K : Set (d → ℝ)) ⊆ Metric.closedBall 0 R := by
     obtain ⟨R, hKR⟩ := hKbdd.subset_closedBall 0
@@ -564,7 +562,6 @@ public theorem SchwartzMap.tsum_eq_tsum_fourier_euclideanSpace
     ∑' n : ι → ℤ, f (x + WithLp.toLp 2 (fun i ↦ (n i : ℝ))) =
       ∑' n : ι → ℤ, 𝓕 f (WithLp.toLp 2 (fun i ↦ (n i : ℝ))) *
         (𝐞 ⟪(WithLp.toLp 2 (fun i ↦ (n i : ℝ)) : EuclideanSpace ℝ ι), x⟫_ℝ : ℂ) := by
-
   set h : SchwartzMap (ι → ℝ) ℂ :=
     SchwartzMap.compCLMOfContinuousLinearEquiv ℝ (euclideanToPi (d := ι)).symm f with hh
   have hh_apply : ∀ v : ι → ℝ, h v = f (WithLp.toLp 2 v) := fun v => by
@@ -576,12 +573,10 @@ public theorem SchwartzMap.tsum_eq_tsum_fourier_euclideanSpace
     rfl
   have key := PiPoissonSummation.SchwartzMap.tsum_add_intVec_eq_tsum_piFourierIntegral
     h (WithLp.ofLp x)
-
   have hL : ∀ n : ι → ℤ, h (ofLp x + intVec n) = f (x + WithLp.toLp 2 (fun i ↦ (n i : ℝ))) := by
     intro n
     rw [hh_apply, WithLp.toLp_add, WithLp.toLp_ofLp]
     rfl
-
   have hR : ∀ m : ι → ℤ, piFourierIntegral (⇑h) (intVec m)
       = 𝓕 f (WithLp.toLp 2 (fun i ↦ (m i : ℝ))) := by
     intro m

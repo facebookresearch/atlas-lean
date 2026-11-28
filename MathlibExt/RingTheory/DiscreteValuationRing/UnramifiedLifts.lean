@@ -169,7 +169,6 @@ private theorem surjective_of_forall_sub_mem_span {A B : Type*} [CommRing A] [Co
     (hϖ : ϖ ∈ Set.range f) (N : ℕ) (hN : ϖ ^ N = 0)
     (h : ∀ b : B, ∃ a : A, b - f a ∈ Ideal.span {ϖ}) : Function.Surjective f := by
   obtain ⟨p, hp⟩ := hϖ
-
   have step : ∀ n : ℕ, ∀ b : B, ∃ a : A, b - f a ∈ Ideal.span {ϖ ^ n} := by
     intro n
     induction n with
@@ -182,7 +181,6 @@ private theorem surjective_of_forall_sub_mem_span {A B : Type*} [CommRing A] [Co
       obtain ⟨d, hd⟩ := Ideal.mem_span_singleton'.1 ha₁
       refine ⟨a₀ + p * a₁, Ideal.mem_span_singleton'.2 ⟨d, ?_⟩⟩
       rw [map_add, map_mul, hp]
-
       have e1 : b - (f a₀ + ϖ * f a₁) = ϖ * (c - f a₁) := by rw [← sub_sub, ← hc]; ring
       rw [e1, ← hd]; ring
   intro b
@@ -210,7 +208,6 @@ private theorem surjective_quotient_pow_of_comp_eq {𝒪 Onr : Type*} [CommRing 
     (hρ : ∀ y : Onr, ρ (Ideal.Quotient.mk _ y) = 0 → y ∈ Ideal.span {algebraMap 𝒪 Onr π})
     (c : W →+* K) (hc : Function.Surjective c) (hcomp : ρ.comp f = c) :
     Function.Surjective f := by
-
   have hπr : algebraMap 𝒪 Onr π ∈ Ideal.span {((r : ℕ) : Onr)} := by
     have : π ∈ Ideal.span {((r : ℕ) : 𝒪)} := by rw [hunr]; exact Ideal.mem_span_singleton_self π
     obtain ⟨s, hs⟩ := Ideal.mem_span_singleton'.1 this
@@ -426,7 +423,6 @@ private theorem mem_of_fN_apply_eq_zero (hunr : Ideal.span {((r : ℕ) : 𝒪)} 
       intro h; apply algebraMap_pi_ne_zero (Onr := Onr) hunr; rw [h, map_zero]
     have := mul_right_cancel₀ hπ0 (h1.symm.trans (one_mul π).symm)
     exact this
-
   have digit : ∀ (N : ℕ) (w : WittVector r k), fN hker hρ₁ N w = 0 → ∃ w', w = (r : WittVector r k)
     * w' := by
     intro N w hw
@@ -446,13 +442,11 @@ private theorem mem_of_fN_apply_eq_zero (hunr : Ideal.span {((r : ℕ) : 𝒪)} 
   | succ N ih =>
     intro w hw
     obtain ⟨w', rfl⟩ := digit (N + 1) _ hw
-
     obtain ⟨y, hy⟩ := Ideal.Quotient.mk_surjective (fN hker hρ₁ (N + 1) w')
     rw [map_mul, map_natCast, ← hy, ← map_natCast (Ideal.Quotient.mk (I π Onr (N + 1 + 1))) r, ←
       map_mul,
       Ideal.Quotient.eq_zero_iff_mem] at hw
     obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.1 hw
-
     have hy' : y ∈ I π Onr (N + 1) := by
       have e1 : (algebraMap 𝒪 Onr u * y - c * algebraMap 𝒪 Onr π ^ (N + 1)) * algebraMap 𝒪 Onr π =
         0 := by
@@ -468,7 +462,6 @@ private theorem mem_of_fN_apply_eq_zero (hunr : Ideal.span {((r : ℕ) : 𝒪)} 
         rw [← mul_assoc, ← map_mul, hvu, map_one, one_mul]
       rw [e3, e2]
       exact Ideal.mul_mem_left _ _ (Ideal.mem_span_singleton'.2 ⟨c, rfl⟩)
-
     have hN : fN hker hρ₁ N w' = 0 := by
       rw [← factor_comp_fN hker hρ₁ N, RingHom.comp_apply, ← hy, Ideal.Quotient.factor_mk,
         Ideal.Quotient.eq_zero_iff_mem]

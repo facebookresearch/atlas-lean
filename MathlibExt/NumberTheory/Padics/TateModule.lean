@@ -164,7 +164,6 @@ theorem smul_apply_eq_zero_of_mem_span {n : ℕ} {a : ℤ_[p]}
   rw [natCast_smul_eq_of_zmod_eq (torsion x n) h, Nat.cast_zero, zero_smul]
 
 variable (p M) in
-
 def proj (n : ℕ) : TateModule p M →+ M where
   toFun x := (x : ℕ → M) n
   map_zero' := rfl
@@ -227,7 +226,6 @@ theorem finite_torsionBy {r : ℕ} (hcard : ∀ n : ℕ,
     rw [hcard n]; exact pow_ne_zero _ (pow_ne_zero _ (Fact.out : p.Prime).ne_zero))
 
 variable (p M) in
-
 def mulP (n : ℕ) : torsionBy ℤ M ((p ^ (n + 1) : ℕ) : ℤ) →+ torsionBy ℤ M ((p ^ n : ℕ) : ℤ) where
   toFun m := ⟨((p : ℕ) : ℤ) • (m : M), smul_mem_torsionBy_of_mem_succ m.2⟩
   map_zero' := Subtype.ext (smul_zero _)
@@ -238,7 +236,6 @@ omit [Fact p.Prime] in
     (mulP p M n m : M) = ((p : ℕ) : ℤ) • (m : M) := rfl
 
 variable (p M) in
-
 def kerMulPEquiv (n : ℕ) : (mulP p M n).ker ≃ torsionBy ℤ M ((p ^ 1 : ℕ) : ℤ) where
   toFun m := ⟨(m.1 : M), mem_torsionBy_one_of_smul_eq_zero (by
     have h := m.2; rw [AddMonoidHom.mem_ker] at h; exact congrArg Subtype.val h)⟩
@@ -305,7 +302,6 @@ theorem pow_smul_coe_liftAux {next} {n : ℕ} {m : torsionBy ℤ M ((p ^ n : ℕ
   subst he; exact (mem_torsionBy_iff _ _).mp (liftAux next n m j).2
 
 omit [Fact p.Prime] in
-
 theorem liftFun_mem
     {next : (k : ℕ) → torsionBy ℤ M ((p ^ k : ℕ) : ℤ) → torsionBy ℤ M ((p ^ (k + 1) : ℕ) : ℤ)}
     (hnext : ∀ k (m : torsionBy ℤ M ((p ^ k : ℕ) : ℤ)), ((p : ℕ) : ℤ) • (next k m : M) = m)
@@ -419,7 +415,6 @@ private theorem dvd_of_rel_apply {x : Fin r → TateModule p M}
   | zero => intro a _ i; simp
   | succ n ih =>
     intro a hab
-
     have hab1 : (∑ i, a i • ((x i : TateModule p M) : ℕ → M) 1) = 0 := by
       have hcp : ∀ i, ((p ^ n : ℕ) : ℤ) • ((x i : TateModule p M) : ℕ → M) (n + 1) =
           ((x i : TateModule p M) : ℕ → M) 1 := fun i => Nat.add_comm n 1 ▸ compat_pow (x i) 1 n
@@ -429,7 +424,6 @@ private theorem dvd_of_rel_apply {x : Fin r → TateModule p M}
             exact Finset.sum_congr rfl fun i _ => by rw [smul_comm, hcp]
         _ = 0 := by rw [hab, smul_zero]
     choose a' ha' using fun i => h1 a hab1 i
-
     have hab' : (∑ i, a' i • ((x i : TateModule p M) : ℕ → M) n) = 0 := by
       refine hab.symm.trans (Finset.sum_congr rfl fun i _ => ?_) |>.symm
       rw [ha', mul_comm, mul_smul, compat]
@@ -508,7 +502,6 @@ private theorem mem_span_tuple
     (h1 : ∀ a : Fin r → ℤ, (∑ i, a i • ((x i : TateModule p M) : ℕ → M) 1) = 0 → ∀ i, (p : ℤ) ∣ a i)
     (z : TateModule p M) : ∃ s : Fin r → ℤ_[p], (∑ i, s i • x i) = z := by
   choose a ha using fun n => exists_eq_levelMap hcard' h1 n (proj_mem_torsionBy n z)
-
   have hcompat : ∀ n i, ((p ^ n : ℕ) : ℤ) ∣ (a (n + 1) i : ℤ) - a n i := fun n =>
     dvd_of_rel_apply h1 n (fun i => (a (n + 1) i : ℤ) - a n i) (by
       simp_rw [sub_smul, Finset.sum_sub_distrib, ha n, sub_eq_zero, proj_apply,

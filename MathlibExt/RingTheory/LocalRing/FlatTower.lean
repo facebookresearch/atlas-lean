@@ -143,7 +143,6 @@ private noncomputable def torLES_torDelta (P : ProjectiveResolution Y)
     (torLES_torIso (P := P) S.X₁ n).inv
 
 include P in
-
 include P in
 private theorem torLES_torMap_comp_eq_zero (S : ShortComplex (ModuleCat.{u} R)) (n : ℕ) :
     ((Tor (ModuleCat.{u} R) n).map S.f).app Y ≫
@@ -235,7 +234,6 @@ private theorem torLES_tor_exact₁ (S : ShortComplex (ModuleCat.{u} R)) (hS : S
     simp
 
 include P in
-
 include P in
 private theorem torLES_tor_isZero_X₂ (S : ShortComplex (ModuleCat.{u} R)) (hS : S.ShortExact)
     (n : ℕ) (h₁ : IsZero (((Tor (ModuleCat.{u} R) (n + 1)).obj S.X₁).obj Y))

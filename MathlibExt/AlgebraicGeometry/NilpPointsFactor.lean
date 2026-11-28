@@ -475,7 +475,6 @@ private theorem toHom_ofHom [IsAffine M] {B : Type} [CommRing B] (ξ : Γ(M, ⊤
   intro a
   rw [Scheme.Hom.comp_appTop, CommRingCat.hom_comp, RingHom.comp_apply, RingHom.comp_apply, ΓSpecIso_nat_apply]
   congr 1
-
   have h1 : M.isoSpec.hom.appTop = (Scheme.ΓSpecIso Γ(M, ⊤)).hom := by rw [Scheme.isoSpec_hom, Scheme.toSpecΓ_appTop]
   have h2 : M.isoSpec.hom.appTop ≫ M.isoSpec.inv.appTop = 𝟙 _ := by
     rw [← Scheme.Hom.comp_appTop, Iso.inv_hom_id]; simp

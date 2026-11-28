@@ -67,7 +67,6 @@ pair or a discrete-series parameter. -/
 inductive RealArchParam where
 
   | principal (u₁ : ℂ) (a₁ : ZMod 2) (u₂ : ℂ) (a₂ : ZMod 2) : RealArchParam
-
   | discrete (u : ℂ) (k : ℕ) (hk : 1 ≤ k) : RealArchParam
 
 def signShift (a : ZMod 2) : ℂ := if a = 0 then 0 else 1
@@ -270,7 +269,6 @@ def zetaIntegrand (W : Matrix (Fin 2) (Fin 2) ℝ → ℂ) (g : Matrix (Fin 2) (
 end ArchR
 
 open ArchR in
-
 /-- A real archimedean Whittaker datum: a smooth Whittaker function with
 unipotent and central laws, an entire zeta function, and decay bounds. -/
 structure ArchDatumR (P : RealArchParam) where
@@ -394,7 +392,6 @@ private theorem exists_torus_ne_zero {P : RealArchParam} (D : ArchDatumR P)
   set r : ℝ := Real.sqrt (c ^ 2 + d ^ 2) with hr
   have hr0 : 0 < r := sqrt_pos_of hcd
   have hr2 : r ^ 2 = c ^ 2 + d ^ 2 := Real.sq_sqrt (by positivity)
-
   set α : ℝ := (G 0 0 * d - G 0 1 * c) / r with hα
   set β : ℝ := (G 0 0 * c + G 0 1 * d) / r with hβ
   set Xm : Matrix (Fin 2) (Fin 2) ℝ := !![α, β; 0, r] with hXm
@@ -420,7 +417,6 @@ private theorem exists_torus_ne_zero {P : RealArchParam} (D : ArchDatumR P)
   set Xg : GL (Fin 2) ℝ := Matrix.GeneralLinearGroup.mkOfDetNeZero Xm
     (by rw [hXm, Matrix.det_fin_two_of]; simpa using hαr) with hXg
   have hXg_coe : ((Xg : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) = Xm := rfl
-
   have h1 : D.W G = D.W Xm := by
     have h := hDW (rotSO hcd) Xg
     rw [archWeightCharℝ_zero, one_mul, hXg_coe] at h
@@ -428,7 +424,6 @@ private theorem exists_torus_ne_zero {P : RealArchParam} (D : ArchDatumR P)
     congr 1
     rw [Units.val_mul, hXg_coe]
     exact hXrot.symm
-
   have hXm_eq : Xm = r • (unip (β / r) * diagOne (α / r)) := by
     ext i j
     fin_cases i <;> fin_cases j <;> simp [hXm, unip, diagOne, Matrix.smul_apply] <;>
@@ -497,14 +492,12 @@ theorem ArchDatumR.exists_lt_mellin_W_diagOne_ne_zero_of_weightZero_of_parity
     ∃ x : ℝ, x₀ < x ∧ MellinConvergent (fun τ : ℝ => D.W (ArchR.diagOne τ)) (x : ℂ) ∧
       mellin (fun τ : ℝ => D.W (ArchR.diagOne τ)) (x : ℂ) ≠ 0 := by
   set f : ℝ → ℂ := fun τ => D.W (diagOne τ) with hf
-
   have hDW' : ∀ (r : Matrix.specialOrthogonalGroup (Fin 2) ℝ) (x : GL (Fin 2) ℝ),
       D.W ((x * specialOrthogonalToGL r : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
         (archWeightCharℝ 0 r : ℂ) * D.W (x : Matrix (Fin 2) (Fin 2) ℝ) := fun r x => by
     rw [hDW0, archWeightCharℝ_zero, one_mul]
   obtain ⟨τ₀, hτ₀, hne⟩ := exists_torus_ne_zero D hDW' hDnz
   have hcont := continuousOn_torus D
-
   set A : ℝ := D.zeta_abscissa with hA
   have hkey : ∀ s : ℂ, A < s.re →
       MellinConvergent f (s - 1) ∧
@@ -514,7 +507,6 @@ theorem ArchDatumR.exists_lt_mellin_W_diagOne_ne_zero_of_weightZero_of_parity
     have hs' : D.zeta_abscissa < s.re + (0 : ℂ).re := by simpa using hs
     have hint := D.zeta_integrable 1 0 c s hdet hs'
     have heq := D.zeta_eq 1 0 c s hdet hs'
-
     have hpos : ∀ t ∈ Ioi (0 : ℝ), zetaIntegrand D.W 1 0 c s t = (t : ℂ) ^ (s - 1 - 1) • f t := by
       intro t ht
       have ht : 0 < t := ht
@@ -544,7 +536,6 @@ theorem ArchDatumR.exists_lt_mellin_W_diagOne_ne_zero_of_weightZero_of_parity
       rw [mellin]; exact setIntegral_congr_fun measurableSet_Ioi hpos
     rw [← heq, ← hsplit, hIic, hmel]
     ring
-
   by_contra hcon
   push Not at hcon
   set B : ℝ := max (max x₀ (A - 1)) (‖u₁‖ + ‖u₂‖ + 1) + 1 with hB
@@ -559,7 +550,6 @@ theorem ArchDatumR.exists_lt_mellin_W_diagOne_ne_zero_of_weightZero_of_parity
   have hBu : ‖u₁‖ + ‖u₂‖ + 1 < B := by
     have h1 := le_max_right (max x₀ (A - 1)) (‖u₁‖ + ‖u₂‖ + 1)
     linarith
-
   have hzero : ∀ x : ℝ, B < x → D.zetaEntire 1 0 c (x : ℂ) = 0 := by
     intro x hx
     have hxA : A < ((x : ℂ)).re := by simp; linarith
@@ -573,7 +563,6 @@ theorem ArchDatumR.exists_lt_mellin_W_diagOne_ne_zero_of_weightZero_of_parity
     have hAF : (P₂.twist 0 c).archFactor (x : ℂ) ≠ 0 := by
       rw [hP]; exact archFactor_twist_ne_zero u₁ u₂ c (by simp; linarith)
     exact (mul_eq_zero.1 hk.symm).resolve_left hAF
-
   have hent : AnalyticOnNhd ℂ (D.zetaEntire 1 0 c) univ :=
     (D.zetaEntire_differentiable 1 0 c).differentiableOn.analyticOnNhd isOpen_univ
   have hall : ∀ z : ℂ, D.zetaEntire 1 0 c z = 0 := by
@@ -592,13 +581,11 @@ theorem ArchDatumR.exists_lt_mellin_W_diagOne_ne_zero_of_weightZero_of_parity
       have hne' : ((B + 1 + ε / 2 : ℝ) : ℂ) ≠ ((B + 1 : ℝ) : ℂ) := by
         intro h; have := Complex.ofReal_injective h; linarith
       exact hball hpt hne' (hzero _ (by linarith))
-
   have hmel0 : ∀ w : ℂ, A - 1 < w.re → mellin f w = 0 := by
     intro w hw
     obtain ⟨-, hk⟩ := hkey (w + 1) (by simp; linarith)
     rw [hall, mul_zero, show w + 1 - 1 = w by ring] at hk
     exact (mul_eq_zero.1 hk).resolve_left two_ne_zero
-
   have hfzero : ∀ x : ℝ, 0 < x → f x = 0 := by
     intro x hx
     have hconvB : MellinConvergent f (B : ℂ) := by
@@ -613,7 +600,6 @@ theorem ArchDatumR.exists_lt_mellin_W_diagOne_ne_zero_of_weightZero_of_parity
     have hinv := mellinInv_mellin_eq B f hx hconvB hvert hcx
     rw [← hinv, mellinInv]
     simp only [hline, smul_zero, integral_zero]
-
   rcases lt_or_gt_of_ne hτ₀ with hlt | hgt
   · apply hne
     have h := hpar (-τ₀) (neg_ne_zero.2 hτ₀)

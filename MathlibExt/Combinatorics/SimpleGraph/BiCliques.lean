@@ -37,7 +37,6 @@ y ∈ Y, we have (x,y) ∈ E. A part may have size 0: `G.ContainsBiclique 0 d` h
 `d ≤ |V|`. The usual biclique `K_{c,d}` has `c` and `d` positive, as in
 `SimpleGraph.bicliqueNumber`.
 -/
-
 def _root_.SimpleGraph.ContainsBiclique {V : Type*} [Fintype V] (G : SimpleGraph V)
     (c d : ℕ) : Prop :=
   ∃ (S T : Finset V), S.card = c ∧ T.card = d ∧ Disjoint S T ∧
@@ -49,7 +48,6 @@ contains a K_{c,d} as a (not necessarily induced) subgraph, with 0<c,d and c +d 
 least 2 when G has an edge, and 0 on an edgeless graph, where no such t exists and the supremum
 of the empty set of natural numbers is 0.
 -/
-
 noncomputable def _root_.SimpleGraph.bicliqueNumber {V : Type*} [Fintype V] (G : SimpleGraph V) : ℕ :=
   sSup { t : ℕ |  ∃ c d, c + d = t ∧ 0 < c ∧ 0 < d ∧ G.ContainsBiclique c d}
 

@@ -64,7 +64,6 @@ theorem sturm_liouville_uniqueness
   have hu0 : u 0 = 0 := by simp [hu_def, Pi.sub_apply, h₁_bc0, h₂_bc0]
   have hu1 : u 1 = 0 := by simp [hu_def, Pi.sub_apply, h₁_bc1, h₂_bc1]
   have hu_smooth : ContDiffOn ℝ 2 u (Icc 0 1) := h₁_smooth.sub h₂_smooth
-
   have hu_ode : ∀ x : ℝ, ∀ hx : x ∈ Icc (0:ℝ) 1,
       iteratedDerivWithin 2 u (Icc 0 1) x = V ⟨x, hx⟩ * u x := by
     intro x hx
@@ -74,7 +73,6 @@ theorem sturm_liouville_uniqueness
     have eq1 := h₁_ode x hx
     have eq2 := h₂_ode x hx
     linarith
-
   have hg_conv : ConvexOn ℝ (Icc 0 1) (fun x => (u x) ^ 2) := by
     apply convexOn_of_hasDerivWithinAt2_nonneg (convex_Icc 0 1)
       (f' := fun x => 2 * u x * deriv u x)
@@ -114,7 +112,6 @@ theorem sturm_liouville_uniqueness
         linarith
       rw [h_dd]
       nlinarith [sq_nonneg (deriv u x), sq_nonneg (u x), hV ⟨x, hx'⟩]
-
   intro x hx
   have hux_eq : u x = 0 := by
     have hg0 : (u 0) ^ 2 = 0 := by rw [hu0]; ring

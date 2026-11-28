@@ -175,7 +175,6 @@ lemma tic_isDLRState_cond_of_tail (β h : ℝ)
   have hscaled := tic_smul_compProd_trim_eq β h (μ s)⁻¹ hcne (μ.restrict s) hrestr
   have key : IsDLRState d β h ((μ s)⁻¹ • μ.restrict s) :=
     isDLRState_of_compProd_trim β h ((μ s)⁻¹ • μ.restrict s) hscaled
-
   exact key
 
 lemma tic_cond_congr {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
@@ -192,7 +191,6 @@ lemma tic_isDLRState_cond_of_aeTail (β h : ℝ)
   have hμeq : μ s' = μ s := (measure_congr hae).symm
   have hs0' : μ s' ≠ 0 := by rw [hμeq]; exact hs0
   have hcond : (μ[|s]) = (μ[|s']) := tic_cond_congr μ hae
-
   have key : IsDLRState d β h (μ[|s']) := tic_isDLRState_cond_of_tail β h μ hμ hs' hs0'
   simp only [hcond]
   exact key

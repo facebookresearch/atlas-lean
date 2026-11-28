@@ -84,7 +84,6 @@ private theorem exists_le_degree_eq (N : ℕ) (x : σ →₀ ℕ) (hx : N ≤ x.
       omega
 
 omit [Finite σ] in
-
 private theorem monomial_one_mem_pow_span_X (y : σ →₀ ℕ) :
     (monomial y (1 : R) : MvPowerSeries σ R) ∈
       Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) ^ y.degree := by

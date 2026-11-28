@@ -55,7 +55,6 @@ namespace WLightR8a
 variable {K : Type*} [Field K] [Algebra ℂ K]
 
 omit [Algebra ℂ K] in
-
 private theorem isIntegral_subring_iff (T : Subring K) (y : K) :
     IsIntegral ↥T y ↔ ∃ p : K[X], p.Monic ∧ (∀ n, p.coeff n ∈ T) ∧ p.eval y = 0 := by
   constructor
@@ -72,7 +71,6 @@ private theorem isIntegral_subring_iff (T : Subring K) (y : K) :
     rw [← Polynomial.eval_map, hq, hp]
 
 omit [Algebra ℂ K] in
-
 private theorem isIntegral_subalgebra_iff {R₀ : Type*} [CommRing R₀] [Algebra R₀ K]
     (T : Subalgebra R₀ K) (y : K) :
     IsIntegral ↥T y ↔ ∃ p : K[X], p.Monic ∧ (∀ n, p.coeff n ∈ T) ∧ p.eval y = 0 := by
@@ -90,7 +88,6 @@ private theorem isIntegral_subalgebra_iff {R₀ : Type*} [CommRing R₀] [Algebr
     rw [← Polynomial.eval_map, hq, hp]
 
 omit [Algebra ℂ K] in
-
 private theorem isIntegral_adjoin_iff_closure {R₀ : Type*} [CommRing R₀] [Algebra R₀ K]
     (B : Set K) (y : K) :
     IsIntegral ↥(Algebra.adjoin R₀ B) y ↔

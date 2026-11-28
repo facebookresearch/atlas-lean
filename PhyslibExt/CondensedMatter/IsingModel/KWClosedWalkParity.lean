@@ -609,7 +609,6 @@ lemma closedDualWalkParity_of_boundsRegion
     ClosedDualWalkParity Gp Gd ψ := by
   intro w W
   obtain ⟨S, hS⟩ := hreg W
-
   intro x p
   rw [walkParity_eq_xor_of_isCoboundary S (fun h => hS h) p]
   cases S x <;> rfl

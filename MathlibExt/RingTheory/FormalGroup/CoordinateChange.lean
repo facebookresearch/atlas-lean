@@ -532,7 +532,6 @@ theorem FormalGroup.TransportAux.target_eq_of_series_eq
   have hXs : ∀ s : Fin 2, MvPowerSeries.HasSubst (fun _ : Unit => (MvPowerSeries.X s :
       MvPowerSeries (Fin 2) R)) :=
     fun s => (PowerSeries.HasSubst.X s).const
-
   have key : ∀ s : Fin 2,
       MvPowerSeries.subst (fun t : Fin 2 => LawHom.substX t χ) (LawHom.substX s ψ.series) =
           MvPowerSeries.X s := by
@@ -546,7 +545,6 @@ theorem FormalGroup.TransportAux.target_eq_of_series_eq
       ← PowerSeries.subst_def, ← PowerSeries.subst_comp_subst_apply hsQ (PowerSeries.HasSubst.X s),
           hright,
       PowerSeries.subst_X (PowerSeries.HasSubst.X s)]
-
   have ev : ∀ H : FormalGroup R,
       MvPowerSeries.subst (fun t : Fin 2 => LawHom.substX t χ)
         (MvPowerSeries.subst ![LawHom.substX 0 ψ.series, LawHom.substX 1 ψ.series] H.toPowerSeries)
@@ -560,7 +558,6 @@ theorem FormalGroup.TransportAux.target_eq_of_series_eq
   have e1 := ψ.comm
   have e2 := θ.comm
   rw [h, e1] at e2
-
   have := congrArg (MvPowerSeries.subst (fun t : Fin 2 => LawHom.substX t χ)) e2
   rw [ev G, ev G'] at this
   exact FormalGroup.ext this.symm

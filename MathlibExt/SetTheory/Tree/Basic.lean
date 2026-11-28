@@ -47,7 +47,6 @@ def level.{u} (α : Type u) [PartialOrder α] [WellFoundedLT α] (a : Ordinal.{u
 -- Logic 22: $\kappa$ tree
 
 open Cardinal in
-
  /-- A κ-tree is a tree on κ whose levels are of cardinality < κ. -/
  def IsTreeAt.{u} (κ : Cardinal.{u}) (α : Type u) [PartialOrder α] [WellFoundedLT α] : Prop :=
     IsTree α ∧

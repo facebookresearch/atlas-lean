@@ -260,7 +260,6 @@ private theorem luqShift (H : ℂ → ℂ) (hH : Differentiable ℂ H) (σ₁ σ
     intro σ hσ
     refine luqIntegrable (hH.continuous.comp (by fun_prop)) one_ne_zero (C := C) fun y => ?_
     simpa using hb (σ + y * I) (by simpa using hσ)
-
   have hhor : ∀ Y : ℝ, ‖∫ x : ℝ in σ₂..σ₁, H (x + Y * I)‖ ≤ C * (1 + Y ^ 2)⁻¹ * |σ₁ - σ₂| := by
     intro Y
     refine intervalIntegral.norm_integral_le_of_norm_le_const fun x hx => ?_
@@ -285,7 +284,6 @@ private theorem luqShift (H : ℂ → ℂ) (hH : Differentiable ℂ H) (σ₁ σ
       push_cast at this
       simpa using this
     exact squeeze_zero_norm hhor' hlim0
-
   have hv₁ : Tendsto (fun Y : ℝ => ∫ y : ℝ in -Y..Y, H (σ₁ + y * I)) atTop
       (𝓝 (∫ y : ℝ, H (σ₁ + y * I))) :=
     intervalIntegral_tendsto_integral (hint σ₁ Set.right_mem_uIcc) tendsto_neg_atTop_atBot
@@ -294,7 +292,6 @@ private theorem luqShift (H : ℂ → ℂ) (hH : Differentiable ℂ H) (σ₁ σ
       (𝓝 (∫ y : ℝ, H (σ₂ + y * I))) :=
     intervalIntegral_tendsto_integral (hint σ₂ Set.left_mem_uIcc) tendsto_neg_atTop_atBot
       tendsto_id
-
   have hrect : ∀ Y : ℝ, I * (∫ y : ℝ in -Y..Y, H (σ₁ + y * I)) -
       I * (∫ y : ℝ in -Y..Y, H (σ₂ + y * I)) =
       (∫ x : ℝ in σ₂..σ₁, H (x + Y * I)) - ∫ x : ℝ in σ₂..σ₁, H (x + (-Y) * I) := by

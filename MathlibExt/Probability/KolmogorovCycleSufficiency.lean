@@ -497,17 +497,13 @@ lemma listRatioProduct_snoc (P : StochasticMatrix M) :
       simp only [listRatioProduct, List.singleton_append, List.getLast_singleton]
       ring
     | cons b rest =>
-
-
       have htail_ne : b :: rest ≠ [] := List.cons_ne_nil b rest
       have ih_eq := ih j htail_ne
-
       have lhs_eq : listRatioProduct P ((a :: b :: rest) ++ [j]) =
           (P.prob a b / P.prob b a) *
             listRatioProduct P ((b :: rest) ++ [j]) := by
         show listRatioProduct P (a :: (b :: rest) ++ [j]) = _
         rfl
-
       have rhs_eq : listRatioProduct P (a :: b :: rest) =
           (P.prob a b / P.prob b a) *
             listRatioProduct P (b :: rest) := rfl

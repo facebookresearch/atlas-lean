@@ -30,7 +30,6 @@ Reference: Simpson, alg-geom/9604005v1, section 4.
 set_option backward.isDefEq.respectTransparency false
 set_option backward.isDefEq.respectTransparency.instanceSearchTypes false
 @[expose] public noncomputable section
-
   AlgebraicGeometry.SheafedSpace.sheaf
 
 namespace MathlibExt.AlgebraicGeometry.LambdaZeroHiggsComparison
