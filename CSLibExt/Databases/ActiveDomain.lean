@@ -15,9 +15,10 @@ public import Mathlib.Data.Finset.Option
 # Active domains
 
 The **active domain** of a relation (`adom`) or of a database (`adomDB`) collects the values
-occurring in its tuples. Queries create no new values: the active domain of a query result is
-contained in the active domain of the database (`adom_eval_subset`), for every database, with no
-conformance hypothesis.
+occurring in its tuples. Queries create no new values: for finite relation-name and attribute
+types, with decidable equality on attributes and values, the active domain of a query result is
+contained in the active domain of the database (`adom_eval_subset`). The database need not
+conform to a schema.
 
 This is the relational-algebra model's notion of active domain, over partial tuples; it is
 distinct from `RelationalSchema.Instance.activeDomain` in `InclusionDependencies`, which uses
