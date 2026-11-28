@@ -47,17 +47,24 @@ devours no end.
 def IsRay {V : Type} (G : SimpleGraph V) (r : ℕ → V) : Prop :=
   Function.Injective r ∧ ∀ n, G.Adj (r n) (r (n + 1))
 
-/-- The rays `r` and `s` cannot be separated by finitely many vertices: for every finite vertex
-set `S`, tails of `r` and of `s` avoid `S` and lie in the same component of `G - S`. -/
+/-- For every finite vertex set `S`, the sequences `r` and `s` eventually avoid `S`, from indices
+`m` and `n` with `r m` and `s n` joined by a path in `G - S`. The predicate accepts arbitrary
+sequences; for rays, whose tails are paths, it says that the tails lie in one component of
+`G - S`, that is, the rays cannot be separated by finitely many vertices. -/
 def RaysEquiv {V : Type} (G : SimpleGraph V) (r s : ℕ → V) : Prop :=
   ∀ S : Finset V, ∃ m n, (∀ i, m ≤ i → r i ∉ S) ∧ (∀ j, n ≤ j → s j ∉ S) ∧
     Relation.ReflTransGen (fun x y => x ∉ S ∧ y ∉ S ∧ G.Adj x y) (r m) (s n)
 
-/-- `s` is an `ω`-ray for the end `ω` of the ray `r₀`: a ray equivalent to `r₀`. -/
+/-- `s` is a ray equivalent to `r₀`. The predicate does not test `IsRay G r₀`, so the reference
+sequence `r₀` is arbitrary: on the one-way infinite path, `r₀ n = 2 * n` is not a ray but is
+equivalent to the ray `s n = n`. When `r₀` is a ray, `s` is an `ω`-ray for the end `ω` of
+`r₀`. -/
 def IsEndRay {V : Type} (G : SimpleGraph V) (r₀ s : ℕ → V) : Prop :=
   IsRay G s ∧ RaysEquiv G r₀ s
 
-/-- The set `R` of rays devours the end of `r₀`: every ray of that end meets some ray in `R`. -/
+/-- The set `R` devours the end of `r₀`: every ray equivalent to `r₀` meets some member of `R`.
+As in `IsEndRay`, `r₀` is not tested to be a ray; the reading as the end of `r₀` is for a ray
+`r₀`. -/
 def Devours {V : Type} (G : SimpleGraph V) (r₀ : ℕ → V) (R : Set (ℕ → V)) : Prop :=
   ∀ s, IsEndRay G r₀ s → ∃ r ∈ R, ∃ i j, s i = r j
 

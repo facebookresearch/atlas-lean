@@ -33,3 +33,34 @@ example : Nat.card (Quot fun a b : ZMod 7 => ∃ m n : ℕ, a ^ 2 ^ m = b ^ 2 ^ 
   exact (by decide : ¬ 3 ∣ 2)
     ((card_powMap_components_eq_two_iff_of_even 7 2 ⟨1, rfl⟩ (by decide)).mp h 3
       (by decide) (by decide))
+
+-- The classification includes the prime 2, where there cannot be three components.
+example : Nat.card (Quot fun a b : ZMod 2 => ∃ m n : ℕ, a ^ 3 ^ m = b ^ 3 ^ n) ≠ 3 := by
+  have : Fact (Nat.Prime 2) := ⟨by decide⟩
+  intro h
+  obtain ⟨m, hm, _⟩ := (card_powMap_components_eq_three_iff_of_odd 2 3 ⟨1, rfl⟩ (by decide)).mp h
+  omega
+
+-- Here (19 - 1) / 2 = 9 divides an iterate exponent, even though it does not divide 3.
+example : Nat.card (Quot fun a b : ZMod 19 => ∃ m n : ℕ, a ^ 3 ^ m = b ^ 3 ^ n) = 3 := by
+  have : Fact (Nat.Prime 19) := ⟨by decide⟩
+  apply (card_powMap_components_eq_three_iff_of_odd 19 3 ⟨1, rfl⟩ (by decide)).mpr
+  refine ⟨9, rfl, fun q hq hdiv => ?_⟩
+  exact hq.dvd_of_dvd_pow (n := 2) hdiv
+
+-- Either 2 or an odd prime factor of (p - 1) / 2 can obstruct the criterion.
+example : Nat.card (Quot fun a b : ZMod 5 => ∃ m n : ℕ, a ^ 3 ^ m = b ^ 3 ^ n) ≠ 3 := by
+  have : Fact (Nat.Prime 5) := ⟨by decide⟩
+  intro h
+  obtain ⟨m, hm, hall⟩ :=
+    (card_powMap_components_eq_three_iff_of_odd 5 3 ⟨1, rfl⟩ (by decide)).mp h
+  have hm' : m = 2 := by omega
+  exact (by decide : ¬ 2 ∣ 3) (hall 2 (by decide) (by simp [hm']))
+
+example : Nat.card (Quot fun a b : ZMod 11 => ∃ m n : ℕ, a ^ 3 ^ m = b ^ 3 ^ n) ≠ 3 := by
+  have : Fact (Nat.Prime 11) := ⟨by decide⟩
+  intro h
+  obtain ⟨m, hm, hall⟩ :=
+    (card_powMap_components_eq_three_iff_of_odd 11 3 ⟨1, rfl⟩ (by decide)).mp h
+  have hm' : m = 5 := by omega
+  exact (by decide : ¬ 5 ∣ 3) (hall 5 (by decide) (by simp [hm']))

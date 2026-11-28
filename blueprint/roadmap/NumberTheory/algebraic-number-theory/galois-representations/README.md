@@ -5,6 +5,7 @@
 - [Galois cohomology of local fields](galois-cohomology-of-local-fields/README.md)
 - [Galois cohomology of number fields](galois-cohomology-of-number-fields/README.md)
 - [Weil groups and Weil–Deligne representations](weil-deligne-representations/README.md)
+- [The Deligne–Serre theorem on modular forms of weight one](deligne-serre-theorem-on-weight-one-forms/README.md)
 - [p-adic Hodge theory](p-adic-hodge-theory/README.md)
 - [Cyclotomic character and Tate twists](cyclotomic-character-and-tate-twists.md)
 - [Conductor of an ℓ-adic representation](conductor-of-an-l-adic-representation.md)

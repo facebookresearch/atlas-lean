@@ -25,7 +25,7 @@ equivalence (Grohe, Theorem 3.1, credited there to Dalmau, Kolaitis and Vardi).
 ## Depends on
 
 - [Treewidth of a conjunctive query](treewidth-of-a-conjunctive-query.md)
-- [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
+- [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 - [Fixed-parameter tractable problems](../../../TheoryOfComputation/complexity-classes/parameterized-complexity/fpt.md)
 - [The level $\mathrm{W}(t)$ of the W-hierarchy](../../../TheoryOfComputation/complexity-classes/parameterized-complexity/wlevel.md)
 - [The complexity class P](../../../TheoryOfComputation/complexity-classes/the-classes-p-np-and-conp/p.md)

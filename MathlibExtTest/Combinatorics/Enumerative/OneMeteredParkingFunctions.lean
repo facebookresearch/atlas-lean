@@ -87,4 +87,22 @@ example : (meteredParkingCount 1 0 2 : ℝ) ≠ binetRHS 0 2 := by
   rw [show meteredParkingCount 1 0 2 = 1 by decide]
   norm_num [binetRHS]
 
+-- With no spots, only the empty preference list can park.
+example : meteredParkingCount 1 1 0 = 0 ∧ meteredParkingCount 1 0 0 = 1 :=
+  ⟨(meteredParkingCount_one_recursion 0).1, (meteredParkingCount_one_recursion 0).2.1⟩
+
+-- At m = n = 1, the second car cannot park.
+example : meteredParkingCount 1 2 1 = 0 := by
+  have h := meteredParkingCount_one_recursion 1
+  have hstep := h.2.2 1 (by decide) (by decide)
+  norm_num [h.1, h.2.1] at hstep
+  exact hstep
+
+-- At m = n = 2, extend the directly computed two-car count using the recurrence.
+example : (meteredParkingCount 1 3 2 : ℤ) = 4 := by
+  have h := meteredParkingCount_one_recursion 2
+  have hstep := h.2.2 2 (by decide) (by decide)
+  norm_num [show meteredParkingCount 1 2 2 = 3 by decide, h.1] at hstep
+  exact hstep
+
 end MathlibExtTest.OneMeteredParkingFunctions
