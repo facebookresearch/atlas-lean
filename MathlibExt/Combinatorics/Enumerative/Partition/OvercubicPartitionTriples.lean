@@ -21,7 +21,7 @@ import MathlibExt.NumberTheory.SquareModEight
 
 The Euler product for the overcubic partition triple count gives a divisor-count formula
 modulo four. This proves the congruences of Nayaka, Dharmendra, and Mahesh Kumar at multiples
-of sixteen and, using Euler's pentagonal number theorem, at indices `24 * n + 1`.
+of sixteen and, using Euler's pentagonal number theorem, at indices `24 * n + 1` and `192 * n + 8`.
 -/
 
 open PowerSeries
@@ -348,6 +348,28 @@ theorem overcubicTripleCount_twentyFour_mul_add_one (n : ℕ) :
     rw [ha, coeff_pentagonalSeries_eq_zero _ hn, Int.ModEq]
     push_cast
     omega
+
+open overcubicTripleCount_congruences_sixteen_mul_args in
+open overcubicTripleCount_twentyFour_mul_add_one in
+/-- **Overcubic partition triples of $192n+8$ modulo $4$.** For $k \ge 1$ let
+$f_k = \prod_{j \ge 1} (1 - q^{kj})$, and let $\mathrm{bt}(m)$ be the number of overcubic
+partition triples of $m$, the coefficient of $q^m$ in $f_4^3 / (f_1^6 f_2^3)$. For every natural
+number $n$, $\mathrm{bt}(192n+8) \equiv 2 c_n \pmod 4$, where $c_n$ is the coefficient of $q^n$
+in $f_1$; equivalently, $\sum_{n \ge 0} \mathrm{bt}(192n+8) q^n \equiv 2 f_1 \pmod 4$
+coefficientwise.
+
+This is the case $\alpha = 0$ of the paper's statement.
+
+Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
+Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Theorem 9,
+eq. (31), case `α = 0` (`integers-2024-A80-thm-9`). -/
+theorem overcubicTripleCount_oneHundredNinetyTwo_mul_add_eight (n : ℕ) :
+    overcubicTripleCount (192 * n + 8) ≡ 2 * coeff n (𝔣 1) [ZMOD 4] := by
+  have hu : Odd (24 * n + 1) := ⟨12 * n, by omega⟩
+  rw [show 192 * n + 8 = 8 * (24 * n + 1) by ring]
+  -- Both counts have the same divisor-count residue, so the odd-index comparison applies.
+  exact ((count_odd_part 2 _ hu).trans (count_odd _ hu).symm).trans
+    (overcubicTripleCount_twentyFour_mul_add_one n)
 
 end
 

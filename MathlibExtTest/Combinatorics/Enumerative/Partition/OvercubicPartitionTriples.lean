@@ -73,3 +73,30 @@ example : (4 : ℤ) ∣ overcubicTripleCount 73 := by
     exact (show ¬ IsSquare (73 : ℤ) by norm_num) ⟨6 * k - 1, by linarith⟩
   rw [qEulerProduct_one, coeff_pentagonalSeries_eq_zero _ hgap, mul_zero] at h
   exact Int.modEq_zero_iff_dvd.mp h
+
+-- The constant coefficient of Euler's series gives the residue at the lower endpoint.
+example : overcubicTripleCount 8 ≡ 2 [ZMOD 4] := by
+  simpa [coeff_zero_eq_constantCoeff, constantCoeff_qEulerProduct (le_refl 1)] using
+    overcubicTripleCount_oneHundredNinetyTwo_mul_add_eight 0
+
+-- The coefficient at exponent 1 is negative, and twice that coefficient is still 2 mod 4.
+example : overcubicTripleCount 200 ≡ 2 [ZMOD 4] := by
+  have h := overcubicTripleCount_oneHundredNinetyTwo_mul_add_eight 1
+  have hc : coeff 1 (qEulerProduct 1) = -1 := by
+    have hp : 1 = pentagonal 1 := by norm_num [pentagonal_def]
+    rw [qEulerProduct_one, hp, coeff_pentagonalSeries_pentagonal, Int.negOnePow_one]
+    rfl
+  rw [hc] at h
+  exact h.trans (show (2 : ℤ) * -1 ≡ 2 [ZMOD 4] by decide)
+
+-- The exponent 4 is a gap in Euler's series.
+example : (4 : ℤ) ∣ overcubicTripleCount 776 := by
+  have h := overcubicTripleCount_oneHundredNinetyTwo_mul_add_eight 4
+  have hgap : 4 ∉ Set.range pentagonal := by
+    rintro ⟨k, hk⟩
+    have he := two_mul_natCast_pentagonal k
+    rw [hk] at he
+    norm_num at he
+    exact (show ¬ IsSquare (97 : ℤ) by norm_num) ⟨6 * k - 1, by linarith⟩
+  rw [qEulerProduct_one, coeff_pentagonalSeries_eq_zero _ hgap, mul_zero] at h
+  exact Int.modEq_zero_iff_dvd.mp h
