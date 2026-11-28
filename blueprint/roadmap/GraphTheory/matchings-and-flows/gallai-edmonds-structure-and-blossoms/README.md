@@ -1,0 +1,18 @@
+# Gallai-Edmonds Structure and Blossoms
+
+- [Approximate maximum weight matchings in general graphs](approximate-maximum-weight-matching.md)
+- [Odd components and the Tutte deficiency of a vertex set](odd-components-and-tutte-deficiency.md)
+- [Phase bound for shortest-augmenting-path matching algorithms in general graphs](phase-bound-shortest-augmenting-paths.md)
+- [Alternating forests, flowers and blossoms of a matching](alternating-forests-and-blossoms.md)
+- [Factor-critical graphs and near-perfect matchings](factor-critical-graphs.md)
+- [Every vertex set bounds the matching number through its odd components](odd-components-bound-matching-number.md)
+- [Edmonds' blossom shrinking lemma](edmonds-blossom-shrinking-lemma.md)
+- [Even and odd levels, tenacity and bridges for minimum-length alternating paths](levels-tenacity-and-bridges.md)
+- [The Gallai-Edmonds partition D(G), A(G), C(G)](gallai-edmonds-partition.md)
+- [Tutte-Berge min-max formula for the maximum matching size](tutte-berge-min-max-formula.md)
+- [Micali-Vazirani maximum matching in O(m sqrt n) time with Vazirani's correctness proof](micali-vazirani-matching-algorithm.md)
+- [Gallai's lemma: connected graphs without essential vertices are factor-critical](gallai-lemma-factor-critical.md)
+- [Tutte's perfect matching criterion via odd components of vertex deletions](tutte-perfect-matching-criterion.md)
+- [Gallai-Edmonds structure theorem for maximum matchings](gallai-edmonds-structure-theorem.md)
+- [Correctness and running time of Edmonds' cardinality blossom algorithm](edmonds-cardinality-blossom-algorithm.md)
+- [Duan-Pettie linear-time approximation for maximum weight matching in general graphs](duan-pettie-linear-time-approximation.md)

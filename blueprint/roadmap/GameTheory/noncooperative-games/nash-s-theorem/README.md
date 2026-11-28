@@ -17,6 +17,7 @@ Brouwer's fixed-point theorem for products of simplices, by Nash's 1951 argument
 - [Graphical Games](graphical-games/README.md)
 - [Polymatrix Games](polymatrix-games/README.md)
 - [Universality of Nash Equilibria](universality-of-nash-equilibria/README.md)
+- [Complexity of Nash Equilibria: PPAD-Hardness and CLS](complexity-of-nash-equilibria-ppad-and-cls/README.md)
 
 ## Related topics
 

@@ -16,3 +16,7 @@ Hash tables (chaining, open addressing, cuckoo, perfect), universal hash familie
 - [Sequential idempotent requests to a hash table](sequential-idempotent-requests-to-a-hash-table/README.md)
 - [Universal hashing bounds for actual chain scans](universal-hashing-bounds-for-actual-chain-scans/README.md)
 - [Constructing FKS Perfect Hash Tables](fks-table-construction/README.md)
+- [Open Addressing Without Reordering](open-addressing-without-reordering/README.md)
+- [Random-Walk Insertion for d-ary Cuckoo Hashing](random-walk-cuckoo-insertion/README.md)
+- [Stable Hash Tables, Iceberg Hashing and Tiny Pointers](stable-and-tiny-pointer-hash-tables/README.md)
+- [Tombstones, Anti-Clustering and Graveyard Hashing](tombstones-and-anti-clustering/README.md)

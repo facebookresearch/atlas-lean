@@ -14,6 +14,10 @@ Lower bounds on the minimax risk $\inf_{\hat\theta} \sup_\theta \mathbb{E}_\thet
 - [Fano and Two-Point Minimax Rates](fano-and-two-point-minimax-rates/README.md)
 - [Robust Hypothesis Selection](robust-hypothesis-selection/README.md)
 
+- [Statistical Query Lower Bounds for Planted Problems](statistical-query-lower-bounds-for-planted-problems/README.md)
+
+- [Low-Degree Likelihood Ratio Method](low-degree-likelihood-ratio-method/README.md)
+
 ## Related topics
 
 - [Total variation and Pinsker's inequality](../../../InformationTheory/information-inequalities/total-variation-and-pinsker-s-inequality/README.md)

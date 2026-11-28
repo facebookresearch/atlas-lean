@@ -18,6 +18,9 @@ Single-source and all-pairs shortest paths: Dijkstra, Bellman-Ford, DAG relaxati
 - [Zero slack at both endpoints does not make an activity critical](slack-eq-zero-total-float-eq-one.md)
 - [Dijkstra's Algorithm and Priority-Queue Costs](dijkstra-priority-queue-costs/README.md)
 - [Negative Triangles and the (min,+) Product](negative-triangle-reductions/README.md)
+- [Decremental SSSP and Dynamic Vertex Sparsifiers](decremental-sssp-and-dynamic-vertex-sparsifiers/README.md)
+- [Near-Linear Negative-Weight Single-Source Shortest Paths](near-linear-negative-weight-sssp/README.md)
+- [Strongly Polynomial Negative-Weight Shortest Paths](strongly-polynomial-negative-sssp/README.md)
 
 ## Related topics
 

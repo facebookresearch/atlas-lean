@@ -13,3 +13,4 @@ Matchings and factors in graphs, stable matchings, and flows in networks, includ
 - [Deterministic polynomial-bit construction of strong thin trees](deterministic-bit-construction-of-strong-thin-trees.md)
 - [Properties of the Top Trading Cycles Mechanism](top-trading-cycles-mechanism-properties/README.md)
 - [Structure of Stable Matchings](stable-matching-structure-and-polytopes/README.md)
+- [Gallai-Edmonds Structure and Blossoms](gallai-edmonds-structure-and-blossoms/README.md)

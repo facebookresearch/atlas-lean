@@ -1,0 +1,16 @@
+# Deterministic Colouring and MIS in LOCAL and CONGEST
+
+- [Defective colouring](defective-colouring.md)
+- [Deterministic (Delta+1)-colouring in O(log^2 Delta log n) rounds without network decomposition](deterministic-delta-plus-one-colouring-log-squared.md)
+- [Arboricity and H-partitions](arboricity-and-h-partitions.md)
+- [Linial's colour reduction to O(Delta^2) colours in O(log* n) rounds](linial-colour-reduction.md)
+- [Graph shattering after a randomized pre-shattering phase](graph-shattering-lemma.md)
+- [Locality lower bound for approximating minimum vertex cover](kmw-vertex-cover-lower-bound.md)
+- [Colouring and MIS in graphs of bounded arboricity via H-partitions](arboricity-h-partition-colouring-mis.md)
+- [Deterministic lambda(Delta+1)-colouring trade-off and sublinear-in-Delta (Delta+1)-colouring](deterministic-colouring-linear-in-delta.md)
+- [Distributed defective colouring in O(log* n) rounds](distributed-defective-colouring-log-star.md)
+- [Randomized (Delta+1)-colouring in O(log* n) plus deterministic time on polylog-size instances](randomized-delta-plus-one-colouring-shattering.md)
+- [Deterministic edge colouring via hypergraph maximal matching](deterministic-edge-colouring-hypergraph-matching.md)
+- [Randomized (Delta+1)-list colouring in CONGEST in O(log^5 log n) rounds](randomized-colouring-congest.md)
+- [Randomized MIS in O(log Delta) + polylog-size deterministic time](randomized-mis-log-delta-shattering.md)
+- [Distributed algorithms for the Lovász local lemma](distributed-lovasz-local-lemma.md)

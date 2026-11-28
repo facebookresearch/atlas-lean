@@ -21,6 +21,8 @@ Byzantine agreement (consensus with Byzantine faults) in the sense of Fischer, L
 - [Byzantine agreement yields the Byzantine generals problem](solves-to-oral.md)
 - [Bounds for Synchronous Byzantine Agreement](byzantine-agreement-bounds/README.md)
 - [Byzantine Broadcast and Quorum Systems](byzantine-broadcast-and-quorum-systems/README.md)
+- [Asynchronous Byzantine Agreement and DAG-Based Atomic Broadcast](asynchronous-byzantine-agreement-and-dag-protocols/README.md)
+- [Linear View-Change BFT State Machine Replication](linear-view-change-bft-state-machine-replication/README.md)
 
 ## Related topics
 

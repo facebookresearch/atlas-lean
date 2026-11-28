@@ -7,7 +7,6 @@ Minimum spanning trees (Kruskal, Prim), maximum flow and minimum cut (Edmonds-Ka
 - [Kruskal's algorithm](kruskal-s-algorithm/README.md)
 - [Maximum bipartite matching](maximum-bipartite-matching/README.md)
 - [Prim's algorithm](prim-s-algorithm/README.md)
-
 - [Hoffman's circulation theorem](hoffman-circulation-theorem.md)
 - [Gale's feasibility condition for transportation problems](gale-feasibility-for-transportation-problems.md)
 - [Reduced-cost optimality certificate for minimum-cost flow](potential-certificate-for-minimum-cost-flow.md)
@@ -22,3 +21,4 @@ Minimum spanning trees (Kruskal, Prim), maximum flow and minimum cut (Edmonds-Ka
 - [Minimum-Weight Outgoing Edges and MST Uniqueness](minimum-weight-outgoing-edges-and-mst-uniqueness/README.md)
 - [Optimum Arborescences and Branchings](optimum-arborescences-and-branchings/README.md)
 - [The Auction Algorithm for Assignment](auction-algorithm-for-assignment/README.md)
+- [Almost-Linear Flows, Cuts and Dynamic Matching](almost-linear-flows-cuts-and-dynamic-matching/README.md)

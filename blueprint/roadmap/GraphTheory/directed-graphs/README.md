@@ -12,3 +12,4 @@ Directed graphs, orientations of undirected graphs, digraph colorings and tourna
 - [Transitive subtournaments](transitive-subtournaments/README.md)
 - [Seymour's second out-neighborhood inequality](seymour-second-neighborhood-bound.md)
 - [Functional graphs](functional-graphs/README.md)
+- [Directed Expander Decompositions and Hierarchies](directed-expander-decompositions/README.md)

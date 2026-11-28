@@ -9,6 +9,7 @@ An algorithm is uniformly stable if replacing one example of its training sample
 - [Expected generalization gap equals replace-one stability term](expected-generalization-gap-equals-replace-one-stability-ter.md)
 - [Uniform stability implies high-probability generalization](uniform-stability-implies-high-probability-generalization.md)
 - [Deletion stability bounds replacement stability](deletion-stability-bounds-replacement-stability.md)
+- [Sharp Generalization of Uniformly Stable Algorithms](sharp-generalization-of-uniformly-stable-algorithms/README.md)
 
 ## Stability of stochastic gradient descent
 

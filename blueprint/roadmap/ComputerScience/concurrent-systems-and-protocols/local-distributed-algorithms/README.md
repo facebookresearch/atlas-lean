@@ -14,3 +14,6 @@
 - [Legit at quadratic bound](legit-at-quadratic-bound.md)
 - [Luby's maximal independent set algorithm](luby-s-maximal-independent-set-algorithm.md)
 - [The LOCAL Model: Symmetry Breaking and LCL Problems](local-model-symmetry-and-lcl/README.md)
+- [Deterministic Colouring and MIS in LOCAL and CONGEST](deterministic-colouring-and-mis-in-local-and-congest/README.md)
+- [Deterministic Network Decomposition and Distributed Derandomization](deterministic-network-decomposition/README.md)
+- [LCL Problems and the Landscape of Distributed Time Complexities](lcl-problems-and-the-locality-landscape/README.md)

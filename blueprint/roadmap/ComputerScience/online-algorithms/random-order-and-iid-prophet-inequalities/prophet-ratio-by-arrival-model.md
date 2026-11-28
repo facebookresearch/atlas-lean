@@ -1,0 +1,9 @@
+# Gambler-to-prophet ratios under different arrival models
+
+Let $X_1, \dots, X_n$ be independent nonnegative random variables with known distributions $F_1, \dots, F_n$. A gambler observes values one at a time and must irrevocably accept or reject each; a *stopping rule* $\tau$ receives $X_\tau$. For an arrival model $\mathcal{M}$, the *prophet ratio* is $\inf_F \sup_\tau \mathbb{E}[X_\tau]/\mathbb{E}[\max_i X_i]$, the infimum over instances with $0 < \mathbb{E}[\max_i X_i] < \infty$ (which excludes the undefined ratio $0/0$ of all-zero rewards) and the supremum over stopping rules allowed in the model. The models are: *adversarial order* (a fixed known order); *i.i.d.* ($F_1 = \dots = F_n$); *random order* or *prophet secretary* (a uniformly random arrival order); and *order selection* (the gambler chooses the order in advance). A rule is *nonadaptive* if it fixes, before any value is seen, an item-indexed threshold $\tau_i$ for each variable and accepts the first arriving $X_i$ with $X_i \ge \tau_i$, whenever $X_i$ arrives; an *adaptive* rule sets the threshold of $X_i$ on arrival, depending on which variables have already arrived. Item-indexed thresholds differ from time-indexed ones, which fix a threshold for the $t$-th arrival, whichever variable it is.
+
+## Sources
+
+- José Correa, Patricio Foncea, Ruben Hoeksma, Tim Oosterwijk, Tjark Vredeveld, "Posted Price Mechanisms and Optimal Threshold Strategies for Random Arrivals", Mathematics of Operations Research 46(4) (2021); EC (2017), Sections 1.2, 3 and 4.
+- Hossein Esfandiari, MohammadTaghi Hajiaghayi, Vahid Liaghat, Morteza Monemizadeh, "Prophet Secretary", SIAM Journal on Discrete Mathematics 31(3) (2017); ESA (2015).
+- Bo Peng, Zhihao Gavin Tang, "Order Selection Prophet Inequality: From Threshold Optimization to Arrival Time Design", FOCS (2022); SIAM Journal on Computing, arXiv:2204.01425.

@@ -5,6 +5,7 @@ Yao's two-party model: deterministic protocols as trees, the rectangle lemma, fo
 - [Deterministic communication protocols](deterministic-communication-protocols/README.md)
 - [Randomized communication protocols](randomized-communication-protocols/README.md)
 - [Randomized and DAG-like Lifting](randomized-and-dag-like-lifting/README.md)
+- [Asymmetric Communication and Static Data-Structure Lower Bounds](asymmetric-communication-and-static-data-structures/README.md)
 
 ## Related topics
 

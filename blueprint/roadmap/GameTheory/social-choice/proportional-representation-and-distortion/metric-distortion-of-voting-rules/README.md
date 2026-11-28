@@ -1,0 +1,16 @@
+# Metric Distortion of Voting Rules
+
+- [Maximal lotteries](maximal-lotteries.md)
+- [Metric election and distortion of a voting rule](metric-election-and-distortion.md)
+- [The uncovered set is nonempty and contains every Copeland winner](uncovered-set-contains-copeland-winners.md)
+- [No deterministic voting rule has metric distortion below three](deterministic-distortion-lower-bound-three.md)
+- [Domination graph of a candidate](domination-graph-of-a-candidate.md)
+- [Random dictatorship has metric distortion 3 - 2/n](random-dictatorship-distortion.md)
+- [Metric distortion of plurality, Borda and Copeland](plurality-borda-copeland-distortion.md)
+- [A perfect matching in the domination graph certifies distortion three](domination-matching-certifies-distortion-three.md)
+- [Ranking-matching lemma: some candidate has a perfectly matchable domination graph](ranking-matching-lemma.md)
+- [Randomized voting rules cannot beat metric distortion 2.112](randomized-distortion-lower-bound-2112.md)
+- [A deterministic rule with metric distortion 2 + sqrt(5)](deterministic-distortion-two-plus-sqrt-five.md)
+- [A randomized voting rule with metric distortion below 2.753](randomized-distortion-upper-bound-2753.md)
+- [Plurality Veto attains metric distortion three](plurality-veto-distortion-three.md)
+- [Plurality matching achieves the optimal deterministic metric distortion three](plurality-matching-distortion-three.md)

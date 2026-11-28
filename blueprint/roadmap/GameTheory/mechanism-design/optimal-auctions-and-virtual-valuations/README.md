@@ -15,6 +15,7 @@ For a value with continuous positive density $f$ and distribution function $F$ o
 - [The optimal mechanism for one bidder](integral-payment-mul-density-le-posted-p.md)
 - [Optimal auctions for regular distributions](remaining-clauses-of-optimal-auctions-for-regular-distributi.md)
 - [Virtual surplus maximization is monotone](virtual-surplus-maximization-is-monotone.md)
+- [Multi-Item Revenue Maximization and Simple Mechanisms](multi-item-revenue-maximization/README.md)
 
 ## Related topics
 

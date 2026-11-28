@@ -1,0 +1,16 @@
+# EFX Allocations: Charity, Rainbow Cycles and Counterexamples
+
+- [Partial EFX allocation with an unallocated pool](partial-efx-allocation-with-pool.md)
+- [Envy graph and most envious agent of a partial allocation](envy-graph-most-envious-agent.md)
+- [EFX allocations exist for graphical valuations while EFX orientations are NP-hard](efx-graphical-valuations.md)
+- [EFX exists for two agents with arbitrary monotone valuations](efx-two-agents-monotone-valuations.md)
+- [Rainbow cycle number](rainbow-cycle-number.md)
+- [Envy-cycle rotation preserves EFX and weakly improves every agent](envy-cycle-rotation-preserves-efx.md)
+- [Upper bounds on the rainbow cycle number](rainbow-cycle-number-upper-bounds.md)
+- [EFX with bounded charity: fewer than n goods left unallocated](efx-with-bounded-charity.md)
+- [Lexicographic improvement step for partial EFX allocations of three agents](efx-three-agents-lexicographic-improvement.md)
+- [Polynomial-time (phi - 1)-EFX allocations for additive valuations](golden-ratio-efx-additive-polynomial.md)
+- [One-half EFX exists for subadditive valuations](half-efx-subadditive-valuations.md)
+- [(1 - epsilon)-EFX with sublinearly many unallocated goods](approximate-efx-sublinear-charity.md)
+- [EFX for four additive agents with at most one unallocated good](efx-four-agents-one-unallocated-good.md)
+- [Complete EFX allocations exist for three additive agents](efx-exists-three-additive-agents.md)

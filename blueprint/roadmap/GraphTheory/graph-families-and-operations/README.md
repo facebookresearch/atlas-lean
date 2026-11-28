@@ -12,3 +12,4 @@ Graph products, line graphs and other constructions, together with special famil
 - [Lexicographic product of graphs](lex-product.md)
 - [Explicit and random expander constructions](explicit-and-random-expander-constructions/README.md)
 - [Operations on expander graphs](expander-graph-operations/README.md)
+- [Expander Decomposition and Pruning](expander-decomposition-and-pruning/README.md)

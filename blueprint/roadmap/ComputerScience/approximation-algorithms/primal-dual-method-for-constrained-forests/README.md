@@ -17,6 +17,8 @@ paper extend it (for example §4, where the algorithm also returns a vertex set)
 - [Steiner forest requirement](steiner-forest-requirement.md)
 - [Goemans–Williamson integrality gap for proper constrained forest problems](exists-forest-cost-le-of-lp-feasible.md)
 
+- [Tree and Connectivity Augmentation](tree-and-connectivity-augmentation/README.md)
+
 ## Related topics
 
 - [Weighted vertex cover by the pricing method](../weighted-vertex-cover-by-the-pricing-method/README.md):

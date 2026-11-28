@@ -1,0 +1,23 @@
+# Low-degree threshold of the spiked Wigner model
+
+Let $(\mathcal{X}_n)$ be a spike prior on $\mathbb{R}^n$ with $\|x\|^2/n \to 1$ in probability, and fix a constant $\hat\lambda > 0$. Under $\mathbb{Q}_n$ observe an $n \times n$ matrix $Z$ with i.i.d. $\mathcal{N}(0,1)$ entries; under $\mathbb{P}_n$ observe $Y = \frac{\hat\lambda}{\sqrt{2n}}\,xx^\top + Z$ with $x \sim \mathcal{X}_n$ independent of $Z$. The symmetrization $(Y + Y^\top)/\sqrt{2n} = \frac{\hat\lambda}{n}xx^\top + W$ has $W \sim \mathrm{GOE}(n)$, with off-diagonal entries $\mathcal{N}(0, 1/n)$ and diagonal entries $\mathcal{N}(0, 2/n)$; this asymmetric model is equivalent to the symmetric spiked Wigner model. Say the prior admits a **local Chernoff bound** if for every $\eta > 0$ there are $\delta, C > 0$ such that for all $n$, independent $x^1, x^2 \sim \mathcal{X}_n$ satisfy $\Pr(|\langle x^1, x^2\rangle| \ge t) \le C\exp\big(-(1-\eta)t^2/(2n)\big)$ for all $t \in [0, \delta n]$.
+
+1. **Below the threshold, general priors.** If the prior admits a local Chernoff bound and $\|x\| \le \sqrt{2n}$ almost surely, then for $\hat\lambda < 1$ and every $D = D(n) = o(n/\log n)$, $\|L_n^{\le D}\| = O(1)$ as $n \to \infty$. Every prior with i.i.d. entries from a fixed subgaussian law with mean $0$ and variance $1$ admits a local Chernoff bound. Such a prior need not satisfy the norm bound; the modified prior that outputs $x$ when $\|x\| \le \sqrt{2n}$ and $0$ otherwise still admits a local Chernoff bound and satisfies it, so the bound applies to the modified prior, which differs from the original with probability $o(1)$. This covers the Rademacher prior and the sparse Rademacher prior of any constant density $\rho$, and predicts that no polynomial-time test succeeds below $\hat\lambda = 1$, even though for $\rho$ below about $0.09$ exhaustive search succeeds for some $\hat\lambda < 1$.
+2. **Above the threshold, Rademacher prior.** If $x$ has i.i.d. uniform $\pm 1$ entries and $\hat\lambda > 1$, then $\|L_n^{\le D}\| = \omega(1)$ for every $D = \omega(1)$. For every prior as above with $\hat\lambda > 1$, thresholding the largest eigenvalue of the symmetrization achieves strong detection in polynomial time, since that eigenvalue tends to $\hat\lambda + 1/\hat\lambda > 2$, while under $\mathbb{Q}_n$ it tends to $2$.
+
+## Proof sketch
+
+By the additive Gaussian formula with signal $\frac{\hat\lambda}{\sqrt{2n}}xx^\top$, $\|L_n^{\le D}\|^2 = \sum_{d \le D}\frac{1}{d!}\big(\frac{\hat\lambda^2}{2n}\big)^d\,\mathbb{E}[\langle x^1, x^2\rangle^{2d}] = \mathbb{E}\big[\exp^{\le D}\big(\tfrac{\hat\lambda^2}{2n}\langle x^1, x^2\rangle^2\big)\big]$, where $\exp^{\le D}$ is the degree-$D$ Taylor polynomial of $\exp$. For part 1, split on $|\langle x^1, x^2\rangle| \le \varepsilon n$. On the small overlaps, bound $\exp^{\le D}$ by $\exp$ and integrate the local Chernoff tail; this is finite because $\hat\lambda^2 < 1 - \eta$ for small $\eta$. On the large overlaps, the norm bound gives $\langle x^1, x^2\rangle^2 \le 4n^2$, so the argument of the truncated series is at most $\frac{\hat\lambda^2}{2n}\cdot 4n^2 = 2\hat\lambda^2 n$; since $2\hat\lambda^2 n > D$ for large $n$ in the theorem's range, the last term of the series is the largest and the series is at most $(D+1)(2\hat\lambda^2 n)^D/D!$. The Chernoff factor $C e^{-\varepsilon^2 n/3}$ then makes the product $o(1)$ provided $D = o(n/\log n)$. For part 2, the Rademacher moments give $\mathbb{E}[\langle x^1, x^2\rangle^{2d}] \ge \frac{n!}{(n-d)!}\cdot\frac{(2d)!}{2^d d!}$, so the $d$-th term is at least $\big(\hat\lambda^2(n-d)/n\big)^d/(2\sqrt d)$, which diverges for $\hat\lambda > 1$ as $d \to \infty$ slowly. The spectral test is the BBP transition for Wigner matrices. Replacing $\langle x^1, x^2\rangle/\sqrt n$ by a standard Gaussian, which turns the sum into $\sum_d \hat\lambda^{2d}\binom{2d}{d}4^{-d}$, predicts the threshold $\hat\lambda = 1$ but is only a heuristic, not a proof.
+
+## Depends on
+
+- [Low-degree likelihood ratio and low-degree advantage](low-degree-likelihood-ratio.md)
+
+## Proof depends on
+
+- [Low-degree advantage of the additive Gaussian model](additive-gaussian-low-degree-advantage.md)
+
+## Sources
+
+- D. Kunisky, A. S. Wein, A. S. Bandeira, "Notes on Computational Hardness of Hypothesis Testing: Predictions Using the Low-Degree Likelihood Ratio", Mathematical Analysis, its Applications and Computation, Springer (2022), arXiv:1907.11636, Section 3.2 (Assumption 3.4, Definitions 3.5 and 3.8, Theorem 3.6, Corollary 3.7, Theorem 3.9, Remark 3.10, Theorem 3.11), Appendix A.3 and Proposition C.4.
+- S. B. Hopkins, "Statistical Inference and the Sum of Squares Method", PhD thesis, Cornell University (2018).

@@ -9,6 +9,7 @@ In an atomic congestion game each player is a unit of traffic. With affine delay
 - [Price of anarchy 5/2 for affine congestion games](social-cost-le-of-is-pure-nash-of-affine.md)
 - [Price of anarchy 5/2 for no-regret play in affine congestion games](average-social-cost-le-of-affine.md)
 - [Efficiency of Atomic Congestion Games](atomic-congestion-efficiency/README.md)
+- [PLS-Hardness of Pure Nash Equilibria in Congestion Games](pls-hardness-of-pure-equilibria-in-congestion-games/README.md)
 
 ## Related topics
 

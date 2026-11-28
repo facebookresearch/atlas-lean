@@ -24,3 +24,4 @@ Algorithms whose identity is their use of randomness or whose analysis averages 
 - [Karger-Stein Recursive Contraction](karger-stein-recursive-contraction/README.md)
 - [Planted Clique Recovery](planted-clique-recovery/README.md)
 - [Random Strings, Sign Sums and Fingerprints](random-strings-and-fingerprints/README.md)
+- [Sketching, Streaming and Sublinear Algorithms](sketching-streaming-and-sublinear-algorithms/README.md)

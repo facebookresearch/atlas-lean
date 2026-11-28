@@ -19,3 +19,6 @@ Exact pattern matching (naive, finite automaton, Knuth-Morris-Pratt, Boyer-Moore
 - [Linear-Time String Transforms on the Word RAM](linear-time-string-transforms-on-the-word-ram/README.md)
 - [Palindromes, LCP Arrays and Multi-Pattern Matching](palindromes-lcp-arrays-and-multipattern-matching/README.md)
 - [Shortest common superstring](shortest-common-superstring/README.md)
+- [BWT Runs Versus Lempel–Ziv and Optimal Compressed Indexes](bwt-runs-versus-lempel-ziv/README.md)
+- [Run-Length BWT Indexing and the r-Index](run-length-bwt-indexing/README.md)
+- [String Attractors and Repetitiveness Measures](string-attractors-and-repetitiveness-measures/README.md)

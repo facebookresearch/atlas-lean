@@ -17,6 +17,8 @@ Social choice theory studies rules that aggregate individual preferences into a 
 - [Monotonicity and the Gibbard–Satterthwaite Reduction](monotonicity-and-the-gibbard-satterthwaite-reduction/README.md)
 - [Random Assignment](random-assignment/README.md)
 - [Strategy-Proofness on Single-Peaked Domains](strategy-proofness-on-single-peaked-domains/README.md)
+- [Fair division frontiers](fair-division-frontiers/README.md)
+- [Proportional representation and metric distortion](proportional-representation-and-distortion/README.md)
 
 ## Related topics
 

@@ -1,0 +1,15 @@
+# Outcome Indistinguishability and Omniprediction
+
+- [Omnipredictors](omnipredictor.md)
+- [Outcome indistinguishability and its access hierarchy](outcome-indistinguishability.md)
+- [Loss outcome indistinguishability and calibrated multiaccuracy](loss-oi-and-calibrated-multiaccuracy.md)
+- [Optimal post-processing is the identity for proper losses and a threshold for cost-sensitive losses](omnipredictor-optimal-post-processing.md)
+- [Swap agnostic learning and swap omniprediction](swap-agnostic-learning.md)
+- [No-access OI is multiaccuracy and sample-access OI is multicalibration](outcome-indistinguishability-equivalences.md)
+- [Oracle- and code-access outcome indistinguishability is computationally hard](oracle-access-oi-hardness.md)
+- [Multicalibration implies omniprediction for convex Lipschitz losses](multicalibration-implies-omniprediction.md)
+- [Omnipredictors for constrained loss minimization](omnipredictors-constrained-optimization.md)
+- [Loss OI decomposes into calibration plus multiaccuracy and yields omnipredictors for GLM losses](loss-oi-decomposition-glm-losses.md)
+- [Oracle-efficient online multicalibration and omniprediction](online-multicalibration-omniprediction.md)
+- [Swap omniprediction, swap multicalibration and swap agnostic learning are equivalent](swap-omniprediction-equivalence.md)
+- [Unbiased high-dimensional predictions give downstream decision makers no swap regret](high-dimensional-unbiased-prediction-swap-regret.md)

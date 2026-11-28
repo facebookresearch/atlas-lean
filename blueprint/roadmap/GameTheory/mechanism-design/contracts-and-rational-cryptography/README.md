@@ -4,3 +4,5 @@
 - [Rational secret sharing game](rational-secret-sharing-game.md)
 - [Optimal contracts and monotonicity in combinatorial agency](optimal-contracts-and-monotonicity-in-combinatorial-agency.md)
 - [Halpern–Teague impossibility and randomized rational secret sharing](halpern-teague-impossibility-and-randomized-rational-secret-sharing.md)
+- [Combinatorial and Multi-Agent Contracts](combinatorial-and-multi-agent-contracts/README.md)
+- [Hidden-Action Principal-Agent Contracts](hidden-action-principal-agent-contracts/README.md)

@@ -10,3 +10,6 @@ Representations of collections with their invariants, operations and costs (wors
 - [Tries, suffix structures and integer dictionaries](tries-and-integer-dictionaries/README.md)
 - [Disjoint sets and dynamic trees](disjoint-sets-and-dynamic-trees/README.md)
 - [Amortized analysis](amortized-analysis/README.md)
+- [Boolean Dynamic Lower Bounds and the Multiphase Problem](boolean-dynamic-lower-bounds-and-multiphase/README.md)
+- [Cell Sampling and Super-Logarithmic Lower Bounds](cell-sampling-and-range-counting-lower-bounds/README.md)
+- [Information-Transfer Lower Bounds for Dynamic Problems](dynamic-information-transfer-lower-bounds/README.md)
