@@ -42,6 +42,7 @@
       "published_sha256": "cfc21b1b40c7da9edd81693e578a86b72e2da80bb1643429ae4cd70f59661322",
       "rationale": "Move the integer product divisibility criterion from WantedExt/Combinatorics/Enumerative/IdentityProductNecklaceWanted.lean to a proved module, preserving its name and statement. Also: When `int_dvd_mul_iff_div_gcd_dvd` moved here in #6321, its docstring carried the Atlas wiki audit restatement of #976, which the row of WantedExt/Combinatorics/Enumerative/IdentityProductNecklaceWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."
     },
+    {"path": "MathlibExt/Data/List/EraseIdxOfFn.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f40dc930e528c1fe683a2a77ea85d2357b1d7f41c5282c31c82ee2968dbbb450", "rationale": "State the exact adjacent-inversion count, length-offset recurrence, termination inequalities and ordered finite-tuple deletion formulas in mathematical docstrings. Every noncomment code/name/privacy/import/option/legal token is unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "53c55949a3fa15324ea24aec714baf3b2ee1a29f55309e814a93600d332b4558"},
     {
       "path": "MathlibExt/Data/List/ToChunks.lean",
       "backport": "pending",
