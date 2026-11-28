@@ -44,6 +44,7 @@ Let K be a complex of shape c on an index type ι in a category C with zero morp
 splitting consists of maps hᵢⱼ : Kᵢ → Kⱼ, zero when c.Rel j i fails, such that dᵢⱼ ≫ hⱼᵢ ≫ dᵢⱼ
 = dᵢⱼ for every i,j. Thus each allowed differential has a generalized inverse in the opposite
 direction; composition is written from left to right with ≫.
+This is the generalized-inverse condition for a split complex in Weibel, Definition 1.4.1.
 -/
 structure Splitting (K : HomologicalComplex C c) where
   /--
@@ -141,8 +142,8 @@ lemma hom_d_idempotent (s : Splitting K) (i j : ι) :
 Let K be a complex of shape c on an index type ι in a category C with zero morphisms. Let s be
 a splitting, with maps hᵢⱼ = s.hom i j : Kᵢ → Kⱼ supported on c.Rel j i and satisfying dᵢⱼ ≫
 hⱼᵢ ≫ dᵢⱼ = dᵢⱼ. Replacing each hᵢⱼ by hᵢⱼ ≫ dⱼᵢ ≫ hᵢⱼ gives another splitting, called the
-reflexive normalization. Its support is unchanged and its components also satisfy rᵢⱼ ≫ dⱼᵢ ≫
-rᵢⱼ = rᵢⱼ.
+reflexive normalization. Its components remain zero off the reverse relation c.Rel j i and
+also satisfy rᵢⱼ ≫ dⱼᵢ ≫ rᵢⱼ = rᵢⱼ.
 -/
 def reflexive (s : Splitting K) : Splitting K where
   hom i j := s.hom i j ≫ K.d j i ≫ s.hom i j

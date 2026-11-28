@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.CategoryTheory.HomologicalComplex.FunctorRelativeResolutionComparison.Homology
+public import
+  MathlibExt.CategoryTheory.HomologicalComplex.FunctorRelativeResolutionComparison.Homology
 public import MathlibExt.Algebra.Category.ModuleCat.TensorBifunctor
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
 
@@ -81,5 +82,48 @@ def tensorRelativeResolutionHomologyIso (M : ModuleCat.{w} R)
     (Functor.mappedResolution (relativeTensorFunctor M) Q).homology n ≅
       (Functor.mappedResolution (relativeTensorFunctor M) P).homology n :=
   Functor.comparisonHomologyIso U (relativeTensorFunctor M) Q P X α β σQ σP hQ hP kQ kP n
+
+/-- Let R be commutative, U : ModuleCat_v(R) → C additive with C preadditive,
+and M : ModuleCat_w(R). Suppose Q → X[0] has U-relative-projective terms,
+P → Y[0] is contractingly split after U, and U preserves its augmentation
+and differential kernels. Any chain map g : Q → P over f : X → Y computes
+the degree-n tensor comparison as H_n(M ⊗ g), in coefficient world max(v,w). -/
+theorem tensorRelativeComparisonHomologyMap_eq_of_augmentation (M : ModuleCat.{w} R)
+    (Q P : ChainComplex (ModuleCat.{v} R) ℕ) (X Y : ModuleCat.{v} R)
+    (α : Q ⟶ (ChainComplex.single₀ (ModuleCat.{v} R)).obj X)
+    (β : P ⟶ (ChainComplex.single₀ (ModuleCat.{v} R)).obj Y)
+    (σP : Functor.AugmentationSplit U P Y β)
+    (hQ : ∀ n, U.IsRelativeProjective (Q.X n))
+    [PreservesLimit (parallelPair (β.f 0) 0) U]
+    (kP : ∀ n, PreservesLimit (parallelPair (P.d (n + 1) n) 0) U)
+    (f : X ⟶ Y) (g : Q ⟶ P)
+    (hg : g ≫ β = α ≫ (ChainComplex.single₀ (ModuleCat.{v} R)).map f) (n : ℕ) :
+    tensorRelativeComparisonHomologyMap U M Q P X Y α β σP hQ kP f n =
+      HomologicalComplex.homologyMap
+        (((relativeTensorFunctor M).mapHomologicalComplex (ComplexShape.down ℕ)).map g) n :=
+  Functor.comparisonHomologyMap_eq_of_augmentation U (relativeTensorFunctor M)
+    Q P X Y α β σP hQ kP f g hg n
+
+/-- Let R be commutative, U : ModuleCat_v(R) → C additive with C preadditive,
+and M : ModuleCat_w(R). Let Q → X[0] and P → X[0] be contractingly split after U,
+with U-relative-projective terms and both augmentation and differential kernels
+preserved by U. The forward map of their degree-n tensor homology isomorphism
+is the tensor comparison from Q to P over the identity of X. -/
+theorem tensorRelativeResolutionHomologyIso_hom (M : ModuleCat.{w} R)
+    (Q P : ChainComplex (ModuleCat.{v} R) ℕ) (X : ModuleCat.{v} R)
+    (α : Q ⟶ (ChainComplex.single₀ (ModuleCat.{v} R)).obj X)
+    (β : P ⟶ (ChainComplex.single₀ (ModuleCat.{v} R)).obj X)
+    (σQ : Functor.AugmentationSplit U Q X α)
+    (σP : Functor.AugmentationSplit U P X β)
+    (hQ : ∀ n, U.IsRelativeProjective (Q.X n))
+    (hP : ∀ n, U.IsRelativeProjective (P.X n))
+    [PreservesLimit (parallelPair (α.f 0) 0) U]
+    [PreservesLimit (parallelPair (β.f 0) 0) U]
+    (kQ : ∀ n, PreservesLimit (parallelPair (Q.d (n + 1) n) 0) U)
+    (kP : ∀ n, PreservesLimit (parallelPair (P.d (n + 1) n) 0) U) (n : ℕ) :
+    (tensorRelativeResolutionHomologyIso U M Q P X α β σQ σP hQ hP kQ kP n).hom =
+      tensorRelativeComparisonHomologyMap U M Q P X X α β σP hQ kP (𝟙 X) n :=
+  Functor.comparisonHomologyIso_hom U (relativeTensorFunctor M)
+    Q P X α β σQ σP hQ hP kQ kP n
 
 end ModuleCat

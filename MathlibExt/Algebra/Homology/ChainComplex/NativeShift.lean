@@ -160,7 +160,7 @@ lemma nativeShiftObjXIso'_inv_map_f_hom {K L : ChainComplex C ℤ}
 
 variable (C)
 
-/-- Let C be a preadditive category, The signed shift by zero has a canonical natural isomorphism η
+/-- Let C be a preadditive category. The signed shift by zero has a canonical natural isomorphism η
 : S₀ ≅ id on integer chain complexes. Its components are the reindexing maps identifying
 K_{−(−i)} with K_i. -/
 noncomputable def nativeShiftZero : nativeShift C 0 ≅ 𝟭 (ChainComplex C ℤ) :=
@@ -283,7 +283,8 @@ lemma nativeShiftAdd'_add_zero (a : ℤ) :
         isoWhiskerLeft (nativeShift C a) (nativeShiftZero C).symm := by
   ext K i
   change ((nativeShiftAdd' C a 0 a (add_zero a)).hom.app K).f i =
-    (HomologicalComplex.id ((nativeShift C a).obj K)).f i ≫ ((nativeShiftZero C).inv.app ((nativeShift C a).obj K)).f i
+    (HomologicalComplex.id ((nativeShift C a).obj K)).f i ≫
+      ((nativeShiftZero C).inv.app ((nativeShift C a).obj K)).f i
   dsimp only [HomologicalComplex.id]
   rw [Category.id_comp, nativeShiftAdd'_hom_app_f,
     nativeShiftZero_inv_app_f]
@@ -301,7 +302,8 @@ lemma nativeShiftAdd_assoc (a b c : ℤ) :
   ext K i
   change ((nativeShiftAdd C (a + b) c).hom.app K).f i ≫
       ((nativeShift C c).map ((nativeShiftAdd C a b).hom.app K)).f i ≫
-        (HomologicalComplex.id (((nativeShift C a ⋙ nativeShift C b) ⋙ nativeShift C c).obj K)).f i =
+        (HomologicalComplex.id
+          (((nativeShift C a ⋙ nativeShift C b) ⋙ nativeShift C c).obj K)).f i =
     ((nativeShiftAdd' C a (b + c) ((a + b) + c) (add_assoc a b c).symm).hom.app K).f i ≫
       ((nativeShiftAdd C b c).hom.app ((nativeShift C a).obj K)).f i
   dsimp only [HomologicalComplex.id]
