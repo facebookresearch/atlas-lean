@@ -2,7 +2,7 @@
 
 Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, let $K$ be an
 imaginary quadratic field of discriminant $D_K \ne -3, -4$ in which every prime factor of $N$ splits, and let
-$y_K \in E(K)$ be [the Heegner point](../heegner-point-construction/heegner-point-of-an-elliptic-curve.md) for a modular parametrization of $E$.
+$y_K \in E(K)$ be [the Heegner point](../heegner-points-on-x0-n/heegner-point-of-an-elliptic-curve.md) for a modular parametrization of $E$.
 Assume that $y_K$ has infinite order in $E(K)$. Then
 
 1. the Mordell–Weil group $E(K)$ has rank $1$, so that $y_K$ generates a subgroup of finite index;
@@ -45,7 +45,7 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Depends on
 
-- [The Heegner point of an elliptic curve over an imaginary quadratic field](../heegner-point-construction/heegner-point-of-an-elliptic-curve.md), for $y_K$
+- [The Heegner point of an elliptic curve over an imaginary quadratic field](../heegner-points-on-x0-n/heegner-point-of-an-elliptic-curve.md), for $y_K$
 - [The Shafarevich–Tate group of an elliptic curve over a number field](../cassels-tate-pairing/elliptic-tate-shafarevich.md), for $\text{Ш}(E/K)$
 
 ## Proof depends on

@@ -2,7 +2,7 @@
 
 Let $N \ge 1$, let $K \subset \mathbb{C}$ be an imaginary quadratic field of discriminant $D_K \ne -3, -4$ in which every
 prime factor of $N$ splits, let $x_1 \in X_0(N)(K_1)$ be the Heegner point of
-[the construction](../heegner-point-construction/rationality-of-heegner-points.md), rational over the Hilbert class
+[the construction](../heegner-points-on-x0-n/rationality-of-heegner-points.md), rational over the Hilbert class
 field $K_1$, let $\tau$ be complex conjugation, which preserves $K_1$, and let $w_N$ be the Fricke involution of
 $X_0(N)$, which sends a cyclic $N$-isogeny $\varphi \colon A \to A'$ to its dual $\varphi' \colon A' \to A$. Then
 
@@ -28,8 +28,8 @@ This node is still to be broken down. A good expansion states and links:
 
 ## Depends on
 
-- [Heegner points are rational over the Hilbert class field](../heegner-point-construction/rationality-of-heegner-points.md), for $x_1$ and $K_1$
-- [Complex points of $X_0(N)$ as cyclic $N$-isogenies](../heegner-point-construction/complex-points-of-x0-n-as-cyclic-isogenies.md), for the description of $w_N$ on cyclic isogenies
+- [Heegner points are rational over the Hilbert class field](../heegner-points-on-x0-n/rationality-of-heegner-points.md), for $x_1$ and $K_1$
+- [Complex points of $X_0(N)$ as cyclic $N$-isogenies](../heegner-points-on-x0-n/complex-points-of-x0-n-as-cyclic-isogenies.md), for the description of $w_N$ on cyclic isogenies
 
 ## Proof depends on
 

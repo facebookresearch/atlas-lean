@@ -25,15 +25,15 @@ depends on $\mathcal{N}$ only up to sign and torsion.
 
 Proof: the two facts are the [rationality of $x_1$ over $K_1$](rationality-of-heegner-points.md) and the
 [independence of the choice of $\mathcal{N}$](independence-of-the-heegner-point-from-the-ideal.md), for discriminants of
-either parity. The construction is laid out on the pages beside this one: the
-[ideal $\mathcal{N}$](ideal-of-index-n-under-the-heegner-hypothesis.md), the
-[cyclic isogeny](kernel-of-the-heegner-isogeny.md) and the
+either parity. The construction uses the
+[ideal $\mathcal{N}$](../heegner-point-construction/exists-ideal-is-add-cyclic-quotient-of-h.md), the
+[cyclic isogeny](../heegner-point-construction/heegner-isogeny-is-add-cyclic-ker.md) and the
 [point $x_1$ of $X_0(N)$](complex-points-of-x0-n-as-cyclic-isogenies.md).
 
 ## Depends on
 
-- [An ideal of index $N$ under the Heegner hypothesis](ideal-of-index-n-under-the-heegner-hypothesis.md), for $\mathcal{N}$
-- [The Heegner isogeny is cyclic of degree $N$](kernel-of-the-heegner-isogeny.md), for the cyclic $N$-isogeny $\mathbb{C}/\mathcal{O} \to \mathbb{C}/\mathcal{N}^{-1}$
+- [An ideal of index $N$ under the Heegner hypothesis](../heegner-point-construction/exists-ideal-is-add-cyclic-quotient-of-h.md), for $\mathcal{N}$
+- [The Heegner isogeny is cyclic of degree $N$](../heegner-point-construction/heegner-isogeny-is-add-cyclic-ker.md), for the cyclic $N$-isogeny $\mathbb{C}/\mathcal{O} \to \mathbb{C}/\mathcal{N}^{-1}$
 - [Complex points of $X_0(N)$ as cyclic $N$-isogenies](complex-points-of-x0-n-as-cyclic-isogenies.md), for the point $x_1$
 - [Modular parametrization of an elliptic curve over $\mathbb{Q}$](../../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md), for $\varphi$ and $X_0(N)$
 - [Hilbert class field of a number field](../../algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/is-hilbert-class-field.md), for $K_1$

@@ -8,7 +8,7 @@ Rational points of varieties over number fields: torsion and rank of elliptic cu
 - [Local-global conjecture for Apollonian circle packings](local-global-conjecture-for-apollonian-circle-pa/README.md)
 - [Mazur's torsion theorem](mazur-s-torsion-theorem/README.md)
 - [Ranks of the elliptic curves $y^2 = x^3 - 2pqx$](ranks-of-the-elliptic-curves-y-x-2pqx/README.md)
-- [Construction of the Heegner point](heegner-point-construction/README.md)
+- [Heegner points on $X_0(N)$](heegner-points-on-x0-n/README.md)
 - [Gross–Zagier formula for the Heegner point](gross-zagier-formula.md)
 - [Gross–Zagier–Zhang formula: when the Heegner point has infinite order](gross-zagier-zhang-formula.md)
 - [Complex conjugation and the trace of the Heegner point](complex-conjugation-and-the-trace/README.md)

@@ -9,7 +9,7 @@ pairs $(A, C)$ of a complex elliptic curve $A$ and a cyclic subgroup $C \subset 
 cyclic $N$-isogenies $A \to A/C$.
 
 In particular the cyclic $N$-isogeny $\mathbb{C}/\mathcal{O}_K \to \mathbb{C}/\mathcal{N}^{-1}$ of the
-[Heegner isogeny page](kernel-of-the-heegner-isogeny.md), with kernel $\mathcal{N}^{-1}/\mathcal{O}_K$, defines a point
+[Heegner isogeny page](../heegner-point-construction/heegner-isogeny-is-add-cyclic-ker.md), with kernel $\mathcal{N}^{-1}/\mathcal{O}_K$, defines a point
 $x_1 \in X_0(N)(\mathbb{C})$.
 
 ## Expansion
@@ -26,7 +26,7 @@ This node is still to be broken down. A good expansion states and links:
 
 - [Modular curve of a group of level $N$ and its standard model over $\mathbb{Q}$](../../modular-forms-q-series/modular-forms/modular-curve-of-a-group-of-level-n.md), for $X_0(N)$ and its complex points
 - [Congruence subgroup $\Gamma_0(N)$](../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md)
-- [The Heegner isogeny is cyclic of degree $N$](kernel-of-the-heegner-isogeny.md), for the point $x_1$
+- [The Heegner isogeny is cyclic of degree $N$](../heegner-point-construction/heegner-isogeny-is-add-cyclic-ker.md), for the point $x_1$
 
 ## Proof depends on
 

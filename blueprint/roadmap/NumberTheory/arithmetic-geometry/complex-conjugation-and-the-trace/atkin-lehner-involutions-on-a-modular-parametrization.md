@@ -39,7 +39,7 @@ This node is still to be broken down. A good expansion states and links:
 
 - [Modular parametrization of an elliptic curve over $\mathbb{Q}$](../../modular-forms-q-series/modular-forms/modular-parametrization-of-an-elliptic-curve.md), for $\varphi$ and the constant $c$
 - [Fricke eigenvalue of a newform](../../zeta-l-functions/root-number-and-parity/fricke-eigenvalue-of-a-newform.md), for $\varepsilon$ and $w_N^*\omega_f = \varepsilon\,\omega_f$
-- [Complex points of $X_0(N)$ as cyclic $N$-isogenies](../heegner-point-construction/complex-points-of-x0-n-as-cyclic-isogenies.md), for the points of $X_0(N)$ on which $w_Q$ acts
+- [Complex points of $X_0(N)$ as cyclic $N$-isogenies](../heegner-points-on-x0-n/complex-points-of-x0-n-as-cyclic-isogenies.md), for the points of $X_0(N)$ on which $w_Q$ acts
 
 ## Proof depends on
 

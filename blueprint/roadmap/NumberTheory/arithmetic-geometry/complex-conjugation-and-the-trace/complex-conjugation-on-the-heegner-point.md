@@ -2,7 +2,7 @@
 
 Let $E$ be an elliptic curve over $\mathbb{Q}$ of conductor $N$, let $K$ be an
 imaginary quadratic field of discriminant $D_K \ne -3, -4$ in which every prime factor of $N$ splits, and let
-$y_K \in E(K)$ be [the Heegner point](../heegner-point-construction/heegner-point-of-an-elliptic-curve.md). Let $\tau$ be complex conjugation, the
+$y_K \in E(K)$ be [the Heegner point](../heegner-points-on-x0-n/heegner-point-of-an-elliptic-curve.md). Let $\tau$ be complex conjugation, the
 nontrivial automorphism of $K$, and let $w(E) \in \{1, -1\}$ be the root number of $E$, the sign in the functional
 equation of
 [its $L$-function](../../zeta-l-functions/root-number-and-parity/functional-equation-of-the-l-function-of-an-elliptic-curve.md). Then
@@ -18,14 +18,14 @@ $x_1^\tau = w_N(x_1^{\sigma'})$ for some $\sigma' \in \operatorname{Gal}(K_1/K)$
 $y_1^\tau = \varepsilon \, y_1^{\sigma'} + \varphi(0)$, where $\varphi(0)$ has finite order by the
 [finiteness of the cuspidal class](cuspidal-divisor-of-x0-n-has-finite-order.md) and
 $\varepsilon$ is the Fricke eigenvalue of the newform of $E$. Summing over $\operatorname{Gal}(K_1/K)$ by
-[the trace lemma](trace-under-a-dihedral-action.md) gives
+[the trace lemma](../heegner-point-construction/smul-sum-smul-eq-of-mul-eq-inv-mul.md) gives
 $\tau(y_K) = \varepsilon y_K + t$ with $t$ of finite order, and $\varepsilon = -w(E)$ by item 2 of
 [the functional equation](../../zeta-l-functions/root-number-and-parity/functional-equation-of-the-l-function-of-an-elliptic-curve.md). When
 $w(E) = -1$, the point $y_K + \tau(y_K) = 2y_K + t$ is fixed by $\operatorname{Gal}(K/\mathbb{Q})$, so lies in $E(\mathbb{Q})$.
 
 ## Depends on
 
-- [The Heegner point of an elliptic curve over an imaginary quadratic field](../heegner-point-construction/heegner-point-of-an-elliptic-curve.md), for $y_K$
+- [The Heegner point of an elliptic curve over an imaginary quadratic field](../heegner-points-on-x0-n/heegner-point-of-an-elliptic-curve.md), for $y_K$
 - [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](../../zeta-l-functions/root-number-and-parity/functional-equation-of-the-l-function-of-an-elliptic-curve.md), for $w(E)$
 
 ## Proof depends on
@@ -33,8 +33,8 @@ $w(E) = -1$, the point $y_K + \tau(y_K) = 2y_K + t$ is fixed by $\operatorname{G
 - [Complex conjugation on Heegner points of $X_0(N)$](complex-conjugation-on-heegner-points-of-x0-n.md), for $x_1^\tau = w_N(x_1^{\sigma'})$
 - [Atkin–Lehner involutions on a modular parametrization](atkin-lehner-involutions-on-a-modular-parametrization.md), for $\varphi(w_N x) = \varepsilon \varphi(x) + \varphi(0)$, its case $Q = N$
 - [The cuspidal divisor $(0) - (\infty)$ has finite order](cuspidal-divisor-of-x0-n-has-finite-order.md), for $\varphi(0)$ of finite order
-- [Traces under a dihedral action](trace-under-a-dihedral-action.md), for the passage from $y_1$ to $y_K$
-- [The Heegner point of an elliptic curve over an imaginary quadratic field](../heegner-point-construction/heegner-point-of-an-elliptic-curve.md), for $x_1$, $y_1$ and the trace
+- [Traces under a dihedral action](../heegner-point-construction/smul-sum-smul-eq-of-mul-eq-inv-mul.md), for the passage from $y_1$ to $y_K$
+- [The Heegner point of an elliptic curve over an imaginary quadratic field](../heegner-points-on-x0-n/heegner-point-of-an-elliptic-curve.md), for $x_1$, $y_1$ and the trace
 - [Analytic continuation and functional equation of the $L$-function of an elliptic curve over $\mathbb{Q}$](../../zeta-l-functions/root-number-and-parity/functional-equation-of-the-l-function-of-an-elliptic-curve.md), for $w(E) = -\varepsilon$ (its item 2)
 
 ## Sources
