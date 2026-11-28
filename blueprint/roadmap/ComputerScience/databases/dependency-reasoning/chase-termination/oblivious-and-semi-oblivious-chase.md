@@ -21,6 +21,7 @@ Both variants are eager, in contrast with the [standard (restricted) chase](rest
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](../../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
+- [Least Herbrand model](../../../programming-language-semantics/effects-modules-and-logic-programming/least-model.md)
 
 ## Proof depends on
 

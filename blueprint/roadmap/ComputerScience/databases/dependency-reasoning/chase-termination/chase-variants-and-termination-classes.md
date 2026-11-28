@@ -2,7 +2,7 @@
 
 The standard, oblivious, semi-oblivious and core chase differ in which triggers of a set of tuple-generating dependencies they apply. Each variant defines classes of dependency sets whose chase terminates on all instances along every sequence or along some sequence; the core chase is defined here, the other variants on their own pages.
 
-**Setting.** An instance is a finite set of atoms over constants and labeled nulls. For a finite set $\Sigma$ of tuple-generating dependencies (tgds) $\alpha(\bar{x}, \bar{y}) \to \exists \bar{z}\, \beta(\bar{x}, \bar{z})$, a *trigger* on an instance $I$ is a pair $(\xi, h)$ of a tgd $\xi = \alpha \to \beta \in \Sigma$ and a homomorphism $h$ with $h(\alpha) \subseteq I$; it is *active* if no extension $h'$ of $h$ has $h'(\beta) \subseteq I$. *Firing* it adds $h'(\beta)$ for the extension $h'$ that maps $\bar{z}$ to fresh nulls.
+**Setting.** An instance is a finite set of atoms over constants and labeled nulls. A homomorphism between instances is a map on their domains that is the identity on constants, extended to atoms; an endomorphism of $I$ is a homomorphism from $I$ to $I$ (Section 2 of the source). For a finite set $\Sigma$ of tuple-generating dependencies (tgds) $\alpha(\bar{x}, \bar{y}) \to \exists \bar{z}\, \beta(\bar{x}, \bar{z})$, a *trigger* on an instance $I$ is a pair $(\xi, h)$ of a tgd $\xi = \alpha \to \beta \in \Sigma$ and a homomorphism $h$ with $h(\alpha) \subseteq I$; it is *active* if no extension $h'$ of $h$ has $h'(\beta) \subseteq I$. *Firing* it adds $h'(\beta)$ for the extension $h'$ that maps $\bar{z}$ to fresh nulls.
 
 **Variants.**
 
@@ -12,12 +12,11 @@ The standard, oblivious, semi-oblivious and core chase differ in which triggers 
 
 **Termination classes (Grahne and Onet).** For $\star \in \{\mathsf{std}, \mathsf{obl}, \mathsf{sobl}, \mathsf{core}\}$, $\mathsf{CT}^{\star}_{\forall\forall}$ is the class of finite tgd sets $\Sigma$ such that, for every instance $I$, every $\star$-chase sequence with $\Sigma$ from $I$ (every fair sequence, for the standard chase) terminates, and $\mathsf{CT}^{\star}_{\forall\exists}$ the class of $\Sigma$ such that, for every instance $I$, some $\star$-chase sequence terminates.
 
-For the oblivious, semi-oblivious and core chase both classes coincide, $\mathsf{CT}^{\mathsf{std}}_{\forall\forall} \subsetneq \mathsf{CT}^{\mathsf{std}}_{\forall\exists}$ (the order of firing can decide termination of the standard chase), and $\mathsf{CT}^{\mathsf{obl}}_{\forall\forall} \subsetneq \mathsf{CT}^{\mathsf{sobl}}_{\forall\forall}$. The core of an instance is a minimal retract, unique up to isomorphism. In the notation of Carral, Gerlach, Larroque and Thomazo, $\mathsf{CT}^{\mathsf{std}}_{\forall\forall}$ is $\mathsf{CT}^{\mathrm{rest}}_{R\,\forall}$.
+For the oblivious, semi-oblivious and core chase both classes coincide, $\mathsf{CT}^{\mathsf{std}}_{\forall\forall} \subsetneq \mathsf{CT}^{\mathsf{std}}_{\forall\exists}$ (the order of firing can decide termination of the standard chase), and $\mathsf{CT}^{\mathsf{obl}}_{\forall\forall} \subsetneq \mathsf{CT}^{\mathsf{sobl}}_{\forall\forall}$. A subinstance $C \subseteq I$ is a *core* of $I$ if some endomorphism $h$ of $I$ has $h(I) \subseteq C$ and no endomorphism $g$ has $g(C) \subsetneq C$; all cores of $I$ are isomorphic, so one speaks of the core of $I$ (Section 2). Since homomorphisms fix constants, the core of a database without nulls is the database itself: for $\{R(a), R(b)\}$ with constants $a, b$ it is the whole instance, unlike the core of a finite structure in the sense of homomorphisms that may move every element. In the notation of Carral, Gerlach, Larroque and Thomazo, $\mathsf{CT}^{\mathsf{std}}_{\forall\forall}$ is $\mathsf{CT}^{\mathrm{rest}}_{R\,\forall}$.
 
 ## Depends on
 
 - [Tuple- and equality-generating dependencies and the chase](../../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
-- [Cores of finite relational structures](../../../../TheoryOfComputation/np-completeness/satisfiability/finite-domain-csp-dichotomy/cores-of-finite-relational-structures.md)
 - [Restricted chase sequences and their termination](restricted-chase-sequences.md)
 - [Oblivious and semi-oblivious chase termination](oblivious-and-semi-oblivious-chase.md)
 

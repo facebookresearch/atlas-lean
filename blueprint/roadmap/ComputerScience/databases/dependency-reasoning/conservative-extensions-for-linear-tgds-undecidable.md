@@ -22,6 +22,7 @@ Hom-conservativity implies CQ-conservativity but not conversely. The same paper 
 
 - [Tuple- and equality-generating dependencies and the chase](../dependencies-and-the-chase/tuple-and-equality-generating-dependencies-and-the-chase.md)
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Guarded and weakly guarded tuple-generating dependencies](guarded-tgds/guarded-and-weakly-guarded-tgds.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
