@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.LucasTetrahedralRecurrence
 public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.LucasPolytopicNumberHasSumInvLucasBracketMulSucc
 public import MathlibExt.NumberTheory.LucasPolytopicNumberEvenLambertSeries
+public import MathlibExt.NumberTheory.LucasPolytopicNumberDerivative
 
 /-!
 # Simplicial `d`-polytopic numbers on Lucas sequences
@@ -124,81 +125,6 @@ public theorem_wanted sum_cubes_specializations (n : ℕ) :
       ∑ k ∈ Finset.Icc 1 n, q ^ (2 * (n - k)) * ((1 - q ^ (2 * k)) / (1 - q ^ 2)) *
           ((1 - q ^ k) / (1 - q)) ^ 2 =
         ((1 - q ^ (n + 1)) * (1 - q ^ n) / ((1 - q) * (1 - q ^ 2))) ^ 2
-
-/-- **Lucas derivative.** For real numbers $\varphi$ and $\varphi'$, the Lucas derivative
-$D_{\varphi,\varphi'}$ sends a function $f : \mathbb{R} \to \mathbb{R}$ to the function whose
-value at $x \ne 0$ is $(f(\varphi x) - f(\varphi' x))/((\varphi - \varphi')x)$, read as $0$ when
-$\varphi = \varphi'$, and whose value at $0$ is the derivative $f'(0)$, read as $0$ when $f$ is
-not differentiable at $0$.
-
-In the paper $\varphi \ne \varphi'$ are the roots of $x^2 - sx - t$; its separate definition for
-$s^2 + 4t = 0$ is not covered.
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Section 2 (definition of the
-Lucas-derivative). -/
-noncomputable def lucasDerivative (φ φ' : ℝ) (f : ℝ → ℝ) (x : ℝ) : ℝ :=
-  if x = 0 then deriv f 0 else (f (φ * x) - f (φ' * x)) / ((φ - φ') * x)
-
-/-- **The Lucas derivative away from the origin.** For all real numbers $\varphi$, $\varphi'$
-and $x \ne 0$ and every function $f : \mathbb{R} \to \mathbb{R}$, the Lucas derivative
-$D_{\varphi,\varphi'}$ satisfies
-$D_{\varphi,\varphi'} f(x) = (f(\varphi x) - f(\varphi' x))/((\varphi - \varphi')x)$, where the
-quotient is read as $0$ when $\varphi = \varphi'$.
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Section 2 (definition of the
-Lucas-derivative). -/
-theorem lucasDerivative_of_ne_zero (φ φ' : ℝ) (f : ℝ → ℝ) {x : ℝ} (hx : x ≠ 0) :
-    lucasDerivative φ φ' f x = (f (φ * x) - f (φ' * x)) / ((φ - φ') * x) := by
-  simp [lucasDerivative, hx]
-
-/-- **The Lucas derivative at the origin.** For all real numbers $\varphi$, $\varphi'$ and every
-function $f : \mathbb{R} \to \mathbb{R}$, the Lucas derivative $D_{\varphi,\varphi'}$ satisfies
-$D_{\varphi,\varphi'} f(0) = f'(0)$, where $f'(0)$ is read as $0$ when $f$ is not differentiable
-at $0$.
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Section 2 (definition of the
-Lucas-derivative). -/
-theorem lucasDerivative_zero (φ φ' : ℝ) (f : ℝ → ℝ) :
-    lucasDerivative φ φ' f 0 = deriv f 0 := by
-  simp [lucasDerivative]
-
-/-- **The Lucas derivative of the identity.** For distinct real numbers $\varphi \ne \varphi'$,
-the Lucas derivative $D_{\varphi,\varphi'}$ of the identity function $y \mapsto y$ equals $1$ at
-every real number $x$.
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Section 2 (definition of the
-Lucas-derivative). -/
-theorem lucasDerivative_id {φ φ' : ℝ} (h : φ ≠ φ') (x : ℝ) :
-    lucasDerivative φ φ' (fun y => y) x = 1 := by
-  by_cases hx : x = 0
-  · simp [lucasDerivative, hx]
-  · rw [lucasDerivative_of_ne_zero _ _ _ hx, ← sub_mul]
-    exact div_self (mul_ne_zero (sub_ne_zero.mpr h) hx)
-
-/-- **Iterated Lucas derivatives of $1/(1 - x)$.** Let $(s, t)$ be nondegenerate Lucas
-parameters, let $\varphi \ne \varphi'$ be real numbers with $\varphi + \varphi' = s$ and
-$\varphi\varphi' = -t$, write $D_{\varphi,\varphi'}$ for the Lucas derivative and
-$\{n\}_{s,t}!$ for the $s,t$-factorial. For every natural number $n$ and every real number $x$
-with $\prod_{k=0}^{n} (1 - \varphi^{n-k}\varphi'^k x) \ne 0$, the $n$-fold iterate of
-$D_{\varphi,\varphi'}$ applied to the function $y \mapsto 1/(1 - y)$ has value at $x$
-$$\frac{\{n\}_{s,t}!}{\prod_{k=0}^{n} (1 - \varphi^{n-k}\varphi'^k x)}.$$
-
-With $q = \varphi'/\varphi$ the denominator is the $q$-Pochhammer symbol
-$(\varphi^n x; q)_{n+1}$ of the paper, which states the identity for $n \ge 1$. Real distinct
-$\varphi, \varphi'$ exist only when $s^2 + 4t > 0$.
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Theorem 8
-(`jis-2025-25.5.6-thm-8`). -/
-public theorem_wanted iterate_lucasDerivative_inv_one_sub (P : LucasParameters) (φ φ' : ℝ)
-    (hsum : φ + φ' = P.s) (hprod : φ * φ' = -P.t) (hne : φ ≠ φ') (n : ℕ) (x : ℝ)
-    (hx : ∏ k ∈ Finset.range (n + 1), (1 - φ ^ (n - k) * φ' ^ k * x) ≠ 0) :
-    (lucasDerivative φ φ')^[n] (fun y => 1 / (1 - y)) x =
-      lucasFactorial P n / ∏ k ∈ Finset.range (n + 1), (1 - φ ^ (n - k) * φ' ^ k * x)
 
 /-- **Generating function of the simplicial Lucas-polytopic numbers.** Let $(s, t)$ be
 nondegenerate Lucas parameters, let $\varphi, \varphi'$ be real numbers with

@@ -17,6 +17,13 @@ public import Mathlib.Basic.Real.Basic
 This file formalizes the definitions in Orozco López,
 *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*:
 <https://cs.uwaterloo.ca/journals/JIS/VOL28/Orozco/oroz2.tex>.
+
+## References
+
+* Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
+  Journal of Integer Sequences 28 (2025), Article 25.5.6, pp. 1–19, §2 (Lucas factorials).
+* The factorial successor law was previously `factorial_succ` in
+  `MathlibExt.NumberTheory.LucasnomialSum` and `MathlibExt.NumberTheory.LucasTetrahedralRecurrence`.
 -/
 
 @[expose] public section
@@ -69,6 +76,18 @@ real number $\{n\}_{s,t}! = \prod_{k=1}^{n} \{k\}_{s,t}$, the product of
 $\{1\}_{s,t}, \dots, \{n\}_{s,t}$; for $n = 0$ it is the empty product $1$. -/
 def lucasFactorial (P : LucasParameters) (n : ℕ) : ℝ :=
   ∏ k ∈ Finset.range n, lucasBracket P (k + 1)
+
+/-- **Lucas factorial at zero.** For nondegenerate Lucas parameters $(s,t)$,
+$\{0\}_{s,t}! = 1$. -/
+@[simp]
+theorem lucasFactorial_zero (P : LucasParameters) : lucasFactorial P 0 = 1 :=
+  Finset.prod_empty
+
+/-- **Lucas factorial at a successor.** For nondegenerate Lucas parameters $(s,t)$ and every
+natural number $n$, $\{n+1\}_{s,t}! = \{n\}_{s,t}!\,\{n+1\}_{s,t}$. -/
+theorem lucasFactorial_succ (P : LucasParameters) (n : ℕ) :
+    lucasFactorial P (n + 1) = lucasFactorial P n * lucasBracket P (n + 1) :=
+  Finset.prod_range_succ _ _
 
 theorem lucasFactorial_ne_zero (P : LucasParameters) (n : ℕ) :
     lucasFactorial P n ≠ 0 := by

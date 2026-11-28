@@ -21,10 +21,6 @@ Lucas tetrahedral numbers and a Lucas triangular number.
 
 namespace MetaMathlibExt
 
-private theorem factorial_succ (P : LucasParameters) (n : ℕ) :
-    lucasFactorial P (n + 1) = lucasFactorial P n * lucasBracket P (n + 1) :=
-  Finset.prod_range_succ _ _
-
 private theorem bracket_succ_succ (P : LucasParameters) (n : ℕ) :
     lucasBracket P (n + 2) = P.s * lucasBracket P (n + 1) + P.t * lucasBracket P n := rfl
 
@@ -42,8 +38,7 @@ public theorem lucasTetrahedral_recurrence (P : LucasParameters) (n : ℕ) :
   cases n with
   | zero =>
     rw [lucasnomial_eq_zero_of_lt P (by decide : 2 < 3)]
-    simp [lucasnomial, lucasBracket, lucasBracketAux, lucasFactorial_ne_zero,
-      show lucasFactorial P 0 = 1 by rfl]
+    simp [lucasnomial, lucasBracket, lucasBracketAux, lucasFactorial_ne_zero]
   | succ n =>
     change lucasnomial P (n + 4) 3 =
       P.s * P.t * lucasnomial P (n + 3) 3 + lucasBracket P (n + 2) * lucasnomial P (n + 3) 2
@@ -55,7 +50,7 @@ public theorem lucasTetrahedral_recurrence (P : LucasParameters) (n : ℕ) :
       ring
     simp (disch := omega) only [lucasnomial, ite_eq_left, Nat.add_sub_cancel,
       show n + 4 - 3 = n + 1 by omega, show n + 3 - 2 = n + 1 by omega]
-    rw [factorial_succ P (n + 3), factorial_succ P 2, factorial_succ P n, hbracket]
+    rw [lucasFactorial_succ P (n + 3), lucasFactorial_succ P 2, lucasFactorial_succ P n, hbracket]
     field_simp [lucasFactorial_ne_zero, lucasBracket_ne_zero P (Nat.succ_ne_zero _)]
     ring
 
