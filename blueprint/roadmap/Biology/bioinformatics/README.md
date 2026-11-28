@@ -2,6 +2,8 @@
 
 Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering and network reconstruction.
 
+- [Sequencing, assembly and sequence analysis](sequencing-assembly-and-sequence-analysis/README.md)
+- [Omics, imaging and network data analysis](omics-imaging-and-network-data-analysis/README.md)
 - [Sequence alignment](sequence-alignment/README.md)
 - [ARACNE gene network reconstruction](aracne-gene-network-reconstruction/README.md)
 - [ChromHMM chromatin-state model](chromhmm-chromatin-state-model/README.md)

@@ -1,0 +1,24 @@
+# Marginal distributions of hierarchic first-order reaction networks
+
+**Networks.** Species are split into $n_{\mathrm{ind}}$ independent species $S^{\mathrm{ind}}$ and $n_{\mathrm{dep}}$ dependent species $S^{\mathrm{dep}}$. A two-level **hierarchic first-order network** consists of
+
+- system I: reactions $Q^{\mathsf T} S^{\mathrm{ind}} \to R^{\mathsf T} S^{\mathrm{ind}} + R^{\mathsf T} S^{\mathrm{dep}}$ of order at most one, each producing at most one independent molecule but any number of dependent molecules (catalytic production and splitting), and
+- system II: monomolecular reactions among dependent species ($Q^{\mathsf T} S^{\mathrm{dep}} \to R^{\mathsf T} S^{\mathrm{dep}}$, at most one product molecule).
+
+The chemical master equation for the copy-number distribution is equivalent to a first-order linear PDE for the probability generating function $g(s,t) = \mathbb E[\prod_j s_j^{N_j(t)}]$, solved along characteristics $\dot s = \Psi(s)$. For these networks the characteristic system is *hierarchically linear*: the dependent variables obey an autonomous linear system and the independent variables a linear system whose coefficients depend only on the dependent variables.
+
+**Generalized distributions.** A distribution with generating function $g_1(g_2(s))$ is $P_1$ generalized by $P_2$. A *discrete compound Poisson* law has $g(s) = \exp\bigl(\sum_{i \ge 1}\lambda\alpha_i(s^i - 1)\bigr)$; it is $\mathrm{DCP}_N$ if this exponent has degree $N$ in $s$. A *Khatri Type B* law has $g(s) = (\sum_{i \ge 0}\alpha_i s^i)^\nu$; it is $\mathrm{KTB}_N$ if the inner polynomial has degree $N$. $\mathrm{DCP}_1$ and $\mathrm{KTB}_1$ are exactly Poisson and binomial.
+
+1. **Solvability.** Every hierarchically linear ODE system is solvable by matrix exponentials (Magnus series if the coefficient matrices do not commute in time). Consequently the master equation of every hierarchic first-order network has an analytical solution: inverting the characteristic flow $s = e^{C}s_0 + v$ gives $g(s,t)$ explicitly from the initial generating function.
+2. **Independent species are unimodal.** For Poissonian or deterministic initial conditions, each independent species has, at every $t > 0$, a Poisson distribution or a convolution of binomial and Poisson distributions; these are unimodal for all parameter values.
+3. **Dependent species can be multimodal.** Let $J(s_X)$ be the coefficient matrix of the independent part of the characteristic system, viewed as a function of the generating variable $s_X$ of a dependent species $X$ (all other variables set to $1$). If an eigenvalue of $J$ depends on $s_X$, the marginal of $X$ is $\mathrm{DCP}_\infty$ (Poissonian initial data) or $\mathrm{KTB}_\infty$ (deterministic initial data). These classes, like $\mathrm{DCP}_N, \mathrm{KTB}_N$ for $N = 2, 3$, contain multimodal members, so the marginal of $X$ is *conditionally multimodal* at all $t > 0$ in the sense of the source's Definition 8: its distribution class contains multimodal members, although a given network need not reach them (in the source's catalysis example the criterion applies and the marginal is Poisson for every catalytic rate).
+
+In the two-stage transcription–translation model (mRNA produced and degraded, protein produced from mRNA and degraded), mRNA is independent and Poisson, while protein falls under item 3 and can be multimodal even without promoter switching.
+
+## Expansion
+
+Item 1 follows level by level: the dependent block is linear with constant coefficients, and substituting its explicit solution into the independent block leaves a linear time-dependent system. For item 2, setting all generating variables except $s_X$ to $1$ reduces the solution for an independent species to a Poisson generating function (Poissonian start) or to a product of binomial and Poisson generating functions (deterministic start); binomial and Poisson laws are strongly unimodal, so their convolution is unimodal. For item 3, $e^{J(s_X)}$ is a polynomial in $J$ with coefficients determined by the eigenvalues; when these depend on $s_X$ the coefficients are transcendental in $s_X$ and the exponent of the generating function has infinite degree, yielding a compound law such as Neyman's Type A distribution $\exp\bigl(\lambda(e^{\phi(s-1)} - 1)\bigr)$, which is bimodal for suitable $\lambda, \phi$. When eigenvalues do not depend on $s_X$, the exponent is a polynomial, and multimodality needs splitting reactions producing several copies of $X$ at once (degree at least $2$).
+
+## Sources
+
+- M. Reis, J. A. Kromer, E. Klipp, "General solution of the chemical master equation and modality of marginal distributions for hierarchic first-order reaction networks", *Journal of Mathematical Biology* (2018), Sections 2–4 (Definitions 2–8, Propositions 1, 3, 6, 7, Lemma 2, Theorems 1–3, Example 5), <https://doi.org/10.1007/s00285-018-1205-2> (PMC6061068).

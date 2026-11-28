@@ -2,6 +2,8 @@
 
 Dynamics of biochemical reaction networks and gene regulatory circuits: mass-action kinetics, enzyme kinetics, ultrasensitivity, feedback, metabolic flux analysis and gene expression noise.
 
+- [Reaction network theory](reaction-network-theory/README.md)
+- [Gene regulation, signalling and cellular models](gene-regulation-and-cellular-models/README.md)
 - [Coherent feed-forward loop](coherent-feed-forward-loop/README.md)
 - [Complex balancing and the deficiency-zero theorem](complex-balancing-and-the-deficiency-zero-theore/README.md)
 - [Genetic toggle switch](genetic-toggle-switch/README.md)
@@ -17,10 +19,6 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Nondegeneracy Conjecture for reaction networks](nondegeneracy-conjecture-for-reaction-networks.md)
 - [Maximal multistationarity of multisite phosphorylation](maximal-multistationarity-of-multisite-phosphorylation.md)
 - [Leak removal in linear compartmental models](leak-removal-in-linear-compartmental-models.md)
-
-- [Gene regulatory network dynamics](gene-regulatory-network-dynamics/README.md)
-- [Stochastic reaction networks](stochastic-reaction-networks/README.md)
-- [Chemical reaction network theory](chemical-reaction-network-theory/README.md)
 
 - [Minimal experiments for identifiable compartmental models](minimal-experiments-for-identifiable-compartmental-models.md)
 - [Three-variable repressilator](three-variable-repressilator/README.md)

@@ -1,0 +1,17 @@
+# Compatibility of level-1 binets
+
+**Setting.** A phylogenetic network $N$ on a finite set $X$ is a rooted acyclic digraph with leaves bijectively labelled by $X$ and no vertex of in- and out-degree $1$; it is *binary* if the root and tree vertices have out-degree $2$ and reticulations have in-degree $2$ and out-degree $1$, and *level-1* if each biconnected component contains at most one reticulation. A *stable ancestor* of $U \subseteq V(N)$ is a vertex outside $U$ lying on every root-to-$U$ path; the lowest one is $\mathrm{LSA}(U)$. The *subnet* $N|_Y$ keeps the vertices on paths from $\mathrm{LSA}(Y)$ to $Y$ and suppresses degree-two vertices and parallel arcs. A **binet** is a network with two leaves; $\mathcal B(N) = \{N|_Y : |Y| = 2\}$. On $\{x, y\}$ there are exactly three binary level-1 binets: the tree type $T(x,y)$ and the reticulate types $R(x;y)$ and $R(y;x)$. A collection of binets is *thin* if it has at most one binet per pair, and *compatible* if some binary network displays all of them.
+
+**Theorem.**
+1. (Structure) If the root of a binary network lies in a non-trivial biconnected component $H$, then $H$ has a lowest vertex $v$ with $\mathrm{LSA}(v) = \rho$; for a simple binary network there are two arc-disjoint directed paths from the root to some lowest vertex of its unique non-trivial biconnected component.
+2. (Reduction to level 1) A thin collection of binary level-1 binets is displayed by some binary network if and only if it is displayed by some binary level-1 network.
+3. (Recursive test) For a thin collection $\mathcal B$ of binary level-1 binets with associated digraph $D_{\mathcal B}$, $\mathcal B$ is displayed by a binary level-1 network iff $D_{\mathcal B}$ has a typed split $A|B$ with $\mathcal B|_A$ and $\mathcal B|_B$ both displayed by binary level-1 networks; this yields a polynomial-time algorithm in $|X|$.
+4. (Reticulation number) If two binary level-1 networks $N_1, N_2$ on $X$ satisfy $\mathcal B(N_1) = \mathcal B(N_2)$, then they have the same number of reticulation vertices, even though they need not be isomorphic.
+
+## Expansion
+
+Part 1 picks, among reticulations of $H$ whose lowest stable ancestor is closest to the root, one that is lowest, and shows by minimizing the number of alternating vertices on undirected paths avoiding a given arc that any counterexample would produce a reticulation with a higher lowest stable ancestor. In the reduction, any network displaying $\mathcal B$ induces a split of $X$ that is either crossed only by tree-type binets or has all crossing reticulate binets pointing into one side (a sink set of $D_{\mathcal B}$); recursively realizing both sides by level-1 networks and joining them either at a tree root, $T(N_A, N_B)$, or under a single reticulation, $R(N_A; N_B)$, displays $\mathcal B$, and induction on $|X|$ gives part 2. For part 4 one first reduces to level-1 networks whose cycles have length three and then argues by induction on $|X|$ that each reticulation leaves a reticulate-binet signature that cannot be produced with a different number of reticulations. Binets do not determine the network: two non-isomorphic trinets can display the same three binets.
+
+## Sources
+
+- L. van Iersel, V. Moulton, E. de Swart, T. Wu, "Binets: fundamental building blocks for phylogenetic networks", Bulletin of Mathematical Biology 79(5) (2017) 1135–1154, Lemma 1, Theorem 1, Corollary 1, Lemmas 2–4 and Theorems 2–4, <https://doi.org/10.1007/s11538-017-0275-4>, PMCID PMC5488434.

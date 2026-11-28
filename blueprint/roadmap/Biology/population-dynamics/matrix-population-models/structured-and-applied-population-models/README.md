@@ -1,0 +1,26 @@
+# Structured, spatial and applied population models
+
+Structured, spatial and stochastic models of cell, tumour, microbial, insect and ecological populations: clonal and lineage dynamics, immunotherapy, biofilms and plasmids, dispersal and integrodifference models, range shifts, fire disturbance, sterile insect releases, consumer–resource transients, stoichiometric food chains and species richness, together with the evolutionary dynamics and games of such populations.
+
+- [Branching models of germinal-centre clonal dynamics](branching-models-of-germinal-centre-clonal-dynamics/README.md)
+- [CAR T-cell dynamics in a lymphoma lymph node](car-t-cell-dynamics-in-a-lymphoma-lymph-node/README.md)
+- [Continuum biofilm models](continuum-biofilm-models/README.md)
+- [Evolutionary dynamics and games](evolutionary-dynamics-and-games/README.md)
+- [Fitness-gradient dispersal of two species](fitness-gradient-dispersal-of-two-species/README.md)
+- [Impulsive fire disturbance in savanna models](impulsive-fire-disturbance-in-savanna-models/README.md)
+- [Integrodifference equations in random environments](integrodifference-equations-in-random-environments/README.md)
+- [Logistic equations with piecewise constant arguments](logistic-equations-with-piecewise-constant-arguments/README.md)
+- [Long transients in consumer–resource systems](long-transients-in-consumer-resource-systems/README.md)
+- [Mutant clone sizes under deterministic wild-type growth](mutant-clone-sizes-under-deterministic-wild-type-growth/README.md)
+- [Optimal sterile-insect release in integrodifference models](optimal-sterile-insect-release-in-integrodifference-models/README.md)
+- [Periodic scalar models of tumour immunotherapy](periodic-scalar-models-of-tumour-immunotherapy/README.md)
+- [Persistence under climate-driven range shifts](persistence-under-climate-driven-range-shifts/README.md)
+- [Phase-type gonotrophic cycle models](phase-type-gonotrophic-cycle-models/README.md)
+- [Plasmid-load structured populations](plasmid-load-structured-populations/README.md)
+- [Plasticity-structured cell population model](plasticity-structured-cell-population-model/README.md)
+- [Rarefaction of species richness](rarefaction-of-species-richness/README.md)
+- [Self-renewal-structured clonal selection](self-renewal-structured-clonal-selection/README.md)
+- [Sterile insect technique with re-mating and residual fertility](sterile-insect-technique-with-re-mating-and-residual-fertility/README.md)
+- [Sterile insect technique with residual fertility](sterile-insect-technique-with-residual-fertility/README.md)
+- [Stochastic multistage cell lineage models](stochastic-multistage-cell-lineage-models/README.md)
+- [Stoichiometric producer–grazer models](stoichiometric-producer-grazer-models/README.md)

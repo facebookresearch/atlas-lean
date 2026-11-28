@@ -12,3 +12,4 @@
 - [Forward invariance and global existence for the chemostat](chemostat-invariance-and-global-existence.md)
 - [Unconditional exponential stability of chemostat washout](unconditional-exponential-stability-of-chemostat-washout.md)
 - [Global convergence of the chemostat](global-convergence-of-the-chemostat.md)
+- [Steady states of a three-tiered microbial food web in the chemostat](steady-states-of-a-three-tiered-microbial-food-web-in-the-chemostat.md)

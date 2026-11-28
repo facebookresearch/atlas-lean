@@ -42,3 +42,6 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Stochastic epidemic models](stochastic-epidemic-models/README.md)
 - [Behavior and control](behavior-and-control/README.md)
 - [Epidemic inference and testing](epidemic-inference-and-testing/README.md)
+- [Transmission models and reproduction numbers](transmission-models-and-thresholds/README.md)
+- [Network and stochastic epidemics](network-and-stochastic-epidemics/README.md)
+- [Control, interventions and epidemiological inference](control-and-epidemiological-inference/README.md)

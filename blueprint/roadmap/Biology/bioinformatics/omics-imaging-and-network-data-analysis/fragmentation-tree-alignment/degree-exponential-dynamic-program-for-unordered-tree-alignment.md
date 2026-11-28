@@ -1,0 +1,15 @@
+# Degree-exponential dynamic program for unordered tree alignment
+
+A **fragmentation tree** of a compound measured by tandem mass spectrometry is a rooted tree $T = (V, E)$ whose nodes are fragments and whose arcs are labeled by neutral losses (molecular formulas); the children of a node are unordered. Comparing two compounds amounts to aligning their fragmentation trees $T_1 = (V_1, E_1)$ and $T_2 = (V_2, E_2)$. An alignment is a tree whose nodes carry pairs from $(V_1 \cup \{-\}) \times (V_2 \cup \{-\})$ such that projecting onto either coordinate and contracting gap nodes recovers (for a **local** alignment, an induced subtree of) $T_1$ and $T_2$. It is scored by a similarity $\sigma : (E_1 \cup \{-\}) \times (E_2 \cup \{-\}) \to \mathbb{R}$ on the arcs ending at each aligned node. A **join** aligns a path of two arcs in one tree, scored by the summed loss, with a single arc of the other, at a uniform penalty $\sigma_{\mathrm{join}} \le 0$ (it models an undetected intermediate peak).
+
+Let $n_i = |V_i|$, let $d_i$ be the maximum out-degree of $T_i$, $\Delta = \max(d_1, d_2)$ and $\delta = \min(d_1, d_2)$.
+
+**Theorem.** The maximum score $\sigma(T_1, T_2)$ of a local alignment, with joins, can be computed in time $O(3^{\Delta} \, 2^{\delta} \, \delta \, n_1 n_2)$. More generally, any pairwise unordered tree alignment (global or local, scoring nodes, arcs or both, with similarities or costs) can be computed within the same bound.
+
+## Expansion
+
+For nodes $u \in V_1$, $v \in V_2$ and child subsets $A \subseteq C(u)$, $B \subseteq C(v)$, let $S_{u,v}[A, B]$ be the best local alignment score of the subtrees at $u$ and $v$ that uses at most the children $A$ and $B$; then $S(u,v) = S_{u,v}[C(u), C(v)]$, $\sigma(T_1, T_2) = \max_{u,v} S(u,v)$, and $S_{u,v}[A, \emptyset] = S_{u,v}[\emptyset, B] = 0$. The recurrence takes the maximum of $0$, a **match** of arcs $ua$ and $vb$ (adding $S(a,b)$ and $\sigma(ua, vb)$ to the best solution on $A \setminus \{a\}$, $B \setminus \{b\}$), a **left deletion** of arc $ua$ that hands a subset $B' \subseteq B$ of $v$'s children to $a$, its mirror image, and the corresponding join cases. Processing node pairs in postorder and subsets by increasing $|A| + |B|$ makes every referenced entry available. Lemma 1 bounds the work at one node pair by $O(3^{d_u} 2^{d_v} d_v + 2^{d_u} 3^{d_v} d_u)$: the factor $3^{d}$ counts pairs $B' \subseteq B \subseteq C(v)$, and joins are folded in through a "prejoin" table without changing the bound. Summing over all $n_1 n_2$ pairs gives the theorem. Unordered tree alignment is MAX SNP-hard in general, so some exponential dependence is expected; here it is confined to the out-degree, which is small for fragmentation trees.
+
+## Sources
+
+- F. Hufsky, K. Dührkop, F. Rasche, M. Chimani, S. Böcker, "Fast alignment of fragmentation trees", Bioinformatics (2012), Section 2 (fragmentation trees, join operator, local alignment score), Section 3 (Eqs. 1-4, Lemma 1, Theorems 1 and 2), Section 4 (sparse dynamic programming, Eqs. 5-8). <https://doi.org/10.1093/bioinformatics/bts207> (PMC3371839)

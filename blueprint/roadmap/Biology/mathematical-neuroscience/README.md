@@ -2,6 +2,8 @@
 
 Models of excitable membranes and neurons: the Nernst potential and passive cable theory, the Hodgkin–Huxley and FitzHugh–Nagumo equations, integrate-and-fire neurons and Wilson–Cowan models of neural populations.
 
+- [Neurons, channels and neural coding](neurons-channels-and-neural-coding/README.md)
+- [Neural networks, fields and perception](neural-networks-fields-and-perception/README.md)
 - [Nernst potential and the steady-state cable equation](nernst-potential-and-the-steady-state-cable-equa/README.md)
 - [Siegert mean first-passage formula](siegert-mean-first-passage-formula/README.md)
 - [Time-dependent passive cable equation](time-dependent-passive-cable-equation/README.md)

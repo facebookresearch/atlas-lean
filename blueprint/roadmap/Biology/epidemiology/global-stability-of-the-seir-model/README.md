@@ -83,3 +83,4 @@
 
 - [Forward-global solutions for nonnegative rates and data](exists-is-solution-of-nonneg.md)
 - [Existence of nonnegative solutions for positive σ, μ and N](exists-is-solution.md)
+- [Global stability of the SEIR model with saturated incidence and education](global-stability-of-the-seir-model-with-saturated-incidence-and-education.md)

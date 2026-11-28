@@ -1,0 +1,19 @@
+# Tree-child networks are encoded by reticulate-edge-deleted subnetworks
+
+**Definitions.** A (binary) phylogenetic network on a leaf set $X$ is a rooted directed acyclic graph whose leaves (indegree $1$, outdegree $0$) are bijectively labeled by $X$ and whose other non-root nodes are tree nodes (indegree $1$, outdegree $2$) or reticulations (indegree $2$, outdegree $1$); all networks below are binary. It is **tree-child** if every non-leaf node has a child that is a tree node or a leaf, and **level-$k$** if every blob (biconnected component) contains at most $k$ reticulations. Deleting a reticulation edge and cleaning up (suppressing indegree-1 outdegree-1 nodes and removing redundant parts) gives a subnetwork; the deletion is **valid** if the result has exactly $2$ nodes and $3$ edges fewer, and a network is valid if all its reticulation edges are. A **maximum lower-level subnetwork** (MLLS) of a level-$k$ network $N$ is obtained by deleting one reticulation edge from every level-$k$ blob; $\mathcal N^{\mathrm{mlls}}(N)$ is the set of them. A class $\mathcal C$ is MLLS-reconstructible (respectively level-reconstructible, subnetwork-reconstructible) if $\mathcal N^{\mathrm{mlls}}(N) = \mathcal N^{\mathrm{mlls}}(N')$ (respectively equal sets of lower-level subnetworks, equal sets of all displayed subnetworks) implies $N \cong N'$ for $N, N' \in \mathcal C$.
+
+**Hierarchy.** MLLS-reconstructible implies level-reconstructible, which implies subnetwork-reconstructible; for classes of valid networks, level-reconstructible also implies MLLS-reconstructible.
+
+**Theorem 3 (blob tree).** For a valid level-$k$ network $N$ with $k \ge 1$, a set $A \subseteq X$ is a node of the blob tree $\mathrm{BT}(N)$ if and only if it is a blob node of $\mathrm{BT}(N^{\mathrm{mlls}})$ for every MLLS; hence $\mathrm{BT}(N)$, the Hasse diagram under inclusion of these common sets, is reconstructible from $\mathcal N^{\mathrm{mlls}}(N)$.
+
+**Main theorem (Corollary 3).** The class of tree-child networks, excluding trees and level-1 networks of girth at most $4$, is MLLS-reconstructible, level-reconstructible and subnetwork-reconstructible. In particular a level-$k$ tree-child network with $k \ge 2$ is determined up to isomorphism by its subnetworks obtained by deleting a single reticulation edge.
+
+**Theorem 7 (algorithm).** For a level-$k$ tree-child network $N$ with $k \ge 2$, Algorithm 1 recovers $N$ from $\mathcal T = \mathcal N^{\mathrm{mlls}}(N)$ in time $O(|\mathcal T|\,|X|^3 / k)$, and can certify when no network has the given set as its MLLSs.
+
+## Expansion
+
+Single valid deletions preserve which leaf sets hang below cut-vertices of the network, so blob nodes survive in every maximum subnetwork, while a set that is not a blob node is broken by deleting a suitable edge of the smallest enclosing blob (Theorems 1-2). Inside each blob, the tree-child property forces a reticulated cherry or an H-shaped configuration at the bottom; up-down distances between leaves change by at most one under a deletion, and comparing the patterns $\Lambda(x,y)$, $H(x,y)$, $\Pi(x,y)$ that appear across the MLLSs identifies how the deleted edge must be restored. The algorithm repeatedly collapses maximal common pendant subnetworks to leaves and rebuilds one level-$k$ blob per recursive call; since each such blob has at least $k + 1$ outgoing edges there are at most $|X|/k$ calls. Level-1 networks of small girth are genuine exceptions, as distinct networks share all their subtrees.
+
+## Sources
+
+- Y. Murakami, L. van Iersel, R. Janssen, M. Jones, V. Moulton, "Reconstructing Tree-Child Networks from Reticulate-Edge-Deleted Subnetworks", Bulletin of Mathematical Biology 81(10) (2019) 3823, Definitions 5-6, Lemmas 1-20, Theorems 1-3 and 7, Corollary 3, <https://doi.org/10.1007/s11538-019-00641-w>, PMCID PMC6764941.
