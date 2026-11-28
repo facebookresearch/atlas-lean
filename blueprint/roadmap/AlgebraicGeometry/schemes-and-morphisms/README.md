@@ -8,7 +8,6 @@ The scheme-theoretic foundations of algebraic geometry: points, immersions, smoo
 - [Reduced induced closed subschemes](reduced-induced-closed-subschemes/README.md)
 - [Smooth morphisms](smooth-morphisms/README.md)
 - [Varieties over a field](varieties-over-a-field/README.md)
-- [Branch locus of a composite](branch-locus-of-a-composite.md)
 - [Zariski's main theorem](zariski-s-main-theorem/README.md)
 - [Flat morphisms of schemes](flat-morphism-of-schemes.md)
 - [Étale morphisms of schemes](etale-morphism-of-schemes.md)

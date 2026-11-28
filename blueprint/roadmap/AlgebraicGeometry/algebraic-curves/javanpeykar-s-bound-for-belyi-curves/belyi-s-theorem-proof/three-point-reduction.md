@@ -3,7 +3,7 @@
 Let $T$ be a finite subset of $\mathbb{P}^1(\mathbb{Q}) = \mathbb{Q} \cup \{\infty\}$. Then there
 is a rational function $q \in \mathbb{Q}(z)$ with $q(T) \subset \{0, 1, \infty\}$ that is a
 composite of fractional linear transformations $z \mapsto \frac{az + b}{cz + d}$ with $a, b, c, d
-\in \mathbb{Q}$ and $ad - bc \ne 0$, and of [polynomials](belyi-polynomial-definition.md) $q_1 =
+\in \mathbb{Q}$ and $ad - bc \ne 0$, and of [polynomials](../belyi-polynomial.md) $q_1 =
 c_{m,n} \, z^m (1 - z)^n$ with $m, n \ge 1$ and $c_{m,n} = \frac{(m+n)^{m+n}}{m^m n^n}$. It is
 built by induction on the number $r$ of elements of $T$:
 
@@ -19,12 +19,12 @@ Sources).
 
 ## Depends on
 
-- [The polynomial $c \, z^m (1 - z)^n$ of Köck's Lemma 3.6](belyi-polynomial-definition.md), for
+- [The polynomial $c \, z^m (1 - z)^n$ of Köck's Lemma 3.6](../belyi-polynomial.md), for
   the polynomials $q_1$
 
 ## Proof depends on
 
-- [Values and derivative of the polynomial $c \, z^m (1 - z)^n$](belyi-polynomial.md), for
+- [Values and derivative of the polynomial $c \, z^m (1 - z)^n$](../belyi-polynomial-spec.md), for
   $q_1(0) = q_1(1) = 0$ and $q_1(\frac{m}{m+n}) = 1$, so that $q_1$ maps $0$, $\frac{m}{m+n}$, $1$
   and $\infty$ onto $\{0, 1, \infty\}$
 

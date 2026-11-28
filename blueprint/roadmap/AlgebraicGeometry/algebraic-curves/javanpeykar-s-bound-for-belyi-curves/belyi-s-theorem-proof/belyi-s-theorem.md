@@ -25,15 +25,15 @@ $\{0, 1, \infty\}$ turns that morphism into a Belyi map of the same degree. So t
   for $t'$, applied to $C_{\bar K}$
 - [Finitely many branch points in characteristic zero](branch-points-of-a-finite-morphism-of-curves.md),
   for the finite set $S$
-- [Polynomial with rational critical values](polynomial-with-rational-critical-values.md),
+- [Polynomial with rational critical values](../exists-nat-degree-pos-aeval-mem-range-al.md),
   for $p$
 - [Branch points of a polynomial map of the projective line](branch-points-of-a-polynomial-map.md),
   for the branch points of $p$ and of each $q_1$ over $\bar K$, and $p(\infty) = \infty$
 - [Moving finitely many rational points to $0$, $1$ and $\infty$](three-point-reduction.md),
   for $q$, a composite over $\mathbb{Q}$, viewed over $\bar K$
-- [Values and derivative of the polynomial $c \, z^m (1 - z)^n$](belyi-polynomial.md), for the
+- [Values and derivative of the polynomial $c \, z^m (1 - z)^n$](../belyi-polynomial-spec.md), for the
   values of the polynomials $q_1$ of that construction and the zeros of $q_1'$ in $\bar K$
-- [Branch locus of a composite](../../../schemes-and-morphisms/branch-locus-of-a-composite.md), for $p \circ t'$,
+- [Branch locus of a composite](../../../schemes-and-morphisms/morphism-restrict-comp.md), for $p \circ t'$,
   the composites that make up $q$, and $q \circ p \circ t'$
 - [A finite morphism of curves has constant degree](degree-of-a-finite-morphism-of-curves.md),
   for the degree $d$ of $t$
