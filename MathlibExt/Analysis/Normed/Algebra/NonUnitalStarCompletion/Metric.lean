@@ -17,10 +17,11 @@ public import MathlibExt.Analysis.Normed.Algebra.NonUnitalStarCompletion.Hom
 # Norm and metric preservation under completion
 
 Let R be a monoid acting distributively on A and B, with uniformly continuous
-fixed-scalar maps. Let A be a nonunital seminormed ring with continuous star.
-Let B be a nonunital nonassociative ring with a norm and a complete T₀
-pseudometric uniform additive-group structure, continuous multiplication and
-continuous star. Assume dist(x,y) = ‖-x+y‖ in B.
+fixed-scalar maps. Let A be a nonunital seminormed ring with a continuous ring involution
+(StarRing A and ContinuousStar A). Let B be a nonunital nonassociative ring with a norm
+and a complete T₀ pseudometric uniform additive-group structure, continuous multiplication
+and a continuous star operation. No ring-involution laws on B are required. Assume
+dist(x,y) = ‖-x+y‖ in B.
 
 A continuous R-equivariant nonunital star homomorphism φ : A → B that preserves
 norms extends to the normed star-ring completion of A. Its extension Γ
@@ -48,9 +49,10 @@ variable [DistribMulAction R B] [UniformContinuousConstSMul R B]
 
 /-- **Norm-preserving completion extension is an injective isometry.** Let R be a monoid with
 distributive actions on A,B whose fixed-scalar maps are uniformly continuous. Let A be a
-nonunital seminormed ring with continuous star, and B a nonunital nonassociative ring with
-a norm, a complete T₀ pseudometric uniform additive-group structure, continuous
-multiplication and continuous star. Assume dist(x,y) = ‖-x+y‖ for all x,y : B. For a
+nonunital seminormed ring with a continuous ring involution (StarRing A and ContinuousStar A).
+Let B be a nonunital nonassociative ring with a norm, a complete T₀ pseudometric uniform
+additive-group structure, continuous multiplication and a continuous star operation; no
+ring-involution laws on B are required. Assume dist(x,y) = ‖-x+y‖ for all x,y : B. For a
 continuous R-equivariant nonunital star homomorphism φ : A → B with ‖φ(a)‖ = ‖a‖ for all
 a, the completion extension Γ preserves every norm, is an isometry, and is injective. -/
 theorem fromCompletion_norm_isometry

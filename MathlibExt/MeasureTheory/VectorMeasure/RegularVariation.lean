@@ -155,7 +155,7 @@ variable {X : Type u}
 variable [TopologicalSpace X] [R1Space X] [MeasurableSpace X] [BorelSpace X]
 
 omit [TopologicalSpace X] [R1Space X] [BorelSpace X] in
-/-- Every signed measure on an arbitrary measurable space has finite variation.
+/-- Every real-valued signed measure on a measurable space has finite total variation.
 No topology or regularity assumption is needed. -/
 theorem isFiniteMeasure_variation (s : SignedMeasure X) :
     IsFiniteMeasure s.variation := by
@@ -303,10 +303,10 @@ theorem hasRegularVariation_iff_re_im (c : ComplexMeasure X) :
       Measure.Regular.add_of_finite _ _
     exact Measure.Regular.of_le (variation_le_re_add_im c)
 
-/-- **Regular complex measure from two regular-variation signed measures.** Let `X` be an R₁
-topological space with its Borel measurable structure. if signed measures `s,t` have
-regular variation, then `s+i t`, constructed as `s.toComplexMeasure t`, has regular
-variation. -/
+/-- **Regular complex measure from two real-valued signed measures.** Let `X` be an R₁
+topological space with its Borel measurable structure. If real-valued signed measures
+`s,t : SignedMeasure X` have regular variation, then `s+i t`, constructed as
+`s.toComplexMeasure t`, has regular variation. -/
 theorem hasRegularVariation_toComplexMeasure {s t : SignedMeasure X}
     (hs : VectorMeasure.HasRegularVariation s) (ht : VectorMeasure.HasRegularVariation t) :
     VectorMeasure.HasRegularVariation (s.toComplexMeasure t) := by

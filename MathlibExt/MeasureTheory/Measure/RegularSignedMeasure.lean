@@ -19,8 +19,9 @@ public import Mathlib.Topology.ContinuousMap.Compact
 /-!
 # Regular signed-measure subspace and continuous integration
 
-On an R₁ Borel space, signed measures with regular total variation form a real submodule. On a
-compact such space, integration defines the bounded real functional `I_s : C(X,ℝ) → ℝ`.
+On an R₁ Borel space, real-valued signed measures with regular total variation form a real
+submodule. On a compact such space, integration defines the bounded real functional
+`I_s : C(X,ℝ) → ℝ`.
 
 It satisfies `|I_s(f)|≤|s|(X)‖f‖∞` and is linear in the signed measure, including negative
 scalars. The norm equality and inverse Riesz construction are established separately for compact
@@ -41,9 +42,10 @@ universe u
 variable {X : Type u} [TopologicalSpace X] [R1Space X]
   [MeasurableSpace X] [BorelSpace X]
 
-/-- **Real submodule of signed measures with regular total variation.** Let `X` be an R₁
-topological space with its Borel measurable structure. `regularSignedMeasureSubmodule X`
-consists of signed measures `s` whose positive total-variation measure `|s|` is regular. -/
+/-- **Real submodule of real-valued signed measures with regular total variation.**
+Let `X` be an R₁ topological space with its Borel measurable structure.
+`regularSignedMeasureSubmodule X` consists of real-valued signed measures
+`s : SignedMeasure X` whose positive total-variation measure `|s|` is regular. -/
 noncomputable def regularSignedMeasureSubmodule (X : Type u)
     [TopologicalSpace X] [R1Space X] [MeasurableSpace X] [BorelSpace X] :
     Submodule ℝ (SignedMeasure X) where
@@ -63,9 +65,10 @@ noncomputable def regularSignedMeasureSubmodule (X : Type u)
     exact (SignedMeasure.totalVariation_regular_iff_hasRegularVariation (c • s)).2
       (((SignedMeasure.totalVariation_regular_iff_hasRegularVariation s).1 hs).smul c)
 
-/-- **Signed measure with regular total variation.** Let `X` be an R₁ topological space with
-its Borel measurable structure. `RegularSignedMeasure X` is the carrier of that real
-submodule; it stores the signed measure and regularity of `|s|`. -/
+/-- **Real-valued signed measure with regular total variation.** Let `X` be an R₁
+topological space with its Borel measurable structure. `RegularSignedMeasure X` is the
+carrier of the real submodule of real-valued signed measures; it stores
+`s : SignedMeasure X` and regularity of `|s|`. -/
 abbrev RegularSignedMeasure (X : Type u) [TopologicalSpace X] [R1Space X]
     [MeasurableSpace X] [BorelSpace X] :=
   ↑(regularSignedMeasureSubmodule X)
