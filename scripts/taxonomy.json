@@ -984,6 +984,7 @@
   }
  },
  "placements": {
+  "MathlibExt/GameTheory/SocialChoice/ApprovalCommittee": {"to": "GameTheory/social-choice", "title": "Approval-based committee elections"},
   "MathlibExt/Probability/Statistics/ANOVA/NestedProjector": {"to": "Probability/linear-models-multivariate", "title": "Cochran's theorem"},
   "MathlibExt/Probability/Statistics/ANOVA/OneWay": {"to": "Probability/linear-models-multivariate", "title": "Cochran's theorem"},
   "MathlibExt/Probability/Statistics/Bayesian/FiniteConsistency": {"to": "Probability/bayesian-statistics", "title": "Bayes updating and posterior consistency for finite models"},
