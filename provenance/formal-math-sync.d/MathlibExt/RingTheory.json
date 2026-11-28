@@ -473,6 +473,42 @@
       "upstream_sha256": "0246291789af36824bdde74d09bc5bd468fdac2f79c11f3d10f5498b3c972b6e"
     },
     {
+      "path": "MathlibExt/RingTheory/Ideal/PrincipalCotangent.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5bfba078c159f3f10c7ecba586d576957b9fcde64a9c726c0668a8146741f4ef",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "c9a9b302694b4ed3fcb26a779a49ff8b19f362f5cdad5d1789ba518a6d18f031"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Ideal/PrincipalRegular.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e05e7e2fdbdbeeda7be2b9cee9f886d183057713498e0d19820920b2904af801",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give the remaining generic homology, quotient, scalar-normalization and graded/dyadic APIs precise mathematical docstrings and readable titles. Preserve every code/import/option/privacy/legal token; state actual signs, ring/ideal/projector hypotheses and independent universes. Replace the failed local singleton-ideal quotation with the explicit typed Ideal.span carrier in the existing three signatures, preserving multiplication by the regular element, its inverse, all ring hypotheses and universes; no quotation-precheck option is changed. Wrap source continuation lines at 100 columns while preserving the exact non-whitespace code and mathematical scope.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "c7e73a174f13ad712a43458e50a4f5b2bb68491fa241c46c87515f60f6bb947a"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Ideal/SurjectivePushoutKernel.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "94953d26a3c44a95c2a065afc19403624196bb13b277bc2af2009f378449e2d5",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "c8200a545ae01dbd0e3d80dbc27fabfddeb788ef54b6d06afb5db392798e8b69"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Ideal/TwoSidedQuotientEquiv.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "29cf37aa778fc6871f1211e1b6446c4050ce47d8c7ad4b0c5f50d730034375a2",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a05a2b5fd7e01cfbca40382ba5aa92a7a4dbe7796abe3b4b704ddc698731210b"
+    },
+    {
       "path": "MathlibExt/RingTheory/Ideal/WeakRegularCotangent.lean",
       "backport": "not-needed",
       "disposition": "diverged",
@@ -525,6 +561,15 @@
       "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "08a05c88251908699f3557961c003f6d89a8d29de09cc86fd612ad1df73dc380"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Kaehler/PolynomialExterior.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f11de843bddc20221036e06a0d345c16c3a8555dacc09b544077f411ad37231c",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "cc779fff8618f1570f50a049d032c6b3afc5f7441434ad95225b8f2e6d4210c3"
     },
     {
       "path": "MathlibExt/RingTheory/Length/AnnihilatorQuotient.lean",
@@ -634,6 +679,42 @@
       "published_sha256": "f8595b0a328a0dbde0fc71733401f21050f4deaeb1c65758f325bf23be85762a",
       "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
       "upstream_sha256": "8185304f6eb74ab164b2e5fd1ea55538f71ef7ed95bd72817f494a6d42376452"
+    },
+    {
+      "path": "MathlibExt/RingTheory/Localization/SurjectivePrime.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "31496b391e125e652a71d37876bad7182df4715e220bf9d1c8df781db1189c20",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "5dddaf095c7c56faf254dc7cb49c4d8a10fd0bb694267cdb5133eecf87fcba5b"
+    },
+    {
+      "path": "MathlibExt/RingTheory/MvPolynomial/EnvelopingDiagonal.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7e692b5ecee52c3e136a52cf61e81d21a657f5e0cfb512a773b0c1bf00768563",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "256fc5b068011b1bee4221b02bdb6caa1a6679b828f6d907749632e04f1d7ab8"
+    },
+    {
+      "path": "MathlibExt/RingTheory/MvPolynomial/RegularSequence.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6cba8a6edefc39c3b67f58fd09799193fa2344d7885a02c09c34189ab8a262c1",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "62086962f765ce764f5386f016190f82cfbc344c5f0d455b8c97d1fda8c65349"
+    },
+    {
+      "path": "MathlibExt/RingTheory/MvPolynomial/Translation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4297a417f72ae81c116c827f3b23af904ca9162d7da2c11a954ad47651510c39",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e89b34ee9cc3e7dd5ab574c36ba56d3eb82dc0a1120d4c8db8b0375c06749a33"
     },
     {
       "path": "MathlibExt/RingTheory/PiFieldDecomposition.lean",
