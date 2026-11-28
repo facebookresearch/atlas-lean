@@ -97,18 +97,6 @@ public theorem_wanted generalizedTau_fourteen_six_odd_index_mod_two (n : ℕ) (h
     generalizedTau 14 (2 * n + 1) ≡ ((Nat.Partition.restricted (n) (¬ 8 ∣ ·)).card : ℤ) [ZMOD 2] ∧
       (Odd (generalizedTau 6 (2 * n + 1)) ↔ ∃ m : ℕ, n = m * (m + 1) / 2)
 
-/-- **$2^s$-regular partitions and the generalized tau function modulo 2.** Let $s$ be a positive
-integer and $n$ a natural number. Let $R_{2^s}(n)$ be the number of partitions of $n$ in which no
-part is divisible by $2^s$, and let $\tau_k(m)$ be the generalized tau function, the coefficient
-of $q^m$ in $q \prod_{j \ge 1} (1 - q^j)^k$. Then $R_{2^s}(n) \equiv \tau_{2^s - 1}(n + 1) \pmod 2$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 5 (`integers-2024-A39-thm-5`). -/
-public theorem_wanted card_two_pow_regular_modEq_generalizedTau (s : ℕ) (hs : 0 < s) (n : ℕ) :
-    ((Nat.Partition.restricted (n) (¬ 2 ^ s ∣ ·)).card : ℤ)
-        ≡ generalizedTau ((2 : ℤ) ^ s - 1) (n + 1) [ZMOD 2]
-
 /-- **Ramanujan's $\tau$ modulo $3$ via $9$-regular partitions.** Let $\tau = \tau_{24}$ be
 Ramanujan's tau function, where $\tau_k$ is the generalized tau function, and let $R_9(m)$ be
 the number of partitions of $m$ with no part divisible by $9$. For every integer $n \ge 1$,
