@@ -1596,6 +1596,7 @@
   "CSLibExt/Computability/Complexity/Karp/MultipleKnapsackHardness": {"to": "TheoryOfComputation/np-completeness/number-and-packing-problems", "title": "Multiple knapsack problem"},
   "CSLibExt/Computability/Complexity/Karp/MultipleKnapsackVerify": {"to": "TheoryOfComputation/np-completeness/number-and-packing-problems", "title": "Multiple knapsack problem"},
   "CSLibExt/Computability/Complexity/Karp/MinOnesThreeSat": {"to": "TheoryOfComputation/np-completeness/satisfiability", "title": "Minimum-ones 3-SAT"},
+  "CSLibExt/Computability/Complexity/Karp/PairedPartition": {"to": "TheoryOfComputation/np-completeness/number-and-packing-problems", "title": "Partition variants"},
   "CSLibExt/Computability/Complexity/Karp/Partition": {"to": "TheoryOfComputation/np-completeness/number-and-packing-problems", "title": "Partition problem"},
   "CSLibExt/Computability/Complexity/Karp/PartitionComplete": {"to": "TheoryOfComputation/np-completeness/number-and-packing-problems", "title": "Partition problem"},
   "CSLibExt/Computability/Complexity/Karp/PartitionDouble": {"to": "TheoryOfComputation/np-completeness/number-and-packing-problems", "title": "Partition problem"},
