@@ -20,6 +20,7 @@ Known unstated proof prerequisites needed before this node is ready for formaliz
 
 - Viola's simulation of time-bounded one-tape Turing machines by read-once branching programs (Cheraghchi et al. Lemma 20)
 - Forbes–Kelley pseudorandom generator for read-once branching programs (Cheraghchi et al. Theorem 21)
+- Counting bound $\Pr[\mathrm{CC}(x) \le s(n)] = o(1)$ for $s(n) = o(2^n/n)$ (Cheraghchi et al., Proposition 8)
 
 ## Depends on
 

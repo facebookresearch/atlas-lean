@@ -4,7 +4,7 @@ Two restrictions on reductions to MCSP: a reduction is *natural* when the size p
 
 **Natural many-one reductions (Kabanets–Cai).** A Karp reduction $R$ from $A$ to $B$ is *natural* if for every instance $I$ of $A$ the size of $R(I)$, and every numerical parameter of $R(I)$, depends only on $|I|$, and $|I|$ and $|R(I)|$ are polynomially related. For a reduction to MCSP, the produced instance $(T,s)$ then has $|T|$ and $s$ determined by $|I|$.
 
-**Parametric honest reductions (Hitchcock–Pavan).** An instance $(x,k)$ of MCSP is $\ell$-large if $k\ge\ell$. A polynomial-time many-one reduction $f$ from $L$ to MCSP is *parametric honest* if there is $\varepsilon>0$ such that $f(x)$ is $|x|^{\varepsilon}$-large for every $x$. The same notion is defined for strong nondeterministic reductions, whose every non-rejecting output must be $|x|^{\varepsilon}$-large.
+**Parametric honest reductions (Hitchcock–Pavan).** An instance $(x,k)$ of MCSP is $\ell$-large if $k\ge\ell$. A polynomial-time many-one reduction $f$ from $L$ to MCSP is *parametric honest* if there is $\varepsilon>0$ such that $f(x)$ is $|x|^{\varepsilon}$-large for every $x$.
 
 **Turing versions (Saks–Santhanam).** A polynomial-time Turing reduction from $L$ to MCSP or MKtP is *parametric honest* if there is $\varepsilon>0$ such that every query made on input $x$ has parameter at least $|x|^{\varepsilon}$, and *natural* if the parameter of every query made on input $x$ depends only on $|x|$. In both cases the condition is only required while previous queries are answered correctly.
 
