@@ -185,8 +185,8 @@
       "path": "MathlibExt/Algebra/Category/Grp/Monoidal.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "1b8ed611bf3312097cbefa1b0db8aaeae50a3b1c71403c1dfa27cf27f4d1b285",
-      "rationale": "Import the canonical additive-group tensor structures and correct the public braiding_hom_apply spelling; preserve all structure maps and prove representative concrete instance, coherence, and closed-adjunction behavior in focused tests. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "published_sha256": "55c243c551647417c9b2213e755827c5cf1f06b30a56fbb9e38b81b1cf80bc16",
+      "rationale": "Adapt the integer-tensor symmetric monoidal closed structure from Mathlib PR42860, commit4d9c97ac1bb4deb8ce8e6005aca99087372c2d77, retaining its tensor, unit, associator, braiding and internal-Hom maps. Redirect selective backport imports; use private additive tensor-extensionality proofs for coherence and the closed adjunction; name the structure instances with Compat suffixes; correct the braiding spelling and provide mathematical documentation. Remove the three unused born-deprecated aliases. Exact upstream source and removal conditions are recorded in BACKPORTS.md.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "b4ed6a608dccabaaecf0c6564882265103afef70db03bf63c8bc008b6669c9c3"
     },
@@ -195,7 +195,7 @@
       "backport": "pending",
       "disposition": "diverged",
       "published_sha256": "01b3b6e34d5ecd02c3f67f7922217cd6723f496aa8ffc26648111c0ca7620ad8",
-      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "rationale": "Prove additivity of left and right integer tensoring on the transported abelian-group monoidal structure, retaining the four zero/add whiskering proofs and their monoidal-preadditive instance. The mathematical module and instance documentation describe this file; concrete and higher-level synthesis clients now exercise the instance.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "c570591102910204544920fae296736bd4b0b8b855f28559afd61479428c3865"
     },
@@ -212,8 +212,8 @@
       "path": "MathlibExt/Algebra/Category/Grp/ZModuleEquivalenceCompat.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "b7a51e56ef88cdb7bc14ee42b80cb1d9d66ae2e501141d5007254c1ed6662834",
-      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "published_sha256": "dcd596569a3a496e63cf6821f10203a73275b7b340ac289ac19c4a34fe8d7903",
+      "rationale": "Selectively backport ModuleCat.intEquivalence from Mathlib PR42860, commit4d9c97ac1bb4deb8ce8e6005aca99087372c2d77. Import the pinned ZModuleEquivalence surface, retaining the integer-action forgetful/inverse functors and their proof; provide the exact license, backport banner and mathematical documentation. The source blob, adaptations and native replacement condition are recorded in BACKPORTS.md. Restore the line-comment prefix on the wrapped immutable-source banner; declaration bodies are unchanged.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "3895a7b0750d708813d4caf47943bc0d7315e00ab6d26bc329a6bb32e5a03a60"
     },
@@ -1192,8 +1192,8 @@
       "path": "MathlibExt/Algebra/Homology/GradedPairing.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "9442700aed639af5c4055676e65c71afce98fe6e83e830bbf6717a51e95a2f06",
-      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "published_sha256": "6f88e23772681600dfaaa03a47d3637b762d6ebe839d409d07c49540d2be636d",
+      "rationale": "Retain the nonnegative cochain pairing structure, signed Leibniz law, whiskering and cycle-pairing proofs. Add module, structure, component, Leibniz-field and cycle-pairing documentation with their precise structural and homology hypotheses. Concrete pairings exercise degree zero and a nonzero odd-degree differential sign.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "7f12c822ce8cd419514241941bb080b629c8c44a8ae88748d3002c7fe627aee2"
     },
@@ -1201,8 +1201,8 @@
       "path": "MathlibExt/Algebra/Homology/GradedPairingHomology.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "59cfc14e984d22d83767c5770aa031641dc769386a16a56b12e481e9939b41ab",
-      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "published_sha256": "b494dbae0aad56e67996b0ceb9f4f0ccc3a32bf6613ba8219d8120fc42c6e712",
+      "rationale": "Retain the signed left/right boundary descent, degree-zero boundary handling, homology pairing and all naturality/whisker laws. Remove the pairing-namespaced copy of the general tensor-homology projection extensionality theorem. Add a mathematical module docstring; actual integer and modulo-three class clients exercise pairHomology without changing its hypotheses or universes.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "cbff6d96340d7bc01d5a40dc5d7e7276838a5cd4efe3d7eedb198cd2b0d00f5e"
     },
@@ -2140,8 +2140,8 @@
       "path": "MathlibExt/Algebra/Homology/TensorHomologyDesc.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "4f503810686e592be41f9f9fa8308a65dcb5814f1e06216fae4d9015c33c7b42",
-      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "published_sha256": "6f6e2d472431146fc3aeae0a208a21720b9467752ca1b0a4c280ddb6d889ceda",
+      "rationale": "Use native HomologicalComplex.homologyIsCokernel and CokernelCofork.isColimitTensor directly for tensor homology descent, its projection law and naturality, removing the parallel homologyCofork model and colimit alias. Retain independent index/shape universes, the weaker two-hypothesis uniqueness result and all stated descent hypotheses. Graded clients exercise actual degree-zero and torsion homology classes. Normalize the anonymous preservation-instance proof layout with whitespace-only changes.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "662d95bb83a7724a0069d96dd28b53d2ca321ba88b942d64888076a79a9680cb"
     },

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Algebra.Category.Grp.Monoidal
+import MathlibExt.Algebra.Category.Grp.MonoidalPreadditive
+import MathlibExt.CategoryTheory.Monoidal.PreservesColimits
 import Mathlib.Algebra.Algebra.Bilinear
 import Mathlib.Data.Matrix.Mul
 import Mathlib.LinearAlgebra.Matrix.Notation
@@ -23,7 +25,7 @@ unitors, associators, braiding and the closed adjunction on elements.
 
 noncomputable section
 
-open CategoryTheory MonoidalCategory
+open CategoryTheory CategoryTheory.Limits MonoidalCategory
 open scoped TensorProduct Matrix
 
 namespace MathlibExtTest.AddCommGrpMonoidalTransport
@@ -69,6 +71,8 @@ example : MonoidalCategory AddCommGrpCat.{0} := inferInstance
 example : BraidedCategory AddCommGrpCat.{0} := inferInstance
 example : SymmetricCategory AddCommGrpCat.{0} := inferInstance
 example : MonoidalClosed AddCommGrpCat.{0} := inferInstance
+example : MonoidalPreadditive AddCommGrpCat.{0} := inferInstance
+example : PreservesColimitsOfSize.{0, 0} (tensorRight torsion) := inferInstance
 example : Closed pairs := inferInstance
 example : AddCommGrpCat.toModuleCatULiftInt.{0}.functor.Monoidal := inferInstance
 
@@ -246,5 +250,10 @@ example (x y : liftedIntegers) :
 example (a : ULift.{1} ℤ) (x : liftedIntegers) :
     (λ_ liftedIntegers).hom (a ⊗ₜ[ℤ] x) = a.down • x :=
   AddCommGrpCat.leftUnitor_hom_apply a x
+
+-- This forces the braided transport instance without assuming right preservation.
+example {C : Type*} [Category C] [MonoidalCategory C] [BraidedCategory C]
+    (X : C) [PreservesColimitsOfSize.{0, 0} (tensorLeft X)] :
+    PreservesColimitsOfSize.{0, 0} (tensorRight X) := inferInstance
 
 end MathlibExtTest.AddCommGrpMonoidalTransport
