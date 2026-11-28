@@ -24,6 +24,14 @@ example {n : ℕ} {Z : Fin n → Ω → ℝ} (h_indep : iIndepFun Z μ)
       exp (-2 * n * t ^ 2) := by
   simpa using measureReal_avg_sub_ge_le h_indep hmeas hZ ht
 
+-- The lower tail for variables in `[0, 1]`.
+example {n : ℕ} {Z : Fin n → Ω → ℝ} (h_indep : iIndepFun Z μ)
+    (hmeas : ∀ i, AEMeasurable (Z i) μ) (hZ : ∀ i, ∀ᵐ ω ∂μ, Z i ω ∈ Set.Icc (0 : ℝ) 1)
+    {t : ℝ} (ht : 0 ≤ t) :
+    μ.real {ω | (1 / n : ℝ) * ∑ i, Z i ω - (1 / n : ℝ) * ∑ i, μ[Z i] ≤ -t} ≤
+      exp (-2 * n * t ^ 2) := by
+  simpa using measureReal_avg_sub_le_neg_le h_indep hmeas hZ ht
+
 -- Bach's Corollary 1.1: the two-sided bound for variables in `[0, 1]`.
 example {n : ℕ} {Z : Fin n → Ω → ℝ} (h_indep : iIndepFun Z μ)
     (hmeas : ∀ i, AEMeasurable (Z i) μ) (hZ : ∀ i, ∀ᵐ ω ∂μ, Z i ω ∈ Set.Icc (0 : ℝ) 1)
