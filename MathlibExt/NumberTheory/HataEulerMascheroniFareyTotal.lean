@@ -15,7 +15,7 @@ import Mathlib.Tactic.Positivity.Basic
 import Mathlib.Tactic.Ring
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 import MathlibExt.NumberTheory.HataEulerMascheroniFarey
-import all MathlibExt.NumberTheory.HataEulerMascheroniFareySum
+import MathlibExt.NumberTheory.HataEulerMascheroniFareySum
 
 /-!
 # Hata's Farey formula for Euler's constant
@@ -32,8 +32,7 @@ reciprocal interval, then telescope the sums over $n$ to obtain the formula for 
   no. 2, pp. 149–159, Theorem 4.1.
 * `MathlibExt.NumberTheory.HataEulerMascheroniFarey` supplies
   `farey_interval_subset_reciprocal_interval`; `MathlibExt.NumberTheory.HataEulerMascheroniFareySum`
-  supplies `hasSum_farey_subintervals_reciprocal_interval` and its helpers `numerators_pos`,
-  `inner_bounds` and `defect_nonneg`.
+  supplies `hasSum_farey_subintervals_reciprocal_interval`.
 -/
 
 namespace MetaMathlibExt
@@ -42,22 +41,38 @@ open Filter
 open scoped BigOperators Topology
 
 private abbrev PositiveFarey :=
-  {(a, b, c, d) : Quad | b * c = a * d + 1 ∧ 0 < a ∧ c ≤ d}
+  {(a, b, c, d) : ℕ × ℕ × ℕ × ℕ | b * c = a * d + 1 ∧ 0 < a ∧ c ≤ d}
 
-private noncomputable def reciprocalPartition : (Σ k : ℕ, FareyNode (k + 1)) ≃ PositiveFarey := by
-  let forget : (Σ k : ℕ, FareyNode (k + 1)) → PositiveFarey := fun ⟨k, q⟩ ↦
+private abbrev ReciprocalFarey (n : ℕ) :=
+  {(a, b, c, d) : ℕ × ℕ × ℕ × ℕ | b * c = a * d + 1 ∧ b ≤ (n + 1) * a ∧ n * c ≤ d}
+
+private noncomputable def reciprocalPartition : (Σ k : ℕ, ReciprocalFarey (k + 1)) ≃
+    PositiveFarey := by
+  let forget : (Σ k : ℕ, ReciprocalFarey (k + 1)) → PositiveFarey := fun ⟨k, q⟩ ↦
     ⟨q.val, by
-      obtain ⟨⟨a, b, c, d⟩, h⟩ := q
-      exact ⟨h.1, (numerators_pos h).1, (Nat.le_mul_of_pos_left c (Nat.succ_pos k)).trans h.2.2⟩⟩
+      obtain ⟨⟨a, b, c, d⟩, hdet, hl, hr⟩ := q
+      have hbc : 0 < b * c := hdet ▸ Nat.succ_pos _
+      have ha := Nat.pos_of_mul_pos_left ((Nat.pos_of_mul_pos_right hbc).trans_le hl)
+      exact ⟨hdet, ha, (Nat.le_mul_of_pos_left c (Nat.succ_pos k)).trans hr⟩⟩
   refine Equiv.ofBijective forget ⟨?_, ?_⟩
   · rintro ⟨k, ⟨⟨a, b, c, d⟩, hk⟩⟩ ⟨l, ⟨⟨a', b', c', d'⟩, hl⟩⟩ h
     have hv := congrArg Subtype.val h
     change (a, b, c, d) = (a', b', c', d') at hv
     simp only [Prod.mk.injEq] at hv
     obtain ⟨rfl, rfl, rfl, rfl⟩ := hv
-    have index {n : ℕ} (hn : InReciprocal n (a, b, c, d)) : d / c = n :=
-      Nat.div_eq_of_lt_le hn.2.2 (inner_bounds hn).2
-    obtain rfl : k = l := Nat.succ.inj ((index hk).symm.trans (index hl))
+    -- Membership in two different intervals would force the determinant to have the wrong sign.
+    have not_lt {i j : ℕ} (hij : i < j) (hi : b ≤ (i + 1 + 1) * a)
+        (hj : (j + 1) * c ≤ d) : False := by
+      have hle : i + 1 + 1 ≤ j + 1 := by omega
+      have hbc : b * c ≤ a * d := calc
+        b * c ≤ (i + 1 + 1) * a * c := Nat.mul_le_mul_right c hi
+        _ = a * ((i + 1 + 1) * c) := by ac_rfl
+        _ ≤ a * d := Nat.mul_le_mul_left a ((Nat.mul_le_mul_right c hle).trans hj)
+      exact (Nat.not_le_of_gt (hk.1 ▸ Nat.lt_succ_self _)) hbc
+    have hkl : k = l := le_antisymm
+      (le_of_not_gt fun hlt ↦ not_lt hlt hl.2.1 hk.2.2)
+      (le_of_not_gt fun hlt ↦ not_lt hlt hk.2.1 hl.2.2)
+    subst l
     rfl
   · rintro ⟨⟨a, b, c, d⟩, hdet, ha, hcd⟩
     obtain ⟨n, hn, h₁, h₂⟩ := farey_interval_subset_reciprocal_interval ha hcd hdet
@@ -74,17 +89,11 @@ private noncomputable def reciprocalPartition : (Σ k : ℕ, FareyNode (k + 1)) 
       exact_mod_cast h₂
 
 private noncomputable def reciprocalSum (k : ℕ) : ℝ :=
-  1 / (k + 1) + 1 / (k + 1 + 1) - 2 * Real.log ((k + 1 + 1) / (k + 1))
+  let n := ((k + 1 : ℕ) : ℝ)
+  1 / n + 1 / (n + 1) - 2 * Real.log ((n + 1) / n)
 
-private theorem hasSum_defect_reciprocalSum (k : ℕ) :
-    HasSum (@defect (k + 1)) (reciprocalSum k) := by
-  have h := hasSum_farey_subintervals_reciprocal_interval (n := k + 1) (Nat.succ_pos k)
-  change HasSum (@defect (k + 1)) _ at h
-  simpa only [reciprocalSum, Nat.cast_add, Nat.cast_one] using h
-
-private theorem hasSum_reciprocalSum :
+private theorem hasSum_reciprocalSum (hnonneg : ∀ k, 0 ≤ reciprocalSum k) :
     HasSum reciprocalSum (2 * Real.eulerMascheroniConstant - 1) := by
-  have hnonneg (k : ℕ) : 0 ≤ reciprocalSum k := (hasSum_defect_reciprocalSum k).nonneg defect_nonneg
   rw [hasSum_iff_tendsto_nat_of_nonneg hnonneg]
   let g (k : ℕ) : ℝ := 2 * ((harmonic k : ℝ) - Real.log ((k : ℝ) + 1)) + 1 / ((k : ℝ) + 1)
   have hg (k : ℕ) : reciprocalSum k = g (k + 1) - g k := by
@@ -122,15 +131,21 @@ public theorem euler_mascheroni_eq_hata_farey_sum :
         1 / 2 + 1 / 2 * ∑' q : {(a, b, c, d) : ℕ × ℕ × ℕ × ℕ | b * c = a * d + 1 ∧ 0 < a ∧ c ≤ d},
           match q.1 with
           | (a, b, c, d) => (1 : ℝ) / (a * b * c * d * (a + c) * (b + d)) := by
-  let f : PositiveFarey → ℝ := fun q ↦ match q.1 with
-    | (a, b, c, d) => (1 : ℝ) / (a * b * c * d * (a + c) * (b + d))
-  let totalTerm (q : Σ k : ℕ, FareyNode (k + 1)) := defect q.2
+  let term : ℕ × ℕ × ℕ × ℕ → ℝ := fun (a, b, c, d) ↦
+    (1 : ℝ) / (a * b * c * d * (a + c) * (b + d))
+  let f (q : PositiveFarey) := term q.1
+  let totalTerm (q : Σ k : ℕ, ReciprocalFarey (k + 1)) := term q.2.1
+  have hnonneg (q : Σ k : ℕ, ReciprocalFarey (k + 1)) : 0 ≤ totalTerm q := by
+    obtain ⟨k, ⟨⟨a, b, c, d⟩, h⟩⟩ := q
+    dsimp [totalTerm, term]
+    positivity
+  have hf (k : ℕ) : HasSum (fun q ↦ totalTerm ⟨k, q⟩) (reciprocalSum k) :=
+    hasSum_farey_subintervals_reciprocal_interval (n := k + 1) (Nat.succ_pos k)
+  have hOuter := hasSum_reciprocalSum (fun k ↦ (hf k).nonneg fun q ↦ hnonneg ⟨k, q⟩)
   have hsum : HasSum totalTerm (2 * Real.eulerMascheroniConstant - 1) :=
-    hasSum_reciprocalSum.sigma_of_hasSum (f := totalTerm) hasSum_defect_reciprocalSum <|
-      (summable_sigma_of_nonneg (f := totalTerm) (fun q ↦ defect_nonneg q.2)).mpr
-        ⟨fun k ↦ (hasSum_defect_reciprocalSum k).summable,
-          by simpa only [totalTerm, (hasSum_defect_reciprocalSum _).tsum_eq] using
-            hasSum_reciprocalSum.summable⟩
+    hOuter.sigma_of_hasSum (f := totalTerm) hf <|
+      (summable_sigma_of_nonneg hnonneg).mpr
+        ⟨fun k ↦ (hf k).summable, by simpa only [(hf _).tsum_eq] using hOuter.summable⟩
   have htotal : HasSum f (2 * Real.eulerMascheroniConstant - 1) := by
     apply (reciprocalPartition.hasSum_iff (f := f)).mp
     have hcomp : f ∘ reciprocalPartition = totalTerm := by
