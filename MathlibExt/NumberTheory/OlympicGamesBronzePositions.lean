@@ -29,7 +29,8 @@ record lows of the fractional parts of $x(\sqrt{13}-3)/2$ for positive integers 
 * S. Beatty, *Problem 3173*, American Mathematical Monthly 33 (1926), no. 3, p. 159
   (the partition of the positive integers by complementary Beatty sequences).
 * `MathlibExt.NumberTheory.DiophantineApproximation.ThreeGap`: the fractional-part lemmas
-  `threeGap_fract_pos`, `threeGap_fract_sub_of_le`, and `threeGap_fract_sub_of_lt`.
+  `Int.fract_intCast_mul_pos_of_irrational`, `Int.fract_sub_eq_sub_of_le`, and
+  `Int.fract_sub_eq_one_add_sub_of_lt`.
 -/
 
 namespace MetaMathlibExt
@@ -70,7 +71,7 @@ private theorem beatty_alpha_iff {x : ℤ} (hx : 0 < x) :
       div_eq_mul_inv _ α, div_eq_mul_inv _ α, alpha_inv, add_mul, one_mul]
   let t : ℝ := (x : ℝ) * γ
   have hpos : 0 < t := mul_pos (by exact_mod_cast hx) gamma_bounds.1
-  have hr : 0 < Int.fract t := threeGap_fract_pos γ gamma_irrational hx.ne'
+  have hr : 0 < Int.fract t := Int.fract_intCast_mul_pos_of_irrational gamma_irrational hx.ne'
   change (∃ k : ℤ, 0 < k ∧ beattySeq α k = x) ↔ 1 - γ < Int.fract t
   rw [← Int.self_sub_floor]
   constructor
@@ -208,7 +209,7 @@ private theorem bronze_block_min (n : ℕ) {k : ℤ} (hk₀ : 0 ≤ k) (hk₃ : 
     linear_combination γ * hxR - hzR + (a : ℝ) * hpγ + (b : ℝ) * hqγ
   by_contra! hc
   rw [herr, mul_le_mul_iff_right₀ he] at hc
-  have hpos : 0 < bronzeFract x := threeGap_fract_pos γ gamma_irrational hx.ne'
+  have hpos : 0 < bronzeFract x := Int.fract_intCast_mul_pos_of_irrational gamma_irrational hx.ne'
   rw [herr, mul_pos_iff_of_pos_left he] at hpos
   have ha : 1 ≤ a := by
     by_contra! ha
@@ -256,20 +257,19 @@ private theorem bronze_record_iff (x : ℤ) : IsBronzeRecord x ↔
       by_contra hne
       exact (hrecord _ hpos (lt_of_le_of_ne hle (Ne.symm hne))).not_gt (hmin _ hx hu hne)
     refine ⟨n, ?_⟩
-    obtain ⟨hC, hD⟩ := bronzeCompanion_succ (2 * n + 1)
     interval_cases k
     · left; simpa using heq
     · right; left
-      rw [hC, add_comm]
+      rw [bronzeCompanionFirst_succ (2 * n + 1), add_comm]
       simpa using heq
     · right; right
-      rw [hD, add_comm]
+      rw [bronzeCompanionSecond_succ (2 * n + 1), add_comm]
       exact heq
   · rintro ⟨n, rfl | rfl | rfl⟩
     · simpa using bronze_record_candidate n (k := 0) (by norm_num) (by norm_num)
-    · rw [(bronzeCompanion_succ (2 * n + 1)).1, add_comm]
+    · rw [bronzeCompanionFirst_succ (2 * n + 1), add_comm]
       simpa using bronze_record_candidate n (k := 1) (by norm_num) (by norm_num)
-    · rw [(bronzeCompanion_succ (2 * n + 1)).2, add_comm]
+    · rw [bronzeCompanionSecond_succ (2 * n + 1), add_comm]
       exact bronze_record_candidate n (k := 2) (by norm_num) (by norm_num)
 
 private theorem bronze_record_fract_le {x : ℤ} (hx : IsBronzeRecord x) : bronzeFract x ≤ γ := by
@@ -322,10 +322,12 @@ public theorem bronzeGame_pPositions (P : Set ℕ)
       rw [Int.ofNat_sub hyx.le] at hb
       have hsub : 0 < (x : ℤ) - y := by omega
       have hble := (beatty_beta_iff hsub).mp hb
-      have hwrap : bronzeFract ((x : ℤ) - y) = 1 + bronzeFract x - bronzeFract y :=
-        threeGap_fract_sub_of_lt γ x y hxy
+      have hwrap : bronzeFract ((x : ℤ) - y) = 1 + bronzeFract x - bronzeFract y := by
+        simpa only [bronzeFract, Int.cast_sub, sub_mul] using
+          Int.fract_sub_eq_one_add_sub_of_lt (x := ((x : ℤ) : ℝ) * γ) (y := ((y : ℤ) : ℝ) * γ) hxy
       rw [hwrap] at hble
-      have hpos : 0 < bronzeFract x := threeGap_fract_pos γ gamma_irrational hxr.1.ne'
+      have hpos : 0 < bronzeFract x :=
+        Int.fract_intCast_mul_pos_of_irrational gamma_irrational hxr.1.ne'
       linarith only [hble, bronze_record_fract_le hyr, hpos]
   · intro x hx
     have hxne : x ≠ 0 := fun h => hx (h.symm ▸ hzero)
@@ -350,10 +352,12 @@ public theorem bronzeGame_pPositions (P : Set ℕ)
       rw [Int.ofNat_sub hyx.le, hyz]
       have hsub : 0 < (x : ℤ) - z := by omega
       apply (beatty_beta_iff hsub).mpr
-      have hfrac : bronzeFract ((x : ℤ) - z) = bronzeFract x - bronzeFract z :=
-        threeGap_fract_sub_of_le γ x z hdiff.le
+      have hfrac : bronzeFract ((x : ℤ) - z) = bronzeFract x - bronzeFract z := by
+        simpa only [bronzeFract, Int.cast_sub, sub_mul] using
+          Int.fract_sub_eq_sub_of_le (x := ((x : ℤ) : ℝ) * γ) (y := (z : ℝ) * γ) hdiff.le
       rw [hfrac]
-      have hpos : 0 < bronzeFract z := threeGap_fract_pos γ gamma_irrational hzr.1.ne'
+      have hpos : 0 < bronzeFract z :=
+        Int.fract_intCast_mul_pos_of_irrational gamma_irrational hzr.1.ne'
       linarith only [le_of_not_gt ha, hpos]
 
 end MetaMathlibExt

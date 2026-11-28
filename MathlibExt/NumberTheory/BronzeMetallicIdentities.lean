@@ -88,14 +88,27 @@ numbers of the second type). -/
 def bronzeCompanionSecond (n : ℕ) : ℤ :=
   lucasU bronzeLucasParams (n + 1) - lucasU bronzeLucasParams n
 
-/-- At index $n+1$, the first and second bronze companions are respectively
-$B_{n+1}+B_n$ and $2B_{n+1}+B_n$, for each natural number $n$. -/
-theorem bronzeCompanion_succ (n : ℕ) :
-    bronzeCompanionFirst (n + 1) = lucasU bronzeLucasParams (n + 1) + lucasU bronzeLucasParams n ∧
-      bronzeCompanionSecond (n + 1) =
-        2 * lucasU bronzeLucasParams (n + 1) + lucasU bronzeLucasParams n := by
-  simp only [bronzeCompanionFirst, bronzeCompanionSecond, lucasU_bronzeLucasParams_add_two n]
-  constructor <;> ring
+/-- **First companion bronze numbers at a successor index.** For every natural number $n$,
+$C_{n+1} = B_{n+1} + B_n$.
+
+Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
+Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4. -/
+theorem bronzeCompanionFirst_succ (n : ℕ) :
+    bronzeCompanionFirst (n + 1) =
+      lucasU bronzeLucasParams (n + 1) + lucasU bronzeLucasParams n := by
+  simp only [bronzeCompanionFirst, lucasU_bronzeLucasParams_add_two n]
+  ring
+
+/-- **Second companion bronze numbers at a successor index.** For every natural number $n$,
+$D_{n+1} = 2B_{n+1} + B_n$.
+
+Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
+Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4. -/
+theorem bronzeCompanionSecond_succ (n : ℕ) :
+    bronzeCompanionSecond (n + 1) =
+      2 * lucasU bronzeLucasParams (n + 1) + lucasU bronzeLucasParams n := by
+  simp only [bronzeCompanionSecond, lucasU_bronzeLucasParams_add_two n]
+  ring
 
 /-- **Recurrence for the companion bronze numbers of the first type.** For every natural number
 $n$, the companion bronze numbers $C_n$ of the first type satisfy $C_{n+2} = 3C_{n+1} + C_n$.

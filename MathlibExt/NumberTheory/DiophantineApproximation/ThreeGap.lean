@@ -15,10 +15,10 @@ public import Mathlib.NumberTheory.Real.Irrational
 /-!
 # The three-gap theorem
 
-This file proves that the fractional parts of the first `n` multiples of an irrational real
-number cut the circle into gaps of at most three distinct lengths. If three lengths occur, the
-largest is the sum of the other two. The fractional-part formulas for differences also apply to
-rational multipliers. Irrationality gives positivity at every nonzero integer index.
+For $n \ge 1$, the fractional parts of the first $n$ multiples of an irrational real number cut
+the circle into gaps of at most three distinct lengths. If three lengths occur, the largest is
+the sum of the other two. The fractional-part formulas for differences hold for any two real
+numbers. Irrationality gives positivity at every nonzero integer index.
 
 ## References
 
@@ -27,6 +27,35 @@ rational multipliers. Irrationality gives positivity at every nonzero integer in
 -/
 
 @[expose] public section
+
+namespace Int
+
+/-- **Fractional part of a difference without wraparound.** If the fractional part of a real
+number $y$ is at most that of $x$, the fractional part of $x-y$ is their difference. -/
+theorem fract_sub_eq_sub_of_le {x y : ℝ} (h : fract y ≤ fract x) :
+    fract (x - y) = fract x - fract y := by
+  rw [← fract_fract_sub_fract, fract_eq_self]
+  exact ⟨sub_nonneg.mpr h, (sub_le_self _ (fract_nonneg y)).trans_lt (fract_lt_one x)⟩
+
+/-- **Fractional part of a difference with wraparound.** If the fractional part of a real
+number $x$ is less than that of $y$, add one to their difference to get the fractional part
+of $x-y$. -/
+theorem fract_sub_eq_one_add_sub_of_lt {x y : ℝ} (h : fract x < fract y) :
+    fract (x - y) = 1 + fract x - fract y := by
+  calc
+    fract (x - y) = fract (fract x - fract y) := (fract_fract_sub_fract x y).symm
+    _ = fract (fract x - fract y + 1) := (fract_add_one _).symm
+    _ = fract x - fract y + 1 := fract_eq_self.mpr
+      ⟨by linarith only [fract_nonneg x, fract_lt_one y], by linarith only [h]⟩
+    _ = 1 + fract x - fract y := by ring
+
+/-- **Positive fractional part of an irrational multiple.** The fractional part of a nonzero
+integer multiple of an irrational real number is positive. -/
+theorem fract_intCast_mul_pos_of_irrational {α : ℝ} (hα : Irrational α) {m : ℤ} (hm : m ≠ 0) :
+    0 < fract ((m : ℝ) * α) :=
+  fract_pos.mpr ((hα.intCast_mul hm).ne_int _)
+
+end Int
 
 namespace MetaMathlibExt
 
@@ -44,15 +73,8 @@ private theorem threeGap_natFract_eq (α : ℝ) (k : ℕ) :
   simp [threeGap_natFract, threeGap_fract]
 
 private theorem threeGap_fract_ne_zero (α : ℝ) (hα : Irrational α) {m : ℤ} (hm : m ≠ 0) :
-    threeGap_fract α m ≠ 0 := by
-  rw [threeGap_fract, Int.fract_ne_zero_iff]
-  rintro ⟨z, hz⟩
-  exact (hα.intCast_mul hm).ne_int z hz.symm
-
-/-- The fractional part of a nonzero integer multiple of an irrational real number is positive. -/
-theorem threeGap_fract_pos (α : ℝ) (hα : Irrational α) {m : ℤ} (hm : m ≠ 0) :
-    0 < Int.fract ((m : ℝ) * α) := by
-  exact lt_of_le_of_ne (Int.fract_nonneg _) (threeGap_fract_ne_zero α hα hm).symm
+    threeGap_fract α m ≠ 0 :=
+  (Int.fract_intCast_mul_pos_of_irrational hα hm).ne'
 
 private theorem threeGap_fract_neg (α : ℝ) (hα : Irrational α) {m : ℤ} (hm : m ≠ 0) :
     threeGap_fract α (-m) = 1 - threeGap_fract α m := by
@@ -98,55 +120,17 @@ private theorem threeGap_fract_add_of_one_le (α : ℝ) (a b : ℤ)
       rw [Int.fract_eq_self]
       constructor <;> linarith
 
-/-- If the fractional part of $b\alpha$ is at most that of $a\alpha$, the fractional part
-of $(a-b)\alpha$ is their difference, for real $\alpha$ and integers $a,b$. -/
-theorem threeGap_fract_sub_of_le (α : ℝ) (a b : ℤ)
-    (h : Int.fract ((b : ℝ) * α) ≤ Int.fract ((a : ℝ) * α)) :
-    Int.fract (((a - b : ℤ) : ℝ) * α) = Int.fract ((a : ℝ) * α) - Int.fract ((b : ℝ) * α) := by
-  change threeGap_fract α b ≤ threeGap_fract α a at h
-  change threeGap_fract α (a - b) = threeGap_fract α a - threeGap_fract α b
-  have ha : threeGap_fract α a < 1 := Int.fract_lt_one _
-  have hb : 0 ≤ threeGap_fract α b := Int.fract_nonneg _
-  calc
-    threeGap_fract α (a - b) =
-        Int.fract (((a : ℝ) * α) - ((b : ℝ) * α)) := by
-      unfold threeGap_fract
-      congr 2
-      push_cast
-      ring
-    _ = Int.fract (threeGap_fract α a - threeGap_fract α b) := by
-      symm
-      exact Int.fract_fract_sub_fract _ _
-    _ = threeGap_fract α a - threeGap_fract α b := by
-      rw [Int.fract_eq_self]
-      constructor <;> linarith
+private theorem threeGap_fract_sub_of_le (α : ℝ) (a b : ℤ)
+    (h : threeGap_fract α b ≤ threeGap_fract α a) :
+    threeGap_fract α (a - b) = threeGap_fract α a - threeGap_fract α b := by
+  simpa only [threeGap_fract, Int.cast_sub, sub_mul] using
+    Int.fract_sub_eq_sub_of_le (x := (a : ℝ) * α) (y := (b : ℝ) * α) h
 
-/-- If the fractional part of $a\alpha$ is less than that of $b\alpha$, the fractional part
-of $(a-b)\alpha$ is their difference plus one, for real $\alpha$ and integers $a,b$. -/
-theorem threeGap_fract_sub_of_lt (α : ℝ) (a b : ℤ)
-    (h : Int.fract ((a : ℝ) * α) < Int.fract ((b : ℝ) * α)) :
-    Int.fract (((a - b : ℤ) : ℝ) * α) = 1 + Int.fract ((a : ℝ) * α) - Int.fract ((b : ℝ) * α) := by
-  change threeGap_fract α a < threeGap_fract α b at h
-  change threeGap_fract α (a - b) = 1 + threeGap_fract α a - threeGap_fract α b
-  have ha : 0 ≤ threeGap_fract α a := Int.fract_nonneg _
-  have hb : threeGap_fract α b < 1 := Int.fract_lt_one _
-  calc
-    threeGap_fract α (a - b) =
-        Int.fract (((a : ℝ) * α) - ((b : ℝ) * α)) := by
-      unfold threeGap_fract
-      congr 2
-      push_cast
-      ring
-    _ = Int.fract (threeGap_fract α a - threeGap_fract α b) := by
-      symm
-      exact Int.fract_fract_sub_fract _ _
-    _ = Int.fract (threeGap_fract α a - threeGap_fract α b + 1) := by
-      symm
-      exact Int.fract_add_one _
-    _ = threeGap_fract α a - threeGap_fract α b + 1 := by
-      rw [Int.fract_eq_self]
-      constructor <;> linarith
-    _ = 1 + threeGap_fract α a - threeGap_fract α b := by ring
+private theorem threeGap_fract_sub_of_lt (α : ℝ) (a b : ℤ)
+    (h : threeGap_fract α a < threeGap_fract α b) :
+    threeGap_fract α (a - b) = 1 + threeGap_fract α a - threeGap_fract α b := by
+  simpa only [threeGap_fract, Int.cast_sub, sub_mul] using
+    Int.fract_sub_eq_one_add_sub_of_lt (x := (a : ℝ) * α) (y := (b : ℝ) * α) h
 
 private theorem threeGap_fract_injective (α : ℝ) (hα : Irrational α) :
     Function.Injective (threeGap_fract α) := by
@@ -216,7 +200,7 @@ private theorem threeGap_extrema_sum_ge (n u v : ℕ) (α : ℝ) (hα : Irration
   have huv_lt : u + v < n := by omega
   have huv_pos : 1 ≤ u + v := by omega
   have hu0 : (u : ℤ) ≠ 0 := by exact_mod_cast (by omega : u ≠ 0)
-  have hfu_pos : 0 < threeGap_natFract α u := threeGap_fract_pos α hα hu0
+  have hfu_pos : 0 < threeGap_natFract α u := Int.fract_intCast_mul_pos_of_irrational hα hu0
   have hfv_lt : threeGap_natFract α v < 1 := Int.fract_lt_one _
   by_cases hlt : threeGap_natFract α u + threeGap_natFract α v < 1
   · have hadd : threeGap_natFract α (u + v) =
@@ -285,7 +269,7 @@ private theorem threeGap_backward_lower (n v k : ℕ) (α : ℝ) (hα : Irration
     have hmax := hvmax (v + (j - k)) (by omega) (by omega)
     have hm0 : ((j - k : ℕ) : ℤ) ≠ 0 := by exact_mod_cast (by omega : j - k ≠ 0)
     have hmpos : 0 < threeGap_natFract α (j - k) :=
-      threeGap_fract_pos α hα hm0
+      Int.fract_intCast_mul_pos_of_irrational hα hm0
     rw [hadd] at hmax
     linarith
 
@@ -679,7 +663,7 @@ theorem three_gap (n : ℕ) (hn : 1 ≤ n) (α : ℝ) (hα : Irrational α) :
       have hTcard : T.card = 3 := by rw [← hGT_eq, hcard]
       have hu0 : (u : ℤ) ≠ 0 := by exact_mod_cast (by omega : u ≠ 0)
       have hδ₁pos : 0 < δ₁ := by
-        exact threeGap_fract_pos α hα hu0
+        exact Int.fract_intCast_mul_pos_of_irrational hα hu0
       have hδ₂pos : 0 < δ₂ := by
         have hfvlt : threeGap_natFract α v < 1 := Int.fract_lt_one _
         dsimp [δ₂]
