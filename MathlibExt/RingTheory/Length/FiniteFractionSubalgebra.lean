@@ -12,6 +12,9 @@ Author: @toskua
 
 module
 
+public import MathlibExt.RingTheory.Length.PrincipalAnnihilator
+public import MathlibExt.RingTheory.Length.FiniteFractionSubmodule
+
 public import MathlibExt.RingTheory.Length.FiniteColengthAlgebra
 public import MathlibExt.RingTheory.Length.AnnihilatorQuotient
 public import Mathlib.Algebra.Module.Torsion.Basic
@@ -51,18 +54,9 @@ image of the algebra map from `R` is torsion: each class is annihilated by a
 non-zero-divisor of `R`. The ring and field universes are independent. -/
 theorem isTorsion_quotient_range (A : Subalgebra R K) :
     Module.IsTorsion R (A ⧸ (Algebra.linearMap R A).range) := by
-  let N : Submodule R A := (Algebra.linearMap R A).range
-  intro z
-  obtain ⟨x, rfl⟩ := Submodule.mkQ_surjective N z
-  obtain ⟨c, r, hr⟩ := IsLocalization.exists_integer_multiple (nonZeroDivisors R) (x : K)
-  refine ⟨c, ?_⟩
-  change (c : R) • N.mkQ x = 0
-  rw [← N.mkQ.map_smul]
-  apply (Submodule.Quotient.mk_eq_zero N).mpr
-  refine ⟨r, ?_⟩
-  apply Subtype.ext
-  change algebraMap R K r = (c : R) • (x : K)
-  exact hr
+  change Module.IsTorsion R
+    (A.toSubmodule ⧸ (Submodule.fractionScalarMap A.toSubmodule A.one_mem).range)
+  exact Submodule.isTorsion_quotient_fractionScalarMap A.toSubmodule A.one_mem
 
 variable [IsDomain R]
 
@@ -84,14 +78,13 @@ theorem isFiniteLength_quotient_range (A : Subalgebra R K)
     [Module.Finite R A] [IsNoetherianRing R] [Ring.KrullDimLE 1 R] :
     IsFiniteLength R (A ⧸ (Algebra.linearMap R A).range) := by
   obtain ⟨c, hc, hann⟩ := exists_nonzero_annihilator_quotient_range A
-  have hI : Ideal.span {c} ≤ Module.annihilator R (A ⧸ (Algebra.linearMap R A).range) :=
-    Ideal.span_le.mpr (Set.singleton_subset_iff.mpr (Module.mem_annihilator.mpr hann))
-  have hquot : Module.length R (R ⧸ Ideal.span {c}) ≠ ⊤ :=
-    Module.length_ne_top_iff.mpr
-      (isFiniteLength_quotient_span_singleton R (mem_nonZeroDivisors_iff_ne_zero.mpr hc))
+  have htor : Module.IsTorsionBy R (A ⧸ (Algebra.linearMap R A).range) c := by
+    rw [Module.isTorsionBy_iff_mem_annihilator]
+    exact Module.mem_annihilator.mpr hann
   exact Module.length_ne_top_iff.mp
-    (Module.length_ne_top_of_finite_of_ideal_le_annihilator R
-      (A ⧸ (Algebra.linearMap R A).range) (Ideal.span {c}) hI hquot)
+    (Module.length_ne_top_of_isTorsionBy_nonZeroDivisor R
+      (A ⧸ (Algebra.linearMap R A).range) c
+      (mem_nonZeroDivisors_iff_ne_zero.mpr hc) htor)
 
 /-- Let `R` be a Noetherian domain of Krull dimension at most one, `K` its
 chosen fraction field, and `A ⊆ K` a finite `R`-subalgebra. For every nonzero

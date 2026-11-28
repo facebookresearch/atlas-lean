@@ -20,12 +20,14 @@ public import Mathlib.RingTheory.Length
 /-!
 # Weighted Euler length cancellation for finitely supported complexes
 
-For a short complex of R-modules, the middle length is the sum of homology length and the
+Over a ring R, for a short complex of left R-modules, the middle length is the sum of homology
+length and the
 lengths of the incoming and outgoing differential ranges. This equality holds in extended
 natural numbers. Finite middle length gives the corresponding finite natural-number identity.
 
 For a complex supported on a finite set s with finite term lengths, let ε assign integer
-weights satisfying ε(i)+ε(j)=0 along every differential edge. The range terms cancel, giving
+weights satisfying ε(i)+ε(j)=0 on every edge allowed by the complex shape, including
+edges whose actual differential is zero. The range terms cancel, giving
 ∑_{i∈s}ε(i)ℓ_R(K_i)=∑_{i∈s}ε(i)ℓ_R(H_i(K)). Homology is finite on s and zero outside s. The
 ring, index and module universes are independent.
 -/
@@ -41,11 +43,12 @@ universe u v w
 
 namespace CategoryTheory.ShortComplex
 
-variable {R : Type u} [CommRing R] (S : ShortComplex (ModuleCat.{v} R))
+variable {R : Type u} [Ring R] (S : ShortComplex (ModuleCat.{v} R))
 
 /-- The middle length decomposes into homology and range lengths.
 
-For a module short complex S, ℓ(S₂)=ℓ(H(S))+ℓ(range f)+ℓ(range g) in extended natural numbers. -/
+Over a ring R, for a left-module short complex S, ℓ(S₂)=ℓ(H(S))+ℓ(range f)+ℓ(range g) in extended
+natural numbers. -/
 theorem moduleCat_length_X₂_eq :
     Module.length R S.X₂ = Module.length R S.homology +
       Module.length R S.f.hom.range + Module.length R S.g.hom.range := by
@@ -72,7 +75,8 @@ theorem moduleCat_length_X₂_eq :
 
 /-- Finite middle length gives finite homology length.
 
-If the middle module of S has finite length, its homology has finite length. -/
+Over a ring R, if the middle module of a left-module short complex S has finite length, its
+homology has finite length. -/
 theorem moduleCat_homology_length_ne_top (hM : Module.length R S.X₂ ≠ ⊤) :
     Module.length R S.homology ≠ ⊤ := by
   apply ne_top_of_le_ne_top hM
@@ -81,7 +85,8 @@ theorem moduleCat_homology_length_ne_top (hM : Module.length R S.X₂ ≠ ⊤) :
 
 /-- The natural-number length decomposition of a finite middle term.
 
-For finite-length S₂, its natural-number length equals those of homology and the two
+Over a ring R, for a left-module short complex with finite-length S₂, its natural-number length
+equals those of homology and the two
 differential ranges added together. -/
 theorem moduleCat_length_X₂_toNat (hM : Module.length R S.X₂ ≠ ⊤) :
     (Module.length R S.X₂).toNat = (Module.length R S.homology).toNat +
@@ -101,14 +106,15 @@ end CategoryTheory.ShortComplex
 
 namespace HomologicalComplex
 
-variable {R : Type u} [CommRing R] {ι : Type w} {c : ComplexShape ι}
+variable {R : Type u} [Ring R] {ι : Type w} {c : ComplexShape ι}
   (K : HomologicalComplex (ModuleCat.{v} R) c)
 
 /-- The weighted term Euler sum equals the homology sum.
 
-For finite support s, finite lengths on s and opposite integer weights across each
-differential edge, homology is finite on s, zero outside it, and the two weighted length sums
-agree. -/
+Over a ring R, let K be a complex of left R-modules supported on a finite set s,
+with finite composition lengths on s. Assume opposite integer weights on every edge
+allowed by the shape: ε(i) + ε(j) = 0 whenever c.Rel i j, including when K.d i j = 0.
+Homology is finite on s and zero outside it, and the two weighted length sums agree. -/
 theorem lengthEuler_eq_homology_of_finite_support (s : Finset ι) (ε : ι → ℤ)
     (hzero : ∀ i, i ∉ s → IsZero (K.X i))
     (hlen : ∀ i ∈ s, Module.length R (K.X i) ≠ ⊤)

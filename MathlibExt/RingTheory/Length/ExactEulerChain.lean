@@ -28,24 +28,41 @@ set_option autoImplicit false
 
 open scoped BigOperators
 
-universe u v
+universe u v w x
 
 namespace Module
 
-variable (R : Type u) [CommRing R]
+variable (R : Type u) [Ring R]
 
-/-- The actual ranges of an exact pair give its middle module length. -/
-theorem exactPair_length_toNat {L M N : Type v}
+/-- Range-sum formula for the middle length of an exact pair.
+
+For R-linear maps f : L → M and g : M → N with Im(f) = Ker(g), ℓ_R(M) = ℓ_R(Im f) + ℓ_R(Im g)
+in ℕ∞. The injective inclusion of Im(f) and surjective range restriction of g present the
+corresponding short exact sequence. -/
+theorem length_eq_range_add_range_of_exact
+    {L : Type v} {M : Type w} {N : Type x}
+    [AddCommGroup L] [Module R L] [AddCommGroup M] [Module R M]
+    [AddCommGroup N] [Module R N]
+    (f : L →ₗ[R] M) (g : M →ₗ[R] N)
+    (h : Function.Exact f g) :
+    Module.length R M =
+      Module.length R f.range + Module.length R g.range := by
+  apply Module.length_eq_add_of_exact
+    f.range.subtype g.rangeRestrict
+      (Submodule.injective_subtype f.range) g.surjective_rangeRestrict
+  exact h.rangeFactorization ⟨0, g.map_zero⟩
+
+/-- Over a ring R, an exact pair of R-linear maps with finite middle length has
+middle natural length equal to the sum of its two range lengths. The ring and
+three module carrier universes are independent. -/
+theorem exactPair_length_toNat {L : Type v} {M : Type w} {N : Type x}
     [AddCommGroup L] [AddCommGroup M] [AddCommGroup N]
     [Module R L] [Module R M] [Module R N]
     (f : L →ₗ[R] M) (g : M →ₗ[R] N) (h : Function.Exact f g)
     (hM : Module.length R M ≠ ⊤) :
     (Module.length R M).toNat =
       (Module.length R f.range).toNat + (Module.length R g.range).toNat := by
-  have he : Module.length R M = Module.length R f.range + Module.length R g.range := by
-    exact Module.length_eq_add_of_exact f.range.subtype g.rangeRestrict
-      (Submodule.injective_subtype _) g.surjective_rangeRestrict
-        (h.rangeFactorization ⟨0, g.map_zero⟩)
+  have he := length_eq_range_add_range_of_exact R f g h
   have hf : Module.length R f.range ≠ ⊤ :=
     ne_top_of_le_ne_top hM
       (Module.length_le_of_injective f.range.subtype (Submodule.injective_subtype _))

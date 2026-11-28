@@ -68,41 +68,25 @@ theorem pairTopIndex_orderEmb (i : Fin 2) :
     (fun _ => Finset.mem_univ _)
   exact congrArg (fun e : Fin 2 ↪o Fin 2 => e i) h.symm
 
-/-- The ordered standard basis of the rank-two free module.
-
-Use the two coordinate vectors of Fin 2 → R. -/
-noncomputable def pairBasis : Module.Basis (Fin 2) R (Fin 2 → R) :=
-  Pi.basisFun R (Fin 2)
-
-/-- The coefficient of the ordered top wedge.
-
-The top-coordinate functional on Λ²(R²) reads the coefficient of e₀∧e₁. -/
-noncomputable def pairTopCoeff : (⋀[R]^2 (Fin 2 → R)) →ₗ[R] R :=
-  exteriorPower.ιMultiDual R 2 (pairBasis R) pairTopIndex
-
-/-- The ordered top wedge of the pair basis.
-
-This is e₀∧e₁ in Λ²(R²). -/
-noncomputable def pairTopWedge : ⋀[R]^2 (Fin 2 → R) :=
-  exteriorPower.ιMulti_family R 2 (pairBasis R) pairTopIndex
-
 /-- The top exterior-power coordinate equivalence.
 
-The ordered wedge identifies Λ²(R²) with R by its coefficient. -/
+The ordered standard wedge identifies Λ²(R²) with R by its native coefficient
+functional. The basis and wedge are the standard `Pi.basisFun` and exterior-power
+constructions; no parallel coordinate interfaces are introduced. -/
 noncomputable def pairTopEquiv :
     (⋀[R]^2 (Fin 2 → R)) ≃ₗ[R] R := by
-  apply LinearEquiv.ofBijective (pairTopCoeff R)
+  let B := Pi.basisFun R (Fin 2)
+  apply LinearEquiv.ofBijective (exteriorPower.ιMultiDual R 2 B pairTopIndex)
   constructor
   · intro z w hzw
-    apply (pairBasis R).exteriorPower 2 |>.repr.injective
+    apply B.exteriorPower 2 |>.repr.injective
     ext s
     rw [pairTopIndex_unique s]
     rw [exteriorPower.basis_repr_apply, exteriorPower.basis_repr_apply]
     exact hzw
   · intro r
-    refine ⟨r • pairTopWedge R, ?_⟩
-    rw [map_smul, pairTopWedge, pairTopCoeff,
-      exteriorPower.ιMultiDual_apply_diag, smul_eq_mul, mul_one]
+    refine ⟨r • exteriorPower.ιMulti_family R 2 B pairTopIndex, ?_⟩
+    rw [map_smul, exteriorPower.ιMultiDual_apply_diag, smul_eq_mul, mul_one]
 
 /-- The determinant formula for a pair wedge.
 
@@ -110,32 +94,10 @@ The top coordinate of the wedge of two vectors is a₀₀a₁₁−a₀₁a₁�
 theorem pairTopEquiv_apply_ιMulti (a : Fin 2 → (Fin 2 → R)) :
     pairTopEquiv R (exteriorPower.ιMulti R 2 a) =
       a 0 0 * a 1 1 - a 0 1 * a 1 0 := by
-  change pairTopCoeff R (exteriorPower.ιMulti R 2 a) = _
-  rw [pairTopCoeff, exteriorPower.ιMultiDual_apply_ιMulti,
-    Matrix.det_fin_two]
-  simp [pairBasis, pairTopIndex_orderEmb]
-
-/-- The oriented top boundary vector.
-
-For the pair (f,g), the top differential vector is (−g,f). -/
-def pairTopBoundaryVector (f g : R) : Fin 2 → R :=
-  Fin.cases (-g) (fun _ => f)
-
-/-- The first coordinate of the top boundary vector.
-
-The coordinate at 0 is −g. -/
-@[simp]
-theorem pairTopBoundaryVector_zero (f g : R) :
-    pairTopBoundaryVector R f g 0 = -g :=
-  rfl
-
-/-- The second coordinate of the top boundary vector.
-
-The coordinate at 1 is f. -/
-@[simp]
-theorem pairTopBoundaryVector_one (f g : R) :
-    pairTopBoundaryVector R f g 1 = f :=
-  rfl
+  change exteriorPower.ιMultiDual R 2 (Pi.basisFun R (Fin 2)) pairTopIndex
+    (exteriorPower.ιMulti R 2 a) = _
+  rw [exteriorPower.ιMultiDual_apply_ιMulti, Matrix.det_fin_two]
+  simp [Pi.basisFun, pairTopIndex_orderEmb]
 
 /-- The top pair differential in ordered coordinates.
 
@@ -145,7 +107,7 @@ theorem pair_differential_one_coordinates (f g : R) :
         (differential R (Fin 2 → R)
           (familyFunctional R (pairFamily R f g)) 1) =
       (LinearMap.toSpanSingleton R (Fin 2 → R)
-        (pairTopBoundaryVector R f g)).comp
+        (pairFamily R (-g) f)).comp
           (pairTopEquiv R).toLinearMap := by
   apply exteriorPower.linearMap_ext
     (R := R) (n := 2) (M := Fin 2 → R) (N := Fin 2 → R)
@@ -160,18 +122,23 @@ theorem pair_differential_one_coordinates (f g : R) :
       pairFamily_zero, pairFamily_one, Fin.sum_univ_two] <;>
     ring
 
-/-- The bottom pair differential in ordered coordinates.
-
-After the degree-zero and degree-one exterior identifications, the differential sends x to
-fx₀+gx₁. -/
-theorem pair_differential_zero_coordinates (f g : R) :
-    (exteriorPower.zeroEquiv R (Fin 2 → R)).toLinearMap.comp
-        (differential R (Fin 2 → R)
-          (familyFunctional R (pairFamily R f g)) 0) =
-      (familyFunctional R (pairFamily R f g)).comp
-        (exteriorPower.oneEquiv R (Fin 2 → R)).toLinearMap :=
-  differential_zero_equiv R (Fin 2 → R)
-    (familyFunctional R (pairFamily R f g))
+/-- For arbitrary f,g in a commutative ring R and z in Λ¹(R²), the bottom
+Koszul differential has actual scalar value f*x₀ + g*x₁, where x is the vector
+obtained from z by the native degree-one exterior equivalence. -/
+theorem pair_differential_zero_coordinates (f g : R)
+    (z : ⋀[R]^1 (Fin 2 → R)) :
+    exteriorPower.zeroEquiv R (Fin 2 → R)
+        (differential R (Fin 2 → R) (familyFunctional R (pairFamily R f g)) 0 z) =
+      f * exteriorPower.oneEquiv R (Fin 2 → R) z 0 +
+        g * exteriorPower.oneEquiv R (Fin 2 → R) z 1 := by
+  have h := LinearMap.congr_fun
+    (differential_zero_equiv R (Fin 2 → R) (familyFunctional R (pairFamily R f g))) z
+  change exteriorPower.zeroEquiv R (Fin 2 → R)
+      (differential R (Fin 2 → R) (familyFunctional R (pairFamily R f g)) 0 z) =
+    familyFunctional R (pairFamily R f g) (exteriorPower.oneEquiv R (Fin 2 → R) z) at h
+  rw [h]
+  simp [familyFunctional, Fintype.linearCombination_apply, Fin.sum_univ_two,
+    smul_eq_mul, mul_comm]
 
 /-- Regularity of the first element makes the top differential injective.
 
@@ -186,9 +153,9 @@ theorem pair_differential_one_injective
   apply hf
   have hcoord :
       LinearMap.toSpanSingleton R (Fin 2 → R)
-          (pairTopBoundaryVector R f g) (pairTopEquiv R z) =
+          (pairFamily R (-g) f) (pairTopEquiv R z) =
         LinearMap.toSpanSingleton R (Fin 2 → R)
-          (pairTopBoundaryVector R f g) (pairTopEquiv R w) := by
+          (pairFamily R (-g) f) (pairTopEquiv R w) := by
     have hformula := pair_differential_one_coordinates R f g
     have hz := LinearMap.congr_fun hformula z
     have hw := LinearMap.congr_fun hformula w
@@ -229,7 +196,7 @@ noncomputable def pairCoordinateShortComplex (f g : R) :
     ShortComplex (ModuleCat R) :=
   ShortComplex.moduleCatMk
     (LinearMap.toSpanSingleton R (Fin 2 → R)
-      (pairTopBoundaryVector R f g))
+      (pairFamily R (-g) f))
     (familyFunctional R (pairFamily R f g)) (by
       apply LinearMap.ext
       intro c
@@ -253,6 +220,7 @@ noncomputable def pairCoordinateShortComplexIso (f g : R) :
   · apply ModuleCat.hom_ext
     exact (pair_differential_one_coordinates R f g).symm
   · apply ModuleCat.hom_ext
-    exact (pair_differential_zero_coordinates R f g).symm
+    exact (differential_zero_equiv R (Fin 2 → R)
+      (familyFunctional R (pairFamily R f g))).symm
 
 end KoszulComplex

@@ -13,18 +13,18 @@ Author: @toskua
 module
 
 public import Mathlib.RingTheory.Length
+public import MathlibExt.RingTheory.Length.AnnihilatorQuotient
 public import Mathlib.RingTheory.Finiteness.Basic
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
 
 /-!
 # Finite scalar length of genuine finite algebra quotients
 
-The actual base quotient acts on the original algebra quotient through the
-canonical quotient scalar map. Its finite length supplies both Artinian and
-Noetherian structures, and the original finite generators remain generators
-over the quotient. The stock surjective scalar length identity returns the
-finite length over the original base. No reducedness or Noetherian hypothesis
-on the original base is required.
+A finite algebra quotient is a finite module over the original base ring. If a
+base ideal maps into the quotient ideal, it annihilates that module. The general
+annihilating-quotient length theorem then gives finite composition length from
+finite length of the base quotient, without Noetherianity or reducedness of the
+original ring.
 -/
 
 @[expose] public section
@@ -45,20 +45,15 @@ theorem length_algebraQuotient_ne_top_of_base_quotient
     (hIJ : I ≤ J.comap (algebraMap R A))
     (hI : Module.length R (R ⧸ I) ≠ ⊤) :
     Module.length R (A ⧸ J) ≠ ⊤ := by
-  let Rbar := R ⧸ I
-  let Q := A ⧸ J
-  let : Algebra Rbar Q := Ideal.Quotient.algebraQuotientOfLEComap hIJ
-  let : IsScalarTower R Rbar Q := IsScalarTower.of_algebraMap_eq (fun _ => rfl)
-  have hfinite := isFiniteLength_iff_isNoetherian_isArtinian.mp
-    (Module.length_ne_top_iff.mp hI)
-  let : IsNoetherianRing Rbar := isNoetherian_of_tower R hfinite.1
-  let : IsArtinianRing Rbar := isArtinian_of_tower R hfinite.2
-  let : Module.Finite R Q := Module.Finite.of_surjective
+  letI : Module.Finite R (A ⧸ J) := Module.Finite.of_surjective
     (Ideal.Quotient.mkₐ R J).toLinearMap J.mkQ_surjective
-  let : Module.Finite Rbar Q := Module.Finite.of_restrictScalars_finite R Rbar Q
-  have hQ : Module.length Rbar Q ≠ ⊤ := Module.length_ne_top
-  have he : Module.length R Q = Module.length Rbar Q :=
-    Module.length_eq_of_surjective (R := Rbar) (S := R) (M := Q) I.mkQ_surjective
-  rwa [← he] at hQ
+  apply Module.length_ne_top_of_finite_of_ideal_le_annihilator R (A ⧸ J) I ?_ hI
+  intro r hr
+  rw [Module.mem_annihilator]
+  intro q
+  have hz : algebraMap R (A ⧸ J) r = 0 :=
+    ((Ideal.Quotient.mkₐ R J).commutes r).symm.trans
+      (Ideal.Quotient.eq_zero_iff_mem.mpr (hIJ hr))
+  simp only [Algebra.smul_def, hz, zero_mul]
 
 end Module

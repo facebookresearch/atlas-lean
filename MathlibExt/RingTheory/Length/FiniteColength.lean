@@ -14,6 +14,8 @@ module
 
 public import Mathlib.RingTheory.Length
 public import Mathlib.LinearAlgebra.Isomorphisms
+public import Mathlib.LinearAlgebra.BilinearMap
+public import Mathlib.RingTheory.Ideal.Quotient.Operations
 
 /-!
 # Quotient lengths and submodules of finite colength
@@ -109,5 +111,51 @@ theorem length_quotient_map_eq_of_finite_colength (N : Submodule R M)
     _ = Module.length R (M ⧸ N) + Module.length R (M ⧸ f.range) := by
       rw [← htransport]
     _ = Module.length R (M ⧸ f.range) + Module.length R (M ⧸ N) := add_comm _ _
+
+end Submodule
+
+namespace Submodule
+
+variable {R : Type u} [CommRing R]
+
+/-- Let R be a commutative ring and A an R-module in an independent universe.
+An injective R-linear map i:R→A with finite-composition-length cokernel identifies
+R/(a) and A/aA in length whenever multiplication by a on A is injective. The
+quotient on A is by the actual range of scalar multiplication. No algebra,
+domain, or fraction-field structure on A is required. -/
+theorem length_quotient_span_eq_lsmul_of_finite_colength
+    {A : Type v} [AddCommGroup A] [Module R A]
+    (i : R →ₗ[R] A) (hi : Function.Injective i)
+    (hfinite : IsFiniteLength R (A ⧸ i.range))
+    (a : R) (hf : Function.Injective (LinearMap.lsmul R A a)) :
+    Module.length R (R ⧸ Ideal.span {a}) =
+      Module.length R (A ⧸ (LinearMap.lsmul R A a).range) := by
+  let N : Submodule R A := i.range
+  let f : A →ₗ[R] A := LinearMap.lsmul R A a
+  let T : Submodule R N := (N.map f).comap N.subtype
+  let e : R ≃ₗ[R] N := LinearEquiv.ofInjective i hi
+  have hN : N.map f ≤ N := by
+    rintro z ⟨x, ⟨r, rfl⟩, rfl⟩
+    refine ⟨a * r, ?_⟩
+    simpa only [smul_eq_mul, f, LinearMap.lsmul_apply] using i.map_smul a r
+  have hmap : Submodule.map e.toLinearMap (Ideal.span {a}) = T := by
+    ext z
+    constructor
+    · rintro ⟨r, hr, rfl⟩
+      obtain ⟨q, rfl⟩ := Ideal.mem_span_singleton.mp hr
+      refine ⟨i q, ⟨q, rfl⟩, ?_⟩
+      change f (i q) = i (a * q)
+      simpa only [smul_eq_mul, f, LinearMap.lsmul_apply] using (i.map_smul a q).symm
+    · rintro ⟨x, ⟨r, rfl⟩, hr⟩
+      refine ⟨a * r, Ideal.mem_span_singleton.mpr ⟨r, rfl⟩, ?_⟩
+      apply Subtype.ext
+      change i (a * r) = (z : A)
+      calc
+        i (a * r) = f (i r) := by
+          simpa only [smul_eq_mul, f, LinearMap.lsmul_apply] using i.map_smul a r
+        _ = (z : A) := hr
+  have hleft : Module.length R (R ⧸ Ideal.span {a}) = Module.length R (N ⧸ T) :=
+    (Submodule.Quotient.equiv (Ideal.span {a}) T e hmap).length_eq
+  exact hleft.trans (Submodule.length_quotient_map_eq_of_finite_colength N hfinite f hf hN)
 
 end Submodule

@@ -51,11 +51,7 @@ theorem length_quotient_span_eq_of_finite_colength [IsDomain S]
     (a : R) (ha : a ≠ 0) :
     Module.length R (R ⧸ Ideal.span {a}) =
       Module.length R (S ⧸ Ideal.span {algebraMap R S a}) := by
-  let i : R →ₗ[R] S := Algebra.linearMap R S
-  let N : Submodule R S := i.range
   let f : S →ₗ[R] S := LinearMap.lsmul R S a
-  let T : Submodule R N := (N.map f).comap N.subtype
-  let e : R ≃ₗ[R] N := LinearEquiv.ofInjective i hi
   have haS : algebraMap R S a ≠ 0 := by
     intro h
     apply ha
@@ -65,31 +61,8 @@ theorem length_quotient_span_eq_of_finite_colength [IsDomain S]
     intro x y h
     apply mul_left_cancel₀ haS
     simpa only [f, LinearMap.lsmul_apply, Algebra.smul_def] using h
-  have hN : N.map f ≤ N := by
-    rintro z ⟨x, ⟨r, rfl⟩, rfl⟩
-    refine ⟨a * r, ?_⟩
-    simp only [i, f, Algebra.linearMap_apply, LinearMap.lsmul_apply,
-      Algebra.smul_def, map_mul]
-  have hmap : Submodule.map e.toLinearMap (Ideal.span {a}) = T := by
-    ext z
-    constructor
-    · rintro ⟨r, hr, rfl⟩
-      obtain ⟨q, rfl⟩ := Ideal.mem_span_singleton.mp hr
-      refine ⟨i q, ⟨q, rfl⟩, ?_⟩
-      change f (i q) = i (a * q)
-      simp only [i, f, Algebra.linearMap_apply, LinearMap.lsmul_apply,
-        Algebra.smul_def, map_mul]
-    · rintro ⟨x, ⟨r, rfl⟩, hr⟩
-      refine ⟨a * r, Ideal.mem_span_singleton.mpr ⟨r, rfl⟩, ?_⟩
-      apply Subtype.ext
-      change i (a * r) = (z : S)
-      calc
-        i (a * r) = f (i r) := by
-          simp only [i, f, Algebra.linearMap_apply, LinearMap.lsmul_apply,
-            Algebra.smul_def, map_mul]
-        _ = (z : S) := hr
-  have hleft : Module.length R (R ⧸ Ideal.span {a}) = Module.length R (N ⧸ T) :=
-    (Submodule.Quotient.equiv (Ideal.span {a}) T e hmap).length_eq
+  have hleft := Submodule.length_quotient_span_eq_lsmul_of_finite_colength
+    (Algebra.linearMap R S) hi hfinite a hf
   have hright : f.range = (Ideal.span {algebraMap R S a}).restrictScalars R := by
     ext z
     change (∃ x, f x = z) ↔ z ∈ Ideal.span {algebraMap R S a}
@@ -101,14 +74,10 @@ theorem length_quotient_span_eq_of_finite_colength [IsDomain S]
     · rintro ⟨x, hx⟩
       refine ⟨x, ?_⟩
       simpa only [f, LinearMap.lsmul_apply, Algebra.smul_def] using hx.symm
-  have hlength := Submodule.length_quotient_map_eq_of_finite_colength N hfinite f hf hN
   let eQ := Submodule.quotEquivOfEq f.range
     ((Ideal.span {algebraMap R S a}).restrictScalars R) hright
   let eS := Submodule.Quotient.restrictScalarsEquiv R
     (Ideal.span {algebraMap R S a})
-  calc
-    Module.length R (R ⧸ Ideal.span {a}) = Module.length R (N ⧸ T) := hleft
-    _ = Module.length R (S ⧸ f.range) := hlength
-    _ = Module.length R (S ⧸ Ideal.span {algebraMap R S a}) := (eQ.trans eS).length_eq
+  exact hleft.trans (eQ.trans eS).length_eq
 
 end Algebra

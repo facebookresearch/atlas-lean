@@ -12,8 +12,14 @@ Author: @toskua
 
 module
 
-public import MathlibExt.RingTheory.Length.FiniteFractionSubalgebra
+public import MathlibExt.RingTheory.Length.FiniteColengthAlgebra
+public import MathlibExt.RingTheory.Length.AnnihilatorQuotient
+public import Mathlib.Algebra.Module.Torsion.Basic
+public import Mathlib.RingTheory.Localization.Integer
+public import Mathlib.RingTheory.Localization.FractionRing
+public import Mathlib.RingTheory.OrderOfVanishing.Basic
 public import Mathlib.RingTheory.Finiteness.Basic
+public import MathlibExt.RingTheory.Length.PrincipalAnnihilator
 
 /-!
 # Principal quotient lengths in finite fraction submodules
@@ -39,54 +45,19 @@ namespace Submodule
 
 variable {R : Type u} [CommRing R]
 
-private theorem length_quotient_span_eq_lsmul_of_finite_colength
-    {A : Type v} [AddCommGroup A] [Module R A]
-    (i : R →ₗ[R] A) (hi : Function.Injective i)
-    (hfinite : IsFiniteLength R (A ⧸ i.range))
-    (a : R) (hf : Function.Injective (LinearMap.lsmul R A a)) :
-    Module.length R (R ⧸ Ideal.span {a}) =
-      Module.length R (A ⧸ (LinearMap.lsmul R A a).range) := by
-  let N : Submodule R A := i.range
-  let f : A →ₗ[R] A := LinearMap.lsmul R A a
-  let T : Submodule R N := (N.map f).comap N.subtype
-  let e : R ≃ₗ[R] N := LinearEquiv.ofInjective i hi
-  have hN : N.map f ≤ N := by
-    rintro z ⟨x, ⟨r, rfl⟩, rfl⟩
-    refine ⟨a * r, ?_⟩
-    simpa only [smul_eq_mul, f, LinearMap.lsmul_apply] using i.map_smul a r
-  have hmap : Submodule.map e.toLinearMap (Ideal.span {a}) = T := by
-    ext z
-    constructor
-    · rintro ⟨r, hr, rfl⟩
-      obtain ⟨q, rfl⟩ := Ideal.mem_span_singleton.mp hr
-      refine ⟨i q, ⟨q, rfl⟩, ?_⟩
-      change f (i q) = i (a * q)
-      simpa only [smul_eq_mul, f, LinearMap.lsmul_apply] using (i.map_smul a q).symm
-    · rintro ⟨x, ⟨r, rfl⟩, hr⟩
-      refine ⟨a * r, Ideal.mem_span_singleton.mpr ⟨r, rfl⟩, ?_⟩
-      apply Subtype.ext
-      change i (a * r) = (z : A)
-      calc
-        i (a * r) = f (i r) := by
-          simpa only [smul_eq_mul, f, LinearMap.lsmul_apply] using i.map_smul a r
-        _ = (z : A) := hr
-  have hleft : Module.length R (R ⧸ Ideal.span {a}) = Module.length R (N ⧸ T) :=
-    (Submodule.Quotient.equiv (Ideal.span {a}) T e hmap).length_eq
-  exact hleft.trans (Submodule.length_quotient_map_eq_of_finite_colength N hfinite f hf hN)
-
 variable {K : Type v} [Field K] [Algebra R K] [IsFractionRing R K]
 
-/-- Let `R` be a commutative ring, `K` an `R`-algebra field that is a fraction
-ring of `R`, and `N ⊆ K` an `R`-submodule containing `1`. The algebra map factors
-as an `R`-linear scalar inclusion `R → N`, whose value in `K` is the original
-algebra-map value. -/
+/-- Let `R` be a commutative ring, `K` an `R`-algebra field, and `N ⊆ K` an
+`R`-submodule containing `1`. Corestricting the algebra map gives an `R`-linear
+scalar map `R → N`, whose value in `K` is the original algebra-map value.
+This construction requires no fraction-ring assumption and need not be injective. -/
 def fractionScalarMap (N : Submodule R K) (h1 : (1 : K) ∈ N) : R →ₗ[R] N :=
   (Algebra.linearMap R K).codRestrict N (fun r => by
     simpa only [Algebra.linearMap_apply, Algebra.smul_def, mul_one] using N.smul_mem r h1)
 
 omit [IsFractionRing R K] in
 /-- For a commutative ring `R`, an `R`-algebra field `K`, and an `R`-submodule
-`N ⊆ K` containing `1`, the scalar inclusion sends `r` to an element whose value
+`N ⊆ K` containing `1`, the scalar map sends `r` to an element whose value
 in `K` is exactly `algebraMap R K r`. This coordinate formula does not require
 the fraction-ring hypothesis. -/
 @[simp] theorem fractionScalarMap_apply (N : Submodule R K) (h1 : (1 : K) ∈ N) (r : R) :
@@ -128,15 +99,13 @@ theorem isFiniteLength_quotient_fractionScalarMap
     IsFiniteLength R (N ⧸ (fractionScalarMap N h1).range) := by
   obtain ⟨c, hc, hc0⟩ := Submodule.annihilator_top_inter_nonZeroDivisors
     (isTorsion_quotient_fractionScalarMap N h1)
-  have hann : ∀ z : N ⧸ (fractionScalarMap N h1).range, c • z = 0 :=
-    fun z => Submodule.mem_annihilator.mp hc z Submodule.mem_top
-  have hI : Ideal.span {c} ≤ Module.annihilator R (N ⧸ (fractionScalarMap N h1).range) :=
-    Ideal.span_le.mpr (Set.singleton_subset_iff.mpr (Module.mem_annihilator.mpr hann))
-  have hquot : Module.length R (R ⧸ Ideal.span {c}) ≠ ⊤ :=
-    Module.length_ne_top_iff.mpr (isFiniteLength_quotient_span_singleton R hc0)
+  have htor : Module.IsTorsionBy R (N ⧸ (fractionScalarMap N h1).range) c := by
+    rw [Module.isTorsionBy_iff_mem_annihilator]
+    exact Module.mem_annihilator.mpr fun z =>
+      Submodule.mem_annihilator.mp hc z Submodule.mem_top
   exact Module.length_ne_top_iff.mp
-    (Module.length_ne_top_of_finite_of_ideal_le_annihilator R
-      (N ⧸ (fractionScalarMap N h1).range) (Ideal.span {c}) hI hquot)
+    (Module.length_ne_top_of_isTorsionBy_nonZeroDivisor R
+      (N ⧸ (fractionScalarMap N h1).range) c hc0 htor)
 
 /-- Let `R` be a Noetherian commutative ring of Krull dimension at most one,
 `K` an `R`-algebra field that is a fraction ring of `R`, and `M ⊆ K` a finitely

@@ -13,6 +13,7 @@ Author: @toskua, Avocado
 module
 
 public import Mathlib.RingTheory.Length
+public import MathlibExt.RingTheory.Length.ExactEulerChain
 
 /-!
 # Module length identities from exact linear maps
@@ -56,44 +57,6 @@ theorem length_self_eq_of_ringEquiv
     AlgEquiv.ofRingEquiv fun _ => rfl
   exact eAlg.toLinearEquiv.length_eq.trans
     (Module.length_eq_of_surjective e.surjective)
-
-/-- Range-sum formula for the middle length of an exact pair.
-
-For R-linear maps f : L → M and g : M → N with Im(f) = Ker(g), ℓ_R(M) = ℓ_R(Im f) + ℓ_R(Im g)
-in ℕ∞. The injective inclusion of Im(f) and surjective range restriction of g present the
-corresponding short exact sequence. -/
-theorem length_eq_range_add_range_of_exact
-    (f : L →ₗ[R] M) (g : M →ₗ[R] N)
-    (h : Function.Exact f g) :
-    Module.length R M =
-      Module.length R f.range + Module.length R g.range := by
-  apply Module.length_eq_add_of_exact
-    f.range.subtype g.rangeRestrict
-      (Submodule.injective_subtype f.range) g.surjective_rangeRestrict
-  exact h.rangeFactorization ⟨0, g.map_zero⟩
-
-/-- Natural-value range-sum formula for a finite middle length.
-
-For an exact pair L →ᶠ M →ᵍ N with ℓ_R(M) ≠ ∞, ℓ_R(M).toNat = ℓ_R(Im f).toNat + ℓ_R(Im
-g).toNat. Both range lengths are finite because one is a submodule length and the other a
-quotient length of M. -/
-theorem length_toNat_eq_range_add_range_of_exact
-    (f : L →ₗ[R] M) (g : M →ₗ[R] N)
-    (h : Function.Exact f g)
-    (hM : Module.length R M ≠ ⊤) :
-    (Module.length R M).toNat =
-      (Module.length R f.range).toNat +
-        (Module.length R g.range).toNat := by
-  have hf : Module.length R f.range ≠ ⊤ :=
-    ne_top_of_le_ne_top hM
-      (Module.length_le_of_injective f.range.subtype
-        (Submodule.injective_subtype f.range))
-  have hg : Module.length R g.range ≠ ⊤ :=
-    ne_top_of_le_ne_top hM
-      (Module.length_le_of_surjective g.rangeRestrict
-        g.surjective_rangeRestrict)
-  rw [length_eq_range_add_range_of_exact R f g h,
-    ENat.toNat_add hf hg]
 
 /-- Finite middle length from finite ends of an exact pair.
 
@@ -156,13 +119,13 @@ theorem alternating_length_six_of_exact
   have h₀range : (Module.length R M₀).toNat =
       (Module.length R f₀.range).toNat :=
     congrArg ENat.toNat e₀.length_eq
-  have h₁range := length_toNat_eq_range_add_range_of_exact
+  have h₁range := exactPair_length_toNat
     R f₀ f₁ h₀₁ h₁
-  have h₂range := length_toNat_eq_range_add_range_of_exact
+  have h₂range := exactPair_length_toNat
     R f₁ f₂ h₁₂ h₂
-  have h₃range := length_toNat_eq_range_add_range_of_exact
+  have h₃range := exactPair_length_toNat
     R f₂ f₃ h₂₃ h₃
-  have h₄range := length_toNat_eq_range_add_range_of_exact
+  have h₄range := exactPair_length_toNat
     R f₃ f₄ h₃₄ h₄
   have h₅range : (Module.length R f₄.range).toNat =
       (Module.length R M₅).toNat := by
