@@ -1,0 +1,17 @@
+# Face-dual vertical crossings and the left-cluster boundary graph
+
+- [Pmd face VAdj of closed](pmd-face-vadj-of-closed.md)
+- [Pmd face HAdj of closed](pmd-face-hadj-of-closed.md)
+- [Pmd Face Dual VCrossing](pmd-face-dual-vcrossing.md)
+- [Pmd face Dual VCrossing of spanning Contour](pmd-face-dual-vcrossing-of-spanning-cont.md)
+- [Pmd face Dual V implies spanning Reach](pmd-face-dual-v-implies-spanning-reach.md)
+- [Pmd box Face Barrier](pmd-box-face-barrier.md)
+- [Pmd box Face Barrier le face Open Dual](pmd-box-face-barrier-le-face-open-dual.md)
+- [Pmd Barrier Connects Rows](pmd-barrier-connects-rows.md)
+- [Pmd face Dual VCrossing of residue](pmd-face-dual-vcrossing-of-residue.md)
+- [Pmd wall face VAdj](pmd-wall-face-vadj.md)
+- [Pmd wall face Dual VCrossing](pmd-wall-face-dual-vcrossing.md)
+- [Pmd wall barrier VAdj](pmd-wall-barrier-vadj.md)
+- [Pmd wall barrier Connects Rows](pmd-wall-barrier-connects-rows.md)
+- [Pmd wall no H yet face Dual V](pmd-wall-no-h-yet-face-dual-v.md)
+- [Pmd wall only face frame works](pmd-wall-only-face-frame-works.md)
