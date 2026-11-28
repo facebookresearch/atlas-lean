@@ -172,33 +172,6 @@ public theorem_wanted gobel_boundaries_eq_iff_jacobi_symmetries
         (∀ n, 1 ≤ n → n ≤ p - l - 2 →
           jacobiSym (n : ℤ) p = jacobiSym (l + 1 + n : ℤ) p)
 
-/-- **Translation and reflection identities for $b_{l,s}$.** Let $l \ge 2$ be an even natural
-number and $s \le l$ a natural number such that $2s + 1$ and $l + 1$ are coprime, let
-$b : \mathbb{Z} \to \mathbb{Z}$ satisfy the defining conditions of $b_{l,s}$, and write
-$t = l/2 - s$. Then the following hold. (a) For every integer $n$ such that neither $n$ nor
-$n + 2s + 1$ is divisible by $l + 1$, $b(n) = -b(n + 2s + 1)$. (b) If $s < l/2$, then for every
-integer $n$ such that neither $n$ nor $n + 2t$ is divisible by $l + 1$, $b(n) = -b(n + 2t)$.
-(c) If $s < l/2$, then for every integer $n$ such that neither $t - n$ nor $t + n$ is divisible
-by $l + 1$, $b(t - n) = b(t + n)$.
-
-Source: Yuh Kobayashi and Shin-ichiro Seki, *A Note on Non-Integrality of the (k, l)-Göbel
-Sequences*, Journal of Integer Sequences 29 (2026), Article 26.3.8, Lemma 23. -/
-public theorem_wanted gobelBSequence_translation_identities
-    (l s : ℕ) (hleven : Even l) (hs : s ≤ l) (hl2 : 2 ≤ l)
-    (hcoprime : Nat.Coprime (2 * s + 1) (l + 1))
-    (b : ℤ → ℤ) (hb : IsGobelBSequence l s b) :
-    (∀ n : ℤ, Int.emod n (l + 1 : ℤ) ≠ 0 →
-      Int.emod (n + (2 * s + 1 : ℕ)) (l + 1 : ℤ) ≠ 0 →
-      b n = -b (n + (2 * s + 1 : ℕ))) ∧
-    (s < l / 2 →
-      ∀ n : ℤ, Int.emod n (l + 1 : ℤ) ≠ 0 →
-        Int.emod (n + (2 * (l / 2 - s) : ℕ)) (l + 1 : ℤ) ≠ 0 →
-        b n = -b (n + (2 * (l / 2 - s) : ℕ))) ∧
-    (s < l / 2 →
-      ∀ n : ℤ, Int.emod (((l / 2 - s : ℕ) : ℤ) - n) (l + 1 : ℤ) ≠ 0 →
-        Int.emod (((l / 2 - s : ℕ) : ℤ) + n) (l + 1 : ℤ) ≠ 0 →
-        b (((l / 2 - s : ℕ) : ℤ) - n) = b (((l / 2 - s : ℕ) : ℤ) + n))
-
 /-- **The sequence $a_{p,l}$ is not multiplicative at an even index.** Let $p \ge 13$ be a prime
 with $p \equiv 1 \pmod 4$, let $l$ be an even natural number with $2 \le l \le p - 3$, and let
 $a : \mathbb{N} \to \mathbb{Z}$ satisfy the defining conditions of $a_{p,l}$. Then there is a

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Ring.Periodic
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 
 /-!
@@ -16,6 +17,19 @@ public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 Once a Göbel residue walk meets the diagonal at a positive index, it follows the diagonal
 through the prime modulus. The walk also defines the boundaries used in non-integrality
 results for Göbel sequences.
+
+For any natural numbers $l,s$, the reflection laws of a periodic sign sequence $b_{l,s}$ can
+be expressed using negation of an index and translation by $2s+1$.
+
+## References
+
+* Yuh Kobayashi and Shin-ichiro Seki, *A Note on Non-Integrality of the (k, l)-Göbel Sequences*,
+  Journal of Integer Sequences **29** (2026), Article 26.3.8, pp. 1–25. Section 2 defines the
+  residue walk and zigzag order, Lemma 8 gives diagonal persistence, the proof of Theorem 1
+  uses the boundaries, and Propositions 17 and 20 give the conditions for the sign sequences.
+* The forward reindexings of the $b_{l,s}$ reflections also appear in the proofs of
+  `existsUnique_gobelBSequence` and `gobelBSequence_complement` in
+  `MathlibExt.NumberTheory.GobelBSequence`.
 -/
 
 namespace MetaMathlibExt
@@ -190,6 +204,32 @@ public def IsGobelBSequence (l s : ℕ) (b : ℤ → ℤ) : Prop :=
   b 1 = 1 ∧
   (∀ n, Int.emod n (l + 1 : ℤ) ≠ 0 → b n = -b ((l + 1 : ℤ) - n)) ∧
   (∀ n, b ((s : ℤ) - n) = b ((s : ℤ) + 1 + n))
+
+/-- **Reflection characterization of the periodic Göbel sign sequence.** For natural numbers
+$l,s$ and a function $b : \mathbb{Z} \to \mathbb{Z}$, $b$ is a $b_{l,s}$-sequence if and only if it
+has period $l+1$, satisfies $b(1)=1$, takes values in $\{1,-1\}$, satisfies $b(n)=-b(-n)$ for
+all integers $n$ not divisible by $l+1$, and satisfies $b(n+2s+1)=b(-n)$ for all integers $n$.
+-/
+public theorem isGobelBSequence_iff {l s : ℕ} {b : ℤ → ℤ} :
+    IsGobelBSequence l s b ↔
+      (∀ n, b n = 1 ∨ b n = -1) ∧ Function.Periodic b (l + 1 : ℤ) ∧ b 1 = 1 ∧
+      (∀ n, ¬ (l + 1 : ℤ) ∣ n → b n = -b (-n)) ∧
+      (∀ n, b (n + (2 * s + 1 : ℤ)) = b (-n)) := by
+  constructor
+  · rintro ⟨hsign, hperiod, hone, hanti, hreflect⟩
+    have hp : Function.Periodic b (l + 1 : ℤ) := hperiod
+    refine ⟨hsign, hp, hone, fun n hn => ?_, fun n => ?_⟩
+    · rw [← hp.sub_eq' (x := n)]
+      exact hanti n (Int.dvd_iff_emod_eq_zero.not.mp hn)
+    · simpa only [show (s : ℤ) - ((s : ℤ) + n) = -n by omega,
+        show (s : ℤ) + 1 + ((s : ℤ) + n) = n + (2 * s + 1 : ℤ) by omega]
+        using (hreflect ((s : ℤ) + n)).symm
+  · rintro ⟨hsign, hperiod, hone, hanti, hreflect⟩
+    refine ⟨hsign, hperiod, hone, fun n hn => ?_, fun n => ?_⟩
+    · rw [hperiod.sub_eq']
+      exact hanti n (Int.dvd_iff_emod_eq_zero.not.mpr hn)
+    · simpa only [show n - (s : ℤ) + (2 * s + 1 : ℤ) = s + 1 + n by omega, neg_sub]
+        using (hreflect (n - (s : ℤ))).symm
 
 /-- **Left boundary of the even Göbel residue walks.** Fix a natural number $p$ and, for each
 natural number $l$, let $\tilde g_l$ denote the Göbel residue walk for $p$ starting at $l$. A
