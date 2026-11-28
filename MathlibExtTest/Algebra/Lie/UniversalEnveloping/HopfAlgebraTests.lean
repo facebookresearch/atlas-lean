@@ -43,7 +43,8 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 private abbrev M := Matrix (Fin 2) (Fin 2) ℤ
 private abbrev U := UniversalEnvelopingAlgebra ℤ M
 
-local instance : Module ℤ U := Algebra.toModule
+local instance : Module ℤ (UniversalEnvelopingAlgebra ℤ (Matrix (Fin 2) (Fin 2) ℤ)) :=
+  Algebra.toModule
 
 private def e01 : M := Matrix.single 0 1 1
 private def e10 : M := Matrix.single 1 0 1
