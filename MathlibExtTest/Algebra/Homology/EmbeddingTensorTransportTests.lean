@@ -48,11 +48,13 @@ private abbrev K : ChainComplex (ModuleCat.{0} ℤ) ℕ :=
   ChainComplex.of (fun _ => M) (fun _ => 0) (by intro n; simp)
 
 private lemma endpoint : K.d 1 0 = 0 := by
-  simp [K, ChainComplex.of.d]
+  simp [K, ChainComplex.of.d] <;> rfl
 
 private def positiveHomologyComparison :
     (K.restriction ChainComplex.kernelTailEmbedding).homology 0 ≅ K.homology 1 :=
   K.positiveRestrictionHomologyZeroIso endpoint
+
+example : IsIso positiveHomologyComparison.hom := inferInstance
 
 example :
     (K.positiveTruncLEToStupidIso endpoint).hom ≫
@@ -71,6 +73,8 @@ example :
         (i := 0) (i' := 1) rfl).hom).hom (1 : ZMod 6) = (1 : ZMod 6)
   rw [Iso.inv_hom_id]
   rfl
+
+example : (1 : ZMod 6) ≠ 0 := by decide
 
 private abbrev Z : ModuleCat.{0} ℤ := ModuleCat.of ℤ ℤ
 private abbrev P : CochainComplex (ModuleCat.{0} ℤ) ℤ :=
@@ -104,7 +108,7 @@ example :
   have h := CochainComplex.ModuleTensor.d_mkAt ℤ P Q
     1 0 1 rfl (1 : ℤ) (1 : ℤ)
   have hp : (P.d 1 2).hom (1 : ℤ) = 0 := by
-    simp [P, CochainComplex.of.d]
+    simp [P, CochainComplex.of.d] <;> rfl
   have hq : (Q.d 0 1).hom (1 : ℤ) = (3 : ℤ) := q_zero_value
   have hz : CochainComplex.ModuleTensor.mkAt ℤ P Q 2 0 2 rfl (0 : ℤ) (1 : ℤ) = 0 := by
     dsimp only [CochainComplex.ModuleTensor.mkAt]
