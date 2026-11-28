@@ -20,7 +20,9 @@ through the finite group of its components, up to phase.
 
 ## Proof depends on
 
-- [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](../../../RepresentationTheory/lie-and-topological-representations/lie-groups-exponential-map-and-maximal-compact-subgroups.md): the closed subgroup theorem.
+- [The logical unitaries of a code form a group](logical-unitaries-of-a-code-form-a-group.md)
+- [The logical unitaries in a compact Lie group form a Lie subgroup](logical-unitaries-in-a-lie-group-form-a-lie-subgroup.md)
+- [The identity component of the logical product unitaries acts on the code as a phase](identity-component-of-logical-product-unitaries-acts-as-a-phase.md)
 
 ## Background
 
