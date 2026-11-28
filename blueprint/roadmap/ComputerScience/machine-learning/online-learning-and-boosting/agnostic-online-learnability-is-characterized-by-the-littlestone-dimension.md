@@ -1,6 +1,6 @@
 # Agnostic online learnability is characterized by the Littlestone dimension
 
-Call a class $H$ of binary classifiers agnostically online learnable if some randomized online learner has
+Call a nonempty class $H$ of binary classifiers agnostically online learnable if some randomized online learner has
 expected regret $o(T)$ in the worst case over sequences of length $T$, against an oblivious adversary, under the
 protocol of the online-classification page. Then $H$ is agnostically online learnable if and only if its
 Littlestone dimension is finite (Ben-David, Pál and Shalev-Shwartz). The two directions are the regret upper bound
