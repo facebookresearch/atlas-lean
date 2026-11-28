@@ -20,8 +20,20 @@ import Mathlib.LinearAlgebra.Matrix.Dual
 /-!
 # Test ranks of relatively free groups in a nonabelian variety
 
-The variety of groups with central commutators of exponent dividing two refutes
-Timoshenko's proposed characterization of abelian varieties by test rank.
+For each rank $r \ge 1$, the relatively free group of rank $r$ in the variety defined by
+$[[x, y], z] = 1$ and $[x, y]^2 = 1$ has test rank $r$. The variety contains both the infinite
+cyclic group and the dihedral group of order eight, so it is neither periodic nor abelian.
+This gives negative answers to both parts of Timoshenko's test rank question.
+
+## References
+
+* E. I. Khukhro and V. D. Mazurov (eds.), *Unsolved Problems in Group Theory: The Kourovka
+  Notebook*, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.87 (E. I. Timoshenko).
+* M. Kinyon and J. Urban, [*Results on problems from the Kourovka Notebook*][kinyon-urban],
+  preprint, version 4 (19 September 2026), Section 3.23 and Proposition 3.9.
+
+[kinyon-urban]:
+  https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-mathematics.pdf
 -/
 
 @[expose] public section
@@ -250,19 +262,21 @@ theorem testRankVarietyAbelian_refuted : ¬ testRankVarietyAbelian := by
   exact dihedral_not_abelian (h laws (fun r _ => free_hasTestRank r) (DihedralGroup 4)
     dihedral_satisfies)
 
-/--
-Resolved false: the same variety (`[[x, y], z] = 1`, `[x, y]^p = 1`, `p` prime) is not periodic
-since it contains `ℤ`, its free groups of every rank `r ≥ 1` have test rank `r` (Kinyon-Urban,
-Proposition 3.9), and it is not the variety of all abelian groups since it contains the non-abelian
-group `UT₃(𝔽_p)`. The Kourovka Notebook (21st issue) answers 16.87(b) "No" (AI solution confirmed by
-E. I. Timoshenko). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
-Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.87 (E. I.
-Timoshenko); resolution: M. Kinyon and J. Urban (with Codex gpt-6-astra), Results on problems from
-the Kourovka Notebook, preprint, version 4 (19 September 2026), Section 3.23 (Problem 16.87): the
-variety M_p defined by [[x, y], z] = 1 and [x, y]^p = 1 (p prime) is nonabelian (it contains
-UT_3(F_p)) and nonperiodic (it contains Z), and Proposition 3.9 shows that its free group of rank r
-has test rank r for every r ≥ 1; the Kourovka Notebook (21st issue) marks 16.87 solved (a), b) No,
-it is not true in both cases; AI solution confirmed by E. I. Timoshenko),
+/-- **Negative answer to Timoshenko's test rank question, part (b).** There is a set of laws
+on countably many generators whose relatively free group of rank $r$ has test rank $r$ for every
+$r \ge 1$. No single positive exponent holds in every group of this variety, yet its groups
+are not exactly the abelian groups.
+
+The witness variety is defined by $[[x, y], z] = 1$ and $[x, y]^2 = 1$. The infinite cyclic group
+satisfies both laws and rules out a uniform positive exponent. The dihedral group of order eight
+also satisfies both laws but is not abelian.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), *Unsolved Problems in Group Theory: The Kourovka
+Notebook*, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.87(b) (E. I. Timoshenko).
+For the prime-indexed construction with $[[x, y], z] = 1$ and $[x, y]^p = 1$, and with
+$\mathrm{UT}_3(\mathbb{F}_p)$ as the nonabelian witness, see M. Kinyon and J. Urban,
+*Results on problems from the Kourovka Notebook*, preprint, version 4 (19 September 2026),
+Section 3.23 and Proposition 3.9.
 https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-mathematics.pdf.
 -/
 theorem testRankNonperiodicVarietyAllAbelian_refuted : ¬ testRankNonperiodicVarietyAllAbelian := by
