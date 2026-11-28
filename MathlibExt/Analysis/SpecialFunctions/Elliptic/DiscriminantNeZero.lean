@@ -39,8 +39,8 @@ namespace PeriodPair
 
 /-- **The lattice sums of `(1, τ)` over `ℤ²`.** For `τ` in the upper half-plane and `k ∈ ℕ`, the
 lattice sum `G_k = ∑_{ω ∈ Λ} ω^{-k}` of the period pair `(1, τ)` (`PeriodPair.G`, a sum over the
-lattice) equals `∑_{v ∈ ℤ²} (v₀ τ + v₁)^{-k}` (the term at `v = 0` is `0` in both sums). The
-lattice is indexed through `PeriodPair.latticeEquivProd`. -/
+lattice) equals `∑_{v ∈ ℤ²} (v₀ τ + v₁)^{-k}` (for `k ≥ 1`, the term at `v = 0` is `0` in both
+sums). The lattice is indexed through `PeriodPair.latticeEquivProd`. -/
 theorem G_ofTau_eq_tsum (τ : ℍ) (k : ℕ) :
     (ofTau τ τ.im_pos.ne').G k = ∑' v : Fin 2 → ℤ, (((v 0 : ℂ) * τ + v 1) ^ k)⁻¹ := by
   set L := ofTau τ τ.im_pos.ne'
