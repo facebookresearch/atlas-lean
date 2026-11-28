@@ -8,7 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Algebra.CyclicHolomorph
+import Mathlib.Algebra.Group.ConjFinite
+import Mathlib.Algebra.Group.TypeTags.Finite
 import Mathlib.RingTheory.Ideal.Quotient.Basic
+import Mathlib.Tactic.NormNum
 
 open MetaMathlibExt
 
@@ -24,3 +27,35 @@ example : IsConj (⟨Multiplicative.ofAdd (0 : ZMod 4), -1⟩ : cyclicHolomorph 
   apply (cyclicHolomorph_isConj_iff 4 (by decide) 0 2 (-1) (-1)).mpr
   refine ⟨rfl, 1, Ideal.Quotient.eq.mpr (Ideal.mem_span_singleton'.mpr ⟨1, ?_⟩)⟩
   decide
+
+section ClassNumber
+
+local instance (n : ℕ) [NeZero n] : Fintype (cyclicHolomorph n) :=
+  Fintype.ofEquiv _ (SemidirectProduct.equivProd (φ := zmodUnitsMulAut n)).symm
+
+local instance (n : ℕ) : DecidableEq (cyclicHolomorph n) := fun x y =>
+  decidable_of_iff (SemidirectProduct.equivProd x = SemidirectProduct.equivProd y)
+    (SemidirectProduct.equivProd.injective.eq_iff)
+
+-- Enumerate the actual conjugacy classes, without the class-number formula.
+example : Nat.card (ConjClasses (cyclicHolomorph 1)) = 1 := by
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+-- The composite modulus checks the contributions of the proper divisors 1 and 2 as well as 4.
+example : Nat.card (ConjClasses (cyclicHolomorph 4)) = 5 := by
+  rw [Nat.card_eq_fintype_card]
+  decide
+
+example : (4 : ℕ).totient * ∑ d ∈ (4 : ℕ).divisors, (1 : ℚ) / d.totient = 5 := by
+  have hdivisors : (4 : ℕ).divisors = {1, 2, 4} := by decide
+  have hφ₂ : (2 : ℕ).totient = 1 := by decide
+  have hφ₄ : (4 : ℕ).totient = 2 := by decide
+  norm_num [hdivisors, Finset.sum_insert, Finset.sum_singleton, hφ₂, hφ₄]
+
+-- The public formula can also be applied directly at a concrete modulus.
+example : (Nat.card (ConjClasses (cyclicHolomorph 4)) : ℚ) =
+    (4 : ℕ).totient * ∑ d ∈ (4 : ℕ).divisors, (1 : ℚ) / d.totient :=
+  card_conjClasses_cyclicHolomorph 4 (by decide)
+
+end ClassNumber
