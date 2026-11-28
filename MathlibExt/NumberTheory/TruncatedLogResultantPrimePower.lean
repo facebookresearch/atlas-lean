@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.TruncatedLogDiscriminant
-import all MathlibExt.NumberTheory.TruncatedLogDiscriminant
 
 /-!
 # The truncated logarithmic resultant at prime powers

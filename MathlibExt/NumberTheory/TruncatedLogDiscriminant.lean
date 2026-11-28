@@ -20,6 +20,12 @@ import Mathlib.Tactic.Primality
 
 We prove that the discriminants of the truncated logarithmic polynomials of degrees
 `3 * q`, `5 * q`, and `7 * q` are nonsquares for every prime `q`.
+
+## References
+
+* John Cullinan and Rylan Gajek-Leonard, *On the Discriminants of Truncated Logarithmic
+  Polynomials*, INTEGERS 25 (2025), Article A39, pp. 1–12, Section 1, Equation (5),
+  Proposition 2, and the modular reduction in the proof of Theorem 4.
 -/
 
 namespace MetaMathlibExt
@@ -422,7 +428,11 @@ private lemma mod_resultant_monomial {p e n : ℕ} [Fact p.Prime] (he : e ≠ 0)
   have hn := (pow_pos (Fact.out : p.Prime).pos e).trans_le hlo
   rw [mod_resultant hlo hhi, reducedPoly_monomial he hlo hhalf, resultant_geom_X hn]
 
-private lemma monomial_resultant_ne_zero {p e n : ℕ} [Fact p.Prime] (he : e ≠ 0)
+/-- Let `p` be prime and let `e ≠ 0`, with `p ^ e ≤ n < p ^ (e + 1)` and `n < 2 * p ^ e`.
+Then the truncated logarithmic resultant product `𝒫ₙ` is nonzero modulo `p`: the scaled
+polynomial reduces to a nonzero multiple of `X ^ (p ^ e)`, and the geometric sum has
+constant coefficient one. -/
+public lemma monomial_resultant_ne_zero {p e n : ℕ} [Fact p.Prime] (he : e ≠ 0)
     (hlo : p ^ e ≤ n) (hhi : n < p ^ (e + 1)) (hhalf : n < 2 * p ^ e) :
     (truncatedLogResultantProduct n : ZMod p) ≠ 0 := by
   rw [mod_resultant_monomial he hlo hhi hhalf]
