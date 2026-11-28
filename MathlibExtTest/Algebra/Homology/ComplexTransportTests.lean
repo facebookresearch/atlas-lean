@@ -177,7 +177,7 @@ private def sourceClass : Q ⟶ upper.homology 1 :=
 private lemma sourceClass_inverse : sourceClass = sourceCoordinate.inv := by
   apply (cancel_mono sourceCoordinate.hom).1
   rw [Iso.inv_hom_id]
-  simpa only [sourceClass, sourceCoordinate, next10] using
+  simpa only [sourceClass, sourceCoordinate, next10, Category.assoc] using
     cycle_coordinate upper 1 upper_d (𝟙 Q)
 
 example : sourceClass.hom (1 : ℚ) ≠ 0 := by
