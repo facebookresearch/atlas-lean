@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DeadlockRecoveryWanted
+public import CSLibExt.Complexity.NPComplete.DeadlockRecoveryOneResourceDefs
 
 @[expose] public section
 
@@ -67,19 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed DEADLOCK RECOVERY instance with exactly one
-resource type (`m = 1`). -/
-def WellFormed (i : DeadlockRecoveryInstance) : Prop :=
-  DeadlockRecovery.WellFormed i ∧ numResources i = 1
-
-open Classical in
-/-- DEADLOCK RECOVERY with a single resource type as a decision problem over bitstrings. -/
-noncomputable def deadlockRecoveryOneResourceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := DeadlockRecoveryInstance) x with
-  | some i => decide (WellFormed i ∧ DeadlockRecoveryFeasible i)
-  | none => false
 
 /-- **DEADLOCK RECOVERY with a single resource type is NP-complete.** Source: Johnson (1983,
 1984), NP-completeness column, crediting Leung (1983); Leung and Lai (1979). -/

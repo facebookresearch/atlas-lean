@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Relation
+public import CSLibExt.Complexity.NPComplete.NonContainmentForFreeBSchemesDefs
 
 @[expose] public section
 
@@ -62,58 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A `B`-scheme: its vertex list, root `0`. A vertex `(true, b, l, r)` is a test labeled `b`
-with `L`-child `l` and `R`-child `r`; a vertex `(false, f, 0, 0)` is a leaf labeled `f` (`0` is
-`Ω`). -/
-abbrev Scheme := List (Bool × ℕ × ℕ × ℕ)
-
-/-- An instance: the schemes `S₁` and `S₂`. -/
-abbrev NonContainmentForFreeBSchemesInstance := Scheme × Scheme
-
-/-- `Child S k k'`: `k` is a test vertex of `S` and `k'` is one of its two children. -/
-def Child (S : Scheme) (k k' : ℕ) : Prop :=
-  ∃ b l r, S[k]? = some (true, b, l, r) ∧ (k' = l ∨ k' = r)
-
-/-- `S` is a free `B`-scheme: it has a root; every test vertex has two distinct children among
-the vertices; every leaf has the placeholder children `0, 0`; the graph is acyclic; every
-vertex is reachable from the root `0`; and two test vertices on one directed path have
-different labels. -/
-def IsFreeBScheme (S : Scheme) : Prop :=
-  S ≠ [] ∧
-    (∀ k b l r : ℕ, S[k]? = some (true, b, l, r) → l < S.length ∧ r < S.length ∧ l ≠ r) ∧
-    (∀ k f l r : ℕ, S[k]? = some (false, f, l, r) → l = 0 ∧ r = 0) ∧
-    (∀ k, ¬ Relation.TransGen (Child S) k k) ∧
-    (∀ k < S.length, Relation.ReflTransGen (Child S) 0 k) ∧
-    ∀ k k' b b' l r l' r' : ℕ, S[k]? = some (true, b, l, r) →
-      S[k']? = some (true, b', l', r') → Relation.TransGen (Child S) k k' → b ≠ b'
-
-/-- Well-formedness of an instance: both schemes are free `B`-schemes. -/
-def WellFormed (i : NonContainmentForFreeBSchemesInstance) : Prop :=
-  IsFreeBScheme i.1 ∧ IsFreeBScheme i.2
-
-/-- `Next S t k k'`: `k` is a test vertex labeled `b`, and `k'` is its child along the arc
-labeled `t b` (`true` is `L`). -/
-def Next (S : Scheme) (t : ℕ → Bool) (k k' : ℕ) : Prop :=
-  ∃ b l r, S[k]? = some (true, b, l, r) ∧ k' = if t b then l else r
-
-/-- The path from the root of `S` determined by `t` terminates at a leaf labeled `f`. -/
-def EndsAt (S : Scheme) (t : ℕ → Bool) (f : ℕ) : Prop :=
-  ∃ j l r, Relation.ReflTransGen (Next S t) 0 j ∧ S[j]? = some (false, f, l, r)
-
-/-- `S₁` is not contained in `S₂`: some assignment `t` sends the root of `S₁` to a leaf
-labeled `f₁` and the root of `S₂` to a leaf labeled `f₂` with `f₁ ≠ f₂` and `f₁ ≠ Ω`. -/
-def NonContainmentForFreeBSchemesFeasible (i : NonContainmentForFreeBSchemesInstance) : Prop :=
-  ∃ t : ℕ → Bool, ∃ f₁ f₂, EndsAt i.1 t f₁ ∧ EndsAt i.2 t f₂ ∧ f₁ ≠ f₂ ∧ f₁ ≠ 0
-
-open Classical in
-/-- NON-CONTAINMENT FOR FREE B-SCHEMES as a decision problem over bitstrings. -/
-noncomputable def nonContainmentForFreeBSchemesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NonContainmentForFreeBSchemesInstance) x with
-  | some i => decide (WellFormed i ∧ NonContainmentForFreeBSchemesFeasible i)
-  | none => false
 
 /-- **NON-CONTAINMENT FOR FREE B-SCHEMES is NP-complete.** Source: Garey and Johnson (1979),
 [PO18]; Fortune, Hopcroft, and Schmidt (1978). -/

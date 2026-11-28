@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Fintype.Prod
+public import CSLibExt.Complexity.NPComplete.KAnonymityDefs
 
 @[expose] public section
 
@@ -54,38 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of attributes, the rows (each a list of `m` alphabet symbols),
-the anonymity parameter `k`, and the suppression budget `l`. -/
-abbrev KAnonymityInstance := ℕ × List (List ℕ) × ℕ × ℕ
-
-/-- Well-formedness of an instance: the rows are pairwise distinct and each has length `m`. -/
-def WellFormed (i : KAnonymityInstance) : Prop :=
-  i.2.1.Nodup ∧ ∀ row ∈ i.2.1, row.length = i.1
-
-/-- The image `t(v)` of row `v` under the suppressor that suppresses the positions `sup`:
-`none` (the symbol `*`) at a suppressed coordinate, the row's own symbol elsewhere. -/
-def suppressed (i : KAnonymityInstance) (sup : Fin i.2.1.length → Fin i.1 → Bool)
-    (v : Fin i.2.1.length) (a : Fin i.1) : Option ℕ :=
-  if sup v a then none else some ((i.2.1.get v).getD a 0)
-
-/-- Some suppressor suppresses at most `l` coordinates in total and makes every row agree with
-at least `k` rows, itself included, after suppression. -/
-def KAnonymityFeasible (i : KAnonymityInstance) : Prop :=
-  ∃ sup : Fin i.2.1.length → Fin i.1 → Bool,
-    (Finset.univ.filter fun p : Fin i.2.1.length × Fin i.1 => sup p.1 p.2 = true).card ≤
-        i.2.2.2 ∧
-      ∀ v, i.2.2.1 ≤
-        (Finset.univ.filter fun w => suppressed i sup w = suppressed i sup v).card
-
-open Classical in
-/-- k-ANONYMITY (entry suppression) as a decision problem over bitstrings. -/
-noncomputable def kAnonymityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KAnonymityInstance) x with
-  | some i => decide (WellFormed i ∧ KAnonymityFeasible i)
-  | none => false
 
 /-- **k-ANONYMITY with entry suppression is NP-complete.** Source: Meyerson and Williams
 (2004), Theorem 3.1. -/

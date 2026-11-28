@@ -25,8 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.StrongInequivalenceOfIanovSchemesDefs
 
 @[expose] public section
 
@@ -64,62 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An Ianov scheme: its instruction list `I₁, …, Iₘ` (see the module docstring). -/
-abbrev IanovScheme := List (ℕ × ℕ × ℕ × ℕ)
-
-/-- An instance: `|F|`, `|P|`, and the two schemes. -/
-abbrev StrongInequivalenceOfIanovSchemesInstance := ℕ × ℕ × IanovScheme × IanovScheme
-
-/-- A scheme over `nF` function symbols and `nP` predicate symbols: nonempty, every
-instruction is `x ← f_r(x)` with `r < nF`, `if p_r(x) then goto Iⱼ else goto Iₖ` with `r < nP`
-and `1 ≤ j, k ≤ m`, or `halt`, and no assignment is the last instruction. -/
-def IsScheme (nF nP : ℕ) (S : IanovScheme) : Prop :=
-  S ≠ [] ∧
-    ∀ c < S.length,
-      (∃ r < nF, S[c]? = some (0, r, 0, 0) ∧ c + 1 < S.length) ∨
-        (∃ r < nP, ∃ j k, S[c]? = some (1, r, j, k) ∧
-          1 ≤ j ∧ j ≤ S.length ∧ 1 ≤ k ∧ k ≤ S.length) ∨
-        S[c]? = some (2, 0, 0, 0)
-
-/-- Well-formedness of an instance: both schemes are schemes over `F` and `P`. -/
-def WellFormed (i : StrongInequivalenceOfIanovSchemesInstance) : Prop :=
-  IsScheme i.1 i.2.1 i.2.2.1 ∧ IsScheme i.1 i.2.1 i.2.2.2
-
-/-- One execution step on a configuration `(c, x)`, where `c` is the `0`-based index of the
-current instruction `I_{c+1}`: an assignment applies its function and moves to the next
-instruction, a test jumps to `Iⱼ` (index `j - 1`) or `Iₖ`, and a halted configuration is
-fixed. -/
-def step {D : Type} (S : IanovScheme) (F : ℕ → D → D) (P : ℕ → D → Bool) (cx : ℕ × D) :
-    ℕ × D :=
-  match S[cx.1]? with
-  | some (0, r, _, _) => (cx.1 + 1, F r cx.2)
-  | some (1, r, j, k) => (if P r cx.2 then j - 1 else k - 1, cx.2)
-  | _ => cx
-
-/-- Started at `I₁` with `x = x₀`, the scheme halts with final value `v`. -/
-def HaltsWith {D : Type} (S : IanovScheme) (F : ℕ → D → D) (P : ℕ → D → Bool) (x₀ v : D) :
-    Prop :=
-  ∃ n : ℕ, S[((step S F P)^[n] (0, x₀)).1]? = some (2, 0, 0, 0) ∧
-    ((step S F P)^[n] (0, x₀)).2 = v
-
-/-- The two schemes are not strongly equivalent: under some domain, interpretation and
-initial value, both halt with different final values, or exactly one of them halts. -/
-def StrongInequivalenceOfIanovSchemesFeasible
-    (i : StrongInequivalenceOfIanovSchemesInstance) : Prop :=
-  ∃ (D : Type) (F : ℕ → D → D) (P : ℕ → D → Bool) (x₀ : D),
-    (∃ v w, HaltsWith i.2.2.1 F P x₀ v ∧ HaltsWith i.2.2.2 F P x₀ w ∧ v ≠ w) ∨
-      ((∃ v, HaltsWith i.2.2.1 F P x₀ v) ∧ ¬ ∃ w, HaltsWith i.2.2.2 F P x₀ w) ∨
-      ((¬ ∃ v, HaltsWith i.2.2.1 F P x₀ v) ∧ ∃ w, HaltsWith i.2.2.2 F P x₀ w)
-
-open Classical in
-/-- STRONG INEQUIVALENCE OF IANOV SCHEMES as a decision problem over bitstrings. -/
-noncomputable def strongInequivalenceOfIanovSchemesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StrongInequivalenceOfIanovSchemesInstance) x with
-  | some i => decide (WellFormed i ∧ StrongInequivalenceOfIanovSchemesFeasible i)
-  | none => false
 
 /-- **STRONG INEQUIVALENCE OF IANOV SCHEMES is NP-complete.** Source: Garey and Johnson
 (1979), [PO16]; Constable, Hunt and Sahni (1980); Rutledge (1964). -/

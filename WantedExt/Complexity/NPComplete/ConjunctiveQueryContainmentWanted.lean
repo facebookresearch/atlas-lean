@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Databases.ConjunctiveQueries
+public import CSLibExt.Complexity.NPComplete.ConjunctiveQueryContainmentDefs
 
 @[expose] public section
 
@@ -60,40 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the queries `Q₁` and `Q₂`, each as its head tuple and its body atoms
-`(relation, argument tuple)`. -/
-abbrev ConjunctiveQueryContainmentInstance :=
-  (List ℕ × List (ℕ × List ℕ)) × (List ℕ × List (ℕ × List ℕ))
-
-/-- The query `Q₁` of the instance. -/
-def query₁ (i : ConjunctiveQueryContainmentInstance) : CQ := ⟨i.1.1, i.1.2⟩
-
-/-- The query `Q₂` of the instance. -/
-def query₂ (i : ConjunctiveQueryContainmentInstance) : CQ := ⟨i.2.1, i.2.2⟩
-
-/-- Well-formedness of an instance: the heads have the same arity, every relation name occurs
-with one arity in the atoms of both queries, and every head variable of each query occurs in
-an atom of that query. -/
-def WellFormed (i : ConjunctiveQueryContainmentInstance) : Prop :=
-  (query₁ i).head.length = (query₂ i).head.length ∧
-    (∀ a ∈ (query₁ i).body ++ (query₂ i).body, ∀ b ∈ (query₁ i).body ++ (query₂ i).body,
-      a.1 = b.1 → a.2.length = b.2.length) ∧
-    (∀ x ∈ (query₁ i).head, ∃ a ∈ (query₁ i).body, x ∈ a.2) ∧
-    ∀ x ∈ (query₂ i).head, ∃ a ∈ (query₂ i).body, x ∈ a.2
-
-/-- `Q₁` is contained in `Q₂`. -/
-def ConjunctiveQueryContainmentFeasible (i : ConjunctiveQueryContainmentInstance) : Prop :=
-  Contained (query₁ i) (query₂ i)
-
-open Classical in
-/-- CONJUNCTIVE QUERY CONTAINMENT as a decision problem over bitstrings. -/
-noncomputable def conjunctiveQueryContainmentDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ConjunctiveQueryContainmentInstance) x with
-  | some i => decide (WellFormed i ∧ ConjunctiveQueryContainmentFeasible i)
-  | none => false
 
 /-- **CONJUNCTIVE QUERY CONTAINMENT is NP-complete.** Source: Chandra and Merlin (1977);
 Abiteboul, Hull and Vianu (1995), Theorem 6.2.10(a). -/

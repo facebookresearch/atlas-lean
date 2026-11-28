@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Databases.NormalForms
-public import WantedExt.Complexity.NPComplete.PrimeAttributeNameWanted
+public import CSLibExt.Complexity.NPComplete.BoyceCoddNormalFormViolationDefs
 
 @[expose] public section
 
@@ -63,28 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of attribute names (`A = Fin n`), the functional dependencies
-`F` as pairs of lists of names, and the names of `A'`. -/
-abbrev BoyceCoddNormalFormViolationInstance := ℕ × List (List ℕ × List ℕ) × List ℕ
-
-/-- Well-formedness of an instance: every dependency is a pair of subsets of `A`, and
-`A' ⊆ A`. -/
-def WellFormed (i : BoyceCoddNormalFormViolationInstance) : Prop :=
-  (∀ p ∈ i.2.1, (∀ a ∈ p.1, a < i.1) ∧ ∀ a ∈ p.2, a < i.1) ∧ ∀ a ∈ i.2.2, a < i.1
-
-/-- `A'` is not in Boyce-Codd normal form for `⟨A, F⟩`. -/
-def BoyceCoddNormalFormViolationFeasible (i : BoyceCoddNormalFormViolationInstance) : Prop :=
-  ¬ Cslib.Databases.IsBCNF (deps i.1 i.2.1) (attrs i.1 i.2.2)
-
-open Classical in
-/-- BOYCE-CODD NORMAL FORM VIOLATION as a decision problem over bitstrings. -/
-noncomputable def boyceCoddNormalFormViolationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BoyceCoddNormalFormViolationInstance) x with
-  | some i => decide (WellFormed i ∧ BoyceCoddNormalFormViolationFeasible i)
-  | none => false
 
 /-- **BOYCE-CODD NORMAL FORM VIOLATION is NP-complete.** Source: Garey and Johnson (1979),
 [SR29]; Beeri and Bernstein (1979). -/

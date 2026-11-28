@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Databases.FunctionalDependencies
-public import WantedExt.Complexity.NPComplete.PrimeAttributeNameWanted
+public import CSLibExt.Complexity.NPComplete.ThirdNormalFormTestDefs
 
 @[expose] public section
 
@@ -74,33 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of attribute names (`U = Fin n`) and the functional
-dependencies `F` as pairs of lists of names. -/
-abbrev ThirdNormalFormTestInstance := ℕ × List (List ℕ × List ℕ)
-
-/-- Third normal form of the scheme `⟨Fin n, F⟩`: every nontrivial derivable dependency
-`X → {a}` (`a ∉ X`) has `X` a superkey or `a` in some key. -/
-def IsThirdNormalForm (n : ℕ) (F : Finset (Cslib.Databases.FD (Fin n))) : Prop :=
-  ∀ (X : Finset (Fin n)) (a : Fin n), a ∉ X → Cslib.Databases.Derives F ⟨X, {a}⟩ →
-    Cslib.Databases.IsSuperkey F X ∨ ∃ K, Cslib.Databases.IsCandidateKey F K ∧ a ∈ K
-
-/-- Well-formedness of an instance: every dependency is a pair of subsets of `U`. -/
-def WellFormed (i : ThirdNormalFormTestInstance) : Prop :=
-  ∀ p ∈ i.2, (∀ a ∈ p.1, a < i.1) ∧ ∀ a ∈ p.2, a < i.1
-
-/-- The scheme `⟨U, F⟩` is in third normal form. -/
-def ThirdNormalFormTestFeasible (i : ThirdNormalFormTestInstance) : Prop :=
-  IsThirdNormalForm i.1 (deps i.1 i.2)
-
-open Classical in
-/-- THIRD NORMAL FORM TEST as a decision problem over bitstrings. -/
-noncomputable def thirdNormalFormTestDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThirdNormalFormTestInstance) x with
-  | some i => decide (WellFormed i ∧ ThirdNormalFormTestFeasible i)
-  | none => false
 
 /-- **THIRD NORMAL FORM TEST is NP-complete.** Source: Jou and Fischer (1982). -/
 public theorem_wanted thirdNormalFormTest_npComplete :

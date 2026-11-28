@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.NonFreedomForLoopFreeProgramSchemesWanted
+public import CSLibExt.Complexity.NPComplete.NonFreedomForLoopFreeProgramSchemesTwoVariablesDefs
 
 @[expose] public section
 
@@ -59,26 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed NON-FREEDOM FOR LOOP-FREE PROGRAM
-SCHEMES instance (well-formed instructions, acyclic flow graph) with exactly two variables. -/
-def WellFormed
-    (i : NonFreedomForLoopFreeProgramSchemes.NonFreedomForLoopFreeProgramSchemesInstance) :
-    Prop :=
-  NonFreedomForLoopFreeProgramSchemes.WellFormed i ∧ i.2.2.1 = 2
-
-open Classical in
-/-- NON-FREEDOM FOR LOOP-FREE PROGRAM SCHEMES with two variables as a decision problem over
-bitstrings. -/
-noncomputable def nonFreedomForLoopFreeProgramSchemesTwoVariablesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NonFreedomForLoopFreeProgramSchemes.NonFreedomForLoopFreeProgramSchemesInstance)
-      x with
-  | some i =>
-    decide (WellFormed i ∧
-      NonFreedomForLoopFreeProgramSchemes.NonFreedomForLoopFreeProgramSchemesFeasible i)
-  | none => false
 
 /-- **NON-FREEDOM FOR LOOP-FREE PROGRAM SCHEMES is NP-complete with two variables.** Source:
 Garey and Johnson (1979), [PO19]; Constable, Hunt, and Sahni (1974; journal version 1980). -/

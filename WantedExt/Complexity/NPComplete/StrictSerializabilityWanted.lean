@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MultiversionSerializabilityWanted
+public import CSLibExt.Complexity.NPComplete.StrictSerializabilityDefs
 
 @[expose] public section
 
@@ -77,45 +75,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A schedule of atomic steps `(t, X, w)`: transaction `t` reads (`w = false`) or writes
-(`w = true`) the variables of `X`. -/
-abbrev StepSchedule := List (ℕ × List ℕ × Bool)
-
-/-- An instance: the number `n` of transactions and the schedule of steps. -/
-abbrev StrictSerializabilityInstance := ℕ × StepSchedule
-
-/-- The single-variable schedule listing each step `(t, X, w)` as the actions `(t, x, w)` for
-the variables `x` of `X`, in order. -/
-def flatten (S : StepSchedule) : Schedule :=
-  S.flatMap fun s => s.2.1.map fun x => (s.1, x, s.2.2)
-
-/-- Well-formedness of an instance: every step belongs to one of the transactions
-`0, ..., n - 1` and lists its variables without repetitions, and every transaction has a
-step. -/
-def WellFormed (i : StrictSerializabilityInstance) : Prop :=
-  (∀ s ∈ i.2, s.1 < i.1 ∧ s.2.1.Nodup) ∧ ∀ t < i.1, ∃ s ∈ i.2, s.1 = t
-
-/-- All steps of transaction `t` precede all steps of transaction `t'` in `S`. -/
-def AllBefore (S : StepSchedule) (t t' : ℕ) : Prop :=
-  ∀ p q : Fin S.length, S[p].1 = t → S[q].1 = t' → p < q
-
-/-- Some serial order `π` of the `n` transactions yields the same final values as `S`, and puts
-`T` before `T'` whenever all steps of `T` precede all steps of `T'` in `S`. -/
-def StrictSerializabilityFeasible (i : StrictSerializabilityInstance) : Prop :=
-  ∃ π : List ℕ, π.Perm (List.range i.1) ∧
-    (∀ x : ℕ, finalValue (flatten i.2) (standard (flatten i.2)) x =
-      finalValue (serial (flatten i.2) π) (standard (serial (flatten i.2) π)) x) ∧
-    ∀ t < i.1, ∀ t' < i.1, AllBefore i.2 t t' → π.idxOf t < π.idxOf t'
-
-open Classical in
-/-- STRICT SERIALIZABILITY as a decision problem over bitstrings. -/
-noncomputable def strictSerializabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StrictSerializabilityInstance) x with
-  | some i => decide (WellFormed i ∧ StrictSerializabilityFeasible i)
-  | none => false
 
 /-- **STRICT SERIALIZABILITY is NP-complete.** Source: Johnson, NP-completeness column (1983),
 problem [4]; Sethi (1982). -/
