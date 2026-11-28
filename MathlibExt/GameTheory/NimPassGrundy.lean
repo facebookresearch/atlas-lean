@@ -98,13 +98,7 @@ private theorem nimPassGrundy_eq_xor_of_even {s : ℕ} {m : Fin s → ℕ}
     heightChocolateBarGrundy (nimPassIndicator m) x p = pileXor x ^^^ p := by
   let F := nimPassIndicator m
   change p ≤ F x at hp
-  have hle (z : Fin s → ℕ) : F z ≤ 1 := by
-    change nimPassIndicator m z ≤ 1
-    by_cases h : ∃ j, m j ≤ z j
-    · rw [nimPassIndicator_eq_one_iff.mpr h]
-    · rw [nimPassIndicator_eq_zero_iff.mpr (fun j ↦ Nat.lt_of_not_ge (fun hj ↦ h ⟨j, hj⟩))]
-      exact Nat.zero_le _
-  have hp_le := hp.trans (hle x)
+  have hp_le := hp.trans (nimPassIndicator_le_one m x)
   have hcut (i : Fin s) (u : ℕ) (hu : u < x i) :
       heightChocolateBarGrundy F (Function.update x i u) (min (F (Function.update x i u)) p) =
         pileXor (Function.update x i u) ^^^ min (F (Function.update x i u)) p :=
@@ -118,10 +112,9 @@ private theorem nimPassGrundy_eq_xor_of_even {s : ℕ} {m : Fin s → ℕ}
       F (Function.update x i u) = F (Function.update x i v) := by
     have hns := (nimPassIndicator_sections_hasNSProperty_iff hm).mpr heven x i
     have he := hns.min_div_two_pow_eq (z' := u) (z := v) (k := 1) (by decide) (by simpa using h) 1
-    change min (F (Function.update x i u)) 1 / 2 ^ (1 - 1) =
-      min (F (Function.update x i v)) 1 / 2 ^ (1 - 1) at he
-    simpa only [Nat.sub_self, pow_zero, Nat.div_one, min_eq_left (hle (Function.update x i u)),
-      min_eq_left (hle (Function.update x i v))] using he
+    simpa only [Nat.sub_self, pow_zero, Nat.div_one,
+      min_eq_left (nimPassIndicator_le_one m (Function.update x i u)),
+      min_eq_left (nimPassIndicator_le_one m (Function.update x i v))] using he
   rw [heightChocolateBarGrundy_eq]
   let missing : Set ℕ := {c | (∀ i u, u < x i →
       heightChocolateBarGrundy F (Function.update x i u) (min (F (Function.update x i u)) p) ≠ c) ∧

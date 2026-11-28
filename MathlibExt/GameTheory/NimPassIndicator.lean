@@ -38,6 +38,16 @@ Article G3, Lemma 10 and Corollary 2 (the function `F`). -/
 public def nimPassIndicator {s : ℕ} (m x : Fin s → ℕ) : ℕ :=
   if ∃ j, m j ≤ x j then 1 else 0
 
+/-- **The Nim pass indicator is at most one.** For every $s \in \mathbb{N}$ and all
+$m, x \in \mathbb{N}^s$, the pass indicator of $m$ at $x$ is at most $1$; that is, it takes values
+in $\{0, 1\}$.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 10 (the function `F`). -/
+public theorem nimPassIndicator_le_one {s : ℕ} (m x : Fin s → ℕ) : nimPassIndicator m x ≤ 1 := by
+  unfold nimPassIndicator; split_ifs <;> omega
+
 /-- **When a pile reaches its pass threshold.** The pass indicator is one exactly when
 at least one pile has reached its threshold. -/
 public theorem nimPassIndicator_eq_one_iff {s : ℕ} {m x : Fin s → ℕ} :
