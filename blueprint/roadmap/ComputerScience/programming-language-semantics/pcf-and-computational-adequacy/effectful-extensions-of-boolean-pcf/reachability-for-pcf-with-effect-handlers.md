@@ -12,7 +12,7 @@ $$
 h ::= \{\mathtt{return}\ x = c,\ \mathit{op}_1\, x_1\, k_1 = c_1, \dots, \mathit{op}_n\, x_n\, k_n = c_n\}.
 $$
 
-Evaluation is the usual small-step call-by-value reduction; when the handled computation is $E[\mathit{op}\ v]$ with $E$ an evaluation context and $h$ contains $\mathit{op}\, x\, k = c$, the step goes to $c[v/x, (\lambda y.\, \mathtt{with}\ h\ \mathtt{handle}\ E[\mathtt{return}\ y])/k]$ (deep handlers). A program is a closed computation, and the *reachability problem* asks, given a program $c$, whether $c \to^* \mathtt{return\ true}$. A program is simply typed if it is typable in the paper's simple type system $\vdash_{\mathrm{st}}$, in which operations have types.
+Evaluation is the usual small-step call-by-value reduction; when the handled computation is $E[\mathit{op}\ v]$ with $E$ an evaluation context $E ::= [\,] \mid \mathtt{let}\ x = E\ \mathtt{in}\ c$, which reaches only up to the nearest enclosing handler, and $h$ contains $\mathit{op}\, x\, k = c$, the step goes to $c[v/x, (\lambda y.\, \mathtt{with}\ h\ \mathtt{handle}\ E[\mathtt{return}\ y])/k]$ (deep handlers). A program is a closed computation, and the *reachability problem* asks, given a program $c$, whether $c \to^* \mathtt{return\ true}$. A program is simply typed if it is typable in the paper's simple type system $\vdash_{\mathrm{st}}$, in which operations have types.
 
 **Theorem (Endo and Terauchi).** Reachability is undecidable for the class $\mathit{MM}$ of programs of the form
 

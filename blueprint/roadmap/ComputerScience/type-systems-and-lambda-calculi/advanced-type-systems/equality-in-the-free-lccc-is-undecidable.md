@@ -8,9 +8,9 @@ Judgmental equality in Martin-Löf type theory with extensional identity types, 
 
 1. Type inhabitation in Martin-Löf type theory with intensional or extensional identity types, $\Pi$-types and a base type is undecidable.
 2. Judgmental equality in Martin-Löf type theory with extensional identity types, $\Pi$-types and a base type is undecidable; this also holds when a unit type and $\Sigma$-types are added.
-3. Equality of arrows in the bifree locally cartesian closed category on one object is undecidable.
+3. Equality of arrows in the bifree locally cartesian closed category on one object, in its syntactic presentation as the category of contexts of Martin-Löf type theory with extensional identity types, a unit type, $\Sigma$-types and $\Pi$-types, is undecidable.
 
-The authors show that the category of contexts of the type theory with extensional identity types, a unit type, $\Sigma$-types and $\Pi$-types is the bifree lccc on one object, which gives clause 3 from clause 2. The same construction proves the folklore result that judgmental equality is undecidable for extensional type theory with $\Pi$-types and one universe.
+The authors show that the category of contexts of the type theory with extensional identity types, a unit type, $\Sigma$-types and $\Pi$-types is the bifree lccc on one object, which gives clause 3 from clause 2. The universal property alone does not fix an effective presentation: the authors note that the statement concerns this particular presentation, and leave open whether every recursively presented bifree lccc has undecidable equality (Section 5). The same construction proves the folklore result that judgmental equality is undecidable for extensional type theory with $\Pi$-types and one universe.
 
 ## Depends on
 
@@ -22,7 +22,7 @@ None.
 
 ## Expansion
 
-All clauses reduce from convertibility of closed terms of combinatory logic. In the context $\Gamma_{CL}$ declaring $o$, constants $k, s : o$, an application operation $\cdot : o \to o \to o$ and axioms $\Pi x\, y : o.\ \mathrm{I}(o, k \cdot x \cdot y, x)$ and $\Pi x\, y\, z : o.\ \mathrm{I}(o, s \cdot x \cdot y \cdot z, x \cdot z \cdot (y \cdot z))$, the type $\mathrm{I}(o, M, M')$ is inhabited exactly when the closed combinatory terms $M$ and $M'$ are convertible: convertibility can be derived inside the theory, and conversely a model interprets $o$ as the set of combinatory terms modulo convertibility. With extensional identity types this inhabitation is equivalent to the judgment $\Gamma_{CL} \vdash M = M' : o$. A good expansion links a page for the undecidability of convertibility in combinatory logic and for the biequivalence between lcccs and the corresponding fragment of extensional type theory.
+All clauses reduce from convertibility of closed terms of combinatory logic. For the base type $o$ of the signature, consider the context $\Gamma_{CL}$ declaring variables $k, s : o$, an application operation $\cdot : o \to o \to o$ and axioms $\mathit{ax}_k : \Pi x\, y : o.\ \mathrm{I}(o, k \cdot x \cdot y, x)$ and $\mathit{ax}_s : \Pi x\, y\, z : o.\ \mathrm{I}(o, s \cdot x \cdot y \cdot z, x \cdot z \cdot (y \cdot z))$ (the type $o$ itself is not declared in $\Gamma_{CL}$; this is what distinguishes the construction from the one with a universe), the type $\mathrm{I}(o, M, M')$ is inhabited exactly when the closed combinatory terms $M$ and $M'$ are convertible: convertibility can be derived inside the theory, and conversely a model interprets $o$ as the set of combinatory terms modulo convertibility. With extensional identity types this inhabitation is equivalent to the judgment $\Gamma_{CL} \vdash M = M' : o$. A good expansion links a page for the undecidability of convertibility in combinatory logic and for the biequivalence between lcccs and the corresponding fragment of extensional type theory.
 
 ## Sources
 
