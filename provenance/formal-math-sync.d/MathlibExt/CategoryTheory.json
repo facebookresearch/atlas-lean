@@ -760,6 +760,15 @@
       "upstream_sha256": "dc7d4ecd46a4dd9c2f346a98fef1ba35c1da5d877540731ddf57967c44ba04eb"
     },
     {
+      "path": "MathlibExt/CategoryTheory/ComposableArrows/Arrow.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "566c68a142961587453058bebf5f7b48716d7f79202af24c8e8900b982b91683",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "28c308ebd9a52bdbefb4c108debfbac310dd85283121bcb10bf539b61d19b403"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/ComposableArrows/Edge.lean",
       "backport": "not-needed",
       "disposition": "diverged",
@@ -2061,6 +2070,15 @@
       "upstream_sha256": "47bdeb82772b346a5713f8e0c5bcdf8b14bf11ab1aa1a66bd901df6d66bf7f64"
     },
     {
+      "path": "MathlibExt/CategoryTheory/Limits/Constructions/Under/ConnectedCocone.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "96b037d435b76838f2e8b4ea05609105575a37e57f69bff84915c7d225ce8f12",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "695e2650c49461173fb9e0091c3cef7c3f1f1068cebf2aed73416f90751e2458"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/Limits/CoproductPushout.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -2126,6 +2144,15 @@
       "published_sha256": "da2651c5fe0f957f6cd98da6c89ab928acd0b25d13d6b00418133e9850f9ec0e",
       "upstream_sha256": "cad5e13116d832075007ada7c0794b15d931fd54b7bcd307a45965f9fa22af80"
     },
+    {
+      "path": "MathlibExt/CategoryTheory/Limits/Shapes/BinaryBiproducts.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7c32be54c4b1f739d125557de11fc1fdf16d9935cef5217c5aeb979cee4c4a5c",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "23cf549740d87e91803bbfae41e788485504d52019ebc8246a5e8adc8a066fd3"
+    },
     {"path": "MathlibExt/CategoryTheory/Limits/Shapes/BiprodPushoutCorner.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "bcb79a028771855128f0ec1fb48a7c1fcfa0a5705ca2fabbbe09e428fdc0a485", "rationale": "Import the complete general MathlibExt.CategoryTheory.Limits.Shapes.BiprodPushoutCorner API from the recorded immutable source, retaining its original authors and mathematical statements, signed maps, hypotheses, independent worlds and proof implementations. Atlas documentation is mathematical. This focused split preserves every nonwhitespace source token; required100-column formatting is whitespace only. Native compilation remains pending.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "6e25b0d06ec29bba5dd2a7c823434b16293d86884f13fcddb71ac1cbee1420e1"},
     {
       "path": "MathlibExt/CategoryTheory/Limits/Shapes/Cofiber.lean",
@@ -2155,10 +2182,28 @@
       "upstream_sha256": "5c9cd8aa7b25e1a0f850d8a16da0a927116a1871cd076dd3a9f85c02789b57d3"
     },
     {
+      "path": "MathlibExt/CategoryTheory/Limits/Shapes/EqualizersCompat.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9e9e0f31b91803182ff345edc8722a388954ce2cb125527eea516fe9035f5049",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "0c3375ba703aa5e4a9520de0f1388246efe8ad191d15cebf74e45bb19420999e"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/Limits/Shapes/FiniteProducts.lean",
       "disposition": "identical",
       "published_sha256": "002e0d6c68141fc0e80341fa77578dc8ec05772b2c76a89824abba4a710eedd9",
       "upstream_sha256": "118b6d16663f4a2d747713b7b81f4e082717fded4ee2d4b8c10ca6b830a40e36"
+    },
+    {
+      "path": "MathlibExt/CategoryTheory/Limits/Shapes/ProductFunctorComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c84117c51aa036c0fc87b093ec82ef6b605aaa1d079d4dc987d812f1a231c6e5",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "950bfb624ff70347f0f02ea43fe94ee0eb3addfe62b1e75e29ab95e24066497b"
     },
     {
       "path": "MathlibExt/CategoryTheory/Limits/Shapes/Pullback/BaseChangeSquareIso.lean",
@@ -2283,6 +2328,15 @@
       "disposition": "identical",
       "published_sha256": "6992b00433b84c00fd1bfc763443897c9849ad2224fa11ccaad513def7d6ee92",
       "upstream_sha256": "c9ae0a789551540635c1975217c459269dfe03232f0018b79392eea2690b61bc"
+    },
+    {
+      "path": "MathlibExt/CategoryTheory/Localization/BousfieldCompat.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "a4c4b7a42d7b713775c5fe915ddc863cd75cab53bae3a6b299bbc4977ac99786",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "1c47897647155b16816c7d710c4afbd7371bb6ae8c6158027ad06a41aaf320c8"
     },
     {
       "path": "MathlibExt/CategoryTheory/Localization/OriginalBifibrantComparison.lean",
@@ -2617,6 +2671,15 @@
       "upstream_sha256": "89f85433f9ec54f6c0da11583d938e3449f294644295004fe3d2e25e7ef9b99f"
     },
     {
+      "path": "MathlibExt/CategoryTheory/Pi/Limits.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "85d7b4f9fe97c746e6d294dc2b6a04278191c1b474c5ccd4519168e44700135b",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f6fcd6a093f2db4bf87ecde4ac52b965c0b087bceb0a828c06af6bf9f07d6f32"
+    },
+    {
       "path": "MathlibExt/CategoryTheory/Pi/Preadditive.lean",
       "backport": "not-needed",
       "disposition": "diverged",
@@ -2626,6 +2689,15 @@
       "upstream_sha256": "eb4a63499b880eb1f189bcab87f13c64227e6551da107c253140cae6d72d04c7"
     },
     {"path": "MathlibExt/CategoryTheory/Preadditive/FunctorEnd.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f1b45e38a60b533f63009c258a80445cd431955bfc9decd8ce604d51a1912fdc", "rationale": "Replace workflow-oriented commentary with mathematical documentation of the native functor-induced End map and its ring/algebra extensions for additive/linear functors. The implementation and original category/scalar worlds are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "5310691c6db765ed5268d35ecee10aae72da7753814efe70ecc5a8d64c28cfd9"},
+    {
+      "path": "MathlibExt/CategoryTheory/Preadditive/Biproducts.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "fe2ce0a0532e1ab6f59c860e7687cb8f3a7a4617edbbedd40e22372a0c15db24",
+      "rationale": "General complex/functor, homology-sequence, quasi-isomorphism and categorical cokernel/product API retained from the immutable recorded source. Atlas mathematical documentation and all original authors/license, hypotheses, independent worlds, maps, signs and proof tokens are preserved. This source is diverged from the current global Formal-Math pin; only necessary 100-column whitespace wraps were applied. Hosted Native verification remains pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "83a6ed3fc7999d0ae0dbf1d9955814c2cdd0d723cef203fc6e7a849f6e9ee0b1"
+    },
     {
       "path": "MathlibExt/CategoryTheory/Preadditive/KilledBy.lean",
       "backport": "not-needed",
