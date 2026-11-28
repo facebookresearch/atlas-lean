@@ -15,8 +15,9 @@ import MathlibExt.Probability.Statistics.NormalTheory
 
 Quantile facts at the Cauchy (`t_1`) and `F(1, 1)` boundary; the `t` median is `0`;
 two-sided coverage collapses to `0` at the threshold `c = 0` and for negative `c`; one-sided
-coverage at `c = 0` is `1/2`; the exact `95%` two-sided interval at `n = 2`; exact-size
-`F` test and `F` region at `(q, n - p) = (1, 1)`.
+coverage at `c = 0` is `1/2`; exact `95%` coverage at `n = 2`, including the paired fixture
+with within-pair dependence `(2 * z, z)`; exact-size `F` test and `F` region at
+`(q, n - p) = (1, 1)`.
 -/
 
 namespace ProbabilityTheory.NormalTheoryChecks
@@ -97,6 +98,40 @@ example (μ : ℝ) {v : NNReal} (hv : v ≠ 0)
       √((∑ i, (X ω i - (∑ j, X ω j) / (3 : ℕ)) ^ 2) / (((3 : ℕ) : ℝ) - 1)) /
         √((3 : ℕ) : ℝ) ≤ μ} = 1 - 1 / 20 :=
   (one_sample_t_one_sided_coverage_eq (by norm_num) μ hv ⟨by norm_num, by norm_num⟩ hX).1
+
+/-- On an actual two-draw model, use pairs `(2 * z, z)` with shared coordinates within each pair.
+Their differences are the original draws, and the `95%` paired interval has exact coverage. -/
+example :
+    let P := Measure.pi fun _ : Fin 2 => gaussianReal 1 1
+    let m : (Fin 2 → ℝ) → ℝ := fun z => (∑ i, z i) / (2 : ℕ)
+    let s : (Fin 2 → ℝ) → ℝ := fun z => √((∑ i, (z i - m z) ^ 2) / (((2 : ℕ) : ℝ) - 1))
+    let r : (Fin 2 → ℝ) → ℝ := fun z =>
+      cdfQuantile (studentTMeasure 1) (1 - (1 / 20) / 2) * s z / √((2 : ℕ) : ℝ)
+    HasLaw (fun z => √((2 : ℕ) : ℝ) * (m z - 1) / s z) (studentTMeasure 1) P ∧
+      (∀ᵐ z ∂P, 0 < s z) ∧
+      P.real {z | (1 : ℝ) ∈ Icc (m z - r z) (m z + r z)} = 19 / 20 := by
+  intro P m s r
+  have hz (i : Fin 2) : HasLaw (fun z : Fin 2 → ℝ => z i) (gaussianReal 1 1) P :=
+    (measurePreserving_eval (fun _ : Fin 2 => gaussianReal 1 1) i).hasLaw
+  have htuple : HasLaw (fun (z : Fin 2 → ℝ) i => z i) P P := by
+    change HasLaw (id : (Fin 2 → ℝ) → Fin 2 → ℝ) P P
+    simpa only [Measure.map_id] using
+      (hasLaw_map (P := P) (X := id) measurable_id.aemeasurable)
+  have hind := (iIndepFun_iff_hasLaw_pi_pi hz).2 htuple
+  let p : Fin 2 → (Fin 2 → ℝ) → ℝ × ℝ := fun i z => (2 * z i, z i)
+  have hp : iIndepFun p P := hind.comp (fun _ (z : ℝ) => (2 * z, z)) (fun _ => by fun_prop)
+  have hpDiff (z : Fin 2 → ℝ) (i : Fin 2) : (p i z).1 - (p i z).2 = z i := by
+    dsimp only [p]
+    ring
+  have hD (i : Fin 2) : HasLaw (fun z => (p i z).1 - (p i z).2) (gaussianReal 1 1) P :=
+    (hz i).congr (Filter.Eventually.of_forall fun z => hpDiff z i)
+  have hα : (1 / 20 : ℝ) ∈ Ioo 0 1 := ⟨by norm_num, by norm_num⟩
+  obtain ⟨hT, hS, hcover⟩ := paired_t_interval_coverage le_rfl 1 (v := 1) (by norm_num) hα hp hD
+  refine ⟨?_, ?_, ?_⟩
+  · simpa only [hpDiff] using hT
+  · simpa only [hpDiff] using hS
+  · rw [show (19 / 20 : ℝ) = 1 - 1 / 20 by norm_num]
+    simpa only [hpDiff] using hcover
 
 end ProbabilityTheory.NormalTheoryChecks
 

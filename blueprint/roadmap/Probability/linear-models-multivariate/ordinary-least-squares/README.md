@@ -1,5 +1,14 @@
 # Ordinary least squares
 
+- [Heteroskedasticity-robust covariance estimation](heteroskedasticity-robust-covariance-estimation/README.md)
+- [Saturated two-by-two regression](saturated-two-by-two-regression/README.md)
+- [Omitted-variable bias](omitted-variable-bias/README.md)
+- [Gauss–Markov: the BLUE covariance ordering in the classical linear model](gauss-markov-the-blue-covariance-ordering-in-the/README.md)
+- [Exact contrast t intervals and the one-sample specialization](exact-contrast-t-intervals-and-the-one-sample-sp/README.md)
+- [Linear hypotheses in the Gaussian linear model: the chi-square numerator](linear-hypotheses-in-the-gaussian-linear-model-t/README.md)
+- [Exact F and single-contrast T² inference in the Gaussian linear model](exact-f-and-single-contrast-t-2-inference-in-the/README.md)
+- [Random-design linear models, conditionally on the design](random-design-linear-models-conditionally-on-the/README.md)
+- [Unbiasedness of RSS/(n−k) in the Gaussian-free classical linear model](unbiasedness-of-rss-n-k-in-the-gaussian-free-cla/README.md)
 - [Exact t law for a single estimated coefficient (Atlas ST04.T03)](exact-t-law-for-a-single-estimated-coefficient-a/README.md)
 - [Errors in variables: attenuation of the OLS slope and its correction](errors-in-variables-attenuation-of-the-ols-slope/README.md)
 - [Independence of fitted values and residuals in the Gaussian linear model](independence-of-fitted-values-and-residuals-in-t/README.md)
@@ -8,6 +17,8 @@
 - [Consistency of OLS with i.i.d. rows (Atlas ST05.T01)](consistency-of-ols-with-i-i-d-rows-atlas-st05-t0/README.md)
 - [Restricted (residual) maximum likelihood: error contrasts and basis invariance](restricted-residual-maximum-likelihood-error-con/README.md)
 - [Sampling properties of the ordinary least-squares estimator](sampling-properties-of-the-ordinary-least-square/README.md)
+- [Saturated-design residuals are almost surely zero](saturated-design-residuals-are-almost-surely-zer/README.md)
+- [Scheffé simultaneous confidence set by inverting the F test](scheffe-coverage.md)
 
 - [Least-squares fitted values are the orthogonal projection onto the column space](fitted-values-are-the-orthogonal-projection.md)
 - [Decomposition of the total sum of squares](total-sum-of-squares-decomposition.md)
