@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ContinuousMultipleChoiceKnapsackWanted
+public import CSLibExt.Complexity.NPComplete.ContinuousMultipleChoiceKnapsackTwoElementBlocksDefs
 
 @[expose] public section
 
@@ -63,21 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed CONTINUOUS MULTIPLE CHOICE KNAPSACK instance
-whose blocks have at most two elements. -/
-def WellFormed (i : ContinuousMultipleChoiceKnapsackInstance) : Prop :=
-  ContinuousMultipleChoiceKnapsack.WellFormed i ∧ ∀ g ∈ i.1, g.length ≤ 2
-
-open Classical in
-/-- CONTINUOUS MULTIPLE CHOICE KNAPSACK with blocks of at most two elements as a decision
-problem over bitstrings. -/
-noncomputable def continuousMultipleChoiceKnapsackTwoElementBlocksDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ContinuousMultipleChoiceKnapsackInstance) x with
-  | some i => decide (WellFormed i ∧ ContinuousMultipleChoiceKnapsackFeasible i)
-  | none => false
 
 /-- **CONTINUOUS MULTIPLE CHOICE KNAPSACK with blocks of at most two elements is NP-complete.**
 Source: Garey and Johnson (1979), [MP11], comment; Ibaraki (1980). -/

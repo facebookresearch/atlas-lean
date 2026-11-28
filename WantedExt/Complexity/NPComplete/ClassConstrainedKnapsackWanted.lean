@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.ClassConstrainedKnapsackDefs
 
 @[expose] public section
 
@@ -55,34 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the set sizes `[U₀, ..., U_{n-1}]`, the knapsacks as pairs
-`(volume Vⱼ, compartments Cⱼ)`, and the bound `K`. -/
-abbrev ClassConstrainedKnapsackInstance := List ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: `∑ᵢ Uᵢ = ∑ⱼ Vⱼ` and `0 < K`. -/
-def WellFormed (i : ClassConstrainedKnapsackInstance) : Prop :=
-  i.1.sum = (i.2.1.map Prod.fst).sum ∧ 0 < i.2.2
-
-/-- Some placement `(I, Q)` respects every volume, compartment and set-size bound, uses only
-allotted compartments, and packs at least `K` elements. -/
-def ClassConstrainedKnapsackFeasible (i : ClassConstrainedKnapsackInstance) : Prop :=
-  ∃ I : Fin i.1.length → Fin i.2.1.length → Bool,
-    ∃ Q : Fin i.1.length → Fin i.2.1.length → ℕ,
-      (∀ j, ∑ k, Q k j ≤ i.2.1[j].1) ∧
-      (∀ j, ∑ k, (I k j).toNat ≤ i.2.1[j].2) ∧
-      (∀ k, ∑ j, Q k j ≤ i.1[k]) ∧
-      (∀ k j, I k j = false → Q k j = 0) ∧
-      i.2.2 ≤ ∑ k, ∑ j, Q k j
-
-open Classical in
-/-- CLASS-CONSTRAINED KNAPSACK as a decision problem over bitstrings. -/
-noncomputable def classConstrainedKnapsackDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ClassConstrainedKnapsackInstance) x with
-  | some i => decide (WellFormed i ∧ ClassConstrainedKnapsackFeasible i)
-  | none => false
 
 /-- **CLASS-CONSTRAINED KNAPSACK is NP-complete.** Source: Crescenzi and Kann, MAXIMUM
 CLASS-CONSTRAINED KNAPSACK; Shachnai and Tamir (2001). -/

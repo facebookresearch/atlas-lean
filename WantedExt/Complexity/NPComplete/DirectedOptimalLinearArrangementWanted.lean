@@ -20,8 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.DirectedOptimalLinearArrangementDefs
 
 @[expose] public section
 
@@ -56,31 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, arc list, bound `K`. -/
-abbrev DirectedOptimalLinearArrangementInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the arcs are distinct, join vertices below `n`, and are not
-loops; `0 < K`. -/
-def WellFormed (i : DirectedOptimalLinearArrangementInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2) ∧ 0 < i.2.2
-
-/-- An ordering of the vertices in which every arc goes forward and the arc lengths sum to at
-most `K`. -/
-def DirectedOptimalLinearArrangementFeasible (i : DirectedOptimalLinearArrangementInstance) :
-    Prop :=
-  ∃ perm : List ℕ, perm.Perm (List.range i.1) ∧
-    (∀ a ∈ i.2.1, perm.idxOf a.1 < perm.idxOf a.2) ∧
-    (i.2.1.map fun a => perm.idxOf a.2 - perm.idxOf a.1).sum ≤ i.2.2
-
-open Classical in
-/-- DIRECTED OPTIMAL LINEAR ARRANGEMENT as a decision problem over bitstrings. -/
-noncomputable def directedOptimalLinearArrangementDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DirectedOptimalLinearArrangementInstance) x with
-  | some i => decide (WellFormed i ∧ DirectedOptimalLinearArrangementFeasible i)
-  | none => false
 
 /-- **DIRECTED OPTIMAL LINEAR ARRANGEMENT is NP-complete.** Source: Garey and Johnson (1979),
 [GT43]; Even and Shiloach (1975). -/

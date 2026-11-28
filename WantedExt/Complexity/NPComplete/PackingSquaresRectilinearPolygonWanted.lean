@@ -31,11 +31,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Order.Interval.Set.Defs
-public import Mathlib.Data.Set.Prod
-public import WantedExt.Complexity.NPComplete.PolyominoPackingWanted
+public import CSLibExt.Complexity.NPComplete.PackingSquaresRectilinearPolygonDefs
 
 @[expose] public section
 
@@ -84,33 +80,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the side `d` of the squares, the list of cells of the polygon, and the bound
-`K`. -/
-abbrev PackingSquaresRectilinearPolygonInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: `d > 0`, the cells are listed without repetition and form a
-polyomino (a nonempty edge-connected cell set, `isPolycubeCells 2`), and `K > 0`. -/
-def WellFormed (i : PackingSquaresRectilinearPolygonInstance) : Prop :=
-  0 < i.1 ∧ i.2.1.Nodup ∧ isPolycubeCells 2 (PolyominoPacking.pieceCells i.2.1) ∧ 0 < i.2.2
-
-/-- `K` pairwise disjoint `d × d` squares fit in the polygon: the square `j` has lower-left cell
-`c j` and covers the cells `Set.Ico (c j).1 ((c j).1 + d) ×ˢ Set.Ico (c j).2 ((c j).2 + d)`. -/
-def PackingSquaresRectilinearPolygonFeasible
-    (i : PackingSquaresRectilinearPolygonInstance) : Prop :=
-  ∃ c : Fin i.2.2 → ℕ × ℕ,
-    (∀ j, ∀ r ∈ Set.Ico (c j).1 ((c j).1 + i.1) ×ˢ Set.Ico (c j).2 ((c j).2 + i.1), r ∈ i.2.1) ∧
-    ∀ j j', j ≠ j' → Disjoint (Set.Ico (c j).1 ((c j).1 + i.1) ×ˢ Set.Ico (c j).2 ((c j).2 + i.1))
-      (Set.Ico (c j').1 ((c j').1 + i.1) ×ˢ Set.Ico (c j').2 ((c j').2 + i.1))
-
-open Classical in
-/-- PACKING SQUARES IN A RECTILINEAR POLYGON as a decision problem over bitstrings. -/
-noncomputable def packingSquaresRectilinearPolygonDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PackingSquaresRectilinearPolygonInstance) x with
-  | some i => decide (WellFormed i ∧ PackingSquaresRectilinearPolygonFeasible i)
-  | none => false
 
 /-- **PACKING SQUARES IN A RECTILINEAR POLYGON is NP-complete.** Source: Fowler, Paterson and
 Tanimoto (1981); Berman, Johnson, Leighton, Shor and Snyder (1990), Sections 1 and 4; Aamand,

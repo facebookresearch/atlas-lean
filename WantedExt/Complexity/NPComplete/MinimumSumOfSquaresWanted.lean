@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import CSLibExt.Complexity.NPComplete.MinimumSumOfSquaresDefs
 
 @[expose] public section
 
@@ -51,33 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sizes `s(a)` of the elements of `A` (element `a` is the `a`-th entry), the
-number `K` of parts and the bound `J`. -/
-abbrev MinimumSumOfSquaresInstance := List ℕ × ℕ × ℕ
-
-/-- Well-formedness of an instance: every size is positive, `0 < K ≤ |A|`, and `J` is
-positive. -/
-def WellFormed (i : MinimumSumOfSquaresInstance) : Prop :=
-  (∀ a ∈ i.1, 0 < a) ∧ 0 < i.2.1 ∧ i.2.1 ≤ i.1.length ∧ 0 < i.2.2
-
-/-- The sum of squares `∑_{k} (∑_{a ∈ A_k} s(a))²` of the partition of `A` into the parts
-`A_k = f⁻¹(k)`. -/
-def sumOfSquares (s : List ℕ) {K : ℕ} (f : Fin s.length → Fin K) : ℕ :=
-  ∑ k : Fin K, (∑ a ∈ Finset.univ.filter (fun a => f a = k), s.get a) ^ 2
-
-/-- Some partition of `A` into `K` disjoint sets has sum of squares at most `J`. -/
-def MinimumSumOfSquaresFeasible (i : MinimumSumOfSquaresInstance) : Prop :=
-  ∃ f : Fin i.1.length → Fin i.2.1, sumOfSquares i.1 f ≤ i.2.2
-
-open Classical in
-/-- MINIMUM SUM OF SQUARES as a decision problem over bitstrings. -/
-noncomputable def minimumSumOfSquaresDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumSumOfSquaresInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumSumOfSquaresFeasible i)
-  | none => false
 
 /-- **MINIMUM SUM OF SQUARES is NP-complete.** Source: Garey and Johnson (1979), [SP19]. -/
 public theorem_wanted minimumSumOfSquares_npComplete :

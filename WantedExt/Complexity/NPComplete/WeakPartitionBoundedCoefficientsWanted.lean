@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.Order.Ring.Abs
-public import WantedExt.Complexity.NPComplete.WeakPartitionWanted
+public import CSLibExt.Complexity.NPComplete.WeakPartitionBoundedCoefficientsDefs
 
 @[expose] public section
 
@@ -64,20 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some nonzero integer vector `x` with `|xᵢ| ≤ K` for all `i` satisfies
-`∑ᵢ xᵢ · s(aᵢ) = 0`. -/
-def WeakPartitionBoundedCoefficientsFeasible (K : ℕ) (i : PartitionInstance) : Prop :=
-  ∃ x : Fin i.length → ℤ, x ≠ 0 ∧ (∀ j, |x j| ≤ K) ∧ ∑ j, x j * (i.get j : ℤ) = 0
-
-open Classical in
-/-- WEAK PARTITION with coefficients bounded by `K` as a decision problem over bitstrings. -/
-noncomputable def weakPartitionBoundedCoefficientsDec (K : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartitionInstance) x with
-  | some i => decide (WellFormed i ∧ WeakPartitionBoundedCoefficientsFeasible K i)
-  | none => false
 
 /-- **WEAK PARTITION with coefficients bounded by `K` is NP-complete for every fixed positive
 integer `K`.** Source: Johnson, NP-completeness column (1982), problem [9], comment; van Emde

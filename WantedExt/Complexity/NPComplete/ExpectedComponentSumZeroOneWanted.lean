@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ExpectedComponentSumWanted
+public import CSLibExt.Complexity.NPComplete.ExpectedComponentSumZeroOneDefs
 
 @[expose] public section
 
@@ -49,20 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the [SP18] well-formedness, and every vector entry is `0`
-or `1`. -/
-def WellFormed (i : ExpectedComponentSumInstance) : Prop :=
-  ExpectedComponentSum.WellFormed i ∧ ∀ v ∈ i.2.1, ∀ x ∈ v, x ≤ 1
-
-open Classical in
-/-- EXPECTED COMPONENT SUM with 0/1 entries as a decision problem over bitstrings. -/
-noncomputable def expectedComponentSumZeroOneDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ExpectedComponentSumInstance) x with
-  | some i => decide (WellFormed i ∧ ExpectedComponentSumFeasible i)
-  | none => false
 
 /-- **EXPECTED COMPONENT SUM with 0/1 entries is NP-complete.** Source: Garey and Johnson
 (1979), [SP18], comment. -/

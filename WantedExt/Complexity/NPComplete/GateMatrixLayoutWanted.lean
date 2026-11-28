@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Logic.Equiv.Defs
+public import CSLibExt.Complexity.NPComplete.GateMatrixLayoutDefs
 
 @[expose] public section
 
@@ -63,47 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the Boolean matrix `M` row by row, and the bound `k`. -/
-abbrev GateMatrixLayoutInstance := List (List Bool) × ℕ
-
-/-- The number of rows `n` (nets). -/
-def rows (i : GateMatrixLayoutInstance) : ℕ := i.1.length
-
-/-- The number of columns `m` (gates; the length of the first row). -/
-def cols (i : GateMatrixLayoutInstance) : ℕ := (i.1.headD []).length
-
-/-- The entry of `M` in row `r` and column `c`. -/
-def entry (i : GateMatrixLayoutInstance) (r c : ℕ) : Bool :=
-  (i.1.getD r []).getD c false
-
-/-- Well-formedness: rows of equal length, and `k` a positive integer. -/
-def WellFormed (i : GateMatrixLayoutInstance) : Prop :=
-  (∀ row ∈ i.1, row.length = cols i) ∧ 1 ≤ i.2
-
-/-- After the column permutation `σ`, the entry of row `r` at position `p` is `1` or `*`: the
-row has a `1` in columns `a` and `b` moved to positions `σ a ≤ p ≤ σ b`. -/
-def Covers (i : GateMatrixLayoutInstance) (σ : Equiv.Perm (Fin (cols i))) (r : Fin (rows i))
-    (p : Fin (cols i)) : Prop :=
-  ∃ a b : Fin (cols i), entry i r a = true ∧ entry i r b = true ∧ σ a ≤ p ∧ p ≤ σ b
-
-instance (i : GateMatrixLayoutInstance) (σ : Equiv.Perm (Fin (cols i))) (r : Fin (rows i))
-    (p : Fin (cols i)) : Decidable (Covers i σ r p) := by
-  unfold Covers; infer_instance
-
-/-- Some column permutation leaves at most `k` entries `1` or `*` in every column. -/
-def GateMatrixLayoutFeasible (i : GateMatrixLayoutInstance) : Prop :=
-  ∃ σ : Equiv.Perm (Fin (cols i)), ∀ p : Fin (cols i),
-    (Finset.univ.filter fun r : Fin (rows i) => Covers i σ r p).card ≤ i.2
-
-open Classical in
-/-- GATE MATRIX LAYOUT as a decision problem over bitstrings. -/
-noncomputable def gateMatrixLayoutDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GateMatrixLayoutInstance) x with
-  | some i => decide (WellFormed i ∧ GateMatrixLayoutFeasible i)
-  | none => false
 
 /-- **GATE MATRIX LAYOUT is NP-complete.** Source: Kashiwabara and Fujisawa (1979); Deo,
 Krishnamoorthy and Langston (1987); Govindan, Langston and Ramachandramurthi (1992). -/

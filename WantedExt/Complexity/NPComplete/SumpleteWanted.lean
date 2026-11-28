@@ -19,8 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SumpleteDefs
 
 @[expose] public section
 
@@ -48,40 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the grid as a list of `m` rows of integers, the `m` row targets, and the `n`
-column targets. Each integer is a pair `(p, q)` of naturals standing for `p - q`. -/
-abbrev SumpleteInstance := List (List (ℕ × ℕ)) × List (ℕ × ℕ) × List (ℕ × ℕ)
-
-/-- The integer `p - q` represented by the pair `(p, q)`. -/
-def intOf (z : ℕ × ℕ) : ℤ := (z.1 : ℤ) - (z.2 : ℤ)
-
-/-- Well-formedness of an instance: one row target per row, and every row has one entry per
-column target, so the grid is a rectangle with `m` rows and `n` columns. -/
-def WellFormed (i : SumpleteInstance) : Prop :=
-  i.2.1.length = i.1.length ∧ ∀ row ∈ i.1, row.length = i.2.2.length
-
-/-- Some cells can be crossed out so that every row and every column sums to its target:
-`keep r c` says that the number in row `r`, column `c` stays uncrossed. -/
-def SumpleteFeasible (i : SumpleteInstance) : Prop :=
-  ∃ keep : ℕ → ℕ → Bool,
-    (∀ r < i.1.length,
-      (Finset.range i.2.2.length).sum (fun c =>
-        if keep r c then intOf ((i.1.getD r []).getD c (0, 0)) else 0) =
-      intOf (i.2.1.getD r (0, 0))) ∧
-    (∀ c < i.2.2.length,
-      (Finset.range i.1.length).sum (fun r =>
-        if keep r c then intOf ((i.1.getD r []).getD c (0, 0)) else 0) =
-      intOf (i.2.2.getD c (0, 0)))
-
-open Classical in
-/-- SUMPLETE as a decision problem over bitstrings. -/
-noncomputable def sumpleteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SumpleteInstance) x with
-  | some i => decide (WellFormed i ∧ SumpleteFeasible i)
-  | none => false
 
 /-- **SUMPLETE is NP-complete.** Source: Hatsugai, Ruangwises, Asano and Abe (2024);
 Ruangwises (2023). -/

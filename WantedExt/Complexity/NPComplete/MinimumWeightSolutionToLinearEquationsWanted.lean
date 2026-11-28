@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Order.Ring.Rat
-public import Mathlib.Data.Finset.Card
+public import CSLibExt.Complexity.NPComplete.MinimumWeightSolutionToLinearEquationsDefs
 
 @[expose] public section
 
@@ -56,34 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the length `m` of the tuples, the list `X` of pairs `(x, b)` (`x` a list of `m`
-encoded integers, `b` an encoded integer), and the bound `K`. -/
-abbrev MinimumWeightSolutionToLinearEquationsInstance :=
-  ℕ × List (List (ℕ × ℕ) × (ℕ × ℕ)) × ℕ
-
-/-- The integer `p.1 - p.2` encoded by a pair of naturals. -/
-def intOf (p : ℕ × ℕ) : ℤ := (p.1 : ℤ) - (p.2 : ℤ)
-
-/-- Well-formedness of an instance: every `x` is an `m`-tuple, and `0 < K ≤ m`. -/
-def WellFormed (i : MinimumWeightSolutionToLinearEquationsInstance) : Prop :=
-  (∀ e ∈ i.2.1, e.1.length = i.1) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- A rational `m`-tuple `y` with at most `K` non-zero entries such that `x · y = b` for every
-pair `(x, b)` of `X`. -/
-def MinimumWeightSolutionToLinearEquationsFeasible
-    (i : MinimumWeightSolutionToLinearEquationsInstance) : Prop :=
-  ∃ y : Fin i.1 → ℚ, (Finset.univ.filter fun j => y j ≠ 0).card ≤ i.2.2 ∧
-    ∀ e ∈ i.2.1, ∑ j : Fin i.1, (intOf (e.1.getD j (0, 0)) : ℚ) * y j = intOf e.2
-
-open Classical in
-/-- MINIMUM WEIGHT SOLUTION TO LINEAR EQUATIONS as a decision problem over bitstrings. -/
-noncomputable def minimumWeightSolutionToLinearEquationsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumWeightSolutionToLinearEquationsInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumWeightSolutionToLinearEquationsFeasible i)
-  | none => false
 
 /-- **MINIMUM WEIGHT SOLUTION TO LINEAR EQUATIONS is NP-complete.** Source: Garey and Johnson
 (1979), [MP5]; Amaldi and Kann (1998). -/

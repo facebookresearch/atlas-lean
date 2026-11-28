@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IntegerProgrammingWanted
+public import CSLibExt.Complexity.NPComplete.NonnegativeIntegerSolutionLinearEquationsDefs
 
 @[expose] public section
 
@@ -60,29 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the dimension `m` and the pairs `(x, b)` of `X`, integers as
-`(positive part, negative part)` pairs. -/
-abbrev NonnegativeIntegerSolutionLinearEquationsInstance :=
-  ℕ × List (List (ℕ × ℕ) × (ℕ × ℕ))
-
-/-- Well-formedness of an instance: every tuple `x` has length `m`. -/
-def WellFormed (i : NonnegativeIntegerSolutionLinearEquationsInstance) : Prop :=
-  ∀ p ∈ i.2, p.1.length = i.1
-
-/-- Some `m`-tuple `y` of non-negative integers satisfies `x · y = b` for every `(x, b) ∈ X`. -/
-def NonnegativeIntegerSolutionLinearEquationsFeasible
-    (i : NonnegativeIntegerSolutionLinearEquationsInstance) : Prop :=
-  ∃ y : List ℕ, y.length = i.1 ∧ ∀ p ∈ i.2, dot p.1 (y.map fun n : ℕ => (n : ℤ)) = toInt p.2
-
-open Classical in
-/-- NON-NEGATIVE INTEGER SOLUTION OF LINEAR EQUATIONS as a decision problem over bitstrings. -/
-noncomputable def nonnegativeIntegerSolutionLinearEquationsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NonnegativeIntegerSolutionLinearEquationsInstance) x with
-  | some i => decide (WellFormed i ∧ NonnegativeIntegerSolutionLinearEquationsFeasible i)
-  | none => false
 
 /-- **NON-NEGATIVE INTEGER SOLUTION OF LINEAR EQUATIONS is NP-complete.** Source: Garey and
 Johnson (1979), [MP1], comment; Sahni (1974); Borosh and Treybig (1976). -/

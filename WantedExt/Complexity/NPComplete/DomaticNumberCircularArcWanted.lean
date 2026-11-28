@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CircularArcColoringWanted
-public import WantedExt.Complexity.NPComplete.DomaticNumberWanted
+public import CSLibExt.Complexity.NPComplete.DomaticNumberCircularArcDefs
 
 @[expose] public section
 
@@ -62,28 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is a circular-arc graph: for some `L`, the vertices carry closed arcs with endpoints
-among the `L` points of the circle such that two distinct vertices are adjacent exactly when
-their arcs meet. -/
-def IsCircularArcGraph (i : DomaticNumber.DomaticNumberInstance) : Prop :=
-  ∃ L : ℕ, ∃ arc : Fin i.1 → ℕ × ℕ, (∀ v, (arc v).1 < L ∧ (arc v).2 < L) ∧
-    ∀ u v, u ≠ v → ((DomaticNumber.Graph i).Adj u v ↔
-      ∃ p < L, CircularArcColoring.OnArc (arc u) p ∧ CircularArcColoring.OnArc (arc v) p)
-
-/-- Well-formedness of an instance: well formed for DOMATIC NUMBER (a simple graph and
-`0 < K ≤ |V|`), and the graph is a circular-arc graph. -/
-def WellFormed (i : DomaticNumber.DomaticNumberInstance) : Prop :=
-  DomaticNumber.WellFormed i ∧ IsCircularArcGraph i
-
-open Classical in
-/-- DOMATIC NUMBER of circular-arc graphs as a decision problem over bitstrings. -/
-noncomputable def domaticNumberCircularArcDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DomaticNumber.DomaticNumberInstance) x with
-  | some i => decide (WellFormed i ∧ DomaticNumber.DomaticNumberFeasible i)
-  | none => false
 
 /-- **DOMATIC NUMBER of circular-arc graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT3]; Bonuccelli (1985); Sprague (1999). -/

@@ -22,8 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SparseMatrixCompressionDefs
 
 @[expose] public section
 
@@ -54,30 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of columns, the rows of `A` (each a list of `n` entries, `true`
-for `1`), and the bound `K`. -/
-abbrev SparseMatrixCompressionInstance := ℕ × List (List Bool) × ℕ
-
-/-- Well-formedness of an instance: every row has exactly `n` entries, and `0 < K ≤ mn`. -/
-def WellFormed (i : SparseMatrixCompressionInstance) : Prop :=
-  (∀ row ∈ i.2.1, row.length = i.1) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length * i.1
-
-/-- A sequence `b` of `n + K` integers in `{0, …, m}` and shifts `s` such that `a_rc = 1` exactly
-when `b` holds `r + 1` at position `s r + c`. -/
-def SparseMatrixCompressionFeasible (i : SparseMatrixCompressionInstance) : Prop :=
-  ∃ b : List ℕ, b.length = i.1 + i.2.2 ∧ (∀ x ∈ b, x ≤ i.2.1.length) ∧
-    ∃ s : Fin i.2.1.length → Fin i.2.2, ∀ r : Fin i.2.1.length, ∀ c : Fin i.1,
-      ((i.2.1.getD r []).getD c false = true ↔ b.getD (s r + c) 0 = r + 1)
-
-open Classical in
-/-- SPARSE MATRIX COMPRESSION as a decision problem over bitstrings. -/
-noncomputable def sparseMatrixCompressionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SparseMatrixCompressionInstance) x with
-  | some i => decide (WellFormed i ∧ SparseMatrixCompressionFeasible i)
-  | none => false
 
 /-- **SPARSE MATRIX COMPRESSION is NP-complete.** Source: Garey and Johnson (1979), [SR13];
 Even, Lichtenstein and Shiloach (1977). -/

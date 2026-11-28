@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import CSLibExt.Complexity.NPComplete.MinimumSumOfAlphaPowersDefs
 
 @[expose] public section
 
@@ -57,29 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sizes `s(a)` of the elements of `A` as a list, the number `K` of sets, and
-the bound `J`. -/
-abbrev MinimumSumOfAlphaPowersInstance := List ℕ × ℕ × ℕ
-
-/-- Well-formedness of an instance: every size is positive, `0 < K ≤ |A|`, and `0 < J`. -/
-def WellFormed (i : MinimumSumOfAlphaPowersInstance) : Prop :=
-  (∀ a ∈ i.1, 0 < a) ∧ 0 < i.2.1 ∧ i.2.1 ≤ i.1.length ∧ 0 < i.2.2
-
-/-- Some partition `f : A → Fin K` of `A` into `K` sets has `∑ⱼ (∑_{f a = j} s(a))^α ≤ J`. -/
-def MinimumSumOfAlphaPowersFeasible (α : ℕ) (i : MinimumSumOfAlphaPowersInstance) : Prop :=
-  ∃ f : Fin i.1.length → Fin i.2.1,
-    ∑ j : Fin i.2.1, ((Finset.univ.filter fun a => f a = j).sum fun a => i.1.get a) ^ α ≤
-      i.2.2
-
-open Classical in
-/-- MINIMUM SUM OF `α`-TH POWERS as a decision problem over bitstrings. -/
-noncomputable def minimumSumOfAlphaPowersDec (α : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumSumOfAlphaPowersInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumSumOfAlphaPowersFeasible α i)
-  | none => false
 
 /-- **MINIMUM SUM OF `α`-TH POWERS is NP-complete for every fixed integer `α ≥ 2`.** Source:
 Garey and Johnson (1979), [SP19], comment. -/

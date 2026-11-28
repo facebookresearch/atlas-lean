@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.IntegerMDimensionalKnapsackDefs
 
 @[expose] public section
 
@@ -61,31 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the columns `j = 1, …, n` (each the column `(a_{1,j}, …, a_{m,j})` of `A`
-paired with `c_j`), the vector `b = (b_1, …, b_m)`, and the bound `K`. -/
-abbrev IntegerMDimensionalKnapsackInstance := List (List ℕ × ℕ) × List ℕ × ℕ
-
-/-- Well-formedness of an instance for the fixed `m`: every column of `A` has `m` entries,
-`b` has `m` entries, and `K` is positive. -/
-def WellFormed (m : ℕ) (i : IntegerMDimensionalKnapsackInstance) : Prop :=
-  (∀ col ∈ i.1, col.1.length = m) ∧ i.2.1.length = m ∧ 0 < i.2.2
-
-/-- There is `x ∈ ℕⁿ` with `∑_j a_{r,j} x_j ≤ b_r` for every row `r` and `∑_j c_j x_j ≥ K`. -/
-def IntegerMDimensionalKnapsackFeasible (i : IntegerMDimensionalKnapsackInstance) : Prop :=
-  ∃ x : Fin i.1.length → ℕ,
-    (∀ r : Fin i.2.1.length, ∑ j, (i.1.get j).1.getD r 0 * x j ≤ i.2.1.get r) ∧
-      i.2.2 ≤ ∑ j, (i.1.get j).2 * x j
-
-open Classical in
-/-- INTEGER M-DIMENSIONAL KNAPSACK, for the fixed `m`, as a decision problem over
-bitstrings. -/
-noncomputable def integerMDimensionalKnapsackDec (m : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntegerMDimensionalKnapsackInstance) x with
-  | some i => decide (WellFormed m i ∧ IntegerMDimensionalKnapsackFeasible i)
-  | none => false
 
 /-- **INTEGER M-DIMENSIONAL KNAPSACK is NP-complete for every fixed `m ≥ 1`.** Source:
 Crescenzi and Kann, MAXIMUM INTEGER M-DIMENSIONAL KNAPSACK; Chandra, Hirschberg and Wong (1976);

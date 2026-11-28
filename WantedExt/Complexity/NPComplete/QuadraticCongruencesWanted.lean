@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Nat.ModEq
+public import CSLibExt.Complexity.NPComplete.QuadraticCongruencesDefs
 
 @[expose] public section
 
@@ -48,26 +46,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the numbers `(a, b, c)`. -/
-abbrev QuadraticCongruencesInstance := ℕ × ℕ × ℕ
-
-/-- Well-formedness of an instance: `a`, `b` and `c` are positive. -/
-def WellFormed (i : QuadraticCongruencesInstance) : Prop :=
-  0 < i.1 ∧ 0 < i.2.1 ∧ 0 < i.2.2
-
-/-- Some positive `x < c` satisfies `x ^ 2 ≡ a [MOD b]`. -/
-def QuadraticCongruencesFeasible (i : QuadraticCongruencesInstance) : Prop :=
-  ∃ x : ℕ, 0 < x ∧ x < i.2.2 ∧ x ^ 2 ≡ i.1 [MOD i.2.1]
-
-open Classical in
-/-- QUADRATIC CONGRUENCES as a decision problem over bitstrings. -/
-noncomputable def quadraticCongruencesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := QuadraticCongruencesInstance) x with
-  | some i => decide (WellFormed i ∧ QuadraticCongruencesFeasible i)
-  | none => false
 
 /-- **QUADRATIC CONGRUENCES is NP-complete.** Source: Garey and Johnson (1979), [AN1];
 Manders and Adleman (1978). -/

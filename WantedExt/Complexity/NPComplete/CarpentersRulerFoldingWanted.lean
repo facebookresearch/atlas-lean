@@ -23,8 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CarpentersRulerFoldingDefs
 
 @[expose] public section
 
@@ -58,34 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the link lengths, in order along the ruler, and the bound `K`. -/
-abbrev CarpentersRulerFoldingInstance := List ℕ × ℕ
-
-/-- The position of joint `j` when link `t` points right (`dirs[t] = true`) or left: the signed
-sum of the first `j` links (joint `0` at position `0`). -/
-def jointPos (lengths : List ℕ) (dirs : List Bool) (j : ℕ) : ℤ :=
-  ((List.zipWith (fun l d => if d then (l : ℤ) else -(l : ℤ)) lengths dirs).take j).sum
-
-/-- Well-formedness of an instance: the ruler has at least one link, every link length is
-positive, and `0 < K`. -/
-def WellFormed (i : CarpentersRulerFoldingInstance) : Prop :=
-  i.1 ≠ [] ∧ (∀ l ∈ i.1, 0 < l) ∧ 0 < i.2
-
-/-- Some choice of a direction for every link places all joints within an interval of length at
-most `K`. -/
-def RulerFoldingFeasible (i : CarpentersRulerFoldingInstance) : Prop :=
-  ∃ dirs : List Bool, dirs.length = i.1.length ∧
-    ∀ j ≤ i.1.length, ∀ j' ≤ i.1.length, jointPos i.1 dirs j - jointPos i.1 dirs j' ≤ i.2
-
-open Classical in
-/-- CARPENTER'S RULER FOLDING as a decision problem over bitstrings. -/
-noncomputable def carpentersRulerFoldingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CarpentersRulerFoldingInstance) x with
-  | some i => decide (WellFormed i ∧ RulerFoldingFeasible i)
-  | none => false
 
 /-- **CARPENTER'S RULER FOLDING is NP-complete.** Source: Hopcroft, Joseph and Whitesides (1985);
 Călinescu and Dumitrescu (2005). -/

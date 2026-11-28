@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartiallyOrderedKnapsackWanted
+public import CSLibExt.Complexity.NPComplete.PartiallyOrderedKnapsackEqualSizeValueDefs
 
 @[expose] public section
 
@@ -58,20 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed PARTIALLY ORDERED KNAPSACK instance in which
-every element has `s(u) = v(u)`. -/
-def WellFormed (i : PartiallyOrderedKnapsackInstance) : Prop :=
-  PartiallyOrderedKnapsack.WellFormed i ∧ ∀ u ∈ i.1, u.1 = u.2
-
-open Classical in
-/-- PARTIALLY ORDERED KNAPSACK with `s(u) = v(u)` as a decision problem over bitstrings. -/
-noncomputable def partiallyOrderedKnapsackEqualSizeValueDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartiallyOrderedKnapsackInstance) x with
-  | some i => decide (WellFormed i ∧ PartiallyOrderedKnapsackFeasible i)
-  | none => false
 
 /-- **PARTIALLY ORDERED KNAPSACK with `s(u) = v(u)` is NP-complete.**
 Source: Garey and Johnson (1979), [MP12], comment; Johnson and Niemi (1983). -/

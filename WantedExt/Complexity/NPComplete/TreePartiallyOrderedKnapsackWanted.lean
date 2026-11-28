@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PartiallyOrderedKnapsackWanted
+public import CSLibExt.Complexity.NPComplete.TreePartiallyOrderedKnapsackDefs
 
 @[expose] public section
 
@@ -60,27 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The order of the instance is the order of an out-tree: any two predecessors of an element
-are equal or comparable, and some root precedes every other element. -/
-def IsTreeOrder (i : PartiallyOrderedKnapsackInstance) : Prop :=
-  (∀ u a b : Fin i.1.length, Precedes i a u → Precedes i b u →
-      a = b ∨ Precedes i a b ∨ Precedes i b a) ∧
-    ∃ r : Fin i.1.length, ∀ u, u ≠ r → Precedes i r u
-
-/-- Well-formedness of an instance: the [MP12] well-formedness, and the order is a tree
-order. -/
-def WellFormed (i : PartiallyOrderedKnapsackInstance) : Prop :=
-  PartiallyOrderedKnapsack.WellFormed i ∧ IsTreeOrder i
-
-open Classical in
-/-- PARTIALLY ORDERED KNAPSACK with a tree order as a decision problem over bitstrings. -/
-noncomputable def treePartiallyOrderedKnapsackDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PartiallyOrderedKnapsackInstance) x with
-  | some i => decide (WellFormed i ∧ PartiallyOrderedKnapsackFeasible i)
-  | none => false
 
 /-- **PARTIALLY ORDERED KNAPSACK with a tree order is NP-complete.** Source: Garey and Johnson
 (1979), [MP12], comment; Johnson and Niemi (1983). -/

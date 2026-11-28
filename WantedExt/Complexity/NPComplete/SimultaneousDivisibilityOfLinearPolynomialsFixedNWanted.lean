@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import CSLibExt.Complexity.NPComplete.SimultaneousDivisibilityOfLinearPolynomialsFixedNDefs
 
 @[expose] public section
 
@@ -54,36 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of variables and the pairs `(aᵢ, bᵢ)` of coefficient vectors,
-each a list `(v[0], …, v[m])`. -/
-abbrev SimultaneousDivisibilityInstance := ℕ × List (List ℕ × List ℕ)
-
-/-- Well-formedness of an instance for `n` divisibilities: there are exactly `n` pairs, every
-vector has `m + 1` entries, and every entry is positive. -/
-def WellFormed (n : ℕ) (i : SimultaneousDivisibilityInstance) : Prop :=
-  i.2.length = n ∧ ∀ p ∈ i.2, p.1.length = i.1 + 1 ∧ p.2.length = i.1 + 1 ∧
-    (∀ c ∈ p.1, 0 < c) ∧ ∀ c ∈ p.2, 0 < c
-
-/-- The value `v[0] + ∑_{j=1}^{m} v[j] xⱼ` of the linear polynomial with coefficients `v` at
-`x : Fin m → ℕ` (`x j` is `x_{j+1}`). -/
-def linearValue {m : ℕ} (v : List ℕ) (x : Fin m → ℕ) : ℕ :=
-  v.getD 0 0 + ∑ j : Fin m, v.getD (j + 1) 0 * x j
-
-/-- Some positive integers `x₁, …, x_m` make `aᵢ[0] + ∑ aᵢ[j] xⱼ` divide
-`bᵢ[0] + ∑ bᵢ[j] xⱼ` for every pair `(aᵢ, bᵢ)`. -/
-def SimultaneousDivisibilityFeasible (i : SimultaneousDivisibilityInstance) : Prop :=
-  ∃ x : Fin i.1 → ℕ, (∀ j, 0 < x j) ∧ ∀ p ∈ i.2, linearValue p.1 x ∣ linearValue p.2 x
-
-open Classical in
-/-- SIMULTANEOUS DIVISIBILITY OF LINEAR POLYNOMIALS with `n` divisibilities as a decision
-problem over bitstrings. -/
-noncomputable def simultaneousDivisibilityFixedNDec (n : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SimultaneousDivisibilityInstance) x with
-  | some i => decide (WellFormed n i ∧ SimultaneousDivisibilityFeasible i)
-  | none => false
 
 /-- **SIMULTANEOUS DIVISIBILITY OF LINEAR POLYNOMIALS is NP-complete for every fixed number
 `n ≥ 5` of divisibilities.** Source: Garey and Johnson (1979), [AN3]; Lipshitz (1977, 1978). -/

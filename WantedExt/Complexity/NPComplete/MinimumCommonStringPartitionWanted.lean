@@ -18,8 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MinimumCommonStringPartitionDefs
 
 @[expose] public section
 
@@ -51,27 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the strings `A` and `B`, and the bound `K` on the number of blocks. -/
-abbrev MinimumCommonStringPartitionInstance := List ℕ × List ℕ × ℕ
-
-/-- Well-formedness of an instance: `A` and `B` are related (permutations of each other). -/
-def WellFormed (i : MinimumCommonStringPartitionInstance) : Prop :=
-  i.1.Perm i.2.1
-
-/-- Some common partition `⟨P, Q⟩` of `A` and `B` has at most `K` blocks: `P` concatenates
-to `A`, `Q` concatenates to `B`, and `Q` is a permutation of `P`. -/
-def MinimumCommonStringPartitionFeasible (i : MinimumCommonStringPartitionInstance) : Prop :=
-  ∃ P Q : List (List ℕ), P.flatten = i.1 ∧ Q.flatten = i.2.1 ∧ Q.Perm P ∧ P.length ≤ i.2.2
-
-open Classical in
-/-- MINIMUM COMMON STRING PARTITION as a decision problem over bitstrings. -/
-noncomputable def minimumCommonStringPartitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumCommonStringPartitionInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumCommonStringPartitionFeasible i)
-  | none => false
 
 /-- **MINIMUM COMMON STRING PARTITION is NP-complete.** Source: Goldstein, Kolman and Zheng
 (2005), Theorem 2.2. -/

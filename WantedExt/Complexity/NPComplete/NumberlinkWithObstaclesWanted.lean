@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ZigZagNumberlinkWanted
+public import CSLibExt.Complexity.NPComplete.NumberlinkWithObstaclesDefs
 
 @[expose] public section
 
@@ -67,35 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the board (as in `ZigZagNumberlinkWanted`) and the obstacle squares
-`(row, column)`. -/
-abbrev NumberlinkWithObstaclesInstance := ZigZagNumberlinkInstance × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: a well-formed ZIG-ZAG NUMBERLINK board, and distinct
-obstacles that are squares of the board without a terminal. -/
-def WellFormed (i : NumberlinkWithObstaclesInstance) : Prop :=
-  ZigZagNumberlink.WellFormed i.1 ∧ i.2.Nodup ∧
-    ∀ o ∈ i.2, ∃ x : Fin (rows i.1) × Fin (cols i.1),
-      ((x.1 : ℕ), (x.2 : ℕ)) = o ∧ square i.1 x = 0
-
-/-- Vertex-disjoint paths connect every terminal pair and avoid the obstacles: every obstacle is
-owned by no pair (`0`), and for each pair `c` with terminals `s ≠ t` some path from `s` to `t`
-passes exactly through the squares owned by `c`. -/
-def NumberlinkWithObstaclesFeasible (i : NumberlinkWithObstaclesInstance) : Prop :=
-  ∃ owner : Fin (rows i.1) × Fin (cols i.1) → ℕ,
-    (∀ x, ((x.1 : ℕ), (x.2 : ℕ)) ∈ i.2 → owner x = 0) ∧
-    ∀ s t, 0 < square i.1 s → square i.1 t = square i.1 s → s ≠ t →
-      ∃ p : (Grid i.1).Walk s t, p.IsPath ∧ ∀ x, x ∈ p.support ↔ owner x = square i.1 s
-
-open Classical in
-/-- NUMBERLINK with obstacles as a decision problem over bitstrings. -/
-noncomputable def numberlinkWithObstaclesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NumberlinkWithObstaclesInstance) x with
-  | some i => decide (WellFormed i ∧ NumberlinkWithObstaclesFeasible i)
-  | none => false
 
 /-- **NUMBERLINK with obstacles (vertex-disjoint paths in grid graphs) is NP-complete.** Source:
 Lynch (1975); Adcock et al. (2015). -/

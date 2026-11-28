@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.Order.Field.Rat
+public import CSLibExt.Complexity.NPComplete.CuttingStockDefs
 
 @[expose] public section
 
@@ -55,35 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the item types as `((α_j, β_j), a_j)`, meaning `a_j` copies of an item of
-size `s_j = α_j / β_j`, and the number `K` of bins. -/
-abbrev CuttingStockInstance := List ((ℕ × ℕ) × ℕ) × ℕ
-
-/-- Well-formedness of an instance: every size `α_j / β_j` has a positive denominator and lies
-in `[0, 1]`. -/
-def WellFormed (i : CuttingStockInstance) : Prop :=
-  ∀ t ∈ i.1, 0 < t.1.2 ∧ t.1.1 ≤ t.1.2
-
-/-- The size `s_j = α_j / β_j` of item type `j`. -/
-def size (i : CuttingStockInstance) (j : Fin i.1.length) : ℚ :=
-  ((i.1.get j).1.1 : ℚ) / (i.1.get j).1.2
-
-/-- A packing into `K` unit bins: bin `b` receives `c b j` copies of item type `j`, every bin
-has total size at most `1`, and every item type `j` is packed exactly `a_j` times. -/
-def CuttingStockFeasible (i : CuttingStockInstance) : Prop :=
-  ∃ c : Fin i.2 → Fin i.1.length → ℕ,
-    (∀ b, ∑ j, (c b j : ℚ) * size i j ≤ 1) ∧
-    ∀ j, ∑ b, c b j = (i.1.get j).2
-
-open Classical in
-/-- CUTTING STOCK as a decision problem over bitstrings. -/
-noncomputable def cuttingStockDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CuttingStockInstance) x with
-  | some i => decide (WellFormed i ∧ CuttingStockFeasible i)
-  | none => false
 
 /-- **CUTTING STOCK is NP-complete.** Source: Garey and Johnson (1979), [SR1]; Eisenbrand and
 Shmonin (2006); Goemans and Rothvoss (2020). -/

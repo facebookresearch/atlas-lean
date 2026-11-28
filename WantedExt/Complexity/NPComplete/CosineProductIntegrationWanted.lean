@@ -28,10 +28,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import CSLibExt.Complexity.NPComplete.CosineProductIntegrationDefs
 
 @[expose] public section
 
@@ -67,30 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sequence `(a₁, ..., aₙ)`, each integer as a pair (positive part,
-negative part). -/
-abbrev CosineProductIntegrationInstance := List (ℕ × ℕ)
-
-/-- The integer an encoded pair represents. -/
-def intOf (p : ℕ × ℕ) : ℤ := (p.1 : ℤ) - (p.2 : ℤ)
-
-/-- Well-formedness of an instance: every pair is in canonical form (one part is zero). -/
-def WellFormed (i : CosineProductIntegrationInstance) : Prop :=
-  ∀ p ∈ i, p.1 = 0 ∨ p.2 = 0
-
-/-- The integral `∫₀^{2π} ∏ᵢ cos(aᵢ θ) dθ` is nonzero. -/
-def CosineProductIntegrationNonzeroFeasible (i : CosineProductIntegrationInstance) : Prop :=
-  (∫ θ in (0 : ℝ)..2 * Real.pi, (i.map fun p => Real.cos ((intOf p : ℝ) * θ)).prod) ≠ 0
-
-open Classical in
-/-- COSINE PRODUCT INTEGRATION (nonzero form) as a decision problem over bitstrings. -/
-noncomputable def cosineProductIntegrationNonzeroDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CosineProductIntegrationInstance) x with
-  | some i => decide (WellFormed i ∧ CosineProductIntegrationNonzeroFeasible i)
-  | none => false
 
 /-- **COSINE PRODUCT INTEGRATION (nonzero form) is NP-complete.** Source: Garey and Johnson
 (1979), [AN14] (the `= 0` form); Plaisted (1976); Karp (1972); Rass (2017). -/

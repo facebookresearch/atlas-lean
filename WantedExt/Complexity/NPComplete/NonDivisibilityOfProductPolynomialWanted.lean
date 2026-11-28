@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.Polynomial.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.NonDivisibilityOfProductPolynomialDefs
 
 @[expose] public section
 
@@ -57,33 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the sequences `A₁, …, Aₘ`, each a list of
-`((positive part, negative part) of aᵢ[j], bᵢ[j])`, and `N`. -/
-abbrev NonDivisibilityOfProductPolynomialInstance := List (List ((ℕ × ℕ) × ℕ)) × ℕ
-
-/-- The integer polynomial `∑ⱼ aⱼ z^{bⱼ}` of a sparse representation
-`⟨((a⁺ⱼ, a⁻ⱼ), bⱼ)⟩ⱼ`, with `aⱼ = a⁺ⱼ - a⁻ⱼ`. -/
-noncomputable def sparsePoly (A : List ((ℕ × ℕ) × ℕ)) : Polynomial ℤ :=
-  (A.map fun t => Polynomial.C ((t.1.1 : ℤ) - t.1.2) * Polynomial.X ^ t.2).sum
-
-/-- Well-formedness of an instance: `N` is positive. -/
-def WellFormed (i : NonDivisibilityOfProductPolynomialInstance) : Prop :=
-  0 < i.2
-
-/-- The product `∏ᵢ pᵢ(z)` is not divisible by `z^N - 1` in `ℤ[z]`. -/
-def NonDivisibilityOfProductPolynomialFeasible
-    (i : NonDivisibilityOfProductPolynomialInstance) : Prop :=
-  ¬ ((Polynomial.X : Polynomial ℤ) ^ i.2 - 1 ∣ (i.1.map sparsePoly).prod)
-
-open Classical in
-/-- NON-DIVISIBILITY OF A PRODUCT POLYNOMIAL as a decision problem over bitstrings. -/
-noncomputable def nonDivisibilityOfProductPolynomialDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := NonDivisibilityOfProductPolynomialInstance) x with
-  | some i => decide (WellFormed i ∧ NonDivisibilityOfProductPolynomialFeasible i)
-  | none => false
 
 /-- **NON-DIVISIBILITY OF A PRODUCT POLYNOMIAL is NP-complete.** Source: Garey and Johnson
 (1979), [AN6]; Plaisted (1977, 1984). -/

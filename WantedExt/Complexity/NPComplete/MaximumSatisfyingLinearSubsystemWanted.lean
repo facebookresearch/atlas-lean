@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumWeightSolutionToLinearEquationsWanted
+public import CSLibExt.Complexity.NPComplete.MaximumSatisfyingLinearSubsystemDefs
 
 @[expose] public section
 
@@ -56,25 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: every row of `A` has `n` entries, and `K` is positive. -/
-def WellFormed (i : MinimumWeightSolutionToLinearEquationsInstance) : Prop :=
-  (∀ e ∈ i.2.1, e.1.length = i.1) ∧ 0 < i.2.2
-
-/-- Some rational `n`-vector `x` satisfies at least `K` of the equations `aᵢ · x = bᵢ`. -/
-def MaximumSatisfyingLinearSubsystemFeasible
-    (i : MinimumWeightSolutionToLinearEquationsInstance) : Prop :=
-  ∃ x : Fin i.1 → ℚ, i.2.2 ≤ i.2.1.countP fun e =>
-    decide (∑ j : Fin i.1, (intOf (e.1.getD j (0, 0)) : ℚ) * x j = intOf e.2)
-
-open Classical in
-/-- MAXIMUM SATISFYING LINEAR SUBSYSTEM as a decision problem over bitstrings. -/
-noncomputable def maximumSatisfyingLinearSubsystemDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumWeightSolutionToLinearEquationsInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumSatisfyingLinearSubsystemFeasible i)
-  | none => false
 
 /-- **MAXIMUM SATISFYING LINEAR SUBSYSTEM is NP-complete.** Source: Crescenzi and Kann, MAXIMUM
 SATISFYING LINEAR SUBSYSTEM; Amaldi and Kann (1995). -/

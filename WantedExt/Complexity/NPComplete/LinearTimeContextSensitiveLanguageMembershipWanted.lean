@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Languages.ContextSensitive.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.LinearTimeContextSensitiveLanguageMembershipDefs
 
 @[expose] public section
 
@@ -58,29 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The word `w` has a derivation in `g` with at most `m` rewriting steps: a chain of sentential
-forms from the initial nonterminal to `w`, consecutive forms related by `Rewrites g`, with at most
-`m` forms after the first. -/
-def DerivableWithin {N : Type} (g : CSGrammar ℕ N) (m : ℕ) (w : List ℕ) : Prop :=
-  ∃ l : List (List (Symbol ℕ N)), l.length ≤ m ∧
-    List.IsChain (Rewrites g) ([Symbol.nonterminal g.initial] :: l) ∧
-    ([Symbol.nonterminal g.initial] :: l).getLast (List.cons_ne_nil _ _) =
-      w.map Symbol.terminal
-
-/-- The grammar `g` is linear time: for some constant `k`, every word `w` of its language has a
-derivation with at most `k · |w|` steps. -/
-def IsLinearTime {N : Type} (g : CSGrammar ℕ N) : Prop :=
-  ∃ k : ℕ, ∀ w ∈ language g, DerivableWithin g (k * w.length) w
-
-open Classical in
-/-- Membership in the language of the fixed grammar `g`, as a decision problem over
-bitstrings. -/
-noncomputable def membershipDec {N : Type} (g : CSGrammar ℕ N) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List ℕ) x with
-  | some w => decide (w ∈ language g)
-  | none => false
 
 /-- **Membership for some fixed linear-time context-sensitive grammar is NP-complete.** Source:
 Garey and Johnson (1979), [AL20], comment; Book (1978). -/
