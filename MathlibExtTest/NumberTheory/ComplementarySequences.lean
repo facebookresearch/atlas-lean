@@ -11,6 +11,7 @@ module
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum.NatSqrt
 import MathlibExt.NumberTheory.ComplementarySequences
+import MathlibExt.NumberTheory.PolygonalNumber
 
 /-!
 # Tests for complementary sequences
@@ -144,3 +145,27 @@ example : nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ 2) 6 = 8 :=
 -- For cubes and n = 4, (k + 1) * n is exactly 2^4.
 example : nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ 3) 4 = 5 :=
   (nthNonValue_add_sumPow 3 (by decide) 4 (by decide)).trans (by decide)
+
+-- Since the j-th pentagonal number is at least j, indices above 6 cannot affect this interval.
+example : Finset.Icc 1 6 \ (Finset.Icc 1 6).image (Nat.polygonalNumber 5) = {2, 3, 4, 6} := by
+  decide
+
+-- Independently compute the non-values using the finite counting formula, not the square root.
+example : nthNonValue (Nat.polygonalNumber 5) 1 = 2 ∧ nthNonValue (Nat.polygonalNumber 5) 3 = 4 ∧
+    nthNonValue (Nat.polygonalNumber 5) 4 = 6 := by
+  have hgap (j : ℕ) (_ : 1 ≤ j) : Nat.polygonalNumber 5 j + j ≤ Nat.polygonalNumber 5 (j + 1) := by
+    simp only [Nat.polygonalNumber_five]
+    rw [show 3 * (j + 1) ^ 2 = 3 * j ^ 2 + 6 * j + 3 by ring]
+    omega
+  have h := nthNonValue_eq_one_step (Nat.polygonalNumber 5) (by decide) hgap
+  exact ⟨(h 1 (by decide)).trans (by decide), (h 3 (by decide)).trans (by decide),
+    (h 4 (by decide)).trans (by decide)⟩
+
+-- The formula covers a zero square root, equality at the threshold, and a strict crossing at s = 1.
+example :
+    let f := fun j : ℕ => (5 - 2) * j * (j - 1) / 2 + j
+    nthNonValue f 1 = 2 ∧ nthNonValue f 3 = 4 ∧ nthNonValue f 4 = 6 := by
+  intro f
+  have h := nthNonValue_polygonal 5 (by decide)
+  exact ⟨(h 1 (by decide)).trans (by norm_num), (h 3 (by decide)).trans (by norm_num),
+    (h 4 (by decide)).trans (by norm_num)⟩

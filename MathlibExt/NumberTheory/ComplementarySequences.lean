@@ -29,6 +29,9 @@ requested term of the complementary sequence. More generally, an interleaving fu
 locates the gap containing the requested term for any sequence with sufficiently large gaps.
 Rounding $\sqrt{2n}$ to the nearest integer locates the gap of the triangular numbers containing
 the $n$-th non-triangular number.
+For $k \ge 3$ and $n \ge 1$, the integer square root of $\lfloor 2n/(k-2) \rfloor$ locates the
+$n$-th positive non-$k$-gonal number in a gap between successive $k$-gonal numbers
+$T(k,j)=(k-2)j(j-1)/2+j$, $j \ge 1$.
 For $k > 1$ and $n \ge 1$, an integer $(k+1)$-st root narrows the search to two gaps for the $n$-th
 positive integer outside the values $m + \sum_{i=1}^m i^k$ for $m \ge 1$.
 
@@ -37,6 +40,9 @@ positive integer outside the values $m + \sum_{i=1}^m i^k$ for $m \ge 1$.
 * Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025), Article A95,
   Section 2.1, Theorems 1 and 2 (pp. 4–5). The two-step proof uses the gap comparison from
   Theorem 2.
+* Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025), Article A95,
+  Section 2.2.1, Theorem 4, Equation (3) (pp. 8–9). Wu uses Corollary 2; the proof here uses
+  the gap-counting lemma `nthNonValue_pyramidal_two_case_le_eight.nthNonValue_of_gap`.
 * Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025), Article A95,
   Section 2.2.5, Theorem 11 (p. 13, third equivalent form). The proof here uses discrete
   power bounds and this module's `nthNonValue_pyramidal_two_case_le_eight.nthNonValue_of_gap`.
@@ -476,6 +482,61 @@ public theorem nthNonValue_sq_eq_round (n : ℕ) (hn : 1 ≤ n) :
   change n + j < (j + 1) ^ 2
   rw [show (j + 1) ^ 2 = j ^ 2 + 2 * j + 1 by ring]
   omega
+
+/-- **Formula for the non-polygonal numbers.** Let $k \ge 3$, and for $j \ge 1$ let
+$T(k, j) = (k - 2) j (j - 1)/2 + j$ be the $k$-gonal numbers. For every integer $n \ge 1$, put
+$s = \lfloor \sqrt{2n/(k - 2)} \rfloor$. Then the $n$-th positive integer that is not of the form
+$T(k, j)$ with $j \ge 1$ equals $n + s + 1$ if $(k - 2) s (s + 1) < 2n$, and $n + s$ otherwise.
+
+Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
+Article A95, Theorem 4, Equation (3). -/
+public theorem nthNonValue_polygonal (k : ℕ) (hk : 3 ≤ k) (n : ℕ) (hn : 1 ≤ n) :
+    let s := Nat.sqrt (2 * n / (k - 2))
+    nthNonValue (fun j => (k - 2) * j * (j - 1) / 2 + j) n =
+      if (k - 2) * s * (s + 1) < 2 * n then n + s + 1 else n + s := by
+  intro s
+  let a := k - 2
+  let f (j : ℕ) := a * j * (j - 1) / 2 + j
+  change nthNonValue f n = if a * s * (s + 1) < 2 * n then n + s + 1 else n + s
+  have ha : 0 < a := by omega
+  have hzero : f 0 = 0 := by simp [f]
+  have hmono : StrictMono f := by
+    apply strictMono_nat_of_lt_succ
+    intro j
+    have hnum := Nat.mul_le_mul (Nat.mul_le_mul_left a (Nat.le_succ j))
+      (Nat.sub_le_sub_right (Nat.le_succ j) 1)
+    exact Nat.add_lt_add_of_le_of_lt (Nat.div_le_div_right hnum) (Nat.lt_succ_self j)
+  -- Consecutive factors make the division by two exact.
+  have hdouble (j : ℕ) : 2 * f (j + 1) = a * j * (j + 1) + 2 * (j + 1) := by
+    have hdiv : 2 ∣ a * (j + 1) * j := by
+      rw [mul_assoc, mul_comm (j + 1) j]
+      exact dvd_mul_of_dvd_right (Nat.two_dvd_mul_add_one j) a
+    simp only [f, Nat.add_sub_cancel]
+    rw [mul_add, Nat.mul_div_cancel' hdiv, mul_right_comm a (j + 1) j]
+  have hsqlo : a * s * s ≤ 2 * n := by
+    rw [mul_assoc, mul_comm a]
+    exact (Nat.le_div_iff_mul_le ha).mp (Nat.sqrt_le _)
+  have hsqhi : 2 * n < a * (s + 1) * (s + 1) := by
+    rw [mul_assoc, mul_comm a]
+    exact (Nat.div_lt_iff_lt_mul ha).mp (Nat.lt_succ_sqrt _)
+  split_ifs with h
+  · rw [Nat.add_assoc]
+    have hnext : 2 * n < a * (s + 1) * (s + 1 + 1) :=
+      hsqhi.trans_le (Nat.mul_le_mul_left _ (Nat.le_succ _))
+    have hleft := hdouble s
+    have hright := hdouble (s + 1)
+    exact nthNonValue_of_gap hmono hzero (by omega) (by omega)
+  · have hright := hdouble s
+    refine nthNonValue_of_gap hmono hzero ?_ (by omega)
+    clear_value s
+    cases s with
+    | zero => simpa [hzero] using (show 0 < n by omega)
+    | succ j =>
+      have hlt : a * j * (j + 1) < a * (j + 1) * (j + 1) :=
+        Nat.mul_lt_mul_of_pos_right (Nat.mul_lt_mul_of_pos_left (Nat.lt_succ_self j) ha)
+          (Nat.succ_pos j)
+      have hleft := hdouble j
+      omega
 
 /-- **Integers not of the form $m + 1^k + \cdots + m^k$.** Let $k > 1$. For $n \ge 1$ let $a(n)$
 be the $n$-th positive integer that is not of the form $m + \sum_{i=1}^m i^k$ with $m \ge 1$, and
