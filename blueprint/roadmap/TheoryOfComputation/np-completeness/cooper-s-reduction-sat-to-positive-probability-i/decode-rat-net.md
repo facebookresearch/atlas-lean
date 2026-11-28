@@ -1,0 +1,3 @@
+# Decoding a network
+
+The decoder reads a unary count $n$ ($n$ ones followed by a zero), then exactly $n$ node codes, each read as a unary parent count, that many unary parent indices, a unary row count and that many rows. It succeeds only if no bits remain, and then returns the parsed list of nodes **reversed**, so that the node written last becomes node $0$ and the encoding's last-to-first order is undone. It fails on missing or trailing bits. Success is syntactic acceptance only, not the well-formedness check of the decision problem: for example the single bit $\mathsf{false}$ decodes to the empty network.

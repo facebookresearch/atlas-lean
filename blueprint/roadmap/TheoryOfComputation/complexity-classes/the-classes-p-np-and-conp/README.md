@@ -24,3 +24,10 @@
 - [The complexity class NP](np.md)
 - [The class coNP](co-np.md)
 - [The P versus NP question](the-p-versus-np-problem.md)
+
+## Canonical machine classes
+
+- [Boolean closure of canonical P](boolean-closure-of-canonical-p/README.md)
+- [Canonical machine complexity](canonical-machine-complexity/README.md)
+- [Consequences of canonical polynomial-time reductions](consequences-of-canonical-polynomial-time-reduct/README.md)
+- [Polynomial-time first projection of bitstring pairs](polynomial-time-first-projection-of-bitstring-pa/README.md)

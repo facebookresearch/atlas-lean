@@ -1,0 +1,3 @@
+# Capture certificate
+
+Consider a circuit with real contamination delays, driven by a register clocked at time $0$ that launches its inputs no earlier than the minimum clock-to-Q delay $t_q$, and suppose the gates follow the causal gate-delay model. Let $o$ be an output whose signal is already settled to its value at the edge on $[-(\mathit{setup} + u), 0]$, where $\mathit{setup}$, $\mathit{hold}$ and the clock uncertainty $u$ are nonnegative durations. If $\mathit{hold} + u \le t_q + e_o$, where $e_o$ is the computed earliest change of output $o$ with every input's earliest change set to $0$, then the receiving register captures output $o$: its signal holds its value at the edge on $[-(\mathit{setup} + u), \mathit{hold} + u)$.

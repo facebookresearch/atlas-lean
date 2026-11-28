@@ -24,4 +24,6 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Near-Maximum Circuit Lower Bounds for Symmetric Exponential Time](symmetric-exponential-time-circuit-lower-bounds/README.md)
 - [Range Avoidance and Near-Maximum Circuit Lower Bounds](range-avoidance-and-near-maximum-lower-bounds/README.md)
 - [Learning under the uniform distribution](learning-under-the-uniform-distribution/README.md)
+- [Arrival times of a circuit with gate delays](arrival-times-of-a-circuit-with-gate-delays/README.md)
+- [Contamination delays and hold-time certificates](contamination-delays-and-hold-time-certificates/README.md)
 - [Monotone circuits for bipartite perfect matching](monotone-perfect-matching-lower-bound/README.md)

@@ -1,0 +1,16 @@
+# Resource annotations via CSLib's `TimeM`
+
+- [Cost annotations](cost.md)
+- [Zero cost](zero.md)
+- [Sum of two costs](add.md)
+- [Addition of costs is associative](add-assoc.md)
+- [Addition of costs is commutative](add-comm.md)
+- [The zero cost is a left identity](zero-add.md)
+- [The zero cost is a right identity](add-zero.md)
+- [Building a costed computation](mk.md)
+- [Return value of a costed computation](value.md)
+- [Cost of a costed computation](cost-2.md)
+- [Zero-cost computation](pure.md)
+- [Sequential composition of costed computations](bind.md)
+- [Charging a cost before a computation](charge.md)
+- [Cost-annotated computation](cost-m.md)

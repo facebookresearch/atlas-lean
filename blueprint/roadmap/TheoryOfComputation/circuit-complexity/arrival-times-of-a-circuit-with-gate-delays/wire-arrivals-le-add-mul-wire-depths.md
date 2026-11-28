@@ -1,0 +1,3 @@
+# Wire arrival times are bounded by depth under nonnegative bounded delays
+
+A straight-line circuit program over a gate signature has a fixed number of input wires and a sequence of gates; each gate applies an operation of the signature to a list of wires (inputs or earlier gates), one for each argument position of the operation. The depth of an input wire is $0$, and the depth of a gate is one plus the maximum of $0$ and the depths of its input wires (so a gate with no inputs has depth $1$). Let $a_0 \ge 0$ and $D$ be reals, suppose every input arrives at time at most $a_0$, and every gate delay lies in $[0, D]$. Then every wire, input or gate, arrives at time at most $a_0 + D \cdot \delta$, where $\delta$ is its depth.

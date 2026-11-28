@@ -1,0 +1,5 @@
+# The decoded network as a Bayesian network over the reals
+
+A rational Boolean network, well-formed or not, decodes to a Bayesian network over the reals with the same nodes. Node $k$ has as parents the set of its listed parents whose index is below $k$. Given an assignment $y$ to that parent set, the node's parent-value list is formed by visiting the original parent list in order, keeping repeated entries, and writing $y$ at the indices in the parent set and $\mathsf{false}$ at the listed indices that are excluded (at least $k$). The node is then Bernoulli, true with probability equal to the node's table entry for that list (the first matching row, or $0$ if none), clamped to $[0, 1]$. On a well-formed network the clamping changes nothing.
+
+For example, if node $0$ lists the parent $0$ and has the single row $([\mathsf{false}], 1, 1)$, its parent set is empty, the decoder looks up the list $[\mathsf{false}]$ and the node is true with probability $1$; looking up the empty list would give $0$.

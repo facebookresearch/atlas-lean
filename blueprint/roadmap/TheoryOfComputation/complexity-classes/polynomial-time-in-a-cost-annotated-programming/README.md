@@ -16,3 +16,7 @@
 - [A timed decider with polynomial-time output function gives membership in P](mem-p-of-decides.md)
 - [A timed verifier with polynomial-time output function puts its language in NP](mem-np-of-verifies.md)
 - [From declared-time to polynomial-time many-one reductions](cook-levin-poly-many-one-red-of-declared.md)
+- [Canonical RAM instruction costs](canonical-ram-instruction-costs/README.md)
+- [Countdown as a consumer of canonical RAM instruction costs](countdown-as-a-consumer-of-canonical-ram-instruc/README.md)
+- [Resource annotation laws](resource-annotation-laws/README.md)
+- [Resource annotations via CSLib's `TimeM`](resource-annotations-via-cslib-s-timem/README.md)

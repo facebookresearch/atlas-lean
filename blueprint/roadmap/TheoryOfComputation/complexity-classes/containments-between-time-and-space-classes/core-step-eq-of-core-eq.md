@@ -1,0 +1,3 @@
+# For a fixed input word, the next core depends only on the current core
+
+Fix a deterministic multi-tape Turing machine with an output tape and a fixed input word. If two configurations of the machine on that input word agree on their core (control state, input head position, and work tapes with their head positions, everything but the output tape), then their successor configurations also agree on their core. The transition never reads the output tape. The input word must be the same for both configurations: the core records the input head position but not the word, and with the head at the same position on two different words the machine may read different symbols and move to different states.

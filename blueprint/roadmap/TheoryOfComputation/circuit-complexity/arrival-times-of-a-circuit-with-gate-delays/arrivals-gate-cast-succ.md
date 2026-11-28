@@ -1,0 +1,3 @@
+# Appending a gate leaves earlier arrival times unchanged
+
+A straight-line circuit program over a gate signature has a fixed number of input wires and a sequence of gates; each gate applies an operation of the signature to a list of wires (inputs or earlier gates), one for each argument position of the operation. Let a program with $g$ gates be extended by one more gate, with real delays for all $g + 1$ gates and real arrival times for the inputs. For every one of the first $g$ gates, its arrival time in the extended program equals its arrival time in the original program computed with the delays of the first $g$ gates.

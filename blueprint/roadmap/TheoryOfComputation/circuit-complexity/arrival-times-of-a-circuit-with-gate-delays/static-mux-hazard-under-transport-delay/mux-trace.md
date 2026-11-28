@@ -1,0 +1,3 @@
+# Output signal of the unrepaired multiplexer
+
+This example models a two-path multiplexer with data inputs $b = c = \mathrm{true}$ under transport delay: at time $0$ the select signal switches, so that the positive path becomes true after its delay $d_1 \ge 0$ and the complemented path becomes false after its delay $d_2 \ge 0$, and the two paths are combined by an output OR gate with delay $d_{\mathrm{or}} \ge 0$. Signals are Boolean functions of real time. For delays $d_1, d_2, d_{\mathrm{or}} \ge 0$, the output signal of the unrepaired multiplexer at time $t$ is the OR of the positive-path signal and the complemented-path signal, both evaluated at time $t - d_{\mathrm{or}}$: it is true at $t$ exactly when $t - d_{\mathrm{or}} \ge d_1$ or $t - d_{\mathrm{or}} < d_2$.

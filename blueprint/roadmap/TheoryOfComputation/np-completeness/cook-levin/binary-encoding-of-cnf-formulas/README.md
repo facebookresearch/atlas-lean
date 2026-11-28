@@ -18,3 +18,5 @@
 - [The SAT language](satlang.md)
 - [SAT as a decision problem](sat-dec.md)
 - [Polynomial-time many-one reduction](poly-many-one-red.md)
+- [NP-hardness](nphard.md)
+- [NP-complete decision problems](../../../complexity-classes/mahaney-s-theorem/npcomplete.md)

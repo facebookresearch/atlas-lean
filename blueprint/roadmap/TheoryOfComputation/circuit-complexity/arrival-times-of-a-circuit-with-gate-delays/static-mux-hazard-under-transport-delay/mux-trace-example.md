@@ -1,0 +1,3 @@
+# A concrete multiplexer glitch
+
+This example models a two-path multiplexer with data inputs $b = c = \mathrm{true}$ under transport delay: at time $0$ the select signal switches, so that the positive path becomes true after its delay $d_1 \ge 0$ and the complemented path becomes false after its delay $d_2 \ge 0$, and the two paths are combined by an output OR gate with delay $d_{\mathrm{or}} \ge 0$. Signals are Boolean functions of real time. With $d_1 = 2$, $d_2 = 1$ and $d_{\mathrm{or}} = 0$, the output signal of the unrepaired multiplexer is true at time $0$, false at time $3/2$ and true at time $3$, while the output signal of the consensus-repaired multiplexer is true at time $3/2$.

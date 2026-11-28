@@ -1,0 +1,3 @@
+# Complemented-path signal of the multiplexer
+
+This example models a two-path multiplexer with data inputs $b = c = \mathrm{true}$ under transport delay: at time $0$ the select signal switches, so that the positive path becomes true after its delay $d_1 \ge 0$ and the complemented path becomes false after its delay $d_2 \ge 0$, and the two paths are combined by an output OR gate with delay $d_{\mathrm{or}} \ge 0$. Signals are Boolean functions of real time. The complemented-path signal with delay $d_2 \ge 0$ is the function of time $t \in \mathbb{R}$ that is true for $t < d_2$ and false for $t \ge d_2$.

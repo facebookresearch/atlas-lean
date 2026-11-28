@@ -1,0 +1,3 @@
+# The multiplexer output glitches exactly when the complemented path is faster
+
+This example models a two-path multiplexer with data inputs $b = c = \mathrm{true}$ under transport delay: at time $0$ the select signal switches, so that the positive path becomes true after its delay $d_1 \ge 0$ and the complemented path becomes false after its delay $d_2 \ge 0$, and the two paths are combined by an output OR gate with delay $d_{\mathrm{or}} \ge 0$. Signals are Boolean functions of real time. For all delays $d_1, d_2, d_{\mathrm{or}} \ge 0$, the output signal of the unrepaired multiplexer is false at some real time $t$ if and only if $d_2 < d_1$.

@@ -1,0 +1,3 @@
+# Programs without constant gates
+
+A straight-line circuit program has input wires and a sequence of gates, each applying an operation of a gate signature to wires that are inputs or earlier gates. The depth of an input wire is $0$, and the depth of a gate is one plus the maximum of $0$ and the depths of its input wires (so a gate with no inputs has depth $1$). A gate arrives at its delay plus the maximum of $0$ and the arrival times of the wires it reads. A program has no constant gates when every one of its gates applies an operation taking at least one argument, so every gate reads at least one wire; the program with no gates satisfies this vacuously. Only the operations the program actually uses matter: the signature may also offer constants.
