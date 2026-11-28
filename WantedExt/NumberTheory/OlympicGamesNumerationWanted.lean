@@ -14,6 +14,7 @@ public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.NumberTheory.Rayleigh
 public import MathlibExt.NumberTheory.BronzeMetallicIdentities
 public import MathlibExt.NumberTheory.GreedyOddFibonacciFloor
+public import MathlibExt.NumberTheory.OlympicGamesNumerationFloorGreedyPellHalfCompanion
 public import MathlibExt.NumberTheory.OddFibonacciGoldenRatio
 public import MathlibExt.NumberTheory.OddFibonacciRepresentation
 public import MathlibExt.NumberTheory.PellLucasSequence
@@ -102,26 +103,6 @@ theorem_wanted goldGame_pPositions (P : Set ℕ)
     (hP : ∀ x, x ∈ P ↔ x = 0 ∨ ∃ k, 1 ≤ k ∧ x = Nat.fib (2 * k + 1)) :
     (∀ x y, x ∈ P → beattyOctalMove Real.goldenRatio (1 + Real.goldenRatio) x y → y ∉ P) ∧
       ∀ x, x ∉ P → ∃ y, beattyOctalMove Real.goldenRatio (1 + Real.goldenRatio) x y ∧ y ∈ P
-
-/-- **Floor of greedy Pell sums times $1 + \sqrt 2$.** Let $P_n$ be the Pell numbers ($P_0 = 0$,
-$P_1 = 1$, $P_{n+2} = 2P_{n+1} + P_n$) and $H_n$ the half-companion Pell numbers
-($H_0 = H_1 = 1$, $H_{n+2} = 2H_{n+1} + H_n$). Let $R_k = P_k$ and $R'_k = H_k$ for odd $k$, and
-$R_k = H_k$ and $R'_k = P_k$ for even $k$. Let $n$ be a natural number and $a_1, a_2, \dots$
-natural numbers such that $\sum_{k=1}^{m-1} a_k R_k < R_m$ for every $1 \le m \le n + 1$, and let
-$t = \sum_{k=1}^{n} a_k R_k$. Then $\lfloor t (1 + \sqrt 2) \rfloor = \sum_{k=1}^{n} a_k R'_{k+1}$.
-
-The hypothesis says that the $a_k$ are the digits of the greedy representation of Theorem 5;
-$n$ need not be minimal.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 6 (1). -/
-theorem_wanted floor_greedy_pell_halfCompanion_sum_mul_one_add_sqrt_two (R R' : ℕ → ℕ)
-    (hR : ∀ k, R k = if k % 2 = 1 then pellNumber k else pellLucasSequence k)
-    (hR' : ∀ k, R' k = if k % 2 = 1 then pellLucasSequence k else pellNumber k)
-    (n : ℕ) (a : ℕ → ℕ)
-    (ha : ∀ m, 1 ≤ m → m ≤ n + 1 → ∑ k ∈ Ico 1 m, a k * R k < R m) :
-    ⌊((∑ k ∈ Icc 1 n, a k * R k : ℕ) : ℝ) * (1 + Real.sqrt 2)⌋₊ =
-      ∑ k ∈ Icc 1 n, a k * R' (k + 1)
 
 /-- **Floor of greedy sums of $2P_k$ and $H_k$ times $(2 + \sqrt 2)/2$.** Let $P_k$ be the Pell
 numbers and $H_k$ the Pell–Lucas numbers ($H_0 = H_1 = 1$, $H_{k+2} = 2H_{k+1} + H_k$). Put

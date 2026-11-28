@@ -18,11 +18,14 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 /-!
 # Numeration by Pell and half-companion Pell numbers
 
-This module proves existence of representations with the digit restrictions of Theorem 5.
-The proof constructs digits whose partial sums stay below the next place value.
+This module constructs a representation of every positive integer whose partial sums stay below
+the next place value, then derives the digit restrictions of Theorem 5. The alternating Pell and
+half-companion Pell place values satisfy a three-term recurrence at each parity.
 
-Reference: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 5.
+## References
+
+* Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial Games with
+  Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, pp. 1–38, Section 3 and Theorem 5.
 -/
 
 namespace MetaMathlibExt
@@ -51,12 +54,6 @@ private lemma pell_bounds (n : ℕ) :
 private def place (n : ℕ) : ℕ :=
   if n % 2 = 1 then pellNumber n else pellLucasSequence n
 
-private lemma place_even (k : ℕ) : place (2 * k) = pellLucasSequence (2 * k) := by
-  simp [place]
-
-private lemma place_odd (k : ℕ) : place (2 * k + 1) = pellNumber (2 * k + 1) := by
-  simp [place, Nat.add_mod]
-
 private lemma place_pos (n : ℕ) : 0 < place n := by
   have hb := pell_bounds n
   dsimp [place]
@@ -74,28 +71,30 @@ private lemma place_mono : Monotone place := by
   have hm : n % 2 = 0 ∨ n % 2 = 1 := by omega
   rcases hm with hm | hm <;> simp [place, Nat.add_mod, hm] <;> omega
 
-private lemma place_even_step (k : ℕ) :
-    place (2 * k + 2) + place (2 * k) = 4 * place (2 * k + 1) := by
+/-- **Even half-companion Pell place recurrence.** If $R_j=P_j$ at odd indices and $R_j=H_j$
+at even indices, where $P$ and $H$ are the Pell and half-companion Pell sequences, then
+$R_{2k+2}+R_{2k}=4R_{2k+1}$ for every natural number $k$. -/
+public lemma pell_halfCompanion_place_even_step {R : ℕ → ℕ}
+    (hR : ∀ j, R j = if j % 2 = 1 then pellNumber j else pellLucasSequence j) (k : ℕ) :
+    R (2 * k + 2) + R (2 * k) = 4 * R (2 * k + 1) := by
   have hp := (pell_step (2 * k)).1
   have hh := (pell_step (2 * k + 1)).2
   have hh' := (pell_step (2 * k)).2
   simp only [Nat.add_assoc, Nat.reduceAdd] at hp hh hh'
-  rw [show 2 * k + 2 = 2 * (k + 1) by omega, place_even, place_even, place_odd]
-  have heq : 2 * (k + 1) = 2 * k + 2 := by omega
-  rw [heq]
+  simp [hR, Nat.add_mod]
   omega
 
-private lemma place_odd_step (k : ℕ) :
-    place (2 * k + 3) + place (2 * k + 1) = 2 * place (2 * k + 2) := by
+/-- **Odd Pell place recurrence.** If $R_j=P_j$ at odd indices and $R_j=H_j$ at even indices,
+where $P$ and $H$ are the Pell and half-companion Pell sequences, then
+$R_{2k+3}+R_{2k+1}=2R_{2k+2}$ for every natural number $k$. -/
+public lemma pell_halfCompanion_place_odd_step {R : ℕ → ℕ}
+    (hR : ∀ j, R j = if j % 2 = 1 then pellNumber j else pellLucasSequence j) (k : ℕ) :
+    R (2 * k + 3) + R (2 * k + 1) = 2 * R (2 * k + 2) := by
   have hp := (pell_step (2 * k + 2)).1
   have hh := (pell_step (2 * k + 1)).2
   have hp' := (pell_step (2 * k + 1)).1
   simp only [Nat.add_assoc, Nat.reduceAdd] at hp hh hp'
-  rw [show 2 * k + 3 = 2 * (k + 1) + 1 by omega, place_odd,
-    show 2 * k + 2 = 2 * (k + 1) by omega, place_even, place_odd]
-  have heq : 2 * (k + 1) = 2 * k + 2 := by omega
-  rw [heq]
-  simp only [Nat.add_assoc, Nat.reduceAdd]
+  simp [hR, Nat.add_mod]
   omega
 
 private lemma exists_greedy_digits (n t : ℕ) (ht : t < place (n + 1)) :
@@ -138,8 +137,8 @@ private lemma greedy_pair_lt (a : ℕ → ℕ)
 private lemma place_back (k : ℕ) (hk : 1 ≤ k) :
     place (2 * k + 1) + place (2 * k - 1) = 2 * place (2 * k) ∧
       place (2 * k) ≤ 4 * place (2 * k - 1) := by
-  have h₁ := place_odd_step (k - 1)
-  have h₂ := place_even_step (k - 1)
+  have h₁ := pell_halfCompanion_place_odd_step (R := place) (fun _ ↦ rfl) (k - 1)
+  have h₂ := pell_halfCompanion_place_even_step (R := place) (fun _ ↦ rfl) (k - 1)
   have he : 2 * (k - 1) + 2 = 2 * k := by omega
   have ho : 2 * (k - 1) + 1 = 2 * k - 1 := by omega
   have ho' : 2 * (k - 1) + 3 = 2 * k + 1 := by omega
@@ -151,7 +150,7 @@ private lemma greedy_odd_bound (a : ℕ → ℕ)
     (ha : ∀ m, (∑ k ∈ Icc 1 m, a k * place k) < place (m + 1))
     (k : ℕ) : a (2 * k + 1) ≤ 3 := by
   have hs := greedy_single_lt a ha (2 * k + 1) (by omega)
-  have he := place_even_step k
+  have he := pell_halfCompanion_place_even_step (R := place) (fun _ ↦ rfl) k
   simp only [Nat.add_assoc, Nat.reduceAdd] at hs
   by_contra h
   have hm := Nat.mul_le_mul_right (place (2 * k + 1)) (by omega : 4 ≤ a (2 * k + 1))
@@ -164,7 +163,7 @@ private lemma greedy_even_bound (a : ℕ → ℕ) (ha0 : a 0 = 0)
   | zero => simp [ha0]
   | succ k =>
     have hs := greedy_single_lt a ha (2 * k + 2) (by omega)
-    have he := place_odd_step k
+    have he := pell_halfCompanion_place_odd_step (R := place) (fun _ ↦ rfl) k
     have hp := place_pos (2 * k + 1)
     have hi : 2 * (k + 1) = 2 * k + 2 := by omega
     rw [hi]
@@ -177,8 +176,8 @@ private lemma greedy_adjacent_even (a : ℕ → ℕ)
     (ha : ∀ m, (∑ k ∈ Icc 1 m, a k * place k) < place (m + 1))
     (k : ℕ) (hk : 1 ≤ k) (hmax : a (2 * k + 1) = 3) :
     a (2 * k) = 0 ∧ a (2 * k + 2) = 0 := by
-  have he := place_even_step k
-  have ho := place_odd_step k
+  have he := pell_halfCompanion_place_even_step (R := place) (fun _ ↦ rfl) k
+  have ho := pell_halfCompanion_place_odd_step (R := place) (fun _ ↦ rfl) k
   have hb := (place_back k hk).1
   constructor
   · have hs := greedy_pair_lt a ha (2 * k) (2 * k + 1) (by omega) (by omega)
@@ -199,7 +198,7 @@ private lemma greedy_previous_odd (a : ℕ → ℕ)
     (k : ℕ) (hk : 1 ≤ k) (hmax : a (2 * k + 1) = 3) :
     a (2 * k - 1) < 3 := by
   have hs := greedy_pair_lt a ha (2 * k - 1) (2 * k + 1) (by omega) (by omega)
-  have he := place_even_step k
+  have he := pell_halfCompanion_place_even_step (R := place) (fun _ ↦ rfl) k
   have hb := place_back k hk
   rw [hmax] at hs
   simp only [Nat.add_assoc, Nat.reduceAdd] at hs
