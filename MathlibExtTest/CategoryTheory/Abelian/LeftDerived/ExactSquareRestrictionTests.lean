@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Category.ModuleCat.Abelian
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import Mathlib.Algebra.Category.ModuleCat.Projective
 public import Mathlib.Data.ZMod.Basic
@@ -51,7 +52,7 @@ private instance : restriction.PreservesHomology :=
 private def coefficient (b : ℤ) : residueIdentity ⟶ residueIdentity where
   app X := b • 𝟙 X
   naturality X Y f := by
-    change f ≫ b • 𝟙 Y = b • 𝟙 X ≫ f
+    change f ≫ (b • 𝟙 Y) = (b • 𝟙 X) ≫ f
     simp only [Preadditive.comp_zsmul, Preadditive.zsmul_comp,
       Category.comp_id, Category.id_comp]
 
@@ -59,13 +60,13 @@ private def scalarSquare (a : ℤ) :
     restriction ⋙ integerIdentity ⟶ residueIdentity ⋙ restriction where
   app X := a • 𝟙 (restriction.obj X)
   naturality X Y f := by
-    change restriction.map f ≫ a • 𝟙 (restriction.obj Y) =
-      a • 𝟙 (restriction.obj X) ≫ restriction.map f
+    change restriction.map f ≫ (a • 𝟙 (restriction.obj Y)) =
+      (a • 𝟙 (restriction.obj X)) ≫ restriction.map f
     simp only [Preadditive.comp_zsmul, Preadditive.zsmul_comp,
       Category.comp_id, Category.id_comp]
 
 private theorem scalarSquare_coefficient (a b : ℤ) :
-    scalarSquare a ≫ whiskerRight (coefficient b) restriction = scalarSquare (b * a) := by
+    scalarSquare a ≫ Functor.whiskerRight (coefficient b) restriction = scalarSquare (b * a) := by
   ext X
   change (a • 𝟙 (restriction.obj X)) ≫ restriction.map (b • 𝟙 X) =
     (b * a) • 𝟙 (restriction.obj X)
@@ -157,7 +158,7 @@ example : coordinateSquare 2 residueObject ≠ 𝟙 (restriction.obj residueObje
   norm_num at h
 
 example (n : ℕ) :
-    derivedSquare 2 n ≫ whiskerRight (NatTrans.leftDerived (coefficient 3) n) restriction =
+    derivedSquare 2 n ≫ Functor.whiskerRight (NatTrans.leftDerived (coefficient 3) n) restriction =
       derivedSquare 6 n := by
   have h := Functor.leftDerivedSquareHom_naturality_target_functor restriction restriction
     integerIdentity residueIdentity (scalarSquare 2) (coefficient 3) n
