@@ -6,6 +6,8 @@ Whether some instance of a parameterized program, made of arbitrarily many copie
 
 **Theorem.** The parameterized reachability problem for parameterized programs with process identities is undecidable.
 
+The source gives this as a proof sketch in a survey and fixes no formal model of templates or of message passing. Its reduction simulates a Turing machine $M$ on an input $x$ with one process per tape cell, each process exchanging messages with its left and right neighbors; the unsafe configurations are those in which some process's control-state variable holds a final state of $M$, and some crowd reaches one exactly when $M$ accepts $x$: an accepting computation uses finitely many cells, say $N$, and the crowd of $N$ processes then reaches such a configuration.
+
 Without identities the picture changes: for anonymous crowds communicating by rendezvous, broadcast or a global store, the same coverability question is decidable, with complexities ranging from NP-complete (global store without locking) through EXPSPACE-complete (global store with locking, by reduction to Petri net coverability) to non-primitive-recursive (broadcast), as surveyed by Esparza.
 
 ## Depends on

@@ -2,7 +2,7 @@
 
 For timed automata that release real-time tasks with interval execution times, where tasks reset a clock on completion and a fixed-priority scheduler may preempt them, it is undecidable whether every task always meets its deadline.
 
-**Setting (Krčál and Yi).** A *timed automaton extended with tasks* over a finite set $C$ of clocks and a finite set $P$ of task types is a timed automaton $\langle N, l_0, E, I \rangle$ (locations $N$, initial location $l_0$, edges labeled by clock guards and clock resets, location invariants of the form $a < n$ or $a \le n$) together with a partial map $M : N \to P$ and a distinguished clock $\mathit{check} \in C$. Each task type $P$ has a best-case execution time $b(P)$, a worst-case execution time $w(P)$ and a relative deadline $d(P)$. Entering a location $m$ with $M(m)$ defined releases an instance of $M(m)$ into a task queue; time elapsing executes the first task of the queue, which may finish once it has run at least $b(P)$ and must finish once it has run $w(P)$, and its completion resets $\mathit{check}$. A *scheduling strategy* reorders the queue by task type; it is *preemptive* when it may change the running task. An automaton with an initial state is *schedulable* with a strategy when no reachable state has a released task that has not finished by its deadline.
+**Setting (Krčál and Yi).** A *timed automaton extended with tasks* over a finite set $C$ of clocks and a finite set $P$ of task types is a timed automaton $\langle N, l_0, E, I \rangle$ (locations $N$, initial location $l_0$, edges labeled by clock guards and clock resets, location invariants of the form $a < n$ or $a \le n$) together with a partial map $M : N \to P$ and a distinguished clock $\mathit{check} \in C$. Edge guards are conjunctions of constraints $a \sim N$ and $a - b \sim M$ with clocks $a, b$, ${\sim} \in \{\le, <, \ge, >\}$ and natural numbers $N, M$. Each task type $P$ has a best-case execution time $b(P)$, a worst-case execution time $w(P)$ and a relative deadline $d(P)$, natural numbers with $b(P) \le w(P) \le d(P)$ and $w(P) > 0$. Entering a location $m$ with $M(m)$ defined releases an instance of $M(m)$ into a task queue; time elapsing executes the first task of the queue, which may finish once it has run at least $b(P)$ and must finish once it has run $w(P)$, and its completion resets $\mathit{check}$. A *scheduling strategy* reorders the queue by task type; it is *preemptive* when it may change the running task. An automaton with an initial state is *schedulable* with a strategy when no reachable state has a released task that has not finished by its deadline.
 
 **Theorem (Krčál and Yi).** It is undecidable whether a given timed automaton extended with tasks is schedulable with the fixed-priority scheduling strategy.
 
@@ -16,6 +16,7 @@ The source notes that the proof also applies, without change, to earliest-deadli
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

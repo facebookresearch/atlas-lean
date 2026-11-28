@@ -20,10 +20,11 @@ For direction-unaware processes the same paper proves cutoffs, hence decidabilit
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-Clauses 1 and 2 reduce the non-halting problem of two-counter machines. The process that starts with the token becomes a controller simulating the finite control of the machine; the other processes are memory cells, each storing one bit per counter, so that a counter's value is the number of its bits set to $1$. Direction awareness lets the controller send commands around the ring and check, from the direction in which the token returns, whether an increment, a decrement or a zero test succeeded. A ring of size $n$ thus simulates the machine with counters bounded by about $n$; since a machine halts exactly when it halts with some bound on its counters, the machine does not halt exactly when the specification holds in every ring. A good expansion adds and links a page for the simulation of bounded two-counter machines by direction-aware rings.
+Clauses 1 and 2 reduce the non-halting problem of two-counter machines. The process that starts with the token becomes a controller simulating the finite control of the machine; the other processes are memory cells, each storing one bit per counter, so that a counter's value is the number of its bits set to $1$. Direction awareness lets the controller send commands around the ring and check, from the direction in which the token returns, whether an increment, a decrement or a zero test succeeded. A ring of size $n$ thus simulates the machine with counters bounded by about $n$; since a machine halts exactly when it halts with some bound on its counters, the machine does not halt exactly when the specification holds in every ring. A good expansion links a page for the simulation of bounded two-counter machines by direction-aware rings.
 
 ## Sources
 
