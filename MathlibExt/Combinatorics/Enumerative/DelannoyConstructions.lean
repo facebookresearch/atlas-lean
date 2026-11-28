@@ -11,10 +11,27 @@ module
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Choose.Sum
 public import Mathlib.Logic.Function.Iterate
+public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
+import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Algebra.Polynomial.Coeff
 import Mathlib.Data.Nat.Choose.Vandermonde
 
-/-! # Generalized Delannoy numbers and parity in Delannoy arrays -/
+/-!
+# Generalized Delannoy numbers and parity in Delannoy arrays
+
+The generalized Delannoy numbers with upper index have a power-of-two sum for all natural
+numbers `k`, `m` and `n`. The lower-index version requires `k ≤ m` and `k ≤ n`.
+
+## References
+
+- Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal of Integer Sequences
+  27 (2024), Article 24.1.8, pp. 1–10, Theorems 9–11
+  (<https://cs.uwaterloo.ca/journals/JIS/VOL27/Edwards/ed6.html>). See also Section 1 for the
+  definitions and examples, and Sections 3–5 for the other identities and parity results.
+- The coefficient argument adapts the expansion in `coeff_delannoyPolynomial_pow` from
+  `MathlibExt.NumberTheory.DelannoyBinomialSum` to independent exponents and coefficient degree.
+-/
 
 namespace MetaMathlibExt.DelannoyConstructions
 
@@ -106,6 +123,113 @@ Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
 of Integer Sequences 27 (2024), Article 24.1.8, Section 1 (definition of `D_k(m, n)`). -/
 @[expose] public def genDelannoyLower (k m n : ℕ) : ℕ :=
   ∑ j ∈ range (n + 1), (m + n - k - j).choose (n - k) * n.choose j
+
+open Polynomial in
+private theorem sum_choose_eq_sum_two_pow (a b n : ℕ) :
+    ∑ j ∈ range (n + 1), (a + n - j).choose b * n.choose j =
+      ∑ j ∈ Ico (n - b) (min (a + n + 1 - b) (n + 1)),
+        a.choose (b - (n - j)) * n.choose j * 2 ^ j := by
+  -- Take the same coefficient using two binomial expansions of the second factor.
+  calc
+    _ = ((X + 1 : ℕ[X]) ^ a * (1 + (X + 1)) ^ n).coeff b := by
+      rw [add_pow (1 : ℕ[X]), mul_sum, finsetSum_coeff]
+      refine sum_congr rfl fun j hj ↦ ?_
+      simp only [one_pow, one_mul, ← mul_assoc, ← pow_add, coeff_mul_natCast,
+        coeff_X_add_one_pow, Nat.cast_id]
+      rw [show a + n - j = a + (n - j) by have := mem_range.mp hj; omega]
+    _ = ((X + 1 : ℕ[X]) ^ a * (2 + X) ^ n).coeff b := by
+      have h : (1 + (X + 1) : ℕ[X]) = 2 + X := by
+        rw [← one_add_one_eq_two]
+        ac_rfl
+      rw [h]
+    _ = _ := by
+      rw [add_pow (2 : ℕ[X]), mul_sum, finsetSum_coeff]
+      have hcoeff (j : ℕ) :
+          ((X + 1 : ℕ[X]) ^ a * (2 ^ j * X ^ (n - j) * (n.choose j : ℕ[X]))).coeff b =
+            if n - j ≤ b then a.choose (b - (n - j)) * n.choose j * 2 ^ j else 0 := by
+        rw [show (2 : ℕ[X]) ^ j * X ^ (n - j) * (n.choose j : ℕ[X]) =
+          X ^ (n - j) * (↑(n.choose j * 2 ^ j : ℕ) : ℕ[X]) by
+            simp only [Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat]
+            ac_rfl]
+        simp only [← mul_assoc, coeff_mul_natCast, coeff_mul_X_pow', coeff_X_add_one_pow,
+          Nat.cast_id]
+        split_ifs <;> simp [mul_assoc]
+      simp only [hcoeff]
+      -- The shift must fit in degree b, and the remaining degree must be at most a.
+      trans ∑ j ∈ Ico (n - b) (min (a + n + 1 - b) (n + 1)),
+        if n - j ≤ b then a.choose (b - (n - j)) * n.choose j * 2 ^ j else 0
+      · symm
+        refine sum_subset ?_ fun j hj hmem ↦ ?_
+        · intro j hj
+          simp only [mem_Ico, mem_range] at hj ⊢
+          omega
+        · simp only [mem_range] at hj
+          simp only [mem_Ico] at hmem
+          by_cases h : n - j ≤ b
+          · have hzero : a < b - (n - j) := by omega
+            simp [h, Nat.choose_eq_zero_of_lt hzero]
+          · simp [h]
+      · refine sum_congr rfl fun j hj ↦ ?_
+        simp only [mem_Ico] at hj
+        rw [ite_eq_left (by omega)]
+
+/-- **Unified power-of-two sums for generalized Delannoy numbers.** For natural numbers $k$, $m$,
+$n$, write $D_k(m, n)$ and $D^k(m, n)$ for the lower and upper generalized Delannoy numbers. If
+$m \ge k$ and $n \ge k$, then
+$D_k(m, n) = \sum_{j=k}^{\min(m, n)} \binom{m-k}{j-k} \binom{n}{j} 2^j$; and, for all $k$, $m$, $n$,
+$D^k(m, n) = \sum_{j=0}^{\min(m, n)} \binom{m+k}{j+k} \binom{n}{j} 2^j$.
+
+With the convention $D_{-k} = D^k$, the second formula is the first with $k$ replaced by $-k$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 11
+(`jis-2024-24.1.8-thm-11`). -/
+public theorem genDelannoy_eq_sum_two_pow_unified (k m n : ℕ) :
+    (k ≤ m → k ≤ n → genDelannoyLower k m n =
+        ∑ j ∈ Ico k (min m n + 1), (m - k).choose (j - k) * n.choose j * 2 ^ j) ∧
+      genDelannoyUpper k m n =
+        ∑ j ∈ range (min m n + 1), (m + k).choose (j + k) * n.choose j * 2 ^ j := by
+  constructor
+  · intro hm hn
+    rw [genDelannoyLower, show m + n - k = m - k + n by omega, sum_choose_eq_sum_two_pow,
+      Nat.sub_sub_self hn, show m - k + n + 1 - (n - k) = m + 1 by omega, Nat.succ_min_succ]
+    refine sum_congr rfl fun j hj ↦ ?_
+    have hjn : j ≤ n := by rw [mem_Ico] at hj; omega
+    rw [show n - k - (n - j) = j - k by omega]
+  · rw [genDelannoyUpper, add_right_comm m n k, sum_choose_eq_sum_two_pow,
+      show n - (n + k) = 0 by omega, show m + k + n + 1 - (n + k) = m + 1 by omega,
+      Nat.succ_min_succ, Nat.Ico_zero_eq_range]
+    refine sum_congr rfl fun j hj ↦ ?_
+    have hjn : j ≤ n := by rw [mem_range] at hj; omega
+    rw [show n + k - (n - j) = j + k by omega]
+
+/-- **Lower generalized Delannoy numbers as a sum of powers of two.** For natural numbers $k$, $m$,
+$n$ with $m \ge k$ and $n \ge k$, the lower generalized Delannoy number $D_k(m, n)$ satisfies
+$D_k(m, n) = \sum_{j=0}^{\min(m-k, n-k)} \binom{m-k}{j} \binom{n}{j+k} 2^{j+k}$.
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 9
+(`jis-2024-24.1.8-thm-9`). -/
+public theorem genDelannoyLower_eq_sum_two_pow (k m n : ℕ) (hm : k ≤ m) (hn : k ≤ n) :
+    genDelannoyLower k m n =
+      ∑ j ∈ range (min (m - k) (n - k) + 1), (m - k).choose j * n.choose (j + k) * 2 ^ (j + k) := by
+  have htop : min m n + 1 - k = min (m - k) (n - k) + 1 := by omega
+  rw [(genDelannoy_eq_sum_two_pow_unified k m n).1 hm hn, sum_Ico_eq_sum_range, htop]
+  simp only [Nat.add_comm k, Nat.add_sub_cancel]
+
+/-- **Powers-of-two formula for the upper generalized Delannoy numbers.**
+For natural numbers $k$, $m$ and $n$, write
+$D^k(m, n) = \sum_{j=0}^{n} \binom{m + n + k - j}{n + k} \binom{n}{j}$ for the upper
+generalized Delannoy numbers. For all natural numbers $k$, $m$ and $n$,
+$$D^k(m, n) = \sum_{j=0}^{\min(m, n)} \binom{m + k}{j + k} \binom{n}{j} 2^j.$$
+
+Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
+of Integer Sequences 27 (2024), Article 24.1.8, Theorem 10
+(`jis-2024-24.1.8-thm-10`). -/
+public theorem genDelannoyUpper_eq_sum_two_pow (k m n : ℕ) :
+    genDelannoyUpper k m n =
+      ∑ j ∈ range (min m n + 1), (m + k).choose (j + k) * n.choose j * 2 ^ j :=
+  (genDelannoy_eq_sum_two_pow_unified k m n).2
 
 /-- **An upper generalized Delannoy number equal to $13$.**
 For natural numbers $k$, $m$ and $n$, write
