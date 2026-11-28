@@ -98,6 +98,6 @@ example :
     (fun f : End ((forget₂ (ModuleCat P) AddCommGrpCat).obj regularP) =>
       f.asHom.hom ((7, 11) : P))
     (ModuleCat.smul_restrictScalars swapRing.toRingHom ((3, 5) : P) regularP)
-  simpa [swapRing, ModuleCat.smul] using h
+  simpa [swapRing, ModuleCat.smul] using! h
 
 end CoefficientTensorDimensionClients
