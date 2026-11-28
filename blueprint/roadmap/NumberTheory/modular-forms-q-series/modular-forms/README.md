@@ -9,6 +9,7 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [Hecke eigenvalues of weight-two normalized eigenforms](hecke-eigenvalues-of-weight-two-normalized-eigen/README.md)
 - [Hecke operators](hecke-operators/README.md)
 - [Integrality of the Hecke algebra of cusp forms on Γ₀(N)](integrality-of-the-hecke-algebra-of-cusp-forms-o/README.md)
+- [Hecke eigenforms and newforms for Γ₁(N)](hecke-eigenforms-and-newforms-for-gamma1-n.md)
 - [Modular functions](modular-functions/README.md)
 - [Modular group and congruence subgroups](modular-group-and-congruence-subgroups/README.md)
 - [Normalized Hecke eigenforms of weight two on Γ₀(N)](normalized-hecke-eigenforms-of-weight-two-on-n/README.md)

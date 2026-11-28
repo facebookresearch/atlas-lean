@@ -18,3 +18,5 @@
 - [Galois representations attached to polarized regular algebraic cuspidal representations over CM fields](galois-representations-attached-to-polarized-cuspidal-representations.md)
 - [Window bound for Tate–Shafarevich groups of Tate twists over subfields of cyclotomic fields](tate-shafarevich-window-bound-over-cyclotomic-subfields.md)
 - [Derivation of the Tate–Shafarevich window bound from automorphic Galois representations](derivation-of-the-tate-shafarevich-window-bound.md)
+- [Galois representations attached to newforms and their Hodge filtration at p](galois-representations-attached-to-newforms.md)
+- [Pan's theorem: the Fontaine–Mazur conjecture for GL₂ over ℚ for odd p and distinct Hodge–Tate weights](fontaine-mazur-conjecture-with-distinct-hodge-tate-weights.md)
