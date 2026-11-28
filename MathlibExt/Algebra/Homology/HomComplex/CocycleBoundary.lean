@@ -132,8 +132,13 @@ theorem mappedShiftedHom_postcomp (F : CochainComplex C ℤ ⥤ D) [F.CommShift 
 
 variable [Preadditive D]
 
-/-- Native shifted composition carries a cocycle boundary through a shift-compatible functor.
-The triangle need not be distinguished and no additional boundary sign is introduced. -/
+/-- Let C be preadditive, D preadditive with integer shifts, and let
+F : CochainComplex C ℤ → D commute with shifts. For a triangle T, an integer q
+and a degree-q cocycle z : K → T₃, the degree-q-to-q+1 connecting map of the
+Hom(F(K), -) sequence for F(T) sends mappedShiftedHom(F, z) to
+mappedShiftedHom(F, (z.postcomp T.mor₃).rightUnshift (q+1)).
+The target shift is removed in the order 1,q. T need not be distinguished,
+and the formula introduces no additional sign. -/
 theorem mappedShiftedHom_boundary (F : CochainComplex C ℤ ⥤ D) [F.CommShift ℤ]
     (T : Triangle (CochainComplex C ℤ)) {K : CochainComplex C ℤ}
     (q : ℤ) (z : Cocycle K T.obj₃ q) :
@@ -155,13 +160,20 @@ section Quotient
 variable {C : Type u} [Category.{v} C] [Preadditive C]
 namespace Cocycle
 
-/-- The cocycle's canonical shifted morphism in the homotopy category. -/
+/-- In a preadditive category C, let z be a degree-q cocycle between integer
+cochain complexes K and L. Its shifted homotopy-class morphism [K] → [L][q]
+is the image of equivHomShift.symm z under the homotopy quotient, followed
+by the quotient functor's shift comparison. -/
 abbrev shiftedHom {K L : CochainComplex C ℤ} {q : ℤ} (z : Cocycle K L q) :
     (HomotopyCategory.quotient C (.up ℤ)).obj K ⟶
       ((HomotopyCategory.quotient C (.up ℤ)).obj L)⟦q⟧ :=
   mappedShiftedHom (HomotopyCategory.quotient C (.up ℤ)) z
 
-/-- The homotopy-category boundary is the generic mapped boundary specialization. -/
+/-- In a preadditive category C, let T be a triangle of integer cochain complexes,
+q an integer and z a degree-q cocycle from K to T₃. The degree-q-to-q+1 connecting
+map of Hom([K], -) for the quotient triangle sends z.shiftedHom to
+((z.postcomp T.mor₃).rightUnshift (q+1)).shiftedHom. The triangle need not
+be distinguished, and the shift-add order 1,q introduces no extra sign. -/
 theorem shiftedHom_boundary
     (T : Triangle (CochainComplex C ℤ)) {K : CochainComplex C ℤ}
     (q : ℤ) (z : Cocycle K T.obj₃ q) :
