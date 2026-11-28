@@ -2491,8 +2491,8 @@
       "path": "MathlibExt/CategoryTheory/Monoidal/TensorPowers.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "623fd04cef41e0ced57b26b1004a1e4aba9ff0f7f04470ee055cd0b66f61c847",
-      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds. Mathematical documentation now states the classifying-space, continuous-action, cup-product, cyclic-resolution and degree-transport contracts with all coefficient worlds, group hypotheses and signs; all noncomment tokens and legal credits are unchanged.",
+      "published_sha256": "a266b60ee937a3c165d069e4503235454d0ed542d413e427a5c15b3a80d473f0",
+      "rationale": "Finite left-associated tensor powers and their coherent block-splitting isomorphism in an arbitrary monoidal category, with ordered pairings under a lax monoidal functor in independently sized source and target categories. Rename lemma-style data tensorPowObj_add to tensorPowAddIso with statement-based hom-law names; remove the duplicate equality-whisker helper in favor of pinned MonoidalCategory.eqToHom_whiskerRight; state unit/associativity laws in native simp normal form (.inv, eqToHom and whiskering). Retain all power objects, component maps, addition transports, worlds and factor order. Use the narrower monoidal Functor import and add an ATLAS-authored concrete Cartesian client. Native compilation of the repair is pending.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "1622aaf1eb314ece0e8f46e0d9ff2bbc6bbf0f842c98c08b68c05821bd60056e"
     },
@@ -2572,8 +2572,8 @@
       "path": "MathlibExt/CategoryTheory/NerveHomotopy.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "7a036640ac4195cdcf7e4253a069924a0094fed0a416319cfb37327b0abdc455",
-      "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds. Mathematical documentation now states the classifying-space, continuous-action, cup-product, cyclic-resolution and degree-transport contracts with all coefficient worlds, group hypotheses and signs; all noncomment tokens and legal credits are unchanged.",
+      "published_sha256": "28af3d420e447fb1f543c8c9d72bdc7890700c8a546d2d006c40d122b1d8b0f4",
+      "rationale": "Import the general natural-transformation nerve-homotopy and finite-prism API, preserving the original legal credits, arrow order, endpoint orientation and common-universe transport formulas. Adapt the mathematical documentation and declaration names to Atlas conventions; generalize the chain classifier and its face laws to independent source/target category universes; reuse one classifier endpoint and constant-chain computation; remove duplicate private proof copies; expose the common-universe data and their application formulas. These are explicit Atlas API and proof changes, so the noncomment tokens differ from the upstream version.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "8e63b6ee95aa76a0da3840fa661eb313f11803506ed3aa4c78df53cbb5d0eebf"
     },
