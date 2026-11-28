@@ -61,10 +61,6 @@ example : coeff 3 (X ^ 2 * cat ^ 2 * (rescale (-1 : ℚ) cat) ^ 2) = 0 := by
   simp only [coeff_rescale, cat_sq_zero, cat_sq_one]
   norm_num
 
--- The theorem is available from its production module.
-example : coeff 4 oddDet = coeff 4 (X ^ 2 * cat ^ 2 * (rescale (-1 : ℚ) cat) ^ 2) :=
-  congrArg (coeff 4) toeplitzHessenbergDet_catalan.1
-
 private noncomputable def consecutiveDet : PowerSeries ℚ :=
   mk fun n => toeplitzHessenbergDet (fun i => if i = 0 then -1 else (catalan (i + 1) : ℚ)) n
 

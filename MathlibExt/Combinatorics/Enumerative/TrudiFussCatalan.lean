@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.RingTheory.Binomial
+public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.LinearAlgebra.Matrix.TrudiBrioschiDeterminant
 public import MathlibExt.NumberTheory.GeneralizedFussCatalanNumbersFMNK
 import Mathlib.Algebra.BigOperators.NatAntidiagonal
@@ -24,13 +25,40 @@ import Mathlib.Tactic.Ring
 # Trudi multi-sums of Fuss–Catalan numbers
 
 The theorem `trudiPartitionSum_fussCatalan` evaluates five partition sums by extracting
-coefficients from the reciprocals of Catalan and Fuss–Catalan generating functions.
+coefficients from the reciprocals of Catalan and Fuss–Catalan generating functions. The module
+also records the Catalan equation over `ℚ` and the coefficients of the square of that series.
+
+## References
+
+* Taras Goy and Mark Shattuck, *Determinants of Toeplitz-Hessenberg Matrices with Fuss-Catalan
+  Entries*, Journal of Integer Sequences 29 (2026), Article 26.1.2, pp. 1–23, Corollary 9 (the
+  partition sums) and the proof of Theorem 6 (the Catalan equation and coefficient shift).
+* Mathlib's `PowerSeries.catalanSeries_sq_mul_X_add_one` supplies the Catalan equation over `ℕ`.
 -/
 
 namespace MetaMathlibExt
-namespace trudiPartitionSum_fussCatalan
 
 open PowerSeries
+
+/-- Over `ℚ`, the Catalan generating function `C` satisfies `C = 1 + X * C ^ 2`. -/
+public lemma catalanSeries_rat_eq_one_add_X_mul_sq :
+    let c : PowerSeries ℚ := mk fun n => (catalan n : ℚ)
+    c = 1 + X * c ^ 2 := by
+  have hmap : map (Nat.castRingHom ℚ) catalanSeries = mk (fun n => (catalan n : ℚ)) := by
+    ext n
+    simp
+  simpa only [map_add, map_mul, map_pow, map_one, map_X, hmap, add_comm, mul_comm] using
+    congrArg (map (Nat.castRingHom ℚ)) catalanSeries_sq_mul_X_add_one.symm
+
+/-- The coefficient of degree `n` in the square of the rational Catalan generating function
+is the Catalan number of index `n + 1`. -/
+public lemma coeff_catalanSeries_rat_sq (n : ℕ) :
+    coeff n (mk (fun k => (catalan k : ℚ)) ^ 2) = (catalan (n + 1) : ℚ) := by
+  have h := congrArg (coeff (n + 1)) catalanSeries_rat_eq_one_add_X_mul_sq
+  simpa [coeff_one, coeff_succ_X_mul] using h.symm
+
+namespace trudiPartitionSum_fussCatalan
+
 open scoped PowerSeries
 
 -- Revert x(1+x)⁻ᵖ to obtain the unique solution of w = x(1+w)ᵖ.
@@ -213,17 +241,13 @@ private lemma trudi_raney (p r n : ℕ) (hn : 0 < n) :
     simp [coeff_raney_nat _ _ _ (Nat.succ_pos i)]
 
 -- Multiplication by 1/(1-X) takes partial sums of the coefficients.
-private noncomputable def cat : ℚ⟦X⟧ := map (Nat.castRingHom ℚ) catalanSeries
+private noncomputable def cat : ℚ⟦X⟧ := mk fun n => (catalan n : ℚ)
 
 private lemma coeff_cat (i : ℕ) : coeff i cat = catalan i := by
   simp [cat]
 
 private lemma cat_zero : constantCoeff cat = 1 := by
   rw [← coeff_zero_eq_constantCoeff_apply, coeff_cat, catalan_zero, Nat.cast_one]
-
-private lemma cat_eq : cat = 1 + X * cat ^ 2 := by
-  simpa [cat, add_comm, mul_comm] using
-    congrArg (map (Nat.castRingHom ℚ)) catalanSeries_sq_mul_X_add_one.symm
 
 private noncomputable def geom : ℚ⟦X⟧ := mk 1
 
@@ -241,7 +265,8 @@ private lemma trudi_catalan_diff (n : ℕ) (hn : 1 ≤ n) :
   let D := (1 - X) * cat
   let F := geom - X * (cat * geom)
   have hinv : D * F = 1 := by
-    have hc : cat * (1 - X * cat) = 1 := by linear_combination cat_eq
+    have hcat : cat = 1 + X * cat ^ 2 := catalanSeries_rat_eq_one_add_X_mul_sq
+    have hc : cat * (1 - X * cat) = 1 := by linear_combination hcat
     calc
       D * F = geom * (1 - X) * (cat * (1 - X * cat)) := by dsimp [D, F]; ring
       _ = 1 := by rw [hc, geom_mul, one_mul]
@@ -261,21 +286,21 @@ private lemma trudi_catalan_shift (n : ℕ) (hn : 1 ≤ n) :
   let D := 1 + cat ^ 2 - cat
   let F := 1 - X * (cat * geom)
   have hD : D * (1 - X - X * cat) = 1 - X := by
+    have hcat : cat = 1 + X * cat ^ 2 := catalanSeries_rat_eq_one_add_X_mul_sq
     dsimp [D]
-    linear_combination cat * cat_eq
+    linear_combination cat * hcat
   have hF : F = geom * (1 - X - X * cat) := by
     dsimp [F]
     linear_combination -geom_mul
   have hinv : D * F = 1 := by
     rw [hF, mul_left_comm, hD, geom_mul]
-  have hsq (i : ℕ) : coeff i (cat ^ 2) = (catalan (i + 1) : ℚ) := by
-    have h := congrArg (coeff (i + 1)) cat_eq
-    simpa [coeff_cat, coeff_one, coeff_succ_X_mul] using h.symm
   rw [trudi_eq_coeff _ _ D F hinv]
   · obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
     simp [F, coeff_one, coeff_succ_X_mul, coeff_cat_geom]
   · simp [D, cat_zero]
   · intro i
+    have hsq : coeff (i + 1) (cat ^ 2) = (catalan (i + 2) : ℚ) :=
+      coeff_catalanSeries_rat_sq (i + 1)
     simp [D, hsq, coeff_one, coeff_cat]
 
 -- H = 1 + X H³, and the series with coefficients J is H².

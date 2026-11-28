@@ -11,7 +11,6 @@ module
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.LinearAlgebra.Matrix.TrudiBrioschiDeterminant
-import Mathlib.RingTheory.PowerSeries.Catalan
 import Mathlib.RingTheory.PowerSeries.Expand
 import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.Tactic.LinearCombination
@@ -40,9 +39,9 @@ consecutive differences starting at `C₁ - C₀` and at `C₂ - C₁`.
 * N. J. A. Sloane et al., *The On-Line Encyclopedia of Integer Sequences*, entries A066357 and
   A026674 (the generating functions used in the paper's equations (12) and (16)).
 * The reduction to positive composition blocks follows `toeplitzHessenbergDet_fussCatalan` in
-  `MathlibExt/Combinatorics/Enumerative/ToeplitzHessenbergDetFussCatalan.lean`. The coefficient
-  shift from the Catalan equation is also used in `trudiPartitionSum_fussCatalan` in
-  `MathlibExt/Combinatorics/Enumerative/TrudiFussCatalan.lean`.
+  `MathlibExt/Combinatorics/Enumerative/ToeplitzHessenbergDetFussCatalan.lean`.
+* The Catalan equation and coefficient shift use `catalanSeries_rat_eq_one_add_X_mul_sq` and
+  `coeff_catalanSeries_rat_sq` from `MathlibExt/Combinatorics/Enumerative/TrudiFussCatalan.lean`.
 -/
 
 namespace MetaMathlibExt
@@ -62,17 +61,7 @@ private lemma positive_det_mul (a : ℕ → ℚ) (ha : a 0 = -1) :
     simpa [positiveSeries, ha] using toeplitzHessenbergDet_genFun a
   linear_combination h
 
-private noncomputable def cat : PowerSeries ℚ := mk fun n => (catalan n : ℚ)
-
-private lemma cat_eq : cat = 1 + X * cat ^ 2 := by
-  have h : map (Nat.castRingHom ℚ) catalanSeries = cat := by
-    ext n
-    simp [cat]
-  simpa only [map_add, map_mul, map_pow, map_one, map_X, h, add_comm, mul_comm] using
-    congrArg (map (Nat.castRingHom ℚ)) catalanSeries_sq_mul_X_add_one.symm
-
-private lemma coeff_cat_sq (n : ℕ) : coeff n (cat ^ 2) = (catalan (n + 1) : ℚ) := by
-  simpa [cat, coeff_one, coeff_succ_X_mul] using (congrArg (coeff (n + 1)) cat_eq).symm
+private noncomputable abbrev cat : PowerSeries ℚ := mk fun n => (catalan n : ℚ)
 
 -- Only positive block sizes enter the Trudi sum. The minus sign in the known sum
 -- removes one power of `-1` from the determinant formula.
@@ -127,6 +116,7 @@ private lemma odd_entries :
   have hF : E (positiveSeries (toeplitzHessenbergDet a)) * (1 - A) = A := by
     simpa only [map_mul, map_sub, map_one, hA] using
       congrArg E (positive_det_mul a (by simp [a]))
+  have cat_eq : cat = 1 + X * cat ^ 2 := catalanSeries_rat_eq_one_add_X_mul_sq
   have hd : d = 1 - X * d ^ 2 := by
     simpa [d, rescale_neg_one_X, sub_eq_add_neg] using congrArg (rescale (-1 : ℚ)) cat_eq
   have hcInv : cat * (1 - X * cat) = 1 := by linear_combination cat_eq
@@ -160,7 +150,7 @@ private lemma consecutive_entries :
   let a : ℕ → ℚ := fun i => if i = 0 then -1 else (catalan (i + 1) : ℚ)
   have hA : positiveSeries a = cat ^ 2 - 1 := by
     ext n
-    rw [map_sub, coeff_cat_sq]
+    rw [map_sub, coeff_catalanSeries_rat_sq]
     cases n <;> simp [positiveSeries, a, coeff_one, catalan_one]
   have hFull : mk (toeplitzHessenbergDet a) = 1 + positiveSeries (toeplitzHessenbergDet a) := by
     ext n
@@ -184,8 +174,9 @@ private lemma difference_entries :
   let a : ℕ → ℚ := fun i => if i = 0 then -1 else (catalan (i + 1) : ℚ) - catalan i
   have hA : positiveSeries a = cat ^ 2 - cat := by
     ext n
-    rw [map_sub, coeff_cat_sq]
+    rw [map_sub, coeff_catalanSeries_rat_sq]
     cases n <;> simp [positiveSeries, cat, a, catalan_zero, catalan_one]
+  have cat_eq : cat = 1 + X * cat ^ 2 := catalanSeries_rat_eq_one_add_X_mul_sq
   have hcube : cat ^ 2 - cat = X * cat ^ 3 := by linear_combination cat * cat_eq
   rw [hcube] at hA
   simpa only [hA] using positive_det_mul a (by simp [a])
