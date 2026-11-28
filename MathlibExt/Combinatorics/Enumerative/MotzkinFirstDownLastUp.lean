@@ -9,13 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Enumerative.MotzkinHumpsYoungTableaux
-import all MathlibExt.Combinatorics.Enumerative.MotzkinHumpPeakHeight
 
 /-!
 # First-down and last-up Motzkin prefixes
 
 `motzkinFirstDownFamily_equiv_lastUpEvenFamily` equates the two prefix families by showing
 that their cardinalities satisfy the same recurrence in the length.
+
+## References
+
+* Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*,
+  Journal of Integer Sequences 28 (2025), Article 25.8.1, pp. 1–11, Lemma 6 (p. 6).
 -/
 
 namespace MetaMathlibExt
@@ -25,37 +29,39 @@ private abbrev Word (n : ℕ) := Fin n → Fin 3
 
 -- Starting above zero lets us remove the first step of a prefix.
 private def Good {n : ℕ} (a : ℤ) (p : Word n) : Prop :=
-  ∀ m ≤ n, 0 ≤ a + mhHeight p m
+  ∀ m ≤ n, 0 ≤ a + motzkinPrefixHeight p m
 
 private theorem prefix_iff {n : ℕ} (p : Word n) (h : ℤ) :
-    IsMotzkinPrefix n h p ↔ Good 0 p ∧ mhHeight p n = h := by
-  simp only [IsMotzkinPrefix, Good, zero_add, mhHeight_total]
+    IsMotzkinPrefix n h p ↔ Good 0 p ∧ motzkinPrefixHeight p n = h := by
+  simp only [isMotzkinPrefix_iff, Good, zero_add, motzkinPrefixHeight_total]
   exact and_congr_left' (forall_congr' fun m => forall_congr' fun hm => by
-    rw [mhHeight_bridge p hm])
+    rw [motzkinPrefixHeight_prefix_sum p hm])
 
 private theorem good_cons {n : ℕ} (a : ℤ) (x : Fin 3) (p : Word n) :
     Good a (Fin.cons x p) ↔ 0 ≤ a ∧ Good (a + motzkinStep x) p := by
   constructor
   · intro h
-    refine ⟨by simpa [mhHeight_cons_zero] using h 0 (by omega), fun m hm => ?_⟩
-    simpa only [mhHeight_cons_succ, add_assoc] using h (m + 1) (by omega)
+    refine ⟨by simpa [motzkinPrefixHeight_zero] using h 0 (by omega), fun m hm => ?_⟩
+    simpa only [motzkinPrefixHeight_cons_succ, add_assoc] using h (m + 1) (by omega)
   · rintro ⟨ha, h⟩ (_ | m) hm
-    · simpa only [mhHeight_cons_zero, add_zero] using ha
-    · simpa only [mhHeight_cons_succ, add_assoc] using h m (by omega)
+    · simpa only [motzkinPrefixHeight_zero, add_zero] using ha
+    · simpa only [motzkinPrefixHeight_cons_succ, add_assoc] using h m (by omega)
 
 private theorem good_snoc {n : ℕ} (x : Fin 3) (p : Word n) :
-    Good 0 (Fin.snoc p x) ↔ Good 0 p ∧ 0 ≤ mhHeight p n + motzkinStep x := by
+    Good 0 (Fin.snoc p x) ↔ Good 0 p ∧ 0 ≤ motzkinPrefixHeight p n + motzkinStep x := by
   constructor
   · intro h
-    refine ⟨fun m hm => ?_, by simpa only [zero_add, mhHeight_snoc_succ] using h _ (le_refl _)⟩
-    simpa only [mhHeight_snoc_of_le p x hm] using h m (by omega)
+    refine ⟨fun m hm => ?_, ?_⟩
+    · simpa only [motzkinPrefixHeight_snoc_of_le p x hm] using h m (by omega)
+    · simpa only [zero_add, motzkinPrefixHeight_snoc_succ] using h _ (le_refl _)
   · rintro ⟨h, hx⟩ m hm
     obtain hmn | rfl := Nat.lt_or_eq_of_le hm
-    · simpa only [mhHeight_snoc_of_le p x (Nat.le_of_lt_succ hmn)] using h m (by omega)
-    · simpa only [zero_add, mhHeight_snoc_succ] using hx
+    · simpa only [motzkinPrefixHeight_snoc_of_le p x (Nat.le_of_lt_succ hmn)] using h m (by omega)
+    · simpa only [zero_add, motzkinPrefixHeight_snoc_succ] using hx
 
 private theorem first_cons {n : ℕ} (x : Fin 3) (p : Word n) :
     FirstNonupStepDown _ (Fin.cons x p) ↔ x = 0 ∨ x = 2 ∧ FirstNonupStepDown n p := by
+  simp only [firstNonupStepDown_iff]
   constructor
   · rintro ⟨i, hi, hj⟩
     cases i using Fin.cases with
@@ -73,6 +79,7 @@ private theorem first_cons {n : ℕ} (x : Fin 3) (p : Word n) :
 
 private theorem last_snoc {n : ℕ} (x : Fin 3) (p : Word n) :
     LastNonflatStepUp _ (Fin.snoc p x) ↔ x = 2 ∨ x = 1 ∧ LastNonflatStepUp n p := by
+  simp only [lastNonflatStepUp_iff]
   constructor
   · rintro ⟨i, hi, hj⟩
     cases i using Fin.lastCases with
@@ -88,32 +95,34 @@ private theorem last_snoc {n : ℕ} (x : Fin 3) (p : Word n) :
       | last => simp
       | cast j => simpa only [Fin.snoc_castSucc, Fin.castSucc_lt_castSucc_iff] using hj j
 
-private theorem height_le {n : ℕ} (p : Word n) : mhHeight p n ≤ n := by
-  rw [← mhHeight_total]
+private theorem height_le {n : ℕ} (p : Word n) : motzkinPrefixHeight p n ≤ n := by
+  rw [← motzkinPrefixHeight_total]
   calc
     _ ≤ ∑ _i : Fin n, (1 : ℤ) := by
       apply Finset.sum_le_sum
       intro i _
       have := (p i).isLt
-      change (p i).val - (1 : ℤ) ≤ 1
+      rw [motzkinStep_eq_sub_one]
       omega
     _ = _ := by simp
 
 private theorem height_first {n : ℕ} (p : Word n) (h : FirstNonupStepDown n p) :
-    mhHeight p n + 2 ≤ n := by
+    motzkinPrefixHeight p n + 2 ≤ n := by
   induction n with
-  | zero => exact Fin.elim0 h.choose
+  | zero =>
+    obtain ⟨i, _, _⟩ := (firstNonupStepDown_iff 0 p).mp h
+    exact Fin.elim0 i
   | succ n ih =>
     obtain ⟨⟨x, p⟩, rfl⟩ := (Fin.consEquiv (n := n) (fun _ => Fin 3)).surjective p
     change FirstNonupStepDown _ (Fin.cons x p) at h
-    change mhHeight (Fin.cons x p) _ + 2 ≤ _
-    rw [mhHeight_cons_succ]
+    change motzkinPrefixHeight (Fin.cons x p) _ + 2 ≤ _
+    rw [motzkinPrefixHeight_cons_succ]
     rcases (first_cons x p).mp h with rfl | ⟨rfl, hp⟩
     · have := height_le p
-      rw [mhStep_vals.1]
+      rw [motzkinStep_values.1]
       omega
     · have := ih p hp
-      rw [mhStep_vals.2.2]
+      rw [motzkinStep_values.2.2]
       omega
 
 open scoped Classical in
@@ -146,14 +155,14 @@ private noncomputable abbrev firstDown (n : ℕ) (a : ℤ) :=
 private theorem total_succ (n : ℕ) {a : ℤ} (ha : 0 ≤ a) :
     total (n + 1) a = total n (a - 1) + total n a + total n (a + 1) := by
   rw [total, count_cons]
-  simp only [good_cons, ha, true_and, mhStep_vals, add_zero, sub_eq_add_neg]
+  simp only [good_cons, ha, true_and, motzkinStep_values, add_zero, sub_eq_add_neg]
 
 private theorem first_succ (n : ℕ) {a : ℤ} (ha : 0 ≤ a) :
     firstDown (n + 1) a = total n (a - 1) + firstDown n (a + 1) := by
   rw [firstDown, count_cons]
   simp only [good_cons, first_cons, ha, true_and]
-  simp only [mhStep_vals, sub_eq_add_neg, add_zero, Fin.reduceEq, true_or, false_or, false_and,
-    and_true, and_false]
+  simp only [motzkinStep_values, sub_eq_add_neg, add_zero, Fin.reduceEq, true_or, false_or,
+    false_and, and_true, and_false]
   simp [count, total, firstDown]
 
 -- A first flat after a run of ups can be replaced by an extra up and a down.
@@ -163,7 +172,8 @@ private theorem first_add (n : ℕ) {a : ℤ} (ha : 0 ≤ a) :
   induction n generalizing a with
   | zero =>
     rw [first_succ 0 ha]
-    simp [firstDown, total, count, FirstNonupStepDown, Good, mhHeight, ha, add_comm]
+    simp [firstDown, total, count, firstNonupStepDown_iff, Good,
+      motzkinPrefixHeight_zero, ha, add_comm]
   | succ n ih =>
     rw [first_succ (n + 1) ha, first_succ n ha, total_succ n ha]
     have h := ih (a := a + 1) (by omega)
@@ -171,12 +181,12 @@ private theorem first_add (n : ℕ) {a : ℤ} (ha : 0 ≤ a) :
     omega
 
 private def AtParity {n : ℕ} (r : ℤ) (p : Word n) : Prop :=
-  Good 0 p ∧ mhHeight p n % 2 = r
+  Good 0 p ∧ motzkinPrefixHeight p n % 2 = r
 
 private def LastUp {n : ℕ} (p : Word n) : Prop :=
-  AtParity 0 p ∧ 2 ≤ mhHeight p n ∧ LastNonflatStepUp n p
+  AtParity 0 p ∧ 2 ≤ motzkinPrefixHeight p n ∧ LastNonflatStepUp n p
 
-private theorem nonneg_end {n : ℕ} {p : Word n} (h : Good 0 p) : 0 ≤ mhHeight p n := by
+private theorem nonneg_end {n : ℕ} {p : Word n} (h : Good 0 p) : 0 ≤ motzkinPrefixHeight p n := by
   simpa only [zero_add] using h n (le_refl _)
 
 -- From an odd height either vertical step gives an even height, and a flat preserves parity.
@@ -186,7 +196,8 @@ private theorem parity_snoc {n : ℕ} (p : Word n) :
     (AtParity 0 (Fin.snoc p 2) ↔ AtParity 1 p) := by
   by_cases hg : Good 0 p
   · have := nonneg_end hg
-    simp only [AtParity, good_snoc, mhHeight_snoc_succ, mhStep_vals, hg, true_and, add_zero]
+    simp only [AtParity, good_snoc, motzkinPrefixHeight_snoc_succ, motzkinStep_values,
+      hg, true_and, add_zero]
     omega
   · simp [AtParity, good_snoc, hg]
 
@@ -194,7 +205,7 @@ private theorem lastUp_snoc {n : ℕ} (p : Word n) :
     ¬LastUp (Fin.snoc p 0) ∧ (LastUp (Fin.snoc p 1) ↔ LastUp p) ∧
     (LastUp (Fin.snoc p 2) ↔ AtParity 1 p) := by
   simp only [LastUp, (parity_snoc p).1, (parity_snoc p).2.1, (parity_snoc p).2.2,
-    mhHeight_snoc_succ, last_snoc, mhStep_vals, Fin.reduceEq, add_zero]
+    motzkinPrefixHeight_snoc_succ, last_snoc, motzkinStep_values, Fin.reduceEq, add_zero]
   simp only [false_and, or_self, true_and, false_or, true_or, and_false, not_false_eq_true,
     and_true]
   refine ⟨And.left, fun h => ⟨h, ?_⟩⟩
@@ -220,7 +231,7 @@ private theorem lastUp_succ (n : ℕ) :
 -- Both counts grow by the odd-height count, twice for even prefixes and once for last-up.
 private theorem even_eq (n : ℕ) : parityCount n 0 = 2 * lastUp n + 1 := by
   induction n with
-  | zero => simp [parityCount, lastUp, count, LastUp, AtParity, Good, mhHeight]
+  | zero => simp [parityCount, lastUp, count, LastUp, AtParity, Good, motzkinPrefixHeight_zero]
   | succ n ih =>
     rw [even_succ, lastUp_succ]
     omega
@@ -237,13 +248,16 @@ private theorem parity_partition (n : ℕ) :
 
 private theorem counts_eq (n : ℕ) : firstDown n 0 = lastUp n := by
   induction n with
-  | zero => simp [firstDown, lastUp, count, FirstNonupStepDown, LastUp, mhHeight]
+  | zero =>
+    simp [firstDown, lastUp, count, firstNonupStepDown_iff, LastUp, motzkinPrefixHeight_zero]
   | succ n ih =>
     have h := first_add n (a := 0) (by decide)
     have neg : total n (-1) = 0 := by
       have bad (p : Word n) : ¬Good (-1) p := by
         intro hp
-        simpa [mhHeight] using hp 0 (Nat.zero_le _)
+        have h₀ := hp 0 (Nat.zero_le _)
+        rw [motzkinPrefixHeight_zero, add_zero] at h₀
+        omega
       simp [total, count, bad]
     rw [show (0 : ℤ) - 1 = -1 by decide, neg, add_zero, parity_partition, even_eq] at h
     rw [lastUp_succ]
@@ -253,7 +267,7 @@ private theorem counts_eq (n : ℕ) : firstDown n 0 = lastUp n := by
 private def firstEquiv (n : ℕ) : MotzkinFirstDownFamily n ≃
     {p : Word n // Good 0 p ∧ FirstNonupStepDown n p} where
   toFun := fun ⟨⟨k, p⟩, _, hp, hf⟩ => ⟨p, ((prefix_iff p k).mp hp).1, hf⟩
-  invFun := fun ⟨p, hg, hf⟩ => ⟨⟨(mhHeight p n).toNat, p⟩, by
+  invFun := fun ⟨p, hg, hf⟩ => ⟨⟨(motzkinPrefixHeight p n).toNat, p⟩, by
     have := nonneg_end hg
     have := height_first p hf
     exact ⟨by omega, (prefix_iff p _).mpr ⟨hg, by omega⟩, hf⟩⟩
@@ -261,7 +275,7 @@ private def firstEquiv (n : ℕ) : MotzkinFirstDownFamily n ≃
     rintro ⟨⟨k, p⟩, _, hp, _⟩
     apply Subtype.ext
     refine Prod.ext ?_ rfl
-    change (mhHeight p n).toNat = k
+    change (motzkinPrefixHeight p n).toNat = k
     rw [((prefix_iff p k).mp hp).2, Int.toNat_natCast]
   right_inv _ := rfl
 
@@ -269,15 +283,15 @@ private def lastEquiv (n : ℕ) : MotzkinLastUpEvenFamily n ≃ {p : Word n // L
   toFun := fun ⟨⟨k, p⟩, hk, _, hp, hu⟩ => ⟨p, by
     obtain ⟨hg, he⟩ := (prefix_iff p _).mp hp
     exact ⟨⟨hg, by omega⟩, by omega, hu⟩⟩
-  invFun := fun ⟨p, ⟨hg, he⟩, hpos, hu⟩ => ⟨⟨(mhHeight p n).toNat / 2, p⟩, by
+  invFun := fun ⟨p, ⟨hg, he⟩, hpos, hu⟩ => ⟨⟨(motzkinPrefixHeight p n).toNat / 2, p⟩, by
     have := height_le p
     exact ⟨by omega, by omega, (prefix_iff p _).mpr ⟨hg, by omega⟩, hu⟩⟩
   left_inv := by
     rintro ⟨⟨k, p⟩, _, _, hp, _⟩
     apply Subtype.ext
     refine Prod.ext ?_ rfl
-    change (mhHeight p n).toNat / 2 = k
-    have he : mhHeight p n = 2 * (k : ℤ) := ((prefix_iff p _).mp hp).2
+    change (motzkinPrefixHeight p n).toNat / 2 = k
+    have he : motzkinPrefixHeight p n = 2 * (k : ℤ) := ((prefix_iff p _).mp hp).2
     omega
   right_inv _ := rfl
 

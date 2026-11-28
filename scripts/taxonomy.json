@@ -11683,6 +11683,7 @@
   "MathlibExt/Combinatorics/Enumerative/MotzkinCentralTrinomial": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Motzkin numbers"},
   "MathlibExt/Combinatorics/Enumerative/MotzkinFirstDownLastUp": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Humps and peaks in Motzkin paths"},
   "MathlibExt/Combinatorics/Enumerative/MotzkinHumpGeneratingFunction": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Humps and peaks in Motzkin paths"},
+  "MathlibExt/Combinatorics/Enumerative/MotzkinHumpLastUp": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Humps and peaks in Motzkin paths"},
   "MathlibExt/Combinatorics/Enumerative/MotzkinHumpPeakHeight": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Humps and peaks in Motzkin paths"},
   "MathlibExt/Combinatorics/Enumerative/MotzkinHumpsYoungTableaux": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Humps and peaks in Motzkin paths"},
   "MathlibExt/Combinatorics/Enumerative/MotzkinNumber": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Motzkin numbers"},

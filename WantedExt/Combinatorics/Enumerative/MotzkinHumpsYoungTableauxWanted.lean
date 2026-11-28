@@ -16,6 +16,7 @@ public import Mathlib.Data.Rat.Defs
 public import MathlibExt.Combinatorics.Enumerative.AdjustedSytHookCount
 public import MathlibExt.Combinatorics.Enumerative.MotzkinFirstDownLastUp
 public import MathlibExt.Combinatorics.Enumerative.MotzkinHumpGeneratingFunction
+public import MathlibExt.Combinatorics.Enumerative.MotzkinHumpLastUp
 public import MathlibExt.Combinatorics.Enumerative.MotzkinNumber
 public import MathlibExt.Combinatorics.Enumerative.SytHookCountGeneratingFunction
 
@@ -50,27 +51,6 @@ public theorem_wanted sytHookCount_closedForm (n k : ℕ) (hk : k + 2 ≤ n) :
               ((2 * k + 2 : ℕ) : ℚ) / ((n + k + 1 - 2 * i - j : ℕ) : ℚ) *
               (Nat.choose (n - 2 * i - 2) j : ℚ) *
               (Nat.choose (n - 2 * i - j - 1) ((n + k - j - 1) / 2 - i) : ℚ)
-
-/-- **Humps correspond to last-up prefixes of twice the height.** Use the steps $U = (1,1)$,
-$F = (1,0)$ and $D = (1,-1)$. A Motzkin prefix of length $n$ ending at height $h$ is a word of
-$n$ steps that never goes below height $0$ and ends at height $h$; a Motzkin path is a Motzkin
-prefix ending at height $0$. A hump of height $k$ in a path is a pair of an up step and a later
-down step with only flat steps between them, where the up step ends at height $k$; the hump is
-a peak when the down step immediately follows the up step. For every natural number $n$ there
-is a bijection from the set of triples $(k, P, h)$ with $1 \le k \le \lfloor n/2 \rfloor$, $P$
-a Motzkin path of length $n$ and $h$ a hump of height $k$ in $P$, to the set of pairs $(k, p)$
-with $1 \le k \le \lfloor n/2 \rfloor$ and $p$ a Motzkin prefix of length $n$ ending at height
-$2k$ that contains a $U$ after which every step is $F$. This bijection keeps the index $k$, and
-the hump $h$ is a peak exactly when the image path $p$ ends with an up step.
-
-Source: Xiaomei Chen, *Humps in Motzkin Paths and Standard Young Tableaux in a (2,1)-Hook*, Journal
-        of Integer Sequences 28 (2025), Article 25.8.1, Lemma 3 (`jis-2025-25.8.1-lem-3`).
--/
-public theorem_wanted motzkinHumpFamily_equiv_lastUpEvenFamily (n : ℕ) :
-    ∃ e : MotzkinHumpFamily n ≃ MotzkinLastUpEvenFamily n,
-      (∀ q, (e q).val.1 = q.val.1) ∧
-        ∀ q, IsMotzkinPeak n q.val.1 q.val.2.1 q.val.2.2.1 q.val.2.2.2 ↔
-          EndsWithUp n (e q).val.2
 
 end
 
