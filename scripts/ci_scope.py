@@ -21,8 +21,7 @@ scheduled and manual runs run every check without asking. It prints one line per
 Any other path, or no path at all, prints `true`. The workflow skips a check only on `false`, so a
 failure here, or of its step, runs everything as before. Changed paths are never printed.
 
-It reads no file but the listing, and imports only the standard library: scripts/queue/preflight.py
-takes the paths named here for rules, not inputs (NAMES_ONLY).
+It reads no file but the listing, and imports only the standard library.
 """
 
 from __future__ import annotations

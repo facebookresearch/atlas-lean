@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import ast
 import contextlib
 import copy
 import datetime as dt
@@ -12,6 +13,7 @@ import http.client
 import io
 import json
 import os
+import posixpath
 import re
 import shlex
 import subprocess
@@ -56,6 +58,8 @@ class FakeGitHub:
         self.logs = logs or {}
         self.queue = queue or queue_answer([])
         self.calls: list[str] = []
+        self.graphql_calls = 0
+        self.queries: list[str] = []  # what each GraphQL request asked: sizes, queue or enqueue
         self.mutations: list[dict] = []
         self.mutation_error: Exception | None = None
         self.mutation_answer: dict | None = None
@@ -67,11 +71,13 @@ class FakeGitHub:
             raise preflight.Failure(f"GET {path}: HTTP 404")
         return copy.deepcopy(self.responses[path])
 
-    def paged(self, path: str, key: str | None = None, max_pages: int = 10) -> list:
+    def paged(self, path: str, key: str | None = None, max_pages: int = 10, stop=None) -> list:
         data = self.get(path)
         return data[key] if key else data
 
     def graphql(self, query: str, variables: dict, attempts: int = 3) -> dict:
+        self.graphql_calls += 1
+        self.queries.append("sizes" if "byteSize" in query else "enqueue" if "enqueuePullRequest" in query else "queue")
         if "byteSize" in query:  # blob sizes, before downloading: small unless a test says otherwise
             sizes = getattr(self, "blob_sizes", {})
             return {"data": {"repository": {alias: {"byteSize": sizes.get(oid, 100)} for alias, oid in
@@ -81,14 +87,28 @@ class FakeGitHub:
             if self.mutation_error:
                 raise self.mutation_error
             return self.mutation_answer or {"data": {"enqueuePullRequest": {"mergeQueueEntry": {"position": 4, "state": "QUEUED"}}}}
-        if self.mutations and self.queued_after:
-            return copy.deepcopy(self.queued_after)
-        return copy.deepcopy(self.queue)
+        answer = copy.deepcopy(self.queued_after if self.mutations and self.queued_after else self.queue)
+        rest = self.responses.get(f"/repos/{REPO}/pulls/{variables.get('number')}")
+        if rest and "mergeQueue" in query:  # the pull request comes with the queue, as GraphQL has it
+            answer["data"]["repository"].setdefault("pullRequest", {}).update(graphql_pull(rest))
+        return answer
 
     def read_log(self, job_id: int, pattern: re.Pattern, max_bytes: int = 0):
         if job_id not in self.logs:
             raise preflight.Failure(f"GET job {job_id} logs: HTTP 404")
         return pattern.search(self.logs[job_id])
+
+
+def graphql_pull(rest: dict) -> dict:
+    """A pull request as QUEUE_QUERY reads it, from its REST form."""
+    head_repo = (rest["head"].get("repo") or {}).get("full_name")
+    return {"headRefOid": rest["head"]["sha"], "baseRefName": rest["base"]["ref"],
+            "state": "MERGED" if rest.get("merged") else str(rest.get("state", "open")).upper(),
+            "isDraft": bool(rest.get("draft")), "title": rest.get("title"), "id": rest.get("node_id"),
+            "mergeable": {True: "MERGEABLE", False: "CONFLICTING"}.get(rest.get("mergeable"), "UNKNOWN"),
+            "mergeStateStatus": str(rest.get("mergeable_state") or "unknown").upper(),
+            "changedFiles": rest.get("changed_files"), "isCrossRepository": head_repo != REPO,
+            "headRepository": {"nameWithOwner": head_repo} if head_repo else None}
 
 
 def queue_answer(entries: list[tuple[int, str]], own: dict | None = None, more: bool = False,
@@ -357,10 +377,8 @@ structure T extends S
 deriving instance DecidableEq for Var, Tm
 end N
 """
-        self.assertEqual(self.names(text), [
-            "N.S", "N.S.x", "N.S.mk", "N.instDecidableEqS", "N.instReprS", "N.I", "N.I.a", "N.I.b", "N.instOrdI",
-            "N.J", "N.J.c", "N.J.d", "N.instHashableJ", "N.T", "N.instBEqT", "N.T.toS", "N.T.mk",
-            "N.instDecidableEqVar", "N.instDecidableEqTm"])
+        self.assertEqual(self.names(text), [  # the instances that `deriving` generates are not read
+            "N.S", "N.S.x", "N.S.mk", "N.I", "N.I.a", "N.I.b", "N.J", "N.J.c", "N.J.d", "N.T", "N.T.toS", "N.T.mk"])
 
     def test_deriving_over_several_lines(self):
         text = """
@@ -380,10 +398,7 @@ inductive I
 deriving instance DecidableEq for (Foo α)
 end N
 """
-        self.assertEqual(self.names(text), [
-            "N.instDecidableEqVar", "N.instReprVar", "N.instBEqVar", "N.instReprTm", "N.instBEqTm", "N.S", "N.S.x",
-            "N.S.mk", "N.instDecidableEqS", "N.instReprS", "N.I", "N.I.a", "N.instOrdI", "N.instHashableI",
-            "?gen:deriving:N.instance"])
+        self.assertEqual(self.names(text), ["N.S", "N.S.x", "N.S.mk", "N.I", "N.I.a"])  # the lists, skipped whole
 
     def test_attached_deriving_over_several_lines(self):
         text = """
@@ -410,9 +425,8 @@ theorem v : True := trivial
 end N
 """
         self.assertEqual(self.names(text), [
-            "N.K", "N.K.a", "N.instDecidableEqK", "N.L", "N.L.b", "N.instReprL", "N.instDecidableEqL", "N.S", "N.S.x",
-            "N.S.mk", "N.instBEqS", "N.t", "N.M", "N.M.c", "?gen:deriving:N.M", "N.u", "N.P", "N.P.y", "N.P.mk",
-            "?gen:deriving:N.instance", "N.v"])
+            "N.K", "N.K.a", "N.L", "N.L.b", "N.S", "N.S.x", "N.S.mk", "N.t", "N.M", "N.M.c", "N.u", "N.P", "N.P.y",
+            "N.P.mk", "N.v"])
 
     def test_deriving_with_attributes(self):
         text = """
@@ -424,8 +438,7 @@ deriving @[expose] Repr, (Weird)
 deriving instance @[expose] BEq for Var
 end N
 """
-        self.assertEqual(self.names(text), ["N.K", "N.K.a", "N.instDecidableEqK", "N.S", "N.S.x", "N.S.mk", "N.instReprS",
-                                            "?gen:deriving:N.S", "N.instBEqVar"])
+        self.assertEqual(self.names(text), ["N.K", "N.K.a", "N.S", "N.S.x", "N.S.mk"])
 
     def test_markers_change_with_their_declaration(self):
         base = "namespace N\n@[simps apply] def e : Nat ≃ Nat := Equiv.refl _ -- note\ndef other := 1\nend N\n"
@@ -519,8 +532,7 @@ end N
         self.assertEqual(self.names("namespace N\nopen Nat in\n  emit_named dup\nend N\n"), ["?gen:command:N.emit_named"])  # indented too
         self.assertEqual(self.names("namespace N\nopen Nat in\n§ dup\nend N\n"), ["?gen:command:N.command"])  # any first character
         deriving = "namespace N\nstructure Earlier where\n  z : Nat\nprivate structure A where\n  x : Nat\nderiving Inhabited\nend N\n"
-        self.assertIn("?maybe:N.instInhabitedA", self.names(deriving))  # the clause belongs to the private A
-        self.assertNotIn("N.instInhabitedEarlier", self.names(deriving))
+        self.assertEqual(self.names(deriving), ["N.Earlier", "N.Earlier.z", "N.Earlier.mk"])  # nothing derived is read
         rules = "namespace N\nmacro_rules\n| `(emit_dup) => `(def {name} := 1)\nend N\n"
         marker = lambda text: [n for n, _ in preflight.declarations(text) if n.startswith("?gen:command")]
         self.assertNotEqual(marker(rules.format(name="previous")), marker(rules.format(name="dup")))  # its alternatives count
@@ -533,6 +545,40 @@ end N
                          ["Set.HasDensity.x", "z"])  # `end A.B` closes both
         self.assertIn("N.S.x", self.names("namespace N\nstructure S (α : Type)\nwhere\n  x : α\nend N\n"))  # `where` below
         self.assertIn("N.I.a", self.names("namespace N\ninductive I (α : Type)\nwhere\n  | a : α → I α\nend N\n"))
+        self.assertTrue({"N.I.a", "N.I.b"} <= set(self.names("namespace N\ninductive I (α : Type)\nwhere | a | b\nend N\n")))
+        shades = set(self.names("namespace N\ninductive Shade\nwhere | blue: Shade | «blue moon» : Shade\nend N\n"))
+        self.assertTrue({"N.Shade.blue", "N.Shade.«blue moon»"} <= shades, shades)  # up to the type, quoted or not
+        quoted = set(self.names("namespace N\ninductive Hue where | «blue|green» : Hue | «deriving» : Hue\nend N\n"))
+        self.assertTrue({"N.Hue.«blue|green»", "N.Hue.«deriving»"} <= quoted, quoted)  # a bar or keyword in quotes
+        later = set(self.names("namespace N\ninductive Tint\nwhere | «blue|green» : Tint | «deriving» : Tint\nend N\n"))
+        self.assertTrue({"N.Tint.«blue|green»", "N.Tint.«deriving»"} <= later, later)
+        forms = ("inductive Shade where | a\n  deriving Repr", "inductive Shade where | a\n  deriving @[expose]\n    Repr",
+                 "inductive Shade where | a\n  deriving BEq\n    , Repr,\n      Inhabited",
+                 "inductive Shade where | a\nderiving @[expose]\n  Repr, BEq", "def Shade : Type := Nat deriving Repr",
+                 "def P := Nat\nderiving Coe\n  (List Nat), Group", "inductive δ where | point\n  deriving Repr",
+                 "def shade : Type := Nat\nderiving instance Repr for shade\n  , Nat",
+                 "open N renaming shade → tint\nderiving instance Repr for tint",
+                 "def f : Nat := go 3\nwhere\n  go : Nat → Nat\n    | n => let rec h := n; h\ninductive Shade where | a\n  deriving Repr")
+        for text, expected in (("inductive Shade where\n  | deriving : Shade\n  | blue : Shade", ["N.Shade.«deriving»", "N.Shade.blue"]),
+                               ("inductive Shade where\n  |\n    deriving : Shade\n  | blue : Shade", ["N.Shade.«deriving»", "N.Shade.blue"]),
+                               ("inductive Shade where\n  |\n    blue : Shade\n  | red", ["N.Shade.blue", "N.Shade.red"]),
+                               ("inductive Shade where\n  | a |\n    blue : Shade\n  deriving Repr", ["N.Shade.a", "N.Shade.blue"]),
+                               ("inductive Shade | a |\n  blue", ["N.Shade.a", "N.Shade.blue"])):
+            # a constructor named like a keyword, or on the line after its `|`
+            self.assertEqual(self.names(f"namespace N\n{text}\nend N\n")[1:], expected, text)
+        self.assertEqual(self.names("def Shade.«deriving» : Nat := 3\n"), ["Shade.«deriving»"])  # the same name, quoted
+        self.assertEqual(self.names("theorem Formula.exists : True := trivial\n"), ["Formula.«exists»"])  # however written
+        self.assertEqual(self.names("inductive T\n  | a.b : T\n")[1:], ["T.a.b"])  # a dotted constructor stays dotted
+        self.assertEqual(self.names("namespace N\nprivate inductive Shade |\n  blue : Shade\n  | red\nend N\n", local=True),
+                         ["?local:N.Shade", "?local:N.Shade.blue", "?local:N.Shade.red"])  # a module-local type too
+        for text in forms:  # the instances that `deriving` generates are not read (a known limitation)
+            found = [name for name, _ in preflight.declarations(f"namespace N\n{text}\ntheorem after : True := trivial\nend N\n")]
+            self.assertFalse([n for n in found if "inst" in n or n.startswith("?gen:deriving")], (text, found))
+            self.assertIn("N.after", found)  # and what follows the clause is read
+        helper = set(self.names("def shade : Nat := where' where\n  where' : Nat := 3\n"))
+        self.assertTrue({"shade", "shade.where'"} <= helper, helper)  # `where'` is a name, not the keyword
+        primed = set(self.names("namespace N\ninductive Tone\nwhere | deriving' : Tone | «blue--green» : Tone | tan : Tone\nend N\n"))
+        self.assertTrue({"N.Tone.deriving'", "N.Tone.«blue--green»", "N.Tone.tan"} <= primed, primed)  # no keyword, no comment
         self.assertIn("N.I.a", self.names("namespace N\ninductive I\n  | @[simp] a\n  | b\nend N\n"))  # an attributed constructor
         additive = self.names("namespace N\n@[to_additive (attr := reassoc) addFoo] theorem mulFoo : True := trivial\nend N\n", auxiliary=True)
         self.assertIn("N.addFoo_assoc", additive)  # the additive copy's generated name
@@ -544,8 +590,7 @@ end N
         self.assertNotIn("?gen:command:N.macro", self.names("namespace N\nmacro \"twice\" x:term : term => `($x + $x)\nend N\n"))
         aux = ("rec", "recOn", "casesOn", "noConfusion", "noConfusionType", "below", "brecOn", "ctorIdx", "_impl")
         derived = [n for n in self.names("namespace N\nprivate inductive T | a | b deriving DecidableEq\nend N\n", local=True)]
-        self.assertIn("?maybe:N.instDecidableEqT", derived)  # a local type's instances may be public
-        self.assertIn("?maybe:N.instInhabitedA", self.names("namespace N\nprivate structure A where\n  x : Nat\n  deriving Inhabited\nend N\n"))
+        self.assertFalse([n for n in derived if "inst" in n], derived)  # the instances that `deriving` generates: not read
         self.assertIn("?gen:structure:N.S", self.names("namespace N\nstructure S extends (id Parent) where\nend N\n"))  # a term
         self.assertIn("?toproj:N.S", self.names("namespace N\nstructure S extends Alias where\nend N\n", eqns=True))  # maybe an alias
         bare = "namespace N\nemit_fixed\ntheorem t : True :=\ntrivial\nend N\n"
@@ -664,10 +709,116 @@ end N
 # --------------------------------------------------------------------------------------------------
 
 
+SELF_PATH = "scripts/queue/preflight.py"
+
+
 class FakeResponse(io.BytesIO):
     def __init__(self, body: bytes, link: str = ""):
         super().__init__(body)
         self.headers = {"Link": link} if link else {}
+
+
+class CheckCodeTests(unittest.TestCase):
+    def test_code_and_data(self):
+        for path in (".github/workflows/ci.yml", ".github/autoform-ref", ".github/actions/setup/action.yml",
+                     "scripts/check.sh", "scripts/bump/pinned_bump.py", "scripts/check_axioms.lean", "tools/verify.py",
+                     "scripts/requirements-inventory.txt", "requirements.txt", "pyproject.toml", "poetry.lock",
+                     "scripts/bump/pinned_deps.json", "scripts/suite.json", "policies/a.json", "lean-toolchain",
+                     "scripts/queue/fixtures/preflight/github_6650.json", "tools/lint", "v1/Atlas/targets.yaml",
+                     "blueprint/migrations/AlgebraNotes.json", "config/checks.list", "Makefile", "hooks/card_pages.py",
+                     "provenance/sync.py", "blueprint/roadmap/run.sh", "provenance/check.awk", "scripts/card-moves.d/0002",
+                     "blueprint/links/rules.cfg", "provenance/limits.txt", "provenance/record.schema.json",
+                     "blueprint/links/schema.json", "provenance/limits.json", "blueprint/links/_defaults.json",
+                     "blueprint/atlas.json", "blueprint/priorities.json",  # settings that scripts read
+                     "provenance/formal-math-sync.d/policy.json", "provenance/formal-math-sync.d/PhyslibExt.json",
+                     "provenance/formal-math-sync.d/Domains/A.json"):  # no shard the sync writes
+            self.assertTrue(preflight.is_check_code(path), path)  # unlisted, or code by its kind wherever it is
+        self.assertTrue(preflight.is_check_code("scripts/taxonomy.json", "100755"))  # runs, whatever its name
+        for path in ("provenance/.gitattributes", "blueprint/roadmap/.gitattributes", "blueprint/links/.gitignore"):
+            self.assertTrue(preflight.is_check_code(path), path)  # git's own configuration, wherever it is
+        self.assertTrue(preflight.is_check_code("lakefile.lean"))  # Lake's configuration, though written in Lean
+        for mode in ("120000", "160000", "100755"):  # a link, a submodule, an executable: no regular file
+            self.assertTrue(preflight.is_check_code("provenance/policy", mode), mode)
+        self.assertFalse(preflight.is_check_code("provenance/formal-math-sync.d/MathlibExt/x.json", "100644"))  # a regular record
+        for path in ("scripts/taxonomy.json", "scripts/wiki-sync.json", "scripts/mathgraph-map.jsonl",
+                     "provenance/formal-math-sync.json", "provenance/formal-math-sync.d/MathlibExt/Analysis.json",
+                     "blueprint/links/Analysis.jsonl", "blueprint/roadmap/A/README.md",
+                     "README.md", "docs/BUMPS.md", "MathlibExt/X.lean", "docs/teaching/examples/X.lean",
+                     "scripts/card-moves.jsonl", "scripts/card-moves.d/0001.jsonl", "NOTICE", "LICENSE",
+                     "provenance/x/source/MathlibExt/A.txt", "provenance/fa/cstar/files-01.jsonl",
+                     "provenance/fa/cstar/environment.json",
+                     "provenance/formal-math-sync.d/CSLibExt.json"):  # (a library's root modules)
+            self.assertFalse(preflight.is_check_code(path), path)
+        self.assertTrue(preflight.is_code_change("tools/lint", {"100755", "100644"}))  # a lost or gained bit
+        self.assertFalse(preflight.is_code_change("scripts/taxonomy.json", {"100644", "000000"}))
+        self.assertTrue(preflight.is_code_change("Makefile", {"000000", "000000"}))  # gone on both sides: by name
+
+    def test_what_the_data_guard_catches(self):
+        d = "provenance/formal-math-sync.d/MathlibExt"
+        blobs = {"one": '{"run": "x"}\r{"run": "y\u2028z\u0085w"}\r\n{"run": "v"}\n', "list": '{"limit": "normal.cfg"}', "plain": '["a.md"]',
+                 "up": '{"p": "./scripts/../scripts/check.py"}', "package": '{"bin": "provenance/sync.py"}',
+                 "link": '{"use": "provenance/policy"}'}
+        records = {"scripts/card-moves.d/a.jsonl": ["100644", "blob", "one"], "scripts/taxonomy.json": ["100644", "blob", "plain"],
+                   f"{d}/sel.json": ["100644", "blob", "list"], f"{d}/normal.cfg": ["100644", "blob", "n"],
+                   f"{d}/p.json": ["100644", "blob", "up"], "scripts/check.py": ["100644", "blob", "c"],
+                   "a.md": ["100644", "blob", "m"], f"{d}/package.json": ["100644", "blob", "package"],
+                   "provenance/sync.py": ["100644", "blob", "s"], f"{d}/limits.json": ["100644", "blob", "link"],
+                   "provenance/policy": ["120000", "blob", "p"]}
+        read = []
+        reader = lambda oid: read.append(oid) or blobs[oid]  # noqa: E731
+        self.assertEqual(data_naming_other_files(records, reader),
+                         {f"{d}/sel.json": [f"{d}/normal.cfg"],  # beside the file that names it
+                          f"{d}/limits.json": ["provenance/policy"],  # a link under data is no data
+                          f"{d}/p.json": ["scripts/check.py"]})  # however it is spelled; a manifest is code
+        self.assertIn("one", read)  # the JSONL file, read as JSONL
+        records[f"{d}/b.json"] = ["100644", "blob", "one"]  # the same bytes as a JSON file
+        read.clear()
+        with self.assertRaises(ValueError):  # read again as what that file is: two documents are no JSON
+            data_naming_other_files(records, reader)
+        self.assertEqual(read.count("one"), 2)
+
+    def test_the_repositorys_data_is_data(self):
+        """The files that change with nearly every merge on main are data, and the checkers that the
+        required workflows run are code, at this repository's own HEAD."""
+        root = Path(__file__).resolve().parents[2]
+        found = subprocess.run(["git", "-C", str(root), "ls-tree", "-r", "-z", "HEAD"], capture_output=True, text=True)
+        if found.returncode != 0 or not (root / ".github/workflows/ci.yml").exists():
+            self.skipTest("not in a checkout of the repository")
+        records = {r.split("\t", 1)[1]: r.split("\t", 1)[0].split() for r in found.stdout.split("\0") if "\t" in r}
+        modes = {path: record[0] for path, record in records.items()}
+        churning = [entry for entry in preflight.DATA if entry.startswith(  # the records that churn, as DATA lists them
+            ("scripts/taxonomy.json", "scripts/wiki-sync.json", "provenance/formal-math-sync.d/", "blueprint/links/"))]
+        hot = [path for path, mode in modes.items() if mode == "100644" and not preflight.is_code_kind(path, mode)
+               and any(preflight._layout(path.split("/"), entry.split("/")) for entry in churning)]  # (a shard
+        # named package.json is a manifest by its name: code, which a change to it shows by needing a hand check)
+        for layout in ("scripts/taxonomy.json", "provenance/formal-math-sync.d/", "blueprint/links/"):
+            self.assertTrue([path for path in hot if path.startswith(layout)], layout)  # the repository keeps them so
+        self.assertEqual([path for path in hot if preflight.is_check_code(path, modes[path])], [])
+        sync = subprocess.run(["git", "-C", str(root), "show", "HEAD:scripts/check_formal_math_sync.py"],
+                              capture_output=True, text=True, check=True).stdout
+        roots = next(ast.literal_eval(node.value) for node in ast.parse(sync).body if isinstance(node, ast.Assign)
+                     and [getattr(target, "id", None) for target in node.targets] == ["ROOTS"])
+        self.assertEqual(preflight._SYNC_ROOTS, roots)  # the shards that the sync writes, and no others
+        reader = subprocess.Popen(["git", "-C", str(root), "cat-file", "--batch"], stdin=subprocess.PIPE,
+                                  stdout=subprocess.PIPE)
+
+        def read(oid: str) -> str:  # one blob at a time: the blobs HEAD records, not the working copy
+            reader.stdin.write(f"{oid}\n".encode())
+            reader.stdin.flush()
+            size = int(reader.stdout.readline().split()[2])
+            text = reader.stdout.read(size).decode()
+            reader.stdout.read(1)
+            return text
+        self.assertIn("scripts/taxonomy.json", [path for path in modes if preflight.is_data(path)])
+        try:
+            self.assertEqual(data_naming_other_files(records, read), {})  # data names no file but data (see DATA)
+        finally:
+            reader.stdin.close()
+            reader.stdout.close()
+            reader.wait()
+        for checker in ("scripts/check.sh", "scripts/check_axioms.lean", "scripts/bump/pinned_bump.py", SELF_PATH):
+            if checker in modes:
+                self.assertTrue(preflight.is_check_code(checker, modes[checker]), checker)
 
 
 class GitHubReadTests(unittest.TestCase):
@@ -904,6 +1055,37 @@ class GitHubReadTests(unittest.TestCase):
         self.assertEqual(summary["legacy"]["conclusion"], "success")
         self.assertIn("graph sync", preflight.summarize_checks(runs, required, statuses)["advisory_failed"])
 
+    def test_a_finished_jobs_log_is_kept_and_its_run_read_again(self):
+        responses, logs = github_6650()
+        gh = FakeGitHub(responses, logs)
+        read = []
+        real = gh.read_log
+        gh.read_log = lambda job, pattern, max_bytes=0: read.append(job) or real(job, pattern, max_bytes)
+        cache = preflight.Cache()
+        first = preflight.ci_run(gh, self.runs, self.head, cache=cache)
+        first["base"], first["base_error"] = None, "rejected for this snapshot"  # what compute may do to it
+        calls = len(gh.calls)
+        again = preflight.ci_run(gh, self.runs, self.head, cache=cache)
+        self.assertEqual((again["base"], again["conclusion"], len(read)), ("5c77d5224cebd12e0808329f65611358b2a85d9a",
+                                                                          "success", 1))  # the log, read once
+        self.assertEqual([c for c in gh.calls[calls:] if "/actions/jobs/" in c], [])  # the job, kept
+        self.assertTrue(any("/actions/runs/" in c for c in gh.calls[calls:]))  # the run, read again
+        run = f"/repos/{REPO}/actions/runs/{self.fixture['run_id']}"
+        gh.responses[run] = dict(gh.responses[run], path=".github/workflows/other.yml")
+        self.assertIn("not .github/workflows/ci.yml", preflight.ci_run(gh, self.runs, self.head, cache=cache)["base_error"])
+
+    def test_a_log_without_its_merge_is_not_kept(self):
+        responses, logs = github_6650()
+        job = self.fixture["job_id"]
+        whole = logs[job]
+        logs[job] = "2026-11-23T16:06:10.0Z (the log is not complete yet)\n"
+        gh = FakeGitHub(responses, logs)
+        cache = preflight.Cache()
+        self.assertEqual(preflight.ci_run(gh, self.runs, self.head, cache=cache)["base_error"], "its log names no merge commit")
+        logs[job] = whole  # the whole log, later
+        self.assertEqual(preflight.ci_run(gh, self.runs, self.head, cache=cache)["base"],
+                         "5c77d5224cebd12e0808329f65611358b2a85d9a")
+
     def test_ci_base_from_the_checkout_log(self):
         responses, logs = github_6650()
         gh = FakeGitHub(responses, logs)
@@ -941,11 +1123,17 @@ class GitHubReadTests(unittest.TestCase):
                                                   (2, "pull_request", ".github/workflows/source-diagnostics.yml"),
                                                   (3, "pull_request_target", ".github/workflows/ci.yml"))})
 
-        def scoped(name: str, run: int, provenance=preflight.Provenance(gh, 6650, "main"), **changes) -> bool:
+        def scope(run: int, conclusion: str = "success") -> dict:  # the job that decided whether to build
+            return {"id": run * 10 + 1, "name": preflight.SCOPE_JOB, "app": actions, "status": "completed",
+                    "conclusion": conclusion, "details_url": f"https://github.com/{REPO}/actions/runs/{run}/job/{run * 10 + 1}"}
+
+        def scoped(name: str, run: int, provenance=preflight.Provenance(gh, 6650, "main"), decided="success",
+                   **changes) -> bool:
             check = dict({"id": run * 10, "name": name, "app": actions, "status": "completed", "conclusion": "skipped",
                           "details_url": f"https://github.com/{REPO}/actions/runs/{run}/job/{run * 10}"}, **changes)
             required = [{"context": name, "integration_id": preflight.ACTIONS_APP_ID}]
-            return bool(preflight.summarize_checks([check], required, [], provenance)["required"][0].get("scoped"))
+            runs = [check] + ([scope(run, decided)] if decided else [])
+            return bool(preflight.summarize_checks(runs, required, [], provenance)["required"][0].get("scoped"))
         self.assertTrue(scoped("build", 1))
         self.assertFalse(scoped("build", 1, conclusion="success"))  # not a skip
         self.assertFalse(scoped("repository integrity", 1))  # CI skips only build
@@ -953,6 +1141,21 @@ class GitHubReadTests(unittest.TestCase):
         self.assertFalse(scoped("build", 3))  # not a pull_request run
         self.assertFalse(scoped("build", 1, provenance=None))  # a run it does not read
         self.assertFalse(scoped("build", 1, app={"id": 99}))  # another app
+        self.assertFalse(scoped("build", 1, decided="cancelled"))  # cancelled before it decided
+        self.assertFalse(scoped("build", 1, decided=None))  # no job decided it
+        gh.responses[f"/repos/{REPO}/actions/runs/4"] = {"event": "pull_request", "path": ".github/workflows/ci.yml",
+                                                         "pull_requests": []}  # a fork's run lists no pull request
+        check = {"id": 40, "name": "build", "app": actions, "status": "completed", "conclusion": "skipped",
+                 "details_url": f"https://github.com/{REPO}/actions/runs/4/job/40"}
+        fork = preflight.summarize_checks([check, scope(4)], [{"context": "build", "integration_id": preflight.ACTIONS_APP_ID}],
+                                          [], preflight.Provenance(gh, 6650, "main"))["required"][0]
+        self.assertEqual((fork["provenance"], fork["scoped"]), ("unknown", True))  # untied, like a pass: not failed
+        facts = ready_facts()
+        facts["checks"]["required"][1] = fork
+        detail = preflight.evaluate(facts, NOW)["checks"]
+        detail = next(c for c in detail if c["name"] == "required checks")["detail"]
+        self.assertIn("cannot be tied", detail)
+        self.assertNotIn("failed", detail)
 
     def test_ci_base_from_the_scope_job_when_build_is_skipped(self):
         actions = {"id": preflight.ACTIONS_APP_ID}
@@ -970,6 +1173,14 @@ class GitHubReadTests(unittest.TestCase):
         logs = {52: f"2026-11-23T17:00:05Z HEAD is now at abcdef0 Merge {head} into {base}\n"}
         ci = preflight.ci_run(FakeGitHub(responses, logs), [build, scope], head, 7000, "main")
         self.assertEqual((ci["base"], ci["base_error"]), (base, None))
+        # Kept between runs: both jobs and the scope job's merge, read once; the run is read again.
+        gh, cache = FakeGitHub(responses, logs), preflight.Cache()
+        self.assertEqual(preflight.ci_run(gh, [build, scope], head, 7000, "main", cache=cache)["base"], base)
+        calls = len(gh.calls)
+        gh.logs = {}  # the log is not read again
+        self.assertEqual(preflight.ci_run(gh, [build, scope], head, 7000, "main", cache=cache)["base"], base)
+        self.assertEqual([c for c in gh.calls[calls:] if "/actions/jobs/" in c], [])
+        self.assertTrue(any("/actions/runs/5" in c for c in gh.calls[calls:]))
         # Another run's job, or a check run that points at another run's job, says nothing about this run.
         other = check(preflight.SCOPE_JOB, 6, 62, "success")
         self.assertIn(f"run 5 has no {preflight.SCOPE_JOB} job",
@@ -1068,6 +1279,39 @@ class GitHubReadTests(unittest.TestCase):
         steady = Pages([first, last])
         self.assertEqual(len(preflight.get_queue(steady, "main", 7000)["entries"]), 101)
         self.assertEqual(steady.calls, 4)  # two complete reads that agree
+        # The pull request itself is part of the snapshot: its head, base, state, draft status, mergeability,
+        # fork and own entry must be the same on every page of a read, and from one read to the next.
+        pull = {"headRefOid": "1" * 40, "baseRefName": "main", "state": "OPEN", "isDraft": False, "title": "t",
+                "id": "PR_x", "mergeable": "MERGEABLE", "mergeStateStatus": "BLOCKED", "changedFiles": 3,
+                "isCrossRepository": False, "headRepository": {"nameWithOwner": REPO}, "mergeQueueEntry": None}
+
+        def with_pull(page: dict, subject: dict | None = pull, **changes) -> dict:
+            page = copy.deepcopy(page)
+            page["data"]["repository"]["pullRequest"] = None if subject is None else dict(subject, **changes)
+            return page
+        steady = Pages([with_pull(first), with_pull(last)])
+        queue = preflight.get_queue(steady, "main", 7000)
+        self.assertEqual((queue["pull"]["headRefOid"], steady.calls), ("1" * 40, 4))
+        changes = {"headRefOid": "9" * 40, "baseRefName": "release", "state": "MERGED", "isDraft": True,
+                   "mergeable": "CONFLICTING", "mergeStateStatus": "DIRTY", "isCrossRepository": True,
+                   "headRepository": None, "mergeQueueEntry": {"position": 3, "state": "QUEUED"}}
+        for field, value in changes.items():
+            pages = Pages([with_pull(first), with_pull(last, **{field: value})])  # its second page, another state
+            with self.assertRaises(preflight.Failure, msg=field):
+                preflight.get_queue(pages, "main", 7000)
+            self.assertEqual(pages.calls, 10, field)  # five reads, each refused at its second page
+            pages = Pages([with_pull(first), with_pull(last), with_pull(first, **{field: value}),
+                           with_pull(last, **{field: value})])  # each read the same throughout, no two in a row alike
+            with self.assertRaises(preflight.Failure, msg=field):
+                preflight.get_queue(pages, "main", 7000)
+            settled = Pages([with_pull(first, **{field: value}), with_pull(last, **{field: value})])
+            if field != "mergeQueueEntry":  # (an entry the queue does not list is refused on its own)
+                self.assertEqual(preflight.get_queue(settled, "main", 7000)["pull"][field], value, field)
+        gone = Pages([with_pull(first), with_pull(last, subject=None)])  # no pull request on the second page
+        with self.assertRaises(preflight.Failure):
+            preflight.get_queue(gone, "main", 7000)
+        title = Pages([with_pull(first), with_pull(last, title="renamed")])  # what the verdict does not use
+        self.assertEqual(preflight.get_queue(title, "main", 7000)["pull"]["title"], "t")
 
     def test_queue_order_and_limits(self):
         gh = FakeGitHub({}, queue=queue_answer([(6645, "a" * 40), (6649, "b" * 40)]))
@@ -1076,6 +1320,127 @@ class GitHubReadTests(unittest.TestCase):
         self.assertIsNone(queue["own"])
         with self.assertRaises(preflight.Failure):
             preflight.get_queue(FakeGitHub({}, queue=queue_answer([(1, "a" * 40)], more=True)), "main", 2)
+
+    def test_the_pull_request_comes_with_the_queue(self):
+        pull = {"headRefOid": "1" * 40, "baseRefName": "main", "state": "OPEN", "isDraft": False, "title": "t",
+                "id": "PR_x", "mergeable": "MERGEABLE", "mergeStateStatus": "BLOCKED", "changedFiles": 3,
+                "isCrossRepository": False, "headRepository": {"nameWithOwner": REPO}}
+        facts = preflight.pull_facts(7000, REPO, pull)
+        self.assertEqual((facts["head"], facts["state"], facts["fork"], facts["mergeable"], facts["mergeable_state"],
+                          facts["changed_files"], facts["node_id"]),
+                         ("1" * 40, "open", False, True, "blocked", 3, "PR_x"))
+        self.assertTrue(preflight.pull_facts(7000, REPO, dict(pull, isCrossRepository=True))["fork"])
+        self.assertTrue(preflight.pull_facts(7000, REPO, dict(pull, headRepository=None))["fork"])  # a fork gone
+        self.assertEqual(preflight.pull_facts(7000, REPO, dict(pull, state="MERGED"))["state"], "merged")
+        self.assertIsNone(preflight.pull_facts(7000, REPO, dict(pull, mergeable="UNKNOWN"))["mergeable"])
+        with self.assertRaises(preflight.Failure):
+            preflight.pull_facts(7000, REPO, None)
+        answer = queue_answer([(6999, "2" * 40)])
+        answer["data"]["repository"]["pullRequest"].update(pull)
+        gh = FakeGitHub({}, queue=answer)
+        queue = preflight.get_queue(gh, "main", 7000)
+        self.assertEqual((gh.graphql_calls, queue["pull"]["headRefOid"]), (1, "1" * 40))  # one page: one request
+
+    def test_a_queue_page_that_contradicts_itself(self):
+        answer = queue_answer([(7000, "1" * 40), (6999, "2" * 40)])  # it lists the pull request, with no entry for it
+        with self.assertRaises(preflight.Failure):
+            preflight.get_queue(FakeGitHub({}, queue=answer), "main", 7000)
+        answer = queue_answer([(6999, "2" * 40)], own={"position": 2, "state": "QUEUED"})  # an entry, not listed
+        with self.assertRaises(preflight.Failure):
+            preflight.get_queue(FakeGitHub({}, queue=answer), "main", 7000)
+        self.assertEqual(preflight.get_queue(FakeGitHub({}, queue=queue_answer(
+            [(6999, "2" * 40), (7000, "1" * 40)], own={"position": 2, "state": "QUEUED"})), "main", 7000)["own"]["position"], 2)
+
+    def test_state_alone_reads_one_request(self):
+        rest = {"head": {"sha": "1" * 40, "repo": {"full_name": REPO}}, "base": {"ref": "main"}, "state": "open",
+                "mergeable": True, "mergeable_state": "clean", "number": 7000}
+        gh = FakeGitHub({f"/repos/{REPO}/pulls/7000": rest}, queue=queue_answer([(6999, "2" * 40)]))
+        git = preflight.Git(Path("/nonexistent/repo.git"), "https://example.invalid/x.git")  # never touched
+        facts = preflight.gather(gh, git, 7000, NOW, frozenset())
+        self.assertEqual((gh.calls, gh.graphql_calls), ([], 1))
+        self.assertEqual(preflight.evaluate(facts, NOW)["verdict"], "READY")
+
+    def test_a_queue_read_without_main(self):
+        rest = {"head": {"sha": "1" * 40, "repo": {"full_name": REPO}}, "base": {"ref": "main"}, "state": "open",
+                "mergeable": True, "mergeable_state": "clean", "number": 7000}
+        answer = queue_answer([(6999, "2" * 40)])
+        answer["data"]["repository"]["ref"] = None  # GitHub does not say which commit main is
+        gh = FakeGitHub({f"/repos/{REPO}/pulls/7000": rest}, queue=answer)
+        git = preflight.Git(Path("/nonexistent/repo.git"), "https://example.invalid/x.git")
+        with self.assertRaises(preflight.Failure):
+            preflight.gather(gh, git, 7000, NOW, frozenset({"conflicts"}))
+
+    def test_a_pull_request_queued_on_another_branch(self):
+        answer = queue_answer([(6999, "2" * 40)], own={"position": 1, "state": "QUEUED"})
+        answer["data"]["repository"]["pullRequest"]["baseRefName"] = "release"  # its entry is in release's queue
+        self.assertEqual(preflight.get_queue(FakeGitHub({}, queue=answer), "main", 7000)["own"]["position"], 1)
+
+    def test_runs_read_once_and_pages_up_to_a_stop(self):
+        gh = preflight.GitHub("t")
+        answers = iter([FakeResponse(b'{"id": 5}'), FakeResponse(b'{"n": 1}'), FakeResponse(b'{"n": 2}')])
+        with mock.patch.object(gh, "_open", side_effect=lambda *a: next(answers)) as sent:
+            self.assertEqual(gh.get(f"/repos/{REPO}/actions/runs/5"), {"id": 5})
+            self.assertEqual(gh.get(f"/repos/{REPO}/actions/runs/5"), {"id": 5})  # read once
+            gh.get(f"/repos/{REPO}/pulls/5")
+            gh.get(f"/repos/{REPO}/pulls/5")  # what may change is read again
+        self.assertEqual(sent.call_count, 3)
+        pages = iter([FakeResponse(b"[3]", '<https://api.github.com/next>; rel="next"'), FakeResponse(b"[1]")])
+        with mock.patch.object(gh, "_open", side_effect=lambda *a: next(pages)) as sent:
+            self.assertEqual(gh.paged("/x", stop=lambda page: min(page) < 2), [3, 1])
+            self.assertEqual(sent.call_count, 2)
+        pages = iter([FakeResponse(b"[1]", '<https://api.github.com/next>; rel="next"'), FakeResponse(b"[0]")])
+        with mock.patch.object(gh, "_open", side_effect=lambda *a: next(pages)) as sent:
+            self.assertEqual(gh.paged("/x", stop=lambda page: min(page) < 2), [1])  # far enough back after one
+            self.assertEqual(sent.call_count, 1)
+
+    def test_main_activity_is_read_back_only_as_far_as_the_oldest_run(self):
+        stops = []
+
+        class Activity(FakeGitHub):
+            def paged(self, path, key=None, max_pages=10, stop=None):
+                stops.append(stop)
+                return super().paged(path, key, max_pages, stop)
+        gh = Activity({f"/repos/{REPO}/actions/runs/1": {"path": ".github/workflows/ci.yml",
+                                                         "created_at": "2026-11-22T17:00:00Z"},  # too old to compare
+                       f"/repos/{REPO}/activity?ref=refs/heads/main&time_period=day": []})
+        required = [{"name": "build", "status": "completed", "conclusion": "success", "run": 1}]
+        preflight.stale_checks(gh, None, "4" * 40, required, preflight.Provenance(gh, 7000, "main"), now=NOW)
+        self.assertTrue(stops[0]([{"timestamp": "2026-11-22T16:59:59Z"}]))  # older than the run: enough
+        self.assertFalse(stops[0]([{"timestamp": "2026-11-22T17:00:00Z"}]))  # its own second may hold more
+
+    def test_rules_are_kept_a_few_minutes(self):
+        rules = [{"type": "required_status_checks", "parameters": {"required_status_checks": [
+            {"context": "build", "integration_id": 15368}]}}]
+        gh = FakeGitHub({f"/repos/{REPO}/rules/branches/main": rules})
+        cache = preflight.Cache()
+        first = preflight.get_required(gh, "main", cache)
+        self.assertEqual(preflight.get_required(gh, "main", cache), first)
+        self.assertEqual(len(gh.calls), 1)
+        cache.fresh = True  # before an enqueue: read again
+        preflight.get_required(gh, "main", cache)
+        self.assertEqual(len(gh.calls), 2)
+        cache.fresh = False
+        with mock.patch.object(preflight.time, "time", return_value=time.time() + preflight.RULES_TTL + 1):
+            preflight.get_required(gh, "main", cache)
+        self.assertEqual(len(gh.calls), 3)
+
+    def test_the_cache_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp, "repo.git.cache.json")
+            cache = preflight.Cache(path)
+            cache.put("size:a", 3)
+            cache.put("rules:x", [1], ttl=60)
+            cache.save()
+            again = preflight.Cache(path)
+            self.assertEqual((again.get("size:a"), again.get("rules:x"), again.get("other")), (3, [1], None))
+            with mock.patch.object(preflight.Cache, "LIMIT", 1):
+                again.put("size:b", 4)
+                again.save()
+            self.assertEqual(sorted(preflight.Cache(path).entries), ["size:b"])  # the oldest go first
+            path.write_text("{not json")
+            self.assertEqual(preflight.Cache(path).entries, {})  # unreadable: start empty
+            path.write_text(json.dumps({"version": 0, "entries": {"size:a": [0, 3]}}))
+            self.assertEqual(preflight.Cache(path).entries, {})  # another version: start empty
 
     def test_pagination_limit(self):
         gh = preflight.GitHub("t")
@@ -1307,7 +1672,7 @@ class GitTests(unittest.TestCase):
                                        {"number": 174, "position": 2, "head": ahead}]}, "check_workflows": [guard]}
         preflight.compute(self.git, facts, 175, head, main)
         self.assertEqual(facts["workflows_ahead"], [{"number": 176, "position": 1, "path": guard},
-                                                    {"number": 174, "position": 2, "path": guard}])
+                                                    {"number": 174, "position": 2, "path": guard}])  # (once #176 leaves)
         result = preflight.evaluate(dict(ready_facts(), workflows_ahead=facts["workflows_ahead"][1:]), NOW)
         freshness = next(c for c in result["checks"] if c["name"] == "freshness")
         self.assertIn(f"#174, queued at position 2, changes {guard}", " ".join(freshness["items"]))
@@ -1411,10 +1776,9 @@ class GitTests(unittest.TestCase):
         docs = r.pull(212, {"docs/a.md": "b\n"}, base=base)
         self.git.ensure()
         self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        self.assertEqual(preflight.workflow_roots(self.git, base, [ci]), ["scripts"])  # code it runs, not docs it reads
         for number, head, changed, own in ((210, script, ["scripts/check.sh"], False),
                                            (211, itself, [preflight.SELF], True), (212, docs, [], False)):
-            facts = {"base": "main", "ci": None, "queue": {"entries": []}, "check_workflows": [ci], "check_roots": ["scripts"]}
+            facts = {"base": "main", "ci": None, "queue": {"entries": []}, "check_workflows": [ci]}
             preflight.compute(self.git, facts, number, head, base)
             self.assertEqual((facts["changed_dependencies"], facts["changes_self"]), (changed, own), number)
         result = preflight.evaluate(dict(ready_facts(), changed_dependencies=["scripts/check.sh"], changes_self=True), NOW)
@@ -1429,82 +1793,24 @@ class GitTests(unittest.TestCase):
         guard = ".github/workflows/bump-guard.yml"
         ci = ".github/workflows/ci.yml"
         r.write({guard: WORKFLOWS[guard] + "    steps:\n      - run: python3 scripts/bump/pinned_bump.py\n",
-                 ci: WORKFLOWS[ci] + "    steps:\n      - run: scripts/check.sh\n",
-                 "scripts/bump/pinned_bump.py": "import helper\n", "scripts/bump/helper.py": "x = 1\n",
-                 "scripts/check.sh": "run scripts/test_scripts.sh\n", "scripts/test_scripts.sh": "true\n"})
+                 "scripts/bump/pinned_bump.py": "import helper\n", "scripts/bump/helper.py": "x = 1\n"})
         before = r.commit("Merge pull request #219 from x")
         r.write({"scripts/bump/helper.py": "x = 2\n"})
-        changed = r.commit("Merge pull request #220 from x")  # main changed what guard runs, through an import
+        changed = r.commit("Merge pull request #220 from x")  # main changed code, after one run started
+        r.write({"scripts/taxonomy.json": "{\"a\": 1}\n"})
+        data = r.commit("Merge pull request #221 from x")  # and data, after the other
         self.git.ensure()
         self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        self.assertEqual(preflight.workflow_code(self.git, changed, [guard]), ["scripts/bump/helper.py", "scripts/bump/pinned_bump.py"])
-        self.assertEqual(preflight.workflow_code(self.git, changed, [ci]), ["scripts/check.sh", "scripts/test_scripts.sh"])
-        activity = [{"timestamp": "2026-11-23T17:30:00Z", "before": before, "after": changed}]
+        activity = [{"timestamp": "2026-11-23T17:50:00Z", "before": changed, "after": data},
+                    {"timestamp": "2026-11-23T17:30:00Z", "before": before, "after": changed}]
         gh = FakeGitHub({f"/repos/{REPO}/activity?ref=refs/heads/main&time_period=day": activity,
                          f"/repos/{REPO}/actions/runs/1": {"path": guard, "created_at": "2026-11-23T17:00:00Z"},
                          f"/repos/{REPO}/actions/runs/2": {"path": ci, "created_at": "2026-11-23T17:45:00Z"}})
         provenance = preflight.Provenance(gh, 6650, "main")
         required = [{"name": "guard", "status": "completed", "conclusion": "success", "run": 1},
                     {"name": "build", "status": "completed", "conclusion": "success", "run": 2}]
-        code = {guard: preflight.workflow_code(self.git, changed, [guard]), ci: preflight.workflow_code(self.git, changed, [ci])}
-        stale = preflight.stale_checks(gh, self.git, changed, required, provenance, now=NOW, code_by_workflow=code)
-        self.assertEqual(stale, [{"name": "guard", "path": "scripts/bump/helper.py", "main": before}])  # a fresh build aside
-
-    def test_what_a_glob_or_a_discovery_selects(self):
-        r = self.remote
-        ci = ".github/workflows/ci.yml"
-        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: scripts/run.sh\n",
-                 "scripts/run.sh": "for f in scripts/checks/*.sh; do sh $f; done\n"
-                                   "python3 -m unittest discover -s \"$REPO_ROOT/scripts/tests\" -p 'test_*.py'\n",
-                 "scripts/checks/a.sh": "true\n", "scripts/checks/b.sh": "true\n", "scripts/tests/test_x.py": "pass\n"})
-        tested_base = r.commit("Merge pull request #224 from x")
-        head = r.pull(225, {"docs/c.md": "c\n"}, base=tested_base)
-        added = r.pull(226, {"scripts/checks/new.sh": "false\n"}, base=tested_base)  # a check that would also run
-        edited = r.pull(227, {"scripts/tests/test_x.py": "raise SystemExit(1)\n"}, base=tested_base)
-        git(r.path, "checkout", "-q", "main")
-        git(r.path, "rm", "-q", "scripts/checks/b.sh")
-        main = r.commit("Merge pull request #228 from x")  # main stops running b.sh after CI ran it
-        self.git.ensure()
-        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        code = preflight.workflow_code(self.git, main, [ci])
-        self.assertEqual(code, ["glob:scripts/checks/*.sh", "scripts/checks/a.sh", "scripts/run.sh", "scripts/tests/"])
-        facts = {"base": "main", "ci": {"base": tested_base, "created_at": "2026-11-23T16:00:00Z", "base_error": None},
-                 "queue": {"entries": [{"number": 226, "position": 1, "head": added}, {"number": 227, "position": 2, "head": edited}]},
-                 "check_workflows": [ci], "check_code": code, "check_roots": ["scripts"]}
-        preflight.compute(self.git, facts, 225, head, main)
-        self.assertEqual(facts["stale_workflows"], ["glob:scripts/checks/*.sh"])  # what the glob selects changed
-        self.assertEqual([(a["number"], a["path"]) for a in facts["workflows_ahead"]],
-                         [(226, "glob:scripts/checks/*.sh"), (227, "scripts/tests/")])
-        self.assertIn("?incomplete", preflight._code_closure(self.git, main, {"scripts/run.sh"}, limit=1))
-
-    def test_modes_and_the_paths_a_glob_selects(self):
-        r = self.remote
-        git(r.path, "config", "core.fileMode", "false")  # modes set in the index alone
-        ci = ".github/workflows/ci.yml"
-        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: scripts/check.sh\n",
-                 "scripts/check.sh": "for f in scripts/checks/*.sh; do sh $f; done\n", "scripts/checks/a.sh": "true\n",
-                 "scripts/checks/child/unselected.sh": "true\n"})
-        git(r.path, "update-index", "--chmod=+x", "scripts/check.sh")
-        base = r.commit("Merge pull request #232 from x")
-        head = r.pull(233, {"docs/d.md": "d\n"}, base=base)
-        git(r.path, "checkout", "-q", "--detach", base)
-        git(r.path, "update-index", "--chmod=-x", "scripts/check.sh")  # no longer executable: CI could not run it
-        mode = r.commit("pull 234")
-        git(r.path, "update-ref", "refs/pull/234/head", mode)
-        git(r.path, "checkout", "-q", "main")
-        accent = r.pull(235, {"scripts/checks/révision.sh": "false\n"}, base=base)  # the glob selects it
-        nested = r.pull(236, {"scripts/checks/child/unselected.sh": "false\n"}, base=base)  # the glob does not
-        self.git.ensure()
-        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        code = preflight.workflow_code(self.git, base, [ci])
-        self.assertEqual(code, ["glob:scripts/checks/*.sh", "scripts/check.sh", "scripts/checks/a.sh"])
-        facts = {"base": "main", "ci": {"base": base, "created_at": "2026-11-23T16:00:00Z", "base_error": None},
-                 "queue": {"entries": [{"number": 234, "position": 1, "head": mode}, {"number": 235, "position": 2, "head": accent},
-                                       {"number": 236, "position": 3, "head": nested}]},
-                 "check_workflows": [ci], "check_code": code, "check_roots": ["scripts"]}
-        preflight.compute(self.git, facts, 233, head, base)
-        self.assertEqual([(a["number"], a["path"]) for a in facts["workflows_ahead"]],
-                         [(234, "scripts/check.sh"), (235, "glob:scripts/checks/*.sh")])
+        stale = preflight.stale_checks(gh, self.git, data, required, provenance, now=NOW)
+        self.assertEqual(stale, [{"name": "guard", "path": "scripts/bump/helper.py", "main": before}])  # data aside
 
     @NEEDS_GIT_245
     def test_sizes_before_downloading(self):
@@ -1521,6 +1827,7 @@ class GitTests(unittest.TestCase):
             self.git.blobs(oids)
         self.assertFalse(any(present(o) for o in oids))  # refused before downloading
         self.git.size_oracle = lambda wanted: {o: 6 for o in wanted}
+        self.git.cache = preflight.Cache()  # a blob's size is kept: another size needs another cache
         with mock.patch.object(preflight, "MAX_BLOBS_BYTES", 10), self.assertRaisesRegex(preflight.Failure, "would add up"):
             self.git.blobs(oids)
         self.assertFalse(any(present(o) for o in oids))
@@ -1532,10 +1839,13 @@ class GitTests(unittest.TestCase):
                 self.git.prefetch({two})  # 12 over two requests: refused before the second
         self.assertEqual((present(one), present(two)), (True, False))
         self.git.size_oracle = lambda wanted: {}  # a size GitHub does not report: not downloaded
+        self.git.cache = preflight.Cache()
         self.git.prefetch({two})
         self.assertFalse(present(two))
-        self.git.size_oracle = lambda wanted: {o: 6 for o in wanted}
+        asked = []
+        self.git.size_oracle = lambda wanted: asked.extend(wanted) or {o: 6 for o in wanted}
         self.assertEqual(sorted(self.git.blobs(oids).values()), ["def big1 := 1\n", "def big2 := 2\n"])
+        self.assertEqual(asked, [two])  # one's size was known already: a blob's size is asked once
 
     @NEEDS_GIT_245
     def test_a_merge_downloads_only_what_it_admits(self):
@@ -1549,6 +1859,7 @@ class GitTests(unittest.TestCase):
         sides = {self.git.out("rev-parse", f"{c}:MathlibExt/A.lean") for c in (left, right)}
         self.assertFalse(any(self.git.present(o) for o in sides))
         self.git.size_oracle = lambda wanted: {o: 50 for o in wanted}
+        self.git.cache = preflight.Cache()  # a blob's size is kept: another size needs another cache
         self.assertTrue(self.git.merge_tree(left, right)["clean"])  # admitted by size, then merged
 
     @NEEDS_GIT_245
@@ -1588,168 +1899,309 @@ class GitTests(unittest.TestCase):
                 self.assertRaisesRegex(preflight.Failure, "gitattributes"):
             cold.merge_tree(ours, theirs)  # an attribute file both sides change is a side too: still refused
 
-    def test_files_the_checks_read(self):
+    def test_data_the_checks_read_needs_no_maintainer(self):
         r = self.remote
         ci = ".github/workflows/ci.yml"
-        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: python3 scripts/inv.py scripts/requirements.txt\n",
-                 "scripts/inv.py": "open('scripts/pins.json')\n", "scripts/requirements.txt": "a\n", "scripts/pins.json": "{}\n"})
-        tested_base = r.commit("Merge pull request #252 from x")
-        head = r.pull(253, {"docs/e.md": "e\n"}, base=tested_base)
-        ahead = r.pull(254, {"scripts/pins.json": "{\"x\": 1}\n"}, base=tested_base)  # a queued PR changes what it reads
+        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: python3 scripts/graph_check.py\n",
+                 "scripts/graph_check.py": "open('scripts/taxonomy.json')\n", "scripts/taxonomy.json": "{}\n"})
+        base = r.commit("Merge pull request #289 from x")
+        proof = r.pull(290, {"scripts/taxonomy.json": "{\"key\": 1}\n", "MathlibExt/P.lean": "def p := 1\n",
+                             "provenance/formal-math-sync.d/MathlibExt/P.json": "[]\n", "blueprint/links/P.jsonl": "{}\n",
+                             "blueprint/roadmap/P/README.md": "p\n"}, base=base)
+        checker = r.pull(291, {"scripts/graph_check.py": "pass\n"}, base=base)
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
+        for number, head, changed in ((290, proof, []), (291, checker, ["scripts/graph_check.py"])):
+            facts = {"base": "main", "ci": None, "queue": {"entries": []}, "check_workflows": [ci]}
+            preflight.compute(self.git, facts, number, head, base)
+            self.assertEqual(facts["changed_dependencies"], changed, number)  # a proof's taxonomy key is content
+
+    def test_everything_that_is_not_data_counts(self):
+        r = self.remote
+        git(r.path, "config", "core.fileMode", "false")  # modes set in the index alone
+        ci = ".github/workflows/ci.yml"
+        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - uses: ./.github/actions/outer\n",
+                 ".github/actions/outer/action.yml": "runs:\n  using: composite\n", "Makefile": "check:\n",
+                 "scripts/queue/fixtures/x.json": "{}\n", "config/checks.list": "validation/verify.py\n",
+                 "requirements.txt": "PyYAML==6.0.2\n", "scripts/taxonomy.json": "{}\n"})
+        base = r.commit("Merge pull request #297 from x")
+        cases = [(298, {"scripts/queue/fixtures/x.json": "{\"y\": 1}\n"}, ["scripts/queue/fixtures/x.json"]),
+                 (299, {"Makefile": "check:\n\ttrue\n"}, ["Makefile"]),
+                 (300, {".github/actions/nested/action.yml": "runs:\n  using: composite\n"},
+                  [".github/actions/nested/action.yml"]),
+                 (301, {"config/checks.list": "validation/other.py\n"}, ["config/checks.list"]),
+                 (302, {"requirements.txt": "PyYAML==6.0.3\n"}, ["requirements.txt"]),
+                 (303, {"scripts/taxonomy.json": "{\"a\": 1}\n", "docs/z.md": "z\n"}, [])]
+        heads = {number: r.pull(number, files, base=base) for number, files, _ in cases}
+        git(r.path, "checkout", "-q", "--detach", base)
+        git(r.path, "update-index", "--chmod=+x", "scripts/taxonomy.json")
+        heads[304] = r.commit("pull 304")  # data made executable
+        git(r.path, "update-ref", "refs/pull/304/head", heads[304])
         git(r.path, "checkout", "-q", "main")
-        r.write({"scripts/requirements.txt": "b\n"})
-        main = r.commit("Merge pull request #255 from x")  # main changed a list the check reads, after CI
         self.git.ensure()
         self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        code = preflight.workflow_code(self.git, main, [ci])
-        self.assertEqual(code, ["scripts/inv.py", "scripts/pins.json", "scripts/requirements.txt"])
-        self.assertEqual(preflight.code_roots(code), ["scripts"])
-        facts = {"base": "main", "ci": {"base": tested_base, "created_at": "2026-11-23T16:00:00Z", "base_error": None},
-                 "queue": {"entries": [{"number": 254, "position": 1, "head": ahead}]}, "check_workflows": [ci],
-                 "check_code": code, "check_roots": ["scripts"]}
-        preflight.compute(self.git, facts, 253, head, main)
-        self.assertEqual(facts["stale_workflows"], ["scripts/requirements.txt"])
-        self.assertEqual([(a["number"], a["path"]) for a in facts["workflows_ahead"]], [(254, "scripts/pins.json")])
+        for number, _, changed in cases + [(304, None, ["scripts/taxonomy.json"])]:
+            facts = {"base": "main", "ci": None, "queue": {"entries": []}, "check_workflows": [ci]}
+            preflight.compute(self.git, facts, number, heads[number], base)
+            self.assertEqual(facts["changed_dependencies"], changed, number)
 
-    def test_inputs_main_lacks_and_data_globs(self):
+    def test_duplicates_need_the_main_its_ci_built_on(self):
         r = self.remote
-        ci = ".github/workflows/ci.yml"
-        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: python3 scripts/pol.py\n",
-                 "scripts/pol.py": "open('data/optional.txt')\nopen('data/gone.txt')\nglob('policies/*.json')\n",
-                 "data/gone.txt": "g\n", "policies/a.json": "{}\n"})
-        tested_base = r.commit("Merge pull request #256 from x")
-        head = r.pull(257, {"docs/f.md": "f\n"}, base=tested_base)
-        added = r.pull(258, {"data/optional.txt": "o\n"}, base=tested_base)  # a named input, absent until now
-        edited = r.pull(259, {"policies/a.json": "{\"y\": 2}\n"}, base=tested_base)  # one the glob selects
+        r.write({"MathlibExt/Existing.lean": "namespace N\ndef reviewClash := 1\nend N\n"})
+        point = r.commit("Merge pull request #305 from x")
+        head = r.pull(306, {"MathlibExt/New.lean": "namespace N\ndef reviewClash := 2\nend N\n"}, base=point)
         git(r.path, "checkout", "-q", "main")
-        git(r.path, "rm", "-q", "data/gone.txt")
-        main = r.commit("Merge pull request #260 from x")  # main removed an input the check read during CI
+        r.write({"MathlibExt/Existing.lean": "namespace N\nend N\n"})
+        tested = r.commit("Merge pull request #307 from x")  # main removes it, and CI runs on that main...
+        r.write({"MathlibExt/Existing.lean": "namespace N\ndef reviewClash := 1\nend N\n"})
+        main = r.commit("Merge pull request #308 from x")  # ...then main puts it back as it was
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main", "+refs/pull/306/head:refs/preflight/pr/306"])
+        facts = {"base": "main", "queue": {"entries": []},
+                 "ci": {"base": tested, "base_error": None, "created_at": "2026-11-23T16:00:00Z", "conclusion": "success"}}
+        preflight.compute(self.git, facts, 306, head, main, frozenset({"duplicates"}))
+        self.assertEqual([d["name"] for d in facts["duplicates"]["found"]], ["N.reviewClash"])
+        failed = {"base": "main", "queue": {"entries": []},  # its build failed: the names it built may clash
+                  "ci": {"base": tested, "base_error": None, "created_at": "2026-11-23T16:00:00Z", "conclusion": "failure"}}
+        preflight.compute(self.git, failed, 306, head, main, frozenset({"duplicates"}))
+        self.assertEqual(failed["duplicates"]["ci_unknown"], "its CI build has not passed")
+        unknown = {"base": "main", "ci": None, "queue": {"entries": []}}  # without its CI run it cannot tell
+        preflight.compute(self.git, unknown, 306, head, main, frozenset({"duplicates"}))
+        self.assertTrue(unknown["duplicates"]["ci_unknown"])
+        result = preflight.evaluate(dict(ready_facts(only=["duplicates"]), duplicates=unknown["duplicates"]), NOW)
+        self.assertFalse(result["ready"])
+        self.assertIn("names its CI built", result["checks"][-1]["items"][-1])
+
+    def test_a_merge_cached_under_another_configuration_is_redone(self):
+        r = self.remote
+        left = r.pull(309, {"MathlibExt/C1.lean": "def c1 := 1\n"})
+        right = r.pull(310, {"MathlibExt/C2.lean": "def c2 := 2\n"})
+        self.fetch(309, 310)
+        first = self.git.merge_tree(left, right)
+        included = self.git.dir / "extra.config"
+        included.write_text("[merge]\n\tconflictStyle = merge\n")
+        with open(self.git.dir / "config", "a") as config:
+            config.write(f"[include]\n\tpath = {included}\n")
+        including = preflight.Git(self.git.dir, self.git.url)
+        including.cache = self.git.cache
+        including.merge_tree(left, right)  # kept under the configuration as it includes that file
+        other = preflight.Git(self.git.dir, self.git.url)
+        other.cache = self.git.cache
+        included.write_text("[merge]\n\tconflictStyle = diff3\n")  # only a file that the configuration includes
+        merges = []
+        real = other.run
+        with mock.patch.object(other, "run", side_effect=lambda *a, **k: (merges.append(a) if "merge-tree" in a else None)
+                               or real(*a, **k)):
+            self.assertEqual(other.merge_tree(left, right)["tree"], first["tree"])
+        self.assertEqual(len(merges), 1)  # another configuration: merged again, not taken from the cache
+
+    def test_what_main_and_the_queue_change(self):
+        r = self.remote
+        git(r.path, "config", "core.fileMode", "false")  # modes set in the index alone
+        ci = ".github/workflows/ci.yml"
+        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: make check\n", "tools/lint": "#!/bin/sh\ntrue\n",
+                 "Makefile": "check:\n", "scripts/queue/fixtures/x.json": "{}\n", "scripts/taxonomy.json": "{}\n"})
+        git(r.path, "update-index", "--chmod=+x", "tools/lint")
+        tested = r.commit("Merge pull request #315 from x")
+        head = r.pull(316, {"MathlibExt/H.lean": "def h := 1\n"}, base=tested)
+        makefile = r.pull(317, {"Makefile": "check:\n\ttrue\n"}, base=tested)
+        links = r.pull(318, {"blueprint/links/X.jsonl": "{}\n", "scripts/taxonomy.json": "{\"q\": 1}\n"}, base=tested)
+        git(r.path, "checkout", "-q", "main")
+        r.write({"scripts/queue/fixtures/x.json": "{\"y\": 1}\n", "scripts/taxonomy.json": "{\"m\": 1}\n",
+                 "provenance/formal-math-sync.d/MathlibExt/P.json": "[]\n"})
+        git(r.path, "update-index", "--chmod=-x", "tools/lint")
+        main = r.commit("Merge pull request #319 from x")  # after CI: a fixture, a lost bit, and data
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main", "+refs/pull/317/head:refs/preflight/pr/317",
+                        "+refs/pull/318/head:refs/preflight/pr/318"])
+        facts = {"base": "main", "ci": {"base": tested, "created_at": "2026-11-23T16:00:00Z", "base_error": None},
+                 "queue": {"entries": [{"number": 317, "position": 1, "head": makefile},
+                                       {"number": 318, "position": 2, "head": links}]}, "check_workflows": [ci]}
+        preflight.compute(self.git, facts, 316, head, main)
+        self.assertEqual(facts["stale_workflows"], ["scripts/queue/fixtures/x.json", "tools/lint"])  # not the data
+        self.assertEqual([(a["number"], a["path"]) for a in facts["workflows_ahead"]], [(317, "Makefile")])
+        self.assertEqual(facts["changed_dependencies"], [])  # a Lean module is data
+
+    def test_its_own_file_changed_by_main_since_ci(self):
+        r = self.remote
+        r.write({"scripts/x.py": "lo = 0\nmid = 1\nhi = 12\n"})
+        tested = r.commit("Merge pull request #360 from x")
+        head = r.pull(361, {"scripts/x.py": "lo = 0\nmid = 1\nhi = 13\n"}, base=tested)
+        git(r.path, "checkout", "-q", "main")
+        r.write({"scripts/x.py": "lo = 1\nmid = 1\nhi = 12\n"})
+        main = r.commit("Merge pull request #362 from x")  # another line of the same file, after CI
         self.git.ensure()
         self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        code = preflight.workflow_code(self.git, main, [ci])
-        self.assertEqual(code, ["data/gone.txt", "data/optional.txt", "glob:policies/*.json", "policies/a.json", "scripts/pol.py"])
-        self.assertEqual(preflight.code_roots(code), ["scripts"])  # inputs count for freshness, not for review
-        facts = {"base": "main", "ci": {"base": tested_base, "created_at": "2026-11-23T16:00:00Z", "base_error": None},
-                 "queue": {"entries": [{"number": 258, "position": 1, "head": added}, {"number": 259, "position": 2, "head": edited}]},
-                 "check_workflows": [ci], "check_code": code, "check_roots": ["scripts"]}
-        preflight.compute(self.git, facts, 257, head, main)
-        self.assertEqual(facts["stale_workflows"], ["data/gone.txt"])
-        self.assertEqual([(a["number"], a["path"]) for a in facts["workflows_ahead"]],
-                         [(258, "data/optional.txt"), (259, "glob:policies/*.json"), (259, "policies/a.json")])
-        self.assertIn("?incomplete", preflight._code_closure(self.git, main, {"scripts/pol.py"}, limit=2))  # reads count
+        facts = {"base": "main", "ci": {"base": tested, "created_at": "2026-11-23T16:00:00Z", "base_error": None},
+                 "queue": {"entries": []}, "check_workflows": []}
+        preflight.compute(self.git, facts, 361, head, main)
+        self.assertEqual((facts["changed_dependencies"], facts["stale_workflows"]), (["scripts/x.py"], ["scripts/x.py"]))
 
-    def test_new_checkers_and_new_directories(self):
+    def test_each_merge_the_queue_makes(self):
+        r = self.remote
+        r.write({"scripts/check.py": "v1\n"})
+        base = r.commit("Merge pull request #370 from x")
+        change = r.pull(371, {"scripts/check.py": "v2\n"}, base=base)
+        restore = r.pull(372, {"scripts/check.py": "v1\n"}, base=change)  # puts it back, after #371
+        same = r.pull(373, {"scripts/check.py": "v2\n"}, base=base)  # the same edit as #371
+        head = r.pull(374, {"docs/m.md": "m\n"}, base=base)
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main"] +
+                       [f"+refs/pull/{n}/head:refs/preflight/pr/{n}" for n in (371, 372, 373)])
+        for queue, ahead in (([(371, change), (372, restore)], [(371, "scripts/check.py"), (372, "scripts/check.py")]),
+                             ([(371, change), (373, same)], [(371, "scripts/check.py")])):
+            facts = {"base": "main", "ci": None, "check_workflows": [],
+                     "queue": {"entries": [{"number": n, "position": i + 1, "head": h} for i, (n, h) in enumerate(queue)]}}
+            preflight.compute(self.git, facts, 374, head, base)
+            self.assertEqual([(a["number"], a["path"]) for a in facts["workflows_ahead"]], ahead)
+
+    def test_each_merge_of_a_queue_it_may_form_instead(self):
+        r = self.remote
+        r.write({"scripts/check.py": "v1\n", "scripts/taxonomy.json": "a\n"})
+        base = r.commit("Merge pull request #375 from x")
+        first = r.pull(376, {"scripts/taxonomy.json": "b\n"}, base=base)
+        change = r.pull(377, {"scripts/taxonomy.json": "c\n", "scripts/check.py": "v2\n"}, base=base)  # conflicts with #376
+        restore = r.pull(378, {"scripts/check.py": "v1\n"}, base=change)  # puts the checker back
+        head = r.pull(379, {"docs/n.md": "n\n"}, base=base)
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main"] +
+                       [f"+refs/pull/{n}/head:refs/preflight/pr/{n}" for n in (376, 377, 378)])
+        facts = {"base": "main", "ci": None, "check_workflows": [],
+                 "queue": {"entries": [{"number": 376, "position": 1, "head": first},
+                                       {"number": 377, "position": 2, "head": change},
+                                       {"number": 378, "position": 3, "head": restore}]}}
+        preflight.compute(self.git, facts, 379, head, base)
+        self.assertEqual(sorted((a["number"], a["path"]) for a in facts["workflows_ahead"]),
+                         [(377, "scripts/check.py"), (378, "scripts/check.py")])  # in the queue without #376
+        clash = r.pull(380, {"scripts/taxonomy.json": "d\n"}, base=base)  # conflicts with that queue too
+        facts = dict(facts, queue=dict(facts["queue"]))
+        preflight.compute(self.git, facts, 380, clash, base)
+        self.assertIn((377, "scripts/check.py"), [(a["number"], a["path"]) for a in facts["workflows_ahead"]])
+
+    def test_an_entry_the_queue_removes_changes_nothing_ahead(self):
+        r = self.remote
+        r.write({"scripts/check.sh": "a\n"})
+        base = r.commit("Merge pull request #363 from x")
+        blocked = r.pull(364, {"scripts/check.sh": "b\n"}, base=base)
+        git(r.path, "checkout", "-q", "main")
+        r.write({"scripts/check.sh": "c\n"})
+        main = r.commit("Merge pull request #365 from x")  # #364 no longer merges: the queue removes it
+        head = r.pull(366, {"docs/k.md": "k\n"}, base=main)
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main", "+refs/pull/364/head:refs/preflight/pr/364"])
+        facts = {"base": "main", "ci": None, "queue": {"entries": [{"number": 364, "position": 1, "head": blocked}]},
+                 "check_workflows": []}
+        preflight.compute(self.git, facts, 366, head, main)
+        self.assertEqual(facts["workflows_ahead"], [])
+
+    def test_code_that_only_the_merge_makes(self):
+        r = self.remote
+        r.write({"scripts/check.sh": "pass\n"})
+        base = r.commit("Merge pull request #367 from x")
+        head = r.pull(368, {"docs/l.md": "l\n"}, base=base)
+        other = r.pull(369, {"scripts/check.sh": "fail\n"}, base=base)  # a tree with another version of the checker
+        self.git.ensure()
+        self.git.fetch(["+refs/heads/main:refs/preflight/main", "+refs/pull/369/head:refs/preflight/pr/369"])
+        merged = self.git.merge_tree(base, head)
+        odd = self.git.merge_tree(other, head)["tree"]  # stands for git restoring an older checker on the queue
+        simulation = {"main": merged, "tip": base, "entries": [], "pin_changes_ahead": [],
+                      "candidate": {"clean": True, "tree": odd, "alternatives": {}}}
+        facts = {"base": "main", "ci": None, "queue": {"entries": []}, "check_workflows": []}
+        with mock.patch.object(preflight, "simulate", return_value=simulation), \
+                mock.patch.object(preflight, "find_duplicates", return_value={}):
+            preflight.compute(self.git, facts, 368, head, base)
+        self.assertEqual(facts["merge_code"], ["scripts/check.sh"])
+        result = preflight.evaluate(dict(ready_facts(), merge_code=facts["merge_code"]), NOW)
+        freshness = next(c for c in result["checks"] if c["name"] == "freshness")
+        self.assertIn("a version of scripts/check.sh that neither it, main nor the queue has", " ".join(freshness["items"]))
+
+    def test_its_own_change_counts_when_main_made_it_too(self):
         r = self.remote
         ci = ".github/workflows/ci.yml"
-        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: python3 scripts/run2.py\n",
-                 "scripts/run2.py": "if exists('tools/extra_validation.py'): run('tools/extra_validation.py')\nglob('policies2/*.json')\n"})
-        base = r.commit("Merge pull request #261 from x")
-        checker = r.pull(262, {"tools/extra_validation.py": "raise SystemExit(0)\n"}, base=base)  # a checker it runs, new
-        policy = r.pull(263, {"policies2/one.json": "{}\n"}, base=base)  # the glob's first match, in a new directory
-        head = r.pull(264, {"docs/g.md": "g\n"}, base=base)
+        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: python3 scripts/check.py\n", "scripts/check.py": "pass\n"})
+        base = r.commit("Merge pull request #325 from x")
+        edit = r.pull(327, {"scripts/check.py": "print(1)\n"}, base=base)
+        git(r.path, "checkout", "-q", "main")
+        r.write({"scripts/check.py": "print(1)\n"})
+        main = r.commit("Merge pull request #328 from x")  # main makes the same change as #327
         self.git.ensure()
         self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        code = preflight.workflow_code(self.git, base, [ci])
-        self.assertEqual(code, ["glob:policies2/*.json", "scripts/run2.py", "tools/extra_validation.py"])
-        facts = {"base": "main", "ci": None, "queue": {"entries": []}, "check_workflows": [ci], "check_code": code,
-                 "check_roots": preflight.code_roots(code, lambda e: preflight.code_signature(self.git, base, e) is not None)}
-        preflight.compute(self.git, facts, 262, checker, base)
-        self.assertEqual(facts["changed_dependencies"], ["tools/extra_validation.py"])  # a maintainer reviews it
-        facts = {"base": "main", "ci": None, "queue": {"entries": [{"number": 263, "position": 1, "head": policy}]},
-                 "check_workflows": [ci], "check_code": code, "check_roots": ["scripts"]}
-        preflight.compute(self.git, facts, 264, head, base)
-        self.assertEqual([(a["number"], a["path"]) for a in facts["workflows_ahead"]], [(263, "glob:policies2/*.json")])
+        facts = {"base": "main", "ci": None, "queue": {"entries": []}, "check_workflows": [ci]}
+        preflight.compute(self.git, facts, 327, edit, main)
+        self.assertEqual(facts["changed_dependencies"], ["scripts/check.py"])  # its runs used its own copy
 
-    def test_signatures_keep_little(self):
+    def test_its_own_change_to_a_workflow_and_to_a_mode(self):
         r = self.remote
-        heads = [r.pull(265 + i, {f"docs/h{i}.md": f"{i}\n"}) for i in range(4)]
-        self.fetch(*range(265, 269))
-        self.git.watched = frozenset({"docs/h0.md", "glob:docs/*.md"})
-        for h in heads:
-            preflight.code_signature(self.git, h, "docs/h0.md")
-        self.assertLessEqual(len(self.git.listings), 2)  # whole listings: the last two only
-        self.assertEqual(set(self.git.signatures[heads[0]]), {"docs/h0.md", "glob:docs/*.md"})  # watched entries only
-
-    @NEEDS_GIT_245
-    def test_a_file_over_the_blob_limit_is_an_input_not_followed(self):
-        r = self.remote
-        big = "#" * 300
-        r.write({"scripts/g.py": "open('scripts/map.json')\n", "scripts/map.json": '["scripts/named.py"]' + " " * 300,
-                 "scripts/named.py": "pass\n", "scripts/h.py": "run('scripts/big.py')\nopen('scripts/same.txt')\n",
-                 "scripts/big.py": big, "scripts/same.txt": big,  # one blob under two names
-                 ".github/actions/a/action.yml": "runs:\n  using: composite\n" + "#" * 300})
-        main = r.commit("Merge pull request #380 from x")
-        self.git.ensure()
-        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        sizes = lambda oids: {o: int(git(r.path, "cat-file", "-s", o)) for o in oids}  # noqa: E731  as GitHub reports
-        self.git.size_oracle = sizes
-        self.assertIn("scripts/named.py", preflight._code_closure(self.git, main, {"scripts/g.py"}))
-        cold = preflight.Git(Path(self.tmp.name) / "cold" / "repo.git", self.git.url)  # nothing downloaded yet
-        cold.ensure()
-        cold.fetch(["+refs/heads/main:refs/preflight/main"])
-        cold.size_oracle = sizes
-        with mock.patch.object(preflight, "MAX_BLOB_BYTES", 200):  # the map has grown past what preflight reads
-            code = preflight._code_closure(cold, main, {"scripts/g.py"})
-            self.assertIn("scripts/map.json", code)  # still an input: its changes count
-            self.assertNotIn("scripts/named.py", code)  # but it is not opened
-            self.assertNotIn("?incomplete", code)
-            unread = git(r.path, "rev-parse", f"{main}:scripts/map.json")
-            self.assertFalse(cold.present(unread))  # nor downloaded
-            for start in ({"scripts/h.py"}, {".github/actions/a/action.yml"}):
-                with self.assertRaises(preflight.Failure):  # a script, or an action that large, is not skipped
-                    preflight._code_closure(self.git, main, start)
-
-    def test_the_repositorys_own_checks_can_be_followed(self):
-        """The code and inputs of this repository's required workflows, at its own HEAD, stay within the
-        limit: an incomplete closure would make every pull request NOT READY."""
-        root = Path(__file__).resolve().parents[2]
-        found = subprocess.run(["git", "-C", str(root), "rev-parse", "--absolute-git-dir"], capture_output=True, text=True)
-        workflows = [w for w in (".github/workflows/ci.yml", ".github/workflows/bump-guard.yml",
-                                 ".github/workflows/source-diagnostics.yml") if (root / w).exists()]
-        if found.returncode != 0 or not workflows:
-            self.skipTest("not in a checkout of the repository")
-        own = preflight.Git(Path(found.stdout.strip()), "https://github.com/facebookresearch/atlas-lean.git")
-        head = own.out("rev-parse", "HEAD")
-        for workflow in workflows:
-            code = preflight.workflow_code(own, head, [workflow])
-            self.assertNotIn("?incomplete", code, workflow)
-            self.assertLess(len(code), 300, workflow)
-            named = (root / workflow).read_text()  # a module the workflow names itself is its input; others are not
-            self.assertFalse([c for c in code if c.endswith(".lean") and c.split("/", 1)[0] in preflight.LIBRARIES
-                              and c not in named], workflow)
-        # The paths that scripts/ci_scope.py and its test name are rules and examples, not inputs (NAMES_ONLY).
-        self.assertEqual(preflight._code_closure(own, head, {"scripts/test_ci_scope.py"}),
-                         {"scripts/test_ci_scope.py", "scripts/ci_scope.py"})
-
-    def test_a_script_that_only_names_paths(self):
-        r = self.remote
+        git(r.path, "config", "core.fileMode", "false")
         ci = ".github/workflows/ci.yml"
-        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: python3 -I scripts/ci_scope.py x\n"
-                                     "      - run: python3 scripts/other.py\n",
-                 "scripts/ci_scope.py": "import sys\nimport helper\nDATA = {'scripts/data.json'}\n",
-                 "scripts/helper.py": "x = 1\n", "scripts/other.py": "open('scripts/read.json')\n",
-                 "scripts/data.json": "{}\n", "scripts/read.json": "{}\n"})
-        base = r.commit("Merge pull request #300 from x")
+        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: tools/lint\n", "tools/lint": "#!/bin/sh\ntrue\n"})
+        git(r.path, "update-index", "--chmod=+x", "tools/lint")
+        base = r.commit("Merge pull request #340 from x")
+        workflow = r.pull(341, {ci: WORKFLOWS[ci] + "    steps:\n      - run: tools/lint --strict\n"}, base=base)
+        git(r.path, "checkout", "-q", "--detach", base)
+        r.write({"tools/lint": "#!/bin/sh\nfalse\n"})
+        git(r.path, "update-index", "--chmod=-x", "tools/lint")
+        both = r.commit("pull 342")  # its text and its mode
+        git(r.path, "update-ref", "refs/pull/342/head", both)
+        git(r.path, "checkout", "-q", "main")
+        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - run: tools/lint --strict\n"})
+        git(r.path, "update-index", "--chmod=-x", "tools/lint")
+        main = r.commit("Merge pull request #343 from x")  # main makes #341's change and drops the bit too
         self.git.ensure()
         self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        code = preflight.workflow_code(self.git, base, [ci])
-        self.assertTrue({"scripts/ci_scope.py", "scripts/helper.py", "scripts/other.py", "scripts/read.json"} <= set(code),
-                        code)  # its imports are followed, and another script's names still count
-        self.assertNotIn("scripts/data.json", code)
+        for number, head, changed in ((341, workflow, "changed_workflows"), (342, both, "changed_dependencies")):
+            facts = {"base": "main", "ci": None, "queue": {"entries": []}, "check_workflows": [ci]}
+            preflight.compute(self.git, facts, number, head, main)
+            self.assertEqual(facts[changed], [ci] if number == 341 else ["tools/lint"], number)
 
-    def test_a_local_action(self):
+    def test_generated_names_alone_need_a_passing_build(self):
         r = self.remote
-        ci = ".github/workflows/ci.yml"
-        r.write({ci: WORKFLOWS[ci] + "    steps:\n      - uses: ./.github/actions/setup\n",
-                 ".github/actions/setup/action.yml": "runs:\n  using: composite\n  steps:\n    - run: python3 tools/verify.py\n      shell: bash\n",
-                 "tools/verify.py": "x = 1\n"})
-        base = r.commit("Merge pull request #286 from x")
-        self.git.ensure()
-        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        code = preflight.workflow_code(self.git, base, [ci])
-        self.assertTrue({".github/actions/setup/", ".github/actions/setup/action.yml", "tools/verify.py"} <= set(code), code)
-        self.assertEqual(preflight.code_roots(code, lambda e: preflight.code_signature(self.git, base, e) is not None),
-                         [".github", "tools"])
+        head = r.pull(355, {"MathlibExt/R.lean": "namespace Outer.Inner\nattribute [reassoc] foo\nend Outer.Inner\n"})
+        self.fetch(355)
+        main = self.git.rev_parse("refs/preflight/main")
+        alone = self.git.commit_tree(self.git.merge_tree(main, head)["tree"], [main], "candidate")
+        changes = preflight.head_changes(self.git, main, [head])
+        result = preflight.find_duplicates(self.git, main, main, [{"before": main, "after": alone, "entries": []}], [],
+                                           changes, None)
+        self.assertEqual((result["names"], result["places"]), (0, True))  # names Lean generates, none written out
+        verdict = preflight.evaluate(dict(ready_facts(only=["duplicates"]), duplicates=dict(result, ci_unknown="x")), NOW)
+        self.assertFalse(verdict["ready"])
+
+    def test_names_that_any_merge_places(self):
+        r = self.remote
+        new = {"MathlibExt/New.lean": "namespace Foo\ndef a := 2\nend Foo\n"}
+        head = r.pull(353, new)
+        ahead = r.pull(354, new)  # a queued pull request with the same file
+        self.fetch(353, 354)
+        main = self.git.rev_parse("refs/preflight/main")
+        with_ahead = self.git.merge_tree(main, ahead)
+        tip = self.git.commit_tree(with_ahead["tree"], [main], "queue")
+        both = self.git.commit_tree(self.git.merge_tree(tip, head)["tree"], [tip], "candidate")
+        alone = self.git.commit_tree(self.git.merge_tree(main, head)["tree"], [main], "candidate alone")
+        entries = [{"number": 354, "position": 1, "head": ahead}]
+        changes = preflight.head_changes(self.git, main, [head, ahead])
+        merges = [{"before": tip, "after": both, "entries": ["#354"]},  # it places nothing there...
+                  {"before": main, "after": alone, "entries": []}]  # ...but Foo.a where #354 leaves first
+        result = preflight.find_duplicates(self.git, main, main, merges, entries, changes, None)
+        self.assertEqual(result["names"], 1)
+        verdict = preflight.evaluate(dict(ready_facts(only=["duplicates"]), duplicates=dict(result, ci_unknown="x")), NOW)
+        self.assertFalse(verdict["ready"])
+
+    def test_merges_are_kept(self):
+        r = self.remote
+        left = r.pull(295, {"MathlibExt/K1.lean": "def k1 := 1\n"})
+        right = r.pull(296, {"MathlibExt/K2.lean": "def k2 := 2\n"})
+        self.fetch(295, 296)
+        merges = []
+        real = self.git.run
+        with mock.patch.object(self.git, "run", side_effect=lambda *a, **k: (merges.append(a) if "merge-tree" in a else None)
+                               or real(*a, **k)):
+            first = self.git.merge_tree(left, right)
+            self.assertEqual(self.git.merge_tree(left, right), first)
+        self.assertEqual(len(merges), 1)  # the same two commits merge once
+        key = next(k for k in self.git.cache.entries if k.startswith("merge:"))
+        self.git.cache.put(key, dict(first, tree="0" * 39 + "1"))  # a tree the clone no longer has
+        self.assertEqual(self.git.merge_tree(left, right), first)  # merged again
 
     def test_the_checkers_own_freshness(self):
         r = self.remote
@@ -1764,11 +2216,8 @@ class GitTests(unittest.TestCase):
         main = r.commit("Merge pull request #216 from x")  # main changed the checker after CI ran
         self.git.ensure()
         self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        code = preflight.workflow_code(self.git, main, [ci])
-        self.assertEqual(code, [".github/autoform-ref", "scripts/check.sh"])  # the revision it fetches counts as code
         facts = {"base": "main", "ci": {"base": tested_base, "created_at": "2026-11-23T16:00:00Z", "base_error": None},
-                 "queue": {"entries": [{"number": 215, "position": 1, "head": ahead}]}, "check_workflows": [ci],
-                 "check_code": code, "check_roots": [".github", "scripts"]}
+                 "queue": {"entries": [{"number": 215, "position": 1, "head": ahead}]}, "check_workflows": [ci]}
         preflight.compute(self.git, facts, 214, head, main)
         self.assertEqual(facts["stale_workflows"], ["scripts/check.sh"])  # CI ran the older checker
         self.assertEqual(facts["workflows_ahead"], [{"number": 215, "position": 1, "path": ".github/autoform-ref"}])
@@ -2169,39 +2618,6 @@ class GitTests(unittest.TestCase):
         result = self.duplicates(base, [], plain)  # an empty queue: its own projection is no evidence
         self.assertEqual((result["found"], result["unpredictable"]), ([], set()) if isinstance(result["unpredictable"], set) else ([], []))
 
-    def test_inputs_a_configuration_names(self):
-        r = self.remote
-        guard = ".github/workflows/bump-guard.yml"
-        r.write({guard: WORKFLOWS[guard] + "    steps:\n      - run: python3 scripts/bump/guard2.py scripts/bump/deps2.json\n",
-                 "scripts/bump/guard2.py": "import json\n", "scripts/bump/deps2.json": "{\"docs\": [\"README.md\", \"scripts/surface2.py\"]}\n",
-                 "README.md": "readme\n", "scripts/surface2.py": "x = 1\n"})
-        tested_base = r.commit("Merge pull request #282 from x")
-        head = r.pull(283, {"docs/i.md": "i\n"}, base=tested_base)
-        ahead = r.pull(284, {"scripts/surface2.py": "x = 2\n"}, base=tested_base)  # a queued PR changes a configured input
-        git(r.path, "checkout", "-q", "main")
-        r.write({"README.md": "changed\n"})
-        main = r.commit("Merge pull request #285 from x")  # main changes another after the guard ran
-        self.git.ensure()
-        self.git.fetch(["+refs/heads/main:refs/preflight/main"])
-        code = preflight.workflow_code(self.git, main, [guard])
-        self.assertTrue({"README.md", "scripts/surface2.py", "scripts/bump/deps2.json"} <= set(code), code)
-        facts = {"base": "main", "ci": {"base": tested_base, "created_at": "2026-11-23T16:00:00Z", "base_error": None},
-                 "queue": {"entries": [{"number": 284, "position": 1, "head": ahead}]}, "check_workflows": [guard],
-                 "check_code": code, "check_roots": ["scripts"]}
-        preflight.compute(self.git, facts, 283, head, main)
-        self.assertIn("README.md", facts["stale_workflows"])
-        self.assertIn((284, "scripts/surface2.py"), [(a["number"], a["path"]) for a in facts["workflows_ahead"]])
-
-    def test_private_derived_instances_in_two_files(self):
-        r = self.remote
-        one = r.pull(272, {"MathlibExt/Pd1.lean": "namespace N\nprivate structure A where\n  x : Nat\n  deriving Inhabited\nend N\n"})
-        two = r.pull(273, {"MathlibExt/Pd2.lean": "namespace N\nprivate structure A where\n  y : Nat\n  deriving Inhabited\nend N\n"})
-        self.fetch(272, 273)
-        main = self.git.rev_parse("refs/preflight/main")
-        for (q, number), h in (((one, 272), two), ((two, 273), one)):  # both orders: the instance may be public
-            result = self.duplicates(main, [{"number": number, "position": 1, "head": q}], h)
-            self.assertTrue(any("instInhabitedA" in item for item in result["unpredictable"]), (number, result))
-
     def test_a_long_file_reads_in_linear_time(self):
         text = "namespace N\n" + "emit_noop\n" * 20000 + "end N\n"
         start = time.monotonic()
@@ -2569,24 +2985,25 @@ class GitTests(unittest.TestCase):
                                            changes, None)
         self.assertIn("that CI built does not merge cleanly here", result["incomplete"])
 
-    def test_derived_instances_collide(self):
+    def test_derived_instances_are_not_compared(self):
+        """A known limitation: the instances that `deriving` generates are not read, so neither a derived
+        instance on each side nor an explicit declaration of a derived instance's name counts. An explicit
+        declaration on each side still does."""
         r = self.remote
-        queued = r.pull(49, {"MathlibExt/D1.lean": "namespace N\nderiving instance DecidableEq for Var\nend N\n"})
-        head = r.pull(50, {"MathlibExt/D2.lean": "namespace N\nderiving instance DecidableEq for Var\nend N\n"})
+        queued = r.pull(49, {"MathlibExt/D1.lean": "namespace N\nderiving instance DecidableEq for Var\n"
+                                                   "inductive K\n  | a\n  deriving\n    DecidableEq\n"
+                                                   "private structure A where\n  x : Nat\n  deriving Inhabited\n"
+                                                   "theorem dup : True := trivial\nend N\n"})
+        head = r.pull(50, {"MathlibExt/D2.lean": "namespace N\nderiving instance DecidableEq for\n  Var\n"
+                                                 "instance instDecidableEqK : True := trivial\n"
+                                                 "private structure A where\n  y : Nat\n  deriving Inhabited\n"
+                                                 "theorem dup : True := trivial\nend N\n"})
         self.fetch(49, 50)
         main = self.git.rev_parse("refs/preflight/main")
-        found = self.duplicates(main, [{"number": 49, "position": 1, "head": queued}], head)["found"]
-        self.assertEqual([(d["name"], d["source"], d["other_path"]) for d in found],
-                         [("N.instDecidableEqVar", "#49", "MathlibExt/D1.lean")])
-
-    def test_derived_instances_over_two_lines_collide(self):
-        r = self.remote
-        queued = r.pull(59, {"MathlibExt/D3.lean": "namespace N\nderiving instance DecidableEq for Var\nend N\n"})
-        head = r.pull(60, {"MathlibExt/D4.lean": "namespace N\nderiving instance DecidableEq for\n  Var\nend N\n"})
-        self.fetch(59, 60)
-        main = self.git.rev_parse("refs/preflight/main")
-        found = self.duplicates(main, [{"number": 59, "position": 1, "head": queued}], head)["found"]
-        self.assertEqual([(d["name"], d["source"]) for d in found], [("N.instDecidableEqVar", "#59")])
+        for (q, number), h in (((queued, 49), head), ((head, 50), queued)):  # both orders
+            result = self.duplicates(main, [{"number": number, "position": 1, "head": q}], h)
+            self.assertEqual([d["name"] for d in result["found"]], ["N.dup"], (number, result))  # the explicit one
+            self.assertFalse([item for item in result["unpredictable"] if "inst" in item], (number, result))
 
     def test_generated_recursor_collides(self):
         r = self.remote
@@ -2601,24 +3018,6 @@ class GitTests(unittest.TestCase):
         found = self.duplicates(main, entries, twin)["found"]  # the type, not each generated member
         self.assertEqual([(d["name"], d["source"]) for d in found], [("N.S", "#61")])
 
-    def test_attached_deriving_over_two_lines_collides(self):
-        r = self.remote
-        queued = r.pull(64, {"MathlibExt/K1.lean": "namespace N\ninductive K\n  | a\n  deriving\n    DecidableEq\nend N\n"})
-        head = r.pull(65, {"MathlibExt/K2.lean": "namespace N\ninstance instDecidableEqK : True := trivial\nend N\n"})
-        self.fetch(64, 65)
-        main = self.git.rev_parse("refs/preflight/main")
-        found = self.duplicates(main, [{"number": 64, "position": 1, "head": queued}], head)["found"]
-        self.assertEqual([(d["name"], d["source"]) for d in found], [("N.instDecidableEqK", "#64")])
-
-    def test_deriving_with_attributes_collides(self):
-        r = self.remote
-        queued = r.pull(73, {"MathlibExt/E1.lean": "namespace N\ninductive K | a deriving @[expose] DecidableEq\nend N\n"})
-        head = r.pull(74, {"MathlibExt/E2.lean": "namespace N\ninstance instDecidableEqK : True := trivial\nend N\n"})
-        self.fetch(73, 74)
-        main = self.git.rev_parse("refs/preflight/main")
-        found = self.duplicates(main, [{"number": 73, "position": 1, "head": queued}], head)["found"]
-        self.assertEqual([(d["name"], d["source"]) for d in found], [("N.instDecidableEqK", "#73")])
-
     def test_this_copy_against_mains(self):
         r = self.remote
         main = self.git.rev_parse("refs/preflight/main")
@@ -2630,6 +3029,43 @@ class GitTests(unittest.TestCase):
         self.git.fetch(["+refs/heads/main:refs/preflight/main"])
         self.assertIs(preflight.copy_differs(self.git, same), False)
         self.assertIs(preflight.copy_differs(self.git, other), True)
+
+    def test_no_merged_tree_is_no_pass(self):
+        """A pull request that conflicts with main has no merged tree to read: the duplicate check is then
+        unavailable, never a merge that adds no declaration, though the head adds a name a queued entry adds."""
+        r = self.remote
+        r.write({"MathlibExt/A.lean": "namespace Foo\ndef a := 2\nend Foo\n"})
+        main = r.commit("Merge pull request #393 from x")  # main edits the line the head edits too
+        head = r.pull(394, {"MathlibExt/A.lean": "namespace Foo\ndef a := 394\nend Foo\n",
+                            "MathlibExt/D7.lean": "namespace Foo\ntheorem dup : True := trivial\nend Foo\n"})
+        self.fetch(394)
+        entries = self.entries[:1]  # #1 adds Foo.dup too
+        simulation, _ = self.simulate(main, entries, head)
+        self.assertFalse(simulation["main"]["clean"])
+        self.assertEqual(preflight.merges_to_read(simulation, main), [])
+        result = self.duplicates(main, entries, head)
+        self.assertEqual((result["unavailable"], result["names"], result["found"]),
+                         ("there is no merged tree to read", None, []))
+        for only in (None, ["duplicates"]):
+            verdict = preflight.evaluate(ready_facts(only=only, duplicates=result, simulation=simulation), NOW)
+            duplicates = next(c for c in verdict["checks"] if c["name"] == "duplicates")
+            self.assertEqual((duplicates["ok"], duplicates["hand_check"], verdict["ready"]), (False, False, False))
+            self.assertIn("could not check", duplicates["detail"])
+            self.assertIn("conflicts with main", " ".join(duplicates["items"]))
+        # Conflicting with a queued entry instead, it reads the entries ahead of it, and says it compared no more.
+        conflict = [{"number": 3, "position": 1, "head": self.edit}, {"number": 1, "position": 2, "head": self.dup}]
+        simulation, _ = self.simulate(r.main, conflict, self.head)  # main before #393: it merges with the head
+        self.assertEqual(simulation["candidate"]["conflicts_with"]["number"], 3)
+        result = self.duplicates(r.main, conflict, self.head)
+        self.assertEqual(result["found"], [])  # #1's Foo.dup, behind #3, is not in what it read
+        verdict = preflight.evaluate(ready_facts(only=["duplicates"], duplicates=result, simulation=simulation), NOW)
+        duplicates = next(c for c in verdict["checks"] if c["name"] == "duplicates")
+        self.assertEqual((duplicates["ok"], verdict["ready"]), (False, False))
+        self.assertIn("not compared with #3", " ".join(duplicates["items"]))
+        fixed = r.pull(395, {"MathlibExt/A.lean": "namespace Foo\ndef a := 2\nend Foo\n",
+                             "MathlibExt/D7.lean": "namespace Foo\ntheorem dup : True := trivial\nend Foo\n"}, base=main)
+        self.fetch(395)  # the same name, once it merges with main: read, and found
+        self.assertEqual([d["name"] for d in self.duplicates(main, entries, fixed)["found"]], ["Foo.dup"])
 
     def test_duplicates_blame_the_entry_that_adds_the_name(self):
         r = self.remote
@@ -2869,6 +3305,50 @@ class GitTests(unittest.TestCase):
             self.assertIn("main changed 1 library", self.duplicates(main, [], self.head, since=r.main)["incomplete"])
 
     @NEEDS_GIT_245
+    def test_only_conflicts_and_duplicates_read_little(self):
+        responses, logs = github_6650(self.head)
+        pull = responses[f"/repos/{REPO}/pulls/6650"]
+        pull.update(mergeable=True, mergeable_state="clean")
+        pull["head"]["repo"] = {"full_name": REPO}
+        fixture = load("github_6650.json")
+        logs[fixture["job_id"]] = logs[fixture["job_id"]].replace("5c77d5224cebd12e0808329f65611358b2a85d9a",
+                                                                  self.remote.main)
+        git(self.remote.path, "update-ref", "refs/pull/6650/head", self.head)
+
+        def run(only):
+            gh = FakeGitHub(responses, logs, queue_answer([(1, self.dup), (2, self.bump), (3, self.edit)],
+                                                          main=self.remote.main))
+            return gh, preflight.gather(gh, self.git, 6650, NOW, frozenset(only))
+        gh, facts = run({"conflicts"})
+        self.assertEqual((gh.calls, gh.queries.count("queue")), ([], 1))  # the queue and the pull request: one request
+        self.assertEqual(set(gh.queries), {"queue", "sizes"})  # and the sizes of what a cold clone downloads
+        gh, facts = run({"conflicts", "duplicates"})  # the names its CI built: its check runs and its CI run
+        self.assertTrue(any("check-runs" in c for c in gh.calls) and any("/actions/jobs/" in c for c in gh.calls), gh.calls)
+        self.assertEqual(facts["ci"]["base"], self.remote.main)
+        gh, facts = run({"conflicts", "duplicates"})  # again: its job and its log are kept, the run read again
+        self.assertEqual([c for c in gh.calls if "check-runs" not in c and "/actions/runs/" not in c], [])
+        self.assertEqual(facts["ci"]["base"], self.remote.main)
+        result = preflight.evaluate(facts, NOW)
+        self.assertEqual([c["name"] for c in result["checks"]], ["state", "conflicts", "duplicates"])
+        self.assertEqual(result["only"], ["conflicts", "duplicates"])
+        self.assertIn("NOT READY (only state, conflicts, duplicates)", preflight.render(result))
+        self.assertIn("Foo.dup", next(c for c in result["checks"] if c["name"] == "duplicates")["items"][0])
+
+    @NEEDS_GIT_245
+    def test_main_is_the_one_the_queue_was_read_against(self):
+        responses, logs = github_6650(self.head)
+        pull = responses[f"/repos/{REPO}/pulls/6650"]
+        pull.update(mergeable=True, mergeable_state="clean")
+        pull["head"]["repo"] = {"full_name": REPO}
+        git(self.remote.path, "update-ref", "refs/pull/6650/head", self.head)
+        read = self.remote.main
+        self.remote.write({"docs/later.md": "later\n"})
+        self.remote.commit("Merge pull request #11 from x")  # main moves on after the queue was read
+        gh = FakeGitHub(responses, logs, queue_answer([(1, self.dup)], main=read))
+        facts = preflight.gather(gh, self.git, 6650, NOW, frozenset({"conflicts"}))
+        self.assertEqual(facts["main"], read)  # one snapshot: that queue on that main
+
+    @NEEDS_GIT_245
     def test_gather_and_evaluate_end_to_end(self):
         responses, logs = github_6650(self.head)
         pull = responses[f"/repos/{REPO}/pulls/6650"]
@@ -2901,6 +3381,44 @@ class GitTests(unittest.TestCase):
 # --------------------------------------------------------------------------------------------------
 
 
+def data_naming_other_files(records: dict[str, list[str]], read) -> dict[str, list[str]]:
+    """For each listed JSON or JSONL file of data (see preflight.DATA), the tracked files that are not data
+    and that a string in it names, from the root or from the file's own directory, with `./` and `..`
+    resolved. `records` maps each tracked path to its mode, type and blob; `read` gives a blob's text. Each
+    blob is read once for each format it is listed in."""
+    def strings(value):  # every key and string value of a JSON document
+        if isinstance(value, str):
+            yield value
+        elif isinstance(value, dict):
+            for key, item in value.items():
+                yield key
+                yield from strings(item)
+        elif isinstance(value, list):
+            for item in value:
+                yield from strings(item)
+    listed = [path for path in records if not preflight.is_check_code(path, records[path][0])
+              and path.endswith((".json", ".jsonl"))]  # data, as preflight has it: a manifest is code
+    by_blob: dict[tuple[str, bool], list[str]] = {}
+    for path in listed:
+        by_blob.setdefault((records[path][2], path.endswith(".jsonl")), []).append(path)
+    found: dict[str, list[str]] = {}
+    for (oid, lines), paths in by_blob.items():
+        text = read(oid)
+        documents = [json.loads(line) for line in text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+                     if line.strip()] if lines else [json.loads(text)]  # lines as sync_wiki.read_rows splits them:
+        # at a line feed or a carriage return, never at U+2028 or U+0085 inside a string
+        named = {s for document in documents for s in strings(document)}
+        del text, documents
+        for path in paths:
+            here = posixpath.dirname(path)
+            targets = {posixpath.normpath(spelled) for s in named for spelled in (s, posixpath.join(here, s))
+                       if s and not s.startswith("/")}
+            bad = sorted(t for t in targets if t in records and preflight.is_check_code(t, records[t][0]))
+            if bad:
+                found[path] = bad
+    return found
+
+
 def ready_facts(**changes) -> dict:
     head = "1" * 40
     facts = {
@@ -2926,6 +3444,67 @@ def ready_facts(**changes) -> dict:
 
 
 class EvaluateTests(unittest.TestCase):
+    def test_a_partial_verdict(self):
+        fork = preflight.evaluate(ready_facts(only=["conflicts", "duplicates"], fork=True), NOW)
+        self.assertEqual(([c["name"] for c in fork["checks"]], fork["verdict"]),
+                         (["state", "conflicts", "duplicates", "fork"], "NOT READY"))  # a fork is never READY
+        self.assertNotIn("merge box", fork["next"])  # a partial verdict never says to queue, even by hand
+        facts = ready_facts(only=["conflicts", "duplicates"], checks={"required": [], "advisory_failed": []})
+        result = preflight.evaluate(facts, NOW)
+        self.assertEqual(([c["name"] for c in result["checks"]], result["verdict"]), (["state", "conflicts", "duplicates"],
+                                                                                    "READY"))
+        self.assertIn("without --only", result["next"])  # never says to queue it
+        self.assertEqual(preflight.enqueue(enqueue_github(), result)["ok"], False)
+        self.assertIn("READY (only state, conflicts, duplicates)", preflight.render(result))
+        hand = preflight.evaluate(ready_facts(only=["workflows"], changed_dependencies=["scripts/check.sh"]), NOW)
+        self.assertEqual(hand["verdict"], "NOT READY")
+        self.assertIn("without --only", hand["next"])
+        self.assertNotIn("merge box", hand["next"])
+        unexplored = preflight.evaluate(ready_facts(only=["duplicates"], simulation=dict(
+            ready_facts()["simulation"], candidate={"clean": True, "files": [], "conflicts_with": None, "unexplored": 6})), NOW)
+        self.assertFalse(unexplored["ready"])  # queues it did not explore are queues it did not read
+        unexplored_freshness = preflight.evaluate(ready_facts(only=["freshness"], simulation=dict(
+            ready_facts()["simulation"], candidate={"clean": True, "files": [], "conflicts_with": None, "unexplored": 6})), NOW)
+        self.assertFalse(unexplored_freshness["ready"])  # queues it did not explore may run other code
+        untied = ready_facts(only=["freshness"], stale_checks=[])
+        untied["checks"]["required"][3] = {"name": "guard", "status": "completed", "conclusion": "success",
+                                          "provenance": "unknown", "url": None}
+        self.assertFalse(preflight.evaluate(untied, NOW)["ready"])  # a run it cannot tell is no fresh run
+
+    def test_duplicates_it_could_not_read(self):
+        """The duplicate check never passes on input it did not have: no merged tree, or no result at all."""
+        unavailable = {"names": None, "places": False, "found": [], "incomplete": None, "unpredictable": [],
+                       "unavailable": "there is no merged tree to read"}
+        conflicting = dict(ready_facts()["simulation"], main={"clean": False, "files": ["MathlibExt/X.lean"]},
+                           candidate=None)
+        for only in (None, ["duplicates"], ["conflicts", "duplicates"]):
+            for facts in (ready_facts(only=only, duplicates=unavailable, simulation=conflicting),
+                          ready_facts(only=only, duplicates=dict(unavailable, ci_unknown="its CI build has not passed")),
+                          ready_facts(only=only, duplicates=dict(unavailable, unpredictable=["@[simps] on Foo.f"])),
+                          {k: v for k, v in ready_facts(only=only).items() if k != "duplicates"}):  # none at all
+                result = preflight.evaluate(facts, NOW)
+                duplicates = next(c for c in result["checks"] if c["name"] == "duplicates")
+                self.assertEqual((duplicates["ok"], duplicates["hand_check"], duplicates["provenance_only"]),
+                                 (False, False, False), (only, facts.get("duplicates")))
+                self.assertIn("could not check", duplicates["detail"])
+                self.assertEqual(result["verdict"], "NOT READY")
+                self.assertNotIn("merge box", result["next"])
+        result = preflight.evaluate(ready_facts(duplicates=unavailable, simulation=conflicting), NOW)
+        duplicates = next(c for c in result["checks"] if c["name"] == "duplicates")
+        self.assertIn("since it conflicts with main", " ".join(duplicates["items"]))
+        self.assertIn("merge main", duplicates["next"])
+        behind = dict(ready_facts()["simulation"], candidate={"clean": False, "files": ["MathlibExt/A.lean"],
+                                                               "conflicts_with": {"number": 3, "position": 1,
+                                                                                  "files": ["MathlibExt/A.lean"]}})
+        for only in (None, ["duplicates"]):  # it read the merge onto the entries ahead of #3 only
+            result = preflight.evaluate(ready_facts(only=only, simulation=behind), NOW)
+            duplicates = next(c for c in result["checks"] if c["name"] == "duplicates")
+            self.assertEqual((duplicates["ok"], duplicates["hand_check"], result["ready"]), (False, False, False))
+            self.assertIn("the check is incomplete", duplicates["detail"])
+            self.assertIn("not compared with #3 and the entries queued behind it", " ".join(duplicates["items"]))
+        # With no merge to read, find_duplicates reads nothing and says so, before touching the clone.
+        self.assertEqual(preflight.find_duplicates(None, "4" * 40, "3" * 40, [], [], {}), unavailable)
+
     def failed(self, facts: dict, **options) -> dict:
         result = preflight.evaluate(facts, NOW, **options)
         return {c["name"]: c for c in result["checks"] if not c["ok"]}
@@ -3001,6 +3580,13 @@ class EvaluateTests(unittest.TestCase):
         self.assertIn("build (skipped: the pull request does not need it)", passed)
         facts["checks"]["required"][0].update(conclusion="skipped")  # any other skip does not pass
         self.assertIn("repository integrity (skipped)", self.failed(facts)["required checks"]["detail"])
+        partial = ready_facts(only=["freshness"], stale_checks=[])  # nor does freshness alone count it against it
+        for c in partial["checks"]["required"]:
+            c["run"] = 7
+        partial["checks"]["required"][1].update(conclusion="skipped", scoped=True)
+        self.assertTrue(preflight.evaluate(partial, NOW)["ready"])
+        partial["checks"]["required"][1].update(scoped=False)
+        self.assertFalse(preflight.evaluate(partial, NOW)["ready"])
 
     def test_freshness(self):
         facts = ready_facts()
@@ -3117,6 +3703,14 @@ class CommandTests(unittest.TestCase):
                 contextlib.redirect_stdout(out):
             status = preflight.main(["7000", "--git-dir", str(Path(cache) / "repo.git"), *args], now=NOW)
         return status, out.getvalue(), gh
+
+    def test_only_takes_known_checks_and_never_enqueues(self):
+        for args in (["--only", "nonsense"], ["--only", ""], ["--only", "duplicates", "--enqueue"]):
+            with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+                self.run_main(ready_facts(), *args)
+        status, out, gh = self.run_main(ready_facts(only=["duplicates"]), "--only", "state,duplicates")
+        self.assertEqual(status, 0)
+        self.assertIn("READY (only state, duplicates)", out)
 
     def test_enqueue_only_when_ready(self):
         status, out, gh = self.run_main(ready_facts(), "--enqueue")
