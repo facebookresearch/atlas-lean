@@ -11,6 +11,7 @@ $$
 ## Depends on
 
 - [Elliptic-curve discrete logarithm problem](../elliptic-curve-discrete-logarithm-problem.md)
+- [Torsion Cardinality](../../../../../AlgebraicGeometry/not-yet-classified/smul-some-eq-zero-iff.md)
 
 ## Proof depends on
 
@@ -18,7 +19,7 @@ None.
 
 ## Expansion
 
-In characteristic $2$ every element of $K^\times$ is a square, so the question is trivial there. The answer is a single bit about $k$; Lauter and Stange relate it to the ECDLP for points of odd order under further conditions on $P$. Prerequisites still to add to this graph: a page for the integer-indexed division polynomials $\psi_n$ of a Weierstrass curve, and one for the criterion that $\psi_n$ vanishes at a nonsingular affine point $P$ exactly when $[n]P=O$.
+In characteristic $2$ every element of $K^\times$ is a square, so the question is trivial there. The answer is a single bit about $k$; Lauter and Stange relate it to the ECDLP for points of odd order under further conditions on $P$. Prerequisite still to add to this graph: a page for the integer-indexed division polynomials $\psi_n$ of a Weierstrass curve.
 
 ## Sources
 

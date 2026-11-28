@@ -1,4 +1,4 @@
-# Logarithmic derivatives of $p$-torsion functions on curves over $\mathbb{F}_p$
+# Logarithmic derivatives of $p$-torsion functions on elliptic curves over $\mathbb{F}_p$
 
 On an elliptic curve over $\mathbb{F}_p$, sending a point $P$ of order dividing $p$ to $df_P/f_P$, where $\operatorname{div}(f_P)=p(P)-p(O)$, is a group homomorphism into differentials; for $P\ne O$ and $f_P$ normalized to start with $t^{-p}$, the constant term of its expansion at $O$ is the coefficient $f_1$ of $t^{-(p-1)}$ in $f_P$.
 

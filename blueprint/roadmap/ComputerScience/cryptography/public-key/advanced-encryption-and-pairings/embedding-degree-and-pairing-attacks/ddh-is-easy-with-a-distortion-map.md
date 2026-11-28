@@ -25,3 +25,4 @@ Let $\zeta=e(P,\psi(P))$, of order $r$. Since $\psi$ is a homomorphism, $\psi([b
 ## Sources
 
 - S. D. Galbraith, *Mathematics of Public Key Cryptography*, Cambridge University Press, 2012, doi:10.1017/CBO9781139012843; numbering from the author's extended and corrected version 2.0 chapters, <https://www.math.auckland.ac.nz/~sgal018/crypto-book/crypto-book.html>, Section 26.5.2 and Definition 26.6.4.
+- D. Boneh and M. Franklin, "Identity-based encryption from the Weil pairing", *SIAM Journal on Computing* 32(3):586–615, 2003, doi:10.1137/S0097539701398521; numbering from the authors' full version, <https://crypto.stanford.edu/~dabo/pubs/papers/bfibe.pdf>, Section 3 ("Decision Diffie-Hellman is Easy", p. 7: $c=ab\bmod q\iff\hat e(P,cP)=\hat e(aP,bP)$) and Section 5.1 (the modified Weil pairing $\hat e(P,Q)=e(P,\varphi(Q))$).

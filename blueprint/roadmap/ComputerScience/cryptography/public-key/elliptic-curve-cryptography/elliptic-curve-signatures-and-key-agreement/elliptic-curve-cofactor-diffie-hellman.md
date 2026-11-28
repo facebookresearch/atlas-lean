@@ -2,7 +2,7 @@
 
 The elliptic-curve Diffie–Hellman primitive outputs the $x$-coordinate of $[d_U]Q_V$; the cofactor variant outputs that of $[h\,d_U]Q_V$, a point of order dividing $n$ for every curve point $Q_V$, and both reject the point at infinity.
 
-Let $T=(p,a,b,G,n,h)$ be valid SEC 1 elliptic-curve domain parameters ($G$ of prime order $n$, $h=\#E(\mathbb{F}_p)/n$ with $n\nmid h$), let $d_U\in[1,n-1]$ be the private key of $U$, and let $Q_V$ be a public key purportedly of $V$.
+Let $T=(p,a,b,G,n,h)$ be valid SEC 1 elliptic-curve domain parameters ($G$ of prime order $n$ and $h=\#E(\mathbb{F}_p)/n$; validity implies $n\nmid h$, as shown on the public-key validation page), let $d_U\in[1,n-1]$ be the private key of $U$, and let $Q_V$ be a public key purportedly of $V$.
 
 - **ECDH primitive** (for a fully valid $Q_V$): compute $P=[d_U]Q_V$; if $P=O$ output "invalid"; otherwise output the shared secret $z=x_P$.
 - **Cofactor ECDH primitive** (for a partially valid $Q_V$): compute $P=[h\,d_U]Q_V$; if $P=O$ output "invalid"; otherwise output $z=x_P$.

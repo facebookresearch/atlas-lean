@@ -2,7 +2,7 @@
 
 Full validation of an elliptic-curve public key $Q$ checks that $Q\ne O$, that its coordinates are canonical field elements satisfying the curve equation, and that $[n]Q=O$; partial validation omits the last check.
 
-Let $T=(p,a,b,G,n,h)$ be valid SEC 1 elliptic-curve domain parameters over a prime field: $E:y^2=x^3+ax+b$ over $\mathbb{F}_p$, $G\in E(\mathbb{F}_p)$ of prime order $n$, cofactor $h=\#E(\mathbb{F}_p)/n$, and in particular $n\nmid h$. For a claimed public key $Q$:
+Let $T=(p,a,b,G,n,h)$ be valid SEC 1 elliptic-curve domain parameters over a prime field: $E:y^2=x^3+ax+b$ over $\mathbb{F}_p$, $G\in E(\mathbb{F}_p)$ of prime order $n$, cofactor $h=\#E(\mathbb{F}_p)/n$; validity implies $n\nmid h$. For a claimed public key $Q$:
 
 1. reject if $Q=O$;
 2. writing $Q=(x_Q,y_Q)$, reject unless $x_Q,y_Q$ are integers in $[0,p-1]$ with $y_Q^2\equiv x_Q^3+ax_Q+b\pmod p$;
@@ -22,7 +22,7 @@ Let $T=(p,a,b,G,n,h)$ be valid SEC 1 elliptic-curve domain parameters over a pri
 
 ## Expansion
 
-Since $\#E(\mathbb{F}_p)=hn$ with $n$ prime and $n\nmid h$, the points killed by $n$ form the unique subgroup of order $n$, which is $\langle G\rangle$; so step 3 together with steps 1–2 characterizes $\langle G\rangle\setminus\{O\}$. Without $n\nmid h$ this fails: over $\mathbb{F}_5$ the curve $y^2=x^3+x$ has four points, $G=(0,0)$ and $Q=(2,0)$ both have order $2$, and $Q\notin\langle G\rangle$. The case $h=1$ is Lagrange's theorem. Full validation rejects every point outside $\langle G\rangle\setminus\{O\}$, which excludes the small-subgroup and related attacks in which a party is made to compute with such a point.
+Validity implies $n\nmid h$, although it is not one of the listed checks: step 6 of SEC 1 §3.1.1.2.1 requires $h\le2^{t/8}$ and $h=\lfloor(\sqrt p+1)^2/n\rfloor$, so $n>(\sqrt p+1)^2/(h+1)\ge(\sqrt p+1)^2/(2^{t/8}+1)$, which exceeds $2^{t/8}\ge h$ because step 1 gives $p>2^{2t-1}$; and $h\ge1$, so $0<h<n$. Since $\#E(\mathbb{F}_p)=hn$ with $n$ prime and $n\nmid h$, the points killed by $n$ form the unique subgroup of order $n$, which is $\langle G\rangle$; so step 3 together with steps 1–2 characterizes $\langle G\rangle\setminus\{O\}$. Without $n\nmid h$ this fails: over $\mathbb{F}_5$ the curve $y^2=x^3+x$ has four points, $G=(0,0)$ and $Q=(2,0)$ both have order $2$, and $Q\notin\langle G\rangle$. The case $h=1$ is Lagrange's theorem. Full validation rejects every point outside $\langle G\rangle\setminus\{O\}$, which excludes the small-subgroup and related attacks in which a party is made to compute with such a point.
 
 ## Sources
 

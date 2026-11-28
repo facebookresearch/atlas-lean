@@ -27,4 +27,4 @@ $x_i\ne0$ implies $y_i\ne c$, so $u_i,v_i$ are defined. Bernstein and Lange veri
 
 ## Sources
 
-- D. J. Bernstein and T. Lange, "Faster addition and doubling on elliptic curves", *Advances in Cryptology (ASIACRYPT 2007)*, LNCS 4833, Springer, 2007, pp. 29–50, doi:10.1007/978-3-540-76900-2_3; numbering from the authors' version of 2007-09-06, <https://cr.yp.to/newelliptic/newelliptic-20070906.pdf>, Theorem 3.2 and the discussion after Theorem 3.3.
+- D. J. Bernstein and T. Lange, "Faster addition and doubling on elliptic curves", *Advances in Cryptology (ASIACRYPT 2007)*, LNCS 4833, Springer, 2007, pp. 29–50, doi:10.1007/978-3-540-76900-2_3; numbering from the authors' version of 2007-09-06, <https://cr.yp.to/newelliptic/newelliptic-20070906.pdf>, Theorem 3.2 and the paragraph between Theorems 3.2 and 3.3 (p. 6).

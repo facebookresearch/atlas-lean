@@ -11,6 +11,7 @@ $$
 ## Depends on
 
 - [Elliptic-curve discrete logarithm problem](../elliptic-curve-discrete-logarithm-problem.md)
+- [Torsion Cardinality](../../../../../AlgebraicGeometry/not-yet-classified/smul-some-eq-zero-iff.md)
 
 ## Proof depends on
 
@@ -18,7 +19,7 @@ None.
 
 ## Expansion
 
-The sequence is the one given by the division polynomials of the fixed Weierstrass equation, not a rescaling of it. Given $k$, the term $W_{E,P}(k)$ is computable with $O(\log k)$ operations in $K$ by a double-and-add recurrence on blocks of consecutive terms (Lauter and Stange, Theorem 7, after Shipsey), so an ECDLP solver yields a solver for this problem. Prerequisites still to add to this graph: a page for the integer-indexed division polynomials $\psi_n$ of a Weierstrass curve, and one for the criterion that $\psi_n$ vanishes at a nonsingular affine point $P$ exactly when $[n]P=O$.
+The sequence is the one given by the division polynomials of the fixed Weierstrass equation, not a rescaling of it. Given $k$, the term $W_{E,P}(k)$ is computable with $O(\log k)$ operations in $K$ by a double-and-add recurrence on blocks of consecutive terms (Lauter and Stange, Theorem 7, after Shipsey), so an ECDLP solver yields a solver for this problem. Prerequisite still to add to this graph: a page for the integer-indexed division polynomials $\psi_n$ of a Weierstrass curve.
 
 ## Sources
 

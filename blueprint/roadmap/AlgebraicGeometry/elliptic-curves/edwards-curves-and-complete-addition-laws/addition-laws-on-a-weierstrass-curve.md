@@ -14,7 +14,7 @@ None.
 
 ## Expansion
 
-Bosma and Lenstra translate addition laws into functions on $E\times E$: the map sending a law to $Z_3Z_1^{-\mu}Z_2^{-\nu}$ is a $k$-linear isomorphism from the laws of bidegree $(\mu,\nu)$ onto the space of $h\in k(E\times E)$ with $h=0$ or $(h)\ge3\nabla-3\mu V-3\nu H$, where $V,H,\nabla$ are the pullbacks of $O$ under the first projection, the second projection and the addition map (the Lemma of Section 2). Homogenizing the usual chord formula for addition and removing a common factor $Z_1Z_2$ gives an addition law of bidegree $(2,2)$ (Section 2, p. 233). Prerequisites still to add: divisors on the surface $E\times E$, the pullbacks $V$, $H$, $\nabla$ of $O$ under the two projections and the addition map, and their intersection numbers.
+Bosma and Lenstra translate addition laws into functions on $E\times E$: the map sending a law to $Z_3Z_1^{-\mu}Z_2^{-\nu}$ is a $k$-linear isomorphism from the laws of bidegree $(\mu,\nu)$ onto the space of $h\in k(E\times E)$ with $h=0$ or $(h)\ge3\nabla-3\mu V-3\nu H$, where $V,H,\nabla$ are the pullbacks of $O$ under the first projection, the second projection and the addition map (the Lemma of Section 2). Homogenizing the usual chord formula for addition and removing a common factor $Z_1Z_2$ gives an addition law of bidegree $(2,2)$ (Section 2, p. 233). Prerequisite still to add for the definition: a page for the group of projective points of a Weierstrass curve over an extension field, which the definition quantifies over. Prerequisites still to add for the Lemma and the results built on it: divisors on the surface $E\times E$, the pullbacks $V$, $H$, $\nabla$ of $O$ under the two projections and the addition map, and their intersection numbers.
 
 ## Sources
 

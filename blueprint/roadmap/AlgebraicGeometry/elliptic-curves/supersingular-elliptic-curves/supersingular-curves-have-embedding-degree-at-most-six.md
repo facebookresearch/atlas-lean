@@ -13,6 +13,7 @@ For a supersingular elliptic curve over $\mathbb{F}_q$ there is $m\in\{1,2,3,4,6
 ## Proof depends on
 
 - [Waterhouse's theorem on Frobenius traces](../point-counts-and-frobenius-traces/exists-is-elliptic-frobenius-trace-eq-if.md)
+- [Cauchy's theorem: a finite group whose order is divisible by a prime p has an element of order p](../../../GroupTheory/permutation-groups/symmetric-groups/cauchy-theorem-groups.md)
 
 ## Expansion
 

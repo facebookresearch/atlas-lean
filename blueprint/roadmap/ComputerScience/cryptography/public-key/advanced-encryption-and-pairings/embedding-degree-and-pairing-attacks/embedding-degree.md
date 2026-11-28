@@ -12,7 +12,7 @@ In particular $\mathbb{F}_{q^{k(q,n)}}$ is the smallest extension of $\mathbb{F}
 
 ## Depends on
 
-None.
+- [Multiplicative order modulo $n$](../../../../../NumberTheory/congruences/congruences-modular-arithmetic/primitive-roots-modulo-prime-powers/mul-ord-mod.md)
 
 ## Proof depends on
 
