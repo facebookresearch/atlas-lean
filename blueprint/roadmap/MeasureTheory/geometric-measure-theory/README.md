@@ -16,3 +16,11 @@ Hausdorff measures and dimension, dimension functions and codimension, fractal s
 - [Lower dimension for equal positive contractions without exact overlaps](homogeneous-no-exact-overlap-measure-dimension.md)
 - [Dimension of self-similar attractors without exact overlaps](no-exact-overlap-attractor-dimension.md)
 - [Sharp integral fillings](sharp-integral-fillings/README.md)
+
+## Related topics
+
+- [Unit-speed parametrisation of a regular space curve](../../Geometry/curves-and-surfaces/regular-curve-unit-speed-parametrisation.md): each compact subarc factors through its variation-length interval.
+
+## Sources
+
+- The related regular-curve result addresses the compact-subarc case of [Tau Ceti’s geometric measure theory roadmap, G1](https://github.com/TauCetiProject/TauCetiRoadmap/blob/8cc2f79f60ebc394160c214a3d0abd16c3c0aff9/TauCetiRoadmap/GeometricMeasureTheory/README.md#L106-L139).
