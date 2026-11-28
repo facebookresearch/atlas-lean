@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.PopulationGenetics.Coalescent.FMatrix
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.NormNum
 
 /-!
 # Tests for the F-matrix encoding of ranked tree shapes
@@ -18,13 +21,13 @@ shapes with four leaves, their F matrices and their distances `d₁ = d₂ = 1`;
 shape, which the F matrix identifies; the metric space structures of `d₁` and `d₂`; the fixed
 diagonal of isochronous F matrices; the weight matrices of two genealogies of one shape and their
 weighted distance, also in the metric space structure of `d₁ʷ`; a heterochronous history
-with two leaves sampled at two times; the boundary case of one leaf; and an `L²`-medoid of a
-sample of reals.
+with two leaves sampled at two times; and the boundary case of one leaf.
 -/
 
 @[expose] public section
 
 open Finset
+open scoped Pointwise
 
 namespace MathlibExtTest.Biology.PopulationGenetics.Coalescent.FMatrix
 
@@ -63,13 +66,13 @@ theorem fMatrix_balanced : balanced.fMatrix = !![2, 0, 0; 1, 3, 0; 0, 2, 4] := b
 /-- The two labelings of the caterpillar have the same F matrix, so a relabelling of the genes
 carries one history's ancestral partitions to the other's. -/
 example : ∃ σ : Equiv.Perm (Fin 4),
-    (partitionsOf caterpillar).map (relabelLineages σ) = partitionsOf caterpillar' :=
+    (partitionsOf caterpillar).map (σ • ·) = partitionsOf caterpillar' :=
   (RankedHistory.fMatrix_eq_fMatrix_iff _ _).1 (by decide)
 
 /-- The caterpillar and the balanced tree have different F matrices, so no relabelling of the
 genes relates them. -/
 example : ¬ ∃ σ : Equiv.Perm (Fin 4),
-    (partitionsOf caterpillar).map (relabelLineages σ) = partitionsOf balanced := by
+    (partitionsOf caterpillar).map (σ • ·) = partitionsOf balanced := by
   rw [← RankedHistory.fMatrix_eq_fMatrix_iff, fMatrix_caterpillar, fMatrix_balanced]
   decide
 
@@ -185,10 +188,5 @@ example : hetero.fMatrix = !![2, 0; 1, 1] := by
 /-- With one leaf there is one ranked tree shape. -/
 example (T₁ T₂ : RankedTreeShape 1 1) : T₁ = T₂ :=
   RankedTreeShape.fMatrix_injective (Matrix.ext fun i _ => absurd i.isLt (by norm_num))
-
-/-- An `L²`-medoid of the sample `0, 1, 5` of reals for the distance `|x - y|`. -/
-example : (1 : ℝ) ∈ l2MedoidSet (fun x y : ℝ => |x - y|) ![0, 1, 5] := by
-  refine ⟨⟨1, rfl⟩, fun k => ?_⟩
-  fin_cases k <;> norm_num [Fin.sum_univ_three]
 
 end MathlibExtTest.Biology.PopulationGenetics.Coalescent.FMatrix

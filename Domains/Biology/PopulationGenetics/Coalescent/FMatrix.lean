@@ -9,10 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.PopulationGenetics.Coalescent.Topology
-public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Algebra.Group.Action.Pointwise.Finset
+public import Mathlib.Analysis.Normed.Lp.PiLp
 public import Mathlib.Data.List.GetD
 public import Mathlib.LinearAlgebra.Matrix.Defs
 public import Mathlib.Logic.Equiv.Fintype
+public import MathlibExt.Probability.Statistics.Medoid
 
 /-!
 # F-matrix encoding and metrics on ranked tree shapes
@@ -50,8 +52,11 @@ the source, and `F_{i,i} = i + 1` there reads `T.fMatrix i i = i + 2` here.
 * `RankedGenealogy n m`, `RankedGenealogy.weightMatrix`, `RankedGenealogy.dw₁`,
   `RankedGenealogy.dw₂`: ranked genealogies, their weight matrices and the weighted distances
   (Eqs. 3–4).
-* `l2MedoidSet`, `meanSquaredDistance`: the `L²`-medoid set of a sample and the dispersion
-  around a point (Eqs. 5–7).
+* `RankedGenealogy.HeterochronousWeightedMetrics`: the statement that the weighted distances are
+  metrics on heterochronous ranked genealogies as well (Proposition 2 for `m ≥ 2`).
+
+The `L²`-medoid set of a sample and the dispersion around a point (Eqs. 5–7) are generic:
+`MathlibExt.Probability.Statistics.Medoid`.
 
 ## Main results
 
@@ -68,7 +73,8 @@ the source, and `F_{i,i} = i + 1` there reads `T.fMatrix i i = i + 2` here.
   `RankedGenealogy.metricSpaceDw₂OfIsochronous`: metrics on isochronous ranked genealogies
   (Proposition 2 for `m = 1`). `RankedGenealogy.eq_of_weighted_eq` reduces the heterochronous case
   to the diagonals of the F matrices.
-* `l2MedoidSet_nonempty`: a nonempty sample has an `L²`-medoid.
+* `fMatrix_encoding_and_metrics`: Theorem 1, the isochronous diagonal, the four distances and
+  medoids together, with the weighted distances for `m ≥ 2` only as pseudometrics.
 
 ## References
 
@@ -79,91 +85,53 @@ the source, and `F_{i,i} = i + 1` there reads `T.fMatrix i i = i + 2` here.
 @[expose] public section
 
 open Finset
+open scoped Pointwise
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent
 
-/-! ### Lineage sets and relabelling of leaves -/
+/-! ### Lineage sets and relabelling of leaves
+
+A permutation `σ` of the leaves relabels a lineage `B`, a set of leaves, as `σ • B`, and a set `S`
+of lineages as `σ • S`, by Mathlib's pointwise action of `Equiv.Perm α`. -/
 
 section Lineages
 
-variable {α : Type*}
+variable {α : Type*} [DecidableEq α]
 
-private theorem map_mul_toEmbedding (σ τ : Equiv.Perm α) (B : Finset α) :
-    B.map (σ * τ).toEmbedding = (B.map τ.toEmbedding).map σ.toEmbedding := by
-  rw [Finset.map_map]
+private theorem perm_smul_finset_eq_map (σ : Equiv.Perm α) (B : Finset α) :
+    σ • B = B.map σ.toEmbedding := by
+  rw [Finset.map_eq_image, Finset.smul_finset_def]
   rfl
 
-private theorem map_eq_self_of_forall {σ : Equiv.Perm α} {B : Finset α} (h : ∀ y ∈ B, σ y = y) :
-    B.map σ.toEmbedding = B := by
-  ext y
-  simp only [Finset.mem_map, Equiv.toEmbedding_apply]
-  constructor
-  · rintro ⟨z, hz, rfl⟩
-    rwa [h z hz]
-  · exact fun hy => ⟨y, hy, h y hy⟩
+private theorem perm_smul_finset_eq_self {σ : Equiv.Perm α} {B : Finset α}
+    (h : ∀ y ∈ B, σ y = y) : σ • B = B := by
+  rw [Finset.smul_finset_def]
+  conv_rhs => rw [← Finset.image_id (s := B)]
+  exact Finset.image_congr fun y hy => h y hy
 
-variable [DecidableEq α]
-
-/-- Relabel the leaves of a set of lineages, each lineage given by its set of leaves, by a
-permutation `σ` of the leaves. -/
-def relabelLineages (σ : Equiv.Perm α) (S : Finset (Finset α)) : Finset (Finset α) :=
-  S.image (Finset.map σ.toEmbedding)
-
-theorem relabelLineages_one (S : Finset (Finset α)) : relabelLineages 1 S = S := by
-  have h : ∀ B : Finset α, B.map (1 : Equiv.Perm α).toEmbedding = B :=
-    fun _ => map_eq_self_of_forall fun _ _ => rfl
-  rw [relabelLineages, Finset.image_congr (g := id) fun B _ => h B, Finset.image_id]
-
-theorem relabelLineages_mul (σ τ : Equiv.Perm α) (S : Finset (Finset α)) :
-    relabelLineages (σ * τ) S = relabelLineages σ (relabelLineages τ S) := by
-  simp only [relabelLineages, Finset.image_image]
-  exact Finset.image_congr fun B _ => map_mul_toEmbedding σ τ B
-
-theorem map_mem_relabelLineages_iff (σ : Equiv.Perm α) (S : Finset (Finset α)) (B : Finset α) :
-    B.map σ.toEmbedding ∈ relabelLineages σ S ↔ B ∈ S :=
-  (Finset.map_injective _).mem_finset_image
-
-theorem card_relabelLineages (σ : Equiv.Perm α) (S : Finset (Finset α)) :
-    (relabelLineages σ S).card = S.card :=
-  Finset.card_image_of_injective _ (Finset.map_injective _)
-
-theorem relabelLineages_inter (σ : Equiv.Perm α) (S T : Finset (Finset α)) :
-    relabelLineages σ (S ∩ T) = relabelLineages σ S ∩ relabelLineages σ T :=
-  Finset.image_inter _ _ (Finset.map_injective _)
-
-theorem relabelLineages_union (σ : Equiv.Perm α) (S T : Finset (Finset α)) :
-    relabelLineages σ (S ∪ T) = relabelLineages σ S ∪ relabelLineages σ T :=
-  Finset.image_union _ _
-
-theorem relabelLineages_coalescence (σ : Equiv.Perm α) (S : Finset (Finset α)) (X Y : Finset α) :
-    relabelLineages σ (insert (X ∪ Y) ((S.erase X).erase Y)) =
-      insert (X.map σ.toEmbedding ∪ Y.map σ.toEmbedding)
-        (((relabelLineages σ S).erase (X.map σ.toEmbedding)).erase (Y.map σ.toEmbedding)) := by
-  rw [relabelLineages, Finset.image_insert, Finset.image_erase (Finset.map_injective _),
-    Finset.image_erase (Finset.map_injective _), Finset.map_union]
-  rfl
-
-theorem relabelLineages_image_singleton (σ : Equiv.Perm α) (A : Finset α) :
-    relabelLineages σ (A.image ({·})) = (A.map σ.toEmbedding).image ({·}) := by
-  ext B
-  simp only [relabelLineages, Finset.image_image, Finset.mem_image, Finset.mem_map,
-    Function.comp_apply, Finset.map_singleton, Equiv.toEmbedding_apply]
-  constructor
-  · rintro ⟨a, ha, rfl⟩
-    exact ⟨σ a, ⟨a, ha, rfl⟩, rfl⟩
-  · rintro ⟨_, ⟨a, ha, rfl⟩, rfl⟩
-    exact ⟨a, ha, rfl⟩
-
-theorem relabelLineages_eq_self {σ : Equiv.Perm α} {S : Finset (Finset α)}
-    (h : ∀ B ∈ S, B.map σ.toEmbedding ∈ S) : relabelLineages σ S = S := by
-  refine Finset.eq_of_subset_of_card_le (fun B hB => ?_) (card_relabelLineages σ S).ge
-  obtain ⟨C, hC, rfl⟩ := Finset.mem_image.1 hB
-  exact h C hC
-
-private theorem map_swap_eq_self {x x' : α} {B : Finset α} (hx : x ∉ B) (hx' : x' ∉ B) :
-    B.map (Equiv.swap x x').toEmbedding = B :=
-  map_eq_self_of_forall fun _ hy =>
+private theorem swap_smul_finset_eq_self {x x' : α} {B : Finset α} (hx : x ∉ B) (hx' : x' ∉ B) :
+    Equiv.swap x x' • B = B :=
+  perm_smul_finset_eq_self fun _ hy =>
     Equiv.swap_apply_of_ne_of_ne (fun h => hx (h ▸ hy)) (fun h => hx' (h ▸ hy))
+
+private theorem smul_coalescence (σ : Equiv.Perm α) (S : Finset (Finset α)) (X Y : Finset α) :
+    σ • insert (X ∪ Y) ((S.erase X).erase Y) =
+      insert (σ • X ∪ σ • Y) (((σ • S).erase (σ • X)).erase (σ • Y)) := by
+  rw [Finset.smul_finset_insert, Finset.smul_finset_union]
+  congr 1
+  simp only [Finset.erase_eq, Finset.smul_finset_sdiff, Finset.smul_finset_singleton]
+
+private theorem smul_image_singleton (σ : Equiv.Perm α) (A : Finset α) :
+    σ • A.image (fun a => ({a} : Finset α)) = (σ • A).image fun a => ({a} : Finset α) := by
+  rw [Finset.smul_finset_def, Finset.smul_finset_def, Finset.image_image, Finset.image_image]
+  exact Finset.image_congr fun a _ => by
+    simp only [Function.comp_apply, Finset.smul_finset_singleton]
+
+private theorem smul_finset_eq_self_of_forall {σ : Equiv.Perm α} {S : Finset (Finset α)}
+    (h : ∀ B ∈ S, σ • B ∈ S) : σ • S = S := by
+  refine Finset.eq_of_subset_of_card_le (fun B hB => ?_) (Finset.card_smul_finset σ S).ge
+  obtain ⟨C, hC, rfl⟩ := Finset.mem_smul_finset.1 hB
+  exact h C hC
 
 /-- `S'` arises from `S` by a **coalescence**: two distinct lineages `X, Y` of `S` merge into
 the lineage `X ∪ Y`. -/
@@ -407,33 +375,33 @@ private theorem IsChain.new_singletons (hS : IsChain S K) {b : ℕ} (hb : b < K)
 
 /-- Swapping two leaves that are both outside every lineage, or both single-leaf lineages,
 fixes a separated lineage set. -/
-private theorem relabelLineages_swap_eq {T : Finset (Finset α)} (hT : Separated T) {x x' : α}
+private theorem swap_smul_eq_self {T : Finset (Finset α)} (hT : Separated T) {x x' : α}
     (h : (x ∉ T.biUnion id ∧ x' ∉ T.biUnion id) ∨ ({x} ∈ T ∧ {x'} ∈ T)) :
-    relabelLineages (Equiv.swap x x') T = T := by
-  apply relabelLineages_eq_self
+    Equiv.swap x x' • T = T := by
+  apply smul_finset_eq_self_of_forall
   intro C hC
   rcases h with ⟨hx, hx'⟩ | ⟨hx, hx'⟩
-  · rw [map_swap_eq_self (B := C) (fun h => hx (Finset.mem_biUnion.2 ⟨C, hC, h⟩))
+  · rw [swap_smul_finset_eq_self (B := C) (fun h => hx (Finset.mem_biUnion.2 ⟨C, hC, h⟩))
       (fun h => hx' (Finset.mem_biUnion.2 ⟨C, hC, h⟩))]
     exact hC
   · by_cases hCx : C = {x}
     · subst hCx
-      simpa using hx'
+      rwa [Finset.smul_finset_singleton, Equiv.Perm.smul_def, Equiv.swap_apply_left]
     by_cases hCx' : C = {x'}
     · subst hCx'
-      simpa using hx
+      rwa [Finset.smul_finset_singleton, Equiv.Perm.smul_def, Equiv.swap_apply_right]
     have h1 : x ∉ C := fun h =>
       Finset.disjoint_left.1 (hT.2 _ hx C hC (Ne.symm hCx)) (Finset.mem_singleton_self x) h
     have h2 : x' ∉ C := fun h =>
       Finset.disjoint_left.1 (hT.2 _ hx' C hC (Ne.symm hCx')) (Finset.mem_singleton_self x') h
-    rw [map_swap_eq_self h1 h2]
+    rw [swap_smul_finset_eq_self h1 h2]
     exact hC
 
 /-- Two distinct lineages of `S k` present at the same steps are single leaves whose swap
 fixes `S 0, …, S k`. -/
 private theorem IsChain.exists_swap (hS : IsChain S K) {k : ℕ} (hk : k ≤ K) {B B' : Finset α}
     (hB : B ∈ S k) (hB' : B' ∈ S k) (hne : B ≠ B') (hpres : ∀ s ≤ k, B ∈ S s ↔ B' ∈ S s) :
-    ∃ x x', B = {x} ∧ B' = {x'} ∧ ∀ t ≤ k, relabelLineages (Equiv.swap x x') (S t) = S t := by
+    ∃ x x', B = {x} ∧ B' = {x'} ∧ ∀ t ≤ k, Equiv.swap x x' • S t = S t := by
   obtain ⟨β, hβk, hβ⟩ := hS.exists_birth hk hB
   have hβ' : ∀ s ≤ k, B' ∈ S s ↔ β ≤ s := fun s hs => (hpres s hs).symm.trans (hβ s hs)
   have main : ∃ x x', B = {x} ∧ B' = {x'} ∧
@@ -456,7 +424,7 @@ private theorem IsChain.exists_swap (hS : IsChain S K) {k : ℕ} (hk : k ≤ K) 
         ⟨fun h => hx (hS.biUnion_mono (by omega) (by omega) h),
           fun h => hx' (hS.biUnion_mono (by omega) (by omega) h)⟩⟩
   obtain ⟨x, x', rfl, rfl, hout⟩ := main
-  refine ⟨x, x', rfl, rfl, fun t ht => relabelLineages_swap_eq (hS.separated (by omega)) ?_⟩
+  refine ⟨x, x', rfl, rfl, fun t ht => swap_smul_eq_self (hS.separated (by omega)) ?_⟩
   by_cases htβ : t < β
   · exact Or.inl (hout t htβ)
   · exact Or.inr ⟨(hβ t ht).2 (by omega), (hβ' t ht).2 (by omega)⟩
@@ -572,50 +540,46 @@ private theorem IsChain.exists_aut_pair (hS : IsChain S K) {k : ℕ} (hk : k ≤
     {X' Y' X₂ Y₂ : Finset α} (hX' : X' ∈ S k) (hY' : Y' ∈ S k) (hXY' : X' ≠ Y')
     (hX₂ : X₂ ∈ S k) (hY₂ : Y₂ ∈ S k) (hXY₂ : X₂ ≠ Y₂)
     (hpX : ∀ s ≤ k, X' ∈ S s ↔ X₂ ∈ S s) (hpY : ∀ s ≤ k, Y' ∈ S s ↔ Y₂ ∈ S s) :
-    ∃ τ : Equiv.Perm α, (∀ t ≤ k, relabelLineages τ (S t) = S t) ∧
-      X'.map τ.toEmbedding = X₂ ∧ Y'.map τ.toEmbedding = Y₂ := by
-  obtain ⟨τ₁, haut₁, hτ₁⟩ : ∃ τ₁ : Equiv.Perm α, (∀ t ≤ k, relabelLineages τ₁ (S t) = S t) ∧
-      X'.map τ₁.toEmbedding = X₂ := by
+    ∃ τ : Equiv.Perm α, (∀ t ≤ k, τ • S t = S t) ∧ τ • X' = X₂ ∧ τ • Y' = Y₂ := by
+  obtain ⟨τ₁, haut₁, hτ₁⟩ : ∃ τ₁ : Equiv.Perm α, (∀ t ≤ k, τ₁ • S t = S t) ∧ τ₁ • X' = X₂ := by
     by_cases h : X' = X₂
-    · refine ⟨1, fun t _ => relabelLineages_one _, ?_⟩
-      rw [h]
-      exact map_eq_self_of_forall fun _ _ => rfl
+    · exact ⟨1, fun t _ => one_smul _ _, by rw [h, one_smul]⟩
     · obtain ⟨x, x₂, rfl, rfl, haut⟩ := hS.exists_swap hk hX' hX₂ h hpX
-      exact ⟨Equiv.swap x x₂, haut, by simp⟩
-  have hmem : ∀ s ≤ k, ∀ B, B.map τ₁.toEmbedding ∈ S s ↔ B ∈ S s := fun s hs B => by
+      exact ⟨Equiv.swap x x₂, haut, by
+        rw [Finset.smul_finset_singleton, Equiv.Perm.smul_def, Equiv.swap_apply_left]⟩
+  have hmem : ∀ s ≤ k, ∀ B, τ₁ • B ∈ S s ↔ B ∈ S s := fun s hs B => by
     conv_lhs => rw [← haut₁ s hs]
-    exact map_mem_relabelLineages_iff _ _ _
-  set Y'' := Y'.map τ₁.toEmbedding with hY''def
+    exact Finset.smul_mem_smul_finset_iff _
+  set Y'' := τ₁ • Y' with hY''def
   have hY'' : Y'' ∈ S k := (hmem k le_rfl Y').2 hY'
   have hpY'' : ∀ s ≤ k, Y'' ∈ S s ↔ Y₂ ∈ S s := fun s hs => (hmem s hs Y').trans (hpY s hs)
   have hne'' : Y'' ≠ X₂ := by
     rw [← hτ₁]
-    exact fun h => hXY' (Finset.map_injective _ h).symm
+    exact fun h => hXY' (MulAction.injective τ₁ h).symm
   obtain ⟨τ₂, haut₂, hτ₂Y, hτ₂X⟩ : ∃ τ₂ : Equiv.Perm α,
-      (∀ t ≤ k, relabelLineages τ₂ (S t) = S t) ∧ Y''.map τ₂.toEmbedding = Y₂ ∧
-        X₂.map τ₂.toEmbedding = X₂ := by
+      (∀ t ≤ k, τ₂ • S t = S t) ∧ τ₂ • Y'' = Y₂ ∧ τ₂ • X₂ = X₂ := by
     by_cases h : Y'' = Y₂
-    · refine ⟨1, fun t _ => relabelLineages_one _, ?_, map_eq_self_of_forall fun _ _ => rfl⟩
-      rw [h]
-      exact map_eq_self_of_forall fun _ _ => rfl
+    · exact ⟨1, fun t _ => one_smul _ _, by rw [h, one_smul], one_smul _ _⟩
     · obtain ⟨y, y₂, hy, hy₂, haut⟩ := hS.exists_swap hk hY'' hY₂ h hpY''
       have hsep := hS.separated hk
       have h1 : y ∉ X₂ := fun hyX => Finset.disjoint_left.1 (hsep.2 _ hY'' _ hX₂ hne'')
         (by rw [hy]; exact Finset.mem_singleton_self y) hyX
       have h2 : y₂ ∉ X₂ := fun hyX => Finset.disjoint_left.1
         (hsep.2 _ hY₂ _ hX₂ (Ne.symm hXY₂)) (by rw [hy₂]; exact Finset.mem_singleton_self y₂) hyX
-      exact ⟨Equiv.swap y y₂, haut, by rw [hy, hy₂]; simp, map_swap_eq_self h1 h2⟩
-  refine ⟨τ₂ * τ₁, fun t ht => by rw [relabelLineages_mul, haut₁ t ht, haut₂ t ht], ?_, ?_⟩
-  · rw [map_mul_toEmbedding, hτ₁, hτ₂X]
-  · rw [map_mul_toEmbedding, ← hY''def, hτ₂Y]
+      exact ⟨Equiv.swap y y₂, haut, by
+        rw [hy, hy₂, Finset.smul_finset_singleton, Equiv.Perm.smul_def, Equiv.swap_apply_left],
+        swap_smul_finset_eq_self h1 h2⟩
+  refine ⟨τ₂ * τ₁, fun t ht => by rw [mul_smul, haut₁ t ht, haut₂ t ht], ?_, ?_⟩
+  · rw [mul_smul, hτ₁, hτ₂X]
+  · rw [mul_smul, ← hY''def, hτ₂Y]
 
 /-- **Core of the unique encoding.** Two chains whose lineage sets meet in the same numbers of
 lineages, pairwise, are related by a relabelling of the leaves. -/
 private theorem IsChain.exists_relabel [Finite α] {S₁ S₂ : ℕ → Finset (Finset α)}
     (h₁ : IsChain S₁ K) (h₂ : IsChain S₂ K)
     (hF : ∀ a ≤ K, ∀ b ≤ K, (S₁ a ∩ S₁ b).card = (S₂ a ∩ S₂ b).card) :
-    ∃ σ : Equiv.Perm α, ∀ t ≤ K, relabelLineages σ (S₁ t) = S₂ t := by
-  suffices H : ∀ k ≤ K, ∃ σ : Equiv.Perm α, ∀ t ≤ k, relabelLineages σ (S₁ t) = S₂ t from
+    ∃ σ : Equiv.Perm α, ∀ t ≤ K, σ • S₁ t = S₂ t := by
+  suffices H : ∀ k ≤ K, ∃ σ : Equiv.Perm α, ∀ t ≤ k, σ • S₁ t = S₂ t from
     H K le_rfl
   intro k hk
   induction k with
@@ -630,7 +594,7 @@ private theorem IsChain.exists_relabel [Finite α] {S₁ S₂ : ℕ → Finset (
     obtain ⟨σ, hσ⟩ := exists_perm_map_eq hc
     refine ⟨σ, fun t ht => ?_⟩
     obtain rfl : t = 0 := by omega
-    rw [hA₁, hA₂, relabelLineages_image_singleton, hσ]
+    rw [hA₁, hA₂, smul_image_singleton, perm_smul_finset_eq_map, hσ]
   | succ k ih =>
     obtain ⟨σ, hσ⟩ := ih (by omega)
     have hkK : k < K := by omega
@@ -638,17 +602,17 @@ private theorem IsChain.exists_relabel [Finite α] {S₁ S₂ : ℕ → Finset (
     have hs₂ := h₂.separated hkK.le
     have hck : (S₁ k).card = (S₂ k).card := by simpa using hF k hkK.le k hkK.le
     have hck' : (S₁ (k + 1)).card = (S₂ (k + 1)).card := by simpa using hF (k + 1) hk (k + 1) hk
-    have hmemσ : ∀ s ≤ k, ∀ B, B.map σ.toEmbedding ∈ S₂ s ↔ B ∈ S₁ s := fun s hs B => by
+    have hmemσ : ∀ s ≤ k, ∀ B, σ • B ∈ S₂ s ↔ B ∈ S₁ s := fun s hs B => by
       rw [← hσ s hs]
-      exact map_mem_relabelLineages_iff _ _ _
+      exact Finset.smul_mem_smul_finset_iff _
     rcases h₁.step k hkK with ⟨X₁, hX₁, Y₁, hY₁, hXY₁, e₁⟩ | ⟨A₁, hA₁ne, hA₁, e₁⟩ <;>
       rcases h₂.step k hkK with ⟨X₂, hX₂, Y₂, hY₂, hXY₂, e₂⟩ | ⟨A₂, hA₂ne, hA₂, e₂⟩
     · -- two coalescences
-      set X' := X₁.map σ.toEmbedding with hX'def
-      set Y' := Y₁.map σ.toEmbedding with hY'def
+      set X' := σ • X₁ with hX'def
+      set Y' := σ • Y₁ with hY'def
       have hX' : X' ∈ S₂ k := (hmemσ k le_rfl X₁).2 hX₁
       have hY' : Y' ∈ S₂ k := (hmemσ k le_rfl Y₁).2 hY₁
-      have hXY' : X' ≠ Y' := fun h => hXY₁ (Finset.map_injective _ h)
+      have hXY' : X' ≠ Y' := fun h => hXY₁ (MulAction.injective σ h)
       have hpair : ∀ s ≤ k, (S₂ s ∩ {X', Y'}).card = (S₂ s ∩ {X₂, Y₂}).card := by
         intro s hs
         have a1 := card_inter_coalescence (T := S₁ s) hX₁ hY₁
@@ -660,8 +624,9 @@ private theorem IsChain.exists_relabel [Finite α] {S₁ S₂ : ℕ → Finset (
         have f1 := hF s (by omega) k hkK.le
         have f2 := hF s (by omega) (k + 1) hk
         have r : (S₂ s ∩ {X', Y'}).card = (S₁ s ∩ {X₁, Y₁}).card := by
-          rw [← hσ s hs, show ({X', Y'} : Finset (Finset α)) = relabelLineages σ {X₁, Y₁} by
-            simp [relabelLineages, X', Y'], ← relabelLineages_inter, card_relabelLineages]
+          rw [← hσ s hs, show ({X', Y'} : Finset (Finset α)) = σ • {X₁, Y₁} by
+            rw [Finset.smul_finset_insert, Finset.smul_finset_singleton],
+            ← Finset.smul_finset_inter, Finset.card_smul_finset]
         omega
       obtain ⟨βX', hβX'k, hβX'⟩ := h₂.exists_birth hkK.le hX'
       obtain ⟨βY', hβY'k, hβY'⟩ := h₂.exists_birth hkK.le hY'
@@ -676,15 +641,15 @@ private theorem IsChain.exists_relabel [Finite α] {S₁ S₂ : ℕ → Finset (
       have finish : ∀ {P Q : Finset α}, P ∈ S₂ k → Q ∈ S₂ k → P ≠ Q →
           S₂ (k + 1) = insert (P ∪ Q) (((S₂ k).erase P).erase Q) →
           (∀ s ≤ k, X' ∈ S₂ s ↔ P ∈ S₂ s) → (∀ s ≤ k, Y' ∈ S₂ s ↔ Q ∈ S₂ s) →
-          ∃ σ' : Equiv.Perm α, ∀ t ≤ k + 1, relabelLineages σ' (S₁ t) = S₂ t := by
+          ∃ σ' : Equiv.Perm α, ∀ t ≤ k + 1, σ' • S₁ t = S₂ t := by
         intro P Q hP hQ hPQ eP hpP hpQ
         obtain ⟨τ, haut, hτX, hτY⟩ := h₂.exists_aut_pair hkK.le hX' hY' hXY' hP hQ hPQ hpP hpQ
         refine ⟨τ * σ, fun t ht => ?_⟩
         rcases Nat.lt_or_ge t (k + 1) with htk | htk
-        · rw [relabelLineages_mul, hσ t (by omega), haut t (by omega)]
+        · rw [mul_smul, hσ t (by omega), haut t (by omega)]
         · obtain rfl : t = k + 1 := by omega
-          rw [e₁, eP, relabelLineages_coalescence, relabelLineages_mul, hσ k le_rfl,
-            haut k le_rfl, map_mul_toEmbedding, map_mul_toEmbedding, ← hX'def, ← hY'def,
+          rw [e₁, eP, smul_coalescence, mul_smul τ σ (S₁ k), hσ k le_rfl,
+            haut k le_rfl, mul_smul τ σ X₁, mul_smul τ σ Y₁, ← hX'def, ← hY'def,
             hτX, hτY]
       rcases hm with ⟨e1, e2⟩ | ⟨e1, e2⟩
       · exact finish hX₂ hY₂ hXY₂ e₂
@@ -714,33 +679,34 @@ private theorem IsChain.exists_relabel [Finite α] {S₁ S₂ : ℕ → Finset (
       rw [← e₁] at c₁
       rw [← e₂] at c₂
       have hcA : A₁.card = A₂.card := by omega
-      have hd₁ : Disjoint (A₁.map σ.toEmbedding) ((S₂ k).biUnion id) := by
+      have hd₁ : Disjoint (σ • A₁) ((S₂ k).biUnion id) := by
         rw [Finset.disjoint_left]
         intro y hy hyC
-        obtain ⟨a, ha, rfl⟩ := Finset.mem_map.1 hy
+        obtain ⟨a, ha, rfl⟩ := Finset.mem_smul_finset.1 hy
         obtain ⟨B₂, hB₂, haB₂⟩ := Finset.mem_biUnion.1 hyC
         rw [← hσ k le_rfl] at hB₂
-        obtain ⟨B₁, hB₁, rfl⟩ := Finset.mem_image.1 hB₂
-        exact Finset.disjoint_left.1 (hA₁ B₁ hB₁) ha ((Finset.mem_map' _).1 haB₂)
+        obtain ⟨B₁, hB₁, rfl⟩ := Finset.mem_smul_finset.1 hB₂
+        exact Finset.disjoint_left.1 (hA₁ B₁ hB₁) ha
+          ((Finset.smul_mem_smul_finset_iff σ).1 haB₂)
       have hd₂ : Disjoint A₂ ((S₂ k).biUnion id) := by
         rw [Finset.disjoint_left]
         intro y hy hyC
         obtain ⟨B₂, hB₂, hyB₂⟩ := Finset.mem_biUnion.1 hyC
         exact Finset.disjoint_left.1 (hA₂ B₂ hB₂) hy hyB₂
-      obtain ⟨ρ, hρC, hρ⟩ := exists_perm_fix_map_eq _ hd₁ hd₂ (by rw [Finset.card_map, hcA])
-      have fixρ : ∀ t ≤ k, relabelLineages ρ (S₂ t) = S₂ t := by
+      obtain ⟨ρ, hρC, hρ⟩ := exists_perm_fix_map_eq _ hd₁ hd₂ (by rw [Finset.card_smul_finset, hcA])
+      have fixρ : ∀ t ≤ k, ρ • S₂ t = S₂ t := by
         intro t ht
-        refine relabelLineages_eq_self fun B hB => ?_
-        rw [map_eq_self_of_forall (B := B) fun y hy => hρC y
+        refine smul_finset_eq_self_of_forall fun B hB => ?_
+        rw [perm_smul_finset_eq_self (B := B) fun y hy => hρC y
           (h₂.biUnion_mono ht hkK.le (Finset.mem_biUnion.2 ⟨B, hB, hy⟩))]
         exact hB
       refine ⟨ρ * σ, fun t ht => ?_⟩
       rcases Nat.lt_or_ge t (k + 1) with htk | htk
-      · rw [relabelLineages_mul, hσ t (by omega), fixρ t (by omega)]
+      · rw [mul_smul, hσ t (by omega), fixρ t (by omega)]
       · obtain rfl : t = k + 1 := by omega
-        rw [e₁, e₂, relabelLineages_mul, relabelLineages_union, relabelLineages_union,
-          hσ k le_rfl, fixρ k le_rfl, relabelLineages_image_singleton,
-          relabelLineages_image_singleton, hρ]
+        rw [e₁, e₂, mul_smul, Finset.smul_finset_union, Finset.smul_finset_union,
+          hσ k le_rfl, fixρ k le_rfl, smul_image_singleton, smul_image_singleton,
+          perm_smul_finset_eq_map ρ, hρ]
 
 private theorem coalescence_step {T T' : Finset (Finset α)} (hT : Separated T)
     (h : IsCoalescence T T') : T'.biUnion id = T.biUnion id ∧ T'.card + 1 = T.card := by
@@ -827,19 +793,16 @@ theorem lineageFMatrix_apply (L : List (Finset (Finset α))) (r : ℕ) (i j : Fi
       if j ≤ i then (L.getD (r - 1 - i) ∅ ∩ L.getD (r - 1 - j) ∅).card else 0 :=
   rfl
 
-theorem relabelLineages_empty (σ : Equiv.Perm α) : relabelLineages σ ∅ = ∅ :=
-  Finset.image_empty _
-
-theorem getD_map_relabelLineages (σ : Equiv.Perm α) (L : List (Finset (Finset α))) (t : ℕ) :
-    (L.map (relabelLineages σ)).getD t ∅ = relabelLineages σ (L.getD t ∅) := by
-  rw [← List.getD_map L ∅ (relabelLineages σ), relabelLineages_empty]
+private theorem getD_map_smul (σ : Equiv.Perm α) (L : List (Finset (Finset α))) (t : ℕ) :
+    (L.map (σ • ·)).getD t ∅ = σ • L.getD t ∅ := by
+  rw [← List.getD_map L ∅ (σ • ·), Finset.smul_finset_empty]
 
 /- Relabelling the leaves does not change the F matrix. -/
-theorem lineageFMatrix_map_relabelLineages (σ : Equiv.Perm α) (L : List (Finset (Finset α)))
-    (r : ℕ) : lineageFMatrix (L.map (relabelLineages σ)) r = lineageFMatrix L r := by
+theorem lineageFMatrix_map_smul (σ : Equiv.Perm α) (L : List (Finset (Finset α))) (r : ℕ) :
+    lineageFMatrix (L.map (σ • ·)) r = lineageFMatrix L r := by
   ext i j
-  simp only [lineageFMatrix_apply, getD_map_relabelLineages, ← relabelLineages_inter,
-    card_relabelLineages]
+  simp only [lineageFMatrix_apply, getD_map_smul, ← Finset.smul_finset_inter,
+    Finset.card_smul_finset]
 
 private theorem card_inter_eq_of_lineageFMatrix_eq {L₁ L₂ : List (Finset (Finset α))} {r : ℕ}
     (h : lineageFMatrix L₁ r = lineageFMatrix L₂ r) {a b : ℕ} (ha : a < r) (hb : b < r) :
@@ -905,31 +868,24 @@ theorem mem_lineages_of_mem_of_mem (H : LabeledRankedHistory n m) {s r k : ℕ} 
 /-- Two labeled ranked histories have the **same shape** when a relabelling of the leaves
 carries the lineages of one to those of the other. -/
 def SameShape (H₁ H₂ : LabeledRankedHistory n m) : Prop :=
-  ∃ σ : Equiv.Perm (Fin n), H₁.lineages.map (relabelLineages σ) = H₂.lineages
-
-theorem map_relabelLineages_one (L : List (Finset (Finset (Fin n)))) :
-    L.map (relabelLineages 1) = L := by
-  rw [show relabelLineages (1 : Equiv.Perm (Fin n)) = id from funext relabelLineages_one,
-    List.map_id]
-
-theorem map_relabelLineages_mul (σ τ : Equiv.Perm (Fin n)) (L : List (Finset (Finset (Fin n)))) :
-    L.map (relabelLineages (σ * τ)) = (L.map (relabelLineages τ)).map (relabelLineages σ) := by
-  rw [List.map_map]
-  exact List.map_congr_left fun S _ => relabelLineages_mul σ τ S
+  ∃ σ : Equiv.Perm (Fin n), H₁.lineages.map (σ • ·) = H₂.lineages
 
 /-- Having the same shape is an equivalence relation. -/
 instance shapeSetoid (n m : ℕ) : Setoid (LabeledRankedHistory n m) where
   r := SameShape
   iseqv := {
-    refl := fun H => ⟨1, map_relabelLineages_one _⟩
+    refl := fun H => ⟨1, by simp⟩
     symm := fun {_ _} h => by
       obtain ⟨σ, h⟩ := h
-      exact ⟨σ⁻¹, by rw [← h, ← map_relabelLineages_mul, inv_mul_cancel,
-        map_relabelLineages_one]⟩
+      refine ⟨σ⁻¹, ?_⟩
+      rw [← h, List.map_map]
+      simp [Function.comp_def]
     trans := fun {_ _ _} h h' => by
       obtain ⟨σ, h⟩ := h
       obtain ⟨τ, h'⟩ := h'
-      exact ⟨τ * σ, by rw [map_relabelLineages_mul, h, h']⟩ }
+      refine ⟨τ * σ, ?_⟩
+      rw [← h', ← h, List.map_map]
+      simp [Function.comp_def, mul_smul] }
 
 /-- The F matrix of a labeled ranked history, of size `n + m - 2`: for `j ≤ i`, entry `(i, j)`
 is the number of lineages extant in the interval `j` (counted from the root, from `0`) that
@@ -947,7 +903,7 @@ theorem fMatrix_apply (H : LabeledRankedHistory n m) (i j : Fin (n + m - 2)) :
 theorem fMatrix_eq_of_sameShape {H₁ H₂ : LabeledRankedHistory n m} (h : SameShape H₁ H₂) :
     H₁.fMatrix = H₂.fMatrix := by
   obtain ⟨σ, hσ⟩ := h
-  rw [fMatrix, fMatrix, ← hσ, lineageFMatrix_map_relabelLineages]
+  rw [fMatrix, fMatrix, ← hσ, lineageFMatrix_map_smul]
 
 /- Labeled ranked histories with the same F matrix have the same shape. -/
 theorem sameShape_of_fMatrix_eq {H₁ H₂ : LabeledRankedHistory n m}
@@ -971,7 +927,7 @@ theorem sameShape_of_fMatrix_eq {H₁ H₂ : LabeledRankedHistory n m}
   rw [List.getElem_map, ← List.getD_eq_getElem _ ∅ ht₂,
     ← List.getD_eq_getElem _ ∅ (by rw [length_lineages]; omega)]
   by_cases ht : t = n + m - 2
-  · rw [ht, hroot₁, hroot₂, relabelLineages, Finset.image_singleton, Finset.map_univ_equiv]
+  · rw [ht, hroot₁, hroot₂, Finset.smul_finset_singleton, Finset.smul_finset_univ]
   · exact hσ t (by omega)
 
 end LabeledRankedHistory
@@ -1030,7 +986,7 @@ def rankedTreeShape {n : ℕ} (h : RankedHistory (n + 1)) : RankedTreeShape (n +
 the genes carries the ancestral partitions of one to those of the other. -/
 theorem rankedTreeShape_eq_iff {n : ℕ} (h₁ h₂ : RankedHistory (n + 1)) :
     h₁.rankedTreeShape = h₂.rankedTreeShape ↔
-      ∃ σ : Equiv.Perm (Fin (n + 1)), (partitionsOf h₁).map (relabelLineages σ) = partitionsOf h₂ :=
+      ∃ σ : Equiv.Perm (Fin (n + 1)), (partitionsOf h₁).map (σ • ·) = partitionsOf h₂ :=
   Quotient.eq
 
 /-- The F matrix of a ranked labeled history of `n` genes, of size `n - 1`, from its ancestral
@@ -1049,7 +1005,7 @@ same F matrix exactly when a relabelling of the genes carries the ancestral part
 those of the other, that is, exactly when they have the same ranked tree shape. -/
 theorem fMatrix_eq_fMatrix_iff {n : ℕ} (h₁ h₂ : RankedHistory n) :
     h₁.fMatrix = h₂.fMatrix ↔
-      ∃ σ : Equiv.Perm (Fin n), (partitionsOf h₁).map (relabelLineages σ) = partitionsOf h₂ := by
+      ∃ σ : Equiv.Perm (Fin n), (partitionsOf h₁).map (σ • ·) = partitionsOf h₂ := by
   constructor
   · intro hF
     rcases n with _ | n
@@ -1057,7 +1013,7 @@ theorem fMatrix_eq_fMatrix_iff {n : ℕ} (h₁ h₂ : RankedHistory n) :
       simp [partitionsOf, blocksOf]
     · exact (rankedTreeShape_eq_iff h₁ h₂).1 (RankedTreeShape.fMatrix_injective hF)
   · rintro ⟨σ, hσ⟩
-    rw [fMatrix, fMatrix, ← hσ, lineageFMatrix_map_relabelLineages]
+    rw [fMatrix, fMatrix, ← hσ, lineageFMatrix_map_smul]
 
 end RankedHistory
 
@@ -1540,36 +1496,72 @@ theorem dist_metricSpaceDw₂OfIsochronous (g₁ g₂ : RankedGenealogy n 1) :
 
 end RankedGenealogy
 
-/-! ### Summary statistics -/
+namespace RankedGenealogy
 
-section Medoid
+/-- **The weighted distances are metrics on heterochronous ranked genealogies**: the source's
+Proposition 2 (Kim, Rosenberg and Palacios 2020) for `m ≥ 2` sampling events, that `d₁ʷ` and `d₂ʷ`
+are the distances of metric space structures on ranked genealogies with `n` leaves and `m`
+sampling events. Since they are the distances of pseudometric space structures
+(`pseudoMetricSpaceDw₁`, `pseudoMetricSpaceDw₂`), this holds exactly when two such genealogies with
+the same matrix `F ∘ W` on and below the diagonal are equal; `eq_of_weighted_eq` proves that when
+the diagonals of their F matrices agree, as they do for one sampling event. The source's proof (SI
+Appendix, section 2) recovers the change-point times from the first column of `F ∘ W`, which
+determines them only when a child of the root persists to the most recent interval. -/
+def HeterochronousWeightedMetrics : Prop :=
+  ∀ n m : ℕ, 2 ≤ m →
+    (∃ M : MetricSpace (RankedGenealogy n m), ∀ g₁ g₂, M.dist g₁ g₂ = dw₁ g₁ g₂) ∧
+      ∃ M : MetricSpace (RankedGenealogy n m), ∀ g₁ g₂, M.dist g₁ g₂ = dw₂ g₁ g₂
 
-variable {X : Type*}
+end RankedGenealogy
 
-/-- The **`L²`-medoid set** of a finite sample `T 0, …, T (s - 1)`, possibly with repetitions,
-for a distance `d` (Kim, Rosenberg and Palacios 2020, Eqs. 5 and 7): the sampled points that
-minimise the sum of squared distances to the sample, used as a measure of center. -/
-def l2MedoidSet (d : X → X → ℝ) {s : ℕ} (T : Fin s → X) : Set X :=
-  {x | (∃ k, T k = x) ∧ ∀ k, ∑ j, d x (T j) ^ 2 ≤ ∑ j, d (T k) (T j) ^ 2}
+open MathlibExt.Probability.Statistics.Medoid in
+/-- **F-matrix encoding and metrics on ranked tree shapes** (Kim, Rosenberg and Palacios 2020,
+Theorem 1, Eqs. 1–7 and Proposition 2), with Proposition 2 for heterochronous genealogies only as
+far as the weighted distances being pseudometrics.
 
-/-- The mean squared distance from a point `x` to a finite sample, used with an `L²`-medoid `x`
-as a measure of dispersion (Kim, Rosenberg and Palacios 2020, Eq. 6). -/
-noncomputable def meanSquaredDistance (d : X → X → ℝ) {s : ℕ} (T : Fin s → X) (x : X) : ℝ :=
-  (∑ j, d x (T j) ^ 2) / s
-
-/-- A nonempty finite sample has an `L²`-medoid. -/
-theorem l2MedoidSet_nonempty (d : X → X → ℝ) {s : ℕ} (T : Fin s → X) (hs : 0 < s) :
-    (l2MedoidSet d T).Nonempty := by
-  obtain ⟨k, -, hk⟩ := Finset.exists_min_image univ (fun k => ∑ j, d (T k) (T j) ^ 2)
-    (Finset.univ_nonempty_iff.2 ⟨⟨0, hs⟩⟩)
-  exact ⟨T k, ⟨k, rfl⟩, fun k' => hk k' (Finset.mem_univ _)⟩
-
-/- An `L²`-medoid has the least mean squared distance to the sample among the sampled points. -/
-theorem meanSquaredDistance_le_of_mem_l2MedoidSet (d : X → X → ℝ) {s : ℕ} (T : Fin s → X)
-    {x : X} (hx : x ∈ l2MedoidSet d T) (k : Fin s) :
-    meanSquaredDistance d T x ≤ meanSquaredDistance d T (T k) :=
-  div_le_div_of_nonneg_right (hx.2 k) (Nat.cast_nonneg s)
-
-end Medoid
+* The F matrix determines the ranked tree shape with `n` leaves and `m` sampling events
+  (heterochronous for `m ≥ 2`, isochronous for `m = 1`).
+* For ranked labeled histories of `n` genes, the F matrices agree exactly when a relabelling of
+  the genes carries the ancestral partitions of one history to those of the other, that is,
+  exactly when the histories have the same ranked tree shape.
+* For isochronous ranked tree shapes with `n` leaves, the interval `i` (counted from the root,
+  from `0`) has `i + 2` lineages: `F_{i,i} = i + 1` in the source's indexing from `1`.
+* The `L¹` and `L²` distances `d₁, d₂` between the F matrices are the distances of metric space
+  structures on ranked tree shapes with `n` leaves and `m` sampling events.
+* The weighted distances `d₁ʷ, d₂ʷ` are the distances of pseudometric space structures on ranked
+  genealogies with `n` leaves and `m` sampling events, and of metric space structures on
+  isochronous ones (`m = 1`). That they are metrics for `m ≥ 2` as well is
+  `RankedGenealogy.HeterochronousWeightedMetrics`, which this theorem does not include.
+* For any distance, a nonempty finite sample has a nonempty `L²`-medoid set, the set of sampled
+  points minimising the sum of squared distances to the sample. -/
+theorem fMatrix_encoding_and_metrics :
+    (∀ n m : ℕ, Function.Injective (RankedTreeShape.fMatrix (n := n) (m := m))) ∧
+    (∀ (n : ℕ) (h₁ h₂ : RankedHistory n), h₁.fMatrix = h₂.fMatrix ↔
+      ∃ σ : Equiv.Perm (Fin n), (partitionsOf h₁).map (σ • ·) = partitionsOf h₂) ∧
+    (∀ (n : ℕ) (T : RankedTreeShape n 1) (i : Fin (n + 1 - 2)), T.fMatrix i i = (i : ℕ) + 2) ∧
+    (∀ n m : ℕ, ∃ M : MetricSpace (RankedTreeShape n m),
+      ∀ T₁ T₂, M.dist T₁ T₂ = RankedTreeShape.d₁ T₁ T₂) ∧
+    (∀ n m : ℕ, ∃ M : MetricSpace (RankedTreeShape n m),
+      ∀ T₁ T₂, M.dist T₁ T₂ = RankedTreeShape.d₂ T₁ T₂) ∧
+    (∀ n m : ℕ, ∃ M : PseudoMetricSpace (RankedGenealogy n m),
+      ∀ g₁ g₂, M.dist g₁ g₂ = RankedGenealogy.dw₁ g₁ g₂) ∧
+    (∀ n m : ℕ, ∃ M : PseudoMetricSpace (RankedGenealogy n m),
+      ∀ g₁ g₂, M.dist g₁ g₂ = RankedGenealogy.dw₂ g₁ g₂) ∧
+    (∀ n : ℕ, ∃ M : MetricSpace (RankedGenealogy n 1),
+      ∀ g₁ g₂, M.dist g₁ g₂ = RankedGenealogy.dw₁ g₁ g₂) ∧
+    (∀ n : ℕ, ∃ M : MetricSpace (RankedGenealogy n 1),
+      ∀ g₁ g₂, M.dist g₁ g₂ = RankedGenealogy.dw₂ g₁ g₂) ∧
+    (∀ {X : Type} (d : X → X → ℝ) {s : ℕ} (T : Fin s → X), 0 < s →
+      (l2MedoidSet d T).Nonempty) :=
+  ⟨fun _ _ => RankedTreeShape.fMatrix_injective,
+    fun _ => RankedHistory.fMatrix_eq_fMatrix_iff,
+    fun _ T i => T.fMatrix_diag_of_isochronous i,
+    fun _ _ => ⟨_, RankedTreeShape.dist_metricSpaceD₁⟩,
+    fun _ _ => ⟨_, RankedTreeShape.dist_metricSpaceD₂⟩,
+    fun _ _ => ⟨_, RankedGenealogy.dist_pseudoMetricSpaceDw₁⟩,
+    fun _ _ => ⟨_, RankedGenealogy.dist_pseudoMetricSpaceDw₂⟩,
+    fun _ => ⟨_, RankedGenealogy.dist_metricSpaceDw₁OfIsochronous⟩,
+    fun _ => ⟨_, RankedGenealogy.dist_metricSpaceDw₂OfIsochronous⟩,
+    fun d _ T hs => l2MedoidSet_nonempty d T hs⟩
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent
