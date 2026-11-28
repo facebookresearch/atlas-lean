@@ -172,13 +172,14 @@ private theorem exists_faulhaber {p l : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) (hpl
     rw [comp_assoc, hshift, comp_X]
   · let S := (Rat.padicValuation p).integer
     have hG : G ∈ lifts S.subtype := (lifts_iff_coeff_lifts G).mpr fun j =>
-      ⟨⟨G.coeff j, powerSumPoly_coeff_integral hp2 hpl j⟩, rfl⟩
+      ⟨⟨G.coeff j, ((Rat.padicValuation p).mem_integer_iff _).mpr
+        (powerSumPoly_coeff_integral hp2 hpl j)⟩, rfl⟩
     obtain ⟨g, hg⟩ := (mem_lifts G).mp hG
     have hp : p.Prime := Fact.out
     have htwo : ¬p ∣ 2 := fun hd => hp2 ((Nat.prime_dvd_prime_iff_eq hp Nat.prime_two).mp hd)
     have hinv : (1 / 2 : ℚ) ∈ S := by
-      change Rat.padicValuation p (1 / 2) ≤ 1
-      rw [Rat.padicValuation_le_one_iff, show (1 / 2 : ℚ).den = 2 by norm_num]
+      rw [(Rat.padicValuation p).mem_integer_iff, Rat.padicValuation_le_one_iff,
+        show (1 / 2 : ℚ).den = 2 by norm_num]
       exact htwo
     let half : S := ⟨1 / 2, hinv⟩
     let U' : S[X] := C 2 * X + C (half ^ 2)
@@ -191,7 +192,8 @@ private theorem exists_faulhaber {p l : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) (hpl
       simp [map_comp, map_contract (by decide : 2 ≠ 0), hH', hU', F]
     intro i
     rw [← hF, coeff_map]
-    exact (((H'.contract 2).comp U').coeff i).property
+    exact ((Rat.padicValuation p).mem_integer_iff _).mp
+      (((H'.contract 2).comp U').coeff i).property
 
 private theorem valuation_le_one_norm {p : ℕ} [Fact p.Prime] {r : ℚ}
     (hr : Rat.padicValuation p r ≤ 1) : padicNorm p r ≤ 1 := by

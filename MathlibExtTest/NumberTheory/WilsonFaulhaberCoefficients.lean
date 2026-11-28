@@ -59,7 +59,9 @@ example : padicNorm 5 (-1 / 3) ≤ 1 ∧ padicNorm 5 (4 / 3) ≤ 1 ∧
   refine ⟨?_, ?_, ?_⟩
   · simpa [fifthPowerPoly, coeff_sub, coeff_C_mul, coeff_X_pow, neg_div] using hc 1 (by decide)
   · simpa [fifthPowerPoly, coeff_sub, coeff_C_mul, coeff_X_pow] using hc 2 (by decide)
-  · norm_num [fifthPowerPoly, coeff_sub, coeff_C_mul, coeff_X_pow, Nat.factorial] at hw ⊢
+  · have hfac : Nat.factorial (5 - 1) = 24 := by decide
+    rw [hfac] at hw
+    norm_num [fifthPowerPoly, coeff_sub, coeff_C_mul, coeff_X_pow] at hw ⊢
     exact hw
 
 -- Check the norms independently of the general theorem, using the exact Wilson difference 175 / 6.
