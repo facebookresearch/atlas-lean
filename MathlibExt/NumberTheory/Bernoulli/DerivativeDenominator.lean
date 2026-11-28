@@ -14,12 +14,24 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.BernoulliPolynomials
 public import MathlibExt.Algebra.Polynomial.CoefficientDenominator
+import Mathlib.Algebra.BigOperators.Associated
 
 /-!
 # Denominators of Bernoulli polynomials
 
 For positive `n`, the large-prime part of the denominator of `Bₙ(X) - Bₙ` divides its coprime part.
-The module also defines the indices for which a derivative of a Bernoulli polynomial is integral.
+A prime divides the coprime part precisely when it does not divide `n` and the base-prime digit
+sum of `n` is at least the prime. The module also defines the indices `n ≥ 1` for which the
+`k`-th derivative of a Bernoulli polynomial has integer coefficients.
+
+## References
+
+* Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
+  Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, pp. 1–11,
+  Sections 1–3, in particular equation (13) for the coprime part.
+* Bernd C. Kellner and Jonathan Sondow, *On Carmichael and polygonal numbers, Bernoulli
+  polynomials, and sums of base-p digits*, INTEGERS 21 (2021), Article A52, pp. 1–21,
+  Section 3, for the decomposition into prime products.
 -/
 
 @[expose] public section
@@ -82,6 +94,22 @@ Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, 
 def bernoulliDiffDenominatorCoprimePart (n : ℕ) : ℕ :=
   ∏ p ∈ (Finset.range (n + 1)).filter
     (fun p => p.Prime ∧ ¬ p ∣ n ∧ p ≤ (Nat.digits p n).sum), p
+
+/-- **Prime divisors of the coprime part.** Let $n \in \mathbb{N}$, let $p$ be a prime, and
+write $s_p(n)$ for the base-$p$ digit sum of $n$. For the coprime part $\mathbb{D}^{\perp}_n$
+of the denominator of $B_n(x)-B_n$, we have $p \mid \mathbb{D}^{\perp}_n$ if and only if
+$p \nmid n$ and $s_p(n) \ge p$. -/
+theorem prime_dvd_bernoulliDiffDenominatorCoprimePart_iff {p n : ℕ} (hp : p.Prime) :
+    p ∣ bernoulliDiffDenominatorCoprimePart n ↔ ¬ p ∣ n ∧ p ≤ (p.digits n).sum := by
+  rw [bernoulliDiffDenominatorCoprimePart, hp.prime.dvd_finsetProd_iff]
+  constructor
+  · rintro ⟨q, hq, hpq⟩
+    obtain ⟨-, hprime, hndvd, hsum⟩ := Finset.mem_filter.mp hq
+    rw [Nat.prime_dvd_prime_iff_eq hp hprime |>.mp hpq]
+    exact ⟨hndvd, hsum⟩
+  · rintro ⟨hndvd, hsum⟩
+    refine ⟨p, Finset.mem_filter.mpr ⟨Finset.mem_range_succ_iff.mpr ?_, hp, hndvd, hsum⟩, dvd_rfl⟩
+    exact hsum.trans (Nat.digit_sum_le p n)
 
 /-- **Small values of $\mathbb{D}^\perp_n$.** Write $s_p(n)$ for the sum of the base-$p$ digits
 of $n$, and let $\mathbb{D}^\perp_n$ be the product of the primes $p$ with $p \nmid n$ and
@@ -151,6 +179,15 @@ Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, 
 (`\overline{𝒮}`) and Section 3 (`\overline{𝒮}_k`). -/
 def bernoulliIntegralDerivativeIndices (k : ℕ) : Set ℕ :=
   {n | 1 ≤ n ∧ polynomialDenominator (derivative^[k] (Polynomial.bernoulli n)) = 1}
+
+/-- **Coefficient criterion for integral Bernoulli derivatives.** For $k,n\in\mathbb{N}$,
+$n \in \overline{\mathcal{S}}_k$ if and only if $n \ge 1$ and every coefficient
+$[x^i]B_n^{(k)}(x)$, for $i \in \mathbb{N}$, has denominator $1$. -/
+theorem mem_bernoulliIntegralDerivativeIndices_iff {k n : ℕ} :
+    n ∈ bernoulliIntegralDerivativeIndices k ↔
+      1 ≤ n ∧ ∀ i, ((derivative^[k] (Polynomial.bernoulli n)).coeff i).den = 1 := by
+  simp only [bernoulliIntegralDerivativeIndices, Set.mem_ofPred_eq,
+    polynomialDenominator_eq_one_iff]
 
 /-- **The derivative of $B_1(x)$ has integer coefficients.** The Bernoulli polynomial
 $B_1(x) = x - \tfrac{1}{2}$ has derivative $B_1'(x) = 1 \in \mathbb{Z}[x]$, so $1$ belongs to

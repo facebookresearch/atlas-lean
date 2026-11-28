@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.Radical.Basic
 public import Mathlib.RingTheory.UniqueFactorizationDomain.Nat
 public import MathlibExt.NumberTheory.Bernoulli.DifferenceDenominatorLCM
+public import MathlibExt.NumberTheory.Bernoulli.IntegralDerivativeSmallIndices
 public import MathlibExt.NumberTheory.Bernoulli.KellnerSondowBernoulliDenominator
 public import MathlibExt.NumberTheory.Bernoulli.OddRadical
 public import MathlibExt.NumberTheory.Bernoulli.PolynomialDenominatorRadical
@@ -56,18 +57,6 @@ Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, 
 Bordellès, Luca, Moree, and Shparlinski (2018), Corollary 1.6 (`jis-2024-24.2.8-cor-4`). -/
 public theorem_wanted kellnerLargePartAsymptoticConjecture_and_finite_integral_derivative :
     KellnerLargePartAsymptoticConjecture ∧ (bernoulliIntegralDerivativeIndices 1).Finite
-
-/-- **Constraints on Bernoulli polynomials with integral derivative.** Let $n \ge 1$ be such that
-the derivative $B_n'(x)$ of the Bernoulli polynomial $B_n(x)$ has integer coefficients. Then
-$n + 1$ is prime, and if $n \notin \{1, 2, 4, 6, 10, 12, 28, 30, 36, 60\}$, then $n > 10^7$.
-
-Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
-Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Theorem 5
-(`jis-2024-24.2.8-thm-5`). -/
-public theorem_wanted bernoulli_integral_derivative_succ_prime_and_large :
-    (∀ n ∈ bernoulliIntegralDerivativeIndices 1, (n + 1).Prime) ∧
-    ∀ n ∈ bernoulliIntegralDerivativeIndices 1,
-      n ∉ ({1, 2, 4, 6, 10, 12, 28, 30, 36, 60} : Set ℕ) → 10 ^ 7 < n
 
 /-- **Indices with $\mathbb{D}_n = \operatorname{rad}(n + 1)$.** Write $s_p(m)$ for the sum of
 the base-$p$ digits of $m$, let $\mathbb{D}_m$ be the product of the primes $p$ with
