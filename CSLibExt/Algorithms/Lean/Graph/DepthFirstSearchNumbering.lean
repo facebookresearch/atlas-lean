@@ -626,7 +626,7 @@ open NumberingInternal
 variable {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
 
 omit [BEq V] [Hashable V] [LawfulBEq V] in
-/-- Tree ancestry does not depend on the order of the parent list. -/
+/-- Reversing the parent list preserves tree ancestry. -/
 theorem treeAncestor_reverse (l : List (V × V)) (a d : V) :
     TreeAncestor l.reverse a d ↔ TreeAncestor l a d := by
   simp [TreeAncestor, ParentRel]

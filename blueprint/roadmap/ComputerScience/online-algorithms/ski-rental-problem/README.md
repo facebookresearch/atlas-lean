@@ -7,4 +7,5 @@
 - [The offline optimum bounds every strategy's cost](opt-le-cost.md)
 - [Ski-rental upper bound for the break-even strategy](cost-break-even-le.md)
 - [The break-even strategy pays at most twice the optimum](cost-break-even-le-two-mul.md)
+- [Lower bound](exists-pos-cost-ge.md)
 - [Lower bound for deterministic ski rental, weak form](exists-cost-ge.md)

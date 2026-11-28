@@ -1,0 +1,3 @@
+# Simulation
+
+A request-preserving simulation of an online problem $X$ by a problem $Y$ with the same requests consists of a map $F$ from $Y$-strategies to $X$-strategies, a map $G$ from inputs and $X$-traces to $Y$-traces, and constants $a, p, d, q \ge 0$, such that every legal $X$-input is a legal $Y$-input; $F$ maps feasible strategies to feasible strategies; $G$ maps every feasible $X$-trace over $\sigma$ to a feasible $Y$-trace over $\sigma$; $\mathrm{ALG}_X(F A, \sigma) \le a \cdot \mathrm{ALG}_Y(A, \sigma) + p$ for every $Y$-strategy $A$ and legal $X$-input $\sigma$; and $\mathrm{cost}_Y(G\,\sigma\,\tau) \le d \cdot \mathrm{cost}_X(\tau) + q$ for every feasible $X$-trace $\tau$ over $\sigma$.

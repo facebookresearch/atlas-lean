@@ -20,3 +20,4 @@
 - [Power-of-three bound on the cost of Karatsuba multiplication](karatsuba-time-le.md)
 - [The $n^{\log_2 3}$ bound for the Karatsuba cost recurrence](karatsuba-cost-le-rpow.md)
 - [The $n^{\log_2 3}$ bound for Karatsuba multiplication](karatsuba-time-le-rpow.md)
+- [Karatsuba digit sizes and charge bound](karatsuba-digits-and-charge-le.md)

@@ -12,6 +12,11 @@
 
 ## The prefix table
 
+- [The KMP prefix table](prefix-table.md)
+- [Size of a KMP prefix table](size.md)
+- [Extending a KMP prefix table by one symbol](extend.md)
+- [Building the KMP prefix table of a pattern](mk-prefix-table.md)
+- [Transition function of the KMP matcher](step.md)
 - [Size of the KMP prefix table](mk-prefix-table-size.md)
 - [The KMP prefix table stores the pattern](mk-prefix-table-symbols.md)
 - [The KMP failure function](mk-prefix-table-failure-spec.md)

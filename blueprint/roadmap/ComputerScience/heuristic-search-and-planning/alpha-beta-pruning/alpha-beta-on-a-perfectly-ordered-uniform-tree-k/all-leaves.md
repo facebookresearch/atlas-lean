@@ -1,0 +1,3 @@
+# All Leaves
+
+The function $k^{\lceil d/2 \rceil}$ of a branching factor $k$ and a height $d$. It is the number of leaves alpha-beta evaluates at an all node of height $d$ when the tree is uniform of branching factor $k$ and perfectly ordered, the window is strict ($a < b$), and the node's value fails the window in the other direction (at most $a$ at a maximizer node, at least $b$ at a minimizer node), so that every child is evaluated as a cut node; see [the cut and all node counts](alpha-beta-time-cut-all.md). Without the strict window the count can differ: at window $[0, 0]$ a maximizer node with two leaves worth $0$ stops after one leaf.

@@ -6,3 +6,4 @@
 - [Fairness after one step of a linear control](fairness-after-one-step-of-a-linear-control.md)
 - [Additive increase and multiplicative decrease are necessary](additive-increase-and-multiplicative-decrease-are-necessary.md)
 - [Fairness of rate allocations](fairness-of-rate-allocations/README.md)
+- [Chiu–Jain AIMD congestion control](chiu-jain-aimd-congestion-control/README.md)

@@ -98,13 +98,15 @@ structure IsSelector (sel : Finset D → Option D) : Prop where
 
 /-! ## The DAC pass -/
 
-/-- One DAC step at `x`: revise the arc from the parent of `x` to `x`. -/
+/-- One DAC step at `x`: revise the arc from the parent of `x` to `x`; no change when `x` has no
+parent. -/
 def dacStep (parent : X → Option X) (dom : X → Finset D) (x : X) : X → Finset D :=
   match parent x with
   | none => dom
   | some p => Function.update dom p (revise P dom p x)
 
-/-- The constraint checks of the DAC step at `x`: `|dom p| · |dom x|` for the parent `p`. -/
+/-- The constraint checks of the DAC step at `x`: `|dom p| · |dom x|` for the parent `p`, and
+`0` when `x` has no parent. -/
 def dacCost (parent : X → Option X) (dom : X → Finset D) (x : X) : ℕ :=
   match parent x with
   | none => 0
@@ -177,9 +179,9 @@ theorem isSolution_dac (hedge : ∀ x p, parent x = some p → (p, x) ∈ P.arcs
   isSolution_dacPass hedge _ hσ
 
 omit [DecidableEq D] in
-/-- The DAC pass invariant on the list `ys` of variables still to process: no listed variable
-has an unlisted (processed) parent, and the arc from each processed variable's parent is
-consistent. -/
+/-- The DAC pass makes every parent-to-child arc consistent, given no self-parent and, for the
+list `ys` still to process: no earlier listed variable is the parent of a later one, every parent
+of a listed variable is listed, and arcs into unlisted children are already consistent. -/
 theorem dirArcConsistent_dacPass (hirr : ∀ x, parent x ≠ some x) :
     ∀ (ys : List X) (dom : X → Finset D),
       ys.Pairwise (fun a b => parent b ≠ some a) →
@@ -283,7 +285,8 @@ theorem dirArcConsistent_ac3All [Fintype X] (hedge : ∀ x p, parent x = some p 
 /-! ## Greedy assignment -/
 
 variable (P parent) in
-/-- The values of `x` compatible with the value of its parent under `σ`. -/
+/-- The values of `x` compatible with the value of its parent under `σ`; the whole current
+domain of `x` when `x` has no parent. -/
 def candidates (dom : X → Finset D) (σ : X → D) (x : X) : Finset D :=
   match parent x with
   | none => dom x
@@ -307,7 +310,8 @@ def greedy [Inhabited D] (sel : Finset D → Option D) (dom : X → Finset D) : 
 
 variable (P parent) in
 /-- The greedy invariant for the list `xs` of variables still to assign: every assigned variable
-has a value in its domain, an assigned parent, and a value compatible with its parent's. -/
+has a value in its domain, and if it has a parent, that parent is assigned with a compatible
+value. An assigned root needs only domain membership. -/
 def GreedyInv (dom : X → Finset D) (xs : List X) (σ : X → D) : Prop :=
   ∀ y, y ∉ xs → σ y ∈ dom y ∧ ∀ p, parent y = some p → p ∉ xs ∧ P.allowed p y (σ p) (σ y) = true
 

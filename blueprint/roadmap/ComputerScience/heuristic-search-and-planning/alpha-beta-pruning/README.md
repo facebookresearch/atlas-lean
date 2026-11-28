@@ -29,3 +29,5 @@
 - [Alpha-beta is exact inside the window](alpha-beta-eq-of-mem-window.md)
 - [Alpha-beta at or above the top of the window](le-alpha-beta-of-le-minimax.md)
 - [Alpha-beta with the full window returns the minimax value](alpha-beta-bot-top.md)
+- [Knuth and Moore's lower bound: alpha-beta is optimal on perfectly ordered uniform trees](knuth-and-moore-s-lower-bound-alpha-beta-is-opti/README.md)
+- [Alpha-beta on a perfectly ordered uniform tree (Knuth and Moore)](alpha-beta-on-a-perfectly-ordered-uniform-tree-k/README.md)

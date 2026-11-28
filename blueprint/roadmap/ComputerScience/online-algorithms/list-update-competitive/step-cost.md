@@ -1,0 +1,3 @@
+# Step Cost
+
+The cost of one list-update step from list $L$ on request $x$ with next list $L'$: the position of $x$ in $L$ (counting from $1$; the length plus one if $x$ is absent), plus the minimum, over target indices $j = 0, \dots, |L|$, of the number of inversions between the list obtained from $L$ by moving $x$ forward to index $j$ for free and $L'$. Inversions compare the positions of first occurrences, so when $L$ has no repeated items the minimum is the number of paid exchanges needed after the best free move. With repeated items it can be smaller: from $[c, a, b, a]$ on request $c$ with next list $[c, a, a, b]$, the first occurrences agree, so the step costs $1$, although one paid exchange is needed.

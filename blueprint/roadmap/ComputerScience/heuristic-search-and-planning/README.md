@@ -6,10 +6,13 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 - [AC-3 algorithm](ac-3-algorithm/README.md)
 - [Global constraint propagation](global-constraint-propagation/README.md)
 - [Alpha–beta pruning](alpha-beta-pruning/README.md)
+- [Backtracking search with forward checking: soundness and completeness](backtracking-search-with-forward-checking-soundn/README.md)
+- [Expectimax and the finite-horizon MDP value](expectimax-and-the-finite-horizon-mdp-value/README.md)
 - [Value iteration](value-iteration/README.md)
 - [Policy iteration](policy-iteration/README.md)
 - [Optimality of stationary policies](optimality-of-stationary-policies/README.md)
 - [Stochastic shortest path problems](stochastic-shortest-path-problems/README.md)
+- [Tree CSPs: directional arc consistency makes greedy assignment backtrack-free](tree-csps-directional-arc-consistency-makes-gree/README.md)
 
 - [Markov decision processes](markov-decision-processes/README.md)
 - [Partially observable planning](partially-observable-planning/README.md)

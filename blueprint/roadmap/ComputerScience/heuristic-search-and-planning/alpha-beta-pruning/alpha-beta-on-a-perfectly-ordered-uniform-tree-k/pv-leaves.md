@@ -1,0 +1,3 @@
+# Pv Leaves
+
+The function $k^{\lceil d/2 \rceil} + k^{\lfloor d/2 \rfloor} - 1$ of a branching factor $k$ and a height $d$, the Knuth–Moore count, with the subtraction truncated at $0$ (it matters only for $k = 0$, $d \ge 2$). It is the number of leaves alpha-beta evaluates at a principal node of height $d$ when the tree is uniform of branching factor $k$ and perfectly ordered and the node's value lies strictly inside the window. Without perfect ordering the count can differ: with window $[-1, 2]$, a maximizer root over two minimizer children, each with leaves $[1, 0]$ in that order, has value $0$ but alpha-beta visits all four leaves, not three.

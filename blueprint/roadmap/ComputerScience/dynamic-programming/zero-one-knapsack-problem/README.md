@@ -9,3 +9,4 @@
 - [Correctness of the zero-one knapsack algorithm](solve-correct.md)
 - [Exact cost of the knapsack algorithm](solve-time.md)
 - [Pseudo-polynomial cost bound for knapsack](solve-time-le-three-mul.md)
+- [Profit scaling for 0/1 knapsack](profit-scaling-for-0-1-knapsack/README.md)

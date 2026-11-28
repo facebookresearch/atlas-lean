@@ -55,8 +55,8 @@ open Cslib.Algorithms.Lean.ArcConsistency
 
 variable {X D : Type*} [DecidableEq X] (P : BinaryCSP X D)
 
-/-- The arcs between `x` and `y`, in either orientation. Compatibility and forward checking
-only inspect these arcs. -/
+/-- The arcs between `x` and `y`, in either orientation, filtered from the whole arc list. Only
+these arcs constrain `x` and `y`; unrelated arcs are still inspected when locating them. -/
 def incidentArcs (x y : X) : List (X × X) :=
   P.arcs.filter fun e => e = (x, y) ∨ e = (y, x)
 
@@ -177,7 +177,7 @@ theorem forwardCheck_subset {dom : X → Finset D} {x : X} {a : D} (ha : a ∈ d
   · exact subset_rfl
   · exact Finset.filter_subset (fun b => compatOn P (incidentArcs P x y) x a y b) (dom y)
 
-/-- A variable with no arc to `x` keeps its domain under forward checking. -/
+/-- A variable `y ≠ x` with no arc to or from `x` keeps its domain under forward checking. -/
 theorem forwardCheck_eq_of_isEmpty {dom : X → Finset D} {x : X} {a : D} {y : X}
     (hy : y ≠ x) (h : (incidentArcs P x y).isEmpty = true) :
     forwardCheck P dom x a y = dom y := by
@@ -229,8 +229,8 @@ theorem toTotal_isSome [Fintype X] {asg : X → Option D} (h : ∀ x, (asg x).is
 /-! ## Soundness -/
 
 /-- The soundness invariant relative to the input domains `dom₀`: assigned values lie in `dom₀`
-and are pairwise compatible, the current domains only hold values compatible with every assigned
-value, and the current domains lie within `dom₀`. -/
+and are pairwise compatible (an assigned entry with itself included), the current domains only
+hold values compatible with every assigned value, and the current domains lie within `dom₀`. -/
 structure SoundInv (dom₀ dom : X → Finset D) (asg : X → Option D) : Prop where
   mem : ∀ x a, asg x = some a → a ∈ dom₀ x
   pair : ∀ x a y b, asg x = some a → asg y = some b → compat P x a y b = true
@@ -243,8 +243,8 @@ theorem soundInv_init (dom₀ : X → Finset D) : SoundInv P dom₀ dom₀ fun _
   prune := by simp
   sub := fun _ => subset_rfl
 
-/-- Assigning `x = a` from its current domain, followed by forward checking, keeps the
-invariant. -/
+/-- Assigning `x = a` from its current domain, with `x = a` compatible with itself, followed by
+forward checking, keeps the invariant. -/
 theorem soundInv_step {dom₀ dom : X → Finset D} {asg : X → Option D}
     (hI : SoundInv P dom₀ dom asg) {x : X} {a : D} (ha : a ∈ dom x)
     (hxx : compat P x a x a = true) :

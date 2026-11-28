@@ -25,6 +25,7 @@ Deterministic bounds on backlog and delay for flows constrained by arrival curve
 - [Shaping conserves arrival constraints](shaping-conserves-arrival-constraints.md)
 - [Packetizers](packetizers/README.md)
 - [Traffic regulators](traffic-regulators/README.md)
+- [Network calculus: arrival curves, service curves and bounds](network-calculus-arrival-curves-service-curves-a/README.md)
 - [Of NNReal apply](of-nnreal-apply.md)
 - [Conv apply of nonneg](conv-apply-of-nonneg.md)
 - [Conv le](conv-le.md)

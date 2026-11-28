@@ -17,12 +17,12 @@ import Mathlib.Tactic
 
 namespace Cslib.Algorithms.Lean.Online.CompetitiveFramework
 
-/-- An online problem: requests arrive one at a time and must be answered
-without knowledge of future requests. `legal` is the prefix-closed domain
-of finite request sequences; `feasible` is the prefix-closed set of
-request/answer traces, nonempty-extendable along legal inputs
-(nonblocking); `cost` is finite and nonnegative on every trace. No
-optimality or competitiveness assumption is part of the data. -/
+/-- An online problem: requests arrive one at a time and must be answered without knowledge of
+future requests. `legal` is the prefix-closed domain of finite request sequences and contains
+the empty input; `feasible` is the prefix-closed set of request/answer traces, contains the
+empty trace, projects to legal request sequences, and is nonempty-extendable along legal inputs
+(nonblocking); `cost` is finite and nonnegative on every trace. No optimality or competitiveness
+assumption is part of the data. -/
 structure OnlineProblem (Req Ans : Type*) where
   legal : List Req → Prop
   legal_nil : legal []
@@ -73,8 +73,8 @@ theorem run_map_fst {Req Ans : Type*} (A : Strategy Req Ans) (σ : List Req) :
     (run A σ).map Prod.fst = σ := by
   exact runFrom_map_fst A [] σ
 
-/-- Causality: the run on a request prefix is the corresponding prefix of
-the run on any extension. -/
+/-- The run from history `past` on `σ ++ τ` is the run on `σ` followed by the run from
+`past ++ σ` on `τ`; in particular runs are causal. -/
 theorem runFrom_append {Req Ans : Type*} (A : Strategy Req Ans)
     (past σ τ : List Req) :
     runFrom A past (σ ++ τ)
@@ -205,10 +205,9 @@ def StrictLowerBound {Req Ans : Type*} [Nonempty Ans] (P : OnlineProblem Req Ans
       ∃ σ : List Req, P.legal σ ∧
         ENNReal.ofReal c * optCost P σ < ENNReal.ofReal (algCost P A σ)
 
-/-- Additive lower-bound predicate: no strategy beats the factor `cstar`
-even with an arbitrary uniform additive constant. Distinct from the strict
-predicate: a bounded-cost strategy refutes every positive additive lower
-bound. -/
+/-- Additive lower-bound predicate: no feasible strategy beats the factor `cstar` even with an
+arbitrary uniform additive constant. Distinct from the strict predicate: a feasible strategy
+with uniformly bounded cost on legal inputs refutes every positive additive lower bound. -/
 def AdditiveLowerBound {Req Ans : Type*} [Nonempty Ans] (P : OnlineProblem Req Ans)
     (cstar : ℝ) : Prop :=
   ∀ (A : Strategy Req Ans), StrategyFeasible P A →
@@ -530,7 +529,8 @@ theorem exists_optimal_of_natCost {Req Ans : Type*} (P : OnlineProblem Req Ans)
 /-- A request-preserving simulation of `X` by `Y`: the same request type
 and sequence throughout. `F` turns `Y`-strategies into `X`-strategies;
 `G` turns feasible `X`-traces into feasible `Y`-traces on the same input;
-the two cost laws bound both translations. -/
+with nonnegative constants, `ALG_X (F A) ≤ a * ALG_Y A + p` on legal `X` inputs and
+`cost_Y (G σ τ) ≤ d * cost_X τ + q` on feasible `X` traces over `σ`. -/
 structure Simulation {Req AnsX AnsY : Type*} (X : OnlineProblem Req AnsX)
     (Y : OnlineProblem Req AnsY) where
   F : Strategy Req AnsY → Strategy Req AnsX
