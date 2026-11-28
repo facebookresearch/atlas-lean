@@ -13,13 +13,12 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Rat.Defs
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Data.Rat.BigOperators
-import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 import MathlibExt.Analysis.SpecialFunctions.Gamma.BetaPowerProduct
-import all MathlibExt.LinearAlgebra.PowerSumMatrix
+import MathlibExt.LinearAlgebra.PowerSumMatrix
 
 /-!
 # An alternating sum of binomial ratios
@@ -42,9 +41,9 @@ integral to twice the integral of `x ^ k`.
   trace formula by Ding, Zhu and Wang.
 * Wu-Sheng Wang, *Some properties of k-gamma and k-beta functions*, ITM Web of Conferences 7
   (2016), Article 07003, pp. 1–6. Cited for the beta–gamma identity in the proof of Lemma 3.
-* `MathlibExt.LinearAlgebra.PowerSumMatrix` supplies `trace_pow_factorial`, `choose_cast_eq`
-  and `factorial_cast_eq`; `MathlibExt.Analysis.SpecialFunctions.Gamma.BetaPowerProduct`
-  supplies `intervalIntegral.integral_pow_one_sub_pow`.
+* `MathlibExt.LinearAlgebra.PowerSumMatrix` supplies `trace_pow_two`;
+  `MathlibExt.Analysis.SpecialFunctions.Gamma.BetaPowerProduct` supplies
+  `intervalIntegral.integral_pow_one_sub_pow`.
 -/
 
 namespace MathlibExt.LinearAlgebra.PowerSumMatrixWanted
@@ -68,7 +67,13 @@ private theorem sum_choose_div_choose_eq_real {k : ℕ} (hk : 2 ≤ k) :
       simp [M, Fin.sum_univ_two]
     have hdet : M.det = x * (1 - x) := by
       simp [M, Matrix.det_diagonal, Fin.prod_univ_two]
-    simpa only [hpow, hdet, htr, one_pow, mul_one, mul_pow, c] using trace_pow_factorial M k hk
+    obtain ⟨m, rfl | rfl⟩ : ∃ m : ℕ, k = 2 * m ∨ k = 2 * m + 1 := ⟨k / 2, by omega⟩
+    · simpa only [hpow, hdet, htr, one_pow, mul_one, mul_pow, c, Nat.cast_mul,
+        Nat.cast_ofNat, show 2 * m / 2 = m by omega] using (trace_pow_two M m (by omega)).1
+    · have hindex (r : ℕ) : 2 * m + 1 - r - 1 = 2 * m - r := by omega
+      simpa only [hpow, hdet, htr, one_pow, mul_one, mul_pow, c, Nat.cast_add, Nat.cast_mul,
+        Nat.cast_ofNat, Nat.cast_one, hindex, show (2 * m + 1) / 2 = m by omega] using
+        (trace_pow_two M m (by omega)).2
   have hleft : (∫ x in (0 : ℝ)..1, x ^ k + (1 - x) ^ k) = 2 / ((k : ℝ) + 1) := by
     have hp : IntervalIntegrable (fun x : ℝ ↦ x ^ k) volume 0 1 :=
       (continuous_id.pow k).intervalIntegrable 0 1
@@ -102,10 +107,18 @@ private theorem sum_choose_div_choose_eq_real {k : ℕ} (hk : 2 ≤ k) :
       have hrk : r ≤ k - r := by omega
       have hsub : k - r - r = k - 2 * r := by omega
       have hkrR : ((k - r : ℕ) : ℝ) ≠ 0 := by exact_mod_cast hkr.ne'
+      have hchoose : (k - r).choose r * r.factorial * (k - 2 * r).factorial =
+          (k - r) * (k - r - 1).factorial := calc
+        _ = (k - r).factorial := by
+          simpa only [hsub] using Nat.choose_mul_factorial_mul_factorial hrk
+        _ = _ := by
+          simpa only [Nat.sub_add_cancel (show 1 ≤ k - r by omega)] using
+            Nat.factorial_succ (k - r - 1)
       have hcoeff : ((k - r).choose r : ℝ) / ((k - r : ℕ) : ℝ) =
           ((k - r - 1).factorial : ℝ) / ((r.factorial : ℝ) * ((k - 2 * r).factorial : ℝ)) := by
-        rw [choose_cast_eq _ _ hrk, hsub, factorial_cast_eq hkr]
-        field_simp [hkrR, factorial_cast_ne_zero]
+        apply (div_eq_div_iff hkrR (by positivity)).2
+        rw [← mul_assoc, mul_comm _ ((k - r : ℕ) : ℝ)]
+        exact_mod_cast hchoose
       simp only [c]
       rw [← hcoeff]
       simp only [div_eq_mul_inv, mul_inv_rev, one_mul]
