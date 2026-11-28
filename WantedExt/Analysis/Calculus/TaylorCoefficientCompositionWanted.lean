@@ -14,6 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.Calculus.TaylorCoefficientComposition
+public import MathlibExt.NumberTheory.MultipleZeta.OddSquareStrictSums
 public import MathlibExt.NumberTheory.MultipleZeta.Series
 
 namespace MetaMathlibExt
@@ -61,21 +62,6 @@ public theorem_wanted starValue_replicate_two_eq (k : ℕ) :
       ((MultipleZeta.starValue (MultipleZeta.Index.replicate k 2)
           (MultipleZeta.Index.replicate_isAdmissibleOrEmpty k le_rfl) : ℝ) : ℂ) =
         2 * ((1 - (2 : ℂ) ^ ((1 : ℤ) - 2 * k)) * riemannZeta (2 * k))
-
-/-- **Strictly nested sums of reciprocal odd squares.** For every natural number $k$,
-$$\sum_{i_1 > i_2 > \cdots > i_k \ge 1} \prod_{j=1}^{k} \frac{1}{(2 i_j - 1)^2} =
-\frac{(\pi/2)^{2k}}{(2k)!},$$
-where the sum runs over all strictly decreasing $k$-tuples $(i_1, \ldots, i_k)$ of positive
-integers. For $k = 0$ the sum has the single empty term and both sides equal $1$.
-
-The source states the identity for $k > 0$; the case $k = 0$ is included here.
-
-Source: Serge Iovleff, *About Some Nested Sums of Reciprocal Squared Numbers*, INTEGERS 26
-(2026), Article A114, Corollary 2. -/
-public theorem_wanted tsum_strictDecreasing_prod_inv_odd_sq_eq (k : ℕ) :
-    ∑' m : MultipleZeta.StrictDecreasingTuple k,
-        ∏ j, ((2 * ((m.1 j : ℕ) : ℝ) - 1) ^ 2)⁻¹ =
-      (Real.pi / 2) ^ (2 * k) / (2 * k).factorial
 
 end
 
