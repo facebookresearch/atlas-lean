@@ -36,8 +36,9 @@ activity is the test of `H₀ : β₁ = 0` against `H₁ : β₁ ≠ 0`, with `�
 SNPs with more than `15` distinct plasmids carrying each allele.
 
 The test is stated by its hypotheses. No test statistic, p-value or calibration is fixed here: the
-source fits the regression by maximum likelihood, `θ` included, and calibrates the type I error
-empirically on fragments that carry no tested variant.
+source fits the regression by maximum likelihood, `θ` included, and estimates the type I error
+empirically by downsampling the fragments of SNPs treated as null, which is how it chose the
+threshold of `15`.
 
 ## Main definitions
 
@@ -69,10 +70,10 @@ empirically on fragments that carry no tested variant.
 
 ## References
 
-* T. Morova, Y. Ding, C.-F. Huang, F. Sar, T. Schwarz, C. Giambartolomei et al., *Optimized
+* T. Morova, Y. Ding, C.-C. F. Huang, F. Sar, T. Schwarz, C. Giambartolomei et al., *Optimized
   high-throughput screening of non-coding variants identified from genome-wide association
   studies*, Nucleic Acids Res. 51 (2023), e18, Materials and Methods ("Testing bi-allelic
-  activity").
+  activity", "Empirical type-I error for NBR").
 -/
 
 @[expose] public section

@@ -49,8 +49,4 @@ example : negBinomialReal 1 (-1 / 2) 1 = -2 ∧ negBinomialMeasure 1 (-1 / 2) {1
   rw [negBinomialMeasure_singleton, h, ENNReal.ofReal_eq_zero]
   norm_num
 
-/-- Every count has positive mass for a positive mean. -/
-example (k : ℕ) : 0 < negBinomialReal 3 (1 / 2) k :=
-  negBinomialReal_pos (by norm_num) (by norm_num) k
-
 end MathlibExtTest.Probability.Distributions.NegativeBinomialMeasure

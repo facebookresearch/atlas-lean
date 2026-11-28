@@ -27,7 +27,6 @@ formed as products (`MeasureTheory.Measure.pi`).
 
 ## Main results
 
-* `negBinomialReal_pos`: for `θ > 0` and `μ > 0` every count has positive mass.
 * `negBinomialMeasure_singleton`, `negBinomialMeasure_real_singleton`: the mass of `{k}` is
   `NB(k; θ, μ)`.
 * `isProbabilityMeasure_negBinomialMeasure`: for `θ > 0` and `μ ≥ 0` the total mass is `1`.
@@ -41,14 +40,6 @@ set_option autoImplicit false
 open MeasureTheory
 
 namespace ProbabilityTheory
-
-/-- For size `θ > 0` and mean `μ > 0` every count `k` has positive negative binomial mass
-`NB(k; θ, μ) > 0`, the count `0` included. -/
-theorem negBinomialReal_pos {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 < μ) (k : ℕ) :
-    0 < negBinomialReal θ μ k := by
-  have h := ascPochhammer_pos k θ hθ
-  unfold negBinomialReal
-  positivity
 
 /-- The negative binomial law with size `θ` and mean `μ` as a measure on `ℕ`: the count `k` has
 mass `NB(k; θ, μ) = θ⁽ᵏ⁾ / k! · (θ / (θ + μ)) ^ θ · (μ / (θ + μ)) ^ k` (`negBinomialReal`). The
