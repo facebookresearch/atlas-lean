@@ -19,7 +19,8 @@ import Mathlib.LinearAlgebra.Matrix.ToLin
   in the standard coordinate basis. `companionMatrix_apply` gives its superdiagonal and last row,
   and `companionMatrix_mulVec` identifies its action on a column vector.
 * `companionMatrix_pow_mulVec_of_isSolution` identifies the whole orbit with the successive
-  windows of a solution. `isSolution_iff_obs_companion` characterizes solutions by the first
+  windows of a solution.
+  `isSolution_iff_forall_eq_companionMatrix_pow_mulVec` characterizes solutions by the first
   coordinate of that orbit, starting with the first terms of the sequence.
 * `charpolyRecurrence` encodes the recurrence of a square matrix's characteristic polynomial.
 * `charPoly_charpolyRecurrence` identifies the polynomial, and
@@ -30,7 +31,13 @@ Source: J. Ouaknine and J. Worrell, *Positivity Problems for Low-Order Linear Re
 SODA 2014, [arXiv:1307.2779, §2](https://arxiv.org/pdf/1307.2779). The source uses the transpose of
 its companion matrix and puts the initial terms in reverse order in the left observation vector.
 Here the initial terms are an increasing-index column state, shifted by the matrix on the left,
-and the first coordinate is observed. The converse uses Cayley–Hamilton in either convention.
+and the first coordinate is observed.
+
+The source requires the last coefficient `a_k` (of the oldest term) to be nonzero. It states the
+Cayley–Hamilton converse for the tail `n ≥ k` and notes in footnote 6 that the whole sequence is
+an LRS if `M` has no zero eigenvalue. Mathlib's `LinearRecurrence` allows zero coefficients, so
+Cayley–Hamilton gives the characteristic-polynomial recurrence from `n = 0` even for singular
+matrices. This order-`k` recurrence need not be minimal.
 -/
 
 @[expose] public section
@@ -87,7 +94,7 @@ theorem companionMatrix_pow_mulVec_of_isSolution {u : ℕ → R} (hu : E.IsSolut
 
 /-- A sequence solves a positive-order recurrence exactly when each term is the first coordinate
 of the companion-matrix orbit with initial state given by its first `E.order` terms. -/
-theorem isSolution_iff_obs_companion (hE : 0 < E.order) (u : ℕ → R) :
+theorem isSolution_iff_forall_eq_companionMatrix_pow_mulVec (hE : 0 < E.order) (u : ℕ → R) :
     E.IsSolution u ↔
       ∀ n, u n = ((companionMatrix E ^ n) *ᵥ (fun i ↦ u i)) ⟨0, hE⟩ := by
   have observe {v : ℕ → R} (hv : E.IsSolution v) (n : ℕ) :
@@ -132,7 +139,9 @@ theorem charPoly_charpolyRecurrence (M : Matrix ι ι R) :
   exact (add_comm _ _).trans hsum.symm
 
 /-- Each sequence `n ↦ cᵀ M^n x` satisfies the order-`k` recurrence from the characteristic
-polynomial of the `k × k` matrix `M`, by Cayley–Hamilton. A smaller recurrence may also hold. -/
+polynomial of the `k × k` matrix `M`, by Cayley–Hamilton. Mathlib allows zero coefficients,
+so the recurrence holds from `n = 0` even when `M` is singular.
+A smaller recurrence may also hold. -/
 theorem isSolution_charpolyRecurrence_dotProduct_pow_mulVec
     (M : Matrix ι ι R) (c x : ι → R) :
     (charpolyRecurrence M).IsSolution (fun n ↦ c ⬝ᵥ (M ^ n *ᵥ x)) := by

@@ -31,7 +31,7 @@ example (n : ℕ) :
     funext i
     fin_cases i
     decide
-  have hobs := (isSolution_iff_obs_companion orderOne (by decide) _).mp h n
+  have hobs := (isSolution_iff_forall_eq_companionMatrix_pow_mulVec orderOne (by decide) _).mp h n
   rwa [hs] at hobs
 
 -- The first row really shifts; the final row is not in reverse order.
@@ -56,7 +56,7 @@ example : orderTwo.IsSolution (fun n ↦ ((companionMatrix orderTwo ^ n) *ᵥ ![
     · change ((companionMatrix orderTwo ^ 1) *ᵥ ![2, -1]) (0 : Fin 2) = -1
       rw [pow_one, orderTwo_matrix]
       decide
-  apply (isSolution_iff_obs_companion orderTwo (by decide) u).mpr
+  apply (isSolution_iff_forall_eq_companionMatrix_pow_mulVec orderTwo (by decide) u).mpr
   rw [hinit]
   intro n
   rfl
