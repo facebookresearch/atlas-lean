@@ -20,6 +20,12 @@ import Mathlib.Tactic.Primality
 
 We prove that the discriminants of the truncated logarithmic polynomials of degrees
 `3 * q`, `5 * q`, and `7 * q` are nonsquares for every prime `q`.
+
+## References
+
+* John Cullinan and Rylan Gajek-Leonard, *On the Discriminants of Truncated Logarithmic
+  Polynomials*, INTEGERS 25 (2025), Article A39, pp. 1–12, Section 1, Equation (5),
+  Proposition 2, and the modular reduction in the proof of Theorem 4.
 -/
 
 namespace MetaMathlibExt
@@ -51,6 +57,10 @@ to $4$ is $L_4 = \operatorname{lcm}(1, 2, 3, 4) = 12$.
 Source: Cullinan and Gajek-Leonard, *On the Discriminants of Truncated
 Logarithmic Polynomials*, INTEGERS 25 (2025), Article A39, Section 1. -/
 public theorem truncatedLogLcm_four : truncatedLogLcm 4 = 12 := by
+  decide
+
+/-- The least common multiple of the integers from $1$ through $9$ is $L_9 = 2520$. -/
+public theorem truncatedLogLcm_nine : truncatedLogLcm 9 = 2520 := by
   decide
 
 /-- **Scaled truncated logarithmic polynomial.** For a natural number $n$, let
@@ -415,14 +425,21 @@ private lemma reducedPoly_monomial {p e n : ℕ} [Fact p.Prime] (he : e ≠ 0)
     omega
   simp [hm, he, reducedPoly]
 
-private lemma mod_resultant_monomial {p e n : ℕ} [Fact p.Prime] (he : e ≠ 0)
+/-- **The truncated logarithmic resultant modulo a prime in the monomial range.** Let $p$ be
+prime and $e > 0$, with $p^e \le n < p^{e+1}$ and $n < 2p^e$. Then in $\mathbb{Z}/p\mathbb{Z}$,
+$\mathcal{P}_n = (L_n/p^e)^{n-1}((-1)^{n-1})^{p^e}$, where $L_n/p^e$ is the integer quotient. -/
+public lemma mod_resultant_monomial {p e n : ℕ} [Fact p.Prime] (he : e ≠ 0)
     (hlo : p ^ e ≤ n) (hhi : n < p ^ (e + 1)) (hhalf : n < 2 * p ^ e) :
     (truncatedLogResultantProduct n : ZMod p) =
       (↑(truncatedLogLcm n / p ^ e) : ZMod p) ^ (n - 1) * ((-1) ^ (n - 1)) ^ p ^ e := by
   have hn := (pow_pos (Fact.out : p.Prime).pos e).trans_le hlo
   rw [mod_resultant hlo hhi, reducedPoly_monomial he hlo hhalf, resultant_geom_X hn]
 
-private lemma monomial_resultant_ne_zero {p e n : ℕ} [Fact p.Prime] (he : e ≠ 0)
+/-- Let `p` be prime and let `e ≠ 0`, with `p ^ e ≤ n < p ^ (e + 1)` and `n < 2 * p ^ e`.
+Then the truncated logarithmic resultant product `𝒫ₙ` is nonzero modulo `p`: the scaled
+polynomial reduces to a nonzero multiple of `X ^ (p ^ e)`, and the geometric sum has
+constant coefficient one. -/
+public lemma monomial_resultant_ne_zero {p e n : ℕ} [Fact p.Prime] (he : e ≠ 0)
     (hlo : p ^ e ≤ n) (hhi : n < p ^ (e + 1)) (hhalf : n < 2 * p ^ e) :
     (truncatedLogResultantProduct n : ZMod p) ≠ 0 := by
   rw [mod_resultant_monomial he hlo hhi hhalf]

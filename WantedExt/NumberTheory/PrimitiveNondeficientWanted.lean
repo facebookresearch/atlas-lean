@@ -52,6 +52,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientTw
 public import MathlibExt.NumberTheory.OddTwoPrimeFactorsDeficient
 public import MathlibExt.NumberTheory.PrimitiveNondeficient
 public import MathlibExt.NumberTheory.PrimitiveNondeficientGrun
+public import MathlibExt.NumberTheory.PrimitiveNondeficientPuchta
 
 set_option autoImplicit false
 
@@ -72,29 +73,5 @@ theorem_wanted exists_pow_factorization_add_one_lt_two_mul_radical
     (hk : n.primeFactors.card = 3 ∨ n.primeFactors.card = 4) :
     ∃ p ∈ n.primeFactors,
       p ^ (n.factorization p + 1) < 2 * ∏ q ∈ n.primeFactors, q
-
-/-- **Generalized Puchta lemma.** Let $n$ be a primitive non-deficient number with $k$ distinct
-prime factors, the least of which is $p_1$, and suppose that $(p_1, k) \ne (3, 3)$. Let $\alpha$
-be a rational number with $0 < \alpha < 1$ such that $H(n) \ge 2 + \alpha$, where
-$H(n) = \prod_p p/(p-1)$ is the product over the distinct primes $p$ dividing $n$. Then some
-prime factor $p$ of $n$ satisfies $p^{a+1} < \max\bigl(2(k + 2 + p_1)/\alpha,\ k(k+1)\bigr)$,
-where $a$ is the exponent of $p$ in $n$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma
-(label `GeneralizedPuchtalemma`). -/
-theorem_wanted exists_pow_factorization_add_one_lt_max
-    (n p₁ : ℕ) (hn : IsPrimitiveNondeficient n)
-    (hp₁ : p₁ ∈ n.primeFactors)
-    (hmin : ∀ q ∈ n.primeFactors, p₁ ≤ q)
-    (hne : ¬ (p₁ = 3 ∧ n.primeFactors.card = 3))
-    (α : ℚ) (hα0 : 0 < α) (hα1 : α < 1)
-    (hH : 2 + α ≤ abundancySup n) :
-    ∃ p ∈ n.primeFactors,
-      ((p ^ (n.factorization p + 1) : ℕ) : ℚ) <
-        max
-          (2 * ((n.primeFactors.card : ℚ) + 2 + (p₁ : ℚ)) / α)
-          ((n.primeFactors.card : ℚ) *
-            ((n.primeFactors.card : ℚ) + 1))
 
 end MathlibExt.NumberTheory.PrimitiveNondeficientWanted

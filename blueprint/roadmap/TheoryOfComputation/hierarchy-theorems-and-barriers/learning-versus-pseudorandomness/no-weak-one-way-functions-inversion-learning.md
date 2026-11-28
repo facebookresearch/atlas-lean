@@ -8,11 +8,8 @@ The labelling map is polynomial-time computable on suitably encoded inputs, so i
 
 ## Depends on
 
+- [Weak one-way function](../../pseudorandomness-and-one-way-functions/one-way-function-transformations/weak-one-way-function.md)
 - [One-way function families](../../complexity-classes/time-and-space-complexity-classes/is-one-way-function.md)
-- [Learning by inverting the labelling map of a keyed family (Occam form)](learning-by-inverting-the-labelling-map.md)
-
-## Proof depends on
-
 - [Learning by inverting the labelling map of a keyed family (Occam form)](learning-by-inverting-the-labelling-map.md)
 
 ## Sources

@@ -1,12 +1,12 @@
 # Bringmann–Cassis–Fischer–Künnemann: Maximum/Minimum Inner Product is complete for MaxSP/MinSP
 
-For fixed $k,\ell$ and a quantifier-free first-order formula $\phi$ over a relational signature, the **MaxSP** problem defined by $\phi$ asks, given a relational structure with $m$ tuples, for
+For fixed $k\ge 2$, $\ell\ge 1$ and a quantifier-free first-order formula $\phi$ over a relational signature, the **MaxSP** problem defined by $\phi$ asks, given a relational structure with $m$ tuples, for
 
 $$
 \max_{x_1,\dots,x_k}\ \#\{(y_1,\dots,y_\ell):\ \phi(x_1,\dots,x_k,y_1,\dots,y_\ell)\},
 $$
 
-and MinSP is defined with min; each is solvable in time $O(m^{k+\ell-1})$. MaxSP contains Maximum Inner Product, nearest-neighbour variants and optimization versions of $k$-XOR. Theorem: a sparse variant of Maximum (resp. Minimum) Inner Product is complete for MaxSP (resp. MinSP) under deterministic fine-grained reductions: a strongly subquadratic algorithm for it gives an $O(m^{k+\ell-1-\delta})$ algorithm for every MaxSP (MinSP) problem. The completeness transfers to approximation: a strongly subquadratic $c$-approximation yields $(c+\varepsilon)$-approximations for all problems in the class in time $O(m^{k+\ell-1-\delta})$. Combined with Chen–Williams, refuting the OV hypothesis is equivalent to an $O(1)$-approximation for all MinSP problems faster than $O(m^{k+\ell-1})$.
+and MinSP is defined with min (the classes MaxSP and MinSP are the unions over all $k\ge 2$, $\ell\ge 1$); each such problem is solvable in time $O(m^{k+\ell-1})$. MaxSP contains Maximum Inner Product, nearest-neighbour variants and optimization versions of $k$-XOR. Theorem: a sparse variant of Maximum (resp. Minimum) Inner Product is complete for MaxSP (resp. MinSP) under deterministic fine-grained reductions: a strongly subquadratic algorithm for it gives an $O(m^{k+\ell-1-\delta})$ algorithm for every MaxSP (MinSP) problem. The completeness transfers to approximation: a strongly subquadratic $c$-approximation yields $(c+\varepsilon)$-approximations for all problems in the class in time $O(m^{k+\ell-1-\delta})$. Combined with Chen–Williams, refuting the OV hypothesis is equivalent to an $O(1)$-approximation for all MinSP problems faster than $O(m^{k+\ell-1})$.
 
 ## Proof sketch
 

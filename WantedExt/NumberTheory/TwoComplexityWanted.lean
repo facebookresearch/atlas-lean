@@ -39,6 +39,7 @@ public import MathlibExt.NumberTheory.TwoComplexitySum
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLDecomp
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLEqAddTwoOfForm
 public import MathlibExt.NumberTheory.TwoComplexityComplexityLPowAddPow
+public import MathlibExt.NumberTheory.TwoComplexityLogbTwoBounds
 
 set_option autoImplicit false
 
@@ -56,18 +57,6 @@ theorem_wanted logb_le_complexityL_le (l n : ℕ) (hl : 1 < l)
     (hln : l ∣ n) (hn : 1 ≤ n) :
     Real.logb l n ≤ (complexityL l n : ℝ) ∧
       (complexityL l n : ℝ) ≤ l * Real.logb l n - 1
-
-/-- **Logarithmic bounds for the 2-complexity (Zhang's Lemma 3(3)).** Write $\|n\|_2$ for the
-2-complexity of $n$: the least number of copies of $2$ from which $n$ can be built using addition
-and multiplication, and $0$ if $n$ cannot be built. For every even natural number $n \ge 1$,
-$\log_2 n \le \|n\|_2 \le 2 \log_2 n - 1$, where $\log_2$ is the real base-2 logarithm.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Lemma 3. -/
-theorem_wanted logb_two_bounds (n : ℕ) (h2n : 2 ∣ n)
-    (hn : 1 ≤ n) :
-    Real.logb 2 n ≤ (complexityL 2 n : ℝ) ∧
-      (complexityL 2 n : ℝ) ≤ 2 * Real.logb 2 n - 1
 
 /-- **Even $n$ with $2^m < n \le 2^{m+1}$ and 2-complexity $m + 1$.** Write $\|n\|_2$ for the
 2-complexity of $n$. Let $m \ge 1$ and let $n$ be an even natural number with
