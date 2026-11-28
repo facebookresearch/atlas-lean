@@ -21,6 +21,7 @@ public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Logic.Equiv.Fin.Rotate
 public import Mathlib.Topology.Algebra.Monoid
 public import Mathlib.Topology.Instances.Real.Lemmas
+public import MathlibExt.Geometry.SegmentVisibilitySharedDefs
 
 @[expose] public section
 
@@ -43,7 +44,9 @@ closed region bounded by it, and quantifying over it avoids that theorem).
 `seg` and `SegAdj` repeat, under the same names and with the same bodies, the definitions in
 `OpenConjectures.ComputerScience.AMR131Problem15`, and `edge`, `IsSimplePolygon` and `IsRegion`
 those in `OpenConjectures.Geometry.AMR131Problem36` (round-1 entries for the same problem list):
-`WantedExt` cannot import `OpenConjectures`.
+`WantedExt` cannot import `OpenConjectures`. `edge` and `IsSimplePolygon` live in
+`MathlibExt.Geometry.SegmentVisibilitySharedDefs`, in this namespace, so that proofs can import
+them.
 -/
 
 /-- Segment `k` of the endpoint family `e`: `[e_{2k}, e_{2k+1}]`. -/
@@ -58,19 +61,6 @@ def SegAdj {m : ℕ} (e : Fin (2 * m) → ℝ × ℝ) (i j : Fin (2 * m)) : Prop
 def IsDisjointSegmentFamily {m : ℕ} (e : Fin (2 * m) → ℝ × ℝ) : Prop :=
   (∀ k : Fin m, e ⟨2 * k.val, by omega⟩ ≠ e ⟨2 * k.val + 1, by omega⟩) ∧
     ∀ k l, k ≠ l → Disjoint (seg e k) (seg e l)
-
-/-- The edge `[vᵢ, vᵢ₊₁]` of a polygon (indices mod `n`). -/
-def edge {n : ℕ} (v : Fin n → ℝ × ℝ) (i : Fin n) : Set (ℝ × ℝ) :=
-  segment ℝ (v i) (v (finRotate n i))
-
-/-- `v` is a simple polygon: at least three vertices, nondegenerate edges, and edges meeting only at
-the common vertex of consecutive edges. -/
-def IsSimplePolygon {n : ℕ} (v : Fin n → ℝ × ℝ) : Prop :=
-  3 ≤ n ∧ (∀ i, v i ≠ v (finRotate n i)) ∧
-    ∀ i j, i ≠ j →
-      (j = finRotate n i → edge v i ∩ edge v j = {v j}) ∧
-      (i = finRotate n j → edge v i ∩ edge v j = {v i}) ∧
-      (j ≠ finRotate n i → i ≠ finRotate n j → Disjoint (edge v i) (edge v j))
 
 /-- `K` is the closed region of the polygon `v`: compact, with nonempty interior, and with the
 polygon as frontier. -/
