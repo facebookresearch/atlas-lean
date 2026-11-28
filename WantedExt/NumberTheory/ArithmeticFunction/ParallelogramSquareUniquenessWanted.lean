@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniq
 public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativePrimeOneModFour
 public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativeFiveKAddThree
 public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessParallelogramMultiplicativeKSqAddOne
+public import MathlibExt.NumberTheory.ArithmeticFunction.ParallelogramSquareUniquenessMain
 
 /-!
 # Parallelogram uniqueness of square numbers for multiplicative functions
@@ -32,20 +33,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open ArithmeticFunction
-
-/-- **Parallelogram uniqueness of squares for multiplicative functions.** Let $f$ be a
-complex-valued multiplicative arithmetic function
-(so $f(0) = 0$) such that $f(m^2 + n^2) + f(m^2 - n^2) = 2f(m^2) + 2f(n^2)$ for all integers
-$m > n \ge 1$, and suppose $f(4) \ne 0$. Then $f(n) = n^2$ for every natural number $n$.
-
-Source: Poo-Sung Park, *On the Parallelogram Uniqueness of Square Numbers for Multiplicative
-Functions*, INTEGERS 24 (2024), Article A108, Theorem 1 (`integers-2024-A108-thm-1`). -/
-public theorem_wanted multiplicative_parallelogram_squares_eq_sq (f : ArithmeticFunction ℂ)
-    (hf : f.IsMultiplicative)
-    (hpar : ∀ m n : ℕ, 0 < n → n < m →
-      f (m ^ 2 + n ^ 2) + f (m ^ 2 - n ^ 2) = 2 * f (m ^ 2) + 2 * f (n ^ 2))
-    (h4 : f 4 ≠ 0) :
-    ∀ n : ℕ, f n = (n : ℂ) ^ 2
 
 /-- **Multiplicative parallelogram solutions vanishing at 4.** Let $f$ be a complex-valued
 multiplicative arithmetic function
