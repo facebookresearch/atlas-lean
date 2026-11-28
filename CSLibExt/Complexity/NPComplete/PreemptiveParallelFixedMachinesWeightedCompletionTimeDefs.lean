@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# PREEMPTIVE SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME on a fixed number `m ≥ 2` of: definitions
-processors (`Pm|pmtn|Σw_iC_i`) is NP-complete
+# PREEMPTIVE SCHEDULING TO MINIMIZE WEIGHTED COMPLETION TIME on a fixed number `m ≥ 2` of processors
+(`Pm|pmtn|Σw_iC_i`): definitions
 
 Source:
 R. McNaughton, "Scheduling with deadlines and loss functions", Management Science 6 (1959),

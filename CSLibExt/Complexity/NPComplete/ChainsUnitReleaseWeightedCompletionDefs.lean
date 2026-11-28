@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# SINGLE-MACHINE WEIGHTED COMPLETION TIME with chains, unit processing times and release dates: definitions
-# is NP-complete
+# SINGLE-MACHINE WEIGHTED COMPLETION TIME with chains, unit processing times and release dates:
+definitions
 
 Source:
 J. K. Lenstra and A. H. G. Rinnooy Kan, "Complexity results for scheduling chains on a single

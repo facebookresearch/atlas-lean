@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# BOUNDED PARALLEL-BATCHING TOTAL COMPLETION TIME WITH RELEASE DATES (1|p-batch;r_i;b<n|ΣC_i): definitions
-is NP-complete
+# BOUNDED PARALLEL-BATCHING TOTAL COMPLETION TIME WITH RELEASE DATES (1|p-batch;r_i;b<n|ΣC_i):
+definitions
 
 Source:
 P. Brucker and S. Knust, *Complexity results for scheduling problems*, class `bat_p` (parallel

@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# SEQUENCING TO MINIMIZE WEIGHTED TARDINESS with precedence constraints and unit tasks is: definitions
-# NP-complete
+# SEQUENCING TO MINIMIZE WEIGHTED TARDINESS with precedence constraints and unit tasks: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

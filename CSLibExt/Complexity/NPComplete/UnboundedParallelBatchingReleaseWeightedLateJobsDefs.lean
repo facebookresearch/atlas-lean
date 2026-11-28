@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# UNBOUNDED PARALLEL-BATCHING WEIGHTED NUMBER OF LATE JOBS WITH RELEASE DATES: definitions
-(1|p-batch;r_i|Σw_iU_i) is NP-complete
+# UNBOUNDED PARALLEL-BATCHING WEIGHTED NUMBER OF LATE JOBS WITH RELEASE DATES
+(1|p-batch;r_i|Σw_iU_i): definitions
 
 Source:
 P. Brucker, A. Gladky, H. Hoogeveen, M. Y. Kovalyov, C. N. Potts, T. Tautenhahn and

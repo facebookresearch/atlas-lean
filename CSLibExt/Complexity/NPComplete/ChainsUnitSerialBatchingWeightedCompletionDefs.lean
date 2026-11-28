@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# SERIAL BATCHING WITH CHAINS AND UNIT PROCESSING TIMES TO MINIMIZE TOTAL WEIGHTED COMPLETION: definitions
-# TIME is NP-complete
+# SERIAL BATCHING WITH CHAINS AND UNIT PROCESSING TIMES TO MINIMIZE TOTAL WEIGHTED COMPLETION TIME:
+definitions
 
 Source:
 S. Albers and P. Brucker, "The complexity of one-machine batching problems", Discrete Applied

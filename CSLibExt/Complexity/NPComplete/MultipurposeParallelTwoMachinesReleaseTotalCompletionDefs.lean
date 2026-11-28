@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH RELEASE DATES, total completion time: definitions
-(`PMPM2|rᵢ|ΣCᵢ`) is NP-complete
+# TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH RELEASE DATES, total completion time
+(`PMPM2|rᵢ|ΣCᵢ`): definitions
 
 Source:
 P. Brucker, *Scheduling Algorithms*, 5th ed., Springer (2007), doi:10.1007/978-3-540-69516-5,

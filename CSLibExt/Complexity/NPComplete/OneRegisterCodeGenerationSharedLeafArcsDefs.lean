@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# CODE GENERATION ON A ONE-REGISTER MACHINE (shared vertices have arcs only to leaves) is: definitions
-# NP-complete
+# CODE GENERATION ON A ONE-REGISTER MACHINE (shared vertices have arcs only to leaves): definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

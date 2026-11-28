@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# RESOURCE CONSTRAINED SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME with one resource and three: definitions
-processors is NP-complete
+# RESOURCE CONSTRAINED SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME with one resource and three
+processors: definitions
 
 Source:
 J. Błażewicz, J. K. Lenstra and A. H. G. Rinnooy Kan, "Scheduling subject to resource

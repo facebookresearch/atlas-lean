@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# UNIFORM PARALLEL MACHINE SCHEDULING, weighted number of late jobs (`Qm||Σw_iU_i`) is: definitions
-NP-complete
+# UNIFORM PARALLEL MACHINE SCHEDULING, weighted number of late jobs (`Qm||Σw_iU_i`): definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of

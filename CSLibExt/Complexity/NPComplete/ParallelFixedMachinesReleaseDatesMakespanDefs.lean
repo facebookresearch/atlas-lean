@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# MULTIPROCESSOR SCHEDULING WITH RELEASE DATES on a fixed number `m ≥ 2` of processors: definitions
-(`Pm|r_i|Cmax`) is NP-complete
+# MULTIPROCESSOR SCHEDULING WITH RELEASE DATES on a fixed number `m ≥ 2` of processors
+(`Pm|r_i|Cmax`): definitions
 
 Source:
 J. K. Lenstra, A. H. G. Rinnooy Kan and P. Brucker, "Complexity of machine scheduling

@@ -7,8 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# UNIFORM PARALLEL MACHINE SCHEDULING, total weighted completion time (`Qm||Σw_iC_i`) is: definitions
-NP-complete
+# UNIFORM PARALLEL MACHINE SCHEDULING, total weighted completion time (`Qm||Σw_iC_i`): definitions
 
 Source:
 P. Brucker and S. Knust, *Complexity results for scheduling problems*, Universität Osnabrück,
