@@ -302,17 +302,6 @@ public theorem_wanted generalizedTau_two_mul_prime_add_one_succ_modEq (p : ℕ) 
           ((r + s + t).negOnePow : ℤ)
         else 0 [ZMOD p]
 
-/-- **A congruence for 9-regular partitions at $4n + 1$.** Let $R_9(m)$ denote the number of
-partitions of $m$ in which no part is divisible by $9$. For every positive integer $n$,
-$R_9(4n + 1) \equiv R_9(n) \pmod 3$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 19 (`integers-2024-A39-thm-19`). -/
-public theorem_wanted card_nine_regular_four_mul_add_one_modEq (n : ℕ) (hn : 0 < n) :
-    ((Nat.Partition.restricted (4 * n + 1) (¬ 9 ∣ ·)).card : ℤ)
-    ≡ ((Nat.Partition.restricted (n) (¬ 9 ∣ ·)).card : ℤ) [ZMOD 3]
-
 /-- **$\tau_{-k}$ and partition convolutions modulo a prime.** Let $l$ be an odd prime, let $k$ be a
 natural number with $2 \le k < l$, let $n$ be a natural number, and write $p(s)$ for the number of
 partitions of $s$. Then
