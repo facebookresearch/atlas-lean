@@ -16,7 +16,7 @@ $$
 \bigl|\{y\in\{0,1\}^m : \mathrm{Adv}(y)\text{ rejects}\}\bigr|<K \quad\text{and}\quad \Pr_{x\sim\{0,1\}^n}[\mathrm{Adv}(G(x))\text{ rejects}]=1.
 $$
 
-Every $(1-K/2^m)$-secure demi-bits generator is $K$-weak (more precisely, $K$-weakness is equivalent to $(1-(K-1)/2^m)$-security; the source loosely equates $K$-weakness with $(1-K/2^m)$-security after Definition 2.2), and every injective $G$ is trivially a $2^n$-weak demi-bits generator.
+Every $(1-K/2^m)$-secure demi-bits generator is $K$-weak (more precisely, $K$-weakness is equivalent to $(1-(K-1)/2^m)$-security; the source loosely equates $K$-weakness with $(1-K/2^m)$-security after Definition 2.2), and every injective such $G$ is trivially a $2^n$-weak demi-bits generator.
 
 **Against a fixed proof system.** Let $\mathcal P$ be a propositional proof system, let $G:\{0,1\}^n\to\{0,1\}^\ell$ with $\ell>n$ be computable by polynomial-size circuits (non-uniform advice allowed), and for $b\in\{0,1\}^\ell$ let $\tau_b(G)$ be a propositional formula encoding "$b\notin\mathrm{Range}(G)$". Then $G$ is a **demi-bits generator against $\mathcal P$** if for at least a $1/3$ fraction of $b\in\{0,1\}^\ell$, $\mathcal P$ has no polynomial-size proof of $\tau_b(G)$; it is a **proof complexity generator against $\mathcal P$** if this holds for every $b\in\{0,1\}^\ell$.
 

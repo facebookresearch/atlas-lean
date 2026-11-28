@@ -8,14 +8,14 @@ The refuter problem of a resolution lower bound takes a purported resolution ref
 - a tag, "resolution" or "weakening",
 - for "resolution": indices $-m\le j,k<i$ and a variable $a\in\{1,\dots,n\}$; for "weakening": one index $-m\le j<i$.
 
-Node $C_i$ is a valid derivation if: when tagged "resolution", there are clauses $D,E$ with $C_j=x_a\lor D$, $C_k=\overline{x}_a\lor E$ and $C_i=D\lor E$; when tagged "weakening", $C_i=C_j\lor D$ for some clause $D$. The refutation is valid if every node is a valid derivation and $C_{L-1}=\bot$. Its length (size) is $L$, and its width is the largest number of literals in a clause $C_i$, $-m\le i<L$.
+Node $C_i$ is a valid derivation if: when tagged "resolution", there are clauses $D,E$ with $C_j=x_a\lor D$, $C_k=\overline{x}_a\lor E$ and $C_i=D\lor E$; when tagged "weakening", $C_i=C_j\lor D$ for some clause $D$; and for the final node $i=L-1$, additionally $C_{L-1}=\bot$. The refutation is valid if every node is a valid derivation. Its length (size) is $L$, and its width is the largest number of literals in a clause $C_i$, $-m\le i<L$.
 
 **Refuter problems.** Let $\mathcal F=\{F_n\}_{n\in\mathbb N}$ be a family of unsatisfiable CNFs such that every resolution refutation of $F_n$ has width greater than $w_n$ and size greater than $s_n$.
 
 - An input to $\mathrm{Refuter}(w(F_n\vdash_{\mathrm{Res}}\bot)\le w_n)$ is a purported resolution refutation of $F_n$ of width at most $w_n$ (each node is allotted only $w_n$ literals).
 - An input to $\mathrm{Refuter}(s(F_n\vdash_{\mathrm{Res}}\bot)\le s_n)$ is a purported resolution refutation of $F_n$ with at most $s_n$ clauses.
 
-In both problems a solution is an index $i$ such that node $C_i$ violates the validity conditions above (an invalid derivation).
+In both problems a solution is an index $i\in\{0,\dots,L-1\}$ such that node $C_i$ violates the validity conditions above (an invalid derivation; in particular, $i=L-1$ is a solution whenever $C_{L-1}\ne\bot$).
 
 The problems live in the decision-tree model of total search: the input is accessed by queries, each node is a block of $\mathrm{poly}(w,\log n,\log L)$ bits, and efficiency is measured by the number of blocks queried (block-depth). Whether a given node is an invalid derivation can be checked with block-depth at most 3, so both refuter problems are in $\mathsf{FNP}^{\mathrm{dt}}$, and they are total, hence in $\mathsf{TFNP}^{\mathrm{dt}}$, whenever the lower bound $w_n$ or $s_n$ is true.
 
