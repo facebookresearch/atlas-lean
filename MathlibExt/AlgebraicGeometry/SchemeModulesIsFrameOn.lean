@@ -52,48 +52,21 @@ variable {X : Scheme.{u}}
 
 namespace FramePullback
 
-variable {M : X.Modules} {U : X.Opens} (s : Γ(M, U)) (W : X.Opens) (hWU : W ≤ U)
-
--- The restrictions of `s` to the opens of `W`, as a global section of `M.restrict W.ι`.
-private def restrictSection : (M.restrict W.ι).sections :=
-  PresheafOfModules.sectionsMk
-    (fun W' => (M.restrictAppIso W.ι W'.unop).inv
-      (M.presheaf.map (homOfLE ((W.ι_image_le W'.unop).trans hWU)).op s))
-    (fun W₁ W₂ i => by
-      change (M.restrict W.ι).presheaf.map i ((M.restrictAppIso W.ι W₁.unop).inv _) = _
-      rw [restrictAppIso_inv_map_apply]
-      congr 1
-      rw [← ConcreteCategory.comp_apply, ← Functor.map_comp]
-      rfl)
-
--- The structure sheaf of `W`, as an object of `W.Modules`.
-private abbrev unitW : (W : Scheme.{u}).Modules :=
-  SheafOfModules.unit (W : Scheme.{u}).ringCatSheaf
-
--- Multiplication by the restrictions of `s`, as a morphism out of the structure sheaf of `W`.
-private def smulHom : unitW W ⟶ M.restrict W.ι :=
-  (SheafOfModules.unitHomEquiv (M.restrict W.ι)).symm (restrictSection s W hWU)
-
-private lemma smulHom_app_apply (W' : (W : Scheme.{u}).Opens) (a : Γ(W, W')) :
-    (smulHom s W hWU).app W' a =
-      (M.restrictAppIso W.ι W').inv ((W.ι.appIso W').inv a •
-        M.presheaf.map (homOfLE ((W.ι_image_le W').trans hWU)).op s) := by
-  rw [smul_restrictAppIso_inv_apply, Iso.inv_hom_id_apply]
-  rfl
-
-private lemma isIso_smulHom {V : X.Opens} (h : IsFrameOn s V) (hWV : W ≤ V) :
-    IsIso (smulHom s W hWU) := by
+private lemma isIso_smulSectionHom {M : X.Modules} {U V : X.Opens} {s : Γ(M, U)}
+    (h : IsFrameOn s V) (W : X.Opens) (hWU : W ≤ U) (hWV : W ≤ V) :
+    IsIso (smulSectionHom W (M.presheaf.map (homOfLE hWU).op s)) := by
   refine Hom.isIso_iff_isIso_app.mpr fun W' => ?_
   rw [ConcreteCategory.isIso_iff_bijective]
-  have e : ⇑(ConcreteCategory.hom ((smulHom s W hWU).app W')) =
+  have e : ⇑(ConcreteCategory.hom
+        ((smulSectionHom W (M.presheaf.map (homOfLE hWU).op s)).app W')) =
       (M.restrictAppIso W.ι W').inv ∘
-        (fun g : Γ(X, W.ι ''ᵁ W') =>
-          g • M.presheaf.map (homOfLE ((W.ι_image_le W').trans hWU)).op s) ∘
+        (fun g : Γ(X, W.ι ''ᵁ W') => g •
+          M.presheaf.map (homOfLE (W.ι_image_le W')).op (M.presheaf.map (homOfLE hWU).op s)) ∘
         (W.ι.appIso W').inv :=
-    funext (smulHom_app_apply s W hWU W')
+    funext (smulSectionHom_app_apply W _ W')
   rw [e]
   exact (ConcreteCategory.bijective_of_isIso _).comp
-    ((h ((W.ι_image_le W').trans hWU) ((W.ι_image_le W').trans hWV)).comp
+    (((h.map (homOfLE hWU)) (W.ι_image_le W') ((W.ι_image_le W').trans hWV)).comp
       (ConcreteCategory.bijective_of_isIso _))
 
 end FramePullback
@@ -106,9 +79,9 @@ public theorem IsFrameOn.nonempty_pullback_iso_unit
     (h : IsFrameOn s V) (W : X.Opens) (hWU : W ≤ U) (hWV : W ≤ V) :
     Nonempty ((Modules.pullback W.ι).obj M ≅
       SheafOfModules.unit (W : Scheme.{u}).ringCatSheaf) :=
-  haveI := FramePullback.isIso_smulHom s W hWU h hWV
+  haveI := FramePullback.isIso_smulSectionHom h W hWU hWV
   ⟨(restrictFunctorIsoPullback W.ι).symm.app M ≪≫
-    (asIso (FramePullback.smulHom s W hWU)).symm⟩
+    (asIso (smulSectionHom W (M.presheaf.map (homOfLE hWU).op s))).symm⟩
 
 end AlgebraicGeometry.Scheme.Modules
 
