@@ -51,14 +51,24 @@ example : ∃ ξ ∈ Ioo (0 : ℝ) 1,
   norm_num [deriv_square, sub_eq_add_neg] at hξ heq
   exact ⟨ξ, hξ, heq⟩
 
--- The bound is attained for the square function and the negative step.
-example : |(((1 : ℝ) + (-1)) ^ 2 - 1 ^ 2) / (-1) -
-    derivWithin (fun t : ℝ ↦ t ^ 2) (uIcc 1 (1 + (-1))) 1| ≤ 1 := by
-  have hBound := abs_oneSidedDifference_sub_derivWithin_le
-    (f := fun t : ℝ ↦ t ^ 2) (x := 1) (h := -1) (M := 2) (by norm_num)
-    square_contDiff.contDiffOn (fun ξ _ ↦ by rw [iteratedDeriv_two_square]; norm_num)
-  norm_num at hBound ⊢
-  exact hBound
+-- Apply the bound for the negative step, then check that it is attained.
+example :
+    let error := |(((1 : ℝ) + (-1)) ^ 2 - 1 ^ 2) / (-1) -
+      derivWithin (fun t : ℝ ↦ t ^ 2) (uIcc 1 (1 + (-1))) 1|
+    let bound := |(-1 : ℝ)| / 2 * 2
+    error ≤ bound ∧ error = bound := by
+  dsimp only
+  constructor
+  · exact abs_oneSidedDifference_sub_derivWithin_le
+      (f := fun t : ℝ ↦ t ^ 2) (x := 1) (h := -1) (M := 2) (by norm_num)
+      square_contDiff.contDiffOn (fun ξ _ ↦ by rw [iteratedDeriv_two_square]; norm_num)
+  · have hne : (1 : ℝ) ≠ 1 + (-1) := by norm_num
+    have hdiff := square_contDiff.differentiable (by decide) (1 : ℝ)
+    have hWithin : derivWithin (fun t : ℝ ↦ t ^ 2) (uIcc 1 (1 + (-1))) 1 = 2 := by
+      rw [hdiff.derivWithin (uniqueDiffOn_uIcc hne 1 left_mem_uIcc), deriv_square]
+      norm_num
+    rw [hWithin]
+    norm_num
 
 -- The absolute value function has the interval derivative `1` at `0` on `[0, 1]`.
 example : ∃ ξ ∈ Ioo (0 : ℝ) 1,
