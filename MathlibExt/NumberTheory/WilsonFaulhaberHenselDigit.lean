@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.FermatQuotient
-import all MathlibExt.NumberTheory.WilsonFermatQuotient
+import MathlibExt.NumberTheory.WilsonFermatQuotient
 import Mathlib.Tactic.Ring
 
 /-!
@@ -40,13 +40,13 @@ public theorem hensel_digit_mul_prime_mod_sq (p : ℕ) (hp : p.Prime) (k : ℕ)
     (((p : ℤ) * t : ℤ) : ZMod (p ^ 2)) =
       (k : ZMod (p ^ 2)) * (1 + (Nat.factorial (p - 1) : ZMod (p ^ 2)) +
         (p : ZMod (p ^ 2)) *
-          ((Int.fermatQuotient p hp (k : ℤ) (by exact coprime_of_mem hp hk) : ℤ) :
+          ((Int.fermatQuotient p hp (k : ℤ) (by exact isCoprime_intCast_of_mem_Icc hp hk) : ℤ) :
             ZMod (p ^ 2))) := by
   let P : ZMod (p ^ 2) := p
   let K : ZMod (p ^ 2) := k
   let T : ZMod (p ^ 2) := t
   let F : ZMod (p ^ 2) := Nat.factorial (p - 1)
-  let Q : ZMod (p ^ 2) := Int.fermatQuotient p hp (k : ℤ) (coprime_of_mem hp hk)
+  let Q : ZMod (p ^ 2) := Int.fermatQuotient p hp (k : ℤ) (isCoprime_intCast_of_mem_Icc hp hk)
   rw [Int.cast_mul, Int.cast_natCast]
   change P * T = K * (1 + F + P * Q)
   have hP : P * P = 0 := by
@@ -56,7 +56,7 @@ public theorem hensel_digit_mul_prime_mod_sq (p : ℕ) (hp : p.Prime) (k : ℕ)
       _ = 0 := ZMod.natCast_self _
   have hQ : K ^ (p - 1) = 1 + P * Q := by
     have h := congrArg (fun z : ℤ => (z : ZMod (p ^ 2)))
-      (Int.natCast_mul_fermatQuotient p hp (k : ℤ) (coprime_of_mem hp hk))
+      (Int.natCast_mul_fermatQuotient p hp (k : ℤ) (isCoprime_intCast_of_mem_Icc hp hk))
     have h' : P * Q = K ^ (p - 1) - 1 := by
       simpa only [P, K, Q, Int.cast_mul, Int.cast_sub, Int.cast_pow, Int.cast_natCast,
         Int.cast_one] using h
