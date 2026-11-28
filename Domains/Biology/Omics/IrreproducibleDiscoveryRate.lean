@@ -49,9 +49,10 @@ of irreproducible findings in the selected set at most `α`.
   `multivariateGaussian !₂[μ, μ] !![σ ^ 2, ρ * σ ^ 2; ρ * σ ^ 2, σ ^ 2]`, and `h₀`, `h₁` are
   `multivariateGaussianPDFReal` of the same means and covariance matrices.
 * With `ρ = 1`, which the model allows, the reproducible component lies on the diagonal
-  `z 0 = z 1` and has no density with respect to Lebesgue measure. The posterior probability of
-  `K = 0` is then `0` on the diagonal and `1` off it, which is also the limit of the formula
-  above as `ρ → 1`; `idr` takes these values when `ρ = 1`.
+  `z 0 = z 1` and has no density with respect to Lebesgue measure. A version of the posterior
+  probability of `K = 0` is then `0` on the diagonal and `1` off it, and `idr` takes these values
+  when `ρ = 1`. For `0 < π₁ < 1` and `σ ≠ 0` they are also the limits of the formula above as `ρ`
+  increases to `1`.
 * The parameters are real inputs. Each theorem assumes only what it uses: `π₁ ∈ [0, 1]` for the
   bounds and the probabilistic theorems, `σ ≠ 0` and `ρ ∈ (-1, 1]` for the posterior and the
   expected fraction, and `σ > 0` and `|ρ| ≤ 1` for the latent marginal. The source's `μ > 0` and
@@ -139,8 +140,8 @@ is
 the posterior probability that the finding is irreproducible
 (`irreproducibleDiscoveryRate_posterior`). When `ρ = 1` the reproducible component lies on the
 diagonal `x 0 = x 1` and has no density; `idr(x)` is then `0` on the diagonal and `1` off it,
-again the posterior probability. The irreproducible discovery rate of `S`, with `z i` the latent
-pair of finding `i`, is
+again a version of the posterior probability. The irreproducible discovery rate of `S`, with `z i`
+the latent pair of finding `i`, is
 
   `IDR(S) = (1 / |S|) ∑ i ∈ S, idr(z i)`,
 
@@ -154,11 +155,12 @@ set at most `α` (`irreproducibleDiscoveryRate_le_of_subset`,
 discovery rate in a two-group model.
 
 For genomic interactions, which have two anchors, the findings are the pairs of a one-to-one
-correspondence between the interactions of the two replicates, each interaction of replicate 1
-paired with one of the interactions of replicate 2 whose anchors overlap its own, chosen by
-minimizing an ambiguity-resolution value (Krismer, Guo and Gifford 2020;
-`Domains.Biology.Omics.InteractionCorrespondence.IsResolvedCorrespondence`); the scores of these
-pairs enter the same model. -/
+correspondence between the interactions of the two replicates (Krismer, Guo and Gifford 2020;
+`Domains.Biology.Omics.InteractionCorrespondence.IsResolvedCorrespondence`): an interaction of
+replicate 1 whose anchors overlap, or lie within a maximal gap of, those of some interaction of
+replicate 2 is paired with such an interaction of minimal ambiguity-resolution value, unless one of
+its partners of minimal value is paired with another interaction of replicate 1. The scores of
+these pairs enter the same model. -/
 noncomputable def irreproducibleDiscoveryRate (π₁ μ σ ρ : ℝ) (z : ι → EuclideanSpace ℝ (Fin 2))
     (S : Finset ι) : ℝ :=
   let h₀ := multivariateGaussianPDFReal (0 : EuclideanSpace ℝ (Fin 2)) 1

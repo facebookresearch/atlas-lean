@@ -22,17 +22,20 @@ two anchors both overlap its anchors, or lie within a maximal gap of them (Figur
 interactions of replicate 2 correspond to the same interaction of replicate 1, one of them is
 chosen by minimizing an *ambiguity-resolution value* (Figure 1D and Eq. (1)): the genomic distance
 between the anchor midpoints, the additive inverse of the relative anchor overlap, or the sum of the
-two interactions' ranks. The scores of the pairs of the resulting one-to-one correspondence then
-enter the copula mixture model of the irreproducible discovery rate
+two interactions' ranks. The result is a one-to-one correspondence: an interaction of replicate 1
+that corresponds to some interaction of replicate 2 is paired with one of minimal value, unless such
+a partner is paired with another interaction of replicate 1. The scores of its pairs then enter the
+copula mixture model of the irreproducible discovery rate
 (`Domains.Biology.Omics.IrreproducibleDiscoveryRate`).
 
 ## Conventions
 
-* An anchor is a closed interval `[start, stop]` of base-pair positions on a chromosome. Two anchors
-  are *within gap `g`* when they lie on the same chromosome and
-  `max start₁ start₂ - min stop₁ stop₂ ≤ g`: for `g = 0` this says that they share a position, and
-  for `g > 0` that they overlap or that the later one starts at most `g` positions after the
-  earlier one ends.
+* An anchor is a closed interval `[start, stop]` of base-pair positions on a chromosome, with
+  `start ≤ stop`. Two anchors are *within gap `g`* when they lie on the same chromosome and their
+  gap `max start₁ start₂ - min stop₁ stop₂ - 1` is at most `g`. For disjoint anchors the gap is the
+  number of positions strictly between them, `0` for adjacent ones, and it is negative for
+  overlapping ones: `g = -1` asks the anchors to overlap, sharing a position, and `g ≥ -1` is
+  IDR2D's maximal gap (its default `-1`, overlap).
 * An interaction is a pair of anchors `(A, B)`. Two interactions *correspond* when their first
   anchors are within the gap of each other, and so are their second anchors.
 * The interactions of the two replicates form types `ι₁` and `ι₂`, with anchors `x₁ : ι₁ → _` and
@@ -41,20 +44,22 @@ enter the copula mixture model of the irreproducible discovery rate
 
 ## Main definitions
 
-* `Anchor`: a closed interval of positions on a chromosome.
+* `Anchor`: a nonempty closed interval of positions on a chromosome.
 * `Anchor.WithinGap g a b`: the anchors `a` and `b` overlap or lie within the gap `g` of each other.
 * `Corresponds g I J`: both anchors of the interactions `I` and `J` are within the gap `g`.
 * `IsResolvedPartner g x₁ x₂ f i j`: the interaction `j` of replicate 2 corresponds to the
   interaction `i` of replicate 1 and minimizes the ambiguity-resolution value `f i` among those that
   do (Eq. (1)).
 * `IsResolvedCorrespondence g x₁ x₂ f P`: `P` is a one-to-one correspondence whose pairs are
-  resolved partners.
+  resolved partners and which pairs every interaction of replicate 1 that has a corresponding
+  interaction, unless one of its resolved partners is paired with another interaction.
 
 ## Main results
 
 * `exists_isResolvedPartner`: an interaction of replicate 1 that corresponds to some interaction of
   a finite replicate 2 has a resolved partner.
 * `IsResolvedPartner.unique`: the resolved partner is unique when `f i` takes distinct values.
+* `exists_isResolvedCorrespondence`: when replicate 2 is finite, a resolved correspondence exists.
 
 ## References
 
@@ -67,8 +72,8 @@ enter the copula mixture model of the irreproducible discovery rate
 
 namespace Domains.Biology.Omics.InteractionCorrespondence
 
-/-- A genomic **anchor**: the closed interval `[start, stop]` of base-pair positions on the
-chromosome `chrom`. -/
+/-- A genomic **anchor**: the nonempty closed interval `[start, stop]` of base-pair positions on
+the chromosome `chrom`. -/
 structure Anchor (Chrom : Type*) where
   /-- The chromosome the anchor lies on. -/
   chrom : Chrom
@@ -76,15 +81,18 @@ structure Anchor (Chrom : Type*) where
   start : ℤ
   /-- The last base-pair position of the anchor. -/
   stop : ℤ
+  /-- The anchor is nonempty. -/
+  start_le_stop : start ≤ stop
 
 variable {Chrom : Type*}
 
-/-- Two anchors are **within gap `g`** of each other when they lie on the same chromosome and
-`max a.start b.start - min a.stop b.stop ≤ g`. For `g = 0` this says that the anchors overlap,
-sharing a base-pair position; for `g > 0`, that they overlap or that the start of the later one
-lies at most `g` positions after the end of the earlier one. -/
+/-- Two anchors are **within gap `g`** of each other when they lie on the same chromosome and their
+gap `max a.start b.start - min a.stop b.stop - 1` is at most `g`. For disjoint anchors the gap is
+the number of base-pair positions strictly between them, `0` for adjacent anchors; for overlapping
+anchors it is negative. So `g = -1` says that the anchors overlap, sharing a position, `g = 0` also
+admits adjacent anchors, and for `g ≥ -1` this is IDR2D's maximal gap between anchors. -/
 def Anchor.WithinGap (g : ℤ) (a b : Anchor Chrom) : Prop :=
-  a.chrom = b.chrom ∧ max a.start b.start - min a.stop b.stop ≤ g
+  a.chrom = b.chrom ∧ max a.start b.start - min a.stop b.stop - 1 ≤ g
 
 /-- Two interactions, each given by its two anchors, **correspond** within the gap `g` when their
 first anchors are within the gap of each other and so are their second anchors (IDR2D,
@@ -108,14 +116,22 @@ def IsResolvedPartner (g : ℤ) (x₁ : ι₁ → Anchor Chrom × Anchor Chrom)
     (x₂ : ι₂ → Anchor Chrom × Anchor Chrom) (f : ι₁ → ι₂ → ℝ) (i : ι₁) (j : ι₂) : Prop :=
   Corresponds g (x₁ i) (x₂ j) ∧ ∀ j', Corresponds g (x₁ i) (x₂ j') → f i j ≤ f i j'
 
-/-- A **resolved correspondence** between the interactions of two replicates: a set `P` of pairs
-`(i, j)` that is one-to-one (no interaction of either replicate is in two pairs) and in which each
-`j` is a resolved partner of `i` (`IsResolvedPartner`). The paired scores of its pairs enter the
-copula mixture model. -/
+/-- A **resolved correspondence** between the interactions of two replicates (IDR2D, Figure 1C–D
+and Eq. (1)): a set `P` of pairs `(i, j)` such that
+
+* each `j` is a resolved partner of its `i` (`IsResolvedPartner`);
+* `P` is one-to-one: no interaction of either replicate is in two pairs;
+* every interaction `i` of replicate 1 that corresponds to some interaction of replicate 2 is in a
+  pair, unless one of its resolved partners is paired with another interaction of replicate 1, as
+  happens when two interactions of replicate 1 compete for the same partner.
+
+The paired scores of its pairs enter the copula mixture model. -/
 def IsResolvedCorrespondence (g : ℤ) (x₁ : ι₁ → Anchor Chrom × Anchor Chrom)
     (x₂ : ι₂ → Anchor Chrom × Anchor Chrom) (f : ι₁ → ι₂ → ℝ) (P : Set (ι₁ × ι₂)) : Prop :=
   (∀ p ∈ P, IsResolvedPartner g x₁ x₂ f p.1 p.2) ∧
-    ∀ p ∈ P, ∀ q ∈ P, (p.1 = q.1 ↔ p.2 = q.2)
+    (∀ p ∈ P, ∀ q ∈ P, (p.1 = q.1 ↔ p.2 = q.2)) ∧
+    ∀ i, (∃ j, Corresponds g (x₁ i) (x₂ j)) →
+      (∃ j, (i, j) ∈ P) ∨ ∃ j, IsResolvedPartner g x₁ x₂ f i j ∧ ∃ i', (i', j) ∈ P
 
 /-- An interaction of replicate 1 that corresponds to some interaction of a finite replicate 2 has
 a resolved partner. -/
@@ -133,5 +149,40 @@ theorem IsResolvedPartner.unique {g : ℤ} {x₁ : ι₁ → Anchor Chrom × Anc
     (hf : Function.Injective (f i)) (hj : IsResolvedPartner g x₁ x₂ f i j)
     (hj' : IsResolvedPartner g x₁ x₂ f i j') : j = j' :=
   hf (le_antisymm (hj.2 j' hj'.1) (hj'.2 j hj.1))
+
+/-- When replicate 2 is finite, a resolved correspondence exists: give each interaction of
+replicate 1 that has a corresponding interaction one of its resolved partners, and keep, for each
+interaction of replicate 2 chosen in this way, one of the interactions of replicate 1 that chose
+it. -/
+theorem exists_isResolvedCorrespondence [Finite ι₂] (g : ℤ)
+    (x₁ : ι₁ → Anchor Chrom × Anchor Chrom) (x₂ : ι₂ → Anchor Chrom × Anchor Chrom)
+    (f : ι₁ → ι₂ → ℝ) : ∃ P, IsResolvedCorrespondence g x₁ x₂ f P := by
+  classical
+  rcases isEmpty_or_nonempty ι₂ with h₂ | h₂
+  · exact ⟨∅, by simp, by simp, fun _ ⟨j, _⟩ => isEmptyElim j⟩
+  rcases isEmpty_or_nonempty ι₁ with h₁ | h₁
+  · exact ⟨∅, by simp, by simp, fun i => isEmptyElim i⟩
+  let M : Set ι₁ := {i | ∃ j, Corresponds g (x₁ i) (x₂ j)}
+  have hp : ∀ i ∈ M, ∃ j, IsResolvedPartner g x₁ x₂ f i j := fun i hi =>
+    exists_isResolvedPartner f hi
+  choose! p hp using hp
+  have hc : ∀ j, (∃ i ∈ M, p i = j) → ∃ i ∈ M, p i = j := fun _ h => h
+  choose! c hcM hcp using hc
+  refine ⟨{q | q.1 ∈ M ∧ p q.1 = q.2 ∧ c q.2 = q.1}, ?_, ?_, ?_⟩
+  · rintro ⟨i, j⟩ ⟨hi, hpj, -⟩
+    dsimp only at hi hpj ⊢
+    rw [← hpj]
+    exact hp i hi
+  · rintro ⟨i, j⟩ ⟨-, hpj, hci⟩ ⟨i', j'⟩ ⟨-, hpj', hci'⟩
+    dsimp only at hpj hci hpj' hci' ⊢
+    constructor
+    · rintro rfl
+      rw [← hpj, ← hpj']
+    · rintro rfl
+      rw [← hci, ← hci']
+  · intro i hi
+    by_cases h : c (p i) = i
+    · exact Or.inl ⟨p i, hi, rfl, h⟩
+    · exact Or.inr ⟨p i, hp i hi, c (p i), hcM (p i) ⟨i, hi, rfl⟩, hcp (p i) ⟨i, hi, rfl⟩, rfl⟩
 
 end Domains.Biology.Omics.InteractionCorrespondence
