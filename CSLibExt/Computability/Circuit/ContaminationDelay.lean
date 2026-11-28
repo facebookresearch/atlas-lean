@@ -127,8 +127,9 @@ def CaptureMet {U : Type*} (s : ℝ → U) (setup hold u : ℝ≥0) : Prop :=
 /-! ### Earliest change: min-plus propagation of contamination delays -/
 
 /-- The earliest time a line's output may change: the contamination delay plus
-the earliest change among the wires it reads, the minimum folded from `⊤`. A
-constant (zero-input) gate never changes. -/
+the earliest change among the wires it reads, the minimum folded from `⊤`. For a
+constant (zero-input) gate the computed earliest change time is `⊤`; for a causal
+gate output (`Line.Causal`) this constrains the signal only on `[0, ∞)`. -/
 def Line.earliest {σ : Signature.{v}} {inputCount gateCount : Nat}
     (line : Line σ inputCount gateCount)
     (wireEarliest : Wire inputCount gateCount → WithTop ℝ) (cdelay : ℝ) : WithTop ℝ :=
@@ -196,7 +197,9 @@ private theorem StableBefore.mono {U : Type*} {s : ℝ → U} {τ τ' : WithTop 
 
 /-! ### Line earliest: no-transition constants and min over fan-in -/
 
-/-- **No-transition constants.** A gate with no inputs never changes. -/
+/-- **No-transition constants.** For a gate with no inputs, the computed earliest change time is
+`⊤`. For a causal gate output (`Line.Causal`) this constrains the signal only on `[0, ∞)`: times
+before the clock edge are unconstrained. -/
 theorem Line.earliest_of_arity_eq_zero {σ : Signature.{v}} {inputCount gateCount : Nat}
     (line : Line σ inputCount gateCount) (wireEarliest : Wire inputCount gateCount → WithTop ℝ)
     (cdelay : ℝ) (h : σ.Arity line.op = 0) :
