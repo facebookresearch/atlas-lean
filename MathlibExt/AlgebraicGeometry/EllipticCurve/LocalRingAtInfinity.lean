@@ -649,7 +649,7 @@ theorem valuationAtInfinity_affineY :
 /-- Let `g : F[X] → K` be a ring map to a field with a valuation `v` in `ℤᵐ⁰`, such that the
 nonzero constants have valuation `1` and `v (g X) = exp k` with `k > 0`. Then
 `v (g p) = exp (k deg p)` for every nonzero polynomial `p`. -/
-private lemma valuation_map_polynomial {K : Type*} [Field K]
+theorem valuation_map_polynomial {K : Type*} [Field K]
     (v : Valuation K (WithZero (Multiplicative ℤ))) (g : F[X] →+* K)
     (hC : ∀ c : F, c ≠ 0 → v (g (C c)) = 1) {k : ℤ} (hX : v (g X) = WithZero.exp k)
     (hk : 0 < k) {p : F[X]} (hp : p ≠ 0) :
@@ -669,7 +669,7 @@ private lemma valuation_map_polynomial {K : Type*} [Field K]
       exact mul_lt_mul_of_pos_right (by exact_mod_cast hlt) hk
 
 /-- The constant polynomial `c` in `x` is the constant `c` of `A_W`. -/
-private lemma of_C_eq (c : F) :
+theorem of_C_eq_algebraMap (c : F) :
     AdjoinRoot.of W.toAffine.polynomial (C c) = algebraMap F W.toAffine.CoordinateRing c := by
   simp [IsScalarTower.algebraMap_apply F F[X] (AdjoinRoot _), AdjoinRoot.algebraMap_eq]
 
@@ -704,7 +704,7 @@ theorem exists_eq_algebraMap_of_valuationAtInfinity_le_one (f : W.toAffine.Coord
   set g : F[X] →+* W.toAffine.FunctionField :=
     (algebraMap _ W.toAffine.FunctionField).comp (AdjoinRoot.of W.toAffine.polynomial) with hg
   have hC : ∀ c : F, c ≠ 0 → W.valuationAtInfinity (g (C c)) = 1 := fun c hc ↦ by
-    rw [hg, RingHom.comp_apply, W.of_C_eq]
+    rw [hg, RingHom.comp_apply, W.of_C_eq_algebraMap]
     exact W.valuationAtInfinity_algebraMap_constant hc
   have hX : W.valuationAtInfinity (g X) = WithZero.exp 2 := W.valuationAtInfinity_affineX
   have hsum : algebraMap _ W.toAffine.FunctionField
@@ -743,7 +743,7 @@ theorem exists_eq_algebraMap_of_valuationAtInfinity_le_one (f : W.toAffine.Coord
     rw [hvp, ← WithZero.exp_zero, WithZero.exp_le_exp] at hf
     have hd : p.natDegree = 0 := by omega
     conv_lhs => rw [Polynomial.eq_C_of_natDegree_eq_zero hd]
-    exact W.of_C_eq _
+    exact W.of_C_eq_algebraMap _
 
 /-- **Functions on `A_W` regular at infinity are constant.** Let `W` be a Weierstrass curve over
 a field `F` and let `f ∈ A_W`. If the image of `f` in the common function field `Frac(A_W)` lies
