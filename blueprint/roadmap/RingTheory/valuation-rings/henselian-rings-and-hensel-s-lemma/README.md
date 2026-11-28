@@ -12,5 +12,8 @@
 - [Elements of the maximal ideal have positive valuation](add-val-lt-add-val-add-of-mem-maximal-id.md)
 - [Hensel's lemma with a derivative bound](exists-is-root-of-two-mul-add-val-deriva.md)
 - [Sections of étale algebras over Henselian local rings](exists-alg-hom-lift-of-etale.md)
+- [Eq of aeval eq zero of apply eq](eq-of-aeval-eq-zero-of-apply-eq.md)
+- [Hensel lifting of embeddings](exists-comp-eq-of-henselian-ring.md)
+- [Uniqueness of lifts of embeddings](ext-of-comp-eq.md)
 - [Complete local rings are Henselian](of-is-adic-complete-maximal-ideal.md)
 - [Valuation subrings of algebraically closed fields are Henselian](henselian-local-ring-of-is-alg-closed.md)
