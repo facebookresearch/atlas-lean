@@ -50,7 +50,7 @@ theorem isIso_kernelInclusion_f_of_zero (i : ι) (hf : f.f i = 0) :
   have hzero : F.map f = 0 := by
     change f.f i = 0
     exact hf
-  letI : IsIso (kernel.ι (F.map f)) :=
+  let : IsIso (kernel.ι (F.map f)) :=
     KernelFork.IsLimit.isIso_ι
       (KernelFork.ofι (kernel.ι (F.map f)) (kernel.condition (F.map f)))
       (kernelIsKernel (F.map f)) hzero
@@ -67,8 +67,8 @@ theorem quasiIsoAt_kernelInclusion_of_zero_components (i : ι)
     [(kernel f).HasHomology i] [K.HasHomology i]
     (hi : f.f i = 0) (hprev : f.f (c.prev i) = 0) :
     QuasiIsoAt (kernel.ι f) i := by
-  letI : IsIso ((kernel.ι f).f i) := isIso_kernelInclusion_f_of_zero f i hi
-  letI : IsIso ((kernel.ι f).f (c.prev i)) :=
+  let : IsIso ((kernel.ι f).f i) := isIso_kernelInclusion_f_of_zero f i hi
+  let : IsIso ((kernel.ι f).f (c.prev i)) :=
     isIso_kernelInclusion_f_of_zero f (c.prev i) hprev
   rw [quasiIsoAt_iff]
   let : Epi (((shortComplexFunctor C c i).map (kernel.ι f)).τ₁) := by
@@ -91,7 +91,8 @@ def kernelHomologyIsoOfZeroComponents (i : ι)
     [(kernel f).HasHomology i] [K.HasHomology i]
     (hi : f.f i = 0) (hprev : f.f (c.prev i) = 0) :
     (kernel f).homology i ≅ K.homology i := by
-  letI := quasiIsoAt_kernelInclusion_of_zero_components f i hi hprev
+  let : QuasiIsoAt (kernel.ι f) i :=
+    quasiIsoAt_kernelInclusion_of_zero_components f i hi hprev
   exact _root_.isoOfQuasiIsoAt (kernel.ι f) i
 
 /-- Let C be a category with zero morphisms and finite limits, let c be any complex shape on an
@@ -117,8 +118,7 @@ induces an isomorphism H⁰(kernel f) ≅ H⁰(K). The predecessor convention at
 def kernelHomologyZeroIso [(kernel f).HasHomology 0] [K.HasHomology 0]
     (h0 : f.f 0 = 0) : (kernel f).homology 0 ≅ K.homology 0 :=
   kernelHomologyIsoOfZeroComponents f 0 h0 (by
-    erw [CochainComplex.prev_nat_zero]
-    exact h0)
+    simpa only [CochainComplex.prev_nat_zero] using h0)
 
 /-- Let C have zero morphisms and finite limits, and let f : K ⟶ L be a map of cochain complexes
 indexed by ℕ. If kernel f and K have homology in degree 1 and f.f 1 = f.f 0 = 0, the kernel
@@ -126,8 +126,7 @@ inclusion induces an isomorphism H¹(kernel f) ≅ H¹(K). -/
 def kernelHomologyOneIso [(kernel f).HasHomology 1] [K.HasHomology 1]
     (h1 : f.f 1 = 0) (h0 : f.f 0 = 0) : (kernel f).homology 1 ≅ K.homology 1 :=
   kernelHomologyIsoOfZeroComponents f 1 h1 (by
-    erw [CochainComplex.prev_nat_succ (0 : ℕ)]
-    exact h0)
+    simpa only [CochainComplex.prev_nat_succ] using h0)
 
 end NonnegativeCochains
 
