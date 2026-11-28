@@ -9,7 +9,7 @@ The recorded state is reachable from the initial state and reaches the final sta
 ## Depends on
 
 - [Correctness of the Chandy–Lamport snapshot algorithm](../../distributed-execution-models/correctness-of-the-chandylamport-snapshot.md)
-- [Consistent cuts and their lattice](../../distributed-execution-models/consistent-cuts-and-their-lattice.md)
+- [Consistent cuts and their lattice](../../consistent-cuts/consistent-cuts-and-their-lattice.md)
 - [Weak and strong fairness](../../distributed-execution-models/weak-and-strong-fairness.md)
 
 ## Sources

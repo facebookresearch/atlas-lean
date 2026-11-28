@@ -1656,6 +1656,7 @@
   "CSLibExt/Computability/Distributed/ChandyLamport": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Chandy–Lamport snapshots"},
   "CSLibExt/Computability/Distributed/ChangRoberts": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Chang–Roberts leader election"},
   "CSLibExt/Computability/Distributed/ColeVishkin": {"to": "ComputerScience/parallel-algorithms", "title": "Cole–Vishkin deterministic coin tossing"},
+  "CSLibExt/Computability/Distributed/ConsistentCut": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Consistent cuts"},
   "CSLibExt/Computability/Distributed/CoordinatedAttack": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Consensus and agreement"},
   "CSLibExt/Computability/Distributed/CrashConsensus": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Synchronous consensus with crash failures"},
   "CSLibExt/Computability/Distributed/CrashConsensusRounds": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Synchronous consensus with crash failures"},

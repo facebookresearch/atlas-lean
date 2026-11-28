@@ -10,7 +10,7 @@ The permutation moves every event that occurs at a process before that process r
 
 ## Depends on
 
-- [Consistent cuts and their lattice](consistent-cuts-and-their-lattice.md)
+- [Consistent cuts and their lattice](../consistent-cuts/consistent-cuts-and-their-lattice.md)
 
 ## Proof depends on
 
