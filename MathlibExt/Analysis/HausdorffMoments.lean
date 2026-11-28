@@ -325,11 +325,8 @@ private theorem restrictPoly_injective : Function.Injective (restrictPoly (d := 
   intro x hx
   exact DFunLike.congr_fun h (fun i => ⟨x i, hx i (Set.mem_univ _)⟩ : Box d)
 
-private def nonnegCone : PointedCone ℝ C(Box d, ℝ) where
-  carrier := {f | 0 ≤ f}
-  zero_mem' := fun _ => le_rfl
-  add_mem' hf hg x := add_nonneg (hf x) (hg x)
-  smul_mem' c _ hf x := mul_nonneg c.property (hf x)
+private def nonnegCone : PointedCone ℝ C(Box d, ℝ) :=
+  (PointedCone.positive ℝ (Box d → ℝ)).comap (ContinuousMap.coeFnLinearMap ℝ)
 
 -- Extend from restrictions of polynomials to all continuous functions. Constants in the
 -- polynomial subspace dominate every continuous function on the compact cube.
