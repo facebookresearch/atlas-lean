@@ -1,0 +1,17 @@
+# Translation invariance of crossing probabilities at p = 1/2
+
+- [Cti edge Equiv](cti-edge-equiv.md)
+- [Cti translate Config eq](cti-translate-config-eq.md)
+- [Cti measurable translate Config](cti-measurable-translate-config.md)
+- [Cti map translate Config](cti-map-translate-config.md)
+- [Cti self Dual shift invariant](cti-self-dual-shift-invariant.md)
+- [Cti is Open Edge translate](cti-is-open-edge-translate.md)
+- [Cti induced Hom](cti-induced-hom.md)
+- [Cti induced Hom Inv](cti-induced-hom-inv.md)
+- [Cti horizontal Crossing Event translate](cti-horizontal-crossing-event-translate.md)
+- [Cti vertical Crossing Event translate](cti-vertical-crossing-event-translate.md)
+- [Cti horizontal Crossing translation invariant](cti-horizontal-crossing-translation-inva.md)
+- [Cti vertical Crossing translation invariant](cti-vertical-crossing-translation-invari.md)
+- [Cti h2box discharge](cti-h2box-discharge.md)
+- [Cti hband discharge](cti-hband-discharge.md)
+- [Cti rai cross pos self Dual](cti-rai-cross-pos-self-dual.md)
