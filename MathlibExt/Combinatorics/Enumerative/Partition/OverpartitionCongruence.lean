@@ -2065,6 +2065,7 @@ public theorem overpartitionOdd_square_recurrence.theta_mul_rescale_genFun :
     omega
   · simpa [h] using Int.le_self_sq x
 
+set_option linter.unusedVariables false in
 /--
 **Overpartitions of $5n$ modulo $5$, explicit form.** For every integer $n \ge 1$, the number of
 pairs $(P, S)$, where $P$ is a finite multiset of positive integers with sum $5n$ and $S$ is a

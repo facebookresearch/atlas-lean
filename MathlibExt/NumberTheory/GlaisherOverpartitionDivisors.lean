@@ -15,6 +15,7 @@ public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
 import Mathlib.RingTheory.PowerSeries.Derivative
 import Mathlib.Tactic.Ring
 import MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionCongruence
+import MathlibExt.NumberTheory.GeneralizedTau
 import MathlibExt.RingTheory.PowerSeries.SeriesDivisorCalculus
 import MathlibExt.RingTheory.PowerSeries.SeriesDivisorInverseConvolution
 import MathlibExt.RingTheory.PowerSeries.SeriesDivisorProduct
@@ -137,14 +138,7 @@ private lemma seriesDivisor_overpartition (n : ℕ) :
     (n : ℤ) * coeff n overpartitionSeries =
       ∑ i ∈ Icc 1 n, 2 * (dD i) * coeff (n - i) overpartitionSeries := by
   let E := pentagonalSeries ℤ
-  have hE : constantCoeff E = 1 := by
-    have h0 : pentagonal 0 = 0 := by rw [pentagonal_def]; decide
-    rw [← coeff_zero_eq_constantCoeff_apply, ← h0]
-    change coeff (pentagonal 0) (pentagonalSeries ℤ) = 1
-    rw [coeff_pentagonalSeries_pentagonal]
-    simp
-  have hUnit : IsUnit E := isUnit_iff_constantCoeff.mpr (by rw [hE]; exact isUnit_one)
-  have hU := hUnit.pow 2
+  have hU : IsUnit (E ^ 2) := isUnit_pentagonalSeries_int.pow 2
   let V : ℤ⟦X⟧ := ↑hU.unit⁻¹
   have hUV : E ^ 2 * V = 1 := hU.unit.mul_inv_of_eq hU.unit_spec
   have hquot : expand 2 two_ne_zero E * V = overpartitionSeries := by
