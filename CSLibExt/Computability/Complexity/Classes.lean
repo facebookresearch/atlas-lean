@@ -823,6 +823,22 @@ def AC0Mod (m : ℕ) : DecisionComplexityClass :=
         (L x = true ↔
           (circuitEval (C n) (fun i => x.getD (i : ℕ) false)).getLast? = some true)}
 
+/-- **Inclusion of AC0 in AC0 with modular gates.** For every natural number $m$,
+$\mathsf{AC}^0 \subseteq \mathsf{AC}^0[m]$. The same circuit family witnesses both memberships
+because a mod-free circuit satisfies the restriction on modular gates for every modulus.
+
+Source: A. Ojha and R. Tewari, "Circuit complexity of bounded planar cutwidth graph matching",
+arXiv:1801.00906v1 (2018), Section 2.1 (the definitions of $\mathsf{AC}^0$ and
+$\mathsf{AC}^0[m]$, and the inclusion $\mathsf{AC}^0 \subseteq \mathsf{AC}^0[m]$). -/
+theorem ac0_subset_ac0Mod (m : ℕ) : AC0 ⊆ AC0Mod m := by
+  rintro L ⟨d, p, C, hC⟩
+  refine ⟨d, p, C, fun n => ?_⟩
+  obtain ⟨hWF, hFree, hSize, hDepth, hEval⟩ := hC n
+  refine ⟨hWF, fun g hg => ?_, hSize, hDepth, hEval⟩
+  cases g with
+  | modGate k inputs => exact (hFree _ hg).elim
+  | _ => trivial
+
 /-- **The class $\mathsf{ACC}^0$.** $\mathsf{ACC}^0$ is the union of the classes
 $\mathsf{AC}^0[m]$ over all natural numbers $m$: a decision problem is in $\mathsf{ACC}^0$ when it
 is in $\mathsf{AC}^0[m]$ for some $m$. A circuit family witnessing membership uses one fixed
