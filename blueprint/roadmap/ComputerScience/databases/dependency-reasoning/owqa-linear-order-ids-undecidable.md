@@ -23,7 +23,7 @@ As for transitive closure, the proof reduces from an undecidable infinite tiling
 
 A good expansion links the undecidability of this origin-constrained infinite tiling problem of the quadrant for a fixed tile system.
 
-Taking $\Sigma' = \Sigma \wedge \neg Q$, which can be written as base frontier-guarded TGDs, the source derives that query answering over a linear order is undecidable for a fixed set of base frontier-guarded TGDs and the tautological query (Corollary 5). In contrast, it proves query answering over linear orders decidable in doubly exponential time for base-covered constraints of the base-covered guarded negation fragment and base-covered UCQs.
+Taking $\Sigma' = \Sigma \wedge \neg Q$, which can be written as base frontier-guarded TGDs, the source derives that query answering over a linear order is undecidable for a fixed set of base frontier-guarded TGDs and the false (contradictory) query, that is, whether $F_0 \wedge \Sigma'$ has no model (Corollary 5, where the source calls this query tautological; under a linear order $\neg Q$ is written $\forall \vec x(\varphi(\vec x) \rightarrow \exists y\, y < y)$, and $\exists y\, y < y$ is equivalent to $\bot$). In contrast, it proves query answering over linear orders decidable in doubly exponential time for base-covered constraints of the base-covered guarded negation fragment and base-covered UCQs.
 
 ## Sources
 

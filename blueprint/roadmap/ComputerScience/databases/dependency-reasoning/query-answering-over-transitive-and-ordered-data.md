@@ -8,11 +8,12 @@ Open-world query answering asks whether a finite set of facts and first-order co
 
 - over transitive relations, written $\mathrm{QA}^{tr}(F_0, \Sigma, Q)$: each distinguished relation $R^+_i$ must be transitive in $F$ (not necessarily reflexive);
 - over transitive closure, written $\mathrm{QA}^{tc}(F_0, \Sigma, Q)$: each distinguished relation $R^+_i$ must be the transitive closure in $F$ of a corresponding binary base relation $R_i \in \sigma_B$;
-- over linear orders, written $\mathrm{QA}^{lin}(F_0, \Sigma, Q)$: each distinguished relation $<_i$ must be a strict linear order (transitive, irreflexive and total) on the elements of $F$.
+- over linear orders, written $\mathrm{QA}^{lin}(F_0, \Sigma, Q)$: each distinguished relation $<_i$ must be a [strict linear order](../../../Order/ordered-sets/strict-total-orders/strict-total-order.md) (transitive, irreflexive and total) on the elements of $F$.
 
 ## Depends on
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
+- [Strict total order](../../../Order/ordered-sets/strict-total-orders/strict-total-order.md)
 
 ## Proof depends on
 
@@ -20,7 +21,7 @@ None.
 
 ## Expansion
 
-Transitivity itself, $R^+(x, y) \wedge R^+(y, z) \rightarrow R^+(x, z)$, is not frontier-guarded (a tuple-generating dependency is frontier-guarded if one body atom contains all variables shared by body and head, and base frontier-guarded if that atom is over a base relation), so these semantics are not expressible within the guarded constraint languages they are combined with. Query answering is decidable over transitive relations and over transitive closure for base frontier-guarded TGDs (more generally the base-guarded negation fragment) and UCQs, and over linear orders for base-covered constraints and base-covered UCQs (a CQ is base-covered if each of its $\sigma_D$-atoms has a $\sigma_B$-atom of the query containing all its variables); the guardedness and coverage conditions are what the undecidability results of the same source show to be needed.
+Transitivity itself, $R^+(x, y) \wedge R^+(y, z) \rightarrow R^+(x, z)$, is not frontier-guarded (a tuple-generating dependency is frontier-guarded if one body atom contains all variables shared by body and head, and base frontier-guarded if that atom is over a base relation), so these semantics are not expressible within the guarded constraint languages they are combined with. Query answering is decidable over transitive relations and over transitive closure for base frontier-guarded TGDs (more generally the base-guarded negation fragment) and UCQs, and over linear orders for constraints in the base-covered guarded negation fragment (BaseCovGNF) and base-covered UCQs (a CQ is base-covered if each of its $\sigma_D$-atoms has a $\sigma_B$-atom of the query containing all its variables); the guardedness and coverage conditions are what the undecidability results of the same source show to be needed.
 
 ## Sources
 
