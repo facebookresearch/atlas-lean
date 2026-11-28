@@ -11,14 +11,16 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.RingTheory.ProjectiveHilbertGrowth
 
 /-!
-# Macaulay growth and Gotzmann persistence
+# Gotzmann persistence
 
 These projective embedding and Hilbert-scheme inputs control the growth of
 actual standard-graded quotient pieces. The generator bound is explicit;
 the persistence assertion does not apply to an arbitrary homogeneous ideal
 without that bound. Macaulay expansions exist for every positive degree
 (`MathlibExt.RingTheory.ProjectiveHilbertGrowth.MacaulayExpansion.nonempty`), so
-the hypotheses on `E` can always be met.
+the hypotheses on `E` can always be met. For Macaulay's growth bound
+`hilbertFunction I (d + 1) ≤ E.successor`, see
+`MathlibExt.RingTheory.ProjectiveHilbertGrowth.macaulay_growth`.
 
 References:
 * F. S. Macaulay, *Some properties of enumeration in the theory of modular
@@ -43,11 +45,6 @@ open MvPolynomial MathlibExt.RingTheory.ProjectiveHilbertGrowth
 attribute [local instance] MvPolynomial.gradedAlgebra
 
 variable {k : Type*} [Field k] {n : ℕ}
-
-/-- Macaulay's upper bound on the next homogeneous quotient dimension. -/
-theorem_wanted macaulay_growth (I : HomogeneousIdeal (homogeneousSubmodule (Fin n) k))
-    (d : ℕ) (hd : 0 < d) (E : MacaulayExpansion d (hilbertFunction I d)) :
-    hilbertFunction I (d + 1) ≤ E.successor
 
 /-- Equality persists after the explicit generator degree bound. -/
 theorem_wanted gotzmann_persistence (I : HomogeneousIdeal (homogeneousSubmodule (Fin n) k))

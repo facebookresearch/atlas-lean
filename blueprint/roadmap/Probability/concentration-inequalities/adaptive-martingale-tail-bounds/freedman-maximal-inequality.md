@@ -16,13 +16,13 @@ For $s \ge 0$, Bennett's one-step bound shows that $\exp\big(s(X_k - X_0) - \fra
 
 - [Finite-horizon adaptive discrete process and its supermartingales](finite-horizon-adaptive-discrete-process.md)
 - [Bennett's inequality and its Bernstein relaxation](bennett-inequality.md)
-- [Ville's maximal inequality](../../not-yet-classified/part-15/ville/ville-maximal-ineq.md)
+- [Ville's maximal inequality](../../hypothesis-testing/sequential-tests-and-quickest-change-detection/anytime-valid-confidence-sequences/ville/ville-maximal-ineq.md)
 
 ## Proof depends on
 
 - [Bennett's one-step moment generating function bound](bennett-one-step-mgf-bound.md)
 - [Bennett's inequality and its Bernstein relaxation](bennett-inequality.md)
-- [Ville's maximal inequality](../../not-yet-classified/part-15/ville/ville-maximal-ineq.md)
+- [Ville's maximal inequality](../../hypothesis-testing/sequential-tests-and-quickest-change-detection/anytime-valid-confidence-sequences/ville/ville-maximal-ineq.md)
 
 ## Sources
 
