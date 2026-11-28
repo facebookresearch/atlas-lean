@@ -23,6 +23,11 @@ open scoped ModularForm MatrixGroups
 #check @CuspForm.fricke_fricke_two
 #check @ModularForm.fricke_involution_weight_two
 
+-- The underlying function of the Fricke operator on cusp forms is `f ∣[k] W_N`, by definition.
+example (f : CuspForm (Gamma0 5) 3) :
+    ⇑(CuspForm.fricke 5 3 f) = ⇑f ∣[(3 : ℤ)] frickeGL 5 :=
+  rfl
+
 -- `W₁` fixes the point `i` of the upper half-plane: `-1/(1 · i) = i`.
 example : ((frickeGL 1 • UpperHalfPlane.I : ℍ) : ℂ) = Complex.I := by
   rw [coe_frickeGL_smul]

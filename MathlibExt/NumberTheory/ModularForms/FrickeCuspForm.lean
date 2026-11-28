@@ -18,9 +18,9 @@ import Mathlib.Tactic.Linarith
 /-!
 # The Fricke involution on cusp forms for `Γ₀(N)`
 
-`MathlibExt.NumberTheory.ModularForms.FrickeGamma0` defines the Fricke matrix
+For `N ≥ 1`, `MathlibExt.NumberTheory.ModularForms.FrickeGamma0` defines the Fricke matrix
 `ModularForm.frickeGL N = W_N = !![0, -1; N, 0]` and the Fricke operator on
-`ModularForm (Gamma0 N) k`. This file adds:
+`ModularForm (Gamma0 N) k`. For the same `N`, this file adds:
 
 * `ModularForm.frickeGL_mul_mapGL_mul_inv`: for `γ = !![a, b; c, d] ∈ Γ₀(N)`, `W_N γ W_N⁻¹`
   is the image of an element of `Γ₀(N)` with entries `!![d, -c/N; -N b, a]`, making
@@ -28,7 +28,7 @@ import Mathlib.Tactic.Linarith
 * `ModularForm.toConjAct_frickeGL_inv_smul`: `W_N⁻¹ Γ₀(N) W_N = Γ₀(N)` in `GL(2, ℝ)`;
 * `UpperHalfPlane.coe_frickeGL_smul`: `W_N • z = -1/(Nz)`;
 * `CuspForm.fricke N k`: the Fricke operator `f ↦ f ∣[k] W_N` as a `ℂ`-linear map on
-  `CuspForm (Gamma0 N) k`, from Mathlib's `CuspForm.translate`, with
+  `CuspForm (Gamma0 N) k`, from Mathlib's `CuspForm.translate` and `CuspForm.mcast`, with
   `CuspForm.fricke_apply_two`, `(f ∣[2] W_N)(z) = N⁻¹ z⁻² f(W_N • z)`, and
   `CuspForm.fricke_fricke_two`, `f ∣[2] W_N ∣[2] W_N = f`, from
   `ModularForm.slash_frickeGL_slash_frickeGL`;
@@ -37,9 +37,18 @@ import Mathlib.Tactic.Linarith
 
 ## References
 
+* J. E. Cremona, *Algorithms for Modular Elliptic Curves*, 2nd ed., Cambridge University
+  Press (1997), Chapter II, §2.4, pp. 18–19 of the author's online text
+  (https://johncremona.github.io/book/fulltext/chapter2.pdf): the weight-two action of
+  matrices `M = !![a, b; c, d]` with `ad - bc > 0`,
+  `(f|M)(z) = (ad - bc)/(cz + d)² f((az + b)/(cz + d))`, and the Fricke involution `W_N` of
+  `S₂(Γ₀(N))`, from `z ↦ -1/Nz`, with matrix `!![0, -1; N, 0]`.
 * J. Coates, *The work of Gross and Zagier on Heegner points and the derivatives of
-  `L`-series*, Séminaire Bourbaki, exp. 635 (1984/85), Astérisque 133–134 (1986), 57–72:
-  p. 65 ("f|₂w_N = f, where w_N(z) = -1/(Nz)").
+  `L`-series*, Séminaire Bourbaki, exp. 635 (1984/85), Astérisque 133–134 (1986), 57–72,
+  p. 65, for the notation `w_N(z) = -1/(Nz)` and `f|₂w_N`. In the proof of Theorem 5 there,
+  `f|₂w_N = f` is the eigenvalue `+1` of `w_N` on the primitive form `f` attached to an
+  elliptic curve `E` whose `L(E, s)` has a simple zero at `s = 1`; it is not the involution
+  `f ∣[2] W_N ∣[2] W_N = f` of every weight-two cusp form.
 -/
 
 @[expose] public section
@@ -53,9 +62,9 @@ namespace ModularForm
 
 variable (N : ℕ) [NeZero N]
 
-/-- **The Fricke matrix normalises `Γ₀(N)`, explicitly.** For `γ = !![a, b; c, d] ∈ Γ₀(N)`
-there is `γ' ∈ Γ₀(N)` with `W_N γ W_N⁻¹ = γ'` in `GL(2, ℝ)` and `γ' = !![d, -c/N; -N b, a]`;
-`W_N = ModularForm.frickeGL N`. -/
+/-- **The Fricke matrix normalises `Γ₀(N)`, explicitly.** For `N ≥ 1` and
+`γ = !![a, b; c, d] ∈ Γ₀(N)` there is `γ' ∈ Γ₀(N)` with `W_N γ W_N⁻¹ = γ'` in `GL(2, ℝ)` and
+`γ' = !![d, -c/N; -N b, a]`; `W_N = ModularForm.frickeGL N`. -/
 theorem frickeGL_mul_mapGL_mul_inv {γ : SL(2, ℤ)} (hγ : γ ∈ Gamma0 N) :
     ∃ γ' ∈ Gamma0 N,
       frickeGL N * SpecialLinearGroup.mapGL ℝ γ * (frickeGL N)⁻¹ =
@@ -93,7 +102,7 @@ private lemma frickeGL_sq_comm (g : GL (Fin 2) ℝ) :
   fin_cases i <;> fin_cases j <;>
     simp [Matrix.mul_apply, Matrix.natCast_apply, mul_comm]
 
-/-- **The Fricke matrix normalises `Γ₀(N)`.** As subgroups of `GL(2, ℝ)`,
+/-- **The Fricke matrix normalises `Γ₀(N)`.** For `N ≥ 1`, as subgroups of `GL(2, ℝ)`,
 `W_N⁻¹ Γ₀(N) W_N = Γ₀(N)`: the group for which Mathlib's `CuspForm.translate` makes
 `f ∣[k] W_N` a cusp form. -/
 theorem toConjAct_frickeGL_inv_smul :
@@ -126,8 +135,8 @@ namespace UpperHalfPlane
 
 variable (N : ℕ) [NeZero N]
 
-/-- The Fricke matrix `W_N = ModularForm.frickeGL N` acts on the upper half-plane by
-`z ↦ -1/(Nz)`. -/
+/-- For `N ≥ 1`, the Fricke matrix `W_N = ModularForm.frickeGL N` acts on the upper half-plane
+by `z ↦ -1/(Nz)`. -/
 theorem coe_frickeGL_smul (z : ℍ) : ((frickeGL N • z : ℍ) : ℂ) = -1 / (N * z) := by
   have hdet : 0 < ((frickeGL N).det : ℝ) := by
     rw [det_frickeGL]; exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
@@ -140,44 +149,36 @@ namespace CuspForm
 
 variable (N : ℕ) [NeZero N]
 
-private lemma coe_cast {k : ℤ} {𝒢 𝒢' : Subgroup (GL (Fin 2) ℝ)} (h : 𝒢 = 𝒢')
-    (f : CuspForm 𝒢 k) : ⇑(cast (congrArg (fun 𝒢 => CuspForm 𝒢 k) h) f) = ⇑f := by
-  subst h; rfl
-
-private lemma coe_cast_translate (k : ℤ) (f : CuspForm (Gamma0 N) k) :
-    ⇑(cast (congrArg (fun 𝒢 => CuspForm 𝒢 k) (toConjAct_frickeGL_inv_smul N))
-      (CuspForm.translate f (frickeGL N))) = ⇑f ∣[k] frickeGL N := by
-  rw [coe_cast (toConjAct_frickeGL_inv_smul N), CuspForm.coe_translate]
-
-/-- The **Fricke operator on cusp forms** for `Γ₀(N)`: `f ↦ f ∣[k] W_N`, with
+/-- For `N ≥ 1`, the **Fricke operator on cusp forms** for `Γ₀(N)`: `f ↦ f ∣[k] W_N`, with
 `W_N = ModularForm.frickeGL N`, as a `ℂ`-linear map from `CuspForm (Gamma0 N) k` to itself
-(the cusp-form counterpart of `ModularForm.fricke`). Only its values are part of the
-statement (`CuspForm.coe_fricke`). -/
+(the cusp-form counterpart of `ModularForm.fricke`). -/
 noncomputable def fricke (k : ℤ) : CuspForm (Gamma0 N) k →ₗ[ℂ] CuspForm (Gamma0 N) k where
-  toFun f := cast (congrArg (fun 𝒢 => CuspForm 𝒢 k) (toConjAct_frickeGL_inv_smul N))
-    (CuspForm.translate f (frickeGL N))
+  toFun f := CuspForm.mcast rfl (CuspForm.translate f (frickeGL N))
+    (toConjAct_frickeGL_inv_smul N).symm
   map_add' f g := by
-    apply DFunLike.coe_injective
-    rw [FunLike.coe_add, coe_cast_translate, coe_cast_translate, coe_cast_translate,
-      FunLike.coe_add, SlashAction.add_slash]
+    ext τ
+    change ((⇑f + ⇑g) ∣[k] frickeGL N) τ = (⇑f ∣[k] frickeGL N) τ + (⇑g ∣[k] frickeGL N) τ
+    rw [SlashAction.add_slash]
+    rfl
   map_smul' c f := by
-    apply DFunLike.coe_injective
+    ext τ
     have hpos : 0 < ((frickeGL N).det : ℝ) := by
       rw [det_frickeGL]
       exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne N)
     have hσ : UpperHalfPlane.σ (frickeGL N) = .refl ℝ ℂ := by
       simp only [UpperHalfPlane.σ, hpos, ↓reduceIte]
-    rw [FunLike.coe_smul, coe_cast_translate, coe_cast_translate, FunLike.coe_smul,
-      smul_slash, hσ]
+    change ((c • ⇑f) ∣[k] frickeGL N) τ = c * (⇑f ∣[k] frickeGL N) τ
+    rw [smul_slash, hσ]
     rfl
 
-/-- **`f ↦ f ∣[k] W_N` maps `CuspForm (Gamma0 N) k` to itself:** `CuspForm.fricke N k f` is a
-cusp form of weight `k` for `Γ₀(N)` with underlying function `f ∣[k] W_N`. -/
+/-- **For `N ≥ 1`, `f ↦ f ∣[k] W_N` maps `CuspForm (Gamma0 N) k` to itself:**
+`CuspForm.fricke N k f` is a cusp form of weight `k` for `Γ₀(N)` with underlying function
+`f ∣[k] W_N`. -/
 theorem coe_fricke (k : ℤ) (f : CuspForm (Gamma0 N) k) :
     ⇑(fricke N k f) = ⇑f ∣[k] frickeGL N :=
-  coe_cast_translate N k f
+  rfl
 
-/-- The formula for the Fricke involution in weight `2`:
+/-- For `N ≥ 1`, the formula for the Fricke involution in weight `2`:
 `(f ∣[2] W_N)(z) = N⁻¹ z⁻² f(W_N • z)`, where `W_N • z = -1/(Nz)`
 (`UpperHalfPlane.coe_frickeGL_smul`). -/
 theorem fricke_apply_two (f : CuspForm (Gamma0 N) 2) (z : ℍ) :
@@ -190,8 +191,8 @@ theorem fricke_apply_two (f : CuspForm (Gamma0 N) 2) (z : ℍ) :
   simp [hNpos]
   field_simp
 
-/-- **The Fricke map is an involution in weight `2`:** `f ∣[2] W_N ∣[2] W_N = f` on
-`S₂(Γ₀(N))`, the case `k = 2` of `ModularForm.slash_frickeGL_slash_frickeGL`. -/
+/-- **The Fricke map is an involution in weight `2`:** for `N ≥ 1`, `f ∣[2] W_N ∣[2] W_N = f`
+on `S₂(Γ₀(N))`, the case `k = 2` of `ModularForm.slash_frickeGL_slash_frickeGL`. -/
 theorem fricke_fricke_two (f : CuspForm (Gamma0 N) 2) : fricke N 2 (fricke N 2 f) = f := by
   ext z
   rw [coe_fricke, coe_fricke, slash_frickeGL_slash_frickeGL]
