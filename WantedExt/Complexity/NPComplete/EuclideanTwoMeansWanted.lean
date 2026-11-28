@@ -64,7 +64,9 @@ abbrev Point (i : EuclideanTwoMeansInstance) : Type := Fin i.2.1.length
 def coord (i : EuclideanTwoMeansInstance) (x : Point i) (c : Fin i.1) : ℚ :=
   ratVal ((i.2.1.get x).getD c ((0, 0), 1))
 
-/-- Coordinate `c` of the centroid `(1 / |C|) ∑_{x ∈ C} x` of the cluster `C`. -/
+/-- Coordinate `c` of the centroid `(1 / |C|) ∑_{x ∈ C} x` of the cluster `C`, where a
+coordinate missing from a point reads as `0` and, with `x / 0 = 0`, the empty cluster has
+centroid `0`. -/
 def centroid (i : EuclideanTwoMeansInstance) (C : Finset (Point i)) (c : Fin i.1) : ℚ :=
   (∑ x ∈ C, coord i x c) / C.card
 

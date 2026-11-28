@@ -7,6 +7,7 @@ Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path 
 - [Degree-constrained spanning tree](degree-constrained-spanning-tree/README.md)
 - [Directed Hamiltonian cycle](directed-hamiltonian-cycle/README.md)
 - [Disjoint paths and integral flows](disjoint-paths-and-integral-flows/README.md)
+- [Graph class recognition and order dimension](graph-class-recognition-and-order-dimension/README.md)
 - [Graph class recognition and sandwich problems](graph-class-recognition-and-sandwich-problems/README.md)
 - [Hamiltonian circuit on restricted graph classes](hamiltonian-circuit-on-restricted-graph-classes/README.md)
 - [Hamiltonian path in directed graphs](hamiltonian-path-in-directed-graphs/README.md)

@@ -1,0 +1,3 @@
+# Feasible instances of HEBI
+
+An instance is feasible when some nonempty list of snakes satisfies the rules. A snake is a list of five distinct white squares, its head (number $1$) first and its tail (number $5$) last, consecutive squares sharing a side. Different snakes share no square and no side. A snake looks in the direction from its square $2$ to its head; no square of another snake lies in its view, the squares beyond the head in that direction up to the next black square or the rim. For each black square with stored value $v \ge 1$, which carries the number $v - 1$ and an arrow: the first snake number on the squares in the arrow's direction, up to the next black square or the rim, is $v - 1$, or no snake square lies there and $v - 1 = 0$.

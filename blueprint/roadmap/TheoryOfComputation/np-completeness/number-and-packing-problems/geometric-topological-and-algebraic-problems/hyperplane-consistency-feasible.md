@@ -1,0 +1,3 @@
+# Feasible instances of HYPERPLANE CONSISTENCY
+
+An instance is feasible when some rational hyperplane $(w, w_0)$ with $w \ne 0$ has the following property: the number of entries $x$ of the positive-example list $P$ with $w \cdot x > w_0$, plus the number of entries $x$ of the negative-example list $N$ with $w \cdot x < w_0$, is at least $K$. Entries are counted with repetition, and coordinates missing from an entry read as $0$. That every example is an $n$-vector, that the vectors of $P$ are pairwise distinct and so are those of $N$ (a vector may occur in both lists), and that $0 < K \le |P| + |N|$ is the separate [well-formedness condition](well-formed-6.md) of the encoded problem, not part of this predicate.

@@ -14,6 +14,7 @@ Subset sum, subset product, partition, 3-partition, multiway partition, knapsack
 - [Cutting stock](cutting-stock/README.md)
 - [D-vector covering](d-vector-covering/README.md)
 - [Exact-cardinality subset sum](exact-cardinality-subset-sum/README.md)
+- [Geometric, topological and algebraic problems](geometric-topological-and-algebraic-problems/README.md)
 - [K-relevancy](k-relevancy/README.md)
 - [Knapsack problem](knapsack-problem/README.md)
 - [Map labeling](map-labeling/README.md)
