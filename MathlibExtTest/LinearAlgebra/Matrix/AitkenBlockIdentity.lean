@@ -51,7 +51,7 @@ example :
     V * (Sxyᵀ * Sxx⁻¹)ᵀ = V * Sxx⁻¹ * Sxy ∧
     Sxyᵀ * Sxx⁻¹ * V * (Sxyᵀ * Sxx⁻¹)ᵀ + (Syy - Sxyᵀ * Sxx⁻¹ * Sxy) =
       Syy - Sxyᵀ * (Sxx⁻¹ - Sxx⁻¹ * V * Sxx⁻¹) * Sxy := by
-  apply Matrix.aitken_block_identity
+  apply WantedExt.Biology.StatisticalGenetics.PearsonAitkenLawleySelectionWanted.aitken_block_identity
   · apply Matrix.IsSymm.ext
     intro i j
     fin_cases i <;> fin_cases j <;> rfl

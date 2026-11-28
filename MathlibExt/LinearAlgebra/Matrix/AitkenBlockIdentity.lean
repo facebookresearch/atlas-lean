@@ -17,7 +17,7 @@ import Mathlib.Tactic.Abel
 
 For real matrices $S_{XX}, V$ of size $p \times p$, $S_{XY}$ of size $p \times q$, and
 $S_{YY}$ of size $q \times q$, assume $S_{XX}$ is symmetric and nonsingular. Writing
-$B = S_{XY}^{\mathsf T} S_{XX}^{-1}$, `Matrix.aitken_block_identity` rewrites the two
+$B = S_{XY}^{\mathsf T} S_{XX}^{-1}$, `aitken_block_identity` rewrites the two
 regression-form covariance blocks $V B^{\mathsf T}$ and
 $B V B^{\mathsf T} + (S_{YY} - S_{XY}^{\mathsf T} S_{XX}^{-1} S_{XY})$ as the upper-right and
 lower-right blocks of Aitken's equation (7), with $R_{qp} = R_{pq}^{\mathsf T}$.
@@ -42,7 +42,9 @@ algebraic rewrites use only symmetry of that inverse.
 
 public section
 
-namespace Matrix
+open Matrix
+
+namespace WantedExt.Biology.StatisticalGenetics.PearsonAitkenLawleySelectionWanted
 
 variable {p q : ℕ}
 
@@ -67,4 +69,4 @@ theorem aitken_block_identity (Sxx : Matrix (Fin p) (Fin p) ℝ)
   · simp only [Matrix.sub_mul, Matrix.mul_sub, Matrix.mul_assoc]
     abel
 
-end Matrix
+end WantedExt.Biology.StatisticalGenetics.PearsonAitkenLawleySelectionWanted
