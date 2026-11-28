@@ -33,8 +33,9 @@ of `j`, so the lateness of `k` in `σ` is at least that of `j` in `τ`.
 
 ## References
 
-* D. Chakrabarty, *Lecture 5: Single Machine Environments (Maximum Lateness)*, Scheduling Theory
-  CO 454 lecture notes, University of Waterloo, May 19, 2009, Definition 1.1 and Theorem 1.2.
+* *Lecture 5: Single Machine Environments (Maximum Lateness)*, Scheduling Theory, CO 454,
+  Spring 2009, May 19, 2009, lecture notes (instructor: D. Chakrabarty, University of Waterloo),
+  Definition 1.1 and Theorem 1.2.
 -/
 
 @[expose] public section
