@@ -23,3 +23,4 @@ Decision procedures for Petri nets in their foundations: the monotonicity of fir
 - [Deadlock-freedom reduces to reaching a marking empty on a set of places](deadlock-freedom-reduces-to-emptying-a-set-of-places.md)
 - [Reaching a marking empty on a set of places reduces to reachability](emptying-a-set-of-places-reduces-to-reachability.md)
 - [Deadlock-freedom of Petri nets is decidable](deadlock-freedom-is-decidable.md)
+- [Decision problems for Petri nets and vector addition systems](decision-problems-for-nets-and-vass/README.md)
