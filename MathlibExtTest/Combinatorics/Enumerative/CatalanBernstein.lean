@@ -39,4 +39,18 @@ example :
   rw [sum_choose_catalan_succ_one_sub_pow_mul_pow]
   norm_num [sum_range_succ, Nat.choose, catalan_two]
 
+-- The alternating sum keeps its constant term at degree zero.
+example :
+    ∑ k ∈ range (0 + 1), (-1 : ℚ) ^ k * (Nat.choose 0 k : ℚ) * (2 * k + 1) / (k + 2) *
+        2 ^ (0 + 1) / 2 ^ (2 * k) * catalan k = 1 := by
+  rw [sum_neg_one_pow_choose_two_pow_catalan]
+  norm_num
+
+-- Degree four includes the nontrivial Catalan weight C₂ on the even-index side.
+example :
+    ∑ k ∈ range (4 + 1), (-1 : ℚ) ^ k * (Nat.choose 4 k : ℚ) * (2 * k + 1) / (k + 2) *
+        2 ^ (4 + 1) / 2 ^ (2 * k) * catalan k = 21 / 8 := by
+  rw [sum_neg_one_pow_choose_two_pow_catalan]
+  norm_num [sum_range_succ, Nat.choose, catalan_two]
+
 end MetaMathlibExt
