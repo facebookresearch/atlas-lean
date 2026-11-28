@@ -16,6 +16,7 @@ public import MathlibExt.NumberTheory.ReducedResidueAverage
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPAbsLeastAPLengthPrimeOfModFourEqOne
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsLeastLongestAPLengthPrimeOfModFourEqOne
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPLongestAPLengthMinOfNotSquarefreeOfNotIsPrimePow
+public import MathlibExt.NumberTheory.ReducedResidueLongestAPAbsLeastAPLengthPrimePow
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsLeastLongestAPLengthPrimePow
 public import MathlibExt.NumberTheory.ReducedResidueLongestAPIsGreatestLongestAPLength
 
@@ -44,16 +45,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open UniqueFactorizationMonoid
-
-/-- **Longest progressions of absolute least residues: prime powers.** Let $p$ be a prime and
-$r \ge 1$, with $r \ge 2$ when $p$ is odd. Then the length $g(p^r)$ of the longest arithmetic
-progression in the absolute least reduced residue system modulo $p^r$ is $p^{r-1}$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 1 (`integers-2026-A6-thm-1`). -/
-public theorem_wanted absLeastAPLength_prime_pow {p r : ℕ} (hp : p.Prime) (hr : 1 ≤ r)
-    (h : p = 2 ∨ 2 ≤ r) : absLeastAPLength (p ^ r) = p ^ (r - 1)
 
 /-- **Longest progressions of absolute least residues: odd squarefree composite moduli.** Let
 $n > 1$ be an odd squarefree natural number that is not prime, let $P$ be its largest prime
