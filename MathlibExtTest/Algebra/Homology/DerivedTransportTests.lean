@@ -522,7 +522,8 @@ private lemma tensorDoubleZero_eq : tensorDoubleZero = tensorZ.map double := by
       tensorSingleCoordinate.hom = tensorZ.map double
   rw [ChainComplex.single₀_map_f_zero]
   change tensorZ.map (𝟙 Z) ≫ tensorZ.map double ≫ tensorZ.map (𝟙 Z) = tensorZ.map double
-  simp only [Functor.map_id, Category.id_comp, Category.comp_id]
+  have hi : tensorZ.map (𝟙 Z) = 𝟙 (tensorZ.obj Z) := tensorZ.map_id Z
+  simp only [hi, Category.id_comp, Category.comp_id]
 
 private def singleSplit : Functor.AugmentationSplit (𝟭 (ModuleCat ℤ)) singleZ Z (𝟙 singleZ) where
   section_ := 𝟙 Z
