@@ -21,6 +21,8 @@ The proof uses the second box $\Box_h$; the source does not discuss the case of 
 
 The proof follows the encoding of Minsky machine computations used for logics with the universal modality. Without $\forall$ the formula cannot refer to all points of a model, so one nominal $n$ is used as a surrogate: if $n$ is accessible from a point $x$ via $R$ and $S$, the formula forces it to be accessible from every point within a fixed distance of $x$, which gives a local substitute for the universal modality on the part of the model the encoding uses. Admissibility follows as before, since $\varphi$ is not unifiable iff $\varphi / \bot$ is admissible.
 
+A good expansion links a page for the undecidability of reachability for one fixed deterministic Minsky program from one fixed configuration, which has no page yet and does not follow from the universality of two-counter machines alone, and for the nominal surrogate of the universal modality.
+
 ## Sources
 
 - F. Wolter and M. Zakharyaschev, "Undecidability of the unification and admissibility problems for modal and description logics", *ACM Transactions on Computational Logic* 9(4):1–20, 2008, doi:10.1145/1380572.1380574; read as arXiv:cs/0609052v1, <https://arxiv.org/abs/cs/0609052v1>: Theorem 4.2 of arXiv:cs/0609052v1 and its proof in Section 4.

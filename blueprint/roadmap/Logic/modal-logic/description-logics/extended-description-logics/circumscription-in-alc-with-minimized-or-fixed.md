@@ -5,8 +5,8 @@ Reasoning with circumscribed ALC knowledge bases, decidable when only concept na
 **Theorem (Bonatti, Lutz and Wolter).** For [circumscribed knowledge bases](circumscribed-description-logic-knowledge-bases.md):
 
 1. in ALC, satisfiability with respect to role-minimizing cKBs is undecidable (Theorem 28 of the source);
-2. in ALCI, satisfiability with respect to role-minimizing cKBs with empty TBox is undecidable (Theorem 30);
-3. the logical consequence problem of monadic second-order logic with one binary relation symbol, over unrestricted structures, is effectively reducible to the instance problem with respect to role-fixing cKBs formulated in ALC, even when the TBox and the preference relation are empty (Theorem 22).
+2. in ALCI, the extension of ALC by inverse roles $r^-$ interpreted as the converse relation $\{(e, d) \mid (d, e) \in r^{\mathcal I}\}$, satisfiability with respect to role-minimizing cKBs with empty TBox is undecidable (Theorem 30);
+3. the logical consequence problem of monadic second-order logic with one binary relation symbol $r$ (MSO($r$): first-order logic over the signature $\{r\}$ extended with quantification over sets of elements), over unrestricted structures, is effectively reducible to the instance problem with respect to role-fixing cKBs formulated in ALC, even when the TBox and the preference relation are empty (Theorem 22).
 
 By contrast, in ALCIO and ALCQO instance checking, satisfiability and subsumption with respect to concept-circumscribed knowledge bases, in which only concept names are minimized or fixed, are decidable (NEXP$^{\mathrm{NP}}$-complete), and for role-minimizing cKBs with empty TBox reasoning is decidable (again NEXP$^{\mathrm{NP}}$-complete) for the description logics between ALC and ALCQO; according to the source's introduction, adding acyclic TBoxes already makes these logics undecidable. The source concludes from part 3 that reasoning with role-fixing cKBs in ALC, already with one fixed role name and empty TBox, is outside the analytic hierarchy.
 

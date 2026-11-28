@@ -26,6 +26,8 @@ $$
 
 where $\varepsilon(\cdot)$ describes the point coding a configuration. The key lemma (Lemma 2.4) says that, for every $L$ in the interval, $P$ reaches $\mathfrak{b}$ from $\mathfrak{a}$ iff $\psi(\mathfrak{b})$ is unifiable in $L$. If $\mathfrak{b}$ is unreachable, every substitution instance of $\psi(\mathfrak{b})$ is refuted in $\mathfrak{F}$ (its consequent is variable-free and false there), so no substitution instance of $\psi(\mathfrak{b})$ belongs to a logic contained in $\mathbf{K4}_u$. If $\mathfrak{b}$ is reachable, an explicit substitution for the two variables, built from formulas saying where the simulation of the computation first breaks down, puts $\sigma(\psi(\mathfrak{b}))$ into $\mathbf{K}_u$.
 
+A good expansion links a page for the undecidability of reachability for one fixed deterministic Minsky program from one fixed configuration (as recalled from Chagrov and Zakharyaschev), which has no page yet and does not follow from the universality of two-counter machines alone, and for Chagrov's frame $\mathfrak F$.
+
 ## Sources
 
 - F. Wolter and M. Zakharyaschev, "Undecidability of the unification and admissibility problems for modal and description logics", *ACM Transactions on Computational Logic* 9(4):1–20, 2008, doi:10.1145/1380572.1380574; read as arXiv:cs/0609052v1, <https://arxiv.org/abs/cs/0609052v1>: Theorem 2.3 of arXiv:cs/0609052v1 and its proof in Section 2.

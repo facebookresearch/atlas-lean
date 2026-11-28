@@ -6,9 +6,9 @@ Satisfiability in description logics with abstraction and refinement is decidabl
 
 1. under the repetition-free semantics, satisfiability is undecidable in $\mathcal{ALC}^{abs}[ca]$, $\mathcal{ALC}^{abs}[ra]$, $\mathcal{EL}^{abs}[rr, ca]$ and $\mathcal{EL}^{abs}[rr, ra]$ (Theorem 6 of the source);
 2. under the DAG semantics, satisfiability is undecidable in $\mathcal{ALC}^{abs}[ca, cr]$ and $\mathcal{EL}^{abs}[ca, cr, rr]$ (Theorem 7);
-3. in the extension with quantified variables, satisfiability is undecidable in $\mathcal{ALCI}^{abs}[ca, cr]$ and $\mathcal{EL}^{abs}[ca, cr, rr]$ (Theorem 8).
+3. in the extension with quantified variables, satisfiability is undecidable in $\mathcal{EL}^{abs}[ca, cr, rr]$ (Theorem 8).
 
-The KR 2023 version of the paper states part 3 for $\mathcal{ALC}^{abs}[ca, cr]$, without inverse roles. The version read withdraws that claim: its footnote 2 says the conference construction contains a mistake and that it is not known whether the result holds for $\mathcal{ALC}^{abs}[ca, cr]$. Part 3 is therefore stated here for $\mathcal{ALCI}^{abs}[ca, cr]$ rather than $\mathcal{ALC}^{abs}[ca, cr]$.
+Theorems 6, 7 and 8 are numbered and stated alike in the refereed KR 2023 paper and in its revision arXiv:2306.03717v3, except for one clause. The KR 2023 Theorem 8 also states undecidability for $\mathcal{ALC}^{abs}[ca, cr]$, without inverse roles; the revision withdraws that claim, its footnote 2 saying that the conference construction contains a mistake and that it is not known whether the result holds for $\mathcal{ALC}^{abs}[ca, cr]$. The revision instead claims the case $\mathcal{ALCI}^{abs}[ca, cr]$, with inverse roles, by a new construction. That case rests only on the unrefereed revision, so it is not stated here; the theorem keeps the $\mathcal{EL}^{abs}[ca, cr, rr]$ clause, which both versions state.
 
 Under the original semantics, satisfiability in $\mathcal{ALCHI}^{abs}$ is decidable in 2EXPTIME (Theorem 2 of the source). With only concept and role refinement, satisfiability under the repetition-free semantics coincides with satisfiability under the original semantics (Proposition 1), so abstraction statements are needed for part 1.
 
@@ -27,4 +27,4 @@ All three results reduce the complement of the halting problem for deterministic
 
 ## Sources
 
-- C. Lutz and L. Schulze, "Description logics with abstraction and refinement", in *Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning (KR 2023)*, 2023, pp. 492–501, <https://doi.org/10.24963/kr.2023/48>; read as arXiv:2306.03717v3, <https://arxiv.org/abs/2306.03717v3>: Theorem 2, Section 6 (Section 6.1, Proposition 1, Theorems 6, 7 and 8) and the appendix proofs of Theorems 6 to 8.
+- C. Lutz and L. Schulze, "Description logics with abstraction and refinement", in *Proceedings of the 20th International Conference on Principles of Knowledge Representation and Reasoning (KR 2023)*, 2023, pp. 492–501, <https://doi.org/10.24963/kr.2023/48>, read in the proceedings copy at <https://proceedings.kr.org/2023/48/kr2023-0048-lutz-et-al.pdf>: Section 3 (semantics), Theorem 2, Section 6 (Section 6.1, Proposition 1, Theorems 6, 7 and 8); and its revision arXiv:2306.03717v3, <https://arxiv.org/abs/2306.03717v3>, for footnote 2 and the appendix proofs of Theorems 6 to 8.

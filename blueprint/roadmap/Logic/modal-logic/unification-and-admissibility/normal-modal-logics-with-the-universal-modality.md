@@ -25,7 +25,7 @@ None.
 
 ## Expansion
 
-The frame characterizations are standard completeness results (Goranko and Passy): in the canonical model the relation for $\forall$ is an equivalence relation containing the relation for $\Box$, so restricting to one of its classes gives a model in which $\forall$ is interpreted by the total relation, and transitivity of the $\Box$-relation is inherited from the axiom $\Box p \to \Box\Box p$.
+The source states the frame characterizations as well known (Fact 2.1, citing Areces, Blackburn and Marx) and gives no proof; the standard canonical-model argument runs as follows: in the canonical model the relation for $\forall$ is an equivalence relation containing the relation for $\Box$, so restricting to one of its classes gives a model in which $\forall$ is interpreted by the total relation, and transitivity of the $\Box$-relation is inherited from the axiom $\Box p \to \Box\Box p$.
 
 ## Sources
 
