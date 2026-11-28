@@ -56,3 +56,26 @@ example : ((∑ k ∈ Finset.range (55 + 1),
     (Nat.choose 55 (2 * k) * Nat.choose 55 k) % 2 : ℕ) : ℤ) = 8 := by
   rw [runLengthTransform_choose_two_mul_pow_two]
   decide
+
+-- Zero has only the empty submask.
+example : ((∑ k ∈ Finset.range (0 + 1),
+    ((0 + 2 * k).choose (2 * k) * (0 : ℕ).choose k) % 2 : ℕ) : ℤ) = 1 := by
+  rw [runLengthTransform_choose_add_two_mul_one_two, runLengthTransform_zero]
+
+-- A single run of three ones contributes two choices, not three or four.
+example : ((∑ k ∈ Finset.range (7 + 1),
+    ((7 + 2 * k).choose (2 * k) * (7 : ℕ).choose k) % 2 : ℕ) : ℤ) = 2 := by
+  rw [runLengthTransform_choose_add_two_mul_one_two]
+  decide
+
+-- The unequal runs of 10110₂ both contribute, even with a trailing zero.
+example : ((∑ k ∈ Finset.range (22 + 1),
+    ((22 + 2 * k).choose (2 * k) * (22 : ℕ).choose k) % 2 : ℕ) : ℤ) = 4 := by
+  rw [runLengthTransform_choose_add_two_mul_one_two]
+  decide
+
+-- Check the orientation of the selected bits directly: the survivors for 10110₂ are
+-- the submasks of 10100₂, not of 10010₂.
+example : ((Finset.range 23).filter
+    (fun k => ((22 + 2 * k).choose (2 * k) * (22 : ℕ).choose k) % 2 = 1)) = {0, 4, 16, 20} := by
+  decide
