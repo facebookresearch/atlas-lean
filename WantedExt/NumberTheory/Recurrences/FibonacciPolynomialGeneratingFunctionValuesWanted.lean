@@ -25,6 +25,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
+public import MathlibExt.NumberTheory.Recurrences.FibonacciLucasPolynomialPell
 public import MathlibExt.NumberTheory.Recurrences.FibonacciGeneratingFunctionValues
 public import MathlibExt.NumberTheory.Recurrences.FibonacciGeneratingFunctionRadius
 public import MathlibExt.NumberTheory.Recurrences.LucasNumberGeneratingFunctionValues
@@ -123,24 +124,6 @@ public theorem_wanted lucasGenFun_eval_isInt_iff_of_abs_lt_radius {a b : ℕ} (h
     (∃ n : ℤ, (2 - a * q) / (1 - a * q - b * q ^ 2) = n) ↔
       ∃ i : ℕ, q = (((𝔽[a, b] (2 * i)).eval 1 : ℤ) : ℚ) / (((𝔽[a, b] (2 * i + 1)).eval 1 : ℤ) : ℚ) ∨
         q = (((𝕃[a, b] (2 * i + 1)).eval 1 : ℤ) : ℚ) / (((𝕃[a, b] (2 * i + 2)).eval 1 : ℤ) : ℚ)
-
-/-- **Polynomial Pell-type solutions as rescaled Fibonacci–Lucas polynomials.** Let $a$ and $b$ be
-positive integers, and let $F_n(x), L_n(x) \in \mathbb{Z}[x]$ be the polynomials with $F_0 = 0$,
-$F_1 = 1$, $L_0 = 2$, $L_1 = ax$ and $G_{n+2} = ax\,G_{n+1} + b\,G_n$ for $G = F, L$ and all
-$n \ge 0$. Let $r_0 \in \{0, 1\}$ and let $P(x), Q(x) \in \mathbb{Q}[x]$ have nonnegative leading
-coefficients (the zero polynomial has leading coefficient $0$) and satisfy
-$P(x)^2 - (a^2x^2 + 4b) Q(x)^2 = 4(-b)^{r_0}$. Then there is $n \in \mathbb{N}$ with
-$n \equiv r_0 \pmod 2$, $b^{\lfloor n/2 \rfloor} P(x) = L_n(x)$ and
-$b^{\lfloor n/2 \rfloor} Q(x) = F_n(x)$.
-
-Source: Yuji Tsuno, *Polynomial Values with Integer Coefficients for the Generating Functions of
-Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024), Article tsuno05142024,
-Proposition 2.1 (`fq-2024-tsuno05142024-prop-2.1`). -/
-public theorem_wanted fibLucasPoly_of_pell_eq {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
-    {P Q : ℚ[X]} (hP : 0 ≤ P.leadingCoeff) (hQ : 0 ≤ Q.leadingCoeff) {r₀ : ℕ} (hr₀ : r₀ ≤ 1)
-    (h : P ^ 2 - (C ((a : ℚ) ^ 2) * X ^ 2 + C (4 * (b : ℚ))) * Q ^ 2 = C (4 * (-(b : ℚ)) ^ r₀)) :
-    ∃ n : ℕ, C ((b : ℚ) ^ (n / 2)) * P = (𝕃[a, b] n).map (Int.castRingHom ℚ) ∧
-      C ((b : ℚ) ^ (n / 2)) * Q = (𝔽[a, b] n).map (Int.castRingHom ℚ) ∧ n % 2 = r₀
 
 /-- **Pell-type solutions as rescaled odd Fibonacci–Lucas values, squarefree case.** Let $a$ and
 $b$ be positive integers with $b \mid a$ and $b$ squarefree, and let
