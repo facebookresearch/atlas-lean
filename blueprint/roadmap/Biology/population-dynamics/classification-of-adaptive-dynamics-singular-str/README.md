@@ -11,4 +11,5 @@
 - [Invasion potential](invades-nearby-residents.md)
 - [Mutual invasibility](mutual-invasibility.md)
 - [Evolutionary branching point](branching-point.md)
+- [Canonical equation of adaptive dynamics from a logistic birth–death–mutation process](canonical-equation-of-adaptive-dynamics.md)
 - [Optimal foraging and life history](optimal-foraging-and-life-history/README.md)

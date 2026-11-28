@@ -26,3 +26,8 @@ Place/transition Petri nets and vector addition systems: reachability, boundedne
 - [Siphons and traps](siphons-and-traps.md)
 - [Commoner's theorem for free-choice nets](commoner-s-theorem.md)
 - [Structure theory of state machines, marked graphs and free-choice nets](state-machines-marked-graphs-and-free-choice-nets/README.md)
+- [Not Mem postset iff](not-mem-postset-iff.md)
+- [Enabled iff preset](enabled-iff-preset.md)
+- [Fire? eq some iff](fire-eq-some-iff.md)
+- [Run? append](run-append.md)
+- [Run? eq some iff](run-eq-some-iff.md)

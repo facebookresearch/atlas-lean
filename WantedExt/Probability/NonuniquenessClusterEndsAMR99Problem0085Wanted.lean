@@ -56,8 +56,10 @@ def UniqueInfiniteCluster {V : Type} (G : SimpleGraph V) (ω : Sym2 V → Bool) 
     ∀ y : V, (gcluster G ω y).Infinite → gcluster G ω y = gcluster G ω x
 
 /-- The uniqueness threshold `p_u(G)` of Bernoulli bond percolation: the infimum of the densities
-`p ∈ [0, 1]` at which there is almost surely exactly one infinite open cluster (with `1` inserted,
-as in `criticalProb`, so that the value lies in `[0, 1]`). -/
+`p ∈ [0, 1]` at which the bond law gives the set of configurations with exactly one infinite open
+cluster mass `1` (with `1` inserted, as in `criticalProb`, so that the value lies in `[0, 1]`). The
+law is applied to that set as an outer measure: when `V` is uncountable the set need not be
+measurable. -/
 noncomputable def bondUniquenessThreshold {V : Type} (G : SimpleGraph V) : ℝ :=
   sInf (insert 1 {p : ℝ | ∃ hp0 : 0 ≤ p, ∃ hp1 : p ≤ 1,
     gbernoulliLaw (V := V) p hp0 hp1 {ω | UniqueInfiniteCluster G ω} = 1})

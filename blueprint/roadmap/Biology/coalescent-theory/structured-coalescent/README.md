@@ -56,6 +56,7 @@
 - [IBD block sharing under spatial diffusion](ibd-block-sharing-under-spatial-diffusion/README.md)
 - [Coalescence time of coalescing random walks on graphs](coalescence-time-of-coalescing-random-walks-on-graphs/README.md)
 - [Coalescence time of reversible random walks](coalescence-time-of-reversible-random-walks/README.md)
+- [Spectral-gap bounds for coalescing random walks](spectral-gap-bounds-for-coalescing-random-walks/README.md)
 
 ## Further structured ancestral models
 

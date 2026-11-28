@@ -42,10 +42,11 @@ worst-case distance. Cutoff at `t_n = (3/4) n log n` is the multiplicative form:
 
 open Filter Topology MathlibExt.Probability.SymmetricGroupRandomWalkShared
 
-/-- The step law of the random-to-random shuffle of `n` cards: the card at a uniform position `i`
-is removed and reinserted at an independent uniform position `j`. On decks `d : Fin n → cards`
-(`d p` is the card at position `p`) this is `d ↦ d ∘ s` with `s = (cycleRange i)⁻¹ * cycleRange j`
-(move the card at `i` to the top, then the top card to `j`). -/
+/-- For `n > 0`, the step law of the random-to-random shuffle of `n` cards: the card at a uniform
+position `i` is removed and reinserted at an independent uniform position `j`. On decks
+`d : Fin n → cards` (`d p` is the card at position `p`) this is `d ↦ d ∘ s` with
+`s = (cycleRange i)⁻¹ * cycleRange j` (move the card at `i` to the top, then the top card to `j`).
+For `n = 0`, `pairStepLaw` divides by `n² = 0`, so the function is `0`, not a law. -/
 noncomputable def randomToRandomStep (n : ℕ) : Equiv.Perm (Fin n) → ℝ :=
   pairStepLaw fun ij => (Fin.cycleRange ij.1)⁻¹ * Fin.cycleRange ij.2
 

@@ -24,4 +24,5 @@
 - [Polygenic adaptation](polygenic-adaptation.md)
 - [Composite likelihood for the selection gradient from SNP likelihoods](composite-likelihood-for-the-selection-gradient-from-snp-likelihoods.md)
 - [Quadratic-approximation estimator of the selection gradient](quadratic-approximation-estimator-of-the-selection-gradient.md)
+- [Stability under a time varying g matrix](stability-under-a-time-varying-g-matrix/README.md)
 - [Pearson–Aitken selection formulas under linear homoscedastic regression](pearson-aitken-lawley-selection-formulas.md)

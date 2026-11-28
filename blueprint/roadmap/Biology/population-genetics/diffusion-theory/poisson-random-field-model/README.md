@@ -22,4 +22,7 @@
 - [Multi-population diffusion for the joint allele-frequency density](multipopulation-diffusion-with-migration-and-admixture.md)
 - [Time-dependent Poisson random fields](time-dependent-poisson-random-fields/README.md)
 - [Two-locus frequency spectrum and its composite likelihood](two-locus-frequency-spectrum-and-its-composite-likelihood.md)
+- [Coalescent dual representation of the non-equilibrium allele frequency spectrum](coalescent-dual-representation-of-the-non-equilibrium-allele-frequency-spectrum.md)
+- [Expected segregating sites during build-up from a monomorphic state](expected-segregating-sites-during-build-up-from-a-monomorphic-state.md)
+- [Non-equilibrium allele frequency spectrum](non-equilibrium-allele-frequency-spectrum.md)
 - [Fixation flux and divergence in the Poisson random field](fixation-flux-and-divergence.md)

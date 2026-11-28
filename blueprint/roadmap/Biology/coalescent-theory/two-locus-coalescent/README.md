@@ -90,3 +90,5 @@
 - [Recent coalescence from IBD segments](recent-coalescence-from-ibd-segments/README.md)
 - [Genealogy-based complex trait analysis](genealogy-based-complex-trait-analysis/README.md)
 - [Ancestral recombination graph on a continuous chromosome](ancestral-recombination-graph-on-a-continuous-chromosome/README.md)
+- [Conditioned ancestral recombination graph dual](conditioned-ancestral-recombination-graph-dual/README.md)
+- [Two-locus sampling probabilities under variable population size](two-locus-sampling-probabilities-under-variable-population-size/README.md)

@@ -60,6 +60,7 @@
 - [Site frequency spectrum of sampled birth–death processes](site-frequency-spectrum-of-sampled-birth-death-processes/README.md)
 - [Stairway plot: composite likelihood of the SFS under epoch-wise sizes](stairway-plot-composite-likelihood.md)
 - [Total tree length under variable population size](total-tree-length-under-variable-population-size/README.md)
+- [Geometry of the expected site frequency spectrum](geometry-of-the-expected-site-frequency-spectrum/README.md)
 - [Mass at infinity, density and mean of the pairwise coalescence time under a variable population size](pair-coalescence-time-under-variable-size.md)
 - [First-coalescence means of the variable-size coalescent](first-coalescence-time-under-variable-size.md)
 - [Clock and epoch lengths of the variable-size coalescent](deterministic-coalescent-time-change.md)
