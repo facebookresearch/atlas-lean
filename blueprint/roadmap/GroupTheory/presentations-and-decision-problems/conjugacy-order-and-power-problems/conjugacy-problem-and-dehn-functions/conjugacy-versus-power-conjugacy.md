@@ -20,9 +20,11 @@ For a group $G = \langle X \mid R \rangle$, the power conjugacy problem asks for
 ## Expansion
 
 For clause 1, the group $G$ is built from an $S$-machine with non-recursive language of accepted inputs, which gives undecidable conjugacy problem and quadratic Dehn function (Lemmas 3.21 and 4.2 of the source). To decide whether $U^k$ and $V^l$ are conjugate for some non-zero exponents $k, l$, one may assume that $U$ and $V$ have infinite order (Lemma 7.1); the exponents can then be bounded recursively in terms of $U$ and $V$ (Lemmas 7.3, 7.6 and 7.7), and conjugacy of elements of infinite order is decidable in $G$ (Theorem 1.4). Clause 2 uses no $S$-machine. It starts from McCool's group
+
 $$
 \Pi_2 = \langle y_n, z_n \ (n \ge 1) \mid y_n z_n = z_n y_n,\ y_{\phi(n)} = z_{\phi(n)}^{\,n} \ (n \ge 1) \rangle,
 $$
+
 with $\phi$ a recursive one-to-one function with non-recursive range, which also appears on the page [a finitely presented group with solvable word problem and unsolvable order and power problems](../order-and-power-problems/solvable-word-problem-unsolvable-order-power.md); $\Pi_2$ has decidable word and conjugacy problems, and some powers of $y_r$ and $z_r$ are conjugate exactly when $r$ is in the range of $\phi$, so its power conjugacy problem is undecidable. A theorem of Olshanskii and Sapir embeds $\Pi_2$ in a $2$-generated group $K$ with decidable conjugacy problem, with the Frattini property that two elements of $\Pi_2$ are conjugate in $K$ exactly when they are conjugate in $\Pi_2$; and $K$ Frattini embeds in a finitely presented group $H$ with decidable conjugacy problem, in which the power conjugacy problem is therefore undecidable. A good expansion adds and links pages for these two Frattini embedding theorems and for the conjugacy decision for elements of infinite order (Theorem 1.4).
 
 ## Sources
