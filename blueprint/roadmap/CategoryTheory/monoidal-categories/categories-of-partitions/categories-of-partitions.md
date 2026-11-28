@@ -10,7 +10,7 @@ A category of partitions is a set of partitions of finite point sets, drawn with
 - The *involution* $p^*\in\mathcal P(\ell,k)$ of $p\in\mathcal P(k,\ell)$ reflects the diagram in a horizontal axis.
 - The *composition* $pq\in\mathcal P(k,m)$ of $p\in\mathcal P(\ell,m)$ and $q\in\mathcal P(k,\ell)$ places $q$ above $p$, identifies each lower point of $q$ with the corresponding upper point of $p$, and then removes these middle points, keeping the blocks connected through them (blocks lying entirely in the middle disappear).
 
-**Definition.** A *category of partitions* is a subset $\mathcal C\subseteq\mathcal P$ that contains the identity partition in $\mathcal P(1,1)$, joining its two points, and the pair partition in $\mathcal P(0,2)$, joining its two lower points, and that is closed under tensor products, involutions and compositions. Write $\mathcal C(k,\ell)=\mathcal C\cap\mathcal P(k,\ell)$. Such a category is automatically closed under rotations and vertical reflections. It is *recursively enumerable* if some Turing machine enumerates its elements.
+**Definition.** A *category of partitions* is a subset $\mathcal C\subseteq\mathcal P$ that contains the identity partition in $\mathcal P(1,1)$, joining its two points, and the pair partition in $\mathcal P(0,2)$, joining its two lower points, and that is closed under tensor products, involutions and compositions. Write $\mathcal C(k,\ell)=\mathcal C\cap\mathcal P(k,\ell)$. Such a category is automatically closed under rotations and vertical reflections. It is *recursively enumerable* if some Turing machine enumerates its elements, equivalently if membership in it is recognizable by a multi-stack machine.
 
 Examples are all partitions $\mathcal P$, the pair partitions (every block of size two), the non-crossing partitions, and the balanced partitions; intersections of categories of partitions are again categories of partitions. Categories of partitions arise in the representation theory of compact quantum groups (easy quantum groups) and are linked to diagram algebras such as the Temperley–Lieb algebra.
 
@@ -18,6 +18,7 @@ Examples are all partitions $\mathcal P$, the pair partitions (every block of si
 
 - [Partition of a set into nonempty pairwise disjoint blocks](../../../SetTheory/sets-functions-relations/set-partition.md)
 - [Enumerating a predicate](../../../TheoryOfComputation/computability/enumerators/enumerates.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
