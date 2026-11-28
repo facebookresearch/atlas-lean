@@ -1,9 +1,14 @@
 /-
-Copyright (c) 2026 Avocado. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Avocado
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Authors: Avocado
+-/
 module
 
 public import MathlibExt.Algebra.Homology.HomCochainComplex
@@ -19,8 +24,9 @@ reversed short exact sequence of Hom cochain complexes into any coefficient if i
 is split monic in every degree. A chain-level splitting is not required.
 
 For a fixed termwise projective chain complex, a short exact sequence of coefficient objects
-gives a covariant short exact sequence of Hom cochains. These constructions extend to families
-of chain complexes and produce six-term cohomology exact windows in degrees `n` and `n + 1`.
+gives a covariant short exact sequence of Hom cochains. For a short exact coefficient sequence,
+these constructions extend to families of chain complexes and produce six-term cohomology exact
+windows in degrees `n` and `n + 1`.
 The indexing-category universes are independent of the coefficient-category universes.
 -/
 
@@ -32,7 +38,7 @@ universe v u v' u'
 
 namespace HomologicalComplex
 
-variable {C : Type u} [Category.{v} C] [Abelian C]
+variable {C : Type u} [Category.{v} C] [Preadditive C]
 
 /-- Reversed Hom cochain short complex of a chain sequence.
 
@@ -43,12 +49,13 @@ noncomputable abbrev homCochainShortComplex
     ShortComplex (CochainComplex AddCommGrpCat.{v} ℕ) :=
   S.op.map (homCochainComplexFunctor C G)
 
+omit [Preadditive C] in
 /-- Degreewise split first arrow gives reversed Hom short exactness.
 
 If a chain-complex short sequence is short exact and its first arrow is split monic in every
 natural degree, its reversed Hom cochain sequence into any `G` is short exact. -/
 theorem homCochainShortComplex_shortExact_of_degreewise_splitMono
-    (S : ShortComplex (ChainComplex C ℕ)) (hS : S.ShortExact)
+    [Abelian C] (S : ShortComplex (ChainComplex C ℕ)) (hS : S.ShortExact)
     (hsplit : ∀ n, SplitMono ((S.map
       (HomologicalComplex.eval C (ComplexShape.down ℕ) n)).f)) (G : C) :
     (homCochainShortComplex S G).ShortExact := by
@@ -107,17 +114,19 @@ private noncomputable instance homCochainComplexCoefficientFunctorEval_additive
   dsimp [homCochainComplexCoefficientFunctorEval]
   infer_instance
 
+omit [Preadditive C] in
 private noncomputable instance
     homCochainComplexCoefficientFunctorEval_preservesFiniteLimits
-    (K : ChainComplex C ℕ) (n : ℕ) :
+    [Abelian C] (K : ChainComplex C ℕ) (n : ℕ) :
     PreservesFiniteLimits (homCochainComplexCoefficientFunctorEval K n) := by
   change PreservesFiniteLimits
     (preadditiveCoyoneda.obj (Opposite.op (K.X n)))
   infer_instance
 
+omit [Preadditive C] in
 private noncomputable instance
     homCochainComplexCoefficientFunctorEval_preservesFiniteColimits
-    (K : ChainComplex C ℕ) (n : ℕ) [Projective (K.X n)] :
+    [Abelian C] (K : ChainComplex C ℕ) (n : ℕ) [Projective (K.X n)] :
     PreservesFiniteColimits (homCochainComplexCoefficientFunctorEval K n) := by
   change PreservesFiniteColimits
     (preadditiveCoyoneda.obj (Opposite.op (K.X n)))
@@ -132,12 +141,13 @@ private noncomputable instance
     @Functor.preservesFiniteColimits_of_preservesHomology _ _ _ _ _ _ F
       inferInstance hHomology inferInstance inferInstance inferInstance
 
+omit [Preadditive C] in
 /-- Projective chain terms give coefficient Hom short exactness.
 
 If every `K.X n` is projective, applying the coefficient Hom cochain functor to a short exact
 coefficient sequence gives a short exact sequence of cochain complexes. -/
 theorem homCochainComplexCoefficientFunctor_map_shortExact_of_projective
-    (K : ChainComplex C ℕ) [∀ n, Projective (K.X n)]
+    [Abelian C] (K : ChainComplex C ℕ) [∀ n, Projective (K.X n)]
     (S : ShortComplex C) (hS : S.ShortExact) :
     (S.map (homCochainComplexCoefficientFunctor K)).ShortExact := by
   let S' : ShortComplex (CochainComplex AddCommGrpCat.{v} ℕ) :=
@@ -199,9 +209,9 @@ theorem homCochainComplexBifunctorOfFunctor_map_shortExact_of_projective
 
 /-- Six-term Hom cohomology windows from coefficient exactness.
 
-Given a chain-complex family whose coefficient Hom cochain functors send short exact sequences
-to short exact sequences, form the functor of six-term cohomology exact windows in degrees `n`
-and `n + 1`, contravariant in the family index. -/
+Given a short exact sequence of coefficients and a chain-complex family whose coefficient
+Hom cochain functors preserve such sequences, form the functor of six-term cohomology exact
+windows in degrees `n` and `n + 1`, contravariant in the family index. -/
 noncomputable def homCochainComplexExactSequenceBifunctor
     {C : Type u} [Category.{v} C] [Preadditive C]
     {X : Type u'} [Category.{v'} X]

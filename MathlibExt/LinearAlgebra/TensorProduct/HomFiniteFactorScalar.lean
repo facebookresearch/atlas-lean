@@ -12,7 +12,6 @@ Author: @toskua
 module
 
 public import MathlibExt.LinearAlgebra.TensorProduct.HomFiniteFactor
-public import MathlibExt.LinearAlgebra.TensorProduct.SurjectiveScalarHom
 
 /-!
 # Finite-projective tensor–Hom comparison under a scalar surjection
@@ -85,8 +84,8 @@ private def homTensorFiniteFactorScalarInputEquiv
     (h : Function.Surjective (algebraMap R S)) :
     (P →ₗ[R] N) ⊗[R] U ≃ₗ[R] (P →ₛₗ[algebraMap R S] N) ⊗[S] U := by
   letI : CompatibleSMul R S (P →ₛₗ[algebraMap R S] N) U :=
-    compatibleSMul_of_surjective_algebraMap
-      (M := P →ₛₗ[algebraMap R S] N) (J := U) h
+    CompatibleSMul.of_algebraMap_surjective
+      (M := P →ₛₗ[algebraMap R S] N) (N := U) h
   exact TensorProduct.congr (homTensorAlgebraMapEquiv (R := R) (S := S))
       (LinearEquiv.refl R U) ≪≫ₗ
     TensorProduct.equivOfCompatibleSMul S R R (P →ₛₗ[algebraMap R S] N) U
@@ -95,7 +94,7 @@ private def homTensorFiniteFactorScalarOutputEquiv
     (h : Function.Surjective (algebraMap R S)) :
     (P →ₛₗ[algebraMap R S] N ⊗[S] U) ≃ₗ[R] (P →ₗ[R] N ⊗[R] U) := by
   letI : CompatibleSMul R S N U :=
-    compatibleSMul_of_surjective_algebraMap (M := N) (J := U) h
+    CompatibleSMul.of_algebraMap_surjective (M := N) (N := U) h
   let eTensor : N ⊗[S] U ≃ₗ[R] N ⊗[R] U :=
     TensorProduct.equivOfCompatibleSMul R S R N U
   exact (homTensorAlgebraMapEquiv (R := R) (S := S) (P := P) (N := N ⊗[S] U)).symm ≪≫ₗ
