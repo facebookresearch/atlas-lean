@@ -35,7 +35,7 @@ The density-dependent factor $(1 - M)$ in the velocity (volume filling) and the 
 
 ## Proof depends on
 
-- [Gronwall inequality in integral form](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+- [Gronwall inequality in integral form](../../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
 
 ## Sources
 

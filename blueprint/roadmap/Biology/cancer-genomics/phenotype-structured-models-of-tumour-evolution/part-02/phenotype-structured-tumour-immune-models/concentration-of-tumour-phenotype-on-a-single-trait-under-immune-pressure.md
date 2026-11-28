@@ -36,7 +36,7 @@ The equations for $p$ and $\ell$ are logistic and linear in their own variables,
 
 ## Proof depends on
 
-- [Dominated convergence theorem for nonnegative functions](../../../../MeasureTheory/integration/dominated-convergence-theorem/tendsto-lintegral-of-dominated-convergence.md)
+- [Dominated convergence theorem for nonnegative functions](../../../../../MeasureTheory/integration/dominated-convergence-theorem/tendsto-lintegral-of-dominated-convergence.md)
 
 ## Sources
 

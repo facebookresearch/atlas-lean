@@ -34,7 +34,7 @@ The chemotactic flux enters the linearization only through $-\xi v^*\mu_k\tilde 
 
 ## Proof depends on
 
-- [Routh–Hurwitz criterion for cubic polynomials](../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
+- [Routh–Hurwitz criterion for cubic polynomials](../../../../../Analysis/control-theory/feedback-stability-and-classical-design/routh-hurwitz-criterion-for-cubic-polynomials.md)
 
 ## Sources
 

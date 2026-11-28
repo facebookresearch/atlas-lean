@@ -31,7 +31,7 @@ At the homogeneous state each cell sends $\psi^*/|\mathcal N_i|$ to every neighb
 
 ## Proof depends on
 
-- [Implicit function theorem](../../../../Analysis/real-functions/multivariable-calculus/implicit-function-theorem.md)
+- [Implicit function theorem](../../../../../Analysis/real-functions/multivariable-calculus/implicit-function-theorem.md)
 
 ## Sources
 

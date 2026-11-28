@@ -47,7 +47,7 @@ Linearizing about $(u_*,v_*)$, a spatial Laplace–Beltrami mode with eigenvalue
 
 ## Depends on
 
-- [Diffusion-driven instability (Turing 1952)](../../turing-patterns-and-diffusion-driven-instability/turing-instability.md)
+- [Diffusion-driven instability (Turing 1952)](../../../turing-patterns-and-diffusion-driven-instability/turing-instability.md)
 
 ## Sources
 

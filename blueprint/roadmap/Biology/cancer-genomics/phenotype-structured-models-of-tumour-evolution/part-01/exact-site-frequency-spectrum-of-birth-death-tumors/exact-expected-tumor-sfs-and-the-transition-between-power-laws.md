@@ -32,7 +32,7 @@ A mutation arising in a division at time $s$ is carried at time $t$ by the desce
 
 ## Proof depends on
 
-- [Kendall's law of the linear birth–death process](../../../../Probability/branching-processes/linear-birth-death-process/prob.md)
+- [Kendall's law of the linear birth–death process](../../../../../Probability/branching-processes/linear-birth-death-process/prob.md)
 
 ## Sources
 

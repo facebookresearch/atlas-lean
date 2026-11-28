@@ -27,7 +27,7 @@ These are the branching computation (Section 2), the model definition, and the m
 
 ## Proof depends on
 
-- [Galton–Watson extinction criterion](../../../../Probability/branching-processes/galton-watson-process/extinction-prob-eq-one-iff.md)
+- [Galton–Watson extinction criterion](../../../../../Probability/branching-processes/galton-watson-process/extinction-prob-eq-one-iff.md)
 
 ## Sources
 

@@ -24,7 +24,7 @@ At an interior equilibrium $N=r_N/(\mu_N+\beta_1A)$; substituting into $dA/dt=0$
 
 ## Proof depends on
 
-- [Poincaré–Bendixson theorem](../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
+- [Poincaré–Bendixson theorem](../../../../../Dynamics/low-dimensional-dynamics/poincar-bendixson-theorem/poincare-bendixson.md)
 
 ## Sources
 

@@ -49,11 +49,11 @@ becomes negative for some $k^2 > 0$ exactly when $d_c J_{11} - d_b r_c > 2\sqrt{
 
 ## Depends on
 
-- [Diffusion-driven instability (Turing 1952)](../../turing-patterns-and-diffusion-driven-instability/turing-instability.md)
+- [Diffusion-driven instability (Turing 1952)](../../../turing-patterns-and-diffusion-driven-instability/turing-instability.md)
 
 ## Proof depends on
 
-- [Turing's criterion](../../turing-patterns-and-diffusion-driven-instability/exists-is-unstable-mode-iff.md)
+- [Turing's criterion](../../../turing-patterns-and-diffusion-driven-instability/exists-is-unstable-mode-iff.md)
 
 ## Sources
 

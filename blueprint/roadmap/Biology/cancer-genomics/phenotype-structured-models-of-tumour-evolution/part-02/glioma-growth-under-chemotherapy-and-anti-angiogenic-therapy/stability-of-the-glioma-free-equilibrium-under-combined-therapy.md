@@ -36,7 +36,7 @@ The agent equations contribute $-\psi$ and $-\gamma$. The Heaviside factors equa
 
 ## Proof depends on
 
-- [Lyapunov's indirect method (linearized stability), conditional decay form](../../../../Analysis/ordinary-differential-equations/lyapunov-s-indirect-method/global-solution-decay-of-has-fderiv-at.md)
+- [Lyapunov's indirect method (linearized stability), conditional decay form](../../../../../Analysis/ordinary-differential-equations/lyapunov-s-indirect-method/global-solution-decay-of-has-fderiv-at.md)
 
 ## Sources
 

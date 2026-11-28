@@ -30,7 +30,7 @@ At $E_0$ the tumour equation linearizes to $\tilde u_t=d_1\Delta\tilde u+(1-\sig
 
 ## Depends on
 
-- [Basic reproduction number of the next-generation matrix](../../../epidemiology/next-generation-matrix-and-the-basic-reproductio/r0.md)
+- [Basic reproduction number of the next-generation matrix](../../../../epidemiology/next-generation-matrix-and-the-basic-reproductio/r0.md)
 
 ## Sources
 

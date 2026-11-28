@@ -28,8 +28,8 @@ The radial eigenvalue follows by implicitly differentiating the two algebraic th
 
 ## Proof depends on
 
-- [Implicit function theorem](../../../../Analysis/real-functions/multivariable-calculus/implicit-function-theorem.md)
-- [Lyapunov's indirect method (linearized stability), conditional decay form](../../../../Analysis/ordinary-differential-equations/lyapunov-s-indirect-method/global-solution-decay-of-has-fderiv-at.md)
+- [Implicit function theorem](../../../../../Analysis/real-functions/multivariable-calculus/implicit-function-theorem.md)
+- [Lyapunov's indirect method (linearized stability), conditional decay form](../../../../../Analysis/ordinary-differential-equations/lyapunov-s-indirect-method/global-solution-decay-of-has-fderiv-at.md)
 
 ## Sources
 

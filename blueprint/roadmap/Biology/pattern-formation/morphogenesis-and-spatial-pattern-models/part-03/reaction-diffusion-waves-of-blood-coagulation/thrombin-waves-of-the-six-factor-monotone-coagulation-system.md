@@ -30,7 +30,7 @@ At an equilibrium every equation except the thrombin one is linear in its own va
 
 ## Proof depends on
 
-- [Perron–Frobenius theorem for irreducible nonnegative matrices](../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius.md)
+- [Perron–Frobenius theorem for irreducible nonnegative matrices](../../../../../LinearAlgebra/special-matrices/perron-frobenius-theorem/perron-frobenius.md)
 
 ## Sources
 
