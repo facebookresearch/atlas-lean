@@ -53,12 +53,21 @@ the other operand is then a multiple of the last place of $p$ bits of the sum, a
 last place of $p$ bits minus half a last place of $p'$ bits. At the scale of its last place, a quotient is $N / m$ and a
 square root is $\sqrt{N}$ for integers $N$ and $m$ with $|m| < 2^p$; so a quotient lies more than $2^{-p-1}$, and a
 square root more than $2^{-p-3}$, last places from any midpoint other than itself, which half a last place of $p'$ bits
-does not reach. With gradual underflow the sums and products are exact in the extended format or behave as above, and a
-quotient or square root that is subnormal in the narrow format is treated in the same way at the scale $2^q$ of its
-subnormal grid, which the conditions on $q'$ keep far enough above the last place of the extended format. The
-counterexamples generalise Figueroa's: for addition $x = 1 + 2^{1-p}$ and $y = 2^{-p} - 2^{-2p}$, for division $x = 1$
-and $y = 1 - 2^{-p}$, for the square root $x = 1 - 2^{-p}$, and for multiplication $x = y = 13$ when $p = 4$ and
-$x = y = 3 \cdot 2^{p-2} - 1$ when $p \ge 5$.
+does not reach. With gradual underflow the sums and products are exact in the extended format or behave as above, and so
+do quotients and square roots in the normal range of the narrow format. A quotient or square root that is subnormal
+there is measured at the scale $2^q$ of its subnormal grid instead, where it need not have the form above: with $p = 3$
+and $q = 0$, the quotient of $7$ and $16 = 4 \cdot 2^2$ is $7/16$ at that scale, whose denominator $16$ exceeds $2^p$,
+and it lies exactly $2^{-p-1}$ from the midpoint $1/2$. Write $d$ for the number of binary places by which the last
+place of the extended format lies below $2^q$; the conditions on $p'$ and $q'$ make $d$ at least $p + 1$ for a quotient
+and $p + 2$ for a square root. A value that lies less than $1/2 - 2^{-d-1}$ from $0$ at that scale meets the criterion
+with the representable number $0$. Otherwise it is at least $1/4$ there, and at least $7/16$ for a square root. A
+quotient is then $N / (4m)$ for integers $N$ and $m$ with $|m| < 2^p$, so it lies more than $2^{-p-2}$ from any midpoint
+other than itself. A square root $M$ has $M^2 = m \cdot 2^s$ for integers $m$ and $s$ with $0 < m < 2^p$, so unless $M$
+is the nearest midpoint $n + 1/2$, $M^2$ differs from $(n + 1/2)^2$ by at least $\min(1/4, 2^s)$, and $M$ still lies
+more than $2^{-p-3}$ from it. Half a last place of the extended format, $2^{-d-1}$ at that scale, reaches neither
+distance. The counterexamples generalise Figueroa's: for addition $x = 1 + 2^{1-p}$ and $y = 2^{-p} - 2^{-2p}$, for
+division $x = 1$ and $y = 1 - 2^{-p}$, for the square root $x = 1 - 2^{-p}$, and for multiplication $x = y = 13$ when
+$p = 4$ and $x = y = 3 \cdot 2^{p-2} - 1$ when $p \ge 5$.
 
 ## Related topics
 
