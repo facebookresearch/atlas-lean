@@ -1,10 +1,10 @@
 # Plurality and the Borda count versus Condorcet winners
 
-A Condorcet winner, an alternative beating every other in pairwise majority, is unique when it exists, and with at least three voters and three alternatives there are profiles with no Condorcet winner. For at least three voters and three alternatives, the plurality rule (ties broken by a fixed order of the alternatives) is onto, non-dictatorial, not strategy-proof, and not Condorcet consistent (it can fail to select an existing Condorcet winner). For at least two voters and three alternatives, the Borda count is Pareto and non-dictatorial but violates independence of irrelevant alternatives.
+A Condorcet winner, an alternative beating every other in pairwise majority, is unique when it exists, and with at least three voters and three alternatives there are profiles with no Condorcet winner. For at least three voters and three alternatives, the plurality rule (ties broken by a fixed order of the alternatives) is onto, non-dictatorial and not strategy-proof, and, except for exactly four voters with exactly three alternatives, it is not Condorcet consistent (it can fail to select an existing Condorcet winner). For at least two voters and three alternatives, the Borda count is Pareto and non-dictatorial but violates independence of irrelevant alternatives.
 
 ## Proof sketch
 
-Uniqueness: two Condorcet winners would each strictly beat the other. Explicit three-alternative profiles exhibit each failure; the Borda IIA violation moves a third alternative between two others.
+Uniqueness: two Condorcet winners would each strictly beat the other. Explicit profiles exhibit each failure (for Condorcet consistency with four voters, one with four alternatives), and alternatives ranked last by every voter extend them to more alternatives; the Borda IIA violation moves a third alternative between two others. With four voters and three alternatives, a Condorcet winner beats each other alternative in at least three of the four rankings, so at least two voters rank it first while each other alternative is ranked first by at most one, and plurality selects it.
 
 ## Depends on
 

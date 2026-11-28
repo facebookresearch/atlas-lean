@@ -4,7 +4,7 @@ Fix a universal multi-tape Turing machine $U$ that parses a binary program $p$ a
 
 $$K^t(x) = \min\{|p| : U(p) \text{ outputs } x \text{ within } t(|x|) \text{ steps}\},$$
 
-and *Levin's* complexity is $Kt(x) = \min\{|p| + \lceil \log_2 \tau \rceil : U(p) \text{ outputs } x \text{ within } \tau \text{ steps}\}$. Always $K(x) \le K^t(x)$, $K^t$ is antitone in $t$, $K^t(x) \le |x| + O(1)$ for $t(n) \ge c\,n$, and $K(x) \le Kt(x)$. Conditional versions $K^t(x \mid y)$ and $Kt(x \mid y)$ give $y$ to the machine as auxiliary input.
+and *Levin's* complexity is $Kt(x) = \min\{|p| + \lceil \log_2 \tau \rceil : \tau \ge 1,\ U(p) \text{ outputs } x \text{ within } \tau \text{ steps}\}$. For the same machine let $K_U(x) = \min\{|p| : U(p) \text{ outputs } x\}$ be the unbounded complexity. Always $K_U(x) \le K^t(x)$, $K^t$ is antitone in $t$, $K^t(x) \le |x| + O(1)$ for $t(n) \ge c\,n$, and $K_U(x) \le Kt(x)$. Since $U$ is a partial computable function, the Kolmogorov complexity $K$ of the universal description method satisfies $K(x) \le K_U(x) + O(1)$, so $K(x) \le K^t(x) + O(1)$ and $K(x) \le Kt(x) + O(1)$. Conditional versions $K^t(x \mid y)$ and $Kt(x \mid y)$ give $y$ to the machine as auxiliary input.
 
 ## Depends on
 

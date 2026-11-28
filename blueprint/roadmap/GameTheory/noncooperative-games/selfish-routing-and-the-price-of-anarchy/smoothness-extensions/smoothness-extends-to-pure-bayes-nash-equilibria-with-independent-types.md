@@ -1,6 +1,12 @@
 # Smoothness extends to pure Bayes–Nash equilibria with independent types
 
-Let a Bayesian cost game with independent finite types be such that, for every type profile $\theta$, the complete-information game $G_\theta$ is $(\lambda, \mu)$-smooth with $\mu < 1$, where in the smoothness inequality the deviation of player $i$ depends only on $\theta$ through $\theta_i$ and on the benchmark optimal strategies. Then every pure Bayes–Nash equilibrium $\sigma$ satisfies
+Let a Bayesian cost game with independent finite types have social cost $C_\theta(a) = \sum_i c_i(\theta_i; a)$, and let $c^*$ be an optimal choice function: it assigns to every type profile $\theta$ an action profile $c^*(\theta)$ minimizing $C_\theta$, so that $\mathrm{OPT}(\theta) = C_\theta(c^*(\theta))$. Suppose that for some $\lambda > 0$ and $\mu < 1$ the game is $(\lambda, \mu)$-smooth with respect to $c^*$ in Roughgarden's sense:
+
+$$
+\sum_i c_i\bigl(\theta_i; (c^*_i(\theta), a_{-i})\bigr) \le \lambda\, C_\theta(c^*(\theta)) + \mu\, C_\varphi(a)
+$$
+
+for every type profile $\theta$, every type profile $\varphi$ and every action profile $a$. (The inequality is required for all pairs $\theta, \varphi$, not only for $\varphi = \theta$, which would be smoothness of every induced complete-information game $G_\theta$.) Then every pure Bayes–Nash equilibrium $\sigma$ satisfies
 
 $$
 \mathbb{E}_\theta\bigl[C_\theta(\sigma(\theta))\bigr] \le \frac{\lambda}{1 - \mu}\, \mathbb{E}_\theta\bigl[\mathrm{OPT}(\theta)\bigr].
@@ -8,7 +14,7 @@ $$
 
 ## Proof sketch
 
-Each type $\theta_i$ considers deviating to the action it would play in the optimal outcome of a fresh type profile drawn independently for the others; independence of types lets the equilibrium condition be averaged against this deviation, and the smoothness inequality applied pointwise gives the bound.
+Each type $\theta_i$ considers deviating to $c^*_i(\theta_i, \varphi_{-i})$ for a fresh profile $\varphi_{-i}$ of the others' types drawn from the prior. By independence, $(\theta_i, \varphi_{-i})$ is distributed as a type profile and is independent of the others' equilibrium actions $\sigma_{-i}(\theta_{-i})$, so summing the equilibrium conditions and applying the inequality to the type profiles $(\theta_i, \varphi_{-i})$ and $\theta$ with $a = \sigma(\theta)$ gives $\mathbb{E}[C_\theta(\sigma(\theta))] \le \lambda\, \mathbb{E}[\mathrm{OPT}] + \mu\, \mathbb{E}[C_\theta(\sigma(\theta))]$.
 
 ## Depends on
 

@@ -1,15 +1,15 @@
 # De's lower bound for pure privacy over a small universe
 
-Let $k, d, n \in \mathbb{N}$ and $\varepsilon \in (0, 1/40]$ with $n \ge \min(k, d)/\varepsilon$. There is a query $F : \mathbb{N}^{d} \to \mathbb{R}^{k}$ on histograms over a universe of $d$ items, with sensitivity at most $1$ in each coordinate, such that every $(\varepsilon, 0)$-differentially private mechanism adds noise of $L_\infty$ norm $\Omega(\min(k, d)/\varepsilon)$ with probability at least $1/2$ on some database with at most $n$ rows. The coordinates of $F$ are not counting queries. The proof constructs queries that are symmetric Lipschitz extensions: given finitely many datasets $D_h$ with real labels $g_h$ satisfying $|g_h - g_{h'}| \le \tfrac12\|D_h - D_{h'}\|_1$ for all $h, h'$ (half the $\ell_1$ distance of the histograms, which is the number of rows to replace when the sizes agree), there is a query of sensitivity $1$ agreeing with every label; a packing argument over $2^{\Omega(\min(k,d))}$ datasets at small Hamming distance then applies.
+Let $k, d, n \in \mathbb{N}$ and $\varepsilon \in (0, 1/40]$ with $n \ge \min(k, d)/\varepsilon$, and take databases to be histograms $x \in \mathbb{N}^d$ over a universe of $d$ items, neighbouring when $\|x - y\|_1 \le 1$ (so neighbours may differ in size by one row). There is a query $F : \mathbb{N}^{d} \to \mathbb{R}^{k}$ with sensitivity at most $1$ in each coordinate with respect to this $\ell_1$ distance such that every $(\varepsilon, 0)$-differentially private mechanism adds noise of $L_\infty$ norm $\Omega(\min(k, d)/\varepsilon)$ with probability at least $1/2$ on some database of weight $\|x\|_1$ at most $n$. The coordinates of $F$ are not counting queries.
 
 ## Proof sketch
 
-With $\ell = \min(k, d)$, choose $2^s$ datasets, $s = \ell/400$, each of weight at most $w = \ell/(1280\varepsilon)$ and pairwise at $\ell_1$ distance at least $w/10$, together with Lipschitz-extension queries whose answers separate them by large margins. Accurate answers would place most mass of the mechanism in disjoint regions, contradicting the pure packing bound.
+With $\ell = \min(k, d)$, choose $2^s$ histograms $x_1, \dots, x_{2^s}$, $s = \ell/400$, each of weight at most $w = \ell/(1280\varepsilon)$ and pairwise at $\ell_1$ distance at least $w/10$. The map $L_S$ whose $i$-th coordinate is $\max(w/30 - \|x_i - z\|_1, 0)$ is $1$-Lipschitz in $\ell_1$ (Dwork and Roth, Claim 8.9), and $F$ takes the inner products of $L_S$ with $k$ independent uniform $\pm 1$ vectors; by a Chernoff and union bound some choice separates every pair $x_h, x_j$ by at least $w/15$ in a tenth of the coordinates. Accurate answers would then place most mass of the mechanism in disjoint regions, contradicting the pure packing bound.
 
 ## Depends on
 
 - [Differential privacy](../differential-privacy/differentially-private.md)
-- [Neighbouring row databases](../differential-privacy/hamming-adj.md)
+- [Neighbouring histograms](../differential-privacy/histogram-adj.md)
 
 ## Proof depends on
 

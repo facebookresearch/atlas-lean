@@ -1,10 +1,10 @@
 # Correctness and privacy of BMR16 mixed-modulus garbling
 
-BMR16 garbling of mixed-modulus circuits is correct: for every hash, tweak assignment, offsets $(\Delta_p)$ and zero labels, evaluating the garbled circuit on encoded inputs and decoding gives the circuit's output, so every garbled circuit the randomized garbler can output evaluates correctly on every input. The simulator, which outputs uniformly random projection-gate ciphertexts and decoding information consistent with the output $y$, produces views that always decode to $y$, and against a random function in place of the hash the real view of the evaluator is exactly the simulated one when distinct gates use distinct tweaks; hence the scheme is private (prv.sim) under mixed-modulus circular correlation robustness of the hash, with advantage at most the corresponding CCR advantage.
+For BMR16 garbling of mixed-modulus circuits (additions, multiplications by units and projection gates): for every hash, all offsets $\Delta_m \in \mathbb{Z}_m^{\lambda_m + 1}$, with $\lambda_m = \lceil \lambda / \log m \rceil$ for the security parameter $\lambda$, whose last (colour) digit is $1$, as BMR16 sample them ($\Delta_m \leftarrow \mathbb{Z}_m^{\lambda_m} \Vert 1$, Section 4.2 and Figure 1; in particular every $\Delta_m$ is nonzero), and all zero labels, evaluating the garbled circuit on encoded inputs yields the active label of every wire, and decoding returns the circuit's output unless, for some output wire $i$ with active label $Y_i$ and some other value $k$, the decoding hash $H(\mathrm{out} \Vert i \Vert k, \cdot)$ takes the same value on $Y_i$ and on the label of $k$. If the hash is mixed-modulus circular correlation robust, the scheme is private (prv.sim): the simulator, given the circuit's side information and the output $y$, outputs uniformly random projection-gate ciphertexts and input labels with decoding information consistent with $y$; when the correlation-robustness oracle is replaced by a random function the evaluator's real view is distributed exactly as the simulated one, so the prv.sim advantage is at most the correlation-robustness advantage of an explicit reduction.
 
 ## Proof sketch
 
-Each projection-gate ciphertext is masked by a hash value at an inactive label $x + c\Delta_p$ with $c \ne 0$ under a fresh tweak, which a random function makes uniform; linear gates reveal nothing beyond the active labels.
+Rewrite every label as the evaluator's active label plus a multiple of the offset. Each projection-gate ciphertext and each decoding entry then has the form $H(g, W^* + a\Delta_m) + c\Delta_{m'} + Q$ with $W^*$ and $Q$ known to the evaluator, and $c = 0$ whenever $a = 0$; the entries with $a \ne 0$ are oracle answers, which a random function makes uniform, and after that the wire values are needed only to shift the decoding information of the output wires, which the output determines.
 
 ## Depends on
 
@@ -13,4 +13,4 @@ Each projection-gate ciphertext is masked by a hash value at an inactive label $
 
 ## Sources
 
-- Marshall Ball, Tal Malkin and Mike Rosulek, "Garbling Gadgets for Boolean and Arithmetic Circuits", Proceedings of the 2016 ACM SIGSAC Conference on Computer and Communications Security, 2016.
+- Marshall Ball, Tal Malkin and Mike Rosulek, "Garbling Gadgets for Boolean and Arithmetic Circuits", Proceedings of the 2016 ACM SIGSAC Conference on Computer and Communications Security, 2016, Section 4.2 (gate types and offsets), Figure 1, Definition 1 and Theorem 1.

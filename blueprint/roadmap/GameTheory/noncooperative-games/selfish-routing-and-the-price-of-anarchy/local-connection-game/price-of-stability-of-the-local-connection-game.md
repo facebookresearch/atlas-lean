@@ -1,6 +1,6 @@
 # Price of stability of the local connection game
 
-For $0 \le \alpha \le 1$ and for $\alpha \ge 2$ the local connection game has a pure Nash equilibrium that is socially optimal (price of stability $1$). For $1 \le \alpha \le 2$ the center-sponsored star is a pure Nash equilibrium whose social cost is less than $\frac43$ times the cost of every connected profile, so the price of stability is at most $\frac43$.
+With $n \ge 2$ players: for $0 \le \alpha \le 1$ and for $\alpha \ge 2$ the local connection game has a pure Nash equilibrium that is socially optimal (price of stability $1$). For $1 \le \alpha \le 2$ the center-sponsored star is a pure Nash equilibrium whose social cost is less than $\frac43$ times the cost of every connected profile, so the price of stability is at most $\frac43$.
 
 ## Proof sketch
 

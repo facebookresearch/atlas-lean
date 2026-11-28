@@ -12,7 +12,7 @@ $d$-regular constraint graph $G$ with a self-loop on each vertex and $\lambda(G)
 
 $$\mathrm{UNSAT}(G^t) \ge \beta_2 \sqrt t \cdot \min\Bigl(\mathrm{UNSAT}(G), \frac1t\Bigr).$$
 
-Powering multiplies the number of edges by $d^{t-1}$, a linear blow-up for constant $t$, and $\mathrm{UNSAT}(G) = 0$ implies $\mathrm{UNSAT}(G^t) = 0$. The proof bounds how often a random walk in an expander passes through a fixed set of edges. The lemma is the main step in the proof of [Dinur's gap amplification](dinur-gap-amplification.md).
+Powering multiplies the number of edges by $d^{t-1}$, a linear blow-up for constant $t$, and $\mathrm{UNSAT}(G) = 0$ implies $\mathrm{UNSAT}(G^t) = 0$. The proof bounds how often a random walk in an expander passes through a fixed set of edges. The lemma is the main step in the proof of [Dinur's gap amplification and alphabet reduction](dinur-gap-amplification.md).
 
 ## Sources
 

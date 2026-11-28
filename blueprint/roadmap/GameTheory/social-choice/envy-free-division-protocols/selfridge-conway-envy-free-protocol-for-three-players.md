@@ -1,6 +1,6 @@
 # Selfridge–Conway envy-free protocol for three players
 
-For three players with nonatomic, finitely additive valuations of the cake $[0, 1]$, the Selfridge–Conway protocol (player $0$ cuts into three equal pieces by its measure; player $1$ trims its favourite piece to tie its second favourite if needed; players choose in the order $2, 1, 0$ with a constraint on the trimmed piece; the trimmings are divided by a second round of cutting and choosing) produces an envy-free and hence proportional division, using at most five cuts, so the cake is divided into at most six intervals.
+For three players whose valuations are as in the Robertson–Webb model (nonatomic probability measures on the cake $[0, 1]$, so every cut exists by continuity), the Selfridge–Conway protocol (player $0$ cuts into three equal pieces by its measure; player $1$ trims its favourite piece to tie its second favourite if needed; players choose in the order $2, 1, 0$ with a constraint on the trimmed piece; the trimmings are divided by a second round of cutting and choosing) produces an envy-free and hence proportional division, using at most five cuts, so the cake is divided into at most six intervals.
 
 ## Proof sketch
 

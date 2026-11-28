@@ -1,10 +1,10 @@
 # Metric k-center cannot be approximated within a factor below 2 unless P = NP
 
-If a polynomial-time algorithm, given a finite metric space with integer distances and an integer $k$, always returns $k$ centers whose covering radius is less than $2$ times the optimal radius, then $\mathrm{P} = \mathrm{NP}$. The greedy farthest-point algorithm of Gonzalez achieves factor $2$, so the threshold is tight.
+If for some fixed $\rho < 2$ a polynomial-time algorithm, given a nonempty finite metric space with integer distances and an integer $k \ge 1$, always returns at most $k$ centers whose covering radius is at most $\rho$ times the optimal radius, then $\mathrm{P} = \mathrm{NP}$. The greedy farthest-point algorithm of Gonzalez achieves factor $2$, so the threshold is tight.
 
 ## Proof sketch
 
-From a graph $G$ build the metric with distance $1$ between adjacent vertices and $2$ between nonadjacent distinct vertices. $G$ has a dominating set of size $k$ iff the optimal radius is $1$; then any radius below $2$ is $1$ and the returned centers form a dominating set. Dominating Set is NP-complete.
+From a graph $G$ build the metric with distance $1$ between adjacent vertices and $2$ between nonadjacent distinct vertices. $G$ has a dominating set of size at most $k$ iff the optimal radius is at most $1$; then any radius at most $\rho < 2$ is at most $1$ and the returned centers form a dominating set, and otherwise every radius is $2$. Dominating Set is NP-complete.
 
 ## Depends on
 

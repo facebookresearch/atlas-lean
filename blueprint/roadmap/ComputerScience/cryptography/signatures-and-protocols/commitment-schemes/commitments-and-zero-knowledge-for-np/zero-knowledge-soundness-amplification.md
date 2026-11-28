@@ -1,6 +1,6 @@
 # Sequential repetition gives negligible soundness while preserving zero knowledge
 
-If an auxiliary-input zero-knowledge proof for $L$ has soundness error $s < 1$ (constant), then its $k(n)$-fold sequential repetition, with $k(n) = \omega(\log n)$ (for example $k = n + 1$ giving error $s^{n+1}$), has negligible soundness error and remains auxiliary-input zero knowledge.
+If an auxiliary-input zero-knowledge proof for $L$ has soundness error $s < 1$ (constant), then its $k(n)$-fold sequential repetition, for every polynomially bounded $k$ computable from $n$ in polynomial time with $k(n) = \omega(\log n)$ (for example $k = n + 1$ giving error $s^{n+1}$), has negligible soundness error and remains auxiliary-input zero knowledge.
 
 ## Proof sketch
 

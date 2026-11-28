@@ -1,6 +1,6 @@
 # Rompel: one-way functions yield universal one-way hash functions
 
-If a one-way function exists, then there is a target collision-resistant (universal one-way) keyed hash family with polynomial-time keys and evaluation, defined on bit strings of every polynomial length and compressing them, secure against probabilistic polynomial-time adversaries that commit to a target input before seeing the key. More generally the conclusion holds for every polynomial-time function family with inaccessible average max-entropy (against adversary-dependent accessible sets).
+If a one-way function exists, then there is a target collision-resistant (universal one-way) keyed hash family with polynomial-time keys and evaluation, defined on bit strings of every polynomial length and compressing them, secure against probabilistic polynomial-time adversaries that commit to a target input before seeing the key. More generally the conclusion holds for every polynomial-time computable function family $F$ with a noticeable gap $\Delta$ between its real Shannon entropy $H(X \mid F(X))$ and its accessible average max-entropy (against adversary-dependent accessible sets), that is, with inaccessible entropy $\Delta(n) \ge 1/p(n)$ for a polynomial $p$ and all large $n$ (Haitner–Holenstein–Reingold–Vadhan–Wee, Theorem 5.1; $\Delta$ need not be efficiently computable).
 
 ## Proof sketch
 

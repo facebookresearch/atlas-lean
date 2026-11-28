@@ -1,6 +1,6 @@
 # Random serial dictatorship: incentives and inefficiency
 
-Deterministic serial dictatorship (agents choose their favourite remaining object in a fixed priority order) is Pareto efficient and strategy-proof. Random serial dictatorship, the uniform lottery over all $n!$ priority orders, is ex-post efficient, anonymous, satisfies equal treatment of equals and is sd-strategy-proof; it is sd-efficient for $n \le 3$ but not for $n \ge 4$, and it is not sd-envy-free.
+Deterministic serial dictatorship (agents choose their favourite remaining object in a fixed priority order) is Pareto efficient and strategy-proof. Random serial dictatorship, the uniform lottery over all $n!$ priority orders, is ex-post efficient, anonymous, satisfies equal treatment of equals and is sd-strategy-proof; it is sd-efficient for $n \le 3$ but not for $n \ge 4$, and for $n \ge 3$ it is not sd-envy-free.
 
 ## Proof sketch
 

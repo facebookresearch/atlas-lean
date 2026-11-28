@@ -1,6 +1,6 @@
 # XOR of independently seeded generators is pseudorandom if one is
 
-Let $G_1, \dots, G_t$ be deterministic polynomial-time generators with the same output length $\ell(n)$, and with $t$ polynomial. Define $G(s_1, \dots, s_t) = G_1(s_1) \oplus \cdots \oplus G_t(s_t)$ on independent seeds. If at least one $G_j$ is a pseudorandom generator (and the index $j$ may depend on $n$), then the output of $G$ is computationally indistinguishable from uniform $\ell(n)$-bit strings. If additionally the total seed length is less than $\ell(n)$, $G$ is a pseudorandom generator.
+Let $G_1, \dots, G_t$ be deterministic polynomial-time generators with the same output length $\ell(n)$, and with $t$ polynomial. Define $G(s_1, \dots, s_t) = G_1(s_1) \oplus \cdots \oplus G_t(s_t)$ on independent seeds. If at least one $G_j$ is a pseudorandom generator (the index $j = j(n)$ may depend on $n$, provided $j(n)$ is computable from $1^n$ in polynomial time), then the output of $G$ is computationally indistinguishable from uniform $\ell(n)$-bit strings. If additionally the total seed length is less than $\ell(n)$, $G$ is a pseudorandom generator.
 
 ## Proof sketch
 

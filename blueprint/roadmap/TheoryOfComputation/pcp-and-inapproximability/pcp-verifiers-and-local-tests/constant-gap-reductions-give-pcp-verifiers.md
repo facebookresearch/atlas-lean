@@ -1,10 +1,10 @@
 # Constant-gap reductions to constraint graphs give PCP verifiers
 
-Let $\Pi$ be a promise problem and let $\Sigma$ be a fixed finite alphabet. Suppose there are $c > 0$ and a polynomial-time map $x \mapsto G_x$ to binary constraint graphs over $\Sigma$ such that $G_x$ is satisfiable for $x \in \Pi_{\mathrm{yes}}$ and $\mathrm{UNSAT}(G_x) \ge c$ for $x \in \Pi_{\mathrm{no}}$. Then $\Pi \in \mathrm{PromisePCP}(\log n, 1)$; if $\Pi$ is a language, then $\Pi \in \mathrm{PCP}(\log n, 1)$ with perfect completeness.
+Let $\Pi$ be a promise problem and let $\Sigma$ be a fixed finite alphabet. Suppose there are $c > 0$ and a polynomial-time map $x \mapsto G_x$ to binary constraint graphs over $\Sigma$ such that $G_x$ is satisfiable for $x \in \Pi_{\mathrm{yes}}$ and $\mathrm{UNSAT}(G_x) \ge c$ for $x \in \Pi_{\mathrm{no}}$. Then $\Pi \in \mathrm{PromisePCP}(\log n, 1)$; if $\Pi$ is a language, then there are constants $a, a' > 0$ such that $\Pi \in \mathrm{PCP}(\lceil a\log n\rceil, a')$ with perfect completeness.
 
 ## Proof sketch
 
-The verifier constructs $G_x$, runs the random-edge verifier on a proof listing a fixed-width binary encoding of a label per vertex, and repeats it a constant number $k$ of times with $(1 - c/2)^k \le 1/2$. Each round uses $O(\log |G_x|) = O(\log n)$ random bits and $O(\log|\Sigma|) = O(1)$ queries.
+The verifier constructs $G_x$, runs the random-edge verifier on a proof listing a fixed-width binary encoding of a label per vertex, and repeats it a constant number $k$ of times with $(1 - c/2)^k \le 1/2$ (and for a language $\Pi$, repeating a constant number $k'$ of times with $(1 - c/2)^{k'} \le 1/3$ and padding the random coins to $\lceil a\log n\rceil$ bits puts $\Pi \in \mathrm{PCP}(\lceil a\log n\rceil, a')$ for constants $a, a' > 0$). Each round uses $O(\log |G_x|) = O(\log n)$ random bits and $O(\log|\Sigma|) = O(1)$ queries.
 
 ## Depends on
 

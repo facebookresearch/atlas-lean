@@ -1,6 +1,6 @@
 # Half-block encryption with a strong PRP is CCA secure
 
-Let $E$ be a strong PRP on $2n$-bit blocks. The half-block cipher encrypts an $n$-bit message $m$ as $E(k, r \| m)$ for a fresh uniform $r \in \{0,1\}^n$, and decrypts $c$ to the last $n$ bits of $D(k, c)$ (rejecting words of other lengths). It is CCA secure.
+Let $E$ be a strong PRP on $2n$-bit blocks, where $2^{-n}$ is negligible in the security parameter. The half-block cipher encrypts an $n$-bit message $m$ as $E(k, r \| m)$ for a fresh uniform $r \in \{0,1\}^n$, and decrypts $c$ to the last $n$ bits of $D(k, c)$ (rejecting words of other lengths). It is CCA secure.
 
 ## Proof sketch
 
@@ -10,6 +10,7 @@ Replace $E$ by a random permutation and then, with a table that answers redundan
 
 - [Strong pseudorandom permutation](../block-ciphers-and-strong-prps/strong-pseudorandom-permutation.md)
 - [CCA indistinguishability experiment](../../security-games/generic-security-games/cca-game.md)
+- [Negligible advantage](../../security-games/asymptotic-security/negligible-adv.md)
 
 ## Proof depends on
 

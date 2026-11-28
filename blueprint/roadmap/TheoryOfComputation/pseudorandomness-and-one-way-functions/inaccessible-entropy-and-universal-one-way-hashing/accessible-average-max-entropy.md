@@ -1,8 +1,10 @@
 # Collision finders and accessible average max-entropy
 
-Let $F = (F_n)$ be a polynomial-time function family on uniform inputs. An *$F$-collision finder* is a randomized algorithm $A$ that on input $x$ outputs an element of the fiber $F^{-1}(F(x))$ (any randomized map can be sanitized into one by replacing outputs outside the fiber by $x$). $F$ has *accessible average max-entropy at most $k(n)$* if for every probabilistic polynomial-time $F$-collision finder $A$ there is a family of sets $L(z) \subseteq F^{-1}(z)$ such that, for all large $n$,
+Let $F = (F_n)$ be a polynomial-time function family on finite input domains $D_n$ (such as $\{0,1\}^n$, or a product of bit strings, a hash family and an index range), and let $X$ be uniform on $D_n$. An *$F$-collision finder* is a randomized algorithm $A$ that on every input $x$ and coin sequence $r$ outputs an element $A(x; r)$ of the fiber $F^{-1}(F(x))$ (any randomized map can be sanitized into one by replacing outputs outside the fiber by $x$). $F$ has *accessible average max-entropy at most $k(n)$* if for every probabilistic polynomial-time $F$-collision finder $A$ there are a family of sets $\{L(x)\}_{x \in D_n}$, indexed by the input, with $x \in L(x)$ for every $x$, and a negligible function $\varepsilon$ such that, for all large $n$,
 
-$$\mathbb{E}_{x}\bigl[\log_2 |L(F(x))|\bigr] \le k(n) \quad\text{and}\quad \Pr_{x, \text{coins}}\bigl[A(x) \notin L(F(x))\bigr] \text{ is negligible}.$$
+$$\mathbb{E}\bigl[\log_2 |L(X)|\bigr] \le k(n) \quad\text{and}\quad \Pr_{X, R}\bigl[A(X; R) \in L(X)\bigr] \ge 1 - \varepsilon(n),$$
+
+with $R$ the uniform coins of $A$. The sets may depend on $A$; intersecting them with the fibers preserves both conditions, so one may assume $L(x) \subseteq F^{-1}(F(x))$.
 
 $F$ has *inaccessible entropy* $\Delta(n)$ if its accessible average max-entropy is at most $H(X \mid F(X)) - \Delta(n)$.
 
@@ -10,7 +12,8 @@ $F$ has *inaccessible entropy* $\Delta(n)$ if its accessible average max-entropy
 
 - [Real sample entropy of a function](real-sample-entropy.md)
 - [Probabilistic polynomial-time Turing machines](../../../ComputerScience/cryptography/security-games/asymptotic-security/probabilistic-polynomial-time-turing-machines.md)
+- [Negligible functions](../../complexity-classes/time-and-space-complexity-classes/negligible.md)
 
 ## Sources
 
-- I. Haitner, T. Holenstein, O. Reingold, S. Vadhan and H. Wee, "Inaccessible Entropy II: IE Functions and Universal One-Way Hashing", Theory of Computing 16, 2020.
+- I. Haitner, T. Holenstein, O. Reingold, S. Vadhan and H. Wee, "Inaccessible Entropy II: IE Functions and Universal One-Way Hashing", Theory of Computing 16(8), 2020: Definition 3.3 (collision finders) and Definition 3.9 (accessible average max-entropy).

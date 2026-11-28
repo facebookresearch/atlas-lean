@@ -1,6 +1,6 @@
 # Correctness of the Fujisaki–Okamoto KEMs
 
-If $\mathrm{PKE}$ is $\delta$-correct, then in the random oracle model the KEMs $\mathrm{FO}^{\perp}$ and $\mathrm{FO}^{\not\perp}$ are $q_G \delta$-correct against adversaries making at most $q_G$ queries to $G$: the probability that an honestly encapsulated key fails to be recovered by decapsulation is at most $q_G\delta$. More precisely, the real decapsulation oracle and a keyless simulator that answers from the cached random-oracle queries are indistinguishable except with probability $q_G \delta$, averaged over key generation.
+If $\mathrm{PKE}$ is $\delta$-correct, then in the random oracle model the KEMs $\mathrm{FO}^{\perp}$ and $\mathrm{FO}^{\not\perp}$ are $q_G \delta$-correct against adversaries making at most $q_G$ queries to $G$: the probability that an honestly encapsulated key fails to be recovered by decapsulation is at most $q_G\delta$.
 
 ## Proof sketch
 

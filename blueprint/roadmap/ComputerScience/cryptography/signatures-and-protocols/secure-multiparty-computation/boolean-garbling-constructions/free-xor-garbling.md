@@ -1,6 +1,6 @@
 # Free-XOR garbling
 
-*Free-XOR* garbling fixes one secret global offset $\Delta \in L$ of colour $1$ for the whole circuit (with $L$ of characteristic two, e.g. $\{0,1\}^k$): the two labels of every wire $i$ are $W_i$ and $W_i \oplus \Delta$, the second encoding the bit $1$. An XOR gate with inputs $a, b$ needs no garbled table: its output zero-label is $W_c = W_a \oplus W_b$, and the evaluator XORs the labels it holds. Non-XOR gates are garbled with four rows (or three with row reduction) using a tweakable hash $H$ with a distinct tweak for each row.
+*Free-XOR* garbling fixes one secret global offset $\Delta \in L$ of colour $1$ for the whole circuit (with $L$ of characteristic two, e.g. $\{0,1\}^k$): the two labels of every wire $i$ are $W_i$ and $W_i \oplus \Delta$, the second encoding the bit $1$. An XOR gate with inputs $a, b$ needs no garbled table: its output zero-label is $W_c = W_a \oplus W_b$, and the evaluator XORs the labels it holds. Each non-XOR gate $g$ with input wires $i, j$ and output wire $k$ is garbled with four rows, placed by the colour bits of the input labels: the row for input labels $A$ (of wire $i$) and $B$ (of wire $j$) is $H(A \Vert B \Vert g) \oplus C$, where $C$ is the output label (with its colour bit) for the gate's value on those inputs and the gate index $g$ serves as a tweak used by that gate only; the evaluator decrypts the row selected by the colours of the labels it holds.
 
 ## Depends on
 

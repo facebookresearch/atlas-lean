@@ -1,6 +1,6 @@
 # Local test on a proof string
 
-Let $P$ be a finite set of proof positions, $\Gamma$ a finite alphabet, $R$ a finite nonempty set of random strings and $Q$ a finite set of query indices. A *local test* $T$ consists of a query map $\mathrm{query} : R \times Q \to P$ and a decision predicate $D_r : \Gamma^Q \to \{0,1\}$ for every $r \in R$. For a proof $\pi : P \to \Gamma$, the test *passes on* $r$ when $D_r\big((\pi(\mathrm{query}(r,i)))_{i \in Q}\big) = 1$, and its *acceptance probability* is
+Let $P$ be a finite set of proof positions, $\Gamma$ a finite alphabet, $R$ a finite nonempty set of random strings and $Q$ a finite nonempty set of query indices. A *local test* $T$ consists of a query map $\mathrm{query} : R \times Q \to P$ and a decision predicate $D_r : \Gamma^Q \to \{0,1\}$ for every $r \in R$. For a proof $\pi : P \to \Gamma$, the test *passes on* $r$ when $D_r\big((\pi(\mathrm{query}(r,i)))_{i \in Q}\big) = 1$, and its *acceptance probability* is
 
 $$\mathrm{acc}_T(\pi) = \Pr_{r \in R}\big[T \text{ passes on } r\big],$$
 

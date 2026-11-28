@@ -6,11 +6,11 @@ $$
 \alpha = \frac{z_1 - a z_0 - b}{c_1 - a c_0},
 $$
 
-so the signing key is recovered from the two signatures. More generally, from two accepting conversations for $u$ whose commitments satisfy $t_1 = a t_0 + b g$, a witness can be extracted.
+so the signing key is recovered from the two signatures. More generally, from two accepting conversations $(t_0, c_0, z_0)$ and $(t_1, c_1, z_1)$ for $u$ whose commitments satisfy $t_1 = a t_0 + b g$ and whose challenges satisfy $c_1 \ne a c_0$, the witness $\alpha = (z_1 - a z_0 - b)/(c_1 - a c_0)$ is extracted; without that condition no witness need be extractable (for $a = 1$, $b = 0$ and $c_1 = c_0$ the two conversations may coincide).
 
 ## Proof sketch
 
-$z_1 - a z_0 = (a r + b + c_1 \alpha) - a(r + c_0 \alpha) = b + (c_1 - a c_0)\alpha$.
+$z_1 - a z_0 = (a r + b + c_1 \alpha) - a(r + c_0 \alpha) = b + (c_1 - a c_0)\alpha$. For conversations, subtracting $a$ times $z_0 g = t_0 + c_0 u$ from $z_1 g = t_1 + c_1 u = a t_0 + b g + c_1 u$ gives $(z_1 - a z_0 - b) g = (c_1 - a c_0) u$.
 
 ## Depends on
 

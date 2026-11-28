@@ -1,6 +1,6 @@
 # Oligopoly pricing on parallel links achieves at least 5/6 of the optimal surplus
 
-Let profit-maximizing providers own disjoint sets of parallel links with smooth convex nondecreasing latencies and set per-unit prices anticipating users' priced Wardrop routing (with reservation utility). At every pure-strategy oligopoly equilibrium, the social surplus is at least $5/6$ of the optimal social surplus, for any number of links and any ownership structure. The bound is tight: for every number $I \ge 2$ of links there is an instance attaining exactly $5/6$.
+Let profit-maximizing providers own disjoint sets of parallel links with smooth convex nondecreasing latencies satisfying $\ell_i(0) = 0$ (zero latency at zero flow) and set per-unit prices anticipating users' priced Wardrop routing (with reservation utility). At every pure-strategy oligopoly equilibrium at which each link carrying positive flow with zero latency is the only link its owner owns (automatic when latencies are strictly increasing or each provider owns one link), the social surplus is at least $5/6$ of the optimal social surplus, for any number of links and any ownership structure. The bound is tight: for every number $I \ge 2$ of links there is an instance, with each link owned by a different provider, attaining exactly $5/6$.
 
 ## Proof sketch
 
