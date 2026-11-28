@@ -65,7 +65,7 @@ theorem mapLCompletion_rankOne (x₂ : E₂) (x₁ : E₁) (y₂ : F₂) (y₁ :
       Completion.inner_coe, TensorProduct.inner_tmul,
       TensorProduct.smul_tmul_smul, Completion.coe_smul]
   | add u v hu hv =>
-    simpa only [Completion.coe_add, map_add, hu, hv]
+    simp only [Completion.coe_add, map_add, hu, hv]
 
 /-- Let `𝕜` be a real or complex scalar field (`RCLike 𝕜`), and let `E₁`, `E₂`, `F₁`
 and `F₂` be independent normed inner-product spaces, possibly zero. For arbitrary vectors

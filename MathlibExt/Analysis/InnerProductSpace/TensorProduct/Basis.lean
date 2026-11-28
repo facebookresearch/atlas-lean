@@ -20,8 +20,9 @@ public import Mathlib.Analysis.InnerProductSpace.l2Space
 Given Hilbert bases of two inner-product spaces, their completed pure
 tensors form a Hilbert basis of the actual tensor completion. Its lp-two
 representation sends a pure tensor to the products of the original basis
-coordinates. Scalar, factor and index universes are independent; no finite,
-countable, nonempty or complete-factor assumption is required.
+coordinates. Scalar, factor and index universes are independent, and the index types
+need not be finite, countable, or nonempty. The given Hilbert bases entail completeness
+of their factor spaces; the construction requires no additional completeness argument.
 -/
 
 @[expose] public section
@@ -52,7 +53,7 @@ def completedTensorProduct (b : HilbertBasis ι 𝕜 E) (c : HilbertBasis κ �
     fun ij => ((b ij.1 ⊗ₜ[𝕜] c ij.2 : E ⊗[𝕜] F) : Completion (E ⊗[𝕜] F))
   have hv : Orthonormal 𝕜 v := by
     exact (b.orthonormal.tmul c.orthonormal).comp_linearIsometry
-      (TensorProduct.factorCompletionInclusion (𝕜 := 𝕜) (E := E ⊗[𝕜] F))
+      (Completion.toComplₗᵢ (𝕜 := 𝕜) (E := E ⊗[𝕜] F))
   have hb : Dense (Submodule.span 𝕜 (Set.range b) : Set E) :=
     Submodule.dense_iff_topologicalClosure_eq_top.mpr b.dense_span
   have hc : Dense (Submodule.span 𝕜 (Set.range c) : Set F) :=

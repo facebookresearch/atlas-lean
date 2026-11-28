@@ -43,17 +43,6 @@ variable {𝕜 : Type u𝕜} [RCLike 𝕜]
 variable {E : Type uE} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
 
-/-- **Canonical isometric inclusion into a factor completion.**
-
-Let E be an inner product space over an RCLike field 𝕜. The map
-factorCompletionInclusion:E→ₗᵢ[𝕜]Ê is the canonical inclusion x↦ι_E(x), preserving its norm
-and inner product.
--/
-def factorCompletionInclusion : E →ₗᵢ[𝕜] Completion E := by
-  let _ : UniformContinuousConstSMul 𝕜 E :=
-    uniformContinuousConstSMul_of_continuousConstSMul 𝕜 E
-  exact Completion.toComplₗᵢ
-
 /-- **Isometric tensor embedding induced by left-factor completion.**
 
 Let E,F be inner product spaces over an RCLike field 𝕜 in independent universes. Write Ê,F̂
@@ -63,7 +52,7 @@ completionLeftTensorEmbedding:E⊗̂F→Ê⊗̂F extends x⊗y↦ι_E(x)⊗y.
 -/
 def completionLeftTensorEmbedding :
     Completion (E ⊗[𝕜] F) →ₗᵢ[𝕜] Completion ((Completion E) ⊗[𝕜] F) :=
-  (mapIsometry (factorCompletionInclusion (𝕜 := 𝕜) (E := E))
+  (mapIsometry (Completion.toComplₗᵢ (𝕜 := 𝕜) (E := E))
     (LinearIsometry.id : F →ₗᵢ[𝕜] F)).completion
 
 /-- **Pure tensor value of the left-factor completion embedding.**
@@ -79,7 +68,7 @@ theorem completionLeftTensorEmbedding_tmul (x : E) (y : F) :
       (((x : Completion E) ⊗ₜ[𝕜] y : (Completion E) ⊗[𝕜] F) :
         Completion ((Completion E) ⊗[𝕜] F)) := by
   rw [completionLeftTensorEmbedding, LinearIsometry.completion_apply_coe]
-  simp only [mapIsometry_apply, TensorProduct.map_tmul, LinearIsometry.id_apply]
+  simp only [mapIsometry_apply, TensorProduct.map_tmul]
   rfl
 
 /-- **Dense range of the left-factor completion embedding.**
@@ -140,6 +129,40 @@ def completionLeftTensorUnitary :
   LinearIsometryEquiv.ofSurjective (completionLeftTensorEmbedding (𝕜 := 𝕜))
     (surjective_completionLeftTensorEmbedding (𝕜 := 𝕜))
 
+/-- **Pure tensor value of the left-factor completion equivalence.**
+
+Let E,F be normed inner-product spaces over an RCLike field 𝕜, and write Ê for the
+completion of E. For x∈E and y∈F, the isometric equivalence from the completion of E⊗F to
+the completion of Ê⊗F sends x⊗y to ι_E(x)⊗y, where ι_E is the completion inclusion.
+Neither factor is required to be complete, nonzero, or finite-dimensional.
+-/
+@[simp]
+theorem completionLeftTensorUnitary_tmul (x : E) (y : F) :
+    completionLeftTensorUnitary (𝕜 := 𝕜)
+        ((x ⊗ₜ[𝕜] y : E ⊗[𝕜] F) : Completion (E ⊗[𝕜] F)) =
+      (((x : Completion E) ⊗ₜ[𝕜] y : (Completion E) ⊗[𝕜] F) :
+        Completion ((Completion E) ⊗[𝕜] F)) := by
+  simpa only [completionLeftTensorUnitary, LinearIsometryEquiv.coe_ofSurjective] using
+    completionLeftTensorEmbedding_tmul (𝕜 := 𝕜) x y
+
+/-- **Inverse pure tensor value of the left-factor completion equivalence.**
+
+Let E,F be normed inner-product spaces over an RCLike field 𝕜, and let ι_E:E→Ê be the
+completion inclusion. For x∈E and y∈F, the inverse isometric equivalence sends the
+completed tensor ι_E(x)⊗y in Ê⊗F to the completed tensor x⊗y in E⊗F. This includes zero
+and incomplete factors.
+-/
+@[simp]
+theorem completionLeftTensorUnitary_symm_tmul (x : E) (y : F) :
+    (completionLeftTensorUnitary (𝕜 := 𝕜)).symm
+        ((((x : Completion E) ⊗ₜ[𝕜] y : (Completion E) ⊗[𝕜] F) :
+          Completion ((Completion E) ⊗[𝕜] F))) =
+      ((x ⊗ₜ[𝕜] y : E ⊗[𝕜] F) : Completion (E ⊗[𝕜] F)) := by
+  have h := (completionLeftTensorUnitary (𝕜 := 𝕜) (E := E) (F := F)).symm_apply_apply
+    ((x ⊗ₜ[𝕜] y : E ⊗[𝕜] F) : Completion (E ⊗[𝕜] F))
+  rw [completionLeftTensorUnitary_tmul] at h
+  exact h
+
 /-- **Isometric tensor embedding induced by right-factor completion.**
 
 Let E,F be inner product spaces over an RCLike field 𝕜 in independent universes. Write Ê,F̂
@@ -150,7 +173,7 @@ completionRightTensorEmbedding:E⊗̂F→E⊗̂F̂ extends x⊗y↦x⊗ι_F(y).
 def completionRightTensorEmbedding :
     Completion (E ⊗[𝕜] F) →ₗᵢ[𝕜] Completion (E ⊗[𝕜] (Completion F)) :=
   (mapIsometry (LinearIsometry.id : E →ₗᵢ[𝕜] E)
-    (factorCompletionInclusion (𝕜 := 𝕜) (E := F))).completion
+    (Completion.toComplₗᵢ (𝕜 := 𝕜) (E := F))).completion
 
 /-- **Pure tensor value of the right-factor completion embedding.**
 
@@ -165,7 +188,7 @@ theorem completionRightTensorEmbedding_tmul (x : E) (y : F) :
       ((x ⊗ₜ[𝕜] (y : Completion F) : E ⊗[𝕜] (Completion F)) :
         Completion (E ⊗[𝕜] (Completion F))) := by
   rw [completionRightTensorEmbedding, LinearIsometry.completion_apply_coe]
-  simp only [mapIsometry_apply, TensorProduct.map_tmul, LinearIsometry.id_apply]
+  simp only [mapIsometry_apply, TensorProduct.map_tmul]
   rfl
 
 /-- **Dense range of the right-factor completion embedding.**
@@ -225,6 +248,40 @@ def completionRightTensorUnitary :
     Completion (E ⊗[𝕜] F) ≃ₗᵢ[𝕜] Completion (E ⊗[𝕜] (Completion F)) :=
   LinearIsometryEquiv.ofSurjective (completionRightTensorEmbedding (𝕜 := 𝕜))
     (surjective_completionRightTensorEmbedding (𝕜 := 𝕜))
+
+/-- **Pure tensor value of the right-factor completion equivalence.**
+
+Let E,F be normed inner-product spaces over an RCLike field 𝕜, and write F̂ for the
+completion of F. For x∈E and y∈F, the isometric equivalence from the completion of E⊗F to
+the completion of E⊗F̂ sends x⊗y to x⊗ι_F(y), where ι_F is the completion inclusion.
+Neither factor is required to be complete, nonzero, or finite-dimensional.
+-/
+@[simp]
+theorem completionRightTensorUnitary_tmul (x : E) (y : F) :
+    completionRightTensorUnitary (𝕜 := 𝕜)
+        ((x ⊗ₜ[𝕜] y : E ⊗[𝕜] F) : Completion (E ⊗[𝕜] F)) =
+      ((x ⊗ₜ[𝕜] (y : Completion F) : E ⊗[𝕜] (Completion F)) :
+        Completion (E ⊗[𝕜] (Completion F))) := by
+  simpa only [completionRightTensorUnitary, LinearIsometryEquiv.coe_ofSurjective] using
+    completionRightTensorEmbedding_tmul (𝕜 := 𝕜) x y
+
+/-- **Inverse pure tensor value of the right-factor completion equivalence.**
+
+Let E,F be normed inner-product spaces over an RCLike field 𝕜, and let ι_F:F→F̂ be the
+completion inclusion. For x∈E and y∈F, the inverse isometric equivalence sends the
+completed tensor x⊗ι_F(y) in E⊗F̂ to the completed tensor x⊗y in E⊗F. This includes zero
+and incomplete factors.
+-/
+@[simp]
+theorem completionRightTensorUnitary_symm_tmul (x : E) (y : F) :
+    (completionRightTensorUnitary (𝕜 := 𝕜)).symm
+        (((x ⊗ₜ[𝕜] (y : Completion F) : E ⊗[𝕜] (Completion F)) :
+          Completion (E ⊗[𝕜] (Completion F)))) =
+      ((x ⊗ₜ[𝕜] y : E ⊗[𝕜] F) : Completion (E ⊗[𝕜] F)) := by
+  have h := (completionRightTensorUnitary (𝕜 := 𝕜) (E := E) (F := F)).symm_apply_apply
+    ((x ⊗ₜ[𝕜] y : E ⊗[𝕜] F) : Completion (E ⊗[𝕜] F))
+  rw [completionRightTensorUnitary_tmul] at h
+  exact h
 
 end
 

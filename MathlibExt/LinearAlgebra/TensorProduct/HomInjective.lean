@@ -19,7 +19,7 @@ public import Mathlib.LinearAlgebra.TensorProduct.Map
 # Injectivity of algebraic tensor evaluation on linear maps
 
 Let K be a field and all modules vector spaces in independent universes. The maps
-P⊗Hom(M,N)→Hom(M,P⊗N), Hom(P,M)⊗N→Hom(P,M⊗N), and Hom(M,M₂)⊗Hom(N,N₂)→Hom(M⊗N,M₂⊗N₂) are
+M⊗Hom(P,N)→Hom(P,M⊗N), Hom(P,M)⊗N→Hom(P,M⊗N), and Hom(M,M₂)⊗Hom(N,N₂)→Hom(M⊗N,M₂⊗N₂) are
 injective, with the usual pure-tensor evaluations.
 -/
 
@@ -40,8 +40,8 @@ variable {P : Type uP} [AddCommGroup P] [Module R P]
 
 /-- **Faithfulness of vector-first tensor evaluation.**
 
-Let K be a field and P,M,N K-vector spaces. The linear map P⊗_KHom_K(M,N)→Hom_K(M,P⊗_KN),
-sending p⊗f to x↦p⊗f(x), is injective, even without finite-dimensionality.
+Let K be a field and M,P,N K-vector spaces. The linear map M⊗_KHom_K(P,N)→Hom_K(P,M⊗_KN),
+sending m⊗f to p↦m⊗f(p), is injective, even without finite-dimensionality.
 -/
 theorem lTensorHomToHomLTensor_injective :
     Function.Injective (lTensorHomToHomLTensor (RingHom.id R) P M N) := by
