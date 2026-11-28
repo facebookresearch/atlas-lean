@@ -5,6 +5,7 @@
 - [Derivations in a string rewriting system](derives.md)
 - [The reachability problem for string rewriting](sr.md)
 - [Rewriting systems with nonempty sides](nonempty-rules.md)
+- [Bottom-up rewriting systems](bottom-up-rewriting-systems/README.md)
 
 ## The dominoes
 

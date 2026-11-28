@@ -1,10 +1,14 @@
 # Resilience through adaptation as a ratio of ensemble means
 
-**Setting.** A noisy system $X$ (a Markov process with generator $\mathcal L_{e,\theta}$ depending on environmental parameters $e$ and physiological parameters $\theta$) starts in its invariant distribution $\bar p_{e_0,\theta_0}$. At time $0$ the environment changes $e_0 \to e_1$; at an independent random reaction time $\tau \sim \mathrm{Exp}(\lambda)$ the system adapts $\theta_0 \to \theta_1$. A success function $S$ measures performance; $\bar S_{e,\theta}$ is its mean under $\bar p_{e,\theta}$, so $\mathbb E S(X(0)) = \bar S_{e_0,\theta_0}$ and $\mathbb E S(X(t)) \to \bar S_{e_1,\theta_1}$.
+**Setting.** A noisy system $X$ (a Markov process with generator $\mathcal L_{e,\theta}$ depending on environmental parameters $e$ and physiological parameters $\theta$) starts in its invariant distribution $\bar p_{e_0,\theta_0}$. At time $0$ the environment changes $e_0 \to e_1$; at an independent random reaction time $\tau \sim \mathrm{Exp}(\lambda)$ the system adapts $\theta_0 \to \theta_1$. A success function $S$ measures performance; $\bar S_{e,\theta}$ is its mean under $\bar p_{e,\theta}$.
+
+**Assumptions.** For every parameter pair $(e,\theta)$ involved, $X_{e,\theta}$ is ergodic with unique invariant probability $\bar p_{e,\theta}$, in the sense that $\mathbb E_x S(X_{e,\theta}(t)) \to \bar S_{e,\theta}$ as $t \to \infty$ for every initial state $x$; and $S$ is bounded and lies in the domain of every generator $\mathcal L_{e,\theta}$ involved. Under these assumptions all the expectations below are finite, $\mathbb E S(X(0)) = \bar S_{e_0,\theta_0}$, and $\mathbb E S(X(t)) \to \bar S_{e_1,\theta_1}$. Without ergodicity the stationary means $\bar S_{e,\theta}$ and this limit need not be defined, and without boundedness (or at least integrability) of $S$ the expectations may diverge.
 
 **Definition.** With $\bar S^\tau_{e_1,\theta_0} = \mathbb E\, S(X(\tau))$, the success at the moment of adaptation, the *resilience through adaptation* is
 
-$$R_\tau = \frac{\bar S_{e_1,\theta_1} - \bar S^\tau_{e_1,\theta_0}}{\bar S_{e_0,\theta_0} - \bar S^\tau_{e_1,\theta_0}} .$$
+$$R_\tau = \frac{\bar S_{e_1,\theta_1} - \bar S^\tau_{e_1,\theta_0}}{\bar S_{e_0,\theta_0} - \bar S^\tau_{e_1,\theta_0}} ,$$
+
+defined whenever the denominator is nonzero.
 
 **Properties.**
 1. $R_\tau$ depends only on ensemble averages. Since $\tau$ is exponential and independent of the paths of the pre-adaptation process $X_{e_1,\theta_0}$ started from $\bar p_{e_0,\theta_0}$,
@@ -25,4 +29,4 @@ Treating the reaction time as random with a known law turns the "worst state" of
 
 ## Sources
 
-- J. M. Ramirez, J. M. Restrepo, V. Lucarini, D. Weston, "Probabilistic Measures for Biological Adaptation and Resilience", *Physical Review E* 109(2) (2024), 024413, definition of resilience through adaptation $R_\tau$ and its resolvent representation, <https://doi.org/10.1103/physreve.109.024413> (preprint arXiv:2307.06974).
+- J. M. Ramirez, J. M. Restrepo, V. Lucarini, D. Weston, "Probabilistic Measures for Biological Adaptation and Resilience", *Physical Review E* 109(2) (2024), 024413, Section 2 (standing assumptions: ergodicity with a unique invariant probability, and a bounded success function $S$ in the generator's domain), definition of resilience through adaptation $R_\tau$ and its resolvent representation, <https://doi.org/10.1103/physreve.109.024413> (preprint arXiv:2307.06974).

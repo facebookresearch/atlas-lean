@@ -23,6 +23,8 @@
 - [Explicit Euler for an index-one linear descriptor system](explicit-euler-for-an-index-one-linear-descriptor-system.md)
 - [The θ-method](theta-method.md)
 - [Global error bound for the θ-method](global-error-bound-for-the-theta-method.md)
+- [Stability threshold of explicit Euler for the complex test equation](scalar-euler-complex-tendsto-zero-iff.md)
+- [Stability threshold of explicit Euler for real decay](scalar-euler-real-tendsto-zero-iff.md)
 
 ## Related topics
 
