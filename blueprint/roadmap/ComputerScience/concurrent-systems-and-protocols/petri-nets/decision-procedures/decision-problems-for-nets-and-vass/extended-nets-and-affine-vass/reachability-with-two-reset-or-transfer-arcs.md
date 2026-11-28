@@ -30,4 +30,3 @@ The proof reduces reachability for nets with inhibitor arcs. Each place $p$ test
 ## Sources
 
 - Catherine Dufourd, Alain Finkel and Philippe Schnoebelen, "Reset nets between decidability and undecidability", in *Automata, Languages and Programming (ICALP 1998)*, Lecture Notes in Computer Science 1443, Springer, 1998, pp. 103–115, doi:10.1007/BFb0055044; read in the authors' open-access copy at <http://www.lsv.fr/Publis/PAPERS/PDF/DFS-icalp98.pdf>: Sections 2 and 3 (G-nets and the families of reset, transfer and double Petri nets), Theorem 11 and the remark after it, of that copy.
-- Toshiro Araki and Tadao Kasami, "Some decision problems related to the reachability problem for Petri nets", *Theoretical Computer Science* 3(1):85–104, 1976, doi:10.1016/0304-3975(76)90067-0 (not read; credited in the copy above with introducing reset nets).

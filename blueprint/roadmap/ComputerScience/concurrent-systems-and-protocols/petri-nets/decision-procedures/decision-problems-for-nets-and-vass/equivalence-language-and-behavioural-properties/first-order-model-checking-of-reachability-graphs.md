@@ -13,6 +13,7 @@ Model checking $\mathrm{FO}(\to)$ restricted to one variable is decidable, and t
 
 ## Depends on
 
+- [Reachability set and reachability graph](../../../reachability-set-and-reachability-graph.md)
 - [Place/transition Petri nets](../../../place-transition-petri-nets.md)
 - [Decidability by multi-stack machines](../../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
@@ -26,4 +27,4 @@ The proofs reduce the equality problem for the reachability sets of two Petri ne
 
 ## Sources
 
-- Philippe Darondeau, Stéphane Demri, Roland Meyer and Christophe Morvan, *Petri Net Reachability Graphs: Decidability Status of First Order Properties*, Logical Methods in Computer Science 8(4), 2012, https://doi.org/10.2168/LMCS-8(4:9)2012; the definition of unlabelled reachability graphs and of the logic, the corollary and the theorem on $\mathrm{FO}(\to)$, and the corollaries on $\mathrm{FO}(\to^+)$ and $\mathrm{FO}(\to^*)$, read in arXiv:1210.2972v2. Locators in arXiv:1210.2972v2: Theorem 2.2, Corollary 3.2, Theorem 3.3, Corollary 3.4, Corollary 4.2 and Proposition 4.3.
+- Philippe Darondeau, Stéphane Demri, Roland Meyer and Christophe Morvan, *Petri Net Reachability Graphs: Decidability Status of First Order Properties*, Logical Methods in Computer Science 8(4), 2012, https://doi.org/10.2168/LMCS-8(4:9)2012; the definition of unlabelled reachability graphs and of the logic, the corollary and the theorem on $\mathrm{FO}(\to)$, and the corollaries on $\mathrm{FO}(\to^+)$ and $\mathrm{FO}(\to^*)$, read in arXiv:1210.2972v2. Locators in arXiv:1210.2972v2: Theorem 2.2, Corollary 3.2, Theorem 3.3, Corollary 3.4, Corollary 4.2 and Propositions 3.5 and 4.3.

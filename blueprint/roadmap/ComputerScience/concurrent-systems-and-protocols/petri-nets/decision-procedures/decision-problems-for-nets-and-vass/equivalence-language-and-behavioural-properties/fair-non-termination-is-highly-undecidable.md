@@ -2,7 +2,7 @@
 
 Whether a Petri net has an infinite fair occurrence sequence, one in which every transition enabled at infinitely many markings occurs infinitely often, is complete for the first level of the analytical hierarchy, and hence undecidable.
 
-**Fairness.** An infinite occurrence sequence of a [Petri net](../../../place-transition-petri-nets.md) is *fair* if every transition that is enabled at infinitely many markings of the sequence occurs infinitely often in it. The *fair non-termination problem* asks, given a Petri net, whether it has an infinite fair occurrence sequence (that is, whether it is not guaranteed to terminate under the fairness assumption). For $i \in \mathbb{N}$, a transition is *$i$-enabled* at a marking if some occurrence sequence of length at most $i$ enables it, and an infinite sequence is *$i$-fair* if every transition that is $i$-enabled infinitely often along it occurs infinitely often; $0$-fairness is fairness.
+**Fairness.** Nets are ordinary [Petri nets](../../../place-transition-petri-nets.md) (all arcs of weight $1$, as in the survey's Section 2). An infinite occurrence sequence of a net is *fair* if every transition that is enabled at infinitely many markings of the sequence occurs infinitely often in it. The *fair non-termination problem* asks, given an ordinary Petri net, whether it has an infinite fair occurrence sequence (that is, whether it is not guaranteed to terminate under the fairness assumption). For $i \in \mathbb{N}$, a transition is *$i$-enabled* at a marking if some occurrence sequence of length at most $i$ enables it, and an infinite sequence is *$i$-fair* if every transition that is $i$-enabled infinitely often along it occurs infinitely often; $0$-fairness is fairness.
 
 **Theorem (Carstensen; Howell, Rosier and Yen).**
 
@@ -22,10 +22,8 @@ None.
 
 ## Expansion
 
-The problem asks for an infinite object, a fair occurrence sequence, and the cited completeness result shows that it is as hard as any problem of the first level of the analytical hierarchy, in particular undecidable. The survey gives no proof details; the comparisons with impartial, just and $\infty$-fair non-termination show that the difficulty comes from the particular fairness notion.
+The problem asks for an infinite object, a fair occurrence sequence, and the cited completeness result shows that it is as hard as any problem of the first level of the analytical hierarchy, in particular undecidable. The survey gives no proof details; the comparisons with impartial, just and $\infty$-fair non-termination show that the difficulty comes from the particular fairness notion. A good expansion follows a source that proves the completeness result and links a page for the first level of the analytical hierarchy.
 
 ## Sources
 
 - Javier Esparza and Mogens Nielsen, "Decidability issues for Petri nets: a survey", *Journal of Information Processing and Cybernetics (EIK)* 30(3):143–160, 1994; read as arXiv:2411.01592v1, <https://arxiv.org/abs/2411.01592v1>: Section 3, paragraph "Non-termination", of arXiv:2411.01592v1, which defines fairness and $i$-fairness and states both clauses and the comparisons.
-- Heino Carstensen, "Decidability questions for fairness in Petri nets", in *STACS 87*, Lecture Notes in Computer Science 247, Springer, 1987, pp. 396–407, doi:10.1007/BFb0039622 (not read).
-- Rodney R. Howell, Louis E. Rosier and Hsu-Chun Yen, "A taxonomy of fairness and temporal logic problems for Petri nets", *Theoretical Computer Science* 82(2):341–372, 1991, doi:10.1016/0304-3975(91)90228-T (not read).

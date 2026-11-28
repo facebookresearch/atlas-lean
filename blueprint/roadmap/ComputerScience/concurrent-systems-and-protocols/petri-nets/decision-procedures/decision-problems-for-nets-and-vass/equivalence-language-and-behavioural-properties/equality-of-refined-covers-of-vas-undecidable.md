@@ -10,7 +10,7 @@ $$
 
 **Theorem (Bonnet, Finkel, Leroux and Zeitoun).** It is undecidable, given two VAS $\mathcal{V}_1$ and $\mathcal{V}_2$ of the same dimension, whether $\mathrm{Cover}_{\le_{\{1\}}}(\mathcal{V}_1) = \mathrm{Cover}_{\le_{\{1\}}}(\mathcal{V}_2)$.
 
-The refined cover is a natural tool for VAS with one zero test on the first component, whose transition relation is monotone for $\le_{\{1\}}$. Because of this theorem, the authors compute the cover of such systems through a different notion, the filtered cover, and derive decision procedures for place-boundedness and LTL model checking of VAS with one zero test.
+The refined cover is a natural tool for VAS with one zero test on the first component, whose transition relation is monotone for $\le_{\{1\}}$. Because of this theorem, the authors compute the cover of such systems through a different notion, the filtered cover, and derive decision procedures for place-boundedness and for model checking labeled VASS with one zero test against ω-regular properties of their transition-label traces, LTL included (Theorem 7.3); the latter proof also uses control-state reachability and the reachability algorithm.
 
 ## Depends on
 

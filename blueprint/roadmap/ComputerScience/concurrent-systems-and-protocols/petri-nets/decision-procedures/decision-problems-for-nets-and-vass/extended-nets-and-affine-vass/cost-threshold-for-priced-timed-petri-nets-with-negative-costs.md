@@ -23,4 +23,4 @@ The reduction is from control-state reachability for two-counter Minsky machines
 
 ## Sources
 
-- Richard Mayr and Parosh Aziz Abdulla, "Priced Timed Petri Nets", Logical Methods in Computer Science 9(4), 2013, <https://doi.org/10.2168/LMCS-9(4:10)2013>; the definitions of the section "Priced Timed Petri Nets" (model, computations, costs and the priced coverability problem) and the theorem with its proof in the section "Undecidability for Negative Costs" of arXiv:1307.2570v2, read at <https://arxiv.org/abs/1307.2570v2>.
+- Parosh Aziz Abdulla and Richard Mayr, "Priced Timed Petri Nets", Logical Methods in Computer Science 9(4), 2013, <https://doi.org/10.2168/LMCS-9(4:10)2013>; the definitions of the section "Priced Timed Petri Nets" (model, computations, costs and the priced coverability problem) and the theorem with its proof in the section "Undecidability for Negative Costs" of arXiv:1307.2570v2, read at <https://arxiv.org/abs/1307.2570v2>.

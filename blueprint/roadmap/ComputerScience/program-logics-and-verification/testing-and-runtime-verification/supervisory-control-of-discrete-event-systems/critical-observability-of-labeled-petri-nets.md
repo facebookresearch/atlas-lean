@@ -14,6 +14,7 @@ The set $C$ is part of the input and must be given finitely. In the reduction (T
 
 ## Depends on
 
+- [Reachability set and reachability graph](../../../concurrent-systems-and-protocols/petri-nets/reachability-set-and-reachability-graph.md)
 - [Place/transition Petri nets](../../../concurrent-systems-and-protocols/petri-nets/place-transition-petri-nets.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 

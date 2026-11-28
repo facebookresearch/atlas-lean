@@ -10,6 +10,7 @@ Thiagarajan and Yang had shown that the MSO theory of a net system that is not g
 
 ## Depends on
 
+- [Boundedness and safeness of Petri nets](../../../boundedness-and-safeness.md)
 - [Place/transition Petri nets](../../../place-transition-petri-nets.md)
 - [Decidability by multi-stack machines](../../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
@@ -23,4 +24,4 @@ The domain of an event structure, its set of configurations ordered by inclusion
 
 ## Sources
 
-- Jérémie Chalopin and Victor Chepoi, *1-Safe Petri Nets and Special Cube Complexes: Equivalence and Applications*, ACM Transactions on Computational Logic 20 (2019), no. 3, pp. 1–49, https://doi.org/10.1145/3322095; the definitions of event structures, MSO theories and grid-freeness in Section 2 and the counterexample theorem with its proof, read in arXiv:1810.03395v2. Locators in arXiv:1810.03395v2: Theorem 10.1, Lemma 10.6 and Theorem 9.11.
+- Jérémie Chalopin and Victor Chepoi, *1-Safe Petri Nets and Special Cube Complexes: Equivalence and Applications*, ACM Transactions on Computational Logic 20 (2019), no. 3, pp. 1–49, https://doi.org/10.1145/3322095; the definitions of event structures, MSO theories and grid-freeness in Section 2 and the counterexample theorem with its proof, read in arXiv:1810.03395v2. Locators in arXiv:1810.03395v2: Theorem 10.1, Lemmas 10.2 and 10.6, and Theorem 9.11.

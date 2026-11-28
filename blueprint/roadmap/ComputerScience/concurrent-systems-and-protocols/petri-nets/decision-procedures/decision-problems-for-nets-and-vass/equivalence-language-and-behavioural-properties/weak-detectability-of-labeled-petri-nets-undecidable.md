@@ -10,6 +10,7 @@ The same paper shows that strong detectability is decidable for labeled Petri ne
 
 ## Depends on
 
+- [Liveness and deadlock-freedom of Petri nets](../../../liveness-and-deadlock-freedom.md)
 - [Place/transition Petri nets](../../../place-transition-petri-nets.md)
 - [Decidability by multi-stack machines](../../../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
