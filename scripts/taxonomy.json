@@ -16811,6 +16811,7 @@
   "WantedExt/Biology/Epidemiology/NonlinearIncidenceGlobalStabilityWanted": {"to": "Biology/epidemiology", "title": "Global stability with nonlinear incidence"},
   "WantedExt/Biology/Epidemiology/PowerLawContactProcessWanted": {"to": "Biology/epidemiology", "title": "Contact process on power-law random graphs"},
   "WantedExt/Biology/Epidemiology/SISLogisticExtinctionTimeWanted": {"to": "Biology/epidemiology", "title": "Extinction times in the stochastic SIS logistic epidemic"},
+  "WantedExt/Biology/PairwiseCompetitionWanted": {"to": "Biology/population-genetics", "title": "Selection coefficient from a pairwise competition assay"},
   "WantedExt/Biology/StatisticalGenetics/BernsteinABOWanted": {"to": "Biology/statistical-genetics", "title": "Bernstein's triple-allele law for the ABO blood groups"},
   "WantedExt/Biology/StatisticalGenetics/HendersonInverseWanted": {"to": "Biology/quantitative-genetics", "title": "Henderson's rules for the inverse numerator relationship matrix"},
   "WantedExt/Biology/Ecology/BoundaryESSStabilityWanted": {"to": "Biology/population-dynamics", "title": "Stability of boundary evolutionarily stable strategies"},
