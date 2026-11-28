@@ -2352,6 +2352,8 @@
   "CSLibExt/Scheduling/ProjectNetwork/Slack": {"to": "ComputerScience/graph-algorithms/shortest-paths", "title": "Shortest paths"},
   "CSLibExt/Scheduling/RealTime/MeasurableJobSchedules": {"to": "ComputerScience/concurrent-systems-and-protocols", "title": "Real-time scheduling"},
   "CSLibExt/Scheduling/SingleMachine/CompletionTime": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Single-machine scheduling"},
+  "CSLibExt/Scheduling/SingleMachine/EarliestDueDate": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Earliest-due-date rule"},
+  "CSLibExt/Scheduling/SingleMachine/Lateness": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Single-machine scheduling"},
   "CSLibExt/Scheduling/SingleMachine/SmithRule": {"to": "ComputerScience/greedy-algorithms-and-matroids", "title": "Smith's rule for weighted completion time"},
   "CSLibExt/Security/AccessControl/HRU/Basic": {"to": "ComputerScience/computer-security", "title": "Access control"},
   "CSLibExt/Security/AccessControl/RBAC0": {"to": "ComputerScience/computer-security", "title": "Role-based access control"},
