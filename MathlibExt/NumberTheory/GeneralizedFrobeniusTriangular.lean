@@ -19,6 +19,8 @@ import Mathlib.Tactic.Ring
 import Mathlib.Data.Int.GCD
 import Mathlib.Data.Set.Card.Arithmetic
 import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum.NatSqrt
+import MathlibExt.NumberTheory.GeneralizedFrobeniusTriangularIsGenFrobeniusNumberConsMulOfGcd
 
 /-! # Generalized Frobenius numbers of triangular numbers
 
@@ -31,12 +33,18 @@ These inequalities describe a triangle of lattice points with a partially includ
 For `s = k * (k + 1) + i` with `i ≤ 2 * k + 1` and `triangularFrobeniusBound n s < n`, that
 cutoff is the generalized Frobenius number of the reduced triple: above it every slice has at
 least as many representations, and the slice with first coefficient `triangularFrobeniusY n k i`
-has strictly more.
+has strictly more. For levels 11 through 20, Corollary 1 gives explicit formulas for unreduced
+triples, with level- and parity-dependent lower bounds on the index as stated in the table.
+The proof uses the reduced theorem above its strict threshold and finite representation counts
+at the table entries on or below that threshold.
 
 ## References
 
 * Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-  Numbers*, INTEGERS 26 (2026), Article A63, pp. 1–22, Definition 1, Lemmas 2–5, and Theorem 4.
+  Numbers*, INTEGERS 26 (2026), Article A63, pp. 1–22, Corollary 1, Definition 1, Lemmas 1–5,
+  and Theorem 4.
+* Matthias Beck and Curtis Kifer, *An Extreme Family of Generalized Frobenius Numbers*,
+  INTEGERS 11 (2011), Article A24, pp. 1–6, Lemma 4 (the common-factor reduction).
 * Kittipong Subwattanachai, *Generalized Frobenius Number of Three Variables*, Kyushu J. Math.
   80 (2026), pp. 49–63, equation (2) and Lemmas 6–7 (the two-generator cutoff results).
 * Matthias Beck and Sinai Robins, *A formula related to the Frobenius problem in two
@@ -299,53 +307,6 @@ private theorem pairCutoff_le_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b)
 
 end frobeniusRepCount_pair_sub_ge
 
--- Keep the source hypotheses in the signature even though the residue argument is stronger.
-set_option linter.unusedVariables false in
-open frobeniusRepCount_pair_sub_ge in
-/-- **Representation counts between consecutive two-generator Frobenius numbers.** Let $a$ and $b$
-be coprime positive integers. For a natural number $r$ let $g(a, b; r)$ be the generalized
-Frobenius number of $(a, b)$ at $r$, and for an integer $m$ let $d(m; a, b)$ be the number of
-representations of $m$ by $(a, b)$. Let $i$ and $s$ be natural numbers, let $c$ be a positive
-integer divisible by $a$ or by $b$, and let $j$ be an integer. Then $d(g(a, b; s) + jc; a, b) = i$
-if and only if $g(a, b; s) + jc \le g(a, b; i)$ and, in case $i \ge 1$, also
-$g(a, b; i - 1) < g(a, b; s) + jc$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Lemma 3 (`integers-2026-A63-lem-3`), quoted from
-Subwattanachai, *Generalized Frobenius number of three variables*. -/
-theorem frobeniusRepCount_pair_eq_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b)
-    (hab : Nat.Coprime a b) (G : ℕ → ℤ) (hG : ∀ r, IsGenFrobeniusNumber ![a, b] r (G r))
-    (i s c : ℕ) (hc : 0 < c) (hdvd : a ∣ c ∨ b ∣ c) (j : ℤ) :
-    frobeniusRepCount ![a, b] (G s + j * c) = i ↔
-      (i = 0 ∨ G (i - 1) < G s + j * c) ∧ G s + j * c ≤ G i := by
-  -- The residue-class argument only needs positivity of the two generators.
-  clear hab hc
-  have cutoff (r : ℕ) :
-      frobeniusRepCount ![a, b] (G s + j * c) ≤ r ↔ G s + j * c ≤ G r := by
-    rcases hdvd with hd | hd
-    · exact pairCutoff_le_iff a b ha hb G hG c hd j s r
-    · have hSwap (q : ℕ) : IsGenFrobeniusNumber ![b, a] q (G q) := by
-        constructor
-        · rw [pairCount_swap b a]; exact (hG q).1
-        · intro m hm
-          rw [pairCount_swap b a]
-          exact (hG q).2 m hm
-      rw [pairCount_swap a b]
-      exact pairCutoff_le_iff b a hb ha G hSwap c hd j s r
-  cases i with
-  | zero => simp [← cutoff]
-  | succ i =>
-    simp only [Nat.succ_ne_zero, false_or, Nat.succ_sub_one, ← cutoff, ← not_le]
-    constructor
-    · intro heq
-      rw [heq]
-      exact ⟨fun h => (Nat.not_succ_le_self i) (by exact_mod_cast h), le_rfl⟩
-    · intro ⟨hi, hs⟩
-      exact le_antisymm hs (by
-        rw [Nat.cast_succ]
-        exact (ENat.add_one_le_iff (by simp)).2 (lt_of_not_ge hi))
-
-
 open frobeniusRepCount_pair_sub_ge in
 /-- The two-generator cutoff is `(r + 1) * a * b - a - b`. -/
 private theorem pairFrobenius_formula {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
@@ -427,6 +388,48 @@ private theorem pairFrobenius_formula {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
     · intro l _ l' _ he
       have he' : v + l * a = v + l' * a := congrFun he 1
       exact mul_right_cancel₀ ha.ne' (Nat.add_left_cancel he')
+
+open frobeniusRepCount_pair_sub_ge in
+/-- **Representation counts between consecutive two-generator Frobenius numbers.** Let $a$ and $b$
+be coprime positive integers. For a natural number $r$ let $g(a, b; r)$ be the generalized
+Frobenius number of $(a, b)$ at $r$, and for an integer $m$ let $d(m; a, b)$ be the number of
+representations of $m$ by $(a, b)$. Let $i$ and $s$ be natural numbers, let $c$ be a positive
+integer divisible by $a$ or by $b$, and let $j$ be an integer. Then $d(g(a, b; s) + jc; a, b) = i$
+if and only if $g(a, b; s) + jc \le g(a, b; i)$ and, in case $i \ge 1$, also
+$g(a, b; i - 1) < g(a, b; s) + jc$.
+
+Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
+Numbers*, INTEGERS 26 (2026), Article A63, Lemma 3 (`integers-2026-A63-lem-3`), quoted from
+Subwattanachai, *Generalized Frobenius number of three variables*. -/
+theorem frobeniusRepCount_pair_eq_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b)
+    (hab : Nat.Coprime a b) (G : ℕ → ℤ) (hG : ∀ r, IsGenFrobeniusNumber ![a, b] r (G r))
+    (i s c : ℕ) (hc : 0 < c) (hdvd : a ∣ c ∨ b ∣ c) (j : ℤ) :
+    frobeniusRepCount ![a, b] (G s + j * c) = i ↔
+      (i = 0 ∨ G (i - 1) < G s + j * c) ∧ G s + j * c ≤ G i := by
+  obtain ⟨c, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hc.ne'
+  have cutoff (r : ℕ) :
+      frobeniusRepCount ![a, b] (G s + j * (c + 1 : ℕ)) ≤ r ↔ G s + j * (c + 1 : ℕ) ≤ G r := by
+    rcases hdvd with hd | hd
+    · exact pairCutoff_le_iff a b ha hb G hG (c + 1) hd j s r
+    · have hSwap (q : ℕ) : IsGenFrobeniusNumber ![b, a] q (G q) := by
+        rw [(hG q).unique (pairFrobenius_formula ha hb hab q), mul_right_comm, sub_right_comm]
+        exact pairFrobenius_formula hb ha hab.symm q
+      rw [pairCount_swap a b]
+      exact pairCutoff_le_iff b a hb ha G hSwap (c + 1) hd j s r
+  simp only [Nat.cast_succ] at cutoff ⊢
+  cases i with
+  | zero => simp [← cutoff]
+  | succ i =>
+    simp only [Nat.succ_ne_zero, false_or, Nat.succ_sub_one, ← cutoff, ← not_le]
+    constructor
+    · intro heq
+      rw [heq]
+      exact ⟨fun h => (Nat.not_succ_le_self i) (by exact_mod_cast h), le_rfl⟩
+    · intro ⟨hi, hs⟩
+      exact le_antisymm hs (by
+        rw [Nat.cast_succ]
+        exact (ENat.add_one_le_iff (by simp)).2 (lt_of_not_ge hi))
+
 
 open frobeniusRepCount_pair_sub_ge in
 /-- A slice counts one for each pair cutoff strictly below its argument. -/
@@ -582,7 +585,7 @@ private theorem triangular_even_factors (p : ℕ) :
     let d := Nat.gcd (t (2 * p + 1)) (t (2 * p + 2))
     t (2 * p) = (2 * p + 1) * p ∧
       t (2 * p + 1) / d = 2 * p + 1 ∧ t (2 * p + 2) / d = 2 * p + 3 ∧
-      Nat.Coprime (2 * p + 1) (2 * p + 3) := by
+      Nat.Coprime (2 * p + 1) (2 * p + 3) ∧ d = p + 1 := by
   have ht₀ : (2 * p) * (2 * p + 1) = 2 * ((2 * p + 1) * p) := by ring
   have ht₁ : (2 * p + 1) * (2 * p + 1 + 1) = 2 * ((2 * p + 1) * (p + 1)) := by ring
   have ht₂ : (2 * p + 2) * (2 * p + 2 + 1) = 2 * ((2 * p + 3) * (p + 1)) := by ring
@@ -602,14 +605,15 @@ private theorem triangular_even_factors (p : ℕ) :
   rw [show 2 * p * (2 * p + 1) / 2 = (2 * p + 1) * p by omega,
     show (2 * p + 1) * (2 * p + 1 + 1) / 2 = (2 * p + 1) * (p + 1) by omega,
     show (2 * p + 2) * (2 * p + 2 + 1) / 2 = (2 * p + 3) * (p + 1) by omega]
-  exact ⟨rfl, (reduceCoprimePair (by omega) hab).1, (reduceCoprimePair (by omega) hab).2, hab⟩
+  refine ⟨rfl, (reduceCoprimePair (by omega) hab).1, (reduceCoprimePair (by omega) hab).2, hab, ?_⟩
+  rw [Nat.gcd_mul_right, hab.gcd_eq_one, one_mul]
 
 private theorem triangular_odd_factors (p : ℕ) :
     let t : ℕ → ℕ := fun j => j * (j + 1) / 2
     let d := Nat.gcd (t (2 * p + 1 + 1)) (t (2 * p + 1 + 2))
     t (2 * p + 1) = (p + 1) * (2 * p + 1) ∧
       t (2 * p + 1 + 1) / d = p + 1 ∧ t (2 * p + 1 + 2) / d = p + 2 ∧
-      Nat.Coprime (p + 1) (p + 2) := by
+      Nat.Coprime (p + 1) (p + 2) ∧ d = 2 * p + 3 := by
   have ht₀ : (2 * p + 1) * (2 * p + 1 + 1) = 2 * ((p + 1) * (2 * p + 1)) := by ring
   have ht₁ : (2 * p + 1 + 1) * (2 * p + 1 + 1 + 1) = 2 * ((p + 1) * (2 * p + 3)) := by ring
   have ht₂ : (2 * p + 1 + 2) * (2 * p + 1 + 2 + 1) = 2 * ((p + 2) * (2 * p + 3)) := by ring
@@ -621,7 +625,8 @@ private theorem triangular_odd_factors (p : ℕ) :
   rw [show (2 * p + 1) * (2 * p + 1 + 1) / 2 = (p + 1) * (2 * p + 1) by omega,
     show (2 * p + 1 + 1) * (2 * p + 1 + 1 + 1) / 2 = (p + 1) * (2 * p + 3) by omega,
     show (2 * p + 1 + 2) * (2 * p + 1 + 2 + 1) / 2 = (p + 2) * (2 * p + 3) by omega]
-  exact ⟨rfl, (reduceCoprimePair (by omega) hab).1, (reduceCoprimePair (by omega) hab).2, hab⟩
+  refine ⟨rfl, (reduceCoprimePair (by omega) hab).1, (reduceCoprimePair (by omega) hab).2, hab, ?_⟩
+  rw [Nat.gcd_mul_right, hab.gcd_eq_one, one_mul]
 
 private theorem cutoff_even_iff (p k δ x y j q : ℕ) (hδ : δ ≤ 1)
     (hy : 2 * x + y = 2 * k + δ) (h₁ : 3 * x ≤ p)
@@ -757,7 +762,7 @@ theorem frobeniusRepCount_triangular_reduced_at_pair_frobenius (n k i : ℕ)
         have hmul : (k + 1) * (k + 1) = k * (k + 1) + (k + 1) := by ring
         omega
     obtain ⟨hxy, hx, hky, hxk, hsum⟩ := hparams
-    obtain ⟨hc, ha, hb, hab⟩ := triangular_even_factors p
+    obtain ⟨hc, ha, hb, hab, _⟩ := triangular_even_factors p
     let a := 2 * p + 1
     let b := 2 * p + 3
     let G (r : ℕ) : ℤ := ((r : ℤ) + 1) * a * b - a - b
@@ -830,7 +835,7 @@ theorem frobeniusRepCount_triangular_reduced_at_pair_frobenius (n k i : ℕ)
         have hmul : (k + 1) * (k + 1) = k * (k + 1) + (k + 1) := by ring
         omega
     obtain ⟨hxy, hy, hend, hsum⟩ := hparams
-    obtain ⟨hc, ha, hb, hab⟩ := triangular_odd_factors p
+    obtain ⟨hc, ha, hb, hab, _⟩ := triangular_odd_factors p
     let a := p + 1
     let b := p + 2
     let G (r : ℕ) : ℤ := ((r : ℤ) + 1) * a * b - a - b
@@ -920,14 +925,14 @@ theorem isGenFrobeniusNumber_triangular_reduced (n k i : ℕ) (hi : i ≤ 2 * k 
     · have hn' : n = 2 * p := by omega
       dsimp only [a, b, d₁, t]
       rw [hn']
-      obtain ⟨hc, ha, hb, hab⟩ := triangular_even_factors p
+      obtain ⟨hc, ha, hb, hab, _⟩ := triangular_even_factors p
       dsimp only at hc ha hb
       rw [hc, ha, hb]
       exact ⟨by omega, by omega, hab, ⟨p, rfl⟩⟩
     · have hn' : n = 2 * p + 1 := by omega
       dsimp only [a, b, d₁, t]
       rw [hn']
-      obtain ⟨hc, ha, hb, hab⟩ := triangular_odd_factors p
+      obtain ⟨hc, ha, hb, hab, _⟩ := triangular_odd_factors p
       dsimp only at hc ha hb
       rw [hc, ha, hb]
       exact ⟨by omega, by omega, hab, ⟨2 * p + 1, rfl⟩⟩
@@ -989,6 +994,337 @@ theorem isGenFrobeniusNumber_triangular_reduced (n k i : ℕ) (hi : i ≤ 2 * k 
     rw [← hsum g hm.le, hg]
     exact ENat.natCast_ne_top _
   exact ne_top_of_le_ne_top hfinite (Finset.sum_le_sum_of_subset (Finset.erase_subset _ _))
+
+-- Restore the common factor of the last two generators before simplifying the formula.
+private theorem restore_triangular_row (n s x y : ℕ) (hn : 2 ≤ n) :
+    let t : ℕ → ℕ := fun j => j * (j + 1) / 2
+    let d := Nat.gcd (t (n + 1)) (t (n + 2))
+    let a := t (n + 1) / d
+    let b := t (n + 2) / d
+    IsGenFrobeniusNumber ![t n, a, b] s
+        (((x : ℤ) + 1) * a * b - b - a + (y : ℤ) * t n) →
+      ∃ g : ℤ, IsGenFrobeniusNumber (triangularTriple n) s g ∧
+        4 * (g + 1) = (n + 1) * (n + 2) *
+          (if Even n then (2 * (x : ℤ) + y + 3) * n + 6 * x
+           else ((x : ℤ) + 2 * y + 3) * n + (3 * x - 3)) := by
+  intro t d a b h
+  let g' : ℤ := ((x : ℤ) + 1) * a * b - b - a + (y : ℤ) * t n
+  have h₁ : d * a = t (n + 1) := Nat.mul_div_cancel' (Nat.gcd_dvd_left ..)
+  have h₂ : d * b = t (n + 2) := Nat.mul_div_cancel' (Nat.gcd_dvd_right ..)
+  have ht : 0 < t n := Nat.div_pos (by
+    have := Nat.le_mul_of_pos_left (n + 1) (by omega : 0 < n)
+    omega) (by decide)
+  have data : (0 < d ∧ 0 < a ∧ 0 < b ∧ a.Coprime b ∧ (t n).Coprime d) ∧
+      4 * ((d : ℤ) * g' + (t n : ℤ) * ((d : ℤ) - 1) + 1) = (n + 1) * (n + 2) *
+        (if Even n then (2 * (x : ℤ) + y + 3) * n + 6 * x
+         else ((x : ℤ) + 2 * y + 3) * n + (3 * x - 3)) := by
+    dsimp only [g', a, b, d, t]
+    rcases Nat.even_or_odd n with ⟨p, hp⟩ | ⟨p, hp⟩
+    · have hn' : n = 2 * p := by omega
+      obtain ⟨hc, ha, hb, hab, hd⟩ := triangular_even_factors p
+      dsimp only at hc ha hb hd
+      rw [hn', hc, ha, hb, hd, ite_eq_left (even_two_mul p)]
+      have hcop : p.Coprime (p + 1) := by simp
+      have hcop' : (2 * p + 1).Coprime (p + 1) := by
+        rw [show 2 * p + 1 = p + 1 * (p + 1) by omega, Nat.coprime_add_mul_right_left]
+        exact hcop
+      refine ⟨⟨by omega, by omega, by omega, hab, hcop'.mul_left hcop⟩, ?_⟩
+      push_cast
+      ring
+    · have hn' : n = 2 * p + 1 := by omega
+      obtain ⟨hc, ha, hb, hab, hd⟩ := triangular_odd_factors p
+      obtain ⟨_, _, _, hcop, _⟩ := triangular_even_factors p
+      dsimp only at hc ha hb hd
+      rw [hn', hc, ha, hb, hd, ite_eq_right (by simp)]
+      have hcop' : (p + 1).Coprime (2 * p + 3) := by
+        rw [show 2 * p + 3 = 1 + 2 * (p + 1) by omega, Nat.coprime_add_mul_right_right]
+        simp
+      refine ⟨⟨by omega, by omega, by omega, hab, hcop'.mul_left hcop⟩, ?_⟩
+      push_cast
+      ring
+  obtain ⟨⟨hd, ha, hb, hab, hcop⟩, hL⟩ := data
+  have hpair : Finset.univ.gcd (![a, b] : Fin 2 → ℕ) = 1 := by
+    rw [Fin.univ_succ, Finset.gcd_cons, Finset.map_eq_image, Finset.gcd_image]
+    have hu : (Finset.univ : Finset (Fin 1)) = {0} := by decide
+    simpa [hu, gcd_eq_nat_gcd] using hab.gcd_eq_one
+  have htriple : Finset.univ.gcd (Fin.cons (t n) (fun j => d * (![a, b] : Fin 2 → ℕ) j)) = 1 := by
+    rw [Fin.univ_succ, Finset.gcd_cons, Finset.map_eq_image, Finset.gcd_image]
+    change Nat.gcd (t n) (Finset.univ.gcd (fun j => d * (![a, b] : Fin 2 → ℕ) j)) = 1
+    rw [Finset.gcd_mul_left, hpair, mul_one]
+    simpa using hcop.gcd_eq_one
+  have heq : Fin.cons (t n) (fun j => d * (![a, b] : Fin 2 → ℕ) j) = triangularTriple n :=
+    funext (Fin.forall_fin_succ.mpr ⟨rfl, Fin.forall_fin_two.mpr ⟨h₁, h₂⟩⟩)
+  refine ⟨(d : ℤ) * g' + (t n : ℤ) * ((d : ℤ) - 1), ?_, hL⟩
+  rw [← heq]
+  exact isGenFrobeniusNumber_cons_mul_of_gcd 1 (t n) d ![a, b] ht
+    (Fin.forall_fin_two.mpr ⟨ha, hb⟩) hd hpair htriple s g' h
+
+private def reducedAt (n k i : ℕ) : Prop :=
+  let t : ℕ → ℕ := fun j => j * (j + 1) / 2
+  let d := Nat.gcd (t (n + 1)) (t (n + 2))
+  let a : ℕ := t (n + 1) / d
+  let b : ℕ := t (n + 2) / d
+  let x : ℤ := triangularFrobeniusX n k i
+  let y : ℤ := triangularFrobeniusY n k i
+  IsGenFrobeniusNumber ![t n, a, b] (k * (k + 1) + i) ((x + 1) * a * b - b - a + y * t n)
+
+private theorem reduced_of_count_window (a b c s g : ℕ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
+    (h : let count (m : ℕ) :=
+      ((Finset.range (m / a + 1) ×ˢ Finset.range (m / c + 1)).filter fun (x, z) =>
+        x * a + z * c ≤ m ∧ (m - (x * a + z * c)) % b = 0).card
+      count g ≤ s ∧ ∀ j : Fin b, s < count (g + j + 1)) :
+    IsGenFrobeniusNumber ![a, b, c] s (g : ℤ) := by
+  apply (isGenFrobeniusNumber_iff_window ![a, b, c] 1 hb s g).2
+  constructor
+  · rw [frobeniusRepCount_triple_eq_card a b c g ha hb hc, ENat.natCast_le_natCast]
+    exact h.1
+  · intro j
+    rw [← Nat.cast_one, ← Nat.cast_add, ← Nat.cast_add,
+      frobeniusRepCount_triple_eq_card a b c _ ha hb hc, ENat.natCast_lt_natCast]
+    exact h.2 j
+
+-- These are exactly the table entries which do not satisfy the strict threshold.
+private def boundaryRows : List (ℕ × ℕ × ℕ) :=
+  [(12, 2, 5), (15, 2, 5), (12, 3, 1), (15, 3, 1), (12, 3, 2), (15, 3, 2),
+    (15, 3, 3), (18, 3, 3), (15, 3, 5), (18, 3, 5), (18, 4, 0), (21, 4, 0)]
+
+private theorem reducedAt_near_boundary (n k i : ℕ) (h : (n, k, i) ∈ boundaryRows) :
+    reducedAt n k i := by
+  simp only [boundaryRows, List.mem_cons, List.not_mem_nil, or_false, Prod.mk.injEq] at h
+  rcases h with ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ |
+    ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ |
+    ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩
+  · exact reduced_of_count_window 78 13 15 11 635 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 120 8 9 11 415 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 78 13 15 13 674 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 120 8 9 13 439 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 78 13 15 14 713 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 120 8 9 14 463 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 120 8 9 15 487 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 171 19 21 15 1556 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 120 8 9 17 511 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 171 19 21 17 1613 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 171 19 21 20 1727 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+  · exact reduced_of_count_window 231 11 12 20 1033 (by decide) (by decide) (by decide)
+      (by decide +kernel)
+
+/-- **Explicit generalized Frobenius numbers of triangular triples at levels 11 to 20.** For a
+natural number $r$ write $t_r = r(r+1)/2$. For a natural number $n$, a natural number $s$ and an
+integer $L$, say that $s$ has value $L$ when the generalized Frobenius number $g$ of
+$(t_n, t_{n+1}, t_{n+2})$ at $s$ exists and satisfies $4(g + 1) = (n+1)(n+2)L$. Then for every
+natural number $n$: $11$ has value $8n + 12$ if $n = 12$ or $n \ge 14$; $12$ has value $9n$ for
+even $n \ge 14$ and $9n - 3$ for odd $n \ge 17$; $13$ has value $9n + 6$ for even $n \ge 12$ and
+$9n + 3$ for odd $n \ge 15$; $14$ has value $9n + 12$ for even $n \ge 12$ and $9n + 9$ for odd
+$n \ge 15$; $15$ has value $9n + 18$ for even $n \ge 18$ and $9n + 15$ for odd $n \ge 15$; $16$
+has value $10n$ if $n = 17$ or $n \ge 19$; $17$ has value $10n + 6$ if $n = 15$ or $n \ge 17$; $18$
+has value $10n + 12$ if $n = 17$ or $n \ge 19$; $19$ has value $10n + 18$ if $n = 20$ or
+$n \ge 22$; $20$ has value $11n$ for even $n \ge 18$ and $11n - 3$ for odd $n \ge 21$.
+
+Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
+Numbers*, INTEGERS 26 (2026), Article A63, Corollary 1 (`integers-2026-A63-cor-1`). -/
+public theorem isGenFrobeniusNumber_triangularTriple_eleven_to_twenty (n : ℕ) :
+    let F : ℕ → ℤ → Prop := fun s L =>
+      ∃ g : ℤ, IsGenFrobeniusNumber (triangularTriple n) s g ∧ 4 * (g + 1) = (n + 1) * (n + 2) * L
+    ((n = 12 ∨ 14 ≤ n) → F 11 (8 * n + 12)) ∧
+      (Even n → 14 ≤ n → F 12 (9 * n)) ∧ (¬ Even n → 17 ≤ n → F 12 (9 * n - 3)) ∧
+      (Even n → 12 ≤ n → F 13 (9 * n + 6)) ∧ (¬ Even n → 15 ≤ n → F 13 (9 * n + 3)) ∧
+      (Even n → 12 ≤ n → F 14 (9 * n + 12)) ∧ (¬ Even n → 15 ≤ n → F 14 (9 * n + 9)) ∧
+      (Even n → 18 ≤ n → F 15 (9 * n + 18)) ∧ (¬ Even n → 15 ≤ n → F 15 (9 * n + 15)) ∧
+      ((n = 17 ∨ 19 ≤ n) → F 16 (10 * n)) ∧
+      ((n = 15 ∨ 17 ≤ n) → F 17 (10 * n + 6)) ∧
+      ((n = 17 ∨ 19 ≤ n) → F 18 (10 * n + 12)) ∧
+      ((n = 20 ∨ 22 ≤ n) → F 19 (10 * n + 18)) ∧
+      (Even n → 18 ≤ n → F 20 (11 * n)) ∧ (¬ Even n → 21 ≤ n → F 20 (11 * n - 3)) := by
+  intro F
+  have row (k i : ℕ) (hi : i ≤ 2 * k + 1) (hn : 2 ≤ n)
+      (h : triangularFrobeniusBound n (k * (k + 1) + i) < n ∨ (n, k, i) ∈ boundaryRows) :
+      let x : ℤ := triangularFrobeniusX n k i
+      let y : ℤ := triangularFrobeniusY n k i
+      F (k * (k + 1) + i) (if Even n then (2 * x + y + 3) * n + 6 * x
+        else (x + 2 * y + 3) * n + (3 * x - 3)) := by
+    apply restore_triangular_row n _ _ _ hn
+    change reducedAt n k i
+    rcases h with h | h
+    · exact (isGenFrobeniusNumber_triangular_reduced n k i hi h).2
+    · exact reducedAt_near_boundary n k i h
+  have evenMod (h : Even n) : n % 2 = 0 := Nat.even_iff.mp h
+  have oddMod (h : ¬ Even n) : n % 2 = 1 := (Nat.odd_iff.mp (Nat.not_even_iff_odd.mp h))
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro hn
+    by_cases he : Even n
+    · have hm := evenMod he
+      have h := row 2 5 (by decide) (by omega) (by
+        by_cases hn : n = 12
+        · exact Or.inr (by subst n; decide)
+        · left
+          norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+    · have hm := oddMod he
+      have h := row 2 5 (by decide) (by omega) (by
+        by_cases hn : n = 15
+        · exact Or.inr (by subst n; decide)
+        · left
+          norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+  · intro he hn
+    have hm := evenMod he
+    have h := row 3 0 (by decide) (by omega) (by
+      left
+      norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
+  · intro he hn
+    have hm := oddMod he
+    have h := row 3 0 (by decide) (by omega) (by
+      left
+      norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
+  · intro he hn
+    have hm := evenMod he
+    have h := row 3 1 (by decide) (by omega) (by
+      by_cases hn : n = 12
+      · exact Or.inr (by subst n; decide)
+      · left
+        norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
+  · intro he hn
+    have hm := oddMod he
+    have h := row 3 1 (by decide) (by omega) (by
+      by_cases hn : n = 15
+      · exact Or.inr (by subst n; decide)
+      · left
+        norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
+  · intro he hn
+    have hm := evenMod he
+    have h := row 3 2 (by decide) (by omega) (by
+      by_cases hn : n = 12
+      · exact Or.inr (by subst n; decide)
+      · left
+        norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
+  · intro he hn
+    have hm := oddMod he
+    have h := row 3 2 (by decide) (by omega) (by
+      by_cases hn : n = 15
+      · exact Or.inr (by subst n; decide)
+      · left
+        norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
+  · intro he hn
+    have hm := evenMod he
+    have h := row 3 3 (by decide) (by omega) (by
+      by_cases hn : n = 18
+      · exact Or.inr (by subst n; decide)
+      · left
+        norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
+  · intro he hn
+    have hm := oddMod he
+    have h := row 3 3 (by decide) (by omega) (by
+      by_cases hn : n = 15
+      · exact Or.inr (by subst n; decide)
+      · left
+        norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
+  · intro hn
+    by_cases he : Even n
+    · have hm := evenMod he
+      have h := row 3 4 (by decide) (by omega) (by
+        left
+        norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+    · have hm := oddMod he
+      have h := row 3 4 (by decide) (by omega) (by
+        left
+        norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+  · intro hn
+    by_cases he : Even n
+    · have hm := evenMod he
+      have h := row 3 5 (by decide) (by omega) (by
+        by_cases hn : n = 18
+        · exact Or.inr (by subst n; decide)
+        · left
+          norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+    · have hm := oddMod he
+      have h := row 3 5 (by decide) (by omega) (by
+        by_cases hn : n = 15
+        · exact Or.inr (by subst n; decide)
+        · left
+          norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+  · intro hn
+    by_cases he : Even n
+    · have hm := evenMod he
+      have h := row 3 6 (by decide) (by omega) (by
+        left
+        norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+    · have hm := oddMod he
+      have h := row 3 6 (by decide) (by omega) (by
+        left
+        norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+  · intro hn
+    by_cases he : Even n
+    · have hm := evenMod he
+      have h := row 3 7 (by decide) (by omega) (by
+        left
+        norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+    · have hm := oddMod he
+      have h := row 3 7 (by decide) (by omega) (by
+        left
+        norm_num [triangularFrobeniusBound, he]; omega)
+      norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+      exact h
+  · intro he hn
+    have hm := evenMod he
+    have h := row 4 0 (by decide) (by omega) (by
+      by_cases hn : n = 18
+      · exact Or.inr (by subst n; decide)
+      · left
+        norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
+  · intro he hn
+    have hm := oddMod he
+    have h := row 4 0 (by decide) (by omega) (by
+      by_cases hn : n = 21
+      · exact Or.inr (by subst n; decide)
+      · left
+        norm_num [triangularFrobeniusBound, he]; omega)
+    norm_num [triangularFrobeniusX, triangularFrobeniusY, he] at h
+    exact h
 
 end
 

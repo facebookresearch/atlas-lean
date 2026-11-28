@@ -96,34 +96,6 @@ public theorem_wanted isGenFrobeniusNumber_triangularTriple_of_xy (n k i : ℕ)
       4 * (g + 1) = (n + 1) * (n + 2) *
         (if Even n then (2 * x + y + 3) * n + 6 * x else (x + 2 * y + 3) * n + 3 * (x - 1))
 
-/-- **Explicit generalized Frobenius numbers of triangular triples at levels 11 to 20.** For a
-natural number $r$ write $t_r = r(r+1)/2$. For a natural number $n$, a natural number $s$ and an
-integer $L$, say that $s$ has value $L$ when the generalized Frobenius number $g$ of
-$(t_n, t_{n+1}, t_{n+2})$ at $s$ exists and satisfies $4(g + 1) = (n+1)(n+2)L$. Then for every
-natural number $n$: $11$ has value $8n + 12$ if $n = 12$ or $n \ge 14$; $12$ has value $9n$ for
-even $n \ge 14$ and $9n - 3$ for odd $n \ge 17$; $13$ has value $9n + 6$ for even $n \ge 12$ and
-$9n + 3$ for odd $n \ge 15$; $14$ has value $9n + 12$ for even $n \ge 12$ and $9n + 9$ for odd
-$n \ge 15$; $15$ has value $9n + 18$ for even $n \ge 18$ and $9n + 15$ for odd $n \ge 15$; $16$
-has value $10n$ if $n = 17$ or $n \ge 19$; $17$ has value $10n + 6$ if $n = 15$ or $n \ge 17$; $18$
-has value $10n + 12$ if $n = 17$ or $n \ge 19$; $19$ has value $10n + 18$ if $n = 20$ or
-$n \ge 22$; $20$ has value $11n$ for even $n \ge 18$ and $11n - 3$ for odd $n \ge 21$.
-
-Source: Kittipong Subwattanachai, *Formulas for the Generalized Frobenius Number of Triangular
-Numbers*, INTEGERS 26 (2026), Article A63, Corollary 1 (`integers-2026-A63-cor-1`). -/
-public theorem_wanted isGenFrobeniusNumber_triangularTriple_eleven_to_twenty (n : ℕ) :
-    let F : ℕ → ℤ → Prop := fun s L =>
-      ∃ g : ℤ, IsGenFrobeniusNumber (triangularTriple n) s g ∧ 4 * (g + 1) = (n + 1) * (n + 2) * L
-    ((n = 12 ∨ 14 ≤ n) → F 11 (8 * n + 12)) ∧
-      (Even n → 14 ≤ n → F 12 (9 * n)) ∧ (¬ Even n → 17 ≤ n → F 12 (9 * n - 3)) ∧
-      (Even n → 12 ≤ n → F 13 (9 * n + 6)) ∧ (¬ Even n → 15 ≤ n → F 13 (9 * n + 3)) ∧
-      (Even n → 12 ≤ n → F 14 (9 * n + 12)) ∧ (¬ Even n → 15 ≤ n → F 14 (9 * n + 9)) ∧
-      (Even n → 18 ≤ n → F 15 (9 * n + 18)) ∧ (¬ Even n → 15 ≤ n → F 15 (9 * n + 15)) ∧
-      ((n = 17 ∨ 19 ≤ n) → F 16 (10 * n)) ∧
-      ((n = 15 ∨ 17 ≤ n) → F 17 (10 * n + 6)) ∧
-      ((n = 17 ∨ 19 ≤ n) → F 18 (10 * n + 12)) ∧
-      ((n = 20 ∨ 22 ≤ n) → F 19 (10 * n + 18)) ∧
-      (Even n → 18 ≤ n → F 20 (11 * n)) ∧ (¬ Even n → 21 ≤ n → F 20 (11 * n - 3))
-
 end
 
 end MetaMathlibExt
