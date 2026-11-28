@@ -15734,6 +15734,7 @@
   "MathlibExt/Probability/Statistics/Nonparametric/KernelBias": {"to": "Probability/nonparametric-survival", "title": "Kernel smoothing at a continuity point"},
   "MathlibExt/Probability/Statistics/Nonparametric/RankFreeness": {"to": "Probability/nonparametric-survival", "title": "Distribution-freeness of ranks"},
   "MathlibExt/Probability/Statistics/PCA": {"to": "Probability/linear-models-multivariate", "title": "Principal component analysis"},
+  "MathlibExt/Probability/Statistics/ParallelTrends": {"to": "Probability/nonparametric-survival", "title": "Potential outcomes and causal identification"},
   "MathlibExt/Probability/Statistics/PoissonLikelihood": {"to": "Probability/statistical-estimation", "title": "Likelihood and maximum likelihood estimators"},
   "MathlibExt/Probability/Statistics/RobbinsFormula": {"to": "Probability/bayesian-statistics", "title": "Empirical Bayes and Tweedie's formula"},
   "MathlibExt/Probability/Statistics/SequentialAnalysis": {"to": "Probability/hypothesis-testing", "title": "Sequential tests and quickest change detection"},
