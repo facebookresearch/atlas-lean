@@ -21,6 +21,7 @@ public import Mathlib.RingTheory.Ideal.Norm.AbsNorm
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.NumberField.FiniteUnits
 
 @[expose] public section
 
@@ -294,30 +295,6 @@ private theorem primorialNorm_pos {K : Type*} [Field K] [NumberField K] (n : ℕ
   rw [Nat.pos_iff_ne_zero, ne_eq, Ideal.absNorm_eq_zero_iff]
   exact hP'.2.1
 
-/-- The unit group of the ring of integers of an imaginary quadratic field is finite,
-by Dirichlet's unit theorem: the unit rank is the number of infinite places minus one,
-and here there is a single infinite place. -/
-private theorem finite_units {K : Type*} [Field K] [NumberField K]
-    (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] : Finite (𝓞 K)ˣ := by
-  have hcard : Fintype.card (NumberField.InfinitePlace K) = 1 := by
-    have h1 := IsTotallyComplex.nrRealPlaces_eq_zero K
-    have h2 := NumberField.InfinitePlace.card_eq_nrRealPlaces_add_nrComplexPlaces K
-    have h3 := NumberField.InfinitePlace.card_add_two_mul_card_eq_rank K
-    rw [hK] at h3
-    omega
-  have hrank : NumberField.Units.rank K = 0 := by
-    simp [NumberField.Units.rank, hcard]
-  apply Finite.of_surjective (fun ζ : NumberField.Units.torsion K => (ζ : (𝓞 K)ˣ))
-  intro x
-  obtain ⟨ζe, h, -⟩ := NumberField.Units.exist_unique_eq_mul_prod K x
-  refine ⟨ζe.1, ?_⟩
-  change (ζe.1 : (𝓞 K)ˣ) = x
-  rw [h]
-  have huniv : (Finset.univ : Finset (Fin (NumberField.Units.rank K))) = ∅ := by
-    rw [hrank]
-    exact Finset.univ_eq_empty
-  rw [huniv, Finset.prod_empty, mul_one]
-
 /-- Only finitely many algebraic integers have absolute norm at most a given bound:
 there are finitely many ideals of bounded norm, and the integers generating a given
 ideal form finitely many associate classes, the unit group being finite. -/
@@ -420,8 +397,7 @@ theorem quadSchatunowskySet_norm_bound_and_finite {K : Type*} [Field K]
     have hlt := hn₀ m hmge
     omega
   refine ⟨hbound, ?_⟩
-  have : Finite (𝓞 K)ˣ :=
-    quadSchatunowskySet_norm_bound_and_finite.finite_units hK
+  have : Finite (𝓞 K)ˣ := NumberField.Units.finite_of_finrank_eq_two hK
   refine Set.Finite.subset
     (quadSchatunowskySet_norm_bound_and_finite.boundedAbsNorm_finite
       (K := K) (quadPrimeNorm K n₀ ^ (ℓ + 1))) (fun α hα => ?_)
