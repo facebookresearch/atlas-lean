@@ -17,4 +17,3 @@ Recursive and recursively enumerable predicates and their closure properties, th
 - [Finiteness problem for programs](finiteness-problem-for-programs/README.md)
 
 - [Kleene's theorem: the $\Delta^1_1$ sets are the hyperarithmetical sets](hyperarithmetical-sets-are-the-delta-1-1-sets.md)
-- [Generalized Collatz problem](generalized-collatz-problem/README.md)

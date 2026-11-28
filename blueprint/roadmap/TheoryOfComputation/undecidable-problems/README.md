@@ -14,4 +14,3 @@ Specific undecidable problems and the reductions proving them undecidable: the P
 - [Regularity problem for context-free languages](regularity-problem-for-context-free-languages/README.md)
 
 - [Validity of first-order sentences is undecidable](validity-of-first-order-sentences-is-undecidable.md)
-- [Extended finite automata](extended-finite-automata/README.md)
