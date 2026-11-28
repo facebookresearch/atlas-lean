@@ -24,7 +24,7 @@
 
 ## Mass-identification theorems
 
-- [Joint law of a hidden Markov model factors into prior and emission weights](joint-prob-factor.md)
+- [Joint weight of a hidden Markov model factors into prior and emission weights](joint-prob-factor.md)
 - [Observation marginal of the joint distribution is the likelihood](obs-marginal-apply.md)
 - [Observation marginal mass as a real number](obs-marginal-apply-to-real.md)
 - [Hidden-path marginal of the joint distribution is the path prior](path-marginal-apply.md)

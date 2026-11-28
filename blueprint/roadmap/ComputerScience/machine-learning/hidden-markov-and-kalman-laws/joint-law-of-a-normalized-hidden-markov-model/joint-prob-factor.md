@@ -1,4 +1,4 @@
-# Joint law of a hidden Markov model factors into prior and emission weights
+# Joint weight of a hidden Markov model factors into prior and emission weights
 
 Let $h$ be a hidden Markov model with finite state set $S$, finite observation set $O$ and real weights: initial weights $\pi(s)$, transition weights $a(s, s')$ and emission weights $b(s, o)$. For every $t \in \mathbb{N}$, path $z = (z_0, \dots, z_t)$ and observation string $x = (x_0, \dots, x_t)$, the joint weight factors as
 

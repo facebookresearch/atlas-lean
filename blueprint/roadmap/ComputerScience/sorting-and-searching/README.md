@@ -7,6 +7,8 @@ Comparison and distribution sorting algorithms (including their expected-cost an
 - [Counting sort](counting-sort/README.md)
 - [Heapsort](heapsort/README.md)
 - [Insertion sort](insertion-sort/README.md)
+- [Ordered insertion and insertion sort](ordered-insertion-and-insertion-sort/README.md)
+- [A relational sorting contract](a-relational-sorting-contract/README.md)
 - [Bucket sort](bucket-sort/README.md)
 - [Linear search](linear-search/README.md)
 - [Lower bound for comparison sorting](lower-bound-for-comparison-sorting/README.md)
