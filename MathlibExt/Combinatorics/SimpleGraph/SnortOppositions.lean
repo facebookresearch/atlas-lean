@@ -25,6 +25,9 @@ An opposition in the first factor also gives an opposition in six standard graph
   Sections 1, 2, and 4; in particular Theorem 2 for gluing block oppositions.
 - Keiko Kakihara, *Snort: A Combinatorial Game*, Master's thesis, California State University,
   San Bernardino, 2010, Section 3 (opposable graphs), cited by Ashmore et al.
+- `MathlibExt.Combinatorics.SimpleGraph.CompatibleOppositionProducts`: the proof of
+  `exists_compatible_opposition_iff` adapts the former `compatible_outside` helper and the
+  restriction argument in `isCompatiblyAlmostOpposable_strongProd`.
 -/
 
 namespace MetaMathlibExt
