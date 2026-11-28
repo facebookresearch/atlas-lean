@@ -17,28 +17,13 @@ public import MathlibExt.NumberTheory.Diophantine.BisectorEquationIntZero
 public import MathlibExt.NumberTheory.Diophantine.NegativePellGcd
 public import MathlibExt.NumberTheory.Diophantine.NegativePellRational
 public import MathlibExt.NumberTheory.GeneralPellBisectors
+public import MathlibExt.NumberTheory.GeneralPellBisectorsRatSolution
 public import MathlibExt.NumberTheory.NegativePellDivisibility
 public import MathlibExt.NumberTheory.GeneralPellBisectorsBisectorEquationFormTen
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Rational solutions of the bisector equation.** Let $a, b, c$ be rational numbers with
-$|a| \ne |b|$ and $(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1)$. Then there are a square-free
-natural number $d > 0$ and rational numbers $a_2, b_2$ with $a^2 - d a_2^2 = -1$ and
-$b^2 - d b_2^2 = -1$ such that either $a_2 + b_2 \ne 0$ and
-$c = (a b_2 + a_2 b) / (a_2 + b_2)$, or $b_2 - a_2 \ne 0$ and $c = (a b_2 - a_2 b) / (b_2 - a_2)$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 1(b)
-(`integers-2024-A111-prop-1`). -/
-public theorem_wanted bisector_equation_rat_solution (a b c : ℚ) (hab : |a| ≠ |b|)
-    (h : (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)) :
-    ∃ d : ℕ, 0 < d ∧ Squarefree d ∧ ∃ a₂ b₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1 ∧
-      b ^ 2 - d * b₂ ^ 2 = -1 ∧
-      ((b₂ + a₂ ≠ 0 ∧ c = (a * b₂ + a₂ * b) / (b₂ + a₂)) ∨
-        (b₂ - a₂ ≠ 0 ∧ c = (a * b₂ - a₂ * b) / (b₂ - a₂)))
 
 /-- **Integer solutions of the bisector equation.** For a natural number $d > 1$ such that
 $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its solution in positive integers
