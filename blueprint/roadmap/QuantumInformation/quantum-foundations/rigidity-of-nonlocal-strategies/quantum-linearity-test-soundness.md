@@ -19,6 +19,7 @@ First derive linearity from consistency: moving each factor $A(a)$, $A(b)$ to th
 ## Depends on
 
 - [States on star-ordered algebras, state-dependent norm and approximation](../states-and-measurements-on-operator-algebras/algebraic-states-and-state-dependent-norm.md)
+- [Measurements, agreement and character observables in a star-ordered algebra](../states-and-measurements-on-operator-algebras/algebraic-measurements-and-agreement.md)
 
 ## Proof depends on
 

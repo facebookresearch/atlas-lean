@@ -16,7 +16,24 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Fintype.Fin
 import Mathlib.Data.Nat.Digits.Lemmas
 
-/-! # Word models for generalized Rascal numbers -/
+/-!
+# Word models for generalized Rascal numbers
+
+A nonempty ascent sequence of length `n` with exactly `k` ascents that avoids both `001` and
+`210` starts with `0, …, k - 1` and a nonempty run of `k`s. It may end with a nonempty
+constant tail of some `x < k`. The empty sequence has `n = k = 0` and fits the first form
+with zero copies of `k`. The proof uses induction on prefixes rather than the
+restricted-growth-function criterion used in the published proof.
+
+## References
+
+* Amelia Gibbs and Brian K. Miceli, *Two Combinatorial Interpretations of Rascal Numbers*,
+  Journal of Integer Sequences 27 (2024), Article 24.8.2, pp. 1–21, Lemma 16, Theorem 20,
+  Corollary 21, and Theorem 23.
+* Paul Duncan and Einar Steingrímsson, *Pattern avoidance in ascent sequences*,
+  The Electronic Journal of Combinatorics 18(1) (2011), Paper P226, Lemma 2.4
+  (the restricted-growth-function criterion used in the published proof of Lemma 16).
+-/
 
 set_option autoImplicit false
 
@@ -410,5 +427,127 @@ theorem sum_rascalGen_alternating_odd (j m : ℕ) :
         exact Nat.lt_succ_iff.mp (Finset.mem_range.mp hk)
       _ = _ := Finset.sum_neg_distrib f
   omega
+
+-- Track positive block sizes; the length equation recovers the sizes in the theorem.
+private theorem ascentSeqAvoid_blocks (w : List ℕ) (hseq : IsAscentSeq w)
+    (havoid : Avoids001210 w) (hne : w ≠ []) (k : ℕ) (hk : wordAscents w = k) :
+    (∃ m : ℕ, w = List.range k ++ List.replicate (m + 1) k) ∨
+      ∃ m r x : ℕ, x < k ∧
+        w = List.range k ++ List.replicate (m + 1) k ++ List.replicate (r + 1) x := by
+  induction w using List.reverseRecOn generalizing k with
+  | nil => exact (hne rfl).elim
+  | append_singleton w b ih =>
+    by_cases hw : w = []
+    · subst w
+      have hb : b = 0 := hseq.1 (by simp)
+      subst b
+      have hk' : k = 0 := hk.symm
+      rw [hk']
+      exact Or.inl ⟨0, rfl⟩
+    have hprefix : IsAscentSeq w := by
+      constructor
+      · intro h
+        simpa only [List.getElem_append_left h] using hseq.1 (show 0 < (w ++ [b]).length by simp)
+      · intro i hi
+        have hi' : i < (w ++ [b]).length := by simp; omega
+        simpa only [List.getElem_append_left hi, List.take_append_of_le_length hi.le] using
+          hseq.2 i hi'
+    have hav : Avoids001210 w := fun x y z h =>
+      havoid x y z (h.trans (List.sublist_append_left w [b]))
+    let j := wordAscents w
+    have hnext (p : List ℕ) (a : ℕ) (hp : w = p ++ [a]) :
+        wordAscents (w ++ [b]) = j + (if a < b then 1 else 0) := by
+      calc
+        _ = wordAscents (p ++ [a]) + (if a < b then 1 else 0) := by
+          rw [hp, List.append_assoc, List.singleton_append, wordAscents_append_pair]
+        _ = _ := by rw [← hp]
+    obtain ⟨m, htop⟩ | ⟨m, r, x, hx, htail⟩ := ih hprefix hav hw j rfl
+    · have hcount := hnext (List.range j ++ List.replicate m j) j (by
+        simpa only [List.replicate_succ', List.append_assoc] using htop)
+      -- An ascent can only introduce the next letter, and only before `j` repeats.
+      by_cases hgt : j < b
+      · have hlast : (w ++ [b])[w.length]'(by simp) = b := by
+          simpa only [List.concat_eq_append] using
+            List.getElem_concat_length (l := w) (a := b) rfl _
+        have hbound : b ≤ j + 1 := by
+          simpa only [hlast, List.take_left] using hseq.2 w.length (by simp)
+        have hb : b = j + 1 := by omega
+        have hm : m = 0 := by
+          by_contra hm
+          have hpair : List.Sublist [j, j] (List.replicate (m + 1) j) :=
+            (List.replicate_sublist_replicate j).mpr (by omega : 2 ≤ m + 1)
+          have hpat : List.Sublist [j, j, b] (w ++ [b]) := by
+            rw [htop]
+            exact (hpair.trans (List.sublist_append_right _ _)).append (List.Sublist.refl [b])
+          exact (havoid j j b hpat).1 ⟨rfl, hgt⟩
+        have hk' : k = j + 1 := by simpa [hcount, hgt] using hk.symm
+        rw [hk']
+        exact Or.inl ⟨0, by simp [htop, hm, hb, List.range_succ]⟩
+      · have hk' : k = j := by simpa [hcount, hgt] using hk.symm
+        rw [hk']
+        by_cases heq : b = j
+        · exact Or.inl ⟨m + 1, by
+            simp only [htop, heq, List.replicate_succ', List.append_assoc]⟩
+        · exact Or.inr ⟨m, 0, b, by omega, by rw [htop]; rfl⟩
+    · have hlow : List.Sublist [x] (List.replicate (r + 1) x) :=
+        (List.replicate_sublist_replicate x).mpr (by omega : 1 ≤ r + 1)
+      -- After the first drop, any change would create either `210` or `001`.
+      have heq : b = x := by
+        rcases lt_trichotomy b x with hlt | h | hgt
+        · have htop : List.Sublist [j] (List.replicate (m + 1) j) :=
+            (List.replicate_sublist_replicate j).mpr (by omega : 1 ≤ m + 1)
+          have hpat : List.Sublist [j, x, b] (w ++ [b]) := by
+            rw [htail]
+            exact ((htop.trans (List.sublist_append_right _ _)).append hlow).append
+              (List.Sublist.refl [b])
+          exact ((havoid j x b hpat).2 ⟨hlt, hx⟩).elim
+        · exact h
+        · have hfirst : List.Sublist [x] (List.range j) :=
+            List.singleton_sublist.mpr (List.mem_range.mpr hx)
+          have hpat : List.Sublist [x, x, b] (w ++ [b]) := by
+            rw [htail]
+            exact ((hfirst.trans (List.sublist_append_left _ _)).append hlow).append
+              (List.Sublist.refl [b])
+          exact ((havoid x x b hpat).1 ⟨rfl, hgt⟩).elim
+      have hcount := hnext (List.range j ++ List.replicate (m + 1) j ++ List.replicate r x) x (by
+        simpa only [List.replicate_succ', List.append_assoc] using htail)
+      have hk' : k = j := by
+        rw [hcount, heq] at hk
+        simpa using hk.symm
+      rw [hk']
+      exact Or.inr ⟨m, r + 1, x, hx, by
+        simp only [htail, heq, List.replicate_succ', List.append_assoc]⟩
+
+/-- **Shape of ascent sequences avoiding 001 and 210.** Let $n$ and $k$ be natural numbers and
+let $w$ be an ascent sequence of length $n$ with exactly $k$ ascents that avoids the patterns
+$001$ and $210$. Then either $w$ consists of $0, 1, \ldots, k-1$ followed by $n - k$ copies of
+$k$, or there are natural numbers $x$ and $y$ with $1 \le y < n - k$ and $x < k$ such that $w$
+consists of $0, 1, \ldots, k-1$, followed by $y$ copies of $k$, followed by $n - k - y$ copies
+of $x$. When $k = 0$ the initial part $0, 1, \ldots, k-1$ is empty.
+
+Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
+Interpretations of Rascal Numbers", Lemma 16. -/
+theorem ascentSeqAvoid_form (n k : ℕ)
+    (w : AscentSeqAvoid n k) :
+    w.1 = List.range k ++ List.replicate (n - k) k ∨
+      ∃ y x : ℕ, 1 ≤ y ∧ y < n - k ∧ x < k ∧
+        w.1 = List.range k ++ List.replicate y k ++
+          List.replicate (n - k - y) x := by
+  obtain ⟨w, hlen, hseq, havoid, hk⟩ := w
+  change w = _ ∨ ∃ y x : ℕ, 1 ≤ y ∧ y < n - k ∧ x < k ∧ w = _
+  by_cases he : w = []
+  · subst w
+    have hn : n = 0 := hlen.symm
+    have hk' : k = 0 := hk.symm
+    rw [hn, hk']
+    exact Or.inl rfl
+  obtain ⟨m, hm⟩ | ⟨m, r, x, hx, htail⟩ := ascentSeqAvoid_blocks w hseq havoid he k hk
+  · have hsize := congrArg List.length hm
+    simp only [List.length_append, List.length_range, List.length_replicate, hlen] at hsize
+    exact Or.inl ((show n - k = m + 1 by omega) ▸ hm)
+  · have hsize := congrArg List.length htail
+    simp only [List.length_append, List.length_range, List.length_replicate, hlen] at hsize
+    refine Or.inr ⟨m + 1, x, by omega, by omega, hx, ?_⟩
+    rwa [show n - k - (m + 1) = r + 1 by omega]
 
 end MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
