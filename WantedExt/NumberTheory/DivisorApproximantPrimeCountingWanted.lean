@@ -34,7 +34,7 @@ open Asymptotics Filter Finset
 @[expose] public section
 
 /-- **Prime-counting function from the smooth divisor count.** For a natural number $k$ let
-$$\tilde\tau(k) = \sum_{j=1}^{k} \exp\left(-\frac{\pi^2}{2} k j^3 \sin^2\frac{k\pi}{j}\right),$$
+$$\tilde\tau(k) = \sum_{j=1}^{k} \exp\left(-(\pi/2)^2 k j^3 \sin^2\frac{k\pi}{j}\right),$$
 and for $n \ge 2$ let $\tilde\pi(n) = \sum_{k=2}^{n} e^{-k(\tilde\tau(k) - 2)}$. Then for every
 natural number $n \ge 2$, $|\tilde\pi(n) - \pi(n)| < 0.7129749140934$, where $\pi(n)$ is the
 number of primes at most $n$.
@@ -47,7 +47,7 @@ Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 2
 (`integers-2026-A46-thm-2`). -/
 public theorem_wanted primeCountingApprox_abs_sub_lt (n : ℕ) (hn : 2 ≤ n) :
     let τ' : ℕ → ℝ := fun k => ∑ j ∈ Icc 1 k,
-      Real.exp (-(Real.pi ^ 2 / 2 * k * j ^ 3 * Real.sin (k * Real.pi / j) ^ 2))
+      Real.exp (-((Real.pi / 2) ^ 2 * k * j ^ 3 * Real.sin (k * Real.pi / j) ^ 2))
     |∑ k ∈ Icc 2 n, Real.exp (-(k * (τ' k - 2))) - Nat.primeCounting n| < 0.7129749140934
 
 end

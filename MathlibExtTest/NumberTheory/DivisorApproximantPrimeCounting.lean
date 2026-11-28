@@ -68,6 +68,10 @@ example :
 example : 1 ≤ Real.pi ^ 2 * (5 : ℝ) ^ 2 / 2 * Real.sin (4 * Real.pi / 5) ^ 2 :=
   one_le_pi_sq_mul_sq_div_two_mul_sin_sq 5 4 (by decide) (by decide) (by decide)
 
+-- The published weight gives the same bound at this residue, also without k ≤ n.
+example : 1 ≤ (Real.pi / 2) ^ 2 * (5 : ℝ) ^ 2 * Real.sin (4 * Real.pi / 5) ^ 2 :=
+  one_le_pi_div_two_sq_mul_sq_mul_sin_sq 5 4 (by decide) (by decide)
+
 example :
     (fun k : ℕ => ∑ j ∈ Icc 1 k,
         Real.exp (-((Real.pi / 2) ^ 2 * k * j ^ 3 * Real.sin (k * Real.pi / j) ^ 2)) -

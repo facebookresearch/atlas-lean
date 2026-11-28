@@ -21,23 +21,29 @@ The exponential weights equal one on the divisors and are at most $e^{-nk}$ on t
 nondivisors. The total contribution of the nondivisors is therefore bounded by a
 geometric sum with ratio $e^{-n}$.
 
-The wanted statement of Theorem 1 used $\pi^2/2$; the coefficient here is $(\pi/2)^2$ as in
-Equation (1) of the published theorem.
+Theorem 1 and Lemma 4 use the weight $(\pi/2)^2 k^2$, as in Equation (1).
 
 ## References
 
 - Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
   Divisor Counting Function*, INTEGERS 26 (2026), Article A46, pp. 1–17, Theorems 1 and 3
   and Lemmas 1, 2 and 4.
-- The proof of the sine bound reuses the argument of `one_le_pi_sq_mul_sq_div_two_mul_sin_sq`
-  from this module, `MathlibExt.NumberTheory.DivisorApproximantPrimeCounting`.
 -/
 
 namespace MetaMathlibExt
 
 open Asymptotics Filter Finset
 
-private theorem one_le_pi_div_two_sq_mul_sq_mul_sin_sq (k n : ℕ) (hk : 1 ≤ k)
+/-- **Sine lower bound for the published weight.** For natural numbers $k$ and $n$ with
+$1 \le k$ and $k \nmid n$,
+
+$$(\pi/2)^2 k^2 \sin^2\frac{n\pi}{k} \ge 1.$$
+
+Unlike the statement in the source, this bound does not require $k \le n$.
+
+Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
+Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 4 (`integers-2026-A46-lem-4`). -/
+public theorem one_le_pi_div_two_sq_mul_sq_mul_sin_sq (k n : ℕ) (hk : 1 ≤ k)
     (hkn : ¬ k ∣ n) :
     1 ≤ (Real.pi / 2) ^ 2 * k ^ 2 * Real.sin (n * Real.pi / k) ^ 2 := by
   have hkR : (0 : ℝ) < k := by exact_mod_cast (show 0 < k by omega)
@@ -90,6 +96,7 @@ set_option linter.unusedVariables false in
 $$\frac{\pi^2 k^2}{2} \sin^2\frac{n\pi}{k} \ge 1.$$
 In other words, $A(k, n) = \pi^2 k^2 / 2$ satisfies the hypothesis
 $A(k, n) \sin^2(n\pi/k) \ge 1$ of the exponential approximation of the divisibility indicator.
+This follows from Lemma 4 with twice the weight.
 
 Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
 Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 4 (`integers-2026-A46-lem-4`). -/
