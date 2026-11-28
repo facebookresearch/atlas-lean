@@ -15104,6 +15104,7 @@
   "MathlibExt/Probability/TotalVariationDistance": {"to": "Probability/convergence-of-measures", "title": "Total variation distance"},
   "MathlibExt/Probability/TruncatedMomentRV": {"to": "Probability/infinite-divisibility-regular-variation", "title": "Truncated moments of regularly varying tails"},
   "MathlibExt/Probability/Truncation": {"to": "Probability/laws-of-large-numbers", "title": "Kolmogorov's three-series theorem"},
+  "MathlibExt/Probability/TwoStationThroughput": {"to": "Probability/queueing-theory", "title": "Deterministic service networks"},
   "MathlibExt/Probability/UnbiasedMMD": {"to": "Probability/convergence-of-measures", "title": "Kernel mean embeddings and maximum mean discrepancy"},
   "MathlibExt/Probability/UniformLaws": {"to": "Probability/high-dimensional-probability", "title": "Uniform laws and Rademacher complexity"},
   "MathlibExt/Probability/VaradhanIntegralLemma": {"to": "Probability/large-deviations", "title": "Varadhan's integral lemma"},
