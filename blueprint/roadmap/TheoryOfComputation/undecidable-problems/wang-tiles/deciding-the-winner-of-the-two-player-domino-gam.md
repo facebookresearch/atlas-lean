@@ -25,6 +25,7 @@ In contrast, whether $A$ can win within a given number $T$ of moves is decidable
 
 ## Proof depends on
 
+- [Every recognizable predicate many-one reduces to the halting set](../../degrees-and-hierarchies/completeness-of-the-halting-set/many-one-reducible-halting-set.md)
 - [The tiling problem is undecidable](the-tiling-problem-is-undecidable.md)
 
 ## Expansion
@@ -32,7 +33,7 @@ In contrast, whether $A$ can win within a given number $T$ of moves is decidable
 Membership in $\Sigma^0_1$ comes from compactness: $B$ wins on $\mathbb{Z}^d$ exactly when $B$ wins on every finite box, so a win of $A$ is witnessed on a finite box. For hardness, the complement of the
 domino problem reduces to the game: from $(\mathcal{A}, \mathcal{F})$ one computes a new instance $(\mathcal{A}', \mathcal{F}')$, with pairs of letters, arrows and a fresh blocking symbol, such that $A$ wins its game exactly when
 the subshift defined by $(\mathcal{A}, \mathcal{F})$ is empty. When $A$ moves more than half of the time in a balanced order, $A$ always wins on a nonempty $\mathcal{F}$ by building isolated copies of a forbidden pattern; when $A$
-moves at most once the game is decided by bounded play.
+moves at most once the game is decided by bounded play. Hardness for $\Sigma^0_1$ needs more than undecidability of tiling: a good expansion links a page for the $\Sigma^0_1$-completeness of the complement of the domino problem on $\mathbb{Z}^d$, from which the game is shown $\Sigma^0_1$-hard (Proposition 2 of the source).
 
 ## Sources
 

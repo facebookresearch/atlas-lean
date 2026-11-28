@@ -25,7 +25,7 @@ nondeterministic two-counter automaton without input has an accepting computatio
 a computation as the concatenation of its configurations separated by $\#\#$. For the binary alphabet $\{0, \#\}$ it builds terminal-free constrained patterns
 $\alpha$ and $\beta$ such that $L_E(\alpha, r_\alpha) \subseteq L_E(\beta, r_\beta)$ always fails at most on words $v 0 u 0 v$ in which $u$ encodes an accepting computation, while the reverse inclusion
 always holds; so the two languages are equal exactly when the automaton has no accepting computation. The binary case reduces to every larger alphabet, since
-the constraint languages use only two letters. A good expansion links a page for the undecidability of emptiness for nondeterministic two-counter automata, which follows from the linked universality theorem together with the undecidability of halting of Turing machines on the blank tape.
+the constraint languages use only two letters. Emptiness of nondeterministic two-counter automata is undecidable by the linked universality theorem, which states that halting of two-counter machines started with zero counters is undecidable: a deterministic two-counter machine whose halting state accepts is such an automaton, with nonempty language exactly when the machine halts.
 
 ## Sources
 

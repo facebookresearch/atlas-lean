@@ -9,7 +9,7 @@ whether it is an SD code, and whether it is an ND code.
 
 For one-sided codes all four kinds of decipherability are decidable, as they are for two-sided codes whose translation vectors are
 parallel; so the undecidability needs translation vectors that do not all lie in one open half-plane bounded by a line through the origin (the source's constructions for uniquely, multiset and set decipherability use vectors from a closed half-plane) and are not all parallel. With
-$m$-catenation, two-sided codes are never ND, MSD or UD $m$-codes, so those cases are decidable trivially; whether a two-sided code is an SD $m$-code is left open by the source. Being two-sided is itself decidable, as it asks for a nonnegative integer solution of a homogeneous linear system.
+$m$-catenation, two-sided codes are never ND, MSD or UD $m$-codes, so those cases are decidable trivially; whether a two-sided code is an SD $m$-code is left open by the source. Being two-sided is itself decidable, as it asks for a nonzero nonnegative integer solution of a homogeneous linear system.
 
 ## Depends on
 

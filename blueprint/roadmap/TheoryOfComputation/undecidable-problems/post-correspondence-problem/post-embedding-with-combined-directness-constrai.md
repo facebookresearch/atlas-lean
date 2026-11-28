@@ -1,7 +1,7 @@
 # Post embedding with combined directness constraints is Σ⁰₁-complete
 
 The regular Post embedding problem, which asks for a word of a regular language whose first image is a subword of its second, is decidable even
-with partial directness; combining directness with codirectness, or allowing context-free or Presburger directness sets, makes it $\Sigma^0_1$-complete.
+with partial directness; combining directness with codirectness, or requiring codirectness on the suffixes in a deterministic context-free or Presburger-definable set, makes it $\Sigma^0_1$-complete.
 
 For a word $x$, write $x \sqsubseteq y$ if $x$ is a *subword* (scattered subword) of $y$, that is, $x$ is obtained from $y$ by erasing letters. Given morphisms $u, v : \Sigma^* \to \Gamma^*$ and a regular language $R \subseteq \Sigma^*$, the *regular
 Post embedding problem* (PEP) asks whether some $\sigma \in R$ satisfies $u(\sigma) \sqsubseteq v(\sigma)$, by analogy with the [Post correspondence problem](exists-not-tm2-decidable-pcp.md), which asks for equality. Variants constrain prefixes and suffixes of a
@@ -32,12 +32,13 @@ source proves decidable through Higman's lemma and a length function theorem.
 
 ## Proof depends on
 
+- [Every recognizable predicate many-one reduces to the halting set](../../degrees-and-hierarchies/completeness-of-the-halting-set/many-one-reducible-halting-set.md)
 - [The Post correspondence problem is undecidable](exists-not-tm2-decidable-pcp.md)
 
 ## Expansion
 
 Item 2 reduces the Post correspondence problem: from an instance $(u, v)$ one builds an instance with two marker letters and a set $R'$ of suffixes whose images have different lengths, which is deterministic context-free and Presburger-definable, so that
-codirectness on $R'$ forces equal lengths and hence equality $u(\sigma) = v(\sigma)$. Item 1 reduces the reachability problem for length-preserving semi-Thue systems; a complete expansion links it.
+codirectness on $R'$ forces equal lengths and hence equality $u(\sigma) = v(\sigma)$. Item 1 reduces the reachability problem for length-preserving semi-Thue systems. A good expansion links pages for the $\Sigma^0_1$-completeness of that reachability problem and of the Post correspondence problem, which the hardness parts use (Theorems 18 and 20 of the source).
 
 ## Sources
 

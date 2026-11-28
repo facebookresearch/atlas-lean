@@ -12,6 +12,6 @@ Specific undecidable problems and the reductions proving them undecidable: the P
 - [Universality problem for context-free grammars](universality-problem-for-context-free-grammars/README.md)
 - [Undecidable problems for context-free grammars](undecidable-problems-for-context-free-grammars/README.md)
 - [Regularity problem for context-free languages](regularity-problem-for-context-free-languages/README.md)
+- [Words, morphisms and patterns](words-morphisms-and-patterns/README.md)
 
 - [Validity of first-order sentences is undecidable](validity-of-first-order-sentences-is-undecidable.md)
-- [Words, morphisms and patterns](words-morphisms-and-patterns/README.md)

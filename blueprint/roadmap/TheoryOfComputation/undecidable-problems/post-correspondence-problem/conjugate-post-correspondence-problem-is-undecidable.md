@@ -8,11 +8,10 @@ Two words $x, y$ are *conjugate* if $x = uv$ and $y = vu$ for some words $u, v$.
 
 **Theorem (Finkel, Halava, Harju and Sahla).** The conjugate Post correspondence problem is undecidable (Theorem 1 of the source). Since an instance has a solution of the $(1,2)$-permutational problem if and only if it has one of the $(2,2)$-permutational problem (Lemma 1), the $(2,2)$-permutational Post correspondence problem is undecidable as well.
 
-Ruohonen proved undecidability of the $(m, n)$-permutational problems by simulating linearly bounded automata; the source gives a new proof of the conjugate case, noting that it was not stated explicitly in Ruohonen's earlier paper.
+Ruohonen's 1983 paper proved, by simulating linearly bounded automata, the undecidability of the $(n, 1)$-permutational problems for all $n$ and of the $(2,2)$-permutational problem; his 1984 report extended this to all $(m, n)$-permutational problems. The source gives a new proof of the conjugate case, noting that it was not stated explicitly in the 1983 paper.
 
 ## Depends on
 
-- [The Post correspondence problem](pcp.md)
 - [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -27,3 +26,4 @@ The proof reduces the halting problem of a deterministic Turing machine on the e
 
 - O. Finkel, V. Halava, T. Harju and E. Sahla, "On bi-infinite and conjugate post correspondence problems", RAIRO – Theoretical Informatics and Applications 57 (2023), article 7, https://doi.org/10.1051/ita/2023008; read in arXiv:2111.04484v3 (Problems 3 and 4, Lemma 1 and Theorem 1 of arXiv:2111.04484v3, Section 2).
 - K. Ruohonen, "On some variants of Post's correspondence problem", Acta Informatica 19 (1983), no. 4, 357–367, https://doi.org/10.1007/BF00290732 (cited after the paper above, which describes its results).
+- K. Ruohonen, "A note on permutational variants of Post's correspondence problem", Report 46, Department of Electrical Engineering, Mathematics, Tampere University of Technology, 1984 (cited after the paper above, its reference [19]).

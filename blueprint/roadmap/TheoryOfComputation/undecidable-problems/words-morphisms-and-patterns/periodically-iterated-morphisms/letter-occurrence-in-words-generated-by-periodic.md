@@ -8,11 +8,11 @@ PD0L words and the first-order theory of PD0L words are undecidable as well, and
 1. given a PD0L system $\mathcal{H} = (\Sigma, H, s)$ and a letter $b \in \Sigma$, it is undecidable whether $b$ occurs in $H^\omega(s)$, and whether $b$ occurs infinitely often in
    $H^\omega(s)$;
 2. given two PD0L systems, it is undecidable whether they generate the same word;
-3. the first-order theory of PD0L words is undecidable, that is, no algorithm decides, given a PD0L system and a first-order sentence about words, whether the
-   sentence holds of the generated word;
+3. the first-order theory of PD0L words is undecidable, that is, no algorithm decides, given a productive PD0L system and a first-order sentence about words, whether the
+   sentence holds of the generated infinite word;
 4. deciding whether a given PD0L system is productive is $\Pi^0_1$-complete.
 
-Items 1 to 3 already hold for non-erasing PD0L systems, and item 4 concerns erasing ones. They contrast with D0L words, for which equality is decidable (Čulik and
+Items 1 to 3 already hold for non-erasing PD0L systems, and for item 3 already for the productive non-erasing systems obtained from Fractran programs computing infinite words (Lemma 4.8 and Theorem 4.15 of the source); non-erasing alone does not make a system productive, since the identity morphism with seed $a$ generates the finite word $a$. Item 4, the productivity decision itself, concerns arbitrary, possibly erasing, systems. They contrast with D0L words, for which equality is decidable (Čulik and
 Harju) and morphic words, whose monadic second-order theory is decidable (Carton and Thomas).
 
 ## Depends on
@@ -24,7 +24,7 @@ Harju) and morphic words, whose monadic second-order theory is decidable (Carton
 
 ## Proof depends on
 
-None.
+- [Every recognizable predicate many-one reduces to the halting set](../../../degrees-and-hierarchies/completeness-of-the-halting-set/many-one-reducible-halting-set.md)
 
 ## Expansion
 
@@ -32,7 +32,7 @@ The proofs go through Fractran, Conway's programming language of lists of fracti
 computing an infinite word is simulated by a non-erasing PD0L system whose word reveals the program's output; modifying a program so that it outputs $0$ while
 running and switches to $1$ forever when it halts reduces halting to the occurrence of the letter $1$, which in this construction occurs at all exactly when it occurs
 infinitely often. Occurrence reduces to equality: $b$ occurs in the generated word exactly when that word differs from the word generated after renaming $b$ to a fresh letter. For productivity, an erasing PD0L system simulates a Fractran program so that the
-generated word is infinite exactly when the program does not halt. A good expansion links pages for the undecidability of halting of Fractran programs on input $2$ and for their simulation by PD0L systems.
+generated word is infinite exactly when the program does not halt. A good expansion links pages for the $\Sigma^0_1$-completeness of halting of Fractran programs on input $2$ (Proposition 2.3 of the source) and for their simulation by PD0L systems.
 
 ## Sources
 

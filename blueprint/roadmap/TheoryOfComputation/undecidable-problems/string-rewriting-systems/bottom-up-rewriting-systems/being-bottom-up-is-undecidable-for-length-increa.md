@@ -1,4 +1,4 @@
-# Being bottom-up is undecidable for length-increasing semi-Thue systems
+# Membership in BU(k) is undecidable for length-increasing semi-Thue systems
 
 For every bound $k \ge 1$, no algorithm decides whether a finite length-increasing semi-Thue system is bottom-up with bound $k$.
 
