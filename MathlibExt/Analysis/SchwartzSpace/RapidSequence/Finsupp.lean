@@ -79,7 +79,7 @@ theorem seminorm_ofFinsupp (k : ℕ) (f : ℕ →₀ E) :
   let C : ℝ≥0 := f.support.sup w
   change seminorm k (ofFinsupp (𝕜 := 𝕜) f) = (C : ℝ)
   apply le_antisymm
-  · apply seminorm_le_of_forall_le k (ofFinsupp f) (NNReal.coe_nonneg C)
+  · apply seminorm_le_of_forall_le k (ofFinsupp f)
     intro n
     by_cases hn : n ∈ f.support
     · have h : w n ≤ C := Finset.le_sup hn

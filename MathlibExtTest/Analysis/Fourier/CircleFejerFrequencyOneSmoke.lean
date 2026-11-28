@@ -11,7 +11,7 @@ Author: @toskua
 -/
 module
 
-import MathlibExt.Analysis.Fourier.CircleFejerCoefficients
+import MathlibExt.Analysis.Fourier.CircleFejerPairing
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -22,6 +22,8 @@ On `UnitAddCircle = ℝ/ℤ`, use the Haar probability measure and the character
 nonconstant. Its Fourier coefficient at frequency one is `1`, while its zero and negative-one
 coefficients vanish. The zeroth Fejér polynomial cuts off frequency one; the first Fejér
 polynomial retains that frequency with coefficient `1/2`, using the normalization `N+1`.
+Pairing its L∞ class with the L¹ character at frequency `-1` gives `1/2`; pairing with
+frequency `1` gives zero, as required by the bilinear convention.
 -/
 
 set_option autoImplicit false
@@ -82,5 +84,24 @@ example :
       (1 / 2 : ℂ) := by
   rw [circleFejerPolynomial_fourierCoeff, frequencyOne_coefficient]
   norm_num [circleFejerWeight]
+
+example :
+    ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1)
+        (circleFejerLp frequencyOne 1) (fourierLp 1 (-1)) = (1 / 2 : ℂ) ∧
+      ((ContinuousLinearMap.mul ℂ ℂ).lpPairing AddCircle.haarAddCircle ∞ 1)
+        (circleFejerLp frequencyOne 1) (fourierLp 1 1) = 0 := by
+  have hcoe :
+      (circleFejerLp frequencyOne 1 : UnitAddCircle → ℂ) =ᵐ[AddCircle.haarAddCircle]
+        circleFejerPolynomial frequencyOne 1 :=
+    ContinuousMap.coeFn_toLp AddCircle.haarAddCircle _
+  constructor
+  · rw [circleLpPairing_fourier]
+    rw [congrFun (fourierCoeff_congr_ae hcoe) (-(-1 : ℤ))]
+    rw [circleFejerPolynomial_fourierCoeff, frequencyOne_coefficient]
+    norm_num [circleFejerWeight]
+  · rw [circleLpPairing_fourier]
+    rw [congrFun (fourierCoeff_congr_ae hcoe) (-1 : ℤ)]
+    rw [circleFejerPolynomial_fourierCoeff, frequencyOne_coefficient]
+    norm_num [circleFejerWeight]
 
 end CircleFejerFrequencyOneSmoke

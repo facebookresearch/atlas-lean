@@ -28,7 +28,7 @@ namespace RapidSequence
 /-- The weighted supremum seminorms increase with their exponent. -/
 theorem seminorm_monotone : Monotone (seminorm (𝕜 := 𝕜) (E := E)) := by
   intro j k hjk f
-  apply seminorm_le_of_forall_le j f (apply_nonneg (seminorm k) f)
+  apply seminorm_le_of_forall_le j f
   intro n
   have hn' : (1 : ℝ) ≤ (n : ℝ) + 1 :=
     le_add_of_nonneg_left (Nat.cast_nonneg n)

@@ -50,44 +50,19 @@ def circleFejerKernel (N : ℕ) : C(UnitAddCircle, ℂ) :=
   ⟨AddCircle.fejerKernel (T := (1 : ℝ)) N,
     AddCircle.fejerKernel_continuous (T := (1 : ℝ)) N⟩
 
-/-- **Squared-modulus formula for the Fejér kernel.** For `N : ℕ` and `x : UnitAddCircle`,
-`circleFejerKernel N x = (‖circleDirichletPolynomial N x‖² / (N + 1) : ℝ)` in `ℂ`. -/
-theorem circleFejerKernel_apply (N : ℕ) (x : UnitAddCircle) :
-    circleFejerKernel N x = ((‖circleDirichletPolynomial N x‖ ^ 2 / (N + 1 : ℝ)) : ℝ) := by
-  change AddCircle.fejerKernel (T := (1 : ℝ)) N x = _
-  rw [AddCircle.fejerKernel_eq_ofReal, Complex.normSq_eq_norm_sq]
-  simpa only [circleDirichletPolynomial_apply, Nat.cast_add, Nat.cast_one,
-    div_eq_mul_inv] using
-    congrArg (fun r : ℝ => (r : ℂ))
-      (mul_comm (((N : ℝ) + 1)⁻¹)
-        (‖∑ n ∈ Finset.range (N + 1), fourier (n : ℤ) x‖ ^ 2))
 
-/-- **Nonnegativity of the Fejér kernel.** For every `N : ℕ` and `x : UnitAddCircle`,
-`0 ≤ (circleFejerKernel N x).re`. -/
-theorem circleFejerKernel_re_nonneg (N : ℕ) (x : UnitAddCircle) :
-    0 ≤ (circleFejerKernel N x).re := by
-  change 0 ≤ (AddCircle.fejerKernel (T := (1 : ℝ)) N x).re
-  exact AddCircle.fejerKernel_nonneg (T := (1 : ℝ)) N x
 
-/-- **Real-valued Fejér kernel.** For every `N : ℕ` and `x : UnitAddCircle`,
-`(circleFejerKernel N x).im = 0`. -/
-theorem circleFejerKernel_im (N : ℕ) (x : UnitAddCircle) : (circleFejerKernel N x).im = 0 := by
-  change (AddCircle.fejerKernel (T := (1 : ℝ)) N x).im = 0
-  rw [AddCircle.fejerKernel_eq_ofReal]
-  rfl
 
-/-- **Norm of the Fejér kernel.** For every `N : ℕ` and `x : UnitAddCircle`,
-`‖circleFejerKernel N x‖ = (circleFejerKernel N x).re`. -/
-theorem circleFejerKernel_norm (N : ℕ) (x : UnitAddCircle) :
-    ‖circleFejerKernel N x‖ = (circleFejerKernel N x).re := by
-  change ‖AddCircle.fejerKernel (T := (1 : ℝ)) N x‖ =
-    (AddCircle.fejerKernel (T := (1 : ℝ)) N x).re
-  have hn := AddCircle.fejerKernel_nonneg (T := (1 : ℝ)) N x
-  rw [AddCircle.fejerKernel_eq_ofReal, Complex.ofReal_re] at hn
-  rw [AddCircle.fejerKernel_eq_ofReal, Complex.norm_real, Real.norm_eq_abs,
-    abs_of_nonneg hn, Complex.ofReal_re]
+/-- **Coercion of the bundled unit-circle Fejér kernel.** For every N∈ℕ, the function
+underlying circleFejerKernel N is AddCircle.fejerKernel N at period one. Thus the general
+kernel formulas, positivity, and Haar normalization apply to this continuous map.
+-/
+@[simp]
+theorem circleFejerKernel_coe (N : ℕ) :
+    (circleFejerKernel N : UnitAddCircle → ℂ) =
+      AddCircle.fejerKernel (T := (1 : ℝ)) N := rfl
 
-/-- **L² norm of the Dirichlet polynomial.** For every `N : ℕ`, the `L²` inner product
+/-- **L² self-inner product of the Dirichlet polynomial.** For every `N : ℕ`, the `L²` inner product
 of `D_N` with itself, for the Haar probability measure on `ℝ/ℤ`, is `(N + 1 : ℂ)`. -/
 theorem circleDirichletPolynomial_inner (N : ℕ) :
     ⟪(circleDirichletPolynomial N).toLp 2 AddCircle.haarAddCircle ℂ,
@@ -105,20 +80,6 @@ theorem circleDirichletPolynomial_inner (N : ℕ) :
   simpa only [circleDirichletPolynomial, map_sum, fourierLp, one_smul, map_one, one_mul,
     Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_add, Nat.cast_one, mul_one] using h
 
-/-- **Unit mass of the Fejér kernel.** For every `N : ℕ`,
-`∫ x, circleFejerKernel N x ∂AddCircle.haarAddCircle = 1` on `UnitAddCircle`. -/
-theorem circleFejerKernel_integral (N : ℕ) :
-    (∫ x, circleFejerKernel N x ∂(AddCircle.haarAddCircle : Measure UnitAddCircle)) = 1 := by
-  change (∫ x : UnitAddCircle, AddCircle.fejerKernel (T := (1 : ℝ)) N x
-    ∂AddCircle.haarAddCircle) = 1
-  exact AddCircle.integral_fejerKernel (T := (1 : ℝ)) N
 
-/-- **Unit mass after translation and inversion.** For every `N : ℕ` and `x : UnitAddCircle`,
-`∫ t, circleFejerKernel N (x - t) ∂AddCircle.haarAddCircle = 1`. -/
-theorem circleFejerKernel_integral_sub (N : ℕ) (x : UnitAddCircle) :
-    (∫ t, circleFejerKernel N (x - t) ∂(AddCircle.haarAddCircle : Measure UnitAddCircle)) = 1 := by
-  rw [integral_sub_left_eq_self (circleFejerKernel N)
-    (AddCircle.haarAddCircle : Measure UnitAddCircle) x]
-  exact circleFejerKernel_integral N
 
 end MathlibExt.Analysis.Fourier

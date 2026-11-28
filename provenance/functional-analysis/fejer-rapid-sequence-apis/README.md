@@ -1,26 +1,20 @@
-# Fejér approximation and rapidly decreasing sequence APIs
+# Fejér approximation and rapidly decreasing sequences
 
-This bundle records five original MathlibExt sources: the four CircleFejer modules
-and the RapidSequence producer. files.jsonl binds their exact original source hashes
-and current exported hashes to the local source-snapshot/manifest.json. The snapshot
-stores five literal source_text records in compact JSON Lines. Each original body,
-author notice, UTF-8 byte count and SHA256 is preserved from the original theme archive.
-Every original_library field is MathlibExt.
+The Fejér polynomial is the square-sum expression on the probability circle ℝ/ℤ and
+equals the canonical `AddCircle.cesaroFourierMean` pointwise. Its L∞ norm bound,
+triangular Fourier coefficients and bilinear convergence against every L¹ function
+are retained. The opposite-sign character pairings at cutoff one distinguish the
+bilinear convention from a conjugated pairing.
 
-The four Fejér sources retain normalized Haar measure, all natural cutoff indices,
-the N + 1 coefficient weights and convergence against L1 test functions. The rapid
-sequence source retains real or complex scalar fields, general normed coefficients,
-all natural polynomial weights and the infinite sequence carrier.
+The rapid-sequence space retains the infinite sequence carrier, all polynomial
+weights, their supremum seminorms and the weighted topology. Finite-support inclusion,
+seminorm monotonicity, all-weight convergence and genuine infinite examples are
+included. Real local convexity uses the compatible real-module and scalar-tower
+hypotheses stated in the source.
 
-direct-apis.json records the two newly authored ATLAS implementations separately:
-the finite-support linear inclusion and exact seminorm law, and full-family
-monotonicity. It records Codex-assisted authorship and native input pins, with no
-Formal-Math source commit or original archive invented for either new implementation.
-
-native-clients.json records the actual passed frequency-one Fejér client and the
-21-claim rapidly decreasing sequence client, including finite, zero-boundary and
-true infinite examples. All native inputs use Lean v4.36.0 and Mathlib fc4f59e.
-
-The original ten-source archive and earlier source/private graph history are retained
-in their original location. This bundle is a verified five-source subset; it does not
-replace or rewrite that history. Provenance does not add to the Lean source LOC target.
+`files.jsonl` records the nine current Atlas source and consumer hashes, author credit,
+Mathlib pins and mathematical adaptations. Its five MathlibExt snapshot pointers resolve
+to literal UTF-8 source strings in `source-originals.jsonl`. Each original body and
+SHA256 is preserved; the two direct Atlas implementations and consumers have no invented
+upstream snapshot. The circle kernel and Cesàro providers are reused from Atlas, with
+exact source bindings. Standard JSON escaping is the only archive encoding.

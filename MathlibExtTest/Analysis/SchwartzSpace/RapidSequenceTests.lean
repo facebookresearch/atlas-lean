@@ -174,7 +174,7 @@ example (k : ℕ) : RapidSequence.seminorm k ((0 : ℂ) • packet) = 0 := by
 
 -- The zero sequence also satisfies the seminorm bound with the endpoint C = 0.
 example (k : ℕ) : RapidSequence.seminorm (𝕜 := ℂ) (E := ℂ) k 0 ≤ 0 := by
-  apply RapidSequence.seminorm_le_of_forall_le k 0 le_rfl
+  apply RapidSequence.seminorm_le_of_forall_le k 0
   intro n
   simp
 

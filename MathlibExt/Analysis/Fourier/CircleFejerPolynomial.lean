@@ -46,15 +46,29 @@ def circleFejerPolynomial (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure Uni
   (N + 1 : ℂ)⁻¹ • ∑ i ∈ Finset.range (N + 1), ∑ j ∈ Finset.range (N + 1),
     fourierCoeff (f : UnitAddCircle → ℂ) ((i : ℤ) - j) • fourier ((i : ℤ) - j)
 
-/-- **Circle Fourier character on a difference.**
 
-Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
-Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For n∈ℤ and x,t∈𝕋,
-e_n(x-t)=e_n(x)e_(-n)(t).
--/
-theorem circleFourier_apply_sub (n : ℤ) (x t : UnitAddCircle) :
-    fourier n (x - t) = fourier n x * fourier (-n) t := by
-  exact (AddCircle.fourier_sub_eq (T := (1 : ℝ)) n x t).trans (mul_comm _ _)
+/-- **Squared-modulus formula for the Fejér kernel.** For `N : ℕ` and `x : UnitAddCircle`,
+`circleFejerKernel N x = (‖circleDirichletPolynomial N x‖² / (N + 1) : ℝ)` in `ℂ`. -/
+private theorem circleFejerKernel_apply (N : ℕ) (x : UnitAddCircle) :
+    circleFejerKernel N x = ((‖circleDirichletPolynomial N x‖ ^ 2 / (N + 1 : ℝ)) : ℝ) := by
+  change AddCircle.fejerKernel (T := (1 : ℝ)) N x = _
+  rw [AddCircle.fejerKernel_eq_ofReal, Complex.normSq_eq_norm_sq]
+  simpa only [circleDirichletPolynomial_apply, Nat.cast_add, Nat.cast_one,
+    div_eq_mul_inv] using
+    congrArg (fun r : ℝ => (r : ℂ))
+      (mul_comm (((N : ℝ) + 1)⁻¹)
+        (‖∑ n ∈ Finset.range (N + 1), fourier (n : ℤ) x‖ ^ 2))
+
+/-- **Norm of the Fejér kernel.** For every `N : ℕ` and `x : UnitAddCircle`,
+`‖circleFejerKernel N x‖ = (circleFejerKernel N x).re`. -/
+private theorem circleFejerKernel_norm (N : ℕ) (x : UnitAddCircle) :
+    ‖circleFejerKernel N x‖ = (circleFejerKernel N x).re := by
+  change ‖AddCircle.fejerKernel (T := (1 : ℝ)) N x‖ =
+    (AddCircle.fejerKernel (T := (1 : ℝ)) N x).re
+  have hn := AddCircle.fejerKernel_nonneg (T := (1 : ℝ)) N x
+  rw [AddCircle.fejerKernel_eq_ofReal, Complex.ofReal_re] at hn
+  rw [AddCircle.fejerKernel_eq_ofReal, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_nonneg hn, Complex.ofReal_re]
 
 /-- **Finite Fourier expansion of the Fejér kernel.**
 
@@ -94,42 +108,38 @@ theorem circleFejerKernel_fourier (N : ℕ) (x : UnitAddCircle) :
     simpa only [RCLike.star_def] using (fourier_neg (n := (j : ℤ)) (x := x)).symm
   rw [hjstar, mul_comm, ← fourier_add, sub_eq_add_neg]
 
-/-- **Integral of a translated Fourier character.**
+private theorem circleIntegral_mul_sub_swap (f g : UnitAddCircle → ℂ) (x : UnitAddCircle) :
+    (∫ t, f t * g (x - t) ∂AddCircle.haarAddCircle) =
+      ∫ t, g t * f (x - t) ∂AddCircle.haarAddCircle := by
+  have he : (fun t : UnitAddCircle => f t * g (x - t)) =
+      (fun t : UnitAddCircle => g t * f (x - t)) ∘ (x - ·) := by
+    funext t
+    simp only [Function.comp_apply, sub_sub_cancel, mul_comm]
+  rw [he]
+  exact integral_sub_left_eq_self
+    (fun t : UnitAddCircle => g t * f (x - t)) AddCircle.haarAddCircle x
 
-Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
-Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ), n∈ℤ and
-x∈𝕋, ∫ t, f(t)e_n(x-t) ∂μ=f̂(n)e_n(x).
--/
-theorem circleFourier_integral_translate
+/-- The translated Fourier integral is the canonical character-convolution identity,
+after the Haar-preserving substitution t↦x−t. -/
+private theorem circleFourier_integral_translate
     (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (n : ℤ) (x : UnitAddCircle) :
     (∫ t, f t * fourier n (x - t) ∂AddCircle.haarAddCircle) =
       fourierCoeff (f : UnitAddCircle → ℂ) n * fourier n x := by
-  have he : (fun t : UnitAddCircle => f t * fourier n (x - t)) =
-      fun t => (fourier n x) * (fourier (-n) t • f t) := by
-    funext t
-    rw [circleFourier_apply_sub, smul_eq_mul]
-    ring
-  rw [he, integral_const_mul]
-  change fourier n x * fourierCoeff (f : UnitAddCircle → ℂ) n = _
-  exact mul_comm _ _
+  have hf : Integrable (f : UnitAddCircle → ℂ) AddCircle.haarAddCircle :=
+    memLp_one_iff_integrable.mp ((Lp.memLp f).mono_exponent (by simp : (1 : ℝ≥0∞) ≤ ∞))
+  rw [circleIntegral_mul_sub_swap]
+  simpa only [smul_eq_mul] using
+    AddCircle.fourier_integral_convolution (f : UnitAddCircle → ℂ) hf n x
 
-/-- **Integrability of a translated Fourier term.**
-
-Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
-Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ. For f∈L∞(𝕋,μ), n∈ℤ and
-x∈𝕋, the function t↦f(t)e_n(x-t) is μ-integrable.
--/
-theorem circleFourier_translate_integrable
+/-- Integrability follows by composing the canonical Fourier-twisted integrable function
+with the Haar-preserving subtraction map. -/
+private theorem circleFourier_translate_integrable
     (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (n : ℤ) (x : UnitAddCircle) :
     Integrable (fun t => f t * fourier n (x - t)) AddCircle.haarAddCircle := by
   have hf : Integrable (f : UnitAddCircle → ℂ) AddCircle.haarAddCircle :=
     memLp_one_iff_integrable.mp ((Lp.memLp f).mono_exponent (by simp : (1 : ℝ≥0∞) ≤ ∞))
-  have h := (hf.fourier_smul (-n)).const_mul (fourier n x)
-  apply h.congr
-  exact Filter.Eventually.of_forall (fun t => by
-    change fourier n x * (fourier (-n) t • f t) = f t * fourier n (x - t)
-    rw [circleFourier_apply_sub, smul_eq_mul]
-    ring)
+  simpa only [sub_sub_cancel, smul_eq_mul, mul_comm] using
+    (AddCircle.fourier_smul_integrable (f : UnitAddCircle → ℂ) hf n x).comp_sub_left x
 
 /-- **Fejér polynomial as convolution with the Fejér kernel.**
 
@@ -171,6 +181,26 @@ theorem circleFejerPolynomial_eq_integral
   simp only [circleFejerPolynomial, ContinuousMap.smul_apply, ContinuousMap.sum_apply,
     smul_eq_mul]
 
+/-- **The square Fejér polynomial is the Cesàro–Fourier mean.**
+
+Let μ be the Haar probability measure on 𝕋=ℝ/ℤ, let f∈L∞(𝕋,μ), and let N∈ℕ. At every x∈𝕋,
+the continuous polynomial (N+1)⁻¹∑_{0≤i,j≤N} f̂(i−j)e_(i−j)(x) equals the canonical mean
+AddCircle.cesaroFourierMean f N x, the average of the partial Fourier sums of orders
+0,…,N. The equality holds pointwise, including N=0, for the representative of f used by
+its Fourier coefficients.
+-/
+theorem circleFejerPolynomial_eq_cesaroFourierMean
+    (f : Lp ℂ ∞ (AddCircle.haarAddCircle : Measure UnitAddCircle)) (N : ℕ) (x : UnitAddCircle) :
+    circleFejerPolynomial f N x =
+      AddCircle.cesaroFourierMean (f : UnitAddCircle → ℂ) N x := by
+  have hf : Integrable (f : UnitAddCircle → ℂ) AddCircle.haarAddCircle :=
+    memLp_one_iff_integrable.mp ((Lp.memLp f).mono_exponent (by simp : (1 : ℝ≥0∞) ≤ ∞))
+  rw [circleFejerPolynomial_eq_integral,
+    AddCircle.cesaroMean_eq_fejer_convolution (f : UnitAddCircle → ℂ) hf N x]
+  simpa only [circleFejerKernel_coe, smul_eq_mul] using
+    circleIntegral_mul_sub_swap (f : UnitAddCircle → ℂ)
+      (AddCircle.fejerKernel (T := (1 : ℝ)) N) x
+
 /-- **Translated Fejér kernel has unit mass.**
 
 Let 𝕋=UnitAddCircle=ℝ/ℤ, with normalized Haar probability measure μ=AddCircle.haarAddCircle.
@@ -178,7 +208,7 @@ Write e_k(x)=fourier k x and f̂(k)=∫ x:𝕋, f(x)e_(-k)(x) ∂μ for k∈ℤ.
 kernel is K_N(x)=circleFejerKernel N x=(N+1)⁻¹|∑_{j=0}^N e_j(x)|², viewed in ℂ. For N∈ℕ and
 x∈𝕋, ∫ t, Re(K_N(x-t)) ∂μ=1.
 -/
-theorem circleFejerKernel_integral_re_sub (N : ℕ) (x : UnitAddCircle) :
+private theorem circleFejerKernel_integral_re_sub (N : ℕ) (x : UnitAddCircle) :
     (∫ t, (circleFejerKernel N (x - t)).re
       ∂(AddCircle.haarAddCircle : Measure UnitAddCircle)) = 1 := by
   have hI : Integrable (fun t => circleFejerKernel N (x - t))
@@ -190,7 +220,11 @@ theorem circleFejerKernel_integral_re_sub (N : ℕ) (x : UnitAddCircle) :
           (continuous_const.sub continuous_id)⟩ : C(UnitAddCircle, ℂ)))
   have hRe := (Complex.reCLM : ℂ →L[ℝ] ℝ).integral_comp_comm hI
   simp only [Complex.reCLM_apply] at hRe
-  rw [hRe, circleFejerKernel_integral_sub]
+  rw [hRe, integral_sub_left_eq_self (circleFejerKernel N)
+    (AddCircle.haarAddCircle : Measure UnitAddCircle) x]
+  change (∫ t : UnitAddCircle, AddCircle.fejerKernel (T := (1 : ℝ)) N t
+    ∂AddCircle.haarAddCircle).re = 1
+  rw [AddCircle.integral_fejerKernel]
   rfl
 
 /-- **Uniform norm bound for a Fejér polynomial.**
@@ -222,7 +256,8 @@ theorem circleFejerPolynomial_norm_le
     have htf : ‖f t‖ ≤ ‖f‖ := by
       simpa only [← toReal_eLpNorm, Lp.norm_def] using ht
     rw [norm_mul, circleFejerKernel_norm]
-    exact mul_le_mul_of_nonneg_right htf (circleFejerKernel_re_nonneg _ _)
+    exact mul_le_mul_of_nonneg_right htf
+      (AddCircle.fejerKernel_nonneg (T := (1 : ℝ)) N (x - t))
   have he := norm_integral_le_of_norm_le hI hbound
   rw [integral_const_mul, circleFejerKernel_integral_re_sub, mul_one] at he
   exact he
