@@ -21,6 +21,7 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
 - [Renyi differential privacy](renyi-differential-privacy/README.md)
 - [Laplace and exponential mechanisms](laplace-and-exponential-mechanisms/README.md)
 - [Unclonable Quantum Cryptography](unclonable-quantum-cryptography/README.md)
+- [Cryptographic private machine learning](privacy-preserving-machine-learning/README.md)
 
 ## Related topics
 
