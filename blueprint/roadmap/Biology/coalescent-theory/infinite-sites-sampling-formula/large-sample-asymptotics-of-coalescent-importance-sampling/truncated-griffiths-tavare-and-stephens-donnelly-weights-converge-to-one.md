@@ -1,6 +1,6 @@
 # Truncated Griffiths–Tavaré and Stephens–Donnelly importance weights converge to one
 
-**Setting.** Let $p(\mathbf n)$ be the probability of an observed type configuration $\mathbf n \in \mathbb N^d$ under the Kingman coalescent with mutation (rate $\theta$, mutation matrix $P$), and let $p(\mathbf n - \mathbf v \mid \mathbf n)$ be the true backward transition probabilities of the block-counting chain. An importance sampler draws backward histories from a proposal $q$; truncated after $k$ steps from the sample $n\mathbf y_0^{(n)}$, its normalised weight is
+**Setting.** Let $p(\mathbf n)$ be the probability of an observed type configuration $\mathbf n \in \mathbb N^d$ under the Kingman coalescent with mutation in the setting of the [cost-functional limit](large-sample-limit-of-coalescent-cost-functionals.md): mutation rate $\theta > 0$ and an irreducible mutation transition matrix $P$ (the standing model of Favero–Koskela, §2.1, for both Theorems 3.3 and 5.3; irreducibility makes $p(\mathbf n) > 0$ for every $\mathbf n \ne 0$, so the weight below is well defined), and let $p(\mathbf n - \mathbf v \mid \mathbf n)$ be the true backward transition probabilities of the block-counting chain. An importance sampler draws backward histories from a proposal $q$; truncated after $k$ steps from the sample $n\mathbf y_0^{(n)}$, its normalised weight is
 
 $$W^{(n)}(k) = \frac{p(n\mathbf Y^{(n)}(k))}{p(n\mathbf y_0^{(n)})}\, C^{(n)}(k), \qquad c_q^{(n)}(\mathbf v \mid \mathbf y) = \frac{p(n\mathbf y \mid n\mathbf y - \mathbf v)}{q(n\mathbf y - \mathbf v \mid n\mathbf y)},$$
 
@@ -14,7 +14,7 @@ where $C^{(n)}$ multiplies the one-step costs $c_q^{(n)}$ along the path and $p(
 
     $$c_{SD}^{(n)}(\mathbf e_j \mid \mathbf y) = 1 + \frac1n\Big[\frac{1-\theta}{\|\mathbf y\|_1} - \frac{1}{y_j}\Big(1 - \sum_i \frac{y_i}{\|\mathbf y\|_1}\theta P_{ij}\Big)\Big] + o(1/n), \qquad c_{SD}^{(n)}(\mathbf e_i - \mathbf e_j \mid \mathbf y) = 1 + o(1).$$
 
-**Theorem.** Assume $\mathbf y_0^{(n)} \to \mathbf y_0 \in \mathbb R^d_+$ with $\|\mathbf y_0\|_1 = 1$ and fix $t \in [0,1)$. Under the true backward distribution, as $n \to \infty$,
+**Theorem.** Assume $P$ is irreducible and $\mathbf y_0^{(n)} \to \mathbf y_0 \in (0, \infty)^d$ with $\|\mathbf y_0\|_1 = 1$ and fix $t \in [0,1)$. Under the true backward distribution, as $n \to \infty$,
 
 $$\frac{p(n\mathbf Y^{(n)}(\lfloor tn \rfloor))}{p(n\mathbf y_0^{(n)})} \Rightarrow (1-t)^{1-d}, \qquad C_{GT}^{(n)}(\lfloor tn \rfloor) \Rightarrow (1-t)^{d-1}, \qquad C_{SD}^{(n)}(\lfloor tn \rfloor) \Rightarrow (1-t)^{d-1},$$
 
@@ -32,4 +32,4 @@ Plug the one-step expansions into the general cost limit. For GT, $a_j(\mathbf y
 
 ## Sources
 
-- Martina Favero and Jere Koskela, "Large-sample analysis of cost functionals for inference under the coalescent", *Stochastic Processes and their Applications* 195 (2026), 104894, <https://doi.org/10.1016/j.spa.2026.104894>. Numbering as in the preprint arXiv:2412.06004v2, <https://arxiv.org/abs/2412.06004v2>: Propositions 4.1, 4.2, 5.2 and Theorem 5.3.
+- Martina Favero and Jere Koskela, "Large-sample analysis of cost functionals for inference under the coalescent", *Stochastic Processes and their Applications* 195 (2026), 104894, <https://doi.org/10.1016/j.spa.2026.104894>. Numbering as in the preprint arXiv:2412.06004v2, <https://arxiv.org/abs/2412.06004v2>: Section 2.1 (standing model, irreducible $P$), Propositions 4.1, 4.2, 5.2 and Theorem 5.3.

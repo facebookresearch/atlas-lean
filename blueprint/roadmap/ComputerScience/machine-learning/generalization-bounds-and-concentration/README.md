@@ -49,3 +49,7 @@ In the [PAC-Bayes bounds](pac-bayes-bounds/README.md), Catoni's bound for bounde
 - [Sharp guarantees for out-of-distribution generalization](out-of-distribution-generalization-guarantees.md)
 - [Occam and Description-Length Bounds](occam-and-description-length-bounds/README.md)
 - [Rademacher Generalization and Margin Bounds](rademacher-and-margin-bounds/README.md)
+
+## Relative generalization bound for bounded-loss sample compression
+
+- [Compression Validation Risk](compression-validation-risk.md)

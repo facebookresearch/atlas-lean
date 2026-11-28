@@ -1,0 +1,29 @@
+# Module checking
+
+Module checking asks whether an open system, whose states are split into system states and environment states, satisfies a branching-time specification against every environment, that is, in every computation tree obtained by pruning environment choices.
+
+**Definition.** A *module* (open Kripke structure) is $\mathcal M = \langle AP, S = S_{sy} \cup S_{en}, s_0, R, L, \cong\rangle$: a [Kripke structure](../temporal-specification/kripke-structures-with-initial-states.md) with a finite set $AP$ of atomic propositions, a (possibly infinite) set $S$ of states partitioned into *system states* $S_{sy}$ and *environment states* $S_{en}$, the single initial state $s_0$ (initial set $\{s_0\}$), transition relation $R \subseteq S \times S$ and labelling $L : S \to 2^{AP}$, together with an [equivalence relation](../../../Order/ordered-sets/equivalence-relation.md) $\cong$ on $S$ relating the states the environment cannot distinguish; since the environment knows whose turn it is, $s \cong s'$ implies ($s \in S_{en}$ iff $s' \in S_{en}$). Write $\mathrm{vis}(s)$ for the class of $s$, and for a node $x$ of the computation tree $T_{\mathcal M}$ obtained by unwinding $\mathcal M$ from $s_0$, let $\mathrm{vis}(x)$ be the sequence of classes of the states on the path from the root to $x$. A *strategy tree* (an environment's view of the execution) is a subtree $ST$ of $T_{\mathcal M}$ containing the root such that every node labelled by a system state keeps all its children, every node labelled by an environment state that has children in $T_{\mathcal M}$ keeps at least one, and for all nodes $x_1, x_2$ with $\mathrm{vis}(x_1) = \mathrm{vis}(x_2)$, $x_1$ is in $ST$ iff $x_2$ is. With $\cong$ the identity, the environment has perfect information. $\mathcal M$ *reactively satisfies* a branching-time formula $\varphi$, written $\mathcal M \models_r \varphi$, if every strategy tree, labelled by $L$, satisfies $\varphi$. The *module checking problem* for a class of modules and a specification logic asks, given $\mathcal M$ and $\varphi$, whether $\mathcal M \models_r \varphi$.
+
+*Pushdown modules.* An *open pushdown system* (OPD) $\mathcal S = \langle AP, Q, q_0, \Gamma, \flat, \Delta, \mu, \mathit{Env}\rangle$ has a finite set $AP$ of propositions, a finite set $Q$ of control states with initial state $q_0$, a finite stack alphabet $\Gamma$ with a bottom symbol $\flat \notin \Gamma$, internal, push and pop transitions $\Delta \subseteq (Q \times Q) \cup (Q \times Q \times \Gamma) \cup (Q \times (\Gamma \cup \{\flat\}) \times Q)$, a labelling $\mu : Q \times (\Gamma \cup \{\flat\}) \to 2^{AP}$, and a set $\mathit{Env} \subseteq Q \times (\Gamma \cup \{\flat\})$ of environment pairs (control state, top of stack). Control states are sets of variables, $Q \subseteq 2^{I \cup H}$, and stack symbols too, $\Gamma \subseteq 2^{I_\Gamma \cup H_\Gamma}$, with $I, I_\Gamma$ visible and $H, H_\Gamma$ invisible finite sets. The visible part of $q$ is $\mathrm{vis}(q) = q \cap I$; for $\gamma \in \Gamma$, $\mathrm{vis}(\gamma) = \varepsilon$ (the empty word, erasing the symbol) if $\gamma$ is nonempty and $\gamma \subseteq H_\Gamma$, and $\mathrm{vis}(\gamma) = \gamma \cap I_\Gamma$ otherwise; $\mathrm{vis}$ extends letterwise to stack contents $\alpha \in \Gamma^*\flat$. The environment must know whose turn it is: whenever $(\mathrm{vis}(q), \mathrm{vis}(\mathrm{top}(\alpha))) = (\mathrm{vis}(q'), \mathrm{vis}(\mathrm{top}(\alpha')))$, $(q, \mathrm{top}(\alpha)) \in \mathit{Env}$ iff $(q', \mathrm{top}(\alpha')) \in \mathit{Env}$. The OPD induces an infinite module $\mathcal M_{\mathcal S}$ on its configurations $(q, \alpha)$, starting from $(q_0, \flat)$, with environment states those with $(q, \mathrm{top}(\alpha)) \in \mathit{Env}$ and with $(q, \alpha) \cong (q', \alpha')$ iff $(\mathrm{vis}(q), \mathrm{vis}(\alpha)) = (\mathrm{vis}(q'), \mathrm{vis}(\alpha'))$. The *stack content depth is visible* if $\mathrm{vis}(\gamma) \neq \varepsilon$ for every $\gamma \in \Gamma$, so that the environment always sees how many symbols are on the stack.
+
+Note that $\mathcal M \not\models_r \varphi$ is not the same as $\mathcal M \models_r \neg\varphi$: the former says only that some strategy tree violates $\varphi$.
+
+## Depends on
+
+- [Kripke model](../../modal-logic/kripke-semantics/kripke-model.md)
+- [Kripke structures with initial states](../temporal-specification/kripke-structures-with-initial-states.md)
+- [Equivalence relation](../../../Order/ordered-sets/equivalence-relation.md)
+- [CTL formulas](../computation-tree-logic/formula.md)
+
+## Proof depends on
+
+None.
+
+## Expansion
+
+Module checking was introduced by Kupferman, Vardi and Wolper for finite-state modules: model checking verifies the full tree $T_{\mathcal M}$, the behavior against a maximal environment, while module checking also covers every environment that disables some of its choices. For CTL over finite-state modules it is EXPTIME-complete, and for pushdown modules with perfect information against CTL it is 2EXPTIME-complete.
+
+## Sources
+
+- L. Bozzelli, "New results on pushdown module checking with imperfect information", in *Proceedings of the Second International Symposium on Games, Automata, Logics and Formal Verification (GandALF 2011)*, Electronic Proceedings in Theoretical Computer Science 54, 2011, pp. 162–177, <https://doi.org/10.4204/EPTCS.54.12>; numbers from arXiv:1106.1239v1, <https://arxiv.org/abs/1106.1239v1>: Section 2 (modules, strategy trees with imperfect information, reactive satisfaction, open pushdown systems and visible stack content depth).
+- A. Ferrante, A. Murano and M. Parente, "Enriched MU-Calculi Module Checking", *Logical Methods in Computer Science* 4(3), 2008, paper 1, <https://doi.org/10.2168/LMCS-4(3:1)2008>; numbers from arXiv:0805.3462v2, <https://arxiv.org/abs/0805.3462v2>: Section 3 (modules) and Section 7 (the memoryless variant used there).
