@@ -12097,7 +12097,7 @@
 "ControlTheory.PW.rep_continuous": "456d12497b24451c",
 "ControlTheory.PW.rep_smul": "ab8278eab954a9a5",
 "ControlTheory.RatMatrix.IsProper": "436179a1598dc704",
-"ControlTheory.RatMatrix.exists_commonDenom": "50f325f21672ec54",
+"ControlTheory.RatMatrix.exists_commonDenom": "dd7bcea6c5ccab20",
 "ControlTheory.StateSpaceCoeffs": "2cca4f88a6f90dbf",
 "ControlTheory.StateSpaceCoeffs.dtOutput": "d90d482f5b6ad2e3",
 "ControlTheory.StateSpaceCoeffs.dtOutput_closedForm": "df42602e193fe651",
