@@ -19,6 +19,7 @@ public import MathlibExt.Data.Set.Density
 public import MathlibExt.NumberTheory.FermatNumberStrongPseudoprimeAddSub
 public import MathlibExt.NumberTheory.FermatNumberStrongPseudoprimeTwoPow
 public import MathlibExt.NumberTheory.FermatPseudoprimeBaseCount
+public import MathlibExt.NumberTheory.FermatPseudoprimeBaseCountSquare
 public import MathlibExt.NumberTheory.StrongPseudoprime
 public import MathlibExt.NumberTheory.StrongPseudoprimeBaseCount
 public import MathlibExt.NumberTheory.StrongPseudoprimePrimitivePart
@@ -43,17 +44,6 @@ stated; see the source audit table.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Products of two distinct primes have a square number of Fermat pseudoprime bases.** Let
-$p$ and $q$ be distinct primes. Then the number of integers $b$ with $1 \le b < pq$ such that
-$pq$ is a Fermat pseudoprime to the base $b$, that is, $b^{pq-1} \equiv 1 \pmod{pq}$, is a perfect
-square.
-
-Source: Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
-Article A23, Corollary 1 (`integers-2024-A23-cor-1`). -/
-public theorem_wanted isSquare_card_fermatPsp_bases_mul_of_prime {p q : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hpq : p ≠ q) :
-    IsSquare {b : ℕ | 1 ≤ b ∧ b < p * q ∧ Nat.FermatPsp (p * q) b}.ncard
 
 /-- **When the strong pseudoprime bases form a subgroup.** Let $n > 1$ be an odd number that is
 not prime, let $r$ be the number of distinct prime factors of $n$, and let $v$ be the least
