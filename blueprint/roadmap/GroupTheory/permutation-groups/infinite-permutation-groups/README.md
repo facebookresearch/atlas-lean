@@ -5,6 +5,7 @@ Permutation groups on infinite sets: highly homogeneous groups of orders, circul
 - [Class transpositions of the integers](class-transpositions-of-the-integers/README.md)
 - [Free groups in the infinite symmetric group](free-groups-in-the-infinite-symmetric-group/README.md)
 - [Highly homogeneous permutation groups](highly-homogeneous-permutation-groups/README.md)
+- [Highly transitive groups and homeomorphisms of the rationals](highly-transitive-groups-and-homeomorphisms-of-t/README.md)
 - [Cofinitary permutation groups](cofinitary-permutation-groups/README.md)
 - [Distinguishing sets of subdegree-finite groups](distinguishing-sets-of-subdegree-finite-groups/README.md)
 - [Orbit algebras of permutation groups](orbit-algebras-of-permutation-groups/README.md)

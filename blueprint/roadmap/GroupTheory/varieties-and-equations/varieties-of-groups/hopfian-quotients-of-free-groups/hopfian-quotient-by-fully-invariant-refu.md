@@ -1,0 +1,5 @@
+# Quotients by fully invariant subgroups need not be Hopfian
+
+There are a free group $F$ of finite rank, a normal subgroup $N$ and a normal subgroup $V \le N$ of $F$, fully invariant in $N$, such that $F/N$ is Hopfian but $F/V$ is not. A group is Hopfian if every surjective endomorphism of it is injective. Ivanov and Storozhev construct a nontrivial variety of groups all of whose noncyclic free groups are non-Hopfian; taking $N = F$ of rank at least $2$ and $V$ the verbal subgroup of that variety gives an example. This answers Kourovka Problem 2.72 negatively. It is the negation of the proposition on [Kourovka Problem 2.72 (Hopfian quotients by fully invariant subgroups)](hopfian-quotient-by-fully-invariant.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 2.72 (D. M. Smirnov; question of G. Baumslag); resolution: S. V. Ivanov and A. M. Storozhev, Non-Hopfian relatively free groups, Geom. Dedicata 114 (2005), 209-228.

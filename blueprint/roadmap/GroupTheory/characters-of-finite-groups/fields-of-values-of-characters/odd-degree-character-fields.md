@@ -1,0 +1,5 @@
+# Navarro's question on fields of values of odd-degree characters (answer)
+
+The proposition that the following holds. A subfield $F$ of $\mathbb{C}$ is the field of values $\mathbb{Q}(\chi)$ of an irreducible complex character $\chi$ of odd degree of some finite group if and only if $F \subseteq \mathbb{Q}(\zeta_f)$ for some $f \ge 1$ (that is, $F/\mathbb{Q}$ is a finite abelian extension) and $\mathbb{Q}(\zeta_{2^a}) \subseteq F$, where $2^a$ is the largest power of $2$ dividing the conductor of $F$, the least $f \ge 1$ with $F \subseteq \mathbb{Q}(\zeta_f)$. Here $\zeta_f = e^{2\pi i/f}$, and $\chi$ is the character of a simple finite-dimensional complex representation of odd dimension.
+
+Source: G. Navarro, in Mini-Workshop: Kronecker, Plethysm, and Sylow Branching Coefficients and their Applications to Complexity Theory, Oberwolfach Reports 17 (2020), no. 9, pp. 526-527, DOI 10.4171/OWR/2020/09; resolution: G. Navarro and P. H. Tiep, The fields of values of characters of degree not divisible by p, Forum Math. Pi 9 (2021), e2, Theorems A1 and A2, https://doi.org/10.1017/fmp.2021.1.

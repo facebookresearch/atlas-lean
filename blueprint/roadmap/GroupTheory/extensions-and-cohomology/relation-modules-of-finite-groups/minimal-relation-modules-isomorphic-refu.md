@@ -1,0 +1,5 @@
+# Minimal relation modules of a finite group need not be isomorphic
+
+There is a finite group with two presentations on $d(G)$ generators whose relation modules are not isomorphic as $\mathbb ZG$-modules. Kourovka Problem 4.54 has a negative answer. For a presentation $\pi \colon F_d \to G$ with kernel $R$, the relation module is $R/[R, R]$ with $G$ acting by conjugation: $g = \pi(u)$ acts through conjugation by $u$. It is minimal when $d = d(G)$, the minimal number of generators of $G$. It is the negation of the proposition on [Kourovka Problem 4.54 (minimal relation modules)](minimal-relation-modules-isomorphic.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 4.54 (K. W. Roggenkamp); resolution: P. A. Linnell, Ph. D. Thesis, Cambridge, 1979; A. J. Sieradski and M. N. Dyer, Distinguishing arithmetic for certain stably isomorphic modules, J. Pure Appl. Algebra 15 (1979), 199-217, https://doi.org/10.1016/0022-4049(79)90034-3.

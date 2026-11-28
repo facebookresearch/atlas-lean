@@ -9,6 +9,7 @@ Structure of finite soluble groups: supersolubility criteria, p-solubility and p
 - [Supersolubility criteria](supersolubility-criteria/README.md)
 - [σ-solubility, σ-nilpotency and σ-subnormality](solubility-nilpotency-and-subnormality/README.md)
 - [Frattini and complemented chief factors](frattini-and-complemented-chief-factors/README.md)
+- [Nilpotent length and exponent](nilpotent-length-and-exponent/README.md)
 - [Schmidt subgroups](schmidt-subgroups/README.md)
 - [Supersoluble maximal subgroups](supersoluble-maximal-subgroups/README.md)
 - [Supplements of maximal subgroups of Sylow subgroups](supplements-of-maximal-subgroups-of-sylow-subgro/README.md)

@@ -18,5 +18,6 @@ Groups of prime-power order: composition series, Frattini subgroups and Φ-exten
 - [p-groups with special maximal subgroups](p-groups-with-special-maximal-subgroups/README.md)
 - [Partitions of p-groups](partitions-of-p-groups/README.md)
 - [Powerful p-groups](powerful-p-groups/README.md)
+- [Schur multipliers of p-groups](schur-multipliers-of-p-groups/README.md)
 - [Φ-extensions of p-groups](extensions-of-p-groups/README.md)
 - [Generalized quaternion group](is-generalized-quaternion.md)

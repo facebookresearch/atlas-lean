@@ -1,0 +1,5 @@
+# The generalised Saxl common neighbour conjecture (statement)
+
+The proposition that for every finite set $\Omega$ with at least two points and every primitive group $G$ of permutations of $\Omega$ in which every base (finite set with trivial pointwise stabilizer) has at least two points, any two points $\alpha, \beta \in \Omega$ (not necessarily distinct) have a common neighbour in the generalised Saxl graph of $G$, the graph in which distinct points are adjacent when some minimum-size base contains both. Primitive means transitive with no nontrivial blocks. For minimum base size $2$ this is the Burness–Giudici common neighbour conjecture.
+
+Source: C. Freedman, H. Y. Huang, M. Lee and K. Rekvényi, arXiv:2410.22613v4 (2026), Definition 1.1 and Conjecture 1.2; E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 21.29; resolution: A. Rizzoli and A. R. Thomas, Common neighbour conjectures for Saxl graphs fail at every base size, arXiv:2609.01367 (2026).

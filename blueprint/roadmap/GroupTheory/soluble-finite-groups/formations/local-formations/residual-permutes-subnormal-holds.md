@@ -1,0 +1,5 @@
+# Residuals of subnormal subgroups permute with subnormal subgroups
+
+Let $\mathfrak{F}$ be a local formation of finite groups containing all finite nilpotent groups, $G$ a finite group and $H, K$ subnormal subgroups of $G$. Then $H^{\mathfrak{F}}K = KH^{\mathfrak{F}}$. A class $\mathfrak{F}$ of finite groups is a local formation if it is a formation (closed under homomorphic images and under subdirect products $G/(N_1 \cap N_2)$ of two members $G/N_1, G/N_2$), contains the trivial group, and is saturated ($G/\Phi(G) \in \mathfrak{F}$ implies $G \in \mathfrak{F}$); the $\mathfrak{F}$-residual $H^{\mathfrak{F}}$ of a finite group $H$ is the intersection of the normal subgroups $N$ of $H$ with $H/N \in \mathfrak{F}$. This proves Kourovka Problem 9.73 even without the solubility assumption on $\mathfrak{F}$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 9.73 (L. A. Shemetkov); resolution: S. F. Kamornikov, Permutable subnormal subgroups of finite groups, Dokl. Akad. Nauk BSSR 33 (1989), no. 5, 396-399 (Russian).

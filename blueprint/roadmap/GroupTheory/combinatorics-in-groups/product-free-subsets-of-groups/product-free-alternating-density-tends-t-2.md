@@ -1,0 +1,5 @@
+# Product-free subsets of alternating groups have vanishing density
+
+For every real $\varepsilon > 0$ there is $N$ such that for all $n \ge N$, every product-free subset $P$ of the alternating group $A_n$ satisfies $|P| \le \varepsilon\,|A_n|$; that is, $|P| = o(|A_n|)$, as Green conjectured. A subset $P$ of a group is product-free if $xy \notin P$ for all $x, y \in P$ (with $x = y$ allowed). Gowers proved the density bound $(n - 1)^{-1/3}$, Eberhard improved it to $O(n^{-1/2} \log^{7/2} n)$, and Keevash, Lifshitz and Minzer determined the maximum for large $n$.
+
+Source: AIM workshop Recent trends in additive combinatorics (2004), problem list collected by E. Croot and V. F. Lev, https://aimath.org/WWN/additivecomb/additivecomb.pdf, Problem 4.3 (V. Sós; conjecture of B. Green); resolution: W. T. Gowers, Quasirandom groups, Combin. Probab. Comput. 17 (2008), 363-387, arXiv:0710.3877; S. Eberhard, Product mixing in the alternating group, Discrete Anal. 2016:2; P. Keevash, N. Lifshitz and D. Minzer, On the largest product-free subsets of the alternating groups, Invent. Math. 237 (2024), 1329-1375, arXiv:2205.15191.

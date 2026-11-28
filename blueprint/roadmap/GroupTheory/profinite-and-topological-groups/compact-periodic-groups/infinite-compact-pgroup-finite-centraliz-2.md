@@ -1,0 +1,5 @@
+# No infinite compact p-group has all centralizers finite
+
+For no prime $p$ is there an infinite compact Hausdorff topological group that is a $p$-group and in which the centralizer of every non-identity element is finite. This answers Kourovka Problem 9.34 negatively, through the connection established by Grosser and Herfort with the restricted Burnside problem and Zel'manov's positive solution of the latter. It is the negation of the proposition on [Kourovka Problem 9.34 (infinite compact p-groups with finite centralizers)](infinite-compact-pgroup-finite-centraliz.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 9.34 (Yu. N. Mukhin) (after S. K. Grosser and W. N. Herfort); resolution: S. K. Grosser and W. N. Herfort, Abelian subgroups of topological groups, Trans. Amer. Math. Soc. 283 (1984), no. 1, 211-223; E. I. Zel'manov, Math. USSR-Izv. 36 (1991), 41-60; Math. USSR-Sb. 72 (1992), 543-565.

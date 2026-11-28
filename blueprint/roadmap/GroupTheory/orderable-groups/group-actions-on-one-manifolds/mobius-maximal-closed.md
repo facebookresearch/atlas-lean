@@ -1,0 +1,5 @@
+# Bestvina Question 4.1 (PSL₂(ℝ) is maximal closed in Homeo₊(S¹))
+
+The proposition that every uniformly closed subgroup $G$ of the group of orientation-preserving homeomorphisms of the circle that contains all Möbius transformations consists either of Möbius transformations only or of all orientation-preserving homeomorphisms. A Möbius transformation of the unit circle is a map $z \mapsto (\alpha z + \beta)/(\bar\beta z + \bar\alpha)$ with $\alpha, \beta \in \mathbb{C}$ and $|\alpha|^2 - |\beta|^2 = 1$ (the action of $\mathrm{PSL}_2(\mathbb{R})$, conjugated to the circle by the Cayley transform); a homeomorphism $f$ of the circle is orientation-preserving if some strictly increasing $F : \mathbb{R} \to \mathbb{R}$ satisfies $f(e^{it}) = e^{iF(t)}$ for all real $t$. A subgroup is uniformly closed if every orientation-preserving homeomorphism that is the uniform limit of a sequence of its elements belongs to it.
+
+Source: M. Bestvina, Questions in Geometric Group Theory (updated July 2004), Q 4.1 (de la Harpe), https://www.math.utah.edu/~bestvina/eprints/questions-updated.pdf.

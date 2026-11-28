@@ -1,0 +1,3 @@
+# Products of two abelian minimax subgroups
+
+Subgroups $A, B$ of a group $G$ exhibit $G$ as a product of two abelian minimax subgroups when every element of $G$ is a product $ab$ with $a \in A$, $b \in B$, both $A$ and $B$ are abelian, and both are minimax. A subgroup is minimax when it has a finite series $1 = H_0 \le H_1 \le \cdots \le H_n$ ending in it, each term normal in the next, whose factors satisfy the maximal or the minimal condition on subgroups. The maximal (minimal) condition on a factor $H_{i+1}/H_i$ is expressed as the absence of infinite ascending (descending) chains in the interval $[H_i, H_{i+1}]$ of the subgroup lattice.

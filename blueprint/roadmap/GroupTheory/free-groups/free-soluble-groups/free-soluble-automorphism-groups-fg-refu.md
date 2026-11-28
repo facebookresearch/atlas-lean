@@ -1,0 +1,5 @@
+# Automorphism groups of free soluble groups need not be finitely generated
+
+For some natural numbers $m$ and $n$ the automorphism group of the free soluble group $F_m/F_m^{(n)}$ is not finitely generated. The free soluble group $F_m/F_m^{(n)}$ is the quotient of the free group $F_m$ of rank $m$ by the $n$-th term of its derived series. By Bachmuth and Mochizuki, the automorphism group of the free metabelian group of rank $3$ ($m = 3$, $n = 2$) is not finitely generated, although it is for $m \ne 3$. This answers Kourovka Problem 5.49(a) negatively. It is the negation of the proposition on [Kourovka Problem 5.49(a) (finite generation of automorphism groups of free soluble groups)](free-soluble-automorphism-groups-fg.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 5.49 (V. N. Remeslennikov); resolution: S. Bachmuth and H. Y. Mochizuki, The nonfinite generation of Aut(G), G free metabelian of rank 3, Trans. Amer. Math. Soc. 270 (1982), 693-700.

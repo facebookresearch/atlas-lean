@@ -1,0 +1,3 @@
+# Isomorphism of relation modules
+
+For a group $G$ and two homomorphisms $\pi_1, \pi_2 \colon F_d \to G$ with kernels $R_1, R_2$, the abelianized kernels $R_1/[R_1, R_1]$ and $R_2/[R_2, R_2]$ are related by this condition when some group isomorphism $f$ between them intertwines conjugation by lifts with equal images: whenever $\pi_1(u_1) = \pi_2(u_2)$, conjugation by $u_1$ followed by $f$ equals $f$ followed by conjugation by $u_2$. When $\pi_1$ and $\pi_2$ are surjective, these are the relation modules of two presentations of $G$, each element of $G$ acts through any of its lifts, and the condition says that $f$ is an isomorphism of $\mathbb ZG$-modules.

@@ -1,0 +1,5 @@
+# The elementary theory of l-ideal lattices of abelian l-groups is undecidable
+
+The set of first-order sentences of the language of lattices true in the lattice of $l$-ideals of every lattice-ordered abelian group is not decidable. Kourovka Problem 5.20 has a negative answer. A lattice-ordered abelian group is a commutative group with a lattice order invariant under multiplication; its $l$-ideals are the subgroups $H$ that are solid: $a \in H$ and $|b| \le |a|$ imply $b \in H$, where $|a| = a \vee a^{-1}$. It is the negation of the proposition on [Kourovka Problem 5.20 (elementary theory of l-ideal lattices)](l-ideal-lattice-theory-decidable.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 5.20 (A. I. Kokorin); resolution: N. Ya. Medvedev, Elementary theory for l-ideal lattices of abelian l-groups, Algebra and Logic 44 (2005), 302-312, https://doi.org/10.1007/s10469-005-0029-5.

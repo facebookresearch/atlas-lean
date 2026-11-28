@@ -1,0 +1,5 @@
+# Isolated subgroups in groups with disconnected prime graph
+
+Let $G$ be a finite group and $\pi$ a nonempty set of primes dividing $|G|$ that does not contain every prime divisor of $|G|$. Suppose that for every nonidentity element $g$ whose order has all prime divisors in $\pi$, the centralizer $C_G(g)$ has order with all prime divisors in $\pi$. Then $G$ has a subgroup $U$ with $U \ne 1$ and $U \ne G$ such that $U \cap gUg^{-1}$ is $1$ or $U$ for every $g \in G$, and $C_G(u) \le U$ for every $u \in U \setminus \{1\}$. This is the positive answer to Kourovka Problem 5.11, which the Archive derives from Williams's theory of prime graph components, using the classification of finite simple groups.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 5.11 (K. W. Gruenberg); resolution: J. S. Williams, Prime graph components of finite groups, J. Algebra 69 (1981), 487-513, https://doi.org/10.1016/0021-8693(81)90218-0.

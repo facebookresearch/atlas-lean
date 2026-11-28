@@ -1,0 +1,3 @@
+# The pro-p index condition on subgroups of a topological group
+
+A subgroup $P$ of a topological group $G$ satisfies the pro-$p$ index condition when for every open normal subgroup $N$ of $G$ the index $|P : P \cap N|$ is $p^k$ for some $k \ge 0$, an infinite index counting as $0$. For a prime $p$ the index is then finite, and the condition says that the image of $P$ in every quotient $G/N$ by an open normal subgroup is a finite $p$-group. For a closed subgroup of a profinite group and a prime $p$, this is exactly the statement that $P$ is a pro-$p$ group. In an arbitrary topological group it is weaker: for $P = G = (\mathbb{R}, +)$ the only open normal subgroup is $G$, so the condition holds for every prime, but $\mathbb{R}$ is not a pro-$p$ group.

@@ -12,6 +12,9 @@ Word-hyperbolic groups (Gromov, *Hyperbolic groups*, 1987, §2): examples, and t
 - [Hyperbolicity does not depend on the finite generating set](is-delta-hyperbolic-of-is-hyperbolic.md)
 - [Hyperbolic groups are finitely presented](is-finitely-presented-of-is-hyperbolic.md)
 - [Hyperbolic groups have solvable word problem](word-problem-solvable-of-is-hyperbolic.md)
+- [One-ended groups](is-one-ended.md)
+- [Bestvina Question 1.12 (finite-index subgroups isomorphic to infinite-index ones)](one-ended-hyperbolic-finite-index-iso-in.md)
+- [One-ended hyperbolic groups that are not commensurably co-Hopfian](one-ended-hyperbolic-finite-index-iso-in-2.md)
 
 ## Related topics
 

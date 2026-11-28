@@ -1,0 +1,5 @@
+# Balanced presentations of the trivial group with no primitive replacement
+
+There is a finite presentation $\langle x_1, \dots, x_n \mid r_1, \dots, r_m \rangle$ with $n \ge 1$ of the trivial group such that replacing any single relator by any primitive element of $F_n$ yields a presentation of a nontrivial group. An element of the free group $F_n$ is primitive if it belongs to some free basis of $F_n$. Ivanov constructs such a balanced presentation on three generators; for two generators the answer is positive. This answers Kourovka Problem 1.13 negatively. It is the negation of the proposition on [Kourovka Problem 1.13 (replacing a relator of the trivial group by a primitive element)](trivial-presentation-primitive-replaceme.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 1.13 (J. Stallings; M. D. Greendlinger); resolution: S. V. Ivanov, On balanced presentations of the trivial group, Invent. Math. 165 (2006), no. 3, 525-549.

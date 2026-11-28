@@ -1,0 +1,5 @@
+# Pro-orderability modulo the centre does not lift
+
+There is a torsion-free group $G$ such that $G/Z(G)$ is pro-orderable but $G$ is not. $G$ is pro-orderable if every positive cone of a bi-invariant partial order on $G$ is contained in a linear one. A positive cone of a bi-invariant partial order on a group $G$ is a subset $P$ with $1 \in P$, $PP \subseteq P$, $a, a^{-1} \in P \Rightarrow a = 1$, and $gPg^{-1} \subseteq P$ for all $g$; it is linear if moreover $a \in P$ or $a^{-1} \in P$ for every $a$. This answers Kourovka Problem 1.56 negatively. It is the negation of the proposition on [Kourovka Problem 1.56 (pro-orderability modulo the centre)](pro-orderable-mod-centre-implies-pro-ord.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 1.56 (A. I. Kokorin); resolution: M. I. Kargapolov, A. I. Kokorin and V. M. Kopytov, Algebra i Logika 4 (1965), no. 6, 21-27 (Russian).

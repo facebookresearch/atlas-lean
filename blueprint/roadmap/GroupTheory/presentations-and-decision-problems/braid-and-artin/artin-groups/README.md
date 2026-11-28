@@ -25,3 +25,7 @@
 - [Acylindrical hyperbolicity and weak malnormality for non-clique irreducible Artin groups](nonclique-artin-group-dynamics.md)
 
 - [Contractibility of the full lifted Salvetti realization](lifted-salvetti-cover-contractible.md)
+
+## Artin group of type D4
+
+- [The Artin group of type D4 and its free normal subgroup](artin-group-of-type-d4/README.md)

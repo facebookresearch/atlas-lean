@@ -1,0 +1,5 @@
+# One-relator groups need not be locally embeddable into finite groups
+
+Some one-relator group $\langle x_1, \dots, x_n \mid r \rangle$ is not locally embeddable into finite groups. A group $G$ is locally embeddable into finite groups ($U$-embeddable in the class of finite groups) if for every finite subset $M \subseteq G$ there are a finite group $A$ and a map $f : G \to A$ that is injective on $M$ and satisfies $f(xy) = f(x)f(y)$ whenever $x, y, xy \in M$. The non-Hopfian group $\langle a, b \mid (b^2)^a = b^3 \rangle$ is an example. This answers Kourovka Problem 3.15(a) negatively. It is the negation of the proposition on [Kourovka Problem 3.15(a) (local embeddability of one-relator groups into finite groups)](one-relator-groups-locally-embeddable.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 3.15 (M. I. Kargapolov); resolution: A. I. Budkin and V. A. Gorbunov, Algebra and Logic 14 (1975), 73-84; example of Yu. I. Merzlyakov (1969) recorded in the Kourovka Archive.

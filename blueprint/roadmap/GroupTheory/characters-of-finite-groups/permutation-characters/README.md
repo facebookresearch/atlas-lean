@@ -5,6 +5,8 @@
 - [Characters of a group](is-character.md)
 - [Strunkov's two-generation criterion (Kourovka 12.79)](strunkov-character-implies-generation.md)
 - [Strunkov's two-generation criterion fails (Kourovka 12.79)](strunkov-character-implies-generation-re.md)
+- [Kourovka Problem 6.6 (permutation characters and primitivity)](same-permutation-character-preserves-pri.md)
+- [Equal permutation characters do not preserve primitivity](same-permutation-character-preserves-pri-2.md)
 - [Rational permutation character on the cosets of a subgroup](perm-char-2.md)
 - [Finite insoluble groups with independent permutation characters (Kourovka 11.9)](insoluble-independent-permutation-charac.md)
 - [No insoluble group has independent permutation characters (Kourovka 11.9)](insoluble-independent-permutation-charac-2.md)

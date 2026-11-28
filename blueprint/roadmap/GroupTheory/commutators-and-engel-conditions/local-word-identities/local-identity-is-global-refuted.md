@@ -1,0 +1,5 @@
+# Local identities of connected groups need not be global
+
+There are $G$, $k$, $f$ and $U$ such that $G$ is a connected Hausdorff topological group, $f$ is a word in $k$ variables (an element of the free group of rank $k$), and there is a neighbourhood $U$ of $1$ in $G$ with $f(u_1, \dots, u_k) = 1$ for all $u_1, \dots, u_k \in U$, while $f(g_1, \dots, g_k) \ne 1$ for some $g_1, \dots, g_k \in G$; Kourovka Problem 2.48 has a negative answer. Zyabrev and Reznichenko construct a path-connected Hausdorff group in which $x^n = 1$ holds on a neighbourhood of $1$ but not everywhere, for suitable odd $n$. It is the negation of the proposition on [Kourovka Problem 2.48 (local identities in connected topological groups)](local-identity-is-global.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 2.48 (V. P. Platonov; question of N. Aronszajn; marked solved in the main list); resolution: I. N. Zyabrev and E. A. Reznichenko, On identities in connected topological groups, arXiv:2406.05203 (2024).

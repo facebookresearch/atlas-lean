@@ -1,0 +1,7 @@
+# Bludov's theorem on right-orderable Frobenius complements
+
+For every group $K$ and every a nontrivial right-orderable group $R$, one carrying a linear order with $a \le b \Rightarrow ac \le bc$, there is a Frobenius group $G$ with kernel $F$ and complement $H$ isomorphic to $R$ such that $K$ embeds in $F$. In particular every nontrivial right-orderable group is a Frobenius complement, and every group embeds in a Frobenius kernel. Here $G$ is a Frobenius group with kernel $F$ and complement $H$ when $F$ is a normal subgroup, $F \cap H = 1$, $FH = G$, $F \ne 1$, $H \ne 1$, $H \cap gHg^{-1} = 1$ for every $g \in G \setminus H$, and the nonidentity elements of $F$ are exactly the elements of $G$ lying in no conjugate of $H$.
+
+## Sources
+
+- E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 6.53 (V. P. Shunkov); resolution: V. V. Bludov, On Frobenius groups, Siberian Math. J. 38, no. 6 (1997), 1054-1056, zbMATH review Zbl 0941.20027: (1) every group embeds in the kernel of some Frobenius group; (2) under such embedding, the complement can be chosen to be any right-ordered group; Kourovka Archive, Problem 6.53: every group can be embedded into the kernel of a Frobenius group, and every right-orderable group can be a complement in a Frobenius group (Bludov), https://doi.org/10.1007/BF02675933.

@@ -1,0 +1,5 @@
+# Strictly isolated abelian normal subgroups without invariant orders
+
+There are $G$ and $A$ such that $G$ is an $S$-group and $A$ is an abelian strictly isolated normal subgroup of $G$, but $A$ has no linear order compatible with multiplication and preserved by all inner automorphisms of $G$; Kourovka Problem 1.49 has a negative answer. A subgroup $H$ is strictly isolated when whenever $x \cdot (g_1^{-1}xg_1) \cdots (g_n^{-1}xg_n) \in H$ for some $x, g_1, \dots, g_n \in G$ ($n \ge 0$), both $x$ and every $g_i^{-1}xg_i$ lie in $H$, and $G$ is an $S$-group when its trivial subgroup is strictly isolated. It is the negation of the proposition on [Kourovka Problem 1.49 (invariant orders on strictly isolated abelian normal subgroups)](strictly-isolated-abelian-normal-has-inv.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 1.49 (A. I. Kokorin); resolution: V. V. Bludov, Algebra and Logic 11 (1972), 341-349.

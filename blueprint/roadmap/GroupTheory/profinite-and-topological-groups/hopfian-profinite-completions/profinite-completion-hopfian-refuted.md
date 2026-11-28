@@ -1,0 +1,5 @@
+# Profinite completions of Hopfian groups need not be Hopfian
+
+There is a residually finite Hopfian group $G$ whose profinite completion has a continuous surjective endomorphism that is not injective. A group is Hopfian if every surjective endomorphism is injective; the profinite completion $\widehat G$ (the inverse limit of the finite quotients of $G$) is topologically Hopfian if every continuous surjective endomorphism of $\widehat G$ is injective. For pairwise distinct odd primes $q_i$, the abelian group $\bigoplus_i \mathbb{Z}[1/q_i]$ is such an example. This answers Kourovka Problem 6.30 negatively. It is the negation of the proposition on [Kourovka Problem 6.30 (Hopficity of profinite completions)](profinite-completion-hopfian.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 6.30 (O. V. Mel'nikov); resolution: M. Brescia, E. Ingrosso and M. Trombetti, Hopficity of profinite completions of abelian groups, arXiv:2607.19193 (2026), Main Theorem.

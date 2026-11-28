@@ -1,0 +1,5 @@
+# Normal subgroups of Z̄-groups need not be Z̄-groups
+
+There are a $\bar Z$-group $G$ and a normal subgroup $N$ of $G$ that is not a $\bar Z$-group; Kourovka Problem 8.16 has a negative answer. A group $G$ is a $\bar Z$-group when every chief factor $A/B$ of $G$ is central, $[A, G] \le B$; a chief factor is a pair of normal subgroups $B < A$ of $G$ with no normal subgroup of $G$ strictly between them. In Jayadevan's example $G = \mathbb{Z}_2 \rtimes \mathbb{Z}_2^\times$ is the affine group over the $2$-adic integers and $N = \mathbb{Z}_2 \rtimes \{\pm 1\}$. It is the negation of the proposition on [Kourovka Problem 8.16 (normal subgroups of Z̄-groups)](z-bar-closed-under-normal-subgroups.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 8.16 (Sh. S. Kemkhadze; marked solved in the main list); resolution: A. Jayadevan, Central chief factors of affine groups over local rings, preprint (2026), https://zenodo.org/records/22821641.

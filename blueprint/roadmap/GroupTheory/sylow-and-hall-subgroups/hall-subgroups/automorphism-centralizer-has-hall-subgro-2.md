@@ -1,0 +1,5 @@
+# A Hall-subgroup criterion for centralizers of automorphisms
+
+Let $G$ be a finite group, $\pi$ a set of natural numbers, $p \in \pi$ a prime and $\sigma$ an automorphism of $G$ of order $p$. If $G$ has a Hall $\pi$-subgroup all of whose Sylow subgroups are cyclic, then the centralizer $C_G(\sigma) = \{g \in G : \sigma(g) = g\}$ has a Hall $\pi$-subgroup (a Hall $\pi$-subgroup of the group $C_G(\sigma)$). A Hall $\pi$-subgroup of a group is a subgroup whose order has all its prime divisors in $\pi$ and whose index has none of its prime divisors in $\pi$. This is the positive answer to Kourovka Problem 3.61, which uses the classification of finite simple groups.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 3.61 (L. A. Shemetkov); resolution: V. D. Mazurov, A question of L. A. Shemetkov, Algebra and Logic 31 (1992), no. 6, 360-366, https://doi.org/10.1007/BF02261729.

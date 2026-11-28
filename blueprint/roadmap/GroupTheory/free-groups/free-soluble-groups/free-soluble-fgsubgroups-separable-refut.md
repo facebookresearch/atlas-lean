@@ -1,0 +1,5 @@
+# Finitely generated subgroups of free soluble groups need not be separable
+
+For some natural numbers $r$ and $l$, the free soluble group $F_r/F_r^{(l)}$ has a finitely generated subgroup that is not finitely separable. The free soluble group $F_r/F_r^{(l)}$ is the quotient of the free group $F_r$ of rank $r$ by the $l$-th term of its derived series. A subgroup $H$ of a group $G$ is finitely separable if every element $g \notin H$ lies outside some subgroup of finite index containing $H$; equivalently, $H$ is the intersection of the subgroups of finite index that contain it. This answers Kourovka Problem 2.19 negatively. It is the negation of the proposition on [Kourovka Problem 2.19 (finitely separable subgroups of free soluble groups)](free-soluble-fgsubgroups-separable.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 2.19 (M. I. Kargapolov); resolution: S. A. Agalakov, Finite separability of groups and Lie algebras, Algebra and Logic 22 (1983), 261-268.

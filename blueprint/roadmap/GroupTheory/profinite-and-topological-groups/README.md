@@ -3,11 +3,17 @@
 Groups with topology or approximated by finite quotients: profinite and pro-p groups, residual finiteness and separability, profinite rigidity, Golod–Shafarevich inequality, just-infinite groups, totally disconnected locally compact groups, group topologies, Lie groups and their dense subgroups.
 
 - [Arcwise connectedness of metric groups](arcwise-connectedness-of-metric-groups/README.md)
+- [Boundedness properties of topological groups](boundedness-properties-of-topological-groups/README.md)
+- [Compact periodic groups](compact-periodic-groups/README.md)
+- [Complements in profinite groups](complements-in-profinite-groups/README.md)
+- [Congruence kernel of SL₂(ℤ)](congruence-kernel-of-sl/README.md)
+- [Congruence topology on unit groups of finitely generated domains](congruence-topology-on-unit-groups-of-finitely-g/README.md)
 - [Conjugacy separability](conjugacy-separability/README.md)
 - [Finite images of minimax groups](finite-images-of-minimax-groups/README.md)
 - [Free pro-p groups](free-pro-p-groups/README.md)
 - [Golod–Shafarevich inequality](golod-shafarevich-inequality/README.md)
 - [Group topologies](group-topologies/README.md)
+- [Hopfian profinite completions](hopfian-profinite-completions/README.md)
 - [Nottingham group](nottingham-group/README.md)
 - [Profinite CN-groups](profinite-cn-groups/README.md)
 - [Profinite rigidity](profinite-rigidity/README.md)

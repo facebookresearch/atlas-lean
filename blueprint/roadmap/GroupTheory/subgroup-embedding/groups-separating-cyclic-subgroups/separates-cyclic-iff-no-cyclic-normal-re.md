@@ -1,0 +1,5 @@
+# A finite group without cyclic normal subgroups that does not separate cyclic subgroups
+
+There is a finite group with no nontrivial cyclic normal subgroup that does not separate cyclic subgroups (it is not the case that for all $a, b \in G$ there is $g \in G$ with $\langle a \rangle \cap g^{-1}\langle b \rangle g = 1$); Kourovka Problem 8.73 has a negative answer. Podufalov's group has order $4 \cdot 25 \cdot 121 \cdot 289 \cdot 9$, and a cyclic subgroup of order $2 \cdot 5 \cdot 11 \cdot 17$ meets each of its conjugates nontrivially. It is the negation of the proposition on [Kourovka Problem 8.73 (Thompson's question on separating cyclic subgroups)](separates-cyclic-iff-no-cyclic-normal.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 8.73 (J. G. Thompson); resolution: N. D. Podufalov, Abstracts of the 9th All-Union Group Theory Symposium, Moscow, 1984, 113-114 (Russian).

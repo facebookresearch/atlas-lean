@@ -1,0 +1,5 @@
+# Normal subgroups of R̃N-groups need not be R̃N-groups
+
+There are an $\tilde R N$-group $G$ and a normal subgroup $N$ of $G$ that is not an $\tilde R N$-group; Kourovka Problem 8.17 has a negative answer. A group is an $\tilde R N$-group when all its quotients have normal systems with abelian jump factors. A normal system of a group is a set of subgroups that is a chain, contains the join and intersection of each of its subsets, and in which for every jump $A < B$ (no member strictly between) $A$ is normal in $B$. In Wilson's example the normal subgroup maps onto a non-abelian simple group, which has no such normal system. It is the negation of the proposition on [Kourovka Problem 8.17 (normal subgroups of R̃N-groups)](rn-tilde-closed-under-normal-subgroups.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 8.17 (Sh. S. Kemkhadze); resolution: J. S. Wilson, On normal subgroups of SI-bar-groups, Arch. Math. 25 (1974), 574-577, https://doi.org/10.1007/BF01238728.

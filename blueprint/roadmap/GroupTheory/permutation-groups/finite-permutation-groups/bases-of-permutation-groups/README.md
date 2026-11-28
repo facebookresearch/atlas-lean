@@ -1,5 +1,9 @@
 # Bases of permutation groups
 
+- [Minimum bases of permutation groups](is-minimum-base.md)
+- [The generalised Saxl graph](generalised-saxl-graph.md)
+- [The generalised Saxl common neighbour conjecture (statement)](conjecture.md)
+- [Generalised Saxl graphs without common neighbours](conjecture-refuted.md)
 - [Base of a group action](is-base.md)
 - [Minimal base](is-minimal-base.md)
 - [Maximal size of a minimal base](max-minimal-base-size.md)

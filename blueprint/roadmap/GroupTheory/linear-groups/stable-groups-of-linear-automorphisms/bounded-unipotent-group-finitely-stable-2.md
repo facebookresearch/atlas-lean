@@ -1,0 +1,5 @@
+# Bounded unipotent groups in characteristic zero are finitely stable
+
+Let $K$ be a field of characteristic $0$, $V$ a vector space over $K$ (of any dimension), and $G$ a group of $K$-linear automorphisms of $V$ whose elements are unipotent of uniformly bounded index: there is $m \in \mathbb{N}$ with $(g - 1)^m = 0$ for every $g \in G$. Then $G$ itself is stable. A set $S$ of linear automorphisms is stable when there are subspaces $0 = W_0 \le W_1 \le \cdots \le W_r = V$ with $g(w) - w \in W_i$ for all $i < r$, $g \in S$ and $w \in W_{i+1}$. The Archive records this strengthening of Kourovka Problem 2.63 as a consequence of Zel'manov's work; it implies that every finitely generated subgroup of $G$ is stable.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 2.63 (B. I. Plotkin); resolution: H. Heineken, Arch. Math. (Basel) 13 (1962), 29-37 (local finite stability); E. I. Zel'manov, Math. USSR-Sb. 66 (1990), no. 1, 159-168 (finite stability).

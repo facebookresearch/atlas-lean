@@ -1,0 +1,16 @@
+# Group actions on one-manifolds
+
+- [Globally contracting actions on the line (type (iii))](is-type-iii.md)
+- [Navas's Question 4 (groups all of whose fixed-point-free orientation-preserving line actions are globally contracting)](exists-group-all-line-actions-type-iii.md)
+- [Finitely generated groups whose fixed-point-free orientation-preserving line actions are all globally contracting](exists-group-all-line-actions-type-iii-h.md)
+- [C^(1+α) diffeomorphisms of the interval](is-interval-diff-one-alpha.md)
+- [C^(1+α) diffeomorphisms of the circle](is-circle-diff-one-alpha.md)
+- [Navas's Question 13 for the interval (critical regularity)](interval-not-smoothable.md)
+- [Navas's Question 13 for the circle (critical regularity)](circle-not-smoothable.md)
+- [Finitely generated groups of C^(1+α) interval diffeomorphisms of critical regularity](interval-not-smoothable-holds.md)
+- [Finitely generated groups of C^(1+α) circle diffeomorphisms of critical regularity](circle-not-smoothable-holds.md)
+- [Orientation-preserving circle homeomorphisms](is-orientation-preserving.md)
+- [Möbius transformations of the circle](is-mobius.md)
+- [Uniformly closed groups of circle homeomorphisms](is-uniformly-closed.md)
+- [Bestvina Question 4.1 (PSL₂(ℝ) is maximal closed in Homeo₊(S¹))](mobius-maximal-closed.md)
+- [PSL₂(ℝ) is a maximal closed subgroup of Homeo₊(S¹)](mobius-maximal-closed-holds.md)

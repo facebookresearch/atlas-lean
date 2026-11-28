@@ -1,0 +1,5 @@
+# A locally pure-free abelian group without a summand ℤ
+
+There is a nonzero abelian group $A$ in which every finite subset lies in a pure finitely generated free subgroup, but which has no direct summand isomorphic to $\mathbb{Z}$. A subgroup $B$ of an abelian group $A$ is pure if $nA \cap B = nB$ for every integer $n$. In ZFC, $A = \mathbb{Z}^{\aleph_1}/N$, with $N$ the elements of countable support, is an example; Palyutin had given one under the continuum hypothesis. This answers Kourovka Problem 3.22 negatively. It is the negation of the proposition on [Kourovka Problem 3.22 (locally pure-free abelian groups and summands ℤ)](locally-pure-free-has-int-summand.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 3.22 (V. I. Kuz'minov); resolution: S. Corson, letter of 26 August 2024 (Kourovka Archive); E. A. Palyutin, Siberian Math. J. 19 (1978), 1415-1417 (under the continuum hypothesis).

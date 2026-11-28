@@ -1,0 +1,5 @@
+# Under CH, Menger-bounded groups need not be Scheepers-bounded
+
+Assuming the Continuum Hypothesis $\mathfrak{c} = \aleph_1$, there is a separable metrizable topological group that is Menger-bounded but not Scheepers-bounded. A topological group $G$ is Menger-bounded if for every sequence $(U_n)$ of neighbourhoods of $1$ there are finite sets $F_n \subseteq G$ with $G = \bigcup_n F_nU_n$, and Scheepers-bounded if for every such sequence there are finite $F_n$ such that every finite subset of $G$ lies in some $F_nU_n$. Machura, Shelah and Tsaban construct, under CH, a Menger-bounded subgroup of the Baer–Specker group $\mathbb{Z}^{\mathbb{N}}$ whose square is not Menger-bounded, hence it is not Scheepers-bounded. This answers part (1) of Tsaban's Problem 10.2 positively.
+
+Source: B. Tsaban, Selection principles and special sets of reals, in Open Problems in Topology II (E. Pearl, ed.), Elsevier 2007, 91-108; revised version arXiv:math/0609601, Problem 10.2, part (1) (M. Machura and B. Tsaban); resolution: M. Machura, S. Shelah and B. Tsaban, Squares of Menger-bounded groups, Trans. Amer. Math. Soc. 362 (2010), 1751-1764, arXiv:math/0611353.

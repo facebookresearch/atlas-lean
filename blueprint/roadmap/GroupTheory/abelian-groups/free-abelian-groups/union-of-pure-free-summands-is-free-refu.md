@@ -1,0 +1,5 @@
+# Unions of ω₁-chains of countable free summands need not be free
+
+There is an abelian group $A$ that is not free abelian although $A$ is the union of a chain of pure subgroups $A_\alpha$, $\alpha < \omega_1$, each free abelian of countably infinite rank, with $A_\beta$ a direct summand of $A_\alpha$ whenever $\beta < \alpha < \omega_1$; a subgroup $B$ is pure if $nA \cap B = nB$ for every integer $n$. This answers Kourovka Problem 2.4 negatively; Griffith's construction of a non-free $\aleph_1$-separable group gives such a chain. It is the negation of the proposition on [Kourovka Problem 2.4 (unions of ω₁-chains of pure free summands)](union-of-pure-free-summands-is-free.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 2.4 (Yu. A. Bogan; question of S. Chase); resolution: P. A. Griffith, A note on a theorem of Hill, Pacific J. Math. 29 (1969), 279-284, Theorem 2.2.

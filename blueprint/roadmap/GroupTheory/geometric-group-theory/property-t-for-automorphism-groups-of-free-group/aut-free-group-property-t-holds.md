@@ -1,0 +1,5 @@
+# Property (T) for Aut(F_n) when n ≥ 5
+
+For every $n \ge 5$, the automorphism group $\mathrm{Aut}(F_n)$ of the free group on $n$ generators has Kazhdan's property (T). Property (T) is taken in Ozawa's form: there are a finite symmetric generating set $S$ of the group, a real $\lambda > 0$ and finitely many elements $\xi_i$ of the real group ring with $\Delta_S^2 - \lambda \Delta_S = \sum_i \xi_i^{*}\xi_i$, where $\Delta_S = |S| - \sum_{s \in S} s$ and $*$ is the linear involution extending inversion. The case $n = 5$ is due to Kaluba, Nowak and Ozawa and the case $n \ge 6$ to Kaluba, Kielak and Nowak, each by certifying such a sum-of-squares decomposition.
+
+Source: B. Farb (ed.), Problems on Mapping Class Groups and Related Topics (2006), Ch. 20 (M. Bridson and K. Vogtmann), Question 2.4; resolution: M. Kaluba, P. W. Nowak and N. Ozawa, Aut(F₅) has property (T), Math. Ann. 375 (2019), 1169-1191, arXiv:1712.07167; M. Kaluba, D. Kielak and P. W. Nowak, On property (T) for Aut(F_n) and SL_n(ℤ), Ann. of Math. 193 (2021), arXiv:1812.03456, Theorem 1.

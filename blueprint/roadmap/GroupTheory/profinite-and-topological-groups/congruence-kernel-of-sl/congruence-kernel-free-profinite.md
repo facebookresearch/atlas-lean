@@ -1,0 +1,5 @@
+# Kourovka Problem 3.40 (the congruence kernel of SL₂(ℤ) is free profinite)
+
+The proposition that the congruence kernel $C$, the subgroup of the profinite completion $\widehat{\mathrm{SL}_2(\mathbb{Z})}$ consisting of the elements whose image in $\mathrm{SL}_2(\mathbb{Z})/\Gamma(N)$ is trivial for every $N \ge 1$ (the kernel of the natural map to the congruence completion), with the subspace topology, is a free profinite group, where $C$ is free profinite if there are a set $X$ and a map $\iota : X \to C$ converging to $1$ (only finitely many $\iota(x)$ lie outside each open neighbourhood of $1$) such that for every finite group $Q$ and every map $f : X \to Q$ with $f(x) = 1$ for all but finitely many $x$ there is exactly one homomorphism $\varphi : C \to Q$ with open kernel and $\varphi \circ \iota = f$. For a profinite group, testing finite groups $Q$ suffices.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 3.40 (I. R. Shafarevich; V. P. Platonov).

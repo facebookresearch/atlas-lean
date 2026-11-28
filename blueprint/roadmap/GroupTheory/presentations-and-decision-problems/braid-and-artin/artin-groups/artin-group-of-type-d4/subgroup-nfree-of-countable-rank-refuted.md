@@ -1,0 +1,5 @@
+# The normal subgroup N of Kourovka Problem 8.11 is not of infinite rank
+
+In the group $M = \langle x, y, z, t \mid [x, y] = [y, z] = [z, x] = (x, t) = (y, t) = (z, t) = 1 \rangle$ with $[u, v] = u^{-1}v^{-1}uv$ and $(u, t) = u^{-1}t^{-1}u^{-1}tut$, the normal closure $N$ of $zx^{-1}$ is not isomorphic to the free group on a countably infinite basis. This answers the rank question of Kourovka Problem 8.11 negatively: $N$ is free of rank $3$. It is the negation of the proposition on [Kourovka Problem 8.11 (N is free of countably infinite rank)](subgroup-nfree-of-countable-rank.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 8.11 (D. L. Johnson); resolution: B. Perron and J. P. Vannier, Groupe de monodromie géométrique des singularités simples, Math. Ann. 306 (1996), 231-245 (Corollaire 1 and Théorème 1, as quoted in J. Crisp and L. Paris, arXiv:math/0210438, Propositions 2.3 and 2.5); remark of Y. Antolín in the 21st issue identifying M as the Artin group of type $D_4$.

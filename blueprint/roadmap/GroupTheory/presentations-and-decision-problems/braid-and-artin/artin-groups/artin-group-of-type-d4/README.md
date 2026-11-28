@@ -1,0 +1,16 @@
+# The Artin group of type D4 and its free normal subgroup
+
+- [Generator $x$ for Kourovka Problem 8.11](gen-x.md)
+- [Generator $y$ for Kourovka Problem 8.11](gen-y.md)
+- [Generator $z$ for Kourovka Problem 8.11](gen-z.md)
+- [Generator $t$ for Kourovka Problem 8.11](gen-t.md)
+- [Relators of the group M of Kourovka Problem 8.11](artin-relators.md)
+- [The group M of Kourovka Problem 8.11](artin-group-m.md)
+- [The normal subgroup N of Kourovka Problem 8.11](subgroup-n.md)
+- [The subgroup H of Kourovka Problem 8.11](subgroup-h.md)
+- [Kourovka Problem 8.11 (N is free of rank 3)](subgroup-nfree-of-rank-three.md)
+- [Kourovka Problem 8.11 (N is free of countably infinite rank)](subgroup-nfree-of-countable-rank.md)
+- [Kourovka Problem 8.11 (H acts faithfully on N)](subgroup-hacts-faithfully.md)
+- [Free normal subgroup of rank 3 in the Artin group of type D4](subgroup-nfree-of-rank-three-holds.md)
+- [The normal subgroup N of Kourovka Problem 8.11 is not of infinite rank](subgroup-nfree-of-countable-rank-refuted.md)
+- [Faithful conjugation action in the Artin group of type D4](subgroup-hacts-faithfully-holds.md)

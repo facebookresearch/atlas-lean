@@ -1,0 +1,5 @@
+# Beletskiĭ's theorem on automorphism groups of class-two groups of prime exponent
+
+Every finite simple group occurs as a composition factor of the automorphism group of a finite group of prime exponent and class exactly $2$: for every finite simple group $S$ there are a prime $p$ and a finite group $G$ with $g^p = 1$ for all $g \in G$ and of nilpotency class exactly $2$ ($\gamma_3(G) = 1 \ne \gamma_2(G) = [G, G]$) such that $S$ is a composition factor of the automorphism group $\mathrm{Aut}(G)$, that is, some subnormal subgroup of $\mathrm{Aut}(G)$ maps homomorphically onto $S$. The prime may depend on $S$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 4.38 (V. D. Mazurov); resolution: P. M. Beletskiĭ, The automorphism groups of finite class-two nilpotent groups with prime exponent, Russian Math. Surveys 35 (1980), no. 6, 85-86, https://doi.org/10.1070/RM1980v035n06ABEH001977.

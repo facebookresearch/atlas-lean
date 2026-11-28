@@ -1,0 +1,5 @@
+# Ergodicity of Aut(F_n) on Hom(F_n, G) for compact connected Lie groups
+
+Let $n \ge 3$ and let $G$ be a compact connected Lie group (a smooth Lie group modelled on a finite-dimensional real normed space, compact and connected) with a Haar measure $\mu$, and $G^n$ carries the product measure $\mu^n$. Then every measurable subset $A \subseteq G^n$ invariant under the action of every automorphism of $F_n$ is null or conull for $\mu^n$. An automorphism $\varphi$ of the free group $F_n$ with basis $e_1, \dots, e_n$ acts on $G^n = \mathrm{Hom}(F_n, G)$ on the right by precomposition: $(g_i)_i \mapsto (\rho_g(\varphi(e_i)))_i$, where $\rho_g : F_n \to G$ is the homomorphism with $\rho_g(e_i) = g_i$. This proves Goldman's conjecture; Gelander proves it for semisimple $G$ and notes that the general case follows.
+
+Source: B. Farb (ed.), Problems on Mapping Class Groups and Related Topics (2006), Ch. 13 (W. Goldman), Conjecture 2.3; resolution: T. Gelander, On deformations of F_n in compact Lie groups, Israel J. Math. 167 (2008), arXiv:math/0611830, Theorems 1.6 and 1.7.

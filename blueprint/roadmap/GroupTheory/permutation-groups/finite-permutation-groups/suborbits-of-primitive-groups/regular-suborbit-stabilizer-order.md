@@ -1,0 +1,5 @@
+# Kourovka Problem 9.69 (point stabilizers inducing a regular group on a suborbit)
+
+The proposition that whenever $G$ is a primitive group of permutations of a finite set $\Omega$, $\alpha \ne \delta$ are points of $\Omega$, and the stabilizer $G_\alpha$ induces a regular permutation group on the orbit $\Delta = G_\alpha \delta$, in the sense that any two elements of $G_\alpha$ that agree at $\delta$ agree on all of $\Delta$ (the elements acting trivially on $\Delta$ may form a nontrivial kernel), then $|G_\alpha| = |\Delta|$, that is, $G_\alpha$ acts faithfully on $\Delta$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 9.69 (A. N. Fomin (after P. Cameron); marked solved in the main list); resolution: P. Spiga, A generalization of Sims' conjecture for finite primitive groups and two point stabilizers in primitive groups, J. Group Theory 25 (2022), no. 1, 113-126, https://doi.org/10.1515/jgth-2021-0032.

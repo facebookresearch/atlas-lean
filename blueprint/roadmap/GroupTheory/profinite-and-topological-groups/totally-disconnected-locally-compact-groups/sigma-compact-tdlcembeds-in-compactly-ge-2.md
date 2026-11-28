@@ -1,0 +1,5 @@
+# A σ-compact TDLC group not embeddable in a compactly generated one
+
+There is a $\sigma$-compact TDLC group that admits no continuous injective homomorphism into any compactly generated TDLC group. A TDLC group is a Hausdorff, totally disconnected, locally compact topological group; it is compactly generated if it is generated as a group by a compact subset. Caprace and Cornulier construct a nontrivial second countable topologically simple TDLC group all of whose continuous homomorphisms to compactly generated locally compact groups are trivial. This answers Question 5 of Leary and Castellano negatively, for closed and non-closed embeddings alike. It is the negation of the proposition on [Leary–Castellano question on embedding σ-compact TDLC groups](sigma-compact-tdlcembeds-in-compactly-ge.md).
+
+Source: Open problems on TDLC-groups (I. Leary and I. Castellano), in Mini-Workshop: Homological aspects of TDLC-groups, Oberwolfach Reports 20 (2023), no. 55, p. 3135, Question 5, DOI 10.4171/OWR/2023/55; resolution: P.-E. Caprace and Y. Cornulier, On embeddings into compactly generated groups, Pacific J. Math. 269 (2014), 305-321, arXiv:1211.5509, Theorem 1.3.

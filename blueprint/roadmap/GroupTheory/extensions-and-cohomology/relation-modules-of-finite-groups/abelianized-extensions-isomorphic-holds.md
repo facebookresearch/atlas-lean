@@ -1,0 +1,5 @@
+# Linnell's theorem on abelianized extensions
+
+Let $G$ be a finite group, let $d(G)$ be its minimal number of generators, let $F$ be the free group on $d(G) + 1$ generators, and let $\pi_1, \pi_2 : F \to G$ be surjective homomorphisms with kernels $R_1$ and $R_2$. The abelianized extensions $R_i/[R_i, R_i] \to F/[R_i, R_i] \to G$ are isomorphic as extensions of $G$: there is a group isomorphism $\theta : F/[R_1, R_1] \to F/[R_2, R_2]$ such that whenever $\theta$ maps the class of $w_1 \in F$ to the class of $w_2 \in F$, one has $\pi_1(w_1) = \pi_2(w_2)$; that is, $\theta$ induces the identity on $G$. For the trivial group, $d(G) = 0$ and $F$ is infinite cyclic. This is Linnell's positive answer to Kourovka Problem 5.9.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 5.9 (K. W. Gruenberg); resolution: P. A. Linnell, Relation modules and augmentation ideals of finite groups, J. Pure Appl. Algebra 22 (1981), 143-164, https://doi.org/10.1016/0022-4049(81)90056-6.

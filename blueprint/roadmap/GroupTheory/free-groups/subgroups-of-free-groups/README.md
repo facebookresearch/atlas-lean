@@ -6,6 +6,7 @@ Subgroup and element structure inside free and free metabelian groups: rank, ine
 - [Characteristic quotients of free groups](characteristic-quotients-of-free-groups/README.md)
 - [Derived subgroups of subgroups of free groups](derived-subgroups-of-subgroups-of-free-groups/README.md)
 - [Equally distributed elements of free metabelian groups](equally-distributed-elements-of-free-metabelian/README.md)
+- [Hanna Neumann conjecture](hanna-neumann-conjecture/README.md)
 - [Inert and compressed subgroups of free groups](inert-and-compressed-subgroups-of-free-groups/README.md)
 - [Normal closures in free groups](normal-closures-in-free-groups/README.md)
 - [Normally independent sets in free groups](normally-independent-sets-in-free-groups/README.md)

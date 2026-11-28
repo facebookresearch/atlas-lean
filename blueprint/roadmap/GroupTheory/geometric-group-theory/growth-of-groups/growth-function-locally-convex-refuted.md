@@ -1,0 +1,5 @@
+# Growth functions are not always locally convex
+
+There are an infinite group $G$ and a finite generating family $P$ such that the growth function $f$ of $P$ violates $2f(n) \le f(n - 1) + f(n + 1)$ for arbitrarily large $n$. For a finite generating family $P$ of a group $G$, the growth function $f(n)$ is the number of elements of $G$ of word length at most $n$ with respect to $P$ (words in the generators and their inverses). De la Harpe and Grigorchuk use the group $\langle a, b \mid a^3 = b^3 = (ab)^3 = 1 \rangle$. This answers Kourovka Problem 5.2 negatively. It is the negation of the proposition on [Kourovka Problem 5.2 (local convexity of growth functions)](growth-function-locally-convex.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 5.2 (V. V. Belyaev, N. F. Sesekin); resolution: P. de la Harpe and R. I. Grigorchuk, Local convexity of the growth function of finitely generated groups and question 5.2 in the Kourovka notebook, Algebra and Logic 37 (1998), 353-356.

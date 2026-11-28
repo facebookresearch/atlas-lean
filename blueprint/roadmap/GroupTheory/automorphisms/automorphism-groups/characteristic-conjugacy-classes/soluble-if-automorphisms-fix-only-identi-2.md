@@ -1,0 +1,5 @@
+# Non-soluble groups with no characteristic nontrivial conjugacy class
+
+There is a finite non-soluble group $G$ with a group $\Phi \le \mathrm{Aut}(G)$ such that every $g \ne 1$ is mapped by some $\varphi \in \Phi$ to an element not conjugate to $g$; Kourovka Problem 3.51 has a negative answer. Fine constructs, for every finite group $A$, a finite group $H \rtimes A$ with $H$ soluble and no characteristic conjugacy class of nontrivial cyclic subgroups; a non-soluble $A$ such as $A_5$ gives the example. It is the negation of the proposition on [Kourovka Problem 3.51 (automorphisms fixing only the identity class)](soluble-if-automorphisms-fix-only-identi.md).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 3.51 (A. I. Saksonov); resolution: Y. Fine, Characteristic classes of involutions in nonsolvable groups, J. Group Theory 22 (2019), no. 6, 1077-1087, Theorem 2, https://doi.org/10.1515/jgth-2019-0040.

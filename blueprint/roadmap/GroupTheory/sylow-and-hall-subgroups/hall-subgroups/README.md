@@ -1,5 +1,7 @@
 # Hall π-subgroups
 
+- [Kourovka Problem 3.62 (extensions of Dπ-groups)](d-pi-group-extension-closed.md)
+- [Extensions of Dπ-groups by Dπ-groups are Dπ-groups](d-pi-group-extension-closed-holds.md)
 - [π-numbers (Kourovka 18.31)](is-pi-number.md)
 - [π-subgroups](is-pi-subgroup.md)
 - [Hall π-subgroups (Kourovka 18.31)](is-hall-pi-subgroup.md)
@@ -27,8 +29,12 @@
 - [Kourovka Problem 17.44(b): overgroups of Hall subgroups in $D_\pi$-groups](hall-overgroup-dpi.md)
 - [Overgroups of Hall subgroups in $C_\pi$-groups are $C_\pi$-groups](hall-overgroup-cpi-holds.md)
 - [Overgroups of Hall subgroups in $D_\pi$-groups are $D_\pi$-groups](hall-overgroup-dpi-holds.md)
+- [Kourovka Problem 3.61 (Hall subgroups of centralizers of automorphisms)](automorphism-centralizer-has-hall-subgro.md)
+- [A Hall-subgroup criterion for centralizers of automorphisms](automorphism-centralizer-has-hall-subgro-2.md)
 - [π-numbers](is-pi-number-4.md)
 - [Hall π-subgroups](is-hall-pi-subgroup-4.md)
 - [The class $E_\pi$ of groups with a Hall π-subgroup](has-hall-pi-subgroup.md)
 - [Zavarnitsine's question on Hall subgroups for intersections of prime sets](hall-subgroup-for-intersection-of-prime.md)
 - [Hall subgroups exist for intersections of prime sets](hall-subgroup-for-intersection-of-prime-2.md)
+- [Kourovka Problem 5.65 (Hall subgroups of subdirect products)](hall-subgroups-subdirect-closed.md)
+- [Subdirect products of groups with Hall π-subgroups](hall-subgroups-subdirect-closed-holds.md)
