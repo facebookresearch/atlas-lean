@@ -8,3 +8,5 @@
 - [Ramanujan's exponential transformation of a factorial series (Chapter 3, Entry 2)](ramanujan-part1-ch3-entry2.md)
 - [Convergence of the left side of Ramanujan's Chapter 3, Entry 2](ramanujan-part1-ch3-entry2-leftsummable.md)
 - [Ramanujan's companion series transformation (Chapter 3, Entry 2, formula (2.3))](ramanujan-part1-ch3-entry2-formula23-ser.md)
+
+The harmonic numbers used here are those of [Harmonic numbers](../../../../Biology/coalescent-theory/fu-s-branch-length-covariances-for-every-sample/harm.md).

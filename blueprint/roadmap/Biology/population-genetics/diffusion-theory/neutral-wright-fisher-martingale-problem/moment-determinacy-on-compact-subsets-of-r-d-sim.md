@@ -4,16 +4,11 @@ Let $E \subseteq \mathbb R^d$ be compact, for example the simplex $\Delta_{K-1}$
 
 $$\int_E x^\beta\, \mu(dx) = \int_E x^\beta\, \nu(dx) \qquad \text{for every multi-index } \beta \in \mathbb N_0^d,$$
 
-then $\mu = \nu$. By the Stone–Weierstrass theorem the polynomials are dense in $C(E)$, so $\int f\, d\mu = \int f\, d\nu$ for every $f \in C(E)$, and finite Borel measures on a compact metric space are determined by their integrals of continuous functions.
+then $\mu = \nu$.
 
-## Proof depends on
+Equivalently, let $\mu$ and $\nu$ be finite Borel measures on $\mathbb R^d$ with $\mu(\mathbb R^d \setminus E) = \nu(\mathbb R^d \setminus E) = 0$ whose mixed moments $\int \prod_i x_i^{\beta_i}\, d\mu(x)$ and $\int \prod_i x_i^{\beta_i}\, d\nu(x)$ agree for every $\beta$; then $\mu = \nu$. The two formulations correspond by pushing a measure on $E$ forward along the inclusion into $\mathbb R^d$, which gives a measure with no mass off $E$, and by restricting a measure on $\mathbb R^d$ to $E$; since $E$ is closed these operations are inverse, preserve every mixed moment (the moment with $\beta = 0$ being the total mass) and reflect equality of measures.
 
-- [Stone–Weierstrass theorem for star subalgebras](../../../../Topology/function-spaces/stone-weierstrass-star-subalgebra.md)
-- [Finite Borel measures on a metric space are determined by integrals of bounded continuous functions](../../../../MeasureTheory/measures/regular-measures/measures-determined-by-continuous-integrals.md)
-
-## Expansion
-
-A full proof page must still establish the density of polynomials in $C(E)$ and the identification of finite Borel measures on $E$ from their integrals of continuous functions, and record the case $E = \Delta_{K-1}^k \subseteq \mathbb R^{kK}$.
+By the Stone–Weierstrass theorem the polynomials are dense in $C(E)$, so $\int f\, d\mu = \int f\, d\nu$ for every $f \in C(E)$, and finite Borel measures on a compact metric space are determined by their integrals of continuous functions.
 
 ## Sources
 

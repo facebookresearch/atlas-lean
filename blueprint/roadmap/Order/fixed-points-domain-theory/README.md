@@ -5,6 +5,7 @@ Least and greatest fixed points of monotone and Scott-continuous maps, Kleene it
 - [Least and greatest fixed points on finite sets](least-and-greatest-fixed-points-on-finite-sets/README.md)
 - [Scott fixed-point induction](scott-fixed-point-induction/README.md)
 - [Scott-continuous maps and least fixed points](scott-continuous-maps-and-least-fixed-points/README.md)
+- [Bounded reachability in finite relations](bounded-reachability-in-finite-relations/README.md)
 - [Continuous lattices](continuous-lattices/README.md)
 - [Scott's graph model](scott-s-graph-model/README.md)
 - [Transitive closure of finite relations](transitive-closure-of-finite-relations/README.md)

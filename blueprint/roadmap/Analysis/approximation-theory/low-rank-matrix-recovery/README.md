@@ -9,6 +9,11 @@ Affine rank minimization asks for the matrix of least rank satisfying linear mea
 - [Uniqueness of the low-rank solution under restricted isometry](eq-of-is-restricted-isometry-two-mul.md)
 - [Exact recovery by nuclear norm minimization under restricted isometry](nuclear-norm-lt-of-is-restricted-isometr.md)
 - [Exact matrix completion (Candès–Recht)](exists-card-filter-unique-nuclear-norm-m.md)
+- [Subadditivity of matrix rank](rank-add-le.md)
+- [Rank le rank add rank sub](rank-le-rank-add-rank-sub.md)
+- [Rank neg](rank-neg.md)
+- [Rank sum le](rank-sum-le.md)
+- [Rank sum le card](rank-sum-le-card.md)
 
 ## Related topics
 

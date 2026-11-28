@@ -3,6 +3,7 @@
 Invariant measures on locally compact groups, unimodularity, and fundamental domains for the actions of discrete subgroups.
 
 - [Bruhat functions](bruhat-functions/README.md)
+- [Finite double-coset cutoffs](finite-double-coset-cutoffs/README.md)
 - [Fundamental domains](fundamental-domains/README.md)
 - [Unfolding integrals with normalized cutoffs](unfolding-integrals-with-normalized-cutoffs/README.md)
 - [Unimodularity of GL(2, F)](unimodular-groups/README.md)
