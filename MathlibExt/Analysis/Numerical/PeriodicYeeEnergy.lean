@@ -440,7 +440,10 @@ private theorem abs_weightedInner_scaled_le {N : ℕ} (h c dt : ℝ)
 
 /-! ## C. Energy invariance and coercivity -/
 
-/-- The energy of the zero pair is zero. -/
+/-- The energy of the zero pair is zero. Here, for `N` cells, real `h`, `c`, `dt` and
+`u v : Fin N → ℝ`, the forward difference is `(D₊ v)_j = (v_{j+1} - v_j) / h`, with indices mod
+`N` and `a / 0 = 0`, and the energy is
+`Q(u, v) = h ∑ⱼ uⱼ² + h ∑ⱼ vⱼ² - h ∑ⱼ uⱼ (c * dt * D₊ v)ⱼ`. The claim is `Q(0, 0) = 0`. -/
 theorem yeeEnergy_zero {N : ℕ} (h c dt : ℝ) :
     yeeEnergy (N := N) h c dt 0 0 = 0 := by
   unfold yeeEnergy weightedNormSq weightedInner
@@ -558,7 +561,12 @@ theorem staggeredLeapfrog_energyStable {N : ℕ}
 
 /-! ## D. All iterates -/
 
-/-- Every iterate has the same energy as the initial pair. -/
+/-- Every iterate has the same energy as the initial pair. Here, for `N` cells, real `h`, `c`,
+`dt` and `u v : Fin N → ℝ`, the forward difference is `(D₊ v)_j = (v_{j+1} - v_j) / h`, with
+indices mod `N` and `a / 0 = 0`. One leapfrog step is `v' = v - c * dt * D₊ᵀ u`,
+`u' = u + c * dt * D₊ v'`, and the energy is
+`Q(u, v) = h ∑ⱼ uⱼ² + h ∑ⱼ vⱼ² - h ∑ⱼ uⱼ (c * dt * D₊ v)ⱼ`. If `(u_n, v_n)` is the `n`-th
+iterate from `(u_0, v_0)`, then `Q(u_n, v_n) = Q(u_0, v_0)` for every `n`. -/
 theorem leapfrogIterate_yeeEnergy {N : ℕ} (h c dt : ℝ)
     (u0 v0 : Fin N → ℝ) (n : ℕ) :
     yeeEnergy h c dt (leapfrogIterate h c dt u0 v0 n).1

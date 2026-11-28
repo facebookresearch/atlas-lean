@@ -43,7 +43,8 @@ left-endpoint integral weights every jump of `h` at `c` by `f c`; for general `f
 * `leftPartitionSum f h a b s = leftSum f h (partitionPts a b s)`: the net of left-endpoint sums,
   indexed by finite sets `s : Finset ℝ` ordered by inclusion (refinement).
 * `HasLeftRSIntegral f h a b I`, `LeftRSIntegrable f h a b`, `leftRSIntegral f h a b`: the
-  integral as a limit along refinement (`leftRSIntegral` is `0` when the limit does not exist).
+  integral as a limit along refinement (when the limit does not exist, `leftRSIntegral` is an
+  unspecified real number, not necessarily `0`).
 
 ## Main results
 
@@ -157,11 +158,17 @@ left-endpoint sums converge to `I` along refinement of partitions. -/
 def HasLeftRSIntegral (f h : ℝ → ℝ) (a b I : ℝ) : Prop :=
   Tendsto (leftPartitionSum f h a b) atTop (𝓝 I)
 
-/-- The left-endpoint integral of `f` against `h` on `[a, b]` exists. -/
+/-- The left-endpoint integral of `f` against `h` on `[a, b]` exists. Both endpoints are inserted
+into every partition (`partitionPts a b s`): for `a > b` the point set is `{b, a}`, with the
+single cell `(b, a]`, so this is not an oriented integral, and the left-endpoint integral always
+exists there, with value `f b * (h a - h b)`. -/
 def LeftRSIntegrable (f h : ℝ → ℝ) (a b : ℝ) : Prop :=
   ∃ I, HasLeftRSIntegral f h a b I
 
-/-- The left-endpoint integral of `f` against `h` on `[a, b]`, or `0` if it does not exist. -/
+/-- The left-endpoint integral of `f` against `h` on `[a, b]` when it exists
+(`HasLeftRSIntegral.leftRSIntegral_eq`). It is defined with `limUnder`: when the left-endpoint
+sums have no limit along refinement, its value is an unspecified real number, not necessarily
+`0`. -/
 noncomputable def leftRSIntegral (f h : ℝ → ℝ) (a b : ℝ) : ℝ :=
   limUnder atTop (leftPartitionSum f h a b)
 
