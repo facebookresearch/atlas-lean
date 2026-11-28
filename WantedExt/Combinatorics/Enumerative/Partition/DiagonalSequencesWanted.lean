@@ -248,26 +248,6 @@ public theorem_wanted card_diagonalClass_filter_card_parts_eq_of_lt {n : ℕ}
               (diagonalSequence p.parts (i + 1) - diagonalSequence p.parts (i + 2))).choose
             (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1))
 
-/-- **Diagonal classes whose multiplicities are at least two.** Let $q \ge 1$, let
-$s = (s_1, s_2, \dots)$ be a sequence of natural numbers, and let $\alpha$ be a partition of $n$
-whose diagonal sequence $\delta(\alpha) = (d_i)_{i \ge 1}$ is
-$(1, 2, \dots, q, q^{(s_q)}, (q-1)^{(s_{q-1})}, \dots, 1^{(s_1)})$ followed by zeros, where
-$v^{(r)}$ means $r$ copies of $v$. Put $L = q + s_1 + \dots + s_q$. If $s_i \ge 2$ for all
-$1 \le i < q$, then exactly one partition of $n$ with diagonal sequence $\delta(\alpha)$ has
-exactly $q$ parts; if moreover $s_q \ge 1$, then the number of partitions of $n$ with diagonal
-sequence $\delta(\alpha)$ is $\prod_{i=q}^{L} (\max(d_i - d_{i+1}, 0) + 1)$.
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Corollary 6 (1), (2). -/
-public theorem_wanted card_diagonalClass_of_two_le_s {n : ℕ} (p : Nat.Partition n) (q : ℕ)
-    (hq : 1 ≤ q) (s : ℕ → ℕ)
-    (hd : diagonalSequence p.parts = diagonalOfList (diagonalNormalForm q s))
-    (hs : ∀ i ∈ Finset.Ico 1 q, 2 ≤ s i) :
-    ((diagonalClass p).filter fun β => β.parts.card = q).card = 1 ∧
-      (1 ≤ s q → (diagonalClass p).card =
-        ∏ i ∈ Finset.Icc q (q + ∑ j ∈ Finset.Icc 1 q, s j),
-          (diagonalSequence p.parts i - diagonalSequence p.parts (i + 1) + 1))
-
 /-- **Truncating the staircase of a diagonal sequence.** For $m \ge 0$ and a sequence
 $s = (s_1, s_2, \dots)$ of natural numbers, let $d(m, s)$ be the sequence
 $(1, 2, \dots, m, m^{(s_m)}, (m-1)^{(s_{m-1})}, \dots, 1^{(s_1)})$ followed by zeros, where
