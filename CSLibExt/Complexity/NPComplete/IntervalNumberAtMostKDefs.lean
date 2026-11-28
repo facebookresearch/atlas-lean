@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# INTERVAL NUMBER AT MOST K is NP-complete for every fixed K ≥ 2: definitions
+# INTERVAL NUMBER AT MOST K: definitions
 
 Source:
 D. B. West and D. B. Shmoys, "Recognizing graphs with fixed interval number is NP-complete",
