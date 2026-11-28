@@ -11,10 +11,10 @@ $f_{\mathcal{A}}(w) \ge 0$ for every nonempty word $w$. An instance is given by 
 
 **Theorem.**
 
-1. $\mathrm{Pos}_2(\{-1, 1\})$ is undecidable (first part of Theorem 1).
-2. The restriction of $\mathrm{Pos}_3(\{-1, 0, 1\})$ to automata whose states are all initial and final is undecidable (first part of Theorem 2).
+1. $\mathrm{Pos}_2(\{-1, 1\})$ is undecidable (first part of Theorem 1; first part of Theorem 2 in the MFCS 2017 version).
+2. The restriction of $\mathrm{Pos}_3(\{-1, 0, 1\})$ to automata whose states are all initial and final is undecidable (first part of Theorem 2; first part of Theorem 4 in the MFCS 2017 version).
 
-Item 1 follows directly from the two-counter-machine proof of Colcombet. With a bounded number of states instead of bounded weights the problem stays undecidable, by [a separate result](comparison-of-max-plus-automata-with-553-states.md).
+Item 1 follows directly from the two-counter-machine proof of Colcombet. The source also states versions with a bounded number of states and unbounded weights ($553$ states on six letters, $554$ for the all-initial-and-final restriction). They are not stated here: their constant comes from a $268$-state universal two-counter machine that the source cites from a PhD thesis, and Lemma 6 of the source with that machine gives $2 \cdot 268 + 27 = 563$ states, not the printed $553$.
 
 ## Depends on
 

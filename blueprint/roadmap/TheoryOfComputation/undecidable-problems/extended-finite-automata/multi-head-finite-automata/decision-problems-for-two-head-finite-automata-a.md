@@ -12,8 +12,8 @@ all of them are undecidable.
 The number of heads $k$ is fixed. For one head the automata accept exactly the regular languages, and all these problems are
 decidable. Two consequences recorded by the source: no algorithm converts an automaton of class $X$ into an equivalent one of
 the same class with the minimal number of states, and no language family with semi-decidable word problem that effectively
-contains $\mathscr{L}(X)$ has a pumping lemma. The problems become decidable for automata with a constant number of head
-reversals that accept letter-bounded languages, and stay undecidable for such automata on arbitrary languages.
+contains $\mathscr{L}(X)$ has a pumping lemma. For automata with a constant number of head reversals, emptiness, universality, finiteness, infiniteness, inclusion and
+equivalence stay undecidable on arbitrary languages and become decidable for letter-bounded languages (Theorem 20).
 
 ## Depends on
 

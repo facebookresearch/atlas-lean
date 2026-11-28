@@ -17,7 +17,7 @@ Unary NQFAs and UQFAs recognize only regular languages, so the undecidability co
 
 ## Expansion
 
-One-way AQFAs can simulate any Turing machine (Yakaryılmaz): after reading the input, the head rests on the right end-marker while the automaton guesses successive configurations existentially and eliminates wrong guesses with universal branches, running forever if the machine does not halt. For a Turing machine $M$, the realtime AQFA $R$ runs a number of steps of the one-way simulation of $M$ on the empty word that grows with the length of its unary input. If $M$ halts on the empty word and accepts, all sufficiently long inputs are accepted; otherwise none is. A decision procedure for emptiness would therefore decide whether a Turing machine accepts the empty word.
+One-way AQFAs can simulate any Turing machine (Yakaryılmaz): after reading the input, the head rests on the right end-marker while the automaton guesses successive configurations existentially and eliminates wrong guesses with universal branches, running forever if the machine does not halt. For a Turing machine $M$, the realtime AQFA $R$ runs a number of steps of the one-way simulation of $M$ on the empty word that grows with the length of its unary input. If $M$ halts on the empty word and accepts, some (indeed infinitely many) sufficiently long inputs are accepted; otherwise none is. A decision procedure for emptiness would therefore decide whether a Turing machine accepts the empty word.
 
 ## Sources
 

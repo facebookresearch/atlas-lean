@@ -13,6 +13,8 @@ Whether the players attain common knowledge of the state at a given history is P
 ## Depends on
 
 - [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Common knowledge](../../../../GameTheory/noncooperative-games/common-knowledge-and-the-agreement-theorem/is-common-knowledge-at.md)
+- [Knowledge operator](../../../../GameTheory/noncooperative-games/common-knowledge-and-the-agreement-theorem/knows.md)
 
 ## Proof depends on
 

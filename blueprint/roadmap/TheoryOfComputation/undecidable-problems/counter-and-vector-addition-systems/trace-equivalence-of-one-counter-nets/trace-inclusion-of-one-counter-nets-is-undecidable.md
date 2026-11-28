@@ -6,7 +6,7 @@ No algorithm decides whether every finite action sequence that one process of a 
 
 **Theorem (Hofman, Mayr and Totzke).** Given two processes $pm$ and $qn$ of one-counter nets, it is undecidable whether $T(pm) \subseteq T(qn)$, and it is undecidable whether $T(pm) = T(qn)$ (Theorem 20 of the source). An instance consists of the net or nets, given by their finite transition relations, the control states $p, q$ and the counter values $m, n \in \mathbb{N}$; two nets over the same actions can be joined into one by disjoint union.
 
-The source states that weak trace inclusion, which ignores silent actions, is undecidable as well. Both problems were known to be undecidable for one-counter automata (Valiant), and their status for one-counter nets had been open. By contrast, the same paper proves that weak simulation is decidable for one-counter nets, and inclusion of the traces of a finite-state system in those of a one-counter net is decidable.
+The source states that weak trace inclusion, which ignores silent actions, is undecidable as well. Both problems were known to be undecidable for one-counter automata (Jančar, Moller and Sawa; Valiant), and their status for one-counter nets had been open. By contrast, the same paper proves that weak simulation is decidable for one-counter nets, and inclusion of the traces of a finite-state system in those of a one-counter net is decidable, since it is decidable for Petri nets (Jančar, Esparza and Moller, as cited in Section 8).
 
 ## Depends on
 

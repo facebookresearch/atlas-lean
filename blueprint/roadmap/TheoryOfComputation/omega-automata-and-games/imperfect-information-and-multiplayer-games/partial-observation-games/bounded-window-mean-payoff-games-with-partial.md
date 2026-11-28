@@ -27,7 +27,7 @@ With perfect information, the multidimensional versions of $\mathrm{UDirBnd}$ an
 
 ## Expansion
 
-The reduction is from universality of weighted finite automata (every word has minimal accepting-run cost $<0$), undecidable by Almagor, Boker and Kupferman. From an automaton $\mathcal N$ the source builds a blind arena in which Adam secretly picks one of three gadgets; a blind strategy of Eve is an infinite word over $\Sigma\cup\{\#\}$. If $\mathcal N$ is universal Eve wins $\mathrm{UDirBnd}$, and if not, Adam wins the complement of $\mathrm{Bnd}$; since $\mathrm{UDirBnd}\subseteq\mathrm{DirBnd},\mathrm{UBnd}\subseteq\mathrm{Bnd}$, all four objectives are undecidable at once.
+The reduction is from universality of weighted finite automata (every word has minimal accepting-run cost $<0$), undecidable by Almagor, Boker and Kupferman. From an automaton $\mathcal N$ the source builds a blind arena in which Adam secretly picks one of three gadgets; a blind strategy of Eve is an infinite word over $\Sigma\cup\{\#\}$. If $\mathcal N$ is not universal Eve wins $\mathrm{UDirBnd}$, and if it is universal Adam wins the complement of $\mathrm{Bnd}$ (as in the source's proof in the appendix; the bullet list in its main text states the two cases the other way round); since $\mathrm{UDirBnd}\subseteq\mathrm{DirBnd},\mathrm{UBnd}\subseteq\mathrm{Bnd}$, all four objectives are undecidable at once.
 
 ## Sources
 

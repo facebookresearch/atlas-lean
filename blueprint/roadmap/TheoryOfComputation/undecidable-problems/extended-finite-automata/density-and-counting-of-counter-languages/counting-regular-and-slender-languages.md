@@ -7,7 +7,7 @@ The counting function of a language gives the number of its words of each length
 - *counting-regular* if there is a regular language $L'$ (over some alphabet) with $f_L(n) = f_{L'}(n)$ for all $n \ge 0$;
 - *strongly counting-regular* if $L \cap L_1$ is counting-regular for every regular language $L_1$.
 
-Every regular language is counting-regular, and so is, for example, $\{ww : w \in \{a, b\}^*\}$, which has as many words of each length as $(a(a+b))^*$. Languages of unambiguous reversal-bounded pushdown automata, and more generally of unambiguous nondeterministic Turing machines with a one-way input and a reversal-bounded worktape, are strongly counting-regular.
+Every regular language is counting-regular, and so is, for example, $\{ww : w \in \{a, b\}^*\}$, which has as many words of each length as $(a(a+b))^*$. Languages of unambiguous reversal-bounded pushdown automata, and more generally of unambiguous nondeterministic Turing machines with a one-way input and a reversal-bounded worktape (one whose head changes direction a bounded number of times), are strongly counting-regular.
 
 ## Depends on
 

@@ -10,8 +10,7 @@ sense of [prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-an
 each $1$-reversal-bounded, whether its language is dense. Consequently, it is undecidable, given a deterministic real-time Turing
 machine with a one-way read-only input and two $1$-reversal-bounded worktapes, whether its language is dense.
 
-A pushdown or worktape is *$1$-reversal-bounded* if it switches at most once between increasing and decreasing the size of its
-store. By contrast, density is decidable for nondeterministic Turing machines with a one-way input and a single
+A pushdown is *$1$-reversal-bounded* if it switches at most once between increasing and decreasing the size of its store (pushing and popping), and a worktape is *$1$-reversal-bounded* if its head changes direction, between moving left and moving right, at most once on every accepting computation (Sections 2 and 3 of the source). By contrast, density is decidable for nondeterministic Turing machines with a one-way input and a single
 reversal-bounded worktape, so the boundary lies between one and two reversal-bounded worktapes.
 
 ## Depends on

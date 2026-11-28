@@ -10,7 +10,7 @@ counter, quantify over all initial counters, or allow some initial counter.
 2. $\forall$-determinizability is undecidable;
 3. $\exists$-determinizability is undecidable.
 
-Decidability of uniform determinizability remains open; the source shows an Ackermannian lower bound for it. Over a one-letter alphabet every OCN is
+The source leaves the decidability of uniform determinizability open (Section 6) and shows an Ackermannian lower bound for it. Over a one-letter alphabet every OCN is
 $0$-, $\forall$- and $\exists$-determinizable, and uniform determinizability is decidable.
 
 ## Depends on

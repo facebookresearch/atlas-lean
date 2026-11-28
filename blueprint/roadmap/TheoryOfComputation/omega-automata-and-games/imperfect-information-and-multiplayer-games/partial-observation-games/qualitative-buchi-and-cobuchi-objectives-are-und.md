@@ -33,9 +33,9 @@ sees nothing but the letters it plays, so deciding whether a finite POMDP has a 
 strategy for a coBüchi objective, or a positive winning one for a Büchi objective, is undecidable. In POMDPs randomized
 observation-based strategies are no more powerful than pure ones for these questions, which extends the result to randomized
 strategies. Finally, every game with probabilistic transitions and one-sided complete observation reduces, in a way that
-preserves almost-sure and positive winning, to one with deterministic transitions: each probabilistic state becomes a state of
-player $2$ followed by equiprobable successor states that player $1$ cannot tell apart, so that either player alone can
-simulate the coin by playing uniformly at random.
+preserves almost-sure and positive winning, to one with deterministic transitions: each probabilistic state $s$ with $n$ successors becomes a state of
+player $2$, who chooses $i \in [n]$, followed by a state $(s, i)$ of player $1$ with the same observation as $s$, who chooses $j \in [n]$, and the play moves to the $(i + j \bmod n)$-th successor of $s$; so either player alone can
+simulate the uniform choice by playing uniformly at random.
 
 ## Sources
 

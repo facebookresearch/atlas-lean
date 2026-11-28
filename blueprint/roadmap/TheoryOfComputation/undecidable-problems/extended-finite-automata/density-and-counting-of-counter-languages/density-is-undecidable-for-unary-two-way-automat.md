@@ -8,7 +8,7 @@ over a unary input alphabet $\{a\}$, whether $L(M)$ is [dense](prefix-suffix-and
 undecidable whether $L(M) = a^*$, and whether $L(M)$ is finite.
 
 By contrast, for two-way nondeterministic automata with finitely many reversal-bounded counters, density is decidable on unary
-languages, since such machines can be converted to finite automata (Ibarra and Jiang); for two-way deterministic automata with two
+languages, since such machines can be converted to finite automata (Ibarra, Jiang, Tran and Wang, the source's reference [11]); for two-way deterministic automata with two
 reversal-bounded counters density is undecidable in general.
 
 ## Depends on

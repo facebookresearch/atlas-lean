@@ -24,9 +24,9 @@ or upward closed, whereas for constant weights Petri nets are decisive with resp
 
 ## Expansion
 
-For static pCMs, the proof reduces the halting problem of normalized counter machines, which do not halt from any initial counter values when they do not halt from zero (a lemma of the source). Each non-halting instruction becomes a choice between itself, with weight $1/3$, and incrementing the first counter and restarting, with weight $2/3$. If the machine does not halt, the halting configuration is unreachable and the chain is decisive. If it halts, the halting configuration stays reachable from every reachable configuration, while the restarting first counter behaves like a random walk drifting upward, so the target is missed with positive probability and the chain is not decisive. For safe one-counter pCMs with one
+For static pCMs, the proof reduces the halting problem of normalized counter machines, which do not halt from any initial counter values when they do not halt from zero (a lemma of the source). Each non-halting instruction becomes a choice between itself, with weight $1$, and incrementing the first counter and restarting, with weight $4$, so the restart has probability at least $2/3$ (proof of Theorem 12 in the appendix). If the machine does not halt, the halting configuration is unreachable and the chain is decisive. If it halts, the halting configuration stays reachable from every reachable configuration, while the restarting first counter behaves like a random walk drifting upward, so the target is missed with positive probability and the chain is not decisive. For safe one-counter pCMs with one
 state, it reduces Hilbert's tenth problem: given an integer polynomial $P$, the decrement has weight $1$ and the increment has weight
-$\min\{P(n_1, \dots, n_k)^2 + 1 : n_1 + \cdots + n_k \le n\}$ at counter value $n$, so that the counter returns to its initial value almost surely, and the chain is decisive, exactly when $P$ has a root in $\mathbb{N}^k$;
+$\min\{P(n_1, \dots, n_k)^2 + 1 : n_1 + \cdots + n_k \le n\}$ at counter value $n$, so that, from the initial value $1$, the counter reaches $0$ almost surely, and the chain is decisive, exactly when $P$ has a root in $\mathbb{N}^k$;
 otherwise the increment weight is at least twice the decrement weight everywhere and the counter escapes with positive probability.
 
 ## Sources
