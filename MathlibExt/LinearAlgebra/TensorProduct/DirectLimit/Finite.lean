@@ -398,7 +398,7 @@ private theorem exists_finiteDiagonalEquiv_fin (t : ℕ) :
     rw [Module.DirectLimit.congr_apply_of]
     simp only [eS, finiteSnocStageEquiv_tprod]
     dsimp only [eB]
-    rw [directLimitDiagonal_of_tmul]
+    rw [directLimitDiagonal_symm_of_tmul]
     simp only [TensorProduct.congr_tmul, LinearEquiv.refl_apply]
     rw [hP]
     dsimp only [eT]
