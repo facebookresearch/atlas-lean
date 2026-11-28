@@ -67,8 +67,9 @@ positive. -/
 def WellFormed (i : MinimumDisjunctiveNormalFormInstance) : Prop :=
   (∀ a ∈ i.2.1, a.length = i.1) ∧ 0 < i.2.2
 
-/-- Some DNF expression over `u₀, …, u_{n-1}` with at most `K` disjuncts is true on exactly the
-assignments in `A`. -/
+/-- Some DNF expression over `u₀, …, u_{n-1}` with at most `K` disjuncts is, at every truth
+assignment `a` of length `n`, true exactly when `a` is a listed row of `A`. Rows are compared
+only at length `n`: rows of `A` of other lengths are never compared. -/
 def MinimumDisjunctiveNormalFormFeasible (i : MinimumDisjunctiveNormalFormInstance) : Prop :=
   ∃ E : List (List (ℕ × Bool)), E.length ≤ i.2.2 ∧ (∀ t ∈ E, ∀ l ∈ t, l.1 < i.1) ∧
     ∀ a : List Bool, a.length = i.1 →

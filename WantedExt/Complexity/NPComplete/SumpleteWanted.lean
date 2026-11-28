@@ -61,8 +61,12 @@ column target, so the grid is a rectangle with `m` rows and `n` columns. -/
 def WellFormed (i : SumpleteInstance) : Prop :=
   i.2.1.length = i.1.length ∧ ∀ row ∈ i.1, row.length = i.2.2.length
 
-/-- Some cells can be crossed out so that every row and every column sums to its target:
-`keep r c` says that the number in row `r`, column `c` stays uncrossed. -/
+/-- Some cells can be crossed out (`keep r c` says that the number in row `r`, column `c`
+stays uncrossed) so that two independent conditions hold: for every row `r` below the number
+of rows, the uncrossed numbers of row `r` in columns below the number of column targets sum to
+the target of row `r`; and for every column `c` below the number of column targets, the
+uncrossed numbers of column `c` in rows below the number of rows sum to the target of
+column `c`. -/
 def SumpleteFeasible (i : SumpleteInstance) : Prop :=
   ∃ keep : ℕ → ℕ → Bool,
     (∀ r < i.1.length,

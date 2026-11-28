@@ -61,7 +61,9 @@ reduction from every language in `NP`
 the transitions `((s, a), t)`. -/
 abbrev AutomatonData := ℕ × ℕ × List ℕ × List ((ℕ × ℕ) × ℕ)
 
-/-- An instance: the alphabet size `m` (letters `0, …, m - 1`) and the automata `A₁`, `A₂`. -/
+/-- An instance: the alphabet size `m` (letters `0, …, m - 1`) and the automata `A₁`, `A₂`.
+The alphabet size is a free field of the raw data: validation requires `m = 1`, and the
+languages are compared over natural letters whatever `m` is. -/
 abbrev AutomatonInequivalenceInstance := ℕ × AutomatonData × AutomatonData
 
 /-- The automaton as a CSLibExt `EncodedNFA`: start state `q₀`, the accept states, the
@@ -81,7 +83,9 @@ alphabet has exactly one letter. -/
 def WellFormed (i : AutomatonInequivalenceInstance) : Prop :=
   AutomatonWellFormed i.1 i.2.1 ∧ AutomatonWellFormed i.1 i.2.2 ∧ i.1 = 1
 
-/-- `A₁` and `A₂` recognize different languages. -/
+/-- `A₁` and `A₂`, read as automata without ε-moves over natural-number letters, recognize
+different languages. The alphabet size `m` is not consulted: words with letters `≥ m` count
+too. -/
 def AutomatonInequivalenceFeasible (i : AutomatonInequivalenceInstance) : Prop :=
   (toEncodedNFA i.2.1).language ≠ (toEncodedNFA i.2.2).language
 

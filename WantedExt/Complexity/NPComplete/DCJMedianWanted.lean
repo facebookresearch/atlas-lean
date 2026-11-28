@@ -101,7 +101,11 @@ def DCJWithin {V : Type} (G H : SimpleGraph V) (k : ℕ) : Prop :=
 /-- The number `n` of genes. -/
 def numGenes (i : DCJMedianInstance) : ℕ := i.1.length
 
-/-- The genome given by an adjacency list, on the extremities `Fin (2n)`. -/
+/-- The graph of an adjacency list on the extremities `Fin (2n)`: two distinct extremities
+are adjacent when the pair, in either order, is listed (`Cslib.Complexity.Karp.edgeGraph`). The
+graph is built from any list; `GenomeList` is sufficient, not necessary, for it to be a genome
+(each extremity in at most one adjacency): a list that repeats an adjacency can still give
+one. -/
 def genome (i : DCJMedianInstance) (adj : List (ℕ × ℕ)) : SimpleGraph (Fin (2 * numGenes i)) :=
   Cslib.Complexity.Karp.edgeGraph (2 * numGenes i) adj
 
@@ -117,8 +121,10 @@ each of the three adjacency lists describes a genome. -/
 def WellFormed (i : DCJMedianInstance) : Prop :=
   (∀ b ∈ i.1, b = true) ∧ GenomeList i i.2.1 ∧ GenomeList i i.2.2.1 ∧ GenomeList i i.2.2.2.1
 
-/-- Some genome `M` on the extremities has total DCJ distance at most `K` to the three input
-genomes. -/
+/-- There are a genome `M` on the extremities and `k₁ + k₂ + k₃ ≤ K` such that, for each of the
+three graphs that `genome` builds from the input lists, a sequence of at most `kᵢ` DCJs leads
+from that graph to `M`. Only the median `M` is required to be a genome; the input graphs are
+built from the raw lists and need not be. -/
 def DCJMedianFeasible (i : DCJMedianInstance) : Prop :=
   ∃ M : SimpleGraph (Fin (2 * numGenes i)), IsGenome M ∧ ∃ k₁ k₂ k₃, k₁ + k₂ + k₃ ≤ i.2.2.2.2 ∧
     DCJWithin (genome i i.2.1) M k₁ ∧ DCJWithin (genome i i.2.2.1) M k₂ ∧

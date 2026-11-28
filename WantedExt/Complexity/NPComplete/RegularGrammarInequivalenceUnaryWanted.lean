@@ -75,7 +75,8 @@ def WellFormed (i : ReynoldsCoveringInstance) : Prop :=
   GrammarWellFormed i.1 i.2.1 ∧ GrammarWellFormed i.1 i.2.2 ∧ IsRegularGrammar i.2.1 ∧
     IsRegularGrammar i.2.2 ∧ i.1 = 1
 
-/-- `G₁` and `G₂` generate different languages. -/
+/-- `G₁` and `G₂` generate different languages. This test checks neither a one-letter
+alphabet nor that the grammars are regular; those are conditions of `WellFormed`. -/
 def RegularGrammarInequivalenceFeasible (i : ReynoldsCoveringInstance) : Prop :=
   (toEncodedCFG i.2.1).language ≠ (toEncodedCFG i.2.2).language
 
