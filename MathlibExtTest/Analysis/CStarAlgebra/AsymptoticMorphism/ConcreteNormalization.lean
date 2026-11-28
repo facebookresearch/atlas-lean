@@ -27,7 +27,10 @@ open Filter
 
 namespace ConcreteAsymptoticNormalization
 
-private def error (t : AsymptoticTime) : ℂ := Real.exp (-(t : ℝ))
+private noncomputable def error (t : AsymptoticTime) : ℂ := Real.exp (-(t : ℝ))
+
+private theorem error_apply (t : AsymptoticTime) :
+    error t = (Real.exp (-(t : ℝ)) : ℂ) := rfl
 
 private theorem error_continuous : Continuous error :=
   Complex.continuous_ofReal.comp (Real.continuous_exp.comp continuous_subtype_val.neg)
@@ -37,13 +40,14 @@ private theorem error_tendsto : Tendsto error atTop (nhds 0) := by
     Real.tendsto_exp_atBot.comp tendsto_neg_atTop_atBot
   have hray : Tendsto (fun t : AsymptoticTime => Real.exp (-(t : ℝ)))
       atTop (nhds 0) := (tendsto_comp_val_Ici_atTop (a := (1 : ℝ))).2 h
-  simpa [error] using (Complex.continuous_ofReal.tendsto (0 : ℝ)).comp hray
+  change Tendsto (fun t : AsymptoticTime => (Real.exp (-(t : ℝ)) : ℂ)) atTop (nhds 0)
+  exact (Complex.continuous_ofReal.tendsto (0 : ℝ)).comp hray
 
 private theorem orbit_tendsto (a : ℂ) :
     Tendsto (fun t : AsymptoticTime => a + error t) atTop (nhds a) := by
   simpa only [add_zero] using tendsto_const_nhds.add error_tendsto
 
-private def translated : AsymptoticMorphism ℂ ℂ where
+private noncomputable def translated : AsymptoticMorphism ℂ ℂ where
   toFun t a := a + error t
   continuous_orbit a := continuous_const.add error_continuous
   add_defect_tendsto a b := by
@@ -59,10 +63,13 @@ private def translated : AsymptoticMorphism ℂ ℂ where
     simpa only [sub_self] using
       (orbit_tendsto (star a)).sub ((orbit_tendsto a).star)
 
+private theorem translated_apply (t : AsymptoticTime) (a : ℂ) :
+    translated t a = a + error t := rfl
+
 private theorem translated_zero_ne_zero (t : AsymptoticTime) : translated t 0 ≠ 0 := by
   intro h
-  have hreal : Real.exp (-(t : ℝ)) = 0 := by
-    simpa [translated, error] using congrArg Complex.re h
+  rw [translated_apply, zero_add, error_apply] at h
+  have hreal : Real.exp (-(t : ℝ)) = 0 := congrArg Complex.re h
   exact Real.exp_ne_zero _ hreal
 
 -- This exercises the actual norm and a nonzero zero orbit of a raw family.
@@ -78,7 +85,10 @@ private theorem normalized_eq_identity :
     translated.normalize = AsymptoticMorphism.ofHom (NonUnitalStarAlgHom.id ℂ ℂ) := by
   apply AsymptoticMorphism.ext
   intro t a
-  simp [AsymptoticMorphism.normalize_apply, translated]
+  rw [AsymptoticMorphism.normalize_apply, translated_apply, translated_apply,
+    AsymptoticMorphism.ofHom_apply]
+  change a + error t - ((0 : ℂ) + error t) = a
+  simp only [zero_add, add_sub_cancel_right]
 
 example (t : AsymptoticTime) : translated.normalize t 0 = 0 :=
   AsymptoticMorphism.normalize_zero translated t
