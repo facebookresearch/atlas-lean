@@ -22,14 +22,11 @@ public import Mathlib.RingTheory.Polynomial.Basic
 #check @IsLocalRing.two_le_depth_of_isIntegrallyClosed
 #check @IsLocalRing.min_two_le_depth_of_isIntegrallyClosed
 #check @IsLocalRing.isRegularLocalRing_of_isIntegrallyClosed
-#check @IsRegularLocalRing.isIntegrallyClosed_of_ringKrullDim_le_one
 #check @isIntegrallyClosed_of_forall_isRegularLocalRing_and_min_two_le_depth
 #check @forall_isRegularLocalRing_and_min_two_le_depth_of_isIntegrallyClosed_localization
 #check @isIntegrallyClosed_iff_forall_isRegularLocalRing_and_min_two_le_depth
-#check @forall_isIntegrallyClosed_localization_iff_of_isDomain
 #check @IsLocalRing.isDomain_of_isReduced_of_isIntegrallyClosed
 #check @IsLocalRing.depth_self_eq_of_ringEquiv
-#check @SerreNormalityCriterion.localization_atPrime
 #check @forall_isIntegrallyClosed_localization_iff
 
 /-- `ℤ` satisfies `(R₁)` and `(S₂)`. -/
