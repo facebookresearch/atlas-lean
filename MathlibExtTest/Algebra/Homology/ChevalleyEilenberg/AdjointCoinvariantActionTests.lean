@@ -41,12 +41,15 @@ local instance : LieRingModule Mat Mat := lieRingSelfModule
 local instance : LieModule ℤ Mat Mat := lieAlgebraSelfModule
 local instance : HasFiniteBiproducts (ModuleCat ℤ) :=
   CategoryTheory.Abelian.hasFiniteBiproducts (C := ModuleCat ℤ)
+local instance : MonoidalClosed (ModuleCat ℤ) :=
+  ModuleCat.UniverseScalarRestriction.monoidalClosed.{0,0} (R := ℤ)
 
 private def e01 : Mat := !![0, 1; 0, 0]
 private def e10 : Mat := !![0, 0; 1, 0]
 private def diagonal : Mat := !![1, 0; 0, -1]
 private def oneWord (m : Mat) : ⋀[ℤ]^1 Mat := exteriorPower.ιMulti ℤ 1 (fun _ => m)
 private abbrev incl : Mat →ₗ⁅ℤ⁆ Mat := LieHom.id
+private abbrev C := (canonicalChainData ℤ Mat).complex
 private abbrev Q := adjointCoinvariantComplex ℤ Mat incl
 private abbrev q := adjointCoinvariantProjection ℤ Mat incl
 private abbrev relations := adjointDegreeSpan ℤ Mat incl 1
@@ -86,11 +89,11 @@ private lemma readQ_projection (m : Mat) : readQ ((q.f 1).hom (oneWord m)) =
     Matrix.trace m := by
   have h := congrArg (fun f => f.hom (oneWord m))
     (adjointCoinvariantProjection_coordinates ℤ Mat incl 1)
-  simp only [ModuleCat.hom_comp, ModuleCat.hom_ofHom, LinearMap.comp_apply] at h
-  change quotientTrace (coordinate.hom.hom ((q.f 1).hom (oneWord m))) = Matrix.trace m
-  rw [h]
-  change traceOne (oneWord m) = Matrix.trace m
-  simp [traceOne, oneWord]
+  have hp : coordinate.hom.hom ((q.f 1).hom (oneWord m)) =
+      relations.mkQ (oneWord m) := h
+  exact (congrArg quotientTrace hp).trans (by
+    change traceOne (oneWord m) = Matrix.trace m
+    simp [traceOne, oneWord])
 private def identityClass : Q.X 1 := (q.f 1).hom (oneWord (1 : Mat))
 private lemma identity_trace : readQ identityClass = 2 := by
   rw [identityClass, readQ_projection]
@@ -104,17 +107,21 @@ example : degreeAdjointAction ℤ Mat 1 e01 (oneWord e10) = oneWord diagonal := 
 example : degreeAdjointAction ℤ Mat 1 e01 (oneWord e10) ≠ 0 := by
   rw [left_action]
   intro hz
-  have h := congrArg (fun a => exteriorPower.oneEquiv ℤ Mat a 0 0) hz
-  norm_num [oneWord, diagonal] at h
+  let f : (⋀[ℤ]^1 Mat) →ₗ[ℤ] Mat := (exteriorPower.oneEquiv ℤ Mat).toLinearMap
+  have hm : f (oneWord diagonal) = diagonal := by simp [f, oneWord]
+  have h0 : diagonal = 0 := hm.symm.trans ((congrArg f hz).trans f.map_zero)
+  exact (by decide : diagonal ≠ 0) h0
 example : (rightAdjointCoefficients ℤ Mat incl 1).action e01 (oneWord e10) =
     -oneWord diagonal := by
   rw [rightAdjointCoefficients_action]
   change -degreeAdjointAction ℤ Mat 1 e01 (oneWord e10) = -oneWord diagonal
   rw [left_action]
 example : (q.f 1).hom (oneWord diagonal) = 0 := by
-  apply LinearMap.mem_ker.mp
-  rw [adjointCoinvariantProjection_ker ℤ Mat incl 1, ← left_action]
-  exact Submodule.subset_span ⟨e01, oneWord e10, rfl⟩
+  have h := degreeAdjointChainMap_projection ℤ Mat incl e01
+  have hp := congrArg (fun f : C ⟶ Q => (f.f 1).hom (oneWord e10)) h
+  change (q.f 1).hom (degreeAdjointAction ℤ Mat 1 e01 (oneWord e10)) = 0 at hp
+  rw [left_action] at hp
+  exact hp
 example : readQ identityClass = 2 := identity_trace
 example : identityClass ≠ 0 := identity_ne_zero
 
@@ -122,7 +129,9 @@ private def flip : Mat →ₗ⁅ℤ⁆ Mat where
   toLinearMap := -(Matrix.transposeLinearEquiv (Fin 2) (Fin 2) ℤ ℤ).toLinearMap
   map_lie' := by
     intro a b
-    change -(a * b - b * a)ᵀ = (-aᵀ) * (-bᵀ) - (-bᵀ) * (-aᵀ)
+    change -(Matrix.transpose (a * b - b * a)) =
+      (-Matrix.transpose a) * (-Matrix.transpose b) -
+        (-Matrix.transpose b) * (-Matrix.transpose a)
     rw [Matrix.transpose_sub, Matrix.transpose_mul, Matrix.transpose_mul]
     simp only [neg_mul_neg, neg_sub]
 private def flipQ : Q ⟶ Q :=
@@ -130,11 +139,10 @@ private def flipQ : Q ⟶ Q :=
 private lemma flip_trace : readQ ((flipQ.f 1).hom identityClass) = -2 := by
   have h := adjointCoinvariantMap_pure ℤ Mat incl incl flip flip (by ext a; rfl)
     1 (fun _ => (1 : Mat))
-  change readQ ((flipQ.f 1).hom ((q.f 1).hom (oneWord (1 : Mat)))) = -2
-  rw [h]
-  change readQ ((q.f 1).hom (oneWord (flip (1 : Mat)))) = -2
-  rw [readQ_projection]
-  norm_num [flip]
+  have hp : (flipQ.f 1).hom identityClass =
+      (q.f 1).hom (oneWord (flip (1 : Mat))) := h
+  exact (congrArg readQ hp).trans ((readQ_projection (flip (1 : Mat))).trans (by
+    norm_num [flip]))
 example : readQ ((flipQ.f 1).hom identityClass) = -2 := flip_trace
 example : flipQ ≠ 𝟙 Q := by
   intro hz
@@ -163,7 +171,10 @@ private def rho : ℤ →+* Module.End ℤ X := (Algebra.lsmul (A := ℤ) ℤ �
 private lemma rho_commutes (r : ℤ) (x : Mat) (m : X) : rho r ⁅x, m⁆ = ⁅x, rho r m⁆ := by
   change r • ⁅x, m⁆ = ⁅x, r • m⁆
   rw [lie_smul]
-private def entry (i j : Fin 2) : Mat →ₗ[ℤ] ℤ := (LinearMap.proj j).comp (LinearMap.proj i)
+private def entry (i j : Fin 2) : Mat →ₗ[ℤ] ℤ where
+  toFun m := m i j
+  map_add' _ _ := rfl
+  map_smul' _ _ := rfl
 private def readAction : ((⋀[ℤ]^1 Mat) ⊗[ℤ] Mat) →ₗ[ℤ] ℤ :=
   (TensorProduct.lid ℤ ℤ).toLinearMap.comp (TensorProduct.map
     ((entry 0 1).comp (exteriorPower.oneEquiv ℤ Mat).toLinearMap) (entry 1 0))
