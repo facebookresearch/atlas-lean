@@ -9,3 +9,6 @@ Context-free grammars and derivations, normal forms, parsing algorithms, pushdow
 - [Chomsky–Schützenberger theorem](chomsky-sch-tzenberger-theorem/README.md)
 - [Semantic LL(1) predictive parsing](semantic-ll-1-predictive-parsing/README.md)
 - [LR(1) grammars](lr-1-grammars/README.md)
+- [Antichain growth of languages](antichain-growth-of-languages/README.md)
+- [Conjunctive grammars over a unary alphabet](conjunctive-grammars-over-a-unary-alphabet/README.md)
+- [Context-free hypergrammars](context-free-hypergrammars/README.md)

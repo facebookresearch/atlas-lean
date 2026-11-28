@@ -14,3 +14,4 @@
 - [Free theorems for pure System F](free-theorems-for-pure-system-f/README.md)
 - [Curry-style System F](curry-style-system-f/README.md)
 - [Full reduction and subject reduction for pure System F](full-reduction-and-subject-reduction-for-pure-sy/README.md)
+- [Atomic polymorphism](atomic-polymorphism/README.md)

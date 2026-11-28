@@ -12,3 +12,4 @@
 
 - [Wright–Fisher diffusion with a strong seed bank](wright-fisher-diffusion-with-a-strong-seed-bank.md)
 - [Seed-bank Cannings graphs](seed-bank-cannings-graphs/README.md)
+- [Seed bank diffusion with simultaneous switching](seed-bank-diffusion-with-simultaneous-switching/README.md)

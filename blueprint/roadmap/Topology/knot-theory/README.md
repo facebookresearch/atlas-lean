@@ -12,3 +12,4 @@ Embeddings of circles in three-space up to ambient isotopy: knot and link diagra
 - [Ropelength and crossing number](ropelength-and-crossing-number/README.md)
 - [Existence of a chiral knot](exists-chiral-knot.md)
 - [Oesper's determinant formula for three-strand weaving knots](oesper-weaving-three-determinant.md)
+- [Undecidable knot problems](undecidable-knot-problems/README.md)
