@@ -12,7 +12,7 @@
 - [The multiplexer output is true before time zero](mux-trace-eq-true-of-neg.md)
 - [The multiplexer output is false during the glitch interval](mux-trace-eq-false-of-mem-glitch.md)
 - [The multiplexer output is true before the glitch can start](mux-trace-eq-true-of-lt.md)
-- [The multiplexer output is true once the positive path has switched](mux-trace-eq-true-of-ge.md)
+- [The multiplexer output is true from time $d_1 + d_{\mathrm{or}}$ onward](mux-trace-eq-true-of-ge.md)
 - [The multiplexer output glitches exactly when the complemented path is faster](exists-mux-trace-eq-false-iff.md)
 - [No glitch when the positive path is at least as fast](mux-trace-eq-true-of-le.md)
 - [Consensus repair](repaired-trace-eq-true.md)
