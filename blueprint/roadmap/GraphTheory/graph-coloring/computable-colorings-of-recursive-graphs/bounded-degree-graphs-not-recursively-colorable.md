@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The graph is built by diagonalizing against an effective enumeration of the partial computable functions, so that none of them is a $k$-coloring of $G$, while $G$ stays $k$-colorable, its degrees stay at most $2k - 2$ and its neighbor function stays computable; the details are in Bean's paper, and Manaster and Rosenstein reach the same bound by a different construction. A good expansion links the definitions of recursive and highly recursive graphs and of the recursive chromatic number, and the construction of Bean (or the different one of Manaster and Rosenstein), none of which has a page.
+The graph is built by diagonalizing against an effective enumeration of the partial computable functions, so that none of them is a $k$-coloring of $G$, while $G$ stays $k$-colorable, its degrees stay at most $2k - 2$ and its neighbor function stays computable; the details are in Bean's paper, and Manaster and Rosenstein reach the same bound by a different construction. A good expansion links the definitions of recursive and highly recursive graphs and of the recursive chromatic number, and the construction of Bean (or the different one of Manaster and Rosenstein).
 
 ## Sources
 
