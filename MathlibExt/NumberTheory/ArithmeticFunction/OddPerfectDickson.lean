@@ -12,12 +12,12 @@ public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.NumberTheory.Divisors
 import Mathlib.Algebra.BigOperators.Associated
 import Mathlib.Analysis.SpecificLimits.Basic
+import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Data.Nat.PrimeFin
 import Mathlib.Order.WellQuasiOrder
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
-import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
-import MathlibExt.NumberTheory.PrimitiveNondeficient
+import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficient
 
 /-!
 # Dickson's finiteness theorem for odd perfect numbers
@@ -37,10 +37,8 @@ late term to exceed `2`, and if all primes and exponents stabilize the numbers c
 * Leonard Eugene Dickson, *Finiteness of the Odd Perfect and Primitive Abundant Numbers with n
   Distinct Prime Factors*, American Journal of Mathematics 35 (1913), pp. 413–422, §1, Corollary,
   and §5, Lemma C (the largest-prime argument).
-* The proof uses `abundancyIndex_prod` and `abundancyIndex_prime_pow_eq` from
-  `MathlibExt.NumberTheory.PrimitiveNondeficient`, and `one_le_abundancyIndex` and
-  `abundancyIndex_prime_pow_succ` from
-  `MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv`.
+* The prime-power and product formulas for the abundancy index come from
+  `MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficient`.
 -/
 
 open Filter Finset
