@@ -6,7 +6,7 @@ One labelled Markov decision process refines another when every behavior of the 
 
 **Theorem (Fijalkow, Kiefer and Shirmohammadi).** The problem $\mathsf{MC} \sqsubseteq \mathsf{MDP}$, which asks for an MC $\mathcal{D}$ and an MDP $\mathcal{E}$ whether $\mathcal{D} \sqsubseteq \mathcal{E}$, is undecidable. Hence the general problem $\mathsf{MDP} \sqsubseteq \mathsf{MDP}$ is undecidable.
 
-This answers an open question of Doyen, Henzinger and Raskin. The same paper shows that mutual refinement, deciding both $\mathcal{D} \sqsubseteq \mathcal{E}$ and $\mathcal{E} \sqsubseteq \mathcal{D}$, is undecidable (Theorem 3.2). When $\mathcal{E}$ is an MC, refinement is decidable in NC, and the same paper studies the cases where $\mathcal{E}$ is restricted to memoryless or pure memoryless strategies.
+This answers an open question of Doyen, Henzinger and Raskin. The same paper shows that mutual refinement of two MDPs, deciding for MDPs $\mathcal{D}$ and $\mathcal{E}$ both $\mathcal{D} \sqsubseteq \mathcal{E}$ and $\mathcal{E} \sqsubseteq \mathcal{D}$, is undecidable (Theorem 3.2); here $\mathcal{D}$ is an MDP, not an MC as in the theorem above. When $\mathcal{E}$ is an MC, refinement is decidable in NC, and the same paper studies the cases where $\mathcal{E}$ is restricted to memoryless or pure memoryless strategies.
 
 ## Depends on
 
