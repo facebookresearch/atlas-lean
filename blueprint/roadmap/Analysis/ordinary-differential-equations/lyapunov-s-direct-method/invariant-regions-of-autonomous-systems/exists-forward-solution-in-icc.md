@@ -1,0 +1,3 @@
+# Forward solutions in an inward-pointing coordinate box
+
+Let $\iota$ be a finite index set, $\ell \le u$ in $\mathbb{R}^\iota$, and $F : \mathbb{R}^\iota \to \mathbb{R}^\iota$ Lipschitz on the box $[\ell, u] = \{y : \ell_i \le y_i \le u_i \text{ for all } i\}$. Suppose the field points into the box on its faces: for every $y \in [\ell, u]$ and every $i$, $F(y)_i \ge 0$ if $y_i = \ell_i$ and $F(y)_i \le 0$ if $y_i = u_i$. Then for every $a \in \mathbb{R}$ and $x_0 \in [\ell, u]$ there is $x : \mathbb{R} \to \mathbb{R}^\iota$ with $x(a) = x_0$, $x(t) \in [\ell, u]$ and $x'(t) = F(x(t))$ for every $t \ge a$. No regularity of $F$ outside the box is assumed.
