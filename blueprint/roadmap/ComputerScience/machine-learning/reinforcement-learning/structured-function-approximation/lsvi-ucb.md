@@ -1,6 +1,6 @@
 # LSVI-UCB
 
-LSVI-UCB (least-squares value iteration with upper confidence bounds) is the episodic algorithm that, before each episode, fits linear predictors backwards in $h$ by ridge regression on all past transitions, adds an elliptical bonus and caps the result at $H$ to obtain optimistic action values (which are not linear in the features), then acts greedily.
+LSVI-UCB (least-squares value iteration with upper confidence bounds) is the episodic algorithm that, before each episode, fits linear predictors backwards in $h$ by ridge regression on all past transitions, adds an elliptical bonus and caps the result at $H$ to obtain optimistic action values (which need not be linear in the features), then acts greedily.
 
 **Input.** An episodic MDP with horizon $H$, finite action set $\mathcal{A}$, a known feature map $\phi : \mathcal{S} \times \mathcal{A} \to \mathbb{R}^d$, a regularization parameter $\lambda > 0$, a bonus multiplier $\beta \ge 0$ (or a sequence $\beta_k$), and $K$ episodes; the initial state $x^k_1$ of episode $k$ may be chosen by an adversary. Write $\phi^\tau_h = \phi(x^\tau_h, a^\tau_h)$ for the feature observed at step $h$ of episode $\tau$.
 

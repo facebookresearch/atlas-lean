@@ -1,6 +1,6 @@
 # PAC bound for linearly combined model ensembles
 
-With $K$ base models combined through $d$-dimensional simplex features, an optimistic version-space algorithm returns a policy within $\varepsilon + (3\sqrt{dK}+2)H\theta$ of optimal after $\tilde O\big(\frac{d^3K^2H^2}{\varepsilon^2}\log\frac{dKH}{\delta}\big)$ trajectories, independent of $|\mathcal{S}|$ and $|\mathcal{A}|$; it assumes an optimistic planning oracle.
+With $K$ base models combined through $d$-dimensional simplex features, an optimistic version-space algorithm returns, with probability at least $1-\delta$, a policy within $\varepsilon + (3\sqrt{dK}+2)H\theta$ of optimal after $\tilde O\big(\frac{d^3K^2H^2}{\varepsilon^2}\log\frac{dKH}{\delta}\big)$ trajectories, independent of $|\mathcal{S}|$ and $|\mathcal{A}|$; it assumes an optimistic planning oracle.
 
 **Setting.** The model class is the [linear combination of base models](linear-combination-of-base-models.md) $\{M(W) : W \in \mathcal{W}_0\}$ with approximation error $\theta$ for the true environment $M^\ast$, total rewards in $[0,1]$, horizon $H$ and initial distribution $P_1$; $v^\ast$ is the optimal value and $v^\pi = \mathbb{E}_{s\sim P_1}V^\pi_{M^\ast,1}(s)$.
 

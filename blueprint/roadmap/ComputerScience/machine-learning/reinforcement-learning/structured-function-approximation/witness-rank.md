@@ -1,6 +1,6 @@
 # Witness rank
 
-The witness rank of a model class is the smallest rank of a matrix that is sandwiched between scaled average Bellman errors and witnessed model misfits, the latter being integral-probability-metric discrepancies between a candidate model's predictions and the true dynamics under another model's policy.
+The witness rank of a model class is the smallest $\beta$-bounded factorization rank ($+\infty$ if no admissible factorization exists) of a matrix that is sandwiched between scaled average Bellman errors and witnessed model misfits, the latter being integral-probability-metric discrepancies between a candidate model's predictions and the true dynamics under another model's policy.
 
 **Setting.** A finite-horizon contextual decision process has a context space $\mathcal{X}$ partitioned into $\mathcal{X}_1, \dots, \mathcal{X}_{H+1}$, $K = |\mathcal{A}|$ actions, an initial distribution $P_0$ on $\mathcal{X}_1$, transitions $P_{x,a} \in \Delta(\mathcal{X}_{h+1})$ for $x \in \mathcal{X}_h$, and reward distributions $R(x,a)$ on $[0,1]$ with $\sum_{h=1}^H r_h \le 1$ almost surely. A model $M = (R, P)$ shares $\mathcal{X}$ and $\mathcal{A}$; $\pi_M$, $Q_M$, $V_M$ and $v_M$ are its optimal policy, action-value, value and initial value, computed in $M$. The true model is $M^\star$, and "$x_h \sim \pi$" means $x_h$ is reached by running $\pi$ in $M^\star$ for $h-1$ steps.
 

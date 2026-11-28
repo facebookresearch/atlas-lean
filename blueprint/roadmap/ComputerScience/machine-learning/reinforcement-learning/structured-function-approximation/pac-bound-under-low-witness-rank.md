@@ -1,6 +1,6 @@
 # PAC bound under low witness rank
 
-With a realizable finite model class and Bellman-dominating test functions, an optimistic model-elimination algorithm finds an $\varepsilon$-optimal policy with probability $1-\delta$ from $\tilde O\big(\frac{H^3 \mathrm{W}_\kappa^2 K}{\kappa^2\varepsilon^2}\log\frac{T|\mathcal{F}||\mathcal{M}|}{\delta}\big)$ trajectories, where $\mathrm{W}_\kappa$ is the witness rank and $K$ the number of actions.
+For a realizable finite model class with Bellman-dominating test functions and finite positive witness rank $\mathrm{W}_\kappa$ (with $\beta \ge 1$), optimistic model elimination finds an $\varepsilon$-optimal policy with probability $1-\delta$ from $\tilde O\big(\frac{H^3 \mathrm{W}_\kappa^2 K}{\kappa^2\varepsilon^2}\log\frac{T|\mathcal{F}||\mathcal{M}|}{\delta}\big)$ trajectories, $K$ being the number of actions.
 
 **Assumptions.** A contextual decision process with horizon $H$, $K$ actions, rewards with $\sum_h r_h \le 1$, and a finite model class $\mathcal{M}$ that contains the true model $M^\star$ (Assumption 1, realizability). The finite test class $\mathcal{F}$ is symmetric, bounded by $2$, and satisfies Bellman domination (Assumption 2). Assume $\beta \ge 1$ and $1 \le \mathrm{W}_\kappa < \infty$, where $\mathrm{W}_\kappa = \max_h \mathrm{W}(\kappa,\beta,\mathcal{M},\mathcal{F},h)$ is the [witness rank](witness-rank.md). These conditions restrict the parameter recipe below to a nontrivial regime in which every logarithm and sample size is defined; the rank-zero case is not claimed here.
 

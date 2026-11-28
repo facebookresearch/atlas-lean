@@ -1,6 +1,6 @@
 # Exponential separation between model-based and model-free exploration
 
-There are families of at most $2^H$ deterministic factored MDPs, sharing one reward function, on which a model-based learner given the model class finds an $\varepsilon$-optimal policy from $\mathrm{poly}(H, 1/\varepsilon, \log(1/\delta))$ trajectories, while every model-free learner that sees states only through the induced optimal $Q$-functions and policies needs $2^{\Omega(H)}$.
+Some families of at most $2^H$ factored MDPs sharing a reward let a model-based learner given the class find an $\varepsilon$-optimal policy with probability $1-\delta$ from $\mathrm{poly}(H,1/\varepsilon,\log(1/\delta))$ trajectories, while every model-free learner seeing states only via the class's optimal $Q$-functions and policies needs $2^{\Omega(H)}$ trajectories to be $1/2$-optimal with probability over $2/3$.
 
 **Model-free algorithms.** For a finite class $\mathcal{G}$ of functions $\mathcal{X}\times\mathcal{A} \to \mathbb{R}$, the $\mathcal{G}$-profile of a context is $\Phi_{\mathcal{G}}(x) = [g(x,a)]_{g\in\mathcal{G}, a\in\mathcal{A}} \in \mathbb{R}^{|\mathcal{G}|\times|\mathcal{A}|}$. An algorithm is *model-free using $\mathcal{G}$* if, during its whole execution, it accesses every context $x$ only through $\Phi_{\mathcal{G}}(x)$. For a model class $\mathcal{M}$, $\mathrm{OP}(\mathcal{M})$ is the set of optimal $Q$-functions and optimal policies of its models; a model-based algorithm receives $\mathcal{M}$, a model-free one $\mathcal{G} = \mathrm{OP}(\mathcal{M})$.
 

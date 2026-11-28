@@ -1,6 +1,6 @@
 # Bellman closure of linear Q-functions forces linear transitions
 
-If the class of linear action-value functions is mapped into itself by the Bellman operator of every policy, and each state has two actions with different features, then on a finite state space the transition kernel is linear in the features. Realizability of a single value function does not give this.
+If the class of linear action-value functions is mapped into itself by the Bellman operator of every policy, and each state has two actions with different features, then on finite state and action spaces the transition kernel is linear in the features. Realizability of a single value function does not give this.
 
 **Statement.** Fix an episodic MDP with finite state space $\mathcal{S}$, finite action set $\mathcal{A}$, a step $h$, deterministic rewards $r_h : \mathcal{S}\times\mathcal{A} \to [0,1]$ and transition kernel $\mathbb{P}_h$, and a feature map $\phi : \mathcal{S} \times \mathcal{A} \to \mathbb{R}^d$. Let $\mathcal{Q} = \{ (x,a) \mapsto \phi(x,a)^{\mathsf T} w : w \in \mathbb{R}^d \}$. For a policy $\pi : \mathcal{S} \to \mathcal{A}$ and $Q : \mathcal{S} \times \mathcal{A} \to \mathbb{R}$ let
 
