@@ -58,8 +58,9 @@ private def e₂ : G R := Multiplicative.ofAdd (0, 1)
 private def tensorCoordinate : T R →ₗ[R] R := (TensorProduct.lid R R).toLinearMap
 
 private lemma tensor_action (g : G R) (z : T R) : (T R).ρ g z = z := by
-  change TensorProduct.map ((A R).ρ g) ((A R).ρ g) z = z
-  simp only [A, Rep.trivial_ρ, TensorProduct.map_id, LinearMap.id_apply]
+  change TensorProduct.map (LinearMap.id : R →ₗ[R] R) LinearMap.id z = z
+  rw [TensorProduct.map_id]
+  rfl
 
 private def cross : cocycles₂ (T R) := cupCocycleOneOne (A R) (A R) (first R) (second R)
 
@@ -136,7 +137,7 @@ example : tensorCoordinate R
 
 end General
 
-private def doubleFirst : G ℤ →* G ℤ where
+private abbrev doubleFirst : G ℤ →* G ℤ where
   toFun g := Multiplicative.ofAdd (2 * g.toAdd.1, g.toAdd.2)
   map_one' := by rfl
   map_mul' g h := by
@@ -144,7 +145,7 @@ private def doubleFirst : G ℤ →* G ℤ where
       Multiplicative.ofAdd (2 * g.toAdd.1 + 2 * h.toAdd.1, g.toAdd.2 + h.toAdd.2)
     rw [mul_add]
 
-private def resIdentity : Rep.res doubleFirst (A ℤ) ⟶ A ℤ :=
+private abbrev resIdentity : Rep.res doubleFirst (A ℤ) ⟶ A ℤ :=
   Rep.ofHom ⟨LinearMap.id, fun g => by rfl⟩
 
 private lemma pulledCross :
@@ -152,8 +153,9 @@ private lemma pulledCross :
       cupCocycleOneOne (A ℤ) (A ℤ)
         (mapCocycles₁ doubleFirst resIdentity (first ℤ))
         (mapCocycles₁ doubleFirst resIdentity (second ℤ)) :=
-  mapCocycles₂_cupCocycleOneOne_of_hom doubleFirst resIdentity resIdentity
-    (first ℤ) (second ℤ)
+  mapCocycles₂_cupCocycleOneOne_of_hom
+    (k := ℤ) (G := G ℤ) (H := G ℤ) (A := A ℤ) (B := A ℤ) (A' := A ℤ) (B' := A ℤ)
+    doubleFirst resIdentity resIdentity (first ℤ) (second ℤ)
 
 private lemma pulledFirst (g : G ℤ) :
     mapCocycles₁ doubleFirst resIdentity (first ℤ) g = 2 * g.toAdd.1 := by
@@ -169,14 +171,24 @@ private lemma pulledSecond (g : G ℤ) :
     resIdentity.hom ((second ℤ) (doubleFirst g)) at h
   exact h.trans (by rfl)
 
-/-- An actual nonidentity group pullback doubles the detected ordered cup value. -/
-example : tensorCoordinate ℤ
-    ((mapCocycles₂ doubleFirst (resIdentity ⊗ₘ resIdentity) (cross ℤ)) (e₁ ℤ, e₂ ℤ)) = 2 := by
-  have h := congrArg (fun z : cocycles₂ (T ℤ) => tensorCoordinate ℤ (z (e₁ ℤ, e₂ ℤ)))
-    pulledCross
-  simp only [cupCocycleOneOne_apply, Rep.trivial_ρ_apply, pulledFirst, pulledSecond] at h
+private lemma pulledCup_coordinate :
+    tensorCoordinate ℤ
+      (cupCocycleOneOne (A ℤ) (A ℤ)
+        (mapCocycles₁ doubleFirst resIdentity (first ℤ))
+        (mapCocycles₁ doubleFirst resIdentity (second ℤ)) (e₁ ℤ, e₂ ℤ)) = 2 := by
+  have h := congrArg (tensorCoordinate ℤ)
+    (cupCocycleOneOne_apply (A ℤ) (A ℤ)
+      (mapCocycles₁ doubleFirst resIdentity (first ℤ))
+      (mapCocycles₁ doubleFirst resIdentity (second ℤ)) (e₁ ℤ) (e₂ ℤ))
+  rw [pulledFirst, pulledSecond] at h
   exact h.trans (by
     change (TensorProduct.lid ℤ ℤ) ((2 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = 2
     simp [smul_eq_mul])
+
+/-- An actual nonidentity group pullback doubles the detected ordered cup value. -/
+example : tensorCoordinate ℤ
+    ((mapCocycles₂ doubleFirst (resIdentity ⊗ₘ resIdentity) (cross ℤ)) (e₁ ℤ, e₂ ℤ)) = 2 :=
+  (congrArg (fun z : cocycles₂ (T ℤ) => tensorCoordinate ℤ (z (e₁ ℤ, e₂ ℤ)))
+    pulledCross).trans pulledCup_coordinate
 
 end CupOneOneNonzeroTests
