@@ -17,7 +17,7 @@ For example, for $I = \{0 < m < n\}$ the circuits are $\{S_0+E\}, \dots, \{S_{m-
 ## Depends on
 
 - [Lifting nondegenerate multistationarity to networks with intermediates](lifting-nondegenerate-multistationarity-to-networks-with-intermediates.md)
-- [Maximal multistationarity of multisite phosphorylation](../../maximal-multistationarity-of-multisite-phosphorylation.md)
+- [Maximal multistationarity of multisite phosphorylation](../../part-01/maximal-multistationarity-of-multisite-phosphorylation.md)
 
 ## Expansion
 
