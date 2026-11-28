@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# d-COLLAPSIBILITY is NP-complete for every fixed d ≥ 4: definitions
+# d-COLLAPSIBILITY: definitions
 
 Source:
 M. Tancer, "d-collapsibility is NP-complete for d ≥ 4", Chicago Journal of Theoretical

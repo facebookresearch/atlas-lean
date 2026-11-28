@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# ALL-K-SIMPLICIAL GRAPH RECOGNITION is NP-complete for every fixed K ≥ 3: definitions
+# ALL-K-SIMPLICIAL GRAPH RECOGNITION: definitions
 
 Source:
 P. Gambette and S. Vialette, "On restrictions of balanced 2-interval graphs", Graph-Theoretic
