@@ -41,6 +41,7 @@ Chemie 92 (1917) 129–168.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.Biophysics.DiffusionLimitedRate
 public import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 public import Mathlib.Analysis.SpecialFunctions.Exp
 
@@ -49,14 +50,6 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 namespace WantedExt.Biology.Biophysics.DiffusionLimitedRateWanted
 
 open MeasureTheory Filter Topology Set
-
-/-- `n` is a **steady radial profile** with current `J` outside the contact distance `R`, for
-diffusion coefficient `D`, thermal energy `kT` and potential derivative `U'`: at every
-`r ≥ R`, `n` has a derivative `n'(r)` within `[R, ∞)` and
-`4π r² D (n'(r) + n(r) U'(r) / kT) = J`. -/
-def IsSteadyProfile (D kT R : ℝ) (U' n : ℝ → ℝ) (J : ℝ) : Prop :=
-  ∃ n' : ℝ → ℝ, ∀ r, R ≤ r → HasDerivWithinAt n (n' r) (Ici R) r ∧
-    4 * Real.pi * r ^ 2 * D * (n' r + n r * U' r / kT) = J
 
 /-- `1/β = ∫_R^∞ e^{U(r)/kT} r^{-2} dr`. -/
 noncomputable def invBeta (kT R : ℝ) (U : ℝ → ℝ) : ℝ :=
@@ -80,18 +73,5 @@ public theorem_wanted current_eq (D kT R : ℝ) (hD : 0 < D) (hkT : 0 < kT) (hR 
         Tendsto n atTop (𝓝 n₀)) ∧
       ∀ (n : ℝ → ℝ) (J : ℝ), IsSteadyProfile D kT R U' n J → n R = 0 →
         Tendsto n atTop (𝓝 n₀) → J = 4 * Real.pi * D * n₀ / invBeta kT R U
-
-/-- **Smoluchowski's steady radial current** (Smoluchowski 1917; Debye 1942, equation (4′)): for
-`D, kT, R > 0`, no interaction (`U = 0`, `U' = 0`), and any real `n₀`, every steady radial
-profile `n` with current `J`, `n(R) = 0` and `n(r) → n₀` satisfies `J = 4π D R n₀` (giving
-`J = 0` when `n₀ = 0`, and rate constant `k_D = J / n₀ = 4π D R` for a nonnegative density with
-positive bulk density `n₀ > 0`).
-
-Source: Debye (1942), equation (4′); Smoluchowski (1917). -/
-public theorem_wanted current_eq_smoluchowski (D kT R : ℝ) (hD : 0 < D) (hkT : 0 < kT)
-    (hR : 0 < R) (n₀ : ℝ) (n : ℝ → ℝ) (J : ℝ)
-    (hn : IsSteadyProfile D kT R (fun _ => 0) n J) (hnR : n R = 0)
-    (hlim : Tendsto n atTop (𝓝 n₀)) :
-    J = 4 * Real.pi * D * R * n₀
 
 end WantedExt.Biology.Biophysics.DiffusionLimitedRateWanted
