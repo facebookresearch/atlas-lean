@@ -10,7 +10,7 @@ $$
 
 where $\le$ is [asynchronous subtyping](asynchronous-subtyping-of-binary-session-types.md).
 
-**Theorem.** The following problem is undecidable. Input: two session types $T$ and $S$. Question: does $T \le_{\mathsf{sc}} S$ hold?
+**Theorem.** The following problem is undecidable. Input: two session types $T$ and $S$. Question: does $T \le_{\mathsf{sc}} S$ hold? Instances are finite type terms over finitely many labels; the source shows that a queue machine $M$ does not accept an input $x$ exactly when $T \le_{\mathsf{sc}} S$ for two closed types computed from $M$ and $x$: $T$ encodes the control of $M$ from its start state, and $S$ encodes the initial queue content, $x$ followed by the end marker.
 
 ## Depends on
 

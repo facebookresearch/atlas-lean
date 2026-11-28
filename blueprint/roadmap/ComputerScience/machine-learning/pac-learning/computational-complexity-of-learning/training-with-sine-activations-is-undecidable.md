@@ -20,7 +20,7 @@ Instances are finite objects: the architecture, the active edges and neurons, ra
 
 The result combines two theorems of the source. Theorem 23: for every set $\tau$ of unary real functions, $\mathrm{NN}_\tau$-TRAINING is complete, under polynomial-time reductions, for the class of problems reducible to existential sentences over $(\mathbb{R}, +, \times, <, =, 0, 1)$ extended by $\tau$; the reduction goes through a flat normal form of such sentences (constraints $x = 1$, $x + y + z = 0$, $x \cdot y + 1 = 0$ and $x + f(y) = 0$) and builds a network with zero biases, a faithful non-negative cost, threshold $0$ and equality. Theorem 13: the existential theory of the reals with sine contains $\Sigma^0_1$-hard problems and lies in $\Sigma^0_3$. Hardness holds because $\sin(y) = 0 \wedge 4 < y < 7$ defines $2\pi$ and $\sin(2\pi x) = 0 \wedge x \ge 0$ defines the natural numbers, so Diophantine equations over $\mathbb{N}$ become existential sentences, and the Davis–Putnam–Robinson–Matiyasevich theorem gives $\Sigma^0_1$-hardness. The $\Sigma^0_3$ bound uses rational approximations and the effective continuity of sine. Without equality atoms the existential theory with sine is exactly $\Sigma^0_1$, with hardness from results of Laczkovich.
 
-A good expansion links Theorem 23 (training is complete for the existential theory of the reals with $\tau$) and Theorem 13 (bounds for the existential theory with sine); neither has a page.
+A good expansion links Theorem 23 (training is complete for the existential theory of the reals with $\tau$) and Theorem 13 (bounds for the existential theory with sine).
 
 ## Sources
 

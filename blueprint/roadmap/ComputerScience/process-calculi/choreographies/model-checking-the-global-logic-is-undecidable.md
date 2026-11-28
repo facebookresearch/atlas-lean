@@ -8,7 +8,7 @@ $$
 \Diamond\big( (str_1@A = str_2@A) \land (str_1@A \ne \epsilon) \land (str_2@A \ne \epsilon) \big),
 $$
 
-when expressions include binary-string values, concatenation with constant strings and equality.
+when expressions include binary-string values, concatenation with constant strings and equality. An instance is finite: a state assigns binary strings to finitely many located variables, and $C$ and $\phi$ are finite terms. The proof (Theorem 4.3 of the source) reduces from the Post correspondence problem over the alphabet $\{0, 1\}$: a recursive choreography appends randomly chosen pairs of words to $str_1$ and $str_2$, and the formula holds iff the instance has a solution.
 
 ## Depends on
 

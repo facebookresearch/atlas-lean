@@ -28,7 +28,7 @@ The boundary is sharp in the source's hierarchy. Contractiveness of recursive, o
 
 **Duality.** $T \perp_2 U$ iff $\overline{T} \simeq_2 U$ for the dual $\overline{T}$, which is computable from $T$.
 
-A good expansion links the reduction from Turing machines to two-counter automata (the universality page above states the halting form, while the proof uses reachability of a state by $\varepsilon$-moves), the correspondence between 2-counter types and decidable trace languages (Theorem 5 of the source) and the computability of the dual type (Lemma 8 of the source); these have no pages of their own.
+A good expansion links the reduction from Turing machines to two-counter automata (the universality page above states the halting form, while the proof uses reachability of a state by $\varepsilon$-moves), the correspondence between 2-counter types and decidable trace languages (Theorem 5 of the source) and the computability of the dual type (Lemma 8 of the source).
 
 ## Sources
 

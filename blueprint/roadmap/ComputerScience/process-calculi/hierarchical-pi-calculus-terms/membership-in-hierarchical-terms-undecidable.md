@@ -2,7 +2,7 @@
 
 Whether a π-calculus term is hierarchical, that is, whether some finite hierarchy is an invariant of the shape of all its reachable terms, is undecidable.
 
-**Theorem.** There is no algorithm that decides, given an arbitrary π-calculus term $P$, whether $P$ is [hierarchical](hierarchical-pi-calculus-terms.md).
+**Theorem.** There is no algorithm that decides, given an arbitrary π-calculus term $P$, whether $P$ is [hierarchical](hierarchical-pi-calculus-terms.md). The proof (Theorem 4 of the source) reduces from termination of π-calculus terms: every terminating term is hierarchical (Lemma 1 there), and termination is decidable for depth-bounded, hence for hierarchical, terms (Theorem 1 there, after Meyer).
 
 ## Depends on
 
@@ -19,7 +19,7 @@ The π-calculus is Turing-complete, so termination of π-calculus terms is undec
 
 This is an obstacle to using the fragment directly, since membership has to be established by hand; the source's type system gives a sufficient, decidable criterion (typably hierarchical terms) instead.
 
-A good expansion links the undecidability of termination of π-calculus terms and the decidability of termination for depth-bounded terms (Theorem 1 of the source), which have no pages on main yet.
+A good expansion links the undecidability of termination of π-calculus terms and the decidability of termination for depth-bounded terms (Theorem 1 of the source).
 
 ## Sources
 

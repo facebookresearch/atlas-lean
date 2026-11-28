@@ -2,7 +2,7 @@
 
 No algorithm decides, given two binary session types $T$ and $S$, whether $T$ is an asynchronous subtype of $S$; this settles the decidability of the subtyping relation of Mostrous and Yoshida for binary session types.
 
-**Theorem.** The following problem is undecidable. Input: two binary session types $T$ and $S$ (selection, branching, recursion and $\mathbf{end}$ over a set of labels). Question: does $T \le S$ hold, where $\le$ is [asynchronous subtyping](asynchronous-subtyping-of-binary-session-types.md)?
+**Theorem.** The following problem is undecidable. Input: two binary session types $T$ and $S$ (selection, branching, recursion and $\mathbf{end}$ over a set of labels). Question: does $T \le S$ hold, where $\le$ is [asynchronous subtyping](asynchronous-subtyping-of-binary-session-types.md)? Instances are finite type terms, each using finitely many labels; the types produced by the reduction are closed, use finitely many labels and have input-guarded recursion, so the problem stays undecidable on those inputs.
 
 ## Depends on
 

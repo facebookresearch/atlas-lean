@@ -2,7 +2,7 @@
 
 Reachability of a given term remains undecidable for hierarchical π-calculus terms, even for those certified by the hierarchical type system, although their coverability problem is decidable.
 
-**Theorem.** The reachability problem (given $P$ and $Q$, is a term structurally congruent to $Q$ reachable from $P$?) is undecidable for [hierarchical terms](hierarchical-pi-calculus-terms.md) $P$, and already for $P$ typably hierarchical.
+**Theorem.** The reachability problem (given $P$ and $Q$, is a term structurally congruent to $Q$ reachable from $P$?) is undecidable for [hierarchical terms](hierarchical-pi-calculus-terms.md) $P$, and already for $P$ typably hierarchical. The proof (Theorem 8 of the source) reduces reachability of Minsky machine configurations to reachability of typably hierarchical terms, through a weak encoding: some runs of the encoding are spurious, but reaching the encoding of a target configuration is possible only along runs that simulate the machine.
 
 ## Depends on
 

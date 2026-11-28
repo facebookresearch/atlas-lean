@@ -25,7 +25,7 @@ None.
 
 Without the graph loop the problem is decidable: emptiness is an equation of guarded Kleene algebra with tests, whose equational theory on deterministic models coincides with that on all relational models and is decidable.
 
-A good expansion links the $\Sigma^0_1$-completeness of the periodic domino problem (Berger; Gurevich and Koryakov) and the source's hypothesis elimination using graph loops, which have no pages on main yet.
+A good expansion links the $\Sigma^0_1$-completeness of the periodic domino problem (Berger; Gurevich and Koryakov) and the source's hypothesis elimination using graph loops.
 
 ## Sources
 

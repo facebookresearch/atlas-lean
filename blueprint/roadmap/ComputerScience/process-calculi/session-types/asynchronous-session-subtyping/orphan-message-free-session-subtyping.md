@@ -12,7 +12,7 @@ The asynchronous subtyping of Chen, Dezani-Ciancaglini, Scalas and Yoshida, whic
 
 $T \le_o S$ if $(T, S)$ lies in some such relation.
 
-**Theorem.** It is undecidable, given two session types $T$ and $S$ with carried types, whether $T \le_o S$.
+**Theorem.** It is undecidable, given two session types $T$ and $S$ with carried types, whether $T \le_o S$. Instances are finite closed type terms over finitely many labels and primitive types; the queue-machine encodings used for the other relations are such terms, carrying no payload types.
 
 ## Depends on
 
