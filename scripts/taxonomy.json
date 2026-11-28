@@ -1099,6 +1099,7 @@
   "CSLibExt/Algorithms/Lean/DataStructures/Queue/Semantics": {"to": "ComputerScience/data-structures/linear-structures", "title": "Two-list queue"},
   "CSLibExt/Algorithms/Lean/DataStructures/RadixTrie": {"to": "ComputerScience/data-structures/tries-and-integer-dictionaries", "title": "Radix trie"},
   "CSLibExt/Algorithms/Lean/DataStructures/RangeTree": {"to": "ComputerScience/data-structures/range-query-structures", "title": "Range tree"},
+  "CSLibExt/Algorithms/Lean/DataStructures/RangeTree/OrthogonalReporting": {"to": "ComputerScience/data-structures/range-query-structures", "title": "Range tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/RedBlackTree": {"to": "ComputerScience/data-structures/search-trees", "title": "Red–black tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/RedBlackTree/Delete": {"to": "ComputerScience/data-structures/search-trees", "title": "Red–black tree"},
   "CSLibExt/Algorithms/Lean/DataStructures/RedBlackTree/DeleteBalanced": {"to": "ComputerScience/data-structures/search-trees", "title": "Red–black tree"},

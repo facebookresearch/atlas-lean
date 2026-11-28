@@ -1,0 +1,3 @@
+# Stop
+
+Exclusive upper endpoint.
