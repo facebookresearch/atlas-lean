@@ -6,7 +6,24 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
 
+`Mathlib/AlgebraicTopology/SimplicialObject/Basic.lean` (Mathlib):
+Copyright (c) 2021 Kim Morrison. All rights reserved.
+Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Johan Commelin, Kim Morrison, Adam Topaz
+Face identities and semisimplicial morphism components.
+
+`Mathlib/AlgebraicTopology/AlternatingFaceMapComplex.lean` (Mathlib):
+Copyright (c) 2021 Joël Riou. All rights reserved.
+Licensed under the Apache License, Version 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Joël Riou, Adam Topaz, Johan Commelin
+Alternating differential, paired-index square-zero proof and chain maps.
+-/
+-- Adapter: @toskua
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
