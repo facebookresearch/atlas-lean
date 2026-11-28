@@ -28,6 +28,7 @@ the almost everywhere differentiability of monotone functions.
 
 - [Measurable spaces and measurable functions](measurable-spaces/README.md)
 - [Measures and measurable sets](measures/README.md)
+- [Absolute continuity, densities and decompositions](absolute-continuity-densities/README.md)
 - [Signed and vector measures](signed-vector-measures/README.md)
 - [Lebesgue measure](lebesgue-measure/README.md)
 - [Covering theorems and differentiation of measures](differentiation-of-measures/README.md)
