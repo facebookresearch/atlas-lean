@@ -25,12 +25,12 @@ set_option autoImplicit false
 namespace ComplexShape
 
 /-- The canonical positive chain embedding preserves and reflects adjacent relations. -/
-instance instIsRelIffPositiveNatEmbedding :
+instance instIsRelIffKernelTailEmbedding :
     ChainComplex.kernelTailEmbedding.IsRelIff :=
   instIsRelIffEmbeddingDown'Add (1 : ℕ) 1
 
 /-- The positive image of the canonical chain embedding is incoming-closed. -/
-instance instIsTruncLEPositiveNatEmbedding :
+instance instIsTruncLEKernelTailEmbedding :
     ChainComplex.kernelTailEmbedding.IsTruncLE :=
   instIsTruncLEEmbeddingDown'Add (1 : ℕ) 1
 

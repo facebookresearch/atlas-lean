@@ -17,3 +17,11 @@ Recursive and recursively enumerable predicates and their closure properties, th
 - [Finiteness problem for programs](finiteness-problem-for-programs/README.md)
 
 - [Kleene's theorem: the $\Delta^1_1$ sets are the hyperarithmetical sets](hyperarithmetical-sets-are-the-delta-1-1-sets.md)
+- [Blum-Shub-Smale machines and real halting problems](blum-shub-smale-machines-and-real-halting-problems/README.md)
+- [Computability of conditional distributions](computability-of-conditional-distributions/README.md)
+- [Computable curves](computable-curves/README.md)
+- [Computable winning strategies](computable-winning-strategies/README.md)
+- [Generalized Collatz problem](generalized-collatz-problem/README.md)
+- [Nested recurrence relations](nested-recurrence-relations/README.md)
+- [Recursive upper bounds of partial recursive functions](recursive-upper-bounds-of-partial-functions/README.md)
+- [Verifying running-time bounds of Turing machines](verifying-running-time-bounds/README.md)

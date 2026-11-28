@@ -50,3 +50,4 @@ Statistical methods for genome-wide association studies, heritability estimation
 - [Semi-supervised inference of the mean](semi-supervised-inference-of-the-mean/README.md)
 - [Transcriptome-wide association studies](transcriptome-wide-association-studies/README.md)
 - [Latent variance component REML](latent-variance-component-reml/README.md)
+- [Multilocus X-chromosome association tests](multilocus-x-chromosome-association-tests/README.md)

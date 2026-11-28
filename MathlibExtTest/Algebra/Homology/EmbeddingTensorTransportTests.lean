@@ -122,22 +122,22 @@ private abbrev S : ShortComplex (CochainComplex (ModuleCat.{0} ℤ) ℤ) :=
 example :
     ((ShortComplex.π₁ :
       ShortComplex (ModuleCat.{0} ℤ) ⥤ ModuleCat.{0} ℤ).mapHomologicalComplex
-        (ComplexShape.up ℤ)).obj S.cochainFlip = P :=
-  S.cochainFlip_π₁
+        (ComplexShape.up ℤ)).obj S.flip = P :=
+  S.flip_π₁
 
 example :
     ((ShortComplex.π₂ :
       ShortComplex (ModuleCat.{0} ℤ) ⥤ ModuleCat.{0} ℤ).mapHomologicalComplex
-        (ComplexShape.up ℤ)).obj S.cochainFlip = P :=
-  S.cochainFlip_π₂
+        (ComplexShape.up ℤ)).obj S.flip = P :=
+  S.flip_π₂
 
-example : ((S.cochainFlip).X 7).f.hom (1 : ℤ) = (1 : ℤ) := rfl
-example : ((S.cochainFlip).X 7).g.hom (1 : ℤ) = (0 : ℤ) := rfl
+example : ((S.flip).X 7).f.hom (1 : ℤ) = (1 : ℤ) := rfl
+example : ((S.flip).X 7).g.hom (1 : ℤ) = (0 : ℤ) := rfl
 
 -- The public transpose works for an arbitrary shape with only zero morphisms.
 example {C : Type*} [Category C] [HasZeroMorphisms C] {I : Type*} {c : ComplexShape I}
     (T : ShortComplex (HomologicalComplex C c)) :
-    ((ShortComplex.π₃ : ShortComplex C ⥤ C).mapHomologicalComplex c).obj T.cochainFlip = T.X₃ :=
-  T.cochainFlip_π₃
+    ((ShortComplex.π₃ : ShortComplex C ⥤ C).mapHomologicalComplex c).obj T.flip = T.X₃ :=
+  T.flip_π₃
 
 end MathlibExtTest.EmbeddingTensorTransport

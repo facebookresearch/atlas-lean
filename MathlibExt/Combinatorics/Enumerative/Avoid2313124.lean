@@ -9,19 +9,36 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.PatternContainment
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Fintype.Perm
+import Mathlib.Logic.Equiv.Sum
 import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Order.WellFounded
 import Mathlib.Tactic.FinCases
 
 /-!
-# Position of zero in permutations avoiding 231 and 3124
+# Permutations avoiding 231 and 3124
 
 `card_avoid_231_3124_pos_zero` counts the avoiders with zero at a prescribed nonfinal
 position by identifying the interval of values occupied by their suffix.
+For `n ≥ 1`, `card_avoid_231_3124` sums over the position of zero, including the
+unique decreasing permutation with zero last, to obtain the count `F_{2n-1}`.
+
+## References
+
+* Juan B. Gil, Felix H. Xu, and William Y. Zhu, *Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
+  Permutations*, INTEGERS 25 (2025), Article A79, pp. 1–19, Propositions 10 and 11.
+  The proof of Proposition 10 here uses the position count of Proposition 11 instead of the
+  paper's first-entry case split.
+* Earlier work on the nine symmetry classes, cited in Section 1 of the above article:
+  M. D. Atkinson, *Restricted permutations*, Discrete Mathematics 195 (1999), no. 1–3,
+  pp. 27–38; and Julian West, *Generating trees and forbidden subsequences*, Discrete
+  Mathematics 157 (1996), no. 1–3, pp. 363–374.
 -/
 
 namespace MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted
@@ -408,5 +425,120 @@ public theorem card_avoid_231_3124_pos_zero (n : ℕ)
   have h := Nat.card_congr (card_avoid_231_3124_pos_zero.positionEquiv m s hs).symm
   rw [Nat.card_prod, Nat.card_fin] at h
   exact h
+
+namespace card_avoid_231_3124
+
+open card_avoid_231_3124_pos_zero (Avoids Perm descending eq_of_suffix has231_iff has3124_iff)
+
+private theorem card_last (n : ℕ) :
+    Nat.card {σ : Perm (n + 1) //
+      ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124 ∧ σ (Fin.last n) = 0} = 1 := by
+  have hrev : StrictAnti (@Fin.revPerm (n + 1)) := fun _ _ h => Fin.rev_lt_rev.mpr h
+  have havoids : Avoids (@Fin.revPerm (n + 1)) := by
+    constructor
+    · rw [has231_iff]
+      rintro ⟨i, j, k, hij, _, _, hij'⟩
+      exact (hrev hij).asymm hij'
+    · rw [has3124_iff]
+      rintro ⟨i, j, k, l, _, hjk, _, hjk', _, _⟩
+      exact (hrev hjk).asymm hjk'
+  refine Nat.card_eq_one_iff_exists.mpr ⟨⟨Fin.revPerm, havoids.1, havoids.2, by simp⟩, ?_⟩
+  intro σ
+  apply Subtype.ext
+  apply eq_of_suffix (p := n + 1) (s := 0)
+  · intro i j hij
+    apply descending (m := n) (s := 0) ⟨σ.2.1, σ.2.2.1⟩
+    · exact congrArg Fin.val σ.2.2.2
+    · exact Fin.rev_lt_rev.mpr hij
+    · exact Nat.le_of_lt_succ i.rev.isLt
+  · intro i j hij
+    exact hrev (Fin.rev_lt_rev.mpr hij)
+  · intro i
+    exact i.elim0
+
+private abbrev Avoider (n : ℕ) := {σ : Perm n // Avoids σ}
+
+-- Index the count by one less than the number of entries.
+private noncomputable def count (n : ℕ) : ℕ := Nat.card (Avoider (n + 1))
+
+private theorem count_eq_sum (n : ℕ) :
+    count n = 1 + ∑ k ∈ Finset.range n, (n - k) * count k := by
+  let fiber (j : Fin (n + 1)) := {σ : Perm (n + 1) //
+    ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124 ∧ σ j = ⟨0, Nat.succ_pos n⟩}
+  let zeroPos (σ : Avoider (n + 1)) : Fin (n + 1) := σ.1.symm 0
+  have e (j : Fin (n + 1)) : {σ // zeroPos σ = j} ≃ fiber j := by
+    refine ⟨fun σ => ⟨σ.1.1, σ.1.2.1, σ.1.2.2, ?_⟩,
+      fun σ => ⟨⟨σ.1, σ.2.1, σ.2.2.1⟩, ?_⟩, fun _ => rfl, fun _ => rfl⟩
+    · exact (congrArg σ.1.1 σ.2).symm.trans (Equiv.apply_symm_apply _ _)
+    · exact (congrArg σ.1.symm σ.2.2.2).symm.trans (Equiv.symm_apply_apply _ _)
+  have hsum : count n = ∑ j, Nat.card (fiber j) := by
+    rw [← Nat.card_sigma]
+    exact Nat.card_congr ((Equiv.sigmaFiberEquiv zeroPos).symm.trans (Equiv.sigmaCongrRight e))
+  have hlast : Nat.card (fiber (Fin.last n)) = 1 := card_last n
+  rw [hsum, Fin.sum_univ_castSucc, hlast, add_comm]
+  congr 1
+  calc
+    (∑ j : Fin n, Nat.card (fiber j.castSucc)) =
+        ∑ j : Fin n, (j.val + 1) * count (n - 1 - j.val) := by
+      refine Finset.sum_congr rfl fun j _ => ?_
+      have h := card_avoid_231_3124_pos_zero (n + 1) (Nat.succ_pos n) j.castSucc
+        (Nat.succ_lt_succ j.isLt)
+      change _ = (j.val + 1) * Nat.card (Avoider (n + 1 - j.val - 1)) at h
+      rw [show n + 1 - j.val - 1 = (n - 1 - j.val) + 1 by omega] at h
+      exact h
+    _ = ∑ k ∈ Finset.range n, (k + 1) * count (n - 1 - k) :=
+      Fin.sum_univ_eq_sum_range (fun k => (k + 1) * count (n - 1 - k)) n
+    _ = ∑ k ∈ Finset.range n, (n - k) * count k := by
+      rw [← Finset.sum_range_reflect (fun k => (n - k) * count k) n]
+      refine Finset.sum_congr rfl fun k hk => ?_
+      have := Finset.mem_range.mp hk
+      rw [show n - (n - 1 - k) = k + 1 by omega]
+
+private theorem count_succ (n : ℕ) :
+    count (n + 1) = 2 * count n + ∑ k ∈ Finset.range n, count k := by
+  have hsum : (∑ k ∈ Finset.range n, (n + 1 - k) * count k) =
+      (∑ k ∈ Finset.range n, (n - k) * count k) + ∑ k ∈ Finset.range n, count k := by
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun k hk => ?_
+    have := Finset.mem_range.mp hk
+    rw [show n + 1 - k = (n - k) + 1 by omega, add_mul, one_mul]
+  have h := count_eq_sum (n + 1)
+  rw [Finset.sum_range_succ, Nat.add_sub_cancel_left, one_mul, hsum] at h
+  have := count_eq_sum n
+  omega
+
+private theorem count_fib : ∀ n : ℕ, count n = Nat.fib (2 * n + 1) := by
+  refine Nat.twoStepInduction ?_ ?_ fun n h₀ h₁ => ?_
+  · simp [count_eq_sum 0]
+  · simp [count_succ 0, count_eq_sum 0, show Nat.fib 3 = 2 by decide]
+  · have ha := count_succ n
+    have hb : count (n + 2) = 2 * count (n + 1) + ∑ k ∈ Finset.range (n + 1), count k :=
+      count_succ (n + 1)
+    rw [Finset.sum_range_succ] at hb
+    have hf := Nat.fib_add (2 * n + 1) 3
+    change Nat.fib (2 * n + 1 + 3 + 1) = Nat.fib (2 * n + 1) * 2 +
+      Nat.fib (2 * n + 1 + 1) * 3 at hf
+    have hg := Nat.fib_add_two (n := 2 * n + 1)
+    rw [show 2 * (n + 1) + 1 = (2 * n + 1) + 2 by omega] at h₁
+    rw [show 2 * (n + 2) + 1 = 2 * n + 1 + 3 + 1 by omega]
+    omega
+
+end card_avoid_231_3124
+
+/-- **$(231, 3124)$-avoiding permutations are counted by odd-indexed Fibonacci numbers.** For
+every $n \ge 1$, the number of permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
+$231$ and $3124$, that is, contain neither of them, is the Fibonacci number $F_{2n-1}$, where
+$F_0 = 0$ and $F_1 = 1$.
+
+Source: Juan B. Gil, Felix H. Xu, and William Y. Zhu,
+"Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
+Permutations", Proposition 10. -/
+public theorem card_avoid_231_3124 (n : ℕ) (hn : 1 ≤ n) :
+    Nat.card {σ : Equiv.Perm (Fin n) //
+      ¬ HasPattern σ pat231 ∧ ¬ HasPattern σ pat3124} =
+      Nat.fib (2 * n - 1) := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hn)
+  rw [show 2 * (n + 1) - 1 = 2 * n + 1 by omega]
+  exact card_avoid_231_3124.count_fib n
 
 end MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted
