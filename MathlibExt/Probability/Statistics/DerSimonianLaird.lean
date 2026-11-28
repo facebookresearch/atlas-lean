@@ -231,14 +231,10 @@ theorem integral_cochranQ {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
       (∑ i, w i * Z i ω ^ 2) - T ω ^ 2 / S := by
     simpa [w, S, T, Z, add_assoc] using
       cochranQ_eq_sum_sq_sub hv m (fun i => m + δ i ω + e i ω)
-  have hsqInt {X : Ω → ℝ} (hX : MemLp X 2 μ) : Integrable (fun ω => X ω ^ 2) μ := by
-    simp only [pow_two]
-    change Integrable (X * X) μ
-    exact hX.integrable_mul hX
   have hsumInt (i : Fin k) : Integrable (fun ω => w i * Z i ω ^ 2) μ :=
-    (hsqInt (hZ i)).const_mul (w i)
+    (hZ i).integrable_sq.const_mul (w i)
   simp_rw [hQ]
-  rw [integral_sub (integrable_finsetSum _ fun i _ => hsumInt i) ((hsqInt hT).div_const S),
+  rw [integral_sub (integrable_finsetSum _ fun i _ => hsumInt i) (hT.integrable_sq.div_const S),
     integral_finsetSum _ (fun i _ => hsumInt i), integral_div, hTsq]
   simp_rw [integral_const_mul, hZsq]
   have hwv (i : Fin k) : w i * v i = 1 := inv_mul_cancel₀ (hv i).ne'
