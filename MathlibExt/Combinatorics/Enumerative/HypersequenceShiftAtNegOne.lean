@@ -37,6 +37,8 @@ Stirling expansion of the alternating binomial power sum at shifts `n + 1` and `
   Mathematics Magazine 85 (2012), no. 4, pp. 252–266, p. 253 (the expansion in (3.10)).
 * Ronald L. Graham, Donald E. Knuth, and Oren Patashnik, *Concrete Mathematics: A Foundation
   for Computer Science*, 2nd ed., Addison-Wesley, 1994, Identity (6.19) (the zero-shift value).
+* The Taylor/Hasse coefficient extraction adapts `mitrinovicR_eq_sum_mitrinovicR_zero`
+  (`MathlibExt/Combinatorics/Enumerative/MitrinovicNumbers.lean`, lines 127–141).
 -/
 
 namespace MetaMathlibExt
