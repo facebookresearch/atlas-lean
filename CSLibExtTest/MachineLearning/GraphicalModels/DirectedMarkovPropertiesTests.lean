@@ -87,15 +87,19 @@ theorem emptyZero_markov :
     OrderedMarkov (fun _ : Fin 0 → Empty => (1 : ℝ)) (default : BayesNet Empty 0).pa ∧
       LocalMarkovFor (fun _ : Fin 0 → Empty => (1 : ℝ)) (default : BayesNet Empty 0) ∧
       GlobalMarkovFor (fun _ : Fin 0 → Empty => (1 : ℝ)) (default : BayesNet Empty 0) := by
-  refine ⟨fun k => k.elim0, fun k => k.elim0, fun X Y Z _ => ?_⟩
-  rw [Set.eq_empty_of_isEmpty X, Set.eq_empty_of_isEmpty Y, Set.eq_empty_of_isEmpty Z]
-  intro x
-  simp
+  have hO : OrderedMarkov (fun _ : Fin 0 → Empty => (1 : ℝ))
+      (default : BayesNet Empty 0).pa := fun k => k.elim0
+  have hP : ∀ x : Fin 0 → Empty, 0 ≤ (fun _ : Fin 0 → Empty => (1 : ℝ)) x := by simp
+  have h1 : ∑ x : Fin 0 → Empty, (fun _ : Fin 0 → Empty => (1 : ℝ)) x = 1 := by simp
+  have htfae := directedMarkov_tfae_prod (fun _ : Fin 0 → Empty => (1 : ℝ)) hP h1
+    (default : BayesNet Empty 0)
+  refine ⟨hO, (htfae.out 4 3).mp hO, (htfae.out 4 2).mp hO⟩
 
 /-- That law is the product of the tables of the network on zero nodes, the empty product. -/
 theorem emptyZero_eq_prod_cpt (x : Fin 0 → Empty) :
     (1 : ℝ) = ∏ k : Fin 0,
-      ((default : BayesNet Empty 0).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) := by
+      ((default : BayesNet Empty 0).cpt k
+        ((default : BayesNet Empty 0).paVal k x)).weights (x k) := by
   simp
 
 /-- The equivalence of the ordered Markov property and factorization at the empty corner. -/
@@ -103,12 +107,10 @@ theorem emptyZero_orderedMarkov_iff (pa : (k : Fin 0) → Finset (Fin k)) :
     OrderedMarkov (fun _ : Fin 0 → Empty => (1 : ℝ)) pa ↔
       ∃ b : BayesNet Empty 0, b.pa = pa ∧
         ∀ x : Fin 0 → Empty,
-          (1 : ℝ) = ∏ k : Fin 0, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) := by
-  constructor
-  · intro _
-    exact ⟨⟨pa, fun k => k.elim0⟩, rfl, fun x => by simp⟩
-  · intro _ k
-    exact k.elim0
+          (1 : ℝ) = ∏ k : Fin 0, (b.cpt k (b.paVal k x)).weights (x k) := by
+  have hP : ∀ x : Fin 0 → Empty, 0 ≤ (fun _ : Fin 0 → Empty => (1 : ℝ)) x := by simp
+  have h1 : ∑ x : Fin 0 → Empty, (fun _ : Fin 0 → Empty => (1 : ℝ)) x = 1 := by simp
+  exact orderedMarkov_iff_exists_bayesNet_prod _ hP h1 pa
 
 /-! #### The empty value type on three nodes -/
 
@@ -129,10 +131,12 @@ node, `X₀ ⫫ X₂ | X₁`, for every table and every finite nonempty value ty
 theorem condIndep_chain_prod_cpt {α : Type*} [Fintype α] [Nonempty α]
     (cpt : (k : Fin 3) → (Junctions.chainPa k → α) → StdSimplex ℝ α) :
     CondIndep (fun x => ∏ k : Fin 3,
-        ((BayesNet.mk Junctions.chainPa cpt).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+        ((BayesNet.mk Junctions.chainPa cpt).cpt k
+          ((BayesNet.mk Junctions.chainPa cpt).paVal k x)).weights (x k))
       {0} {2} {1} := by
   have h : (fun x => ∏ k : Fin 3,
-      ((BayesNet.mk Junctions.chainPa cpt).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+      ((BayesNet.mk Junctions.chainPa cpt).cpt k
+        ((BayesNet.mk Junctions.chainPa cpt).paVal k x)).weights (x k))
       = (BayesNet.mk Junctions.chainPa cpt).joint := by
     funext x
     exact (BayesNet.joint_eq_prod _ x).symm
@@ -144,7 +148,8 @@ theorem condIndep_chain_prod_cpt {α : Type*} [Fintype α] [Nonempty α]
 theorem condIndep_chain_prod_cpt_of_orderedMarkov {α : Type*} [Fintype α]
     (cpt : (k : Fin 3) → (Junctions.chainPa k → α) → StdSimplex ℝ α) :
     CondIndep (fun x => ∏ k : Fin 3,
-        ((BayesNet.mk Junctions.chainPa cpt).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+        ((BayesNet.mk Junctions.chainPa cpt).cpt k
+          ((BayesNet.mk Junctions.chainPa cpt).paVal k x)).weights (x k))
       {2} {0} {1} := by
   have hO := orderedMarkov_prod_cpt (BayesNet.mk Junctions.chainPa cpt)
   have h2 := hO 2
@@ -160,10 +165,12 @@ parent, `X₁ ⫫ X₂ | X₀`, for every table and every finite nonempty value 
 theorem condIndep_fork_prod_cpt {α : Type*} [Fintype α] [Nonempty α]
     (cpt : (k : Fin 3) → (Junctions.forkPa k → α) → StdSimplex ℝ α) :
     CondIndep (fun x => ∏ k : Fin 3,
-        ((BayesNet.mk Junctions.forkPa cpt).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+        ((BayesNet.mk Junctions.forkPa cpt).cpt k
+          ((BayesNet.mk Junctions.forkPa cpt).paVal k x)).weights (x k))
       {1} {2} {0} := by
   have h : (fun x => ∏ k : Fin 3,
-      ((BayesNet.mk Junctions.forkPa cpt).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+      ((BayesNet.mk Junctions.forkPa cpt).cpt k
+        ((BayesNet.mk Junctions.forkPa cpt).paVal k x)).weights (x k))
       = (BayesNet.mk Junctions.forkPa cpt).joint := by
     funext x
     exact (BayesNet.joint_eq_prod _ x).symm
@@ -175,7 +182,8 @@ theorem condIndep_fork_prod_cpt {α : Type*} [Fintype α] [Nonempty α]
 theorem condIndep_fork_prod_cpt_of_orderedMarkov {α : Type*} [Fintype α]
     (cpt : (k : Fin 3) → (Junctions.forkPa k → α) → StdSimplex ℝ α) :
     CondIndep (fun x => ∏ k : Fin 3,
-        ((BayesNet.mk Junctions.forkPa cpt).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+        ((BayesNet.mk Junctions.forkPa cpt).cpt k
+          ((BayesNet.mk Junctions.forkPa cpt).paVal k x)).weights (x k))
       {2} {1} {0} := by
   have hO := orderedMarkov_prod_cpt (BayesNet.mk Junctions.forkPa cpt)
   have h2 := hO 2
@@ -192,7 +200,8 @@ type. -/
 theorem condIndep_collider_prod_cpt_of_orderedMarkov {α : Type*} [Fintype α]
     (cpt : (k : Fin 3) → (Junctions.colliderPa k → α) → StdSimplex ℝ α) :
     CondIndep (fun x => ∏ k : Fin 3,
-        ((BayesNet.mk Junctions.colliderPa cpt).cpt k fun j => x (Fin.castLE k.2.le j)).weights
+        ((BayesNet.mk Junctions.colliderPa cpt).cpt k
+          ((BayesNet.mk Junctions.colliderPa cpt).paVal k x)).weights
           (x k))
       {1} {0} ∅ := by
   have hO := orderedMarkov_prod_cpt (BayesNet.mk Junctions.colliderPa cpt)
@@ -206,10 +215,10 @@ theorem condIndep_collider_prod_cpt_of_orderedMarkov {α : Type*} [Fintype α]
 `X₂ = X₀ ∨ X₁`), the roots are independent, `X₀ ⫫ X₁`. -/
 theorem berksonNet_prod_cpt_condIndep_parents :
     CondIndep (fun x => ∏ k : Fin 3,
-        (Junctions.berksonNet.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+        (Junctions.berksonNet.cpt k (Junctions.berksonNet.paVal k x)).weights (x k))
       {0} {1} ∅ := by
   have h : (fun x => ∏ k : Fin 3,
-      (Junctions.berksonNet.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+      (Junctions.berksonNet.cpt k (Junctions.berksonNet.paVal k x)).weights (x k))
       = Junctions.berksonNet.joint := by
     funext x
     exact (BayesNet.joint_eq_prod _ x).symm
@@ -220,10 +229,10 @@ theorem berksonNet_prod_cpt_condIndep_parents :
 `¬ X₀ ⫫ X₁ | X₂` (Berkson's paradox). -/
 theorem berksonNet_prod_cpt_not_condIndep_given_collider :
     ¬ CondIndep (fun x => ∏ k : Fin 3,
-        (Junctions.berksonNet.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+        (Junctions.berksonNet.cpt k (Junctions.berksonNet.paVal k x)).weights (x k))
       {0} {1} {2} := by
   have h : (fun x => ∏ k : Fin 3,
-      (Junctions.berksonNet.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k))
+      (Junctions.berksonNet.cpt k (Junctions.berksonNet.paVal k x)).weights (x k))
       = Junctions.berksonNet.joint := by
     funext x
     exact (BayesNet.joint_eq_prod _ x).symm
@@ -252,7 +261,7 @@ zero. -/
 theorem exists_bayesNet_prod_edge_null_row :
     ∃ b : BayesNet Bool 2, b.pa = edgePa ∧
       ∀ x : Fin 2 → Bool, (if x 0 = false then (1 / 2 : ℝ) else 0) =
-        ∏ k : Fin 2, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) := by
+        ∏ k : Fin 2, (b.cpt k (b.paVal k x)).weights (x k) := by
   have hP : ∀ x : Fin 2 → Bool, 0 ≤ (if x 0 = false then (1 / 2 : ℝ) else 0) := by
     intro x
     split_ifs <;> norm_num
@@ -297,7 +306,7 @@ theorem orderedMarkov_zero_not_prod_cpt_emptyZero (pa : (k : Fin 0) → Finset (
     OrderedMarkov (0 : (Fin 0 → Empty) → ℝ) pa ∧
       ¬ ∃ b : BayesNet Empty 0, b.pa = pa ∧
         ∀ x : Fin 0 → Empty,
-          (0 : ℝ) = ∏ k : Fin 0, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) := by
+          (0 : ℝ) = ∏ k : Fin 0, (b.cpt k (b.paVal k x)).weights (x k) := by
   constructor
   · exact fun k => k.elim0
   · rintro ⟨b, -, h⟩
@@ -310,14 +319,14 @@ theorem orderedMarkov_mass_two_not_prod_cpt :
     OrderedMarkov (fun _ : Fin 1 → Bool => (1 : ℝ)) (fun _ => ∅) ∧
       ¬ ∃ b : BayesNet Bool 1, b.pa = (fun _ => ∅) ∧
         ∀ x : Fin 1 → Bool,
-          (1 : ℝ) = ∏ k : Fin 1, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) := by
+          (1 : ℝ) = ∏ k : Fin 1, (b.cpt k (b.paVal k x)).weights (x k) := by
   constructor
   · exact fm_aux_tb_orderedMarkov_one_empty _
   · rintro ⟨b, -, h⟩
     have h2 : (∑ _x : Fin 1 → Bool, (1 : ℝ)) = 1 := by
       calc ∑ _x : Fin 1 → Bool, (1 : ℝ)
           = ∑ x : Fin 1 → Bool,
-              ∏ k : Fin 1, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) :=
+              ∏ k : Fin 1, (b.cpt k (b.paVal k x)).weights (x k) :=
             Finset.sum_congr rfl fun x _ => h x
         _ = 1 := BayesNet.sum_prod_cpt b
     have hcard : Fintype.card (Fin 1 → Bool) = 2 := by decide
@@ -327,21 +336,37 @@ theorem orderedMarkov_mass_two_not_prod_cpt :
 /-- Nonnegativity is needed: on one `Bool` node without parents the signed weight `(2, -1)` of
 total mass `1` is ordered Markov but is not a product of tables. -/
 theorem orderedMarkov_signed_not_prod_cpt :
-    OrderedMarkov (fun x : Fin 1 → Bool => if x 0 then (2 : ℝ) else -1) (fun _ => ∅) ∧
+    (∑ x : Fin 1 → Bool, (if x 0 then (2 : ℝ) else -1) = 1) ∧
+      OrderedMarkov (fun x : Fin 1 → Bool => if x 0 then (2 : ℝ) else -1) (fun _ => ∅) ∧
       ¬ ∃ b : BayesNet Bool 1, b.pa = (fun _ => ∅) ∧
         ∀ x : Fin 1 → Bool, (if x 0 then (2 : ℝ) else -1) =
-          ∏ k : Fin 1, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) := by
-  constructor
-  · exact fm_aux_tb_orderedMarkov_one_empty _
+          ∏ k : Fin 1, (b.cpt k (b.paVal k x)).weights (x k) := by
+  refine ⟨?_, fm_aux_tb_orderedMarkov_one_empty _, ?_⟩
+  · have hstep : (∑ x : Fin 1 → Bool, (if x 0 then (2 : ℝ) else -1))
+        = ∑ b : Bool, (if b then (2 : ℝ) else -1) := by
+      have hbase := (Equiv.sum_comp (Equiv.funUnique (Fin 1) Bool).symm
+        (fun x : Fin 1 → Bool => (if x 0 then (2 : ℝ) else -1))).symm
+      have hpt : ∀ b : Bool, (fun x : Fin 1 → Bool => (if x 0 then (2 : ℝ) else -1))
+          (((Equiv.funUnique (Fin 1) Bool).symm) b)
+          = (if b then (2 : ℝ) else -1) := by
+        intro b
+        rw [show (((Equiv.funUnique (Fin 1) Bool).symm) b) = uniqueElim b from rfl]
+        show (if (uniqueElim (ι := Fin 1) (α := fun _ => Bool) b 0) then (2 : ℝ)
+          else -1) = _
+        rw [uniqueElim_const]
+      exact hbase.trans (Finset.sum_congr rfl fun b _ => hpt b)
+    rw [hstep]
+    norm_num [Fintype.sum_bool]
   · rintro ⟨b, -, h⟩
     have h0 := h (fun _ => false)
-    have hneg : (if (fun _ => false) (0 : Fin 1) then (2 : ℝ) else -1) = -1 := by simp
-    rw [hneg] at h0
-    have hnn : (0 : ℝ) ≤ ∏ k : Fin 1,
-        (b.cpt k fun j => (fun _ => false) (Fin.castLE k.2.le j)).weights ((fun _ => false) k) :=
+    have hneg : (∏ k : Fin 1,
+        (b.cpt k (b.paVal k (fun _ => false))).weights ((fun _ => false) k)) < 0 := by
+      rw [← h0]
+      norm_num
+    have hnn : 0 ≤ ∏ k : Fin 1,
+        (b.cpt k (b.paVal k (fun _ => false))).weights ((fun _ => false) k) :=
       Finset.prod_nonneg fun k _ => StdSimplex.weights_nonneg _
-    rw [← h0] at hnn
-    norm_num at hnn
+    exact (not_le_of_gt hneg) hnn
 
 /-- On the edge, `X₀ = false` almost surely and `X₁` is a fair coin whatever `X₀` is. -/
 noncomputable def nullRowFair : BayesNet Bool 2 where
@@ -359,8 +384,8 @@ noncomputable def nullRowTrue : BayesNet Bool 2 where
 row `X₀ = true`, and their tables have the same product. -/
 theorem nullRow_ne_and_prod_cpt_eq :
     nullRowFair ≠ nullRowTrue ∧ ∀ x : Fin 2 → Bool,
-      ∏ k : Fin 2, (nullRowFair.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) =
-        ∏ k : Fin 2, (nullRowTrue.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) := by
+      ∏ k : Fin 2, (nullRowFair.cpt k (nullRowFair.paVal k x)).weights (x k) =
+        ∏ k : Fin 2, (nullRowTrue.cpt k (nullRowTrue.paVal k x)).weights (x k) := by
   constructor
   · intro hcon
     have h1 := congrArg (fun b : BayesNet Bool 2 => b.cpt 1 (fun _ => true)) hcon
@@ -388,18 +413,18 @@ theorem nullRow_ne_and_prod_cpt_eq :
     by_cases h : x 0 = false
     · have h00 : ((0 : Fin 2) : ℕ) = 0 := by decide
       have h10 : ((1 : Fin 2) : ℕ) ≠ 0 := by decide
-      have hF0 : (nullRowFair.cpt 0 fun j => x (Fin.castLE (0 : Fin 2).2.le j))
+      have hF0 : (nullRowFair.cpt 0 (nullRowFair.paVal 0 x))
           = StdSimplex.single false := by
         show (if ((0 : Fin 2) : ℕ) = 0 then StdSimplex.single false else Junctions.fairCoin) = _
         rw [ite_eq_left h00]
-      have hT0 : (nullRowTrue.cpt 0 fun j => x (Fin.castLE (0 : Fin 2).2.le j))
+      have hT0 : (nullRowTrue.cpt 0 (nullRowTrue.paVal 0 x))
           = StdSimplex.single false := by
         show (if ((0 : Fin 2) : ℕ) = 0 then StdSimplex.single false else
           if (∃ i : ↥(edgePa (0 : Fin 2)),
             (fun j => x (Fin.castLE (0 : Fin 2).2.le j)) i = true)
           then StdSimplex.single true else Junctions.fairCoin) = _
         rw [ite_eq_left h00]
-      have hF1 : (nullRowFair.cpt 1 fun j => x (Fin.castLE (1 : Fin 2).2.le j))
+      have hF1 : (nullRowFair.cpt 1 (nullRowFair.paVal 1 x))
           = Junctions.fairCoin := by
         show (if ((1 : Fin 2) : ℕ) = 0 then StdSimplex.single false else Junctions.fairCoin) = _
         rw [ite_eq_right h10]
@@ -415,7 +440,7 @@ theorem nullRow_ne_and_prod_cpt_eq :
         simp only at hi
         rw [hcast, h] at hi
         exact absurd hi (by decide)
-      have hT1 : (nullRowTrue.cpt 1 fun j => x (Fin.castLE (1 : Fin 2).2.le j))
+      have hT1 : (nullRowTrue.cpt 1 (nullRowTrue.paVal 1 x))
           = Junctions.fairCoin := by
         show (if ((1 : Fin 2) : ℕ) = 0 then StdSimplex.single false else
           if (∃ i : ↥(edgePa (1 : Fin 2)),
@@ -428,22 +453,22 @@ theorem nullRow_ne_and_prod_cpt_eq :
         · exact absurd h0 h
         · rfl
       have h00 : ((0 : Fin 2) : ℕ) = 0 := by decide
-      have hF0 : (nullRowFair.cpt 0 fun j => x (Fin.castLE (0 : Fin 2).2.le j))
+      have hF0 : (nullRowFair.cpt 0 (nullRowFair.paVal 0 x))
           = StdSimplex.single false := by
         show (if ((0 : Fin 2) : ℕ) = 0 then StdSimplex.single false else Junctions.fairCoin) = _
         rw [ite_eq_left h00]
-      have hT0 : (nullRowTrue.cpt 0 fun j => x (Fin.castLE (0 : Fin 2).2.le j))
+      have hT0 : (nullRowTrue.cpt 0 (nullRowTrue.paVal 0 x))
           = StdSimplex.single false := by
         show (if ((0 : Fin 2) : ℕ) = 0 then StdSimplex.single false else
           if (∃ i : ↥(edgePa (0 : Fin 2)),
             (fun j => x (Fin.castLE (0 : Fin 2).2.le j)) i = true)
           then StdSimplex.single true else Junctions.fairCoin) = _
         rw [ite_eq_left h00]
-      have hzF : (nullRowFair.cpt 0 fun j => x (Fin.castLE (0 : Fin 2).2.le j)).weights (x 0)
+      have hzF : (nullRowFair.cpt 0 (nullRowFair.paVal 0 x)).weights (x 0)
           = 0 := by
         rw [hF0, hx0]
         simp
-      have hzT : (nullRowTrue.cpt 0 fun j => x (Fin.castLE (0 : Fin 2).2.le j)).weights (x 0)
+      have hzT : (nullRowTrue.cpt 0 (nullRowTrue.paVal 0 x)).weights (x 0)
           = 0 := by
         rw [hT0, hx0]
         simp

@@ -149,9 +149,9 @@ theorem directedMarkov_tfae [Fintype α] [Nonempty α] (P : (Fin n → α) → �
 
 /-! ### Every finite value type
 
-The results above assume `[Nonempty α]` because they go through `BayesNet.joint`. Here (F) is the
+The results above that use `BayesNet.joint` assume `[Nonempty α]`. Here (F) is the
 factorization formula of Evans (§5.2.1) for the tables of a network,
-`x ↦ ∏ k : Fin n, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)`, the right-hand side
+`x ↦ ∏ k : Fin n, (b.cpt k (b.paVal k x)).weights (x k)`, the right-hand side
 of `BayesNet.joint_eq_prod`, and `α` is any finite type, empty or not. For nonempty `α` the
 product is `BayesNet.joint`, and these are the results above in product form. For empty `α` there
 is no network on one node or more (`BayesNet.instIsEmptySucc`) and exactly one on zero nodes
@@ -202,14 +202,14 @@ For nonempty $\alpha$ the product is the joint law `BayesNet.joint` (`BayesNet.j
 and this is `BayesNet.sum_joint`; for empty $\alpha$ the network has zero nodes and the sum has a
 single term, the empty product $1$. -/
 theorem BayesNet.sum_prod_cpt [Fintype α] (b : BayesNet α n) :
-    ∑ x : Fin n → α, ∏ k : Fin n, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) = 1 := by
+    ∑ x : Fin n → α, ∏ k : Fin n, (b.cpt k (b.paVal k x)).weights (x k) = 1 := by
   rcases isEmpty_or_nonempty α with hempty | hne
   · cases n with
     | zero =>
       rw [Fintype.sum_unique]
       simp
     | succ n => exact isEmptyElim b
-  · have hfun : (fun x => ∏ k : Fin n, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)) =
+  · have hfun : (fun x => ∏ k : Fin n, (b.cpt k (b.paVal k x)).weights (x k)) =
         b.joint := by
       funext x
       exact (BayesNet.joint_eq_prod b x).symm
@@ -225,12 +225,12 @@ parent sets of $b$: under $P$, every node is conditionally independent of the ea
 are not its parents, given its parents (Evans, (5.1), for the order $0, \dots, n - 1$). -/
 theorem orderedMarkov_prod_cpt [Fintype α] (b : BayesNet α n) :
     OrderedMarkov
-      (fun x => ∏ k : Fin n, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)) b.pa := by
+      (fun x => ∏ k : Fin n, (b.cpt k (b.paVal k x)).weights (x k)) b.pa := by
   rcases isEmpty_or_nonempty α with hempty | hne
   · cases n with
     | zero => exact fun k => k.elim0
     | succ n => exact isEmptyElim b
-  · have hfun : (fun x => ∏ k : Fin n, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)) =
+  · have hfun : (fun x => ∏ k : Fin n, (b.cpt k (b.paVal k x)).weights (x k)) =
         b.joint := by
       funext x
       exact (BayesNet.joint_eq_prod b x).symm
@@ -248,7 +248,7 @@ theorem exists_bayesNet_prod_of_orderedMarkov [Fintype α] (P : (Fin n → α) �
     (hP : ∀ x, 0 ≤ P x) (h1 : ∑ x, P x = 1) (pa : (k : Fin n) → Finset (Fin k))
     (hO : OrderedMarkov P pa) :
     ∃ b : BayesNet α n, b.pa = pa ∧
-      ∀ x, P x = ∏ k : Fin n, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) := by
+      ∀ x, P x = ∏ k : Fin n, (b.cpt k (b.paVal k x)).weights (x k) := by
   rcases isEmpty_or_nonempty α with hempty | hne
   · cases n with
     | zero =>
@@ -276,12 +276,12 @@ This is `orderedMarkov_iff_exists_bayesNet` without the assumption that $\alpha$
 theorem orderedMarkov_iff_exists_bayesNet_prod [Fintype α] (P : (Fin n → α) → ℝ)
     (hP : ∀ x, 0 ≤ P x) (h1 : ∑ x, P x = 1) (pa : (k : Fin n) → Finset (Fin k)) :
     OrderedMarkov P pa ↔ ∃ b : BayesNet α n, b.pa = pa ∧
-      ∀ x, P x = ∏ k : Fin n, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) := by
+      ∀ x, P x = ∏ k : Fin n, (b.cpt k (b.paVal k x)).weights (x k) := by
   constructor
   · exact exists_bayesNet_prod_of_orderedMarkov P hP h1 pa
   · rintro ⟨b, hbpa, hprod⟩
     have hfun : P =
-        (fun x => ∏ k : Fin n, (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)) :=
+        (fun x => ∏ k : Fin n, (b.cpt k (b.paVal k x)).weights (x k)) :=
       funext hprod
     rw [hfun, ← hbpa]
     exact orderedMarkov_prod_cpt b
@@ -295,12 +295,12 @@ graph of $b$: under $P$, every node is conditionally independent of its non-desc
 not its parents, given its parents (Evans, (5.2)). -/
 theorem localMarkovFor_prod_cpt [Fintype α] {b b' : BayesNet α n} (h : b'.pa = b.pa) :
     LocalMarkovFor
-      (fun x => ∏ k : Fin n, (b'.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)) b := by
+      (fun x => ∏ k : Fin n, (b'.cpt k (b'.paVal k x)).weights (x k)) b := by
   rcases isEmpty_or_nonempty α with hempty | hne
   · cases n with
     | zero => exact fun k => k.elim0
     | succ n => exact isEmptyElim b'
-  · have hfun : (fun x => ∏ k : Fin n, (b'.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)) =
+  · have hfun : (fun x => ∏ k : Fin n, (b'.cpt k (b'.paVal k x)).weights (x k)) =
         b'.joint := by
       funext x
       exact (BayesNet.joint_eq_prod b' x).symm
@@ -318,13 +318,11 @@ topological order for each node; here the single order $0, \dots, n - 1$ suffice
 theorem localMarkovFor_of_orderedMarkov [Fintype α] (P : (Fin n → α) → ℝ)
     (hP : ∀ x, 0 ≤ P x) (h1 : ∑ x, P x = 1) (b : BayesNet α n)
     (hO : OrderedMarkov P b.pa) : LocalMarkovFor P b := by
-  rcases isEmpty_or_nonempty α with hempty | hne
-  · cases n with
-    | zero => exact fun k => k.elim0
-    | succ n => exact isEmptyElim b
-  · obtain ⟨b', hbpa, hbjoint⟩ := exists_bayesNet_of_orderedMarkov P hP h1 b.pa hO
-    rw [← hbjoint]
-    exact localMarkovFor_of_globalMarkovFor (globalMarkovFor_of_factorizes hbpa)
+  obtain ⟨b', hbpa, hprod⟩ := exists_bayesNet_prod_of_orderedMarkov P hP h1 b.pa hO
+  have hfun : P =
+      (fun x => ∏ k : Fin n, (b'.cpt k (b'.paVal k x)).weights (x k)) := funext hprod
+  rw [hfun]
+  exact localMarkovFor_prod_cpt hbpa
 
 /-- **The directed Markov properties are equivalent, for every finite value type.** Let
 $\alpha$ be a finite type, empty or not, let $P$ be a law on $\alpha^n$ ($P(x) \ge 0$ for every
@@ -338,14 +336,14 @@ the assumption that $\alpha$ is nonempty, with (F) in product form. -/
 theorem directedMarkov_tfae_prod [Fintype α] (P : (Fin n → α) → ℝ) (hP : ∀ x, 0 ≤ P x)
     (h1 : ∑ x, P x = 1) (b : BayesNet α n) :
     [∃ b' : BayesNet α n, b'.pa = b.pa ∧
-        ∀ x, P x = ∏ k : Fin n, (b'.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k),
+        ∀ x, P x = ∏ k : Fin n, (b'.cpt k (b'.paVal k x)).weights (x k),
       GlobalMarkovFor P b, LocalMarkovFor P b, OrderedMarkov P b.pa].TFAE := by
   rcases isEmpty_or_nonempty α with hempty | hne
   · cases n with
     | zero =>
       have hO : OrderedMarkov P b.pa := fun k => k.elim0
       have h1st : ∃ b' : BayesNet α 0, b'.pa = b.pa ∧
-          ∀ x, P x = ∏ k : Fin 0, (b'.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k) :=
+          ∀ x, P x = ∏ k : Fin 0, (b'.cpt k (b'.paVal k x)).weights (x k) :=
         exists_bayesNet_prod_of_orderedMarkov P hP h1 b.pa hO
       have hG : GlobalMarkovFor P b := fun X Y Z _ => condIndep_of_fin_zero P X Y Z
       have hL : LocalMarkovFor P b := fun k => k.elim0
@@ -360,7 +358,7 @@ theorem directedMarkov_tfae_prod [Fintype α] (P : (Fin n → α) → ℝ) (hP :
       simp at h1
   · have h1equiv : (∃ b' : BayesNet α n, b'.pa = b.pa ∧ b'.joint = P) ↔
         (∃ b' : BayesNet α n, b'.pa = b.pa ∧
-          ∀ x, P x = ∏ k : Fin n, (b'.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)) := by
+          ∀ x, P x = ∏ k : Fin n, (b'.cpt k (b'.paVal k x)).weights (x k)) := by
       constructor
       · rintro ⟨b', hbpa, hbjoint⟩
         refine ⟨b', hbpa, fun x => ?_⟩
