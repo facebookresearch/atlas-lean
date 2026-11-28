@@ -11367,6 +11367,7 @@
   "MathlibExt/Combinatorics/Enumerative/ParityRestrictedCompositions": {"to": "Combinatorics/integer-compositions", "title": "Compositions with parity-restricted large parts"},
   "MathlibExt/Combinatorics/Enumerative/ParityWeightedBinomialSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
   "MathlibExt/Combinatorics/Enumerative/ParkingFunction": {"to": "Combinatorics/parking-functions", "title": "Parking functions"},
+  "MathlibExt/Combinatorics/Enumerative/ParkingFunctionEnds": {"to": "Combinatorics/parking-functions", "title": "Descents, peaks and valleys of parking functions"},
   "MathlibExt/Combinatorics/Enumerative/ParkingFunctionStatistics": {"to": "Combinatorics/parking-functions", "title": "Descents, peaks and valleys of parking functions"},
   "MathlibExt/Combinatorics/Enumerative/PartialBellPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Partial Bell polynomials"},
   "MathlibExt/Combinatorics/Enumerative/Partition/AndrewsMacMahonPartition": {"to": "Combinatorics/integer-partitions/partition-identities", "title": "MacMahon's partition theorem"},
