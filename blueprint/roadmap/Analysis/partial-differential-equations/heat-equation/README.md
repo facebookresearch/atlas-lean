@@ -44,3 +44,6 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
 - [The heat semigroup's generator is the Laplacian](heat-semigroup-generator-eq-laplacian.md)
 
 - [The heat semigroup's generator is the Laplacian, in `ENNReal`](heat-semigroup-generator-eq-laplacian-en.md)
+- [Positive classical solutions of u_t − Δu = uᵖ](is-positive-classical-solution.md)
+- [Quittner's conjecture on positive entire solutions of u_t − Δu = uᵖ](positive-solution-iff-supercritical.md)
+- [Liouville theorem for the semilinear heat equation](positive-solution-iff-supercritical-hold.md)

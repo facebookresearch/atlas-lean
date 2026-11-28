@@ -4,12 +4,10 @@ Fine structure of real functions: Blumberg's theorem, continuous nowhere-differe
 
 - [Almost additive functions](almost-additive-functions/README.md)
 - [Approximate derivatives and monotonicity](approximate-derivatives-and-monotonicity/README.md)
-- [Dilated multiples of sets of positive measure](dilated-multiples-of-sets-of-positive-measure/README.md)
-- [Discrepancy of sequences](discrepancy-of-sequences/README.md)
 - [Exponential functional equation](exponential-functional-equation/README.md)
 - [Functions with continuous differences](functions-with-continuous-differences/README.md)
 - [Hyers–Ulam stability](hyers-ulam-stability/README.md)
-- [Khinchin's conjecture on uniform distribution](khinchin-s-conjecture-on-uniform-distribution/README.md)
+- [Uniform distribution and dilates of sets](uniform-distribution-and-dilates-of-sets/README.md)
 - [Modulus of continuity](modulus-of-continuity/README.md)
 - [Pointwise and uniform Hölder conditions](pointwise-and-uniform-h-lder-conditions/README.md)
 - [Rising sun lemma](rising-sun-lemma/README.md)
