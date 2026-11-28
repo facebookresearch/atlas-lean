@@ -21,6 +21,7 @@ None.
 ## Proof depends on
 
 - [Completeness for arbitrary languages](../../../../Logic/first-order-logic/g-del-s-completeness-theorem/provable-of-models-general.md)
+- [Soundness for theories](../../../../Logic/first-order-logic/first-order-natural-deduction/models.md)
 
 ## Informally uses
 

@@ -22,6 +22,7 @@ The proof is model-theoretic. In a model $M$ of $\mathsf{PV}$, a formula has no 
 ## Proof depends on
 
 - [Compactness theorem for first-order logic](../../../../Logic/model-theory/compactness-theorem-for-first-order-logic.md)
+- [Soundness for theories](../../../../Logic/first-order-logic/first-order-natural-deduction/models.md)
 
 ## Sources
 
