@@ -50,6 +50,8 @@ variable {C : Type u₁} [Category.{v₁} C] [Abelian C]
   {D : Type u₂} [Category.{v₂} D] [Abelian D]
   (F : C ⥤ D) [F.Additive] {ι : Type w} (c : ComplexShape ι)
 
+attribute [local instance] preservesBinaryBiproducts_of_preservesBiproducts
+
 /-- Applying an additive functor to the optional next coefficient gives the
 optional next coefficient of the image family, using F(0) ≅ 0 at an endpoint. -/
 def endpointCofreeNextTermFunctorIso (I : GradedObject ι C) (i : ι) :
@@ -132,9 +134,17 @@ theorem endpointCofreeFunctorTransportHom_f (I : GradedObject ι C) (i : ι) :
     (endpointCofreeFunctorTransportHom F c I).f i =
       (endpointCofreeFunctorTransportDegreeIso F c I i).hom := by
   apply biprod.hom_ext
-  · exact (endpointCofreeFunctorTransportHom_fst F c I i).trans
+  · change (endpointCofreeFunctorTransportHom F c I).f i ≫
+        endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i =
+      (endpointCofreeFunctorTransportDegreeIso F c I i).hom ≫
+        endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i
+    exact (endpointCofreeFunctorTransportHom_fst F c I i).trans
       (endpointCofreeFunctorTransportDegreeIso_fst F c I i).symm
-  · by_cases hi : c.Rel i (c.next i)
+  · change (endpointCofreeFunctorTransportHom F c I).f i ≫
+        endpointCofreeSecondProjection (c := c) (fun j => F.obj (I j)) i =
+      (endpointCofreeFunctorTransportDegreeIso F c I i).hom ≫
+        endpointCofreeSecondProjection (c := c) (fun j => F.obj (I j)) i
+    by_cases hi : c.Rel i (c.next i)
     · apply (cancel_mono
         (endpointCofreeNextTermIso (fun j => F.obj (I j)) hi).hom).1
       calc
@@ -152,9 +162,15 @@ theorem endpointCofreeFunctorTransportHom_f (I : GradedObject ι C) (i : ι) :
           rw [endpointCofree_d I hi]
           simp only [Category.assoc, endpointCofreeInclusion_projection,
             Category.comp_id, Functor.map_comp]
-        _ = _ := by
-          rw [endpointCofreeFunctorTransportDegreeIso_snd, Category.assoc,
-            endpointCofreeNextTermFunctorIso_hom_next]
+        _ = (F.map (endpointCofreeSecondProjection (c := c) I i) ≫
+            (endpointCofreeNextTermFunctorIso F c I i).hom) ≫
+              (endpointCofreeNextTermIso (fun j => F.obj (I j)) hi).hom :=
+          (congrArg (F.map (endpointCofreeSecondProjection (c := c) I i) ≫ ·)
+            (endpointCofreeNextTermFunctorIso_hom_next F c I hi).symm).trans
+              (Category.assoc _ _ _).symm
+        _ = _ := congrArg
+          (· ≫ (endpointCofreeNextTermIso (fun j => F.obj (I j)) hi).hom)
+          (endpointCofreeFunctorTransportDegreeIso_snd F c I i).symm
     · exact (endpointCofreeNextTerm_isZero (fun j => F.obj (I j)) i hi).eq_of_tgt _ _
 
 /-- Every component of the cofree transport comparison is an isomorphism, so
@@ -183,10 +199,28 @@ def endpointCofreeFunctorTransportIso :
         ((endpointCofreeFunctorTransportHom F c I).f i ≫
           (endpointCofreeMap (c := c) (fun j => F.map (a j))).f i) ≫
             endpointCofreeProjection (c := c) (fun j => F.obj (J j)) i
-      simp only [Category.assoc, endpointCofreeFunctorTransportHom_fst,
-        endpointCofreeFunctorTransportHom_fst_assoc,
-        endpointCofreeMap_fst]
-      rw [← F.map_comp, endpointCofreeMap_fst, F.map_comp])
+      calc
+        _ = F.map ((endpointCofreeMap (c := c) a).f i) ≫
+            F.map (endpointCofreeProjection (c := c) J i) :=
+          (Category.assoc _ _ _).trans (congrArg
+            (F.map ((endpointCofreeMap (c := c) a).f i) ≫ ·)
+            (endpointCofreeFunctorTransportHom_fst F c J i))
+        _ = F.map ((endpointCofreeMap (c := c) a).f i ≫
+            endpointCofreeProjection (c := c) J i) := (F.map_comp _ _).symm
+        _ = F.map (endpointCofreeProjection (c := c) I i ≫ a i) :=
+          congrArg F.map (endpointCofreeMap_fst (c := c) a i)
+        _ = F.map (endpointCofreeProjection (c := c) I i) ≫ F.map (a i) :=
+          F.map_comp _ _
+        _ = ((endpointCofreeFunctorTransportHom F c I).f i ≫
+            endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i) ≫
+              F.map (a i) := congrArg (· ≫ F.map (a i))
+          (endpointCofreeFunctorTransportHom_fst F c I i).symm
+        _ = (endpointCofreeFunctorTransportHom F c I).f i ≫
+            (endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i ≫
+              F.map (a i)) := Category.assoc _ _ _
+        _ = _ := (congrArg ((endpointCofreeFunctorTransportHom F c I).f i ≫ ·)
+          (endpointCofreeMap_fst (c := c) (fun j => F.map (a j)) i).symm).trans
+            (Category.assoc _ _ _).symm)
 
 /-- The natural comparison has the canonical transported first projection in
 every degree. -/
@@ -208,8 +242,17 @@ theorem endpointCofreeFunctorTransportIso_unit (K : HomologicalComplex C c) :
   change (F.map (((endpointCofreeUnit C c).app K).f i) ≫
       ((endpointCofreeFunctorTransportIso F c).hom.app K.X).f i) ≫
         endpointCofreeProjection (c := c) (fun j => F.obj (K.X j)) i = _
-  rw [Category.assoc, endpointCofreeFunctorTransportIso_fst, ← F.map_comp,
-    endpointCofreeUnit_fst, F.map_id, endpointCofreeUnit_fst]
+  calc
+    _ = F.map (((endpointCofreeUnit C c).app K).f i) ≫
+        F.map (endpointCofreeProjection (c := c) K.X i) :=
+      (Category.assoc _ _ _).trans (congrArg
+        (F.map (((endpointCofreeUnit C c).app K).f i) ≫ ·)
+        (endpointCofreeFunctorTransportIso_fst F c K.X i))
+    _ = F.map (((endpointCofreeUnit C c).app K).f i ≫
+        endpointCofreeProjection (c := c) K.X i) := (F.map_comp _ _).symm
+    _ = F.map (𝟙 (K.X i)) := congrArg F.map (endpointCofreeUnit_fst C c K i)
+    _ = 𝟙 (F.obj (K.X i)) := F.map_id _
+    _ = _ := (endpointCofreeUnit_fst D c ((F.mapHomologicalComplex c).obj K) i).symm
 
 /-- The transported cofree comparison commutes degreewise with the canonical
 counits on the original and image coefficient families. -/
@@ -218,6 +261,10 @@ theorem endpointCofreeFunctorTransportIso_counit (I : GradedObject ι C) (i : ι
     ((endpointCofreeFunctorTransportIso F c).hom.app I).f i ≫
         ((endpointCofreeCounit D c).app ((Functor.pi (fun _ : ι => F)).obj I)) i =
       F.map (((endpointCofreeCounit C c).app I) i) := by
-  simp only [endpointCofreeCounit_app, endpointCofreeFunctorTransportIso_fst]
+  rw [endpointCofreeCounit_app, endpointCofreeCounit_app]
+  change ((endpointCofreeFunctorTransportIso F c).hom.app I).f i ≫
+      endpointCofreeProjection (c := c) (fun j => F.obj (I j)) i =
+    F.map (endpointCofreeProjection (c := c) I i)
+  exact endpointCofreeFunctorTransportIso_fst F c I i
 
 end HomologicalComplex

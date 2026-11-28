@@ -14,6 +14,7 @@ module
 
 import MathlibExt.Algebra.Homology.HomologicalComplex.EndpointCofree
 import Mathlib.Algebra.Category.ModuleCat.EnoughInjectives
+import Mathlib.Algebra.Category.ModuleCat.Abelian
 import Mathlib.Algebra.Module.ULift
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.FinCases
@@ -55,7 +56,7 @@ private abbrev J : A := Injective.under N
 private lemma six_smul (x : V) : (6 : ℤ) • x = 0 := by
   apply ULift.ext
   change (6 : ℤ) • x.down = 0
-  rw [zsmul_eq_mul, show (6 : ZMod 6) = 0 by decide, zero_mul]
+  simp [zsmul_eq_mul, show (6 : ZMod 6) = 0 from by decide]
 
 private lemma two_three : ((2 : ℤ) • 𝟙 N) ≫ ((3 : ℤ) • 𝟙 N) = 0 := by
   apply ModuleCat.hom_ext
@@ -243,9 +244,9 @@ private abbrev step (i : ZMod 2) : N ⟶ N :=
 private lemma step_square {i j : ZMod 2} (hij : c.Rel i j) : step i ≫ step j = 0 := by
   fin_cases i <;> fin_cases j
   · exact False.elim ((by decide : ¬ c.Rel 0 0) hij)
-  · simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0)]
+  · simpa [step]
       using two_three
-  · simpa only [step, if_pos rfl, if_neg (by decide : (1 : ZMod 2) ≠ 0)]
+  · simpa [step]
       using three_two
   · exact False.elim ((by decide : ¬ c.Rel 1 1) hij)
 
