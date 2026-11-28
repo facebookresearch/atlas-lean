@@ -18,8 +18,8 @@ None.
 
 ## Expansion
 
-Synchronizability was introduced by Basu, Bultan and Ouederni as a sufficient condition for reducing the verification of asynchronously communicating peers to synchronous ones; for the peer-to-peer semantics it had been claimed decidable. The source refutes that claim with a counterexample, proves undecidability, and recovers decidability for systems whose communication topology is an oriented ring, where synchronizability coincides with $1$-synchronizability ($\mathit{sTr}_0 = \mathit{sTr}_1$).
+Synchronizability was introduced by Basu and Bultan, as the source recalls (Section 1), as a sufficient condition for reducing the verification of asynchronously communicating peers to synchronous ones; for the peer-to-peer semantics it had been claimed decidable. The source refutes that claim with a counterexample, proves undecidability, and recovers decidability for systems whose communication topology is an oriented ring, where synchronizability coincides with $1$-synchronizability ($\mathit{sTr}_0 = \mathit{sTr}_1$).
 
 ## Sources
 
-- Alain Finkel and Etienne Lozes, "Synchronizability of communicating finite state machines is not decidable", *Logical Methods in Computer Science* 19(4), article 33, 2023, <https://doi.org/10.46298/lmcs-19(4:33)2023>; read as arXiv:1702.07213v7, <https://arxiv.org/abs/1702.07213v7>, the journal version: Section 2 (message sets, traces, FIFO and bounded traces, peers, systems and configurations, and the definition of synchronizability with its sets of send traces).
+- Alain Finkel and Etienne Lozes, "Synchronizability of communicating finite state machines is not decidable", *Logical Methods in Computer Science* 19(4), article 33, 2023, <https://doi.org/10.46298/lmcs-19(4:33)2023>; read as arXiv:1702.07213v7, <https://arxiv.org/abs/1702.07213v7>, the journal version: Section 1 (the origin of synchronizability) and Section 2 (message sets, traces, FIFO and bounded traces, peers, systems and configurations, and the definition of synchronizability with its sets of send traces).

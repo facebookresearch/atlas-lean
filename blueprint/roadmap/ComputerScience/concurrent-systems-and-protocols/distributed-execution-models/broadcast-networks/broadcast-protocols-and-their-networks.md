@@ -10,7 +10,7 @@ A broadcast protocol is a finite-state machine whose transitions broadcast or re
 
 **Executions.** A finite (infinite) execution is a finite (infinite) sequence $C_0 C_1 \cdots$ of configurations with $C_0$ initial and $C_{i-1} \to C_i$ for every $i > 0$.
 
-A protocol is *Wait-Only* if no state has both an outgoing broadcast and an outgoing reception. This is the network model of Esparza, Finkel and Mayr, in which every process hears every broadcast.
+A protocol is *Wait-Only* if no state has both an outgoing broadcast and an outgoing reception. In these networks every process hears every broadcast. Broadcast protocols were introduced by Emerson and Namjoshi, as the first source recalls (Section 1); Esparza, Finkel and Mayr showed that broadcasts simulate rendezvous, that coverability is Ackermann-complete and that liveness is undecidable.
 
 ## Depends on
 
@@ -26,5 +26,5 @@ The model is a parameterized system: verification questions quantify over the nu
 
 ## Sources
 
-- Lucie Guillou, Arnaud Sangnier and Nathalie Sznajder, "Wait-Only Broadcast Protocols Are Easier to Verify", 50th International Symposium on Mathematical Foundations of Computer Science (MFCS 2025), Leibniz International Proceedings in Informatics (LIPIcs) 345, pp. 53:1–53:17, 2025, <https://doi.org/10.4230/LIPIcs.MFCS.2025.53>. Read in arXiv:2506.22144v1, <https://arxiv.org/abs/2506.22144v1>; Definition 2.1 and Section 2.1 (networks of processes using broadcast communication), numbering of arXiv:2506.22144v1.
-- Javier Esparza, Alain Finkel and Richard Mayr, "On the Verification of Broadcast Protocols", Proceedings of the 14th Annual IEEE Symposium on Logic in Computer Science (LICS 1999), pp. 352–359, 1999, <https://doi.org/10.1109/LICS.1999.782630> (the origin of the model, cited as in the first source).
+- Lucie Guillou, Arnaud Sangnier and Nathalie Sznajder, "Wait-Only Broadcast Protocols Are Easier to Verify", 50th International Symposium on Mathematical Foundations of Computer Science (MFCS 2025), Leibniz International Proceedings in Informatics (LIPIcs) 345, pp. 53:1–53:17, 2025, <https://doi.org/10.4230/LIPIcs.MFCS.2025.53>. Read in arXiv:2506.22144v1, <https://arxiv.org/abs/2506.22144v1>; Section 1 (the origin of the model), Definition 2.1 and Section 2.1 (networks of processes using broadcast communication), numbering of arXiv:2506.22144v1.
+- Javier Esparza, Alain Finkel and Richard Mayr, "On the Verification of Broadcast Protocols", Proceedings of the 14th Annual IEEE Symposium on Logic in Computer Science (LICS 1999), pp. 352–359, 1999, <https://doi.org/10.1109/LICS.1999.782630> (cited as in the first source, for the simulation of rendezvous, the complexity of coverability and the undecidability of liveness; not read).

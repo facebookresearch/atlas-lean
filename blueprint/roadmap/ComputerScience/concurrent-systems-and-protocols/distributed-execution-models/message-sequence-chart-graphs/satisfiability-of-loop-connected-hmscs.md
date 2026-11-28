@@ -8,7 +8,7 @@ Whether a high-level message sequence chart over FIFO channels generates any com
 1. Satisfiability of loop-connected HMSCs with at least two processes is undecidable; it remains undecidable for flat loop-connected HMSCs, in the sense of the source, with three processes.
 2. Satisfiability of HMSCs whose message set $\mathcal M$ is a singleton is undecidable.
 
-In contrast, the same paper shows that every loop-connected HMSC can be effectively translated into an equivalent communicating finite-state machine, which extends the realizability of globally cooperative HMSCs by Genest, Kuske and Muscholl to behaviors with unbounded channels. HMSCs whose labels are complete MSCs are the [MSC graphs](msc-graphs.md) of earlier work.
+In contrast, the same paper shows that every loop-connected HMSC can be effectively translated into an equivalent communicating finite-state machine, which complements the realizability of globally cooperative HMSCs by Genest, Kuske and Muscholl, whose MSC languages are channel-bounded; the authors call the two results orthogonal and leave open whether every globally cooperative HMSC has an equivalent loop-connected one (Section 7, Problem 1). HMSCs whose labels are complete MSCs are the [MSC graphs](msc-graphs.md) of earlier work.
 
 ## Depends on
 
@@ -26,4 +26,4 @@ For flat charts with processes $p, q, r$ and a Post correspondence instance give
 
 ## Sources
 
-- Benedikt Bollig, Marie Fortin and Paul Gastin, "High-Level Message Sequence Charts: Satisfiability and Realizability Revisited", in *Application and Theory of Petri Nets and Concurrency (PETRI NETS 2025)*, Lecture Notes in Computer Science, Springer, 2025, pp. 109–129, doi:[10.1007/978-3-031-94634-9_6](https://doi.org/10.1007/978-3-031-94634-9_6); read in arXiv:2504.19814v1 ([arXiv](https://arxiv.org/abs/2504.19814v1)), whose numbering is used: Section 2 (cMSCs, concatenation, HMSCs, loop-connectedness), Theorem 2 (realizability of loop-connected HMSCs), Theorems 4 and 5 (Section 3), and their proofs in Section 6.
+- Benedikt Bollig, Marie Fortin and Paul Gastin, "High-Level Message Sequence Charts: Satisfiability and Realizability Revisited", in *Application and Theory of Petri Nets and Concurrency (PETRI NETS 2025)*, Lecture Notes in Computer Science, Springer, 2025, pp. 109–129, doi:[10.1007/978-3-031-94634-9_6](https://doi.org/10.1007/978-3-031-94634-9_6); read in arXiv:2504.19814v1 ([arXiv](https://arxiv.org/abs/2504.19814v1)), whose numbering is used: Section 2 (cMSCs, concatenation, HMSCs, loop-connectedness), Theorem 2 (realizability of loop-connected HMSCs), Theorems 4 and 5 (Section 3), their proofs in Section 6, and Section 7 (the comparison with globally cooperative HMSCs and Problem 1).

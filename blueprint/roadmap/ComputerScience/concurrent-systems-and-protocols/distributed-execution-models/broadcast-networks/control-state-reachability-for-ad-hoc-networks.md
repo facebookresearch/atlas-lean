@@ -15,6 +15,7 @@ In contrast, the problem is decidable over clique graphs (diameter $1$), where i
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 

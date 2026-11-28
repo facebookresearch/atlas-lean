@@ -19,10 +19,11 @@ For dense time without emptiness tests, the same paper shows reachability decida
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The proofs are topology-preserving reductions between communicating tick automata and communicating counter automata. Synchronized ticks are implemented by broadcasting a tick message, so that each channel can simulate a counter and each emptiness test a zero test; conversely, counters can be implemented by channels. On a connected topology with two testable channels this yields a system equivalent to a two-counter machine, so reachability there is undecidable. Discrete time reduces to dense time over the same topology by forcing every process to let exactly one time unit elapse at each tick, which transfers the undecidability to timed automata.
+The proofs are topology-preserving reductions between communicating tick automata and communicating counter automata. Synchronized ticks are implemented by broadcasting a tick message, so that each channel can simulate a counter and each emptiness test a zero test; conversely, counters can be implemented by channels. On a connected topology with two testable channels this yields a system equivalent to a two-counter machine, so reachability there is undecidable. Discrete time reduces to dense time over the same topology by forcing every process to let exactly one time unit elapse at each tick, which transfers the undecidability to timed automata. The decidable direction of clause 1 reduces reachability over a polyforest with at most one testable channel per component to reachability for counter automata with zero tests on only one counter, which is decidable (Reinhardt; Bonnet), and the necessity of polyforests uses the undecidability of reachability for communicating finite-state machines on every non-polyforest topology, even without ticks (Pachl; La Torre, Madhusudan and Parlato), both as cited in the proof of Theorem 3. A good expansion links pages for these two results.
 
 ## Sources
 

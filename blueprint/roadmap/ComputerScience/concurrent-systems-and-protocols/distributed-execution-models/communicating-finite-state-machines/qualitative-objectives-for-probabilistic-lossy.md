@@ -2,7 +2,7 @@
 
 In lossy channel systems where a scheduler resolves nondeterminism and each stored message is lost with a fixed probability at every step, it is undecidable whether some scheduler visits a set of locations infinitely often with positive probability, and whether some scheduler satisfies a Streett condition almost surely, with positive probability, with probability less than one, or with probability zero.
 
-**Setting (Baier, Bertrand and Schnoebelen).** A [lossy channel system](lossy-channel-systems.md) $\mathcal{L} = (Q, C, M, \Delta)$ has finitely many control locations $Q$, channels $C$, messages $M$ and rules $q \xrightarrow{op} p$ with $op$ a send $c!m$, a receive $c?m$ or an internal action; every location has a rule that is not a receive. An *NPLCS* $\mathcal{N} = (\mathcal{L}, \tau)$ adds a *fault rate* $\tau \in (0, 1)$, a rational number given with the system (the reductions below work with an arbitrary fault rate), and is a Markov decision process: a *scheduler* $\mathcal{U}$ chooses, from the history, an enabled rule, which is fired perfectly, and then each message in the channels is lost independently with probability $\tau$. For an LTL property $\varphi$ over locations, $\Pr_{\mathcal{U}}((q, \varepsilon) \models \varphi)$ is the probability that a run from location $q$ with empty channels satisfies $\varphi$; $\Box \Diamond A$ means that a location in $A$ is visited infinitely often.
+**Setting (Baier, Bertrand and Schnoebelen).** A [lossy channel system](lossy-channel-systems.md) $\mathcal{L} = (Q, C, M, \Delta)$ has finitely many control locations $Q$, channels $C$, messages $M$ and rules $q \xrightarrow{op} p$ with $op$ a send $c!m$, a receive $c?m$ or an internal action; every location has a rule that is not a receive. An *NPLCS* $\mathcal{N} = (\mathcal{L}, \tau)$ adds a *fault rate* $\tau \in (0, 1)$, a rational number given with the system (the reductions below work with an arbitrary fault rate), and is a Markov decision process, as in the linked page on Markov decision processes and adversaries except that its states are the infinitely many configurations (location and channel contents) rather than a finite set: a *scheduler* $\mathcal{U}$ chooses, from the history, an enabled rule, which is fired perfectly, and then each message in the channels is lost independently with probability $\tau$. For an LTL property $\varphi$ over locations, $\Pr_{\mathcal{U}}((q, \varepsilon) \models \varphi)$ is the probability that a run from location $q$ with empty channels satisfies $\varphi$; $\Box \Diamond A$ means that a location in $A$ is visited infinitely often.
 
 **Theorem (Baier, Bertrand and Schnoebelen).**
 
@@ -16,7 +16,6 @@ In particular, qualitative LTL model checking over all schedulers is undecidable
 - [Lossy channel systems](lossy-channel-systems.md)
 - [Formulas of linear temporal logic](../../../../Logic/temporal-logic/linear-temporal-logic/formula.md)
 - [Markov decision processes and adversaries](../../../../Logic/temporal-logic/probabilistic-model-checking/markov-decision-processes-and-adversaries.md)
-- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

@@ -20,7 +20,7 @@ The property is fixed and the graph is the input. By contrast, checking LTL prop
 
 ## Expansion
 
-The proof reuses the MSC graphs of the undecidability proof for weak realizability. When an implied but unspecified MSC exists, there is one in which the two strings use words from different lists, which shows up as local properties of the messages sent by two of the processes. A fixed Boolean combination of these local properties therefore holds on all of $L^w(G)$ iff the relaxed Post correspondence instance has no solution.
+The proof reuses the MSC graphs of the undecidability proof for weak realizability. When an implied but unspecified MSC exists, there is one in which the two strings use words from different lists, which shows up as local properties of the messages sent by two of the processes. A fixed Boolean combination of these local properties therefore holds on all of $L^w(G)$ iff the relaxed Post correspondence instance has no solution. The proof thus uses more than the statement of the weak-realizability theorem: it uses the relaxed Post correspondence problem (Lemma 2 of the source) and the particular MSC graphs built from its instances in the proof of Theorem 1, with their property that an implied MSC whose two strings use words from different lists exists iff the instance has a solution. A good expansion links pages for the undecidability of the relaxed Post correspondence problem (Lemma 2) and for that construction.
 
 ## Sources
 
