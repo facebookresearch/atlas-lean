@@ -4,12 +4,12 @@ Some finite hypergraphs have quantum representations only in infinite-dimensiona
 
 **Theorem (Fritz).** There are finite hypergraphs $H$ such that $C^*(H)$ is nonzero but has no finite-dimensional representation. Moreover, there is no algorithm to determine, for a given $H$, whether this is the case.
 
-So there are finite configurations of closed subspaces, pairwise orthogonal and spanning along prescribed subsets, that can be realized only in infinite-dimensional Hilbert spaces. It is not known whether the problem is semi-decidable.
+So there are finite configurations of closed subspaces, pairwise orthogonal and spanning along prescribed subsets, that can be realized only in infinite-dimensional Hilbert spaces. Fritz (2020) leaves open whether the problem is semi-decidable.
 
 ## Depends on
 
 - [Free hypergraph C*-algebras](free-hypergraph-c-star-algebra.md)
-- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -17,7 +17,9 @@ So there are finite configurations of closed subspaces, pairwise orthogonal and 
 
 ## Expansion
 
-The proof follows the one for residual finite-dimensionality: given an oracle for the property, decide $C^*(H) = 0$ by running the operator-norm algorithm of Fritz, Netzer and Thom when $C^*(H)$ has a finite-dimensional representation (if $\|1\| = 1$, it is attained in any finite-dimensional representation, which suffices for that algorithm), and answering nonzero otherwise. The norm algorithm has no page here. The existence of such $H$ follows from the undecidability.
+The proof follows the one for residual finite-dimensionality. Given an oracle for the property, decide $C^*(H) = 0$ as follows. Ask the oracle whether $C^*(H)$ is nonzero with no finite-dimensional representation; if it is, answer nonzero. Otherwise $C^*(H)$ is zero or has a finite-dimensional representation, and the operator-norm algorithm of Fritz, Netzer and Thom decides whether $\|1\| = 1$ or $\|1\| = 0$: if $\|1\| = 1$, this norm is attained in any finite-dimensional representation, which suffices for that algorithm. The existence of such $H$ follows from the undecidability.
+
+A good expansion adds and links a page for the operator-norm algorithm of Fritz, Netzer and Thom.
 
 ## Sources
 
