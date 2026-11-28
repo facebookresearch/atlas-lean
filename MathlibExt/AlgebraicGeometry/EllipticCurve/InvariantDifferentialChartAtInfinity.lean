@@ -15,7 +15,7 @@ import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Module
 
 /-!
-# The invariant differential in the chart at infinity
+# The invariant differential on the overlap of the charts at infinity
 
 Let `W` be a Weierstrass curve over a field `F` with coefficients `a₁, a₂, a₃, a₄, a₆`, with affine
 coordinate ring `A_W = F[x, y] / (g)`, `g = y² + a₁ x y + a₃ y - x³ - a₂ x² - a₄ x - a₆`, and
@@ -26,9 +26,11 @@ Write `P = 2 y + a₁ x + a₃` and `Q = 3 x² + 2 a₂ x + a₄ - a₁ y`, and
 `h_z = ∂h / ∂z = a₁ w - 3 z² - 2 a₂ z w - a₄ w²`,
 `h_w = ∂h / ∂w = 1 + a₁ z + 2 a₃ w - a₂ z² - 2 a₄ z w - 3 a₆ w²`.
 
-The invariant differential `ω_W` of `A_W` satisfies `P ω_W = dx` and `Q ω_W = dy`. This file works
-in the module of Kähler differentials `Ω¹` of the overlap `S = B_W[1 / w]` over `F`, with `x` and
-`y` read in `S` through the isomorphism, and proves, when the discriminant is nonzero:
+This file carries out the overlap calculation toward the planned statement that the invariant
+differential `ω_W` of `A_W`, characterized by `P ω_W = dx` and `Q ω_W = dy`, satisfies
+`h_w ω_W = -dz` and `h_z ω_W = dw` near the point at infinity. It works in the module of Kähler
+differentials `Ω¹` of the overlap `S = B_W[1 / w]` over `F`, with `x` and `y` read in `S` through
+the isomorphism, and proves, when the discriminant is nonzero:
 
 * there is exactly one `θ ∈ Ω¹_{S/F}` with `P θ = dx` and `Q θ = dy`, namely `p dx + q dy` for any
   `p, q` with `p P + q Q = 1` (`WeierstrassCurve.existsUnique_invariantDifferential_atInfinity`);
@@ -42,10 +44,16 @@ mapped to `S`.
 The identities `h_w dx = -P dz`, `h_w dy = -Q dz`, `h_z dx = P dw`, `h_z dy = Q dw` behind them hold
 for every Weierstrass curve (`WeierstrassCurve.kaehler_identities_atInfinity`).
 
+The statements concern forms on `S` with these defining identities. No form on `A_W` is mapped to
+`S` here, and the identity `ω_W = -dz / h_w` on `B_W[1 / (w h_w)]` is not stated.
+
 ## References
 
 * J. S. Milne, *Elliptic Curves*, second edition, World Scientific, 2021, author's version
-  <https://jmilne.org/math/Books/EC2.pdf>, Chapter V, §6, p. 211.
+  <https://jmilne.org/math/Books/EC2.pdf>, Chapter V, §6, p. 211, as motivation: for
+  `y² = x³ + a x + b` over `ℂ`, Milne shows that `dx / 2y` is holomorphic on the affine curve and
+  leaves its holomorphy at the point at infinity as a check; the calculation here is an algebraic
+  form of that check on the overlap of the two charts.
 -/
 
 @[expose] public section
@@ -168,8 +176,9 @@ over a field `F`, let `S = B_W[1 / w]` be the overlap of its two charts, and rea
 differentials,
 `h_w dx = -P dz`, `h_w dy = -Q dz`, `h_z dx = P dw` and `h_z dy = Q dw`.
 
-No hypothesis on the discriminant is needed. These are the identities of the source's proof of
-`h_w ω_W = -dz` and `h_z ω_W = dw`. -/
+No hypothesis on the discriminant is needed. These identities are the overlap calculation toward
+the planned statement that the invariant differential `ω_W` satisfies `h_w ω_W = -dz` and
+`h_z ω_W = dw`. -/
 theorem kaehler_identities_atInfinity :
     let x := W.affineToOverlap W.affineX
     let y := W.affineToOverlap W.affineY
@@ -220,23 +229,24 @@ private lemma exists_mul_add_mul_eq_one_overlap (hΔ : W.Δ ≠ 0) :
   linear_combination h
 
 open KaehlerDifferential in
-/-- **The invariant differential in the chart at infinity.** Let `W` be a Weierstrass curve over a
-field `F` with discriminant `Δ_W ≠ 0`, let `S = B_W[1 / w]` be the overlap of its two charts, and
-read `x = z / w` and `y = 1 / w` in `S` through the chart isomorphism
+/-- **Forms on the overlap with the defining identities of the invariant differential.** Let `W` be
+a Weierstrass curve over a field `F` with discriminant `Δ_W ≠ 0`, let `S = B_W[1 / w]` be the
+overlap of its two charts, and read `x = z / w` and `y = 1 / w` in `S` through the chart isomorphism
 (`WeierstrassCurve.affineToOverlap`). Let `P = 2 y + a₁ x + a₃`, `Q = 3 x² + 2 a₂ x + a₄ - a₁ y`,
 `h_z = ∂h / ∂z` and `h_w = ∂h / ∂w` for `h = w + a₁ z w + a₃ w² - z³ - a₂ z² w - a₄ z w² - a₆ w³`.
 If `θ ∈ Ω¹_{S/F}` satisfies `P θ = dx` and `Q θ = dy`, then `h_w θ = -dz` and `h_z θ = dw`.
 
-The invariant differential `ω_W` of the affine chart satisfies `P ω_W = dx` and `Q ω_W = dy`, so its
-image in `Ω¹_{S/F}` is such a `θ`; by `existsUnique_invariantDifferential_atInfinity` there is
-exactly one. This is item 2 of the source's statement, read in `Ω¹_{S/F}`. Item 1, that `Ω¹` of
-`(B_W)_{h_w}` is free with basis `dz`, is `WeierstrassCurve.basisAwayPartialW`; the final form
-`ω_W = -dz / h_w` on `(B_W)_{w h_w}` is not stated here.
+By `existsUnique_invariantDifferential_atInfinity` there is exactly one such `θ`. This is the
+overlap calculation toward the planned statement `h_w ω_W = -dz`, `h_z ω_W = dw` for the invariant
+differential `ω_W` of the affine chart: the theorem does not map a form on `A_W` to `S`, and it does
+not state the identity `ω_W = -dz / h_w` on `(B_W)_{w h_w}`. The basis `dz` of `Ω¹` of
+`(B_W)_{h_w}` is `WeierstrassCurve.basisAwayPartialW`.
 
-Source: J. S. Milne, *Elliptic Curves*, second edition, World Scientific, 2021, author's version
-<https://jmilne.org/math/Books/EC2.pdf>, Chapter V, §6, p. 211: `ω = dx / 2y` is holomorphic on
-the affine curve, and "One can check that it also holomorphic at the point at infinity"; this is
-the algebraic form of that check. -/
+Motivation: J. S. Milne, *Elliptic Curves*, second edition, World Scientific, 2021, author's version
+<https://jmilne.org/math/Books/EC2.pdf>, Chapter V, §6, p. 211, for `y² = x³ + a x + b` over `ℂ`:
+`ω = dx / 2y` is holomorphic on the affine curve, and "One can check that it also holomorphic at
+the point at infinity". Milne leaves that check to the reader; this theorem is an algebraic form
+of the calculation on the overlap. -/
 theorem invariantDifferential_atInfinity (hΔ : W.Δ ≠ 0)
     (θ : KaehlerDifferential F W.AtInfinityAwayW)
     (hP : (2 * W.affineToOverlap W.affineY + algebraMap F _ W.a₁ * W.affineToOverlap W.affineX +
@@ -306,7 +316,11 @@ curve over a field `F` with discriminant `Δ_W ≠ 0`, let `S = B_W[1 / w]` be t
 charts, and read `x = z / w` and `y = 1 / w` in `S` through the chart isomorphism. Let
 `P = 2 y + a₁ x + a₃` and `Q = 3 x² + 2 a₂ x + a₄ - a₁ y`. Then there is exactly one
 `θ ∈ Ω¹_{S/F}` with `P θ = dx` and `Q θ = dy`: for `p, q ∈ S` with `p P + q Q = 1`, it is
-`θ = p dx + q dy`. It is the image of the invariant differential `ω_W` of the affine chart. -/
+`θ = p dx + q dy`.
+
+No form on `A_W` is mapped to `S` here. Uniqueness shows that the image in `Ω¹_{S/F}` of any form
+on `A_W` with these defining identities, such as the invariant differential `ω_W`, would be this
+`θ`. -/
 theorem existsUnique_invariantDifferential_atInfinity (hΔ : W.Δ ≠ 0) :
     ∃! θ : KaehlerDifferential F W.AtInfinityAwayW,
       (2 * W.affineToOverlap W.affineY + algebraMap F _ W.a₁ * W.affineToOverlap W.affineX +

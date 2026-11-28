@@ -11,7 +11,7 @@ module
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.InvariantDifferentialChartAtInfinity
 
 /-!
-# Tests for the invariant differential in the chart at infinity
+# Tests for the overlap calculation for the invariant differential at infinity
 
 Examples on the curve `y² + y = x³ - x` over `ℚ`, whose discriminant is `37`.
 -/
@@ -35,8 +35,8 @@ example : MvPolynomial.pderiv 1 E.polynomialAtInfinity =
   rw [pderiv_one_polynomialAtInfinity]
   simp [polynomialAtInfinityW]
 
-/-- The invariant differential of `y² + y = x³ - x` on the overlap of the charts exists and is
-unique. -/
+/-- On `y² + y = x³ - x`, exactly one form on the overlap of the charts satisfies `P θ = dx` and
+`Q θ = dy`. -/
 example : ∃! θ : KaehlerDifferential ℚ E.AtInfinityAwayW,
     (2 * E.affineToOverlap E.affineY + algebraMap ℚ _ E.a₁ * E.affineToOverlap E.affineX +
         algebraMap ℚ _ E.a₃) • θ = D ℚ _ (E.affineToOverlap E.affineX) ∧
@@ -46,8 +46,8 @@ example : ∃! θ : KaehlerDifferential ℚ E.AtInfinityAwayW,
         D ℚ _ (E.affineToOverlap E.affineY) :=
   E.existsUnique_invariantDifferential_atInfinity (by rw [E_Δ]; norm_num)
 
-/-- On this curve, the invariant differential satisfies `h_w θ = -dz` and `h_z θ = dw` on the
-overlap of the charts. -/
+/-- On this curve, the form on the overlap of the charts with `P θ = dx` and `Q θ = dy` satisfies
+`h_w θ = -dz` and `h_z θ = dw`. -/
 example : ∃ θ : KaehlerDifferential ℚ E.AtInfinityAwayW,
     algebraMap _ E.AtInfinityAwayW E.partialWAtInfinity • θ =
         -D ℚ _ (algebraMap _ E.AtInfinityAwayW E.zAtInfinity) ∧
