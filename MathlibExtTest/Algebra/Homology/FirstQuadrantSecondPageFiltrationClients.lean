@@ -58,7 +58,7 @@ lemma vertical_zero : V.d 0 0 = 0 := V.shape 0 0 (by decide)
 private lemma integer_double_ne_one (n : ℤ) : Int.add n n ≠ (1 : ℤ) := by
   intro h
   have hd : (2 : ℤ) ∣ (1 : ℤ) :=
-    ⟨n, by simpa only [two_mul] using h.symm⟩
+    ⟨n, by simpa only [Int.add_def, two_mul] using h.symm⟩
   exact (by decide : ¬ ((2 : ℤ) ∣ (1 : ℤ))) hd
 
 lemma vertical_not_surjective : ¬ Function.Surjective (V.d 1 0).hom := by
