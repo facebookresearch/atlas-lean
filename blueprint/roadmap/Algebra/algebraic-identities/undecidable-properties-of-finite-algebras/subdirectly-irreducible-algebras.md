@@ -2,12 +2,12 @@
 
 An algebra is subdirectly irreducible when, among its congruences other than the identity relation, there is a least one.
 
-An [algebra](algebras-of-a-finite-type.md) $A$ of a finite type is *subdirectly irreducible* when the set of its [congruences](congruences-and-subdirectly-irreducible-algebras.md) other than the identity relation $\{(a, a) : a \in A\}$ has a least element. A one-element algebra has no such congruence and so is not subdirectly irreducible.
+An [algebra](algebras-of-a-finite-type.md) $A$ of a finite type is *subdirectly irreducible* when the set of its [congruences](congruences-of-an-algebra.md) other than the identity relation $\{(a, a) : a \in A\}$ has a least element. A one-element algebra has no such congruence and so is not subdirectly irreducible.
 
 ## Depends on
 
 - [Algebras of a finite type](algebras-of-a-finite-type.md)
-- [Congruences of an algebra](congruences-and-subdirectly-irreducible-algebras.md)
+- [Congruences of an algebra](congruences-of-an-algebra.md)
 
 ## Proof depends on
 

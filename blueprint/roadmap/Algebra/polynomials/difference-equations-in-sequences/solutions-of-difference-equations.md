@@ -2,9 +2,9 @@
 
 A solution of a system of $M$-polynomial equations in a ring with an $M$-action is a tuple of elements on which every member of the system vanishes, after the coefficients are mapped along an equivariant homomorphism.
 
-Let $M$ be a monoid, let $A$ and $B$ be commutative rings with actions of $M$ by [ring endomorphisms](monoid-actions-on-rings.md), let $A \to B$ be an [equivariant ring homomorphism](equivariant-ring-homomorphisms.md), and let $F$ be a subset of the ring of [$M$-polynomials](difference-polynomials-and-their-solutions.md) $A[\sigma^m(\boldsymbol{X}) \mid m \in M]$, $\boldsymbol{X} = (X_1, \dots, X_n)$. A tuple $\mathbf{x} = (x_1, \dots, x_n) \in B^n$ is a *solution* of the system $F = 0$ in $B$ when the unique equivariant ring homomorphism $A[\sigma^m(\boldsymbol{X}) \mid m \in M] \to B$ that extends $A \to B$ and sends $X_i$ to $x_i$ maps every element of $F$ to $0$; the image of $f$ is written $f(\mathbf{x})$.
+Let $M$ be a monoid, let $A$ and $B$ be commutative rings with actions of $M$ by [ring endomorphisms](monoid-actions-on-rings.md), let $A \to B$ be an [equivariant ring homomorphism](equivariant-ring-homomorphisms.md), and let $F$ be a subset of the ring of [$M$-polynomials](rings-of-m-polynomials.md) $A[\sigma^m(\boldsymbol{X}) \mid m \in M]$, $\boldsymbol{X} = (X_1, \dots, X_n)$. A tuple $\mathbf{x} = (x_1, \dots, x_n) \in B^n$ is a *solution* of the system $F = 0$ in $B$ when the unique equivariant ring homomorphism $A[\sigma^m(\boldsymbol{X}) \mid m \in M] \to B$ that extends $A \to B$ and sends $X_i$ to $x_i$ maps every element of $F$ to $0$; the image of $f$ is written $f(\mathbf{x})$.
 
-For a field $k$ and a subfield $k_0$, both carry the trivial action, so the inclusion $k_0 \to k$ and the map $k \to k^M$ sending a constant to the constant [sequence](difference-rings-and-equations-in-sequences.md) are equivariant; a system with coefficients in $k_0$ can thus be asked to have a solution in $k^M$.
+For a field $k$ and a subfield $k_0$, both carry the trivial action, so the inclusion $k_0 \to k$ and the map $k \to k^M$ sending a constant to the constant [sequence](rings-of-sequences-indexed-by-a-monoid.md) are equivariant; a system with coefficients in $k_0$ can thus be asked to have a solution in $k^M$.
 
 Example: the Fibonacci sequence $(1, 1, 2, 3, 5, \dots) \in \mathbb{C}^{\mathbb{N}}$ is a solution of the difference equation $\sigma^2(X) - \sigma(X) - X = 0$.
 
@@ -12,8 +12,8 @@ Example: the Fibonacci sequence $(1, 1, 2, 3, 5, \dots) \in \mathbb{C}^{\mathbb{
 
 - [Monoid action on a semiring by semiring endomorphisms](monoid-actions-on-rings.md)
 - [Equivariant semiring homomorphisms](equivariant-ring-homomorphisms.md)
-- [Rings of M-polynomials](difference-polynomials-and-their-solutions.md)
-- [Rings of sequences indexed by a monoid](difference-rings-and-equations-in-sequences.md)
+- [Rings of M-polynomials](rings-of-m-polynomials.md)
+- [Rings of sequences indexed by a monoid](rings-of-sequences-indexed-by-a-monoid.md)
 
 ## Proof depends on
 

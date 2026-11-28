@@ -11,8 +11,8 @@ Conventions: the type is part of the input, and isomorphic algebras are counted 
 ## Depends on
 
 - [Algebras of a finite type](algebras-of-a-finite-type.md)
-- [Identities satisfied by an algebra](identities-satisfied-by-an-algebra.md)
-- [Varieties of algebras](varieties-of-algebras-and-finitely-generated-varieties.md)
+- [Equational consequence and E-algebras](../../../Logic/first-order-logic/equational-logic/equational-consequence-and-e-algebras.md)
+- [Varieties of algebras](varieties-of-algebras.md)
 - [Predicates decidable by a single-tape Turing machine](../../../TheoryOfComputation/turing-machines/single-tape/decidable-and-recognizable-predicates-on-single/single-tape-decidable.md)
 
 ## Proof depends on

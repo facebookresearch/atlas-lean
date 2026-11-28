@@ -16,3 +16,4 @@ None.
 
 - Matthew Moore, *The undecidability of the definability of principal subcongruences*, The Journal of Symbolic Logic 80 (2015), no. 2, 384–432, https://doi.org/10.1017/jsl.2014.51; Section 1 of arXiv:1301.5588v3.
 - Anvar M. Nurakunov and Michał M. Stronkowski, *Profiniteness in finitely generated varieties is undecidable*, The Journal of Symbolic Logic 83 (2018), no. 4, 1566–1578, https://doi.org/10.1017/jsl.2017.89; Section 2.1 of arXiv:1712.09056v1 (finite algebraic types and algebras).
+- Stanley Burris and H. P. Sankappanavar, *A Course in Universal Algebra*, Graduate Texts in Mathematics 78, Springer, 1981, https://doi.org/10.1007/978-1-4613-8130-3; read in the authors' Millennium Edition (2012 update), https://www.math.uwaterloo.ca/~snburris/htdocs/UALG/univ-algebra2012.pdf, Chapter II, Definitions 1.1–1.3 (operations of each arity, nullary operations as elements, types, and algebras with a nonempty universe).

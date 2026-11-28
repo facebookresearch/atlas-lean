@@ -4,7 +4,7 @@ For monoids acting on two semirings by semiring endomorphisms, an equivariant se
 
 Let $M$ and $N$ be monoids, $\varphi \colon M \to N$ a monoid homomorphism, and $R$ and $S$ semirings with actions of $M$ on $R$ and of $N$ on $S$ by [semiring endomorphisms](monoid-actions-on-rings.md). A $\varphi$-equivariant semiring homomorphism $f \colon R \to S$ is a map with $f(0) = 0$, $f(1) = 1$, $f(r + s) = f(r) + f(s)$ and $f(rs) = f(r) f(s)$ for all $r, s \in R$, and $f(m \cdot r) = \varphi(m) \cdot f(r)$ for all $m \in M$ and $r \in R$.
 
-For $N = M$ and $\varphi$ the identity, these are the morphisms of $M$-rings of difference algebra: ring homomorphisms that commute with the actions.
+For commutative rings $R$ and $S$, $N = M$ and $\varphi$ the identity, these are the morphisms of $M$-rings of difference algebra: ring homomorphisms that commute with the actions.
 
 ## Sources
 

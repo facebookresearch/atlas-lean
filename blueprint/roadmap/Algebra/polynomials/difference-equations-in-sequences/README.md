@@ -4,8 +4,8 @@ Systems of polynomial difference equations solved in rings of sequences indexed 
 
 - [Monoid action on a semiring by semiring endomorphisms](monoid-actions-on-rings.md)
 - [Equivariant semiring homomorphisms](equivariant-ring-homomorphisms.md)
-- [Rings of sequences indexed by a monoid](difference-rings-and-equations-in-sequences.md)
-- [Rings of M-polynomials](difference-polynomials-and-their-solutions.md)
+- [Rings of sequences indexed by a monoid](rings-of-sequences-indexed-by-a-monoid.md)
+- [Rings of M-polynomials](rings-of-m-polynomials.md)
 - [Solutions of systems of M-polynomial equations](solutions-of-difference-equations.md)
 - [Computable subfields](computable-subfields.md)
 - [Consistency of difference equations in sequences of real numbers is undecidable](difference-equations-in-real-sequences.md)
