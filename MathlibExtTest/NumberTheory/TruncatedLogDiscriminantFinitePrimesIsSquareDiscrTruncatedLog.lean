@@ -11,6 +11,7 @@ module
 import MathlibExt.NumberTheory.TruncatedLogDiscriminantFinitePrimesIsSquareDiscrTruncatedLog
 import Mathlib.NumberTheory.Harmonic.Defs
 import Mathlib.NumberTheory.Padics.PadicVal.Basic
+import Mathlib.Tactic.ComputeDegree
 import MathlibExt.NumberTheory.TruncatedLogResultantPos
 
 namespace MathlibExtTest.NumberTheory.TruncatedLogDiscriminantFinitePrimesIsSquareDiscrTruncatedLog
@@ -31,5 +32,102 @@ example : BddAbove {q : ℕ | q.Prime ∧ 3 * q % 4 = 1 ∧
 example : {q : ℕ | q.Prime ∧ 5 * q % 4 = 1 ∧
     IsSquare (truncatedLogPolynomial (5 * q)).discr}.Finite :=
   finite_primes_isSquare_discr_truncatedLog (m := 5) (by decide)
+
+open Polynomial
+
+-- Independently compute the paper's auxiliary product at m = 3 by reducing the second
+-- polynomial modulo 1 + X + X² and evaluating the resulting linear resultant.
+private lemma auxProduct_three : truncatedLogAuxProduct 3 = 13 / 36 := by
+  let f : ℚ[X] := 1 + X + X ^ 2
+  let g : ℚ[X] := C (1 / 3) + X + C (1 / 2) * X ^ 2
+  have hf' : (∑ j ∈ Finset.range 3, (X : ℚ[X]) ^ j) = f := by
+    simp [f, Finset.sum_range_succ]
+  have hg' : (C ((3 : ℕ) : ℚ)⁻¹ + ∑ j ∈ Finset.Icc (1 : ℕ) (3 - 1),
+      C ((j : ℚ)⁻¹) * X ^ j) = g := by
+    norm_num [g, show (3 : ℕ) - 1 = 2 by decide,
+      show Finset.Icc 1 2 = ({1, 2} : Finset ℕ) by decide, add_assoc]
+  have haux : truncatedLogAuxProduct 3 = resultant f g := by
+    calc
+      truncatedLogAuxProduct 3 = _ := rfl
+      _ = resultant f g := congrArg₂ (fun a b : ℚ[X] => resultant a b) hf' hg'
+  have hf : f.natDegree = 2 := by dsimp [f]; compute_degree!
+  have hg : g.natDegree = 2 := by dsimp [g]; compute_degree!
+  have hrem : g = C (1 / 2) * (X - C (1 / 3)) + f * C (1 / 2) := by
+    dsimp [f, g]
+    calc
+      _ = (C (1 / 2 : ℚ) - C (1 / 2) * C (1 / 3)) +
+          (C (1 / 2) * X + X * C (1 / 2)) + C (1 / 2) * X ^ 2 := by
+        rw [← C_mul, ← C_sub, mul_comm X, ← add_mul, ← C_add]
+        norm_num
+      _ = _ := by ring
+  rw [haux, hf, hg, hrem,
+    resultant_add_mul_right _ _ _ _ _ (by simp) hf.le, resultant_C_mul_right]
+  rw [show 2 = 1 + 1 by decide, resultant_add_right_deg _ _ _ 1 1 (by simp),
+    resultant_X_sub_C_right _ _ _ hf.le]
+  norm_num [f, coeff_add, coeff_one, coeff_X, coeff_X_pow, eval_add, eval_pow]
+
+private lemma valuation_nat_of_not_dvd {q a : ℕ} (h : ¬ q ∣ a) :
+    padicValRat q (a : ℚ) = 0 := by
+  rw [← Int.cast_natCast, padicValRat.of_int,
+    padicValInt.eq_zero_of_not_dvd (by exact_mod_cast h), Nat.cast_zero]
+
+private lemma valuation_fraction_of_not_dvd {q a b : ℕ} [Fact q.Prime]
+    (ha : ¬ q ∣ a) (hb : ¬ q ∣ b) : padicValRat q ((a : ℚ) / b) = 0 := by
+  have ha' : a ≠ 0 := fun h => ha (h ▸ dvd_zero q)
+  have hb' : b ≠ 0 := fun h => hb (h ▸ dvd_zero q)
+  rw [padicValRat.div (by exact_mod_cast ha') (by exact_mod_cast hb'),
+    valuation_nat_of_not_dvd ha, valuation_nat_of_not_dvd hb, sub_zero]
+
+-- The harmonic branch puts 11 in E₃; the auxiliary numerator's prime 13 is
+-- filtered out by the congruence. Neither numerator is divisible by 7.
+private lemma seven_not_exceptional_three : 7 ∉ truncatedLogExceptionalPrimes 3 := by
+  have hH : harmonic 3 = 11 / 6 := by norm_num [harmonic_succ]
+  have : Fact (Nat.Prime 7) := ⟨by decide⟩
+  have hX : padicValRat 7 (13 / 36) = 0 :=
+    valuation_fraction_of_not_dvd (q := 7) (a := 13) (b := 36) (by decide) (by decide)
+  have hY : padicValRat 7 (11 / 6) = 0 :=
+    valuation_fraction_of_not_dvd (q := 7) (a := 11) (b := 6) (by decide) (by decide)
+  norm_num [truncatedLogExceptionalPrimes, auxProduct_three, hH, hX, hY]
+
+example : 11 ∈ truncatedLogExceptionalPrimes 3 := by
+  have hH : harmonic 3 = 11 / 6 := by norm_num [harmonic_succ]
+  have hp : Nat.Prime 11 := by decide
+  have : Fact (Nat.Prime 11) := ⟨hp⟩
+  have h11 : padicValRat 11 (11 : ℚ) = 1 := padicValRat.self (by decide : 1 < 11)
+  have h6 : padicValRat 11 (6 : ℚ) = 0 := valuation_nat_of_not_dvd (by decide : ¬ 11 ∣ 6)
+  have hY : padicValRat 11 (11 / 6) = 1 := by
+    rw [padicValRat.div (by norm_num) (by norm_num), h11, h6, sub_zero]
+  norm_num [truncatedLogExceptionalPrimes, hp, hH, hY]
+
+example : 13 ∉ truncatedLogExceptionalPrimes 3 := by
+  norm_num [truncatedLogExceptionalPrimes]
+
+-- The m = 1 auxiliary product is empty. Compute the residue for q = 5 independently
+-- of the exceptional-prime criterion and use it to certify nonsquareness.
+example : truncatedLogAuxProduct 1 = 1 := by norm_num [truncatedLogAuxProduct]
+
+example : ¬ IsSquare (truncatedLogPolynomial 5).discr := by
+  refine not_isSquare_discr_truncatedLog_mul_prime_of_resultant_ne_zero (m := 1) (q := 5)
+    (by decide) (by decide) (by decide) (by decide) ?_
+  have : Fact (1 < (5 : ℕ)) := ⟨by decide⟩
+  let f : (ZMod 5)[X] := ∑ j ∈ Finset.range 5, X ^ j
+  have hlog : (∑ j ∈ Finset.Icc (1 : ℕ) 1, C ((j : ZMod 5)⁻¹) * X ^ j) = X := by simp
+  have hf : f.natDegree = 4 := by
+    simp only [f, Finset.sum_range_succ, Finset.range_zero, Finset.sum_empty, pow_zero, pow_one,
+      zero_add]
+    compute_degree!
+  have h₀ : f.coeff 0 = 1 := by simp [f, Finset.sum_range_succ, coeff_X_pow]
+  change resultant f (∑ j ∈ Finset.Icc (1 : ℕ) 1, C ((j : ZMod 5)⁻¹) * X ^ j) ≠ 0
+  have hr : resultant f X 4 1 = 1 := by
+    have h := resultant_X_pow_right f 4 1 hf.le
+    rw [pow_one (X : (ZMod 5)[X]), Nat.mul_one, pow_one, h₀, mul_one] at h
+    exact h.trans (by decide)
+  rw [hlog, hf, natDegree_X, hr]
+  exact one_ne_zero
+
+-- Client example at a composite degree.
+example : ¬ IsSquare (truncatedLogPolynomial 21).discr :=
+  not_isSquare_discr_truncatedLog_mul_prime (m := 3) (q := 7)
+    (by decide) seven_not_exceptional_three (by decide) (by decide)
 
 end MathlibExtTest.NumberTheory.TruncatedLogDiscriminantFinitePrimesIsSquareDiscrTruncatedLog

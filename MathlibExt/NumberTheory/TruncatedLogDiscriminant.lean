@@ -19,13 +19,15 @@ import Mathlib.Tactic.Primality
 # Nonsquare discriminants of truncated logarithmic polynomials
 
 We prove that the discriminants of the truncated logarithmic polynomials of degrees
-`3 * q`, `5 * q`, and `7 * q` are nonsquares for every prime `q`.
+`3 * q`, `5 * q`, and `7 * q` are nonsquares for every prime `q`. For $q$ prime, $1\le m<q$
+and $mq$ odd, nonvanishing of the reduced resultant also rules out a square discriminant
+in degree $mq$.
 
 ## References
 
 * John Cullinan and Rylan Gajek-Leonard, *On the Discriminants of Truncated Logarithmic
   Polynomials*, INTEGERS 25 (2025), Article A39, pp. 1–12, Section 1, Equation (5),
-  Proposition 2, and the modular reduction in the proof of Theorem 4.
+  Proposition 2, and the modular reductions in the proofs of Theorems 4 and 5.
 -/
 
 namespace MetaMathlibExt
@@ -821,6 +823,33 @@ private lemma nonsquare_seven {q : ℕ} (hq : q.Prime) :
     bezout_seven
 
 end not_isSquare_discr_truncatedLog_three_five_seven_mul
+
+open not_isSquare_discr_truncatedLog_three_five_seven_mul in
+/-- **Nonsquare discriminant from a reduced resultant.** Let $q$ be prime and $1\le m<q$,
+and suppose $mq$ is odd. Write $R=\mathbb{Z}/q\mathbb{Z}$. If
+$\operatorname{Res}(\sum_{j=0}^{mq-1} x^j,\sum_{j=1}^m j^{-1}x^j)\ne 0$ in $R$, then the
+discriminant of $F_{mq}(x)=1+x+x^2/2+\cdots+x^{mq}/(mq)$ is not a square in $\mathbb{Q}$. -/
+public lemma not_isSquare_discr_truncatedLog_mul_prime_of_resultant_ne_zero {m q : ℕ}
+    (hq : q.Prime) (hm : 1 ≤ m) (hmq : m < q) (hodd : Odd (m * q))
+    (hres : resultant (∑ j ∈ Finset.range (m * q), (X : (ZMod q)[X]) ^ j)
+      (∑ j ∈ Finset.Icc 1 m, C ((j : ZMod q)⁻¹) * X ^ j) ≠ 0) :
+    ¬ IsSquare (truncatedLogPolynomial (m * q)).discr := by
+  have : Fact q.Prime := ⟨hq⟩
+  have hlo : q ^ 1 ≤ m * q := by
+    rw [pow_one]
+    exact Nat.le_mul_of_pos_left q hm
+  have hhi : m * q < q ^ (1 + 1) := by
+    rw [pow_two]
+    exact Nat.mul_lt_mul_of_pos_right hmq hq.pos
+  have hmz : (m : ZMod q) ≠ 0 := by
+    rw [ne_eq, ZMod.natCast_eq_zero_iff]
+    exact fun h => hmq.not_ge (Nat.le_of_dvd hm h)
+  have hg : reducedPoly q m (1 == 0) = ∑ j ∈ Finset.Icc 1 m, C ((j : ZMod q)⁻¹) * X ^ j := by
+    simp [reducedPoly]
+  apply nonsquare_of_odd_mul hodd hmz
+  rw [mod_resultant hlo hhi, pow_one, Nat.mul_div_cancel _ hq.pos, hg]
+  exact mul_ne_zero (pow_ne_zero _ (by simpa using lcm_quotient_ne_zero hlo hhi))
+    (pow_ne_zero _ hres)
 
 /-- **Nonsquare discriminants of $F_{3q}$, $F_{5q}$ and $F_{7q}$.** Let
 $F_n(x) = 1 + x + x^2/2 + \cdots + x^n/n$ be the truncated logarithmic polynomial. For every
