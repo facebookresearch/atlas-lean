@@ -15,8 +15,9 @@ public import MathlibExt.AlgebraicGeometry.EllipticCurve.AffineInvariantDifferen
 
 For a Weierstrass curve `W` over a field `F`, `WeierstrassCurve.MvCoordinateRing` is
 `F[x, y] / (f_W)` with `F[x, y] = MvPolynomial (Fin 2) F`, and Mathlib's
-`WeierstrassCurve.Affine.CoordinateRing` is `F[X][Y] / (f_W)`. The `F`-algebra isomorphism
-`F[x, y] ≅ F[X][Y]`, `x ↦ X`, `y ↦ Y`, carries one Weierstrass polynomial to the other and so
+`WeierstrassCurve.Affine.CoordinateRing` is `F[X][Y] / (f_W)`. Mathlib's `F`-algebra isomorphism
+`Polynomial.Bivariate.equivMvPolynomial F : F[X][Y] ≃ F[x, y]`, `X ↦ x`, `Y ↦ y`, carries one
+Weierstrass polynomial to the other (`WeierstrassCurve.equivMvPolynomial_polynomial`) and so
 induces an `F`-algebra isomorphism of the coordinate rings
 (`WeierstrassCurve.mvCoordinateRingEquiv`), with `x̄ ↦ X̄` and `ȳ ↦ Ȳ`.
 -/
@@ -30,48 +31,24 @@ namespace WeierstrassCurve
 
 variable {F : Type*} [Field F]
 
-/-- `bivariateToMvPolynomial` as an `F`-algebra homomorphism `F[X][Y] → F[x, y]`. -/
-noncomputable def bivariateToMvPolynomialAlgHom : F[X][Y] →ₐ[F] MvPolynomial (Fin 2) F :=
-  { bivariateToMvPolynomial with
-    commutes' := fun r ↦ by
-      change bivariateToMvPolynomial (Polynomial.C (Polynomial.C r)) = _
-      rw [bivariateToMvPolynomial_CC, MvPolynomial.algebraMap_eq] }
-
-/-- **`F[x, y] ≅ F[X][Y]`**: the `F`-algebra isomorphism with `x ↦ X` (`Polynomial.C X`) and
-`y ↦ Y`, whose inverse is `bivariateToMvPolynomial`. -/
-noncomputable def mvPolynomialEquivBivariate : MvPolynomial (Fin 2) F ≃ₐ[F] F[X][Y] :=
-  AlgEquiv.ofAlgHom (aeval ![Polynomial.C Polynomial.X, Polynomial.X]) bivariateToMvPolynomialAlgHom
-    (by
-      apply AlgHom.toRingHom_injective
-      refine Polynomial.ringHom_ext' (Polynomial.ringHom_ext (fun a ↦ ?_) ?_) ?_ <;>
-        simp [bivariateToMvPolynomialAlgHom, bivariateToMvPolynomial])
-    (by
-      apply MvPolynomial.algHom_ext
-      intro i
-      fin_cases i <;> simp [bivariateToMvPolynomialAlgHom, bivariateToMvPolynomial])
-
-theorem mvPolynomialEquivBivariate_mvPolynomial (W : WeierstrassCurve F) :
-    mvPolynomialEquivBivariate W.mvPolynomial = W.toAffine.polynomial := by
-  simp [mvPolynomialEquivBivariate, mvPolynomial, Affine.polynomial]
-  ring
-
 theorem span_polynomial_eq_map (W : WeierstrassCurve F) :
     Ideal.span {W.toAffine.polynomial} =
-      (Ideal.span {W.mvPolynomial}).map (mvPolynomialEquivBivariate (F := F)) := by
-  rw [Ideal.map_span, Set.image_singleton]
-  change _ = Ideal.span {mvPolynomialEquivBivariate W.mvPolynomial}
-  rw [mvPolynomialEquivBivariate_mvPolynomial]
+      (Ideal.span {W.affineMvPolynomial}).map (Polynomial.Bivariate.equivMvPolynomial F).symm := by
+  rw [Ideal.map_span, Set.image_singleton, ← W.equivMvPolynomial_polynomial,
+    AlgEquiv.symm_apply_apply]
 
 /-- **The two affine coordinate rings of a Weierstrass curve are isomorphic**: the `F`-algebra
 isomorphism `F[x, y] / (f_W) ≅ F[X][Y] / (f_W)` (`WeierstrassCurve.MvCoordinateRing` and
-Mathlib's `WeierstrassCurve.Affine.CoordinateRing`) induced by `x ↦ X`, `y ↦ Y`. -/
+Mathlib's `WeierstrassCurve.Affine.CoordinateRing`) induced by `x ↦ X`, `y ↦ Y`, that is, by the
+inverse of `Polynomial.Bivariate.equivMvPolynomial F`. -/
 noncomputable def mvCoordinateRingEquiv (W : WeierstrassCurve F) :
     W.MvCoordinateRing ≃ₐ[F] W.toAffine.CoordinateRing :=
-  Ideal.quotientEquivAlg _ _ mvPolynomialEquivBivariate W.span_polynomial_eq_map
+  Ideal.quotientEquivAlg _ _ (Polynomial.Bivariate.equivMvPolynomial F).symm
+    W.span_polynomial_eq_map
 
 theorem mvCoordinateRingEquiv_mvMk (W : WeierstrassCurve F) (p : MvPolynomial (Fin 2) F) :
     W.mvCoordinateRingEquiv (W.mvMk p) =
-      AdjoinRoot.mk W.toAffine.polynomial (mvPolynomialEquivBivariate p) :=
+      AdjoinRoot.mk W.toAffine.polynomial ((Polynomial.Bivariate.equivMvPolynomial F).symm p) :=
   Ideal.quotientEquivAlg_mk _ _ _ p
 
 /-- The isomorphism sends `x̄` to `X̄` and `ȳ` to `Ȳ`. -/
@@ -80,8 +57,10 @@ theorem mvCoordinateRingEquiv_X (W : WeierstrassCurve F) :
         AdjoinRoot.mk W.toAffine.polynomial (Polynomial.C Polynomial.X) ∧
       W.mvCoordinateRingEquiv (W.mvMk (X 1)) =
         AdjoinRoot.mk W.toAffine.polynomial Polynomial.X := by
-  rw [mvCoordinateRingEquiv_mvMk, mvCoordinateRingEquiv_mvMk]
-  simp [mvPolynomialEquivBivariate]
+  rw [mvCoordinateRingEquiv_mvMk, mvCoordinateRingEquiv_mvMk,
+    Polynomial.Bivariate.equivMvPolynomial_symm_X_0,
+    Polynomial.Bivariate.equivMvPolynomial_symm_X_1]
+  exact ⟨rfl, rfl⟩
 
 /-- The inverse isomorphism is induced by `WeierstrassCurve.toMvCoordinateRing`:
 it sends the class of `p ∈ F[X][Y]` to `p(x̄, ȳ)`. -/
@@ -90,14 +69,7 @@ theorem mvCoordinateRingEquiv_symm_mk (W : WeierstrassCurve F) (p : F[X][Y]) :
       W.toMvCoordinateRing p := by
   apply W.mvCoordinateRingEquiv.injective
   rw [AlgEquiv.apply_symm_apply]
-  have hp : p = mvPolynomialEquivBivariate (bivariateToMvPolynomial p) :=
-    (mvPolynomialEquivBivariate.apply_symm_apply p).symm
-  have hring : W.toMvCoordinateRing = W.mvMk.toRingHom.comp bivariateToMvPolynomial := by
-    refine Polynomial.ringHom_ext' (Polynomial.ringHom_ext (fun a ↦ ?_) ?_) ?_ <;>
-      simp [toMvCoordinateRing, bivariateToMvPolynomial]
-  have : W.toMvCoordinateRing p = W.mvMk (bivariateToMvPolynomial p) := by
-    rw [hring]
-    rfl
-  rw [this, mvCoordinateRingEquiv_mvMk, ← hp]
+  change _ = W.mvCoordinateRingEquiv (W.mvMk (Polynomial.Bivariate.equivMvPolynomial F p))
+  rw [mvCoordinateRingEquiv_mvMk, AlgEquiv.symm_apply_apply]
 
 end WeierstrassCurve

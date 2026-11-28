@@ -35,8 +35,13 @@ example : (⟨0, 0, 0, -1, 0⟩ : WeierstrassCurve ℚ).mvCoordinateRingEquiv
     ((⟨0, 0, 0, -1, 0⟩ : WeierstrassCurve ℚ).mvMk (X 1 ^ 2 - X 0 ^ 3 + X 0)) = 0 := by
   have h : (⟨0, 0, 0, -1, 0⟩ : WeierstrassCurve ℚ).mvMk (X 1 ^ 2 - X 0 ^ 3 + X 0) = 0 := by
     refine Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.subset_span ?_)
-    simp [mvPolynomial]
+    simp [affineMvPolynomial]
     ring
   rw [h, map_zero]
+
+-- Mathlib's `F[X][Y] ≃ F[x, y]` sends Mathlib's Weierstrass polynomial to `affineMvPolynomial`.
+example {F : Type} [Field F] (W : WeierstrassCurve F) :
+    Polynomial.Bivariate.equivMvPolynomial F W.toAffine.polynomial = W.affineMvPolynomial :=
+  W.equivMvPolynomial_polynomial
 
 end WeierstrassCurve

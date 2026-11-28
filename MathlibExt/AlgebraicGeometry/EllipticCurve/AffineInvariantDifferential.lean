@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.RingTheory.Kaehler.QuotientMvPolynomial
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.VariableChangePolynomial
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.WeierstrassSingularPoints
 public import Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange
 import Mathlib.Tactic.LinearCombination
 
@@ -17,8 +18,9 @@ import Mathlib.Tactic.LinearCombination
 # The invariant differential of an affine Weierstrass curve
 
 Let `W` be a Weierstrass curve over a field `F` with `Δ_W ≠ 0`, and let
-`A_W = F[x, y] / (f_W)` with `f_W = y² + a₁ x y + a₃ y - x³ - a₂ x² - a₄ x - a₆`, written here
-as a quotient of `MvPolynomial (Fin 2) F` with `x = X 0` and `y = X 1`. With
+`A_W = F[x, y] / (f_W)` with `f_W = y² + a₁ x y + a₃ y - x³ - a₂ x² - a₄ x - a₆`
+(`WeierstrassCurve.affineMvPolynomial`), written here as a quotient of `MvPolynomial (Fin 2) F`
+with `x = X 0` and `y = X 1`. With
 `P_W = 2y + a₁ x + a₃` and `Q_W = 3x² + 2a₂ x + a₄ - a₁ y`, there is a unique `ω_W ∈ Ω¹_{A_W/F}`
 with `P_W ω_W = dx` and `Q_W ω_W = dy`, and `Ω¹_{A_W/F}` is free of rank one with basis `ω_W`
 (`WeierstrassCurve.invariantDifferential_spec`). Under a variable change `C = (u, r, s, t)`, the
@@ -27,7 +29,7 @@ that carries `ω_W` to `u⁻¹ ω_{C • W}` (`WeierstrassCurve.invariantDiffere
 
 The proofs use the presentation of the differentials of a hypersurface
 (`MvPolynomial.kaehlerDifferential_planeCurve`) and, transported from Mathlib's coordinate ring
-`F[X][Y] / (f_W)`, the identities of
+`F[X][Y] / (f_W)` along `Polynomial.Bivariate.equivMvPolynomial`, the identities of
 `WeierstrassCurve.Affine.evalEval_polynomial_variableChange`,
 `WeierstrassCurve.Affine.evalEval_partials_variableChange` and
 `WeierstrassCurve.Affine.CoordinateRing.exists_mul_add_mul_eq_one_of_Δ_ne_zero`.
@@ -42,12 +44,6 @@ namespace WeierstrassCurve
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 
-/-- The Weierstrass polynomial `f_W = y² + a₁ x y + a₃ y - x³ - a₂ x² - a₄ x - a₆` in
-`F[x, y]`, with `x = X 0` and `y = X 1`. -/
-noncomputable def mvPolynomial : MvPolynomial (Fin 2) F :=
-  X 1 ^ 2 + C W.a₁ * X 0 * X 1 + C W.a₃ * X 1 -
-    (X 0 ^ 3 + C W.a₂ * X 0 ^ 2 + C W.a₄ * X 0 + C W.a₆)
-
 /-- `P_W = 2y + a₁ x + a₃ = ∂f_W/∂y` in `F[x, y]`, with `x = X 0` and `y = X 1`. -/
 noncomputable def mvPolynomialP : MvPolynomial (Fin 2) F :=
   2 * X 1 + C W.a₁ * X 0 + C W.a₃
@@ -57,23 +53,31 @@ noncomputable def mvPolynomialQ : MvPolynomial (Fin 2) F :=
   3 * X 0 ^ 2 + 2 * C W.a₂ * X 0 + C W.a₄ - C W.a₁ * X 1
 
 /-- The affine coordinate ring `F[x, y] / (f_W)` of `W`. -/
-abbrev MvCoordinateRing : Type _ := MvPolynomial (Fin 2) F ⧸ Ideal.span {W.mvPolynomial}
+abbrev MvCoordinateRing : Type _ := MvPolynomial (Fin 2) F ⧸ Ideal.span {W.affineMvPolynomial}
 
 /-- The class in `F[x, y] / (f_W)` of a polynomial. -/
 noncomputable abbrev mvMk : MvPolynomial (Fin 2) F →ₐ[F] W.MvCoordinateRing :=
   Ideal.Quotient.mkₐ F _
 
-theorem pderiv_zero_mvPolynomial : pderiv 0 W.mvPolynomial = -W.mvPolynomialQ := by
-  simp [mvPolynomial, mvPolynomialQ, pderiv_X]
+theorem pderiv_zero_affineMvPolynomial : pderiv 0 W.affineMvPolynomial = -W.mvPolynomialQ := by
+  simp [affineMvPolynomial, mvPolynomialQ, pderiv_X]
   ring
 
-theorem pderiv_one_mvPolynomial : pderiv 1 W.mvPolynomial = W.mvPolynomialP := by
-  simp [mvPolynomial, mvPolynomialP, pderiv_X]
+theorem pderiv_one_affineMvPolynomial : pderiv 1 W.affineMvPolynomial = W.mvPolynomialP := by
+  simp [affineMvPolynomial, mvPolynomialP, pderiv_X]
 
-/-- The ring homomorphism `F[X][Y] → F[x, y] / (f_W)`, `X ↦ x̄`, `Y ↦ ȳ`. -/
-noncomputable def toMvCoordinateRing : F[X][Y] →+* W.MvCoordinateRing :=
-  Polynomial.eval₂RingHom
-    (Polynomial.eval₂RingHom (W.mvMk.toRingHom.comp C) (W.mvMk (X 0))) (W.mvMk (X 1))
+/-- **The Weierstrass polynomial in the two coordinate systems**: Mathlib's equivalence
+`F[X][Y] ≃ F[x, y]` (`Polynomial.Bivariate.equivMvPolynomial`, `X ↦ x`, `Y ↦ y`) sends
+`WeierstrassCurve.Affine.polynomial` to `WeierstrassCurve.affineMvPolynomial`. -/
+theorem equivMvPolynomial_polynomial :
+    Polynomial.Bivariate.equivMvPolynomial F W.toAffine.polynomial = W.affineMvPolynomial := by
+  simp [affineMvPolynomial, Affine.polynomial]
+  ring
+
+/-- The `F`-algebra homomorphism `F[X][Y] → F[x, y] / (f_W)`, `X ↦ x̄`, `Y ↦ ȳ`: Mathlib's
+equivalence `F[X][Y] ≃ F[x, y]` followed by the quotient map. -/
+noncomputable def toMvCoordinateRing : F[X][Y] →ₐ[F] W.MvCoordinateRing :=
+  W.mvMk.comp (Polynomial.Bivariate.equivMvPolynomial F).toAlgHom
 
 @[simp] theorem toMvCoordinateRing_CC (a : F) :
     W.toMvCoordinateRing (Polynomial.C (Polynomial.C a)) = W.mvMk (C a) := by
@@ -89,15 +93,9 @@ noncomputable def toMvCoordinateRing : F[X][Y] →+* W.MvCoordinateRing :=
 
 theorem toMvCoordinateRing_polynomial :
     W.toMvCoordinateRing W.toAffine.polynomial = 0 := by
-  have : W.mvMk W.mvPolynomial = 0 :=
-    Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mem_span_singleton_self _)
-  rw [← this]
-  change _ = W.mvMk (X 1 ^ 2 + C W.a₁ * X 0 * X 1 + C W.a₃ * X 1 -
-    (X 0 ^ 3 + C W.a₂ * X 0 ^ 2 + C W.a₄ * X 0 + C W.a₆))
-  rw [Affine.polynomial]
-  simp only [map_add, map_sub, map_mul, map_pow, toMvCoordinateRing_CC, toMvCoordinateRing_CX,
-    toMvCoordinateRing_Y]
-  ring
+  change W.mvMk (Polynomial.Bivariate.equivMvPolynomial F W.toAffine.polynomial) = 0
+  rw [equivMvPolynomial_polynomial]
+  exact Ideal.Quotient.eq_zero_iff_mem.mpr (Ideal.mem_span_singleton_self _)
 
 theorem toMvCoordinateRing_polynomialY :
     W.toMvCoordinateRing W.toAffine.polynomialY = W.mvMk W.mvPolynomialP := by
@@ -121,15 +119,16 @@ theorem exists_mul_add_mul_eq_one_of_Δ_ne_zero (hΔ : W.Δ ≠ 0) :
     ∃ p q : W.MvCoordinateRing, p * W.mvMk W.mvPolynomialP + q * W.mvMk W.mvPolynomialQ = 1 := by
   obtain ⟨p, q, h⟩ := Affine.CoordinateRing.exists_mul_add_mul_eq_one_of_Δ_ne_zero W hΔ
   let ψ : W.toAffine.CoordinateRing →+* W.MvCoordinateRing :=
-    AdjoinRoot.lift (Polynomial.eval₂RingHom (W.mvMk.toRingHom.comp C) (W.mvMk (X 0)))
-      (W.mvMk (X 1)) (W.toMvCoordinateRing_polynomial)
+    Ideal.Quotient.lift _ W.toMvCoordinateRing.toRingHom fun a ha ↦ by
+      obtain ⟨b, rfl⟩ := Ideal.mem_span_singleton'.mp ha
+      simp [W.toMvCoordinateRing_polynomial]
   refine ⟨ψ p, ψ q, ?_⟩
   have := congrArg ψ h
   rw [map_add, map_mul, map_mul, map_one] at this
   rw [← this]
   congr 2
-  · exact ((AdjoinRoot.lift_mk _ _).trans W.toMvCoordinateRing_polynomialY).symm
-  · exact ((AdjoinRoot.lift_mk _ _).trans W.toMvCoordinateRing_neg_polynomialX).symm
+  · exact ((Ideal.Quotient.lift_mk _ _ _).trans W.toMvCoordinateRing_polynomialY).symm
+  · exact ((Ideal.Quotient.lift_mk _ _ _).trans W.toMvCoordinateRing_neg_polynomialX).symm
 
 /-- The `A_W`-linear map `A_W² → A_W`, `(b₁, b₂) ↦ b₁ P_W + b₂ Q_W`. -/
 noncomputable def pairingPQ :
@@ -141,11 +140,11 @@ theorem pairingPQ_apply (b : Fin 2 → W.MvCoordinateRing) :
   simp [pairingPQ, Fintype.linearCombination_apply, Fin.sum_univ_two]
 
 theorem ker_kaehlerCoordinates_le_ker_pairingPQ :
-    LinearMap.ker (kaehlerCoordinates F W.mvPolynomial) ≤ LinearMap.ker W.pairingPQ := by
-  rw [(kaehlerDifferential_planeCurve F W.mvPolynomial).2, Submodule.span_le,
+    LinearMap.ker (kaehlerCoordinates F W.affineMvPolynomial) ≤ LinearMap.ker W.pairingPQ := by
+  rw [(kaehlerDifferential_planeCurve F W.affineMvPolynomial).2, Submodule.span_le,
     Set.singleton_subset_iff, SetLike.mem_coe, LinearMap.mem_ker, pairingPQ_apply]
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, pderiv_zero_mvPolynomial,
-    pderiv_one_mvPolynomial, map_neg]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, pderiv_zero_affineMvPolynomial,
+    pderiv_one_affineMvPolynomial, map_neg]
   change -(W.mvMk W.mvPolynomialQ) * W.mvMk W.mvPolynomialP +
     W.mvMk W.mvPolynomialP * W.mvMk W.mvPolynomialQ = 0
   ring
@@ -154,21 +153,21 @@ theorem ker_kaehlerCoordinates_le_ker_pairingPQ :
 `(b₁, b₂) ↦ b₁ P_W + b₂ Q_W` through the presentation of `Ω¹_{A_W/F}`. -/
 noncomputable def kaehlerToCoordinateRing :
     KaehlerDifferential F W.MvCoordinateRing →ₗ[W.MvCoordinateRing] W.MvCoordinateRing :=
-  ((LinearMap.ker (kaehlerCoordinates F W.mvPolynomial)).liftQ W.pairingPQ
+  ((LinearMap.ker (kaehlerCoordinates F W.affineMvPolynomial)).liftQ W.pairingPQ
       W.ker_kaehlerCoordinates_le_ker_pairingPQ).comp
-    ((kaehlerCoordinates F W.mvPolynomial).quotKerEquivOfSurjective
-      (quotientSpanSingleton_kaehler_surjective F W.mvPolynomial)).symm.toLinearMap
+    ((kaehlerCoordinates F W.affineMvPolynomial).quotKerEquivOfSurjective
+      (quotientSpanSingleton_kaehler_surjective F W.affineMvPolynomial)).symm.toLinearMap
 
 theorem kaehlerToCoordinateRing_kaehlerCoordinates (b : Fin 2 → W.MvCoordinateRing) :
-    W.kaehlerToCoordinateRing (kaehlerCoordinates F W.mvPolynomial b) = W.pairingPQ b := by
+    W.kaehlerToCoordinateRing (kaehlerCoordinates F W.affineMvPolynomial b) = W.pairingPQ b := by
   rw [kaehlerToCoordinateRing, LinearMap.comp_apply, LinearEquiv.coe_coe,
     ← LinearMap.quotKerEquivOfSurjective_apply_mk _
-      (quotientSpanSingleton_kaehler_surjective F W.mvPolynomial),
+      (quotientSpanSingleton_kaehler_surjective F W.affineMvPolynomial),
     LinearEquiv.symm_apply_apply, Submodule.liftQ_apply]
 
 theorem kaehlerToCoordinateRing_D_X_zero :
     W.kaehlerToCoordinateRing (D F _ (W.mvMk (X 0))) = W.mvMk W.mvPolynomialP := by
-  have : kaehlerCoordinates F W.mvPolynomial (Pi.single 0 1) = D F _ (W.mvMk (X 0)) := by
+  have : kaehlerCoordinates F W.affineMvPolynomial (Pi.single 0 1) = D F _ (W.mvMk (X 0)) := by
     rw [kaehlerCoordinates, Fintype.linearCombination_apply_single]
     exact one_smul W.MvCoordinateRing (D F W.MvCoordinateRing (W.mvMk (X 0)))
   rw [← this, kaehlerToCoordinateRing_kaehlerCoordinates, pairingPQ_apply]
@@ -176,7 +175,7 @@ theorem kaehlerToCoordinateRing_D_X_zero :
 
 theorem kaehlerToCoordinateRing_D_X_one :
     W.kaehlerToCoordinateRing (D F _ (W.mvMk (X 1))) = W.mvMk W.mvPolynomialQ := by
-  have : kaehlerCoordinates F W.mvPolynomial (Pi.single 1 1) = D F _ (W.mvMk (X 1)) := by
+  have : kaehlerCoordinates F W.affineMvPolynomial (Pi.single 1 1) = D F _ (W.mvMk (X 1)) := by
     rw [kaehlerCoordinates, Fintype.linearCombination_apply_single]
     exact one_smul W.MvCoordinateRing (D F W.MvCoordinateRing (W.mvMk (X 1)))
   rw [← this, kaehlerToCoordinateRing_kaehlerCoordinates, pairingPQ_apply]
@@ -185,27 +184,28 @@ theorem kaehlerToCoordinateRing_D_X_one :
 theorem kaehlerToCoordinateRing_bijective (hΔ : W.Δ ≠ 0) :
     Function.Bijective W.kaehlerToCoordinateRing := by
   obtain ⟨p, q, hpq⟩ := W.exists_mul_add_mul_eq_one_of_Δ_ne_zero hΔ
-  have hsurj := quotientSpanSingleton_kaehler_surjective F W.mvPolynomial
-  refine ⟨?_, fun b ↦ ⟨kaehlerCoordinates F W.mvPolynomial ![b * p, b * q], ?_⟩⟩
+  have hsurj := quotientSpanSingleton_kaehler_surjective F W.affineMvPolynomial
+  refine ⟨?_, fun b ↦ ⟨kaehlerCoordinates F W.affineMvPolynomial ![b * p, b * q], ?_⟩⟩
   · rw [← LinearMap.ker_eq_bot, eq_bot_iff]
     intro w hw
     obtain ⟨v, rfl⟩ := hsurj w
     rw [LinearMap.mem_ker, kaehlerToCoordinateRing_kaehlerCoordinates, pairingPQ_apply] at hw
     -- `v = c (-Q, P)` with `c = v₁ p - v₀ q`, so `v` lies in the kernel of the presentation.
     have hv : v = (v 1 * p - v 0 * q) •
-        (fun i ↦ Ideal.Quotient.mk (Ideal.span {W.mvPolynomial}) (pderiv i W.mvPolynomial)) := by
+        (fun i ↦ Ideal.Quotient.mk (Ideal.span {W.affineMvPolynomial})
+          (pderiv i W.affineMvPolynomial)) := by
       funext i
       fin_cases i
-      · simp only [Fin.zero_eta, Fin.isValue, Pi.smul_apply, pderiv_zero_mvPolynomial, map_neg,
-          smul_eq_mul]
+      · simp only [Fin.zero_eta, Fin.isValue, Pi.smul_apply, pderiv_zero_affineMvPolynomial,
+          map_neg, smul_eq_mul]
         change v 0 = (v 1 * p - v 0 * q) * -(W.mvMk W.mvPolynomialQ)
         linear_combination (-v 0) * hpq + p * hw
-      · simp only [Fin.mk_one, Fin.isValue, Pi.smul_apply, pderiv_one_mvPolynomial,
+      · simp only [Fin.mk_one, Fin.isValue, Pi.smul_apply, pderiv_one_affineMvPolynomial,
           smul_eq_mul]
         change v 1 = (v 1 * p - v 0 * q) * W.mvMk W.mvPolynomialP
         linear_combination (-v 1) * hpq + q * hw
-    have : v ∈ LinearMap.ker (kaehlerCoordinates F W.mvPolynomial) := by
-      rw [(kaehlerDifferential_planeCurve F W.mvPolynomial).2, hv]
+    have : v ∈ LinearMap.ker (kaehlerCoordinates F W.affineMvPolynomial) := by
+      rw [(kaehlerDifferential_planeCurve F W.affineMvPolynomial).2, hv]
       refine Submodule.smul_mem _ _ (Submodule.subset_span ?_)
       funext i
       fin_cases i <;> rfl
@@ -356,36 +356,20 @@ theorem variableChangeSubstInv_comp :
       (MvPolynomial.C (C.u : F) * MvPolynomial.C ((C.u⁻¹ : Fˣ) : F) + 1) * MvPolynomial.C C.s *
         (X 0 - MvPolynomial.C C.r)) * hab
 
-/-- The ring homomorphism `F[X][Y] → F[x, y]`, `X ↦ x`, `Y ↦ y`. -/
-noncomputable def bivariateToMvPolynomial : F[X][Y] →+* MvPolynomial (Fin 2) F :=
-  Polynomial.eval₂RingHom (Polynomial.eval₂RingHom MvPolynomial.C (X 0)) (X 1)
-
-@[simp] theorem bivariateToMvPolynomial_CC (a : F) :
-    bivariateToMvPolynomial (Polynomial.C (Polynomial.C a)) = MvPolynomial.C a := by
-  simp [bivariateToMvPolynomial]
-
-@[simp] theorem bivariateToMvPolynomial_CX :
-    bivariateToMvPolynomial (Polynomial.C (Polynomial.X : Polynomial F)) =
-      (X 0 : MvPolynomial (Fin 2) F) := by
-  simp [bivariateToMvPolynomial]
-
-@[simp] theorem bivariateToMvPolynomial_Y :
-    bivariateToMvPolynomial (Y : F[X][Y]) = (X 1 : MvPolynomial (Fin 2) F) := by
-  simp [bivariateToMvPolynomial]
-
 /-- **The Weierstrass polynomial after a variable change**, in `F[x, y]`:
 `f_W(u² x + r, u³ y + u² s x + t) = u⁶ f_{C • W}(x, y)`. This is
 `WeierstrassCurve.Affine.evalEval_polynomial_variableChange`, carried from `F[X][Y]` to
 `F[x, y]`. -/
-theorem variableChangeSubst_mvPolynomial :
-    variableChangeSubst C W.mvPolynomial =
-      MvPolynomial.C ((C.u : F) ^ 6) * (C • W).mvPolynomial := by
-  have h := congrArg bivariateToMvPolynomial (Affine.evalEval_polynomial_variableChange W C)
+theorem variableChangeSubst_affineMvPolynomial :
+    variableChangeSubst C W.affineMvPolynomial =
+      MvPolynomial.C ((C.u : F) ^ 6) * (C • W).affineMvPolynomial := by
+  have h := congrArg (Polynomial.Bivariate.equivMvPolynomial F)
+    (Affine.evalEval_polynomial_variableChange W C)
   rw [Affine.evalEval_polynomial, Affine.polynomial] at h
   simp only [map_a₁, map_a₂, map_a₃, map_a₄, map_a₆, RingHom.coe_comp, Function.comp_apply,
-    map_add, map_sub, map_mul, map_pow, bivariateToMvPolynomial_CC, bivariateToMvPolynomial_CX,
-    bivariateToMvPolynomial_Y] at h
-  simp only [variableChangeSubst, mvPolynomial, map_add, map_sub, map_mul, map_pow, aeval_X,
+    map_add, map_sub, map_mul, map_pow, Polynomial.Bivariate.equivMvPolynomial_C_C,
+    Polynomial.Bivariate.equivMvPolynomial_C_X, Polynomial.Bivariate.equivMvPolynomial_X] at h
+  simp only [variableChangeSubst, affineMvPolynomial, map_add, map_sub, map_mul, map_pow, aeval_X,
     aeval_C, MvPolynomial.algebraMap_eq, Matrix.cons_val_zero, Matrix.cons_val_one]
   linear_combination h
 
@@ -400,14 +384,15 @@ theorem variableChangeSubst_mvPolynomialP_Q :
         MvPolynomial.C ((C.u : F) ^ 4) * (C • W).mvPolynomialQ +
           MvPolynomial.C (C.s * (C.u : F) ^ 3) * (C • W).mvPolynomialP := by
   obtain ⟨h₁, h₂⟩ := Affine.evalEval_partials_variableChange W C
-  replace h₁ := congrArg bivariateToMvPolynomial h₁
-  replace h₂ := congrArg bivariateToMvPolynomial h₂
+  replace h₁ := congrArg (Polynomial.Bivariate.equivMvPolynomial F) h₁
+  replace h₂ := congrArg (Polynomial.Bivariate.equivMvPolynomial F) h₂
   rw [Affine.evalEval_polynomialY, Affine.polynomialY] at h₁
   rw [Polynomial.evalEval_neg, Affine.evalEval_polynomialX, Affine.polynomialX,
     Affine.polynomialY] at h₂
   simp only [map_a₁, map_a₂, map_a₃, map_a₄, RingHom.coe_comp, Function.comp_apply,
-    map_add, map_sub, map_mul, map_pow, map_neg, map_ofNat, bivariateToMvPolynomial_CC,
-    bivariateToMvPolynomial_CX, bivariateToMvPolynomial_Y] at h₁ h₂
+    map_add, map_sub, map_mul, map_pow, map_neg, map_ofNat,
+    Polynomial.Bivariate.equivMvPolynomial_C_C, Polynomial.Bivariate.equivMvPolynomial_C_X,
+    Polynomial.Bivariate.equivMvPolynomial_X] at h₁ h₂
   constructor
   · simp only [variableChangeSubst, mvPolynomialP, map_add, map_mul, map_pow, map_ofNat,
       aeval_X, aeval_C, MvPolynomial.algebraMap_eq, Matrix.cons_val_zero, Matrix.cons_val_one]
@@ -423,18 +408,19 @@ noncomputable def variableChangeSubstEquiv :
   AlgEquiv.ofAlgHom (variableChangeSubst C) (variableChangeSubstInv C)
     (variableChangeSubst_comp_inv C) (variableChangeSubstInv_comp C)
 
-theorem span_mvPolynomial_variableChange :
-    Ideal.span {(C • W).mvPolynomial} =
-      (Ideal.span {W.mvPolynomial}).map (variableChangeSubstEquiv C) := by
+theorem span_affineMvPolynomial_variableChange :
+    Ideal.span {(C • W).affineMvPolynomial} =
+      (Ideal.span {W.affineMvPolynomial}).map (variableChangeSubstEquiv C) := by
   rw [Ideal.map_span, Set.image_singleton]
-  change _ = Ideal.span {variableChangeSubst C W.mvPolynomial}
-  rw [variableChangeSubst_mvPolynomial, Ideal.span_singleton_mul_left_unit]
+  change _ = Ideal.span {variableChangeSubst C W.affineMvPolynomial}
+  rw [variableChangeSubst_affineMvPolynomial, Ideal.span_singleton_mul_left_unit]
   have h := (Units.isUnit (C.u ^ 6)).map (MvPolynomial.C : F →+* MvPolynomial (Fin 2) F)
   rwa [Units.val_pow_eq_pow_val] at h
 
 /-- The isomorphism `A_W ≅ A_{C • W}` induced by the substitution of a variable change. -/
 noncomputable def variableChangeEquiv : W.MvCoordinateRing ≃ₐ[F] (C • W).MvCoordinateRing :=
-  Ideal.quotientEquivAlg _ _ (variableChangeSubstEquiv C) (W.span_mvPolynomial_variableChange C)
+  Ideal.quotientEquivAlg _ _ (variableChangeSubstEquiv C)
+    (W.span_affineMvPolynomial_variableChange C)
 
 theorem variableChangeEquiv_mvMk (p : MvPolynomial (Fin 2) F) :
     W.variableChangeEquiv C (W.mvMk p) = (C • W).mvMk (variableChangeSubst C p) :=
