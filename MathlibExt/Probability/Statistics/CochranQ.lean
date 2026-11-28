@@ -53,6 +53,40 @@ variances `v`, where `w = inverseVarianceWeights v`. -/
 noncomputable def cochranQ (v X : Fin k → ℝ) : ℝ :=
   ∑ i, (v i)⁻¹ * (X i - ∑ j, inverseVarianceWeights v j * X j) ^ 2
 
+/-- **Cochran's `Q` about an arbitrary center.** For positive sampling variances, subtract the
+squared weighted residual sum divided by the total inverse weight from the weighted sum of squared
+residuals about any center `m`. -/
+theorem cochranQ_eq_sum_sq_sub {v : Fin k → ℝ} (hv : ∀ i, 0 < v i) (m : ℝ)
+    (X : Fin k → ℝ) :
+    cochranQ v X = (∑ i, (v i)⁻¹ * (X i - m) ^ 2) -
+      (∑ i, (v i)⁻¹ * (X i - m)) ^ 2 / ∑ i, (v i)⁻¹ := by
+  rcases Nat.eq_zero_or_pos k with rfl | hk
+  · simp [cochranQ]
+  let w : Fin k → ℝ := fun i => (v i)⁻¹
+  let S := ∑ i, w i
+  let T := ∑ i, w i * (X i - m)
+  have hS : 0 < S := Finset.sum_pos (fun i _ => inv_pos.mpr (hv i))
+    ⟨⟨0, hk⟩, Finset.mem_univ _⟩
+  have hmean : (∑ i, inverseVarianceWeights v i * X i) = m + T / S := by
+    rw [sum_inverseVarianceWeights_mul]
+    change (∑ i, w i * X i) / S = m + T / S
+    have hT : T = (∑ i, w i * X i) - S * m := by
+      simp only [T, mul_sub, Finset.sum_sub_distrib, ← Finset.sum_mul, S]
+    rw [hT]
+    field_simp
+    ring
+  rw [cochranQ, hmean]
+  change (∑ i, w i * (X i - (m + T / S)) ^ 2) =
+    (∑ i, w i * (X i - m) ^ 2) - T ^ 2 / S
+  calc
+    _ = ∑ i, (w i * (X i - m) ^ 2 - (w i * (X i - m)) * (2 * (T / S)) +
+        w i * (T / S) ^ 2) := Finset.sum_congr rfl fun i _ => by ring
+    _ = _ := by
+      rw [Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.sum_mul, ← Finset.sum_mul]
+      change (∑ i, w i * (X i - m) ^ 2) - T * (2 * (T / S)) + S * (T / S) ^ 2 = _
+      field_simp
+      ring
+
 /-- Algebraic core of Cochran's theorem for `Q`: if `Xᵢ = θ + √vᵢ zᵢ` with `vᵢ > 0`, then `Q` is
 the squared distance from `z` to the line spanned by `a = (vᵢ^{-1/2})ᵢ`, i.e. the squared norm
 of the projection of `z` onto the orthogonal complement of that line. -/
@@ -74,20 +108,16 @@ theorem cochranQ_eq_norm_sq {v : Fin k → ℝ} (hv : ∀ i, 0 < v i) (θ : ℝ)
   have hinner : ⟪(WithLp.toLp 2 fun i => (√(v i))⁻¹ : EuclideanSpace ℝ (Fin k)), z⟫ =
       ∑ j, (√(v j))⁻¹ * z j := by
     simp [PiLp.inner_apply, mul_comm]
-  have hw : ∀ j, inverseVarianceWeights v j * √(v j) = (√(v j))⁻¹ / S := by
-    intro j
-    have := (hspos j).ne'
-    simp only [inverseVarianceWeights, ← hSdef]
-    rw [show (v j)⁻¹ = (√(v j) ^ 2)⁻¹ by rw [hsq]]
-    field_simp
   have hmean : ∑ j, inverseVarianceWeights v j * (θ + √(v j) * z j) =
       θ + (∑ j, (√(v j))⁻¹ * z j) / S := by
-    simp_rw [mul_add, Finset.sum_add_distrib, ← Finset.sum_mul, sum_inverseVarianceWeights hv hk,
-      one_mul, Finset.sum_div]
-    congr 1
-    refine Finset.sum_congr rfl fun j _ => ?_
-    rw [← mul_assoc, hw j]
-    ring
+    rw [sum_inverseVarianceWeights_mul]
+    have hroot (j : Fin k) : (v j)⁻¹ * √(v j) = (√(v j))⁻¹ := by
+      calc
+        _ = (√(v j) ^ 2)⁻¹ * √(v j) := by rw [hsq]
+        _ = _ := by field_simp [(hspos j).ne']
+    simp only [mul_add, Finset.sum_add_distrib, ← Finset.sum_mul, div_eq_mul_inv, ← mul_assoc,
+      hroot, ← hSdef]
+    field_simp
   rw [Submodule.starProjection_orthogonal_val, Submodule.starProjection_singleton, ha2, hinner,
     EuclideanSpace.norm_sq_eq, cochranQ, hmean]
   refine Finset.sum_congr rfl fun i _ => ?_

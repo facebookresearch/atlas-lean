@@ -43,20 +43,6 @@ open MeasureTheory ProbabilityTheory MathlibExt.Probability.Statistics.MetaAnaly
 
 variable {k : ℕ}
 
-/-- **Expectation of Cochran's `Q`.** Let `μ` be a
-probability measure, `k ≥ 2`, `v_i > 0` known sampling variances, `Δ² ≥ 0`, and
-`y_i = m + δ_i + e_i` where `δ, e` satisfy the random-effects model assumptions (square
-integrable, mean `0`, `Var δ_i = Δ²`, `Var e_i = v_i`, distinct deviations uncorrelated). Then
-`S₁ - S₂ / S₁ > 0` and `E[cochranQ v y] = (k - 1) + Δ² (S₁ - S₂ / S₁)`, with `S_r = ∑ (v_i⁻¹)^r`.
-
-Sources: R. DerSimonian and N. Laird, "Meta-analysis in clinical trials", Control. Clin. Trials 7
-(1986) 177–188, p. 182 (the moment equation). -/
-public theorem_wanted integral_cochranQ {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    [IsProbabilityMeasure μ] (hk : 2 ≤ k) (v : Fin k → ℝ) (hv : ∀ i, 0 < v i) (Δsq m : ℝ)
-    (hΔ : 0 ≤ Δsq) (δ e : Fin k → Ω → ℝ) (hmodel : RandomEffectsModel μ δ e v Δsq) :
-    0 < weightScale v ∧
-      ∫ ω, cochranQ v (fun i => m + δ i ω + e i ω) ∂μ = (k - 1) + Δsq * weightScale v
-
 /-- **Bias of the moment estimators.** Under the hypotheses
 of `integral_cochranQ` (probability measure `μ`, `k ≥ 2`, sampling variances `v_i > 0`,
 `Δ² ≥ 0`, `y_i = m + δ_i + e_i` with the random-effects model assumptions), the untruncated
