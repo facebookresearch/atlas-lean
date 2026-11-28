@@ -15,7 +15,7 @@ import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Data.Nat.GCD.BigOperators
 import Mathlib.Tactic.Ring
-import all MathlibExt.NumberTheory.HelouTerjanianLargePrime
+import MathlibExt.NumberTheory.HelouTerjanianBlockProduct
 
 /-!
 # The Helou–Terjanian congruence at three
@@ -40,17 +40,18 @@ by `9 * a * (2 * j + a + 1)`. The block product identity then gives the congruen
   Theory 128 (2008), pp. 475–499, Corollary on p. 490 (the result cited by Zhang).
 * Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial Coefficients*, INTEGERS
   26 (2026), Article A32, pp. 1–28, Lemma 6 (the quotient formula for the block products).
-* `MathlibExt.NumberTheory.HelouTerjanianLargePrime`: the proof reuses `blockProd` and
-  `choose_mul_prod_blockProd` and specializes the congruence argument of `choose_mul_modEq_add`
-  and `choose_mul_prime_modEq_of_five_le` to the two factors at three.
+* `MathlibExt.NumberTheory.HelouTerjanianBlockProduct`: the proof uses the shared `blockProd`,
+  `blockProd_eq_prod`, and `choose_mul_prod_blockProd`.
+* `MathlibExt.NumberTheory.HelouTerjanianLargePrime`: the proof specializes the congruence argument
+  of `choose_mul_modEq_add` and `choose_mul_prime_modEq_of_five_le` to the two factors at three.
 -/
 
 namespace MetaMathlibExt
 
-open choose_mul_prime_modEq_of_five_le (blockProd choose_mul_prod_blockProd)
+open HelouTerjanian (blockProd blockProd_eq_prod choose_mul_prod_blockProd)
 
 private theorem blockProd_three_eq (j : ℕ) : blockProd 3 j = 2 + 3 ^ 2 * j * (j + 1) := by
-  norm_num [blockProd, Finset.prod_Ico_eq_prod_range, Finset.prod_range_succ]
+  norm_num [blockProd_eq_prod, Finset.prod_Ico_eq_prod_range, Finset.prod_range_succ]
   ring
 
 -- First use only the valuation of the complementary index `a`.

@@ -16,13 +16,19 @@ import MathlibExt.NumberTheory.HelouTerjanianThree
 
 open MetaMathlibExt
 
--- The smallest admissible pair attains the bound.
-example : (6 : ℕ).choose 3 ≡ 2 [MOD 9] ∧ ¬ (6 : ℕ).choose 3 ≡ 2 [MOD 27] := by
-  refine ⟨?_, by decide⟩
-  convert choose_three_mul_modEq 2 1 (by decide) (by decide) using 1 <;> decide +kernel
+-- The smallest admissible pair attains the bound, by direct computation.
+example : (6 : ℕ).choose 3 ≡ 2 [MOD 9] ∧ ¬ (6 : ℕ).choose 3 ≡ 2 [MOD 27] := by decide
 
--- Each complementary index in turn supplies the larger valuation, and `10.choose 3 = 120`
--- contributes one more power of three.
+-- For the two complementary indices, the larger index valuation is one and the binomial
+-- coefficient contributes one more power of three. Check both scaled coefficients directly.
+example : padicValNat 3 3 = 1 ∧ padicValNat 3 7 = 0 ∧ padicValNat 3 ((10 : ℕ).choose 3) = 1 :=
+  by decide +kernel
+
+example : (30 : ℕ).choose 9 ≡ 120 [MOD 81] ∧ (30 : ℕ).choose 21 ≡ 120 [MOD 81] := by
+  simp only [Nat.choose_eq_fast_choose]
+  decide +kernel
+
+-- The public theorem specializes to the computed modulus with either index supplying the maximum.
 example : (30 : ℕ).choose 9 ≡ 120 [MOD 81] := by
   convert choose_three_mul_modEq 10 3 (by decide) (by decide) using 1 <;> decide +kernel
 
