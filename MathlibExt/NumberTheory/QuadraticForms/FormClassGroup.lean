@@ -379,8 +379,8 @@ Theorem 1.12(c), p. 28. -/
 instance [h4 : Fact (D % 4 = 0 ∨ D % 4 = 1)] : One (FormClass D) :=
   ⟨mk 1 (D % 2) ((D % 2 - D) / 4) (discrim_one_form h4.out) (gcd_one_form _ _)⟩
 
-/-- The identity class is the class of $(1, \varepsilon, (\varepsilon - D)/4)$,
-$\varepsilon = D \bmod 2$. -/
+/-- For $D \equiv 0$ or $1 \pmod 4$, the identity class is the class of
+$(1, \varepsilon, (\varepsilon - D)/4)$, $\varepsilon = D \bmod 2$. -/
 theorem one_def [h4 : Fact (D % 4 = 0 ∨ D % 4 = 1)] :
     (1 : FormClass D) = mk 1 (D % 2) ((D % 2 - D) / 4) (discrim_one_form h4.out)
       (gcd_one_form _ _) := rfl
@@ -460,8 +460,9 @@ theorem mk_mul_mk_neg [Fact (¬ IsSquare D)] [Fact (D % 4 = 0 ∨ D % 4 = 1)] {a
     ← mk_one_eq_one (hd := hd₁) (hp := gcd_one_form _ _), mk_eq_mk_iff]
   exact properlyEquivalent_swap (a * c) b 1
 
-/-- **Commutativity.** The product of classes is commutative: the composition of
-$(a_2, b, c_2)$ and $(a_1, b, c_1)$ is the composition of $(a_1, b, c_1)$ and $(a_2, b, c_2)$.
+/-- **Commutativity.** For $D$ not a square, the product of classes is commutative: the
+composition of $(a_2, b, c_2)$ and $(a_1, b, c_1)$ is the composition of $(a_1, b, c_1)$ and
+$(a_2, b, c_2)$.
 
 Source: Anthony W. Knapp, *Advanced Algebra*, digital second edition, 2016, Chapter I, §4, the
 proof of Theorem 1.12(c), p. 30 ("commutativity of multiplication is clear"). -/
