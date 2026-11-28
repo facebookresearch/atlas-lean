@@ -1,0 +1,28 @@
+# Word equations with length and regular constraints
+
+Restricted classes of word equations, their extensions by length, regular and counting constraints, and the exact complexity and decidability boundaries between them.
+
+- [Word equations with length and regular constraints](length-and-regular-constraints.md)
+- [Quadratic, regular and regular-ordered word equations](restricted-classes-of-word-equations.md)
+- [Commuting words are powers of a common word](commuting-words-are-powers-of-a-common-word.md)
+- [Nielsen transformations of quadratic word equations](nielsen-transformations.md)
+- [Nielsen transformations decide quadratic word equations](nielsen-transformations-solve-quadratic-equations.md)
+- [Minimal solutions of regular-ordered equations are short](regular-ordered-minimal-solutions-are-short.md)
+- [Regular-ordered word equations are NP-complete](regular-ordered-equations-are-np-complete.md)
+- [Nielsen graphs of regular equations have polynomial diameter](nielsen-graphs-of-regular-equations-diameter.md)
+- [Regular word equations are NP-complete](regular-word-equations-are-np-complete.md)
+- [k-ordered quadratic word equations are NP-complete](k-ordered-quadratic-equations-are-np-complete.md)
+- [Quadratic equations with boundedly many variables are in P](quadratic-equations-with-few-variables-in-p.md)
+- [Non-cross equations with one repeated variable are in P](non-cross-one-repeated-variable-in-p.md)
+- [One-variable word equations in near-linear time](one-variable-equations-in-near-linear-time.md)
+- [One-variable equations have at most three or infinitely many solutions](one-variable-solution-sets-at-most-three.md)
+- [Quadratic equations with infinitely many solutions have unbounded exponent](quadratic-infinite-solutions-unbounded-exponent.md)
+- [Regular-ordered equations with regular constraints are PSPACE-complete](regular-ordered-with-regular-constraints-pspace.md)
+- [A quadratic equation whose length set is not Presburger-definable](quadratic-length-abstraction-not-presburger.md)
+- [Regular-ordered equations with length constraints are decidable](regular-ordered-with-length-is-decidable.md)
+- [One-terminal word equations with length constraints are NP-complete](one-terminal-equations-with-length-np.md)
+- [Negation reduces length constraints to one-terminal equations](negation-reduces-length-to-one-terminal.md)
+- [Letter-counting constraints make word equations undecidable](letter-counting-constraints-undecidable.md)
+- [Word equations with counting inequations are decidable](counting-inequations-are-decidable.md)
+- [Word equations with visibly pushdown constraints are undecidable](visibly-pushdown-constraints-undecidable.md)
+- [Expressiveness of word equations with length and regular constraints](expressiveness-hierarchy-of-string-logics.md)

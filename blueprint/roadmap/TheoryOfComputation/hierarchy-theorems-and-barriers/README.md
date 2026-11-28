@@ -12,3 +12,4 @@ Time and space hierarchy theorems and diagonalization against time-bounded machi
 - [Forrelation and the Oracle Separation of BQP and PH](forrelation-and-bqp-versus-ph/README.md)
 - [Learning algorithms from natural proofs](learning-algorithms-from-natural-proofs/README.md)
 - [Learning versus pseudorandomness](learning-versus-pseudorandomness/README.md)
+- [Meta-complexity barriers and unprovability](meta-complexity-barriers-and-unprovability/README.md)
