@@ -60,4 +60,49 @@ example : IsEuclideanRamsey (fun i : Fin 2 ↦ EuclideanSpace.single i (1 : ℝ)
   · intro i
     fin_cases i <;> simp [j, hcolor]
 
+-- The empty family has no distances to check, even in ambient dimension zero.
+example (a : Fin 0 → EuclideanSpace ℝ (Fin 0)) : EuclideanGeometry.Cospherical (Set.range a) := by
+  refine (EuclideanGeometry.cospherical_def _).2 ⟨0, 0, ?_⟩
+  rintro _ ⟨i, rfl⟩
+  exact Fin.elim0 i
+
+-- A singleton has itself as a center with radius zero.
+example (a : Fin 1 → EuclideanSpace ℝ (Fin 0)) : EuclideanGeometry.Cospherical (Set.range a) := by
+  refine (EuclideanGeometry.cospherical_def _).2 ⟨a 0, 0, ?_⟩
+  rintro _ ⟨i, rfl⟩
+  fin_cases i
+  exact dist_self _
+
+private noncomputable def e₀ : EuclideanSpace ℝ (Fin 2) := EuclideanSpace.single 0 1
+
+private theorem norm_e₀ : ‖e₀‖ = 1 :=
+  (EuclideanSpace.orthonormal_single (𝕜 := ℝ) (ι := Fin 2)).norm_eq_one 0
+
+-- Two opposite points on a coordinate axis are on the unit circle despite not spanning the plane.
+example : EuclideanGeometry.Cospherical (Set.range (![e₀, -e₀] : Fin 2 → _)) := by
+  refine (EuclideanGeometry.cospherical_def _).2 ⟨0, 1, ?_⟩
+  rintro _ ⟨i, rfl⟩
+  fin_cases i <;> simp [dist_zero_right, norm_e₀]
+
+-- Check the geometric obstruction directly, then use the public theorem to rule out Ramsey.
+example : ¬ IsEuclideanRamsey (![0, e₀, -e₀] : Fin 3 → _) := by
+  let a : Fin 3 → EuclideanSpace ℝ (Fin 2) := ![0, e₀, -e₀]
+  have hnonspherical : ¬ EuclideanGeometry.Cospherical (Set.range a) := by
+    intro h
+    obtain ⟨z, r, hr⟩ := (EuclideanGeometry.cospherical_def _).1 h
+    have heq (i : Fin 3) : dist (a i) z = r := hr (a i) (Set.mem_range_self i)
+    have h₀ : ‖z‖ = r := by simpa [a, dist_comm (0 : EuclideanSpace ℝ (Fin 2)) z] using heq 0
+    have h₁ : ‖e₀ - z‖ = r := by simpa [a, dist_eq_norm] using heq 1
+    have h₂ : ‖-e₀ - z‖ = r := by simpa [a, dist_eq_norm] using heq 2
+    have hp : ‖e₀ - z‖ ^ 2 + ‖-e₀ - z‖ ^ 2 = 2 * ‖e₀‖ ^ 2 + 2 * ‖z‖ ^ 2 := by
+      rw [norm_sub_sq_real, norm_sub_sq_real, norm_neg, inner_neg_left]
+      ring
+    rw [h₀, h₁, h₂, norm_e₀] at hp
+    linarith
+  have hinj : Function.Injective a := by
+    intro i j hij
+    have hx := congrArg (fun p : EuclideanSpace ℝ (Fin 2) ↦ p 0) hij
+    fin_cases i <;> fin_cases j <;> first | rfl | norm_num [a, e₀, PiLp.single_apply] at hx
+  exact fun h ↦ hnonspherical (euclideanRamsey_configurations_cospherical a hinj h)
+
 end EuclideanRamseyTests
