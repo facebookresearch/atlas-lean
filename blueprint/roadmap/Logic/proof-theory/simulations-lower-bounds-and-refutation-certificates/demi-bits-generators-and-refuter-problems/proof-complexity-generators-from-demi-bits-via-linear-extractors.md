@@ -29,7 +29,7 @@ In the same paper, $1/2$-secure demi-bits generators $G:\{0,1\}^n\to\{0,1\}^{100
 
 ## Proof depends on
 
-None.
+- [Leftover hash lemma as a strong extractor](../../../../TheoryOfComputation/pseudorandomness-and-one-way-functions/derandomization/leftover-hash-lemma-as-a-strong-extractor.md)
 
 ## Sources
 

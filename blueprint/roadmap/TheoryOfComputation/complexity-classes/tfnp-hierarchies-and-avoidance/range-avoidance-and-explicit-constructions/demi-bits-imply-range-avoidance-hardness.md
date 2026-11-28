@@ -30,7 +30,7 @@ Earlier hardness results for range avoidance needed subexponentially secure indi
 
 ## Proof depends on
 
-None.
+- [Leftover hash lemma as a strong extractor](../../../pseudorandomness-and-one-way-functions/derandomization/leftover-hash-lemma-as-a-strong-extractor.md)
 
 ## Sources
 
