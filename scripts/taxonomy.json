@@ -13580,6 +13580,7 @@
   "MathlibExt/NumberTheory/GesselWord": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Gessel words"},
   "MathlibExt/NumberTheory/GibonacciCassini": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/GibonacciCompositionSum": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Toeplitz–Hessenberg determinants of recurrences"},
+  "MathlibExt/NumberTheory/HoradamCompositionSumRecurrence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Toeplitz–Hessenberg determinants of recurrences"},
   "MathlibExt/NumberTheory/GibonacciNumber": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/GibonacciPowerSeries": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
   "MathlibExt/NumberTheory/GibonacciPolynomialPowerSums": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Sums of powers of gibonacci polynomials"},
