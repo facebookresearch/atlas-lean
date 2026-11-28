@@ -14,6 +14,15 @@ public import MathlibExt.AlgebraicGeometry.EllipticCurve.ProjectiveSchemeVariabl
 
 open AlgebraicGeometry CategoryTheory MvPolynomial
 
+#check @HomogeneousLocalization.Away.lift
+#check @HomogeneousLocalization.Away.lift_mk_mul
+#check @HomogeneousLocalization.Away.lift_algebraMap
+#check @HomogeneousLocalization.Away.lift_congr
+#check @HomogeneousLocalization.Away.lift_comp_awayMap
+#check @HomogeneousLocalization.Away.lift_comp_map
+#check @HomogeneousLocalization.Away.comp_lift
+#check @AlgebraicGeometry.Proj.specMap_awayLift_awayι
+
 namespace WeierstrassCurve
 
 #check @projectiveSubst

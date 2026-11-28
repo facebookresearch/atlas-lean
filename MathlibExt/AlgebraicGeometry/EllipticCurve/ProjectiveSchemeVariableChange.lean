@@ -43,6 +43,10 @@ charts `Z ≠ 0` to the affine variable change `A_W → A_{C • W}`, `x ↦ u²
   `WeierstrassCurve.projectiveSchemeVariableChangeIso_hom_projectiveSchemeToSpec`,
   `WeierstrassCurve.zeroSection_comp_projectiveSchemeVariableChangeIso_hom` and
   `WeierstrassCurve.affineChart_comp_projectiveSchemeVariableChangeIso_hom`.
+* `HomogeneousLocalization.Away.lift`: the ring map `A_(s) → T` of a ring map `ρ : A → T` with
+  `ρ s` a unit, with its compatibilities (`lift_mk_mul`, `lift_algebraMap`, `lift_comp_awayMap`,
+  `lift_comp_map`, `comp_lift`), and `AlgebraicGeometry.Proj.specMap_awayLift_awayι`: the
+  resulting `T`-point of `Proj` does not depend on the standard open used.
 
 ## References
 
@@ -362,14 +366,19 @@ section AwayLift
 variable {A σ : Type u} [CommRing A] [SetLike σ A] [AddSubgroupClass σ A] (𝒜 : ℕ → σ)
   [GradedRing 𝒜] {T : Type u} [CommRing T]
 
-/-- The ring map `A_(s) → T` induced by a ring map `ρ : A → T` with `ρ s` a unit. -/
-private noncomputable def awayLiftAux (ρ : A →+* T) (s : A) (hs : IsUnit (ρ s)) : Away 𝒜 s →+* T :=
+/-- The ring map `A_(s) → T` induced by a ring map `ρ : A → T` with `ρ s` a unit: the restriction
+to the degree-zero part `A_(s)` of the localization `A[1/s]` of the lift `A[1/s] → T` of `ρ`. -/
+noncomputable def HomogeneousLocalization.Away.lift (ρ : A →+* T) (s : A) (hs : IsUnit (ρ s)) :
+    Away 𝒜 s →+* T :=
   (IsLocalization.Away.lift s hs).comp (algebraMap (Away 𝒜 s) (Localization.Away s))
 
-private lemma awayLiftAux_mk_mul (ρ : A →+* T) {s : A} (hs : IsUnit (ρ s)) {d : ℕ} (hd : s ∈ 𝒜 d)
+/-- `HomogeneousLocalization.Away.lift` on the fraction `a / s ^ n`: `ρ s ^ n` times its value is
+`ρ a`. -/
+lemma HomogeneousLocalization.Away.lift_mk_mul (ρ : A →+* T) {s : A} (hs : IsUnit (ρ s)) {d : ℕ}
+    (hd : s ∈ 𝒜 d)
     (n : ℕ) (a : A) (ha : a ∈ 𝒜 (n • d)) :
-    ρ s ^ n * awayLiftAux 𝒜 ρ s hs (Away.mk 𝒜 hd n a ha) = ρ a := by
-  rw [awayLiftAux, RingHom.comp_apply, HomogeneousLocalization.algebraMap_apply, Away.val_mk,
+    ρ s ^ n * Away.lift 𝒜 ρ s hs (Away.mk 𝒜 hd n a ha) = ρ a := by
+  rw [Away.lift, RingHom.comp_apply, HomogeneousLocalization.algebraMap_apply, Away.val_mk,
     Localization.mk_eq_mk', IsLocalization.Away.lift]
   have := (IsLocalization.lift_mk'_spec (M := Submonoid.powers s) (S := Localization.Away s)
     (g := ρ) (fun y => ?_) a _ ⟨s ^ n, n, rfl⟩).mp rfl
@@ -377,50 +386,58 @@ private lemma awayLiftAux_mk_mul (ρ : A →+* T) {s : A} (hs : IsUnit (ρ s)) {
   · obtain ⟨_, k, rfl⟩ := y
     simpa using hs.pow k
 
-private lemma awayLiftAux_algebraMap (ρ : A →+* T) {s : A} (hs : IsUnit (ρ s)) (c : 𝒜 0) :
-    awayLiftAux 𝒜 ρ s hs (algebraMap (𝒜 0) (Away 𝒜 s) c) = ρ c := by
-  rw [awayLiftAux, RingHom.comp_apply]
+/-- `HomogeneousLocalization.Away.lift` restricts to `ρ` on the degree-zero part `𝒜 0`. -/
+lemma HomogeneousLocalization.Away.lift_algebraMap (ρ : A →+* T) {s : A} (hs : IsUnit (ρ s))
+    (c : 𝒜 0) :
+    Away.lift 𝒜 ρ s hs (algebraMap (𝒜 0) (Away 𝒜 s) c) = ρ c := by
+  rw [Away.lift, RingHom.comp_apply]
   exact IsLocalization.Away.lift_eq s hs (c : A)
 
-private lemma awayLiftAux_congr {ρ ρ' : A →+* T} (h : ρ = ρ') (s : A) (hs : IsUnit (ρ s))
-    (hs' : IsUnit (ρ' s)) : awayLiftAux 𝒜 ρ s hs = awayLiftAux 𝒜 ρ' s hs' := by
+/-- `HomogeneousLocalization.Away.lift` depends only on the ring map, not on the unit proof. -/
+lemma HomogeneousLocalization.Away.lift_congr {ρ ρ' : A →+* T} (h : ρ = ρ') (s : A)
+    (hs : IsUnit (ρ s)) (hs' : IsUnit (ρ' s)) : Away.lift 𝒜 ρ s hs = Away.lift 𝒜 ρ' s hs' := by
   subst h
   rfl
 
-private lemma awayLiftAux_comp_awayMap (ρ : A →+* T) {f g x : A} {d e : ℕ} (hf : f ∈ 𝒜 d)
-    (hg : g ∈ 𝒜 e) (hx : x = f * g) (hux : IsUnit (ρ x)) (huf : IsUnit (ρ f)) :
-    (awayLiftAux 𝒜 ρ x hux).comp (awayMap 𝒜 hg hx) = awayLiftAux 𝒜 ρ f huf := by
+/-- `HomogeneousLocalization.Away.lift` is compatible with the localization map
+`awayMap : A_(f) → A_(f g)`. -/
+lemma HomogeneousLocalization.Away.lift_comp_awayMap (ρ : A →+* T) {f g x : A} {d e : ℕ}
+    (hf : f ∈ 𝒜 d) (hg : g ∈ 𝒜 e) (hx : x = f * g) (hux : IsUnit (ρ x)) (huf : IsUnit (ρ f)) :
+    (Away.lift 𝒜 ρ x hux).comp (awayMap 𝒜 hg hx) = Away.lift 𝒜 ρ f huf := by
   refine RingHom.ext fun y => ?_
   obtain ⟨n, a, ha, rfl⟩ := Away.mk_surjective 𝒜 hf y
   rw [RingHom.comp_apply, awayMap_mk]
   refine (hux.pow n).mul_left_cancel ?_
-  rw [awayLiftAux_mk_mul]
-  have h2 := awayLiftAux_mk_mul 𝒜 ρ huf hf n a ha
+  rw [Away.lift_mk_mul]
+  have h2 := Away.lift_mk_mul 𝒜 ρ huf hf n a ha
   simp only [hx, map_mul, map_pow, mul_pow]
   rw [← h2]
   ring
 
-private lemma awayLiftAux_comp_awayMap' {B τ : Type u} [CommRing B] [SetLike τ B]
+/-- `HomogeneousLocalization.Away.lift` is compatible with the map `Away.map f s : A_(s) → B_(f s)`
+induced by a graded ring map `f`. -/
+lemma HomogeneousLocalization.Away.lift_comp_map {B τ : Type u} [CommRing B] [SetLike τ B]
     [AddSubgroupClass τ B] {ℬ : ℕ → τ} [GradedRing ℬ] (f : 𝒜 →+*ᵍ ℬ) (ρ : B →+* T)
     {s : A} {d : ℕ} (hs : s ∈ 𝒜 d) (hu : IsUnit (ρ (f s))) :
-    (awayLiftAux ℬ ρ (f s) hu).comp (Away.map f s) =
-      awayLiftAux 𝒜 (ρ.comp (f : A →+* B)) s hu := by
+    (Away.lift ℬ ρ (f s) hu).comp (Away.map f s) =
+      Away.lift 𝒜 (ρ.comp (f : A →+* B)) s hu := by
   refine RingHom.ext fun y => ?_
   obtain ⟨n, a, ha, rfl⟩ := Away.mk_surjective 𝒜 hs y
   rw [RingHom.comp_apply, Away.map_mk]
   refine (hu.pow n).mul_left_cancel ?_
-  rw [awayLiftAux_mk_mul]
-  have h2 := awayLiftAux_mk_mul 𝒜 (ρ.comp (f : A →+* B)) hu hs n a ha
+  rw [Away.lift_mk_mul]
+  have h2 := Away.lift_mk_mul 𝒜 (ρ.comp (f : A →+* B)) hu hs n a ha
   simpa using h2.symm
 
-private lemma comp_awayLiftAux {T' : Type u} [CommRing T'] (φ : T →+* T') (ρ : A →+* T) {s : A}
-    {d : ℕ} (hd : s ∈ 𝒜 d) (hu : IsUnit (ρ s)) :
-    φ.comp (awayLiftAux 𝒜 ρ s hu) = awayLiftAux 𝒜 (φ.comp ρ) s (hu.map φ) := by
+/-- Composing `HomogeneousLocalization.Away.lift` with a ring map `φ` is the lift of `φ ∘ ρ`. -/
+lemma HomogeneousLocalization.Away.comp_lift {T' : Type u} [CommRing T'] (φ : T →+* T')
+    (ρ : A →+* T) {s : A} {d : ℕ} (hd : s ∈ 𝒜 d) (hu : IsUnit (ρ s)) :
+    φ.comp (Away.lift 𝒜 ρ s hu) = Away.lift 𝒜 (φ.comp ρ) s (hu.map φ) := by
   refine RingHom.ext fun y => ?_
   obtain ⟨n, a, ha, rfl⟩ := Away.mk_surjective 𝒜 hd y
   refine ((hu.map φ).pow n).mul_left_cancel ?_
-  have h1 := awayLiftAux_mk_mul 𝒜 (φ.comp ρ) (hu.map φ) hd n a ha
-  have h2 := congrArg φ (awayLiftAux_mk_mul 𝒜 ρ hu hd n a ha)
+  have h1 := Away.lift_mk_mul 𝒜 (φ.comp ρ) (hu.map φ) hd n a ha
+  have h2 := congrArg φ (Away.lift_mk_mul 𝒜 ρ hu hd n a ha)
   simp only [RingHom.comp_apply, map_mul, map_pow] at h1 h2 ⊢
   rw [h1, h2]
 
@@ -431,13 +448,17 @@ private lemma fromZeroRingHom_eq_mk {s : A} {d : ℕ} (hs : s ∈ 𝒜 d) (c : �
   simp only [pow_zero]
   rfl
 
-private lemma specMap_awayLiftAux_awayι (ρ : A →+* T) {s s' : A} {i j : ℕ} (hs : s ∈ 𝒜 i)
+/-- The `T`-point of `Proj 𝒜` given by `ρ` does not depend on the standard open `D₊(s)` used to
+write it: for `s`, `s'` of positive degree with `ρ s`, `ρ s'` units, the two composites
+`Spec T ⟶ Spec A_(s) ⟶ Proj 𝒜` and `Spec T ⟶ Spec A_(s') ⟶ Proj 𝒜` agree. -/
+theorem AlgebraicGeometry.Proj.specMap_awayLift_awayι (ρ : A →+* T) {s s' : A} {i j : ℕ}
+    (hs : s ∈ 𝒜 i)
     (hs' : s' ∈ 𝒜 j) (hi : 0 < i) (hj : 0 < j) (hu : IsUnit (ρ s)) (hu' : IsUnit (ρ s')) :
-    Spec.map (CommRingCat.ofHom (awayLiftAux 𝒜 ρ s hu)) ≫ Proj.awayι 𝒜 s hs hi =
-      Spec.map (CommRingCat.ofHom (awayLiftAux 𝒜 ρ s' hu')) ≫ Proj.awayι 𝒜 s' hs' hj := by
+    Spec.map (CommRingCat.ofHom (Away.lift 𝒜 ρ s hu)) ≫ Proj.awayι 𝒜 s hs hi =
+      Spec.map (CommRingCat.ofHom (Away.lift 𝒜 ρ s' hu')) ≫ Proj.awayι 𝒜 s' hs' hj := by
   have hx : IsUnit (ρ (s * s')) := by rw [map_mul]; exact hu.mul hu'
-  rw [← awayLiftAux_comp_awayMap 𝒜 ρ hs hs' rfl hx hu,
-    ← awayLiftAux_comp_awayMap 𝒜 ρ hs' hs (mul_comm s s') hx hu', CommRingCat.ofHom_comp,
+  rw [← Away.lift_comp_awayMap 𝒜 ρ hs hs' rfl hx hu,
+    ← Away.lift_comp_awayMap 𝒜 ρ hs' hs (mul_comm s s') hx hu', CommRingCat.ofHom_comp,
     CommRingCat.ofHom_comp, Spec.map_comp, Spec.map_comp, Category.assoc, Category.assoc,
     Proj.SpecMap_awayMap_awayι, Proj.SpecMap_awayMap_awayι]
   congr 1
@@ -457,29 +478,29 @@ private noncomputable def evalZeroSectionAux : W.HomogeneousCoordinateRing →+*
     obtain ⟨c, rfl⟩ := Ideal.mem_span_singleton'.mp ha
     simp [Projective.polynomial])
 
-private theorem specMap_awayLiftAux_eq_zeroSection (ρ : W.HomogeneousCoordinateRing →+* R)
+private theorem specMap_awayLift_eq_zeroSection (ρ : W.HomogeneousCoordinateRing →+* R)
     (h0 : ρ (W.projectiveCoordinate 0) = 0) (h2 : ρ (W.projectiveCoordinate 2) = 0)
     (hY : IsUnit (ρ (W.projectiveCoordinate 1))) (hR : ∀ r, ρ (algebraMap R _ r) = r) :
-    Spec.map (CommRingCat.ofHom (awayLiftAux W.projectiveGrading ρ _ hY)) ≫
+    Spec.map (CommRingCat.ofHom (Away.lift W.projectiveGrading ρ _ hY)) ≫
       Proj.awayι W.projectiveGrading _ (W.projectiveCoordinate_mem 1) Nat.one_pos =
         W.zeroSection := by
-  set L := awayLiftAux W.projectiveGrading ρ _ hY
+  set L := Away.lift W.projectiveGrading ρ _ hY
   have key : L.comp W.awayYRingEquiv.symm.toRingHom = W.evalAtInfinity.toRingHom := by
     refine Ideal.Quotient.ringHom_ext (MvPolynomial.ringHom_ext (fun r => ?_) (fun i => ?_))
     · change L (W.awayYRingEquiv.symm (algebraMap R _ r)) = W.evalAtInfinity (algebraMap R _ r)
       rw [AlgHom.commutes, ← W.awayYRingEquiv_algebraMap r, RingEquiv.symm_apply_apply,
-        awayLiftAux_algebraMap]
+        Away.lift_algebraMap]
       exact hR r
     · fin_cases i
       · change L (W.awayYRingEquiv.symm W.zAtInfinity) = W.evalAtInfinity W.zAtInfinity
         rw [awayYRingEquiv_symm_zAtInfinity, zAtInfinity, evalAtInfinity_mk]
         refine (hY.pow 1).mul_left_cancel ?_
-        rw [xOverY, awayLiftAux_mk_mul, h0]
+        rw [xOverY, Away.lift_mk_mul, h0]
         simp
       · change L (W.awayYRingEquiv.symm W.wAtInfinity) = W.evalAtInfinity W.wAtInfinity
         rw [awayYRingEquiv_symm_wAtInfinity, evalAtInfinity_wAtInfinity]
         refine (hY.pow 1).mul_left_cancel ?_
-        rw [zOverY, awayLiftAux_mk_mul, h2]
+        rw [zOverY, Away.lift_mk_mul, h2]
         simp
   have hL : L = W.evalAtInfinity.toRingHom.comp W.awayYRingEquiv.toRingHom := by
     rw [← key, RingHom.comp_assoc]
@@ -554,15 +575,15 @@ theorem zeroSection_comp_projectiveSchemeVariableChangeIso_hom (C : VariableChan
     rw [RingHom.comp_apply]
     change (C • W).evalZeroSectionAux (W.projectiveGradedVariableChange C _) = _
     rw [projectiveGradedVariableChange_algebraMap, hR]
-  rw [← (C • W).specMap_awayLiftAux_eq_zeroSection _ h0 h2 hu' hR]
+  rw [← (C • W).specMap_awayLift_eq_zeroSection _ h0 h2 hu' hR]
   have hmem : W.projectiveGradedVariableChange C (W.projectiveCoordinate 1) ∈
       (C • W).projectiveGrading 1 :=
     (W.projectiveGradedVariableChange C).map_mem (W.projectiveCoordinate_mem 1)
-  rw [specMap_awayLiftAux_awayι _ _ _ hmem _ Nat.one_pos hu' hu]
+  rw [Proj.specMap_awayLift_awayι _ _ _ hmem _ Nat.one_pos hu' hu]
   rw [projectiveSchemeVariableChangeIso_hom, Category.assoc, Proj.awayι_comp_map,
     ← Category.assoc, ← Spec.map_comp, ← CommRingCat.ofHom_comp,
-    awayLiftAux_comp_awayMap' _ _ _ (W.projectiveCoordinate_mem 1) hu]
-  exact W.specMap_awayLiftAux_eq_zeroSection _ h0' h2' hu hR'
+    Away.lift_comp_map _ _ _ (W.projectiveCoordinate_mem 1) hu]
+  exact W.specMap_awayLift_eq_zeroSection _ h0' h2' hu hR'
 
 /-- **The variable change isomorphism lies over `Spec R`.** Let `W` be a Weierstrass curve over
 a commutative ring `R` and `C` a variable change. The composite of
@@ -672,9 +693,9 @@ theorem affineChart_comp_projectiveSchemeVariableChangeIso_hom (C : VariableChan
   have hmem : W.projectiveGradedVariableChange C (W.projectiveCoordinate 2) ∈
       (C • W).projectiveGrading 1 :=
     (W.projectiveGradedVariableChange C).map_mem (W.projectiveCoordinate_mem 2)
-  have e : W.awayZToAffine = awayLiftAux W.projectiveGrading W.dehomogenizeZ _ hZ := rfl
+  have e : W.awayZToAffine = Away.lift W.projectiveGrading W.dehomogenizeZ _ hZ := rfl
   have e' : (C • W).awayZToAffine =
-      awayLiftAux (C • W).projectiveGrading (C • W).dehomogenizeZ _ hZ' := rfl
+      Away.lift (C • W).projectiveGrading (C • W).dehomogenizeZ _ hZ' := rfl
   have hρ : (C • W).dehomogenizeZ.comp (W.projectiveGradedVariableChange C :
       W.HomogeneousCoordinateRing →+* _) = (W.affineVariableChange C).comp W.dehomogenizeZ := by
     refine Ideal.Quotient.ringHom_ext (MvPolynomial.ringHom_ext (fun r => ?_) (fun i => ?_))
@@ -693,13 +714,13 @@ theorem affineChart_comp_projectiveSchemeVariableChangeIso_hom (C : VariableChan
       · simp
   rw [affineChart, affineChart]
   rw [e, e']
-  rw [specMap_awayLiftAux_awayι _ _ _ hmem one_pos one_pos hZ' hfZ]
+  rw [Proj.specMap_awayLift_awayι _ _ _ hmem one_pos one_pos hZ' hfZ]
   rw [projectiveSchemeVariableChangeIso_hom, Category.assoc,
     Proj.awayι_comp_map _ _ _ _ (W.projectiveCoordinate_mem 2),
     ← Category.assoc, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
-  rw [awayLiftAux_comp_awayMap' _ _ _ (W.projectiveCoordinate_mem 2) hfZ, ← Category.assoc,
+  rw [Away.lift_comp_map _ _ _ (W.projectiveCoordinate_mem 2) hfZ, ← Category.assoc,
     ← Spec.map_comp, ← CommRingCat.ofHom_comp,
-    comp_awayLiftAux _ _ _ (W.projectiveCoordinate_mem 2) hZ]
-  rw [awayLiftAux_congr _ hρ (W.projectiveCoordinate 2) hfZ (hZ.map (W.affineVariableChange C))]
+    Away.comp_lift _ _ _ (W.projectiveCoordinate_mem 2) hZ]
+  rw [Away.lift_congr _ hρ (W.projectiveCoordinate 2) hfZ (hZ.map (W.affineVariableChange C))]
 
 end WeierstrassCurve
