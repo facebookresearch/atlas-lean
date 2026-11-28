@@ -46,11 +46,6 @@ The canonical `ramanujanTheta` therefore requires an explicit summability witnes
 * C. Adiga, B. C. Berndt, S. Bhargava, and G. N. Watson, *Chapter 16 of Ramanujan's Second
   Notebook: Theta-Functions and q-Series*, Mem. Amer. Math. Soc. 53 (1985), no. 315, pp. 1–85,
   Entry 19 (Jacobi triple product).
-
-The nonzero-parameter proof is moved from `theta_product_of_ne_zero` and its helpers in
-`MathlibExt.Combinatorics.Enumerative.Partition.SlaterOrderEighteenThetaRamanujanThetaEtaQuotients`.
-The zero-parameter sum calculation is moved from `ramanujanThetaRaw_zero_left` in
-`MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanProductSum`.
 -/
 
 @[expose] public section

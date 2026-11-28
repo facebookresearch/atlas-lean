@@ -34,13 +34,6 @@ out-of-domain `q` cannot be passed silently.
 * `MetaMathlibExt.QPochhammer.hasProd_qPochhammerInf`
 * `MetaMathlibExt.QPochhammer.qPochhammerInfRaw_split`
 * `MetaMathlibExt.QPochhammer.qPochhammerInfRaw_two_one`
-
-## References
-
-The residue-class splitting proof moves `pochhammer_split` from
-`MathlibExt.Combinatorics.Enumerative.Partition.SlaterOrderEighteenThetaRamanujanThetaEtaQuotients`
-and replaces the former `diagonal_split` in
-`MathlibExt.NumberTheory.ModularForms.JacobiTheta.RamanujanOneTwo`.
 -/
 
 @[expose] public section
