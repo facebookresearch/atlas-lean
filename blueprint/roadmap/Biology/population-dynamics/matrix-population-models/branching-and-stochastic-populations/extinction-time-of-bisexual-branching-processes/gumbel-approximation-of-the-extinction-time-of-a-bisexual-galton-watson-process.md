@@ -10,13 +10,13 @@ mating units: the mating function is indexed by the current number of mating uni
 
 **Results.**
 
-- For every non-trivial process, $\tau$ is unbounded: its right endpoint is $+\infty$.
+- Under the hypotheses above, if moreover $\mathbb P\big(L_1(f_{1,0},m_{1,0})\ge1\big)>0$ and the process starts from $Z_0=N\ge1$ mating units, then $\tau$ is unbounded: its right endpoint $\omega_\tau$ is $+\infty$. *Correction to the source.* The source's Proposition 1 prints "For any non-trivial BGWBP with initial offspring $N\in\mathbb N$, it holds that $\omega_\tau=\infty$", under its standing Hypothesis 1 (parts 1–5, the hypotheses above), and does not print the condition $\mathbb P\big(L_1(f_{1,0},m_{1,0})\ge1\big)>0$. This page adds that condition because Hypothesis 1 does not imply it and the printed statement fails without it: $L_k\equiv0$ satisfies all five parts of Hypothesis 1, yet gives $\tau=1$ almost surely. The source's proof uses the condition (through $\mathbb P[L_1(f_{1,0},m_{1,0})<1]^N<1$ and the strict monotonicity of $h$ in its (3)), so the corrected form follows from the printed proof. The condition $N\ge1$ excludes $Z_0=0$, where $\tau=0$.
 - If $r<1$, the law of $\tau$, being integer-valued, belongs to no max-domain of attraction of an extreme value distribution.
 - Under the hypotheses, with $F_\tau$ the distribution function of $\tau$ (so $F_\tau^m$ is that of the maximum of $m$ independent copies), for all $k\ge1$
 
 $$\exp\{-e^{-\theta k}\} \le \liminf_{m\to\infty} F_\tau^m(k+1+m).$$
 
-  The source's Theorem 1, (8), also prints the upper bound $\limsup_{m\to\infty} F_\tau^m(k+1+m) \le \exp\{-e^{-\theta(k+1)}\}$, which cannot hold: its Proposition 2 gives $\mathbb P(\tau>t\mid Z_0=j)\le jr^t$, so $F_\tau^m(k+1+m)\ge1-mjr^{k+1+m}\to1$. Since $\tau$ is unbounded, $F_\tau(k)^m \to 0$ for every fixed $k$, which is why the argument is shifted by $m$.
+  The source's Theorem 1, (8), also prints the upper bound $\limsup_{m\to\infty} F_\tau^m(k+1+m) \le \exp\{-e^{-\theta(k+1)}\}$, which cannot hold: its Proposition 2 gives $\mathbb P(\tau>t\mid Z_0=j)\le jr^t$, so $F_\tau^m(k+1+m)\ge1-mjr^{k+1+m}\to1$. Since $\tau$ is unbounded under the conditions of the first item, $F_\tau(k)^m \to 0$ for every fixed $k$, which is why the argument is shifted by $m$.
 
 ## Expansion
 

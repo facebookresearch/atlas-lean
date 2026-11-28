@@ -24,6 +24,8 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
 - [Weak maximum principle for the heat equation](exists-mem-parabolic-boundary-is-max-on.md)
 - [Uniqueness for the heat equation on a bounded domain](eq-on-of-heat-equation.md)
 - [Single-mode solution of the Dirichlet heat equation](single-mode-solution-of-the-dirichlet-heat-equation.md)
+- [Uniqueness of the Gaussian heat solution in the exponential-growth class](eq-heat-solution-of-exp-growth.md)
+- [The Gaussian heat solution has exponential growth on every strip](heat-solution-has-exp-growth-on-strip.md)
 
 ## Related topics
 

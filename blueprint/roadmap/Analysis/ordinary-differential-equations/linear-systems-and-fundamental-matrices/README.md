@@ -50,3 +50,22 @@
 - [Trace–determinant classification of a planar linearization](linear-type-2.md)
 - [Linear stability means the stable node or stable focus class](is-linearly-stable-iff-linear-type.md)
 - [Saddles, unstable nodes and unstable foci are linearly unstable](is-linearly-unstable-of-linear-type.md)
+
+## Constant-input scalar relaxation
+
+- [Solution of the constant-input relaxation equation](amount.md)
+- [Equilibrium of the constant-input relaxation equation](steady-amount.md)
+- [Half-life of exponential decay](half-life.md)
+- [Solutions of the constant-input relaxation equation on the half-line](is-solution.md)
+- [Explicit solution of the constant-input relaxation equation](amount-eq-of-ne-zero.md)
+- [Constant-input relaxation with zero removal rate](amount-rate-zero.md)
+- [Uniqueness of solutions of the constant-input relaxation equation](eq-amount.md)
+- [Nonnegativity of the constant-input relaxation solution](amount-nonneg.md)
+- [Relaxation with zero input is exponential decay](amount-bolus.md)
+- [Shifting by the half-life halves an unforced relaxation](amount-bolus-add-half-life.md)
+- [Relaxation to the steady state at positive rate](tendsto-amount.md)
+- [Relaxation from above the steady state is decreasing](amount-antitone.md)
+- [Relaxation from below stays below the steady state](amount-le-steady-amount.md)
+- [Relaxation from above stays above the steady state](steady-amount-le-amount.md)
+- [Duhamel's formula](duhamel-s-formula/README.md)
+- [Power bound near zero for solutions of a Whittaker-type equation](exists-rpow-bound-near-zero-of-whittaker.md)
