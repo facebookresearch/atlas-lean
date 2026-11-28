@@ -19,3 +19,8 @@ Smooth manifolds and smooth maps between them: immersions, submersions, transver
 - [Smooth retraction onto a closed embedded manifold in $\mathbb{R}^n$](tubular-smooth-retraction.md)
 - [Existence of smooth partitions of unity](partition-of-unity-existence.md)
 - [Differential of a smooth map at a point, acting on derivations](differential-smooth-map.md)
+- [Naturality of exterior differentiation](naturality-of-exterior-differentiation.md)
+
+## Sources
+
+- For the naturality of exterior differentiation: the [Tau Ceti differential geometry roadmap, §1.2](https://github.com/TauCetiProject/TauCetiRoadmap/blob/8cc2f79f60ebc394160c214a3d0abd16c3c0aff9/TauCetiRoadmap/DifferentialGeometry/README.md#L886-L888) includes the smooth scalar case in its finite-regularity result.
