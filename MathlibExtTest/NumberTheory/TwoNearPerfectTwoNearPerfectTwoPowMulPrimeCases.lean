@@ -23,6 +23,11 @@ Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Ze
 
 namespace MathlibExtTest.NumberTheory.TwoNearPerfect
 
+-- Check the divisor sums for the zeroth and a positive power independently of the formula.
+example : ArithmeticFunction.sigma 1 (2 ^ 0) + 1 = 2 ^ (0 + 1) := by decide
+
+example : ArithmeticFunction.sigma 1 (2 ^ 3) + 1 = 2 ^ (3 + 1) := by decide
+
 example : ∃ a b : ℕ, (3 : ℤ) = 2 ^ 4 - 2 ^ a - 2 ^ b - 1 ∧
     ((2 ^ a = 4 ∧ 2 ^ b = 8) ∨ (2 ^ a = 8 ∧ 2 ^ b = 4)) := by
   obtain ⟨e₁, e₂, horder, hcases⟩ :=

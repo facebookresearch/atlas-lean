@@ -10,11 +10,11 @@ module
 
 public import MathlibExt.NumberTheory.PolygonalNumber
 public import MathlibExt.NumberTheory.PracticalNumber
-import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Data.Nat.Log
 import MathlibExt.NumberTheory.OddSquareTriangular
 import MathlibExt.NumberTheory.PracticalPolygonalSums
 import MathlibExt.NumberTheory.PracticalPolygonalSumsIsPracticalNumberMulOfLeSigmaAddOne
+import MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeCases
 
 /-!
 # Positive integers as sums of a practical number and a triangular number
@@ -36,7 +36,7 @@ small enough for the product to be practical.
 
 The practical-power induction uses the same small-factor argument as `isPracticalNumber_primorial`
 in `MathlibExt.NumberTheory.PracticalPolygonalSumsEventuallyTwo`. The divisor-sum calculation
-uses the Mathlib identities used in `sigma_two_pow_add_one` in
+uses `sigma_two_pow_add_one` from
 `MathlibExt.NumberTheory.TwoNearPerfectTwoNearPerfectTwoPowMulPrimeCases`.
 -/
 
@@ -99,9 +99,7 @@ public theorem exists_practical_add_triangular (n : ℕ) (hn : 0 < n) :
       _ = _ := by ring
     exact Nat.le_of_mul_le_mul_left hprod hbpos
   have hσ : sigma 1 b + 1 = 2 * b := by
-    change sigma 1 (2 ^ j) + 1 = 2 * 2 ^ j
-    rw [← pow_succ', sigma_one_apply_prime_pow Nat.prime_two]
-    simpa only [one_add_one_eq_two, mul_one] using geom_sum_mul_add (1 : ℕ) (j + 1)
+    simpa only [b, pow_succ'] using sigma_two_pow_add_one j
   have hpractical (a : ℕ) : IsPracticalNumber (2 ^ a) := by
     induction a with
     | zero =>
