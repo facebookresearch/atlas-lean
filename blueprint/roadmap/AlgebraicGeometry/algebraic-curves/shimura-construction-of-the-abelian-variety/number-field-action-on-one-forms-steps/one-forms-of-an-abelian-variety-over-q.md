@@ -17,6 +17,7 @@ pullback of regular $1$-forms; so under the isomorphism $\beta^*$ is $1 \otimes 
 - [Abelian scheme](../../../abelian-varieties/abelian-scheme.md), for abelian varieties over $\mathbb{Q}$
 - [Homomorphisms of abelian schemes and commutativity](../../../abelian-varieties/homomorphisms-of-abelian-schemes.md), for endomorphisms
   defined over $\mathbb{Q}$
+- [Holomorphic $1$-forms and tangent space of a complex abelian variety](../holomorphic-one-forms-steps/holomorphic-one-forms-and-tangent-space.md), for $D_{A'}$ and the pullback $\beta^*$
 
 ## Proof depends on
 
