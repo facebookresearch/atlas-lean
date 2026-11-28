@@ -28,6 +28,7 @@ Am. J. Hum. Genet. 61 (1997) 1179–1188, model (1) and Appendix A.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.StatisticalGenetics.AssociationTests.KongCoxAlleleSharing
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -128,13 +129,5 @@ public theorem_wanted concaveOn_sum_log {ι : Type*} [Fintype ι] (γ Zbar : ι 
       ((∃ i, γ i * Zbar i ≠ 0) →
         StrictConcaveOn ℝ {δ : ℝ | ∀ i, 0 < 1 + δ * (γ i * Zbar i)}
           (fun δ => ∑ i, Real.log (1 + δ * (γ i * Zbar i))))
-
-/-- **The score at `δ = 0`** (Kong and Cox 1997). Let `ι` be a finite set of independent
-pedigrees with weights `γᵢ` and null posterior mean scores `Z̄ᵢ` (real numbers). The function
-`δ ↦ ∑ᵢ log (1 + δ γᵢ Z̄ᵢ)` has derivative `∑ᵢ γᵢ Z̄ᵢ` at `δ = 0`.
-
-Source: Kong and Cox (1997). -/
-public theorem_wanted hasDerivAt_sum_log_zero {ι : Type*} [Fintype ι] (γ Zbar : ι → ℝ) :
-    HasDerivAt (fun δ => ∑ i, Real.log (1 + δ * (γ i * Zbar i))) (∑ i, γ i * Zbar i) 0
 
 end WantedExt.Biology.StatisticalGenetics.KongCoxAlleleSharingWanted
