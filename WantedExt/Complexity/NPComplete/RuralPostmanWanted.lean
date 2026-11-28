@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
+public import CSLibExt.Complexity.NPComplete.RuralPostmanDefs
 
 @[expose] public section
 
@@ -52,47 +49,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list with lengths (an entry
-`(u, v, l)` is the edge `{u, v}` of length `l`), the required edges `E'` (pairs of endpoints),
-and the bound `B`. -/
-abbrev RuralPostmanInstance := ℕ × List (ℕ × ℕ × ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : RuralPostmanInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (i.2.1.map fun e => (e.1, e.2.1))
-
-/-- The length of an edge `s`: the length recorded for the list entry whose endpoints are the
-endpoints of `s` (unique under `WellFormed`). -/
-def edgeLength (i : RuralPostmanInstance) (s : Sym2 (Fin i.1)) : ℕ :=
-  ((i.2.1.find? fun e => s.map Fin.val = s(e.1, e.2.1)).map fun e => e.2.2).getD 0
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), every required pair
-is an edge of the graph (in either orientation), and `0 < B`. -/
-def WellFormed (i : RuralPostmanInstance) : Prop :=
-  ((i.2.1.map fun e => (e.1, e.2.1)).Nodup ∧
-    ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧
-      (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)) ∧
-    (∀ r ∈ i.2.2.1, r ∈ (i.2.1.map fun e => (e.1, e.2.1)) ∨
-      (r.2, r.1) ∈ i.2.1.map fun e => (e.1, e.2.1)) ∧
-    0 < i.2.2.2
-
-/-- Some closed walk traverses every required edge and has total length at most `B` (each
-traversal of an edge counts its length). -/
-def RuralPostmanFeasible (i : RuralPostmanInstance) : Prop :=
-  ∃ v, ∃ c : (Graph i).Walk v v,
-    (∀ r ∈ i.2.2.1, s(r.1, r.2) ∈ c.edges.map (Sym2.map Fin.val)) ∧
-      (c.edges.map (edgeLength i)).sum ≤ i.2.2.2
-
-open Classical in
-/-- RURAL POSTMAN as a decision problem over bitstrings. -/
-noncomputable def ruralPostmanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RuralPostmanInstance) x with
-  | some i => decide (WellFormed i ∧ RuralPostmanFeasible i)
-  | none => false
 
 /-- **RURAL POSTMAN is NP-complete.** Source: Garey and Johnson (1979), [ND27]; Lenstra and
 Rinnooy Kan (1976). -/

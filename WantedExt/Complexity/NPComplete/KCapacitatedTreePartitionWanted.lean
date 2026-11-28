@@ -24,11 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BoundedDiameterSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.KCapacitatedTreePartitionDefs
 
 @[expose] public section
 
@@ -65,36 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and `k` and `K` are
-positive. -/
-def WellFormed (i : BoundedDiameterSpanningTreeInstance) : Prop :=
-  ((endpoints i).Nodup ∧
-    ∀ e ∈ endpoints i, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ endpoints i) ∧
-    0 < i.2.2.1 ∧ 0 < i.2.2.2
-
-/-- The simple graph on the vertices `0, ..., n - 1` made from the edges listed in `F`; it is a
-spanning subgraph of `G` when `F` is a sublist of the input edges, as feasibility requires. -/
-def forest (i : BoundedDiameterSpanningTreeInstance) (F : List (ℕ × ℕ × ℕ)) :
-    SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (F.map fun e => (e.1, e.2.1))
-
-/-- Some set `F ⊆ E` of edges forms a spanning forest whose connected components (trees) have at
-least `k` vertices each, of total weight at most `K`. -/
-def KCapacitatedTreePartitionFeasible (i : BoundedDiameterSpanningTreeInstance) : Prop :=
-  ∃ F : List (ℕ × ℕ × ℕ), F.Sublist i.2.1 ∧ (forest i F).IsAcyclic ∧
-    (∀ v, i.2.2.1 ≤ Nat.card ((forest i F).connectedComponentMk v).supp) ∧
-    (F.map fun e => e.2.2).sum ≤ i.2.2.2
-
-open Classical in
-/-- k-CAPACITATED TREE PARTITION as a decision problem over bitstrings. -/
-noncomputable def kCapacitatedTreePartitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BoundedDiameterSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ KCapacitatedTreePartitionFeasible i)
-  | none => false
 
 /-- **k-CAPACITATED TREE PARTITION is NP-complete.** Source: Crescenzi and Kann, MINIMUM
 K-CAPACITATED TREE PARTITION; Imielińska, Kalantari and Khachiyan (1993), as recorded by Goemans

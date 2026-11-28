@@ -18,11 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted
+public import CSLibExt.Complexity.NPComplete.PointSetEmbeddabilityDefs
 
 @[expose] public section
 
@@ -63,47 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the edge list of `G` and the points of `P` (pairs of encoded integers). -/
-abbrev PointSetEmbeddabilityInstance := List (ℕ × ℕ) × List ((ℕ × ℕ) × (ℕ × ℕ))
-
-/-- The graph of the instance on the vertices `0, ..., n - 1`, `n` the number of points. -/
-def Graph (i : PointSetEmbeddabilityInstance) : SimpleGraph (Fin i.2.length) :=
-  Cslib.Complexity.Karp.edgeGraph i.2.length i.1
-
-/-- The position in the real plane of the `j`-th point of `P`. -/
-def position (i : PointSetEmbeddabilityInstance) (j : Fin i.2.length) : ℝ × ℝ :=
-  ((point (i.2.get j)).1, (point (i.2.get j)).2)
-
-/-- Well-formedness of an instance: the points are distinct, and the edge list describes a
-simple graph on the `n` vertices. -/
-def WellFormed (i : PointSetEmbeddabilityInstance) : Prop :=
-  (i.2.map point).Nodup ∧ i.1.Nodup ∧
-    ∀ e ∈ i.1, e.1 < i.2.length ∧ e.2 < i.2.length ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.1
-
-/-- Some bijection `σ` from the vertices onto the points gives a planar straight-line drawing:
-the segments of two different edges meet only at common endpoints, and no vertex lies on the
-segment of an edge other than at its own endpoints. -/
-def PointSetEmbeddabilityFeasible (i : PointSetEmbeddabilityInstance) : Prop :=
-  ∃ σ : Fin i.2.length ≃ Fin i.2.length,
-    (∀ ⦃v w x y⦄, (Graph i).Adj v w → (Graph i).Adj x y →
-      ({v, w} : Set (Fin i.2.length)) ≠ {x, y} →
-      SimpleGraph.Segment (position i (σ v)) (position i (σ w)) ∩
-          SimpleGraph.Segment (position i (σ x)) (position i (σ y)) ⊆
-        ({position i (σ v), position i (σ w)} : Set (ℝ × ℝ)) ∩
-          {position i (σ x), position i (σ y)}) ∧
-    ∀ ⦃v w⦄ u, (Graph i).Adj v w →
-      position i (σ u) ∈ SimpleGraph.Segment (position i (σ v)) (position i (σ w)) →
-        u = v ∨ u = w
-
-open Classical in
-/-- PLANAR POINT-SET EMBEDDABILITY as a decision problem over bitstrings. -/
-noncomputable def pointSetEmbeddabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PointSetEmbeddabilityInstance) x with
-  | some i => decide (WellFormed i ∧ PointSetEmbeddabilityFeasible i)
-  | none => false
 
 /-- **PLANAR POINT-SET EMBEDDABILITY is NP-complete.** Source: Cabello (2006), Theorem 1. -/
 public theorem_wanted pointSetEmbeddability_npComplete :

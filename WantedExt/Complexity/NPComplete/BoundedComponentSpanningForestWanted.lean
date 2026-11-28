@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import CSLibExt.Complexity.NPComplete.BoundedComponentSpanningForestDefs
 
 @[expose] public section
 
@@ -54,38 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, vertex weights
-`[w 0, ..., w (n - 1)]`, the bound `K` on the number of parts, and the weight bound `B`. -/
-abbrev BoundedComponentSpanningForestInstance := ℕ × List (ℕ × ℕ) × List ℕ × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : BoundedComponentSpanningForestInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), there is one weight
-per vertex, `0 < K ≤ |V|`, and `0 < B`. -/
-def WellFormed (i : BoundedComponentSpanningForestInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1.length = i.1 ∧ 0 < i.2.2.2.1 ∧ i.2.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2.2
-
-/-- For some `k ≤ K`, a surjective assignment `c` of the vertices to `k` parts makes every part
-induce a connected subgraph of total weight at most `B`. -/
-def BoundedComponentSpanningForestFeasible
-    (i : BoundedComponentSpanningForestInstance) : Prop :=
-  ∃ k ≤ i.2.2.2.1, ∃ c : Fin i.1 → Fin k, Function.Surjective c ∧
-    ∀ j, ((Graph i).induce {v | c v = j}).Connected ∧
-      ∑ v with c v = j, i.2.2.1.getD v 0 ≤ i.2.2.2.2
-
-open Classical in
-/-- BOUNDED COMPONENT SPANNING FOREST as a decision problem over bitstrings. -/
-noncomputable def boundedComponentSpanningForestDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BoundedComponentSpanningForestInstance) x with
-  | some i => decide (WellFormed i ∧ BoundedComponentSpanningForestFeasible i)
-  | none => false
 
 /-- **BOUNDED COMPONENT SPANNING FOREST is NP-complete.** Source: Garey and Johnson (1979),
 [ND10]; Hadlock (1974); Dyer and Frieze (1985). -/

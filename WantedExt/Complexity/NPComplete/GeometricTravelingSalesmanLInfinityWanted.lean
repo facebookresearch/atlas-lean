@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted
-public import WantedExt.Complexity.NPComplete.TspWanted
+public import CSLibExt.Complexity.NPComplete.GeometricTravelingSalesmanLInfinityDefs
 
 @[expose] public section
 
@@ -63,36 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The `L∞` distance `max(|x₁ - x₂|, |y₁ - y₂|)` between two integer points. -/
-def chebyshevDist (p q : ℤ × ℤ) : ℕ :=
-  max (p.1 - q.1).natAbs (p.2 - q.2).natAbs
-
-/-- The TRAVELING SALESMAN instance with `C = P`, the `L∞` distance, and the bound `B`: the
-number of points, the matrix of pairwise `L∞` distances (row `j`, column `k` holds
-`d(pⱼ, pₖ)`), and `B`. -/
-def toTspInstance (i : GeometricTravelingSalesman.GeometricTravelingSalesmanInstance) :
-    Tsp.TspInstance :=
-  (i.1.length,
-    (i.1.map GeometricTravelingSalesman.point).map fun p =>
-      (i.1.map GeometricTravelingSalesman.point).map fun q => chebyshevDist p q,
-    i.2)
-
-/-- Some tour of the points has `L∞` length at most `B`. -/
-def GeometricTravelingSalesmanLInfinityFeasible
-    (i : GeometricTravelingSalesman.GeometricTravelingSalesmanInstance) : Prop :=
-  Tsp.TspFeasible (toTspInstance i)
-
-open Classical in
-/-- GEOMETRIC TRAVELING SALESMAN in the `L∞` metric as a decision problem over bitstrings. -/
-noncomputable def geometricTravelingSalesmanLInfinityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GeometricTravelingSalesman.GeometricTravelingSalesmanInstance) x with
-  | some i =>
-      decide (GeometricTravelingSalesman.WellFormed i ∧
-        GeometricTravelingSalesmanLInfinityFeasible i)
-  | none => false
 
 /-- **GEOMETRIC TRAVELING SALESMAN is NP-complete in the `L∞` metric.** Source: Garey and
 Johnson (1979), [ND23], comment; Garey, Graham, and Johnson (1976). -/

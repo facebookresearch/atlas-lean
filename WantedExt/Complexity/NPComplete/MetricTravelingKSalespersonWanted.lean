@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TravelingRepairmanWanted
+public import CSLibExt.Complexity.NPComplete.MetricTravelingKSalespersonDefs
 
 @[expose] public section
 
@@ -68,41 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of cities, the distance matrix as `m` rows of `m` entries
-(`d(a, b)` is entry `b` of row `a`), the initial city `s`, the number `k` of subtours, and the
-bound `K`. -/
-abbrev MetricTravelingKSalespersonInstance := ℕ × List (List ℕ) × ℕ × ℕ × ℕ
-
-/-- The metric part of an instance, as a `TravelingRepairmanWanted` instance (cities, matrix,
-initial city, bound). -/
-def toMetric (i : MetricTravelingKSalespersonInstance) : TravelingRepairmanInstance :=
-  (i.1, i.2.1, i.2.2.1, i.2.2.2.2)
-
-/-- Well-formedness of an instance: the distances form a metric on the `m` cities and `s < m`
-(`TravelingRepairman.WellFormed`), distances between distinct cities are positive, `0 < k`, and
-`0 < K`. -/
-def WellFormed (i : MetricTravelingKSalespersonInstance) : Prop :=
-  TravelingRepairman.WellFormed (toMetric i) ∧
-    (∀ a < i.1, ∀ b < i.1, a ≠ b → 0 < TravelingRepairman.dist (toMetric i) a b) ∧
-    0 < i.2.2.2.1 ∧ 0 < i.2.2.2.2
-
-/-- Some collection of at most `k` subtours, each a list of distinct cities starting at `s`
-whose closed route back to `s` has length at most `K`, contains every city. -/
-def MetricTravelingKSalespersonFeasible (i : MetricTravelingKSalespersonInstance) : Prop :=
-  ∃ tours : List (List ℕ), tours.length ≤ i.2.2.2.1 ∧
-    (∀ t ∈ tours, t.head? = some i.2.2.1 ∧ t.Nodup ∧ (∀ c ∈ t, c < i.1) ∧
-      routeLength (toMetric i) (t ++ [i.2.2.1]) ≤ i.2.2.2.2) ∧
-    ∀ c < i.1, ∃ t ∈ tours, c ∈ t
-
-open Classical in
-/-- METRIC TRAVELING K-SALESPERSON as a decision problem over bitstrings. -/
-noncomputable def metricTravelingKSalespersonDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MetricTravelingKSalespersonInstance) x with
-  | some i => decide (WellFormed i ∧ MetricTravelingKSalespersonFeasible i)
-  | none => false
 
 /-- **METRIC TRAVELING K-SALESPERSON is NP-complete.** Source: Crescenzi and Kann, MINIMUM METRIC
 TRAVELING K-SALESPERSON PROBLEM; Frederickson, Hecht, and Kim (1978); Garey and Johnson (1979),

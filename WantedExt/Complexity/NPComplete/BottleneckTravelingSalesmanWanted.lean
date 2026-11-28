@@ -19,8 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.BottleneckTravelingSalesmanDefs
 
 @[expose] public section
 
@@ -49,34 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number of cities `m`, the distance matrix, and the bound `B`. -/
-abbrev BottleneckTravelingSalesmanInstance := ℕ × List (List ℕ) × ℕ
-
-/-- The distance from city `a` to city `b`. -/
-def dist (d : List (List ℕ)) (a b : ℕ) : ℕ := (d.getD a []).getD b 0
-
-/-- Well-formedness of an instance: `m ≥ 1`; the distances form an `m × m` symmetric matrix
-with zero diagonal and positive off-diagonal entries; and `B` is positive. -/
-def WellFormed (i : BottleneckTravelingSalesmanInstance) : Prop :=
-  0 < i.1 ∧ i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧
-    (∀ a < i.1, ∀ b < i.1, dist i.2.1 a b = dist i.2.1 b a) ∧
-    (∀ a < i.1, dist i.2.1 a a = 0) ∧ (∀ a < i.1, ∀ b < i.1, a ≠ b → 0 < dist i.2.1 a b) ∧
-    0 < i.2.2
-
-/-- Some tour has every edge, the return edge included, of length at most `B`. -/
-def BottleneckTravelingSalesmanFeasible (i : BottleneckTravelingSalesmanInstance) : Prop :=
-  ∃ tour : List ℕ, tour.Perm (List.range i.1) ∧
-    ∀ j < i.1, dist i.2.1 (tour.getD j 0) (tour.getD ((j + 1) % i.1) 0) ≤ i.2.2
-
-open Classical in
-/-- BOTTLENECK TRAVELING SALESMAN as a decision problem over bitstrings. -/
-noncomputable def bottleneckTravelingSalesmanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BottleneckTravelingSalesmanInstance) x with
-  | some i => decide (WellFormed i ∧ BottleneckTravelingSalesmanFeasible i)
-  | none => false
 
 /-- **BOTTLENECK TRAVELING SALESMAN is NP-complete.** Source: Garey and Johnson
 (1979), [ND24]. -/

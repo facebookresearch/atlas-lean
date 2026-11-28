@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted
+public import CSLibExt.Complexity.NPComplete.GeometricSteinerTreeDefs
 
 @[expose] public section
 
@@ -59,44 +55,6 @@ reduction from every language in `NP`
 -/
 
 open GeometricTravelingSalesman (point discreteDist)
-
-/-- An instance: the points of `P` as `((x⁺, x⁻), (y⁺, y⁻))`, standing for
-`(x⁺ - x⁻, y⁺ - y⁻)`, and the bound `B` (the encoding of GEOMETRIC TRAVELING SALESMAN). -/
-abbrev GeometricSteinerTreeInstance :=
-  GeometricTravelingSalesman.GeometricTravelingSalesmanInstance
-
-/-- The set `P` of the instance. -/
-def points (i : GeometricSteinerTreeInstance) : Finset (ℤ × ℤ) :=
-  (i.1.map point).toFinset
-
-/-- The discretized Euclidean distance is symmetric. -/
-theorem discreteDist_comm (p q : ℤ × ℤ) : discreteDist p q = discreteDist q p := by
-  unfold discreteDist
-  rw [show (p.1 - q.1) ^ 2 + (p.2 - q.2) ^ 2 = (q.1 - p.1) ^ 2 + (q.2 - p.2) ^ 2 by ring]
-
-/-- The weight of an edge `{p, q}`: the discretized Euclidean distance `discreteDist p q`. -/
-noncomputable def edgeLength : Sym2 (ℤ × ℤ) → ℕ :=
-  Sym2.lift ⟨discreteDist, discreteDist_comm⟩
-
-/-- Well-formedness of an instance: `0 < B`. -/
-def WellFormed (i : GeometricSteinerTreeInstance) : Prop :=
-  0 < i.2
-
-open Classical in
-/-- Some finite set `Q ⊆ Z × Z` and some spanning tree `T` of the points of `P ∪ Q` have total
-edge weight at most `B`. -/
-def GeometricSteinerTreeFeasible (i : GeometricSteinerTreeInstance) : Prop :=
-  ∃ Q : Finset (ℤ × ℤ), ∃ T : SimpleGraph {x // x ∈ points i ∪ Q}, T.IsTree ∧
-    ∑ e ∈ T.edgeFinset, edgeLength (e.map Subtype.val) ≤ i.2
-
-open Classical in
-/-- GEOMETRIC STEINER TREE as a decision problem over bitstrings. -/
-noncomputable def geometricSteinerTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GeometricSteinerTreeInstance) x with
-  | some i => decide (WellFormed i ∧ GeometricSteinerTreeFeasible i)
-  | none => false
 
 /-- **GEOMETRIC STEINER TREE is NP-complete.** Source: Garey and Johnson (1979), [ND13];
 Garey, Graham, and Johnson (1977). -/

@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.LinearAlgebra.AffineSpace.AffineSubspace.Defs
-public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted
+public import CSLibExt.Complexity.NPComplete.CoveringPointsByLinesDefs
 
 @[expose] public section
 
@@ -61,29 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the points, each a pair of integer coordinates in positive/negative-part
-form, and the bound `K`. -/
-abbrev CoveringPointsByLinesInstance := List ((ℕ × ℕ) × (ℕ × ℕ)) × ℕ
-
-/-- Well-formedness of an instance: the points are distinct, and `K` is positive. -/
-def WellFormed (i : CoveringPointsByLinesInstance) : Prop :=
-  (i.1.map point).Nodup ∧ 0 < i.2
-
-/-- There are `K` straight lines, each through two distinct points of `ℝ × ℝ`, such that every
-point of `P` lies on one of them. -/
-def CoveringPointsByLinesFeasible (i : CoveringPointsByLinesInstance) : Prop :=
-  ∃ L : Fin i.2 → (ℝ × ℝ) × (ℝ × ℝ), (∀ j, (L j).1 ≠ (L j).2) ∧
-    ∀ q ∈ i.1, ∃ j, ((point q).map Int.cast Int.cast : ℝ × ℝ) ∈ line[ℝ, (L j).1, (L j).2]
-
-open Classical in
-/-- COVERING POINTS BY LINES as a decision problem over bitstrings. -/
-noncomputable def coveringPointsByLinesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CoveringPointsByLinesInstance) x with
-  | some i => decide (WellFormed i ∧ CoveringPointsByLinesFeasible i)
-  | none => false
 
 /-- **COVERING POINTS BY LINES is NP-complete.** Source: Megiddo and Tamir (1982); recorded in
 Agarwal, Procopiuc and Varadarajan (2002). -/

@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.DiameterSpanningSubgraphDefs
 
 @[expose] public section
 
@@ -69,52 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list (an entry `(u, v, w, l)` is
-the edge `{u, v}` with weight `w` and length `l`), the budget `B`, and the bound `K`. -/
-abbrev DiameterSpanningSubgraphInstance := ℕ × List (ℕ × ℕ × ℕ × ℕ) × ℕ × ℕ
-
-/-- The endpoint pairs of a list of edges. -/
-def endpoints (es : List (ℕ × ℕ × ℕ × ℕ)) : List (ℕ × ℕ) :=
-  es.map fun e => (e.1, e.2.1)
-
-/-- The spanning subgraph `(V, E')` on the vertices `Fin n` with edge list `E'`. -/
-def spanning (i : DiameterSpanningSubgraphInstance) (E' : List (ℕ × ℕ × ℕ × ℕ)) :
-    SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (endpoints E')
-
-/-- The length `l(e)` of an edge `s`: the length of the list entry whose endpoints are the
-endpoints of `s` (unique under `WellFormed`), and `0` when there is none. -/
-def edgeLength (i : DiameterSpanningSubgraphInstance) (s : Sym2 (Fin i.1)) : ℕ :=
-  ((i.2.1.find? fun e => s.map Fin.val = s(e.1, e.2.1)).map fun e => e.2.2.2).getD 0
-
-/-- The length of a walk: the sum of the lengths of the edges it traverses. -/
-def walkLength (i : DiameterSpanningSubgraphInstance) {G : SimpleGraph (Fin i.1)}
-    {u v : Fin i.1} (p : G.Walk u v) : ℕ :=
-  (p.edges.map (edgeLength i)).sum
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), every weight is
-positive, and `B` and `K` are positive. -/
-def WellFormed (i : DiameterSpanningSubgraphInstance) : Prop :=
-  ((endpoints i.2.1).Nodup ∧
-    ∀ e ∈ endpoints i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ endpoints i.2.1) ∧
-    (∀ e ∈ i.2.1, 0 < e.2.2.1) ∧ 0 < i.2.2.1 ∧ 0 < i.2.2.2
-
-/-- Some set `E'` of edges (a sublist of the edge list) has total weight at most `B`, and in the
-spanning subgraph `(V, E')` every two vertices are joined by a walk of length at most `K`. -/
-def DiameterSpanningSubgraphFeasible (i : DiameterSpanningSubgraphInstance) : Prop :=
-  ∃ E' : List (ℕ × ℕ × ℕ × ℕ), E'.Sublist i.2.1 ∧ (E'.map fun e => e.2.2.1).sum ≤ i.2.2.1 ∧
-    ∀ u v : Fin i.1, ∃ p : (spanning i E').Walk u v, walkLength i p ≤ i.2.2.2
-
-open Classical in
-/-- DIAMETER SPANNING SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def diameterSpanningSubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DiameterSpanningSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ DiameterSpanningSubgraphFeasible i)
-  | none => false
 
 /-- **DIAMETER SPANNING SUBGRAPH is NP-complete.** Source: Crescenzi and Kann, MINIMUM DIAMETER
 SPANNING SUBGRAPH; Plesník (1981). -/

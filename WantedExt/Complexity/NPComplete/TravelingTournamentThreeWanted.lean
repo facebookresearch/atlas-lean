@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnconstrainedTravelingTournamentWanted
+public import CSLibExt.Complexity.NPComplete.TravelingTournamentThreeDefs
 
 @[expose] public section
 
@@ -61,32 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- No team of the `n` teams plays 4 consecutive rounds with the same home/away status. -/
-def AtMostThreeConsecutive (n : ℕ) (home : ℕ → ℕ → Bool) : Prop :=
-  ∀ t < n, ∀ r, r + 3 < numRounds n →
-    ¬ (home t r = home t (r + 1) ∧ home t (r + 1) = home t (r + 2) ∧
-      home t (r + 2) = home t (r + 3))
-
-/-- No team of the `n` teams plays the same opponent in two consecutive rounds. -/
-def NoRepeaters (n : ℕ) (opp : ℕ → ℕ → ℕ) : Prop :=
-  ∀ t < n, ∀ r, r + 1 < numRounds n → opp t r ≠ opp t (r + 1)
-
-/-- Some double round robin schedule with at most 3 consecutive home or away matches and no
-repeaters has total travel distance at most `K`. -/
-def TravelingTournamentThreeFeasible (i : TravelingTournamentInstance) : Prop :=
-  ∃ opp : ℕ → ℕ → ℕ, ∃ home : ℕ → ℕ → Bool, IsDoubleRoundRobin (numTeams i) opp home ∧
-    AtMostThreeConsecutive (numTeams i) home ∧ NoRepeaters (numTeams i) opp ∧
-    totalTravel (distance i) (numTeams i) opp home ≤ i.2
-
-open Classical in
-/-- TRAVELING TOURNAMENT PROBLEM with maximum streak 3 as a decision problem over bitstrings. -/
-noncomputable def travelingTournamentThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TravelingTournamentInstance) x with
-  | some i => decide (WellFormed i ∧ TravelingTournamentThreeFeasible i)
-  | none => false
 
 /-- **TRAVELING TOURNAMENT PROBLEM with maximum streak 3 is NP-complete.** NP-hardness: Thielen
 and Westphal (2011). Membership in NP: the schedule is a certificate of polynomial size, checked in

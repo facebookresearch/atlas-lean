@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BoundedDiameterSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.BoundedDiameterSpanningTreeFixedDDefs
 
 @[expose] public section
 
@@ -64,23 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the fixed diameter bound `D`: the parent's (a simple
-weighted edge list on `Fin n` with positive weights, `0 < D ≤ |V|`, `0 < B`), the instance's
-diameter bound is `D`, and every edge weight is `1` or `2`. -/
-def WellFormed (D : ℕ) (i : BoundedDiameterSpanningTreeInstance) : Prop :=
-  BoundedDiameterSpanningTree.WellFormed i ∧ i.2.2.1 = D ∧
-    ∀ e ∈ i.2.1, e.2.2 = 1 ∨ e.2.2 = 2
-
-open Classical in
-/-- BOUNDED DIAMETER SPANNING TREE with the diameter bound fixed to `D` and edge weights 1 or 2,
-as a decision problem over bitstrings. -/
-noncomputable def boundedDiameterSpanningTreeFixedDDec (D : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BoundedDiameterSpanningTreeInstance) x with
-  | some i => decide (WellFormed D i ∧ BoundedDiameterSpanningTreeFeasible i)
-  | none => false
 
 /-- **BOUNDED DIAMETER SPANNING TREE is NP-complete for every fixed `D ≥ 4`, even with edge
 weights 1 or 2.** Source: Garey and Johnson (1979), [ND4], comment (Garey and Johnson,

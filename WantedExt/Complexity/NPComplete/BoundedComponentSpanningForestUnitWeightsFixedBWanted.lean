@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BoundedComponentSpanningForestWanted
+public import CSLibExt.Complexity.NPComplete.BoundedComponentSpanningForestUnitWeightsFixedBDefs
 
 @[expose] public section
 
@@ -65,28 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance for a fixed bound `B`: vertex count `n` (vertices `Fin n`), edge list, vertex
-weights `[w 0, …, w (n - 1)]`, and the bound `K` on the number of parts. -/
-abbrev FixedBoundInstance := ℕ × List (ℕ × ℕ) × List ℕ × ℕ
-
-/-- The BOUNDED COMPONENT SPANNING FOREST instance given by `i` and the weight bound `B`. -/
-abbrev withBound (i : FixedBoundInstance) (B : ℕ) : BoundedComponentSpanningForestInstance :=
-  (i.1, i.2.1, i.2.2.1, i.2.2.2, B)
-
-/-- Well-formedness of an instance for the bound `B`: the BOUNDED COMPONENT SPANNING FOREST
-instance `withBound i B` is well-formed, and every vertex weight is `1`. -/
-def WellFormed (B : ℕ) (i : FixedBoundInstance) : Prop :=
-  BoundedComponentSpanningForest.WellFormed (withBound i B) ∧ ∀ x ∈ i.2.2.1, x = 1
-
-open Classical in
-/-- BOUNDED COMPONENT SPANNING FOREST with unit weights and the weight bound fixed to `B`, as a
-decision problem over bitstrings. -/
-noncomputable def boundedComponentSpanningForestUnitWeightsDec (B : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := FixedBoundInstance) x with
-  | some i => decide (WellFormed B i ∧ BoundedComponentSpanningForestFeasible (withBound i B))
-  | none => false
 
 /-- **BOUNDED COMPONENT SPANNING FOREST with unit weights is NP-complete for every fixed
 `B ≥ 3`.** Source: Garey and Johnson (1979), [ND10], comment; Dyer and Frieze (1985),

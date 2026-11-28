@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TspWanted
+public import CSLibExt.Complexity.NPComplete.MetricTravelingSalespersonDefs
 
 @[expose] public section
 
@@ -61,25 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed TRAVELING SALESPERSON instance (a symmetric
-`m × m` distance matrix with zero diagonal, `0 < m`) whose distances between distinct cities are
-positive and satisfy the triangle inequality `d(a, c) ≤ d(a, b) + d(b, c)`, and `0 < B`. -/
-def WellFormed (i : TspInstance) : Prop :=
-  Tsp.WellFormed i ∧
-    (∀ a < i.1, ∀ b < i.1, a ≠ b → 0 < (i.2.1.getD a []).getD b 0) ∧
-    (∀ a < i.1, ∀ b < i.1, ∀ c < i.1,
-      (i.2.1.getD a []).getD c 0 ≤ (i.2.1.getD a []).getD b 0 + (i.2.1.getD b []).getD c 0) ∧
-    0 < i.2.2
-
-open Classical in
-/-- METRIC TRAVELING SALESPERSON as a decision problem over bitstrings. -/
-noncomputable def metricTravelingSalespersonDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TspInstance) x with
-  | some i => decide (WellFormed i ∧ TspFeasible i)
-  | none => false
 
 /-- **METRIC TRAVELING SALESPERSON is NP-complete.** Source: Garey and Johnson (1979), [ND22]
 (distances `1` and `2`). -/

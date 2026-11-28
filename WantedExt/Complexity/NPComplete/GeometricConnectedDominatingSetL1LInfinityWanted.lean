@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GeometricConnectedDominatingSetWanted
-public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanLInfinityWanted
-public import WantedExt.Complexity.NPComplete.RectilinearTravelingSalesmanWanted
+public import CSLibExt.Complexity.NPComplete.GeometricConnectedDominatingSetL1LInfinityDefs
 
 @[expose] public section
 
@@ -65,46 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The `L₁` distance-`B` graph on the points of `P`: two distinct points are adjacent when
-`|x₁ - x₂| + |y₁ - y₂| ≤ B`. -/
-def l1Graph (i : GeometricConnectedDominatingSetInstance) : SimpleGraph (Fin i.1.length) :=
-  SimpleGraph.fromRel fun a b => rectilinearDist (point i.1[a]) (point i.1[b]) ≤ i.2.1
-
-/-- The `L∞` distance-`B` graph on the points of `P`: two distinct points are adjacent when
-`max (|x₁ - x₂|, |y₁ - y₂|) ≤ B`. -/
-def lInfinityGraph (i : GeometricConnectedDominatingSetInstance) : SimpleGraph (Fin i.1.length) :=
-  SimpleGraph.fromRel fun a b => chebyshevDist (point i.1[a]) (point i.1[b]) ≤ i.2.1
-
-/-- Under the `L₁` metric, some subset `P' ⊆ P` of at most `K` points dominates the
-distance-`B` graph, and the subgraph it induces is connected. -/
-def L1Feasible (i : GeometricConnectedDominatingSetInstance) : Prop :=
-  ∃ P' : Finset (Fin i.1.length), P'.card ≤ i.2.2 ∧ (l1Graph i).IsDominating ↑P' ∧
-    ((l1Graph i).induce (↑P' : Set (Fin i.1.length))).Connected
-
-/-- Under the `L∞` metric, some subset `P' ⊆ P` of at most `K` points dominates the
-distance-`B` graph, and the subgraph it induces is connected. -/
-def LInfinityFeasible (i : GeometricConnectedDominatingSetInstance) : Prop :=
-  ∃ P' : Finset (Fin i.1.length), P'.card ≤ i.2.2 ∧ (lInfinityGraph i).IsDominating ↑P' ∧
-    ((lInfinityGraph i).induce (↑P' : Set (Fin i.1.length))).Connected
-
-open Classical in
-/-- GEOMETRIC CONNECTED DOMINATING SET under the `L₁` metric as a decision problem over
-bitstrings. -/
-noncomputable def l1Dec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GeometricConnectedDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ L1Feasible i)
-  | none => false
-
-open Classical in
-/-- GEOMETRIC CONNECTED DOMINATING SET under the `L∞` metric as a decision problem over
-bitstrings. -/
-noncomputable def lInfinityDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GeometricConnectedDominatingSetInstance) x with
-  | some i => decide (WellFormed i ∧ LInfinityFeasible i)
-  | none => false
 
 /-- **GEOMETRIC CONNECTED DOMINATING SET under the `L₁` metric is NP-complete.** Source: Garey
 and Johnson (1979), [ND48], comment. -/

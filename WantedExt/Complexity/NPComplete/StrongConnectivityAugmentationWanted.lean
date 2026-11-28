@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Logic.Relation
+public import CSLibExt.Complexity.NPComplete.StrongConnectivityAugmentationDefs
 
 @[expose] public section
 
@@ -53,41 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, arc list of `G`, weight matrix `w` (row `u`, column `v`
-holds `w(u, v)`), and the bound `B`. -/
-abbrev StrongConnectivityAugmentationInstance := ℕ × List (ℕ × ℕ) × List (List ℕ) × ℕ
-
-/-- The weight of the ordered pair `(u, v)`. -/
-def weight (w : List (List ℕ)) (u v : ℕ) : ℕ := (w.getD u []).getD v 0
-
-/-- The digraph on `Fin n` whose arcs are the listed pairs. -/
-def arcDigraph (n : ℕ) (arcs : List (ℕ × ℕ)) : Digraph (Fin n) where
-  Adj u v := ((u : ℕ), (v : ℕ)) ∈ arcs
-
-/-- Well-formedness of an instance: the arcs of `G` join distinct vertices below `n`; `w` is
-an `n × n` matrix with positive entries; and `B` is positive. -/
-def WellFormed (i : StrongConnectivityAugmentationInstance) : Prop :=
-  (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2) ∧
-    i.2.2.1.length = i.1 ∧ (∀ row ∈ i.2.2.1, row.length = i.1) ∧
-    (∀ u < i.1, ∀ v < i.1, 0 < weight i.2.2.1 u v) ∧ 0 < i.2.2.2
-
-/-- Some list `A'` of ordered pairs of vertices has total weight at most `B`, and adding its
-pairs to the arcs of `G` gives a strongly connected digraph. -/
-def StrongConnectivityAugmentationFeasible (i : StrongConnectivityAugmentationInstance) :
-    Prop :=
-  ∃ A' : List (ℕ × ℕ), (∀ a ∈ A', a.1 < i.1 ∧ a.2 < i.1) ∧
-    (A'.map fun a => weight i.2.2.1 a.1 a.2).sum ≤ i.2.2.2 ∧
-    ∀ u v : Fin i.1, Relation.ReflTransGen (arcDigraph i.1 (i.2.1 ++ A')).Adj u v
-
-open Classical in
-/-- STRONG CONNECTIVITY AUGMENTATION as a decision problem over bitstrings. -/
-noncomputable def strongConnectivityAugmentationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := StrongConnectivityAugmentationInstance) x with
-  | some i => decide (WellFormed i ∧ StrongConnectivityAugmentationFeasible i)
-  | none => false
 
 /-- **STRONG CONNECTIVITY AUGMENTATION is NP-complete.** Source: Garey and Johnson
 (1979), [ND19]; Eswaran and Tarjan (1976). -/

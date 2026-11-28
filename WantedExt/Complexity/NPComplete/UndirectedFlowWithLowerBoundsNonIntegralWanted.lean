@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UndirectedFlowWithLowerBoundsWanted
+public import CSLibExt.Complexity.NPComplete.UndirectedFlowWithLowerBoundsNonIntegralDefs
 
 @[expose] public section
 
@@ -60,28 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- There is a real-valued flow `f` from `s` to `t` that is feasible for the symmetric edge
-capacities (it is nonnegative, vanishes off the orientations of the edges, is at most
-`c({u, v})` on both orientations of `{u, v}`, and is conserved at every vertex other than `s`
-and `t`), uses only one direction of each edge, meets each lower bound in the used direction,
-and has net flow into `t` at least `R`. -/
-def NonIntegralFeasible (i : UndirectedFlowWithLowerBoundsInstance) : Prop :=
-  ∃ (hs : i.2.2.1 < i.1) (ht : i.2.2.2.1 < i.1) (f : Fin i.1 → Fin i.1 → ℝ),
-    IsFeasibleFlow (fun u v : Fin i.1 => (capacity i u v : ℝ)) ⟨i.2.2.1, hs⟩ ⟨i.2.2.2.1, ht⟩ f ∧
-      (∀ u v, (Graph i).Adj u v →
-        (f u v = 0 ∨ f v u = 0) ∧ (lowerBound i u v : ℝ) ≤ max (f u v) (f v u)) ∧
-      (i.2.2.2.2 : ℝ) ≤ (∑ u, f u ⟨i.2.2.2.1, ht⟩) - ∑ w, f ⟨i.2.2.2.1, ht⟩ w
-
-open Classical in
-/-- UNDIRECTED FLOW WITH LOWER BOUNDS with non-integral flows, as a decision problem over
-bitstrings. -/
-noncomputable def nonIntegralDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UndirectedFlowWithLowerBoundsInstance) x with
-  | some i => decide (WellFormed i ∧ NonIntegralFeasible i)
-  | none => false
 
 /-- **UNDIRECTED FLOW WITH LOWER BOUNDS remains NP-complete when non-integral flows are
 allowed.** Source: Garey and Johnson (1979), [ND37], comment; Itai (1978). -/

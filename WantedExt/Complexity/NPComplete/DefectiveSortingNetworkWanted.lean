@@ -22,11 +22,8 @@ does not sort?", proved NP-complete).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Algorithms.Lean.SortingNetworks.ZeroOne
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Data.Int.Order.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.DefectiveSortingNetworkDefs
 
 @[expose] public section
 
@@ -66,33 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables and the statements `(i, j)` in program order. -/
-abbrev DefectiveSortingNetworkInstance := ℕ × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: every statement `(i, j)` has `i < j < n`. -/
-def WellFormed (i : DefectiveSortingNetworkInstance) : Prop :=
-  ∀ c ∈ i.2, c.1 < c.2 ∧ c.2 < i.1
-
-/-- The program as a comparator network on `n` wires (statements with an index out of range,
-which `WellFormed` excludes, are dropped). -/
-def network (i : DefectiveSortingNetworkInstance) :
-    Cslib.Algorithms.Lean.SortingNetworks.Network i.1 :=
-  i.2.filterMap fun c =>
-    if h : c.1 < i.1 ∧ c.2 < i.1 then some (⟨c.1, h.1⟩, ⟨c.2, h.2⟩) else none
-
-/-- Some integer input is not sorted into nondecreasing order by the program. -/
-def DefectiveSortingNetworkFeasible (i : DefectiveSortingNetworkInstance) : Prop :=
-  ¬ Cslib.Algorithms.Lean.SortingNetworks.Sorts (network i) ℤ
-
-open Classical in
-/-- DEFECTIVE SORTING NETWORK as a decision problem over bitstrings. -/
-noncomputable def defectiveSortingNetworkDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DefectiveSortingNetworkInstance) x with
-  | some i => decide (WellFormed i ∧ DefectiveSortingNetworkFeasible i)
-  | none => false
 
 /-- **DEFECTIVE SORTING NETWORK is NP-complete.** Source: Johnson (1982), NP-completeness column,
 crediting Rabin (1981); Parberry (1991). -/

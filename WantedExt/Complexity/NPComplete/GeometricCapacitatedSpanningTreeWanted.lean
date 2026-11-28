@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted
+public import CSLibExt.Complexity.NPComplete.GeometricCapacitatedSpanningTreeDefs
 
 @[expose] public section
 
@@ -61,48 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(P, p₀, r, c, B)`: the points (encoded as in GEOMETRIC TRAVELING SALESMAN),
-the index of `p₀`, the requirements `r(p)` of the points in order, the capacity `c`, and the
-bound `B`. -/
-abbrev GeometricCapacitatedSpanningTreeInstance :=
-  List ((ℕ × ℕ) × (ℕ × ℕ)) × ℕ × List ℕ × ℕ × ℕ
-
-/-- The points of the instance in `Z × Z`. -/
-def points (i : GeometricCapacitatedSpanningTreeInstance) : List (ℤ × ℤ) :=
-  i.1.map GeometricTravelingSalesman.point
-
-/-- The discretized Euclidean distance between the points with indices `a` and `b`. -/
-noncomputable def pointDist (i : GeometricCapacitatedSpanningTreeInstance) (a b : Fin i.1.length) :
-    ℕ :=
-  GeometricTravelingSalesman.discreteDist ((points i).getD a (0, 0)) ((points i).getD b (0, 0))
-
-/-- Well-formedness of an instance: the points are nonempty and distinct, `p₀` is one of them,
-there is one requirement per point, and `c` and `B` are positive. -/
-def WellFormed (i : GeometricCapacitatedSpanningTreeInstance) : Prop :=
-  0 < i.1.length ∧ (points i).Nodup ∧ i.2.1 < i.1.length ∧ i.2.2.1.length = i.1.length ∧
-    0 < i.2.2.2.1 ∧ 0 < i.2.2.2.2
-
-open Classical in
-/-- Some spanning tree `T` of the complete graph on the points has total discretized Euclidean
-length at most `B`, and for each edge `e` of `T` the requirements of the points whose path to
-`p₀` in `T` contains `e` sum to at most `c`. -/
-def GeometricCapacitatedSpanningTreeFeasible (i : GeometricCapacitatedSpanningTreeInstance) :
-    Prop :=
-  ∃ hp : i.2.1 < i.1.length, ∃ T : SimpleGraph (Fin i.1.length), T.IsTree ∧
-    (∑ a, ∑ b, if T.Adj a b ∧ a < b then pointDist i a b else 0) ≤ i.2.2.2.2 ∧
-    ∀ e ∈ T.edgeSet,
-      ∑ u ∈ Finset.univ.filter (fun u => ∃ p : T.Walk u ⟨i.2.1, hp⟩, p.IsPath ∧ e ∈ p.edges),
-        i.2.2.1.getD u 0 ≤ i.2.2.2.1
-
-open Classical in
-/-- GEOMETRIC CAPACITATED SPANNING TREE as a decision problem over bitstrings. -/
-noncomputable def geometricCapacitatedSpanningTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GeometricCapacitatedSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ GeometricCapacitatedSpanningTreeFeasible i)
-  | none => false
 
 /-- **GEOMETRIC CAPACITATED SPANNING TREE is NP-complete.** Source: Garey and Johnson (1979),
 [ND6]; Papadimitriou (1978). -/
