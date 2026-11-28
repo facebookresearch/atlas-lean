@@ -37,8 +37,9 @@ For an admissible exact sequence `X → Y → Z`, the first map is a kernel
 of the second and the second is a cokernel of the first.
 
 ## References
-* [C. Weibel, *The K-book: Chapter II.7*][weibel-k-book]
-* [D. Quillen, *Higher algebraic K-theory: I*][quillen-higher-algk-I]
+* [Charles A. Weibel, *The K-book*][Weibel2013], II.7, Exercise 7.8.
+* Daniel Quillen, *Higher algebraic K-theory: I*, §2,
+  [DOI: 10.1007/BFb0067053](https://doi.org/10.1007/BFb0067053).
 -/
 
 @[expose] public section
