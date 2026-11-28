@@ -30,9 +30,9 @@ example : (2 : ℝ) ^ (2 : ℕ) * exp (-2) = (2 * exp (-1)) ^ (2 : ℕ) := by
     exact pow_rpow_inv_natCast (by positivity) (by decide)
   have h := lambertCutoff_pow_mul_exp 3 (by decide) 2
     (c := (2 * exp (-1)) ^ (2 : ℕ)) (by positivity) (by
-      rw [show ((3 : ℕ) : ℝ) - 1 = 2 by norm_num, hroot,
-        show -(2 : ℝ) / 2 = -1 by norm_num, lambertMap.eq_def]
-      ring)
+      rw [show ((3 : ℕ) : ℝ) - 1 = 2 by norm_num, hroot]
+      apply (lambertMap_neg_div_eq_iff (by norm_num : (2 : ℝ) ≠ 0)).mpr
+      rw [show -(2 : ℝ) / 2 = -1 by norm_num])
   exact h
 
 -- At the smallest allowed `n` and `m`, the actual lower-branch cutoff puts the integral in (33, 34).
@@ -64,7 +64,7 @@ example : lambertMap (-1) < lambertMap (-2) := by
   have h : 2 * exp (-1) < 1 := by
     rw [exp_neg, ← div_eq_mul_inv, div_lt_one (exp_pos _)]
     exact exp_one_gt_two
-  rw [lambertMap.eq_def, lambertMap.eq_def, show (-2 : ℝ) = -1 + -1 by norm_num, exp_add]
+  rw [lambertMap_apply, lambertMap_apply, show (-2 : ℝ) = -1 + -1 by norm_num, exp_add]
   nlinarith only [mul_lt_mul_of_pos_right h (exp_pos (-1))]
 
 -- Check both strict endpoints at `n = 5`, `m = 2` without invoking the bounds theorem.
@@ -92,7 +92,7 @@ example : ∃ A : ℝ, 4 ≤ A ∧
         exact pow_rpow_inv_natCast (by norm_num) (by decide)
     have hcut : lambertMap (-(10 : ℝ) / 4) < lambertMap (-A / 4) := by
       have h := mul_lt_mul hroot hexp.le (exp_pos _) (by norm_num : (0 : ℝ) ≤ 10 / 13)
-      rw [hW, lambertMap.eq_def, show -(10 : ℝ) / 4 = -(5 / 2) by norm_num, exp_neg,
+      rw [hW, lambertMap_apply, show -(10 : ℝ) / 4 = -(5 / 2) by norm_num, exp_neg,
         ← div_eq_mul_inv, div_lt_iff₀ (exp_pos _)]
       linarith only [h]
     have hArg : -A / 4 ∈ Set.Iic (-1 : ℝ) := by rw [Set.mem_Iic]; linarith
@@ -101,7 +101,7 @@ example : ∃ A : ℝ, 4 ≤ A ∧
     linarith
   have hA₀ : 0 < A := by linarith
   have hnorm : A ^ (4 : ℕ) * exp (-A) = 2 / 7 := by
-    rw [lambertMap.eq_def] at hW
+    rw [lambertMap_apply] at hW
     have hmul : A * exp (-A / 4) = (4 / 14 : ℝ) ^ (1 / 4 : ℝ) := by
       linear_combination -4 * hW
     have h := congrArg (fun x : ℝ => x ^ (4 : ℕ)) hmul

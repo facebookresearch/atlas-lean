@@ -43,6 +43,8 @@ real `a`, and nonnegative target constant in place of `4 / 7`.
   27 (2024), Article 24.5.7, pp. 1–11, Equation (3), Theorem 10, and Section 3.3.
 * Đ. Kurepa, *On the left factorial function !n*, Mathematica Balkanica 1 (1971), pp. 147–153,
   especially p. 151 for the integral representation.
+* The rescaled equation, cutoff identity and lower-branch comparison are from
+  `MathlibExt.Analysis.SpecialFunctions.LambertWFunction`.
 -/
 
 namespace MetaMathlibExt
@@ -52,31 +54,6 @@ open Set
 @[expose] public section
 
 end
-
-private lemma lambertMul {d : ℝ} (hd : d ≠ 0) (a c : ℝ)
-    (hW : lambertMap (-a / d) = -(1 / d) * c ^ (1 / d)) :
-    a * Real.exp (-a / d) = c ^ (1 / d) := by
-  rw [lambertMap.eq_def] at hW
-  field_simp [hd] at hW
-  simpa only [neg_div, neg_inj] using hW
-
-/-- **Exponential-power identity for Lambert cutoffs.** For a natural number $n > 1$, a real
-constant $c \ge 0$, and a real number $a$, if the Lambert map $h(y)=ye^y$ satisfies
-$h(-a/(n-1)) = -(1/(n-1))c^{1/(n-1)}$, then $a^{n-1} e^{-a} = c$. -/
-public theorem lambertCutoff_pow_mul_exp (n : ℕ) (hn : 1 < n) (a : ℝ) {c : ℝ} (hc : 0 ≤ c)
-    (hW : lambertMap (-a / ((n : ℝ) - 1)) =
-      -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1))) :
-    a ^ (n - 1) * Real.exp (-a) = c := by
-  have hn' : (1 : ℝ) < n := by exact_mod_cast hn
-  have hd := (sub_pos.mpr hn').ne'
-  have hcast : ((n - 1 : ℕ) : ℝ) = (n : ℝ) - 1 := Nat.cast_pred (by omega)
-  have hmul := congrArg (· ^ (n - 1)) (lambertMul hd a c hW)
-  have hexp : ((n - 1 : ℕ) : ℝ) * (-a / ((n : ℝ) - 1)) = -a := by
-    rw [hcast]
-    field_simp
-  rw [mul_pow, ← Real.exp_nat_mul, hexp, ← Real.rpow_mul_natCast hc, hcast,
-    one_div_mul_cancel hd, Real.rpow_one] at hmul
-  exact hmul
 
 private lemma a_gt (n : ℕ) (hn : 5 ≤ n) (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
     (hW : lambertMap (-a / ((n : ℝ) - 1)) =
@@ -89,7 +66,7 @@ private lemma a_gt (n : ℕ) (hn : 5 ≤ n) (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
   · exfalso
     have hc1 : (4 / 7 : ℝ) ^ (1 / ((n : ℝ) - 1)) ≤ 1 :=
       Real.rpow_le_one (by norm_num) (by norm_num) (by positivity)
-    have hEq := lambertMul hd a (4 / 7) hW
+    have hEq := (lambertMap_neg_div_eq_iff hd).mp hW
     rw [← hEq_a] at hEq
     rw [neg_div, div_self hd] at hEq
     have hepos : 0 < Real.exp (-1) := Real.exp_pos _
@@ -110,7 +87,7 @@ private lemma uexp_strictAnti :
   intro u hu v hv huv
   have hu' : -u ∈ Iic (-1 : ℝ) := neg_le_neg (Set.mem_Ioi.mp hu).le
   have hv' : -v ∈ Iic (-1 : ℝ) := neg_le_neg (Set.mem_Ioi.mp hv).le
-  simpa only [lambertMap.eq_def, neg_mul, neg_lt_neg_iff] using
+  simpa only [lambertMap_apply, neg_mul, neg_lt_neg_iff] using
     lambertMap_strictAntiOn_Iic hv' hu' (neg_lt_neg huv)
 
 private lemma a_ge_of_exp_bound (n : ℕ) (hn : 5 ≤ n) (a : ℝ) (ha : (n : ℝ) - 1 ≤ a)
@@ -124,7 +101,7 @@ private lemma a_ge_of_exp_bound (n : ℕ) (hn : 5 ≤ n) (a : ℝ) (ha : (n : �
   have hpos : (0 : ℝ) < (n : ℝ) - 1 := by linarith
   have hd : ((n : ℝ) - 1) ≠ 0 := ne_of_gt hpos
   have ha_gt := a_gt n hn a ha hW
-  have hEq := lambertMul hd a (4 / 7) hW
+  have hEq := (lambertMap_neg_div_eq_iff hd).mp hW
   by_contra hcon
   rw [not_le] at hcon
   have hu_mem : a / ((n : ℝ) - 1) ∈ Ioi (1 : ℝ) :=

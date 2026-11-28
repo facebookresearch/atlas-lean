@@ -29,12 +29,11 @@ term by term with the remainder at the one-parameter cutoff.
   27 (2024), Article 24.5.7, pp. 1–11, Theorems 10 and 14 (Sections 3.1 and 3.3).
 * Đ. Kurepa, *On the left factorial function !n*, Mathematica Balkanica 1 (1971), pp. 147–153,
   especially p. 151 for the integral representation.
-* The proof reuses `kurepaPartialIntegral_lambertSequence_bounds` and
-  `lambertCutoff_pow_mul_exp` from the `MathlibExt.NumberTheory` module
-  `GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds`, and
+* The proof reuses `kurepaPartialIntegral_lambertSequence_bounds` from the `MathlibExt.NumberTheory`
+  module `GoldenRatioLeftFactorialLambertKurepaPartialIntegralLambertSequenceBounds`, and
   `sum_factorial_sub_kurepaPartialIntegral` and `kurepaPartialIntegral_lt_sum_factorial` from
   `GoldenRatioLeftFactorialLambertKurepaPartialIntegralGoldenFactorialExponentBounds`.
-  It uses the lower-branch API `lambertMap_strictAntiOn_Iic` and
+  It uses `lambertCutoff_pow_mul_exp`, `lambertMap_strictAntiOn_Iic`, and
   `existsUnique_lambertMap_lower_preimage` from the module
   `MathlibExt.Analysis.SpecialFunctions.LambertWFunction`.
 -/

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
@@ -38,6 +39,9 @@ justify such a subtype-valued inverse.
 `existsUnique_lambertMap_lower_preimage` gives the matching characterization of the lower
 real branch `W₋₁`: every `x` with `-exp (-1) ≤ x < 0` has exactly one preimage `y ≤ -1`.
 The Lambert map is strictly decreasing on this branch, including its endpoint `y = -1`.
+For a natural number `n > 1` and a real target `c ≥ 0`, the equation
+`lambertMap (-a / (n - 1)) = -(1 / (n - 1)) * c ^ (1 / (n - 1))` for a real `a`
+implies the cutoff identity `a ^ (n - 1) * Real.exp (-a) = c`.
 
 ## References
 
@@ -48,7 +52,8 @@ The Lambert map is strictly decreasing on this branch, including its endpoint `y
   Journal of Integer Sequences 10 (2007), Article 07.3.7, pp. 1–11, Section 2.
 * Aleksandar Petojević, Marjana Gorjanac Ranitović, Dragan Rastovac, and Milinko Mandić,
   *The Golden Ratio, Factorials, and the Lambert W Function*, Journal of Integer Sequences
-  27 (2024), Article 24.5.7, pp. 1–11, Section 2 (the lower real branch).
+  27 (2024), Article 24.5.7, pp. 1–11, Section 2 (the lower real branch), Equation (3),
+  and Section 3.3 (Lambert cutoffs).
 -/
 
 namespace MetaMathlibExt
@@ -62,6 +67,41 @@ The inverse of $h$ restricted to $y > -1$ is the principal real branch of the La
 Source: Ouellet JIS VOL20 `ou2.tex` lines 426-432. -/
 public noncomputable def lambertMap (y : ℝ) : ℝ :=
   y * Real.exp y
+
+/-- **Evaluation of the Lambert map.** For every real $y$, the Lambert map has value $y e^y$. -/
+public theorem lambertMap_apply (y : ℝ) : lambertMap y = y * Real.exp y := by
+  rfl
+
+/-- **Rescaled Lambert equation.** For real numbers $a$, $z$, and $d \ne 0$,
+$h(-a/d) = -z/d$ for the Lambert map $h$ if and only if $a e^{-a/d} = z$. -/
+public theorem lambertMap_neg_div_eq_iff {a d z : ℝ} (hd : d ≠ 0) :
+    lambertMap (-a / d) = -(1 / d) * z ↔ a * Real.exp (-a / d) = z := by
+  rw [lambertMap_apply]
+  constructor
+  · intro h
+    field_simp [hd] at h
+    simpa only [neg_div, neg_inj] using h
+  · intro h
+    field_simp [hd]
+    simpa only [neg_div, neg_inj] using h
+
+/-- **Exponential-power identity for Lambert cutoffs.** For a natural number $n > 1$, a real
+constant $c \ge 0$, and a real number $a$, if the Lambert map $h(y)=ye^y$ satisfies
+$h(-a/(n-1)) = -(1/(n-1))c^{1/(n-1)}$, then $a^{n-1} e^{-a} = c$. -/
+public theorem lambertCutoff_pow_mul_exp (n : ℕ) (hn : 1 < n) (a : ℝ) {c : ℝ} (hc : 0 ≤ c)
+    (hW : lambertMap (-a / ((n : ℝ) - 1)) =
+      -(1 / ((n : ℝ) - 1)) * c ^ (1 / ((n : ℝ) - 1))) :
+    a ^ (n - 1) * Real.exp (-a) = c := by
+  have hn' : (1 : ℝ) < n := by exact_mod_cast hn
+  have hd := (sub_pos.mpr hn').ne'
+  have hcast : ((n - 1 : ℕ) : ℝ) = (n : ℝ) - 1 := Nat.cast_pred (by omega)
+  have hmul := congrArg (· ^ (n - 1)) ((lambertMap_neg_div_eq_iff hd).mp hW)
+  have hexp : ((n - 1 : ℕ) : ℝ) * (-a / ((n : ℝ) - 1)) = -a := by
+    rw [hcast]
+    field_simp
+  rw [mul_pow, ← Real.exp_nat_mul, hexp, ← Real.rpow_mul_natCast hc, hcast,
+    one_div_mul_cancel hd, Real.rpow_one] at hmul
+  exact hmul
 
 /-- **Principal-branch preimages of the Lambert map.** Let $h(y) = y e^y$ be the Lambert map on
 the real numbers. Every real $x > -e^{-1}$ has exactly one preimage $y > -1$ under $h$, that is,
