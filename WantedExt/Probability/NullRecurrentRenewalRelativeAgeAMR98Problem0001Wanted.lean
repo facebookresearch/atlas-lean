@@ -38,12 +38,16 @@ Convergence in distribution to the uniform law is `P(U_t ≤ u) → u` for every
 uniform distribution function is continuous).
 -/
 
-/-- The renewal epochs `S n = X 0 + ⋯ + X (n - 1)` (`S 0 = 0`, no delay). -/
+/-- The partial sums `S n = X 0 + ⋯ + X (n - 1)` (`S 0 = 0`) of arbitrary real increments `X i`.
+They are the renewal epochs of a zero-delay renewal process when the `X i` are independent,
+identically distributed, positive recurrence times. -/
 def renewalEpoch {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) : ℝ :=
   ∑ i ∈ Finset.range n, X i ω
 
-/-- The event `{U_t ≤ u}`: `t` lies in the cycle `[S n, S (n + 1))` of length `X n` and the relative
-age `A_t / D_t = (t - S n) / X n` is at most `u`. -/
+/-- The existential test: some `n` has `S n ≤ t < S (n + 1)` and `t - S n ≤ u * X n`. When the
+increments are positive the intervals `[S n, S (n + 1))` are disjoint, so at most one `n` covers
+`t`; when one does, this is the event `{U_t ≤ u}` that the relative age
+`A_t / D_t = (t - S n) / X n` of the cycle of length `X n` containing `t` is at most `u`. -/
 def relativeAgeLE {Ω : Type*} (X : ℕ → Ω → ℝ) (t u : ℝ) : Set Ω :=
   {ω | ∃ n, renewalEpoch X n ω ≤ t ∧ t < renewalEpoch X (n + 1) ω ∧
     t - renewalEpoch X n ω ≤ u * X n ω}

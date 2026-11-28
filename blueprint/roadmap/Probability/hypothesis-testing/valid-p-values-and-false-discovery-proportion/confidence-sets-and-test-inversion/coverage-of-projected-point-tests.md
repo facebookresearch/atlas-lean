@@ -1,0 +1,3 @@
+# Coverage of a projected point-test confidence set
+
+Let $(P_\theta)_{\theta \in \Theta}$ be probability measures on a measurable space $\mathcal X$ of observations and $\tau : \Theta \to \mathcal T$ an estimand. For each parameter $\theta$ let $R_\theta \subseteq \mathcal X$ be measurable with $P_\theta(R_\theta) \le \alpha$, where $\alpha \in [0,1]$. Let $C$ map observations to subsets of $\mathcal T$ so that $C(x)$ contains $\{\tau(\theta) : x \notin R_\theta\}$ for every $x$, and suppose $\{x : \tau(\theta) \in C(x)\}$ is measurable for every $\theta$. Then $P_\theta(\tau(\theta) \in C(x)) \ge 1 - \alpha$ for every $\theta$.
