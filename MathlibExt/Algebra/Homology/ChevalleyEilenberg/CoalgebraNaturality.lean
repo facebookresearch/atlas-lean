@@ -166,12 +166,12 @@ theorem nativeComplexMap_comul (f : L →ₗ⁅R⁆ L') :
   have hsource := congrArg (fun m => m.hom a) (ExteriorAlgebra.gradedCoproduct_realize R L n)
   have htensor := congrArg (fun m => m.hom ((ExteriorAlgebra.gradedCoproduct R L n).hom a))
     (tensorMap_realize R L f n)
-  simp only [ModuleCat.hom_comp, ModuleCat.hom_ofHom, LinearMap.comp_apply] at htarget hsource
-    htensor
+  simp only [ModuleCat.hom_comp, ModuleCat.hom_ofHom,
+    LinearMap.comp_apply] at htarget hsource htensor
   change (ExteriorAlgebra.tensorDegreeRealize R L' n).hom
     ((ExteriorAlgebra.gradedCoproduct R L' n).hom (exteriorPower.map n f.toLinearMap a)) =
-    ExteriorAlgebra.coproduct R L' (exteriorPower.map n f.toLinearMap a : ExteriorAlgebra R L') at
-      htarget
+    ExteriorAlgebra.coproduct R L'
+      (exteriorPower.map n f.toLinearMap a : ExteriorAlgebra R L') at htarget
   change (ExteriorAlgebra.tensorDegreeRealize R L n).hom
     ((ExteriorAlgebra.gradedCoproduct R L n).hom a) =
     ExteriorAlgebra.coproduct R L ((show ⋀[R]^n L from a) : ExteriorAlgebra R L) at hsource
@@ -233,8 +233,8 @@ theorem nativeComplexMap_coaug (f : L →ₗ⁅R⁆ L') :
     apply Subtype.ext
     have hComp := HomologicalComplex.comp_f (nativeComplexCoaug R L) (nativeComplexMap R L f) 0
     have hComp' := congrArg (fun g => g.hom r) hComp
-    simp only [ModuleCat.hom_comp, LinearMap.comp_apply, nativeComplexMap_f, ModuleCat.hom_ofHom] at
-      hComp'
+    simp only [ModuleCat.hom_comp, LinearMap.comp_apply, nativeComplexMap_f,
+      ModuleCat.hom_ofHom] at hComp'
     let a : ⋀[R]^0 L := (nativeComplexCoaug R L).f 0 r
     let b : ⋀[R]^0 L' := (nativeComplexCoaug R L').f 0 r
     have hValue : exteriorPower.map 0 f.toLinearMap a = b := by
