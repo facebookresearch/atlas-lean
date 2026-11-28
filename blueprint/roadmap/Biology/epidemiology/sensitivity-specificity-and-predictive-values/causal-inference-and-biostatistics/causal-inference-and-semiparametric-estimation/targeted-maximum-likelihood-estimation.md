@@ -6,7 +6,7 @@ Let $O_1,\dots,O_n$ be i.i.d. from $P_0$ in a model $\mathcal M$, let $\psi = \P
 
 $$\frac1n\sum_{i=1}^n D^*(\hat P^*)(O_i) = 0.$$
 
-Solving this equation is an algebraic property of the fitted $\hat P^*$. Under the usual conditions for asymptotically linear estimators, which concern the fitted estimators and not only the population identity $\mathbb E_{P_0} D^*(P_0)(O) = 0$ (second-order remainder $o_P(n^{-1/2})$ and a Donsker or sample-splitting condition), $\hat\psi - \psi_0 = n^{-1}\sum_i D^*(P_0)(O_i) + o_P(n^{-1/2})$, so $\hat\psi$ is efficient, and it is doubly robust when the remainder has a product structure.
+Solving this equation is an algebraic property of the fitted $\hat P^*$; efficiency needs conditions on the fitted estimators, not only the population identity $\mathbb E_{P_0} D^*(P_0)(O) = 0$. In the source's Theorem 1, $\mathcal M$ is convex, $\Psi$ is linear, so that $\Psi(P) - \Psi(P_0) = -\mathbb E_{P_0} D^*(P)(O)$, $\hat P^* \in \mathcal M$ with $p_0/\hat p^*$ bounded on the support of $p_0$, and the number of iterations $K(n)$ is large enough that the estimating equation holds up to a remainder $R(n, K(n)) = \frac1n\sum_i D^*(\hat P^*)(O_i) = o_P(n^{-1/2})$. Then $\hat\psi - \psi_0 = \frac1n\sum_i \{D^*(\hat P^*)(O_i) - \mathbb E_{P_0} D^*(\hat P^*)(O)\} + R(n, K(n))$. If moreover $D^*(\hat P^*)$ falls in a $P_0$-Donsker class with probability tending to $1$ and $\mathbb E_{P_0}\{D^*(\hat P^*) - D^*(P_1)\}^2(O) \to 0$ in probability for some $P_1 \in \mathcal M$, then $\hat\psi$ is asymptotically linear with influence curve $D^*(P_1) - \mathbb E_{P_0} D^*(P_1)(O)$; when $P_1 = P_0$ this gives $\hat\psi - \psi_0 = n^{-1}\sum_i D^*(P_0)(O_i) + o_P(n^{-1/2})$, so $\hat\psi$ is asymptotically efficient.
 
 **Point-treatment example.** For $O = (W, A, Y)$ with binary $A$ and $Y \in [0,1]$, $\psi = \mathbb E_W\{\bar Q(1,W) - \bar Q(0,W)\}$ with $\bar Q(a,w) = \mathbb E(Y\mid A=a,W=w)$ and propensity $g(w) = P(A=1\mid W=w)$. Assume overlap, $\delta \le g(W) \le 1 - \delta$ a.s. for some $\delta > 0$, so that both inverse probabilities below are bounded and $D^*$ is square integrable; the fitted $\hat g$ is likewise truncated to $[\delta, 1 - \delta]$. The efficient influence curve is
 
@@ -26,4 +26,4 @@ At the MLE $\hat\epsilon$ the score of the fluctuation vanishes, and because tha
 
 ## Sources
 
-- Mark J. van der Laan and Daniel Rubin, "Targeted Maximum Likelihood Learning", The International Journal of Biostatistics (2006), <https://doi.org/10.2202/1557-4679.1043>.
+- Mark J. van der Laan and Daniel Rubin, "Targeted Maximum Likelihood Learning", The International Journal of Biostatistics (2006), <https://doi.org/10.2202/1557-4679.1043>, Section 2, Eq. (10) and Theorem 1.

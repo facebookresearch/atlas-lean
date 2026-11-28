@@ -15,7 +15,8 @@ $$\sum_{j \in V} w_j^\infty > \frac{1 + \max_{1 \le j \le J} w_j^\infty}{2},$$
 then $\hat\beta_{\mathrm{WM}} \xrightarrow{p} \beta$.
 
 A strict majority of valid weight, $\sum_{j \in V} w_j^\infty > 1/2$, does not suffice for the interpolated
-estimator. With true effect $0$, estimates $(-1, 0, 1/N)$ and weights $(0.45, 0.20, 0.35)$, the last two
+estimator (this page derives the strengthened margin $\sum_{j \in V} w_j^\infty > (1 + \max_j w_j^\infty)/2$
+above; Bowden et al. (2016) state consistency under the weaker heuristic condition that at least 50% of the weight comes from valid instruments without printing this margin). With true effect $0$, estimates $(-1, 0, 1/N)$ and weights $(0.45, 0.20, 0.35)$, the last two
 variants are valid and carry weight $0.55$, yet the mid-point percentiles of the first two are $0.225$ and
 $0.55$, so $\hat\beta_{\mathrm{WM}} = -2/13$ for every $N$.
 
