@@ -12,6 +12,7 @@ import MathlibExt.Algebra.Homology.TwistingHomComplexMap
 import MathlibExt.Algebra.Homology.TwistingHomComplexModule
 import MathlibExt.Algebra.Homology.TwistingMaurerCartanReduced
 import Mathlib.Algebra.Category.ModuleCat.Abelian
+import Mathlib.Algebra.Category.ModuleCat.Colimits
 import Mathlib.Algebra.Category.ModuleCat.Monoidal.Closed
 import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 import Mathlib.CategoryTheory.Monoidal.Internal.Limits
@@ -103,6 +104,14 @@ private abbrev p₁ : A ⟶ I := p₁Mon.hom
 private instance : IsMonHom p₀ := p₀Mon.isMonHom_hom
 private instance : IsMonHom p₁ := p₁Mon.isMonHom_hom
 
+private lemma p₀_eq_fst : p₀ = (prod.fst : A ⟶ I) := by
+  simp [p₀, p₀Mon, unitProduct, Mon.limitCone, Cone.postcompose,
+    pairComp, diagramIsoPair, mapPairIso]
+
+private lemma p₁_eq_snd : p₁ = (prod.snd : A ⟶ I) := by
+  simp [p₁, p₁Mon, unitProduct, Mon.limitCone, Cone.postcompose,
+    pairComp, diagramIsoPair, mapPairIso]
+
 private abbrev ι₀ : I ⟶ C :=
   ((unitProduct Hᵒᵖ).cone.π.app ⟨WalkingPair.left⟩).hom.unop
 private abbrev ι₁ : I ⟶ C :=
@@ -122,10 +131,12 @@ private lemma scalar_first_zero : scalarMap ≫ p₀ = 0 := by
   apply Quiver.Hom.op_inj
   rw [op_comp]
   dsimp only [scalarMap]
+  rw [Quiver.Hom.op_unop]
   apply prod.hom_ext
-  · simp [Category.assoc]
+  · simp only [Category.assoc, prod.lift_fst, comp_zero, zero_comp]
   · simp only [Category.assoc, prod.lift_snd, zero_comp]
     change (secondScalar ≫ p₀).op = 0
+    rw [p₀_eq_fst]
     simp [secondScalar]
 
 private lemma second_coordinate : ι₁ ≫ scalarMap ≫ p₁ = (2 : ℤ) • 𝟙 I := by
@@ -134,6 +145,7 @@ private lemma second_coordinate : ι₁ ≫ scalarMap ≫ p₁ = (2 : ℤ) • �
     exact congrArg (fun f : op A ⟶ op I => f.unop)
       (prod.lift_snd (0 : I ⟶ A).op secondScalar.op)
   rw [← Category.assoc, hs]
+  rw [p₁_eq_snd]
   simp [secondScalar]
 
 example : CochainComplex.IsReducedCochain ι₀ p₀ scalarCochain := by
