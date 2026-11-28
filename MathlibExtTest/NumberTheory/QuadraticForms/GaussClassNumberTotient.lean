@@ -17,6 +17,10 @@ import Mathlib.Tactic.NormNum.Prime
 The bounds of `MetaMathlibExt.gaussClassNumber_mul_totient_le` at small discriminants, with the
 class numbers computed by `decide`. At $D = -3$ and $f = 7$ the second bound is an equality:
 $\varphi(7) = 6 = 3\, h(-147)$.
+
+The reduction theory of the module on concrete forms: the Gauss-reduced form properly equivalent
+to $2x^2 + 6xy + 5y^2$ is $x^2 + y^2$, and the reduced forms $2x^2 \pm xy + 3y^2$ are not properly
+equivalent.
 -/
 
 namespace MetaMathlibExt.GaussClassNumberTotientTest
@@ -57,5 +61,38 @@ example : gaussClassNumber (-100) = 2 := by decide +kernel
 -- At `f = 1` the first bound reads `h(D) ≤ h(D)`.
 example : gaussClassNumber (-7) * Nat.totient 1 ≤ gaussClassNumber ((1 : ℕ) ^ 2 * (-7)) :=
   (gaussClassNumber_mul_totient_le fundamental_neg_seven le_rfl).1 (by norm_num) (by norm_num)
+
+section Reduction
+
+open GaussClassNumberTotient BinaryQuadraticForm
+
+theorem isGaussReduced_one_zero_one : IsGaussReduced 1 0 1 :=
+  IsGaussReduced.mk (by norm_num) (by norm_num [discrim]) (by norm_num) le_rfl (by norm_num)
+
+-- The substitution `x ↦ x + y`, `y ↦ x + 2y`, of determinant `1`, takes `x² + y²` to
+-- `2x² + 6xy + 5y²`.
+theorem properlyEquivalent_one_zero_one_two_six_five : ProperlyEquivalent (1, 0, 1) (2, 6, 5) :=
+  ⟨⟨!![1, 1; 1, 2], by rw [Matrix.det_fin_two_of]; norm_num⟩, rfl⟩
+
+-- `exists_reduced` on `2x² + 6xy + 5y²`, of discriminant `-4`, gives a reduced form `G` properly
+-- equivalent to it. By the substitution above and transitivity, the reduced form `x² + y²` is
+-- properly equivalent to `G` too, so `eq_of_equiv_of_reduced` gives `G = x² + y²`.
+example :
+    ∃ G, ProperlyEquivalent (2, 6, 5) G ∧ IsGaussReduced G.1 G.2.1 G.2.2 ∧ G = (1, 0, 1) := by
+  obtain ⟨G, hFG, hred⟩ := exists_reduced (2, 6, 5) (by norm_num) (by norm_num [discrim])
+  refine ⟨G, hFG, hred, ?_⟩
+  exact (eq_of_equiv_of_reduced isGaussReduced_one_zero_one hred
+    (properlyEquivalent_one_zero_one_two_six_five.trans hFG)).symm
+
+-- `2x² + xy + 3y²` and `2x² - xy + 3y²` are distinct reduced forms of discriminant `-23`, so they
+-- are not properly equivalent, though `x ↦ -x` takes one to the other.
+example : ¬ ProperlyEquivalent (2, 1, 3) (2, -1, 3) := fun h =>
+  absurd (eq_of_equiv_of_reduced
+    (IsGaussReduced.mk (by norm_num) (by norm_num [discrim]) (by norm_num) (by norm_num)
+      (by norm_num))
+    (IsGaussReduced.mk (by norm_num) (by norm_num [discrim]) (by norm_num) (by norm_num)
+      (by norm_num)) h) (by decide)
+
+end Reduction
 
 end MetaMathlibExt.GaussClassNumberTotientTest
