@@ -12,7 +12,7 @@ $$
 \langle \vec{A}(b, \cdot), \vec{x} \rangle \ge \vec{t}(b).
 $$
 
-It is a $\mathbb{Z}$-solution if it is an integer vector. The decision problem $\mathrm{FinIneqSolv}(\mathbb{F})$, for $\mathbb{F} \in \{\mathbb{R}, \mathbb{Z}\}$, asks whether a given orbit-finite system has a finitary $\mathbb{F}$-solution; for the same $\mathbb{F}$ it is inter-reducible with the variant that asks for an arbitrary (finitely supported) $\mathbb{F}$-solution and with nonnegative $\mathbb{F}$-solvability of orbit-finite systems of equations, but not with finitary nonnegative solvability of equations, which is decidable for both $\mathbb{R}$ and $\mathbb{Z}$ (Theorem 20 of the arXiv version).
+It is a $\mathbb{Z}$-solution if it is an integer vector. A system is given finitely by (1) a finite common support $T$ of $\vec{A}$ and $\vec{t}$; (2) a list of the $T$-orbits making up $B$ and $C$, each given by a tuple of distinct atoms and a group of permutations of its positions, and of the $T$-orbits of $B \times C$, each given by one element; and (3) the integer value, in binary, of $\vec{t}$ on each $T$-orbit of $B$ and of $\vec{A}$ on each $T$-orbit of $B \times C$ (both are constant on $T$-orbits). The decision problem $\mathrm{FinIneqSolv}(\mathbb{F})$, for $\mathbb{F} \in \{\mathbb{R}, \mathbb{Z}\}$, asks whether a given orbit-finite system has a finitary $\mathbb{F}$-solution; for the same $\mathbb{F}$ it is inter-reducible with the variant that asks for an arbitrary (finitely supported) $\mathbb{F}$-solution and with nonnegative $\mathbb{F}$-solvability of orbit-finite systems of equations, but not with finitary nonnegative solvability of equations, which is decidable for both $\mathbb{R}$ and $\mathbb{Z}$ (Theorem 20 of the arXiv version).
 
 ## Depends on
 

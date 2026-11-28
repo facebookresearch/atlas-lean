@@ -12,7 +12,7 @@ $$
 
 the probability of runs whose observation reveals that the secret holds, and $\mathrm{PrDiscl}(\varphi, \mathcal{A}, \mathcal{O})$ is its supremum over schedulers ($\sim$-schedulers for a POMDP). The decision problems are: the *value problem* (compute $\mathrm{PrDiscl}$); the *general disclosure problem* (given $\delta \in [0, 1]$, is $\mathrm{PrDiscl} > \delta$?); the *almost-sure opacity problem* (is $\mathrm{PrDiscl} = 0$?); the *limit disclosure problem* (is $\mathrm{PrDiscl} = 1$?); and the *almost-sure disclosure problem* (is there a scheduler $\sigma$ with $\mathrm{PrDiscl}_\sigma = 1$?). Each can be restricted to finite-memory schedulers.
 
-**Theorem (Bérard, Chatterjee and Sznajder).** Given a POMDP $\mathcal{A}$ and a morphism $\mathcal{O}$ as observation function:
+**Theorem (Bérard, Chatterjee and Sznajder).** Given a POMDP $\mathcal{A}$ with rational transition probabilities, a morphism $\mathcal{O}$ as observation function and, for the general disclosure problem, a rational threshold $\delta$ (instances are finite; the value problem being undecidable means that no algorithm computes $\mathrm{PrDiscl}$ from such an instance):
 
 1. the almost-sure disclosure problem is undecidable for secrets given as DCA or DPA;
 2. the almost-sure opacity problem is undecidable for secrets given as DBA or DPA;

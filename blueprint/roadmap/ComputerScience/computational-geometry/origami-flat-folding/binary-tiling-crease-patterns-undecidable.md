@@ -19,7 +19,7 @@ None.
 
 The reduction is from the binary Wang tiling problem, proved undecidable by Kari: given finitely many prototiles with colored edges for the binary tiling (each tile has five edges), can every tile be assigned a prototile with matching colors on shared edges? By König's lemma, tiling the square binary tiling, every binary tiling of the half-plane, or every finite union of their tiles are equivalent. For each tile a Boolean circuit reads the colors of its edges, shared with neighboring tiles, and checks that they match a prototile; converting the circuit into creases with the folding gadgets gives a finite pattern that folds flat in a tile exactly when the check succeeds. The repeated pattern is flat-foldable if and only if the Wang tiling instance has a solution.
 
-A good expansion links the undecidability of binary Wang tiling (Kari; Lemma 24 of the source), which has no page on main yet.
+A good expansion links the undecidability of binary Wang tiling (Kari; Lemma 24 of the source).
 
 ## Sources
 

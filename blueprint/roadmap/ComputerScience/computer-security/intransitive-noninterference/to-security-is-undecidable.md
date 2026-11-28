@@ -2,7 +2,9 @@
 
 Whether a finite-state deterministic system is TO-secure for an intransitive information flow policy is undecidable, although the related notions of purge-based security, IP-security and TA-security can be checked in polynomial time.
 
-**Theorem.** There is no algorithm that decides, given a finite-state machine $M$ and a noninterference policy $\rightarrowtail$, whether $M$ is [TO-secure](to-security-for-intransitive-policies.md) with respect to $\rightarrowtail$.
+**Theorem (Eggert, van der Meyden, Schnoor and Wilke).** There is no algorithm that decides, given a finite-state machine $M$ (by the finite tables of its transition, observation and domain functions) and a noninterference policy $\rightarrowtail$ on its finite set of domains, whether $M$ is [TO-secure](to-security-for-intransitive-policies.md) with respect to $\rightarrowtail$. This remains undecidable for a fixed policy on $4$ domains.
+
+The proof (Theorem 4 of the source) reduces from the Post correspondence problem: for the policy $A \rightarrowtail C$, $A \rightarrowtail D$, $B \rightarrowtail C$, $C \rightarrowtail D$ (with reflexivity) it builds a machine that is TO-secure iff the instance has no solution.
 
 ## Depends on
 
