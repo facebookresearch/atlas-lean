@@ -7,4 +7,6 @@
 - [Overpartitions of $5n$ modulo $5$](overpartition-card-mul-five-mod-eq.md)
 - [Liang's congruences modulo 512 for overpartitions](overpartition-three-pow-congr-zero-mod-5.md)
 - [Eta-quotient identity in the powers $q^3$, $q^6$, $q^9$ and $q^{18}$](euler-function-six-cube-nine-six-div-eq.md)
+- [Gauss's product formula for the signed square theta series](theta-euler-product.md)
+- [Five-dissection of the square theta series](theta-five-components.md)
 - [Three-dissection of $(q;q)_\infty / (q^2;q^2)_\infty^2$](euler-function-one-div-two-sq-eq.md)

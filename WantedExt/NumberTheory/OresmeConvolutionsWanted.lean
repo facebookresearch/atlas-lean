@@ -16,6 +16,7 @@ public import MathlibExt.NumberTheory.JacobsthalLucasNumber
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.OresmeConvolutions
 public import MathlibExt.NumberTheory.OresmeJacobsthalLucasCongruence
+public import MathlibExt.NumberTheory.OresmeJacobsthalModuloNine
 public import MathlibExt.NumberTheory.OresmeLucasModuloFive
 public import MathlibExt.NumberTheory.OresmePellCongruence
 public import MathlibExt.NumberTheory.PellLucasSequence
@@ -43,16 +44,6 @@ Jacobsthal–Lucas numbers `j_0 = 2, j_1 = 1` are `jacobsthalLucasNumber`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Powers of two times Jacobsthal numbers modulo 9.** Let $J_m$ denote the Jacobsthal numbers,
-the terms of the Lucas sequence $U(1, -2)$. For every natural number $n$,
-$2^n J_{n+1} \equiv n + 1 \pmod{9}$.
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Corollary 6.3 (`fq-2024-cookbacon061124-cor-6.3`). -/
-public theorem_wanted two_pow_mul_jacobsthal_succ_modEq_nine (n : ℕ) :
-    2 ^ n * lucasU ⟨1, -2, by decide⟩ (n + 1) ≡ n + 1 [ZMOD 9]
 
 end
 
