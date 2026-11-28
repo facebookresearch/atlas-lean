@@ -21,7 +21,7 @@ public import CSLibExt.Computability.Distributed.CausalDelivery
 * `conc`: replicas `0` and `1` issue concurrent updates, which replica `2` delivers in the
   opposite order to replica `0`. Causal delivery holds, as it does not order concurrent updates.
 * The empty execution provides causal delivery.
-* In `tr`, `happensBefore_iff_transGen_delivered` relates direct precedence to Lamport's
+* In `tr`, `happensBefore_iff_transGen_directlyBefore` relates direct precedence to Lamport's
   happened-before, and on every execution whose receipts name earlier issues causal delivery is
   the same as the condition stated with Lamport's happened-before (`LamportCausalDelivery`).
 * `relay`, over four replicas: a well-formed execution in which replica `2` receives from the
@@ -137,9 +137,9 @@ theorem causalDelivery_iff_lamport {R : Type*} {tr : List (Event R)} (hwf : Well
     CausalDelivery tr ↔ LamportCausalDelivery tr := by
   constructor <;> intro h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁ hhb
   · exact h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁
-      ((happensBefore_iff_transGen_delivered hwf hiss h₁ hn₁ h₂ hn₂).mp hhb)
+      ((happensBefore_iff_transGen_directlyBefore hwf hiss h₁ hn₁ h₂ hn₂).mp hhb)
   · exact h j i₁ i₂ ej e₁ e₂ hj hr h₂ hn₂ h₁ hn₁
-      ((happensBefore_iff_transGen_delivered hwf hiss h₁ hn₁ h₂ hn₂).mpr hhb)
+      ((happensBefore_iff_transGen_directlyBefore hwf hiss h₁ hn₁ h₂ hn₂).mpr hhb)
 
 theorem tr_receipts : ∀ (j i : ℕ) (ej : Event (Fin 3)), tr[j]? = some ej →
     ej.recvFrom = some i → ∃ ei : Event (Fin 3), tr[i]? = some ei ∧ ei.recvFrom = none := by
@@ -149,11 +149,11 @@ theorem tr_receipts : ∀ (j i : ℕ) (ej : Event (Fin 3)), tr[j]? = some ej →
 
 /-- Replica `1` delivers `u` before it issues `v`, so `u` happened before `v`. -/
 example : HappensBefore tr 0 2 :=
-  (happensBefore_iff_transGen_delivered tr_wellFormed tr_receipts (i₁ := 0) (i₂ := 2) rfl rfl rfl
-    rfl).mpr (.single db02)
+  (happensBefore_iff_transGen_directlyBefore tr_wellFormed tr_receipts (i₁ := 0) (i₂ := 2) rfl rfl
+    rfl rfl).mpr (.single db02)
 
 example : Relation.TransGen (DirectlyBefore tr) 0 2 :=
-  (happensBefore_iff_transGen_delivered tr_wellFormed tr_receipts rfl rfl rfl rfl).mp
+  (happensBefore_iff_transGen_directlyBefore tr_wellFormed tr_receipts rfl rfl rfl rfl).mp
     (.tail (b := 1) (.single ⟨by decide, _, _, rfl, rfl, Or.inr rfl⟩)
       ⟨by decide, _, _, rfl, rfl, Or.inl rfl⟩)
 

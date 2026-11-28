@@ -6,7 +6,7 @@ The execution provides *causal delivery* if every replica delivers an update $u_
 
 A receipt from a position that holds no issue delivers nothing and plays no part: it stands for a message that carries no update. The execution need not be [well formed](../lamport-clocks/well-formed.md): a receipt may name a later position, and a receipt that names a later issue delivers that update, both for causal delivery and for direct precedence.
 
-When every receipt names an earlier issue, happened-before between updates is Lamport's [happened-before](../lamport-clocks/happens-before.md) between their issues ([Happened-before between updates, by delivery](happens-before-iff-trans-gen-delivered.md)). Otherwise the two relations can differ: a receipt from an earlier receipt delivers nothing, but adds a step to Lamport's relation.
+When every receipt names an earlier issue, happened-before between updates is Lamport's [happened-before](../lamport-clocks/happens-before.md) between their issues ([Happened-before between updates, by delivery](happens-before-iff-trans-gen-directly-be.md)). Otherwise the two relations can differ: a receipt from an earlier receipt delivers nothing, but adds a step to Lamport's relation.
 
 ## Sources
 

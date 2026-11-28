@@ -31,7 +31,7 @@ a position holding no issue delivers nothing: it stands for a message that carri
 * `CausalDelivery`: every replica delivers an update only after it has issued or delivered every
   update that happened before it, where happened-before is the transitive closure of
   `DirectlyBefore`.
-* `happensBefore_iff_transGen_delivered`: when every receipt names an earlier issue, the
+* `happensBefore_iff_transGen_directlyBefore`: when every receipt names an earlier issue, the
   transitive closure of `DirectlyBefore` is Lamport's happened-before (`LamportClock.HappensBefore`)
   between the issues. Without that hypothesis the two can differ (see the tests): a receipt from
   an earlier receipt delivers nothing, but adds a step to Lamport's relation.
@@ -48,13 +48,15 @@ variable {R : Type*}
 /-- **An update directly precedes another, by delivery.** Read an execution $e_0, \dots, e_{n-1}$,
 whose events each belong to a process and may receive the message of the event at some position,
 as an execution of a replicated system whose replicas are the processes: an event that receives no
-message issues a new update, identified with the position of that event, and an event that
-receives from position $i$ delivers the update issued at position $i$. An update $a$ directly
-precedes an update $b$ when the replica that issues $b$ has issued or delivered $a$ before it
-issues $b$: positions $a$ and $b$ hold issues, and some position $k < b$ holds an event of the
-replica that issues $b$ that either is the issue of $a$ ($k = a$) or delivers $a$. This is the
-relation by which Shapiro et al. define happened-before between updates: $a$ belongs to the
-causal history of the replica of $b$ just before $b$ is issued. -/
+message issues a new update, identified with the position of that event, and a receipt naming
+position $i$ delivers the update at $i$ if that position holds an issue; otherwise it delivers no
+update. An update $a$ directly precedes an update $b$ when the replica that issues $b$ has issued
+or delivered $a$ before it issues $b$: positions $a$ and $b$ hold issues, and some position
+$k < b$ holds an event of the replica that issues $b$ that either is the issue of $a$ ($k = a$) or
+delivers $a$. This is the relation by which M. Shapiro, N. Preguiça, C. Baquero and M. Zawirski
+define happened-before between updates (*Conflict-free replicated data types*, INRIA research
+report RR-7687, version 2, Section 2.4, p. 7: Definition 2.5 and the definition of happened-before
+after it): $a$ belongs to the causal history of the replica of $b$ just before $b$ is issued. -/
 def DirectlyBefore (tr : List (Event R)) (a b : ℕ) : Prop :=
   ∃ ea eb : Event R, tr[a]? = some ea ∧ ea.recvFrom = none ∧ tr[b]? = some eb ∧
     eb.recvFrom = none ∧ ∃ k < b, ∃ ek : Event R, tr[k]? = some ek ∧ ek.proc = eb.proc ∧
@@ -112,7 +114,7 @@ $u_1 = v_0, v_1, \dots, v_m = u_2$ of updates with $m \ge 1$ in which each $v_l$
 precedes $v_{l+1}$. So on such executions Lamport's happened-before between updates is the
 transitive closure of the replica-local order of issues and of the order from delivering an
 update to issuing a later one at the same replica. -/
-theorem happensBefore_iff_transGen_delivered {tr : List (Event R)} (hwf : WellFormed tr)
+theorem happensBefore_iff_transGen_directlyBefore {tr : List (Event R)} (hwf : WellFormed tr)
     (hiss : ∀ (j i : ℕ) (ej : Event R), tr[j]? = some ej → ej.recvFrom = some i →
       ∃ ei : Event R, tr[i]? = some ei ∧ ei.recvFrom = none)
     {i₁ i₂ : ℕ} {e₁ e₂ : Event R} (h₁ : tr[i₁]? = some e₁) (hn₁ : e₁.recvFrom = none)

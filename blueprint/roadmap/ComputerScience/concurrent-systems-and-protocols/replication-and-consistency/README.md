@@ -3,7 +3,7 @@
 - [Strong eventual consistency](strong-eventual-consistency.md)
 - [An update directly precedes another, by delivery](directly-before.md)
 - [Causal delivery of updates](causal-delivery-of-updates.md)
-- [Happened-before between updates, by delivery](happens-before-iff-trans-gen-delivered.md)
+- [Happened-before between updates, by delivery](happens-before-iff-trans-gen-directly-be.md)
 - [Convergence of operation-based CRDTs](convergence-of-operation-based-crdts.md)
 - [The ABD emulation of an atomic register](the-abd-emulation-of-an-atomic-register.md)
 - [The CAP theorem](the-cap-theorem.md)
