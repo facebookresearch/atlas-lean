@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.GameTheory.SlowANim
-import all MathlibExt.GameTheory.SlowANimGeneralReduction
 
 /-!
 # Parity in Slow A-Nim with an even number of stacks
@@ -47,7 +46,7 @@ public theorem slowANim_one_n_even_isP_iff (n : ℕ) (hn : 0 < n) (hne : Even n)
     have hleast (j : Fin n) : p i ≤ p j := hmin j (Finset.mem_univ j)
     have hparity (S : Finset (Fin n)) (hpos : ∀ j ∈ S, 1 ≤ p j) :
         Even (∑ j, p j) ↔ (Even (∑ j, slowANimAfter p S j) ↔ Even S.card) := by
-      rw [← slowANim_generalReduction.sum_after_add_card p S hpos, Nat.even_add]
+      rw [← sum_slowANimAfter_add_card p S hpos, Nat.even_add]
     have hsingle (j : Fin n) (hj : 1 ≤ p j) :
         Even (∑ k, p k) ↔ ¬ Even (∑ k, slowANimAfter p {j} k) := by
       simpa using hparity {j} (by simpa using hj)

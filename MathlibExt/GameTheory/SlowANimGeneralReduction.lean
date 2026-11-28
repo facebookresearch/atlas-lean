@@ -30,18 +30,6 @@ namespace MetaMathlibExt
 
 namespace slowANim_generalReduction
 
-private theorem sum_after_add_card {n : ℕ} (p : Fin n → ℕ) (S : Finset (Fin n))
-    (hS : ∀ i ∈ S, 1 ≤ p i) : (∑ i, slowANimAfter p S i) + S.card = ∑ i, p i := by
-  calc
-    _ = ∑ i, (slowANimAfter p S i + if i ∈ S then 1 else 0) := by
-      simp [Finset.sum_add_distrib]
-    _ = _ := by
-      apply Finset.sum_congr rfl
-      intro i _
-      by_cases hi : i ∈ S
-      · simp [slowANimAfter, hi, Nat.sub_add_cancel (hS i hi)]
-      · simp [slowANimAfter, hi]
-
 private theorem tokens_needed_to_empty {n : ℕ} {A : Finset ℕ} (hA : A.Nonempty)
     (i : Fin n) {p t : Fin n → ℕ}
     (hpt : Relation.ReflTransGen (fun x y => y ∈ slowANimMoves A x) p t) (ht : t i = 0) :
@@ -51,7 +39,7 @@ private theorem tokens_needed_to_empty {n : ℕ} {A : Finset ℕ} (hA : A.Nonemp
   | @head p q hpq _ ih =>
     simp only [slowANimMoves, Finset.mem_image, Finset.mem_filter] at hpq
     obtain ⟨S, ⟨-, -, hcard, hS⟩, rfl⟩ := hpq
-    have hsum := sum_after_add_card p S hS
+    have hsum := sum_slowANimAfter_add_card p S hS
     have hsize := Finset.min'_le A S.card hcard
     have hheight : p i ≤ slowANimAfter p S i + 1 := by
       unfold slowANimAfter
@@ -247,7 +235,7 @@ public theorem slowANim_generalReduction (n : ℕ) (A : Finset ℕ)
   have hafter : (∑ i, q i) < a * Finset.univ.sup q :=
     lt_of_not_ge fun h => hnot (slowANim_generalReduction.reduced_of_total ha ha_pos h)
   have hsum : (∑ i, q i) + S.card = ∑ i, p i :=
-    slowANim_generalReduction.sum_after_add_card p S hSp
+    sum_slowANimAfter_add_card p S hSp
   have hstack (i : Fin n) : q i ≤ p i := by
     unfold q slowANimAfter
     split_ifs <;> omega

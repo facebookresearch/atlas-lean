@@ -13,8 +13,6 @@ public import MathlibExt.GameTheory.SlowANim
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fin.Tuple.Sort
 import Mathlib.Tactic.FinCases
-import all MathlibExt.GameTheory.SlowANimGeneralReduction
-import all MathlibExt.GameTheory.SpragueGrundy
 
 /-!
 # Simplifying four-pile Princess and the Roses
@@ -36,9 +34,9 @@ which must preserve the order of the piles.
 - R. P. Sprague, *Über mathematische Kampfspiele*, Tôhoku Mathematical Journal 41
   (1935–1936), pp. 438–444, and P. M. Grundy, *Mathematics and games*, Eureka 2 (1939),
   pp. 6–8, for the Sprague–Grundy theory behind the equivalence criterion.
-- `MathlibExt.GameTheory.SlowANimGeneralReduction` (`sum_after_add_card`) and
-  `MathlibExt.GameTheory.SpragueGrundy` (`sum_cases`, `sum_mem_left`, `sum_mem_right`,
-  and `impartialGame_equiv_iff_isP_gameSum`) supply the Lean move-count and game-sum results.
+- `MathlibExt.GameTheory.SlowANim` (`mem_slowANimGame_moves_one_two_iff`) and
+  `MathlibExt.GameTheory.SpragueGrundy` (`mem_gameSum_moves_iff` and
+  `impartialGame_equiv_iff_isP_gameSum`) supply the Lean move-count and game-sum results.
 -/
 
 namespace MetaMathlibExt
@@ -148,50 +146,20 @@ public def simplifiedPrincessRoses (p : ℕ × ℕ × ℕ × ℕ) : ImpartialGam
   rank_lt := fun _ _ h => simplifiedPrincessRosesMoves_rank_lt h
   start := p
 
--- A move changes each pile by at most one and removes one or two objects in total.
-private theorem mem_one_two_moves_iff {k : ℕ} {p q : Fin k → ℕ} :
-    q ∈ slowANimMoves {1, 2} p ↔
-      (∀ i, q i ≤ p i ∧ p i ≤ q i + 1) ∧
-        (∑ i, q i) < (∑ i, p i) ∧ (∑ i, p i) ≤ (∑ i, q i) + 2 := by
-  simp only [slowANimMoves, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and,
-    Finset.mem_insert, Finset.mem_singleton]
-  constructor
-  · rintro ⟨S, ⟨-, hcard, hpos⟩, rfl⟩
-    refine ⟨fun i => ?_, ?_⟩
-    · unfold slowANimAfter
-      split_ifs <;> omega
-    · have hsum := slowANim_generalReduction.sum_after_add_card p S hpos
-      omega
-  · rintro ⟨hpq, hlo, hhi⟩
-    let S := Finset.univ.filter fun i => q i < p i
-    have hpos (i : Fin k) (hi : i ∈ S) : 1 ≤ p i :=
-      Nat.one_le_of_lt (Finset.mem_filter.mp hi).2
-    have heq : slowANimAfter p S = q := by
-      funext i
-      have hi := hpq i
-      by_cases hlt : q i < p i
-      · simp [slowANimAfter, S, hlt]
-        omega
-      · simp [slowANimAfter, S, hlt]
-        omega
-    have hsum := slowANim_generalReduction.sum_after_add_card p S hpos
-    simp only [heq] at hsum
-    exact ⟨S, ⟨Finset.card_pos.mp (by omega), by omega, hpos⟩, heq⟩
-
-private theorem one_two_move_perm {k : ℕ} {p q : Fin k → ℕ} (σ : Equiv.Perm (Fin k))
-    (h : q ∈ slowANimMoves {1, 2} p) : q ∘ σ ∈ slowANimMoves {1, 2} (p ∘ σ) := by
-  obtain ⟨hb, hlo, hhi⟩ := mem_one_two_moves_iff.mp h
-  exact mem_one_two_moves_iff.mpr
+private theorem one_two_move_perm {p q : Fin 4 → ℕ} (σ : Equiv.Perm (Fin 4))
+    (h : q ∈ (slowANimGame 4 {1, 2}).moves p) : q ∘ σ ∈ (slowANimGame 4 {1, 2}).moves (p ∘ σ) := by
+  obtain ⟨hb, hlo, hhi⟩ := mem_slowANimGame_moves_one_two_iff.mp h
+  exact mem_slowANimGame_moves_one_two_iff.mpr
     ⟨fun i => hb (σ i), by simpa [Function.comp_def, Equiv.sum_comp] using And.intro hlo hhi⟩
 
 -- Since each pile loses at most one, sorting by the sum of the old and new heights
 -- sorts both tuples. In particular, a tie in the old heights is broken by the new heights.
-private theorem sort_one_two_move {k : ℕ} {p q : Fin k → ℕ}
-    (h : q ∈ slowANimMoves {1, 2} p) :
-    ∃ τ : Equiv.Perm (Fin k), Antitone (p ∘ τ) ∧ Antitone (q ∘ τ) := by
+private theorem sort_one_two_move {p q : Fin 4 → ℕ}
+    (h : q ∈ (slowANimGame 4 {1, 2}).moves p) :
+    ∃ τ : Equiv.Perm (Fin 4), Antitone (p ∘ τ) ∧ Antitone (q ∘ τ) := by
   let τ := Tuple.sortDesc fun i => p i + q i
   have hs := Tuple.antitone_sortDesc (fun i => p i + q i)
-  have hb := (mem_one_two_moves_iff.mp h).1
+  have hb := (mem_slowANimGame_moves_one_two_iff.mp h).1
   refine ⟨τ, ?_, ?_⟩ <;> intro i j hij
   all_goals
     have hsum : p (τ j) + q (τ j) ≤ p (τ i) + q (τ i) := hs hij
@@ -201,11 +169,11 @@ private theorem sort_one_two_move {k : ℕ} {p q : Fin k → ℕ}
     omega
 
 private theorem mem_vec_moves_iff {a b c d a' b' c' d' : ℕ} :
-    ![a', b', c', d'] ∈ slowANimMoves {1, 2} ![a, b, c, d] ↔
+    ![a', b', c', d'] ∈ (slowANimGame 4 {1, 2}).moves ![a, b, c, d] ↔
       (a' ≤ a ∧ a ≤ a' + 1) ∧ (b' ≤ b ∧ b ≤ b' + 1) ∧
       (c' ≤ c ∧ c ≤ c' + 1) ∧ (d' ≤ d ∧ d ≤ d' + 1) ∧
       a' + b' + c' + d' < a + b + c + d ∧ a + b + c + d ≤ a' + b' + c' + d' + 2 := by
-  rw [mem_one_two_moves_iff]
+  rw [mem_slowANimGame_moves_one_two_iff]
   simp [Fin.forall_fin_succ, Fin.sum_univ_succ, and_assoc, Nat.add_assoc]
 
 private theorem mem_simplified_moves_iff {a b c d a' b' c' d' : ℕ} :
@@ -223,20 +191,19 @@ private theorem mem_simplified_moves_iff {a b c d a' b' c' d' : ℕ} :
   · rintro ⟨ha, hb, hc, hd, hlo, hhi, hab, hbc, hcd, h⟩
     exact ⟨ha.1, hb.1, hc.1, hd.1, hab, hbc, hcd, by omega⟩
 
-private def ordinaryRoses : ImpartialGame := princessRoses ![0, 0, 0, 0]
-
-private def simplifiedRoses : ImpartialGame := simplifiedPrincessRoses (0, 0, 0, 0)
-
-private theorem isP_shifted_sum (a b c d n : ℕ) (hab : b ≤ a) (hbc : c ≤ b) (hcd : d ≤ c)
-    (σ : Equiv.Perm (Fin 4)) :
-    IsP (gameSum ordinaryRoses simplifiedRoses) (![a, b, c, d] ∘ σ, (a + n, b + n, c + n, d)) := by
+private theorem isP_shifted_sum (l : Fin 4 → ℕ) (r : ℕ × ℕ × ℕ × ℕ)
+    (a b c d n : ℕ) (hab : b ≤ a) (hbc : c ≤ b) (hcd : d ≤ c) (σ : Equiv.Perm (Fin 4)) :
+    IsP (gameSum (princessRoses l) (simplifiedPrincessRoses r))
+      (![a, b, c, d] ∘ σ, (a + n, b + n, c + n, d)) := by
+  let G := princessRoses l
+  let H := simplifiedPrincessRoses r
   let p : Fin 4 → ℕ := ![a, b, c, d] ∘ σ
   let t := (a + n, b + n, c + n, d)
   refine (isP_iff _ _).2 ?_
   intro v hv
-  rcases sum_cases ordinaryRoses simplifiedRoses p t v hv with
+  rcases (mem_gameSum_moves_iff G H p t v).mp hv with
     ⟨q, hq, rfl⟩ | ⟨⟨x, y, z, w⟩, hm, rfl⟩
-  · change q ∈ slowANimMoves {1, 2} p at hq
+  · change q ∈ (slowANimGame 4 {1, 2}).moves p at hq
     obtain ⟨τ, hpτ, hqτ⟩ := sort_one_two_move hq
     have hp : Antitone (![a, b, c, d] : Fin 4 → ℕ) := by
       rw [Fin.antitone_iff_succ_le]
@@ -267,29 +234,31 @@ private theorem isP_shifted_sum (a b c d n : ℕ) (hab : b ≤ a) (hbc : c ≤ b
     have hcd' : d' ≤ c' := hqτ (show (2 : Fin 4) ≤ 3 by decide)
     by_cases h : c' < c → d' < d
     · -- A legal move on both boards is mirrored on the simplified board.
-      have hmirror : (a' + n, b' + n, c' + n, d') ∈ simplifiedRoses.moves t :=
+      have hmirror : (a' + n, b' + n, c' + n, d') ∈ H.moves t :=
         mem_simplified_moves_iff.mpr (by omega)
       intro hP
       rw [hqEq] at hP
-      exact (isP_iff _ _).mp hP _ (sum_mem_right _ _ _ _ _ hmirror)
-        (isP_shifted_sum a' b' c' d' n hab' hbc' hcd' τ.symm)
+      exact (isP_iff _ _).mp hP _
+        ((mem_gameSum_moves_iff G H _ _ _).mpr (.inr ⟨_, hmirror, rfl⟩))
+        (isP_shifted_sum l r a' b' c' d' n hab' hbc' hcd' τ.symm)
     · -- A move on the third but not fourth pile is answered on the original board
       -- by decrementing the rest of the top three piles.
       have hc' : c' < c := (not_imp.mp h).1
       have hd' : d' = d := by have := (not_imp.mp h).2; omega
-      have hreply : ![a - 1, b - 1, c - 1, d] ∈ slowANimMoves {1, 2} ![a', b', c', d'] :=
+      have hreply : ![a - 1, b - 1, c - 1, d] ∈ (slowANimGame 4 {1, 2}).moves ![a', b', c', d'] :=
         mem_vec_moves_iff.mpr (by omega)
-      have hreply' : ![a - 1, b - 1, c - 1, d] ∘ τ.symm ∈ ordinaryRoses.moves q := by
+      have hreply' : ![a - 1, b - 1, c - 1, d] ∘ τ.symm ∈ G.moves q := by
         rw [hqEq]
         exact one_two_move_perm τ.symm hreply
       have hshift (u : ℕ) (hu : 1 ≤ u) : u - 1 + (n + 1) = u + n := by
         rw [Nat.add_comm n 1, ← Nat.add_assoc, Nat.sub_add_cancel hu]
       have ht : (a - 1 + (n + 1), b - 1 + (n + 1), c - 1 + (n + 1), d) = t := by
         simp only [t, hshift a (by omega), hshift b (by omega), hshift c (by omega)]
-      have hrec := isP_shifted_sum (a - 1) (b - 1) (c - 1) d (n + 1)
+      have hrec := isP_shifted_sum l r (a - 1) (b - 1) (c - 1) d (n + 1)
         (by omega) (by omega) (by omega) τ.symm
       rw [ht] at hrec
-      exact fun hP => (isP_iff _ _).mp hP _ (sum_mem_left _ _ _ _ _ hreply') hrec
+      exact fun hP => (isP_iff _ _).mp hP _
+        ((mem_gameSum_moves_iff G H _ _ _).mpr (.inl ⟨_, hreply', rfl⟩)) hrec
   · change (x, y, z, w) ∈ simplifiedPrincessRosesMoves (a + n, b + n, c + n, d) at hm
     obtain ⟨hx, hy, hz, hw, hlo, hhi, hxy, hyz, hzw, h⟩ := mem_simplified_moves_iff.mp hm
     -- The third pile cannot drop below the shift: decreasing it requires decreasing
@@ -298,14 +267,15 @@ private theorem isP_shifted_sum (a b c d n : ℕ) (hab : b ≤ a) (hbc : c ≤ b
     have hshift : (x - n + n, y - n + n, z - n + n, w) = (x, y, z, w) := by
       simp only [Nat.sub_add_cancel (hn.trans (hyz.trans hxy)), Nat.sub_add_cancel (hn.trans hyz),
         Nat.sub_add_cancel hn]
-    have hmirror : ![x - n, y - n, z - n, w] ∈ slowANimMoves {1, 2} ![a, b, c, d] :=
+    have hmirror : ![x - n, y - n, z - n, w] ∈ (slowANimGame 4 {1, 2}).moves ![a, b, c, d] :=
       mem_vec_moves_iff.mpr (by omega)
-    have hmirror' : ![x - n, y - n, z - n, w] ∘ σ ∈ ordinaryRoses.moves p :=
+    have hmirror' : ![x - n, y - n, z - n, w] ∘ σ ∈ G.moves p :=
       one_two_move_perm σ hmirror
-    have hrec := isP_shifted_sum (x - n) (y - n) (z - n) w n
+    have hrec := isP_shifted_sum l r (x - n) (y - n) (z - n) w n
       (by omega) (by omega) (by omega) σ
     rw [hshift] at hrec
-    exact fun hP => (isP_iff _ _).mp hP _ (sum_mem_left _ _ _ _ _ hmirror') hrec
+    exact fun hP => (isP_iff _ _).mp hP _
+      ((mem_gameSum_moves_iff G H _ _ _).mpr (.inl ⟨_, hmirror', rfl⟩)) hrec
 termination_by a + b + c + d
 decreasing_by all_goals omega
 
@@ -320,7 +290,7 @@ public theorem princessRoses_equiv_simplifiedPrincessRoses (a b c d n : ℕ)
     (hab : b ≤ a) (hbc : c ≤ b) (hcd : d ≤ c) :
     Equiv (princessRoses ![a, b, c, d]) (simplifiedPrincessRoses (a + n, b + n, c + n, d)) := by
   rw [impartialGame_equiv_iff_isP_gameSum]
-  exact isP_shifted_sum a b c d n hab hbc hcd (Equiv.refl _)
+  exact isP_shifted_sum ![a, b, c, d] (a + n, b + n, c + n, d) a b c d n hab hbc hcd (Equiv.refl _)
 
 end
 
