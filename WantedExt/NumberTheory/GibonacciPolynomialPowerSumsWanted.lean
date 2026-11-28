@@ -24,6 +24,7 @@ public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.FibonacciPolynomialOddPowerSub
 public import MathlibExt.NumberTheory.GibonacciPolynomialPowerSums
+public import MathlibExt.NumberTheory.GibonacciPolynomialPowerSumsCubeEvenIndex
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.GibonacciPolynomialPowerSumsFibPolyPowEvenSub
 
@@ -94,30 +95,6 @@ public theorem_wanted lucasPoly_pow_odd_sub {n k : ℕ} (hk : k ≤ n) (m : ℕ)
     (Even k → 𝔩 (n + k) ^ (2 * m + 1) - 𝔩 (n - k) ^ (2 * m + 1) =
       (X ^ 2 + 4) * ∑ j ∈ Finset.range (m + 1), ((2 * m + 1).choose j : ℤ[X]) *
         (-1) ^ (n * j) * 𝔣 (n * (2 * m + 1 - 2 * j)) * 𝔣 (k * (2 * m + 1 - 2 * j)))
-
-/-- **Cubic-denominator series for even-index Fibonacci polynomials.** Let $f_i$ and $\ell_i$ be the
-Fibonacci and Lucas polynomials, defined by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$, $\ell_1 = x$ and
-$g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. For every real $x > 0$,
-$$
-\sum_{n \ge 1} \frac{(x^3 + 3x) f_{6n}(x) + 3x f_{2n}(x)}{(f_{2n}(x)^2 + 1)^3} = x^2 + 4
-$$
-and
-$$
-\sum_{n \ge 2} \frac{x(x^4 + 4x^2 + 3) \ell_{6n}(x) - 3x \ell_{2n}(x)}{(f_{2n}(x)^2 - x^2)^3} =
-\frac{(x^2 + 4)\bigl((x^2 + 2)^3 + 1\bigr)}{x^3 (x^2 + 2)^3}.
-$$
-
-Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
-The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
-Corollary 4.3 (`fq-2024-linzhou02172024-cor-4.3`). -/
-public theorem_wanted tsum_fibPoly_cube_even_index {x : ℝ} (hx : 0 < x) :
-    ∑' n : ℕ, ((x ^ 3 + 3 * x) * aeval x (𝔣 (6 * (n + 1))) + 3 * x * aeval x (𝔣 (2 * (n + 1)))) /
-        (aeval x (𝔣 (2 * (n + 1))) ^ 2 + 1) ^ 3 =
-      x ^ 2 + 4 ∧
-      ∑' n : ℕ, (x * (x ^ 4 + 4 * x ^ 2 + 3) * aeval x (𝔩 (6 * (n + 2))) -
-          3 * x * aeval x (𝔩 (2 * (n + 2)))) /
-          (aeval x (𝔣 (2 * (n + 2))) ^ 2 - x ^ 2) ^ 3 =
-        (x ^ 2 + 4) * ((x ^ 2 + 2) ^ 3 + 1) / (x ^ 3 * (x ^ 2 + 2) ^ 3)
 
 /-- **Cubic series over even-indexed Lucas polynomials.** Let $x > 0$ be real, and let $f_n$ and
 $\ell_n$ denote the Fibonacci and Lucas polynomials evaluated at $x$, given by $f_0 = 0$,
