@@ -2518,8 +2518,8 @@
       "path": "MathlibExt/CategoryTheory/Monoidal/TensorPowerFunctor.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "1ea1a6a95d8b92247c39ee0ad318f0e8a158b46fc0d0ac977906100a2052d6d9",
-      "rationale": "Actual published TensorPowerFunctor caller migration for PR11297’s canonical tensorPowAddIso interface. Rename generic block-splitting calls and use the pinned native MonoidalCategory.eqToHom_whiskerRight law instead of the removed wrapper. All public caller declaration names, hypotheses, universes, power/factor order and structure maps are retained; 100-column wraps are whitespace only. This is an explicit API/proof adaptation, not an unchanged-token copy of the earlier source. The head-tail cast proof fixes the entire Hom type before applying the native whiskering equality, retaining the same cast and factor maps.",
+      "published_sha256": "ea68c16d6c7a823d73e502600d2fb5dd5a269b3121d5eae0b3114bf68693c286",
+      "rationale": "Actual published TensorPowerFunctor caller migration for PR11297’s canonical tensorPowAddIso interface. Rename generic block-splitting calls and use the pinned native MonoidalCategory.eqToHom_whiskerRight law instead of the removed wrapper. All public caller declaration names, hypotheses, universes, power/factor order and structure maps are retained; 100-column wraps are whitespace only. This is an explicit API/proof adaptation, not an unchanged-token copy of the earlier source. The head-tail cast proof fixes the entire Hom type before applying the native whiskering equality, retaining the same cast and factor maps. The typed cast proof retains tensor-morphism syntax until applying tensorHom_id as a propositional law, then applies native equality whiskering; no object, factor, index or public statement changes.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "9ddd659357a45835ebb7abf51d3838a19379540cb26363d3e04d68e675f1cbb5"
     },

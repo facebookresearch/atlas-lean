@@ -117,8 +117,8 @@ theorem tensorPowObjHeadTailIso_eq_addIso (X : C) :
             (Nat.one_add (n + 2)).symm)).hom =
           ((eqToIso (congrArg (tensorPowObj X) h)).hom ⊗ₘ 𝟙 X) := by
         change eqToHom (congrArg (fun k => tensorPowObj X k ⊗ X) h) =
-          eqToHom (congrArg (tensorPowObj X) h) ▷ X
-        rw [MonoidalCategory.eqToHom_whiskerRight]
+          (eqToHom (congrArg (tensorPowObj X) h) ⊗ₘ 𝟙 X)
+        rw [tensorHom_id, MonoidalCategory.eqToHom_whiskerRight]
       rw [hcast]
       rw [show (tensorPowAddIso X 1 ((n + 1) + 1)).hom =
           ((tensorPowAddIso X 1 (n + 1)).hom ⊗ₘ 𝟙 X) ≫
