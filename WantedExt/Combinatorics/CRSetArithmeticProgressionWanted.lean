@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.PNat.Basic
+public import MathlibExt.Combinatorics.CRSetArithmeticProgression
 public import MathlibExt.Combinatorics.EssentialSetSequence
 public import MathlibExt.Combinatorics.RamseyFamily
 public import MathlibExt.Combinatorics.RamseyFamilyIdempotent
@@ -74,23 +75,6 @@ Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEG
 def IsJSet (A : Set S) : Prop :=
   ∀ F : Finset (ℕ → S), ∃ a : S, ∃ H : List ℕ, H.Nodup ∧ H ≠ [] ∧
     ∀ f ∈ F, (H.map f).foldl (· + ·) a ∈ A
-
-/-- **CR-set.** A subset $A$ of a commutative semigroup $(S, +)$ is a CR-set (combinatorially rich)
-when for every natural number $n$, including $n = 0$, there is a natural number $r$ such that for
-every $r \times n$ matrix $(m_{ij})$ with entries in $S$ there are a nonempty set
-$\alpha \subseteq \{1, \ldots, r\}$ and an element $s \in S$ such that
-$s + \sum_{i \in \alpha} m_{ij} \in A$ for every column $j \in \{1, \ldots, n\}$.
-
-The paper takes $n \ge 1$. Allowing $n = 0$ adds the requirement that $S$ be nonempty, the
-paper's implicit convention: over an empty $S$ every case $n \ge 1$ holds vacuously (take
-$r = 1$; there is no matrix), so without it $\emptyset$ would be a CR-set of the empty
-semigroup. Over a nonempty $S$ the two definitions agree.
-
-Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
-25 (2025), Article A4, Definition 2. -/
-def IsCRSet (A : Set S) : Prop :=
-  ∀ n : ℕ, ∃ r : ℕ, ∀ M : Fin r → Fin n → S, ∃ α : Finset (Fin r), α.Nonempty ∧
-    ∃ s : S, ∀ j, (α.toList.map fun i => M i j).foldl (· + ·) s ∈ A
 
 /-- **Essential CR-set.** Let $(S, +)$ be a commutative semigroup, and add ultrafilters on $S$ by
 the rule that $E \in p + q$ if and only if $\{x \in S : \{y \in S : x + y \in E\} \in q\} \in p$.
@@ -208,19 +192,6 @@ public theorem_wanted isEssentialCRSet_iff_exists_decreasing_sequence {S : Type*
     [AddCommSemigroup S] [Countable S] (A : Set S) :
     IsEssentialCRSet A ↔ ∃ C : ℕ → Set S, Antitone C ∧ (∀ n, C n ⊆ A) ∧
       (∀ n, ∀ x ∈ C n, ∃ m, C m ⊆ {y : S | x + y ∈ C n}) ∧ ∀ n, IsCRSet (C n)
-
-/-- **Arithmetic progressions in CR-sets.** If $A$ is a CR-set in a commutative semigroup
-$(S, +)$ and $l$ is a natural number, then the set of pairs $(a, b) \in S \times S$ such that
-$a, a + b, a + 2b, \dots, a + lb$ all lie in $A$ is a CR-set in $S \times S$. Here $a + ib$ is
-$a$ followed by $i$ additions of $b$, since $S$ need not have a zero.
-
-The paper takes $l \ge 1$; the case $l = 0$ is included.
-
-Source: De and Debnath, *Abundance of Arithmetic Progressions in CR-Sets*, INTEGERS
-25 (2025), Article A4, Theorem 8 (`integers-2025-A4-thm-8`). -/
-public theorem_wanted IsCRSet.arithmeticProgressions {S : Type*} [AddCommSemigroup S]
-    {A : Set S} (hA : IsCRSet A) (l : ℕ) :
-    IsCRSet {p : S × S | ∀ i ≤ l, (· + p.2)^[i] p.1 ∈ A}
 
 /-- **Arithmetic progressions in essential CR-sets of the positive integers.** Let $\mathbb{N}^+$
 denote the positive integers under addition. If $A \subseteq \mathbb{N}^+$ is an essential CR-set
