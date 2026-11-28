@@ -1175,5 +1175,3 @@
 {"page": "Analysis/partial-differential-equations/global-regularity-of-the-navier-stokes-equations", "to": "Analysis/partial-differential-equations/viscous-dispersive-and-kinetic-evolution/global-regularity-of-the-navier-stokes-equations", "article_id": "af_5fff502b9aa4df4ebda4c265"}
 {"page": "Geometry/convex-geometry/isoperimetric-inequality", "to": "Geometry/convex-geometry/extremal-volume-and-area-bounds/isoperimetric-inequality", "article_id": "af_b0c76c4c3aa9ba72110094b9"}
 {"page": "Geometry/riemannian-geometry/admits-positive-scalar-curvature-metric", "to": "Geometry/riemannian-geometry/curvature-of-riemannian-manifolds/admits-positive-scalar-curvature-metric", "article_id": "af_200b12ef2af1c938a007d607"}
-{"statement": "af_49e335a2f08c67f65137ed46", "page": "NumberTheory/algebraic-number-theory/discriminants-ramification/upper-numbering-of-ramification-groups", "replaced_by": "af_2342bea47ec082b0abae8ae2"}
-{"statement": "af_8160d35e429feaefd1d14a21", "page": "NumberTheory/algebraic-number-theory/galois-representations/conductor-of-the-l-adic-representation-of-a-newform", "replaced_by": "af_e0e6ed0e0548376c558cdcb9"}
