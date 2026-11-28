@@ -17,7 +17,7 @@ import Mathlib.Data.Nat.PrimeFin
 import Mathlib.Order.WellQuasiOrder
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
-import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficient
+import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndex
 
 /-!
 # Dickson's finiteness theorem for odd perfect numbers
@@ -38,12 +38,11 @@ late term to exceed `2`, and if all primes and exponents stabilize the numbers c
   Distinct Prime Factors*, American Journal of Mathematics 35 (1913), pp. 413–422, §1, Corollary,
   and §5, Lemma C (the largest-prime argument).
 * The prime-power and product formulas for the abundancy index come from
-  `MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficient`.
+  `MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndex`.
 -/
 
 open Filter Finset
-open scoped Topology
-open MathlibExt.NumberTheory.PrimitiveNondeficientWanted
+open scoped Function Topology
 
 namespace MetaMathlibExt
 
@@ -63,17 +62,17 @@ private theorem tendsto_abundancyIndex_prime_pow {p a : ℕ → ℕ} {l : ℝ}
     (hp : ∀ n, (p n).Prime)
     (hbase : Tendsto (fun n => (p n : ℝ) / ((p n : ℝ) - 1)) atTop (𝓝 l))
     (hpow : Tendsto (fun n => (p n : ℝ) ^ (a n + 1)) atTop atTop) :
-    Tendsto (fun n => (abundancyIndex (p n ^ a n) : ℝ)) atTop (𝓝 l) := by
+    Tendsto (fun n => (Nat.abundancyIndex (p n ^ a n) : ℝ)) atTop (𝓝 l) := by
   have h := hbase.mul ((tendsto_inv_atTop_zero.comp hpow).const_sub 1)
   simp only [sub_zero, mul_one] at h
   refine h.congr fun n => ?_
-  rw [abundancyIndex_prime_pow_eq _ _ (hp n)]
+  rw [Nat.abundancyIndex_prime_pow_eq _ _ (hp n)]
   push_cast
   simp only [Function.comp_apply, one_div]
 
 private theorem tendsto_abundancyIndex_prime_pow_of_prime_tendsto {p a : ℕ → ℕ}
     (hp : ∀ n, (p n).Prime) (h : Tendsto p atTop atTop) :
-    Tendsto (fun n => (abundancyIndex (p n ^ a n) : ℝ)) atTop (𝓝 1) := by
+    Tendsto (fun n => (Nat.abundancyIndex (p n ^ a n) : ℝ)) atTop (𝓝 1) := by
   have hpR : Tendsto (fun n => (p n : ℝ)) atTop atTop := tendsto_natCast_atTop_atTop.comp h
   have hsub : Tendsto (fun n => (p n : ℝ) - 1) atTop atTop := by
     simpa only [sub_eq_add_neg] using tendsto_atTop_add_const_right atTop (-1 : ℝ) hpR
@@ -90,12 +89,12 @@ private theorem tendsto_abundancyIndex_prime_pow_of_prime_tendsto {p a : ℕ →
     simpa only [pow_one] using pow_le_pow_right₀ hp1 (Nat.succ_le_succ (Nat.zero_le (a n)))
 
 private theorem one_lt_abundancyIndex_prime_pow {p a : ℕ} (hp : p.Prime) (ha : 0 < a) :
-    1 < (abundancyIndex (p ^ a) : ℝ) := by
+    1 < (Nat.abundancyIndex (p ^ a) : ℝ) := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero ha.ne'
   have hpQ : (0 : ℚ) < p := by exact_mod_cast hp.pos
   have hpos : (0 : ℚ) < 1 / (p : ℚ) ^ (k + 1) := one_div_pos.mpr (pow_pos hpQ _)
-  have h := (one_le_abundancyIndex (pow_pos hp.pos k)).trans_lt (lt_add_of_pos_right _ hpos)
-  rw [← abundancyIndex_prime_pow_succ hp] at h
+  have h := (Nat.one_le_abundancyIndex (pow_pos hp.pos k)).trans_lt (lt_add_of_pos_right _ hpos)
+  rw [← Nat.abundancyIndex_prime_pow_succ hp] at h
   exact_mod_cast h
 
 /-- **Dickson's finiteness theorem for odd perfect numbers.** For every natural number $m$, there
@@ -137,26 +136,25 @@ public theorem finite_setOf_oddPerfect_card_primeFactors_eq (m : ℕ) :
     (enumerate (φ n)).injective (Subtype.ext h)
   have ha (n : ℕ) (i : Fin m) : 0 < a n i :=
     (hp n i).factorization_pos_of_dvd (hN (φ n)).2.1.2.ne' (Nat.dvd_of_mem_primeFactors (hpMem n i))
-  have hReindex {M : Type} [CommMonoid M] (n : ℕ) (f : ℕ → M) :
-      ∏ i, f (p n i) = ∏ q ∈ (N (φ n)).primeFactors, f q :=
-    (Equiv.prod_comp (enumerate (φ n)) (fun q => f q)).trans (Finset.prod_coe_sort _ _)
   have hNprod (n : ℕ) : ∏ i, p n i ^ a n i = N (φ n) := by
-    change (∏ i, p n i ^ (N (φ n)).factorization (p n i)) = N (φ n)
-    rw [hReindex n (fun q => q ^ (N (φ n)).factorization q)]
-    exact (Nat.prod_primeFactors_pow_factorization (hN (φ n)).2.1.2.ne').symm
-  let abund (n : ℕ) (i : Fin m) : ℝ := (abundancyIndex (p n i ^ a n i) : ℝ)
-  have hAbund (n : ℕ) : ∏ i, abund n i = 2 := by
     let k := N (φ n)
-    have hk : k.Perfect := (hN (φ n)).2.1
-    have hcop (p' : ℕ) (hp' : p' ∈ k.primeFactors) (q : ℕ) (hq : q ∈ k.primeFactors)
-        (hne : p' ≠ q) : (p' ^ k.factorization p').Coprime (q ^ k.factorization q) :=
-      ((Nat.coprime_primes (Nat.prime_of_mem_primeFactors hp')
-        (Nat.prime_of_mem_primeFactors hq)).mpr hne).pow _ _
-    change (∏ i, (abundancyIndex (p n i ^ a n i) : ℝ)) = 2
-    rw [← Rat.cast_prod, hReindex n (fun q => abundancyIndex (q ^ k.factorization q)),
-      ← abundancyIndex_prod _ _ hcop, ← Nat.prod_primeFactors_pow_factorization hk.2.ne']
-    simp [abundancyIndex_eq_sum_divisors_div, (Nat.perfect_iff_sum_divisors_eq_two_mul hk.2).mp hk,
-      Nat.cast_ne_zero.mpr hk.2.ne']
+    let f (q : ℕ) := q ^ k.factorization q
+    change (∏ i, f (p n i)) = k
+    calc
+      _ = ∏ q : k.primeFactors, f q := (enumerate (φ n)).prod_comp (fun q => f q)
+      _ = ∏ q ∈ k.primeFactors, f q := Finset.prod_coe_sort _ _
+      _ = k := (Nat.prod_primeFactors_pow_factorization (hN (φ n)).2.1.2.ne').symm
+  let abund (n : ℕ) (i : Fin m) : ℝ := ((p n i ^ a n i).abundancyIndex : ℝ)
+  have hAbund (n : ℕ) : ∏ i, abund n i = 2 := by
+    let f (i : Fin m) := p n i ^ a n i
+    have hcop : (↑(univ : Finset (Fin m)) : Set (Fin m)).Pairwise (Nat.Coprime on f) := by
+      intro i _ j _ hij
+      exact ((Nat.coprime_primes (hp n i) (hp n j)).mpr ((hpInj n).ne hij)).pow _ _
+    change (∏ i, ((f i).abundancyIndex : ℝ)) = 2
+    rw [← Rat.cast_prod, ← Nat.abundancyIndex_prod _ _ hcop, hNprod]
+    have hperf := (hN (φ n)).2.1
+    simp [Nat.abundancyIndex, (Nat.perfect_iff_sum_divisors_eq_two_mul hperf.2).mp hperf,
+      Nat.cast_ne_zero.mpr hperf.2.ne']
   let fixed := univ.filter fun i : Fin m => ¬ Tendsto (p · i) atTop atTop
   let growing := fixed.filter fun i => Tendsto (a · i) atTop atTop
   have hP (i : Fin m) : ∃ q, i ∈ fixed → ∀ᶠ n in atTop, p n i = q := by
@@ -200,7 +198,7 @@ public theorem finite_setOf_oddPerfect_card_primeFactors_eq (m : ℕ) :
       · simp only [limit, num, den, hi, hg, ite_true, ite_false]
         refine tendsto_const_nhds.congr' ?_
         filter_upwards [hP i hi, hA i hi hg] with n hn he
-        simp [abund, abundancyIndex_eq_sum_divisors_div, hn, he]
+        simp [abund, Nat.abundancyIndex, hn, he]
     · have hpTop : Tendsto (p · i) atTop atTop := by simpa [fixed] using hi
       simpa [limit, num, den, hi] using
         tendsto_abundancyIndex_prime_pow_of_prime_tendsto (fun n => hp n i) hpTop
@@ -250,7 +248,7 @@ public theorem finite_setOf_oddPerfect_card_primeFactors_eq (m : ℕ) :
     obtain ⟨i, hi⟩ := hnot
     obtain ⟨n, hn⟩ := hStable.exists
     have hmatch (j : Fin m) (hj : j ∈ fixed) : limit j = abund n j := by
-      simp [limit, num, den, hj, hGrowing, abund, abundancyIndex_eq_sum_divisors_div,
+      simp [limit, num, den, hj, hGrowing, abund, Nat.abundancyIndex,
         (hn j hj).1, (hn j hj).2]
     have hunit (j : Fin m) (hj : j ∉ fixed) : limit j = 1 := by simp [limit, num, den, hj]
     have hlt (j : Fin m) : 1 < abund n j := one_lt_abundancyIndex_prime_pow (hp n j) (ha n j)

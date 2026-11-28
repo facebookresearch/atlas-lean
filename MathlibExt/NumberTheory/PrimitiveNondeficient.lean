@@ -63,34 +63,23 @@ private theorem three_le_of_mem_primeFactors (n q : ℕ) (hno : Odd n)
   have h2 := hprime.two_le
   omega
 
-/-- The abundancy index of a positive number is positive. -/
-private theorem abundancyIndex_pos (m : ℕ) (hm : 0 < m) :
-    0 < abundancyIndex m := by
-  rw [abundancyIndex]
-  apply div_pos _ (by exact_mod_cast hm)
-  have hle : m ≤ ∑ d ∈ Nat.divisors m, d :=
-    Finset.single_le_sum (f := fun d => d) (fun _ _ => Nat.zero_le _)
-      (Nat.mem_divisors_self m hm.ne')
-  have hleQ : (m : ℚ) ≤ ((∑ d ∈ Nat.divisors m, d : ℕ) : ℚ) := by exact_mod_cast hle
-  have hm1 : (1 : ℚ) ≤ (m : ℚ) := by exact_mod_cast hm
-  linarith [hleQ]
-
 /-- Abundancy as the supremum bound times correction factors. -/
 private theorem abundancyIndex_eq_sup_mul (n : ℕ) (hn0 : n ≠ 0) :
     abundancyIndex n = abundancySup n *
       ∏ p ∈ n.primeFactors, (1 - 1 / (p : ℚ) ^ (n.factorization p + 1)) := by
-  have hcop : ∀ p ∈ n.primeFactors, ∀ q ∈ n.primeFactors, p ≠ q →
-      (p ^ n.factorization p).Coprime (q ^ n.factorization q) := by
+  let f (p : ℕ) := p ^ n.factorization p
+  have hcop : (n.primeFactors : Set ℕ).Pairwise (Function.onFun Nat.Coprime f) := by
     intro p hp q hq hpq
-    have hpp : p.Prime := (Nat.mem_primeFactors.mp hp).1
-    have hqq : q.Prime := (Nat.mem_primeFactors.mp hq).1
-    exact ((Nat.coprime_primes hpp hqq).mpr hpq).pow_left _ |>.pow_right _
+    have hpp : p.Prime := Nat.prime_of_mem_primeFactors hp
+    have hqq : q.Prime := Nat.prime_of_mem_primeFactors hq
+    exact ((Nat.coprime_primes hpp hqq).mpr hpq).pow _ _
+  rw [abundancyIndex_eq_nat_abundancyIndex]
   conv_lhs => rw [Nat.prod_primeFactors_pow_factorization hn0]
-  rw [abundancyIndex_prod _ _ hcop]
+  rw [Nat.abundancyIndex_prod _ f hcop]
   simp only [abundancySup, ← Finset.prod_mul_distrib]
   apply Finset.prod_congr rfl
   intro p hp
-  exact abundancyIndex_prime_pow_eq p _ ((Nat.mem_primeFactors.mp hp).1)
+  exact Nat.abundancyIndex_prime_pow_eq p _ (Nat.prime_of_mem_primeFactors hp)
 
 /-- Product of `p/(p-1)` over distinct naturals, bounded by telescoping. -/
 private theorem prod_div_sub_one_le (T : Finset ℕ) (c : ℕ) (hc : 1 ≤ c)
@@ -601,7 +590,9 @@ private theorem abundancy_lt_two_mul (n p₁ : ℕ) (hn : IsPrimitiveNondeficien
   have h2 : abundancyIndex (n / p₁) < 2 := by
     rw [abundancyIndex, div_lt_iff₀ hnposdQ]
     exact_mod_cast hdef
-  have hposd : 0 < abundancyIndex (n / p₁) := abundancyIndex_pos _ hnposd
+  have hposd : 0 < abundancyIndex (n / p₁) := by
+    rw [abundancyIndex_eq_nat_abundancyIndex]
+    exact zero_lt_one.trans_le (Nat.one_le_abundancyIndex hnposd)
   have ha1 : 1 ≤ n.factorization p₁ := by
     have hpos := Nat.Prime.factorization_pos_of_dvd hpp hn0 hdvd
     omega
