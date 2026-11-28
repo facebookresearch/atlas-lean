@@ -19,7 +19,7 @@ The uniform one-dimensional fragment $\mathrm{UF}_1$, which differs only by the 
 
 ## Expansion
 
-The hardness proof reduces the $\mathbb{N} \times \mathbb{N}$ tiling problem, which is $\Pi^0_1$-complete. Binary relations $H$ and $V$ represent the horizontal and vertical neighbors; because $\mathrm{GF}_1$ allows a quantified block such as $\exists y \exists z$ with a matrix mixing atoms $H(x, y)$, $V(x, z)$ and atoms on other variable sets, a sentence can demand that every element has an $H$-neighbor and a $V$-neighbor and that the grid closes (the $V$-neighbor of the $H$-neighbor is an $H$-neighbor of the $V$-neighbor), and that unary predicates for the tiles match along $H$ and $V$. Such a sentence is satisfiable iff the tile set tiles the grid.
+The hardness proof reduces the $\mathbb{N} \times \mathbb{N}$ tiling problem, which is $\Pi^0_1$-complete. Binary relations $H$ and $V$ represent the horizontal and vertical neighbors; because $\mathrm{GF}_1$ allows a quantified block such as $\exists y \exists z$ with a matrix mixing atoms $H(x, y)$, $V(x, z)$ and atoms on other variable sets, a sentence can demand that every element has an $H$-neighbor and a $V$-neighbor and that the grid closes (the $V$-neighbor of the $H$-neighbor is an $H$-neighbor of the $V$-neighbor), and that unary predicates for the tiles match along $H$ and $V$. Such a sentence is satisfiable iff the tile set tiles the grid. A good expansion links a page for the $\Pi^0_1$-completeness of tiling $\mathbb{N} \times \mathbb{N}$, which the $\Pi^0_1$-hardness needs, and a page for this grid encoding.
 
 ## Sources
 

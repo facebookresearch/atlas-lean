@@ -13,7 +13,7 @@ The formula, and for model checking the Kripke structure, are the input; the set
 ## Depends on
 
 - [LTL with percentage operators](ltl-with-percentage-operators.md)
-- [Kripke model](../../modal-logic/kripke-semantics/kripke-model.md)
+- [Kripke structures with initial states](../temporal-specification/kripke-structures-with-initial-states.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

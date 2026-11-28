@@ -9,6 +9,5 @@ Fragments of first-order logic and of the calculus of relations, restricted in t
 - [One-dimensional fragments](one-dimensional-fragments/README.md)
 - [Two-variable logic and its extensions](two-variable-logic-and-its-extensions/README.md)
 - [Entailment between positive first-order sentences is undecidable](entailment-between-positive-first-order.md)
-- [Implication between clauses is undecidable](implication-between-clauses-is-undecidable.md)
 - [Finite satisfiability of monadic first-order logic with polyadic counting is undecidable](monadic-first-order-logic-with-polyadic-counting.md)
 - [Satisfiability of regular theories is undecidable for the EPR and Gurevich classes](regular-first-order-theories-of-epr-and.md)

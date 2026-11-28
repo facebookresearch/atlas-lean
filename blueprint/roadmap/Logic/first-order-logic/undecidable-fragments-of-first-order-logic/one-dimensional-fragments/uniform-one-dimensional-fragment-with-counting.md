@@ -13,7 +13,6 @@ In contrast, satisfiability and finite satisfiability of $\mathrm{UF}_1^{=}$ its
 
 ## Depends on
 
-- [Complete theory of a first-order structure](../../theory-of-structure.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 - [The arithmetical class $\Pi_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
@@ -24,7 +23,7 @@ In contrast, satisfiability and finite satisfiability of $\mathrm{UF}_1^{=}$ its
 
 ## Expansion
 
-Membership in $\Pi^0_1$ and $\Sigma^0_1$ holds because $\mathrm{UFC}_1^{=}$ is a fragment of first-order logic, whose unsatisfiable sentences are recursively enumerable and whose finitely satisfiable sentences can be enumerated. Hardness comes from tiling: a $\mathrm{UFC}_1^{=}$ sentence $\eta$ over a ternary relation $R$ and a unary relation $E$ (marking even rows) axiomatizes grid-like structures, where $R(a, b, c)$ holds when $b$ is the horizontal successor of $a$ and $c$ the vertical successor of $b$, or with the roles exchanged on odd rows; counting quantifiers force each element to have exactly the right number of $R$-neighbours. Every grid-like model contains a homomorphic image of the infinite grid $\mathbb{N} \times \mathbb{N}$, so a tile set tiles the grid exactly when $\eta$ together with the tiling conditions is satisfiable, and periodic tilings correspond to finite models. The tiling problem is $\Pi^0_1$-complete and the periodic tiling problem $\Sigma^0_1$-complete. The tiling problem for the quarter plane is equivalent to that for the whole plane by a compactness argument. A complete expansion links a page for the $\Sigma^0_1$-completeness of the periodic tiling problem.
+Membership in $\Pi^0_1$ and $\Sigma^0_1$ holds because $\mathrm{UFC}_1^{=}$ is a fragment of first-order logic, whose unsatisfiable sentences are recursively enumerable and whose finitely satisfiable sentences can be enumerated. Hardness comes from tiling: a $\mathrm{UFC}_1^{=}$ sentence $\eta$ over a ternary relation $R$ and a unary relation $E$ (marking even rows) axiomatizes grid-like structures, where $R(a, b, c)$ holds when $b$ is the horizontal successor of $a$ and $c$ the vertical successor of $b$, or with the roles exchanged on odd rows; counting quantifiers force each element to have exactly the right number of $R$-neighbours. Every grid-like model contains a homomorphic image of the infinite grid $\mathbb{N} \times \mathbb{N}$, so a tile set tiles the grid exactly when $\eta$ together with the tiling conditions is satisfiable, and periodic tilings correspond to finite models. The tiling problem is $\Pi^0_1$-complete and the periodic tiling problem $\Sigma^0_1$-complete. The tiling problem for the quarter plane is equivalent to that for the whole plane by a compactness argument. A complete expansion links pages for the $\Pi^0_1$-completeness of tiling $\mathbb{N} \times \mathbb{N}$ and for the $\Sigma^0_1$-completeness of the periodic tiling problem, which the two hardness results need.
 
 ## Sources
 

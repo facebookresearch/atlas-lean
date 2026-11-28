@@ -14,14 +14,14 @@ With one linear order, two-variable logic is NExpTime-complete (Otto). With two 
 
 ## Proof depends on
 
-None.
+- [The tiling problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 
 ## Expansion
 
-The Kieroński–Tendera survey lists this case among the undecidable extensions of $\mathrm{GF}^2$ by distinguished relations, for both satisfiability and finite satisfiability, and refers to the original paper for the proof. The decidability of an extension depends on the number and kind of special relations, and on whether they may occur outside guards.
+Kieroński reduces tiling problems (Section 2 of the original paper). By Lemma 3 there, it suffices to give a two-variable sentence $\eta$ that the $\mathbb Z \times \mathbb Z$ grid and arbitrarily large finite tori, expanded by three linear orders and unary predicates, satisfy, and all of whose models with three linear orders are grid-like; the paper builds such an $\eta$ from a $4 \times 6$ repeating pattern of unary predicates and makes it guarded by using the total orders as guards (Theorem 6 and the remark after it). A good expansion links the tiling problem, the undecidability of tiling the periodic tori that finite satisfiability needs, and a page for Lemma 3. The decidability of an extension depends on the number and kind of special relations, and on whether they may occur outside guards.
 
 ## Sources
 
-- E. Kieroński, "Decidability issues for two-variable logics with several linear orders", in *Computer Science Logic (CSL 2011)*, Leibniz International Proceedings in Informatics 12, Schloss Dagstuhl, 2011, pp. 337–351, doi:[10.4230/LIPIcs.CSL.2011.337](https://doi.org/10.4230/LIPIcs.CSL.2011.337) (original source, cited as recalled in the survey).
+- E. Kieroński, "Decidability issues for two-variable logics with several linear orders", in *Computer Science Logic (CSL 2011)*, Leibniz International Proceedings in Informatics 12, Schloss Dagstuhl, 2011, pp. 337–351, doi:[10.4230/LIPIcs.CSL.2011.337](https://doi.org/10.4230/LIPIcs.CSL.2011.337) ; read in the open-access version: Section 2 (Lemmas 2 and 3, the construction of $\eta$) and Theorem 6 with the remark on guards.
 
 - E. Kieroński and L. Tendera, "Finite satisfiability of the two-variable guarded fragment with transitive guards and related variants", *ACM Transactions on Computational Logic* 19(2), Article 8, 2018, doi:[10.1145/3174805](https://doi.org/10.1145/3174805). Numbering of the version read, arXiv:1611.03267v3: Section 1 and Table I (rows "1 linear order", "2 linear orders" and "3 linear orders") and the paragraph after Table I.

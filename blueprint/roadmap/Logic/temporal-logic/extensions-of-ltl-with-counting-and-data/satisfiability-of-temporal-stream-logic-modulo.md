@@ -10,6 +10,8 @@ Here the formula is the input, and the cells and symbols are those occurring in 
 
 - [Temporal stream logic modulo theories](temporal-stream-logic-modulo-theories.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 
@@ -22,4 +24,4 @@ In $T_U$ a TSL formula $\varphi_{\mathit{num}}$ forces a constant $z$, a unary f
 
 ## Sources
 
-- Bernd Finkbeiner, Philippe Heim and Noemi Passing, "Temporal stream logic modulo theories", in *Foundations of Software Science and Computation Structures (FoSSaCS 2022)*, Lecture Notes in Computer Science 13242, Springer, 2022, pp. 325–346, doi:10.1007/978-3-030-99253-8_17; read as arXiv:2104.14988v2, <https://arxiv.org/abs/2104.14988v2>: Section 5 (the theorems "Undecidability of TSL-$T_U$-SAT", "Undecidability of TSL-$T_N$-SAT" and "Undecidability of TSL-$T_E$-SAT" and the encoding lemma for numbers), Appendix C (the theorem on high undecidability of TSL satisfiability in theories encoding reset, increment and equality, and the universal halting problem for GOTO programs) and Section 6 of arXiv:2104.14988v2.
+- Bernd Finkbeiner, Philippe Heim and Noemi Passing, "Temporal stream logic modulo theories", in *Foundations of Software Science and Computation Structures (FoSSaCS 2022)*, Lecture Notes in Computer Science 13242, Springer, 2022, pp. 325–346, doi:10.1007/978-3-030-99253-8_17; read as arXiv:2104.14988v2, <https://arxiv.org/abs/2104.14988v2>: Section 5 (Theorems 4, 5, 6 and 7 and the encoding lemma for numbers), Appendix C (Theorem 8 on the universal halting problem for GOTO programs and Theorem 9 on high undecidability of TSL satisfiability in theories encoding reset, increment and equality) and Section 6 of arXiv:2104.14988v2.

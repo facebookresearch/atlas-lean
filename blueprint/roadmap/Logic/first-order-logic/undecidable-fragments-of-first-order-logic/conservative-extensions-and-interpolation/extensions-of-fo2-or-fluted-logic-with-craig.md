@@ -20,10 +20,11 @@ Any abstract logic that extends two-variable first-order logic or the fluted fra
 ## Proof depends on
 
 - [Two-variable fluted logic with three transitive relations is undecidable](../guarded-and-fluted-fragments/two-variable-fluted-logic-with-three-transitive.md)
+- [The two-variable guarded fragment with two transitive relations is undecidable](../guarded-and-fluted-fragments/gf2-with-two-transitive-relations-is.md)
 
 ## Expansion
 
-Using CIP, the formulas $\psi_0(x_1) = \forall x_2 \forall x_3 (R(x_1,x_2) \wedge R(x_2,x_3) \to R(x_1,x_3))$ and $\psi_1 = \neg \forall x_1 \forall x_2 \forall x_3 (R(x_1,x_2) \wedge R(x_2,x_3) \to R(x_1,x_3))$ arise as unique interpolants of valid entailments between $\mathrm{FO}^2$ or $\mathrm{FL}$ formulas with auxiliary predicates, so $L$ expresses them. Ordered (or universal) quantification of $\psi_0$, or negation of $\psi_1$, then expresses transitivity of $R$, and by renaming, transitivity of several relations. Satisfiability is reduced from $\mathrm{FL}$ with three transitive relations (undecidable by Pratt-Hartmann and Tendera) in clause 1, and from $\mathrm{FO}^2$ with two transitive relations (undecidable by Kieroński) in clause 2, by conjoining the translated formula with the transitivity sentences.
+Using CIP, the formulas $\psi_0(x_1) = \forall x_2 \forall x_3 (R(x_1,x_2) \wedge R(x_2,x_3) \to R(x_1,x_3))$ and $\psi_1 = \neg \forall x_1 \forall x_2 \forall x_3 (R(x_1,x_2) \wedge R(x_2,x_3) \to R(x_1,x_3))$ arise as unique interpolants of valid entailments between $\mathrm{FO}^2$ or $\mathrm{FL}$ formulas with auxiliary predicates, so $L$ expresses them. Ordered (or universal) quantification of $\psi_0$, or negation of $\psi_1$, then expresses transitivity of $R$, and by renaming, transitivity of several relations. Satisfiability is reduced from $\mathrm{FL}$ with three transitive relations (undecidable by Pratt-Hartmann and Tendera) in clause 1, and from $\mathrm{FO}^2$ with two transitive relations (undecidable by Kieroński, already for the two-variable guarded fragment, which is contained in $\mathrm{FO}^2$) in clause 2, by conjoining the translated formula with the transitivity sentences.
 
 ## Sources
 

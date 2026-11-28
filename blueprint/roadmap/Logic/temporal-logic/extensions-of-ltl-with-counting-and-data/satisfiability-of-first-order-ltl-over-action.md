@@ -27,4 +27,4 @@ For each first-order sentence $\varphi$ one constructs an $\mathrm{LTL}^{\mathrm
 
 ## Sources
 
-- A. Bauer, J.-C. Küster and G. Vegliach, "From Propositional to First-Order Monitoring", in *Runtime Verification (RV 2013)*, Lecture Notes in Computer Science 8174, Springer, 2013, pp. 59–75, <https://doi.org/10.1007/978-3-642-40787-1_4>; numbers from arXiv:1303.3645v1, <https://arxiv.org/abs/1303.3645v1>: Section 4 (syntax and semantics of $\mathrm{LTL}^{\mathrm{FO}}$, Lemma 1, Theorems 2 and 5) and the abstract.
+- A. Bauer, J.-C. Küster and G. Vegliach, "From Propositional to First-Order Monitoring", in *Runtime Verification (RV 2013)*, Lecture Notes in Computer Science 8174, Springer, 2013, pp. 59–75, <https://doi.org/10.1007/978-3-642-40787-1_4>; numbers from arXiv:1303.3645v1, <https://arxiv.org/abs/1303.3645v1>: Section 3 (syntax and semantics of $\mathrm{LTL}^{\mathrm{FO}}$), Section 4 (Lemma 1, Theorems 2 and 5) and the abstract.

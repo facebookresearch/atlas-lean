@@ -14,11 +14,11 @@ Two-variable first-order logic $\mathrm{FO}^2$ itself is decidable, NEXPTIME-com
 
 ## Proof depends on
 
-None.
+- [The tiling problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 
 ## Expansion
 
-The copies read state the result without proof. Immerman, Rabinovich, Reps, Sagiv and Yorsh recall it as the reason that transitive closure makes even very tame logics undecidable, and note that any logic able to express tilings of a grid has undecidable satisfiability; the original proof is in Grädel, Otto and Rosen and is not reproduced here.
+The copies read state the result without proof. Immerman, Rabinovich, Reps, Sagiv and Yorsh recall it as the reason that transitive closure makes even very tame logics undecidable, and note that any logic able to express tilings of a grid has undecidable satisfiability; the original proof is in Grädel, Otto and Rosen. A good expansion links the tiling problem and a page showing that $\mathrm{FO}^2(\mathrm{DTC})$ expresses tilings of a grid.
 
 ## Sources
 

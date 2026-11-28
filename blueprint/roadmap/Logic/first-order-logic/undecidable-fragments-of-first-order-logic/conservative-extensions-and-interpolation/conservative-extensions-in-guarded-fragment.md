@@ -2,7 +2,7 @@
 
 In every fragment of first-order logic that contains the three-variable guarded fragment, it is undecidable whether one sentence conservatively extends another, and so are Σ-inseparability, Σ-entailment and strong Σ-entailment.
 
-**Theorem (Jung, Lutz, Martel, Schneider and Wolter).** Let $F$ be any fragment of first-order logic that extends the three-variable [guarded fragment](../guarded-and-fluted-fragments/guarded-fragment.md) $\mathrm{GF}^3$. Then the following problems for $F$ are undecidable: [conservative extensions, $\Sigma$-inseparability, $\Sigma$-entailment and strong $\Sigma$-entailment](conservative-extensions-and-sigma-entailment.md) (Theorem 7 of the source).
+**Theorem (Jung, Lutz, Martel, Schneider and Wolter).** Let $F$ be any fragment of first-order logic that extends the three-variable [guarded fragment](../guarded-and-fluted-fragments/guarded-fragment.md) $\mathrm{GF}^3$. Then the following problems for $F$ are undecidable: [conservative extensions, $\Sigma$-inseparability, $\Sigma$-entailment and strong $\Sigma$-entailment](conservative-extensions-and-sigma-entailment.md) (Theorem 7 of the source). Here $\mathrm{GF}$ and $\mathrm{GF}^3$ allow predicates of any arity; the source restricts arities to one and two only for $\mathrm{FO}^2$ and its fragments, and the reduction behind Theorem 7 uses ternary predicates as guards (Section 3).
 
 The source notes that the proof gives witnesses in the two-variable guarded fragment, so $\mathrm{GF}^2$-conservative extensions of $\mathrm{GF}^3$-sentences are already undecidable. In contrast, conservative extensions are decidable and 2ExpTime-complete in the two-variable guarded fragment $\mathrm{GF}^2$, the intersection of $\mathrm{GF}$ and $\mathrm{FO}^2$.
 

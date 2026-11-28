@@ -12,11 +12,12 @@ $$
 
 for formulas $\varphi$ and letters $\sigma \in \mathrm{AP}$: majority in the past, exactly half in the past, and most frequent letter in the past. At $i = 0$ the counts are $0$, so $\mathbf{M}\varphi$ and $\mathbf{H}\varphi$ are true there; $\mathbf{H}\varphi$ is true only at even positions and equals $\mathbf{M}\varphi \wedge \mathbf{M}\neg\varphi$. $\mathrm{LTL}_{\mathbf{F}}[\mathbf{M}]$, $\mathrm{LTL}_{\mathbf{F}}[\mathbf{H}]$ and $\mathrm{LTL}_{\mathbf{F}}[\mathbf{MF}]$ add the respective operator.
 
-**Problems.** A Kripke structure has a finite set of states, a set of initial states, a total transition relation and a labelling of each state by a finite subset of $\mathrm{AP}$ (Section 2.3 of the source); its traces are the finite words labelling finite paths from initial states. *Satisfiability* asks whether a formula has a finite model word; *model checking* asks whether some trace of a given Kripke structure satisfies a given formula.
+**Problems.** A [Kripke structure](../temporal-specification/kripke-structures-with-initial-states.md) has a finite set of states, a set of initial states, a total transition relation and a labelling of each state by a finite subset of $\mathrm{AP}$ (Section 2.3 of the source); its traces are the finite words labelling finite paths from initial states. *Satisfiability* asks whether a formula has a finite model word; *model checking* asks whether some trace of a given Kripke structure satisfies a given formula.
 
 ## Depends on
 
 - [Formulas of linear temporal logic](../linear-temporal-logic/formula.md)
+- [Kripke structures with initial states](../temporal-specification/kripke-structures-with-initial-states.md)
 
 ## Proof depends on
 
