@@ -11,7 +11,7 @@ A word $w$ is a *subsequence* of $v$, written $w\le v$, if $w$ is obtained from 
 4. (*$\forall$-$k$-universality*) given $L$ and $k$, is every word of $L$ $k$-universal?
 5. (*$\infty$-universality*) given $L$, does $L$ contain an $m$-universal word for every $m\ge1$?
 
-(Theorem 3 of the source, for Problems 1–5.) Here $k$-universality is taken with respect to the terminal alphabet $\Sigma$ of the given grammar, and, following the source, languages do not contain the empty word, which the definition above guarantees. Adding $\varepsilon$ to $L$ would change the answer to Problem 1 for $w = \varepsilon$ and to Problem 3 for $k = 0$ when $L$ is otherwise empty, and would make Problem 2 false unless $w = \varepsilon$ and Problem 4 false unless $k = 0$; it would not change Problem 5.
+(Theorem 3 of the source, for Problems 1–5.) Here $k$-universality is taken with respect to the terminal alphabet $\Sigma$ of the given grammar, and, following the source, languages do not contain the empty word, which the definition above guarantees. For a nonempty terminal alphabet, as in the source ($\Sigma = \{1, \dots, \sigma\}$), adding $\varepsilon$ to $L$ would change the answer to Problem 1 for $w = \varepsilon$ and to Problem 3 for $k = 0$ when $L$ is otherwise empty, and would make Problem 2 false unless $w = \varepsilon$ and Problem 4 false unless $k = 0$; it would not change Problem 5. (Over an empty terminal alphabet $L$ is empty and $\varepsilon$ is $k$-universal for every $k$, so adding it would change Problem 3 for every $k$ and Problem 5, and leave Problem 4 true.)
 
 By contrast, the source shows that all five problems are decidable for context-free languages given by grammars in Chomsky normal form, as they are for regular languages.
 
