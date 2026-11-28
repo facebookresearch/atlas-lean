@@ -10,6 +10,7 @@ module
 
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.ArithmeticFunction.CompletelyMultiplicative
+public import MathlibExt.NumberTheory.ArithmeticFunction.PrimePowerValues
 public import MathlibExt.NumberTheory.UnitaryDivisor
 
 /-!
@@ -300,7 +301,7 @@ Source: Emil Daniel Schwab, *Fibonacci Numbers via Dirichlet Convolution and Luc
 Unitary Convolution*, Journal of Integer Sequences 28 (2025), Article 25.1.7, Section 1.3 (a
 multiplicative function is determined by its values at the prime powers). -/
 def multiplicativeOfPrimePowers [CommMonoidWithZero R] (g : ℕ → R) : ArithmeticFunction R :=
-  ⟨fun n => if n = 0 then 0 else ∏ p ∈ n.primeFactors, g (n.factorization p), by simp⟩
+  ofPrimePowerValues fun _ e => g e
 
 /-- **Value of the function with prescribed prime-power values.** Let $R$ be a commutative monoid
 with zero, let $g : \mathbb{N} \to R$, and let $n \ne 0$ be a natural number. The multiplicative
@@ -312,8 +313,8 @@ Source: Emil Daniel Schwab, *Fibonacci Numbers via Dirichlet Convolution and Luc
 Unitary Convolution*, Journal of Integer Sequences 28 (2025), Article 25.1.7, Section 1.3. -/
 theorem multiplicativeOfPrimePowers_apply [CommMonoidWithZero R] (g : ℕ → R) {n : ℕ}
     (hn : n ≠ 0) :
-    multiplicativeOfPrimePowers g n = n.factorization.prod fun _ k => g k := by
-  simp [multiplicativeOfPrimePowers, hn, Finsupp.prod, Nat.support_factorization]
+    multiplicativeOfPrimePowers g n = n.factorization.prod fun _ k => g k :=
+  ofPrimePowerValues_apply_of_ne_zero (fun _ e => g e) hn
 
 /-- **The function with prescribed prime-power values is $1$ at $1$.** Let $R$ be a commutative
 monoid with zero and $g : \mathbb{N} \to R$. The multiplicative function with prime-power values
@@ -325,8 +326,8 @@ Source: Emil Daniel Schwab, *Fibonacci Numbers via Dirichlet Convolution and Luc
 Unitary Convolution*, Journal of Integer Sequences 28 (2025), Article 25.1.7, Section 1.3. -/
 @[simp]
 theorem multiplicativeOfPrimePowers_one [CommMonoidWithZero R] (g : ℕ → R) :
-    multiplicativeOfPrimePowers g 1 = 1 := by
-  simp [multiplicativeOfPrimePowers]
+    multiplicativeOfPrimePowers g 1 = 1 :=
+  (isMultiplicative_ofPrimePowerValues fun _ e => g e).map_one
 
 /-- **The function with prescribed prime-power values at a prime power.** Let $R$ be a
 commutative monoid with zero and $g : \mathbb{N} \to R$. For every prime $p$ and every $m \ge 1$,
@@ -337,9 +338,8 @@ $n$ and $v_q(n)$ the exponent of $q$ in $n$), takes the value $g(m)$ at $p^m$.
 Source: Emil Daniel Schwab, *Fibonacci Numbers via Dirichlet Convolution and Lucas Numbers via
 Unitary Convolution*, Journal of Integer Sequences 28 (2025), Article 25.1.7, Section 1.3. -/
 theorem multiplicativeOfPrimePowers_prime_pow [CommMonoidWithZero R] (g : ℕ → R) {p m : ℕ}
-    (hp : p.Prime) (hm : m ≠ 0) : multiplicativeOfPrimePowers g (p ^ m) = g m := by
-  simp [multiplicativeOfPrimePowers, hp.ne_zero, Nat.primeFactors_prime_pow hm hp,
-    hp.factorization_self]
+    (hp : p.Prime) (hm : m ≠ 0) : multiplicativeOfPrimePowers g (p ^ m) = g m :=
+  ofPrimePowerValues_prime_pow (fun _ e => g e) hp hm
 
 /-- **Multiplicativity of the function with prescribed prime-power values.** Let $R$ be a
 commutative monoid with zero and $g : \mathbb{N} \to R$. The arithmetic function
@@ -349,13 +349,8 @@ and $v_q(n)$ is the exponent of $q$ in $n$, is multiplicative.
 Source: Emil Daniel Schwab, *Fibonacci Numbers via Dirichlet Convolution and Lucas Numbers via
 Unitary Convolution*, Journal of Integer Sequences 28 (2025), Article 25.1.7, Section 1.3. -/
 theorem isMultiplicative_multiplicativeOfPrimePowers [CommMonoidWithZero R] (g : ℕ → R) :
-    (multiplicativeOfPrimePowers g).IsMultiplicative := by
-  refine IsMultiplicative.iff_ne_zero.mpr
-    ⟨multiplicativeOfPrimePowers_one g, fun {m n} hm hn hmn => ?_⟩
-  rw [multiplicativeOfPrimePowers_apply g (Nat.mul_ne_zero hm hn),
-    multiplicativeOfPrimePowers_apply g hm, multiplicativeOfPrimePowers_apply g hn,
-    Nat.factorization_mul_of_coprime hmn,
-    Finsupp.prod_add_index_of_disjoint hmn.disjoint_primeFactors]
+    (multiplicativeOfPrimePowers g).IsMultiplicative :=
+  isMultiplicative_ofPrimePowerValues fun _ e => g e
 
 /-- **A multiplicative function with prescribed prime-power values.** Let $R$ be a
 commutative monoid with zero, let $g : \mathbb{N} \to R$, and let $f$ be a multiplicative
