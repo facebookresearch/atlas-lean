@@ -25,12 +25,25 @@ import Mathlib.Tactic.Ring
 # Vertices of generalized Cohn trees
 
 Generalized Cohn triples and trees, built on the generalized Cohn matrices of
-`MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul`, the fact that both children of a
-generalized Cohn triple are generalized Cohn triples, and uniqueness of the tree parameter and
-path of a triple whose middle Markov entry is largest.
+`MathlibExt.NumberTheory.GeneralizedMarkovUniquenessMulEMul`. Both children of any
+$k$-generalized Cohn triple are $k$-generalized Cohn triples for $k \in \mathbb{N}$.
+A $k$-generalized Cohn triple with associated entries $(a,b,c)$ and $a < b$, $c < b$ lies at a
+unique pair of tree parameter and path in the generalized Cohn trees. In the classical case
+$k=0$, every Markov triple $(a,b,c)$ with $a \le b$ and $c \le b$ lifts to a Cohn triple by taking
+left and right steps from a Cohn triple over $(1,1,1)$, and both steps act by Vieta jumping on the
+$(1,2)$-entries of any classical Cohn triple.
 
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 3.5 and Proposition 3.17.
+## References
+
+* Yasuaki Gyoda and Shuhei Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
+  Are Prime Powers*, INTEGERS 26 (2026), Article A91, pp. 1–27, Theorems 1.9 and 3.5,
+  Proposition 3.17, and Sections 2 and 3.1 (numerical descent and lifting).
+* Martin Aigner, *Markov's Theorem and 100 Years of the Uniqueness Conjecture:
+  A Mathematical Journey from Irrational Numbers to Perfect Matchings*, Springer, Cham, 2013,
+  Theorem 4.7, as cited by Gyoda and Maruyama for Theorem 1.9.
+* Yasuaki Gyoda and Kodai Matsushita, *Generalization of Markov Diophantine Equation via
+  Generalized Cluster Algebra*, Electronic Journal of Combinatorics 30 (4) (2023), #P4.10,
+  pp. 1–20, Theorem 1, as cited by Gyoda and Maruyama for the numerical tree.
 -/
 
 namespace MetaMathlibExt
@@ -759,6 +772,92 @@ public theorem IsGenCohnTriple.existsUnique_mem_genCohnTree {k a b c : ℕ}
   refine ⟨p, hp, ?_⟩
   rintro ⟨ℓ, w⟩ hw
   exact cohn_tree_injective (hw.trans hp.symm)
+
+private theorem cohn_lift_classical {a b c : ℕ} (h : IsGenMarkovTriple 0 a b c)
+    (hab : a ≤ b) (hcb : c ≤ b) :
+    ∃ w, IsGenCohnTriple 0 (wideGenCohnTree 0 0 w).1 (wideGenCohnTree 0 0 w).2.1
+      (wideGenCohnTree 0 0 w).2.2 a b c := by
+  have extend (w : List Bool) (dir : Bool) :
+      wideGenCohnTree 0 0 (w ++ [dir]) = genCohnStep 0 dir (wideGenCohnTree 0 0 w) := by
+    simp only [wideGenCohnTree, genCohnPath, List.foldl_append, List.foldl_cons, List.foldl_nil]
+  induction b using Nat.strong_induction_on generalizing a c with
+  | ind b ih =>
+    by_cases ha : a = b
+    · subst a
+      obtain ⟨rfl, rfl⟩ := markov_max_tie (markov_swap h) hcb
+      exact ⟨[], cohn_wide_root 0 0⟩
+    by_cases hc : c = b
+    · subst c
+      obtain ⟨rfl, rfl⟩ := markov_max_tie h hab
+      exact ⟨[], cohn_wide_root 0 0⟩
+    have hab' : a < b := lt_of_le_of_ne hab ha
+    have hcb' : c < b := lt_of_le_of_ne hcb hc
+    by_cases he : a = c
+    · subst c
+      obtain ⟨rfl, rfl⟩ := markov_equal_endpoints h hab'
+      exact ⟨[false], (cohn_wide_root 0 0).step.1⟩
+    -- Descend through the larger endpoint and lift the inverse jump from its Cohn triple.
+    let d := (a ^ 2 + 0 * a * c + c ^ 2) / b
+    obtain ⟨hjump, hmul, _⟩ := markov_jump h
+    have hpos : 0 < a ∨ 0 < c := by omega
+    have hnum : 0 < a ^ 2 + 0 * a * c + c ^ 2 := by
+      rcases hpos with ha' | hc' <;> positivity
+    have hd : 0 < d := Nat.pos_of_mul_pos_right (b := b) (hmul ▸ hnum)
+    have hback : (a ^ 2 + 0 * a * c + c ^ 2) / d = b := by
+      rw [← hmul, Nat.mul_div_cancel_left _ hd]
+    dsimp only [d] at hback
+    by_cases hac : a < c
+    · obtain ⟨w, hw⟩ := ih c hcb' (markov_swap (markov_rotate hjump)) hac.le
+        (markov_descent_lt h hac hcb').le
+      refine ⟨w ++ [false], ?_⟩
+      rw [extend]
+      simpa only [genCohnStep, hback] using hw.step.1
+    · have hca : c < a := by omega
+      have hdiv : (c ^ 2 + 0 * c * a + a ^ 2) / b = d := by
+        dsimp only [d]
+        congr 1
+        ring
+      have hda : d < a := by
+        simpa only [hdiv] using markov_descent_lt (markov_swap h) hca hab'
+      obtain ⟨w, hw⟩ := ih a hab' (markov_rotate (markov_swap hjump)) hda.le hca.le
+      refine ⟨w ++ [true], ?_⟩
+      rw [extend]
+      simpa only [genCohnStep, hback] using hw.step.2
+
+/-- **Cohn steps reach every classical Markov triple whose middle entry is largest.** A Cohn
+triple is a $0$-generalized Cohn triple, so the matrix $S$ is zero and $Q=PR$. The left step is
+$(P,Q,R) \mapsto (P,PQ,Q)$ and the right step is $(P,Q,R) \mapsto (Q,QR,R)$. For every Markov
+triple $(a,b,c)$ with $a \le b$ and $c \le b$, there is a Cohn triple $(P_0,Q_0,R_0)$ associated
+with $(1,1,1)$ and a finite sequence of left and right steps taking it to a Cohn triple
+associated with $(a,b,c)$. For any Cohn triple $(P,Q,R)$ associated with $(a,b,c)$, the
+$(1,2)$-entries of the left step are $(a,\lfloor (a^2+b^2)/c \rfloor,b)$, and the $(1,2)$-entries
+of the right step are $(b,\lfloor (b^2+c^2)/a \rfloor,c)$: the two steps induce the left and
+right Vieta jumpings of $(a,b,c)$.
+
+Source: Yasuaki Gyoda and Shuhei Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
+Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 1.9 (citing Martin Aigner,
+Theorem 4.7). -/
+public theorem cohnTriple_reachable :
+    (∀ a b c, IsGenMarkovTriple 0 a b c → a ≤ b → c ≤ b →
+      ∃ P₀ Q₀ R₀ w, IsGenCohnTriple 0 P₀ Q₀ R₀ 1 1 1 ∧
+        (let T := genCohnPath 0 (P₀, Q₀, R₀) w
+         IsGenCohnTriple 0 T.1 T.2.1 T.2.2 a b c)) ∧
+    ∀ P Q R a b c d, IsGenCohnTriple 0 P Q R a b c →
+      (genCohnStep 0 d (P, Q, R)).1 0 1 = (genMarkovVieta 0 d (a, b, c)).1 ∧
+        (genCohnStep 0 d (P, Q, R)).2.1 0 1 = (genMarkovVieta 0 d (a, b, c)).2.1 ∧
+        (genCohnStep 0 d (P, Q, R)).2.2 0 1 = (genMarkovVieta 0 d (a, b, c)).2.2 := by
+  constructor
+  · intro a b c h hab hcb
+    obtain ⟨w, hw⟩ := cohn_lift_classical h hab hcb
+    exact ⟨genCohnP1 0 0, genCohnQ1 0 0, genCohnR1 0 0, w, cohn_wide_root 0 0, hw⟩
+  · intro P Q R a b c d h
+    cases d
+    · rw [genMarkovVieta_false]
+      obtain ⟨_, _, _, _, h₁, h₂, h₃, _⟩ := h.step.1
+      exact ⟨h₁, h₂, h₃⟩
+    · rw [genMarkovVieta_true]
+      obtain ⟨_, _, _, _, h₁, h₂, h₃, _⟩ := h.step.2
+      exact ⟨h₁, h₂, h₃⟩
 
 end
 
