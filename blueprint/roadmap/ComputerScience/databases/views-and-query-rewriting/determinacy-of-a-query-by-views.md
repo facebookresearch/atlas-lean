@@ -30,4 +30,4 @@ Determinacy is the semantic condition behind answering a query from materialized
 
 ## Sources
 
-- Tomasz Gogacz and Jerzy Marcinkowski, "Red Spider Meets a Rainworm: Conjunctive Query Finite Determinacy Is Undecidable", Proceedings of the 35th ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems (PODS 2016), pp. 121–134, 2016, <https://doi.org/10.1145/2902251.2902288>; definition of CQfDP in Section I of arXiv:1512.01681v1 (sections numbered I, II, ...), <https://arxiv.org/abs/1512.01681v1>.
+- Tomasz Gogacz and Jerzy Marcinkowski, "Red Spider Meets a Rainworm: Conjunctive Query Finite Determinacy Is Undecidable", Proceedings of the 35th ACM SIGMOD-SIGACT-SIGAI Symposium on Principles of Database Systems (PODS 2016), pp. 121–134, 2016, <https://doi.org/10.1145/2902251.2902288>; definition of CQfDP in Section I and the conventions on constants in Section II.A ("Basic notions") of arXiv:1512.01681v1 (sections numbered I, II, ...), <https://arxiv.org/abs/1512.01681v1>.

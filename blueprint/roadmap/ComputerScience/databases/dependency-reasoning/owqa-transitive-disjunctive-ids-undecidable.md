@@ -1,8 +1,13 @@
 # Query answering over transitive relations with disjunctive inclusion dependencies is undecidable
 
-When a distinguished binary relation is only required to be transitive, open-world query answering is undecidable for a fixed set of disjunctive inclusion dependencies, which are not base-guarded, and a fixed conjunctive query, over a signature of arity two, with the finite set of facts as input.
+When a distinguished binary relation is only required to be transitive, open-world query answering is undecidable for a fixed set of disjunctive inclusion dependencies, which are not base-guarded, and a fixed union of conjunctive queries over a signature of arity two, or a fixed conjunctive query over a signature with one ternary relation and the relations of an Or-gadget, with the finite set of facts as input.
 
-**Theorem.** There are a signature $\sigma = \sigma_B \sqcup \sigma_D$ whose relations have arity at most two and in which $\sigma_D$ consists of a single distinguished relation $S^+$, required to be transitive, a set $\Sigma$ of [disjunctive inclusion dependencies](disjunctive-inclusion-dependencies.md) on $\sigma$ and a CQ $Q$ on $\sigma_B$ such that the following problem is undecidable: given a finite set of facts $F_0$, decide $\mathrm{QA}^{tr}(F_0, \Sigma, Q)$, that is, whether every set of facts $F \supseteq F_0$ satisfying $\Sigma$ in which $S^+$ is transitive satisfies $Q$. The notions are those of [Query answering with transitive relations, transitive closure and linear orders](query-answering-over-transitive-and-ordered-data.md).
+**Theorem.** In each of the following settings there are a signature $\sigma = \sigma_B \sqcup \sigma_D$, in which $\sigma_D$ consists of a single distinguished relation $S^+$, required to be transitive, a set $\Sigma$ of [disjunctive inclusion dependencies](disjunctive-inclusion-dependencies.md) on $\sigma$ and a query $Q$ on $\sigma_B$ such that the following problem is undecidable: given a finite set of facts $F_0$, decide $\mathrm{QA}^{tr}(F_0, \Sigma, Q)$, that is, whether every set of facts $F \supseteq F_0$ satisfying $\Sigma$ in which $S^+$ is transitive satisfies $Q$.
+
+1. All relations of $\sigma$ have arity at most two, and $Q$ is a union of conjunctive queries.
+2. $Q$ is a conjunctive query, and $\sigma$ is the signature of setting 1 with the successor relation $S'$ made ternary and a ternary relation $\mathrm{Or}$ and a unary relation $\mathrm{True}$ added.
+
+Theorem 9 of the source states the result for a conjunctive query over an arity-two signature; its proof gives the arity-two form for a union of conjunctive queries and the conjunctive form only after the extra arity is added (appendix, "From UCQ to CQ"), as stated above. The notions are those of [Query answering with transitive relations, transitive closure and linear orders](query-answering-over-transitive-and-ordered-data.md).
 
 ## Depends on
 
@@ -27,7 +32,7 @@ $$
 S^+(x, y) \rightarrow \bigvee_i K_i(x, y), \qquad S^+(x, y) \rightarrow \bigvee_i K_i(y, x), \qquad S^+(x, y) \rightarrow \bigvee_i K'_i(x),
 $$
 
-where $K_i(x, y)$ says that the cell indexed by the pair of positions $(x, y)$ has color $C_i$, and $K'_i(x)$ plays the role of $K_i(x, x)$ for the diagonal cells (a separate predicate, since variables cannot repeat in an inclusion dependency). By transitivity every ordered pair of positions of the generated chain gets a color in both orders. The initial facts encode a chain $a_0, \dots, a_n$ of $S'$-facts and the prescribed colors $K_j(a_0, a_i)$ and $K'_j(a_0)$, and the query detects a forbidden horizontal or vertical pair of adjacent cells; the source proves the result first for a UCQ and then adapts it to a CQ. The tiling problem has a solution exactly when some superset of $F_0$ satisfies $\Sigma$, violates $Q$ and has $S^+$ transitive.
+where $K_i(x, y)$ says that the cell indexed by the pair of positions $(x, y)$ has color $C_i$, and $K'_i(x)$ plays the role of $K_i(x, x)$ for the diagonal cells (a separate predicate, since variables cannot repeat in an inclusion dependency). By transitivity every ordered pair of positions of the generated chain gets a color in both orders. The initial facts encode a chain $a_0, \dots, a_n$ of $S'$-facts and the prescribed colors $K_j(a_0, a_i)$ and $K'_j(a_0)$, and the query detects a forbidden horizontal or vertical pair of adjacent cells; the source proves the result first for a UCQ and then adapts it to a CQ by adding a Boolean position to $S'$, carried along the dependencies, and an Or-gadget $\mathrm{Or}(b, b', b \vee b')$, $\mathrm{True}(t)$ that combines these values into one conjunctive query. The tiling problem has a solution exactly when some superset of $F_0$ satisfies $\Sigma$, violates $Q$ and has $S^+$ transitive.
 
 A good expansion links the undecidability of this origin-constrained infinite tiling problem of the quadrant for a fixed tile system.
 

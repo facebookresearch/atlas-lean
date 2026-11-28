@@ -10,7 +10,6 @@ Undecidability had previously been known only when $Q_0$ may be context-free. De
 
 ## Depends on
 
-- [Graph databases and regular path queries](../datalog/graph-databases-and-regular-path-queries.md)
 - [Determinacy of a query by views](determinacy-of-a-query-by-views.md)
 - [The arithmetical class $\Pi_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 - [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)

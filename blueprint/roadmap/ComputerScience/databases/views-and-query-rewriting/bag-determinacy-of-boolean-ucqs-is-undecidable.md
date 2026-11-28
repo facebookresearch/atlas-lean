@@ -12,6 +12,8 @@ $$
 
 In contrast, the same paper proves that bag determinacy is decidable when $V$ and $q$ are Boolean conjunctive queries, and that for path queries bag determinacy coincides with set determinacy. Under set semantics, determinacy of Boolean (and even unary) unions of conjunctive queries is decidable.
 
+*Proof sketch.* The reduction is from the complement of Hilbert's tenth problem. For a polynomial given as a set of monomials over unknowns $x_1, \dots, x_n$, the schema has two nullary predicates $H, C$ and unary predicates $X_1, \dots, X_n$; the number of $X_i$-facts of a structure plays the role of $x_i$, and a monomial becomes a conjunctive query whose count is the value of the monomial (the encoding of Ioannidis and Ramakrishnan). The query is $q = H$, and the views use unions combining $H$ and $C$ (the "$p_1 \vee p_2$" trick) so that two structures with equal view answers agree on the unary predicates and can differ on $H$ only if the corresponding values of the unknowns are a root of the polynomial. Hence $V$ bag-determines $q$ exactly when the polynomial has no root in $\mathbb{N}$.
+
 ## Depends on
 
 - [Answers of a conjunctive query](../conjunctive-queries/answers-of-a-conjunctive-query.md)
@@ -23,9 +25,7 @@ In contrast, the same paper proves that bag determinacy is decidable when $V$ an
 
 - [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
 
-## Expansion
-
-The reduction is from the complement of Hilbert's tenth problem. For a polynomial given as a set of monomials over unknowns $x_1, \dots, x_n$, the schema has two nullary predicates $H, C$ and unary predicates $X_1, \dots, X_n$; the number of $X_i$-facts of a structure plays the role of $x_i$, and a monomial becomes a conjunctive query whose count is the value of the monomial (the encoding of Ioannidis and Ramakrishnan). The query is $q = H$, and the views use unions combining $H$ and $C$ (the "$p_1 \vee p_2$" trick) so that two structures with equal view answers agree on the unary predicates and can differ on $H$ only if the corresponding values of the unknowns are a root of the polynomial. Hence $V$ bag-determines $q$ exactly when the polynomial has no root in $\mathbb{N}$.
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Sources
 

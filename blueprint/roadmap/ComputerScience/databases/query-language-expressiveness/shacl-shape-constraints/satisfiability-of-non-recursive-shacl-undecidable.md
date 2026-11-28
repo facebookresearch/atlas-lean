@@ -25,4 +25,4 @@ Clause 1 reduces from the subsumption problem for role-value maps in description
 
 ## Sources
 
-- Paolo Pareti, George Konstantinidis and Fabio Mogavero, *Satisfiability and containment of recursive SHACL*, Journal of Web Semantics 74 (2022), article 100721, https://doi.org/10.1016/j.websem.2022.100721; the definition of SCL, the correspondence table of SHACL components and SCL expressions, and the two undecidability theorems for the S E fragment and the domino-based fragments in the section on SCL satisfiability, read in arXiv:2108.13063v2. Locators in arXiv:2108.13063v2: Theorems 14, 15 and 16.
+- Paolo Pareti, George Konstantinidis and Fabio Mogavero, *Satisfiability and containment of recursive SHACL*, Journal of Web Semantics 74 (2022), article 100721, <https://doi.org/10.1016/j.websem.2022.100721>; the definition of SCL, the correspondence table of SHACL components and SCL expressions, and the two undecidability theorems for the S E fragment and the domino-based fragments in the section on SCL satisfiability, read in arXiv:2108.13063v2. Locators in arXiv:2108.13063v2: Theorems 14, 15 and 16.

@@ -6,6 +6,8 @@ A complexity measure for a class $\mathcal{S}$ of spanner representations is a t
 
 **Theorem.** Let $c$ be a complexity measure for the [core spanner representations](core-spanners.md) $\mathrm{RGX}^{\{\pi, \zeta^{=}, \cup, \bowtie\}}$ over a fixed alphabet with at least two letters. There is no algorithm that, given $\rho \in \mathrm{RGX}^{\{\pi, \zeta^{=}, \cup, \bowtie\}}$, computes an equivalent $\hat\rho \in \mathrm{RGX}^{\{\pi, \zeta^{=}, \cup, \bowtie\}}$ that is $c$-minimal.
 
+*Proof sketch.* The set $U_{\min}$ of $c$-minimal representations of the universal Boolean spanner $\Upsilon_\emptyset$ is finite, by the definition of a complexity measure, so membership in it is decidable. A minimization algorithm would then decide whether $[\![\rho]\!] = \Upsilon_\emptyset$ by testing whether its output lies in $U_{\min}$, contradicting the undecidability of universality for Boolean core spanners.
+
 ## Depends on
 
 - [Core spanners](core-spanners.md)
@@ -14,9 +16,6 @@ A complexity measure for a class $\mathcal{S}$ of spanner representations is a t
 
 - [Universality and equivalence of core spanners are not semi-decidable](universality-of-core-spanners.md)
 
-## Expansion
-
-The set $U_{\min}$ of $c$-minimal representations of the universal Boolean spanner $\Upsilon_\emptyset$ is finite, by the definition of a complexity measure, so membership in it is decidable. A minimization algorithm would then decide whether $[\![\rho]\!] = \Upsilon_\emptyset$ by testing whether its output lies in $U_{\min}$, contradicting the undecidability of universality for Boolean core spanners.
 
 ## Sources
 
