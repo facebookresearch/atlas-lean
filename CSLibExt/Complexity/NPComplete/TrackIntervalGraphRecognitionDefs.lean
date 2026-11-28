@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# d-TRACK INTERVAL GRAPH RECOGNITION is NP-complete for every fixed d ≥ 2: definitions
+# d-TRACK INTERVAL GRAPH RECOGNITION: definitions
 
 Source:
 M. Jiang, "Recognizing d-interval graphs and d-track interval graphs", Algorithmica 66 (2013),

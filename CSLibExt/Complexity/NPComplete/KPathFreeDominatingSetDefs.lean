@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# k-PATH-FREE DOMINATING SET (directed) is NP-complete for every fixed k ≥ 2: definitions
+# k-PATH-FREE DOMINATING SET (directed): definitions
 
 Source:
 R. Bar-Yehuda and U. Vishkin, "Complexity of finding k-path-free dominating sets in graphs",
