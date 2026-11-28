@@ -15,11 +15,12 @@ Authors: Junyan Xu
 -/
 module
 
--- BACKPORT: Near-verbatim full-file copy of PR #42860 head
+-- BACKPORT: Integer-tensor structure adapted from Mathlib PR #42860 head
 -- `4d9c97ac1bb4deb8ce8e6005aca99087372c2d77`,
 -- path `Mathlib/Algebra/Category/Grp/Monoidal.lean`,
 -- blob `8b91310c9117182a71ccf3d0cd58569c7f94830f`, authors Junyan Xu.
--- See `BACKPORTS.md` for copied surface, adaptations, and upgrade-removal steps.
+-- Imports, private extensionality proofs, instance names and documentation are adapted.
+-- The braiding spelling is corrected. See `BACKPORTS.md` for the removal condition.
 
 public import MathlibExt.Algebra.Category.Grp.ZModuleEquivalenceCompat
 public import MathlibExt.LinearAlgebra.TensorProduct.BasicCompat
@@ -135,6 +136,8 @@ noncomputable instance monoidalCategoryCompat : MonoidalCategory Ab.{u} :=
 noncomputable instance : toModuleCatULiftInt.{u}.functor.Monoidal :=
   Monoidal.fromInducedMonoidal _ inducingFunctorData
 
+/-- The integer tensor braiding of abelian groups exchanges the two factors and is
+compatible with the tensor associator and unitors. -/
 noncomputable instance braidedCategoryCompat : BraidedCategory Ab.{u} :=
   .ofFaithful toModuleCatULiftInt.functor
     (fun M N ↦ (TensorProduct.comm ℤ M N).toAddEquiv.toAddCommGrpIso)
@@ -143,6 +146,8 @@ noncomputable instance braidedCategoryCompat : BraidedCategory Ab.{u} :=
       apply TensorProduct.extAdd
       intro x y; rfl
 
+/-- The integer tensor braiding of abelian groups is symmetric: exchanging the factors
+twice gives the identity. -/
 noncomputable instance symmetricCategoryCompat : SymmetricCategory Ab.{u} where
   symmetry _ _ := by
     apply AddCommGrpCat.hom_ext
@@ -201,33 +206,6 @@ to `y ⊗ x`. -/
 
 @[simp] lemma ihom_obj (M N : Ab.{u}) : (ihom M).obj N = of (M →+ N) := rfl
 
-/-- The category of abelian groups in universe `u` has the monoidal
-structure given by integer tensor product and the copy `ULift.{u} ℤ`
-as unit. This compatibility name denotes that same monoidal structure. -/
-@[nolint defsWithUnderscore]
-noncomputable abbrev instMonoidalCategoryAb_mathlibExt : MonoidalCategory Ab.{u} :=
-  monoidalCategoryCompat
-
-/-- The integer-tensor monoidal category of abelian groups in universe
-`u` is braided. Its braiding exchanges the two tensor factors and
-is compatible with the tensor associator and unit maps. -/
-@[nolint defsWithUnderscore]
-noncomputable abbrev instBraidedCategoryAb_mathlibExt : BraidedCategory Ab.{u} :=
-  braidedCategoryCompat
-
-/-- The integer-tensor monoidal category of abelian groups in universe
-`u` is symmetric: applying the tensor-factor exchange twice is the
-identity. This compatibility name denotes the same symmetric structure. -/
-@[nolint defsWithUnderscore]
-noncomputable abbrev instSymmetricCategoryAb_mathlibExt : SymmetricCategory Ab.{u} :=
-  symmetricCategoryCompat
-
-attribute [deprecated monoidalCategoryCompat (since := "2026-11-09")]
-  instMonoidalCategoryAb_mathlibExt
-attribute [deprecated braidedCategoryCompat (since := "2026-11-09")]
-  instBraidedCategoryAb_mathlibExt
-attribute [deprecated symmetricCategoryCompat (since := "2026-11-09")]
-  instSymmetricCategoryAb_mathlibExt
 
 end AddCommGrpCat
 
