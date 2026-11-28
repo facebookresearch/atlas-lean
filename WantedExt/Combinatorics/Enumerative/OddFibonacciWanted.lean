@@ -52,6 +52,7 @@ public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Mathlib.Combinatorics.Enumerative.DyckWord
+public import MathlibExt.Combinatorics.Enumerative.Avoid3214123
 public import MathlibExt.Combinatorics.Enumerative.Avoid2313124
 public import MathlibExt.Combinatorics.NoncrossingPartition.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
@@ -62,19 +63,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.OddFibonacciWanted
-
-/-- **$(321, 4123)$-avoiding permutations are counted by odd-indexed Fibonacci numbers.** For
-every $n \ge 1$, the number of permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
-$321$ and $4123$, that is, contain neither of them, is the Fibonacci number $F_{2n-1}$, where
-$F_0 = 0$ and $F_1 = 1$.
-
-Source: Juan B. Gil, Felix H. Xu, and William Y. Zhu,
-"Odd-Indexed Fibonacci Numbers via Pattern-Avoiding
-Permutations", Proposition 1. -/
-theorem_wanted card_avoid_321_4123 (n : ℕ) (hn : 1 ≤ n) :
-    Nat.card {σ : Equiv.Perm (Fin n) //
-      ¬ HasPattern σ pat321 ∧ ¬ HasPattern σ pat4123} =
-      Nat.fib (2 * n - 1)
 
 /-- **$(321, 3412)$-avoiding permutations are counted by odd-indexed Fibonacci numbers.** For
 every $n \ge 1$, the number of permutations of $\{0, 1, \dots, n-1\}$ that avoid both patterns
