@@ -214,7 +214,7 @@ private theorem protocolLTS_saturate_tr {α : Type u} {y y' : Phase α × Slot �
       exact Or.inr ⟨μ, rfl, h2⟩
 
 /-- A saturated specification trace erases to a protocol trace between the same states. -/
-private theorem driverLTS_mtr_of_saturate_mtr {α : Type u} {y y' : Phase α × Slot α}
+theorem driverLTS_mtr_of_saturate_mtr {α : Type u} {y y' : Phase α × Slot α}
     {ms : List (StepLabel α)} (hy : (protocolLTS α).saturate.MTr y ms y') :
     (driverLTS α).MTr y (visibleLabels ms) y' := by
   induction hy with
