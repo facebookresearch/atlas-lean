@@ -31,7 +31,7 @@ None.
 
 ## Expansion
 
-Metric Wu planes are exactly the coordinate planes over Pythagorean fields of characteristic $0$, fields in which every sum of two squares is a square: the source proves that the theory of metric Wu planes is bi-interpretable with the theory of Pythagorean fields of characteristic $0$ (its Theorem 1 in Section 5; Makowsky stated a weaker form), and that ordered metric Wu planes are bi-interpretable with ordered Pythagorean fields (Theorem 4) and Euclidean ordered metric Wu planes with Euclidean fields (Theorem 7), formally real Pythagorean fields in which every element is a square or minus a square.
+Metric Wu planes are exactly the coordinate planes over Pythagorean fields of characteristic $0$, fields in which every sum of two squares is a square: the source proves that the theory of metric Wu planes is bi-interpretable with the theory of Pythagorean fields of characteristic $0$ (its Theorem 1 in Section 5; Makowsky's Theorem 13 stated a weaker form, without the definable isomorphisms), and that ordered metric Wu planes are bi-interpretable with ordered Pythagorean fields (Theorem 4) and Euclidean ordered metric Wu planes with Euclidean fields (Theorem 7), formally real Pythagorean fields in which every element is a square or minus a square.
 
 ## Sources
 
