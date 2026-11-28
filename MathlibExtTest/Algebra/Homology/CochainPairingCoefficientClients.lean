@@ -125,6 +125,7 @@ private lemma coefficient_pairing (a b : R) (i j : ℕ) :
     MonoidalLinear.smul_whiskerRight, MonoidalLinear.whiskerLeft_smul,
     MonoidalCategory.id_whiskerRight, MonoidalCategory.whiskerLeft_id,
     Linear.smul_comp, Linear.comp_smul, Category.id_comp, Category.comp_id, smul_smul]
+  rw [mul_comm a b]
 
 /-- Genuine joint coefficient naturality, with output scalar `a*b`. -/
 example (a b : R) (p q : ℕ) :

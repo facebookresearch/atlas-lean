@@ -76,7 +76,7 @@ private abbrev A : Rep ℤ G := Rep.trivial ℤ G ℤ
 private lemma transfer_value (n : ℕ) (g : Fin n → G) :
     corestrictionCochain A T n (fun _ => (2 : ℤ)) g = 6 := by
   rw [corestrictionCochain_apply]
-  simp only [Rep.trivial_ρ_apply]
+  simp only [Representation.trivial_apply]
   rw [Finset.sum_const, Finset.card_univ, transversal_card]
   norm_num
 
@@ -94,7 +94,7 @@ example : corestrictionCochain A T 3 (fun _ => (2 : ℤ)) ≠ 0 := by
 
 example : corestrictionCochainThree A T (fun _ => (2 : ℤ)) (1, 1, 1) = 6 := by
   rw [corestrictionCochainThree_apply]
-  simp only [Rep.trivial_ρ_apply]
+  simp only [Representation.trivial_apply]
   rw [Finset.sum_const, Finset.card_univ, transversal_card]
   norm_num
 

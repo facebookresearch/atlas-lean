@@ -44,8 +44,8 @@ private def first : cocycles₁ A :=
 
 private def secondSquare : cocycles₂ A :=
   ⟨fun p => p.1.toAdd.2 * p.2.toAdd.2, (mem_cocycles₂_iff _).2 (fun g h j => by
-    change h.toAdd.2 * j.toAdd.2 - (g.toAdd.2 + h.toAdd.2) * j.toAdd.2 +
-      g.toAdd.2 * (h.toAdd.2 + j.toAdd.2) - g.toAdd.2 * h.toAdd.2 = 0
+    change (g.toAdd.2 + h.toAdd.2) * j.toAdd.2 + g.toAdd.2 * h.toAdd.2 =
+      h.toAdd.2 * j.toAdd.2 + g.toAdd.2 * (h.toAdd.2 + j.toAdd.2)
     ring)⟩
 
 private def e₁ : G := Multiplicative.ofAdd (1, 0)
@@ -91,7 +91,7 @@ private abbrev coefficientIdentity : Rep.res swap A ⟶ A :=
 private abbrev tensorIdentity : Rep.res swap T ⟶ T :=
   Rep.ofHom ⟨LinearMap.id, fun _ => rfl⟩
 
-example : map swap (coefficientIdentity ⊗ₘ coefficientIdentity) 3
+example : map (A := T) (B := T) swap (coefficientIdentity ⊗ₘ coefficientIdentity) 3
     (cupOneTwo A A (H1π A first) (H2π A secondSquare)) =
       cupOneTwo A A (map swap coefficientIdentity 1 (H1π A first))
         (map swap coefficientIdentity 2 (H2π A secondSquare)) :=
