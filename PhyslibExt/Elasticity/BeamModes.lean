@@ -814,8 +814,8 @@ lemma cantileverFirstMode {EI ρA L : ℝ} (hEI : 0 < EI) (hρ : 0 < ρA) (hL : 
 
 /-! ### B.4. The old root bracket -/
 
-/-- The second root lies below `3 π / 2` and `(3 π / 2, 2 π)` contains no root, so the bracket
-`((2 k - 1) π / 2, k π)` fails at `k = 2`. -/
+/-- The equation `cos z cosh z + 1 = 0` has a root in `(π, 3 π / 2)` and none in
+`(3 π / 2, 2 π)`, so the bracket `((2 k - 1) π / 2, k π)` fails at `k = 2`. -/
 lemma secondRoot_lt_three_pi_div_two :
     (∃ z ∈ Set.Ioo Real.pi (3 * Real.pi / 2), cantileverChar z = 0) ∧
       ∀ z ∈ Set.Ioo (3 * Real.pi / 2) (2 * Real.pi), cantileverChar z ≠ 0 := by

@@ -1108,8 +1108,10 @@ lemma erfcProfile_xxderiv_value (cs D x t : ℝ) (hD : 0 < D) (ht : 0 < t) :
   rw [hderiv]
   exact hchain
 
-/-- The time derivative of the profile for `D > 0` and `t > 0`, by the chain rule through
-`x / √(4Dt)`. -/
+/-- The time derivative of the profile for `D > 0` and `t > 0`:
+`∂ₜ c(x, t) = -cs · erfc'(x / √(4Dt)) · x / (2t √(4Dt))`, where `erfc' z = -(2/√π) exp(-z²)`
+(`erfcDeriv`). The statement writes this value in the unsimplified form that the chain rule
+through `x / √(4Dt)` gives. -/
 lemma erfcProfile_tderiv_value (cs D x t : ℝ) (hD : 0 < D) (ht : 0 < t) :
     HasDerivAt (fun t => erfcProfile cs D x t)
       (cs * (erfcDeriv (x / Real.sqrt (4 * D * t))
@@ -1296,8 +1298,7 @@ lemma profile_pointwise_lt (cs D x t₁ t₂ : ℝ) (hx : 0 < x) (hcs : 0 < cs) 
   exact mul_lt_mul_of_pos_left herfc hcs
 
 /-- **Mass uptake.** For `cs > 0` and `D > 0`, the amount `∫₀^∞ erfcProfile cs D x t dx` on the
-half-line is strictly increasing in `t > 0`: the surface held at `cs` supplies mass. Its closed
-form `2 cs √(Dt/π)` is not proved here. -/
+half-line is strictly increasing in `t > 0`: the surface held at `cs` supplies mass. -/
 lemma erfcProfile_mass_strictMono (cs D : ℝ) (hcs : 0 < cs) (hD : 0 < D) :
     StrictMonoOn (fun t => ∫ x in Set.Ioi (0 : ℝ), erfcProfile cs D x t) (Set.Ioi (0 : ℝ)) := by
   intro t₁ ht₁ t₂ ht₂ h12
@@ -1406,11 +1407,11 @@ lemma continuousOn_energy {a b T : ℝ} (hab : a ≤ b) {w : ℝ → ℝ → ℝ
     exact (hw.comp (continuous_const.prodMk continuous_id).continuousOn
       fun t ht => ⟨Ioc_subset_Icc_self hx, ht⟩).pow 2
 
-/-- **Energy identity at an interior time.** Let `w` and the functions `wx`, `wxx`, `wt` be
-continuous on `[a, b] × (0, T)`; let `wx`, `wxx`, `wt` be the derivatives `∂ₓw`, `∂ₓₓw`, `∂ₜw`
-at the points of `(a, b) × (0, T)`, where `∂ₜw = D ∂ₓₓw`; and let `w` vanish at `x = a` and
-`x = b` for `0 < t < T`. Then at every `t₀ ∈ (0, T)` the energy `E(t) = ∫ₐᵇ w(x, t)² dx` has the
-derivative `-2D ∫ₐᵇ wx(x, t₀)² dx`. -/
+/-- **Energy identity at an interior time.** Let `a < b`, and let `w` and the functions `wx`,
+`wxx`, `wt` be continuous on `[a, b] × (0, T)`; let `wx`, `wxx`, `wt` be the derivatives `∂ₓw`,
+`∂ₓₓw`, `∂ₜw` at the points of `(a, b) × (0, T)`, where `∂ₜw = D ∂ₓₓw`; and let `w` vanish at
+`x = a` and `x = b` for `0 < t < T`. Then at every `t₀ ∈ (0, T)` the energy
+`E(t) = ∫ₐᵇ w(x, t)² dx` has the derivative `-2D ∫ₐᵇ wx(x, t₀)² dx`. -/
 lemma energy_identity_deriv {a b T D : ℝ} (hab : a < b) {w wx wxx wt : ℝ → ℝ → ℝ}
     (hw_cont : ContinuousOn (fun p : ℝ × ℝ => w p.1 p.2) (Icc a b ×ˢ Ioo 0 T))
     (hwx_cont : ContinuousOn (fun p : ℝ × ℝ => wx p.1 p.2) (Icc a b ×ˢ Ioo 0 T))
@@ -1487,9 +1488,9 @@ lemma energy_identity_deriv {a b T D : ℝ} (hab : a < b) {w wx wxx wt : ℝ →
   rw [hpde', hibp]
   ring
 
-/-- **Uniqueness for the Dirichlet problem** (energy method). Let `w` equal `c₁ - c₂` on the
-closed rectangle `[a, b] × [0, T]` and be continuous there; let `wx`, `wxx`, `wt` be continuous
-on `[a, b] × (0, T)` and be the derivatives `∂ₓw`, `∂ₓₓw`, `∂ₜw` at the points of
+/-- **Uniqueness for the Dirichlet problem** (energy method). Let `a < b`, and let `w` equal
+`c₁ - c₂` on the closed rectangle `[a, b] × [0, T]` and be continuous there; let `wx`, `wxx`, `wt`
+be continuous on `[a, b] × (0, T)` and be the derivatives `∂ₓw`, `∂ₓₓw`, `∂ₜw` at the points of
 `(a, b) × (0, T)`, where `∂ₜw = D ∂ₓₓw` with `D > 0`. If `w` vanishes at `x = a` and `x = b` for
 `0 < t < T` and at `t = 0` on `[a, b]`, then `c₁ = c₂` on `[a, b] × [0, T]`. Nothing is assumed
 outside the rectangle, so `c₁` and `c₂` may be solutions that exist only up to time `T`. -/
