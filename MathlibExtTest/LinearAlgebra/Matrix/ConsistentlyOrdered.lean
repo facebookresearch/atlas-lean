@@ -29,6 +29,20 @@ private theorem twoBlockMatrix_isConsistentlyOrdered : IsConsistentlyOrdered two
 example : (SimpleGraph.fromRel (fun i j ↦ twoBlockMatrix i j ≠ 0)).Colorable 2 :=
   twoBlockMatrix_isConsistentlyOrdered.colorable_support
 
+-- Check the layer and coloring witnesses directly, independently of the two theorems above.
+example : IsConsistentlyOrdered twoBlockMatrix := by
+  refine ⟨![0, 0, 1, 1], ?_⟩
+  intro i j
+  fin_cases i <;> fin_cases j <;> decide
+
+example : (SimpleGraph.fromRel (fun i j ↦ twoBlockMatrix i j ≠ 0)).Colorable 2 := by
+  let color : Fin 4 → Fin 2 := ![0, 0, 1, 1]
+  refine ⟨SimpleGraph.Coloring.mk color ?_⟩
+  intro i j
+  change (i ≠ j ∧ (twoBlockMatrix i j ≠ 0 ∨ twoBlockMatrix j i ≠ 0)) → color i ≠ color j
+  dsimp only [color]
+  fin_cases i <;> fin_cases j <;> decide
+
 -- Ordinary tridiagonal matrices use singleton blocks.
 example {n : ℕ} (A : Matrix (Fin n) (Fin n) ℕ)
     (hzero : ∀ ⦃i j : Fin n⦄, i ≠ j → (i : ℕ) + 1 ≠ (j : ℕ) →
