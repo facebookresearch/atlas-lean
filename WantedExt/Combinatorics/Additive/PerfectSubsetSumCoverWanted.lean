@@ -17,9 +17,11 @@ public import Mathlib.GroupTheory.QuotientGroup.Defs
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.LinearAlgebra.Span.Defs
 public import Mathlib.Order.Interval.Finset.Fin
+public import MathlibExt.Combinatorics.Additive.PerfectCoverCoordinateOrders
 public import MathlibExt.Combinatorics.Additive.PerfectCoverPrescribedOddCoordinates
 public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverErase
 public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverInit
+public import MathlibExt.Combinatorics.Additive.PerfectSubsetSumCoverOddMultiple
 
 /-!
 # Perfect subset-sum covers of abelian groups of order a power of two
@@ -171,20 +173,6 @@ public theorem_wanted oddMultiple_iff_perfectCover_replace {G : Type*} [AddCommG
     (a ≠ b → ((∃ j : ℤ, b = (2 * j + 1) • a) ↔
       ∀ S : Finset G, IsPerfectCover S → ¬ (a ∈ S ∧ b ∈ S)))
 
-/-- **Replacing an entry of a perfect $2^k$-cover by an odd multiple.** Let $G$ be an abelian
-group, let $k$ and $N$ be natural numbers, and let $a, b, s_1, \dots, s_N \in G$. If the family
-$(a, s_1, \dots, s_N)$ is a perfect $2^k$-cover of $G$ and $b = (2j + 1)a$ for some integer $j$,
-then the family $(b, s_1, \dots, s_N)$ is also a perfect $2^k$-cover of $G$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 11
-(`jis-2025-25.7.8-lem-11`). The paper's `|G| = 2^n` and length `n + k` are not needed. -/
-public theorem_wanted isPerfectMCover_cons_oddMultiple {G : Type*} [AddCommGroup G]
-    [DecidableEq G] {k N : ℕ} {a b : G} {s : Fin N → G}
-    (hs : IsPerfectMCover (2 ^ k) (Fin.cons a s : Fin (N + 1) → G))
-    (hab : ∃ j : ℤ, b = (2 * j + 1) • a) :
-    IsPerfectMCover (2 ^ k) (Fin.cons b s : Fin (N + 1) → G)
-
 /-- **Which families are perfect $m$-covers of $\mathbb{Z}_{2^n}$.** Let $s = (s_i)_{i \in \iota}$
 be a family in $\mathbb{Z}_{2^n}$ indexed by a finite type $\iota$ (a colored multiset). Then $s$
 is a perfect $m$-cover of $\mathbb{Z}_{2^n}$ for some $m$ if and only if for every $j$ with
@@ -209,20 +197,6 @@ of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Corollary 13
 public theorem_wanted exists_perfectCover_subfamily_zmod {n m : ℕ} {ι : Type*} [Fintype ι]
     {s : ι → ZMod (2 ^ n)} (hs : IsPerfectMCover m s) :
     ∃ T : Finset ι, IsPerfectMCover 1 (fun i : T => s i)
-
-/-- **Orders of second coordinates in perfect $m$-covers.** Let $H$ be a finite abelian group of
-order $2^r$ and let $s = (s_i)_{i \in \iota}$ be a family in $H \oplus \mathbb{Z}_{2^n}$ indexed by
-a finite type $\iota$. If $s$ is a perfect $m$-cover of $H \oplus \mathbb{Z}_{2^n}$, then for
-every $j$ with $1 \le j \le n$ the second coordinate of some $s_i$ has additive order $2^j$.
-
-Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
-of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Corollary 14
-(`jis-2025-25.7.8-cor-14`). The family has any finite index type (the record reuses `n`
-for its length). -/
-public theorem_wanted exists_snd_addOrderOf_of_isPerfectMCover {H : Type*} [AddCommGroup H]
-    [DecidableEq H] [Fintype H] {r n m : ℕ} (hH : Fintype.card H = 2 ^ r) {ι : Type*}
-    [Fintype ι] {s : ι → H × ZMod (2 ^ n)} (hs : IsPerfectMCover m s) :
-    ∀ j : ℕ, 1 ≤ j → j ≤ n → ∃ i, addOrderOf (s i).2 = 2 ^ j
 
 /-- **Odd combinations of disjoint parts of a perfect cover.** Let $G$ be an abelian group of
 order $2^n$ and $S$ a perfect cover of $G$. For a finite $A \subseteq G$, let $\mathcal{T}(A)$ be

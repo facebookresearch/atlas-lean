@@ -542,8 +542,8 @@ G(U^*, s) = G(s) - G(U, s) = G(U, s)\Big(\Big(\prod_{p \ge U} G_p(s)\Big) - 1\Bi
 and let $J(U)$ and $J(U^*)$ be the integrals of (3.1.1) with $G(s)$ replaced by $G(U, s)$ and by
 $G(U^*, s)$. These integrals converge absolutely and (3.1.4) $J(U) = -J(U^*)$.
 
-Here $\Psi = $ `LSeries ψ`, $G = $ `LSeries g`, $G_p = $ `eulerFactor α β α' β' p`,
-$G(U, \cdot) = $ `partialEuler α β α' β' U`, the integrals are `oesterleIntegral`, and the
+Here $\Psi$ is `LSeries ψ`, $G$ is `LSeries g`, $G_p$ is `eulerFactor α β α' β' p`,
+$G(U, \cdot)$ is `partialEuler α β α' β' U`, the integrals are `oesterleIntegral`, and the
 holomorphic extension of $\Psi$ is `Ψ'` on the open set `V`. The identity of (3.1.3) is stated
 for $\operatorname{Re} s > 3/2$ and every real $U$.
 

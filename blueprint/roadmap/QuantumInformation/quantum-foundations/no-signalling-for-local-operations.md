@@ -6,15 +6,10 @@ $\mathrm{Tr}_{Y'}((\mathrm{id}_X \otimes \Psi)(\rho)) = \mathrm{Tr}_Y(\rho)$: th
 the unconditioned marginal; the state of $X$ conditioned on a particular outcome of a measurement on $Y$ can differ
 from $\mathrm{Tr}_Y(\rho)$.
 
-## Expansion
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Quantum channels (CPTP maps).
-
 ## Depends on
 
 - [Partial trace over the second factor](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-right.md)
+- [Quantum channel](../quantum-operations/quantum-channel.md)
 
 ## Sources
 
