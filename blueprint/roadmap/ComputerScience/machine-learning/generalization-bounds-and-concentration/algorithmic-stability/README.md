@@ -25,6 +25,11 @@ Stochastic gradient descent on convex, $\beta$-smooth, $L$-Lipschitz losses with
 - [Generalization of SGM in expectation](abs-integral-empirical-risk-sub-risk-sgm.md)
 - [Dataset swap identity](swap-identity.md)
 
+## High-probability generalization from deletion stability
+
+- [Is Deletion Stable](is-deletion-stable.md)
+- [Leave One Out Risk](leave-one-out-risk.md)
+
 ## Related topics
 
 - [Rademacher complexity](../rademacher-complexity/README.md): the uniform-convergence route to generalization, which bounds the deviation of every predictor of a class at once, where stability bounds only that of the predictor the algorithm returns.

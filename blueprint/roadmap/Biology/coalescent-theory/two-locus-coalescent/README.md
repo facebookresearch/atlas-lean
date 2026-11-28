@@ -85,3 +85,7 @@
 - [Tree-sequence inference by ancestral haplotype copying](tree-sequence-inference-by-ancestral-haplotype-copying/README.md)
 - [Wright–Fisher versus coalescent genealogies of long genomes](wright-fisher-versus-coalescent-genealogies-of-long-genomes/README.md)
 - [IBD segments on coalescent trees](ibd-segments-on-coalescent-trees/README.md)
+- [Ascertained sequentially Markovian coalescent](ascertained-sequentially-markovian-coalescent/README.md)
+- [Recent coalescence from IBD segments](recent-coalescence-from-ibd-segments/README.md)
+- [Genealogy-based complex trait analysis](genealogy-based-complex-trait-analysis/README.md)
+- [Ancestral recombination graph on a continuous chromosome](ancestral-recombination-graph-on-a-continuous-chromosome/README.md)
