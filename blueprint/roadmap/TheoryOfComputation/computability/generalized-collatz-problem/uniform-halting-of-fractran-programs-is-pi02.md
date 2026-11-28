@@ -2,13 +2,13 @@
 
 Deciding whether a Fractran program halts on every positive starting value is complete for the class $\Pi^0_2$ of the arithmetical hierarchy.
 
-**Theorem (Endrullis, Grabmayer and Hendriks).** The uniform halting problem for [Fractran programs](collatz-functions-and-fractran-programs.md), which asks, given a program $P$, whether $P$ halts on every starting value $n_0 \in \mathbb{N}$ with $n_0 > 0$, is [$\Pi^0_2$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)-complete.
+**Theorem (Endrullis, Grabmayer and Hendriks).** The uniform halting problem for [Fractran programs](fractran-programs.md), which asks, given a program $P$, whether $P$ halts on every starting value $n_0 \in \mathbb{N}$ with $n_0 > 0$, is [$\Pi^0_2$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)-complete.
 
 Membership in $\Pi^0_2$ is immediate from the form $\forall n_0\, \exists i$ of the condition. The program is the input; there is no bound on its length or on its fractions.
 
 ## Depends on
 
-- [Collatz functions and Fractran programs](collatz-functions-and-fractran-programs.md)
+- [Fractran programs](fractran-programs.md)
 - [The arithmetical class $\Pi_n$](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
 
 ## Proof depends on

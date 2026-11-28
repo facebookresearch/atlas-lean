@@ -4,8 +4,13 @@ The complement of the convergence problem for analytic machines, whether a real-
 produce a convergent one, is BSS many-one equivalent to the twice-iterated real halting problem, so convergence is strictly harder than
 boundedness.
 
-**Theorem.** With $\mathbb{K}$ the convergence problem for analytic machines, $\mathbb{H}$ the BSS halting problem and $\preceq$ BSS many-one
-reducibility, as in [Blum-Shub-Smale machines, their halting problems and analytic machines](blum-shub-smale-machines-their-halting-problems.md):
+**Theorem.** Let $\mathbb{H}$ be the BSS halting problem and $\preceq$ BSS many-one reducibility, as in [Blum-Shub-Smale machines and their halting problems](blum-shub-smale-machines-their-halting-problems.md), and let
+
+$$
+\mathbb{K} = \{(\langle \mathcal{M} \rangle, \vec x) : \mathcal{M} \text{ on input } \vec x \text{ produces a convergent infinite sequence}\}
+$$
+
+be the *convergence problem* for [analytic machines](analytic-machines.md). Then:
 
 1. the complement of $\mathbb{K}$ is BSS many-one reducible to $\mathbb{H}^{\mathbb{H}^{\mathbb{H}}}$;
 2. conversely, $\mathbb{H}^{\mathbb{H}^{\mathbb{H}}}$ is BSS many-one reducible to the complement of $\mathbb{K}$.
@@ -17,7 +22,8 @@ shown earlier by diagonalization.
 
 ## Depends on
 
-- [Blum-Shub-Smale machines, their halting problems and analytic machines](blum-shub-smale-machines-their-halting-problems.md)
+- [Blum-Shub-Smale machines and their halting problems](blum-shub-smale-machines-their-halting-problems.md)
+- [Analytic machines](analytic-machines.md)
 
 ## Proof depends on
 

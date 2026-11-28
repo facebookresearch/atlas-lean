@@ -2,7 +2,7 @@
 
 When gadgets are traversed by deterministically moving robots and a spawner gadget creates a new robot in every round, deciding whether some robot ever reaches a target location is RE-complete, hence undecidable, already for four specific gadgets.
 
-**Model.** Gadgets are as in [gadgets and motion-planning games](gadgets-and-motion-planning-games.md). In *0-player directed-edge motion planning* the connection graph between gadget locations is directed, each location has only incoming edges or at most one outgoing edge, and all gadgets are deterministic, so a robot moves on its own along the edge it is on and traverses the gadgets it meets. A *spawner* is a one-location gadget that creates a new robot at its location in every round. *0-player directed-edge motion planning with spawners* proceeds in rounds: in each round every robot, in spawn order, moves along its directed edge until it traverses one gadget or gets stuck, and then every spawner creates a robot. The *robot reachability* problem asks, given such a system and a target location, whether some robot reaches the target in finite time.
+**Model.** Gadgets are as in [gadgets and motion-planning games](gadgets-and-motion-planning-games.md). In *0-player directed-edge motion planning* the connection graph between gadget locations is directed, each location has only incoming edges or at most one outgoing edge, and all gadgets are deterministic, so a robot moves on its own along the edge it is on and traverses the gadgets it meets. A *spawner* is a one-location gadget that creates a new robot at its location in every round. *0-player directed-edge motion planning with spawners* proceeds in rounds: in each round every robot, in spawn order, moves along its directed edge until it traverses one gadget or gets stuck, and then every spawner creates a robot. The *robot reachability* problem asks, given such a system (finitely many gadgets from the given set, with their initial states and initial robots, the directed connection graph and the spawners) and a target location, whether some robot reaches the target in finite time.
 
 The four gadgets of the theorem are the *increment gadget* (four states, ten locations: a three-path path selector that, when traversed, enables one path of a three-path lock branch and locks itself, the gadget returning to its initial state when a lock-branch path is traversed), the *register gadget* (three states, ten locations: a path selector, a processing branch and a response branch), the *UPDSDS gadget* (two states up and down, a tunnel setting the state to up and two switches, each with one input and two outputs, whose output depends on the state and which set the state to down), and the spawner.
 
@@ -13,6 +13,8 @@ Without spawners, the 0-player problem with a single robot is in PSPACE, since a
 ## Depends on
 
 - [Gadgets and motion-planning games](gadgets-and-motion-planning-games.md)
+- [Recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

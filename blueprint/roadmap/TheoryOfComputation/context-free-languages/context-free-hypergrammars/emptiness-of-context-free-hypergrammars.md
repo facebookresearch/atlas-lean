@@ -4,12 +4,13 @@ No algorithm decides whether a context-free hypergrammar whose quantification co
 
 **Theorem.** The emptiness problem is undecidable for $\forall^*$-[context-free hypergrammars](context-free-hypergrammars-and-hyperlanguages.md) and for $\exists\forall$-context-free hypergrammars: there is no algorithm that decides, given such a hypergrammar $G$, whether $\mathcal{H}(G) = \emptyset$.
 
-With a single quantifier $\forall x$ the problem reduces to emptiness of a context-free grammar and is in polynomial time, as it is for $\exists^*$-CFHG. The underlying grammar in the proof is linear, so the result also applies to asynchronous hyperautomata.
+With a single quantifier $\forall x$ the problem reduces to emptiness of a context-free grammar and is in polynomial time, as it is for $\exists^*$-CFHG. The proof reduces the Post correspondence problem to a hypergrammar with quantification condition $\forall x_1 \forall x_2$ (and to one with $\exists x_1 \forall x_2$), so emptiness is already undecidable for these two prefixes. The underlying grammar in the proof is linear, so the result also applies to asynchronous hyperautomata.
 
 ## Depends on
 
 - [Context-free hypergrammars and hyperlanguages](context-free-hypergrammars-and-hyperlanguages.md)
 - [Context-free languages](../grammars-and-pushdown-automata/context-free-languages.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

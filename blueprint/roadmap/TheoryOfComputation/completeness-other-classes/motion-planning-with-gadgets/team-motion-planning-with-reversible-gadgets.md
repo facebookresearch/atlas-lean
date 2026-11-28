@@ -18,6 +18,8 @@ same gadgets is EXPTIME-complete instead.
 ## Depends on
 
 - [Gadgets and motion-planning games](gadgets-and-motion-planning-games.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
 
 ## Proof depends on
 
@@ -39,4 +41,4 @@ white player observe an edge without interfering.
 
 ## Sources
 
-- E. D. Demaine, D. H. Hendrickson, J. Lynch, "Toward a general complexity theory of motion planning: characterizing which gadgets make games hard", in *11th Innovations in Theoretical Computer Science Conference (ITCS 2020)*, Leibniz International Proceedings in Informatics 151, Schloss Dagstuhl, 2020, article 62, doi:[10.4230/LIPIcs.ITCS.2020.62](https://doi.org/10.4230/LIPIcs.ITCS.2020.62). Numbering of the version read, arXiv:1812.03592v2 (titled "Toward a General Theory of Motion Planning Complexity: Characterizing Which Gadgets Make Games Hard"): Theorem 4.2 (the locking 2-toggle), Theorem 4.3 (arbitrary interacting-tunnel reversible deterministic gadgets), Lemma 4.1 (membership in RE) and Theorems 3.2 and 3.3 (the two-player case), and the discussion of Team Private Constraint Logic before Theorem 4.2.
+- E. D. Demaine, D. H. Hendrickson, J. Lynch, "Toward a general complexity theory of motion planning: characterizing which gadgets make games hard", in *11th Innovations in Theoretical Computer Science Conference (ITCS 2020)*, Leibniz International Proceedings in Informatics 151, Schloss Dagstuhl, 2020, article 62, doi:[10.4230/LIPIcs.ITCS.2020.62](https://doi.org/10.4230/LIPIcs.ITCS.2020.62). Numbering of the version read, arXiv:1812.03592v2 (titled "Toward a General Theory of Motion Planning Complexity: Characterizing Which Gadgets Make Games Hard"): Section 4: Theorem 15 (the locking 2-toggle), Theorem 16 (arbitrary interacting-tunnel reversible deterministic gadgets), Lemma 14 (membership in RE) and the discussion of Team Private Constraint Logic before Theorem 15; Theorems 12 and 13 (the two-player case).

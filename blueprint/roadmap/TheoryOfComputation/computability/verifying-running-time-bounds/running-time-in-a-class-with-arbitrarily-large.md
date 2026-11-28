@@ -15,6 +15,7 @@ $T(n) = \Omega(1)$ are undecidable: no algorithm decides whether a Turing machin
 ## Depends on
 
 - [Turing machines running within a time bound](turing-machines-running-within-a-time-bound.md)
+- [Decidability by multi-stack machines](../decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

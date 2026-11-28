@@ -22,12 +22,13 @@ Turing machine halts on every encoding and accepts exactly the encodings of its 
   $\mathrm{HALT}^1_{\mathcal{F}}$): the set of multi-tape (resp. one-tape) Turing machines that run in time $T(n)$ for some
   $T \in \mathcal{F}$.
 
-For example $\mathrm{HALT}_{O(1)}$ is the set of multi-tape machines running in constant time, and $\mathrm{HALT}_{\mathsf{P}}$
-the set of those running in polynomial time.
+Here $\mathsf{P}$ denotes the class of polynomial functions and $\mathsf{EXP}$ the class of exponential functions $\mathbb{N} \to \mathbb{R}_{\ge 0}$, as classes of time bounds, not of languages; and for $T : \mathbb{N} \to \mathbb{R}_{\ge 0}$, $O(T(n))$ is the class of $f : \mathbb{N} \to \mathbb{R}_{\ge 0}$ with $f(n) \le c\,T(n)$ for some $c$ and all large enough $n$. So $\mathrm{HALT}_{O(1)}$ is the set of multi-tape machines running in constant time, and $\mathrm{HALT}_{\mathsf{P}}$ the set of those running in polynomial time.
+
 
 ## Depends on
 
 - [Time-bounded multi-tape machine](../../complexity-classes/time-and-space-classes-on-multi-tape-machines/time-bounded-by.md)
+- [Decidability by multi-stack machines](../decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

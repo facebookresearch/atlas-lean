@@ -14,6 +14,7 @@ $n = 0$) and the constant $5$ can be verified. The input of the problem is the m
 
 - [Turing machines running within a time bound](turing-machines-running-within-a-time-bound.md)
 - [Time-bounded multi-tape machine](../../complexity-classes/time-and-space-classes-on-multi-tape-machines/time-bounded-by.md)
+- [Decidability by multi-stack machines](../decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

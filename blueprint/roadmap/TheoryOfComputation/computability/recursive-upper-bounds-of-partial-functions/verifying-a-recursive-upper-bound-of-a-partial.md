@@ -23,10 +23,13 @@ recursive functions that have a recursive sup-interpretation is in $\Sigma^0_3$ 
 ## Depends on
 
 - [The arithmetical class Πₙ](../../degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Decidability by multi-stack machines](../decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Co-recognizability by multi-stack machines](../decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [Halting of a code on an input](../halting-problem-and-rice-s-theorem/halts.md)
 
 ## Proof depends on
 
-None.
+- [The halting problem is not co-recognizable by multi-stack machines](../halting-problem-and-rice-s-theorem/not-tm2-co-recognizable-halting.md)
 
 ## Expansion
 

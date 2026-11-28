@@ -3,8 +3,13 @@
 Whether an analytic machine, a real-number machine printing an infinite sequence of vectors, produces a bounded sequence on a given
 input can be semidecided, but not decided, by a Blum-Shub-Smale machine with access to the real halting problem.
 
-**Proposition.** Let $\mathbb{B}$ be the boundedness problem for analytic machines and $\mathbb{H}$ the BSS halting problem, as in
-[Blum-Shub-Smale machines, their halting problems and analytic machines](blum-shub-smale-machines-their-halting-problems.md).
+**Proposition.** Let $\mathbb{H}$ be the BSS halting problem, as in [Blum-Shub-Smale machines and their halting problems](blum-shub-smale-machines-their-halting-problems.md), and let
+
+$$
+\mathbb{B} = \{(\langle \mathcal{M} \rangle, \vec x) : \mathcal{M} \text{ on input } \vec x \text{ produces a bounded sequence}\}
+$$
+
+be the *boundedness problem* for [analytic machines](analytic-machines.md), where a finite output sequence counts as bounded.
 
 1. A BSS machine with oracle access to $\mathbb{H}$ can semidecide $\mathbb{B}$.
 2. No BSS machine with oracle access to $\mathbb{H}$ decides $\mathbb{B}$. More precisely, $\mathbb{H}^{\mathbb{H}} \preceq \mathbb{B}$.
@@ -14,7 +19,8 @@ BSS many-one reducible to $\mathbb{H}^{\mathbb{H}}$ by Cucker's characterization
 
 ## Depends on
 
-- [Blum-Shub-Smale machines, their halting problems and analytic machines](blum-shub-smale-machines-their-halting-problems.md)
+- [Blum-Shub-Smale machines and their halting problems](blum-shub-smale-machines-their-halting-problems.md)
+- [Analytic machines](analytic-machines.md)
 
 ## Proof depends on
 
@@ -31,4 +37,4 @@ every $y$ is output and the sequence is unbounded. So $\vec x \mapsto (\langle \
 
 ## Sources
 
-- T. Gärtner and M. Ziegler, "Real analytic machines and degrees", *Logical Methods in Computer Science* 7(3), paper 11, 2011, doi:10.2168/LMCS-7(3:11)2011; read in arXiv:1006.0398v3: Proposition 3.2 with its proof in Section 3.1, and Fact 1.3 (Cucker's characterization of semidecidability relative to $\mathbb{H}$).
+- T. Gärtner and M. Ziegler, "Real analytic machines and degrees", *Logical Methods in Computer Science* 7(3), paper 11, 2011, doi:10.2168/LMCS-7(3:11)2011; read in arXiv:1006.0398v3: the definition of $\mathbb{B}$ and Proposition 3.2 with its proof in Section 3.1, and Fact 1.3 (Cucker's characterization of semidecidability relative to $\mathbb{H}$).

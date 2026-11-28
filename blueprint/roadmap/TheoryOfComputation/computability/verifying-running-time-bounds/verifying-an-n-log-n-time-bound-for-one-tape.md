@@ -17,6 +17,7 @@ multi-tape machines the condition $T(n) \ge n + 1$ alone gives undecidability.
 ## Depends on
 
 - [Turing machines running within a time bound](turing-machines-running-within-a-time-bound.md)
+- [Decidability by multi-stack machines](../decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

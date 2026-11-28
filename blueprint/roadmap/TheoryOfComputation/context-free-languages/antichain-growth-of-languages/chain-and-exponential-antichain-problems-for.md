@@ -4,13 +4,14 @@ For context-free grammars over a partially ordered alphabet it is undecidable wh
 
 **Theorem.** Order words [lexicographically](antichain-growth-of-a-language.md) by a partial order on their alphabet. There is no algorithm that decides, given a finite partially ordered alphabet $\Sigma$ and a context-free grammar $G$ over $\Sigma$, whether $L(G)$ is a chain (the problem CFG-Chain). There is no algorithm that decides, given such $\Sigma$ and $G$, whether $L(G)$ has exponential antichain growth (the problem CFG-ExpAntichain).
 
-For regular languages, given by NFAs, exponential antichain growth is decidable in polynomial time (Theorem 18 of the source). Every context-free language has either polynomial or exponential antichain growth (Theorem 34), so the second problem is also that of deciding which of the two cases holds.
+For [regular languages](../../regular-languages/automata-and-expressions/kleene-s-theorem/is-regular-iff-exists-regex.md), given by NFAs, exponential antichain growth is decidable in [polynomial time](../../complexity-classes/the-classes-p-np-and-conp/p.md) (Theorem 18 of the source). Every context-free language has either polynomial or exponential antichain growth (Theorem 34), so the second problem is also that of deciding which of the two cases holds.
 
 ## Depends on
 
 - [Antichain growth of a language](antichain-growth-of-a-language.md)
 - [Partially ordered set](../../../Order/ordered-sets/partial-order.md)
 - [Context-free languages](../grammars-and-pushdown-automata/context-free-languages.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
