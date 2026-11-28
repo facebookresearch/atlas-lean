@@ -8,13 +8,30 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Group.Conj
+public import Mathlib.Data.Nat.Totient
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.SemidirectProduct
 public import Mathlib.RingTheory.Ideal.Quotient.Defs
 public import Mathlib.RingTheory.Ideal.Span
+import Mathlib.Data.ZMod.Units
+import Mathlib.GroupTheory.Index
 import Mathlib.Tactic.LinearCombination
 
-/-! # Conjugacy in cyclic holomorphs -/
+/-! # Conjugacy in cyclic holomorphs
+
+For `n > 0`, the conjugacy classes of `cyclicHolomorph n` with a given unit component `u`
+are represented by the divisors of `gcd(n, (1 - u).val)`. Counting instead by divisor `d` of `n`
+reduces the class number to the sum of the sizes of the kernels of reduction on units modulo `d`.
+
+## References
+
+* Lực Ta, *Enumeration of Virtual Quandles up to Isomorphism*, Journal of Integer
+  Sequences 28 (2025), Article 25.8.4, pp. 1–11, Proposition 22 and Theorem 23.
+* Stefan Kohl, *Counting the orbits on finite simple groups under the action of the automorphism
+  group—Suzuki groups vs. linear groups*, Communications in Algebra 30 (2002),
+  pp. 3515–3532, Lemma 1.3, cited by Ta for the unit orbits of a cyclic group.
+-/
 
 namespace MetaMathlibExt
 
@@ -99,5 +116,126 @@ theorem cyclicHolomorph_isConj_iff (n : ℕ) (hn : 0 < n) (a b : ZMod n)
     · exact mul_comm y u
 
 end
+
+private def translationModulus {n : ℕ} (u : (ZMod n)ˣ) : ℕ := (1 - (u : ZMod n)).val.gcd n
+
+private theorem translationModulus_dvd {n : ℕ} (u : (ZMod n)ˣ) : translationModulus u ∣ n :=
+  Nat.gcd_dvd_right _ _
+
+private theorem reduction_eq_zero_iff {n d : ℕ} [NeZero n] (hd : d ∣ n) (a : ZMod n) :
+    ZMod.castHom hd (ZMod d) a = 0 ↔ d ∣ a.val := by
+  calc
+    _ ↔ ZMod.castHom hd (ZMod d) (a.val : ZMod n) = 0 := by rw [ZMod.natCast_zmod_val]
+    _ ↔ _ := by rw [map_natCast, ZMod.natCast_eq_zero_iff]
+
+private theorem cast_dvd_of_dvd_val {n d : ℕ} [NeZero n] {a : ZMod n} (h : d ∣ a.val) :
+    (d : ZMod n) ∣ a := by
+  obtain ⟨k, hk⟩ := h
+  exact ⟨k, (ZMod.natCast_zmod_val a).symm.trans (by rw [hk, Nat.cast_mul])⟩
+
+private theorem dvd_of_cast_dvd {n d e : ℕ} (hd : d ∣ n)
+    (h : (d : ZMod n) ∣ (e : ZMod n)) : d ∣ e := by
+  obtain ⟨x, hx⟩ := h
+  have he := congrArg (ZMod.castHom hd (ZMod d)) hx
+  simpa only [map_mul, map_natCast, ZMod.natCast_self, zero_mul, ZMod.natCast_eq_zero_iff] using he
+
+private theorem dvd_translationModulus_iff {n d : ℕ} [NeZero n] (hd : d ∣ n)
+    (u : (ZMod n)ˣ) : d ∣ translationModulus u ↔ ZMod.unitsMap hd u = 1 := by
+  rw [translationModulus, Nat.dvd_gcd_iff, and_iff_left hd, ← reduction_eq_zero_iff hd,
+    map_sub, map_one, sub_eq_zero, ← Units.val_inj, ZMod.unitsMap_val, ← ZMod.castHom_apply,
+    Units.val_one, eq_comm]
+
+-- Reducing modulo the translation modulus identifies exactly the cosets in Proposition 22.
+private theorem quotient_eq_iff_reduction_eq {n : ℕ} [NeZero n] (u : (ZMod n)ˣ)
+    (a b : ZMod n) :
+    Ideal.Quotient.mk (Ideal.span {1 - (u : ZMod n)}) a =
+      Ideal.Quotient.mk (Ideal.span {1 - (u : ZMod n)}) b ↔
+    ZMod.castHom (translationModulus_dvd u) (ZMod (translationModulus u)) a =
+      ZMod.castHom (translationModulus_dvd u) (ZMod (translationModulus u)) b := by
+  let c : ZMod n := 1 - (u : ZMod n)
+  let d := translationModulus u
+  let π := ZMod.castHom (translationModulus_dvd u) (ZMod d)
+  change Ideal.Quotient.mk (Ideal.span {c}) a = Ideal.Quotient.mk _ b ↔ π a = π b
+  rw [Ideal.Quotient.eq, Ideal.mem_span_singleton, ← sub_eq_zero, ← map_sub]
+  have hcd : c ∣ (d : ZMod n) := ⟨c⁻¹, (ZMod.mul_inv_eq_gcd c).symm⟩
+  have hdc : (d : ZMod n) ∣ c := cast_dvd_of_dvd_val (Nat.gcd_dvd_left c.val n)
+  constructor
+  · intro h
+    obtain ⟨t, ht⟩ := hdc.trans h
+    rw [ht, map_mul, map_natCast, ZMod.natCast_self, zero_mul]
+  · intro h
+    have hval := (reduction_eq_zero_iff (translationModulus_dvd u) _).mp h
+    exact hcd.trans (cast_dvd_of_dvd_val hval)
+
+-- One representative for each pair consisting of a divisor and a unit reducing to one there.
+private noncomputable def conjClassesEquivUnitKernels (n : ℕ) (hn : 0 < n) :
+    (Σ d : n.divisors, (ZMod.unitsMap (Nat.dvd_of_mem_divisors d.property)).ker) ≃
+      ConjClasses (cyclicHolomorph n) := by
+  letI : NeZero n := ⟨hn.ne'⟩
+  let f : (Σ d : n.divisors, (ZMod.unitsMap (Nat.dvd_of_mem_divisors d.property)).ker) →
+      ConjClasses (cyclicHolomorph n) := fun ⟨d, u⟩ =>
+    ConjClasses.mk ⟨Multiplicative.ofAdd ((d : ℕ) : ZMod n), u.val⟩
+  refine Equiv.ofBijective f ⟨?_, ?_⟩
+  · rintro ⟨d, ⟨u, hu⟩⟩ ⟨e, ⟨v, hv⟩⟩ h
+    have hc : IsConj (⟨Multiplicative.ofAdd ((d : ℕ) : ZMod n), u⟩ : cyclicHolomorph n)
+        ⟨Multiplicative.ofAdd ((e : ℕ) : ZMod n), v⟩ :=
+      ConjClasses.mk_eq_mk_iff_isConj.mp h
+    obtain ⟨rfl, y, hy⟩ := (cyclicHolomorph_isConj_iff n hn _ _ _ _).mp hc
+    have hd := (dvd_translationModulus_iff (Nat.dvd_of_mem_divisors d.property) u).mpr hu
+    have he := (dvd_translationModulus_iff (Nat.dvd_of_mem_divisors e.property) u).mpr hv
+    have hred := (quotient_eq_iff_reduction_eq u _ _).mp hy
+    have hassoc : Associated ((d : ℕ) : ZMod (translationModulus u))
+        ((e : ℕ) : ZMod (translationModulus u)) := by
+      refine ⟨ZMod.unitsMap (translationModulus_dvd u) y, ?_⟩
+      rw [ZMod.unitsMap_val, ← ZMod.castHom_apply]
+      simpa only [map_mul, map_natCast, mul_comm] using hred.symm
+    have hde : d = e := Subtype.ext (Nat.dvd_antisymm
+      (dvd_of_cast_dvd hd hassoc.dvd) (dvd_of_cast_dvd he hassoc.symm.dvd))
+    subst e
+    rfl
+  · intro C
+    obtain ⟨⟨a, u⟩, rfl⟩ := ConjClasses.exists_rep C
+    let hd := translationModulus_dvd u
+    obtain ⟨d, hd', w, hw, hw'⟩ :=
+      ZMod.eq_unit_mul_divisor (ZMod.castHom hd (ZMod (translationModulus u)) a.toAdd)
+    obtain ⟨y, hy⟩ := ZMod.unitsMap_surjective hd hw.unit
+    have hdn := dvd_trans hd' hd
+    let D : n.divisors := ⟨d, Nat.mem_divisors.mpr ⟨hdn, hn.ne'⟩⟩
+    have hker : u ∈ (ZMod.unitsMap (Nat.dvd_of_mem_divisors D.property)).ker :=
+      (dvd_translationModulus_iff hdn u).mp hd'
+    refine ⟨⟨D, ⟨u, hker⟩⟩, ConjClasses.mk_eq_mk_iff_isConj.mpr ?_⟩
+    refine (cyclicHolomorph_isConj_iff n hn _ a.toAdd u u).mpr ⟨rfl, y, ?_⟩
+    apply (quotient_eq_iff_reduction_eq u _ _).mpr
+    have hy' : ZMod.castHom hd (ZMod (translationModulus u)) (y : ZMod n) = w := by
+      rw [ZMod.castHom_apply, ← ZMod.unitsMap_val hd, hy, IsUnit.unit_spec]
+    simpa only [map_mul, map_natCast, hy'] using hw'
+
+/-- **Class number of the holomorph of $\mathbb{Z}/n\mathbb{Z}$.** For every integer $n > 0$,
+the number of conjugacy classes of the holomorph
+$\mathbb{Z}/n\mathbb{Z} \rtimes (\mathbb{Z}/n\mathbb{Z})^\times$ of $\mathbb{Z}/n\mathbb{Z}$ equals
+$\varphi(n) \sum_{d \mid n} 1/\varphi(d)$, where $\varphi$ is Euler's totient function.
+
+Source: Lực Ta, *Enumeration of Virtual Quandles up to Isomorphism*, Journal of Integer
+Sequences 28 (2025), Article 25.8.4, Theorem 23 (`jis-2025-25.8.4-thm-23`). -/
+public theorem card_conjClasses_cyclicHolomorph (n : ℕ) (hn : 0 < n) :
+    (Nat.card (ConjClasses (cyclicHolomorph n)) : ℚ) =
+      n.totient * ∑ d ∈ n.divisors, (1 : ℚ) / d.totient := by
+  classical
+  let : NeZero n := ⟨hn.ne'⟩
+  rw [Nat.card_congr (conjClassesEquivUnitKernels n hn).symm, Nat.card_sigma, Nat.cast_sum,
+    Finset.mul_sum, ← Finset.sum_coe_sort n.divisors
+      (fun d : ℕ => (n.totient : ℚ) * (1 / d.totient))]
+  apply Finset.sum_congr rfl
+  intro d _
+  have hd := Nat.dvd_of_mem_divisors d.property
+  have hdpos : 0 < (d : ℕ) := Nat.pos_of_dvd_of_pos hd hn
+  let : NeZero (d : ℕ) := ⟨hdpos.ne'⟩
+  let f := ZMod.unitsMap hd
+  have hcard : Nat.card f.ker * Nat.totient d = n.totient := by
+    simpa only [Nat.card_eq_fintype_card, ZMod.card_units_eq_totient] using
+      Subgroup.card_ker_mul_card_of_surjective (ZMod.unitsMap_surjective hd)
+  have hpos : (0 : ℚ) < Nat.totient d := by exact_mod_cast Nat.totient_pos.mpr hdpos
+  rw [mul_one_div, eq_div_iff hpos.ne']
+  exact_mod_cast hcard
 
 end MetaMathlibExt

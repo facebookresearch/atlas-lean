@@ -23,4 +23,5 @@ finite-dimensional real division algebras and Jacobson's commutativity theorem.
 - [Categories of algebraic structures](categories-of-algebraic-structures/README.md)
 - [Not yet classified](not-yet-classified/README.md)
 - [Rings and fields](rings-and-fields/README.md)
+- [Finite sums and products](big-operators/README.md)
 - [Modules over rings](modules/README.md)
