@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The proof reduces the complement of the periodic tiling problem, which is $\Sigma^0_1$-complete (Gurevich and Koryakov): does a tile set tile some torus, a finite grid whose east border wraps to the west and north border to the south? Finite labeled Cartesian frames are defined in $(T, \beta, P)$ with $P$ finite (Lemma 5.5), labeled tori are interpreted uniformly in them (Lemma 5.6), and a sentence has a model in $\mathcal F(T, \beta)$ iff some torus is tilable; its negation lies in the theory iff no torus is tilable.
+The proof reduces the complement of the periodic tiling problem, which is $\Sigma^0_1$-complete (Gurevich and Koryakov): does a tile set tile some torus, a finite grid whose east border wraps to the west and north border to the south? Finite labeled Cartesian frames are defined in $(T, \beta, P)$ with $P$ finite (Lemma 5.5), labeled tori are interpreted uniformly in them (Lemma 5.6), and a sentence has a model in $\mathcal F(T, \beta)$ iff some torus is tilable; its negation lies in the theory iff no torus is tilable. A good expansion links pages for the $\Sigma^0_1$-completeness of the periodic tiling problem (Gurevich and Koryakov) and for Lemmas 5.5 and 5.6 of the source.
 
 ## Sources
 
