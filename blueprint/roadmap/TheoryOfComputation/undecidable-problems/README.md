@@ -17,3 +17,5 @@ Specific undecidable problems and the reductions proving them undecidable: the P
 - [Positivity of matrix moments](positivity-of-matrix-moments/README.md)
 
 - [Validity of first-order sentences is undecidable](validity-of-first-order-sentences-is-undecidable.md)
+- [Counter systems and vector addition systems](counter-and-vector-addition-systems/README.md)
+- [Extended finite automata](extended-finite-automata/README.md)
