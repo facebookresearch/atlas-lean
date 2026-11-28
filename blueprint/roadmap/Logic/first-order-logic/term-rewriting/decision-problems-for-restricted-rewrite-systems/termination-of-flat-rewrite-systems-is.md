@@ -2,9 +2,9 @@
 
 Termination of finite term rewriting systems stays undecidable when every rule has both sides of height at most one, and already when variables occur only at depth at most one.
 
-**Theorem (Barguñó, Godoy, Huntingford and Tiwari).** A term is *shallow* if all its variable positions are at depth $0$ or $1$, and *flat* if its height is at most $1$; a rule $l \to r$ is shallow (flat) if both $l$ and $r$ are, and a [term rewriting system](../../automated-deduction/term-rewriting-systems.md) is shallow (flat) if all its rules are. A system $R$ is *terminating* if there is no infinite derivation $s_0 \to_R s_1 \to_R \cdots$ from any term. Then:
+**Theorem (Barguñó, Godoy, Huntingford and Tiwari).** A term is *shallow* if all its variable positions are at depth $0$ or $1$, and *flat* if its height is at most $1$; a rule $l \to r$ is shallow (flat) if both $l$ and $r$ are, and a [term rewriting system](../../automated-deduction/term-rewriting-systems.md) is shallow (flat) if all its rules are. A system $R$ over a finite signature is *terminating* if there is no infinite derivation $s_0 \to_R s_1 \to_R \cdots$ from any term over that signature; an instance is a finite signature with a finite system over it. Then:
 
-1. termination of finite shallow term rewriting systems is undecidable (Theorem 8.1 of the source);
+1. termination of finite shallow term rewriting systems is undecidable (Theorem 8.1 of the source, by a reduction from the Post correspondence problem with nonempty words);
 2. termination of finite flat term rewriting systems is undecidable (Theorem 8.2).
 
 Termination of general finite systems is [undecidable](../termination-of-term-rewriting-is-undecidable.md). By contrast, termination from a given term is decidable for right-flat systems, even modulo a permutative theory (Theorem 4.10); innermost termination is decidable for shallow systems (Section 5 of the source); and termination is decidable for systems whose right-hand sides are shallow and linear (Section 6).

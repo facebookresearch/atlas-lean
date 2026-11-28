@@ -2,7 +2,7 @@
 
 Whether every innermost derivation of a finite term rewriting system terminates is undecidable even when all right-hand sides of rules have height at most one.
 
-**Theorem (Barguñó, Godoy, Huntingford and Tiwari).** A rewrite step $s \to_{R, p} t$ at position $p$ is *innermost* if every proper subterm $s|_{p'}$ with $p' > p$ is irreducible, and a [term rewriting system](../../automated-deduction/term-rewriting-systems.md) is *innermost terminating* if it admits no infinite derivation consisting of innermost steps. A rule $l \to r$ is *right-flat* if $r$ has height at most $1$. Innermost termination of finite right-flat term rewriting systems is undecidable (Theorem 8.3 of the source).
+**Theorem (Barguñó, Godoy, Huntingford and Tiwari).** A rewrite step $s \to_{R, p} t$ at position $p$ is *innermost* if every proper subterm $s|_{p'}$ with $p' > p$ is irreducible, and a [term rewriting system](../../automated-deduction/term-rewriting-systems.md) is *innermost terminating* if it admits no infinite derivation consisting of innermost steps. A rule $l \to r$ is *right-flat* if $r$ has height at most $1$. Innermost termination of finite right-flat term rewriting systems, given together with their finite signature, is undecidable (Theorem 8.3 of the source, by a reduction from the Post correspondence problem).
 
 For shallow, and hence flat, systems innermost termination is decidable, even modulo permutative theories (Section 5 of the source), and innermost termination of a right-flat system from a given term is decidable (Theorem 4.10); the undecidability concerns right-flat systems with arbitrary left-hand sides and all start terms.
 

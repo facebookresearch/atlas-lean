@@ -16,11 +16,11 @@ The inputs are the two formulas (for the (S)CEP) or a formula and a finite signa
 
 ## Proof depends on
 
-- [The tiling problem is undecidable](../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The proof reduces an undecidable tiling problem, adapting an earlier undecidability proof for conservative extensions in two-variable first-order logic. For a tiling system one constructs in polynomial time formulas $\varphi$ and $\psi$ such that the system has a solution iff $\varphi \wedge \psi$ is not a (strong) conservative extension of $\varphi$; the new idea is to generate arbitrarily large binary trees inside $\mathsf{Q^1S5}$-models, which can be forced to be grids when the extension is not conservative. Combining the construction with an example in which a uniform interpolant fails to exist gives the UIEP; the same combination shows that uniform interpolant existence in two-variable first-order logic, with or without equality, is undecidable.
+The proof reduces a finite-rectangle tiling problem (Section 5), adapting an earlier undecidability proof for conservative extensions in two-variable first-order logic. A tiling system $(T, H, V, o, z_\uparrow, z_\rightarrow)$ has a finite set $T$ of tiles with $o, z_\uparrow, z_\rightarrow \in T$ and horizontal and vertical matching relations $H, V \subseteq T \times T$; a solution is a tiling $\tau$ of an $n \times m$ rectangle, $0 < n, m < \omega$, respecting $H$ and $V$, with $o$ exactly at $(0,0)$, $z_\rightarrow$ exactly in the last column and $z_\uparrow$ exactly in the last row. Whether a tiling system has a solution is undecidable by a reduction of the halting problem for Turing machines, as the source notes; this is not the tiling problem for the whole plane. For a tiling system one constructs in polynomial time formulas $\varphi$ and $\psi$ such that the system has a solution iff $\varphi \wedge \psi$ is not a (strong) conservative extension of $\varphi$; the new idea is to generate arbitrarily large binary trees inside $\mathsf{Q^1S5}$-models, which can be forced to be grids when the extension is not conservative. Combining the construction with an example in which a uniform interpolant fails to exist gives the UIEP; the same combination shows that uniform interpolant existence in two-variable first-order logic, with or without equality, is undecidable.
 
 ## Sources
 

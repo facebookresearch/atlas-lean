@@ -11,7 +11,7 @@ Every recursively enumerable equational theory of semirings with a fixed-point o
 1. Every recursively enumerable extension of $\mu\mathsf{S} + \mathsf{idem}$ that is sound for $\mathcal{L}$ is $\Sigma^0_1$-complete (Theorem 24).
 2. Every recursively enumerable extension of $\mu\mathsf{S}_{\not 1}$ that is sound for $\mathcal{L}$ is $\Sigma^0_1$-complete (Theorem 37).
 
-Consequently the equational theories of idempotent Conway μ-semirings, idempotent Park μ-semirings and Chomsky algebras are $\Sigma^0_1$-complete (Corollary 28), and so are those of Conway μ-semirings and Park μ-semirings, also in their identity-free versions (Corollary 38).
+The alphabet $\Sigma$ is the source's fixed finite alphabet, in which its reduction writes the configurations of Turing machines, so the theorem concerns an alphabet with at least two letters; over a one-letter alphabet every context-free language is regular and the source's reduction does not apply. Consequently the equational theories of idempotent Conway μ-semirings, idempotent Park μ-semirings and Chomsky algebras are $\Sigma^0_1$-complete (Corollary 28), and so are those of Conway μ-semirings and Park μ-semirings, also in their identity-free versions (Corollary 38).
 
 ## Depends on
 

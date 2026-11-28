@@ -8,7 +8,7 @@ $$
 \varphi ::= p \mid \neg\varphi \mid \varphi \wedge \varphi \mid \Box_a\varphi \mid [U]\varphi \mid [\Uparrow]\varphi, \qquad U ::= (\varphi, a, \varphi) \mid U, (\varphi, a, \varphi),
 $$
 
-with $p \in P$ and $a \in A$; an *arrow update* $U$ is a finite set of *clauses* $(\varphi, a, \varphi')$. *Arbitrary arrow update logic* AAUL is the full language, and *arrow update logic* AUL its fragment without $[\Uparrow]$. *Arbitrary arrow update logic with common knowledge* AAULC adds a common knowledge operator $C\varphi$, with the usual semantics, and its fragment without $[\Uparrow]$ is AULC.
+with $p \in P$ and $a \in A$; an *arrow update* $U$ is a nonempty finite set of *clauses* $(\varphi, a, \varphi')$, as the grammar for $U$ shows. *Arbitrary arrow update logic* AAUL is the full language, and *arrow update logic* AUL its fragment without $[\Uparrow]$. *Arbitrary arrow update logic with common knowledge* AAULC adds a common knowledge operator $C\varphi$, with the usual semantics, and its fragment without $[\Uparrow]$ is AULC.
 
 **Semantics.** Formulas are evaluated on arbitrary Kripke models $M = (W, R, V)$ with an accessibility relation $R(a) \subseteq W \times W$ for each agent. The clauses for $p$, $\neg$, $\wedge$ and $\Box_a$ are the usual ones, and
 

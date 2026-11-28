@@ -8,6 +8,8 @@ It is undecidable whether a rewrite system consisting of a single rule can be pr
 2. this remains undecidable for one-rule systems that can be proved terminating by a (non-linear) polynomial interpretation over $\mathbb N$ (Corollary 8);
 3. for $D \in \{\mathbb Q, \mathbb R\}$, it is undecidable whether a given term rewrite system can be proved terminating by a polynomial interpretation over $D$ (Theorem 12 and Corollary 13).
 
+A *polynomial interpretation over $D$* assigns to each $k$-ary symbol a polynomial with coefficients in $D$ that maps $D_{\ge 0}^k$ to $D_{\ge 0}$; for a fixed $\delta \in D$ with $\delta > 0$, write $x >_\delta y$ if $x \ge y + \delta$. The interpretation proves termination of $R$ if each interpretation function is monotone for $>_\delta$ in every argument and $[\ell]_D >_\delta [r]_D$ for every rule $\ell \to r$ and every assignment of values in $D_{\ge 0}$ to the variables (Section 3 of the source, which takes the formal definitions from Neurauter and Middeldorp, 2014). The input in every part is a finite term rewrite system over a finite signature.
+
 The refereed version proves part 3 for one-rule systems and shows by the same reduction that termination by the Knuth–Bendix order with subterm coefficients is undecidable. Undecidability of termination by polynomial interpretations over $\mathbb N$ was proved earlier by Mitterwallner and Middeldorp; general termination of finite rewrite systems is undecidable ([termination of term rewriting is undecidable](../termination-of-term-rewriting-is-undecidable.md)).
 
 ## Depends on

@@ -20,7 +20,7 @@ The first-order modal logics of the rationals and the reals ordered by $\leq$ or
 
 ## Expansion
 
-Hardness comes from a modification of the tiling construction used for $(\mathbb{N}, \leq)$: an infinite ascending chain suffices to represent the $\mathbb{N} \times \mathbb{N}$ grid, but without well-foundedness only the ordinary tiling problem can be encoded, giving $\Pi^0_1$-hardness of satisfiability. The source uses the $\Pi^0_1$-complete tiling problem for the quadrant $\mathbb{N} \times \mathbb{N}$ (Berger), which is equivalent by compactness to the tiling problem for the plane. Membership in $\Sigma^0_1$ holds because $\mathbf{QS4.3}$, $\mathbf{QK4.3.D.X}$ and $\mathbf{QK4.3}$ are finitely axiomatizable, and $\mathbf{QS4.3} = \mathbf{L}(\mathbb{Q}, \leq)$ and $\mathbf{QK4.3.D.X} = \mathbf{L}(\mathbb{Q}, <)$ by a result of Corsi, for which a good expansion would link a page; none exists yet.
+Hardness comes from a modification of the tiling construction used for $(\mathbb{N}, \leq)$: an infinite ascending chain suffices to represent the $\mathbb{N} \times \mathbb{N}$ grid, but without well-foundedness only the ordinary tiling problem can be encoded, giving $\Pi^0_1$-hardness of satisfiability. The source uses the $\Pi^0_1$-complete tiling problem for the quadrant $\mathbb{N} \times \mathbb{N}$ (Berger), which is equivalent by compactness to the tiling problem for the plane. Membership in $\Sigma^0_1$ holds because $\mathbf{QS4.3}$, $\mathbf{QK4.3.D.X}$ and $\mathbf{QK4.3}$ are finitely axiomatizable, and $\mathbf{QS4.3} = \mathbf{L}(\mathbb{Q}, \leq)$ and $\mathbf{QK4.3.D.X} = \mathbf{L}(\mathbb{Q}, <)$ by a result of Corsi, for which a good expansion links a page.
 
 ## Sources
 

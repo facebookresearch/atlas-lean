@@ -20,7 +20,7 @@ None.
 
 ## Expansion
 
-The proof encodes the recurrent $\mathbb{N} \times \mathbb{N}$ tiling problem, which is $\Sigma^1_1$-complete (Harel, Theorem 6.4, as quoted in the source): given a finite set of tile types and a designated type, is there a tiling of the quadrant in which the designated type occurs infinitely often in the leftmost column? For each tile set a formula in the restricted language is built that is satisfiable over $(\mathbb{N}, R)$ exactly when a recurrent tiling exists; the order type of $\mathbb{N}$ is what allows the recurrence condition to be expressed. A good expansion links a page for the $\Sigma^1_1$-completeness of the recurrent tiling problem, which has none yet.
+The proof encodes the recurrent $\mathbb{N} \times \mathbb{N}$ tiling problem, which is $\Sigma^1_1$-complete (Harel, Theorem 6.4, as quoted in the source): given a finite set of tile types and a designated type, is there a tiling of the quadrant in which the designated type occurs infinitely often in the leftmost column? For each tile set a formula in the restricted language is built that is satisfiable over $(\mathbb{N}, R)$ exactly when a recurrent tiling exists; the order type of $\mathbb{N}$ is what allows the recurrence condition to be expressed. A good expansion links a page for the $\Sigma^1_1$-completeness of the recurrent tiling problem.
 
 ## Sources
 
