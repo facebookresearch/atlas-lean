@@ -410,19 +410,6 @@ local notation "desList" x:max =>
   Finset.image (· + 1)
     ((Finset.range (List.length x - 1)).filter fun i => List.getD x (i + 1) 0 < List.getD x i 0)
 
-/-- **The ascent-to-descent rearrangement is injective.** The ascent-to-descent rearrangement
-$\nu$ is injective on finite words over $\mathbb{N}$: if $\nu(x) = \nu(x')$, then $x = x'$.
-
-Since $\nu$ rearranges letters, this is the same as injectivity of $\nu$ on the rearrangements of
-each fixed word.
-
-Source: Ari Cruz, Pamela E. Harris, Kimberly J. Harry, Jan Kretschmann, Matt McClinton,
-Alex Moon, John O. Museus and Eric Redmon, *On Some Discrete Statistics of Parking
-Functions*, Journal of Integer Sequences 27 (2024), Article 24.8.6,
-Lemma 13 (`jis-2024-24.8.6-lem-13`). -/
-public theorem_wanted ascentToDescentRearrangement_injective :
-    Function.Injective ascentToDescentRearrangement
-
 /-- **The ascent-to-descent rearrangement matches ascent and descent sets.** Let $y$ be a finite
 word over $\mathbb{N}$ and $I$ a finite set of natural numbers. For a word $x = x_1 \cdots x_m$,
 let the ascent set $\mathrm{Asc}(x)$ be the set of $i \in \{1, \dots, m - 1\}$ with
