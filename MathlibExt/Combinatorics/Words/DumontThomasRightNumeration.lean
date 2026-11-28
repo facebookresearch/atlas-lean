@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Words.DumontThomasProperPrefix
-import all MathlibExt.Combinatorics.PalindromicRecurrentOutsideP
 import Mathlib.Order.Filter.AtTopBot.Basic
+import MathlibExt.Combinatorics.InfiniteWord.PureMorphicWord
 
 /-!
 # Dumont–Thomas numeration for a right-infinite fixed point
@@ -32,13 +32,11 @@ formulation works for arbitrary alphabets, beyond the finite alphabets in the so
 * The proof reuses `properPrefix_morphIterate_decomposition` from
   `MathlibExt.Combinatorics.Words.DumontThomasProperPrefix`,
   `admissibleSequence_weightedLength_lt` and `letterAdmissibleSequence_eq_of_weightedLength_eq`
-  from `MathlibExt.Combinatorics.Words.DumontThomasNumeration`, and `iterate_succ_right` and
-  `iterate_prefix` from `MathlibExt.Combinatorics.PalindromicRecurrentOutsideP`.
+  from `MathlibExt.Combinatorics.Words.DumontThomasNumeration`, and `morphIterate_succ_right`
+  and `morphIterate_prefix` from `MathlibExt.Combinatorics.InfiniteWord.PureMorphicWord`.
 -/
 
 namespace MetaMathlibExt
-
-open MathlibExt.Combinatorics.PalindromicRecurrentOutsidePWanted (iterate_succ_right iterate_prefix)
 
 /-- **Dumont–Thomas numeration.** Let $\eta$ be a substitution on an alphabet $A$, extended
 to finite words by concatenation, and let $u_0 u_1 u_2 \cdots$ be a right-infinite word over
@@ -94,8 +92,8 @@ public theorem dumontThomas_numeration {A : Type*} (η : A → List A)
   have hmono : Monotone (fun j => (morphIterate η j [a]).length) := by
     apply monotone_nat_of_le_succ
     intro k
-    rw [iterate_succ_right, List.flatMap_singleton]
-    exact (iterate_prefix hseed η k).length_le
+    rw [morphIterate_succ_right, morphExtend, List.flatMap_singleton]
+    exact (morphIterate_prefix hseed η k).length_le
   obtain ⟨k, _, hle, hlt⟩ :=
     hgrow.exists_le_lt_succ (show (morphIterate η 0 [a]).length ≤ n from hn)
   -- Split off a top pair at each level of the iterated proper prefix.
@@ -166,13 +164,13 @@ public theorem dumontThomas_numeration {A : Type*} (η : A → List A)
   have hlead' : [a] <+: (s' k').1 :=
     List.prefix_of_prefix_length_le hseed hpre' (List.length_pos_iff.mpr htop')
   have hle' : (morphIterate η k' [a]).length ≤ n := by
-    have hlen := (iterate_prefix hlead' η k').length_le
+    have hlen := (morphIterate_prefix hlead' η k').length_le
     rw [hw', Finset.sum_range_succ]
     omega
   have hlt' : n < (morphIterate η (k' + 1) [a]).length := by
-    rw [hw', iterate_succ_right, List.flatMap_singleton]
+    rw [hw', morphIterate_succ_right, morphExtend, List.flatMap_singleton]
     exact (admissibleSequence_weightedLength_lt η hη s' k' hs'.1).trans_le
-      (iterate_prefix hs'.2 η k').length_le
+      (morphIterate_prefix hs'.2 η k').length_le
   have hk : k' = k := by
     apply le_antisymm
     · exact le_of_not_gt fun h => hlt.not_ge ((hmono (Nat.succ_le_of_lt h)).trans hle')
