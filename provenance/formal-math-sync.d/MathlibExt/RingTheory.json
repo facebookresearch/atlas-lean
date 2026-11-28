@@ -518,6 +518,15 @@
       "upstream_sha256": "2fcef07e1a21611480a64d2ef03f77e3653940d13643898e4752c7f5a0982134"
     },
     {
+      "path": "MathlibExt/RingTheory/Kaehler/HochschildPresentation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6c9e331efeed9cf011e81eb684ae7a12aa15681791bad9659be8fea820d05a7e",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "08a05c88251908699f3557961c003f6d89a8d29de09cc86fd612ad1df73dc380"
+    },
+    {
       "path": "MathlibExt/RingTheory/Length/AnnihilatorQuotient.lean",
       "backport": "not-needed",
       "disposition": "diverged",
