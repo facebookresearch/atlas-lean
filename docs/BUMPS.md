@@ -101,9 +101,22 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    the manifest): once you edit a file, `git add` it when it is resolved.
 
    For a domain-sharded ledger, stage the affected JSON shards as well as the
-   resolved Lean files. Do not start an automatic bump merge across the one-time
-   layout cutover. For a manual merge, keep the sharded layout and both parents'
-   records, then stage the result and validate it without committing:
+   resolved Lean files. A row lives in its legacy shard or in its own module
+   file, and every edit moves it to its module file, so the two sides can keep
+   one row in different files. When a ledger file conflicts, or both sides
+   changed the ledger, `merge-main` therefore merges the whole ledger by path,
+   not file by file: a row goes to its module file if either side keeps it
+   there, and leaves the legacy shard on the side that still has it, so no row
+   ever moves back to a legacy shard. It then rewrites, creates or deletes each
+   ledger file that this changes, conflicted or not, as long as the file is as
+   `git merge` left it or as the tool last wrote it, and saves any file it
+   deletes. It refuses to start while the ledger directory has untracked files.
+   A bump branch whose tools predate module files must first take main's
+   `scripts/check_formal_math_sync.py` and `scripts/bump/` (check them out from
+   main and commit them) before it merges a main that has module files: the
+   old checker rejects them. Do not start an automatic bump merge across the
+   one-time layout cutover. For a manual merge, keep the sharded layout and both
+   parents' records, then stage the result and validate it without committing:
 
    ```sh
    python3 scripts/bump/bump_branch.py resolve-manifest --check-only
@@ -118,7 +131,8 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    2. Run `bump_branch.py resolve-manifest`. If it lists rows to finish (a file
       you resolved by hand needs its own rationale), record each with
       `python3 scripts/check_formal_math_sync.py --record-divergence PATH
-      --rationale TEXT --backport pending`, `git add` the manifest, and run
+      --rationale TEXT --backport pending`, run `git add -A provenance/` (a
+      module file is a new file, and an emptied shard is a deletion), and run
       `resolve-manifest` again.
 
    Then re-run any fixer the bump needs, such as a rename script: files main

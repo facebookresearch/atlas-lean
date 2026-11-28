@@ -32,8 +32,8 @@ from check_formal_math_sync import (  # noqa: E402  (the checker owns the header
     BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, UPSTREAM_REPOSITORY, count_rows, is_flt,
     git as atlas_git,
     last_committed_text, leading_notice, library_files, load, load_revision, manifest_documents,
-    manifest_rel, retired_row, row_structure_problems, shard_directory, sha256, split_published,
-    upstream_body, write_manifest,
+    manifest_rel, module_rows, retired_row, row_structure_problems, shard_directory, sha256, split_published,
+    upstream_body, worktree_shards, write_manifest,
 )
 
 ZERO = "0" * 40
@@ -310,8 +310,9 @@ def main(argv: list[str] | None = None) -> int:
                          "history (run `git fetch --unshallow` first)")
     commit = git(a.formal_math, "rev-parse", "--verify", f"{a.commit}^{{commit}}").decode().strip()
     previous = previous_manifest(a.atlas, manifest_path)
+    kept = module_rows(manifest_path, previous, worktree_shards(manifest_path)) if previous else set()
     if previous and a.report and a.report.exists():
-        for target in manifest_documents(manifest_path, previous):
+        for target in manifest_documents(manifest_path, previous, kept):
             if target.exists() and a.report.samefile(target):
                 ap.error("--report must not alias a provenance ledger file")
     rationales = load_json(a.rationales)
@@ -332,7 +333,10 @@ def main(argv: list[str] | None = None) -> int:
         except OSError as error:
             print(f"sync: cannot write report {a.report}: {error}; ledger not written", file=sys.stderr)
             return 1
-    write_manifest(manifest_path, manifest)
+    # Every existing row stays in the file it is in, and a new row goes to its own module file: a
+    # sync that moved rows would rewrite the whole ledger.
+    new_rows = {row["path"] for row in manifest["rows"]} - {row["path"] for row in previous.get("rows", [])}
+    write_manifest(manifest_path, manifest, modules=kept | new_rows)
     print(f"wrote ledger at {manifest_path} ({len(manifest['rows'])} rows)")
     return 0
 

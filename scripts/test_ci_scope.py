@@ -80,6 +80,7 @@ LEAN = [
     "DomainsTest/Biology/X.lean",
     "provenance/formal-math-sync.json",
     "provenance/formal-math-sync.d/MathlibExt/Algebra.json",
+    "provenance/formal-math-sync.d/WantedExt/NumberTheory/FkPerfectWanted.lean.json",
 ]
 # The suites of scripts/test_scripts.sh that ATLAS_TOOL_TESTS=skip leaves out, and those that always run.
 TOOL_TESTS = [

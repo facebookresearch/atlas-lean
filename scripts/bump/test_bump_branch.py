@@ -6,6 +6,7 @@ Run with: python3 scripts/bump/test_bump_branch.py
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import shutil
@@ -13,7 +14,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 sys.dont_write_bytecode = True
 HERE = Path(__file__).resolve().parent
@@ -394,16 +397,18 @@ class GitTest(unittest.TestCase):
 
     def write(
         self, files: dict[str, str], rows: list[dict] | None = None, message: str = "edit", *,
-        schema_version: int = 1, upstream_pin: str = "a" * 40,
+        schema_version: int = 1, upstream_pin: str = "a" * 40, modules=frozenset(),
     ) -> None:
+        """Commit `files` and, with `rows`, the whole ledger: rows in `modules` in module files."""
         files = files.copy()
         if rows is not None:
             data = json.loads(manifest(
                 rows, schema_version=schema_version,
                 upstream={"commit": upstream_pin, "repository": fms.UPSTREAM_REPOSITORY},
             ))
-            documents = fms.manifest_documents(Path(bb.MANIFEST), data)
+            documents = fms.manifest_documents(Path(bb.MANIFEST), data, modules)
             files.update({path.as_posix(): text for path, text in documents.items()})
+            shutil.rmtree(fms.shard_directory(self.repo / bb.MANIFEST), ignore_errors=True)
         for path, text in files.items():
             target = self.repo / path
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -617,6 +622,465 @@ class GitTest(unittest.TestCase):
         self.assertEqual(resolved.returncode, 0, resolved.stdout + resolved.stderr)
         self.assertIn("ok [formal-math-sync]", resolved.stdout)
         self.assertEqual(self.git("show", f"HEAD:{shard}").stdout, fixed)
+
+    def ledger_files(self) -> set[Path]:
+        directory = fms.shard_directory(Path(bb.MANIFEST)).as_posix()
+        return {Path(name) for name in self.git("ls-tree", "-r", "--name-only", "HEAD", "--", directory).stdout.split()}
+
+    def test_sharded_merge_where_main_moved_a_record_the_bump_edited(self) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, b = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/B.lean"
+        files = {path: f"/-- {name} doc -/\ndef {name.lower()} := 1\n\n\ntheorem {name.lower()}_eq := rfl\n"
+                 for path, name in ((a, "A"), (b, "B"))}
+        rows = [diverged(path, text, f"Port {path}.") for path, text in files.items()]
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        # The bump edits A's row in place, in its legacy shard, as writers did before module files.
+        self.write(*self.edit(files, rows, a, files[a].replace("a_eq :=", "a_eq : a = 1 :="), f"Port {a}. {BUMP}"),
+                   "bump", schema_version=sharded)
+        self.git("checkout", "-q", "main")
+        # Main edits A too, and its writer moves A's row to A's module file.
+        self.write(*self.edit(files, rows, a, files[a].replace("A doc", "A, restated"), "Restate A (#961)."),
+                   "Restate A (#961)", schema_version=sharded, modules={a})
+        self.git("checkout", "-q", "bump")
+        merged = self.tool("merge-main", "--main", "main")
+        self.assertEqual(merged.returncode, 0, merged.stdout + merged.stderr)
+        self.assertIn("ok [formal-math-sync]", merged.stdout)
+        self.assertEqual(self.git("status", "--porcelain").stdout, "")
+        ledger, errors = fms.load_revision(self.repo, "HEAD")
+        self.assertEqual(errors, [])
+        self.assertEqual(fms.module_rows(header, ledger, self.ledger_files()), {a})  # main's location
+        legacy = json.loads((self.repo / fms.shard_path(header, a)).read_text())
+        self.assertEqual([row["path"] for row in legacy["rows"]], [b])
+        text = (self.repo / a).read_bytes()
+        self.assertIn(b"A, restated", text)
+        self.assertIn(b"a_eq : a = 1", text)
+        row = bb.rows_by_path(ledger)[a]
+        self.assertEqual((row["published_sha256"], row["rationale"]), (fms.sha256(text), f"Restate A (#961). {BUMP}"))
+
+    def test_sharded_merge_keeps_a_record_the_bump_moved_in_its_module_file(self) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, b = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/B.lean"
+        files = {path: f"/-- {name} doc -/\ndef {name.lower()} := 1\n\n\ntheorem {name.lower()}_eq := rfl\n"
+                 for path, name in ((a, "A"), (b, "B"))}
+        rows = [diverged(path, text, f"Port {path}.") for path, text in files.items()]
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        # The bump edits A with the new writer, which moves A's row to A's module file.
+        self.write(*self.edit(files, rows, a, files[a].replace("a_eq :=", "a_eq : a = 1 :="), f"Port {a}. {BUMP}"),
+                   "bump", schema_version=sharded, modules={a})
+        self.git("checkout", "-q", "main")
+        # Main edits A in place, in its legacy shard (a branch from before module files, or a sync).
+        self.write(*self.edit(files, rows, a, files[a].replace("A doc", "A, restated"), "Restate A (#961)."),
+                   "Restate A (#961)", schema_version=sharded)
+        self.git("checkout", "-q", "bump")
+        merged = self.tool("merge-main", "--main", "main")
+        self.assertEqual(merged.returncode, 0, merged.stdout + merged.stderr)
+        self.assertIn("ok [formal-math-sync]", merged.stdout)
+        self.assertEqual(self.git("status", "--porcelain").stdout, "")
+        ledger, errors = fms.load_revision(self.repo, "HEAD")
+        self.assertEqual(errors, [])
+        self.assertEqual(fms.module_rows(header, ledger, self.ledger_files()), {a})  # never back to a shard
+        legacy = json.loads((self.repo / fms.shard_path(header, a)).read_text())
+        self.assertEqual([row["path"] for row in legacy["rows"]], [b])
+        text = (self.repo / a).read_bytes()
+        self.assertIn(b"A, restated", text)
+        self.assertIn(b"a_eq : a = 1", text)
+        row = bb.rows_by_path(ledger)[a]
+        self.assertEqual((row["published_sha256"], row["rationale"]), (fms.sha256(text), f"Restate A (#961). {BUMP}"))
+
+    def test_an_untracked_module_file_is_never_deleted(self) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, b, c = (f"MathlibExt/Algebra/{name}.lean" for name in "ABC")
+        files = {path: f"def {path[-6].lower()} := 1\n" for path in (a, b)}
+        rows = [diverged(path, text, f"Port {path}.") for path, text in files.items()]
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        self.write(*self.edit(files, rows, a, "def a : Nat := 1\n", f"Port {a}. {BUMP}"), "bump", schema_version=sharded)
+        self.git("checkout", "-q", "main")
+        self.write(*self.edit(files, rows, b, "def b : Nat := 1\n", "Type b (#5)."), "Type b (#5)", schema_version=sharded)
+        self.git("checkout", "-q", "bump")
+        (self.repo / c).write_text("def c := 3\n")
+        record = subprocess.run([sys.executable, "scripts/check_formal_math_sync.py", "--record-divergence", c,
+                                 "--rationale", "New on the bump.", "--backport", "pending"], cwd=self.repo,
+                                capture_output=True, text=True, env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+        self.assertEqual(record.returncode, 0, record.stdout + record.stderr)
+        module = self.repo / fms.module_path(header, c)
+        draft = module.read_bytes()  # untracked, like the Lean file
+        refused = self.tool("merge-main", "--main", "main")
+        self.assertEqual(refused.returncode, 2, refused.stdout + refused.stderr)
+        self.assertIn("untracked files", refused.stderr)
+        self.assertEqual(module.read_bytes(), draft)
+        self.assertNotEqual(self.git("rev-parse", "--verify", "MERGE_HEAD", check=False).returncode, 0)
+        # An untracked ledger file that appears during a merge is not the tool's to touch either.
+        moved = self.repo.parent / f"{self.repo.name}-module.json"
+        os.replace(module, moved)
+        self.assertEqual(self.tool("merge-main", "--main", "main", "--no-commit").returncode, 0)
+        os.replace(moved, module)
+        resolved = self.tool("resolve-manifest")
+        self.assertEqual(resolved.returncode, 0, resolved.stdout + resolved.stderr)
+        self.assertEqual(module.read_bytes(), draft)
+        self.assertIn(f"?? {fms.module_path(header, c).as_posix()}",
+                      self.git("status", "--porcelain", "--untracked-files=all").stdout)
+
+    def test_a_clean_merge_never_leaves_a_row_in_two_files(self) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, new = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/B.lean"
+        files = {a: "def a := 1\n"}
+        rows = [diverged(a, files[a], "Port A.")]
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        added = {new: "def b := 2\n"}
+        row = diverged(new, added[new], "Add B.")
+        self.git("checkout", "-q", "-b", "bump")
+        self.write(added, rows + [row], "bump: add B to its legacy shard", schema_version=sharded)
+        self.git("checkout", "-q", "main")
+        self.write(added, rows + [row], "Add B (#6)", schema_version=sharded, modules={new})
+        self.git("checkout", "-q", "bump")
+        self.assertEqual(self.git("merge-tree", "--write-tree", "HEAD", "main", check=False).returncode, 0,
+                         "git merges this cleanly, with B in two files")
+        merged = self.tool("merge-main", "--main", "main")
+        self.assertEqual(merged.returncode, 0, merged.stdout + merged.stderr)
+        self.assertIn("ok [formal-math-sync]", merged.stdout)
+        ledger, errors = fms.load_revision(self.repo, "HEAD")
+        self.assertEqual(errors, [])
+        self.assertEqual(fms.module_rows(header, ledger, self.ledger_files()), {new})
+        legacy = json.loads((self.repo / fms.shard_path(header, a)).read_text())
+        self.assertEqual([row["path"] for row in legacy["rows"]], [a])
+
+    def two_accounts_of_a(self) -> tuple[str, str]:
+        """A sharded merge where both sides rewrote A's rationale, so A's shard needs a person."""
+        sharded = fms.SHARDED_SCHEMA_VERSION
+        a, b = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/B.lean"
+        files = {a: "def a := 1\n", b: "def b := 2\n"}
+        rows = [diverged(path, text, "Base account.") for path, text in files.items()]
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        for branch, account in (("bump", "Bump account."), ("main", "Main account.")):
+            self.git("checkout", "-q", "-b", branch) if branch == "bump" else self.git("checkout", "-q", "main")
+            self.write({}, [{**row, "rationale": account} if row["path"] == a else row for row in rows],
+                       account, schema_version=sharded)
+        self.git("checkout", "-q", "bump")
+        return a, b
+
+    def test_a_module_file_written_during_the_merge_is_left_alone(self) -> None:
+        header = Path(bb.MANIFEST)
+        a, _ = self.two_accounts_of_a()
+        self.assertEqual(self.tool("merge-main", "--main", "main").returncode, 3)
+        record = subprocess.run([sys.executable, "scripts/check_formal_math_sync.py", "--record-divergence", a,
+                                 "--rationale", "Both accounts.", "--backport", "pending"], cwd=self.repo,
+                                capture_output=True, text=True, env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+        self.assertEqual(record.returncode, 0, record.stdout + record.stderr)
+        module = fms.module_path(header, a).as_posix()
+        self.git("add", "--", module)  # staged alone; A's old shard is still unmerged
+        written = (self.repo / module).read_bytes()
+        shard = self.repo / fms.shard_path(header, a)
+        mine = shard.read_bytes()  # the writer took A out of it
+        for args in ((), ("--regenerate",)):
+            resolve = self.tool("resolve-manifest", *args)
+            self.assertEqual(resolve.returncode, 3, resolve.stdout + resolve.stderr)
+            self.assertIn(f"{module}: created since the merge, so it is left as it is", resolve.stdout)
+            self.assertIn("git add -A provenance/", resolve.stdout)
+            self.assertNotIn("not started by merge-main", resolve.stdout)
+            self.assertIn(f"{a}: {module}, created since the merge, holds another row", resolve.stdout)
+            self.assertEqual((self.repo / module).read_bytes(), written, args)
+            self.assertEqual(shard.read_bytes(), mine, args)  # A's other file is left to the person too
+        self.git("add", "-A", "provenance/")
+        resolve = self.tool("resolve-manifest")
+        self.assertEqual(resolve.returncode, 0, resolve.stdout + resolve.stderr)
+        ledger, errors = fms.load_revision(self.repo, "HEAD")
+        self.assertEqual((errors, bb.rows_by_path(ledger)[a]["rationale"]), ([], "Both accounts."))
+        self.assertEqual(fms.module_rows(header, ledger, self.ledger_files()), {a})
+
+    def test_a_ledger_file_deleted_since_the_merge_is_not_recreated(self) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, new = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/B.lean"
+        files, added = {a: "def a := 1\n"}, {new: "def b := 2\n"}
+        rows, row = [diverged(a, files[a], "Port A.")], diverged(new, added[new], "Add B.")
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        self.write(added, rows + [row], "bump: add B", schema_version=sharded)
+        self.git("checkout", "-q", "main")
+        self.write(added, rows + [row], "Add B (#6)", schema_version=sharded, modules={new})
+        self.git("checkout", "-q", "bump")
+        self.assertEqual(self.tool("merge-main", "--main", "main", "--no-commit").returncode, 0)
+        module = fms.module_path(header, new).as_posix()
+        self.git("rm", "-q", "-f", "--", module)
+        resolve = self.tool("resolve-manifest")  # the deletion is an edit: the ledger is not merged again
+        self.assertEqual(resolve.returncode, 2, resolve.stdout + resolve.stderr)
+        self.assertIn("drops provenance rows", resolve.stderr)
+        self.assertNotIn("edited since the merge", resolve.stdout)
+        self.assertFalse((self.repo / module).exists())
+        resolve = self.tool("resolve-manifest", "--regenerate")  # merged again, but the deleted file stays deleted
+        self.assertEqual(resolve.returncode, 2, resolve.stdout + resolve.stderr)
+        self.assertIn(f"{module}: edited since the merge, so it is left as it is", resolve.stdout)
+        self.assertFalse((self.repo / module).exists())
+
+    def test_backups_never_overwrite_each_other(self) -> None:
+        self.base_tree()
+        a, b = "MathlibExt/A.lean", "MathlibExt/B.lean"
+        before = {path: (self.repo / path).read_bytes() for path in (a, b)}
+        out = io.StringIO()
+        with mock.patch.object(bb, "REPO", self.repo), mock.patch.object(bb.time, "time_ns", return_value=7), \
+                redirect_stdout(out):
+            for path in (a, b):  # both replaced by write_draft within one tick of a frozen clock
+                self.assertTrue(bb.write_draft(path, "replaced\n", True, sharded=True))
+        backups = [Path(line.split("saved as ", 1)[1]) for line in out.getvalue().splitlines() if "saved as " in line]
+        self.assertEqual(len(set(backups)), 2, out.getvalue())
+        self.assertEqual([backup.read_bytes() for backup in backups], [before[a], before[b]])
+
+    def test_a_row_left_in_two_files_by_a_plain_merge_names_the_fix(self) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, new = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/B.lean"
+        files, added = {a: "def a := 1\n"}, {new: "def b := 2\n"}
+        rows, row = [diverged(a, files[a], "Port A.")], diverged(new, added[new], "Add B.")
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        self.write(added, rows + [row], "bump: add B", schema_version=sharded)
+        self.git("checkout", "-q", "main")
+        self.write(added, rows + [row], "Add B (#6)", schema_version=sharded, modules={new})
+        self.git("checkout", "-q", "bump")
+        self.git("merge", "-q", "--no-ff", "--no-commit", "main")  # clean, without merge-main
+        stopped = self.tool("resolve-manifest")
+        self.assertEqual(stopped.returncode, 2, stopped.stdout + stopped.stderr)
+        self.assertIn("recorded in two files", stopped.stderr)
+        self.assertIn("`resolve-manifest --regenerate` rewrites every ledger file", stopped.stderr)
+        self.assertIn("your edits included", stopped.stderr)
+        self.assertIn("--no-commit", stopped.stderr)
+        fixed = self.tool("resolve-manifest", "--regenerate", "--no-commit")
+        self.assertEqual(fixed.returncode, 0, fixed.stdout + fixed.stderr)
+        self.assertIn("saved as", fixed.stdout)
+        self.assertEqual(self.git("rev-parse", "--verify", "MERGE_HEAD", check=False).returncode, 0)
+        committed = self.tool("resolve-manifest")
+        self.assertEqual(committed.returncode, 0, committed.stdout + committed.stderr)
+        ledger, errors = fms.load_revision(self.repo, "HEAD")
+        self.assertEqual(errors, [])
+        self.assertEqual(fms.module_rows(header, ledger, self.ledger_files()), {new})
+
+    def test_a_copy_in_a_file_edited_since_the_merge_is_named(self) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, new, local = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/B.lean", "MathlibExt/Algebra/Local.lean"
+        files, added = {a: "def a := 1\n", local: "def l := 0\n"}, {new: "def b := 2\n"}
+        rows, row = [diverged(a, files[a], "Port A.")], diverged(new, added[new], "Add B.")
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({**added, local: "def l := 1\n"}, rows + [row], "bump: add B", schema_version=sharded)
+        self.git("checkout", "-q", "main")
+        self.write({**added, local: "def l := 2\n"}, rows + [row], "Add B (#6)", schema_version=sharded,
+                   modules={new})
+        self.git("checkout", "-q", "bump")
+        self.assertEqual(self.tool("merge-main", "--main", "main").returncode, 3)  # stops at Local.lean
+        (self.repo / local).write_text("def l := 3\n")
+        shard = self.repo / fms.shard_path(header, a)
+        edited = json.loads(shard.read_text())
+        edited["rows"][0]["backport"] = "not-needed"  # an edit of A: B's copy is still in this file
+        shard.write_text(fms.dump_manifest(edited))
+        self.git("add", "-A", local, "provenance/")
+        stopped = self.tool("resolve-manifest")
+        self.assertEqual(stopped.returncode, 2, stopped.stdout + stopped.stderr)
+        legacy = fms.shard_path(header, a).as_posix()
+        self.assertIn(f"{legacy} was edited or created since the merge", stopped.stderr)
+        self.assertIn(f"{new}: {legacy}, {fms.module_path(header, new).as_posix()}", stopped.stderr)
+        self.assertNotIn("--regenerate", stopped.stderr)
+        edited["rows"] = edited["rows"][:1]  # the person deletes the copy in the legacy shard
+        shard.write_text(fms.dump_manifest(edited))
+        self.git("add", "-A", "provenance/")
+        resolve = self.tool("resolve-manifest")
+        self.assertEqual(resolve.returncode, 0, resolve.stdout + resolve.stderr)
+
+    def test_a_created_file_cannot_revert_a_correction_on_main(self) -> None:
+        for typo in (False, True):
+            with self.subTest(typo=typo):
+                self.tearDown()
+                self.setUp()
+                self.check_created_file_against_a_correction(typo)
+
+    def check_created_file_against_a_correction(self, typo: bool) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, d, local = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/D.lean", "MathlibExt/Algebra/Local.lean"
+        files = {a: "def a := 1\n", d: "def d := 4\n", local: "def l := 0\n"}
+        rows = [diverged(a, files[a], "A is from PR #12."), diverged(d, files[d], "Port D.")]
+        self.write(files, rows, "base: A in its module file", schema_version=sharded, modules={a})
+        base_module = (self.repo / fms.module_path(header, a)).read_bytes()
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({local: "def l := 1\n"}, [rows[0], {**rows[1], "rationale": f"Port D. {BUMP}"}], "bump",
+                   schema_version=sharded, modules={a})
+        self.git("checkout", "-q", "main")
+        self.write({local: "def l := 2\n"}, [{**rows[0], "rationale": "A is from PR #21."}, rows[1]],
+                   "Correct A's reference, in its legacy shard (#7)", schema_version=sharded)
+        self.git("checkout", "-q", "bump")
+        self.assertEqual(self.tool("merge-main", "--main", "main").returncode, 3)  # stops at Local.lean
+        (self.repo / local).write_text("def l := 3\n")
+        module = self.repo / fms.module_path(header, a)
+        module.parent.mkdir(parents=True, exist_ok=True)
+        written = b'{"rows": [' if typo else base_module  # the person brings back A's module file
+        module.write_bytes(written)
+        self.git("add", "--", local, str(module))
+        shard = self.repo / fms.shard_path(header, a)
+        conflicted = shard.read_bytes()
+        resolve = self.tool("resolve-manifest")
+        self.assertEqual(resolve.returncode, 3, resolve.stdout + resolve.stderr)
+        rel = fms.module_path(header, a).as_posix()
+        if typo:
+            self.assertIn(f"{rel} changed since the merge and cannot be read as a ledger file", resolve.stdout)
+            self.assertIn("No ledger file was written", resolve.stdout)
+        else:
+            self.assertIn(f"{a}: {rel}, created since the merge, holds another row", resolve.stdout)
+        self.assertEqual(shard.read_bytes(), conflicted, "the shard holding main's correction is left as git left it")
+        self.assertEqual(module.read_bytes(), written)
+        self.assertEqual(self.git("rev-list", "--count", "--merges", "HEAD").stdout.strip(), "0")
+
+    def bump_moved_a_and_main_corrected_it(self) -> tuple[str, Path, Path]:
+        """The bump's writer moved A to its module file; main corrected A's rationale in the legacy
+        shard; merge-main stopped at Local.lean, which the person resolves."""
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, d, local = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/D.lean", "MathlibExt/Algebra/Local.lean"
+        files = {a: "def a := 1\n", d: "def d := 4\n", local: "def l := 0\n"}
+        rows = [diverged(a, files[a], "A is from PR #12."), diverged(d, files[d], "Port D.")]
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        moved = diverged(a, "noncomputable def a := 1\n", "A is from PR #12. Adapted to the bump.")
+        self.write({a: "noncomputable def a := 1\n", local: "def l := 1\n"}, [moved, rows[1]], "bump",
+                   schema_version=sharded, modules={a})
+        self.git("checkout", "-q", "main")
+        self.write({local: "def l := 2\n"}, [{**rows[0], "rationale": "A is from PR #21."}, rows[1]],
+                   "Correct A's reference (#7)", schema_version=sharded)
+        self.git("checkout", "-q", "bump")
+        self.assertEqual(self.tool("merge-main", "--main", "main").returncode, 3)  # stops at Local.lean
+        (self.repo / local).write_text("def l := 3\n")
+        self.git("add", "--", local)
+        return a, self.repo / fms.module_path(header, a), self.repo / fms.shard_path(header, a)
+
+    def test_an_edited_module_file_cannot_revert_a_correction_on_main(self) -> None:
+        for reformat in (False, True):
+            with self.subTest(reformat=reformat):
+                self.tearDown()
+                self.setUp()
+                a, module, shard = self.bump_moved_a_and_main_corrected_it()
+                document = json.loads(module.read_text())
+                if reformat:  # the same row, written differently
+                    module.write_text(json.dumps(document, indent=4) + "\n")
+                else:
+                    document["rows"][0]["backport"] = "not-needed"
+                    module.write_text(fms.dump_manifest(document))
+                self.git("add", "--", str(module))
+                conflicted = shard.read_bytes()
+                resolve = self.tool("resolve-manifest")
+                self.assertEqual(resolve.returncode, 3, resolve.stdout + resolve.stderr)
+                rel = module.relative_to(self.repo).as_posix()
+                self.assertIn(f"{a}: {rel}, edited since the merge, holds another row", resolve.stdout)
+                self.assertEqual(shard.read_bytes(), conflicted, "main's correction stays where git left it")
+                self.assertEqual(self.git("rev-list", "--count", "--merges", "HEAD").stdout.strip(), "0")
+
+    def test_differing_copies_of_a_row_are_both_shown(self) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, new, local = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/B.lean", "MathlibExt/Algebra/Local.lean"
+        files, added = {a: "def a := 1\n", local: "def l := 0\n"}, {new: "def b := 2\n"}
+        rows = [diverged(a, files[a], "Port A.")]
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({**added, local: "def l := 1\n"}, rows + [diverged(new, added[new], "Added on the bump.")],
+                   "bump: add B", schema_version=sharded)
+        self.git("checkout", "-q", "main")
+        self.write({**added, local: "def l := 2\n"}, rows + [diverged(new, added[new], "Added on main (#6).")],
+                   "Add B (#6)", schema_version=sharded, modules={new})
+        self.git("checkout", "-q", "bump")
+        self.assertEqual(self.tool("merge-main", "--main", "main").returncode, 3)  # stops at Local.lean
+        (self.repo / local).write_text("def l := 3\n")
+        shard = self.repo / fms.shard_path(header, a)
+        edited = json.loads(shard.read_text())
+        edited["rows"][0]["backport"] = "not-needed"
+        shard.write_text(fms.dump_manifest(edited))
+        self.git("add", "-A", local, "provenance/")
+        stopped = self.tool("resolve-manifest")
+        self.assertEqual(stopped.returncode, 2, stopped.stdout + stopped.stderr)
+        self.assertIn("the copies differ", stopped.stderr)
+        self.assertIn("Added on the bump.", stopped.stderr)
+        self.assertIn("Added on main (#6).", stopped.stderr)
+
+    def test_a_deliberate_edit_beside_a_row_in_two_files_is_kept(self) -> None:
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        a, new, t = "MathlibExt/Algebra/A.lean", "MathlibExt/Algebra/B.lean", "MathlibExt/Topology/T.lean"
+        local = "MathlibExt/Algebra/Local.lean"
+        files, added = {a: "def a := 1\n", t: "def t := 5\n", local: "def l := 0\n"}, {new: "def b := 2\n"}
+        rows = [diverged(a, files[a], "Port A."), diverged(t, files[t], "Port T.")]
+        row = diverged(new, added[new], "Add B.")
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({**added, local: "def l := 1\n"}, rows + [row], "bump: add B", schema_version=sharded)
+        self.git("checkout", "-q", "main")
+        self.write({**added, local: "def l := 2\n"}, rows + [row], "Add B (#6)", schema_version=sharded,
+                   modules={new})
+        self.git("checkout", "-q", "bump")
+        self.assertEqual(self.tool("merge-main", "--main", "main").returncode, 3)  # stops at Local.lean
+        (self.repo / local).write_text("def l := 3\n")
+        topology = self.repo / fms.shard_path(header, t)
+        edited = json.loads(topology.read_text())
+        edited["rows"][0]["backport"] = "not-needed"  # a deliberate edit of an unrelated row
+        topology.write_text(fms.dump_manifest(edited))
+        self.git("add", "-A", local, "provenance/")
+        stopped = self.tool("resolve-manifest")
+        self.assertEqual(stopped.returncode, 2, stopped.stdout + stopped.stderr)
+        self.assertIn("resolve-manifest --regenerate --no-commit", stopped.stderr)
+        regenerated = self.tool("resolve-manifest", "--regenerate", "--no-commit")
+        self.assertEqual(regenerated.returncode, 3, regenerated.stdout + regenerated.stderr)
+        rel = fms.shard_path(header, t).as_posix()
+        self.assertIn(f"{t}: {rel}, edited since the merge, holds another row than the merged one, and that edit "
+                      "is kept as it is: it needs only `git add -A provenance/` and a plain resolve-manifest",
+                      regenerated.stdout)
+        self.assertNotIn("finish the row by hand", regenerated.stdout)
+        self.git("add", "-A", "provenance/")
+        committed = self.tool("resolve-manifest")
+        self.assertEqual(committed.returncode, 0, committed.stdout + committed.stderr)
+        ledger, errors = fms.load_revision(self.repo, "HEAD")
+        self.assertEqual((errors, bb.rows_by_path(ledger)[t]["backport"]), ([], "not-needed"))
+        self.assertEqual(fms.module_rows(header, ledger, self.ledger_files()), {new})
+
+    def test_bump_sized_sharded_merge(self) -> None:
+        """342 rows edited on the bump, as in #6018, against main moving and adding rows."""
+        sharded, header = fms.SHARDED_SCHEMA_VERSION, Path(bb.MANIFEST)
+        paths = [f"MathlibExt/NumberTheory/F{i:03}.lean" for i in range(400)]
+        files = {path: f"/-- F{i} doc -/\ndef f{i} := {i}\n\n\ntheorem f{i}_eq := rfl\n" for i, path in enumerate(paths)}
+        rows = [diverged(path, text, f"Port F{i}.") for i, (path, text) in enumerate(files.items())]
+        self.write(files, rows, "sharded base", schema_version=sharded)
+        self.git("checkout", "-q", "-b", "bump")
+        bump_files, bump_rows = dict(files), list(rows)
+        for i in range(342):  # rows 0-9 with the new writer, which moves them to module files
+            bump_files, bump_rows = self.edit(bump_files, bump_rows, paths[i], files[paths[i]].replace(
+                f"f{i}_eq :=", f"f{i}_eq : f{i} = {i} :="), f"Port F{i}. {BUMP}")
+        added_on_bump = {f"MathlibExt/NumberTheory/Bump{j}.lean": f"def bump{j} := {j}\n" for j in range(5)}
+        bump_rows += [diverged(path, text, "Added on the bump.") for path, text in added_on_bump.items()]
+        self.write({**bump_files, **added_on_bump}, bump_rows, "bump", schema_version=sharded,
+                   modules=set(paths[:10]))
+        self.git("checkout", "-q", "main")
+        main_files, main_rows = dict(files), list(rows)
+        for i in range(300, 360):  # rows 300-341 are the bump's too
+            main_files, main_rows = self.edit(main_files, main_rows, paths[i], files[paths[i]].replace(
+                f"F{i} doc", f"F{i}, restated"), "Restate (#7001).")
+        added_on_main = {f"MathlibExt/NumberTheory/New{j}.lean": f"def new{j} := {j}\n" for j in range(20)}
+        main_rows += [diverged(path, text, "Added on main.") for path, text in added_on_main.items()]
+        self.write({**main_files, **added_on_main}, main_rows, "Restate (#7001)", schema_version=sharded,
+                   modules=set(paths[300:360]) | set(added_on_main))
+        self.git("checkout", "-q", "bump")
+        merged = self.tool("merge-main", "--main", "main")
+        self.assertEqual(merged.returncode, 0, merged.stdout + merged.stderr)
+        self.assertIn("38 row(s) from main, 305 from the bump, 42 changed on both sides re-recorded", merged.stdout)
+        self.assertIn("ok [formal-math-sync]: 425 rows", merged.stdout)
+        self.assertEqual(self.git("status", "--porcelain").stdout, "")
+        ledger, errors = fms.load_revision(self.repo, "HEAD")
+        self.assertEqual(errors, [])
+        # Every row either side keeps in its module file stays there, rows 0-9 included.
+        self.assertEqual(fms.module_rows(header, ledger, self.ledger_files()),
+                         set(paths[:10]) | set(paths[300:360]) | set(added_on_main))
+        merged_rows = bb.rows_by_path(ledger)
+        for i in (0, 9, 10, 299, 300, 341, 342, 359, 360, 399):
+            text = (self.repo / paths[i]).read_bytes()
+            row = merged_rows[paths[i]]
+            with self.subTest(i=i):
+                self.assertEqual(row["published_sha256"], fms.sha256(text))
+                self.assertEqual(b"restated" in text, 300 <= i < 360)
+                self.assertEqual(b" : f" in text, i < 342)
+                expected = {(True, True): f"Restate (#7001). {BUMP}", (True, False): f"Port F{i}. {BUMP}",
+                            (False, True): "Restate (#7001).", (False, False): f"Port F{i}."}
+                self.assertEqual(row["rationale"], expected[(i < 342, 300 <= i < 360)])
 
     def test_mixed_layout_is_reported_and_left_for_manual_merge(self) -> None:
         files, rows = self.base_tree()
