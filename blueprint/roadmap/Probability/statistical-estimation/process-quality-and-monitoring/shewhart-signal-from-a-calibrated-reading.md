@@ -7,10 +7,6 @@ signal; if $\lvert \hat x - \mu_0\rvert \le h\sigma_0 - \varepsilon$, then $x$ i
 undecided reading is not evidence that there is no signal. The calibration bound is an assumption about the instrument on the
 population where it was validated.
 
-## Depends on
-
-## Proof depends on
-
 ## Sources
 
 - NIST/SEMATECH *e-Handbook of Statistical Methods*, Section 6.3.2, Shewhart control limits $\mu_w \pm k\sigma_w$ and the average run length, <https://www.itl.nist.gov/div898/handbook/pmc/section3/pmc32.htm>.

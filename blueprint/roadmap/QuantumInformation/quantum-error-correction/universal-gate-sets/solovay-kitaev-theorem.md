@@ -19,16 +19,6 @@ for $U = iI$ on one qubit, every product of elements of $SU(2)$ has eigenvalues 
 least $\sqrt 2$ from $U$. No bound of this form holds uniformly in the gate width, since a single gate on $n$ qubits can be an
 arbitrary $n$-qubit unitary.
 
-## Expansion
-
-A good expansion adds pages for the remaining steps of the Dawson–Nielsen proof: the balanced group commutator
-decomposition, which takes two forms: in $SU(2)$ it is exact (Section 4.1, equation (11)): every $U$ with
-$\|I - U\| < \varepsilon$ equals $V W V^{*} W^{*}$ with $\|I - V\|, \|I - W\| \le c_{gc}\sqrt{\varepsilon}$; in $SU(d)$ for fixed
-$d$ the construction (Sections 5.1–5.2) only approximates, giving $V, W$ within $O_d(\sqrt{\varepsilon})$ of $I$ with
-$V W V^{*} W^{*}$ within $O_d(\varepsilon^{3/2})$ of $U$; the existence of an
-$\varepsilon_0$-net of $SU(d)$ by products of bounded length (the base case, from density); and the recursion analysis
-giving the exponents. The [commutator approximation lemma](approximating-a-group-commutator.md) is already a page.
-
 ## Depends on
 
 - [Instruction set for $SU(d)$](instruction-set.md)
@@ -36,11 +26,18 @@ giving the exponents. The [commutator approximation lemma](approximating-a-group
 ## Proof depends on
 
 - [Approximating a group commutator](approximating-a-group-commutator.md)
+- [Finite nets from an instruction set](epsilon-nets-from-an-instruction-set.md)
+- [The Solovay–Kitaev recursion step](solovay-kitaev-recursion-step.md)
+- [Approximate balanced group commutators in $SU(d)$](approximate-balanced-group-commutators-in-sud.md)
 - [Telescoping bound for products of contractions](../../not-yet-classified/part-01/unitary-error-budget/norm-list-of-fn-prod-sub-le.md)
 
 ## Background
 
 - [Clifford plus $T$ is universal](clifford-plus-t-is-universal.md)
+
+## Related topics
+
+- [Solovay-Kitaev theorem](../../quantum-operations/solovay-kitaev-gate-compilation/solovay-kitaev-theorem.md): the single-unitary statement and running time
 
 ## Sources
 

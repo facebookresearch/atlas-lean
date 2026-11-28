@@ -11,8 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceComponents
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceNegation
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifference
+public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceCycles
 
 /-! # Rainbow-free colorings for `x - y = z ^ k`
 
@@ -55,56 +57,6 @@ public theorem_wanted eq_zero_of_color_eq_color_zero_of_rainbowFree_powDiff
     (hrf : ∀ x y z : ZMod p, x - y = z ^ k → ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
     (a : ZMod p) (ha : c a = c 0) : a = 0
 
-
-/-- **Each component of the power digraph has exactly one cycle.** Let $p$ be a prime and $k$ a
-natural number, and let $G^k_p$ be the digraph on $\mathbb{Z}/p\mathbb{Z}$ with edges
-$a \to a^k$, so that $m$ steps lead from $a$ to $a^{k^m}$. Call $a$ a cycle vertex if
-$a^{k^r} = a$ for some $r > 0$, and say that $a$ and $b$ lie in the same component if
-$a^{k^m} = b^{k^n}$ for some $m, n \ge 0$. Then every $a$ has a cycle vertex $a^{k^m}$ among its
-iterates, and if two cycle vertices $a$ and $b$ lie in the same component, then $b = a^{k^m}$
-for some $m \ge 0$. Thus every component of $G^k_p$ contains exactly one cycle.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 12
-(`integers-2024-A105-lem-12`). -/
-public theorem_wanted powMap_component_unique_cycle (p k : ℕ) [Fact p.Prime] :
-    (∀ a : ZMod p, ∃ m : ℕ, ∃ r : ℕ, 0 < r ∧ (a ^ k ^ m) ^ k ^ r = a ^ k ^ m) ∧
-      ∀ a b : ZMod p, (∃ r : ℕ, 0 < r ∧ a ^ k ^ r = a) → (∃ r : ℕ, 0 < r ∧ b ^ k ^ r = b) →
-        (∃ m n : ℕ, a ^ k ^ m = b ^ k ^ n) → ∃ m : ℕ, a ^ k ^ m = b
-
-/-- **Power digraphs modulo a prime with two components.** Let $p$ be a prime and $k > 0$ an even
-natural number, and let $G^k_p$ be the directed graph on $\mathbb{Z}/p\mathbb{Z}$ with an edge
-$a \to a^k$ from every vertex $a$. Its (weak) components are the classes of the equivalence
-relation "$a^{k^m} = b^{k^n}$ for some natural numbers $m, n$". Then $G^k_p$ has exactly two
-components if and only if every prime factor of $p - 1$ divides $k$.
-
-In the source, writing the prime factorization of $k$ as
-$k = 2^{\alpha_0} q_1^{\alpha_1} \cdots q_\ell^{\alpha_\ell}$ with distinct odd primes
-$q_1, \dots, q_\ell$, the condition reads
-$p - 1 = 2^{\beta_0} q_1^{\beta_1} \cdots q_\ell^{\beta_\ell}$ with all $\beta_i \ge 0$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Proposition 1
-(`integers-2024-A105-prop-1`). -/
-public theorem_wanted card_powMap_components_eq_two_iff_of_even
-    (p k : ℕ) [Fact p.Prime] (hk : Even k) (hk0 : 0 < k) :
-    Nat.card (Quot fun a b : ZMod p => ∃ m n : ℕ, a ^ k ^ m = b ^ k ^ n) = 2 ↔
-      ∀ q : ℕ, q.Prime → q ∣ p - 1 → q ∣ k
-
-/-- **Power digraphs modulo a prime with three components.** Let $p$ be a prime and $k \ge 3$ an
-odd natural number, and let $G^k_p$ be the directed graph on $\mathbb{Z}/p\mathbb{Z}$ with an edge
-$a \to a^k$ from every vertex $a$. Its (weak) components are the classes of the equivalence
-relation "$a^{k^m} = b^{k^n}$ for some natural numbers $m, n$". Then $G^k_p$ has exactly three
-components if and only if $p - 1 = 2m$ for some natural number $m$ every prime factor of which
-divides $k$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Proposition 2
-(`integers-2024-A105-prop-2`). -/
-public theorem_wanted card_powMap_components_eq_three_iff_of_odd
-    (p k : ℕ) [Fact p.Prime] (hk : Odd k) (hk3 : 3 ≤ k) :
-    Nat.card (Quot fun a b : ZMod p => ∃ m n : ℕ, a ^ k ^ m = b ^ k ^ n) = 3 ↔
-      ∃ m : ℕ, p - 1 = 2 * m ∧ ∀ q : ℕ, q.Prime → q ∣ m → q ∣ k
 
 /-- **Upper density threshold for rainbow solutions of $x - y = z^k$.** Let $k \ge 2$ be an
 integer, let $s = \lfloor k / 2 \rfloor$ and $\delta = (4^s - 1) / (3 \cdot 4^s)$, and let $c$ be

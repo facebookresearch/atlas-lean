@@ -1,0 +1,27 @@
+# The capacity of finite-state channels cannot be approximated by any algorithm
+
+No algorithm approximates the capacity of finite-state channels with rational transition probabilities to within $1/5$; for each rational $\lambda \in (0, 1]$ there is a family of such channels, each of capacity at least $\lambda$ or at most $\lambda/2$, on which it is undecidable which holds.
+
+Let finite-state channels in product form and their capacity, in bits, be as in [Finite-state channels and their capacity](finite-state-channels.md). From a [probabilistic finite automaton](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/probabilistic-automata-and-cut-point-languages.md) $\mathcal{A}$ the source builds a finite-state channel $\mathbf{V}_{\mathcal{A}}$ with a fixed initial state, rational transition probabilities $p(y \mid x, s')$ and $q(s \mid x, s')$ and binary output (described under Expansion), and for rational $\lambda \in (0, 1]$ it defines the explicit family $\mathcal{S}_\lambda = \{\mathbf{V}_{\mathcal{A}} : \mathcal{A} \in \mathcal{T}_\lambda\}$, where $\mathcal{T}_\lambda$ is the family of rational automata with $5$ letters and $62$ states of eq. (93) of its Supplementary Note 6. Every channel in $\mathcal{S}_\lambda$ has $10$ input symbols and $62$ states, and capacity $\ge \lambda$ or $\le \lambda/2$. A channel is given to a Turing machine by $\sigma(\mathbf{N})$, an injective encoding of its finitely many rational transition probabilities as a natural number (Supplementary Note 3).
+
+**Theorem (Elkouss and Pérez-García).** There is no Turing machine that halts on all inputs $\sigma(\mathbf{N})$ with $\mathbf{N} \in \mathcal{S}_1$ and outputs a rational number $c$ with $|C(\mathbf{N}) - c| \le 1/5$ (Main Result 1 of the source, in its restatement as eq. (2)).
+
+The source derives this from a stronger statement: for every rational $\lambda \in (0, 1]$ it is undecidable, given $\mathbf{N} \in \mathcal{S}_\lambda$, whether its capacity is $\ge \lambda$ or $\le \lambda/2$ (Main Result 2); the theorem is the case $\lambda = 1$, since an approximation within $1/5$ would separate capacities $\ge 1$ from capacities $\le 1/2$. All channels in $\mathcal{S}_\lambda$ are [information stable](finite-state-channels.md) (Corollary 1), so no function on information stable finite-state channels with $10$ input symbols and $62$ states that approximates the capacity within $1/5$ is computable, which is how the source states Main Result 1. The same holds for any larger numbers of input symbols and states, for example $4$ input bits, $1$ output bit and $6$ bits of memory, and for every more general class of channels with memory.
+
+## Depends on
+
+- [Finite-state channels and their capacity](finite-state-channels.md)
+- [Probabilistic automata and cut-point languages](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/probabilistic-automata-and-cut-point-languages.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+
+## Proof depends on
+
+- [The emptiness problem for probabilistic automata is undecidable](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/emptiness-problem-for-probabilistic-automata.md)
+
+## Expansion
+
+From a [probabilistic finite automaton](../../../TheoryOfComputation/regular-languages/automata-and-expressions/weighted-automata-and-rational-series/probabilistic-automata-and-cut-point-languages.md) $\mathcal{A}$, extended by an identity letter and a reset letter, the source builds a channel $\mathbf{V}_{\mathcal{A}}$ with a data input and a control input: the control input drives $\mathcal{A}$, whose state is the channel state, and the data bit is transmitted noiselessly when $\mathcal{A}$ is in an accepting state and replaced by a uniformly random bit otherwise. Its capacity equals the value of $\mathcal{A}$, the supremum of the acceptance probabilities of words (Theorem 1 of the source). A construction of Gimbert and Oualhadj turns undecidability of emptiness for cut-point languages into a family of automata whose value is at least $\lambda$ or at most $\lambda/2$ with no algorithm telling which (Lemma 1), and Main Result 1 is the case $\lambda = 1$. The emptiness problem it uses is the source's Corollary 2, for automata with $2$ letters and $27$ states and every rational cut-point $\delta \in (0, 1)$, which the source derives from Hirvensalo's theorem (Theorem 2 of Supplementary Note 6 B: cut-point $1/(5k - 10)$, $2$ letters and $5k - 10$ states, $k \ge 7$). A good expansion links pages for the capacity formula of Theorem 1, the Gimbert–Oualhadj gap construction (Lemma 1) and the fixed-size emptiness result (Corollary 2).
+
+## Sources
+
+- D. Elkouss and D. Pérez-García, "Memory effects can make the transmission capability of a communication channel uncomputable", Nature Communications 9 (2018), article 1149, https://doi.org/10.1038/s41467-018-03428-0; read in arXiv:1601.06101v3 (Main Results 1 and 2 with their restatements, eq. (2) in particular, Lemma 1, Theorem 1, Corollary 1, Supplementary Note 3 for the encoding $\sigma$, and Supplementary Note 6 with eq. (93) proving Lemma 1, with Theorem 2 and Corollary 2 in its part B, of arXiv:1601.06101v3).

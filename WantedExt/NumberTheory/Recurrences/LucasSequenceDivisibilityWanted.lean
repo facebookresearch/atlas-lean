@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.Recurrences.LucasParityDivisibility
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceAddition
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceFirstKind
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceModThree
+public import MathlibExt.NumberTheory.Recurrences.LucasSequenceModTwo
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceNegation
 public import MathlibExt.NumberTheory.Recurrences.NondegenerateLucasPair
 public import Mathlib.Basic.Complex.Basic
@@ -85,27 +86,6 @@ public theorem_wanted prime_pow_succ_dvd_lucasU_two_mul_iff
     (hpi : (p : ℤ) ^ i ∣ L.p) (hpi' : ¬ (p : ℤ) ^ (i + 1) ∣ L.p)
     (n : ℕ) (hn : 0 < n) :
     (p : ℤ) ^ (i + 1) ∣ lucasU L (2 * n) ↔ p ∣ n
-
-/-- **Lucas sequences modulo 2.** Let $U = U(P, Q)$ be the Lucas sequence with integer parameters
-$P$ and $Q \ne 0$, let $D = P^2 - 4Q$, and suppose $2 \nmid \gcd(P, Q)$. Then $U$ is periodic
-modulo $2$ from index $1$ on: there is $k > 0$ with $U_{n+k} \equiv U_n \pmod 2$ for every
-$n \ge 1$. If $P$ is odd and $Q$ is even, then $U_n$ is odd for every $n \ge 1$. If $P$ is even
-and $Q$ is odd, then for every $n \ge 0$, $2 \mid U_n$ if and only if $2 \mid n$; moreover
-$2 \mid D$. If $P$ and $Q$ are both odd, then for every $n \ge 0$, $2 \mid U_n$ if and only if
-$3 \mid n$.
-
-The periodicity need not start at $n = 0$: for $P = 1$ and $Q = 2$, $U$ is $0, 1, 1, 1, \dots$
-modulo $2$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Lemma 2.7 (`integers-2025-A107-lem-2-7`). -/
-public theorem_wanted lucasU_mod_two
-    (L : LucasSequenceParams) (h2 : ¬ 2 ∣ Int.gcd L.p L.q) :
-    (∃ k : ℕ, 0 < k ∧ ∀ n, 1 ≤ n → lucasU L (n + k) ≡ lucasU L n [ZMOD 2]) ∧
-      (Odd L.p → Even L.q → ∀ n, 1 ≤ n → ¬ 2 ∣ lucasU L n) ∧
-      (Even L.p → Odd L.q →
-        (∀ n, 2 ∣ lucasU L n ↔ 2 ∣ n) ∧ 2 ∣ L.p ^ 2 - 4 * L.q) ∧
-      (Odd L.p → Odd L.q → ∀ n, 2 ∣ lucasU L n ↔ 3 ∣ n)
 
 /-- **Growth and positivity of Lucas sequences with positive discriminant.** Let $P, Q$ be
 integers with $P \neq 0$, $Q \neq 0$ and $D = P^2 - 4Q > 0$, and let $U = U(P, Q)$ and
