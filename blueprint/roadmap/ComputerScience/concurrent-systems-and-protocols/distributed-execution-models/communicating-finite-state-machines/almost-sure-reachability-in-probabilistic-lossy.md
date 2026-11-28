@@ -8,7 +8,7 @@ For probabilistic lossy channel systems in which each sent message is lost with 
 
 **Theorem (Abdulla, Baier, Iyer and Jonsson).** Reach-PLCS is undecidable (Theorem 18).
 
-The loss probability $\lambda$ and the weights are part of the input. By contrast, in the model of Baier and Engelen, where the next step is a loss with a fixed probability and losses can occur at any time, checking properties with probability one is decidable when the loss probability is high enough.
+The loss probability $\lambda$ and the weights are part of the input; as finite data they are rational numbers. The source defines them as a real number in $[0,1]$ and positive reals, and its construction gives every transition the same weight (Section 6, which notes that any positive weights would do), so undecidability already holds with all weights equal to $1$. By contrast, in the model of Baier and Engelen, where the next step is a loss with a fixed probability and losses can occur at any time, checking properties with probability one is decidable when the loss probability is high enough.
 
 ## Depends on
 
@@ -21,7 +21,7 @@ None.
 
 ## Expansion
 
-The reduction is from control-state reachability for communicating finite-state machines with one perfect FIFO channel, which is undecidable because the channel can hold a Turing machine tape. The PLCS has a lossy copy of the perfect channel and two further channels. Each send of the perfect machine is simulated by many retransmissions of the message, and each receive by a loop that consumes all copies, so a computation of the perfect machine is simulated faithfully with positive probability. A second protocol restarts the simulation from time to time. Together these give: $s_F$ is reached with probability $1$ iff $s_F$ is reachable in the perfect machine. The perfect-channel reachability problem has no page on main.
+The reduction is from control-state reachability for communicating finite-state machines with one perfect FIFO channel, which is undecidable because the channel can hold a Turing machine tape. The PLCS has a lossy copy of the perfect channel and two further channels. Each send of the perfect machine is simulated by many retransmissions of the message, and each receive by a loop that consumes all copies, so a computation of the perfect machine is simulated faithfully with positive probability. A second protocol restarts the simulation from time to time. Together these give: $s_F$ is reached with probability $1$ iff $s_F$ is reachable in the perfect machine. A good expansion links a page for the undecidability of control-state reachability in channel machines with perfect channels.
 
 ## Sources
 

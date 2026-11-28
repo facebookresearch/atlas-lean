@@ -6,7 +6,7 @@ Weakly synchronous executions of communicating machines proceed in phases in whi
 
 **Theorem (Di Giusto, Ferré, Lozes and Nisse).** The emptiness problem for weakly synchronous point-to-point communicating systems with three processes is undecidable.
 
-The input is promised to be weakly synchronous. Since an MSC is weakly synchronous and causally ordered exactly when it is weakly synchronous and point-to-point, the emptiness problem for weakly synchronous causally ordered systems with three processes is undecidable as well. Three is the threshold: with two machines every point-to-point MSC is also a mailbox MSC and reachability is decidable, as it is for weakly synchronous systems with mailbox communication; undecidability for four or more machines had been shown earlier.
+The input is a system of three finite transition systems over finite sets of processes and messages, and it is promised to be weakly synchronous. An MSC may be empty, so a system in which every process's initial state is its final state has a nonempty language; a machine may also move between states without an action, as the source's runs allow. Since an MSC is weakly synchronous and causally ordered exactly when it is weakly synchronous and point-to-point, the emptiness problem for weakly synchronous causally ordered systems with three processes is undecidable as well. Three is the threshold: with two machines every point-to-point MSC is also a mailbox MSC and reachability is decidable, as it is for weakly synchronous systems with mailbox communication; undecidability for four or more machines had been shown earlier.
 
 ## Depends on
 

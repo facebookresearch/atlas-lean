@@ -18,7 +18,7 @@ The graph is the input. For a finite set of MSCs weak realizability is coNP-comp
 
 ## Expansion
 
-The reduction is from a variant of the Post correspondence problem. Inspecting the standard proof of undecidability of PCP shows that the one-sided version, where one string never overtakes the other, remains undecidable, and a further variant, the relaxed PCP (choose from either list at each index, at least once differently, with the prefix condition), is shown undecidable by a homomorphic encoding (Lemma 2). From an instance one builds a bounded MSC graph with four processes in which an implied but unspecified MSC exists iff the instance has a solution. A good expansion links the undecidability of the one-sided Post correspondence problem and of the relaxed variant (Lemma 2), which have no page on main.
+The reduction is from a variant of the Post correspondence problem. Inspecting the standard proof of undecidability of PCP shows that the one-sided version, where one string never overtakes the other, remains undecidable, and a further variant, the relaxed PCP (choose from either list at each index, at least once differently, with the prefix condition), is shown undecidable by a homomorphic encoding (Lemma 2). From an instance one builds a bounded MSC graph with four processes in which an implied but unspecified MSC exists iff the instance has a solution. A good expansion links the undecidability of the one-sided Post correspondence problem and of the relaxed variant (Lemma 2).
 
 ## Sources
 

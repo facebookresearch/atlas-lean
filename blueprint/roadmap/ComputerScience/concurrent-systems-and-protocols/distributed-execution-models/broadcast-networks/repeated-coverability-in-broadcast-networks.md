@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-The source that states the problem in this form does not reprove its undecidability; it cites Theorem 5.1 of Esparza, Finkel and Mayr, who show that liveness properties of broadcast protocols are undecidable. A good expansion reads that proof, links the undecidable problem it reduces from, which has no page yet, and checks that the cited theorem covers exactly the transition-based formulation above.
+The source that states the problem in this form does not reprove its undecidability; it cites Theorem 5.1 of Esparza, Finkel and Mayr, who show that liveness properties of broadcast protocols are undecidable. A good expansion reads that proof, links the undecidable problem it reduces from and checks that the cited theorem covers exactly the transition-based formulation above.
 
 ## Sources
 
