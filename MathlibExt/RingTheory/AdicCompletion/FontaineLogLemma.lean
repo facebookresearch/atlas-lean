@@ -34,7 +34,7 @@ completion of the values `Σ aₙ βⁿ` with `aₙ ∈ A` (`AdicCompletion.eval
 that `p` and the positive integers `n` are invertible in `P`, with `p^{v_p(n)}/n ∈ A`, that
 `A ∩ I^k = ξ^k A`, that `⋂_k (p^k A + ξ^m A) = ξ^m A`, and that `ξ` is a non-zero-divisor of the
 completion. Then for every nonzero `a ∈ S`, `a · log(1 - β) ∉ S`, where
-`log(1 - β) = -Σ_{n ≥ 1} βⁿ/n` (`AdicCompletion.mul_evalPowerSeries_logOneSubSeries_not_mem`).
+`log(1 - β) = -Σ_{n ≥ 1} βⁿ/n` (`AdicCompletion.mul_evalPowerSeries_logOneSubSeries_notMem`).
 
 The series `log(1 - X)` is written over `P` with given inverses of the positive integers
 (`AdicCompletion.logOneSubSeries`), as `P` is not assumed to be a `ℚ`-algebra; when these inverses
@@ -155,18 +155,20 @@ private theorem exists_evalₐ_natCast_pow_mul {β : P} (hβI : β ∈ I) (ξ : 
     ← map_natCast (Ideal.Quotient.mk (I ^ m)), ← map_pow, ← map_mul,
     natCast_pow_mul_eval_trunc A p ξ hpβ f m]
 
-/-- **`A⟦β⟧` is `p`-adically separated** if `p` is invertible in `P`, `p β = ξ` with `ξ ∈ A`, the
-preimage of `I^k` in `A` is `ξ^k A` for every `k`, and `⋂_k (p^k A + ξ^m A) = ξ^m A` for every
-`m`: an element of the completion that lies in `p^k A⟦β⟧` for every `k` is zero. -/
+/-- **`A⟦β⟧` is `p`-adically separated**: let `A` be a commutative ring, `P` a commutative
+`A`-algebra, `I` an ideal of `P`, `p` a natural number with `p · pinv = 1` in `P`, and `β ∈ I`
+with `p β = ξ` for some `ξ ∈ A`. Assume that, for every `k`, every `a ∈ A` whose image lies in
+`I^k` lies in `ξ^k A`, and that `⋂_k (p^k A + ξ^m A) = ξ^m A` for every `m`. Then an element `x`
+of the completion such that, for every `k`, `x = p^k y` for some `y ∈ A⟦β⟧`, is zero. -/
 theorem eq_zero_of_forall_mem_pow_mul {β : P} (hβI : β ∈ I) (ξ : A) {pinv : P}
     (hpβ : (p : P) * β = algebraMap A P ξ) (hpinv : (p : P) * pinv = 1)
-    (hξI : algebraMap A P ξ ∈ I)
     (hξpow : ∀ (k : ℕ) (a : A), algebraMap A P a ∈ I ^ k → a ∈ Ideal.span {ξ ^ k})
     (hsepA : ∀ (m : ℕ) (w : A), (∀ k : ℕ, ∃ a b : A, w = (p : A) ^ k * a + ξ ^ m * b) →
       w ∈ Ideal.span {ξ ^ m})
     (x : AdicCompletion I P)
     (h : ∀ k : ℕ, ∃ y ∈ evalPowerSeriesRange A I hβI, x = (p : AdicCompletion I P) ^ k * y) :
     x = 0 := by
+  have hξI : algebraMap A P ξ ∈ I := hpβ ▸ I.mul_mem_left (p : P) hβI
   refine ext_evalₐ fun m => ?_
   rw [map_zero]
   choose y hy hxy using h
@@ -365,15 +367,17 @@ private theorem exists_C_pow_mul_logOneSubSeries_eq [Fact p.Prime] {pinv : P}
           hw n h0 hndvd, mul_zero, sub_zero, add_zero]
         ring
 
-/-- **Fontaine's lemma, abstract form**: let `p` be a prime and `β ∈ I` with `p β = ξ ∈ A`. Assume
-that `p` and the positive integers `n` are invertible in `P`, with `inv n = 1/n` and
-`p^{v_p(n)}/n ∈ A`, that the preimage of `I^k` in `A` is `ξ^k A` for every `k`, that
-`⋂_k (p^k A + ξ^m A) = ξ^m A` for every `m`, and that `ξ` is a non-zero-divisor of the
-completion. Then `a · log(1 - β) ∉ A⟦β⟧` for every nonzero `a ∈ A⟦β⟧`, where
-`log(1 - β) = -Σ_{n ≥ 1} βⁿ/n`. -/
-theorem mul_evalPowerSeries_logOneSubSeries_not_mem [Fact p.Prime] {β : P} (hβI : β ∈ I) (ξ : A)
+/-- **Fontaine's lemma, abstract form**: let `A` be a commutative ring, `P` a commutative
+`A`-algebra, `I` an ideal of `P`, `p` a prime with `p · pinv = 1` in `P`, and `β ∈ I` with
+`p β = ξ` for some `ξ ∈ A`. Let `inv n ∈ P` satisfy `n · inv n = 1` for every `n ≠ 0`. Assume
+that `p^{v_p(n)}/n ∈ A` for every `n ≠ 0` (the image of some `w ∈ A`, times `n`, is `p^{v_p(n)}`
+in `P`), that, for every `k`, every `a ∈ A` whose image lies in `I^k` lies in `ξ^k A`, that
+`⋂_k (p^k A + ξ^m A) = ξ^m A` for every `m`, and that `ξ` is a non-zero-divisor of the completion.
+Then `a · log(1 - β) ∉ A⟦β⟧` for every nonzero `a ∈ A⟦β⟧`, where `log(1 - β) = -Σ_{n ≥ 1} βⁿ/n`
+is the value at `β` of `logOneSubSeries inv`. -/
+theorem mul_evalPowerSeries_logOneSubSeries_notMem [Fact p.Prime] {β : P} (hβI : β ∈ I) (ξ : A)
     {pinv : P} (hpβ : (p : P) * β = algebraMap A P ξ) (hpinv : (p : P) * pinv = 1)
-    (hξI : algebraMap A P ξ ∈ I) (inv : ℕ → P) (hinv : ∀ n : ℕ, n ≠ 0 → (n : P) * inv n = 1)
+    (inv : ℕ → P) (hinv : ∀ n : ℕ, n ≠ 0 → (n : P) * inv n = 1)
     (hint : ∀ n : ℕ, n ≠ 0 → ∃ w : A, algebraMap A P w * (n : P) = (p : P) ^ padicValNat p n)
     (hξpow : ∀ (k : ℕ) (a : A), algebraMap A P a ∈ I ^ k → a ∈ Ideal.span {ξ ^ k})
     (hsepA : ∀ (m : ℕ) (w : A), (∀ k : ℕ, ∃ a b : A, w = (p : A) ^ k * a + ξ ^ m * b) →
@@ -426,7 +430,7 @@ theorem mul_evalPowerSeries_logOneSubSeries_not_mem [Fact p.Prime] {β : P} (hβ
   -- Step 1: `a = p^r a'` with `a' ∉ p A⟦β⟧`.
   have hex : ∃ k : ℕ, ¬ ∃ y ∈ S, a = (p : AdicCompletion I P) ^ k * y := by
     by_contra hc
-    exact ha0 (eq_zero_of_forall_mem_pow_mul A I p hβI ξ hpβ hpinv hξI hξpow hsepA a
+    exact ha0 (eq_zero_of_forall_mem_pow_mul A I p hβI ξ hpβ hpinv hξpow hsepA a
       fun k => not_not.mp (not_exists.mp hc k))
   have hK0 : Nat.find hex ≠ 0 := by
     intro h0

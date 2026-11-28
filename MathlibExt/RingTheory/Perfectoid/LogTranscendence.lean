@@ -34,7 +34,7 @@ chosen element of the tilt of `𝓞_ℂ_[p]` with `p̃♯ = p`. We prove:
   (`PadicComplexInt.mul_algebraMap_logPTilde_ne`): there are no `a ≠ 0` and `b` in `B_max` with
   `a u = b`. Following Fontaine's proof (§4.3.2), every element of `B_max` is a quotient of two
   elements of `A_max ⊆ S = W(𝓞_ℂ_[p]♭)⟦ξ/p⟧`, and `a u ∉ S` for every nonzero `a ∈ S`
-  (`AdicCompletion.mul_evalPowerSeries_logOneSubSeries_not_mem`).
+  (`AdicCompletion.mul_evalPowerSeries_logOneSubSeries_notMem`).
 * **The transcendence of `log [p̃]`**: `u` is transcendental over `B_max`
   (`PadicComplexInt.transcendental_logPTilde`), equivalently the evaluation
   `B_max[X] → B_dR`, `X ↦ log [p̃]`, is injective (`PadicComplexInt.aeval_logPTilde_injective`).
@@ -348,9 +348,8 @@ theorem mul_algebraMap_logPTilde_ne {a b : 𝔹} (ha : a ∈ bMax p) (hb : b ∈
     rw [hrel]
     exact mem_evalPowerSeriesRange_of_mem_aMax p (mul_mem hy2 hz1)
   rw [logPTilde_eq_evalPowerSeries] at hmem
-  exact AdicCompletion.mul_evalPowerSeries_logOneSubSeries_not_mem 𝔸 𝕀 p (xiDivP_mem_ker p)
+  exact AdicCompletion.mul_evalPowerSeries_logOneSubSeries_notMem 𝔸 𝕀 p (xiDivP_mem_ker p)
     (xi p) (natCast_mul_xiDivP p) (natCast_mul_algebraMap_inv p hp.out.ne_zero)
-    (algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_xi p))
     (fun n => algebraMap ℚ_[p] 𝔸ₚ (n : ℚ_[p])⁻¹) (fun _ hn => natCast_mul_algebraMap_inv p hn)
     (exists_algebraMap_mul_natCast_eq p)
     (fun k a h => mem_span_xi_pow_of_algebraMap_mem p k a
