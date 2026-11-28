@@ -7,7 +7,6 @@ Infinite groups defined by torsion and finiteness conditions: Burnside problems 
 - [Embeddings into simple periodic groups](embeddings-into-simple-periodic-groups/README.md)
 - [Finiteness conditions in periodic groups](finiteness-conditions-in-periodic-groups/README.md)
 - [Free Burnside groups](free-burnside-groups/README.md)
-- [Generalized periodic elements](generalized-periodic-elements/README.md)
 - [Golod groups](golod-groups/README.md)
 - [Groups of exponent 4](groups-of-exponent-4/README.md)
 - [Higman embedding in Burnside varieties](higman-embedding-in-burnside-varieties/README.md)

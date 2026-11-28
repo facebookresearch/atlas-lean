@@ -9,7 +9,6 @@ Combinatorial group theory: presentations, one-relator groups, HNN extensions an
 - [Coherence of one-relator groups](coherence-of-one-relator-groups/README.md)
 - [Decision problems in free abelianized extensions](decision-problems-in-free-abelianized-extensions/README.md)
 - [Finite quotients of one-relator groups](finite-quotients-of-one-relator-groups/README.md)
-- [Finitely generated divisible groups](finitely-generated-divisible-groups/README.md)
 - [Finitely presented soluble groups](finitely-presented-soluble-groups/README.md)
 - [Free subgroups of one-relator groups](free-subgroups-of-one-relator-groups/README.md)
 - [Generators, relations and presentations of groups](generators-relations-and-presentations-of-groups/README.md)
