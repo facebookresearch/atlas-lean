@@ -12,7 +12,11 @@ The *resident type* $\varrho(t)$ is the index attaining $v^*$ at the last reside
 
 1. *(Continued-lines representation.)* Let $\ell_0 \equiv 1$ and, recursively, let $\ell_{k+1}$ be the half-line starting at $(t_{k+1}, \ell^r_k(t_{k+1}) - 1)$ with slope $(\ell^r_k)'(t_{k+1}) + a_{k+1}$, where $\ell^r_k = \max(\ell_0, \dots, \ell_k)$; let $\ell^r$ be the convex upper envelope. For non-degenerate $\beth$, $h_i(s) = \ell_i(s) - \ell^r(s) + 1$ from $t_i$ until this quantity first hits $0$, and $h_i = 0$ otherwise. This identifies the resident change times from the envelope $\ell^r$.
 2. *(Complexity.)* Simulating the trajectories directly can require $\Omega(n^2)$ slope updates: there are inputs with $n(n+1)$ slope changes at resident change times. Nevertheless, computing $t \mapsto \varrho(t)$ for any finite, non-degenerate, ordered $\beth$ of size $n$ has algorithmic complexity $\Theta(n)$. If all initial slopes lie in $\{1, \dots, k\}$, all slope functions $t \mapsto v_i(t)$ can be computed in time $O(kn)$.
-3. *(Poissonian input.)* For Poissonian birth times with random slopes, the expected number of slope changes at resident change times up to time $t$ is $O(t)$, and its growth rate converges almost surely to a ratio of expectations over the renewal cycles between successive *renewal extinction times* (times when a new resident is the only clone of positive height).
+3. *(Poissonian input.)* Consider the system of Poissonian interacting trajectories $\mathrm{PIT}(\lambda,\gamma)$: the birth times $T_1 < T_2 < \cdots$ are the arrival times of a Poisson process of intensity $\lambda > 0$ (so, with $T_0 = 0$, the gaps $T_i - T_{i-1}$ are i.i.d. exponential with parameter $\lambda$), and the initial slopes $A_1, A_2, \dots$ are i.i.d. strictly positive random variables with common law $\gamma$ on $(0,\infty)$, independent of the birth times. For this input, the expected number $\mathbb E(K_t)$ of slope changes at resident change times up to time $t$ is $O(t)$, and $K_t/t$ converges almost surely to $\mathbb E(K_{E_1})/\mathbb E(E_1) \in (0,\infty)$, for every choice of $\gamma$, where $E_1$ is the first *renewal extinction time* (a time when a new resident is the only clone of positive height) and successive renewal extinction times delimit i.i.d. cycles.
+
+## Depends on
+
+- [Poisson process](../../../../Probability/point-processes/poisson-processes/is-poisson-process.md)
 
 ## Expansion
 

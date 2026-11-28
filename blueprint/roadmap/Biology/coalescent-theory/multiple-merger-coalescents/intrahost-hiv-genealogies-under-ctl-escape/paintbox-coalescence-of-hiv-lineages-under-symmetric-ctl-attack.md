@@ -4,7 +4,11 @@
 
 $$\frac{dh}{dt} = g\Big(1 - h - \sum_{v'}e_{v'}h\Big), \qquad de_v = \frac1{\mathbb E}\Big(dP(\gamma\mathbb E e_vh) - dP(k_v\mathbb E e_v) + \sum_{v'\in\mathcal P(v)}dP(\mu\gamma\mathbb E e_{v'}h)\Big),$$
 
-where the $dP(\cdot)$ are independent Poisson increments with the indicated rates, $\gamma$ is the infection rate, $\mu$ the per-infection mutation probability and $\mathcal P(v)$ the parents of $v$ (variants one escape away). The **small population limit** (SPL) is $\mathbb E\to\infty$, $\mu\to0$ with $\mu\mathbb E\to\infty$ and $\mu^3\mathbb E^2\to0$. Sample $n$ infected cells after full escape and let $\Pi(0)$ be the partition of the sample induced by common ancestry at time $0$.
+where the $dP(\cdot)$ are independent Poisson increments with the indicated rates, $\gamma$ is the infection rate, $\mu$ the per-infection mutation probability and $\mathcal P(v)$ the parents of $v$ (variants one escape away). The **small population limit** (SPL) is $\mathbb E\to\infty$, $\mu\to0$ with $\mu\mathbb E\to\infty$ and $\mu^3\mathbb E^2\to0$. CTL attack starts at time $0$ from the source's initial state (Eq. (13) of the arXiv version and the paragraph after it, Section 2): the unescaped variant $v_0 = 0\cdots0$ dominates at the equilibrium of the escape-free dynamics,
+
+$$h(0) = \frac1\gamma, \qquad e_{v_0}(0) = \frac{1 - h(0)}{h(0)},$$
+
+each one-escape variant $v\in\mathcal E_1$ starts at $e_v(0) = \mu\mathbb E$ (the source's mutation-selection value), and no variant with two or more escapes is present ($e_v(0) = 0$ for $v\in\mathcal E_i$, $i\ge2$). Sample $n$ infected cells after full escape and let $\Pi(0)$ be the partition of the sample induced by common ancestry at time $0$.
 
 **Paintbox.** For $i = 0,\dots,\mathbf e - 2$ let $\Gamma^{(i)} = e^{2W_1}W_2\,B\big(2\Delta k/k_i\big)$, with $W_1, W_2$ independent standard exponentials and $B(p)$ an independent Bernoulli$(p)$ variable. Given $A > 0$, define the random partition $\Xi_{A,i}$ of a set $S$: draw $K\sim\mathrm{Poisson}(A)$ and i.i.d. weights $\Gamma_1,\dots,\Gamma_K\sim\Gamma^{(i)}$, paint each element of $S$ independently with color $j$ with probability $\Gamma_j/\sum_{j'}\Gamma_{j'}$, and group elements of the same color.
 
