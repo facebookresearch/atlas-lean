@@ -19,3 +19,6 @@
 - [Steady-state sensitivity of stochastic reaction networks](steady-state-sensitivity-of-stochastic-reaction-networks/README.md)
 - [Stochastic bistability in reaction networks](stochastic-bistability-in-reaction-networks/README.md)
 - [Stochastic first-passage, immune dynamics, and weak-form estimation](stochastic-and-inverse-systems-biology/README.md)
+- [Boundary-induced power-law slow mixing of stochastic reaction networks](boundary-induced-power-law-slow-mixing.md)
+- [Conditional stationary distribution after eliminating non-interacting species](conditional-stationary-distribution-after-eliminating-non-interacting-species.md)
+- [Limit of complex balanced distributions under fast-degradation scaling](limit-of-complex-balanced-distributions-under-fast-degradation-scaling.md)

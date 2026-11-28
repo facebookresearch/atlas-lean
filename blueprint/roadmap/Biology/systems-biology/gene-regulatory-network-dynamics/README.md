@@ -16,3 +16,4 @@
 - [Steady states of sigmoidal ODEs and multistate networks](steady-states-of-sigmoidal-odes-and-multistate-networks/README.md)
 - [Time-series model rejection for regulatory networks](time-series-model-rejection-for-regulatory-networks/README.md)
 - [Wagner model of transcriptional network development](wagner-model-of-transcriptional-network-development/README.md)
+- [Exact thinning simulation of the bursty PDMP gene network model](exact-thinning-simulation-of-the-bursty-pdmp-gene-network-model.md)

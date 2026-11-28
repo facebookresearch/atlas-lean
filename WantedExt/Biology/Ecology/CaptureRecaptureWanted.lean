@@ -55,20 +55,6 @@ public theorem_wanted card_filter_inter_eq {N n₁ n₂ : ℕ} (A : Finset (Fin 
     (((Finset.univ : Finset (Fin N)).powersetCard n₂).filter fun S => (S ∩ A).card = k).card /
         (N.choose n₂ : ℝ) = hypergeometricReal N n₁ n₂ k
 
-/-- **Exact unbiasedness and strict bias of Chapman's estimate.** For
-`n₁ ≤ N` and `n₂ ≤ N`, with `m` hypergeometric: if `n₁ + n₂ ≥ N` then
-`E[(n₁ + 1)(n₂ + 1)/(m + 1) - 1] = N`, and if `n₁ + n₂ < N` then this expectation is strictly less
-than `N`.
-
-Sources: D. G. Chapman, "Some properties of the hypergeometric distribution with applications to
-zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160; the closed form is
-derived. -/
-public theorem_wanted chapman_unbiased_iff {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤ N) (hn₂ : n₂ ≤ N) :
-    (N ≤ n₁ + n₂ →
-        ∑ k ∈ Finset.range (n₂ + 1), hypergeometricReal N n₁ n₂ k * chapman n₁ n₂ k = N) ∧
-      (n₁ + n₂ < N →
-        ∑ k ∈ Finset.range (n₂ + 1), hypergeometricReal N n₁ n₂ k * chapman n₁ n₂ k < N)
-
 /-- **When the Lincoln–Petersen estimate is undefined.** For `n₁ ≤ N` and
 `n₂ ≤ N`, the probability `P(m = 0)` that the second sample contains no marked animal, where the
 Lincoln–Petersen estimate `n₁ n₂ / m` is infinite, is positive if and only if `n₁ + n₂ ≤ N`.
