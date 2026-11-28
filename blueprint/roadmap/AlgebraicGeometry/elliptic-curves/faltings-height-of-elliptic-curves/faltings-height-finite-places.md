@@ -42,7 +42,7 @@ $\mathfrak{p}$ gives $\log \prod_\mathfrak{p} \#(\mathcal{O}_L/\mathfrak{p})^{v_
 
 ## Proof depends on
 
-- [Néron model of an abelian variety over the ring of integers of a number field](../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
+- [Néron model of an abelian variety over the ring of integers of a number field](../../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
   item 2, for the localization of $\mathcal{E}$ at $\mathfrak{p}$
 - [Minimal Weierstrass models and the identity component of the Néron model](minimal-weierstrass-model-and-neron-model.md),
   item 3, for the generator $\alpha_\mathfrak{p}$

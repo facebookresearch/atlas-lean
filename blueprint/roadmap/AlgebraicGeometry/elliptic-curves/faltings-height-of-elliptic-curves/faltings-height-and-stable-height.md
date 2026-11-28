@@ -4,9 +4,9 @@ Let $L$ be a number field with ring of integers $\mathcal{O}_L$, let $E$ be an e
 let $h_{\mathrm{Fal}}(E/L)$ be its
 [Faltings height over $L$](faltings-height-over-the-field-of-definition.md), computed with the Néron
 model of $E$ over $\mathcal{O}_L$, and let $h_F(E)$ be its
-[stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md). Say that $E$ has
+[stable Faltings height](../../abelian-varieties/stable-faltings-height/faltings-height.md). Say that $E$ has
 semistable reduction at a maximal ideal $\mathfrak{p}$ of $\mathcal{O}_L$ if it has
-[semistable reduction](../abelian-varieties/semistable-reduction-theorem.md) over the local ring
+[semistable reduction](../../abelian-varieties/semistable-reduction-theorem.md) over the local ring
 $\mathcal{O}_{L,\mathfrak{p}}$, and semistable reduction everywhere if it does at every $\mathfrak{p}$.
 
 **Theorem** (Deligne, p. 27, for abelian varieties; here in dimension one).
@@ -26,22 +26,22 @@ the same constant $\frac{g}{2} \log \pi$.
 
 - [Faltings height of an elliptic curve over its field of definition](faltings-height-over-the-field-of-definition.md),
   for $h_{\mathrm{Fal}}(E/L)$
-- [Stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md), for $h_F(E)$
-- [Semistable reduction theorem for abelian varieties](../abelian-varieties/semistable-reduction-theorem.md),
+- [Stable Faltings height](../../abelian-varieties/stable-faltings-height/faltings-height.md), for $h_F(E)$
+- [Semistable reduction theorem for abelian varieties](../../abelian-varieties/semistable-reduction-theorem.md),
   for semistable reduction over a discrete valuation ring
 
 ## Proof depends on
 
-- [Néron model of an abelian variety](../abelian-varieties/neron-model.md), for the Néron mapping
+- [Néron model of an abelian variety](../../abelian-varieties/neron-model.md), for the Néron mapping
   property, which gives the morphism from the base change of the Néron model over $\mathcal{O}_L$ to
   the Néron model over $\mathcal{O}_{L'}$
-- [Néron model of an abelian variety over the ring of integers of a number field](../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
+- [Néron model of an abelian variety over the ring of integers of a number field](../../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
   for good reduction outside finitely many maximal ideals and the localization of the Néron model
-- [Semistable reduction theorem for abelian varieties](../abelian-varieties/semistable-reduction-theorem.md),
+- [Semistable reduction theorem for abelian varieties](../../abelian-varieties/semistable-reduction-theorem.md),
   for semistable reduction after a finite extension at each of the finitely many remaining maximal
   ideals, and for the identity component of a semistable Néron model commuting with finite
   extensions
-- [The stable Faltings height is invariant under finite extension](../abelian-varieties/stable-faltings-height/faltings-height-field-base-change.md),
+- [The stable Faltings height is invariant under finite extension](../../abelian-varieties/stable-faltings-height/faltings-height-field-base-change.md),
   for the independence of $h_F(E)$ from the extension
 
 ## Expansion

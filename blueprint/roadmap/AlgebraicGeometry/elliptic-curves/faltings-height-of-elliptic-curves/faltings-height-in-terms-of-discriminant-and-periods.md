@@ -3,8 +3,8 @@
 Let $L$ be a number field with ring of integers $\mathcal{O}_L$, let $E$ be an elliptic curve over $L$,
 let $h_{\mathrm{Fal}}(E/L)$ be its
 [Faltings height over $L$](faltings-height-over-the-field-of-definition.md), computed with the
-[finite-type Néron model](../not-yet-classified/neron-models/finite-type-neron-model.md) of $E$ over $\mathcal{O}_L$, with its
-[group structure](../not-yet-classified/neron-models/group-structure.md), and the metrics $\frac{i}{2} \int s \wedge \bar s$, and let
+[finite-type Néron model](../../not-yet-classified/neron-models/finite-type-neron-model.md) of $E$ over $\mathcal{O}_L$, with its
+[group structure](../../not-yet-classified/neron-models/group-structure.md), and the metrics $\frac{i}{2} \int s \wedge \bar s$, and let
 $\Delta_{E/L} \subseteq \mathcal{O}_L$ be its [minimal discriminant](minimal-discriminant.md). For
 $\tau$ in the upper half-plane $\mathbb{H}$ let
 
@@ -12,7 +12,7 @@ $$\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2 = (2\pi)^{12} \eta(\tau)^{24}
   = (2\pi)^{12} \, q \prod_{n \ge 1} (1 - q^n)^{24}, \qquad q = e^{2\pi i \tau},$$
 
 the discriminant of the lattice $\mathbb{Z} + \mathbb{Z}\tau$, with the second equality
-[Jacobi's product formula](../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md).
+[Jacobi's product formula](../../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md).
 For each embedding $\sigma : L \to \mathbb{C}$ choose $\tau_\sigma \in \mathbb{H}$ with
 $E_\sigma(\mathbb{C}) \cong \mathbb{C}/(\mathbb{Z} + \mathbb{Z}\tau_\sigma)$ as complex Lie groups, which
 the [complex uniformization](complex-uniformization.md) provides.
@@ -29,7 +29,7 @@ $h_{\mathrm{Fal}}(E/L) = \frac{\log N_{L/\mathbb{Q}}(\Delta_{E/L})}{12 [L : \mat
 - \frac{1}{12 [L : \mathbb{Q}]} \sum_{\sigma} \log \bigl( |\eta(\tau_\sigma)|^{24} (\operatorname{Im} \tau_\sigma)^6 \bigr)$.
 No semistability hypothesis is made. The choices of $\tau_\sigma$ differ by elements of
 $\mathrm{SL}_2(\mathbb{Z})$, under which
-[$|\Delta(\tau)| (\operatorname{Im} \tau)^6$ is invariant](../../NumberTheory/modular-forms-q-series/modular-forms/modular-group-and-congruence-subgroups/discriminant-im-pow-six-invariant.md),
+[$|\Delta(\tau)| (\operatorname{Im} \tau)^6$ is invariant](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-group-and-congruence-subgroups/discriminant-im-pow-six-invariant.md),
 so the right-hand side does not depend on them.
 
 *Proof* (Silverman, pp. 254–256). Let $\beta_E = \Delta_W \, \omega_W^{\otimes 12}$ be the element
@@ -57,18 +57,18 @@ The theorem computes the height over $L$, not the stable height; the two are com
 
 - [Faltings height of an elliptic curve over its field of definition](faltings-height-over-the-field-of-definition.md),
   for $h_{\mathrm{Fal}}(E/L)$
-- [Finite-type Néron model](../not-yet-classified/neron-models/finite-type-neron-model.md), over
+- [Finite-type Néron model](../../not-yet-classified/neron-models/finite-type-neron-model.md), over
   $\mathcal{O}_L$ and its fraction field $L$, for the Néron model $\mathcal{E}$ through which
   $h_{\mathrm{Fal}}(E/L)$ is defined
-- [Group structure on a Néron model](../not-yet-classified/neron-models/group-structure.md), for the
+- [Group structure on a Néron model](../../not-yet-classified/neron-models/group-structure.md), for the
   group law of $\mathcal{E}$ and its zero section $\varepsilon$
 - [Minimal discriminant of an elliptic curve over a number field](minimal-discriminant.md), for
   $\Delta_{E/L}$
-- [Jacobi's product formula for the discriminant of a lattice](../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md),
+- [Jacobi's product formula for the discriminant of a lattice](../../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md),
   for $\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2 = (2\pi)^{12} \eta(\tau)^{24}$
 - [Complex uniformization of elliptic curves](complex-uniformization.md), for the existence of the
   $\tau_\sigma$ and for items 3 and 4, by which they differ by elements of $\mathrm{SL}_2(\mathbb{Z})$
-- [Invariance of $|\Delta(\tau)| (\operatorname{Im} \tau)^6$ under the modular group](../../NumberTheory/modular-forms-q-series/modular-forms/modular-group-and-congruence-subgroups/discriminant-im-pow-six-invariant.md),
+- [Invariance of $|\Delta(\tau)| (\operatorname{Im} \tau)^6$ under the modular group](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-group-and-congruence-subgroups/discriminant-im-pow-six-invariant.md),
   for the independence of the right-hand side from the $\tau_\sigma$
 
 ## Proof depends on

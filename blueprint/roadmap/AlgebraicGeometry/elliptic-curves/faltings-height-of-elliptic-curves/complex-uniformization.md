@@ -10,7 +10,7 @@ g_3(\Lambda) = 140 \sum_{\lambda \in \Lambda \setminus \{0\}} \frac{1}{\lambda^6
 and $E_\Lambda$ is the curve $Y^2 = 4X^3 - g_2(\Lambda) X - g_3(\Lambda)$ over $\mathbb{C}$. For
 $\tau$ in the upper half-plane $\mathbb{H}$ write $\Lambda_\tau = \mathbb{Z} + \mathbb{Z}\tau$; then
 $g_2(\Lambda_\tau)$ and $g_3(\Lambda_\tau)$ are the $g_2(\tau)$ and $g_3(\tau)$ of
-[Jacobi's product formula](../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md),
+[Jacobi's product formula](../../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md),
 and $\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2$.
 
 **Theorem.**
@@ -26,7 +26,7 @@ and $\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2$.
 3. For lattices $\Lambda$ and $\Lambda'$, the curves $E_\Lambda$ and $E_{\Lambda'}$ are isomorphic if
    and only if $\mathbb{C}/\Lambda$ and $\mathbb{C}/\Lambda'$ are isomorphic as complex Lie groups, if
    and only if $\Lambda$ and $\Lambda'$ are
-   [homothetic](../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md),
+   [homothetic](../../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md),
    if and only if $j(\Lambda) = j(\Lambda')$, where $j(\Lambda) = 1728\, g_2(\Lambda)^3 / \Delta(\Lambda)$
    is the $j$-invariant of $E_\Lambda$.
 4. For $\tau, \tau' \in \mathbb{H}$, $\Lambda_\tau$ and $\Lambda_{\tau'}$ are homothetic if and only if
@@ -35,9 +35,9 @@ and $\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2$.
 
 ## Depends on
 
-- [Homothetic period pairs](../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md),
+- [Homothetic period pairs](../../../Analysis/special-functions/elliptic-functions/homothetic-complex-period-lattices/is-homothetic.md),
   for homothety of lattices
-- [Jacobi's product formula for the discriminant of a lattice](../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md),
+- [Jacobi's product formula for the discriminant of a lattice](../../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md),
   for $g_2(\tau)$, $g_3(\tau)$ and $\Delta(\tau)$
 
 ## Expansion
@@ -45,8 +45,8 @@ and $\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2$.
 This node is still to be broken down. A good expansion states and links:
 
 - the convergence of the series for $\wp$, its periodicity, evenness and double poles at the points of
-  $\Lambda$, and the [elliptic functions](../../Analysis/special-functions/elliptic-functions/is-elliptic-function.md)
-  and [elliptic orders](../../Analysis/special-functions/elliptic-functions/pole-sets-and-elliptic-order-of-meromorphic-elli/README.md)
+  $\Lambda$, and the [elliptic functions](../../../Analysis/special-functions/elliptic-functions/is-elliptic-function.md)
+  and [elliptic orders](../../../Analysis/special-functions/elliptic-functions/pole-sets-and-elliptic-order-of-meromorphic-elli/README.md)
   that show that $\wp$ takes each value twice on $\mathbb{C}/\Lambda$, counted with multiplicity;
 - the Laurent expansion of $\wp$ at $0$ and the differential equation
   $\wp'^2 = 4\wp^3 - g_2 \wp - g_3$;

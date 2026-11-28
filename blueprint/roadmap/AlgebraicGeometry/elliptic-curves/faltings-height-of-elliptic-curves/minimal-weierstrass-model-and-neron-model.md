@@ -9,7 +9,7 @@ be a Weierstrass equation of $E$ that is minimal: the valuation of its discrimin
 least among the Weierstrass equations of $E$ with coefficients in $R$. Let
 $\mathcal{W} \subset \mathbb{P}^2_R$ be the closed subscheme defined by the homogenized equation,
 $\mathcal{W}^{\mathrm{sm}}$ its open subscheme of points at which $\mathcal{W}$ is smooth over $R$,
-$\mathcal{E}$ the [Néron model](../abelian-varieties/neron-model.md) of $E$ over $R$, with zero section
+$\mathcal{E}$ the [Néron model](../../abelian-varieties/neron-model.md) of $E$ over $R$, with zero section
 $\varepsilon$, and $\mathcal{E}^0$ the open subgroup scheme of $\mathcal{E}$ obtained by removing the
 non-identity components of its special fibre.
 
@@ -28,14 +28,14 @@ non-identity components of its special fibre.
 
 ## Depends on
 
-- [Néron model of an abelian variety](../abelian-varieties/neron-model.md), for the Néron model
+- [Néron model of an abelian variety](../../abelian-varieties/neron-model.md), for the Néron model
   $\mathcal{E}$, its mapping property and good reduction
 - [The invariant differential of a Weierstrass equation](invariant-differential-of-a-weierstrass-equation.md),
   for $\omega_W$
 
 ## Proof depends on
 
-- [Néron model of an abelian variety](../abelian-varieties/neron-model.md), for the existence of
+- [Néron model of an abelian variety](../../abelian-varieties/neron-model.md), for the existence of
   $\mathcal{E}$ and its mapping property, which gives the morphism of item 1
 - [The invariant differential of a Weierstrass equation](invariant-differential-of-a-weierstrass-equation.md),
   for the invariant differential of $W$ and its behaviour under variable changes

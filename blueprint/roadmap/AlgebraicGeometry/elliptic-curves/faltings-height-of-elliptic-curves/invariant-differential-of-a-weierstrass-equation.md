@@ -24,12 +24,12 @@ $(2y + a_1 x + a_3)\,dy = (3x^2 + 2a_2 x + a_4 - a_1 y)\,dx$.
 
 ## Depends on
 
-- [Variable changes transform the Weierstrass equation](weierstrass-curves/equation-map-affine-coordinates-iff.md),
+- [Variable changes transform the Weierstrass equation](../weierstrass-curves/equation-map-affine-coordinates-iff.md),
   for the variable changes between Weierstrass equations
 
 ## Proof depends on
 
-- [Variable changes transform the Weierstrass equation](weierstrass-curves/equation-map-affine-coordinates-iff.md),
+- [Variable changes transform the Weierstrass equation](../weierstrass-curves/equation-map-affine-coordinates-iff.md),
   for the substitution behind item 2: $dx = u^2 dx'$ and $2y + a_1 x + a_3 = u^3 (2y' + a'_1 x' + a'_3)$
 
 ## Expansion

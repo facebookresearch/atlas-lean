@@ -13,7 +13,7 @@ $H^0(E_\sigma, \Omega^1)^{\otimes 12}$, and, by the
 of $E_\sigma$ with the curve $Y^2 = 4X^3 - g_2(\tau) X - g_3(\tau)$; identify $E_\sigma(\mathbb{C})$
 with $\mathbb{C}/(\mathbb{Z} + \mathbb{Z}\tau)$ through it and $z \mapsto (\wp(z), \wp'(z))$. Let
 $\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2$ as in
-[Jacobi's product formula](../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md).
+[Jacobi's product formula](../../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md).
 
 **Theorem.** On $\mathbb{C}/(\mathbb{Z} + \mathbb{Z}\tau)$, $\beta_\sigma = \Delta(\tau) \, (dz)^{\otimes 12}$.
 For every $\alpha \in H^0(E_\sigma, \Omega^1)$ with $\alpha^{\otimes 12} = \beta_\sigma$, such as
@@ -46,7 +46,7 @@ $\| \alpha \|_\sigma^2 = \frac{i}{2} \int \alpha \wedge \bar\alpha$.
   for $\beta_E$
 - [Complex uniformization of elliptic curves](complex-uniformization.md), for $\tau$, the
   isomorphism and the parametrization by $\wp$
-- [Jacobi's product formula for the discriminant of a lattice](../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md),
+- [Jacobi's product formula for the discriminant of a lattice](../../../NumberTheory/modular-forms-q-series/modular-forms/lattice-discriminant-eta-product.md),
   for $g_2(\tau)$, $g_3(\tau)$ and $\Delta(\tau)$
 
 ## Proof depends on
@@ -55,7 +55,7 @@ $\| \alpha \|_\sigma^2 = \frac{i}{2} \int \alpha \wedge \bar\alpha$.
   item 3, for the independence of $\beta$ from the Weierstrass equation
 - [Complex uniformization of elliptic curves](complex-uniformization.md), item 1, for the pullback of
   $dX/Y$ to $dz$
-- [Area of a fundamental parallelogram](../../Analysis/special-functions/elliptic-functions/fundamental-parallelograms-of-complex-lattices/area-of-fundamental-parallelogram.md),
+- [Area of a fundamental parallelogram](../../../Analysis/special-functions/elliptic-functions/fundamental-parallelograms-of-complex-lattices/area-of-fundamental-parallelogram.md),
   for the area $\operatorname{Im} \tau$ and the reduction of the integral over
   $\mathbb{C}/(\mathbb{Z} + \mathbb{Z}\tau)$ to one over a fundamental parallelogram
 

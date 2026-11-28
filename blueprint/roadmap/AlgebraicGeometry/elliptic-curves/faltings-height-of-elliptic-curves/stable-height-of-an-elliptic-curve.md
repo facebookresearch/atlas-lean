@@ -1,7 +1,7 @@
 # Deligne's formula for the stable Faltings height of an elliptic curve
 
 Let $k$ be a number field and $E$ an elliptic curve over $k$ with $j$-invariant $j \in k$. Let
-$h_F(E)$ be its [stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md),
+$h_F(E)$ be its [stable Faltings height](../../abelian-varieties/stable-faltings-height/faltings-height.md),
 and for $\tau \in \mathbb{H}$ let $\Delta(\tau) = g_2(\tau)^3 - 27 g_3(\tau)^2$ and
 $j(\tau) = 1728\, g_2(\tau)^3 / \Delta(\tau)$, as in
 [Silverman's formula](faltings-height-in-terms-of-discriminant-and-periods.md) and the
@@ -38,7 +38,7 @@ that Deligne gives for the minimum of $h_{\mathrm{geom}}$.
 
 ## Depends on
 
-- [Stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md), for $h_F(E)$
+- [Stable Faltings height](../../abelian-varieties/stable-faltings-height/faltings-height.md), for $h_F(E)$
 - [Faltings height of an elliptic curve in terms of its discriminant and periods](faltings-height-in-terms-of-discriminant-and-periods.md),
   for $\Delta(\tau)$ and its normalization
 - [Complex uniformization of elliptic curves](complex-uniformization.md), for $j(\tau)$ and the
@@ -54,7 +54,7 @@ that Deligne gives for the minimum of $h_{\mathrm{geom}}$.
 - [Minimal Weierstrass models and the identity component of the Néron model](minimal-weierstrass-model-and-neron-model.md),
   item 2, for $\Delta_{E/k} = \mathcal{O}_k$ under good reduction everywhere
 - [Complex uniformization of elliptic curves](complex-uniformization.md), items 3 and 4, and
-  [invariance of $|\Delta(\tau)| (\operatorname{Im} \tau)^6$ under the modular group](../../NumberTheory/modular-forms-q-series/modular-forms/modular-group-and-congruence-subgroups/discriminant-im-pow-six-invariant.md),
+  [invariance of $|\Delta(\tau)| (\operatorname{Im} \tau)^6$ under the modular group](../../../NumberTheory/modular-forms-q-series/modular-forms/modular-group-and-congruence-subgroups/discriminant-im-pow-six-invariant.md),
   for the independence of the archimedean terms from the choice of $\tau_\iota$, so that the terms of
   the embeddings of $k'$ above $\iota$ all equal that of $\iota$
 

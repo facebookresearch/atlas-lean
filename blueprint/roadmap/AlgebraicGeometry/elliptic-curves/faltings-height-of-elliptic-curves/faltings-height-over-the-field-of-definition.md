@@ -2,7 +2,7 @@
 
 Let $L$ be a number field with ring of integers $\mathcal{O}_L$, let $E$ be an elliptic curve over
 $L$, and let $\mathcal{E}$ be the
-[Néron model of $E$ over $\mathcal{O}_L$](../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
+[Néron model of $E$ over $\mathcal{O}_L$](../../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
 with zero section $\varepsilon$. The invertible $\mathcal{O}_L$-module
 $\omega = \varepsilon^* \Omega^1_{\mathcal{E}/\mathcal{O}_L}$ has
 $\omega \otimes_{\mathcal{O}_L} L = H^0(E, \Omega^1_{E/L})$, and
@@ -13,9 +13,9 @@ metrics
 $$\| s \|_\sigma^2 = \frac{i}{2} \int_{E_\sigma(\mathbb{C})} s \wedge \bar s \qquad (s \in \omega \otimes_\sigma \mathbb{C}),$$
 
 $\bar\omega = (\omega, (\| \cdot \|_\sigma)_\sigma)$ is a
-[hermitian line bundle](../arakelov-geometry/arithmetic-variety.md) on
+[hermitian line bundle](../../arakelov-geometry/arithmetic-variety.md) on
 $\operatorname{Spec} \mathcal{O}_L$, and the **Faltings height of $E/L$** is its normalized
-[arithmetic degree](../arakelov-geometry/arithmetic-intersection-numbers.md):
+[arithmetic degree](../../arakelov-geometry/arithmetic-intersection-numbers.md):
 
 $$h_{\mathrm{Fal}}(E/L) = \frac{\widehat{\deg}(\bar\omega)}{[L : \mathbb{Q}]}
   = \frac{1}{[L : \mathbb{Q}]} \Bigl( \log \# \bigl( \omega / s \mathcal{O}_L \bigr)
@@ -33,7 +33,7 @@ $$n \, [L : \mathbb{Q}] \, h_{\mathrm{Fal}}(E/L) = \widehat{\deg}(\bar\omega^{\o
   - \sum_{\sigma : L \to \mathbb{C}} \log \| t \|_\sigma .$$
 
 The metric is Faltings' normalization, the one of the
-[stable Faltings height](../abelian-varieties/stable-faltings-height/faltings-height.md) in dimension one,
+[stable Faltings height](../../abelian-varieties/stable-faltings-height/faltings-height.md) in dimension one,
 where $\frac{1}{2} |s \wedge \bar s| = \frac{i}{2} s \wedge \bar s$; but the height is computed with the
 Néron model of $E$ over $L$ itself, with no extension of $L$, so it is not the stable height
 (Silverman, Remark 1.2 (1)). Deligne's metric $\frac{1}{2\pi} \int |s \wedge \bar s|$ gives
@@ -41,20 +41,20 @@ $h_{\mathrm{Fal}}(E/L) + \frac{1}{2} \log \pi$.
 
 ## Depends on
 
-- [Néron model of an abelian variety over the ring of integers of a number field](../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
+- [Néron model of an abelian variety over the ring of integers of a number field](../../abelian-varieties/stable-faltings-height/neron-model-over-a-ring-of-integers.md),
   for $\mathcal{E}$ and the invertible module $\omega$ with its generic and complex fibres
-- [Arithmetic varieties and hermitian vector bundles](../arakelov-geometry/arithmetic-variety.md),
+- [Arithmetic varieties and hermitian vector bundles](../../arakelov-geometry/arithmetic-variety.md),
   for hermitian line bundles on $\operatorname{Spec} \mathcal{O}_L$
-- [Arithmetic degree and arithmetic intersection numbers](../arakelov-geometry/arithmetic-intersection-numbers.md),
+- [Arithmetic degree and arithmetic intersection numbers](../../arakelov-geometry/arithmetic-intersection-numbers.md),
   for $\widehat{\deg}$ on $\operatorname{Spec} \mathcal{O}_L$
 
 ## Proof depends on
 
-- [Arithmetic degree and arithmetic intersection numbers](../arakelov-geometry/arithmetic-intersection-numbers.md),
+- [Arithmetic degree and arithmetic intersection numbers](../../arakelov-geometry/arithmetic-intersection-numbers.md),
   for the class $\hat c_1(\bar\omega^{\otimes n}) = [(\operatorname{div}(t), -\log \| t \|^2)]$ of any
   nonzero rational section $t$, the additivity of $\hat c_1$ and $\widehat{\deg}$ under tensor
   products, and the vanishing of $\widehat{\deg}$ on principal arithmetic divisors
-- [Principal Arakelov divisors have size one](../arakelov-geometry/arakelov-divisors/size-principal.md),
+- [Principal Arakelov divisors have size one](../../arakelov-geometry/arakelov-divisors/size-principal.md),
   for the product formula behind the independence of $s$
 
 ## Sources

@@ -7,7 +7,7 @@ $$y^2 + a_1 x y + a_3 y = x^3 + a_2 x^2 + a_4 x + a_6, \qquad a_1, \dots, a_6 \i
 
 with nonzero discriminant $\Delta = \Delta(a_1, \dots, a_6)$, a polynomial with integer coefficients
 in the $a_i$. The Weierstrass equations of $E$ are those obtained from this one by the
-[variable changes](weierstrass-curves/equation-map-affine-coordinates-iff.md)
+[variable changes](../weierstrass-curves/equation-map-affine-coordinates-iff.md)
 $x = u^2 x' + r$, $y = u^3 y' + u^2 s x' + t$ with $u \in L^\times$ and $r, s, t \in L$.
 
 Let $\mathfrak{p}$ be a maximal ideal of $\mathcal{O}_L$, with normalized valuation $v_\mathfrak{p}$
@@ -35,7 +35,7 @@ it carries the Weierstrass equations of one curve to those of the other.
 
 ## Depends on
 
-- [Variable changes transform the Weierstrass equation](weierstrass-curves/equation-map-affine-coordinates-iff.md),
+- [Variable changes transform the Weierstrass equation](../weierstrass-curves/equation-map-affine-coordinates-iff.md),
   for the Weierstrass equations of $E$ and the variable changes between them
 
 ## Sources
