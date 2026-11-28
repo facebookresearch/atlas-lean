@@ -4,6 +4,7 @@ The framework of game-based security proofs: adaptive oracle algorithms, averagi
 
 - [Asymptotic security](asymptotic-security/README.md)
 - [Fair-bit sampling with a running-time tail](fair-bit-sampling-with-a-running-time-tail/README.md)
+- [Bilinear groups and pairing-based assumptions](bilinear-groups-and-pairing-based-assumptions/README.md)
 - [Baby-step giant-step discrete logarithm in the generic group model](baby-step-giant-step-discrete-logarithm-in-the-g/README.md)
 - [Closure properties of negligible functions](closure-properties-of-negligible-functions/README.md)
 - [Collision-resistant and target-collision-resistant hash functions](collision-resistant-and-target-collision-resista/README.md)

@@ -12,7 +12,6 @@ Topics added since this subject's fields were last revised.
 - [Backtracking](backtracking/README.md)
 - [Basic](basic/README.md)
 - [Bayes Net Gibbs](bayes-net-gibbs/README.md)
-- [Bilinear Group](bilinear-group/README.md)
 - [Boolean Retrieval](boolean-retrieval/README.md)
 - [Causal Witnesses](causal-witnesses/README.md)
 - [CComponent Factorization](ccomponent-factorization/README.md)

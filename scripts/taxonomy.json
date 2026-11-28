@@ -1783,6 +1783,7 @@
   "CSLibExt/Crypto/Framework/Asymptotic": {"to": "ComputerScience/cryptography/security-games", "title": "Asymptotic security"},
   "CSLibExt/Crypto/Framework/Averaging": {"to": "ComputerScience/cryptography/security-games", "title": "Games and advantages"},
   "CSLibExt/Crypto/Framework/FairSampling": {"to": "ComputerScience/cryptography/security-games", "title": "Fair-bit sampling with a running-time tail"},
+  "CSLibExt/Crypto/Framework/BilinearGroup": {"to": "ComputerScience/cryptography/security-games", "title": "Bilinear groups and pairing-based assumptions"},
   "CSLibExt/Crypto/Framework/Games": {"to": "ComputerScience/cryptography/security-games", "title": "Generic security games"},
   "CSLibExt/Crypto/Framework/GenericGroup/Shoup": {"to": "ComputerScience/cryptography/security-games", "title": "Generic-group lower bounds"},
   "CSLibExt/Crypto/Framework/GenericGroup": {"to": "ComputerScience/cryptography/security-games", "title": "Generic group model with deeply embedded programs"},
