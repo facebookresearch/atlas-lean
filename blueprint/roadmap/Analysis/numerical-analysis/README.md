@@ -36,6 +36,16 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Upwind scheme](upwind-scheme/README.md)
 - [Finite-volume schemes for transport](finite-volume-schemes-for-transport/README.md)
 - [Operator splitting](operator-splitting/README.md)
+- [Certified numerical analysis](certified-numerical-analysis/README.md)
+- [Global error bound for the periodic Yee leapfrog scheme](global-error-bound-for-the-periodic-yee-leapfrog/README.md)
+- [Checking LDL factorizations](checking-ldl-factorizations/README.md)
+- [Ordered dot-product error bound](ordered-dot-product-error-bound/README.md)
+- [Periodic leapfrog stencil](periodic-leapfrog-stencil/README.md)
+- [Periodic staggered-grid energy stability of the leapfrog update](periodic-staggered-grid-energy-stability-of-the/README.md)
+- [Periodic Yee residual](periodic-yee-residual/README.md)
+- [Rational interval arithmetic](rational-interval-arithmetic/README.md)
+- [Saturating round-half-up quantization](saturating-round-half-up-quantization/README.md)
+- [Soundness of Gram-matrix sum-of-squares certificates over the rationals](soundness-of-gram-matrix-sum-of-squares-certific/README.md)
 
 ## Related topics
 

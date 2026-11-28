@@ -161,7 +161,8 @@ def HasLeftRSIntegral (f h : ℝ → ℝ) (a b I : ℝ) : Prop :=
 def LeftRSIntegrable (f h : ℝ → ℝ) (a b : ℝ) : Prop :=
   ∃ I, HasLeftRSIntegral f h a b I
 
-/-- The left-endpoint integral of `f` against `h` on `[a, b]`, or `0` if it does not exist. -/
+/-- The left-endpoint integral of `f` against `h` on `[a, b]`: the limit of the left-endpoint
+sums when they converge; unspecified (`limUnder` picks no particular value) otherwise. -/
 noncomputable def leftRSIntegral (f h : ℝ → ℝ) (a b : ℝ) : ℝ :=
   limUnder atTop (leftPartitionSum f h a b)
 
@@ -372,8 +373,9 @@ theorem leftRSIntegrable_of_boundedVariationOn (hab : a ≤ b)
 
 /-! ### Bounds on the sums -/
 
-/-- A sum over the cells of a partition with weights `t x` bounded by `M` and increments of a
-function controlled by `V` is at most `M (V b - V a)` in absolute value. -/
+/-- For `a ≤ b`, a sum over the cells of a partition with weights `|t x| ≤ M` at the partition
+points and increments of a function controlled by `V` is at most `M (V b - V a)` in absolute
+value. -/
 theorem abs_sum_cells_mul_le (hab : a ≤ b) (hc : IsControl k V a b) (t : ℝ → ℝ) {M : ℝ}
     (s : Finset ℝ) (ht : ∀ x ∈ partitionPts a b s, |t x| ≤ M) :
     |∑ x ∈ partitionPts a b s, t x * (k x - k (prev (partitionPts a b s) x))| ≤

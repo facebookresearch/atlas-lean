@@ -58,7 +58,7 @@ theorem ldl_posSemidef {m : ℕ} (L : Matrix (Fin m) (Fin m) ℚ) (d : Fin m →
   rw [hT]
   exact hD.mul_mul_conjTranspose_same L
 
-/-- Each entry of `L * diagonal d * Lᵀ` is a single sum. -/
+/-- Each entry of `L * diagonal d * Lᵀ` is a single sum: `(i, j) ↦ ∑ k, L i k * d k * L j k`. -/
 theorem ldl_entry {m : ℕ} (L : Matrix (Fin m) (Fin m) ℚ) (d : Fin m → ℚ)
     (i j : Fin m) :
     (L * Matrix.diagonal d * L.transpose) i j = ∑ k, L i k * d k * L j k := by

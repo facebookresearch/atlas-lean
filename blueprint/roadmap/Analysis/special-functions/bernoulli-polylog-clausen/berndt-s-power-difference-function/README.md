@@ -19,6 +19,8 @@
 - [The power-difference series](chapter7-power-difference-sum-2.md)
 - [Ramanujan's distribution relation for the power-difference function](ramanujan-part1-ch7-entry10-zeta2.md)
 - [Power difference term in Ramanujan's Entry 10](chapter7-power-difference-term.md)
+- [Differentiability of sin(πr/2)](differentiable-sin-pi-mul-div-two.md)
+- [Differentiability of (2π)^(r+1)](differentiable-two-mul-pi-cpow-add-one.md)
 - [Left side of the corollary to Entry 10](chapter7-entry10-corollary-left.md)
 - [Right side of the corollary to Entry 10](chapter7-entry10-corollary-right.md)
 - [The points $-k/n$ are admissible](chapter7-admissible-neg-div.md)

@@ -15,6 +15,8 @@ Geometry of inner product spaces: nearest-point projections, orthonormal and Hil
 - [Separable Hilbert spaces](separable-hilbert-spaces/README.md)
 - [Weak convergence of orthonormal sequences](weak-convergence-of-orthonormal-sequences/README.md)
 - [Inner product spaces and their completions](inner-product-spaces-and-their-completions/README.md)
+- [Kitaev's geometric lemma](kitaev-s-geometric-lemma/README.md)
+- [Pythagoras for finitely many pairwise-orthogonal vectors](pythagoras-for-finitely-many-pairwise-orthogonal/README.md)
 - [Hilbert basis of orthogonal polynomials on $[-1, 1]$](orthogonal-polynomial-hilbert-basis.md)
 - [A complete subspace has an orthogonal projection](of-complete-space.md)
 - [Dimension of the orthogonal complement in a finite-dimensional real or complex inner product space](orthogonal-complement-dimension.md)

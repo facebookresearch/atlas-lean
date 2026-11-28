@@ -1,0 +1,3 @@
+# Good scaling of a hypergeometric coefficient sequence
+
+For multisets $\alpha, \beta$ of rational numbers, a rational number $C$ is a good scaling for $(\alpha, \beta)$ when every rescaled coefficient $C^n \prod_i (\alpha_i)_n / \prod_j (\beta_j)_n$ is an integer, where $(a)_n$ is the rising factorial and division is total, with $q/0 = 0$ (so a vanishing Pochhammer denominator, for example $\beta = (0)$ at $n = 1$, gives the coefficient $0$). Note $C = 0$ always satisfies this; the rescalings of interest are the positive ones, as in the definition of $N$-integrality, which asks for some positive good scaling.

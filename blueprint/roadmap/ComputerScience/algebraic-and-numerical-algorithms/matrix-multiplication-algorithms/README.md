@@ -17,3 +17,4 @@
 
 - [Communication lower bounds](../communication-lower-bounds/README.md): every algorithm that evaluates all $n^3$ products, in any order, moves $\Omega(n^3/\sqrt{M})$ words through a fast memory of $M$ words; blocked and recursive orders attain this.
 - [Rounding error analysis](../rounding-error-analysis/README.md): the entrywise error bound $\gamma_n |A|\,|B|$ of the floating-point product.
+- [Leverage scores](leverage-scores/README.md)

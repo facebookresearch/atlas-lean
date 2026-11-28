@@ -1,0 +1,3 @@
+# Rational interval division
+
+For rational intervals $I$ and $J$, the interval quotient $I / J$ is the product of $I$ with the [reciprocal interval](inv.md) of $J$, whose endpoints are the minimum and maximum of the endpoint reciprocals, with $0^{-1} = 0$. The operation is defined for every pair of intervals. It encloses the pointwise quotients, $x / y \in I / J$ whenever $x \in I$ and $y \in J$, when $J$ does not contain zero, that is when $J.\mathrm{upper} < 0$ or $0 < J.\mathrm{lower}$. Otherwise it can fail to enclose even a defined quotient: for $I = [1, 1]$ and $J = [-1, 1]$ the endpoint reciprocals give $I / J = [-1, 1]$, yet $1 / (1/2) = 2$.

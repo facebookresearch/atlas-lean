@@ -50,3 +50,8 @@
 - [Trace–determinant classification of a planar linearization](linear-type-2.md)
 - [Linear stability means the stable node or stable focus class](is-linearly-stable-iff-linear-type.md)
 - [Saddles, unstable nodes and unstable foci are linearly unstable](is-linearly-unstable-of-linear-type.md)
+
+## Constant-input scalar relaxation
+
+- [Integral of a decaying exponential kernel](integral-exp-neg-mul-sub.md)
+- [Decaying exponential tends to zero](tendsto-exp-neg-mul.md)

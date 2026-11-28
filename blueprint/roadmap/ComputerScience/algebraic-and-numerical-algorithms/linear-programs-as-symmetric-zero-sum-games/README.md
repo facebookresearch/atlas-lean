@@ -8,3 +8,6 @@
 - [Reading a linear program off a solution of Dantzig's game](dantzig-game-lp-readoff.md)
 - [The Dantzig game of a bounded feasibility problem has no solution with t = 0](bounded-feasibility-game-positive-t.md)
 - [Linear feasibility with integer data reduces to a single symmetric zero-sum game](integer-feasibility-reduces-to-symmetric-game.md)
+- [Two-variable LP: feasibility under added constraints](two-variable-lp-feasibility-under-added-constrai/README.md)
+- [LP optimality certificates](lp-optimal-of-certificate.md)
+- [Assignment optimality from a dual certificate](assignment-optimal-of-dual.md)

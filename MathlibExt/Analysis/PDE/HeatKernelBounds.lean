@@ -39,7 +39,8 @@ namespace MathlibExt.Analysis.PDE.HeatKernel
 /-- The first spatial derivative of the one-dimensional heat kernel. -/
 noncomputable def heatKernelDx (t x : ℝ) : ℝ := -x / (2 * t) * heatKernel ℝ t x
 
-/-- The second spatial derivative, also the time derivative, in dimension one. -/
+/-- The second spatial derivative `(x² / (4 t²) - 1 / (2 t)) Φ(t, x)` in dimension one; for
+`0 < t` it is also the time derivative (`hasDerivAt_heatKernel_time_dxx`). -/
 noncomputable def heatKernelDxx (t x : ℝ) : ℝ :=
   (x ^ 2 / (4 * t ^ 2) - 1 / (2 * t)) * heatKernel ℝ t x
 

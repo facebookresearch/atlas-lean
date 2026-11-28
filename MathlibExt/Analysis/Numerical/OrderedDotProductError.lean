@@ -68,7 +68,7 @@ theorem accumulator_zero (p d : ℕ → ℝ) :
     accumulator p d 0 = 0 := by
   rfl
 
-/-- One step of the exact left fold. -/
+/-- One step of the exact left fold: `s (n + 1) = s n + p n + d n`. -/
 theorem accumulator_succ (p d : ℕ → ℝ) (n : ℕ) :
     accumulator p d (n + 1) = accumulator p d n + p n + d n := by
   rfl

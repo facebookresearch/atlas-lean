@@ -21,7 +21,7 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-- [Integral balance in divergence form](../../../Analysis/not-yet-classified/continuum-balances/has-deriv-at-set-integral-of-divergence.md)
+- [Integral balance in divergence form](../../../Analysis/ordinary-differential-equations/mechanical-and-engineering-models/continuum-balances/has-deriv-at-set-integral-of-divergence.md)
 
 ## Expansion
 

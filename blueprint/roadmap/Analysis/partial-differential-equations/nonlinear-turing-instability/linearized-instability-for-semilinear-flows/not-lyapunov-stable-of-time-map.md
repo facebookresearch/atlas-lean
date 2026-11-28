@@ -1,0 +1,3 @@
+# An unstable eigenvalue of the time map destabilizes the flow
+
+Let $X$ be a normed space over $\mathbb{R}$ or $\mathbb{C}$ and $L$ a continuous linear operator on $X$. Let $\Phi : \mathbb{R} \times X \to X$, $u_0 \in X$, $T \ge 0$, $\rho > 0$, $C \ge 0$ and $p > 1$ satisfy: $\Phi(0, x) = x$; $\Phi((n+1)T, x) = \Phi(T, \Phi(nT, x))$ whenever $\|\Phi(kT, x) - u_0\| \le \rho$ for all $k \le n$; and $\|\Phi(T, u_0 + y) - u_0 - L y\| \le C \|y\|^p$ for $\|y\| \le \rho$. Suppose $L v = \nu v$ for some $v \ne 0$ with $|\nu| > 1$, and $\|L^n\| \le M \mu^n$ for all $n$, where $0 \le \mu < |\nu|^p$. Then $u_0$ is not Lyapunov stable for $\Phi$.

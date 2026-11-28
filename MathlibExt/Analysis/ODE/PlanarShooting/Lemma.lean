@@ -332,7 +332,8 @@ theorem stableRate_char (hD : 0 < D) (r c : ℝ) (hdisc : 0 ≤ c ^ 2 + 4 * r * 
   field_simp
   linear_combination h
 
-/-- The amplitude variable `x(z) = e^{λ₊ z} / 4` of the branch; `0 < x(z) < 1/4` for `z < 0`. -/
+/-- The amplitude variable `x(z) = e^{λ₊ z} / 4` of the branch, for all parameters; it is
+positive, and `x(z) < 1/4` for `z < 0` when `0 < D` and `0 < r` (`branchArg_lt`). -/
 noncomputable def branchArg (D r c z : ℝ) : ℝ := 1 / 4 * exp (unstableRate D r c * z)
 
 /-- **The unstable branch** of the logistic traveling-wave ODE `D U'' + c U' + r U (1 - U) = 0`

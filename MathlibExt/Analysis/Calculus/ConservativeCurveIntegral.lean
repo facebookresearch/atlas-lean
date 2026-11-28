@@ -232,7 +232,7 @@ theorem curveIntegral_affineField_segment (d : ℝ) :
   · norm_num [PiLp.inner_apply, Fin.sum_univ_two, PiLp.toLp_apply, RCLike.inner_apply,
       RCLike.conj_to_real, Matrix.cons_val_zero, Matrix.cons_val_one]
 
-/-- The same affine field along the reversed segment integrates to `+1`. -/
+/-- The constant field `-(3,-1)` along the reversed segment `(1,2) → (0,0)` integrates to `+1`. -/
 theorem curveIntegral_affineField_segment_symm :
     (∫ᶜ _ in (Path.segment (!₂[0, 0] : EuclideanSpace ℝ (Fin 2)) !₂[1, 2]).symm,
         innerSL ℝ (-(!₂[3, -1] : EuclideanSpace ℝ (Fin 2)))) = 1 := by

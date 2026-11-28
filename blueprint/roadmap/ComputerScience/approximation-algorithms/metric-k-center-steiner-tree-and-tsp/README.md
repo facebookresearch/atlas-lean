@@ -7,3 +7,4 @@
 - [Approximating metric k-center within a factor below 2 is NP-hard](k-center-hardness-below-two.md)
 - [The Kou-Markowsky-Berman heuristic for Steiner tree in graphs](kou-markowsky-berman-heuristic.md)
 - [Christofides' 3/2-approximation for metric TSP](christofides-three-halves.md)
+- [Metric k-center: separation counting](kcenter-separation-impossible.md)

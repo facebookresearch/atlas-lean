@@ -57,8 +57,8 @@ physical length scale is restored by rescaling `x` explicitly.
 
 namespace EarthScience
 
-/-- Time derivative of the single heat mode
-`u(t, x) = exp(-κ π² t) sin(π x)` at fixed `x`. -/
+/-- Time derivative of the single heat mode `u(t, x) = exp(-κ π² t) sin(π x)` at fixed `x`:
+it is `-κ π² u(t, x)`. -/
 theorem heat_mode_hasDerivAt_t {κ x t : ℝ} :
     HasDerivAt (fun t => Real.exp (-κ * Real.pi ^ 2 * t) * Real.sin (Real.pi * x))
       (-κ * Real.pi ^ 2 * Real.exp (-κ * Real.pi ^ 2 * t) * Real.sin (Real.pi * x)) t := by

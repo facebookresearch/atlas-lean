@@ -1,0 +1,3 @@
+# Amplitude variable of the unstable branch
+
+For $D, r, c, z \in \mathbb{R}$, let $\lambda_+ = \frac{-c + \sqrt{c^2 + 4 r D}}{2D}$ (with real division $a/0 = 0$ and $\sqrt{y} = 0$ for $y < 0$) and let the amplitude variable of the branch be $x(z) = \frac{1}{4} e^{\lambda_+ z}$; it is positive for all parameters. For example, $D = 1$, $r = -1$, $c = 0$ gives $\sqrt{-4} = 0$, so $\lambda_+ = 0$ and $x(z) = 1/4$. When $D > 0$ and $r > 0$, $\lambda_+ > 0$, so $x(z) < 1/4$ for every $z < 0$ ([the bound](branch-arg-lt.md)); without these hypotheses the bound can fail (for $D = 1$, $r = c = 0$, $\lambda_+ = 0$ and $x(z) = 1/4$).

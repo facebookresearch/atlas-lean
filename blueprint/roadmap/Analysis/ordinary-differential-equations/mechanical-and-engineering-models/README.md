@@ -6,3 +6,6 @@
 - [Lambert's problem](lambert-s-problem/README.md)
 - [Rocket ascent losses](rocket-ascent-losses/README.md)
 - [Torque-free rigid-body motion](torque-free-rigid-body-motion/README.md)
+- [A smooth wave mode and its conserved energy](a-smooth-wave-mode-and-its-conserved-energy/README.md)
+- [Continuum balances](continuum-balances/README.md)
+- [PWM primitive bound](pwm-primitive-bound/README.md)

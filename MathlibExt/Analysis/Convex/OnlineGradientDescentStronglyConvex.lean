@@ -241,7 +241,8 @@ noncomputable def ogdIterVarying {E : Type*} [NormedAddCommGroup E] [InnerProduc
     (proj : E → E) (g : ℕ → E → E) (η : ℕ → ℝ) (x0 : E) : ℕ → E :=
   ogdIter proj (fun t x => η t • g t x) 1 x0
 
-/-- Successor equation for the varying-step iterates. -/
+/-- Successor equation for the varying-step iterates:
+`x_{t+1} = proj (x_t - η_t • g_t x_t)`. -/
 theorem ogdIterVarying_succ {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (proj : E → E) (g : ℕ → E → E) (η : ℕ → ℝ) (x0 : E) (t : ℕ) :
     ogdIterVarying proj g η x0 (t + 1)

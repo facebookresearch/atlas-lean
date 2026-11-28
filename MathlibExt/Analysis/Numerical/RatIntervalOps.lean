@@ -118,7 +118,8 @@ containing zero (Moore, *Interval Analysis*, 1966, Ch. 2). -/
 def inv (J : RatInterval) : RatInterval :=
   ⟨min J.lower⁻¹ J.upper⁻¹, max J.lower⁻¹ J.upper⁻¹⟩
 
-/-- Interval division, as multiplication by the reciprocal interval. -/
+/-- Interval division, as multiplication by the reciprocal interval. Total; it encloses the
+pointwise quotients when `J` does not contain zero (`Encloses.div`). -/
 def div (I J : RatInterval) : RatInterval :=
   I.mul J.inv
 

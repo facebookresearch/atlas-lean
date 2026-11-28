@@ -93,7 +93,8 @@ noncomputable def collocatedUUpdateResidual {N : ℕ} (u v : ℝ → ℝ → ℝ
   sampledU u dt h (n + 1) - sampledU u dt h n -
     (c * dt) • dPlus h (collocatedV v dt h (n + 1))
 
-/-- The consistency bound `sqrt(L) * dt * (Mt * dt^2 + c * Mx * h^2) / 24`. -/
+/-- The consistency bound expression `sqrt(L) * dt * (Mt * dt^2 + c * Mx * h^2) / 24`, defined for
+all real arguments (it can be negative); it bounds the residuals only for admissible data. -/
 noncomputable def consistencyEta (L dt c Mt Mx h : ℝ) : ℝ :=
   Real.sqrt L * dt * (Mt * dt ^ 2 + c * Mx * h ^ 2) / 24
 

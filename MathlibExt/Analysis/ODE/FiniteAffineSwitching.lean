@@ -775,7 +775,7 @@ noncomputable def twoLevelA : ℝ →L[ℝ] ℝ := -ContinuousLinearMap.id ℝ �
 /-- Switch times `0 < 1 < 2`. -/
 noncomputable def twoLevelTimes : Fin 3 → ℝ := ![0, 1, 2]
 
-/-- Two forcing levels: `u = 1` before the switch at `t = 1`, `u = 0` after it. -/
+/-- Two forcing levels: `u = 1` for `t < 1`, and `u = 0` from the switch instant `t = 1` on. -/
 noncomputable def twoLevelForcing (t : ℝ) : ℝ := if t < 1 then 1 else 0
 
 /-- The patched trajectory from `0`: charge `1 - e^{-t}`, then discharge from `1 - e^{-1}`. -/
@@ -958,7 +958,8 @@ private lemma twoLevel_piece1 (t : ℝ) (ht1 : 1 ≤ t) (ht2 : t ≤ 2) :
   · intro s hs
     exact twoLevel_ode1 s ⟨hs.1, lt_of_lt_of_le hs.2 ht2⟩
 
-/-- The two-level fixture satisfies the integral equation across the interior switch. -/
+/-- The two-level fixture satisfies the integral equation across the interior switch:
+`x t = ∫ s in 0..t, (-x s + u s)` for every `t ∈ [0, 2]`. -/
 theorem twoLevel_integral_equation :
     ∀ t ∈ Icc (0 : ℝ) 2, twoLevelTrajectory t =
       0 + ∫ s in (0 : ℝ)..t, (twoLevelA (twoLevelTrajectory s) + twoLevelForcing s) := by

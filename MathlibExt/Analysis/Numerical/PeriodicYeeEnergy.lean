@@ -100,7 +100,8 @@ open MathlibExt.Analysis.Numerical.PeriodicLeapfrogStencil
 
 /-! ## A. Grid norms, scaled difference and energy -/
 
-/-- Squared weighted grid norm: `h` times the sum of squares. -/
+/-- Weighted sum of squares `h * ∑ⱼ wⱼ²`, defined for every `h`; for `0 ≤ h` it is the square
+of the weighted grid norm, and for `h < 0` it can be negative. -/
 def weightedNormSq {N : ℕ} (h : ℝ) (w : Fin N → ℝ) : ℝ :=
   weightedInner h w w
 
@@ -108,8 +109,8 @@ def weightedNormSq {N : ℕ} (h : ℝ) (w : Fin N → ℝ) : ℝ :=
 def pairNormSq {N : ℕ} (h : ℝ) (u v : Fin N → ℝ) : ℝ :=
   weightedNormSq h u + weightedNormSq h v
 
-/-- Pair norm: the square root of the squared pair norm. This is
-the Euclidean pair norm, not a product maximum norm. -/
+/-- Pair norm: the square root of the squared pair norm. For `h ≥ 0` this is `√h` times the
+Euclidean norm of the concatenated vector `(u, v)`, not a product maximum norm. -/
 noncomputable def pairNorm {N : ℕ} (h : ℝ) (u v : Fin N → ℝ) : ℝ :=
   Real.sqrt (pairNormSq h u v)
 
