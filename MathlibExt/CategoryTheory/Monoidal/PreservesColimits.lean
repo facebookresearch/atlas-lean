@@ -12,6 +12,14 @@ module
 public import Mathlib.CategoryTheory.Limits.Preserves.Basic
 public import Mathlib.CategoryTheory.Monoidal.Braided.Basic
 
+/-!
+# Colimit preservation by tensor functors in braided categories
+
+The braiding identifies left and right tensoring by the same object. Preservation of
+colimits by the left tensor functor therefore gives preservation by the right tensor
+functor, with the same independent diagram and object universes.
+-/
+
 @[expose] public section
 
 open CategoryTheory Limits

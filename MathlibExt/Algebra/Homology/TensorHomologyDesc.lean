@@ -39,34 +39,6 @@ variable {C : Type u} [Category.{v} C] [Preadditive C]
   {ι₁ : Type w₁} {ι₂ : Type w₂}
   {c₁ : ComplexShape ι₁} {c₂ : ComplexShape ι₂}
 
-/-- Let C be preadditive, K a complex with shape c on an arbitrary index type, j a degree with
-homology, and i = c.prev(j). The homology projection π_j : Z_j(K) → H_j(K), which kills the
-incoming boundary map β : K_i → Z_j(K), defines a cokernel cofork of β. -/
-noncomputable def homologyCofork (K : HomologicalComplex C c₁)
-    (i j : ι₁) (_h : c₁.prev j = i) [K.HasHomology j] :
-    CokernelCofork (K.toCycles i j) :=
-  CokernelCofork.ofπ (K.homologyπ j) (K.toCycles_comp_homologyπ i j)
-
-@[simp]
-lemma homologyCofork_pt (K : HomologicalComplex C c₁)
-    (i j : ι₁) (hij : c₁.prev j = i) [K.HasHomology j] :
-    (homologyCofork K i j hij).pt = K.homology j :=
-  rfl
-
-@[simp]
-lemma homologyCofork_π (K : HomologicalComplex C c₁)
-    (i j : ι₁) (hij : c₁.prev j = i) [K.HasHomology j] :
-    (homologyCofork K i j hij).π = K.homologyπ j :=
-  rfl
-
-/-- Let C be preadditive, K a complex of arbitrary shape c, j a degree with homology, and i =
-c.prev(j). The cofork K_i → Z_j(K) → H_j(K), formed from the incoming boundary map and the
-homology projection, is a colimit cofork. Thus H_j(K) is the cokernel of that boundary map. -/
-noncomputable def homologyCoforkIsColimit (K : HomologicalComplex C c₁)
-    (i j : ι₁) (h : c₁.prev j = i) [K.HasHomology j] :
-    IsColimit (homologyCofork K i j h) :=
-  K.homologyIsCokernel i j h
-
 variable [MonoidalCategory C] [MonoidalPreadditive C]
 
 variable (K₁ : HomologicalComplex C c₁) (i₁ j₁ : ι₁)
@@ -91,14 +63,16 @@ lemma tensor_homologyπ_hom_ext {Z : C}
     (w : (K₁.homologyπ j₁ ⊗ₘ K₂.homologyπ j₂) ≫ f =
       (K₁.homologyπ j₁ ⊗ₘ K₂.homologyπ j₂) ≫ g) : f = g := by
   let _ : PreservesColimit (parallelPair (K₂.toCycles i₂ j₂) 0)
-      (tensorLeft (homologyCofork K₁ i₁ j₁ h₁).pt) := by
+      (tensorLeft
+        (CokernelCofork.ofπ (K₁.homologyπ j₁)
+          (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (K₁.homology j₁))
     infer_instance
   exact CokernelCofork.tensor_hom_ext
-    (homologyCofork K₁ i₁ j₁ h₁)
-    (homologyCoforkIsColimit K₁ i₁ j₁ h₁)
-    (homologyCofork K₂ i₂ j₂ h₂)
-    (homologyCoforkIsColimit K₂ i₂ j₂ h₂) w
+    (CokernelCofork.ofπ (K₁.homologyπ j₁) (K₁.toCycles_comp_homologyπ i₁ j₁))
+    (K₁.homologyIsCokernel i₁ j₁ h₁)
+    (CokernelCofork.ofπ (K₂.homologyπ j₂) (K₂.toCycles_comp_homologyπ i₂ j₂))
+    (K₂.homologyIsCokernel i₂ j₂ h₂) w
 
 variable [HasBinaryCoproduct (K₁.X i₁ ⊗ K₂.cycles j₂)
     (K₁.cycles j₁ ⊗ K₂.X i₂)]
@@ -121,14 +95,14 @@ noncomputable def tensorHomologyDesc {Z : C}
       (K₁.cycles j₁ ◁ K₂.toCycles i₂ j₂) ≫ k = 0) :
     K₁.homology j₁ ⊗ K₂.homology j₂ ⟶ Z := by
   let _ : PreservesColimit (parallelPair (K₂.toCycles i₂ j₂) 0)
-      (tensorLeft (homologyCofork K₁ i₁ j₁ h₁).pt) := by
+      (tensorLeft
+        (CokernelCofork.ofπ (K₁.homologyπ j₁)
+          (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (K₁.homology j₁))
     infer_instance
-  exact CokernelCofork.tensorDesc
-    (homologyCofork K₁ i₁ j₁ h₁)
-    (homologyCoforkIsColimit K₁ i₁ j₁ h₁)
-    (homologyCofork K₂ i₂ j₂ h₂)
-    (homologyCoforkIsColimit K₂ i₂ j₂ h₂) k hk
+  exact (CokernelCofork.isColimitTensor
+    (K₁.homologyIsCokernel i₁ j₁ h₁) (K₂.homologyIsCokernel i₂ j₂ h₂)).desc
+      (CokernelCofork.ofπ k hk)
 
 include h₁ h₂ in
 /-- Let C be a preadditive monoidal category with bilinear tensor product. Let K₁ and K₂ have
@@ -147,14 +121,14 @@ lemma tensor_homologyπ_comp_tensorHomologyDesc {Z : C}
     (K₁.homologyπ j₁ ⊗ₘ K₂.homologyπ j₂) ≫
         tensorHomologyDesc K₁ i₁ j₁ h₁ K₂ i₂ j₂ h₂ k hk = k := by
   let _ : PreservesColimit (parallelPair (K₂.toCycles i₂ j₂) 0)
-      (tensorLeft (homologyCofork K₁ i₁ j₁ h₁).pt) := by
+      (tensorLeft
+        (CokernelCofork.ofπ (K₁.homologyπ j₁)
+          (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (K₁.homology j₁))
     infer_instance
-  exact CokernelCofork.tensor_π_desc
-    (homologyCofork K₁ i₁ j₁ h₁)
-    (homologyCoforkIsColimit K₁ i₁ j₁ h₁)
-    (homologyCofork K₂ i₂ j₂ h₂)
-    (homologyCoforkIsColimit K₂ i₂ j₂ h₂) k hk
+  exact (CokernelCofork.isColimitTensor
+    (K₁.homologyIsCokernel i₁ j₁ h₁) (K₂.homologyIsCokernel i₂ j₂ h₂)).fac
+      (CokernelCofork.ofπ k hk) WalkingParallelPair.one
 
 include h₁ h₂ in
 /-- Let C be a preadditive monoidal category with bilinear tensor product. Let K₁ and K₂ have
@@ -194,22 +168,26 @@ lemma tensorHomologyDesc_naturality
         tensorHomologyDesc L₁ i₁ j₁ h₁ L₂ i₂ j₂ h₂ k' hk' =
       tensorHomologyDesc K₁ i₁ j₁ h₁ K₂ i₂ j₂ h₂ k hk ≫ z := by
   let _ : PreservesColimit (parallelPair (K₂.toCycles i₂ j₂) 0)
-      (tensorLeft (homologyCofork K₁ i₁ j₁ h₁).pt) := by
+      (tensorLeft
+        (CokernelCofork.ofπ (K₁.homologyπ j₁)
+          (K₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (K₁.homology j₁))
     infer_instance
   let _ : PreservesColimit (parallelPair (L₂.toCycles i₂ j₂) 0)
-      (tensorLeft (homologyCofork L₁ i₁ j₁ h₁).pt) := by
+      (tensorLeft
+        (CokernelCofork.ofπ (L₁.homologyπ j₁)
+          (L₁.toCycles_comp_homologyπ i₁ j₁)).pt) := by
     change PreservesColimit _ (tensorLeft (L₁.homology j₁))
     infer_instance
   exact CokernelCofork.tensorDesc_naturality
-    (homologyCofork K₁ i₁ j₁ h₁)
-    (homologyCoforkIsColimit K₁ i₁ j₁ h₁)
-    (homologyCofork K₂ i₂ j₂ h₂)
-    (homologyCoforkIsColimit K₂ i₂ j₂ h₂)
-    (homologyCofork L₁ i₁ j₁ h₁)
-    (homologyCoforkIsColimit L₁ i₁ j₁ h₁)
-    (homologyCofork L₂ i₂ j₂ h₂)
-    (homologyCoforkIsColimit L₂ i₂ j₂ h₂)
+    (CokernelCofork.ofπ (K₁.homologyπ j₁) (K₁.toCycles_comp_homologyπ i₁ j₁))
+    (K₁.homologyIsCokernel i₁ j₁ h₁)
+    (CokernelCofork.ofπ (K₂.homologyπ j₂) (K₂.toCycles_comp_homologyπ i₂ j₂))
+    (K₂.homologyIsCokernel i₂ j₂ h₂)
+    (CokernelCofork.ofπ (L₁.homologyπ j₁) (L₁.toCycles_comp_homologyπ i₁ j₁))
+    (L₁.homologyIsCokernel i₁ j₁ h₁)
+    (CokernelCofork.ofπ (L₂.homologyπ j₂) (L₂.toCycles_comp_homologyπ i₂ j₂))
+    (L₂.homologyIsCokernel i₂ j₂ h₂)
     (K₁.cyclesMap f₁ j₁) (K₂.cyclesMap f₂ j₂)
     (K₁.homologyMap f₁ j₁) (K₂.homologyMap f₂ j₂)
     (K₁.homologyπ_naturality f₁ j₁)
