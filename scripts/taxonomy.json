@@ -15696,6 +15696,7 @@
   "MathlibExt/Probability/SDE/YamadaWatanabeApprox": {"to": "Probability/stochastic-calculus", "title": "Yamada–Watanabe approximating functions"},
   "MathlibExt/Probability/SampleCovariance": {"to": "Probability/statistical-estimation", "title": "Bias and mean squared error of estimators"},
   "MathlibExt/Probability/SampleEmpiricalMeasure": {"to": "Probability/large-deviations", "title": "Sanov's theorem"},
+  "MathlibExt/Probability/SampleMedianInterval": {"to": "Probability/distributions/distribution-functions", "title": "Median of a distribution"},
   "MathlibExt/Probability/Sampling/HorvitzThompson": {"to": "Probability/statistical-estimation", "title": "Finite-population survey sampling"},
   "MathlibExt/Probability/Sampling/HorvitzThompsonVariance": {"to": "Probability/statistical-estimation", "title": "Finite-population survey sampling"},
   "MathlibExt/Probability/Sampling/SimpleRandomSampling": {"to": "Probability/statistical-estimation", "title": "Finite-population survey sampling"},
