@@ -174,17 +174,6 @@ public theorem_wanted stirling_first_pref_ge_lucky (n : ℕ) (w : Fin (2 * n) �
     (stirlingLuckySet w).card ≤ w i₀ ∧
       ∀ i : Fin (2 * n), i.val + 1 ∈ stirlingLuckySet w → stirlingParkSpot w i ≤ w i₀
 
-/-- **When the penultimate car is lucky.** Let $n \ge 1$ and let $w = w_1 \cdots w_{2n}$ be a
-Stirling permutation of order $n$, read as a parking function of length $2n$. Then car $2n - 1$
-is lucky, that is, belongs to the lucky set $\mathrm{Lucky}(w)$, if and only if $w_{2n-1} = 1$.
-
-Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
-Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
-Theorem 3.11 (`jis-2024-24.6.7-thm-31`). -/
-public theorem_wanted stirling_penultimate_lucky_iff (n : ℕ) (w : Fin (2 * n) → ℕ)
-    (hw : IsStirlingPermutation n w) (i : Fin (2 * n)) (hi : i.val + 1 = 2 * n - 1) :
-    2 * n - 1 ∈ stirlingLuckySet w ↔ w i = 1
-
 /-- **Admissible lucky sets with two elements.** Let $n$, $h$ and $i$ be natural numbers with
 $h < i \le 2n$. The set $\{h, i\}$ is an $n$-admissible lucky set if and only if $h = 1$ and
 either $i > n$ and $i$ is odd, or $i \le n$.
