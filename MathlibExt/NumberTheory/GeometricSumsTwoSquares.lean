@@ -86,4 +86,41 @@ public theorem geomSum_pythagorean (p n : ℕ) (hp : p.Prime)
     intro q hq hq4
     exact (hdiv (Nat.prime_of_mem_primeFactors hq) (Nat.dvd_of_mem_primeFactors hq) hq4).elim
 
+/-- **Geometric sums with $p^k$ terms, $p \equiv 3 \pmod 4$ and $n$ odd, are sums of two squares.**
+Let $p$ be a prime with $p \equiv 3 \pmod 4$, let $n$ be a positive odd integer, let $k$ be a
+positive integer, and put $q = p^k$. Then there are integers $a, b$ with
+$\sum_{j=0}^{q-1} p^{nj} = 1 + p^n + p^{2n} + \cdots + p^{(q-1)n} = a^2 + b^2$.
+
+Source: Lorenz Halbeisen, Norbert Hungerbühler, and
+Franz Lemmermeyer, "Geometric Sums as Sums of Two
+Squares", Corollary 11. -/
+public theorem geomSumPow_eq_sq_add_sq (p n k : ℕ) (hp : p.Prime)
+    (hp4 : p % 4 = 3) (hn : Odd n) (hn0 : 0 < n) (hk : 1 ≤ k) :
+    ∃ a b : ℤ, (∑ j ∈ Finset.range (p ^ k), (p : ℤ) ^ (n * j)) =
+      a ^ 2 + b ^ 2 := by
+  have hk0 : 0 ≤ k := (Nat.zero_le 1).trans hk
+  clear hk
+  have hpOdd := hp.odd_of_ne_two (by omega)
+  have hp1 : 1 < (p : ℤ) := by exact_mod_cast hp.one_lt
+  have hx : (p : ℤ) ^ n - 1 ≠ 0 := sub_ne_zero.mpr (one_lt_pow₀ hp1 hn0.ne').ne'
+  induction k, hk0 using Nat.le_induction with
+  | base => exact ⟨1, 0, by simp⟩
+  | succ k _ ih =>
+    obtain ⟨a, b, hab⟩ := ih
+    obtain ⟨c, d, hcd⟩ := (geomSum_pythagorean p (n * p ^ k) hp hp4
+      (hn.mul (hpOdd.pow)) (Nat.mul_pos hn0 (pow_pos hp.pos _))).2
+    have hcd' : (∑ j ∈ Finset.range p, (p : ℤ) ^ ((n * p ^ k) * j)) =
+        (c : ℤ) ^ 2 + (d : ℤ) ^ 2 := by exact_mod_cast hcd
+    have hfactor : (∑ j ∈ Finset.range (p ^ (k + 1)), (p : ℤ) ^ (n * j)) =
+        (∑ j ∈ Finset.range (p ^ k), (p : ℤ) ^ (n * j)) *
+          (∑ j ∈ Finset.range p, (p : ℤ) ^ ((n * p ^ k) * j)) := by
+      rw [pow_succ p k]
+      simp only [pow_mul]
+      -- Multiplying by `p ^ n - 1` telescopes the geometric sums.
+      apply mul_right_cancel₀ hx
+      rw [geom_sum_mul, mul_right_comm, geom_sum_mul, mul_geom_sum, pow_mul]
+    refine ⟨a * (c : ℤ) - b * (d : ℤ), a * (d : ℤ) + b * (c : ℤ), ?_⟩
+    rw [hfactor, hab, hcd']
+    ring
+
 end MathlibExt.NumberTheory.GeometricSumsTwoSquaresWanted
