@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.TotalColoringWanted
+public import CSLibExt.Complexity.NPComplete.TotalColoringRegularBipartiteDefs
 
 @[expose] public section
 
@@ -65,23 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance for the fixed degree `k`: a well-formed TOTAL COLORING
-instance whose number of colors is `k + 1` and whose graph is nonempty, `k`-regular and
-bipartite. -/
-def WellFormed (k : ℕ) (i : TotalColoringInstance) : Prop :=
-  TotalColoring.WellFormed i ∧ i.2.2 = k + 1 ∧ 0 < i.1 ∧ (Graph i).IsRegularOfDegree k ∧
-    (Graph i).IsBipartite
-
-open Classical in
-/-- TOTAL COLORING OF `k`-REGULAR BIPARTITE GRAPHS with `k + 1` colors, for the fixed degree
-`k`, as a decision problem over bitstrings. -/
-noncomputable def totalColoringRegularBipartiteDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := TotalColoringInstance) x with
-  | some i => decide (WellFormed k i ∧ TotalColoring.TotalColoringFeasible i)
-  | none => false
 
 /-- **TOTAL COLORING OF REGULAR BIPARTITE GRAPHS is NP-complete for every fixed `k ≥ 3`.**
 Source: McDiarmid and Sánchez-Arroyo (1994); Sánchez-Arroyo (1989). -/

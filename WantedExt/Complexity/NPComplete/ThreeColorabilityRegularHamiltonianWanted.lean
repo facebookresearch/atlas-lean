@@ -27,11 +27,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityRegularHamiltonianDefs
 
 @[expose] public section
 
@@ -78,21 +74,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance for a fixed `k`: a well-formed GRAPH K-COLORABILITY instance
-(a simple edge list on `Fin n`) with `K = 3` whose graph is `k`-regular and Hamiltonian. -/
-def WellFormed (k : ℕ) (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = 3 ∧ (Graph i).IsRegularOfDegree k ∧
-    (Graph i).IsHamiltonian
-
-open Classical in
-/-- 3-COLORABILITY on `k`-regular Hamiltonian graphs as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityRegularHamiltonianDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed k i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY on `k`-regular Hamiltonian graphs is NP-complete for every fixed
 `k ≥ 4`.** Source: Fleischner and Sabidussi (2003) (`k = 4`); Cavallaro (2019), Theorem 4.10;

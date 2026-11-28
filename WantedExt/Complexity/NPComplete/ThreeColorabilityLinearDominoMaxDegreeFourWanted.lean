@@ -25,13 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
-public import Mathlib.Combinatorics.SimpleGraph.Star
-public import Mathlib.Data.Set.Card
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityLinearDominoMaxDegreeFourDefs
 
 @[expose] public section
 
@@ -92,24 +86,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with `K = 3`
-whose graph is linear domino (no induced claw `K_{1,3}` and no induced diamond `K_4 - e`) and has
-maximum degree at most 4. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = 3 ∧
-    ¬ (SimpleGraph.starGraph (0 : Fin 4)).IsIndContained (Graph i) ∧
-    ¬ ((⊤ : SimpleGraph (Fin 4)).deleteEdges {s(0, 1)}).IsIndContained (Graph i) ∧
-    ∀ v : Fin i.1, ((Graph i).neighborSet v).ncard ≤ 4
-
-open Classical in
-/-- 3-COLORABILITY OF LINEAR DOMINO GRAPHS OF MAXIMUM DEGREE 4 as a decision problem over
-bitstrings. -/
-noncomputable def threeColorabilityLinearDominoMaxDegreeFourDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY OF LINEAR DOMINO GRAPHS OF MAXIMUM DEGREE 4 is NP-complete.** Source: Garey
 and Johnson (1979), [GT4]; Metelsky and Tyshkevich (2003); Král', Kratochvíl, Tuza and Woeginger

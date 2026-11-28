@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
-public import Mathlib.Combinatorics.SimpleGraph.LineGraph
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TotalColoringDefs
 
 @[expose] public section
 
@@ -58,34 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, number of colors `K`. -/
-abbrev TotalColoringInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : TotalColoringInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and `0 < K`. -/
-def WellFormed (i : TotalColoringInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2
-
-/-- A total coloring with `K` colors: a proper vertex coloring `cv` and a proper edge coloring
-`ce` (a coloring of the line graph) such that every edge `e` and every endpoint `v ∈ e` get
-distinct colors. -/
-def TotalColoringFeasible (i : TotalColoringInstance) : Prop :=
-  ∃ (cv : (Graph i).Coloring (Fin i.2.2)) (ce : (Graph i).lineGraph.Coloring (Fin i.2.2)),
-    ∀ e : (Graph i).edgeSet, ∀ v ∈ (e : Sym2 (Fin i.1)), ce e ≠ cv v
-
-open Classical in
-/-- TOTAL COLORING as a decision problem over bitstrings. -/
-noncomputable def totalColoringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := TotalColoringInstance) x with
-  | some i => decide (WellFormed i ∧ TotalColoringFeasible i)
-  | none => false
 
 /-- **TOTAL COLORING is NP-complete.** Source: Sánchez-Arroyo (1989); McDiarmid and
 Sánchez-Arroyo (1994). -/

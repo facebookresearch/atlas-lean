@@ -26,12 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import CSLibExt.Complexity.NPComplete.VertexKCutDefs
 
 @[expose] public section
 
@@ -63,43 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, the list of pairs
-`(sᵢ, tᵢ)`, the vertex weights `w` (indexed by vertex), and the bound `K`. -/
-abbrev VertexKCutInstance := ℕ × List (ℕ × ℕ) × List (ℕ × ℕ) × List ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : VertexKCutInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), every pair has both
-vertices below `n`, there is one weight per vertex, and `K` is positive. -/
-def WellFormed (i : VertexKCutInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∀ p ∈ i.2.2.1, p.1 < i.1 ∧ p.2 < i.1) ∧ i.2.2.2.1.length = i.1 ∧ 0 < i.2.2.2.2
-
-/-- A vertex k-cut of weight at most `K`: a set `C` of vertices containing no special vertex, of
-total weight at most `K`, such that in the subgraph of `G` induced on the vertices outside `C`
-(`SimpleGraph.induce`) the terminal of every pair is not reachable from its source. -/
-def VertexKCutFeasible (i : VertexKCutInstance) : Prop :=
-  ∃ C : Finset (Fin i.1),
-    (∀ v ∈ C, ∀ p ∈ i.2.2.1, p.1 ≠ (v : ℕ) ∧ p.2 ≠ (v : ℕ)) ∧
-      ∑ v ∈ C, i.2.2.2.1.getD v 0 ≤ i.2.2.2.2 ∧
-        ∀ p ∈ i.2.2.1, ∀ hs : p.1 < i.1, ∀ ht : p.2 < i.1,
-          ∀ hsC : (⟨p.1, hs⟩ : Fin i.1) ∈ ((C : Set (Fin i.1))ᶜ),
-            ∀ htC : (⟨p.2, ht⟩ : Fin i.1) ∈ ((C : Set (Fin i.1))ᶜ),
-              ¬ ((Graph i).induce ((C : Set (Fin i.1))ᶜ)).Reachable
-                ⟨⟨p.1, hs⟩, hsC⟩ ⟨⟨p.2, ht⟩, htC⟩
-
-open Classical in
-/-- VERTEX K-CUT as a decision problem over bitstrings. -/
-noncomputable def vertexKCutDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := VertexKCutInstance) x with
-  | some i => decide (WellFormed i ∧ VertexKCutFeasible i)
-  | none => false
 
 /-- **VERTEX K-CUT is NP-complete.** Source: Crescenzi and Kann, MINIMUM VERTEX K-CUT, citing Garg,
 Vazirani and Yannakakis (1994); NP-complete already for NODE MULTIWAY CUT with unit weights,

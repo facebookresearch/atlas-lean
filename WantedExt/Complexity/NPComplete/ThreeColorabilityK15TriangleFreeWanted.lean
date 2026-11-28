@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Star
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.ThreeColorabilityK15TriangleFreeDefs
 
 @[expose] public section
 
@@ -69,20 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance with `K = 3`
-whose graph has no triangle and no induced star `K_{1,5}`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = 3 ∧ (Graph i).CliqueFree 3 ∧
-    ¬ (SimpleGraph.starGraph (0 : Fin 6)).IsIndContained (Graph i)
-
-open Classical in
-/-- 3-COLORABILITY OF (K_{1,5}, TRIANGLE)-FREE GRAPHS as a decision problem over bitstrings. -/
-noncomputable def threeColorabilityK15TriangleFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ GraphColoring.GraphColoringFeasible i)
-  | none => false
 
 /-- **3-COLORABILITY OF (K_{1,5}, TRIANGLE)-FREE GRAPHS is NP-complete.** Source: Garey and
 Johnson (1979), [GT4]; Maffray and Preissmann (1996). -/

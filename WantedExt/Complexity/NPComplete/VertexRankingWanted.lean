@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import CSLibExt.Complexity.NPComplete.GraphColoringDefs
+public import CSLibExt.Complexity.NPComplete.VertexRankingDefs
 
 @[expose] public section
 
@@ -71,29 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `c` is a vertex ranking of `G`: any path between two distinct vertices of the same color
-contains a vertex of larger color. -/
-def IsVertexRanking {V : Type*} (G : SimpleGraph V) {k : ℕ} (c : V → Fin k) : Prop :=
-  ∀ ⦃u v : V⦄ (p : G.Walk u v), p.IsPath → u ≠ v → c u = c v → ∃ w ∈ p.support, c u < c w
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`
-(`GraphColoring.WellFormed`), and `0 < K ≤ n`. -/
-def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- The graph has a vertex ranking with `K` colors. -/
-def VertexRankingFeasible (i : GraphColoringInstance) : Prop :=
-  ∃ c : Fin i.1 → Fin i.2.2, IsVertexRanking (Graph i) c
-
-open Classical in
-/-- VERTEX RANKING as a decision problem over bitstrings. -/
-noncomputable def vertexRankingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphColoringInstance) x with
-  | some i => decide (WellFormed i ∧ VertexRankingFeasible i)
-  | none => false
 
 /-- **VERTEX RANKING (TREE-DEPTH) is NP-complete.** Source: Bodlaender et al. (1998);
 Pothen (1988). -/
