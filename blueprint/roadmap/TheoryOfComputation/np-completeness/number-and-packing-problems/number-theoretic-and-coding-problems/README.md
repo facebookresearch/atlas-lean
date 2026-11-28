@@ -90,7 +90,6 @@
 - [Well-formed instances of SATISFIABILITY OF QUADRATIC EQUATIONS OVER GF(q)](well-formed-17.md)
 - [Feasible instances of SATISFIABILITY OF QUADRATIC EQUATIONS OVER GF(q)](quadratic-equations-feasible.md)
 - [SATISFIABILITY OF QUADRATIC EQUATIONS OVER GF(q) as a decision problem](quadratic-equations-dec.md)
-- [SATISFIABILITY OF QUADRATIC EQUATIONS OVER GF(q) is NP-complete](quadratic-equations-np-complete.md)
 - [Instances of GOOD SIMULTANEOUS DIOPHANTINE APPROXIMATION](simultaneous-diophantine-approximation-i.md)
 - [Well-formed instances of GOOD SIMULTANEOUS DIOPHANTINE APPROXIMATION](well-formed-18.md)
 - [Feasible instances of GOOD SIMULTANEOUS DIOPHANTINE APPROXIMATION](simultaneous-diophantine-approximation-f.md)

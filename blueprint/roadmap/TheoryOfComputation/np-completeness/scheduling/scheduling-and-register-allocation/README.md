@@ -29,7 +29,6 @@
 - [Well-formed instances of PARALLEL PROCESSOR TOTAL FLOW TIME](well-formed-5.md)
 - [Feasible instances of PARALLEL PROCESSOR TOTAL FLOW TIME](parallel-processor-total-flow-time-feasi.md)
 - [PARALLEL PROCESSOR TOTAL FLOW TIME as a decision problem](parallel-processor-total-flow-time-dec.md)
-- [PARALLEL PROCESSOR TOTAL FLOW TIME is NP-complete](parallel-processor-total-flow-time-np-co.md)
 - [Instances of REGISTER SUFFICIENCY FOR LOOPS](register-sufficiency-for-loops-instance.md)
 - [Well-formed instances of REGISTER SUFFICIENCY FOR LOOPS](well-formed-6.md)
 - [Overlapping loop variables](overlap.md)

@@ -56,8 +56,9 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the records' probabilities `p(r)` as pairs `(a, b)` meaning `a / b`, the number
-`m` of sectors, and the bound `K`. -/
+/-- An instance: record weights `p(r)` as pairs `(a, b)` read as `a / b` (`0` when `b = 0`),
+probabilities for well-formed instances, the number `m` of sectors, and a natural bound `K`
+(positive for well-formed instances). -/
 abbrev ExpectedRetrievalCostInstance := List (ℕ × ℕ) × ℕ × ℕ
 
 /-- The rational `a / b` encoded by the pair `(a, b)`. -/
@@ -85,8 +86,9 @@ def retrievalCost (inst : ExpectedRetrievalCostInstance)
 def WellFormed (inst : ExpectedRetrievalCostInstance) : Prop :=
   (∀ q ∈ inst.1, 0 < q.2 ∧ q.1 ≤ q.2) ∧ (inst.1.map toRat).sum = 1 ∧ 0 < inst.2.2
 
-/-- Some allocation of the records to the `m` sectors, with every sector nonempty, has expected
-retrieval cost at most `K`. -/
+/-- Some allocation of the records to the `m` sectors, with every sector nonempty, has weighted
+latency cost `retrievalCost` at most `K` (the expected retrieval cost for well-formed
+instances). -/
 def ExpectedRetrievalCostFeasible (inst : ExpectedRetrievalCostInstance) : Prop :=
   ∃ f : Fin inst.1.length → Fin inst.2.1, Function.Surjective f ∧ retrievalCost inst f ≤ inst.2.2
 

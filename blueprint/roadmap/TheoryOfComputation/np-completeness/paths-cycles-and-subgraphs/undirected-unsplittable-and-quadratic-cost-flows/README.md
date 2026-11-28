@@ -37,4 +37,3 @@
 - [Well-formed instances of UNSPLITTABLE FLOW](well-formed-4.md)
 - [Feasible instances of UNSPLITTABLE FLOW](unsplittable-flow-feasible.md)
 - [UNSPLITTABLE FLOW as a decision problem](unsplittable-flow-dec.md)
-- [UNSPLITTABLE FLOW is NP-complete](unsplittable-flow-np-complete.md)
