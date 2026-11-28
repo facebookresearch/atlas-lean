@@ -10,11 +10,11 @@ $$\lim_{x\to-\infty}N_0(x)=\lim_{x\to+\infty}N_1(x)=n_-,\qquad \lim_{x\to+\infty
 
 The two spatial halves of the population oscillate in antiphase. The proof is computer-assisted at $\sigma=10$ (Theorem 3 of Section 4 gives explicit approximations $\bar N,\bar M$ with $\|N-\bar N\|_{C(\mathbb{R})},\|M-\bar M\|_{C(\mathbb{R})}\le 4.19\times10^{-13}$), and the rescaling $x\mapsto \sigma x$ transfers the solution to every $\sigma>0$.
 
-**Theorem 1.2 (spectral enclosure).** Let $N_t$ be a 2-cycle, $S=Q\circ Q$ and, without loss of generality, $\sigma=1$. Every eigenvalue of the linearization $\mathcal{M}=DS[N_0]$ lies in the closed disc of radius
+**Theorem 1.2 (spectral enclosure).** Let $N_t$ be a 2-cycle, $S=Q\circ Q$ and, without loss of generality, $\sigma=1$. Every eigenvalue of the linearization $\mathcal{M}=DS[N_0]$, acting on the space $C_b(\mathbb R)$ of bounded continuous functions with the sup norm, lies in the closed disc centred at $0$ of radius
 
 $$\mu=\|F'\circ N_0\|_\infty\,\|F'\circ N_1\|_\infty .$$
 
-An eigenfunction $h$ for eigenvalue $\lambda$ solves $\lambda\ddot h=\lambda h-F'(N_1)v$, $\ddot v=v-F'(N_0)h$ with $v=K*(F'(N_0)h)$. If $|\lambda|\ge1$ and $0<F'(n_+)F'(n_-)<1$, the limiting constant-coefficient systems at $\pm\infty$ are hyperbolic with eigenvalues $\xi_{j,k}=(-1)^j\sqrt{1+(-1)^k\sqrt{F'(n_+)F'(n_-)/\lambda}}$, which makes an Evans-function count of unstable eigenvalues possible.
+An eigenfunction $h$ for eigenvalue $\lambda$ solves $\lambda\ddot h=\lambda h-F'(N_1)v$, $\ddot v=v-F'(N_0)h$ with $v=K*(F'(N_0)h)$. If $|\lambda|\ge1$ and $0<F'(n_+)F'(n_-)<1$, the limiting constant-coefficient systems at $\pm\infty$ are hyperbolic with eigenvalues $\xi_{j,k}=(-1)^j\sqrt{1+(-1)^k\sqrt{F'(n_+)F'(n_-)/\lambda}}$, $j,k\in\{0,1\}$, which makes an Evans-function count of unstable eigenvalues possible.
 
 ## Depends on
 

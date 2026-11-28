@@ -4,7 +4,7 @@
 
 $$C^{(n)}(k) = \prod_{k'=1}^{k} c^{(n)}\big(n\mathbf Y^{(n)}(k'-1) - n\mathbf Y^{(n)}(k') \,\big|\, \mathbf Y^{(n)}(k'-1)\big), \qquad C^{(n)}(0) = 1.$$
 
-**Hypotheses.** (i) Large sample: $\mathbf Y^{(n)}(0) = \mathbf y_0^{(n)} \to \mathbf y_0 \in \mathbb R_+^d$ with $\|\mathbf y_0\|_1 = 1$. (ii) Asymptotic one-step costs: there are continuous functions $a_j$ and $b_{ij} \ge 1$ such that, for every $\delta > 0$, uniformly over lattice points $\mathbf y$ with all coordinates at least $\delta$,
+**Hypotheses.** (i) Large sample: $\mathbf Y^{(n)}(0) = \mathbf y_0^{(n)} \to \mathbf y_0 \in (0, \infty)^d$ with $\|\mathbf y_0\|_1 = 1$ (every limiting type frequency $y_{0,i}$ is strictly positive). (ii) Asymptotic one-step costs: there are continuous functions $a_j$ and $b_{ij} \ge 1$ such that, for every $\delta > 0$, uniformly over lattice points $\mathbf y$ with all coordinates at least $\delta$,
 
 $$n\big(c^{(n)}(\mathbf e_j \mid \mathbf y) - 1\big) \to a_j(\mathbf y), \qquad c^{(n)}(\mathbf e_j - \mathbf e_i \mid \mathbf y) \to b_{ij}(\mathbf y).$$
 
@@ -22,7 +22,7 @@ So for large samples the coalescent forgets its randomness in the lineage counts
 
 ## Expansion
 
-A backward step removes one lineage, so after $\lfloor sn \rfloor$ steps the total scaled count is $1 - s + O(1/n)$; coalescence steps happen with probability $1 - O(1/n)$ and occur in each type in proportion to its frequency, which yields the deterministic ray. Mutation steps have probability of order $\theta/\|\mathbf n\|$ per step, i.e. $O(1/n)$, so over $O(n)$ steps they form a Poisson process with the stated intensity. Writing $\log C^{(n)}$ as a sum over steps, coalescence steps contribute $\frac1n a_j + o(1/n)$ each, which sums to the Riemann integral, and each of the finitely many mutation steps contributes $\log b_{ij}$. The proof makes this rigorous by generator convergence for the triple $(C, \mathbf Y, M)$ on compact sets in the interior of the orthant (Ethier–Kurtz), which is why $t < 1$ is fixed and the coordinates stay bounded away from zero.
+Only coalescence steps remove a lineage, so after $k$ steps the total count equals the initial total minus $k$ plus the number of mutation steps among them, $\|\mathbf Y^{(n)}(k)\|_1 = \|\mathbf y_0^{(n)}\|_1 - k/n + \|M^{(n)}(k)\|_1/n$. Since $\|\mathbf y_0^{(n)}\|_1 \to 1$ (Assumption 1.1) and the mutation count over $\lfloor sn \rfloor$ steps is tight, the total scaled count at step $\lfloor sn \rfloor$ tends to $1 - s$; coalescence steps happen with probability $1 - O(1/n)$ and occur in each type in proportion to its frequency, which yields the deterministic limiting ray $\mathbf Y(s) = \mathbf y_0(1 - s)$. Mutation steps have probability of order $\theta/\|\mathbf n\|$ per step, i.e. $O(1/n)$, so over $O(n)$ steps they form a Poisson process with the stated intensity. Writing $\log C^{(n)}$ as a sum over steps, coalescence steps contribute $\frac1n a_j + o(1/n)$ each, which sums to the Riemann integral, and each of the finitely many mutation steps contributes $\log b_{ij}$. The proof makes this rigorous by generator convergence for the triple $(C, \mathbf Y, M)$ on compact sets in the interior of the orthant (Ethier–Kurtz), which is why $t < 1$ is fixed and the coordinates stay bounded away from zero.
 
 ## Sources
 

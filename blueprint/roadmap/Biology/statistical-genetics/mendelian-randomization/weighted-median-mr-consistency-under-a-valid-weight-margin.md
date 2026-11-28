@@ -15,8 +15,11 @@ $$\sum_{j \in V} w_j^\infty > \frac{1 + \max_{1 \le j \le J} w_j^\infty}{2},$$
 then $\hat\beta_{\mathrm{WM}} \xrightarrow{p} \beta$.
 
 A strict majority of valid weight, $\sum_{j \in V} w_j^\infty > 1/2$, does not suffice for the interpolated
-estimator (this page derives the strengthened margin $\sum_{j \in V} w_j^\infty > (1 + \max_j w_j^\infty)/2$
-above; Bowden et al. (2016) state consistency under the weaker heuristic condition that at least 50% of the weight comes from valid instruments without printing this margin). With true effect $0$, estimates $(-1, 0, 1/N)$ and weights $(0.45, 0.20, 0.35)$, the last two
+estimator. Bowden et al. (2016), Web Appendix 1, already distinguish the empirical weighted median from the
+mid-point interpolated one, give a counterexample to consistency under a valid-weight majority alone for the
+latter, and give a guarantee when no variant carries more than 10% of the weight and at least 55% of it is valid.
+The margin $\sum_{j \in V} w_j^\infty > (1 + \max_j w_j^\infty)/2$ above is a general sufficient condition
+derived on this page; it is not necessary for every configuration. With true effect $0$, estimates $(-1, 0, 1/N)$ and weights $(0.45, 0.20, 0.35)$, the last two
 variants are valid and carry weight $0.55$, yet the mid-point percentiles of the first two are $0.225$ and
 $0.55$, so $\hat\beta_{\mathrm{WM}} = -2/13$ for every $N$.
 
@@ -38,4 +41,4 @@ $|\hat\beta_{\mathrm{WM}} - \beta| < \varepsilon$.
 
 ## Sources
 
-- J. Bowden, G. Davey Smith, P. C. Haycock, and S. Burgess, "Consistent Estimation in Mendelian Randomization with Some Invalid Instruments Using a Weighted Median Estimator", Genetic Epidemiology 40 (2016), 304–314, <https://doi.org/10.1002/gepi.21965> (PMC4849733). The paper states consistency when at least half of the weight is valid; the margin above is the hypothesis under which its interpolated estimator is consistent.
+- J. Bowden, G. Davey Smith, P. C. Haycock, and S. Burgess, "Consistent Estimation in Mendelian Randomization with Some Invalid Instruments Using a Weighted Median Estimator", Genetic Epidemiology 40 (2016), 304–314, <https://doi.org/10.1002/gepi.21965> (PMC4849733). Web Appendix 1 (empirical versus mid-point interpolated median, a counterexample to majority-only consistency for the latter, and the guarantee under a 10% maximum weight with 55% valid weight); the general sufficient margin above is derived here.
