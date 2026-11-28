@@ -8,9 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Data.Nat.Prime.Defs
+public import Mathlib.Data.Set.Defs
 public import MathlibExt.NumberTheory.GeneralizedSylvester
 import Mathlib.Data.Int.ModEq
+import Mathlib.Data.Nat.Factorization.Induction
 import Mathlib.Data.Nat.ModEq
+import Mathlib.Data.Set.Insert
 import Mathlib.Tactic.Ring
 
 /-!
@@ -20,10 +24,20 @@ The recurrence preserves the residue of `Sₖ` modulo `(Sₖ - 1)²` for every t
 from index `k` onward. In particular, the terms from `S₂ = 7` onward have
 residue `7` modulo `36`.
 
+Starting from `S₃ = 43`, the recurrence preserves the residue `43` modulo `1764`
+because `43² - 43 + 1 = 1807 = 1764 + 43` (congruence (7) in the reference below).
+Starting from `S₁ = 3`, the residue modulo `4` gives a prime divisor congruent to
+`3` modulo `4` in every subsequent term, including `S₁` itself.
+
+Among the terms $S_n$ with $n \ge 0$, only $S_1 = 3$ has $2S_n = m(m+1)$ for a
+natural number $m \ge 1$. The products $m(m+1)$ have residues $0, 2, 3, 6$ modulo
+$9$, excluding $2S_0 \equiv 4 \pmod{9}$ and $2S_n \equiv 5 \pmod{9}$ for $n \ge 2$.
+
 ## References
 
 * Abderrahim Makki Naciri, *A Note on Sylvester's Sequence*, INTEGERS 24
-  (2024), Article A117, Proposition 1, divisibility (4) and congruence (6).
+  (2024), Article A117, pp. 1–7, Proposition 1, divisibility (4) and congruences
+  (5)–(7), and Corollary 1(b) and (d).
   <https://math.colgate.edu/~integers/y117/y117.pdf>
 -/
 
@@ -84,5 +98,79 @@ theorem sylvester_sub_dvd
       exact (ih.add ((ih.sub_right 1).pow 2)).trans
         (Int.add_modEq_left_iff.mpr (dvd_refl _))
   exact ((hres m hm).trans (hres n hn).symm).dvd
+
+/-- **Sylvester numbers modulo 1764.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
+$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 3$, $S_n \equiv 43 \pmod{1764}$.
+
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (7). -/
+theorem sylvester_modEq_forty_three_mod_1764
+    (n : ℕ) (hn : 3 ≤ n) :
+    sylvesterNumber n % 1764 = 43 := by
+  have hmod : (43 : ℤ) ≡ (sylvesterNumber n : ℤ) [ZMOD 1764] :=
+    Int.modEq_iff_dvd.mpr (sylvester_sub_dvd 3 3 n (by decide) (by decide) hn)
+  have hnat : 43 ≡ sylvesterNumber n [MOD 1764] := Int.natCast_modEq_iff.mp hmod
+  exact hnat.symm
+
+private theorem exists_prime_dvd_mod_four_eq_three (m : ℕ) (hm : m % 4 = 3) :
+    ∃ p : ℕ, p.Prime ∧ p ∣ m ∧ p % 4 = 3 := by
+  induction m using induction_on_primes with
+  | zero => simp at hm
+  | one => simp at hm
+  | prime_mul p a hp ih =>
+    have hresidue : ∀ i j : Fin 4, (i.val * j.val) % 4 = 3 → i.val = 3 ∨ j.val = 3 := by
+      decide
+    rw [Nat.mul_mod] at hm
+    rcases hresidue ⟨p % 4, Nat.mod_lt _ (by decide)⟩ ⟨a % 4, Nat.mod_lt _ (by decide)⟩ hm with
+      h | h
+    · exact ⟨p, hp, dvd_mul_right p a, h⟩
+    · obtain ⟨q, hq, hqa, hqmod⟩ := ih h
+      exact ⟨q, hq, hqa.trans (dvd_mul_left a p), hqmod⟩
+
+/-- **Prime divisors congruent to 3 modulo 4 of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the
+Sylvester sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n$ has a
+prime divisor $p$ with $p \equiv 3 \pmod 4$.
+
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(d). -/
+theorem sylvester_exists_prime_divisor_mod_four_eq_three
+    (n : ℕ) (hn : 1 ≤ n) :
+    ∃ p : ℕ, p.Prime ∧ p ∣ sylvesterNumber n ∧ p % 4 = 3 := by
+  have hmod : (3 : ℤ) ≡ (sylvesterNumber n : ℤ) [ZMOD 4] :=
+    Int.modEq_iff_dvd.mpr (sylvester_sub_dvd 1 1 n (by decide) (by decide) hn)
+  have hnat : 3 ≡ sylvesterNumber n [MOD 4] := Int.natCast_modEq_iff.mp hmod
+  exact exists_prime_dvd_mod_four_eq_three _ hnat.symm
+
+/-- **The only triangular Sylvester number is $3$.** Let $S_n$ denote the $n$-th Sylvester
+number. A natural number $x$ equals $S_n$ for some $n$ and satisfies $2x = m(m + 1)$ for some
+natural number $m \ge 1$ if and only if $x = 3$.
+
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(b). -/
+theorem triangular_sylvester_values_eq :
+    {x : ℕ | ∃ n m : ℕ, 1 ≤ m ∧ x = sylvesterNumber n ∧
+      2 * x = m * (m + 1)} = {3} := by
+  have havoid (m : ℕ) : ¬ m * (m + 1) ≡ 4 [MOD 9] ∧ ¬ m * (m + 1) ≡ 5 [MOD 9] := by
+    have hfin : ∀ r : Fin 9,
+        ¬ r.val * (r.val + 1) ≡ 4 [MOD 9] ∧ ¬ r.val * (r.val + 1) ≡ 5 [MOD 9] := by decide
+    have hr := Nat.mod_modEq m 9
+    have hp := hr.mul (hr.add_right 1)
+    obtain ⟨h4, h5⟩ := hfin ⟨m % 9, Nat.mod_lt _ (by decide)⟩
+    exact ⟨fun h => h4 (hp.trans h), fun h => h5 (hp.trans h)⟩
+  ext x
+  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨n, m, -, rfl, hm⟩
+    rcases n with _ | _ | n
+    · have h4 : m * (m + 1) ≡ 4 [MOD 9] := by
+        rw [← hm]
+        decide
+      exact ((havoid m).1 h4).elim
+    · decide
+    · have h36 : sylvesterNumber (n + 2) ≡ 7 [MOD 36] :=
+        sylvester_modEq_seven_mod_thirty_six (n + 2) (by omega)
+      have h5 : m * (m + 1) ≡ 5 [MOD 9] := by
+        rw [← hm]
+        exact ((h36.of_dvd (by decide : 9 ∣ 36)).mul_left 2).trans (by decide)
+      exact ((havoid m).2 h5).elim
+  · rintro rfl
+    exact ⟨1, 2, by decide, by decide, by decide⟩
 
 end MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted

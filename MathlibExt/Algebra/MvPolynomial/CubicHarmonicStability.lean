@@ -150,7 +150,7 @@ public theorem cubicLowerTwo_cubicXi (ν : Fin 3 → ℂ) (p : CubicPoly) :
       - X 2 * pderiv 2 (pderiv 0 (pderiv 0 p)) -
         X 2 * pderiv 2 (pderiv 1 (pderiv 1 p))) := by
   simp only [cubicLowerTwo, cubicXi, Fin.sum_univ_three, Matrix.of_apply, Fin.isValue,
-    Fin.reduceEq, if_true, if_false, max01, max02, max12, max10, max20, max21, min01,
+    Fin.reduceEq, ite_true, ite_false, max01, max02, max12, max10, max20, max21, min01,
     min02, min12, min10, min20, min21, Matrix.cons_val_zero, Matrix.cons_val_one,
     Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons, map_add, map_sub, map_neg,
     pderiv_mul, pderiv_C, pdX, zero_mul, add_zero, zero_add, one_mul, c10, c20, c21]
@@ -187,7 +187,7 @@ public theorem cubicLowerOne_cubicXi (ν : Fin 3 → ℂ) (p : CubicPoly) :
       - X 0 * (X 2 * pderiv 1 (pderiv 1 (pderiv 1 p)))
       + X 0 * (X 1 * pderiv 1 (pderiv 1 (pderiv 2 p)))) := by
   rw [cubicLowerOne_eq]
-  simp only [cubicXi, Matrix.of_apply, Fin.isValue, Fin.reduceEq, if_true, if_false,
+  simp only [cubicXi, Matrix.of_apply, Fin.isValue, Fin.reduceEq, ite_true, ite_false,
     max01, max02, max12, max10, max20, max21, min01, min02, min12, min10, min20, min21,
     Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
     Matrix.tail_cons, map_add, map_sub, map_neg, pderiv_mul, pderiv_C, pdX, zero_mul,
@@ -203,7 +203,7 @@ public theorem cubicQSum_cubicXi (ν : Fin 3 → ℂ) (p : CubicPoly) :
       + X 1 ^ 2 * (pderiv 2 (pderiv 2 p) - pderiv 0 (pderiv 0 p))
       - X 2 ^ 2 * (pderiv 0 (pderiv 0 p) + pderiv 1 (pderiv 1 p)) := by
   simp only [cubicQSum, cubicXi, Fin.sum_univ_three, Matrix.of_apply, Fin.isValue,
-    Fin.reduceEq, if_true, if_false, max01, max02, max12, max10, max20, max21, min01,
+    Fin.reduceEq, ite_true, ite_false, max01, max02, max12, max10, max20, max21, min01,
     min02, min12, min10, min20, min21, Matrix.cons_val_zero, Matrix.cons_val_one,
     Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons, map_add, map_sub, map_neg,
     pderiv_mul, pderiv_C, pdX, zero_mul, add_zero, zero_add, one_mul, c10, c20, c21]
@@ -217,7 +217,7 @@ public theorem cubicLowerTwo_cubicXi_diagQuad (ν : Fin 3 → ℂ) (α β : ℂ)
   rw [cubicLowerTwo_cubicXi]
   simp only [Fin.isValue, map_add, map_sub, mul_add, mul_sub, pderiv_C_mul, pderiv_C,
     pd_ofNat, pdXsq, pdX, pderiv_mul, pderiv_one, map_zero, Fin.reduceEq,
-    eq_self_iff_true, if_true, if_false, mul_zero, zero_mul, add_zero, zero_add,
+    eq_self_iff_true, ite_true, ite_false, mul_zero, zero_mul, add_zero, zero_add,
     sub_zero, map_neg, mul_neg, neg_mul, neg_zero, mul_one]
   simp only [map_add, map_sub, map_mul, map_neg, map_one, map_ofNat]
   ring
@@ -233,7 +233,7 @@ public theorem cubicSameTwo_cubicXi_diagQuad (ν : Fin 3 → ℂ) (α β : ℂ) 
   rw [cubicSameTwo_eq, cubicQSum_cubicXi]
   simp only [Fin.isValue, map_add, map_sub, mul_add, mul_sub, pderiv_C_mul, pderiv_C,
     pd_ofNat, pdXsq, pdX, pderiv_mul, pderiv_one, map_zero, Fin.reduceEq,
-    eq_self_iff_true, if_true, if_false, mul_zero, zero_mul, add_zero, zero_add,
+    eq_self_iff_true, ite_true, ite_false, mul_zero, zero_mul, add_zero, zero_add,
     sub_zero, map_neg, mul_neg, neg_mul, neg_zero, mul_one]
   simp only [map_add, map_sub, map_mul, map_neg, map_one, map_ofNat]
   ring
@@ -244,7 +244,7 @@ public theorem cubicLowerOne_cubicXi_X01 (ν : Fin 3 → ℂ) (z : ℂ) :
   rw [cubicLowerOne_cubicXi]
   simp only [Fin.isValue, map_add, map_sub, mul_add, mul_sub, pderiv_C_mul, pderiv_C,
     pd_ofNat, pdX, pderiv_mul, pderiv_one, map_zero, Fin.reduceEq, eq_self_iff_true,
-    if_true, if_false, mul_zero, zero_mul, add_zero, zero_add, sub_zero, map_neg,
+    ite_true, ite_false, mul_zero, zero_mul, add_zero, zero_add, sub_zero, map_neg,
     mul_neg, neg_mul, neg_zero, mul_one, one_mul]
   simp only [map_add, map_sub, map_mul, map_neg, map_one, map_ofNat]
   ring
@@ -255,7 +255,7 @@ public theorem cubicLowerOne_cubicXi_X02 (ν : Fin 3 → ℂ) (z : ℂ) :
   rw [cubicLowerOne_cubicXi]
   simp only [Fin.isValue, map_add, map_sub, mul_add, mul_sub, pderiv_C_mul, pderiv_C,
     pd_ofNat, pdX, pderiv_mul, pderiv_one, map_zero, Fin.reduceEq, eq_self_iff_true,
-    if_true, if_false, mul_zero, zero_mul, add_zero, zero_add, sub_zero, map_neg,
+    ite_true, ite_false, mul_zero, zero_mul, add_zero, zero_add, sub_zero, map_neg,
     mul_neg, neg_mul, neg_zero, mul_one, one_mul]
   simp only [map_add, map_sub, map_mul, map_neg, map_one, map_ofNat]
   ring

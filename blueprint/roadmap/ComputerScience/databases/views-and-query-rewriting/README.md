@@ -1,0 +1,16 @@
+# Views and query rewriting
+
+- [Rewritings of conjunctive queries using views](rewritings-of-conjunctive-queries-using-views.md)
+- [A query has a rewriting using a view exactly when its Boolean projection is contained in the view's](existence-of-a-rewriting-using-a-view.md)
+- [Complexity of deciding whether a rewriting using views exists](complexity-of-deciding-whether-a-rewriting-exists.md)
+- [Locally minimal rewritings reuse the query's atoms, and their view atoms can use the query's variables](locally-minimal-rewritings-reuse-the-query-atoms.md)
+- [Locally minimal complete rewritings have at most as many atoms as the query](complete-rewritings-have-at-most-as-many-atoms-as-the-query.md)
+- [Finding small and complete rewritings of conjunctive queries is NP-complete](finding-small-and-complete-rewritings-is-np-complete.md)
+- [Complete rewriting is NP-complete even without repeated relation names](complete-rewriting-is-np-complete-without-repeated-relations.md)
+- [Complete rewriting over unary and binary views defined by unions of conjunctive queries is Π2p-complete](complete-rewriting-over-ucq-views-is-pi2p-complete.md)
+- [Bag determinacy of Boolean unions of conjunctive queries is undecidable](bag-determinacy-of-boolean-ucqs-is-undecidable.md)
+- [Determinacy of a query by views](determinacy-of-a-query-by-views.md)
+- [Determinacy of finite regular path queries is undecidable](determinacy-of-finite-regular-path-queries.md)
+- [Determinacy of regular path queries is undecidable](determinacy-of-regular-path-queries-is-undecidable.md)
+- [Finite determinacy of conjunctive queries is undecidable](finite-determinacy-of-cqs-is-undecidable.md)
+- [Unrestricted determinacy of conjunctive queries is undecidable](unrestricted-cq-determinacy-is-undecidable.md)

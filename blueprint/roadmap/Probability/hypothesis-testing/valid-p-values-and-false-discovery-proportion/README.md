@@ -8,10 +8,22 @@
 - [False discovery proportion](false-discovery-proportion.md)
 - [False discovery proportion is nonnegative](false-discovery-proportion-nonneg.md)
 - [False discovery proportion is at most one](false-discovery-proportion-le-one.md)
+- [The step-up index is a qualifying index](step-up-index-mem.md)
+- [The step-up index as a finite supremum](step-up-index-eq-sup.md)
 - [Upper tail of a measure on the natural numbers](upper-tail.md)
 - [Exact upper-tail p-value](upper-tail-pvalue.md)
 - [Upper tails decrease with the cutoff](upper-tail-antitone.md)
 - [Validity of the upper-tail p-value](is-valid-pvalue-upper-tail-pvalue.md)
+- [Exact calibration of the upper-tail p-value at attainable levels](measure-upper-tail-pvalue-le-upper-tail.md)
+- [Lower tail of a law on the natural numbers](lower-tail.md)
+- [Lower-tail p-value of a count](lower-tail-pvalue.md)
+- [Monotonicity of the lower tail](lower-tail-mono.md)
+- [Validity of the lower-tail p-value](is-valid-pvalue-lower-tail-pvalue.md)
+- [Survival-function p-values are valid](is-valid-pvalue-survival.md)
+- [Validity of a discrete upper-tail p-value](sum-upper-tail-le.md)
+- [Validity of the doubled two-sided p-value](is-valid-pvalue-two-sided.md)
+
+- [Confidence sets and test inversion](confidence-sets-and-test-inversion/README.md)
 
 ## Genomic control with an estimated inflation factor
 
@@ -78,6 +90,12 @@
 - [Two independent null genes: the λ̂ p-values are not PRDS](not-is-prdson-tail-pvalue-gc-stat-rv-two-2.md)
 - [Two independent null genes: T₀ has positive variance](variance-gc-stat-rv-two-pos.md)
 - [Two independent null genes: T₀ and T₁ have negative covariance](covariance-gc-stat-rv-two-neg.md)
+
+## Type-I error of a calibrated rejection rule
+
+- [Type I error of a p-value rejection rule](type-i-error-le-of-is-valid-pvalue.md)
+- [Type I error of a calibrated critical-value rule](type-i-error-le-of-has-law.md)
+- [Type I error of a uniform p-value](type-i-error-le-of-has-law-uniform-p-val.md)
 
 ## Related topics
 

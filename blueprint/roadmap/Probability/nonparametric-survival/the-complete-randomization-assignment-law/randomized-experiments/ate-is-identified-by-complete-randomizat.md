@@ -1,0 +1,3 @@
+# Identification of the average treatment effect under complete randomization
+
+Let $U$ be a finite population of $N$ units (with the discrete σ-algebra) and $1 \le n_1$, $n_1 + 1 \le N$. For a schedule $\theta = (y_0, y_1)$ of potential outcomes $y_0, y_1 : U \to \mathbb{R}$, let $P_\theta$ be the law of the observed triple (unit $I$, treatment indicator $\mathbf 1[I \in S]$, observed outcome $y_{1I}$ if $I \in S$ and $y_{0I}$ otherwise) when $I$ is uniform on $U$ and, independently, $S$ is drawn by complete randomization of $n_1$ treated units. Then the average treatment effect is identified: whenever $P_\theta = P_{\theta'}$, the average treatment effects $\frac1N \sum_i (y_{1i} - y_{0i})$ of $\theta$ and $\theta'$ are equal.

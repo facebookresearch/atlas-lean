@@ -11,9 +11,39 @@ module
 import MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for type III alternating hyperharmonic power sums over squarefree numbers -/
+/-! # Tests for type III alternating hyperharmonic numbers and their power sums over squarefree
+numbers -/
 
 open MetaMathlibExt Asymptotics Filter Finset
+
+-- The four asymptotics of the type III numbers, at order parameter two.
+example : (fun n : ℕ =>
+    signedIteratedPartialSum true (alternatingGeneralizedHarmonic 1) 5 n) ~[atTop]
+    fun n : ℕ => (n : ℝ) ^ 2 * Real.log 2 / 8 := by
+  simpa [alternatingZeta_one, Nat.factorial] using
+    (alternatingHyperharmonic_typeIII_isEquivalent (y := 2) (p := 1)
+      (by decide) (by decide)).1
+
+example : (fun n : ℕ =>
+    signedIteratedPartialSum true (alternatingGeneralizedHarmonic 1) 4 n) ~[atTop]
+    fun n : ℕ => (n : ℝ) * Real.log n / 4 := by
+  simpa [Nat.factorial] using
+    (alternatingHyperharmonic_typeIII_isEquivalent (y := 2) (p := 1)
+      (by decide) (by decide)).2.1
+
+example : (fun n : ℕ =>
+    signedIteratedPartialSum true (alternatingGeneralizedHarmonic 2) 4 (2 * n)) ~[atTop]
+    fun n : ℕ => (n : ℝ) * ((∑' i : ℕ, 1 / (i : ℝ) ^ 2) - alternatingZeta 2) / 2 := by
+  simpa [Nat.factorial] using
+    (alternatingHyperharmonic_typeIII_isEquivalent (y := 2) (p := 2)
+      (by decide) (by decide)).2.2.1 (by decide)
+
+example : (fun n : ℕ =>
+    signedIteratedPartialSum true (alternatingGeneralizedHarmonic 2) 4 (2 * n - 1)) ~[atTop]
+    fun n : ℕ => (n : ℝ) * ((∑' i : ℕ, 1 / (i : ℝ) ^ 2) + alternatingZeta 2) / 2 := by
+  simpa [Nat.factorial] using
+    (alternatingHyperharmonic_typeIII_isEquivalent (y := 2) (p := 2)
+      (by decide) (by decide)).2.2.2 (by decide)
 
 -- Both levels of type III summation alternate: `H_2^{(1,2,3)} = H̄_1 - H̄_2 = 1 / 2`, the value
 -- `∑_{m ≤ 1} (2m)⁻¹` of the even-index formula.

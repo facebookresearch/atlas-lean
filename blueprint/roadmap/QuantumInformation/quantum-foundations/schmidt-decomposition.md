@@ -9,17 +9,11 @@ with $r \le \min(\dim\mathcal{X}, \dim\mathcal{Y})$, positive numbers $p_1, \dot
 orthonormal families $\{x_i\}$ in $\mathcal{X}$ and $\{y_i\}$ in $\mathcal{Y}$. The $p_i$ are the nonzero
 eigenvalues of both reduced states of $uu^*$, which therefore have the same nonzero spectrum.
 
-## Expansion
-
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Finite-dimensional quantum state (pure and mixed).
-
 ## Depends on
 
 - [Left partial trace of a rank-one matrix](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-left-vec-mul-vec-star.md)
 - [Right partial trace of a rank-one matrix](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-right-vec-mul-vec-star.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Sources
 

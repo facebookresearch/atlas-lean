@@ -75,7 +75,10 @@ def unitOrderIso : MonRelCat.unit.{u} ≃o assertions (𝟙_ SumRelCat.{u}) wher
   right_inv P := by ext x; exact x.elim
   map_rel_iff' := by intros; simp
 
-/-- The strong tensor comparison in the monotone-relation category. -/
+/-- The tensor comparison `assertions X ⊗ assertions Y ≅ assertions (X ⊗ Y)` of powerset
+verification, which relates `P` to `Q` along `f` iff `f.rel.image P ⊆ Q`: the isomorphism of
+monotone relations induced by the order isomorphism
+`(P, Q) ↦ Sum.inl '' P ∪ Sum.inr '' Q`. -/
 def tensorIso (X Y : SumRelCat.{u}) :
     assertions X ⊗ assertions Y ≅ assertions (X ⊗ Y) := MonRelCat.isoOfOrderIso (tensorOrderIso X Y)
 /-- The strong unit comparison. -/
@@ -143,7 +146,10 @@ private theorem core_right_unit (X : SumRelCat.{u}) :
     tensorOrderIso, Set.sumEquiv, unitOrderIso, OrderHom.comp, OrderHom.prodMap,
     MonRelCat.rightUnitOrderIso]
 
-/-- Coherence of the powerset tensor and unit comparisons. -/
+/-- The strong monoidal structure of powerset verification, which relates `P` to `Q` along a
+relation `f` iff `f.rel.image P ⊆ Q`: the tensor comparison `tensorIso`, induced by the order
+isomorphism `(P, Q) ↦ Sum.inl '' P ∪ Sum.inr '' Q`, and the unit comparison `unitIso`, with
+their naturality, associativity and unitality. -/
 def coreMonoidal : verification.{u}.CoreMonoidal where
   εIso := unitIso
   μIso := tensorIso
@@ -174,7 +180,8 @@ instance : verification.{u}.Braided where
 def safeInvariant {X Y U : SumRelCat.{u}} (f : X ⊗ U ⟶ Y ⊗ U) (R : Set Y) : Set U :=
   {u | ∀ y, SumRelCat.FeedbackPath f (Sum.inr u) y → y ∈ R}
 
-/-- Partial correctness of feedback is equivalent to preservation of a hidden invariant. -/
+/-- Partial correctness of feedback is equivalent to a hidden invariant `Q` whose assembled
+image stays inside the assembled postcondition: `f[P ⊕ Q] ⊆ R ⊕ Q`. -/
 theorem feedback_image_subset_iff {X Y U : SumRelCat.{u}} (f : X ⊗ U ⟶ Y ⊗ U)
     (P : Set X) (R : Set Y) :
     (SumRelCat.feedback f).rel.image P ⊆ R ↔

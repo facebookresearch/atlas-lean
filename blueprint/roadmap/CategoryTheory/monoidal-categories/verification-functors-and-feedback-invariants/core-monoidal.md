@@ -1,0 +1,3 @@
+# Core Monoidal
+
+The powerset verification functor, sending a state space to its assertions ordered by inclusion and a relation $f : X \to Y$ to the upward-closed graph of its direct image, which relates an assertion $P \subseteq X$ to $Q \subseteq Y$ exactly when $f[P] \subseteq Q$ (not only when $f[P] = Q$; for the empty relation on a singleton, the empty assertion is related to the full one), is a monoidal functor from the disjoint-union relation category to monotone relations, with unit comparison the empty-assertion isomorphism and tensor comparison the isomorphism pairing assertions on the two summands of a disjoint union; both comparisons are natural.
