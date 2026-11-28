@@ -27,8 +27,9 @@ probability is `1 / (1 + (2/3) · 2 · (3/4)) = 1/2`. Region `B` has `μ = 3`, `
 * ground truth: the count of region `A` is geometric, `P(N = k) = (1/2)^(k+1)`, and the `p`-value
   of an observed count `2` is `1/4`;
 * with `C = 0` the count is `0` almost surely;
-* the model agrees with the gamma-Poisson hierarchy with exposure of
-  `Domains.Biology.Omics.HierarchicalCount`;
+* the model agrees with the gamma-Poisson hierarchy with exposure,
+  `MathlibExt.Biology.Omics.HierarchicalCount.marginalLik` (module
+  `Domains.Biology.Omics.HierarchicalCount`);
 * over the union of regions `A` and `B`, `P(N = 1) = (1/2)(6/25) + (1/4)(3/5) = 27/100`;
 * two regions with a common success probability give the negative binomial law with the summed
   shape. -/

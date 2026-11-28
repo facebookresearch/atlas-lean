@@ -59,11 +59,11 @@ those of mixed Poisson laws. The theorems hold for any cohort scaling `C ≥ 0` 
 probabilities `p ≥ 0` on the candidate set, normalized or not; with `C ∑_{i ∈ I} p i = 0` the
 count is `0` almost surely, the negative binomial law with success probability `1`. The
 gamma-Poisson hierarchy with an exposure `s`,
-`Domains.Biology.Omics.HierarchicalCount.marginalLik`, is the same mixture for `s = C ∑_{i ∈ I} p i`
-and the gamma law of rate `μ / σsq`. Here the model is a Poisson mixture over the image of the rate
-law under scaling (`ProbabilityTheory.gammaMeasure_map_const_mul`), which Greenwood–Yule
-(`ProbabilityTheory.poissonMixtureReal_gammaMeasure`) and the change to the success probability
-(`ProbabilityTheory.negBinomialReal_eq_negBinomialPMF`) evaluate.
+`MathlibExt.Biology.Omics.HierarchicalCount.marginalLik`, is the same mixture for
+`s = C ∑_{i ∈ I} p i` and the gamma law of rate `μ / σsq`. Here the model is a Poisson mixture over
+the image of the rate law under scaling (`ProbabilityTheory.gammaMeasure_map_const_mul`), which
+Greenwood–Yule (`ProbabilityTheory.poissonMixtureReal_gammaMeasure`) and the change to the success
+probability (`ProbabilityTheory.negBinomialReal_eq_negBinomialPMF`) evaluate.
 
 ## References
 
@@ -95,13 +95,13 @@ theorem isProbabilityMeasure_rateLaw {μ σsq : ℝ} (hμ : 0 < μ) (hσ : 0 < �
     IsProbabilityMeasure (rateLaw μ σsq) :=
   isProbabilityMeasure_gammaMeasure (by positivity) (by positivity)
 
-/-- The rate law has mean `μ`. -/
+/-- For `μ, σsq > 0` the rate law has mean `μ`. -/
 theorem integral_id_rateLaw {μ σsq : ℝ} (hμ : 0 < μ) (hσ : 0 < σsq) :
     ∫ x, x ∂rateLaw μ σsq = μ := by
   rw [rateLaw, integral_id_gammaMeasure (by positivity) (by positivity)]
   field_simp
 
-/-- The rate law has variance `σsq`. -/
+/-- For `μ, σsq > 0` the rate law has variance `σsq`. -/
 theorem variance_id_rateLaw {μ σsq : ℝ} (hμ : 0 < μ) (hσ : 0 < σsq) :
     variance id (rateLaw μ σsq) = σsq := by
   rw [rateLaw, variance_id_gammaMeasure (by positivity) (by positivity)]
@@ -121,14 +121,15 @@ negative binomial with shape `μ² / σsq` and success probability
 noncomputable def countPMF (μ σsq C : ℝ) (p : ι → ℝ) (I : Finset ι) (k : ℕ) : ℝ :=
   poissonMixtureReal ((rateLaw μ σsq).map fun x => C * (∑ i ∈ I, p i) * x) k
 
-/-- The law of the Poisson rate of the set `I` is a probability measure. -/
+/-- For `μ, σsq > 0` the law of the Poisson rate of the set `I` is a probability measure. -/
 private lemma isProbabilityMeasure_map_rate {μ σsq C : ℝ} {p : ι → ℝ} {I : Finset ι}
     (hμ : 0 < μ) (hσ : 0 < σsq) :
     IsProbabilityMeasure ((rateLaw μ σsq).map fun x => C * (∑ i ∈ I, p i) * x) :=
   have := isProbabilityMeasure_rateLaw hμ hσ
   inferInstance
 
-/-- The law of the Poisson rate of the set `I` is concentrated on `[0, ∞)`. -/
+/-- For `C ≥ 0` and `p ≥ 0` on `I` the law of the Poisson rate of the set `I` is concentrated on
+`[0, ∞)`. -/
 private lemma ae_nonneg_map_rate {μ σsq C : ℝ} {p : ι → ℝ} {I : Finset ι} (hC : 0 ≤ C)
     (hp : ∀ i ∈ I, 0 ≤ p i) :
     ∀ᵐ y ∂(rateLaw μ σsq).map (fun x => C * (∑ i ∈ I, p i) * x), 0 ≤ y :=
@@ -159,7 +160,7 @@ theorem countPMF_eq_negBinomialPMF {μ σsq C : ℝ} {p : ι → ℝ} {I : Finse
     congr 1
     field_simp
 
-/-- The mass function of the count is nonnegative. -/
+/-- For `C ≥ 0` and `p ≥ 0` on `I` the mass function of the count is nonnegative. -/
 theorem countPMF_nonneg {μ σsq C : ℝ} {p : ι → ℝ} {I : Finset ι} (hC : 0 ≤ C)
     (hp : ∀ i ∈ I, 0 ≤ p i) (k : ℕ) : 0 ≤ countPMF μ σsq C p I k :=
   poissonMixtureReal_nonneg (ae_nonneg_map_rate hC hp) k
@@ -190,7 +191,8 @@ and sets `I r` of candidate mutations, in a cohort with scaling `C`. Their rates
 Poisson with means `C (∑_{i ∈ I r} p r i) λ_r`, so that the total count is Poisson with mean
 `∑_r C (∑_{i ∈ I r} p r i) λ_r`. `unionCountPMF μ σsq C p I k` is the marginal probability that the
 total count is `k`: the Poisson mixture over the law of that sum under the product of the rate
-laws. It is the convolution of the regions' negative binomial mass functions
+laws. For `μ r, σsq r > 0`, `C ≥ 0` and `p r ≥ 0` on `I r` it is a probability mass function
+(`hasSum_unionCountPMF`), the convolution of the regions' negative binomial mass functions
 (`unionCountPMF_eq_sum_prod_negBinomialPMF`). -/
 noncomputable def unionCountPMF [Fintype ρ] (μ σsq : ρ → ℝ) (C : ℝ) (p : ρ → ι → ℝ)
     (I : ρ → Finset ι) (k : ℕ) : ℝ :=
@@ -199,8 +201,8 @@ noncomputable def unionCountPMF [Fintype ρ] (μ σsq : ρ → ℝ) (C : ℝ) (p
 
 variable [Fintype ρ]
 
-/-- The law of the Poisson rate of the union is the law of the sum of independent rates, one of
-each region's law. -/
+/-- For `μ r, σsq r > 0` the law of the Poisson rate of the union is the law of the sum of
+independent rates, one of each region's law. -/
 private lemma pi_map_sum_rate {μ σsq : ρ → ℝ} {C : ℝ} {p : ρ → ι → ℝ} {I : ρ → Finset ι}
     (hμ : ∀ r, 0 < μ r) (hσ : ∀ r, 0 < σsq r) :
     (Measure.pi fun r => rateLaw (μ r) (σsq r)).map
@@ -231,7 +233,8 @@ theorem unionCountPMF_eq_sum_prod_negBinomialPMF [DecidableEq ρ] {μ σsq : ρ 
   refine sum_congr rfl fun j _ => prod_congr rfl fun r _ => ?_
   exact countPMF_eq_negBinomialPMF (hμ r) (hσ r) hC (hp r) (j r)
 
-/-- The law of the Poisson rate of the union is concentrated on `[0, ∞)`. -/
+/-- For `μ r, σsq r > 0`, `C ≥ 0` and `p r ≥ 0` on `I r` the law of the Poisson rate of the union
+is concentrated on `[0, ∞)`. -/
 private lemma ae_nonneg_pi_map_sum_rate {μ σsq : ρ → ℝ} {C : ℝ} {p : ρ → ι → ℝ}
     {I : ρ → Finset ι} (hμ : ∀ r, 0 < μ r) (hσ : ∀ r, 0 < σsq r) (hC : 0 ≤ C)
     (hp : ∀ r, ∀ i ∈ I r, 0 ≤ p r i) :
@@ -245,7 +248,8 @@ private lemma ae_nonneg_pi_map_sum_rate {μ σsq : ρ → ℝ} {C : ℝ} {p : ρ
   exact (ae_map_iff hmeas.aemeasurable measurableSet_Ici).2 <| h0.mono
     fun x hx => sum_nonneg fun r _ => mul_nonneg (mul_nonneg hC (sum_nonneg (hp r))) (hx r)
 
-/-- The mass function of the total count over a union of regions is nonnegative. -/
+/-- For `μ r, σsq r > 0`, `C ≥ 0` and `p r ≥ 0` on `I r` the mass function of the total count
+over a union of regions is nonnegative. -/
 theorem unionCountPMF_nonneg {μ σsq : ρ → ℝ} {C : ℝ} {p : ρ → ι → ℝ} {I : ρ → Finset ι}
     (hμ : ∀ r, 0 < μ r) (hσ : ∀ r, 0 < σsq r) (hC : 0 ≤ C) (hp : ∀ r, ∀ i ∈ I r, 0 ≤ p r i)
     (k : ℕ) : 0 ≤ unionCountPMF μ σsq C p I k :=
