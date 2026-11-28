@@ -10,3 +10,6 @@
 - [Network transformations transfer injectivity and multistationarity](network-transformations-transfer-injectivity-and-multistationarity.md)
 - [Network translation and positive dependence of reaction vectors](network-translation-and-positive-dependence.md)
 - [Unstable cores of Child-Selection matrices](unstable-cores-of-child-selection-matrices.md)
+- [Monomolecular networks are not nondegenerately multistationary](monomolecular-networks-are-not-nondegenerately-multistationary.md)
+- [Steady-state invariants of glued reaction networks](steady-state-invariants-of-glued-reaction-networks.md)
+- [Topological criterion for autocatalysis in diluted reaction networks](topological-criterion-for-autocatalysis-in-diluted-networks.md)
