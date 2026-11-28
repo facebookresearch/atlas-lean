@@ -121,17 +121,12 @@ example (a b : R) (p q : ℕ) :
     (coefficient R A (a * b))
   intro i j
   apply ModuleCat.hom_ext
-  apply LinearMap.ext
-  change ∀ z : A ⊗[R] A,
-    (a * b) • (LinearMap.mul' R A) z =
-      (LinearMap.mul' R A) ((TensorProduct.map (a • LinearMap.id)
-        (b • LinearMap.id)) z)
-  intro z
-  induction z using TensorProduct.inductionOn with
-  | add x y hx hy => simp only [map_add, hx, hy]
-  | tmul x y =>
-      change (a * b) • (x * y) = (a • x) * (b • y)
-      simp only [smul_mul_assoc, mul_smul_comm, smul_smul]
+  change ((a * b) • (LinearMap.id : A →ₗ[R] A)).comp (LinearMap.mul' R A) =
+    (LinearMap.mul' R A).comp (TensorProduct.map (a • LinearMap.id) (b • LinearMap.id))
+  apply TensorProduct.ext'
+  intro x y
+  change (a * b) • (x * y) = (a • x) * (b • y)
+  simp only [smul_mul_assoc, mul_smul_comm, smul_smul]
 
 /-- The actual restriction functor forgets only the scalar structure. -/
 private def restrictedCarriers : ModuleCat.{u} R ⥤ Type u :=
