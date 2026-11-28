@@ -12,7 +12,6 @@ import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
-import MathlibExt.NumberTheory.ChurchBicknellFibonacciConvolution
 import MathlibExt.NumberTheory.Digits.BasePhiConjugate
 import MathlibExt.NumberTheory.Digits.BasePhiLucasPowers
 public import MathlibExt.NumberTheory.LucasSequence
@@ -35,24 +34,6 @@ namespace bergman_lucas_even_add
 open BasePhiConjugate
 open BasePhiRepresentations (value_pow_le_of_mem)
 
-private theorem lucas_lt_pow {n : ℕ} (hn : 1 ≤ n) :
-    (lucasNumber (2 * n - 1) : ℝ) < φ ^ ((2 * n - 1 : ℕ) : ℤ) := by
-  rw [← cb_lucas_binet, ← zpow_natCast φ, ← zpow_natCast ψ]
-  have hψneg : ψ ^ ((2 * n - 1 : ℕ) : ℤ) < 0 := by
-    have hexp : ((2 * n - 1 : ℕ) : ℤ) = 2 * ((n : ℤ) - 1) + 1 := by
-      rw [show 2 * n - 1 = 2 * (n - 1) + 1 by omega, Nat.cast_add, Nat.cast_mul,
-        Nat.cast_sub hn]
-      push_cast
-      ring
-    rw [hexp, zpow_add₀ Real.goldenConj_ne_zero, zpow_mul, zpow_one]
-    have hsq : (0:ℝ) < ψ ^ (2 : ℤ) := by
-      rw [zpow_ofNat, pow_two]
-      exact mul_pos_of_neg_of_neg Real.goldenConj_neg Real.goldenConj_neg
-    have hpow : (0:ℝ) < (ψ ^ (2 : ℤ)) ^ ((n : ℤ) - 1) := zpow_pos hsq _
-    have := mul_neg_of_pos_of_neg hpow Real.goldenConj_neg
-    exact this
-  linarith
-
 private theorem upper_bound {S : Finset ℤ} {n k : ℕ} (hn : 1 ≤ n)
     (hk : k ≤ lucasNumber (2 * n - 1)) (hSk : basePhiValue S = k) :
     ∀ i ∈ S, i ≤ 2 * (n : ℤ) - 2 := by
@@ -73,7 +54,8 @@ private theorem upper_bound {S : Finset ℤ} {n k : ℕ} (hn : 1 ≤ n)
     rw [← hSk]
     exact value_pow_le_of_mem hi
   have h2 : (k : ℝ) ≤ (lucasNumber (2 * n - 1) : ℝ) := by exact_mod_cast hk
-  have h3 := lucas_lt_pow hn
+  have h3 := BasePhiLucasPowers.lucas_odd_lt (n - 1)
+  rw [show 2 * (n - 1) + 1 = 2 * n - 1 by omega] at h3
   linarith
 
 private theorem min_ge {S : Finset ℤ} {n k : ℕ} (hn : 1 ≤ n)
@@ -137,7 +119,8 @@ private theorem min_ge {S : Finset ℤ} {n k : ℕ} (hn : 1 ≤ n)
       rw [zpow_add₀ Real.goldenRatio_ne_zero, zpow_neg_one, mul_comm]
     linarith
   have h2 : (k : ℝ) ≤ (lucasNumber (2 * n - 1) : ℝ) := by exact_mod_cast hk
-  have h3 := lucas_lt_pow hn
+  have h3 := BasePhiLucasPowers.lucas_odd_lt (n - 1)
+  rw [show 2 * (n - 1) + 1 = 2 * n - 1 by omega] at h3
   have hexp2 : ((2 * n - 1 : ℕ) : ℤ) = (2 : ℤ) * (n : ℤ) - 1 := by
     rw [show 2 * n - 1 = 2 * (n - 1) + 1 by omega, Nat.cast_add, Nat.cast_mul,
       Nat.cast_sub hn]
