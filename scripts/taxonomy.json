@@ -15953,7 +15953,7 @@
   "WantedExt/Analysis/BeurlingAhlforsWanted": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Beurling–Ahlfors transform"},
   "WantedExt/Analysis/CKMRVInterpolationWanted": {"to": "Analysis/harmonic-analysis/fourier-transform", "title": "Fourier interpolation in dimensions 8 and 24"},
   "WantedExt/Analysis/Calculus/GreensTheoremWanted": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Green's theorem"},
-  "WantedExt/Analysis/Calculus/MonotoneDiscontinuousDerivWanted": {"to": "Analysis/real-functions/differential-calculus", "title": "Monotone function with discontinuous derivative"},
+  "MathlibExt/Analysis/Calculus/MonotoneDiscontinuousDeriv": {"to": "Analysis/real-functions/differential-calculus", "title": "Monotone function with discontinuous derivative"},
   "MathlibExt/Analysis/Calculus/MidpointConvexContinuousConvex": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Midpoint convexity"},
   "MathlibExt/Analysis/Calculus/MonotonePointwiseUniform": {"to": "Analysis/sequences-and-series/convergence", "title": "Dini's second theorem on monotone functions"},
   "WantedExt/Analysis/Calculus/ScottishBook66Wanted": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Existence of mixed partial derivatives"},
