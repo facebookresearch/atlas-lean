@@ -18,7 +18,6 @@ import Mathlib.RingTheory.Finiteness.Basic
 import Mathlib.RingTheory.MvPowerSeries.Ideal
 import Mathlib.RingTheory.PowerSeries.Expand
 import Mathlib.RingTheory.ZMod
-import all MathlibExt.Combinatorics.Enumerative.Partition.KTupleRegularPartitions
 
 /-!
 # Prime-power congruences for tuples of regular partitions
@@ -36,7 +35,7 @@ series, then lift the congruence and use the vanishing of coefficients off multi
 * Robson da Silva and James A. Sellers, *Infinitely Many Congruences for k-Regular Partitions
   with Designated Summands*, Bulletin of the Brazilian Mathematical Society, New Series 51
   (2020), pp. 357–370, Lemma 3, cited by Paudel, Sellers, and Wang for their Lemma 6.
-* The generating-series coefficient formula is `coeff_lRegularSeries_pow` in
+* The generating-series coefficient formula is `coeff_lRegularPartitionSeries_pow` in
   `MathlibExt.Combinatorics.Enumerative.Partition.KTupleRegularPartitions`. The prime-power
   lifting step follows `qEulerProduct_iterated_primePower_congruence` in
   `MathlibExt.Combinatorics.Enumerative.Partition.QEulerProductCongruence`.
@@ -66,7 +65,7 @@ public theorem kTupleRegularPartition_primePower_congruent (p m ℓ α s r n : �
     Nat.ModEq (p ^ (α - s + 1))
       (kTupleRegularPartitionCount ℓ (p ^ α * m) (p ^ s * n + r)) 0 := by
   let : Fact p.Prime := ⟨hp⟩
-  let f := lRegularSeries ℤ ℓ
+  let f := lRegularPartitionSeries ℤ ℓ
   have hps : p ^ s ≠ 0 := pow_ne_zero s hp.ne_zero
   let E := expand (p ^ s) hps (R := ℤ)
   let ρ := map (Int.castRingHom (ZMod p))
@@ -96,6 +95,6 @@ public theorem kTupleRegularPartition_primePower_congruent (p m ℓ α s r n : �
   apply Int.natCast_dvd_natCast.mp
   refine ⟨coeff (p ^ s * n + r) g, ?_⟩
   simpa only [map_sub, hzero, sub_zero, ← Nat.cast_pow, coeff_natCast_mul, f,
-    coeff_lRegularSeries_pow] using congrArg (coeff (p ^ s * n + r)) hg
+    coeff_lRegularPartitionSeries_pow] using congrArg (coeff (p ^ s * n + r)) hg
 
 end MetaMathlibExt

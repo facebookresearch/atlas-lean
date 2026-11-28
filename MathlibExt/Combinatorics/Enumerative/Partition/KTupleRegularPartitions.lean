@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+public import Mathlib.RingTheory.PowerSeries.Basic
 import Mathlib.Algebra.BigOperators.NatAntidiagonal
 import Mathlib.Combinatorics.Enumerative.Partition.Glaisher
 import Mathlib.Data.ZMod.Basic
@@ -23,6 +24,12 @@ import MathlibExt.Combinatorics.Enumerative.Partition.RamanujanPartitionCongruen
 The tuple-count recurrence gives powers of the single-partition generating series.
 Modulo two, the series for 2-regular partitions equals the first Euler product,
 whose cube has odd coefficients exactly at triangular indices.
+
+## References
+
+* Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+  and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, pp. 1–10,
+  Sections 1–2 (partition counts, their generating series, and Lemma 8).
 -/
 
 open PowerSeries
@@ -125,11 +132,25 @@ public theorem kTupleRegularPartitionCount_at_zero (ℓ k : ℕ) :
 
 end
 
-private def lRegularSeries (R : Type*) [Semiring R] (ℓ : ℕ) : PowerSeries R :=
+/-- **Generating series for $\ell$-regular partitions.** For a natural number $\ell$ and a
+semiring $R$, the coefficient of $X^n$ is the number of $\ell$-regular partitions of $n$, cast
+into $R$, for every natural number $n$. A partition is $\ell$-regular if none of its parts is
+divisible by $\ell$.
+
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Section 2. -/
+public def lRegularPartitionSeries (R : Type*) [Semiring R] (ℓ : ℕ) : PowerSeries R :=
   mk fun n => (lRegularPartitionCount ℓ n : R)
 
-private theorem coeff_lRegularSeries_pow (R : Type*) [Semiring R] (ℓ k n : ℕ) :
-    coeff n (lRegularSeries R ℓ ^ k) = (kTupleRegularPartitionCount ℓ k n : R) := by
+/-- **Coefficients of powers of the regular-partition generating series.** For natural numbers
+$\ell$, $k$ and $n$ and a semiring $R$, the coefficient of $X^n$ in the $k$-th power of the
+$\ell$-regular partition series is the number of $k$-tuples of $\ell$-regular partitions of
+total size $n$, cast into $R$.
+
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Section 2. -/
+public theorem coeff_lRegularPartitionSeries_pow (R : Type*) [Semiring R] (ℓ k n : ℕ) :
+    coeff n (lRegularPartitionSeries R ℓ ^ k) = (kTupleRegularPartitionCount ℓ k n : R) := by
   induction k generalizing n with
   | zero =>
     by_cases hn : n = 0 <;> simp [coeff_one, kTupleRegularPartitionCount_zero, hn]
@@ -137,12 +158,12 @@ private theorem coeff_lRegularSeries_pow (R : Type*) [Semiring R] (ℓ k n : ℕ
     rw [pow_succ', coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk,
       kTupleRegularPartitionCount_succ, Nat.cast_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
-    rw [ih, Nat.cast_mul, lRegularSeries, coeff_mk]
+    rw [ih, Nat.cast_mul, lRegularPartitionSeries, coeff_mk]
 
 -- By Glaisher's identity the odd-part series has one factor `1 + X ^ (i + 1)` per size.
 private theorem qEulerProduct_one_mul_twoRegularSeries :
-    qEulerProduct 1 * lRegularSeries ℤ 2 = qEulerProduct 2 := by
-  have hparts : HasProd (fun i : ℕ => (1 : ℤ⟦X⟧) + X ^ (i + 1)) (lRegularSeries ℤ 2) := by
+    qEulerProduct 1 * lRegularPartitionSeries ℤ 2 = qEulerProduct 2 := by
+  have hparts : HasProd (fun i : ℕ => (1 : ℤ⟦X⟧) + X ^ (i + 1)) (lRegularPartitionSeries ℤ 2) := by
     change HasProd _ (mk fun n => ((Nat.Partition.restricted n (¬ 2 ∣ ·)).card : ℤ))
     simpa only [Nat.Partition.card_restricted_eq_card_countRestricted _ (by decide : 0 < 2),
       Finset.sum_range_succ, Finset.sum_range_zero, mul_zero, mul_one, pow_zero, pow_one,
@@ -155,18 +176,18 @@ private theorem qEulerProduct_one_mul_twoRegularSeries :
   ring
 
 private theorem twoRegularSeries_mod_two :
-    lRegularSeries (ZMod 2) 2 = map (Int.castRingHom (ZMod 2)) (qEulerProduct 1) := by
+    lRegularPartitionSeries (ZMod 2) 2 = map (Int.castRingHom (ZMod 2)) (qEulerProduct 1) := by
   let φ := map (Int.castRingHom (ZMod 2))
-  change lRegularSeries (ZMod 2) 2 = φ (qEulerProduct 1)
+  change lRegularPartitionSeries (ZMod 2) 2 = φ (qEulerProduct 1)
   have hEuler : φ (qEulerProduct 1 ^ 2) = φ (qEulerProduct 2) := by
     ext n
     simp only [φ, coeff_map, Int.coe_castRingHom]
     exact (ZMod.intCast_eq_intCast_iff _ _ 2).mpr (by
       simpa using qEulerProduct_iterated_primePower_congruence 2 1 1 1 1
         Nat.prime_two (by decide) (by decide) (by decide) (by decide) n)
-  have hparts : φ (lRegularSeries ℤ 2) = lRegularSeries (ZMod 2) 2 := by
+  have hparts : φ (lRegularPartitionSeries ℤ 2) = lRegularPartitionSeries (ZMod 2) 2 := by
     ext n
-    simp [φ, lRegularSeries]
+    simp [φ, lRegularPartitionSeries]
   have hunit : IsUnit (qEulerProduct 1) := by
     rw [PowerSeries.isUnit_iff_constantCoeff, constantCoeff_qEulerProduct (le_refl 1)]
     exact isUnit_one
@@ -187,10 +208,10 @@ and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Le
 public theorem tripleTwo_odd_iff_triangular (n : ℕ) :
     tripleRegularPartitionCount 2 n % 2 = 1 ↔ ∃ m : ℕ, n = m * (m + 1) / 2 := by
   have hseries :
-      lRegularSeries (ZMod 2) 2 ^ 3 = map (Int.castRingHom (ZMod 2)) jacobiCubeSeries := by
+      lRegularPartitionSeries (ZMod 2) 2 ^ 3 = map (Int.castRingHom (ZMod 2)) jacobiCubeSeries := by
     rw [twoRegularSeries_mod_two, ← map_pow, qEulerProduct_one, pentagonalSeries_pow_three]
   have hcoeff := congrArg (coeff n) hseries
-  rw [coeff_lRegularSeries_pow, coeff_map] at hcoeff
+  rw [coeff_lRegularPartitionSeries_pow, coeff_map] at hcoeff
   change (tripleRegularPartitionCount 2 n : ZMod 2) =
     (coeff (R := ℤ) n jacobiCubeSeries : ZMod 2) at hcoeff
   have hcast : (tripleRegularPartitionCount 2 n : ZMod 2) = 1 ↔
