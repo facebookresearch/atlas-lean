@@ -14,7 +14,7 @@ For uncorrelated instruments its leading-order (first delta-method term) standar
 
 $$\hat\beta_{SSt}=\frac{\sum_k\hat\beta_{Xk}\hat\beta_{Yk}\sigma_{Yk}^{-2}}{\sum_k\hat\beta_{Xk}^2\sigma_{Yk}^{-2}},$$
 
-and the leading-order standard error above reduces to $\bigl(\sum_k\hat\beta_{Xk}^2\sigma_{Yk}^{-2}\bigr)^{-1/2}$, the usual IVW standard error. With equal weights, $\hat\beta_{SSw}$ is the ratio of two inverse-variance-weighted meta-analyses, of the variant–outcome and the variant–risk-factor associations.
+and the leading-order standard error above reduces to $\bigl(\sum_k\hat\beta_{Xk}^2\sigma_{Yk}^{-2}\bigr)^{-1/2}$, the usual IVW standard error. With equal weights, $\hat\beta_{SSw}$ is approximately the ratio of two inverse-variance-weighted meta-analyses, of the variant–outcome and the variant–risk-factor associations, since $\sigma_{Xk}^{-2}$ is then approximately proportional to $\sigma_{Yk}^{-2}$; the identity is exact only when $\sigma_{Xk}^{-2} \propto \sigma_{Yk}^{-2}$. The source, too, gives the proportionality as an approximation: "as the $\sigma_{Xk}^{-2}$ parameters are approximately proportional to $\sigma_{Yk}^{-2}$".
 
 ## Depends on
 

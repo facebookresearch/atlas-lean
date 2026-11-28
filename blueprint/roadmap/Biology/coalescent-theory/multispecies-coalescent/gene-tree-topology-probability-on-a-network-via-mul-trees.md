@@ -12,7 +12,7 @@ $$P(G \mid \Psi) = \sum_{m \in \mathcal{M}} P(G \mid T, m),$$
 
 where $P(G \mid T, m)$ is computed by summing over coalescent histories on $T$, with two corrections: each branch carries the inheritance probability of the network branch it copies (raised to the number of lineages routed through it), and the branches of $T$ in a common preimage $f^{-1}(b)$ are treated jointly, so that the number of lineages entering (and leaving) network branch $b$ is the sum over its copies, and the coalescent factor for $b$ is the probability that this total number of lineages coalesces to the total exiting number within the length of $b$, with Degnan–Salter ordering counts for the coalescences.
 
-Given independent loci with gene trees $G_1, \dots, G_m$, the likelihood of $\Psi$ is $\prod_i P(G_i \mid \Psi)$. With one reticulation and three species, a network that mixes two species-tree resolutions can match any observed vector of the three rooted gene tree frequencies in which the minimum frequency is below $1/3$.
+Given independent loci with gene trees $G_1, \dots, G_m$, the likelihood of $\Psi$ is $\prod_i P(G_i \mid \Psi)$. With one reticulation and three species, a network that mixes two species-tree resolutions can match any observed vector of the three rooted gene tree frequencies in which the minimum frequency lies strictly between $0$ and $1/3$ and is strictly below the other two frequencies. A zero frequency cannot be matched, because the least frequent topology has probability $\tfrac13 e^{-t} > 0$ for every finite branch length $t$; the source gives "the unique solution t = −log(3p3), γ = (p2 − p3)/(1 − 3p3) for p3 < 1/3 and 0 < p3 < p2, p1" (Equation 9).
 
 ## Depends on
 

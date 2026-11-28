@@ -2,11 +2,13 @@
 
 Let $Y$ be a quantitative phenotype in a population whose members have both parents genotyped. Assume direct genetic effects are additive and there is no gene-by-environment interaction. Call the effect of an individual's own genome on its own phenotype **direct**, and the effect of relatives' genomes (for example parental genetic nurture) **indirect**; indirect effects are part of the environment of the proband.
 
-**Variance decomposition.**
+**Variance decomposition.** Write $Y = D + E + \epsilon$, with $D$ the direct genetic component and $E$ the environmental component correlated with parental genotype (including parental genetic nurture). Then
 
 $$\operatorname{Var}(Y) = v_g + v_{e\sim g} + c_{g,e} + \operatorname{Var}(\epsilon),$$
 
-where $v_g$ is the variance explained by direct genetic effects and $h^2 = v_g / \operatorname{Var}(Y)$ is the (direct) heritability, $v_{e\sim g}$ is the variance of the environmental component correlated with parental genotype (including parental genetic nurture), $c_{g,e}$ is the covariance between direct genetic and environmental effects, and $\epsilon$ is uncorrelated with both proband and parental genotypes.
+where $v_g = \operatorname{Var}(D)$ is the variance explained by direct genetic effects and $h^2 = v_g / \operatorname{Var}(Y)$ is the (direct) heritability, $v_{e\sim g} = \operatorname{Var}(E)$, $c_{g,e} = 2\operatorname{Cov}(D, E)$ is twice the covariance between the direct genetic component and the environmental component correlated with parental genotype, and $\epsilon$ is uncorrelated with both proband and parental genotypes.
+
+Young et al. call $c_{g,e}$ the covariance between direct genetic and environmental effects; this page defines it as twice that covariance. The source standardises $G$ to variance one and $G_{par}$ to "mean zero and variance two", and builds $R_{o,par}^{snp} = (2l)^{-1}(G G_{par}^T + G_{par} G^T)$, "calculated in this way to ensure estimates of vg, ve~g, and cg,e are properly calibrated". Then $[R_{o,\mathrm{par}}]_{ii} \approx 1$, and since $\operatorname{Var}(D + E + \epsilon) = \operatorname{Var} D + \operatorname{Var} E + 2\operatorname{Cov}(D, E) + \operatorname{Var}\epsilon$, the diagonal of the covariance model below reproduces the decomposition only when $c_{g,e} = 2\operatorname{Cov}(D, E)$.
 
 **RDR covariance model.** For a vector $\mathbf Y$ of phenotypes,
 

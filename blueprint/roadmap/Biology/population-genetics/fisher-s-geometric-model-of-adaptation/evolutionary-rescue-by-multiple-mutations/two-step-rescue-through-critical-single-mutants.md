@@ -8,7 +8,7 @@ In Fisher's geometric model with many mutations of small effect ($m_{\max}/\lamb
 
 $$\Lambda_2^{(0)}(m_0) \approx 4 U^2 f(0 \mid m_0) \sqrt{m_{\max} \lambda / \pi}.$$
 
-Because $\Lambda_2^{(0)} \propto U^2$ while $\Lambda_1(m_0)$ is linear in $U$ but falls off rapidly as the wild type becomes more maladapted, two-step paths through nearly neutral intermediates dominate rescue at high mutation rates and severe environmental change.
+Multi-step paths dominate rescue at high mutation rates and severe environmental change; among two-step paths, nearly neutral (critical) intermediates matter most when mutation is rare or the wild type is mildly maladapted, and subcritical ones when it is very maladapted. The source states that "the dominant genetic path to rescue switches from a single mutation to multiple as mutation rates and the severity of the environmental change increase", that "when mutations are rare, only first-step mutations that are very nearly neutral (m∼0) will persist long enough", and that "when the wild type is very maladapted (relative to mutational variance), most two-step rescue events occur through subcritical first-step mutants" (Results, "Classifying two-step rescue regimes", Figure 5).
 
 ## Depends on
 

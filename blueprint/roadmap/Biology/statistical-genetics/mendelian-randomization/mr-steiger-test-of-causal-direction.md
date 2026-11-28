@@ -8,15 +8,17 @@ $$\rho_{gy} = \rho_{gx}\,\rho_{xy}, \qquad\text{hence}\qquad |\rho_{gy}| \le |\r
 
 with strict inequality whenever $\rho_{gx} \ne 0$ and $|\rho_{xy}| < 1$. So the trait that the instrument explains more variance of ($\rho_{g\cdot}^2$ larger) is the upstream trait.
 
-**Test.** The MR Steiger method infers the direction by testing $H_0: |\rho_{gx}| = |\rho_{gy}|$ with Steiger's test, using Fisher's transformation of the absolute correlations, $Z_{g\cdot} = \tfrac12\ln\frac{1+|\rho_{g\cdot}|}{1-|\rho_{g\cdot}|}$:
+**Test.** The MR Steiger method infers the direction by testing $H_0: |\rho_{gx}| = |\rho_{gy}|$ with Steiger's test on oriented traits. Replace $x$ by $s_x x$ and $y$ by $s_y y$, where $s_x = -1$ if $\rho_{gx} < 0$ and $s_x = 1$ otherwise (likewise $s_y$), so that both instrument correlations are nonnegative; the correlation of the oriented traits is $\tilde\rho_{xy} = s_x s_y\,\rho_{xy}$. Use Fisher's transformation of the (now nonnegative) instrument correlations, $Z_{g\cdot} = \tfrac12\ln\frac{1+|\rho_{g\cdot}|}{1-|\rho_{g\cdot}|}$:
 
 - *One sample of size $N$ (correlated correlations):*
 
-$$Z = \frac{(Z_{gx} - Z_{gy})\sqrt{N-3}}{\sqrt{2(1-\rho_{xy})\,h}},\qquad h = \frac{1 - f r_m^2}{1 - r_m^2},\quad f = \frac{1-\rho_{xy}}{2(1-r_m^2)},\quad r_m^2 = \tfrac12(\rho_{gx}^2 + \rho_{gy}^2).$$
+$$Z = \frac{(Z_{gx} - Z_{gy})\sqrt{N-3}}{\sqrt{2(1-\tilde\rho_{xy})\,h}},\qquad h = \frac{1 - f r_m^2}{1 - r_m^2},\quad f = \frac{1-\tilde\rho_{xy}}{2(1-r_m^2)},\quad r_m^2 = \tfrac12(\rho_{gx}^2 + \rho_{gy}^2).$$
 
 - *Two samples of sizes $N_1, N_2$ (independent correlations, e.g. GWAS summary data):*
 
 $$Z = \frac{Z_{gx} - Z_{gy}}{\sqrt{1/(N_1-3) + 1/(N_2-3)}}.$$
+
+The source prints the one-sample statistic with signed correlations throughout: "Z = (Z_gx − Z_gy)√(N−3)/√(2(1−ρ_xy)h) where Fisher's z-transformation is used to obtain Z_g* = ½ln((1+ρ_g*)/(1−ρ_g*))". This page tests the absolute correlations, so it orients the traits and uses $\tilde\rho_{xy}$ in place of $\rho_{xy}$ in $h$, $f$ and the standard error. Mixing absolute instrument correlations with the signed $\rho_{xy}$ would give, when $\rho_{gx}$ and $\rho_{gy}$ have opposite signs, Steiger's numerator for $x$ and $-y$ with a standard error built from $1 + |\rho_{xy}|$: a statistic without an $N(0,1)$ null law, whose p-value would change when $y$ is recoded as $-y$.
 
 $Z > 0$ supports $x \to y$, $Z < 0$ supports $y \to x$, with $p_{\mathrm{Steiger}}$ from the normal reference. Combined with an MR test ($p_{\mathrm{MR}}$) of a nonzero effect in the inferred direction, it orients a causal association using only summary statistics and without knowing which trait the SNP acts on. With several independent instruments, the same test applies to the total variance explained.
 

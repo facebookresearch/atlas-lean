@@ -1,10 +1,10 @@
 # Adjusted Cochran's Q for pleiotropy in multivariable Mendelian randomization
 
-In two-sample multivariable MR with two exposures, let $\hat\Gamma_j$ be the SNP–outcome estimate with variance $\sigma_{yj}^2$, let $\hat\pi_{1j}, \hat\pi_{2j}$ be the SNP–exposure estimates with variances $\sigma_{1j}^2, \sigma_{2j}^2$ and covariance $\sigma_{12j}$, and let $\hat\beta_1, \hat\beta_2$ be efficient estimates of the direct effects, for example from the multivariable IVW fit. Define
+In two-sample multivariable MR with two exposures and $L$ mutually uncorrelated variants (so that the SNP association estimates are independent across variants), let $\hat\Gamma_j$ be the SNP–outcome estimate with variance $\sigma_{yj}^2$, let $\hat\pi_{1j}, \hat\pi_{2j}$ be the SNP–exposure estimates with variances $\sigma_{1j}^2, \sigma_{2j}^2$ and covariance $\sigma_{12j}$, and let $\hat\beta_1, \hat\beta_2$ be efficient estimates of the direct effects, for example from the multivariable IVW fit. Define
 
 $$Q_A = \sum_{j=1}^{L}\frac{\big(\hat\Gamma_j - \hat\beta_1\hat\pi_{1j} - \hat\beta_2\hat\pi_{2j}\big)^2}{\sigma_{Aj}^2}, \qquad \sigma_{Aj}^2 = \sigma_{yj}^2 + \hat\beta_1^2\sigma_{1j}^2 + \hat\beta_2^2\sigma_{2j}^2 + 2\hat\beta_1\hat\beta_2\sigma_{12j}.$$
 
-Under the null hypothesis that no variant has a pleiotropic effect on the outcome, so that all variants are valid instruments for the two exposures, $Q_A$ is asymptotically $\chi^2_{L-2}$. Excess heterogeneity ("heterogeneity is bad") is evidence of invalid instruments. The test is global: it does not say which variants are invalid.
+Under the null hypothesis that no variant has a pleiotropic effect on the outcome, so that all variants are valid instruments for the two exposures, $Q_A$ is asymptotically $\chi^2_{L-2}$; the source assumes throughout that the variants "are mutually uncorrelated (by design)", and the law fails for correlated variants. Excess heterogeneity ("heterogeneity is bad") is evidence of invalid instruments. The test is global: it does not say which variants are invalid.
 
 The standard Cochran statistic, which weights only by $\sigma_{yj}^2$, ignores the uncertainty in the exposure estimates and is not asymptotically $\chi^2$. $Q_A$ is the multivariable extension of the adjusted univariable Q statistic, and the paper suggests updating the weights iteratively from the current causal estimates.
 

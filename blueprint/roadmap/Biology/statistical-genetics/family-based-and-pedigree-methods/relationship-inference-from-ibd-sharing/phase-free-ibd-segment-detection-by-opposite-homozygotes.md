@@ -10,7 +10,13 @@ $$W^{(2)}_i = \big(M_{s_1,i} \cup M_{s_2,i}\big)^{c} \cap \Big(\big(H^{(0)}_{s_1
 
 with $\oplus$ the symmetric difference. Neither set requires phased haplotypes.
 
-**IBIS rule.** A putative IBD segment is a maximal run of windows that starts and ends with $W_i = \varnothing$, has $|W_i| \le 1$ in every window (tolerating genotyping error), and has an overall mismatch fraction below a threshold. It is kept if its genetic length and marker count exceed minimums (default $7$ cM). IBD2 segments are called similarly from $W^{(2)}_i$ with up to two mismatches per window and a shorter default minimum ($2$ cM), because identical genotypes over a stretch are much stronger evidence. The rest of an IBD region is IBD1.
+**IBIS rule.** Putative IBD segments are found sequentially along the chromosome:
+
+1. a segment starts at a window with $W_i = \varnothing$ and is extended window by window while $|W_i| \le 1$ (tolerating genotyping error), tracking the running fraction of mismatching sites across its length;
+2. it is terminated as soon as that running fraction exceeds a threshold, at a window with $|W_i| \ge 2$, or at the end of the chromosome, and it ends at the last mismatch-free window ($W_i = \varnothing$);
+3. the minimums below are then applied.
+
+The segment is therefore cut at the first point where the running mismatch fraction exceeds the threshold, even if a long clean stretch follows. The source describes the rule this way: "While tracking an ongoing segment, IBIS calculates the fraction of mismatching sites across its length. If this fraction exceeds a user-given threshold, or if the segment reaches the end of the chromosome, the algorithm terminates the segment and chooses the last mismatch-free window as its end point." A segment is kept if its genetic length and marker count exceed minimums (default $7$ cM). IBD2 segments are called similarly from $W^{(2)}_i$ with up to two mismatches per window and a shorter default minimum ($2$ cM), because identical genotypes over a stretch are much stronger evidence. The rest of an IBD region is IBD1.
 
 **Relationship classification.** With $k^{(1)}, k^{(2)}$ the fractions of the genome (in cM) covered by IBD1 and IBD2 segments, the kinship coefficient is estimated as
 

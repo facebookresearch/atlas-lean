@@ -11,9 +11,9 @@ the length-weighted, per-chromosome fraction of shared IBD that lies on a single
 **Separation of second-degree relationships.** With error-free phasing:
 
 - half-siblings are related through a single parent of each, so all IBD lies on one haplotype of each: $h_i(ij) = h_j(ij) = 1$;
-- in a grandparent–grandchild or avuncular pair, the younger relative (grandchild, niece or nephew) shares IBD through one parent only, so its score is $1$, while the older relative (grandparent, aunt or uncle) shares IBD on both of its haplotypes, so its score is below $1$.
+- in a grandparent–grandchild or avuncular pair, the younger relative (grandchild, niece or nephew) shares IBD through one parent only, so its score is $1$, while the older relative (grandparent, aunt or uncle) is expected to share IBD across both of its haplotypes, so its score is typically below $1$. It can equal $1$: if on every chromosome carrying shared IBD the shared segments come from a single haplotype of the older relative (for example, no crossover in the transmitted region), its score is exactly $1$ even with perfect phasing.
 
-The pair $(h_i(ij), h_j(ij))$ therefore distinguishes half-siblings from the other second-degree relationships, which have the same expected IBD1 and IBD2 proportions, and orients the generations within a pair.
+The pair $(h_i(ij), h_j(ij))$ therefore tends to distinguish half-siblings from the other second-degree relationships, which have the same expected IBD1 and IBD2 proportions, and to orient the generations within a pair; this is a classification tendency, not a certainty. The source states only that the older individual "should share the IBD across both parental haplotypes", and reports that haplotype scores "correctly orient >98% of grandparent–grandchild and avuncular pairs", and that "most incorrect assignments occur when the difference in haplotype scores is close to zero".
 
 ## Expansion
 

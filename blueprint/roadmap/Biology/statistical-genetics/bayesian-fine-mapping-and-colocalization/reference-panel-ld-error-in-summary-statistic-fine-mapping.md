@@ -10,7 +10,9 @@ with $\tilde R$ the $2 \times 2$ correlation matrix built from $\tilde\rho$.
 
 **Asymptotics.** For large $n$ and $d$, dropping terms bounded independently of $n$ and $d$,
 
-$$\log \frac{\Pr(\gamma_{10} \mid D)}{\Pr(\gamma_{11} \mid D)} \approx \log n - \frac{n}{d}\, \frac{\lambda_C^2\, \varepsilon^2}{1 - \rho^2}, \qquad \mathbb E\Bigl[\log \frac{\Pr(\gamma_{10} \mid D)}{\Pr(\gamma_{11} \mid D)}\Bigr] \approx \log n - \frac{n}{d}\lambda_C^2 .$$
+$$2\log \frac{\Pr(\gamma_{10} \mid D)}{\Pr(\gamma_{11} \mid D)} \approx \log n - \frac{n}{d}\, \frac{\lambda_C^2\, \varepsilon^2}{1 - \rho^2}, \qquad \mathbb E\Bigl[2\log \frac{\Pr(\gamma_{10} \mid D)}{\Pr(\gamma_{11} \mid D)}\Bigr] \approx \log n - \frac{n}{d}\lambda_C^2 .$$
+
+The factor $2$ on the left corrects the source. Benner et al. print Equations A4–A5 as "log{Pr(γ10|D)/Pr(γ11|D)} ≈ log n − …", without it, but their Equation A1 writes the log odds with a factor $0.5$ on every term and Equations A2–A3 accordingly read "2 log{Pr(γ10|D)/Pr(γ11|D)} = log n + …". Read without the $2$, A4–A5 differ from A1–A3 by an amount unbounded in $n$ (at $\varepsilon = 0$ they give $\log n$ instead of $\tfrac12\log n$); the sign conclusions below are the same for both forms.
 
 Hence if $n \gg d$ the false configuration with two causal variants is on average favoured, while if $d$ grows proportionally to $n$ the evidence for the true configuration grows like $\log n$. The reference panel must scale with the GWAS sample size.
 

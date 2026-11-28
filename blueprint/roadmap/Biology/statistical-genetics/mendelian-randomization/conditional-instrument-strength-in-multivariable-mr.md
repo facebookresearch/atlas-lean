@@ -2,7 +2,7 @@
 
 Consider multivariable MR with two exposures $X_1, X_2$ and $L$ independent variants. From summary data take SNP–exposure estimates $\hat\pi_{1j}, \hat\pi_{2j}$ with variances $\sigma_{1j}^2, \sigma_{2j}^2$ and covariance $\sigma_{12j}$. The two-sample MVMR model fits $\hat\Gamma_j = \beta_1\hat\pi_{1j} + \beta_2\hat\pi_{2j} + \epsilon_j$.
 
-Separate strong $F$-statistics for $X_1$ and $X_2$ are necessary but not sufficient. The instruments must predict $X_1$ conditionally on their prediction of $X_2$, which fails if $(\pi_{1j})_j$ is (nearly) proportional to $(\pi_{2j})_j$. In that case the model is under-identified.
+Separate strong $F$-statistics for $X_1$ and $X_2$ are necessary but not sufficient. The instruments must predict $X_1$ conditionally on their prediction of $X_2$, which fails if $(\pi_{1j})_j$ is proportional to $(\pi_{2j})_j$; then the model is under-identified. Nearly proportional effects give weak joint identification: the model is identified, as the source puts it, when "there are at least two elements of π1 and π2 … that differ", but the exposures are only "weakly predicted in a joint sense".
 
 **Individual-level data.** Joint strength is measured by the Sanderson–Windmeijer **conditional $F$-statistic** $F_c$. Each exposure is regressed on the instrument-based predictions of the others, and $F_c$ tests whether the instruments still explain the residual variation. Values $F_c > 10$ for every exposure indicate adequate joint strength. Equivalently, under-identification for $X_1$ is tested as a Sargan over-identification test of $X_1 = \delta_0 + \delta X_2 + u_1$, with $X_2$ instrumented by the variants.
 
@@ -10,7 +10,7 @@ Separate strong $F$-statistics for $X_1$ and $X_2$ are necessary but not suffici
 
 $$Q_{x1} = \sum_{j=1}^{L}\frac{(\hat\pi_{1j} - \hat\delta\,\hat\pi_{2j})^2}{\sigma_{x1j}^2}, \qquad \sigma_{x1j}^2 = \sigma_{1j}^2 + \hat\delta^2\sigma_{2j}^2 - 2\hat\delta\,\sigma_{12j},$$
 
-with $\hat\delta$ an efficient estimate of $\delta$ in $\hat\pi_{1j} = \delta\hat\pi_{2j} + v_j$. Under the null that the instruments cannot predict both exposures, $Q_{x1}$ is asymptotically $\chi^2_{L-1}$. Rejection ("heterogeneity is good") indicates that $X_1$ is identified. Swapping the roles of the exposures gives $Q_{x2}$, and both must exceed the critical value. If $\sigma_{12j}$ is unavailable it can be set to zero, which is exact when the two exposures come from separate samples and a good approximation when $\hat\delta\sigma_{12j}$ is small.
+with $\hat\delta$ an efficient estimate of $\delta$ in $\hat\pi_{1j} = \delta\hat\pi_{2j} + v_j$. Under the null that the instruments cannot predict both exposures, that is $\pi_{1j} = \delta\pi_{2j}$ for all $j$ (exact proportionality), $Q_{x1}$ is asymptotically $\chi^2_{L-1}$. Rejection ("heterogeneity is good") indicates that $X_1$ is identified. Swapping the roles of the exposures gives $Q_{x2}$, and both must exceed the critical value. If $\sigma_{12j}$ is unavailable it can be set to zero, which is exact when the two exposures come from separate samples and a good approximation when $\hat\delta\sigma_{12j}$ is small.
 
 ## Expansion
 
