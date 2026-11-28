@@ -11,3 +11,4 @@
 - [Twisting preserves the archimedean type](has-arch-type-fn-twist.md)
 - [Satake power sums](satake-pow.md)
 - [Satake power sums are power sums of the parameters](satake-pow-add-pow.md)
+- [Inclusions at distinct infinite places commute](adelic-arch-glincl-at-commute.md)

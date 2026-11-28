@@ -8,3 +8,4 @@
 - [The quotient map is the quotient projection](padic-quotient-map-mk-q-eq.md)
 - [Contragredient action on the $p$-adic Pontryagin dual](contragredient-smul.md)
 - [Evaluating the contragredient action](smul-apply.md)
+- [Groups over the p-adic numbers](groups-over-the-p-adic-numbers/README.md)

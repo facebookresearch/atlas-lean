@@ -4,7 +4,6 @@ p-adic integers and expansions, valuations of integer sequences, Hensel lifting,
 
 - [2-adic odd part of factorials of powers of two](2-adic-odd-part-of-factorials-of-powers-of-two/README.md)
 - [Absolute values on fields](absolute-values-on-fields/README.md)
-- [Groups over the p-adic numbers](groups-over-the-p-adic-numbers/README.md)
 - [Hilbert symbol](hilbert-symbol/README.md)
 - [Krasner's lemma](krasner-s-lemma/README.md)
 - [Morita's p-adic gamma function](morita-s-p-adic-gamma-function/README.md)

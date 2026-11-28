@@ -12,7 +12,6 @@ Topics added since this subject's fields were last revised.
 - [Coeff Commute](coeff-commute/README.md)
 - [Cyclotomic Eigenspace Vanishing](cyclotomic-eigenspace-vanishing/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
-- [Fn Twist](fn-twist/README.md)
 - [Fundamental Domain Exact Volume](fundamental-domain-exact-volume/README.md)
 - [Gamma0 Index](gamma0-index/README.md)
 - [Hecke Operator](hecke-operator/README.md)
