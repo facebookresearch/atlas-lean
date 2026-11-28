@@ -19,8 +19,6 @@ Research level. The page is the subfield's worked example of multimodality and o
 ## Depends on
 
 - [MicroRNA silencing and the mimic/antagomiR pair](./microrna-silencing-pathway.md)
-- [Interaction references are not interchangeable](../../../pharmacokinetics/pharmacodynamic-response-models/interact-references-disagree.md)
-- [Canonical Hill response model](../../../pharmacokinetics/pharmacodynamic-response-models/response.md)
 - [Species, model system and the scope of a preclinical claim](../preclinical-model-systems/species-and-model-system-scope.md)
 
 ## Proof depends on
@@ -30,6 +28,8 @@ None.
 ## Expansion
 
 What is missing before a mathematical statement: a declared non-interaction reference against which a three-modality combination could be judged, since the source reports arm comparisons; a heating model with geometry and perfusion, which an in-solution measurement does not supply; a release function with stated form and uncertainty rather than one percentage at one exposure time; biodistribution, since relative uptake in culture does not establish selectivity in tissue; and cohort-resolved reporting, since resected and non-resected animals answer different questions.
+
+For the choice of non-interaction reference, see [Interaction references are not interchangeable](../../../pharmacokinetics/pharmacodynamic-response-models/interact-references-disagree.md).
 
 ## Sources
 

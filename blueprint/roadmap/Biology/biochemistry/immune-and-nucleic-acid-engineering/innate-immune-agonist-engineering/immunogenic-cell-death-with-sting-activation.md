@@ -19,7 +19,6 @@ Research level. It completes an arc with [Why delivering a STING agonist is hard
 
 - [The cGAS-STING axis as an engineering target](./cgas-sting-sensing-axis.md)
 - [Why delivering a STING agonist is harder than finding one](./sting-agonist-delivery-constraints.md)
-- [Interaction references are not interchangeable](../../../pharmacokinetics/pharmacodynamic-response-models/interact-references-disagree.md)
 - [Species, model system and the scope of a preclinical claim](../preclinical-model-systems/species-and-model-system-scope.md)
 
 ## Proof depends on
@@ -29,6 +28,8 @@ None.
 ## Expansion
 
 Before any mathematical treatment: the dendritic-cell state would have to be defined as a measurable vector rather than a label; antigen release would have to be linked to cross-priming probability; the rejection fraction needs its denominators and a binomial interval, per model; and the anti-PD-1 arm needs an explicit non-interaction reference. Full-text review is required before this page is used as evidence.
+
+For the choice of non-interaction reference, see [Interaction references are not interchangeable](../../../pharmacokinetics/pharmacodynamic-response-models/interact-references-disagree.md).
 
 ## Sources
 
