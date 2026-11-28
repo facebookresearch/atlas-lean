@@ -114,8 +114,8 @@
     },
     {
       "path": "MathlibExtTest/Analysis/Fourier/RegularTwoFrameSmoke.lean",
-      "source_sha256": "0794563299c8321f5e7b0b29753a042539b67b26f74ba4edf62b001787092a69",
-      "source_bytes": 3242,
+      "source_sha256": "21c9598fef28075ac94e37b1810b6eadceb4ec247cd8b9e878d076e416a08692",
+      "source_bytes": 3401,
       "author_notice": "/- Author: @toskua -/",
       "project_imports": [
         "MathlibExt/Analysis/Fourier/RegularTwoFrame.lean"

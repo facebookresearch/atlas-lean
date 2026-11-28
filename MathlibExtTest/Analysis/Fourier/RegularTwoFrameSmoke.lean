@@ -30,8 +30,12 @@ open scoped BigOperators
 
 namespace RegularTwoFrameSmoke
 
+private theorem sqrt_four : Real.sqrt (4 : ℝ) = 2 := by
+  have h : (4 : ℝ) = (2 : ℝ) ^ 2 := by norm_num
+  rw [h, Real.sqrt_sq (by norm_num)]
+
 private theorem first_cos : Real.regularTwoFrame 4 (0 : Fin 2) (0 : Fin 4) = 1 / 2 := by
-  norm_num [Real.regularTwoFrame]
+  norm_num [Real.regularTwoFrame, sqrt_four]
 
 private theorem first_sin : Real.regularTwoFrame 4 (1 : Fin 2) (0 : Fin 4) = 0 := by
   norm_num [Real.regularTwoFrame]
@@ -42,8 +46,7 @@ private theorem quarter_cos : Real.regularTwoFrame 4 (0 : Fin 2) (2 : Fin 4) = 0
 
 private theorem quarter_sin : Real.regularTwoFrame 4 (1 : Fin 2) (2 : Fin 4) = 1 / 2 := by
   change Real.sin (Real.pi * 2 / 4) / Real.sqrt 4 = 1 / 2
-  rw [show Real.pi * 2 / 4 = Real.pi / 2 by ring, Real.sin_pi_div_two]
-  norm_num
+  rw [show Real.pi * 2 / 4 = Real.pi / 2 by ring, Real.sin_pi_div_two, sqrt_four]
 
 example : Real.regularTwoFrame 4 (0 : Fin 2) (0 : Fin 4) = 1 / 2 ∧
     Real.regularTwoFrame 4 (1 : Fin 2) (0 : Fin 4) = 0 ∧
