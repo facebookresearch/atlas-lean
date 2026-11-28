@@ -2,13 +2,14 @@
 
 With partial observation, satisfiability of ATL with strategy contexts is undecidable even over turn-based game structures, although under full observation turn-based satisfiability is decidable.
 
-**Theorem (Laroussinie, Markey and Sangnier).** A *concurrent game structure with partial observation* (CGSO) is a finite-state concurrent game structure together with an equivalence relation $\sim_a$ on states for each agent $a$; histories of equal length are $a$-equivalent if they are pointwise $\sim_a$-equivalent, and strategies of $a$ must give the same move after $a$-equivalent histories. It is *turn-based* (a TBGSO) if each state has an owner whose move alone determines the successor. Interpret [$\mathrm{ATL}^*_{sc}$, $\mathrm{ATL}_{sc}$, $\mathrm{ATL}^*_{sc,0}$ and $\mathrm{ATL}_{sc,0}$](atl-with-strategy-contexts.md) over CGSOs with strategy quantifiers ranging over such observation-respecting strategies (memoryless ones in the two variants with subscript $0$). For each of these four logics, the problem of deciding, given a formula $\Phi$, whether there exist a CGSO, an observation relation and a state satisfying $\Phi$ is undecidable, even when restricted to turn-based structures.
+**Theorem (Laroussinie, Markey and Sangnier).** A *concurrent game structure with partial observation* (CGSO) is a finite-state concurrent game structure together with an equivalence relation $\sim_a$ on states for each agent $a$; histories of equal length are $a$-equivalent if they are pointwise $\sim_a$-equivalent, and strategies of $a$ must give the same move after $a$-equivalent histories. It is *turn-based* (a TBGSO) if each state has an owner whose move alone determines the successor. Interpret [$\mathrm{ATL}^*_{sc}$, $\mathrm{ATL}_{sc}$, $\mathrm{ATL}^*_{sc,0}$ and $\mathrm{ATL}_{sc,0}$](atl-with-strategy-contexts.md) over CGSOs with strategy quantifiers ranging over such observation-respecting strategies (memoryless ones in the two variants with subscript $0$). For each of these four logics, the problem of deciding, given a formula $\Phi$, whether there exist a CGSO, an observation relation and a state satisfying $\Phi$ is undecidable, even when restricted to turn-based structures. This is Theorem 16 of the source, which reuses the reduction of Troquard and Walther from modal-logic satisfiability to $\mathrm{ATL}_{sc}$ satisfiability.
 
 Partial observation changes satisfiability: the formula $\mathbf{AX}(\langle{\cdot} a_1 {\cdot}\rangle\mathbf X f) \wedge \neg\langle{\cdot} a_1 {\cdot}\rangle\mathbf{X}\mathbf X f$ is satisfiable with partial observation but not with full observation. Model checking $\mathrm{ATL}^*_{sc}$ over CGSOs with uniform observation (all agents sharing one equivalence) is decidable (Corollary 11 of the source).
 
 ## Depends on
 
 - [ATL with strategy contexts](atl-with-strategy-contexts.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

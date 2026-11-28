@@ -2,13 +2,14 @@
 
 LTL with disjunctions over orbit-finite sets of formulas mentioning atoms has an undecidable satisfiability problem, for equality atoms and for ordered atoms alike.
 
-**Theorem (Klin and Łełyk).** It is undecidable whether a given formula of [atomic LTL](temporal-logics-over-sets-with-atoms.md) is satisfiable, that is, holds at some state of some deterministic atomic Kripke model. This holds both for equality atoms and for ordered atoms.
+**Theorem (Klin and Łełyk).** It is undecidable whether a given formula of [atomic LTL](atomic-ltl.md) is satisfiable, that is, holds at some state of some deterministic atomic Kripke model. This holds both for equality atoms and for ordered atoms.
 
-Classical LTL satisfiability is decidable (PSPACE-complete); here the input formula is a finite description of an orbit-finite syntax tree.
+Instances are finite presentations: orbit-finite sets, and hence orbit-finite disjunctions, formulas and models, are written as set-builder expressions $\{e \mid v_1, \ldots, v_n \in \mathbb A, \phi\}$ with $\phi$ a first-order formula over the atoms, and the set $P$ of basic propositions is equivariant and given in the same way. This is Theorem 9.1 of the source, proved by reducing acceptance of the empty word by a Turing machine, following the undecidability of universality for register automata; the reduction uses a special marker proposition and the basic propositions $\mathit{atom}_a$ ($a \in \mathbb A$), $\mathit{tape}_\gamma$ and $\mathit{head}_q$. Classical LTL satisfiability is decidable (PSPACE-complete).
 
 ## Depends on
 
-- [Temporal logics over sets with atoms](temporal-logics-over-sets-with-atoms.md)
+- [Atomic LTL](atomic-ltl.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

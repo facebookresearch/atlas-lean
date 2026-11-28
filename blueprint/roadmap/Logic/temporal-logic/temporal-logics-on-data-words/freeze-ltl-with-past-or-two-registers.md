@@ -14,6 +14,9 @@ The upper bounds hold for the full logic $\mathrm{LTL}^{\downarrow}(\mathsf X,\m
 ## Depends on
 
 - [Formulas of linear temporal logic](../linear-temporal-logic/formula.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
 
 ## Proof depends on
 

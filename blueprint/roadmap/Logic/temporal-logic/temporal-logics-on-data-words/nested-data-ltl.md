@@ -2,7 +2,7 @@
 
 Nested data LTL (ND-LTL) is a temporal logic for words whose positions carry the values of several attributes ordered as a forest; besides LTL navigation along all positions, it navigates along the positions that share the current value of an attribute together with the values of all attributes below it.
 
-**Definition.** Let $AP$ be a finite set of propositions, $\Delta$ an infinite set of data values and $A$ a finite set of attributes carrying a *tree order* $\le$, a partial order in which the downward closure $x{\downarrow}$ of every attribute is a chain. A *multi-attributed data word* is a finite or infinite sequence $w = (a_0, d_0)(a_1, d_1)\cdots$ with $a_i \subseteq AP$ and $d_i : A \to \Delta$. Position formulae $\varphi$ and class formulae $\psi$ are
+**Definition.** Let $AP$ be a finite set of propositions, $\Delta$ an infinite set of data values and $A$ a finite set of attributes carrying a *tree order* $\le$, a partial order in which the downward closure $x{\downarrow}$ of every attribute is a chain. A *multi-attributed data word* is a nonempty finite or infinite sequence $w = (a_0, d_0)(a_1, d_1)\cdots$ with $a_i \subseteq AP$ and $d_i : A \to \Delta$. Position formulae $\varphi$ and class formulae $\psi$ are
 
 $$
 \varphi ::= p \mid \varphi \wedge \varphi \mid \neg\varphi \mid \mathsf X\varphi \mid \mathsf Y\varphi \mid \varphi\,\mathsf U\,\varphi \mid \varphi\,\mathsf S\,\varphi \mid \mathsf C^r_x\psi, \qquad \psi ::= @x \mid \psi \wedge \psi \mid \neg\psi \mid \mathsf X^{=}\psi \mid \mathsf Y^{=}\psi \mid \psi\,\mathsf U^{=}\psi \mid \psi\,\mathsf S^{=}\psi \mid \varphi,

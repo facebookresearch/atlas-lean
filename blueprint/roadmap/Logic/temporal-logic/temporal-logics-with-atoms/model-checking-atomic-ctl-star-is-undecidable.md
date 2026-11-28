@@ -2,13 +2,14 @@
 
 Model checking CTL* with orbit-finite disjunctions over atoms is undecidable, even on a fixed kind of orbit-finite, equivariant Kripke model, in contrast with the decidable model checking of the vectorial atomic μ-calculus.
 
-**Theorem (Klin and Łełyk).** The model checking problem for [atomic CTL*](temporal-logics-over-sets-with-atoms.md) is undecidable: there is no algorithm that decides, given an orbit-finite atomic Kripke model $\mathcal K$, a state $x$ and an atomic CTL* state formula $\Phi$, whether $\mathcal K, x \models \Phi$. This holds for equality atoms and for ordered atoms, and whether path quantifiers range over all paths or over finitely supported paths only.
+**Theorem (Klin and Łełyk).** The model checking problem for [atomic CTL*](atomic-ctl-star.md) is undecidable: there is no algorithm that decides, given an orbit-finite atomic Kripke model $\mathcal K$, a state $x$ and an atomic CTL* state formula $\Phi$, whether $\mathcal K, x \models \Phi$. This holds for equality atoms and for ordered atoms, and whether path quantifiers range over all paths or over finitely supported paths only. Instances are finite presentations: orbit-finite sets, and hence orbit-finite disjunctions, formulas and models, are written as set-builder expressions $\{e \mid v_1, \ldots, v_n \in \mathbb A, \phi\}$ with $\phi$ a first-order formula over the atoms, and the set $P$ of basic propositions is equivariant and given in the same way. This is Theorem 9.3 of the source: it reduces atomic LTL satisfiability, using one fixed kind of orbit-finite equivariant model in which any two states are connected.
 
 Since model checking the vectorial atomic μ-calculus over orbit-finite models is decidable (Theorem 5.1 of the source), atomic CTL* is not a fragment of the atomic μ-calculus, unlike in the classical setting.
 
 ## Depends on
 
-- [Temporal logics over sets with atoms](temporal-logics-over-sets-with-atoms.md)
+- [Atomic CTL*](atomic-ctl-star.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

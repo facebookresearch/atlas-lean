@@ -2,13 +2,14 @@
 
 Model checking finite Markov chains against the probabilistic higher-order fixpoint logic is undecidable, already for closed order-1 formulas without fixpoint alternation.
 
-**Theorem (Mitani, Kobayashi and Tsukada).** There is no algorithm that, given a finite Markov chain $M$ and a closed order-1 formula $\varphi$ of type $\mathrm{Prop}$ of [PHFL](probabilistic-higher-order-fixpoint-logic.md), decides whether $M \models \varphi$. Undecidability holds already for the $\mu$-only order-1 fragment, without greatest fixpoints and hence without fixpoint alternation.
+**Theorem (Mitani, Kobayashi and Tsukada).** There is no algorithm that, given a finite Markov chain $M$ and a closed order-1 formula $\varphi$ of type $\mathrm{Prop}$ of [PHFL](probabilistic-higher-order-fixpoint-logic.md), decides whether $M \models \varphi$. Undecidability holds already for the $\mu$-only order-1 fragment, without greatest fixpoints and hence without fixpoint alternation. The proof reduces the value-1 problem for probabilistic automata, undecidable by Gimbert and Oualhadj: from an automaton $\mathcal A$ it builds a finite Markov chain $M_{\mathcal A}$ and a formula $\varphi_{\mathcal A}$ with $M_{\mathcal A} \models \varphi_{\mathcal A}$ iff $\mathcal A$ has value 1 (Theorems 3.3 and 3.5 of the source).
 
 By contrast, model checking finite Markov chains is decidable for the full $\mu^p$-calculus (order 0) and for non-probabilistic higher-order fixpoint logic, both with fixpoint alternation; the combination of probabilities and higher-order predicates causes the undecidability.
 
 ## Depends on
 
 - [Probabilistic higher-order fixpoint logic](probabilistic-higher-order-fixpoint-logic.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

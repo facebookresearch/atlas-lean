@@ -4,11 +4,12 @@ When the strategy quantifiers of ATL with strategy contexts range over memoryles
 
 **Theorem (Laroussinie and Markey).** The satisfiability problem for $\mathrm{ATL}^0_{sc}$, [ATL with strategy contexts](atl-with-strategy-contexts.md) in which $\langle{\cdot} A {\cdot}\rangle$ quantifies over memoryless strategies, is undecidable, even when the models are restricted to turn-based concurrent game structures.
 
-The source proves the statement in detail for infinite-state turn-based games and indicates that the finite-state turn-based case follows by similar, more involved, ideas encoding the tiling of all finite grids. The same method shows that satisfiability of strategy logic with memoryless strategy quantification, $\mathrm{SL}^0$, is undecidable even over turn-based structures (Theorem 17 of the source, with proof sketched). By contrast, satisfiability of $\mathrm{ATL}_{sc}$ with arbitrary strategies over turn-based games is decidable, by the reduction to quantified CTL* of Theorem 10, though non-elementary (Theorem 11).
+This is Theorem 14 of the source, which proves it in detail for infinite-state turn-based games by encoding the tiling of the quadrant and indicates that the finite-state turn-based case follows by similar, more involved, ideas encoding the tiling of all finite grids. The same method shows that satisfiability of strategy logic with memoryless strategy quantification, $\mathrm{SL}^0$, is undecidable even over turn-based structures (Theorem 17 of the source, with proof sketched). By contrast, satisfiability of $\mathrm{ATL}_{sc}$ with arbitrary strategies over turn-based games is decidable, by the reduction to quantified CTL* of Theorem 10, though non-elementary (Theorem 11).
 
 ## Depends on
 
 - [ATL with strategy contexts](atl-with-strategy-contexts.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

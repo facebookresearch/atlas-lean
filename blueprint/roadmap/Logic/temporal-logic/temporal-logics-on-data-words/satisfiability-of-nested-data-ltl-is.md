@@ -9,6 +9,7 @@ In contrast, satisfiability of ND-LTL$^-$ over finite words and of ND-LTL$^+$ ov
 ## Depends on
 
 - [Nested data LTL](nested-data-ltl.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

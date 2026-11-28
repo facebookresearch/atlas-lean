@@ -17,14 +17,15 @@ Over such data words TPTL is strictly more expressive than MTL, in contrast with
 ## Depends on
 
 - [Formulas of linear temporal logic](../linear-temporal-logic/formula.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [Recurring computations of two-counter machines](../../../TheoryOfComputation/equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md)
+- [Recurring computations of two-counter machines are Σ¹₁-hard](../../../TheoryOfComputation/equivalence-of-models/counter-machines/recurring-computations-of-two-counter-machines.md)
 
 ## Expansion
 
-The recurrent state problem for two-counter machines, whether some computation visits the initial instruction infinitely often, is $\Sigma^1_1$-hard, and for each machine $M$ there is a TPTL formula $\varphi_M$ without propositions that is satisfiable exactly when $M$ is a positive instance (Alur and Henzinger). Set $\psi_M=(x.\mathsf{FFF}(x=0))\wedge\mathsf F\varphi_M$. If $\varphi_M$ is unsatisfiable, $\psi_M$ defines the empty language and is definable in MTL; if it is satisfiable, an Ehrenfeucht–Fraïssé game argument for MTL shows that $\psi_M$ is not MTL-definable. Hence MTL-definability would decide the recurrent state problem. The same argument with Ehrenfeucht–Fraïssé games for TPTL and its fragments gives parts 2 and 3. A good expansion links pages for Ehrenfeucht–Fraïssé games for MTL and TPTL and for the encoding of two-counter machines in TPTL; none exists yet.
+The recurrent state problem for two-counter machines, whether some computation visits the initial instruction infinitely often, is $\Sigma^1_1$-hard, and for each machine $M$ there is a TPTL formula $\varphi_M$ without propositions that is satisfiable exactly when $M$ is a positive instance (Alur and Henzinger). Set $\psi_M=(x.\mathsf{FFF}(x=0))\wedge\mathsf F\varphi_M$. If $\varphi_M$ is unsatisfiable, $\psi_M$ defines the empty language and is definable in MTL; if it is satisfiable, an Ehrenfeucht–Fraïssé game argument for MTL shows that $\psi_M$ is not MTL-definable. Hence MTL-definability would decide the recurrent state problem. The same argument with Ehrenfeucht–Fraïssé games for TPTL and its fragments gives parts 2 and 3. A good expansion links pages for Ehrenfeucht–Fraïssé games for MTL and TPTL and for the encoding of two-counter machines in TPTL.
 
 ## Sources
 

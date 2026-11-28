@@ -2,13 +2,14 @@
 
 The modal μ-calculus with orbit-finite disjunctions over sets with atoms has an undecidable satisfiability problem, already in its scalar form.
 
-**Theorem (Klin and Łełyk).** It is undecidable whether a given formula of the (scalar) [atomic μ-calculus](temporal-logics-over-sets-with-atoms.md) is satisfiable, that is, holds at some state of some atomic Kripke model. This holds both for equality atoms and for ordered atoms.
+**Theorem (Klin and Łełyk).** It is undecidable whether a given formula of the (scalar) [atomic μ-calculus](atomic-mu-calculus.md) is satisfiable, that is, holds at some state of some atomic Kripke model. This holds both for equality atoms and for ordered atoms. Instances are finite presentations: orbit-finite sets, and hence orbit-finite disjunctions, formulas and models, are written as set-builder expressions $\{e \mid v_1, \ldots, v_n \in \mathbb A, \phi\}$ with $\phi$ a first-order formula over the atoms, and the set $P$ of basic propositions is equivariant and given in the same way. This is Theorem 9.2 of the source, derived from the undecidability of atomic LTL satisfiability (Theorem 9.1 there).
 
 Classical μ-calculus satisfiability is decidable (EXPTIME-complete), and model checking of the vectorial atomic μ-calculus over orbit-finite models is decidable (Theorem 5.1 of the source).
 
 ## Depends on
 
-- [Temporal logics over sets with atoms](temporal-logics-over-sets-with-atoms.md)
+- [Atomic μ-calculus](atomic-mu-calculus.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

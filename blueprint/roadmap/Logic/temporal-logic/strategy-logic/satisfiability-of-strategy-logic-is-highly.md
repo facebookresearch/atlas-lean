@@ -12,6 +12,7 @@ The source states the same $\Sigma^1_1$-hardness for its boolean-goal fragment S
 ## Depends on
 
 - [Strategy logic](strategy-logic.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -23,4 +24,4 @@ Clause 1 reduces from the recurrent domino problem: given finite tile types $D$ 
 
 ## Sources
 
-- F. Mogavero, A. Murano, G. Perelli and M. Y. Vardi, "Reasoning about strategies: on the satisfiability problem", *Logical Methods in Computer Science* 13(1), Paper 9, 2017, doi:10.23638/LMCS-13(1:9)2017; read as arXiv:1611.08541v3, <https://arxiv.org/abs/1611.08541v3>: the theorem labeled Satisfiability in Section 3.2 of arXiv:1611.08541v3 (clause 1), the theorem on satisfiability on finite models at the end of Section 4 (clause 2), and the theorem on SL[BG] there.
+- F. Mogavero, A. Murano, G. Perelli and M. Y. Vardi, "Reasoning about strategies: on the satisfiability problem", *Logical Methods in Computer Science* 13(1), Paper 9, 2017, doi:10.23638/LMCS-13(1:9)2017; read as arXiv:1611.08541v3, <https://arxiv.org/abs/1611.08541v3>: Theorem 3.10 in Section 3.2 of arXiv:1611.08541v3 (clause 1), Theorem 4.3 in Section 4.1 (clause 2), Theorem 4.2 (SL[BG]), Theorem 3.5 (no bounded model property) and Theorem 5.13 (SL[1G] in 2EXPTIME).

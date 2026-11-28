@@ -7,6 +7,7 @@ With fixpoint alternation, model checking finite Markov chains against order-1 P
 ## Depends on
 
 - [Probabilistic higher-order fixpoint logic](probabilistic-higher-order-fixpoint-logic.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

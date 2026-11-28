@@ -10,6 +10,7 @@ So satisfiability of $\mathrm{LTL}^{\downarrow}_A$ is decidable iff $(A, \sqsubs
 
 - [Freeze LTL with quasi-ordered attributes](freeze-ltl-with-quasi-ordered-attributes.md)
 - [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
