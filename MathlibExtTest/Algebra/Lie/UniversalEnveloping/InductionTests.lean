@@ -46,6 +46,7 @@ example (x : UniversalEnvelopingAlgebra ℤ ℤ) :
   | ι n =>
     norm_num [evalZero, evalTwice, UniversalEnvelopingAlgebra.lift_ι_apply,
       twice_apply, map_mul]
+    exact Or.inl (by decide)
   | mul a b ha hb => simp only [map_mul, ha, hb]
   | add a b ha hb => simp only [map_add, ha, hb]
 

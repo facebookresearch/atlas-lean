@@ -80,7 +80,7 @@ theorem corner_left (b : ι) (a : A) (m : M) :
       := by
   ext i j
   rw [Coefficients.left_smul_apply]
-  by_cases hi : i = b <;> by_cases hj : j = b <;>
+  by_cases hi : b = i <;> by_cases hj : b = j <;>
     simp [cornerAlgHom_apply, Matrix.singleLinearMap_apply, Matrix.single_apply, eq_comm, ite_and,
       hi, hj]
 
@@ -95,7 +95,7 @@ theorem corner_right (b : ι) (a : A) (m : M) :
       MulOpposite.op (cornerAlgHom k A ι b a) • Matrix.singleLinearMap k b b m := by
   ext i j
   rw [Coefficients.right_smul_apply]
-  by_cases hi : i = b <;> by_cases hj : j = b <;>
+  by_cases hi : b = i <;> by_cases hj : b = j <;>
     simp [cornerAlgHom_apply, Matrix.singleLinearMap_apply, Matrix.single_apply, eq_comm, ite_and,
       hi, hj, apply_ite]
 
