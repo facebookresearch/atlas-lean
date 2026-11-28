@@ -17,9 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumAreaPolygonalizationWanted
+public import CSLibExt.Complexity.NPComplete.MaximumAreaPolygonalizationDefs
 
 @[expose] public section
 
@@ -63,23 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some simple polygon with vertex set exactly `S` has area at least `A`: some cyclic order `σ`
-of the points gives a simple polygon `p_{σ 0}, …, p_{σ (n-1)}` whose shoelace area is at least
-`A`. -/
-def MaximumAreaPolygonalizationFeasible (i : MinimumAreaPolygonalizationInstance) : Prop :=
-  ∃ σ : Equiv.Perm (Fin i.1.length),
-    MathlibExt.Geometry.SegmentVisibilityShared.IsSimplePolygon (point i ∘ σ) ∧
-      ratVal i.2 ≤ (|twiceSignedArea i σ| : ℚ) / 2
-
-open Classical in
-/-- MAXIMUM AREA POLYGONALIZATION as a decision problem over bitstrings. -/
-noncomputable def maximumAreaPolygonalizationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumAreaPolygonalizationInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumAreaPolygonalizationFeasible i)
-  | none => false
 
 /-- **MAXIMUM AREA POLYGONALIZATION is NP-complete.** Source: Fekete (2000), Theorem 4.1. -/
 public theorem_wanted maximumAreaPolygonalization_npComplete :
