@@ -6,7 +6,7 @@ A control improvisation problem asks for a random generator of words accepted by
 
 **Theorem (Fremont, Donzé, Seshia and Wessel).**
 
-1. The set of feasible control improvisation instances, with $\alpha$ ranging over computable predicates, is computably enumerable but not computable.
+1. The set of feasible control improvisation instances, with $\alpha$ ranging over computable predicates, each given by a Turing machine that halts on every input, is computably enumerable but not computable (Corollary 3.4 of the source).
 2. For each of the classes $\mathcal{P}_1$ and $\mathcal{P}_2$, determining whether an instance is feasible is undecidable.
 
 Feasibility holds exactly when $|I| \ge 1/\rho$ and $|A| \ge (1 - \epsilon)/\rho$. When both components are given by DFAs, the same paper gives a polynomial-time improvisation scheme.
@@ -24,7 +24,7 @@ Feasibility holds exactly when $|I| \ge 1/\rho$ and $|A| \ge (1 - \epsilon)/\rho
 
 ## Expansion
 
-By the characterization of feasibility through the sizes of $I$ and $A$, the instance $(\mathcal{A}', \mathcal{T}, 0, 1/N)$, with $\mathcal{T}$ the trivial DFA accepting $\Sigma^*$, is feasible exactly when $|L(\mathcal{A}')| \ge N$. For clause 2, given a probabilistic automaton $\mathcal{A}$ with a cut-point, add deterministic states so that exactly $N$ words lead to the initial state of $\mathcal{A}$ and every other word is rejected; then $|L(\mathcal{A}')| \ge N$ exactly when $L(\mathcal{A})$ is nonempty, which is undecidable. For clause 1, both sets $I$ and $A$ are computably enumerable, so feasible instances can be enumerated, while for arbitrary computable $\alpha$ the condition $|A| \ge (1 - \epsilon)/\rho$ cannot be decided. A good expansion adds and links a page for the characterization of feasibility by the sizes of $I$ and $A$.
+By the characterization of feasibility through the sizes of $I$ and $A$, the instance $(\mathcal{A}', \mathcal{T}, 0, 1/N)$, with $\mathcal{T}$ the trivial DFA accepting $\Sigma^*$, is feasible exactly when $|L(\mathcal{A}')| \ge N$. For clause 2, given a probabilistic automaton $\mathcal{A}$ with a cut-point, add deterministic states so that exactly $N$ words lead to the initial state of $\mathcal{A}$ and every other word is rejected; then $|L(\mathcal{A}')| \ge N$ exactly when $L(\mathcal{A})$ is nonempty, which is undecidable. For clause 1, both sets $I$ and $A$ are computably enumerable, so feasible instances can be enumerated, while for arbitrary computable $\alpha$ the condition $|A| \ge (1 - \epsilon)/\rho$ cannot be decided. A good expansion links a page for the characterization of feasibility by the sizes of $I$ and $A$.
 
 ## Sources
 

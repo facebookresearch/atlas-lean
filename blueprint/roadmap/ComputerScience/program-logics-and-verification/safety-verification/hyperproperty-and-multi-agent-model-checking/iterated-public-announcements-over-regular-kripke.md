@@ -16,6 +16,7 @@ For every regular Kripke structure and closed PPAL formula, the set of states sa
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
