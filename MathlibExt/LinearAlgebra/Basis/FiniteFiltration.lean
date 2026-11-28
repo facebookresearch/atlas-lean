@@ -120,8 +120,8 @@ noncomputable def ofFiltrationStage
       let hlast : F n ≤ F (n + 1) := by
         simpa using hF (Fin.last n)
       let blast : Basis (κ n) R
-          (F (n + 1) ⧸ (F n).comap (F (n + 1)).subtype) := by
-        simpa using b (Fin.last n)
+          (F (n + 1) ⧸ (F n).comap (F (n + 1)).subtype) :=
+        b (Fin.last n)
       let lower : Basis (FiltrationIndex κ n) R
           ((F n).comap (F (n + 1)).subtype) :=
         (ofFiltrationStage F hzero κ n hF' b').map

@@ -154,7 +154,9 @@ example (i : Fin 2) :
         (Module.Basis.ofFiltrationStageVector flag rfl GradeIndex 2 flag_le gradedBasis i 0) :
       Graded i) =
       (Submodule.Quotient.mk (coordinateVector i 1) : Graded i) := by
-  simp only [Module.Basis.ofFiltrationStageVector_mk, gradedBasis_apply]
+  exact (Module.Basis.ofFiltrationStageVector_mk
+    flag rfl GradeIndex 2 flag_le gradedBasis i (0 : Fin 1)).trans
+      (gradedBasis_apply i (0 : Fin 1))
 
 theorem first_vector :
     ((secondBasis ⟨(0 : Fin 2), 0⟩ : flag 2) : V) = Pi.single 0 1 := by
@@ -168,11 +170,24 @@ theorem first_vector :
     change
       ((Module.Basis.ofFiltrationStageVector flag rfl GradeIndex 2 flag_le gradedBasis 0 0 :
         flag 1) : V) - Pi.single 0 1 ∈ (⊥ : Submodule ℚ V) at hmem
-    exact Submodule.mem_bot.mp hmem
+    exact (Submodule.mem_bot ℚ).mp hmem
   simpa only [secondBasis, Module.Basis.ofFiltrationStageVector] using sub_eq_zero.mp hz
 
 example : ambientBasis ⟨(0 : Fin 2), 0⟩ = Pi.single 0 1 := by
   exact (Module.Basis.ofFiltration_apply
     flag rfl GradeIndex 2 flag_le gradedBasis rfl ⟨(0 : Fin 2), (0 : Fin 1)⟩).trans first_vector
+
+-- Default simp compares the two public constructors on the proper nonempty flag.
+example (i : Fin 1) (a : Fin 1) :
+    ((Module.Basis.ofFiltrationStage (R := ℚ) (M := V)
+        flag rfl GradeIndex 2 flag_le gradedBasis ⟨i.castSucc, a⟩ : flag 2) : V) =
+      ((Module.Basis.ofFiltrationStage (R := ℚ) (M := V)
+        flag rfl GradeIndex 1 (fun j => flag_le j.castSucc)
+          (fun j => gradedBasis j.castSucc) ⟨i, a⟩ : flag 1) : V) ∧
+    Module.Basis.ofFiltration (R := ℚ) (M := V)
+        flag rfl GradeIndex 2 flag_le gradedBasis rfl ⟨i.castSucc, a⟩ =
+      ((Module.Basis.ofFiltrationStage (R := ℚ) (M := V)
+        flag rfl GradeIndex 2 flag_le gradedBasis ⟨i.castSucc, a⟩ : flag 2) : V) := by
+  simp
 
 end MathlibExtTest.FiniteFiltration

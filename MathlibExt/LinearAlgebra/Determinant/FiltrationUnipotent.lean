@@ -117,8 +117,8 @@ theorem ofFiltration_apply_eq_ofFiltrationStage
 
 Let R be a commutative ring and 0=F_0⊆⋯⊆F_n a finite filtration in M, with quotient bases b_i
 indexed by κ_i. Write B for the assembled basis whose grade-i vector represents b_i in
-F_(i+1)/F_i. Assume F_n=M. If the κ_i are finite and U(B_(i,a))-B_(i,a)∈F_i for all i,a, then
-U(F_j)⊆F_j for every j≤n.
+F_(i+1)/F_i. Assume F_n=M. If U(B_(i,a))-B_(i,a)∈F_i for all i,a, then U(F_j)⊆F_j for every
+j≤n. The graded index sets κ_i may be finite or infinite.
 -/
 theorem ofFiltration_stable
     (F : ℕ → Submodule R M) (hzero : F 0 = ⊥)
@@ -132,42 +132,26 @@ theorem ofFiltration_stable
     (hU : ∀ i : Fin n, ∀ a : κ i.val,
       U (ofFiltration F hzero κ n hF b htop ⟨i, a⟩) -
           ofFiltration F hzero κ n hF b htop ⟨i, a⟩ ∈ F i.val)
-    [∀ i : Fin n, Finite (κ i.val)]
     (j : ℕ) (hj : j ≤ n) : F j ≤ (F j).comap U := by
-  let _ : ∀ i : Fin n, Fintype (κ i.val) := fun _ => Fintype.ofFinite _
-  let _ : ∀ i : Fin j, Fintype (κ i.val) := fun i =>
-    inferInstanceAs (Fintype (κ (i.castLE hj).val))
   let bj := ofFiltrationStage F hzero κ j
     (fun k => hF (k.castLE hj)) (fun k => b (k.castLE hj))
-  intro x hx
-  let xj : F j := ⟨x, hx⟩
-  have hsum := bj.sum_repr xj
-  have hsumM := congrArg (fun z : F j => (z : M)) hsum
-  have hcoe :
-      (((∑ p, (bj.repr xj) p • bj p : F j) : F j) : M) =
-        ∑ p, (bj.repr xj) p • (bj p : M) := by
-    change (F j).subtype (∑ p, (bj.repr xj) p • bj p) = _
-    rw [map_sum]
-    simp only [map_smul]
-    apply Finset.sum_congr rfl
-    intro p _
-    rfl
-  have hsumM' :
-      (∑ p, (bj.repr xj) p • (bj p : M)) = (xj : M) :=
-    hcoe.symm.trans hsumM
-  change U (xj : M) ∈ F j
-  rw [← hsumM', map_sum]
-  exact Submodule.sum_mem _ fun p _ => by
-    rw [map_smul]
-    apply Submodule.smul_mem
-    have hpref := ofFiltration_apply_eq_ofFiltrationStage
-      F hzero n hF b htop hj p.1 p.2
-    have herr := hU (p.1.castLE hj) p.2
-    rw [hpref] at herr
-    have herrj : U (bj p : M) - (bj p : M) ∈ F j :=
-      filtration_mono_of_succ F n hF (Nat.le_of_lt p.1.isLt) hj herr
-    rw [← sub_add_cancel (U (bj p : M)) (bj p : M)]
-    exact Submodule.add_mem _ herrj (bj p).property
+  have hspan :
+      Submodule.span R ((F j).subtype '' Set.range bj) = F j := by
+    rw [← Submodule.map_span, bj.span_eq, Submodule.map_subtype_top]
+  calc
+    F j = Submodule.span R ((F j).subtype '' Set.range bj) := hspan.symm
+    _ ≤ (F j).comap U := by
+      apply Submodule.span_le.mpr
+      rintro _ ⟨x, ⟨p, rfl⟩, rfl⟩
+      change U (bj p : M) ∈ F j
+      have hpref := ofFiltration_apply_eq_ofFiltrationStage
+        F hzero n hF b htop hj p.1 p.2
+      have herr := hU (p.1.castLE hj) p.2
+      rw [hpref] at herr
+      have herrj : U (bj p : M) - (bj p : M) ∈ F j :=
+        filtration_mono_of_succ F n hF (Nat.le_of_lt p.1.isLt) hj herr
+      rw [← sub_add_cancel (U (bj p : M)) (bj p : M)]
+      exact Submodule.add_mem _ herrj (bj p).property
 
 end Module.Basis
 
@@ -271,6 +255,31 @@ theorem det_eq_one_of_sub_mem_ofFiltration
         LinearMap.det (endomorphism (Fin.last n))
       exact LinearMap.det_conj (endomorphism (Fin.last n)) eTop
     _ = 1 := hdetStage
+
+/-- **Stagewise lower errors give determinant one.**
+
+Let R be a commutative ring and 0=F_0⊆⋯⊆F_n=M a finite filtration, with a basis b_i indexed by
+finite κ_i for each quotient F_(i+1)/F_i. If U x-x belongs to F_i for every x∈F_(i+1), then
+det(U)=1. The hypothesis concerns every stage vector and does not depend on chosen lifts.
+-/
+theorem det_eq_one_of_sub_mem_ofFiltrationStage
+    (F : ℕ → Submodule R M) (hzero : F 0 = ⊥)
+    (n : ℕ)
+    (hF : ∀ i : Fin n, F i.val ≤ F (i.val + 1))
+    (b : ∀ i : Fin n,
+      Basis (κ i.val) R
+        (F (i.val + 1) ⧸ (F i.val).comap (F (i.val + 1)).subtype))
+    (htop : F n = ⊤)
+    (U : M →ₗ[R] M)
+    (hU : ∀ i : Fin n, ∀ x : M,
+      x ∈ F (i.val + 1) → U x - x ∈ F i.val)
+    [∀ i : Fin n, Finite (κ i.val)] :
+    U.det = 1 := by
+  apply det_eq_one_of_sub_mem_ofFiltration F hzero n hF b htop U
+  intro i a
+  apply hU i
+  simpa only [ofFiltration_apply] using
+    ofFiltrationStage_mem F hzero κ n hF b i a
 
 end LinearMap
 
