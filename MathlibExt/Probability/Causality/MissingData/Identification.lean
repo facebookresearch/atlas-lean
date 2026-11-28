@@ -33,8 +33,10 @@ predicates from `MissingData.Basic`; MAR unfolds to `CondIndepDiscrete`:
 ## Main definitions
 
 * `completeCaseMean μ R Y`: the mean of `Y` over the respondents, `E[1_R Y] / P(R)`.
-* `ipwMean μ R X Y`: the inverse-response-weighted mean `E[1_R Y / π(X)]`, with
-  `π(x) = P(R | X = x)` the response probability (`propensity`).
+* `ipwMean μ R X Y`: the inverse-response-weighted integral `∫ 1_R Y / π(X) dμ`, with
+  `π = propensity μ R X` the exact-fibre response ratio; it is the mean `E[1_R Y / π(X)]` for a
+  probability measure, and `π(x) = P(R | X = x)` when `{X = x}` is measurable with positive
+  finite mass and `R ∩ {X = x}` is measurable.
 
 Both depend on `Y` only through its values on `R` (`completeCaseMean_congr`, `ipwMean_congr`),
 so they are observed-data estimands; neither is defined as the full-data mean.
