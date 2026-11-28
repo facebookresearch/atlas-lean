@@ -1252,6 +1252,15 @@
       "upstream_sha256": "aef8f9a7655773e249fece7fa1a81d99963fce301dfa4b4acdd79674db9b6a09"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/HomComplex/HomologyRepresentatives.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4fd2352058aec1733b4a7d076ecafb8425e80ae91fd5ef2c5aff6ba5c493111d",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged. Small source-cohort preparation: wrap overlong lines and add mathematical module documentation where absent. Every noncomment Lean token, declaration, proof, hypothesis and universe parameter is unchanged. Native compilation of this cohort is pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a5059a5b436435ca922cfffdfcb7bcebf132db81e0f66a4b467c387f0f56baa0"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/HomComplex/LinearMap.lean",
       "backport": "not-needed",
       "disposition": "diverged",
@@ -1295,6 +1304,15 @@
       "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "0b69a4f4d6220603aa5ddb3e4a0434ee7b795721c29e20719ebe8e7d6b354cbd"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomologicalComplex/ConeBoundary.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5a389046a7fa6fc67892178434f81d3fb26521b156ab8ac73db07d6c602e52a2",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "3a80b1ccc6a723bade0b3cc8c61065d8f9276479b2aa4504f84f6465f0bc267a"
     },
     {
       "path": "MathlibExt/Algebra/Homology/HomologicalComplex/CyclesComplex.lean",
