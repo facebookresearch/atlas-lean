@@ -1020,7 +1020,7 @@
   "MathlibExt/Analysis/InnerProductSpace/SchurGramBound": {"to": "Analysis/operator-theory/bounded-operators", "title": "Schur multipliers"},
   "MathlibExt/Analysis/IntegralGeometry/RadonTransform": {"to": "Analysis/harmonic-analysis/integral-transforms", "title": "Radon transform"},
   "MathlibExt/Analysis/LaplaceUniqueness": {"to": "Analysis/harmonic-analysis/integral-transforms", "title": "Uniqueness of Laplace and Mellin transforms"},
-  "MathlibExt/Analysis/Normed/Field/UltrametricOpenSubgroup": {"to": "NumberTheory/p-adic-numbers", "title": "Nonarchimedean normed fields"},
+  "MathlibExt/Analysis/Normed/Field/UltrametricOpenSubgroup": {"to": "NumberTheory/p-adic-numbers", "title": "p-adic Pontryagin duals"},
   "MathlibExt/Analysis/PotentialTheory/HarmonicMeasure": {"to": "Analysis/potential-theory", "title": "Perron method and harmonic measure"},
   "MathlibExt/Analysis/ScalarCalculus": {"to": "Analysis/real-functions/integration", "title": "Elementary derivatives and integrals"},
   "MathlibExt/Analysis/Series/DirichletTest": {"to": "Analysis/sequences-and-series/convergence", "title": "Abel's and Dirichlet's tests"},
