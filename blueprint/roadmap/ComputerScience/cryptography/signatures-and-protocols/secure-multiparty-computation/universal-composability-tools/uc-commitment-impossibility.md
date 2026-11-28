@@ -12,6 +12,7 @@ In the ideal world, the simulator for a corrupted committer driven by the enviro
 - [The ideal UC bit-commitment functionality](uc-commitment-functionality.md)
 - [The ideal commitment-with-abort functionality](../../commitment-schemes/commitments-from-oblivious-transfer/ideal-commitment-functionality.md)
 - [Negligible advantage](../../../security-games/asymptotic-security/negligible-adv.md)
+
 ## Sources
 
 - Ran Canetti and Marc Fischlin, "Universally Composable Commitments", Advances in Cryptology – CRYPTO 2001, 2001.

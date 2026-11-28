@@ -9,6 +9,7 @@ A map $P$ from messages to subsets of $\{1, \dots, n\}$ is *containment free* if
 - [Collision resistance and target collision resistance](../../../hash-functions/collision-resistance-and-target-collision-resistance.md)
 - [Asymptotic PRG security relative to a class of distinguishers](../../../symmetric-key/pseudorandom-generators/prgsecure.md)
 - [Efficient adversaries](../../../security-games/asymptotic-security/efficient-adversaries.md)
+
 ## Sources
 
 - D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.

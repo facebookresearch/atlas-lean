@@ -18,6 +18,7 @@ for the guessing advantage $\mathrm{Adv}^{\mathrm{ind\text{-}cpa}}(\mathcal{B}) 
 - [CPA security of public-key encryption families](../../../security-games/asymptotic-security/pub-cpasecure.md)
 - [One-way and unpredictable public-key encryption](../../elgamal-encryption/elgamal-variants-and-properties/one-way-and-unpredictable-pke.md)
 - [Efficient adversaries](../../../security-games/asymptotic-security/efficient-adversaries.md)
+
 ## Sources
 
 - Dan Boneh and Victor Shoup, "A Graduate Course in Applied Cryptography", Version 0.6, 2023, Definition 12.5 and Exercise 12.9.

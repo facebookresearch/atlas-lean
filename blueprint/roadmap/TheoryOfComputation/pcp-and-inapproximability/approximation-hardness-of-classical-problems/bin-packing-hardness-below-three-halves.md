@@ -11,6 +11,7 @@ Given an instance of Partition with total $S$, answer directly if the list is em
 - [Polynomial time on multi-tape machines](../../complexity-classes/time-and-space-classes-on-multi-tape-machines/p.md)
 - [The complexity class NP](../../complexity-classes/the-classes-p-np-and-conp/np.md)
 - [NP-complete decision problems](../../complexity-classes/mahaney-s-theorem/npcomplete.md)
+- [Feasible bin packing instances](../../np-completeness/number-and-packing-problems/bin-packing/bin-packing-feasible.md)
 
 ## Sources
 

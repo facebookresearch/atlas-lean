@@ -13,6 +13,8 @@
 - [Encrypt-then-authenticate](../encrypt-then-mac/scheme.md)
 - [Polynomial-query unforgeability of MACs](../../security-games/asymptotic-security/poly-query-macsecure.md)
 - [Negligible advantage](../../security-games/asymptotic-security/negligible-adv.md)
+- [CCA indistinguishability experiment](../../security-games/generic-security-games/cca-game.md)
+- [Strong MAC forgery experiment](../../security-games/generic-security-games/mac-strong-game.md)
 
 ## Proof depends on
 

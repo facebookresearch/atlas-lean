@@ -1,9 +1,9 @@
 # Soundness of BCS-compiled FRI in the random oracle model
 
-Compile (batched, smooth or binary) FRI with the BCS transform using digest length $\sigma$. For every prover making at most $t_{FS}$ Fiat–Shamir and $t_{MT}$ Merkle queries, the probability of producing an accepted proof for a word that is $e$-far from the Reed–Solomon code is at most
+Compile (batched, smooth or binary) FRI with the BCS transform using digest length $\sigma$. For every prover making at most $t_{FS}$ Fiat–Shamir and $t_{MT}$ Merkle queries with total query budget $t = t_{MT} + t_{FS}$ (under the parameter condition of Chiesa and Yogev, Theorems 25.2.1 and 31.2.1), the probability of producing an accepted proof for a word that is $e$-far from the Reed–Solomon code is at most
 
 $$
-(t_{FS} + k)\cdot \max\Bigl(\max_i \varepsilon_i^{\mathrm{FRI}},\ \Bigl(1 - \frac{e}{2^d}\Bigr)^{q}\Bigr) + O\!\left(\frac{t_{MT}^2}{2^\sigma}\right),
+(t_{FS} + k)\cdot \max\Bigl(\max_i \varepsilon_i^{\mathrm{FRI}},\ \Bigl(1 - \frac{e}{2^d}\Bigr)^{q}\Bigr) + \frac{3.5\, t^2}{2^\sigma},
 $$
 
 where $k$ is the number of verifier challenges of the compiled FRI protocol (the verifier's own Fiat–Shamir queries), with the FRI round errors $\varepsilon_i^{\mathrm{FRI}}$ from the unique-decoding or Johnson-regime round-by-round analysis, and with separate prover and verifier Merkle budgets permitted.
@@ -25,5 +25,5 @@ Instantiate the BCS soundness theorem with the round-by-round soundness of FRI.
 ## Sources
 
 - Eli Ben-Sasson, Alessandro Chiesa and Nicholas Spooner, "Interactive Oracle Proofs", Theory of Cryptography – TCC 2016-B, Part II, 2016.
-- Alessandro Chiesa and Eylon Yogev, "Building Cryptographic Proofs from Hash Functions", 2024.
+- Alessandro Chiesa and Eylon Yogev, "Building Cryptographic Proofs from Hash Functions", 2024, Lemma 18.5.10, Theorems 25.2.1 and 31.2.1, and Lemma 25.2.2.
 - Eli Ben-Sasson et al., "Proximity Gaps for Reed–Solomon Codes", Journal of the ACM, 2023.

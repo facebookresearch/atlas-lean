@@ -12,6 +12,7 @@ Choi et al. also rule out a fully black-box proof of that security from the non-
 - [Free-XOR garbling](../../signatures-and-protocols/secure-multiparty-computation/boolean-garbling-constructions/free-xor-garbling.md)
 - [Ideal 1-out-of-2, batched and 1-out-of-4 oblivious transfer](../../signatures-and-protocols/secure-multiparty-computation/oblivious-transfer-protocols/oblivious-transfer-functionalities.md)
 - [Negligible advantage](../../security-games/asymptotic-security/negligible-adv.md)
+
 ## Sources
 
 - Y. Ishai, J. Kilian, K. Nissim and E. Petrank, "Extending Oblivious Transfers Efficiently", Advances in Cryptology (CRYPTO 2003), LNCS 2729, 2003.

@@ -12,6 +12,7 @@ By Poisson summation, for $s \ge \eta_\varepsilon(L)$ the Gaussian mass of each 
 - [Smoothing parameter of a lattice](../lattice-gaussians-and-smoothing-parameter/smoothing-parameter.md)
 - [Gaussian function, Gaussian mass and discrete Gaussian on a lattice](../lattice-gaussians-and-smoothing-parameter/discrete-gaussian-on-a-lattice.md)
 - [Shortest vector, independent vectors and guaranteed distance decoding problems](../lattice-gaussians-and-smoothing-parameter/svp-sivp-givp-and-gdd.md)
+- [Approximate lattice problems GapSVP and SIVP](../../isogeny-and-lattice-foundations/worst-case-to-average-case-lattice-reductions/gapsvp-and-sivp.md)
 
 ## Sources
 

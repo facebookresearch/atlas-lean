@@ -1,6 +1,6 @@
 # Inaccessible average max-entropy from any one-way function
 
-Let $f : \{0,1\}^n \to \{0,1\}^n$ be a length-preserving one-way function (any one-way function yields one by normalizing its output length), and let $\mathcal{G}$ be a family of hash functions $g : \{0,1\}^n \to \{0,1\}^n$ that is three-wise independent and constructible (a member can be sampled and evaluated in time polynomial in $n$). Define $F$ on $\mathrm{Dom}(F) = \{0,1\}^n \times \mathcal{G} \times [n]$ by
+Let $f : \{0,1\}^n \to \{0,1\}^n$ be a length-preserving one-way function (any one-way function yields one by normalizing its output length), and let $\mathcal{G}$ be a family of hash functions $g : \{0,1\}^n \to \{0,1\}^n$ that is three-wise independent and constructible (members can be evaluated in polynomial time, and for any $x, y \in \{0,1\}^n$ a uniformly random member $g \in \mathcal{G}$ with $g(x) = y$ can be sampled in probabilistic polynomial time; Haitner–Holenstein–Reingold–Vadhan–Wee, Section 2). Define $F$ on $\mathrm{Dom}(F) = \{0,1\}^n \times \mathcal{G} \times [n]$ by
 
 $$F(x, g, i) = \bigl(g(f(x))_{1..i},\ g,\ i\bigr),$$
 

@@ -13,6 +13,7 @@ $F$ has *inaccessible entropy* $\Delta(n)$ if its accessible average max-entropy
 - [Real sample entropy of a function](real-sample-entropy.md)
 - [Probabilistic polynomial-time Turing machines](../../../ComputerScience/cryptography/security-games/asymptotic-security/probabilistic-polynomial-time-turing-machines.md)
 - [Negligible functions](../../complexity-classes/time-and-space-complexity-classes/negligible.md)
+
 ## Sources
 
 - I. Haitner, T. Holenstein, O. Reingold, S. Vadhan and H. Wee, "Inaccessible Entropy II: IE Functions and Universal One-Way Hashing", Theory of Computing 16(8), 2020: Definition 3.3 (collision finders) and Definition 3.9 (accessible average max-entropy).

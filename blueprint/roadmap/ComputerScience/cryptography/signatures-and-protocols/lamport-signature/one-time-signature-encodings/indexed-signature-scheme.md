@@ -8,6 +8,7 @@ A *$q$-indexed signature scheme* is a signature scheme whose messages are pairs 
 - [Signature forgery experiment](../../../security-games/generic-security-games/sig-game.md)
 - [Efficient adversaries](../../../security-games/asymptotic-security/efficient-adversaries.md)
 - [Negligible advantage](../../../security-games/asymptotic-security/negligible-adv.md)
+
 ## Sources
 
 - D. Boneh and V. Shoup, "A Graduate Course in Applied Cryptography", draft textbook, version 0.6, 2023.
