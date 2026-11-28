@@ -6,8 +6,37 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Foundations.Unification.Basic
+
+/-!
 # UNIFICATION WITH COMMUTATIVE OPERATORS: definitions
+
+INSTANCE: a set `V` of variables, a set `C` of constants, and ordered pairs `(eᵢ, fᵢ)`,
+`1 ≤ i ≤ n`, of expressions, where an expression is either a variable from `V`, a constant
+from `C`, or `(e + f)` where `e` and `f` are expressions. QUESTION: is there an assignment to
+each `v ∈ V` of a variable-free expression `I(v)` such that, if `I(e)` denotes the expression
+obtained by replacing each occurrence of each variable `v` in `e` by `I(v)`, then
+`I(eᵢ) ≡ I(fᵢ)` for `1 ≤ i ≤ n`, where `e ≡ f` if and only
+if `e = f`, or `e = (a + b)`, `f = (c + d)` and either `a ≡ c` and `b ≡ d`, or `a ≡ d` and
+`b ≡ c`?
+
+Expressions are the binary terms `Cslib.Unification.Term (Fin |C|)` (`var`, `const`, and
+`node l r` for `(l + r)`), with variables `0, ..., |V| - 1` and constants `Fin |C|`; `I(e)` is
+`Term.subst`, and "variable-free" is `Term.vars = ∅`. The equivalence `≡` is `CommEquiv`, the
+least relation closed under the three clauses of the source's recursive definition (which is
+well founded on the size of the expressions, so it has exactly one solution).
+
+Each expression is given by its prefix (Polish) token list `tokens`, which determines the term
+uniquely: `(0, v)` is the variable `v`, `(1, c)` the constant `c`, and `(2, 0)` is `+`, followed by
+the tokens of its two operands.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -20,11 +49,6 @@ doi:10.1016/B978-044450813-3/50010-2, Section 3.4 (commutativity `C_f`:
 unification with constants is NP-complete; the hardness result is the one in
 Garey and Johnson, attributed to Sethi).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Foundations.Unification.Basic
 
 @[expose] public section
 

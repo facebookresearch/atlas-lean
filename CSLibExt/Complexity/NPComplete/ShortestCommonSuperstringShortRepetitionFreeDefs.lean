@@ -6,8 +6,31 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ShortestCommonSuperstringDefs
+
+/-!
 # SHORTEST COMMON SUPERSTRING with short repetition-free strings: definitions
+
+The problem SHORTEST COMMON SUPERSTRING
+(`MetaMathlibExt.Complexity.NPComplete.ShortestCommonSuperstring`), restricted to instances in
+which all `x ∈ R` have `|x| ≤ 8` and contain no repeated symbols. INSTANCE: a finite alphabet
+`Σ`, a finite set `R` of strings from `Σ*`, each of length at most `8` and with no repeated
+symbol, and a positive integer `K`. QUESTION: is there a string `w ∈ Σ*` with `|w| ≤ K` such that
+each string `x ∈ R` is a substring of `w`, i.e., `w = w₀ x w₁` where each `wᵢ ∈ Σ*`?
+
+The instance encoding (the alphabet size `k`, the alphabet being `{0, …, k - 1}`, the strings
+of `R` as lists of symbols, and `K`), the well-formedness conditions of SHORTEST COMMON
+SUPERSTRING and the question are those of `ShortestCommonSuperstring`; here additionally every
+string of `R` has length at most `8` and no repeated symbol (`List.Nodup`). Numbers use the
+binary encoding.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,11 +40,6 @@ repeated symbols", reference [Maier and Storer, 1977], Report No. 233, Princeton
 J. Gallant, D. Maier and J. A. Storer, "On finding minimal length superstrings", Journal of
 Computer and System Sciences 20 (1980), 50-58, doi:10.1016/0022-0000(80)90004-5.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.ShortestCommonSuperstringDefs
 
 @[expose] public section
 

@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Basic.Real.Basic
+
+/-!
 # TEMPORAL CONSTRAINT SATISFACTION: definitions
+
+INSTANCE: time-point variables `X₁, ..., Xₙ` with continuous domains, and constraints, each a
+finite set of closed intervals `{[a₁, b₁], ..., [aₖ, bₖ]}` with rational endpoints: a unary
+constraint on `Xᵢ` represents `(a₁ ≤ Xᵢ ≤ b₁) ∨ ... ∨ (aₖ ≤ Xᵢ ≤ bₖ)`, and a binary constraint on
+`(Xᵢ, Xⱼ)` represents `(a₁ ≤ Xⱼ - Xᵢ ≤ b₁) ∨ ... ∨ (aₖ ≤ Xⱼ - Xᵢ ≤ bₖ)`. QUESTION: is the network
+consistent, i.e. is there an assignment of real values to the variables satisfying all
+constraints?
+
+Variables are `0, ..., n - 1`. A rational endpoint is a triple `(p, m, d)` standing for
+`(p - m) / d` with `d > 0` (`Endpoint.val`). Dechter, Meiri and Pearl assume constraints are
+given with pairwise disjoint intervals; overlapping intervals denote the same disjunction, so
+that canonical form is not required here. The problem is in NP because choosing one interval per
+constraint leaves a simple temporal problem, decidable in polynomial time (their Section 3), and
+NP-hard by their Theorem 4.1, a reduction from graph 3-coloring with integer point intervals.
+Numbers use the canonical binary encoding.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 R. Dechter, I. Meiri, and J. Pearl, "Temporal constraint networks", Artificial
@@ -15,11 +40,6 @@ Intelligence 49 (1991), 61-95, doi:10.1016/0004-3702(91)90006-6, Section 2
 (TCSP) and Theorem 4.1 (deciding consistency of a TCSP is NP-hard; credited there
 to E. Davis, private communication, 1989).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Basic.Real.Basic
 
 @[expose] public section
 

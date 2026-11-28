@@ -6,8 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Databases.ConjunctiveQueries
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+
+/-!
 # RESILIENCE OF THE TRIANGLE QUERY: definitions
+
+The triangle query is the self-join-free Boolean conjunctive query
+`q△ :- R(x, y), S(y, z), T(z, x)`, with every relation endogenous (its tuples may be deleted).
+Its resilience problem `RES(q△)`:
+
+INSTANCE: a database `D` with binary relations `R`, `S`, `T`, and an integer `k`.
+QUESTION: does `D ⊨ q△` hold, and is there a set `Γ` of at most `k` tuples of `D` such that
+`D - Γ ⊭ q△`?
+
+The query and the satisfaction relation are those of `CSLibExt.Databases.ConjunctiveQueries`:
+`q△` is the `CQ` with empty head and body `R(x, y), S(y, z), T(z, x)`, the relation names
+`R, S, T` being `0, 1, 2` and the variables `x, y, z` being `0, 1, 2`; `D ⊨ q` is the
+existence of a satisfying assignment (`Satisfies`). The domain is `ℕ` and a relation is given
+by the list of its tuples (pairs), without repetition. Deleting `Γ` leaves a database `D'`
+with `D' r ⊆ D r` for every relation `r`, and `|Γ|` is the number of tuples removed,
+`∑ r ∈ {R, S, T}, |D r \ D' r|`; conversely every such `D'` arises from `Γ = D \ D'`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 C. Freire, W. Gatterbauer, N. Immerman and A. Meliou, "The complexity of resilience and
@@ -16,12 +43,6 @@ responsibility for self-join-free conjunctive queries", Proceedings of the VLDB 
 (`RES(q△)` is NP-complete); extended version arXiv:1507.00674, Definition 2.1 and
 Proposition 3.3 (reduction from 3SAT).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Databases.ConjunctiveQueries
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 @[expose] public section
 

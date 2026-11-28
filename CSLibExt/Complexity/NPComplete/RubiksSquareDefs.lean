@@ -6,18 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # RUBIK'S SQUARE: definitions
+
+The `n × n` Rubik's Square (the `n × n × 1` Rubik's Cube) is an `n × n` array of unit cubies;
+every cubie face on the outside of the puzzle carries a sticker of one of six colours. A move
+flips a single row or column of cubies through space by a rotation in the long direction
+(Demaine, Eisenstat and Rudoy, Section 2.1): the half turn about the axis that lies in the plane
+of the square and is perpendicular to the row or column, so that the cubie at `(x, y)` of a
+flipped row moves to `(-x, y)` in coordinates centred at the origin (Section 2.3), turned upside
+down. The puzzle is solved when each of its six faces is monochromatic in a different colour. Given
+a configuration and a number `k`, the question is
+whether the configuration can be solved in `k` moves or fewer.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 E. D. Demaine, S. Eisenstat and M. Rudoy, "Solving the Rubik's Cube Optimally is NP-complete",
 35th Symposium on Theoretical Aspects of Computer Science (STACS 2018), LIPIcs 96 (2018),
 24:1-24:13, doi:10.4230/LIPIcs.STACS.2018.24, Problem 1 (the Rubik's Square problem).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 
@@ -126,8 +141,7 @@ def config (i : RubiksSquareInstance) : Config i.1 where
 /-- Well-formedness: `n ≥ 1`, both face arrays are `n × n`, the four side lists have length
 `n`, every sticker has one of the six colours `0, …, 5`, and the colouring is a configuration of
 the puzzle: a sequence of moves turns some rigid placement of the solved puzzle
-(`solvedPlacements n`) into it. (An assembled configuration that is not of this form can never
-become monochromatic, so it would be a no-instance in any case.) -/
+(`solvedPlacements n`) into it. -/
 def WellFormed (i : RubiksSquareInstance) : Prop :=
   1 ≤ i.1 ∧
     i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1 ∧ ∀ c ∈ row, c < 6) ∧

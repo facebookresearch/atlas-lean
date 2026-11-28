@@ -6,8 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Data.Nat.Prime.Defs
+public import Mathlib.Data.ZMod.Defs
+public import CSLibExt.Complexity.Algebraic.MatrixMultiplicationExponent
+
+/-!
 # TENSOR RANK over a prime field: definitions
+
+Fix a prime `p` and the field `𝔽_p = ZMod p`. INSTANCE: a three-dimensional tensor
+`T ∈ 𝔽_p^{n₁ × n₂ × n₃}` and an integer `r`. QUESTION: is the rank of `T` at most `r`, i.e. is
+`T` a sum of `r` rank-one tensors `u ⊗ v ⊗ w` (`u ∈ 𝔽_p^{n₁}`, `v ∈ 𝔽_p^{n₂}`, `w ∈ 𝔽_p^{n₃}`)?
+
+Håstad proves NP-completeness over every finite field, each field giving its own decision
+problem; the corresponding wanted theorem states it for the prime fields `ZMod p`, one decision
+problem per prime
+`p`. The tensor is given as `n₁` slices, each `n₂` rows of `n₃` entries, every entry a natural
+number below `p` naming an element of `ZMod p`; all three dimensions are read off the listed
+entries. "Rank at most `r`" is the repository's `HasTrilinearRankAtMost` (CSLibExt, matrix
+multiplication exponents): a list of at most `r` rank-one terms whose coefficient sum is `T`.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 J. Håstad, "Tensor rank is NP-complete", Journal of Algorithms 11(4) (1990), 644-654,
@@ -17,14 +41,6 @@ C. J. Hillar and L.-H. Lim, "Most tensor problems are NP-hard", Journal of the A
 (2013), 1-39, doi:10.1145/2512329, Section 8 ("tensor rank is NP-hard over Q and
 NP-complete over finite fields" [Håstad 1990]).
 -/
-module
-
-public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Nat.Prime.Defs
-public import Mathlib.Data.ZMod.Defs
-public import CSLibExt.Complexity.Algebraic.MatrixMultiplicationExponent
 
 @[expose] public section
 

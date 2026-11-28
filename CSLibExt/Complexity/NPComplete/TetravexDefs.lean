@@ -6,17 +6,31 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # TETRAVEX: definitions
+
+INSTANCE: a side length `n` and `n²` unit square tiles, each edge of which is labelled with a
+number. QUESTION: can each tile be placed within an
+`n × n` square, every tile used exactly once and none rotated, such that all neighbouring
+edges are labelled with an identical number?
+
+A tile `(a, b, c, d)` has top label `a`, right label `b`, bottom label `c` and left label `d`.
+Positions `(x, y)` with `x, y < n` count columns left to right and rows top to bottom. The
+tiles form a list, so equal tiles may occur several times; each list entry is placed once.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 Y. Takenaga and T. Walsh, "Tetravex is NP-complete", Information Processing Letters 99 (2006),
 171-174, doi:10.1016/j.ipl.2006.04.010 (arXiv:0903.1147).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 

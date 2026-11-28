@@ -6,19 +6,47 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import MathlibExt.Combinatorics.RationalSimplicialHomologyShared
+
+/-!
 # SHELLABILITY: definitions
+
+Fix `d ≥ 2`. INSTANCE: a pure `d`-dimensional finite abstract simplicial complex `K`, given by
+its facets. QUESTION: is `K` shellable, that is, is there a linear ordering `σ₁, σ₂, …, σₙ` of
+the facets of `K` such that, for every `i ≥ 2`, `σᵢ ∩ (⋃_{j < i} σⱼ)` is a pure
+`(d - 1)`-dimensional simplicial complex? (Goaoc et al., Section 1; there a simplex `σ` also
+stands for the complex of all its faces.)
+
+Complexes are the repository's finite abstract simplicial complexes on the vertex set `ℕ`
+(`MathlibExt.Combinatorics.RationalSimplicialHomologyShared`): finite families of finite sets
+closed under taking subsets, with the empty face, as in Goaoc et al., Section 2. A face with
+`k + 1` vertices has dimension `k`. The instance lists the facets, each a list of `d + 1`
+distinct vertices; `K` is the family of all subsets of the listed facets (`complex`). Since
+the listed sets all have `d + 1` elements, none contains another, so they are exactly the facets
+of `K` (`IsFacet`), and `K` is pure of dimension `d`.
+
+A face of `σᵢ ∩ (⋃_{j < i} σⱼ)` is a subset of `σᵢ` that lies in some `σⱼ` with `j < i`
+(`intersectionComplex`). Being pure `(d - 1)`-dimensional means having dimension `d - 1` (its
+largest face has `d` vertices, `topCard`) with every facet of dimension `d - 1` (every facet has
+`d` vertices).
+
+For each fixed `d ≥ 2` the problem is NP-complete (Goaoc et al., abstract and Theorem 1 with
+Corollary 3); membership in NP is their Remark 2 (a shelling order is checkable in polynomial
+time). The family is stated as one theorem with `d` and `2 ≤ d` as parameters.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 X. Goaoc, P. Paták, Z. Patáková, M. Tancer and U. Wagner, "Shellability is NP-complete",
 Journal of the ACM 66 (2019), Article 21, doi:10.1145/3314024 (conference version: SoCG 2018;
 preprint arXiv:1711.08436).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.RationalSimplicialHomologyShared
 
 @[expose] public section
 
@@ -48,8 +76,9 @@ consists of `d + 1` distinct vertices (so `K` is pure of dimension `d`). -/
 def WellFormed (d : ℕ) (i : ShellabilityInstance) : Prop :=
   i ≠ [] ∧ ∀ σ ∈ i, σ.Nodup ∧ σ.length = d + 1
 
-/-- `K` is shellable: some list `σ₀, …, σₙ₋₁` enumerating the facets of `K` once each has, for
-every position `i ≥ 1`, `σᵢ ∩ (σ₀ ∪ ⋯ ∪ σᵢ₋₁)` pure of dimension `d - 1`. -/
+/-- Some ordering `σ₀, …, σₙ₋₁` of all facets, without repetition, has each intersection
+`σᵢ ∩ (σ₀ ∪ ⋯ ∪ σᵢ₋₁)` for `i ≥ 1` pure with facets of cardinality `d`. When `K` is pure
+of dimension `d`, as `WellFormed d` requires, this is precisely shellability of `K`. -/
 def ShellabilityFeasible (d : ℕ) (i : ShellabilityInstance) : Prop :=
   ∃ l : List (Finset ℕ), l.Nodup ∧ (∀ F ∈ l, IsFacet (complex i) F) ∧
     (∀ F ∈ complex i, IsFacet (complex i) F → F ∈ l) ∧

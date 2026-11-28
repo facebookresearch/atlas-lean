@@ -6,8 +6,25 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Data.Int.ModEq
+
+/-!
 # SIMULTANEOUS INCONGRUENCES: definitions
+
+INSTANCE: a collection `{(a₁, b₁), ..., (aₙ, bₙ)}` of ordered pairs of positive integers, with
+`aᵢ ≤ bᵢ` for `1 ≤ i ≤ n`. QUESTION: is there an integer `x` such that, for `1 ≤ i ≤ n`,
+`x ≢ aᵢ (mod bᵢ)`?
+
+The collection is a list of pairs `(aᵢ, bᵢ)`; repeated pairs do not change the question.
+Incongruence is Mathlib's `Int.ModEq`, negated.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -17,11 +34,6 @@ L. J. Stockmeyer and A. R. Meyer, "Word problems requiring exponential time
 (preliminary report)", Proceedings of the 5th Annual ACM Symposium on Theory of
 Computing (STOC 1973), 1-9, doi:10.1145/800125.804029.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Int.ModEq
 
 @[expose] public section
 

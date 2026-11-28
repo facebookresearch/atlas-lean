@@ -6,8 +6,31 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Fintype.Prod
+
+/-!
 # 3-DIMENSIONAL ASSIGNMENT: definitions
+
+INSTANCE: three sets `X`, `Y` and `W`, a cost function `c : X × Y × W → ℕ`, and a positive
+integer `K`.
+QUESTION: is there an assignment `A`, i.e. a subset `A ⊆ X × Y × W` such that every element of
+`X ∪ Y ∪ W` belongs to exactly one triple in `A`, of cost `∑_{(x, y, w) ∈ A} c(x, y, w) ≤ K`?
+(The decision version of the compendium's MINIMUM 3-DIMENSIONAL ASSIGNMENT, the weighted
+version of 3-DIMENSIONAL MATCHING: with costs `0` on the given triples and `K + 1` elsewhere,
+an assignment of cost at most `K` is a perfect 3-dimensional matching.)
+
+The sets are `X = Fin p`, `Y = Fin q`, `W = Fin r` (disjoint, as the three coordinates of a
+triple), and the cost function is the `p × q × r` table of its values, `c(x, y, w)` being entry
+`w` of entry `y` of entry `x`; costs and `K` in binary.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, entry
@@ -18,12 +41,6 @@ problems with triangle inequalities", European Journal of Operational Research 6
 R. M. Karp, "Reducibility among combinatorial problems", Complexity of Computer Computations,
 Plenum Press (1972), 85-103, doi:10.1007/978-1-4684-2001-2_9 (3-DIMENSIONAL MATCHING).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Fintype.Prod
 
 @[expose] public section
 

@@ -42,4 +42,17 @@ example :
   intro h
   exact (by decide : ¬ (2 : Nat) < 2) (h.1.1 [2] (by simp) 2 (by simp))
 
+/-- The two binary letters fit in a single superstring of length two. -/
+example :
+    shortestCommonSuperstringBinaryDec
+      (bitEncode ((2, [[0], [1]], 2) : ShortestCommonSuperstringInstance)) = true := by
+  let i : ShortestCommonSuperstringInstance := (2, [[0], [1]], 2)
+  have hw : WellFormed i := by
+    unfold WellFormed ShortestCommonSuperstring.WellFormed
+    decide
+  have hf : ShortestCommonSuperstring.ShortestCommonSuperstringFeasible i := by
+    refine ⟨[0, 1], ?_, ?_, ?_⟩ <;> decide
+  change shortestCommonSuperstringBinaryDec (bitEncode i) = true
+  simp [shortestCommonSuperstringBinaryDec, hw, hf]
+
 end MetaMathlibExt.Complexity.NPComplete.ShortestCommonSuperstringBinary

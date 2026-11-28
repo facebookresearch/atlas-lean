@@ -6,8 +6,35 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.Order.Round
+public import Mathlib.Data.Rat.Floor
+
+/-!
 # GOOD SIMULTANEOUS DIOPHANTINE APPROXIMATION: definitions
+
+INSTANCE: rational numbers `α₁, …, αₙ`, a bound `N ∈ ℕ`, and an error bound `ε ∈ ℚ⁺`.
+QUESTION: is there an integer `Q ∈ {1, …, N}` with `max_{i} |⌊Q αᵢ⌉ − Q αᵢ| ≤ ε`, where
+`⌊x⌉` is the integer closest to `x` (Eisenbrand and Rothvoß, problem (1))? That is, does
+`(α₁, …, αₙ)` have a simultaneous approximation of accuracy `ε` in the sup norm with a
+denominator `Q` in `1 ≤ Q ≤ N`?
+
+Lagarias proves this NP-complete with the dimension `n` part of the input (abstract: deciding
+whether a given vector of rationals "has a simultaneous approximation of specified accuracy with
+respect to the sup norm with denominator Q in a given interval 1 ≤ Q ≤ N is NP-complete"). The
+denominator `Q` is a certificate of size polynomial in the binary encoding of `N`.
+
+`⌊x⌉` is Mathlib's `round` (a tie `x ∈ ℤ + 1/2` has distance `1/2` either way). A rational is
+given as the positive and negative parts of its numerator and its denominator, which must be
+positive; `ε = s₁/s₂` is given as two positive naturals. The dimension `n ≥ 1`. Binary
+encoding.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 J. C. Lagarias, "The computational complexity of simultaneous Diophantine approximation
@@ -15,12 +42,6 @@ problems", SIAM Journal on Computing 14 (1985), 196-209, doi:10.1137/0214016;
 F. Eisenbrand and T. Rothvoß, "Recent hardness results for periodic uni-processor scheduling",
 Dagstuhl Seminar Proceedings 10071, Scheduling (2010), Section 2, problem (1).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.Order.Round
-public import Mathlib.Data.Rat.Floor
 
 @[expose] public section
 

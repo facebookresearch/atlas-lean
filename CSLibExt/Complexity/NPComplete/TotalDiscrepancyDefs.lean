@@ -6,8 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Basic.Real.Basic
+
+/-!
 # TOTAL DISCREPANCY: definitions
+
+INSTANCE (Garey, Tarjan, and Wilfong, Section 2.1): `N, k ∈ ℤ⁺` and, for `1 ≤ i ≤ N`, a task
+length `lᵢ ∈ ℤ⁺` and a preferred midtime `Mᵢ ∈ ℤ⁺`. QUESTION: is there a schedule `S` such
+that `cost(S) = ∑ᵢ |mᵢ(S) - Mᵢ| ≤ k`, where `mᵢ(S)` is the actual midtime of task `i` in `S`
+(the time exactly half way between its starting and finishing times)?
+
+A schedule assigns to each task `Tᵢ` a starting time `sᵢ` such that no two tasks overlap in
+their execution: the execution intervals `[sᵢ, sᵢ + lᵢ]` and `[sⱼ, sⱼ + lⱼ]` of any two tasks
+intersect only at their endpoints, so `mᵢ(S) = sᵢ + lᵢ / 2`. Starting times are real numbers
+and are not bounded below. Since every length is positive, two intervals meet only at
+endpoints exactly when one task finishes before the other starts. This is one-processor
+scheduling with symmetric earliness and tardiness penalties, `1||∑|Cⱼ - dⱼ|`; the source
+notes that preferred starting, completion and midpoint times are interchangeable. Binary
+encoding of all numbers.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey, R. E. Tarjan, and G. T. Wilfong, "One-processor scheduling with symmetric
@@ -16,12 +41,6 @@ doi:10.1287/moor.13.2.330 (Section 2.1, the Total Discrepancy decision problem i
 NP-complete); technical report version: "One-processor scheduling of tasks with preferred
 starting times", Princeton University CS-TR-049-86 (1986).
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Basic.Real.Basic
 
 @[expose] public section
 

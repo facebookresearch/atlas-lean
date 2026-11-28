@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# YOSENABE: definitions
-
-Source:
-C. Iwamoto, "Yosenabe is NP-complete", Journal of Information Processing 22(1) (2014), 40-43,
-doi:10.2197/ipsjjip.22.40.
--/
 module
 
 public import MathlibExt.Computability.BinaryNatEncoding
@@ -21,6 +14,37 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Prod
+
+/-!
+# YOSENABE: definitions
+
+INSTANCE: a rectangular grid in which some cells are gray, two gray cells being connected when
+they are adjacent vertically or horizontally (a set of connected gray cells is a gray area); some
+gray areas are labelled with numbers, and some non-gray cells contain circles with numbers.
+QUESTION: can arrows be drawn vertically or horizontally from all circles to gray areas so that
+(i) the arrows do not bend and do not cross other circles or lines of other arrows, (ii) the
+number of a labelled gray area equals the total of the numbers of the circles that enter it, and
+(iii) at least one circle (arrow tip) enters each gray area?
+
+The grid is given explicitly, row by row: each cell is `(k, a)` with `k = 0` an empty white cell,
+`k = 1` a white cell with a circle numbered `a`, and `k = 2` a gray cell, labelled `a` if `a ≠ 0`.
+Gray areas are the connected components of the gray cells in the grid graph
+`pathGraph m □ pathGraph n` (`SameArea`). A solution gives every circle `x` the tip `tip x` of
+its arrow, a gray cell in the same row or column; the arrow's line is the cells from `x`
+(excluded) to `tip x` (included) (`OnArrow`), and the circle enters the gray area of its tip. As
+in the source's rule (i), the only restrictions on a line are that it does not bend, contains no
+circle, and shares no cell with the line of another arrow; in particular at most one arrow tip
+enters each gray cell, as the source notes. The source does not forbid a line from passing over
+gray cells before its tip, so neither does the statement.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+Source:
+C. Iwamoto, "Yosenabe is NP-complete", Journal of Information Processing 22(1) (2014), 40-43,
+doi:10.2197/ipsjjip.22.40.
+-/
 
 @[expose] public section
 

@@ -6,8 +6,31 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Logic.Relation
+
+/-!
 # SIMPLE ASSEMBLY LINE BALANCING (SALBP-1): definitions
+
+INSTANCE: tasks `0, …, n - 1` with integer task times `t_j ∈ ℤ₀⁺`, precedence constraints
+given by a directed acyclic graph on the tasks, a cycle time `c` and a number `K` of stations.
+QUESTION: can the tasks be assigned to the `K` stations `0, …, K - 1` of a line so that the total
+task time at every station is at most `c` and every task is at a station no earlier than the
+stations of its predecessors?
+
+This is the decision version of SALBP-1 (minimize the number of stations for a given cycle
+time). An arc `(i, j)` says that task `i` precedes task `j`; the assignment condition on the
+arcs implies it for the partial order they generate. Acyclicity is stated with Mathlib's
+`Relation.TransGen`: no task precedes itself. Without arcs the problem is BIN PACKING ([SR1];
+`BinPackingWanted`), so it is NP-complete in the strong sense.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
@@ -20,12 +43,6 @@ constraints it is bin packing);
 T. S. Wee and M. J. Magazine, "Assembly line balancing as generalized bin packing", Operations
 Research Letters 1 (1982), 56-58, doi:10.1016/0167-6377(82)90046-3.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Logic.Relation
 
 @[expose] public section
 

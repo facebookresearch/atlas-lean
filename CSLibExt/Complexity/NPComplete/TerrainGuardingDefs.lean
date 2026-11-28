@@ -6,8 +6,39 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Analysis.Convex.Segment
+public import Mathlib.Basic.Real.Basic
+
+/-!
 # TERRAIN GUARDING: definitions
+
+INSTANCE: a 1.5-dimensional terrain `T`, that is, an `x`-monotone polygonal chain given by its
+vertices `v₁, …, vₙ` with `vᵢ = (xᵢ, yᵢ)` and `xᵢ < xᵢ₊₁`, with an edge joining each pair
+`vᵢ, vᵢ₊₁`; a finite set `G` of candidate guard points on the terrain; a finite set `N` of
+points on the terrain; and an integer `K`.
+QUESTION: is there a set of at most `K` guards from `G` such that every point of `N` is seen
+by one of them? A point `p` on the terrain sees a point `q` on the terrain if the line segment
+`pq` is never strictly below the terrain.
+
+This is the discrete version of the problem, the one the source's reduction targets. Points
+are elements of `ℝ × ℝ` with rational coordinates; the terrain is the union of its edges, each
+the Mathlib `segment` between consecutive vertices. A segment point `z` is strictly below the
+terrain when a terrain point `t` with the same `x`-coordinate has `t.2 > z.2`. A rational
+number is given as the positive and negative parts of its numerator and its denominator, which
+must be positive; coordinates and `K` use the canonical binary encoding. The terrain has at
+least two vertices, so it has at least one edge.
+
+Membership in NP: a certificate is the chosen guard set; since the terrain is piecewise linear,
+whether `p` sees `q` is decided by comparing the segment `pq` with the terrain vertices between
+them, in rational arithmetic.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 J. King and E. Krohn, "Terrain guarding is NP-hard", SIAM Journal on Computing 40(5) (2011),
@@ -15,12 +46,6 @@ J. King and E. Krohn, "Terrain guarding is NP-hard", SIAM Journal on Computing 4
 3-SAT is for the discrete terrain guarding problem, "where both the set of guards and the set
 of points to be guarded are a finite subset of the terrain").
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Analysis.Convex.Segment
-public import Mathlib.Basic.Real.Basic
 
 @[expose] public section
 

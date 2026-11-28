@@ -6,17 +6,33 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
+module
+
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+/-!
 # GENERALIZED SHISEN-SHO: definitions
+
+Generalized Shisen-Sho (Iwamoto, Wada and Morita) is played with `4p` tiles that fill a
+rectangular grid; for each label there are exactly four tiles carrying it. Two tiles can be
+removed if they are labeled by the same number and if they are adjacent or can be connected
+with at most three orthogonal line segments, which must not cross tiles. The question is whether
+the player can remove all of the tiles.
+
+The line segments run along rows and columns of cell centres and may leave the board, as in
+the paper's Fig. 1, where two tiles of a completely filled board are connected by three
+segments. Positions are integer points `(row, column)`; the board occupies rows `0, …, R - 1` and
+columns `0, …, C - 1`, and every point outside it is free.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
 
 Source:
 C. Iwamoto, Y. Wada and K. Morita, "Generalized Shisen-Sho is NP-Complete", IEICE Transactions
 on Information and Systems E95-D(11) (2012), 2712-2715, doi:10.1587/transinf.E95.D.2712.
 -/
-module
-
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 
