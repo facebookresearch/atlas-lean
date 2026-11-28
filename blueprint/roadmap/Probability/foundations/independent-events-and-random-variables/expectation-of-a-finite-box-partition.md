@@ -14,13 +14,13 @@ $$
 \mathbb{E}\big[f(\tilde{\boldsymbol{x}}_k)\big] = \sum_{m=1}^{M} f_m \prod_{d=1}^{D} \big[ F_{k,d}(b_{m,d}) - F_{k,d}(a_{m,d}) \big] .
 $$
 
-For $T \ge 1$ such surrogates, the $t$-th constant on its own finite partition $\{\mathcal{T}_{t,m}\}_{m=1}^{M_t}$ with values $f_{t,m}$, their average $\bar{f} = T^{-1}\sum_{t=1}^{T} f_t$ satisfies
+For $T \ge 1$ such functions $f_t$, the $t$-th constant on its own finite partition $\{\mathcal{T}_{t,m}\}_{m=1}^{M_t}$ with values $f_{t,m}$, their average $\bar{f} = T^{-1}\sum_{t=1}^{T} f_t$ satisfies
 
 $$
 \mathbb{E}\big[\bar{f}(\tilde{\boldsymbol{x}}_k)\big] = \frac{1}{T} \sum_{t=1}^{T} \sum_{m=1}^{M_t} f_{t,m} \prod_{d=1}^{D} \big[ F_{k,d}(b_{t,m,d}) - F_{k,d}(a_{t,m,d}) \big] .
 $$
 
-The half-open boxes make the tile of a point unambiguous, and infinite endpoints are needed because a partition of $\mathbb{R}^{D}$ has unbounded tiles, for which no minimum or maximum coordinate exists; atomic coordinate laws are covered by the same displays. Integrability is automatic, since each surrogate takes finitely many values. The identities are exact for the surrogates, not for the objective they approximate: the error is the fitting error, not an integration error.
+The half-open boxes make the tile of a point unambiguous, and infinite endpoints are needed because a partition of $\mathbb{R}^{D}$ has unbounded tiles, for which no minimum or maximum coordinate exists; atomic coordinate laws are covered by the same displays. Integrability is automatic, since each such function takes finitely many values.
 
 ## Depends on
 
@@ -32,13 +32,13 @@ None. The finite partition and coordinate laws are stipulated in the statement.
 
 ## Expansion
 
-Split the integral over $\mathbb{R}^{D}$ into the tiles, pull the constant $f_m$ out of each piece, and recognize the remaining integral as $P_k(\mathcal{T}_m)$. For the second display, the product structure of $P_k$ gives $P_k(\mathcal{T}_m) = \prod_d P_{k,d}((a_{m,d}, b_{m,d}])$, and each factor is the increment of the coordinate distribution function, which the linked statement supplies for finite endpoints and monotone limits extend to infinite ones. The ensemble identity is linearity of expectation over the average of the $T$ surrogates.
+Split the integral over $\mathbb{R}^{D}$ into the tiles, pull the constant $f_m$ out of each piece, and recognize the remaining integral as $P_k(\mathcal{T}_m)$. For the second display, the product structure of $P_k$ gives $P_k(\mathcal{T}_m) = \prod_d P_{k,d}((a_{m,d}, b_{m,d}])$, and each factor is the increment of the coordinate distribution function, which the linked statement supplies for finite endpoints and monotone limits extend to infinite ones. The identity for the average follows from linearity of expectation over the $T$ functions.
 
-An expansion should establish the finite-product rectangle rule for the stipulated product law, as well as the equivalent formulation using independent coordinate random variables. For the latter, Mathlib `ProbabilityTheory.iIndepFun.measure_inter_preimage_eq_mul` supplies the finite-product rule for preimages of measurable sets under an independent family. The factorized displays require this product-measure or independence bridge; the robust-counterpart definition alone does not supply it.
+An expansion should establish the finite-product rectangle rule for the stipulated product law, as well as the equivalent formulation using independent coordinate random variables. For the latter, Mathlib `ProbabilityTheory.iIndepFun.measure_inter_preimage_eq_mul` supplies the finite-product rule for preimages of measurable sets under an independent family. The factorized displays require this product-measure or independence bridge.
 
 ## Context
 
-Graduate. The computational core of Golem by Aldeghi, Häse, Hickman, Tamblyn and Aspuru-Guzik: it turns an intractable integral into a closed-form sum, so robustness can be estimated at every candidate during a sequential laboratory campaign. No theory of regression trees is needed for a given finite partition.
+Graduate. The computational core of Golem by Aldeghi, Häse, Hickman, Tamblyn and Aspuru-Guzik: it turns an intractable integral into a closed-form sum, so robustness can be estimated at every candidate during a sequential laboratory campaign. No theory of regression trees is needed for a given finite partition. When these functions are used as surrogates for an objective, the identities are exact for the surrogates; the error relative to the objective is the fitting error, not an integration error.
 
 ## Sources
 
