@@ -17,4 +17,4 @@ $0 \to \varprojlim_n B_n \to \prod_n B_n \to \prod_n B_n \to \varprojlim^1_n B_n
 
 - J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., electronic edition, version 2.3
   (May 2020), <https://www.mathi.uni-heidelberg.de/~schmidt/NSW2e/>: Chapter II, §7, inverse systems indexed by
-  $\mathbb{N}$ and the derived functors of $\varprojlim$, p. 138, and Proposition (2.7.4), p. 139.
+  $\mathbb{N}$ and the derived functors of $\varprojlim$, p. 138, and Proposition (2.7.4), p. 140.

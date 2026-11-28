@@ -24,4 +24,4 @@ In particular $\varprojlim^1_n B_n = 0$ for every inverse system of finite abeli
 
 - J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., electronic edition, version 2.3
   (May 2020), <https://www.mathi.uni-heidelberg.de/~schmidt/NSW2e/>: Chapter II, §7, the Mittag-Leffler property,
-  pp. 138–139, and Proposition (2.7.4) with its proof, p. 139.
+  pp. 138–139, and Proposition (2.7.4), p. 140, with its proof, pp. 140–141.
