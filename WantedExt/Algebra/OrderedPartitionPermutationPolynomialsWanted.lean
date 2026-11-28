@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Field.ZMod
+public import MathlibExt.Algebra.Polynomial.PowerWeightedGeometricSum
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSum
 public import MathlibExt.FieldTheory.Finite.DilatedPowerSumPermutationPolynomial
 public import MathlibExt.FieldTheory.Finite.MonomialPermutationPolynomial
@@ -35,28 +36,6 @@ the monomial criterion the paper quotes (`isPermutationPolynomial_X_pow_iff_copr
 namespace MetaMathlibExt
 
 @[expose] public section
-
-open Polynomial
-
-/-- **Rational form of the power-weighted geometric sum.** For positive integers $t$ and $k$,
-the following identity holds in $\mathbb{Z}[X]$:
-
-$$(1 - X)^{t+1} \sum_{n=1}^{k} n^t X^n =
-\sum_{n=1}^{t} \Bigl(\sum_{i=0}^{n-1} (-1)^i \binom{t+1}{i} (n - i)^t\Bigr) X^n +
-\sum_{m=1}^{t+1} \Bigl(\sum_{i=m}^{t+1} (-1)^i \binom{t+1}{i} (k + m - i)^t\Bigr) X^{k+m}.$$
-
-Equivalently, for every $x \ne 1$ the value $h_t^k(x) = \sum_{n=1}^{k} n^t x^n$ is the
-right-hand side at $x$ divided by $(1 - x)^{t+1}$, which is the form the source states.
-
-Source: Chandan Kumar Vishwakarma and Rajesh P. Singh, *A Congruence Identity on Ordered
-Partitions Using Permutation Polynomials*, INTEGERS 24 (2024), Article A12, Lemma 4
-(`integers-2024-A12-lem-4`). -/
-public theorem_wanted one_sub_X_pow_mul_sum_pow_mul_X_pow (t k : ℕ) (ht : 0 < t) (hk : 0 < k) :
-    (1 - X : ℤ[X]) ^ (t + 1) * ∑ n ∈ Finset.Icc 1 k, C ((n : ℤ) ^ t) * X ^ n =
-      ∑ n ∈ Finset.Icc 1 t, C (∑ i ∈ Finset.range n,
-          (-1) ^ i * ((t + 1).choose i : ℤ) * ((n : ℤ) - i) ^ t) * X ^ n +
-        ∑ m ∈ Finset.Icc 1 (t + 1), C (∑ i ∈ Finset.Icc m (t + 1),
-          (-1) ^ i * ((t + 1).choose i : ℤ) * ((k : ℤ) + m - i) ^ t) * X ^ (k + m)
 
 /-- **Vishwakarma–Singh congruence for ordered partitions into multiples.** Let $p$ be an odd
 prime and let $a, k, s, t$ be positive integers with $\gcd(a, p - 1) = 1$, $s \le p - 2$ and

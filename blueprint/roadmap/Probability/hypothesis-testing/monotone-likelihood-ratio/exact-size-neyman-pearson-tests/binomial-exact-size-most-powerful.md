@@ -1,0 +1,3 @@
+# Exact-size most powerful test between two binomial laws
+
+Let $n \ge 1$, $0 < p_0 < p_1 < 1$ and $\alpha \in (0, 1)$, and let $p_0(j)$, $p_1(j)$ be the probabilities of $j \in \{0, \dots, n\}$ under $\mathrm{Bin}(n, p_0)$ and $\mathrm{Bin}(n, p_1)$. Then there exist a threshold $k \ge 0$, a tie value $\gamma \in [0, 1]$ and a test $\varphi^* : \{0, \dots, n\} \to [0, 1]$ with $\varphi^*(j) = 1$ where $k\,p_0(j) < p_1(j)$, $\varphi^*(j) = 0$ where $p_1(j) < k\,p_0(j)$ and $\varphi^*(j) = \gamma$ where $p_1(j) = k\,p_0(j)$, such that $\sum_j\varphi^*(j)p_0(j) = \alpha$ and $\sum_j\varphi(j)p_1(j) \le \sum_j\varphi^*(j)p_1(j)$ for every test $\varphi : \{0, \dots, n\} \to [0, 1]$ with $\sum_j\varphi(j)p_0(j) \le \alpha$.

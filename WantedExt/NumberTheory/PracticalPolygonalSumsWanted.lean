@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.OddSquareTriangular
 public import MathlibExt.NumberTheory.PracticalPolygonalSumsPracticalAddPolygonalExceptions
 public import MathlibExt.NumberTheory.PracticalPolygonalSumsExistsSqAddSqModEqPrimePow
 public import MathlibExt.NumberTheory.PracticalPolygonalSumsIsPracticalNumberMulOfLeSigmaAddOne
+public import MathlibExt.NumberTheory.PracticalPolygonalSumsEventuallyTwo
 
 /-!
 # Sums of practical numbers and polygonal numbers
@@ -49,19 +50,6 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Theorem 1
 (`jis-2024-24.5.1-thm-1`). -/
 public theorem_wanted exists_practical_add_triangular (n : ℕ) (hn : 0 < n) :
     ∃ q k : ℕ, IsPracticalNumber q ∧ n = q + Nat.polygonalNumber 3 k
-
-/-- **Large integers as a practical number plus two polygonal numbers.** Let $s > 3$ be a natural
-number and, for a natural number $x$, let $P_s(x) = (s-2)\binom{x}{2} + x$ be the $x$-th
-$s$-gonal number, so that $P_s(0) = 0$. There is a natural number $N$ such that every natural
-number $n > N$ can be written as $n = q + P_s(x) + P_s(y)$ with $q$ a practical number and
-$x, y$ natural numbers.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Theorem 2
-(`jis-2024-24.5.1-thm-2`). -/
-public theorem_wanted eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 < s) :
-    ∃ N : ℕ, ∀ n > N, ∃ q x y : ℕ,
-      IsPracticalNumber q ∧ n = q + Nat.polygonalNumber s x + Nat.polygonalNumber s y
 
 end
 

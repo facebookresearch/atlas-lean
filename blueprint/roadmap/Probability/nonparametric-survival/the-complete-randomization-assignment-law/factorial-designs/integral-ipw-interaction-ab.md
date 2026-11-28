@@ -1,0 +1,8 @@
+# Unbiasedness of the inverse-probability-weighted interaction
+
+Let $U$ be a finite population of $N \ge 1$ units. Factors $A$ and $B$ have levels $0$ and $1$, and cell $c \in \{0,1,2,3\}$ is the treatment combination $(a, b)$ with $c = 2a + b$, so the cells are $(0,0), (0,1), (1,0), (1,1)$. For cell means $m_{00}, m_{01}, m_{10}, m_{11}$ write $\mathrm{ME}_A = (m_{11} + m_{10} - m_{01} - m_{00})/2$, $\mathrm{ME}_B = (m_{11} + m_{01} - m_{10} - m_{00})/2$ and $\mathrm{INT}_{AB} = (m_{11} - m_{10} - m_{01} + m_{00})/2$. For known cell probabilities $\pi_{ic} > 0$ with $\sum_c \pi_{ic} = 1$ for every unit $i$, let units be assigned independently, unit $i$ to cell $c$ with probability $\pi_{ic}$, and write $\hat m_c(f) = \sum_{i : f(i) = c} y^{(c)}_i/(N \pi_{ic})$ for the inverse-probability-weighted cell mean of the outcomes $y^{(c)}$ of cell $c$ (an empty realized cell gives $0$). Let $y^{00}, y^{01}, y^{10}, y^{11} : U \to \mathbb{R}$ be the potential outcomes under the four combinations. Then $\mathrm{INT}_{AB}$ of the weighted cell means $\hat m_0, \hat m_1, \hat m_2, \hat m_3$ (built from $y^{00}, y^{01}, y^{10}, y^{11}$ respectively) has expectation $\mathrm{INT}_{AB}$ of the population means $\bar Y^{00}, \bar Y^{01}, \bar Y^{10}, \bar Y^{11}$. No additivity assumption and no nonempty-cell condition is needed.
+
+## Sources
+
+- T. Dasgupta, N. S. Pillai and D. B. Rubin, "Causal inference from $2^K$ factorial designs using the potential outcomes model", arXiv:1211.2481, Section 3.1, equations (1) and (2).
+- D. G. Horvitz and D. J. Thompson, "A generalization of sampling without replacement from a finite universe", *Journal of the American Statistical Association* 47 (1952), 663–685.
