@@ -12,11 +12,11 @@ Let $G$ be a finitely presented group containing a subgroup isomorphic to $F_2 \
 
 ## Proof depends on
 
-- [Novikov–Boone theorem (unsolvability of the word problem)](../../word-problem-for-groups/novikov-unsolvable.md)
+- [Triviality of finitely presented groups is undecidable](../markov-properties-of-finite-presentations/triviality-of-finite-presentations-undecidable.md)
 
 ## Expansion
 
-The isomorphism problem for finitely generated subgroups of $F_2 \times F_2$ is unsolvable (Lemma 7.3, a known result attributed to Miller): $F_6 \times F_6$ embeds in $F_2 \times F_2$, and the generation problem of $F_6 \times F_6$ (whether a finite subset generates the whole group; Lemma 7.2), unsolvable by work of Miller via Mihailova's construction, reduces to deciding whether a finitely generated subgroup inside $F_6 \times F_6$ is isomorphic to $F_6 \times F_6$, using that centralizers in free groups are cyclic. Restricting to subgroups of the embedded copy of $F_2 \times F_2$ gives the result for $G$.
+The isomorphism problem for finitely generated subgroups of $F_2 \times F_2$ is unsolvable (Lemma 7.3, a known result attributed to Miller): $F_6 \times F_6$ embeds in $F_2 \times F_2$, and the generation problem of $F_6 \times F_6$ (whether a finite subset generates the whole group; Lemma 7.2), unsolvable by a fibre product construction applied to a recursive family of presentations on a fixed number of generators, each presenting the trivial group or an infinite group, whose triviality is undecidable (the source cites Lyndon–Schupp and Miller's book), reduces to deciding whether a finitely generated subgroup inside $F_6 \times F_6$ is isomorphic to $F_6 \times F_6$, using that centralizers in free groups are cyclic. Restricting to subgroups of the embedded copy of $F_2 \times F_2$ gives the result for $G$. A good expansion links a page for this form of the triviality problem, which is stronger than the linked statement, and for the unsolvability of the generation problem of $F_6 \times F_6$ (Lemma 7.2).
 
 ## Sources
 

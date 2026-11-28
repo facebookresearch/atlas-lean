@@ -19,7 +19,7 @@ None.
 
 ## Expansion
 
-Theorem A of the source shows that such a group $G$ interprets the arithmetic $(\mathbb{N}, +, \times)$ with parameters, by finding a definable subgroup isomorphic to $\mathbb{Z} \wr \mathbb{Z}$, which interprets the arithmetic. By Mostowski, Robinson and Tarski the theory of the arithmetic has a finitely axiomatized essentially undecidable subtheory, and a structure of finite signature that interprets the arithmetic with parameters has hereditarily undecidable theory. Theorem B adds that $F(r, \Lambda, A)$ with $\Lambda$ cyclic interprets the arithmetic without parameters.
+Theorem A of the source shows that such a group $G$ interprets the arithmetic $(\mathbb{N}, +, \times)$ with parameters, by finding a definable subgroup isomorphic to $\mathbb{Z} \wr \mathbb{Z}$, which interprets the arithmetic. By Mostowski, Robinson and Tarski the theory of the arithmetic has a finitely axiomatized essentially undecidable subtheory, and a structure of finite signature that interprets the arithmetic with parameters has hereditarily undecidable theory. Theorem B adds that $F(r, \Lambda, A)$ with $\Lambda$ cyclic interprets the arithmetic without parameters. A good expansion links pages for the interpretation of arithmetic in $\mathbb{Z} \wr \mathbb{Z}$, for the existence of a finitely axiomatized essentially undecidable subtheory of arithmetic (Mostowski, Robinson and Tarski), and for the transfer of hereditary undecidability along interpretations with parameters.
 
 ## Sources
 

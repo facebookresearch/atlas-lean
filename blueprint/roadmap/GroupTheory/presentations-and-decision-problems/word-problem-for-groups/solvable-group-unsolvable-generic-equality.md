@@ -22,7 +22,7 @@ None.
 
 ## Expansion
 
-Solvable groups are amenable, so Theorem 5.1 applies to $G(M)$. For the nontrivial direction, if the equality problem is solvable on a generic set $S$, then for every finite $F \subseteq F_X$ some translate $Fy$ lies in $S$, so $\pi_\Gamma(S)$ contains Følner sets; in a recursively presented amenable group, computing one-to-one preimages of Følner sets for every $n$ solves the word problem, and the equality algorithm on $S$ provides them through an enumeration of candidate finite sets.
+Solvable groups are amenable, so Theorem 5.1 applies to $G(M)$. For the nontrivial direction, if the equality problem is solvable on a generic set $S$, then for every finite $F \subseteq F_X$ some translate $Fy$ lies in $S$, so $\pi_\Gamma(S)$ contains Følner sets; in a recursively presented amenable group, computing one-to-one preimages of Følner sets for every $n$ solves the word problem, and the equality algorithm on $S$ provides them through an enumeration of candidate finite sets. A good expansion links pages for the unsolvability of the word problem in the groups $G(M)$ of Kharlampovich, for the characterization of solvable word problem by computable one-to-one preimages of Følner sets (Theorem 4.1 of the source), and for Lemma 5.2.
 
 ## Sources
 

@@ -14,12 +14,12 @@ The groups constructed are neither bicombable nor automatic; for those classes t
 
 ## Proof depends on
 
-- [Novikov–Boone theorem (unsolvability of the word problem)](../../word-problem-for-groups/novikov-unsolvable.md)
+- [Triviality of finitely presented groups is undecidable](../markov-properties-of-finite-presentations/triviality-of-finite-presentations-undecidable.md)
 - [Serre's Property FA](../../../free-groups/automorphisms-of-free-groups/finite-index-subgroups-of-automorphism-groups-of/has-property-fa.md)
 
 ## Expansion
 
-The proof combines the author's construction of combable groups as doubles $\Delta(N \times F; \hat F)$ over graphs of subgroups of products with an encoding of the fact that there is no algorithm deciding which $m$-element subsets generate a direct product of free groups, or certain hyperbolic groups; these generation problems are unsolvable by Mihailova-type fibre product constructions from groups with unsolvable word problem. A group with property FA and a finitely presented group with property $\Psi$ enter the precise statement (Theorem 4.1 of the source).
+The proof combines the author's construction of combable groups as doubles $\Delta(N \times F; \hat F)$ over graphs of subgroups of products with an encoding of the fact that there is no algorithm deciding which $m$-element subsets generate a direct product of free groups, or certain hyperbolic groups; these generation problems are unsolvable by Mihailova-type fibre product constructions from recursive families of finite presentations of fixed size, each presenting the trivial group or an infinite group, whose triviality no algorithm decides (Proposition 1.1 of the source, due to Miller; Proposition 1.2 carries it over to hyperbolic groups). A group with property FA and a finitely presented group with property $\Psi$ enter the precise statement (Theorem 4.1 of the source). A good expansion links a page for this form of the triviality problem, with presentations of fixed size each presenting the trivial group or an infinite group, which is stronger than the linked statement.
 
 ## Sources
 
