@@ -18,7 +18,7 @@ import MathlibExt.Combinatorics.EuclideanRamsey
 namespace EuclideanRamseyTests
 
 -- The empty configuration still requires a positive host dimension and a palette witness.
-example (a : Fin 0 → EuclideanSpace ℝ (Fin 0)) : IsEuclideanRamsey a := by
+private theorem empty_ramsey (a : Fin 0 → EuclideanSpace ℝ (Fin 0)) : IsEuclideanRamsey a := by
   intro r hr
   refine ⟨1, le_rfl, fun _ ↦ ⟨Fin.elim0, ?_, ⟨0, by omega⟩, ?_⟩⟩
   · intro i
@@ -41,7 +41,8 @@ private theorem dist_basis_sq {n : ℕ} {i j : Fin n} (hij : i ≠ j) :
 
 -- For each palette, two of the r+1 coordinate unit vectors share a color. Their distance
 -- is exactly that of the original pair, so the witness cannot just collapse both labels.
-example : IsEuclideanRamsey (fun i : Fin 2 ↦ EuclideanSpace.single i (1 : ℝ)) := by
+private theorem coordinate_pair_ramsey :
+    IsEuclideanRamsey (fun i : Fin 2 ↦ EuclideanSpace.single i (1 : ℝ)) := by
   intro r _
   refine ⟨r + 1, Nat.succ_pos r, fun color ↦ ?_⟩
   obtain ⟨u, v, huv, hcolor⟩ := Fintype.exists_ne_map_eq_of_card_lt
@@ -65,6 +66,25 @@ example (a : Fin 0 → EuclideanSpace ℝ (Fin 0)) : EuclideanGeometry.Cospheric
   refine (EuclideanGeometry.cospherical_def _).2 ⟨0, 0, ?_⟩
   rintro _ ⟨i, rfl⟩
   exact Fin.elim0 i
+
+-- Invoke the public theorem with the actual Ramsey witness in ambient dimension zero.
+example (a : Fin 0 → EuclideanSpace ℝ (Fin 0)) : EuclideanGeometry.Cospherical (Set.range a) :=
+  euclideanRamsey_configurations_cospherical a (fun {i} _ ↦ Fin.elim0 i) (empty_ramsey a)
+
+-- The two coordinate unit vectors span a proper affine line, not the whole plane.
+example :
+    let a (i : Fin 2) := EuclideanSpace.single i (1 : ℝ)
+    affineSpan ℝ (Set.range a) ≠ ⊤ ∧ EuclideanGeometry.Cospherical (Set.range a) := by
+  intro a
+  constructor
+  · intro htop
+    have hdim := finrank_vectorSpan_range_le ℝ a (n := 1) (by simp)
+    rw [← direction_affineSpan, htop, AffineSubspace.direction_top,
+      finrank_top, finrank_euclideanSpace_fin] at hdim
+    omega
+  · exact euclideanRamsey_configurations_cospherical a
+      (EuclideanSpace.orthonormal_single (𝕜 := ℝ) (ι := Fin 2)).linearIndependent.injective
+      coordinate_pair_ramsey
 
 -- A singleton has itself as a center with radius zero.
 example (a : Fin 1 → EuclideanSpace ℝ (Fin 0)) : EuclideanGeometry.Cospherical (Set.range a) := by
