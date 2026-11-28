@@ -37,3 +37,10 @@ example : IsTestSet ({Multiplicative.ofAdd (2 : ℤ)} : Set (Multiplicative ℤ)
     rw [hmul, hone, mul_one]
   rw [h]
   exact Function.bijective_id
+
+-- Nonperiodicity rules out a single positive exponent that works throughout the variety.
+example : ¬ (∀ W : Set (FreeGroup ℕ),
+    (∀ r : ℕ, 1 ≤ r → HasTestRank (RelativelyFreeGroup W r) r) →
+    (¬ ∃ n : ℕ, 0 < n ∧ ∀ (G : Type) [Group G], SatisfiesLaws W G → ∀ g : G, g ^ n = 1) →
+    ∀ (G : Type) [Group G], (SatisfiesLaws W G ↔ ∀ a b : G, a * b = b * a)) :=
+  testRankNonperiodicVarietyAllAbelian_refuted

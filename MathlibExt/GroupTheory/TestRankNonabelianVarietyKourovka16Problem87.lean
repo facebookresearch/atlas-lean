@@ -20,8 +20,21 @@ import Mathlib.LinearAlgebra.Matrix.Dual
 /-!
 # Test ranks of relatively free groups in a nonabelian variety
 
-The variety of groups with central commutators of exponent dividing two refutes
-Timoshenko's proposed characterization of abelian varieties by test rank.
+For each rank $r \ge 1$, the relatively free group of rank $r$ in the variety defined by
+$[[x, y], z] = 1$ and $[x, y]^2 = 1$ has test rank $r$. The variety contains both the infinite
+cyclic group and the dihedral group of order eight, so it is neither periodic nor abelian.
+This gives negative answers to both parts of Timoshenko's test rank question.
+
+## References
+
+* E. I. Khukhro and V. D. Mazurov (eds.), *Unsolved Problems in Group Theory: The Kourovka
+  Notebook*, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.87 (E. I. Timoshenko).
+* Michael Kinyon, Josef Urban, and Codex gpt-6-astra,
+  [*Results on problems from the Kourovka Notebook*][kinyon-urban],
+  preprint, version 4 (19 September 2026), Section 3.23 and Proposition 3.9.
+
+[kinyon-urban]:
+  https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-mathematics.pdf
 -/
 
 @[expose] public section
@@ -112,6 +125,10 @@ private theorem satisfies_iff {G : Type*} [Group G] :
     · obtain rfl : w = _ := hw
       simpa using he (φ (of 0)) (φ (of 1))
 
+private theorem commGroup_satisfies (G : Type*) [CommGroup G] : SatisfiesLaws laws G :=
+  satisfies_iff.2 ⟨fun _ _ _ => Commute.all .., fun _ _ => by
+    rw [(Commute.all ..).commutator_eq, one_pow]⟩
+
 private theorem quotient_satisfies (W : Set (FreeGroup ℕ)) (r : ℕ) :
     SatisfiesLaws W (RelativelyFreeGroup W r) := by
   intro w hw φ
@@ -141,10 +158,7 @@ private def exponents (r : ℕ) : Free r →* Multiplicative (Fin r → ℤ) :=
   let e := FreeGroup.lift (fun i : Fin r => Multiplicative.ofAdd (Pi.single i (1 : ℤ)))
   QuotientGroup.lift _ e (Subgroup.normalClosure_le_normal (by
     rintro _ ⟨w, hw, φ, rfl⟩
-    have h : SatisfiesLaws laws (Multiplicative (Fin r → ℤ)) :=
-      satisfies_iff.2 ⟨fun _ _ _ => Commute.all .., fun _ _ => by
-        rw [(Commute.all ..).commutator_eq, one_pow]⟩
-    exact h w hw (e.comp φ)))
+    exact commGroup_satisfies (Multiplicative (Fin r → ℤ)) w hw (e.comp φ)))
 
 private theorem exponents_gen {r : ℕ} (i : Fin r) :
     (exponents r (gen i)).toAdd = Pi.single i 1 := by
@@ -220,6 +234,12 @@ private theorem dihedral_satisfies : SatisfiesLaws laws (DihedralGroup 4) := by
   simp only [Commute, SemiconjBy]
   decide
 
+private theorem dihedral_not_abelian : ¬ ∀ a b : DihedralGroup 4, a * b = b * a := by
+  intro h
+  have hne : DihedralGroup.r (1 : ZMod 4) * DihedralGroup.sr 0 ≠
+      DihedralGroup.sr 0 * DihedralGroup.r 1 := by decide
+  exact hne (h _ _)
+
 /-- **Negative answer to Timoshenko's test rank question, part (a).** There is a set $W$ of laws
 in the free group $F_\mathbb{N}$ on countably many generators such that for every $r \ge 1$ the
 free $r$-generator group $G_r$ of the variety defined by $W$ has test rank $r$, but the variety is
@@ -240,9 +260,35 @@ https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-ma
 -/
 theorem testRankVarietyAbelian_refuted : ¬ testRankVarietyAbelian := by
   intro h
-  have hc := h laws (fun r _ => free_hasTestRank r) (DihedralGroup 4) dihedral_satisfies
-  have hne : DihedralGroup.r (1 : ZMod 4) * DihedralGroup.sr 0 ≠
-      DihedralGroup.sr 0 * DihedralGroup.r 1 := by decide
-  exact hne (hc _ _)
+  exact dihedral_not_abelian (h laws (fun r _ => free_hasTestRank r) (DihedralGroup 4)
+    dihedral_satisfies)
+
+/-- **Negative answer to Timoshenko's test rank question, part (b).** There is a set of laws
+on countably many generators whose relatively free group of rank $r$ has test rank $r$ for every
+$r \ge 1$. No single positive exponent holds in every group of this variety, yet its groups
+are not exactly the abelian groups.
+
+The witness variety is defined by $[[x, y], z] = 1$ and $[x, y]^2 = 1$. The infinite cyclic group
+satisfies both laws and rules out a uniform positive exponent. The dihedral group of order eight
+also satisfies both laws but is not abelian.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), *Unsolved Problems in Group Theory: The Kourovka
+Notebook*, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.87(b) (E. I. Timoshenko).
+For the prime-indexed construction with $[[x, y], z] = 1$ and $[x, y]^p = 1$, and with
+$\mathrm{UT}_3(\mathbb{F}_p)$ as the nonabelian witness, see Michael Kinyon, Josef Urban, and
+Codex gpt-6-astra,
+*Results on problems from the Kourovka Notebook*, preprint, version 4 (19 September 2026),
+Section 3.23 and Proposition 3.9.
+https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-mathematics.pdf.
+-/
+theorem testRankNonperiodicVarietyAllAbelian_refuted : ¬ testRankNonperiodicVarietyAllAbelian := by
+  intro h
+  apply dihedral_not_abelian
+  refine (h laws (fun r _ => free_hasTestRank r) ?_ (DihedralGroup 4)).mp dihedral_satisfies
+  rintro ⟨n, hn, hpow⟩
+  have hzero := congrArg Multiplicative.toAdd
+    (hpow (Multiplicative ℤ) (commGroup_satisfies _) (Multiplicative.ofAdd 1))
+  simp only [toAdd_pow, toAdd_ofAdd, nsmul_eq_mul, mul_one, toAdd_one] at hzero
+  omega
 
 end MathlibExt.GroupTheory.TestRankNonabelianVarietyKourovka16Problem87Wanted
