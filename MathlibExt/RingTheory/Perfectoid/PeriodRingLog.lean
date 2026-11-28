@@ -67,26 +67,26 @@ local notation "𝔹⁺" => BDeRhamPlus 𝓞_ℂ_[p] p
 
 /-! ### The element `ξ/p` -/
 
-/-- The element `ξ/p` of `W(𝓞_ℂ_[p]♭)[1/p]`, where `ξ = p - [p♭]`. -/
+/-- For a prime `p`, the element `ξ/p` of `W(𝓞_ℂ_[p]♭)[1/p]`, where `ξ = p - [p♭]`. -/
 def xiDivP : 𝔸ₚ :=
   algebraMap 𝔸 𝔸ₚ (xi p) * algebraMap ℚ_[p] 𝔸ₚ (p : ℚ_[p])⁻¹
 
-/-- `k · k⁻¹ = 1` in `W(𝓞_ℂ_[p]♭)[1/p]` for a nonzero natural number `k`, where `k⁻¹` is the
-image of `(k : ℚ_[p])⁻¹`. -/
+/-- For a prime `p` and a nonzero natural number `k`, `k · k⁻¹ = 1` in `W(𝓞_ℂ_[p]♭)[1/p]`, where
+`k⁻¹` is the image of `(k : ℚ_[p])⁻¹`. -/
 theorem natCast_mul_algebraMap_inv {k : ℕ} (hk : k ≠ 0) :
     (k : 𝔸ₚ) * algebraMap ℚ_[p] 𝔸ₚ (k : ℚ_[p])⁻¹ = 1 := by
   rw [← map_natCast (algebraMap ℚ_[p] 𝔸ₚ) k, ← map_mul,
     mul_inv_cancel₀ (Nat.cast_ne_zero.mpr hk), map_one]
 
-/-- `p · (ξ/p) = ξ`. -/
+/-- For a prime `p`, `p · (ξ/p) = ξ` in `W(𝓞_ℂ_[p]♭)[1/p]`. -/
 theorem natCast_mul_xiDivP : (p : 𝔸ₚ) * xiDivP p = algebraMap 𝔸 𝔸ₚ (xi p) := by
   rw [xiDivP, mul_left_comm, natCast_mul_algebraMap_inv p hp.out.ne_zero, mul_one]
 
-/-- `ξ/p` lies in the kernel of `θ` with `p` inverted. -/
+/-- For a prime `p`, `ξ/p` lies in the kernel of `θ` with `p` inverted. -/
 theorem xiDivP_mem_ker : xiDivP p ∈ 𝕀 :=
   Ideal.mul_mem_right _ _ (algebraMap_mem_ker_fontaineThetaInvertP p (fontaineTheta_xi p))
 
-/-- `[p♭]/p - 1 = -ξ/p` in `W(𝓞_ℂ_[p]♭)[1/p]`. -/
+/-- For a prime `p`, `[p♭]/p - 1 = -ξ/p` in `W(𝓞_ℂ_[p]♭)[1/p]`. -/
 theorem teichmuller_pFlat_div_sub_one :
     algebraMap 𝔸 𝔸ₚ (teichmuller p (pFlat p)) * algebraMap ℚ_[p] 𝔸ₚ (p : ℚ_[p])⁻¹ - 1 =
       -xiDivP p := by
@@ -114,8 +114,8 @@ theorem coeff_logSeries (n : ℕ) :
   · rw [map_div₀, map_pow, map_neg, map_one, map_natCast, div_eq_mul_inv, map_mul, map_pow,
       map_neg, map_one]
 
-/-- **`log(1 + y)`** for `y` in the kernel of `θ` with `p` inverted: the value in `B_dR^+` of the
-logarithm series at `y`. -/
+/-- **`log(1 + y)`**, for a prime `p` and `y` in the kernel of `θ` with `p` inverted: the value in
+`B_dR^+` of the logarithm series at `y`. -/
 def logOneAdd {y : 𝔸ₚ} (hy : y ∈ 𝕀) : 𝔹⁺ :=
   evalBDeRhamPlus p hy (logSeries p)
 
@@ -264,8 +264,9 @@ private theorem comp_mem_reesAlgebra {R : Type*} [CommRing R] (I : Ideal R) (P :
   exact Algebra.adjoin_le (Set.singleton_subset_iff.mpr hW)
     (Polynomial.aeval_mem_adjoin_singleton _ _)
 
-/-- **Additivity of the logarithm**: `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)` for `y`, `z`
-in the kernel of `θ` with `p` inverted. -/
+/-- **Additivity of the logarithm**: for a prime `p` and `y`, `z` in the kernel of `θ` with `p`
+inverted, `log((1 + y)(1 + z)) = log(1 + y) + log(1 + z)`, where `(1 + y)(1 + z) = 1 + w` with
+`w = y + z + yz` (also in the kernel). -/
 theorem logOneAdd_add {y z : 𝔸ₚ} (hy : y ∈ 𝕀) (hz : z ∈ 𝕀) (hyz : y + z + y * z ∈ 𝕀) :
     logOneAdd p hyz = logOneAdd p hy + logOneAdd p hz := by
   change AdicCompletion.evalPowerSeries 𝕀 hyz (logSeries p) =
@@ -288,7 +289,8 @@ theorem logOneAdd_add {y z : 𝔸ₚ} (hy : y ∈ 𝕀) (hz : z ∈ 𝕀) (hyz :
   convert hQ using 1
   ring
 
-/-- `log(1 + y)` depends only on `y`. -/
+/-- For a prime `p`, `log(1 + y)` depends only on `y`: `log(1 + y) = log(1 + z)` for `y = z` in
+the kernel of `θ` with `p` inverted. -/
 theorem logOneAdd_congr {y z : 𝔸ₚ} (hy : y ∈ 𝕀) (hz : z ∈ 𝕀) (h : y = z) :
     logOneAdd p hy = logOneAdd p hz := by
   subst h
@@ -296,14 +298,15 @@ theorem logOneAdd_congr {y z : 𝔸ₚ} (hy : y ∈ 𝕀) (hz : z ∈ 𝕀) (h :
 
 /-! ### `log [ε]` and `log [p̃]` -/
 
-/-- For `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1`, the element `[ε] - 1` lies in the kernel of `θ` (with `p`
-inverted). -/
+/-- For a prime `p` and `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1`, the element `[ε] - 1` lies in the kernel of
+`θ` (with `p` inverted). -/
 theorem algebraMap_teichmuller_sub_one_mem_ker {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) :
     algebraMap 𝔸 𝔸ₚ (teichmuller p ε - 1) ∈ 𝕀 :=
   algebraMap_mem_ker_fontaineThetaInvertP p (by
     rw [map_sub, fontaineTheta_teichmuller, h, map_one, sub_self])
 
-/-- **`log [ε]`** for `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1`: the value `log(1 + ([ε] - 1)) ∈ B_dR^+`. -/
+/-- **`log [ε]`**, for a prime `p` and `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1`: the value
+`log(1 + ([ε] - 1)) ∈ B_dR^+`. -/
 def logTeichmuller {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) : 𝔹⁺ :=
   logOneAdd p (algebraMap_teichmuller_sub_one_mem_ker p h)
 
@@ -398,8 +401,9 @@ private theorem exists_trunc_logSeries_sub_X (N : ℕ) :
   · simp
   · omega
 
-/-- **`log [ε] ≠ 0` for `ε ≠ 1`**: write `[ε] - 1 = ξ^s w` with `θ(w) ≠ 0` and `s ≥ 1`; modulo
-`(ker θ)^(s+1)`, `log [ε] ≡ [ε] - 1 ≢ 0`. -/
+/-- **`log [ε] ≠ 0` for `ε ≠ 1`**: for a prime `p` and `ε ∈ 𝓞_ℂ_[p]♭` with `ε♯ = 1` and `ε ≠ 1`,
+`log [ε] ≠ 0`. Write `[ε] - 1 = ξ^s w` with `θ(w) ≠ 0` and `s ≥ 1`; modulo `(ker θ)^(s+1)`,
+`log [ε] ≡ [ε] - 1 ≢ 0`. -/
 theorem logTeichmuller_ne_zero {ε : PreTilt 𝓞_ℂ_[p] p} (h : ε.untilt = 1) (hne : ε ≠ 1) :
     logTeichmuller p h ≠ 0 := by
   intro h0

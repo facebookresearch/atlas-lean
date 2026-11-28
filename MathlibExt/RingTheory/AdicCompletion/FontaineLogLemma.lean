@@ -59,13 +59,15 @@ namespace AdicCompletion
 
 variable (A : Type*) {P : Type*} [CommRing A] [CommRing P] [Algebra A P] (I : Ideal P)
 
-/-- The subring `A⟦β⟧` of the `I`-adic completion of `P`: the values at `β ∈ I` of the power series
-with coefficients in `A`. -/
+/-- The subring `A⟦β⟧` of the `I`-adic completion of `P`, for a commutative ring `A`, a commutative
+`A`-algebra `P` and `β` in an ideal `I` of `P`: the values at `β` of the power series with
+coefficients in `A`. -/
 def evalPowerSeriesRange {β : P} (hβ : β ∈ I) : Subring (AdicCompletion I P) :=
   ((evalPowerSeries I hβ).comp (PowerSeries.map (algebraMap A P))).range
 
-/-- An element lies in `A⟦β⟧` if and only if it is the value at `β` of a series with coefficients
-in `A`. -/
+/-- For a commutative ring `A`, a commutative `A`-algebra `P` and `β` in an ideal `I` of `P`, an
+element of the `I`-adic completion of `P` lies in `A⟦β⟧` if and only if it is the value at `β` of
+a series with coefficients in `A`. -/
 theorem mem_evalPowerSeriesRange {β : P} (hβ : β ∈ I) {y : AdicCompletion I P} :
     y ∈ evalPowerSeriesRange A I hβ ↔
       ∃ f : A⟦X⟧, evalPowerSeries I hβ (PowerSeries.map (algebraMap A P) f) = y :=

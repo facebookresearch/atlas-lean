@@ -170,8 +170,8 @@ private theorem galoisRestrict_coeff_relation (B : Subalgebra ℚ_[p] 𝔹)
     Polynomial.coeff_map] at hc
   linear_combination hc
 
-/-- **Fontaine's Galois argument** (Exposé II, §4.3.3): let `B` be a `ℚ_[p]`-subalgebra of `B_dR`
-stable under `Gal(ℚ̄_p/ℚ_p)`, and let `u ∈ B_dR` satisfy `σ(u) - u ∈ B` for every `σ`. If `u` is
+/-- **Fontaine's Galois argument** (Exposé II, §4.3.3): let `p` be a prime, `B` a `ℚ_[p]`-subalgebra
+of `B_dR` stable under `Gal(ℚ̄_p/ℚ_p)`, and `u ∈ B_dR` with `σ(u) - u ∈ B` for every `σ`. If `u` is
 not in the fraction field of `B` (there are no `a ≠ 0` and `b` in `B` with `a u = b`), then `u` is
 transcendental over `B`. -/
 theorem transcendental_of_forall_mul_ne (B : Subalgebra ℚ_[p] 𝔹)
@@ -327,8 +327,8 @@ private theorem logPTilde_eq_evalPowerSeries :
     map_pow, map_neg, map_one, neg_pow (xiDivP p)]
   ring
 
-/-- **Fontaine's Lemme 4.3.1, for `B_max`**: `log [p̃]` is not in the fraction field of `B_max`
-inside `B_dR`: if `a, b ∈ B_max` and `a ≠ 0`, then `a · log [p̃] ≠ b`. -/
+/-- **Fontaine's Lemme 4.3.1, for `B_max`**: for a prime `p`, `log [p̃]` is not in the fraction
+field of `B_max` inside `B_dR`: if `a, b ∈ B_max` and `a ≠ 0`, then `a · log [p̃] ≠ b`. -/
 theorem mul_algebraMap_logPTilde_ne {a b : 𝔹} (ha : a ∈ bMax p) (hb : b ∈ bMax p)
     (ha0 : a ≠ 0) : a * algebraMap 𝔹⁺ 𝔹 (logPTilde p) ≠ b := by
   intro he
@@ -374,7 +374,7 @@ theorem transcendental_logPTilde : Transcendental (bMax p) (algebraMap 𝔹⁺ �
       rw [galoisBDeRham_algebraMap, galoisBDeRhamPlus_logPTilde p σ hu hu1, map_add, add_comm])
     fun a ha b hb ha0 => mul_algebraMap_logPTilde_ne p ha hb ha0
 
-/-- **The evaluation `B_max[X] → B_dR` at `log [p̃]` is injective.** -/
+/-- **The evaluation `B_max[X] → B_dR` at `log [p̃]` is injective**, for a prime `p`. -/
 theorem aeval_logPTilde_injective :
     Function.Injective (aeval (R := bMax p) (algebraMap 𝔹⁺ 𝔹 (logPTilde p))) :=
   transcendental_iff_injective.mp (transcendental_logPTilde p)
