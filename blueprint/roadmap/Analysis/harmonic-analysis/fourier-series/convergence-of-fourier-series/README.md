@@ -12,3 +12,5 @@
 - [Carleson's theorem](carleson-ae-tendsto.md)
 - [Fourier series of a square-integrable function converge in L²](fourier-series-converges-in-l2.md)
 - [Parseval's identity on the circle](parseval-identity-on-the-circle.md)
+
+- [Almost-everywhere convergence of symmetric Fourier sums in L log L](symmetric-fourier-convergence-l-log-l.md)

@@ -30,6 +30,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import MathlibExt.Analysis.CatalanDigammaSeries
+public import MathlibExt.Analysis.CatalanDigammaNatSpecialization
 public import MathlibExt.Analysis.CatalanSeriesSpecialValues
 public import MathlibExt.Analysis.CentralBinomDigammaSeries
 public import MathlibExt.Analysis.HalfIntegerHarmonic
@@ -39,17 +40,6 @@ public import MathlibExt.Analysis.SpecialFunctions.Gamma.HalfIntegerShifts
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **A product series for $\pi \cot(\pi/k)$.** For every integer $k \ge 2$,
-$$(k - 2)\Bigl(1 + \sum_{n=1}^{\infty} \frac{1}{n + 1}
-\prod_{j=1}^{n} \frac{kj - (k - 2)}{kj + 1}\Bigr) = \pi \cot\frac{\pi}{k}.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 1 (`integers-2025-A18-thm-1`). -/
-public theorem_wanted sub_two_mul_one_add_tsum_prod_eq_pi_mul_cot {k : ℕ} (hk : 2 ≤ k) :
-    ((k : ℝ) - 2) * (1 + ∑' n : ℕ, 1 / ((n : ℝ) + 2) *
-        ∏ j ∈ Finset.Icc 1 (n + 1), ((k : ℝ) * j - (k - 2)) / (k * j + 1)) =
-      Real.pi * Real.cot (Real.pi / k)
 
 /-- **Adegoke–Frontczak series for the tangent.** For every complex number $z$ with
 $-\frac12 < \operatorname{Re} z < \frac12$,
@@ -101,19 +91,6 @@ public theorem_wanted tsum_catalan_mul_harmonic_div_four_pow_mul_binom {z : ℂ}
       2 * (Complex.digamma z - Complex.digamma (z + 1 / 2)) *
           (1 - z * (Complex.digamma (z + 1) + Real.eulerMascheroniConstant)) +
         2 * z * ∑' j : ℕ, (1 / ((j : ℂ) + z) ^ 2 - 1 / ((j : ℂ) + z + 1 / 2) ^ 2)
-
-/-- **Digamma evaluation of the $n$-weighted Catalan series with binomial denominators.** Let
-$C_n$ be the $n$-th Catalan number and $\psi$ the digamma function, and for complex $z$ write
-$\binom{n+z}{n} = \prod_{j=1}^{n} (z+j)/j$. For every complex number $z$ with
-$\operatorname{Re} z > 1/2$,
-$$\sum_{n=0}^{\infty} \frac{n\,C_n}{4^n \binom{n+z}{n}} =
-2z\,\psi(z) - z\bigl(\psi(z + \tfrac12) + \psi(z - \tfrac12)\bigr).$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Corollary 1 (`integers-2025-A18-cor-1`). -/
-public theorem_wanted tsum_nat_mul_catalan_div_four_pow_mul_binom {z : ℂ} (hz : 1 / 2 < z.re) :
-    ∑' n : ℕ, (n : ℂ) * catalan n / (4 ^ n * ∏ j ∈ Finset.Icc 1 n, (z + j) / j) =
-      2 * z * Complex.digamma z - z * (Complex.digamma (z + 1 / 2) + Complex.digamma (z - 1 / 2))
 
 /-- **Adegoke–Frontczak series with odd weights, Catalan numbers and harmonic numbers.** Let $z$
 be a complex number with $\operatorname{Re} z > \frac12$. Write $C_n$ for the $n$-th Catalan
@@ -298,22 +275,6 @@ public theorem_wanted tsum_four_pow_mul_odd_harmonic_div_succ_mul_choose_mul_cen
         (7 * riemannZeta 3 - 8 * ∑ j ∈ Finset.range (m - 1), 1 / (2 * (j : ℂ) + 1) ^ 3 +
           (∑ j ∈ Finset.range (m - 1), 1 / (2 * (j : ℂ) + 1)) *
             (3 * riemannZeta 2 - 4 * ∑ j ∈ Finset.range (m - 1), 1 / (2 * (j : ℂ) + 1) ^ 2))
-
-/-- **Catalan numbers over binomial and central binomial coefficients.** Let $m$ be a positive
-integer, $C_n$ the $n$th Catalan number, $H_n = \sum_{j=1}^{n} \frac{1}{j}$ the $n$th harmonic
-number and $O_n = \sum_{j=1}^{n} \frac{1}{2j - 1}$. Then
-$$\sum_{n=0}^{\infty} \frac{C_n}{\binom{n+m}{n} \binom{2(n+m)}{n+m}} =
-\frac{m}{2} \cdot \frac{H_{m-1} - 2 O_{m-1} + 2 \log 2}{\binom{2(m-1)}{m-1}}.$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 12, identity (28)
-(`integers-2025-A18-thm-12`). -/
-public theorem_wanted tsum_catalan_div_choose_mul_centralBinom {m : ℕ} (hm : 0 < m) :
-    ∑' n : ℕ, (catalan n : ℝ) / (((n + m).choose n : ℝ) * ((n + m).centralBinom : ℝ)) =
-      (m : ℝ) / 2 *
-          ((harmonic (m - 1) : ℝ) - 2 * ∑ j ∈ Finset.range (m - 1), 1 / (2 * (j : ℝ) + 1) +
-            2 * Real.log 2) /
-        ((m - 1).centralBinom : ℝ)
 
 /-- **An odd harmonic Catalan series over central binomial coefficients.** Let $m$ be a positive
 integer and $C_n$ the $n$th Catalan number, and write $H_n = \sum_{j=1}^{n} \frac{1}{j}$,

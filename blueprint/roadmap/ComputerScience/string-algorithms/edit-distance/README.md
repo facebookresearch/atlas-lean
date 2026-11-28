@@ -26,3 +26,11 @@
 - [Symmetry of edit distance](edit-distance-comm.md)
 - [Triangle inequality for edit distance](edit-distance-triangle.md)
 - [Edit distance between distinct lists is positive](edit-distance-pos-iff.md)
+- [Binary equal-length edit-distance distortion lower bound](binary-edit-distance-distortion-lower-bound.md)
+- [Uniform sharp exponential scale of edit-distance distortion](uniform-edit-distance-distortion-scale.md)
+- [Finite-circle edit distortion and local binary codes](finite-circle-edit-distortion-and-binary-codes.md)
+- [Almost-linear-work edit approximation in the raw-band bit model](raw-band-almost-linear-edit-distance-approximation.md)
+- [Branch guard and product law of raw-band edit approximation](raw-band-branch-and-randomness-model.md)
+- [Answer, work, and footprint of the raw-band edit model](raw-band-answer-work-and-footprint.md)
+
+The conditional lower bound for edit distance under the Strong Exponential Time Hypothesis is [in fine-grained complexity](../../../TheoryOfComputation/fine-grained-complexity/fine-grained-hypotheses/edit-distance-has-no-strongly-subquadratic.md).

@@ -141,19 +141,6 @@ public theorem_wanted frobeniusPartitionRepCount_four_two_dissection :
         PowerSeries.mk (fun n => (frobeniusPartitionRepCount 4 (2 * n + 1) : ℤ)) =
       𝔣 2 ^ 7 * 𝔣 10 ^ 2
 
-/-- **A level-10 Euler-product identity.** Let $f_k = \prod_{m \ge 1} (1 - q^{km})$ in the ring of
-integer power series in $q$. Then
-$f_2^5 f_5^2 = f_1^5 f_5 f_{10} + 5q f_1^2 f_2 f_{10}^4$.
-
-Dividing both sides by $f_1^5 f_2^2 f_{10}^2$ gives the form in the source,
-$f_2^3 f_5^2/(f_1^5 f_{10}^2) = f_5/(f_2^2 f_{10}) + 5q f_{10}^2/(f_1^3 f_2)$.
-
-Source: Bipul Kumar Sarmah and Satyajit Gayan, *Congruences for F-partitions with 4
-Repetitions*, INTEGERS 25 (2025), Article A17, Lemma 5, eq. (17)
-(`integers-2025-A17-lem-5`). -/
-public theorem_wanted f2_cube_f5_sq_quotient_identity :
-    𝔣 2 ^ 5 * 𝔣 5 ^ 2 = 𝔣 1 ^ 5 * 𝔣 5 * 𝔣 10 + 5 * X * 𝔣 1 ^ 2 * 𝔣 2 * 𝔣 10 ^ 4
-
 end
 
 end MetaMathlibExt
