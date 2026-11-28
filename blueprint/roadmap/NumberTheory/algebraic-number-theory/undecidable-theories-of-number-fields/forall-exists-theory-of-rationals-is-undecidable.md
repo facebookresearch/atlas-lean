@@ -17,6 +17,7 @@ Equivalently, by negation, the set of true $\exists\forall$-sentences is not com
 ## Depends on
 
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -25,6 +25,8 @@ Conventions:
 ## Depends on
 
 - [Commutative ring with identity](../../../Algebra/rings-and-fields/commutative-ring-with-identity.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Every field has an algebraic closure](../../../FieldTheory/extensions-and-closure/algebraic-closure-existence.md)
 
 ## Proof depends on
 

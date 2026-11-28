@@ -21,6 +21,7 @@ The conclusion also holds unconditionally: Alpöge, Bhargava, Ho and Shnidman, a
 - [Hilbert's tenth problem over a ring](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/hilbert-s-tenth-problem-over-a-ring.md)
 - [Integral closure of ℤ in a field and the ring of integers of a number field](../../algebraic-number-theory/number-fields-embeddings/ring-of-integers.md)
 - [The Shafarevich–Tate group of an elliptic curve over a number field](../../arithmetic-geometry/cassels-tate-pairing/elliptic-tate-shafarevich.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -41,6 +42,6 @@ A good expansion adds and links pages for Mazur and Rubin's rank result for cycl
 
 - Barry Mazur and Karl Rubin, *Ranks of twists of elliptic curves and Hilbert's tenth problem*, Invent. Math. 181 (2010), no. 3, 541–575, https://doi.org/10.1007/s00222-010-0252-0. Theorem 1.2 of arXiv:0904.3709v3 is the main statement; Conjecture $\mathrm{ST}_2(K)$ is stated in Section 1 of that version.
 - Jochen Koenigsmann, *Undecidability in number theory*, in: Model Theory in Algebra, Analysis and Arithmetic, Lecture Notes in Mathematics 2111, Springer, 2014, pp. 159–195, https://doi.org/10.1007/978-3-642-54936-6_5; Theorem 5.2 and Corollary 5.3 of arXiv:1309.0441v1 state a variant, with the weak Shafarevich–Tate conjecture assumed for elliptic curves over $K$ only and an elliptic curve over $\mathbb{Q}$ with $\operatorname{rk} E(\mathbb{Q}) = \operatorname{rk} E(K) = 1$.
-- Levent Alpöge, Manjul Bhargava, Wei Ho and Ari Shnidman, *Rank stability in quadratic extensions and Hilbert's tenth problem for the ring of integers of a number field*, Invent. Math. 243 (2025), no. 3, 1129–1139, https://doi.org/10.1007/s00222-025-01392-3; the unconditional result over $\mathcal{O}_K$ is Corollary 1.2 of arXiv:2501.18774v1, the version read.
+- Levent Alpöge, Manjul Bhargava, Wei Ho and Ari Shnidman, *Rank stability in quadratic extensions and Hilbert's tenth problem for the ring of integers of a number field*, Invent. Math. 243 (2026), no. 3, 1129–1139 (published online 2025), https://doi.org/10.1007/s00222-025-01392-3; the unconditional result over $\mathcal{O}_K$ is Corollary 1.2 of arXiv:2501.18774v1, the version read.
 - Peter Koymans and Carlo Pagano, *Hilbert's tenth problem via additive combinatorics*, J. Amer. Math. Soc. 40 (2026), no. 1, 195–234, https://doi.org/10.1090/jams/1081; the unconditional results are Theorems 1.1 and 1.2 of arXiv:2412.01768v3, the version read.
 - Anwesh Ray and Tom Weston, *Diophantine stability for elliptic curves on average*, European J. Math. 11 (2025), no. 4, article 78, https://doi.org/10.1007/s40879-025-00872-3; Section 1.3 of arXiv:2304.09742v3 records both unconditional proofs.

@@ -11,6 +11,7 @@ Conventions: the language has no parameters and no further constants; quantifier
 ## Depends on
 
 - [Complete theory of a first-order structure](../../first-order-logic/theory-of-structure.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

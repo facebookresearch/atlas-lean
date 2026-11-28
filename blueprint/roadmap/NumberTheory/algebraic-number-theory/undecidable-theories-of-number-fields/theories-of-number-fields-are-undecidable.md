@@ -15,6 +15,7 @@ The case $K = \mathbb{Q}$ includes the undecidability of the theory of $\mathbb{
 
 - [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 - [Integral closure of ℤ in a field and the ring of integers of a number field](../number-fields-embeddings/ring-of-integers.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

@@ -23,6 +23,7 @@ Conventions: the rank of $E$ over $K$ is that of its base change; elements of $\
 - [Mordell–Weil rank of an elliptic curve](../../arithmetic-geometry/mordell-weil-rank-of-an-elliptic-curve.md)
 - [Integral closure of ℤ in a field and the ring of integers of a number field](../../algebraic-number-theory/number-fields-embeddings/ring-of-integers.md)
 - [Diophantine subsets of a ring](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/is-diophantine-set.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
