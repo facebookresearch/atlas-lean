@@ -34,6 +34,13 @@ Deligne, for $k = 1$ to Deligne and Serre (P. Deligne and J.-P. Serre, *Formes m
 poids 1*, Ann. Sci. École Norm. Sup. (4) 7 (1974), 507–530), and for $k \le 0$ there are no
 nonzero cusp forms.
 
+## Informally uses
+
+- [Galois representations attached to weight-two eigenforms](../algebraic-number-theory/galois-representations/galois-representations-of-modular-eigenforms/galois-representations-attached-to-weight-two-eigenforms.md), for the case $k = 2$ (Shimura), without irreducibility
+- [Irreducibility of the Galois representations of weight-two eigenforms](../algebraic-number-theory/galois-representations/galois-representations-of-modular-eigenforms/irreducibility-of-the-galois-representations-of-weight-two-eigenforms.md), for irreducibility when $k = 2$ (Ribet)
+- [Galois representations attached to eigenforms of weight at least three](../algebraic-number-theory/galois-representations/galois-representations-of-modular-eigenforms/galois-representations-attached-to-eigenforms-of-weight-at-least-three.md), for the case $k \ge 3$ (Deligne)
+- [Galois representations attached to weight-one eigenforms](../algebraic-number-theory/galois-representations/galois-representations-of-modular-eigenforms/galois-representations-attached-to-weight-one-eigenforms.md), for the case $k = 1$ (Deligne and Serre)
+
 ## Sources
 
 - Fred Diamond and Jerry Shurman, *A First Course in Modular Forms*, Graduate Texts in Mathematics 228, Springer (2005), [Theorem 9.6.5, p. 393](https://doi.org/10.1007/978-0-387-27226-9), with normalized eigenforms as in Definition 5.8.1 and Galois representations, unramifiedness and absolute Frobenius elements as in Section 9.3 (Definitions 9.3.2 and 9.3.3).

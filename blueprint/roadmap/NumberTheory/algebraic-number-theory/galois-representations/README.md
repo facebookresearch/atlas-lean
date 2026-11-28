@@ -12,6 +12,7 @@
 - [Frobenius isocrystals of rank one](frobenius-isocrystals-of-rank-one/README.md)
 - [Galois invariants of the p-adic complex numbers](galois-invariants-of-the-p-adic-complex-numbers/README.md)
 - [p-adic Hodge theory](p-adic-hodge-theory/README.md)
+- [Galois representations attached to modular eigenforms](galois-representations-of-modular-eigenforms/README.md)
 - [Cyclotomic character and Tate twists](cyclotomic-character-and-tate-twists.md)
 - [Conductor of an ℓ-adic representation](conductor-of-an-l-adic-representation.md)
 - [Conductor of the ℓ-adic representation of a newform](conductor-of-the-l-adic-representation-of-a-newform.md)
