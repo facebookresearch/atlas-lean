@@ -16,3 +16,4 @@
 - [Least Herbrand model](least-model.md)
 - [Herbrand models are the pre-fixed points of the immediate consequence operator](is-model-iff-immediate-consequence-subse.md)
 - [The immediate consequence operator is ω-continuous](scott-continuous-immediate-consequence.md)
+- [Answer-set existence for ASP with algebraic constraints is undecidable](answer-set-existence-for-asp-ac-is-undecidable.md)

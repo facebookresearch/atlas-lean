@@ -22,3 +22,6 @@ Linear and lexicographic-linear ranking functions for loops given by linear cons
 - [Restriction to positive-eigenvalue blocks](restriction-to-positive-eigenvalue-blocks.md)
 - [Dominant-term procedure decides termination](dominant-term-procedure-decides-termination.md)
 - [Termination of linear loops over the reals is decidable](termination-of-linear-loops-over-the-reals-is-decidable.md)
+- [Termination of linear loops with polynomial guards over the integers is undecidable](termination-of-linear-loops-with-polynomial-guards-over-z.md)
+- [Termination of multipath linear-constraint loops is undecidable](termination-of-multipath-loops-is-undecidable.md)
+- [Termination of two-piece affine integer loops is undecidable](termination-of-two-piece-affine-integer-loops.md)

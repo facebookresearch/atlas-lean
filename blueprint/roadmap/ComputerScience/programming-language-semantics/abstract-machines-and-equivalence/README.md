@@ -10,3 +10,5 @@
 - [Frame-stack termination for ML](frame-stack-termination-for-ml.md)
 - [Logical simulation relation for ML with references](logical-simulation-relation-for-ml-with-references.md)
 - [The unwinding theorem for recursive functions in ML](unwinding-theorem-for-ml.md)
+- [Compositionality of stateful SOS trace and termination semantics is undecidable](compositionality-of-stateful-sos-semantics-undecidable.md)
+- [Observational equivalence of finitary higher-order languages](observational-equivalence-of-finitary-languages/README.md)
