@@ -26,3 +26,4 @@ reachability, Büchi, parity and Muller conditions are in [Muller, Rabin and Str
 - [Matrix multiplication games](matrix-multiplication-games/README.md)
 - [Reachability games on cost register automata](cost-register-reachability-games/README.md)
 - [Safety Minkowski games are undecidable](safety-minkowski-games-are-undecidable.md)
+- [Multidimensional payoff games](multidimensional-payoff-games/README.md)

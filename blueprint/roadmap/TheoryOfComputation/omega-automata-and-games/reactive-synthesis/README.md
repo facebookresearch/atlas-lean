@@ -16,3 +16,5 @@
 - [Symmetric synthesis for a two-process pipeline is undecidable](symmetric-synthesis-for-a-two-process-pipeline.md)
 - [Synthesis for six-player Petri games with local safety is undecidable](synthesis-for-six-player-petri-games-is-undecid.md)
 - [Token rings and isomorphic and parameterized realizability](token-rings-and-isomorphic-and-parameterized-rea.md)
+- [Deadlock avoidance control for lock-sharing systems is undecidable](deadlock-avoidance-control-for-lock-sharing-syst.md)
+- [Lock-sharing systems and deadlock avoidance control](lock-sharing-systems-and-deadlock-avoidance-cont.md)

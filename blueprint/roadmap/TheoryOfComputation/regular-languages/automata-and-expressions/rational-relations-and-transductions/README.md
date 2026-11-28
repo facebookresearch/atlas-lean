@@ -23,3 +23,4 @@ step are in [sequential transducers, Mealy and Moore machines](../sequential-tra
 - [MSO-definable string transductions are exactly the deterministic two-way transductions](mso-transductions-are-two-way-transductions.md)
 - [Subsequentiality of a rational function is decidable](subsequentiality-of-a-rational-function-is-decidable.md)
 - [Origin transducers and resynchronizers](origin-transducers-and-resynchronizers/README.md)
+- [Infinitary rational relations](infinitary-rational-relations/README.md)

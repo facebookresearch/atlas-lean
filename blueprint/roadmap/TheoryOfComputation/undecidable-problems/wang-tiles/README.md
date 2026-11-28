@@ -15,3 +15,4 @@ space–time diagrams of one-dimensional cellular automata, and the reductions f
 - [Tiling the plane with three polygons is undecidable](tiling-the-plane-with-three-polygons-is-undecida.md)
 - [Tilings of the hyperbolic plane](tilings-of-the-hyperbolic-plane/README.md)
 - [Translational tiling problems](translational-tiling-problems/README.md)
+- [Recognizability of infinite pictures](recognizability-of-infinite-pictures/README.md)

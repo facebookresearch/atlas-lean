@@ -28,3 +28,4 @@ automata as continuous shift-commuting maps are in
 - [Freezing and convergent cellular automata](freezing-and-convergent-cellular-automata/README.md)
 - [Whether a periodic configuration has a periodic preimage under the Game of Life is Σ⁰₁-complete](whether-a-periodic-configuration-has-a-periodic.md)
 - [Whether a periodic configuration has a preimage under the Game of Life is Π⁰₁-complete](whether-a-periodic-configuration-has-a-preimage.md)
+- [Cellular automata on finite graphs](cellular-automata-on-finite-graphs/README.md)
