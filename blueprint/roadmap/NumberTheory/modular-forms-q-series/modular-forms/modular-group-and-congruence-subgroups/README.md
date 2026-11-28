@@ -22,3 +22,5 @@
 - [Lower-right entry character of Γ₀(N) over Z\[1/q\]](gamma0-away-units-char.md)
 - [First vertex map into Γ₀(N) over Z\[1/q\]](vertex-zero-away.md)
 - [Second vertex map into Γ₀(N) over Z\[1/q\]](vertex-one-away.md)
+- [Invariance of `|Δ(τ)| (Im τ)⁶` under the modular group](discriminant-im-pow-six-invariant.md)
+- [Fundamental domain of the modular group](exists-smul-mem-half-open-and-eq.md)

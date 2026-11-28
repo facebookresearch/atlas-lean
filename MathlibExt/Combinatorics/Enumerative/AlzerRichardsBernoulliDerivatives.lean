@@ -24,18 +24,24 @@ Let $f(x) = (1 - e^x)/x$ off zero and $f(0) = -1$. Then
 `MetaMathlibExt.iteratedDeriv_pow_one_sub_exp_div_self_zero` gives the derivatives of $f^k$
 at zero in terms of Stirling numbers of the second kind, and
 `MetaMathlibExt.iteratedDeriv_inv_one_sub_exp_div_self_zero` gives those of $1/f$ in terms of
-Bernoulli numbers.
+Bernoulli numbers. For each natural number $n$, the derivatives of $(1 + f)^{n+1}$ at zero
+vanish through order $n$, and the derivative of order $n+1$ is $(-1/2)^{n+1}(n+1)!$.
 
 The function $f$ is the slope function `dslope` of $h(x) = 1 - e^x$ at $0$. For the powers,
 Leibniz's rule applied to $x^k f(x)^k = (1-e^x)^k$ isolates the derivative of $f^k$.
 The derivative of $(1-e^x)^k$ is given by `iteratedDeriv_one_sub_exp_pow` in
 `MathlibExt.Combinatorics.Enumerative.StirlingSecondExpDeriv`. For the reciprocal,
 differentiating $(1/f) \cdot h = \mathrm{id}$ gives the Bernoulli recurrence `sum_bernoulli`.
+For powers of $1 + f$, write $1 + f(x) = x g(x)$ with $g$ analytic at zero and $g(0) = -1/2$.
 
 ## References
 
 * Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
-  Various Related Results*, INTEGERS 25 (2025), Article A61, pp. 1–20, Lemmas 1 and 2 (p. 9).
+  Various Related Results*, INTEGERS 25 (2025), Article A61, pp. 1–20, Lemmas 1 and 2 (p. 9),
+  and Lemma 3, Equation (26) (p. 9).
+* In `MathlibExt.Combinatorics.Enumerative.AlzerRichardsBernoulliDerivatives`, the proof of
+  Lemma 3 uses `analyticAt_one_sub_exp_div_self` and adapts the Leibniz argument of
+  `iteratedDeriv_pow_one_sub_exp_div_self_zero`, which also gives $f'(0) = -1/2$.
 * I. S. Gradshteyn and I. M. Ryzhik, *Table of Integrals, Series, and Products*, 7th ed.,
   Elsevier, 2007, p. 1047 (the expansion cited in Lemma 1).
 * Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
@@ -157,5 +163,49 @@ public theorem iteratedDeriv_pow_one_sub_exp_div_self_zero {f : ℝ → ℝ} (hf
     simp only [iteratedDeriv_fun_pow_zero, ite_eq_right hj, Nat.cast_zero, mul_zero, zero_mul]
   · intro hk
     exact (hk (mem_range.mpr (by omega))).elim
+
+/-- **Derivatives at zero of $(1 + (1 - e^x)/x)^{n+1}$.** Let $f : \mathbb{R} \to \mathbb{R}$
+satisfy $f(0) = -1$ and $f(x) = (1 - e^x)/x$ for every $x \ne 0$, and let $n$ be a natural
+number. Then for every natural number $r \le n$, the $r$-th derivative of $(1 + f)^{n+1}$ at $0$
+is $0$, and the $(n+1)$-th derivative of $(1 + f)^{n+1}$ at $0$ equals $(-1/2)^{n+1} (n+1)!$.
+
+Source: Horst Alzer and Kendall C. Richards, *Extensions of Some Combinatorial Identities and
+Various Related Results*, INTEGERS 25 (2025), Article A61, Lemma 3, Equation (26). -/
+public theorem iteratedDeriv_one_add_one_sub_exp_div_self_pow_zero {f : ℝ → ℝ}
+    (hf0 : f 0 = -1) (hf : ∀ x ≠ 0, f x = (1 - Real.exp x) / x) (n : ℕ) :
+    (∀ r ≤ n, iteratedDeriv r (fun x => (1 + f x) ^ (n + 1)) 0 = 0) ∧
+      iteratedDeriv (n + 1) (fun x => (1 + f x) ^ (n + 1)) 0 =
+        (-1 / 2 : ℝ) ^ (n + 1) * ((n + 1).factorial : ℝ) := by
+  let g := dslope (fun x => 1 + f x) 0
+  have hga : AnalyticAt ℝ g 0 :=
+    (analyticAt_const.add (analyticAt_one_sub_exp_div_self hf0 hf)).dslope 0
+  have hg0 : g 0 = -1 / 2 := by
+    change dslope (fun x => 1 + f x) 0 0 = -1 / 2
+    rw [dslope_same, deriv_const_add]
+    have h := iteratedDeriv_pow_one_sub_exp_div_self_zero hf0 hf 1 1
+    norm_num [iteratedDeriv_one, Nat.stirlingSecond_one_right, Nat.choose_one_right] at h ⊢
+    exact h
+  -- Factor out the zero of `1 + f` before taking the power.
+  have hprod : (fun x => (1 + f x) ^ (n + 1)) = fun x => x ^ (n + 1) * g x ^ (n + 1) := by
+    funext x
+    have hx : x * g x = 1 + f x := by
+      simpa only [sub_zero, smul_eq_mul, g] using
+        sub_smul_dslope_of_zero (f := fun y => 1 + f y) (a := 0) (by simp [hf0]) x
+    rw [← mul_pow, hx]
+  -- Up to order `n + 1`, only the last summand in Leibniz's rule can survive.
+  have hderiv (r : ℕ) (hr : r ≤ n + 1) :
+      iteratedDeriv r (fun x => (1 + f x) ^ (n + 1)) 0 =
+        iteratedDeriv r (fun x : ℝ => x ^ (n + 1)) 0 * g 0 ^ (n + 1) := by
+    have hxpow : ContDiffAt ℝ r (fun x : ℝ => x ^ (n + 1)) 0 := contDiffAt_id.pow _
+    have hgpow : ContDiffAt ℝ r (fun x => g x ^ (n + 1)) 0 := (hga.pow (n + 1)).contDiffAt
+    rw [hprod, iteratedDeriv_fun_mul hxpow hgpow, sum_range_succ,
+      sum_eq_zero (fun i hi => ?_), zero_add]
+    · simp
+    · have hi' : i ≠ n + 1 := (lt_of_lt_of_le (mem_range.mp hi) hr).ne
+      simp only [iteratedDeriv_fun_pow_zero, ite_eq_right hi', Nat.cast_zero, mul_zero, zero_mul]
+  refine ⟨fun r hr => ?_, ?_⟩
+  · rw [hderiv r (Nat.le_succ_of_le hr), iteratedDeriv_fun_pow_zero,
+      ite_eq_right (Nat.lt_succ_of_le hr).ne, Nat.cast_zero, zero_mul]
+  · rw [hderiv (n + 1) le_rfl, iteratedDeriv_fun_pow_zero, ite_eq_left rfl, hg0, mul_comm]
 
 end MetaMathlibExt

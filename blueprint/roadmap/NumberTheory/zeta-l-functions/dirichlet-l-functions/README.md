@@ -9,6 +9,7 @@ Dirichlet characters, conductors, primitive and quadratic characters, Dirichlet 
 - [Dedekind zeta function and polar density](dedekind-zeta-function-and-polar-density/README.md)
 - [Dirichlet series of arithmetic functions](dirichlet-series-of-arithmetic-functions/README.md)
 - [Moments of Dedekind zeta coefficients over sums of six squares](moments-of-dedekind-zeta-coefficients-over-sums/README.md)
+- [Oesterlé's fundamental identity](oesterl-s-fundamental-identity/README.md)
 - [Perron's formula](perron-s-formula/README.md)
 - [Subconvexity bounds for Dirichlet L-functions](subconvexity-bounds-for-dirichlet-l-functions/README.md)
 - [Zeros of Dirichlet L-functions](zeros-of-dirichlet-l-functions/README.md)
