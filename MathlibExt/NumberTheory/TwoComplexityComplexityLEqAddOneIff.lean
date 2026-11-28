@@ -27,7 +27,8 @@ exponent zero. The reverse direction uses the complexity formula for a sum of tw
 * Pengcheng Zhang, *The 2-Complexity of Even Positive Integers*, INTEGERS 24 (2024),
   Article A109, pp. 1–11, Proposition 3 and Theorem 1(1); the proof uses Corollaries 1 and 2.
   <https://math.colgate.edu/~integers/vol24.html>
-* ATLAS: `MathlibExt.NumberTheory.TwoComplexity` (`logb_two_add_one_le`) and
+* ATLAS: `MathlibExt.NumberTheory.TwoComplexity` (`logb_two_add_one_le` and
+  `largest_exponent_of_two_pow_add_two_pow`) and
   `MathlibExt.NumberTheory.TwoComplexityComplexityLPowAddPow` (`complexityL_pow_add_pow`).
 -/
 
@@ -65,17 +66,7 @@ theorem complexityL_eq_add_one_iff (m n : ℕ)
       rw [hc, Nat.cast_add, Nat.cast_one] at hbound
       linarith only [hlog, hbound]
     obtain ⟨a, b, hab, hn⟩ := hsum
-    -- The sum lies in the interval with lower exponent b as well as the one with exponent m.
-    have hlow : 2 ^ b < n := by
-      rw [hn]
-      exact Nat.lt_add_of_pos_left (Nat.two_pow_pos a)
-    have hupp : n ≤ 2 ^ (b + 1) := by
-      rw [hn, pow_succ, mul_two]
-      exact Nat.add_le_add_right (Nat.pow_le_pow_right (by decide) hab) _
-    have htwo : 1 < (2 : ℕ) := by decide
-    have hmb := (Nat.pow_lt_pow_iff_right htwo).mp (hn1.trans_le hupp)
-    have hbm := (Nat.pow_lt_pow_iff_right htwo).mp (hlow.trans_le hn2)
-    have hb : b = m := by omega
+    have hb := largest_exponent_of_two_pow_add_two_pow m n a b hab hn1 hn2 hn
     subst b
     have ha : 1 ≤ a := by
       by_contra h

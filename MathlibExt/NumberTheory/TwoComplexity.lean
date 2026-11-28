@@ -16,7 +16,16 @@ public import Mathlib.Data.Nat.Find
 
 Following Pengcheng Zhang, *The 2-Complexity of Even Positive Integers*, we classify the values
 above half the maximum for a fixed number of copies of two. Applying this classification to a
-minimal expression gives the logarithmic lower bound.
+minimal expression gives the logarithmic lower bound. For a sum of two powers of two with
+natural exponents, the interval $(2^m, 2^{m+1}]$ determines the larger exponent as $m$.
+
+## References
+
+* Pengcheng Zhang, *The 2-Complexity of Even Positive Integers*, INTEGERS 24 (2024),
+  Article A109, pp. 1–11, Proposition 3 and Corollary 2.
+  <https://math.colgate.edu/~integers/vol24.html>
+* The proof of `largest_exponent_of_two_pow_add_two_pow` was originally the private
+  `largest_exponent` in `MathlibExt.NumberTheory.TwoComplexityComplexityLEqAddTwoOfForm`.
 -/
 
 set_option autoImplicit false
@@ -222,5 +231,23 @@ theorem logb_two_add_one_le (n : ℕ) (h2n : 2 ∣ n)
       (show (2 : ℝ) * n ≤ 2 ^ complexityL 2 n by exact_mod_cast h)
     simpa [Real.logb_mul, hn'.ne', Real.logb_pow, Real.logb_self_eq_one, add_comm] using hl
   · exact (hform ⟨i, i + d, by omega, by rw [h, pow_add]; ring⟩).elim
+
+/-- **Larger exponent of a sum of two powers of two.** Let $a, b, m, n$ be natural numbers
+with $a \le b$, $2^m < n \le 2^{m+1}$ and $n = 2^a + 2^b$. Then $b = m$, including when
+$a = b$. -/
+theorem largest_exponent_of_two_pow_add_two_pow (m n a b : ℕ) (hab : a ≤ b)
+    (hn1 : 2 ^ m < n) (hn2 : n ≤ 2 ^ (m + 1)) (heq : n = 2 ^ a + 2 ^ b) : b = m := by
+  have hle : b ≤ m := by
+    by_contra h
+    have hp := Nat.pow_le_pow_right (n := 2) (by decide) (show m + 1 ≤ b by omega)
+    have hpos := Nat.two_pow_pos a
+    omega
+  have hge : m ≤ b := by
+    by_contra h
+    have hp := Nat.pow_le_pow_right (n := 2) (by decide) (show b + 1 ≤ m by omega)
+    have hp' := Nat.pow_le_pow_right (n := 2) (by decide) hab
+    rw [pow_succ] at hp
+    omega
+  omega
 
 end MathlibExt.NumberTheory.TwoComplexityWanted

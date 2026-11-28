@@ -50,4 +50,13 @@ example : complexityL 2 1 = 0 := by
     | mul _ _ hx _ => exact dvd_mul_of_dvd_left hx _
   exact absurd (even_build hk) (by decide)
 
+-- Independently check the exponent conclusion on a finite grid, including m = 0 and a = b.
+example : ∀ (m : Fin 5) (a b : Fin 6), a.val ≤ b.val →
+    (2 : ℕ) ^ m.val < 2 ^ a.val + 2 ^ b.val →
+    2 ^ a.val + 2 ^ b.val ≤ (2 : ℕ) ^ (m.val + 1) → b.val = m.val := by decide
+
+-- A client can recover the larger exponent of any ordered representation of the endpoint.
+example (a b : ℕ) (hab : a ≤ b) (h : 32 = 2 ^ a + 2 ^ b) : b = 4 :=
+  largest_exponent_of_two_pow_add_two_pow 4 32 a b hab (by decide) (by decide) h
+
 end MathlibExt.NumberTheory.TwoComplexityWanted
