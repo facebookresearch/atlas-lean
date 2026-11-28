@@ -98,6 +98,18 @@ example : liftedDiagonal.det = scalarEquiv 15 := by
     rationalDiagonal liftedDiagonal (fun _ => rfl)]
   norm_num [rationalDiagonal, Fin.prod_univ_two]
 
+-- Left multiplication uses the module carried by the given algebra structure.
+instance liftedAlgebraFinite :
+    @Module.Finite LiftedScalar V _ _ (Algebra.toModule : Module LiftedScalar V) := by
+  let m : Module LiftedScalar V := Algebra.toModule
+  let : Module LiftedScalar V := m
+  have hcompat : ∀ (c : ℚ) (x : V), scalarEquiv c • x = c • x := by
+    intro c x
+    simp only [Algebra.smul_def]
+    rfl
+  exact Module.Finite.of_basis
+    ((Pi.basisFun ℚ (Fin 2)).mapCoeffs scalarEquiv hcompat)
+
 example :
     (Algebra.lmul LiftedScalar V ![(3 : ℚ), 5]).charpoly =
       (X - C (scalarEquiv 3)) * (X - C (scalarEquiv 5)) := by

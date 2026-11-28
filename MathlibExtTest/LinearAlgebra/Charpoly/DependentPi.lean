@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import MathlibExtTest.LinearAlgebra.Determinant.DependentPi
-import MathlibExt.LinearAlgebra.Charpoly.DependentPi
+public import MathlibExtTest.LinearAlgebra.Determinant.DependentPi
+public import MathlibExt.LinearAlgebra.Charpoly.DependentPi
 import Mathlib.Tactic.NormNum
 
 /-!
