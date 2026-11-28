@@ -43,7 +43,10 @@ Over a finite alphabet, a pairwise (Potts) score `f z = ∑ i, h i (z i) + ∑ i
 (`exists_features_of_pairwise`): one coordinate for each suffix position `l` and letter `b`,
 carrying the couplings `∑ k, J k (Lp + l) (x k) b` on the prefix side and the indicator
 `if y l = b then 1 else 0` on the suffix side, and two coordinates carrying the prefix-only and
-the suffix-only parts of the score, each paired with the constant `1`.
+the suffix-only parts of the score, each paired with the constant `1`. Dai et al. (2022,
+Supplemental Methods, section C.1) put the indicators on the shorter of the two segments and so
+reach dimension `min Lp Ls * card α + 2`; here, as on the page, they sit on the suffix, which
+matches that dimension when `Ls ≤ Lp`.
 
 ## Conventions
 
@@ -78,7 +81,8 @@ the suffix-only parts of the score, each paired with the constant `1`.
   factorizable libraries for efficient therapeutic discovery", Genome Research 32 (2022),
   1787–1794, <https://doi.org/10.1101/gr.276593.122>, Methods: "Preliminaries", "SAPS generates
   factorizable libraries" and "The reverse kernel trick allows for efficient library score
-  evaluation".
+  evaluation", and Supplemental Methods, section C.1, which gives the features of a pairwise
+  score and their dimension.
 -/
 
 @[expose] public section
@@ -156,34 +160,34 @@ theorem sum_factorizableLibrary_eq_inner {f : (Fin (Lp + Ls) → α) → ℝ}
   rw [inner_sum]
   exact Finset.sum_congr rfl fun y _ => hf x y
 
-/-- Replacing one prefix `x₀` of a factorizable library by a new prefix `x₁` changes the total
-score by one inner product of the change `φp x₁ - φp x₀` of the prefix feature with the running
-sum of the suffix features, whatever the `#Y` library members that change. -/
+/-- Replacing one prefix `x₀` of a factorizable library by a prefix `x₁` that is none of its
+other prefixes changes the total score by one inner product of the change `φp x₁ - φp x₀` of the
+prefix feature with the running sum of the suffix features, whatever the `#Y` library members
+that change. -/
 theorem sum_factorizableLibrary_replace_prefix {f : (Fin (Lp + Ls) → α) → ℝ}
     {φp : (Fin Lp → α) → V} {φs : (Fin Ls → α) → V}
     (hf : ∀ x y, f (Fin.append x y) = ⟪φp x, φs y⟫_ℝ)
-    {x₀ x₁ : Fin Lp → α} (hx₀ : x₀ ∈ X) (hx₁ : x₁ ∉ X) (Y : Finset (Fin Ls → α)) :
+    {x₀ x₁ : Fin Lp → α} (hx₀ : x₀ ∈ X) (hx₁ : x₁ ∉ X.erase x₀) (Y : Finset (Fin Ls → α)) :
     ∑ z ∈ factorizableLibrary (insert x₁ (X.erase x₀)) Y, f z =
       (∑ z ∈ factorizableLibrary X Y, f z) + ⟪φp x₁ - φp x₀, ∑ y ∈ Y, φs y⟫_ℝ := by
-  have hx₁' : x₁ ∉ X.erase x₀ := fun hmem => hx₁ (Finset.mem_of_mem_erase hmem)
   have hsum : ∑ x ∈ insert x₁ (X.erase x₀), φp x = (∑ x ∈ X, φp x) + (φp x₁ - φp x₀) := by
-    rw [Finset.sum_insert hx₁', ← Finset.sum_erase_add X _ hx₀]
+    rw [Finset.sum_insert hx₁, ← Finset.sum_erase_add X _ hx₀]
     abel
   rw [sum_factorizableLibrary_eq_inner hf, sum_factorizableLibrary_eq_inner hf, hsum,
     inner_add_left]
 
-/-- Replacing one suffix `y₀` of a factorizable library by a new suffix `y₁` changes the total
-score by one inner product of the running sum of the prefix features with the change
-`φs y₁ - φs y₀` of the suffix feature, whatever the `#X` library members that change. -/
+/-- Replacing one suffix `y₀` of a factorizable library by a suffix `y₁` that is none of its
+other suffixes changes the total score by one inner product of the running sum of the prefix
+features with the change `φs y₁ - φs y₀` of the suffix feature, whatever the `#X` library
+members that change. -/
 theorem sum_factorizableLibrary_replace_suffix {f : (Fin (Lp + Ls) → α) → ℝ}
     {φp : (Fin Lp → α) → V} {φs : (Fin Ls → α) → V}
     (hf : ∀ x y, f (Fin.append x y) = ⟪φp x, φs y⟫_ℝ)
-    (X : Finset (Fin Lp → α)) {y₀ y₁ : Fin Ls → α} (hy₀ : y₀ ∈ Y) (hy₁ : y₁ ∉ Y) :
+    (X : Finset (Fin Lp → α)) {y₀ y₁ : Fin Ls → α} (hy₀ : y₀ ∈ Y) (hy₁ : y₁ ∉ Y.erase y₀) :
     ∑ z ∈ factorizableLibrary X (insert y₁ (Y.erase y₀)), f z =
       (∑ z ∈ factorizableLibrary X Y, f z) + ⟪∑ x ∈ X, φp x, φs y₁ - φs y₀⟫_ℝ := by
-  have hy₁' : y₁ ∉ Y.erase y₀ := fun hmem => hy₁ (Finset.mem_of_mem_erase hmem)
   have hsum : ∑ y ∈ insert y₁ (Y.erase y₀), φs y = (∑ y ∈ Y, φs y) + (φs y₁ - φs y₀) := by
-    rw [Finset.sum_insert hy₁', ← Finset.sum_erase_add Y _ hy₀]
+    rw [Finset.sum_insert hy₁, ← Finset.sum_erase_add Y _ hy₀]
     abel
   rw [sum_factorizableLibrary_eq_inner hf, sum_factorizableLibrary_eq_inner hf, hsum,
     inner_add_right]
@@ -297,11 +301,14 @@ with a field `h i` at each position and a coupling `J i j` for each pair of posi
 then there are `φp` and `φs` with `f (Fin.append x y) = ⟪φp x, φs y⟫_ℝ`, so that the total score
 of a factorizable library is one inner product (`sum_factorizableLibrary_eq_inner`).
 
-The features are those of Dai et al. (2022): one coordinate for each suffix position `l` and
-letter `b`, carrying the couplings `∑ k, J k (Lp + l) (x k) b` of the prefix with the letter `b`
-at that position and, on the suffix side, the indicator of `y l = b`; and two coordinates
-carrying the part of the score that the prefix alone contributes and the part that the suffix
-alone contributes, each paired with the constant `1`. -/
+The features are one coordinate for each suffix position `l` and letter `b`, carrying the
+couplings `∑ k, J k (Lp + l) (x k) b` of the prefix with the letter `b` at that position and, on
+the suffix side, the indicator of `y l = b`; and two coordinates carrying the part of the score
+that the prefix alone contributes and the part that the suffix alone contributes, each paired
+with the constant `1`. Dai et al. (2022, Supplemental Methods, section C.1) give this
+construction with the indicators on the shorter of the two segments, of dimension
+`min Lp Ls * card α + 2`; putting them on the suffix, as here, matches that dimension when
+`Ls ≤ Lp`. -/
 theorem exists_features_of_pairwise [Fintype α] (h : Fin (Lp + Ls) → α → ℝ)
     (J : Fin (Lp + Ls) → Fin (Lp + Ls) → α → α → ℝ) (f : (Fin (Lp + Ls) → α) → ℝ)
     (hf : ∀ z, f z = (∑ i, h i (z i)) + ∑ i, ∑ j ∈ Finset.Ioi i, J i j (z i) (z j)) :
