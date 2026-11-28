@@ -12,7 +12,7 @@ $$
 \nu_c=\nu_a+\nu_b:\ \mathrm{ATP}+\text{glutamate}+\text{ammonia}=\mathrm{ADP}+\text{phosphate}+\text{glutamine},
 $$
 
-each [balanced](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiometric-conservati/is-balanced.md) for $A'$; water cancels in $\nu_c$. Let $G'$ be a differentiable function of the reactant amounts $n'$ on an open set, with $\partial G'/\partial n_i'=\Delta_fG_i'$, as in the reactant form of the [fundamental equation of the transformed Gibbs energy](transformed-gibbs-fundamental-equation.md), and write $\Delta_rG'(\nu)=\sum_i\nu_i\Delta_fG_i'$ at the current state.
+each [balanced](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiometric-conservati/is-balanced.md) for $A'$ and each a biochemical reaction in the sense of the apparent-constant page, with an underlying chemical equation balanced in atoms and charge; water cancels in $\nu_c$. Let $G'$ be a differentiable function of the reactant amounts $n'$ on an open set, with $\partial G'/\partial n_i'=\Delta_fG_i'$, as in the reactant form of the [fundamental equation of the transformed Gibbs energy](transformed-gibbs-fundamental-equation.md), and write $\Delta_rG'(\nu)=\sum_i\nu_i\Delta_fG_i'$ at the current state.
 
 **Statement (glutamate–ammonia ligase example).**
 

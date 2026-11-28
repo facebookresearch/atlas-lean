@@ -16,7 +16,7 @@ $$
 n_c(\mathrm H)=\sum_{j\in J}N_{\mathrm H}(j)\,n_j,\qquad n_c(\mathrm{Mg})=\sum_{j\in J}N_{\mathrm{Mg}}(j)\,n_j .
 $$
 
-**Fixed free-ion potentials.** Concentrations are divided by $c^\circ=1\ \mathrm{mol\,L^{-1}}$, so $[\mathrm{B}]$ is dimensionless; $\mathrm{pH}=-\log_{10}[\mathrm{H^+}]$ and $\mathrm{pMg}=-\log_{10}[\mathrm{Mg^{2+}}]$ use concentrations, not activities. With the standard Gibbs energies of formation $\Delta_fG^\circ(\mathrm{H^+})$ and $\Delta_fG^\circ(\mathrm{Mg^{2+}})$ at the given $T$ and $I$ (the first is zero at $I=0$ by convention, but not at $I>0$), the medium fixes
+**Fixed free-ion potentials.** Concentrations are the [molarities](../../solutions-and-aqueous-equilibria/concentration-units-of-solutions/molarity.md) $n/V$ of the species in the solution of volume $V>0$, divided by $c^\circ=1\ \mathrm{mol\,L^{-1}}$, so $[\mathrm{B}]$ is dimensionless; $\mathrm{pH}=-\log_{10}[\mathrm{H^+}]$ and $\mathrm{pMg}=-\log_{10}[\mathrm{Mg^{2+}}]$ use concentrations, not activities. With the standard Gibbs energies of formation $\Delta_fG^\circ(\mathrm{H^+})$ and $\Delta_fG^\circ(\mathrm{Mg^{2+}})$ at the given $T$ and $I$ (the first is zero at $I=0$ by convention, but not at $I>0$), the medium fixes
 
 $$
 \mu(\mathrm{H^+})=\Delta_fG^\circ(\mathrm{H^+})-RT\ln(10)\,\mathrm{pH},\qquad \mu(\mathrm{Mg^{2+}})=\Delta_fG^\circ(\mathrm{Mg^{2+}})-RT\ln(10)\,\mathrm{pMg},
@@ -41,14 +41,15 @@ For the pH-only variant, omit the magnesium reservoir terms and its specified-po
 1. If the free ions in the state are at the specified pH and pMg, that is $\mu_{\mathrm{H^+}}=\mu(\mathrm{H^+})$ and $\mu_{\mathrm{Mg^{2+}}}=\mu(\mathrm{Mg^{2+}})$ for the species potentials, then $\mu'_{\mathrm{H^+}}=\mu'_{\mathrm{Mg^{2+}}}=0$.
 2. Since $G=\sum_j\mu_jn_j$ by the Euler relation, $G'=\sum_{j\in J}\mu_j'\,n_j$.
 
-**Sign convention.** Both exchanged terms are subtracted. The source prints its magnesium transform with $+\,n_c(\mathrm{Mg})\mu(\mathrm{Mg^{2+}})$; with that sign consequence 1 fails for $\mathrm{Mg^{2+}}$ ($\mu'_{\mathrm{Mg^{2+}}}$ would be $2\mu(\mathrm{Mg^{2+}})$), and the reciprocal relation printed in the same section would change sign. The minus sign is the one consistent with the source's pH transform and with that relation.
+**Sign convention.** Both exchanged terms are subtracted. The 2011 manuscript prints its magnesium transform with $+\,n_c(\mathrm{Mg})\mu(\mathrm{Mg^{2+}})$; with that sign consequence 1 fails for $\mathrm{Mg^{2+}}$ ($\mu'_{\mathrm{Mg^{2+}}}$ would be $2\mu(\mathrm{Mg^{2+}})$), and the reciprocal relation printed in the same section would change sign. The minus sign is the one consistent with that manuscript's pH transform and with that relation, and the 1994 recommendations print the two-reservoir transform and the transformed species potentials with both terms subtracted.
 
-Holding further component potentials fixed, such as that of solvent water or of coenzymes, gives the source's further transformed Gibbs energies $G''$; those transforms are not part of this page.
+Holding further component potentials fixed, such as that of solvent water or of coenzymes, gives the 2011 manuscript's further transformed Gibbs energies $G''$; those transforms are not part of this page.
 
 ## Depends on
 
 - [Euler relation for the internal energy](../fundamental-relation-of-thermodynamics/euler-relation.md)
 - [Chemical potential from the entropy](../fundamental-relation-of-thermodynamics/chem-pot.md)
+- [Molarity of a solution](../../solutions-and-aqueous-equilibria/concentration-units-of-solutions/molarity.md)
 
 ## Proof depends on
 
@@ -61,3 +62,4 @@ Consequence 1 is $\mu(\mathrm{H^+})-1\cdot\mu(\mathrm{H^+})-0=0$ and the same fo
 ## Sources
 
 - R. A. Alberty, A. Cornish-Bowden, R. N. Goldberg, G. G. Hammes, K. Tipton and H. V. Westerhoff, *Recommendations for terminology and databases for biochemical thermodynamics*, IUBMB Recommendations, Biophysical Chemistry 155 (2011) 89–103, <https://doi.org/10.1016/j.bpc.2011.03.007>. Section and equation numbers are those of the official IUBMB-hosted author manuscript (August 2010, 53 pages), <https://iubmb.qmul.ac.uk/thermod2/BiochemThermodynamics.pdf>: Section 3, equations (3-1)–(3-4) for Legendre transforms and $G=\sum\mu_jn_j$; Section 5, equations (5-1) and (5-3); Section 7, equation (7-12) for the magnesium transform and equations (7-14) and (7-16) for the further transforms.
+- R. A. Alberty, A. Cornish-Bowden, Q. H. Gibson, R. N. Goldberg, G. G. Hammes, W. Jencks, K. F. Tipton, R. Veech, H. V. Westerhoff and E. C. Webb (IUPAC–IUBMB Panel on Biochemical Thermodynamics), *Recommendations for nomenclature and tables in biochemical thermodynamics* (Recommendations 1994), Pure Appl. Chem. 66 (1994) 1641–1666, reprinted in Eur. J. Biochem. 240 (1996) 1–14. Equation numbers are those of the IUBMB web version, Section 5, <https://iubmb.qmul.ac.uk/thermod/noGreek/th5.html>: equations (46) and (48), with (47) and the concentration definitions of pH and pMg in Section 5.3.
