@@ -4,6 +4,7 @@
 
 - [Gl Arch](gl-arch.md)
 - [Gl Fin](gl-fin.md)
+- [Fin Component](fin-component.md)
 - [Ideal Bound](ideal-bound.md)
 - [Ideal Ball](ideal-ball.md)
 - [Is Level Zero Matrix](is-level-zero-matrix.md)
