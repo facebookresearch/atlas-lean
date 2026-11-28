@@ -11,7 +11,7 @@ module
 import MathlibExt.Algebra.Category.ModuleCat.Torsion.QuotientHomColimit
 import Mathlib.Data.ZMod.Basic
 import Mathlib.RingTheory.Flat.TorsionFree
-meta import Mathlib.Tactic.NormNum
+import Mathlib.Algebra.Module.NatInt
 
 /-!
 # Power-torsion coordinates under integer coefficient reduction
@@ -42,29 +42,39 @@ private def reduction : A ⟶ B :=
   ModuleCat.ofHom reductionRing.toAddMonoidHom.toIntLinearMap
 
 private lemma reduction_three : reduction.hom (3 : ZMod 12) = (3 : ZMod 6) := by
-  norm_num [reduction, reductionRing]
+  change reductionRing (3 : ZMod 12) = (3 : ZMod 6)
+  exact map_natCast reductionRing 3
 
 private lemma reduction_six : reduction.hom (6 : ZMod 12) = (0 : ZMod 6) := by
-  norm_num [reduction, reductionRing]
+  change reductionRing (6 : ZMod 12) = (0 : ZMod 6)
+  exact (map_natCast reductionRing 6).trans (by decide)
 
 private lemma power_mem_iff (M : ModuleCat.{0} ℤ) (n : ℕ) (x : M) :
     x ∈ powerAnnihilator I M n ↔ ((2 : ℤ) ^ n) • x = 0 := by
   change x ∈ Submodule.torsionBySet ℤ M ((I ^ n : Ideal ℤ) : Set ℤ) ↔ _
   rw [show I ^ n = Ideal.span {((2 : ℤ) ^ n)} from Ideal.span_singleton_pow _ _]
   rw [Submodule.torsionBySet_ideal_span_singleton_eq, Submodule.mem_torsionBy_iff]
+  simp only [int_smul_eq_zsmul]
 
 private def threeA : powerAnnihilator I A 2 :=
-  ⟨3, (power_mem_iff A 2 3).mpr (by norm_num)⟩
+  ⟨3, (power_mem_iff A 2 3).mpr (by
+    change ((2 : ℤ) ^ 2) • (3 : ZMod 12) = 0
+    decide)⟩
 
 private def sixA : powerAnnihilator I A 1 :=
-  ⟨6, (power_mem_iff A 1 6).mpr (by norm_num)⟩
+  ⟨6, (power_mem_iff A 1 6).mpr (by
+    change ((2 : ℤ) ^ 1) • (6 : ZMod 12) = 0
+    decide)⟩
 
 private def threeB : powerAnnihilator I B 2 :=
-  ⟨3, (power_mem_iff B 2 3).mpr (by norm_num)⟩
+  ⟨3, (power_mem_iff B 2 3).mpr (by
+    change ((2 : ℤ) ^ 2) • (3 : ZMod 6) = 0
+    decide)⟩
 
 example : (3 : ZMod 12) ∉ powerAnnihilator I A 1 := by
   rw [power_mem_iff]
-  norm_num
+  change ¬ ((2 : ℤ) ^ 1) • (3 : ZMod 12) = 0
+  decide
 
 example : (3 : ZMod 12) ∈ powerAnnihilator I A 2 := threeA.property
 
@@ -73,7 +83,7 @@ example : (6 : ZMod 12) ∈ powerAnnihilator I A 1 := sixA.property
 example : (3 : ZMod 6) ∈ powerAnnihilator I B 2 := threeB.property
 
 example : (3 : ZMod 12) ≠ 0 ∧ (6 : ZMod 12) ≠ 0 ∧ (3 : ZMod 6) ≠ 0 := by
-  norm_num
+  decide
 
 private def gammaThreeA : (functor I).obj A := (annihilatorInclusion I A 2).hom threeA
 private def gammaSixA : (functor I).obj A := (annihilatorInclusion I A 1).hom sixA
@@ -84,7 +94,7 @@ example : gammaThreeA.val = (3 : ZMod 12) := rfl
 example : gammaThreeA ≠ 0 := by
   intro h
   have hv := congrArg Subtype.val h
-  exact (by norm_num : (3 : ZMod 12) ≠ 0) hv
+  exact (by decide : (3 : ZMod 12) ≠ 0) hv
 
 example : (((functor I).map reduction).hom gammaThreeA).val = (3 : ZMod 6) :=
   reduction_three
@@ -141,7 +151,7 @@ private lemma phiSixA_one : phiSixA.hom (Ideal.quotientOne (I ^ 1)) =
 
 example : phiThreeA.hom (Submodule.Quotient.mk (3 : ℤ)) = (9 : ZMod 12) := by
   change (3 : ℤ) • (3 : ZMod 12) = 9
-  norm_num
+  decide
 
 example : ((Ideal.quotientHomEquiv (I ^ 2) (ZMod 12)) phiThreeA.hom).val =
     (3 : ZMod 12) := phiThreeA_one
@@ -154,10 +164,10 @@ example : phiThreeA ≫ reduction = phiThreeB := by
   change reduction.hom (r • (3 : ZMod 12)) = r • (3 : ZMod 6)
   rw [map_smul, reduction_three]
 
-private def quotientClassThreeA : colimit (quotientHomDiagram I A) :=
+private def quotientClassThreeA : (colimit (quotientHomDiagram I A) : ModuleCat.{0} ℤ) :=
   (colimit.ι (quotientHomDiagram I A) 2).hom phiThreeA
 
-private def quotientClassSixA : colimit (quotientHomDiagram I A) :=
+private def quotientClassSixA : (colimit (quotientHomDiagram I A) : ModuleCat.{0} ℤ) :=
   (colimit.ι (quotientHomDiagram I A) 1).hom phiSixA
 
 private def quotientDetectA : colimit (quotientHomDiagram I A) ⟶ (functor I).obj A :=
@@ -188,13 +198,13 @@ example : quotientClassThreeA ≠ 0 := by
   intro h
   have hv := congrArg (fun x => (quotientDetectA.hom x).val) h
   rw [quotientDetect_three, map_zero] at hv
-  exact (by norm_num : (3 : ZMod 12) ≠ 0) hv
+  exact (by decide : (3 : ZMod 12) ≠ 0) hv
 
 example : quotientClassSixA ≠ 0 := by
   intro h
   have hv := congrArg (fun x => (quotientDetectA.hom x).val) h
   rw [quotientDetect_six, map_zero] at hv
-  exact (by norm_num : (6 : ZMod 12) ≠ 0) hv
+  exact (by decide : (6 : ZMod 12) ≠ 0) hv
 
 private def quotientReduction :
     colimit (quotientHomDiagram I A) ⟶ colimit (quotientHomDiagram I B) :=
@@ -252,7 +262,7 @@ example : (((localCohomologyZeroIso I).hom.app A).hom localClassThreeA).val =
   have h := congrArg (fun f : (functor I).obj A ⟶ (functor I).obj A =>
     (f.hom gammaThreeA).val) ((localCohomologyZeroIso I).app A).inv_hom_id
   simpa only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_id,
-    LinearMap.id_apply] using h
+    LinearMap.id_apply] using! h
 
 example : localClassThreeA ≠ 0 := by
   intro h
@@ -263,24 +273,24 @@ example : localClassThreeA ≠ 0 := by
     have hi := congrArg (fun f : (functor I).obj A ⟶ (functor I).obj A =>
       (f.hom gammaThreeA).val) ((localCohomologyZeroIso I).app A).inv_hom_id
     simpa only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_id,
-      LinearMap.id_apply] using hi
+      LinearMap.id_apply] using! hi
   rw [he, map_zero] at hv
-  exact (by norm_num : (3 : ZMod 12) ≠ 0) hv
+  exact (by decide : (3 : ZMod 12) ≠ 0) hv
 
 example : ¬ Module.Flat ℤ (ZMod 12) := by
   intro h
   letI : Module.Flat ℤ (ZMod 12) := h
-  letI : IsTorsionFree ℤ (ZMod 12) := Module.Flat.isTorsionFree
-  have hz : (12 : ℤ) • (1 : ZMod 12) = 0 := by norm_num
-  have hc := (smul_eq_zero.mp hz).resolve_left (by norm_num : (12 : ℤ) ≠ 0)
-  exact (by norm_num : (1 : ZMod 12) ≠ 0) hc
+  letI : Module.IsTorsionFree ℤ (ZMod 12) := Module.Flat.isTorsionFree
+  have hz : (12 : ℤ) • (1 : ZMod 12) = 0 := by decide
+  have hc := (smul_eq_zero.mp hz).resolve_left (by decide : (12 : ℤ) ≠ 0)
+  exact (by decide : (1 : ZMod 12) ≠ 0) hc
 
 example : ¬ Module.Flat ℤ (ZMod 6) := by
   intro h
   letI : Module.Flat ℤ (ZMod 6) := h
-  letI : IsTorsionFree ℤ (ZMod 6) := Module.Flat.isTorsionFree
-  have hz : (6 : ℤ) • (1 : ZMod 6) = 0 := by norm_num
-  have hc := (smul_eq_zero.mp hz).resolve_left (by norm_num : (6 : ℤ) ≠ 0)
-  exact (by norm_num : (1 : ZMod 6) ≠ 0) hc
+  letI : Module.IsTorsionFree ℤ (ZMod 6) := Module.Flat.isTorsionFree
+  have hz : (6 : ℤ) • (1 : ZMod 6) = 0 := by decide
+  have hc := (smul_eq_zero.mp hz).resolve_left (by decide : (6 : ℤ) ≠ 0)
+  exact (by decide : (1 : ZMod 6) ≠ 0) hc
 
 end PowerTorsionCoefficientReduction

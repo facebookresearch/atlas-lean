@@ -11,7 +11,7 @@ module
 import MathlibExt.Algebra.Category.ModuleCat.AnnihilatorQuotient
 import MathlibExt.Algebra.Category.ModuleCat.ExtendedRestrictedQuotient
 import Mathlib.Data.ZMod.Basic
-meta import Mathlib.Tactic.NormNum
+import Mathlib.Algebra.Module.NatInt
 
 /-!
 # Quotient scalar actions and reduction modulo six
@@ -37,8 +37,9 @@ private abbrev J : Ideal ℤ := Ideal.span {(12 : ℤ)}
 private lemma J_annihilates : J ≤ Module.annihilator ℤ (ZMod 12) := by
   rw [Ideal.span_singleton_le_iff_mem, Module.mem_annihilator]
   intro x
-  change (12 : ZMod 12) * x = 0
-  norm_num
+  have hzero : (12 : ZMod 12) • x = 0 := by
+    rw [show (12 : ZMod 12) = 0 by decide, zero_smul]
+  exact (Int.cast_smul_eq_zsmul (ZMod 12) (12 : ℤ) x).symm.trans hzero
 
 section DescendedAction
 
@@ -47,28 +48,28 @@ local instance : Module (ℤ ⧸ J) (ZMod 12) :=
 
 example : (Ideal.Quotient.mk J (5 : ℤ)) • (3 : ZMod 12) = 3 := by
   rw [ModuleCat.annihilatorQuotientModule_mk_smul]
-  norm_num
+  decide
 
 example : (Ideal.Quotient.mk J (4 : ℤ)) • (3 : ZMod 12) = 0 := by
   rw [ModuleCat.annihilatorQuotientModule_mk_smul]
-  norm_num
+  decide
 
 example : (Ideal.Quotient.mk J (5 : ℤ)) • (3 : ZMod 12) ≠ 0 := by
   rw [ModuleCat.annihilatorQuotientModule_mk_smul]
-  norm_num
+  decide
 
 private def restrictComparison :=
   ModuleCat.annihilatorQuotientRestrictIso ℤ J (ZMod 12) J_annihilates
 
 example : restrictComparison.hom.hom (3 : ZMod 12) = 3 := rfl
 
-example : restrictComparison.inv.hom (3 : ZMod 12) = 3 := rfl
+example : restrictComparison.inv.hom (3 : ZMod 12) = (3 : ZMod 12) := rfl
 
 example : restrictComparison.hom.hom
     ((Ideal.Quotient.mk J (5 : ℤ)) • (3 : ZMod 12)) = 3 := by
   change (Ideal.Quotient.mk J (5 : ℤ)) • (3 : ZMod 12) = 3
   rw [ModuleCat.annihilatorQuotientModule_mk_smul]
-  norm_num
+  decide
 
 end DescendedAction
 
@@ -81,15 +82,31 @@ private def integerPresentation :=
   ModuleCat.surjectiveQuotientModuleIso ℤ (ZMod 6) integerReduction
     integerReduction_surjective
 
-example : integerPresentation.hom.hom
+private lemma integerFifteen_value : integerPresentation.hom.hom
     (Ideal.Quotient.mk (RingHom.ker integerReduction) (15 : ℤ)) = (3 : ZMod 6) := by
-  rw [ModuleCat.surjectiveQuotientModuleIso_hom_mk]
-  norm_num [integerReduction]
+  have h : integerPresentation.hom.hom
+      (Ideal.Quotient.mk (RingHom.ker integerReduction) (15 : ℤ)) = integerReduction 15 := by
+    simpa only [integerPresentation] using!
+      ModuleCat.surjectiveQuotientModuleIso_hom_mk ℤ (ZMod 6) integerReduction
+        integerReduction_surjective 15
+  exact h.trans (by decide)
+
+private lemma integerSix_value : integerPresentation.hom.hom
+    (Ideal.Quotient.mk (RingHom.ker integerReduction) (6 : ℤ)) = (0 : ZMod 6) := by
+  have h : integerPresentation.hom.hom
+      (Ideal.Quotient.mk (RingHom.ker integerReduction) (6 : ℤ)) = integerReduction 6 := by
+    simpa only [integerPresentation] using!
+      ModuleCat.surjectiveQuotientModuleIso_hom_mk ℤ (ZMod 6) integerReduction
+        integerReduction_surjective 6
+  exact h.trans (by decide)
 
 example : integerPresentation.hom.hom
-    (Ideal.Quotient.mk (RingHom.ker integerReduction) (6 : ℤ)) = (0 : ZMod 6) := by
-  rw [ModuleCat.surjectiveQuotientModuleIso_hom_mk]
-  norm_num [integerReduction]
+    (Ideal.Quotient.mk (RingHom.ker integerReduction) (15 : ℤ)) = (3 : ZMod 6) :=
+  integerFifteen_value
+
+example : integerPresentation.hom.hom
+    (Ideal.Quotient.mk (RingHom.ker integerReduction) (6 : ℤ)) = (0 : ZMod 6) :=
+  integerSix_value
 
 example : integerPresentation.inv.hom (integerReduction (15 : ℤ)) =
     Ideal.Quotient.mk (RingHom.ker integerReduction) (15 : ℤ) :=
@@ -98,13 +115,14 @@ example : integerPresentation.inv.hom (integerReduction (15 : ℤ)) =
 example : Ideal.Quotient.mk (RingHom.ker integerReduction) (15 : ℤ) ≠ 0 := by
   intro h
   have hv := congrArg integerPresentation.hom.hom h
-  rw [ModuleCat.surjectiveQuotientModuleIso_hom_mk, map_zero] at hv
-  norm_num [integerReduction] at hv
+  have hz : (3 : ZMod 6) = 0 :=
+    integerFifteen_value.symm.trans (hv.trans (map_zero integerPresentation.hom.hom))
+  exact (by decide : (3 : ZMod 6) ≠ 0) hz
 
 example : Ideal.Quotient.mk (RingHom.ker integerReduction) (6 : ℤ) = 0 := by
   apply (Ideal.Quotient.eq_zero_iff_mem).mpr
   change integerReduction (6 : ℤ) = 0
-  norm_num [integerReduction]
+  decide
 
 private def reduction : ZMod 12 →+* ZMod 6 := ZMod.castHom (by decide : 6 ∣ 12) _
 
@@ -114,16 +132,24 @@ private lemma reduction_surjective : Function.Surjective reduction :=
 private def coefficientPresentation :=
   ModuleCat.surjectiveQuotientModuleIso (ZMod 12) (ZMod 6) reduction reduction_surjective
 
+private lemma coefficientThree_value : coefficientPresentation.hom.hom
+    (Ideal.Quotient.mk (RingHom.ker reduction) (3 : ZMod 12)) = (3 : ZMod 6) := by
+  have h : coefficientPresentation.hom.hom
+      (Ideal.Quotient.mk (RingHom.ker reduction) (3 : ZMod 12)) = reduction 3 := by
+    simpa only [coefficientPresentation] using!
+      ModuleCat.surjectiveQuotientModuleIso_hom_mk (ZMod 12) (ZMod 6) reduction
+        reduction_surjective 3
+  exact h.trans (map_natCast reduction 3)
+
 example : (6 : ZMod 12) ∈ RingHom.ker reduction ∧ (6 : ZMod 12) ≠ 0 := by
   constructor
   · change reduction (6 : ZMod 12) = 0
-    norm_num [reduction]
-  · norm_num
+    exact (map_natCast reduction 6).trans (by decide)
+  · decide
 
 example : coefficientPresentation.hom.hom
-    (Ideal.Quotient.mk (RingHom.ker reduction) (3 : ZMod 12)) = (3 : ZMod 6) := by
-  rw [ModuleCat.surjectiveQuotientModuleIso_hom_mk]
-  norm_num [reduction]
+    (Ideal.Quotient.mk (RingHom.ker reduction) (3 : ZMod 12)) = (3 : ZMod 6) :=
+  coefficientThree_value
 
 example : coefficientPresentation.inv.hom (reduction (3 : ZMod 12)) =
     Ideal.Quotient.mk (RingHom.ker reduction) (3 : ZMod 12) :=
@@ -132,7 +158,8 @@ example : coefficientPresentation.inv.hom (reduction (3 : ZMod 12)) =
 example : Ideal.Quotient.mk (RingHom.ker reduction) (3 : ZMod 12) ≠ 0 := by
   intro h
   have hv := congrArg coefficientPresentation.hom.hom h
-  rw [ModuleCat.surjectiveQuotientModuleIso_hom_mk, map_zero] at hv
-  norm_num [reduction] at hv
+  have hz : (3 : ZMod 6) = 0 :=
+    coefficientThree_value.symm.trans (hv.trans (map_zero coefficientPresentation.hom.hom))
+  exact (by decide : (3 : ZMod 6) ≠ 0) hz
 
 end QuotientScalarReduction
