@@ -35,6 +35,8 @@ This does not settle the question for field coefficients.
   arXiv:1401.0300v49.
 * Achyuth Jayadevan, *A coefficient-ring obstruction to freeness of projective group-ring
   modules*, preprint (2026), main counterexample, https://doi.org/10.5281/zenodo.22846603.
+* The Stacks Project, Lemma 10.78.2 (tag `00NX`), https://stacks.math.columbia.edu/tag/00NX,
+  for the direct-summand criterion for finite projectivity.
 -/
 
 set_option autoImplicit false
