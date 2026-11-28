@@ -15,6 +15,7 @@ import Mathlib.Analysis.Calculus.ContDiff.Comp
 import Mathlib.Analysis.Calculus.ContDiff.Operations
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.DerivativeTest
@@ -50,11 +51,19 @@ invade `x*`, and nearby strategies on opposite sides of `x*` invade each other.
   of the fitness gradient.
 * `branchingPoint`: convergence-stable but not ESS-stable singular strategies are
   evolutionary branching points.
+* `mutual_invasibility`: for a `C²` invasion fitness that vanishes on the diagonal and has
+  `D(x*) = 0`, a positive `s_xx + s_yy` at `(x*, x*)` gives mutual invasion for all
+  sufficiently close pairs symmetric about `x*`. A negative sum rules out mutual invasion
+  for all sufficiently close distinct pairs, including asymmetric ones.
 
-Sources: S. A. H. Geritz, É. Kisdi, G. Meszéna and J. A. J. Metz, "Evolutionarily singular
-strategies and the adaptive growth and branching of the evolutionary tree", Evol. Ecol. 12
-(1998) 35–57, eqs. (1)–(11), Table 1; I. Eshel, "Evolutionary and continuous stability",
-J. Theor. Biol. 103 (1983) 99–111.
+## References
+
+* S.A.H. Geritz, É. Kisdi, G. Meszéna and J.A.J. Metz, "Evolutionarily singular strategies and
+  the adaptive growth and branching of the evolutionary tree", Evolutionary Ecology 12 (1998),
+  pp. 35–57, eqs. (1)–(11) and Table 1; see pp. 39–40, eqs. (7), (10) and (11) for mutual
+  invasibility.
+* I. Eshel, "Evolutionary and continuous stability", Journal of Theoretical Biology 103 (1983),
+  pp. 99–111.
 -/
 
 @[expose] public section
@@ -85,16 +94,14 @@ structure IsSingular (s : ℝ → ℝ → ℝ) (xs : ℝ) : Prop where
   gradient_eq_zero : fitnessGradient s xs = 0
 
 /-- The `y`-slice derivative of a `C²` function is its Fréchet derivative in direction `(0, 1)`. -/
-private lemma deriv_slice_snd {s : ℝ → ℝ → ℝ} {p : ℝ × ℝ}
+private lemma hasDerivAt_slice_snd {s : ℝ → ℝ → ℝ} {p : ℝ × ℝ}
     (hS : ContDiff ℝ 2 (fun p : ℝ × ℝ => s p.1 p.2)) :
-    deriv (fun y => s p.1 y) p.2 = fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2) p (0, 1) := by
+    HasDerivAt (s p.1) (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2) p (0, 1)) p.2 := by
   have hdiff : DifferentiableAt ℝ (fun p : ℝ × ℝ => s p.1 p.2) p :=
     hS.differentiable (by simp) p
   have hline : HasDerivAt (fun y : ℝ => (p.1, y)) (0, 1) p.2 :=
     (hasDerivAt_const _ _).prodMk (hasDerivAt_id _)
-  have hcomp := (hdiff.hasFDerivAt.comp_hasDerivAt
-    (f := fun y : ℝ => (p.1, y)) p.2 hline).deriv
-  simpa only [Function.comp_def] using hcomp
+  exact hdiff.hasFDerivAt.comp_hasDerivAt (f := fun y : ℝ => (p.1, y)) p.2 hline
 
 /-- The Fréchet derivative in direction `v`, composed with a curve, has derivative given by the
 second Fréchet derivative. -/
@@ -140,7 +147,7 @@ private lemma sxy_eq {s : ℝ → ℝ → ℝ} {xs : ℝ}
   have heq : (fun x => deriv (fun y => s x y) xs)
       = fun x => fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2) (x, xs) (0, 1) := by
     funext x
-    exact deriv_slice_snd (p := (x, xs)) hS
+    exact (hasDerivAt_slice_snd (p := (x, xs)) hS).deriv
   change deriv (fun x => deriv (fun y => s x y) xs) xs = _
   rw [heq]
   exact hmain
@@ -155,7 +162,7 @@ private lemma syy_eq {s : ℝ → ℝ → ℝ} {xs : ℝ}
   have heq : (fun y => deriv (fun y' => s xs y') y)
       = fun y => fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2) (xs, y) (0, 1) := by
     funext y
-    exact deriv_slice_snd (p := (xs, y)) hS
+    exact (hasDerivAt_slice_snd (p := (xs, y)) hS).deriv
   change deriv (fun y => deriv (fun y' => s xs y') y) xs = _
   rw [heq]
   exact hmain
@@ -166,7 +173,7 @@ private lemma hasDerivAt_fitnessGradient {s : ℝ → ℝ → ℝ} {xs : ℝ} (h
   have hD : fitnessGradient s
       = fun x => fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2) (x, x) (0, 1) := by
     funext x
-    exact deriv_slice_snd (p := (x, x)) h.contDiff
+    exact (hasDerivAt_slice_snd (p := (x, x)) h.contDiff).deriv
   have hdiag : HasDerivAt (fun x : ℝ => (x, x)) (1, 1) xs :=
     (hasDerivAt_id _).prodMk (hasDerivAt_id _)
   have hmain := hasDerivAt_sndFDeriv_comp (v := (0, 1)) h.contDiff hdiag
@@ -260,11 +267,10 @@ private lemma invadable_part {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingula
 
 /-- Mutual invasibility: nearby strategies on opposite sides of `x*` invade each other. -/
 private lemma mutual_part {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s xs)
-    (hconv : sxy s xs xs + syy s xs xs < 0) (hyy : 0 < syy s xs xs) :
+    (hxy : sxy s xs xs < 0) :
     ∃ δ > 0, ∀ e, 0 < e → e < δ → 0 < s (xs - e) (xs + e) ∧ 0 < s (xs + e) (xs - e) := by
   have hS01 : fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2) (xs, xs) (0, 1) = 0 := by
-    have hslice := deriv_slice_snd (p := (xs, xs)) h.contDiff
-    rw [← hslice]
+    rw [← (hasDerivAt_slice_snd (p := (xs, xs)) h.contDiff).deriv]
     exact h.gradient_eq_zero
   have hdiag1 : fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2) (xs, xs) (1, 1) = 0 := by
     have hdiff : DifferentiableAt ℝ (fun p : ℝ × ℝ => s p.1 p.2) (xs, xs) :=
@@ -292,7 +298,6 @@ private lemma mutual_part {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s
   have hsxy : sxy s xs xs
       = fderiv ℝ (fderiv ℝ (fun p : ℝ × ℝ => s p.1 p.2)) (xs, xs) (1, 0) (0, 1) :=
     sxy_eq h.contDiff
-  have hsxy_neg : sxy s xs xs < 0 := by linarith [hconv, hyy]
   have hΦ2 : ContDiff ℝ 2 (fun u : ℝ => (fun p : ℝ × ℝ => s p.1 p.2)
       ((xs, xs) + u • ((-1, 1) : ℝ × ℝ))) :=
     h.contDiff.comp (contDiff_const.add (contDiff_id.smul contDiff_const))
@@ -392,7 +397,7 @@ public theorem branchingPoint {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingul
       ∀ e, 0 < e → e < δ → 0 < s (xs - e) (xs + e) ∧ 0 < s (xs + e) (xs - e) := by
   obtain ⟨δ₁, hδ₁, hgrad⟩ := grad_part h hconv
   obtain ⟨δ₂, hδ₂, hinv⟩ := invadable_part h hyy
-  obtain ⟨δ₃, hδ₃, hmut⟩ := mutual_part h hconv hyy
+  obtain ⟨δ₃, hδ₃, hmut⟩ := mutual_part h (by linarith only [hconv, hyy])
   refine ⟨min δ₁ (min δ₂ δ₃), lt_min hδ₁ (lt_min hδ₂ hδ₃), ?_, ?_, ?_⟩
   · intro x hx0 hxδ
     exact hgrad x hx0 (lt_of_lt_of_le hxδ (min_le_left _ _))
@@ -400,5 +405,74 @@ public theorem branchingPoint {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingul
     exact hinv y hy0 (lt_of_lt_of_le hyδ (le_trans (min_le_right _ _) (min_le_left _ _)))
   · intro e he0 heδ
     exact hmut e he0 (lt_of_lt_of_le heδ (le_trans (min_le_right _ _) (min_le_right _ _)))
+
+/-- A positive mixed partial makes the sum of the two invasion fitnesses negative nearby. -/
+private lemma sum_neg_near_of_sxy_pos {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s xs)
+    (hxy : 0 < sxy s xs xs) :
+    ∃ δ > 0, ∀ x y, |x - xs| < δ → |y - xs| < δ → x < y → s x y + s y x < 0 := by
+  let f : ℝ × ℝ → ℝ := fun p => s p.1 p.2
+  let d (p : ℝ × ℝ) := fderiv ℝ f p (0, 1)
+  let m (p : ℝ × ℝ) := fderiv ℝ (fderiv ℝ f) p (1, 0) (0, 1)
+  have hf : ContDiff ℝ 2 f := h.contDiff
+  have hm : Continuous m :=
+    (((hf.fderiv_right (m := 1) (by decide)).continuous_fderiv one_ne_zero).clm_apply
+      continuous_const).clm_apply continuous_const
+  have hm0 : 0 < m (xs, xs) := by
+    change 0 < fderiv ℝ (fderiv ℝ f) (xs, xs) (1, 0) (0, 1)
+    rwa [← sxy_eq h.contDiff]
+  obtain ⟨δ, hδ, hpos⟩ := Metric.eventually_nhds_iff.mp (hm.continuousAt.eventually_const_lt hm0)
+  refine ⟨δ, hδ, fun x y hx hy hlt => ?_⟩
+  have hnear {z : ℝ} (hz : z ∈ Set.Icc x y) : |z - xs| < δ :=
+    abs_lt.mpr ⟨by linarith only [(abs_lt.mp hx).1, hz.1],
+      by linarith only [(abs_lt.mp hy).2, hz.2]⟩
+  have ha : x ∈ Set.Icc x y := ⟨le_rfl, hlt.le⟩
+  have hb : y ∈ Set.Icc x y := ⟨hlt.le, le_rfl⟩
+  -- For each mutant strategy between `x` and `y`, its partial derivative grows with the resident.
+  have hdlt (b : ℝ) (hb' : b ∈ Set.Icc x y) : d (x, b) < d (y, b) := by
+    have hd (a : ℝ) : HasDerivAt (fun z => d (z, b)) (m (a, b)) a :=
+      hasDerivAt_sndFDeriv_comp (v := (0, 1)) h.contDiff
+        ((hasDerivAt_id' a).prodMk (hasDerivAt_const a b))
+    apply strictMonoOn_of_deriv_pos (convex_Icc x y)
+      (fun a _ => (hd a).continuousAt.continuousWithinAt) _ ha hb hlt
+    intro a ha'
+    rw [(hd a).deriv]
+    apply hpos
+    rw [Prod.dist_eq, Real.dist_eq, Real.dist_eq]
+    exact max_lt (hnear (interior_subset ha')) (hnear hb')
+  -- Thus `s y b - s x b` grows with `b`; at the endpoints the diagonal values vanish.
+  have hdiff (b : ℝ) : HasDerivAt (fun z => s y z - s x z) (d (y, b) - d (x, b)) b :=
+    (hasDerivAt_slice_snd (p := (y, b)) h.contDiff).sub
+      (hasDerivAt_slice_snd (p := (x, b)) h.contDiff)
+  have hmono : StrictMonoOn (fun b => s y b - s x b) (Set.Icc x y) := by
+    apply strictMonoOn_of_deriv_pos (convex_Icc x y)
+      (fun b _ => (hdiff b).continuousAt.continuousWithinAt)
+    intro b hb'
+    rw [(hdiff b).deriv]
+    exact sub_pos.mpr (hdlt b (interior_subset hb'))
+  have hlt' := hmono ha hb hlt
+  dsimp only at hlt'
+  rw [h.diag x, h.diag y] at hlt'
+  linarith only [hlt']
+
+/-- **Mutual invasibility** (Geritz et al. 1998, eq. (11)). For an invasion fitness `s` with
+singular strategy `x*`: if `s_xx + s_yy > 0` at `(x*, x*)`, there is `δ > 0` such that for
+every `h` with `0 < h < δ` the strategies `x* - h` and `x* + h` invade each other; if
+`s_xx + s_yy < 0`, there is `δ > 0` such that no two distinct strategies within `δ` of `x*`
+invade each other.
+
+Source: Geritz et al. (1998), eq. (11). -/
+public theorem mutual_invasibility {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s xs) :
+    (0 < sxx s xs xs + syy s xs xs → ∃ δ > 0, ∀ e, 0 < e → e < δ →
+        0 < s (xs - e) (xs + e) ∧ 0 < s (xs + e) (xs - e)) ∧
+      (sxx s xs xs + syy s xs xs < 0 → ∃ δ > 0, ∀ x y, |x - xs| < δ → |y - xs| < δ →
+        x ≠ y → ¬ (0 < s x y ∧ 0 < s y x)) := by
+  have hdiag := (diagonal_identity_and_hasDerivAt h).1
+  refine ⟨fun hpos => mutual_part h (by linarith only [hdiag, hpos]), ?_⟩
+  intro hneg
+  obtain ⟨δ, hδ, hsum⟩ := sum_neg_near_of_sxy_pos h (by linarith only [hdiag, hneg])
+  refine ⟨δ, hδ, fun x y hx hy hne hmut => ?_⟩
+  rcases lt_or_gt_of_ne hne with hlt | hlt
+  · exact (hsum x y hx hy hlt).not_gt (add_pos hmut.1 hmut.2)
+  · exact (hsum y x hy hx hlt).not_gt (add_pos hmut.2 hmut.1)
 
 end WantedExt.Biology.Ecology.SingularStrategyClassificationWanted
