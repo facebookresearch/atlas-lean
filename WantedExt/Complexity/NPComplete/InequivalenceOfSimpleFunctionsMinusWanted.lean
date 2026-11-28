@@ -100,8 +100,11 @@ def IsExpr (nX : ℕ) (ts : List (ℕ × ℕ)) : Prop :=
 def WellFormed (i : InequivalenceOfSimpleFunctionsMinusInstance) : Prop :=
   IsExpr i.1 i.2.1 ∧ IsExpr i.1 i.2.2
 
-/-- Some assignment of non-negative integers to the variables gives `f` and `g` different
-values. -/
+/-- There are expression trees `f` and `g` whose prefix token lists (`MinusExpr.tokens`) are
+exactly the two stored lists, and one assignment `a : ℕ → ℕ` of non-negative integers to every
+variable index under which their values differ. An empty list is the token list of no tree, so
+it is never feasible; the bounds on variable indices belong to `WellFormed`, so at `|X| = 0` the
+trees `var 0` and `var 1` can still be separated. -/
 def InequivalenceOfSimpleFunctionsMinusFeasible
     (i : InequivalenceOfSimpleFunctionsMinusInstance) : Prop :=
   ∃ f g : MinusExpr, f.tokens = i.2.1 ∧ g.tokens = i.2.2 ∧

@@ -80,8 +80,10 @@ well-formed program). -/
 def initialStore {n v : ℕ} (a : Fin n → Fin v) (j : ℕ) : ℕ :=
   if h : j < n then (a ⟨j, h⟩ : ℕ) else 0
 
-/-- Some initial assignment `a : X → V` makes the two programs end with different values in
-some variable `x ∈ X`. -/
+/-- Some initial assignment `a : X → V` of values in `V = {0, …, |V| - 1}` to the variables
+`0, …, n - 1` makes the two programs end with different values in some variable `x < n`. Both
+programs start from the same zero-extended store `initialStore a` (`a j` at `j < n`, `0`
+elsewhere); for `|V| = 0 < n` no assignment exists, so the instance is infeasible. -/
 def InequivalenceProgramsAssignmentsFeasible (i : InequivalenceProgramsAssignmentsInstance) :
     Prop :=
   ∃ a : Fin i.1 → Fin i.2.2.2, ∃ x : Fin i.1,

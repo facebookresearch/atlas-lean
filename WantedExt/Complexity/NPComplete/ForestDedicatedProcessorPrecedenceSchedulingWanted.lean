@@ -75,8 +75,12 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- The partial order is a forest: its Hasse diagram, the undirected graph of the immediate
-predecessor relation, is acyclic. -/
+/-- The undirected graph joining two distinct tasks when one immediately precedes the other
+(`ImmediatePredecessor`, read from the listed pairs) is acyclic. The test is not conditional on
+a partial order: two tasks listing both `(0, 1)` and `(1, 0)` give one undirected edge and pass,
+although that relation is not a strict order. Only for a strict partial order, which
+`DedicatedWellFormed` requires, is this graph the Hasse diagram, and the test then says that the
+order is a forest. -/
 def IsForest (i : PrecedenceConstrainedSchedulingInstance) : Prop :=
   (SimpleGraph.fromRel (ImmediatePredecessor i)).IsAcyclic
 
