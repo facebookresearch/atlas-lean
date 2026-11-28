@@ -21,6 +21,7 @@
 - [Evaluation at rational places: arithmetic and orders](evaluation-at-rational-places-arithmetic-and-ord/README.md)
 - [Principal divisors on the rational function field](principal-divisors-on-the-rational-function-fiel/README.md)
 - [Component charts and annuli of a semistable reduction](component-charts-and-annuli-of-a-semistable-redu/README.md)
+- [Weil reciprocity for function fields](weil-reciprocity-for-function-fields/README.md)
 - [Separating Transcendental](exists-separating-transcendental.md)
 - [Adic Valuation Rank One](adic-valuation-is-rank-one-discrete.md)
 - [Adic Valuation Trivial On](adic-valuation-is-trivial-on.md)
@@ -37,3 +38,5 @@
 - [Rat Func Non Finite Place](to-valuation-subring-eq-of-forall-ne-of.md)
 - [Genus Exists](stichtenoth-genus-exists-of-is-curve-ove.md)
 - [Finite sets of points lie in affine opens](finset-subset-affine-open-glued.md)
+- [Place Extension](pullback-over.md)
+- [Rational Weil Reciprocity](weil-reciprocity.md)

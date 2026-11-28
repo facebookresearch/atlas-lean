@@ -25,6 +25,9 @@
 - [Agent 0 knows the coin is tails exactly at tails](sat-know-zero-not-atom.md)
 - [Agent 1 does not know that the coin is heads](muddy-not-know-one-p-true.md)
 - [Agent 1 knows that agent 0 knows whether the coin is heads](muddy-know-one-knows-whether.md)
+- [Arbitrary, group and coalition announcement logics](quantified-public-announcement-logics.md)
+- [Model checking probabilistic knowledge under synchronous perfect recall is undecidable](probabilistic-knowledge-under-perfect-recall.md)
+- [Satisfiability of quantified announcement logics is undecidable](satisfiability-of-quantified-announcement-logics.md)
 
 - [Computing common knowledge on finite models](computing-common-knowledge-on-finite-models/README.md)
 - [Public announcement logic](public-announcement-logic/README.md)

@@ -1,5 +1,7 @@
 # Monotone likelihood ratio
 
+- [Power and sample size of the z test](power-and-sample-size-of-the-z-test/README.md)
+- [Exact-size Neyman–Pearson tests](exact-size-neyman-pearson-tests/README.md)
 - [Monotone likelihood ratio](has-monotone-likelihood-ratio-on.md)
 - [Antitone likelihood ratio](has-antitone-likelihood-ratio-on.md)
 - [Posterior stochastic ordering, cross-multiplied form](set-integral-ioi-mul-integral-le-of-has.md)
@@ -12,3 +14,4 @@
 - [Poisson family with antitone mean has antitone likelihood ratio](poisson-lik-has-antitone-lr.md)
 - [Binomial likelihood](binomial-lik.md)
 - [Binomial family has monotone likelihood ratio](binomial-lik-has-mlr.md)
+- [Threshold tests under a monotone likelihood ratio satisfy the Neyman–Pearson conditions](mlr-threshold-np-clauses.md)

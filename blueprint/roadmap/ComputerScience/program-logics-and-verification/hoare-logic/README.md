@@ -55,3 +55,4 @@
 - [Soundness of the recursion rule](soundness-of-the-recursion-rule.md)
 - [Self-composition reduces 2-safety to safety](self-composition-reduces-2-safety-to-safety.md)
 - [Two-run product of IMP commands](two-run-product-of-imp-commands.md)
+- [Quantitative Hoare logic](quantitative-hoare-logic/README.md)
