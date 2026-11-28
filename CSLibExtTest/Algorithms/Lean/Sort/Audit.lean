@@ -38,3 +38,11 @@ example : (medianOfMedians [5, 1, 4, 2, 3] 2).ret = some 3 := by decide
 #check Cslib.Algorithms.Lean.TimeM.clog_factorial_le
 
 example : Nat.clog 2 (Nat.factorial 5) ≤ 5 * Nat.clog 2 5 := by decide
+
+#check Cslib.Algorithms.Lean.TimeM.countingSort_stable_sorted_perm
+#check Cslib.Algorithms.Lean.TimeM.radixSort_stable_sorted_perm
+#check Cslib.Algorithms.Lean.TimeM.medianOfMedians_rank
+
+example : ⟪countingSort (fun r => (⟨r.1 % 2, by omega⟩ : Fin 2))
+    #[((1 : Nat), 'a'), ((0 : Nat), 'b'), ((1 : Nat), 'c')]⟫.toList =
+    [(0, 'b'), (1, 'a'), (1, 'c')] := by decide
