@@ -1,19 +1,43 @@
 # Coupling of biochemical reactions by an extra conserved component
 
-Transformed reaction Gibbs energies add when biochemical reactions are added, but a sum alone does not impose coupling. Restricting two independent reaction directions to their sum adds one conserved component; the resulting energy budget can permit uphill conversion coupled to a larger downhill conversion.
+Transformed reaction Gibbs energies add when biochemical reactions are added, but only a mechanism that runs the sum couples them. Glutamate–ammonia ligase runs ATP hydrolysis and glutamine synthesis as one reaction: its transformed Gibbs energy is the sum of theirs, and it conserves one quantity beyond the element balances.
 
-**Setting.** Fix $T>0$, $P$, $I$, pH and pMg, and a finite set $I'$ of $N'$ reactants with composition matrix $A'$ as for the [apparent equilibrium constant](apparent-equilibrium-constant.md). Let $G'$ be a differentiable function of the reactant amounts $n'$ on an open set, with $\partial G'/\partial n_i'=\Delta_fG_i'$, as in the reactant form of the [fundamental equation of the transformed Gibbs energy](transformed-gibbs-fundamental-equation.md). For a biochemical reaction $\nu$ write $\Delta_rG'(\nu)=\sum_i\nu_i\Delta_fG_i'$ at the current state. Let $\nu_1,\nu_2\in\mathbb R^{I'}$ be linearly independent biochemical reactions, both [balanced](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiometric-conservati/is-balanced.md) for $A'$. For a set $\mathcal S$ of reactions let $L(\mathcal S)=\{\ell\in\mathbb R^{I'}:\ell\cdot\nu=0\ \text{for all}\ \nu\in\mathcal S\}$ be the linear combinations of reactant amounts left unchanged by the [amounts after reaction extents](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiometric-conservati/amount-after-extents.md) $n_0'+\sum_r\xi_r\nu_r$.
+**Setting.** Fix $T>0$, $P$, $I$ and pH, and take as reactants $I'$ ATP, ADP, phosphate, glutamate, ammonia, glutamine and water, with composition matrix $A'$ over C, N, O and P as for the [apparent equilibrium constant](apparent-equilibrium-constant.md); hydrogen is not balanced at specified pH. Consider the biochemical reactions
+
+$$
+\nu_a:\ \mathrm{ATP}+\mathrm{H_2O}=\mathrm{ADP}+\text{phosphate},\qquad \nu_b:\ \text{glutamate}+\text{ammonia}=\text{glutamine}+\mathrm{H_2O},
+$$
+
+$$
+\nu_c=\nu_a+\nu_b:\ \mathrm{ATP}+\text{glutamate}+\text{ammonia}=\mathrm{ADP}+\text{phosphate}+\text{glutamine},
+$$
+
+each [balanced](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiometric-conservati/is-balanced.md) for $A'$; water cancels in $\nu_c$. Let $G'$ be a differentiable function of the reactant amounts $n'$ on an open set, with $\partial G'/\partial n_i'=\Delta_fG_i'$, as in the reactant form of the [fundamental equation of the transformed Gibbs energy](transformed-gibbs-fundamental-equation.md), and write $\Delta_rG'(\nu)=\sum_i\nu_i\Delta_fG_i'$ at the current state.
 
 **Statement.**
 
-1. (additivity) $\Delta_rG'(\nu_1+\nu_2)=\Delta_rG'(\nu_1)+\Delta_rG'(\nu_2)$, the same holds for $\Delta_rG'^\circ$, and $K'(\nu_1+\nu_2)=K'(\nu_1)\,K'(\nu_2)$.
-2. (one more component) $\dim L(\{\nu_1,\nu_2\})=N'-2$ and $\dim L(\{\nu_1+\nu_2\})=N'-1$. A catalyst that carries out only $\nu_1+\nu_2$ leaves one more independent combination of reactant amounts unchanged than separate catalysis of $\nu_1$ and $\nu_2$.
-3. (rates of change, wherever the composition lies in the open domain of $G'$) Along $n'(\xi_1,\xi_2)=n_0'+\xi_1\nu_1+\xi_2\nu_2$, $\partial G'/\partial\xi_k=\Delta_rG'(\nu_k)$; along $n'(\xi)=n_0'+\xi(\nu_1+\nu_2)$, $dG'/d\xi=\Delta_rG'(\nu_1)+\Delta_rG'(\nu_2)$.
-4. (conditional energy budget) Assume the criterion that, at fixed $T$, $P$, pH, pMg and $I$, a composition change in an available direction $d$ can occur spontaneously only if $\nabla G'\cdot d\le0$. Forward progress along the combined direction requires $\Delta_rG'(\nu_1)+\Delta_rG'(\nu_2)\le0$, compatible with $\Delta_rG'(\nu_1)>0$ if $\Delta_rG'(\nu_2)\le-\Delta_rG'(\nu_1)$. In the two-direction model, $-\nu_1$ is a strict descent direction when $\Delta_rG'(\nu_1)>0$, but the sum direction can also decrease $G'$. The criterion is necessary only: neither a negative sum nor the existence of a descent direction identifies a coupling mechanism or determines a reaction rate.
+1. (additivity) $\Delta_rG'(\nu_c)=\Delta_rG'(\nu_a)+\Delta_rG'(\nu_b)$, the same holds for the standard values $\Delta_rG'^\circ$, and $K'(\nu_c)=K'(\nu_a)\,K'(\nu_b)$.
+2. (single extent) Along the [amounts after an extent](../../amounts-and-stoichiometry/balanced-reactions-and-stoichiometric-conservati/amount-after-extents.md) $n'(\xi')=n_0'+\xi'\nu_c$ of the ligase reaction, wherever $n'(\xi')$ lies in the domain of $G'$,
 
-The budget uses the transformed reaction Gibbs energies at the actual concentrations, not the standard values $\Delta_rG'^\circ$. Standard data for ATP hydrolysis and other cofactor reactions enter as functions of $T$, $I$, pH and pMg, not as fixed energies.
+$$
+\frac{dG'}{d\xi'}=\Delta_rG'(\nu_c)=\Delta_rG'(\nu_a)+\Delta_rG'(\nu_b).
+$$
 
-**Example.** For glutamate–ammonia ligase, $\mathrm{ATP}+\text{glutamate}+\text{ammonia}=\mathrm{ADP}+\text{phosphate}+\text{glutamine}$ is the sum of $\mathrm{ATP}+\mathrm{H_2O}=\mathrm{ADP}+\text{phosphate}$ and $\text{glutamate}+\text{ammonia}=\text{glutamine}+\mathrm{H_2O}$, and water cancels. Over C, N, O and P the six reactants of the combined reaction have a composition matrix of rank $4$. With the apparent equilibrium constant that gives five relations for six concentrations. The missing relation is the extra component: the amount of ATP plus the amount of glutamine is conserved by the combined reaction, but not by ATP hydrolysis alone, and it is no combination of element balances.
+Under the source's criterion that a biochemical reaction can go spontaneously to the right only if its transformed reaction Gibbs energy at the actual concentrations is negative, the ligase reaction can run forward only when $\Delta_rG'(\nu_a)+\Delta_rG'(\nu_b)<0$, a condition compatible with $\Delta_rG'(\nu_b)>0$.
+
+3. (extra component) The composition matrix of the six reactants of $\nu_c$ over C, N, O and P has rank $4$, while the linear combinations of their amounts left unchanged by $\nu_c$ form a space of dimension $5$. So the ligase reaction conserves one combination of reactant amounts that is no combination of element balances. With the apparent equilibrium constant, the element balances give only five relations among six equilibrium concentrations; the extra conserved combination supplies the sixth.
+
+The energies in part 2 are those at the actual concentrations, not the standard values. Standard data for ATP hydrolysis enter as functions of $T$, $I$ and pH, not as fixed energies.
+
+## Derived extensions
+
+These statements are not printed in the source; each is proved here.
+
+**The extra conserved quantity.** The amount of ATP plus the amount of glutamine is conserved by $\nu_c$ but changed by $\nu_a$, and it is not in the row space of $A'$. *Proof.* $\nu_c$ changes ATP by $-1$ and glutamine by $+1$, $\nu_a$ changes ATP by $-1$ and glutamine by $0$, and a combination of the C, N, O, P rows with weight $0$ on ADP, phosphate, glutamate and ammonia is zero: ammonia forces the N weight to $0$, glutamate and phosphate then fix the C and P weights as multiples of the O weight, and ADP forces the O weight to $0$. Such a combination gives ATP weight $0$, not $1$.
+
+**General component count.** For any finite set of $N'$ reactants and linearly independent biochemical reactions $\nu_1,\nu_2$, let $L(\mathcal S)=\{\ell:\ell\cdot\nu=0\ \text{for all}\ \nu\in\mathcal S\}$. Then $\dim L(\{\nu_1,\nu_2\})=N'-2$ and $\dim L(\{\nu_1+\nu_2\})=N'-1$: running only the sum conserves exactly one more independent combination than running both reactions separately. *Proof.* $L(\mathcal S)$ is the orthogonal complement of the span of $\mathcal S$, whose dimension is $2$ for independent $\nu_1,\nu_2$ and $1$ for $\nu_1+\nu_2\ne0$.
+
+**Conditional energy budget.** In the general setting, assume that a composition change in an available direction $d$ can occur spontaneously only if $\nabla G'\cdot d\le0$. Along $n_0'+\xi_1\nu_1+\xi_2\nu_2$, $\partial G'/\partial\xi_k=\Delta_rG'(\nu_k)$. If only $\nu_1+\nu_2$ is available, forward progress requires $\Delta_rG'(\nu_1)+\Delta_rG'(\nu_2)\le0$, compatible with $\Delta_rG'(\nu_1)>0$. If both directions are available and $\Delta_rG'(\nu_1)>0$, then $-\nu_1$ is a direction of strict decrease. The criterion is necessary only: neither a negative sum nor a descent direction identifies a coupling mechanism or fixes a rate. *Proof.* The chain rule with $\partial G'/\partial n_i'=\Delta_fG_i'$, and $\nabla G'\cdot(-\nu_1)=-\Delta_rG'(\nu_1)$.
 
 ## Depends on
 
@@ -31,8 +55,8 @@ The budget uses the transformed reaction Gibbs energies at the actual concentrat
 
 ## Expansion
 
-Part 1: $\nu\mapsto\sum_i\nu_i\Delta_fG_i'$ is linear, which is Hess's law with the molar values $\Delta_fG_i'$ (or $\Delta_fG_i'^\circ$) in place of molar enthalpies; exponentiate for $K'$. Part 2: $L(\mathcal S)$ is the orthogonal complement of the span of $\mathcal S$, of dimension $N'$ minus the rank, and the rank is $2$ for independent $\nu_1,\nu_2$ and $1$ for $\nu_1+\nu_2\ne0$. Part 3 is the chain rule with $\partial G'/\partial n_i'=\Delta_fG_i'$. Part 4 applies the criterion to $d=\nu_1+\nu_2$ in the coupled case and to $d=-\nu_1$ in the uncoupled case, where $\nabla G'\cdot(-\nu_1)=-\Delta_rG'(\nu_1)<0$. The example's arithmetic uses element counts C10 N5 O13 P3 for ATP, C10 N5 O10 P2 for ADP, O4 P for phosphate, C5 N O4 for glutamate, N for ammonia, C5 N2 O3 for glutamine and O for water, with hydrogen not conserved at specified pH.
+Part 1: $\nu\mapsto\sum_i\nu_i\Delta_fG_i'$ is linear, which is Hess's law with the molar values $\Delta_fG_i'$ (or $\Delta_fG_i'^\circ$) in place of molar enthalpies; exponentiate for $K'$. Part 2 is the chain rule with $\partial G'/\partial n_i'=\Delta_fG_i'$, followed by part 1. Part 3 uses the element counts C10 N5 O13 P3 for ATP, C10 N5 O10 P2 for ADP, O4 P for phosphate, C5 N O4 for glutamate, N for ammonia and C5 N2 O3 for glutamine: the columns of ADP, phosphate, ammonia and glutamine are independent, so the rank is $4$, and the space conserved by the single nonzero reaction $\nu_c$ in six amounts has dimension $6-1=5$. The extra conserved combination is the derived extension above.
 
 ## Sources
 
-- R. A. Alberty, A. Cornish-Bowden, R. N. Goldberg, G. G. Hammes, K. Tipton and H. V. Westerhoff, *Recommendations for terminology and databases for biochemical thermodynamics*, IUBMB Recommendations, Biophysical Chemistry 155 (2011) 89–103, <https://doi.org/10.1016/j.bpc.2011.03.007>. Equation numbers are those of the official IUBMB-hosted author manuscript (August 2010, 53 pages), <https://iubmb.qmul.ac.uk/thermod2/BiochemThermodynamics.pdf>: Section 2, equations (2-8)–(2-10) and the discussion of components; Section 5, the criterion $(dG')\le0$ after equation (5-5); Section 7, equations (7-2)–(7-4) and (7-7); Section 8, equations (8-10) and (8-11), $N'=C'+R'$, and the remark that coupling by the enzyme mechanism adds components.
+- R. A. Alberty, A. Cornish-Bowden, R. N. Goldberg, G. G. Hammes, K. Tipton and H. V. Westerhoff, *Recommendations for terminology and databases for biochemical thermodynamics*, IUBMB Recommendations, Biophysical Chemistry 155 (2011) 89–103, <https://doi.org/10.1016/j.bpc.2011.03.007>. Equation numbers are those of the official IUBMB-hosted author manuscript (August 2010, 53 pages), <https://iubmb.qmul.ac.uk/thermod2/BiochemThermodynamics.pdf>: Section 2, equations (2-8)–(2-10) and the discussion of the additional conservation relationship; Section 7, equations (7-2)–(7-4) and (7-7) with the statement that the sign of the transformed reaction Gibbs energy determines the direction; Section 8, equations (8-10) and (8-11), $N'=C'+R'$, and the remark that coupling by the enzyme mechanism adds components.
