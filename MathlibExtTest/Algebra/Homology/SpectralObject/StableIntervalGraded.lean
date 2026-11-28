@@ -119,15 +119,12 @@ private theorem topStepToAbutment_id : Y.stableIntervalStepToAbutment 0 (2 : Fin
 private instance topImageInclusionIsIso :
     IsIso (image.ι (Y.stableIntervalStepToAbutment 0 (2 : Fin 3))) := by
   let _ : Epi (Y.stableIntervalStepToAbutment 0 (2 : Fin 3)) := by
-    rw [topStepToAbutment_id]
-    infer_instance
-  let _ : Epi (factorThruImage (Y.stableIntervalStepToAbutment 0 (2 : Fin 3)) ≫
-      image.ι (Y.stableIntervalStepToAbutment 0 (2 : Fin 3))) := by
-    rw [image.fac]
-    infer_instance
-  let _ := epi_of_epi (factorThruImage (Y.stableIntervalStepToAbutment 0 (2 : Fin 3)))
-    (image.ι (Y.stableIntervalStepToAbutment 0 (2 : Fin 3)))
-  infer_instance
+    refine ⟨fun g h w => ?_⟩
+    rw [topStepToAbutment_id] at w
+    exact (Category.id_comp g).symm.trans (w.trans (Category.id_comp h))
+  let _ : Epi (image.ι (Y.stableIntervalStepToAbutment 0 (2 : Fin 3))) :=
+    epi_image_of_epi (Y.stableIntervalStepToAbutment 0 (2 : Fin 3))
+  exact isIso_of_mono_of_epi (image.ι (Y.stableIntervalStepToAbutment 0 (2 : Fin 3)))
 
 private def topImageIso : Y.stableIntervalStepImage 0 2 ≅ Q :=
   asIso (image.ι (Y.stableIntervalStepToAbutment 0 (2 : Fin 3))) ≪≫ topStepIso
