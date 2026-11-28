@@ -47,6 +47,16 @@ def IsCycleCode (q : ℕ) {n : ℕ} (A : Finset (Fin n → ZMod q)) : Prop :=
     (∀ i : Fin n, x i = -1 ∨ x i = 0 ∨ x i = 1) →
     x = 0
 
+/-- A finite set is a cycle code exactly when two confusable members are equal. -/
+theorem isCycleCode_iff_eq_of_confusable {q n : ℕ} {A : Finset (Fin n → ZMod q)} :
+    IsCycleCode q A ↔ ∀ a ∈ A, ∀ b ∈ A,
+      (∀ i, a i - b i = -1 ∨ a i - b i = 0 ∨ a i - b i = 1) → a = b := by
+  constructor
+  · intro h a ha b hb hab
+    exact sub_eq_zero.mp (h _ ⟨a, ha, b, hb, rfl⟩ hab)
+  · rintro h _ ⟨a, ha, b, hb, rfl⟩ hab
+    exact sub_eq_zero.mpr (h a ha b hb hab)
+
 /-- **Cycle codes.** For natural numbers $q$ and $n$, a cycle code of length $n$ modulo $q$ is a
 finite set of words of length $n$ over $\mathbb{Z}/q\mathbb{Z}$ that is an independent code for
 the $q$-cycle. -/
