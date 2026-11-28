@@ -65,7 +65,14 @@ theorem source_coordinate : sourceCycle ≫
     (HomologicalComplex₂.horizontalDirectColumnCochain K 1).iCycles (-1) ≫
     (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 1 0).hom = 𝟙 Z := by
   unfold sourceCycle
-  rw [← HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso_hom_iCycles K 1 0]
+  have he := HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso_hom_iCycles K 1 0
+  have he' : (HomologicalComplex₂.horizontalDirectColumnVerticalCyclesIso K 1 0).hom ≫
+      (K.X 1).iCycles 0 =
+    (HomologicalComplex₂.horizontalDirectColumnCochain K 1).iCycles (-1) ≫
+      (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 1 0).hom := by
+    simpa only [Nat.cast_one, Nat.cast_zero, sub_zero] using he
+  simp only [Category.assoc]
+  rw [← he']
   simp only [Category.assoc, Iso.inv_hom_id_assoc, verticalCycle,
     HomologicalComplex.liftCycles_i]
 
@@ -78,14 +85,17 @@ def lowerRecovery : HomologicalComplex₂.horizontalFilteredTotalObj K 1 0 ⟶ Z
 theorem previous_recovery :
     HomologicalComplex₂.horizontalFilteredPreviousColumnInclusion K 0 0 ≫
       lowerRecovery = 𝟙 Z := by
-  unfold lowerRecovery
   have h := HomologicalComplex₂.horizontalFilteredTotalι_toTotal K 1 0
     ⟨⟨(0, 0), rfl⟩, by decide⟩
   change HomologicalComplex₂.horizontalFilteredPreviousColumnInclusion K 0 0 ≫
     HomologicalComplex₂.horizontalFilteredTotalToTotal K 1 0 =
       K.ιTotal (ComplexShape.down ℕ) 0 0 0 rfl at h
-  rw [← Category.assoc, h]
-  simpa using HomologicalComplex₂.ιTotal_horizontalTotalTopProjection K 0 0 0 0 rfl
+  have hc := congrArg
+    (fun f => f ≫ HomologicalComplex₂.horizontalTotalTopProjection K 0 0) h
+  have hp : K.ιTotal (ComplexShape.down ℕ) 0 0 0 rfl ≫
+      HomologicalComplex₂.horizontalTotalTopProjection K 0 0 = 𝟙 Z := by
+    simpa using HomologicalComplex₂.ιTotal_horizontalTotalTopProjection K 0 0 0 0 rfl
+  simpa only [lowerRecovery, Category.assoc] using hc.trans hp
 
 /-- The public horizontal cycle map carries the nonzero negative coordinate. -/
 theorem horizontal_cycle_coordinate : sourceCycle ≫
@@ -94,9 +104,18 @@ theorem horizontal_cycle_coordinate : sourceCycle ≫
     (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 0 0).hom =
       (1 : ℤ).negOnePow • (K.d 1 0).f 0 := by
   have h := HomologicalComplex₂.horizontalDirectColumnHorizontalCyclesMap_iCycles K 0 0
+  have h' : HomologicalComplex₂.horizontalDirectColumnHorizontalCyclesMap K 0 0 ≫
+      (HomologicalComplex₂.horizontalDirectColumnCochain K 0).iCycles 0 =
+    (1 : ℤ).negOnePow •
+      ((HomologicalComplex₂.horizontalDirectColumnCochain K 1).iCycles (-1) ≫
+        (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 1 0).hom ≫
+        (K.d 1 0).f 0 ≫
+        (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 0 0).inv) := by
+    simpa only [Nat.zero_add, Nat.add_zero, Nat.cast_one, Nat.cast_zero,
+      neg_zero, sub_zero] using h
   have hc := congrArg
     (fun f => sourceCycle ≫ f ≫
-      (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 0 0).hom) h
+      (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 0 0).hom) h'
   simpa only [Category.assoc, Linear.comp_units_smul, Linear.units_smul_comp,
     Iso.inv_hom_id_assoc, source_coordinate_assoc, Category.id_comp] using hc
 
@@ -107,14 +126,25 @@ theorem finite_boundary_coordinate : sourceCycle ≫
     HomologicalComplex₂.horizontalFilteredTopInclusion K 1 0 ≫
     HomologicalComplex₂.horizontalFilteredTotalD K 1 1 0 ≫ lowerRecovery =
       (K.d 1 0).f 0 := by
-  rw [HomologicalComplex₂.horizontalDirectColumnTopInclusion_d_eq_previous K 0 0]
-  rw [source_coordinate_assoc, Category.id_comp, previous_recovery]
-  exact Category.comp_id _
+  have h := HomologicalComplex₂.horizontalDirectColumnTopInclusion_d_eq_previous K 0 0
+  have h' : (HomologicalComplex₂.horizontalDirectColumnCochain K 1).iCycles (-1) ≫
+      (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 1 0).hom ≫
+      HomologicalComplex₂.horizontalFilteredTopInclusion K 1 0 ≫
+      HomologicalComplex₂.horizontalFilteredTotalD K 1 1 0 =
+    (HomologicalComplex₂.horizontalDirectColumnCochain K 1).iCycles (-1) ≫
+      (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 1 0).hom ≫
+      (K.d 1 0).f 0 ≫
+      HomologicalComplex₂.horizontalFilteredPreviousColumnInclusion K 0 0 := by
+    simpa only [Nat.zero_add, Nat.add_zero, Nat.cast_one, Nat.cast_zero,
+      neg_zero, sub_zero] using h
+  have hc := congrArg (fun f => sourceCycle ≫ f ≫ lowerRecovery) h'
+  simpa only [Category.assoc, source_coordinate_assoc, Category.id_comp,
+    previous_recovery, Category.comp_id] using hc
 
 example : (sourceCycle ≫
     HomologicalComplex₂.horizontalDirectColumnHorizontalCyclesMap K 0 0 ≫
     (HomologicalComplex₂.horizontalDirectColumnCochain K 0).iCycles 0 ≫
-    (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 0 0).hom).hom (1 : ℤ) = -2 := by
+    (HomologicalComplex₂.horizontalDirectColumnCochainXIso K 0 0).hom).hom (1 : ℤ) = (-2 : ℤ) := by
   rw [horizontal_cycle_coordinate, horizontal_component]
   change (1 : ℤ).negOnePow • ((1 : ℤ) + 1) = -2
   decide
@@ -131,7 +161,7 @@ example : ¬ Function.Surjective ((K.d 1 0).f 0).hom := by
   intro h
   obtain ⟨x, hx⟩ := h (1 : ℤ)
   rw [horizontal_component] at hx
-  change x + x = (1 : ℤ) at hx
+  have hx' : (x : ℤ) + x = 1 := hx
   omega
 
 end MathlibExtTest.Algebra.Homology.FirstQuadrantFirstPageFocusedClients
