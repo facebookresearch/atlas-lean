@@ -2623,6 +2623,7 @@
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "eb4a63499b880eb1f189bcab87f13c64227e6551da107c253140cae6d72d04c7"
     },
+    {"path": "MathlibExt/CategoryTheory/Preadditive/FunctorEnd.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f1b45e38a60b533f63009c258a80445cd431955bfc9decd8ce604d51a1912fdc", "rationale": "Replace workflow-oriented commentary with mathematical documentation of the native functor-induced End map and its ring/algebra extensions for additive/linear functors. The implementation and original category/scalar worlds are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "5310691c6db765ed5268d35ecee10aae72da7753814efe70ecc5a8d64c28cfd9"},
     {
       "path": "MathlibExt/CategoryTheory/Preadditive/KilledBy.lean",
       "backport": "not-needed",
