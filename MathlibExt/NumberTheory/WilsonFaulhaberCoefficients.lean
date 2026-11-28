@@ -17,6 +17,7 @@ import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Data.Nat.Choose.Dvd
 import Mathlib.NumberTheory.BernoulliPolynomials
+import MathlibExt.Algebra.Polynomial.ZeroOneSquareComposition
 import all MathlibExt.NumberTheory.Bernoulli.SumModPrime
 import all MathlibExt.NumberTheory.WilsonFermatQuotient
 
@@ -45,7 +46,12 @@ following Corollary 1, with the quadratic coefficient identified by differentiat
 * J. W. L. Glaisher, *On the residues of the sums of products of the first p − 1 numbers and
   their powers, to modulus p^2 or p^3*, Quart. J. Math. 31 (1900), pp. 321–353
   (the Bernoulli form of the Wilson congruence).
-* `MathlibExt.NumberTheory.Bernoulli.SumModPrime` (`padicValuation_bernoulli_le_one`) and
+* Z-H. Sun, *Congruences concerning Bernoulli numbers and Bernoulli polynomials*,
+  Discrete Applied Mathematics 105 (2000), pp. 193–223 (the power-sum reduction to evaluation
+  at `p`, credited to Sun by Levaillant on p. 9 before equation (21)).
+* `MathlibExt.Algebra.Polynomial.ZeroOneSquareComposition`
+  (`Polynomial.expand_contract_of_comp_neg_X_eq`),
+  `MathlibExt.NumberTheory.Bernoulli.SumModPrime` (`padicValuation_bernoulli_le_one`), and
   `MathlibExt.NumberTheory.WilsonFermatQuotient` (`wilson_mod_prime_sq`, `coprime_of_mem`).
 -/
 
@@ -125,17 +131,6 @@ private theorem powerSumPoly_coeff_integral {p l : ℕ} [Fact p.Prime] (hp2 : p 
       · exact_mod_cast Int.padicValuation_le_one p ((p + 1).choose j)
   · simp
 
-private theorem expand_contract_of_reflect (H : ℚ[X]) (hH : H.comp (-X) = H) :
-    expand ℚ 2 (H.contract 2) = H := by
-  ext j
-  rw [coeff_expand (by decide : 0 < 2)]
-  split_ifs with hj
-  · rw [coeff_contract two_ne_zero, Nat.div_mul_cancel hj]
-  · have ho : Odd j := Nat.not_even_iff_odd.mp (by simpa [even_iff_two_dvd] using hj)
-    have he := congrArg (fun Q : ℚ[X] => Q.coeff j) hH
-    rw [show (-X : ℚ[X]) = C (-1) * X by simp, comp_C_mul_X_coeff, ho.neg_one_pow] at he
-    linarith
-
 private theorem exists_faulhaber {p l : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) (hpl : p = 2 * l + 1) :
     ∃ F : ℚ[X], F.comp triangularPoly = powerSumPoly p ∧
       ∀ i, Rat.padicValuation p (F.coeff i) ≤ 1 := by
@@ -171,7 +166,7 @@ private theorem exists_faulhaber {p l : ℕ} [Fact p.Prime] (hp2 : p ≠ 2) (hpl
     have hpow : ((X : ℚ[X]) ^ 2).comp (X - C (1 / 2)) = (X - C (1 / 2)) ^ 2 := by simp
     dsimp only [F]
     rw [comp_assoc, hU, ← hpow, ← comp_assoc, ← expand_eq_comp_X_pow,
-      expand_contract_of_reflect H href]
+      expand_contract_of_comp_neg_X_eq href]
     dsimp only [H]
     rw [comp_assoc, hshift, comp_X]
   · let S := (Rat.padicValuation p).integer
