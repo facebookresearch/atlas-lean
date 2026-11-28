@@ -25,6 +25,7 @@ Given a decidable $A$ not computable in time $O(t^3)$, the proof builds a univer
 - [Sets of Kolmogorov-random strings R_C, R_K and R_{K^t}](kolmogorov-random-strings.md)
 - [The complexity class P](../../../complexity-classes/the-classes-p-np-and-conp/p.md)
 - [Polynomial time with polynomial advice](../../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
+- [Deterministic space classes on multi-tape machines](../../../complexity-classes/time-and-space-classes-on-multi-tape-machines/dspace.md)
 
 ## Proof depends on
 

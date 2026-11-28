@@ -16,8 +16,6 @@ $\mathrm{AvgP}$ is the class of distributional problems that admit an errorless 
 1. for every $x$ in the support of $D_n$, $\Pr_{\mathcal{A}}[\mathcal{A}(x,1^n,1^k)\in\{L(x),\bot\}]\ge 4/5$;
 2. $\Pr_{x\sim D_n}\bigl[\Pr_{\mathcal{A}}[\mathcal{A}(x,1^n,1^k)=\bot]<1/5\bigr]\ge 1-1/k$.
 
-For the problem $\mathrm{MINnKT}$ with inputs $(x,1^s,1^t)$, $(\mathrm{MINnKT},\mathcal{U})\in\mathrm{AvgBPP}$ means: there are a probabilistic polynomial-time $\mathcal{A}$ and a polynomial $\rho$ such that for all $n,s,k$ and all $t\ge\rho(n)$, every $x\in\{0,1\}^n$ satisfies $\Pr_{\mathcal{A}}[\mathcal{A}(x,1^s,1^t,1^k)\in\{\mathrm{MINnKT}(x,1^s,1^t),\bot\}]\ge 4/5$, and $\Pr_{x\sim\{0,1\}^n}\bigl[\Pr_{\mathcal{A}}[\mathcal{A}(x,1^s,1^t,1^k)=\bot]<1/5\bigr]\ge 1-1/k$.
-
 **Heuristica (Hirahara's sense).** Heuristica is the statement that $\mathrm{P}\ne\mathrm{NP}$ and $\mathrm{DistNP}\subseteq\mathrm{AvgP}$. This uses errorless schemes, and differs from the five-worlds notion built on one polynomial-time algorithm that may answer wrongly on a negligible fraction of inputs; theorems citing this page assume the errorless notion.
 
 ## Expansion
@@ -38,6 +36,6 @@ None.
 ## Sources
 
 - Andrej Bogdanov and Luca Trevisan, "Average-Case Complexity", *Foundations and Trends in Theoretical Computer Science* 2(1), 2006, [doi:10.1561/0400000004](https://doi.org/10.1561/0400000004) (Definitions 6 and 8, Proposition 7, Definitions 10 to 13; numbering of arXiv:cs/0606037v2).
-- Shuichi Hirahara, "Symmetry of Information from Meta-Complexity", *37th Computational Complexity Conference (CCC 2022)*, LIPIcs 234, 2022, [doi:10.4230/LIPIcs.CCC.2022.26](https://doi.org/10.4230/LIPIcs.CCC.2022.26) (Section 1.1, paragraph after Theorem 1.2; Section 1.2).
+- Shuichi Hirahara, "Symmetry of Information from Meta-Complexity", *37th Computational Complexity Conference (CCC 2022)*, LIPIcs 234, 2022, [doi:10.4230/LIPIcs.CCC.2022.26](https://doi.org/10.4230/LIPIcs.CCC.2022.26) (Section 1, paragraph after Theorem 1.2; Section 1.2).
 - Shuichi Hirahara, "Non-Disjoint Promise Problems from Meta-Computational View of Pseudorandom Generator Constructions", *35th Computational Complexity Conference (CCC 2020)*, LIPIcs 169, 2020, [doi:10.4230/LIPIcs.CCC.2020.20](https://doi.org/10.4230/LIPIcs.CCC.2020.20) (Section 1.2, Theorem 4, Corollary 5).
 - Jinqiao Hu, Zhenjian Lu and Igor C. Oliveira, "Hardness of Computing Nondeterministic Kolmogorov Complexity", *41st Computational Complexity Conference (CCC 2026)*, LIPIcs, 2026, [doi:10.4230/LIPIcs.CCC.2026.9](https://doi.org/10.4230/LIPIcs.CCC.2026.9) (Section 2.7).

@@ -24,6 +24,7 @@ The proof views a black-box pseudorandom generator construction meta-computation
 
 - [The promise problem GapMINKT](gap-minkt-promise-problem.md)
 - [Errorless average-case easiness: DistNP ⊆ AvgP, AvgBPP and Heuristica](errorless-average-case-easiness.md)
+- [The class E](../../../complexity-classes/time-and-space-complexity-classes/e.md)
 
 ## Proof depends on
 

@@ -28,6 +28,7 @@ If $M^{R'}$ erred on some length-$n$ input, the first such input could be found 
 - [BPP](../../../complexity-classes/time-and-space-complexity-classes/bpp.md)
 - [Polynomial time with polynomial advice](../../../complexity-classes/time-and-space-complexity-classes/ppoly.md)
 - [Polynomial space for decision problems](../../../complexity-classes/time-and-space-complexity-classes/pspace.md)
+- [Deterministic time classes on multi-tape machines](../../../complexity-classes/time-and-space-classes-on-multi-tape-machines/dtime.md)
 
 ## Proof depends on
 

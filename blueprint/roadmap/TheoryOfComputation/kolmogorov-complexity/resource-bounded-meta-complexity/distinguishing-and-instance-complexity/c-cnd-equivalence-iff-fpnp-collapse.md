@@ -16,6 +16,7 @@ Item 1 implies item 2 because generating a string lets one distinguish it. For i
 
 - [Distinguishing complexity CD^t](distinguishing-complexity-cdt.md)
 - [Nondeterministic time-bounded Kolmogorov complexity nK^t](../nondeterministic-kolmogorov-complexity/nondeterministic-time-bounded-complexity.md)
+- [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 

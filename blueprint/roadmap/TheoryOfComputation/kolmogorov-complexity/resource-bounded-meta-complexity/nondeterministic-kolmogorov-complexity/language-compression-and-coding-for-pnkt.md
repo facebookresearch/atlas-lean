@@ -25,7 +25,9 @@ For language compression take $k=\lceil\log|A_n|\rceil+2$ and a pairwise-indepen
 ## Depends on
 
 - [Probabilistic nondeterministic time-bounded complexity pnK^t](probabilistic-nondeterministic-complexity-pnkt.md)
-- [Samplable distributions](../../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/samplable.md)
+- [Errorless average-case easiness: DistNP ⊆ AvgP, AvgBPP and Heuristica](../symmetry-of-information-and-gap-problems/errorless-average-case-easiness.md)
+- [BPP](../../../complexity-classes/time-and-space-complexity-classes/bpp.md)
+- [The complexity class NP](../../../complexity-classes/the-classes-p-np-and-conp/np.md)
 
 ## Proof depends on
 

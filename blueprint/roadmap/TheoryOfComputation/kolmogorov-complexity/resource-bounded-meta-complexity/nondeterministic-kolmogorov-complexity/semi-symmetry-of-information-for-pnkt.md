@@ -24,8 +24,7 @@ For semi-symmetry the proof follows the direct-product-generator approach used t
 
 - [Probabilistic nondeterministic time-bounded complexity pnK^t](probabilistic-nondeterministic-complexity-pnkt.md)
 - [Probabilistic time-bounded Kolmogorov complexity pK^t and its conditional form](../../probabilistic-kolmogorov-and-symmetry-of-information/pkt-probabilistic-time-bounded-kolmogorov-complexity.md)
-- [Polynomial-time symmetry of information hypothesis for K^t and pK^t](../../probabilistic-kolmogorov-and-symmetry-of-information/polynomial-time-symmetry-of-information-hypothesis.md)
-- [Samplable distributions](../../../pseudorandomness-and-one-way-functions/impagliazzo-s-five-worlds/samplable.md)
+- [Errorless average-case easiness: DistNP ⊆ AvgP, AvgBPP and Heuristica](../symmetry-of-information-and-gap-problems/errorless-average-case-easiness.md)
 
 ## Proof depends on
 

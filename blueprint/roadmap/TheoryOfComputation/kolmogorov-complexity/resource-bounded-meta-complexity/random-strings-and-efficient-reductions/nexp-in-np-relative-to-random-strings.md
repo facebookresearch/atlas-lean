@@ -6,7 +6,7 @@ $$
 \mathrm{NEXP}\subseteq\mathrm{NP}^{R_C}.
 $$
 
-This extends the inclusions $\mathrm{PSPACE}\subseteq\mathrm{P}^{R}$ and $\mathrm{EXP}\subseteq\mathrm{NP}^{R}$ of Allender, Buhrman, Koucký, van Melkebeek and Ronneburger. Allender, Buhrman, Friedman and Loff note that these inclusions hold for both plain and prefix-free complexity and for every choice of universal machine.
+This extends $\mathrm{PSPACE}\subseteq\mathrm{P}^{R_K}$ of Allender, Buhrman, Koucký, van Melkebeek and Ronneburger, who also prove $\mathrm{EXP}=\mathrm{NP}^{R_{Kt}}$ for the set $R_{Kt}$ of strings $x$ with Levin complexity $\mathrm{Kt}(x)\ge|x|/2$. Allender, Buhrman, Friedman and Loff note that $\mathrm{PSPACE}\subseteq\mathrm{P}^{R}$ and $\mathrm{NEXP}\subseteq\mathrm{NP}^{R}$ hold for both plain and prefix-free complexity and for every choice of universal machine.
 
 ## Expansion
 
@@ -25,4 +25,5 @@ None.
 ## Sources
 
 - Eric Allender, Harry Buhrman and Michal Koucký, "What Can Be Efficiently Reduced to the Kolmogorov-Random Strings?", *Annals of Pure and Applied Logic* 138(1–3), 2006, [doi:10.1016/j.apal.2005.06.003](https://doi.org/10.1016/j.apal.2005.06.003) (Theorem 6; numbering of the ECCC TR04-044 version).
+- Eric Allender, Harry Buhrman, Michal Koucký, Dieter van Melkebeek and Detlef Ronneburger, "Power from Random Strings", *SIAM Journal on Computing* 35(6), 2006, [doi:10.1137/050628994](https://doi.org/10.1137/050628994) (Theorems 11 and 13; numbering of ECCC TR02-028, revision 1).
 - Eric Allender, Harry Buhrman, Luke Friedman and Bruno Loff, "Reductions to the set of random strings: The resource-bounded case", *Logical Methods in Computer Science* 10(3:5), 2014, DOI 10.2168/LMCS-10(3:5)2014, [arXiv:1406.7658v2](https://arxiv.org/abs/1406.7658v2) (Section 1).

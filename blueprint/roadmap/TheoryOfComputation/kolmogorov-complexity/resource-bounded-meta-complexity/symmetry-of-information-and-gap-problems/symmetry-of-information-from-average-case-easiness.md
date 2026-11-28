@@ -21,6 +21,7 @@ Both hypotheses of the precise form follow from $\mathrm{DistNP}\subseteq\mathrm
 - [The promise problem GapMINKT](gap-minkt-promise-problem.md)
 - [Polynomial-time symmetry of information hypothesis for K^t and pK^t](../../probabilistic-kolmogorov-and-symmetry-of-information/polynomial-time-symmetry-of-information-hypothesis.md)
 - [Errorless average-case easiness: DistNP ⊆ AvgP, AvgBPP and Heuristica](errorless-average-case-easiness.md)
+- [The class E](../../../complexity-classes/time-and-space-complexity-classes/e.md)
 
 ## Proof depends on
 

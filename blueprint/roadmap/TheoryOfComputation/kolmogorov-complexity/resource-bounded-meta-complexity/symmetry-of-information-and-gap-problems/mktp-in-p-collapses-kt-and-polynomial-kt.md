@@ -18,6 +18,7 @@ Item 2 follows from item 1 by setting $s=\mathrm{Kt}(x)$: a coRP algorithm accep
 
 - [The minimum Kt problem MKtP](../../time-bounded-kolmogorov-complexity/the-minimum-kt-problem.md)
 - [Time-bounded Kolmogorov complexity K^t and Levin's Kt](../../time-bounded-kolmogorov-complexity/time-bounded-kolmogorov-complexity-and-levin-kt.md)
+- [Deterministic time classes on multi-tape machines](../../../complexity-classes/time-and-space-classes-on-multi-tape-machines/dtime.md)
 
 ## Proof depends on
 
