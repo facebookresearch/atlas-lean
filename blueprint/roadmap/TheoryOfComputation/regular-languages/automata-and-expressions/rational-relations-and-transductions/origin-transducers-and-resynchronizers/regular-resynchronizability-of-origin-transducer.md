@@ -17,6 +17,7 @@ resynchronizer is undecidable for one-way transducers $T_1, T_2$ with $[\![T_1]\
 ## Depends on
 
 - [Origin semantics of transducers and bounded regular resynchronizers](origin-semantics-of-transducers-and-bounded-regu.md)
+- [Decidability by multi-stack machines](../../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -32,4 +33,4 @@ equivalence, replace $T_{\mathrm{down}}$ by $T_{\mathrm{down}} \cup T_{\mathrm{u
 
 ## Sources
 
-- D. Kuperberg and J. Martens, "Regular resynchronizability of origin transducers is undecidable", in *45th International Symposium on Mathematical Foundations of Computer Science (MFCS 2020)*, LIPIcs 170, paper 58, 2020, doi:10.4230/LIPIcs.MFCS.2020.58; read in arXiv:2002.07558v3: the main theorem of Section 5 with the remark after it, the corollary on 1NTs and shift resynchronizers, the theorem on equivalence of 1NTs, the corollary on rational resynchronizers, and the decidability theorem for unambiguous transducers recalled in Section 4.
+- D. Kuperberg and J. Martens, "Regular resynchronizability of origin transducers is undecidable", in *45th International Symposium on Mathematical Foundations of Computer Science (MFCS 2020)*, LIPIcs 170, paper 58, 2020, doi:10.4230/LIPIcs.MFCS.2020.58; read in arXiv:2002.07558v3: Theorem 20 in Section 5 with the remark after it, Corollary 25 (1NTs and shift resynchronizers), Theorem 26 (equivalence of 1NTs), Corollary 27 (rational resynchronizers), Lemma 39 in Appendix A.7 (BoundTape), and Theorem 10 (unambiguous transducers) recalled in Section 4, with the numbering of that version.
