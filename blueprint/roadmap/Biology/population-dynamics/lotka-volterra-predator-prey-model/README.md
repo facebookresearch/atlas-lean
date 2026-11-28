@@ -11,4 +11,11 @@
 
 - [Spatial, Allee, tumour, and eco-evolutionary population dynamics](spatial-and-game-population-dynamics/README.md)
 - [Interacting species](interacting-species/README.md)
-- [Population dynamics (part 1)](part-01/README.md)
+## [Consumer–resource models, lifetime reproduction and selection](part-01/README.md)
+
+- [Crop–locust–pesticide model](part-01/crop-locust-pesticide-model/README.md)
+- [Invasion criterion in consumer-resource models](part-01/invasion-criterion-in-consumer-resource-models/README.md)
+- [Markov chains with rewards](part-01/markov-chains-with-rewards/README.md)
+- [Optimal diet choice and multi-prey functional response](part-01/optimal-diet-choice-and-multi-prey-functional-response/README.md)
+- [Pessimistic probability weighting under stochastic growth](part-01/pessimistic-probability-weighting-under-stochastic-growth/README.md)
+- [Weak-selection fixation under death-Birth updating](part-01/weak-selection-fixation-under-death-birth-updating/README.md)
