@@ -18,6 +18,8 @@ The case of deficiency one, $|R| = |A| - 1$, is left open in the source; there, 
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
 - [Varieties of groups](../axiomatizable-classes-of-groups/is-variety.md)
+- [The first-order language of groups](../../../Logic/model-theory/first-order-language-of-groups/group-language.md)
+- [Complete theory of a first-order structure](../../../Logic/first-order-logic/theory-of-structure.md)
 
 ## Proof depends on
 

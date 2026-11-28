@@ -21,6 +21,7 @@ The same paper proves undecidability for every finitely generated non-abelian fr
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 - [Varieties of groups](../axiomatizable-classes-of-groups/is-variety.md)
 - [Solution set of a system of equations](../equationally-noetherian-groups/solutions-2.md)
+- [Free group of a variety on a finite set](../automorphisms-of-categories-of-relatively-free-g/relatively-free-group.md)
 
 ## Proof depends on
 
