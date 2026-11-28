@@ -15,9 +15,17 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
-
+- [Post-selection inference for changepoints](post-selection-inference-for-changepoints/README.md)
+- [Age-structured microlesion model of tumour growth](age-structured-microlesion-model-of-tumour-growth/README.md)
+- [Consecutive seeding of metastases](consecutive-seeding-of-metastases/README.md)
+- [Driver mutations in a two-type branching process](driver-mutations-in-a-two-type-branching-process/README.md)
+- [Excess-mutation tests for regulatory elements](excess-mutation-tests-for-regulatory-elements/README.md)
+- [Recurrent mutation in regulatory elements](recurrent-mutation-in-regulatory-elements/README.md)
+- [Regional somatic mutation burden](regional-somatic-mutation-burden/README.md)
+- [Controllability of adaptive cancer therapy](controllability-of-adaptive-cancer-therapy/README.md)
+- [Immune extinction threshold models](immune-extinction-threshold-models/README.md)
+- [Minimum uncovering branching](minimum-uncovering-branching/README.md)
 ## [Drug resistance, copy-number distances and survival subnetworks](part-01/README.md)
-
 - [Darwinian dynamics of cancer drug resistance](part-01/darwinian-dynamics-of-drug-resistance/README.md)
 - [Multi-copy copy-number profile transformation](part-01/multi-copy-copy-number-profile-transformation/README.md)
 - [Mutational burden after treatment in birth–death tumours](part-01/mutational-burden-after-treatment-in-birth-death-tumours/README.md)

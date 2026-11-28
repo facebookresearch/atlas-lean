@@ -9,8 +9,9 @@
 - [Lotka–Volterra solutions with the same positive start agree for t ≥ 0](eq-of-initial.md)
 - [Non-equilibrium positive solutions are periodic with a least period](exists-minimal-period.md)
 
+- [Spatial, Allee, tumour, and eco-evolutionary population dynamics](spatial-and-game-population-dynamics/README.md)
+- [Interacting species](interacting-species/README.md)
 ## [Ecological, evolutionary and tumour–immune dynamics](part-01/README.md)
-
 - [Adaptive dynamics of memory-one strategies](part-01/adaptive-dynamics-of-memory-one-strategies/README.md)
 - [Clonal statistics of stem cell self-renewal](part-01/clonal-statistics-of-stem-cell-self-renewal/README.md)
 - [Clone-consistent ecosystem models](part-01/clone-consistent-ecosystem-models/README.md)

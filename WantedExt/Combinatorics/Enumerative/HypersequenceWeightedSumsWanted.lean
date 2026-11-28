@@ -14,11 +14,14 @@ public import Mathlib.Analysis.Complex.Basic
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSmallCases
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumRecurrences
 public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumStirling
+public import MathlibExt.Combinatorics.Enumerative.HyperLucasRecurrence
 public import MathlibExt.Combinatorics.Enumerative.Hypersequence
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceAbelSummation
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceBinomial
+public import MathlibExt.Combinatorics.Enumerative.HypersequenceLucasClosedForm
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceRecurrence
 public import MathlibExt.Combinatorics.Enumerative.HypersequenceWeightedSums
+public import MathlibExt.Combinatorics.Enumerative.PowerSumRisingStirling
 public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
 public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
@@ -90,35 +93,6 @@ public theorem_wanted hyperFibonacci_recurrence (r n : ℕ) :
     hyperFibonacci r 0 = 0 ∧ hyperFibonacci r 1 = 1 ∧
       hyperFibonacci (r + 1) (n + 2) =
         hyperFibonacci (r + 1) (n + 1) + hyperFibonacci (r + 1) n + (n + r + 1).choose r
-
-/-- **Hyperlucas numbers in terms of Lucas numbers.** Let $L_n$ denote the Lucas numbers and
-let $L^{(r)}_n$ denote the hyperlucas numbers, the hypersequence of generation $r$ of $(L_n)$.
-For all natural numbers $r$ and $n$, in the integers,
-$$L^{(r)}_n = L_{n+2r} - \sum_{k=0}^{r-1} \binom{n+k}{k} L_{2(r-k)-1}.$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 5, Equation (2.12) (`integers-2024-A70-thm-5`). -/
-public theorem_wanted hyperLucas_eq_lucas_sub_sum (r n : ℕ) :
-    ((hypersequence lucasNumber r n : ℕ) : ℤ) =
-      lucasNumber (n + 2 * r) -
-        ∑ k ∈ range r, ((n + k).choose k * lucasNumber (2 * (r - k) - 1) : ℕ)
-
-/-- **Recurrence for the hyperlucas numbers.** Let $L^{(r)}_n$ denote the hyperlucas numbers,
-the hypersequence of generation $r$ of the Lucas numbers. For all natural numbers $r$ and $n$,
-$L^{(r)}_0 = 2$, $L^{(r)}_1 = 2r + 1$, and, in the rational numbers,
-$$L^{(r+1)}_{n+2} = L^{(r+1)}_{n+1} + L^{(r+1)}_n + \frac{n + 2(r+1)}{n+2} \binom{n+r+1}{r}.$$
-
-Equivalently, for $r \ge 1$,
-$$L^{(r)}_{n+2} = L^{(r)}_{n+1} + L^{(r)}_n + \frac{n+2r}{n+2} \binom{n+r}{r-1}.$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Theorem 6, Equation (2.13) (`integers-2024-A70-thm-6`). -/
-public theorem_wanted hyperLucas_recurrence (r n : ℕ) :
-    hypersequence lucasNumber r 0 = 2 ∧ hypersequence lucasNumber r 1 = 2 * r + 1 ∧
-      ((hypersequence lucasNumber (r + 1) (n + 2) : ℕ) : ℚ) =
-        ((hypersequence lucasNumber (r + 1) (n + 1) : ℕ) : ℚ) +
-          ((hypersequence lucasNumber (r + 1) n : ℕ) : ℚ) +
-          ((n + 2 * (r + 1) : ℕ) : ℚ) / (n + 2) * ((n + r + 1).choose r : ℚ)
 
 /-- **Power-weighted sums of hypersequences.** Let $a$ be a sequence of complex numbers, let
 $a^{(r)}_n$ denote its hypersequence of generation $r$, let
@@ -206,21 +180,6 @@ public theorem_wanted carlitzSum_deriv_and_recurrence {ℓ m : ℕ} (hℓ : 1 �
       alternatingBinomialPowerSum ℓ m 1 (n + 1) =
         (m + n + 1) * alternatingBinomialPowerSum (ℓ - 1) m 1 (n + 1) -
           m * alternatingBinomialPowerSum (ℓ - 1) (m - 1) 1 (n + 1)
-
-/-- **Sums of $m$th powers via Stirling numbers of the second kind.** For all natural numbers
-$n$ and $m$,
-$$\sum_{k=1}^{n} k^m = \sum_{k=0}^{m} (-1)^{m-k}\, k!\, \binom{n + k}{k + 1}\, S(m, k),$$
-where $S(m, k)$ denotes the Stirling numbers of the second kind.
-
-The paper takes $n \ge 1$; for $n = 0$ both sides vanish, so that case is included.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Corollary 5, Equation (4.4) (`integers-2024-A70-cor-5`). -/
-public theorem_wanted sum_pow_eq_sum_stirlingSecond (n m : ℕ) :
-    ∑ k ∈ Icc 1 n, (k : ℤ) ^ m =
-      ∑ k ∈ range (m + 1),
-        (-1) ^ (m - k) * (k.factorial : ℤ) * ((n + k).choose (k + 1) : ℤ) *
-          (Nat.stirlingSecond m k : ℤ)
 
 /-- **Power-weighted sums of Fibonacci numbers.** Let $F_k$ denote the Fibonacci numbers and let
 $p_{\ell,m}(x, y) = \sum_{i=0}^{m} (-1)^i \binom{m}{i} (ix + y)^\ell$ be the alternating binomial

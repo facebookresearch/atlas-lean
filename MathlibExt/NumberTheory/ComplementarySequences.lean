@@ -28,6 +28,15 @@ requested term of the complementary sequence. More generally, an interleaving fu
 locates the gap containing the requested term for any sequence with sufficiently large gaps.
 Rounding $\sqrt{2n}$ to the nearest integer locates the gap of the triangular numbers containing
 the $n$-th non-triangular number.
+
+## References
+
+* Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025), Article A95,
+  Section 2.1, Theorems 1 and 2 (pp. 4–5). The two-step proof uses the gap comparison from
+  Theorem 2.
+* J. Lambek and L. Moser, *Inverse and Complementary Sequences of Natural Numbers*,
+  The American Mathematical Monthly 61 (1954), pp. 454–458. Wu credits this paper for the
+  iteration method and its two-step bound.
 -/
 
 namespace MetaMathlibExt
@@ -242,6 +251,32 @@ private theorem nthNonValue_eq_one_step.exists_strictMono_extension (f : ℕ →
       omega
   exact ⟨g, gzero, gpos, hg⟩
 
+-- The positive indices below a cutoff are exactly the interval up to the last such index.
+private theorem card_filter_Icc_eq_of_bounds {f g : ℕ → ℕ}
+    (gpos : ∀ m, 1 ≤ m → g m = f m) (hg : StrictMono g) {x k : ℕ}
+    (hlast : g k ≤ x) (hnext : x < g (k + 1)) :
+    ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card = k := by
+  have hset : ((Finset.Icc 1 x).filter fun m => f m ≤ x) = Finset.Icc 1 k := by
+    ext m
+    simp only [Finset.mem_filter, Finset.mem_Icc, and_assoc]
+    refine and_congr_right fun hm => ?_
+    rw [← gpos m hm]
+    constructor
+    · rintro ⟨_, hmx⟩
+      exact Nat.lt_succ_iff.mp (hg.lt_iff_lt.mp (hmx.trans_lt hnext))
+    · intro hmk
+      have hmx := (hg.monotone hmk).trans hlast
+      exact ⟨hg.le_apply.trans hmx, hmx⟩
+  simp [hset]
+
+private theorem nthNonValue_eq_one_step.exists_count_cutoff {f g : ℕ → ℕ}
+    (gzero : g 0 = 0) (gpos : ∀ m, 1 ≤ m → g m = f m) (hg : StrictMono g) (x : ℕ) :
+    ∃ k, g k ≤ x ∧ x < g (k + 1) ∧ ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card = k := by
+  obtain ⟨k, hk, hnext⟩ := Nat.exists_not_and_succ_of_not_zero_of_exists
+    (p := fun m => x < g m) (by simp [gzero]) ⟨x + 1, (Nat.lt_succ_self x).trans_le hg.le_apply⟩
+  have hlast := le_of_not_gt hk
+  exact ⟨k, hlast, hnext, card_filter_Icc_eq_of_bounds gpos hg hlast hnext⟩
+
 /-- **Complementary sequences from one evaluation of the counting function.** Let
 $f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all
 $m \ge 1$, let $C(x)$ be the number of $m$ with $1 \le m \le x$ and $f(m) \le x$, and for
@@ -257,22 +292,8 @@ public theorem nthNonValue_eq_one_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
     nthNonValue f n = if f (C n + 1) ≤ n + C n then n + C n + 1 else n + C n := by
   intro C
   obtain ⟨g, gzero, gpos, hg⟩ := nthNonValue_eq_one_step.exists_strictMono_extension f hf1 hgap
-  -- The indices counted at n form the initial interval from 1 to k.
-  obtain ⟨k, hk, hnext⟩ := Nat.exists_not_and_succ_of_not_zero_of_exists
-    (p := fun m => n < g m) (by simp [gzero]) ⟨n + 1, (Nat.lt_succ_self n).trans_le hg.le_apply⟩
-  have hlast : g k ≤ n := le_of_not_gt hk
-  have hindex (m : ℕ) : g m ≤ n ↔ m ≤ k :=
-    ⟨fun h => Nat.lt_succ_iff.mp (hg.lt_iff_lt.mp (h.trans_lt hnext)),
-      fun h => (hg.monotone h).trans hlast⟩
-  have hC : C n = k := by
-    have hset : ((Finset.Icc 1 n).filter fun m => f m ≤ n) = Finset.Icc 1 k := by
-      ext m
-      simp only [Finset.mem_filter, Finset.mem_Icc, and_assoc]
-      refine and_congr_right fun hm => ?_
-      rw [← gpos m hm, hindex]
-      exact and_iff_right_of_imp fun h => h.trans (hg.le_apply.trans hlast)
-    change ((Finset.Icc 1 n).filter _).card = k
-    simp [hset]
+  obtain ⟨k, hlast, hnext, hC⟩ := nthNonValue_eq_one_step.exists_count_cutoff gzero gpos hg n
+  change C n = k at hC
   have heq : nthNonValue f n = nthNonValue g n := by
     simp +contextual only [nthNonValue, gpos]
   rw [heq, hC, ← gpos (k + 1) (by omega)]
@@ -287,6 +308,46 @@ public theorem nthNonValue_eq_one_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
     cases k with
     | zero => simpa [gzero] using (show 0 < n by omega)
     | succ k => omega
+
+/-- **Complementary sequences in two Lambek–Moser steps.** Let $f : \mathbb{N} \to \mathbb{N}$
+satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$, let $C(x)$ be the number of
+$m$ with $1 \le m \le x$ and $f(m) \le x$, and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive
+integer that is not a value $f(m)$ with $m \ge 1$. Then $f_P(n) = n + C(n + C(n))$ for every
+$n \ge 1$.
+
+Under the hypotheses, $f(m) \ge m$ for all $m \ge 1$, so $C(x)$ is the number of all $m \ge 1$
+with $f(m) \le x$, the counting function of the values of $f$.
+
+Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
+Article A95, Theorem 1. -/
+public theorem nthNonValue_eq_two_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
+    (hgap : ∀ m, 1 ≤ m → f m + m ≤ f (m + 1)) (n : ℕ) (hn : 1 ≤ n) :
+    let C : ℕ → ℕ := fun x => ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card
+    nthNonValue f n = n + C (n + C n) := by
+  intro C
+  obtain ⟨g, gzero, gpos, hg⟩ := nthNonValue_eq_one_step.exists_strictMono_extension f hf1 hgap
+  obtain ⟨k, hlast, hnext, hC⟩ := nthNonValue_eq_one_step.exists_count_cutoff gzero gpos hg n
+  change C n = k at hC
+  have hstep : nthNonValue f n =
+      if f (C n + 1) ≤ n + C n then n + C n + 1 else n + C n :=
+    nthNonValue_eq_one_step f hf1 hgap n hn
+  rw [hstep, hC]
+  -- The second count keeps the first k indices and can include at most one more.
+  split_ifs with h
+  · have hlo : g (k + 1) ≤ n + k := by rwa [gpos _ (by omega)]
+    have hgap' := hgap (k + 1) (by omega)
+    rw [← gpos _ (by omega), ← gpos _ (by omega)] at hgap'
+    have hhi : n + k < g (k + 1 + 1) := by omega
+    have hc : C (n + k) = k + 1 :=
+      card_filter_Icc_eq_of_bounds gpos hg hlo hhi
+    rw [hc, Nat.add_assoc]
+  · have hlo : g k ≤ n + k := hlast.trans (Nat.le_add_right _ _)
+    have hhi : n + k < g (k + 1) := by
+      rw [gpos _ (by omega)]
+      exact lt_of_not_ge h
+    have hc : C (n + k) = k :=
+      card_filter_Icc_eq_of_bounds gpos hg hlo hhi
+    rw [hc]
 
 /-- **Complementary sequences from an interleaving function.** Let
 $f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
