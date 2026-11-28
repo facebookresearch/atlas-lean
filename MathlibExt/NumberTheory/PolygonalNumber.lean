@@ -13,7 +13,7 @@ import Mathlib.Tactic.Ring
 /-!
 # Polygonal numbers
 
-This file formalizes the polygonal-number family.
+This file formalizes the polygonal-number family from the source cited below.
 
 The source defines, for `m = 3, 4, ...` and `n = 0, 1, 2, ...`,
 `p_m(n) = (m - 2) * C(n, 2) + n`.
@@ -26,8 +26,6 @@ truncated-subtraction semantics enter the definition itself.
 ## References
 
 * Zhi-Wei Sun, *On universal sums of polygonal numbers*, Sci. China Math. 58 (2015), 1367–1396.
-* `MathlibExt.NumberTheory.PracticalPolygonalSumsPracticalAddPolygonalExceptions`:
-  the former private lemmas `polygonal_ge` and `polygonal_mono` are moved here.
 -/
 
 namespace Nat

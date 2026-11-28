@@ -61,7 +61,7 @@ private theorem isPracticalNumber_primorial (b : ℕ) : IsPracticalNumber (primo
     split_ifs with hprime
     · rw [prod_insert (Nat.notMem_primesLE b), ← primorial_eq_prod_primesLE, mul_comm]
       exact isPracticalNumber_mul_of_le_sigma_add_one _ _ ih (Nat.succ_pos _) <|
-        Nat.succ_le_succ (le_primorial_self.trans (le_sigma_one _ (primorial_pos b)))
+        Nat.succ_le_succ (le_primorial_self.trans (le_sigma_one _))
     · rwa [← primorial_eq_prod_primesLE]
 
 /-- Prime reciprocals give a lower bound for the divisor sum of every nonzero multiple of a
@@ -211,7 +211,7 @@ public theorem eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 < s) :
     | zero => simpa [M] using isPracticalNumber_primorial r
     | succ j ih =>
       have hpd := (hp.dvd_primorial_iff.mpr hpr).trans (hM_dvd j)
-      have hle := (Nat.le_of_dvd (hM j) hpd).trans (le_sigma_one _ (hM j))
+      have hle := (Nat.le_of_dvd (hM j) hpd).trans (le_sigma_one _)
       rw [hM_succ]
       exact isPracticalNumber_mul_of_le_sigma_add_one _ p ih hp.pos (Nat.le_succ_of_le hle)
   refine ⟨2 * Nat.polygonalNumber s (2 * M 0), fun n hn ↦ ?_⟩
