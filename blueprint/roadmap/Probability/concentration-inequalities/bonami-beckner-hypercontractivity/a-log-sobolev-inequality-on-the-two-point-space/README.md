@@ -1,0 +1,18 @@
+# A log-Sobolev inequality on the two-point space
+
+- [Tpl ent](tpl-ent.md)
+- [Tpl mean](tpl-mean.md)
+- [Tpl ent eq](tpl-ent-eq.md)
+- [Tpl chi Sq bound](tpl-chi-sq-bound.md)
+- [Tpl cauchy schwarz](tpl-cauchy-schwarz.md)
+- [Tpl var div mean le](tpl-var-div-mean-le.md)
+- [Tpl lsi pos](tpl-lsi-pos.md)
+- [Tpl boundary scalar](tpl-boundary-scalar.md)
+- [Tpl lsi b zero](tpl-lsi-b-zero.md)
+- [Tpl ent swap](tpl-ent-swap.md)
+- [Tpl lsi a zero](tpl-lsi-a-zero.md)
+- [Tpl lsi nonneg](tpl-lsi-nonneg.md)
+- [Tpl lsi](tpl-lsi.md)
+- [Tpl lsi weighted](tpl-lsi-weighted.md)
+- [Tpl ent nonneg](tpl-ent-nonneg.md)
+- [Tpl chi Sq](tpl-chi-sq.md)

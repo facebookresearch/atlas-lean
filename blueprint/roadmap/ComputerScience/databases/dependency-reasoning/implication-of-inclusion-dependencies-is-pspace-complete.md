@@ -31,6 +31,8 @@ acceptance problem and for the reduction, and links them under `## Proof depends
 ## Proof depends on
 
 - [Finite and unrestricted implication of functional and inclusion dependencies](../dependencies-and-the-chase/finite-and-unrestricted-implication-of-functional-and-inclusion.md)
+- [Unrestricted implication of inclusion dependencies via the chase](chase-for-functional-and-inclusion-dependencies/unrestricted-implication-of-inds-via-the-chase.md)
+- [Implication of inclusion dependencies via compact witnesses](chase-for-functional-and-inclusion-dependencies/implication-of-inds-via-compact-witnesses.md)
 
 ## Sources
 

@@ -75,6 +75,7 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [Soundness error](soundness-error-prob.md)
 - [Combined tracing error](combined-error-prob.md)
 - [Fingerprinting security](is-fingerprinting-secure.md)
+- [Is Fingerprinting Secure](is-fingerprinting-secure-2.md)
 - [Error-robust fingerprinting security](is-error-robust-fingerprinting-secure.md)
 - [Combined fingerprinting security](is-fingerprinting-secure-combined.md)
 - [Bernoulli mass](bernoulli-mass.md)
@@ -99,3 +100,4 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [Packing lower bound for pure differential privacy](packing-lower-bound-for-pure-differential.md)
 - [Rényi differential privacy of the Gaussian mechanism](renyi-differential-privacy-of-the-gaussian.md)
 - [Fingerprinting codes](fingerprinting-codes.md)
+- [Accuracy of randomized programs is undecidable](accuracy-of-randomized-programs-is-undecidable.md)
