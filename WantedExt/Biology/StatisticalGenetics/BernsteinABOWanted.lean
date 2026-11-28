@@ -42,13 +42,4 @@ public import Domains.Biology.StatisticalGenetics.BernsteinABOTwoLocusConstraint
 
 namespace WantedExt.Biology.StatisticalGenetics.BernsteinABOWanted
 
-/-- **The triple-allele model violates the two-locus constraint** (derived): for allele
-frequencies `p, q, r ≥ 0` with `p + q + r = 1` and both `p > 0` and `q > 0`, the triple-allele
-phenotype frequencies satisfy `(A + AB)(B + AB) ≠ AB`; in fact `(A + AB)(B + AB) > AB`.
-
-Sources: Bernstein (1925); Crow (1993), p. 4 and Table 1. -/
-public theorem_wanted tripleAllele_violates_twoLocus (p q r : ℝ) (hp : 0 < p) (hq : 0 < q)
-    (hr : 0 ≤ r) (hsum : p + q + r = 1) :
-    freqAB p q r < (freqA p q r + freqAB p q r) * (freqB p q r + freqAB p q r)
-
 end WantedExt.Biology.StatisticalGenetics.BernsteinABOWanted
