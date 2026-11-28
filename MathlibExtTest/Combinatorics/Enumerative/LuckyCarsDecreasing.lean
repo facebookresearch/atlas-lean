@@ -8,30 +8,30 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.Fin.VecNotation
 import MathlibExt.Combinatorics.Enumerative.LuckyCarsDecreasing
 
 /-! # Tests for the lucky-spot count in weakly decreasing parking functions -/
 
-open MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
+open MetaMathlibExt MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted
 
--- The sole spot in a one-car lot.
-example : (∑ i : Fin 1, (qDec 1 i 0 : ℚ)) = 1 := by
-  rw [card_dec_lucky_spot_eq_sum_catalan, ← Nat.cast_sum]
-  norm_cast
+-- The first two cars both prefer spot 1, but the second takes spot 2.
+example : List.ofFn (parkSpots (![1, 1, 0] : Fin 3 → Fin 3)) = [1, 2, 0] := by
   decide +kernel
 
--- The first, an interior, and the last spot in a four-car lot.
-example : (∑ i : Fin 4, (qDec 4 i 0 : ℚ)) = 14 := by
-  rw [card_dec_lucky_spot_eq_sum_catalan, ← Nat.cast_sum]
-  norm_cast
-  decide +kernel
+-- Enumerate the lucky (car, preference function) pairs using greedy parking itself.
+private def directLuckySpotCount (n : ℕ) (j : Fin n) : ℕ :=
+  ∑ i : Fin n, (Finset.univ.filter fun f : Fin n → Fin n =>
+    IsParkingFunction n f ∧ Antitone f ∧ f i = j ∧ parkSpots f i = j).card
 
-example : (∑ i : Fin 4, (qDec 4 i 1 : ℚ)) = 9 := by
-  rw [card_dec_lucky_spot_eq_sum_catalan, ← Nat.cast_sum]
-  norm_cast
-  decide +kernel
+example : directLuckySpotCount 1 0 = 1 := by decide +kernel
 
-example : (∑ i : Fin 4, (qDec 4 i 3 : ℚ)) = 5 := by
-  rw [card_dec_lucky_spot_eq_sum_catalan, ← Nat.cast_sum]
-  norm_cast
+-- The first, middle, and last spots in a three-car lot.
+example : directLuckySpotCount 3 0 = 5 := by decide +kernel
+example : directLuckySpotCount 3 1 = 3 := by decide +kernel
+example : directLuckySpotCount 3 2 = 2 := by decide +kernel
+
+-- Compare the independently computed interior count to the Catalan sum.
+example : directLuckySpotCount 3 1 =
+    ∑ k ∈ Finset.range 2, catalan (3 - 1 - k) * catalan k := by
   decide +kernel

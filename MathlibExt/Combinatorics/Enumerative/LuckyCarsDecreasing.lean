@@ -15,7 +15,6 @@ import Mathlib.Data.Fintype.Sigma
 import Mathlib.Data.List.OfFn
 import Mathlib.Order.Fin.Basic
 import MathlibExt.Combinatorics.Enumerative.DescendingNaplesPaddedDyckWord
-import MathlibExt.Combinatorics.Enumerative.LuckyCarFactorialMoments
 
 /-!
 # Lucky spots in weakly decreasing parking functions
@@ -33,10 +32,10 @@ an ordered pair of Dyck words; the column determines where to insert the removed
 * Richard P. Stanley, *Catalan Numbers*, Cambridge University Press (2015), and Catherine H. Yan,
   *Parking functions*, in *Handbook of Enumerative Combinatorics*, CRC Press (2015), pp. 835–893,
   cited in Section 4 for the Catalan enumeration.
-* ATLAS modules `LuckyCars` (`exists_lucky_of_preferred`, `isLuckyCar_iff_parkSpots_eq`),
-  `LuckyCarFactorialMoments` (`parkSpots_injective`), and `DescendingNaplesPaddedDyckWord`
-  (`decreasingParkingPreferenceEquivDyckWord`, `stepHeight_eq`, `stepHeight_nil`,
-  `stepHeight_cons_up`, `stepHeight_append`).
+* ATLAS modules `LuckyCars` (`exists_lucky_of_preferred`, `isLuckyCar_iff_parkSpots_eq`,
+  `parkSpots_injective_of_antitone`) and `DescendingNaplesPaddedDyckWord`
+  (`decreasingParkingPreferenceEquivDyckWord`, `dyckStepHeight_eq`, `dyckStepHeight_nil`,
+  `dyckStepHeight_cons_U`, `dyckStepHeight_append`).
 -/
 
 set_option autoImplicit false
@@ -61,7 +60,8 @@ private noncomputable def luckySpotEquiv {n : ℕ} (j : Fin n) :
       subst g
       have hi := (isLuckyCar_iff_parkSpots_eq f i).mp hl
       have hk := (isLuckyCar_iff_parkSpots_eq f k).mp hgl
-      have hik : i = k := parkSpots_injective hp ((hi.trans hj).trans (hk.trans hgj).symm)
+      have hik : i = k := parkSpots_injective_of_antitone hp ha
+        ((hi.trans hj).trans (hk.trans hgj).symm)
       subst k
       rfl
     · rintro ⟨⟨f, hp, ha⟩, h⟩
@@ -74,30 +74,30 @@ private abbrev SizedDyck (n : ℕ) := {p : DyckWord // p.semilength = n}
 private def HasColumn (j : ℕ) (p : List DyckStep) : Prop :=
   ∃ a t, p = a ++ U :: t ∧ a.count D = j
 
-private lemma dyck_height (p : DyckWord) : stepHeight p.toList = 0 := by
-  simp [stepHeight_eq, p.count_U_eq_count_D]
+private lemma dyck_height (p : DyckWord) : dyckStepHeight p.toList = 0 := by
+  simp [dyckStepHeight_eq, p.count_U_eq_count_D]
 
-private lemma dyck_prefix_height (p : DyckWord) (i : ℕ) : 0 ≤ stepHeight (p.toList.take i) := by
+private lemma dyck_prefix_height (p : DyckWord) (i : ℕ) : 0 ≤ dyckStepHeight (p.toList.take i) := by
   have := p.count_D_le_count_U i
-  rw [stepHeight_eq]
+  rw [dyckStepHeight_eq]
   omega
 
 -- A walk with negative final height crosses down from its starting height. Everything before
 -- that first crossing is a Dyck word. An initial Up step is paired before continuing the search.
-private lemma split_negative (t : List DyckStep) (h : stepHeight t < 0) :
+private lemma split_negative (t : List DyckStep) (h : dyckStepHeight t < 0) :
     ∃ (b : DyckWord) (c : List DyckStep), t = b.toList ++ D :: c := by
   match t with
-  | [] => simp [stepHeight_nil] at h
+  | [] => simp [dyckStepHeight_nil] at h
   | D :: t => exact ⟨0, t, rfl⟩
   | U :: t =>
-    have ht : stepHeight t < 0 := by
-      rw [stepHeight_cons_up] at h
+    have ht : dyckStepHeight t < 0 := by
+      rw [dyckStepHeight_cons_U] at h
       omega
     obtain ⟨b, c, hb⟩ := split_negative t ht
     have hnest : U :: t = b.nest.toList ++ c := by
       rw [hb]
       simp [DyckWord.nest, List.append_assoc]
-    rw [hnest, stepHeight_append, dyck_height, zero_add] at h
+    rw [hnest, dyckStepHeight_append, dyck_height, zero_add] at h
     have hlen : c.length < (U :: t).length := by rw [hnest]; simp [DyckWord.nest]; omega
     obtain ⟨b', c', hc⟩ := split_negative c h
     exact ⟨b.nest + b', c', by rw [hnest, hc]; exact (List.append_assoc ..).symm⟩
@@ -171,41 +171,41 @@ private lemma column_cut_unique {a b c d : List DyckStep} (h : a ++ c = b ++ d)
 
 -- Prefixes of the spliced list are prefixes of the outer list with a (possibly empty)
 -- prefix of the inserted word added. The displayed index skips the inserted steps.
-private lemma stepHeight_take_splice (a b c : List DyckStep) (i : ℕ) :
-    stepHeight ((a ++ b ++ c).take i) =
-      stepHeight ((a ++ c).take (i - min (i - a.length) b.length)) +
-        stepHeight (b.take (i - a.length)) := by
+private lemma dyckStepHeight_take_splice (a b c : List DyckStep) (i : ℕ) :
+    dyckStepHeight ((a ++ b ++ c).take i) =
+      dyckStepHeight ((a ++ c).take (i - min (i - a.length) b.length)) +
+        dyckStepHeight (b.take (i - a.length)) := by
   by_cases hi : i ≤ a.length
   · rw [List.append_assoc, List.take_append_of_le_length hi, Nat.sub_eq_zero_of_le hi]
-    simp [List.take_append_of_le_length hi, stepHeight_nil]
+    simp [List.take_append_of_le_length hi, dyckStepHeight_nil]
   · have h₁ : a.length ≤ i - min (i - a.length) b.length := by omega
     have h₂ : i - min (i - a.length) b.length - a.length = i - a.length - b.length := by omega
-    simp only [List.append_assoc, List.take_append, stepHeight_append,
+    simp only [List.append_assoc, List.take_append, dyckStepHeight_append,
       List.take_of_length_le (show a.length ≤ i by omega), List.take_of_length_le h₁, h₂]
     omega
 
-private lemma dyck_of_height (w : List DyckStep) (h : stepHeight w = 0)
-    (hp : ∀ i, 0 ≤ stepHeight (w.take i)) : ∃ p : DyckWord, p.toList = w := by
+private lemma dyck_of_height (w : List DyckStep) (h : dyckStepHeight w = 0)
+    (hp : ∀ i, 0 ≤ dyckStepHeight (w.take i)) : ∃ p : DyckWord, p.toList = w := by
   refine ⟨⟨w, ?_, ?_⟩, rfl⟩
-  · rw [stepHeight_eq] at h
+  · rw [dyckStepHeight_eq] at h
     omega
   · intro i
     have hi := hp i
-    rw [stepHeight_eq] at hi
+    rw [dyckStepHeight_eq] at hi
     omega
 
 private lemma splice_dyck (p b : DyckWord) {a c : List DyckStep} (h : p.toList = a ++ c) :
     ∃ w : DyckWord, w.toList = a ++ b.toList ++ c := by
   apply dyck_of_height
-  · simpa [stepHeight_append, dyck_height b, h] using dyck_height p
+  · simpa [dyckStepHeight_append, dyck_height b, h] using dyck_height p
   · intro i
-    rw [stepHeight_take_splice, ← h]
+    rw [dyckStepHeight_take_splice, ← h]
     exact add_nonneg (dyck_prefix_height p _) (dyck_prefix_height b _)
 
 private lemma erase_dyck (p b : DyckWord) {a c : List DyckStep}
     (h : p.toList = a ++ b.toList ++ c) : ∃ w : DyckWord, w.toList = a ++ c := by
   apply dyck_of_height
-  · simpa [stepHeight_append, h, dyck_height b] using dyck_height p
+  · simpa [dyckStepHeight_append, h, dyck_height b] using dyck_height p
   · intro i
     by_cases hi : i ≤ a.length
     · have hp := dyck_prefix_height p i
@@ -213,7 +213,7 @@ private lemma erase_dyck (p b : DyckWord) {a c : List DyckStep}
       rwa [List.take_append_of_le_length hi]
     · have hp := dyck_prefix_height p (i + b.toList.length)
       have hb : b.toList.length ≤ i + b.toList.length - a.length := by omega
-      rw [h, stepHeight_take_splice, min_eq_right hb, Nat.add_sub_cancel,
+      rw [h, dyckStepHeight_take_splice, min_eq_right hb, Nat.add_sub_cancel,
         List.take_of_length_le hb, dyck_height, add_zero] at hp
       exact hp
 
@@ -291,11 +291,11 @@ private noncomputable def spliceColumnEquiv (n j : ℕ) : CatalanPairs n j ≃ C
     exact congrArg (Sigma.mk k) hh
   · rintro ⟨⟨p, hp⟩, hm⟩
     obtain ⟨a, t, hcut, ha, hbound⟩ := column_cut_with_up hm
-    have ht : stepHeight t < 0 := by
+    have ht : dyckStepHeight t < 0 := by
       have hbal := dyck_height p
       have hpre := dyck_prefix_height p a.length
       rw [hcut, List.take_left] at hpre
-      rw [hcut, stepHeight_append, stepHeight_cons_up] at hbal
+      rw [hcut, dyckStepHeight_append, dyckStepHeight_cons_U] at hbal
       omega
     obtain ⟨b, c, hbc⟩ := split_negative t ht
     have hs : p.toList = a ++ b.nest.toList ++ c := by

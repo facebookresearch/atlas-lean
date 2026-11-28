@@ -14,7 +14,10 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
 import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.List.GetD
+import Mathlib.Data.List.Nodup
 import Mathlib.Data.List.OfFn
+import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Positivity
 import MathlibExt.Probability.BertrandBallot
@@ -81,6 +84,77 @@ $0, 1, \dots, n-1$ arrive in order, and each takes the least free spot at or aft
 (or its preference itself if there is none). The outcome sends each car $i$ to the spot it takes. -/
 def parkSpots {n : ℕ} (f : Fin n → Fin n) : Fin n → Fin n :=
   fun i => (parkSpotsFrom (List.ofFn f) ∅).getD i.val i
+
+-- If the occupied set is small enough at each arrival, every next spot is fresh.
+private lemma parkSpotsFrom_spec_of_room {n : ℕ} (l : List (Fin n)) (occ : Finset (Fin n))
+    (hroom : ∀ (i : ℕ) (hi : i < l.length), occ.card + i < n - l[i].val) :
+    (parkSpotsFrom l occ).length = l.length ∧ (parkSpotsFrom l occ).Nodup ∧
+      ∀ s ∈ parkSpotsFrom l occ, s ∉ occ := by
+  induction l generalizing occ with
+  | nil => simp [parkSpotsFrom]
+  | cons a l ih =>
+    let free := Finset.univ.filter fun s : Fin n => a ≤ s ∧ s ∉ occ
+    have hfree : free.Nonempty := by
+      by_contra h
+      have hsub : Finset.Ici a ⊆ occ := by
+        intro b hb
+        by_contra hbo
+        exact h ⟨b, by simp [free, Finset.mem_Ici.mp hb, hbo]⟩
+      have hc := Finset.card_le_card hsub
+      rw [Fin.card_Ici] at hc
+      have h0 := hroom 0 (by simp)
+      exact (not_le_of_gt (by simpa using h0 : occ.card < n - a.val)) hc
+    have ha : nextFreeSpot occ a ∉ occ := by
+      rw [nextFreeSpot, dite_eq_left hfree]
+      exact (Finset.mem_filter.mp (Finset.min'_mem free hfree)).2.2
+    have hrest (i : ℕ) (hi : i < l.length) :
+        (insert (nextFreeSpot occ a) occ).card + i < n - l[i].val := by
+      have hc := Finset.card_insert_le (nextFreeSpot occ a) occ
+      have h := hroom (i + 1) (by simpa using hi)
+      change occ.card + (i + 1) < n - l[i].val at h
+      omega
+    obtain ⟨hlen, hnd, hdisj⟩ := ih _ hrest
+    rw [parkSpotsFrom]
+    refine ⟨by simp [hlen], hnd.cons (fun hs => hdisj _ hs (Finset.mem_insert_self ..)), ?_⟩
+    intro s hs
+    rcases List.mem_cons.mp hs with rfl | hs
+    · exact ha
+    · exact fun hocc => hdisj _ hs (Finset.mem_insert_of_mem hocc)
+
+-- Cars preferring a strictly smaller spot than car `i` all arrive after it.
+private lemma car_index_lt_room_of_antitone {n : ℕ} {f : Fin n → Fin n}
+    (hf : IsParkingFunction n f) (hdec : Antitone f) (i : Fin n) :
+    i.val < n - (f i).val := by
+  by_cases h0 : (f i).val = 0
+  · simp [h0]
+  let j : Fin n := ⟨(f i).val - 1, (Nat.sub_le ..).trans_lt (f i).isLt⟩
+  have hsub : Finset.univ.filter (fun k => f k ≤ j) ⊆ Finset.Ioi i := by
+    intro k hk
+    refine Finset.mem_Ioi.mpr (lt_of_not_ge fun hki => ?_)
+    have h := Fin.le_def.mp ((hdec hki).trans (Finset.mem_filter.mp hk).2)
+    change (f i).val ≤ (f i).val - 1 at h
+    omega
+  have h := ((isParkingFunction_iff_card_filter_le n f).mp hf j).trans
+    (Finset.card_le_card hsub)
+  rw [Fin.card_Ioi] at h
+  change (f i).val - 1 + 1 ≤ n - 1 - i.val at h
+  omega
+
+/-- Distinct cars in a weakly decreasing parking function take distinct spots under the greedy
+rule: each car has more eligible spots than there are preceding cars. -/
+theorem parkSpots_injective_of_antitone {n : ℕ} {f : Fin n → Fin n}
+    (hf : IsParkingFunction n f) (hdec : Antitone f) : Function.Injective (parkSpots f) := by
+  have hroom (i : ℕ) (hi : i < (List.ofFn f).length) :
+      (∅ : Finset (Fin n)).card + i < n - (List.ofFn f)[i].val := by
+    rw [Finset.card_empty, Nat.zero_add, List.getElem_ofFn]
+    exact car_index_lt_room_of_antitone hf hdec ⟨i, by simpa using hi⟩
+  obtain ⟨hlen, hnd, _⟩ := parkSpotsFrom_spec_of_room (List.ofFn f) ∅ hroom
+  intro i j h
+  have hi : i.val < (parkSpotsFrom (List.ofFn f) ∅).length := by simp [hlen]
+  have hj : j.val < (parkSpotsFrom (List.ofFn f) ∅).length := by simp [hlen]
+  unfold parkSpots at h
+  rw [List.getD_eq_getElem _ _ hi, List.getD_eq_getElem _ _ hj] at h
+  exact Fin.ext (hnd.getElem_inj_iff.mp h)
 
 /-- **Lucky car under greedy parking.** Let $f : \{0, \dots, n-1\} \to \{0, \dots, n-1\}$ give the
 preferred spot of each of $n$ cars. Cars $0, 1, \dots, n-1$ arrive in order, and each takes the

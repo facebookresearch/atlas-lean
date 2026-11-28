@@ -136,28 +136,14 @@ private theorem parkSpotsFrom_eq_parkAssign {n : ℕ} (f : Fin n → Fin n)
       (by rw [parkOcc_succ_of_lt _ _ _ _ _ hjn, hassign, hcir, Finset.image_insert])
 termination_by i.val - j
 
-private theorem parkSpots_eq_circularAssign {n : ℕ} (f : Fin n → Fin n)
-    (hf : LinSuccess n n f) (i : Fin n) :
-    emb n (parkSpots f i) = parkAssign n n (lift n n f) le_rfl i.val i.isLt := by
-  simpa [parkSpots] using parkSpotsFrom_eq_parkAssign f hf i 0 (Nat.zero_le _) ⟨∅, by simp⟩
-    (linOccAux_zero n n f) (by simp [parkOcc, parkOccAux])
-
-/-- Distinct cars in a parking function take distinct spots under the greedy parking rule. -/
-public theorem parkSpots_injective {n : ℕ} {f : Fin n → Fin n}
-    (hf : IsParkingFunction n f) : Function.Injective (parkSpots f) := by
-  have hf' := (linSuccess_iff_isPartialParkingFunction n n f le_rfl).mpr hf
-  intro i k h
-  apply Fin.ext
-  by_contra hne
-  exact parkAssign_inj n n (lift n n f) le_rfl i.val k.val i.isLt k.isLt hne
-    ((parkSpots_eq_circularAssign f hf' i).symm.trans
-      ((congrArg (emb n) h).trans (parkSpots_eq_circularAssign f hf' k)))
-
 private theorem circleWeight_lift {n : ℕ} (f : Fin n → Fin n) (hf : IsParkingFunction n f) :
     circleWeight (lift n n f) le_rfl = X ^ luckyCount f := by
   have hf' : LinSuccess n n f :=
     (linSuccess_iff_isPartialParkingFunction n n f le_rfl).mpr hf
-  have hspot := parkSpots_eq_circularAssign f hf'
+  have hspot (i : Fin n) : emb n (parkSpots f i) =
+      parkAssign n n (lift n n f) le_rfl i.val i.isLt := by
+    simpa [parkSpots] using parkSpotsFrom_eq_parkAssign f hf' i 0 (Nat.zero_le _) ⟨∅, by simp⟩
+      (linOccAux_zero n n f) (by simp [parkOcc, parkOccAux])
   have hlucky (i : Fin n) :
       parkSpots f i = f i ↔ lift n n f i ∉ parkOcc n n (lift n n f) le_rfl i.val := by
     have hsize := circle_card_lt n n (lift n n f) le_rfl i.val i.isLt.le
