@@ -41,15 +41,7 @@ theorem sum_single_eq_sum_fiber (f : I → G) (c : G → R) :
     (∑ i : I, single (f i) (c (f i))) =
       ∑ g : G, (Fintype.card {i : I // f i = g}) • single g (c g) := by
   classical
-  let e := Equiv.sigmaFiberEquiv f
-  rw [← e.sum_comp (fun i => single (f i) (c (f i))), Fintype.sum_sigma]
-  apply Finset.sum_congr rfl
-  intro g _
-  have hconst (i : {i : I // f i = g}) :
-      single (f (e ⟨g, i⟩)) (c (f (e ⟨g, i⟩))) = single g (c g) := by
-    change single (f i.val) (c (f i.val)) = _
-    rw [i.property]
-  simp_rw [hconst]
-  rw [Finset.sum_const, Finset.card_univ]
+  rw [← Fintype.sum_fiberwise' f (fun g => single g (c g))]
+  simp only [Finset.sum_const, Finset.card_univ]
 
 end MonoidAlgebra
