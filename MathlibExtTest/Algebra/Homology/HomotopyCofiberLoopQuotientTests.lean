@@ -94,7 +94,7 @@ private lemma homotopy_block : mapCoordinates =
     · simp only [mapCoordinates, Category.assoc, inl_XIsoBiprod_inv_assoc,
         inlX_mapOfHomotopy_assoc, add_comp, inrX_XIsoBiprod_hom_assoc,
         inlX_XIsoBiprod_hom_assoc, biprod.inl_desc_assoc, biprod.lift_fst,
-        biprod.inr_fst, biprod.inl_fst, comp_zero, comp_id, add_zero]
+        biprod.inr_fst, biprod.inl_fst, comp_zero, comp_id, add_zero, zero_add]
       rfl
     · simp only [mapCoordinates, Category.assoc, inr_XIsoBiprod_inv_assoc,
         inrX_mapOfHomotopy_assoc, inrX_XIsoBiprod_hom_assoc,
@@ -103,7 +103,7 @@ private lemma homotopy_block : mapCoordinates =
     · simp only [mapCoordinates, Category.assoc, inl_XIsoBiprod_inv_assoc,
         inlX_mapOfHomotopy_assoc, add_comp, inrX_XIsoBiprod_hom_assoc,
         inlX_XIsoBiprod_hom_assoc, biprod.inl_desc_assoc, biprod.lift_snd,
-        biprod.inr_snd, biprod.inl_snd, comp_zero, comp_id, zero_add]
+        biprod.inr_snd, biprod.inl_snd, comp_zero, comp_id, zero_add, add_zero]
       rfl
     · simp only [mapCoordinates, Category.assoc, inr_XIsoBiprod_inv_assoc,
         inrX_mapOfHomotopy_assoc, inrX_XIsoBiprod_hom_assoc,
