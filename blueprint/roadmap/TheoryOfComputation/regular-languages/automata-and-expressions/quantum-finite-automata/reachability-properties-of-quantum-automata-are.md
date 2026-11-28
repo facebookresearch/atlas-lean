@@ -6,13 +6,14 @@ For finite-dimensional quantum automata with rational data, no algorithm decides
 
 **Inputs.** Subspaces are identified with their [orthogonal projections](../../../../QuantumInformation/quantum-foundations/gleason-s-theorem/is-orth-proj.md); all unitary and projection operators are given as matrices in a fixed orthonormal basis whose entries are rational complex numbers (the source assumes that all complex numbers in the input are rational).
 
-**Theorem (Li and Ying).** For each $\Delta \in \{\mathbf{F}, \mathbf{G}, \mathbf{U}, \mathbf{I}\}$, it is undecidable whether $\mathcal{A} \models \Delta f$ for a given quantum automaton $\mathcal{A}$ and formula $f$.
+**Theorem (Li and Ying).** For each $\Delta \in \{\mathbf{F}, \mathbf{G}, \mathbf{U}, \mathbf{I}\}$, it is undecidable whether $\mathcal{A} \models \Delta f$ for a given quantum automaton $\mathcal{A}$ and formula $f$ (Theorem 2.1 of the source).
 
-The source shows undecidability already for formulas of a simple form containing one negation. In contrast, for $\Delta \in \{\mathbf{G}, \mathbf{U}, \mathbf{I}\}$ the problem becomes decidable when $f$ contains no negation (the decidability theorem of the same paper).
+The source shows undecidability already for formulas of a simple form containing one negation. In contrast, for $\Delta \in \{\mathbf{G}, \mathbf{U}, \mathbf{I}\}$ the problem becomes decidable when $f$ contains no negation (Theorem 2.2 of the same paper).
 
 ## Depends on
 
 - [Orthogonal projection](../../../../QuantumInformation/quantum-foundations/gleason-s-theorem/is-orth-proj.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -25,4 +26,4 @@ With a one-dimensional initial subspace, $\mathcal{A} \models \mathbf{G} f$ iff 
 
 ## Sources
 
-- Y. Li and M. Ying, "(Un)decidable problems about reachability of quantum systems", in *CONCUR 2014: Concurrency Theory*, Lecture Notes in Computer Science, Springer, 2014, pp. 482–496, doi:10.1007/978-3-662-44584-6_33; read in arXiv:1401.6249v1: the definitions of quantum automata and reachability properties, the input convention and the undecidability theorem of the section "Main Theorems", and its proofs in the following sections.
+- Y. Li and M. Ying, "(Un)decidable problems about reachability of quantum systems", in *CONCUR 2014: Concurrency Theory*, Lecture Notes in Computer Science, Springer, 2014, pp. 482–496, doi:10.1007/978-3-662-44584-6_33; read in arXiv:1401.6249v1: the definitions of quantum automata and reachability properties, the input convention and Theorems 2.1 and 2.2 of the section "Main Theorems", and its proofs in the following sections.

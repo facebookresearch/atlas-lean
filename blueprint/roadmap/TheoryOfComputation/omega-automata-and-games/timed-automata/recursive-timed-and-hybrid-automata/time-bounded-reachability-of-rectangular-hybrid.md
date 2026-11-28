@@ -8,14 +8,15 @@ Reachability of a location within a fixed time bound is undecidable for rectangu
 
 **Theorem (Brihaye, Doyen, Geeraerts, Ouaknine, Raskin and Worrell).**
 
-1. The time-bounded reachability problem is undecidable for rectangular hybrid automata, even when restricted to singular rates; the proof uses rates of both signs and time bound $1$.
-2. The time-bounded reachability problem is undecidable for linear hybrid automata whose variables all have singular, strictly positive, fixed rates, when diagonal constraints are allowed in guards.
+1. The time-bounded reachability problem is undecidable for rectangular hybrid automata, even when restricted to singular rates; the proof uses rates of both signs and time bound $1$ (Theorem 2 of the source).
+2. The time-bounded reachability problem is undecidable for linear hybrid automata whose variables all have singular, strictly positive, fixed rates, when diagonal constraints are allowed in guards (Theorem 3).
 
 The same paper shows that time-bounded reachability is decidable for (non-initialized) rectangular hybrid automata with only non-negative rates, a class containing stopwatch automata, for which unbounded reachability is undecidable.
 
 ## Depends on
 
 - [Hybrid automata and their executions](../../../../Analysis/control-theory/hybrid-systems/hybrid-automata-and-their-executions.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -27,4 +28,4 @@ Both results reduce the halting problem for two-counter machines, which is undec
 
 ## Sources
 
-- T. Brihaye, L. Doyen, G. Geeraerts, J. Ouaknine, J.-F. Raskin and J. Worrell, "On reachability for hybrid automata over bounded time", in *Automata, Languages and Programming (ICALP 2011)*, Lecture Notes in Computer Science, Springer, 2011, pp. 416–427, doi:10.1007/978-3-642-22012-8_33; read in arXiv:1104.5335v1: the definitions of linear and rectangular hybrid automata and of the time-bounded reachability problem, the two undecidability theorems ("Undecidability for RHA with negative rates" and "Undecidability with diagonal constraints"), and the decidability result in the introduction.
+- T. Brihaye, L. Doyen, G. Geeraerts, J. Ouaknine, J.-F. Raskin and J. Worrell, "On reachability for hybrid automata over bounded time", in *Automata, Languages and Programming (ICALP 2011)*, Lecture Notes in Computer Science, Springer, 2011, pp. 416–427, doi:10.1007/978-3-642-22012-8_33; read in arXiv:1104.5335v1: the definitions of linear and rectangular hybrid automata and of the time-bounded reachability problem, Theorems 2 and 3 in Section 4 (Undecidability Results) for items 1 and 2, and Theorem 1 in Section 3 for the decidable class with non-negative rates.

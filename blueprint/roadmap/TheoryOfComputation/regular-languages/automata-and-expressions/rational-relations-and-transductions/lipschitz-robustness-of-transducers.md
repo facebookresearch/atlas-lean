@@ -14,13 +14,14 @@ $$
 d_\Sigma(s, t) < \infty \implies d_\Gamma([\![T]\!]\,(s), [\![T]\!]\,(t)) \le K \cdot d_\Sigma(s, t) \qquad \text{for all } s, t \in \mathrm{dom}(T).
 $$
 
-**Theorem.** It is undecidable, given a deterministic transducer $T$ on finite words and generalized Manhattan distances $d_\Sigma, d_\Gamma$, whether $T$ is $1$-Lipschitz robust with respect to $d_\Sigma, d_\Gamma$. Consequently, for every fixed rational $K > 0$, $K$-Lipschitz robustness of deterministic transducers is undecidable.
+**Theorem.** It is undecidable, given a deterministic transducer $T$ on finite words and generalized Manhattan distances $d_\Sigma, d_\Gamma$, each given by its mismatch penalty as a finite table of nonnegative rationals and $\infty$, whether $T$ is $1$-Lipschitz robust with respect to $d_\Sigma, d_\Gamma$ (Theorem 10 of the source). Consequently, by scaling the output distance, for every fixed rational $K > 0$, $K$-Lipschitz robustness of deterministic transducers is undecidable.
 
 The constant $K$ matters: for functional transducers on finite words and generalized Manhattan distances, whether some $K$ makes $T$ $K$-robust is decidable in co-NP (Proposition 11 of the source), and $K$-robustness of synchronized transducers, Mealy machines among them, is decidable in polynomial time when the distances are computed by functional weighted automata (Theorem 7). The same source shows that $K$-robustness of nondeterministic letter-to-letter transducers, measured with the Hausdorff or the inf-inf set-similarity function induced by an output distance, is undecidable even for generalized Manhattan distances.
 
 ## Depends on
 
 - [Rational relations and transducers](rational-relations-and-transducers.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

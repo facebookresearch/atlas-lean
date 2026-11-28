@@ -10,7 +10,7 @@ The *marked concatenation* of $L_1,\dots,L_n$ is $L_1\sharp L_2\sharp\cdots\shar
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,9 +18,9 @@ None.
 
 ## Expansion
 
-Tight worst-case state complexities are known for every combination of two basic operations, so the undecidability concerns an infinite family of compositions mixing intersection and marked concatenation, with the composition index part of the input.
+Tight worst-case state complexities are known for every combination of two basic operations, so the undecidability concerns an infinite family of compositions mixing intersection and marked concatenation, with the composition index part of the input. The survey read states the theorem without proof; a good expansion links the undecidable problem from which Salomaa, Salomaa and Yu reduce, which the survey does not name.
 
 ## Sources
 
-- Arto Salomaa, Kai Salomaa and Taylor J. Smith, "Descriptional Complexity of Finite Automata – Selected Highlights", *Fundamenta Informaticae* 191(3–4), 2024, paper 10876, doi:[10.46298/fi.10876](https://doi.org/10.46298/fi.10876); read in arXiv:2301.03708v4 ([arXiv](https://arxiv.org/abs/2301.03708v4)): the definition of state complexity upper bounds and the undecidability theorem in the section on operational state complexity.
+- Arto Salomaa, Kai Salomaa and Taylor J. Smith, "Descriptional Complexity of Finite Automata – Selected Highlights", *Fundamenta Informaticae* 191(3–4), 2024, paper 10876, doi:[10.46298/fi.10876](https://doi.org/10.46298/fi.10876); read in arXiv:2301.03708v4 ([arXiv](https://arxiv.org/abs/2301.03708v4)): Definition 4.1 (state complexity upper bounds) and Theorem 4.2 in Section 4 (Operational state complexity).
 - The theorem is due to Arto Salomaa, Kai Salomaa and Sheng Yu, "Undecidability of state complexity", *International Journal of Computer Mathematics* 90(6), 2013, pp. 1310–1320, doi:[10.1080/00207160.2012.704994](https://doi.org/10.1080/00207160.2012.704994) (cited as recalled in the survey above; not read).

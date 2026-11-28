@@ -16,6 +16,7 @@ it, finiteness of the automaton does not guarantee a rational language, and rati
 ## Depends on
 
 - [Pomset automata and series-parallel rational languages](pomset-automata-and-series-parallel-rational-lan.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

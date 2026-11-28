@@ -8,15 +8,17 @@ $$
 \mathrm{Val}_A(w) = \| s X_{w_1} \cdots X_{w_k} P \|^2 ,
 $$
 
-the probability of observing the state in the accepting subspace after applying $X_{w_1}, \dots, X_{w_k}$; it lies in $[0, 1]$.
+the probability of observing the state in the accepting subspace after applying $X_{w_1}, \dots, X_{w_k}$; it lies in $[0, 1]$. As inputs, the matrices and the vector have rational entries; the reduction of the source uses rational rotation matrices with entries in $\{0, \pm\tfrac35, \pm\tfrac45, 1\}$.
 
-**Theorem (Blondel, Jeandel, Koiran and Portier).** There is no algorithm that decides, for a given automaton $A$, whether there is a word $w$ with $\mathrm{Val}_A(w) \ge 1$, and there is none that decides whether there is a word $w$ with $\mathrm{Val}_A(w) \le 0$. Both problems remain undecidable for automata given by $7$ matrices of dimension $6$, or by $2$ matrices of dimension $42$.
+**Theorem (Blondel, Jeandel, Koiran and Portier).** There is no algorithm that decides, for a given automaton $A$, whether there is a word $w$ with $\mathrm{Val}_A(w) \ge 1$, and there is none that decides whether there is a word $w$ with $\mathrm{Val}_A(w) \le 0$. Both problems remain undecidable for automata given by $7$ matrices of dimension $6$, or by $2$ matrices of dimension $42$ (Theorem 2.1 of the source).
 
 In contrast, for a given automaton $A$ and threshold $\lambda$, it is decidable whether some word $w$ satisfies $\mathrm{Val}_A(w) > \lambda$, and whether some word satisfies $\mathrm{Val}_A(w) < \lambda$ (Theorem 3.2 of the source). For probabilistic automata the situation differs: the strict emptiness problem is undecidable there.
 
 ## Depends on
 
 - [One-way quantum finite automata](one-way-quantum-finite-automata.md)
+- [Orthogonal projection](../../../../QuantumInformation/quantum-foundations/gleason-s-theorem/is-orth-proj.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

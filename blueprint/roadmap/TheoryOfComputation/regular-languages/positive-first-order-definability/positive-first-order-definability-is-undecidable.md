@@ -9,6 +9,7 @@ Since first-order definability of regular languages is decidable, the problem is
 ## Depends on
 
 - [Positive first-order logic on words](positive-first-order-logic-on-words.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

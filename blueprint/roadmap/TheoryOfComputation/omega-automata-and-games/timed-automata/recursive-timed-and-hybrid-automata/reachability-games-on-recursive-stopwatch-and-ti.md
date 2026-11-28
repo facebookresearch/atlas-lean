@@ -18,6 +18,7 @@ automata with at most two stopwatches are decidable, because hybrid automata wit
 ## Depends on
 
 - [Recursive hybrid automata and their reachability games](recursive-hybrid-automata-and-their-reachability.md)
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -34,4 +35,4 @@ arranged so that the delays of successive instructions sum to a bounded total.
 
 ## Sources
 
-- S. N. Krishna, L. Manasa and A. Trivedi, "Improved undecidability results for reachability games on recursive timed automata", in *GandALF 2014*, Electronic Proceedings in Theoretical Computer Science 161, pp. 245–259, 2014, doi:10.4204/EPTCS.161.21; version arXiv:1408.5968v1: the main undecidability theorem of Section 3 with its proof in Section 4, and the decidability theorem for glitch-free automata with two stopwatches after it.
+- S. N. Krishna, L. Manasa and A. Trivedi, "Improved undecidability results for reachability games on recursive timed automata", in *GandALF 2014*, Electronic Proceedings in Theoretical Computer Science 161, pp. 245–259, 2014, doi:10.4204/EPTCS.161.21; version arXiv:1408.5968v1: Theorem 1 in Section 3.3 with its proof in Section 4 (Lemmas 1 and 2 for the time-bounded cases), and Theorem 2 for glitch-free automata with two stopwatches.

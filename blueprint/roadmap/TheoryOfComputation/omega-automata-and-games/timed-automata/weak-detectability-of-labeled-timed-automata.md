@@ -6,13 +6,16 @@ No algorithm decides whether a labeled timed automaton has some infinite behavio
 
 **Weak detectability.** The automaton is *weakly detectable* if, when $L^\omega$ is nonempty, there are $t \in \mathbb{Z}_+$ and some $\omega$-timed word $w \in L^\omega$ such that $|\mathcal{M}(\gamma)| = 1$ for every prefix $\gamma$ of $\ell(w)$ of length at least $t$. It is *weakly periodically detectable* if, when $L^\omega$ is nonempty, there are $t \in \mathbb{Z}_+$ and some $w \in L^\omega$ such that every prefix $w'$ of $w$ extends to a prefix $w' w''$ of $w$ with $|\ell(w'')| < t$ and $|\mathcal{M}(\ell(w' w''))| = 1$.
 
-**Theorem (Zhang).** Weak detectability and weak periodic detectability of labeled timed automata are undecidable.
+An automaton with $L^\omega = \varnothing$ counts as weakly detectable and weakly periodically detectable (Definitions 12 and 13 of the source).
+
+**Theorem (Zhang).** Weak detectability and weak periodic detectability of labeled timed automata are undecidable (Theorem 17 of the source). This holds already for automata with two states, both initial, one event, which is observable, and clock constants $0$ and $1$: the proof reduces from the universality problem for timed automata with a single state, a single event and clock constants $0$ and $1$, which Adams, Ouaknine and Worrell showed undecidable, a restricted variant of the universality problem of Alur and Dill.
 
 Deterministic timed automata satisfy every detectability notion; the same paper gives region-automaton characterizations of strong and strong periodic detectability.
 
 ## Depends on
 
 - [Timed Büchi automata and timed regular languages](timed-buchi-automata.md)
+- [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 

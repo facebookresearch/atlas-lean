@@ -10,7 +10,7 @@ This answers a question of Meduna and Zemek. The class of GJFA languages is inco
 
 ## Depends on
 
-None.
+- [Decidability by multi-stack machines](../../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,7 +18,7 @@ None.
 
 ## Expansion
 
-The reduction is from universality of context-free grammars, for a grammar $G$ in Greibach normal form without the empty word, with rules $B_i\to u_i$, $u_i\in\Sigma_T\Sigma_N^*$. The GJFA $M_G$ works over $\Gamma=\Sigma_T\cup\Sigma_N\cup\{b_1,\dots,b_m\}$ with five states and rules labeled by the words $b_iu_i$, $A_ib_i$ and certain two-letter words; a derivation of $G$ is recorded by rewriting $A_i$ into $A_ib_iu_i$ rather than into $u_i$, keeping the nonterminals. Words of $\Gamma^*$ that do not encode such derivations are accepted by easy paths, and a word of the shape $x_1t\,x_2t\cdots x_nt$ can only be accepted through a path inserting $b_iu_i$ next to an unmatched $A_i$, which simulates a derivation of $x_1\cdots x_n$. Hence $L(M_G)=\Gamma^*$ iff $L(G)=\Sigma_T^*$. Greibach normal form for context-free grammars is used without a page.
+The reduction is from universality of context-free grammars, for a grammar $G$ in Greibach normal form without the empty word, with rules $B_i\to u_i$, $u_i\in\Sigma_T\Sigma_N^*$. The GJFA $M_G$ works over $\Gamma=\Sigma_T\cup\Sigma_N\cup\{b_1,\dots,b_m\}$ with five states and rules labeled by the words $b_iu_i$, $A_ib_i$ and certain two-letter words; a derivation of $G$ is recorded by rewriting $A_i$ into $A_ib_iu_i$ rather than into $u_i$, keeping the nonterminals. Words of $\Gamma^*$ that do not encode such derivations are accepted by easy paths, and a word of the shape $x_1t\,x_2t\cdots x_nt$ can only be accepted through a path inserting $b_iu_i$ next to an unmatched $A_i$, which simulates a derivation of $x_1\cdots x_n$. Hence $L(M_G)=\Gamma^*$ iff $L(G)=\Sigma_T^*$. The reduction uses [Greibach normal form](../../../context-free-languages/grammars-and-pushdown-automata/greibach-normal-form/is-greibach-normal-form.md) for context-free grammars.
 
 ## Sources
 

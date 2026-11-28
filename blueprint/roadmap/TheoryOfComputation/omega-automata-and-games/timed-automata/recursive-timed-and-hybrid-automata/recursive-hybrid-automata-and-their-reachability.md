@@ -34,7 +34,7 @@ then takes the transition $\delta(q, a)$ and resets the variables in $J(a)$.
 **Games.** A partition of the locations into those of two players, Achilles and the tortoise, gives a game arena. The *reachability
 game problem* asks, for an initial location and valuation with empty stack and a set of final locations, whether Achilles has a
 strategy that reaches a final location against every strategy of the tortoise; under *bounded time*, the final location must be
-reached within total time $T$.
+reached within total time $T \in \mathbb{N}$. An instance is finite: the automaton, the partition, the final locations, and an initial valuation with rational entries (the source writes $\nu \in \mathbb{R}^{|X|}$, which is not a finite input).
 
 ## Depends on
 
