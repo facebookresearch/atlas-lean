@@ -36,10 +36,10 @@ before it; no-wait: each operation of a job starts exactly when the preceding op
 same job is completed; and a bound `K`.
 QUESTION: is there a feasible schedule with makespan `max_j Cⱼ ≤ K`?
 
-This is FLOW-SHOP SCHEDULING ([SS15], `FlowShopSchedulingWanted`) with `m = 2` processors, the
+This is FLOW-SHOP SCHEDULING ([SS15], `FlowShopScheduling`) with `m = 2` processors, the
 deadline `D` read as the makespan bound `K`, release dates added, and the no-wait condition of
 NO-WAIT FLOW-SHOP SCHEDULING ([SS16]) `σᵢ₊₁(j) = σᵢ(j) + l(tᵢ[j])`. The schedule conditions are
-those of `FlowShopSchedulingWanted` (one task at a time on each processor as non-overlap, as in
+those of `FlowShopScheduling` (one task at a time on each processor as non-overlap, as in
 the scheduling model of the source) rather than those of `NoWaitFlowShopSchedulingWanted`, whose
 one-processor schedules are also one-to-one, a condition the `α|β|γ` model does not impose on
 zero-length operations. The instance pairs the parent's instance with the list of release dates;

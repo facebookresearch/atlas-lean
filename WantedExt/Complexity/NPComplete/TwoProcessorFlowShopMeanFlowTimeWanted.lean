@@ -35,7 +35,7 @@ INSTANCE: a set `J` of jobs, each job `j ∈ J` consisting of `m = 2` tasks `t_1
 `K ∈ ℤ⁺`. QUESTION: is there a flow-shop schedule for `J` such that the sum, over all `j ∈ J`,
 of `σ_m(j) + l(t_m[j])` is at most `K`?
 
-This is FLOW-SHOP SCHEDULING ([SS15], `FlowShopSchedulingWanted`) with `m = 2` and the goal
+This is FLOW-SHOP SCHEDULING ([SS15], `FlowShopScheduling`) with `m = 2` and the goal
 of meeting the overall deadline replaced by a bound `K` on the sum of the jobs' completion
 times (Garey and Johnson's comment to [SS15]; the mean flow time is that sum divided by `|J|`).
 The instance type `FlowShopScheduling.FlowShopSchedulingInstance`, the task lengths

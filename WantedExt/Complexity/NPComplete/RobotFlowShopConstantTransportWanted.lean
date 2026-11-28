@@ -44,7 +44,7 @@ the robot take no time; buffers before and after the machines are unlimited. As 
 note (Section 2), `F2;R1|tⱼ|C_max` is then the three-machine flow shop `F3||C_max` in which the
 second machine is the robot: a job is transported after its operation on `M₁` and processed on
 `M₂` after its transport, and the robot, like a machine, handles one job at a time. The question
-is therefore stated through FLOW-SHOP SCHEDULING ([SS15], `FlowShopSchedulingWanted`): `toFlowShop`
+is therefore stated through FLOW-SHOP SCHEDULING ([SS15], `FlowShopScheduling`): `toFlowShop`
 builds the instance with `m = 3` processors `M₁`, robot, `M₂`, job `j` given the task lengths
 `[p₁ⱼ, tⱼ, p₂ⱼ]`, and deadline `D = K`; the makespan is at most `K` iff every task (in
 particular each job's last) ends by `D`. Every decoded instance is well formed (all data, `K`

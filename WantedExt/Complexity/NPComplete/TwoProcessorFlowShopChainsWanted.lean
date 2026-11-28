@@ -42,7 +42,7 @@ and at most one immediate successor), and an overall deadline `D ∈ ℤ⁺`. QU
 flow-shop schedule for `J` that meets the overall deadline (makespan `C_max ≤ D`) such that,
 whenever `j` precedes `k`, job `k` starts only after job `j` is completed (`C_j ≤ B_k`)?
 
-This is FLOW-SHOP SCHEDULING ([SS15], `FlowShopSchedulingWanted`) with `m = 2` and chain
+This is FLOW-SHOP SCHEDULING ([SS15], `FlowShopScheduling`) with `m = 2` and chain
 precedence constraints added (`F2|chains|Cmax`; without precedence constraints the
 two-processor problem is solvable in polynomial time, Johnson 1954). The instance type
 `FlowShopScheduling.FlowShopSchedulingInstance`, the task lengths `FlowShopScheduling.len` and

@@ -45,11 +45,11 @@ This is `F2||Lmax` in the notation of Lenstra, Rinnooy Kan, and Brucker (`n|2|F|
 optimization problem replaced, as in their paper, by the recognition problem "is there a
 schedule with value `≤ y`". A schedule is given by the starting times `s₁ⱼ`, `s₂ⱼ ∈ ℤ₀⁺` of the
 two operations of job `j`. That each machine handles at most one job at a time is read, as in
-`FlowShopSchedulingWanted`, as non-overlap of the operations of two distinct jobs on the same
+`FlowShopScheduling`, as non-overlap of the operations of two distinct jobs on the same
 machine (`s + p ≤ s'` or `s' + p' ≤ s`). The bound `y` is an integer, encoded as a pair
 `(y⁺, y⁻)` of naturals representing `y⁺ - y⁻`, as in `ZeroOneILPWanted`; `Cⱼ - dⱼ ≤ y⁺ - y⁻` is
 stated over `ℕ` as `Cⱼ + y⁻ ≤ dⱼ + y⁺`. The flow-shop schedule predicates of
-`FlowShopSchedulingWanted` and `NoWaitFlowShopSchedulingWanted` carry the overall deadline in
+`FlowShopScheduling` and `NoWaitFlowShopSchedulingWanted` carry the overall deadline in
 their instance and schedule conditions, so they do not apply to a lateness objective. Jobs are
 `Fin n`. Binary encoding of all numbers.
 

@@ -44,7 +44,7 @@ This is `F2|pᵢⱼ = 1; chains|∑ Tᵢ` in the three-field notation. Since eve
 `1`, processing times are not part of the instance. A schedule is given by the starting times
 `s₁ j`, `s₂ j ∈ ℤ₀⁺` of the two operations of job `j`; non-overlap of two distinct jobs'
 operations on one machine is `s + 1 ≤ s'` or `s' + 1 ≤ s` (the form of
-`FlowShopSchedulingWanted`), job `k` starts at `s₁ k` and job `j` completes at
+`FlowShopScheduling`), job `k` starts at `s₁ k` and job `j` completes at
 `Cⱼ = s₂ j + 1`, and `max(0, Cⱼ - dⱼ)` is the truncated subtraction `Cⱼ - dⱼ` of `ℕ`.
 
 The chains are given by the list of their arcs `(j, k)`, `j` the immediate predecessor of `k`.

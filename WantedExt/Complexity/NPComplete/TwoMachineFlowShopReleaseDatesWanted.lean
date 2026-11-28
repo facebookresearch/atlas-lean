@@ -36,7 +36,7 @@ time; job `j` has a release date `rⱼ ∈ ℤ₀⁺` and cannot start before it
 QUESTION: is there a feasible schedule with makespan `max_j Cⱼ ≤ K`, where `Cⱼ` is the
 completion time of job `j`?
 
-This is FLOW-SHOP SCHEDULING ([SS15], `FlowShopSchedulingWanted`) with `m = 2` processors, the
+This is FLOW-SHOP SCHEDULING ([SS15], `FlowShopScheduling`) with `m = 2` processors, the
 deadline `D` read as the makespan bound `K` (every operation ends by `D` iff the makespan is at
 most `D`), and release dates added. The instance pairs the parent's instance with the list of
 release dates; `WellFormed` asks for `m = 2`, two tasks per job and one release date per job (all

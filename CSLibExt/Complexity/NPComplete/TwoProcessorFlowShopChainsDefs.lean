@@ -33,7 +33,7 @@ public import CSLibExt.Complexity.NPComplete.FlowShopSchedulingDefs
 
 namespace MetaMathlibExt.Complexity.NPComplete.TwoProcessorFlowShopChains
 
-/-- An instance: the [SS15] instance of `FlowShopSchedulingWanted` (the number of processors
+/-- An instance: the [SS15] instance of `FlowShopScheduling` (the number of processors
 `m`, one list of task lengths per job, and the deadline `D`), and the arcs `(j, k)` of the
 chains, `j` the immediate predecessor of `k`. -/
 abbrev TwoProcessorFlowShopChainsInstance :=

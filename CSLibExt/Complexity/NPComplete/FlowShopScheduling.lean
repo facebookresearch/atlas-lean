@@ -17,9 +17,10 @@ Mathematics of Operations Research 1 (1976), 117-129, doi:10.1287/moor.1.2.117.
 -/
 module
 
-public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Complexity.NPComplete.FlowShopSchedulingDefs
+import CSLibExt.Complexity.NPComplete.FlowShopScheduling.Hardness
+import CSLibExt.Complexity.NPComplete.FlowShopScheduling.Membership
 
 @[expose] public section
 
@@ -55,15 +56,19 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in
 `MetaMathlibExt.ComplexityTheory.NP`, plus a polynomial-time many-one
 reduction from every language in `NP`
-(`Cslib.CookLevin.PolyManyOneRed`).
+(`Cslib.CookLevin.PolyManyOneRed`). Membership is proved in
+`CSLibExt.Complexity.NPComplete.FlowShopScheduling.Membership` (a polynomial-time verifier for
+schedules) and NP-hardness in `CSLibExt.Complexity.NPComplete.FlowShopScheduling.Hardness` (a
+reduction from the three-processor problem of `CSLibExt.Computability.Complexity.Karp.FlowShop`).
 -/
 
 /-- **FLOW-SHOP SCHEDULING is NP-complete.** Source: Garey and Johnson (1979), [SS15];
 Garey, Johnson and Sethi (1976). -/
-public theorem_wanted flowShopScheduling_npComplete :
+public theorem flowShopScheduling_npComplete :
     flowShopSchedulingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
         L ∈ MetaMathlibExt.ComplexityTheory.NP →
-          Cslib.CookLevin.PolyManyOneRed L flowShopSchedulingDec
+          Cslib.CookLevin.PolyManyOneRed L flowShopSchedulingDec :=
+  ⟨flowShopScheduling_mem_NP, flowShopScheduling_npHard⟩
 
 end MetaMathlibExt.Complexity.NPComplete.FlowShopScheduling

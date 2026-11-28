@@ -45,7 +45,7 @@ operation of each job. r is called the number of stages of the problem. Furtherm
 machine sets are assumed to be different", and an MPM operation is processed on exactly one
 machine of its set) with `m = 3` machines and the makespan criterion. Choosing `r = 3` and
 `μⱼ = {Mⱼ}` gives the three-machine flow shop `F3||C_max`: its instances `(3, jobs, D)` of
-FLOW-SHOP SCHEDULING (`WantedExt.Complexity.NPComplete.FlowShopSchedulingWanted`) map to
+FLOW-SHOP SCHEDULING (`CSLibExt.Complexity.NPComplete.FlowShopScheduling`) map to
 `((3, jobs, D), [[0], [1], [2]])`, so NP-hardness follows from Garey, Johnson and Sethi (1976),
 who prove `F3||C_max` NP-complete in the strong sense. Membership in NP holds because machine
 assignments and start times below `K` are a certificate of polynomial size.
