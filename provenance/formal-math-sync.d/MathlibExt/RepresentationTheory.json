@@ -1,8 +1,35 @@
 {
   "rows": [
-    {"path": "MathlibExt/RepresentationTheory/CoinvariantsReflection.lean", "disposition": "identical", "published_sha256": "a9cda1e5a152efe06056a1d7f90fa0ebb89effe97a4d6e06233211427a0b90ef", "upstream_sha256": "b89dd29a8d2465629d5744a5f7680c99536dcd1c7a864fd03f064d359e6879e9"},
-    {"path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/FiniteCyclic.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "aed6252ce08ecf620bd203971b20f0c854c7800b0d34637ca9bfd9575cde0fe9", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "bd66d6300025449758307189276cb8e3f666e0ad8a6cbaff51f29e86a5cd8aa3"},
-    {"path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/HerbrandQuotient.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "84ba16c66410b8dc628e7b72593b9dab37ec0847cfd2e0a844c961a3c1d20056", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)", "upstream_sha256": "560baa3a22336e4ec92c3009d4cc3a2fc14888f686cc555145ab39a9d4da93ef"},
-    {"path": "MathlibExt/RepresentationTheory/Rep/ResTensor.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "776e1cc1ddbbd440bcf14516569a117d2cb195040e80fd4747a74cd89a407f4d", "rationale": "General field/site/group cohomology API adapted to canonical Atlas owners and mathematical documentation, retaining original statements, coefficient actions and independent worlds. Mathematical docs state the Shapiro/coefficient restriction, group-homology, normalized-bar, residue-representation and signed-shuffle contracts with their precise worlds and hypotheses; all noncomment tokens and legal credits are unchanged. Preserve the actual categorical leading-unit representation powers and coefficient restriction maps, and transport their carriers to native TensorPower with n+1 ordered factors. The native leading-unit/snoc equivalences replace the parallel recursive module carrier, and PiTensorProduct.map/comp supplies the three coefficient-map coherence families. Group/scalar/object worlds and every categorical map are retained; coordinate statements are expressed in the native tensor encoding. Directly import the Atlas-authored FinSnoc naturality helper now owned by this actual caller PR, together with its used leading-unit transport. Native categorical-to-TensorPower carrier maps, all coefficient maps, group/scalar worlds and coordinate statements are unchanged by this import-boundary update.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "e6b7166f6b1c407c9e9736adfb574e0a1458ff43077d425a955a3f89c082d304"}
+    {
+      "path": "MathlibExt/RepresentationTheory/CoinvariantsReflection.lean",
+      "disposition": "identical",
+      "published_sha256": "a9cda1e5a152efe06056a1d7f90fa0ebb89effe97a4d6e06233211427a0b90ef",
+      "upstream_sha256": "b89dd29a8d2465629d5744a5f7680c99536dcd1c7a864fd03f064d359e6879e9"
+    },
+    {
+      "path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/FiniteCyclic.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "aed6252ce08ecf620bd203971b20f0c854c7800b0d34637ca9bfd9575cde0fe9",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "bd66d6300025449758307189276cb8e3f666e0ad8a6cbaff51f29e86a5cd8aa3"
+    },
+    {
+      "path": "MathlibExt/RepresentationTheory/Homological/TateCohomology/HerbrandQuotient.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "84ba16c66410b8dc628e7b72593b9dab37ec0847cfd2e0a844c961a3c1d20056",
+      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #991)",
+      "upstream_sha256": "560baa3a22336e4ec92c3009d4cc3a2fc14888f686cc555145ab39a9d4da93ef"
+    },
+    {
+      "path": "MathlibExt/RepresentationTheory/Rep/ResTensor.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "7c5742e18f73974b68c3bc710e00bc35ab47febaf82f3e1ccebf60a001cf235d",
+      "rationale": "The original categorical representation tensor powers use the native positive-power carrier and the canonical leading-unit and ordered FinSnoc transports. The zero and successor tensor formulas and coefficient naturality use explicit equivalence applications; two redundant reflexivity steps are removed. All original restrictions, objects, coefficients, signs and universe conditions are retained. Original upstream pin and digest are preserved.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e6b7166f6b1c407c9e9736adfb574e0a1458ff43077d425a955a3f89c082d304"
+    }
   ]
 }
