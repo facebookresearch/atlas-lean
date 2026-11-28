@@ -72,9 +72,11 @@ right-hand side. -/
 def IsLinear (g : GrammarData) : Prop :=
   ∀ p ∈ g.2.2, (p.2.filter fun x => !x.1).length ≤ 1
 
-/-- The parenthesized grammar over the terminals `{0, ..., k + 1}`: every production
-`A → w` is replaced by `A → (w)`, where `(` is the new terminal `k` and `)` is the new
-terminal `k + 1`. -/
+/-- The parenthesized grammar for the number `k`: every production `A → w` is replaced by
+`A → (w)`, where `(` is the terminal `k` and `)` is the terminal `k + 1`; the nonterminals, the
+initial symbol and the terminals already in a production are kept as they are. The result is a
+grammar over the terminals `{0, ..., k + 1}` exactly when the old terminal labels are below
+`k + 2`; when they are below `k`, the parentheses are fresh. -/
 def parenthesize (k : ℕ) (g : GrammarData) : GrammarData :=
   (g.1, g.2.1, g.2.2.map fun p => (p.1, (true, k) :: p.2 ++ [(true, k + 1)]))
 

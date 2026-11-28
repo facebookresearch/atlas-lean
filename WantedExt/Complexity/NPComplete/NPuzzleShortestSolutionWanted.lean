@@ -74,8 +74,11 @@ def WellFormed (i : NPuzzleShortestSolutionInstance) : Prop :=
 def config (n : ℕ) (rows : List (List ℕ)) : Fin n × Fin n → ℕ :=
   fun x => (rows.getD x.1 []).getD x.2 0
 
-/-- One move takes configuration `a` to `b`: the hole, at cell `x`, exchanges cells with the
-square at a cell `y` that shares a side with `x`. -/
+/-- One move takes the labelling `a` to `b`: some cell `x` with `a x = 0` and a cell `y` that
+shares a side with `x` exchange their labels. The move requires neither a unique zero cell nor a
+nonzero label at `y`, so any zero cell may move; boards with `n < 2` have no two side-adjacent
+cells and so no move. On configurations with one hole, a move slides a square into the
+hole. -/
 def Move (n : ℕ) (a b : Fin n × Fin n → ℕ) : Prop :=
   ∃ x y : Fin n × Fin n, (SimpleGraph.pathGraph n □ SimpleGraph.pathGraph n).Adj x y ∧
     a x = 0 ∧ b = a ∘ Equiv.swap x y

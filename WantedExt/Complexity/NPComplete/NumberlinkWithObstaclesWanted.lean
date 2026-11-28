@@ -79,9 +79,11 @@ def WellFormed (i : NumberlinkWithObstaclesInstance) : Prop :=
     ∀ o ∈ i.2, ∃ x : Fin (rows i.1) × Fin (cols i.1),
       ((x.1 : ℕ), (x.2 : ℕ)) = o ∧ square i.1 x = 0
 
-/-- Vertex-disjoint paths connect every terminal pair and avoid the obstacles: every obstacle is
-owned by no pair (`0`), and for each pair `c` with terminals `s ≠ t` some path from `s` to `t`
-passes exactly through the squares owned by `c`. -/
+/-- One owner function on the squares, with every obstacle owned by no label (`0`), such that
+for every two distinct squares `s ≠ t` carrying the same positive label `c` some simple path
+from `s` to `t` has support exactly the squares owned by `c`. Paths for different pairs of one
+label need not be disjoint; on a well-formed board each label is on exactly two squares, so the
+paths connect the terminal pairs, are pairwise vertex-disjoint and avoid the obstacles. -/
 def NumberlinkWithObstaclesFeasible (i : NumberlinkWithObstaclesInstance) : Prop :=
   ∃ owner : Fin (rows i.1) × Fin (cols i.1) → ℕ,
     (∀ x, ((x.1 : ℕ), (x.2 : ℕ)) ∈ i.2 → owner x = 0) ∧

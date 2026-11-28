@@ -75,9 +75,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- `B` expresses `x ∧ ¬y`: some well-formed expression over the variables `u₀, u₁` and the
-connectives of `B` is true under a truth assignment exactly when `u₀` is true and `u₁` is
-false. -/
+/-- `B` expresses `x ∧ ¬y`: every code in `B` is below 16, used or not, and some well-formed
+expression over the variables `u₀, u₁` and the connectives of `B` is true under a truth
+assignment exactly when `u₀` is true and `u₁` is false. The bound on every code comes from the
+well-formedness test on `(2, B, toks)`. -/
 def ExpressesAndNot (B : List ℕ) : Prop :=
   ∃ toks : List (ℕ × ℕ), SatisfiabilityOfBooleanExpressions.WellFormed (2, B, toks) ∧
     ∃ E : BoolExpr, parse toks = some E ∧ ∀ σ : ℕ → Bool, E.eval σ = (σ 0 && !σ 1)

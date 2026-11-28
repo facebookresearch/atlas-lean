@@ -67,15 +67,18 @@ abbrev BlockSortingInstance := List ℕ × ℕ
 /-- The identity permutation `id = 1 2 … n`. -/
 def identity (n : ℕ) : List ℕ := List.range' 1 n
 
-/-- `B` is a block of `π`: a maximal substring of `π` that is also a substring of the identity
-permutation of the same length (every substring of `π` that contains `B` and is a substring of
-the identity is `B` itself). Blocks are nonempty. -/
+/-- For arbitrary lists `π` and `B` of naturals, not necessarily permutations, `B` is a block of
+`π`: a maximal substring of `π` that is also a substring of the identity list `1 2 … n` of the
+same length `n` (every substring of `π` that contains `B` and is a substring of the identity is
+`B` itself). Blocks are nonempty. On a permutation these are the maximal runs shared with the
+identity. -/
 def IsBlock (π B : List ℕ) : Prop :=
   B ≠ [] ∧ B <:+: π ∧ B <:+: identity π.length ∧
     ∀ B' : List ℕ, B <:+: B' → B' <:+: π → B' <:+: identity π.length → B' = B
 
-/-- A block move from `π` to `π'`: pick up a block `B` of `π = A ++ B ++ C` and place it
-elsewhere, `π' = X ++ B ++ Y` with `X ++ Y = A ++ C` and `π' ≠ π`. -/
+/-- A block move from `π` to `π'`, for arbitrary lists of naturals, not necessarily
+permutations: pick up a block `B` of `π = A ++ B ++ C` and place it elsewhere,
+`π' = X ++ B ++ Y` with `X ++ Y = A ++ C` and `π' ≠ π`. -/
 def BlockMove (π π' : List ℕ) : Prop :=
   ∃ A B C X Y : List ℕ, π = A ++ B ++ C ∧ IsBlock π B ∧ X ++ Y = A ++ C ∧
     π' = X ++ B ++ Y ∧ π' ≠ π

@@ -88,17 +88,20 @@ its arity as length. -/
 def RelationsWellFormed (S : List Relation) : Prop :=
   ∀ r ∈ S, 0 < r.1 ∧ ∀ u ∈ r.2, u.length = r.1
 
-/-- The tuple `(t(0), ..., t(k - 1))` of values of the coordinates of `r` belongs to `r`. -/
+/-- The tuple `(t(0), ..., t(k - 1))` of values of the coordinates of `r` is a row of `r`. The
+relation is read through its rows of length `k`; rows of other lengths are ignored. -/
 def Holds (r : Relation) (t : ℕ → Bool) : Prop :=
   (List.range r.1).map t ∈ r.2
 
 /-- `φ` is a CNF expression over the coordinates `0, ..., k - 1` of `r` that is logically
-equivalent to `r`. -/
+equivalent to `r`: it is satisfied by exactly the tuples `t` for which `[t(0), ..., t(k - 1)]`
+is a row of `r`. Only the rows of length `k` count; rows of other lengths are ignored. -/
 def IsEquivalentCNF (r : Relation) (φ : CNF) : Prop :=
   (∀ C ∈ φ, ∀ l ∈ C, l.1 < r.1) ∧ ∀ t : ℕ → Bool, Holds r t ↔ φ.Satisfies t
 
 /-- `r` is the solution set of a system `A x = b` of linear equations over `GF[2]` in the
-coordinates of `r`. -/
+coordinates of `r`: its solutions are exactly the tuples `t` for which `[t(0), ..., t(k - 1)]`
+is a row of `r`. Rows of length other than `k` are ignored. -/
 def IsAffine (r : Relation) : Prop :=
   ∃ (m : ℕ) (A : Matrix (Fin m) (Fin r.1) (ZMod 2)) (b : Fin m → ZMod 2),
     ∀ t : ℕ → Bool, Holds r t ↔ A *ᵥ (fun j => if t j then 1 else 0) = b

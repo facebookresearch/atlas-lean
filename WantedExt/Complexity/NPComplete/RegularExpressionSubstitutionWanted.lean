@@ -82,8 +82,11 @@ def WellFormed (i : RegularExpressionSubstitutionInstance) : Prop :=
 def substitute (m : ℕ) (ws : List (List ℕ)) (z : List ℕ) : List ℕ :=
   z.flatMap fun a => if m ≤ a then ws.getD (a - m) [] else [a]
 
-/-- Some `z ∈ L(R)` and strings `wᵢ ∈ L(Rᵢ)`, one for each `i`, make the substitution of `wᵢ`
-for `xᵢ` in `z` equal to `w`. -/
+/-- The token list of `R` parses to an expression, each token list of `Rᵢ` parses to an
+expression, and some `z ∈ L(R)` and strings `wᵢ ∈ L(Rᵢ)`, one for each `i`, make the
+substitution of `wᵢ` for `xᵢ` in `z` equal to `w`. In `substitute`, a symbol `m + j` with `j`
+at least the number of the `Rᵢ` (an out-of-range replacement index) contributes the empty
+word. -/
 def RegularExpressionSubstitutionFeasible (i : RegularExpressionSubstitutionInstance) : Prop :=
   ∃ R, parse i.2.1 = some R ∧ ∃ z ∈ R.matches', ∃ ws : List (List ℕ),
     List.Forall₂ (fun toks wᵢ => ∃ E, parse toks = some E ∧ wᵢ ∈ E.matches') i.2.2.1 ws ∧

@@ -81,9 +81,11 @@ def WellFormed (i : TemporalConstraintSatisfactionInstance) : Prop :=
 def InSome (x : ℝ) (Is : List (Endpoint × Endpoint)) : Prop :=
   ∃ I ∈ Is, (I.1.val : ℝ) ≤ x ∧ x ≤ (I.2.val : ℝ)
 
-/-- The network is consistent: some real assignment `X` satisfies every unary constraint
-(`Xᵢ` in one of its intervals) and every binary constraint (`Xⱼ - Xᵢ` in one of its
-intervals). -/
+/-- The network is consistent: some real assignment `X` satisfies, for each listed unary entry
+`(i, A)`, that `Xᵢ` lies in one of the intervals of `A`, and, for each listed binary entry
+`(i, j, B)`, that `Xⱼ - Xᵢ` lies in one of the intervals of `B`. The conditions are quantified
+over each listed entry: the intervals of separate entries on one variable or pair are not
+pooled, and an unlisted variable or pair is unconstrained. -/
 def TemporalConstraintSatisfactionFeasible
     (i : TemporalConstraintSatisfactionInstance) : Prop :=
   ∃ X : ℕ → ℝ, (∀ c ∈ i.2.1, InSome (X c.1) c.2) ∧
