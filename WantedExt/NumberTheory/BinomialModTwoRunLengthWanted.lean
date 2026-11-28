@@ -16,6 +16,7 @@ public import MathlibExt.NumberTheory.BinomialParitySumFive
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PadovanSequence
 public import MathlibExt.NumberTheory.RunLengthTransformLinearRecurrence
+public import MathlibExt.NumberTheory.BinomialModTwoRunLengthRunLengthTransformChooseAddSubSucc
 
 /-!
 # Sums of products of binomial coefficients mod 2 as run length transforms
@@ -68,18 +69,6 @@ Sequences*, INTEGERS 24 (2024), Article A73, Theorem 5. -/
 public theorem_wanted runLengthTransform_choose_add_two_mul_one_two (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 2 * k).choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => if i = 0 then 1 else 2) n
-
-/-- **Sum of $\binom{n+k}{n-k}\binom{n}{k} \bmod 2$ as a run length transform.** For every
-natural number $n$, the sum $\sum_{k=0}^{n} \bigl(\binom{n+k}{n-k}\binom{n}{k} \bmod 2\bigr)$
-equals the value at $n$ of the run length transform of the sequence $S(i) = i + 1$ of positive
-integers $1, 2, 3, \dots$.
-
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
-2-Regular
-Sequences*, INTEGERS 24 (2024), Article A73, Theorem 6. -/
-public theorem_wanted runLengthTransform_choose_add_sub_succ (n : ℕ) :
-    ((∑ k ∈ Finset.range (n + 1), ((n + k).choose (n - k) * n.choose k) % 2 : ℕ) : ℤ) =
-      runLengthTransform (fun i => (i + 1 : ℤ)) n
 
 /-- **Rampersad–Wiebe Theorem 7.** Let $(N_j)_{j \ge 0}$ be Narayana's cows sequence, $N_0 = 0$,
 $N_1 = N_2 = 1$ and $N_j = N_{j-1} + N_{j-3}$ for $j \ge 3$, and let $T$ be the run length
