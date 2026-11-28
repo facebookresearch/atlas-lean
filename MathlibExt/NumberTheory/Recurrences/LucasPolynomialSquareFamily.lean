@@ -43,11 +43,10 @@ namespace MetaMathlibExt
 
 open Polynomial
 
-namespace hasSum_lucasPoly_sq_family
-
-/-- A solution of `z_{n+2} = x z_{n+1} + z_n` with positive first two terms stays positive when
-`x > 0`. -/
-private theorem pos_of_rec {x : ℝ} (hx : 0 < x) (l : ℕ → ℝ)
+/-- **Positivity for the gibonacci recurrence.** A real sequence satisfying
+$\ell_{n+2} = x\ell_{n+1} + \ell_n$ is positive at every index when $x$, $\ell_0$ and $\ell_1$
+are positive. -/
+public theorem pos_of_gibonacci_recurrence {x : ℝ} (hx : 0 < x) (l : ℕ → ℝ)
     (hl : ∀ n, l (n + 2) = x * l (n + 1) + 1 * l n) (h₀ : 0 < l 0) (h₁ : 0 < l 1) (n : ℕ) :
     0 < l n := by
   have h : ∀ n, 0 < l n ∧ 0 < l (n + 1) := by
@@ -59,6 +58,8 @@ private theorem pos_of_rec {x : ℝ} (hx : 0 < x) (l : ℕ → ℝ)
       rw [hl, one_mul]
       exact add_pos (mul_pos hx ih.2) ih.1
   exact (h n).1
+
+namespace hasSum_lucasPoly_sq_family
 
 /-- Let `l` be a nonvanishing solution of `z_{n+2} = x z_{n+1} + z_n`, let `f` be the solution with
 `f_0 = 0` and `f_1 = 1`, and let `C = l_1^2 - l_0 l_2`. Then the term of index `n` of the family is
@@ -140,7 +141,7 @@ public theorem hasSum_lucasPoly_sq_family {x : ℝ} (hx : 0 < x) {k p r t : ℕ}
       x * aeval x (generalizedFibonacciPolynomial 0 1 X 1 (n + 1)) +
         1 * aeval x (generalizedFibonacciPolynomial 0 1 X 1 n) := by
     simp
-  have hpos := hasSum_lucasPoly_sq_family.pos_of_rec hx
+  have hpos := pos_of_gibonacci_recurrence hx
     (fun n => aeval x (generalizedFibonacciPolynomial 2 X X 1 n)) hl
     (by norm_num [map_ofNat]) (by simpa using hx)
   have h := hasSum_gibonacciPoly_pow_ratio_telescoping _ (Or.inr rfl) hx hk hr ht Nat.one_pos htp
