@@ -19,3 +19,6 @@
 - [Restricted protocol theories and their secrecy problems](restricted-protocol-theories-and-secrecy-problems.md)
 - [Cascade protocols](cascade-protocols.md)
 - [Characterization of secure cascade protocols](characterization-of-secure-cascade-protocols.md)
+- [Ping-pong protocols with one message variable per rule](ping-pong-protocols-with-one-variable.md)
+- [Trace inclusion of ping-pong protocols is undecidable](trace-inclusion-of-ping-pong-protocols.md)
+- [Trace inclusion and trace equivalence of security protocols](trace-inclusion-and-trace-equivalence.md)

@@ -7,3 +7,4 @@
 - [Network calculus](network-calculus/README.md)
 - [Os resource management](os-resource-management/README.md)
 - [Working sets](working-sets/README.md)
+- [Verification of stateful networks](stateful-network-verification/README.md)
