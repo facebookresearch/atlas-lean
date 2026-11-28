@@ -96,7 +96,8 @@ example :
     top_one
   have hv := congrArg
     (LinearMap.toSpanSingleton R6 (Fin 2 → R6) (KoszulComplex.pairFamily R6 (-2) 3)) ht
-  simpa only [LinearMap.toSpanSingleton_apply_one,
+  simpa only [LinearEquiv.coe_toLinearMap, LinearEquiv.coe_coe,
+    LinearMap.toSpanSingleton_apply_one,
     show (-2 : R6) = 4 from by decide] using h.trans hv
 
 section EmptyFamily
@@ -178,8 +179,12 @@ example : Module.length ℚ M = 2 ∧ Module.length ℚ axis = 1 ∧
 example :
     Module.length ℚ (M ⧸ (⊥ : Submodule ℚ M)) =
       Module.length ℚ (axis ⧸ (⊥ : Submodule ℚ axis)) + 1 := by
-  simpa only [Submodule.comap_bot, Submodule.ker_subtype, axis_quotient_length] using
+  let e : (axis ⧸ axis.subtype.ker) ≃ₗ[ℚ] (axis ⧸ (⊥ : Submodule ℚ axis)) :=
+    Submodule.quotEquivOfEq axis.subtype.ker ⊥ (by simp only [Submodule.ker_subtype])
+  have h : Module.length ℚ (M ⧸ (⊥ : Submodule ℚ M)) =
+      Module.length ℚ (axis ⧸ axis.subtype.ker) + Module.length ℚ (M ⧸ axis) :=
     Submodule.length_quotient_eq_add_of_le (⊥ : Submodule ℚ M) axis bot_le
+  exact h.trans (congrArg₂ (fun a b : ENat => a + b) e.length_eq axis_quotient_length)
 
 example :
     Module.length ℚ (axis ⧸ (axis.map (LinearMap.id : M →ₗ[ℚ] M)).comap axis.subtype) =
