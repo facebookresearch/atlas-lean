@@ -28,6 +28,15 @@ def IsStirlingPermutation (n : ℕ) (w : Fin (2 * n) → ℕ) : Prop :=
   ∀ i ∈ Finset.Icc 1 n, ∀ a b c : Fin (2 * n),
     a < b → b < c → w a = i → w c = i → i < w b
 
+/-- A Stirling permutation has exactly two copies of each letter in its alphabet, no other
+letters, and only larger letters strictly between the two copies of any letter. -/
+theorem isStirlingPermutation_iff {n : ℕ} {w : Fin (2 * n) → ℕ} :
+    IsStirlingPermutation n w ↔
+      (∀ k, w k ∈ Finset.Icc 1 n) ∧
+      (∀ v ∈ Finset.Icc 1 n, (Finset.univ.filter (fun k => w k = v)).card = 2) ∧
+      ∀ i ∈ Finset.Icc 1 n, ∀ a b c : Fin (2 * n),
+        a < b → b < c → w a = i → w c = i → i < w b := Iff.rfl
+
 /-- **The set of Stirling permutations.** For a natural number $n$, $Q_n$ is the set of all
 Stirling permutations of order $n$, viewed as words $w_1 w_2 \cdots w_{2n}$ of natural numbers.
 

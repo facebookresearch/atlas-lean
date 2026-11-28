@@ -20,6 +20,12 @@ of the nonnegative elements of the zero block and of the elements of the kept bl
 `{0, …, n}`, so the word is the list itself. A descent then occurs exactly at the end of each
 wrapped block word with at least two letters and at the passage from the doubled word of a
 nonempty negative part to the wrapped word of the same block.
+
+## References
+
+* Adam Buck, Jennifer Elder, Azia A. Figueroa, Pamela E. Harris, Kimberly J. Harry, and
+  Anthony Simpson, *Flattened Stirling Permutations*, INTEGERS 24 (2024), Article A104,
+  pp. 1–20, Notation 1, Proposition 1, and Lemma 4.
 -/
 
 namespace MetaMathlibExt
@@ -197,11 +203,14 @@ private theorem mem_neg_image {s : Finset ℤ} {y : ℤ} : y ∈ s.image (fun x 
 
 private theorem zero_mem_Icc : (0 : ℤ) ∈ Finset.Icc (-(n : ℤ)) n := by simp
 
-private theorem part_neg (hP : IsTypeBSetPartition P) {x : ℤ}
+/-- In a type B set partition, the block containing the negative of an element of the
+signed interval is the negation of its block. -/
+public theorem part_neg (hP : IsTypeBSetPartition P) {x : ℤ}
     (hx : x ∈ Finset.Icc (-(n : ℤ)) n) : P.part (-x) = (P.part x).image (fun x => -x) :=
   P.part_eq_of_mem (hP.1 _ (P.part_mem.mpr hx)) (mem_neg_image.mpr (by simpa using P.mem_part hx))
 
-private theorem neg_mem_part_zero (hP : IsTypeBSetPartition P) {x : ℤ} (hx : x ∈ P.part 0) :
+/-- The zero block of a type B set partition is closed under negation. -/
+public theorem neg_mem_part_zero (hP : IsTypeBSetPartition P) {x : ℤ} (hx : x ∈ P.part 0) :
     -x ∈ P.part 0 := by
   have h := part_neg hP (zero_mem_Icc (n := n))
   rw [neg_zero] at h
@@ -218,17 +227,21 @@ private theorem part_eq_part_zero (hP : IsTypeBSetPartition P) {x : ℤ}
     rw [← part_neg hP zero_mem_Icc, neg_zero]
   exact hP.2.unique ⟨P.part_mem.mpr hx, hself⟩ ⟨P.part_mem.mpr zero_mem_Icc, hzero⟩
 
-private theorem mem_labels {p : ℤ} : p ∈ adlerBlockLabels P ↔
+/-- An Adler label is a positive element of the interval that is minimal among the
+positive elements of its block and strictly smaller than the magnitudes of its negative elements. -/
+public theorem mem_labels {p : ℤ} : p ∈ adlerBlockLabels P ↔
     p ∈ Finset.Icc 1 (n : ℤ) ∧ ∀ q ∈ P.part p, (0 < q → p ≤ q) ∧ (q < 0 → p < -q) :=
   Finset.mem_filter
 
-private theorem mem_Icc_of_label {p : ℤ} (hp : p ∈ adlerBlockLabels P) :
+/-- Every Adler label belongs to the signed interval being partitioned. -/
+public theorem mem_Icc_of_label {p : ℤ} (hp : p ∈ adlerBlockLabels P) :
     p ∈ Finset.Icc (-(n : ℤ)) n := by
   have := Finset.mem_Icc.mp (mem_labels.mp hp).1
   simp only [Finset.mem_Icc]
   omega
 
-private theorem zero_notMem_label (hP : IsTypeBSetPartition P) {p : ℤ}
+/-- In a type B set partition, no Adler-labelled block contains zero. -/
+public theorem zero_notMem_label (hP : IsTypeBSetPartition P) {p : ℤ}
     (hp : p ∈ adlerBlockLabels P) : (0 : ℤ) ∉ P.part p := by
   intro h0
   have hpI := mem_Icc_of_label hp
@@ -271,7 +284,8 @@ private theorem card_typeBShift {S : Finset ℤ} (h : Set.InjOn Int.natAbs (S : 
     (typeBShift S).card = S.card :=
   Finset.card_image_of_injOn fun _ ha _ hb hab => h ha hb (Nat.add_right_cancel hab)
 
-private theorem label_eq_of_part_eq {p p' : ℤ} (hp : p ∈ adlerBlockLabels P)
+/-- Two Adler labels of the same partition that label the same block coincide. -/
+public theorem label_eq_of_part_eq {p p' : ℤ} (hp : p ∈ adlerBlockLabels P)
     (hp' : p' ∈ adlerBlockLabels P) (h : P.part p = P.part p') : p = p' := by
   have hmem : p' ∈ P.part p := by
     rw [h]
@@ -285,8 +299,8 @@ private theorem label_eq_of_part_eq {p p' : ℤ} (hp : p ∈ adlerBlockLabels P)
   have := ((mem_labels.mp hp').2 p hmem').1 (by omega)
   omega
 
--- Two labelled blocks are never negatives of each other.
-private theorem part_ne_neg_part {p p' : ℤ} (hp : p ∈ adlerBlockLabels P)
+/-- Two Adler-labelled blocks of a partition are never negatives of one another. -/
+public theorem part_ne_neg_part {p p' : ℤ} (hp : p ∈ adlerBlockLabels P)
     (hp' : p' ∈ adlerBlockLabels P) : P.part p' ≠ (P.part p).image (fun x => -x) := by
   intro h
   have h1 : -p' ∈ P.part p := by
@@ -313,8 +327,9 @@ private theorem mem_labels_of {p : ℤ} (hp : p ∈ Finset.Icc 1 (n : ℤ))
     have hne : q ≠ -p := fun h => hneg (h ▸ hq)
     omega
 
--- Every block other than the zero block, or its negative, is labelled.
-private theorem exists_label (hP : IsTypeBSetPartition P) {x : ℤ}
+/-- An element of the signed interval outside the zero block of a type B set
+partition belongs, up to negation, to an Adler-labelled block. -/
+public theorem exists_label (hP : IsTypeBSetPartition P) {x : ℤ}
     (hx : x ∈ Finset.Icc (-(n : ℤ)) n) (hx0 : x ∉ P.part 0) :
     ∃ p ∈ adlerBlockLabels P, x ∈ P.part p ∨ -x ∈ P.part p := by
   obtain ⟨z, hz, hmin⟩ := Finset.exists_min_image (P.part x) Int.natAbs ⟨x, P.mem_part hx⟩
@@ -429,7 +444,9 @@ private theorem card_neg_add_card_pos (hP : IsTypeBSetPartition P) {p : ℤ}
   rw [← hfilter]
   exact Finset.card_filter_add_card_filter_not _
 
-private theorem length_list (hP : IsTypeBSetPartition P) :
+/-- The word list of a type B partition of the integer interval `[-n, n]`
+has length `2 * (n + 1)`. -/
+public theorem length_list (hP : IsTypeBSetPartition P) :
     (typeBFlattenedWordList P).length = 2 * (n + 1) := by
   have hblock : ∀ p ∈ adlerBlockLabels P,
       (doubledWord (typeBShift ((P.part p).filter (· < 0))) ++

@@ -148,7 +148,9 @@ private theorem pairedWord_stirling (n : ℕ) : IsStirlingPermutation n (pairedW
     simp only [pairedWord] at ha hc ⊢
     omega
 
-private theorem count_ofFn_stirling {n : ℕ} {w : Fin (2 * n) → ℕ}
+/-- Each letter in the alphabet of a Stirling permutation occurs twice in its list, and no
+other letter occurs. -/
+public theorem count_ofFn_stirling {n : ℕ} {w : Fin (2 * n) → ℕ}
     (hw : IsStirlingPermutation n w) (v : ℕ) :
     (List.ofFn w).count v = if v ∈ Finset.Icc 1 n then 2 else 0 := by
   by_cases hv : v ∈ Finset.Icc 1 n
@@ -405,6 +407,51 @@ Permutations*, INTEGERS 24 (2024), Article A104, Proposition 1 (map `φ`). -/
 def typeBFlattenedWord {n : ℕ} (P : Finpartition (Finset.Icc (-(n : ℤ)) n)) :
     Fin (2 * (n + 1)) → ℕ :=
   fun i => (typeBFlattenedWordList P).getD i 0
+
+/-- The run leaders of a flattened word are weakly increasing in position order. -/
+theorem isFlattenedWord_iff {m : ℕ} {w : Fin m → ℕ} : IsFlattenedWord w ↔
+    ∀ i j : Fin m, i < j → wordRunStart w i → wordRunStart w j → w i ≤ w j := Iff.rfl
+
+/-- A run starts at the first position or immediately after a strict descent. -/
+theorem wordRunStart_iff {m : ℕ} {w : Fin m → ℕ} {i : Fin m} : wordRunStart w i ↔
+    i.val = 0 ∨ ∃ j : Fin m, j.val + 1 = i.val ∧ w i < w j := Iff.rfl
+
+/-- A partition of the signed interval has type B exactly when negation preserves its blocks
+and fixes exactly one block. -/
+theorem isTypeBSetPartition_iff {n : ℕ} {P : Finpartition (Finset.Icc (-(n : ℤ)) n)} :
+    IsTypeBSetPartition P ↔
+      (∀ b ∈ P.parts, b.image (fun x => -x) ∈ P.parts) ∧
+        ∃! b, b ∈ P.parts ∧ b.image (fun x => -x) = b := Iff.rfl
+
+/-- The letters of the shifted set are exactly the absolute values of its elements plus one. -/
+theorem mem_typeBShift {s : Finset ℤ} {a : ℕ} : a ∈ typeBShift s ↔
+    ∃ x ∈ s, x.natAbs + 1 = a := Finset.mem_image
+
+/-- The doubled word is obtained by replacing each entry in the increasing enumeration by a pair. -/
+theorem doubledWord_eq_flatMap (s : Finset ℕ) :
+    doubledWord s = (s.sort (· ≤ ·)).flatMap (fun x => [x, x]) := rfl
+
+/-- For a nonempty increasing enumeration, the wrapped word doubles its tail and surrounds it
+by its first entry. -/
+theorem wrappedWord_eq_of_sort_eq {s : Finset ℕ} {a : ℕ} {as : List ℕ}
+    (h : s.sort (· ≤ ·) = a :: as) :
+    wrappedWord s = a :: as.flatMap (fun x => [x, x]) ++ [a] := by
+  simp [wrappedWord, h]
+
+/-- The partition's list starts with its wrapped nonnegative zero block and continues with the
+negative and positive words of its labelled blocks in increasing label order. -/
+theorem typeBFlattenedWordList_eq {n : ℕ} (P : Finpartition (Finset.Icc (-(n : ℤ)) n)) :
+    typeBFlattenedWordList P = wrappedWord (typeBShift ((P.part 0).filter (0 ≤ ·))) ++
+      ((adlerBlockLabels P).sort (· ≤ ·)).flatMap (fun p =>
+        doubledWord (typeBShift ((P.part p).filter (· < 0))) ++
+          wrappedWord (typeBShift ((P.part p).filter (0 < ·)))) := rfl
+
+/-- The word at a position is the partition list's letter there, defaulting to zero outside the
+list. -/
+theorem typeBFlattenedWord_apply {n : ℕ} (P : Finpartition (Finset.Icc (-(n : ℤ)) n))
+    (i : Fin (2 * (n + 1))) :
+    typeBFlattenedWord P i = (typeBFlattenedWordList P).getD i 0 := rfl
+
 end
 
 end MetaMathlibExt
