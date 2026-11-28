@@ -43,6 +43,17 @@ nodes of the subtree (`potential`).
   `3 log₂ n + 1`.
 * `balance_theorem`: any `m` successive splays starting from an `n`-node tree cost in total
   at most `m (3 log₂ n + 1) + n log₂ n`, the explicit form of Theorem 1 (Balance Theorem).
+* `amortized_splayMax_le`: the amortized cost of `splayMax t` is at most `3 log₂ n + 1`
+  in the repo's rotation-based cost model (the FDSA/AFP `A_splay_max` analogue; AFP
+  states `3 * φ t + 1` with `φ t = log₂ (size1 t)`).
+* `amortized_delete_le`: the amortized cost of `delete x t` is at most `5 log₂ n + 2`
+  in the repo's rotation-based cost model (the FDSA/AFP `A_delete` analogue; AFP
+  states `6 log₂ (size1 t) + 2`).
+* `amortized_nipkowInsert_le`: the amortized cost of the book's `nipkowInsert x t`
+  is at most `4 log₂ n + 2` in the repo's rotation-based cost model (the FDSA/AFP
+  `A_insert` analogue; AFP states `4 log₂ (size1 t) + 2`). The tree is the same as
+  `insert x t` (`insert_eq_nipkowInsert`); `costInsert` charges the book's
+  splay-then-rebuild, not the `split` that `insert` performs instead.
 
 **On the splaying variant.** `SplayTree.splay` is recursive and consumes two levels of the
 search path per step starting from the root, so when the access depth is odd its single
@@ -776,6 +787,410 @@ theorem balance_theorem [LinearOrder α] (xs : ℕ → α) (t : BinaryTree α) (
   have hm := potential_nonneg (splayRun xs t m)
   simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul] at key
   linarith
+
+/-- **Number of rotations performed by `splayMax`.** `rotationsMax t` counts the single
+rotations performed by `SplayTree.splayMax t`: one for a zig step and two for a
+zig-zig step, mirroring the recursion of `splayMax` (Sleator and Tarjan, §2, for the
+maximum). No ordering is needed. -/
+def rotationsMax : BinaryTree α → ℕ
+  | .nil => 0
+  | .node _ _ .nil => 0
+  | .node _ _ (.node _ _ rr) =>
+      match splayMax rr with
+      | .nil => 1
+      | .node _ _ _ => rotationsMax rr + 2
+
+/-- **Cost of `splayMax`.** The number of rotations performed by `SplayTree.splayMax t`,
+or one if there are none, following the cost model of `cost` (Sleator and Tarjan, §2). -/
+def costMax (t : BinaryTree α) : ℕ :=
+  max 1 (rotationsMax t)
+
+/-- **Cost of `delete`.** The cost of `SplayTree.delete x t`: the cost of the splay,
+plus the cost of `splayMax` on the left subtree when `x` is found (Nipkow, FDSA §21.1). -/
+def costDelete [LinearOrder α] (x : α) (t : BinaryTree α) : ℕ :=
+  match splay x t with
+  | .nil => 1
+  | .node a l _r => if x = a then cost x t + costMax l else cost x t
+
+/-- **Cost of the book's insert.** The cost of `SplayTree.nipkowInsert x t`: the cost
+of the splay; the rebuilding of the tree around the new root is free, as in Nipkow's
+time function `Tinsert = Tsplay` (FDSA Appendix B.9). It charges the book's
+splay-then-rebuild: `SplayTree.insert x t` is the same tree (`insert_eq_nipkowInsert`),
+but the `split` that `SplayTree.insert` performs instead of the rebuild is not charged. -/
+def costInsert [LinearOrder α] (x : α) (t : BinaryTree α) : ℕ :=
+  cost x t
+
+private theorem rotationsMax_node_node_of_nil {k rk : α} {l rl rr : BinaryTree α}
+    (h : splayMax rr = .nil) :
+    rotationsMax (.node k l (.node rk rl rr)) = 1 := by
+  unfold rotationsMax
+  simp [h]
+
+private theorem rotationsMax_node_node_of_node {k rk c : α} {l rl rr C D : BinaryTree α}
+    (h : splayMax rr = .node c C D) :
+    rotationsMax (.node k l (.node rk rl rr)) = rotationsMax rr + 2 := by
+  have heq : rotationsMax (.node k l (.node rk rl rr)) =
+      match splayMax rr with
+      | .nil => 1
+      | .node _ _ _ => rotationsMax rr + 2 := rfl
+  rw [heq, h]
+
+private theorem costDelete_eq_of_nil [LinearOrder α] {x : α} {t : BinaryTree α}
+    (hsp : splay x t = .nil) : costDelete x t = 1 := by
+  unfold costDelete
+  rw [hsp]
+
+private theorem costDelete_eq_of_ne [LinearOrder α] {x a : α} {t l r : BinaryTree α}
+    (hsp : splay x t = .node a l r) (hxa : x ≠ a) : costDelete x t = cost x t := by
+  unfold costDelete
+  rw [hsp]
+  simp [hxa]
+
+private theorem costDelete_eq_of_eq [LinearOrder α] {x a : α} {t l r : BinaryTree α}
+    (hsp : splay x t = .node a l r) (hxa : x = a) :
+    costDelete x t = cost x t + costMax l := by
+  unfold costDelete
+  rw [hsp]
+  simp [hxa]
+
+/-- **Logarithm monotonicity, including zero.** `log₂ m ≤ log₂ n` for `m ≤ n`, with
+`log₂ 0 = 0`. -/
+private theorem logb_mono_zero {m n : ℕ} (h : m ≤ n) :
+    Real.logb 2 (m : ℝ) ≤ Real.logb 2 (n : ℝ) := by
+  rcases Nat.eq_zero_or_pos m with h0 | h0
+  · rw [h0]
+    simp only [Nat.cast_zero, Real.logb_zero]
+    exact lg_nonneg n
+  · exact lg_mono h0 h
+
+/-- **`log₂ (n + 1) ≤ log₂ n + 1` for `n ≥ 1`.** Since `n + 1 ≤ 2n`. -/
+private theorem logb_succ_le {n : ℕ} (hn : 1 ≤ n) :
+    Real.logb 2 (((n + 1 : ℕ) : ℝ)) ≤ Real.logb 2 (n : ℝ) + 1 := by
+  have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have hnpos : (0 : ℝ) < n := by exact_mod_cast hn
+  have hle : (((n + 1 : ℕ) : ℝ)) ≤ 2 * (n : ℝ) := by
+    push_cast
+    linarith
+  have h1 := Real.logb_le_logb_of_le (by norm_num : (1 : ℝ) < 2)
+    (by exact_mod_cast Nat.succ_pos n) hle
+  have h2 : Real.logb 2 (2 * (n : ℝ)) = Real.logb 2 (n : ℝ) + 1 := by
+    rw [Real.logb_mul (by norm_num : (2 : ℝ) ≠ 0) (ne_of_gt hnpos),
+      Real.logb_self_eq_one (by norm_num : (1 : ℝ) < 2)]
+    ring
+  linarith
+
+/-- **Potential of a splay with known root.** If `splay x t` has root `a` with
+subtrees `l` and `r`, its potential is `potential l + potential r + log₂ |t|`. -/
+private theorem potential_splay_eq_of_eq [LinearOrder α] {x a : α} {t l r : BinaryTree α}
+    (hs : splay x t = .node a l r) :
+    potential (splay x t) = potential l + potential r + Real.logb 2 (t.numNodes : ℝ) := by
+  have hnum : (BinaryTree.node a l r).numNodes = t.numNodes := by
+    rw [← hs]
+    exact numNodes_splay
+  rw [hs]
+  simp only [potential, hnum]
+
+/-- **Potential of a `splayMax` with known root.** If `splayMax t` has root `m` with
+subtrees `l'` and `D`, its potential is `potential l' + potential D + log₂ |t|`. -/
+private theorem potential_splayMax_eq_of_eq_node {m : α} {t l' D : BinaryTree α}
+    (hmax : splayMax t = .node m l' D) :
+    potential (splayMax t) = potential l' + potential D + Real.logb 2 (t.numNodes : ℝ) := by
+  have hnum : (BinaryTree.node m l' D).numNodes = t.numNodes := by
+    rw [← hmax]
+    exact numNodes_splayMax
+  rw [hmax]
+  simp only [potential, hnum]
+
+/-- **Potential of a deletion with known shape.** If `splay x t` has root `x` with
+subtrees `l` and `r`, and `splayMax l` has root `m` with left subtree `l'`, the
+deleted tree has potential `potential l' + potential r + log₂ (|t| - 1)`. -/
+private theorem potential_delete_eq_of_eq_node [LinearOrder α] {x a m : α}
+    {t l r l' D : BinaryTree α} (hsp : splay x t = .node a l r) (hxa : x = a)
+    (hmax : splayMax l = .node m l' D) :
+    potential (delete x t) =
+      potential l' + potential r + Real.logb 2 (((t.numNodes - 1 : ℕ) : ℝ)) := by
+  obtain ⟨-, hin⟩ := splayMax_eq_node hmax
+  have hlen : l'.numNodes + 1 = l.numNodes := by
+    have h1 := congrArg List.length hin
+    rw [List.length_append, List.length_singleton] at h1
+    rw [← BinarySearchTree.numNodes_eq_length_inorder,
+      ← BinarySearchTree.numNodes_eq_length_inorder] at h1
+    exact h1
+  have ht : t.numNodes = l.numNodes + r.numNodes + 1 := by
+    have h1 : (BinaryTree.node a l r).numNodes = t.numNodes := by
+      rw [← hsp]
+      exact numNodes_splay
+    simp only [BinaryTree.numNodes] at h1
+    omega
+  have hnum : (BinaryTree.node m l' r).numNodes = t.numNodes - 1 := by
+    simp only [BinaryTree.numNodes]
+    omega
+  rw [delete_eq_of_eq_node hsp hxa hmax]
+  simp only [potential, hnum]
+
+/-- **Splaying for the maximum costs as many rotations as splaying for that key.**
+On a search tree, `splayMax t` performs exactly the rotations that `splay a t`
+performs when `a` is at least every key of `t`: the search for `a` always turns
+right, so the two recursions take the same zig-zig steps. -/
+private theorem rotationsMax_eq_rotations_aux [LinearOrder α] (n : Nat) (t : BinaryTree α)
+    (h : t.numNodes ≤ n) (hOrd : BinarySearchTree.Ordered t) {a : α}
+    (ha : ∀ y ∈ t, y ≤ a) :
+    rotationsMax t = rotations a t := by
+  induction n generalizing t with
+  | zero =>
+      cases t with
+      | nil => rfl
+      | node k l r => simp only [BinaryTree.numNodes] at h; omega
+  | succ n ih =>
+      cases t with
+      | nil => rfl
+      | node k l r =>
+          cases r with
+          | nil =>
+              have hk : k ≤ a := ha k (Or.inr (Or.inl rfl))
+              have hrot : rotations a (.node k l .nil) = 0 := by
+                rw [rotations.eq_def]
+                by_cases hak : a = k
+                · simp [hak]
+                · have hka : k < a := lt_of_le_of_ne hk (fun hh => hak hh.symm)
+                  simp [hak, not_lt.mpr (le_of_lt hka)]
+              calc rotationsMax (.node k l .nil) = 0 := rfl
+                _ = rotations a (.node k l .nil) := hrot.symm
+          | node rk rl rr =>
+              obtain ⟨hOrdL, hOrdR, hAllL, hAllR⟩ := hOrd
+              obtain ⟨-, hkrk, -⟩ := hAllR
+              have hka : k < a :=
+                lt_of_lt_of_le hkrk (ha rk (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))
+              have hrka : rk ≤ a := ha rk (Or.inr (Or.inr (Or.inr (Or.inl rfl))))
+              rcases lt_trichotomy a rk with hlt | heq | hgt
+              · exact absurd (lt_of_lt_of_le hlt hrka) (lt_irrefl a)
+              · have hrr : rr = .nil := by
+                  cases rr with
+                  | nil => rfl
+                  | node s b c =>
+                      exfalso
+                      have hsle : s ≤ a :=
+                        ha s (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))))
+                      obtain ⟨-, -, -, hAllR2⟩ := hOrdR
+                      obtain ⟨-, hrks, -⟩ := hAllR2
+                      rw [heq] at hsle
+                      exact absurd (lt_of_lt_of_le hrks hsle) (lt_irrefl rk)
+                subst hrr
+                have hrot : rotations a (.node k l (.node rk rl .nil)) = 1 := by
+                  rw [rotations.eq_def]
+                  simp [ne_of_gt hkrk, not_lt.mpr (le_of_lt hkrk), heq]
+                calc rotationsMax (.node k l (.node rk rl .nil)) = 1 :=
+                      rotationsMax_node_node_of_nil rfl
+                  _ = rotations a (.node k l (.node rk rl .nil)) := hrot.symm
+              · cases rr with
+                | nil =>
+                    have hrot : rotations a (.node k l (.node rk rl .nil)) = 1 := by
+                      rw [rotations.eq_def]
+                      simp [ne_of_gt hka, not_lt.mpr (le_of_lt hka), ne_of_gt hgt, hgt]
+                    calc rotationsMax (.node k l (.node rk rl .nil)) = 1 :=
+                          rotationsMax_node_node_of_nil rfl
+                      _ = rotations a (.node k l (.node rk rl .nil)) := hrot.symm
+                | node s b c =>
+                    cases hsp : splayMax (.node s b c) with
+                    | nil => exact absurd hsp (splayMax_ne_nil (by simp))
+                    | node cc C D =>
+                        have hrot : rotations a (.node k l (.node rk rl (.node s b c))) =
+                            rotations a (.node s b c) + 2 := by
+                          rw [rotations.eq_def]
+                          simp [ne_of_gt hka, not_lt.mpr (le_of_lt hka), ne_of_gt hgt, hgt]
+                        have hih : rotationsMax (.node s b c) = rotations a (.node s b c) := by
+                          apply ih
+                          · simp only [BinaryTree.numNodes] at h ⊢
+                            omega
+                          · obtain ⟨-, hOrdRR, -, -⟩ := hOrdR
+                            exact hOrdRR
+                          · intro y hy
+                            exact ha y (Or.inr (Or.inr (Or.inr (Or.inr hy))))
+                        calc rotationsMax (.node k l (.node rk rl (.node s b c)))
+                            = rotationsMax (.node s b c) + 2 :=
+                              rotationsMax_node_node_of_node hsp
+                          _ = rotations a (.node s b c) + 2 := by rw [hih]
+                          _ = rotations a (.node k l (.node rk rl (.node s b c))) :=
+                              hrot.symm
+
+/-- **Splaying for the maximum costs as many rotations as splaying for that key.** -/
+public theorem rotationsMax_eq_rotations [LinearOrder α] {t : BinaryTree α}
+    (hOrd : BinarySearchTree.Ordered t) {a : α} (ha : ∀ y ∈ t, y ≤ a) :
+    rotationsMax t = rotations a t :=
+  rotationsMax_eq_rotations_aux t.numNodes t (by omega) hOrd ha
+
+/-- **Amortized cost of `splayMax` is at most `3 log₂ n + 1`.** Splaying the maximum
+to the root costs, in the amortized sense, at most `3 log₂ n + 1` on an `n`-node
+search tree in this file's rotation-based cost model (rotations, or 1 if none;
+`potential` sums `log₂` of subtree sizes): `splayMax t` is `splay a t` for the
+maximum key `a`, and the access lemma applies. This is the repo's analogue of the
+FDSA/AFP `A_splay_max` bound, not FDSA's statement: AFP's `A_splay_max_ub3`
+states `3 * φ t + 1`, with `φ t = log₂ (size1 t)`. -/
+public theorem amortized_splayMax_le [LinearOrder α] (t : BinaryTree α)
+    (hOrd : BinarySearchTree.Ordered t) :
+    (costMax t : ℝ) + potential (splayMax t) - potential t ≤
+      3 * Real.logb 2 (t.numNodes : ℝ) + 1 := by
+  cases t with
+  | nil => simp [costMax, rotationsMax, splayMax_nil, potential, Real.logb_zero]
+  | node k l r =>
+      obtain ⟨a, ha, hEq⟩ := exists_max_splay hOrd (by simp)
+      have hcost : costMax (.node k l r) = cost a (.node k l r) := by
+        simp only [costMax, cost, rotationsMax_eq_rotations hOrd ha]
+      rw [hEq, hcost]
+      have h := access_lemma a (.node k l r)
+      have hlog := lg_nonneg ((focus a (.node k l r)).numNodes)
+      linarith
+
+/-- **Amortized cost of `delete` is at most `5 log₂ n + 2`.** Deleting from an `n`-node
+search tree costs, in the amortized sense, at most `5 log₂ n + 2` in this file's
+rotation-based cost model (rotations, or 1 if none; `potential` sums `log₂` of
+subtree sizes). In the main case (after the splay the key is at the root and its
+left subtree `l` is nonempty), the splay contributes at most `3 log₂ n + 1` (access
+lemma) and the `splayMax` on `l` at most `3 log₂ |l| + 1`; replacing the root by the
+maximum of `l` then changes the potential by `log₂ (n - 1) - log₂ n - log₂ |l|`,
+which is at most `-log₂ |l|`. The total is therefore at most
+`3 log₂ n + 2 log₂ |l| + 2 ≤ 5 log₂ n + 2`. This is the repo's analogue of the
+FDSA/AFP `A_delete` bound, not FDSA's statement: AFP's `amor_delete` proves
+`6 * log 2 (size1 t) + 2` in AFP's own time-function and potential model. -/
+public theorem amortized_delete_le [LinearOrder α] (x : α) (t : BinaryTree α)
+    (hOrd : BinarySearchTree.Ordered t) :
+    (costDelete x t : ℝ) + potential (delete x t) - potential t ≤
+      5 * Real.logb 2 (t.numNodes : ℝ) + 2 := by
+  cases hs : splay x t with
+  | nil =>
+      have ht : t = .nil := splay_eq_nil.mp hs
+      subst ht
+      have hc : costDelete x (.nil : BinaryTree α) = 1 := costDelete_eq_of_nil hs
+      have hd : delete x (.nil : BinaryTree α) = .nil := by simp [delete, hs]
+      rw [hc, hd]
+      simp only [potential, BinaryTree.numNodes, Nat.cast_zero, Real.logb_zero]
+      norm_num
+  | node a l r =>
+      by_cases hxa : x = a
+      · cases hmax : splayMax l with
+        | nil =>
+            have hl : l = .nil := splayMax_eq_nil.mp hmax
+            subst hl
+            rw [delete_eq_of_eq_nil hs hxa hmax, costDelete_eq_of_eq hs hxa]
+            have hcostMax : costMax (.nil : BinaryTree α) = 1 := by
+              simp [costMax, rotationsMax]
+            rw [hcostMax]
+            push_cast
+            have hps := potential_splay_eq_of_eq hs
+            simp only [potential] at hps
+            have h1 := amortized_cost_le x t
+            have hlog := lg_nonneg t.numNodes
+            linarith
+        | node m l' D =>
+            have hps := potential_splay_eq_of_eq hs
+            obtain ⟨hD, -⟩ := splayMax_eq_node hmax
+            subst hD
+            have hpm := potential_splayMax_eq_of_eq_node hmax
+            simp only [potential] at hpm
+            have hpd := potential_delete_eq_of_eq_node hs hxa hmax
+            have hsOrd : BinarySearchTree.Ordered (.node a l r) := by
+              rw [← hs]
+              exact ordered_splay (x := x) hOrd
+            obtain ⟨hOrdL, -, -, -⟩ := hsOrd
+            have h1 := amortized_cost_le x t
+            have h2 := amortized_splayMax_le l hOrdL
+            rw [costDelete_eq_of_eq hs hxa]
+            push_cast
+            have hlog1 : Real.logb 2 (((t.numNodes - 1 : ℕ) : ℝ)) ≤
+                Real.logb 2 (t.numNodes : ℝ) :=
+              logb_mono_zero (Nat.sub_le _ _)
+            have hlog2 : Real.logb 2 (l.numNodes : ℝ) ≤
+                Real.logb 2 (t.numNodes : ℝ) := by
+              apply logb_mono_zero
+              have hnum : (BinaryTree.node a l r).numNodes = t.numNodes := by
+                rw [← hs]
+                exact numNodes_splay
+              simp only [BinaryTree.numNodes] at hnum
+              omega
+            have hlogL := lg_nonneg l.numNodes
+            have hlogT := lg_nonneg t.numNodes
+            linarith
+      · rw [delete_eq_of_ne hs hxa, costDelete_eq_of_ne hs hxa]
+        have h1 := amortized_cost_le x t
+        rw [hs] at h1
+        have hlog := lg_nonneg t.numNodes
+        linarith
+
+/-- **Amortized cost of the book's insert is at most `4 log₂ n + 2`.** Inserting into an
+`n`-node tree costs, in the amortized sense, at most `4 log₂ n + 2` in this file's
+rotation-based cost model (rotations, or 1 if none; `potential` sums `log₂` of
+subtree sizes): the splay contributes at most `3 log₂ n + 1`, and the new root adds
+at most `log₂ n + 1` of potential (the new subtree of the old root contributes at
+most `log₂ n`, and the new tree is at most one node larger). No search-tree
+ordering is needed. This is the repo's analogue of the FDSA/AFP `A_insert` bound,
+not FDSA's statement: AFP's `amor_insert` proves `4 * log 2 (size1 t) + 2` in AFP's
+own time-function and potential model. -/
+public theorem amortized_nipkowInsert_le [LinearOrder α] (x : α) (t : BinaryTree α) :
+    (costInsert x t : ℝ) + potential (nipkowInsert x t) - potential t ≤
+      4 * Real.logb 2 (t.numNodes : ℝ) + 2 := by
+  simp only [costInsert]
+  cases hs : splay x t with
+  | nil =>
+      have ht : t = .nil := splay_eq_nil.mp hs
+      subst ht
+      rw [nipkowInsert_eq_of_nil hs]
+      have hc : cost x (.nil : BinaryTree α) = 1 := by simp [cost, rotations]
+      have hp : potential (.node x .nil .nil : BinaryTree α) = 0 := by
+        simp [potential, BinaryTree.numNodes, Real.logb_one]
+      rw [hc, hp]
+      simp only [potential, BinaryTree.numNodes, Nat.cast_zero, Real.logb_zero]
+      norm_num
+  | node a l r =>
+      have hps := potential_splay_eq_of_eq hs
+      have h1 := amortized_cost_le x t
+      have hnum : (BinaryTree.node a l r).numNodes = t.numNodes := by
+        rw [← hs]
+        exact numNodes_splay
+      have ht : t.numNodes = l.numNodes + r.numNodes + 1 := by
+        simp only [BinaryTree.numNodes] at hnum
+        omega
+      have hlogT := lg_nonneg t.numNodes
+      rcases lt_trichotomy x a with hxa | hxa | hxa
+      · rw [nipkowInsert_eq_of_lt hs hxa]
+        have hnumR : (BinaryTree.node a .nil r).numNodes = r.numNodes + 1 := by
+          simp [BinaryTree.numNodes]
+        have hnumN : (BinaryTree.node x l (.node a .nil r)).numNodes = t.numNodes + 1 := by
+          simp only [BinaryTree.numNodes]
+          omega
+        have hpot : potential (.node x l (.node a .nil r) : BinaryTree α) =
+            potential l + (potential r + Real.logb 2 ((r.numNodes + 1 : ℕ) : ℝ)) +
+              Real.logb 2 (((t.numNodes + 1 : ℕ) : ℝ)) := by
+          simp only [potential, hnumR, hnumN, zero_add]
+        have hlog1 : Real.logb 2 ((r.numNodes + 1 : ℕ) : ℝ) ≤
+            Real.logb 2 (t.numNodes : ℝ) := by
+          apply logb_mono_zero
+          omega
+        have hlog2 : Real.logb 2 (((t.numNodes + 1 : ℕ) : ℝ)) ≤
+            Real.logb 2 (t.numNodes : ℝ) + 1 := by
+          apply logb_succ_le
+          omega
+        linarith
+      · rw [nipkowInsert_eq_of_eq hs hxa, ← hs]
+        linarith
+      · rw [nipkowInsert_eq_of_gt hs hxa]
+        have hnumL : (BinaryTree.node a l .nil).numNodes = l.numNodes + 1 := by
+          simp [BinaryTree.numNodes]
+        have hnumN : (BinaryTree.node x (.node a l .nil) r).numNodes = t.numNodes + 1 := by
+          simp only [BinaryTree.numNodes]
+          omega
+        have hpot : potential (.node x (.node a l .nil) r : BinaryTree α) =
+            (potential l + Real.logb 2 ((l.numNodes + 1 : ℕ) : ℝ)) + potential r +
+              Real.logb 2 (((t.numNodes + 1 : ℕ) : ℝ)) := by
+          simp only [potential, hnumL, hnumN, add_zero]
+        have hlog1 : Real.logb 2 ((l.numNodes + 1 : ℕ) : ℝ) ≤
+            Real.logb 2 (t.numNodes : ℝ) := by
+          apply logb_mono_zero
+          omega
+        have hlog2 : Real.logb 2 (((t.numNodes + 1 : ℕ) : ℝ)) ≤
+            Real.logb 2 (t.numNodes : ℝ) + 1 := by
+          apply logb_succ_le
+          omega
+        linarith
 
 section Weighted
 

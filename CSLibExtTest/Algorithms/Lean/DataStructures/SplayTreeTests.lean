@@ -17,7 +17,8 @@ public import Mathlib.Data.Nat.Basic
 Client examples exercise every splay rotation case, including the
 unsuccessful left-right and right-left (zig-zag) searches where the
 last visited node must be rotated to the root, plus split, insertion,
-access, and membership through the public API.
+access, and membership through the public API. Also splaying the maximum,
+deletion, and the book's insert (Nipkow, FDSA §21.1).
 -/
 
 @[expose] public section
@@ -231,5 +232,129 @@ example : SplayTree.splay 11 rightPath =
 /-- Splaying the absent key `12` ends with the last-visited node `11` at the root. -/
 example : SplayTree.splay 12 rightPath =
     .node 11 (.node 5 (leaf 2) (leaf 8)) .nil := by decide
+
+/-! ### Splaying the maximum, deletion, and the book's insert -/
+
+example : SplayTree.splayMax (BinaryTree.nil : BinaryTree Nat) =
+    (BinaryTree.nil : BinaryTree Nat) := by decide
+
+/-- The maximum of `balanced` is already at the root (it is built by reverse insertion). -/
+example : SplayTree.splayMax balanced = balanced := by decide
+
+/-- Splaying the maximum of a right path performs a zig-zig. -/
+example : SplayTree.splayMax (.node 1 .nil (.node 2 .nil (.node 3 .nil .nil))) =
+    .node 3 (.node 2 (.node 1 .nil .nil) .nil) .nil := by decide
+
+example : SplayTree.root? (SplayTree.splayMax balanced) = some 7 := by decide
+
+example : inorder (SplayTree.splayMax balanced) = [1, 2, 3, 4, 5, 6, 7] := by decide
+
+example : SplayTree.splayMax leftPath4 = leftPath4 := by decide
+
+example (x : Nat) (t : BinaryTree Nat) :
+    x ∈ SplayTree.splayMax t ↔ x ∈ t :=
+  SplayTree.mem_splayMax
+
+example (t : BinaryTree Nat) :
+    (SplayTree.splayMax t).numNodes = t.numNodes :=
+  SplayTree.numNodes_splayMax
+
+example (t : BinaryTree Nat) (hOrd : Ordered t) :
+    Ordered (SplayTree.splayMax t) :=
+  SplayTree.ordered_splayMax hOrd
+
+example : inorder (SplayTree.delete 4 balanced) = [1, 2, 3, 5, 6, 7] := by decide
+
+example : inorder (SplayTree.delete 1 balanced) = [2, 3, 4, 5, 6, 7] := by decide
+
+example : inorder (SplayTree.delete 7 balanced) = [1, 2, 3, 4, 5, 6] := by decide
+
+example : inorder (SplayTree.delete 0 balanced) = [1, 2, 3, 4, 5, 6, 7] := by decide
+
+example : Ordered (SplayTree.delete 4 balanced) :=
+  SplayTree.ordered_delete ordered_balanced
+
+example (x y : Nat) (t : BinaryTree Nat) (hOrd : Ordered t) :
+    y ∈ SplayTree.delete x t ↔ y ∈ t ∧ y ≠ x :=
+  SplayTree.mem_delete hOrd
+
+example : (SplayTree.delete 4 balanced).numNodes = 6 := by decide
+
+example : SplayTree.root? (SplayTree.nipkowInsert 0 balanced) = some 0 := by decide
+
+example : SplayTree.root? (SplayTree.nipkowInsert 8 balanced) = some 8 := by decide
+
+example : inorder (SplayTree.nipkowInsert 0 balanced) = [0, 1, 2, 3, 4, 5, 6, 7] := by
+  decide
+
+example : inorder (SplayTree.nipkowInsert 8 balanced) = [1, 2, 3, 4, 5, 6, 7, 8] := by
+  decide
+
+example : inorder (SplayTree.nipkowInsert 4 balanced) = [1, 2, 3, 4, 5, 6, 7] := by decide
+
+example : Ordered (SplayTree.nipkowInsert 0 balanced) :=
+  SplayTree.ordered_nipkowInsert ordered_balanced
+
+example (x y : Nat) (t : BinaryTree Nat) :
+    y ∈ SplayTree.nipkowInsert x t ↔ y ∈ t ∨ y = x :=
+  SplayTree.mem_nipkowInsert
+
+example : (SplayTree.nipkowInsert 0 balanced).numNodes = 8 := by decide
+
+example : (SplayTree.nipkowInsert 4 balanced).numNodes = 7 := by decide
+
+/-- Splay-tree insertion and the book's insert build the same tree: splaying `5` brings `4` to
+the root, and splitting the right subtree at `5` walks its left spine `10, 6` and keeps it
+whole. -/
+example :
+    SplayTree.insert 5
+        (.node 10 (.node 2 (leaf 1) (.node 6 (leaf 4) .nil)) (leaf 12) : BinaryTree Nat) =
+      SplayTree.nipkowInsert 5
+        (.node 10 (.node 2 (leaf 1) (.node 6 (leaf 4) .nil)) (leaf 12)) := by
+  decide
+
+/-- They also agree on a tree that is not a search tree: `9` sits in the left subtree of `2`,
+which the split at `5` never visits. -/
+example :
+    SplayTree.insert 5 (.node 10 (.node 2 (leaf 9) (leaf 6)) .nil : BinaryTree Nat) =
+      SplayTree.nipkowInsert 5 (.node 10 (.node 2 (leaf 9) (leaf 6)) .nil) := by
+  decide
+
+#check SplayTree.splayMax
+#check SplayTree.delete
+#check SplayTree.nipkowInsert
+#check SplayTree.inorder_splayMax
+#check SplayTree.mem_splayMax
+#check SplayTree.numNodes_splayMax
+#check SplayTree.ordered_splayMax
+#check SplayTree.splay_max_eq_splay
+#check SplayTree.mem_delete
+#check SplayTree.ordered_delete
+#check SplayTree.inorder_delete
+#check SplayTree.numNodes_delete_of_mem
+#check SplayTree.numNodes_delete_of_not_mem
+#check SplayTree.mem_nipkowInsert
+#check SplayTree.ordered_nipkowInsert
+#check SplayTree.numNodes_nipkowInsert_of_mem
+#check SplayTree.numNodes_nipkowInsert_of_not_mem
+#check SplayTree.inorder_nipkowInsert_of_mem
+#check SplayTree.inorder_nipkowInsert_of_not_mem
+
+#print axioms SplayTree.inorder_splayMax
+#print axioms SplayTree.mem_splayMax
+#print axioms SplayTree.numNodes_splayMax
+#print axioms SplayTree.ordered_splayMax
+#print axioms SplayTree.splay_max_eq_splay
+#print axioms SplayTree.mem_delete
+#print axioms SplayTree.ordered_delete
+#print axioms SplayTree.inorder_delete
+#print axioms SplayTree.numNodes_delete_of_mem
+#print axioms SplayTree.numNodes_delete_of_not_mem
+#print axioms SplayTree.mem_nipkowInsert
+#print axioms SplayTree.ordered_nipkowInsert
+#print axioms SplayTree.numNodes_nipkowInsert_of_mem
+#print axioms SplayTree.numNodes_nipkowInsert_of_not_mem
+#print axioms SplayTree.inorder_nipkowInsert_of_mem
+#print axioms SplayTree.inorder_nipkowInsert_of_not_mem
 
 end Cslib.Algorithms.Lean.SplayTreeTests

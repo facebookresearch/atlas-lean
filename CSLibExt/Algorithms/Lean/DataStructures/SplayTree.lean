@@ -36,6 +36,15 @@ inorder traversal (hence membership and `Ordered`), and a present key
 ends at the root. The amortized `O(log n)` access lemma (the
 Sleator-Tarjan potential argument) for this definition is proved in
 `CSLibExt.Algorithms.Lean.DataStructures.SplayTree.Amortized`.
+
+It also provides `splayMax` (splay the rightmost key to the root; it is the
+maximum key when the tree is `Ordered`), `delete` (splay, then replace a
+present key by the maximum of the left subtree),
+and `nipkowInsert` (the book's insert: splay, then rebuild around the new
+root; it computes the same tree as `insert`, by `insert_eq_nipkowInsert`),
+with the same functional-correctness guarantees (Nipkow, FDSA §21.1);
+their amortized bounds are in
+`CSLibExt.Algorithms.Lean.DataStructures.SplayTree.Amortized`.
 -/
 
 set_option autoImplicit false
@@ -303,7 +312,7 @@ private theorem inorder_splay_aux {α : Type u} [LinearOrder α] {x : α}
                             rw [hs] at hh
                             simpa using hh.symm
                           rw [splay_zigzig_left_nil hxk hlt hxl hllt hs]
-                          simp [hIl, List.append_assoc]
+                          simp [hIl]
                       | node d lll llr =>
                           have hb : ll.numNodes ≤ n := by
                             simp only [BinaryTree.numNodes] at h
@@ -860,13 +869,1004 @@ if and only if $x$ is a key of $t$. -/
 public theorem contains_eq_true_iff {α : Type u} [LinearOrder α]
     {x : α} {t : BinaryTree α} (hOrd : Ordered t) :
     contains x t = true ↔ x ∈ t := by
-  show decide (root? (splay x t) = some x) = true ↔ x ∈ t
+  change decide (root? (splay x t) = some x) = true ↔ x ∈ t
   rw [decide_eq_true_eq]
   constructor
   · intro h
     exact mem_splay.mp (mem_of_root?_eq_some h)
   · intro h
     exact root?_splay_of_mem hOrd h
+
+/--
+Splay the rightmost key to the root (Nipkow's `splay_max`, FDSA §21.1); when the
+tree is `Ordered`, the rightmost key is its maximum.
+The recursion descends two levels down the right spine per step. No ordering
+is needed: the operation only follows the right spine. The `.nil` branch of
+the match is the zig case: it is taken exactly when `rr` is empty, so
+`splayMax rr = .nil`, and it rotates `rk` to the root (AFP's `CD = Leaf`
+branch); the other branch applies the two-level step when `rr` is nonempty.
+-/
+public def splayMax {α : Type u} : BinaryTree α → BinaryTree α
+  | .nil => .nil
+  | .node k l .nil => .node k l .nil
+  | .node k l (.node rk rl rr) =>
+    match splayMax rr with
+    | .nil => .node rk (.node k l rl) .nil
+    | .node c C D => .node c (.node rk (.node k l rl) C) D
+
+/-- Splaying the empty tree for the maximum is empty. -/
+@[simp] public theorem splayMax_nil {α : Type u} :
+    splayMax (.nil : BinaryTree α) = .nil :=
+  rfl
+
+private theorem splayMax_node_node_of_nil {α : Type u}
+    {k rk : α} {l rl rr : BinaryTree α} (h : splayMax rr = .nil) :
+    splayMax (.node k l (.node rk rl rr)) = .node rk (.node k l rl) .nil := by
+  unfold splayMax
+  simp [h]
+
+private theorem splayMax_node_node_of_node {α : Type u}
+    {k rk c : α} {l rl rr C D : BinaryTree α} (h : splayMax rr = .node c C D) :
+    splayMax (.node k l (.node rk rl rr)) =
+      .node c (.node rk (.node k l rl) C) D := by
+  unfold splayMax
+  simp [h]
+
+private theorem inorder_splayMax_aux {α : Type u} (n : Nat) (t : BinaryTree α)
+    (h : t.numNodes ≤ n) : inorder (splayMax t) = inorder t := by
+  induction n generalizing t with
+  | zero =>
+      cases t with
+      | nil => rfl
+      | node k l r =>
+          simp only [BinaryTree.numNodes] at h
+          omega
+  | succ n ih =>
+      cases t with
+      | nil => rfl
+      | node k l r =>
+          cases r with
+          | nil => rfl
+          | node rk rl rr =>
+              cases hs : splayMax rr with
+              | nil =>
+                  have hb : rr.numNodes ≤ n := by
+                    simp only [BinaryTree.numNodes] at h
+                    omega
+                  have hIrr : inorder rr = [] := by
+                    have hh := ih rr hb
+                    rw [hs] at hh
+                    simpa using hh.symm
+                  rw [splayMax_node_node_of_nil hs]
+                  simp [hIrr, List.append_assoc]
+              | node c C D =>
+                  have hb : rr.numNodes ≤ n := by
+                    simp only [BinaryTree.numNodes] at h
+                    omega
+                  have hIrr : inorder rr = inorder C ++ c :: inorder D := by
+                    have hh := ih rr hb
+                    rw [hs] at hh
+                    rw [← hh, inorder_node]
+                  rw [splayMax_node_node_of_node hs]
+                  simp [hIrr, List.append_assoc]
+
+/-- Splaying the maximum preserves the inorder traversal exactly. -/
+public theorem inorder_splayMax {α : Type u} (t : BinaryTree α) :
+    inorder (splayMax t) = inorder t :=
+  inorder_splayMax_aux t.numNodes t (by omega)
+
+/-- Splaying the maximum preserves structural membership. -/
+public theorem mem_splayMax {α : Type u} {x : α} {t : BinaryTree α} :
+    x ∈ splayMax t ↔ x ∈ t := by
+  simp only [← mem_inorder, inorder_splayMax]
+
+/-- Splaying the maximum preserves the number of nodes. -/
+public theorem numNodes_splayMax {α : Type u} {t : BinaryTree α} :
+    (splayMax t).numNodes = t.numNodes := by
+  rw [numNodes_eq_length_inorder, numNodes_eq_length_inorder, inorder_splayMax]
+
+/-- Splaying the maximum preserves the strict search-tree invariant. -/
+public theorem ordered_splayMax {α : Type u} [LinearOrder α] {t : BinaryTree α}
+    (h : Ordered t) : Ordered (splayMax t) :=
+  ordered_of_pairwise_inorder (by
+    rw [inorder_splayMax]
+    exact ordered_inorder h)
+
+/-- Splaying the maximum returns the empty tree iff the input is empty. -/
+public theorem splayMax_ne_nil {α : Type u} {t : BinaryTree α} (ht : t ≠ .nil) :
+    splayMax t ≠ .nil := by
+  intro hcon
+  have h := numNodes_splayMax (t := t)
+  rw [hcon] at h
+  simp only [BinaryTree.numNodes] at h
+  exact ht (by
+    cases t with
+    | nil => rfl
+    | node k l r =>
+      simp only [BinaryTree.numNodes] at h
+      exact absurd h (by omega))
+
+/-- Splaying the empty tree gives the empty tree, and vice versa. -/
+public theorem splay_eq_nil {α : Type u} [LinearOrder α] {x : α} {t : BinaryTree α} :
+    splay x t = .nil ↔ t = .nil := by
+  constructor
+  · intro h
+    cases t with
+    | nil => rfl
+    | node k l r =>
+      have hnum := numNodes_splay (x := x) (t := .node k l r)
+      rw [h] at hnum
+      simp only [BinaryTree.numNodes] at hnum
+      omega
+  · rintro rfl
+    rfl
+
+/-- Splaying the maximum of the empty tree gives the empty tree, and vice versa. -/
+public theorem splayMax_eq_nil {α : Type u} {t : BinaryTree α} :
+    splayMax t = .nil ↔ t = .nil := by
+  constructor
+  · intro h
+    cases t with
+    | nil => rfl
+    | node k l r =>
+      have hnum := numNodes_splayMax (t := .node k l r)
+      rw [h] at hnum
+      simp only [BinaryTree.numNodes] at hnum
+      omega
+  · rintro rfl
+    rfl
+
+private theorem splay_bounds_aux {α : Type u} [LinearOrder α] {x : α} (n : Nat)
+    (t : BinaryTree α) (h : t.numNodes ≤ n) (hOrd : Ordered t) :
+    ∀ {l : BinaryTree α} {a : α} {r : BinaryTree α},
+    splay x t = .node a l r → All (· < x) l ∧ All (x < ·) r := by
+  induction n generalizing t with
+  | zero =>
+      cases t with
+      | nil =>
+        intro l' a' r' hsp
+        simp at hsp
+      | node k l r =>
+        simp only [BinaryTree.numNodes] at h
+        omega
+  | succ n ih =>
+      cases t with
+      | nil =>
+        intro l' a' r' hsp
+        simp at hsp
+      | node k l r =>
+        rcases hOrd with ⟨hOrdL, hOrdR, hAllL, hAllR⟩
+        intro l' a' r' hsp
+        by_cases hxk : x = k
+        · subst hxk
+          rw [splay_node_self rfl] at hsp
+          obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+          exact ⟨hAllL, hAllR⟩
+        · by_cases hlt : x < k
+          · cases l with
+            | nil =>
+              rw [splay_node_left_nil hxk hlt] at hsp
+              obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+              exact ⟨trivial, all_mono (fun y hy => lt_trans hlt hy) hAllR⟩
+            | node lk ll lr =>
+              rcases hOrdL with ⟨hOrdLL, hOrdLR, hAllLL, hAllLR⟩
+              by_cases hxl : x = lk
+              · subst hxl
+                rw [splay_zig_left hxk hlt rfl] at hsp
+                obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                exact ⟨hAllLL,
+                  ⟨hAllLR, hlt, all_mono (fun y hy => lt_trans hlt hy) hAllR⟩⟩
+              · by_cases hllt : x < lk
+                · cases hs : splay x ll with
+                  | nil =>
+                    rw [splay_zigzig_left_nil hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hll : ll = .nil := splay_eq_nil.mp hs
+                    subst hll
+                    exact ⟨trivial,
+                      ⟨all_mono (fun y hy => lt_trans hllt hy) hAllLR, hlt,
+                        all_mono (fun y hy => lt_trans hlt hy) hAllR⟩⟩
+                  | node d lll llr =>
+                    rw [splay_zigzig_left_node hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : ll.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih ll hb hOrdLL hs
+                    exact ⟨h1, h2, hllt,
+                      ⟨all_mono (fun y hy => lt_trans hllt hy) hAllLR, hlt,
+                        all_mono (fun y hy => lt_trans hlt hy) hAllR⟩⟩
+                · have hgt : lk < x :=
+                    lt_of_le_of_ne (le_of_not_gt hllt) (fun hh => hxl hh.symm)
+                  cases hs : splay x lr with
+                  | nil =>
+                    rw [splay_zigzag_left_nil hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hlr : lr = .nil := splay_eq_nil.mp hs
+                    subst hlr
+                    exact ⟨all_mono (fun y hy => lt_trans hy hgt) hAllLL,
+                      ⟨trivial, hlt, all_mono (fun y hy => lt_trans hlt hy) hAllR⟩⟩
+                  | node d lrl lrr =>
+                    rw [splay_zigzag_left_node hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : lr.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih lr hb hOrdLR hs
+                    exact ⟨⟨all_mono (fun y hy => lt_trans hy hgt) hAllLL, hgt, h1⟩,
+                      ⟨h2, hlt, all_mono (fun y hy => lt_trans hlt hy) hAllR⟩⟩
+          · have hgt : k < x :=
+              lt_of_le_of_ne (le_of_not_gt hlt) (fun hh => hxk hh.symm)
+            cases r with
+            | nil =>
+              rw [splay_node_right_nil hxk hlt] at hsp
+              obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+              exact ⟨all_mono (fun y hy => lt_trans hy hgt) hAllL, trivial⟩
+            | node rk rl rr =>
+              rcases hOrdR with ⟨hOrdRL, hOrdRR, hAllRL, hAllRR⟩
+              by_cases hxr : x = rk
+              · subst hxr
+                rw [splay_zig_right hxk hlt rfl] at hsp
+                obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                exact ⟨⟨all_mono (fun y hy => lt_trans hy hgt) hAllL, hgt, hAllRL⟩,
+                  hAllRR⟩
+              · by_cases hrrt : rk < x
+                · cases hs : splay x rr with
+                  | nil =>
+                    rw [splay_zigzig_right_nil hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hrr : rr = .nil := splay_eq_nil.mp hs
+                    subst hrr
+                    exact ⟨⟨all_mono (fun y hy => lt_trans hy hgt) hAllL, hgt,
+                      all_mono (fun y hy => lt_trans hy hrrt) hAllRL⟩, trivial⟩
+                  | node d rrl rrr =>
+                    rw [splay_zigzig_right_node hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : rr.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih rr hb hOrdRR hs
+                    exact ⟨⟨⟨all_mono (fun y hy => lt_trans hy hgt) hAllL, hgt,
+                      all_mono (fun y hy => lt_trans hy hrrt) hAllRL⟩, hrrt, h1⟩, h2⟩
+                · have hxlt : x < rk := lt_of_le_of_ne (le_of_not_gt hrrt) hxr
+                  cases hs : splay x rl with
+                  | nil =>
+                    rw [splay_zigzag_right_nil hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hrl : rl = .nil := splay_eq_nil.mp hs
+                    subst hrl
+                    exact ⟨⟨all_mono (fun y hy => lt_trans hy hgt) hAllL, hgt, trivial⟩,
+                      all_mono (fun y hy => lt_trans hxlt hy) hAllRR⟩
+                  | node d rll rlr =>
+                    rw [splay_zigzag_right_node hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : rl.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih rl hb hOrdRL hs
+                    exact ⟨⟨all_mono (fun y hy => lt_trans hy hgt) hAllL, hgt, h1⟩,
+                      ⟨h2, hxlt, all_mono (fun y hy => lt_trans hxlt hy) hAllRR⟩⟩
+
+/-- **Splay bounds.** In an ordered tree, every key in the left subtree
+of `splay x t` is `< x` and every key in the right subtree is `> x`.
+It is used for `inorder_nipkowInsert_of_not_mem`, which splices an absent
+key into the inorder traversal at its sorted position. -/
+public theorem splay_bounds {α : Type u} [LinearOrder α] {x : α} {t : BinaryTree α}
+    {l : BinaryTree α} {a : α} {r : BinaryTree α} (hOrd : Ordered t)
+    (hsp : splay x t = .node a l r) : All (· < x) l ∧ All (x < ·) r :=
+  splay_bounds_aux t.numNodes t (by omega) hOrd hsp
+
+private theorem splayMax_eq_node_aux {α : Type u} (n : Nat) (t : BinaryTree α)
+    (h : t.numNodes ≤ n) :
+    ∀ {l : BinaryTree α} {a : α} {r : BinaryTree α},
+    splayMax t = .node a l r → r = .nil ∧ inorder l ++ [a] = inorder t := by
+  induction n generalizing t with
+  | zero =>
+      cases t with
+      | nil =>
+        intro l' a' r' hsp
+        simp at hsp
+      | node k l r =>
+        simp only [BinaryTree.numNodes] at h
+        omega
+  | succ n ih =>
+      cases t with
+      | nil =>
+        intro l' a' r' hsp
+        simp at hsp
+      | node k l r =>
+        cases r with
+        | nil =>
+          intro l' a' r' hsp
+          rw [show splayMax (.node k l .nil) = .node k l .nil from rfl] at hsp
+          obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+          refine ⟨rfl, ?_⟩
+          simp [inorder_node]
+        | node rk rl rr =>
+          cases hs : splayMax rr with
+          | nil =>
+            intro l' a' r' hsp
+            rw [splayMax_node_node_of_nil hs] at hsp
+            obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+            have hrr : rr = .nil := splayMax_eq_nil.mp hs
+            subst hrr
+            refine ⟨rfl, ?_⟩
+            simp [inorder_node, List.append_assoc]
+          | node c C D =>
+            intro l' a' r' hsp
+            rw [splayMax_node_node_of_node hs] at hsp
+            obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+            have hb : rr.numNodes ≤ n := by
+              simp only [BinaryTree.numNodes] at h
+              omega
+            obtain ⟨hD, hIrr⟩ := ih rr hb hs
+            refine ⟨hD, ?_⟩
+            simp [inorder_node, List.append_assoc, hIrr]
+
+/-- **Characterisation of `splayMax`.** If `splayMax t` is a node, its
+right subtree is empty and its inorder traversal is `inorder l ++ [a]`,
+so the root `a` is the maximum key of `t` for an ordered tree. -/
+public theorem splayMax_eq_node {α : Type u} {t : BinaryTree α} {l : BinaryTree α}
+    {a : α} {r : BinaryTree α} (h : splayMax t = .node a l r) :
+    r = .nil ∧ inorder l ++ [a] = inorder t :=
+  splayMax_eq_node_aux t.numNodes t (by omega) h
+
+private theorem splay_max_eq_splay_aux {α : Type u} [LinearOrder α] {a : α} (n : Nat)
+    (t : BinaryTree α) (h : t.numNodes ≤ n) (hOrd : Ordered t)
+    (hbound : ∀ y ∈ t, y ≤ a) : splayMax t = splay a t := by
+  induction n generalizing t with
+  | zero =>
+      cases t with
+      | nil => rfl
+      | node k l r =>
+        simp only [BinaryTree.numNodes] at h
+        omega
+  | succ n ih =>
+      cases t with
+      | nil => rfl
+      | node k l r =>
+        rcases hOrd with ⟨hOrdL, hOrdR, hAllL, hAllR⟩
+        cases r with
+        | nil =>
+          by_cases hak : a = k
+          · subst hak
+            have h0 : splayMax (.node a l .nil) = .node a l .nil := by simp [splayMax]
+            rw [h0, splay_node_self rfl]
+          · have hka : k < a :=
+              lt_of_le_of_ne (hbound k (Or.inr (Or.inl rfl))) (Ne.symm hak)
+            have h0 : splayMax (.node k l .nil) = .node k l .nil := by simp [splayMax]
+            rw [h0, splay_node_right_nil hak (not_lt.mpr (le_of_lt hka))]
+        | node rk rl rr =>
+          rcases hOrdR with ⟨hOrdRL, hOrdRR, hAllRL, hAllRR⟩
+          have hka : k < a :=
+            lt_of_lt_of_le ((all_iff_forall_mem.mp hAllR) rk (Or.inr (Or.inl rfl)))
+              (hbound rk (Or.inr (Or.inr (Or.inr (Or.inl rfl)))))
+          by_cases hxr : a = rk
+          · subst hxr
+            cases rr with
+            | nil =>
+              rw [splay_zig_right (Ne.symm (ne_of_lt hka)) (not_lt.mpr (le_of_lt hka)) rfl,
+                splayMax_node_node_of_nil rfl]
+            | node c C D =>
+              exfalso
+              have hcle : c ≤ a :=
+                hbound c (Or.inr (Or.inr (Or.inr (Or.inr (Or.inr (Or.inl rfl))))))
+              have hac : a < c :=
+                (all_iff_forall_mem.mp hAllRR) c (Or.inr (Or.inl rfl))
+              exact absurd hcle (not_le_of_gt hac)
+          · by_cases hrac : rk < a
+            · cases hs : splay a rr with
+              | nil =>
+                have hsMax : splayMax rr = .nil :=
+                  splayMax_eq_nil.mpr (splay_eq_nil.mp hs)
+                rw [splay_zigzig_right_nil (Ne.symm (ne_of_lt hka)) (not_lt.mpr (le_of_lt hka))
+                  hxr hrac hs, splayMax_node_node_of_nil hsMax]
+                have hrr0 : rr = .nil := splay_eq_nil.mp hs
+                rw [hrr0]
+              | node d rrl rrr =>
+                have hb : rr.numNodes ≤ n := by
+                  simp only [BinaryTree.numNodes] at h
+                  omega
+                have hbound_rr : ∀ y ∈ rr, y ≤ a :=
+                  fun y hy => hbound y (Or.inr (Or.inr (Or.inr (Or.inr hy))))
+                have hs' : splayMax rr = .node d rrl rrr :=
+                  (ih rr hb hOrdRR hbound_rr).trans hs
+                rw [splay_zigzig_right_node (Ne.symm (ne_of_lt hka)) (not_lt.mpr (le_of_lt hka))
+                  hxr hrac hs, splayMax_node_node_of_node hs']
+            · have har : a < rk := lt_of_le_of_ne (le_of_not_gt hrac) hxr
+              exact absurd (hbound rk (Or.inr (Or.inr (Or.inr (Or.inl rfl))))) (not_le_of_gt har)
+
+/-- **Splaying the maximum equals splaying a key above all keys.**
+For an ordered tree and a key `a` at least every key of `t`,
+`splayMax t = splay a t`. -/
+public theorem splay_max_eq_splay {α : Type u} [LinearOrder α] {a : α}
+    {t : BinaryTree α} (hOrd : Ordered t) (hbound : ∀ y ∈ t, y ≤ a) :
+    splayMax t = splay a t :=
+  splay_max_eq_splay_aux t.numNodes t (by omega) hOrd hbound
+
+/-- **The maximum key splays to the root.** On a nonempty search tree, the maximum
+key `a` (at least every key of `t`) satisfies `splayMax t = splay a t`. -/
+public theorem exists_max_splay {α : Type u} [LinearOrder α] {t : BinaryTree α}
+    (hOrd : Ordered t) (ht : t ≠ .nil) :
+    ∃ a, (∀ y ∈ t, y ≤ a) ∧ splayMax t = splay a t := by
+  cases hsp : splayMax t with
+  | nil => exact absurd hsp (splayMax_ne_nil ht)
+  | node a l r =>
+    obtain ⟨hr, hin⟩ := splayMax_eq_node hsp
+    subst hr
+    have hmax : ∀ y ∈ t, y ≤ a := by
+      intro y hy
+      have hmem : y ∈ inorder t := mem_inorder.mpr hy
+      rw [← hin] at hmem
+      rw [List.mem_append, List.mem_singleton] at hmem
+      rcases hmem with hyl | rfl
+      · have hpair := ordered_inorder hOrd
+        rw [← hin] at hpair
+        rw [List.pairwise_append] at hpair
+        obtain ⟨_, _, hmid⟩ := hpair
+        exact le_of_lt (hmid y hyl a (List.mem_singleton_self a))
+      · exact le_rfl
+    exact ⟨a, hmax, hsp.symm.trans (splay_max_eq_splay hOrd hmax)⟩
+
+/--
+Delete a key by splaying (Nipkow's `delete`, FDSA §21.1): splay `x`
+to the root; if it is there, replace it by the maximum of the left
+subtree, splayed to the root of that subtree, with the right subtree
+attached. If `x` is absent the splayed tree is returned unchanged.
+-/
+public def delete {α : Type u} [LinearOrder α] (x : α) (t : BinaryTree α) : BinaryTree α :=
+  match splay x t with
+  | .nil => .nil
+  | .node a l r =>
+    if x = a then
+      match splayMax l with
+      | .node m l' _ => .node m l' r
+      | .nil => r
+    else .node a l r
+
+/-- Deleting an absent key returns the splayed tree unchanged. -/
+public theorem delete_eq_of_ne {α : Type u} [LinearOrder α] {x a : α}
+    {t l r : BinaryTree α} (hsp : splay x t = .node a l r) (hxa : x ≠ a) :
+    delete x t = .node a l r := by
+  unfold delete
+  rw [hsp]
+  simp [hxa]
+
+/-- Deleting a present key with an empty left subtree returns the right subtree. -/
+public theorem delete_eq_of_eq_nil {α : Type u} [LinearOrder α] {x a : α}
+    {t l r : BinaryTree α} (hsp : splay x t = .node a l r) (hxa : x = a)
+    (hmax : splayMax l = .nil) : delete x t = r := by
+  unfold delete
+  rw [hsp]
+  simp [hxa, hmax]
+
+/-- Deleting a present key replaces it by the maximum of the left subtree. -/
+public theorem delete_eq_of_eq_node {α : Type u} [LinearOrder α] {x a m : α}
+    {t l r l' D : BinaryTree α} (hsp : splay x t = .node a l r) (hxa : x = a)
+    (hmax : splayMax l = .node m l' D) : delete x t = .node m l' r := by
+  unfold delete
+  rw [hsp]
+  simp [hxa, hmax]
+
+/-- Deleting a key removes exactly that key from structural membership. -/
+public theorem mem_delete {α : Type u} [LinearOrder α] {x y : α} {t : BinaryTree α}
+    (hOrd : Ordered t) : y ∈ delete x t ↔ y ∈ t ∧ y ≠ x := by
+  cases hs : splay x t with
+  | nil =>
+    have ht : t = .nil := splay_eq_nil.mp hs
+    subst ht
+    simp [delete, hs]
+  | node a l r =>
+    have hsOrd : Ordered (.node a l r) := by
+      rw [← hs]
+      exact ordered_splay hOrd
+    by_cases hxa : x = a
+    · cases hmax : splayMax l with
+      | nil =>
+        have hl : l = .nil := splayMax_eq_nil.mp hmax
+        subst hl
+        rw [delete_eq_of_eq_nil hs hxa hmax]
+        rcases hsOrd with ⟨_, _, _, hAllR⟩
+        constructor
+        · intro hy
+          refine ⟨mem_splay.mp (by rw [hs]; exact Or.inr (Or.inr hy)), ?_⟩
+          have hay : a < y := (all_iff_forall_mem.mp hAllR) y hy
+          exact fun h => ne_of_gt hay (h.trans hxa)
+        · rintro ⟨hy, hyx⟩
+          have hyt : y ∈ BinaryTree.node a .nil r := by
+            have h1 : y ∈ splay x t := mem_splay.mpr hy
+            rwa [hs] at h1
+          rcases hyt with hy | hya | hyr
+          · exact False.elim hy
+          · exact absurd (hya.trans hxa.symm) hyx
+          · exact hyr
+      | node m l' D =>
+        rw [delete_eq_of_eq_node hs hxa hmax]
+        obtain ⟨hD, _⟩ := splayMax_eq_node hmax
+        have hmem_l : ∀ z, z ∈ l ↔ z ∈ l' ∨ z = m := by
+          intro z
+          rw [← mem_splayMax, hmax]
+          simp [hD]
+        rcases hsOrd with ⟨hOrdL, _, hAllL, hAllR⟩
+        constructor
+        · intro hy
+          rcases hy with hy | hye | hy
+          · have hyl : y ∈ l := (hmem_l y).mpr (Or.inl hy)
+            refine ⟨mem_splay.mp (by rw [hs]; exact Or.inl hyl), ?_⟩
+            have hya : y < a := (all_iff_forall_mem.mp hAllL) y hyl
+            exact fun h => ne_of_lt hya (h.trans hxa)
+          · have hml : m ∈ l := (hmem_l m).mpr (Or.inr rfl)
+            have hma : m < a := (all_iff_forall_mem.mp hAllL) m hml
+            refine ⟨mem_splay.mp (by rw [hs]; exact Or.inl (hye.symm ▸ hml)), ?_⟩
+            exact fun h => ne_of_lt (hye.symm ▸ hma) (h.trans hxa)
+          · refine ⟨mem_splay.mp (by rw [hs]; exact Or.inr (Or.inr hy)), ?_⟩
+            have hay : a < y := (all_iff_forall_mem.mp hAllR) y hy
+            exact fun h => ne_of_gt hay (h.trans hxa)
+        · rintro ⟨hy, hyx⟩
+          have hyt : y ∈ BinaryTree.node a l r := by
+            have h1 : y ∈ splay x t := mem_splay.mpr hy
+            rwa [hs] at h1
+          rcases hyt with hyl | hya | hyr
+          · rcases (hmem_l y).mp hyl with hy' | hy'
+            · exact Or.inl hy'
+            · exact Or.inr (Or.inl hy')
+          · exact absurd (hya.trans hxa.symm) hyx
+          · exact Or.inr (Or.inr hyr)
+    · rw [delete_eq_of_ne hs hxa]
+      have hxnot : x ∉ t := by
+        intro hx
+        obtain ⟨l1, r1, hsp1⟩ := root_splay_of_mem hOrd hx
+        rw [hs] at hsp1
+        obtain ⟨h1, -, -⟩ := BinaryTree.node.inj hsp1
+        exact hxa h1.symm
+      constructor
+      · intro hy
+        refine ⟨mem_splay.mp (by rwa [hs]), ?_⟩
+        intro hyx
+        exact hxnot (hyx ▸ mem_splay.mp (by rwa [hs]))
+      · rintro ⟨hy, -⟩
+        have h1 : y ∈ splay x t := mem_splay.mpr hy
+        rwa [hs] at h1
+
+/-- Deletion preserves the strict search-tree invariant. -/
+public theorem ordered_delete {α : Type u} [LinearOrder α] {x : α} {t : BinaryTree α}
+    (hOrd : Ordered t) : Ordered (delete x t) := by
+  cases hs : splay x t with
+  | nil =>
+    have ht : t = .nil := splay_eq_nil.mp hs
+    subst ht
+    exact trivial
+  | node a l r =>
+    have hsOrd : Ordered (.node a l r) := by
+      rw [← hs]
+      exact ordered_splay hOrd
+    by_cases hxa : x = a
+    · subst hxa
+      cases hmax : splayMax l with
+      | nil =>
+        rw [delete_eq_of_eq_nil hs rfl hmax]
+        exact hsOrd.2.1
+      | node m l' D =>
+        rw [delete_eq_of_eq_node hs rfl hmax]
+        rcases hsOrd with ⟨hOrdL, hOrdR, hAllL, hAllR⟩
+        have hsOrdMax : Ordered (.node m l' D) := hmax ▸ ordered_splayMax hOrdL
+        rcases hsOrdMax with ⟨hOrdL', _, hAllL', _⟩
+        refine ⟨hOrdL', hOrdR, hAllL', ?_⟩
+        have hml : m ∈ l := by
+          have hm : m ∈ splayMax l := by rw [hmax]; exact Or.inr (Or.inl rfl)
+          exact mem_splayMax.mp hm
+        have hma : m < x := (all_iff_forall_mem.mp hAllL) m hml
+        exact all_mono (fun y hy => lt_trans hma hy) hAllR
+    · rw [delete_eq_of_ne hs hxa]
+      exact hsOrd
+
+/-- Deleting a key filters it out of the inorder traversal. -/
+public theorem inorder_delete {α : Type u} [LinearOrder α] {x : α} {t : BinaryTree α}
+    (hOrd : Ordered t) :
+    inorder (delete x t) = (inorder t).filter (· ≠ x) := by
+  cases hs : splay x t with
+  | nil =>
+    have ht : t = .nil := splay_eq_nil.mp hs
+    subst ht
+    simp [delete, hs]
+  | node a l r =>
+    have hsOrd : Ordered (.node a l r) := by
+      rw [← hs]
+      exact ordered_splay hOrd
+    by_cases hxa : x = a
+    · subst hxa
+      cases hmax : splayMax l with
+      | nil =>
+        have hl : l = .nil := splayMax_eq_nil.mp hmax
+        subst hl
+        rw [delete_eq_of_eq_nil hs rfl hmax]
+        rcases hsOrd with ⟨_, _, _, hAllR⟩
+        have h1 : inorder (.node x .nil r) = [x] ++ inorder r := by
+          simp [inorder_node]
+        have h2 : ([x] ++ inorder r).filter (· ≠ x) = inorder r := by
+          rw [List.filter_append]
+          have hfa : ([x] : List α).filter (· ≠ x) = [] := by simp
+          rw [hfa, List.nil_append]
+          apply List.filter_eq_self.mpr
+          intro y hy
+          have hyr : y ∈ r := mem_inorder.mp hy
+          have hay : x < y := (all_iff_forall_mem.mp hAllR) y hyr
+          exact decide_eq_true_eq.mpr (ne_of_gt hay)
+        have ht : inorder t = [x] ++ inorder r := by
+          rw [← inorder_splay (x := x) (t := t), hs]
+          exact h1
+        rw [ht, h2]
+      | node m l' D =>
+        rw [delete_eq_of_eq_node hs rfl hmax]
+        obtain ⟨_, hin⟩ := splayMax_eq_node hmax
+        rcases hsOrd with ⟨_, _, hAllL, hAllR⟩
+        have h1 : inorder t = inorder l ++ [x] ++ inorder r := by
+          rw [← inorder_splay (x := x) (t := t), hs]
+          simp [inorder_node, List.append_assoc]
+        have h2 : (inorder l ++ [x] ++ inorder r).filter (· ≠ x) =
+            inorder l ++ inorder r := by
+          have hfl : (inorder l).filter (· ≠ x) = inorder l := by
+            apply List.filter_eq_self.mpr
+            intro y hy
+            have hyl : y ∈ l := mem_inorder.mp hy
+            have hya : y < x := (all_iff_forall_mem.mp hAllL) y hyl
+            exact decide_eq_true_eq.mpr (ne_of_lt hya)
+          have hfa : ([x] : List α).filter (· ≠ x) = [] := by simp
+          have hfr : (inorder r).filter (· ≠ x) = inorder r := by
+            apply List.filter_eq_self.mpr
+            intro y hy
+            have hyr : y ∈ r := mem_inorder.mp hy
+            have hay : x < y := (all_iff_forall_mem.mp hAllR) y hyr
+            exact decide_eq_true_eq.mpr (ne_of_gt hay)
+          rw [List.filter_append, List.filter_append, hfl, hfa, hfr]
+          simp
+        have hin' : inorder l' ++ m :: inorder r = inorder l ++ inorder r := by
+          rw [← hin]
+          simp [List.append_assoc]
+        rw [h1, h2, inorder_node]
+        exact hin'
+    · rw [delete_eq_of_ne hs hxa]
+      have hxnot : x ∉ t := by
+        intro hx
+        obtain ⟨l1, r1, hsp1⟩ := root_splay_of_mem hOrd hx
+        rw [hs] at hsp1
+        obtain ⟨h1, -, -⟩ := BinaryTree.node.inj hsp1
+        exact hxa h1.symm
+      rw [← inorder_splay (x := x) (t := t), hs]
+      symm
+      apply List.filter_eq_self.mpr
+      intro y hy
+      have hyt : y ∈ t := by
+        have h1 : y ∈ splay x t := by
+          rw [hs]
+          exact mem_inorder.mp hy
+        exact mem_splay.mp h1
+      exact decide_eq_true_eq.mpr (fun hyx => hxnot (hyx ▸ hyt))
+
+/-- Deleting a present key decreases the number of nodes by one. -/
+public theorem numNodes_delete_of_mem {α : Type u} [LinearOrder α] {x : α}
+    {t : BinaryTree α} (hOrd : Ordered t) (hx : x ∈ t) :
+    (delete x t).numNodes = t.numNodes - 1 := by
+  obtain ⟨l, r, hsp⟩ := root_splay_of_mem hOrd hx
+  have hnum1 := numNodes_splay (x := x) (t := t)
+  rw [hsp] at hnum1
+  cases hmax : splayMax l with
+  | nil =>
+    have hl : l = .nil := splayMax_eq_nil.mp hmax
+    subst hl
+    rw [delete_eq_of_eq_nil hsp rfl hmax]
+    simp only [BinaryTree.numNodes] at hnum1
+    omega
+  | node m l' D =>
+    have hnum2 := numNodes_splayMax (t := l)
+    rw [hmax] at hnum2
+    obtain ⟨hD, -⟩ := splayMax_eq_node hmax
+    subst hD
+    rw [delete_eq_of_eq_node hsp rfl hmax]
+    simp only [BinaryTree.numNodes] at hnum1 hnum2 ⊢
+    omega
+
+/-- Deleting an absent key leaves the number of nodes unchanged. -/
+public theorem numNodes_delete_of_not_mem {α : Type u} [LinearOrder α] {x : α}
+    {t : BinaryTree α} (hx : x ∉ t) :
+    (delete x t).numNodes = t.numNodes := by
+  cases hs : splay x t with
+  | nil =>
+    have ht : t = .nil := splay_eq_nil.mp hs
+    subst ht
+    simp [delete, hs]
+  | node a l r =>
+    by_cases hxa : x = a
+    · exfalso
+      exact hx (mem_splay.mp (by rw [hs, ← hxa]; exact Or.inr (Or.inl rfl)))
+    · rw [delete_eq_of_ne hs hxa]
+      have hnum := numNodes_splay (x := x) (t := t)
+      rwa [hs] at hnum
+
+/--
+Insert a key by splaying (Nipkow's `insert`, FDSA §21.1): splay `x` to the root;
+if it is there the splayed tree is returned, otherwise `x` becomes the new root with the
+splayed tree split around it. This is the book's formulation (splay, then rebuild
+around the new root). It computes the same tree as `SplayTree.insert`
+(`insert_eq_nipkowInsert`), which applies `split` to the splayed tree instead;
+`costInsert` in `CSLibExt.Algorithms.Lean.DataStructures.SplayTree.Amortized`
+charges the book's splay-then-rebuild.
+-/
+public def nipkowInsert {α : Type u} [LinearOrder α] (x : α) (t : BinaryTree α) : BinaryTree α :=
+  match splay x t with
+  | .nil => .node x .nil .nil
+  | .node a l r =>
+      if x = a then .node a l r
+      else if x < a then .node x l (.node a .nil r)
+      else .node x (.node a l .nil) r
+
+/-- Inserting into the empty tree creates a singleton. -/
+public theorem nipkowInsert_eq_of_nil {α : Type u} [LinearOrder α] {x : α}
+    {t : BinaryTree α} (hsp : splay x t = .nil) :
+    nipkowInsert x t = .node x .nil .nil := by
+  unfold nipkowInsert
+  rw [hsp]
+
+/-- Inserting a present key returns the splayed tree unchanged. -/
+public theorem nipkowInsert_eq_of_eq {α : Type u} [LinearOrder α] {x a : α}
+    {t l r : BinaryTree α} (hsp : splay x t = .node a l r) (hxa : x = a) :
+    nipkowInsert x t = .node a l r := by
+  unfold nipkowInsert
+  rw [hsp]
+  simp [hxa]
+
+/-- Inserting a smaller key makes it the new root, with the old tree on the right. -/
+public theorem nipkowInsert_eq_of_lt {α : Type u} [LinearOrder α] {x a : α}
+    {t l r : BinaryTree α} (hsp : splay x t = .node a l r) (hxa : x < a) :
+    nipkowInsert x t = .node x l (.node a .nil r) := by
+  unfold nipkowInsert
+  rw [hsp]
+  simp [ne_of_lt hxa, hxa]
+
+/-- Inserting a larger key makes it the new root, with the old tree on the left. -/
+public theorem nipkowInsert_eq_of_gt {α : Type u} [LinearOrder α] {x a : α}
+    {t l r : BinaryTree α} (hsp : splay x t = .node a l r) (hxa : a < x) :
+    nipkowInsert x t = .node x (.node a l .nil) r := by
+  unfold nipkowInsert
+  rw [hsp]
+  simp [ne_of_gt hxa, not_lt.mpr (le_of_lt hxa)]
+
+private theorem split_of_splay_eq_node_aux {α : Type u} [LinearOrder α] {x : α} (n : Nat)
+    (t : BinaryTree α) (h : t.numNodes ≤ n) :
+    ∀ {l : BinaryTree α} {a : α} {r : BinaryTree α}, splay x t = .node a l r →
+      (x < a → split x l = (l, .nil)) ∧ (a < x → split x r = (.nil, r)) := by
+  induction n generalizing t with
+  | zero =>
+      cases t with
+      | nil =>
+        intro l' a' r' hsp
+        simp at hsp
+      | node k l r =>
+        simp only [BinaryTree.numNodes] at h
+        omega
+  | succ n ih =>
+      cases t with
+      | nil =>
+        intro l' a' r' hsp
+        simp at hsp
+      | node k l r =>
+        intro l' a' r' hsp
+        by_cases hxk : x = k
+        · subst hxk
+          rw [splay_node_self rfl] at hsp
+          obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+          exact ⟨fun hx => absurd hx (lt_irrefl _), fun hx => absurd hx (lt_irrefl _)⟩
+        · by_cases hlt : x < k
+          · cases l with
+            | nil =>
+              rw [splay_node_left_nil hxk hlt] at hsp
+              obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+              exact ⟨fun _ => rfl, fun hkx => absurd hlt (lt_asymm hkx)⟩
+            | node lk ll lr =>
+              by_cases hxl : x = lk
+              · subst hxl
+                rw [splay_zig_left hxk hlt rfl] at hsp
+                obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                exact ⟨fun hx => absurd hx (lt_irrefl _), fun hx => absurd hx (lt_irrefl _)⟩
+              · by_cases hllt : x < lk
+                · cases hs : splay x ll with
+                  | nil =>
+                    rw [splay_zigzig_left_nil hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hll : ll = .nil := splay_eq_nil.mp hs
+                    subst hll
+                    exact ⟨fun _ => rfl, fun hkx => absurd hllt (lt_asymm hkx)⟩
+                  | node d lll llr =>
+                    rw [splay_zigzig_left_node hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : ll.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih ll hb hs
+                    exact ⟨h1, fun hdx => by rw [split_node_lt hllt, h2 hdx]⟩
+                · have hgt : lk < x :=
+                    lt_of_le_of_ne (le_of_not_gt hllt) (fun hh => hxl hh.symm)
+                  cases hs : splay x lr with
+                  | nil =>
+                    rw [splay_zigzag_left_nil hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hlr : lr = .nil := splay_eq_nil.mp hs
+                    subst hlr
+                    exact ⟨fun hxl' => absurd hgt (lt_asymm hxl'), fun _ => split_node_lt hlt⟩
+                  | node d lrl lrr =>
+                    rw [splay_zigzag_left_node hxk hlt hxl hllt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : lr.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih lr hb hs
+                    exact ⟨fun hxd => by rw [split_node_gt hllt hgt, h1 hxd],
+                      fun hdx => by rw [split_node_lt hlt, h2 hdx]⟩
+          · have hgt : k < x :=
+              lt_of_le_of_ne (le_of_not_gt hlt) (fun hh => hxk hh.symm)
+            cases r with
+            | nil =>
+              rw [splay_node_right_nil hxk hlt] at hsp
+              obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+              exact ⟨fun hxk' => absurd hxk' hlt, fun _ => rfl⟩
+            | node rk rl rr =>
+              by_cases hxr : x = rk
+              · subst hxr
+                rw [splay_zig_right hxk hlt rfl] at hsp
+                obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                exact ⟨fun hx => absurd hx (lt_irrefl _), fun hx => absurd hx (lt_irrefl _)⟩
+              · by_cases hrrt : rk < x
+                · cases hs : splay x rr with
+                  | nil =>
+                    rw [splay_zigzig_right_nil hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hrr : rr = .nil := splay_eq_nil.mp hs
+                    subst hrr
+                    exact ⟨fun hxr' => absurd hrrt (lt_asymm hxr'), fun _ => rfl⟩
+                  | node d rrl rrr =>
+                    rw [splay_zigzig_right_node hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : rr.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih rr hb hs
+                    exact ⟨fun hxd => by rw [split_node_gt (lt_asymm hrrt) hrrt, h1 hxd], h2⟩
+                · have hxlt : x < rk := lt_of_le_of_ne (le_of_not_gt hrrt) hxr
+                  cases hs : splay x rl with
+                  | nil =>
+                    rw [splay_zigzag_right_nil hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hrl : rl = .nil := splay_eq_nil.mp hs
+                    subst hrl
+                    exact ⟨fun _ => split_node_gt hlt hgt,
+                      fun hrx => absurd hxlt (lt_asymm hrx)⟩
+                  | node d rll rlr =>
+                    rw [splay_zigzag_right_node hxk hlt hxr hrrt hs] at hsp
+                    obtain ⟨rfl, rfl, rfl⟩ := BinaryTree.node.inj hsp
+                    have hb : rl.numNodes ≤ n := by
+                      simp only [BinaryTree.numNodes] at h
+                      omega
+                    obtain ⟨h1, h2⟩ := ih rl hb hs
+                    exact ⟨fun hxd => by rw [split_node_gt hlt hgt, h1 hxd],
+                      fun hdx => by rw [split_node_lt hxlt, h2 hdx]⟩
+
+/-- **Splay-tree insertion and the book's insertion agree.** For every key $x$ and every binary
+tree $t$ over a linearly ordered type, the splay-tree insertion of $x$ into $t$ (splay, then
+split) and the book's insertion of $x$ into $t$ (splay, then rebuild around the new root; Nipkow,
+FDSA §21.1) are the same tree, whether or not $t$ is a binary search tree. Suppose that splaying
+$x$ in $t$ gives the tree with root key $a$, left subtree $L$ and right subtree $R$. If $x < a$,
+the search for $x$ turned right at every node of the right spine of $L$, so every key on that
+spine is smaller than $x$; splitting the splayed tree at $x$ thus gives $L$ and the tree with
+root key $a$, empty left subtree and right subtree $R$, which are the two subtrees that the book
+puts under the new root $x$. The case $a < x$ is the mirror image, and the cases $x = a$ and $t$
+empty are immediate. -/
+public theorem insert_eq_nipkowInsert {α : Type u} [LinearOrder α] (x : α) (t : BinaryTree α) :
+    insert x t = nipkowInsert x t := by
+  rw [insert_eq]
+  cases hs : splay x t with
+  | nil =>
+    rw [nipkowInsert_eq_of_nil hs]
+    rfl
+  | node a l r =>
+    obtain ⟨hl, hr⟩ := split_of_splay_eq_node_aux t.numNodes t (by omega) hs
+    rcases lt_trichotomy x a with hxa | rfl | hxa
+    · rw [nipkowInsert_eq_of_lt hs hxa, split_node_lt hxa, hl hxa]
+    · rw [nipkowInsert_eq_of_eq hs rfl, split_node_eq (lt_irrefl _) (lt_irrefl _)]
+    · rw [nipkowInsert_eq_of_gt hs hxa, split_node_gt (lt_asymm hxa) hxa, hr hxa]
+
+/-- Inserting a key adds exactly that key to structural membership. -/
+public theorem mem_nipkowInsert {α : Type u} [LinearOrder α] {x y : α} {t : BinaryTree α} :
+    y ∈ nipkowInsert x t ↔ y ∈ t ∨ y = x := by
+  rw [← insert_eq_nipkowInsert, mem_insert, or_comm]
+
+/-- Insertion preserves the strict search-tree invariant. -/
+public theorem ordered_nipkowInsert {α : Type u} [LinearOrder α] {x : α} {t : BinaryTree α}
+    (hOrd : Ordered t) : Ordered (nipkowInsert x t) := by
+  rw [← insert_eq_nipkowInsert]
+  exact ordered_insert hOrd
+
+/-- Inserting a present key leaves the number of nodes unchanged. -/
+public theorem numNodes_nipkowInsert_of_mem {α : Type u} [LinearOrder α] {x : α}
+    {t : BinaryTree α} (hOrd : Ordered t) (hx : x ∈ t) :
+    (nipkowInsert x t).numNodes = t.numNodes := by
+  obtain ⟨l, r, hsp⟩ := root_splay_of_mem hOrd hx
+  rw [nipkowInsert_eq_of_eq hsp rfl]
+  have hnum := numNodes_splay (x := x) (t := t)
+  rwa [hsp] at hnum
+
+/-- Inserting an absent key increases the number of nodes by one. -/
+public theorem numNodes_nipkowInsert_of_not_mem {α : Type u} [LinearOrder α] {x : α}
+    {t : BinaryTree α} (hx : x ∉ t) :
+    (nipkowInsert x t).numNodes = t.numNodes + 1 := by
+  cases hs : splay x t with
+  | nil =>
+    have ht : t = .nil := splay_eq_nil.mp hs
+    subst ht
+    rw [nipkowInsert_eq_of_nil hs]
+    simp [BinaryTree.numNodes]
+  | node a l r =>
+    have hnum : (BinaryTree.node a l r).numNodes = t.numNodes := by
+      rw [← hs]
+      exact numNodes_splay
+    rcases lt_trichotomy x a with hxa | hxa | hxa
+    · rw [nipkowInsert_eq_of_lt hs hxa]
+      simp only [BinaryTree.numNodes] at hnum ⊢
+      omega
+    · exfalso
+      exact hx (mem_splay.mp (by rw [hs]; exact Or.inr (Or.inl hxa)))
+    · rw [nipkowInsert_eq_of_gt hs hxa]
+      simp only [BinaryTree.numNodes] at hnum ⊢
+      omega
+
+/-- Inserting a present key leaves the inorder traversal unchanged. -/
+public theorem inorder_nipkowInsert_of_mem {α : Type u} [LinearOrder α] {x : α}
+    {t : BinaryTree α} (hOrd : Ordered t) (hx : x ∈ t) :
+    inorder (nipkowInsert x t) = inorder t := by
+  obtain ⟨l, r, hsp⟩ := root_splay_of_mem hOrd hx
+  rw [nipkowInsert_eq_of_eq hsp rfl, ← hsp]
+  exact inorder_splay (x := x) (t := t)
+
+/-- Inserting an absent key splices it into the inorder traversal at its sorted position. -/
+public theorem inorder_nipkowInsert_of_not_mem {α : Type u} [LinearOrder α] {x : α}
+    {t : BinaryTree α} (hOrd : Ordered t) (hx : x ∉ t) :
+    ∃ l' r', inorder t = l' ++ r' ∧ inorder (nipkowInsert x t) = l' ++ [x] ++ r' ∧
+      (∀ y ∈ l', y < x) ∧ (∀ y ∈ r', x < y) := by
+  cases hs : splay x t with
+  | nil =>
+    have ht : t = .nil := splay_eq_nil.mp hs
+    subst ht
+    refine ⟨[], [], by simp, ?_, fun _ h => by simp at h, fun _ h => by simp at h⟩
+    rw [nipkowInsert_eq_of_nil hs]
+    simp [BinarySearchTree.inorder, BinarySearchTree.inorderAux]
+  | node a l r =>
+    obtain ⟨hbl, hbr⟩ := splay_bounds hOrd hs
+    have hin_t : inorder t = inorder l ++ [a] ++ inorder r := by
+      rw [← inorder_splay (x := x) (t := t), hs]
+      simp [inorder_node, List.append_assoc]
+    rcases lt_trichotomy x a with hxa | hxa | hxa
+    · refine ⟨inorder l, [a] ++ inorder r, by rw [hin_t, List.append_assoc], ?_, ?_, ?_⟩
+      · rw [nipkowInsert_eq_of_lt hs hxa]
+        simp [inorder_node, List.append_assoc]
+      · intro y hy
+        exact (all_iff_forall_mem.mp hbl) y (mem_inorder.mp hy)
+      · intro y hy
+        rw [List.mem_append, List.mem_singleton] at hy
+        rcases hy with rfl | hy
+        · exact hxa
+        · exact (all_iff_forall_mem.mp hbr) y (mem_inorder.mp hy)
+    · exfalso
+      exact hx (mem_splay.mp (by rw [hs]; exact Or.inr (Or.inl hxa)))
+    · refine ⟨inorder l ++ [a], inorder r, ?_, ?_, ?_, ?_⟩
+      · rw [hin_t]
+      · rw [nipkowInsert_eq_of_gt hs hxa]
+        simp [inorder_node, List.append_assoc]
+      · intro y hy
+        rw [List.mem_append, List.mem_singleton] at hy
+        rcases hy with hy | rfl
+        · exact (all_iff_forall_mem.mp hbl) y (mem_inorder.mp hy)
+        · exact hxa
+      · intro y hy
+        exact (all_iff_forall_mem.mp hbr) y (mem_inorder.mp hy)
 
 end SplayTree
 end Cslib.Algorithms.Lean
