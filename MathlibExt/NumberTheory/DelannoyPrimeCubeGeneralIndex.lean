@@ -37,7 +37,7 @@ The coefficient is determined by the case `n = 2`, using the Fermat quotient of 
   Journal of Integer Sequences 27 (2024), Article 24.1.8, Theorem 8.
 * The lagged harmonic sum vanishes by `sum_lagged_harmonic_two_pow_div_eq_zero` in
   `DelannoyHarmonicCongruence`. The second congruence of `delannoy_two_mul` in `DelannoyPrimeCube`
-  evaluates the case `n = 2`. That module also supplies `cube_zero` and `unit_of_lt`.
+  evaluates the case `n = 2`.
 -/
 
 namespace MathlibExt.NumberTheory.DelannoyTriangleWanted
@@ -46,6 +46,13 @@ open Finset
 
 private abbrev R (p : ℕ) := ZMod (p ^ 3)
 
+private theorem cube_zero (p : ℕ) : (p : R p) ^ 3 = 0 := by
+  rw [← Nat.cast_pow, ZMod.natCast_self]
+
+private theorem unit_of_lt {p k : ℕ} (hp : p.Prime) (hk : 0 < k) (hkp : k < p) :
+    IsUnit (k : R p) :=
+  (ZMod.isUnit_natCast_iff_not_dvd_pow hp (by decide)).2 (Nat.not_dvd_of_pos_of_lt hk hkp)
+
 -- Convert the falling factorial in the generalized binomial expansion to `Nat.choose`,
 -- retaining only the constant and linear coefficients explicitly.
 private theorem choose_cast_eq_expansion {p s k : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p)
@@ -53,7 +60,7 @@ private theorem choose_cast_eq_expansion {p s k : ℕ} (hp : p.Prime) (hp5 : 5 �
     ∃ c : R p, ((s * p - 1).choose k : R p) =
       (-1) ^ k * (1 - (s : R p) * (p : R p) * harmonicMod (p ^ 3) k + (p : R p) ^ 2 * c) := by
   rcases eq_or_ne k 0 with rfl | hk0
-  · exact ⟨0, by simp [harmonicMod_eq_sum]⟩
+  · exact ⟨0, by simp [harmonicMod]⟩
   have hsp : p ≤ s * p := Nat.le_mul_of_pos_left p hs
   have hprod : ∏ i ∈ Icc 1 k, ((s : R p) * p - (i : R p)) =
       ((s * p - 1).descFactorial k : R p) := by
@@ -134,7 +141,7 @@ private theorem lagged_sum_zero {p : ℕ} (hp : p.Prime) (hp5 : 5 ≤ p) :
     refine sum_congr rfl fun j hj => ?_
     have hj' := mem_range.mp hj
     have hh : f (harmonicMod (p ^ 3) j) = harmonicMod p j := by
-      rw [harmonicMod_eq_sum (p ^ 3) j, harmonicMod_eq_sum p j, map_sum]
+      simp only [harmonicMod, map_sum]
       refine sum_congr rfl fun i hi => ?_
       have hi' := mem_Icc.mp hi
       exact hf i (by omega) (by omega)

@@ -30,7 +30,3 @@ example : (∑ j ∈ range 4, harmonicMod 5 j * (2 : ZMod 5) ^ (j + 1) *
 
 example : (∑ j ∈ range 6, harmonicMod 7 j * (2 : ZMod 7) ^ (j + 1) *
     ((j + 1 : ℕ) : ZMod 7)⁻¹) = 0 := by decide +kernel
-
-example : (5 : ZMod 125) ^ 3 = 0 := by decide
-
-example : IsUnit (4 : ZMod 125) := ⟨⟨4, 94, by decide, by decide⟩, rfl⟩

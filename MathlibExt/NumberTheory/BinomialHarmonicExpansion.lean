@@ -36,12 +36,6 @@ conventional value that Mathlib assigns to the inverse of a non-unit. -/
 @[expose] public def harmonicMod (m k : ℕ) : ZMod m :=
   ∑ i ∈ Finset.Icc 1 k, (i : ZMod m)⁻¹
 
-/-- **Finite sum for a harmonic number modulo $m$.** For natural numbers $m$ and $k$,
-$H_k$ modulo $m$ is the sum of the inverses of $1, \ldots, k$ in $\mathbb{Z}/m\mathbb{Z}$,
-using the inverse convention of `ZMod` for nonunits. -/
-public theorem harmonicMod_eq_sum (m k : ℕ) :
-    harmonicMod m k = ∑ i ∈ Finset.Icc 1 k, (i : ZMod m)⁻¹ := rfl
-
 /-- **Harmonic numbers of order two modulo $m$.** For natural numbers $m$ and $k$, the
 harmonic number $H_{k,2}$ of order two modulo $m$ is the residue $\sum_{i=1}^{k} (i^2)^{-1}$
 in $\mathbb{Z}/m\mathbb{Z}$, where $(i^2)^{-1}$ is the inverse of $i^2$ modulo $m$ when $i$ is

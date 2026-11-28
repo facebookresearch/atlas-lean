@@ -35,15 +35,11 @@ private abbrev R (p : ℕ) := ZMod (p ^ 3)
 
 private def frac (p k : ℕ) : R p := p * (k : R p)⁻¹
 
-/-- **The cube of $p$ vanishes modulo $p^3$.** For any natural number $p$, its residue in
-`ZMod (p ^ 3)` has cube zero. -/
-public theorem cube_zero (p : ℕ) : (p : ZMod (p ^ 3)) ^ 3 = 0 := by
-  simp [← Nat.cast_pow]
+private theorem cube_zero (p : ℕ) : (p : R p) ^ 3 = 0 := by
+  simp [← Nat.cast_pow, R]
 
-/-- **Positive integers below a prime are units modulo its cube.** If $p$ is prime and
-$0 < k < p$, the residue of $k$ is a unit in `ZMod (p ^ 3)`. -/
-public theorem unit_of_lt {p k : ℕ} (hp : p.Prime) (hk : 0 < k) (hkp : k < p) :
-    IsUnit (k : ZMod (p ^ 3)) :=
+private theorem unit_of_lt {p k : ℕ} (hp : p.Prime) (hk : 0 < k) (hkp : k < p) :
+    IsUnit (k : R p) :=
   (ZMod.isUnit_natCast_iff_not_dvd_pow hp (by decide)).2 (Nat.not_dvd_of_pos_of_lt hk hkp)
 
 private theorem frac_mul {p k : ℕ} (hp : p.Prime) (hk : 0 < k) (hkp : k < p) :
