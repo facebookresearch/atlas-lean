@@ -212,12 +212,14 @@ private def integerDouble : ChainComplex (ModuleCat ℤ) ℤ := by
         by_cases h : i = 1 ∧ j = 0
         · rcases h with ⟨rfl, rfl⟩
           exact False.elim (hn (by decide))
-        · exact if_neg h
+        · exact ite_eq_right h
       d_comp_d' := fun i j k _ _ => by
         by_cases h : i = 1 ∧ j = 0
         · rcases h with ⟨rfl, rfl⟩
           simp
         · simp [h] }
+
+private def integerXIso (i : ℤ) : integerDouble.X i ≅ Z := eqToIso rfl
 
 private lemma next_zero : (ComplexShape.down ℤ).next 0 = -1 :=
   (ComplexShape.down ℤ).next_eq' (by decide)
@@ -230,13 +232,12 @@ private lemma prev_zero : (ComplexShape.down ℤ).prev 0 = 1 :=
 
 private lemma double_mono : Mono double := by
   apply (ModuleCat.mono_iff_injective double).2
+  change Function.Injective (fun x : ℤ => (2 : ℤ) * x)
   intro x y hxy
-  change 2 * x = 2 * y at hxy
   omega
 
 private lemma integerDouble_projective_images (i : ℤ) :
     Projective (Abelian.image (integerDouble.d i ((ComplexShape.down ℤ).next i))) := by
-  classical
   by_cases hi : i = 1
   · subst i
     rw [next_one]
@@ -244,7 +245,8 @@ private lemma integerDouble_projective_images (i : ℤ) :
     let : Mono double := double_mono
     exact Projective.of_iso (asIso (Abelian.factorThruImage double)) inferInstance
   · have hd : integerDouble.d i ((ComplexShape.down ℤ).next i) = 0 := by
-      simp [integerDouble, hi]
+      change (if i = 1 ∧ (ComplexShape.down ℤ).next i = 0 then double else (0 : Z ⟶ Z)) = 0
+      exact ite_eq_right (fun h => hi h.1)
     rw [hd]
     change Projective (Abelian.image (0 : Z ⟶ Z))
     have hf : Abelian.factorThruImage (0 : Z ⟶ Z) = 0 := by
@@ -254,10 +256,17 @@ private lemma integerDouble_projective_images (i : ℤ) :
 
 private lemma integerDouble_not_split : ¬ IsSplit integerDouble := by
   rintro ⟨s⟩
-  have hv := congrArg (fun f : Z ⟶ Z => f.hom 1) (s.d_h_d (1 : ℤ) 0)
-  change 2 * (s.hom 0 1).hom 2 = 2 at hv
-  have hl := (s.hom 0 1).hom.map_smul (2 : ℤ) (1 : ℤ)
-  change (s.hom 0 1).hom 2 = 2 * (s.hom 0 1).hom 1 at hl
+  let t : Z ⟶ Z := s.hom 0 1
+  have hs : double ≫ t ≫ double = double := s.d_h_d (1 : ℤ) 0
+  let k : ℤ := t.hom (1 : ℤ)
+  have hl : (show ℤ from t.hom (2 : ℤ)) = (2 : ℤ) * k := by
+    have h := t.hom.map_smul (2 : ℤ) (1 : ℤ)
+    change (show ℤ from t.hom (2 : ℤ)) = (2 : ℤ) * (show ℤ from t.hom (1 : ℤ)) at h
+    exact h
+  have hv : (2 : ℤ) * (show ℤ from t.hom (2 : ℤ)) = 2 := by
+    have h := congrArg (fun f : Z ⟶ Z => (show ℤ from f.hom (1 : ℤ))) hs
+    change (2 : ℤ) * (show ℤ from t.hom (2 : ℤ)) = 2 at h
+    exact h
   rw [hl] at hv
   omega
 
@@ -271,53 +280,96 @@ private lemma double_residue : double ≫ residue = 0 := by
   apply LinearMap.ext
   intro x
   change ((2 * x : ℤ) : ZMod 2) = 0
-  simp
+  rw [Int.cast_mul]
+  have h2 : ((2 : ℤ) : ZMod 2) = 0 := by decide
+  rw [h2, zero_mul]
+
+private def cyclesInclusion : integerDouble.cycles 0 ⟶ Z :=
+  integerDouble.iCycles 0 ≫ (integerXIso 0).hom
+
+private def projectionZero : Z ⟶ integerDouble.homology 0 :=
+  (integerXIso 0).inv ≫ (homologyProjection integerDouble integerDouble_projective_images).f 0
+
+private lemma cycles_residue_zero : integerDouble.toCycles 1 0 ≫ cyclesInclusion ≫ residue = 0 := by
+  apply zero_of_epi_comp (integerXIso 1).inv
+  calc
+    _ = ((integerXIso 1).inv ≫ integerDouble.d 1 0 ≫ (integerXIso 0).hom) ≫ residue := by
+      have h := congrArg
+        (fun f : integerDouble.X 1 ⟶ integerDouble.X 0 =>
+          (integerXIso 1).inv ≫ f ≫ (integerXIso 0).hom ≫ residue)
+        (integerDouble.toCycles_i 1 0)
+      simpa only [cyclesInclusion, Category.assoc] using h
+    _ = double ≫ residue := by
+      have hd : (integerXIso 1).inv ≫ integerDouble.d 1 0 ≫ (integerXIso 0).hom = double := by
+        change (𝟙 Z) ≫ double ≫ (𝟙 Z) = double
+        simp only [Category.id_comp, Category.comp_id]
+      rw [hd]
+    _ = 0 := double_residue
 
 private def homologyResidue :
     {f : integerDouble.homology 0 ⟶ residueModule //
-      integerDouble.homologyπ 0 ≫ f = integerDouble.iCycles 0 ≫ residue} :=
+      integerDouble.homologyπ 0 ≫ f = cyclesInclusion ≫ residue} :=
   CokernelCofork.IsColimit.desc'
     (integerDouble.homologyIsCokernel (i := 1) (j := 0) prev_zero)
-    (integerDouble.iCycles 0 ≫ residue) (by
-      rw [← Category.assoc, integerDouble.toCycles_i]
-      change double ≫ residue = 0
-      exact double_residue)
+    (cyclesInclusion ≫ residue) cycles_residue_zero
 
-private lemma projection_residue :
-    (homologyProjection integerDouble integerDouble_projective_images).f 0 ≫
-      homologyResidue.1 = residue := by
-  let l : Z ⟶ integerDouble.cycles 0 :=
-    integerDouble.liftCycles (𝟙 Z) (-1) next_zero (by
-      change (𝟙 Z) ≫ (0 : Z ⟶ Z) = 0
-      simp only [comp_zero])
-  have hl : l ≫ integerDouble.iCycles 0 = 𝟙 Z :=
-    integerDouble.liftCycles_i (𝟙 Z) (-1) next_zero _
-  have hq := iCycles_homologyProjection_f integerDouble integerDouble_projective_images 0
+private def integerCycleLift : Z ⟶ integerDouble.cycles 0 :=
+  integerDouble.liftCycles (integerXIso 0).inv (-1) next_zero (by
+    have hd : integerDouble.d 0 (-1) = 0 := by
+      change (0 : Z ⟶ Z) = 0
+      rfl
+    rw [hd, comp_zero])
+
+private lemma cycleLift_inclusion : integerCycleLift ≫ cyclesInclusion = 𝟙 Z := by
+  have h : integerCycleLift ≫ integerDouble.iCycles 0 = (integerXIso 0).inv :=
+    integerDouble.liftCycles_i (integerXIso 0).inv (-1) next_zero _
   calc
-    _ = (l ≫ integerDouble.iCycles 0) ≫
-        (homologyProjection integerDouble integerDouble_projective_images).f 0 ≫
-          homologyResidue.1 := by rw [hl, Category.id_comp]
-    _ = l ≫ (integerDouble.iCycles 0 ≫
-        (homologyProjection integerDouble integerDouble_projective_images).f 0) ≫
-          homologyResidue.1 := by simp only [Category.assoc]
-    _ = l ≫ integerDouble.homologyπ 0 ≫ homologyResidue.1 := by rw [hq]
-    _ = l ≫ (integerDouble.iCycles 0 ≫ residue) := by
-      simp only [Category.assoc, homologyResidue.2]
-    _ = residue := by rw [← Category.assoc, hl, Category.id_comp]
+    _ = (integerCycleLift ≫ integerDouble.iCycles 0) ≫ (integerXIso 0).hom := by
+      simp only [cyclesInclusion, Category.assoc]
+    _ = (integerXIso 0).inv ≫ (integerXIso 0).hom :=
+      congrArg (fun f : Z ⟶ integerDouble.X 0 => f ≫ (integerXIso 0).hom) h
+    _ = 𝟙 Z := (integerXIso 0).inv_hom_id
 
-/-- The arbitrary projective-image projection carries 1 to the nonzero residue class. -/
-example :
-    ((homologyProjection integerDouble integerDouble_projective_images).f 0 ≫
-      homologyResidue.1).hom 1 = (1 : ZMod 2) := by
+private lemma inclusion_projection :
+    cyclesInclusion ≫ projectionZero = integerDouble.homologyπ 0 := by
+  calc
+    _ = integerDouble.iCycles 0 ≫
+        (homologyProjection integerDouble integerDouble_projective_images).f 0 := by
+      simp only [cyclesInclusion, projectionZero, Category.assoc, Iso.hom_inv_id_assoc]
+    _ = integerDouble.homologyπ 0 :=
+      iCycles_homologyProjection_f integerDouble integerDouble_projective_images 0
+
+private lemma projection_factor {B C D : ModuleCat ℤ}
+    (l : Z ⟶ B) (i : B ⟶ Z) (p : Z ⟶ C) (π : B ⟶ C) (r : C ⟶ D) (v : Z ⟶ D)
+    (hli : l ≫ i = 𝟙 Z) (hip : i ≫ p = π) (hπr : π ≫ r = i ≫ v) :
+    p ≫ r = v := by
+  calc
+    _ = (l ≫ i) ≫ p ≫ r := by rw [hli, Category.id_comp]
+    _ = (l ≫ (i ≫ p)) ≫ r := by simp only [Category.assoc]
+    _ = (l ≫ π) ≫ r := congrArg (fun f : B ⟶ C => (l ≫ f) ≫ r) hip
+    _ = l ≫ (π ≫ r) := Category.assoc l π r
+    _ = l ≫ (i ≫ v) := congrArg (fun f : B ⟶ D => l ≫ f) hπr
+    _ = (l ≫ i) ≫ v := (Category.assoc l i v).symm
+    _ = v := by rw [hli, Category.id_comp]
+
+private lemma projection_residue : projectionZero ≫ homologyResidue.1 = residue :=
+  projection_factor integerCycleLift cyclesInclusion projectionZero
+    (integerDouble.homologyπ 0) homologyResidue.1 residue
+      cycleLift_inclusion inclusion_projection homologyResidue.2
+
+/-- In its native ℤ coordinate, the projection carries 1 to the nonzero residue class. -/
+example : (projectionZero ≫ homologyResidue.1).hom (1 : ℤ) = (1 : ZMod 2) := by
   rw [projection_residue]
   rfl
 
 /-- This projection has a genuinely nonzero degree-zero component. -/
 example : (homologyProjection integerDouble integerDouble_projective_images).f 0 ≠ 0 := by
   intro hz
+  have hq : projectionZero = 0 := by
+    simp only [projectionZero, hz, comp_zero]
   have h := projection_residue
-  rw [hz, zero_comp] at h
-  have hv := congrArg (fun f : Z ⟶ residueModule => f.hom 1) h
+  rw [hq, zero_comp] at h
+  have hv := congrArg (fun f : Z ⟶ residueModule => (show ZMod 2 from f.hom (1 : ℤ))) h
   change (0 : ZMod 2) = 1 at hv
   exact zero_ne_one hv
 
@@ -343,38 +395,94 @@ end NonsplitProjection
 
 section ConcreteShiftCoherence
 
-/-- The zero-shift comparison and its inverse both retain the nonzero integer 7. -/
+private def shiftXIso (a i : ℤ) :
+    ((ChainComplex.nativeShift (ModuleCat ℤ) a).obj integerDouble).X i ≅ Z :=
+  ChainComplex.nativeShiftObjXIso integerDouble a i ≪≫ integerXIso (i - a)
+
+private def twiceXIso (i : ℤ) :
+    ((ChainComplex.nativeShift (ModuleCat ℤ) 1).obj
+      ((ChainComplex.nativeShift (ModuleCat ℤ) 1).obj integerDouble)).X i ≅ Z :=
+  ChainComplex.nativeShiftObjXIso
+      ((ChainComplex.nativeShift (ModuleCat ℤ) 1).obj integerDouble) 1 i ≪≫ shiftXIso 1 (i - 1)
+
+private def coordinateShiftD (K : ChainComplex (ModuleCat ℤ) ℤ)
+    (e : ∀ i : ℤ, K.X i ≅ Z) (a i j i' j' : ℤ) (hi : i - a = i') (hj : j - a = j') :
+    Z ⟶ Z :=
+  (e i').inv ≫
+    ((ChainComplex.nativeShiftObjXIso' K a i i' hi).inv ≫
+      ((ChainComplex.nativeShift (ModuleCat ℤ) a).obj K).d i j ≫
+        (ChainComplex.nativeShiftObjXIso' K a j j' hj).hom) ≫ (e j').hom
+
+private lemma coordinateShiftD_eq (K : ChainComplex (ModuleCat ℤ) ℤ)
+    (e : ∀ i : ℤ, K.X i ≅ Z) (a i j i' j' : ℤ) (hi : i - a = i') (hj : j - a = j') :
+    coordinateShiftD K e a i j i' j' hi hj =
+      (e i').inv ≫ (a.negOnePow • K.d i' j') ≫ (e j').hom := by
+  unfold coordinateShiftD
+  rw [ChainComplex.nativeShiftObjXIso'_inv_d_hom]
+
+/-- The zero-shift comparison and its inverse retain 7 in the earned component coordinates. -/
 example :
-    (((ChainComplex.nativeShiftZero (ModuleCat ℤ)).hom.app integerDouble).f 0).hom 7 = 7 ∧
-    (((ChainComplex.nativeShiftZero (ModuleCat ℤ)).inv.app integerDouble).f 0).hom 7 = 7 := by
+    ((shiftXIso 0 0).inv ≫
+      ((ChainComplex.nativeShiftZero (ModuleCat ℤ)).hom.app integerDouble).f 0 ≫
+        (integerXIso 0).hom).hom (7 : ℤ) = (7 : ℤ) ∧
+    ((integerXIso 0).inv ≫
+      ((ChainComplex.nativeShiftZero (ModuleCat ℤ)).inv.app integerDouble).f 0 ≫
+        (shiftXIso 0 0).hom).hom (7 : ℤ) = (7 : ℤ) := by
   constructor
   · rw [ChainComplex.nativeShiftZero_hom_app_f]
     rfl
   · rw [ChainComplex.nativeShiftZero_inv_app_f]
     rfl
 
-/-- Shifting the actual ×2 edge down by one produces the negative value in degree 0→-1. -/
+/-- The actual ×2 edge shifted down by one has value -14 in degrees 0→-1. -/
 example :
-    (((ChainComplex.nativeShift (ModuleCat ℤ) (-1)).obj integerDouble).d 0 (-1)).hom 7 =
-      -14 := by
-  simp [ChainComplex.nativeShift_obj_d, integerDouble, double]
+    (coordinateShiftD integerDouble integerXIso (-1) 0 (-1) 1 0
+      (by decide) (by decide)).hom (7 : ℤ) = (-14 : ℤ) := by
+  rw [coordinateShiftD_eq]
+  change ((-1 : ℤ).negOnePow • double).hom (7 : ℤ) = (-14 : ℤ)
+  have hs : (-1 : ℤ).negOnePow = (-1 : ℤˣ) := by decide
+  rw [hs]
+  change -((2 : ℤ) * 7) = (-14 : ℤ)
+  rfl
 
-/-- The addition comparison carries 7 unchanged between the two genuine shifts by one. -/
+/-- The addition comparison carries 7 between a shift by two and the two shifts by one. -/
 example :
-    (((ChainComplex.nativeShiftAdd (ModuleCat ℤ) 1 1).hom.app integerDouble).f 3).hom 7 = 7 ∧
-    (((ChainComplex.nativeShiftAdd (ModuleCat ℤ) 1 1).inv.app integerDouble).f 3).hom 7 = 7 := by
+    ((shiftXIso 2 3).inv ≫
+      ((ChainComplex.nativeShiftAdd (ModuleCat ℤ) 1 1).hom.app integerDouble).f 3 ≫
+        (twiceXIso 3).hom).hom (7 : ℤ) = (7 : ℤ) ∧
+    ((twiceXIso 3).inv ≫
+      ((ChainComplex.nativeShiftAdd (ModuleCat ℤ) 1 1).inv.app integerDouble).f 3 ≫
+        (shiftXIso 2 3).hom).hom (7 : ℤ) = (7 : ℤ) := by
   constructor
   · rw [ChainComplex.nativeShiftAdd_hom_app_f]
     rfl
   · rw [ChainComplex.nativeShiftAdd_inv_app_f]
     rfl
 
-/-- Two odd shifts restore the positive ×2 differential, at its new indices 3→2. -/
+/-- Two odd shifts restore the positive ×2 edge, in its earned degree-3→2 coordinates. -/
 example :
-    (((ChainComplex.nativeShift (ModuleCat ℤ) 2).obj integerDouble).d 3 2).hom 7 = 14 ∧
-    (((ChainComplex.nativeShift (ModuleCat ℤ) 1).obj
-      ((ChainComplex.nativeShift (ModuleCat ℤ) 1).obj integerDouble)).d 3 2).hom 7 = 14 := by
-  constructor <;> simp [ChainComplex.nativeShift_obj_d, integerDouble, double]
+    (coordinateShiftD integerDouble integerXIso 2 3 2 1 0
+      (by decide) (by decide)).hom (7 : ℤ) = (14 : ℤ) ∧
+    (coordinateShiftD ((ChainComplex.nativeShift (ModuleCat ℤ) 1).obj integerDouble)
+      (shiftXIso 1) 1 3 2 2 1 (by decide) (by decide)).hom (7 : ℤ) = (14 : ℤ) := by
+  constructor
+  · rw [coordinateShiftD_eq]
+    change ((2 : ℤ).negOnePow • double).hom (7 : ℤ) = (14 : ℤ)
+    have hs : (2 : ℤ).negOnePow = (1 : ℤˣ) := by decide
+    rw [hs, one_smul]
+    change (2 : ℤ) * 7 = 14
+    rfl
+  · rw [coordinateShiftD_eq]
+    simp only [Linear.units_smul_comp, Linear.comp_units_smul]
+    change ((1 : ℤ).negOnePow •
+      coordinateShiftD integerDouble integerXIso 1 2 1 1 0
+        (by decide) (by decide)).hom (7 : ℤ) = (14 : ℤ)
+    rw [coordinateShiftD_eq]
+    change ((1 : ℤ).negOnePow • ((1 : ℤ).negOnePow • double)).hom (7 : ℤ) = (14 : ℤ)
+    have hs : (1 : ℤ).negOnePow = (-1 : ℤˣ) := by decide
+    rw [hs]
+    change (2 : ℤ) * 7 = 14
+    rfl
 
 end ConcreteShiftCoherence
 
@@ -382,11 +490,33 @@ section TensorComparison
 
 private abbrev singleZ := (ChainComplex.single₀ (ModuleCat ℤ)).obj Z
 
+private abbrev tensorZ : ModuleCat ℤ ⥤ ModuleCat ℤ :=
+  ModuleCat.relativeTensorFunctor (R := ℤ) Z
+
+private def tensorSingleCoordinate : tensorZ.obj (singleZ.X 0) ≅ tensorZ.obj Z :=
+  tensorZ.mapIso (singleObjXSelf (ComplexShape.down ℕ) 0 Z)
+
+private def tensorDoubleZero : tensorZ.obj Z ⟶ tensorZ.obj Z :=
+  tensorSingleCoordinate.inv ≫
+    (((tensorZ.mapHomologicalComplex (ComplexShape.down ℕ)).map
+      ((ChainComplex.single₀ (ModuleCat ℤ)).map double)).f 0) ≫ tensorSingleCoordinate.hom
+
+private lemma tensorDoubleZero_eq : tensorDoubleZero = tensorZ.map double := by
+  unfold tensorDoubleZero
+  change tensorSingleCoordinate.inv ≫
+    tensorZ.map (((ChainComplex.single₀ (ModuleCat ℤ)).map double).f 0) ≫
+      tensorSingleCoordinate.hom = tensorZ.map double
+  rw [ChainComplex.single₀_map_f_zero]
+  simp only [tensorSingleCoordinate, ChainComplex.single₀ObjXSelf, Functor.mapIso_refl,
+    Iso.refl_inv, Iso.refl_hom, Category.id_comp, Category.comp_id]
+
 private def singleSplit : Functor.AugmentationSplit (𝟭 (ModuleCat ℤ)) singleZ Z (𝟙 singleZ) where
   section_ := 𝟙 Z
   s _ := 0
   section_comp := by simp
-  zero := by simp
+  zero := by
+    change (𝟙 Z) + (0 : Z ⟶ singleZ.X 1) ≫ (0 : singleZ.X 1 ⟶ Z) = 𝟙 Z
+    simp only [zero_comp, add_zero]
   succ n :=
     (isZero_single_obj_X (ComplexShape.down ℕ) 0 Z (n + 1) (by omega)).eq_of_src _ _
 
@@ -421,15 +551,10 @@ example (n : ℕ) :
 /-- Tensoring the nonidentity ×2 comparison takes 2⊗3 to a tensor detected by 12. -/
 example :
     (TensorProduct.lid ℤ ℤ).toLinearMap
-      (((((ModuleCat.relativeTensorFunctor (R := ℤ) Z).mapHomologicalComplex
-        (ComplexShape.down ℕ)).map
-          ((ChainComplex.single₀ (ModuleCat ℤ)).map double)).f 0).hom (2 ⊗ₜ[ℤ] 3)) = 12 := by
+      (tensorDoubleZero.hom ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ))) = (12 : ℤ) := by
+  rw [tensorDoubleZero_eq]
   change (TensorProduct.lid ℤ ℤ).toLinearMap
-    (((ModuleCat.relativeTensorFunctor (R := ℤ) Z).map
-      (((ChainComplex.single₀ (ModuleCat ℤ)).map double).f 0)).hom (2 ⊗ₜ[ℤ] 3)) = 12
-  rw [ChainComplex.single₀_map_f_zero]
-  change (TensorProduct.lid ℤ ℤ).toLinearMap
-    (TensorProduct.map LinearMap.id double.hom (2 ⊗ₜ[ℤ] 3)) = 12
+    (TensorProduct.map LinearMap.id double.hom ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ))) = (12 : ℤ)
   simp [TensorProduct.map_tmul, double]
 
 end TensorComparison
