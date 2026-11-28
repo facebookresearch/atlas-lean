@@ -168,10 +168,10 @@ theorem coefficientLift_coefficientD :
   ext p
   rfl
 
-/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
-C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
-towers. If D∈Der_k(P,M) and f:C →ₗ[A] M satisfies f(1⊗dp)=D(p) for every p∈P, then
-f=coefficientLift k P A D. -/
+omit [Algebra k A] [IsScalarTower k P A] [IsScalarTower k A M] in
+/-- For a k-algebra P and a P-algebra A, let M have compatible module towers
+P→A→M and k→P→M. If f:A⊗_PΩ¹_{P/k} →ₗ[A] M sends 1⊗dp to D(p) for every
+p∈P, it is the universal coefficientLift of D. No chosen k-algebra structure on A is needed. -/
 theorem coefficientLift_unique (D : Derivation k P M)
     (f : Coefficient k P A →ₗ[A] M)
     (h : ∀ p : P, f ((1 : A) ⊗ₜ[P] KaehlerDifferential.D k P p) = D p) :
@@ -197,10 +197,10 @@ theorem coefficientHomEquivDerivation_naturality
   ext p
   rfl
 
-/-- Let k,P,A be commutative rings with a compatible algebra tower k→P→A. Put Ω=Ω¹_{P/k} and
-C=A⊗_PΩ. Let M carry compatible A-, P- and k-module structures respecting the three scalar
-towers. For a compatible coefficient module N, an A-linear g:M→N and D∈Der_k(P,M), one has
-g∘coefficientLift(D)=coefficientLift(g|_P∘D). -/
+omit [Algebra k A] [IsScalarTower k P A] [IsScalarTower k A M] [IsScalarTower k A N] in
+/-- For a k-algebra P and a P-algebra A, let M,N have compatible module towers
+P→A→M,N and k→P→M,N. For A-linear g:M→N and D∈Der_k(P,M), postcomposition
+with g commutes with coefficientLift, using the P-linear restriction of g on derivations. -/
 theorem coefficientLift_naturality (g : M →ₗ[A] N) (D : Derivation k P M) :
     g.comp (coefficientLift k P A D) =
       coefficientLift k P A ((g.restrictScalars P).compDer D) := by
