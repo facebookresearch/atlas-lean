@@ -70,17 +70,15 @@ local instance : Module point.left coefficients :=
   Module.compHom coefficients point.hom.hom.toRingHom
 local instance : Module ℤ coefficients :=
   Module.compHom coefficients (algebraMap ℤ A)
-local instance : IsScalarTower ℤ point.left coefficients :=
-  IsScalarTower.of_algebraMap_smul (fun r m => by
-    change point.hom.hom (algebraMap ℤ point.left r) • m = algebraMap ℤ A r • m
-    rw [point.hom.hom.commutes])
 
 private def dx : CommAlgCat.CotangentDerivations ℤ A point coefficients := by
+  letI := IsScalarTower.of_compHom ℤ point.left coefficients
   change Derivation ℤ P coefficients
   exact MvPolynomial.mkDerivation ℤ (fun _ : Fin 1 => (1 : coefficients))
 
 private lemma dx_X :
     CommAlgCat.cotangentDerivationValue ℤ A point coefficients dx (MvPolynomial.X 0) = 1 := by
+  letI := IsScalarTower.of_compHom ℤ point.left coefficients
   change (MvPolynomial.mkDerivation ℤ (fun _ : Fin 1 => (1 : coefficients)))
     (MvPolynomial.X 0) = 1
   exact MvPolynomial.mkDerivation_X ℤ (fun _ : Fin 1 => (1 : coefficients)) (0 : Fin 1)

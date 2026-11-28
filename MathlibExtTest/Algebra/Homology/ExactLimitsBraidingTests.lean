@@ -55,7 +55,8 @@ example :
     (mapBifunctorBraidingNatIso_hom_app_app K L)
   have hc := h.trans (mapBifunctorBraidingIso_hom_f_f K L 2 1)
   exact (congrArg (fun f => f.hom ((2 : ℤ) ⊗ₜ[ℤ] (3 : ℤ))) hc).trans
-    (ModuleCat.MonoidalCategory.braiding_hom_apply (2 : ℤ) (3 : ℤ))
+    (ModuleCat.MonoidalCategory.braiding_hom_apply
+      (R := ℤ) (M := K.X 2) (N := L.X 1) (2 : ℤ) (3 : ℤ))
 
 example :
     (((((mapBifunctorBraidingNatIso (c₁ := ComplexShape.down ℕ)
@@ -65,7 +66,8 @@ example :
     (mapBifunctorBraidingNatIso_inv_app_app K L)
   have hc := h.trans (mapBifunctorBraidingIso_inv_f_f K L 2 1)
   exact (congrArg (fun f => f.hom ((3 : ℤ) ⊗ₜ[ℤ] (2 : ℤ))) hc).trans
-    (ModuleCat.MonoidalCategory.braiding_inv_apply (2 : ℤ) (3 : ℤ))
+    (ModuleCat.MonoidalCategory.braiding_inv_apply
+      (R := ℤ) (M := K.X 2) (N := L.X 1) (2 : ℤ) (3 : ℤ))
 
 /-! ### Rank-two integer coefficient coordinates -/
 
@@ -108,7 +110,8 @@ private lemma rankTwoBraiding_tmul (x y : V) :
     (mapBifunctorBraidingNatIso_hom_app_app vectorK vectorL)
   have hc := h.trans (mapBifunctorBraidingIso_hom_f_f vectorK vectorL 2 1)
   exact (congrArg (fun f => f.hom (x ⊗ₜ[ℤ] y)) hc).trans
-    (ModuleCat.MonoidalCategory.braiding_hom_apply x y)
+    (ModuleCat.MonoidalCategory.braiding_hom_apply
+      (R := ℤ) (M := vectorK.X 2) (N := vectorL.X 1) x y)
 
 -- The off-diagonal coordinates interchange under the actual cell (2,1) braiding.
 example :
