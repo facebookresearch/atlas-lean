@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# L(2,1)-LABELING WITH FIXED SPAN is NP-complete for every fixed span K ≥ 4: definitions
+# L(2,1)-LABELING WITH FIXED SPAN: definitions
 
 Source:
 J. Fiala, T. Kloks and J. Kratochvíl, "Fixed-parameter complexity of λ-labelings", Discrete

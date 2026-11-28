@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# PERFECT H-PACKING is NP-complete for every fixed H with a component of at least 3 vertices: definitions
+# PERFECT H-PACKING: definitions
 
 Source:
 D. G. Kirkpatrick and P. Hell, "On the completeness of a generalized matching

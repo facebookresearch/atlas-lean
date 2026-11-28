@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# PARTITION INTO CLIQUES is NP-complete for every fixed K ≥ 3: definitions
+# PARTITION INTO CLIQUES: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

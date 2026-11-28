@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# MONOCHROMATIC K_k is NP-complete for every fixed k ≥ 4: definitions
+# MONOCHROMATIC K_k: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

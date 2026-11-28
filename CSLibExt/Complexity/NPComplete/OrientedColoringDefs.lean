@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# ORIENTED k-COLORING is NP-complete for every fixed k ≥ 4: definitions
+# ORIENTED k-COLORING: definitions
 
 Source:
 W. F. Klostermeyer and G. MacGillivray, "Homomorphisms and oriented colorings of equivalence

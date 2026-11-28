@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# H-COLORING is NP-complete for every fixed non-bipartite H: definitions
+# H-COLORING: definitions
 
 Source:
 P. Hell and J. Nešetřil, "On the complexity of H-coloring", Journal of Combinatorial Theory,

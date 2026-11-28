@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# H-DECOMPOSITION is NP-complete for every fixed H with a component of at least 3 edges: definitions
+# H-DECOMPOSITION: definitions
 
 Source:
 D. Dor and M. Tarsi, "Graph decomposition is NP-complete: a complete proof of Holyer's

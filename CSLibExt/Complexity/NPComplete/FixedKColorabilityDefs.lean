@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# GRAPH K-COLORABILITY is NP-complete for every fixed K ≥ 4: definitions
+# GRAPH K-COLORABILITY: definitions
 
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the

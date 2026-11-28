@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# H-MATCHING is NP-complete for every fixed H with a component of at least 3 vertices: definitions
+# H-MATCHING: definitions
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
