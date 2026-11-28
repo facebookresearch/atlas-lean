@@ -23,13 +23,14 @@ Then:
 
 1. $R^*$ does not depend on $P$.
 2. $R^* \mathbf 1 = 0$.
-3. For each population $k$, every vector supported on population $k$ whose coordinates sum to $0$ is an
+3. For each population $k$, every nonzero vector supported on population $k$ whose coordinates sum to $0$ is an
    eigenvector of $R^*$ with eigenvalue $1 - \tau_k$; these give $M(k) - 1$ eigenvalues $1 - \tau_k$.
 4. $F$ is invariant under $R^*$, and in the basis $f^{[1]}, \dots, f^{[K]}$ the restriction of $R^*$ to $F$ is
    $S$. So $R^*$ has $K - 1$ further eigenvectors, spanning $F \cap \mathbf 1^\perp$, whose eigenvalues are
    those of $S$ on $u^\perp$.
 5. If $B$ is positive definite, each of these $K - 1$ eigenvalues is at least
-   $2 \lambda_{\min}(B) \min_k M(k)$, so all of them tend to infinity as every $M(k) \to \infty$.
+   $2 \lambda_{\min}(B) \min_k M(k)$, so all of them tend to infinity as every $M(k) \to \infty$
+   (a lower bound derived from the source's Eq. (33) for $S$, rather than printed verbatim in Theorem 3).
 
 ## Expansion
 
@@ -49,4 +50,4 @@ Then:
 
 ## Sources
 
-- N. Patterson, A. L. Price, and D. Reich, "Population Structure and Eigenanalysis", PLOS Genetics 2 (2006), e190, <https://doi.org/10.1371/journal.pgen.0020190> (PMC1713260). (Theorem 3 and its proof.)
+- N. Patterson, A. L. Price, and D. Reich, "Population Structure and Eigenanalysis", PLOS Genetics 2 (2006), e190, <https://doi.org/10.1371/journal.pgen.0020190> (PMC1713260). (Theorem 3 and its proof; item 5's explicit lower bound is derived from Eq. (33).)

@@ -2,6 +2,7 @@
 
 Finite subsets and finite types: cardinality, lattice operations, products, powersets, bounded natural numbers, finite tuples and symmetric powers. Lists and multisets have their own field; enumerative identities are under Combinatorics.
 
+- [Cardinality of finite sets](cardinality-of-finite-sets/README.md)
 - [Finiteness of subsets and ranges](finiteness-of-subsets-and-ranges/README.md)
 - [Finite set](finite-set.md)
 - [The Cartesian product of two finite sets is finite](finite-product-finite.md)

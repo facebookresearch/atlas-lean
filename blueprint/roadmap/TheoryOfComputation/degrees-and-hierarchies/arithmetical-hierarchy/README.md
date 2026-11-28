@@ -16,3 +16,4 @@
 - [Monotonicity of the Π hierarchy](pi-mono.md)
 - [Σₙ and Πₙ predicates are Δₙ₊₁](sigma-pi-subset-delta-succ.md)
 - [Σ₁ is the class of recursively enumerable predicates](sigma-one-eq-re.md)
+- [The index set of uniformly c.e. families with finite teaching dimension is Σ⁰₅-complete](the-index-set-of-uniformly-c-e-families-with-fin.md)
