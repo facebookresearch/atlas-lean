@@ -269,11 +269,14 @@ how to [pick a task](../CONTRIBUTING.md#picking-a-task).
 With the pinned Autoform installed as described below, run
 `python -m scripts.graph_work` from the repository root. It reads the authored
 annotations without building Lean or calling GitHub. It stops with an error,
-naming the row or the page, when a row is not JSON or when a page it would
-list has another annotation, an annotation that Autoform's strict JSON reader
-rejects, an article ID that another annotation also has, or pending
-prerequisites without the record the [importer](mathgraph-import.md#annotations)
-writes beside them. So each ID it lists names one article. The JSON lists marked
+naming the file and line or the page, when Autoform reads no annotations (a
+missing or symbolically linked links folder), when the links folder holds files
+or lines that Autoform and the sync read differently (as the sync checks the
+folder), or when a page it would list has another annotation, an article ID
+that another annotation also has, the links folder's defaults included, or
+pending prerequisites whose record is not the one the
+[importer](mathgraph-import.md#annotations) writes. So each ID it lists names
+one article. The JSON lists marked
 articles and separates expansions from imported pages whose pending prerequisites
 need review. It is not a readiness verdict: read the page and check its sources,
 prerequisites, and any existing PRs before starting. See [Expanding a node](#expanding-a-node)

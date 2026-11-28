@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts import graph_work, sync_wiki as sync
+from scripts import graph_work, import_mathgraph, sync_wiki as sync
 
 
 def article_id(name):
@@ -13,9 +13,10 @@ def article_id(name):
     return "af_" + hashlib.sha256(name.encode()).hexdigest()[:24]
 
 
-# An import's record of the result it imported (docs/mathgraph-import.md, Annotations).
+# An import's record of the result it imported (docs/mathgraph-import.md, Annotations), and the id its seed gives.
 SEED = {"source": "mathgraph", "node": "mg_" + "0" * 24, "revision": "0" * 40}
 PENDING = [{"key": "prerequisite", "kind": "proof", "reason": "under-review"}]
+IMPORTED = import_mathgraph.article_id(SEED)
 
 
 class GraphWorkTests(unittest.TestCase):
@@ -42,24 +43,33 @@ class GraphWorkTests(unittest.TestCase):
         (self.links / "roadmap.jsonl").write_text("".join(json.dumps(row) + "\n" for row in rows))
 
     def test_separates_expansion_from_imported_prerequisites(self):
-        self.save(self.row("b.md", own={"seed": SEED, "pending": PENDING}), self.row("a.md"))
+        self.save(self.row("b.md", own={"seed": SEED, "pending": PENDING}, id=IMPORTED), self.row("a.md"))
         before = (self.links / "roadmap.jsonl").read_bytes()
         report = graph_work.inventory()
         self.assertEqual([item["kind"] for item in report], ["expand", "review-pending-prerequisites"])
         self.assertEqual(report[0]["path"], "blueprint/roadmap/a.md")
         self.assertEqual(report[0]["article_id"], article_id("a.md"))
+        self.assertEqual(report[1]["article_id"], IMPORTED)
         self.assertEqual(report[1]["pending"], PENDING)
         self.assertEqual((self.links / "roadmap.jsonl").read_bytes(), before)
 
     def test_pending_prerequisites_need_an_imports_record(self):
-        for own in ({"pending": PENDING}, {"seed": {**SEED, "source": "elsewhere"}, "pending": PENDING},
-                    {"seed": SEED, "pending": [None]}, {"seed": SEED, "pending": [{**PENDING[0], "reason": "later"}]},
-                    {"seed": SEED, "pending": "prerequisite"}):
-            with self.subTest(own=own):
-                self.save(self.row("topic.md", own=own))
-                with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/topic\.md: its pending prerequisites are "
-                                                        r"not an import's: "):
+        for own, given, reason in (
+                ({"pending": PENDING}, IMPORTED, "'seed' is a required property"),
+                ({"seed": {**SEED, "source": "elsewhere"}, "pending": PENDING}, IMPORTED, "seed/source: "),
+                ({"seed": SEED, "pending": [None]}, IMPORTED, "pending/0: None is not of type 'object'"),
+                ({"seed": SEED, "pending": [{**PENDING[0], "reason": "later"}]}, IMPORTED, "pending/0/reason: "),
+                ({"seed": SEED, "pending": "prerequisite"}, IMPORTED, "pending: "),
+                ({"seed": SEED, "pending": PENDING}, article_id("topic.md"),
+                 f"its article ID is not {IMPORTED}, the one its seed gives"),
+                ({"seed": SEED, "pending": PENDING * 2}, IMPORTED, "pending/1: prerequisite is pending twice")):
+            with self.subTest(own=own, id=given):
+                self.save(self.row("topic.md", own=own, id=given))
+                with self.assertRaises(ValueError) as raised:
                     graph_work.inventory()
+                self.assertRegex(str(raised.exception),
+                                 r"^blueprint/roadmap/topic\.md: its pending prerequisites are not an import's: ")
+                self.assertIn(reason, str(raised.exception))
 
     def test_omits_unmarked_folders_held_pages_and_credited_declarations(self):
         self.save(self.row("unmarked.md", flag=False), self.row("README.md"),
@@ -91,6 +101,25 @@ class GraphWorkTests(unittest.TestCase):
                                                         r"also the ID of blueprint/roadmap/b\.md$"):
                     graph_work.inventory()
 
+    def test_an_id_the_defaults_give_another_annotation_fails(self):
+        first, second = self.row("a.md"), self.row("b.md", flag=False)
+        second.pop("id")
+        (self.links / "_defaults.json").write_text(json.dumps({"object": {"type": "lean", "uri": "../.."},
+                                                               "id": first["id"]}))
+        self.save(first, second)
+        with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/a\.md: its article ID af_[0-9a-f]{24} is also "
+                                                r"the ID of blueprint/roadmap/b\.md$"):
+            graph_work.inventory()
+
+    def test_a_links_folder_autoform_does_not_read_fails(self):
+        self.save(self.row("a.md"))
+        (self.root / "elsewhere").mkdir()
+        self.links.rename(self.root / "elsewhere/links")
+        self.links.symlink_to(self.root / "elsewhere/links", target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, r"^Autoform reads no annotations: blueprint/links is missing, is a "
+                                                r"symbolic link"):
+            graph_work.inventory()
+
     def test_a_listed_page_with_another_annotation_fails_whichever_comes_first(self):
         marked, unmarked = self.row("a.md"), {**self.row("a.md", flag=False), "id": article_id("other")}
         for rows in ((unmarked, marked), (marked, unmarked)):
@@ -100,17 +129,24 @@ class GraphWorkTests(unittest.TestCase):
                                                         r"page, found 2"):
                     graph_work.inventory()
 
-    def test_a_listed_annotation_autoform_leaves_out_fails(self):
+    def test_a_line_autoform_leaves_out_fails_with_its_file_and_line(self):
         row = json.dumps(self.row("topic.md"))
         (self.links / "roadmap.jsonl").write_text(f'{row[:-1]}, "id": "{article_id("other")}"}}\n')
-        with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/topic\.md: Autoform leaves its annotation at "
-                                                r"blueprint/links/roadmap\.jsonl:1 out: duplicate key 'id'"):
+        with self.assertRaisesRegex(ValueError, r"links/roadmap\.jsonl:1 \(duplicate key 'id'"):
             graph_work.inventory()
 
     def test_a_row_that_is_not_json_fails_with_its_file_and_line(self):
         self.save(self.row("a.md"))
         (self.links / "second.jsonl").write_text(json.dumps(self.row("b.md")) + "\n\n{\n")
-        with self.assertRaisesRegex(ValueError, r"^blueprint/links/second\.jsonl:3: the row is not JSON: "):
+        with self.assertRaisesRegex(ValueError, r"links/second\.jsonl:3 \(not JSON: "):
+            graph_work.inventory()
+
+    def test_an_annotation_file_the_sync_does_not_read_fails(self):
+        self.save(self.row("a.md"))
+        (self.links / "more").mkdir()
+        (self.links / "more/b.jsonl").write_text(json.dumps(self.row("b.md")) + "\n")
+        with self.assertRaisesRegex(ValueError, r"^Autoform reads blueprint/links/more/b\.jsonl, which the sync does "
+                                                r"not"):
             graph_work.inventory()
 
     def test_missing_marked_page_fails(self):

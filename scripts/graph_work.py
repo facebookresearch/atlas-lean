@@ -22,9 +22,9 @@ def extension(row: dict, namespace: str) -> dict:
     return value if isinstance(value, dict) else {}
 
 
-def annotation_lines() -> Iterator[tuple[str, str, dict]]:
-    """Each row of the links files, where it is (`file:line` from the repository's root) and its line as written,
-    read as sync_wiki.read_annotations reads them (read_rows), its lines numbered as Autoform numbers them."""
+def annotation_lines() -> Iterator[tuple[str, dict]]:
+    """Each row of the links files with where it is (`file:line` from the repository's root), read as
+    sync_wiki.read_annotations reads them (read_rows), its lines numbered as Autoform numbers them."""
     for links in sorted(sync.LINKS.glob("*.jsonl")):
         name = links.relative_to(sync.wiki.ROOT).as_posix()
         try:
@@ -40,7 +40,7 @@ def annotation_lines() -> Iterator[tuple[str, str, dict]]:
                 row = json.loads(line)
             except json.JSONDecodeError as error:
                 raise ValueError(f"{where}: the row is not JSON: {error.msg} at column {error.colno}") from None
-            yield where, line, row
+            yield where, row
 
 
 def shown(page: Path | None, where: str, problem: str | None) -> str:
@@ -52,8 +52,9 @@ def shown(page: Path | None, where: str, problem: str | None) -> str:
 
 @functools.cache
 def import_validator():
-    """The importer's own check of an imported page's record: the seed and the pending list its manifest row gives
-    and its annotation keeps (docs/mathgraph-import.md, Annotations), with the manifest's schema and validator."""
+    """The importer's own check of the shape of an imported page's record: the seed and the pending list its manifest
+    row gives and its annotation keeps (docs/mathgraph-import.md, Annotations), with the manifest's schema and
+    validator."""
     from . import import_mathgraph as imports
 
     schema = imports.MANIFEST_SCHEMA
@@ -65,26 +66,43 @@ def import_validator():
     })
 
 
-def import_problem(own: dict) -> str | None:
-    """Why a page's pending prerequisites are not an import's, as the importer's schema finds (import_validator), or
-    None: a seed of mathgraph, and pending entries of a key, a kind and a public reason."""
+def import_problem(own: dict, article_id: str) -> str | None:
+    """Why a page's pending prerequisites are not an import's record, or None, by the importer's own checks of what its
+    annotation keeps: the manifest's schema (import_validator: a seed of mathgraph, and pending entries of a key, a kind
+    and a public reason), the article ID that seed gives, and no prerequisite listed twice. The record's consistency,
+    not that an import took place."""
+    from . import import_mathgraph as imports
+
     errors = sorted(import_validator().iter_errors(own), key=lambda error: [str(part) for part in error.absolute_path])
-    if not errors:
-        return None
-    at = "/".join(str(part) for part in errors[0].absolute_path)
-    return f"{at}: {errors[0].message}" if at else errors[0].message
+    if errors:
+        at = "/".join(str(part) for part in errors[0].absolute_path)
+        return f"{at}: {errors[0].message}" if at else errors[0].message
+    if article_id != (seeded := imports.article_id(own["seed"])):
+        return f"its article ID is not {seeded}, the one its seed gives"
+    # The importer also refuses the result's own key, which the import map keeps and the annotation does not. No
+    # entry's key is empty (the schema's `key`), so the empty key checks for keys listed twice alone.
+    if twice := imports.pending_problems("", own["pending"]):
+        number, problem = twice[0]
+        return f"pending/{number}: {problem}"
+    return None
 
 
 def inventory() -> list[dict]:
-    from literature_links import companion
-
-    if not sync.LINKS.is_dir() or sync.links_template() is None:
-        raise ValueError("cannot read the wiki annotation folder and its defaults")
+    # Autoform reads blueprint/links only as a folder of that name that is no symbolic link, and none of it when it
+    # cannot use its defaults.
+    if not sync.reader().links_exist(sync.LINKS.parent) or sync.links_template() is None:
+        raise ValueError(f"Autoform reads no annotations: {sync.LINKS.relative_to(sync.wiki.ROOT).as_posix()} is "
+                         "missing, is a symbolic link, or has defaults it cannot use")
+    # The checks the sync makes of the folder: files and lines that Autoform and the sync would read differently, such
+    # as an annotation file in a subfolder, or a line Autoform's reader leaves out (a key given twice, say).
+    if problems := sync.links_problems():
+        more = f" (and {len(problems) - 1} more)" if problems[1:] else ""
+        raise ValueError(f"{problems[0]}{more}")
     items: dict[str, dict] = {}
     listed: dict[str, str] = {}  # each listed path's page, as the keys of `annotations` name it
     annotations: dict[str, int] = {}  # how many annotations are about each page
     with_id: dict[str, list[tuple[Path | None, str, str | None]]] = {}  # the annotations that have each id
-    for where, line, row in annotation_lines():
+    for where, row in annotation_lines():
         effective = sync.effective(row)
         if effective is None:
             raise ValueError(f"{where}: cannot read the annotation with the wiki's defaults")
@@ -92,8 +110,9 @@ def inventory() -> list[dict]:
         if page is not None:
             key = os.fspath(page)
             annotations[key] = annotations.get(key, 0) + 1
-        if isinstance(row.get("id"), str):
-            with_id.setdefault(row["id"], []).append((page, where, problem))
+        # Autoform takes a row's id, as the rest of its facts, from the row merged over the folder's defaults.
+        if isinstance(effective.get("id"), str):
+            with_id.setdefault(effective["id"], []).append((page, where, problem))
         if extension(effective, "org.autoform").get("not_ready") is not True:
             continue
         own = extension(effective, "org.atlas-wiki")
@@ -104,16 +123,11 @@ def inventory() -> list[dict]:
         if page.name == "README.md":
             continue
         path = page.relative_to(sync.wiki.ROOT).as_posix()
-        # Autoform reads each row strictly: it leaves out one with a key twice, say, which json.loads reads.
-        try:
-            companion.loads(line)
-        except (companion.LoadError, RecursionError) as error:
-            raise ValueError(f"{path}: Autoform leaves its annotation at {where} out: {error}") from None
         article_id = row.get("id")
         if not isinstance(article_id, str) or not sync.ARTICLE_ID.fullmatch(article_id):
             raise ValueError(f"{path}: expected an article ID of the form af_ followed by 24 lowercase hex digits")
         # Only an import lists pending prerequisites, beside the seed of the result it imported.
-        if "pending" in own and (invalid := import_problem(own)):
+        if "pending" in own and (invalid := import_problem(own, article_id)):
             raise ValueError(f"{path}: its pending prerequisites are not an import's: {invalid}")
         pending = own.get("pending", [])
         items[path] = {
