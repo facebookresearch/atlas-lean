@@ -16,7 +16,7 @@ with $K_t$ drawn at random and the absolute difference taken between the integer
 
 The candidate is then checked by the residual test, which is not part of this procedure.
 
-## Expansion
+## Remarks
 
 The identity $(a+Ke_i)\cdot s=a\cdot s+Ks_i$ is exact; that small scores indicate $s_i=0$ is a heuristic that depends on the trained model. For ternary secrets SALSA VERDE adds a separate two-bit procedure on the candidate support: if $s_i=s_j$, swapping $a_i$ and $a_j$, or replacing $(a_i,a_j)$ by $(a_i+c,a_j-c)$ with $c\ne0$, leaves $a\cdot s$ unchanged, and model predictions are compared to group the support into two classes, giving two sign assignments to verify; the source gives no explicit decision threshold for this grouping.
 

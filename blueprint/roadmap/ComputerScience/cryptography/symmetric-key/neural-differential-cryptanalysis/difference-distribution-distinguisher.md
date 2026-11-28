@@ -10,7 +10,7 @@ $$
 
 Under random pairs $\delta$ is uniform on the $2^b-1$ nonzero blocks, so if $p$ is the exact law of $\delta$ for real pairs, this rule maximises accuracy among rules that depend only on $\delta$ (ties at equality are assigned to "random"; any assignment is optimal). Gohr takes $p$ to be the Markov-model prediction for Speck32/64 with $\Delta=\mathtt{0x0040/0000}$, computed for up to eight rounds by iterating the one-round transition matrix; the optimality statement does not transfer to that approximation, and his reported accuracies for this rule are computed under the assumption that the prediction is exact, with true positive rates checked empirically.
 
-## Expansion
+## Proof sketch
 
 Optimality is Bayes' rule with equal priors: choose the label whose likelihood of $\delta$ is larger. A different classifier uses the whole pair. With uniform key and plaintext, $\Pr[C\mid\text{real}]=N(C)/2^{b+k}$ where $N(C)$ is the number of keys under which $(C_0,C_1)$ decrypts to a plaintext pair with difference $\Delta$, and in the distinct-pair model $\Pr[C\mid\text{random}]=1/(2^{2b}-2^b)$; the Bayes rule is "real" iff $N(C)>2^{b+k}/(2^{2b}-2^b)$. For Speck32/64 Gohr implements the comparison with the cutoff $2^{32}$ and reports about 95% accuracy on $10^4$ five-round test pairs.
 

@@ -18,7 +18,7 @@ with $\pi_{w^\perp}$ the projection orthogonal to $w$: Gaussian components of wi
 
 **Decision hCLWE.** $\mathrm{hCLWE}_{\beta,\gamma}$ is the problem of distinguishing independent samples of $H_{w,\beta,\gamma}$, for one uniformly random unit vector $w$ fixed for all samples, from independent samples of $D_{\mathbb{R}^n}$.
 
-## Expansion
+## Proof sketch
 
 The mixture form follows from $\rho(y)\rho_\beta(k-\gamma\langle y,w\rangle)=\rho(\pi_{w^\perp}(y))\rho(t)\rho_\beta(k-\gamma t)$ with $t=\langle y,w\rangle$, and completing the square in $t$. Bruna, Regev, Song and Tang also compute the normalising constant of the density.
 

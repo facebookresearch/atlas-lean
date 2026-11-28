@@ -12,17 +12,23 @@ $$
 \|b_j^*\| = \lambda_1\bigl(L_{[j,k]}\bigr),\qquad k=\min(j+\beta-1,n).
 $$
 
-**Algorithm (Chen–Nguyen, Algorithm 1).** LLL-reduce $B$; set $z\leftarrow0$, $j\leftarrow0$. While $z<n-1$:
+**Algorithm (Chen–Nguyen, Section 3.1 and Algorithm 1).** LLL-reduce $B$; set $z\leftarrow0$, $j\leftarrow0$. While $z<n-1$:
 
 1. $j\leftarrow (j \bmod (n-1))+1$, $k\leftarrow\min(j+\beta-1,n)$, $h\leftarrow\min(k+1,n)$;
 2. find $(v_j,\dots,v_k)\in\mathbb{Z}^{k-j+1}\setminus\{0\}$ with $\|\pi_j(\sum_{i=j}^{k}v_ib_i)\| = \lambda_1(L_{[j,k]})$ (an exact shortest-vector subroutine in dimension $k-j+1$, by enumeration or sieving);
 3. if $\|b_j^*\|>\lambda_1(L_{[j,k]})$: set $z\leftarrow0$, insert $b^{\mathrm{new}}=\sum_{i=j}^{k}v_ib_i$ between $b_{j-1}$ and $b_j$, and apply LLL to the linearly dependent generating set $(b_1,\dots,b_{j-1},b^{\mathrm{new}},b_j,\dots,b_h)$, which returns an LLL-reduced basis $(b_1,\dots,b_h)$ of the lattice it generates; otherwise set $z\leftarrow z+1$ and apply LLL to $(b_1,\dots,b_h)$.
 
-The counter $z$ records consecutive windows whose enumeration found no shorter vector, and the loop ends when it reaches $n-1$; Chen and Nguyen state that the output basis is BKZ-$\beta$-reduced. Output quality is measured by the Hermite factor $\|b_1\|/\operatorname{vol}(L)^{1/n}$.
+The index updates and the counter are those of Algorithm 1; step 3 follows the description in Section 3.1. The printed Algorithm 1 differs from that description in two details: it inserts when the enumerated coefficient vector differs from $(1,0,\dots,0)$, rather than when $\|b_j^*\|>\lambda_1(L_{[j,k]})$ (the two tests disagree, for example, when $\|b_j^*\|=\lambda_1(L_{[j,k]})$ and the subroutine returns a coefficient vector other than $(1,0,\dots,0)$), and it resumes LLL at stage $j$ after an insertion and at stage $h-1$ otherwise. The counter $z$ records consecutive windows whose enumeration found no shorter vector, and the loop ends when it reaches $n-1$; Chen and Nguyen state that the output basis is BKZ-$\beta$-reduced. Output quality is measured by the Hermite factor $\|b_1\|/\operatorname{vol}(L)^{1/n}$.
+
+## Remarks
+
+The algorithm is due to Schnorr and Euchner (1994); BKZ 2.0 keeps this loop and adds early abort, pruned enumeration and preprocessing of local blocks. Step 3 uses the variant of LLL that accepts a linearly dependent generating set and removes the dependency, which is more than LLL on a basis. No bound on the number of loop iterations is stated in the source. Albrecht, Göpfert, Virdia and Wunderer (Section 2.3) remark, citing Hanrot, Pujol and Stehlé, that after polynomially many calls to the shortest-vector subroutine the basis changes little. The cost of each subroutine call depends on the instance and the method; no per-call bound is claimed here.
 
 ## Expansion
 
-The algorithm is due to Schnorr and Euchner (1994); BKZ 2.0 keeps this loop and adds early abort, pruned enumeration and preprocessing of local blocks. Step 3 uses the variant of LLL that accepts a linearly dependent generating set and removes the dependency, which is more than LLL on a basis. No bound on the number of loop iterations is stated in the source. Albrecht, Göpfert, Virdia and Wunderer (Section 2.3) remark, citing Hanrot, Pujol and Stehlé, that after polynomially many calls to the shortest-vector subroutine the basis changes little. The cost of each subroutine call depends on the instance and the method; no per-call bound is claimed here.
+A good expansion adds pages for:
+
+- LLL applied to a linearly dependent generating set, returning an LLL-reduced basis of the lattice it generates (the insertion step).
 
 ## Depends on
 

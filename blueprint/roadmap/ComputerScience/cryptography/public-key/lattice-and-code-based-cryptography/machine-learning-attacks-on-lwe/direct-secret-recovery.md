@@ -8,7 +8,7 @@ Let $s\in\{0,1\}^n$ be the secret and $M$ a model trained on samples $(a,b)$, $b
 
 **Variant (SALSA, Algorithm 1).** The model reads integers encoded in base $B$, and inputs $Ke_i$ use integer values of $K$, five fixed and five random in $(q,10q)$, not reduced modulo $q$. For each $K$ the decoded outputs $p_i=M(Ke_i)$ are binarized by thresholding at their mean, at the mean after a softmax, or at their mode, in both orientations, giving six candidates per $K$. In the source's experiments candidates were compared with the known secret; without it, the residual test is used.
 
-## Expansion
+## Remarks
 
 The method assumes that the model generalises to the special inputs $Ke_i$, which lie outside the training distribution; SALSA VERDE stops using it in large dimension for that reason. There is no correctness guarantee.
 

@@ -14,9 +14,17 @@ If $\mathrm{LWE}(n,\mathbb{Z}_q^{\ell},\mathbb{Z}_q^{\ell},D_{\mathbb{Z},\sigma}
 
 The entropy in the hypothesis is that of the integer distribution $S_{n,k}$ on $\{-1,0,1\}^n$: its min-entropy is $\log_2\bigl(\binom nk2^k\bigr)\ge k\log_2(n/k)$, and the hypothesis uses the lower bound. The secret residue $S_{n,k}\bmod q$ can have smaller entropy when $q=2$, where the signs collapse. For fixed small $k$ the inequality caps the admissible $\ell$: for $n=512$ and $k=20$, $k\log_2(n/k)\approx94$, so with $\log_2q=10$ it allows only $\ell\le8$. This bounds what this reduction gives; it is not a statement about such instances.
 
+## Proof sketch
+
+Gupte, Vafa and Vaikuntanathan adapt Micciancio's binary-secret reduction. A transformation $\varphi$ built from a gadget matrix adapted to $k$-sparse vectors (their Lemma 11, Section 4) maps the uniform distribution to a distribution statistically close to sparse-secret LWE with error $\sigma'$, using the min-entropy bound (their Lemma 10, from $|S_{n,k}|=\binom nk2^k$ and $\binom nk\ge(n/k)^k$); and it maps the first matrix-secret LWE distribution (dimension $n-1$, secret size $\ell$) to a distribution statistically close to the second (dimension $n+1$, secret size $\ell+1$, error $2\sigma$). Hence sparse-secret LWE $\approx\varphi(\text{uniform})\approx_c\varphi(\text{first})\approx\text{second}\approx_c$ uniform. Their Theorem 5 assumes hardness of two matrix-secret LWE distributions, in dimensions $n-1$ and $n+1$ with secret sizes $\ell$ and $\ell+1$; the corollary above derives both from the single assumption, with the hybrid over $m$ secret columns giving the factor $m$.
+
 ## Expansion
 
-Gupte, Vafa and Vaikuntanathan adapt Micciancio's binary-secret reduction. A transformation $\varphi$ built from a gadget matrix adapted to $k$-sparse vectors (their Lemma 11, Section 4) maps the uniform distribution to a distribution statistically close to sparse-secret LWE with error $\sigma'$, using the min-entropy bound (their Lemma 10, from $|S_{n,k}|=\binom nk2^k$ and $\binom nk\ge(n/k)^k$); and it maps the first matrix-secret LWE distribution (dimension $n-1$, secret size $\ell$) to a distribution statistically close to the second (dimension $n+1$, secret size $\ell+1$, error $2\sigma$). Hence sparse-secret LWE $\approx\varphi(\text{uniform})\approx_c\varphi(\text{first})\approx\text{second}\approx_c$ uniform. Their Theorem 5 assumes hardness of two matrix-secret LWE distributions, in dimensions $n-1$ and $n+1$ with secret sizes $\ell$ and $\ell+1$; the corollary above derives both from the single assumption, with the hybrid over $m$ secret columns giving the factor $m$. The proof uses the sparse gadget lemma, the discrete Gaussian convolution lemma and the matrix-secret hybrid lemma.
+A good expansion adds pages for:
+
+- the gadget matrix for $k$-sparse vectors (Gupte–Vafa–Vaikuntanathan, Lemma 11);
+- the discrete Gaussian convolution lemma (Micciancio, Lemma 2.5);
+- the hybrid lemma from vector to matrix secrets (Micciancio, Lemma 2.9).
 
 ## Depends on
 

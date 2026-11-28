@@ -20,7 +20,7 @@ $$
 
 because the projection of the short vector orthogonally to the first $d-\beta$ Gram–Schmidt vectors, of expected length about $\sqrt\beta\,\sigma$, is then shorter than the predicted $\|b^*_{d-\beta+1}\|$. Their experiments with Kannan's embedding and $t=1$ behave as this estimate predicts, somewhat better; the estimate remains a heuristic, not a theorem.
 
-## Expansion
+## Proof sketch
 
 Volume: the basis is triangular with diagonal $1^n,q^{m-n},t$. Membership: put $s'=A_1s\in\mathbb{Z}_q^n$; then $As=\binom{s'}{A_2A_1^{-1}s'}$, so $c^{\mathsf T}\equiv s'^{\mathsf T}[I_n\mid A']+e^{\mathsf T}\pmod q$. Choose the integer vector $\hat s$ with $\hat s_i=c_i-\bar e_i$ for $i\le n$ (a lift of $s'_i$, since $c_i\equiv s'_i+e_i$). The vector $(c^{\mathsf T},t)-\sum_{i\le n}\hat s_i\,(\text{row }i)$ has first $n$ entries exactly $\bar e_1,\dots,\bar e_n$ and entries $n+1,\dots,m$ congruent to $\bar e_{n+1},\dots,\bar e_m$ modulo $q$; subtracting integer multiples of the rows $(0,qI_{m-n},0)$ makes them equal, which gives $(\bar e,t)$. AGVW note (footnote 7) that the exponent printed in the 2016 paper, $2\beta-d-1$, seems to be an error, and use $2\beta-d$. For short secrets the Bai–Galbraith embedding uses the $(n+m+1)$-dimensional lattice containing $(\nu s,e,1)$ (HE Standard, Section 2.1.2); it is a different construction.
 

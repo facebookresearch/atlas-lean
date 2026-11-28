@@ -12,7 +12,7 @@ In the *length-$k$ parity problem* with noise rate $\eta\in[0,1/2)$, each exampl
 
 **Budget.** Put $\delta=p_0-\frac12$ and $T=\lceil k/\delta^2\rceil$. Run $R=4T$ independent batches; if fewer than $T$ are hits, output an arbitrary guess (failure); otherwise take the majority of the estimates from the first $T$ hits as $c_1$. Cyclic shifts of the coordinates give the other bits.
 
-## Expansion
+## Proof sketch
 
 Noise accumulation is the piling-up lemma for $s$ independent error bits: $\frac12+2^{s-1}(\frac12-\eta)^s$. Elimination step (Lemma 4): the class of a vector is determined by its eliminated block, and the representative is chosen uniformly by fresh coins; adding it to another vector of the class zeroes that block, and conditionally on the representative the other vectors of the class are independent and uniform on the vectors of $V_i$ agreeing with it on that block, so their sums are independent and uniform on $V_{i+1}$. The selected vector's label error is the sum of the noise bits of its at most $2^{a-1}$ contributing examples (an example used twice cancels), independent of all feature vectors because labels are never examined, so its estimate is correct with probability at least $p_0$.
 

@@ -10,7 +10,7 @@ Let $(a,b)$ range over reduced LWE pairs (rows of $(RA,Rb)$) with a sparse binar
 2. *Greedy recovery of the cool bits* (Algorithm 1): starting from a retained candidate, for each cool index $i$ in turn compute $\sigma_0=\sigma(s^*)$ with $s^*_i=0$ and $\sigma_1$ with $s^*_i=1$; keep $s^*_i=0$ if $\sigma_0\le\sigma_1$, else set $s^*_i=1$.
 3. Output the resulting secret if $V$ accepts it (the source checks that it produces nearly correct original pairs, i.e. small residuals); otherwise continue the enumeration.
 
-## Expansion
+## Remarks
 
 The cutoff comes from an empirical observation: after reduction the entries in the first columns of $RA$ keep a spread close to uniform, while later columns are strongly reduced, and the authors report $n_u\approx\rho^2n$ in their experiments, where their $\rho$ is the standard deviation of all entries of the reduced matrix divided by $q/\sqrt{12}$. They state as a hypothesis, validated experimentally, that for sparse enough secrets the cool entries contribute little to $a\cdot s$, so a candidate correct on the cruel bits already has visibly smaller residual spread than a random one. Standard deviation is a practical proxy for a statistical test, and simulated annealing is an alternative to the greedy pass. No cost or success guarantee is stated.
 

@@ -26,7 +26,7 @@ so the reduced pairs obey the LWE relation with the same secret and error $Re$ m
 
 **Reduction factor (Salsa Fresca).** Reduction is measured by $\rho=\sigma(RA)/\sigma(A)$, where $\sigma(\cdot)$ is the mean over rows of the standard deviation of a row's entries (centred representatives), defined when $\sigma(A)>0$. The Cool and the Cruel paper uses a different $\rho$: the standard deviation of all entries of the reduced matrix divided by $q/\sqrt{12}$.
 
-## Expansion
+## Proof sketch
 
 The identity is linearity over $\mathbb{Z}$ followed by reduction modulo $q$; replacing $RA$ by $RA+qC$ does not change residues. The conditional variance is that of a fixed linear combination of independent centred variables. Source-specific choices: SALSA PICANTE reduces $\begin{pmatrix}\omega I_n & A\\ 0 & qI_n\end{pmatrix}$ for square $A$ with $\omega=15$ and describes $\omega$ as trading reduction of $A$ against error growth; SALSA VERDE reorders the rows as displayed, uses $\omega=10$ and interleaves BKZ 2.0 with a polishing step; Salsa Fresca allows $m\le n$ and adds flatter. These are the papers' choices and observations, not general monotonicity statements. Taking $n$ of the $4n$ original samples copies them, so each chosen batch consists of genuine LWE samples before reduction.
 

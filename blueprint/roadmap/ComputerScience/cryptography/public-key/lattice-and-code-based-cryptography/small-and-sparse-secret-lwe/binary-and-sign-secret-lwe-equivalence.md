@@ -9,7 +9,7 @@ Let $q\ge3$ be an odd integer, $n,m\ge1$, $\chi$ any error distribution on $\mat
 
 Consequently a distinguisher for one problem composed with the corresponding map is a distinguisher for the other with exactly the same advantage. The reductions are polynomial time and preserve the modulus, the dimension, the number of samples and the error distribution.
 
-## Expansion
+## Proof sketch
 
 Since $q$ is odd, $2$ is invertible modulo $q$, so $A\mapsto A/2$ and $A\mapsto 2A$ are bijections of $\mathbb{Z}_q^{m\times n}$ preserving the uniform law. If $b=As+e$ with $s\in\{0,1\}^n$, then $b-(A/2)u=(A/2)(2s-u)+e$ and $2s-u$ is uniform on $\{-1,1\}^n$. If $b=As'+e$ with $s'\in\{\pm1\}^n$, then $b+Au=(2A)\bigl((s'+u)/2\bigr)+e$ with $(s'+u)/2$ uniform on $\{0,1\}^n$. If $b$ is uniform and independent of $A$, so is $b$ minus any function of $A$. The same maps translate a search solution for one problem into one for the other.
 

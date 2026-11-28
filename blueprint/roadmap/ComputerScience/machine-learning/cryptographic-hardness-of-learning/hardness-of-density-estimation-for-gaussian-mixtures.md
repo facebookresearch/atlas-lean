@@ -8,14 +8,23 @@ Let $\mathcal{G}_{n,k}$ be the family of mixtures of $k$ Gaussians in $\mathbb{R
 
 **Consequence.** Combined with the quantum hardness of homogeneous CLWE, which requires $\beta\in(0,1)$, $\gamma\ge2\sqrt n$ and $\gamma/\beta$ polynomially bounded: taking $\gamma=2\sqrt n$, $g(n)=c\log n$ for a constant $c$ with $g(n)\ge4\pi$, $k=\lceil2\gamma\sqrt{g(n)/\pi}\rceil$ and $\beta<1/32$ with $\gamma/\beta$ polynomially bounded, an algorithm that solves density estimation for $\mathcal{G}_{n,K}$ for every $K$ in time polynomial in $n$ and $K$ would, applied with $K=2k+1=O(\sqrt{n\log n})$, give a polynomial-time quantum algorithm for $\mathrm{SIVP}_\alpha$ and $\mathrm{GapSVP}_\alpha$ with $\alpha$ polynomial in $n$.
 
+## Proof sketch
+
+Bruna et al.'s proof runs the estimator on the unknown $P$, obtaining an evaluation oracle $f$, and tests whether $P=D_{\mathbb{R}^n}$: it draws a constant number of points $x\sim D_{\mathbb{R}^n}$ (about $1/(6\sqrt\delta)$) and answers "Gaussian" iff $f(x)/D(x)\in[1-\sqrt\delta,1+\sqrt\delta]$ for all of them. Two facts are proved. First, the estimator succeeds on both input laws with constant probability: for $P=D_{\mathbb{R}^n}$ because $D_{\mathbb{R}^n}\in\mathcal{G}_{n,2k+1}$; for $P=H_{w,\beta,\gamma}$, which has infinitely many components, because truncating to the $2k+1$ central components changes it by at most $2\exp(-\pi k^2/(\beta^2+\gamma^2))$ in total variation (Claim 5.4, any positive integer $k$), so the joint law of the $\exp(g(n))$ samples the estimator reads differs from the truncated one by at most $2\exp(-g(n))\le2e^{-4\pi}$, and on success $\Delta(f,H_{w,\beta,\gamma})<2\delta$ by the triangle inequality. Second, $\Delta(H_{w,\beta,\gamma},D_{\mathbb{R}^n})>1/2$ for $\beta<1/32$, $\gamma\ge1$ (Claim 5.3). The remaining step, that the ratio test turns these facts into a distinguisher, is asserted by the source without a quantitative argument: it states success probability at least $2/3$ and calls Rubinfeld and Servedio's Observation 24 a closely related statement. The source writes $k=2\gamma\sqrt{g(n)/\pi}$; any integer at least this value works in the truncation argument. Gupte, Vafa and Vaikuntanathan derive related bounds from classical LWE hardness under their own time, sample and advantage assumptions.
+
 ## Expansion
 
-Bruna et al.'s proof runs the estimator on the unknown $P$, obtaining an evaluation oracle $f$, and tests whether $P=D_{\mathbb{R}^n}$: it draws a constant number of points $x\sim D_{\mathbb{R}^n}$ (about $1/(6\sqrt\delta)$) and answers "Gaussian" iff $f(x)/D(x)\in[1-\sqrt\delta,1+\sqrt\delta]$ for all of them. Two facts are proved. First, the estimator succeeds on both input laws with constant probability: for $P=D_{\mathbb{R}^n}$ because $D_{\mathbb{R}^n}\in\mathcal{G}_{n,2k+1}$; for $P=H_{w,\beta,\gamma}$, which has infinitely many components, because truncating to the $2k+1$ central components changes it by at most $2\exp(-\pi k^2/(\beta^2+\gamma^2))$ in total variation (Claim 5.4, any positive integer $k$), so the joint law of the $\exp(g(n))$ samples the estimator reads differs from the truncated one by at most $2\exp(-g(n))\le2e^{-4\pi}$, and on success $\Delta(f,H_{w,\beta,\gamma})<2\delta$ by the triangle inequality. Second, $\Delta(H_{w,\beta,\gamma},D_{\mathbb{R}^n})>1/2$ for $\beta<1/32$, $\gamma\ge1$ (Claim 5.3). The remaining step, that the ratio test turns these facts into a distinguisher (the source asserts success probability at least $2/3$ and calls Rubinfeld and Servedio's Observation 24 a closely related statement), is not verified quantitatively here and is an open proof step. The source writes $k=2\gamma\sqrt{g(n)/\pi}$; any integer at least this value works in the truncation argument. Gupte, Vafa and Vaikuntanathan derive related bounds from classical LWE hardness under their own time, sample and advantage assumptions.
+A good expansion adds pages for:
+
+- the total variation gap $\Delta(H_{w,\beta,\gamma},D_{\mathbb{R}^n})>1/2$ for $\beta<1/32$, $\gamma\ge1$ (Bruna–Regev–Song–Tang, Claim 5.3);
+- the truncation bound for $H_{w,\beta,\gamma}$ to its $2k+1$ central components (Bruna–Regev–Song–Tang, Claim 5.4);
+- a quantitative analysis of the ratio test that turns an accurate density estimate into a distinguisher with non-negligible advantage.
 
 ## Depends on
 
 - [Homogeneous continuous learning with errors (hCLWE)](homogeneous-continuous-lwe.md)
 - [Total variation distance between finite measures](../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md)
+- [Distinguishing advantage](../../cryptography/security-games/games-and-advantages/advantage.md)
 
 ## Proof depends on
 

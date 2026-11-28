@@ -14,19 +14,27 @@ so that $\beta=O(\sigma\sqrt n/q)$. If no algorithm running in time $T+\mathrm{p
 
 Meaningful parameters ($\beta\ll1$) need $q/\sigma\gg\sqrt n$.
 
-## Expansion
+## Proof sketch
 
 The proof (Corollary 5) has three steps. First, a quantitative form of Micciancio's binary-secret reduction (Gupte–Vafa–Vaikuntanathan, Theorem 7, from Micciancio's Theorem 3.1 and Lemma 2.9) gives hardness of LWE with secrets uniform on $\{-1,1\}^n$, $m$ samples and error width $\sigma_1=2\sigma\sqrt{n+1}$, at advantage $\epsilon$ from advantage $(\epsilon-\mathrm{negl})/(2m)$ for standard LWE with $n$ samples. Second, the dimension- and sample-preserving reduction from LWE with secrets of fixed norm $r$ to CLWE with secret distribution $\frac1r\mathcal{S}$ (their Theorem 6) applies with $r=\sqrt n$, yielding the stated $\gamma$ and $\beta=\sigma_3/q$, provided $\sigma_1\ge3\sqrt n\sqrt{\ln m+\ln n+\omega(\log\lambda)}$, which the hypothesis on $\sigma$ guarantees. Third, a uniformly random rotation applied to all samples turns the discrete secret $\frac1{\sqrt n}\{-1,1\}^n$ into a uniform unit vector (Claim 2.22 of Bruna et al.). A separate corollary (their Corollary 3) combines the result with classical hardness of LWE for worst-case GapSVP, and Corollary 6 treats sparse secrets; both have their own parameter regimes and are not part of this statement.
+
+## Expansion
+
+A good expansion adds pages for:
+
+- the quantitative sign-secret step with its finite advantage loss (Gupte–Vafa–Vaikuntanathan, Theorem 7); the asymptotic binary-secret hardness page does not provide this interface;
+- the dimension- and sample-preserving reduction from LWE with secrets of fixed norm to CLWE (Gupte–Vafa–Vaikuntanathan, Theorem 6).
 
 ## Depends on
 
 - [Continuous learning with errors (CLWE)](continuous-lwe.md)
 - [Learning with errors](../../cryptography/public-key/hardness-assumptions/learning-with-errors.md)
 - [Distinguishing advantage](../../cryptography/security-games/games-and-advantages/advantage.md)
+- [Gaussian function, Gaussian mass and discrete Gaussian on a lattice](../../cryptography/public-key/lattice-and-code-based-cryptography/lattice-gaussians-and-smoothing-parameter/discrete-gaussian-on-a-lattice.md)
 
 ## Proof depends on
 
-None.
+- [LWE with a prescribed secret distribution](../../cryptography/public-key/lattice-and-code-based-cryptography/small-and-sparse-secret-lwe/lwe-with-a-secret-distribution.md)
 
 ## Sources
 

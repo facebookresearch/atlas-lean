@@ -26,7 +26,7 @@ $$
 
 a formula Albrecht, Göpfert, Virdia and Wunderer take from Chen's thesis. Both are modelling assumptions.
 
-## Expansion
+## Proof sketch
 
 Given the GSA, $\prod_{i=1}^d\|b_i^*\|=\|b_1\|^d\alpha^{d(d-1)/2}$ and $\|b_1\|^d=\delta_0^{d^2}\operatorname{vol}(\Lambda)$, so $\delta_0^{d^2}\alpha^{d(d-1)/2}=1$, i.e. $\alpha=\delta_0^{-2d/(d-1)}$. The $\delta_0(\beta)$ formula is recorded as the model the cited papers use, attributed there to Chen's thesis; no claim about its accuracy is made, and it is not meant for very small block sizes.
 

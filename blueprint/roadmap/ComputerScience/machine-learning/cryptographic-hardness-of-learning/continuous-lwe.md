@@ -14,7 +14,7 @@ $$
 
 The worst-case decision problem (distinguish for every fixed $w$) reduces in polynomial time to the average-case one by applying one uniformly random rotation to all samples, since $D_{\mathbb{R}^n}$ is rotation invariant.
 
-## Expansion
+## Proof sketch
 
 The random-rotation reduction maps $(y,z)$ to $(Ry,z)$; then $Ry\sim D_{\mathbb{R}^n}$ and $\langle Ry,Rw\rangle=\langle y,w\rangle$, while $Rw$ is uniform on the sphere and the null distribution is unchanged. CLWE is the continuous analogue of LWE: $y$ plays the role of $a$, $\gamma w$ of $s/q$, and arithmetic modulo $1$ replaces arithmetic modulo $q$. Gupte, Vafa and Vaikuntanathan allow other secret distributions on the sphere and other sample distributions. The homogeneous variant is a separate page.
 

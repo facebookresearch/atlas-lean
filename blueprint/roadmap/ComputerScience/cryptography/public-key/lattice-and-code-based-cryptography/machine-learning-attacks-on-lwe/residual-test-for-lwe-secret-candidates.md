@@ -19,9 +19,15 @@ The test with threshold $\theta>0$, a supplied input, accepts $s'$ iff $\sigma_{
 
 A necessary condition for the test to separate the two cases is that $\lambda_e$ differ from the uniform law; if the error is itself uniform modulo $q$, both cases give the same residual law. The distributional facts do not carry over to a candidate chosen using the same samples, or to reduced samples, whose covariates are not uniform.
 
+## Proof sketch
+
+Uniformity: for a vector $d$ with an invertible coordinate, $x\mapsto x\cdot d$ is a surjective homomorphism $\mathbb{Z}_q^n\to\mathbb{Z}_q$ whose fibres all have $q^{n-1}$ elements, so it maps the uniform law to the uniform law; adding an independent $e_i$ preserves uniformity, and independence across $i$ follows from independent $(a_i,e_i)$. Any $q$ consecutive integers have variance $(q^2-1)/12$ under the uniform law. Li et al. (PICANTE, Appendix A.2) choose the threshold from confidence intervals for $\sigma_{\mathrm{emp}}$ based on the chi-square law of $(N-1)\sigma_{\mathrm{emp}}^2/\sigma^2$, which assumes Gaussian residuals, approximated by a normal law for $N>100$; that is a statistical heuristic.
+
 ## Expansion
 
-Uniformity: for a vector $d$ with an invertible coordinate, $x\mapsto x\cdot d$ is a surjective homomorphism $\mathbb{Z}_q^n\to\mathbb{Z}_q$ whose fibres all have $q^{n-1}$ elements, so it maps the uniform law to the uniform law; adding an independent $e_i$ preserves uniformity, and independence across $i$ follows from independent $(a_i,e_i)$. Any $q$ consecutive integers have variance $(q^2-1)/12$ under the uniform law. The proof uses this pushforward property of surjective group homomorphisms. Li et al. (PICANTE, Appendix A.2) choose the threshold from confidence intervals for $\sigma_{\mathrm{emp}}$ based on the chi-square law of $(N-1)\sigma_{\mathrm{emp}}^2/\sigma^2$, which assumes Gaussian residuals, approximated by a normal law for $N>100$; that is a statistical heuristic.
+A good expansion adds pages for:
+
+- the pushforward of the uniform law on a finite abelian group under a surjective homomorphism is the uniform law.
 
 ## Depends on
 

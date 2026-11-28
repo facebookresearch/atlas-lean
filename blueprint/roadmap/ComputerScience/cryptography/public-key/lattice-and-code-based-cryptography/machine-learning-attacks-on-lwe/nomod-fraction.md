@@ -12,7 +12,7 @@ If $b$ is the representative of $a\cdot s+e$ for an integer error $e$ with $|e|<
 
 **Observation and model (SALSA VERDE).** In 210 experiments with $n=256$, $\log_2q=20$, secrets were recovered only when NoMod exceeded about $67\%$. A Gaussian model of $x$ for a binary secret of weight $h\gg1$, with $\sigma_x\approx\sqrt h\,\sigma_a$ for coordinates of $a$ of standard deviation $\sigma_a$ and ignoring correlations and the error, suggests recoverability when $\sqrt h\,\sigma_a\le q/2$; for uniform $a$, approximating the standard deviation of a uniform coordinate by $q/\sqrt{12}$ gives $h\le3$. Both are empirical or model statements.
 
-## Expansion
+## Proof sketch
 
 The no-wrap criterion: if $k\ne0$ then $|kq-e|\ge q-|e|>q/2$. The same paper proposes, when recovery fails, to permute the columns of the original (unreduced) sample matrices, rerun the preprocessing on the permuted matrices and attack the correspondingly permuted secret; NoMod of the new training set can then differ (its Table 7). The scaling model is reported to underestimate the recovered $h$ by about a factor of two after preprocessing.
 

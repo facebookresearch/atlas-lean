@@ -17,7 +17,7 @@ In practice $\chi_s$ is the law of $\bar s \bmod q$ for an integer vector $\bar 
 
 Binary, ternary and sparse secrets are used for efficiency in homomorphic encryption and centered binomial secrets in Kyber. The Homomorphic Encryption Standard tabulates parameters for uniform, error-distributed and ternary secrets and none for sparse secrets, whose security implications it describes as not yet well understood.
 
-## Expansion
+## Remarks
 
 This page fixes notation; hardness results are separate pages. Their hypotheses differ from family to family: Micciancio's theorem for sign secrets needs $n+1\ge(k+1)(\log_2q+1)$ for an underlying standard LWE dimension $k$, and the sparse-secret theorem of Gupte, Vafa and Vaikuntanathan needs $h\log_2(n/h)$ to exceed $(\ell+1)\log_2q$ by $\omega(\log\lambda)$; Micciancio's theorem concerns full-weight sign secrets, and for $h=64$, $n=2^{14}$ the sparse-secret theorem's left side is $64\log_2256=512$, so it derives hardness only from standard LWE of dimension $\ell<512/\log_2q-1$. These are limits of the cited reductions, not hardness or easiness statements for such instances.
 

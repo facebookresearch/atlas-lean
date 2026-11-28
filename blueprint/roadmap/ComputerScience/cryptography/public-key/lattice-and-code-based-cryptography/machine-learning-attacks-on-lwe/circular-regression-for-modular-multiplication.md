@@ -18,13 +18,14 @@ $$
 
 with learning rate $\eta>0$, halts once $\mathcal{L}(s_t)\le-m+\varepsilon$ for a chosen tolerance $\varepsilon$ (a condition that may never be met on noisy data), and outputs the integer in $(s_t-\frac12,s_t+\frac12]$.
 
-## Expansion
+## Remarks
 
 The update is gradient descent on $\mathcal{L}$, since $\mathcal{L}'(s)=-\frac{2\pi}{p}\sum_ia_i\sin(y_i-\frac{2\pi}{p}a_is)$. On noiseless data with all $a_i\in\{0,\dots,p-1\}$ the authors plot the loss for several primes and observe a deep valley at the secret with oscillations of decreasing size elsewhere; that shape is an observation for those examples. They report that the method, as implemented, does not consistently improve on exhaustive search; this is an experimental result, not a hardness theorem.
 
 ## Depends on
 
-None.
+- [Learning with errors](../../hardness-assumptions/learning-with-errors.md)
+- [Gaussian function, Gaussian mass and discrete Gaussian on a lattice](../lattice-gaussians-and-smoothing-parameter/discrete-gaussian-on-a-lattice.md)
 
 ## Proof depends on
 
@@ -33,3 +34,4 @@ None.
 ## Sources
 
 - Kristin Lauter, Cathy Yuanchen Li, Krystal Maughan, Rachel Newton, Megha Srivastava, "Machine Learning for Modular Multiplication", in Research Directions in Number Theory, Association for Women in Mathematics Series 39, Springer, 2026, https://doi.org/10.1007/978-3-032-11183-8_9, Section 2 (Definition 1, Sections 2.1–2.3, Figure 1).
+- Same work, preprint arXiv:2402.19254v1, [https://arxiv.org/abs/2402.19254v1](https://arxiv.org/abs/2402.19254v1), Section 2 (Definition 1, Sections 2.1–2.3, Figure 2.1).

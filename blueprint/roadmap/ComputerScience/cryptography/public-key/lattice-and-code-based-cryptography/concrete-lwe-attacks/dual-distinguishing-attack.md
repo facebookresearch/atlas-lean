@@ -15,7 +15,7 @@ $$
 
 **Advantage model.** Albrecht, Player and Scott, following Lindner and Peikert, state that the advantage of distinguishing $\langle v,e\rangle$ from uniform is close to $\exp\bigl(-\pi(\|v\|\,\alpha)^2\bigr)$; this is a heuristic advantage estimate, not a success probability. The BKZ model gives $\|v\|\approx\delta_0^{m}q^{n/m}$ when $L_A$ has volume $q^n$ (for instance $q$ prime, $m\ge n$, $A$ of rank $n$ modulo $q$); for fixed $\delta_0>1$, ignoring integrality and the available number of samples, this is minimised at $m=\sqrt{n\log q/\log\delta_0}$.
 
-## Expansion
+## Proof sketch
 
 Exactness: $\langle v,As+e\rangle=(vA)s+\langle v,e\rangle$ and $vA\equiv0$. Uniformity: conditional on $A$ and the randomness that produced $v$, $c$ is still uniform, and for a usable $v$ the map $c\mapsto\langle v,c\rangle$ is a surjective homomorphism $\mathbb{Z}_q^m\to\mathbb{Z}_q$ with equal-size fibres. If $v$ were chosen after seeing $c$ (say orthogonal to $c$) the conclusion would fail. The advantage model treats $\langle v,e\rangle$ as a Gaussian of width about $\|v\|\alpha q$ reduced modulo $q$; Albrecht, Player and Scott use it to choose the target length for a desired advantage (their Corollary 2) and note that accepting longer vectors and repeating on fresh, independent samples can be cheaper; tests reusing the same samples are correlated and need separate analysis. Variants for small or sparse secrets (Albrecht 2017) and dual-hybrid attacks exist and are not covered here.
 
@@ -25,6 +25,7 @@ Exactness: $\langle v,As+e\rangle=(vA)s+\langle v,e\rangle$ and $vA\equiv0$. Uni
 - [The block Korkine–Zolotarev (BKZ) reduction algorithm](../../../../algebraic-and-numerical-algorithms/lattice-basis-reduction/bkz-algorithm.md)
 - [Root-Hermite factor and the geometric series assumption](../../../../algebraic-and-numerical-algorithms/lattice-basis-reduction/root-hermite-factor-and-geometric-series-assumption.md)
 - [Distinguishing advantage](../../../security-games/games-and-advantages/advantage.md)
+- [Gaussian function, Gaussian mass and discrete Gaussian on a lattice](../lattice-gaussians-and-smoothing-parameter/discrete-gaussian-on-a-lattice.md)
 
 ## Proof depends on
 
