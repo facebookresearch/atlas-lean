@@ -40,6 +40,19 @@ This node is still to be broken down. A good expansion states and links:
 
 - [The ℓ-adic first cohomology of an abelian variety is the dual of its Tate module](l-adic-first-cohomology-and-the-tate-module.md),
   for the isomorphism $\varphi$
+- [Galois Scheme Operator](../../not-yet-classified/geometric-adic-galois-operators/galois-scheme-operator.md),
+  for the automorphism $\mathrm{id}_A \times \operatorname{Spec} \sigma$ of $A_K$
+- [Map](../../../Algebra/not-yet-classified/tate-module/map.md), for the map of Tate modules induced
+  by the action of $\sigma$ on $A(K)$
+
+## Proof depends on
+
+- [The étale fundamental group and first étale cohomology with finite coefficients](../etale-fundamental-group-and-first-cohomology.md),
+  for the classification of finite étale coverings and the identification of $H^1$ with
+  homomorphisms from $\pi_1$ (its items 1 and 2), whose naturality the expansion states
+- [Multiplication by n as a Galois covering](multiplication-by-n-as-a-galois-covering.md), for the
+  coverings given by multiplication by $\ell^m$, with their translations, and the classes
+  $f \circ \rho_{\ell^m}$ (its items 1, 2 and 4)
 
 ## Sources
 

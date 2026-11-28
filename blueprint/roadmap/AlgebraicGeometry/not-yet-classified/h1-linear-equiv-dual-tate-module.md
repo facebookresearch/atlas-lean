@@ -30,8 +30,9 @@ through pro-étale cohomology, which computes it here.
 ## Informally uses
 
 - [The ℓ-adic first cohomology of an abelian variety is the dual of its Tate module](../grothendieck-topologies/etale-cohomology-of-abelian-varieties/l-adic-first-cohomology-and-the-tate-module.md),
-  Milne's Theorem 12.1 (a) for a separably closed field, through the coverings given by
-  multiplication by $\ell^n$ and the torsion of the Picard group
+  Milne's Theorem 12.1 (a) for a separably closed field, whose proof uses the coverings given by
+  multiplication by $\ell^n$, his Lemma 12.2 on graded algebras with a coproduct and the Künneth
+  formula
 - [Galois compatibility of the duality between ℓ-adic H¹ and the Tate module](../grothendieck-topologies/etale-cohomology-of-abelian-varieties/galois-compatibility-of-the-tate-module-duality.md),
   Milne's Remark 12.5 in degree one
 - [First pro-étale cohomology with ℓ-adic coefficients as a limit](../grothendieck-topologies/first-pro-etale-cohomology-as-a-limit.md),

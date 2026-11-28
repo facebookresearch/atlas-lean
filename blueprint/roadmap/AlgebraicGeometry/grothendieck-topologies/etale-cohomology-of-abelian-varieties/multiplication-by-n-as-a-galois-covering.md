@@ -1,8 +1,8 @@
 # Multiplication by n as a Galois covering
 
 Let $A$ be an [abelian variety](../../abelian-varieties/abelian-scheme.md) of dimension $g$ over a separably closed field
-$k$, with zero $0$, and let $n \ge 1$ be an integer not divisible by the characteristic of $k$.
-Write $A_n(k)$ for the group of points of $A(k)$ killed by $n$.
+$k$, with zero $0$, let $\ell$ be a prime different from the characteristic of $k$, and let
+$n = \ell^m$ for an integer $m \ge 1$. Write $A_n(k)$ for the group of points of $A(k)$ killed by $n$.
 
 1. Multiplication by $n$, $n_A \colon A \to A$, is a finite étale covering, and the group $A_n(k)$,
    acting on $A$ by translations, makes it a Galois covering with group $A_n(k)$: the morphism
@@ -11,11 +11,11 @@ Write $A_n(k)$ for the group of points of $A(k)$ killed by $n$.
    [étale fundamental group](../etale-fundamental-group-and-first-cohomology.md)
    at a geometric point over $0$. The fibre of $n_A$ over $0$ is $A_n(k)$, and
    $\rho_n(\gamma) = \gamma \cdot 0$ defines a continuous homomorphism
-   $\rho_n \colon \pi_1(A, 0) \to A_n(k)$, which is surjective. For $m \mid n$,
-   $\rho_m = (n/m) \rho_n$.
-3. For a prime $\ell$ different from the characteristic of $k$, the $\rho_{\ell^m}$ define a
-   continuous surjection $\pi_1(A, 0) \to T_\ell A = \varprojlim_m A_{\ell^m}(k)$, the transition maps
-   being multiplication by $\ell$.
+   $\rho_n \colon \pi_1(A, 0) \to A_n(k)$, which is surjective. For $1 \le j \le m$,
+   $\rho_{\ell^j} = \ell^{m - j} \rho_n$.
+3. The $\rho_{\ell^m}$, for all $m \ge 1$, define a continuous surjection
+   $\pi_1(A, 0) \to T_\ell A = \varprojlim_m A_{\ell^m}(k)$, the transition maps being
+   multiplication by $\ell$.
 4. The map $\operatorname{Hom}(A_n(k), \mathbb{Z}/n\mathbb{Z}) \to H^1(A_{\mathrm{et}}, \mathbb{Z}/n\mathbb{Z})$,
    $f \mapsto f \circ \rho_n$, through the identification of $H^1(A_{\mathrm{et}}, \mathbb{Z}/n\mathbb{Z})$
    with $\operatorname{Hom}_{\mathrm{cont}}(\pi_1(A, 0), \mathbb{Z}/n\mathbb{Z})$, is injective.
@@ -26,9 +26,9 @@ the isomorphism $A \times A[n] \cong A \times_A A$ for the kernel of a homomorph
 acts on the fibre $A_n(k)$ commuting with the translations, so
 $\gamma \cdot x = x + \rho_n(\gamma)$, which makes $\rho_n$ a homomorphism; it is surjective because the
 covering $A$ is connected, so that the action on the fibre is transitive. The morphism
-$(n/m)_A$ is a morphism of coverings from $n_A$ to $m_A$ that sends $0$ to $0$, which gives
-$\rho_m = (n/m) \rho_n$. For 3, a compatible family of surjections from the compact group
-$\pi_1(A, 0)$ onto finite groups gives a surjection onto their limit. For 4, $f \circ \rho_n = 0$
+$(\ell^{m - j})_A$ is a morphism of coverings from $n_A$ to $(\ell^j)_A$ that sends $0$ to $0$, which
+gives $\rho_{\ell^j} = \ell^{m - j} \rho_n$. For 3, a compatible family of surjections from the compact
+group $\pi_1(A, 0)$ onto finite groups gives a surjection onto their limit. For 4, $f \circ \rho_n = 0$
 forces $f = 0$ as $\rho_n$ is surjective.
 
 ## Depends on
@@ -54,7 +54,6 @@ forces $f = 0$ as $\rho_n$ is surjective.
   12.1, p. 55 (multiplication by $\ell^n$ is a finite étale covering with group of covering
   transformations $A_{\ell^n}(k)$, the epimorphism $\pi_1(A, 0) \to A_{\ell^n}(k)$, with a reference
   to Milne's *Étale Cohomology*, I 5, its limit $\pi_1(A, 0) \to T_\ell A$, and the injection
-  $\operatorname{Hom}_{\mathbb{Z}_\ell}(T_\ell A, \mathbb{Z}_\ell) \to H^1(A, \mathbb{Z}_\ell)$); Remark
-  12.3, p. 56.
+  $\operatorname{Hom}_{\mathbb{Z}_\ell}(T_\ell A, \mathbb{Z}_\ell) \to H^1(A, \mathbb{Z}_\ell)$).
 - J. S. Milne, *Étale Cohomology*, Princeton University Press, 1980: I 5, as cited by Milne,
   *Abelian Varieties*, p. 55 (not read).

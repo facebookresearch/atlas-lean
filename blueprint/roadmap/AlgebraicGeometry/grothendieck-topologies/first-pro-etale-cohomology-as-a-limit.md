@@ -46,10 +46,13 @@ This node is still to be broken down. A good expansion states and links:
 - [Continuous Module Sheaf](../not-yet-classified/continuous-adic-coefficients/continuous-module-sheaf.md),
   for the sheaf $\hat{\mathbb{Z}}_\ell$, the sheaf $U \mapsto C(U, M)$ on the small pro-étale site for
   $M = \mathbb{Z}_\ell$
+- [Cohomology](../not-yet-classified/pro-etale-cohomology-functoriality/cohomology.md), for the
+  cohomology $H^1(X_{\text{proét}}, -)$ of a sheaf of modules on the small pro-étale site
 
 ## Sources
 
 - B. Bhatt and P. Scholze, *The pro-étale topology for schemes*, arXiv:1309.1198v2, <https://arxiv.org/abs/1309.1198v2>: Lemma 4.2.12, p. 30; Proposition 5.6.2 and its proof, p. 41; Lemma 6.8.2 (1) and its proof,
-  pp. 58–59.
+  pp. 58–59. Published in Astérisque 369 (2015), 99–201 (the published version not read; the page
+  numbers above are those of the arXiv version).
 - The Stacks Project, Tag 07KY (Lemma 15.88.10), <https://stacks.math.columbia.edu/tag/07KY>, and Tag
   07KW (Lemma 15.88.1), <https://stacks.math.columbia.edu/tag/07KW>.

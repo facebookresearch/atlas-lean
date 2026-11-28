@@ -1,8 +1,8 @@
 # Étale cohomology of abelian varieties
 
 The first étale cohomology of an abelian variety over a separably closed field, with coefficients
-$\mathbb{Z}/n\mathbb{Z}$ and $\mathbb{Z}_\ell$, computed through the Galois coverings given by
-multiplication by $n$, and its compatibility with the action of the Galois group, after Milne,
+$\mathbb{Z}/\ell^m\mathbb{Z}$ and $\mathbb{Z}_\ell$, computed through the Galois coverings given by
+multiplication by $\ell^m$, and its compatibility with the action of the Galois group, after Milne,
 *Abelian Varieties*, §I.12 and Lemma III.9.2. The pro-étale form of the ℓ-adic statement, with its
 Galois action, is
 [The ℓ-adic H¹ of an abelian variety is the dual of its Tate module, Galois-equivariantly](../../not-yet-classified/h1-linear-equiv-dual-tate-module.md).

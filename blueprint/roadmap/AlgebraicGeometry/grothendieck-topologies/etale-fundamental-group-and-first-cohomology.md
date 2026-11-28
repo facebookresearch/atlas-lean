@@ -32,14 +32,16 @@ This node is still to be broken down. A good expansion states and links:
 
 - the identification of $\pi_1(X, \bar x)$ with Milne's $\varprojlim_i \operatorname{Aut}_X(X_i)$, the
   limit over a cofinal system of connected finite étale Galois coverings $X_i \to X$ pointed over
-  $\bar x$, and the equivalence of 1 (Milne, *Lectures on Étale Cohomology*, Theorem 3.1, a survey
-  statement whose proofs are in the references at the end of his §3);
+  $\bar x$, and the equivalence of 1 (the Stacks Project, Theorem 58.6.2, which states it for
+  $\pi_1(X, \bar x) = \operatorname{Aut}(F_{\bar x})$; Milne, *Lectures on Étale Cohomology*, Theorem
+  3.1, a survey statement whose proofs are in the references at the end of his §3);
 - the identification of $H^1(X_{\mathrm{et}}, G)$ with Čech cohomology and the bijection between Čech
   classes and isomorphism classes of torsors (the same notes, the opening of §11 and Proposition
   11.1);
 - the representability of a torsor under a finite constant group by a finite étale covering of $X$;
-- the passage from torsors under $M$ to homomorphisms $\pi_1(X, \bar x) \to M$ through 1, and the
-  naturality of 2 in $M$ and under morphisms of pointed connected schemes.
+- the passage from torsors under $M$ to homomorphisms $\pi_1(X, \bar x) \to M$ through 1 (the same
+  notes, Example 11.3), and the naturality of 2 in $M$ and under morphisms of pointed connected
+  schemes.
 
 ## Depends on
 
@@ -47,11 +49,19 @@ This node is still to be broken down. A good expansion states and links:
   étale coverings
 - [Arithmetic Fundamental Group](../not-yet-classified/etale-fibre-frobenius/arithmetic-fundamental-group.md),
   for $\pi_1(X, \bar x)$ as the automorphism group of the fibre functor
+- [Fibre Automorphism Topology](../not-yet-classified/etale-fibre-frobenius/fibre-automorphism-topology.md),
+  for the profinite topology on $\pi_1(X, \bar x)$
 
 ## Sources
 
-- J. S. Milne, *Lectures on Étale Cohomology*, course notes, version 2.21 (2013), <https://www.jmilne.org/math/CourseNotes/LEC.pdf>: §3, the definition of $\pi_1(X, \bar x)$ and Theorem 3.1, p. 27; §11, its opening
-  paragraph, p. 76, and Proposition 11.1, p. 77.
+- J. S. Milne, *Lectures on Étale Cohomology*, course notes, version 2.21 (2013), <https://www.jmilne.org/math/CourseNotes/LEC.pdf>: §3, the definition of $\pi_1(X, \bar x)$ as $\varprojlim_i \operatorname{Aut}_X(X_i)$ and Theorem 3.1, p. 27; §11, its opening
+  paragraph, p. 76, Proposition 11.1, p. 77, and Example 11.3, p. 78 (for a connected $X$ and a finite
+  group $G$, a canonical isomorphism
+  $H^1(X_{\mathrm{et}}, G) \cong \operatorname{Hom}_{\mathrm{conts}}(\pi_1(X, \bar x), G)$).
+- The Stacks Project, Section 58.6 (Tag 0BQ8), <https://stacks.math.columbia.edu/tag/0BQ8>:
+  Definition 58.6.1 (Tag 0BNC), $\pi_1(X, \bar x) = \operatorname{Aut}(F_{\bar x})$ for a connected
+  scheme $X$, with the profinite topology of Lemma 58.3.1 (Tag 0BMR), and Theorem 58.6.2 (Tag 0BND),
+  the equivalence between finite étale coverings of $X$ and finite $\pi_1(X, \bar x)$-sets.
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008), <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter III, §9, its first paragraph, p. 113 (for a finite abelian group $M$, the
   continuous homomorphisms $\pi_1(V, P) \to M$ classify the Galois coverings of $V$ with group $M$),
   and the proof of Corollary 9.6, p. 115, which uses

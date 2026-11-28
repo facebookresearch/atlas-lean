@@ -36,6 +36,16 @@ This node is still to be broken down. A good expansion states and links:
   the commutative group $\operatorname{Hom}(A, B)$
 - [Isogenies of abelian schemes](../../abelian-varieties/isogenies-of-abelian-schemes.md), for the groups
   $A_{\ell^n}(k^{\mathrm{sep}})$ of $\ell^n$-torsion points
+- [Map Linear Map](../../../Algebra/not-yet-classified/tate-module/map-linear-map.md), for the
+  $\mathbb{Z}_\ell$-linear map $T_\ell \alpha$ of Tate modules
+
+## Proof depends on
+
+- [Isogenies of abelian schemes](../../abelian-varieties/isogenies-of-abelian-schemes.md), for the
+  $\ell^{2gn}$ points of order dividing $\ell^n$ of an abelian variety of dimension $g$ over
+  $k^{\mathrm{sep}}$ (its item 3): with them $T_\ell B$ is free over $\mathbb{Z}_\ell$, and when
+  $T_\ell \alpha = 0$ the restriction of $\alpha$ to each $A_i$ of positive dimension has an infinite
+  kernel
 
 ## Sources
 
