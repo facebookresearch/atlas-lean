@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Tactic.Linarith
 import MathlibExt.NumberTheory.DivRunCountOne
 
 namespace MetaMathlibExt
@@ -23,14 +25,20 @@ example : divRunCount 2 1 = 1980 := by
   rw [divRunCount_one]
   decide
 
--- One constant controls the error at the smallest permitted bound and all larger bounds.
-example : ∃ K : ℝ, |1980 - 32 * 2 ^ 4 * Real.log 2| ≤ K * 2 ^ 4 ∧
-    ∀ B : ℕ, 3 ≤ B →
-      |(divRunCount B 1 : ℝ) - 32 * (B : ℝ) ^ 4 * Real.log B| ≤ K * (B : ℝ) ^ 4 := by
-  obtain ⟨K, hK⟩ := divRunCount_one_asymptotic
-  have hcount : divRunCount 2 1 = 1980 := by
+-- At radius three the concrete error lies between consecutive integers, below the uniform bound.
+example :
+    let error := |(divRunCount 3 1 : ℝ) - 32 * 3 ^ 4 * Real.log 3|
+    6028 < error ∧ error < 6029 ∧ error ≤ 238 * 3 ^ 4 := by
+  dsimp only
+  have hcount : divRunCount 3 1 = 8876 := by
     rw [divRunCount_one]
     decide
-  exact ⟨K, by simpa [hcount] using hK 2 (by decide), fun B hB => hK B (by omega)⟩
+  simp only [hcount, Nat.cast_ofNat]
+  have hlo : 6028 < (8876 : ℝ) - 32 * 3 ^ 4 * Real.log 3 := by
+    linarith only [Real.log_three_lt_d9]
+  have hhi : (8876 : ℝ) - 32 * 3 ^ 4 * Real.log 3 < 6029 := by
+    linarith only [Real.log_three_gt_d9]
+  rw [abs_of_pos (lt_trans (by norm_num) hlo)]
+  exact ⟨hlo, hhi, hhi.le.trans (by norm_num)⟩
 
 end MetaMathlibExt
