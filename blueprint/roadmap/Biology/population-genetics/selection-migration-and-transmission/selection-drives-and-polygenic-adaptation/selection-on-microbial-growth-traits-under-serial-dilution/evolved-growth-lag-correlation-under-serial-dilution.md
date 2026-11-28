@@ -12,7 +12,7 @@ the correlation of $(\gamma, \omega)$ within a single fixed mutation; it is posi
 
 $$\rho_{\mathrm{evo}} \approx \frac{\langle \gamma\omega \rangle_{\mathrm{fixed}}}{\sqrt{\langle \gamma^2 \rangle_{\mathrm{fixed}} \, \langle \omega^2 \rangle_{\mathrm{fixed}}}},$$
 
-which is negative for every symmetric distribution $p_{\mathrm{mut}}$ with uncorrelated $\gamma$ and $\omega$.
+which is negative for the source's independent, nondegenerate symmetric uniform or centred Gaussian mutational distributions $p_{\mathrm{mut}}$ (it need not be negative for every jointly symmetric, uncorrelated distribution).
 
 Assume that the mutational effects are uncorrelated, $\langle \gamma\omega \rangle_{\mathrm{mut}} = 0$, and symmetric about zero, that is, $(\gamma, \omega)$ and $(-\gamma, -\omega)$ have the same law under $p_{\mathrm{mut}}$ (as for the source's independent uniform distributions on intervals symmetric about $0$, or centred Gaussians), and that the population's average yield does not change and stays at its ancestral value $Y_0$. Then the SSWM adaptation speeds per cycle are
 
