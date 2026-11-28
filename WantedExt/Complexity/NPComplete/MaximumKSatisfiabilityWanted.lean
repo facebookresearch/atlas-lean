@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MaxSatWanted
+public import CSLibExt.Complexity.NPComplete.MaximumKSatisfiabilityDefs
 
 @[expose] public section
 
@@ -68,21 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance for the constant `k`: a well-formed MAXIMUM SATISFIABILITY
-instance (variables below the variable count) in which every clause has at most `k` literals,
-and `0 < K`. -/
-def WellFormed (k : ℕ) (i : MaxSatInstance) : Prop :=
-  MaxSat.WellFormed i ∧ (∀ clause ∈ i.2.1, clause.length ≤ k) ∧ 0 < i.2.2
-
-open Classical in
-/-- MAXIMUM K-SATISFIABILITY for the constant `k` as a decision problem over bitstrings. -/
-noncomputable def maximumKSatisfiabilityDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaxSatInstance) x with
-  | some i => decide (WellFormed k i ∧ MaxSatFeasible i)
-  | none => false
 
 /-- **MAXIMUM K-SATISFIABILITY is NP-complete for every fixed `k ≥ 2`.** Source: Garey, Johnson
 and Stockmeyer (1976); Garey and Johnson (1979), [LO5]; Crescenzi and Kann, MAXIMUM

@@ -24,9 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.KeyTheorems.KarpLubyWanted
+public import CSLibExt.Complexity.NPComplete.MinimumDisjunctiveNormalFormDefs
 
 @[expose] public section
 
@@ -57,32 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables, the list of truth assignments `A`, and the bound
-`K`. -/
-abbrev MinimumDisjunctiveNormalFormInstance := ℕ × List (List Bool) × ℕ
-
-/-- Well-formedness of an instance: every listed truth assignment has length `n`, and `K` is
-positive. -/
-def WellFormed (i : MinimumDisjunctiveNormalFormInstance) : Prop :=
-  (∀ a ∈ i.2.1, a.length = i.1) ∧ 0 < i.2.2
-
-/-- Some DNF expression over `u₀, …, u_{n-1}` with at most `K` disjuncts is true on exactly the
-assignments in `A`. -/
-def MinimumDisjunctiveNormalFormFeasible (i : MinimumDisjunctiveNormalFormInstance) : Prop :=
-  ∃ E : List (List (ℕ × Bool)), E.length ≤ i.2.2 ∧ (∀ t ∈ E, ∀ l ∈ t, l.1 < i.1) ∧
-    ∀ a : List Bool, a.length = i.1 →
-      (MetaMathlibExt.Complexity.KeyTheorems.KarpLuby.dnfSat (fun x => a.getD x false) E ↔
-        a ∈ i.2.1)
-
-open Classical in
-/-- MINIMUM DISJUNCTIVE NORMAL FORM as a decision problem over bitstrings. -/
-noncomputable def minimumDisjunctiveNormalFormDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumDisjunctiveNormalFormInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumDisjunctiveNormalFormFeasible i)
-  | none => false
 
 /-- **MINIMUM DISJUNCTIVE NORMAL FORM is NP-complete.** Source: Garey and Johnson (1979),
 [LO9]; Gimpel (1965); Allender, Hellerstein, McCabe, Pitassi, and Saks (2008). -/

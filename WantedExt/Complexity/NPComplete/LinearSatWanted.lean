@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Logics.Propositional.CNF.Semantics
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.LinearSatDefs
 
 @[expose] public section
 
@@ -55,33 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables and the CNF formula (its clauses). -/
-abbrev LinearSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
-
-/-- The variables of a clause. -/
-def vars (c : List (ℕ × Bool)) : List ℕ := c.map Prod.fst
-
-/-- Well-formedness of an instance: every clause lists literals on variables `< n` with strictly
-increasing variables, no clause is listed twice, and any two clauses share at most one
-variable. -/
-def WellFormed (i : LinearSatInstance) : Prop :=
-  (∀ c ∈ i.2, (vars c).Pairwise (· < ·) ∧ ∀ v ∈ vars c, v < i.1) ∧ i.2.Nodup ∧
-    i.2.Pairwise fun c d => ((vars c).filter fun v => v ∈ vars d).length ≤ 1
-
-/-- A satisfying truth assignment. -/
-def LinearSatFeasible (i : LinearSatInstance) : Prop :=
-  ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
-
-open Classical in
-/-- LINEAR SAT as a decision problem over bitstrings. -/
-noncomputable def linearSatDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := LinearSatInstance) x with
-  | some i => decide (WellFormed i ∧ LinearSatFeasible i)
-  | none => false
 
 /-- **LINEAR SAT is NP-complete.** Source: Porschen, Speckenmeyer and Zhao (2009). -/
 public theorem_wanted linearSat_npComplete :

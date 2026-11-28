@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.InequivalenceProgramsAssignmentsWanted
+public import CSLibExt.Complexity.NPComplete.InequivalenceProgramsAssignmentsBooleanDefs
 
 @[expose] public section
 
@@ -57,25 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed INEQUIVALENCE OF PROGRAMS WITH
-ASSIGNMENTS instance (every assignment names only variables of `X`), and the value set is
-`V = {0, 1}` (`|V| = 2`). -/
-def WellFormed
-    (i : InequivalenceProgramsAssignments.InequivalenceProgramsAssignmentsInstance) : Prop :=
-  InequivalenceProgramsAssignments.WellFormed i ∧ i.2.2.2 = 2
-
-open Classical in
-/-- INEQUIVALENCE OF PROGRAMS WITH ASSIGNMENTS for `V = {0, 1}` as a decision problem over
-bitstrings. -/
-noncomputable def inequivalenceProgramsAssignmentsBooleanDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InequivalenceProgramsAssignments.InequivalenceProgramsAssignmentsInstance) x with
-  | some i =>
-      decide (WellFormed i ∧
-        InequivalenceProgramsAssignments.InequivalenceProgramsAssignmentsFeasible i)
-  | none => false
 
 /-- **INEQUIVALENCE OF PROGRAMS WITH ASSIGNMENTS is NP-complete for `V = {0, 1}`.** Source:
 Garey and Johnson (1979), [PO12]; Downey and Sethi (1976). -/

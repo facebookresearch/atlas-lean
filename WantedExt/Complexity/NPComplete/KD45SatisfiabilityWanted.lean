@@ -21,11 +21,8 @@ doi:10.1093/logcom/exm029.
 module
 
 public import Batteries.Util.ProofWanted
-public import Cslib.Foundations.Relation.Defs
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ModalLogicS5SatisfiabilityWanted
+public import CSLibExt.Complexity.NPComplete.KD45SatisfiabilityDefs
 
 @[expose] public section
 
@@ -66,22 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The formula is true at some world of a Kripke model whose accessibility relation is
-serial, transitive and Euclidean. -/
-def KD45SatisfiabilityFeasible (i : ModalLogicS5SatisfiabilityInstance) : Prop :=
-  ∃ φ, parse i.2 [] = some φ ∧
-    ∃ (W : Type) (M : KripkeModel W ℕ) (w : W),
-      Relation.Serial M.rel ∧ IsTrans W M.rel ∧ Relation.RightEuclidean M.rel ∧ M.Satisfies w φ
-
-open Classical in
-/-- KD45 SATISFIABILITY as a decision problem over bitstrings. -/
-noncomputable def kd45SatisfiabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ModalLogicS5SatisfiabilityInstance) x with
-  | some i => decide (ModalLogicS5Satisfiability.WellFormed i ∧ KD45SatisfiabilityFeasible i)
-  | none => false
 
 /-- **KD45 SATISFIABILITY (single-agent belief) is NP-complete.** Source: Halpern and Moses
 (1992); Halpern and Rêgo (2007). -/

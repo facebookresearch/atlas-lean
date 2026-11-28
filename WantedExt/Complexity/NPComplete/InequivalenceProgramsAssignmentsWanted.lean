@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Logic.Function.Basic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.InequivalenceProgramsAssignmentsDefs
 
 @[expose] public section
 
@@ -52,49 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An assignment `(x₀, x₁, x₂, x₃, x₄)`, read `x₀ ← if x₁ = x₂ then x₃ else x₄`. -/
-abbrev Assignment := ℕ × ℕ × ℕ × ℕ × ℕ
-
-/-- An instance: the number `n` of variables, the programs `P₁` and `P₂`, and the size `|V|`
-of the value set. -/
-abbrev InequivalenceProgramsAssignmentsInstance :=
-  ℕ × List Assignment × List Assignment × ℕ
-
-/-- Executes one assignment `x₀ ← if x₁ = x₂ then x₃ else x₄` on the store `s`. -/
-def execAssignment (s : ℕ → ℕ) (c : Assignment) : ℕ → ℕ :=
-  Function.update s c.1 (if s c.2.1 = s c.2.2.1 then s c.2.2.2.1 else s c.2.2.2.2)
-
-/-- The final store of the program `P` started from the store `s`. -/
-def run (P : List Assignment) (s : ℕ → ℕ) : ℕ → ℕ :=
-  P.foldl execAssignment s
-
-/-- Well-formedness of an instance: every assignment of either program names only the
-variables `0, …, n - 1`. -/
-def WellFormed (i : InequivalenceProgramsAssignmentsInstance) : Prop :=
-  ∀ c ∈ i.2.1 ++ i.2.2.1,
-    c.1 < i.1 ∧ c.2.1 < i.1 ∧ c.2.2.1 < i.1 ∧ c.2.2.2.1 < i.1 ∧ c.2.2.2.2 < i.1
-
-/-- The store holding `a j` in variable `j < n` (other indices hold `0` and are never read by a
-well-formed program). -/
-def initialStore {n v : ℕ} (a : Fin n → Fin v) (j : ℕ) : ℕ :=
-  if h : j < n then (a ⟨j, h⟩ : ℕ) else 0
-
-/-- Some initial assignment `a : X → V` makes the two programs end with different values in
-some variable `x ∈ X`. -/
-def InequivalenceProgramsAssignmentsFeasible (i : InequivalenceProgramsAssignmentsInstance) :
-    Prop :=
-  ∃ a : Fin i.1 → Fin i.2.2.2, ∃ x : Fin i.1,
-    run i.2.1 (initialStore a) x ≠ run i.2.2.1 (initialStore a) x
-
-open Classical in
-/-- INEQUIVALENCE OF PROGRAMS WITH ASSIGNMENTS as a decision problem over bitstrings. -/
-noncomputable def inequivalenceProgramsAssignmentsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InequivalenceProgramsAssignmentsInstance) x with
-  | some i => decide (WellFormed i ∧ InequivalenceProgramsAssignmentsFeasible i)
-  | none => false
 
 /-- **INEQUIVALENCE OF PROGRAMS WITH ASSIGNMENTS is NP-complete.** Source: Garey and Johnson
 (1979), [PO12]; Downey and Sethi (1976). -/

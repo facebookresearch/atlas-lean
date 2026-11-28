@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.ModelTheory.Satisfiability
+public import CSLibExt.Complexity.NPComplete.PredicateLogicWithoutNegationExistentialConstantsDefs
 
 @[expose] public section
 
@@ -69,64 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The language: two constant symbols `c₀`, `c₁`, and no relation symbols. -/
-abbrev Lang : Language := constantsOn (Fin 2)
-
-/-- The constant symbol `cᵢ`. -/
-def const (i : Fin 2) : Lang.Constants := i
-
-/-- A token `(code, a, b)` of the prefix notation. -/
-abbrev Token := ℕ × ℕ × ℕ
-
-/-- An instance: the token list of the sentence `A`. -/
-abbrev PredicateLogicInstance := List Token
-
-/-- The term with code `t` inside `k` existential quantifiers: `c₀` for `0`, `c₁` for `1`, and
-for `j + 2` with `j < k` the variable bound by the `(j + 1)`-th enclosing quantifier, counted
-from the outermost (Mathlib's de Bruijn levels). -/
-def term (k : ℕ) : ℕ → Option (Lang.Term (Empty ⊕ Fin k))
-  | 0 => some (const 0).term
-  | 1 => some (const 1).term
-  | j + 2 => if h : j < k then some (Term.var (Sum.inr ⟨j, h⟩)) else none
-
-/-- Read one formula inside `k` existential quantifiers from the front of the token list,
-returning it with the unread tokens; the first argument is recursion fuel. -/
-def parseAux : ℕ → (k : ℕ) → List Token → Option (Lang.BoundedFormula Empty k × List Token)
-  | 0, _, _ => none
-  | _ + 1, _, [] => none
-  | f + 1, k, t :: r =>
-    match t.1 with
-    | 0 => (term k t.2.1).bind fun s => (term k t.2.2).map fun u => (s.bdEqual u, r)
-    | 1 => (parseAux f k r).bind fun p => (parseAux f k p.2).map fun q => (p.1 ⊓ q.1, q.2)
-    | 2 => (parseAux f k r).bind fun p => (parseAux f k p.2).map fun q => (p.1 ⊔ q.1, q.2)
-    | 3 => (parseAux f (k + 1) r).map fun p => (p.1.ex, p.2)
-    | _ => none
-
-/-- The sentence spelled by a token list, if the whole list spells exactly one. -/
-def parse (toks : List Token) : Option Lang.Sentence :=
-  match parseAux toks.length 0 toks with
-  | some (φ, []) => some φ
-  | _ => none
-
-/-- Well-formedness of an instance: the token list spells a sentence. -/
-def WellFormed (i : PredicateLogicInstance) : Prop :=
-  (parse i).isSome
-
-/-- The sentence is true under all interpretations of the two constants: it holds in every
-nonempty structure for the language (Mathlib's `(∅ : Theory) ⊨ᵇ A`). -/
-def PredicateLogicFeasible (i : PredicateLogicInstance) : Prop :=
-  ∃ A, parse i = some A ∧ (∅ : Lang.Theory) ⊨ᵇ A
-
-open Classical in
-/-- PREDICATE LOGIC WITHOUT NEGATION restricted to existential sentences over two constants, as
-a decision problem over bitstrings. -/
-noncomputable def predicateLogicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PredicateLogicInstance) x with
-  | some i => decide (WellFormed i ∧ PredicateLogicFeasible i)
-  | none => false
 
 /-- **PREDICATE LOGIC WITHOUT NEGATION restricted to existential sentences over two constants is
 NP-complete.** Source: Garey and Johnson (1979), [LO15], comment; Kozen (1977). -/

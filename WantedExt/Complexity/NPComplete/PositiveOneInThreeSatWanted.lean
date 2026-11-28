@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.OneInThreeSatWanted
+public import CSLibExt.Complexity.NPComplete.PositiveOneInThreeSatDefs
 
 @[expose] public section
 
@@ -53,20 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (three literals per clause, variables `< n`),
-and every literal is positive. -/
-def WellFormed (i : OneInThreeSat.OneInThreeSatInstance) : Prop :=
-  OneInThreeSat.WellFormed i ∧ ∀ clause ∈ i.2, ∀ l ∈ clause, l.2 = true
-
-open Classical in
-/-- POSITIVE ONE-IN-THREE 3SAT as a decision problem over bitstrings. -/
-noncomputable def positiveOneInThreeSatDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OneInThreeSat.OneInThreeSatInstance) x with
-  | some i => decide (WellFormed i ∧ OneInThreeSat.OneInThreeSatFeasible i)
-  | none => false
 
 /-- **POSITIVE ONE-IN-THREE 3SAT is NP-complete.** Source: Garey and Johnson (1979), [LO4];
 Schaefer (1978). -/

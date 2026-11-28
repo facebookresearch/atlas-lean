@@ -19,8 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.CyclicOrderingDefs
 
 @[expose] public section
 
@@ -48,29 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the size `n` of `A = Fin n` and the triples of `C`. -/
-abbrev CyclicOrderingInstance := ℕ × List (ℕ × ℕ × ℕ)
-
-/-- Well-formedness of an instance: every triple consists of three distinct elements of `A`. -/
-def WellFormed (i : CyclicOrderingInstance) : Prop :=
-  ∀ t ∈ i.2, t.1 < i.1 ∧ t.2.1 < i.1 ∧ t.2.2 < i.1 ∧ t.1 ≠ t.2.1 ∧ t.1 ≠ t.2.2 ∧ t.2.1 ≠ t.2.2
-
-/-- Some one-to-one `f : A → Fin n` puts every triple `(a, b, c)` of `C` in cyclic order:
-`f a < f b < f c`, `f b < f c < f a`, or `f c < f a < f b`. -/
-def CyclicOrderingFeasible (i : CyclicOrderingInstance) : Prop :=
-  ∃ f : Fin i.1 → Fin i.1, Function.Injective f ∧
-    ∀ a b c : Fin i.1, ((a : ℕ), (b : ℕ), (c : ℕ)) ∈ i.2 →
-      (f a < f b ∧ f b < f c) ∨ (f b < f c ∧ f c < f a) ∨ (f c < f a ∧ f a < f b)
-
-open Classical in
-/-- CYCLIC ORDERING as a decision problem over bitstrings. -/
-noncomputable def cyclicOrderingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CyclicOrderingInstance) x with
-  | some i => decide (WellFormed i ∧ CyclicOrderingFeasible i)
-  | none => false
 
 /-- **CYCLIC ORDERING is NP-complete.** Source: Garey and Johnson (1979), [MS2]; Galil and
 Megiddo (1977). -/

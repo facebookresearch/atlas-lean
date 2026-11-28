@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.Minimum3DnfSatisfiabilityWanted
+public import CSLibExt.Complexity.NPComplete.KConstraintSatisfactionDefs
 
 @[expose] public section
 
@@ -58,29 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables, the conjunctive clauses as lists of literals
-`(variable, polarity)`, and the bound `K`. -/
-abbrev KConstraintSatisfactionInstance := ℕ × List (List (ℕ × Bool)) × ℕ
-
-/-- Well-formedness of an instance for the constant `k`: every clause has at most `k`
-literals, every literal names one of `u₀, ..., u_{n-1}`, and `K` is positive. -/
-def WellFormed (k : ℕ) (i : KConstraintSatisfactionInstance) : Prop :=
-  (∀ t ∈ i.2.1, t.length ≤ k ∧ ∀ l ∈ t, l.1 < i.1) ∧ 0 < i.2.2
-
-/-- Some truth assignment satisfies at least `K` clauses. -/
-def KConstraintSatisfactionFeasible (i : KConstraintSatisfactionInstance) : Prop :=
-  ∃ σ : ℕ → Bool, i.2.2 ≤ Minimum3DnfSatisfiability.satisfiedCount σ i.2.1
-
-open Classical in
-/-- K-CONSTRAINT SATISFACTION with clauses of at most `k` literals as a decision problem over
-bitstrings. -/
-noncomputable def kConstraintSatisfactionDec (k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KConstraintSatisfactionInstance) x with
-  | some i => decide (WellFormed k i ∧ KConstraintSatisfactionFeasible i)
-  | none => false
 
 /-- **K-CONSTRAINT SATISFACTION is NP-complete for every constant `k ≥ 2`.** Source:
 Crescenzi and Kann, MAXIMUM K-CONSTRAINT SATISFACTION; Garey, Johnson and Stockmeyer (1976). -/

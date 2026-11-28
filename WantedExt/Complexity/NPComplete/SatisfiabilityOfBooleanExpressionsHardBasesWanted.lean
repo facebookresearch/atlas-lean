@@ -25,9 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SatisfiabilityOfBooleanExpressionsWanted
+public import CSLibExt.Complexity.NPComplete.SatisfiabilityOfBooleanExpressionsHardBasesDefs
 
 @[expose] public section
 
@@ -74,28 +72,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `B` expresses `x ∧ ¬y`: some well-formed expression over the variables `u₀, u₁` and the
-connectives of `B` is true under a truth assignment exactly when `u₀` is true and `u₁` is
-false. -/
-def ExpressesAndNot (B : List ℕ) : Prop :=
-  ∃ toks : List (ℕ × ℕ), SatisfiabilityOfBooleanExpressions.WellFormed (2, B, toks) ∧
-    ∃ E : BoolExpr, parse toks = some E ∧ ∀ σ : ℕ → Bool, E.eval σ = (σ 0 && !σ 1)
-
-/-- Well-formedness of an instance for the fixed set `B`: a well-formed SATISFIABILITY OF
-BOOLEAN EXPRESSIONS instance whose connectives are drawn from `B`. -/
-def WellFormed (B : List ℕ) (i : SatisfiabilityOfBooleanExpressionsInstance) : Prop :=
-  SatisfiabilityOfBooleanExpressions.WellFormed i ∧ ∀ c ∈ i.2.1, c ∈ B
-
-open Classical in
-/-- SATISFIABILITY OF BOOLEAN EXPRESSIONS over the fixed set `B` of connectives as a decision
-problem over bitstrings. -/
-noncomputable def satisfiabilityOfBooleanExpressionsHardBasesDec (B : List ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SatisfiabilityOfBooleanExpressionsInstance) x with
-  | some i => decide (WellFormed B i ∧ SatisfiabilityOfBooleanExpressionsFeasible i)
-  | none => false
 
 /-- **SATISFIABILITY OF BOOLEAN EXPRESSIONS over any fixed set of binary connectives that
 expresses `x ∧ ¬y` is NP-complete.** Source: Garey and Johnson (1979), [LO7], comment; Lewis
