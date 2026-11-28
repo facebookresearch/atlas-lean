@@ -11,7 +11,7 @@ module
 public import CSLibExt.Complexity.Algebraic.BilinearRecursion
 
 /-!
-# Type-level tests for the bilinear block encoder and decoder
+# Type-level tests for the recursive bilinear circuit
 -/
 
 set_option autoImplicit false
@@ -87,5 +87,34 @@ noncomputable example {F : Type u} [Field F]
       (MatrixMultiplicationExponent.MatrixCoordinate 2 2))) :
     MatrixArithmeticCircuit F 4 4 4 :=
   recursiveCircuit terms 2
+
+noncomputable example {F : Type u} [Field F] :
+    ∃ terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)),
+      terms.length ≤ 7 ∧ IsMatrixMultiplication (recursiveCircuit terms 1) :=
+  exists_recursiveCircuit_isMatrixMultiplication
+    (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor_rank_le_seven F) 1
+
+noncomputable example {F : Type u} [Field F] :
+    ∃ terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)),
+      terms.length ≤ 7 ∧ IsMatrixMultiplication (recursiveCircuit terms 2) :=
+  exists_recursiveCircuit_isMatrixMultiplication
+    (MatrixMultiplicationExponent.squareMatrixMultiplicationTensor_rank_le_seven F) 2
+
+noncomputable example {F : Type u} [Field F]
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)
+      (MatrixMultiplicationExponent.MatrixCoordinate 2 2)))
+    (hterms : ∀ a b c,
+      MatrixMultiplicationExponent.squareMatrixMultiplicationTensor F 2 a b c =
+        (terms.map fun term ↦ term.eval a b c).sum) :
+    IsMatrixMultiplication (recursiveCircuit terms 0) :=
+  recursiveCircuit_isMatrixMultiplication terms hterms 0
 
 end Cslib.Complexity.Algebraic

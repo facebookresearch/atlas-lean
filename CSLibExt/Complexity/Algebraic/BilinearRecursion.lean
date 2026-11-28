@@ -167,7 +167,7 @@ theorem recursiveCircuit_isMatrixMultiplication {F : Type u} [Field F] {q : ℕ}
   | zero => exact outerMatrixCircuit_correct 1 1
   | succ k ih =>
       intro A B I L
-      show ((blockDecoder terms k).subst
+      change ((blockDecoder terms k).subst
         (((recursiveCircuit terms k).parallel terms.length).subst
           (blockEncoder terms k))).evaluate (matrixInput A B) (I, L) =
         (A * B) I L
