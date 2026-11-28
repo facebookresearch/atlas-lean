@@ -35,6 +35,7 @@ textbooks: Time to revise" (2021), formulas (4) and (5).
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.StatisticalGenetics.PopulationAttributableFraction
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.Fin
@@ -45,31 +46,10 @@ namespace WantedExt.Biology.StatisticalGenetics.PopulationAttributableFractionWa
 
 variable {𝒵 : Type*} [Fintype 𝒵]
 
-/-- Levin's formula `Pe (RR - 1) / (1 + Pe (RR - 1))`. It is meaningful when `1 + Pe (RR - 1) ≠ 0`,
-which holds for `Pe ∈ [0, 1)` and `RR ≥ 0` or for `Pe ∈ [0, 1]` and `RR > 0`; a zero denominator
-gives `0` by Lean's convention `x / 0 = 0`. -/
-noncomputable def levin (Pe RR : ℝ) : ℝ :=
-  Pe * (RR - 1) / (1 + Pe * (RR - 1))
-
 /-- Miettinen's formula `Pc (RR - 1) / RR`. It is meaningful for `RR ≠ 0`; at `RR = 0`, Lean's
 convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def miettinen (Pc RR : ℝ) : ℝ :=
   Pc * (RR - 1) / RR
-
-/-- The exposure prevalence `Pe = ∑_z P(z) e(z)`. -/
-def exposurePrevalence (pz e : 𝒵 → ℝ) : ℝ :=
-  ∑ z, pz z * e z
-
-/-- The observed risk `P(Y = 1) = ∑_z P(z) (e(z) r₁(z) + (1 - e(z)) r₀(z))`. -/
-def observedRisk (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
-  ∑ z, pz z * (e z * r₁ z + (1 - e z) * r₀ z)
-
-/-- The causal attributable fraction `1 - P(Y(0) = 1) / P(Y = 1)`, with
-`P(Y(0) = 1) = ∑_z P(z) r₀(z)`: the net proportional change in population risk had the exposure been
-absent (negative when the exposure is protective). It is meaningful when `P(Y = 1) > 0`; if
-`P(Y = 1) = 0`, Lean's convention `x / 0 = 0` makes the quotient `0` and the value `1`. -/
-noncomputable def causalPAF (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
-  1 - (∑ z, pz z * r₀ z) / observedRisk pz e r₀ r₁
 
 /-- The risk among the exposed, `P(Y = 1 | E = 1) = ∑_z P(z) e(z) r₁(z) / Pe`. It is meaningful when
 `Pe > 0`; if `Pe = 0`, Lean's convention `x / 0 = 0` makes the value `0`. -/
@@ -92,12 +72,6 @@ meaningful when `∑_z P(z) e(z) r₀(z) > 0`; a zero denominator gives `0` by L
 `x / 0 = 0`. -/
 noncomputable def exposedStandardizedRR (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
   (∑ z, pz z * e z * r₁ z) / ∑ z, pz z * e z * r₀ z
-
-/-- The risk ratio standardized to the total population, `∑_z P(z) r₁(z) / ∑_z P(z) r₀(z)`. It is
-meaningful when `∑_z P(z) r₀(z) > 0`; a zero denominator gives `0` by Lean's convention `x / 0 = 0`.
--/
-noncomputable def totalStandardizedRR (pz r₀ r₁ : 𝒵 → ℝ) : ℝ :=
-  (∑ z, pz z * r₁ z) / ∑ z, pz z * r₀ z
 
 /-- The exposure prevalence among cases, `Pc = P(E = 1 | Y = 1) = ∑_z P(z) e(z) r₁(z) / P(Y = 1)`.
 It is meaningful when `P(Y = 1) > 0`; if `P(Y = 1) = 0`, Lean's convention `x / 0 = 0` makes the
@@ -151,22 +125,5 @@ public theorem_wanted miettinen_exposedRR_eq_causalPAF (pz e r₀ r₁ : 𝒵 �
     (h₀ : 0 < ∑ z, pz z * e z * r₀ z) (h₁ : 0 < ∑ z, pz z * e z * r₁ z) :
     miettinen (casePrevalence pz e r₀ r₁) (exposedStandardizedRR pz e r₀ r₁) =
       causalPAF pz e r₀ r₁
-
-/-- **Levin's formula with an adjusted risk ratio can disagree with the PAF.** There is a
-nondegenerate confounded finite strata model with two strata, `P(z) > 0`, `∑_z P(z) = 1`,
-`0 < e(z) < 1`, strictly positive risks `0 < r₀(z), r₁(z) ≤ 1` (hence positive observed and
-counterfactual risks), and confounding (`e 0 ≠ e 1` and `r₀ 0 ≠ r₀ 1`), in which Levin's formula
-with `Pe` and the risk ratio standardized to the total population differs from the causal
-attributable fraction (Khosravi et al. 2021). This is a counterexample: it shows that the two can
-disagree in one confounded model, not that they disagree in every confounded model, and it is not
-a statement about the bias of an estimator.
-
-Source: Khosravi et al. (2021), who call Levin's formula "biased in the presence of confounding
-even if the adjusted RR is used"; the counterexample is derived. -/
-public theorem_wanted exists_levin_totalRR_ne_causalPAF :
-    ∃ pz e r₀ r₁ : Fin 2 → ℝ, (∀ z, 0 < pz z) ∧ ∑ z, pz z = 1 ∧ (∀ z, 0 < e z) ∧
-      (∀ z, e z < 1) ∧ (∀ z, 0 < r₀ z) ∧ (∀ z, r₀ z ≤ 1) ∧ (∀ z, 0 < r₁ z) ∧ (∀ z, r₁ z ≤ 1) ∧
-      e 0 ≠ e 1 ∧ r₀ 0 ≠ r₀ 1 ∧
-      levin (exposurePrevalence pz e) (totalStandardizedRR pz r₀ r₁) ≠ causalPAF pz e r₀ r₁
 
 end WantedExt.Biology.StatisticalGenetics.PopulationAttributableFractionWanted
