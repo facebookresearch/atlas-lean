@@ -290,7 +290,8 @@ theorem pairHomology_delta_right
       ((-1 : ℤ) ^ p) •
         (P₃.pairHomology p q ≫
           hT.δ (p + q) (p + q + 1) rfl) := by
-  apply tensor_homologyπ_hom_ext (K₁ := K) (K₂ := S.X₃) p q
+  apply tensor_homologyπ_hom_ext K ((ComplexShape.up ℕ).prev p) p rfl
+    S.X₃ ((ComplexShape.up ℕ).prev q) q rfl
   apply ModuleCat.hom_ext
   apply LinearMap.ext
   intro t
@@ -484,7 +485,8 @@ theorem pairHomology_delta_left
           (show (p + 1) + q = p + q + 1 by omega)).hom) =
       P₃.pairHomology p q ≫
         hT.δ (p + q) (p + q + 1) rfl := by
-  apply tensor_homologyπ_hom_ext (K₁ := S.X₃) (K₂ := K) p q
+  apply tensor_homologyπ_hom_ext S.X₃ ((ComplexShape.up ℕ).prev p) p rfl
+    K ((ComplexShape.up ℕ).prev q) q rfl
   apply ModuleCat.hom_ext
   apply LinearMap.ext
   intro t
