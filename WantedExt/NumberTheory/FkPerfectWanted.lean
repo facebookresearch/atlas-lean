@@ -60,19 +60,6 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
 
-/-- **No prime power is deficient $F$-perfect or near $F$-perfect.** For every prime $p$ and
-every natural number $a$, the number $n = p^a$ is neither deficient $F$-perfect nor near
-$F$-perfect: there is no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) + d^2 = n^2 + 3n$, and
-no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the
-sum of the squares of the divisors of $n$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 1. -/
-theorem_wanted prime_pow_not_fPerfect (p a : ℕ)
-    (hp : p.Prime) :
-    ¬ IsDeficientFPerfect (p ^ a) ∧ ¬ IsNearFPerfect (p ^ a)
-
 /-- **$[k,\ell]$-deficient-perfect prime powers for $k \ge 2$.** Let $p$ be a prime and let $a$,
 $k$ and $\ell$ be natural numbers with $k \ge 2$. If $p^a$ is $[k,\ell]$-deficient-perfect, then
 $p = 2$ and $a = 1$.

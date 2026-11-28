@@ -139,6 +139,18 @@ example : ¬ IsDeficientFkPerfect 3 (3 ^ 1 * 5 ^ 1) :=
     (by decide) (by decide) (by decide) (by decide) (by decide)
     (Or.inr ⟨by decide, by decide⟩)
 
+-- Eight is a prime power, so it is neither deficient `F`-perfect nor near `F`-perfect.
+example : ¬ IsDeficientFPerfect 8 ∧ ¬ IsNearFPerfect 8 := by
+  simpa using prime_pow_not_fPerfect 2 3 Nat.prime_two
+
+-- Nine is a prime power, so it is not deficient `F`-perfect.
+example : ¬ IsDeficientFPerfect 9 := by
+  simpa using (prime_pow_not_fPerfect 3 2 (by decide)).1
+
+-- Every prime is a prime power with exponent one.
+example (p : ℕ) (hp : p.Prime) : ¬ IsDeficientFPerfect p ∧ ¬ IsNearFPerfect p := by
+  simpa using prime_pow_not_fPerfect p 1 hp
+
 -- A concrete instance with a positive exponent.
 example : ¬ IsDeficientFkPerfect 2 (3 ^ 5 * 5) :=
   not_isDeficientFkPerfect_prime_pow_mul (k := 2) (p₁ := 3) (p₂ := 5) (a := 5)

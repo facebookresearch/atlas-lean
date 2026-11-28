@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.FkPerfectNotIsDeficientFPerfectOfPrime
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
@@ -63,6 +64,8 @@ Article A86 (<https://math.colgate.edu/~integers/z86/z86.pdf>).
   exponents `a, b ≥ 1` with `a + b` odd or both `a` and `b` odd, the number `p₁ ^ a * p₂ ^ b` is
   not deficient `F_k`-perfect (Theorem 19). Every divisor is odd and the divisor count
   `(a + 1) * (b + 1)` is even, so `σₖ(n) + d ^ k` is odd while `n ^ k + 3 * n` is even.
+* `prime_pow_not_fPerfect`: for a prime `p` and `a : ℕ`, `p ^ a` is neither deficient
+  `F`-perfect nor near `F`-perfect (Theorem 1).
 * `not_isDeficientFkPerfect_prime_pow_mul`: for `k > 1` and distinct odd primes `p₁` and `p₂`,
   no number `p₁ ^ a * p₂` is deficient `F_k`-perfect (Theorem 16). Its divisors are all odd and
   even in number, so `σₖ(n) + d ^ k` is odd while `n ^ k + 3 * n` is even.
@@ -1046,6 +1049,21 @@ theorem not_isDeficientFkPerfect_pow_mul_pow
   have h31 : 3 * (p₁ ^ a * p₂ ^ b) % 2 = 1 :=
     Nat.odd_iff.mp ((by decide : Odd 3).mul hn_odd)
   omega
+
+/-- **No prime power is deficient $F$-perfect or near $F$-perfect.** For every prime $p$ and
+every natural number $a$, the number $n = p^a$ is neither deficient $F$-perfect nor near
+$F$-perfect: there is no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) + d^2 = n^2 + 3n$, and
+no divisor $d$ of $n$ with $d < n$ and $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n)$ is the
+sum of the squares of the divisors of $n$.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Theorem 1. -/
+theorem prime_pow_not_fPerfect (p a : ℕ)
+    (hp : p.Prime) :
+    ¬ IsDeficientFPerfect (p ^ a) ∧ ¬ IsNearFPerfect (p ^ a) :=
+  ⟨fun h => absurd (isKLDeficientPerfect_prime_pow_two_imp p a 3 hp h).1 (by decide),
+    not_isNearFPerfect_prime_pow p a hp⟩
 
 private theorem odd_of_dvd_of_odd (e n : ℕ) (hn : Odd n) (he : e ∣ n) : Odd e := by
   by_contra hcon
