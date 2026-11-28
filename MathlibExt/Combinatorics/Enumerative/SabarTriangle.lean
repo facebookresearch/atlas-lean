@@ -14,7 +14,9 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Combinatorics.Enumerative.WhittGeneralizedCatalan
+public import MathlibExt.Combinatorics.FineNumber
 import MathlibExt.Combinatorics.Enumerative.FrischReciprocalBinomial
+import MathlibExt.Combinatorics.Enumerative.SabarFineNumberWhitt
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Data.Nat.Choose.Cast
@@ -32,8 +34,9 @@ the source's Table 1 and a recurrence in small cases, and proves that for every 
 `(1 / (n + 1)) ∑_{i=0}^{n} C(n, i)⁻¹ = 1 + ∑_{i=0}^{n-2} (-1)^{n-i-1} s(n-1, i) / ((n-i)(n+1-i))`
 (`sum_inv_choose_succ_eq_one_add_sum_sabarNumber`) and the harmonic number identity
 `∑_{i=0}^{2n-2} (-1)^i s(2n-1, i) / (i+1) = H_n` (`sum_sabarNumber_div_succ_eq_harmonic`).
-It also expresses the central entries `s(2n, n)` in terms of Whitt's generalized Catalan numbers
-(`sabarNumber_central_eq_whittGeneralizedCatalan`).
+It also expresses the central entry `s(2n, n)` in terms of Whitt's generalized Catalan numbers
+(`sabarNumber_central_eq_whittGeneralizedCatalan`) and gives three Fine-number formulas for
+`s(2n, n)` and one for `s(2n - 1, n)` (`sabarNumber_central_eq_fineNumber`), all for `n ≥ 1`.
 
 ## Proof outline
 
@@ -53,6 +56,26 @@ vanish and the odd columns contribute the consecutive reciprocals of `H_n`.
 For Theorem 7, complete each central sum with its omitted first term and use Pascal's identity
 as in Sabar's induction. Subtracting the central binomial contribution leaves a recurrence with
 a Catalan term, which cancels against the consecutive Whitt relation after scaling by `2^(n+1)`.
+
+For Theorem 5, use the central Whitt formula and the Fine–Whitt identity at `n - 1` for `n ≥ 2`.
+The Fine–Whitt identity at `n` and the consecutive Whitt relation give `2 F(n) + F(n - 1) = C(n)`,
+which converts the even-row formulas using the central binomial coefficients. In a fixed column,
+the sums for rows `2n - 1` and `2n` cancel except for the final binomial term. The endpoint `n = 1`
+is checked directly.
+
+## References
+
+- Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26 (2026),
+  Article A27, pp. 1–17: §2 (the triangle and its adjacent-row identity), Corollary 1,
+  Theorems 3 and 5–7, and Corollary 4.
+- E. Deutsch and L. Shapiro, *A survey of the Fine numbers*, Discrete Mathematics 241 (2001),
+  pp. 241–265 (the Fine numbers as cited in §1 of Sabar Taoufik).
+- Milan Janjić, *On Enumeration of Dyck Paths with Colored Hills*, Journal of Integer Sequences
+  21 (2018), Article 18.9.7, Identity 35 (the explicit Fine-number formula used at the endpoint).
+- Joseph Abate and Ward Whitt, *Brownian Motion and the Generalized Catalan Numbers*,
+  Journal of Integer Sequences 14 (2011), Article 11.2.6, §2, equations (9)–(10).
+- H. W. Gould and Jocelyn Quaintance, *On the Binomial Identities of Frisch and Klamkin*,
+  Journal of Integer Sequences 19 (2016), Article 16.7.7, §1, equation (2) (Frisch's identity).
 
 ## Implementation notes
 
@@ -397,6 +420,85 @@ public theorem sabarNumber_central_eq_whittGeneralizedCatalan (n : ℕ) (hn : 1 
   rw [pow_succ (-1 : ℚ) n]
   field_simp
   linear_combination h
+
+/-- **Central entries of Sabar's triangle and Fine numbers.** Let $F(m)$ denote the Fine numbers
+and $C_m$ the Catalan numbers. For every natural number $n \ge 1$, the entries of Sabar's
+triangle $s$ satisfy
+$$s(2n, n) = \frac{1}{6} \binom{2n+2}{n+1} + \frac{2}{3} F(n) + (-1)^{n+1},$$
+$$s(2n, n) = \frac{1}{3} (2n+1) C_n + \frac{2}{3} F(n) + (-1)^{n+1},$$
+$$s(2n, n) = \frac{2}{3} \binom{2n}{n} - \frac{1}{3} F(n-1) + (-1)^{n+1},$$
+and
+$$s(2n-1, n) = \frac{2}{3} \binom{2n-1}{n} + \frac{1}{3} F(n-1) + (-1)^n.$$
+
+Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
+(2026), Article A27, Theorem 5 (`integers-2026-A27-thm-5`). -/
+public theorem sabarNumber_central_eq_fineNumber (n : ℕ) (hn : 1 ≤ n) :
+    (sabarNumber (2 * n) n : ℚ) =
+        (1 / 6) * ((2 * n + 2).choose (n + 1) : ℚ) + (2 / 3) * fineNumber n + (-1) ^ (n + 1) ∧
+      (sabarNumber (2 * n) n : ℚ) =
+        (1 / 3) * (2 * n + 1) * (catalan n : ℚ) + (2 / 3) * fineNumber n + (-1) ^ (n + 1) ∧
+      (sabarNumber (2 * n) n : ℚ) =
+        (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * fineNumber (n - 1) + (-1) ^ (n + 1) ∧
+      (sabarNumber (2 * n - 1) n : ℚ) =
+        (2 / 3) * ((2 * n - 1).choose n : ℚ) + (1 / 3) * fineNumber (n - 1) + (-1) ^ n := by
+  by_cases h : n = 1
+  · subst n
+    simp only [fineNumber_eq_sum]
+    decide +kernel
+  have hprev := two_pow_mul_fineNumber_eq_whittGeneralizedCatalan (n - 1) (by omega)
+  rw [show n - 1 + 2 = n + 1 by omega, Nat.sub_add_cancel hn] at hprev
+  have hsign : (-1 : ℚ) ^ n = -(-1) ^ (n - 1) := by
+    conv_lhs => rw [← Nat.sub_add_cancel hn, pow_succ, mul_neg_one]
+  have hwhitt : whittGeneralizedCatalan 2 n = 2 ^ (n + 1) * fineNumber (n - 1) + 3 * (-1) ^ n := by
+    rw [hsign]
+    linear_combination -hprev
+  have hthird : (sabarNumber (2 * n) n : ℚ) =
+      (2 / 3) * ((2 * n).choose n : ℚ) - (1 / 3) * fineNumber (n - 1) + (-1) ^ (n + 1) := by
+    rw [sabarNumber_central_eq_whittGeneralizedCatalan n hn, hwhitt]
+    field_simp
+    ring
+  -- The signs in the two consecutive Fine–Whitt identities cancel.
+  have hfine : 2 * fineNumber n + fineNumber (n - 1) = catalan n := by
+    have hcurr := two_pow_mul_fineNumber_eq_whittGeneralizedCatalan n hn
+    rw [pow_succ (2 : ℚ) (n + 1)] at hcurr
+    apply mul_left_cancel₀ (pow_ne_zero (n + 1) (show (2 : ℚ) ≠ 0 by norm_num))
+    linear_combination hcurr + whittGeneralizedCatalan_two_add_succ n hn - hwhitt
+  have hcatalan : ((2 * n).choose n : ℚ) = ((n : ℚ) + 1) * catalan n := by
+    exact_mod_cast (succ_mul_catalan_eq_centralBinom n).symm
+  have hnext : ((2 * n + 2).choose (n + 1) : ℚ) =
+      2 * (2 * (n : ℚ) + 1) * catalan n := by
+    have hbinom : ((n : ℚ) + 1) * ((2 * n + 2).choose (n + 1) : ℚ) =
+        2 * (2 * (n : ℚ) + 1) * ((2 * n).choose n : ℚ) := by
+      exact_mod_cast Nat.succ_mul_centralBinom_succ n
+    rw [hcatalan] at hbinom
+    apply mul_left_cancel₀ (show (n : ℚ) + 1 ≠ 0 by positivity)
+    linear_combination hbinom
+  have hsecond : (sabarNumber (2 * n) n : ℚ) =
+      (1 / 3) * (2 * n + 1) * (catalan n : ℚ) + (2 / 3) * fineNumber n + (-1) ^ (n + 1) := by
+    rw [hthird, hcatalan]
+    linear_combination -(1 / 3) * hfine
+  refine ⟨?_, hsecond, hthird, ?_⟩
+  · rw [hsecond, hnext]
+    ring
+  -- Adding the two consecutive rows in the same column cancels all but the last term.
+  have hrow : (sabarNumber (2 * n) n : ℚ) =
+      ((2 * n).choose n : ℚ) - sabarNumber (2 * n - 1) n := by
+    simp only [sabarNumber]
+    push_cast
+    have htop := Finset.sum_Ioc_succ_top (show n ≤ 2 * n - 1 by omega)
+      (fun j => (-1 : ℚ) ^ (2 * n - j) * (j.choose n : ℚ))
+    rw [show 2 * n - 1 + 1 = 2 * n by omega] at htop
+    rw [htop, Nat.sub_self, pow_zero, one_mul, sub_eq_neg_add, ← Finset.sum_neg_distrib]
+    congr 1
+    refine Finset.sum_congr rfl fun j hj => ?_
+    rw [Finset.mem_Ioc] at hj
+    rw [show 2 * n - j = (2 * n - 1 - j) + 1 by omega, pow_succ, mul_neg_one, neg_mul]
+  have hmiddle : ((2 * n).choose n : ℚ) = 2 * ((2 * n - 1).choose n : ℚ) := by
+    obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+    rw [show 2 * (m + 1) = (2 * m + 1) + 1 by omega, Nat.add_sub_cancel,
+      Nat.choose_succ_succ', Nat.choose_symm_half, Nat.cast_add, ← two_mul]
+  rw [pow_succ (-1 : ℚ) n, mul_neg_one] at hthird
+  linear_combination hrow - hthird + (1 / 3) * hmiddle
 
 end
 
