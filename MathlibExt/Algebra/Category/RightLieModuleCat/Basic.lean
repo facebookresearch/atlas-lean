@@ -136,9 +136,13 @@ def toLeft (M : RightLieModuleCat.{w} R L) : LieModuleCat.{w} R L := by
   letI : LieRingModule L M := negativeLieRingModule M
   letI : LieModule R L M :=
     { smul_lie := fun r x m => by
-        rw [M.action.map_smul, LinearMap.smul_apply, smul_neg]
+        simpa only [negativeLieRingModule] using
+          (show -(M.action (r • x) m) = r • -(M.action x m) by
+            rw [M.action.map_smul, LinearMap.smul_apply, smul_neg])
       lie_smul := fun r x m => by
-        rw [(M.action x).map_smul, smul_neg] }
+        simpa only [negativeLieRingModule] using
+          (show -(M.action x (r • m)) = r • -(M.action x m) by
+            rw [(M.action x).map_smul, smul_neg]) }
   exact LieModuleCat.of R L M
 
 /-- The carrier of the left module associated to right coefficients.
@@ -382,8 +386,8 @@ def fromLeftMap {M : LieModuleCat.{w} R L} {N : LieModuleCat.{w'} R L}
     HomOver (LieHom.id : L →ₗ⁅R⁆ L) (fromLeft M) (fromLeft N) :=
   ⟨g.toLinearMap, by
     intro x m
-    change g (-⁅x, m⁆) = -⁅x, g m⁆
-    rw [g.map_neg, g.map_lie]⟩
+    change g.toLinearMap (-⁅x, (m : M)⁆) = -⁅x, (g m : N)⁆
+    rw [g.toLinearMap.map_neg, g.map_lie]⟩
 
 /-- The right coefficient map associated to a left Lie-module homomorphism has the same
 value on each coefficient element. -/
@@ -446,13 +450,13 @@ def toLeftCounitIso (M : LieModuleCat.{w} R L) : toLeft (fromLeft M) ≅ M where
     { toLinearMap := LinearMap.id
       map_lie' := by
         intro x m
-        change -(-⁅x, m⁆) = ⁅x, m⁆
+        change -(-⁅x, (m : M)⁆) = ⁅x, (m : M)⁆
         simp only [neg_neg] }
   inv :=
     { toLinearMap := LinearMap.id
       map_lie' := by
         intro x m
-        change ⁅x, m⁆ = -(-⁅x, m⁆)
+        change ⁅x, (m : M)⁆ = -(-⁅x, (m : M)⁆)
         simp only [neg_neg] }
   hom_inv_id := by
     apply LieModuleHom.ext
@@ -487,8 +491,9 @@ def equivalence : RightLieModuleCat.{w} R L ≌ LieModuleCat.{w} R L where
 /-- The right-to-left conversion functor is an equivalence, hence fully faithful and
 essentially surjective, for every commutative ground ring and Lie algebra. -/
 instance toLeftFunctor_isEquivalence :
-    (toLeftFunctor (R := R) (L := L)).IsEquivalence :=
-  Equivalence.isEquivalence_functor (equivalence (R := R) (L := L))
+    (toLeftFunctor (R := R) (L := L)).IsEquivalence := by
+  simpa only [equivalence] using
+    Equivalence.isEquivalence_functor (equivalence (R := R) (L := L))
 
 /-- The trivial right Lie action on a scalar module.
 

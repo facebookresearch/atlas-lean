@@ -237,7 +237,7 @@ def coefficientPullback (f : P →ₐ[k] Q)
     · rw [← IsScalarTower.algebraMap_smul (R := Q) (A := A),
         ← IsScalarTower.algebraMap_smul (R := P) (A := A), h q]
 
-omit [Algebra k A] [IsScalarTower k P A] in
+omit [IsScalarTower k P A] in
 @[simp]
 theorem coefficientPullback_apply (f : P →ₐ[k] Q)
     (h : ∀ p : P, algebraMap P A p = algebraMap Q A (f p)) (p : P) :
