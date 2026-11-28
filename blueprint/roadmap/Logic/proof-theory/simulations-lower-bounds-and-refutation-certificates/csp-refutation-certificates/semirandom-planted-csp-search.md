@@ -18,7 +18,7 @@ $$
 
 constraints, where $c$ is a universal constant, then with probability $1-1/\mathrm{poly}(n)$ over $\Psi$ the output satisfies $\mathrm{val}_\Psi(x)\ge1-\epsilon$. In particular, with $\epsilon=1/\mathrm{polylog}(n)$ and $m\ge\tilde{O}(n^{k/2})$, the output satisfies a $1-o(1)$ fraction of the constraints with high probability.
 
-The proof goes through **noisy planted $k$-XOR**: for a $k$-uniform hypergraph $\mathcal{H}\subseteq\binom{[n]}{k}$, $x^*\in\{\pm1\}^n$ and $\eta\in[0,1/2)$, the instance $\psi\sim\psi(\mathcal{H},x^*,\eta)$ contains, for each $C\in\mathcal{H}$, the constraint $\prod_{i\in C}x_i=\prod_{i\in C}x^*_i$ with probability $1-\eta$ and $\prod_{i\in C}x_i=-\prod_{i\in C}x^*_i$ otherwise (a corrupted constraint; $\mathrm{Err}_\psi$ is the set of corrupted constraints). Let $\epsilon\in(0,1)$ and
+The proof goes through **noisy planted $k$-XOR** for $k\ge 2$ (footnote 10 of the source notes that Theorem 3 applies for $|S|\ge 2$, while $k=1$ is handled separately by Lemma C.1 with $m\ge O(n\log n/\epsilon)$): for a $k$-uniform hypergraph $\mathcal{H}\subseteq\binom{[n]}{k}$ ($k\ge 2$), $x^*\in\{\pm1\}^n$ and $\eta\in[0,1/2)$, the instance $\psi\sim\psi(\mathcal{H},x^*,\eta)$ contains, for each $C\in\mathcal{H}$, the constraint $\prod_{i\in C}x_i=\prod_{i\in C}x^*_i$ with probability $1-\eta$ and $\prod_{i\in C}x_i=-\prod_{i\in C}x^*_i$ otherwise (a corrupted constraint; $\mathrm{Err}_\psi$ is the set of corrupted constraints). Let $k\ge 2$, $\epsilon\in(0,1)$ and
 
 $$
 m\ge c\,n^{k/2}\cdot\frac{k^4\log^3 n}{\epsilon^5(1-2\eta)^4}

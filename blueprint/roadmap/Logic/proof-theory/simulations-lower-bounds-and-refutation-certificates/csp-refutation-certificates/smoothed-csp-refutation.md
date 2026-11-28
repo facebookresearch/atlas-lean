@@ -1,8 +1,8 @@
 # Smoothed Boolean CSPs are refutable at the random-CSP trade-off
 
-For a predicate $P$ whose satisfying assignments support no $t$-wise uniform distribution, the degree-$2\ell$ sum-of-squares relaxation strongly refutes smoothed CSP($P$) instances in time $n^{O(\ell)}$ once there are about $\ell(n/\ell)^{t/2}$ polylogarithmic-factor constraints, matching the trade-off known for fully random instances.
+For a predicate $P$ whose satisfying assignments support no $t$-wise uniform distribution ($t\ge 2$), the degree-$2\ell$ sum-of-squares relaxation strongly refutes smoothed CSP($P$) instances in time $n^{O(\ell)}$ once there are about $\ell(n/\ell)^{t/2}$ polylogarithmic-factor constraints, matching the trade-off known for fully random instances.
 
-**Theorem (smoothed Boolean CSP refutation).** Let $P:\{\pm1\}^k\to\{0,1\}$ be a $k$-ary predicate such that no $t$-wise uniform distribution is supported on $P^{-1}(1)$, and let $\ell$ be an integer with $2(k-1)\le\ell\le n$. There is an algorithm that takes an instance $\Theta$ of CSP($P$) and outputs $\mathrm{algval}(\Theta)\in[0,1]$ in time $n^{O(\ell)}$ such that:
+**Theorem (smoothed Boolean CSP refutation).** Let $P:\{\pm1\}^k\to\{0,1\}$ be a $k$-ary predicate and $t\ge 2$ an integer such that no $t$-wise uniform distribution is supported on $P^{-1}(1)$ (the header of Theorem 7.4 in the source leaves $t\ge 2$ implicit; any predicate failing $1$-wise uniformity also fails $2$-wise uniformity), and let $\ell$ be an integer with $2(k-1)\le\ell\le n$. There is an algorithm that takes an instance $\Theta$ of CSP($P$) and outputs $\mathrm{algval}(\Theta)\in[0,1]$ in time $n^{O(\ell)}$ such that:
 
 1. $\mathrm{val}(\Theta)\le\mathrm{algval}(\Theta)\le1$ for every $\Theta$.
 2. Suppose $\Theta$ is a $\vec{p}$-smoothing $\psi_s$ of an arbitrary instance $\psi=(\mathcal{H},\Xi)$ with $n$ variables and $m$ constraints, for smoothing parameters $p_{C,i}\in[0,1]$, and suppose $m\ge 2m_0/q(\vec{p})$, where
@@ -23,7 +23,7 @@ where $\delta_t\ge2^{-\tilde{O}(k^t)}$ depends only on $P$. In the semirandom ca
 
 Moreover, $\mathrm{algval}$ is (to within $2^{-n}$) the value of the canonical degree-$2\ell$ sum-of-squares relaxation of the CSP over the hypercube. The bound is non-trivial when $\epsilon<\delta_t$.
 
-The key ingredient is a certificate for semirandom sparse polynomials. Let $k\in\mathbb{N}$ and $2(k-1)\le\ell(n)\le n$, and let
+The key ingredient is a certificate for semirandom sparse polynomials. Let $k\ge 2$ and $2(k-1)\le\ell(n)\le n$ (Theorem 5.1 in the source leaves $k\ge 2$ implicit; its proof uses Lemma 4.7, which requires $k\ge 2$), and let
 
 $$
 \phi(x)=\frac{1}{m}\sum_{C\in\mathcal{H}}b_C\prod_{i\le k}x_{C_i}
