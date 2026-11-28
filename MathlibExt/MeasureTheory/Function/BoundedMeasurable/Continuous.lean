@@ -46,13 +46,7 @@ topological space with its Borel measurable structure, without a Hausdorff or
 nonempty-space assumption. `ofContinuousMap f` includes `f∈C(X,ℂ)` pointwise into bounded
 measurable functions. -/
 noncomputable def ofContinuousMap (f : C(X, ℂ)) : BoundedMeasurableFunction X :=
-  ⟨⟨(show PreLp (fun _ : X ↦ ℂ) from fun x ↦ f x), by
-      change Memℓp (fun x ↦ f x) ∞
-      rw [memℓp_infty_iff]
-      refine ⟨‖f‖, ?_⟩
-      rintro _ ⟨x, rfl⟩
-      exact f.norm_coe_le_norm x⟩,
-    f.continuous.measurable⟩
+  ofBound (fun x ↦ f x) f.continuous.measurable ‖f‖ (fun x ↦ f.norm_coe_le_norm x)
 
 /-- **Value of a compact continuous-function inclusion.** Let `X` be a compact topological
 space with its Borel measurable structure, without a Hausdorff or nonempty-space
@@ -70,34 +64,28 @@ noncomputable def continuousMapStarAlgHom :
     C(X, ℂ) →⋆ₐ[ℂ] BoundedMeasurableFunction X where
   toFun := ofContinuousMap
   map_one' := by
-    apply Subtype.ext
-    apply lp.ext
-    funext x
+    apply BoundedMeasurableFunction.ext
+    intro x
     rfl
   map_mul' f g := by
-    apply Subtype.ext
-    apply lp.ext
-    funext x
+    apply BoundedMeasurableFunction.ext
+    intro x
     rfl
   map_zero' := by
-    apply Subtype.ext
-    apply lp.ext
-    funext x
+    apply BoundedMeasurableFunction.ext
+    intro x
     rfl
   map_add' f g := by
-    apply Subtype.ext
-    apply lp.ext
-    funext x
+    apply BoundedMeasurableFunction.ext
+    intro x
     rfl
   commutes' c := by
-    apply Subtype.ext
-    apply lp.ext
-    funext x
+    apply BoundedMeasurableFunction.ext
+    intro x
     rfl
   map_star' f := by
-    apply Subtype.ext
-    apply lp.ext
-    funext x
+    apply BoundedMeasurableFunction.ext
+    intro x
     rfl
 
 /-- **Pointwise value of the continuous-function star inclusion.** Let `X` be a compact

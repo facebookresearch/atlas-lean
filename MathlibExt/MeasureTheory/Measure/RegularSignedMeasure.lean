@@ -54,12 +54,8 @@ noncomputable def regularSignedMeasureSubmodule (X : Type u)
   add_mem' := by
     intro s t hs ht
     apply (SignedMeasure.totalVariation_regular_iff_hasRegularVariation (s + t)).2
-    let _ : IsFiniteMeasure s.variation := by
-      rw [← SignedMeasure.totalVariation_eq_variation]
-      infer_instance
-    let _ : IsFiniteMeasure t.variation := by
-      rw [← SignedMeasure.totalVariation_eq_variation]
-      infer_instance
+    let _ : IsFiniteMeasure s.variation := SignedMeasure.isFiniteMeasure_variation s
+    let _ : IsFiniteMeasure t.variation := SignedMeasure.isFiniteMeasure_variation t
     exact ((SignedMeasure.totalVariation_regular_iff_hasRegularVariation s).1 hs).add
       ((SignedMeasure.totalVariation_regular_iff_hasRegularVariation t).1 ht)
   smul_mem' := by
@@ -92,18 +88,12 @@ theorem hasRegularVariation (s : RegularSignedMeasure X) :
   (SignedMeasure.totalVariation_regular_iff_hasRegularVariation (s : SignedMeasure X)).1
     s.property
 
-omit [TopologicalSpace X] [R1Space X] [BorelSpace X] in
-private theorem variationFinite (s : SignedMeasure X) :
-    IsFiniteMeasure s.variation := by
-  rw [← SignedMeasure.totalVariation_eq_variation]
-  infer_instance
-
 variable [CompactSpace X]
 
 omit [R1Space X] in
 private theorem continuousMap_integrable (s : SignedMeasure X) (f : C(X, ℝ)) :
     s.Integrable fun x ↦ f x := by
-  let _ : IsFiniteMeasure s.variation := variationFinite s
+  let _ : IsFiniteMeasure s.variation := SignedMeasure.isFiniteMeasure_variation s
   apply Integrable.of_bound f.continuous.measurable.aestronglyMeasurable ‖f‖
   exact Filter.Eventually.of_forall fun x ↦ f.norm_coe_le_norm x
 
@@ -131,7 +121,7 @@ private theorem norm_signedIntegralLinear_apply_le
     ‖signedIntegralLinear s f‖ ≤
       (s : SignedMeasure X).totalVariation.real univ * ‖f‖ := by
   let _ : IsFiniteMeasure (s : SignedMeasure X).variation :=
-    variationFinite (s : SignedMeasure X)
+    SignedMeasure.isFiniteMeasure_variation (s : SignedMeasure X)
   have h := VectorMeasure.norm_integral_le_of_norm_le_const
     (μ := (s : SignedMeasure X))
     (B := (ContinuousLinearMap.lsmul ℝ ℝ).flip)

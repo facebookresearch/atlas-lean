@@ -155,7 +155,9 @@ variable {X : Type u}
 variable [TopologicalSpace X] [R1Space X] [MeasurableSpace X] [BorelSpace X]
 
 omit [TopologicalSpace X] [R1Space X] [BorelSpace X] in
-private theorem isFiniteMeasure_variation (s : SignedMeasure X) :
+/-- Every signed measure on an arbitrary measurable space has finite variation.
+No topology or regularity assumption is needed. -/
+theorem isFiniteMeasure_variation (s : SignedMeasure X) :
     IsFiniteMeasure s.variation := by
   rw [← s.totalVariation_eq_variation]
   infer_instance
@@ -339,7 +341,7 @@ Borel premise is required. -/
 theorem HasRegularVariation.neg {c : ComplexMeasure X}
     (hc : VectorMeasure.HasRegularVariation c) :
     VectorMeasure.HasRegularVariation (-c) :=
-  hc.neg
+  VectorMeasure.HasRegularVariation.neg hc
 
 omit [R1Space X] [BorelSpace X] in
 /-- **Complex scaling preserves regular variation.** Let `X` have a topology and measurable
@@ -348,7 +350,7 @@ structure. If a complex measure `c` has regular variation, then so does `z • c
 theorem HasRegularVariation.smul {c : ComplexMeasure X}
     (hc : VectorMeasure.HasRegularVariation c) (z : ℂ) :
     VectorMeasure.HasRegularVariation (z • c) :=
-  hc.smul z
+  VectorMeasure.HasRegularVariation.smul hc z
 
 end ComplexMeasure
 

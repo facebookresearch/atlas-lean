@@ -84,6 +84,13 @@ variable {X}
 instance : CoeFun (BoundedMeasurableFunction X) (fun _ ↦ X → ℂ) where
   coe f := f.1
 
+/-- Bounded measurable functions are equal when their pointwise values are equal,
+on any measurable space, including an empty source. -/
+@[ext]
+theorem ext {f g : BoundedMeasurableFunction X} (h : ∀ x, f x = g x) : f = g := by
+  apply Subtype.ext
+  exact lp.ext (funext h)
+
 /-- **Underlying raw bounded function.** Let `X` be a measurable space. Bounded measurable
 complex functions have pointwise equality and norm `‖f‖∞=sup_x |f(x)|`, zero on an empty
 source. for `f : BoundedMeasurableFunction X`, `f.toLp ∈ lp(X,ℂ,∞)` has the same pointwise
@@ -256,9 +263,8 @@ source. for every `c∈ℂ`, `indicatorConst ∅ c=0`. -/
 @[simp]
 theorem indicatorConst_empty (c : ℂ) :
     indicatorConst (∅ : Set X) MeasurableSet.empty c = 0 := by
-  apply Subtype.ext
-  apply lp.ext
-  funext x
+  apply BoundedMeasurableFunction.ext
+  intro x
   simp
 
 /-- **Characteristic function of the empty set.** Let `X` be a measurable space. Bounded
@@ -274,9 +280,8 @@ an empty source. `indicator X=1`, including the empty source where the function 
 trivial. -/
 @[simp]
 theorem indicator_univ : indicator (Set.univ : Set X) MeasurableSet.univ = 1 := by
-  apply Subtype.ext
-  apply lp.ext
-  funext x
+  apply BoundedMeasurableFunction.ext
+  intro x
   simp
 
 /-- **Product of two measurable characteristic functions.** Let `X` be a measurable space.
@@ -286,9 +291,8 @@ pointwise. -/
 @[simp]
 theorem indicator_inter (s t : Set X) (hs : MeasurableSet s) (ht : MeasurableSet t) :
     indicator (s ∩ t) (hs.inter ht) = indicator s hs * indicator t ht := by
-  apply Subtype.ext
-  apply lp.ext
-  funext x
+  apply BoundedMeasurableFunction.ext
+  intro x
   by_cases hxs : x ∈ s <;> by_cases hxt : x ∈ t <;> simp [indicator_apply, hxs, hxt]
 
 /-- **Self-adjointness of a measurable characteristic function.** Let `X` be a measurable
@@ -298,9 +302,8 @@ space. Bounded measurable complex functions have pointwise equality and norm `�
 @[simp]
 theorem star_indicator (s : Set X) (hs : MeasurableSet s) :
     star (indicator s hs) = indicator s hs := by
-  apply Subtype.ext
-  apply lp.ext
-  funext x
+  apply BoundedMeasurableFunction.ext
+  intro x
   by_cases hx : x ∈ s <;> simp [indicator_apply, hx]
 
 /-- **Supremum norm of a scalar indicator is bounded by its value.** Let `X` be a measurable
