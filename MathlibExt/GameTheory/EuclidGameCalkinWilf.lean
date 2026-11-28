@@ -25,11 +25,16 @@ Each arch top has a unique move to a child of the original position. From that c
 subtracting once returns to the original position. Counting the left arch tops row by row
 gives `3 * Tₖ = 2 ^ (k - 2) + 2 * (-1) ^ k` for `2 ≤ k` (`count_arch_tops_calkinWilfRow`).
 
+A legal Euclid move from row $k$ that subtracts $j$ copies of the smaller entry lands in row
+$k-j$, and $j\le k$ (`calkinWilfRow_sub_mul`).
+
 ## References
 
 * Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
   of the Game Euclid*, The Fibonacci Quarterly 62 (1) (2024), pp. 15–28,
-  Propositions 4.1 and 4.2, Corollaries 4.6 and 4.7, and Proposition 5.2.
+  Section 3, Propositions 4.1 and 4.2, Corollaries 4.6 and 4.7, and Proposition 5.2.
+* S. Hofmann, G. Schuster, and J. Steuding, *Euclid, Calkin & Wilf—playing with rationals*,
+  Elemente der Mathematik 63 (3) (2008), pp. 109–117 (moves along Calkin–Wilf branches).
 -/
 
 namespace MetaMathlibExt
@@ -123,6 +128,52 @@ public def euclidGame : SpragueGrundy.ImpartialGame where
   rank := fun p => p.1 + p.2
   rank_lt := euclidMoves_rank_lt
   start := (1, 1)
+
+/-- **Legal moves in Euclid.** For $a,b$ natural numbers, $q$ is a move from $(a,b)$ in the
+Euclid game exactly when either $b>0$ and $q=(a-jb,b)$ for some natural $j>0$ with $jb<a$,
+or $a>0$ and $q=(a,b-ja)$ for some natural $j>0$ with $ja<b$.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Section 3. -/
+public theorem mem_euclidGame_moves_iff {a b : ℕ} {q : ℕ × ℕ} :
+    q ∈ euclidGame.moves (a, b) ↔
+      (0 < b ∧ ∃ j : ℕ, 0 < j ∧ j * b < a ∧ q = (a - j * b, b)) ∨
+      (0 < a ∧ ∃ j : ℕ, 0 < j ∧ j * a < b ∧ q = (a, b - j * a)) := by
+  change q ∈ euclidMoves (a, b) ↔ _
+  have impossible {x y j : ℕ} (hj : 0 < j) (hxy : y ≤ x) : ¬j * x < y :=
+    not_lt_of_ge (hxy.trans (Nat.le_mul_of_pos_left _ hj))
+  have range_iff {x y k : ℕ} (hx : 0 < x) : k < (y - 1) / x ↔ (k + 1) * x < y := by
+    change k + 1 ≤ (y - 1) / x ↔ _
+    rw [Nat.le_div_iff_mul_le hx]
+    have hpos : 0 < (k + 1) * x := Nat.mul_pos (Nat.succ_pos k) hx
+    omega
+  have shift (P : ℕ → Prop) : (∃ k, P (k + 1)) ↔ ∃ j > 0, P j := by
+    constructor
+    · rintro ⟨k, hk⟩
+      exact ⟨k + 1, Nat.succ_pos k, hk⟩
+    · rintro ⟨_ | k, hj, hk⟩
+      · exact (Nat.not_lt_zero _ hj).elim
+      · exact ⟨k, hk⟩
+  simp only [euclidMoves]
+  split_ifs with h hab
+  · simp only [Finset.notMem_empty, false_iff]
+    rintro (⟨hb, j, hj, hja, _⟩ | ⟨ha, j, hj, hjb, _⟩)
+    · exact impossible hj (by omega) hja
+    · exact impossible hj (by omega) hjb
+  · have ha : 0 < a := by omega
+    have hleft : ¬(0 < b ∧ ∃ j : ℕ, 0 < j ∧ j * b < a ∧ q = (a - j * b, b)) := by
+      rintro ⟨_, j, hj, hja, _⟩
+      exact impossible hj hab.le hja
+    simp only [hleft, false_or]
+    simp only [ha, true_and, Finset.mem_image, Finset.mem_range,
+      range_iff ha, eq_comm (a := q), ← shift]
+  · have hb : 0 < b := by omega
+    have hright : ¬(0 < a ∧ ∃ j : ℕ, 0 < j ∧ j * a < b ∧ q = (a, b - j * a)) := by
+      rintro ⟨_, j, hj, hjb, _⟩
+      exact impossible hj (by omega) hjb
+    simp only [hright, or_false]
+    simp only [hb, true_and, Finset.mem_image, Finset.mem_range,
+      range_iff hb, eq_comm (a := q), ← shift]
 
 /-- **Correctness of the fuel-bounded Euclid classifier.** For all natural numbers $f$, $a$ and $b$
 with $a + b \le f$, the fuel-bounded evaluation of the P-positions of Euclid with fuel $f$ returns
@@ -415,6 +466,55 @@ private theorem row_pos {k : ℕ} {p : ℕ × ℕ} (h : p ∈ calkinWilfRow k) :
     rcases h with rfl | rfl
     · exact child_pos (ih hq) false
     · exact child_pos (ih hq) true
+
+end euclidPPosition_self_similar
+
+open euclidPPosition_self_similar in
+/-- **A Euclid subtraction skips one Calkin–Wilf row per copy.** Suppose $(a,b)$ lies in row $k$
+of the Calkin–Wilf tree, and let $j$ be a natural number. If $jb<a$, then $j\le k$ and
+$(a-jb,b)$ lies in row $k-j$. If $ja<b$, then $j\le k$ and $(a,b-ja)$ lies in row $k-j$.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Section 3. -/
+public theorem calkinWilfRow_sub_mul {k a b : ℕ} (h : (a, b) ∈ calkinWilfRow k) (j : ℕ) :
+    (j * b < a → j ≤ k ∧ (a - j * b, b) ∈ calkinWilfRow (k - j)) ∧
+    (j * a < b → j ≤ k ∧ (a, b - j * a) ∈ calkinWilfRow (k - j)) := by
+  induction j generalizing k a b with
+  | zero => simp [h]
+  | succ j ih =>
+    cases k with
+    | zero =>
+      simp only [calkinWilfRow, List.mem_singleton, Prod.mk.injEq] at h
+      obtain ⟨rfl, rfl⟩ := h
+      simp
+    | succ k =>
+      obtain ⟨⟨x, y⟩, hxy, hchild⟩ := List.mem_flatMap.mp h
+      obtain ⟨hx, hy⟩ := row_pos hxy
+      simp only [List.mem_cons, List.not_mem_nil, or_false, Prod.mk.injEq] at hchild
+      rcases hchild with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+      · constructor
+        · intro hj
+          rw [Nat.succ_mul] at hj
+          omega
+        · intro hj
+          rw [Nat.succ_mul] at hj
+          obtain ⟨hle, hmem⟩ := (ih hxy).2 (by omega)
+          refine ⟨Nat.succ_le_succ hle, ?_⟩
+          rw [Nat.succ_sub_succ_eq_sub, Nat.succ_mul, Nat.add_comm a y, Nat.add_sub_add_right]
+          exact hmem
+      · constructor
+        · intro hj
+          rw [Nat.succ_mul] at hj
+          obtain ⟨hle, hmem⟩ := (ih hxy).1 (by omega)
+          refine ⟨Nat.succ_le_succ hle, ?_⟩
+          simpa only [Nat.succ_sub_succ_eq_sub, Nat.succ_mul, Nat.add_sub_add_right] using hmem
+        · intro hj
+          rw [Nat.succ_mul] at hj
+          omega
+
+namespace euclidPPosition_self_similar
+
+open euclidPPosition_aunt_xor_cousin euclidPPosition_branch_step
 
 -- The daughter has a forced move to its parent when a ≤ b. Otherwise it is always N.
 private theorem daughter_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
