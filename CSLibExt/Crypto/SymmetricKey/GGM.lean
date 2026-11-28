@@ -39,10 +39,10 @@ query (once for a new node when `m > j`, and `ℓ - i - 1` times to walk down fr
 `prfAdvantage_ggm` is an equality of advantages for fixed finite types: it states no running time,
 and the running-time requirement on `B` and the asymptotic statement that `ggm G` is a secure PRF
 when `G` is a secure PRG are outside it. Under Boneh and Shoup's efficiency assumptions (`S`
-efficiently recognizable and efficiently sampleable, `G` efficient, and `ℓ` and `Q` polynomially
-bounded in the security parameter), this `B` is an elementary wrapper around `A`
-(Definition 2.12). For `Q = 0` the adversary makes no queries and its advantage is `0`; the
-assumption `Q ≥ 1` only makes the coin set of `B` nonempty.
+efficiently recognizable and efficiently sampleable and `G` efficient, as in their Definitions 2.9
+and 3.2, and `ℓ` and `Q` polynomially bounded in the security parameter), this `B` is an elementary
+wrapper around `A` (Definition 2.12). For `Q = 0` the adversary makes no queries and its advantage
+is `0`; the assumption `Q ≥ 1` only makes the coin set of `B` nonempty.
 
 **Proof.** The `ℓ Q` hybrids are indexed by `(i, j)` with `i < ℓ` and `j < Q`. In hybrid
 `(i, j)`, the answers are computed as by `B`, the `j`-th query included: from a pair `u m` for the
@@ -60,7 +60,8 @@ gives the factor `ℓ Q`. The query translation `OracleComp.reindex` and the laz
 ## References
 
 * D. Boneh and V. Shoup, *A Graduate Course in Applied Cryptography*, version 0.4, 2017,
-  Section 2.4.3 (Definition 2.12) and Section 4.6 (Theorem 4.10).
+  Section 2.4.2 (Definition 2.9), Section 2.4.3 (Definition 2.12), Section 3.1.2 (Definition 3.2)
+  and Section 4.6 (Theorem 4.10).
 * O. Goldreich, S. Goldwasser and S. Micali, "How to construct random functions", *Journal of the
   ACM* 33(4):792–807, 1986.
 -/
@@ -74,8 +75,6 @@ open Cslib.Crypto.Framework.OracleComp
   (reindex run_reindex isQueryBounded_reindex runLazy runLazy_comp map_runLazy_empty)
 
 local notation "U" => Cslib.Probability.PMF.uniformOfFintype
-
-universe u v w
 
 /-! ### Uniform sampling helpers -/
 
@@ -239,8 +238,9 @@ private theorem isQueryBounded_levelComp (G : S → S × S) (i : Fin ℓ) {Q : �
     FreeM.IsQueryBounded Q (levelComp G i c) :=
   isQueryBounded_reindex _ _ hc
 
-/-- With index `0` the lazy hybrid at level `i` is the eager hybrid at level `i`: every fresh
-node at level `i` gets a uniform label, and its children the labels `G` derives from it. -/
+/-- For an adversary that makes at most `Q` queries along every path, with index `0` the lazy
+hybrid at level `i` is the eager hybrid at level `i`: every fresh node at level `i` gets a uniform
+label, and its children the labels `G` derives from it. -/
 private theorem lazyHyb_zero (G : S → S × S) (Q : ℕ) (A : R → OracleComp (Fin ℓ → Bool) S Bool)
     (hA : ∀ r, FreeM.IsQueryBounded Q (A r)) (i : Fin ℓ) :
     lazyHyb G Q A i 0 = eagerHyb G A i i.2.le := by
@@ -281,8 +281,9 @@ private def childEquiv (i : ℕ) : ((Fin i → Bool) → S × S) ≃ ((Fin (i + 
     have hz := Fin.snoc_init_self (α := fun _ => Bool) z
     cases h : z (Fin.last i) <;> simp only [h, Bool.cond_false, Bool.cond_true] <;> rw [← h, hz]
 
-/-- With index `Q` the lazy hybrid at level `i` is the eager hybrid at level `i + 1`: every
-fresh node at level `i` gives its children uniform labels. -/
+/-- For an adversary that makes at most `Q` queries along every path, with index `Q` the lazy
+hybrid at level `i` is the eager hybrid at level `i + 1`: every fresh node at level `i` gives its
+children uniform labels. -/
 private theorem lazyHyb_Q (G : S → S × S) (Q : ℕ) (A : R → OracleComp (Fin ℓ → Bool) S Bool)
     (hA : ∀ r, FreeM.IsQueryBounded Q (A r)) (i : Fin ℓ) :
     lazyHyb G Q A i Q = eagerHyb G A (i + 1) i.2 := by
@@ -404,10 +405,10 @@ $B$ runs $A$ once, keeps at most $Q$ table entries and evaluates $G$ at most $\e
 query. The equality is one between advantages for fixed finite sets and states no running time;
 the running-time requirement on $B$ and the asymptotic statement that $F$ is a secure PRF when $G$
 is a secure PRG are outside it. Under Boneh and Shoup's efficiency assumptions ($S$ efficiently
-recognizable and efficiently sampleable, $G$ efficient, and $\ell$ and $Q$ polynomially bounded in
-the security parameter), this $B$ is an elementary wrapper around $A$ (Definition 2.12). For
-$Q = 0$ the adversary makes no queries and its advantage is $0$; the assumption $Q \ge 1$ only
-makes the coin set of $B$ nonempty. -/
+recognizable and efficiently sampleable and $G$ efficient, as in their Definitions 2.9 and 3.2, and
+$\ell$ and $Q$ polynomially bounded in the security parameter), this $B$ is an elementary wrapper
+around $A$ (Definition 2.12). For $Q = 0$ the adversary makes no queries and its advantage is $0$;
+the assumption $Q \ge 1$ only makes the coin set of $B$ nonempty. -/
 theorem prfAdvantage_ggm [NeZero ℓ] (G : S → S × S) (Q : ℕ) [NeZero Q]
     (A : R → OracleComp (Fin ℓ → Bool) S Bool) (hA : ∀ r, FreeM.IsQueryBounded Q (A r)) :
     PRF.prfAdvantage (ggm G) A = ℓ * Q * PRG.prgAdvantage G (ggmReduction G Q A) := by

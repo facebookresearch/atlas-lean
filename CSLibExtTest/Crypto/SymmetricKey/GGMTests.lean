@@ -118,16 +118,6 @@ theorem prfAdvantage_compare : PRF.prfAdvantage (ggm copyG) compare = 1 / 2 := b
   rw [h1, h2]
   norm_num
 
-/-- Two independent uniform samples, as one uniform pair. -/
-theorem bind_map_eq_map_prod {α β γ : Type*} [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]
-    (g : α → β → γ) :
-    ((Cslib.Probability.PMF.uniformOfFintype α).bind fun a =>
-      (Cslib.Probability.PMF.uniformOfFintype β).map (g a)) =
-      (Cslib.Probability.PMF.uniformOfFintype (α × β)).map fun p => g p.1 p.2 := by
-  rw [← Cslib.Probability.PMF.uniformOfFintype_prod, PMF.map_bind]
-  simp only [PMF.map_comp]
-  rfl
-
 /-- The coins of the hybrid distinguisher for `ℓ = 1`, `Q = 2` and seeds in `Bool`, with the tapes
 written as pairs. -/
 def coinsEquiv : (Fin 1 × Fin 2 × (Fin 2 → Bool × Bool) × (Fin 2 → Bool) × Unit) ≃
@@ -142,17 +132,21 @@ theorem prgAdvantage_ggmReduction_compare :
   have hcoins : (ggmReduction copyG 2 compare).coins =
       (Cslib.Probability.PMF.uniformOfFintype _).map coinsEquiv.symm :=
     (Cslib.Probability.PMF.uniformOfFintype_map_equiv coinsEquiv.symm).symm
+  have hreal := uniformOfFintype_map_prod (α := Bool) fun p : Bool × _ =>
+    (ggmReduction copyG 2 compare).guess (copyG p.1) (coinsEquiv.symm p.2)
+  have hrand := uniformOfFintype_map_prod (α := Bool × Bool) fun p : (Bool × Bool) × _ =>
+    (ggmReduction copyG 2 compare).guess p.1 (coinsEquiv.symm p.2)
+  dsimp only at hreal hrand
   rw [PRG.prgAdvantage, advantage, PRG.prgReal, PRG.prgRand, hcoins]
-  simp only [PMF.map_comp]
-  rw [bind_map_eq_map_prod, bind_map_eq_map_prod]
-  rw [winProb_map_uniform, winProb_map_uniform]
+  simp only [PMF.map_comp, Function.comp_def]
+  rw [← hreal, ← hrand, winProb_map_uniform, winProb_map_uniform]
   have h1 : (Finset.univ.filter fun p : Bool × (Fin 1 × Fin 2 × ((Bool × Bool) × (Bool × Bool)) ×
       (Bool × Bool) × Unit) =>
-      ((ggmReduction copyG 2 compare).guess (copyG p.1) ∘ coinsEquiv.symm) p.2 = true).card =
+      (ggmReduction copyG 2 compare).guess (copyG p.1) (coinsEquiv.symm p.2) = true).card =
       192 := by decide +kernel
   have h2 : (Finset.univ.filter fun p : (Bool × Bool) × (Fin 1 × Fin 2 ×
       ((Bool × Bool) × (Bool × Bool)) × (Bool × Bool) × Unit) =>
-      ((ggmReduction copyG 2 compare).guess p.1 ∘ coinsEquiv.symm) p.2 = true).card =
+      (ggmReduction copyG 2 compare).guess p.1 (coinsEquiv.symm p.2) = true).card =
       256 := by decide +kernel
   rw [h1, h2]
   simp only [Fintype.card_prod, Fintype.card_bool, Fintype.card_fin, Fintype.card_unit]

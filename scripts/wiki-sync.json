@@ -23395,7 +23395,7 @@
 "Cslib.Crypto.Framework.withSampleOracle": "07f6f5a2851fe363",
 "Cslib.Crypto.GGM.ggm": "e933bee51aa2dd33",
 "Cslib.Crypto.GGM.ggmReduction": "188e52fc370e3d1e",
-"Cslib.Crypto.GGM.prfAdvantage_ggm": "611f2e5c120a52cc",
+"Cslib.Crypto.GGM.prfAdvantage_ggm": "4e3371ff647a89da",
 "Cslib.Crypto.GGM.walk": "e75ce16f23042a75",
 "Cslib.Crypto.HMAC.blocks_append": "aca17947f8630b4b",
 "Cslib.Crypto.HMAC.contHash": "bcd166326bdd25d3",
