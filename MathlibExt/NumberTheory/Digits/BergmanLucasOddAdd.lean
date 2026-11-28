@@ -99,7 +99,8 @@ private theorem odd_endpoints {m k : ℕ} {S : Finset ℤ} (hS : IsBergmanExpans
   refine ⟨ha', ht', ?_⟩
   intro hm
   have haS : a ∈ S := Finset.mem_coe.mp ha.1
-  have ha₁ := hS a haS
+  have hspacing := isBergmanExpansion_iff.mp hS
+  have ha₁ := hspacing a haS
   have hmin : ∀ i ∈ S.erase a, a + 2 ≤ i := by
     intro i hi
     obtain ⟨hia, hiS⟩ := Finset.mem_erase.mp hi
@@ -107,7 +108,8 @@ private theorem odd_endpoints {m k : ℕ} {S : Finset ℤ} (hS : IsBergmanExpans
     have hin : i ≠ a + 1 := fun e => ha₁ (e ▸ hiS)
     omega
   have hnorm := conj_factor_gt (S := S.erase a)
-    (fun i hi hj => hS i (Finset.mem_of_mem_erase hi) (Finset.mem_of_mem_erase hj))
+    (isBergmanExpansion_iff.mpr fun i hi hj =>
+      hspacing i (Finset.mem_of_mem_erase hi) (Finset.mem_of_mem_erase hj))
     (Finset.mem_erase.mpr ⟨by omega, hm⟩) hmin
   have hev : Even a := ⟨-(m : ℤ) - 1, by omega⟩
   have hev₂ : Even (a + 2) := hev.add ⟨1, by decide⟩
@@ -168,8 +170,9 @@ private theorem interior_bounds {S : Finset ℤ} (hS : IsBergmanExpansion S) {a 
   obtain ⟨hit, hia, hiS⟩ := hi
   have hlo := ha.2 (Finset.mem_coe.mpr hiS)
   have hhi := ht.2 (Finset.mem_coe.mpr hiS)
-  have hleft : i ≠ a + 1 := fun e => hS a (Finset.mem_coe.mp ha.1) (e ▸ hiS)
-  have hright : i + 1 ≠ t := fun e => hS i hiS (e.symm ▸ Finset.mem_coe.mp ht.1)
+  have hspacing := isBergmanExpansion_iff.mp hS
+  have hleft : i ≠ a + 1 := fun e => hspacing a (Finset.mem_coe.mp ha.1) (e ▸ hiS)
+  have hright : i + 1 ≠ t := fun e => hspacing i hiS (e.symm ▸ Finset.mem_coe.mp ht.1)
   omega
 
 private theorem eq_splice {S E T : Finset ℤ} {a t : ℤ} (ha : a ∈ S) (ht : t ∈ S) (hat : a ≠ t)
@@ -182,12 +185,13 @@ private theorem eq_splice {S E T : Finset ℤ} {a t : ℤ} (ha : a ∈ S) (ht : 
   have hd : Disjoint E I := Finset.disjoint_left.mpr fun i hi hj => by
     rcases hsep i hi i hj with h | h <;> omega
   have hb : IsBergmanExpansion (E ∪ I) := by
+    apply isBergmanExpansion_iff.mpr
     intro i hi hj
     rcases Finset.mem_union.mp hi with hi | hi <;> rcases Finset.mem_union.mp hj with hj | hj
-    · exact hE i hi hj
+    · exact isBergmanExpansion_iff.mp hE i hi hj
     · rcases hsep i hi (i + 1) hj with h | h <;> omega
     · rcases hsep (i + 1) hj i hi with h | h <;> omega
-    · exact hS i (hsub hi) (hsub hj)
+    · exact isBergmanExpansion_iff.mp hS i (hsub hi) (hsub hj)
   have hsplit : basePhiValue I + φ ^ t + φ ^ a = basePhiValue S := by
     simp only [I, basePhiValue_eq_sum]
     rw [Finset.sum_erase_add _ _ (Finset.mem_erase.mpr ⟨hat.symm, ht⟩),
@@ -260,7 +264,8 @@ public theorem bergman_lucas_odd_add (n : ℕ) (hn : 2 ≤ n) :
     simp only [show a - 2 + 3 = a + 1 by omega, show a - 2 + (t - a) + 4 = t + 2 by omega,
       show a - 2 - a + 2 = 0 by omega, add_zero, Finset.image_id']
     refine eq_splice (Finset.mem_coe.mp ha.1) (Finset.mem_coe.mp ht.1) (by omega) hS ?_ hT ?_ ?_
-    · intro i hi hj
+    · apply isBergmanExpansion_iff.mpr
+      intro i hi hj
       simp only [Finset.mem_insert, Finset.mem_singleton] at hi hj
       omega
     · intro x hx y hy
@@ -295,7 +300,8 @@ public theorem bergman_lucas_odd_add (n : ℕ) (hn : 2 ≤ n) :
     simp only [show a - 2 + (t - a) + 2 = t by omega, show a - 2 + (t - a) + 4 = t + 2 by omega,
       show a - 2 - a + 2 = 0 by omega, add_zero, Finset.image_id']
     refine eq_splice (Finset.mem_coe.mp ha.1) (Finset.mem_coe.mp ht.1) (by omega) hS ?_ hT ?_ ?_
-    · intro i hi hj
+    · apply isBergmanExpansion_iff.mpr
+      intro i hi hj
       simp only [Finset.mem_insert, Finset.mem_singleton] at hi hj
       omega
     · intro x hx y hy
@@ -322,7 +328,8 @@ public theorem bergman_lucas_odd_add (n : ℕ) (hn : 2 ≤ n) :
       show a - 4 + (t - a) + 7 = t + 3 by omega, show a - 4 - a + 4 = 0 by omega,
       add_zero, Finset.image_id']
     refine eq_splice (Finset.mem_coe.mp ha.1) (Finset.mem_coe.mp ht.1) (by omega) hS ?_ hT ?_ ?_
-    · intro i hi hj
+    · apply isBergmanExpansion_iff.mpr
+      intro i hi hj
       simp only [Finset.mem_insert, Finset.mem_singleton] at hi hj
       omega
     · intro x hx y hy

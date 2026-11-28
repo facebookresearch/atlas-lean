@@ -61,6 +61,11 @@ private theorem golden_zpow_examples :
       _ = _ := by rw [h5n]; linear_combination 5 * Real.goldenRatio_sq
   exact ⟨h2, h3, h5, h1n, h2n, h3n, h4n, h6n⟩
 
+-- Two adjacent occupied positions do not form a Bergman expansion.
+example : ¬ IsBergmanExpansion ({0, 1} : Finset ℤ) := by
+  rw [isBergmanExpansion_iff]
+  decide
+
 -- The first formula at n = 2 and k = 1 changes 5 to 12, retaining the digit at −1.
 example : ∃ b : ℤ, ({5, -1, -3, -6} : Finset ℤ) =
     {b, b + 3, b + 7 + 4} ∪ ({-1} : Finset ℤ).image (· + (b - (-4) + 2)) := by
@@ -73,9 +78,9 @@ example : ∃ b : ℤ, ({5, -1, -3, -6} : Finset ℤ) =
       Finset.sum_pair (by decide), h5, h1n, h3n, h6n]
     ring
   have h := (bergman_lucas_odd_add 2 (by decide)).1 1 (by decide) (by decide)
-    {3, -1, -4} {5, -1, -3, -6} (-4) 3 (by unfold IsBergmanExpansion; decide) hS
+    {3, -1, -4} {5, -1, -3, -6} (-4) 3 (by rw [isBergmanExpansion_iff]; decide) hS
     (by norm_num [IsLeast, lowerBounds]) (by norm_num [IsGreatest, upperBounds])
-    (by unfold IsBergmanExpansion; decide) hT
+    (by rw [isBergmanExpansion_iff]; decide) hT
   have hI : (({3, -1, -4} : Finset ℤ).erase (-4)).erase 3 = {-1} := by decide
   simpa only [hI, show (3 : ℤ) - (-4) = 7 by decide] using h
 
@@ -91,9 +96,9 @@ example : ∃ b : ℤ, ({5, 3, 1, -6} : Finset ℤ) =
       Finset.sum_pair (by decide), h5, h3, zpow_one, h6n]
     ring
   have h := (bergman_lucas_odd_add 2 (by decide)).2.1 2 (by decide) (by decide)
-    {3, 1, -4} {5, 3, 1, -6} (-4) 3 (by unfold IsBergmanExpansion; decide) hS
+    {3, 1, -4} {5, 3, 1, -6} (-4) 3 (by rw [isBergmanExpansion_iff]; decide) hS
     (by norm_num [IsLeast, lowerBounds]) (by norm_num [IsGreatest, upperBounds])
-    (by unfold IsBergmanExpansion; decide) hT
+    (by rw [isBergmanExpansion_iff]; decide) hT
   have hI : (({3, 1, -4} : Finset ℤ).erase (-4)).erase 3 = {1} := by decide
   simpa only [hI, show (3 : ℤ) - (-4) = 7 by decide] using h
 
@@ -108,9 +113,9 @@ example : ∃ b : ℤ, ({5, 2, -3, -6} : Finset ℤ) = {b, b + 3, b + 4 + 4, b +
       Finset.sum_pair (by decide), h5, h2, h3n, h6n]
     ring
   have h := (bergman_lucas_odd_add 2 (by decide)).2.2 0 (by decide)
-    {2, -2} {5, 2, -3, -6} (-2) 2 (by unfold IsBergmanExpansion; decide) hS
+    {2, -2} {5, 2, -3, -6} (-2) 2 (by rw [isBergmanExpansion_iff]; decide) hS
     (by norm_num [IsLeast, lowerBounds]) (by norm_num [IsGreatest, upperBounds])
-    (by unfold IsBergmanExpansion; decide) hT
+    (by rw [isBergmanExpansion_iff]; decide) hT
   have hI : (({2, -2} : Finset ℤ).erase (-2)).erase 2 = ∅ := by decide
   simpa only [hI, Finset.image_empty, Finset.union_empty, show (2 : ℤ) - (-2) = 4 by decide] using h
 
