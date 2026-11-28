@@ -29,9 +29,10 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Identifiability and inference](identifiability-and-inference/README.md)
 - [Stochastic biochemical dynamics](stochastic-biochemical-dynamics/README.md)
 - [Regulatory and signalling circuits](regulatory-and-signalling-circuits/README.md)
-
+- [Operon dynamics with state-dependent delays](operon-dynamics-with-state-dependent-delays/README.md)
+- [Slowest first passage times](slowest-first-passage-times/README.md)
+- [Sparse-regression equation learning](sparse-regression-equation-learning/README.md)
 ## [Stochastic reaction networks and gene expression](part-01/README.md)
-
 - [CRNs as computing devices](part-01/crns-as-computing-devices.md)
 - [Gillespie propensities and the mass-action Markov chain of a reaction network](part-01/remaining-clauses-of-stochastic-chemical-reaction-networks.md)
 - [Computational power of stochastic CRNs: universal with error, limited without](part-01/computational-power-of-stochastic-crns-universal-with-error.md)
@@ -51,9 +52,7 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Three-stage model of protein production](part-01/three-stage-model-of-protein-production/README.md)
 - [Time-varying gene network estimation](part-01/time-varying-gene-network-estimation/README.md)
 - [Zinc uptake regulation model](part-01/zinc-uptake-regulation-model/README.md)
-
 ## [Cell populations, physiology and cell mechanics](part-02/README.md)
-
 - [Age-structured cell invasion](part-02/age-structured-cell-invasion/README.md)
 - [Burns–Tannock stem cell delay equation](part-02/burns-tannock-stem-cell-delay-equation/README.md)
 - [Cell cycle clustering threshold models](part-02/cell-cycle-clustering-threshold-models/README.md)

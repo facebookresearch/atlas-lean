@@ -42,7 +42,11 @@ Compartmental, renewal and branching-process models of infectious disease transm
 - [Stochastic epidemic models](stochastic-epidemic-models/README.md)
 - [Behavior and control](behavior-and-control/README.md)
 - [Epidemic inference and testing](epidemic-inference-and-testing/README.md)
-
+- [Kinetic crowd evacuation with contagion](kinetic-crowd-evacuation-with-contagion/README.md)
+- [Multi-strain co-colonization SIS model](multi-strain-co-colonization-sis-model/README.md)
+- [Multi-strain diffusive SIS model](multi-strain-diffusive-sis-model/README.md)
+- [Separable heterogeneity in Kermack–McKendrick models](separable-heterogeneity-in-kermack-mckendrick-models/README.md)
+- [SIR model on metric graphs](sir-model-on-metric-graphs/README.md)
 - [Compartmental, delay, fractional-order and contagion models](part-01/README.md)
 - [Stochastic, network and spatial epidemic models](part-02/README.md)
 - [Testing, control, within-host and vector-borne models](part-03/README.md)

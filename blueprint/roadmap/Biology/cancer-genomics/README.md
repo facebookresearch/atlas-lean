@@ -25,7 +25,9 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Controllability of adaptive cancer therapy](controllability-of-adaptive-cancer-therapy/README.md)
 - [Immune extinction threshold models](immune-extinction-threshold-models/README.md)
 - [Minimum uncovering branching](minimum-uncovering-branching/README.md)
-
+- [Phenotype-structured models of tumour evolution](phenotype-structured-models-of-tumour-evolution/README.md)
+- [Phenotypic switching in tumours](phenotypic-switching-in-tumours/README.md)
+- [Random segregation of extrachromosomal DNA](random-segregation-of-extrachromosomal-dna/README.md)
 ## [Statistical and evolutionary models of tumour genomes](part-01/README.md)
 - [Cyclic shift permutation testing](part-01/cyclic-shift-permutation-testing/README.md)
 - [Exact site frequency spectrum of birth–death tumors](part-01/exact-site-frequency-spectrum-of-birth-death-tumors/README.md)
