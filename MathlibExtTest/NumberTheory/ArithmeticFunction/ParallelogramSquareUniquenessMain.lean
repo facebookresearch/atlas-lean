@@ -34,6 +34,10 @@ example : squares.IsMultiplicative ∧ squares 4 ≠ 0 ∧
       show (2 : ℕ) ≠ 0 by decide, false_and, ite_false, Nat.cast_add, Nat.cast_sub hle, Nat.cast_pow]
     ring
 
+-- Check both exponent parities directly at the first odd prime, without the induction theorem.
+example : squares (3 ^ 2) = 81 ∧ squares (3 ^ 3) = 729 := by
+  norm_num [squares, ArithmeticFunction.pow_apply]
+
 section
 
 variable (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)

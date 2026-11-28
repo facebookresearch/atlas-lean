@@ -22,6 +22,10 @@ A complex-valued multiplicative arithmetic function satisfying the parallelogram
 squares for all positive natural numbers `m > n`, with `f 4 ≠ 0`, takes the value `n ^ 2`
 at every natural number `n`. At zero this is the defining convention for arithmetic functions.
 
+For a complex-valued multiplicative arithmetic function satisfying the same identity, at an odd
+prime `p` with the square value at `p` and at every positive power of each smaller prime, the
+square value also holds at every power of `p` with exponent at least two.
+
 ## References
 
 * Poo-Sung Park, *On the Parallelogram Uniqueness of Square Numbers for Multiplicative Functions*,
@@ -103,10 +107,31 @@ private theorem two_pow_values (h2 : f 2 = 4) (h4 : f 4 = 16) (h8 : f 8 = 64) :
   · rw [hk]
     exact (hpairs k).2
 
-include hf hpar in
-private theorem odd_prime_pow_values {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
+end
+
+/-- **Parallelogram induction: odd prime powers.**
+Let $f$ be a complex-valued multiplicative arithmetic function
+(so $f(0) = 0$) such that $f(m^2 + n^2) + f(m^2 - n^2) = 2f(m^2) + 2f(n^2)$ for all integers
+$m > n \ge 1$.
+Let $p$ be a prime such that $f(q^s) = q^{2s}$ for every prime $q < p$ and every integer
+$s \ge 1$.
+If $p$ is odd and $f(p) = p^2$, then $f(p^r) = p^{2r}$ for every integer $r \ge 2$.
+
+The hypothesis $p \ne 2$ is needed: the function with $f(n) = 0$ if $4 \mid n$, $f(n) = 4$ if
+$n \equiv 2 \pmod 4$ and $f(n) = 1$ otherwise satisfies the hypotheses for $p = 2$, but
+$f(4) = 0$.
+
+Source: Poo-Sung Park, *On the Parallelogram Uniqueness of Square Numbers for Multiplicative
+Functions*, INTEGERS 24 (2024), Article A108, Theorem 4 (`integers-2024-A108-thm-4`). -/
+public theorem parallelogram_multiplicative_prime_pow (f : ArithmeticFunction ℂ)
+    (hf : f.IsMultiplicative)
+    (hpar : ∀ m n : ℕ, 0 < n → n < m →
+      f (m ^ 2 + n ^ 2) + f (m ^ 2 - n ^ 2) = 2 * f (m ^ 2) + 2 * f (n ^ 2))
+    {p : ℕ} (hp : p.Prime)
     (hind : ∀ q s : ℕ, q.Prime → q < p → 1 ≤ s → f (q ^ s) = (q : ℂ) ^ (2 * s))
-    (hfp : f p = (p : ℂ) ^ 2) (r : ℕ) : f (p ^ r) = (p : ℂ) ^ (2 * r) := by
+    (hp2 : p ≠ 2) (hfp : f p = (p : ℂ) ^ 2) :
+    ∀ r : ℕ, 2 ≤ r → f (p ^ r) = (p : ℂ) ^ (2 * r) := by
+  intro r _
   have hplus := parallelogram_multiplicative_sq_add_one f hf hpar hp hind hp2 hfp
   obtain ⟨t, ht⟩ := hp.odd_of_ne_two hp2
   have hpge := hp.two_le
@@ -180,8 +205,10 @@ private theorem odd_prime_pow_values {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
 
 set_option maxHeartbeats 1200000 in
 -- The exact Table 1 certificates normalize products of polynomials of degree up to six.
-include hf hpar in
-private theorem small_values_of_four_ne_zero (h4 : f 4 ≠ 0) :
+private theorem small_values_of_four_ne_zero {f : ArithmeticFunction ℂ} (hf : f.IsMultiplicative)
+    (hpar : ∀ m n : ℕ, 0 < n → n < m →
+      f (m ^ 2 + n ^ 2) + f (m ^ 2 - n ^ 2) = 2 * f (m ^ 2) + 2 * f (n ^ 2))
+    (h4 : f 4 ≠ 0) :
     f 2 = 4 ∧ f 3 = 9 ∧ f 4 = 16 ∧ f 7 = 49 ∧ f 8 = 64 ∧ f 11 = 121 := by
   -- Specialize the parallelogram law at small pairs and split off coprime factors.
   have h10 : f 10 = f 2 * f 5 := hf.map_mul_of_coprime (by decide : Nat.Coprime 2 5)
@@ -594,8 +621,6 @@ private theorem small_values_of_four_ne_zero (h4 : f 4 ≠ 0) :
     linear_combination e92 / 49
   exact ⟨hf2, hf3, hf4, hf7, hf8, hf11⟩
 
-end
-
 /-- **Parallelogram uniqueness of squares for multiplicative functions.** Let $f$ be a
 complex-valued multiplicative arithmetic function
 (so $f(0) = 0$) such that $f(m^2 + n^2) + f(m^2 - n^2) = 2f(m^2) + 2f(n^2)$ for all integers
@@ -613,7 +638,7 @@ public theorem multiplicative_parallelogram_squares_eq_sq (f : ArithmeticFunctio
   have hprime (p : ℕ) : p.Prime → ∀ r : ℕ, 1 ≤ r → f (p ^ r) = (p : ℂ) ^ (2 * r) := by
     induction p using Nat.strong_induction_on with
     | ind p ih =>
-      intro hp r _
+      intro hp r hr
       by_cases hp2 : p = 2
       · subst p
         simpa only [Nat.cast_ofNat] using two_pow_values hf hpar hf2 hf4 hf8 r
@@ -631,7 +656,9 @@ public theorem multiplicative_parallelogram_squares_eq_sq (f : ArithmeticFunctio
         · norm_num [hf7]
         · norm_num [hf11]
         · exact (by decide : ¬Nat.Prime 15) hp |>.elim
-      exact odd_prime_pow_values hf hpar hp hp2 hind hfp r
+      by_cases hr1 : r = 1
+      · simpa only [hr1, pow_one, Nat.mul_one] using hfp
+      exact parallelogram_multiplicative_prime_pow f hf hpar hp hind hp2 hfp r (by omega)
   intro n
   by_cases hn : n = 0
   · simp [hn]
