@@ -1,0 +1,16 @@
+# Rearrangements, phasing and statistical genomics
+
+- [Active module identification](active-module-identification/README.md)
+- [Allelic-coverage phasing of aneuploid genomes](allelic-coverage-phasing-of-aneuploid-genomes/README.md)
+- [Comparing genome segmentations](comparing-genome-segmentations/README.md)
+- [Compression-based metabolic network alignment](compression-based-metabolic-network-alignment/README.md)
+- [Distance estimation under the fragile breakage model](fragile-breakage-model-distance-estimation/README.md)
+- [Generalized matrix decomposition biplot](generalized-matrix-decomposition-biplot/README.md)
+- [Minimum error correction failure under read errors](minimum-error-correction-failure-under-read-errors/README.md)
+- [Moment approximations of permutation gene-set tests](moment-approximations-of-permutation-gene-set-tests/README.md)
+- [Pairwise-difference normalization for differential expression](pairwise-difference-normalization-for-differential-expression/README.md)
+- [Ranges of optimal transcript abundance under nonidentifiability](ranges-of-optimal-transcript-abundance-under-nonidentifiability/README.md)
+- [Spectral gene scores on cell graphs](spectral-gene-scores-on-cell-graphs/README.md)
+- [Three-way similarity networks](three-way-similarity-networks/README.md)
+- [Weighted double-cut-and-join distance](weighted-double-cut-and-join-distance/README.md)
+- [Zero-inflated autoregressive models of microbial dynamics](zero-inflated-autoregressive-models-of-microbial-dynamics/README.md)
