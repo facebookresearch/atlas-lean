@@ -26,3 +26,4 @@ Diffie–Hellman key agreement; ElGamal encryption and its security under the de
 - [Post-quantum indistinguishability obfuscation from standard assumptions](post-quantum-obfuscation-from-standard-assumptions.md)
 - [Isogeny and lattice foundations](isogeny-and-lattice-foundations/README.md)
 - [Obfuscation and witness encryption](obfuscation-and-witness-encryption/README.md)
+- [Elliptic-curve cryptography](elliptic-curve-cryptography/README.md)

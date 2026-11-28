@@ -17,3 +17,4 @@ Elliptic curves given by Weierstrass equations, their points over finite fields 
 - [A positive integer n is congruent iff the curve y^2 = x^3 − n^2 x has a rational point with y ≠ 0](congruent-number-elliptic-curve.md)
 - [Frey curves, modularity and level lowering](frey-curves-and-modularity/README.md)
 - [Modularity of elliptic curves over $\mathbb{Q}$](modularity-of-elliptic-curves-over-q.md)
+- [Edwards curves and complete addition laws](edwards-curves-and-complete-addition-laws/README.md)

@@ -1,0 +1,34 @@
+# Tripartite Diffie–Hellman from a pairing
+
+Joux's one-round protocol lets three parties agree on $e(P,Q)^{abc}$: each publishes $(aP,aQ)$, $(bP,bQ)$ or $(cP,cQ)$, and each combines the other two with a non-degenerate bilinear pairing and its own secret.
+
+Let $n$ be a prime, $G_1=\langle P\rangle$ and $G_2=\langle Q\rangle$ cyclic groups of order $n$ (written additively) and $e:G_1\times G_2\to G_T$ a non-degenerate bilinear pairing into a group of order $n$, so that $e(P,Q)$ generates $G_T$; for example $P,Q\in E[n]$ independent points of an elliptic curve with $n$ prime to the characteristic, and $e$ the Weil pairing $e_n$. Alice, Bob and Carol choose secret integers $a,b,c$ independently and uniformly modulo $n$ and in a single round broadcast
+
+$$
+(P_A,Q_A)=(aP,aQ),\qquad (P_B,Q_B)=(bP,bQ),\qquad (P_C,Q_C)=(cP,cQ).
+$$
+
+Alice computes $e(P_B,Q_C)^a$, Bob computes $e(P_A,Q_C)^b$ and Carol computes $e(P_A,Q_B)^c$. By bilinearity all three equal
+
+$$
+e(P,Q)^{abc},
+$$
+
+which is the shared key. A passive eavesdropper sees $aP,bP,cP,aQ,bQ,cQ$ and must compute $e(P,Q)^{abc}$ from them.
+
+## Depends on
+
+- [Bilinear groups](../../advanced-encryption-and-pairings/bilinear-groups.md)
+
+## Proof depends on
+
+None.
+
+## Expansion
+
+$e(bP,cQ)^a=e(P,Q)^{bca}$, $e(aP,cQ)^b=e(P,Q)^{acb}$ and $e(aP,bQ)^c=e(P,Q)^{abc}$, also when some exponent is $0$. Non-degeneracy is needed for the key to depend on the secrets: a trivial pairing gives the constant key $1$. For the Weil pairing on independent $P,Q$ of prime order $n$, $e_n(P,Q)$ has order $n$ (Sutherland, Corollary 23.31). The protocol is unauthenticated.
+
+## Sources
+
+- A. V. Sutherland, *18.783 Elliptic Curves*, Lecture 23 notes, MIT, Fall 2023, <https://math.mit.edu/classes/18.783/2023/LectureNotes23.pdf>, Section 23.6 (crediting Joux, ANTS IV, 2000), Theorem 23.29 and Corollary 23.31.
+- S. D. Galbraith, *Mathematics of Public Key Cryptography*, Cambridge University Press, 2012, doi:10.1017/CBO9781139012843; numbering from the author's extended and corrected version 2.0 chapters, <https://www.math.auckland.ac.nz/~sgal018/crypto-book/crypto-book.html>, Chapter 26 introduction.
