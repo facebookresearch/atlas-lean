@@ -29,10 +29,11 @@ The species balances of the semi-batch reactor, `(V c)' = F c_in + R V`, divided
 
   `S' = (F / V) (S_in - S) - μ(S) X / Y`,   `X' = μ(S) X - (F / V) X`.
 
-The feed rate is any nonnegative function of time; no continuity of it is assumed. Since
-`V' = F` must hold at every time of the interval on which the balances are posed, a feed switched
-abruptly is covered by applying the result on each interval between switches, with time measured
-from the start of that interval.
+The feed rate is any nonnegative function of time; no continuity of it is assumed. For a
+jump in the feed, apply the result on each closed segment where the balances hold, measuring
+time from the start of the segment. At a shared endpoint, use the feed's one-sided value for
+that segment, if it exists and the one-sided balances hold there. Carry the terminal values of
+`V`, `S` and `X` into the next segment as its initial values, not the preceding feed value.
 
 ## Main definitions
 

@@ -13,9 +13,10 @@ with initial volume $V_0 = V(0) > 0$ and $S(0), X(0) \ge 0$. Then at every time 
 stocks $m_S = VS$ and $m_X = VX$ satisfy $(m_S + m_X/Y)'(t) = F(t)\, S_{\mathrm{in}}$; and $S(t) \ge 0$ and $X(t) \ge 0$.
 
 For $I = \{0\}$ every value is a derivative within $I$, so the balances impose no condition, the account identity says
-nothing, and the result reduces to $V(0) \ge V_0$ and $S(0), X(0) \ge 0$. Since $V' = F$ must hold at every time of $I$,
-a feed switched abruptly is covered by applying the result on each interval between switches, with time measured from
-the start of that interval.
+nothing, and the result reduces to $V(0) \ge V_0$ and $S(0), X(0) \ge 0$. For a jump in the feed, apply the result on
+successive closed segments, measuring time from the start of each segment. At a shared endpoint, use the one-sided
+feed value for that segment, if it exists and the one-sided balances hold there. The terminal values of $V$, $S$ and
+$X$ become the next segment's initial values; the feed need not take the same endpoint value in both applications.
 
 The volume grows because $V' = F \ge 0$. Differentiating the stocks, the growth terms $\pm\mu(S) V X / Y$ cancel and only
 the substrate fed remains. Nonnegativity needs only signs: while $S > -K_s$, $\mu(S) < \mu_m$, so $X' \ge \mu_m X$
