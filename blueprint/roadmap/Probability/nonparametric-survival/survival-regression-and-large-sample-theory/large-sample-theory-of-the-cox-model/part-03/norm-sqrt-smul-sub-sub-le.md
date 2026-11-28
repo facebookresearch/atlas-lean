@@ -1,0 +1,3 @@
+# Deterministic core of asymptotic normality for the vector Cox estimator
+
+For survival data with observed times $T_i$, event indicators $\delta_i$ and covariate vectors $x_i \in \mathbb{R}^p$, let $U(\beta)$ be the Cox score vector and $I(\beta)$ the observed information matrix. Let $n > 0$, $\lambda > 0$ with $\lambda\|h\|_\infty^2 \le h^\top Sh$ for every $h \in \mathbb{R}^p$, $S$ invertible, $\eta \ge 0$ with $p^2\eta \le \lambda/2$, and $I(b)/n$ entrywise within $\eta$ of $S$ on the closed ball $\|b - \beta_0\|_\infty \le \varepsilon$. If $U(\hat b) = 0$ and $\|\hat b - \beta_0\|_\infty \le \varepsilon$, then $\|\sqrt n(\hat b - \beta_0) - S^{-1}U(\beta_0)/\sqrt n\|_\infty \le (2p^3\eta/\lambda^2)\|U(\beta_0)/\sqrt n\|_\infty$.

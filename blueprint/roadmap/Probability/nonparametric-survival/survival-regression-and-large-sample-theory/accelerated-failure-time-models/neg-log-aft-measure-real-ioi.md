@@ -1,0 +1,3 @@
+# Cumulative-hazard transform of an accelerated failure time law
+
+For a measure $\mu_0$ on $\mathbb{R}$ and a linear predictor $\eta$, the accelerated failure time measure $\mu_\eta$ is the image of $\mu_0$ under $t \mapsto e^\eta t$; when $\mu_0$ is the law of $T_0$, $\mu_\eta$ is the law of $e^\eta T_0$. Write $S_0(s)$ and $S(s \mid \eta)$ for the real numbers $\mu_0(s, \infty)$ and $\mu_\eta(s, \infty)$, an infinite mass being read as $0$. If $S_0(e^{-\eta}t) > 0$, then $S(t \mid \eta) > 0$ and $H(t \mid \eta) = H_0(e^{-\eta}t)$, where $H = -\log S$.

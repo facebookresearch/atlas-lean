@@ -1,0 +1,3 @@
+# Joint central limit theorem for cell proportions
+
+Let subjects $Z_i = (T_i, C_i)$ take values in $\{0, \dots, k-1\}^2$, with observed cell $(\min(T_i, C_i), \mathbf 1\{T_i \le C_i\})$; let $p$ be the vector of cell probabilities, $\hat p_n$ the empirical cell proportions of the first $n$ subjects, $e_j = p(j, 1)$ and $Y_j = \sum_{l\ge j}(p(l, 1) + p(l, 0))$. If the $Z_i$ are independent with common law $\mu$ and $G$ is an almost everywhere measurable random vector in cell space all of whose projections $\langle G, t\rangle$ are centered normal with the variance of $\langle e_{\mathrm{cell}(Z_0)}, t\rangle$, then $\sqrt n(\hat p_n - p) \Rightarrow G$.

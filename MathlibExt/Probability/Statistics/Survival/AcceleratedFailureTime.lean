@@ -75,10 +75,10 @@ open scoped ENNReal NNReal
 
 noncomputable section
 
-/-- **The accelerated-failure-time law** with baseline `μ₀` and linear predictor `η`: the law of
-`T = exp η * T₀` for `T₀ ~ μ₀`, i.e. the pushforward of `μ₀` along `t ↦ exp η * t`. Where
-`T₀ > 0`, on the log scale this is `log T = η + log T₀`, so `η` shifts the log failure time and
-`exp η` is the acceleration factor (time ratio). -/
+/-- **The accelerated-failure-time measure** with baseline `μ₀` (any measure on `ℝ`) and linear
+predictor `η`: the pushforward of `μ₀` along `t ↦ exp η * t`. When `μ₀` is the law of `T₀`, it is
+the law of `T = exp η * T₀`. Where `T₀ > 0`, on the log scale this is `log T = η + log T₀`, so `η`
+shifts the log failure time and `exp η` is the acceleration factor (time ratio). -/
 def aftMeasure (μ₀ : Measure ℝ) (η : ℝ) : Measure ℝ :=
   μ₀.map fun t => exp η * t
 
@@ -126,7 +126,9 @@ theorem aftMeasure_aftMeasure (μ₀ : Measure ℝ) (η₁ η₂ : ℝ) :
 theorem aftMeasure_zero (μ₀ : Measure ℝ) : aftMeasure μ₀ 0 = μ₀ := by
   simp [aftMeasure]
 
-/-- **AFT survival transform**: `S(t | η) = S₀(exp (-η) * t)` for every `t`. -/
+/-- **AFT survival transform**: for any measure `μ₀`, the masses of `(t, ∞)` under the AFT measure
+and of `(exp (-η) * t, ∞)` under `μ₀` agree in `[0, ∞]` for every `t`; for a probability law `μ₀`
+this is `S(t | η) = S₀(exp (-η) * t)`. -/
 theorem aftMeasure_Ioi (μ₀ : Measure ℝ) (η t : ℝ) :
     aftMeasure μ₀ η (Ioi t) = μ₀ (Ioi (exp (-η) * t)) := by
   rw [aftMeasure, Measure.map_apply (measurable_exp_mul η) measurableSet_Ioi,
@@ -137,16 +139,19 @@ theorem aftMeasure_real_Ioi (μ₀ : Measure ℝ) (η t : ℝ) :
     (aftMeasure μ₀ η).real (Ioi t) = μ₀.real (Ioi (exp (-η) * t)) := by
   rw [measureReal_def, aftMeasure_Ioi, measureReal_def]
 
-/-- **AFT distribution-function transform**: `F(t | η) = F₀(exp (-η) * t)`. -/
+/-- **AFT distribution-function transform**: for any measure `μ₀`, the real masses of `(-∞, t]`
+under the AFT measure and of `(-∞, exp (-η) * t]` under `μ₀` agree (an infinite mass is read as
+`0`); for a probability law `μ₀` this is `F(t | η) = F₀(exp (-η) * t)`. -/
 theorem aftMeasure_real_Iic (μ₀ : Measure ℝ) (η t : ℝ) :
     (aftMeasure μ₀ η).real (Iic t) = μ₀.real (Iic (exp (-η) * t)) := by
   rw [aftMeasure, map_measureReal_apply (measurable_exp_mul η) measurableSet_Iic,
     preimage_exp_mul_Iic]
 
-/-- **AFT cumulative-hazard transform**: where the baseline survival at the rescaled point is
-positive, so is the AFT survival at `t`, and `H(t | η) = H₀(exp (-η) * t)` with the cumulative
-hazard `H = -log S`. Positivity excludes points past the end of the support, where `H = +∞` but
-Lean's `Real.log 0 = 0`. -/
+/-- **AFT cumulative-hazard transform**: for any measure `μ₀`, write `S₀ s` and `S(s | η)` for the
+real masses of `(s, ∞)` under `μ₀` and under the AFT measure (an infinite mass is read as `0`).
+Where `S₀` is positive at the rescaled point, `S(t | η)` is positive and
+`H(t | η) = H₀(exp (-η) * t)` with the cumulative hazard `H = -log S`. Positivity excludes points
+past the end of the support, where `H = +∞` but Lean's `Real.log 0 = 0`. -/
 theorem neg_log_aftMeasure_real_Ioi (μ₀ : Measure ℝ) (η t : ℝ)
     (hS : 0 < μ₀.real (Ioi (exp (-η) * t))) :
     0 < (aftMeasure μ₀ η).real (Ioi t) ∧
@@ -154,12 +159,13 @@ theorem neg_log_aftMeasure_real_Ioi (μ₀ : Measure ℝ) (η t : ℝ)
   rw [aftMeasure_real_Ioi]
   exact ⟨hS, rfl⟩
 
-/-- **AFT hazard transform**: if the baseline survival is positive at `exp (-η) * t` and the
-baseline cumulative hazard `H₀ = -log S₀` has derivative `h₀` (the baseline hazard rate) there,
-then the AFT survival is positive at `t` and the cumulative hazard of the AFT law has derivative
-`exp (-η) * h₀` at `t`: `h(t | η) = exp (-η) h₀(exp (-η) t)`. Time is rescaled inside the hazard
-and the hazard is multiplied by the inverse acceleration factor. Positivity excludes points past
-the end of the support, where Lean's `Real.log 0 = 0` would make a zero derivative look like a
+/-- **AFT hazard transform**: for any measure `μ₀`, write `S₀ s` and `S(s | η)` for the real masses
+of `(s, ∞)` under `μ₀` and under the AFT measure (an infinite mass is read as `0`). If
+`S₀(exp (-η) * t) > 0` and the baseline cumulative hazard `H₀ = -log S₀` has derivative `h₀` (the
+baseline hazard rate) there, then `S(t | η) > 0` and the cumulative hazard `-log S(· | η)` has
+derivative `exp (-η) * h₀` at `t`: `h(t | η) = exp (-η) h₀(exp (-η) t)`. Time is rescaled inside the
+hazard and the hazard is multiplied by the inverse acceleration factor. Positivity excludes points
+past the end of the support, where Lean's `Real.log 0 = 0` would make a zero derivative look like a
 hazard. -/
 theorem hasDerivAt_neg_log_aftMeasure_real_Ioi (μ₀ : Measure ℝ) (η t h₀ : ℝ)
     (hS : 0 < μ₀.real (Ioi (exp (-η) * t)))
@@ -175,7 +181,9 @@ theorem hasDerivAt_neg_log_aftMeasure_real_Ioi (μ₀ : Measure ℝ) (η t h₀ 
   · rfl
   · ring
 
-/-- **AFT quantile transform**: if `q` is a level-`p` point of the baseline distribution function,
+/-- **AFT quantile transform**: for any measure `μ₀`, the real mass of `(-∞, exp η * q]` under the
+AFT measure equals the real mass of `(-∞, q]` under `μ₀` (an infinite mass is read as `0`). For a
+probability law `μ₀`, if `q` is a level-`p` point of the baseline distribution function,
 `F₀(q) = p`, then `exp η * q` is a level-`p` point of the AFT law. Quantiles scale by the
 acceleration factor. -/
 theorem aftMeasure_real_Iic_exp_mul (μ₀ : Measure ℝ) (η q : ℝ) :
@@ -188,8 +196,10 @@ theorem aftMeasure_Iic (μ₀ : Measure ℝ) (η t : ℝ) :
   rw [aftMeasure, Measure.map_apply (measurable_exp_mul η) measurableSet_Iic,
     preimage_exp_mul_Iic]
 
-/-- Mass strictly below `t` under the AFT law: `P(T < t) = P(T₀ < exp (-η) * t)`. At `t = 0`
-the AFT law puts no mass below `0` exactly when the baseline does. -/
+/-- Mass strictly below `t` under the AFT measure, for any measure `μ₀`: the masses of `(-∞, t)`
+under the AFT measure and of `(-∞, exp (-η) * t)` under `μ₀` agree in `[0, ∞]`; for
+`T = exp η * T₀` with `T₀ ~ μ₀` this is `P(T < t) = P(T₀ < exp (-η) * t)`. At `t = 0` the AFT
+measure puts no mass below `0` exactly when the baseline does. -/
 theorem aftMeasure_Iio (μ₀ : Measure ℝ) (η t : ℝ) :
     aftMeasure μ₀ η (Iio t) = μ₀ (Iio (exp (-η) * t)) := by
   rw [aftMeasure, Measure.map_apply (measurable_exp_mul η) measurableSet_Iio,

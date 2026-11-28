@@ -1,0 +1,3 @@
+# On the risk set the error increment is the martingale increment
+
+Let $N$ and $Y$ be real-valued processes on the grid and $\alpha$ a deterministic real sequence (no counting-process structure is assumed; the counting model with at-risk process $Y$ and cumulative hazard $\alpha$ is an application), $\hat A = Y^{-1}\bullet N$ the Nelson–Aalen process, $\Lambda^* = \mathbf 1\{Y \ne 0\}\bullet\alpha$ and $M = N - Y\bullet\alpha$. Here $Y^{-1}$ is read as $0$ where $Y = 0$ (zero risk). If $Y_{i+1}(\omega) \ne 0$, the normalized error increment $\sqrt n(\Delta\hat A_{i+1} - \Delta\alpha_{i+1})$ equals $\sqrt nY_{i+1}^{-1}\Delta M_{i+1}$.

@@ -212,7 +212,8 @@ theorem martingale_stochasticIntegral_of_bdd [IsFiniteMeasure μ] {H M : ℕ →
     (ae_of_all _ fun ω => (Real.norm_eq_abs _).trans_le (hC ω))
 
 /-- **Predictable quadratic variation of the stochastic integral**: `⟨H • M⟩ = H² • ⟨M⟩`, where
-`⟨M⟩ₙ = ∑_{k < n} E[(ΔM_{k+1})² | ℱ_k]` is `predictableQuadraticVariation`. This is the discrete
+`⟨M⟩ₙ = ∑_{k < n} μ[(ΔM_{k+1})² | ℱ_k]` (conditional expectation for any measure `μ`) is
+`predictableQuadraticVariation`. This is the discrete
 form of `⟨∫ H dM⟩ = ∫ H² d⟨M⟩`. -/
 theorem predictableQuadraticVariation_stochasticIntegral {H M : ℕ → Ω → ℝ}
     (hH : IsStronglyPredictable ℱ H)
@@ -276,7 +277,8 @@ theorem IsCountingProcess.monotone {N : ℕ → Ω → ℝ} (hN : IsCountingProc
   monotone_nat_of_le_succ fun n => sub_nonneg.1 (hN.increment_nonneg n ω)
 
 /-- The increment of the compensated process `M = N - A` (Mathlib's `martingalePart`, with the
-compensator `A = predictablePart N`) is `ΔN_{n+1} - E[ΔN_{n+1} | ℱₙ]`. -/
+compensator `A = predictablePart N`) is `ΔN_{n+1} - μ[ΔN_{n+1} | ℱₙ]`, with Mathlib's
+conditional expectation for any measure `μ`. -/
 theorem martingalePart_succ_sub (N : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) :
     martingalePart N ℱ μ (n + 1) ω - martingalePart N ℱ μ n ω =
       N (n + 1) ω - N n ω - μ[N (n + 1) - N n | ℱ n] ω := by
@@ -284,7 +286,8 @@ theorem martingalePart_succ_sub (N : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) :
   ring
 
 /-- The **compensator** `A = predictablePart N` of a counting process is a.e. non-decreasing:
-its increment `E[ΔN_{n+1} | ℱₙ]` is a.e. non-negative. -/
+for any measure `μ`, its increment `μ[ΔN_{n+1} | ℱₙ]` (Mathlib's conditional expectation) is
+a.e. non-negative. -/
 theorem IsCountingProcess.compensator_increment_nonneg {N : ℕ → Ω → ℝ} (hN : IsCountingProcess N)
     (n : ℕ) : 0 ≤ᵐ[μ] μ[N (n + 1) - N n | ℱ n] :=
   condExp_nonneg (ae_of_all _ fun ω => hN.increment_nonneg n ω)
@@ -520,7 +523,7 @@ theorem prodIntegral_sub_prodIntegral (A B : ℕ → ℝ) (n : ℕ) :
     rw [hsum, prodIntegral_succ, prodIntegral_succ]
     linear_combination (1 - (B (n + 1) - B n)) * ih
 
-/-- **Duhamel's equation, Gill's quotient form**: if no increment of `B` equals `1`,
+/-- **Duhamel's equation, Gill's quotient form**: if `B(k + 1) - B(k) ≠ 1` for every `k < n`,
 `𝒫_A(n) / 𝒫_B(n) - 1 = -∑_{k < n} 𝒫_A(k) / 𝒫_B(k+1) (ΔA_{k+1} - ΔB_{k+1})`, the discrete form of
 `Ŝ/S - 1 = -∫ Ŝ₋ / S d(Â - Λ)`. -/
 theorem prodIntegral_div_prodIntegral_sub_one (A B : ℕ → ℝ) {n : ℕ}
@@ -585,7 +588,8 @@ theorem stronglyAdapted_kaplanMeierProcess {N Y : ℕ → Ω → ℝ} (hN : Stro
   exact stronglyMeasurable_const.sub (((hA (k + 1)).mono (ℱ.mono hk)).sub
     ((hA k).mono (ℱ.mono hk.le)))
 
-/-- The integrand `Ŝ_{k-1} / (S_k Y_k)` of Gill's martingale representation of Kaplan–Meier. -/
+/-- The integrand `Ŝ_{k-1} / S_k · Y_k⁻¹` of Gill's martingale representation of Kaplan–Meier,
+where `Y_k⁻¹` is the total inverse, `0` when `Y_k = 0` (zero risk). -/
 noncomputable def kaplanMeierIntegrand (N Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) (k : ℕ) (ω : Ω) : ℝ :=
   kaplanMeierProcess N Y (k - 1) ω / prodIntegral α k * (Y k ω)⁻¹
 
@@ -594,8 +598,10 @@ noncomputable def kaplanMeierRemainder (N Y : ℕ → Ω → ℝ) (α : ℕ → 
   kaplanMeierProcess N Y (k - 1) ω / prodIntegral α k * if Y k ω = 0 then 1 else 0
 
 /-- **Martingale representation of the Kaplan–Meier estimator** (pathwise, from Duhamel's
-equation): with `S = 𝒫(1 - dα)` and `M = N - ∫ Y dα`,
-`Ŝ/S - 1 = -∫ Ŝ₋ / (S Y) dM + ∫ Ŝ₋ / S · 1{Y = 0} dα`.
+equation): if no increment `α (k + 1) - α k` equals `1`, then with `S = 𝒫(1 - dα)` and
+`M = N - ∫ Y dα`, `Ŝ/S - 1 = -∫ Ŝ₋ / S · Y⁻¹ dM + ∫ Ŝ₋ / S · 1{Y = 0} dα`, where the
+increment from `k` to `k + 1` of the first integral has integrand `Ŝ_k / S_{k+1} · Y_{k+1}⁻¹`
+and `Y_{k+1}⁻¹` is the total inverse, `0` when `Y_{k+1} = 0` (zero risk).
 The second term is the vanishing-risk remainder; it is `0` while the risk set is non-empty. -/
 theorem kaplanMeierProcess_div_sub_one (N Y : ℕ → Ω → ℝ) {α : ℕ → ℝ}
     (hα : ∀ k, α (k + 1) - α k ≠ 1) (n : ℕ) (ω : Ω) :
@@ -662,8 +668,9 @@ theorem martingale_kaplanMeierProcess [IsFiniteMeasure μ] {N Y : ℕ → Ω →
           · exact abs_inv_le_one (hY1 _ ω)
       _ = |(prodIntegral α (n + 1))⁻¹| := by ring
 
-/-- **Kaplan–Meier martingale without vanishing risk**: if the risk set never empties, `Ŝ / S` is
-a martingale (Gill 1980). -/
+/-- **Kaplan–Meier martingale without vanishing risk**: if `Y (n + 1) ≥ 1` at every step `n`
+(`Y 0` may be `0`), together with the stated increment bounds, `Ŝ / S` is a martingale
+(Gill 1980). -/
 theorem martingale_kaplanMeierProcess_div [IsFiniteMeasure μ] {N Y : ℕ → Ω → ℝ} {α : ℕ → ℝ}
     (hM : Martingale (fun n ω => N n ω - aalenCompensator Y α n ω) ℱ μ)
     (hN : StronglyAdapted ℱ N) (hY : IsStronglyPredictable ℱ Y)
@@ -721,9 +728,9 @@ theorem HasUnitJumps.ae_jump_mul_eq_zero_of_martingale [IsFiniteMeasure μ] {N :
   filter_upwards [(integral_eq_zero_iff_of_nonneg_ae hnn hXint).1 h0] with ω hω
   rw [← heq]; exact hω
 
-/-- **Counterexample form**: if with positive probability `N` jumps at step `k + 1` while its
-compensator jump is `< 1`, then integrating `ΔN` against the compensated process does **not**
-give a martingale. -/
+/-- **Counterexample form**: on a finite measure space, if the set where `N` jumps at step
+`k + 1` while its compensator jump is `< 1` has positive measure, then integrating `ΔN` against
+the compensated process does **not** give a martingale. -/
 theorem HasUnitJumps.not_martingale_of_unpredicted_jump [IsFiniteMeasure μ] {N : ℕ → Ω → ℝ}
     (hN : HasUnitJumps N) (hint : ∀ n, Integrable (N n) μ) {k : ℕ}
     (hk : μ {ω | N (k + 1) ω - N k ω = 1 ∧ μ[N (k + 1) - N k | ℱ k] ω < 1} ≠ 0) :
@@ -750,13 +757,14 @@ private lemma prod_fin_le_eq_prod_range {M : Type*} [CommMonoid M] {k : ℕ} (f 
     have := mem_range.1 hi; omega
 
 open KaplanMeier in
-/-- The counting process of grouped censored data on the step grid: `Nₙ = ∑_{i < n} dᵢ`. -/
+/-- The counting process of grouped censored data on the step grid: `Nₙ = ∑_{i < min n k} dᵢ`. -/
 noncomputable def gridDeaths {k : ℕ} (D : CensoredData k) : ℕ → Ω → ℝ := fun n _ =>
   ∑ i ∈ range n, if h : i < k then (D.deaths ⟨i, h⟩ : ℝ) else 0
 
 open KaplanMeier in
-/-- The at-risk process of grouped censored data on the step grid: `Yₙ = n_{n-1}` (the number at
-risk at the `n`-th observation time), and `0` past the last one. -/
+/-- The at-risk process of grouped censored data on the step grid: `Yₙ = n_{n-1}` for `n ≥ 1` (the
+number at risk at the `n`-th observation time), `Y₀ = n₀` (Lean's `0 - 1 = 0`), and `0` past the
+last one; in particular `Y₀ = 0` when `k = 0`. -/
 noncomputable def gridAtRisk {k : ℕ} (D : CensoredData k) : ℕ → Ω → ℝ := fun n _ =>
   if h : n - 1 < k then (D.atRisk ⟨n - 1, h⟩ : ℝ) else 0
 

@@ -127,8 +127,10 @@ noncomputable def riskSum1 (c : Fin q → ℝ) (μ : Coord k q) (b : ℝ) (j : F
   ∑ a, c a * exp (b * c a) * μ (Sum.inr (j, a))
 
 /-- The **Cox score map** on the indicator space:
-`Ψ(μ, b) = ∑_{j, a} μ(inl (j, a)) (cₐ - S⁽¹⁾(μ, b, j) / S⁽⁰⁾(μ, b, j))`. At the mean `μ = x̄ₙ` of
-the encoded sample it is the Cox score divided by `n` (`coxScore_eq_mul_scoreMap`). -/
+`Ψ(μ, b) = ∑_{j, a} μ(inl (j, a)) (cₐ - S⁽¹⁾(μ, b, j) / S⁽⁰⁾(μ, b, j))`. When the grids `t` and
+`c` are injective and contain every observed time and covariate of the first `n` observations,
+the Cox score is `n` times its value at the encoded sample mean `μ = x̄ₙ`
+(`coxScore_eq_mul_scoreMap`). -/
 noncomputable def scoreMap (c : Fin q → ℝ) (μ : Coord k q) (b : ℝ) : ℝ :=
   ∑ j, ∑ a, μ (Sum.inl (j, a)) * (c a - riskSum1 c μ b j / riskSum0 c μ b j)
 
@@ -735,11 +737,13 @@ variable {t : Fin k → ℝ} {c : Fin q → ℝ}
 /-- **Bootstrap validity for the grid Cox estimator, fixed data.** Let the data `x` have every
 observed time on the grid `t` and every covariate among the levels `c`, and let `Z` be a random
 vector in the indicator space whose projections are `N(0, v s)`. Suppose that, in every direction
-`s`, the plug-in variances of the encoded data converge to `v s` and satisfy the Lindeberg
-condition, that the encoded sample means converge to `θ`, that every grid time has positive total
-at-risk mass under `θ`, that `β₀` is a root of the limiting score `Ψ(θ, ·)` and that the limiting
-information `coxInfo c θ β₀` is nonzero. Then, conditionally on the data (under `world x`),
-`√n (β̂*ₙ - β̂ₙ)` converges in distribution to `coxLimitMap c θ β₀ Z`. -/
+`s`, the plug-in variances of the encoded data converge to `v s`, that the centred encoded
+observations `aᵢ - āₙ` satisfy the Lindeberg condition (for every `ε > 0`, the mean over `i < n` of
+`(aᵢ - āₙ)²` on `|aᵢ - āₙ| > ε √n` tends to `0`), that the encoded sample means converge to `θ`,
+that every grid time has positive total at-risk mass under `θ`, that `β₀` is a root of the limiting
+score `Ψ(θ, ·)` and that the limiting information `coxInfo c θ β₀` is nonzero. Then, conditionally
+on the data (under `world x`), `√n (β̂*ₙ - β̂ₙ)` converges in distribution to
+`coxLimitMap c θ β₀ Z`. -/
 theorem tendstoInDistribution_bootstrap_coxMPLE (ht : Function.Injective t)
     (hc : Function.Injective c) (x : ℕ → ℝ × ℝ × ℝ) (hgrid : ∀ i, (x i).1 ∈ Set.range t)
     (hcov : ∀ i, (x i).2.2 ∈ Set.range c) {Ω' : Type*} [MeasurableSpace Ω']

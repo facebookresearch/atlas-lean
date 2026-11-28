@@ -1,0 +1,3 @@
+# Product-rule linear map of the Kaplan–Meier map
+
+At a cell vector $p$ with $e_j = p(j, 1)$, at-risk masses $Y_j$ and at-risk functionals $A_j$, the product-rule linear map of the Kaplan–Meier map at $m$ is $v \mapsto \sum_{j\le m}\prod_{l\le m, l\ne j}(1 - e_l/Y_l)\cdot(e_jA_j(v) - Y_jv(j, 1))/Y_j^2$, with $x/0 = 0$: a term with $Y_j = 0$ is $0$ and a factor with $Y_l = 0$ is $1$. The map is defined for every $p$. When $Y_j \ne 0$ for every $j \le m$ it is the Fréchet derivative of the Kaplan–Meier map at $p$ ([differentiability](has-fderiv-at-km-map.md)); at a vector with some $Y_j = 0$ the formula is not in general a derivative, and the Kaplan–Meier map need not even be continuous there.

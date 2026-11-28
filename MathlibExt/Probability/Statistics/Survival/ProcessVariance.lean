@@ -180,8 +180,9 @@ private lemma predictableQuadraticVariation_stochasticIntegral_of_lt {H M : ℕ 
 
 /-- **Conditional square sum of the scaled Nelson–Aalen process** (exact, on the grid). For
 `M = N - ∫ Y dα` with an arbitrary real process `N`, suppose the increments have the conditional
-second moment `E[(ΔM_{j+1})² | ℱ_j] = Y_{j+1} Δα_{j+1} (1 - Δα_{j+1})` at the steps `j < k`
-(only those are used). Then the conditional square sum `∑_{i < k} E[(Δ √n (Â - Λ*))² | ℱ_i]`
+second moment `μ[(ΔM_{j+1})² | ℱ_j] = Y_{j+1} Δα_{j+1} (1 - Δα_{j+1})` at the steps `j < k`
+(only those are used), with Mathlib's conditional expectation for an arbitrary measure `μ`. Then
+the conditional square sum `∑_{i < k} μ[(Δ √n (Â - Λ*))² | ℱ_i]`
 (`predictableQuadraticVariation`) equals
 `n ∑_{i < k} Y_{i+1}⁻¹ Δα_{i+1} (1 - Δα_{i+1})` a.e. The martingale property of `M` is not
 assumed; for a martingale `M` (binomial variance: each of the `Y_{k+1}` subjects at risk fails
@@ -324,11 +325,12 @@ the time of interest, and let `ȳ n` be deterministic levels with `ȳ n (i + 1) 
 
 * the hazard increments are non-negative, uniformly small (the mesh condition `hmesh`, which holds
   for a continuous limiting hazard), and of bounded total `α n (k n) - α n 0 ≤ L`;
-* (**uniform LLN**) `P(∃ i < k n, |Y n (i+1) / n - ȳ n (i+1)| > δ) → 0` for every `δ > 0`;
+* (**uniform LLN**) `μ(∃ i < k n, |Y n (i+1) / n - ȳ n (i+1)| > δ) → 0` for every `δ > 0`;
 * (**grid limit**, a T57-style input) the Riemann–Stieltjes sums `∑_{i < k n} Δα / ȳ` converge to
   `σ²`.
 
-Then the variance sums `n ∑ Y⁻¹ Δα (1 - Δα)` converge in probability to `σ²`. -/
+Then the variance sums `n ∑ Y⁻¹ Δα (1 - Δα)` converge to `σ²` in `μ`-measure (in probability
+when `μ` is a probability measure). -/
 theorem tendstoInMeasure_naVarianceSum {Y : ℕ → ℕ → Ω → ℝ} {α ybar : ℕ → ℕ → ℝ} {k : ℕ → ℕ}
     {ε L σsq : ℝ} (hε : 0 < ε)
     (hinc : ∀ n, ∀ i < k n, 0 ≤ α n (i + 1) - α n i)
@@ -385,7 +387,7 @@ grid with filtration `ℱ n`, with the conditional second moment of
 assumed. Under the
 uniform LLN for `Y n / n`, the mesh condition and the grid limit of
 `tendstoInMeasure_naVarianceSum`, the conditional square sums of `√n (Â - Λ*)` up to step `k n`
-converge in probability to `σ²`. -/
+converge to `σ²` in `μ`-measure (in probability when `μ` is a probability measure). -/
 theorem tendstoInMeasure_predictableQuadraticVariation_naScaledProcess
     {ℱ : ℕ → Filtration ℕ m0} {N Y : ℕ → ℕ → Ω → ℝ} {α ybar : ℕ → ℕ → ℝ} {k : ℕ → ℕ}
     {ε L σsq : ℝ} (hε : 0 < ε)
@@ -617,21 +619,22 @@ theorem eventually_gridHazard_increment_le (Λ : StieltjesFunction ℝ) (hΛ : C
   rw [gridHazard, gridHazard]
   exact (le_abs_self _).trans this.le
 
-/-- **Conditional square sums of `√n (Â - Λ*)` converge to `∫_0^t dΛ / y`** in probability.
+/-- **Conditional square sums of `√n (Â - Λ*)` converge to `∫_0^t dΛ / y`** in measure.
 
 Setting: a continuous cumulative hazard `Λ` (a continuous `StieltjesFunction`), a horizon `τ > 0`
 and a time `t ∈ [0, τ]`; for each `n` a grid of mesh `h_n = τ / K n` (`K n → ∞`) carrying a real
 process `N n` and a predictable at-risk process `Y n` (values in `{0} ∪ [1, ∞)`), with hazard
-increments `ΔΛ` (`gridHazard`) and the conditional second moment `E[(ΔM)² | ℱ] = Y ΔΛ (1 - ΔΛ)` of
-`M = N n - ∫ Y n dΛ` at the grid steps before `t` (with its integrability). Neither that `N n` is
-a counting process nor that `M` is a martingale is assumed. The limiting at-risk fraction `y` is
-continuous on `[0, τ]` and bounded below by `ε > 0` (the horizon is supported), and the **law of
-large numbers** `sup_{grid points ≤ t} |Y n / n - y| → 0` holds in probability. Then the conditional
-square sums `∑ E[(Δ √n (Â - Λ*))² | ℱ]` up to the grid point `⌊t / h_n⌋ h_n` converge in
-probability to `∫_{(0, t]} (y s)⁻¹ dΛ(s)`. If `M` is a martingale
-(`martingale_nelsonAalenProcess_sub` then makes `√n (Â - Λ*)` one), these sums are the predictable
-variations `⟨√n (Â - Λ*)⟩` and the limit is the variance function of the Gaussian-martingale limit
-(Andersen–Borgan–Gill–Keiding, §IV.1). -/
+increments `ΔΛ` (`gridHazard`) and the conditional second moment `μ[(ΔM)² | ℱ] = Y ΔΛ (1 - ΔΛ)` of
+`M = N n - ∫ Y n dΛ` at the grid steps before `t` (with its integrability), with Mathlib's
+conditional expectation for an arbitrary measure `μ`. Neither that `N n` is a counting process nor
+that `M` is a martingale is assumed. The limiting at-risk fraction `y` is continuous on `[0, τ]` and
+bounded below by `ε > 0` (the horizon is supported), and the **law of large numbers**
+`max_{i < ⌊t / h_n⌋} |Y n (i + 1) / n - y((i + 1) h_n)| → 0` over the positive right endpoints up to
+`t` holds in `μ`-measure. Then the conditional square sums `∑ μ[(Δ √n (Â - Λ*))² | ℱ]` up to the
+grid point `⌊t / h_n⌋ h_n` converge in `μ`-measure to `∫_{(0, t]} (y s)⁻¹ dΛ(s)` (in probability
+when `μ` is a probability measure). If `M` is a martingale (`martingale_nelsonAalenProcess_sub` then
+makes `√n (Â - Λ*)` one), these sums are the predictable variations `⟨√n (Â - Λ*)⟩` and the limit is
+the variance function of the Gaussian-martingale limit (Andersen–Borgan–Gill–Keiding, §IV.1). -/
 theorem tendstoInMeasure_predictableQuadraticVariation_naScaledProcess_integral
     {ℱ : ℕ → Filtration ℕ m0} {N Y : ℕ → ℕ → Ω → ℝ} (Λ : StieltjesFunction ℝ)
     (hΛ : Continuous Λ) {y : ℝ → ℝ} {τ t ε : ℝ} (hτ : 0 < τ) (ht : t ∈ Set.Icc 0 τ)

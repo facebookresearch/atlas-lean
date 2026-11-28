@@ -1,0 +1,3 @@
+# A time inspected with probability zero leaves the hazard unidentified
+
+Under interval censoring on a finite grid, an inspection set $S$ with law $p_S$ is independent of the event time $T \sim p_T$, and one observes $S$ together with the inspection times in $S$ at or after $T$. Write $h(j) = P(T = j) / P(T \ge j)$ for the [discrete hazard](../../censored-survival-data/hazard.md), with $0/0 = 0$, the value when $P(T \ge j) = 0$. If $P(j \in S) = 0$ and $j$ is not the last grid point, there are event-time laws with the same observed-data law and different hazards at $j$: the point masses at $j$ and $j + 1$, with hazards $1$ and $0$ and both with $P(T \ge j) = 1$, so the difference does not come from the $0/0$ convention.
