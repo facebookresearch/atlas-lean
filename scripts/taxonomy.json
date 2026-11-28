@@ -1142,6 +1142,7 @@
   "CSLibExt/Algorithms/Lean/DynamicProgramming/EditDistance/Metric": {"to": "ComputerScience/string-algorithms", "title": "Edit distance"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/EditDistance/Script": {"to": "ComputerScience/string-algorithms", "title": "Edit distance"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/ExactSubsetSum": {"to": "ComputerScience/dynamic-programming", "title": "Subset sum"},
+  "CSLibExt/Algorithms/Lean/DynamicProgramming/HeldKarp": {"to": "ComputerScience/dynamic-programming", "title": "Dynamic programming principles"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/HirschbergAlignment": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Hirschberg's linear-space alignment"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/Knapsack": {"to": "ComputerScience/dynamic-programming", "title": "Zero-one knapsack problem"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/LongestCommonSubsequence": {"to": "ComputerScience/dynamic-programming", "title": "Longest common subsequence"},
