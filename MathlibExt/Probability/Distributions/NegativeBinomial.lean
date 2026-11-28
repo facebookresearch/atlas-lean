@@ -98,6 +98,14 @@ theorem negBinomialReal_nonneg {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 ≤ μ) (k 
   unfold negBinomialReal
   positivity
 
+/-- For size `θ > 0` and mean `μ > 0` every count `k` has positive negative binomial mass
+`NB(k; θ, μ) > 0`, the count `0` included. -/
+theorem negBinomialReal_pos {θ μ : ℝ} (hθ : 0 < θ) (hμ : 0 < μ) (k : ℕ) :
+    0 < negBinomialReal θ μ k := by
+  have h := ascPochhammer_pos k θ hθ
+  unfold negBinomialReal
+  positivity
+
 /-- The zero class of the negative binomial law is `(θ / (θ + μ)) ^ θ`. -/
 theorem negBinomialReal_zero (θ μ : ℝ) : negBinomialReal θ μ 0 = (θ / (θ + μ)) ^ θ := by
   simp [negBinomialReal]

@@ -113,4 +113,11 @@ example (κ γ b : ℝ) (p : ℕ → ℝ) :
     burstDeathFlow κ γ b p 0 = γ * p 1 - κ * (b / (1 + b)) * p 0 := by
   simp [burstDeathFlow]
 
+/-- With a positive mean every count, `0` included, has positive mass; with mean `0` the count `1`
+has mass `0`, so `negBinomialReal_pos` needs `0 < μ`. -/
+example (k : ℕ) : 0 < negBinomialReal 3 (1 / 2) k ∧ negBinomialReal 3 0 1 = 0 := by
+  refine ⟨negBinomialReal_pos (by norm_num) (by norm_num) k, ?_⟩
+  rw [negBinomialReal_mean_zero (by norm_num)]
+  simp
+
 end MathlibExtTest.Probability.Distributions.NegativeBinomial
