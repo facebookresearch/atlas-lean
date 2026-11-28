@@ -2283,6 +2283,7 @@
   "CSLibExt/MachineLearning/LatentVariable/HardEM": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "k-means clustering"},
   "CSLibExt/MachineLearning/LatentVariable/ProbabilisticPCA": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "Probabilistic principal component analysis"},
   "CSLibExt/MachineLearning/LatentVariable/ProbabilisticPCAMLE": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "Probabilistic principal component analysis"},
+  "CSLibExt/MachineLearning/LinearBandit/EllipticalPotential": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Multi-armed bandits"},
   "CSLibExt/MachineLearning/LinearQuadraticRegulator": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Linear quadratic regulator"},
   "CSLibExt/MachineLearning/MarginRademacher": {"to": "ComputerScience/machine-learning/generalization-bounds-and-concentration", "title": "Rademacher complexity"},
   "CSLibExt/MachineLearning/MatrixFactorization/SuccessiveProjection": {"to": "ComputerScience/machine-learning/unsupervised-learning", "title": "Successive projection algorithm"},

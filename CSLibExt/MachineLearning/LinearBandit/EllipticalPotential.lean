@@ -45,29 +45,78 @@ open scoped Matrix
 
 namespace Cslib.MachineLearning.LinearBandit
 
+/-- **Gram matrix of the actions.** For a matrix $V_0 \in \mathbb{R}^{d \times d}$ and vectors
+$a_0, a_1, \ldots \in \mathbb{R}^d$, numbered from $0$, the Gram matrix after $t$ rounds is
+
+$$V_t = V_0 + \sum_{k < t} a_k a_k^{\mathsf T},$$
+
+the sum of $V_0$ and of the first $t$ outer products $a_k a_k^{\mathsf T}$.
+
+Source: T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020
+(author copy), Lemma 19.4, the matrices $V_t$, whose actions are numbered from $1$: the book's
+$a_{k+1}$ is $a_k$ here.
+<https://tor-lattimore.com/downloads/book/book.pdf> -/
 noncomputable def ellipticalGram {ι : Type*} [Fintype ι] [DecidableEq ι]
     (V0 : Matrix ι ι ℝ) (a : ℕ → ι → ℝ) (t : ℕ) : Matrix ι ι ℝ :=
   V0 + ∑ k ∈ Finset.range t, Matrix.vecMulVec (a k) (a k)
 
+/-- **Quadratic form of an action in the inverse Gram matrix.** For a matrix
+$V_0 \in \mathbb{R}^{d \times d}$ and vectors $a_0, a_1, \ldots \in \mathbb{R}^d$, numbered from
+$0$, let $V_k = V_0 + \sum_{j < k} a_j a_j^{\mathsf T}$ be the Gram matrix of the actions before
+$a_k$. The quadratic form of round $k$ is
+
+$$a_k^{\mathsf T} V_k^{-1} a_k,$$
+
+where $V_k^{-1}$ is the inverse of $V_k$, taken to be $0$ when $V_k$ is singular. When $V_k$ is
+positive definite, it is the squared norm $\lVert a_k \rVert_{V_k^{-1}}^2$.
+
+Source: T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020
+(author copy), Lemma 19.4, the quadratic forms $\lVert a_t \rVert_{V_{t-1}^{-1}}^2$, with
+$t = k + 1$.
+<https://tor-lattimore.com/downloads/book/book.pdf> -/
 noncomputable def ellipticalQuadratic {ι : Type*} [Fintype ι] [DecidableEq ι]
     (V0 : Matrix ι ι ℝ) (a : ℕ → ι → ℝ) (k : ℕ) : ℝ :=
   a k ⬝ᵥ ((ellipticalGram V0 a k)⁻¹ *ᵥ a k)
 
+/-- **Capped elliptical potential.** For a matrix $V_0 \in \mathbb{R}^{d \times d}$ and vectors
+$a_0, a_1, \ldots \in \mathbb{R}^d$, numbered from $0$, let
+$V_k = V_0 + \sum_{j < k} a_j a_j^{\mathsf T}$ be the Gram matrix of the actions before $a_k$. The
+capped potential of round $k$ is
+
+$$\min\big(1, a_k^{\mathsf T} V_k^{-1} a_k\big),$$
+
+where $V_k^{-1}$ is the inverse of $V_k$, taken to be $0$ when $V_k$ is singular.
+
+Source: T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020
+(author copy), Lemma 19.4, the summands $\min\big(1, \lVert a_t \rVert_{V_{t-1}^{-1}}^2\big)$, with
+$t = k + 1$.
+<https://tor-lattimore.com/downloads/book/book.pdf> -/
 noncomputable def ellipticalPotential {ι : Type*} [Fintype ι] [DecidableEq ι]
     (V0 : Matrix ι ι ℝ) (a : ℕ → ι → ℝ) (k : ℕ) : ℝ :=
   min 1 (ellipticalQuadratic V0 a k)
 
+/-- **The Gram matrix starts at the initial matrix.** For a matrix $V_0 \in \mathbb{R}^{d \times d}$
+and vectors $a_0, a_1, \ldots \in \mathbb{R}^d$, numbered from $0$, the Gram matrix
+$V_t = V_0 + \sum_{k < t} a_k a_k^{\mathsf T}$ after $t = 0$ rounds is $V_0$. -/
 theorem ellipticalGram_zero {ι : Type*} [Fintype ι] [DecidableEq ι]
     (V0 : Matrix ι ι ℝ) (a : ℕ → ι → ℝ) :
     ellipticalGram V0 a 0 = V0 := by
   simp [ellipticalGram]
 
+/-- **Outer-product update of the Gram matrix.** For a matrix $V_0 \in \mathbb{R}^{d \times d}$ and
+vectors $a_0, a_1, \ldots \in \mathbb{R}^d$, numbered from $0$, the Gram matrices
+$V_t = V_0 + \sum_{k < t} a_k a_k^{\mathsf T}$ satisfy $V_{t+1} = V_t + a_t a_t^{\mathsf T}$ for
+every $t$. -/
 theorem ellipticalGram_succ {ι : Type*} [Fintype ι] [DecidableEq ι]
     (V0 : Matrix ι ι ℝ) (a : ℕ → ι → ℝ) (t : ℕ) :
     ellipticalGram V0 a (t + 1) =
       ellipticalGram V0 a t + Matrix.vecMulVec (a t) (a t) := by
   simp only [ellipticalGram, Finset.sum_range_succ, add_assoc]
 
+/-- **The Gram matrix is positive definite.** If $V_0 \in \mathbb{R}^{d \times d}$ is symmetric
+positive definite, then for any vectors $a_0, a_1, \ldots \in \mathbb{R}^d$, numbered from $0$, and
+every $t$ the Gram matrix $V_t = V_0 + \sum_{k < t} a_k a_k^{\mathsf T}$ is symmetric positive
+definite. -/
 theorem ellipticalGram_posDef {ι : Type*} [Fintype ι] [DecidableEq ι]
     {V0 : Matrix ι ι ℝ} (hV0 : V0.PosDef) (a : ℕ → ι → ℝ) (t : ℕ) :
     (ellipticalGram V0 a t).PosDef := by
@@ -83,6 +132,11 @@ theorem ellipticalGram_posDef {ι : Type*} [Fintype ι] [DecidableEq ι]
       exact h1.add ih
   exact hV0.add_posSemidef (hsum (Finset.range t))
 
+/-- **Trace of the Gram matrix.** For a matrix $V_0 \in \mathbb{R}^{d \times d}$ and vectors
+$a_0, a_1, \ldots \in \mathbb{R}^d$, numbered from $0$, the Gram matrices
+$V_t = V_0 + \sum_{k < t} a_k a_k^{\mathsf T}$ satisfy, for every $t$,
+
+$$\operatorname{trace} V_t = \operatorname{trace} V_0 + \sum_{k < t} \lVert a_k \rVert_2^2.$$ -/
 theorem ellipticalGram_trace {ι : Type*} [Fintype ι] [DecidableEq ι]
     (V0 : Matrix ι ι ℝ) (a : ℕ → ι → ℝ) (t : ℕ) :
     (ellipticalGram V0 a t).trace =
@@ -90,6 +144,10 @@ theorem ellipticalGram_trace {ι : Type*} [Fintype ι] [DecidableEq ι]
   simp only [ellipticalGram, Matrix.trace_add, Matrix.trace_sum,
     Matrix.trace_vecMulVec]
 
+/-- **The quadratic form is nonnegative.** Let $V_0 \in \mathbb{R}^{d \times d}$ be symmetric
+positive definite, let $a_0, a_1, \ldots \in \mathbb{R}^d$ be numbered from $0$ and let
+$V_k = V_0 + \sum_{j < k} a_j a_j^{\mathsf T}$. Then $a_k^{\mathsf T} V_k^{-1} a_k \ge 0$ for every
+round $k$. -/
 theorem ellipticalQuadratic_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     {V0 : Matrix ι ι ℝ} (hV0 : V0.PosDef) (a : ℕ → ι → ℝ) (k : ℕ) :
     0 ≤ ellipticalQuadratic V0 a k := by
@@ -97,6 +155,18 @@ theorem ellipticalQuadratic_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     (ellipticalGram_posDef hV0 a k).inv.posSemidef
   simpa [ellipticalQuadratic] using hpsd.dotProduct_mulVec_nonneg (a k)
 
+/-- **From the determinant gain to the capped potential.** Let $V_0 \in \mathbb{R}^{d \times d}$ be
+symmetric positive definite, let $a_0, a_1, \ldots \in \mathbb{R}^d$ be numbered from $0$, and let
+$V_k = V_0 + \sum_{j < k} a_j a_j^{\mathsf T}$ and $q_k = a_k^{\mathsf T} V_k^{-1} a_k$. If, for
+some $n$, $\sum_{k < n} q_k / (1 + q_k) \le \log \det V_n - \log \det V_0$, then
+
+$$\sum_{k < n} \min(1, q_k) \le 2 \log \frac{\det V_n}{\det V_0}.$$
+
+Source: T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020
+(author copy), adapted from the proof of Lemma 19.4, which bounds $\min(1, u)$ by $2 \log(1 + u)$;
+here it is bounded by $2u / (1 + u)$ for $u \ge 0$, and the sum of the $q_k / (1 + q_k)$ by the
+hypothesis.
+<https://tor-lattimore.com/downloads/book/book.pdf> -/
 theorem sum_ellipticalPotential_le_of_gain {ι : Type*} [Fintype ι] [DecidableEq ι]
     {V0 : Matrix ι ι ℝ} (hV0 : V0.PosDef) (a : ℕ → ι → ℝ) (n : ℕ)
     (hgain : ∑ k ∈ Finset.range n,
@@ -138,6 +208,15 @@ theorem sum_ellipticalPotential_le_of_gain {ι : Type*} [Fintype ι] [DecidableE
         rw [Real.log_div (ne_of_gt ((ellipticalGram_posDef hV0 a n).det_pos))
           (ne_of_gt hV0.det_pos)]
 
+/-- **Capped elliptical potential and the determinant ratio.** Let $V_0 \in \mathbb{R}^{d \times d}$
+be symmetric positive definite, let $a_0, a_1, \ldots \in \mathbb{R}^d$ be numbered from $0$ and let
+$V_k = V_0 + \sum_{j < k} a_j a_j^{\mathsf T}$. Then for every $n$
+
+$$\sum_{k < n} \min\big(1, a_k^{\mathsf T} V_k^{-1} a_k\big) \le 2 \log \frac{\det V_n}{\det V_0}.$$
+
+Source: T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020
+(author copy), Lemma 19.4, first inequality, with the actions numbered from $0$.
+<https://tor-lattimore.com/downloads/book/book.pdf> -/
 theorem sum_ellipticalPotential_le_two_log_det_ratio
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {V0 : Matrix ι ι ℝ} (hV0 : V0.PosDef) (a : ℕ → ι → ℝ) (n : ℕ) :
@@ -160,6 +239,17 @@ theorem sum_ellipticalPotential_le_two_log_det_ratio
     (fun _ => 0) (fun _ => 0), hGram, hInv] at hgain
   exact sum_ellipticalPotential_le_of_gain hV0 a n hgain
 
+/-- **Determinant ratio of the Gram matrix.** Let $d \ge 1$, let $V_0 \in \mathbb{R}^{d \times d}$
+be symmetric positive definite, let $L \ge 0$, let $a_0, a_1, \ldots \in \mathbb{R}^d$ be numbered
+from $0$ with $\lVert a_k \rVert_2 \le L$ for $k < n$, and let
+$V_t = V_0 + \sum_{k < t} a_k a_k^{\mathsf T}$. Then
+
+$$\log \frac{\det V_n}{\det V_0}
+  \le d \log\Big(\frac{\operatorname{trace} V_0 + n L^2}{d \det(V_0)^{1/d}}\Big).$$
+
+Source: T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020
+(author copy), Lemma 19.4, second inequality (divided by $2$), with the actions numbered from $0$.
+<https://tor-lattimore.com/downloads/book/book.pdf> -/
 theorem log_det_ellipticalGram_ratio_le
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {V0 : Matrix ι ι ℝ} (hV0 : V0.PosDef) (a : ℕ → ι → ℝ)
@@ -224,6 +314,20 @@ theorem log_det_ellipticalGram_ratio_le
         ((Fintype.card ι : ℝ) * V0.det ^ ((Fintype.card ι : ℝ)⁻¹))) :=
         Real.log_pow _ _
 
+/-- **Elliptical potential lemma.** Let $d \ge 1$, let $V_0 \in \mathbb{R}^{d \times d}$ be
+symmetric positive definite, let $L \ge 0$ and let $a_1, \dots, a_n \in \mathbb{R}^d$ satisfy
+$\lVert a_t \rVert_2 \le L$, and let $V_t = V_0 + \sum_{s \le t} a_s a_s^{\mathsf T}$. Then
+
+$$\sum_{t=1}^n \min\big(1, \lVert a_t \rVert_{V_{t-1}^{-1}}^2\big)
+  \le 2 \log \frac{\det V_n}{\det V_0}
+  \le 2d \log\Big(\frac{\operatorname{trace} V_0 + n L^2}{d \det(V_0)^{1/d}}\Big).$$
+
+Here the actions $a_1, \ldots, a_n$ are `a 0, …, a (n - 1)`, so that $V_t$ is
+`ellipticalGram V0 a t`.
+
+Source: T. Lattimore and Cs. Szepesvári, *Bandit Algorithms*, Cambridge University Press, 2020
+(author copy), Lemma 19.4.
+<https://tor-lattimore.com/downloads/book/book.pdf> -/
 theorem elliptical_potential_lemma
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {V0 : Matrix ι ι ℝ} (hV0 : V0.PosDef) (a : ℕ → ι → ℝ)

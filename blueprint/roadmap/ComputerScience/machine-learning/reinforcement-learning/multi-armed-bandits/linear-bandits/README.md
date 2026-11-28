@@ -1,0 +1,22 @@
+# Linear bandits
+
+In a stochastic linear bandit the learner chooses in each round $t$ an action $A_t$ from a set $\mathcal{A}_t \subseteq \mathbb{R}^d$ and observes a reward whose conditional mean is $\langle \theta^*, A_t \rangle$ for an unknown parameter $\theta^*$. In round $t$, optimistic algorithms such as LinUCB act on a confidence ellipsoid around the regularized least-squares estimate $\hat\theta_{t-1}$, whose shape is given by the Gram matrix $V_{t-1}$ of the earlier actions, where $V_t = V_0 + \sum_{s \le t} A_s A_s^{\mathsf T}$ and $V_0 = \lambda I$ with $\lambda > 0$. For any symmetric positive definite $V_0$, the elliptical potential lemma bounds the sum over the rounds $t = 1, \dots, n$ of $\min(1, \lVert A_t \rVert_{V_{t-1}^{-1}}^2)$, where round $t$ uses the Gram matrix $V_{t-1}$ of the actions before $A_t$, by twice the logarithm of the determinant ratio $\det V_n / \det V_0$; it is a main step of the regret bound of LinUCB (Lattimore and Szepesvári, *Bandit Algorithms*, 2020, Chapters 19 and 20).
+
+The lemma's page numbers the actions from $1$, as the book does. The pages on the Gram matrix and its potentials number them from $0$: their $a_k$ is the action of round $k + 1$, and their $V_k = V_0 + \sum_{j < k} a_j a_j^{\mathsf T}$ is the Gram matrix of the actions before $a_k$.
+
+- [Gram matrix of the actions](elliptical-gram.md)
+- [Quadratic form of an action in the inverse Gram matrix](elliptical-quadratic.md)
+- [Capped elliptical potential](elliptical-potential.md)
+- [The Gram matrix starts at the initial matrix](elliptical-gram-zero.md)
+- [Outer-product update of the Gram matrix](elliptical-gram-succ.md)
+- [Trace of the Gram matrix](elliptical-gram-trace.md)
+- [The quadratic form is nonnegative](elliptical-quadratic-nonneg.md)
+- [From the determinant gain to the capped potential](sum-elliptical-potential-le-of-gain.md)
+- [Capped elliptical potential and the determinant ratio](sum-elliptical-potential-le-two-log-det.md)
+- [Determinant ratio of the Gram matrix](log-det-elliptical-gram-ratio-le.md)
+- [Elliptical potential lemma](elliptical-potential-lemma.md)
+- [Stochastic linear bandits and LinUCB regret](stochastic-linear-bandits-and-linucb-regret.md)
+
+## Related topics
+
+- [The information matrix is positive definite](../../../../../Analysis/control-theory/recursive-least-squares/pos-def-rls-information.md): with $P_0 = V_0^{-1}$ its information matrix is the Gram matrix $V_t$, so it also states that $V_t$ is positive definite when $V_0$ is.

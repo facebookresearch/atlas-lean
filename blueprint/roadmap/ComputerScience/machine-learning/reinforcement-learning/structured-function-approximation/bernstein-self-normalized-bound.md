@@ -30,7 +30,7 @@ Compared with the [sub-Gaussian self-normalized bound](self-normalized-bound-for
 
 ## Proof depends on
 
-- [Elliptical potential lemma](../multi-armed-bandits/elliptical-potential-lemma.md)
+- [Elliptical potential lemma](../multi-armed-bandits/linear-bandits/elliptical-potential-lemma.md)
 
 ## Expansion
 
