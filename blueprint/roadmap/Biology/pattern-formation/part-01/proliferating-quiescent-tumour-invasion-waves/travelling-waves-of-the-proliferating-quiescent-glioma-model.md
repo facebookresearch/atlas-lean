@@ -21,7 +21,7 @@ Every point $(0,w^*)$ is an equilibrium. **Theorem.** Suppose $g(w)=w\,G(w)$ wit
 
 ## Depends on
 
-- [Every Fisher–KPP front speed is at least the minimal speed](../../pattern-formation/fisher-kpp-travelling-waves/two-mul-sqrt-le-of-is-front.md)
+- [Every Fisher–KPP front speed is at least the minimal speed](../../fisher-kpp-travelling-waves/two-mul-sqrt-le-of-is-front.md)
 
 ## Expansion
 

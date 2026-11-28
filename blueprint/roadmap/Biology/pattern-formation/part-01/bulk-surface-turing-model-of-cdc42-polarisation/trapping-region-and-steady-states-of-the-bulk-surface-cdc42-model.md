@@ -25,7 +25,7 @@ $$\sqrt{c_2}<\min(c_{\max},m),\qquad u^*\in\bigl(\sqrt{c_2},\ \min(c_{\max},m)\b
 ## Depends on
 
 - [Bulk-surface activator–inhibitor model of Cdc42 polarisation](bulk-surface-activator-inhibitor-model-of-cdc42-polarisation.md)
-- [Diffusion-driven instability (Turing 1952)](../turing-patterns-and-diffusion-driven-instability/turing-instability.md)
+- [Diffusion-driven instability (Turing 1952)](../../turing-patterns-and-diffusion-driven-instability/turing-instability.md)
 
 ## Expansion
 
