@@ -15,6 +15,7 @@ public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceComponents
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceNegation
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifference
 public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceCycles
+public import MathlibExt.Combinatorics.Additive.RainbowPowerDifferenceShift
 
 /-! # Rainbow-free colorings for `x - y = z ^ k`
 
@@ -151,30 +152,6 @@ public theorem_wanted rainbowNumber_powDiff_of_odd (p k : ℕ) [Fact p.Prime] (h
     (¬ (∃ m : ℕ, p - 1 = 2 * m ∧ ∀ q : ℕ, q.Prime → q ∣ m → q ∣ k) →
       sInf {r : ℕ | 3 ≤ r ∧ ∀ c : ZMod p → Fin r, Function.Surjective c →
         ∃ x y z : ZMod p, x - y = z ^ k ∧ c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z} = 4)
-
-/-- **Shifting monochromatic strings by $k$-th powers.** Let $k$ be a natural number and let $c$
-be a coloring of the positive integers by three distinct colors $R$, $B$, $G$ with no rainbow
-solution of $x - y = z^k$: there are no positive integers $x, y, z$ with $x = y + z^k$ and
-$c(x)$, $c(y)$, $c(z)$ pairwise distinct. Assume that $R$ is dominant: for all positive integers
-$i$ and all $\ell \ge 0$, if $c$ takes exactly two colors on $\{i, i + 1, \dots, i + \ell - 1\}$,
-then one of them is $R$. Let $j$ be a positive integer with $c(j) = B$, and let $i \ge 1$ and
-$\ell \ge 0$ be such that $c(i + t) = G$ for all $0 \le t < \ell$. Then there is a color
-$e \in \{B, G\}$ with $c(i + j^k + t) = e$ for all $0 \le t < \ell$, and, if $j^k < i$, there
-is a color $e' \in \{B, G\}$ with $c(i - j^k + t) = e'$ for all $0 \le t < \ell$.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 2
-(`integers-2024-A105-lem-2`). -/
-public theorem_wanted monochromatic_shift_of_rainbowFree_powDiff (k : ℕ) (c : ℕ → Fin 3)
-    (hrf : ∀ x y z : ℕ, 0 < x → 0 < y → 0 < z → x = y + z ^ k →
-      ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
-    (R B G : Fin 3) (hRB : R ≠ B) (hRG : R ≠ G) (hBG : B ≠ G)
-    (hdom : ∀ i ℓ : ℕ, 0 < i → ((Finset.Ico i (i + ℓ)).image c).card = 2 →
-      R ∈ (Finset.Ico i (i + ℓ)).image c)
-    (j : ℕ) (hj : 0 < j) (hcj : c j = B) (i ℓ : ℕ) (hi : 0 < i)
-    (hG : ∀ t < ℓ, c (i + t) = G) :
-    (∃ e : Fin 3, (e = B ∨ e = G) ∧ ∀ t < ℓ, c (i + j ^ k + t) = e) ∧
-      (j ^ k < i → ∃ e : Fin 3, (e = B ∨ e = G) ∧ ∀ t < ℓ, c (i - j ^ k + t) = e)
 
 /-- **Coprime numbers of a non-dominant color cannot both have the $A$-property.** Let $k$ be a
 natural number, let $n_0 \ge 2$ be an integer, and let $c$ be a coloring of the positive
