@@ -20,12 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Prod
-public import Mathlib.Data.List.Perm.Basic
+public import CSLibExt.Complexity.NPComplete.TwoBarTilingDefs
 
 @[expose] public section
 
@@ -67,38 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the unit cells `(x, y)` of the polygon. -/
-abbrev TwoBarTilingInstance := List (ℕ × ℕ)
-
-/-- The grid graph on the unit cells of the quadrant: cells sharing an edge are adjacent. -/
-abbrev CellGraph : SimpleGraph (ℕ × ℕ) := SimpleGraph.hasse ℕ □ SimpleGraph.hasse ℕ
-
-/-- Well-formedness: the polygon has at least one cell, no cell is listed twice, and its cells
-are connected along their edges. -/
-def WellFormed (i : TwoBarTilingInstance) : Prop :=
-  i ≠ [] ∧ i.Nodup ∧ (CellGraph.induce {x | x ∈ i}).Connected
-
-/-- The cells of the bar placed at `p`: the horizontal bar `1 × m`, cells `(x + t, y)` for
-`t < m`, if `v = false`; the vertical bar `k × 1`, cells `(x, y + t)` for `t < k`, if
-`v = true`. -/
-def barCells (m k : ℕ) (v : Bool) (p : ℕ × ℕ) : List (ℕ × ℕ) :=
-  if v then (List.range k).map fun t => (p.1, p.2 + t)
-  else (List.range m).map fun t => (p.1 + t, p.2)
-
-/-- The polygon is tiled by the bars `1 × m` and `k × 1`: some placed bars (an orientation and a
-position each) cover every cell of the polygon exactly once and nothing else. -/
-def TwoBarTilingFeasible (m k : ℕ) (i : TwoBarTilingInstance) : Prop :=
-  ∃ bs : List (Bool × (ℕ × ℕ)), (bs.flatMap fun t => barCells m k t.1 t.2).Perm i
-
-open Classical in
-/-- TILING A POLYGON WITH THE BARS `1 × m` AND `k × 1` as a decision problem over bitstrings. -/
-noncomputable def twoBarTilingDec (m k : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoBarTilingInstance) x with
-  | some i => decide (WellFormed i ∧ TwoBarTilingFeasible m k i)
-  | none => false
 
 /-- **TILING A POLYGON WITH TWO BARS is NP-complete** for every fixed `m ≥ 2` and `k ≥ 3`.
 Source: Beauquier, Nivat, Rémila and Robson (1995); Horiyama, Ito, Nakatsuka, Suzuki and Uehara
