@@ -24,8 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.LongestPathWithForbiddenPairsDefs
 
 @[expose] public section
 
@@ -66,30 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, edge list, the list of pairs `C`, and the bound `K`. -/
-abbrev LongestPathWithForbiddenPairsInstance := ℕ × List (ℕ × ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- Well-formedness of an instance: the edge list is a simple graph on `0, …, n - 1`, the
-pairs use vertices below `n`, and `0 < K`. -/
-def WellFormed (i : LongestPathWithForbiddenPairsInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∀ c ∈ i.2.2.1, c.1 < i.1 ∧ c.2 < i.1) ∧ 0 < i.2.2.2
-
-/-- A simple path with at least `K` edges containing at most one vertex from each pair. -/
-def LongestPathWithForbiddenPairsFeasible (i : LongestPathWithForbiddenPairsInstance) : Prop :=
-  ∃ p : List ℕ, i.2.2.2 + 1 ≤ p.length ∧ p.Nodup ∧ (∀ v ∈ p, v < i.1) ∧
-    p.IsChain (fun u v => (u, v) ∈ i.2.1 ∨ (v, u) ∈ i.2.1) ∧
-      ∀ c ∈ i.2.2.1, c.1 ∈ p → c.2 ∈ p → c.1 = c.2
-
-open Classical in
-/-- LONGEST PATH WITH FORBIDDEN PAIRS as a decision problem over bitstrings. -/
-noncomputable def longestPathWithForbiddenPairsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := LongestPathWithForbiddenPairsInstance) x with
-  | some i => decide (WellFormed i ∧ LongestPathWithForbiddenPairsFeasible i)
-  | none => false
 
 /-- **LONGEST PATH WITH FORBIDDEN PAIRS is NP-complete.** Source: Crescenzi and Kann, LONGEST
 PATH WITH FORBIDDEN PAIRS; Garey and Johnson (1979), [GT54], [GT39]. -/

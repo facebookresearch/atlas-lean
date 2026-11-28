@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import WantedExt.Complexity.NPComplete.InducedPathWanted
+public import CSLibExt.Complexity.NPComplete.InducedPathBipartiteDefs
 
 @[expose] public section
 
@@ -54,20 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed INDUCED PATH instance whose graph is
-bipartite. -/
-def WellFormed (i : InducedPathInstance) : Prop :=
-  InducedPath.WellFormed i ∧ (InducedPath.Graph i).IsBipartite
-
-open Classical in
-/-- INDUCED PATH for bipartite graphs as a decision problem over bitstrings. -/
-noncomputable def inducedPathBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InducedPathInstance) x with
-  | some i => decide (WellFormed i ∧ InducedPathFeasible i)
-  | none => false
 
 /-- **INDUCED PATH for bipartite graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT23]; Yannakakis (1978). -/

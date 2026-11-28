@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import WantedExt.Complexity.NPComplete.HamiltonianCircuitCubicPlanarBiconnectedWanted
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitCubicPlanarBipartiteBiconnectedDefs
 
 @[expose] public section
 
@@ -62,22 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed instance of HAMILTONIAN CIRCUIT on 2-connected
-cubic planar graphs whose graph is also bipartite. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCircuitCubicPlanarBiconnected.WellFormed i ∧ (Graph i).IsBipartite
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on 2-connected cubic planar bipartite graphs as a decision problem over
-bitstrings. -/
-noncomputable def hamiltonianCircuitCubicPlanarBipartiteBiconnectedDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT is NP-complete on 2-connected cubic planar bipartite graphs.** Source:
 Akiyama, Nishizeki and Saito (1980); Garey and Johnson (1979), [GT37]. -/

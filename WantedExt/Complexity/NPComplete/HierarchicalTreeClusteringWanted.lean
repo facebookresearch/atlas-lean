@@ -18,10 +18,8 @@ Letters 27 (1988), 265-270, doi:10.1016/0020-0190(88)90090-7, problem (P6).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Bioinformatics.Phylogenetics.Splits
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.HierarchicalTreeClusteringDefs
 
 @[expose] public section
 
@@ -60,35 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the rows of the dissimilarity matrix `w` and the bound `K`. -/
-abbrev HierarchicalTreeClusteringInstance := List (List ℕ) × ℕ
-
-/-- The entry `w(a, b)` of the matrix. -/
-def entry (i : HierarchicalTreeClusteringInstance) (a b : ℕ) : ℕ :=
-  (i.1.getD a []).getD b 0
-
-/-- Well-formedness of an instance: the matrix is square, symmetric, zero exactly on the
-diagonal, and `K` is positive. -/
-def WellFormed (i : HierarchicalTreeClusteringInstance) : Prop :=
-  (∀ row ∈ i.1, row.length = i.1.length) ∧
-    (∀ a < i.1.length, ∀ b < i.1.length,
-      (entry i a b = 0 ↔ a = b) ∧ entry i a b = entry i b a) ∧ 0 < i.2
-
-/-- Some ultrametric `u` on `Fin n` has `∑_{x < y} |u(x, y) - w(x, y)| ≤ K`. -/
-def HierarchicalTreeClusteringFeasible (i : HierarchicalTreeClusteringInstance) : Prop :=
-  ∃ u : Fin i.1.length → Fin i.1.length → ℝ, IsUltrametric u ∧
-    ∑ x : Fin i.1.length, ∑ y ∈ Finset.univ.filter (x < ·),
-      |u x y - (entry i x y : ℝ)| ≤ i.2
-
-open Classical in
-/-- HIERARCHICAL-TREE CLUSTERING as a decision problem over bitstrings. -/
-noncomputable def hierarchicalTreeClusteringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HierarchicalTreeClusteringInstance) x with
-  | some i => decide (WellFormed i ∧ HierarchicalTreeClusteringFeasible i)
-  | none => false
 
 /-- **HIERARCHICAL-TREE CLUSTERING (ℓ₁ ultrametric fitting) is NP-complete.** Source: Křivánek
 and Morávek (1986); Křivánek (1988), problem (P6). -/

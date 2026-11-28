@@ -20,12 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.LocallyConnectedHamiltonianCircuitDefs
 
 @[expose] public section
 
@@ -64,24 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance whose graph has
-every vertex of degree at most `7` and is locally connected (every neighbourhood induces a
-connected graph). -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ (∀ v, (Graph i).degree v ≤ 7) ∧
-    ∀ v, ((Graph i).induce ((Graph i).neighborSet v)).Connected
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on locally connected graphs of maximum degree 7 as a decision problem
-over bitstrings. -/
-noncomputable def locallyConnectedHamiltonianCircuitDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on locally connected graphs of maximum degree 7 is NP-complete.**
 Source: Garey and Johnson (1979), [GT37]; Gordon, Orlovich, Potts and Strusevich (2011). -/

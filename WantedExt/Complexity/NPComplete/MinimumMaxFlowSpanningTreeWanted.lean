@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
-public import WantedExt.Complexity.NPComplete.ShortestTotalPathLengthSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.MinimumMaxFlowSpanningTreeDefs
 
 @[expose] public section
 
@@ -64,29 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- The number of unordered pairs `{x, y}` of vertices (each counted once, as `x < y`) that are
-not connected in `T` after the edge `{u, v}` is removed, including pairs already disconnected.
-When `T` is a spanning tree and `{u, v}` is one of its edges, this is the flow on that edge. -/
-noncomputable def edgeFlow {n : ℕ} (T : SimpleGraph (Fin n)) (u v : Fin n) : ℕ :=
-  (Finset.univ.filter fun p : Fin n × Fin n =>
-    p.1 < p.2 ∧ ¬ (T.deleteEdges {s(u, v)}).Reachable p.1 p.2).card
-
-/-- A spanning tree `T ≤ G` in which the flow on every edge is at most `B`. -/
-def MinimumMaxFlowSpanningTreeFeasible (i : ShortestTotalPathLengthSpanningTreeInstance) :
-    Prop :=
-  ∃ T : SimpleGraph (Fin i.1), T ≤ Graph i ∧ T.IsTree ∧
-    ∀ u v, T.Adj u v → edgeFlow T u v ≤ i.2.2
-
-open Classical in
-/-- MINIMUM MAX-FLOW SPANNING TREE as a decision problem over bitstrings. -/
-noncomputable def minimumMaxFlowSpanningTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShortestTotalPathLengthSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumMaxFlowSpanningTreeFeasible i)
-  | none => false
 
 /-- **MINIMUM MAX-FLOW SPANNING TREE is NP-complete.** Source: Johnson (1985), NP-completeness
 column 14, problem [1]; Camerini, Galbiati and Maffioli (1980). -/

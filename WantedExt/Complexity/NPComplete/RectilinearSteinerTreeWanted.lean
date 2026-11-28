@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.BigOperators.Finprod
-public import Mathlib.Algebra.Order.Group.Abs
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Data.Sym.Sym2
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.RectilinearSteinerTreeDefs
 
 @[expose] public section
 
@@ -57,49 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the points of `P`, each a pair of coordinates encoded as (positive part,
-negative part) pairs, and the bound `K`. -/
-abbrev RectilinearSteinerTreeInstance := List ((ℕ × ℕ) × (ℕ × ℕ)) × ℕ
-
-/-- The integer a (positive part, negative part) pair represents. -/
-def toInt (z : ℕ × ℕ) : ℤ := (z.1 : ℤ) - z.2
-
-/-- The point set `P ⊆ ℤ × ℤ` of the instance. -/
-def points (i : RectilinearSteinerTreeInstance) : Finset (ℤ × ℤ) :=
-  (i.1.map fun p => (toInt p.1, toInt p.2)).toFinset
-
-/-- The rectilinear (`L₁`) distance `|x₁ - x₂| + |y₁ - y₂|`. -/
-def rectilinear (a b : ℤ × ℤ) : ℤ := |a.1 - b.1| + |a.2 - b.2|
-
-/-- The rectilinear distance between the endpoints of an unordered pair of points. -/
-def edgeWeight {V : Finset (ℤ × ℤ)} : Sym2 V → ℤ :=
-  Sym2.lift ⟨fun a b => rectilinear a b, fun a b => by
-    simp only [rectilinear, abs_sub_comm (a : ℤ × ℤ).1, abs_sub_comm (a : ℤ × ℤ).2]⟩
-
-/-- The total weight of a graph on a finite set of points: the sum of the rectilinear lengths
-of its edges. -/
-noncomputable def totalWeight {V : Finset (ℤ × ℤ)} (T : SimpleGraph V) : ℤ :=
-  ∑ᶠ e ∈ T.edgeSet, edgeWeight e
-
-/-- Well-formedness of an instance: `0 < K`. -/
-def WellFormed (i : RectilinearSteinerTreeInstance) : Prop :=
-  0 < i.2
-
-/-- Some finite `Q ⊆ ℤ × ℤ` and some tree `T` on the vertex set `P ∪ Q` have total
-rectilinear weight at most `K`. -/
-def RectilinearSteinerTreeFeasible (i : RectilinearSteinerTreeInstance) : Prop :=
-  ∃ Q : Finset (ℤ × ℤ), ∃ T : SimpleGraph ↥(points i ∪ Q), T.IsTree ∧
-    totalWeight T ≤ i.2
-
-open Classical in
-/-- RECTILINEAR STEINER TREE as a decision problem over bitstrings. -/
-noncomputable def rectilinearSteinerTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RectilinearSteinerTreeInstance) x with
-  | some i => decide (WellFormed i ∧ RectilinearSteinerTreeFeasible i)
-  | none => false
 
 /-- **RECTILINEAR STEINER TREE is NP-complete.** Source: Garey and Johnson (1979), [ND13],
 comment; Garey and Johnson (1977). -/

@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Connectivity
+public import CSLibExt.Complexity.NPComplete.MaximumFixedLengthDisjointPathsDefs
 
 @[expose] public section
 
@@ -54,40 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list, the vertices `s` and `t`,
-the number of paths `J`, and the path length `K`. -/
-abbrev MaximumFixedLengthDisjointPathsInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MaximumFixedLengthDisjointPathsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), `s` and `t` are
-distinct vertices, and `0 < J ≤ n` and `0 < K ≤ n`. -/
-def WellFormed (i : MaximumFixedLengthDisjointPathsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ i.2.2.1 ≠ i.2.2.2.1 ∧
-    0 < i.2.2.2.2.1 ∧ i.2.2.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2.2.2 ∧ i.2.2.2.2.2 ≤ i.1
-
-/-- There are `J` distinct paths from `s` to `t`, each with exactly `K` edges, such that any two
-of them share no vertex other than `s` and `t`. -/
-def MaximumFixedLengthDisjointPathsFeasible (i : MaximumFixedLengthDisjointPathsInstance) :
-    Prop :=
-  ∃ hs : i.2.2.1 < i.1, ∃ ht : i.2.2.2.1 < i.1,
-    ∃ P : Fin i.2.2.2.2.1 → (Graph i).Walk ⟨i.2.2.1, hs⟩ ⟨i.2.2.2.1, ht⟩,
-      Function.Injective P ∧ (∀ k, (P k).IsPath ∧ (P k).length = i.2.2.2.2.2) ∧
-        Pairwise fun a b => SimpleGraph.InternallyDisjoint (P a) (P b)
-
-open Classical in
-/-- MAXIMUM FIXED-LENGTH DISJOINT PATHS as a decision problem over bitstrings. -/
-noncomputable def maximumFixedLengthDisjointPathsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumFixedLengthDisjointPathsInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumFixedLengthDisjointPathsFeasible i)
-  | none => false
 
 /-- **MAXIMUM FIXED-LENGTH DISJOINT PATHS is NP-complete.** Source: Garey and Johnson (1979),
 [ND42]; Itai, Perl and Shiloach (1982). -/

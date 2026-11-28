@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Bioinformatics.Phylogenetics.Splits
+public import CSLibExt.Complexity.NPComplete.MaximumAgreementSubtreeThreeTreesDefs
 
 @[expose] public section
 
@@ -60,46 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of leaves, the cluster lists of the three trees, and the bound
-`K`. -/
-abbrev MaximumAgreementSubtreeThreeTreesInstance :=
-  ℕ × List (List ℕ) × List (List ℕ) × List (List ℕ) × ℕ
-
-/-- The cluster system of a tree on the leaves `Fin n`, from its cluster lists. -/
-def clusters (n : ℕ) (T : List (List ℕ)) : Finset (Finset (Fin n)) :=
-  (T.map fun c => Finset.univ.filter fun x : Fin n => (x : ℕ) ∈ c).toFinset
-
-/-- The cluster system of the homeomorphic subtree `T|Y`: the nonempty sets `C ∩ Y` for the
-clusters `C` of `T`. -/
-def restrict {n : ℕ} (H : Finset (Finset (Fin n))) (Y : Finset (Fin n)) :
-    Finset (Finset (Fin n)) :=
-  (H.image fun C => C ∩ Y).filter fun C => C.Nonempty
-
-/-- Well-formedness of an instance: every listed leaf is in `X = Fin n`, and each tree's clusters
-form a hierarchy on `X`. -/
-def WellFormed (i : MaximumAgreementSubtreeThreeTreesInstance) : Prop :=
-  (∀ T ∈ [i.2.1, i.2.2.1, i.2.2.2.1], ∀ c ∈ T, ∀ x ∈ c, x < i.1) ∧
-    IsHierarchy Finset.univ (clusters i.1 i.2.1) ∧
-    IsHierarchy Finset.univ (clusters i.1 i.2.2.1) ∧
-    IsHierarchy Finset.univ (clusters i.1 i.2.2.2.1)
-
-/-- Some set `Y` of at least `K` leaves on which the three trees agree: `T₁|Y`, `T₂|Y` and
-`T₃|Y` have the same cluster system. -/
-def MaximumAgreementSubtreeThreeTreesFeasible
-    (i : MaximumAgreementSubtreeThreeTreesInstance) : Prop :=
-  ∃ Y : Finset (Fin i.1), i.2.2.2.2 ≤ Y.card ∧
-    restrict (clusters i.1 i.2.1) Y = restrict (clusters i.1 i.2.2.1) Y ∧
-    restrict (clusters i.1 i.2.2.1) Y = restrict (clusters i.1 i.2.2.2.1) Y
-
-open Classical in
-/-- MAXIMUM AGREEMENT SUBTREE for three trees as a decision problem over bitstrings. -/
-noncomputable def maximumAgreementSubtreeThreeTreesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumAgreementSubtreeThreeTreesInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumAgreementSubtreeThreeTreesFeasible i)
-  | none => false
 
 /-- **MAXIMUM AGREEMENT SUBTREE for three trees is NP-complete.** Source: Amir and Keselman
 (1997). -/

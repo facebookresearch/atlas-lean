@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Data.Multiset.MapFold
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.GraphMotifDefs
 
 @[expose] public section
 
@@ -55,39 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, the colors of the
-vertices in order, and the motif `M` as a list. -/
-abbrev GraphMotifInstance := ℕ × List (ℕ × ℕ) × List ℕ × List ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : GraphMotifInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The color of vertex `v`. -/
-def color (i : GraphMotifInstance) (v : Fin i.1) : ℕ :=
-  i.2.2.1.getD v 0
-
-/-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate edges
-in either orientation, no self-loops, endpoints in range), and there is one color per
-vertex. -/
-def WellFormed (i : GraphMotifInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1.length = i.1
-
-/-- Some vertex set `S` induces a connected subgraph and has color multiset `M`. -/
-def GraphMotifFeasible (i : GraphMotifInstance) : Prop :=
-  ∃ S : Finset (Fin i.1), ((Graph i).induce (S : Set (Fin i.1))).Connected ∧
-    S.val.map (color i) = (i.2.2.2 : Multiset ℕ)
-
-open Classical in
-/-- GRAPH MOTIF as a decision problem over bitstrings. -/
-noncomputable def graphMotifDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphMotifInstance) x with
-  | some i => decide (WellFormed i ∧ GraphMotifFeasible i)
-  | none => false
 
 /-- **GRAPH MOTIF is NP-complete.** Source: Fellows, Fertin, Hermelin and Vialette (2011);
 Lacroix, Fernandes and Sagot (2006). -/

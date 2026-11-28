@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.RectilinearSteinerTreeWanted
+public import CSLibExt.Complexity.NPComplete.LInfinitySteinerTreeDefs
 
 @[expose] public section
 
@@ -57,34 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The `L∞` distance `max {|x₁ - x₂|, |y₁ - y₂|}`. -/
-def chebyshev (a b : ℤ × ℤ) : ℤ := max |a.1 - b.1| |a.2 - b.2|
-
-/-- The `L∞` distance between the endpoints of an unordered pair of points. -/
-def edgeWeight {V : Finset (ℤ × ℤ)} : Sym2 V → ℤ :=
-  Sym2.lift ⟨fun a b => chebyshev a b, fun a b => by
-    simp only [chebyshev, abs_sub_comm (a : ℤ × ℤ).1, abs_sub_comm (a : ℤ × ℤ).2]⟩
-
-/-- The total weight of a graph on a finite set of points: the sum of the `L∞` lengths of its
-edges. -/
-noncomputable def totalWeight {V : Finset (ℤ × ℤ)} (T : SimpleGraph V) : ℤ :=
-  ∑ᶠ e ∈ T.edgeSet, edgeWeight e
-
-/-- Some finite `Q ⊆ ℤ × ℤ` and some tree `T` on the vertex set `P ∪ Q` have total `L∞`
-weight at most `K`. -/
-def LInfinitySteinerTreeFeasible (i : RectilinearSteinerTreeInstance) : Prop :=
-  ∃ Q : Finset (ℤ × ℤ), ∃ T : SimpleGraph ↥(points i ∪ Q), T.IsTree ∧
-    totalWeight T ≤ i.2
-
-open Classical in
-/-- GEOMETRIC STEINER TREE in the `L∞` metric as a decision problem over bitstrings. -/
-noncomputable def lInfinitySteinerTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RectilinearSteinerTreeInstance) x with
-  | some i => decide (RectilinearSteinerTree.WellFormed i ∧ LInfinitySteinerTreeFeasible i)
-  | none => false
 
 /-- **GEOMETRIC STEINER TREE in the `L∞` metric is NP-complete.** Source: Garey and Johnson
 (1979), [ND13], comment; Garey and Johnson (1977). -/

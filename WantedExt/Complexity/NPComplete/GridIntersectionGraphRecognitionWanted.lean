@@ -23,8 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.GridIntersectionGraphRecognitionDefs
 
 @[expose] public section
 
@@ -67,37 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the side sizes `a = |U|` and `b = |W|`, and the edge list of pairs `(u, w)`. -/
-abbrev GridIntersectionGraphRecognitionInstance := ℕ × ℕ × List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: no repeated edges, and every edge `(u, w)` has `u < a` and
-`w < b`. -/
-def WellFormed (i : GridIntersectionGraphRecognitionInstance) : Prop :=
-  i.2.2.Nodup ∧ ∀ e ∈ i.2.2, e.1 < i.1 ∧ e.2 < i.2.1
-
-/-- The graph is a grid intersection graph: horizontal segments `h u = (y, x₁, x₂)` for `U` and
-vertical segments `v w = (x, y₁, y₂)` for `W`, segments of one side pairwise disjoint, such that
-`(u, w)` is an edge exactly when `h u` and `v w` meet. -/
-def GridIntersectionGraphRecognitionFeasible (i : GridIntersectionGraphRecognitionInstance) :
-    Prop :=
-  ∃ (h : Fin i.1 → ℕ × ℕ × ℕ) (v : Fin i.2.1 → ℕ × ℕ × ℕ),
-    (∀ u, (h u).2.1 ≤ (h u).2.2) ∧ (∀ w, (v w).2.1 ≤ (v w).2.2) ∧
-    (∀ u u', u ≠ u' →
-      (h u).1 ≠ (h u').1 ∨ (h u).2.2 < (h u').2.1 ∨ (h u').2.2 < (h u).2.1) ∧
-    (∀ w w', w ≠ w' →
-      (v w).1 ≠ (v w').1 ∨ (v w).2.2 < (v w').2.1 ∨ (v w').2.2 < (v w).2.1) ∧
-    ∀ (u : Fin i.1) (w : Fin i.2.1), ((u : ℕ), (w : ℕ)) ∈ i.2.2 ↔
-      ((h u).2.1 ≤ (v w).1 ∧ (v w).1 ≤ (h u).2.2 ∧ (v w).2.1 ≤ (h u).1 ∧ (h u).1 ≤ (v w).2.2)
-
-open Classical in
-/-- GRID INTERSECTION GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def gridIntersectionGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GridIntersectionGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ GridIntersectionGraphRecognitionFeasible i)
-  | none => false
 
 /-- **GRID INTERSECTION GRAPH RECOGNITION is NP-complete.** Source: Kratochvíl (1994). -/
 public theorem_wanted gridIntersectionGraphRecognition_npComplete :

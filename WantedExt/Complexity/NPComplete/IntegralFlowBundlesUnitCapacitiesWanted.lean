@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IntegralFlowBundlesWanted
+public import CSLibExt.Complexity.NPComplete.IntegralFlowBundlesUnitCapacitiesDefs
 
 @[expose] public section
 
@@ -63,21 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed INTEGRAL FLOW WITH BUNDLES instance in which
-every bundle has capacity `1` and consists of exactly two distinct arcs. -/
-def WellFormed (i : IntegralFlowBundlesInstance) : Prop :=
-  IntegralFlowBundles.WellFormed i ∧ ∀ b ∈ i.2.2.2.2.1, b.2 = 1 ∧ b.1.toFinset.card = 2
-
-open Classical in
-/-- INTEGRAL FLOW WITH BUNDLES with unit capacities and two-arc bundles as a decision problem
-over bitstrings. -/
-noncomputable def integralFlowBundlesUnitCapacitiesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntegralFlowBundlesInstance) x with
-  | some i => decide (WellFormed i ∧ IntegralFlowBundlesFeasible i)
-  | none => false
 
 /-- **INTEGRAL FLOW WITH BUNDLES with unit capacities and two-arc bundles is NP-complete.**
 Source: Garey and Johnson (1979), [ND36], comment; Sahni (1974). -/

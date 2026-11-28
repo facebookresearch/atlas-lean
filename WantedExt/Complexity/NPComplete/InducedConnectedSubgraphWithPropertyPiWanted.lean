@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import WantedExt.Complexity.NPComplete.InducedSubgraphWithPropertyPiWanted
+public import CSLibExt.Complexity.NPComplete.InducedConnectedSubgraphWithPropertyPiDefs
 
 @[expose] public section
 
@@ -68,28 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `Φ` holds for arbitrarily large connected graphs but not for all connected graphs. -/
-def IsConnectedNontrivial (Φ : GraphProperty) : Prop :=
-  (∀ m, ∃ n, m ≤ n ∧ ∃ G : SimpleGraph (Fin n), G.Connected ∧ Φ n G) ∧
-    ∃ n, ∃ G : SimpleGraph (Fin n), G.Connected ∧ ¬ Φ n G
-
-/-- Some set of at least `K` vertices induces a connected subgraph with property `Φ`: for some
-`m ≥ K` and some injective `f : Fin m ↪ Fin n`, the subgraph induced by the range of `f` is
-connected and has `Φ`. -/
-def InducedConnectedSubgraphWithPropertyPiFeasible (Φ : GraphProperty)
-    (i : InducedSubgraphWithPropertyPiInstance) : Prop :=
-  ∃ m, i.2.2 ≤ m ∧ ∃ f : Fin m ↪ Fin i.1,
-    ((Graph i).comap f).Connected ∧ Φ m ((Graph i).comap f)
-
-open Classical in
-/-- INDUCED CONNECTED SUBGRAPH WITH PROPERTY `Φ` as a decision problem over bitstrings. -/
-noncomputable def inducedConnectedSubgraphWithPropertyPiDec (Φ : GraphProperty) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InducedSubgraphWithPropertyPiInstance) x with
-  | some i => decide (WellFormed i ∧ InducedConnectedSubgraphWithPropertyPiFeasible Φ i)
-  | none => false
 
 /-- **INDUCED CONNECTED SUBGRAPH WITH PROPERTY Π is NP-complete** for every hereditary property
 `Π` that holds for arbitrarily large connected graphs but not for all connected graphs and can

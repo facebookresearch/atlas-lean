@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import WantedExt.Complexity.NPComplete.InducedPathWanted
+public import CSLibExt.Complexity.NPComplete.InducedCycleDefs
 
 @[expose] public section
 
@@ -61,20 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some set of `m ≥ K` vertices, `m ≥ 3`, induces a simple cycle on `m` vertices: the cycle
-graph on `m` vertices is an induced subgraph of the instance graph. -/
-def InducedCycleFeasible (i : InducedPathInstance) : Prop :=
-  ∃ m, i.2.2 ≤ m ∧ 3 ≤ m ∧ (SimpleGraph.cycleGraph m).IsIndContained (InducedPath.Graph i)
-
-open Classical in
-/-- INDUCED CYCLE as a decision problem over bitstrings. -/
-noncomputable def inducedCycleDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InducedPathInstance) x with
-  | some i => decide (InducedPath.WellFormed i ∧ InducedCycleFeasible i)
-  | none => false
 
 /-- **INDUCED CYCLE is NP-complete.** Source: Garey and Johnson (1979), [GT23];
 Yannakakis (1978). -/

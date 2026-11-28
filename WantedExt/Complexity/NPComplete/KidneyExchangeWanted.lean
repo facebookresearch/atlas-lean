@@ -18,11 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Dynamics.PeriodicPts.Defs
-public import Mathlib.Logic.Equiv.Defs
+public import CSLibExt.Complexity.NPComplete.KidneyExchangeDefs
 
 @[expose] public section
 
@@ -56,36 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edge list (a pair `(u, v)` is the
-edge `u → v`), and the cycle-length bound `L`. -/
-abbrev KidneyExchangeInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The directed graph of the instance, with an edge `u → v` for each pair `(u, v)` of the
-edge list. -/
-def Graph (i : KidneyExchangeInstance) : Digraph (Fin i.1) where
-  Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2.1
-
-/-- Well-formedness of an instance: no repeated edges, endpoints in range, no loops (an edge
-goes from one agent to another), and `L ≥ 3`. Opposite edges `u → v` and `v → u` may both
-occur. -/
-def WellFormed (i : KidneyExchangeInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2) ∧ 3 ≤ i.2.2
-
-/-- `G` admits a perfect cycle cover containing cycles of length at most `L`: there is a
-permutation `σ` of the vertices with an edge from every vertex `v` to `σ v` and with every
-cycle of length at most `L`. -/
-def KidneyExchangeFeasible (i : KidneyExchangeInstance) : Prop :=
-  ∃ σ : Equiv.Perm (Fin i.1), ∀ v, (Graph i).Adj v (σ v) ∧ Function.minimalPeriod σ v ≤ i.2.2
-
-open Classical in
-/-- KIDNEY EXCHANGE as a decision problem over bitstrings. -/
-noncomputable def kidneyExchangeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KidneyExchangeInstance) x with
-  | some i => decide (WellFormed i ∧ KidneyExchangeFeasible i)
-  | none => false
 
 /-- **KIDNEY EXCHANGE (perfect cycle cover with cycles of length at most L) is NP-complete.**
 Source: Abraham, Blum and Sandholm (2007), Theorem 1. -/

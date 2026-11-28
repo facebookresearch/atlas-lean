@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Set.Card
-public import WantedExt.Complexity.NPComplete.IsomorphicSpanningTreeWanted
+public import CSLibExt.Complexity.NPComplete.IsomorphicSpanningTreeFullBinaryDefs
 
 @[expose] public section
 
@@ -61,26 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `T` is a full binary tree: a tree that, rooted at a suitable vertex, has one vertex, or a
-root `r` of degree `2` with every other vertex of degree `1` or `3`. -/
-def IsFullBinary {m : ℕ} (T : SimpleGraph (Fin m)) : Prop :=
-  T.IsTree ∧ (m = 1 ∨ ∃ r : Fin m, (T.neighborSet r).ncard = 2 ∧
-    ∀ v, v ≠ r → (T.neighborSet v).ncard = 1 ∨ (T.neighborSet v).ncard = 3)
-
-/-- Well-formedness of an instance: the parent's (simple edge lists, `T` a tree), and `T` is a
-full binary tree (which repeats the tree condition). -/
-def WellFormed (i : IsomorphicSpanningTreeInstance) : Prop :=
-  IsomorphicSpanningTree.WellFormed i ∧ IsFullBinary (TreeGraph i)
-
-open Classical in
-/-- ISOMORPHIC SPANNING TREE for full binary trees as a decision problem over bitstrings. -/
-noncomputable def isomorphicSpanningTreeFullBinaryDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IsomorphicSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ IsomorphicSpanningTreeFeasible i)
-  | none => false
 
 /-- **ISOMORPHIC SPANNING TREE is NP-complete for full binary trees.** Source: Garey and
 Johnson (1979), [ND8], comment (b); Papadimitriou and Yannakakis (1978; published 1982). -/

@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.Graph.MengerVertex
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.MaximumLengthBoundedDisjointPathsDefs
 
 @[expose] public section
 
@@ -59,39 +56,6 @@ reduction from every language in `NP`
 -/
 
 open MathlibExt.Combinatorics.SimpleGraph.MengerVertexWanted
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), edge list, `s`, `t`, `J`, `K`. -/
-abbrev MaximumLengthBoundedDisjointPathsInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : MaximumLengthBoundedDisjointPathsInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list is simple (endpoints in range, no self-loops,
-no repeated or reversed edges), `s` and `t` are distinct vertices, and `0 < J ≤ |V|` and
-`0 < K ≤ |V|`. -/
-def WellFormed (i : MaximumLengthBoundedDisjointPathsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ i.2.2.1 ≠ i.2.2.2.1 ∧
-    0 < i.2.2.2.2.1 ∧ i.2.2.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2.2.2 ∧ i.2.2.2.2.2 ≤ i.1
-
-/-- There are `J` different paths from `s` to `t` in `G`, pairwise sharing no vertex other than
-`s` and `t`, each with at most `K` edges. -/
-def MaximumLengthBoundedDisjointPathsFeasible
-    (i : MaximumLengthBoundedDisjointPathsInstance) : Prop :=
-  ∃ (hs : i.2.2.1 < i.1) (ht : i.2.2.2.1 < i.1)
-    (paths : Fin i.2.2.2.2.1 → (Graph i).Path ⟨i.2.2.1, hs⟩ ⟨i.2.2.2.1, ht⟩),
-    Function.Injective paths ∧ IsInternallyVertexDisjointSTPaths paths ∧
-      ∀ j, (paths j).val.length ≤ i.2.2.2.2.2
-
-open Classical in
-/-- MAXIMUM LENGTH-BOUNDED DISJOINT PATHS as a decision problem over bitstrings. -/
-noncomputable def maximumLengthBoundedDisjointPathsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MaximumLengthBoundedDisjointPathsInstance) x with
-  | some i => decide (WellFormed i ∧ MaximumLengthBoundedDisjointPathsFeasible i)
-  | none => false
 
 /-- **MAXIMUM LENGTH-BOUNDED DISJOINT PATHS is NP-complete.** Source: Garey and Johnson (1979),
 [ND41]; Itai, Perl, and Shiloach (1982). -/

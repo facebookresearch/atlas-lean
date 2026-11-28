@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.VertexConnectivity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitThreeConnectedCubicBipartiteDefs
 
 @[expose] public section
 
@@ -64,23 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance (at least one
-vertex, simple edge list on `Fin n`) whose graph is 3-connected, cubic and bipartite. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ (Graph i).IsVertexConnected 3 ∧
-    (Graph i).IsRegularOfDegree 3 ∧ (Graph i).IsBipartite
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on 3-connected cubic bipartite graphs as a decision problem over
-bitstrings. -/
-noncomputable def hamiltonianCircuitThreeConnectedCubicBipartiteDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on 3-connected cubic bipartite graphs is NP-complete.** Source:
 Akiyama, Nishizeki and Saito (1980); Garey and Johnson (1979), [GT37]. -/

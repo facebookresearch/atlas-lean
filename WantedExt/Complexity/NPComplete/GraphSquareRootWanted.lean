@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Square
+public import CSLibExt.Complexity.NPComplete.GraphSquareRootDefs
 
 @[expose] public section
 
@@ -53,31 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` and edge list. -/
-abbrev GraphSquareRootInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : GraphSquareRootInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : GraphSquareRootInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- Some graph `H` on the same vertices has square `G`. -/
-def GraphSquareRootFeasible (i : GraphSquareRootInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), H.square = Graph i
-
-open Classical in
-/-- GRAPH SQUARE ROOT as a decision problem over bitstrings. -/
-noncomputable def graphSquareRootDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphSquareRootInstance) x with
-  | some i => decide (WellFormed i ∧ GraphSquareRootFeasible i)
-  | none => false
 
 /-- **GRAPH SQUARE ROOT is NP-complete.** Source: Motwani and Sudan (1994). -/
 public theorem_wanted graphSquareRoot_npComplete :

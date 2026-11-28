@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import CSLibExt.Complexity.NPComplete.IsomorphicSpanningTreeDefs
 
 @[expose] public section
 
@@ -52,40 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` and edge list of `G`, vertex count `m` and edge list
-of `T`. -/
-abbrev IsomorphicSpanningTreeInstance := ℕ × List (ℕ × ℕ) × ℕ × List (ℕ × ℕ)
-
-/-- The graph `G` of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : IsomorphicSpanningTreeInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The tree `T` of the instance as a `SimpleGraph (Fin m)`. -/
-def TreeGraph (i : IsomorphicSpanningTreeInstance) : SimpleGraph (Fin i.2.2.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.2.2.1 i.2.2.2
-
-/-- Well-formedness of an instance: both edge lists describe simple graphs (no duplicate
-edges in either orientation, no self-loops, endpoints in range), and `T` is a tree. -/
-def WellFormed (i : IsomorphicSpanningTreeInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (i.2.2.2.Nodup ∧ ∀ e ∈ i.2.2.2,
-      e.1 < i.2.2.1 ∧ e.2 < i.2.2.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.2.2) ∧
-    (TreeGraph i).IsTree
-
-/-- `G` contains a spanning tree isomorphic to `T`: a tree `H` on all vertices of `G`, with
-`H ≤ G`, and a graph isomorphism `H ≃g T`. -/
-def IsomorphicSpanningTreeFeasible (i : IsomorphicSpanningTreeInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), H ≤ Graph i ∧ H.IsTree ∧ Nonempty (H ≃g TreeGraph i)
-
-open Classical in
-/-- ISOMORPHIC SPANNING TREE as a decision problem over bitstrings. -/
-noncomputable def isomorphicSpanningTreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IsomorphicSpanningTreeInstance) x with
-  | some i => decide (WellFormed i ∧ IsomorphicSpanningTreeFeasible i)
-  | none => false
 
 /-- **ISOMORPHIC SPANNING TREE is NP-complete.** Source: Garey and Johnson (1979), [ND8];
 Papadimitriou and Yannakakis (1982). -/

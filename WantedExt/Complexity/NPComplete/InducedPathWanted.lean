@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
+public import CSLibExt.Complexity.NPComplete.InducedPathDefs
 
 @[expose] public section
 
@@ -54,33 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev InducedPathInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : InducedPathInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and `0 < K ≤ |V|`. -/
-def WellFormed (i : InducedPathInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
-
-/-- Some set of `m ≥ K` vertices induces a simple path on `m` vertices: the path graph on `m`
-vertices is an induced subgraph of the instance graph. -/
-def InducedPathFeasible (i : InducedPathInstance) : Prop :=
-  ∃ m, i.2.2 ≤ m ∧ (SimpleGraph.pathGraph m).IsIndContained (Graph i)
-
-open Classical in
-/-- INDUCED PATH as a decision problem over bitstrings. -/
-noncomputable def inducedPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := InducedPathInstance) x with
-  | some i => decide (WellFormed i ∧ InducedPathFeasible i)
-  | none => false
 
 /-- **INDUCED PATH is NP-complete.** Source: Garey and Johnson (1979), [GT23];
 Yannakakis (1978), Theorem 4. -/

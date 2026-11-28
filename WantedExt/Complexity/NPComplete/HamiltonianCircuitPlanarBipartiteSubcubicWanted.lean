@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitPlanarBipartiteSubcubicDefs
 
 @[expose] public section
 
@@ -69,23 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance (`0 < n`, simple
-edge list) whose graph is bipartite, planar, and has every vertex of degree at most 3. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ (Graph i).IsBipartite ∧ (Graph i).IsPlanar ∧
-    ∀ v, (Graph i).degree v ≤ 3
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT ON PLANAR BIPARTITE GRAPHS OF MAXIMUM DEGREE 3 as a decision problem over
-bitstrings. -/
-noncomputable def hamiltonianCircuitPlanarBipartiteSubcubicDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT ON PLANAR BIPARTITE GRAPHS OF MAXIMUM DEGREE 3 is NP-complete.** Source:
 Garey and Johnson (1979), [GT37]; Akiyama, Nishizeki and Saito (1980). -/

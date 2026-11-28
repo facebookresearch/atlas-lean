@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCircuitRegularWanted
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitCubicPlanarDefs
 
 @[expose] public section
 
@@ -69,20 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance on a `3`-regular
-graph (`0 < n`, simple edge list, every vertex of degree 3) whose graph is planar. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCircuitRegular.WellFormed 3 i ∧ (Graph i).IsPlanar
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT ON PLANAR CUBIC GRAPHS as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitCubicPlanarDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT ON PLANAR CUBIC GRAPHS is NP-complete.** Source: Garey and Johnson (1979),
 [GT37]; Garey, Johnson and Tarjan (1976). -/

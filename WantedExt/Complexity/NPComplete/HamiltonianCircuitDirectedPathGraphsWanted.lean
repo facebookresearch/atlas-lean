@@ -22,11 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import MathlibExt.Combinatorics.SimpleGraph.Dichromatic
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitDirectedPathGraphsDefs
 
 @[expose] public section
 
@@ -74,32 +70,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is a directed path graph: for some tree `T` on `Fin m` and some orientation `D` of its
-edges (MathlibExt's `SimpleGraph.IsOrientation`), each vertex `v` of `G` has the vertex set `P v`
-of a path of `T` whose edges all follow `D`, and distinct vertices are adjacent in `G` exactly when
-their paths share a vertex. -/
-def IsDirectedPathGraph {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ (m : ℕ) (T : SimpleGraph (Fin m)) (D : Fin m → Fin m → Prop), T.IsTree ∧
-    T.IsOrientation D ∧
-    ∃ P : Fin n → Finset (Fin m),
-      (∀ v, ∃ (a b : Fin m) (p : T.Walk a b), p.IsPath ∧ (∀ d ∈ p.darts, D d.fst d.snd) ∧
-        p.support.toFinset = P v) ∧
-      ∀ u v, u ≠ v → (G.Adj u v ↔ (P u ∩ P v).Nonempty)
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance (`0 < n`, simple
-edge list) whose graph is a directed path graph. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ IsDirectedPathGraph (Graph i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT ON DIRECTED PATH GRAPHS as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitDirectedPathGraphsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT ON DIRECTED PATH GRAPHS is NP-complete.** Source: Garey and Johnson
 (1979), [GT37]; Narasimhan (1989). -/

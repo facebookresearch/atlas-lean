@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.InducedSubgraphWithPropertyPiWanted
+public import CSLibExt.Complexity.NPComplete.InducedPlanarSubgraphDefs
 
 @[expose] public section
 
@@ -62,16 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph property "planar": a graph on `Fin m` has a crossing-free straight-line drawing
-(`SimpleGraph.IsPlanar`). -/
-def planarProperty : InducedSubgraphWithPropertyPi.GraphProperty :=
-  fun _ G => G.IsPlanar
-
-/-- INDUCED PLANAR SUBGRAPH as a decision problem over bitstrings: INDUCED SUBGRAPH WITH
-PROPERTY Π for `Π` = planar. -/
-noncomputable def inducedPlanarSubgraphDec : MetaMathlibExt.ComplexityTheory.DecisionProblem :=
-  InducedSubgraphWithPropertyPi.inducedSubgraphWithPropertyPiDec planarProperty
 
 /-- **INDUCED PLANAR SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979), [GT27],
 comment; Krishnamoorthy and Deo (1979); Yannakakis (1978). -/

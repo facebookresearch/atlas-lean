@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IntegralFlowHomologousArcsWanted
+public import CSLibExt.Complexity.NPComplete.IntegralFlowHomologousArcsUnitCapacitiesDefs
 
 @[expose] public section
 
@@ -64,21 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed INTEGRAL FLOW WITH HOMOLOGOUS ARCS instance
-in which every arc has capacity `1`. -/
-def WellFormed (i : IntegralFlowHomologousArcsInstance) : Prop :=
-  IntegralFlowHomologousArcs.WellFormed i ∧ ∀ a ∈ i.2.1, a.2.2 = 1
-
-open Classical in
-/-- INTEGRAL FLOW WITH HOMOLOGOUS ARCS with unit capacities as a decision problem over
-bitstrings. -/
-noncomputable def integralFlowHomologousArcsUnitCapacitiesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntegralFlowHomologousArcsInstance) x with
-  | some i => decide (WellFormed i ∧ IntegralFlowHomologousArcsFeasible i)
-  | none => false
 
 /-- **INTEGRAL FLOW WITH HOMOLOGOUS ARCS with unit capacities is NP-complete.** Source: Garey
 and Johnson (1979), [ND35], comment; Even, Itai and Shamir (1976). -/

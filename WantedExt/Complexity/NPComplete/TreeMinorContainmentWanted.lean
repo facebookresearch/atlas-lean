@@ -25,10 +25,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import WantedExt.Complexity.NPComplete.GraphMinorTestingWanted
+public import CSLibExt.Complexity.NPComplete.TreeMinorContainmentDefs
 
 @[expose] public section
 
@@ -72,20 +69,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH MINOR TESTING instance (two simple edge
-lists) in which both `G` and `H` are trees. -/
-def WellFormed (i : GraphMinorTestingInstance) : Prop :=
-  GraphMinorTesting.WellFormed i ∧ (hostGraph i).G.IsTree ∧ (patternGraph i).G.IsTree
-
-open Classical in
-/-- TREE MINOR CONTAINMENT as a decision problem over bitstrings. -/
-noncomputable def treeMinorContainmentDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphMinorTestingInstance) x with
-  | some i => decide (WellFormed i ∧ GraphMinorTestingFeasible i)
-  | none => false
 
 /-- **TREE MINOR CONTAINMENT is NP-complete.** Source: Matoušek and Thomas (1992); Gima,
 Kumabe, Kurita, Okada and Otachi (2024), Section 1; Johnson (1987), Section 1. -/

@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.PerfectGraph
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.HamiltonianCircuitPerfectDefs
 
 @[expose] public section
 
@@ -81,20 +78,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance (at least one
-vertex and a simple edge list on the vertices `0, ..., n - 1`) whose graph is perfect. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ IsPerfect (Graph i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT for perfect graphs as a decision problem over bitstrings. -/
-noncomputable def hamiltonianCircuitPerfectDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT for perfect graphs is NP-complete.** Source: Garey and Johnson (1979),
 [GT37]; Akiyama, Nishizeki and Saito (1980); de Figueiredo, de Melo, Sasaki and Silva (2022),
