@@ -1,8 +1,8 @@
-# Strategy synthesis for global window PCTL with randomized strategies is undecidable
+# Strategy synthesis for global window L-PCTL with history-dependent randomized strategies is undecidable
 
-Whether a Markov decision process has a history-dependent randomized strategy under which every reachable state satisfies a bounded-horizon PCTL formula with linear probability constraints is undecidable: coRE-complete for flat non-strict formulas, and $\Sigma^1_1$-hard for flat formulas with strict inequalities.
+Whether a Markov decision process has a history-dependent randomized strategy under which every history reachable from the initial state satisfies a bounded-horizon PCTL formula with linear probability constraints is undecidable: coRE-complete for flat non-strict formulas, and $\Sigma^1_1$-hard for flat formulas with strict inequalities.
 
-**Setting (Bordais, Busatto-Gaston, Guha and Raskin).** $L$-PCTL extends [PCTL](../pctl.md) by linear constraints between probabilities: state formulas are built from literals $p$, $\neg p$ with $\wedge$, $\vee$ and inequalities $\sum_{i=1}^n c_i \Pr(\varphi_i) \succcurlyeq c_0$ with integer $c_i$ and ${\succcurlyeq} \in \{\geq, >\}$, and path formulas are $\mathbf{X}^{\ell}\Phi$, $\Phi_1 \mathbf{U}^{\ell} \Phi_2$, $\Phi_1 \mathbf{W}^{\ell} \Phi_2$ with $\ell \in \mathbb{N} \cup \{\infty\}$. A *window formula* uses only finite horizons $\ell$ (encoded in unary); it is *flat* if probability operators are not nested and *non-strict* if every inequality uses $\geq$. A *global window formula* $\forall\mathbf{G}\,\Phi$, with $\Phi$ a window formula, holds in a state of a Markov chain when every state reachable from it satisfies $\Phi$. The *synthesis problem* asks, given a finite [Markov decision process](../markov-decision-processes-and-adversaries.md) $M$, whose probabilities are rational numbers written as pairs of integers in binary, and a formula, whether some strategy $\sigma$, history-dependent and randomized unless restricted, makes the induced Markov chain $M[\sigma]$ satisfy the formula.
+**Setting (Bordais, Busatto-Gaston, Guha and Raskin).** $L$-PCTL extends [PCTL](../pctl.md) by linear constraints between probabilities: state formulas are built from literals $p$, $\neg p$ with $\wedge$, $\vee$ and inequalities $\sum_{i=1}^n c_i \Pr(\varphi_i) \succcurlyeq c_0$ with integer $c_i$ and ${\succcurlyeq} \in \{\geq, >\}$, and path formulas are $\mathbf{X}^{\ell}\Phi$ with $\ell \in \mathbb{N}$ and $\Phi_1 \mathbf{U}^{\ell} \Phi_2$, $\Phi_1 \mathbf{W}^{\ell} \Phi_2$ with $\ell \in \mathbb{N} \cup \{\infty\}$ (Definition 5). A *window formula* uses only finite horizons $\ell$ (encoded in unary); it is *flat* if probability operators are not nested and *non-strict* if every inequality uses $\geq$. A *global window formula* $\forall\mathbf{G}\,\Phi$, with $\Phi$ a window formula, holds in a state of a Markov chain when every state reachable from it satisfies $\Phi$; the states of the induced chain $M[\sigma]$ are the finite histories of $M$, so under a history-dependent strategy the condition ranges over histories. The *synthesis problem* asks, given a finite [Markov decision process](../markov-decision-processes-and-adversaries.md) $M$, whose probabilities are rational numbers written as pairs of integers in binary, and a formula, whether some strategy $\sigma$, history-dependent and randomized unless restricted, makes the induced Markov chain $M[\sigma]$ satisfy the formula at its initial state (Definition 6).
 
 **Theorem (Bordais, Busatto-Gaston, Guha and Raskin).** The synthesis problem for flat, non-strict global window $L$-PCTL formulas is in coRE (Theorem 24 of arXiv:2204.14107v1) and coRE-hard (Theorem 37), hence undecidable.
 
@@ -17,7 +17,7 @@ With strict inequalities allowed, the synthesis problem for flat global window $
 
 ## Proof depends on
 
-None.
+- [Two-counter machines are universal](../../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 
 ## Expansion
 
