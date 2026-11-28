@@ -213,7 +213,7 @@ theorem representation_map {M N : LieModuleCat.{w} R L} (f : M ⟶ N) (a : U) (m
         exact f'.map_lie x m)
       (by
         intro a b ha hb m
-        rw [map_mul, map_mul, Module.End.mul_apply, Module.End.mul_apply, ha, hb])
+        rw [map_mul, map_mul, mul_apply_eq_comp, mul_apply_eq_comp, ha, hb])
       (by
         intro a b ha hb m
         rw [map_add, map_add, LinearMap.add_apply, LinearMap.add_apply]
@@ -307,11 +307,6 @@ def unitIso (M : LieModuleCat.{w} R L) :
           map_add' := fun _ _ => rfl
           map_smul' := by
             intro r m
-            change @SMul.smul R M M.moduleStructure.toDistribMulAction.toMulAction.toSMul r m =
-              @SMul.smul R (restrictObj R L (representObj R L M))
-                (restrictObj R L (representObj R L M)).moduleStructure
-                  .toDistribMulAction.toMulAction.toSMul
-                  r m
             exact (restrict_represent_smul R L M r m).symm }
       map_lie' := by
         intro x m
@@ -322,11 +317,6 @@ def unitIso (M : LieModuleCat.{w} R L) :
           map_add' := fun _ _ => rfl
           map_smul' := by
             intro r m
-            change @SMul.smul R (restrictObj R L (representObj R L M))
-                (restrictObj R L (representObj R L M)).moduleStructure
-                  .toDistribMulAction.toMulAction.toSMul
-                  r m =
-              @SMul.smul R M M.moduleStructure.toDistribMulAction.toMulAction.toSMul r m
             exact restrict_represent_smul R L M r m }
       map_lie' := by
         intro x m
