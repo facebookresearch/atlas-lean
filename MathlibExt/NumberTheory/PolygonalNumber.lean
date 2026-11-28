@@ -26,6 +26,8 @@ truncated-subtraction semantics enter the definition itself.
 ## References
 
 * Zhi-Wei Sun, *On universal sums of polygonal numbers*, Sci. China Math. 58 (2015), 1367–1396.
+* `Nat.le_polygonalNumber` and `Nat.polygonalNumber_mono` use the proofs of
+  [`polygonal_ge` and `polygonal_mono`](https://github.com/facebookresearch/atlas-lean/blob/9d8271ad4f924cdcdd560e3f0a65c9149fb2daaa/MathlibExt/NumberTheory/PracticalPolygonalSumsPracticalAddPolygonalExceptions.lean#L64-L74).
 -/
 
 namespace Nat
