@@ -14,6 +14,7 @@ The scheme-theoretic foundations of algebraic geometry: points, immersions, smoo
 - [Relative group laws on schemes](relative-group-laws-on-schemes/README.md)
 - [Smooth morphisms](smooth-morphisms/README.md)
 - [Varieties over a field](varieties-over-a-field/README.md)
+- [Branch locus of a composite](morphism-restrict-comp.md)
 - [Zariski's main theorem](zariski-s-main-theorem/README.md)
 - [Affine group schemes and Hopf algebras](affine-group-schemes-and-hopf-algebras/README.md)
 - [Projective schemes and adic thickenings](projective-schemes-and-adic-thickenings/README.md)

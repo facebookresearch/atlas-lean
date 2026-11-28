@@ -1,0 +1,15 @@
+# Leaf Insertion Counterexample
+
+- [Lrc far Left off S](lrc-far-left-off-s.md)
+- [Lrc reaches Far Left off S](lrc-reaches-far-left-off-s.md)
+- [Lrc ring S](lrc-ring-s.md)
+- [Lrc u Prime](lrc-u-prime.md)
+- [Lrc cell ne](lrc-cell-ne.md)
+- [Lrc origin isolated](lrc-origin-isolated.md)
+- [Lrc eq of walk from isolated](lrc-eq-of-walk-from-isolated.md)
+- [Lrc insert not connected](lrc-insert-not-connected.md)
+- [Lrc ring connected](lrc-ring-connected.md)
+- [Lrc leaf Removable false](lrc-leaf-removable-false.md)
+- [Lrc adj of nat Abs](lrc-adj-of-nat-abs.md)
+- [Lrc arc leaf Hypothesis false](lrc-arc-leaf-hypothesis-false.md)
+- [Lrc leaf Removable of reaches Far Left](lrc-leaf-removable-of-reaches-far-left.md)
