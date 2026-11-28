@@ -8,13 +8,7 @@
       "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #970)",
       "upstream_sha256": "227d35dcce355fe08e5cf125f5857dfe2528cbcdfafc9f6c92376098944b9d8b"
     },
-    {
-      "path": "MathlibExt/Combinatorics/AcceleratedZeckendorfGame.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "27b3f2600c3405e14af2eab2cb03dc498431792087cf68245019e991ba3967d2",
-      "rationale": "Moved from WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted.lean when the Fibonacci combine statement was proved, preserving declaration names, statements, and definitions. Also: prove Theorem 1.8 of The Accelerated Zeckendorf Game here without changing its statement. Prove Lemma 2.4 here with its original signature. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Prove Proposition 1.5 of The Accelerated Zeckendorf Game in the publicly imported proved module, preserving the declaration and docstring."
-    },
+    {"path": "MathlibExt/Combinatorics/AcceleratedZeckendorfGame.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "1352d0147897adbd483c5605f0a131623864ac7a86ee1d315909eb839fe0e91d", "rationale": "Moved from WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted.lean when the Fibonacci combine statement was proved, preserving declaration names, statements, and definitions. Also: prove Theorem 1.8 of The Accelerated Zeckendorf Game here without changing its statement. Prove Lemma 2.4 here with its original signature. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Prove Proposition 1.5 of The Accelerated Zeckendorf Game in the publicly imported proved module, preserving the declaration and docstring. Also: Expose documented lemmas for move and complete-game rules, Zeckendorf counts, and the absence of infinite play without exposing the rank."},
     {
       "path": "MathlibExt/Combinatorics/AcceleratedZeckendorfGameFibonacci.lean",
       "backport": "pending",
@@ -22,6 +16,7 @@
       "published_sha256": "e274d5430400790958e052b2e48a2cc7bd66fe44b32551a01cd3cbb7acf53ba9",
       "rationale": "Prove Lemma 2.3 of The Accelerated Zeckendorf Game, preserving the declaration moved from WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted.lean. Also: Prove the sharp game-length bound of Theorem 1.4 by batching the Fibonacci trajectories for the Zeckendorf summands."
     },
+    {"path": "MathlibExt/Combinatorics/AcceleratedZeckendorfGameTermination.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "ac6bce0c4a275007403fce9c90ed60bf5cd30c72eef7fe38ddc862e70ec554ae", "rationale": "Prove Theorem 1.3 of The Accelerated Zeckendorf Game, preserving the declaration moved from WantedExt/Combinatorics/AcceleratedZeckendorfGameWanted.lean. Also: Use the public game API in place of private imports, preserving the theorem statement and docstring."},
     {
       "path": "MathlibExt/Combinatorics/AccessibleSets.lean",
       "backport": "pending",
@@ -575,6 +570,7 @@
       "published_sha256": "32359e4a601cc9d0a122d8d3fb52299a4f1215553460be01263a2f9e8114ac72",
       "rationale": "Moved from WantedExt/Combinatorics/Additive/SquareWeightedZeroSumWanted.lean when the wanted statement was proved, together with the two definitions its statement uses; same names and statements. Also: Restate docstrings to match the Lean statements (Atlas wiki audit, #975). Also: move the unit-square and weighted zero-sum definitions and prove the even-power lifting theorem in MathlibExt (Paul and Paul, Lemma 13), preserving declaration statements and the public re-export, and aligning the Lemma 13 citation with the journal version. Clarify the preprint and published hypotheses and why the restriction matters at modulus one. Also: Document both public zero-sum results and distinguish squares of units from nonzero-square weights in the module overview. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Additive/SquareWeightedZeroSumWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Prove Paul and Paul, Lemma 5, by relating scaled canonical representatives to the smaller modulus, keeping the published statement and docstring. Also: Prove Paul and Paul, Lemma 7, by the Chinese remainder theorem, moving its statement and docstring from the wanted module unchanged."
     },
+    {"path": "MathlibExt/Combinatorics/Additive/SquareWeightedZeroSumTwoPower.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c5e0d20052293980ade660c22cecf8ad5509cf159045bf7ef0294bd5e6c99ffb", "rationale": "Move and prove the square-weighted zero-sum obstruction for unit triples from the wanted module, preserving its name, statement and docstring (Paul and Paul, Lemma 10)."},
     {
       "path": "MathlibExt/Combinatorics/Additive/SumsetsMinimumDistinctTerms.lean",
       "backport": "pending",
@@ -1378,13 +1374,7 @@
       "published_sha256": "74887f3e1f736ef56d93c4b41745a3f66e90c91953e52f66cd721f04a0359635",
       "rationale": "Moved the alternating binomial power sum, its example value, and its recurrence statement from WantedExt/Combinatorics/Enumerative/HypersequenceWeightedSumsWanted.lean when the recurrences were proved, preserving their names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/HypersequenceWeightedSumsWanted.lean that Formal-Math does not have yet (its backport is still owed)."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/AlternatingBinomialPowerSumStirling.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "94be9f39aaf36e31659e424e06d78c024653fd6a7fb7aed6ad335ba1946f331e",
-      "rationale": "Moved the Boyadzhiev and Katsuura formulas for alternating binomial power sums from WantedExt/Combinatorics/Enumerative/HypersequenceWeightedSumsWanted.lean when they were proved, preserving their name, statement and docstring. Also: Restate docstrings to match the Lean statements (Atlas wiki audit, #976)"
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/AlternatingBinomialPowerSumStirling.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0fe9bf1e85c74399743b849b89edd1f4d488c4432e8cafd478b85a0cacda4263", "rationale": "Moved the Boyadzhiev and Katsuura formulas for alternating binomial power sums from WantedExt/Combinatorics/Enumerative/HypersequenceWeightedSumsWanted.lean when they were proved, preserving their name, statement and docstring. Also: Restate docstrings to match the Lean statements (Atlas wiki audit, #976) Also: Moved and proved alternatingBinomialPowerSum_special_values here from WantedExt, preserving its statement and source docstring."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/AlternatingCentralBinomialConvolution.lean",
       "backport": "pending",
@@ -1406,13 +1396,7 @@
       "published_sha256": "a7c2c8eb25a6826062cea2f4a92f9e59d039cafbae3e3b4b23c58c7623a101a4",
       "rationale": "Move and prove the first identity of Adegoke’s Proposition 3 from WantedExt/Combinatorics/Enumerative/KnuthOldSumWanted.lean, preserving its name, exact statement and source docstring."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/AlzerRichardsBernoulliDerivatives.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "cce5fbff5ec7f93e1e42fa82b57c4af6a452cf3cbd2562237053aa48f3ae3be5",
-      "rationale": "Moved the derivative identity for x/(1 - e^x) from WantedExt/Combinatorics/Enumerative/AlzerRichardsIdentitiesWanted.lean when it was proved, preserving its name and statement. Also: Prove and move the derivative formula for powers of (1 - e^x)/x, preserving its name, statement and docstring. Also: Reuse the existing signed exponential-power derivative formula in StirlingSecondExpDeriv instead of proving a separate recurrence."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/AlzerRichardsBernoulliDerivatives.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b55afe2b4f4cd3f3c8cfb227ec93bc15624cefa62637eec24a1b9a5231733ee5", "rationale": "Moved the derivative identity for x/(1 - e^x) from WantedExt/Combinatorics/Enumerative/AlzerRichardsIdentitiesWanted.lean when it was proved, preserving its name and statement. Also: Prove and move the derivative formula for powers of (1 - e^x)/x, preserving its name, statement and docstring. Also: Reuse the existing signed exponential-power derivative formula in StirlingSecondExpDeriv instead of proving a separate recurrence. Also: Prove Lemma 3, Equation (26), by factoring out the zero at the origin and applying Leibniz's rule; preserve the original declaration and docstring."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/AlzerRichardsBernoulliSum.lean",
       "backport": "pending",
@@ -1602,13 +1586,7 @@
       "published_sha256": "7ac91b72124a2c076d3f90378ffe7f887f71e4500a7283c1e3106788db707e56",
       "rationale": "Moved from WantedExt/Combinatorics/Enumerative/ParkingFunctionStatisticsWanted.lean when the ascent-set identity was proved. The rearrangement definitions, base case, example and theorem retain their names and statements. The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/ParkingFunctionStatisticsWanted.lean that Formal-Math does not have yet (its backport is still owed)."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/Avoid2313124.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "b04fac49ce28e26fdd268f59eaa7a7e92f034868c8b6eeb07b799e68221994b2",
-      "rationale": "Moved from WantedExt/Combinatorics/Enumerative/OddFibonacciWanted.lean when the position count for permutations avoiding 231 and 3124 was proved. The moved declarations retain their names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/OddFibonacciWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Keep the five pattern definitions together in their original order to preserve the elaborated finite numerals."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/Avoid2313124.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e2f780a7ff0960646218289b15c2f9f4e62e612b830f94e9141ab58e4093fd48", "rationale": "Moved from WantedExt/Combinatorics/Enumerative/OddFibonacciWanted.lean when the position count for permutations avoiding 231 and 3124 was proved. The moved declarations retain their names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/OddFibonacciWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Keep the five pattern definitions together in their original order to preserve the elaborated finite numerals. Also: Prove the total count of permutations avoiding 231 and 3124 using the position count, and document the sources."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/BAryBinomialCoefficient.lean",
       "backport": "pending",
@@ -1672,13 +1650,7 @@
       "rationale": "ATLAS-side edit not in formal-math: retire private copies of Mathlib lemmas, citing the Mathlib lemmas at their uses (#1085 batch 1, #1867); Restate docstrings to match the Lean statements (Atlas wiki audit, #970)",
       "upstream_sha256": "d91c9d0f9075df1b9badfb60357b3e6febff83bcda36030cb942ef0882adf580"
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/BellRiordanTotalPositivity.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "df66e0c1f43b1edc0b347b044d2a3f161b54ed5f270c472573c057b281fab7bb",
-      "rationale": "Move the Bell-type Riordan array theorem from WantedExt/Combinatorics/Enumerative/BellRiordanTotalPositivityWanted.lean after proving it, preserving its name, statement and documentation. Also: Restate docstrings to match the Lean statements (Atlas wiki audit, #976). Also: Moved `riordanArray_hasNonnegativeMinors_of_coeffMatrix` from WantedExt/Combinatorics/Enumerative/BellRiordanTotalPositivityWanted.lean when proved, with the same names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/BellRiordanTotalPositivityWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Moved `bellRiordanArray_hasNonnegativeMinors_of_pf` from WantedExt/Combinatorics/Enumerative/BellRiordanTotalPositivityWanted.lean when proved, with the same names and statements. Prove the Pólya frequency criterion by composing two Bell arrays."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/BellRiordanTotalPositivity.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "fe2e11c4255ab2a9fbd7f7f552c4a8f11359cfffc3e682d571d831f636ec4686", "rationale": "Move the Bell-type Riordan array theorem from WantedExt/Combinatorics/Enumerative/BellRiordanTotalPositivityWanted.lean after proving it, preserving its name, statement and documentation. Also: Restate docstrings to match the Lean statements (Atlas wiki audit, #976). Also: Moved `riordanArray_hasNonnegativeMinors_of_coeffMatrix` from WantedExt/Combinatorics/Enumerative/BellRiordanTotalPositivityWanted.lean when proved, with the same names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/BellRiordanTotalPositivityWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Moved `bellRiordanArray_hasNonnegativeMinors_of_pf` from WantedExt/Combinatorics/Enumerative/BellRiordanTotalPositivityWanted.lean when proved, with the same names and statements. Prove the Pólya frequency criterion by composing two Bell arrays. Also: Prove the parameter criterion from Theorem 2 by factoring the Riordan array and move the declaration here with its statement and docstring unchanged."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/BellStirlingSum.lean",
       "backport": "pending",
@@ -1727,6 +1699,7 @@
       "published_sha256": "229e49c588c1b36e8e28ac1470595a014efa4c94313488c7b670f789b4a62853",
       "rationale": "Moved binomial_inversion_iff from WantedExt/Combinatorics/Enumerative/CarlitzTypeQPolynomialsWanted.lean when the wanted statement was proved; same name and statement. Also: When `binomial_inversion_iff` moved here in #6247, its docstring carried the Atlas wiki audit restatement of #976, which the row of WantedExt/Combinatorics/Enumerative/CarlitzTypeQPolynomialsWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."
     },
+    {"path": "MathlibExt/Combinatorics/Enumerative/BinomialPolynomialRescale.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f1be02dfbea6337c7996deaeec3013533d0279b3539ccfb5fac8e60bdc8e9c22", "rationale": "Move Adegoke's weighted binomial polynomial identity (Corollary 6, equation (53)) from WantedExt/Combinatorics/Enumerative/KnuthOldSumWanted.lean when proved, retaining its name, statement and source docstring."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/BinomialSumRecurrences.lean",
       "backport": "pending",
@@ -2077,6 +2050,7 @@
       "published_sha256": "f26e9b0f56718d3c3977345fe29a8deeb26af92f4727600754a81656ffa43797",
       "rationale": "Moved from WantedExt/Combinatorics/Enumerative/CyclicPatternAvoidingStacksWanted.lean when the assertion about reduction and iterates was proved, preserving the names, definitions, statements, and docstrings. The docstring backport from the original module remains pending. Also: Moved `reductionSeq_cyclicSortingMachine_123_reductionSeq` from WantedExt/Combinatorics/Enumerative/CyclicPatternAvoidingStacksWanted.lean when proved, with the same names and statements. Prove the one-pass reduction identity with shared induction on consecutive-pair expansions."
     },
+    {"path": "MathlibExt/Combinatorics/Enumerative/CyclicSortingMachine123Iterates.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e2fd892724628d9ba0bfdb0380b87c7cd03c8ba3d41fc430f1c48117c2d21b7e", "rationale": "Move cyclicSortingMachine_123_iterate_sorts from WantedExt/Combinatorics/Enumerative/CyclicPatternAvoidingStacksWanted.lean unchanged in name, statement and docstring, and prove the sharp iteration bound by induction on reduced length and by tracing the parity-split witnesses."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/CyclicSortingMachineReductionLength.lean",
       "backport": "pending",
@@ -2105,13 +2079,7 @@
       "published_sha256": "e1b5ff9087134483008758314610a05ae7f2b5b5fd88438a5c56ab1e618a9dd7",
       "rationale": "Moved the alternating binomial sum from WantedExt/Combinatorics/Enumerative/DegenerateHarmonicRiordanWanted.lean when it was proved, together with the existing definitions and lemmas, preserving names and statements. Also: Moved the rank partial-sum convolution here from the wanted module when it was proved, preserving its name and statement. Also: Moved `degenerateHarmonicRank_shifted_exp_weighted_sum` from WantedExt/Combinatorics/Enumerative/DegenerateHarmonicRiordanWanted.lean when proved, with the same names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/DegenerateHarmonicRiordanWanted.lean that Formal-Math does not have yet (its backport is still owed)."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/DelannoyConstructions.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "dbfa14fd2b343988843313b6384ac2480292e5f88e531ce25cadad22555d6783",
-      "rationale": "Moved the adjacent-binomial parity statement from WantedExt/Combinatorics/Enumerative/DelannoyConstructionsWanted.lean when it was proved, with the same name and statement. Also: Moved the iterated horizontal sum parity theorem for binomial seeds from the wanted module to the proved Delannoy constructions module, with the same name and statement. Also: Moved the row congruence for positive iterates of the horizontal sum from the wanted module to the proved module, with the same name and statement. Also: Moved the upper and lower generalized Delannoy definitions and their completed results from the wanted module to the proved module, including the newly proved horizontal sum identity, with the same names and statements. Also: Moved the first horizontal sum congruence for binomial seeds from the wanted module to the proved Delannoy constructions module, preserving its name and statement. Also: Proved the horizontal difference identity and moved it from WantedExt/Combinatorics/Enumerative/DelannoyConstructionsWanted.lean with the same name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/DelannoyConstructionsWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Proved Edwards and Griffiths's vertical sum identity for positive upper index and moved it from the wanted module, preserving its name, type, and source docstring. Also: Prove Edwards and Griffiths's Delannoy binomial sum (Theorem 8) with the original name, statement, and docstring in MathlibExt; keep the legacy public import. Also: Prove Edwards and Griffiths's vertical difference identity (Corollary 6) with the original name, statement, and docstring in MathlibExt. Also: Wrap the theorem statement to satisfy the line-length lint; the type and proof are unchanged."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/DelannoyConstructions.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "0434b18547831c62a25d5efd741d833026f75dd0a2f2980f0f5fd44b2bc4b1bd", "rationale": "Moved the adjacent-binomial parity statement from WantedExt/Combinatorics/Enumerative/DelannoyConstructionsWanted.lean when it was proved, with the same name and statement. Also: Moved the iterated horizontal sum parity theorem for binomial seeds from the wanted module to the proved Delannoy constructions module, with the same name and statement. Also: Moved the row congruence for positive iterates of the horizontal sum from the wanted module to the proved module, with the same name and statement. Also: Moved the upper and lower generalized Delannoy definitions and their completed results from the wanted module to the proved module, including the newly proved horizontal sum identity, with the same names and statements. Also: Moved the first horizontal sum congruence for binomial seeds from the wanted module to the proved Delannoy constructions module, preserving its name and statement. Also: Proved the horizontal difference identity and moved it from WantedExt/Combinatorics/Enumerative/DelannoyConstructionsWanted.lean with the same name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/DelannoyConstructionsWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Proved Edwards and Griffiths's vertical sum identity for positive upper index and moved it from the wanted module, preserving its name, type, and source docstring. Also: Prove Edwards and Griffiths's Delannoy binomial sum (Theorem 8) with the original name, statement, and docstring in MathlibExt; keep the legacy public import. Also: Prove Edwards and Griffiths's vertical difference identity (Corollary 6) with the original name, statement, and docstring in MathlibExt. Also: Wrap the theorem statement to satisfy the line-length lint; the type and proof are unchanged. Also: Proved the sharp power-of-two divisibility of iterated horizontal sums (Theorem 18), preserving the name, statement, and docstring."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/DelannoyRowsParity.lean",
       "backport": "pending",
@@ -2179,13 +2147,7 @@
       "rationale": "ATLAS-side edit not in formal-math: retire private copies of Mathlib lemmas, citing the Mathlib lemmas at their uses (#1085 batch 1, #1867); Restate docstrings to match the Lean statements (Atlas wiki audit, #970)",
       "upstream_sha256": "e104078207e25e93848d4140a18e9b8def0de974e182abb3411d54312984cdfe"
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/DoubleAscentDescent.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "75bb47aa292c5c1e9f7ce5cd987196bbe238cfc18c8ebe06514b65bb9eec67d8",
-      "rationale": "Moved from WantedExt/Combinatorics/Enumerative/TwoPatternAvoidanceCountsWanted.lean when the double ascent and double descent generating function identity was proved. The moved declarations retain their names and statements. Elaborate the ascent and descent counts and their generating function in source order to preserve the terms shared with the double ascent and double descent identity. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/TwoPatternAvoidanceCountsWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Use the permutation descent count from PermutationStatistics in the generating function."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/DoubleAscentDescent.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "86a1e00010389ade7aab2d16a5e724539fc021453966993f563856006589638b", "rationale": "Moved from WantedExt/Combinatorics/Enumerative/TwoPatternAvoidanceCountsWanted.lean when the double ascent and double descent generating function identity was proved. The moved declarations retain their names and statements. Elaborate the ascent and descent counts and their generating function in source order to preserve the terms shared with the double ascent and double descent identity. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/TwoPatternAvoidanceCountsWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Use the permutation descent count from PermutationStatistics in the generating function. Also: Move the public HasPattern decision instance to the already publicly imported PatternContainment module, without changing its name or type."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/DoubleBinomialSumReduction.lean",
       "backport": "pending",
@@ -2862,13 +2824,8 @@
       "published_sha256": "a50f1e7a0911d189370c803300ff3ad5900cab5d2f4025b415c732ca24b31c3a",
       "rationale": "Moved the generating-function identity from WantedExt/Combinatorics/Enumerative/InversionSequencePatternSetsWanted.lean when the wanted statement was proved, preserving its name and statement."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/InversionSequencePatternSets.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "cc59e4228e1413187f69391681c16340106ec419f47630af0dfdb4ef300eca67",
-      "rationale": "Moved from WantedExt/Combinatorics/Enumerative/InversionSequencePatternSetsWanted.lean when the five-pattern equivalence was proved, preserving the declaration names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/InversionSequencePatternSetsWanted.lean that Formal-Math does not have yet (its backport is still owed)."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/InversionSequenceAvoidSeven.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "9337194159a2efb8e82bd78a8ff4836310229aefdbbe064c5db4f23a9f87c4a6", "rationale": "Move the generating-function identity from WantedExt/Combinatorics/Enumerative/InversionSequencePatternSetsWanted.lean with its statement and docstring unchanged, and prove Mansour’s Theorem 16 by counting compatible subsets of prefix values. Also: Use the public comparison API from InversionSequencePatternSets instead of private declarations from another proof."},
+    {"path": "MathlibExt/Combinatorics/Enumerative/InversionSequencePatternSets.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "a9ec4059a82c17c502a3c6afbfceb50c59494ea1dc745c5a0ae79f72bd1339e7", "rationale": "Moved from WantedExt/Combinatorics/Enumerative/InversionSequencePatternSetsWanted.lean when the five-pattern equivalence was proved, preserving the declaration names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/InversionSequencePatternSetsWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Expose the existing triple-order predicate and containment characterization as documented public declarations, with a lemma for the six comparisons."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/InversionSequenceWilf201210.lean",
       "backport": "pending",
@@ -3842,6 +3799,7 @@
       "published_sha256": "721f885abb670a19a5af71c216822db0be55d8f19e805cd99e3e0a651999617e",
       "rationale": "Move the signed triangular sum identity from WantedExt/Combinatorics/Enumerative/Partition/MercaDistinctPartsSumWanted.lean after proving it, preserving its full name, statement, and docstring."
     },
+    {"path": "MathlibExt/Combinatorics/Enumerative/Partition/MercaSquareSum.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "f5b32bb05587f6550ffa3064cb97dd7aa652b3be359283e67d9b257f674ee02f", "rationale": "Move the signed square convolution from WantedExt/Combinatorics/Enumerative/Partition/MercaDistinctPartsSumWanted.lean after proving it, preserving its full name, statement, and docstring. Also: Reuse the formal Gauss identity from OverpartitionCongruence by identifying its rescaled theta series coefficientwise."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/Partition/MercaTwiceSquareSum.lean",
       "backport": "pending",
@@ -4167,13 +4125,7 @@
       "published_sha256": "ccb2093bc167c9d85f50cbe598ae1ca6c8bddf603af5e3e361e6aefe2f5384d3",
       "rationale": "Moved from WantedExt/Combinatorics/Enumerative/PascalStirlingGeneralizationWanted.lean, which keeps its other wanted statements, when its theorem_wanted powerSeriesFactorialMatrix_mul was proved, together with the definition powerSeriesFactorialMatrix and the completed lemma powerSeriesFactorialMatrix_apply_self: same names, statements and docstrings. The moved docstrings keep the Atlas wiki audit restatement recorded for that wanted file, still pending backport."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/PatternContainment.lean",
-      "backport": "not-needed",
-      "disposition": "diverged",
-      "published_sha256": "ae447cff16eeb64704ec6d17901cfdec69dd5e14ad466cd01e87efc7a9d8e8f9",
-      "rationale": "Moved from WantedExt/Combinatorics/Enumerative/OddFibonacciWanted.lean when the double ascent and double descent generating function identity was proved. The moved declarations retain their names and statements."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/PatternContainment.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "dbe3f03af28e4da176369061f4fe4c5b574415f1a601ad4f2dc13365a907be06", "rationale": "Moved from WantedExt/Combinatorics/Enumerative/OddFibonacciWanted.lean when the double ascent and double descent generating function identity was proved. The moved declarations retain their names and statements. Also: Host the existing computable HasPattern decision instance in the module that defines containment, retaining its public name and type."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/PeakStatistic231.lean",
       "backport": "pending",
@@ -4463,13 +4415,7 @@
       "published_sha256": "baee3ba0ce421776aa02500ee22beb6407f2a48f6e3fffad955b0799a5eeb1c7",
       "rationale": "Moved from WantedExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopolesWanted.lean when the no-bud criterion was proved. The moved declarations keep their names and statements. Also: Restate docstrings to match the Lean statements (Atlas wiki audit, #978) Also: Prove cycleCount_bounds_of_reduced in MathlibExt using the existing cycle count API. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopolesWanted.lean that Formal-Math does not have yet (its backport is still owed)."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopolesGenusBounds.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "59ccecb4f06dfd30660eaef00b794224b94803c0ae5fe328ed1ad69f2b7872f9",
-      "rationale": "Move the genus bounds from WantedExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopolesWanted.lean after proving them, preserving the theorem name, statement, and docstring."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopolesGenusBounds.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "6bbfaabd37daec849ccd84023df69a54a3da1e404790821058f76a0e641315b4", "rationale": "Move the genus bounds from WantedExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopolesWanted.lean after proving them, preserving the theorem name, statement, and docstring. Also: Move and prove the fixed-genus counting formula (Cori and Hetyei, Proposition 15), preserving its name, statement, and docstring. Also: Use Mathlib's public rotation cycle-type lemma instead of importing a private Zagier proof helper."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/ReducedUnicellularHypermonopolesVanishing.lean",
       "backport": "pending",
@@ -4507,13 +4453,7 @@
       "published_sha256": "345fd2d3515f5602dd2dc28c601cc6e02641e91d0c3889300f4581d616a1a806",
       "rationale": "Moved from WantedExt/Combinatorics/Enumerative/TenOeisConjecturesWanted.lean when the repeating-decimal ratio count was proved, preserving its name, statement and docstring. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/TenOeisConjecturesWanted.lean that Formal-Math does not have yet (its backport is still owed)."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/RestrictedCombinations.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "3a55f5625bf09211d6235a92c83417f62d477279079d49bb1cf11f6afe51ee5b",
-      "rationale": "Moved from WantedExt/Combinatorics/Enumerative/RestrictedCombinationsWanted.lean when the wanted statement was proved; same names and statements. Also: Move the restricted-combination counting definitions and the generating-function identity for forbidden differences 1 and 4 from WantedExt/Combinatorics/Enumerative/RestrictedCombinationsWanted.lean, preserving their names and statements and proving the identity. Also: Prove the generating-function identity for forbidden differences 1 and 5 using the recurrence on blocked positions, sharing the prepend bijection with the 1 and 4 proof."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/RestrictedCombinations.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "e34e668b2fec9a9b5af932a6a055cb54653a6ade5e7110f966faeb53aad33d6d", "rationale": "Moved from WantedExt/Combinatorics/Enumerative/RestrictedCombinationsWanted.lean when the wanted statement was proved; same names and statements. Also: Move the restricted-combination counting definitions and the generating-function identity for forbidden differences 1 and 4 from WantedExt/Combinatorics/Enumerative/RestrictedCombinationsWanted.lean, preserving their names and statements and proving the identity. Also: Prove the generating-function identity for forbidden differences 1 and 5 using the recurrence on blocked positions, sharing the prepend bijection with the 1 and 4 proof. Also: Prove the restricted combination and overlap tiling counts from the existing bijection and polynomial identity, and cite the two published sources."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/RestrictedMaximalSetsOfLanes.lean",
       "backport": "pending",
@@ -4631,13 +4571,7 @@
       "published_sha256": "b25a1dc20d4ed5dea36aaed7e33ff8d8e9106a6943659c27affb81e66c650b0e",
       "rationale": "Moved harmonic_eq_sum_inv_choose_add_sum_sabarNumber from WantedExt/Combinatorics/Enumerative/SabarTriangleWanted.lean unchanged in name, statement and docstring, and proved it using the order-one case of Frisch’s identity."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/SabarTriangle.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "d17cf8867423ae6aae72aefbf30e96ddea7bd586f8ce2831de070207ad8b171c",
-      "rationale": "Moved from WantedExt/Combinatorics/Enumerative/SabarTriangleWanted.lean, which keeps its other wanted statements, when its theorem_wanted sum_inv_choose_succ_eq_one_add_sum_sabarNumber was proved, together with the definition sabarNumber and its two decided checks sabarNumber_rows_five_ten and sabarNumber_recurrence_small: same namespace, declaration names, statements and definition body. The moved docstrings keep the Atlas wiki audit restatement recorded for that wanted file (#978), still pending backport. Also: sum_sabarNumber_div_succ_eq_harmonic is proved here with its original name, statement and docstring (INTEGERS 26, Article A27, Theorem 3)."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/SabarTriangle.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b10eb7803582995c1a95273844f47908d6f8965c20c38c54f833f67eaa0dcf85", "rationale": "Moved from WantedExt/Combinatorics/Enumerative/SabarTriangleWanted.lean, which keeps its other wanted statements, when its theorem_wanted sum_inv_choose_succ_eq_one_add_sum_sabarNumber was proved, together with the definition sabarNumber and its two decided checks sabarNumber_rows_five_ten and sabarNumber_recurrence_small: same namespace, declaration names, statements and definition body. The moved docstrings keep the Atlas wiki audit restatement recorded for that wanted file (#978), still pending backport. Also: sum_sabarNumber_div_succ_eq_harmonic is proved here with its original name, statement and docstring (INTEGERS 26, Article A27, Theorem 3). Also: Prove Sabar Theorem 7 (INTEGERS 26, Article A27) using Pascal’s identity and the consecutive Whitt relation, preserving the original statement and docstring."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/SabarWeightedBinomialSum.lean",
       "backport": "pending",
@@ -4810,6 +4744,7 @@
       "published_sha256": "9e622be4e7c8902eccea2b4b749bc101d21718561597aa9af7efd98bf5c973e5",
       "rationale": "Move the existing Lemma 9 statement and docstring from WantedExt/Combinatorics/Enumerative/SignedInversionSequenceLength2Wanted.lean unchanged and prove it by the bar-toggle bijection."
     },
+    {"path": "MathlibExt/Combinatorics/Enumerative/SignedInversionSequenceLength2TwoFactorial.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "20c6f07173c70257d8991f39c00d641c661aa5045498aa8b42feb72b5951f466", "rationale": "Move the statement of signedInvAvoidCount_eq_two_mul_factorial from WantedExt/Combinatorics/Enumerative/SignedInversionSequenceLength2Wanted.lean and prove it by counting unbarred and single-bar sequences separately."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/SignedLargePartCompositions.lean",
       "backport": "pending",
@@ -4854,13 +4789,7 @@
       "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #970)",
       "upstream_sha256": "a82dbb4140e5f0ec26b38f41dbdcc835d7e89c113efc417867474382d1dc5cfb"
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/SmallestCycleMoment.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "5519bd323b44dfe80096abb73241873895bdc9bf6ef156e2a6789f57b73678c6",
-      "rationale": "Move the higher-moment estimate from WantedExt/Combinatorics/Enumerative/SmallestCycleBuchstabWanted.lean when proving it, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/SmallestCycleBuchstabWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Moved `smallest_cycle_mean_asymp` from WantedExt/Combinatorics/Enumerative/SmallestCycleBuchstabWanted.lean when proved, with the same names and statements. Add a proof of the mean asymptotic of the smallest cycle that does not use the Buchstab function (generating function of the tail increments and Abel's limit theorem), and extend the module docstring to cover the mean."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/SmallestCycleMoment.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5401eb83470fc783c043023102b26597a9d4d9b5977b010521d82e6467ff5108", "rationale": "Move the higher-moment estimate from WantedExt/Combinatorics/Enumerative/SmallestCycleBuchstabWanted.lean when proving it, preserving its name and statement. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/Enumerative/SmallestCycleBuchstabWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Moved `smallest_cycle_mean_asymp` from WantedExt/Combinatorics/Enumerative/SmallestCycleBuchstabWanted.lean when proved, with the same names and statements. Add a proof of the mean asymptotic of the smallest cycle that does not use the Buchstab function (generating function of the tail increments and Abel's limit theorem), and extend the module docstring to cover the mean. Also: Prove the unchanged smallest-cycle variance estimate using the second moment and mean asymptotics, and document their sources. Also: Pinpoint the earlier moment asymptotics to Section 4, Theorem 5, of Panario and Richmond. Also: Note that Gravel and Panario, Remark 1, restore the omitted contribution on [1, 2) to the permutation variance integral in Panario and Richmond, Section 4, Theorem 5; move the proof overview above the references and reuse Mathlib's abs_sub."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/SmarandachePermutationSequence.lean",
       "backport": "pending",
@@ -5117,13 +5046,7 @@
       "published_sha256": "e55d28b65836a4333b150f3fe67aad2260becc39a6bc564cb8831b14e805d5b7",
       "rationale": "Moved the successor power identity from WantedExt/Combinatorics/Enumerative/HypersequenceWeightedSumsWanted.lean to its proved module, preserving its name and statement. Also: When `succ_pow_eq_sum_stirlingSecond` moved here in #6321, its docstring carried the Atlas wiki audit restatement of #976, which the row of WantedExt/Combinatorics/Enumerative/HypersequenceWeightedSumsWanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed)."
     },
-    {
-      "path": "MathlibExt/Combinatorics/Enumerative/SumsOfPowersA304330.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "f351705dbc28a6563800707a5a5b895a44a2664e9029c587066ae40485662ae4",
-      "rationale": "Moved the weighted binomial sum from the wanted module into MathlibExt when it was proved, preserving its name and statement. Also: Moved the sum over even indices from the wanted module here when it was proved, preserving its name and statement. Also: Moved the array definition and its alternating factorial sum from WantedExt/Combinatorics/Enumerative/SumsOfPowersA304330Wanted.lean when the identity was proved, preserving their names, definition and statement. Also: Moved the closed form for the array from WantedExt/Combinatorics/Enumerative/SumsOfPowersA304330Wanted.lean when it was proved, preserving its name, statement and docstring; the reflection step of the private vanishing lemma now goes through a private lemma shared with that proof. Also: Moved `inversion_uU`, `pow_mul_powerSum_odd_eq_sum` and `pow_mul_powerSum_even_eq_sum` from WantedExt/Combinatorics/Enumerative/SumsOfPowersA304330Wanted.lean when proved, with the same names and statements. Prove the inversion formula using the normalized array recurrence and the unit diagonal of the signed Jacobi–Stirling array. Prove the scaled odd power-sum formula by extracting an odd coefficient from the centered geometric sum. Prove the scaled even power-sum formula by extracting the even coefficient of the centered geometric sum. Also: When `sum_mul_choose_eq` (#6180), `sum_two_mul_choose_eq` (#6432), `sum_neg_factorial_sq_div_arrayR_eq_zero` (#6858), `arrayR_eq_closedForm` (#7090) and `inversion_uU`, `pow_mul_powerSum_even_eq_sum` and `pow_mul_powerSum_odd_eq_sum` (#7391) moved here, their docstrings carried the Atlas wiki audit restatement of #978, which the row of WantedExt/Combinatorics/Enumerative/SumsOfPowersA304330Wanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed). Also: Prove Knuth’s even–odd power-sum correspondence using the weighted binomial sum, preserving the statement and name. Also: Prove the even power-sum formula using the central factorial basis and the weighted binomial difference, preserving its statement and docstring and crediting the sources."
-    },
+    {"path": "MathlibExt/Combinatorics/Enumerative/SumsOfPowersA304330.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5022c912adbcb12018d8acf32c774dcf7f6cc8d0b78b7d035c14abe1484e59eb", "rationale": "Moved the weighted binomial sum from the wanted module into MathlibExt when it was proved, preserving its name and statement. Also: Moved the sum over even indices from the wanted module here when it was proved, preserving its name and statement. Also: Moved the array definition and its alternating factorial sum from WantedExt/Combinatorics/Enumerative/SumsOfPowersA304330Wanted.lean when the identity was proved, preserving their names, definition and statement. Also: Moved the closed form for the array from WantedExt/Combinatorics/Enumerative/SumsOfPowersA304330Wanted.lean when it was proved, preserving its name, statement and docstring; the reflection step of the private vanishing lemma now goes through a private lemma shared with that proof. Also: Moved `inversion_uU`, `pow_mul_powerSum_odd_eq_sum` and `pow_mul_powerSum_even_eq_sum` from WantedExt/Combinatorics/Enumerative/SumsOfPowersA304330Wanted.lean when proved, with the same names and statements. Prove the inversion formula using the normalized array recurrence and the unit diagonal of the signed Jacobi–Stirling array. Prove the scaled odd power-sum formula by extracting an odd coefficient from the centered geometric sum. Prove the scaled even power-sum formula by extracting the even coefficient of the centered geometric sum. Also: When `sum_mul_choose_eq` (#6180), `sum_two_mul_choose_eq` (#6432), `sum_neg_factorial_sq_div_arrayR_eq_zero` (#6858), `arrayR_eq_closedForm` (#7090) and `inversion_uU`, `pow_mul_powerSum_even_eq_sum` and `pow_mul_powerSum_odd_eq_sum` (#7391) moved here, their docstrings carried the Atlas wiki audit restatement of #978, which the row of WantedExt/Combinatorics/Enumerative/SumsOfPowersA304330Wanted.lean records as a pending backport; Formal-Math does not have that text yet (its backport is still owed). Also: Prove Knuth’s even–odd power-sum correspondence using the weighted binomial sum, preserving the statement and name. Also: Prove the even power-sum formula using the central factorial basis and the weighted binomial difference, preserving its statement and docstring and crediting the sources. Also: Move faulhaberB unchanged and prove powerSum_even_faulhaber using the signed Legendre–Stirling expansion of the binomial basis."},
     {
       "path": "MathlibExt/Combinatorics/Enumerative/SymmetricPeakHeightBivariateGeneratingFunction.lean",
       "backport": "pending",
@@ -5960,13 +5883,7 @@
       "published_sha256": "83409cb42582fa36d2d3233e4adcd9234095260dd77f03a2f60951302295b330",
       "rationale": "Move the definitions and statement from WantedExt/Combinatorics/IncreasingSequenceConsecutiveSumsErdosProblem356Wanted.lean when proving the theorem, preserving their names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/IncreasingSequenceConsecutiveSumsErdosProblem356Wanted.lean that Formal-Math does not have yet (its backport is still owed)."
     },
-    {
-      "path": "MathlibExt/Combinatorics/InfinitaryHalesJewett.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "211efc6ce97c08a1e940820df0518e4f555e94bab4ef4859bddb8105cf5135f5",
-      "rationale": "Moved the J-set configuration theorem from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when it was proved, with the same name and statement. Also: Restate docstrings to match the Lean statements (Atlas wiki audit, #978). Also: Moved `exists_variableWords_subst_mem_prod_pattern_mem_finiteProducts_of_isMulJSet` from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when proved, with the same names and statements. Also: Moved `exists_variableWords_subst_mem_sum_count_mem_finiteSums_of_isMulJSet` from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when proved, with the same names and statements. Prove the J-set variable-count theorem using disjoint sets of input indices. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Moved `exists_variableWords_prod_mem_of_isCSet` from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when proved, with the same names and statements. Prove the C-set product theorem by choosing words in decreasing ultrafilter members. Also: Moved `exists_variableWord_subst_mem_of_isMulPiecewiseSyndetic` from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when proved, with the same names and statements. Prove the piecewise syndetic configuration theorem by coloring a finite cube by its translating prefixes. Also: Prove the C-set variable-pattern product theorem by combining the idempotent-ultrafilter construction with successive disjoint ordered pattern blocks, and preserve the moved statement and docstring."
-    },
+    {"path": "MathlibExt/Combinatorics/InfinitaryHalesJewett.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "88141ca499a34970b90acb9074228b628b3f8b5ed23052de24986ba64a138846", "rationale": "Moved the J-set configuration theorem from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when it was proved, with the same name and statement. Also: Restate docstrings to match the Lean statements (Atlas wiki audit, #978). Also: Moved `exists_variableWords_subst_mem_prod_pattern_mem_finiteProducts_of_isMulJSet` from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when proved, with the same names and statements. Also: Moved `exists_variableWords_subst_mem_sum_count_mem_finiteSums_of_isMulJSet` from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when proved, with the same names and statements. Prove the J-set variable-count theorem using disjoint sets of input indices. Also: The moved docstring keeps ATLAS-side text from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Moved `exists_variableWords_prod_mem_of_isCSet` from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when proved, with the same names and statements. Prove the C-set product theorem by choosing words in decreasing ultrafilter members. Also: Moved `exists_variableWord_subst_mem_of_isMulPiecewiseSyndetic` from WantedExt/Combinatorics/InfinitaryHalesJewettWanted.lean when proved, with the same names and statements. Prove the piecewise syndetic configuration theorem by coloring a finite cube by its translating prefixes. Also: Prove the C-set variable-pattern product theorem by combining the idempotent-ultrafilter construction with successive disjoint ordered pattern blocks, and preserve the moved statement and docstring. Also: Prove Corollary 3.8 in the existing module using the C-set induction and the shared single-stage count and finite-sum arguments, and document the sources."},
     {
       "path": "MathlibExt/Combinatorics/InfinitaryHalesJewettCentral.lean",
       "backport": "pending",
@@ -6088,14 +6005,7 @@
       "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #971)",
       "upstream_sha256": "ca6cc0f497eb0085d6eb931b6899f5319c2b9fd31c8cba5e86287f523e3c3bfd"
     },
-    {
-      "path": "MathlibExt/Combinatorics/InfiniteWord/PureMorphicWord.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "409644dd528a1a406bb499b527bf1c3caea9b9185c8d329f82633b13c57ca473",
-      "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #971)",
-      "upstream_sha256": "e7ad9944bdb2e319b95384939ec00c5e1a7be31477497b85fac02715ead9f380"
-    },
+    {"path": "MathlibExt/Combinatorics/InfiniteWord/PureMorphicWord.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b0f607d8bfbbb99c47ba25ad5b25db5e4f474a1c3a659692b1435354c5487f73", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #971) Also: Move the generic substitution-iterate successor and prefix lemmas into the shared module as documented public theorems.", "upstream_sha256": "e7ad9944bdb2e319b95384939ec00c5e1a7be31477497b85fac02715ead9f380"},
     {
       "path": "MathlibExt/Combinatorics/InfiniteWord/RPRelation.lean",
       "backport": "pending",
@@ -6460,6 +6370,7 @@
       "published_sha256": "c2030b0221ccc9aa0fffddf4890953251a82cddc0fe23c42bc31d54817291a21",
       "rationale": "Prove the one-step floor-rule Maximum Nim reduction of Lemma 5(ii.1), moving it from WantedExt/Combinatorics/MaximumNimJosephusWanted.lean with the same declaration name, statement and docstring. Also: State the index bounds and clarify that the recurrence identifies Grundy values rather than describing a move."
     },
+    {"path": "MathlibExt/Combinatorics/MaximumNimGrundyPPositions.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "45c5b64bec952958b61272fa5a81d241f70cbb4596461c778e522f4db1b7864d", "rationale": "Move maximumNimGame and maximumNimGame_isP_iff unchanged from WantedExt/Combinatorics/MaximumNimJosephusWanted.lean and prove maximumNimGrundy_eq_zero_iff_isP with its original name, statement and docstring. The moved docstrings keep the Atlas wiki audit restatement whose backport is pending."},
     {
       "path": "MathlibExt/Combinatorics/MaximumNimIterates.lean",
       "backport": "pending",
@@ -6670,13 +6581,7 @@
       "published_sha256": "faef38615691ab406cb56d2f1f38ec2ad7655d32c747d9d30a6e53bde42e9491",
       "rationale": "Moved from WantedExt/Combinatorics/PairwiseSumTheoremWanted.lean when the pairwise sum witness characterization was proved, preserving its name and statement."
     },
-    {
-      "path": "MathlibExt/Combinatorics/PalindromicRecurrentOutsideP.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "2b13197d1cdf24048513e42291d78de2e8fd735aa9b8b6a03d7d05518863152a",
-      "rationale": "Moved from WantedExt/Combinatorics/PalindromicRecurrentOutsidePWanted.lean when the wanted theorem was proved, retaining the declaration names and statements."
-    },
+    {"path": "MathlibExt/Combinatorics/PalindromicRecurrentOutsideP.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "bb2f7e3375a95029f09081fc70b8f5219ebf5c510b8fbdf6fb60490db2680bca", "rationale": "Moved from WantedExt/Combinatorics/PalindromicRecurrentOutsidePWanted.lean when the wanted theorem was proved, retaining the declaration names and statements. Also: Use the shared morphIterate_succ_right and morphIterate_prefix theorems in place of the private helpers moved to PureMorphicWord."},
     {
       "path": "MathlibExt/Combinatorics/PaperfoldingReducedComplexity.lean",
       "backport": "pending",
@@ -8308,6 +8213,7 @@
       "published_sha256": "a9fce4803e549337e16a5c649fa49727d457e533f09e2c08683475c9cbf98e0c",
       "rationale": "Move the proper-prefix decomposition from WantedExt/Combinatorics/Words/DumontThomasNumerationWanted.lean without changing the statement or docstring, and prove it by scanning the iterated letter images."
     },
+    {"path": "MathlibExt/Combinatorics/Words/DumontThomasRightNumeration.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "2da305e5385e631a624659c1731f6588a01ce19941423e4999e3e2af1a5ab0c2", "rationale": "Prove Dumont–Thomas numeration for right-infinite fixed points, moving the theorem from WantedExt/Combinatorics/Words/DumontThomasNumerationWanted.lean with its statement and docstring unchanged. Also: Reuse the existing iterate_succ_right and iterate_prefix lemmas from PalindromicRecurrentOutsideP. Also: Import and use the public substitution-iterate lemmas from PureMorphicWord instead of depending on private lemmas from PalindromicRecurrentOutsideP."},
     {
       "path": "MathlibExt/Combinatorics/Words/EquilibriousWord.lean",
       "backport": "pending",

@@ -11,3 +11,4 @@ Ideals and submodules under localization, Hilbert's Nullstellensatz, Gröbner ba
 - [Toric ideals and Markov bases](toric-ideals-and-markov-bases/README.md)
 - [Witt vectors](witt-vectors/README.md)
 - [Zero-divisor graph](zero-divisor-graph/README.md)
+- [Witt-vector lift of a normal-form basis](exists-witt-vector-lift-of-normal-form-o.md)

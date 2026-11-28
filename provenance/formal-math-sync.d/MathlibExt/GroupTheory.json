@@ -531,13 +531,7 @@
       "published_sha256": "a67b127eed2e274e3973dc4f7d8eb48c411a26bc357f84db106c940d076a64d0",
       "rationale": "Extract the tree automorphism definitions and finite-section closure proof from FiniteStateFreeProduct and FiniteStateIrreducibleGenerators, and identify the prefix predicate with subgroup membership. Also: Cite Lavrenyuk (arXiv:1210.0150v1) in the helper lemmas whose statements it recalls, drop the other Source lines, which named a Lean module or the Kourovka problems, and state the helper lemmas' hypotheses in their docstrings, as the review of #7918 asked."
     },
-    {
-      "path": "MathlibExt/GroupTheory/FinitelyGeneratedBranchGroupsKourovka15Problem14.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "86a6ac82f5a60ae7a66080b35ec7fe273709d9a50f01f3a700ba4659463f19b7",
-      "rationale": "Moved from WantedExt/GroupTheory/FinitelyGeneratedBranchGroupsKourovka15Problem14Wanted.lean when the wanted statement was proved, preserving the names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/GroupTheory/FinitelyGeneratedBranchGroupsKourovka15Problem14Wanted.lean that Formal-Math does not have yet (its backport is still owed)."
-    },
+    {"path": "MathlibExt/GroupTheory/FinitelyGeneratedBranchGroupsKourovka15Problem14.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "839ffe2e6cfeaf2c9ce0050540759b1665c1edbead0ac962b68a3ef831435730", "rationale": "Moved from WantedExt/GroupTheory/FinitelyGeneratedBranchGroupsKourovka15Problem14Wanted.lean when the wanted statement was proved, preserving the names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/GroupTheory/FinitelyGeneratedBranchGroupsKourovka15Problem14Wanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Prove `fgBranchGroupOfExponentialGrowth_holds` using the rank-two free subgroup witness, and move its supporting growth definitions here with unchanged names and statements."},
     {
       "path": "MathlibExt/GroupTheory/FinitelyPresentedSolubleMetanilpotentKourovka16Problem35.lean",
       "backport": "pending",
@@ -1211,6 +1205,7 @@
       "published_sha256": "2e590bf5fb3d6f1d4fbdebdd6aee6c2cae3e687340257c2a7419b38063dcbfa6",
       "rationale": "Moved from WantedExt/GroupTheory/PolynormalParanormalSubgroupKourovka14Problem50Wanted.lean when the wanted statement was proved, preserving declaration names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/GroupTheory/PolynormalParanormalSubgroupKourovka14Problem50Wanted.lean that Formal-Math does not have yet (its backport is still owed)."
     },
+    {"path": "MathlibExt/GroupTheory/ProjectiveGroupRingModuleFreeKourovka11Problem5.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "2a0f8b855d4329498a10a112110969c6d30b5556bef01d9ee5c4bac810c9600d", "rationale": "Move the proposition and refutation of Kourovka Notebook Problem 11.5 from WantedExt/GroupTheory/ProjectiveGroupRingModuleFreeKourovka11Problem5Wanted.lean, keeping their names and statements, and prove the counterexample. Also: Credit The Stacks Project, Lemma 10.78.2, for the direct-summand criterion."},
     {
       "path": "MathlibExt/GroupTheory/PropermutableSubgroup.lean",
       "backport": "pending",
@@ -1301,13 +1296,7 @@
       "published_sha256": "2ead4b08b621cfd55bbd9d19613f7ef779ab28a30a4d91c7a03047374944ab5a",
       "rationale": "Moved from WantedExt/GroupTheory/RightRelativelyConvexSublatticeKourovka21Problem147Wanted.lean when the wanted statement was proved, preserving names and statements. Also: The moved docstring keeps ATLAS-side text from WantedExt/GroupTheory/RightRelativelyConvexSublatticeKourovka21Problem147Wanted.lean that Formal-Math does not have yet (its backport is still owed). Also: The module docstring now also carries the module docstring of WantedExt/GroupTheory/RightRelativelyConvexSublatticeKourovka21Problem147Wanted.lean (record id UM-00002656, with its source and scope notes), which was lost when #7581 deleted that file as this module took its theorem."
     },
-    {
-      "path": "MathlibExt/GroupTheory/SchurWeyl.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "0a4684073d387a449ca20cdb5879eaca33103f3424d1e47fe8b2331116202aec",
-      "rationale": "Moved from WantedExt/GroupTheory/SchurWeylWanted.lean when its theorem_wanted glAction_range_eq_centralizer_symAction was proved: same names, statements and docstrings for symAction, glAction and glAction_range_eq_centralizer_symAction, narrower Mathlib imports instead of Batteries.Util.ProofWanted and Mathlib, the lean-eval attribution restated for the adapted portions, and the proof. Also: The moved docstring keeps ATLAS-side text from WantedExt/GroupTheory/SchurWeylWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Remove the orphaned comment above the general linear side of Schur–Weyl duality."
-    },
+    {"path": "MathlibExt/GroupTheory/SchurWeyl.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c035ff649d59e48493f27f12e9cdf496a0e46640f2bba658d81c96b995e04e26", "rationale": "Moved from WantedExt/GroupTheory/SchurWeylWanted.lean when its theorem_wanted glAction_range_eq_centralizer_symAction was proved: same names, statements and docstrings for symAction, glAction and glAction_range_eq_centralizer_symAction, narrower Mathlib imports instead of Batteries.Util.ProofWanted and Mathlib, the lean-eval attribution restated for the adapted portions, and the proof. Also: The moved docstring keeps ATLAS-side text from WantedExt/GroupTheory/SchurWeylWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Remove the orphaned comment above the general linear side of Schur–Weyl duality. Also: Prove the symmetric group side, moving the existing statement and docstring here with the lean-eval attribution and adding the mathematical references. Also: Distinguish Weyl's characteristic-zero treatment from the formalized result, which also covers finite fields when k! is invertible."},
     {
       "path": "MathlibExt/GroupTheory/SchurZassenhaus.lean",
       "backport": "pending",

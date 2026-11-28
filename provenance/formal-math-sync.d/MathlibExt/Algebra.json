@@ -244,15 +244,7 @@
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "107b6f77cc4db94bc1a8f23cb3779cf62b08da9f6e12210e028cdb885a024292"
     },
-    {
-      "path": "MathlibExt/Algebra/Category/ModuleCat/CompatibleScalarRestriction.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "92c6f5936915e6f189349cf39b89ccaf7a3bf4b8b7e8aabb7279bf8869b850be",
-      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "f046c09829c8848060c2cd0a2204f26669bca82df2cf9a308f574e5f5d8f30d9"
-    },
+    {"path": "MathlibExt/Algebra/Category/ModuleCat/CompatibleScalarRestriction.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "92c6f5936915e6f189349cf39b89ccaf7a3bf4b8b7e8aabb7279bf8869b850be", "rationale": "The recorded 9a495da file already defines identity-on-carriers scalar restriction and its naturality for a compatible ground action. This Atlas version adds the standard copyright header and self-contained mathematical module/declaration documentation; its noncomment source code is unchanged. Backport the documentation/header attribution changes; the source pin and original code hash are retained.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "f046c09829c8848060c2cd0a2204f26669bca82df2cf9a308f574e5f5d8f30d9"},
     {
       "path": "MathlibExt/Algebra/Category/ModuleCat/DirectLimit.lean",
       "backport": "not-needed",
@@ -313,15 +305,7 @@
       "published_sha256": "0a0650151978fdd5839d7e3299a51ae3f11a8fd454e8a3f33c70367c90c6f729",
       "upstream_sha256": "240392aaf6f2aa516d000d6a857e9754d3a794aeb40b7afa4515bc72e4fd9581"
     },
-    {
-      "path": "MathlibExt/Algebra/Category/ModuleCat/Monoidal/Universe.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "2294be36b3dde6e09e0deeeee0713632707a9dcef7b75f10b6654d66718a2f1b",
-      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "aa7fcc52ebc5903742039e2f3cb65b4766648307141948452abf90008937fd27"
-    },
+    {"path": "MathlibExt/Algebra/Category/ModuleCat/Monoidal/Universe.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "07b8ab02050d8b21f5c75989fb0af3f23f30a138f04a9bb6aff39dba1810dee3", "rationale": "Keep the recorded 9a495da scoped monoidal structure on ModuleCat at max(u,v), its ULift(v) ring unit, tensor maps/unitors and all preadditive/linear/braiding axioms. Add precise Apache-2.0 notices for adapted Mathlib ModuleCat/Monoidal/Basic and Symmetric proofs (Kim Morrison copyright; original author list), separate adapter credit and mathematical docs. Drop unused Projective and Flat imports and correct the tensor-product citation to Bourbaki Algebra I,Chapter II,section3. Backport legal/documentation/import cleanup; carrier worlds and unit/maps are unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "aa7fcc52ebc5903742039e2f3cb65b4766648307141948452abf90008937fd27"},
     {
       "path": "MathlibExt/Algebra/Category/ModuleCat/RingHomInduction/Adjunction.lean",
       "backport": "not-needed",
@@ -482,6 +466,7 @@
       "published_sha256": "1442d1d1b62d47de8404106a27ecafa3c9bd046ed491766d83acbdee7f3376d5",
       "rationale": "Moved from WantedExt/Algebra/RationalFunctionFareyPathWanted.lean when the determinant-one statement was proved, preserving the definition, names, statements and docstrings. Also: The moved docstring keeps ATLAS-side text from WantedExt/Algebra/RationalFunctionFareyPathWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Moved `polyContFract_of_farey_path_det_neg_one_pow` from WantedExt/Algebra/RationalFunctionFareyPathWanted.lean when proved, with the same names and statements. Prove the convergent formula for Farey paths whose adjacent determinants alternate as (-1)^i, and name it in the module docstring."
     },
+    {"path": "MathlibExt/Algebra/CyclicHolomorph.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "5b8a70fa0a4ab88fbcefc9d9aec8a98599aa7ed1795f048571fa3a79c5bfd1c0", "rationale": "Move the cyclic holomorph action, type, and multiplication law unchanged from WantedExt/Algebra/VirtualQuandleWanted.lean, and prove the existing conjugacy criterion."},
     {
       "path": "MathlibExt/Algebra/DeepPowerSumCongruences.lean",
       "backport": "pending",
@@ -559,24 +544,8 @@
       "published_sha256": "67381918595fe8a6d56320ef8a756b19881337461b98ed3c7d33a7fca6c92277",
       "rationale": "Moved the restricted power-sum exponential from WantedExt/Algebra/DeepPowerSumCongruencesWanted.lean when its wanted statement was proved, preserving its name, statement and docstring. Also: Prove the elementary symmetric polynomial partition expansion of Corollary 21, preserving its name, statement and docstring."
     },
-    {
-      "path": "MathlibExt/Algebra/DirectSum/InternalGrade.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "7f07be3e5ffe85b0f6e9fc94c9676c1d5854451cdeae4912876b10e95e6b18be",
-      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "34384b830f4f6816f550c380aedc3cb53e00e66bebafa298fda5024e2cc2c1e0"
-    },
-    {
-      "path": "MathlibExt/Algebra/DirectSum/InternalGradeAlgebra.lean",
-      "backport": "pending",
-      "disposition": "diverged",
-      "published_sha256": "339271205f0d1f73a46cf419a103b506ebfd9d6b7ac2053e508fcfbe5106cebf",
-      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
-      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
-      "upstream_sha256": "81d781b5688bbe70db6dc93110f8960b600e4ede06e8d429b2ea650a549cc0c4"
-    },
+    {"path": "MathlibExt/Algebra/DirectSum/InternalGrade.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "8c728c5ed780fde09e353f997a4919155d780598b9830db21e7e05ac65e5345f", "rationale": "Add the Atlas header and mathematical coordinate/graded-action documentation to the recorded 9a495da file. Remove its duplicate ModuleCoordinates ring-only aliases and internalGrade_finite wrapper; the semiring coordinate interface still applies to rings, while native DirectSum.of_injective and Module.Finite.range provide the injectivity/finiteness facts directly. Retain the actual decomposition and graded action. Backport this interface cleanup and its dependent generic-name substitutions. Correct the native DirectSum.of_injective call to name its implicit beta family, as verified by the completed46103981488 compiler diagnostics; all maps, hypotheses, universes, source notices and13 client assertions remain unchanged.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "34384b830f4f6816f550c380aedc3cb53e00e66bebafa298fda5024e2cc2c1e0"},
+    {"path": "MathlibExt/Algebra/DirectSum/InternalGradeAlgebra.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "91b0d2a5e9af326d62c71b88f62ef36d58559a2346796aa81422467f343707ae", "rationale": "Retain the recorded 9a495da internal direct-sum algebra, its multiplication and graded action, with Atlas header and mathematical docs. Replace the removed ring-only coordinate names by the definitionally identical generic internalGrade and mem_internalGrade_iff in the module-action instance, preserving every public declaration, scalar/module hypothesis, index action and universe. Backport these canonical-name substitutions together with the InternalGrade cleanup.", "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0", "upstream_sha256": "81d781b5688bbe70db6dc93110f8960b600e4ede06e8d429b2ea650a549cc0c4"},
     {
       "path": "MathlibExt/Algebra/Group/CodiagonalCommutativity.lean",
       "backport": "pending",
@@ -2131,6 +2100,7 @@
       "published_sha256": "d4e9a3e3f95b87770f06200cc74bd2bb8bc3771dd0d921a71d563e516c3f759f",
       "rationale": "Moved from WantedExt/Algebra/LocallyIntegerPolynomialWanted.lean when the wanted statement was proved; same names and statements."
     },
+    {"path": "MathlibExt/Algebra/Polynomial/KasselReutenauerLaurentCoefficients.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "c5bb49d767ab16e95487000a26c1c7db4dcbf64fdd131cee255b541ab32be543", "rationale": "Move kasselReutenauerPoly without changing its definition and prove kasselReutenauer_C_abs_coeff_sum with its original statement, citing the published Corollary 24. The moved declarations retain the pending backport from the wanted module."},
     {
       "path": "MathlibExt/Algebra/Polynomial/KasselReutenauerTopCoefficient.lean",
       "backport": "pending",
