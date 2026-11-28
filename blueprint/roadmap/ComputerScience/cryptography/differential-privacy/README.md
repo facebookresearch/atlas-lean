@@ -100,3 +100,4 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [Packing lower bound for pure differential privacy](packing-lower-bound-for-pure-differential.md)
 - [Rényi differential privacy of the Gaussian mechanism](renyi-differential-privacy-of-the-gaussian.md)
 - [Fingerprinting codes](fingerprinting-codes.md)
+- [Accuracy of randomized programs is undecidable](accuracy-of-randomized-programs-is-undecidable.md)

@@ -7,6 +7,7 @@ Smooth dynamics studies differentiable maps and flows: hyperbolicity, stable man
 - [Kolmogorov–Arnold–Moser theorem](kolmogorov-arnold-moser-theorem/README.md)
 - [LaSalle's invariance principle](lasalle-s-invariance-principle/README.md)
 - [Period functions and limit cycles of planar systems](period-functions-and-limit-cycles-of-planar-syst/README.md)
+- [Reaction networks with real exponents](reaction-networks-with-real-exponents/README.md)
 - [Shadowing lemma](shadowing-lemma/README.md)
 - [Stability for delayed difference equations](stability-for-delayed-difference-equations/README.md)
 - [Stability of equilibria](stability-of-equilibria/README.md)
