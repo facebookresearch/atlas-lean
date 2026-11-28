@@ -234,6 +234,7 @@ private lemma double_mono : Mono double := by
   apply (ModuleCat.mono_iff_injective double).2
   change Function.Injective (fun x : ℤ => (2 : ℤ) * x)
   intro x y hxy
+  change (2 : ℤ) * x = (2 : ℤ) * y at hxy
   omega
 
 private lemma integerDouble_projective_images (i : ℤ) :
@@ -287,8 +288,12 @@ private lemma double_residue : double ≫ residue = 0 := by
 private def cyclesInclusion : integerDouble.cycles 0 ⟶ Z :=
   integerDouble.iCycles 0 ≫ (integerXIso 0).hom
 
+private def homologyXIso : (homologyZeroComplex integerDouble).X 0 ≅ integerDouble.homology 0 :=
+  eqToIso rfl
+
 private def projectionZero : Z ⟶ integerDouble.homology 0 :=
-  (integerXIso 0).inv ≫ (homologyProjection integerDouble integerDouble_projective_images).f 0
+  (integerXIso 0).inv ≫ (homologyProjection integerDouble integerDouble_projective_images).f 0 ≫
+    homologyXIso.hom
 
 private lemma cycles_residue_zero : integerDouble.toCycles 1 0 ≫ cyclesInclusion ≫ residue = 0 := by
   apply zero_of_epi_comp (integerXIso 1).inv
@@ -332,12 +337,21 @@ private lemma cycleLift_inclusion : integerCycleLift ≫ cyclesInclusion = 𝟙 
 
 private lemma inclusion_projection :
     cyclesInclusion ≫ projectionZero = integerDouble.homologyπ 0 := by
+  have h : integerDouble.iCycles 0 ≫
+      (homologyProjection integerDouble integerDouble_projective_images).f 0 =
+        integerDouble.homologyπ 0 ≫ homologyXIso.inv :=
+    iCycles_homologyProjection_f integerDouble integerDouble_projective_images 0
   calc
-    _ = integerDouble.iCycles 0 ≫
-        (homologyProjection integerDouble integerDouble_projective_images).f 0 := by
+    _ = (integerDouble.iCycles 0 ≫
+        (homologyProjection integerDouble integerDouble_projective_images).f 0) ≫
+          homologyXIso.hom := by
       simp only [cyclesInclusion, projectionZero, Category.assoc, Iso.hom_inv_id_assoc]
-    _ = integerDouble.homologyπ 0 :=
-      iCycles_homologyProjection_f integerDouble integerDouble_projective_images 0
+    _ = (integerDouble.homologyπ 0 ≫ homologyXIso.inv) ≫ homologyXIso.hom :=
+      congrArg
+        (fun f : integerDouble.cycles 0 ⟶ (homologyZeroComplex integerDouble).X 0 =>
+          f ≫ homologyXIso.hom) h
+    _ = integerDouble.homologyπ 0 := by
+      simp only [Category.assoc, Iso.inv_hom_id, Category.comp_id]
 
 private lemma projection_factor {B C D : ModuleCat ℤ}
     (l : Z ⟶ B) (i : B ⟶ Z) (p : Z ⟶ C) (π : B ⟶ C) (r : C ⟶ D) (v : Z ⟶ D)
@@ -366,7 +380,7 @@ example : (projectionZero ≫ homologyResidue.1).hom (1 : ℤ) = (1 : ZMod 2) :=
 example : (homologyProjection integerDouble integerDouble_projective_images).f 0 ≠ 0 := by
   intro hz
   have hq : projectionZero = 0 := by
-    simp only [projectionZero, hz, comp_zero]
+    simp only [projectionZero, hz, zero_comp, comp_zero]
   have h := projection_residue
   rw [hq, zero_comp] at h
   have hv := congrArg (fun f : Z ⟶ residueModule => (show ZMod 2 from f.hom (1 : ℤ))) h
@@ -507,8 +521,8 @@ private lemma tensorDoubleZero_eq : tensorDoubleZero = tensorZ.map double := by
     tensorZ.map (((ChainComplex.single₀ (ModuleCat ℤ)).map double).f 0) ≫
       tensorSingleCoordinate.hom = tensorZ.map double
   rw [ChainComplex.single₀_map_f_zero]
-  simp only [tensorSingleCoordinate, ChainComplex.single₀ObjXSelf, Functor.mapIso_refl,
-    Iso.refl_inv, Iso.refl_hom, Category.id_comp, Category.comp_id]
+  change tensorZ.map (𝟙 Z) ≫ tensorZ.map double ≫ tensorZ.map (𝟙 Z) = tensorZ.map double
+  simp only [Functor.map_id, Category.id_comp, Category.comp_id]
 
 private def singleSplit : Functor.AugmentationSplit (𝟭 (ModuleCat ℤ)) singleZ Z (𝟙 singleZ) where
   section_ := 𝟙 Z
