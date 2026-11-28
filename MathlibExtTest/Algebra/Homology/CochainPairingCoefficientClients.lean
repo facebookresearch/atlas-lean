@@ -58,7 +58,7 @@ private def pairing : CochainGradedPairing (K R A) (K R A) (K R A) where
   pair _ _ := ModuleCat.ofHom (LinearMap.mul' R A)
   leibniz _ _ := by
     simp only [K, MonoidalPreadditive.zero_tensor, MonoidalPreadditive.tensor_zero,
-      Category.comp_zero, Category.zero_comp, zsmul_zero, add_zero]
+      comp_zero, zero_comp, zsmul_zero, add_zero]
 
 private def cycleIso (n : ℕ) : (K R A).cycles n ≅ M R A :=
   (K R A).iCyclesIso n (n + 1) (by simp) rfl
@@ -77,8 +77,9 @@ private lemma cycle_inclusion (n : ℕ) (x : A) :
     ((K R A).iCycles n).hom (cycle R A n x) = x := by
   have h := congrArg (fun f => f.hom x)
     ((K R A).iCyclesIso_inv_hom_id n (n + 1) (by simp) rfl)
-  simpa only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_id,
-    LinearMap.id_apply, cycle, cycleIso] using h
+  change ((K R A).iCycles n).hom
+    (((K R A).iCyclesIso n (n + 1) (by simp) rfl).inv.hom x) = x at h
+  exact h
 
 private lemma coordinate_pi (n : ℕ) (z : (K R A).cycles n) :
     (coordinate R A n).hom.hom (((K R A).homologyπ n).hom z) =
@@ -116,6 +117,7 @@ example (a b : R) (p q : ℕ) :
     (pairing R A).pairHomology p q ≫ homologyMap (coefficient R A (a * b)) (p + q) =
       (homologyMap (coefficient R A a) p ⊗ₘ homologyMap (coefficient R A b) q) ≫
         (pairing R A).pairHomology p q := by
+  symm
   apply CochainGradedPairing.pairHomology_naturality
     (pairing R A) (pairing R A) (coefficient R A a) (coefficient R A b)
     (coefficient R A (a * b))
@@ -169,5 +171,6 @@ example : ((pairing ℤ ZMatrix).pairHomology 1 2).hom
   rw [h, map_zero] at hc
   have he := congrArg (fun m : ZMatrix => m 0 0) hc
   norm_num [leftUnit, rightUnit, Matrix.mul_apply, Fin.sum_univ_two, Matrix.single] at he
+  exact zero_ne_one (show (0 : ℤ) = 1 from he)
 
 end MathlibExtTest.CochainPairingCoefficient

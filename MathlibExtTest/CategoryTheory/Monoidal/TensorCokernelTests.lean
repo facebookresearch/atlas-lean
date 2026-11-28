@@ -67,13 +67,17 @@ private lemma kills_relations :
   · rw [coprod.inl_desc_assoc, comp_zero]
     apply tensor_ext
     intro x y
-    norm_num [twiceA, AddCommGrpCat.whiskerRight_apply, multiplication_tmul,
-      map_zsmul, zsmul_eq_mul]
+    change castA ((2 : ℤ) • x) * castB y = 0
+    rw [map_zsmul, zsmul_eq_mul]
+    have htwo : (2 : ZMod 2) = 0 := by decide
+    rw [htwo, zero_mul, zero_mul]
   · rw [coprod.inr_desc_assoc, comp_zero]
     apply tensor_ext
     intro x y
-    norm_num [twiceB, AddCommGrpCat.whiskerLeft_apply, multiplication_tmul,
-      map_zsmul, zsmul_eq_mul]
+    change castA x * castB ((2 : ℤ) • y) = 0
+    rw [map_zsmul, zsmul_eq_mul]
+    have htwo : (2 : ZMod 2) = 0 := by decide
+    rw [htwo, zero_mul, mul_zero]
 
 private def descended : cokernel twiceA ⊗ cokernel twiceB ⟶ D :=
   tensorCokernelDesc twiceA twiceB multiplication kills_relations
@@ -81,17 +85,20 @@ private def descended : cokernel twiceA ⊗ cokernel twiceB ⟶ D :=
 example : MonoidalPreadditive Ab.{0} := inferInstance
 example : PreservesColimitsOfSize.{0, 0} (tensorRight A) := inferInstance
 
-example : twiceA (1 : ZMod 4) ≠ 0 := by norm_num [twiceA, zsmul_eq_mul]
-example : twiceB (1 : ZMod 6) ≠ 0 := by norm_num [twiceB, zsmul_eq_mul]
+example : twiceA (1 : ZMod 4) ≠ 0 := by
+  change (2 : ZMod 4) ≠ 0
+  decide
+example : twiceB (1 : ZMod 6) ≠ 0 := by
+  change (2 : ZMod 6) ≠ 0
+  decide
 
 example :
     descended ((cokernel.π twiceA ⊗ₘ cokernel.π twiceB)
       ((1 : ZMod 4) ⊗ₜ[ℤ] (1 : ZMod 6))) = 1 := by
   have h := tensor_cokernel_π_comp_tensorCokernelDesc
     twiceA twiceB multiplication kills_relations
-  have he := congrArg
-    (fun f : A ⊗ B ⟶ D => f ((1 : ZMod 4) ⊗ₜ[ℤ] (1 : ZMod 6))) h
-  simpa [descended, multiplication_tmul, castA, castB] using he
+  have he := ConcreteCategory.congr_hom h ((1 : ZMod 4) ⊗ₜ[ℤ] (1 : ZMod 6))
+  exact he.trans (by rw [multiplication_tmul]; norm_num [castA, castB])
 
 -- This abstract client cannot supply the omitted coproduct or third preservation hypothesis.
 example {C : Type*} [Category C] [Preadditive C] [MonoidalCategory C]
