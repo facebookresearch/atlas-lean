@@ -12,7 +12,7 @@ extended to all of $F_S$. The *group presented by $\Phi$*, written $\langle \Phi
 
 **Automata groups.** When $\Phi$ takes the form $\Phi\colon A \times S \to S \times A$ (a *finite state transducer*), $\langle \Phi \rangle$ is an [automaton group](automaton-group.md).
 
-**Contracting groups.** For $g \in G = \langle \Phi \rangle$ and $u \in A^*$, the state $g@u$ is the element with $(uv)^g = u^g v^{g@u}$ for all $v$. An automata group $G$ is *contracting* if there is a finite set $N \subseteq G$ such that for every $g \in G$ there is $n(g)$ with $g@u \in N$ whenever $|u| \ge n(g)$. A finite state transducer is *nuclear* when its set of states $S$ contains the minimal such set $N$ (the nucleus) and $\overline{\Phi}(A \times S^2) \subseteq S \times A$, where $\overline{\Phi}$ is the induced map on $A \times G$; nuclear transducers generate contracting groups.
+**Contracting groups.** For $g \in G = \langle \Phi \rangle$ and $u \in A^*$, the state $g@u$ is the element with $(uv)^g = u^g v^{g@u}$ for all $v$. An automata group $G$ is *contracting* if there is a finite set $N \subseteq G$ such that for every $g \in G$ there is $n(g)$ with $g@u \in N$ whenever $|u| \ge n(g)$. The minimal such set $N$ is the *nucleus*. A finite state transducer is *nuclear* when $\overline{\Phi}(A \times S^2) \subseteq S \times A$, where $\overline{\Phi}\colon A \times G \to G \times A$ is the induced map: for every letter $a$ and states $s_1, s_2$, the product $s_1 s_2$ rewrites $a$ with a state of $S$ acting on the rest. Every contracting automata group has a nuclear transducer, obtained by adding the nucleus to $S$ and reading blocks of letters, and nuclear transducers generate contracting groups (Section 3.4).
 
 ## Depends on
 
@@ -25,4 +25,4 @@ None.
 
 ## Sources
 
-- Laurent Bartholdi and Ivan Mitrofanov, "The word and order problems for self-similar and automata groups", *Groups, Geometry, and Dynamics* 14(2):705–728, 2020, doi:[10.4171/GGD/560](https://doi.org/10.4171/GGD/560). Numbering of the version read, arXiv:1710.10109v4: Section 1 (definitions of functionally recursive groups, automata groups and contracting groups) and the definition of contracting groups and nuclear transducers in Section 3.4.
+- Laurent Bartholdi and Ivan Mitrofanov, "The word and order problems for self-similar and automata groups", *Groups, Geometry, and Dynamics* 14(2):705–728, 2020, doi:[10.4171/GGD/560](https://doi.org/10.4171/GGD/560). Numbering of the version read, arXiv:1710.10109v4: Section 1 (definitions of functionally recursive groups, automata groups and contracting groups), and Definition 3.3 (contracting groups and the nucleus) with the definition of nuclear transducers in Section 3.4.

@@ -11,6 +11,7 @@ The source also shows that $\mathrm{Aut}(F)$ contains orbit undecidable subgroup
 - [Thompson's group F by its standard presentation](thompson-f.md)
 - [Normal subgroup](../../../group-basics/normal-subgroup.md)
 - [Quotient group](../../../group-basics/quotient-group.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -18,8 +19,8 @@ The source also shows that $\mathrm{Aut}(F)$ contains orbit undecidable subgroup
 
 ## Expansion
 
-Bogopolski, Martino and Ventura showed that for an algorithmic short exact sequence $1 \to F \to G \to H \to 1$ with $H$ torsion-free hyperbolic, $G$ has solvable conjugacy problem if and only if $F$ has solvable twisted conjugacy problem and the action subgroup $A_G \le \mathrm{Aut}(F)$ is orbit decidable (Theorem 1.3 of the source applies this to $F$), and that $\mathrm{Aut}(F)$ has an orbit undecidable subgroup whenever $F_2 \times F_2$ embeds in $\mathrm{Aut}(F)$ meeting the stabilizer of the conjugacy class of some element trivially; this uses Mihailova's unsolvable membership problem in $F_2 \times F_2$. The source embeds $F_2 \times F_2$ in $\mathrm{Aut}^+(F)$ through germs at $\pm\infty$ of periodic piecewise linear maps (Corollary 3.3), checks the stabilizer condition, and takes the extension of $F$ by a free group realizing the resulting orbit undecidable subgroup. A complete expansion also links the Bogopolski–Martino–Ventura criteria for the conjugacy problem in extensions and for orbit undecidability, which have no pages here.
+Bogopolski, Martino and Ventura showed that for an algorithmic short exact sequence $1 \to F \to G \to H \to 1$ (finitely presented groups given by finite presentations, morphisms given by images of generators) in which $F$ has solvable twisted conjugacy problem, $H$ has solvable conjugacy problem and every cyclic subgroup $\langle h \rangle \ne 1$ of $H$ has computable finite index in its centralizer, $G$ has solvable conjugacy problem if and only if the action subgroup $A_G \le \mathrm{Aut}(F)$ is orbit decidable (Theorem 1.1 of the source). With Theorem 1.2 this gives the criterion for Thompson's group $F$ and torsion-free hyperbolic $H$ (Theorem 1.3). They also showed (Theorem 3.1) that $\mathrm{Aut}(F)$ has an orbit undecidable subgroup whenever $F_2 \times F_2$ embeds in $\mathrm{Aut}(F)$ meeting the stabilizer of the conjugacy class of some element trivially; this uses Mihailova's unsolvable membership problem in $F_2 \times F_2$. The source embeds $F_2 \times F_2$ in $\mathrm{Aut}^+(F)$ through germs at $\pm\infty$ of periodic piecewise linear maps (Corollary 3.3), checks the stabilizer condition, and takes the extension of $F$ by a free group realizing the resulting orbit undecidable subgroup. A good expansion also links the Bogopolski–Martino–Ventura criteria for the conjugacy problem in extensions and for orbit undecidability.
 
 ## Sources
 
-- José Burillo, Francesco Matucci and Enric Ventura, "The conjugacy problem in extensions of Thompson's group $F$", *Israel Journal of Mathematics* 216(1):15–59, 2016, doi:[10.1007/s11856-016-1403-9](https://doi.org/10.1007/s11856-016-1403-9). Numbering of the version read, arXiv:1307.6750v2: Theorems 1.2, 1.3 and 1.4, Theorem 3.1 and Corollary 3.3.
+- José Burillo, Francesco Matucci and Enric Ventura, "The conjugacy problem in extensions of Thompson's group $F$", *Israel Journal of Mathematics* 216(1):15–59, 2016, doi:[10.1007/s11856-016-1403-9](https://doi.org/10.1007/s11856-016-1403-9). Numbering of the version read, arXiv:1307.6750v2: Theorems 1.1, 1.2, 1.3 and 1.4, Theorem 3.1, Corollary 3.3 and the proof of Theorem 1.4 in Section 3.

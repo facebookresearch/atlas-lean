@@ -10,7 +10,6 @@ For example, $\mathbb{Z}$ does not have property $R_\infty$: for the automorphis
 
 - [Group](../../../group-basics/group.md)
 - [Twisted conjugacy class of the identity (Kourovka 18.15)](twisted-unit-class.md)
-- [Twisted conjugacy problem](../../../presentations-and-decision-problems/conjugacy-order-and-power-problems/conjugacy-problem-in-group-extensions/twisted-conjugacy-problem.md)
 
 ## Proof depends on
 
@@ -18,4 +17,4 @@ None.
 
 ## Sources
 
-- Francesco Fournier-Facio, Harry Iveson, Armando Martino, Wagner Sgobbi and Peter Wong, "Property $R_\infty$ for groups with infinitely many ends", *Geometriae Dedicata* 220(3):25, 2026, doi:[10.1007/s10711-026-01078-x](https://doi.org/10.1007/s10711-026-01078-x). Numbering of the version read, arXiv:2504.12002v3: Definitions 2.1, 2.5 and 2.7, Lemmas 2.4 and 2.6, and the proof of the undecidability corollary in Section 4.
+- Francesco Fournier-Facio, Harry Iveson, Armando Martino, Wagner Sgobbi and Peter Wong, "Property $R_\infty$ for groups with infinitely many ends", *Geometriae Dedicata* 220(3):25, 2026, doi:[10.1007/s10711-026-01078-x](https://doi.org/10.1007/s10711-026-01078-x). Numbering of the version read, arXiv:2504.12002v3: Definitions 2.1.1, 2.1.3 and 2.1.5, Lemmas 2.1.2 and 2.1.4, the remarks after Definition 2.1.1 (right action and the side convention), Theorem 5.1.18 (accessible groups with infinitely many ends), and Corollary 4.1.11 (undecidability of property $R_\infty$ among finitely presented groups) with its proof.
