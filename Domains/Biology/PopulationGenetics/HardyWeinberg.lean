@@ -28,6 +28,9 @@ union of gametes the offspring genotype is a pair of independent gametes (`offsp
   is the product `p ⊗ p` of the parental allele frequencies `p = gamete G`.
 * `gamete_offspring`: allele frequencies are conserved.
 * `offspring_offspring`: Hardy–Weinberg proportions are an equilibrium.
+* `iidGenotype`, `iidGenotype_apply`, `gamete_iidGenotype`: the genotype law with independent
+  alleles of a given law `p`, its masses `p(a) p(b)`, and its allele frequencies `p`;
+  `offspring_eq_iidGenotype`: the offspring law is the case `p = gamete G`.
 * Two alleles (`A = Bool`, `true` = allele `A` with frequency `p`, `false` = allele `a` with
   frequency `q = 1 - p`): `freq_true_add_freq_false`, `offspring_true_true`
   (`P(AA) = p²`), `offspring_false_false` (`P(aa) = q²`), `offspring_heterozygote`
@@ -87,13 +90,19 @@ theorem gamete_apply [Fintype A] (G : PMF (A × A)) (a : A) :
   rw [Finset.sum_comm (f := fun x y => if (x, y).2 = a then G (x, y) * 2⁻¹ else 0)]
   simp [Finset.mul_sum, mul_comm]
 
-/-- **Hardy–Weinberg proportions** (Hardy 1908, Weinberg 1908): after one generation of random
-mating the genotype law is the product `p ⊗ p` of the parental allele frequencies
-`p = gamete G`. -/
-theorem offspring_apply (G : PMF (A × A)) (a b : A) :
-    offspring G (a, b) = gamete G a * gamete G b := by
+/-! ### Genotypes with independent alleles -/
+
+/-- The law of a genotype whose maternal and paternal alleles are drawn independently from the
+allele frequencies `p`. The offspring law is the case `p = gamete G`
+(`offspring_eq_iidGenotype`). -/
+noncomputable def iidGenotype (p : PMF A) : PMF (A × A) :=
+  p.bind fun a => p.map (Prod.mk a)
+
+/-- The two alleles of `iidGenotype p` are independent with law `p`: the genotype `(a, b)` has
+probability `p(a) p(b)`. -/
+theorem iidGenotype_apply (p : PMF A) (a b : A) : iidGenotype p (a, b) = p a * p b := by
   classical
-  rw [offspring, PMF.bind_apply, tsum_eq_single a]
+  rw [iidGenotype, PMF.bind_apply, tsum_eq_single a]
   · rw [PMF.map_apply, tsum_eq_single b]
     · simp
     · intro c hc
@@ -102,10 +111,13 @@ theorem offspring_apply (G : PMF (A × A)) (a b : A) :
     rw [PMF.map_apply]
     simp [Ne.symm hc]
 
-/-- **Allele frequencies are conserved** under random mating: the gamete law of the offspring
-equals that of the parents. -/
-theorem gamete_offspring (G : PMF (A × A)) : gamete (offspring G) = gamete G := by
-  set p := gamete G
+/-- The offspring law under random union of gametes is the law of a genotype with independent
+alleles drawn from the parental allele frequencies `gamete G`. -/
+theorem offspring_eq_iidGenotype (G : PMF (A × A)) : offspring G = iidGenotype (gamete G) := rfl
+
+/-- The allele frequencies of a genotype with independent alleles of law `p` are `p`: the gamete
+law of `iidGenotype p` is `p`. -/
+theorem gamete_iidGenotype (p : PMF A) : gamete (iidGenotype p) = p := by
   have key : ∀ a b : A,
       transmit (a, b) = (PMF.uniformFintype Bool).bind fun c => PMF.pure (cond c a b) := by
     intro a b
@@ -113,7 +125,7 @@ theorem gamete_offspring (G : PMF (A × A)) : gamete (offspring G) = gamete G :=
   have h1 : ∀ a : A, (p.bind fun b => (PMF.uniformFintype Bool).bind fun c =>
       PMF.pure (cond c a b)) = (PMF.uniformFintype Bool).bind fun c =>
         p.bind fun b => PMF.pure (cond c a b) := fun a => PMF.bind_comm _ _ _
-  calc gamete (offspring G)
+  calc gamete (iidGenotype p)
       = p.bind fun a => p.bind fun b => transmit (a, b) := by
         change (p.bind fun a => p.map (Prod.mk a)).bind transmit = _
         rw [PMF.bind_bind]
@@ -132,6 +144,18 @@ theorem gamete_offspring (G : PMF (A × A)) : gamete (offspring G) = gamete G :=
         · simp [PMF.bind_const, PMF.bind_pure]
         · simp [PMF.bind_const, PMF.bind_pure]
     _ = p := PMF.bind_const _ _
+
+/-- **Hardy–Weinberg proportions** (Hardy 1908, Weinberg 1908): after one generation of random
+mating the genotype law is the product `p ⊗ p` of the parental allele frequencies
+`p = gamete G`. -/
+theorem offspring_apply (G : PMF (A × A)) (a b : A) :
+    offspring G (a, b) = gamete G a * gamete G b :=
+  iidGenotype_apply (gamete G) a b
+
+/-- **Allele frequencies are conserved** under random mating: the gamete law of the offspring
+equals that of the parents. -/
+theorem gamete_offspring (G : PMF (A × A)) : gamete (offspring G) = gamete G :=
+  gamete_iidGenotype (gamete G)
 
 /-- **Hardy–Weinberg equilibrium**: the Hardy–Weinberg proportions reached after one generation
 of random mating are a fixed point of random mating. -/

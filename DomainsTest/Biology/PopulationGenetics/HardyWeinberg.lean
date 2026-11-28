@@ -83,4 +83,17 @@ example : offspring (PMF.pure (true, true)) (true, true) = 1 := by
 #print axioms offspring_offspring
 #print axioms hwDeviation_offspring
 
+/-! ### Genotypes with independent alleles -/
+
+/-- With alleles drawn independently from a fair coin, each ordered genotype has probability
+`1/2 · 1/2`. -/
+example : iidGenotype (PMF.uniformFintype Bool) (true, false) = 2⁻¹ * 2⁻¹ := by
+  simp [iidGenotype_apply]
+
+/-- A genotype with independent alleles of law `p` has allele frequencies `p`, and the offspring
+law is the genotype law with independent alleles at the parental allele frequencies. -/
+example {A : Type*} (p : PMF A) (G : PMF (A × A)) :
+    gamete (iidGenotype p) = p ∧ offspring G = iidGenotype (gamete G) :=
+  ⟨gamete_iidGenotype p, offspring_eq_iidGenotype G⟩
+
 end MathlibExtTest.Biology.PopulationGenetics.HardyWeinberg
