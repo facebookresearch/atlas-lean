@@ -111,8 +111,7 @@ example :
   have hn : (negativeComplexIso.hom.f 0).hom (zeroCoordinate 1) = -zeroCoordinate 1 := by
     simp [negativeComplexIso, HomologicalComplex.neg_f_apply]
   rw [hn]
-  simp only [binaryValue, LinearMap.comp_apply, TensorProduct.map_tmul,
-    LinearMap.id_apply, map_neg, zeroCoordinate_value, TensorProduct.rid_tmul]
+  simp only [binaryValue]
   decide
 
 example :
@@ -125,8 +124,7 @@ example :
   have hn : (negativeComplexIso.hom.f 0).hom (zeroCoordinate 1) = -zeroCoordinate 1 := by
     simp [negativeComplexIso, HomologicalComplex.neg_f_apply]
   rw [hn]
-  simp only [binaryValue, LinearMap.comp_apply, TensorProduct.map_tmul,
-    LinearMap.id_apply, map_neg, zeroCoordinate_value, TensorProduct.rid_tmul]
+  simp only [binaryValue]
   decide
 
 private def regularValue : regularComplex.X 0 →ₗ[R] R :=
@@ -144,8 +142,7 @@ example :
   have hn : (negativeComplexIso.hom.f 0).hom (zeroCoordinate 1) = -zeroCoordinate 1 := by
     simp [negativeComplexIso, HomologicalComplex.neg_f_apply]
   rw [hn]
-  simp only [regularValue, LinearMap.comp_apply, TensorProduct.map_tmul,
-    LinearMap.id_apply, map_neg, zeroCoordinate_value, TensorProduct.lid_tmul]
+  simp only [regularValue]
   decide
 
 example :

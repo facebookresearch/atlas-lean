@@ -23,8 +23,7 @@ import Mathlib.Algebra.Category.Grp.Zero
 Let R be a commutative principal ideal domain in universe u, and assume its underlying set has a
 representative in the module universe v. Every R-module M in v has projective dimension at most
 one: the kernel of a free presentation is a submodule of a free module and is free over R.
-This applies
-to arbitrary modules without a finite-generation or finite-rank restriction.
+This applies to arbitrary modules without a finite-generation or finite-rank restriction.
 
 When Ext groups of this module category are defined in universe w, Ext^p_R(M,A)=0 for all p≥2
 and all modules M,A in v. The statements give vanishing as a subsingleton group, as a zero

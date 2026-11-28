@@ -18,9 +18,8 @@ modules X in an independent universe z, the right-factor functor is X↦X⊗_k M
 carrier universe max(w,z). It is additive in every module map.
 
 If M is flat over k, both fixed-factor functors X↦M⊗_k X and X↦X⊗_k M preserve homology. The
-ring universe u is independent of w,z. The canonical additive and homology-preservation
-instances are supplied by the
-imported exact tensor-bifunctor owner.
+ring universe u is independent of w,z. The canonical additivity instance and
+homology-preservation results are supplied by the imported exact tensor-bifunctor owner.
 -/
 
 @[expose] public section
