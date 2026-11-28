@@ -18545,7 +18545,7 @@
   "WantedExt/TheoryOfComputation/FriedbergMuchnik": {"to": "TheoryOfComputation/degrees-and-hierarchies", "title": "Friedberg–Muchnik theorem"},
   "WantedExt/TheoryOfComputation/GreibachNormalFormWanted": {"to": "TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata", "title": "Greibach normal form"},
   "WantedExt/TheoryOfComputation/HierarchyStrictness": {"to": "TheoryOfComputation/degrees-and-hierarchies", "title": "Strictness of the arithmetical hierarchy"},
-  "WantedExt/TheoryOfComputation/HopcroftCostWanted": {"to": "TheoryOfComputation/regular-languages/minimization", "title": "Total work of Hopcroft's minimization algorithm"},
+  "WantedExt/TheoryOfComputation/HopcroftCostWanted": {"to": "TheoryOfComputation/regular-languages/minimization", "title": "Hopcroft's algorithm"},
   "WantedExt/TheoryOfComputation/ImmuneSetExistence": {"to": "TheoryOfComputation/degrees-and-hierarchies", "title": "Existence of immune sets"},
   "WantedExt/TheoryOfComputation/InherentAmbiguityWanted": {"to": "TheoryOfComputation/context-free-languages/grammars-and-pushdown-automata", "title": "Ambiguity of context-free grammars"},
   "WantedExt/TheoryOfComputation/IntegerMultiplicationWanted": {"to": "TheoryOfComputation/algebraic-complexity", "title": "Integer multiplication in time O(n log n)"},
