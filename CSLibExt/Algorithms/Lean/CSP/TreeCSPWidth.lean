@@ -28,9 +28,9 @@ a variable and its parent (`isTreeArcs_orderParent`). A forest constraint graph 
 width at most one (`constraintWidth_le_one_of_isAcyclic`), hence such a parent map
 (`exists_rootedOrder_of_isAcyclic`).
 
-Main results, for finitely many variables with symmetric constraints (`Symmetric`), no
-self-arcs, and selectors that pick a member of each nonempty candidate set and return `none`
-on the empty set:
+Main results, for finitely many variables and an inhabited value type, with symmetric
+constraints (`Symmetric`), no self-arcs, and selectors that pick a member of each nonempty
+candidate set and return `none` on the empty set:
 
 * `treeSolve_orderParent_ne_none_iff`: along an ordering of width at most one, the tree-CSP
   algorithm succeeds iff the CSP has a solution, and then returns one
@@ -286,11 +286,12 @@ private theorem cw_aux_a_isSolution_iff {X D : Type*} (P : BinaryCSP X D) (hsym 
       rw [← hsym a1 a2 (σ a1) (σ a2)]
       exact h2
 
-/-- **Orderings of width at most one are backtrack-free.** Let `P` have symmetric constraints and
-no arc joining a variable to itself, and let `d` be an ordering of width at most one. For all
-domains and any selector that picks a member of each nonempty candidate set and returns `none`
-on the empty set, the tree-CSP algorithm along `d`, each variable's parent being its earlier
-neighbor, succeeds exactly when `P` has a solution within the domains. -/
+/-- **Orderings of width at most one are backtrack-free.** Let `P` have finitely many variables
+and an inhabited value type, symmetric constraints and no arc joining a variable to itself, and
+let `d` be an ordering of width at most one. For all finite domains, which may be empty, and any
+selector that picks a member of each nonempty candidate set and returns `none` on the empty set,
+the tree-CSP algorithm along `d`, each variable's parent being its earlier neighbor, succeeds
+exactly when `P` has a solution within the domains. -/
 theorem treeSolve_orderParent_ne_none_iff [Inhabited D] {sel : Finset D → Option D}
     (hsel : IsSelector sel) (hsym : Symmetric P) (hdist : ∀ e ∈ P.arcs, e.1 ≠ e.2)
     {d : X ≃ Fin (Fintype.card X)} (hw : P.orderWidth d ≤ 1) (dom : X → Finset D) :
@@ -333,12 +334,12 @@ private theorem cw_aux_a_treeSolve_ne_none_iff_aux {X D : Type*} [DecidableEq X]
   exact treeSolve_orderParent_ne_none_iff P hsel hsym hdist hd dom
 
 omit [Fintype X] in
-/-- **Forests are backtrack-free.** Let `P` have finitely many variables, symmetric constraints,
-no arc joining a variable to itself, and an acyclic simple constraint graph. Fix a selector that
-picks a member of each nonempty candidate set and returns `none` on the empty set. Then there are
-a parent map and a root-first order for it such that every arc joins a variable and its parent
-and, for all domains, the tree-CSP algorithm succeeds exactly when `P` has a solution within the
-domains. -/
+/-- **Forests are backtrack-free.** Let `P` have finitely many variables and an inhabited value
+type `D`, symmetric constraints, no arc joining a variable to itself, and an acyclic simple
+constraint graph. Fix a selector that picks a member of each nonempty candidate set and returns
+`none` on the empty set. Then there are a parent map and a root-first order for it such that
+every arc joins a variable and its parent and, for all finite domains, which may be empty, the
+tree-CSP algorithm succeeds exactly when `P` has a solution within the domains. -/
 theorem exists_treeSolve_ne_none_iff_of_isAcyclic [Finite X] [Inhabited D]
     {sel : Finset D → Option D} (hsel : IsSelector sel) (hsym : Symmetric P)
     (hdist : ∀ e ∈ P.arcs, e.1 ≠ e.2) (hacyc : P.constraintGraph.IsAcyclic) :
@@ -429,16 +430,16 @@ theorem greedyFromT_time_le (parent : X → Option X) (sel : Finset D → Option
       rw [Nat.add_mul, Nat.one_mul, add_comm (List.length xs * d) d]
       exact add_le_add hcost (ih _)
 
-/-- `treeSolveT` returns what `treeSolve` returns. -/
+/-- For an inhabited value type, `treeSolveT` returns what `treeSolve` returns. -/
 theorem treeSolveT_ret [Inhabited D] (parent : X → Option X) (order : List X)
     (sel : Finset D → Option D) (dom : X → Finset D) :
     (treeSolveT P parent order sel dom).ret = treeSolve P parent order sel dom := by
   simp only [treeSolveT, TimeM.ret_bind, greedyFromT_ret, treeSolve, greedy]
 
 /-- **Relation-check budget of the tree-CSP algorithm.** Under a root-first order, for `n`
-variables and domains of size at most `d`, the DAC pass and greedy assignment together charge at
-most `n · d² + n · d` relation checks (a budget under the declared charges, not an exact trace of
-calls). -/
+variables with values in an inhabited type and domains of size at most `d`, the DAC pass and
+greedy assignment together charge at most `n · d² + n · d` relation checks (a budget under the
+declared charges, not an exact trace of calls). -/
 theorem treeSolveT_time_le [Fintype X] [Inhabited D] {parent : X → Option X} {order : List X}
     (hord : RootedOrder parent order) (sel : Finset D → Option D) (d : ℕ)
     (dom : X → Finset D) (hd : ∀ v, (dom v).card ≤ d) :
