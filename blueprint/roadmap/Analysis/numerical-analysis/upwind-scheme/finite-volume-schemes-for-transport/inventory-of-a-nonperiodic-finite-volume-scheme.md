@@ -17,7 +17,7 @@ Convergence is outside this result.
 
 ## Proof depends on
 
-- [Finite-volume ledger with wells](../../../EarthScience/hydrology-and-surface-processes/part-02/radial-flow-to-wells-well-sources-and-fractional/stock-add-mul-well-cell-rate.md)
+- [Finite-volume ledger with wells](../../../../EarthScience/hydrology-and-surface-processes/part-02/radial-flow-to-wells-well-sources-and-fractional/stock-add-mul-well-cell-rate.md)
 
 ## Sources
 
