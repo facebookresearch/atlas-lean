@@ -221,8 +221,8 @@
       "path": "MathlibExt/RingTheory/FilteredAlgebra/AssociatedGraded.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "9d3f71ebb9490929d53647ed2eb2a563eb75bd6abc1f9d28c526dbdb310a50d3",
-      "rationale": "Atlas adaptation of the general natural-number associated-graded algebra API: the Meta header retains the actual author attribution (@toskua). Quotient multiplication now uses native LinearMap.liftQ₂ and its representative rule; symbol induction and linear-map extensionality have additive hypotheses only. Mathematical documentation identifies the preceding-stage convention and does not assume exhaustivity. Lean 4.36 public-API compatibility and the original source origin are preserved; no NOTICE file-list attribution is claimed.",
+      "published_sha256": "331ed16dbcd933b1085f9cee2fff2b240065810921cb471a210a983ba96dc203",
+      "rationale": "Atlas adaptation of the general natural-number associated-graded algebra API, retaining actual @toskua author attribution in the source header. Quotient multiplication uses native LinearMap.liftQ₂ and its representative rule with explicit reduction of the filtered-stage representative. The symbol map, additive induction and linear-map extensionality are placed before ring-filtration and multiplicative instances, so their statements require no ring-filtration hypothesis. Mathematical documentation cites the verified preceding-stage convention as background and does not assume exhaustivity. The original source origin is preserved.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "f8646c32e80f38da288210c40492467bfe96094f8aee85390333f37234163082"
     },

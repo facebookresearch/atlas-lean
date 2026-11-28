@@ -31,10 +31,13 @@ set_option warningAsError true
 
 namespace CategoryTheory.Monad.BarChangeClient
 
+@[expose]
 private abbrev identityMonad : Monad (Type) := ofTypeMonad Id
 
+@[expose]
 private abbrev optionMonad : Monad (Type) := ofTypeMonad Option
 
+@[expose]
 private abbrev listMonad : Monad (Type) := ofTypeMonad List
 
 private def idToOption : identityMonad ⟶ optionMonad where
@@ -69,7 +72,7 @@ private abbrev rightList : RightModule listMonad (Type) :=
 private abbrev leftList : LeftModule (Type) listMonad :=
   LeftModule.regular (T := listMonad)
 
-example : idToOption.app ℕ 7 = some 7 := rfl
+example : idToOption.app ℕ (7 : ℕ) = some (7 : ℕ) := rfl
 
 example : optionToList.app ℕ none = [] := rfl
 

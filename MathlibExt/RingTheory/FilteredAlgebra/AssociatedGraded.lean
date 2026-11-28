@@ -104,6 +104,58 @@ theorem mem_lowerInStage_iff (n : ℕ) (x : F n) :
   | zero => simp [lowerInStage, lower]
   | succ n => rfl
 
+/-- Filtered representative as a homogeneous associated-graded element.
+
+For natural `n`, the linear symbol map takes `u : F n` to its quotient class in `Grade F n`
+and then includes that class in degree `n` of the external direct sum. -/
+def symbol (n : ℕ) : F n →ₗ[R] AssociatedGraded F :=
+  (DirectSum.lof R ℕ (Grade F) n).comp (lowerInStage F n).mkQ
+
+/-- Symbol map as quotient projection and direct-sum inclusion.
+
+The symbol of `u : F n` is `DirectSum.lof R ℕ (Grade F) n ((lowerInStage F n).mkQ u)`. -/
+@[simp]
+theorem symbol_mk (n : ℕ) (u : F n) :
+    symbol F n u = DirectSum.lof R ℕ (Grade F) n ((lowerInStage F n).mkQ u) := rfl
+
+/-- Additive induction on homogeneous symbols.
+
+A property of associated-graded elements holds everywhere if it holds at zero and at every
+symbol of a filtered representative, and is preserved by addition. -/
+@[elab_as_elim]
+theorem symbol_induction {motive : AssociatedGraded F → Prop}
+    (zero : motive 0) (symbol : ∀ n (u : F n), motive (FilteredAlgebra.symbol F n u))
+    (add : ∀ x y, motive x → motive y → motive (x + y)) (z : AssociatedGraded F) :
+    motive z := by
+  induction z using DirectSum.induction_on with
+  | zero => exact zero
+  | of n x =>
+      obtain ⟨u, rfl⟩ := (lowerInStage F n).mkQ_surjective x
+      exact symbol n u
+  | add x y hx hy => exact add x y hx hy
+
+/-- Linear maps from the associated graded are determined by symbols.
+
+Two `R`-linear maps from `AssociatedGraded F` to an `R`-module are equal if their values agree
+on `symbol F n u` for all natural `n` and all `u : F n`. -/
+theorem linearMap_ext_symbol {M : Type*} [AddCommGroup M] [Module R M]
+    {f g : AssociatedGraded F →ₗ[R] M}
+    (h : ∀ n (u : F n), f (symbol F n u) = g (symbol F n u)) : f = g := by
+  apply LinearMap.ext
+  intro z
+  exact symbol_induction F (by rw [map_zero, map_zero]) h
+    (fun x y hx hy => by rw [map_add, map_add, hx, hy]) z
+
+/-- Equal degree and underlying representative give equal symbols.
+
+If `n = m` and `u : F n` and `v : F m` have equal underlying elements in `A`, then `symbol F n
+u = symbol F m v`. -/
+theorem symbol_congr {n m : ℕ} (h : n = m) (u : F n) (v : F m)
+    (huv : u.val = v.val) : symbol F n u = symbol F m v := by
+  subst m
+  apply congrArg (symbol F n)
+  exact Subtype.ext huv
+
 variable [IsRingFiltration F (lower F)]
 
 /-- Bilinear multiplication between filtered stages.
@@ -208,8 +260,9 @@ theorem gradeProduct_mk (n m : ℕ) (x : F n) (y : F m) :
     gradeProduct F n m ((lowerInStage F n).mkQ x) ((lowerInStage F m).mkQ y) =
       (lowerInStage F (n + m)).mkQ
         ⟨x.val * y.val, SetLike.mul_mem_graded x.property y.property⟩ := by
-  simpa only [gradeProduct, Submodule.mkQ_apply, LinearMap.liftQ₂_mk,
+  simp only [gradeProduct, Submodule.mkQ_apply, LinearMap.liftQ₂_mk,
     LinearMap.compr₂_apply]
+  rfl
 
 /-- Algebra scalars restricted to filtration degree zero.
 
@@ -425,21 +478,6 @@ instance gradeGAlgebra : DirectSum.GAlgebra R (Grade F) where
     rw [graded_mul_mk, ← map_smul]
     exact gradedMk_congr F (Nat.zero_add n).symm _ _ (Algebra.smul_def r u.val)
 
-/-- Filtered representative as a homogeneous associated-graded element.
-
-For natural `n`, the linear symbol map takes `u : F n` to its quotient class in `Grade F n`
-and then includes that class in degree `n` of the external direct sum. -/
-def symbol (n : ℕ) : F n →ₗ[R] AssociatedGraded F :=
-  (DirectSum.lof R ℕ (Grade F) n).comp (lowerInStage F n).mkQ
-
-omit [IsRingFiltration F (lower F)] in
-/-- Symbol map as quotient projection and direct-sum inclusion.
-
-The symbol of `u : F n` is `DirectSum.lof R ℕ (Grade F) n ((lowerInStage F n).mkQ u)`. -/
-@[simp]
-theorem symbol_mk (n : ℕ) (u : F n) :
-    symbol F n u = DirectSum.lof R ℕ (Grade F) n ((lowerInStage F n).mkQ u) := rfl
-
 /-- Symbols multiply as filtered representatives.
 
 For `x : F n` and `y : F m`, the product of their symbols is the degree-`n + m` symbol of
@@ -465,47 +503,6 @@ theorem symbol_one :
 For `r : R`, the symbol of `scalarStage F r` equals `algebraMap R (AssociatedGraded F) r`. -/
 theorem symbol_algebraMap (r : R) :
     symbol F 0 (scalarStage F r) = algebraMap R (AssociatedGraded F) r := rfl
-
-omit [IsRingFiltration F (lower F)] in
-/-- Additive induction on homogeneous symbols.
-
-A property of associated-graded elements holds everywhere if it holds at zero and at every
-symbol of a filtered representative, and is preserved by addition. -/
-@[elab_as_elim]
-theorem symbol_induction {motive : AssociatedGraded F → Prop}
-    (zero : motive 0) (symbol : ∀ n (u : F n), motive (FilteredAlgebra.symbol F n u))
-    (add : ∀ x y, motive x → motive y → motive (x + y)) (z : AssociatedGraded F) :
-    motive z := by
-  induction z using DirectSum.induction_on with
-  | zero => exact zero
-  | of n x =>
-      obtain ⟨u, rfl⟩ := (lowerInStage F n).mkQ_surjective x
-      exact symbol n u
-  | add x y hx hy => exact add x y hx hy
-
-omit [IsRingFiltration F (lower F)] in
-/-- Linear maps from the associated graded are determined by symbols.
-
-Two `R`-linear maps from `AssociatedGraded F` to an `R`-module are equal if their values agree
-on `symbol F n u` for all natural `n` and all `u : F n`. -/
-theorem linearMap_ext_symbol {M : Type*} [AddCommGroup M] [Module R M]
-    {f g : AssociatedGraded F →ₗ[R] M}
-    (h : ∀ n (u : F n), f (symbol F n u) = g (symbol F n u)) : f = g := by
-  apply LinearMap.ext
-  intro z
-  exact symbol_induction F (by rw [map_zero, map_zero]) h
-    (fun x y hx hy => by rw [map_add, map_add, hx, hy]) z
-
-omit [IsRingFiltration F (lower F)] in
-/-- Equal degree and underlying representative give equal symbols.
-
-If `n = m` and `u : F n` and `v : F m` have equal underlying elements in `A`, then `symbol F n
-u = symbol F m v`. -/
-theorem symbol_congr {n m : ℕ} (h : n = m) (u : F n) (v : F m)
-    (huv : u.val = v.val) : symbol F n u = symbol F m v := by
-  subst m
-  apply congrArg (symbol F n)
-  exact Subtype.ext huv
 
 /-- Lowering filtered commutators makes homogeneous symbols commute.
 
