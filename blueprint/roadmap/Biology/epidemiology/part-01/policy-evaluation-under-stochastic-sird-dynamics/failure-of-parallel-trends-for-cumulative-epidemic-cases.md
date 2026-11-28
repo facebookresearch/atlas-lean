@@ -1,6 +1,6 @@
 # Failure of parallel trends for cumulative epidemic cases
 
-In the setting of [unconfoundedness under stochastic SIRD dynamics](unconfoundedness-of-policy-effects-under-stochastic-sird-dynamics.md), write $\Delta_{(t^*-1, t)}X_t = X_t - X_{t^*-1}$. For each $d \in \{0, 1\}$,
+In the setting of [unconfoundedness under stochastic SIRD dynamics](unconfoundedness-of-policy-effects-under-stochastic-sird-dynamics.md) (the source's stochastic SIRD model for untreated potential outcomes, Eqs. (A.1)–(A.7), with its overlap assumption), write $\Delta_{(t^*-1, t)}X_t = X_t - X_{t^*-1}$. For each $d \in \{0, 1\}$,
 
 $$E\bigl[\Delta_{(t^*-1,t)}C_t(0) \mid D = d\bigr] = \sum_{s = t^*}^{t} E\Bigl[E\bigl[\Delta C_s(0) \mid F_{t^*-1}, D = d\bigr] \Bigm| D = d\Bigr].$$
 

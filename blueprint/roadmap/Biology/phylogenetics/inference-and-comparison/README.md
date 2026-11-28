@@ -22,20 +22,18 @@ These articles concern inference of evolutionary trees, networks and recorded ce
 
 - [Monte Carlo phylogenetic bootstrap support](phylogenetic-bootstrap-support-definition-and-no.md)
 
-## Tree estimation, comparison and diversity
+## [Tree estimation, phylogenetic networks and reconciliation](part-01/README.md)
 
-- [Average internode distance species trees](average-internode-distance-species-trees/README.md)
-- [First-order matrix exponential derivative approximation](first-order-matrix-exponential-derivative-approximation/README.md)
-- [Generalized pruning on subsplit DAGs](generalized-pruning-on-subsplit-dags/README.md)
-- [Guide tree merger for disjoint tree merging](guide-tree-merger-for-disjoint-tree-merging/README.md)
-- [Moments of the phylogenetic mean pairwise distance](moments-of-the-phylogenetic-mean-pairwise-distance/README.md)
-- [RF-optimal gene tree refinement and completion](rf-optimal-gene-tree-refinement-and-completion/README.md)
-- [Spanning edge betweenness of minimum spanning trees](spanning-edge-betweenness-of-minimum-spanning-trees/README.md)
-- [Split-incompatibility scores for majority-rule supertrees](split-incompatibility-scores-for-majority-rule-supertrees/README.md)
-- [Standardized phylogenetic beta diversity](standardized-phylogenetic-beta-diversity/README.md)
-- [Taxonomy–phylogeny discord and taxonomic rooting](taxonomy-phylogeny-discord-and-taxonomic-rooting/README.md)
-
-## [Phylogenetic networks and reconciliation](part-01/README.md)
+- [Average internode distance species trees](part-01/average-internode-distance-species-trees/README.md)
+- [First-order matrix exponential derivative approximation](part-01/first-order-matrix-exponential-derivative-approximation/README.md)
+- [Generalized pruning on subsplit DAGs](part-01/generalized-pruning-on-subsplit-dags/README.md)
+- [Guide tree merger for disjoint tree merging](part-01/guide-tree-merger-for-disjoint-tree-merging/README.md)
+- [Moments of the phylogenetic mean pairwise distance](part-01/moments-of-the-phylogenetic-mean-pairwise-distance/README.md)
+- [RF-optimal gene tree refinement and completion](part-01/rf-optimal-gene-tree-refinement-and-completion/README.md)
+- [Spanning edge betweenness of minimum spanning trees](part-01/spanning-edge-betweenness-of-minimum-spanning-trees/README.md)
+- [Split-incompatibility scores for majority-rule supertrees](part-01/split-incompatibility-scores-for-majority-rule-supertrees/README.md)
+- [Standardized phylogenetic beta diversity](part-01/standardized-phylogenetic-beta-diversity/README.md)
+- [Taxonomy–phylogeny discord and taxonomic rooting](part-01/taxonomy-phylogeny-discord-and-taxonomic-rooting/README.md)
 
 - [Constrained level-1 network extension](part-01/constrained-level-1-network-extension/README.md)
 - [Cycle-breaking approximation of the hybridization number](part-01/cycle-breaking-approximation-of-hybridization-number/README.md)

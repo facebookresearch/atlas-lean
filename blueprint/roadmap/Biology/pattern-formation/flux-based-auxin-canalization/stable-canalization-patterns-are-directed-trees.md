@@ -15,7 +15,7 @@ with quadratic response $\Phi(x)=x^2$ for $x>0$ and $\Phi(x)=0$ for $x\le0$. Put
 
 $$a^*_i=\frac{1}{c\,\alpha_a(i)}\quad(i\ne i_0),\qquad a^*_{i_0}=\frac{\alpha_a(i_0)}{\beta_{a_{i_0}}},$$
 
-so auxin decreases along every path towards the sink, i.e. flux runs against the auxin gradient inside sink-driven trees.
+so auxin decreases along every path towards the sink up to the last cell before $i_0$, i.e. flux runs against the auxin gradient inside sink-driven trees away from the sink; the last step into $i_0$ can increase, since $a^*_{i_0}$ is large when $\beta_{a_{i_0}}$ is small (the source: "the auxin concentration decreases along the paths as long as $i\ne i_0$").
 
 ## Expansion
 

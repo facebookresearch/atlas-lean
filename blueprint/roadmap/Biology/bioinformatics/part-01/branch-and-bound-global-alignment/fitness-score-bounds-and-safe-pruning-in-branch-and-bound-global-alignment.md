@@ -1,6 +1,6 @@
 # Fitness-score bounds and safe pruning in branch-and-bound global alignment
 
-Let $S_1$ and $S_2$ have lengths $m$ and $n$, and score a global alignment with match score $M > 0$, mismatch score $M_s < M$ and linear gap score $G < 0$. A node of the search tree is a partial alignment of the prefixes $S_1[1..P_1]$ and $S_2[1..P_2]$ with present score $\mathrm{PrS}$; each node has at most three children (match/mismatch, gap in $S_2$, gap in $S_1$). With remaining lengths $x_1 = m - P_1$, $x_2 = n - P_2$, put $x = \min(x_1, x_2)$ and $y = |x_1 - x_2|$ and define the future-score bounds and fitness interval
+Let $S_1$ and $S_2$ have lengths $m$ and $n$, and score a global alignment with match score $M > 0$, mismatch score $M_s < 0$ and linear gap score $G < 0$. A node of the search tree is a partial alignment of the prefixes $S_1[1..P_1]$ and $S_2[1..P_2]$ with present score $\mathrm{PrS}$; each node has at most three children (match/mismatch, gap in $S_2$, gap in $S_1$). With remaining lengths $x_1 = m - P_1$, $x_2 = n - P_2$, put $x = \min(x_1, x_2)$ and $y = |x_1 - x_2|$ and define the future-score bounds and fitness interval
 
 $$F_{\max} = xM + yG, \qquad F_{\min} = xM_s + yG, \qquad [T_{\max}, T_{\min}] = [\mathrm{PrS} + F_{\max},\ \mathrm{PrS} + F_{\min}].$$
 

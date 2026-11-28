@@ -6,6 +6,8 @@ $$\frac{d\bar u}{d\tau}=\gamma f(\bar u,\bar v),\qquad \frac{d\bar v}{d\tau}=\ga
 
 $$q_0(\bar u,\bar v)=c_1a\,(c_{\max}-(\bar u+\bar v))\,(m-(\bar u+\bar v))-c_{-1}\bar v,\qquad m=V_0/a .$$
 
+The source's Eq. (8) prints $d\bar v/d\tau=\gamma\bigl(f(\bar u,\bar v)-q_0(\bar u,\bar v)\bigr)$; the page writes $\gamma(-f+q_0)$ because that is the spatial average of the $v$-equation of the source's reduced model (6), $\partial_\tau v=d\Delta_\Gamma v+\gamma(-f+q)$, displayed above (the Laplacian averages to zero on the closed surface $\Gamma$).
+
 The physically admissible states form
 
 $$\mathcal A=\{(u,v)\ge(0,0):\ u+v\le\min(c_{\max},m)\}.$$

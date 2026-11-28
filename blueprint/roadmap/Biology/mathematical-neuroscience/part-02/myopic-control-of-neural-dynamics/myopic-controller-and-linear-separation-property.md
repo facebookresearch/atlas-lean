@@ -14,7 +14,7 @@ where $\mu_t, \Sigma_t$ are the state mean and covariance, so the optimal contro
 
 $$u_t^{*} = -\left(B^\top B + \gamma I_m\right)^{-1} B^\top (A - \tilde A)\,\mu_t$$
 
-(Theorem 1). State estimation and control design therefore separate, as in LQG.
+(Theorem 1). The source's Eq. (8) omits the term $\mu_t^\top(A-\tilde A)^\top(A-\tilde A)\mu_t$, and its Eq. (9) prints $u_t^*=-2(B^\top B+\gamma I_m)^{-1}B^\top(A-\tilde A)\mu_t$ after "Maximizing (8)"; the forms here follow from expanding $\mathbb E\|(A-\tilde A)x_t+Bu_t\|^2$ with $\mathbb E[x_tx_t^\top]=\Sigma_t+\mu_t\mu_t^\top$ and setting the gradient $2B^\top(A-\tilde A)\mu_t+2(B^\top B+\gamma I_m)u_t$ of the convex cost to zero (minimizing, not maximizing). State estimation and control design therefore separate, as in LQG.
 
 **Nonlinear case.** Linearizing $F[x_t, u_t] \approx f_t + B_t u_t$ about null control, with $f_t = F[x_t, 0]$ and $B_t$ the control Jacobian, gives
 

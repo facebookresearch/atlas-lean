@@ -7,7 +7,7 @@ Let $G$ be a gene tree and $S'$ a subdivided dated species tree. A reconciliatio
 
 **Fact.** Every reconciliation parsimonious for some positive cost vector is Pareto-optimal, but the converse fails: there are gene and species trees with a Pareto-optimal reconciliation of event count vector $(1, 2, 4)$ that is parsimonious for no strictly positive cost vector (To et al. 2015, Remark 2 and Fig. 3).
 
-The event count vectors of all reconciliations parsimonious for some cost vector in a box $[r_m, r_M]$ can be computed by dynamic programming over pairs (gene node, species node) in $O(|V(S)|^2 |V(G)|^5)$ time and $O(|V(S)|^2 |V(G)|^3)$ space (Theorem 1).
+The event count vectors of all reconciliations parsimonious for some cost vector $c$ whose ratio vector $r(c) = (\lambda/\tau, \delta/\tau, \lambda/\delta)$ lies in a given box $[r_m, r_M]$ (componentwise $r_m \le r(c) \le r_M$) can be computed by dynamic programming over pairs (gene node, species node) in $O(|V(S)|^2 |V(G)|^5)$ time and $O(|V(S)|^2 |V(G)|^3)$ space (Theorem 1).
 
 ## Expansion
 

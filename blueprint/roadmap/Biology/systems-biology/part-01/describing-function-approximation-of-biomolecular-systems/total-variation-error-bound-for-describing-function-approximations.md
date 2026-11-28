@@ -13,7 +13,7 @@ In particular the describing-function (first-harmonic) error obeys $\epsilon_1^2
 **Consequences.**
 
 - A saturation of slope $k$ and level $ka$ driven with amplitude $A>a$ has $V=4ka$ per period, so $\epsilon_1^2\le(4ka)^2/(\pi\omega)$; a relay with hysteresis and output levels $\pm D$ has $\epsilon_1^2\le(4D)^2/(\pi\omega)$.
-- A periodic output that is monotone between one minimum and one maximum per period has $V=2(\max f-\min f)$. For a biomolecular output bounded by a conserved total (e.g. an enzyme-modified fraction $0\le A_1\le A_T$), this yields a bound from the conservation law alone, without simulating the trajectory.
+- A periodic output that is monotone between one minimum and one maximum per period has $V=2(\max f-\min f)$. The source prints this for every signal: "for any real periodic signal, the total variation over a period is bounded and is four times of the amplitude of the signal" (Section 3.1); the page restricts it to such unimodal signals, since a signal with several local maxima per period has total variation larger than $2(\max f-\min f)$ (e.g. $\sin t+\sin 3t$). For a biomolecular output bounded by a conserved total (e.g. an enzyme-modified fraction $0\le A_1\le A_T$), this yields a bound from the conservation law alone, without simulating the trajectory.
 - In harmonic-balance limit-cycle analysis, replacing $N$ by the uncertainty set $N(1\pm e)$ in $1+N(A)G(j\omega)=0$ gives an interval of predicted amplitudes. For the Van der Pol oscillator the nominal prediction is $\omega=1$, $A=2$, and the error band gives amplitudes between about $1.53$ and $3.72$, which bracket the true oscillation for moderate damping.
 
 ## Expansion

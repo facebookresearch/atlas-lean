@@ -18,11 +18,13 @@ $$
 \lambda_1=-\delta,\qquad \lambda_2=r_2-\frac{n\sigma}{\delta}-c_1,\qquad \lambda_3=-r_3,
 $$
 
-independently of $\tau$ (the delayed terms enter only through an entry that does not affect the triangular spectrum). Hence $E_0$ is locally asymptotically stable for every delay $\tau\ge 0$ if and only if
+independently of $\tau$ (the delayed terms enter only through an entry that does not affect the triangular spectrum). Hence $E_0$ is locally asymptotically stable for every delay $\tau\ge 0$ if
 
 $$
-r_2<\frac{n\sigma}{\delta}+c_1 .
+r_2<\frac{n\sigma}{\delta}+c_1 ,
 $$
+
+and unstable if $\lambda_2>0$, i.e. if $r_2>n\sigma/\delta+c_1$; at $\lambda_2=0$ the linearization does not decide. (The source states the sufficient direction: "$E_0$ is locally stable if $\lambda_2<0$ if and only if $r_2<n\sigma/\delta+c_1$, $\forall\tau\ge0$", Eq. (13).)
 
 The lethal state $(\sigma/\delta,0,0)$ has eigenvalues $-\delta$, $r_2-n\sigma/\delta$ and $r_3>0$, so it is always an unstable saddle.
 

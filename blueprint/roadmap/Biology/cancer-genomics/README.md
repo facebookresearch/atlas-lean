@@ -15,8 +15,11 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
-- [Darwinian dynamics of cancer drug resistance](darwinian-dynamics-of-drug-resistance/README.md)
-- [Multi-copy copy-number profile transformation](multi-copy-copy-number-profile-transformation/README.md)
-- [Mutational burden after treatment in birth–death tumours](mutational-burden-after-treatment-in-birth-death-tumours/README.md)
-- [Stability of persistence curves for copy-number signals](stability-of-persistence-curves-for-copy-number-signals/README.md)
-- [Survival-associated mutated subnetworks](survival-associated-mutated-subnetworks/README.md)
+
+## [Drug resistance, copy-number distances and survival subnetworks](part-01/README.md)
+
+- [Darwinian dynamics of cancer drug resistance](part-01/darwinian-dynamics-of-drug-resistance/README.md)
+- [Multi-copy copy-number profile transformation](part-01/multi-copy-copy-number-profile-transformation/README.md)
+- [Mutational burden after treatment in birth–death tumours](part-01/mutational-burden-after-treatment-in-birth-death-tumours/README.md)
+- [Stability of persistence curves for copy-number signals](part-01/stability-of-persistence-curves-for-copy-number-signals/README.md)
+- [Survival-associated mutated subnetworks](part-01/survival-associated-mutated-subnetworks/README.md)

@@ -4,6 +4,8 @@
 
 $$y_\kappa = \int_0^{T_\kappa} q_\kappa(\gamma_\kappa(t))\,dt, \qquad Q(\kappa) = \frac{y_\kappa}{T_\kappa}.$$
 
+The source's Eq. (2) prints the upper limit $\kappa$, $Q(\kappa)=\frac1{T_\kappa}\int_0^{\kappa}q_\kappa(\gamma_\kappa(t))\,dt$; the page writes $T_\kappa$ because $Q$ is the progress per cycle divided by the period, as the source's text defines it, and the integral must run over one full period of $\gamma_\kappa$.
+
 In a **powerstroke–recovery** system, $t = 0$ is the start of the powerstroke of duration $T^{ps}_\kappa$, and $q_\kappa \equiv 0$ during the recovery of duration $T^{re}_\kappa = T_\kappa - T^{ps}_\kappa$. The **sensitivity** to a sustained perturbation $\kappa_0 \to \kappa_0 + \epsilon$ is $S = \partial Q/\partial\kappa(\kappa_0)$; $S = 0$ means first-order performance homeostasis.
 
 **Infinitesimal shape response curve (iSRC).** With a monotone time rescaling $\tau_\epsilon$ mapping $[0,T_0)$ onto $[0,T_\epsilon)$, write $\gamma_\epsilon(\tau_\epsilon(t)) = \gamma_0(t) + \epsilon\,\gamma_1(t) + O(\epsilon^2)$. Then $\gamma_1$ solves

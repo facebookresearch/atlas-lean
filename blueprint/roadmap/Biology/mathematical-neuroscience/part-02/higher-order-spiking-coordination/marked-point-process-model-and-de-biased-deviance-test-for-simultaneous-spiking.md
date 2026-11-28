@@ -10,7 +10,7 @@ with baseline $\mu^{(m)}$ and ensemble-history modulation $\theta^{(m)}$ (Mukher
 
 $$D^{(r)}_{k,\beta} = \frac{1+\beta}{1-\beta}\left[2\left(\ell^\beta_k(\hat\omega^{(F)}_k) - \ell^\beta_k(\hat\omega^{(R)}_k)\right) - \left(B^{(F)}_k - B^{(R)}_k\right)\right]$$
 
-between full and reduced models, with bias corrections $B$ (Eq. 9). As $\beta \to 1$ it is asymptotically $\chi^2_{M^{(r)}}$ under the null and noncentral $\chi^2_{M^{(r)}}(\nu^{(r)}_k)$ under the alternative (Theorem 2), and the result extends to any nested hypothesis on the marks, giving adaptive Granger-causality tests (Corollary 2.2). Significance is summarized by Youden's statistic $J^{(r)}_k = 1 - \alpha - F_{\chi^2(M, \hat\nu_k)}\big(F^{-1}_{\chi^2(M)}(1-\alpha)\big)$ (Eq. 10).
+between full and reduced models, with bias corrections $B$ (Eq. 9). As $\beta \to 1$ it is asymptotically $\chi^2_{M^{(r)}}$ under the null and, assuming the base rate parameters of $r$th-order interactions scale at least as $O((1-\beta)/(1+\beta))$, noncentral $\chi^2_{M^{(r)}}(\nu^{(r)}_k)$ under the alternative (Theorem 2), and the result extends to any nested hypothesis on the marks, giving adaptive Granger-causality tests (Corollary 2.2). Significance is summarized by Youden's statistic $J^{(r)}_k = 1 - \alpha - F_{\chi^2(M, \hat\nu_k)}\big(F^{-1}_{\chi^2(M)}(1-\alpha)\big)$ (Eq. 10).
 
 ## Expansion
 

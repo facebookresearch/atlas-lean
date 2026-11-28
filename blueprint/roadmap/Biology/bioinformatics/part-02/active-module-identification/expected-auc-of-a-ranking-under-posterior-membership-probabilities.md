@@ -4,7 +4,7 @@ Let $G$ be a graph with $n$ vertices, let $\mathcal M$ be a random vertex set (t
 
 $$E[\mathrm{AUC}] = 1 - \frac{1}{m(n - m)}\Bigl(\sum_{i=1}^n i\,p_i - \frac{m(m+1)}{2}\Bigr).$$
 
-Hence, among all rankings, the expected AUC is maximized by ordering vertices by decreasing $p_i$. If $m = |\mathcal M|$ is random (supported on $\{1, \dots, n-1\}$), conditioning on $|\mathcal M| = m$ gives $E[\mathrm{AUC}] = 1 - \sum_{i=1}^n i\,q_i + E\big[\tfrac{|\mathcal M|+1}{2(n - |\mathcal M|)} \mid W = w\big]$, where $q_i = \sum_{m=1}^{n-1} P(|\mathcal M|=m \mid W=w)\,P(v_i \in \mathcal M \mid |\mathcal M|=m, W=w)/\big(m(n-m)\big)$, so expected AUC is maximized by ordering vertices by decreasing $q_i$.
+Hence, among all rankings, the expected AUC is maximized by ordering vertices by decreasing $p_i$. If $m = |\mathcal M|$ is random (supported on $\{1, \dots, n-1\}$), conditioning on $|\mathcal M| = m$ gives $E[\mathrm{AUC}] = 1 - \sum_{i=1}^n i\,q_i + E\big[\tfrac{|\mathcal M|+1}{2(n - |\mathcal M|)} \mid W = w\big]$, where $q_i = \sum_{m=1}^{n-1} P(|\mathcal M|=m \mid W=w)\,P(v_i \in \mathcal M \mid |\mathcal M|=m, W=w)/\big(m(n-m)\big)$, so expected AUC is maximized by ordering vertices by decreasing $q_i$. For random $|\mathcal M|$ the source prints $1-\frac{1}{\mathbb E|\mathcal M|\cdot|G\setminus\mathcal M|}\big(\sum_i i\,p'_i-\frac{\mathbb E|\mathcal M|(|\mathcal M|+1)}{2}\big)$ (after Lemma 1), a ratio of expectations, which is not the expected AUC in general; the form here follows from Lemma 1 by conditioning on $|\mathcal M|=m$ and averaging over $m$.
 
 ## Expansion
 

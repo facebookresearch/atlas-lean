@@ -4,7 +4,7 @@ Consider the delayed Kuramoto network of the [non-plastic model](global-frequenc
 
 $$\frac{d\tau_{ij}}{dt} = H(\tau_{ij})\bigl[-(\tau_{ij} - \tau^0_{ij}) + \kappa\,\sin(\theta_j - \theta_i)\bigr], \qquad \tau_{ij}(0) = \tau^0_{ij} \ge 0,$$
 
-where $\kappa > 0$ is the plasticity gain and $H$ is a smooth cutoff with $H(\tau) = 0$ for $\tau < 0$ and $H(\tau) = 1$ for $\tau > \varepsilon$, which keeps delays nonnegative. A phase-locked state $\theta_i(t) = \Omega t + \phi_i$ with offsets $\Delta_{ij} = \phi_j - \phi_i$ exists iff, for all $i, j$,
+where $\kappa > 0$ is the plasticity gain and $H$ is a smooth cutoff with $H(\tau) = 0$ for $\tau < 0$ and $H(\tau) = 1$ for $\tau > \varepsilon$, which keeps delays nonnegative. The global frequency $\Omega$ and offsets $\Delta_{ij} = \phi_j - \phi_i$ of a synchronized state $\theta_i(t) \to \Omega t + \phi_i$ as $t\to\infty$, with delays converging to equilibrium values $\tau_{ij}(t)\to\tau^E_{ij}$, satisfy, for all $i, j$ (the source derives these equations by applying its phase-locked ansatz to the state reached as $t\to\infty$; it does not claim that they characterize existence, and since $\tau_{ij}(0)=\tau^0_{ij}$ the delays are not constant from $t=0$),
 
 $$\Omega = \omega_0 + \frac{g}{N}\sum_{j=1}^N a_{ij}\sin(-\Omega\tau^E_{ij} + \Delta_{ij}), \qquad \tau^E_{ij} = \max\bigl(\tau^0_{ij} + \kappa\sin\Delta_{ij},\,0\bigr),$$
 

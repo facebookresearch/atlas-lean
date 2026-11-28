@@ -29,10 +29,10 @@ $$
 for the delayed states $x_i\in\{E,T\}$ (and without the advanced term for $N,u$), and the optimal infusion is
 
 $$
-v^*(t)=\min\Bigl(v_{\max},\,\frac{\lambda_4(t)}{B_v}\Bigr),
+v^*(t)=\max\Bigl(0,\,\min\Bigl(v_{\max},\,\frac{\lambda_4(t)}{B_v}\Bigr)\Bigr),
 $$
 
-understood as the projection of $\lambda_4/B_v$ onto $[0,v_{\max}]$.
+the projection of $\lambda_4/B_v$ onto $[0,v_{\max}]$. The source's Eq. (32) prints $v^*=\min(v_{\max},\lambda_4/B_v)$, which drops the lower bound; the page keeps it because the admissible controls take values in $[0,v_{\max}]$ and the Hamiltonian is strictly concave in $v$, so its maximizer over that interval is the clipped stationary point.
 
 ## Expansion
 

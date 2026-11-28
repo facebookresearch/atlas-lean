@@ -6,7 +6,7 @@
 
 $$D(g) = \frac{2\,\lvert\{x : f(x) > 0\}\rvert}{n(n+1)}, \qquad D_k(g) = \frac{\lvert\{x : f(x) > 0,\ |x| = k\}\rvert}{n-k+1}, \qquad R_k(g) = \frac{\sum_{|x| = k,\ f(x) > 1} f(x)}{n-k+1},$$
 
-where $x$ ranges over non-empty strings. $D_k$ is the fraction of the $n-k+1$ $k$-mer positions that are first copies of distinct $k$-mers; $R_k$ is the fraction of positions covered by $k$-mers that occur at least twice. If $C(k,r)$ is the number of distinct $k$-mers occurring exactly $r$ times, then $(n-k+1)R_k = \sum_{r > 1} r\,C(k,r)$.
+where $x$ ranges over non-empty strings. $D_k$ is the fraction of the $n-k+1$ $k$-mer positions that are first copies of distinct $k$-mers; $R_k$ is the fraction of positions covered by $k$-mers that occur at least twice. If $C(k,r)$ is the number of distinct $k$-mers occurring exactly $r$ times, then $(n-k+1)R_k = \sum_{r > 1} r\,C(k,r)$. The source prints "Therefore, $R_k=\sum_{r>1}r\cdot C(k,r)$", without the factor $n-k+1$; the form here follows from its definition of $R_k$ displayed above, since $\sum_{|x|=k,\,f(x)>1}f(x)=\sum_{r>1}r\,C(k,r)$.
 
 **Lemma 1 (distinct substrings).**
 

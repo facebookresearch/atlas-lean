@@ -6,7 +6,7 @@
 
 **Distributed organization (DO).** $D \subseteq \mathcal{S}$ is a DO through $\hat v \in \mathbb{R}^m_+$ if $D = S_1 \cup \dots \cup S_k$ for pairwise different closed sets $S_i$ (compartments), $N\hat v \ge 0$, and $\hat v = \sum_i \hat v^i$ with each $\hat v^i$ feasible for $S_i$. A DO with $k = 1$ is an organization.
 
-**SOR.** If $D$ is a DO through a flux $\hat v$ feasible for $D$, then $\mathrm{SOR}(\hat v) = \{r_j : \hat v_j > 0\}$ is a **set of organizational reactions**. A species $s_i$ is overproduced by $\hat v$ if $(N\hat v)_i > 0$.
+**SOR.** If $D$ is a DO through a flux $\hat v$, in the compartment-wise sense above (each $\hat v^i$ feasible for its own closed $S_i$, with no feasibility of $\hat v$ for $D$ itself), then $\mathrm{SOR}(\hat v) = \{r_j : \hat v_j > 0\}$ is a **set of organizational reactions**. The source's Definition 6 prints "a feasible flux $\hat v$ with respect to $D$"; the page drops that condition because with it Lemma 3 below is false: for $r_1 : a \to 2a$, $r_2 : b \to 2b$, $r_3 : a + b \to c$ and $\hat v = (1,1,0)$, $N\hat v \ge 0$ and $R = \{r_1,r_2\} = \mathrm{ERC}(r_1) \cup \mathrm{ERC}(r_2)$, yet any flux feasible for a DO containing $a$ and $b$ has $\hat v_3 > 0$. A species $s_i$ is overproduced by $\hat v$ if $(N\hat v)_i > 0$.
 
 **Elementary reaction closure (ERC).** For $\hat r \in \mathcal{R}$,
 

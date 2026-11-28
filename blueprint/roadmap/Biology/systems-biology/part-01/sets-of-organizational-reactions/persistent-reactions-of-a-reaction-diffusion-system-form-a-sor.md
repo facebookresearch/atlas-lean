@@ -15,13 +15,13 @@ Let $\hat c$ be a solution with $\partial_t \hat c$ and the second spatial deriv
 
 $$\{ r \in \mathcal{R} : \hat v_r > 0 \}$$
 
-is a set of organizational reactions. A reaction persists iff all species in its support persist.
+is a set of organizational reactions, in the compartment-wise sense of the [SOR characterization](sor-characterization-by-elementary-reaction-closures.md) (each compartment's flux feasible for that compartment, not $\hat v$ for the whole DO; the source's Definition 6 asks for a flux "feasible with respect to $D$", under which the theorem fails when persistent species live in disjoint regions). Every species in the support of a persistent reaction persists; the converse can fail, since species that persist only in disjoint regions of $\Omega$ never react with each other.
 
 **Consequences.** (i) A set of reactions that is not a SOR cannot be the persistent reaction set of any bounded solution of any such system on the network; it can only be transient. (ii) Right after the initial time, each compartment activates the elementary reaction closure of its initially active reactions, so the persistent reactions are always contained in the union of the ERCs of the initially active reactions. (iii) Enumerating all SORs, which needs only the network, therefore lists every possible long-term set of active reactions ("persistent subspace") independently of kinetic laws and rate constants. The same statement holds for the ODE and patch (compartment) special cases.
 
 ## Expansion
 
-The species-level theorem (persistent species form a DO) comes from averaging the dynamics: species that persist must be produced at least as fast as consumed on average, giving $N\hat v \ge 0$ for the time- and space-integrated flux, and the spatial regions where different subsets coexist play the role of compartments, each closed under its own reactions. Feasibility of $v$ ties reaction activity to species presence, so the support of $\hat v$ is exactly the set of reactions supported by persistent species, which is the SOR of that DO.
+The species-level theorem (persistent species form a DO) comes from averaging the dynamics: species that persist must be produced at least as fast as consumed on average, giving $N\hat v \ge 0$ for the time- and space-integrated flux, and the spatial regions where different subsets coexist play the role of compartments, each closed under its own reactions. Feasibility of $v$ ties reaction activity to local species presence, so the support of $\hat v$ is the set of reactions whose support persists jointly on a region of positive measure, each such region lying inside one compartment; this is the SOR of that DO. For example, with $r_1 : a \to 2a$, $r_2 : b \to 2b$, $r_3 : a + b \to c$, $r_4 : 2a \to a$, $r_5 : 2b \to b$, $d_a = d_b = 0$ on $\Omega = (0,1)$ and mass-action fluxes, initial data with $a$ supported in $[0,1/3]$ and $b$ in $[2/3,1]$ keep both species persistent while $r_3$ never fires: the persistent reactions $\{r_1,r_2,r_4,r_5\}$ are a SOR through the compartments $\{a\}$ and $\{b\}$, but no flux feasible for $\{a,b\}$ is supported on them.
 
 ## Depends on
 
