@@ -8,24 +8,33 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Complex.ExponentialBounds
-public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.NumberTheory.Modular
 public import Mathlib.NumberTheory.ModularForms.Discriminant
+import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.Real.Pi.Bounds
+import MathlibExt.NumberTheory.ModularForms.DiscriminantImPowSixInvariant
 
 /-!
 # An explicit upper bound for `‖η(τ)‖ ^ 24 (Im τ) ^ 6`
 
-The function `τ ↦ ‖Δ(τ)‖ (Im τ) ^ 6` on the upper half-plane, where `Δ = η ^ 24` is the modular
-discriminant (`ModularForm.discriminant`), is invariant under `SL(2, ℤ)` and bounded. Through the
-formula expressing the Faltings height of an elliptic curve over a number field in terms of its
-minimal discriminant and the values `‖Δ(τ_σ)‖ (Im τ_σ) ^ 6` at its complex periods
-(J. H. Silverman, "Heights and elliptic curves", in G. Cornell and J. H. Silverman (eds.),
-*Arithmetic Geometry*, Springer, 1986, Proposition 1.1, p. 254, cited as stated), an explicit upper
-bound for this function is the analytic input of explicit lower bounds for the Faltings height of
-elliptic curves. The constant `1 / 64` is exactly what the case `g = 1` of Bost's lower bound
-`h_F ≥ -(g/2) log (2π²)` needs (É. Gaudron and G. Rémond, Comment. Math. Helv. 89 (2014),
-Corollaire 8.4, p. 400, cited as stated); it is not optimal.
+The function `τ ↦ ‖η(τ)‖ ^ 24 (Im τ) ^ 6` on the upper half-plane is invariant under `SL(2, ℤ)` and
+bounded. Here `η ^ 24 = Δ` is Mathlib's normalized discriminant `ModularForm.discriminant`, which is
+`(2π) ^ (-12) (g₂ ^ 3 - 27 g₃ ^ 2)` for the lattice `ℤ + ℤ τ`
+(`MetaMathlibExt.lattice_discriminant_eq_eta_product`). This file proves the explicit bound
+`‖η(τ)‖ ^ 24 (Im τ) ^ 6 ≤ 1 / 64`; it is not optimal.
+
+Normalizations of the two sources this bound is used with:
+
+* J. H. Silverman, "Heights and elliptic curves", in G. Cornell and J. H. Silverman (eds.),
+  *Arithmetic Geometry*, Springer, 1986, Proposition 1.1, p. 254, writes the Faltings height of an
+  elliptic curve with the values `|Δ(τ_σ)| (Im τ_σ) ^ 6` for
+  `Δ = g₂ ^ 3 - 27 g₃ ^ 2 = (2π) ^ 12 η ^ 24`.
+  In his normalization the bound here reads `|Δ(τ)| (Im τ) ^ 6 ≤ (2π²) ^ 6`; written with `η ^ 24`,
+  his formula carries an extra `-log (2π)`.
+* É. Gaudron and G. Rémond, Comment. Math. Helv. 89 (2014), Corollaire 8.4, prove
+  `h(A) ≥ -(g/2) log (2π)` for their height `h(A) = h_F(A) + (g/2) log π` (§2.3), that is,
+  `h_F(A) ≥ -(g/2) log (2π²)`. For `g = 1`, Silverman's formula written with `η ^ 24` and the bound
+  `1 / 64` give `-log (2π) - (1/12) log (1/64) = -(1/2) log (2π²)`, which is this inequality.
 
 ## Main results
 
@@ -44,9 +53,8 @@ The product `∏ (1 - q ^ (n + 1))` is bounded termwise by `‖1 - x‖ ≤ 1 + 
 geometric series `∑ r ^ (n + 1) = r / (1 - r)`. On the fundamental domain `Im τ ≥ √3 / 2`, so
 `t = 2π Im τ ≥ 5`; then `(Im τ) ^ 6 exp (-t) ≤ 720 / (2π) ^ 6` (from `t ^ 6 / 6! ≤ exp t`) and
 `exp (24 r / (1 - r)) ≤ 71 / 59` (from `e ^ 5 ≥ 143`), with the certified bounds `π > 3.14` and
-`e > 2.7`. The `SL(2, ℤ)`-invariance uses the weight-12 invariance of `Δ` under the generators
-`S` and `T` (`ModularForm.discriminant_S_invariant`, `ModularForm.discriminant_T_invariant`) and
-`Im (g • τ) = Im τ / |c τ + d| ^ 2`.
+`e > 2.7`. The `SL(2, ℤ)`-invariance of `‖η(τ)‖ ^ 24 (Im τ) ^ 6` is
+`MetaMathlibExt.discriminant_im_pow_six_invariant`.
 -/
 
 @[expose] public section
@@ -68,12 +76,12 @@ theorem norm_tprod_one_sub_pow_le {q : ℂ} (hq : ‖q‖ < 1) :
     · rw [div_eq_mul_inv]
   refine le_of_tendsto' hm fun s ↦ ?_
   rw [norm_prod]
-  calc ∏ n ∈ s, ‖1 - q ^ (n + 1)‖ ≤ ∏ n ∈ s, Real.exp (‖q‖ ^ (n + 1)) := by
+  calc ∏ n ∈ s, ‖1 - q ^ (n + 1)‖ ≤ ∏ n ∈ s, (1 + ‖q‖ ^ (n + 1)) := by
         refine Finset.prod_le_prod₀ (fun _ _ ↦ norm_nonneg _) fun n _ ↦ ?_
         calc ‖1 - q ^ (n + 1)‖ ≤ ‖(1 : ℂ)‖ + ‖q ^ (n + 1)‖ := norm_sub_le _ _
-          _ = ‖q‖ ^ (n + 1) + 1 := by rw [norm_one, norm_pow, add_comm]
-          _ ≤ Real.exp (‖q‖ ^ (n + 1)) := Real.add_one_le_exp _
-    _ = Real.exp (∑ n ∈ s, ‖q‖ ^ (n + 1)) := (Real.exp_sum _ _).symm
+          _ = 1 + ‖q‖ ^ (n + 1) := by rw [norm_one, norm_pow]
+    _ ≤ Real.exp (∑ n ∈ s, ‖q‖ ^ (n + 1)) :=
+        Real.prod_one_add_le_exp_sum s fun _ ↦ by positivity
     _ ≤ Real.exp (‖q‖ / (1 - ‖q‖)) :=
         Real.exp_le_exp.2 (sum_le_hasSum s (fun _ _ ↦ by positivity) hs)
 
@@ -104,10 +112,10 @@ private lemma le_exp_five : (143 : ℝ) ≤ Real.exp 5 := by
   linarith
 
 /-- An explicit upper bound for `‖η(τ)‖ ^ 24 (Im τ) ^ 6 = ‖Δ(τ)‖ (Im τ) ^ 6` on the standard
-fundamental domain: for every `τ ∈ ModularGroup.fd` (so `|Re τ| ≤ 1 / 2` and `|τ| ≥ 1`),
-`‖η(τ)‖ ^ 24 (Im τ) ^ 6 ≤ 1 / 64`. The constant `1 / 64` is explicit and not optimal; only the
-consequence `Im τ ≥ √3 / 2` of `τ ∈ ModularGroup.fd` is used. -/
-theorem norm_eta_pow_mul_im_pow_le_of_mem_fd (τ : ℍ) (hτ : τ ∈ ModularGroup.fd) :
+fundamental domain, where `Δ = η ^ 24 = (2π) ^ (-12) (g₂ ^ 3 - 27 g₃ ^ 2)` is Mathlib's
+`ModularForm.discriminant`: for every `τ ∈ ModularGroup.fd` (so `|Re τ| ≤ 1 / 2` and `|τ| ≥ 1`),
+`‖η(τ)‖ ^ 24 (Im τ) ^ 6 ≤ 1 / 64`. The constant `1 / 64` is explicit and not optimal. -/
+theorem norm_eta_pow_mul_im_pow_le_of_mem_fd {τ : ℍ} (hτ : τ ∈ ModularGroup.fd) :
     ‖eta τ‖ ^ 24 * τ.im ^ 6 ≤ 1 / 64 := by
   set y := τ.im with hy_def
   have hy0 : 0 < y := τ.im_pos
@@ -172,35 +180,27 @@ theorem norm_eta_pow_mul_im_pow_le_of_mem_fd (τ : ℍ) (hτ : τ ∈ ModularGro
     _ ≤ 1 / 64 := by norm_num
 
 /-- An explicit upper bound for `‖η(τ)‖ ^ 24 (Im τ) ^ 6 = ‖Δ(τ)‖ (Im τ) ^ 6` on the whole upper
-half-plane: for every `τ` in the upper half-plane, `‖η(τ)‖ ^ 24 (Im τ) ^ 6 ≤ 1 / 64`. It follows
-from the bound on the fundamental domain (`ModularGroup.fd`) and the `SL(2, ℤ)`-invariance of
-`‖Δ(τ)‖ (Im τ) ^ 6`. The constant `1 / 64` is explicit and not optimal. -/
+half-plane, where `Δ = η ^ 24 = (2π) ^ (-12) (g₂ ^ 3 - 27 g₃ ^ 2)` is Mathlib's
+`ModularForm.discriminant`: for every `τ` in the upper half-plane,
+`‖η(τ)‖ ^ 24 (Im τ) ^ 6 ≤ 1 / 64`. It follows from the bound on the fundamental domain
+(`ModularGroup.fd`) and the `SL(2, ℤ)`-invariance of `‖η(τ)‖ ^ 24 (Im τ) ^ 6`
+(`MetaMathlibExt.discriminant_im_pow_six_invariant`). The constant `1 / 64` is explicit and not
+optimal. -/
 theorem norm_eta_pow_mul_im_pow_le (τ : ℍ) :
     ‖eta τ‖ ^ 24 * τ.im ^ 6 ≤ 1 / 64 := by
   obtain ⟨g, hg⟩ := ModularGroup.exists_smul_mem_fd τ
-  have hinv := congr_fun (SlashInvariantForm.slash_action_generators_SL2Z
-    discriminant_S_invariant discriminant_T_invariant g) τ
-  rw [SL_slash_apply] at hinv
-  have him := ModularGroup.im_smul_eq_div_normSq g τ
-  have h := norm_eta_pow_mul_im_pow_le_of_mem_fd _ hg
-  generalize g • τ = σ at hinv him h
-  generalize denom (Matrix.SpecialLinearGroup.toGL
-    ((Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ)) g)) (τ : ℂ) = d at hinv him
-  have hd0 : d ≠ 0 := by
-    rintro rfl
-    simp at him
-    linarith [σ.im_pos]
-  have hnd : 0 < ‖d‖ := norm_pos_iff.2 hd0
-  rw [Complex.normSq_eq_norm_sq] at him
-  have hΔ : ‖eta τ‖ ^ 24 = ‖eta σ‖ ^ 24 / ‖d‖ ^ 12 := by
-    have := congr_arg norm hinv
-    simp only [discriminant, norm_mul, norm_pow, norm_zpow] at this
-    rw [← this, zpow_neg, div_eq_mul_inv]
-    rfl
-  rw [hΔ]
+  have h := norm_eta_pow_mul_im_pow_le_of_mem_fd hg
+  have hdet : g 0 0 * g 1 1 - g 0 1 * g 1 0 = 1 := by
+    have := g.det_coe
+    rwa [Matrix.det_fin_two] at this
+  have key := (MetaMathlibExt.discriminant_im_pow_six_invariant τ (g 0 0) (g 0 1) (g 1 0) (g 1 1)
+    hdet).2.2.2.2
+  have hw : ((g • τ : ℍ) : ℂ) = ((g 0 0 : ℂ) * τ + g 0 1) / ((g 1 0 : ℂ) * τ + g 1 1) := by
+    rw [coe_specialLinearGroup_apply]
+    simp
+  rw [← hw, norm_pow, norm_pow] at key
+  have him : (g • τ).im = ((g • τ : ℍ) : ℂ).im := rfl
   rw [him] at h
-  calc ‖eta σ‖ ^ 24 / ‖d‖ ^ 12 * τ.im ^ 6
-      = ‖eta σ‖ ^ 24 * (τ.im / ‖d‖ ^ 2) ^ 6 := by field_simp
-    _ ≤ 1 / 64 := h
+  linarith
 
 end ModularForm

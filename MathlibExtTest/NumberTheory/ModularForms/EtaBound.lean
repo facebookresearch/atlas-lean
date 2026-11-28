@@ -23,7 +23,7 @@ open UpperHalfPlane
 
 /-- The bound at the point `i` of the fundamental domain. -/
 example : ‖ModularForm.eta (UpperHalfPlane.I : ℂ)‖ ^ 24 * UpperHalfPlane.I.im ^ 6 ≤ 1 / 64 :=
-  ModularForm.norm_eta_pow_mul_im_pow_le_of_mem_fd _ ModularGroup.I_mem_fd
+  ModularForm.norm_eta_pow_mul_im_pow_le_of_mem_fd ModularGroup.I_mem_fd
 
 /-- The bound in terms of the discriminant `Δ = η ^ 24`, at an arbitrary point. -/
 example (τ : ℍ) : ‖ModularForm.discriminant τ‖ * τ.im ^ 6 ≤ 1 / 64 := by
