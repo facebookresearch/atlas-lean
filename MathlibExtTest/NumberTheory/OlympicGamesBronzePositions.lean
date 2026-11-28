@@ -83,6 +83,20 @@ example (m : ℕ) : ¬beattyOctalMove α β 1 m := by
   rw [alpha_small (by norm_num)] at hα
   omega
 
+-- A positive index of the zero-slope sequence gives 0, but an empty heap cannot be removed.
+example : beattySeq 0 1 = 0 ∧ ¬beattyOctalMove 0 2 0 0 := by
+  constructor
+  · simp [beattySeq]
+  · rw [beattyOctalMove_zero_iff]
+    simp
+
+-- The second sequence may likewise contain 0, but a partial move must remove a token.
+example : beattySeq 0 1 = 0 ∧ ¬beattyOctalMove 2 0 1 1 := by
+  constructor
+  · simp [beattySeq]
+  · rw [beattyOctalMove_pos_iff (by decide : 0 < (1 : ℕ))]
+    simp
+
 -- Check absorption through both types of move.
 example : beattyOctalMove α β 3 0 :=
   beattyOctalMove_zero_iff.mpr ⟨by decide, 1, by decide, alpha_values.1⟩
