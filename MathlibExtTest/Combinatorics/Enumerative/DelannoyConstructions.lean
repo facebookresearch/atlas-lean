@@ -12,6 +12,37 @@ import MathlibExt.Combinatorics.Enumerative.DelannoyConstructions
 
 namespace MetaMathlibExt.DelannoyConstructions
 
+open Finset
+
+-- With k = 0 the two index conventions give the same nontrivial sum.
+example : genDelannoyLower 0 2 2 = 13 ∧ genDelannoyUpper 0 2 2 = 13 ∧
+    (∑ j ∈ Ico 0 (min 2 2 + 1), (2 : ℕ).choose (j - 0) * (2 : ℕ).choose j * 2 ^ j) = 13 ∧
+    (∑ j ∈ range (min 2 2 + 1), (2 : ℕ).choose (j + 0) * (2 : ℕ).choose j * 2 ^ j) = 13 := by
+  decide
+
+-- The upper formula uses j + k in the first binomial and stops at n when n < m.
+example : genDelannoyUpper 1 3 2 = 44 ∧
+    (∑ j ∈ range (min 3 2 + 1), (3 + 1).choose (j + 1) * (2 : ℕ).choose j * 2 ^ j) = 44 := by
+  decide
+
+-- The lower formula starts at k, not zero, and includes j = min m n.
+example : genDelannoyLower 1 2 2 = 8 ∧
+    (∑ j ∈ Ico 1 (min 2 2 + 1), (2 - 1).choose (j - 1) * (2 : ℕ).choose j * 2 ^ j) = 8 := by
+  decide
+
+-- At m = k < n the lower sum has exactly one term; the upper sum also stops at m.
+example : genDelannoyLower 1 1 3 = 6 ∧
+    (∑ j ∈ Ico 1 (min 1 3 + 1), (1 - 1).choose (j - 1) * (3 : ℕ).choose j * 2 ^ j) = 6 ∧
+    genDelannoyUpper 1 1 3 = 8 ∧
+    (∑ j ∈ range (min 1 3 + 1), (1 + 1).choose (j + 1) * (3 : ℕ).choose j * 2 ^ j) = 8 := by
+  decide
+
+-- A client can use either component of the unified theorem from this import.
+example : genDelannoyLower 1 2 2 = genDelannoyUpper 1 1 3 := by
+  rw [(genDelannoy_eq_sum_two_pow_unified 1 2 2).1 (by decide) (by decide),
+    (genDelannoy_eq_sum_two_pow_unified 1 1 3).2]
+  decide
+
 -- At the boundary n = 0, the formula has only its constant term.
 example (m : ℕ) : ordinaryRiordanPascalLikeMatrix m m 1 = 1 := by
   simpa using delannoy_eq_sum_choose_mul_choose_two_pow m 0
