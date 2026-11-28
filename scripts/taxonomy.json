@@ -15165,6 +15165,7 @@
   "MathlibExt/NumberTheory/ThreeIntegersSymmetricSquaresFamily331": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Integer triples with square symmetric functions"},
   "MathlibExt/NumberTheory/ThreeIntegersSymmetricSquaresFamily36": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Integer triples with square symmetric functions"},
   "MathlibExt/NumberTheory/ThreeIntegersSymmetricSquaresHasSquareElementarySymmetricFunctionsFamily34": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Integer triples with square symmetric functions"},
+  "MathlibExt/NumberTheory/ThreeIntegersSymmetricSquaresHasSquareElementarySymmetricFunctionsFamily35": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Integer triples with square symmetric functions"},
   "MathlibExt/NumberTheory/ThreeModFourIntegers": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Integers with all prime factors 3 mod 4"},
   "MathlibExt/NumberTheory/ThreePowAddThirtyfivePow": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/ThreePowEqSqAddTwoIff": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},

@@ -49,6 +49,7 @@ public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquares
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily330
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily331
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresHasSquareElementarySymmetricFunctionsFamily34
+public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresHasSquareElementarySymmetricFunctionsFamily35
 public import MathlibExt.NumberTheory.ThreeIntegersSymmetricSquaresFamily36
 
 set_option autoImplicit false
@@ -67,23 +68,6 @@ private abbrev firstShiftedSextic (s t : ℤ) : ℤ :=
 
 private abbrev secondShiftedSextic (s t : ℤ) : ℤ :=
   3 * s ^ 6 + s ^ 4 * t ^ 2 + s ^ 2 * t ^ 4 - t ^ 6
-
-/-- **Choudhry's family (3.5) of integer triples with square symmetric functions.** For all
-integers $s$ and $t$, let $f = s^6 - s^4 t^2 - 5 s^2 t^4 + t^6$ and
-$g = 3 s^6 + s^4 t^2 + s^2 t^4 - t^6$, and put $a = 4 s^4 t^2 (s^2 + t^2) f^2$,
-$b = (s^4 - t^4)^2 f^2$ and $c = 4 s^2 t^4 (s^2 + t^2) g^2$. Then each of $a + b + c$,
-$ab + bc + ca$ and $abc$ is the square of an integer.
-
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
-Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.5). -/
-theorem_wanted hasSquareElementarySymmetricFunctions_family35
-    (s t : ℤ) :
-    HasSquareElementarySymmetricFunctions
-      (4 * s ^ 4 * t ^ 2 * (s ^ 2 + t ^ 2) *
-        (firstShiftedSextic s t) ^ 2)
-      ((s ^ 4 - t ^ 4) ^ 2 * (firstShiftedSextic s t) ^ 2)
-      (4 * s ^ 2 * t ^ 4 * (s ^ 2 + t ^ 2) *
-        (secondShiftedSextic s t) ^ 2)
 
 private abbrev shiftedQuartic (m n : ℤ) : ℤ :=
   m ^ 4 - 6 * m ^ 2 * n ^ 2 + n ^ 4
