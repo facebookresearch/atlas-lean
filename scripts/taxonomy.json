@@ -1162,6 +1162,7 @@
   "CSLibExt/Algorithms/Lean/DynamicProgramming/SemiGlobalAlignment": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Semi-global and overlap alignment"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/SequenceAlignment": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Pairwise sequence alignment"},
   "CSLibExt/Algorithms/Lean/DynamicProgramming/WavefrontAlignment": {"to": "Biology/bioinformatics/sequence-alignment", "title": "Wavefront alignment algorithm"},
+  "CSLibExt/Algorithms/Lean/DynamicProgramming/WeightedIntervalSchedulingRecurrence": {"to": "ComputerScience/dynamic-programming", "title": "Weighted interval scheduling"},
   "CSLibExt/Algorithms/Lean/Fourier/FFT": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Fast Fourier transform"},
   "CSLibExt/Algorithms/Lean/Fourier/FFT/Array": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Fast Fourier transform"},
   "CSLibExt/Algorithms/Lean/Fourier/FFT/ArrayCorrectness": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Fast Fourier transform"},
