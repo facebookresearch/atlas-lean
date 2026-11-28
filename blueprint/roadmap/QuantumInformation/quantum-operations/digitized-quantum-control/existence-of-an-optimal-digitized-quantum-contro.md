@@ -1,0 +1,32 @@
+# Existence of an optimal digitized quantum control policy is undecidable
+
+No algorithm decides, for a digitized quantum control problem with finitely many control maps applicable in any order and any number of times, whether some finite control policy steers the system to the optimum of a given observable, even within any accuracy below one; this holds already for multimode bosonic systems with displacement controls.
+
+**Digitized quantum control.** The state of the system is a density operator $\hat\rho$ on a Hilbert space (positive, trace class, of trace $1$; a [density matrix](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md) in finite dimension, while the bosonic family below lives on an infinite-dimensional Fock space). Each of finitely many controls $i = 1, \dots, N$ acts by a Kraus map $\Phi_i[\hat\rho] = \sum_j \hat{K}_{i,j} \hat\rho \hat{K}_{i,j}^\dagger$ with $\sum_j \hat{K}_{i,j}^\dagger \hat{K}_{i,j} = \mathbb{I}$, a trace-preserving [completely positive map](../../../Analysis/operator-algebras/completely-positive-maps/completely-positive-map.md). A *control policy* is a finite integer sequence $\mathbf{p} = (p_1, \dots, p_P)$ from a set of accessible policies, and it produces $\hat\rho(\mathbf{p}) = \Phi_{p_P} \cdots \Phi_{p_1}[\hat\rho_0]$. For an observable $\hat{O}$ whose largest eigenvalue is normalized to $0$, the objective is the expectation value $J_{\hat O}(\mathbf{p}) = \operatorname{Tr}(\hat{O}\hat\rho(\mathbf{p}))$ (for a finite-dimensional system, the [expectation value](../../../Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/expectation-value.md) of the observable), and a policy is optimal if $J_{\hat O}(\mathbf{p}) = 0$. A target-state problem asks instead for $\hat\rho(\mathbf{p}) = \hat\rho_{\mathrm{f}}$.
+
+**The bosonic family.** On $n$ bosonic modes with annihilation operators $\hat{a}_1, \dots, \hat{a}_n$, take the vacuum $\hat\rho_0 = |0, \dots, 0\rangle\langle 0, \dots, 0|$, the displacement controls $\Phi_l[\hat\rho] = \hat{D}_l \hat\rho \hat{D}_l^\dagger$ with $\hat{D}_l = \exp(\hat{a}_l^\dagger - \hat{a}_l)$, $l = 1, \dots, n$, policies of arbitrary finite length, and, for a polynomial $D \in \mathbb{Z}[x_1, \dots, x_n]$ with $n \ge 1$, the observable $\hat{O} = -D(\hat{a}_1, \dots, \hat{a}_n)^\dagger D(\hat{a}_1, \dots, \hat{a}_n)$. An instance of this family is given by $n$ and the integer coefficients of $D$; along every policy the state is a coherent state, on which $J_{\hat O}$ is finite.
+
+**Theorem (Bondar and Pechen).** The Diophantine equation $D(x_1, \dots, x_n) = 0$ has a solution in nonnegative integers if and only if the bosonic control problem above has a policy with $J_{\hat O}(\mathbf{p}) = 0$, and, for any fixed $0 < \varepsilon < 1$, if and only if it has a policy with $J_{\hat O}(\mathbf{p}) \ge -\varepsilon$. (The source states Theorem 1 with "if"; the converse is the remark before it that the maximum $0$ is reached only at coherent states $|x_1, \dots, x_n\rangle$ with $D(x_1, \dots, x_n) = 0$.) Consequently no algorithm decides, given $n$ and the coefficients of $D$, whether the bosonic control problem has an optimal control policy, or an $\varepsilon$-optimal one for small enough $\varepsilon$; since maximizing an expectation value is a special case of preparing a target state, the target-state problem is undecidable too.
+
+The source also notes that with finitely many digitized controls exact optimality may be unattainable by every finite policy, while a finite set of controls (a universally optimal Kraus map together with a universal gate set) reaches every expectation value up to any $\epsilon > 0$.
+
+## Depends on
+
+- [Density matrices, pure states and reduced states](../../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
+- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Completely positive map between operator systems](../../../Analysis/operator-algebras/completely-positive-maps/completely-positive-map.md)
+- [Expectation value of an observable](../../../Physics/quantum-mechanics/postulates-of-finite-dimensional-quantum-mechani/expectation-value.md)
+- [Coherent state in the Fock space](../../../Analysis/complex-analysis/analytic-function-spaces/fock-space/fock-coherent.md)
+
+## Proof depends on
+
+- [Davis–Putnam–Robinson–Matiyasevich theorem](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/dprm-theorem.md)
+- [The halting problem is undecidable by multi-stack machines](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halting.md)
+
+## Expansion
+
+Applying the displacement $\hat{D}_l$ to a coherent state shifts its $l$-th amplitude by $1$, so a policy that uses $\hat{D}_l$ exactly $x_l$ times turns the vacuum into the coherent state $|x_1, \dots, x_n\rangle$, the order of the controls being irrelevant, and every policy produces a state of this form. Since $\hat{a}_l |\alpha_1, \dots, \alpha_n\rangle = \alpha_l |\alpha_1, \dots, \alpha_n\rangle$, the objective at that state is $-|D(x_1, \dots, x_n)|^2$, a nonpositive integer, which vanishes exactly at a solution and is otherwise at most $-1$; this gives both equivalences. By the Davis–Putnam–Robinson–Matiyasevich theorem every recursively enumerable set is Diophantine, so solvability of Diophantine equations in nonnegative integers is undecidable (Hilbert's tenth problem), because the halting set is recursively enumerable and not decidable. A good expansion adds and links pages for the two facts about multimode coherent states used here: they are eigenvectors of the annihilation operators, and the displacement $\hat{D}_l$ shifts the $l$-th amplitude by $1$.
+
+## Sources
+
+- D. I. Bondar and A. N. Pechen, "Uncomputability and complexity of quantum control", *Scientific Reports* 10, 2020, article 1195, doi:10.1038/s41598-019-56804-1; read in arXiv:1907.10082v2, whose numbering is used: the definition of digitized quantum control, Theorem 1 (the reduction of Diophantine equations to multimode coherent-state control) with the paragraph on $\varepsilon$-accuracy before it and the discussion after it, the section "Uncomputability and complexity of digitized quantum control", and Theorems 2 and 3 of the Methods section.
