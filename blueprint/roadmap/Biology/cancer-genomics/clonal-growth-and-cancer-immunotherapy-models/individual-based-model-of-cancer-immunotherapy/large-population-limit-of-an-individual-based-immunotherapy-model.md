@@ -26,7 +26,7 @@ The model is a multitype Markov jump process whose jump rates are Lipschitz func
 
 ## Related topics
 
-- [Lotka–Volterra predator–prey model](../../population-dynamics/lotka-volterra-predator-prey-model/README.md)
+- [Lotka–Volterra predator–prey model](../../../population-dynamics/lotka-volterra-predator-prey-model/README.md)
 
 ## Sources
 

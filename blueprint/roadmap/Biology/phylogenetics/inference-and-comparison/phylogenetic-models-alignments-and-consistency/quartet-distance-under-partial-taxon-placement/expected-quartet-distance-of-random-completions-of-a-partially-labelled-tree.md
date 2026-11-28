@@ -24,7 +24,7 @@ so $0.606\binom n4 \gtrsim maxexp(n,\frac12)\gtrsim 0.572\binom n4$. The simpler
 
 ## Depends on
 
-- [Four-taxon subsets](../../quartet-support-and-determination-of-trees-by-qu/quartets.md)
+- [Four-taxon subsets](../../../quartet-support-and-determination-of-trees-by-qu/quartets.md)
 
 ## Proof sketch
 

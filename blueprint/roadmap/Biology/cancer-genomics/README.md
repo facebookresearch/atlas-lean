@@ -15,10 +15,6 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 
 - [Identifiability of tumor histories with copy-number change and mutation loss](identifiability-of-tumor-histories-with-copy-number-change-and-mutation-loss.md)
 - [Number of samples for unique clone-tree reconstruction](number-of-samples-for-unique-clone-tree-reconstruction.md)
-- [Clone growth rate from coalescence times](clone-growth-rate-from-coalescence-times/README.md)
-- [Individual-based model of cancer immunotherapy](individual-based-model-of-cancer-immunotherapy/README.md)
-- [Sequential mutations in growing populations](sequential-mutations-in-growing-populations/README.md)
-- [Single-cell mutational burden in cell lineage trees](single-cell-mutational-burden-in-cell-lineage-trees/README.md)
 - [Post-selection inference for changepoints](post-selection-inference-for-changepoints/README.md)
 - [Age-structured microlesion model of tumour growth](age-structured-microlesion-model-of-tumour-growth/README.md)
 - [Consecutive seeding of metastases](consecutive-seeding-of-metastases/README.md)
@@ -29,3 +25,4 @@ Mathematical models for tumour sequencing data: purity and copy number, cancer c
 - [Controllability of adaptive cancer therapy](controllability-of-adaptive-cancer-therapy/README.md)
 - [Immune extinction threshold models](immune-extinction-threshold-models/README.md)
 - [Minimum uncovering branching](minimum-uncovering-branching/README.md)
+- [Clonal growth and cancer immunotherapy models](clonal-growth-and-cancer-immunotherapy-models/README.md)

@@ -11,9 +11,9 @@
 
 ## Depends on
 
-- [Maximum agreement forest number](../../../not-yet-classified/tbragreement-forest/maf-number.md)
-- [TBR distance](../../../not-yet-classified/tbragreement-forest/tbr-dist.md)
-- [TBR distance equals the maximum agreement forest number](../../../not-yet-classified/tbragreement-forest/tbr-dist-eq-maf-number.md)
+- [Maximum agreement forest number](../../../../not-yet-classified/tbragreement-forest/maf-number.md)
+- [TBR distance](../../../../not-yet-classified/tbragreement-forest/tbr-dist.md)
+- [TBR distance equals the maximum agreement forest number](../../../../not-yet-classified/tbragreement-forest/tbr-dist-eq-maf-number.md)
 
 ## Proof sketch
 
