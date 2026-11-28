@@ -16,12 +16,23 @@ import Mathlib.RingTheory.PowerSeries.Binomial
 import Mathlib.RingTheory.PowerSeries.Expand
 
 /-!
-# The general binomial congruence for prime multiples
+# Binomial congruences for prime multiples
 
 `MetaMathlibExt.ringChoose_mul_prime_sub_congr_sum_d` bounds the valuation of the remainder
-after truncating the binomial expansion of `choose (n * p) (k * p)` at order `m`.
-The proof factors `(1 + X)^p` as `(1 + X^p)(1 + u)` in the integer power series ring,
-where `u` is divisible by both `p` and `X`.
+for a prime `p`, natural numbers `m, k` with `m + 1 < p`, and an integer `n`, after truncating
+the binomial expansion of `choose (n * p) (k * p)` at order `m`. The proof factors `(1 + X)^p`
+as `(1 + X^p)(1 + u)` in the integer power series ring, where `u` is divisible by both `p` and `X`.
+
+`MetaMathlibExt.ringChoose_mul_prime_sub_congr_pow_four` takes `p ≥ 7` prime, `k` natural, and `n`
+an integer. It computes the first three differences explicitly using Vandermonde's identity and
+Pascal's recurrence. The remainder vanishes if $\binom{n}{4} = 0$ and otherwise is divisible by
+$p^{4+v_p(\binom{n}{4})}$. This specializes Kehila's Proposition 3 from $p$-adic integers to
+ordinary integers and takes the truncation directly from Theorem 3.
+
+## References
+
+* Walid Kehila, *An Extension of Wolstenholme’s Theorem by Binomial Coefficients*,
+  INTEGERS 26 (2026), Article A32, pp. 1–28, Theorem 3 and Proposition 3 (equation (8), p. 16).
 -/
 
 namespace MetaMathlibExt
@@ -315,5 +326,148 @@ public theorem ringChoose_mul_prime_sub_congr_sum_d (p m k : ℕ) (n : ℤ) (hp 
     rfl
   simp_rw [hD]
   exact sum_tail p (m + 1) hp hmp n _ (fun _ hl => (mem_Ico.mp hl).1) b
+
+-- The lower index is k - i, with negative indices interpreted as zero.
+private noncomputable def shiftedChoose (x : ℚ) (k i : ℕ) : ℚ :=
+  if i ≤ k then Ring.choose x (k - i) else 0
+
+private lemma shiftedChoose_pascal (x : ℚ) (k i : ℕ) :
+    shiftedChoose (x + 1) k i = shiftedChoose x k i + shiftedChoose x k (i + 1) := by
+  by_cases h : i < k
+  · simp only [shiftedChoose, ite_eq_left h.le, ite_eq_left (Nat.succ_le_of_lt h)]
+    rw [show k - i = (k - (i + 1)) + 1 by omega, Ring.choose_succ_succ, add_comm]
+  · rcases eq_or_lt_of_le (le_of_not_gt h) with rfl | hlt
+    · simp [shiftedChoose]
+    · simp [shiftedChoose, not_le.mpr hlt, show ¬ i + 1 ≤ k by omega]
+
+private lemma sum_choose_mul_shiftedChoose (x : ℚ) (j k : ℕ) :
+    ∑ i ∈ range (j + 1), (j.choose i : ℚ) * shiftedChoose (x - j) k i = Ring.choose x k := by
+  let f (i : ℕ) := (j.choose i : ℚ) * shiftedChoose (x - j) k i
+  have h := Ring.add_choose_eq k (Commute.all (j : ℚ) (x - j))
+  rw [show (j : ℚ) + (x - j) = x by ring, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk] at h
+  simp only [Ring.choose_natCast] at h
+  rw [h]
+  calc
+    ∑ i ∈ range (j + 1), f i = ∑ i ∈ range (max j k + 1), f i := by
+      apply sum_subset (range_mono (Nat.succ_le_succ (le_max_left j k)))
+      intro i _ hi
+      have hji : j < i := by simpa using hi
+      simp [f, Nat.choose_eq_zero_of_lt hji]
+    _ = ∑ i ∈ range (k + 1), f i := by
+      symm
+      apply sum_subset (range_mono (Nat.succ_le_succ (le_max_right j k)))
+      intro i _ hi
+      have hki : ¬ i ≤ k := by simpa using hi
+      simp [f, shiftedChoose, hki]
+    _ = _ := by
+      refine sum_congr rfl fun i hi => ?_
+      simp [f, shiftedChoose, Nat.le_of_lt_succ (mem_range.mp hi)]
+
+private lemma choose_two_mul_shiftedChoose (x : ℚ) (k : ℕ) :
+    Ring.choose x 2 * shiftedChoose (x - 2) k 1 = (k : ℚ) * (x - k) / 2 * Ring.choose x k := by
+  have hfirst (y : ℚ) (r : ℕ) :
+      ((r : ℚ) + 1) * Ring.choose y (r + 1) = y * Ring.choose (y - 1) r := by
+    simpa [Nat.choose_one_right, nsmul_eq_mul, Ring.choose_one_right] using
+      Ring.choose_smul_choose y (n := r + 1) (k := 1) (Nat.succ_pos r)
+  have hlast (y : ℚ) (r : ℕ) :
+      (y - r) * Ring.choose y r = y * Ring.choose (y - 1) r := by
+    cases r with
+    | zero => simp
+    | succ r =>
+      have hpascal := Ring.choose_succ_succ (y - 1) r
+      rw [sub_add_cancel] at hpascal
+      rw [Nat.cast_succ, sub_mul, hfirst, hpascal]
+      ring
+  have htwo : Ring.choose x 2 = x * (x - 1) / 2 := by
+    have h := hfirst x 1
+    norm_num [Ring.choose_one_right] at h
+    linarith only [h]
+  cases k with
+  | zero => simp [shiftedChoose]
+  | succ k =>
+    have hk : 1 ≤ k.succ := Nat.succ_le_succ (Nat.zero_le k)
+    have h := hlast (x - 1) k
+    rw [show x - 1 - 1 = x - 2 by ring] at h
+    simp only [shiftedChoose, ite_eq_left hk, Nat.succ_sub_one, Nat.cast_succ, htwo]
+    calc
+      _ = x * ((x - 1) * Ring.choose (x - 2) k) / 2 := by ring
+      _ = (x - ((k : ℚ) + 1)) * (x * Ring.choose (x - 1) k) / 2 := by rw [← h]; ring
+      _ = _ := by rw [← hfirst]; ring
+
+-- Compare the scaled rows with Vandermonde, then take the first three finite differences.
+private lemma sum_d_three (p k : ℕ) (x : ℚ) :
+    let b (j i : ℕ) : ℚ := ((j * p).choose (i * p) : ℚ)
+    let c (j : ℕ) := ∑ i ∈ range (j + 1), b j i * shiftedChoose (x - j) k i
+    ∑ l ∈ Icc 1 3, Ring.choose x l *
+      ∑ j ∈ range (l + 1), (-1) ^ (l - j) * (l.choose j : ℚ) * c j =
+        (k : ℚ) * (x - k) / 2 * Ring.choose x k *
+          ((x - 4) + (3 - x) * b 2 1 + (x - 2) / 3 * b 3 1) := by
+  intro b c
+  have bzero (j : ℕ) : b j 0 = 1 := by simp [b]
+  have bself (j : ℕ) : b j j = 1 := by simp [b]
+  have bsymm : b 3 2 = b 3 1 := by
+    have h := Nat.choose_symm (n := 3 * p) (k := p) (by omega)
+    rw [show 3 * p - p = 2 * p by omega] at h
+    simpa [b] using congrArg (fun a : ℕ => (a : ℚ)) h
+  have h32 : (3 : ℕ).choose 2 = 3 := by decide
+  have hc0 : c 0 = Ring.choose x k := by
+    rw [← sum_choose_mul_shiftedChoose x 0 k]
+    norm_num [c, bzero, sum_range_succ]
+  have hc1 : c 1 = Ring.choose x k := by
+    rw [← sum_choose_mul_shiftedChoose x 1 k]
+    norm_num [c, bzero, bself, sum_range_succ]
+  have hc2 : c 2 = Ring.choose x k + (b 2 1 - 2) * shiftedChoose (x - 2) k 1 := by
+    rw [← sum_choose_mul_shiftedChoose x 2 k]
+    norm_num [c, bzero, bself, sum_range_succ]
+    ring
+  have hc3 : c 3 = Ring.choose x k + (b 3 1 - 3) * shiftedChoose (x - 2) k 1 := by
+    rw [← sum_choose_mul_shiftedChoose x 3 k, show x - 2 = x - 3 + 1 by ring, shiftedChoose_pascal]
+    norm_num [c, bzero, bself, bsymm, h32, sum_range_succ]
+    ring
+  have hthree : Ring.choose x 3 = (x - 2) / 3 * Ring.choose x 2 := by
+    have h := Ring.choose_smul_choose x (n := 3) (k := 2) (by decide)
+    norm_num [h32, nsmul_eq_mul, Ring.choose_one_right] at h
+    linarith only [h]
+  calc
+    _ = Ring.choose x 2 * shiftedChoose (x - 2) k 1 *
+        ((b 2 1 - 2) + (x - 2) / 3 * (b 3 1 - 3 * b 2 1 + 3)) := by
+      rw [show Icc 1 3 = ({1, 2, 3} : Finset ℕ) by decide]
+      norm_num [sum_insert, sum_range_succ, hc0, hc1, hc2, hc3, h32, hthree]
+      ring
+    _ = _ := by rw [choose_two_mul_shiftedChoose]; ring
+
+/-- **The congruence for $\binom{np}{kp}$ modulo $p^4$ via $\binom{2p}{p}$ and $\binom{3p}{p}$.**
+Let $p \ge 7$ be a prime, let $k$ be a natural number and let $n$ be an integer. For an integer
+$x$ and a natural number $r$ write $\binom{x}{r} = x(x-1)\cdots(x-r+1)/r!$, and let $v_p$ be
+the $p$-adic valuation on $\mathbb{Q}$. Let
+$$
+X = \binom{np}{kp} - \binom{n}{k} - \frac{k(n-k)}{2} \binom{n}{k} \left((n - 4) +
+(3 - n) \binom{2p}{p} + \frac{n - 2}{3} \binom{3p}{p}\right).
+$$
+Then either $X = 0$, or $\binom{n}{4} \ne 0$ and $v_p(X) \ge 4 + v_p\big(\binom{n}{4}\big)$; that
+is, $X \equiv 0 \pmod{p^{4+v_p(\binom{n}{4})}}$, and $X = 0$ when $\binom{n}{4} = 0$.
+
+The paper allows $n \in \mathbb{Z}_p$; only integers $n$ are covered here.
+
+Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
+Coefficients*, INTEGERS 26 (2026), Article A32, Proposition 3
+(`integers-2026-A32-prop-3`). -/
+public theorem ringChoose_mul_prime_sub_congr_pow_four (p k : ℕ) (n : ℤ) (hp : p.Prime)
+    (hp7 : 7 ≤ p) :
+    let C : ℤ → ℕ → ℚ := fun x r => ((Ring.choose x r : ℤ) : ℚ)
+    let N : ℚ := n
+    let X : ℚ := C (n * p) (k * p) - C n k -
+      (k : ℚ) * (N - k) / 2 * C n k *
+        ((N - 4) + (3 - N) * ((2 * p).choose p : ℚ) + (N - 2) / 3 * ((3 * p).choose p : ℚ))
+    X = 0 ∨ (C n 4 ≠ 0 ∧ 4 + padicValRat p (C n 4) ≤ padicValRat p X) := by
+  have hmap (z : ℤ) (r : ℕ) : ((Ring.choose z r : ℤ) : ℚ) = Ring.choose (z : ℚ) r :=
+    Ring.map_choose (Int.castRingHom ℚ) z r
+  have h := ringChoose_mul_prime_sub_congr_sum_d p 3 k n hp (by omega)
+  have hsum := sum_d_three p k (n : ℚ)
+  dsimp only at h hsum
+  simp only [shiftedChoose, mul_ite, mul_zero, one_mul] at hsum
+  simp only [hmap, Int.cast_sub, Int.cast_natCast, Ring.choose_natCast] at h
+  rw [hsum] at h
+  simpa only [hmap, Nat.reduceAdd, Nat.cast_ofNat] using h
 
 end MetaMathlibExt
