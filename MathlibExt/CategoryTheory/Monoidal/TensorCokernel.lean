@@ -167,9 +167,9 @@ noncomputable def tensorCokernelDesc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
 lemma tensor_cokernel_π_comp_tensorCokernelDesc {Z : C} (k : Y₁ ⊗ Y₂ ⟶ Z)
     (hk : coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂) ≫ k = 0) :
     (cokernel.π f₁ ⊗ₘ cokernel.π f₂) ≫ tensorCokernelDesc f₁ f₂ k hk = k := by
-  simpa only [tensorCokernelDesc] using
-    (tensorCokernelIsColimit f₁ f₂).fac
-      (CokernelCofork.ofπ k hk) WalkingParallelPair.one
+  simpa only [tensorCokernelDesc, CokernelCofork.tensor, CokernelCofork.π_ofπ] using
+    Cofork.IsColimit.π_desc (t := CokernelCofork.ofπ k hk)
+      (tensorCokernelIsColimit f₁ f₂)
 
 omit [HasBinaryCoproduct (X₁ ⊗ Y₂) (Y₁ ⊗ X₂)]
   [PreservesColimit (parallelPair f₁ 0) (tensorRight X₂)] in
@@ -264,18 +264,33 @@ of the two tensor relations has a cokernel, there is a canonical
 isomorphism from `cokernel f₁ ⊗ cokernel f₂` to that cokernel. -/
 noncomputable def tensorCokernelIso :
     cokernel f₁ ⊗ cokernel f₂ ≅
-      cokernel (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)) :=
-  IsColimit.coconePointUniqueUpToIso
-    (tensorCokernelIsColimit f₁ f₂)
-    (cokernelIsCokernel _)
+      cokernel (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)) := by
+  let c : CokernelCofork (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)) :=
+    CokernelCofork.ofπ (cokernel.π (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)))
+      (cokernel.condition _)
+  let hc : IsColimit c := cokernelIsCokernel _
+  exact IsColimit.coconePointUniqueUpToIso
+    (s := ((CokernelCofork.ofπ (cokernel.π f₁) (cokernel.condition f₁)).tensor
+        (CokernelCofork.ofπ (cokernel.π f₂) (cokernel.condition f₂)))) (t := c)
+    (tensorCokernelIsColimit f₁ f₂) hc
 
 @[reassoc (attr := simp)]
 lemma tensor_cokernel_π_comp_tensorCokernelIso_hom :
     (cokernel.π f₁ ⊗ₘ cokernel.π f₂) ≫ (tensorCokernelIso f₁ f₂).hom =
       cokernel.π (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)) := by
-  simpa only [tensorCokernelIso] using
-    IsColimit.comp_coconePointUniqueUpToIso_hom
-      (tensorCokernelIsColimit f₁ f₂)
-      (cokernelIsCokernel _) WalkingParallelPair.one
+  let c : CokernelCofork (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)) :=
+    CokernelCofork.ofπ (cokernel.π (coprod.desc (f₁ ▷ Y₂) (Y₁ ◁ f₂)))
+      (cokernel.condition _)
+  let hc : IsColimit c := cokernelIsCokernel _
+  have h := IsColimit.comp_coconePointUniqueUpToIso_hom
+    (s := ((CokernelCofork.ofπ (cokernel.π f₁) (cokernel.condition f₁)).tensor
+        (CokernelCofork.ofπ (cokernel.π f₂) (cokernel.condition f₂)))) (t := c)
+    (tensorCokernelIsColimit f₁ f₂) hc WalkingParallelPair.one
+  change ((CokernelCofork.ofπ (cokernel.π f₁) (cokernel.condition f₁)).tensor
+      (CokernelCofork.ofπ (cokernel.π f₂) (cokernel.condition f₂))).π ≫
+      (IsColimit.coconePointUniqueUpToIso (t := c)
+        (tensorCokernelIsColimit f₁ f₂) hc).hom = c.π at h
+  simpa only [tensorCokernelIso, c, hc, CokernelCofork.tensor,
+    CokernelCofork.π_ofπ] using h
 
 end CategoryTheory.Limits
