@@ -25,34 +25,3 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Probability.Statistics.ManskiTreatmentBounds
-
-@[expose] public section
-
-namespace WantedExt.Probability.Statistics.ManskiTreatmentBoundsWanted
-
-open MeasureTheory
-
-variable {Ω : Type*} [MeasurableSpace Ω]
-
-/-- **Sharpness of the no-assumption bounds.** Let `μ` be a probability measure on
-`Ω`, `T` a measurable event, and `Y₀, Y₁ : Ω → ℝ` measurable with values in `[0, 1]`. Then there
-are measurable potential outcomes `Y₀', Y₁'` with values in `[0, 1]` that agree with the observed
-ones (`Y₁' = Y₁` on `T` and `Y₀' = Y₀` on `Tᶜ`) and whose average treatment effect equals
-`lowerBound μ T Y₀ Y₁`, and likewise a pair whose average treatment effect equals
-`upperBound μ T Y₀ Y₁`.
-
-Sources: C. F. Manski, "Nonparametric bounds on treatment effects", Am. Econ. Rev. 80(2) (1990)
-319–323. -/
-public theorem_wanted bounds_sharp (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Set Ω)
-    (hT : MeasurableSet T) (Y₀ Y₁ : Ω → ℝ) (h₀ : Measurable Y₀) (h₁ : Measurable Y₁)
-    (h₀01 : ∀ ω, 0 ≤ Y₀ ω ∧ Y₀ ω ≤ 1) (h₁01 : ∀ ω, 0 ≤ Y₁ ω ∧ Y₁ ω ≤ 1) :
-    (∃ Y₀' Y₁' : Ω → ℝ, Measurable Y₀' ∧ Measurable Y₁' ∧
-        (∀ ω, 0 ≤ Y₀' ω ∧ Y₀' ω ≤ 1) ∧ (∀ ω, 0 ≤ Y₁' ω ∧ Y₁' ω ≤ 1) ∧
-        (∀ ω ∈ T, Y₁' ω = Y₁ ω) ∧ (∀ ω ∈ Tᶜ, Y₀' ω = Y₀ ω) ∧
-        (∫ ω, Y₁' ω ∂μ) - ∫ ω, Y₀' ω ∂μ = lowerBound μ T Y₀ Y₁) ∧
-      ∃ Y₀' Y₁' : Ω → ℝ, Measurable Y₀' ∧ Measurable Y₁' ∧
-        (∀ ω, 0 ≤ Y₀' ω ∧ Y₀' ω ≤ 1) ∧ (∀ ω, 0 ≤ Y₁' ω ∧ Y₁' ω ≤ 1) ∧
-        (∀ ω ∈ T, Y₁' ω = Y₁ ω) ∧ (∀ ω ∈ Tᶜ, Y₀' ω = Y₀ ω) ∧
-        (∫ ω, Y₁' ω ∂μ) - ∫ ω, Y₀' ω ∂μ = upperBound μ T Y₀ Y₁
-
-end WantedExt.Probability.Statistics.ManskiTreatmentBoundsWanted

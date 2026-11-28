@@ -13,10 +13,10 @@ $F(P,Q)=0$ means $\sqrt P\sqrt Q = 0$, which is equivalent to $PQ = 0$ by taking
 ## Depends on
 
 - [Fidelity of positive semidefinite matrices](root-fidelity.md)
+- [Density matrices, pure states and reduced states](density-matrices-and-reduced-states.md)
 
 ## Proof depends on
 
-- [Fidelity of positive semidefinite matrices](root-fidelity.md)
 - [Uhlmann's theorem](../uhlmann-s-theorem.md)
 
 ## Sources

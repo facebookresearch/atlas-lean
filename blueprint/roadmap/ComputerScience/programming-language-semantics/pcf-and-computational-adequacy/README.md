@@ -75,6 +75,7 @@
 - [Contextual equivalence in PCF is a congruence](congr.md)
 - [Contextual approximation in PCF is reflexive](refl-2.md)
 - [Contextual equivalence is mutual contextual approximation in PCF](ctx-equiv-iff-ctx-approx.md)
+- [Effectful extensions of Boolean PCF](effectful-extensions-of-boolean-pcf/README.md)
 
 ## Related topics
 
