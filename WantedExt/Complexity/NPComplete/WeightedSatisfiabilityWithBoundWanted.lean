@@ -63,9 +63,13 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `n` of variables `u₀, …, u_{n-1}`, the postfix token list of `F`
-(as in `SatisfiabilityOfBooleanExpressionsWanted`), the bound `B`, the weights `w(u₀), …,
-w(u_{n-1})`, and the bound `K`. -/
+/-- An instance: a number `n`, a raw token list (a list of natural pairs, read as the postfix
+encoding of a Boolean expression `F` over `u₀, …, u_{n-1}` as in
+`SatisfiabilityOfBooleanExpressionsWanted`), a bound `B`, a list of natural numbers meant as
+the weights `w(u₀), …, w(u_{n-1})`, and a bound `K`. A token list may be empty or fail to
+parse; which expression it represents is defined only when parsing succeeds. The type does not
+tie the weight list to `n`: with `n = 1` an empty weight list still decodes. That the tokens
+parse and that the weight list has length `n` are part of `WellFormed`. -/
 abbrev WeightedSatisfiabilityWithBoundInstance := ℕ × List (ℕ × ℕ) × ℕ × List ℕ × ℕ
 
 /-- Well-formedness of an instance: the token list spells an expression, every variable token

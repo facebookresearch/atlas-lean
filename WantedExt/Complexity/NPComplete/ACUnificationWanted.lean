@@ -61,8 +61,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the arities of the function symbols, the indices of the AC symbols, the number
-of variables `|V|`, and the token lists of `s` and of `t`. -/
+/-- An instance: a list of natural arities of the function symbols, a list of natural indices
+of the AC symbols, a number `|V|`, and two raw token lists, read as the terms `s` and `t`. The
+token lists need not parse and may be empty or refer to undeclared symbols or variables, and
+an AC index need not name a binary symbol; these conditions belong to `WellFormed`. -/
 abbrev ACUnificationInstance := List ℕ × List ℕ × ℕ × List (ℕ × ℕ) × List (ℕ × ℕ)
 
 /-- Well-formedness of an instance: every AC symbol is a binary symbol, and `s` and `t` are

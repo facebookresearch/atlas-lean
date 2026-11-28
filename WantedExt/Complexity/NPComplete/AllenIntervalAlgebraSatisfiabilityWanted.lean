@@ -62,8 +62,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `n` of interval variables and the assertions `(i, j, R)`, where `R`
-lists the codes of the simple relations allowed between `Iᵢ` and `Iⱼ`. -/
+/-- An instance: a number `n` and a list of assertions `(i, j, R)`, each two natural indices
+and a list `R` of natural codes, read as the simple relations allowed between `Iᵢ` and `Iⱼ`.
+The data are raw: an index need not be below `n`, and a code can be `13` or larger, although
+only `0, ..., 12` name simple relations; index bounds and legal codes belong to `WellFormed`. -/
 abbrev AllenIntervalAlgebraSatisfiabilityInstance := ℕ × List (ℕ × ℕ × List ℕ)
 
 /-- Allen's simple relation with code `r` between the intervals `[a.1, a.2]` and `[b.1, b.2]`:

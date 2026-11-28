@@ -67,8 +67,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `n` of variables `u₀, …, u_{n-1}`, and the expressions of `C`, each
-a postfix token list as in `NonTautologyWanted`. -/
+/-- An instance: a number `n` and a list `C` of raw token lists, each a list of natural pairs,
+read as the postfix encodings of expressions over `u₀, …, u_{n-1}` as in `NonTautologyWanted`.
+A token list may be empty or fail to parse; which expression it represents is defined only
+when parsing succeeds. Successful parsing and the variable bound belong to `WellFormed`. -/
 abbrev TruthFunctionallyCompleteConnectivesInstance := ℕ × List (List (ℕ × ℕ))
 
 /-- The binary truth function `(a, b) ↦ s(E)` that the expression `E` defines under the
