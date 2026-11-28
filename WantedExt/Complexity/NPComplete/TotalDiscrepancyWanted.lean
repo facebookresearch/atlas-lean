@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Basic.Real.Basic
+public import CSLibExt.Complexity.NPComplete.TotalDiscrepancyDefs
 
 @[expose] public section
 
@@ -56,46 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tasks, task `i` being the `i`-th pair `(lᵢ, Mᵢ)` of length and preferred
-midtime, and the bound `k`. -/
-abbrev TotalDiscrepancyInstance := List (ℕ × ℕ) × ℕ
-
-/-- The tasks of the instance, `Fin N` for `N` listed pairs. -/
-abbrev Task (i : TotalDiscrepancyInstance) : Type := Fin i.1.length
-
-/-- The length `lᵢ` of task `t`. -/
-def taskLength (i : TotalDiscrepancyInstance) (t : Task i) : ℕ :=
-  (i.1.get t).1
-
-/-- The preferred midtime `Mᵢ` of task `t`. -/
-def preferredMidtime (i : TotalDiscrepancyInstance) (t : Task i) : ℕ :=
-  (i.1.get t).2
-
-/-- Starting times `s` form a one-processor schedule for positive lengths `l`: of any two
-distinct tasks, one finishes before the other starts. -/
-def IsSchedule {N : ℕ} (l : Fin N → ℕ) (s : Fin N → ℝ) : Prop :=
-  ∀ a b, a ≠ b → s a + l a ≤ s b ∨ s b + l b ≤ s a
-
-/-- Well-formedness of an instance: `N ∈ ℤ⁺` (some task), every length and preferred midtime
-is positive, and `k ∈ ℤ⁺`. -/
-def WellFormed (i : TotalDiscrepancyInstance) : Prop :=
-  i.1 ≠ [] ∧ (∀ x ∈ i.1, 0 < x.1 ∧ 0 < x.2) ∧ 0 < i.2
-
-/-- Some schedule has total discrepancy at most `k`: the sum over the tasks of the distance
-between the actual midtime `sᵢ + lᵢ / 2` and the preferred midtime `Mᵢ` is at most `k`. -/
-def TotalDiscrepancyFeasible (i : TotalDiscrepancyInstance) : Prop :=
-  ∃ s : Task i → ℝ, IsSchedule (taskLength i) s ∧
-    ∑ t, |s t + (taskLength i t : ℝ) / 2 - preferredMidtime i t| ≤ i.2
-
-open Classical in
-/-- TOTAL DISCREPANCY as a decision problem over bitstrings. -/
-noncomputable def totalDiscrepancyDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TotalDiscrepancyInstance) x with
-  | some i => decide (WellFormed i ∧ TotalDiscrepancyFeasible i)
-  | none => false
 
 /-- **TOTAL DISCREPANCY is NP-complete.** Source: Garey, Tarjan, and Wilfong (1988),
 Section 2.1. -/

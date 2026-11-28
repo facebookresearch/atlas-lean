@@ -20,8 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ShapleyShubikVotingPowerDefs
 
 @[expose] public section
 
@@ -49,31 +48,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the votes `[w(v₁), ..., w(vₙ)]` and the quota `q`. -/
-abbrev ShapleyShubikVotingPowerInstance := List ℕ × ℕ
-
-/-- Well-formedness of an instance: there is at least one voter, every voter has a positive
-number of votes, and the quota is positive. -/
-def WellFormed (i : ShapleyShubikVotingPowerInstance) : Prop :=
-  0 < i.1.length ∧ (∀ w ∈ i.1, 0 < w) ∧ 0 < i.2
-
-/-- Some ordering `π` of the voters has `v₁` (voter `0`) at a position `j` where the votes of
-the first `j` voters total less than `q` and the votes of the first `j + 1` voters total at
-least `q`. -/
-def ShapleyShubikVotingPowerFeasible (i : ShapleyShubikVotingPowerInstance) : Prop :=
-  ∃ π : List ℕ, π.Perm (List.range i.1.length) ∧ ∃ j, π[j]? = some 0 ∧
-    ((π.take j).map (fun v => i.1.getD v 0)).sum < i.2 ∧
-    i.2 ≤ ((π.take (j + 1)).map (fun v => i.1.getD v 0)).sum
-
-open Classical in
-/-- SHAPLEY-SHUBIK VOTING POWER as a decision problem over bitstrings. -/
-noncomputable def shapleyShubikVotingPowerDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShapleyShubikVotingPowerInstance) x with
-  | some i => decide (WellFormed i ∧ ShapleyShubikVotingPowerFeasible i)
-  | none => false
 
 /-- **SHAPLEY-SHUBIK VOTING POWER is NP-complete.** Source: Garey and Johnson (1979), [MS8];
 Matsui and Matsui (2001). -/

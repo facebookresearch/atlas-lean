@@ -19,8 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ShortestCommonSuperstringDefs
 
 @[expose] public section
 
@@ -48,29 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alphabet size `k` (symbols `0, …, k - 1`), the strings of `R`, and the bound
-`K`. -/
-abbrev ShortestCommonSuperstringInstance := ℕ × List (List ℕ) × ℕ
-
-/-- Well-formedness of an instance: every symbol of every string of `R` is in the alphabet, and
-`0 < K`. -/
-def WellFormed (i : ShortestCommonSuperstringInstance) : Prop :=
-  (∀ x ∈ i.2.1, ∀ c ∈ x, c < i.1) ∧ 0 < i.2.2
-
-/-- Some string over the alphabet, of length at most `K`, contains every string of `R` as a
-substring. -/
-def ShortestCommonSuperstringFeasible (i : ShortestCommonSuperstringInstance) : Prop :=
-  ∃ w : List ℕ, (∀ c ∈ w, c < i.1) ∧ w.length ≤ i.2.2 ∧ ∀ x ∈ i.2.1, x <:+: w
-
-open Classical in
-/-- SHORTEST COMMON SUPERSTRING as a decision problem over bitstrings. -/
-noncomputable def shortestCommonSuperstringDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShortestCommonSuperstringInstance) x with
-  | some i => decide (WellFormed i ∧ ShortestCommonSuperstringFeasible i)
-  | none => false
 
 /-- **SHORTEST COMMON SUPERSTRING is NP-complete.** Source: Garey and Johnson (1979), [SR9];
 Gallant, Maier and Storer (1980). -/

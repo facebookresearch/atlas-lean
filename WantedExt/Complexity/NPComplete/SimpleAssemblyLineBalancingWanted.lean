@@ -24,10 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Logic.Relation
+public import CSLibExt.Complexity.NPComplete.SimpleAssemblyLineBalancingDefs
 
 @[expose] public section
 
@@ -58,32 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the task times, the precedence arcs `(i, j)` (task `i` precedes task `j`),
-the cycle time `c` and the number `K` of stations. -/
-abbrev SimpleAssemblyLineBalancingInstance := List ℕ × List (ℕ × ℕ) × ℕ × ℕ
-
-/-- Well-formedness of an instance: every arc joins two tasks, and the precedence graph is
-acyclic. -/
-def WellFormed (i : SimpleAssemblyLineBalancingInstance) : Prop :=
-  (∀ e ∈ i.2.1, e.1 < i.1.length ∧ e.2 < i.1.length) ∧
-    ∀ v, ¬ Relation.TransGen (fun a b => (a, b) ∈ i.2.1) v v
-
-/-- There is an assignment `f` of the tasks to the stations `0, …, K - 1` such that
-`f i ≤ f j` for every arc `(i, j)` and the task times at every station sum to at most `c`. -/
-def SimpleAssemblyLineBalancingFeasible (i : SimpleAssemblyLineBalancingInstance) : Prop :=
-  ∃ f : Fin i.1.length → Fin i.2.2.2,
-    (∀ a b : Fin i.1.length, ((a : ℕ), (b : ℕ)) ∈ i.2.1 → f a ≤ f b) ∧
-    ∀ k, ∑ j ∈ Finset.univ.filter (fun j => f j = k), i.1.get j ≤ i.2.2.1
-
-open Classical in
-/-- SIMPLE ASSEMBLY LINE BALANCING as a decision problem over bitstrings. -/
-noncomputable def simpleAssemblyLineBalancingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SimpleAssemblyLineBalancingInstance) x with
-  | some i => decide (WellFormed i ∧ SimpleAssemblyLineBalancingFeasible i)
-  | none => false
 
 /-- **SIMPLE ASSEMBLY LINE BALANCING is NP-complete.** Source: Garey and Johnson (1979), [SR1]
 (special case); Ritt and Costa (2018); Wee and Magazine (1982). -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ShortestCommonSuperstringWanted
+public import CSLibExt.Complexity.NPComplete.ShortestCommonSuperstringShortRepetitionFreeDefs
 
 @[expose] public section
 
@@ -58,21 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the instance is well-formed for SHORTEST COMMON
-SUPERSTRING, and every string of `R` has length at most `8` and no repeated symbol. -/
-def WellFormed (i : ShortestCommonSuperstringInstance) : Prop :=
-  ShortestCommonSuperstring.WellFormed i ∧ ∀ x ∈ i.2.1, x.length ≤ 8 ∧ x.Nodup
-
-open Classical in
-/-- SHORTEST COMMON SUPERSTRING with short repetition-free strings as a decision problem over
-bitstrings. -/
-noncomputable def shortestCommonSuperstringShortRepetitionFreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShortestCommonSuperstringInstance) x with
-  | some i => decide (WellFormed i ∧ ShortestCommonSuperstringFeasible i)
-  | none => false
 
 /-- **SHORTEST COMMON SUPERSTRING with strings of length at most `8` and no repeated symbols is
 NP-complete.** Source: Garey and Johnson (1979), [SR9], comment (Maier and Storer, 1977);

@@ -17,11 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Combinatorics.SimpleGraph.Hasse
-public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import Mathlib.Combinatorics.SimpleGraph.Prod
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ZahlenschlangeDefs
 
 @[expose] public section
 
@@ -60,41 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the width `w` and the rows of numbers (`h` rows of `w` numbers). -/
-abbrev ZahlenschlangeInstance := ℕ × List (List ℕ)
-
-/-- A cell `(row, column)` of the grid. -/
-abbrev Cell (i : ZahlenschlangeInstance) := Fin i.2.length × Fin i.1
-
-/-- Orthogonal adjacency of cells: the grid graph, the box product of two path graphs. -/
-abbrev gridGraph (i : ZahlenschlangeInstance) : SimpleGraph (Cell i) :=
-  SimpleGraph.pathGraph i.2.length □ SimpleGraph.pathGraph i.1
-
-/-- The number in a cell. -/
-def number (i : ZahlenschlangeInstance) (u : Cell i) : ℕ :=
-  (i.2.getD u.1 []).getD u.2 0
-
-/-- Well-formedness of an instance: at least one row and one column, every row of `w`
-numbers. -/
-def WellFormed (i : ZahlenschlangeInstance) : Prop :=
-  0 < i.1 ∧ 0 < i.2.length ∧ ∀ row ∈ i.2, row.length = i.1
-
-/-- The puzzle has a solution: a path of the grid graph from the top left cell `s` to the bottom
-right cell `t` on which, for the number of every cell `u`, exactly one cell holds that
-number. -/
-def ZahlenschlangeFeasible (i : ZahlenschlangeInstance) : Prop :=
-  ∃ s t : Cell i, (s.1 : ℕ) = 0 ∧ (s.2 : ℕ) = 0 ∧ (t.1 : ℕ) + 1 = i.2.length ∧
-    (t.2 : ℕ) + 1 = i.1 ∧ ∃ p : (gridGraph i).Walk s t, p.IsPath ∧
-      ∀ u : Cell i, p.support.countP (fun v => number i v = number i u) = 1
-
-open Classical in
-/-- ZAHLENSCHLANGE as a decision problem over bitstrings. -/
-noncomputable def zahlenschlangeDec : MetaMathlibExt.ComplexityTheory.DecisionProblem :=
-  fun x =>
-    match MetaMathlibExt.BitstringEncoding.bitDecode (α := ZahlenschlangeInstance) x with
-    | some i => decide (WellFormed i ∧ ZahlenschlangeFeasible i)
-    | none => false
 
 /-- **ZAHLENSCHLANGE is NP-complete.** Source: Kiatchaipipat and Ruangwises (2025),
 Section 2.3. -/

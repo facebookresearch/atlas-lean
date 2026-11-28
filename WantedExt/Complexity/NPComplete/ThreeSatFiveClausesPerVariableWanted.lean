@@ -26,9 +26,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Logics.Propositional.CNF.Semantics
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ThreeSatFiveClausesPerVariableDefs
 
 @[expose] public section
 
@@ -64,30 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `n` of variables and the CNF formula (its clauses). -/
-abbrev ThreeSatFiveClausesPerVariableInstance := ℕ × Cslib.Logic.LegacyPL.CNF
-
-/-- Well-formedness of an instance: every clause consists of three distinct literals on
-variables `< n`, and every variable `u < n` lies in at most five clauses. -/
-def WellFormed (i : ThreeSatFiveClausesPerVariableInstance) : Prop :=
-  (∀ clause ∈ i.2, clause.length = 3 ∧ clause.Nodup ∧ ∀ l ∈ clause, l.1 < i.1) ∧
-    ∀ u < i.1, i.2.countP (fun clause => clause.any (fun l => l.1 == u)) ≤ 5
-
-/-- A satisfying truth assignment for the variables `0, …, n - 1`. -/
-def ThreeSatFiveClausesPerVariableFeasible (i : ThreeSatFiveClausesPerVariableInstance) : Prop :=
-  ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
-
-open Classical in
-/-- 3-SATISFIABILITY with at most five clauses per variable as a decision problem over
-bitstrings. -/
-noncomputable def threeSatFiveClausesPerVariableDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeSatFiveClausesPerVariableInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeSatFiveClausesPerVariableFeasible i)
-  | none => false
 
 /-- **3-SATISFIABILITY with at most five clauses per variable is NP-complete.** Source: Garey and
 Johnson (1979), [LO2]; Tovey (1984); Kratochvíl, Savický and Tuza (1993). -/

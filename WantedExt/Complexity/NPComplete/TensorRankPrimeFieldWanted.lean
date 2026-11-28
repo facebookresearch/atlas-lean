@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Nat.Prime.Defs
-public import Mathlib.Data.ZMod.Defs
-public import CSLibExt.Complexity.Algebraic.MatrixMultiplicationExponent
+public import CSLibExt.Complexity.NPComplete.TensorRankPrimeFieldDefs
 
 @[expose] public section
 
@@ -57,47 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tensor, as a list of `n₁` slices of `n₂` rows of `n₃` entries, and the
-bound `r`. -/
-abbrev TensorRankPrimeFieldInstance := List (List (List ℕ)) × ℕ
-
-/-- The first dimension `n₁`: the number of slices. -/
-def dim₁ (i : TensorRankPrimeFieldInstance) : ℕ := i.1.length
-
-/-- The second dimension `n₂`: the number of rows of the first slice. -/
-def dim₂ (i : TensorRankPrimeFieldInstance) : ℕ := (i.1.headD []).length
-
-/-- The third dimension `n₃`: the length of the first row of the first slice. -/
-def dim₃ (i : TensorRankPrimeFieldInstance) : ℕ := ((i.1.headD []).headD []).length
-
-/-- The entry `T[a][b][c]`, as a natural number. -/
-def entry (i : TensorRankPrimeFieldInstance) (a b c : ℕ) : ℕ :=
-  ((i.1.getD a []).getD b []).getD c 0
-
-/-- Well-formedness of an instance for the prime `p`: every slice has `n₂` rows, every row has
-`n₃` entries, and every entry is below `p`. -/
-def WellFormed (p : ℕ) (i : TensorRankPrimeFieldInstance) : Prop :=
-  ∀ s ∈ i.1, s.length = dim₂ i ∧ ∀ row ∈ s, row.length = dim₃ i ∧ ∀ x ∈ row, x < p
-
-/-- The tensor of the instance as a coefficient function over `ZMod p`. -/
-def tensor (p : ℕ) (i : TensorRankPrimeFieldInstance) :
-    Fin (dim₁ i) → Fin (dim₂ i) → Fin (dim₃ i) → ZMod p :=
-  fun a b c => ((entry i a b c : ℕ) : ZMod p)
-
-/-- The tensor has rank at most `r` over `ZMod p`: it is the sum of at most `r` rank-one
-tensors `u ⊗ v ⊗ w`. -/
-def TensorRankPrimeFieldFeasible (p : ℕ) (i : TensorRankPrimeFieldInstance) : Prop :=
-  HasTrilinearRankAtMost (tensor p i) i.2
-
-open Classical in
-/-- TENSOR RANK over `ZMod p` as a decision problem over bitstrings. -/
-noncomputable def tensorRankPrimeFieldDec (p : ℕ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TensorRankPrimeFieldInstance) x with
-  | some i => decide (WellFormed p i ∧ TensorRankPrimeFieldFeasible p i)
-  | none => false
 
 /-- **TENSOR RANK over the prime field `ZMod p` is NP-complete, for every prime `p`.** Source:
 Håstad (1990); Hillar and Lim (2013), Section 8. -/

@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Databases.RelationalAlgebra
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.SideEffectFreeDeletionPropagationDefs
 
 @[expose] public section
 
@@ -62,52 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the pairs of `R₁(A, B)`, the pairs of `R₂(B, C)`, and the view tuple
-`t = (a, c)`. -/
-abbrev SideEffectFreeDeletionPropagationInstance := List (ℕ × ℕ) × List (ℕ × ℕ) × (ℕ × ℕ)
-
-/-- The tuple with value `u` at attribute `x`, value `v` at attribute `y`, and undefined
-elsewhere (for `x ≠ y`). -/
-def pairTuple (x y : Fin 3) (u v : ℕ) : Tuple (Fin 3) ℕ :=
-  fun k => if k = x then some u else if k = y then some v else none
-
-/-- The relation `R₁` over the attributes `A = 0`, `B = 1`. -/
-def rel₁ (i : SideEffectFreeDeletionPropagationInstance) : Finset (Tuple (Fin 3) ℕ) :=
-  (i.1.map fun p => pairTuple 0 1 p.1 p.2).toFinset
-
-/-- The relation `R₂` over the attributes `B = 1`, `C = 2`. -/
-def rel₂ (i : SideEffectFreeDeletionPropagationInstance) : Finset (Tuple (Fin 3) ℕ) :=
-  (i.2.1.map fun p => pairTuple 1 2 p.1 p.2).toFinset
-
-/-- The view `Π_{A,C}(r₁ ⋈ r₂)`. -/
-def view (r₁ r₂ : Finset (Tuple (Fin 3) ℕ)) : Finset (Tuple (Fin 3) ℕ) :=
-  project {0, 2} (join r₁ r₂)
-
-/-- The view tuple `t = (a, c)` over the attributes `A = 0`, `C = 2`. -/
-def target (i : SideEffectFreeDeletionPropagationInstance) : Tuple (Fin 3) ℕ :=
-  pairTuple 0 2 i.2.2.1 i.2.2.2
-
-/-- Well-formedness of an instance: the relations are listed without repetitions, and `t` is
-a tuple of the view. -/
-def WellFormed (i : SideEffectFreeDeletionPropagationInstance) : Prop :=
-  i.1.Nodup ∧ i.2.1.Nodup ∧ target i ∈ view (rel₁ i) (rel₂ i)
-
-/-- Some deletion of source tuples `T₁ ⊆ R₁`, `T₂ ⊆ R₂` removes exactly `t` from the view. -/
-def SideEffectFreeDeletionPropagationFeasible
-    (i : SideEffectFreeDeletionPropagationInstance) : Prop :=
-  ∃ T₁ ⊆ rel₁ i, ∃ T₂ ⊆ rel₂ i,
-    view (rel₁ i \ T₁) (rel₂ i \ T₂) = (view (rel₁ i) (rel₂ i)).erase (target i)
-
-open Classical in
-/-- SIDE-EFFECT-FREE DELETION PROPAGATION for `Π_{A,C}(R₁ ⋈ R₂)` as a decision problem over
-bitstrings. -/
-noncomputable def sideEffectFreeDeletionPropagationDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SideEffectFreeDeletionPropagationInstance) x with
-  | some i => decide (WellFormed i ∧ SideEffectFreeDeletionPropagationFeasible i)
-  | none => false
 
 /-- **SIDE-EFFECT-FREE DELETION PROPAGATION for the project-join view `Π_{A,C}(R₁ ⋈ R₂)` is
 NP-complete.** Source: Buneman, Khanna and Tan (2002), Theorem 2.1. -/

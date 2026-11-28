@@ -18,10 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Batteries.Data.List.Basic
-public import Mathlib.Data.List.Perm.Basic
+public import CSLibExt.Complexity.NPComplete.SolitaireUnoDefs
 
 @[expose] public section
 
@@ -59,28 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance `(c, b, C)`: the number of colors `c`, the number of numbers `b`, and the cards
-`(color, number)` of the multiset `C`. -/
-abbrev SolitaireUnoInstance := ℕ × ℕ × List (ℕ × ℕ)
-
-/-- Well-formedness: every card has a color in `{1, …, c}` and a number in `{1, …, b}`. -/
-def WellFormed (i : SolitaireUnoInstance) : Prop :=
-  ∀ t ∈ i.2.2, 1 ≤ t.1 ∧ t.1 ≤ i.1 ∧ 1 ≤ t.2 ∧ t.2 ≤ i.2.1
-
-/-- All the cards can be played: some ordering of the multiset of cards has each card matching
-the one before it in color or in number. -/
-def SolitaireUnoFeasible (i : SolitaireUnoInstance) : Prop :=
-  ∃ s : List (ℕ × ℕ), s.Perm i.2.2 ∧ s.IsChain fun t t' => t'.1 = t.1 ∨ t'.2 = t.2
-
-open Classical in
-/-- SOLITAIRE UNO as a decision problem over bitstrings. -/
-noncomputable def solitaireUnoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SolitaireUnoInstance) x with
-  | some i => decide (WellFormed i ∧ SolitaireUnoFeasible i)
-  | none => false
 
 /-- **SOLITAIRE UNO is NP-complete.** Source: Demaine, Demaine, Harvey, Uehara, Uno and Uno
 (2014), Theorem 3. -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Int.ModEq
+public import CSLibExt.Complexity.NPComplete.SimultaneousIncongruencesDefs
 
 @[expose] public section
 
@@ -49,27 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the list of pairs `(aᵢ, bᵢ)`. -/
-abbrev SimultaneousIncongruencesInstance := List (ℕ × ℕ)
-
-/-- Well-formedness of an instance: every pair `(aᵢ, bᵢ)` consists of positive integers with
-`aᵢ ≤ bᵢ` (so `bᵢ` is positive as well). -/
-def WellFormed (i : SimultaneousIncongruencesInstance) : Prop :=
-  ∀ p ∈ i, 0 < p.1 ∧ p.1 ≤ p.2
-
-/-- Some integer `x` satisfies `x ≢ aᵢ (mod bᵢ)` for every pair `(aᵢ, bᵢ)`. -/
-def SimultaneousIncongruencesFeasible (i : SimultaneousIncongruencesInstance) : Prop :=
-  ∃ x : ℤ, ∀ p ∈ i, ¬ x ≡ (p.1 : ℤ) [ZMOD (p.2 : ℤ)]
-
-open Classical in
-/-- SIMULTANEOUS INCONGRUENCES as a decision problem over bitstrings. -/
-noncomputable def simultaneousIncongruencesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SimultaneousIncongruencesInstance) x with
-  | some i => decide (WellFormed i ∧ SimultaneousIncongruencesFeasible i)
-  | none => false
 
 /-- **SIMULTANEOUS INCONGRUENCES is NP-complete.** Source: Garey and Johnson (1979), [AN2];
 Stockmeyer and Meyer (1973). -/

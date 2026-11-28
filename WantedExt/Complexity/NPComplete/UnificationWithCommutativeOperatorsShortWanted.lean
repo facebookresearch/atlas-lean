@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnificationWithCommutativeOperatorsWanted
+public import CSLibExt.Complexity.NPComplete.UnificationWithCommutativeOperatorsShortDefs
 
 @[expose] public section
 
@@ -61,28 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The number of occurrences of variables and constants in an expression given by its prefix
-token list: the tokens `(0, v)` and `(1, c)`, i.e., those that are not the operator `(2, 0)`. -/
-def leafCount (ts : List (ℕ × ℕ)) : ℕ :=
-  ts.countP fun t => t.1 ≠ 2
-
-/-- Well-formedness of an instance: it is a well-formed instance of UNIFICATION WITH
-COMMUTATIVE OPERATORS, and no `eᵢ` or `fᵢ` contains more than 7 occurrences of constants and
-variables. -/
-def WellFormed (i : UnificationWithCommutativeOperatorsInstance) : Prop :=
-  UnificationWithCommutativeOperators.WellFormed i ∧
-    ∀ p ∈ i.2.2, leafCount p.1 ≤ 7 ∧ leafCount p.2 ≤ 7
-
-open Classical in
-/-- UNIFICATION WITH COMMUTATIVE OPERATORS with short expressions as a decision problem over
-bitstrings. -/
-noncomputable def unificationWithCommutativeOperatorsShortDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnificationWithCommutativeOperatorsInstance) x with
-  | some i => decide (WellFormed i ∧ UnificationWithCommutativeOperatorsFeasible i)
-  | none => false
 
 /-- **UNIFICATION WITH COMMUTATIVE OPERATORS with at most 7 occurrences of constants and
 variables per expression is NP-complete.** Source: Garey and Johnson (1979), [AN16],
