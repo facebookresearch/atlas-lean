@@ -19,22 +19,40 @@ import MathlibExt.NumberTheory.HyperLeonardoLogConvex
 # Eventual log-concavity of the hyper-Leonardo numbers
 
 The hyper-Leonardo numbers are log-concave at every index `n ≥ 2` for every order `r ≥ 1`.
+They also satisfy a Cassini-type identity at every index `n ≥ 1` for every order `r ≥ 1`.
 Order one is the partial-sum sequence of the ordinary Leonardo numbers, so Zhao's partial-sum
 inequality gives the base case. For the order step, log-concavity at index one starts an induction
-on the index using the consecutive-order recurrence, without applying the paper's convolution
-lemma to a sequence that is only eventually log-concave.
+on the index using the Cassini-type identity and the consecutive-order recurrence, without applying
+the paper's convolution lemma to a sequence that is only eventually log-concave.
 
 ## References
 
 * Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino,
   *A Note on Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, pp. 1–18,
-  Definition 1 and Propositions 3, 6, 12, 13, and 14 (with the order-zero exception below).
+  Definition 1 and Propositions 3, 4, 6, 12, 13, and 14 (with the order-zero exception below).
 * Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the Generalized Leonardo
   Numbers*, INTEGERS 24 (2024), Article A82, pp. 1–9, Theorem 2, for the order-one base case
   at indices `n ≥ 2`.
 -/
 
 namespace MetaMathlibExt
+
+/-- **Cassini-type identity for hyper-Leonardo numbers.** For all natural numbers $r \ge 1$ and
+$n \ge 1$, the hyper-Leonardo numbers $Le^{(r)}_n$ satisfy
+$Le^{(r)}_{n-1} Le^{(r)}_{n+1} - (Le^{(r)}_n)^2 =
+Le^{(r)}_n Le^{(r-1)}_{n+1} - Le^{(r-1)}_n Le^{(r)}_{n+1}$.
+
+Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
+Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 4
+(`integers-2026-A48-prop-4`). -/
+public theorem hyperLeonardo_mul_sub_sq (r n : ℕ) :
+    hyperLeonardo (r + 1) n * hyperLeonardo (r + 1) (n + 2) - hyperLeonardo (r + 1) (n + 1) ^ 2 =
+      hyperLeonardo (r + 1) (n + 1) * hyperLeonardo r (n + 2) -
+        hyperLeonardo r (n + 1) * hyperLeonardo (r + 1) (n + 2) := by
+  have h₁ := hyperLeonardo_succ_succ r n
+  have h₂ := hyperLeonardo_succ_succ r (n + 1)
+  linear_combination -(hyperLeonardo (r + 1) (n + 2)) * h₁ +
+    hyperLeonardo (r + 1) (n + 1) * h₂
 
 private theorem hyperLeonardo_pos (r : ℕ) : ∀ n, 0 < hyperLeonardo r n := by
   induction r with
@@ -59,8 +77,9 @@ private theorem hyperLeonardo_logConcave_succ (r : ℕ) (hr : 1 ≤ r)
   have hstep (i : ℕ) : S (i + 1) = S i + x (i + 1) := hyperLeonardo_succ_succ r i
   have gap (i : ℕ) : S (i + 1) ^ 2 - S i * S (i + 2) =
       S (i + 1) * x (i + 1) - S i * x (i + 2) := by
-    rw [hstep (i + 1)]
-    linear_combination S (i + 1) * hstep i
+    have hCassini : S i * S (i + 2) - S (i + 1) ^ 2 =
+        S (i + 1) * x (i + 2) - x (i + 1) * S (i + 2) := hyperLeonardo_mul_sub_sq r i
+    linear_combination -hCassini + x (i + 1) * hstep (i + 1) - x (i + 2) * hstep i
   have cross (i : ℕ) : S i * x (i + 2) ≤ S (i + 1) * x (i + 1) := by
     induction i with
     | zero =>
@@ -110,5 +129,16 @@ public theorem hyperLeonardo_logConcave {r : ℕ} (hr : 1 ≤ r) {n : ℕ} (hn :
     rw [Nat.add_sub_cancel]
     refine hyperLeonardo_logConcave_succ (r + 1) (by omega) (fun j => ?_) i
     simpa only [Nat.add_sub_cancel] using ih (n := j + 1 + 1) (by omega)
+
+/-- **Eventual log-concavity of the hyper-Leonardo numbers of order one.** For every natural
+number $n \ge 2$, the hyper-Leonardo numbers $Le^{(1)}_n$ of order $1$ satisfy
+$Le^{(1)}_{n-1} Le^{(1)}_{n+1} \le (Le^{(1)}_n)^2$.
+
+Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
+Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 13
+(`integers-2026-A48-prop-13`). -/
+public theorem hyperLeonardo_one_logConcave (n : ℕ) (hn : 2 ≤ n) :
+    hyperLeonardo 1 (n - 1) * hyperLeonardo 1 (n + 1) ≤ hyperLeonardo 1 n ^ 2 :=
+  hyperLeonardo_logConcave le_rfl hn
 
 end MetaMathlibExt

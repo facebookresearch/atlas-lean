@@ -106,29 +106,6 @@ public theorem_wanted leonardo_logConvex_logConcave_pointwise :
     (∀ n, n = 2 ∨ n = 4 ∨ 6 ≤ n →
       genLeonardo 1 (n - 1) * genLeonardo 1 (n + 1) ≤ genLeonardo 1 n ^ 2)
 
-/-- **Eventual log-concavity of the hyper-Leonardo numbers of order one.** For every natural
-number $n \ge 2$, the hyper-Leonardo numbers $Le^{(1)}_n$ of order $1$ satisfy
-$Le^{(1)}_{n-1} Le^{(1)}_{n+1} \le (Le^{(1)}_n)^2$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 13
-(`integers-2026-A48-prop-13`). -/
-public theorem_wanted hyperLeonardo_one_logConcave (n : ℕ) (hn : 2 ≤ n) :
-    hyperLeonardo 1 (n - 1) * hyperLeonardo 1 (n + 1) ≤ hyperLeonardo 1 n ^ 2
-
-/-- **Cassini-type identity for hyper-Leonardo numbers.** For all natural numbers $r \ge 1$ and
-$n \ge 1$, the hyper-Leonardo numbers $Le^{(r)}_n$ satisfy
-$Le^{(r)}_{n-1} Le^{(r)}_{n+1} - (Le^{(r)}_n)^2 =
-Le^{(r)}_n Le^{(r-1)}_{n+1} - Le^{(r-1)}_n Le^{(r)}_{n+1}$.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Proposition 4
-(`integers-2026-A48-prop-4`). -/
-public theorem_wanted hyperLeonardo_mul_sub_sq (r n : ℕ) :
-    hyperLeonardo (r + 1) n * hyperLeonardo (r + 1) (n + 2) - hyperLeonardo (r + 1) (n + 1) ^ 2 =
-      hyperLeonardo (r + 1) (n + 1) * hyperLeonardo r (n + 2) -
-        hyperLeonardo r (n + 1) * hyperLeonardo (r + 1) (n + 2)
-
 end
 
 end MetaMathlibExt
