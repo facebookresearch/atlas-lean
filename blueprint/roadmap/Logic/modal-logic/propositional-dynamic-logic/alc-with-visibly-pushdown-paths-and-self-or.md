@@ -1,6 +1,6 @@
 # ALC with visibly pushdown paths and Self or nominals is undecidable
 
-Concept satisfiability, decidable for ALC with visibly pushdown path expressions, becomes undecidable when the Self operator is added, and also when nominals are added, already with the single non-regular language {rⁿsⁿ}.
+Concept satisfiability, decidable for ALC with visibly pushdown path expressions, becomes undecidable when the Self operator is added, and also when nominals are added; with nominals, already with the single non-regular language {rⁿsⁿ}.
 
 **Theorem (Bednarczyk).** For the logics of the page on [ALC with visibly pushdown path expressions](alc-with-visibly-pushdown-path-expressions.md):
 

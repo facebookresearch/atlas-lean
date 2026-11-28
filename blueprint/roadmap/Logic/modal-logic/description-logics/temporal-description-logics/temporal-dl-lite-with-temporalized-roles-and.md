@@ -8,7 +8,7 @@ $$
 S ::= P_i \mid G_i, \qquad R ::= S \mid S^- \mid \Diamond^* R \mid \Box^* R, \qquad B ::= \bot \mid A_i \mid {\ge}\, q\, R, \qquad C ::= B \mid \neg C \mid C_1 \sqcap C_2 \mid \bigcirc_F C,
 $$
 
-with $q \ge 1$ a natural number. An interpretation $\mathcal I$ assigns to each time point $n \in \mathbb Z$ an interpretation $\mathcal I(n)$ over one constant domain $\Delta^{\mathcal I}$, with the same interpretation of each object name and of each rigid role name at all time points. Then $(S^-)^{\mathcal I(n)}$ is the converse of $S^{\mathcal I(n)}$, $({\ge}\, q\, R)^{\mathcal I(n)}$ is the set of $x$ with at least $q$ elements $y$ such that $(x, y) \in R^{\mathcal I(n)}$, $(\bigcirc_F C)^{\mathcal I(n)} = C^{\mathcal I(n+1)}$, Booleans are as usual, and
+with $q \ge 1$ a natural number. An interpretation $\mathcal I$ assigns to each time point $n \in \mathbb Z$ an interpretation $\mathcal I(n)$ over one constant domain $\Delta^{\mathcal I}$, with the same interpretation of each object name and of each rigid role name at all time points; as in the source, distinct object names denote distinct elements (the unique name assumption), and the source notes that dropping it changes none of its complexity results except the LogSpace bound of its Theorem 4, which is not used here. Then $(S^-)^{\mathcal I(n)}$ is the converse of $S^{\mathcal I(n)}$, $({\ge}\, q\, R)^{\mathcal I(n)}$ is the set of $x$ with at least $q$ elements $y$ such that $(x, y) \in R^{\mathcal I(n)}$, $(\bigcirc_F C)^{\mathcal I(n)} = C^{\mathcal I(n+1)}$, Booleans are as usual, and
 
 $$
 (\Diamond^* R)^{\mathcal I(n)} = \bigcup_{k \in \mathbb Z} R^{\mathcal I(k)}, \qquad (\Box^* R)^{\mathcal I(n)} = \bigcap_{k \in \mathbb Z} R^{\mathcal I(k)} .

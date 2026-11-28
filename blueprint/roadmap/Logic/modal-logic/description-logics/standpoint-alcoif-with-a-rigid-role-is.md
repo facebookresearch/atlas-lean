@@ -30,7 +30,7 @@ $$
 $$
 
 $$
-\mathit{Pick} \sqsubseteq \forall E.\neg\mathit{Even} \sqcup \forall E.(\neg\mathit{Odd} \sqcup \exists\mathit{Point}^-.\{o\}), \qquad \mathit{Pick} \sqsubseteq \forall E.\neg\mathit{Odd} \sqcup \forall E.(\neg\mathit{Even} \sqcup \exists\mathit{Point}^-.\{o\})
+\mathit{Pick} \sqsubseteq \forall E.\bigl(\neg\mathit{Even} \sqcup \forall E.(\neg\mathit{Odd} \sqcup \exists\mathit{Point}^-.\{o\})\bigr), \qquad \mathit{Pick} \sqsubseteq \forall E.\bigl(\neg\mathit{Odd} \sqcup \forall E.(\neg\mathit{Even} \sqcup \exists\mathit{Point}^-.\{o\})\bigr)
 $$
 
 ensure that each grid element is picked in some precisification, and there the upper neighbor of its right neighbor and the right neighbor of its upper neighbor are both pointed to by $o$ through the functional role, so they coincide. Since $E$ is rigid, these coincidences hold in all precisifications and the grid closes; a tiling on top of the grid is enforced very similarly to the source's earlier lower-bound construction. The problem reduced is the one Section 5 of the source states: "There is a tiling system $T_{\mathrm{und}}$ such that the following problem is undecidable: Given an initial condition of size $n$, is there a corresponding $T_{\mathrm{und}}$-tiling of $\mathbb N\times\mathbb N$?" The linked tiling page, with the tile set as input and no initial condition, does not give this; a good expansion links a page for undecidability of tiling with initial conditions for one fixed tiling system, which follows by simulating a universal Turing machine in a fixed tile set and using the undecidability of halting.

@@ -1,6 +1,6 @@
 # Atomic query answering in the temporal description logic TEL◯ is undecidable
 
-Answering atomic queries over temporal knowledge bases of TEL◯, which combines the lightweight description logic EL with the LTL next and previous operators, is undecidable, closing a question left open when the logic was introduced; with future operators only it is in polynomial time.
+Answering atomic queries over temporal knowledge bases of TEL◯, which combines the lightweight description logic EL with the LTL next and previous operators, is undecidable, closing a question left open when the logic was introduced; with future operators only, and time offsets and timestamps encoded in unary, it is in polynomial time.
 
 **The logic TEL◯.** Fix individual names, concept names and role names, the role names split into *rigid* and *local* ones. A *TEL◯-TBox* is a finite set of concept inclusions in normal form
 
@@ -8,14 +8,14 @@ $$
 A\sqsubseteq\bigcirc^n B,\qquad A\sqcap A'\sqsubseteq B,\qquad\exists r.A\sqsubseteq B,\qquad A\sqsubseteq\exists r.B,
 $$
 
-with concept names $A,A',B$, a role name $r$ and $n\in\mathbb Z$. A *temporal ABox* is a finite set of facts $A(a,n)$ and $r(a,b,n)$ with individual names $a,b$ and time points $n\in\mathbb Z$. An interpretation is a sequence $(\mathcal I_i)_{i\in\mathbb Z}$ of description logic interpretations over one domain, interpreting individual names by themselves and rigid roles identically at all times; $\bigcirc^n A$ holds at time $i$ where $A$ holds at time $i+n$, and a concept inclusion must hold at every time point. The *future fragment* allows only $n\ge0$, and a *rigid concept name* is interpreted identically at all times. *Temporal atomic query answering* (TAQA) asks, given a TBox $\mathcal T$, an ABox $\mathcal A$ and a fact $A(a,n)$, whether every model of $(\mathcal T,\mathcal A)$ satisfies $A(a,n)$.
+with concept names $A,A',B$, a role name $r$ and $n\in\mathbb Z$. A *temporal ABox* is a finite set of facts $A(a,n)$ and $r(a,b,n)$ with individual names $a,b$ and time points $n\in\mathbb Z$. An interpretation is a sequence $(\mathcal I_i)_{i\in\mathbb Z}$ of description logic interpretations over one domain, interpreting individual names by themselves and rigid roles identically at all times; $\bigcirc^n A$ holds at time $i$ where $A$ holds at time $i+n$, and a concept inclusion must hold at every time point. The *future fragment* allows only $n\ge0$, and a *rigid concept name* is interpreted identically at all times. *Temporal atomic query answering* (TAQA) asks, given a TBox $\mathcal T$, an ABox $\mathcal A$ and a fact $A(a,n)$, whether every model of $(\mathcal T,\mathcal A)$ satisfies $A(a,n)$. Input time offsets and timestamps are encoded in unary: as in the preliminaries of the source, the size of a TBox or ABox is the number of symbols needed to write it down, with integers encoded in unary.
 
 **Theorem (Bourgaux, Gnatenko and Thomazo).**
 
 1. TAQA is undecidable in combined complexity for TEL◯-TBoxes, and for TBoxes of the future fragment extended with rigid concept names (Theorem 26).
 2. There is a TBox $\mathcal T$ of the future fragment with concept names $A$, $B$ for which $\{n\in\mathbb N:\mathcal T\models A\sqsubseteq\bigcirc^n B\}=\{4^k:k\in\mathbb N\}$, so TEL◯ lacks ultimate periodicity, and it is undecidable whether this set is semilinear for a given future TBox (Theorem 25).
 
-By contrast, TAQA for TBoxes of the future fragment, without rigid concept names, is PTIME-complete in both combined and data complexity (Theorem 27). Undecidability in combined complexity does not settle data complexity.
+By contrast, TAQA for TBoxes of the future fragment, without rigid concept names, is PTIME-complete in both combined and data complexity under this unary encoding (Theorem 27); its upper-bound proof introduces names for every integer between the least and the greatest ABox timestamp, which under a binary encoding could be exponentially many. Undecidability in combined complexity does not settle data complexity.
 
 ## Depends on
 

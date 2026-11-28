@@ -18,7 +18,7 @@ Graphs are in the language with the edge relation only. In a language with relat
 
 ## Expansion
 
-The proof modifies the construction for the joint embedding property so that in the classes produced every homomorphism between members is forced to be an embedding. Wheel graphs serve as gadgets: every proper homomorphic image of the wheel $W_5$ contains a copy of $K_4$ (Fact 5.4), and the construction uses this to keep homomorphisms between members of the class from collapsing the coding. For a tiling problem $\mathcal T$ the resulting class has the JHP iff $\mathcal T$ has a solution, as in the JEP construction.
+The proof modifies the construction for the joint embedding property so that homomorphisms from the two canonical models into a witness of the JHP are forced to be embeddings, so that such a witness also witnesses the JEP for them (proof of Theorem 5.1, by Theorem 5.13). It does not make every homomorphism between members an embedding: two nonadjacent vertices can still map to one vertex. The all-homomorphisms statement holds only in the language with relations for edges and non-edges (Proposition 5.2). Wheel graphs serve as gadgets: every proper homomorphic image of the wheel $W_5$ contains a copy of $K_4$ (Fact 5.4), and the construction uses this to keep homomorphisms between members of the class from collapsing the coding. For a tiling problem $\mathcal T$ the resulting class has the JHP iff $\mathcal T$ has a solution, as in the JEP construction.
 
 ## Sources
 

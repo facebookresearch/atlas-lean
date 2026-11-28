@@ -2,7 +2,7 @@
 
 PDL with parallel composition remains undecidable when the input formulas contain no propositional variables at all, only the constant $\bot$.
 
-**Theorem (Rybakov and Shkatov).** The variable-free fragment of [PRSPDL](pdl-with-parallel-composition-prspdl.md) over $\ast$-separated models is undecidable: no algorithm decides, for formulas built from $\bot$, $\to$, program boxes, atomic programs, the component programs $r_1, r_2, s_1, s_2$, tests, composition, parallel composition and iteration, whether they are valid (equivalently, whether their negations are satisfiable).
+**Theorem (Rybakov and Shkatov).** The variable-free fragment of [PRSPDL](pdl-with-parallel-composition-prspdl.md) over $\ast$-separated models is undecidable: no algorithm decides, for formulas built from $\bot$, $\to$, program boxes, atomic programs, the component programs $r_1, r_2, s_1, s_2$, tests, composition, parallel composition and iteration, whether they are valid (equivalently, whether their negations are unsatisfiable).
 
 The same source shows that variable-free fragments do not lower complexity for regular PDL (EXPTIME-complete) or PDL with intersection (2EXPTIME-complete) either.
 
