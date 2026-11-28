@@ -25,13 +25,14 @@ pairing $H^i(k, A') \times H^{2-i}(k, A) \to \mathbb{Q}/\mathbb{Z}$.
 ## Depends on
 
 - [Local Tate duality](local-tate-duality.md), for the pairing
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for inflation and restriction
+- [Inflation, restriction and corestriction for profinite groups](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/inflation-restriction-and-corestriction.md), for inflation and restriction
 
 ## Proof depends on
 
 - [Local Tate duality](local-tate-duality.md)
 - [Local Euler characteristic formula](local-euler-characteristic-formula.md), for $\# H^1(k, A) = \# H^0(k, A) \cdot \# H^2(k, A)$ when the order of $A$ is prime to $p$, which with duality gives $\# H^1_{\mathrm{nr}}(k, A) \cdot \# H^1_{\mathrm{nr}}(k, A') = \# H^1(k, A)$
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the cohomology of $\hat{\mathbb{Z}}$ (cohomological dimension $1$, and $\# H^0 = \# H^1$ on finite modules), which makes the cup product of two unramified classes vanish, and for the inflation–restriction sequence
+- [Cohomology of torsion-free procyclic groups](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-of-torsion-free-procyclic-groups.md), for the cohomology of $\hat{\mathbb{Z}}$ (cohomological dimension $1$, and $\# H^0 = \# H^1$ on finite modules), which makes the cup product of two unramified classes vanish
+- [The five term exact sequence](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/five-term-exact-sequence.md), for the inflation–restriction sequence
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the cohomological triviality of the units of the maximal unramified extension (its item 1), which gives the orthogonality in degrees $0$ and $2$ for unramified $A$ (NSW, proof of (7.2.15), through (7.1.2)(i))
 
 ## Sources

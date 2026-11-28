@@ -66,7 +66,10 @@ A good expansion has pages for:
 - [Isogenies of abelian schemes](../../../../AlgebraicGeometry/abelian-varieties/isogenies-of-abelian-schemes.md), for multiplication by $n$ as a finite étale surjection in characteristic $0$, which makes the Kummer sequences exact on $\bar k$-points
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the invariant maps $H^2(k, \mathbb{G}_m) \cong \mathbb{Q}/\mathbb{Z}$ and $H^2(\mathbb{R}, \mathbb{G}_m) \cong \tfrac12\mathbb{Z}/\mathbb{Z}$ (its item 2)
 - [Local Tate duality](local-tate-duality.md), for the finite-level pairings of item 3
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for Galois cohomology, cup products, Tate cohomology of $\operatorname{Gal}(\mathbb{C}/\mathbb{R})$ and the long exact sequences
+- [Cohomology of a profinite group with discrete coefficients](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-with-discrete-coefficients.md), for Galois cohomology
+- [Cup products for profinite groups](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cup-products.md), for cup products
+- [Tate cohomology groups of a finite group](../../../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/tate-cohomology.md), for the Tate cohomology of $\operatorname{Gal}(\mathbb{C}/\mathbb{R})$
+- [The long exact cohomology sequence](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/long-exact-cohomology-sequence.md) and [the long exact Tate cohomology sequence of a finite group](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/long-exact-tate-cohomology-sequence-of-a-finite-group.md), for the long exact sequences
 
 ## Proof depends on
 

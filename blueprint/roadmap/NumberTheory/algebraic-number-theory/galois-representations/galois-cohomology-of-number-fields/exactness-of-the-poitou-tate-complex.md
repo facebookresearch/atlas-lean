@@ -58,7 +58,9 @@ A good expansion has pages for:
 - [Galois cohomology of roots of unity over a p-adic field](../galois-cohomology-of-local-fields/cohomology-of-roots-of-unity-over-p-adic-fields.md), for the Kummer map in that local comparison
 - [Product formula for principal ideles](../../adeles-class-field-theory/adeles-and-ideles/adelic-norm-principal-embedding.md), for $\prod_v \lVert \# A \rVert_v = 1$ in item 3
 - [Local Euler characteristic formula](../galois-cohomology-of-local-fields/local-euler-characteristic-formula.md), used in item 3
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for continuous cohomology along countable towers in item 2, and for restriction, corestriction and the composition series of item 4
+- [Continuous cohomology of a countable inverse limit of finite modules](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/continuous-cohomology-of-a-countable-inverse-limit.md) and [continuous cohomology as an inverse limit over finite levels](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/continuous-cohomology-as-an-inverse-limit.md), for continuous cohomology along countable towers in item 2
+- [Inflation, restriction and corestriction for profinite groups](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/inflation-restriction-and-corestriction.md), for restriction and corestriction in item 4
+- [Simple modules over pro-p-groups](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/simple-modules-over-pro-p-groups.md), for the composition series of item 4
 
 ## Sources
 

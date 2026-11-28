@@ -33,7 +33,7 @@ along the same diagram.
 
 ## Depends on
 
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the Galois cohomology of $G_K$
+- [Cohomology of a profinite group with discrete coefficients](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-with-discrete-coefficients.md), for the Galois cohomology of $G_K$
 
 ## Proof depends on
 
@@ -41,7 +41,8 @@ along the same diagram.
 - [Fundamental class of global class field theory](../../adeles-class-field-theory/reciprocity-law/fundamental-class.md), for the exact sequence $0 \to \mathrm{Br}(K) \to \bigoplus_v \mathrm{Br}(K_v) \to \mathbb{Q}/\mathbb{Z} \to 0$ (its item 1), which makes $\mathrm{Br}(K) \to \bigoplus_{v \text{ real}} \mathrm{Br}(K_v)$ onto
 - [Periodicity of Tate cohomology for finite cyclic groups](../../../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/nonempty-periodicity-iso.md), for $H^3 \cong H^1$ over $\operatorname{Gal}(\mathbb{C}/\mathbb{R})$
 - [Hilbert's Theorem 90 for the multiplicative group](../../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for $H^1(\operatorname{Gal}(\mathbb{C}/\mathbb{R}), \mathbb{C}^\times) = 0$
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the long exact sequences and the torsion of the cohomology of profinite groups in positive degrees
+- [The long exact cohomology sequence](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/long-exact-cohomology-sequence.md), for the long exact sequences
+- [Cohomology in positive degrees is torsion](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-in-positive-degrees-is-torsion.md), for the torsion of the cohomology of profinite groups in positive degrees
 
 ## Sources
 

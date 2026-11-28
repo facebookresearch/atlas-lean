@@ -20,13 +20,13 @@ here.
 
 ## Depends on
 
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for dualizing modules
+- [Dualizing modules and the abstract duality theorems](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/dualizing-modules-and-duality-theorems.md), for dualizing modules
 - [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for the isomorphisms $H^2(K, \mu_n) \cong \mathbb{Z}/n\mathbb{Z}$ given by the invariant map
 
 ## Proof depends on
 
 - [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for $\operatorname{cd}_\ell(G_k) = 2$ for every prime $\ell$, so that the discrete torsion modules have a dualizing module $D_0$, which is also the dualizing module of every open subgroup
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for that dualizing module of a profinite group of finite cohomological dimension (NSW (3.4.4), and the remark after (3.4.1) on open subgroups)
+- [Dualizing modules and the abstract duality theorems](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/dualizing-modules-and-duality-theorems.md), for that dualizing module of a profinite group of finite cohomological dimension (NSW (3.4.4), and the remark after (3.4.1) on open subgroups)
 - [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for $H^2(V, \mu_n) \cong \mathbb{Z}/n\mathbb{Z}$ for every open subgroup $V$ of $G_k$, which identifies $\operatorname{Hom}_V(\mu_n, D_0)$ with $\mathbb{Z}/n\mathbb{Z}$
 
 ## Sources

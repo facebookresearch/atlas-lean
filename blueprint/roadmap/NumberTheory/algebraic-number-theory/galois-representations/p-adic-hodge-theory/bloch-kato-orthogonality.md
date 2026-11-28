@@ -24,7 +24,7 @@ complement of $H^1_e(G_K, V)$ is $H^1_g(G_K, V^*(1))$, and that of $H^1_g(G_K, V
 - [Hodge–Tate representations](hodge-tate-representations.md), for the Hodge–Tate decomposition of the de Rham representation $V$ used in that reduction
 - [Galois cohomology of roots of unity over a p-adic field](../galois-cohomology-of-local-fields/cohomology-of-roots-of-unity-over-p-adic-fields.md), for the Kummer identification $H^1(K, \mathbb{Q}_p(1)) \cong (\varprojlim_n K^\times/K^{\times p^n}) \otimes \mathbb{Q}$, under which the boundary $K \to H^1(K, \mathbb{Q}_p(1))$ of the last step is the $p$-adic exponential (Bloch–Kato, p. 358)
 - [The p-adic exponential on a neighbourhood of zero](../../../p-adic-numbers/p-adic-exponential.md), for that exponential
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the long exact sequences of continuous cohomology with period-ring coefficients, which exist because the maps of the fundamental exact sequences have continuous sections (Bloch–Kato, Remarks 1.18)
+- [The long exact sequence of continuous cohomology](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/long-exact-sequence-for-continuous-cohomology.md), for the long exact sequences of continuous cohomology with period-ring coefficients, which exist because the maps of the fundamental exact sequences have continuous sections (Bloch–Kato, Remarks 1.18)
 
 ## Sources
 

@@ -23,11 +23,11 @@ carrying their $\ell$-adic topologies.
 ## Depends on
 
 - [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for $V^*(1)$ and $\mathbb{Q}_\ell(1)$
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for continuous cochain cohomology
+- [Continuous cohomology](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/continuous-cohomology.md), for continuous cochain cohomology
 
 ## Proof depends on
 
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for Tate's comparison of continuous cohomology with the inverse limit over finite levels when the cohomology of the open subgroups with $\mathbb{Z}/\ell$-coefficients is finite
+- [Continuous cohomology as an inverse limit over finite levels](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/continuous-cohomology-as-an-inverse-limit.md), for Tate's comparison of continuous cohomology with the inverse limit over finite levels when the cohomology of the open subgroups with $\mathbb{Z}/\ell$-coefficients is finite
 - [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for the finiteness of $H^i(U, \mathbb{Z}/\ell\mathbb{Z})$ for open subgroups $U$ and for $\operatorname{cd}_\ell(G_K) = 2$
 - [Local Tate duality](local-tate-duality.md), applied to $T/\ell^n T$
 - [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for the isomorphisms $H^2(G_K, \mu_{\ell^m}) \cong \mathbb{Z}/\ell^m\mathbb{Z}$, whose inverse limit is $H^2(G_K, T_\ell(\mu)) \cong \mathbb{Z}_\ell$

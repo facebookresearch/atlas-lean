@@ -19,13 +19,14 @@ prime $\ell$ and $r \ge 1$, $H^2(k, \mu_{\ell^r}) \cong \mathbb{Z}/\ell^r\mathbb
 
 ## Depends on
 
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the cohomology of $G_k$ with discrete coefficients
+- [Cohomology of a profinite group with discrete coefficients](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-with-discrete-coefficients.md), for the cohomology of $G_k$ with discrete coefficients
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the invariant map $\operatorname{inv}_k$ (its item 2)
 
 ## Proof depends on
 
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for $H^1(k, \bar k^\times) = 1$ and $\operatorname{inv}_k \colon H^2(k, \bar k^\times) \cong \mathbb{Q}/\mathbb{Z}$, by passage to the limit over finite Galois extensions (its item 2)
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the long exact cohomology sequence and the commutation of cohomology with direct limits
+- [The long exact cohomology sequence](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/long-exact-cohomology-sequence.md), for the long exact cohomology sequence
+- [Cohomology commutes with direct limits](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-commutes-with-direct-limits.md), for the commutation of cohomology with direct limits
 
 ## Sources
 

@@ -20,7 +20,7 @@ weights in this convention.
 
 - [Fundamental exact sequence of p-adic Hodge theory](fundamental-exact-sequence.md), for the exact sequence $0 \to \mathbb{Q}_p \to B_{\mathrm{cris}} \oplus B_{\mathrm{dR}}^+ \to B_{\mathrm{cris}} \oplus B_{\mathrm{dR}} \to 0$ tensored with $V$
 - [Tate–Sen theorem on the Galois cohomology of C(i)](tate-sen-theorem.md), for the injectivity of $H^1(G_K, B_{\mathrm{dR}}^+ \otimes V) \to H^1(G_K, B_{\mathrm{dR}} \otimes V)$ (Bellaïche, Lemma 2.6)
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the long exact sequences of continuous cohomology of the sequences of period rings tensored with $V$, which exist because their maps have continuous set-theoretic sections (Bloch–Kato, Remarks 1.18; NSW (2.7.2))
+- [The long exact sequence of continuous cohomology](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/long-exact-sequence-for-continuous-cohomology.md), for the long exact sequences of continuous cohomology of the sequences of period rings tensored with $V$, which exist because their maps have continuous set-theoretic sections (Bloch–Kato, Remarks 1.18; NSW (2.7.2))
 
 ## Sources
 

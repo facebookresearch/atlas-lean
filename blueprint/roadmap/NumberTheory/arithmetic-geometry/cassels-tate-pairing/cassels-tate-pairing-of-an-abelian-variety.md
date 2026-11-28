@@ -92,7 +92,8 @@ $1/m$, $\tau/m$ on $\mathbb{C}/(\mathbb{Z} + \mathbb{Z}\tau)$, with $E$ identifi
 - [Selmer groups and the torsion of the Shafarevich–Tate group of an abelian variety](selmer-groups-of-abelian-varieties.md), for $\text{Ш}(K, A)$ and the local groups
 - [Vanishing of the third cohomology of the multiplicative group of a number field](../../algebraic-number-theory/galois-representations/galois-cohomology-of-number-fields/vanishing-of-h3-of-the-multiplicative-group.md), for the cochain $\bar\varepsilon$ in step 2
 - [Local class field theory: cohomology and the existence theorem](../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2)
-- [Cohomology of profinite groups](../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for continuous cochains and their cup products
+- [Continuous cohomology](../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/continuous-cochain-cohomology/continuous-cohomology.md), for continuous cochains
+- [Cup products for profinite groups](../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cup-products.md), for their cup products
 
 ## Proof depends on
 

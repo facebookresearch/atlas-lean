@@ -14,13 +14,15 @@ maximal unramified extension, $\operatorname{cd}_\ell(G_L) \le 1$.
 
 ## Depends on
 
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for cohomological dimension
+- [Cohomological dimension of a profinite group](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/cohomological-dimension.md), for cohomological dimension
 
 ## Proof depends on
 
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for $H^1(K, \bar k^\times) = 0$ and the behaviour of the invariant map under restriction, $\operatorname{inv}_K \circ \operatorname{Res} = [K : k] \operatorname{inv}_k$, for the finite extensions $K/k$ (its item 2); for an infinite algebraic extension $L/k$ of degree divisible by $\ell^\infty$ these give $H^1(L, \bar k^\times) = 0$ and $H^2(L, \bar k^\times)(\ell) = \varinjlim_K H^2(K, \bar k^\times)(\ell) = 0$ by passage to the direct limit over the finite subextensions $K$ of $L/k$, along restriction maps that multiply the invariant by the degrees
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the criterion for $\operatorname{cd}_\ell \le 1$ of a field in terms of $H^1$ and $H^2$ of the multiplicative group, the Hochschild–Serre spectral sequence and inflation–restriction
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the commutation of cohomology with direct limits of groups used in that passage
+- [Cohomological dimension of a field and the multiplicative group](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/cohomological-dimension-of-fields.md), for the criterion for $\operatorname{cd}_\ell \le 1$ of a field in terms of $H^1$ and $H^2$ of the multiplicative group
+- [The Hochschild–Serre spectral sequence](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/hochschild-serre-spectral-sequence.md), for the Hochschild–Serre spectral sequence
+- [The five term exact sequence](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/five-term-exact-sequence.md), for inflation–restriction
+- [Cohomology commutes with direct limits](../../../../RepresentationTheory/group-cohomology/profinite-group-cohomology/discrete-coefficients/cohomology-commutes-with-direct-limits.md), for the commutation of cohomology with direct limits of groups used in that passage
 - [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for $H^2(k, \mu_\ell) \cong \mathbb{Z}/\ell\mathbb{Z} \ne 0$, which gives $\operatorname{cd}_\ell = 2$, and for $H^1(K, \mu_n) \cong K^\times/K^{\times n}$ and $H^2(K, \mu_n) \cong \tfrac1n\mathbb{Z}/\mathbb{Z}$ over finite extensions $K$
 - [Index of the n-th powers in a local field of characteristic zero](../../../p-adic-numbers/index-of-n-th-powers.md), for the finiteness of $K^\times/K^{\times n}$, hence of $H^1(K, \mu_n)$
 
