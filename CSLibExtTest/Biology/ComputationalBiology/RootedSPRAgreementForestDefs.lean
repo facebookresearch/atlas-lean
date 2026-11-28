@@ -15,7 +15,7 @@ import CSLibExt.Biology.ComputationalBiology.RootedSPRAgreementForestDefs
 * A tree is at rSPR distance `0` from itself, and has the one-part rooted agreement forest, so
   its maximum agreement forest number with itself is `0` too.
 * Any two trees have the agreement forest of singletons: the minimal subtree of one taxon is its
-  leaf, so `m(T, T')` is at most the number of taxa minus one.
+  leaf, so `m(T, T')` is at most the number of labels, `ρ` included, minus one.
 * The decision problem accepts a well-formed tree paired with itself for every bound, and
   rejects instances with fewer than two taxa other than the root and malformed trees.
 -/
@@ -76,7 +76,7 @@ theorem rootedRestrictionsAgree_singleton (ρ : Y) (T T' : UnrootedBinaryTree Y)
   simp at hnd
 
 /-- The partition into singletons is a rooted agreement forest for any two trees, so `m(T, T')`
-is at most the number of taxa minus one. -/
+is at most the number of labels, `ρ` included, minus one. -/
 theorem rootedMafNumber_le (ρ : Y) (T T' : UnrootedBinaryTree Y) :
     rootedMafNumber ρ T T' ≤ Fintype.card Y - 1 := by
   have hcard : 0 < Fintype.card Y := Fintype.card_pos_iff.2 ⟨ρ⟩
