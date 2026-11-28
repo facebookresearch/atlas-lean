@@ -247,4 +247,147 @@ theorem T3_rm_trace_30 :
       sched 29 = some 1 := by
   decide
 
+/-! ### Feasibility
+
+Liu and Layland's two-task example (Section 4, Figure 2): with `T₁ = 2`,
+`T₂ = 5` and `C₁ = C₂ = 1`, giving the first task the higher priority is
+feasible, and `C₂` can be raised to `2` but not to `3`; giving the second
+task the higher priority, neither run-time can be raised beyond `1`. The
+checks below cover the requests with deadlines up to the hyperperiod `10`. -/
+
+/-- Liu and Layland's two tasks, `(C₁, T₁) = (c₁, 2)` and `(C₂, T₂) = (c₂, 5)`, first requested
+at time `0`. -/
+private def twoTasks (c₁ c₂ : ℕ) (h₁ : 1 ≤ c₁) (h₂ : 1 ≤ c₂) : TaskSet (Fin 2) :=
+  fun i => if i = 0 then ⟨c₁, 2, 0, h₁, by decide⟩ else ⟨c₂, 5, 0, h₂, by decide⟩
+
+/-- Fixed priorities: the first task is the more urgent. -/
+private def firstUrgent : PriorityRule (Fin 2) ℕ := fun i _ => i.val
+
+/-- Fixed priorities: the second task is the more urgent. -/
+private def secondUrgent : PriorityRule (Fin 2) ℕ := fun i _ => 1 - i.val
+
+private theorem firstUrgent_isFixedPriority : IsFixedPriority (Fin 2) ℕ firstUrgent :=
+  fun _ _ _ => rfl
+
+private theorem secondUrgent_isFixedPriority : IsFixedPriority (Fin 2) ℕ secondUrgent :=
+  fun _ _ _ => rfl
+
+private theorem fig2a_no_overflow_up_to_10 :
+    ∀ t : Fin 11, ¬ OverflowAt (twoTasks 1 1 le_rfl le_rfl)
+      (produceSchedule (twoTasks 1 1 le_rfl le_rfl) firstUrgent) t := by
+  intro t ⟨i, k, hdead, hro⟩
+  have ht := t.isLt
+  have hk : k < 6 := by
+    by_cases hi : i = 0
+    · have h := hdead
+      simp [deadline, twoTasks, hi] at h
+      omega
+    · have h := hdead
+      simp [deadline, twoTasks, hi] at h
+      omega
+  have hfin : ∀ i : Fin 2, ∀ k : Fin 6, deadline (twoTasks 1 1 le_rfl le_rfl) i k.val ≤ 10 →
+      ¬ RequestOverflow (twoTasks 1 1 le_rfl le_rfl)
+        (produceSchedule (twoTasks 1 1 le_rfl le_rfl) firstUrgent) i k.val := by
+    decide
+  exact hfin i ⟨k, hk⟩ (by rw [Fin.val_mk]; omega) hro
+
+private theorem fig2b_trace :
+    let sched := produceSchedule (twoTasks 1 2 le_rfl (by decide)) firstUrgent
+    sched 0 = some 0 ∧ sched 1 = some 1 ∧ sched 2 = some 0 ∧ sched 3 = some 1 ∧
+      sched 4 = some 0 ∧ sched 5 = some 1 ∧ sched 6 = some 0 ∧ sched 7 = some 1 ∧
+      sched 8 = some 0 ∧ sched 9 = none := by
+  decide
+
+private theorem fig2b_requests_fulfilled_up_to_10 :
+    let tasks := twoTasks 1 2 le_rfl (by decide)
+    let sched := produceSchedule tasks firstUrgent
+    (∀ k : Fin 5, ¬ RequestOverflow tasks sched 0 k.val) ∧
+      ∀ k : Fin 2, ¬ RequestOverflow tasks sched 1 k.val := by
+  decide
+
+private theorem fig2b_raised_overflows_at_5 :
+    OverflowAt (twoTasks 1 3 le_rfl (by decide))
+      (produceSchedule (twoTasks 1 3 le_rfl (by decide)) firstUrgent) 5 :=
+  ⟨1, 0, rfl, by decide⟩
+
+private theorem fig2c_requests_fulfilled_up_to_10 :
+    let tasks := twoTasks 1 1 le_rfl le_rfl
+    let sched := produceSchedule tasks secondUrgent
+    (∀ k : Fin 5, ¬ RequestOverflow tasks sched 0 k.val) ∧
+      ∀ k : Fin 2, ¬ RequestOverflow tasks sched 1 k.val := by
+  decide
+
+private theorem fig2c_raised_first_overflows_at_2 :
+    OverflowAt (twoTasks 2 1 (by decide) le_rfl)
+      (produceSchedule (twoTasks 2 1 (by decide) le_rfl) secondUrgent) 2 :=
+  ⟨0, 0, rfl, by decide⟩
+
+private theorem fig2c_raised_second_overflows_at_2 :
+    OverflowAt (twoTasks 1 2 le_rfl (by decide))
+      (produceSchedule (twoTasks 1 2 le_rfl (by decide)) secondUrgent) 2 :=
+  ⟨0, 0, rfl, by decide⟩
+
+/-- A raised run-time is infeasible under every schedule once it exceeds the period. -/
+private theorem twoTasks_not_feasible_of_period_lt (sched : Schedule (Fin 2)) :
+    ¬ Feasible (twoTasks 3 1 (by decide) le_rfl) sched := fun h => by
+  have := h.runTime_le_period 0
+  simp [twoTasks] at this
+
+/-- Under every priority rule, the single task `(3, 2)` overflows at some time. -/
+private theorem T5_overflow_somewhere {π : Type*} [LinearOrder π]
+    (rule : PriorityRule (Fin 1) π) :
+    ∃ t, OverflowAt tasksT5 (produceSchedule tasksT5 rule) t := by
+  by_contra h
+  exact T5_not_feasible rule ((feasible_iff_forall_not_overflowAt _ _).mpr fun t ht => h ⟨t, ht⟩)
+
+/-- No schedule at all is feasible for the single task `(3, 2)`. -/
+private theorem T5_no_feasible_schedule (sched : Schedule (Fin 1)) :
+    ¬ Feasible tasksT5 sched := fun h => by
+  have := h.runTime_le_period 0
+  simp [tasksT5] at this
+
+/-- A single task with run-time equal to its period, first requested at time `3`. -/
+private def tightTask : TaskSet (Fin 1) := fun _ => ⟨4, 4, 3, by decide, by decide⟩
+
+private theorem tightTask_feasible {π : Type*} [LinearOrder π] (rule : PriorityRule (Fin 1) π) :
+    Feasible tightTask (produceSchedule tightTask rule) :=
+  (feasible_produceSchedule_iff_of_unique tightTask rule).mpr le_rfl
+
+/-- A single task has some feasible schedule exactly when its run-time is at most its period. -/
+private theorem exists_feasible_iff_of_unique {ι : Type*} [Fintype ι] [LinearOrder ι] [Unique ι]
+    (tasks : TaskSet ι) :
+    (∃ sched : Schedule ι, Feasible tasks sched) ↔ (tasks default).C ≤ (tasks default).T :=
+  ⟨fun ⟨_, h⟩ => h.runTime_le_period default, fun h =>
+    ⟨_, (feasible_produceSchedule_iff_of_unique tasks (fun _ _ => (0 : ℕ))).mpr h⟩⟩
+
+/-! ### Dropped requests and response times
+
+A request that is not fulfilled by its deadline is dropped, which can free processor time for
+lower-priority tasks. With the tasks `(C, T, phase) = (2, 5, 0)`, `(1, 2, 0)` and `(1, 5, 0)`, in
+decreasing priority, the first request of the second task overflows, and the request of the third
+task at time `0`, made together with requests of both higher-priority tasks, has a smaller
+response time than its request at time `5`. -/
+
+/-- Three tasks whose second task overflows under priorities in index order. -/
+private def droppingTasks : TaskSet (Fin 3) := fun i =>
+  match i.val with
+  | 0 => ⟨2, 5, 0, by decide, by decide⟩
+  | 1 => ⟨1, 2, 0, by decide, by decide⟩
+  | _ => ⟨1, 5, 0, by decide, by decide⟩
+
+/-- Fixed priorities in index order. -/
+private def indexOrder : PriorityRule (Fin 3) ℕ := fun i _ => i.val
+
+private theorem droppingTasks_second_overflows :
+    RequestOverflow droppingTasks (produceSchedule droppingTasks indexOrder) 1 0 := by
+  decide
+
+private theorem droppingTasks_response_time_at_0 :
+    responseTime droppingTasks (produceSchedule droppingTasks indexOrder) 2 0 = some 4 :=
+  (responseTime_of_fulfilled _ _ 2 0 4 (by decide) (by decide)).trans (by decide)
+
+private theorem droppingTasks_response_time_at_5 :
+    responseTime droppingTasks (produceSchedule droppingTasks indexOrder) 2 1 = some 5 :=
+  (responseTime_of_fulfilled _ _ 2 1 10 (by decide) (by decide)).trans (by decide)
+
 end Cslib.Scheduling.RealTime.Tests

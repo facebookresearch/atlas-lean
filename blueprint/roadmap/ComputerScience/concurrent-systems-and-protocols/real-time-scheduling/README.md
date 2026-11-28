@@ -1,5 +1,6 @@
 # Real-time scheduling
 
+- [Periodic task model](periodic-task-model/README.md)
 - [The Liu–Layland periodic task model](the-liu-layland-periodic-task-model.md)
 - [The critical instant theorem](the-critical-instant-theorem.md)
 - [Optimality of rate-monotonic priorities](optimality-of-rate-monotonic-priorities.md)

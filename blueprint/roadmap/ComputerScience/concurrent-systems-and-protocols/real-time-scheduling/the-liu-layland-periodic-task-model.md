@@ -1,6 +1,6 @@
 # The Liu–Layland periodic task model
 
-A *hard-real-time task system* in the sense of Liu and Layland consists of tasks $\tau_1, \dots, \tau_m$ on one processor satisfying the following assumptions:
+A *hard-real-time task system* in the sense of Liu and Layland consists of tasks $\tau_i$, indexed by a finite set, on one processor satisfying the following assumptions:
 
 1. the requests for each task are periodic, with a constant interval $T_i$, the *request period*, between successive requests;
 2. each request must be completed before the next request for the same task occurs;
@@ -10,7 +10,9 @@ A *hard-real-time task system* in the sense of Liu and Layland consists of tasks
 
 The results stated for this model concern the periodic tasks over intervals in which no non-periodic routine runs; the analyzed task system consists of the periodic tasks alone.
 
-A task is thus characterized by its request period $T_i$ and its run-time $C_i$; its *request rate* is $1/T_i$. A *scheduling algorithm* determines the task executed at each moment. It is *preemptive and priority driven* if, whenever a task of higher priority than the running one is requested, the running task is immediately interrupted and the requested task started, and *static* (fixed priority) if priorities are assigned to tasks once and for all. The *deadline* of a request is the time of the next request for the same task; an *overflow* occurs at time $t$ if $t$ is the deadline of an unfulfilled request; and a scheduling algorithm is *feasible* for a task set if no overflow ever occurs. The *response time* of a request is the time from the request to the end of the response to it, and a *critical instant* of a task is an instant at which a request for it has the largest response time.
+Time is discrete here, whereas Liu and Layland take it to be continuous: the slot $t \in \mathbb{N}$ is the interval $[t, t + 1)$, and run-times, request periods and request times are natural numbers. A task $\tau_i$ is given by its run-time $C_i \ge 1$, its request period $T_i \ge 1$ and its *phase* $\varphi_i$, the time of its first request: its requests are made at the times $\varphi_i + kT_i$ for $k = 0, 1, 2, \dots$. Liu and Layland characterize a task by $T_i$ and $C_i$ alone, and call $1/T_i$ its *request rate*; the phase records when its requests start, which their assumptions leave free. Feasibility, defined below, is relative to the given phases. Feasibility of a scheduling algorithm for a task set in Liu and Layland's sense, given by the $T_i$ and $C_i$ alone, corresponds to feasibility *whatever the phases*: for every choice of the phases, the schedule that the same algorithm, such as a fixed priority order, produces is feasible. The run-time may exceed the request period, although then [no schedule is feasible](periodic-task-model/run-time-le-period.md).
+
+A *schedule* assigns to each slot the task executed in it, if any. The *deadline* of a request is the time of the next request for the same task: the request of $\tau_i$ made at $\varphi_i + kT_i$ has deadline $\varphi_i + (k + 1)T_i$. A request is *fulfilled* if the schedule executes its task in at least $C_i$ of the slots from the request up to its deadline, that is, by its deadline. A schedule may also execute a task before its first request, which counts for no request, or after its current request is fulfilled, which that request no longer needs. An *overflow* occurs at time $t$ if $t$ is the deadline of an unfulfilled request, and a schedule is *feasible* if no overflow ever occurs, that is, if every request is fulfilled.
 
 ## Sources
 

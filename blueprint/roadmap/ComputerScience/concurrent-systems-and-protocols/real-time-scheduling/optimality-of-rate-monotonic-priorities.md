@@ -1,10 +1,12 @@
 # Optimality of rate-monotonic priorities
 
-In the Liu–Layland periodic task model (over intervals in which no non-periodic routine runs), if some fixed-priority assignment yields a feasible schedule, then the rate-monotonic assignment, which gives higher priority to tasks with shorter periods, also yields a feasible schedule.
+In the Liu–Layland periodic task model (over intervals in which no non-periodic routine runs), if some fixed-priority assignment yields a feasible schedule whatever the phases of the tasks, then the rate-monotonic assignment, which gives higher priority to tasks with shorter periods, also yields a feasible schedule whatever the phases.
 
 ## Depends on
 
 - [The Liu–Layland periodic task model](the-liu-layland-periodic-task-model.md)
+- [Preemptive priority-driven schedules](periodic-task-model/produce-schedule.md)
+- [Fixed-priority rules](periodic-task-model/is-fixed-priority.md)
 
 ## Proof depends on
 

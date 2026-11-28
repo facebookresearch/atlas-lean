@@ -56,9 +56,29 @@ Representation decisions (modeling choices, not source claims):
 ## Main results
 
 `request_window_unique`, `currentRequest_spec`,
-`receivedWork_stable_after_deadline`, `overflowAt_of_agree_before`,
-`responseTime_of_fulfilled`, `produceSchedule_spec`,
-`produceSchedule_idle_iff`, `receivedWork_mono`.
+`receivedWork_stable_after_deadline`, `feasible_iff_forall_not_overflowAt`,
+`overflowAt_of_agree_before`, `responseTime_of_fulfilled`,
+`produceSchedule_spec`, `produceSchedule_idle_iff`, `receivedWork_mono`,
+`Feasible.runTime_le_period`, `feasible_produceSchedule_iff_of_unique`.
+
+The last two show that feasibility is neither vacuous nor automatic: a
+feasible schedule needs every run-time to be at most its period, and for a
+single task the priority-driven schedule is feasible exactly then.
+
+## Implementation notes
+
+`TaskSet`, `Schedule`, `release`, `deadline`, `currentRequest`,
+`RequestOverflow`, `OverflowAt` and `PriorityRule`, which the documentation of
+`Feasible` and `produceSchedule` states in full, and the helpers behind
+`produceSchedule` (`livePairs`, `scheduleStep`, `producePrefix`) carry plain
+comments rather than docstrings, so that they get no wiki pages of their own.
+
+## References
+
+* C. L. Liu and J. W. Layland, *Scheduling algorithms for multiprogramming in
+  a hard-real-time environment*, J. ACM 20(1), 1973, 46–61: Section 3 (the
+  assumptions, scheduling algorithms and priorities) and Section 4
+  (deadlines, overflow and feasibility).
 -/
 
 @[expose] public section
@@ -67,7 +87,9 @@ namespace Cslib.Scheduling.RealTime
 
 open scoped BigOperators
 
-/-- A periodic task `(C, T, phase)`: run time, period, release offset. -/
+/-- **Periodic tasks.** A periodic task has a run-time `C ≥ 1`, a period `T ≥ 1` and a phase: its
+request `k`, for `k = 0, 1, 2, …`, is made at slot `phase + k * T`, and its deadline is the time of
+the next request, `phase + (k + 1) * T`. The run-time may exceed the period. -/
 structure PeriodicTask where
   /-- Run time: slots of work needed to serve one request. -/
   C : ℕ
@@ -80,27 +102,33 @@ structure PeriodicTask where
   /-- Period is positive. -/
   hT : 1 ≤ T
 
-/-- A task set: a finite family of tasks indexed by a finite type. -/
+-- A task set: a finite family of tasks indexed by a finite type.
 abbrev TaskSet (ι : Type*) [Fintype ι] := ι → PeriodicTask
 
-/-- A schedule assigns each slot at most one task, or idles (`none`). -/
+-- A schedule assigns each slot at most one task, or idles (`none`).
 abbrev Schedule (ι : Type*) := ℕ → Option ι
 
-/-- Release slot of request `k` of task `i`: `phase + k * T`. -/
+-- Release slot of request `k` of task `i`: `phase + k * T`.
 def release {ι : Type*} [Fintype ι] (tasks : TaskSet ι) (i : ι) (k : ℕ) : ℕ :=
   (tasks i).phase + k * (tasks i).T
 
-/-- Deadline of request `k` of task `i`: `phase + (k + 1) * T`. -/
+-- Deadline of request `k` of task `i`: `phase + (k + 1) * T`.
 def deadline {ι : Type*} [Fintype ι] (tasks : TaskSet ι) (i : ι) (k : ℕ) : ℕ :=
   (tasks i).phase + (k + 1) * (tasks i).T
 
-/-- Work request `k` of task `i` received before `t` (capped at deadline). -/
+/-- **Work received by a request.** `receivedWork tasks sched i k t` is the number of slots `s < t`
+from the release of request `k` of task `i` up to its deadline, `release ≤ s < deadline`, in which
+the schedule runs task `i`. Slots at or after the deadline do not count, so the work stops growing
+once the deadline passes. -/
 def receivedWork {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : TaskSet ι)
     (sched : Schedule ι) (i : ι) (k t : ℕ) : ℕ :=
   ((Finset.Ico (release tasks i k) (min t (deadline tasks i k))).filter
     (fun s => sched s = some i)).card
 
-/-- Request `k` of task `i` is live at `t`: in its window and unfulfilled. -/
+/-- **Pending requests.** Request `k` of task `i` is live, or pending, at slot `t` under a schedule
+if it has been made, `release ≤ t`, its deadline has not passed, `t < deadline`, and it has received
+fewer than `C` slots of work before `t`. A request whose deadline passes before it receives `C`
+slots of work is thus no longer live. -/
 def IsLive {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : TaskSet ι)
     (sched : Schedule ι) (i : ι) (k t : ℕ) : Prop :=
   release tasks i k ≤ t ∧
@@ -113,7 +141,7 @@ instance decIsLive {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : TaskSet �
   unfold IsLive
   infer_instance
 
-/-- Request of task `i` whose window contains slot `t`, if `phase ≤ t`. -/
+-- Request of task `i` whose window contains slot `t`, if `phase ≤ t`.
 def currentRequest {ι : Type*} [Fintype ι] (tasks : TaskSet ι) (i : ι) (t : ℕ) :
     Option ℕ :=
   if t < (tasks i).phase then none
@@ -190,7 +218,7 @@ theorem receivedWork_stable_after_deadline {ι : Type*} [Fintype ι] [DecidableE
   have hmin : min t (deadline tasks i k) = deadline tasks i k := by omega
   rw [hmin, min_self]
 
-/-- Request `k` of task `i` overflows: unfulfilled at its deadline. -/
+-- Request `k` of task `i` overflows: unfulfilled at its deadline.
 def RequestOverflow {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : TaskSet ι)
     (sched : Schedule ι) (i : ι) (k : ℕ) : Prop :=
   receivedWork tasks sched i k (deadline tasks i k) < (tasks i).C
@@ -202,17 +230,26 @@ instance decRequestOverflow {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : 
   unfold RequestOverflow
   infer_instance
 
-/-- An overflow occurs at `t`: `t` is the deadline of an unfulfilled request. -/
+-- An overflow occurs at `t`: `t` is the deadline of an unfulfilled request.
 def OverflowAt {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : TaskSet ι)
     (sched : Schedule ι) (t : ℕ) : Prop :=
   ∃ i k, deadline tasks i k = t ∧ RequestOverflow tasks sched i k
 
-/-- A schedule is feasible if no request ever overflows. -/
+/-- **Feasible schedules in the Liu–Layland periodic task model.** Time is discrete: slot `t` is
+the interval `[t, t + 1)`. Each task `i` of a finite task set has a run-time `C ≥ 1`, a period
+`T ≥ 1` and a phase; its request `k`, for `k = 0, 1, 2, …`, is made at time `phase + k * T`, and
+its deadline is the time of the next request, `phase + (k + 1) * T`. A schedule executes at most
+one task in each slot. A request is fulfilled if the schedule executes its task in at least `C` of
+the slots from the request up to its deadline, and an overflow occurs at time `t` if `t` is the
+deadline of an unfulfilled request. The schedule is feasible if every request is fulfilled, that
+is, if no overflow ever occurs (`feasible_iff_forall_not_overflowAt`). -/
 def Feasible {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : TaskSet ι)
     (sched : Schedule ι) : Prop :=
   ∀ i k, ¬ RequestOverflow tasks sched i k
 
-/-- First slot at which an overflow occurs, if any overflow occurs. -/
+/-- **The first overflow of a schedule.** `firstOverflow tasks sched` is `some t` for the least time
+`t` at which an overflow occurs, that is, the least deadline of a request that receives fewer than
+`C` slots of work by its deadline, and `none` if no overflow ever occurs. -/
 noncomputable def firstOverflow {ι : Type*} [Fintype ι] [DecidableEq ι]
     (tasks : TaskSet ι) (sched : Schedule ι) : Option ℕ :=
   haveI : Decidable (∃ t, OverflowAt tasks sched t) :=
@@ -220,6 +257,15 @@ noncomputable def firstOverflow {ι : Type*} [Fintype ι] [DecidableEq ι]
   haveI : DecidablePred (OverflowAt tasks sched) :=
     fun t => Classical.propDecidable (OverflowAt tasks sched t)
   if h : ∃ t, OverflowAt tasks sched t then some (Nat.find h) else none
+
+theorem feasible_iff_forall_not_overflowAt {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (tasks : TaskSet ι) (sched : Schedule ι) :
+    Feasible tasks sched ↔ ∀ t, ¬ OverflowAt tasks sched t := by
+  constructor
+  · rintro h t ⟨i, k, -, hro⟩
+    exact h i k hro
+  · intro h i k hro
+    exact h _ ⟨i, k, rfl, hro⟩
 
 theorem firstOverflow_eq_some_iff {ι : Type*} [Fintype ι] [DecidableEq ι]
     (tasks : TaskSet ι) (sched : Schedule ι) (t : ℕ) :
@@ -317,7 +363,11 @@ theorem overflowAt_of_agree_before {ι : Type*} [Fintype ι] [DecidableEq ι]
       receivedWork_of_agree tasks s2 s1 i k (deadline tasks i k) hag
     omega
 
-/-- Response time of a request: end of its `C`-th unit slot minus release. -/
+/-- **Response time of a request.** The response time of request `k` of task `i` under a schedule is
+`t` minus the time of the request, where `t` is the first time by which the request has received
+`C` slots of work, the end of the slot in which it receives the last of them. Slots at or after the
+deadline of the request do not count, so a request that receives fewer than `C` slots of work by its
+deadline has no response time. -/
 noncomputable def responseTime {ι : Type*} [Fintype ι] [DecidableEq ι]
     (tasks : TaskSet ι) (sched : Schedule ι) (i : ι) (k : ℕ) : Option ℕ :=
   haveI : Decidable (∃ t, (tasks i).C ≤ receivedWork tasks sched i k t) :=
@@ -345,26 +395,30 @@ theorem responseTime_of_fulfilled {ι : Type*} [Fintype ι] [DecidableEq ι]
       omega
   rw [hfind]
 
-/-- A priority rule maps (task index, request number) into a linear order. -/
+-- A priority rule maps (task index, request number) into a linear order.
 abbrev PriorityRule (ι : Type*) (π : Type*) [LinearOrder π] := ι → ℕ → π
 
-/-- A fixed-priority (static) rule ignores the request number. -/
+/-- **Fixed-priority rules.** A priority rule, which gives each request `k` of each task `i` a
+priority `rule i k`, is fixed, or static, if all requests of each task have the same priority:
+priorities are assigned to tasks once and for all. -/
 def IsFixedPriority (ι π : Type*) [LinearOrder π]
     (rule : PriorityRule ι π) : Prop :=
   ∀ i k₁ k₂, rule i k₁ = rule i k₂
 
-/-- The deadline-driven (dynamic) rule: priority is the request deadline. -/
+/-- **The deadline-driven priority rule.** The deadline-driven rule gives each request its deadline
+as priority, so that, a smaller value being a higher priority, a request with an earlier deadline
+has a higher priority. It is dynamic: the priorities of a task change from request to request. -/
 def deadlineRule {ι : Type*} [Fintype ι] (tasks : TaskSet ι) : PriorityRule ι ℕ :=
   fun i k => deadline tasks i k
 
-/-- Live `(task, request)` pairs at slot `t` under a prefix schedule. -/
+-- Live `(task, request)` pairs at slot `t` under a prefix schedule.
 def livePairs {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : TaskSet ι)
     (pre : Schedule ι) (t : ℕ) : Finset (ι × ℕ) :=
   Finset.univ.biUnion (fun i => match currentRequest tasks i t with
     | none => ∅
     | some k => if IsLive tasks pre i k t then {(i, k)} else ∅)
 
-/-- Slot choice: least priority wins, ties broken by least task index. -/
+-- Slot choice: least priority wins, ties broken by least task index.
 def scheduleStep {ι : Type*} {π : Type*} [Fintype ι] [LinearOrder ι] [LinearOrder π]
     (tasks : TaskSet ι) (rule : PriorityRule ι π) (pre : Schedule ι)
     (t : ℕ) : Option ι :=
@@ -376,14 +430,24 @@ def scheduleStep {ι : Type*} {π : Type*} [Fintype ι] [LinearOrder ι] [Linear
     | none => none
     | some i => some i
 
-/-- Prefix schedules: slots below `n` follow the priority rule. -/
+-- Prefix schedules: slots below `n` follow the priority rule.
 def producePrefix {ι : Type*} {π : Type*} [Fintype ι] [LinearOrder ι] [LinearOrder π]
     (tasks : TaskSet ι) (rule : PriorityRule ι π) : ℕ → Schedule ι
   | 0 => fun _ => none
   | n + 1 => let pre := producePrefix tasks rule n;
     Function.update pre n (scheduleStep tasks rule pre n)
 
-/-- The priority-driven preemptive schedule: top priority runs, else idle. -/
+/-- **Preemptive priority-driven schedules.** A priority rule gives each request `k` of each task
+`i` a priority `rule i k` in a linearly ordered type, a smaller value being a higher priority. The
+priority-driven schedule of the rule runs in each slot `t` the task of the live request of highest
+priority, ties between equal priorities being broken by the least task index, and leaves slot `t`
+idle only when no request is live at `t`. A request is live at `t` if it has been made, its
+deadline has not passed and it has received fewer than `C` slots of work before `t`, so a request
+whose deadline passes before it receives `C` slots is dropped. As the choice is made afresh in
+every slot, a new request that outranks every live request preempts the running task at once,
+while one that another live request outranks waits, even if it outranks the running task. This is
+a preemptive, priority-driven scheduling algorithm in the sense of Liu and Layland, and it is
+feasible for a task set if this schedule is feasible. -/
 def produceSchedule {ι : Type*} {π : Type*} [Fintype ι] [LinearOrder ι] [LinearOrder π]
     (tasks : TaskSet ι) (rule : PriorityRule ι π) : Schedule ι :=
   fun t => producePrefix tasks rule (t + 1) t
@@ -605,11 +669,13 @@ theorem produceSchedule_spec {ι : Type*} {π : Type*} [Fintype ι] [LinearOrder
             have hlt : pmin < pmin := lt_of_le_of_lt hle1 h2
             exact absurd hlt (lt_irrefl pmin)
 
-/-- Utilization factor `U = ∑ Cᵢ / Tᵢ` as a rational number. -/
+/-- **Processor utilization of a task set.** The utilization factor of a task set is the rational
+number `U = ∑ᵢ Cᵢ / Tᵢ`, the sum over its tasks of run-time divided by period. -/
 def utilization {ι : Type*} [Fintype ι] (tasks : TaskSet ι) : ℚ :=
   ∑ i, ((tasks i).C : ℚ) / ((tasks i).T : ℚ)
 
-/-- Hyperperiod: least common multiple of all task periods. -/
+/-- **Hyperperiod of a task set.** The hyperperiod of a task set is the least common multiple of
+the periods of its tasks, `1` for the empty task set. -/
 def hyperperiod {ι : Type*} [Fintype ι] (tasks : TaskSet ι) : ℕ :=
   Finset.univ.lcm (fun i => (tasks i).T)
 
@@ -633,6 +699,49 @@ theorem receivedWork_mono {ι : Type*} [Fintype ι] [DecidableEq ι] (tasks : Ta
   apply Finset.card_le_card
   apply Finset.filter_subset_filter
   apply Finset.Ico_subset_Ico_right
+  omega
+
+private theorem deadline_sub_release {ι : Type*} [Fintype ι] (tasks : TaskSet ι) (i : ι)
+    (k : ℕ) : deadline tasks i k - release tasks i k = (tasks i).T := by
+  simp only [release, deadline, Nat.succ_mul]
+  omega
+
+private theorem receivedWork_le_period {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (tasks : TaskSet ι) (sched : Schedule ι) (i : ι) (k t : ℕ) :
+    receivedWork tasks sched i k t ≤ (tasks i).T := by
+  unfold receivedWork
+  refine (Finset.card_filter_le _ _).trans ?_
+  rw [Nat.card_Ico]
+  have h := deadline_sub_release tasks i k
+  omega
+
+/-- **Feasibility needs every run-time to be at most its period.** If a schedule of a periodic
+task set is feasible, then every task's run-time `C` is at most its period `T`. -/
+theorem Feasible.runTime_le_period {ι : Type*} [Fintype ι] [DecidableEq ι] {tasks : TaskSet ι}
+    {sched : Schedule ι} (h : Feasible tasks sched) (i : ι) : (tasks i).C ≤ (tasks i).T := by
+  by_contra hlt
+  exact h i 0 ((receivedWork_le_period tasks sched i 0 _).trans_lt (not_le.mp hlt))
+
+/-- **Feasibility of a single periodic task.** For a task set with exactly one task, of run-time
+`C` and period `T`, the priority-driven schedule of any priority rule is feasible exactly when
+`C ≤ T`. -/
+theorem feasible_produceSchedule_iff_of_unique {ι : Type*} {π : Type*} [Fintype ι]
+    [LinearOrder ι] [Unique ι] [LinearOrder π] (tasks : TaskSet ι) (rule : PriorityRule ι π) :
+    Feasible tasks (produceSchedule tasks rule) ↔ (tasks default).C ≤ (tasks default).T := by
+  refine ⟨fun h => h.runTime_le_period default, fun hCT i k hro => ?_⟩
+  obtain rfl : i = default := Unique.eq_default i
+  -- An overflowing request is live, so scheduled, in every slot of its window.
+  have hrun : ∀ s ∈ Finset.Ico (release tasks default k) (deadline tasks default k),
+      produceSchedule tasks rule s = some default := by
+    intro s hs
+    rw [Finset.mem_Ico] at hs
+    have hlive : IsLive tasks (produceSchedule tasks rule) default k s :=
+      ⟨hs.1, hs.2, (receivedWork_mono tasks _ default k s _ hs.2.le).trans_lt hro⟩
+    cases hS : produceSchedule tasks rule s with
+    | none => exact absurd ⟨default, k, hlive⟩ ((produceSchedule_idle_iff tasks rule s).mp hS)
+    | some j => rw [Unique.eq_default j]
+  unfold RequestOverflow receivedWork at hro
+  rw [min_self, Finset.filter_true_of_mem hrun, Nat.card_Ico, deadline_sub_release] at hro
   omega
 
 end Cslib.Scheduling.RealTime
