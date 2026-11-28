@@ -21,6 +21,17 @@ values occurring in its relations, and queries create no new values
 (`DatabaseInstance.adom_eval_subset`). Selection and projection distribution laws are restated
 as query rewrites (`Expr.select_comm`, `Expr.select_union`, `Expr.select_diff`,
 `Expr.project_union`, `Expr.select_project`, `Expr.select_join_right`).
+
+This is the relational-algebra model's notion of database instance and active domain, over
+partial tuples; it is unrelated to `RelationalSchema.Instance` and its `activeDomain` in
+`InclusionDependencies`, which use total tuples over a named schema.
+
+## References
+
+Serge Abiteboul, Richard Hull, and Victor Vianu, _Foundations of Databases_ (Addison-Wesley,
+1995): Section 3.3 for database instances; Section 4.2 (p. 41) for the active domain, where the
+active domain of a query result is contained in the union of the active domains of the query and
+the instance.
 -/
 
 @[expose] public section
@@ -59,36 +70,26 @@ private theorem adom_mono {r s : Finset (Tuple A D)} (h : r ⊆ s) : adom r ⊆ 
 
 end adom
 
-namespace DatabaseInstance
+/-- The **active domain** of a database `db`: the values occurring in any of its relations. This
+is the unbundled form of `DatabaseInstance.adom`; no conformance hypothesis is needed. -/
+def adomDB [Fintype N] [Fintype A] [DecidableEq D] (db : N → Finset (Tuple A D)) : Finset D :=
+  Finset.univ.biUnion fun n => adom (db n)
 
-variable {sch : N → Finset A}
+theorem mem_adomDB [Fintype N] [Fintype A] [DecidableEq D] {db : N → Finset (Tuple A D)} {d : D} :
+    d ∈ adomDB db ↔ ∃ n, ∃ t ∈ db n, ∃ a, t a = some d := by
+  simp only [adomDB, Finset.mem_biUnion, Finset.mem_univ, true_and, mem_adom]
 
-/-- **Typing soundness for database instances**: a well-typed query evaluates on a database
-instance to a relation over its inferred schema. -/
-theorem eval_isOver [Fintype A] [DecidableEq A] [DecidableEq D] (I : DatabaseInstance D sch)
-    {e : Expr N A D} {S : Finset A} (h : e.schema sch = some S) : IsOver S (e.eval I.rel) := by
-  exact Expr.eval_isOver I.conforms e h
-
-variable [Fintype N] [Fintype A] [DecidableEq D]
-
-/-- The **active domain** `adom(I)` of a database instance: the values occurring in any of its
-relations. -/
-def adom (I : DatabaseInstance D sch) : Finset D :=
-  Finset.univ.biUnion fun n => Databases.adom (I.rel n)
-
-theorem mem_adom {I : DatabaseInstance D sch} {d : D} :
-    d ∈ I.adom ↔ ∃ n, ∃ t ∈ I.rel n, ∃ a, t a = some d := by
-  simp only [adom, Finset.mem_biUnion, Finset.mem_univ, true_and, Databases.mem_adom]
-
-/-- Queries (which have no constants) create no values: `adom(q(I)) ⊆ adom(I)`. -/
-theorem adom_eval_subset [DecidableEq A] (I : DatabaseInstance D sch) (e : Expr N A D) :
-    Databases.adom (e.eval I.rel) ⊆ I.adom := by
+/-- **Queries create no values, unbundled form.** For every database `db` (conforming or not) and
+every query `e`, the active domain of the result is contained in the active domain of `db`.
+`DatabaseInstance.adom_eval_subset` is this statement at `db := I.rel`. -/
+theorem adom_eval_subset_db [Fintype N] [Fintype A] [DecidableEq A] [DecidableEq D]
+    (db : N → Finset (Tuple A D)) (e : Expr N A D) : adom (e.eval db) ⊆ adomDB db := by
   induction e with
   | rel n =>
       simp only [Expr.eval]
       intro d hd
       obtain ⟨t, ht, a, ha⟩ := Databases.mem_adom.mp hd
-      exact mem_adom.mpr ⟨n, t, ht, a, ha⟩
+      exact mem_adomDB.mpr ⟨n, t, ht, a, ha⟩
   | select c e ih =>
       simp only [Expr.eval, Databases.select]
       exact (Databases.adom_mono (Finset.filter_subset _ _)).trans ih
@@ -137,13 +138,45 @@ theorem adom_eval_subset [DecidableEq A] (I : DatabaseInstance D sch) (e : Expr 
       simp only [Function.comp_apply] at ha
       exact ih (Databases.mem_adom.mpr ⟨u, hu, f.symm a, ha⟩)
 
+namespace DatabaseInstance
+
+variable {sch : N → Finset A}
+
+/-- **Typing soundness for database instances**: a well-typed query evaluates on a database
+instance to a relation over its inferred schema. -/
+theorem eval_isOver [Fintype A] [DecidableEq A] [DecidableEq D] (I : DatabaseInstance D sch)
+    {e : Expr N A D} {S : Finset A} (h : e.schema sch = some S) : IsOver S (e.eval I.rel) := by
+  exact Expr.eval_isOver I.conforms e h
+
+variable [Fintype N] [Fintype A] [DecidableEq D]
+
+/-- The **active domain** `adom(I)` of a database instance: the values occurring in any of its
+relations. -/
+def adom (I : DatabaseInstance D sch) : Finset D :=
+  adomDB I.rel
+
+theorem mem_adom {I : DatabaseInstance D sch} {d : D} :
+    d ∈ I.adom ↔ ∃ n, ∃ t ∈ I.rel n, ∃ a, t a = some d := by
+  simp only [adom, adomDB, Finset.mem_biUnion, Finset.mem_univ, true_and, Databases.mem_adom]
+
+/-- **Queries create no values.** Every value in the result of a relational-algebra query on an
+instance already occurs in the instance. Constants occur only in selection conditions, which
+filter tuples; no constructor of `Expr` builds a tuple from a constant, so the query's own active
+domain contributes nothing (compare the reference in the module docstring). -/
+theorem adom_eval_subset [DecidableEq A] (I : DatabaseInstance D sch) (e : Expr N A D) :
+    Databases.adom (e.eval I.rel) ⊆ I.adom :=
+  adom_eval_subset_db I.rel e
+
 end DatabaseInstance
 
 namespace Expr
 
 variable [Fintype A] [DecidableEq A] [DecidableEq D] {sch : N → Finset A}
 
-/-- Selections commute, as a query rewrite. -/
+/-- **Selections commute as a query rewrite.** Fix a schema `sch`. Let `e` be a well-formed query
+with schema `S`, and let `c` and `c'` be selection conditions whose attributes lie in `S`. Then
+`select c (select c' e)` is equivalent to `select c' (select c e)`: both are well-formed with the
+same schema, and they have equal values on every database conforming to `sch`. -/
 theorem select_comm {e : Expr N A D} {S : Finset A} (he : e.schema sch = some S)
     {c c' : Cond A D} (hc : c.attrs ⊆ S) (hc' : c'.attrs ⊆ S) :
     Equiv sch (select c (select c' e)) (select c' (select c e)) := by
@@ -151,7 +184,11 @@ theorem select_comm {e : Expr N A D} {S : Finset A} (he : e.schema sch = some S)
   intro db _
   exact Databases.select_comm _ _ _
 
-/-- Selection distributes over union, as a query rewrite. -/
+/-- **Selection distributes over union as a query rewrite.** Fix a schema `sch`. Let `e` and `e'`
+be well-formed queries with the same schema `S`, and let `c` be a selection condition whose
+attributes lie in `S`. Then `select c (union e e')` is equivalent to
+`union (select c e) (select c e')`: both are well-formed with the same schema, and they have equal
+values on every database conforming to `sch`. -/
 theorem select_union {e e' : Expr N A D} {S : Finset A} (he : e.schema sch = some S)
     (he' : e'.schema sch = some S) {c : Cond A D} (hc : c.attrs ⊆ S) :
     Equiv sch (select c (union e e')) (union (select c e) (select c e')) := by
@@ -159,7 +196,11 @@ theorem select_union {e e' : Expr N A D} {S : Finset A} (he : e.schema sch = som
   intro db _
   exact Databases.select_union _ _ _
 
-/-- Selection distributes over difference, as a query rewrite. -/
+/-- **Selection distributes over difference as a query rewrite.** Fix a schema `sch`. Let `e` and
+`e'` be well-formed queries with the same schema `S`, and let `c` be a selection condition whose
+attributes lie in `S`. Then `select c (diff e e')` is equivalent to
+`diff (select c e) (select c e')`: both are well-formed with the same schema, and they have equal
+values on every database conforming to `sch`. -/
 theorem select_diff {e e' : Expr N A D} {S : Finset A} (he : e.schema sch = some S)
     (he' : e'.schema sch = some S) {c : Cond A D} (hc : c.attrs ⊆ S) :
     Equiv sch (select c (diff e e')) (diff (select c e) (select c e')) := by
@@ -167,7 +208,11 @@ theorem select_diff {e e' : Expr N A D} {S : Finset A} (he : e.schema sch = some
   intro db _
   exact Databases.select_sdiff _ _ _
 
-/-- Projection distributes over union, as a query rewrite. -/
+/-- **Projection distributes over union as a query rewrite.** Fix a schema `sch`. Let `e` and `e'`
+be well-formed queries with the same schema `S`, and let `T` be a subset of `S`. Then
+`project T (union e e')` is equivalent to `union (project T e) (project T e')`: both are
+well-formed with the same schema, and they have equal values on every database conforming to
+`sch`. -/
 theorem project_union {e e' : Expr N A D} {S T : Finset A} (he : e.schema sch = some S)
     (he' : e'.schema sch = some S) (hT : T ⊆ S) :
     Equiv sch (project T (union e e')) (union (project T e) (project T e')) := by
@@ -175,7 +220,11 @@ theorem project_union {e e' : Expr N A D} {S T : Finset A} (he : e.schema sch = 
   intro db _
   exact Databases.project_union _ _ _
 
-/-- Selection commutes with a projection that keeps its attributes, as a query rewrite. -/
+/-- **Selection commutes with projection as a query rewrite.** Fix a schema `sch`. Let `e` be a
+well-formed query with schema `S`, let `T` be a subset of `S`, and let `c` be a selection
+condition whose attributes lie in `T` (the projection keeps them). Then `select c (project T e)`
+is equivalent to `project T (select c e)`: both are well-formed with the same schema, and they
+have equal values on every database conforming to `sch`. -/
 theorem select_project {e : Expr N A D} {S T : Finset A} (he : e.schema sch = some S)
     (hT : T ⊆ S) {c : Cond A D} (hc : c.attrs ⊆ T) :
     Equiv sch (select c (project T e)) (project T (select c e)) := by
@@ -183,7 +232,11 @@ theorem select_project {e : Expr N A D} {S T : Finset A} (he : e.schema sch = so
   intro db _
   exact Databases.select_project _ _ hc
 
-/-- **Selection pushdown** into the right operand of a join, as a query rewrite. -/
+/-- **Selection pushdown into the right operand of a join, as a query rewrite.** Fix a schema
+`sch`. Let `e` and `e'` be well-formed queries with schemas `S` and `S'`, and let `c` be a
+selection condition whose attributes lie in `S'`, the right operand's schema. Then
+`select c (join e e')` is equivalent to `join e (select c e')`: both are well-formed with the same
+schema, and they have equal values on every database conforming to `sch`. -/
 theorem select_join_right {e e' : Expr N A D} {S S' : Finset A} (he : e.schema sch = some S)
     (he' : e'.schema sch = some S') (c : Cond A D) (hc : c.attrs ⊆ S') :
     Equiv sch (select c (join e e')) (join e (select c e')) := by

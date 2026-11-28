@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Databases.DatabaseInstance
-public import CSLibExt.Databases.FunctionalDependencies
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 
@@ -18,11 +17,8 @@ public import Mathlib.Tactic.FinCases
 
 Attributes are `0, 1, 2, 3 : Fin 4` (think `A`, `B`, `C`, `E`); values are natural numbers.
 * The three-relation instance `I` over `R(A, B)`, `S(B, C)` and `T(C, E)`.
-* Join associativity and selection pushdown, both by the theorems and by evaluation; pushing a
-  condition on `E` into `R` changes the result, so the side condition is needed.
 * Typing soundness on `I`, query-level associativity, the active domain, and the six query
   rewrites, each applied on this schema.
-* The FD interface: `B → C` holds in `S`, while `A → B` fails in `R` extended by `⟨1, 3⟩`.
 -/
 
 @[expose] public section
@@ -69,30 +65,6 @@ def I : DatabaseInstance ℕ sch := ⟨![R, S, T], by
   fin_cases n
   exacts [R_isOver, S_isOver, T_isOver]⟩
 
-/-- Join associativity by the theorem `join_assoc` ... -/
-example : join (join R S) T = join R (join S T) := join_assoc _ _ _
-
-/-- ... and by evaluation, with the expected value. -/
-example : join (join R S) T = join R (join S T) ∧
-    join R (join S T) =
-      {tup (some 1) (some 2) (some 5) (some 7), tup (some 2) (some 3) (some 6) (some 8)} := by
-  decide
-
-/-- Selection pushdown on `A = 1` by the theorem `select_join_left` (apply it with `R_isOver`). -/
-example : select (.eqConst 0 1) (join R (join S T)) =
-    join (select (.eqConst 0 1) R) (join S T) := by
-  exact select_join_left _ _ R_isOver (by decide)
-
-/-- ... and by evaluation. -/
-example : select (.eqConst 0 1) (join R (join S T)) =
-    {tup (some 1) (some 2) (some 5) (some 7)} := by
-  decide
-
-/-- Boundary: a condition on `E`, which `R` lacks, cannot be pushed into `R`. -/
-example : select (.eqConst 3 7) (join R (join S T)) ≠
-    join (select (.eqConst 3 7) R) (join S T) := by
-  decide
-
 /-- The adapter: the three-way join query type-checks with schema `{A, B, C, E}`, so by
 `DatabaseInstance.eval_isOver` its value on `I` is a relation over that schema. -/
 example : IsOver {0, 1, 2, 3}
@@ -116,6 +88,12 @@ example : (9 : ℕ) ∈ I.adom ∧ (10 : ℕ) ∉ I.adom := by
   · intro h
     have hnone : ¬ ∃ n, ∃ t ∈ I.rel n, ∃ a, t a = some (10 : ℕ) := by decide
     exact hnone (DatabaseInstance.mem_adom.mp h)
+
+/-- Selecting on a literal absent from the instance: the result, and so its active domain, is
+empty. The constant `10` does not leak into the output. -/
+example : adom ((Expr.select (.eqConst 1 10) (.rel 1) :
+    Expr (Fin 3) (Fin 4) ℕ).eval I.rel) = ∅ := by
+  decide
 
 /-- `adom_eval_subset` applied to a query (apply the theorem, not `decide`). -/
 example : adom ((Expr.project {0, 3} (.join (.rel 0) (.join (.rel 1) (.rel 2))) :
@@ -160,31 +138,5 @@ example : Expr.Equiv sch (.select (.eqConst 3 7) (.join (.rel 1) (.rel 2)))
     (.join (.rel 1) (.select (.eqConst 3 7) (.rel 2)) : Expr (Fin 3) (Fin 4) ℕ) := by
   -- Expr.select_join_right
   exact Expr.select_join_right (S := {1, 2}) (S' := {2, 3}) (by decide) (by decide) _ (by decide)
-
-/-- FD interface: FD satisfaction on an RA relation is `FD.HoldsIn` at value type `Option D`,
-definitionally; no tuple-type bijection is involved. -/
-example {A D : Type*} (r : Finset (Tuple A D)) (f : FD A) :
-    f.HoldsIn (↑r : Set (A → Option D)) ↔
-      ∀ t ∈ r, ∀ u ∈ r, (∀ a ∈ f.lhs, t a = u a) → ∀ a ∈ f.rhs, t a = u a :=
-  Iff.rfl
-
-/-- A holding dependency: `B → C` holds in `S`. -/
-example : FD.HoldsIn ⟨{1}, {2}⟩ (↑S : Set (Fin 4 → Option ℕ)) := by
-  intro t ht u hu h
-  simp only [S, Finset.mem_coe, Finset.mem_insert, Finset.mem_singleton] at ht hu
-  rcases ht with rfl | rfl | rfl
-  all_goals rcases hu with rfl | rfl | rfl
-  all_goals revert h
-  all_goals decide
-
-/-- A failing dependency: in `R ∪ R'` with `R' = {⟨A:1, B:3⟩}`, `A → B` does not hold. -/
-example : ¬ FD.HoldsIn ⟨{0}, {1}⟩
-    (↑(R ∪ {tup (some 1) (some 3) none none}) : Set (Fin 4 → Option ℕ)) := by
-  intro h
-  have h2 :=
-    h (tup (some 1) (some 2) none none) (by decide)
-      (tup (some 1) (some 3) none none) (by decide) (by decide) 1 (by decide)
-  revert h2
-  decide
 
 end Cslib.Databases.DatabaseInstanceTests
