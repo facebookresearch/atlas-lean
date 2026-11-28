@@ -33,8 +33,9 @@ namespace GradedScalarExamples
 private abbrev GF (_ : ℕ) := ℤ
 
 -- Select the native graded module action on the total direct sums.
-local instance : Module (DirectSum ℕ GF) (DirectSum ℕ GF) :=
-  DirectSum.Gmodule.module GF GF
+local instance : Module (DirectSum ℕ (fun _ : ℕ => ℤ))
+    (DirectSum ℕ (fun _ : ℕ => ℤ)) :=
+  DirectSum.Gmodule.module (fun _ : ℕ => ℤ) (fun _ : ℕ => ℤ)
 
 example : GradedAlgebra (DirectSum.algebraInternalGrade ℤ GF) := inferInstance
 
@@ -72,9 +73,9 @@ example :
       change (3 : ℤ) • (2 : ℤ) = (6 : ℤ)
       norm_num
 
-example : (Polynomial.ofFn 2 ![(2 : ℚ), 3]).coeff 1 = 3 :=
-  Polynomial.ofFn_coeff_eq_val_of_lt (n := 2) (i := 1)
-    ![(2 : ℚ), 3] (by decide)
+example : (Polynomial.ofFn 2 ![(2 : ℚ), 3]).coeff 1 = 3 := by
+  simpa using (Polynomial.ofFn_coeff_eq_val_of_lt (n := 2) (i := 1)
+    ![(2 : ℚ), 3] (by decide))
 
 example : Polynomial.finitePowerCombination 2 ![(2 : ℚ), 3] 2 = 8 := by
   norm_num [Polynomial.finitePowerCombination,
