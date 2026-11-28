@@ -89,7 +89,7 @@ theorem bm25TermScore_zero_tf (idf k1 b docLen avgLen : ℝ) :
   simp [bm25TermScore]
 
 /-- With `idf ≥ 0`, `tf ≥ 0`, `k1 > 0` and a positive length-normalization factor, a BM25 term
-score is nonnegative and saturates at `idf * (k1 + 1)`. -/
+score is nonnegative and at most `idf * (k1 + 1)`. -/
 theorem bm25TermScore_nonneg_le_saturation {idf tf k1 b docLen avgLen : ℝ}
     (hidf : 0 ≤ idf) (htf : 0 ≤ tf) (hk1 : 0 < k1)
     (hnorm : 0 < bm25LengthNorm b docLen avgLen) :
