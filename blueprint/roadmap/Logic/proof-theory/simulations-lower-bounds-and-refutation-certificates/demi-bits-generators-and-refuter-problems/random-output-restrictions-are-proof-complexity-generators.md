@@ -1,6 +1,6 @@
 # Random output restrictions of a demi-bits generator are proof complexity generators
 
-For every proof system that cannot be hurt by extra axioms, keeping a random set of $m$ output bits of a demi-bits generator against it gives, with high probability, a proof complexity generator against it. No extra circuitry is added, so generators in $\mathsf{NC}^0$ stay in $\mathsf{NC}^0$.
+For every proof system that cannot be hurt by extra axioms, keeping a random set of $m$ output bits of a demi-bits generator against it gives, with probability at least $1-4m\log(1/\varepsilon)/N$ (constant probability in the stated parameter range), a proof complexity generator against it. No extra circuitry is added, so generators in $\mathsf{NC}^0$ stay in $\mathsf{NC}^0$.
 
 **Well-behaved proof systems.** A proof system $\mathcal P$ is well-behaved if there is a polynomial $p$ such that for all CNFs $C\subseteq C'$ (every clause of $C$ is a clause of $C'$), a length-$\ell$ $\mathcal P$-refutation of $C$ implies a length-$\mathrm{poly}(\ell)$ $\mathcal P$-refutation of $C'$.
 

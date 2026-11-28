@@ -1,8 +1,8 @@
 # Demi-bits generators
 
-A demi-bits generator is a stretching map $G:\{0,1\}^n\to\{0,1\}^m$ such that no small nondeterministic adversary rejects every output of $G$ while accepting a noticeable fraction of all $m$-bit strings. The notion is the nondeterministic analogue of a cryptographic hitting set generator.
+A demi-bits generator is an efficiently computable stretching map $G:\{0,1\}^n\to\{0,1\}^m$ such that no small nondeterministic adversary rejects every output of $G$ while accepting a noticeable fraction of all $m$-bit strings. The notion is the nondeterministic analogue of a cryptographic hitting set generator.
 
-Let $n<m$ be length parameters. A function $G:\{0,1\}^n\to\{0,1\}^m$ is an **$(s,\varepsilon)$-secure demi-bits generator** if there is no $\mathsf{NP}/\mathrm{poly}$ adversary $\mathrm{Adv}$ of size $s$ such that
+Let $n<m$ be length parameters. A function $G:\{0,1\}^n\to\{0,1\}^m$ computable by polynomial-size circuits (non-uniform advice allowed) is an **$(s,\varepsilon)$-secure demi-bits generator** if there is no $\mathsf{NP}/\mathrm{poly}$ adversary $\mathrm{Adv}$ of size $s$ such that
 
 $$
 \Pr_{y\sim\{0,1\}^m}[\mathrm{Adv}(y)=1]\ge\varepsilon \quad\text{and}\quad \Pr_{x\sim\{0,1\}^n}[\mathrm{Adv}(G(x))=1]=0.
