@@ -53,9 +53,9 @@ example {ρ : ℝ} (hρ : 0 < ρ) {d : ι → ℝ} (hd : ∀ i, 0 ≤ d i) {Θ :
     (isGraphicalLassoEstimate_diagonal hρ hd)
 
 /-- For `S = 0` the estimate has `(Θ⁻¹)ᵢᵢ = ρ`. -/
-example {ρ : ℝ} (hρ : 0 ≤ ρ) {Θ : Matrix ι ι ℝ}
-    (h : IsGraphicalLassoEstimate (of fun _ _ => ρ) 0 Θ) (i : ι) : Θ⁻¹ i i = ρ := by
-  simpa using h.inv_apply_self_const hρ (IsSymm.ext fun _ _ => rfl) i
+example {ρ : ℝ} {Θ : Matrix ι ι ℝ} (h : IsGraphicalLassoEstimate (of fun _ _ => ρ) 0 Θ)
+    (i : ι) : Θ⁻¹ i i = ρ := by
+  simpa using h.inv_apply_self_const i
 
 /-- A weak correlation is thresholded to zero: for `S = [[1, 1/2], [1/2, 1]]` and `ρ = 1` the
 estimate is `I / 2`, with `Γ₀₁ = -1/2`. -/
@@ -111,13 +111,10 @@ example : IsGraphicalLassoEstimate (of fun _ _ => (1 / 4 : ℝ)) !![1, 1 / 2; 1 
     fin_cases i <;> fin_cases j <;> norm_num
 
 /-- With the diagonal left out of the penalty, `(Θ⁻¹)ᵢᵢ = Sᵢᵢ` at the estimate. -/
-example {ρ : ℝ} (hρ : 0 ≤ ρ) {S Θ : Matrix ι ι ℝ} (hS : S.IsSymm)
+example {ρ : ℝ} {S Θ : Matrix ι ι ℝ}
     (h : IsGraphicalLassoEstimate (of fun i j => if i = j then 0 else ρ) S Θ) (i : ι) :
     Θ⁻¹ i i = S i i := by
-  have hP : (of fun i j => if i = j then 0 else ρ : Matrix ι ι ℝ).IsSymm :=
-    IsSymm.ext fun i j => by simp [eq_comm]
-  simpa using h.inv_apply_self (fun i j => by dsimp only [of_apply]; split_ifs <;> simp [hρ])
-    hP hS i
+  simpa using h.inv_apply_self i
 
 /-- Non-vacuity of the weighted existence theorem: unequal positive penalties. -/
 example {S : Matrix (Fin 2) (Fin 2) ℝ} (hS : S.PosSemidef) :

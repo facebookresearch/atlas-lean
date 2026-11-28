@@ -11,28 +11,27 @@ module
 public import MathlibExt.Probability.Statistics.GaussianGraphicalModel
 public import Mathlib.Basic.Real.Sign
 public import Mathlib.LinearAlgebra.Matrix.Hadamard
+import MathlibExt.Analysis.Matrix.DeterminantDerivative
 import MathlibExt.LinearAlgebra.Matrix.LogDetTrace
-import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.Calculus.Deriv.Slope
 import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 import Mathlib.Analysis.Matrix.Order
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
-import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
-import Mathlib.RingTheory.MatrixPolynomialAlgebra
 import Mathlib.Topology.Instances.Matrix
 
 /-!
 # The graphical lasso
 
 Let `S` be the empirical covariance matrix of a Gaussian sample with variables indexed by a finite
-type `ι` (positive semidefinite, possibly singular). For `ρ > 0` the graphical lasso of Friedman,
-Hastie and Tibshirani estimates the precision matrix `Θ = Σ⁻¹` by
+type `ι` (positive semidefinite, possibly singular). For `ρ > 0` the graphical lasso estimates the
+precision matrix `Θ = Σ⁻¹` by
 
 `Θ̂ = argmax_{Θ ≻ 0} {log det Θ - tr (S Θ) - ρ ∑ᵢⱼ |Θᵢⱼ|}`,
 
-the Gaussian log-likelihood `gaussLogLik S Θ = log det Θ - tr (S Θ)` minus an `L¹` penalty. As in
-their Remark 2.1, each entry may carry its own penalty `Pᵢⱼ`; the constant penalty matrix
-`Matrix.of fun _ _ => ρ` is the original problem.
+the Gaussian log-likelihood `gaussLogLik S Θ = log det Θ - tr (S Θ)` minus an `L¹` penalty: the
+problem (1) of Banerjee, El Ghaoui and d'Aspremont and (2.1) of Friedman, Hastie and Tibshirani.
+As in the latter's Remark 2.1, each entry may carry its own penalty `Pᵢⱼ`; the constant penalty
+matrix `Matrix.of fun _ _ => ρ` is the original problem.
 
 ## Main definitions
 
@@ -42,16 +41,18 @@ their Remark 2.1, each entry may carry its own penalty `Pᵢⱼ`; the constant p
 ## Main results
 
 * `existsUnique_isGraphicalLassoEstimate_const`: for `ρ > 0` and positive semidefinite `S` the
-  estimate exists and is unique; `existsUnique_isGraphicalLassoEstimate` allows nonnegative
-  penalties `Pᵢⱼ` with positive diagonal.
+  estimate exists and is unique (Banerjee, El Ghaoui and d'Aspremont, Theorem 1);
+  `existsUnique_isGraphicalLassoEstimate` allows nonnegative penalties `Pᵢⱼ` with positive
+  diagonal.
 * `isGraphicalLassoEstimate_const_iff`: **optimality conditions**: for `ρ ≥ 0`, symmetric `S` and
   positive definite `Θ`, `Θ` is the estimate iff `Θ⁻¹ - S - ρ Γ = 0` for some `Γ` with
   `Γᵢⱼ = sign Θᵢⱼ` where `Θᵢⱼ ≠ 0` and `Γᵢⱼ ∈ [-1, 1]` where `Θᵢⱼ = 0`.
   `isGraphicalLassoEstimate_iff` is the same for symmetric nonnegative penalties `P`, with the
   entrywise product `P ⊙ Γ` in place of `ρ Γ`.
 * `IsGraphicalLassoEstimate.inv_apply_self_const`: at the estimate, `W = Θ⁻¹` has
-  `Wᵢᵢ = Sᵢᵢ + ρ`; `IsGraphicalLassoEstimate.inv_apply_self` gives `Wᵢᵢ = Sᵢᵢ + Pᵢᵢ`, so
-  `Wᵢᵢ = Sᵢᵢ` when the diagonal is not penalized.
+  `Wᵢᵢ = Sᵢᵢ + ρ`, with no assumption on `ρ` or `S`; `IsGraphicalLassoEstimate.inv_apply_self`
+  gives `Wᵢᵢ = Sᵢᵢ + Pᵢᵢ` for any penalty matrix, so `Wᵢᵢ = Sᵢᵢ` when the diagonal is not
+  penalized.
 
 ## Implementation notes
 
@@ -61,14 +62,17 @@ case), which gives uniqueness, and with the subgradient inequality of `|·|` the
 optimality conditions. For existence, a positive definite `Θ` at least as good as `1` has
 `tr (S Θ) ≥ 0`, so `log det Θ` is bounded below, while `log det Θ ≤ ∑ᵢ Pᵢᵢ Θᵢᵢ / 2 + c` bounds its
 diagonal and hence, by `|Θᵢⱼ| ≤ (Θᵢᵢ + Θⱼⱼ) / 2`, all its entries: such matrices form a compact
-set on which the objective is continuous. For necessity, the objective is differentiated at the
-estimate along the symmetric directions `Eₖₗ + Eₗₖ`, using
-`d/dt log det (Θ + t H) = tr (Θ⁻¹ H)` at `t = 0`.
+set on which the objective is continuous. For necessity, and for the diagonal identities, the
+objective is differentiated at the estimate along the symmetric directions `Eₖₗ + Eₗₖ` and `Eₖₖ`,
+using `d/dt log det (Θ + t H) = tr (Θ⁻¹ H)` at `t = 0` (`Matrix.hasDerivAt_det_one_add_smul`).
 
 ## References
 
+* O. Banerjee, L. El Ghaoui and A. d'Aspremont, *Model selection through sparse maximum likelihood
+  estimation for multivariate Gaussian or binary data*, J. Mach. Learn. Res. 9 (2008), 485–516,
+  problem (1) and Theorem 1.
 * J. Friedman, T. Hastie and R. Tibshirani, *Sparse inverse covariance estimation with the
-  graphical lasso*, Biostatistics 9 (2008), 432–441, equations (2.1) and (2.6), Remarks 2.1
+  graphical lasso*, Biostatistics 9 (2008), 432–441, problem (2.1), equation (2.6), Remarks 2.1
   and 2.2.
 -/
 
@@ -352,18 +356,6 @@ private theorem eventually_posDef_add_smul [Finite ι] {A H : Matrix ι ι ℝ} 
     exact PosDef.posSemidef_add (hrA'.add (hhi.smul (a := -t) (by linarith)))
       (PosDef.one.smul (by linarith))
 
-/-- `d/ds det (1 + s M) = tr M` at `s = 0`, from the polynomial `det (1 + X M)`. -/
-private theorem hasDerivAt_det_one_add_smul (M : Matrix ι ι ℝ) :
-    HasDerivAt (fun s : ℝ => (1 + s • M).det) M.trace 0 := by
-  let p : Polynomial ℝ :=
-    (1 + (Polynomial.X : Polynomial ℝ) • M.map (Polynomial.C : ℝ → Polynomial ℝ)).det
-  have hp : HasDerivAt (fun s => p.eval s) M.trace 0 :=
-    (p.hasDerivAt 0).congr_deriv (Matrix.derivative_det_one_add_X_smul M)
-  apply hp.congr_of_eventuallyEq
-  filter_upwards with s
-  dsimp [p]
-  simp [eval_det, ← Matrix.smul_eq_mul_diagonal]
-
 /-- The derivative of `t ↦ log det (Θ + t H) - tr (S (Θ + t H))` at `0` is
 `tr (Θ⁻¹ H) - tr (S H)`. -/
 private theorem hasDerivAt_gaussLogLik {S Θ H : Matrix ι ι ℝ} (hΘ : Θ.PosDef) :
@@ -376,7 +368,7 @@ private theorem hasDerivAt_gaussLogLik {S Θ H : Matrix ι ι ℝ} (hΘ : Θ.Pos
       mul_nonsing_inv _ hu, Matrix.one_mul]
   have hdet : HasDerivAt (fun t : ℝ => (Θ + t • H).det) (Θ.det * (Θ⁻¹ * H).trace) 0 := by
     rw [hfun]
-    exact (hasDerivAt_det_one_add_smul _).const_mul _
+    exact (Matrix.hasDerivAt_det_one_add_smul _).const_mul _
   have h0 : (Θ + (0 : ℝ) • H).det ≠ 0 := by simpa using hΘ.det_pos.ne'
   have htr : HasDerivAt (fun t : ℝ => (S * (Θ + t • H)).trace) (S * H).trace 0 := by
     have : (fun t : ℝ => (S * (Θ + t • H)).trace) = fun t => (S * Θ).trace + t * (S * H).trace := by
@@ -440,6 +432,41 @@ private theorem trace_sub_le {P S Θ H : Matrix ι ι ℝ} (hest : IsGraphicalLa
   have := hest.2 _ ht
   rw [hpen] at this
   simp only [zero_smul, add_zero]
+  linarith
+
+/-- The diagonal consequence of `trace_sub_le`, along the directions `±Eₖₖ`: since `Θₖₖ > 0`, the
+penalty changes by `±t Pₖₖ`, so `(Θ⁻¹)ₖₖ - Sₖₖ = Pₖₖ`. -/
+private theorem inv_apply_self_eq {P S Θ : Matrix ι ι ℝ} (hest : IsGraphicalLassoEstimate P S Θ)
+    (k : ι) : Θ⁻¹ k k = S k k + P k k := by
+  have hpos : 0 < Θ k k := hest.1.diag_pos
+  have key : ∀ s : ℝ, s * (Θ⁻¹ k k - S k k) ≤ s * P k k := fun s => by
+    have h := trace_sub_le hest (isHermitian_diagonal (Pi.single k s))
+    have hdiag : ∀ i j, diagonal (Pi.single k s) i j = if i = k ∧ j = k then s else 0 :=
+      fun i j => by
+        by_cases hij : i = j
+        · subst hij
+          by_cases hi : i = k
+          · simp [hi]
+          · simp [hi]
+        · have : ¬ (i = k ∧ j = k) := fun h => hij (h.1.trans h.2.symm)
+          simp [diagonal_apply_ne _ hij, this]
+    have htr : ∀ M : Matrix ι ι ℝ, (M * diagonal (Pi.single k s)).trace = M k k * s := fun M => by
+      simp only [trace, diag_apply, mul_diagonal]
+      rw [sum_eq_single k (fun i _ hi => by simp [hi]) (by simp)]
+      simp
+    have hpen : ∑ i, ∑ j, P i j * dirAbs (Θ i j) (diagonal (Pi.single k s) i j) = P k k * s := by
+      rw [sum_eq_single k, sum_eq_single k]
+      · simp only [hdiag, and_self, ↓reduceIte, dirAbs, hpos.ne', Real.sign_of_pos hpos, one_mul]
+      · intro j _ hj
+        simp [hdiag, hj, dirAbs]
+      · simp
+      · intro i _ hi
+        exact sum_eq_zero fun j _ => by simp [hdiag, hi, dirAbs]
+      · simp
+    rw [htr, htr, hpen] at h
+    linarith
+  have h₁ := key 1
+  have h₂ := key (-1)
   linarith
 
 /-- The entrywise consequence of `trace_sub_le`, along the symmetric direction `s (Eₖₗ + Eₗₖ)`
@@ -582,7 +609,8 @@ private theorem of_subgradient {P S Θ Γ : Matrix ι ι ℝ} (hP0 : ∀ i j, 0 
 /-- **Existence and uniqueness of the weighted graphical lasso estimate**: for a penalty matrix
 `P` with nonnegative entries and positive diagonal and a positive semidefinite `S`, there is exactly
 one positive definite `Θ` maximizing `log det Θ - tr (S Θ) - ∑ᵢⱼ Pᵢⱼ |Θᵢⱼ|` over positive definite
-matrices. -/
+matrices. This extends Theorem 1 of Banerjee, El Ghaoui and d'Aspremont, the case of a constant
+penalty (`existsUnique_isGraphicalLassoEstimate_const`). -/
 theorem existsUnique_isGraphicalLassoEstimate {P S : Matrix ι ι ℝ} (hP : ∀ i j, 0 ≤ P i j)
     (hPd : ∀ i, 0 < P i i) (hS : S.PosSemidef) : ∃! Θ, IsGraphicalLassoEstimate P S Θ := by
   obtain ⟨Θ, hΘ⟩ := exists_isGraphicalLassoEstimate hP hPd hS
@@ -600,29 +628,22 @@ theorem isGraphicalLassoEstimate_iff {P S Θ : Matrix ι ι ℝ} (hP0 : ∀ i j,
       (∀ i j, Θ i j = 0 → Γ i j ∈ Set.Icc (-1) 1) ∧ Θ⁻¹ - S - P ⊙ Γ = 0 :=
   ⟨exists_subgradient hP0 hP hS, fun ⟨_, h₁, h₂, h₃⟩ => of_subgradient hP0 hΘ h₁ h₂ h₃⟩
 
-/-- **The diagonal of the weighted graphical lasso covariance estimate**: for a symmetric penalty
-matrix `P` with nonnegative entries and a symmetric `S`, the estimate `Θ` has
+/-- **The diagonal of the weighted graphical lasso covariance estimate**: the estimate `Θ` has
 `(Θ⁻¹)ᵢᵢ = Sᵢᵢ + Pᵢᵢ` for every `i`, since `Θᵢᵢ > 0`. In particular `(Θ⁻¹)ᵢᵢ = Sᵢᵢ` when the
 diagonal is not penalized (`Pᵢᵢ = 0`; Friedman, Hastie and Tibshirani, Remark 2.2). -/
-theorem IsGraphicalLassoEstimate.inv_apply_self {P S Θ : Matrix ι ι ℝ} (hP0 : ∀ i j, 0 ≤ P i j)
-    (hP : P.IsSymm) (hS : S.IsSymm) (h : IsGraphicalLassoEstimate P S Θ) (i : ι) :
-    Θ⁻¹ i i = S i i + P i i := by
-  obtain ⟨Γ, hsign, -, hkkt⟩ := exists_subgradient hP0 hP hS h
-  have hpos : 0 < Θ i i := h.1.diag_pos
-  have := congrFun (congrFun hkkt i) i
-  rw [Matrix.sub_apply, Matrix.sub_apply, hadamard_apply, hsign i i hpos.ne',
-    Real.sign_of_pos hpos, Matrix.zero_apply] at this
-  linarith
+theorem IsGraphicalLassoEstimate.inv_apply_self {P S Θ : Matrix ι ι ℝ}
+    (h : IsGraphicalLassoEstimate P S Θ) (i : ι) : Θ⁻¹ i i = S i i + P i i :=
+  inv_apply_self_eq h i
 
 omit [Fintype ι] [DecidableEq ι] in
 private theorem isSymm_const (ρ : ℝ) : (of fun _ _ => ρ : Matrix ι ι ℝ).IsSymm := by
   ext
   simp
 
-/-- **Existence and uniqueness of the graphical lasso estimate** (Friedman, Hastie and
-Tibshirani, equation (2.1)): for `ρ > 0` and a positive semidefinite `S`, there is exactly one
-positive definite `Θ` maximizing `log det Θ - tr (S Θ) - ρ ∑ᵢⱼ |Θᵢⱼ|` over positive definite
-matrices. -/
+/-- **Existence and uniqueness of the graphical lasso estimate** (Banerjee, El Ghaoui and
+d'Aspremont, Theorem 1, for their problem (1), which is problem (2.1) of Friedman, Hastie and
+Tibshirani): for `ρ > 0` and a positive semidefinite `S`, there is exactly one positive definite `Θ`
+maximizing `log det Θ - tr (S Θ) - ρ ∑ᵢⱼ |Θᵢⱼ|` over positive definite matrices. -/
 theorem existsUnique_isGraphicalLassoEstimate_const {ρ : ℝ} (hρ : 0 < ρ) {S : Matrix ι ι ℝ}
     (hS : S.PosSemidef) : ∃! Θ, IsGraphicalLassoEstimate (of fun _ _ => ρ) S Θ :=
   existsUnique_isGraphicalLassoEstimate (P := of fun _ _ => ρ) (fun _ _ => hρ.le) (fun _ => hρ) hS
@@ -644,11 +665,10 @@ theorem isGraphicalLassoEstimate_const_iff {ρ : ℝ} (hρ : 0 ≤ ρ) {S Θ : M
   simp only [h]
 
 /-- **The diagonal of the graphical lasso covariance estimate** (Friedman, Hastie and
-Tibshirani, Section 2): for `ρ ≥ 0` and a symmetric `S`, the estimate `Θ` has
+Tibshirani, Section 2; Banerjee, El Ghaoui and d'Aspremont, Section 2.2): the estimate `Θ` has
 `(Θ⁻¹)ᵢᵢ = Sᵢᵢ + ρ` for every `i`, since `Θᵢᵢ > 0`. -/
-theorem IsGraphicalLassoEstimate.inv_apply_self_const {ρ : ℝ} (hρ : 0 ≤ ρ)
-    {S Θ : Matrix ι ι ℝ} (hS : S.IsSymm) (h : IsGraphicalLassoEstimate (of fun _ _ => ρ) S Θ)
-    (i : ι) : Θ⁻¹ i i = S i i + ρ := by
-  simpa using h.inv_apply_self (P := of fun _ _ => ρ) (fun _ _ => hρ) (isSymm_const ρ) hS i
+theorem IsGraphicalLassoEstimate.inv_apply_self_const {ρ : ℝ} {S Θ : Matrix ι ι ℝ}
+    (h : IsGraphicalLassoEstimate (of fun _ _ => ρ) S Θ) (i : ι) : Θ⁻¹ i i = S i i + ρ := by
+  simpa using h.inv_apply_self i
 
 end MathlibExt.Probability.Statistics.GraphicalLasso
