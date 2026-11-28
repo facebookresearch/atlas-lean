@@ -16842,6 +16842,7 @@
   "MathlibExt/Analysis/Fourier/AddCircle/WienerOneOverF": {"to": "Analysis/harmonic-analysis/fourier-series", "title": "Absolutely convergent Fourier series"},
   "WantedExt/Analysis/WignerSemicircleWanted": {"to": "Probability/high-dimensional-probability", "title": "Wigner's semicircle law"},
   "WantedExt/Analysis/WirsingConstantWanted": {"to": "NumberTheory/continued-fractions-expansions", "title": "Gauss–Kuzmin–Wirsing operator"},
+  "WantedExt/Biology/Biophysics/SecantCriterionWanted": {"to": "Biology/systems-biology", "title": "Gene regulatory network dynamics"},
   "WantedExt/Biology/Epidemiology/ConfigurationModelSIRWanted": {"to": "Biology/epidemiology", "title": "SIR epidemics on configuration-model graphs"},
   "WantedExt/Biology/Epidemiology/GraphSISExtinctionTimeWanted": {"to": "Biology/epidemiology", "title": "SIS extinction times on finite graphs"},
   "WantedExt/Biology/Epidemiology/HouseholdReproductionNumberWanted": {"to": "Biology/epidemiology", "title": "Household reproduction number and threshold"},
