@@ -21,7 +21,7 @@ None.
 
 ## Expansion
 
-The three semantics form a hierarchy: $Q(G)^{q\text{-}inj} \subseteq Q(G)^{a\text{-}inj} \subseteq Q(G)^{st}$ for every $Q$ and $G$, and the inclusions are strict in general. Atom-injective semantics extends the simple-path semantics of regular path queries atom by atom (with nodes and edges exchanged, it is the semantics used by the Neo4j query language). Under standard semantics, CRPQ/CRPQ containment is EXPSPACE-complete, by results of Calvanese, De Giacomo, Lenzerini and Vardi and of Florescu, Levy and Suciu.
+The three semantics form a hierarchy: $Q(G)^{q\text{-}inj} \subseteq Q(G)^{a\text{-}inj} \subseteq Q(G)^{st}$ for every $Q$ and $G$, and the inclusions are strict in general. Atom-injective semantics extends the simple-path semantics of regular path queries atom by atom (with the roles of nodes and edges exchanged, the source's Section 7 notes, it is present in the Neo4j graph database). Under standard semantics, CRPQ/CRPQ containment is EXPSPACE-complete, by results of Calvanese, De Giacomo, Lenzerini and Vardi and of Florescu, Levy and Suciu.
 
 ## Sources
 
