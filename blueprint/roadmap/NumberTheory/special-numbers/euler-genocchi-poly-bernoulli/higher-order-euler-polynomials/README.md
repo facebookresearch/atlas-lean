@@ -1,6 +1,7 @@
 # Higher-order Euler polynomials
 
 - [Euler polynomials](euler-poly.md)
+- [Adjacent sum of an Euler polynomial](euler-poly-shift.md)
 - [Generalized Stirling polynomial](gen-stirling-poly.md)
 - [Taylor coefficients of $(2 + 2z)/(2 + 2z + z^2)$](euler-alpha.md)
 - [Truncated recurrence for the Euler numbers of order $\alpha$](euler-num-gen-aux.md)

@@ -13,7 +13,7 @@ $\mathcal{C}^{(k-1)}$ when $U \in \mathcal{C}^{(k)}$; for $U$ in the third level
 
 ## Depends on
 
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Clifford group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/clifford-group-on-n-qubits.md)
 - [Quantum teleportation](../../quantum-foundations/quantum-teleportation.md)
 
 ## Sources

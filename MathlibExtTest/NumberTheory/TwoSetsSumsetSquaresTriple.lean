@@ -45,4 +45,17 @@ example : ∃ S : ℤ, S = 100 ∧ ∃ e : Fin 3 → Fin 3 → ℤ,
     omega
   exact ⟨S, hS, e, hrow, hcol⟩
 
+-- Euler's matrix (2.10) at `(p, q, r, s) = (7, 3, 2, 1)`: the nine squares are distinct,
+-- and the nonzero offsets have opposite signs.
+example : PairwiseSumsSquares ![484, 1156, 1849] ![0, -480, (960 : ℤ)] := by
+  let e : Fin 3 → Fin 3 → ℤ := ![![53, 26, -22], ![-2, 43, 46], ![34, -38, 37]]
+  have he : IsSemiMagicRoots e := ⟨3969, by decide⟩
+  have h := pairwiseSumsSquares_triple_of_isSemiMagicRoots e he
+  norm_num [e] at h
+  exact h
+
+-- The construction allows a zero common sum and repeated values in both triples.
+example : PairwiseSumsSquares ![0, 0, 0] ![0, 0, (0 : ℤ)] :=
+  pairwiseSumsSquares_triple_of_isSemiMagicRoots (fun _ _ ↦ 0) ⟨0, by decide⟩
+
 end MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted

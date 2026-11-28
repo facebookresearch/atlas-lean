@@ -11,7 +11,7 @@ a central extension of $\mathbb{F}_2^{2n}$ by $\mathbb{F}_2$ with bilinear cocyc
 ## Depends on
 
 - [Pauli operator $X^a Z^b$ on $n$ qubits](../../quantum-error-correction/css-codes/pauli.md)
-- [Pauli group, Clifford group and stabilizer states](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-clifford-group-and-stabilizer-states.md)
+- [The Pauli group on $n$ qubits](../../../TheoryOfComputation/randomized-and-quantum-complexity/bounded-error-quantum-polynomial-time-bqp/pauli-group-on-n-qubits.md)
 
 ## Sources
 

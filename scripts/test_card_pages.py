@@ -156,15 +156,27 @@ def links_digest(files: dict[str, bytes | None]) -> str:
     return digest.hexdigest()
 
 
-def receipt(commit: str, rows: str, cards: dict[str, str], links: dict[str, bytes | None] | None = None,
-            complete: bool = True, replacements: dict[str, dict[str, str]] | None = None) -> dict:
-    """The receipt `scripts/cards.py moves` writes for the commit, the ledger ``rows``, the links folder's files, the
-    cards it lists and the replacements of the ledger's retirements (by default, every listed card, as a folder)."""
+def ledger_digest(files: list[tuple[str, bytes]]) -> str:
+    """The digest of the move ledger's files, by path in logical order, as docs/cards.md#reading gives it: sha256 over
+    each file, as its path in the repository, a NUL, its length in bytes in decimal, a NUL and its bytes."""
+    digest = hashlib.sha256()
+    for path, data in files:
+        digest.update(path.encode() + b"\0" + str(len(data)).encode() + b"\0" + data)
+    return digest.hexdigest()
+
+
+def receipt(commit: str, rows: str | list[tuple[str, bytes]], cards: dict[str, str],
+            links: dict[str, bytes | None] | None = None, complete: bool = True,
+            replacements: dict[str, dict[str, str]] | None = None) -> dict:
+    """The receipt `scripts/cards.py moves` writes for the commit, the ledger (the frozen file's ``rows``, or each
+    file's path and bytes in logical order), the links folder's files, the cards it lists and the replacements of the
+    ledger's retirements (by default, every listed card, as a folder)."""
     if replacements is None:
         replacements = {card: {"kind": "folder", "node": folder} for card, folder in cards.items()}
-    return {"schema": "atlas-card-moves/v2", "commit": commit,
-            "ledger_sha256": hashlib.sha256(rows.encode()).hexdigest(), "annotations_sha256": links_digest(links or {}),
-            "cards": cards, "cards_complete": complete, "replacements": replacements}
+    files = [("scripts/card-moves.jsonl", rows.encode())] if isinstance(rows, str) else rows
+    return {"schema": "atlas-card-moves/v3", "commit": commit, "ledger_sha256": ledger_digest(files),
+            "annotations_sha256": links_digest(links or {}), "cards": cards, "cards_complete": complete,
+            "replacements": replacements}
 
 
 T = "A/f/t"
@@ -818,11 +830,13 @@ class ReceiptTests(unittest.TestCase):
     NO_DATA = "there is no build/cards.json (the rollup writes none when the strict check fails)"
     STILL = "::warning title=Card data not shown::{}; moved addresses are still kept\n"
 
-    def hook(self, data=None, change=None, rows: str = ROWS) -> tuple[card_pages.Site | None, str]:
-        """Run the hook as under GitHub Actions on a checkout with the ledger ``rows``, the links folder LINKS, the
-        rollup ``data`` gives for the commit being built, and the receipt of that commit, ledger and links folder with
-        the cards CARDS, which ``change`` may alter (``change(receipt, root)``; a receipt it returns as text is written
-        as it is, and None writes none): the site the hook keeps, and what it prints."""
+    def hook(self, data=None, change=None, rows: str = ROWS,
+             fragments: dict[str, str] | None = None) -> tuple[card_pages.Site | None, str]:
+        """Run the hook as under GitHub Actions on a checkout with the ledger's frozen ``rows`` and ``fragments`` (by
+        name), the links folder LINKS, the rollup ``data`` gives for the commit being built, and the receipt of that
+        commit, ledger and links folder with the cards CARDS, which ``change`` may alter (``change(receipt, root)``; a
+        receipt it returns as text is written as it is, and None writes none): the site the hook keeps, and what it
+        prints."""
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary).resolve()
             git = ["git", "-C", str(root), "-c", "user.name=Test", "-c", "user.email=test@example.com"]
@@ -830,15 +844,17 @@ class ReceiptTests(unittest.TestCase):
             subprocess.run([*git, "commit", "-q", "--allow-empty", "-m", "fixture"], check=True)
             commit = subprocess.run([*git, "rev-parse", "HEAD"], check=True, capture_output=True,
                                     text=True).stdout.strip()
-            files = {"site-src/dependencies/index.json": json.dumps(index(*self.ENTRIES)).encode(),
-                     "scripts/card-moves.jsonl": rows.encode(),
+            parts = [("scripts/card-moves.jsonl", rows.encode()),
+                     *((f"scripts/card-moves.d/{name}", text.encode())
+                       for name, text in sorted((fragments or {}).items()))]
+            files = {"site-src/dependencies/index.json": json.dumps(index(*self.ENTRIES)).encode(), **dict(parts),
                      **{f"blueprint/links/{name}": data for name, data in self.LINKS.items()}}
             if data is not None:
                 files["build/cards.json"] = json.dumps(data(commit)).encode()
             for path, content in files.items():
                 (root / path).parent.mkdir(parents=True, exist_ok=True)
                 (root / path).write_bytes(content)
-            made = receipt(commit, rows, dict(self.CARDS), self.LINKS)
+            made = receipt(commit, parts, dict(self.CARDS), self.LINKS)
             if change is not None:
                 made = change(made, root)
             if made is not None:
@@ -932,22 +948,49 @@ class ReceiptTests(unittest.TestCase):
         self.assertEqual(printed, "::warning title=Card data not shown::there is no scripts/card-moves.jsonl\n"
                                   "::error title=Moved addresses not kept::there is no scripts/card-moves.jsonl\n")
 
+    def test_two_moves_of_one_article_into_one_address_keep_nothing_and_say_where(self) -> None:
+        # A ledger the check refuses, with a receipt made by hand: lemma (11) moved into a/lemma twice, from two old
+        # addresses. The hook keeps no moved address, the unrelated retired card's included, and says why, naming the
+        # address; it never takes the second move for the first.
+        rows = self.ROWS + ledger({"page": f"{T}/other-lemma", "to": f"{T}/a/lemma", "article_id": af(11)})
+        site, printed = self.hook(rows=rows)
+        self.assertIsNone(site)
+        self.assertIn(f"::error title=Moved addresses not kept::scripts/card-moves.jsonl:3: {af(11)} moves into "
+                      f"{T}/a/lemma a second time; an article moves into an address once", printed)
+        # The same split between the frozen file and a fragment, and a lawful continuation, which keeps all three.
+        site, printed = self.hook(rows=self.ROWS, fragments={"20260101T000000Z-again.jsonl": ledger(
+            {"page": f"{T}/other-lemma", "to": f"{T}/a/lemma", "article_id": af(11)})})
+        self.assertIsNone(site)
+        self.assertIn("scripts/card-moves.d/20260101T000000Z-again.jsonl:1: " + af(11) + " moves into "
+                      f"{T}/a/lemma a second time", printed)
+        entries = [leaf(f"{T}/a/a-main"), leaf(f"{T}/a/lemma2"), leaf(f"{T}/b/b-main")]
+        pages = card_pages.Pages(card_pages.read_index(index(*entries)))
+        lawful = card_pages.read_ledger(self.ROWS + ledger(
+            {"page": f"{T}/a/lemma", "to": f"{T}/a/lemma2", "article_id": af(11)}))
+        self.assertEqual(card_pages.history(lawful, pages, {af(1): ("folder", f"{T}/a")}), {
+            ("page", f"{T}/lemma"): f"{T}/a/lemma2", ("page", f"{T}/a/lemma"): f"{T}/a/lemma2",
+            ("folder", f"{T}/z"): f"{T}/a"})
+
     def test_without_this_receipt_no_moved_address_is_kept(self) -> None:
-        not_this = "build/card-moves.json is not a receipt of atlas-card-moves/v2"
+        not_this = "build/card-moves.json is not a receipt of atlas-card-moves/v3"
         for name, change, reason in (
             ("no receipt", lambda made, root: None,
              "there is no build/card-moves.json (the ledger check writes none when the ledger is invalid)"),
             ("not JSON", lambda made, root: "{", "build/card-moves.json is not JSON: "),
             ("another schema", lambda made, root: {**made, "schema": "atlas-card-moves/v0"}, not_this),
+            # A v2 receipt digests the frozen file's bytes alone: it says nothing of the fragments.
+            ("a v2 receipt", lambda made, root: {**made, "schema": "atlas-card-moves/v2",
+                                                 "ledger_sha256": hashlib.sha256(self.ROWS.encode()).hexdigest()},
+             not_this),
             ("a key too many", lambda made, root: {**made, "note": ""}, not_this),
             ("a key missing", lambda made, root: {key: value for key, value in made.items() if key != "cards_complete"},
              not_this),
             ("another commit's", lambda made, root: {**made, "commit": COMMIT},
              "build/card-moves.json is not the ledger check of the commit being built"),
             ("another ledger's", lambda made, root: {**made, "ledger_sha256": hashlib.sha256(b"").hexdigest()},
-             "build/card-moves.json is the check of another scripts/card-moves.jsonl than the one being built"),
+             "build/card-moves.json is the check of another move ledger than the one being built"),
             ("a malformed ledger digest", lambda made, root: {**made, "ledger_sha256": made["ledger_sha256"].upper()},
-             "build/card-moves.json is the check of another scripts/card-moves.jsonl than the one being built"),
+             "build/card-moves.json is the check of another move ledger than the one being built"),
             ("annotations changed since",
              lambda made, root: ((root / "blueprint/links/A.jsonl").write_bytes(b"\n"), made)[1],
              "build/card-moves.json is the check of other annotations than blueprint/links/ as it is now"),
@@ -1004,6 +1047,235 @@ class ReceiptTests(unittest.TestCase):
         site, printed = self.hook(full, lambda made, root: None)
         self.assertIsNone(site)
         self.assertEqual(printed.count("there is no build/card-moves.json"), 2)
+
+
+class ResolverOrderTests(unittest.TestCase):
+    """The reverse replay (history) judges what a row says against a fallback at the historical point: a folder row or
+    a card's retirement replaces the fallback of a gone folder that a later row's replay put in place, whatever the
+    order of the two in the ledger; a fallback never replaces what a row said. These are tests of the resolver alone,
+    in both orders, apart from the fragment guard that declines the pair as two new fragments (scripts/test_cards.py,
+    Fragments)."""
+
+    ENTRIES = [leaf(f"{T}/live/u"), leaf(f"{T}/live/w"), folder(f"{T}/live"), folder(T), folder("A/f"), folder("A"),
+               folder("roadmap")]
+
+    def history(self, *rows: dict, replacements: dict | None = None) -> dict:
+        pages = card_pages.Pages(card_pages.read_index(index(*self.ENTRIES)))
+        return card_pages.history(card_pages.read_ledger(ledger(*rows)), pages,
+                                  replacements or {af(1): ("folder", f"{T}/live")})
+
+    def test_a_move_out_of_a_folder_and_its_card_s_retirement_resolve_alike_in_both_orders(self) -> None:
+        # P: the statement 11 moves out of T/old into T/live; R: card 7 is retired at T/old, replaced by card 1 at
+        # T/live. Before the fix, R then P led T/old to T, the fallback P's replay put there first.
+        p = {"page": f"{T}/old/u", "to": f"{T}/live/u", "article_id": af(11)}
+        r = {"card": af(7), "folder": f"{T}/old", "replaced_by": af(1)}
+        expected = {("page", f"{T}/old/u"): f"{T}/live/u", ("folder", f"{T}/old"): f"{T}/live"}
+        self.assertEqual(self.history(p, r), expected)
+        self.assertEqual(self.history(r, p), expected)
+
+    def test_a_fallback_taken_from_above_an_overridden_folder_is_taken_from_it(self) -> None:
+        # The statement left T/old/sub, a folder in T/old that is gone too; T/old's retirement says where T/old leads,
+        # and T/old/sub, nearer to it than T, leads there as well, in both orders.
+        p = {"page": f"{T}/old/sub/u", "to": f"{T}/live/u", "article_id": af(11)}
+        r = {"card": af(7), "folder": f"{T}/old", "replaced_by": af(1)}
+        expected = {("page", f"{T}/old/sub/u"): f"{T}/live/u", ("folder", f"{T}/old"): f"{T}/live",
+                    ("folder", f"{T}/old/sub"): f"{T}/live"}
+        self.assertEqual(self.history(p, r), expected)
+        self.assertEqual(self.history(r, p), expected)
+
+    def test_a_folder_row_beats_a_fallback_and_never_the_reverse(self) -> None:
+        # The folder T/old became T/live; a statement left it before or after. Its old address leads where the row
+        # says, not to T, in both orders; the folder's own row moves it alone.
+        folder_row = {"folder": f"{T}/old", "to": f"{T}/live", "article_id": af(50)}
+        page_row = {"page": f"{T}/old/w", "to": f"{T}/live/w", "article_id": af(12)}
+        expected = {("folder", f"{T}/old"): f"{T}/live", ("page", f"{T}/old/w"): f"{T}/live/w"}
+        self.assertEqual(self.history(folder_row, page_row), expected)
+        self.assertEqual(self.history(page_row, folder_row), expected)
+
+    def test_fallbacks_resting_on_fallbacks_follow_the_retirement_at_any_depth(self) -> None:
+        # a moves into old/sub/deep and out; b leaves old/sub, c leaves old; card 7 at old is retired for card 1. The
+        # replay infers old, then old/sub from old, then old/sub/deep from old/sub, in one order of the sibling moves,
+        # or old and old/sub from T in the other: either way the retirement of old reaches all three.
+        entries = [leaf(f"{T}/live/a"), leaf(f"{T}/live/b"), leaf(f"{T}/live/c"), folder(f"{T}/live")]
+        enter = {"page": f"{T}/old/a", "to": f"{T}/old/sub/deep/a", "article_id": af(11)}
+        retire = {"card": af(7), "folder": f"{T}/old", "replaced_by": af(1)}
+        leave = {"page": f"{T}/old/sub/deep/a", "to": f"{T}/live/a", "article_id": af(11)}
+        sub = {"page": f"{T}/old/sub/b", "to": f"{T}/live/b", "article_id": af(12)}
+        old = {"page": f"{T}/old/c", "to": f"{T}/live/c", "article_id": af(13)}
+        expected = {("folder", f"{T}/old"): f"{T}/live", ("folder", f"{T}/old/sub"): f"{T}/live",
+                    ("folder", f"{T}/old/sub/deep"): f"{T}/live", ("page", f"{T}/old/a"): f"{T}/live/a",
+                    ("page", f"{T}/old/sub/deep/a"): f"{T}/live/a", ("page", f"{T}/old/sub/b"): f"{T}/live/b",
+                    ("page", f"{T}/old/c"): f"{T}/live/c"}
+        pages = card_pages.Pages(card_pages.read_index(index(*entries)))
+        for rows in ((enter, retire, leave, sub, old), (enter, retire, leave, old, sub),
+                     (retire, enter, old, leave, sub)):
+            with self.subTest(rows=[next(iter(row.values())) for row in rows]):
+                self.assertEqual(card_pages.history(card_pages.read_ledger(ledger(*rows)), pages,
+                                                    {af(1): ("folder", f"{T}/live")}), expected)
+
+    def test_a_card_replaced_in_place_keeps_its_chain(self) -> None:
+        # Card 7 was retired at T/live for card 8, in place, which was retired there for card 1, in place too: the
+        # folder is live, so no fallback and no explicit row moves it.
+        rows = ({"card": af(7), "folder": f"{T}/live", "replaced_by": af(8)},
+                {"card": af(8), "folder": f"{T}/live", "replaced_by": af(1)})
+        self.assertEqual(self.history(*rows), {})
+        # Gone, the folder leads to the last replacement's.
+        rows = ({"card": af(7), "folder": f"{T}/gone", "replaced_by": af(8)},
+                {"card": af(8), "folder": f"{T}/gone", "replaced_by": af(1)})
+        self.assertEqual(self.history(*rows), {("folder", f"{T}/gone"): f"{T}/live"})
+
+
+class OracleTests(unittest.TestCase):
+    """The site's redirects against a hand-written oracle: for each history below, written forward as it happened,
+    the final endpoint of every old address and every route the site emits for it, set down independently of the
+    reverse resolver. Equal permutations can agree on a wrong endpoint; this cannot."""
+
+    def emitted(self, entries, cards, rows, replacements=None) -> dict:
+        with tempfile.TemporaryDirectory() as docs:
+            site = card_pages.build(rollup(cards), index(*entries), rows, Path(docs), replacements=replacements)
+        notices = {}
+        for path, text in site.files.items():
+            if path.endswith(".md") and path.startswith("roadmap/"):
+                target = text.split('<p><a href="', 1)[1].split('"', 1)[0]
+                notices[path] = (target, "http-equiv" in text,
+                                 sorted(RedirectTests.elements(text)))
+        return {"notices": notices,
+                "anchors": {page: sorted((slug, RedirectTests.elements(element)[0][1]) for slug, element in pairs)
+                            for page, pairs in site.anchors.items()},
+                "table": RedirectTests.moves(site) if card_pages.SCRIPT in site.files else {},
+                "explorer": sorted(path for path in site.files if path.startswith("dependencies/scopes/"))}
+
+    def test_a_folder_renamed_with_its_statements_then_a_card_retired_into_it(self) -> None:
+        # Forward: the folder T/old (1), with its statements a (10) and b (11), became the card folder T/card; then
+        # card 7 at T/z, which held z (12), was dissolved: z moved into T/card, and card 7 was retired for card 1.
+        entries = [leaf(f"{T}/card/a"), leaf(f"{T}/card/b", own_page=True), leaf(f"{T}/card/z"),
+                   folder(f"{T}/card")]
+        rows = [*rename(f"{T}/old", f"{T}/card", 1, pages={"a": 10, "b": 11}),
+                {"page": f"{T}/z/z", "to": f"{T}/card/z", "article_id": af(12)},
+                {"card": af(7), "folder": f"{T}/z", "replaced_by": af(1)}]
+        found = self.emitted(entries, [card(1, f"{T}/card", ["a", "b", "z"])], ledger(*rows))
+        self.assertEqual(found, {
+            "notices": {
+                # Every old page route: a boxed statement's anchor on its folder page, a statement of its own page.
+                f"roadmap/{T}/old/a.md": ("../card/index.html#a", True, []),
+                f"roadmap/{T}/old/b.md": ("../card/b.html", True, []),
+                f"roadmap/{T}/z/z.md": ("../card/index.html#z", True, []),
+                # Every gone folder: its notice, with an element for each old anchor, and no refresh.
+                f"roadmap/{T}/old/README.md": ("../card/index.html", False,
+                                               [("a", "../card/index.html#a"), ("b", "../card/b.html")]),
+                f"roadmap/{T}/z/README.md": ("../card/index.html", False, [("z", "../card/index.html#z")])},
+            "anchors": {},
+            "table": {f"{T}/old": f"{T}/card", f"{T}/old/a": f"{T}/card/a", f"{T}/old/b": f"{T}/card/b",
+                      f"{T}/z": f"{T}/card", f"{T}/z/z": f"{T}/card/z"},
+            "explorer": [f"dependencies/scopes/{T}/old.md", f"dependencies/scopes/{T}/z.md"]})
+
+    def test_statements_retired_into_a_page_a_folder_and_in_place(self) -> None:
+        # Forward: the node T/n (20) was expanded into the folder T/n of its own name (21); the node T/m (22) was
+        # retired for T/j (24), which was then retired for the page T/k (23); and the boxed node T/i (25) was retired
+        # for T/h (26), which then moved into T/i, in place.
+        entries = [leaf(f"{T}/k", own_page=True), leaf(f"{T}/i"), leaf(f"{T}/n/part"), folder(f"{T}/n"), folder(T)]
+        rows = [{"statement": af(20), "page": f"{T}/n", "replaced_by": af(21)},
+                {"statement": af(22), "page": f"{T}/m", "replaced_by": af(24)},
+                {"statement": af(24), "page": f"{T}/j", "replaced_by": af(23)},
+                {"statement": af(25), "page": f"{T}/i", "replaced_by": af(26)},
+                {"page": f"{T}/h", "to": f"{T}/i", "article_id": af(26)}]
+        replacements = {af(21): ("folder", f"{T}/n"), af(23): ("page", f"{T}/k"), af(26): ("page", f"{T}/i")}
+        found = self.emitted(entries, [], ledger(*rows), replacements)
+        self.assertEqual(found, {
+            "notices": {
+                # The node expanded into the folder of its name: its old page of its own leads to the folder.
+                f"roadmap/{T}/n.md": ("n/index.html", True, []),
+                # A chain of retirements ends at the live page k, from both of its addresses.
+                f"roadmap/{T}/m.md": ("k.html", True, []), f"roadmap/{T}/j.md": ("k.html", True, []),
+                # h moved, then sits at i, in place of the boxed i: h's old page leads to i's box, and i's own old
+                # page of its own (the route the boxed replacement lacks) too.
+                f"roadmap/{T}/h.md": ("index.html#i", True, []), f"roadmap/{T}/i.md": ("index.html#i", True, [])},
+            # On T's page, each old box the endpoint does not have itself: n's, m's, j's, h's (whose link, on the page
+            # of i's box, is the box's own anchor); never i's.
+            "anchors": {f"roadmap/{T}/index.html": [("h", "#i"), ("j", "k.html"), ("m", "k.html"),
+                                                     ("n", "n/index.html")]},
+            # An explorer link to an address that leads to itself needs no rewrite.
+            "table": {f"{T}/h": f"{T}/i", f"{T}/j": f"{T}/k", f"{T}/m": f"{T}/k"},
+            "explorer": []})
+
+
+class LedgerDigestTests(unittest.TestCase):
+    """The receipt's ledger digest (docs/cards.md#reading): per file, in logical order, its path, a NUL, its length
+    in decimal, a NUL and its bytes; never a join of the rows."""
+
+    FILES = [("scripts/card-moves.jsonl", b'{"a": "1"}\n'), ("scripts/card-moves.d/20260101T000000Z-x.jsonl",
+                                                             b'{"b": "2"}\n{"c": "3"}\n')]
+
+    def test_the_digest_frames_each_file(self) -> None:
+        framed = b"".join(path.encode() + b"\0" + str(len(data)).encode() + b"\0" + data for path, data in self.FILES)
+        self.assertEqual(card_pages.ledger_digest(self.FILES), hashlib.sha256(framed).hexdigest())
+        self.assertEqual(card_pages.ledger_digest(self.FILES), ledger_digest(self.FILES))
+        self.assertNotEqual(card_pages.ledger_digest(self.FILES),
+                            hashlib.sha256(b"".join(data for _, data in self.FILES)).hexdigest())
+
+    def test_a_name_or_a_part_boundary_changes_the_digest(self) -> None:
+        renamed = [self.FILES[0], ("scripts/card-moves.d/20260101T000000Z-y.jsonl", self.FILES[1][1])]
+        moved = [("scripts/card-moves.jsonl", b'{"a": "1"}\n{"b": "2"}\n'),
+                 ("scripts/card-moves.d/20260101T000000Z-x.jsonl", b'{"c": "3"}\n')]
+        digests = {card_pages.ledger_digest(files) for files in (self.FILES, renamed, moved)}
+        self.assertEqual(len(digests), 3)
+
+
+class FragmentReceiptTests(unittest.TestCase):
+    """The hook reads the ledger's frozen file and its fragments (ledger_files) and keeps the moved addresses only with
+    an `atlas-card-moves/v3` receipt of those very files: stale, missing, malformed and non-regular parts each keep
+    nothing."""
+
+    hook = ReceiptTests.hook
+    assertMoves = ReceiptTests.assertMoves
+    ENTRIES, ROWS, CARDS, LINKS, MOVES, NO_DATA = (ReceiptTests.ENTRIES, ReceiptTests.ROWS, ReceiptTests.CARDS,
+                                                    ReceiptTests.LINKS, ReceiptTests.MOVES, ReceiptTests.NO_DATA)
+    STILL = ReceiptTests.STILL
+    PART = "scripts/card-moves.d/20260101T000000Z-z.jsonl"
+
+    def split(self, change=None):
+        rows = self.ROWS.splitlines(keepends=True)
+        return self.hook(change=change, rows=rows[0], fragments={self.PART.rsplit("/", 1)[1]: rows[1]})
+
+    def test_a_ledger_split_into_fragments_keeps_its_addresses(self) -> None:
+        site, printed = self.split()
+        self.assertMoves(site)
+        self.assertEqual(printed, self.STILL.format(self.NO_DATA))
+
+    def test_a_part_changed_after_the_receipt_keeps_nothing(self) -> None:
+        late = ledger({"page": f"{T}/elsewhere", "to": f"{T}/b/b-main", "article_id": af(13)})
+        another = "build/card-moves.json is the check of another move ledger than the one being built"
+        for name, change, reason in (
+            ("a fragment added", lambda made, root: (
+                (root / "scripts/card-moves.d/20260102T000000Z-late.jsonl").write_text(late), made)[1], another),
+            ("a fragment deleted", lambda made, root: ((root / self.PART).unlink(), made)[1], another),
+            ("a fragment renamed", lambda made, root: (
+                (root / self.PART).rename(root / self.PART.replace("-z.", "-y.")), made)[1], another),
+            ("a fragment edited", lambda made, root: ((root / self.PART).write_text(
+                (root / self.PART).read_text() + "\n"), made)[1], another),
+            ("rows moved across the boundary", lambda made, root: (
+                (root / "scripts/card-moves.jsonl").write_text(self.ROWS), (root / self.PART).write_text(
+                    "\n" + self.ROWS.splitlines(keepends=True)[1]), made)[2], another),
+            ("an entry that is no fragment", lambda made, root: (
+                (root / "scripts/card-moves.d/notes.txt").write_text("x\n"), made)[1],
+             "scripts/card-moves.d/notes.txt: not a fragment"),
+            ("a fragment that is a link", lambda made, root: (
+                (root / "kept.jsonl").write_bytes((root / self.PART).read_bytes()), (root / self.PART).unlink(),
+                (root / self.PART).symlink_to(root / "kept.jsonl"), made)[3], f"{self.PART}: no regular file"),
+            ("a folder that is no folder", lambda made, root: (
+                shutil.rmtree(root / "scripts/card-moves.d"), (root / "scripts/card-moves.d").write_text(""), made)[2],
+             "scripts/card-moves.d is no folder"),
+            ("a folder that is a link to the same fragments elsewhere", lambda made, root: (
+                (root / "scripts/card-moves.d").rename(root / "kept"),
+                (root / "scripts/card-moves.d").symlink_to(root / "kept"), made)[2],
+             "scripts/card-moves.d is no folder"),
+            ("a frozen file that is gone", lambda made, root: ((root / "scripts/card-moves.jsonl").unlink(), made)[1],
+             "there is no scripts/card-moves.jsonl"),
+        ):
+            with self.subTest(name):
+                site, printed = self.split(change)
+                self.assertIsNone(site)
+                self.assertIn(f"::error title=Moved addresses not kept::{reason}", printed)
 
 
 class ReportTests(unittest.TestCase):
