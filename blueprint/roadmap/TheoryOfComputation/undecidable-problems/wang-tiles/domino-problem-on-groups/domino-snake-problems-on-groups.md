@@ -9,11 +9,12 @@ For fixed $(G,S)$, given a tileset graph $\Gamma$ (and elements $p,q\in G$):
 - the *ouroboros problem* asks whether a $\Gamma$-ouroboros exists;
 - the *snake reachability problem* asks whether some $\Gamma$-snake connects $p$ to $q$.
 
-The *seeded* variants add a tile $a_0$ and require $\zeta(0)=a_0$. Tileset graphs are effectively equivalent to Wang tiles, whose sides indexed by $S\cup S^{-1}$ carry colors, for every finitely generated group $(G,S)$; for $\mathbb Z^2$ with its standard generators these are the classical Wang tiles.
+The *seeded* variants add a tile $a_0$ and require $\zeta(0)=a_0$. An instance is the finite graph $\Gamma$ (with $a_0$ for the seeded variants and, for snake reachability, $p$ and $q$ written as words over $S\cup S^{-1}$); the group $G$ and the generating set $S$ are fixed and not part of the input. Tileset graphs are effectively equivalent to Wang tiles, whose sides indexed by $S\cup S^{-1}$ carry colors, for every finitely generated group $(G,S)$; for $\mathbb Z^2$ with its standard generators these are the classical Wang tiles.
 
 ## Depends on
 
 - [Group](../../../../GroupTheory/group-basics/group.md)
+- [Cayley digraph](../../../../GraphTheory/algebraic-graph-theory/part-01/directed-cayley-graph.md)
 
 ## Proof depends on
 

@@ -5,8 +5,8 @@ purely geometric tilings by a given finite set of polygons have finite local com
 
 **Theorem.** For [geometric tilings and the domino problem on a set of tilings](geometric-tilings-and-the-domino-problem-on-a-se.md):
 
-1. for every nonempty set $X$ of geometric tilings with finite local complexity, the domino problem on $X$ is $\Pi^0_1$-hard, and therefore undecidable;
-2. the problem of deciding, given a finite shapeset $\mathcal{S}$ of polygons, whether the purely geometric subshift on $\mathcal{S}$ has finite local complexity is $\Sigma^0_1$-complete, and
+1. for every nonempty set $X$ of geometric tilings with finite local complexity, the domino problem on $X$ is $\Pi^0_1$-hard, and therefore undecidable, the shapeset and $X$ being fixed and only the alphabet, the tileset and the forbidden patterns forming the input;
+2. the problem of deciding, given a finite shapeset $\mathcal{S}$ of polygons by the lists of their vertices (the source does not fix how coordinates are written), whether the purely geometric subshift on $\mathcal{S}$ has finite local complexity is $\Sigma^0_1$-complete, and
    therefore undecidable.
 
 Item 1 contains the undecidability of the classical domino problem, the case of the edge-to-edge tilings by a unit square, and an earlier result for subshifts of rhombus
