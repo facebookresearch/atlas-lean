@@ -12164,6 +12164,7 @@
   "MathlibExt/Combinatorics/WeightedEdgeKernel": {"to": "Combinatorics/probabilistic-combinatorics", "title": "Moment bounds for counting"},
   "MathlibExt/Combinatorics/WeightedMatroidNonnegativeLinesConnected": {"to": "Combinatorics/matroid-theory", "title": "Non-negative lines in weighted matroids"},
   "MathlibExt/Combinatorics/WeightedProjectiveSimplexCoefficients": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Weighted projective space simplices"},
+  "MathlibExt/Combinatorics/WeightedProjectiveSimplexHStar": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Weighted projective space simplices"},
   "MathlibExt/Combinatorics/WeightedProjectiveSimplexIDP": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Weighted projective space simplices"},
   "MathlibExt/Combinatorics/WeightedProjectiveSimplexOneSupported": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Weighted projective space simplices"},
   "MathlibExt/Combinatorics/Words/AntitoneRelativePosition": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Relative position in binary words"},

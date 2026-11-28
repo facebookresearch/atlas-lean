@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexCoefficients
+public import MathlibExt.Combinatorics.WeightedProjectiveSimplexHStar
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexIDP
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexOneSupported
 public import MathlibExt.Combinatorics.WeightedProjectiveSimplexReflexive
@@ -150,20 +151,6 @@ Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (20
 A60, Lemma 1. -/
 public def setupEll {d : ℕ} (r x : Fin d → ℕ) : ℕ :=
   (1 + ∑ i, x i * r i) / weightLcm (List.ofFn r)
-
-/-- **The $h^*$ formula of a weight vector.** For a list $q = (q_1, \dots, q_n)$ of natural
-numbers, put $|q| = q_1 + \dots + q_n$ and define the weight statistic
-$w(q,b) = b - \sum_{i=1}^n \lfloor q_i b / (1 + |q|) \rfloor$. The $h^*$ formula of $q$ is the
-integer polynomial $\sum_{b=0}^{|q|} z^{w(q,b)}$.
-
-It is named a formula, not defined to be $h^*$; Theorem 5 relates it to the independently
-defined Ehrhart-series condition.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 5. -/
-public noncomputable def hStarFormula (q : List ℕ) : Polynomial ℤ :=
-  ∑ b ∈ Finset.range (q.sum + 1), Polynomial.X ^ weightStatistic q b
 
 /-- **The exponent $u(\alpha)$ of support data.** For tuples $r = (r_1, \dots, r_d)$ and
 $x = (x_1, \dots, x_d)$ of natural numbers and a natural number $\alpha$, let $\ell = \ell(r, x)$
@@ -601,25 +588,6 @@ public theorem_wanted stabilization_eventually_not_unimodal_coefficients_one_or_
       ∀ k : ℕ, k ≤ (hStarFormula (reflexiveStabilizationAt q m)).natDegree →
         (hStarFormula (reflexiveStabilizationAt q m)).coeff k = 1 ∨
           (hStarFormula (reflexiveStabilizationAt q m)).coeff k = 2
-
-/-- **The first reflexive stabilization adds one monomial to the $h^*$-formula.** Let
-$q = (q_1, \dots, q_n)$ be a list of natural numbers whose reflexive stabilization number is
-$1$, so that its first reflexive stabilization is $\operatorname{rs}(q) = (1, q_1, \dots, q_n)$.
-For a list $p = (p_1, \dots, p_m)$ of natural numbers put $|p| = p_1 + \dots + p_m$, let
-$\ell(p) = \lfloor (1 + |p|) / \operatorname{lcm}(p) \rfloor$ (taken to be $0$ when
-$\operatorname{lcm}(p) = 0$), let
-$w(p, b) = b - \sum_{i=1}^{m} \lfloor p_i b / (1 + |p|) \rfloor$ be its weight statistic, and let
-$h_p(z) = \sum_{b=0}^{|p|} z^{w(p, b)} \in \mathbb{Z}[z]$ be its explicit $h^*$-formula. Suppose
-that $\ell(\operatorname{rs}(q)) = 1$. Then $h_{\operatorname{rs}(q)}(z) = h_q(z) + z^{n+1}$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 12. -/
-public theorem_wanted stabilization_hStar_add_monomial (q : List ℕ)
-    (hrsn : reflexiveStabilizationNumber q = 1)
-    (hell : listEll (reflexiveStabilization q) = 1) :
-    hStarFormula (reflexiveStabilization q) =
-      hStarFormula q + Polynomial.X ^ (q.length + 1)
 
 /-- **Lattice points of the cone over a polytope.** For a set $P \subseteq \mathbb{R}^n$, a pair
 $(t, w)$ with $t \in \mathbb{N}$ and $w \in \mathbb{Z}^n$ is a lattice point of the cone over $P$
