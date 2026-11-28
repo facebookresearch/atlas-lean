@@ -21,7 +21,8 @@ semi-stables*, Astérisque 223 (1994), Exposé III, §3.7 pp. 141–142, we defi
 * `Representation.IsHodgeTate`: `V` is **Hodge–Tate** over `K` if it is `B_HT`-admissible as a
   representation of `G_K` (Definition 6.3), for the Hodge–Tate ring `B_HT = ℂ_p[t, t⁻¹]` of
   `MathlibExt.NumberTheory.Padics.HodgeTate`: `V` is finite-dimensional and
-  `D_HT(V) = (B_HT ⊗_{ℚ_p} V)^{G_K}` has dimension `dim_{ℚ_p} V` over `B_HT^{G_K} = K`;
+  `D_HT(V) = (B_HT ⊗_{ℚ_p} V)^{G_K}` has dimension `dim_{ℚ_p} V` over `B_HT^{G_K}` (identified
+  with `K` when `K` is finite over `ℚ_p`);
 * `Representation.tateTwist`: the Tate twist `V(i) = V ⊗_{ℚ_p} ℚ_p(i)`, on which `σ` acts by
   `χ(σ)ⁱ ρ(σ)`, and `Representation.cyclotomic p`, the representation `ℚ_p(1)`;
 * `Representation.twistPeriods`: the space `(ℂ_p(i) ⊗_{ℚ_p} V)^{G_K}`, a module over `ℂ_p^{G_K}`;
