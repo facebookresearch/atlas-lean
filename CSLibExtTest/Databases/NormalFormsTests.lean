@@ -29,6 +29,9 @@ Attributes `A, B, C = 0, 1, 2`, values natural numbers.
 * Satisfaction on a sub-schema is satisfaction of the projected dependencies: `{C → A}` imposes
   nothing on `AB`, whose decomposition into `A` and `B` is lossy.
 * No BCNF decomposition of `Fdep` preserves dependencies (Abiteboul–Hull–Vianu, Example 11.2.10).
+* Minimal covers and 3NF synthesis: a superkey as the key scheme, a non-minimal cover, or a wide
+  right side breaks third normal form; `minimalCover` repairs the cover, and synthesis from its
+  output is in third normal form.
 -/
 
 @[expose] public section
@@ -223,4 +226,59 @@ example : ¬ LosslessJoin ℕ ({⟨{2}, {0}⟩} : Finset (FD (Fin 3))) {0} {1} :
   revert this
   decide
 
+/-! ### Minimal covers and third normal form -/
+
+-- A superkey key scheme is not enough: for `FAB = {A → B}`, the scheme `ABC` is not in 3NF.
+example : IsSuperkey FAB Finset.univ ∧
+    Finset.univ ∈ synthesize ([⟨{0}, {1}⟩] : List (FD (Fin 3))) Finset.univ ∧
+    ¬ Is3NF FAB Finset.univ := by
+  decide
+
+/-- The non-minimal cover `{AC → B, A → B}` of `FAB`. -/
+def GnonMin : List (FD (Fin 3)) := [⟨{0, 2}, {1}⟩, ⟨{0}, {1}⟩]
+
+-- It is equivalent to `FAB` but not minimal, and synthesis with the candidate key `AC` produces
+-- the scheme `ABC`, which is not in 3NF.
+example : Equivalent FAB GnonMin.toFinset ∧ ¬ IsMinimalCover FAB GnonMin.toFinset ∧
+    IsCandidateKey FAB {0, 2} ∧ ({0, 1, 2} : Finset (Fin 3)) ∈ synthesize GnonMin {0, 2} ∧
+    ¬ Is3NF FAB {0, 1, 2} := by
+  decide
+
+/-- `Fchain = {A → B, B → C}`. -/
+def Fchain : Finset (FD (Fin 3)) := {⟨{0}, {1}⟩, ⟨{1}, {2}⟩}
+
+/-- A cover of `Fchain` with a two-attribute right side. -/
+def Gwide : List (FD (Fin 3)) := [⟨{0}, {1, 2}⟩, ⟨{1}, {2}⟩]
+
+-- Single-attribute right sides are needed: `Gwide` is equivalent to `Fchain`, but its scheme
+-- `ABC` is not in 3NF (`B → C` with `B` not a superkey and `C` not prime).
+example : Equivalent Fchain Gwide.toFinset ∧ ¬ IsMinimalCover Fchain Gwide.toFinset ∧
+    IsCandidateKey Fchain {0} ∧ ({0, 1, 2} : Finset (Fin 3)) ∈ synthesize Gwide {0} ∧
+    ¬ Is3NF Fchain {0, 1, 2} := by
+  decide
+
+/-- A redundant, non-reduced presentation of `Fchain`: `{A → BC, B → C, AB → C}`. -/
+def lchain : List (FD (Fin 3)) := [⟨{0}, {1, 2}⟩, ⟨{1}, {2}⟩, ⟨{0, 1}, {2}⟩]
+
+/-- The minimal cover `{A → B, B → C}` of `Fchain`. -/
+def Gchain : List (FD (Fin 3)) := [⟨{0}, {1}⟩, ⟨{1}, {2}⟩]
+
+-- The algorithm splits, reduces and removes redundancy.
+example : minimalCover lchain (List.finRange 3) = Gchain := by decide
+
+-- It repairs the non-minimal cover of `FAB`.
+example : minimalCover GnonMin (List.finRange 3) = [⟨{0}, {1}⟩] := by decide
+
+-- Positive control: `{A → B, B → C}` is a minimal cover of `Fchain`, and all synthesized schemes
+-- `A`, `AB`, `BC` are in 3NF.
+example : IsMinimalCover Fchain Gchain.toFinset ∧
+    synthesize Gchain {0} = [{0}, {0, 1}, {1, 2}] ∧
+    ∀ S ∈ synthesize Gchain {0}, Is3NF Fchain S := by
+  decide
+
+-- The general theorems, end to end on `lchain`.
+example : ∀ S ∈ synthesize (minimalCover lchain (List.finRange 3))
+    (findKey lchain.toFinset (List.finRange 3)), Is3NF lchain.toFinset S :=
+  fun _ hS => is3NF_of_mem_synthesize (isMinimalCover_minimalCover _ List.mem_finRange)
+    (findKey_isCandidateKey _ List.mem_finRange) hS
 end Cslib.Databases.NormalFormsTests
