@@ -9,15 +9,15 @@ Remark 3.10 of the source states that the results of its Section 3 also hold for
 ## Depends on
 
 - [Quantified intuitionistic logic $\mathbf{QInt}$](quantified-intuitionistic-logic-qint.md)
-- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [The tiling problem is undecidable](../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
+- [The tiling problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 
 ## Expansion
 
-Kontchakov, Kurucz and Zakharyaschev (2005) showed that the two-variable fragment of $\mathbf{QInt}$ is undecidable by reducing the complement of the $\mathbb{N} \times \mathbb{N}$ tiling problem. The source first makes that encoding positive and monadic: binary letters are simulated by monadic ones in the positive fragment, giving undecidability of the positive monadic two-variable fragment (Theorem 3.4). It then embeds that fragment into the subfragment with one monadic letter, adapting a propositional technique of Rybakov that reduces positive intuitionistic formulas to formulas in two variables: each letter $P_i$ is replaced by a positive formula in the single letter $P$ that, in a countermodel built over a fixed layered frame, defines the worlds where $P_i$ holds. The translation $\varphi \mapsto \varphi^\ast$ satisfies $\varphi \in \mathbf{QInt}$ iff $\varphi^\ast \in \mathbf{QInt}$ and introduces no new individual variables.
+Kontchakov, Kurucz and Zakharyaschev (2005) showed that the two-variable fragment of $\mathbf{QInt}$ is undecidable by reducing the complement of the $\mathbb{N} \times \mathbb{N}$ tiling problem. The source first makes that encoding positive and monadic: binary letters are simulated by monadic ones in the positive fragment, giving undecidability of the positive monadic two-variable fragment (Theorem 3.4). It then embeds that fragment into the subfragment with one monadic letter, adapting a propositional technique of Rybakov that reduces positive intuitionistic formulas to formulas in two propositional variables (Section 3.2 of the source): each letter $P_i$ is replaced by a positive formula in the single letter $P$ that, in a countermodel built over a fixed layered frame, defines the worlds where $P_i$ holds. The translation $\varphi \mapsto \varphi^\ast$ satisfies $\varphi \in \mathbf{QInt}$ iff $\varphi^\ast \in \mathbf{QInt}$ and introduces no new individual variables. The proof uses the $\mathbb N \times \mathbb N$ tiling problem, which the linked plane tiling page does not state: a good expansion links a page stating that a tile set tiles the quadrant iff it tiles the plane and that the quadrant tiling problem is $\Pi^0_1$-complete (Berger).
 
 ## Sources
 

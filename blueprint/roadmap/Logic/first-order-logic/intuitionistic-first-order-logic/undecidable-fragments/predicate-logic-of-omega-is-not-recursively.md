@@ -15,10 +15,10 @@ is both $\Sigma^0_1$-hard and $\Pi^0_1$-hard (Theorem 7.3), and so is its positi
 ## Depends on
 
 - [Quantified intuitionistic logic QInt](quantified-intuitionistic-logic-qint.md)
-- [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
-- [The arithmetical class $\Pi_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
-- [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
-- [Co-recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
+- [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [The arithmetical class $\Pi_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-pi.md)
+- [Recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Co-recognizability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-co-recognizable.md)
 
 ## Proof depends on
 
@@ -26,7 +26,7 @@ is both $\Sigma^0_1$-hard and $\Pi^0_1$-hard (Theorem 7.3), and so is its positi
 
 ## Expansion
 
-$\Sigma^0_1$-hardness follows from the construction for $\mathbf{QLC}$ (Theorem 6.2), since every such $L$ lies between $\mathbf{QLC}$ and $\mathbf{QSIL}(\mathfrak{G} \odot \mathbb{N})$. For $\Pi^0_1$-hardness one uses a different tiling problem, shown $\Sigma^0_1$-hard in the appendix: whether a set $T = \{t_0, \dots, t_n\}$ admits a tiling of $\mathbb{N} \times \mathbb{N}$ with $f(0,0) = t_0$ and with $f(0, j) = t_1$ for all $j$ beyond some $j^\ast$. Formulas of the same fragment, built with the abbreviation $x \preccurlyeq y = Q(y) \to Q(x)$, are refuted in a model over $\mathfrak{G}$ iff such a tiling exists, which needs the well-ordering of $\omega$; so this $\Sigma^0_1$-hard problem reduces to the complement of $L$.
+$\Sigma^0_1$-hardness follows from the construction for $\mathbf{QLC}$ (Theorem 6.2), since every such $L$ lies between $\mathbf{QLC}$ and $\mathbf{QSIL}(\mathfrak{G} \odot \mathbb{N})$. For $\Pi^0_1$-hardness one uses a different tiling problem, shown $\Sigma^0_1$-hard in the appendix: whether a set $T = \{t_0, \dots, t_n\}$ admits a tiling of $\mathbb{N} \times \mathbb{N}$ with $f(0,0) = t_0$ and with $f(0, j) = t_1$ for all $j$ beyond some $j^\ast$. Formulas of the same fragment, built with the abbreviation $x \preccurlyeq y = Q(y) \to Q(x)$, are refuted in a model over $\mathfrak{G}$ iff such a tiling exists, which uses that every infinite subset of $\omega$ is cofinal (proof of Lemma 7.2; for frames $\langle\alpha, \subseteq\rangle$ the source obtains only $\Sigma^0_1$-hardness, Corollary 6.4); so this $\Sigma^0_1$-hard problem reduces to the complement of $L$.
 
 ## Sources
 

@@ -13,7 +13,7 @@ The signature is part of the input in clause 1, and in clause 2 consists of unar
 
 - [Mints hierarchy of implicational-universal formulas](mints-hierarchy-of-implicational-universal.md)
 - [Quantified intuitionistic logic QInt](quantified-intuitionistic-logic-qint.md)
-- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
@@ -21,7 +21,7 @@ None.
 
 ## Expansion
 
-The proof reduces the solvability of tiling puzzles, a branching variant of tiling problems shown undecidable in Section 3 (Lemma 3.1), to provability: each puzzle is effectively translated into a $\Delta_2$ formula that is provable iff the puzzle is solvable (the two directions are separate lemmas of Section 4). Since the formulas used are "easy" in the source's sense, a translation (Section 4.1) $\varphi \mapsto \overline{\varphi}$ that replaces predicates of higher arity by unary predicates with auxiliary symbols preserves provability and gives clause 2. Earlier, undecidability of $\Pi_2$ for the full language with one binary predicate followed from a result of Orevkov, and the conference version of the paper had shown undecidability of $\Pi_2$ in the $(\forall,\to)$-fragment.
+The proof reduces the solvability of deterministic tiling puzzles to provability (Section 3.1): a puzzle $\langle T, R, E, ok\rangle$ with a finite set $T$ of tiles and $R : T^4 \to T$ determines a unique tiling $G^\ast$ of $\mathbb N \times \mathbb N$, with $E$ on both axes and $G^\ast(m+1, n+1) = R(G^\ast(m, n+1), G^\ast(m, n), G^\ast(m+1, n), G^\ast(m+2, n))$, and it is solvable when $ok$ occurs in $G^\ast$. Solvability is undecidable (Lemma 3.1, by reduction from whether a deterministic Turing machine accepts the empty input); a good expansion links a page for that lemma. In the reduction, each puzzle is effectively translated into a $\Delta_2$ formula that is provable iff the puzzle is solvable (the two directions are separate lemmas of Section 4). Since the formulas used are "easy" in the source's sense, a translation (Section 4.1) $\varphi \mapsto \overline{\varphi}$ that replaces predicates of higher arity by unary predicates with auxiliary symbols preserves provability and gives clause 2. Earlier, undecidability of $\Pi_2$ for the full language with one binary predicate followed from a result of Orevkov, and the conference version of the paper had shown undecidability of $\Pi_2$ in the $(\forall,\to)$-fragment.
 
 ## Sources
 

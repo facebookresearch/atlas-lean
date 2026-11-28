@@ -16,16 +16,16 @@ Since $\mathbf{QLC}$ is the superintuitionistic fragment of the modal predicate 
 ## Depends on
 
 - [Quantified intuitionistic logic QInt](quantified-intuitionistic-logic-qint.md)
-- [The arithmetical class $\Sigma_n$](../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
-- [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [The arithmetical class $\Sigma_n$](../../../../TheoryOfComputation/degrees-and-hierarchies/arithmetical-hierarchy/is-sigma.md)
+- [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
 
-- [The tiling problem is undecidable](../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
+- [The tiling problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/wang-tiles/the-tiling-problem-is-undecidable.md)
 
 ## Expansion
 
-For a finite set $T$ of tile types one constructs a two-variable formula $\varphi_T$ such that if some $T$-tiling of $\mathbb{N} \times \mathbb{N}$ exists, $\varphi_T$ is refuted at the root of a model over $\mathfrak{G} \odot \mathbb{N}$, and if none exists, $\varphi_T$ is valid on all frames of $\mathbf{QLC}$. The construction modifies a method of Marx and Reynolds that encodes tilings using natural numbers rather than an enumeration of pairs, and uses a "double labeling" of the elements of the domains so that two individual variables suffice. Membership in $\Sigma^0_1$ holds because $\mathbf{QLC}$ and $\mathbf{QLC.cd}$ are recursively axiomatizable.
+For a finite set $T$ of tile types one constructs a two-variable formula $\varphi_T$ such that if some $T$-tiling of $\mathbb{N} \times \mathbb{N}$ exists, $\varphi_T$ is refuted at the root of a model over $\mathfrak{G} \odot \mathbb{N}$, and if none exists, $\varphi_T$ is valid on all frames of $\mathbf{QLC}$. The construction modifies a method of Marx and Reynolds that numbers the cells of $\mathbb N \times \mathbb N$ by natural numbers through Cantor's enumeration of pairs, and uses a "double labeling" of the elements of the domains so that two individual variables suffice. Membership in $\Sigma^0_1$ holds because $\mathbf{QLC}$ and $\mathbf{QLC.cd}$ are recursively axiomatizable. The proof uses the $\mathbb N \times \mathbb N$ tiling problem, which the linked plane tiling page does not state: a good expansion links a page stating that a tile set tiles the quadrant iff it tiles the plane and that the quadrant tiling problem is $\Pi^0_1$-complete (Berger).
 
 ## Sources
 

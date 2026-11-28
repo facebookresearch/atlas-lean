@@ -7,3 +7,4 @@ Natural deduction for intuitionistic first-order logic and its Kripke semantics 
 - [Persistence of forcing in first-order Kripke models](persistence-of-forcing-in-first-order-kripke-models.md)
 - [Kripke soundness and completeness of intuitionistic first-order logic](kripke-soundness-and-completeness-of-iqc.md)
 - [Existence property of intuitionistic first-order logic](existence-property-of-iqc.md)
+- [Undecidable fragments of intuitionistic predicate logic](undecidable-fragments/README.md)
