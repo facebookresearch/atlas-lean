@@ -18,6 +18,7 @@ length, the rank, and the `p`-length of `G` if `G` is soluble.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.GroupTheory.FullPrimeMaximalSupersolubleKourovka19Problem55
 public import WantedExt.GroupTheory.KourovkaNotebookShared
 
 @[expose] public section
@@ -29,8 +30,10 @@ Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theor
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.55 (V. S.
 Monakhov). UnsolvedMath record UM-00701603 (`KOU-19.55`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Supersoluble: a normal series with cyclic factors, written with generators `g₀, …, g_{n-1}` whose
-initial segments generate normal subgroups. A composition factor `S` of `G` is a simple group onto
+`MathlibExt/GroupTheory/FullPrimeMaximalSupersolubleKourovka19Problem55.lean` defines
+`IsSupersoluble` and `MaximalFullPrimeSupersoluble` and proves `fittingHeightUnbounded_holds`.
+Supersolubility is expressed by generators `g₀, …, g_{n-1}` whose initial segments generate a
+normal series with cyclic factors. A composition factor `S` of `G` is a simple group onto
 which some subnormal subgroup of `G` maps (`IsCompositionFactor`). The nilpotency length is the
 Fitting height (least length of a normal series with nilpotent factors). The rank of a soluble group
 is read as the largest rank of its chief factors (Huppert's rank; a chief factor of a finite soluble
@@ -39,30 +42,14 @@ V₁ ⋯ V_n` (proof of Theorem B) the minimal normal subgroup `V_n` is such a c
 tends to infinity. A chief factor of rank `k` is a section that needs `k` generators, so the target
 also gives unbounded Prüfer rank (the largest number of generators a subgroup needs). `p`-length at
 most `1` means normal subgroups `N ≤ M` with `N` a `p'`-group, `M / N` a `p`-group and `G / M` a
-`p'`-group. The four targets give the answers: (a) every non-abelian simple group occurs; (b) the
-Fitting height and the rank are unbounded and the `p`-length is at most `1`. `IsChiefFactor`,
-`IsCompositionFactor` and `FittingHeightLE` are the shared definitions in
-`WantedExt/GroupTheory/KourovkaNotebookShared.lean`.
+`p'`-group.
+
+The three targets in this module state that every non-abelian simple group occurs in (a) and that
+the rank is unbounded and the `p`-length is at most `1` in (b). They use the shared definitions
+`IsChiefFactor` and `IsCompositionFactor`.
 -/
 
 open MathlibExt.GroupTheory.KourovkaNotebookShared
-
-/-- **Supersoluble group (generator form).** A group $G$ is supersoluble when there are a natural
-number $n$ and elements $g_0, \dots, g_{n-1}$ of $G$ that generate $G$ such that, for every
-$i \le n$, the subgroup $G_i = \langle g_j : j < i \rangle$ is normal in $G$.
-
-Then $1 = G_0 \le \dots \le G_n = G$ is a normal series with cyclic factors
-$G_{i+1} / G_i = \langle G_i, g_i \rangle / G_i$. -/
-def IsSupersoluble (G : Type*) [Group G] : Prop :=
-  ∃ (n : ℕ) (g : Fin n → G), (∀ i : ℕ, i ≤ n → (Subgroup.closure (g '' {j | j.val < i})).Normal) ∧
-    Subgroup.closure (Set.range g) = ⊤
-
-/-- **Monakhov's condition.** A group $G$ satisfies Monakhov's condition when every maximal
-subgroup $M$ of $G$ with $\pi(M) = \pi(G)$ is supersoluble, where $\pi(X)$ is the set of prime
-factors of the order of $X$ if $X$ is finite, and is empty if $X$ is infinite. -/
-def MaximalFullPrimeSupersoluble (G : Type*) [Group G] : Prop :=
-  ∀ M : Subgroup G, IsCoatom M → (Nat.card M).primeFactors = (Nat.card G).primeFactors →
-    IsSupersoluble M
 
 /-- **Chief factor of rank above a bound.** A group $G$ has a chief factor of rank greater than a
 natural number $r$ when there are a chief factor $A / B$ of $G$, a prime $p$ and a natural number
@@ -92,14 +79,6 @@ def everyNonabelianSimpleGroupOccurs : Prop :=
   ∀ (S : Type) [Group S] [Finite S], IsSimpleGroup S → (∃ a b : S, a * b ≠ b * a) →
     ∃ (G : Type) (_ : Group G) (_ : Finite G), MaximalFullPrimeSupersoluble G ∧
       IsCompositionFactor S G
-
-/-- **Kourovka 19.55(b) (Monakhov): unbounded Fitting height.** The proposition that for every
-natural number $h$ there is a finite soluble group $G$ whose Fitting height is greater than $h$ and
-in which every maximal subgroup $M$ with $\pi(M) = \pi(G)$ is supersoluble, where $\pi(X)$ is the
-set of primes dividing the order of $X$. -/
-def fittingHeightUnbounded : Prop :=
-  ∀ h : ℕ, ∃ (G : Type) (_ : Group G) (_ : Finite G), Group.IsSolvable G ∧
-    MaximalFullPrimeSupersoluble G ∧ ¬ FittingHeightLE G h
 
 /-- **Unbounded chief-factor rank under Monakhov's condition (the claim).** The statement that for
 every natural number $r$ there is a finite soluble group $G$ satisfying Monakhov's condition
@@ -134,22 +113,6 @@ examples of arbitrarily large nilpotency length and rank) and Theorem C (the p-l
 prime divisor p of |G|); Kourovka Archive, Problem 19.55, https://arxiv.org/abs/2010.04808.
 -/
 public theorem_wanted everyNonabelianSimpleGroupOccurs_holds : everyNonabelianSimpleGroupOccurs
-
-/--
-**Moretó: soluble groups in Kourovka 19.55 have unbounded Fitting height.** For every natural
-number $h$ there is a finite soluble group $G$ whose Fitting height is greater than $h$ and in
-which every maximal subgroup $M$ with $\pi(M) = \pi(G)$ is supersoluble, where $\pi(X)$ is the set
-of primes dividing the order of $X$.
-
-Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
-Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.55 (V. S.
-Monakhov); resolution: A. Moretó, Finite groups whose maximal subgroups of order divisible by all
-the primes are supersolvable, Monatsh. Math. 195 (2021), no. 3, 497-500 (arXiv:2010.04808),
-Theorem A (every nonabelian simple group occurs as a composition factor), Theorem B (solvable
-examples of arbitrarily large nilpotency length and rank) and Theorem C (the p-length is 1 for every
-prime divisor p of |G|); Kourovka Archive, Problem 19.55, https://arxiv.org/abs/2010.04808.
--/
-public theorem_wanted fittingHeightUnbounded_holds : fittingHeightUnbounded
 
 /--
 **Unbounded chief-factor rank under Monakhov's condition.** For every natural number $r$ there is

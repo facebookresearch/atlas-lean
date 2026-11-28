@@ -15,9 +15,12 @@ finite `p`-groups, the restricted wreath product, Skiba's `σ`-notions (partitio
 primes, `σ`-primary integers, `σ`-subnormal subgroups, `σ`-nilpotent and `σ`-soluble groups), and
 verbal subgroups (Problems 2.43, 8.18).
 The chief factors, prime partitions, σ-primary integers, σ-subnormal subgroups and σ-soluble
-groups are imported from `MathlibExt.GroupTheory.SigmaSubnormal`, and the σ-nilpotent groups
-from `MathlibExt.GroupTheory.SigmaNilpotent`. The Fitting subgroup and the free soluble groups
-are `fittingSubgroup` and `FreeSolubleGroup` of the Kourovka 17.40 and 1.89 entries.
+groups are imported from
+`MathlibExt.GroupTheory.SigmaSubnormal`, the σ-nilpotent groups from
+`MathlibExt.GroupTheory.SigmaNilpotent`, and the bound on the Fitting height from
+`MathlibExt.GroupTheory.FittingHeight`. The Fitting subgroup and the free
+soluble groups are `fittingSubgroup` and `FreeSolubleGroup` of the Kourovka 17.40 and 1.89
+entries.
 -/
 
 module
@@ -28,6 +31,7 @@ public import Mathlib.GroupTheory.Nilpotent
 public import Mathlib.GroupTheory.RegularWreathProduct
 public import Mathlib.GroupTheory.Solvable
 public import Mathlib.Order.CompletePartialOrder
+public import MathlibExt.GroupTheory.FittingHeight
 public import MathlibExt.GroupTheory.KourovkaCompositionFactor
 public import MathlibExt.GroupTheory.SigmaNilpotent
 public import MathlibExt.GroupTheory.SigmaSubnormal
@@ -35,14 +39,6 @@ public import MathlibExt.GroupTheory.SigmaSubnormal
 @[expose] public section
 
 namespace MathlibExt.GroupTheory.KourovkaNotebookShared
-
-/-- **Groups of Fitting height at most $h$.** For a natural number $h$, a group $G$ has Fitting
-height (nilpotent length) at most $h$ if there are normal subgroups
-$1 = G_0 \le G_1 \le \cdots \le G_h = G$ of $G$ such that for every $i < h$ some term of the lower
-central series of $G_{i+1}$ lies in $G_i$, that is, $G_{i+1} / G_i$ is nilpotent. -/
-def FittingHeightLE (G : Type*) [Group G] (h : ℕ) : Prop :=
-  ∃ s : ℕ → Subgroup G, s 0 = ⊥ ∧ s h = ⊤ ∧ ∀ i < h, (s i).Normal ∧ s i ≤ s (i + 1) ∧
-    ∃ c : ℕ, (s (i + 1)).lowerCentralSeries c ≤ s i
 
 /-- **Conjugacy separable groups.** A group $G$ is conjugacy separable if any two elements
 $x, y \in G$ whose images are conjugate in every quotient $G / N$ by a normal subgroup $N$ of
