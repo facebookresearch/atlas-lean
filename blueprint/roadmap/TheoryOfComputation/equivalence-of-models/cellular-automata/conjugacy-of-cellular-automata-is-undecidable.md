@@ -1,6 +1,6 @@
 # Conjugacy of cellular automata is undecidable
 
-It is undecidable whether two given one-dimensional cellular automata are topologically conjugate, whether one is a factor of the other, and whether one embeds into the other, already for one-sided automata, and the same holds for reversible two-dimensional automata.
+It is undecidable whether two given one-dimensional cellular automata are topologically conjugate, whether the first is a factor of the second, and whether the first embeds into the second, already for one-sided automata, and the same holds for reversible two-dimensional automata.
 
 **Theorem.** Let $\mathbb M = \mathbb N$ or $\mathbb M = \mathbb Z$, and consider [cellular automata](cellular-automata-on-z-d.md) $F : A^{\mathbb M} \to A^{\mathbb M}$ and $G : B^{\mathbb M} \to B^{\mathbb M}$ as dynamical systems. For $\mathbb M=\mathbb N$ these are *one-sided* automata, defined as on the linked page but on configurations indexed by $\mathbb N$ with a neighborhood $\{0,1,\dots,r\}$, so that $F(c)_i=f(c_i,\dots,c_{i+r})$; an instance is the finite local rule. A *homomorphism* from $(A^{\mathbb M}, F)$ to $(B^{\mathbb M}, G)$ is a continuous map $H$ with $H \circ F = G \circ H$; it is a *factor map* if surjective, an *embedding* if injective and a *conjugacy* if bijective, and it is *strong* if it also commutes with the shift. There is no algorithm that decides, given two cellular automata $F$ and $G$ on $A^{\mathbb M}$:
 

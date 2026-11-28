@@ -3,6 +3,7 @@
 In every dimension, nilpotent cellular automata cannot be separated by an algorithm from non-convergent ones, and it is undecidable whether a given convergent cellular automaton is bounded-change.
 
 **Theorem (Ollinger and Theyssier).** In every dimension $d\ge1$, call a [cellular automaton](../cellular-automata-on-z-d.md) $F$ *nilpotent* if some power $F^t$, $t>0$, is constant. For [convergent](convergent-cellular-automata.md) and [bounded-change](bounded-change-cellular-automata.md) automata:
+
 1. the set of nilpotent cellular automata and the set of non-convergent cellular automata are recursively inseparable: no decidable set of automata contains every nilpotent one and no non-convergent one; in particular convergence and bounded change are undecidable;
 2. it is undecidable, given a convergent cellular automaton, whether it is bounded-change.
 

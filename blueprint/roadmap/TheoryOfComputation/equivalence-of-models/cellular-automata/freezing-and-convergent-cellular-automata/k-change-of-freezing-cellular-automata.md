@@ -14,11 +14,11 @@ The proof uses one-dimensional automata. The bound $n-1$ for an $n$-state freezi
 
 ## Proof depends on
 
-- [Reachability for one-dimensional freezing cellular automata is undecidable](cylinder-reachability-of-freezing-cellular.md)
+- [Two-counter machines are universal](../../counter-machines/two-counter-machines-are-universal.md)
 
 ## Expansion
 
-The Minsky machine simulation $F_M$ used for cylinder reachability is reused. Its freezing order admits a unique longest chain of state changes, through an initialization sequence $i_0\to\cdots\to i_K$, the initial machine state, three counter-marker states and the halting state $h$, with $K=3k'+3$ for $k'$ counters; every other admissible sequence is shorter. This longest chain can occur at the origin only in a configuration whose evolution simulates a halting computation of $M$ from zero counters, so $F_M$ fails to be $(K+4)$-change iff $M$ halts on the empty input, which is undecidable.
+The proof reuses the Minsky machine simulation $F_M$ built for [cylinder reachability](cylinder-reachability-of-freezing-cellular.md) (Lemmas 3 and 4 of the source), not the undecidability of that problem; the undecidability comes from the halting of two-counter machines on the empty input (Theorem 4). Its freezing order admits a unique longest chain of state changes, through an initialization sequence $i_0\to\cdots\to i_K$, the initial machine state, three counter-marker states and the halting state $h$, with $K=3k'+3$ for $k'$ counters; every other admissible sequence is shorter. This longest chain can occur at the origin only in a configuration whose evolution simulates a halting computation of $M$ from zero counters, so $F_M$ fails to be $(K+4)$-change iff $M$ halts on the empty input, which is undecidable.
 
 ## Sources
 

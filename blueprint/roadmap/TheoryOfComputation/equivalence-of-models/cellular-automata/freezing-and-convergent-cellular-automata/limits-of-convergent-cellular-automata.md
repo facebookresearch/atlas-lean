@@ -3,6 +3,7 @@
 There are freezing cellular automata whose limit value and freezing time are uncomputable, convergent automata whose limit from a computable configuration is uncomputable, and two-dimensional freezing automata whose limit state sets are neither recursively enumerable nor co-recursively enumerable.
 
 **Theorem (Ollinger and Theyssier).** For a [convergent](convergent-cellular-automata.md) cellular automaton $F$ with limit configurations $F^\omega(c)$ and freezing times $\tau(c,z)$, the *limit value problem* $\mathrm{LIMIT}_F$ maps a computable configuration $c$, given by a Turing machine, to $F^\omega(c)_0$, and the *freezing time problem* $\mathrm{TIME}_F$ maps it to $\tau(c,0)$; for a configuration $c$ and state $q$, $\chi_q(c)=\{z: c_z=q\}$.
+
 1. There is a [freezing](freezing-cellular-automata.md) cellular automaton $F$ for which both $\mathrm{LIMIT}_F$ and $\mathrm{TIME}_F$ are uncomputable (Theorem 7).
 2. There is a one-dimensional convergent cellular automaton $F$ and a computable configuration $c$ such that $F^\omega(c)$ is uncomputable (Theorem 9).
 3. There is a two-dimensional freezing cellular automaton $F$, a finite configuration $c$ and a state $q$ such that $\chi_q(F^\omega(c))$ is neither recursively enumerable nor co-recursively enumerable (Corollary 1).

@@ -7,13 +7,15 @@ Let $\mathcal{X}$ be a finite alphabet, $\mathcal{X}^*$ the finite and $\mathcal
 empty string, and $x \sqsubseteq y$ the prefix relation. A *semimeasure* is a function $\nu : \mathcal{X}^* \to [0, 1]$ with
 $\nu(\epsilon) \le 1$ and $\nu(x) \ge \sum_{a \in \mathcal{X}} \nu(xa)$ for all $x$; it is a *measure* if both are equalities.
 
-Fix a universal monotone Turing machine $U$, the reference machine. *Solomonoff's prior* is
+A *monotone machine* $T$ is a Turing machine with a one-way read-only binary input tape and a one-way write-only output tape over $\mathcal{X}$; on a finite or infinite binary input $p$ it outputs the string $T(p) \in \mathcal{X}^* \cup \mathcal{X}^\infty$ written while it reads $p$, so output already written is never taken back: $T(p) \sqsubseteq T(pq)$. A monotone machine $U$ is *universal* if for every monotone machine $T$ there is a binary string $q_T$ with $U(q_T p) = T(p)$ for all $p$; this is the sense in which the source's proof of Theorem 4 calls a machine running $U(p)$ on input $00p$ universal.
+
+Fix a universal monotone machine $U$, the reference machine. *Solomonoff's prior* $M(x)$ is the probability that $U$ outputs a string beginning with $x$ when its input is an infinite sequence $\omega \in \{0, 1\}^{\mathbb{N}}$ of independent uniformly random bits:
 
 $$
-M(x) = \sum_{p \,:\, x \sqsubseteq U(p)} 2^{-|p|} ,
+M(x) = \lambda\{ \omega \in \{0, 1\}^{\mathbb{N}} : x \sqsubseteq U(\omega) \} = \sum_{p \in P_x} 2^{-|p|} ,
 $$
 
-the sum over the binary programs $p$ whose output starts with $x$. $M$ is a semimeasure but not a measure. The *measure mixture*
+where $\lambda$ is the uniform measure and $P_x$ is the set of *minimal* programs for $x$, the finite binary strings $p$ with $x \sqsubseteq U(p)$ such that no proper prefix $q$ of $p$ has $x \sqsubseteq U(q)$. The source writes the sum over all $p$ with $x \sqsubseteq U(p)$ as shorthand; since every extension of such a $p$ also qualifies, only the minimal ones are counted, and $P_x$ is prefix-free, so $M(x) \le 1$. $M$ is a semimeasure but not a measure. The *measure mixture*
 is
 
 $$
@@ -41,5 +43,5 @@ None.
 
 ## Sources
 
-- J. Leike and M. Hutter, "On the computability of Solomonoff induction and knowledge-seeking", in *Algorithmic Learning Theory (ALT 2015)*, Lecture Notes in Computer Science 9355, pp. 364–378, Springer, 2015, doi:10.1007/978-3-319-24486-0_24; numbering of the version arXiv:1507.04124v1: Section 2.2 (strings), Definition 1 ($\Sigma^0_n$-, $\Pi^0_n$-, $\Delta^0_n$-computable functions) and the beginning of Section 3 (semimeasures, Solomonoff's prior, the measure mixture, conditional probabilities).
+- J. Leike and M. Hutter, "On the computability of Solomonoff induction and knowledge-seeking", in *Algorithmic Learning Theory (ALT 2015)*, Lecture Notes in Computer Science 9355, pp. 364–378, Springer, 2015, doi:10.1007/978-3-319-24486-0_24; numbering of the version arXiv:1507.04124v1: Section 2.2 (strings), Definition 1 ($\Sigma^0_n$-, $\Pi^0_n$-, $\Delta^0_n$-computable functions), the beginning of Section 3 (semimeasures, Solomonoff's prior as the probability of output starting with $x$ on uniformly random input bits, Eq. (2), the measure mixture, conditional probabilities) and the proof of Theorem 4 (the universal machine $U'$ built from $U$).
 - M. Li and P. Vitányi, *An Introduction to Kolmogorov Complexity and Its Applications*, 3rd ed., Springer, 2008: the section on continuous sample spaces (universal monotone machines and Solomonoff's prior); this book was not read here, so it is cited by topic.
