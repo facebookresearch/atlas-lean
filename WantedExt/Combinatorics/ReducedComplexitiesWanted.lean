@@ -114,18 +114,6 @@ theorem_wanted rhoRed_paperfolding_mod_eight (n : ℕ) (hn : 2 ≤ n) :
     (n % 8 = 3 ∨ n % 8 = 5 ∨ n % 8 = 7 →
       rhoRed paperfoldingSeq n = 6)
 
-/-- **Reduced abelian complexity of the paperfolding word at lengths 1 mod 4.** Let $f$ be the
-regular paperfolding sequence and let $\rho^{\mathrm{ab,red}}_f(n)$ be the number of reductions
-of length-$n$ factors of $f$, counted up to rearrangement of their letters. For every $n > 1$
-with $n \equiv 1 \pmod 4$, $\rho^{\mathrm{ab,red}}_f(n) = 4$.
-
-Source: John M. Campbell, James D. Currie, and Narad
-Rampersad, "Reduced Complexities for Sequences Over Finite
-Alphabets", Theorem 3. -/
-theorem_wanted rhoAbRed_paperfolding_mod_four_one (n : ℕ)
-    (hn : 1 < n) (h : n % 4 = 1) :
-    rhoAbRed paperfoldingSeq n = 4
-
 /-- **Reduced abelian complexity of the paperfolding word at lengths 3 mod 4.** Let $f$ be the
 regular paperfolding sequence and let $\rho^{\mathrm{ab,red}}_f(n)$ be the number of reductions
 of length-$n$ factors of $f$, counted up to rearrangement of their letters. For every natural

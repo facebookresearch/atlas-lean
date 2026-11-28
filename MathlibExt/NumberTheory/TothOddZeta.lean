@@ -219,23 +219,12 @@ public theorem hurwitzZeta_three_quarters_two_mul_add_one (k : ℕ) (hk : 1 ≤ 
   field_simp
   ring
 
-open MathlibExt.Combinatorics.ReducedComplexitiesWanted (paperfoldingSeq)
+open MathlibExt.Combinatorics.ReducedComplexitiesWanted
+  (paperfoldingSeq paperfoldingSeq_even paperfoldingSeq_odd)
 
 namespace tsum_neg_one_pow_paperfolding
 
 -- The sequence index is one less than the denominator.
-private lemma paperfoldingSeq_odd (n : ℕ) : paperfoldingSeq (2 * n + 1) = paperfoldingSeq n := by
-  unfold paperfoldingSeq
-  rw [show 2 * n + 1 + 1 = 2 * (n + 1) by omega,
-    Nat.factorization_mul (by decide : 2 ≠ 0) (Nat.succ_ne_zero n), Finsupp.add_apply,
-    Nat.prime_two.factorization_self, pow_add, pow_one,
-    Nat.mul_div_mul_left _ _ (by decide : 0 < 2)]
-
-private lemma paperfoldingSeq_even (n : ℕ) :
-    paperfoldingSeq (2 * n) = decide ((2 * n + 1) % 4 ≠ 1) := by
-  unfold paperfoldingSeq
-  rw [Nat.factorization_eq_zero_of_not_dvd (by omega : ¬ 2 ∣ 2 * n + 1), pow_zero, Nat.div_one]
-
 private noncomputable def signedTerm (s n : ℕ) : ℝ :=
   (-1 : ℝ) ^ (paperfoldingSeq n).toNat * term s (n + 1)
 
@@ -250,11 +239,9 @@ private lemma summable_signedTerm {s : ℕ} (hs : 1 < s) : Summable (signedTerm 
 private lemma hasSum_even_index_signedTerm {s : ℕ} (hs : 1 < s) :
     HasSum (fun n => signedTerm s (2 * n)) (progression s 1 - progression s 3) := by
   have h₁ (n : ℕ) : signedTerm s (2 * (2 * n)) = term s (4 * n + 1) := by
-    simp [signedTerm, paperfoldingSeq_even, show 2 * (2 * n) + 1 = 4 * n + 1 by omega,
-      show (4 * n + 1) % 4 = 1 by omega]
+    simp [signedTerm, paperfoldingSeq_even, show 2 * (2 * n) + 1 = 4 * n + 1 by omega]
   have h₃ (n : ℕ) : signedTerm s (2 * (2 * n + 1)) = -term s (4 * n + 3) := by
-    simp [signedTerm, paperfoldingSeq_even, show 2 * (2 * n + 1) + 1 = 4 * n + 3 by omega,
-      show (4 * n + 3) % 4 = 3 by omega]
+    simp [signedTerm, paperfoldingSeq_even, show 2 * (2 * n + 1) + 1 = 4 * n + 3 by omega]
   rw [sub_eq_add_neg]
   exact HasSum.even_add_odd ((summable_progression hs 1).hasSum.congr_fun h₁)
     ((summable_progression hs 3).hasSum.neg.congr_fun h₃)
