@@ -27,6 +27,7 @@ Topics added since this subject's fields were last revised.
 - [Growth Function](growth-function/README.md)
 - [Hidden Markov Law](hidden-markov-law/README.md)
 - [Hidden Markov Measure](hidden-markov-measure/README.md)
+- [Identification Soundness](identification-soundness/README.md)
 - [Knuth Moore](knuth-moore/README.md)
 - [Likelihood Weighting](likelihood-weighting/README.md)
 - [Local Convex Shortening](local-convex-shortening/README.md)

@@ -23,6 +23,7 @@
 - [Marginal over a prefix of an ordering as a Q-factor](marginal-pred-eq-q-factor.md)
 - [Marginal of a set with one node added as a Q-factor](marginal-insert-pred-eq-q-factor.md)
 - [Q-factor of a set of observed nodes](q-factor.md)
+- [The causal effect of an intervention in a Bayesian network](do-marginal.md)
 - [No Observed Ancestor Of Latent](no-observed-ancestor-of-latent.md)
 - [Q-factor factorization over bidirected-separated blocks](q-factor-eq-prod-of-not-adj.md)
 - [Marginalizing a Q-factor onto an ancestral subset](marginal-q-factor-of-ancestral.md)
