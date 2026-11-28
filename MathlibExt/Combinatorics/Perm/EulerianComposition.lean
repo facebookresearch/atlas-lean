@@ -118,8 +118,9 @@ theorem signedStableSortElement_mul (n a b : ℕ) :
       (((Tuple.sort (e.symm h).1 * Tuple.sort (e.symm h).2).sign : ℤ) : ℚ) =
     MonoidAlgebra.single (Tuple.sort h) (((Tuple.sort h).sign : ℤ) : ℚ)
   have hp := Tuple.sort_successiveStableFinLabelsEquiv n a b (e.symm h)
-  rw [show Tuple.successiveStableFinLabelsEquiv n a b (e.symm h) = h from e.apply_symm_apply h] at
-    hp
+  have he : Tuple.successiveStableFinLabelsEquiv n a b (e.symm h) = h :=
+    e.apply_symm_apply h
+  rw [he] at hp
   rw [← hp]
 
 /-- For `n : ℕ`, let `S_n = Equiv.Perm (Fin n)`, `P_(n,d)(X) = (1/n!)∏_(j=0)^(n-1)(X+j-d)`, and

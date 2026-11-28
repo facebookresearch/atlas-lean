@@ -6747,8 +6747,8 @@
       "path": "MathlibExt/Combinatorics/Perm/EulerianComposition.lean",
       "backport": "pending",
       "disposition": "diverged",
-      "published_sha256": "6b9c5d09ae5bedfc34cd81c62b03ab32f69dea2cd7d3b14d7739fa0d6f682790",
-      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace procedural permutation/coordinate descriptions with exact self-contained mathematical docstrings, retaining every noncomment Lean token, declaration, privacy, option, import and legal notice. Wrap source continuation lines at 100 columns while preserving the exact non-whitespace code and mathematical scope.",
+      "published_sha256": "cd01cb4c27680f98acb04cffa257eeb01ecfbc26cb8ef20f12cf6130d462808d",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace procedural permutation/coordinate descriptions with exact self-contained mathematical docstrings, retaining every noncomment Lean token, declaration, privacy, option, import and legal notice. Wrap source continuation lines at 100 columns while preserving the exact non-whitespace code and mathematical scope. Replace the tested invalid line break after the tactic at keyword by an earned explicit equality and rw [he] at hp, preserving the stable-sort identity and all statement data.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "84d54edeb29ced7d9b769db03b1295007a95f6c964e724f4b2265f54490d78bc"
     },
