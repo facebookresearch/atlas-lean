@@ -7,6 +7,7 @@ Bayesian inference and nonparametric priors: the Dirichlet process and stick-bre
 - [Infinite mixture models](infinite-mixture-models/README.md)
 - [Predictive values of diagnostic tests](predictive-values-of-diagnostic-tests/README.md)
 - [Indian buffet process](indian-buffet-process/README.md)
+- [Bayes updating and posterior consistency for finite models](bayes-updating-and-posterior-consistency-for-fin/README.md)
 - [Bayesian inverse problems](bayesian-inverse-problems/README.md)
 - [Function-space MCMC](function-space-mcmc/README.md)
 - [Ensemble Kalman inversion](ensemble-kalman-inversion/README.md)

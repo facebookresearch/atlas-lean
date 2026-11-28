@@ -8,7 +8,7 @@ Consider two groups $g \in \{T,C\}$ of positive probability in periods $0$ and $
 
 ## Background
 
-- [Identification of the average effect on the treated by difference-in-differences](../../not-yet-classified/part-04/difference-in-differences/did-estimand-observed-eq-att-post.md): under no anticipation and parallel trends for the untreated outcomes, the observed difference-in-differences identifies the post-period average effect on the treated.
+- [Identification of the average effect on the treated by difference-in-differences](difference-in-differences/did-estimand-observed-eq-att-post.md): under no anticipation and parallel trends for the untreated outcomes, the observed difference-in-differences identifies the post-period average effect on the treated.
 
 ## Sources
 

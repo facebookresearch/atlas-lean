@@ -1,5 +1,6 @@
 # Bias and mean squared error of estimators
 
+- [Sample mean, sample variance and sampling distributions](sample-mean-sample-variance-and-sampling-distrib/README.md)
 - [Bias of an estimator](bias.md)
 - [Bias as an integral](bias-eq-integral.md)
 - [Mean squared error](mean-squared-error.md)
