@@ -12,10 +12,10 @@ public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import MathlibExt.NumberTheory.ZetaStrideSeriesTendstoStrideAlternatingSumRiemannZeta
 
 import all MathlibExt.NumberTheory.ZetaStrideSeriesTendstoStrideAlternatingSumRiemannZeta
-import all MathlibExt.Analysis.SpecialFunctions.Gamma.TwistedDigamma
+import all MathlibExt.Analysis.Ramanujan.Part1Ch8Entry8Digammaseries
+import Mathlib.Algebra.Order.Floor.Div
 import Mathlib.Analysis.Normed.Group.Tannery
-import Mathlib.Analysis.SpecificLimits.Normed
-import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
@@ -24,17 +24,17 @@ import Mathlib.Tactic.Ring
 For positive integers `q` and `t`, the alternating stride sums weighted by
 `(2n + q) / ((n + 1/2) (n - 1/2 + q))` have a limit given by two digamma series.
 We reindex the finite sums first, then apply dominated convergence to the truncated
-alternating rows. Pairing successive terms in each row gives a digamma difference.
+alternating rows. Ramanujan's alternating digamma series gives the limit of each row.
 
 ## References
 
 * Anthony Sofo and Junesang Choi, *New Series Representations for the Riemann Zeta Function and
   Its Associated Functions*, INTEGERS 24 (2024), Article A45, pp. 1–17, Corollary 1, equation (20).
-* R. A. Askey and R. Roy, *Gamma Function*, NIST Digital Library of Mathematical Functions,
-  §5.7(ii), [equation (5.7.6)](https://dlmf.nist.gov/5.7.E6), for the digamma expansion.
-* This proof uses `alternating_bound` from
-  `MathlibExt.NumberTheory.ZetaStrideSeriesTendstoStrideAlternatingSumRiemannZeta` and
-  `hasSum_digamma_sub_one` from `MathlibExt.Analysis.SpecialFunctions.Gamma.TwistedDigamma`.
+* Bruce C. Berndt, *Ramanujan's Notebooks, Part I* (Springer-Verlag, 1985), Chapter 8, Entry 8.
+  We use `ramanujan_part1_ch8_entry8_digammaseries_complex_digamma` and `bridge_iff` from
+  `MathlibExt.Analysis.Ramanujan.Part1Ch8Entry8Digammaseries`.
+* The finite row bound uses `alternating_bound` from
+  `MathlibExt.NumberTheory.ZetaStrideSeriesTendstoStrideAlternatingSumRiemannZeta`.
 -/
 
 namespace MetaMathlibExt
@@ -43,8 +43,8 @@ open Filter Finset Topology
 
 private theorem lt_strideCutoff_iff {q n j : ℕ} (hq : 0 < q) :
     j < (n + q - 1) / q ↔ q * j < n := by
-  rw [Nat.lt_div_iff_mul_lt hq, Nat.mul_comm j q]
-  omega
+  rw [← Nat.ceilDiv_eq_add_pred_div]
+  simpa only [not_le] using (ceilDiv_le_iff_le_mul (b := n) (c := j) hq).not
 
 /-- Reindex the finite triangle by the denominator index `m` rather than `n = m + q*j`. -/
 private theorem sum_stride_reindex {q t N : ℕ} (hq : 0 < q) (w : ℕ → ℝ) :
@@ -100,66 +100,25 @@ private theorem norm_sum_alternating_reciprocal_le {a : ℝ} (ha : 0 < a) (q K :
         simpa [f] using alternating_bound (fun j ↦ f (k - j)) k
           (fun j _ ↦ by dsimp [f]; positivity) (fun j _ ↦ hanti (by omega))
 
-/-- The limit in natural order is identified on the even subsequence. -/
+open MathlibExt.Analysis.Ramanujan.Part1Ch8.Entry8Digammaseries in
+/-- Ramanujan's Entry 8 with parameters `a - q` and `q`. -/
 private theorem tendsto_sum_alternating_reciprocal {a : ℝ} (ha : 0 < a) {q : ℕ} (hq : 0 < q) :
     Tendsto (fun K : ℕ ↦ (↑(∑ j ∈ range K, (-1 : ℝ) ^ j * (1 / (a + q * (j : ℝ)))) : ℂ))
       atTop (𝓝 ((Complex.digamma ((↑a + q) / (2 * q)) -
         Complex.digamma (↑a / (2 * q))) / (2 * q))) := by
-  let f (j : ℕ) : ℝ := 1 / (a + q * (j : ℝ))
-  have hanti : Antitone f := by
-    intro i j hij
-    dsimp [f]
-    gcongr
-  have hqR : 0 < (q : ℝ) := by exact_mod_cast hq
-  have hqC : (q : ℂ) ≠ 0 := by exact_mod_cast hq.ne'
-  have hf : Tendsto f atTop (𝓝 0) := by
-    have htop := (tendsto_natCast_atTop_atTop (R := ℝ)).const_mul_atTop hqR
-    exact (tendsto_atTop_mono (fun _ ↦ le_add_of_nonneg_left ha.le) htop).const_div_atTop 1
-  obtain ⟨l, hl⟩ := hanti.tendsto_alternating_series_of_tendsto_zero hf
-  have hlC := (Complex.continuous_ofReal.tendsto l).comp hl
-  let x : ℂ := ↑a / (2 * q)
-  let y : ℂ := (↑a + q) / (2 * q)
-  have hx : 0 < x.re := by
-    simpa only [x, ← Complex.ofReal_natCast, ← Complex.ofReal_ofNat, ← Complex.ofReal_mul,
-      ← Complex.ofReal_div, Complex.ofReal_re] using (show 0 < a / (2 * (q : ℝ)) by positivity)
-  have hy : 0 < y.re := by
-    simpa only [y, ← Complex.ofReal_natCast, ← Complex.ofReal_ofNat, ← Complex.ofReal_mul,
-      ← Complex.ofReal_add, ← Complex.ofReal_div, Complex.ofReal_re] using
-      (show 0 < (a + q) / (2 * (q : ℝ)) by positivity)
-  have hψ := ((hasSum_digamma_sub_one hy).sub (hasSum_digamma_sub_one hx)).div_const (2 * (q : ℂ))
-  have hpair (j : ℕ) : (↑(f (2 * j) - f (2 * j + 1)) : ℂ) =
-      ((1 / ((j : ℂ) + 1) - 1 / ((j : ℂ) + y)) -
-        (1 / ((j : ℂ) + 1) - 1 / ((j : ℂ) + x))) / (2 * q) := by
-    have hxj : (j : ℂ) + x = (↑a + q * (2 * j)) / (2 * q) := by
-      dsimp [x]
-      field_simp
-      ring
-    have hyj : (j : ℂ) + y = (↑a + q * (2 * j + 1)) / (2 * q) := by
-      dsimp [y]
-      field_simp
-      ring
-    simp only [f, Complex.ofReal_sub, Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_add,
-      Complex.ofReal_mul, Complex.ofReal_natCast, Complex.ofReal_ofNat, Nat.cast_add, Nat.cast_mul,
-      Nat.cast_ofNat, Nat.cast_one, hxj, hyj, one_div_div]
-    have hD : (2 * (q : ℂ)) ≠ 0 := mul_ne_zero (by norm_num) hqC
-    simp only [sub_sub_sub_cancel_left, sub_div, div_right_comm (2 * (q : ℂ)) _ (2 * q),
-      div_self hD]
-  have hblocks (K : ℕ) : ∑ j ∈ range (2 * K), (-1 : ℝ) ^ j * f j =
-      ∑ j ∈ range K, (f (2 * j) - f (2 * j + 1)) := by
-    induction K with
-    | zero => simp
-    | succ K ih =>
-      rw [show 2 * (K + 1) = 2 * K + 1 + 1 by omega,
-        sum_range_succ, sum_range_succ, sum_range_succ, ih]
-      simp [pow_succ, sub_eq_add_neg, add_assoc]
-  have htop : Tendsto (fun K : ℕ ↦ 2 * K) atTop atTop :=
-    tendsto_atTop_mono (fun K ↦ by change K ≤ 2 * K; omega) tendsto_id
-  have heven : Tendsto (fun K : ℕ ↦ (↑(∑ j ∈ range (2 * K), (-1 : ℝ) ^ j * f j) : ℂ))
-      atTop (𝓝 ((Complex.digamma y - Complex.digamma x) / (2 * q))) := by
-    simpa only [hblocks, Complex.ofReal_sum, hpair, Function.comp_apply, sub_sub_sub_cancel_right]
-      using hψ.tendsto_sum_nat
-  have heq := tendsto_nhds_unique (hlC.comp htop) heven
-  rwa [← heq]
+  have hq₀ : (q : ℂ) ≠ 0 := by exact_mod_cast hq.ne'
+  have hden (j : ℕ) : (a : ℂ) - q + q * ((j + 1 : ℕ) : ℂ) = a + q * (j : ℂ) := by
+    push_cast
+    ring
+  have hne (j : ℕ) : (a : ℂ) - q + q * ((j + 1 : ℕ) : ℂ) ≠ 0 := by
+    rw [hden]
+    exact_mod_cast (show a + (q : ℝ) * (j : ℝ) ≠ 0 by positivity)
+  have h := (bridge_iff _ _).mp
+    (ramanujan_part1_ch8_entry8_digammaseries_complex_digamma ((a : ℂ) - q) q hq₀ hne)
+  rw [show (a : ℂ) - q + 2 * q = a + q by ring, sub_add_cancel] at h
+  simpa only [chapter8Entry8Term, hden, Complex.ofReal_sum, Complex.ofReal_mul, Complex.ofReal_pow,
+    Complex.ofReal_neg, Complex.ofReal_one, Complex.ofReal_div, Complex.ofReal_add,
+    Complex.ofReal_natCast, mul_one_div] using h
 
 private theorem tendsto_stride_reciprocal (q t : ℕ) (hq : 0 < q) (ht : 0 < t) (a : ℝ)
     (ha : 0 ≤ a) :
