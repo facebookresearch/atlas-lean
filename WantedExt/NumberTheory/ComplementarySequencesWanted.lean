@@ -21,6 +21,7 @@ public import MathlibExt.NumberTheory.ComplementarySequencesInterleaveNear
 public import MathlibExt.NumberTheory.ComplementarySequencesNthNonCenteredPolygonal
 public import MathlibExt.NumberTheory.ComplementarySequencesInterleaveFar
 public import MathlibExt.NumberTheory.NonSecondPentagonal
+public import MathlibExt.NumberTheory.ComplementarySequencesPolygonalRoundShift
 
 /-!
 # Algorithms for complementary sequences (wanted statements)
@@ -79,20 +80,6 @@ public theorem_wanted nthNonValue_polygonal_shift (k : ℕ) (hk : 3 ≤ k) (r : 
     let s := ⌊Real.sqrt ((2 * n + r) / ((k : ℝ) - 2))⌋₊
     nthNonValue (fun j => (k - 2) * j * (j - 1) / 2 + j) n =
       if (k - 2) * s * (s + 1) < 2 * n then n + s + 1 else n + s
-
-/-- **Rounding formula for the non-$k$-gonal numbers, every $k \ge 3$.** Let $k \ge 3$; the
-$k$-gonal numbers are $(k - 2) j (j - 1)/2 + j$ for $j \ge 1$. For every $n \ge 1$, the $n$-th
-positive integer that is not a $k$-gonal number equals
-$n + \lfloor \sqrt{(2n - 2 + \lfloor (k + 1)/4 \rfloor)/(k - 2)} + 1/2 \rfloor$.
-
-This corresponds to the shift $r = \lfloor (k + 1)/4 \rfloor - 2$ in the source.
-
-Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
-Article A95, Theorem 5 (last sentence). -/
-public theorem_wanted nthNonValue_polygonal_eq_round_shift (k : ℕ) (hk : 3 ≤ k) (n : ℕ)
-    (hn : 1 ≤ n) :
-    nthNonValue (fun j => (k - 2) * j * (j - 1) / 2 + j) n =
-      n + ⌊Real.sqrt ((2 * n - 2 + ((k + 1) / 4 : ℕ)) / ((k : ℝ) - 2)) + 1 / 2⌋₊
 
 /-- **Formula for the non-second-polygonal numbers.** Let $k > 5$, and for $j \ge 1$ let
 $S(k, j) = ((k - 2) j^2 + (k - 4) j)/2$ be the second $k$-gonal numbers. For every integer
