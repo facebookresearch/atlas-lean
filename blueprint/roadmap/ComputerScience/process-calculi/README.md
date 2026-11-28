@@ -15,6 +15,7 @@ Algebraic models of concurrent processes: labelled transition systems and their 
 - [k-induction for labelled transition systems](k-induction-for-labelled-transition-systems/README.md)
 - [Labelled transition systems](labelled-transition-systems/README.md)
 - [Observational congruence](observational-congruence/README.md)
+- [Top-level cut elimination](top-level-cut-elimination/README.md)
 - [Partition refinement for strong bisimilarity](partition-refinement-for-strong-bisimilarity/README.md)
 - [Weak bisimilarity and observation congruence in CCS with restriction and relabelling](weak-bisimilarity-and-observation-congruence-in/README.md)
 - [Weak bisimilarity and observation congruence in finite CCS](weak-bisimilarity-and-observation-congruence-in-2/README.md)

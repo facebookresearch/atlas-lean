@@ -1987,6 +1987,7 @@
   "CSLibExt/Languages/CCS/RecursiveLaws": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
   "CSLibExt/Languages/CCS/StaticLaws": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
   "CSLibExt/Languages/CCS/StaticOperators": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
+  "CSLibExt/Languages/ClassicalProcesses/TopLevelCutElimination": {"to": "ComputerScience/process-calculi", "title": "Top-level cut elimination"},
   "CSLibExt/Languages/CCS/StrongCongruence": {"to": "ComputerScience/process-calculi", "title": "Calculus of communicating systems"},
   "CSLibExt/Languages/CCS/SumEquivalence": {"to": "ComputerScience/process-calculi", "title": "Expansion law and head normal forms in CCS"},
   "CSLibExt/Languages/CCS/WeakChoice": {"to": "ComputerScience/process-calculi", "title": "Weak bisimilarity and observation congruence in finite CCS"},
