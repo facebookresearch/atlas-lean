@@ -1,0 +1,20 @@
+# Intron Jaccard index
+
+For an RNA-seq sample $i$ and an intron $j$ with donor site $d_j$ and acceptor site $a_j$, count reads in **evidence units**: a split read contributes one junction observation, of the intron it maps to exactly, and a non-split read contributes one boundary observation at each exon–intron boundary it spans. Let $D_{ij}$ be the set of **donor-associated observations**: junction observations of introns using donor $d_j$ and boundary observations at $d_j$. Let $A_{ij}$ be the analogous set of **acceptor-associated observations** at $a_j$. A non-split read spanning both boundaries of a short intron gives two distinct units, one in each set, so the only units common to both sets are the junction observations of intron $j$ itself.
+
+**Definition.** When $D_{ij} \cup A_{ij} \ne \emptyset$, the (raw) intron Jaccard index is
+
+$$J_{ij} = \frac{|D_{ij} \cap A_{ij}|}{|D_{ij} \cup A_{ij}|} = \frac{s_{ij}}{\sum_{d \in L_j} s_{id} + \sum_{a \in R_j} s_{ia} + \sum_{t \in \{d_j, a_j\}} u_{it} - s_{ij}},$$
+
+where $s_{ij}$ is the number of split reads mapping exactly to intron $j$, $L_j$ ($R_j$) is the set of introns using donor $d_j$ (acceptor $a_j$), and $u_{it}$ is the number of non-split reads spanning the exon–intron boundary at splice site $t$. The denominator is positive exactly when some read gives evidence at $d_j$ or $a_j$; for a sample with no such read $J_{ij}$ is undefined. Thus $J_{ij} \in [0,1]$ is the fraction of evidence units at either splice site that support splicing of exactly this intron.
+
+**Outlier model (FRASER 2.0).** Write $k_{ij}$ and $n_{ij}$ for the numerator and denominator of $J_{ij}$. The model input is not the raw ratio but the pseudocount-smoothed ratio $(k_{ij} + \alpha)/(n_{ij} + 2\alpha)$, with pseudocount $\alpha > 0$, which is defined also when $n_{ij} = 0$; its logits $x_{ij}$ are fed to a denoising autoencoder that captures sample covariation and returns a predicted proportion $\widehat J_{ij} \in (0,1)$. Each observed count $k_{ij}$ is then tested against a beta-binomial distribution with $n_{ij}$ trials, success proportion $\widehat J_{ij}$ and an intron-specific dispersion parameter $\rho_j$ fitted alongside the autoencoder; its conditional mean is $\mathbb E[k_{ij}] = n_{ij}\widehat J_{ij}$. Intron-level $p$-values are Holm-corrected within each gene and sample, the minimum is taken as the gene-level $p$-value, and Benjamini–Yekutieli FDR control is applied across genes within each sample.
+
+## Expansion
+
+Because a junction observation of an intron is shared by the donor and acceptor sets only when both of its splice sites are those of intron $j$, and boundary observations at $d_j$ and $a_j$ are distinct units, the two sets intersect exactly in the junction observations of intron $j$; inclusion–exclusion then gives the closed form. A single index captures alternative donor and acceptor usage, exon skipping, exon truncation or elongation, exon creation and intron retention, which the older FRASER metrics $\psi_5$, $\psi_3$ and $\theta$ split across three partly redundant statistics. Because its denominator pools both splice sites, a rare alternative donor that leaves the canonical intron dominant changes $J$ little, which removes many low-impact outliers. On GTEx, the method called about $10$ times fewer splicing outliers with about $10$-fold enrichment for candidate rare splice-disrupting variants.
+
+## Sources
+
+- I. F. Scheller, K. Lutz, C. Mertes, V. A. Yépez and J. Gagneur, "Improved detection of aberrant splicing with FRASER 2.0 and the intron Jaccard index", *American Journal of Human Genetics* 110 (2023), 2056–2067, <https://doi.org/10.1016/j.ajhg.2023.10.014> (PMC10716352; Material and methods, sections "Splicing quantification with the intron Jaccard index", "Denoising autoencoder" and "Multiple-testing correction and effect-size cutoff"; Figure 1).
+- C. Mertes, I. F. Scheller, V. A. Yépez et al., "Detection of aberrant splicing events in RNA-seq data using FRASER", *Nature Communications* 12 (2021), 529, <https://doi.org/10.1038/s41467-020-20573-7> (Methods, beta-binomial model, Equation (5)).
