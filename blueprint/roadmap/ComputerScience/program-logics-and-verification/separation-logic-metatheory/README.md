@@ -6,3 +6,6 @@ Separating implication and local reasoning in the heap model, abstract separatio
 - [Abstract separation logic](abstract-separation-logic/README.md)
 - [List segments](list-segments/README.md)
 - [Symbolic heaps and bi-abduction](symbolic-heaps-and-bi-abduction/README.md)
+- [Footprints and small specifications](footprints-and-small-specifications/README.md)
+- [Operational locality and the frame rule](operational-locality/README.md)
+- [Permission accounting and share models](permission-accounting/README.md)
