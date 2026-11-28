@@ -928,6 +928,7 @@
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "48f9258c97dfa56093943043fabd30eaf79aa694a666addc5bdba525f8d1e1dc"
     },
+    {"path": "MathlibExt/Algebra/Homology/Hochschild/NonUnital/Cyclic.lean","backport": "pending","disposition": "diverged","published_sha256": "32e67b705c0ca118aa410bf95ec414d842186d618c53e94df48a9faa576c6992","rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague Hochschild/bar/mixed-complex descriptions with exact mathematical module/declaration docs and readable titles, retaining every code, import, option, privacy and legal token. State the actual coefficient actions, normalized/unnormalized signs, quotient and ground-projective hypotheses. Migrate the actual calls to the clarified last-face-omitted functor and contraction names after the 11275 API rename, preserving every face, tensor/coefficient map, differential sign, hypothesis and carrier universe; no compatibility alias or new result premise is added. Wrap the renamed calls to100 columns without changing tokens.","upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0","upstream_sha256": "d4798bf71c33b83261fa498b8849d5638f178383358bccaf0090d2d43f6f35c7"},
     {
       "path": "MathlibExt/Algebra/Homology/Hochschild/NonUnital/UnitalComparison.lean",
       "backport": "pending",
@@ -937,6 +938,7 @@
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "6dc3c93384beb03562985f27de9ea888e250c858fec9f2817ba6c85e36f0af06"
     },
+    {"path": "MathlibExt/Algebra/Homology/Hochschild/OuterWord.lean","backport": "pending","disposition": "diverged","published_sha256": "f9279610e0a06460abee30aae3b8fd39e5f09f3d0c6e582321eebf1f38991776","rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.","upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0","upstream_sha256": "e22463a9d5baa64f80b4d75671ea265d019ae0bfdbb16fa86e58aca6f5a3f574"},
     {
       "path": "MathlibExt/Algebra/Homology/Hochschild/WeakRegularLocalForms.lean",
       "backport": "not-needed",
