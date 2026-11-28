@@ -29,11 +29,10 @@ namespace MathlibExtTest.TensorFold
 abbrev P : ModuleCat.{v} ℤ := ModuleCat.of ℤ (ULift.{v} ℤ)
 abbrev Z : ModuleCat.{0} ℤ := ModuleCat.of ℤ ℤ
 
-def down : P ⟶ Z :=
-  ModuleCat.ofHom
-    { toFun := ULift.down
-      map_add' := fun _ _ => rfl
-      map_smul' := fun _ _ => rfl }
+def down : P.{v} →ₗ[ℤ] ℤ where
+  toFun := ULift.down
+  map_add' := fun _ _ => rfl
+  map_smul' := fun _ _ => rfl
 
 def multiplication : ℤ →ₗ[ℤ] ℤ →ₗ[ℤ] ℤ where
   toFun x :=
@@ -45,18 +44,21 @@ def multiplication : ℤ →ₗ[ℤ] ℤ →ₗ[ℤ] ℤ where
         ring }
   map_add' := by
     intro x y
-    ext z
+    apply LinearMap.ext
+    intro z
     change (x + y) * z = x * z + y * z
     ring
   map_smul' := by
     intro r x
-    ext y
+    apply LinearMap.ext
+    intro y
     change (r * x) * y = r * (x * y)
     ring
 
 def evaluate : ModuleCat.TensorFold.objAt.{0,v,0} ℤ P [Z, Z] →ₗ[ℤ] ℤ :=
-  TensorProduct.lift
-    (multiplication.comp (TensorProduct.lift (multiplication.comp down.hom)))
+  let pair : P.{v} ⊗[ℤ] ℤ →ₗ[ℤ] ℤ :=
+    TensorProduct.lift (multiplication.comp down.{v})
+  TensorProduct.lift (multiplication.comp pair)
 
 def probe : ModuleCat.TensorFold.objAt.{0,v,0} ℤ P [Z, Z] :=
   ((ULift.up (1 : ℤ) : P) ⊗ₜ[ℤ] (2 : ℤ)) ⊗ₜ[ℤ] (3 : ℤ)
@@ -69,7 +71,7 @@ def negIso : Z ≅ Z :=
       invFun := fun x => -x
       left_inv := by intro x; simp
       right_inv := by intro x; simp
-      map_add' := by intros; simp
+      map_add' := by intro x y; simp [add_comm]
       map_smul' := by intros; simp }).toModuleIso
 
 def factors : Fin 2 → ModuleCat.{0} ℤ := fun _ => Z
