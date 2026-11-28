@@ -32,12 +32,14 @@ namespace ArithmeticFunction
 variable {R : Type*} [CommMonoidWithZero R]
 
 /-- **Arithmetic function with prescribed prime-power values.**
+Let `R` be a commutative monoid with zero and let `a p e` take values in `R`.
 Extend coefficients on positive powers of primes to an arithmetic function by taking their
 product over the prime factorization of a nonzero natural number, and assigning `0` to `0`. -/
 @[expose] public def ofPrimePowerValues (a : ℕ → ℕ → R) : ArithmeticFunction R :=
   ⟨fun n => if n = 0 then 0 else n.factorization.prod a, by simp⟩
 
 /-- **Product formula for the prime-power extension.**
+Let `R` be a commutative monoid with zero and let `a p e` take values in `R`.
 At a nonzero natural number, the extension is the product of the prescribed coefficients
 at its prime-power factors. -/
 public theorem ofPrimePowerValues_apply_of_ne_zero (a : ℕ → ℕ → R) {n : ℕ} (hn : n ≠ 0) :
@@ -46,6 +48,7 @@ public theorem ofPrimePowerValues_apply_of_ne_zero (a : ℕ → ℕ → R) {n : 
   rw [ite_eq_right hn]
 
 /-- **Multiplicativity of the prime-power extension.**
+Let `R` be a commutative monoid with zero and let `a p e` take values in `R`.
 The extension of prescribed prime-power values is multiplicative, since coprime positive
 integers have disjoint sets of prime factors. -/
 public theorem isMultiplicative_ofPrimePowerValues (a : ℕ → ℕ → R) :
@@ -58,6 +61,7 @@ public theorem isMultiplicative_ofPrimePowerValues (a : ℕ → ℕ → R) :
   exact Finsupp.prod_add_index_of_disjoint hmn.disjoint_primeFactors a
 
 /-- **Evaluation of the extension at a prime power.**
+Let `R` be a commutative monoid with zero and let `a p e` take values in `R`.
 The extension takes its prescribed value at `p ^ e` for prime `p` and nonzero `e`. -/
 public theorem ofPrimePowerValues_prime_pow (a : ℕ → ℕ → R) {p e : ℕ}
     (hp : p.Prime) (he : e ≠ 0) : ofPrimePowerValues a (p ^ e) = a p e := by
