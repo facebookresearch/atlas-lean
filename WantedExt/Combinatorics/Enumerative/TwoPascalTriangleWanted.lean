@@ -21,6 +21,7 @@ public import MathlibExt.Combinatorics.Enumerative.SprugnoliBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.TrinomialAlternatingColumn
 public import MathlibExt.Combinatorics.Enumerative.TrinomialBinomialTransform
 public import MathlibExt.Combinatorics.Enumerative.TrinomialConvolution
+public import MathlibExt.Combinatorics.Enumerative.TrinomialDiagonalTribonacci
 public import MathlibExt.Combinatorics.Enumerative.TrinomialEvenAlternating
 public import MathlibExt.Combinatorics.Enumerative.TrinomialEvenGenerating
 public import MathlibExt.Combinatorics.Enumerative.TrinomialInverseTransform
@@ -361,24 +362,6 @@ public theorem_wanted sum_trinomialCoefficient_diagonal_weighted_power_sum (z w 
         (trinomialCoefficient (n - k) k : ℂ) * n / (n - k : ℕ) * w ^ (2 * n - 3 * k) * z ^ k =
       (w ^ 2 - w * r₁ + r₁ ^ 2) ^ n + (w ^ 2 - w * r₂ + r₂ ^ 2) ^ n +
         (w ^ 2 - w * r₃ + r₃ ^ 2) ^ n
-
-/-- **Tribonacci formula for a diagonal sum of trinomial coefficients.**
-Write $\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $t^k$ in
-$(1 + t + t^2)^n$, and $T_n$ for the Tribonacci numbers, $T_0 = T_1 = 0$, $T_2 = 1$ and
-$T_{n+3} = T_{n+2} + T_{n+1} + T_n$. Then for every $n \in \mathbb{N}$,
-
-$$\sum_{k=0}^{n} \binom{n + k}{n - k}_2 = \frac{T_{2(n+1)}}{2} + \frac{1}{2}\binom{n}{n}_2 +
-\frac{1}{2} \sum_{k=0}^{n-1} \binom{k}{k}_2 \left(T_{2(n-k)} + T_{2(n-1-k)}\right).$$
-
-The sequence $(T_{2n})$ is the bisection A099463.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Corollary 42 (`jis-2025-25.3.5-cor-42`). -/
-public theorem_wanted sum_trinomialCoefficient_add_sub_eq_tribonacci (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient (n + k) (n - k) : ℚ) =
-      (tribonacci (2 * (n + 1)) : ℚ) / 2 + (trinomialCoefficient n n : ℚ) / 2 +
-        (∑ k ∈ Finset.range n, (trinomialCoefficient k k : ℚ) *
-          ((tribonacci (2 * (n - k)) : ℚ) + tribonacci (2 * (n - 1 - k)))) / 2
 
 end
 
