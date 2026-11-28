@@ -142,6 +142,16 @@ and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Se
 public def lRegularPartitionSeries (R : Type*) [Semiring R] (ℓ : ℕ) : PowerSeries R :=
   mk fun n => (lRegularPartitionCount ℓ n : R)
 
+/-- **Coefficients of the regular-partition generating series.** For natural numbers $\ell$
+and $n$ and a semiring $R$, the coefficient of $X^n$ in the $\ell$-regular partition series
+is the number of $\ell$-regular partitions of $n$, cast into $R$.
+
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Section 2. -/
+public theorem coeff_lRegularPartitionSeries (R : Type*) [Semiring R] (ℓ n : ℕ) :
+    coeff n (lRegularPartitionSeries R ℓ) = (lRegularPartitionCount ℓ n : R) := by
+  simp only [lRegularPartitionSeries, coeff_mk]
+
 /-- **Coefficients of powers of the regular-partition generating series.** For natural numbers
 $\ell$, $k$ and $n$ and a semiring $R$, the coefficient of $X^n$ in the $k$-th power of the
 $\ell$-regular partition series is the number of $k$-tuples of $\ell$-regular partitions of
