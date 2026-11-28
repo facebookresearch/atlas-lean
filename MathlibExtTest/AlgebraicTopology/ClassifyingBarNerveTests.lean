@@ -88,28 +88,51 @@ private lemma barTwo_coordinate (J : Type) [TopologicalSpace J] [Monoid J]
 private lemma powOne_component (X : TopCat.{0}) :
     (monadPowHom (topTensorMonadHom G π) 1).app X = (topTensorMonadHom G π).app X := by
   have hpow := monadPowHom_succ_app (topTensorMonadHom G π) 0 X
-  change (monadPowHom (topTensorMonadHom G π) 1).app X =
-    𝟙 ((tensorMonad (GTop G)).obj X) ≫ (topTensorMonadHom G π).app X at hpow
-  exact hpow.trans (Category.id_comp _)
+  have hnorm : (monadPowHom (topTensorMonadHom G π) 1).app X =
+      𝟙 _ ≫ (topTensorMonadHom G π).app X := by
+    simpa only [monadPowHom_zero_app, monadPow_zero, Functor.id_map] using hpow
+  exact hnorm.trans (Category.id_comp _)
 
 private lemma map_barOne (x : G) :
     (BBarMap G π).app (op (SimplexCategory.mk 1)) (barOne G x) = barOne H (π x) := by
-  refine (ConcreteCategory.congr_hom (BBarMap_app_op_mk G π 1) (barOne G x)).trans ?_
-  rw [powOne_component]
-  change (topPoint ◁ (topTensorMonadHom G π).app topPoint) (barOne G x) = barOne H (π x)
-  rw [TopCat.whiskerLeft_apply]
-  simp only [barOne, topTensorMonadHom_app]
+  have hdegree := (BBarMap_app_op_mk G π 1).trans
+    (congrArg (fun q => (MonoidalCategory.tensorLeft topPoint).map q)
+      (powOne_component topPoint))
+  have hmap := ConcreteCategory.congr_hom hdegree (barOne G x)
+  have houter := TopCat.whiskerLeft_apply topPoint
+    ((topTensorMonadHom G π).app topPoint)
+    (show ↑(topPoint ⊗ (GTop G ⊗ topPoint)) from barOne G x)
+  have hinner := topTensorMonadHom_app G π topPoint
+    (show G × topPoint from (barOne G x).2)
+  exact hmap.trans (houter.trans
+    (congrArg (fun z : H × topPoint => ((barOne G x).1, z)) hinner))
 
 private lemma map_barTwo (x y : G) :
     (BBarMap G π).app (op (SimplexCategory.mk 2)) (barTwo G x y) =
       barTwo H (π x) (π y) := by
-  refine (ConcreteCategory.congr_hom (BBarMap_app_op_mk G π 2) (barTwo G x y)).trans ?_
-  rw [monadPowHom_succ_app, powOne_component]
-  change (PUnit.unit,
-    (GTop H ◁ (topTensorMonadHom G π).app topPoint)
-      ((topTensorMonadHom G π).app (GTop G ⊗ topPoint) (x, (y, PUnit.unit)))) =
-    (PUnit.unit, (π x, (π y, PUnit.unit)))
-  rw [topTensorMonadHom_app, TopCat.whiskerLeft_apply, topTensorMonadHom_app]
+  have hsucc := monadPowHom_succ_app (topTensorMonadHom G π) 1 topPoint
+  rw [powOne_component] at hsucc
+  have hpow : (monadPowHom (topTensorMonadHom G π) 2).app topPoint =
+      (topTensorMonadHom G π).app (GTop G ⊗ topPoint) ≫
+        (GTop H ◁ (topTensorMonadHom G π).app topPoint) := hsucc
+  have hcomp := ConcreteCategory.congr_hom hpow
+    (show ↑(GTop G ⊗ (GTop G ⊗ topPoint)) from (barTwo G x y).2)
+  have hfirst := topTensorMonadHom_app G π (GTop G ⊗ topPoint)
+    (show G × (GTop G ⊗ topPoint) from (barTwo G x y).2)
+  have hsecond := TopCat.whiskerLeft_apply (GTop H)
+    ((topTensorMonadHom G π).app topPoint)
+    (show ↑(GTop H ⊗ (GTop G ⊗ topPoint)) from (π x, (y, PUnit.unit)))
+  have hlast := topTensorMonadHom_app G π topPoint (y, PUnit.unit)
+  have hvalue : (monadPowHom (topTensorMonadHom G π) 2).app topPoint
+      (show ↑(GTop G ⊗ (GTop G ⊗ topPoint)) from (barTwo G x y).2) =
+        (π x, (π y, PUnit.unit)) :=
+    hcomp.trans ((congrArg (fun z => (GTop H ◁ (topTensorMonadHom G π).app topPoint) z)
+      hfirst).trans (hsecond.trans (congrArg (fun z => (π x, z)) hlast)))
+  have hmap := ConcreteCategory.congr_hom (BBarMap_app_op_mk G π 2) (barTwo G x y)
+  have houter := TopCat.whiskerLeft_apply topPoint
+    ((monadPowHom (topTensorMonadHom G π) 2).app topPoint) (barTwo G x y)
+  exact hmap.trans (houter.trans
+    (congrArg (fun z => ((barTwo G x y).1, z)) hvalue))
 
 private abbrev imageOne :=
   (BBarMap G π).app (op (SimplexCategory.mk 1)) (barOne G g)
