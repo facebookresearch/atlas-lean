@@ -14,7 +14,7 @@ These are murine results against one comparator; no human efficacy is claimed by
 
 ## Context
 
-Research level. The page is included for its explicit objective conflict - regenerate bone, do not feed the tumor - which the authors identify as a reason tissue-engineering strategies have been slow to reach cancer patients. The work is a Trinity College Dublin and University College Dublin collaboration with the Artzi group.
+Research level. The page is included for its explicit objective conflict - regenerate bone, do not feed the tumor - which the authors identify as a reason tissue-engineering strategies have been slow to reach cancer patients.
 
 ## Depends on
 

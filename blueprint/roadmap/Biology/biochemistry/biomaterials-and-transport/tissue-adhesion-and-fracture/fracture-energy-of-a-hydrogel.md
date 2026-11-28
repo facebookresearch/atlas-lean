@@ -12,7 +12,7 @@ Decomposition. Zhao writes $\Gamma = \Gamma_0 + \Gamma_D$, with $\Gamma_0$ the i
 
 $$\Gamma_D^{pz} = 2V\int_{0}^{h} w_D\,dy, \qquad w_D = \sum_{i=1}^{3}\oint s_i\,d\lambda_i ,$$
 
-with $h$ the half-width of the process zone (the factor 2 counts both sides), $V$ the volume fraction of gel in it and $w_D$ the hysteresis-loop area per unit reference volume. Yuk et al. use the same split for the interfacial toughness of hydrogel–solid bonds, a different failure path from bulk fracture.
+with $h$ the width of the process zone and $y$ the vertical coordinate of a gel element, both in the reference state, $V$ the volume fraction of gel in it and $w_D$ the hysteresis-loop area per unit reference volume. Yuk et al. use the same split for the interfacial toughness of hydrogel–solid bonds, a different failure path from bulk fracture.
 
 ## Context
 

@@ -14,7 +14,7 @@ $$\frac{P_T}{P_0}=\prod_{i=1}^{n}10^{-\varepsilon_i bC_i},\qquad A_{\mathrm{mix}
 
 ## Context
 
-Undergraduate analytical chemistry and biochemistry. Absorbance at 260 and 280 nm is the routine way to quantify nucleic acids and proteins, and a Beer's-law calibration line is inverted to estimate unknown concentrations ([inverse prediction from a calibration line](../../../../Chemistry/analytical-chemistry/analytical-calibration-and-inverse-prediction/inverse-prediction.md)). The main text of the Artzi RNA-triple-helix study reports that absorbance spectra of the RNA strands alone and assembled into duplexes and the triplex were recorded (Conde et al. 2016, Results; the spectra are in its supplementary information, which was not accessed); such spectra are context, not a test of this law.
+Undergraduate analytical chemistry and biochemistry. Absorbance at 260 and 280 nm is the routine way to quantify nucleic acids and proteins, and a Beer's-law calibration line is inverted to estimate unknown concentrations ([inverse prediction from a calibration line](../../../../Chemistry/analytical-chemistry/analytical-calibration-and-inverse-prediction/inverse-prediction.md)). The main text of an RNA-triple-helix study reports that absorbance spectra of the RNA strands alone and assembled into duplexes and the triplex were recorded (Conde et al. 2016, Results; the spectra are in its supplementary information, which was not accessed); such spectra are context, not a test of this law.
 
 ## Depends on
 

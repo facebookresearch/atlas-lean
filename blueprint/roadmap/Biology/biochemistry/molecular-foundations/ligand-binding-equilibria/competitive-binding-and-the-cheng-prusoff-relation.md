@@ -26,7 +26,7 @@ Items 1–3 use free concentrations. If the plotted concentrations are totals, t
 
 ## Context
 
-Undergraduate to graduate pharmacology and biochemistry. Displacement assays with a labelled tracer are the standard way to rank the affinities of unlabelled compounds, and the Cheng–Prusoff factor converts an observed $\mathrm{IC}_{50}$ into an affinity. No Artzi-specific result depends on this page.
+Undergraduate to graduate pharmacology and biochemistry. Displacement assays with a labelled tracer are the standard way to rank the affinities of unlabelled compounds, and the Cheng–Prusoff factor converts an observed $\mathrm{IC}_{50}$ into an affinity.
 
 ## Depends on
 

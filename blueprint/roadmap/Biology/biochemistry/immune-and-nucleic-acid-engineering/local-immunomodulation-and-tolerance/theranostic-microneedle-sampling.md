@@ -11,11 +11,12 @@ What the source reports, by experiment:
 
 ## Context
 
-Research level. The platform supports both of the group's skin programs - immunostimulation in tumors and immunoregulation in autoimmunity and transplantation - and monitoring is what could make a local dosing strategy adjustable.
+Research level. The same patch format appears in this field for immunostimulation in tumors and for immunoregulation in autoimmunity and transplantation; monitoring is what could make a local dosing strategy adjustable.
 
 ## Depends on
 
 - [Recruit and expand: a two-signal local strategy for Treg](./recruit-and-expand-local-treg-strategy.md)
+- [Species, model system and the scope of a preclinical claim](../preclinical-model-systems/species-and-model-system-scope.md)
 
 ## Proof depends on
 

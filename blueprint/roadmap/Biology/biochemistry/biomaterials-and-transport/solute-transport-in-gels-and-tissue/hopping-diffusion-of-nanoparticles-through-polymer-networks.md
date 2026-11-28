@@ -6,7 +6,7 @@ Claims of the source (abstract level). Particles larger than the mesh size $a_x$
 
 ## Context
 
-Research frontier for nanoparticle transport in gels and tissue; the source mentions nano drug carriers in biological gels such as mucus. The page records the regime structure only; quantitative step sizes, barriers, diffusion coefficients and the time windows of ballistic, subdiffusive and confined motion depend on the regime and are in the source's Section 2 and later sections. Relevance to Artzi's work is conceptual: whether released particles or in-situ nanogels are smaller than, comparable to, or much larger than the local mesh changes their mobility.
+Research frontier for nanoparticle transport in gels and tissue; the source mentions nano drug carriers in biological gels such as mucus. The page records the regime structure only; quantitative step sizes, barriers, diffusion coefficients and the time windows of ballistic, subdiffusive and confined motion depend on the regime and are in the source's Section 2 and later sections. The regimes bear on nanoparticles or in-situ nanogels released into gels or tissue: whether they are smaller than, comparable to, or much larger than the local mesh changes their mobility.
 
 ## Depends on
 

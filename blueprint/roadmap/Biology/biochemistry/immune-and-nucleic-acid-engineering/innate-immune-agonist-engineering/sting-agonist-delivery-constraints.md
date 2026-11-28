@@ -12,11 +12,12 @@ Constraints as each source states them:
 
 ## Context
 
-Graduate level. This page motivates the two strategies that follow in the folder - conjugating a synthetic agonist so its fate can be engineered, and inducing the cell to make the endogenous agonist - both pursued in the Artzi group's work, with Dosta and Cryer as lead authors of the respective studies.
+Graduate level. This page motivates the two strategies the cited studies pursue: conjugating a synthetic agonist so that its fate can be engineered, and inducing the cell to make the endogenous agonist.
 
 ## Depends on
 
 - [The cGAS-STING axis as an engineering target](./cgas-sting-sensing-axis.md)
+- [Species, model system and the scope of a preclinical claim](../preclinical-model-systems/species-and-model-system-scope.md)
 
 ## Proof depends on
 

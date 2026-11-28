@@ -1,6 +1,6 @@
 # MMP- and pH-responsive nanoparticles for glioblastoma (empirical)
 
-In a mouse glioblastoma model, a dual MMP- and pH-sensitive nanoparticle system from Artzi's group was detected at the tumor site up to 6 days after one intratumoral injection and delayed tumor growth relative to untreated mice or Dox-conjugated dendrimer nanoparticles alone.
+In a mouse glioblastoma model, a dual MMP- and pH-sensitive nanoparticle system (Dosta et al., 2024) was detected at the tumor site up to 6 days after one intratumoral injection and delayed tumor growth relative to untreated mice or Dox-conjugated dendrimer nanoparticles alone.
 
 Findings (empirical, abstract-level). Dosta et al. built a dual-sensitive nanoparticle system (Dual-NP): dendrimer and dextran nanoparticles bound by a linker sensitive to matrix metalloproteinase and to pH, designed to disassemble rapidly in the tumor microenvironment. According to the abstract, disassembly prompts in situ nanogel formation via a Schiff base reaction, prolonging Dual-NP retention and releasing small doxorubicin-conjugated dendrimer nanoparticles over time. Dual-NPs penetrated deep into 3D spheroid models and were detected at the tumor site up to 6 days after a single intratumoral injection in an orthotopic mouse model; the reported outcomes were a significant delay in tumor growth and an overall increase in survival compared with untreated mice or Dox-conjugated dendrimer nanoparticles alone.
 
@@ -25,4 +25,4 @@ A quantitative model would couple nanoparticle diffusion in tumor tissue, MMP- a
 
 ## Sources
 
-- P. Dosta, M. Z. Dion, M. Prado et al. (corresponding author N. Artzi), "Matrix Metalloproteinase- and pH-Sensitive Nanoparticle System Enhances Drug Retention and Penetration in Glioblastoma", ACS Nano 18(22), 14145–14160 (2024), <https://doi.org/10.1021/acsnano.3c03409>; only the abstract, author list and supporting-information list on the publisher page were read: abstract, author list and supporting-information item list on the publisher page
+- P. Dosta, M. Z. Dion, M. Prado, P. Hurtado, C. J. Riojas-Javelly, A. M. Cryer, Y. Soria, N. Andrews Interiano, G. Muñoz-Taboada and N. Artzi, "Matrix Metalloproteinase- and pH-Sensitive Nanoparticle System Enhances Drug Retention and Penetration in Glioblastoma", ACS Nano 18(22), 14145–14160 (2024), <https://doi.org/10.1021/acsnano.3c03409>; only the abstract, author list and supporting-information list on the publisher page were read: abstract, author list and supporting-information item list on the publisher page

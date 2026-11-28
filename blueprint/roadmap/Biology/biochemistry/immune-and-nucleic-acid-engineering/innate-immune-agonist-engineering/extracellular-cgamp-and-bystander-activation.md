@@ -13,11 +13,12 @@ Nothing here states what fraction of produced cGAMP leaves a cell, how far it tr
 
 ## Context
 
-Graduate level. The page separates a mechanism from the therapy built on it, so the therapy page can be read as an application. It is also the biological precedent for the more general paracrine-transfer framing that follows in this folder.
+Graduate level. The page separates a mechanism from the therapy built on it, so [Making the tumor cell produce its own innate-immune agonist](./cancer-cell-cgas-restoration.md) can be read as an application. It is also the biological precedent for the more general framing in [The paracrine transfer effect as a nanomedicine design concept](./paracrine-transfer-effect.md).
 
 ## Depends on
 
 - [The cGAS-STING axis as an engineering target](./cgas-sting-sensing-axis.md)
+- [Species, model system and the scope of a preclinical claim](../preclinical-model-systems/species-and-model-system-scope.md)
 
 ## Proof depends on
 

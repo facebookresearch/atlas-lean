@@ -6,7 +6,7 @@ Findings (empirical), each with its own endpoint. Li et al. (2017): a two-layer 
 
 ## Context
 
-Research-level, preclinical evidence. The design principle, a strong interfacial bond plus bulk dissipation, follows the decomposition $\Gamma = \Gamma_0 + \Gamma_D$. The numbers come from different substrates, tests and failure modes (tissue adhesion, interfacial toughness on solids, bulk fracture) and are not one comparison. Artzi's sealants are characterized by burst pressure and adhesive modulus, so values are not directly comparable.
+Research-level, preclinical evidence. The design principle, a strong interfacial bond plus bulk dissipation, follows the decomposition $\Gamma = \Gamma_0 + \Gamma_D$. The numbers come from different substrates, tests and failure modes (tissue adhesion, interfacial toughness on solids, bulk fracture) and are not one comparison. The aldehyde–amine studies on the [tissue-specific adhesion](tissue-specific-aldehyde-amine-adhesion.md) page report interfacial modulus and adhesion strength or maximum load, and the [sprayable gastrointestinal sealant](sprayable-gastrointestinal-hydrogel-sealant.md) study reports ex vivo burst pressure; these endpoints are not compared numerically with the energies above.
 
 ## Depends on
 

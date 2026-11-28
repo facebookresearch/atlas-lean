@@ -1,16 +1,16 @@
 # Surface-erosion release from a slab, cylinder or sphere
 
-If a uniformly loaded device releases drug only as its surface recedes at constant speed, the released fraction is $1 - (1 - k_0t/(C_0a))^n$ with $n = 1, 2, 3$ for a slab, an infinite cylinder and a sphere; only the slab, whose area is constant, releases linearly.
+If a uniformly loaded device releases drug only as its surface recedes at constant speed, the released fraction is $1 - (1 - k_0t/(C_0a))^n$ with $n = 1, 2, 3$ for a slab, an infinite cylinder and a sphere.
 
 Let drug be uniform at concentration $C_0 > 0$ in a slab of half-thickness $a$ (per unit area), an infinitely long cylinder of radius $a$ (per unit length) or a sphere of radius $a$, with $a > 0$. Suppose the body erodes only at its surface, which recedes at constant normal speed $v = k_0/C_0$ ($k_0 > 0$ the drug mass released per unit area per unit time), and that drug is released exactly as material is removed. Then
 
 $$\frac{M_t}{M_\infty} = 1 - \left(1 - \frac{k_0 t}{C_0 a}\right)^{n}, \qquad 0 \le t \le t_f = \frac{C_0 a}{k_0}, \qquad n = 1, 2, 3,$$
 
-and $M_t/M_\infty = 1$ for $t \ge t_f$. For the slab this is $t/t_f$ (zero order); for the sphere the release rate $(3/t_f)(1 - t/t_f)^2$ decreases with time.
+and $M_t/M_\infty = 1$ for $t \ge t_f$. For the slab this is $t/t_f$ (zero order).
 
 ## Context
 
-Undergraduate. Li and Mooney explain when erosion is surface-limited (bond cleavage faster than transport of water or enzyme into the bulk) and say mass loss can be fairly linear for surface-eroding gels, giving near zero-order release; the formula shows that exact linearity requires a fixed eroding area (slab) or holds only at short times for shrinking cylinders and spheres. For a finite cylinder of radius $r_0$ and height $2h_0$ eroding on all faces, the remaining volume fraction is $(1 - vt/r_0)^2(1 - vt/h_0)$ until either factor first vanishes, at $t = \min(r_0, h_0)/v$, and zero thereafter; the open copy's Eq. (47) prints a square on both factors, which is not adopted here. Mircioiu et al. note that Hopfenberg's formula generalizes the Hixson–Crowell cube-root law.
+Undergraduate. Li and Mooney explain when erosion is surface-limited (bond cleavage faster than transport of water or enzyme into the bulk) and say mass loss can be fairly linear for surface-eroding gels, giving near zero-order release; by differentiation of the formula, exact linearity holds for the slab, whose area is constant, while for the cylinder and the sphere the release rate decreases as they shrink. For a finite cylinder of radius $r_0$ and height $2h_0$ eroding on all faces, the remaining volume fraction is $(1 - vt/r_0)^2(1 - vt/h_0)$ until either factor first vanishes, at $t = \min(r_0, h_0)/v$, and zero thereafter; the open copy's Eq. (47) prints a square on both factors, which is not adopted here. Mircioiu et al. note that Hopfenberg's formula generalizes the Hixson–Crowell cube-root law.
 
 ## Depends on
 

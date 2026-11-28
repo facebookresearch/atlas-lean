@@ -8,11 +8,9 @@ $$\langle i\rangle(x)=\frac{x\,P'(x)}{P(x)}=\frac{d\ln P}{d\ln x},\qquad Y(x)=\f
 
 At $x=0$ the middle expression extends continuously with value $0$, but the derivative in $\ln x$ is not defined there.
 
-**Extension to power series.** The same identity holds for $q(s)=\sum_{n\ge0}g_ns^n$ with coefficients $g_n\ge0$ that do not depend on $s$, $q(s)>0$, and $s>0$ strictly inside the radius of convergence: then $\langle n\rangle=\sum_nn\,g_ns^n/q(s)=s\,\partial\ln q/\partial s$, the partial derivative holding all other parameters fixed. At the boundary of convergence the first moment can be infinite (for example $g_n=1/n^2$ for $n\ge1$ at $s=1$), so the extension needs the interior condition or a separately verified convergent differentiated series. This is how mean helix content is obtained from the [Zimm–Bragg partition function](../folding-and-hybridization-thermodynamics/zimm-bragg-helix-coil-model.md), where the coefficients depend on the fixed nucleation weight but not on $s$.
-
 ## Context
 
-Undergraduate to graduate. Known as Wyman's binding-potential or linkage relation in the binding literature, the identity turns a binding curve into a derivative of one function, which is what makes linkage and fluctuation arguments (such as the [variance form of the Hill slope](hill-slope-as-variance-ratio.md)) short. No Artzi-specific result depends on it.
+Undergraduate to graduate. Known as Wyman's binding-potential or linkage relation in the binding literature, the identity turns a binding curve into a derivative of one function, which is what makes linkage and fluctuation arguments (such as the [variance form of the Hill slope](hill-slope-as-variance-ratio.md)) short.
 
 ## Depends on
 
@@ -24,9 +22,9 @@ None.
 
 ## Expansion
 
-Proof (finite case): differentiate termwise, $xP'(x)=\sum_i i\beta_ix^i$, and divide by $P(x)>0$ to get $\sum_i i\,p_i(x)$; the chain rule $d/d\ln x=x\,d/dx$ gives the logarithmic form. For the power-series case, termwise differentiation is valid strictly inside the radius of convergence, where the differentiated series converges absolutely.
+Proof: differentiate termwise, $xP'(x)=\sum_i i\beta_ix^i$, and divide by $P(x)>0$ to get $\sum_i i\,p_i(x)$; the chain rule $d/d\ln x=x\,d/dx$ gives the logarithmic form.
 
-Remaining decomposition before the page can be marked ready: a citation of the termwise-differentiation theorem for power series (available in Mathlib) for the extension, and an explicit statement of which parameters are held fixed when the coefficients depend on other variables.
+Remaining decomposition before the page can be marked ready: an explicit statement of which parameters are held fixed when the coefficients depend on other variables (as for the polynomial partition functions of the [Zimm–Bragg model](../folding-and-hybridization-thermodynamics/zimm-bragg-helix-coil-model.md), whose coefficients depend on the fixed nucleation weight); a power-series form would need its own source and convergence hypothesis.
 
 ## Sources
 

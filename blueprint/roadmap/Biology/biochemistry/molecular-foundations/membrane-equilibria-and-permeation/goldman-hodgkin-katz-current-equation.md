@@ -23,7 +23,7 @@ Hodgkin and Katz wrote the permeability as $P=uRT\beta/(Fa)$ in terms of a mobil
 
 ## Context
 
-Graduate physiology and biophysics. The equation underlies the resting potential, ion-selectivity measurements of channels and the analysis of current–voltage rectification. Alvarez and Latorre note that the constant-field assumption is physically reasonable for thin membranes at low ion concentrations; their Appendix B shows that the zero-current (reversal) potential of a membrane permeable only to ions of one sign and valence can be obtained without it, but the current–voltage relation stated here does require it. It is a foundation for quantitative treatments of ion transport across cell membranes; no Artzi-specific result depends on it.
+Graduate physiology and biophysics. The equation underlies the resting potential, ion-selectivity measurements of channels and the analysis of current–voltage rectification. Alvarez and Latorre note that the constant-field assumption is physically reasonable for thin membranes at low ion concentrations; their Appendix B shows that the zero-current (reversal) potential of a membrane permeable only to ions of one sign and valence can be obtained without it, but the current–voltage relation stated here does require it. It is a foundation for quantitative treatments of ion transport across cell membranes.
 
 ## Depends on
 

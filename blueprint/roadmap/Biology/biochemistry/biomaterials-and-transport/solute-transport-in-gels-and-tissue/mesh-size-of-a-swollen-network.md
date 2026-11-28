@@ -1,6 +1,6 @@
 # Mesh size of a swollen network
 
-In the Peppas group's model the mesh size $\xi$ is the root-mean-square distance between neighbouring junctions of a swollen network: the unperturbed end-to-end length of a network chain, multiplied by the isotropic swelling factor $\phi_s^{-1/3}$.
+In the Peppas group's model the mesh size $\xi$ of a swollen network is the root-mean-square junction spacing: the unperturbed end-to-end length of a network chain, reduced by the phantom factor $(1 - 2/f)^{1/2}$ and multiplied by the swelling factor $\phi_s^{-1/3}$.
 
 For a network with junction functionality $f > 2$, degree of polymerization $N_j$ between junctions, $\lambda$ backbone bonds of mean length $\bar l$ per repeat unit and Flory characteristic ratio $C_\infty$, swollen to polymer volume fraction $\phi_s \in (0,1)$, Richbourg, Ravikumar and Peppas define
 
@@ -8,13 +8,11 @@ $$\xi = \phi_s^{-1/3}\left[\left(1 - \frac{2}{f}\right)\bar l^{2} C_\infty \lamb
 
 A different, mechanical length is obtained from the shear modulus $G$ of the swollen gel via classical rubber elasticity (Li and Mooney, Box 1):
 
-$$r_{mesh} = \left(\frac{6RT}{\pi N_{Av} G}\right)^{1/3} = \left(\frac{6k_BT}{\pi G}\right)^{1/3},$$
-
-which corresponds to one elastic chain per sphere of diameter $r_{mesh}$; despite its notation it is a diameter-like length, not the portal radius of the [mesh radius](mesh-radius-of-regular-lattice-networks.md) page.
+$$r_{mesh} = \left(\frac{6RT}{\pi N_{Av} G}\right)^{1/3}.$$
 
 ## Context
 
-Graduate. Typical hydrogel mesh sizes are 5–100 nm (Li and Mooney), to be compared like with like: hydrodynamic diameters of 4.1 nm for lysozyme and 10.7 nm for IgG against diameter-like lengths, radii against radii. For PEG the Hydrogel Design values are $\bar l = 0.15$ nm, $C_\infty = 4$, $\lambda = 3$. Canal and Peppas (1989) introduced a regime-dependent correlation between mesh size and equilibrium polymer fraction; the factor $1 - 2/f$ is the later phantom-network correction. If a relaxed (formation) state at fraction $\phi_r$ is used as reference, lengths scale by $(\phi_r/\phi_s)^{1/3}$ instead of $\phi_s^{-1/3}$. Real networks have a distribution of mesh sizes, which a scalar $\xi$ does not describe.
+Graduate. Typical hydrogel mesh sizes are 5–100 nm (Li and Mooney), to be compared like with like: hydrodynamic diameters of 4.1 nm for lysozyme and 10.7 nm for IgG against diameter-like lengths, radii against radii. For PEG the Hydrogel Design values are $\bar l = 0.15$ nm, $C_\infty = 4$, $\lambda = 3$. Canal and Peppas (1989) introduced a regime-dependent correlation between mesh size and equilibrium polymer fraction; the factor $1 - 2/f$ is the later phantom-network correction. If a relaxed (formation) state at fraction $\phi_r$ is used as reference, lengths scale by $(\phi_r/\phi_s)^{1/3}$ instead of $\phi_s^{-1/3}$. Real networks have a distribution of mesh sizes, which a scalar $\xi$ does not describe. Li and Mooney do not state a geometric reading of $r_{mesh}$; if $G = \nu k_BT$, the formula is the diameter of a sphere containing one elastic strand (Expansion), a different length from the portal radius on the [mesh radius](mesh-radius-of-regular-lattice-networks.md) page.
 
 ## Depends on
 

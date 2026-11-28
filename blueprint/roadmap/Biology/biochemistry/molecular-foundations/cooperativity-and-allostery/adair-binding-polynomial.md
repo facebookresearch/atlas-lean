@@ -24,7 +24,7 @@ normalized so that $P_{\mathrm{Adair}}(0)=1$; the MWC page's weight sum $(1+\alp
 
 ## Context
 
-Undergraduate to graduate biochemistry. Adair introduced stepwise constants to describe hemoglobin's four-site oxygen binding; the binding polynomial is the common language in which phenomenological (Adair, Hill) and mechanistic (MWC, KNF) cooperativity models are compared. Artzi's RNA-triple-helix design assembles three chemically distinct strands at a defined 1:1:1 stoichiometry (Conde et al. 2016); the binding polynomial for one ligand species is at most an analogy for that multi-component assembly, which the paper does not analyze this way.
+Undergraduate to graduate biochemistry. Adair introduced stepwise constants to describe hemoglobin's four-site oxygen binding; the binding polynomial is the common language in which phenomenological (Adair, Hill) and mechanistic (MWC, KNF) cooperativity models are compared. One RNA-triple-helix design assembles three chemically distinct strands at a defined 1:1:1 stoichiometry (Conde et al. 2016); the binding polynomial for one ligand species is at most an analogy for that multi-component assembly, which the paper does not analyze this way.
 
 ## Depends on
 

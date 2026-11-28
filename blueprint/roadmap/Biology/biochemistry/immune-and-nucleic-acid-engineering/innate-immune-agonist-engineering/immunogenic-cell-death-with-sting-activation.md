@@ -13,7 +13,7 @@ No human data; no strain-to-arm mapping is asserted, since indexing terms do not
 
 ## Context
 
-Research level, and the most recent empirical page in this folder. It completes an arc: deliver an agonist, make the agonist endogenously, or couple agonism to antigen release from dying tumor cells. He and Artzi are the lead and corresponding authors.
+Research level. It completes an arc with [Why delivering a STING agonist is harder than finding one](./sting-agonist-delivery-constraints.md) and [Making the tumor cell produce its own innate-immune agonist](./cancer-cell-cgas-restoration.md): deliver an agonist, make the agonist endogenously, or couple agonism to antigen release from dying tumor cells.
 
 ## Depends on
 

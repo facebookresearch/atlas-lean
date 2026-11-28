@@ -13,7 +13,7 @@ The in vitro transfer observation and the in vivo tumor effect are not linked by
 
 ## Context
 
-Research level. The conceptual inversion - use an abundant cell type in the tumor as a production site for an immune signal rather than only as a target - is why this page exists. Cryer and Artzi are the lead and corresponding authors; the nanoparticles were administered intratumorally in the design shown in Figure 1.
+Research level. The conceptual inversion - use an abundant cell type in the tumor as a production site for an immune signal rather than only as a target - is why this page exists. The nanoparticles were administered intratumorally in the design shown in Figure 1.
 
 ## Depends on
 

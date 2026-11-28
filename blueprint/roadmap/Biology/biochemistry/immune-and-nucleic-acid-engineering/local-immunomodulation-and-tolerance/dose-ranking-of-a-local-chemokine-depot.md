@@ -18,6 +18,7 @@ Graduate level. The page is a corrective to dose-escalation intuition imported f
 ## Depends on
 
 - [Regulatory T cells and the logic of local tolerance](./regulatory-t-cells-and-peripheral-tolerance.md)
+- [Species, model system and the scope of a preclinical claim](../preclinical-model-systems/species-and-model-system-scope.md)
 - [Kaplan-Meier survival estimate](../../../../Probability/nonparametric-survival/kaplan-meier-estimator/km-survival.md)
 
 ## Proof depends on
@@ -30,4 +31,4 @@ Making this precise would require: a spatial description of the chemokine profil
 
 ## Sources
 
-- J. D. Fisher, W. Zhang, S. C. Balmert, A. M. Aral, A. P. Acharya, Y. Kulahci, J. Li, H. R. Turnquist, A. W. Thomson, M. G. Solari, V. S. Gorantla, S. R. Little, "In situ recruitment of regulatory T cells promotes donor-specific tolerance in vascularized composite allotransplantation", *Science Advances* 6(11):eaax8429 (2020). DOI 10.1126/sciadv.aax8429. Read: publisher full text - Abstract; "Characterization of Recruitment-MP" (linear release over about 40 days; particle size above 10 micrometres); "Recruitment-MP prevents rejection and promotes long-term survival of hindlimb allografts" with Figure 1A (strain pairing, immunosuppression withdrawal at day 21, the three doses and their mean survival times, six of eight animals beyond 200 days at 50 mg, blank-particle, soluble-chemokine and contralateral-limb controls). Not an Artzi-group publication. https://www.science.org/doi/full/10.1126/sciadv.aax8429
+- J. D. Fisher, W. Zhang, S. C. Balmert, A. M. Aral, A. P. Acharya, Y. Kulahci, J. Li, H. R. Turnquist, A. W. Thomson, M. G. Solari, V. S. Gorantla, S. R. Little, "In situ recruitment of regulatory T cells promotes donor-specific tolerance in vascularized composite allotransplantation", *Science Advances* 6(11):eaax8429 (2020). DOI 10.1126/sciadv.aax8429. Read: publisher full text - Abstract; "Characterization of Recruitment-MP" (linear release over about 40 days; particle size above 10 micrometres); "Recruitment-MP prevents rejection and promotes long-term survival of hindlimb allografts" with Figure 1A (strain pairing, immunosuppression withdrawal at day 21, the three doses and their mean survival times, six of eight animals beyond 200 days, blank-particle, soluble-chemokine and contralateral-limb controls). https://www.science.org/doi/full/10.1126/sciadv.aax8429

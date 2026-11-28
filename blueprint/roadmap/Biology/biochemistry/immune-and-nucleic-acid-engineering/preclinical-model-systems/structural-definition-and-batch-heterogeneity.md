@@ -7,18 +7,17 @@ What is argued, and at what strength:
 - *Measured material heterogeneity.* The Perspective states that, unlike small-molecule drugs, nanomedicines within a batch are not identical, and that size, nucleic-acid placement and loading are reported as average values. This is a statement about material characterization.
 - *Inferred functional heterogeneity.* From that, the authors reason that a range of particle efficacies exists within a batch and that identifying the most effective and least toxic structures would advance understanding of structure-function relationships. Neither source measured a distribution of therapeutic responses across individual particles, so this is an inference, not a measurement.
 - *Strength of the architecture claim.* The companion comment argues that lack of structural definition limits efficacy and complicates approval because architecture, not just component identity, determines potency. Read as an argument that architecture is an important contributor; the sources do not establish it as the sole determinant, and composition, dose and biological context remain in play.
-- *Archetype.* Spherical nucleic acids are offered as the example, with core composition, conjugation chemistry, and oligonucleotide number, type, location and density listed as systematically tunable.
+- *Archetype.* Spherical nucleic acids are offered as the example. The tunable parameters the Perspective lists for their use as a structural immunotherapeutic are core composition, chemical mode of conjugation, and oligonucleotide number, type, location and orientation.
 
 Both pieces are perspective articles: they organise evidence and set an agenda rather than report an experiment.
 
 ## Context
 
-Research level. The page closes the subfield by naming an assumption every empirical page quietly makes - that a formulation can be summarised by its mean properties. Artzi is a co-author on both pieces with Mirkin and colleagues, and a corresponding author on the longer one.
+Research level. It names an assumption that the empirical pages of this field make implicitly - that a formulation can be summarised by its mean properties. Both pieces argue the position from existing nanomedicine literature rather than from new measurements.
 
 ## Depends on
 
 - [The paracrine transfer effect as a nanomedicine design concept](../innate-immune-agonist-engineering/paracrine-transfer-effect.md)
-- [Interaction references are not interchangeable](../../../pharmacokinetics/pharmacodynamic-response-models/interact-references-disagree.md)
 
 ## Proof depends on
 

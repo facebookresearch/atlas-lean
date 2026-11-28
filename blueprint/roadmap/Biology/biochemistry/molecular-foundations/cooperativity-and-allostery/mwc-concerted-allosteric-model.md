@@ -20,11 +20,11 @@ $Z(0)=1+L$; dividing by $1+L$ gives the normalized [Adair binding polynomial](ad
 
 **Correspondence with Marzen, Garcia and Phillips.** Their active state $A$ and inactive state $I$ correspond to $R$ and $T$ here, with state energies $\varepsilon_A,\varepsilon_I$. Dividing the numerator and denominator of their Eq. 2 by the active weight $e^{-\beta\varepsilon_A}$ gives their Eq. 4 with $L=e^{-\beta(\varepsilon_I-\varepsilon_A)}$, the ratio of the inactive to the active Boltzmann weight. The sentence before their Eq. 4 prints $L=e^{-\beta(\varepsilon_A-\varepsilon_I)}$, the reciprocal; the expression that is consistent with their Eq. 4, and the one used here, is $e^{-\beta(\varepsilon_I-\varepsilon_A)}$.
 
-**Shape.** Sigmoidal saturation (positive curvature of $Y$ against $\alpha$ at small $\alpha$) occurs for suitable parameters, for example $n=2$, $L=100$, $c=0.01$; it is not automatic: for $n=2$, $L=1$, $c=1/2$ the curve is concave for all $\alpha\ge0$. A sigmoid on a linear concentration axis and a local Hill slope above one are related but distinct criteria. Within each conformation sites do not interact directly, but occupancies are correlated through the shared conformation.
+**Shape.** Whether the saturation curve is sigmoidal depends on the parameters; it is not automatic. A sigmoid on a linear concentration axis and a local Hill slope above one are related but distinct criteria. Within each conformation sites do not interact directly, but occupancies are correlated through the shared conformation.
 
 ## Context
 
-Undergraduate to graduate. MWC is the standard mechanistic model of allostery (hemoglobin, ligand-gated channels, chemoreceptor clusters) and a reference model for cooperative molecular switches. Stimulus-responsive materials of the kind the Artzi laboratory designs to "sense and respond to specific cues in the tissue microenvironment" (Wyss Institute profile) are engineered rather than allosteric proteins; the model is included as a foundation, not as a description of those materials.
+Undergraduate to graduate. MWC is the standard mechanistic model of allostery (hemoglobin, ligand-gated channels, chemoreceptor clusters) and a reference model for cooperative molecular switches.
 
 ## Depends on
 
@@ -36,7 +36,9 @@ None.
 
 ## Expansion
 
-This page is a definition. $Y=\frac{\alpha}{n}\,d\ln Z/d\alpha$ follows from [the logarithmic-derivative identity](mean-occupancy-as-logarithmic-derivative.md) with $\sum_ii\binom{n}{i}y^i=ny(1+y)^{n-1}$. The two shape examples were checked numerically (second differences of $Y$ at several $\alpha$). Limiting cases are on [limiting behaviour of the MWC model](limiting-behaviour-of-the-mwc-model.md).
+This page is a definition. $Y=\frac{\alpha}{n}\,d\ln Z/d\alpha$ follows from [the logarithmic-derivative identity](mean-occupancy-as-logarithmic-derivative.md) with $\sum_ii\binom{n}{i}y^i=ny(1+y)^{n-1}$. Limiting cases are on [limiting behaviour of the MWC model](limiting-behaviour-of-the-mwc-model.md).
+
+Derived here and not stated in the cited sources (numerical checks of the shape remark): for $n=2$, $L=100$, $c=0.01$ the second difference of $Y$ in $\alpha$ is positive at $\alpha=0.5$ (sigmoidal), while for $n=2$, $L=1$, $c=1/2$ it is negative at every tested $\alpha\ge0$ (concave).
 
 Remaining decomposition before the page can be marked ready: (i) a lemma deriving the binomial weights from independence within each conformation and the concerted constraint; (ii) a lemma identifying the normalized Adair coefficients; (iii) if the shape statements are to be kept as results, an explicit criterion (sign of the second derivative of $Y$ near $\alpha=0$ in terms of $n,L,c$) on its own page.
 
@@ -45,4 +47,3 @@ Remaining decomposition before the page can be marked ready: (i) a lemma derivin
 - S. Marzen, H. G. Garcia and R. Phillips, "Statistical mechanics of Monod–Wyman–Changeux (MWC) models", *Journal of Molecular Biology* (2013); author manuscript read at [pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/articles/PMC3786005/), section "States and weights in the MWC setting", Eq. 2 (Boltzmann weights of active and inactive states), the parametrization sentence and footnote before Eq. 4, Eqs. 4–5 (one-site activity and binding curves with $K_d^{(A)},K_d^{(I)}$ and $L$) and Eq. 8 (activity with $n$ binding sites).
 - H. Jakubowski and P. Flatt, *Fundamentals of Biochemistry*, LibreTexts, Section 5.11 "Derivation of the MWC Equation", Eq. 1 and Steps 1–3 (weights $\binom{n}{i}\alpha^i$ and $L\binom{n}{i}(c\alpha)^i$ relative to $[R_0]$, binding polynomial, fractional saturation, $L=[T_0]/[R_0]$), [bio.libretexts.org](https://bio.libretexts.org/Bookshelves/Biochemistry/Fundamentals_of_Biochemistry_%28Jakubowski_and_Flatt%29/01%3A_Unit_I-_Structure_and_Catalysis/05%3A_Protein_Function/5.11%3A_Derivation_of_the_MWC_Equation).
 - M. I. Stefan and N. Le Novère, "Cooperative binding", *PLoS Computational Biology* 9(6) (2013), e1003106, [doi.org](https://doi.org/10.1371/journal.pcbi.1003106), section "The MWC Model" (assumptions of the concerted model; equations rendered as images).
-- Wyss Institute faculty profile of Natalie Artzi, [wyss.harvard.edu](https://wyss.harvard.edu/team/core-faculty/natalie-artzi-ph-d/) (context sentence only).

@@ -5,7 +5,7 @@ Acting on the immune system at one tissue site: regulatory T cell recruitment an
 ## Pages
 
 - [Local Treg expansion in immune-mediated alopecia: what the two models showed](./immune-mediated-alopecia-local-treg-outcome.md)
-- [Different graft-survival outcomes across three local-depot arms](./non-monotonic-dose-response-local-delivery.md)
+- [Different graft-survival outcomes across three local-depot arms](./dose-ranking-of-a-local-chemokine-depot.md)
 - [Recruit and expand: a two-signal local strategy for Treg](./recruit-and-expand-local-treg-strategy.md)
 - [Regulatory T cells and the logic of local tolerance](./regulatory-t-cells-and-peripheral-tolerance.md)
 - [Dosing and sampling the same tissue site with one platform](./theranostic-microneedle-sampling.md)

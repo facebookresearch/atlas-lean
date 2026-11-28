@@ -20,7 +20,7 @@ while the lifetime ratio of the emitting population still equals $1+k_q\tau_0[Q]
 
 ## Context
 
-Undergraduate to graduate biophysical chemistry. Quenching by oxygen, iodide or acrylamide probes the solvent accessibility and structural fluctuations of fluorophores in proteins; Lakowicz and Weber found near-diffusion-limited oxygen quenching of free fluorophores, including tryptophan, in the systems studied, and used the method to detect access-dependent protection of macromolecule-bound probes (empirical results). The Artzi RNA-triple-helix design places fluorophores and a dark quencher on separate strands and reads near-complete quenching at a 1:1:1 molar ratio as evidence that the strands are assembled in close proximity (Conde et al. 2016, Fig. 2a); that is quenching within a complex, not the diffusional law in item 1, which it does not test.
+Undergraduate to graduate biophysical chemistry. Quenching by oxygen, iodide or acrylamide probes the solvent accessibility and structural fluctuations of fluorophores in proteins; Lakowicz and Weber found near-diffusion-limited oxygen quenching of free fluorophores, including tryptophan, in the systems studied, and used the method to detect access-dependent protection of macromolecule-bound probes (empirical results). One RNA-triple-helix design places fluorophores and a dark quencher on separate strands and reads near-complete quenching at a 1:1:1 molar ratio as evidence that the strands are assembled in close proximity (Conde et al. 2016, Fig. 2a); that is quenching within a complex, not the diffusional law in item 1, which it does not test.
 
 ## Depends on
 

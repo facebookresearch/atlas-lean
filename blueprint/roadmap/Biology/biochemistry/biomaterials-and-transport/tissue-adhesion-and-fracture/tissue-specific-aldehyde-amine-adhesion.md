@@ -6,7 +6,7 @@ Findings (empirical). Artzi et al. (2009) varied the dextran-aldehyde solid cont
 
 ## Context
 
-Graduate biomaterials; the empirical principle of Artzi's adhesive design ("matching material and tissue properties"). The correlations are over a handful of rodent tissues and formulations and do not establish a quantitative or causal law. Inflammation scores in the 2012 subcutaneous study stayed mild to moderate at 7 and 30 days; subcutaneous responses do not establish safety in the GI tract.
+Graduate biomaterials; the design principle stated by Oliva et al. ("matching material and tissue properties"). The correlations are over a handful of rodent tissues and formulations and do not establish a quantitative or causal law. Inflammation scores in the 2012 subcutaneous study stayed mild to moderate at 7 and 30 days; subcutaneous responses do not establish safety in the GI tract.
 
 ## Depends on
 

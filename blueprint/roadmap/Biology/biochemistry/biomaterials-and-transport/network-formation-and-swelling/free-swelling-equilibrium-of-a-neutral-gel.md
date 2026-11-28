@@ -6,7 +6,7 @@ Take the free energy per unit dry volume $W = W_s + W_m$ (affine stretching plus
 
 $$\log\left(1 - \lambda^{-3}\right) + \lambda^{-3} + \chi\,\lambda^{-6} + Nv\left(\lambda^{-1} - \lambda^{-3}\right) = 0 .$$
 
-Equivalently, with $\phi = \lambda^{-3}$, $\ln(1-\phi) + \phi + \chi\phi^2 + Nv(\phi^{1/3} - \phi) = 0$. For $Nv = 10^{-3}$ and $\chi = 0.2$, Hong et al. report the free-swelling stretch 3.215; a numerical solve of the displayed equation gives 3.2150. This checks the specialization; it is not a statement about real gels.
+Equivalently, with $\phi = \lambda^{-3}$, $\ln(1-\phi) + \phi + \chi\phi^2 + Nv(\phi^{1/3} - \phi) = 0$. For $Nv = 10^{-3}$ and $\chi = 0.2$, Hong et al. report the free-swelling stretch 3.215; this is a property of the model, not a statement about real gels.
 
 For networks formed at polymer fraction $\phi_0$ in solution, with junction functionality $f > 2$ and chain-end defect fraction $\gamma$, Richbourg, Ravikumar and Peppas use the separate phantom-network equation
 
@@ -16,7 +16,7 @@ with $V_1$ the solvent molar volume, $\rho_d$ the dry polymer density, $M_r$ the
 
 ## Context
 
-Graduate. The equilibrium polymer fraction feeds mesh size, modulus and diffusivity estimates. Assumptions: additive elastic and mixing free energies; Gaussian chains without entanglements or finite extensibility; constant $\chi$ (the Hydrogel Design notes call its equality with the free-polymer value assumed but unproven); no ions. The two equations are distinct models (different reference states and elastic terms) and should not be mixed. In the first equation, letting $Nv \to 0$ at constant $\chi \le 1/2$ sends $\lambda \to \infty$, a limit in which the network description itself fails; for $\chi > 1/2$ the mixing term alone has a root at finite $\lambda$ (for example $\chi = 0.8$ gives $\lambda \approx 1.2365$). Muñoz Taboada et al. (2024) list low swelling among the design requirements of a gastrointestinal sealant; neither equation was fitted to that material.
+Graduate. The equilibrium polymer fraction feeds mesh size, modulus and diffusivity estimates. Assumptions: additive elastic and mixing free energies; Gaussian chains without entanglements or finite extensibility; constant $\chi$ (the Hydrogel Design notes call its equality with the free-polymer value assumed but unproven); no ions. The two equations are distinct models (different reference states and elastic terms) and should not be mixed. Muñoz Taboada et al. (2024) list low swelling among the design requirements of a gastrointestinal sealant; neither equation was fitted to that material.
 
 ## Depends on
 
@@ -29,7 +29,7 @@ None.
 
 ## Expansion
 
-Derivation: zero stress gives $P = NkT(\lambda^{-1} - \lambda^{-3})$; substituting into $\mu = kT[\log(1 - \lambda^{-3}) + \lambda^{-3} + \chi\lambda^{-6}] + Pv = 0$ gives the equation. For existence and uniqueness of a root $\phi \in (0,1)$ when $Nv > 0$ and $\chi < 1/2$, the left side $g$ is not monotone ($g' > 0$ near $0$ and $g' < 0$ near $1$), so a monotonicity argument fails; a workable route writes $-[\ln(1-\phi) + \phi + \chi\phi^2]/\phi^2 = \tfrac12 - \chi + \sum_{n \ge 3}\phi^{n-2}/n$ and compares it with $Nv(\phi^{1/3} - \phi)/\phi^2$, using that $\phi^{5/3}/(1 - \phi^{2/3})$ is increasing. The phantom equation needs its own derivation from a free energy with formation-state reference, which the cited pages state without proof.
+Derivation: zero stress gives $P = NkT(\lambda^{-1} - \lambda^{-3})$; substituting into $\mu = kT[\log(1 - \lambda^{-3}) + \lambda^{-3} + \chi\lambda^{-6}] + Pv = 0$ gives the equation. For existence and uniqueness of a root $\phi \in (0,1)$ when $Nv > 0$ and $\chi < 1/2$, the left side $g$ is not monotone ($g' > 0$ near $0$ and $g' < 0$ near $1$), so a monotonicity argument fails; a workable route writes $-[\ln(1-\phi) + \phi + \chi\phi^2]/\phi^2 = \tfrac12 - \chi + \sum_{n \ge 3}\phi^{n-2}/n$ and compares it with $Nv(\phi^{1/3} - \phi)/\phi^2$, using that $\phi^{5/3}/(1 - \phi^{2/3})$ is increasing. The behaviour of the root as $Nv \to 0$, which depends on whether $\chi \le 1/2$, also needs a lemma; a numerical solve of the displayed equation reproduces 3.215 for the source's parameters. The phantom equation needs its own derivation from a free energy with formation-state reference, which the cited pages state without proof.
 
 ## Sources
 

@@ -22,13 +22,11 @@ $$\theta_H=\frac{s}{n}\,\frac{\partial\ln q_{\mathrm{zip}}}{\partial s}=\frac{\s
 
 $$q_{\mathrm{zip}}(n)\big|_{s=1}=1+\frac{\sigma n(n+1)}{2},\qquad \theta_H\big|_{s=1}=\frac{\sigma(n+1)(n+2)}{6\,q_{\mathrm{zip}}(n)|_{s=1}}.$$
 
-3. $\theta_H$ is strictly increasing in $s$, so the midpoint $\theta_H=1/2$ occurs at a unique $s_{1/2}$, and $s_{1/2}>1$ if and only if $\sigma(n+1)(4-n)<6$. This holds for every $n$ when $0<\sigma<1$ and for every $\sigma$ when $n\ge4$; it fails, for example, for $n=1$, $\sigma=2$, where $s_{1/2}=1/2$.
-
 A chain in the zipper ensemble still has partial helicities; the model is not the same as an all-or-none (two-state) transition.
 
 ## Context
 
-Graduate biophysics. The zipper model is the short-chain counterpart of the full Zimm–Bragg treatment and shows how the transition midpoint depends on chain length in the cooperative regime $\sigma<1$. No Artzi-specific result depends on this page.
+Graduate biophysics. The zipper model is the short-chain counterpart of the full Zimm–Bragg treatment. For comparison only: for the full multiple-stretch model (not the single-stretch ensemble of this page), the source observes that for finite chains the midpoint $\theta_H=1/2$ lies at $s>1$.
 
 ## Depends on
 
@@ -40,10 +38,10 @@ Graduate biophysics. The zipper model is the short-chain counterpart of the full
 
 ## Expansion
 
-Proof: count placements of one run of length $k$ in a word of length $n$ (there are $n-k+1$), then sum the arithmetico-geometric series using $\sum_{k=1}^n s^k=(s^{n+1}-s)/(s-1)$ and $\sum_{k=1}^n ks^k=s\,(ns^{n+1}-(n+1)s^n+1)/(s-1)^2$; the helicity follows by differentiating in $s$. Item 2 uses $\sum_k(n-k+1)=n(n+1)/2$ and $\sum_kk(n-k+1)=n(n+1)(n+2)/6$. For item 3, $s\,d\theta_H/ds=\operatorname{Var}(n_H)/n>0$ (the same variance identity as for binding polynomials), and $s_{1/2}>1$ iff $\theta_H(1)<1/2$, which rearranges to $\sigma(n+1)(4-n)<6$; the factor $(n+1)(4-n)$ is at most $6$ (at $n=1,2$) and is $\le0$ for $n\ge4$. The closed forms, item 2 and the midpoint examples were checked numerically against brute-force enumeration and bisection.
+Proof: count placements of one run of length $k$ in a word of length $n$ (there are $n-k+1$), then sum the arithmetico-geometric series using $\sum_{k=1}^n s^k=(s^{n+1}-s)/(s-1)$ and $\sum_{k=1}^n ks^k=s\,(ns^{n+1}-(n+1)s^n+1)/(s-1)^2$; the helicity follows by differentiating in $s$. Item 2 uses $\sum_k(n-k+1)=n(n+1)/2$ and $\sum_kk(n-k+1)=n(n+1)(n+2)/6$. Derived here and not stated in the source (a candidate separate page), for the single-stretch ensemble: $s\,d\theta_H/ds=\operatorname{Var}(n_H)/n>0$, and $\theta_H\to0$ as $s\to0^+$ and $\theta_H\to1$ as $s\to\infty$, so the midpoint exists and is unique, and it lies at $s>1$ iff $\theta_H(1)<1/2$, i.e. iff $\sigma(n+1)(4-n)<6$; this fails for large $\sigma$ (for $n=1$, $\sigma=2$ the midpoint is $s=1/2$). The closed forms, item 2 and these midpoint examples were checked numerically against brute-force enumeration and bisection.
 
-Remaining decomposition before the page can be marked ready: the variance identity $s\,d\langle n_H\rangle/ds=\operatorname{Var}(n_H)$ for polynomial partition functions as a lemma (it is the analogue of the first step on the [Hill-slope page](../cooperativity-and-allostery/hill-slope-as-variance-ratio.md)), and the series identities as lemmas.
+Remaining decomposition before the page can be marked ready: a source for any midpoint criterion before it enters the statement; the variance identity $s\,d\langle n_H\rangle/ds=\operatorname{Var}(n_H)$ for polynomial partition functions as a lemma (it is the analogue of the first step on the [Hill-slope page](../cooperativity-and-allostery/hill-slope-as-variance-ratio.md)), and the series identities as lemmas.
 
 ## Sources
 
-- A. Tokmakoff, *Concepts in Biophysical Chemistry*, LibreTexts, Section 18.1 "Helix–Coil Transition", subsection "Zipper model" (read at [chem.libretexts.org](https://chem.libretexts.org/Bookshelves/Biological_Chemistry/Concepts_in_Biophysical_Chemistry_%28Tokmakoff%29/05:_Cooperativity/18:_Cooperativity/18.01:_HelixCoil_Transition)): placement count $n-n_H+1$, the sum and its closed form, the distribution $P_H(n,n_H)$ and the helicity formula; the finite-chain paragraph of "Multiple stretches" (midpoint at $s>1$ for cooperative parameters).
+- A. Tokmakoff, *Concepts in Biophysical Chemistry*, LibreTexts, Section 18.1 "Helix–Coil Transition", subsection "Zipper model" (read at [chem.libretexts.org](https://chem.libretexts.org/Bookshelves/Biological_Chemistry/Concepts_in_Biophysical_Chemistry_%28Tokmakoff%29/05:_Cooperativity/18:_Cooperativity/18.01:_HelixCoil_Transition)): placement count $n-n_H+1$, the sum and its closed form, the distribution $P_H(n,n_H)$ and the helicity formula; and, for the Context comparison only, the finite-chain paragraph of "Multiple stretches" about the full transfer-matrix model ("the observed midpoint ($\theta_H = 0.5$) lies at $s > 1$").

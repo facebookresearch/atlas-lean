@@ -18,6 +18,7 @@ Graduate level. The page makes explicit a recurring reasoning step in this subfi
 
 - [A polymorphism inside a microRNA binding site switches regulation on and off](./seed-site-polymorphism-and-microrna-targeting.md)
 - [MicroRNA silencing and the mimic/antagomiR pair](./microrna-silencing-pathway.md)
+- [Species, model system and the scope of a preclinical claim](../preclinical-model-systems/species-and-model-system-scope.md)
 
 ## Proof depends on
 

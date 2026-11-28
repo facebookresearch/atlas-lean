@@ -28,7 +28,7 @@ None.
 
 ## Expansion
 
-Toward a mathematical statement one would need: a tumor-growth model with identifiable parameters instead of a single endpoint ratio; an uncertainty decomposition across animals, measurement and model choice; a stated inferential target, such as a difference in growth rate rather than per-cent reduction on a fixed day; and pairwise comparisons with multiplicity control if arm-to-arm survival claims are wanted. A measurement prerequisite on relative expression estimates is still needed and is not yet linked. The transcriptional correlates would require separate target-validation experiments.
+Toward a mathematical statement one would need: a tumor-growth model with identifiable parameters instead of a single endpoint ratio; an uncertainty decomposition across animals, measurement and model choice; a stated inferential target, such as a difference in growth rate rather than per-cent reduction on a fixed day; and pairwise comparisons with multiplicity control if arm-to-arm survival claims are wanted. The transcriptional correlates would require separate target-validation experiments.
 
 ## Sources
 

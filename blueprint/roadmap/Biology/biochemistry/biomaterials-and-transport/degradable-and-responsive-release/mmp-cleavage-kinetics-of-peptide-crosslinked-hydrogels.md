@@ -1,18 +1,18 @@
 # MMP cleavage kinetics of peptide-crosslinked hydrogels (empirical)
 
-For MMP-1 acting on synthetic peptide substrates, Lutolf and co-workers measured Michaelis–Menten constants in soluble form and turnover numbers in PEG gels; replacing GPQG↓IAGQ by GPQG↓IWGQ in the soluble crosslinker precursor raised $k_{cat}$ about threefold.
+For MMP-1 acting on synthetic peptide substrates, Lutolf and co-workers measured Michaelis–Menten constants in soluble form and turnover numbers in PEG gels; the more sensitive of the two crosslinker substrates studied had a turnover number about three times that of the less sensitive one in soluble form.
 
 Findings (empirical, in vitro enzyme kinetics with MMP-1). Selected rows of their Table 1:
 
 | Substrate (form) | $k_{cat}$ (s⁻¹) | $K_m$ (µM) | $k_{cat}/K_m$ (M⁻¹ s⁻¹) |
 | --- | --- | --- | --- |
-| Ac-GPQG↓IWGQ-NH₂ (soluble peptide) | 0.54 ± 0.11 * | 620 ± 160 * | 870 ± 170 * |
-| GCRD-GPQG↓IWGQ-DRCG (soluble crosslinker precursor) | 0.51 ± 0.10 * | 290 ± 30 * | 1,760 ± 280 * |
-| GCRD-GPQG↓IAGQ-DRCG (soluble crosslinker precursor) | 0.17 ± 0.03 † | 430 ± 90 † | 400 ± 80 † |
-| 4-arm PEG gel with the IWGQ crosslinker | 1.21 | not determined | not determined |
-| 4-arm PEG gel with the IAGQ crosslinker | 0.40 | not determined | not determined |
+| MMP(W), soluble peptide substrate | 0.54 ± 0.11 * | 620 ± 160 * | 870 ± 170 * |
+| MMP(W)x, soluble crosslinker substrate (more sensitive) | 0.51 ± 0.10 * | 290 ± 30 * | 1,760 ± 280 * |
+| MMP(A)x, soluble crosslinker substrate (less sensitive) | 0.17 ± 0.03 † | 430 ± 90 † | 400 ± 80 † |
+| 4-arm PEG gel crosslinked with MMP(W)x | 1.21 | not determined | not determined |
+| 4-arm PEG gel crosslinked with MMP(A)x | 0.40 | not determined | not determined |
 
-\* standard deviation, $n = 3$; † estimated from the largest relative error of the first two rows. Separately, primary human fibroblasts invaded the gels proteolytically in vitro, at rates depending on substrate activity, adhesion-ligand concentration and crosslink density, and gels delivering a specified dose of recombinant BMP-2 to critical-size rat cranial defects were infiltrated and remodeled into bony tissue within four weeks.
+Labels are the study's substrate identifiers (sequences in the source's Table 1 footnote). \* standard deviation, $n = 3$; † estimated from the largest relative error of the first two rows. Separately, primary human fibroblasts invaded the gels proteolytically in vitro, at rates depending on substrate activity, adhesion-ligand concentration and crosslink density, and gels delivering a specified dose of recombinant BMP-2 to critical-size rat cranial defects were infiltrated and remodeled into bony tissue within four weeks.
 
 ## Context
 

@@ -7,7 +7,7 @@ Terms and distinctions used throughout this folder:
 - *Activating ligand versus catalytic substrate.* Cytosolic double-stranded DNA is the ligand whose binding activates cGAS; it is not the material from which cGAMP is built. In cell-free extracts, cGAMP synthesis required ATP and GTP and occurred in the presence of DNA but not RNA.
 - *Direct agonist versus upstream activator.* A STING agonist binds STING: endogenous 2'3'-cGAMP, or a synthetic cyclic dinucleotide. DNA is an upstream activator of the pathway through cGAS, not a STING agonist.
 - *Endogenous production versus exogenous administration.* Agonist can be made inside a cell by cGAS, or supplied from outside as a drug. These differ in location, timing and clearance, and the folder keeps them apart.
-- *Cell compartment.* "STING signaling" without naming the cell type (cancer cell, dendritic cell, macrophage, endothelial cell) is ambiguous; a later page in this folder shows a case where the compartment decides the result.
+- *Cell compartment.* "STING signaling" without naming the cell type (cancer cell, dendritic cell, macrophage, endothelial cell) is ambiguous; in [Cancer cells as a depot: host-cell dependence of a nanoparticle immunotherapy](./nanoparticle-depot-and-host-cell-dependence.md) the compartment decides the result.
 
 cGAMP is hydrophilic and negatively charged, so it does not readily cross membranes, and it is degraded extracellularly by ectonucleotide pyrophosphatase/phosphodiesterase 1 (ENPP1).
 

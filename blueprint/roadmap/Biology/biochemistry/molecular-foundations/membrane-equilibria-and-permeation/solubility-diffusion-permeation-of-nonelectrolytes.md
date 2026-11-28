@@ -14,7 +14,7 @@ The author concludes that water and nonelectrolytes cross these bilayers by a so
 
 ## Context
 
-Undergraduate to graduate membrane biophysics. The solubility–diffusion picture (Overton's rule) is the usual starting point for thinking about passive membrane permeation of small molecules. In the Artzi laboratory's RNA-triple-helix work, one RNA strand carries a cholesterol conjugate stated to "facilitate the permeation of cell membranes", improve co-transfection and protect oligonucleotides (Conde et al. 2016, Results, citing earlier literature); that design rationale was not tested against this model, and the model does not establish it.
+Undergraduate to graduate membrane biophysics. The solubility–diffusion picture (Overton's rule) is the usual starting point for thinking about passive membrane permeation of small molecules. In one RNA-triple-helix study, one RNA strand carries a cholesterol conjugate stated to "facilitate the permeation of cell membranes", improve co-transfection and protect oligonucleotides (Conde et al. 2016, Results, citing earlier literature); that design rationale was not tested against this model, and the model does not establish it.
 
 ## Depends on
 

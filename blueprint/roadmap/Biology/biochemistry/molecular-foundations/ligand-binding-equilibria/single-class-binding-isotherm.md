@@ -18,7 +18,7 @@ Here $[L]$ is the **free** ligand concentration. Substituting the total ligand c
 
 ## Context
 
-Undergraduate biochemistry. This hyperbolic isotherm is the reference curve against which cooperativity, competition and depletion are measured, and the starting point of occupancy-based pharmacology. The Artzi laboratory studies how delivery regimen and administration mode affect the pharmacokinetics and pharmacodynamics of locally delivered therapies (Wyss Institute profile); occupancy of a target by a delivered ligand is the most basic quantity in that analysis. No specific Artzi result depends on this page.
+Undergraduate biochemistry. This hyperbolic isotherm is the reference curve against which cooperativity, competition and depletion are measured, and the starting point of occupancy-based pharmacology. Occupancy of a target by a delivered ligand is the most basic quantity in analyses of local drug delivery.
 
 ## Depends on
 
@@ -38,4 +38,3 @@ Remaining decomposition before the page can be marked ready: (i) a definition pa
 
 - E. C. Hulme and M. A. Trevethick, "Ligand binding assays at equilibrium: validation and interpretation", *British Journal of Pharmacology* 161(6) (2010), 1219–1237, [doi.org](https://doi.org/10.1111/j.1476-5381.2009.00604.x); open-access copy read: [pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/articles/PMC3000649/), section "Equilibrium binding" (the mass-action derivation and Eqs. 1a–1b, the Langmuir isotherm; the formulas are rendered as images, and the text states the derivation from $[RL]=K[R][L]$ and receptor conservation).
 - I. Jarmoskaite et al., "How to measure and evaluate binding affinities", *eLife* 9 (2020), e57264, [doi.org](https://doi.org/10.7554/eLife.57264); open-access copy read: [pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/articles/PMC7452723/), section "Avoid the titration regime", Eqs. 4a and 4b (fraction bound $=[P]_{\mathrm{free}}/([P]_{\mathrm{free}}+K_D)$ and its total-concentration approximation; the roles of the two partners are swapped relative to this page).
-- Wyss Institute faculty profile of Natalie Artzi, [wyss.harvard.edu](https://wyss.harvard.edu/team/core-faculty/natalie-artzi-ph-d/) (context sentence only).

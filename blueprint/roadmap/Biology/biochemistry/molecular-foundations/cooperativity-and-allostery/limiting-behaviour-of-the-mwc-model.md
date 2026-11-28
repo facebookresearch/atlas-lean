@@ -11,7 +11,7 @@ In the Monod–Wyman–Changeux model the fraction of molecules in the relaxed s
 
 $$p_R(0)=\frac{1}{1+L},\qquad \lim_{\alpha\to\infty}p_R(\alpha)=\frac{1}{1+Lc^{\,n}},$$
 
-and it is strictly increasing in $\alpha$ if $0<c<1$, constant if $c=1$, and strictly decreasing if $c>1$. When $0<c<1$ and $R$ is the active state, the two limits are the basal activity ("leakiness") and the maximal activity, and their difference $\frac{1}{1+Lc^n}-\frac{1}{1+L}>0$ is the dynamic range of a single molecule; for $c>1$ the roles of minimum and maximum are exchanged and the signed difference is negative.
+When $0<c<1$ and $R$ is the active state, the two limits are the basal activity ("leakiness") and the maximal activity, and their difference $\frac{1}{1+Lc^n}-\frac{1}{1+L}>0$ is the dynamic range of a single molecule; for $c>1$ the roles of minimum and maximum are exchanged and the signed difference is negative.
 3. For each fixed $\alpha\ge0$: as $L\to0$, $Y\to\alpha/(1+\alpha)=x/(K_R+x)$; as $L\to\infty$, $Y\to c\alpha/(1+c\alpha)=x/(K_T+x)$.
 4. If $c=1$, then $Y=\alpha/(1+\alpha)$ for every $L$: with equal affinities the binding curve carries no information about $L$ and shows no cooperativity.
 5. If $n=1$, then
@@ -22,7 +22,7 @@ a hyperbolic function of $\alpha$, so sigmoidal saturation needs $n\ge2$.
 
 ## Context
 
-Undergraduate to graduate. These limits are the quickest checks on any fitted allosteric model and isolate the parameters that set basal activity, maximal activity and switching range. Marzen, Garcia and Phillips use the two activity limits of an open-favoured ligand-gated channel to define its dynamic range (multiplied by the number of receptors for a population). No Artzi-specific result depends on this page.
+Undergraduate to graduate. These limits are the quickest checks on any fitted allosteric model and isolate the parameters that set basal activity, maximal activity and switching range. Marzen, Garcia and Phillips use the two activity limits of an open-favoured ligand-gated channel to define its dynamic range (multiplied by the number of receptors for a population).
 
 ## Depends on
 
@@ -34,7 +34,7 @@ None.
 
 ## Expansion
 
-Proof: for item 2, write $1/p_R=1+L\big((1+c\alpha)/(1+\alpha)\big)^n$; the ratio $(1+c\alpha)/(1+\alpha)$ starts at $1$, tends to $c$, and has derivative $(c-1)/(1+\alpha)^2$, which gives the limits and the monotonicity in each case. For item 1 divide $Y$ by $\alpha^n$: numerator and denominator both tend to $1+Lc^n$. Items 3–5 follow by direct substitution, using $\alpha(1+\alpha)^{n-1}/(1+\alpha)^n=\alpha/(1+\alpha)$; item 5 is a ratio of affine functions of $\alpha$, hence hyperbolic. Marzen et al. state item 2 for a two-site channel (their Eqs. 15–16, with $L=e^{-\beta\varepsilon}$ and $c=K_d^{(O)}/K_d^{(C)}$); the $n$-site form is the same computation applied to their Eq. 8.
+Proof: for item 2, write $1/p_R=1+L\big((1+c\alpha)/(1+\alpha)\big)^n$; the ratio $(1+c\alpha)/(1+\alpha)$ starts at $1$, tends to $c$, and has derivative $(c-1)/(1+\alpha)^2$, which gives the limits. Derived here and not stated in the cited sources: by the sign of that derivative $p_R$ is strictly increasing in $\alpha$ if $0<c<1$, constant if $c=1$ and strictly decreasing if $c>1$. For item 1 divide $Y$ by $\alpha^n$: numerator and denominator both tend to $1+Lc^n$. Items 3–5 follow by direct substitution, using $\alpha(1+\alpha)^{n-1}/(1+\alpha)^n=\alpha/(1+\alpha)$; item 5 is a ratio of affine functions of $\alpha$, hence hyperbolic. Marzen et al. state item 2 for a two-site channel (their Eqs. 15–16, with $L=e^{-\beta\varepsilon}$ and $c=K_d^{(O)}/K_d^{(C)}$); the $n$-site form is the same computation applied to their Eq. 8.
 
 Remaining decomposition before the page can be marked ready: each item is elementary, but the page relies on the MWC definition page, whose own decomposition (see its Expansion) must be completed first; "hyperbolic" in item 5 should be stated as an explicit Möbius form.
 

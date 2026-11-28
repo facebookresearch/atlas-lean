@@ -20,7 +20,7 @@ This is an exact forward model. Whether $K_d$ can be estimated precisely from da
 
 ## Context
 
-Undergraduate to graduate. The page is a prerequisite for interpreting binding of nucleic-acid strands or ligands at the micromolar concentrations typical of materials formulations; no specific Artzi result is derived here.
+Undergraduate to graduate. The page is a prerequisite for interpreting binding of nucleic-acid strands or ligands at the micromolar concentrations typical of materials formulations.
 
 ## Depends on
 

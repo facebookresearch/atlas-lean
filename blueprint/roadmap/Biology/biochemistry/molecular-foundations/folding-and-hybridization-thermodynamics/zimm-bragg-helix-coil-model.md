@@ -18,7 +18,7 @@ For $\sigma=1$ the segments are independent, $q(n)=(1+s)^n$ and $\theta_H=s/(1+s
 
 ## Context
 
-Graduate biophysics. The model explains why helix formation in polypeptides and the melting of long DNA sharpen with chain length: nucleating a helical stretch is costly ($\sigma\ll1$) while extending it is cheap. Seelig and Seelig apply a Zimm–Bragg-type cooperative multistate model to protein unfolding. No Artzi-specific result depends on this page.
+Graduate biophysics. The model explains why helix formation in polypeptides and the melting of long DNA sharpen with chain length: nucleating a helical stretch is costly ($\sigma\ll1$) while extending it is cheap. Seelig and Seelig apply a Zimm–Bragg-type cooperative multistate model to protein unfolding.
 
 ## Depends on
 

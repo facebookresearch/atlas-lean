@@ -6,9 +6,9 @@ Conventions, and the separation of rationale from measurement:
 
 - Pairing is described here by hydrogen-bonding edges, not by free energies; binding energetics belong to the molecular-thermodynamics subfield.
 - A *triplex-forming oligonucleotide* binds a duplex via Hoogsteen or reverse-Hoogsteen hydrogen bonds while the duplex retains Watson-Crick pairing; orientation is stated relative to the purine-rich strand.
-- *Motif rationale versus observation.* For the RNA construct in this folder, the authors argue that the chosen antiparallel motif requires no base protonation and therefore is not pH-dependent in the way protonation-requiring motifs are. That is a design rationale.
+- *Motif rationale versus observation.* For the RNA construct studied in [RNA triple-helix construct for co-delivery of two microRNA cargos](./rna-triple-helix-delivery-construct.md), the authors argue that the chosen antiparallel motif requires no base protonation and therefore is not pH-dependent in the way protonation-requiring motifs are. That is a design rationale.
 - *What was measured.* Stability of that assembled triplex was reported across a finite tested range, pH 5 to 9, together with tests of ionic strength, temperature, urea and serum. The rationale does not establish stability at arbitrary pH, and the measured range is the claim that is supported.
-- *Modelled versus measured structure.* The published secondary-structure depiction of the triplex is a software model; the experimental support for assembly comes from separate assays (fluorescence proximity, gel electrophoresis, melting behavior).
+- *Modelled versus measured structure.* How the published depiction of this triplex relates to the assays that support assembly is set out in [RNA triple-helix construct for co-delivery of two microRNA cargos](./rna-triple-helix-delivery-construct.md).
 
 ## Context
 

@@ -26,7 +26,7 @@ so the zero-current potential determines the permeability ratio $P_X/P_Y$. The f
 
 ## Context
 
-Graduate physiology and biophysics. Hodgkin and Katz used the equation to show that the squid-axon membrane at rest is far more permeable to $\mathrm K^+$ than to $\mathrm{Na}^+$ and that the ratio reverses at the peak of the action potential; the fitted ratios ($P_K:P_{Na}:P_{Cl}=1:0.04:0.45$ at rest and $1:20:0.45$ at the peak) are empirical findings for that preparation, not consequences of the equation, and with voltage-dependent permeabilities the uniqueness statement above does not apply. The bi-ionic form is the standard way to measure channel selectivity. No Artzi-specific result depends on this page.
+Graduate physiology and biophysics. Hodgkin and Katz used the equation to show that the squid-axon membrane at rest is far more permeable to $\mathrm K^+$ than to $\mathrm{Na}^+$ and that the ratio reverses at the peak of the action potential; the fitted ratios ($P_K:P_{Na}:P_{Cl}=1:0.04:0.45$ at rest and $1:20:0.45$ at the peak) are empirical findings for that preparation, not consequences of the equation, and with voltage-dependent permeabilities the uniqueness statement above does not apply. The bi-ionic form is the standard way to measure channel selectivity.
 
 ## Depends on
 

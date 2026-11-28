@@ -24,7 +24,7 @@ and if $\Delta G_w\ge0$ the midpoint $f_U=1/2$ lies at $[D]_{1/2}=\Delta G_w/m\g
 
 ## Context
 
-Undergraduate to graduate biochemistry; the linear extrapolation method is the most widely used way to quote protein stability. Denaturants also probe nucleic-acid assemblies: the main text of the Artzi RNA-triple-helix study reports testing triplex stability in the presence of urea, a denaturant of double-stranded RNA (Conde et al. 2016, Results; the data are in its supplementary information, which was not accessed), but the study did not fit the linear extrapolation model, so the relevance here is to the measurement concept only.
+Undergraduate to graduate biochemistry; the linear extrapolation method is the most widely used way to quote protein stability. Denaturants also probe nucleic-acid assemblies: the main text of an RNA-triple-helix study reports testing triplex stability in the presence of urea, a denaturant of double-stranded RNA (Conde et al. 2016, Results; the data are in its supplementary information, which was not accessed), but the study did not fit the linear extrapolation model, so the relevance here is to the measurement concept only.
 
 ## Depends on
 

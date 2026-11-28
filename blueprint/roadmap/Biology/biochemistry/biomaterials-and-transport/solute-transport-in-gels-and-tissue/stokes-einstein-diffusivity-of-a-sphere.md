@@ -18,11 +18,11 @@ None.
 
 ## Proof depends on
 
-- [Stokes force balance gives the terminal settling velocity](../../../../Physics/fluid-mechanics/stokes-settling-velocity/terminal-velocity.md)
+None.
 
 ## Expansion
 
-Two ingredients: the Stokes drag $6\pi\eta r_s v$ on a slowly moving sphere (used by the linked page as a force law; it needs the creeping-flow solution) and the Einstein fluctuation–dissipation relation $D = k_BT/\zeta$, which needs a page deriving it, for example from the balance of diffusive and drift fluxes at Boltzmann equilibrium or from Langevin dynamics at long times.
+The proof needs two ingredients: (1) the Stokes drag law, that a rigid sphere of radius $r_s$ translating at speed $v$ through an unbounded Newtonian liquid in creeping flow with no slip feels the force $6\pi\eta r_s v$, from the creeping-flow (Stokes) solution around a sphere; and (2) the Einstein relation $D = k_BT/\zeta$ for an overdamped Brownian particle with friction coefficient $\zeta$, for example from the balance of diffusive and drift fluxes at Boltzmann equilibrium in an external potential, or from the long-time limit of Langevin dynamics. The Stokes settling-velocity balance takes the drag law as given and does not supply either ingredient.
 
 ## Sources
 

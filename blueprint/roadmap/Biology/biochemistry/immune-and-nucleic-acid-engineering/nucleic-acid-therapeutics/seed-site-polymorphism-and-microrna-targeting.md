@@ -13,7 +13,7 @@ The claim concerns this site, these two microRNAs and this transcript, in the as
 
 ## Context
 
-Graduate level. This is the clearest case in the subfield of genotype entering a design decision: the same oligonucleotide therapy is predicted to act differently depending on a patient-level variant, and the response taken was to engineer the microRNA rather than the target. The work is a collaboration between the Shomron and Artzi groups.
+Graduate level. This is the clearest case in the subfield of genotype entering a design decision: the same oligonucleotide therapy is predicted to act differently depending on a patient-level variant, and the response taken was to engineer the microRNA rather than the target.
 
 ## Depends on
 

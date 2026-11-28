@@ -14,15 +14,13 @@ $$\mathrm{EC}_{50}=K_d+\frac{R_T}{2}.$$
 
 $$\delta\big|_{L_T=\mathrm{EC}_{50}}=\frac{R_T}{2K_d+R_T}.$$
 
-3. For every $L_T>0$ the depletion equals $\delta=[R]/(K_d+[R])$, where $[R]=R_T-x$ is the free receptor; it is strictly decreasing in $L_T$ and
+3. As $L_T\to0^+$ the depletion tends to $R_T/(K_d+R_T)$; the source states that depletion is most pronounced at the lowest ligand concentrations, where its value may be approximated by this expression.
 
-$$\sup_{L_T>0}\delta=\lim_{L_T\to 0^+}\delta=\frac{R_T}{K_d+R_T}.$$
-
-Consequently $K_d=\mathrm{EC}_{50}-R_T/2$, so estimating $K_d$ from a saturation curve under depletion requires $R_T$ as well as $\mathrm{EC}_{50}$, and $\mathrm{EC}_{50}/K_d=1+R_T/(2K_d)$. The supremum of the depletion is below 10% if and only if $R_T<K_d/9$; depletion is below 10% at every $L_T>0$ if and only if $R_T\le K_d/9$ (at $R_T=K_d/9$ the supremum $10\%$ is approached as $L_T\to0^+$ but not attained); and depletion at the half-saturation point is below 10% if and only if $R_T<2K_d/9$. The source's working guideline $R_T<0.1K_d$ is therefore a sufficient (slightly conservative) condition for depletion below 10% everywhere, and it keeps $\mathrm{EC}_{50}$ within 5% of $K_d$.
+Consequently $K_d=\mathrm{EC}_{50}-R_T/2$, so estimating $K_d$ from a saturation curve under depletion requires $R_T$ as well as $\mathrm{EC}_{50}$, and $\mathrm{EC}_{50}/K_d=1+R_T/(2K_d)$. The source's working guideline is to keep $R_T$ below about $0.1K_d$, which keeps $\mathrm{EC}_{50}$ within 5% of $K_d$.
 
 ## Context
 
-Undergraduate to graduate. This is the quantitative reason why apparent affinities measured with concentrated targets (receptor-rich preparations or binding surfaces) shift toward higher ligand. No Artzi-specific result is claimed.
+Undergraduate to graduate. This is the quantitative reason why apparent affinities measured with concentrated targets (receptor-rich preparations or binding surfaces) shift toward higher ligand.
 
 ## Depends on
 
@@ -35,9 +33,11 @@ None.
 
 ## Expansion
 
-Proof: from $K_dx=[R][L]$ with $x=[R]=R_T/2$ one gets $[L]=K_d$, and ligand conservation gives $L_T=K_d+R_T/2$; uniqueness of the admissible root gives the converse. Item 2 is $\delta=(R_T/2)/(K_d+R_T/2)$. For item 3, $x/L_T=x/([L]+x)$ and $[L]=K_dx/[R]$ give $\delta=[R]/(K_d+[R])$; $[R]$ decreases strictly as $L_T$ increases (more ligand binds more receptor), and $[R]\to R_T$ as $L_T\to0^+$. The supremum condition is $R_T/(K_d+R_T)<1/10$; since $[R]<R_T$ for every $L_T>0$, the supremum is not attained, which gives the non-strict pointwise condition $R_T/(K_d+R_T)\le1/10$; the half-point condition is $R_T/(2K_d+R_T)<1/10$.
+Proof: from $K_dx=[R][L]$ with $x=[R]=R_T/2$ one gets $[L]=K_d$, and ligand conservation gives $L_T=K_d+R_T/2$; uniqueness of the admissible root gives the converse. Item 2 is $\delta=(R_T/2)/(K_d+R_T/2)$. For item 3, $x/L_T=x/([L]+x)$ and $[L]=K_dx/[R]$ give $\delta=[R]/(K_d+[R])$, and $[R]\to R_T$ as $L_T\to0^+$.
 
-Remaining decomposition before the page can be marked ready: a lemma that the admissible root $x$ is strictly increasing in $L_T$ (from implicit differentiation of the quadratic, or from monotonicity of the rationalized formula), which item 3 uses.
+Derived here and not stated in the cited source (a candidate separate page): since $[R]$ decreases strictly as $L_T$ increases, $\delta$ is strictly decreasing with unattained supremum $R_T/(K_d+R_T)$; hence the supremum is below 10% iff $R_T<K_d/9$, depletion is below 10% at every $L_T>0$ iff $R_T\le K_d/9$, and depletion at the half-saturation point is below 10% iff $R_T<2K_d/9$, so the guideline $R_T<0.1K_d$ is a slightly conservative sufficient condition.
+
+Remaining decomposition before the page can be marked ready: a lemma that the admissible root $x$ is strictly increasing in $L_T$ (from implicit differentiation of the quadratic, or from monotonicity of the rationalized formula), and a source for the exact thresholds before they enter a statement.
 
 ## Sources
 

@@ -6,7 +6,7 @@ Findings (empirical). Artzi et al. (2009) explain qualitatively that amines add 
 
 ## Context
 
-Graduate. The pH dependence links material chemistry to the tissue microenvironment, a theme of Artzi's work. The two studies use different formulations, assays and observation times; retained dry solids are neither bond-cleavage rates nor evidence of in vivo lesion protection, and three pH points establish only the tested ordering, not an optimum.
+Graduate. The pH dependence links material chemistry to the tissue microenvironment, a theme of the cited sealant studies. The two studies use different formulations, assays and observation times; retained dry solids are neither bond-cleavage rates nor evidence of in vivo lesion protection, and three pH points establish only the tested ordering, not an optimum.
 
 ## Depends on
 

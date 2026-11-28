@@ -1,6 +1,6 @@
 # Power-law and Weibull release fits (empirical)
 
-The power law $M_t/M_\infty = kt^n$ and the Weibull function $1 - e^{-\alpha t^\beta}$ are empirical fits to release curves; exact diffusion solutions in common geometries start as $\sqrt t$ asymptotically, but a fitted exponent over a finite window is a different quantity.
+The power law $M_t/M_\infty = kt^n$ and the Weibull function $1 - e^{-\alpha t^\beta}$ are empirical fits to release curves; a fitted exponent over a finite window is not identified with any exact solution's behaviour.
 
 Empirical models. The Ritger–Peppas (Korsmeyer–Peppas) power law, with $k, n > 0$ and $kt^n$ dimensionless,
 
@@ -14,7 +14,7 @@ generalizes first-order dissolution by replacing $t$ with $t^\beta$; for small $
 
 ## Context
 
-Undergraduate, with a methodological warning: these are fits, not theorems, and a good fit does not identify a mechanism. For uniformly loaded dissolved drug diffusing to a perfect sink through a smooth surface, the released fraction starts as $(2S/V)\sqrt{Dt/\pi}$ (surface area $S$, volume $V$) in slabs, cylinders and spheres alike; even for the slab the exact curve is not $k\sqrt t$ on any interval ([Fickian release from a slab](fickian-release-from-a-slab.md)). Geometry-dependent best-fit exponents over a 60% window depend on the window, the norm and weighting, and the geometry; the values reported by Ritger and Peppas were not verified here because only a truncated abstract was accessible. The power law exceeds 1 at large $t$. Li and Mooney instead summarize hydrogel systems by the 24 h release fraction and the half-life $t_{1/2}$, a descriptive chart.
+Undergraduate, with a methodological warning: these are fits, not theorems, and a good fit does not identify a mechanism. The reading $n = 0.5$ refers to Fickian diffusion, whose exact solutions in simple geometries are on pages such as [Fickian release from a slab](fickian-release-from-a-slab.md); their short-time behaviour is a separate result (Expansion), and a fitted exponent is not the same object. Geometry-dependent best-fit exponents over a 60% window depend on the window, the norm and weighting, and the geometry; the values reported by Ritger and Peppas were not verified here because only a truncated abstract was accessible. The power law exceeds 1 at large $t$. Li and Mooney instead summarize hydrogel systems by the 24 h release fraction and the half-life $t_{1/2}$, a descriptive chart.
 
 ## Depends on
 
@@ -28,7 +28,7 @@ None.
 
 ## Expansion
 
-To connect fits to theorems: prove the short-time asymptotics $(2S/V)\sqrt{Dt/\pi}$ for the slab, cylinder and sphere, and quantify the best single power law over $0 \le M_t/M_\infty \le 0.6$ under a stated norm, which yields geometry-dependent exponents as derived quantities; state the surface-eroding slab as the exact $n = 1$ case. Inference of mechanism from fitted $n$ for swelling or degrading gels remains empirical.
+To connect fits to theorems: state and prove the short-time asymptotics of the exact Fickian solutions for the slab, cylinder and sphere, and quantify the best single power law over $0 \le M_t/M_\infty \le 0.6$ under a stated norm, which yields geometry-dependent exponents as derived quantities; state the surface-eroding slab as the exact $n = 1$ case. Inference of mechanism from fitted $n$ for swelling or degrading gels remains empirical.
 
 ## Sources
 

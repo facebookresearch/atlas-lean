@@ -6,7 +6,7 @@ Let $U_f$ be the modelled work required to rupture one network strand bridging t
 
 $$\Gamma_0 = U_f\,m, \qquad m = m_{dry}\,C^{2/3},$$
 
-where, for a gel obtained by isotropic swelling of a given dry network, $m_{dry}$ is the areal strand density of that dry network and $C$ the polymer volume fraction of the gel. With $U_f m_{dry} \approx 50$ J/m² for common elastomers, a gel with about 90% water gives the estimate $50 \times 0.1^{2/3} \approx 10.8$ J/m², i.e. about 10 J/m²; Zhao notes that Eq. (4) tends to overestimate dilute, loosely crosslinked gels.
+where, for a gel obtained by isotropic swelling of a given dry network, $m_{dry}$ is the areal strand density of that dry network and $C$ the polymer volume fraction of the gel. With $U_f m_{dry} \approx 50$ J/m² for common elastomers, a gel with about 90% water gives the source's estimate of about 10 J/m²; Zhao notes that Eq. (4) tends to overestimate dilute, loosely crosslinked gels.
 
 ## Context
 

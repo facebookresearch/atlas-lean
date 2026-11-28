@@ -10,11 +10,11 @@ The concept as the Perspective states it:
 - *Export routes and determinants* reviewed include exosome secretion, transcytosis, lysosomal exocytosis and secretory autophagy, with particle size, colloidal stability and surface charge influencing export; the Perspective notes that export can occur with first-order kinetics.
 - *Case studies discussed* are STING-stimulating polymeric cyclic-dinucleotide nanoparticles and TLR9-stimulating liposomal spherical nucleic acids.
 
-This is a Perspective: it organizes and names a concept and discusses existing case studies. It does not itself demonstrate PTE, and the endogenous-messenger transfer described elsewhere in this folder is an analogy to it, not an instance of the same definition.
+This is a Perspective: it organizes and names a concept and discusses existing case studies. It does not itself demonstrate PTE, and the endogenous-messenger transfer described in [Extracellular cGAMP and bystander activation](./extracellular-cgamp-and-bystander-activation.md) is an analogy to it, not an instance of the same definition.
 
 ## Context
 
-Research level. The page names a pattern that recurs in this subfield - a cell that takes up material and later supplies it, or an active fragment of it, to its neighbors. The Perspective is co-authored and co-corresponded by the Artzi and Mirkin groups.
+Research level. The page names a pattern that recurs in this subfield - a cell that takes up material and later supplies it, or an active fragment of it, to its neighbors. The Perspective collects export routes and design determinants that the empirical pages in this field touch only in passing.
 
 ## Depends on
 

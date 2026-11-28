@@ -1,6 +1,6 @@
 # Higuchi release from a spherical matrix
 
-For a sphere of radius $a$ with dispersed drug, Higuchi's pseudo-steady model relates the radius $R$ of the undissolved core to time and to the released fraction; for finite $C_s/A$ the core is exhausted only as $t \to \infty$, while the high-loading approximation reaches $R = 0$ at finite time.
+For a sphere of radius $a$ with dispersed drug, Higuchi's pseudo-steady model relates the radius $R$ of the undissolved core to time and to the released fraction, with a separate high-loading reduction.
 
 Under the planar Higuchi assumptions, in a sphere of radius $a$ with loading $A$, solubility $C_s$, $q = C_s/A \in (0,1)$, diffusivity $D > 0$ and a receding undissolved core of radius $R(t) \in (0, a)$, take the quasi-static profile
 
@@ -12,11 +12,11 @@ $$\frac{M_t}{M_\infty} = 1 - \left(\frac{R}{a}\right)^{3} + \frac{q}{2}\left[2\l
 
 $$\frac{6C_sDt}{Aa^2} = 2\left(\frac{R}{a}\right)^{3} - 3\left(\frac{R}{a}\right)^{2} + 1 - q\left[2\left(\frac{R}{a}\right)^{3} - 4\left(\frac{R}{a}\right)^{2} + \frac{R}{a} + 1 + \ln\frac{R}{a}\right].$$
 
-For $q > 0$ the right side of the second relation tends to $+\infty$ as $R \to 0$ (through $-q\ln(R/a)$), so within the model the core vanishes only as $t \to \infty$, even though $M_t/M_\infty \to 1$. Dropping $q$ first gives the high-loading approximation $M_t/M_\infty = 1 - (R/a)^3$ and $6C_sDt/(Aa^2) = 2(R/a)^3 - 3(R/a)^2 + 1$ (source Eqs. (33)–(34)), which reaches $R = 0$ at $t^* = Aa^2/(6C_sD)$; this endpoint is a feature of the leading-order branch, not the uniform limit of the finite-$q$ solution.
+For $A \gg C_s$ the source reduces these to $M_t/M_\infty = 1 - (R/a)^3$ and $6C_sDt/(Aa^2) = 2(R/a)^3 - 3(R/a)^2 + 1$ (its Eqs. (33)–(34)).
 
 ## Context
 
-Graduate. The spherical case shows how geometry changes the time course: release is not proportional to $\sqrt t$, though it starts that way. At $R = a$ both right-hand sides vanish, while the profile itself is defined only for $R < a$ (its denominator $a - R$ vanishes at startup).
+Graduate. The spherical case shows how geometry changes the time course of Higuchi-type release. At $R = a$ both right-hand sides vanish, while the profile itself is defined only for $R < a$. The finite-loading and high-loading relations differ near exhaustion: by inspection of the displayed time relation, its term $-q\ln(R/a)$ grows without bound as $R \to 0$ when $q > 0$, so the core vanishes only as $t \to \infty$ in the finite-loading relation, whereas the reduced relation reaches $R = 0$ at $t^* = Aa^2/(6C_sD)$; the source does not discuss this limit.
 
 ## Depends on
 

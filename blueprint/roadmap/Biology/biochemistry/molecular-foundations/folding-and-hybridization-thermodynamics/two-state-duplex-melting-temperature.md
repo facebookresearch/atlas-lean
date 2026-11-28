@@ -17,7 +17,7 @@ whenever the denominator is nonzero and the quotient is positive. For a genuinel
 
 ## Context
 
-Undergraduate biochemistry. Because duplex formation is bimolecular, $T_M$ rises with strand concentration (for the usual $\Delta H^\circ<0$, $\Delta S^\circ<0$ on a branch where $T_M>0$); this is why melting temperatures must be quoted with concentrations. The Artzi RNA-triple-helix study reports apparent melting temperatures for single strands, duplexes and the triplex as stability evidence (Conde et al. 2016, Results and Fig. 2d); the triplex is a three-strand assembly not described by this duplex result.
+Undergraduate biochemistry. Because duplex formation is bimolecular, $T_M$ rises with strand concentration (for the usual $\Delta H^\circ<0$, $\Delta S^\circ<0$ on a branch where $T_M>0$); this is why melting temperatures must be quoted with concentrations. An RNA-triple-helix study reports apparent melting temperatures for single strands, duplexes and the triplex as stability evidence (Conde et al. 2016, Results and Fig. 2d); the triplex is a three-strand assembly not described by this duplex result.
 
 ## Depends on
 
@@ -36,4 +36,5 @@ Remaining decomposition before the page can be marked ready: a definition page f
 ## Sources
 
 - J. SantaLucia Jr., "A unified view of polymer, dumbbell, and oligonucleotide DNA nearest-neighbor thermodynamics", *Proceedings of the National Academy of Sciences USA* 95(4) (1998), 1460–1465, [doi.org](https://doi.org/10.1073/pnas.95.4.1460); open-access copy read: [pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/articles/PMC19045/), section "Prediction of the Melting Temperature $T_M$", Eq. 3 (rendered as an image; the text defines $T_M$, gives the replacements $C_T/4$ and $C_A-C_B/2$, and the concentration-independent polymer observation $T_M=\Delta H^\circ/\Delta S^\circ$).
+- A. Tokmakoff, *Concepts in Biophysical Chemistry*, LibreTexts, Section 18.2 "Two-State Thermodynamics" (read at [chem.libretexts.org](https://chem.libretexts.org/Bookshelves/Biological_Chemistry/Concepts_in_Biophysical_Chemistry_%28Tokmakoff%29/05%3A_Cooperativity/18%3A_Cooperativity/18.02%3A_Two-State_Thermodynamics)): for a unimolecular two-state transition, "Define the melting temperature Tm as the temperature at which φF = 0.5. Then at Tm, $\Delta G^0=0$ or $T_m=\Delta H^0/\Delta S^0$" (the unimolecular relation used above).
 - J. Conde, N. Oliva, M. Atilano, H. S. Song and N. Artzi, "Self-assembled RNA-triple-helix hydrogel scaffold for microRNA modulation in the tumour microenvironment", *Nature Materials* 15(3) (2016), 353–363, [doi.org](https://doi.org/10.1038/nmat4497); author manuscript read: [pmc.ncbi.nlm.nih.gov](https://pmc.ncbi.nlm.nih.gov/articles/PMC6594154/), Results and Fig. 2d caption (context only).

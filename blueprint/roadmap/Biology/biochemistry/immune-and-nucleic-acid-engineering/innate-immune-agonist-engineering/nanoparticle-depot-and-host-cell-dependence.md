@@ -4,8 +4,7 @@ In a melanoma mouse model treated with cyclic-dinucleotide-conjugated polymer na
 
 Reported statements, all abstract-scope:
 
-- Chemistry: cyclic dinucleotides covalently conjugated to poly(beta-amino ester) nanoparticles through a cathepsin-sensitive linker, increasing stability and loading.
-- Consequence claimed: an expanded therapeutic window in multiple syngeneic tumor models, which enabled study of how the long-term fate of the nanoparticles affects the immune response.
+- Chemistry and the reported stability, loading and therapeutic-window consequences are described in [Why delivering a STING agonist is harder than finding one](./sting-agonist-delivery-constraints.md). The abstract states that the expanded therapeutic window is what enabled the long-term fate of the nanoparticles to be studied.
 - Mechanistic attribution in the melanoma model: clearance depends on host-cell STING signaling, not cancer-cell STING signaling; immune memory depends on the spleen; cancer cells act as a depot releasing nanoparticles to nearby immune cells over time.
 - Framing by the authors: nanoparticle structure and nano-biointeractions control immunotherapy efficacy.
 
@@ -13,7 +12,7 @@ The depot statement concerns where the particles sit and when they are released;
 
 ## Context
 
-Research level. The page matters pedagogically because the obvious reading of "deliver a STING agonist to the tumor" is that the tumor cell must respond - and the reported dependence is the opposite. Dosta and Artzi are lead and corresponding authors; the same group's later work extends the depot idea into the general paracrine-transfer framing.
+Research level. The page matters pedagogically because the obvious reading of "deliver a STING agonist to the tumor" is that the tumor cell must respond - and the reported dependence is the opposite. The depot observation is the empirical starting point for the more general transfer framing set out in [The paracrine transfer effect as a nanomedicine design concept](./paracrine-transfer-effect.md).
 
 ## Depends on
 

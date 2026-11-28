@@ -6,13 +6,13 @@ Each outcome with the model that produced it:
 
 - *Murine immune-mediated alopecia model.* Reported: local increase in Treg numbers, sustained hair regrowth, attenuation of inflammatory pathways. The abstract does not state the duration of regrowth, the group sizes or the control arms.
 - *Humanized skin transplant mouse model.* Reported: expansion of Treg within human skin, and no peripheral immunosuppression engendered. This is the abstract's reported negative finding; the abstract does not identify or count the peripheral assays. It is not a biodistribution measurement, and it does not show that the delivered agents remain at the site or that the approach is generally safe.
-- *Device-level.* High loading capacity and shelf-life stability, described as relevant to prospective clinical translation - a manufacturing statement, not an efficacy one.
+- *Device-level.* The patch characteristics the abstract reports are given in [Recruit and expand: a two-signal local strategy for Treg](./recruit-and-expand-local-treg-strategy.md); they are manufacturing statements, not efficacy ones.
 
 Hair regrowth belongs to the mouse disease experiment and the Treg-in-human-skin finding to the graft experiment; neither transfers to the other, and neither is a clinical result.
 
 ## Context
 
-Research level, and the empirical anchor of this folder. It is also the clearest illustration in the subfield of why the model must travel with the claim: "expanded Treg in human skin grafted on a mouse" and "worked in patients" are different statements. Artzi and Azzi are joint corresponding authors.
+Research level. It is also the clearest illustration in the subfield of why the model must travel with the claim: "expanded Treg in human skin grafted on a mouse" and "worked in patients" are different statements.
 
 ## Depends on
 
@@ -25,7 +25,7 @@ None.
 
 ## Expansion
 
-Required before a mathematical statement: a time-resolved model of local Treg abundance under the two-signal input; a defined outcome variable for regrowth, since the reported phrase is a qualitative composite; graft-to-graft variability in the humanized model; and an explicit systemic-exposure measurement if absence of peripheral effect is to be read as confinement. A measurement prerequisite on gated proportions and their denominators is still needed and is not yet linked. Group sizes, durations and controls are not characterized here because only the abstract was read.
+Required before a mathematical statement: a time-resolved model of local Treg abundance under the two-signal input; a defined outcome variable for regrowth, since the reported phrase is a qualitative composite; graft-to-graft variability in the humanized model; and an explicit systemic-exposure measurement if absence of peripheral effect is to be read as confinement. Group sizes, durations and controls are not characterized here because only the abstract was read.
 
 ## Sources
 

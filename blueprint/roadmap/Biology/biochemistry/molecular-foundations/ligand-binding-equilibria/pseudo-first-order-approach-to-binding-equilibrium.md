@@ -16,7 +16,7 @@ and it stays in $[0,R_T]$. The equilibrium value is the [single-class isotherm](
 
 ## Context
 
-Undergraduate to graduate. The cited sources use this to choose incubation times: when approaching equilibrium from a displaced state, incubating for several half-times at the lowest concentration used is a practical guideline for a chosen tolerance, not a logical requirement, and the single-step rate law need not describe multistep binding. No Artzi-specific result is derived.
+Undergraduate to graduate. The cited sources use this to choose incubation times: when approaching equilibrium from a displaced state, incubating for several half-times at the lowest concentration used is a practical guideline for a chosen tolerance, not a logical requirement, and the single-step rate law need not describe multistep binding.
 
 ## Depends on
 

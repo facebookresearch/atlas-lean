@@ -6,7 +6,7 @@ Li and Mooney classify release heuristically by the ratio of mesh size to drug s
 
 ## Context
 
-Undergraduate biomaterials exposition. Examples from the review: hydrolytically degradable PEG gels with protein release half-lives up to 17 days, and a PCL–PEG–PCL gel releasing BSA for two weeks; periodate-oxidized polysaccharide gels are cited as typically bulk-eroding with rates set by the degree of oxidation. Chemical scission and measured mass erosion are different quantities. Assigning an erosion regime to a specific formulation, including Artzi's imine-crosslinked dextran-aldehyde gels, requires residence-time, size, transport and erosion data that are not compiled here. Comparisons of size should use matched conventions: the Li–Mooney modulus length is diameter-like, the [mesh radius](../solute-transport-in-gels-and-tissue/mesh-radius-of-regular-lattice-networks.md) is a portal radius.
+Undergraduate biomaterials exposition. Examples from the review: hydrolytically degradable PEG gels with protein release half-lives up to 17 days, and a PCL–PEG–PCL gel releasing BSA for two weeks; periodate-oxidized polysaccharide gels are cited as typically bulk-eroding with rates set by the degree of oxidation. Chemical scission and measured mass erosion are different quantities. Assigning an erosion regime to a specific formulation, including imine-crosslinked dextran-aldehyde sealants, requires residence-time, size, transport and erosion data that are not compiled here. Comparisons of size should use matched conventions: the Li–Mooney modulus length is diameter-like, the [mesh radius](../solute-transport-in-gels-and-tissue/mesh-radius-of-regular-lattice-networks.md) is a portal radius.
 
 ## Depends on
 
