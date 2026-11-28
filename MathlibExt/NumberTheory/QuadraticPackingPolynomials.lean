@@ -22,6 +22,12 @@ import Mathlib.Tactic.Ring
 The shear sending `(x, y)` to `(x - y/2, y)` turns the staircases of the sector of slope
 `12/7` into vertical lines. On the sheared lattice the quadratic polynomial of Brandt and
 Gjaldbæk's Example 10 takes every natural-number value exactly once.
+
+## References
+
+- Madeline Brandt and Kåre Schou Gjaldbæk, *Classification of Quadratic Packing Polynomials on
+  Sectors of R^2*, INTEGERS 25 (2025), Article A81, pp. 1–23, Definition 1, Section 2,
+  and Example 10.
 -/
 
 namespace MetaMathlibExt
@@ -58,6 +64,44 @@ public def IsQuadraticPackingPolynomial (S : Set (ℝ × ℝ)) (P : ℝ → ℝ 
   (∃ a b c d e f : ℝ, (a ≠ 0 ∨ b ≠ 0 ∨ c ≠ 0) ∧
       ∀ x y, P x y = a * x ^ 2 + b * x * y + c * y ^ 2 + d * x + e * y + f) ∧
     Set.BijOn (fun p : ℝ × ℝ => P p.1 p.2) S (Set.range ((↑) : ℕ → ℝ))
+
+/-- A quadratic packing polynomial maps its domain bijectively onto the natural numbers. -/
+public theorem IsQuadraticPackingPolynomial.bijOn {S : Set (ℝ × ℝ)} {P : ℝ → ℝ → ℝ}
+    (hP : IsQuadraticPackingPolynomial S P) :
+    Set.BijOn (fun p : ℝ × ℝ => P p.1 p.2) S (Set.range ((↑) : ℕ → ℝ)) :=
+  hP.2
+
+private theorem IsQuadraticPackingPolynomial.shear {S : Set (ℝ × ℝ)} {P : ℝ → ℝ → ℝ}
+    (hP : IsQuadraticPackingPolynomial S P) (c : ℝ) :
+    IsQuadraticPackingPolynomial ((fun p : ℝ × ℝ => (p.1 - c * p.2, p.2)) '' S)
+      (fun x y => P (x + c * y) y) := by
+  obtain ⟨a, b, d, e, f, g, hquad, hP_eq⟩ := hP.1
+  refine ⟨⟨a, 2 * a * c + b, a * c ^ 2 + b * c + d, e, e * c + f, g, ?_, ?_⟩, ?_⟩
+  · contrapose! hquad
+    obtain ⟨ha, hb, hd⟩ := hquad
+    simp_all
+  · intro x y
+    dsimp only
+    rw [hP_eq]
+    ring
+  · have hInv : Function.Injective (fun p : ℝ × ℝ => (p.1 + c * p.2, p.2)) := by
+      intro p q h
+      obtain ⟨h₁, h₂⟩ := Prod.mk.inj h
+      exact Prod.ext (by rw [h₂] at h₁; exact add_right_cancel h₁) h₂
+    have himage : (fun p : ℝ × ℝ => (p.1 + c * p.2, p.2)) ''
+        ((fun p : ℝ × ℝ => (p.1 - c * p.2, p.2)) '' S) = S := by
+      rw [Set.image_image]
+      simp
+    exact hP.bijOn.comp (himage ▸ hInv.injOn.bijOn_image)
+
+/-- Shearing the domain by `(x, y) ↦ (x - c * y, y)` and substituting the inverse shear
+into the polynomial preserves and reflects the quadratic packing property. -/
+public theorem isQuadraticPackingPolynomial_shear_iff {S : Set (ℝ × ℝ)} {P : ℝ → ℝ → ℝ}
+    (c : ℝ) :
+    IsQuadraticPackingPolynomial ((fun p : ℝ × ℝ => (p.1 - c * p.2, p.2)) '' S)
+      (fun x y => P (x + c * y) y) ↔ IsQuadraticPackingPolynomial S P := by
+  refine ⟨fun h => ?_, fun h => h.shear c⟩
+  simpa [Set.image_image, neg_mul, sub_eq_add_neg] using h.shear (-c)
 
 /-- **Quadratic packing polynomials take natural-number values.** If $P$ is a quadratic packing
 polynomial on a set $S \subseteq \mathbb{R}^2$, then for every point $(x, y) \in S$ the value
@@ -124,6 +168,20 @@ Source: Brandt and Gjaldbæk, *Classification of Quadratic Packing Polynomials o
 R^2*, INTEGERS 25 (2025), Article A81, Section 2 (definition of `k`). -/
 public noncomputable def consecutiveStepDifference (m n : ℕ) (P : ℝ → ℝ → ℝ) : ℝ :=
   P (((m : ℝ) - 1) / Nat.gcd (m - 1) n) ((n : ℝ) / Nat.gcd (m - 1) n) - P 0 0
+
+/-- If the sheared form is `f x + c * y`, the step difference is `c` times the
+vertical spacing `n / gcd (m - 1) n`. -/
+public theorem consecutiveStepDifference_of_sheared_form {m n : ℕ} (hn : 0 < n)
+    {P : ℝ → ℝ → ℝ} {f : ℝ → ℝ} {c : ℝ}
+    (h : ∀ x y, P (x + ((m : ℝ) - 1) / n * y) y = f x + c * y) :
+    consecutiveStepDifference m n P = c * ((n : ℝ) / Nat.gcd (m - 1) n) := by
+  have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  have hadd : (0 : ℝ) + ((m : ℝ) - 1) / n * ((n : ℝ) / Nat.gcd (m - 1) n) =
+      ((m : ℝ) - 1) / Nat.gcd (m - 1) n := by rw [zero_add, div_mul_div_cancel₀ hn']
+  rw [consecutiveStepDifference, ← hadd, h]
+  have hzero := h 0 0
+  simp only [mul_zero, add_zero] at hzero
+  rw [hzero, add_sub_cancel_left]
 
 /-- **Step difference of the slope-$12/7$ example.** Let
 $P(x, y) = 6(x - y/2)(x - y/2 - 3/2) + x + y + 2$. For $m = 7$ and $n = 12$ (the sector of

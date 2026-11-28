@@ -10,6 +10,7 @@ module
 
 import MathlibExt.NumberTheory.QuadraticPackingPolynomialsShearedCriterion
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 namespace MetaMathlibExt.ShearedCriterionTest
 
@@ -61,5 +62,54 @@ example :
   (isQuadraticPackingPolynomial_sheared_iff (m := 1) (n := 1) (k := 1) (F := 0)
     (by norm_num) (by norm_num) (by norm_num) (by decide) (by norm_num)
     (by decide)).mp qpp_one_one
+
+private noncomputable def slopeTwelveSevenths (x y : ℝ) : ℝ :=
+  6 * (x - y / 2) * (x - y / 2 - 3 / 2) + x + y + 2
+
+-- Check the published example's constant and its step difference by direct evaluation.
+example : slopeTwelveSevenths 0 0 = 2 ∧ slopeTwelveSevenths 1 2 - slopeTwelveSevenths 0 0 = 3 ∧
+    ((Nat.gcd (7 - 1) 12 : ℝ) ^ 2 / 12) * (3 - 1) * (3 + 1) / 12 = 2 := by
+  norm_num [slopeTwelveSevenths, show Nat.gcd (7 - 1) 12 = 6 by decide]
+
+-- Test the shear convention on the original point (1, 2), which shears to (0, 2).
+example : slopeTwelveSevenths (0 + (1 / 2) * 2) 2 = 6 * 0 * (0 - 3 / 2) + 0 + 3 / 2 * 2 + 2 := by
+  norm_num [slopeTwelveSevenths]
+
+example : slopeTwelveSevenths 0 0 = 2 := by
+  have h : IsQuadraticPackingPolynomial (sectorLatticePoints (((12 : ℕ) : ℝ) / (7 : ℕ)))
+      slopeTwelveSevenths := by
+    apply (isQuadraticPackingPolynomial_shear_iff (1 / 2)).mp
+    norm_num only [Nat.cast_ofNat]
+    convert isQuadraticPackingPolynomial_sheared_example_twelve_sevenths using 1
+    funext x y
+    dsimp only [slopeTwelveSevenths]
+    ring
+  have hF := quadraticPackingPolynomial_constant_term (m := 7) (n := 12) (k := 3)
+    (by decide) (by decide) (by decide) h (by decide)
+    consecutiveStepDifference_example_twelve_sevenths
+  norm_num [show Nat.gcd (7 - 1) 12 = 6 by decide] at hF
+  exact hF
+
+private noncomputable def slopeOne (x y : ℝ) : ℝ := 1 / 2 * x * (x - 1) + x + y
+
+-- Check the k = 1 and n / l = 1 boundary independently as well.
+example : slopeOne 0 0 = 0 ∧ slopeOne 0 1 - slopeOne 0 0 = 1 ∧
+    ((Nat.gcd (1 - 1) 1 : ℝ) ^ 2 / 1) * (1 - 1) * (1 + 1) / 12 = 0 := by
+  norm_num [slopeOne]
+
+example : slopeOne 0 0 = 0 := by
+  have h : IsQuadraticPackingPolynomial (sectorLatticePoints (((1 : ℕ) : ℝ) / (1 : ℕ)))
+      slopeOne := by
+    apply (isQuadraticPackingPolynomial_shear_iff 0).mp
+    have hq := qpp_one_one
+    norm_num [slopeOne] at hq ⊢
+    exact hq
+  have hk : consecutiveStepDifference 1 1 slopeOne = ((1 : ℕ) : ℝ) := by
+    have hD := consecutiveStepDifference_of_sheared_form (m := 1) (n := 1) (by decide)
+      (P := slopeOne) (f := fun x => 1 / 2 * x * (x - 1) + x) (c := 1)
+      (by intro x y; norm_num [slopeOne])
+    simpa using hD
+  simpa using quadraticPackingPolynomial_constant_term (m := 1) (n := 1) (k := 1)
+    (by decide) (by decide) (by decide) h (by decide) hk
 
 end MetaMathlibExt.ShearedCriterionTest
