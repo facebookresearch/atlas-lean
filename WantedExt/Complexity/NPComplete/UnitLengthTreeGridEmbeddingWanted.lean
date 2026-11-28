@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.Copy
+public import CSLibExt.Complexity.NPComplete.UnitLengthTreeGridEmbeddingDefs
 
 @[expose] public section
 
@@ -55,34 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev UnitLengthTreeGridEmbeddingInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : UnitLengthTreeGridEmbeddingInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and that graph is a
-tree. -/
-def WellFormed (i : UnitLengthTreeGridEmbeddingInstance) : Prop :=
-  (i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2) ∧
-    (Graph i).IsTree
-
-/-- The tree is a subgraph of the infinite square grid: it is contained in
-`hypercubicLattice 2`. -/
-def UnitLengthTreeGridEmbeddingFeasible (i : UnitLengthTreeGridEmbeddingInstance) : Prop :=
-  (Graph i).IsContained (StatMech.Lattice.hypercubicLattice 2)
-
-open Classical in
-/-- UNIT-LENGTH TREE EMBEDDING IN THE GRID as a decision problem over bitstrings. -/
-noncomputable def unitLengthTreeGridEmbeddingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitLengthTreeGridEmbeddingInstance) x with
-  | some i => decide (WellFormed i ∧ UnitLengthTreeGridEmbeddingFeasible i)
-  | none => false
 
 /-- **UNIT-LENGTH TREE EMBEDDING IN THE GRID is NP-complete.** Source: Bhatt and Cosmadakis
 (1987); de Sá, da Fonseca, Machado and de Figueiredo (2011). -/

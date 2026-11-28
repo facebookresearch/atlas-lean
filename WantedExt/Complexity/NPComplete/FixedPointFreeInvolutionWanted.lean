@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Algebra.Order.Group.End
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import Mathlib.GroupTheory.OrderOfElement
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.FixedPointFreeInvolutionDefs
 
 @[expose] public section
 
@@ -65,31 +60,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev FixedPointFreeInvolutionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : FixedPointFreeInvolutionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : FixedPointFreeInvolutionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- The graph has an automorphism of order `2` that fixes no vertex. -/
-def FixedPointFreeInvolutionFeasible (i : FixedPointFreeInvolutionInstance) : Prop :=
-  ∃ f : Graph i ≃g Graph i, orderOf f = 2 ∧ ∀ v, f v ≠ v
-
-open Classical in
-/-- FIXED-POINT-FREE AUTOMORPHISM OF ORDER 2 as a decision problem over bitstrings. -/
-noncomputable def fixedPointFreeInvolutionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FixedPointFreeInvolutionInstance) x with
-  | some i => decide (WellFormed i ∧ FixedPointFreeInvolutionFeasible i)
-  | none => false
 
 /-- **FIXED-POINT-FREE AUTOMORPHISM OF ORDER 2 is NP-complete.** Source: Lubiw (1981). -/
 public theorem_wanted fixedPointFreeInvolution_npComplete :

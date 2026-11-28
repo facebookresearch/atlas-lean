@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.RegisterSufficiencyWanted
+public import CSLibExt.Complexity.NPComplete.RegisterSufficiencyOutDegreeTwoDefs
 
 @[expose] public section
 
@@ -55,20 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed REGISTER SUFFICIENCY instance in which every
-vertex is the tail of at most two arcs. -/
-def WellFormed (i : RegisterSufficiency.RegisterSufficiencyInstance) : Prop :=
-  RegisterSufficiency.WellFormed i ∧ ∀ a ∈ i.2.1, i.2.1.countP (fun b => b.1 = a.1) ≤ 2
-
-open Classical in
-/-- REGISTER SUFFICIENCY (out-degree at most 2) as a decision problem over bitstrings. -/
-noncomputable def registerSufficiencyOutDegreeTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := RegisterSufficiency.RegisterSufficiencyInstance) x with
-  | some i => decide (WellFormed i ∧ RegisterSufficiency.RegisterSufficiencyFeasible i)
-  | none => false
 
 /-- **REGISTER SUFFICIENCY (out-degree at most 2) is NP-complete.** Source: Garey and Johnson
 (1979), [PO1]; Sethi (1975). -/

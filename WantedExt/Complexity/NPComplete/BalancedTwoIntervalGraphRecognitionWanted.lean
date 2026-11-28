@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Interval.Set.Defs
-public import Mathlib.Order.SetNotation
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.BalancedTwoIntervalGraphRecognitionDefs
 
 @[expose] public section
 
@@ -64,44 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`) and edge list. -/
-abbrev BalancedTwoIntervalGraphRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : BalancedTwoIntervalGraphRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : BalancedTwoIntervalGraphRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `(l, r)` is a balanced 2-interval representation of `H`: each vertex `v` has two disjoint
-closed intervals `[l v 0, r v 0]` and `[l v 1, r v 1]` of the same length, and two distinct
-vertices are adjacent exactly when the unions of their intervals intersect. -/
-def IsBalancedTwoIntervalRepresentation {n : ℕ} (H : SimpleGraph (Fin n))
-    (l r : Fin n → Fin 2 → ℝ) : Prop :=
-  (∀ v j, l v j ≤ r v j) ∧
-    (∀ v, Disjoint (Set.Icc (l v 0) (r v 0)) (Set.Icc (l v 1) (r v 1))) ∧
-    (∀ v, r v 0 - l v 0 = r v 1 - l v 1) ∧
-    ∀ u v, u ≠ v →
-      (H.Adj u v ↔
-        ((⋃ j, Set.Icc (l u j) (r u j)) ∩ (⋃ j, Set.Icc (l v j) (r v j))).Nonempty)
-
-/-- The graph of the instance is a balanced 2-interval graph. -/
-def BalancedTwoIntervalGraphRecognitionFeasible
-    (i : BalancedTwoIntervalGraphRecognitionInstance) : Prop :=
-  ∃ l r : Fin i.1 → Fin 2 → ℝ, IsBalancedTwoIntervalRepresentation (Graph i) l r
-
-open Classical in
-/-- BALANCED 2-INTERVAL GRAPH RECOGNITION as a decision problem over bitstrings. -/
-noncomputable def balancedTwoIntervalGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BalancedTwoIntervalGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ BalancedTwoIntervalGraphRecognitionFeasible i)
-  | none => false
 
 /-- **BALANCED 2-INTERVAL GRAPH RECOGNITION is NP-complete.** Source: Gambette and Vialette
 (2007), Theorem 1. -/

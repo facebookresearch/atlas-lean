@@ -21,8 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.DirectedTwoDisjointConnectingPathsDefs
 
 @[expose] public section
 
@@ -53,37 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), arc list, `s₁`, `t₁`, `s₂`,
-`t₂`. -/
-abbrev DirectedTwoDisjointConnectingPathsInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ × ℕ × ℕ
-
-/-- Well-formedness of an instance: the arcs are distinct, loopless and between vertices, and
-`s₁, t₁, s₂, t₂` are pairwise distinct vertices. -/
-def WellFormed (i : DirectedTwoDisjointConnectingPathsInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2) ∧
-    (∀ v ∈ [i.2.2.1, i.2.2.2.1, i.2.2.2.2.1, i.2.2.2.2.2], v < i.1) ∧
-    [i.2.2.1, i.2.2.2.1, i.2.2.2.2.1, i.2.2.2.2.2].Nodup
-
-/-- `p` is a directed path from `s` to `t` along the arcs `A`: distinct vertices, first `s`,
-last `t`, an arc from each vertex to the next. -/
-def IsDirectedPath (A : List (ℕ × ℕ)) (s t : ℕ) (p : List ℕ) : Prop :=
-  p.head? = some s ∧ p.getLast? = some t ∧ p.Nodup ∧ p.IsChain fun u v => (u, v) ∈ A
-
-/-- There are vertex-disjoint directed paths from `s₁` to `t₁` and from `s₂` to `t₂`. -/
-def DirectedTwoDisjointConnectingPathsFeasible
-    (i : DirectedTwoDisjointConnectingPathsInstance) : Prop :=
-  ∃ p q : List ℕ, IsDirectedPath i.2.1 i.2.2.1 i.2.2.2.1 p ∧
-    IsDirectedPath i.2.1 i.2.2.2.2.1 i.2.2.2.2.2 q ∧ p.Disjoint q
-
-open Classical in
-/-- DIRECTED DISJOINT CONNECTING PATHS with `k = 2`, as a decision problem over bitstrings. -/
-noncomputable def directedTwoDisjointConnectingPathsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DirectedTwoDisjointConnectingPathsInstance) x with
-  | some i => decide (WellFormed i ∧ DirectedTwoDisjointConnectingPathsFeasible i)
-  | none => false
 
 /-- **DIRECTED DISJOINT CONNECTING PATHS with `k = 2` is NP-complete.** Source: Garey and
 Johnson (1979), [ND40]; Fortune, Hopcroft, and Wyllie (1980). -/

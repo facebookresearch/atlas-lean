@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import CSLibExt.Complexity.NPComplete.ShortestWeightConstrainedPathDefs
 
 @[expose] public section
 
@@ -50,46 +47,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), the edges as `(u, v, l, w)` (endpoints,
-length, weight), `s`, `t`, `K`, `W`. -/
-abbrev ShortestWeightConstrainedPathInstance := ℕ × List (ℕ × ℕ × ℕ × ℕ) × ℕ × ℕ × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : ShortestWeightConstrainedPathInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (i.2.1.map fun e => (e.1, e.2.1))
-
-/-- The `(length, weight)` of the listed edge joining `a` and `b` (in either orientation);
-`(0, 0)` if there is none. Under `WellFormed` at most one listed edge joins them. -/
-def edgeData (i : ShortestWeightConstrainedPathInstance) (a b : ℕ) : ℕ × ℕ :=
-  ((i.2.1.find? fun e => decide ((e.1, e.2.1) = (a, b) ∨ (e.1, e.2.1) = (b, a))).map
-    fun e => e.2.2).getD (0, 0)
-
-/-- Well-formedness of an instance: the edges join distinct in-range vertices, no two listed
-edges join the same pair of vertices (in either orientation), every length and weight is
-positive, `s, t ∈ V`, and `K, W` are positive. -/
-def WellFormed (i : ShortestWeightConstrainedPathInstance) : Prop :=
-  (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧ 0 < e.2.2.1 ∧ 0 < e.2.2.2) ∧
-    (i.2.1.map fun e => (e.1, e.2.1)).Nodup ∧
-    (∀ e ∈ i.2.1, (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ 0 < i.2.2.2.2.1 ∧ 0 < i.2.2.2.2.2
-
-/-- A simple path from `s` to `t` whose total weight is at most `W` and whose total length is
-at most `K`. -/
-def ShortestWeightConstrainedPathFeasible (i : ShortestWeightConstrainedPathInstance) : Prop :=
-  ∃ (hs : i.2.2.1 < i.1) (ht : i.2.2.2.1 < i.1),
-    ∃ p : (Graph i).Walk ⟨i.2.2.1, hs⟩ ⟨i.2.2.2.1, ht⟩, p.IsPath ∧
-      (p.darts.map fun d => (edgeData i d.fst d.snd).2).sum ≤ i.2.2.2.2.2 ∧
-      (p.darts.map fun d => (edgeData i d.fst d.snd).1).sum ≤ i.2.2.2.2.1
-
-open Classical in
-/-- SHORTEST WEIGHT-CONSTRAINED PATH as a decision problem over bitstrings. -/
-noncomputable def shortestWeightConstrainedPathDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ShortestWeightConstrainedPathInstance) x with
-  | some i => decide (WellFormed i ∧ ShortestWeightConstrainedPathFeasible i)
-  | none => false
 
 /-- **SHORTEST WEIGHT-CONSTRAINED PATH is NP-complete.** Source: Garey and Johnson (1979),
 [ND30] (Megiddo, 1977, private communication). -/

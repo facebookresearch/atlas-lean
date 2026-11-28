@@ -22,10 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
+public import CSLibExt.Complexity.NPComplete.EdgeSubgraphDefs
 
 @[expose] public section
 
@@ -58,41 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev EdgeSubgraphInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : EdgeSubgraphInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |E|`, the length of the edge list. -/
-def WellFormed (i : EdgeSubgraphInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-open Classical in
-/-- Some sublist `es` of the edge list with at least `K` entries gives a line graph. `K` counts
-the selected list entries, not distinct edges. The tested graph is `edgeGraph n es`, which drops
-loops and pairs with an endpoint at least `n` and identifies repeated and reversed pairs, induced
-on its support (its non-isolated vertices). Under `WellFormed` the entries are distinct edges of
-a simple graph, so this is the source's `|E'| ≥ K` on the endpoints of the edges in `E'`. -/
-def EdgeSubgraphFeasible (i : EdgeSubgraphInstance) : Prop :=
-  ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧ i.2.2 ≤ es.length ∧
-    MetaMathlibExt.SimpleGraph.IsLineGraph
-      ((Cslib.Complexity.Karp.edgeGraph i.1 es).induce
-        (Cslib.Complexity.Karp.edgeGraph i.1 es).support)
-
-open Classical in
-/-- EDGE-SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def edgeSubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgeSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ EdgeSubgraphFeasible i)
-  | none => false
 
 /-- **EDGE-SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979), [GT28];
 Yannakakis (1978), Theorem 12; Yannakakis (1981). -/

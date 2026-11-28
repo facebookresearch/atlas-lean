@@ -17,10 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Metric
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.GraphBurningDefs
 
 @[expose] public section
 
@@ -53,35 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`), edge list, and `k`. -/
-abbrev GraphBurningInstance := ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : GraphBurningInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate edges
-in either orientation, no self-loops, endpoints in range) with at least one vertex, and
-`2 ≤ k`. -/
-def WellFormed (i : GraphBurningInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.1 ∧ 2 ≤ i.2.2
-
-/-- `b(G) ≤ k`: some sequence `x₀, …, x_{k-1}` of vertices has every vertex within distance
-`k - 1 - j` of some `x_j`. -/
-def GraphBurningFeasible (i : GraphBurningInstance) : Prop :=
-  ∃ x : Fin i.2.2 → Fin i.1, ∀ v, ∃ j : Fin i.2.2,
-    (Graph i).edist (x j) v ≤ ((i.2.2 - 1 - (j : ℕ) : ℕ) : ℕ∞)
-
-open Classical in
-/-- GRAPH BURNING as a decision problem over bitstrings. -/
-noncomputable def graphBurningDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphBurningInstance) x with
-  | some i => decide (WellFormed i ∧ GraphBurningFeasible i)
-  | none => false
 
 /-- **GRAPH BURNING is NP-complete.** Source: Bessy, Bonato, Janssen, Rautenbach and Roshanbin
 (2017). -/

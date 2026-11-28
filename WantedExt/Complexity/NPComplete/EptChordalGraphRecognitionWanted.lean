@@ -21,12 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Copy
-public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
-public import WantedExt.Complexity.NPComplete.EptGraphRecognitionWanted
+public import CSLibExt.Complexity.NPComplete.EptChordalGraphRecognitionDefs
 
 @[expose] public section
 
@@ -72,21 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The graph of the instance is in `EPT ∩ chordal`: it has no induced cycle of length at least
-`4`, and it is an EPT graph (`EptGraphRecognitionFeasible`). -/
-def EptChordalGraphRecognitionFeasible (i : EptGraphRecognitionInstance) : Prop :=
-  (∀ k, 4 ≤ k → ¬ (SimpleGraph.cycleGraph k).IsIndContained (Graph i)) ∧
-    EptGraphRecognitionFeasible i
-
-open Classical in
-/-- RECOGNITION OF EPT ∩ CHORDAL GRAPHS as a decision problem over bitstrings. -/
-noncomputable def eptChordalGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EptGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ EptChordalGraphRecognitionFeasible i)
-  | none => false
 
 /-- **RECOGNITION OF EPT ∩ CHORDAL GRAPHS is NP-complete.** Source: Golumbic and Jamison (1985),
 Theorem 3; Sysło (1985). -/

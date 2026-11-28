@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Bipartite
-public import Mathlib.Combinatorics.SimpleGraph.LineGraph
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import CSLibExt.Complexity.NPComplete.HamiltonianCycleUndirectedDefs
+public import CSLibExt.Complexity.NPComplete.BipartiteLineGraphHamiltonianCircuitDefs
 
 @[expose] public section
 
@@ -76,26 +71,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `G` is the line graph of a bipartite graph: isomorphic to `L(H)` for a bipartite graph `H`
-on some `Fin k`. -/
-def IsBipartiteLineGraph {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ (k : ℕ) (H : SimpleGraph (Fin k)), H.IsBipartite ∧ Nonempty (G ≃g H.lineGraph)
-
-/-- Well-formedness of an instance: a well-formed HAMILTONIAN CIRCUIT instance whose graph is
-the line graph of a bipartite graph. -/
-def WellFormed (i : HamiltonianCycleUndirectedInstance) : Prop :=
-  HamiltonianCycleUndirected.WellFormed i ∧ IsBipartiteLineGraph (Graph i)
-
-open Classical in
-/-- HAMILTONIAN CIRCUIT on line graphs of bipartite graphs as a decision problem over
-bitstrings. -/
-noncomputable def bipartiteLineGraphHamiltonianCircuitDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := HamiltonianCycleUndirectedInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible i)
-  | none => false
 
 /-- **HAMILTONIAN CIRCUIT on line graphs of bipartite graphs is NP-complete.** Source: Garey
 and Johnson (1979), [GT37]; Lai and Wei (1993). -/

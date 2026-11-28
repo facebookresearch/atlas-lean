@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Set.Card
-public import WantedExt.Complexity.NPComplete.EdgeSubgraphWanted
+public import CSLibExt.Complexity.NPComplete.EdgeSubgraphMaxDegreeFourDefs
 
 @[expose] public section
 
@@ -58,19 +55,6 @@ reduction from every language in `NP`
 -/
 
 open EdgeSubgraph (EdgeSubgraphInstance Graph EdgeSubgraphFeasible)
-
-/-- Well-formedness of an instance: EDGE-SUBGRAPH well-formedness (a simple edge list and
-`0 < K ≤ |E|`), and every vertex has at most 4 neighbours. -/
-def WellFormed (i : EdgeSubgraphInstance) : Prop :=
-  EdgeSubgraph.WellFormed i ∧ ∀ v, ((Graph i).neighborSet v).ncard ≤ 4
-
-open Classical in
-/-- EDGE-SUBGRAPH on graphs of maximum degree 4 as a decision problem over bitstrings. -/
-noncomputable def edgeSubgraphMaxDegreeFourDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := EdgeSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ EdgeSubgraphFeasible i)
-  | none => false
 
 /-- **EDGE-SUBGRAPH is NP-complete on graphs of maximum degree 4.** Source: Garey and Johnson
 (1979), [GT28], comment; Yannakakis (1978), Theorem 12. -/

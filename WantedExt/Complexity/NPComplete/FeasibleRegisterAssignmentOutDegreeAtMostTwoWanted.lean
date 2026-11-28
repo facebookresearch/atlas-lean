@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.FeasibleRegisterAssignmentWanted
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.FeasibleRegisterAssignmentOutDegreeAtMostTwoDefs
 
 @[expose] public section
 
@@ -61,25 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed FEASIBLE REGISTER ASSIGNMENT instance
-(a directed acyclic graph, `K ≥ 1`, and a register index below `K` for each vertex), and every
-vertex has out-degree at most 2. -/
-def WellFormed (i : FeasibleRegisterAssignment.FeasibleRegisterAssignmentInstance) : Prop :=
-  FeasibleRegisterAssignment.WellFormed i ∧
-    ∀ v, {u | (RegisterSufficiency.Graph
-      (FeasibleRegisterAssignment.toRegisterSufficiency i)).Adj v u}.ncard ≤ 2
-
-open Classical in
-/-- FEASIBLE REGISTER ASSIGNMENT with out-degree at most 2 as a decision problem over
-bitstrings. -/
-noncomputable def feasibleRegisterAssignmentOutDegreeAtMostTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := FeasibleRegisterAssignment.FeasibleRegisterAssignmentInstance) x with
-  | some i =>
-    decide (WellFormed i ∧ FeasibleRegisterAssignment.FeasibleRegisterAssignmentFeasible i)
-  | none => false
 
 /-- **FEASIBLE REGISTER ASSIGNMENT is NP-complete for out-degree at most 2.** Source: Garey and
 Johnson (1979), [PO2]; Sethi (1975). -/

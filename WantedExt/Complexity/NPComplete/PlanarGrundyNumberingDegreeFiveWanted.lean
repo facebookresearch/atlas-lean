@@ -21,10 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PlanarGrundyNumberingDegreeBoundedWanted
+public import CSLibExt.Complexity.NPComplete.PlanarGrundyNumberingDegreeFiveDefs
 
 @[expose] public section
 
@@ -69,23 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed GRAPH GRUNDY NUMBERING instance whose
-underlying graph is planar and in which every vertex has in-degree and out-degree at most `5`. -/
-def WellFormed (i : GraphGrundyNumberingInstance) : Prop :=
-  GraphGrundyNumbering.WellFormed i ∧
-    (SimpleGraph.fromRel (GraphGrundyNumbering.Graph i).Adj).IsPlanar ∧
-    ∀ v, inDegree i v ≤ 5 ∧ outDegree i v ≤ 5
-
-open Classical in
-/-- GRAPH GRUNDY NUMBERING for planar digraphs with in- and out-degrees at most `5` as a
-decision problem over bitstrings. -/
-noncomputable def planarGrundyNumberingDegreeFiveDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphGrundyNumberingInstance) x with
-  | some i => decide (WellFormed i ∧ GraphGrundyNumberingFeasible i)
-  | none => false
 
 /-- **GRAPH GRUNDY NUMBERING for planar digraphs with in- and out-degrees at most `5` is
 NP-complete.** Source: Garey and Johnson (1979), [GT56]; Fraenkel and Yesha (1977); Fraenkel

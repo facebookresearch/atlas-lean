@@ -22,12 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Relation
-public import WantedExt.Complexity.NPComplete.DirectedTwoDisjointConnectingPathsWanted
-public import WantedExt.Complexity.NPComplete.PathWithForbiddenPairsWanted
-public import WantedExt.Complexity.NPComplete.RoutingWithMustPairsWanted
+public import CSLibExt.Complexity.NPComplete.BusRoutingDefs
 
 @[expose] public section
 
@@ -71,50 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), arc list `A`, `s`, `t`, the
-weights as a list of entries `((u, v), w(u, v))`, and the bound `B`. -/
-abbrev BusRoutingInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ × List ((ℕ × ℕ) × ℕ) × ℕ
-
-/-- The ROUTING WITH MUST PAIRS instance with the same vertex count, arcs, `s` and `t`, whose
-pairs are the weighted pairs. -/
-def toMustPairs (i : BusRoutingInstance) :
-    PathWithForbiddenPairs.PathWithForbiddenPairsInstance :=
-  (i.1, i.2.1, i.2.2.1, i.2.2.2.1, i.2.2.2.2.1.map Prod.fst)
-
-/-- Well-formedness of an instance: `RoutingWithMustPairs.WellFormed` of `toMustPairs i` (arcs,
-`s`, `t` and weighted pairs use vertices below `n`, the digraph is acyclic, every weighted pair
-is in `A*`), the weighted pairs are distinct, every pair of `A*` is weighted, and `0 < B`. -/
-def WellFormed (i : BusRoutingInstance) : Prop :=
-  RoutingWithMustPairs.WellFormed (toMustPairs i) ∧ (i.2.2.2.2.1.map Prod.fst).Nodup ∧
-    (∀ u v, Relation.TransGen (fun a b => (a, b) ∈ i.2.1) u v →
-      (u, v) ∈ i.2.2.2.2.1.map Prod.fst) ∧
-    0 < i.2.2.2.2.2
-
-/-- `(u, v)` is in the transitive closure `P*` of the arcs of the path `p`: `v` is reached from
-`u` by passing to the next vertex of `p` one or more times. -/
-def InPathClosure (p : List ℕ) (u v : ℕ) : Prop :=
-  Relation.TransGen (fun a b => [a, b] <:+: p) u v
-
-open Classical in
-/-- The total weight `∑_{a ∈ P*} w(a)` of the weighted pairs in the transitive closure of the
-arcs of `p`. -/
-noncomputable def closureWeight (W : List ((ℕ × ℕ) × ℕ)) (p : List ℕ) : ℕ :=
-  ((W.filter fun e => decide (InPathClosure p e.1.1 e.1.2)).map Prod.snd).sum
-
-/-- Some path `P` from `s` to `t` has `∑_{a ∈ P*} w(a) ≥ B`. -/
-def BusRoutingFeasible (i : BusRoutingInstance) : Prop :=
-  ∃ p : List ℕ, DirectedTwoDisjointConnectingPaths.IsDirectedPath i.2.1 i.2.2.1 i.2.2.2.1 p ∧
-    i.2.2.2.2.2 ≤ closureWeight i.2.2.2.2.1 p
-
-open Classical in
-/-- BUS ROUTING as a decision problem over bitstrings. -/
-noncomputable def busRoutingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BusRoutingInstance) x with
-  | some i => decide (WellFormed i ∧ BusRoutingFeasible i)
-  | none => false
 
 /-- **BUS ROUTING is NP-complete.** Source: Johnson, NP-completeness column (1982), problem [1];
 Rock (1982). -/

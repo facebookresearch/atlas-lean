@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.UnorderedTreeEditDistanceWanted
+public import CSLibExt.Complexity.NPComplete.CommonEmbeddedSubtreeDefs
 
 @[expose] public section
 
@@ -55,41 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the trees `T₁` and `T₂`, each a list of `(parent code, label)` pairs (code `0`
-for the root, `k + 1` for parent `k`), and the bound `K`. -/
-abbrev CommonEmbeddedSubtreeInstance := List (ℕ × ℕ) × List (ℕ × ℕ) × ℕ
-
-/-- `x` is a proper ancestor of `y` in `F`: following parents from `y` reaches `x` in one or
-more steps. -/
-def IsAncestor (F : UnorderedTreeEditDistance.LabeledForest) (x y : Fin F.n) : Prop :=
-  Relation.TransGen (fun a b => F.parent a = some b) y x
-
-/-- An embedding of `S` into `T`: an injective map of the nodes that preserves labels and
-ancestorship. -/
-def Embeds (S T : UnorderedTreeEditDistance.LabeledForest) : Prop :=
-  ∃ f : Fin S.n → Fin T.n, Function.Injective f ∧ (∀ x, S.label x = T.label (f x)) ∧
-    ∀ x y, IsAncestor S x y ↔ IsAncestor T (f x) (f y)
-
-/-- Well-formedness of an instance: both lists describe rooted trees (as in
-`UnorderedTreeEditDistance.WellFormed`), and `0 < K`. -/
-def WellFormed (i : CommonEmbeddedSubtreeInstance) : Prop :=
-  UnorderedTreeEditDistance.WellFormed i ∧ 0 < i.2.2
-
-/-- Some labeled tree with at least `K` nodes embeds into both `T₁` and `T₂`. -/
-def CommonEmbeddedSubtreeFeasible (i : CommonEmbeddedSubtreeInstance) : Prop :=
-  ∃ T' : UnorderedTreeEditDistance.LabeledForest, T'.IsTree ∧ i.2.2 ≤ T'.n ∧
-    Embeds T' (UnorderedTreeEditDistance.ofList i.1) ∧
-    Embeds T' (UnorderedTreeEditDistance.ofList i.2.1)
-
-open Classical in
-/-- COMMON EMBEDDED SUBTREE as a decision problem over bitstrings. -/
-noncomputable def commonEmbeddedSubtreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CommonEmbeddedSubtreeInstance) x with
-  | some i => decide (WellFormed i ∧ CommonEmbeddedSubtreeFeasible i)
-  | none => false
 
 /-- **COMMON EMBEDDED SUBTREE is NP-complete.** Source: Crescenzi and Kann, MAXIMUM COMMON EMBEDDED
 SUB-TREE; Zhang and Jiang (1994); Kilpeläinen and Mannila (1995). -/

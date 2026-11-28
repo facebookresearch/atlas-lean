@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Data.Set.Card
+public import CSLibExt.Complexity.NPComplete.EliminationDegreeSequenceDefs
 
 @[expose] public section
 
@@ -53,36 +50,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, and the sequence
-`⟨d₁, ..., dₙ⟩` as a list. -/
-abbrev EliminationDegreeSequenceInstance := ℕ × List (ℕ × ℕ) × List ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : EliminationDegreeSequenceInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), the sequence has
-exactly `n` entries, and every entry is at most `n - 1`. -/
-def WellFormed (i : EliminationDegreeSequenceInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.length = i.1 ∧ ∀ d ∈ i.2.2, d ≤ i.1 - 1
-
-/-- A one-to-one `f : V → {0, ..., n - 1}` such that every vertex `v` has exactly `d_{f v}`
-neighbours `u` with `f v < f u`. -/
-def EliminationDegreeSequenceFeasible (i : EliminationDegreeSequenceInstance) : Prop :=
-  ∃ f : Fin i.1 → Fin i.1, Function.Injective f ∧
-    ∀ v : Fin i.1, {u : Fin i.1 | f v < f u ∧ (Graph i).Adj u v}.ncard = i.2.2.getD (f v) 0
-
-open Classical in
-/-- ELIMINATION DEGREE SEQUENCE as a decision problem over bitstrings. -/
-noncomputable def eliminationDegreeSequenceDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EliminationDegreeSequenceInstance) x with
-  | some i => decide (WellFormed i ∧ EliminationDegreeSequenceFeasible i)
-  | none => false
 
 /-- **ELIMINATION DEGREE SEQUENCE is NP-complete.** Source: Garey and Johnson (1979), [GT47]
 (Garey, Johnson, and Papadimitriou, 1977, unpublished). -/

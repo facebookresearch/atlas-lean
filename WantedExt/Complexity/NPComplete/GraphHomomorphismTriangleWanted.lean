@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.GraphHomomorphismIdentificationWanted
+public import CSLibExt.Complexity.NPComplete.GraphHomomorphismTriangleDefs
 
 @[expose] public section
 
@@ -57,24 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count and edge list of `G`. -/
-abbrev GraphHomomorphismTriangleInstance := ℕ × List (ℕ × ℕ)
-
-/-- The GRAPH HOMOMORPHISM instance with graph `G` and `H` the triangle on `Fin 3`. -/
-abbrev withTriangle (i : GraphHomomorphismTriangleInstance) :
-    GraphHomomorphismIdentificationInstance :=
-  (i.1, i.2, 3, [(0, 1), (0, 2), (1, 2)])
-
-open Classical in
-/-- GRAPH HOMOMORPHISM onto a triangle as a decision problem over bitstrings. -/
-noncomputable def graphHomomorphismTriangleDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphHomomorphismTriangleInstance) x with
-  | some i => decide (GraphHomomorphismIdentification.WellFormed (withTriangle i) ∧
-      GraphHomomorphismIdentificationFeasible (withTriangle i))
-  | none => false
 
 /-- **GRAPH HOMOMORPHISM onto a triangle is NP-complete.** Source: Garey and Johnson (1979),
 [GT52], comment. -/

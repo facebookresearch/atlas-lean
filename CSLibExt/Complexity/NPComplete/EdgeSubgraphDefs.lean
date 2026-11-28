@@ -1,0 +1,68 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# EDGE-SUBGRAPH: definitions
+
+Source:
+M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
+Theory of NP-Completeness*, W. H. Freeman (1979), problem [GT28] EDGE-SUBGRAPH;
+M. Yannakakis, "Node- and edge-deletion NP-complete problems", Proceedings of
+the 10th Annual ACM Symposium on Theory of Computing (STOC 1978), 253-264,
+doi:10.1145/800133.804355 (Theorem 12);
+M. Yannakakis, "Edge-deletion problems", SIAM Journal on Computing 10 (1981),
+297-309, doi:10.1137/0210021.
+-/
+module
+
+public import CSLibExt.Computability.Complexity.Defs
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import CSLibExt.Computability.Complexity.Karp.Color
+public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.EdgeSubgraph
+
+/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
+abbrev EdgeSubgraphInstance := ℕ × List (ℕ × ℕ) × ℕ
+
+/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
+def Graph (i : EdgeSubgraphInstance) : SimpleGraph (Fin i.1) :=
+  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
+
+/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
+duplicate edges in either orientation, no self-loops, endpoints in range), and
+`0 < K ≤ |E|`, the length of the edge list. -/
+def WellFormed (i : EdgeSubgraphInstance) : Prop :=
+  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
+    0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
+
+open Classical in
+/-- Some sublist `es` of the edge list with at least `K` entries gives a line graph. `K` counts
+the selected list entries, not distinct edges. The tested graph is `edgeGraph n es`, which drops
+loops and pairs with an endpoint at least `n` and identifies repeated and reversed pairs, induced
+on its support (its non-isolated vertices). Under `WellFormed` the entries are distinct edges of
+a simple graph, so this is the source's `|E'| ≥ K` on the endpoints of the edges in `E'`. -/
+def EdgeSubgraphFeasible (i : EdgeSubgraphInstance) : Prop :=
+  ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧ i.2.2 ≤ es.length ∧
+    MetaMathlibExt.SimpleGraph.IsLineGraph
+      ((Cslib.Complexity.Karp.edgeGraph i.1 es).induce
+        (Cslib.Complexity.Karp.edgeGraph i.1 es).support)
+
+open Classical in
+/-- EDGE-SUBGRAPH as a decision problem over bitstrings. -/
+noncomputable def edgeSubgraphDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := EdgeSubgraphInstance) x with
+  | some i => decide (WellFormed i ∧ EdgeSubgraphFeasible i)
+  | none => false
+
+end MetaMathlibExt.Complexity.NPComplete.EdgeSubgraph

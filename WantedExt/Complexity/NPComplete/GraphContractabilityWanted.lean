@@ -20,10 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import CSLibExt.Complexity.NPComplete.GraphContractabilityDefs
 
 @[expose] public section
 
@@ -58,39 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count and edge list of `G`, vertex count and edge list of `H`. -/
-abbrev GraphContractabilityInstance := ℕ × List (ℕ × ℕ) × ℕ × List (ℕ × ℕ)
-
-/-- The graph `G` as a `SimpleGraph (Fin n₁)`. -/
-def GraphG (i : GraphContractabilityInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- The graph `H` as a `SimpleGraph (Fin n₂)`. -/
-def GraphH (i : GraphContractabilityInstance) : SimpleGraph (Fin i.2.2.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.2.2.1 i.2.2.2
-
-/-- Well-formedness of an instance: both edge lists are simple (in range, no loops, no
-repeated edge in either orientation). -/
-def WellFormed (i : GraphContractabilityInstance) : Prop :=
-  i.2.1.Nodup ∧ (∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.2.Nodup ∧
-      ∀ e ∈ i.2.2.2, e.1 < i.2.2.1 ∧ e.2 < i.2.2.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.2.2
-
-/-- `G` contracts to `H`: some map `f : V₁ → V₂` has fibers inducing connected subgraphs of
-`G`, and the quotient of `G` by its fibers is `H`. -/
-def GraphContractabilityFeasible (i : GraphContractabilityInstance) : Prop :=
-  ∃ f : Fin i.1 → Fin i.2.2.1,
-    (∀ x, ((GraphG i).induce {v | f v = x}).Connected) ∧ (GraphG i).map f = GraphH i
-
-open Classical in
-/-- GRAPH CONTRACTABILITY as a decision problem over bitstrings. -/
-noncomputable def graphContractabilityDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := GraphContractabilityInstance) x with
-  | some i => decide (WellFormed i ∧ GraphContractabilityFeasible i)
-  | none => false
 
 /-- **GRAPH CONTRACTABILITY is NP-complete.** Source: Garey and Johnson (1979), [GT51]
 (Statman, unpublished); Brouwer and Veldman (1987). -/

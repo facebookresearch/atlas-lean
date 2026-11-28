@@ -20,13 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
-public import WantedExt.Complexity.NPComplete.EdgeSubgraphWanted
+public import CSLibExt.Complexity.NPComplete.ConnectedEdgeSubgraphMaxDegreeThreeDefs
 
 @[expose] public section
 
@@ -67,29 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- Well-formedness of an instance: EDGE-SUBGRAPH well-formedness (a simple edge list on
-`Fin n` and `0 < K ≤ |E|`), and every vertex of the graph has degree at most 3. -/
-def WellFormed (i : EdgeSubgraph.EdgeSubgraphInstance) : Prop :=
-  EdgeSubgraph.WellFormed i ∧ ∀ v, (EdgeSubgraph.Graph i).degree v ≤ 3
-
-/-- Some sublist `E'` of the edge list with at least `K` entries spans a connected subgraph
-`(V, E')` on all vertices that is a line graph. -/
-def ConnectedEdgeSubgraphFeasible (i : EdgeSubgraph.EdgeSubgraphInstance) : Prop :=
-  ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧ i.2.2 ≤ es.length ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 es).Connected ∧
-      MetaMathlibExt.SimpleGraph.IsLineGraph (Cslib.Complexity.Karp.edgeGraph i.1 es)
-
-open Classical in
-/-- CONNECTED EDGE-SUBGRAPH on graphs of maximum degree 3 as a decision problem over
-bitstrings. -/
-noncomputable def connectedEdgeSubgraphMaxDegreeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := EdgeSubgraph.EdgeSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ ConnectedEdgeSubgraphFeasible i)
-  | none => false
 
 /-- **CONNECTED EDGE-SUBGRAPH is NP-complete on graphs of maximum degree 3.** Source: Garey
 and Johnson (1979), [GT28], comment; Yannakakis (1978), Theorem 12, Remark (2). -/

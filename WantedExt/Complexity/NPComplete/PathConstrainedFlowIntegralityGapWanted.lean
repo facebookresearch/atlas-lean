@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.PathConstrainedNetworkFlowWanted
+public import CSLibExt.Complexity.NPComplete.PathConstrainedFlowIntegralityGapDefs
 
 @[expose] public section
 
@@ -68,45 +66,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, ..., n - 1`), the arcs
-`(tail, head, capacity)`, `s`, `t`, and the collection `P` of paths (vertex lists). -/
-abbrev PathConstrainedFlowIntegralityGapInstance :=
-  ℕ × List (ℕ × ℕ × ℕ) × ℕ × ℕ × List (List ℕ)
-
-/-- The PATH CONSTRAINED NETWORK FLOW instance with the same network and paths and the
-requirement `R = 1`, which nothing here reads. -/
-def toParent (i : PathConstrainedFlowIntegralityGapInstance) :
-    PathConstrainedNetworkFlowInstance :=
-  (i.1, i.2.1, i.2.2.1, i.2.2.2.1, i.2.2.2.2, 1)
-
-/-- Well-formedness of an instance: the parent's for `toParent i`. -/
-def WellFormed (i : PathConstrainedFlowIntegralityGapInstance) : Prop :=
-  PathConstrainedNetworkFlow.WellFormed (toParent i)
-
-/-- Some integral path flow is feasible and its net flow into `t` is at least that of every
-feasible rational path flow (nonnegative rational amounts on the paths). -/
-def NoIntegralityGapFeasible (i : PathConstrainedFlowIntegralityGapInstance) : Prop :=
-  ∃ (hs : i.2.2.1 < i.1) (ht : i.2.2.2.1 < i.1), ∃ g : ℕ → ℕ,
-    IsFeasibleFlow (fun u v : Fin i.1 => (capacity (toParent i) u v : ℝ)) ⟨i.2.2.1, hs⟩
-        ⟨i.2.2.2.1, ht⟩ (fun u v => ((pathFlow (toParent i) g u v : ℕ) : ℝ)) ∧
-      ∀ q : ℕ → ℚ, (∀ j, 0 ≤ q j) →
-        IsFeasibleFlow (fun u v : Fin i.1 => (capacity (toParent i) u v : ℝ)) ⟨i.2.2.1, hs⟩
-            ⟨i.2.2.2.1, ht⟩ (fun u v => ((pathFlow (toParent i) q u v : ℚ) : ℝ)) →
-          (∑ u : Fin i.1, ((pathFlow (toParent i) q u i.2.2.2.1 : ℚ) : ℝ)) -
-              ∑ w : Fin i.1, ((pathFlow (toParent i) q i.2.2.2.1 w : ℚ) : ℝ) ≤
-            (∑ u : Fin i.1, ((pathFlow (toParent i) g u i.2.2.2.1 : ℕ) : ℝ)) -
-              ∑ w : Fin i.1, ((pathFlow (toParent i) g i.2.2.2.1 w : ℕ) : ℝ)
-
-open Classical in
-/-- PATH CONSTRAINED NETWORK FLOW without an integrality gap as a decision problem over
-bitstrings. -/
-noncomputable def pathConstrainedFlowIntegralityGapDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathConstrainedFlowIntegralityGapInstance) x with
-  | some i => decide (WellFormed i ∧ NoIntegralityGapFeasible i)
-  | none => false
 
 /-- **Whether the best rational path-constrained flow fails to exceed the best integral one is
 NP-complete.** Source: Garey and Johnson (1979), [ND34], comment (Prömel, 1978). -/

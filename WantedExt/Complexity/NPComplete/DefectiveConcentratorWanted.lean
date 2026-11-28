@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Logic.Relation
-public import WantedExt.Complexity.NPComplete.DefectiveSuperconcentratorWanted
+public import CSLibExt.Complexity.NPComplete.DefectiveConcentratorDefs
 
 @[expose] public section
 
@@ -71,37 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the arcs are distinct, loopless and between vertices; the
-digraph is acyclic; `I` and `O` are lists of distinct vertices, disjoint from each other, with
-`|O| ≤ |I|`. -/
-def WellFormed (i : DefectiveSuperconcentratorInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2) ∧
-    (∀ v : ℕ, ¬ Relation.TransGen (fun u w => (u, w) ∈ i.2.1) v v) ∧
-    i.2.2.1.Nodup ∧ i.2.2.2.Nodup ∧ (∀ v ∈ i.2.2.1, v < i.1) ∧ (∀ v ∈ i.2.2.2, v < i.1) ∧
-    i.2.2.1.Disjoint i.2.2.2 ∧ i.2.2.2.length ≤ i.2.2.1.length
-
-/-- The digraph is a concentrator: for every set `S ⊆ I` with `|S| = |O|` there are `|S|`
-pairwise vertex-disjoint directed paths, each from a vertex of `S` to a vertex of `O`. -/
-def IsConcentrator (i : DefectiveSuperconcentratorInstance) : Prop :=
-  ∀ S : Finset ℕ, S ⊆ i.2.2.1.toFinset → S.card = i.2.2.2.length →
-    ∃ P : Fin S.card → List ℕ,
-      (∀ j, ∃ s ∈ S, ∃ t ∈ i.2.2.2,
-        DirectedTwoDisjointConnectingPaths.IsDirectedPath i.2.1 s t (P j)) ∧
-        ∀ j k, j ≠ k → (P j).Disjoint (P k)
-
-/-- The digraph is not a concentrator. -/
-def DefectiveConcentratorFeasible (i : DefectiveSuperconcentratorInstance) : Prop :=
-  ¬ IsConcentrator i
-
-open Classical in
-/-- DEFECTIVE CONCENTRATOR as a decision problem over bitstrings. -/
-noncomputable def defectiveConcentratorDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DefectiveSuperconcentratorInstance) x with
-  | some i => decide (WellFormed i ∧ DefectiveConcentratorFeasible i)
-  | none => false
 
 /-- **DEFECTIVE CONCENTRATOR is NP-complete.** Source: Johnson (1985), NP-completeness column;
 Blum, Karp, Vornberger, Papadimitriou and Yannakakis (1981). -/

@@ -24,11 +24,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Logic.Relation
-public import Mathlib.Data.Finset.Card
-public import WantedExt.Complexity.NPComplete.PathWithForbiddenPairsWanted
+public import CSLibExt.Complexity.NPComplete.PathWithDisjointForbiddenPairsDefs
 
 @[expose] public section
 
@@ -71,26 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the parent's (arcs, `s`, `t` and pairs use vertices below
-`m`), the digraph is acyclic, every vertex has at most 2 distinct in-neighbours and at most 2
-distinct out-neighbours, and the pairs are pairwise disjoint. -/
-def WellFormed (i : PathWithForbiddenPairs.PathWithForbiddenPairsInstance) : Prop :=
-  PathWithForbiddenPairs.WellFormed i ∧
-    (∀ v, ¬ Relation.TransGen (fun u w => (u, w) ∈ i.2.1) v v) ∧
-    (∀ v, ((Finset.range i.1).filter fun u => (u, v) ∈ i.2.1).card ≤ 2 ∧
-      ((Finset.range i.1).filter fun w => (v, w) ∈ i.2.1).card ≤ 2) ∧
-    i.2.2.2.2.Pairwise fun c d => c.1 ≠ d.1 ∧ c.1 ≠ d.2 ∧ c.2 ≠ d.1 ∧ c.2 ≠ d.2
-
-open Classical in
-/-- PATH WITH FORBIDDEN PAIRS with disjoint pairs on acyclic digraphs of in- and out-degree at
-most 2, as a decision problem over bitstrings. -/
-noncomputable def pathWithDisjointForbiddenPairsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PathWithForbiddenPairs.PathWithForbiddenPairsInstance) x with
-  | some i => decide (WellFormed i ∧ PathWithForbiddenPairs.PathWithForbiddenPairsFeasible i)
-  | none => false
 
 /-- **PATH WITH FORBIDDEN PAIRS is NP-complete for pairwise disjoint pairs on acyclic digraphs
 with in- and out-degree at most 2.** Source: Garey and Johnson (1979), [GT54], comment; Gabow,

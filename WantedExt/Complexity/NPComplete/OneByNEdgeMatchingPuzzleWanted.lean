@@ -23,9 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.EdgeMatchingPuzzleWanted
+public import CSLibExt.Complexity.NPComplete.OneByNEdgeMatchingPuzzleDefs
 
 @[expose] public section
 
@@ -60,27 +58,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the tiles `(top, right, bottom, left)`. -/
-abbrev OneByNEdgeMatchingPuzzleInstance := List (ℕ × ℕ × ℕ × ℕ)
-
-/-- The edge-matching instance on the `1 × n` board, `n` the number of tiles. -/
-def strip (i : OneByNEdgeMatchingPuzzleInstance) : EdgeMatchingPuzzle.EdgeMatchingPuzzleInstance :=
-  (i, 1, i.length)
-
-/-- Well-formedness of an instance: there is at least one tile. -/
-def WellFormed (i : OneByNEdgeMatchingPuzzleInstance) : Prop :=
-  i ≠ []
-
-open Classical in
-/-- 1 × n EDGE-MATCHING PUZZLE as a decision problem over bitstrings: the edge-matching puzzle
-on the `1 × n` board. -/
-noncomputable def oneByNEdgeMatchingPuzzleDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := OneByNEdgeMatchingPuzzleInstance) x with
-  | some i => decide (WellFormed i ∧ EdgeMatchingPuzzle.EdgeMatchingPuzzleFeasible (strip i))
-  | none => false
 
 /-- **1 × n EDGE-MATCHING PUZZLE is NP-complete.** Source: Bosboom, Demaine, Demaine,
 Hesterberg, Manurangsi, and Yodpinyanee (2017), Definition 3 and Theorem 1; Ebbesen, Fischer,

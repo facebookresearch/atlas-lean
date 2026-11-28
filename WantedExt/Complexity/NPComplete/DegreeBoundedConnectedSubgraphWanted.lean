@@ -23,11 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import CSLibExt.Complexity.NPComplete.DegreeBoundedConnectedSubgraphDefs
 
 @[expose] public section
 
@@ -55,39 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, degree bound `d`, and edge
-bound `K`. -/
-abbrev DegreeBoundedConnectedSubgraphInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : DegreeBoundedConnectedSubgraphInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), `d ≤ |V|`, and
-`0 < K ≤ |E|`, the length of the edge list. -/
-def WellFormed (i : DegreeBoundedConnectedSubgraphInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    i.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2 ∧ i.2.2.2 ≤ i.2.1.length
-
-open Classical in
-/-- Some sublist `E'` of the edge list with at least `K` entries spans a connected subgraph
-`(V, E')` of maximum degree at most `d`. -/
-def DegreeBoundedConnectedSubgraphFeasible (i : DegreeBoundedConnectedSubgraphInstance) :
-    Prop :=
-  ∃ es : List (ℕ × ℕ), es.Sublist i.2.1 ∧ i.2.2.2 ≤ es.length ∧
-    (Cslib.Complexity.Karp.edgeGraph i.1 es).Connected ∧
-      ∀ v, (Cslib.Complexity.Karp.edgeGraph i.1 es).degree v ≤ i.2.2.1
-
-open Classical in
-/-- DEGREE-BOUNDED CONNECTED SUBGRAPH as a decision problem over bitstrings. -/
-noncomputable def degreeBoundedConnectedSubgraphDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DegreeBoundedConnectedSubgraphInstance) x with
-  | some i => decide (WellFormed i ∧ DegreeBoundedConnectedSubgraphFeasible i)
-  | none => false
 
 /-- **DEGREE-BOUNDED CONNECTED SUBGRAPH is NP-complete.** Source: Garey and Johnson (1979),
 [GT26]; Yannakakis (1978), Theorem 9; Yannakakis (1981). -/

@@ -21,11 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleDirectedWanted
+public import CSLibExt.Complexity.NPComplete.PlanarDegreeTwoDirectedHamiltonianCircuitDefs
 
 @[expose] public section
 
@@ -59,40 +55,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and arc list, as in
-`HamiltonianCycleDirectedWanted`. -/
-abbrev PlanarDegreeTwoDirectedHamiltonianCircuitInstance :=
-  HamiltonianCycleDirected.HamiltonianCycleDirectedInstance
-
-/-- The underlying undirected simple graph: `u` and `v` are adjacent when `u ≠ v` and `u → v`
-or `v → u` is an arc. -/
-def UnderlyingGraph (i : PlanarDegreeTwoDirectedHamiltonianCircuitInstance) :
-    SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the directed-Hamiltonian-circuit instance is well-formed
-(at least one vertex; distinct arcs with endpoints in range, no loops); the underlying graph is
-planar; and every vertex has in-degree at most 2 and out-degree at most 2. -/
-def WellFormed (i : PlanarDegreeTwoDirectedHamiltonianCircuitInstance) : Prop :=
-  HamiltonianCycleDirected.WellFormed i ∧ (UnderlyingGraph i).IsPlanar ∧
-    ∀ v < i.1, (i.2.filter fun a => a.2 = v).length ≤ 2 ∧
-      (i.2.filter fun a => a.1 = v).length ≤ 2
-
-/-- A directed Hamiltonian circuit, exactly as in `HamiltonianCycleDirectedWanted`. -/
-def PlanarDegreeTwoDirectedHamiltonianCircuitFeasible
-    (i : PlanarDegreeTwoDirectedHamiltonianCircuitInstance) : Prop :=
-  HamiltonianCycleDirected.HamiltonianCycleDirectedFeasible i
-
-open Classical in
-/-- DIRECTED HAMILTONIAN CIRCUIT (planar, in- and out-degree at most 2) as a decision problem
-over bitstrings. -/
-noncomputable def planarDegreeTwoDirectedHamiltonianCircuitDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PlanarDegreeTwoDirectedHamiltonianCircuitInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarDegreeTwoDirectedHamiltonianCircuitFeasible i)
-  | none => false
 
 /-- **DIRECTED HAMILTONIAN CIRCUIT (planar, in- and out-degree at most 2) is NP-complete.**
 Source: Garey and Johnson (1979), [GT38]; Plesník (1979). -/

@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.DecisionTreeWanted
+public import CSLibExt.Complexity.NPComplete.DecisionTreeThreePositivesDefs
 
 @[expose] public section
 
@@ -53,21 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: a well-formed DECISION TREE instance in which every test
-is `1` on at most three objects. -/
-def WellFormed (i : DecisionTree.DecisionTreeInstance) : Prop :=
-  DecisionTree.WellFormed i ∧ ∀ T ∈ i.2.1, T.count true ≤ 3
-
-open Classical in
-/-- DECISION TREE (tests with at most three positives) as a decision problem over
-bitstrings. -/
-noncomputable def decisionTreeThreePositivesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := DecisionTree.DecisionTreeInstance) x with
-  | some i => decide (WellFormed i ∧ DecisionTree.DecisionTreeFeasible i)
-  | none => false
 
 /-- **DECISION TREE (tests with at most three positives) is NP-complete.** Source: Garey and
 Johnson (1979), [MS15]; Hyafil and Rivest (1976). -/

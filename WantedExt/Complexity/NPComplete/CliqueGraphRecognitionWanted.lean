@@ -18,12 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Maps
-public import Mathlib.Order.Defs.Unbundled
+public import CSLibExt.Complexity.NPComplete.CliqueGraphRecognitionDefs
 
 @[expose] public section
 
@@ -58,38 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev CliqueGraphRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CliqueGraphRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- The clique graph `K(H)`: the intersection graph of the maximal cliques of `H`. Its
-vertices are the maximal cliques of `H`; two distinct maximal cliques are adjacent when they
-share a vertex. -/
-def cliqueGraph {V : Type*} (H : SimpleGraph V) :
-    SimpleGraph {s : Set V // Maximal H.IsClique s} :=
-  SimpleGraph.fromRel fun s t => ((s : Set V) ∩ t).Nonempty
-
-/-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate
-edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : CliqueGraphRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `G` is a clique graph: `G` is isomorphic to `K(H)` for some finite simple graph `H`. -/
-def CliqueGraphRecognitionFeasible (i : CliqueGraphRecognitionInstance) : Prop :=
-  ∃ m : ℕ, ∃ H : SimpleGraph (Fin m), Nonempty (Graph i ≃g cliqueGraph H)
-
-open Classical in
-/-- CLIQUE GRAPH as a decision problem over bitstrings. -/
-noncomputable def cliqueGraphRecognitionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CliqueGraphRecognitionInstance) x with
-  | some i => decide (WellFormed i ∧ CliqueGraphRecognitionFeasible i)
-  | none => false
 
 /-- **CLIQUE GRAPH (clique graph recognition) is NP-complete.** Source: Alcón, Faria,
 de Figueiredo and Gutierrez (2009). -/
