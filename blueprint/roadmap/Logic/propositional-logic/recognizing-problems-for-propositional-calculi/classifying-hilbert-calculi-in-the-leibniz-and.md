@@ -4,10 +4,10 @@ No algorithm determines, for the logic of a finite consistent Hilbert calculus, 
 
 **Theorem (Moraschini).** A *Hilbert calculus* in a finite propositional language consists of finitely many axioms and rules $\Gamma \vdash \varphi$ closed under substitution, and its *logic* is the substitution-invariant consequence relation it derives; the calculus is *consistent* if its logic does not derive every formula from the empty set. Then:
 
-1. for every level $\mathsf K$ of the Leibniz hierarchy as displayed in Figure 1 of the source, from protoalgebraic and truth-equational logics down to finitely regularly algebraizable logics, the problem of determining whether the logic of a given consistent finite Hilbert calculus in a finite language belongs to $\mathsf K$ is undecidable (Theorem 4.10 of the source);
+1. for every class $\mathsf K$ of the Leibniz hierarchy displayed in Figure 1 of the source (among them the protoalgebraic and the truth-equational logics, through the finitely regularly algebraizable logics), the problem of determining whether the logic of a given consistent finite Hilbert calculus in a finite language belongs to $\mathsf K$ is undecidable (Theorem 4.10 of the source);
 2. for every level $\mathsf K$ of the Frege hierarchy (selfextensional, fully selfextensional, Fregean and fully Fregean logics), the problem of determining whether the logic of a given finite consistent Hilbert calculus in a finite language belongs to $\mathsf K$ is undecidable, and remains undecidable when restricted to calculi that determine a finitely algebraizable logic (Theorem 5.3).
 
-Here a logic $L$ is *protoalgebraic* if it has a set $\rho(x, y)$ of formulas with $\vdash_L \rho(x, x)$ and $x, \rho(x, y) \vdash_L y$, and *selfextensional* if interderivability $\dashv\vdash_L$ is a congruence on the formula algebra; the other levels strengthen these conditions.
+Here a logic $L$ is *protoalgebraic* if it has a set $\rho(x, y)$ of formulas with $\vdash_L \rho(x, x)$ and $x, \rho(x, y) \vdash_L y$, and *selfextensional* if interderivability $\dashv\vdash_L$ is a congruence on the formula algebra; truth-equationality is a separate condition, and the other classes of Figure 1 are defined in the source.
 
 ## Depends on
 
@@ -21,7 +21,7 @@ Here a logic $L$ is *protoalgebraic* if it has a set $\rho(x, y)$ of formulas wi
 
 *Leibniz hierarchy.* To each Diophantine equation $p \approx 0$ one effectively assigns a consistent finite Hilbert calculus whose logic $L(p)$ belongs to $\mathsf K$ iff $p \approx 0$ has an integer solution; this works for every class $\mathsf K$ containing the finitely regularly algebraizable logics and contained in the protoalgebraic logics or in the logics whose truth sets are implicitly definable (Theorem 4.8). An algorithm for membership in $\mathsf K$ would solve Hilbert's tenth problem.
 
-*Frege hierarchy.* For an equation $\alpha \approx \beta$ in the language of a finitely based variety of finite type, a finitely algebraizable logic $L(\alpha, \beta)$ is built that is fully Fregean, and equally lies in any level of the Frege hierarchy, iff $\alpha \approx \beta$ holds in the variety (Theorem 5.2); varieties of this kind with undecidable equational theory in one variable exist, which gives the reduction.
+*Frege hierarchy.* For a one-variable equation $\alpha \approx \beta$ in the language of a finitely based variety of finite type, a finitely algebraizable logic $L(\alpha, \beta)$ is built that is fully Fregean, and equally lies in any level of the Frege hierarchy, iff $\alpha \approx \beta$ holds in the variety (Theorem 5.2); varieties of this kind with undecidable equational theory in one variable exist, which gives the reduction.
 
 ## Sources
 

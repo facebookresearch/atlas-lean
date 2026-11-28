@@ -14,6 +14,7 @@ Here $P_0$ is fixed and $P$ ranges over finite sets of $\Sigma$-formulas, with m
 ## Proof depends on
 
 - [Tag systems emulate Turing machines](../../../TheoryOfComputation/equivalence-of-models/tag-systems/tag-systems-emulate-turing-machines.md)
+- [Recognizing extensions of a propositional calculus is undecidable](recognizing-extensions-of-a-propositional.md)
 
 ## Expansion
 

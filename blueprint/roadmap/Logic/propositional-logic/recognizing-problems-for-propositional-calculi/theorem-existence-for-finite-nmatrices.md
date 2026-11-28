@@ -18,7 +18,7 @@ The source revisits this result from the authors' earlier work and uses it to pr
 
 ## Expansion
 
-From a counter machine $\mathcal{C}$ the proof builds a signature $\Sigma_{\mathcal{C}}$, with constants for zero and the empty configuration, a successor, and one connective per state, and a finite Nmatrix whose truth values are register values, configurations and two auxiliary values (Definition 8). Formulas describe computations, and $\mathcal{C}$ halts from all counters zero if and only if the Nmatrix has a theorem (Corollaries 11 and 12). The halting problem for counter machines (Minsky) is undecidable.
+From a counter machine $\mathcal{C}$ the proof builds a signature $\Sigma_{\mathcal{C}}$, with constants for zero and for the empty sequence of configurations, a successor, and one connective per state, and a finite Nmatrix whose truth values are register values, configurations and two auxiliary values (Definition 8). Formulas describe computations, and $\mathcal{C}$ halts from all counters zero if and only if the Nmatrix has a theorem (Corollaries 11 and 12). The halting problem for counter machines (Minsky) is undecidable.
 
 ## Sources
 

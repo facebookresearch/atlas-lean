@@ -17,7 +17,7 @@ Without diagonal constraints, satisfiability is 2EXPTIME-complete for every logi
 
 ## Expansion
 
-As in the model-checking proof, for a two-counter machine $M$ one builds a CCTL$_{\pm 1}$ formula $\Phi_M$ over propositions $q_1, \ldots, q_n$ for the instructions and propositions for the operations $C^{+}, C^{-}, C_0, D^{+}, D^{-}, D_0$ and $\mathit{halt}$. $\Phi_M$ describes a linear Kripke structure in which every state carries exactly one instruction proposition and one operation proposition, consecutive states follow the instructions of $M$, the value of each counter at a position is the difference of the numbers of its increment and decrement states so far, zero tests are checked by diagonal constraints, and a $\mathit{halt}$ state is reached. $\Phi_M$ is satisfiable iff $M$ halts.
+As in the model-checking proof, for a two-counter machine $M$ one builds a CCTL$_{\pm 1}$ formula $\Phi_M$ over propositions $q_1, \ldots, q_n$ for the instructions and propositions for the operations $C^{+}, C^{-}, C_0, D^{+}, D^{-}, D_0$ and $\mathit{halt}$. $\Phi_M$ requires $q_1$ at the initial state and describes a linear Kripke structure in which every state carries exactly one instruction proposition and one operation proposition, consecutive states follow the instructions of $M$, the value of each counter at a position is the difference of the numbers of its increment and decrement states so far, zero tests are checked by diagonal constraints, and a $\mathit{halt}$ state is reached. $\Phi_M$ is satisfiable iff $M$ halts.
 
 ## Sources
 

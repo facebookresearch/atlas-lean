@@ -2,13 +2,14 @@
 
 It is undecidable whether all theorems of a given propositional Hilbert-type calculus are tautologies of a given finite-valued logic.
 
-**Theorem (Baaz and Zach).** A *propositional Hilbert-type calculus* $C$ over a propositional language $L$ (variables and finitely many connectives, possibly $0$-ary constants) has a finite set of axioms and a finite set of rules $A_1, \ldots, A_n / B$; its theorems $\mathrm{Thm}(C)$ are the formulas derivable from substitution instances of axioms by substitution instances of rules. An *$m$-valued logic* $M$ has a finite set $V(M)$ of truth values, a set $V^+(M) \subseteq V(M)$ of designated values and a truth function on $V(M)$ for each connective; $\mathrm{Taut}(M)$ is the set of formulas taking a designated value under every valuation. $C$ is *weakly sound* for $M$ if $\mathrm{Thm}(C) \subseteq \mathrm{Taut}(M)$. There is no algorithm that decides, given a calculus $C$ and a finite-valued logic $M$, whether $C$ is weakly sound for $M$ (Proposition 20 of the source).
+**Theorem (Baaz and Zach).** A *propositional Hilbert-type calculus* $C$ over a propositional language $L$ (variables and finitely many connectives, possibly $0$-ary constants) has a finite set of axioms and a finite set of rules $A_1, \ldots, A_n / B$; its theorems $\mathrm{Thm}(C)$ are the formulas derivable from substitution instances of axioms by substitution instances of rules. An *$m$-valued logic* $M$, a finite deterministic [non-deterministic matrix](non-deterministic-logical-matrices.md), has a finite set $V(M)$ of truth values, a set $V^+(M) \subseteq V(M)$ of designated values and a truth function on $V(M)$ for each connective; $\mathrm{Taut}(M)$ is the set of formulas taking a designated value under every valuation. $C$ is *weakly sound* for $M$ if $\mathrm{Thm}(C) \subseteq \mathrm{Taut}(M)$. There is no algorithm that decides, given a calculus $C$ and a finite-valued logic $M$, whether $C$ is weakly sound for $M$ (Proposition 20 of the source).
 
 The source contrasts weak soundness with two stronger notions in which every axiom is a tautology of $M$: *t-soundness*, where each rule instance with tautological premises has a tautological conclusion, and *strong soundness*, where every valuation satisfying the premises of a rule satisfies its conclusion. The related recognizing problems for calculi with modus ponens and substitution are on [Propositional calculi with modus ponens and substitution](propositional-calculi-with-modus-ponens-and.md).
 
 ## Depends on
 
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Non-deterministic logical matrices and their decision problems](non-deterministic-logical-matrices.md)
 
 ## Proof depends on
 

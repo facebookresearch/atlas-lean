@@ -7,7 +7,7 @@ Satisfiability of formulas with only the modality "during" is undecidable over f
 1. it is undecidable whether a formula is satisfiable in some model over a suborder of $(\mathbb Z, \le)$; equivalently, since the truth of a formula on an interval depends only on its subintervals, whether it is satisfiable over some finite linear order (Theorem 1 of the source);
 2. it is undecidable whether a formula is satisfiable in some model over a discrete linear order (Theorem 2).
 
-This settles the last open case of the classification of fragments of Halpern–Shoham logic by decidability of satisfiability, and subsumes earlier undecidability results over discrete orders for the fragments with modalities ABE, BE, BD, ADB and AĀD.
+This settles the last open case of the classification of fragments of Halpern–Shoham logic by decidability of satisfiability over the classes of orders discussed in the source (finite and discrete orders), and subsumes earlier undecidability results over discrete orders for the fragments with modalities ABE, BE, BD, ADB and AĀD.
 
 ## Depends on
 

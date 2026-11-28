@@ -1,6 +1,6 @@
 # Propositional calculi with modus ponens and substitution
 
-A propositional calculus in the sense of Tarski's decision problems is a finite set of axioms over a finite signature containing implication, closed under modus ponens and substitution. Comparing such calculi by their sets of theorems gives the recognizing problems for extensions, completeness and axiomatizations.
+A propositional calculus in the sense of Tarski's decision problems is a finite set of axioms over a finite signature containing implication; its theorems are the formulas derivable from the axioms by modus ponens and substitution. Comparing such calculi by their sets of theorems gives the recognizing problems for extensions, completeness and axiomatizations.
 
 **Calculi.** Fix an infinite set of propositional variables and a finite signature $\Sigma$ of connectives containing the binary connective $\to$. A *$\Sigma$-calculus* $P$ is a finite set of $\Sigma$-formulas (its axioms) together with two rules of inference:
 

@@ -18,6 +18,8 @@ $$
 [\![\pi, \varphi \mathbin{U} \psi]\!] = \sup_{i \geq 0} \min\Big([\![\pi^i, \psi]\!], \min_{0 \leq j < i} [\![\pi^j, \varphi]\!]\Big),
 $$
 
+where the minimum over the empty range $j < 0$ is $1$,
+
 $$
 [\![\pi, \varphi \mathbin{U_\eta} \psi]\!] = \sup_{i \geq 0} \min\Big(\eta(i)\,[\![\pi^i, \psi]\!], \min_{0 \leq j < i} \eta(j)\,[\![\pi^j, \varphi]\!]\Big),
 $$
@@ -36,7 +38,7 @@ None.
 
 ## Expansion
 
-On formulas without discounting operators the values are $0$ or $1$ and the semantics is that of LTL. The source shows that LTL can be augmented with an arbitrary set of discounting functions while preserving decidability of threshold model checking, since for a fixed threshold the discounting cuts the relevant horizon to a finite one and formulas translate to Büchi automata; the average operator breaks this.
+On formulas with neither discounting nor averaging operators the values are $0$ or $1$ and the semantics is that of LTL; averaging alone already gives other values, since $\mathrm{True} \oplus \neg\mathrm{True}$ has value $\tfrac12$. For a fixed rational threshold, discounting cuts the relevant horizon to a finite one and formulas translate to alternating weak automata (Theorem 1 of the source). The source concludes decidability of threshold model checking for the exponential discounting functions $i \mapsto \lambda^i$ with rational $\lambda \in (0,1)$ (Sections 3.3–3.5, Theorem 3); for an arbitrary discounting function the values need not be computable (for $\eta(i) = r/2^i$ with a noncomputable $r$, the formula $\mathrm{True} \mathbin{U_\eta} \mathrm{True}$ has value $r$ on every computation). The average operator makes validity undecidable for every nonempty set of discounting functions.
 
 ## Sources
 

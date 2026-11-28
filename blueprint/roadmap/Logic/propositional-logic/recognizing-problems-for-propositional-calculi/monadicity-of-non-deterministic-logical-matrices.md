@@ -22,7 +22,7 @@ Consequently, there is no algorithm computing the set of unary multi-functions e
 
 ## Expansion
 
-From a deterministic counter machine $\mathcal C$ one builds a finite Nmatrix $\mathbb M_{\mathcal C}$ whose closed formulas can encode sequences of configurations; non-determinism lets every valuation refute a formula unless it encodes the actual computation of $\mathcal C$ from the initial configuration, and an infectious non-designated error value propagates mistakes. Thus $\vdash_{\mathbb M_{\mathcal C}}$ has a theorem exactly when $\mathcal C$ halts. A second construction transforms any finite Nmatrix $\mathbb M$ with at least two truth values and an infectious non-designated value into an Nmatrix $\mathbb M_{\mathsf m}$ that is monadic if and only if $\vdash_{\mathbb M}$ has theorems. Composing the two reduces the halting problem for counter machines to monadicity.
+From a deterministic counter machine $\mathcal C$ one builds a finite Nmatrix $\mathbb M_{\mathcal C}$ whose closed formulas can encode sequences of configurations; non-determinism lets some valuation refute a formula unless it encodes the actual computation of $\mathcal C$ from the initial configuration, and an infectious non-designated error value propagates mistakes. Thus $\vdash_{\mathbb M_{\mathcal C}}$ has a theorem exactly when $\mathcal C$ halts. A second construction transforms any finite Nmatrix $\mathbb M$ with at least two truth values and an infectious non-designated value into an Nmatrix $\mathbb M_{\mathsf m}$ that is monadic if and only if $\vdash_{\mathbb M}$ has theorems. Composing the two reduces the halting problem for counter machines to monadicity.
 
 ## Sources
 
