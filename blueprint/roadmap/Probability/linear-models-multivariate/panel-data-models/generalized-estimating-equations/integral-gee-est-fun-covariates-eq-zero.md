@@ -1,0 +1,3 @@
+# Unbiasedness of the generalized estimating function with random covariates
+
+On a probability space, for clusters $i$ with measurable random covariates $X_i$, mean models $\mu_i(x, \beta)$, declared working covariances $V_i(x, \beta)$ and responses $y_i$, let $U(\beta) = \sum_iD_i(\beta)^\top V_i(\beta)^{-1}(y_i - \mu_i(\beta))$ be the generalized estimating function, $D_i = \partial\mu_i/\partial\beta$. If the conditional mean model is correct at $\beta^*$, $\mathbb{E}[Y_i \mid X_i] = \mu_i(X_i, \beta^*)$, the model maps are measurable in $x$ and the moments exist, then $\mathbb{E}[U(\beta^*)] = 0$ for every choice of working covariances. No independence between clusters is assumed.

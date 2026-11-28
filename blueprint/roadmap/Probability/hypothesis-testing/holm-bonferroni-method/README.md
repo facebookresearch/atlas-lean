@@ -9,3 +9,4 @@
 - [Number of hypotheses rejected by Holm's procedure](card-holm-rejections.md)
 - [Holm rejection bound for a set of hypotheses](exists-le-div-card-of-holm-rejections.md)
 - [Holm's procedure controls the FWER](measure-holm-familywise-error-le.md)
+- [Multiple testing of treatment effects](multiple-testing-of-treatment-effects/README.md)

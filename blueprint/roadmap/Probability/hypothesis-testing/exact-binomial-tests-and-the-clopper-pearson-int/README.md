@@ -29,3 +29,4 @@
 - [Coverage of the Clopper–Pearson interval](clopper-pearson-coverage.md)
 
 - [Statistical certification of simulators by exact finite-sample tests](statistical-certification-of-simulators-by-exact.md)
+- [Exact conditional tests for Poisson rates](exact-conditional-tests-for-poisson-rates/README.md)

@@ -1,0 +1,3 @@
+# Linearization of an estimating equation from differentiability
+
+Let $E$ be a real inner product space. Suppose each cluster score $\beta \mapsto U_i(\beta)$ is differentiable on $B(\beta_0, \delta)$ for some $\delta > 0$ with derivative $DU_i(\beta)$, $n^{-1}\sum_{i<n}DU_i(\beta) \to \bar A(\beta)$ uniformly on the ball in probability with $\bar A$ continuous at $\beta_0$, and $\hat\beta_n \to \beta_0$ in probability. Then for every $\varepsilon > 0$, with probability tending to one, $\|n^{-1}\sum_i(U_i(\hat\beta_n) - U_i(\beta_0)) - \bar A(\beta_0)(\hat\beta_n - \beta_0)\| \le \varepsilon\|\hat\beta_n - \beta_0\|$.

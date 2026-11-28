@@ -1,0 +1,3 @@
+# Consistency of the empirical sandwich with estimated weights
+
+Let $U_i(\beta, \theta)$ be the cluster scores and $DU_i(\beta, \theta)$ operators (in applications, the Jacobians of the scores in $\beta$). Suppose the averaged operators $n^{-1}\sum_{i<n}DU_i(\beta, \theta)$ and averaged outer products $n^{-1}\sum_{i<n}U_i(\beta, \theta)U_i(\beta, \theta)^\top$ converge uniformly near $(\beta_0, \theta_0)$ in probability to $\bar A$ and $\bar B$, both continuous at $(\beta_0, \theta_0)$, $\bar A(\beta_0, \theta_0)$ invertible, and $\hat\beta_n$, $\hat\theta_n$ consistent. Then the empirical sandwich built from these averages at $(\hat\beta_n, \hat\theta_n)$ converges in probability to the sandwich covariance of $\bar A(\beta_0, \theta_0)$ and $\bar B(\beta_0, \theta_0)$.

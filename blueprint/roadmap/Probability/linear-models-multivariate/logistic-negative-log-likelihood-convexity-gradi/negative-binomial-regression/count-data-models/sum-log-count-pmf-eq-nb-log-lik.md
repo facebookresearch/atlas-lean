@@ -1,0 +1,3 @@
+# The unitwise likelihood is a negative binomial regression
+
+Consider a count-matrix model for units $g$, samples $j$ and conditions $c$: each sample $j$ is a replicate of a condition $c(j)$ with exposure (size factor) $s_j \ge 0$, each unit $g$ has a valid count law $L_g$ (Poisson or negative binomial) and a rate $\lambda_{g,c} > 0$ in each condition, and the count $Y_{gj}$ has law $L_g$ at mean $\mu_{gj} = s_j\lambda_{g,c(j)}$. If $L_g$ is negative binomial with shape $\theta$ and all exposures are positive, then $\sum_j\log P(Y_{gj})$ equals a term free of the rates plus the negative binomial regression log-likelihood with shape $\theta$, the condition design matrix, offsets $\log s_j$, responses $Y_{gj}$ and coefficients $\beta_c = \log\lambda_{g,c}$.

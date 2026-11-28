@@ -1,0 +1,3 @@
+# Asymptotic normality of an estimating-equation root from a linearization
+
+Let $E$ be a finite-dimensional real inner product space. Let $A$ be invertible, $\hat\beta_n$ almost everywhere measurable solving $\sum_{i<n}U_i(\hat\beta_n) = 0$ with probability tending to one, and suppose that for every $\varepsilon > 0$, with probability tending to one, $\big\|n^{-1}\sum_i(U_i(\hat\beta_n) - U_i(\beta_0)) - A(\hat\beta_n - \beta_0)\big\| \le \varepsilon\|\hat\beta_n - \beta_0\|$. If $-A^{-1}n^{-1/2}\sum_{i<n}U_i(\beta_0)$ converges in distribution to $W$, then so does $\sqrt n(\hat\beta_n - \beta_0)$.

@@ -386,17 +386,18 @@ Source: Wang and Ramdas (2022). -/
 def IsEBHSelfConsistent (α : ℝ) (e : Fin m → ℝ) (R : Finset (Fin m)) : Prop :=
   ∀ i ∈ R, (m : ℝ) ≤ α * R.card * e i
 
-/-- The number of e-values clearing the e-BH threshold for `k` rejections, `e i ≥ m / (α k)`
-(division-free: `m ≤ α k e i`). -/
+/-- The number of e-values clearing the e-BH threshold for `k` rejections, `m ≤ α k e i`
+(for `α > 0` and `k ≥ 1`, `e i ≥ m / (α k)`). -/
 noncomputable def eBHCount (α : ℝ) (e : Fin m → ℝ) (k : ℕ) : ℕ :=
   (Finset.univ.filter fun i => (m : ℝ) ≤ α * k * e i).card
 
 /-- The **e-BH index**: the largest `k ∈ {0, …, m}` such that at least `k` e-values satisfy
-`e i ≥ m / (α k)` (`k = 0` always qualifies). -/
+`m ≤ α k e i` (`k = 0` always qualifies). -/
 noncomputable def eBHIndex (α : ℝ) (e : Fin m → ℝ) : ℕ :=
   ((Finset.range (m + 1)).filter fun k : ℕ => k ≤ eBHCount α e k).max' ⟨0, by simp⟩
 
-/-- The **e-BH rejections**: the e-values with `e i ≥ m / (α k̂)`, `k̂ = eBHIndex α e`.
+/-- The **e-BH rejections**: the e-values with `m ≤ α k̂ e i`, `k̂ = eBHIndex α e` (for `α > 0`
+and `k̂ ≥ 1`, `e i ≥ m / (α k̂)`; nothing is rejected when `k̂ = 0`).
 
 Source: Wang and Ramdas (2022). -/
 noncomputable def eBHRejections (α : ℝ) (e : Fin m → ℝ) : Finset (Fin m) :=
@@ -606,9 +607,9 @@ theorem measurable_falseDiscoveryProportion_eBHRejections {α : ℝ} {E : Fin m 
   rw [heq]
   exact (hcount H0).div ((hcount Finset.univ).max measurable_const)
 
-/-- **e-BH controls the FDR under arbitrary dependence.** If every true-null statistic is an
-e-value and every false-null statistic is measurable, the e-BH FDP is integrable and
-`E[FDP] ≤ α |H0| / m ≤ α`.
+/-- **e-BH controls the FDR under arbitrary dependence.** If `α ≥ 0`, every true-null statistic
+is an e-value and every false-null statistic is measurable, the e-BH FDP is integrable and
+`E[FDP] ≤ α`.
 
 Source: Wang and Ramdas (2022). -/
 theorem integral_falseDiscoveryProportion_eBHRejections_le {α : ℝ} (hα : 0 ≤ α)
@@ -640,8 +641,8 @@ theorem lintegral_falseDiscoveryProportion_eBHRejections_stoppedValue_le {α : �
 
 /-- **e-BH at a stopping time.** If every true-null endpoint carries an e-process for a common
 filtration, `τ` is a bounded stopping time, and the false-null stopped values `E i τ` are
-measurable, then the e-BH procedure applied to the stopped values has an integrable FDP and
-`E[FDP] ≤ α |H0| / m ≤ α`: the analyst may choose when to stop, using all data so far, and still
+measurable and `α ≥ 0`, then the e-BH procedure applied to the stopped values has an integrable
+FDP and `E[FDP] ≤ α`: the analyst may choose when to stop, using all data so far, and still
 control the FDR. -/
 theorem integral_falseDiscoveryProportion_eBHRejections_stoppedValue_le {α : ℝ}
     (hα : 0 ≤ α) {𝒢 : Filtration ℕ m0} (E : Fin m → ℕ → Ω → ℝ) (H0 : Finset (Fin m))

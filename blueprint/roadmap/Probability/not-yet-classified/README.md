@@ -16,7 +16,6 @@ Topics added since this subject's fields were last revised.
 - [Binary Cost Adapter](part-02/binary-cost-adapter/README.md)
 - [Bootstrap](part-02/bootstrap/README.md)
 - [Bootstrap Mean CLT](part-02/bootstrap-mean-clt/README.md)
-- [Canonical](part-02/canonical/README.md)
 - [Common Covariance Likelihood](part-02/common-covariance-likelihood/README.md)
 - [Component Observations](part-02/component-observations/README.md)
 

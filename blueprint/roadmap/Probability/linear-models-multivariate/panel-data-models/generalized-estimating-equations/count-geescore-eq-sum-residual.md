@@ -1,0 +1,3 @@
+# The count GEE score is linear in the residuals
+
+For clusters $z = (x, y)$ with covariate vectors $x_t \in E$ (a real inner product space) and counts $y_t$ over finitely many occasions $t$, let $\mu_t(\beta) = e^{\langle x_t, \beta\rangle}$, $v(m) = m + \alpha m^2$ the negative binomial working variance with dispersion $\alpha \ge 0$, $w_t = v(\mu_t)^{-1/2}$ and $Q$ an inverse working correlation matrix; the count GEE score is $\psi(\beta; z) = \sum_{s,t}Q_{st}w_sw_t\mu_s(y_t - \mu_t)x_s$ and the model-based information is $\mathcal I(\beta; x) = \sum_{s,t}Q_{st}w_sw_t\mu_s\mu_t\,x_sx_t^\top$. Then $\psi(\beta; z) = \sum_t(y_t - \mu_t)\sum_sQ_{st}w_sw_t\mu_sx_s$, residuals times vectors depending only on the covariates.

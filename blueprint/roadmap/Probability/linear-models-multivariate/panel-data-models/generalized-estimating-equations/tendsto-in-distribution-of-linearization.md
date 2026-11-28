@@ -1,0 +1,3 @@
+# Asymptotic normality of a consistent root by linearization
+
+Let $\Psi_n(\beta)$ be random functions on $\mathbb{R}$, differentiable in $\beta$ with derivative $\Psi_n'(\beta)$, and let $B_n > 0$ and $D_n > 0$ eventually be deterministic. Assume $\Psi_n(\beta_0)/B_n \Rightarrow Y$; $\hat\beta_n$ is almost everywhere measurable, a root with probability tending to one and consistent; and for every $\varepsilon > 0$ there is $\delta > 0$ with $P(\exists\beta \in [\beta_0 - \delta, \beta_0 + \delta] : |\Psi_n'(\beta) + D_n| > \varepsilon D_n) \to 0$. Then $D_n(\hat\beta_n - \beta_0)/B_n \Rightarrow Y$.

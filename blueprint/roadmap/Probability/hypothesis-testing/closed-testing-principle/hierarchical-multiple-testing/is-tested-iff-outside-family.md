@@ -1,0 +1,3 @@
+# Whether a family is tested depends only on the other nodes
+
+Let $T$ be a family of clusters with p-values $p_C$ and a level $q$. The sibling family of $C$ is the set of members of $T$ with the same strict ancestors as $C$; Yekutieli's procedure tests each node at the Benjamini–Hochberg cutoff $qk_S/|S|$ of its family $S$ ($k_S$ the BH index of the family's p-values) and rejects a node when it and all its ancestors in $T$ pass their levels; a family is tested when every strict ancestor passed its level. Then the family $S$ of $C$ is tested under $p$ if and only if it is tested under the p-values that agree with $p$ on $T \setminus S$ and vanish elsewhere.

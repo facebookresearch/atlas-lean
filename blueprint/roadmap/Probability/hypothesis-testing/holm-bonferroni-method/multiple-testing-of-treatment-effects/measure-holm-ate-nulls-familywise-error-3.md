@@ -1,0 +1,3 @@
+# Familywise error of Holm on average-treatment-effect Lehmann p-values
+
+Let $T$ be a measurable treatment event on a probability space, $X$ a measurable covariate with finitely many values, $e(x) = P(T \mid X = x)$ the propensity score, and for endpoints $j = 1, \dots, m$ potential outcomes $Y_{0j}, Y_{1j}$ with observed outcome $Y_j = Y_{1j}$ on $T$ and $Y_{0j}$ off $T$. The causal nulls are the endpoints with integrable $Y_{1j} - Y_{0j}$ and $\mathbb{E}[Y_{1j} - Y_{0j}] = 0$. Suppose every causal-null endpoint is strongly ignorable given $X$ with measurable integrable potential outcomes, and the cluster noises are uniform on $[0, 1]$. Then Holm at level $\alpha \in [0, 1]$ on the ATE Lehmann p-values rejects some causal null with probability at most $\alpha$.

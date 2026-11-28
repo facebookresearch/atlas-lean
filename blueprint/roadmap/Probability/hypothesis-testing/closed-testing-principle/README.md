@@ -7,3 +7,4 @@
 - [Bonferroni local test of an intersection hypothesis](bonferroni-local-test.md)
 - [Level of the Bonferroni local test](measure-bonferroni-local-test-le.md)
 - [Holm's procedure is a closed test](holm-rejections-eq-closed-rejections.md)
+- [Hierarchical multiple testing](hierarchical-multiple-testing/README.md)

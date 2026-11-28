@@ -1,0 +1,3 @@
+# Refuting positive regression dependence
+
+On a nonzero finite measure space, p-values $p_1, \dots, p_m$ are positively regression dependent on a subset $H_0$ (PRDS) if for every $i \in H_0$ and every measurable increasing set $D \subseteq \mathbb{R}^m$, $x \mapsto P((p_1, \dots, p_m) \in D \mid p_i = x)$ has a nondecreasing version. For measurable p-values, if for some $i \in H_0$, measurable increasing $D$ and $s, t$, $P(\mathbf p \in D, s < p_i \le t)P(p_i \le s) < P(\mathbf p \in D, p_i \le s)P(s < p_i \le t)$, where $\mathbf p = (p_1, \dots, p_m)$, then the p-values are not PRDS on $H_0$.

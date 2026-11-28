@@ -1,0 +1,3 @@
+# Coefficient block of the negative binomial Fisher information
+
+Consider negative binomial regression with joint parameter $p = (\beta, \theta)$, coefficients $\beta$ and shape $\theta$: an observation $z = (x, y)$ (covariate row $x$, count $y$) has density $f_p(z) = \mathrm{NB}(y; \theta, e^{x^\top\beta})$, with closed-form score $s_p(z)$ and observed information $J_p(z)$. For an s-finite covariate law $\mu_X$ (reference measure $\mu_X \otimes$ counting measure), $\theta_0 > 0$, $J_{p_0}$ integrable with mean $I(p_0)$, the coefficient block of $I(p_0)$ is $\mathbb{E}_x\big[F(\theta_0, x^\top\beta_0)\,xx^\top\big]$ with $F(\theta, \eta) = \theta e^\eta/(\theta + e^\eta)$: the information for $\beta$ with known shape.

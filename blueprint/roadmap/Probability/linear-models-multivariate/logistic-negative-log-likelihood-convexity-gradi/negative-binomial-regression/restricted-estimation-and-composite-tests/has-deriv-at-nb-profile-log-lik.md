@@ -1,0 +1,3 @@
+# Envelope theorem for the profile log-likelihood
+
+For a design $X$, offset $o$ and counts $y$, let $\ell(\beta, \theta)$ be the joint negative binomial log-likelihood, $\ell_0(\theta) = \ell(\beta_0, \theta)$ its restriction to the null $\beta = \beta_0$, and $\ell_{\mathrm{prof}}(\theta) = \sup_\beta\ell(\beta, \theta)$ the profile log-likelihood of the shape. Let $\theta \mapsto \hat\beta(\theta)$ be section maximizers for $\theta$ near $\theta_0 > 0$, differentiable at $\theta_0$. Then $\ell_{\mathrm{prof}}$ is differentiable at $\theta_0$ with derivative the shape score at $(\hat\beta(\theta_0), \theta_0)$.

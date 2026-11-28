@@ -1,0 +1,3 @@
+# A Gaussian vector with the negative binomial Fisher information as covariance
+
+Consider negative binomial regression with joint parameter $p = (\beta, \theta)$, coefficients $\beta$ and shape $\theta$: an observation $z = (x, y)$ (covariate row $x$, count $y$) has density $f_p(z) = \mathrm{NB}(y; \theta, e^{x^\top\beta})$, with closed-form score $s_p(z)$ and observed information $J_p(z)$. If $z$ has law $f_{p_0}\,\nu$ with $\theta_0 > 0$ and $s_{p_0}$ is square integrable with mean zero, there is a random vector $Y$ on the standard Gaussian space with $\langle Y, t\rangle \sim \mathcal N(0, \langle I(p_0)t, t\rangle)$ for every $t$.
