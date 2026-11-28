@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCCalibrating
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCFirstElementBounds
 public import MathlibExt.NumberTheory.ArithmeticFunction.HBCHalfPrimeProductBounds
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectDickson
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectMinFac
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectHBCAdmissible
 
@@ -30,14 +31,6 @@ Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*,
 (2024), Article A114, Lemma 1 (ii) (`integers-2024-A114-lem-1`). -/
 public theorem_wanted oddPerfect_five_le_card_primeFactors (N : ℕ) (hodd : Odd N)
     (hperf : N.Perfect) : 5 ≤ N.primeFactors.card
-
-/-- **Dickson's finiteness theorem for odd perfect numbers.** For every natural number $m$, there
-are only finitely many odd perfect numbers with exactly $m$ distinct prime divisors.
-
-Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
-(2024), Article A114, Lemma 1 (iii) (`integers-2024-A114-lem-1`). -/
-public theorem_wanted finite_setOf_oddPerfect_card_primeFactors_eq (m : ℕ) :
-    {N : ℕ | Odd N ∧ N.Perfect ∧ N.primeFactors.card = m}.Finite
 
 /-- **Steuerwald's theorem on odd perfect numbers.** If $N$ is an odd perfect number, then $N$ has
 a prime divisor whose exponent in the prime factorization of $N$ is even and different from $2$.
