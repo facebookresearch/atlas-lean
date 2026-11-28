@@ -19,6 +19,7 @@ the length-$n$ discrete Fourier transform over $\mathbb{Z}_p$, with the primitiv
 ## Depends on
 
 - [The negacyclic ring $\mathbb{Z}_q[X]/(X^n+1)$](../../cryptography/public-key/lattice-and-code-based-cryptography/lattice-problems/negacyclic-ring.md)
+- [Radix-two fast Fourier transform](../fast-fourier-transform/fft.md)
 
 ## Proof depends on
 
@@ -28,7 +29,7 @@ the length-$n$ discrete Fourier transform over $\mathbb{Z}_p$, with the primitiv
 
 The bijection with componentwise products is the Chinese remainder isomorphism for the complete splitting of $\alpha^{n}+1$ over $\mathbb{Z}_p$, the same one that gives plaintext slots for a prime plaintext modulus congruent to $1$ modulo $2n$. The displayed formula follows from $\omega^{(2j+1)i}=\omega^{i}(\omega^{2})^{ij}$.
 
-Expansion requirements: (i) recovering the product's coefficients needs the inverse transform over $\mathbb{Z}_p$ (inverse DFT with the factor $n^{-1}$, followed by untwisting with $\omega^{-i}$); (ii) the $O(n\log n)$ cost needs the radix-two fast Fourier transform over a field with a primitive $n$-th root of unity.
+Expansion requirements: (i) recovering the product's coefficients needs the inverse transform over $\mathbb{Z}_p$ (inverse DFT with the factor $n^{-1}$, followed by untwisting with $\omega^{-i}$); (ii) that the radix-two fast Fourier transform with root $\omega^{2}$ returns this discrete Fourier transform over $\mathbb{Z}_p$, an analogue for a field with a primitive $n$-th root of unity of [Correctness of the radix-two FFT](../fast-fourier-transform/fft-correct.md), which is stated for complex roots of unity. The operation count of the transform is already bounded for every commutative ring by [Cost bound for the radix-two FFT](../fast-fourier-transform/fft-time-le.md) ($8\cdot 2^{d}\cdot d$ for length $2^{d}$).
 
 ## Sources
 

@@ -13,6 +13,7 @@ Writing $t\tilde q_i/q_i=\omega_i+\theta_i$ with $\omega_i\in\mathbb{Z}$ and $\t
 ## Depends on
 
 - [Residue number system representation of $R_q$](rns-representation.md)
+- [BGV and BFV ring ciphertexts](../../homomorphic-encryption/leveled-packed-fhe-bgv-and-bfv/bgv-bfv-ciphertexts.md)
 
 ## Proof depends on
 

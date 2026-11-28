@@ -2,7 +2,7 @@
 
 BFV decryption can run entirely on RNS residues. A fast base conversion of $|\gamma t\,\mathrm{ct}(s)|_q$ to the moduli $t$ and $\gamma$ gives the scaled message up to a small error, and the centered residue modulo $\gamma$ cancels that error exactly provided the noise is at most $\tfrac qt(\tfrac12-\tfrac k\gamma)-\tfrac{|q|_t}2$.
 
-Let $R=\mathbb{Z}[x]/(x^n+1)$, let $q=q_1\cdots q_k$ be an RNS base, and let $t\ge 2$ be a plaintext modulus with $\gcd(t,q)=1$. Write $\Delta=\lfloor q/t\rfloor$ and $|q|_t=q\bmod t$, and assume $t|q|_t<q$. Let $\mathrm{ct}=(c_0,c_1)$ be a BFV ciphertext with $\mathrm{ct}(s)=c_0+c_1s\equiv\Delta[m]_t+v\pmod q$, where $[m]_t$ has coefficients in $[-t/2,t/2)$ and $v\in R$ is the inherent noise. Let $\gamma$ be a positive integer with $\gcd(\gamma,t)=\gcd(\gamma,q)=1$ and
+Let $n$ be a power of two, let $R=\mathbb{Z}[x]/(x^n+1)$, let $q=q_1\cdots q_k$ be an RNS base, and let $t\ge 2$ be a plaintext modulus with $\gcd(t,q)=1$. Write $\Delta=\lfloor q/t\rfloor$ and $|q|_t=q\bmod t$, and assume $t|q|_t<q$. Let $\mathrm{ct}=(c_0,c_1)$ be a BFV ciphertext with $\mathrm{ct}(s)=c_0+c_1s\equiv\Delta[m]_t+v\pmod q$, where $[m]_t$ has coefficients in $[-t/2,t/2)$ and $v\in R$ is the inherent noise. Let $\gamma$ be a positive integer with $\gcd(\gamma,t)=\gcd(\gamma,q)=1$ and
 
 $$
 \gamma>\frac{2k}{1-t|q|_t/q}.
@@ -37,5 +37,5 @@ $$
 
 ## Sources
 
-- Jean-Claude Bajard, Julien Eynard, M. Anwar Hasan, Vincent Zucca, "A Full RNS Variant of FV Like Somewhat Homomorphic Encryption Schemes", Selected Areas in Cryptography (SAC 2016), LNCS 10532 (2017), pp. 423–442, DOI [10.1007/978-3-319-69453-5_23](https://doi.org/10.1007/978-3-319-69453-5_23): §3.2–3.5, Lemma 1 (Eq. (3)), Lemma 2 (Eq. (4), hypothesis $\gamma\varepsilon\ge k$), Theorem 1 (Eq. (5), stated with $\le$) and Algorithm 1 ($\mathrm{Dec}_{\mathrm{RNS}}$), proofs in Appendix A.1–A.3; authors' version.
+- Jean-Claude Bajard, Julien Eynard, M. Anwar Hasan, Vincent Zucca, "A Full RNS Variant of FV Like Somewhat Homomorphic Encryption Schemes", Selected Areas in Cryptography (SAC 2016), LNCS 10532 (2017), pp. 423–442, DOI [10.1007/978-3-319-69453-5_23](https://doi.org/10.1007/978-3-319-69453-5_23): §2 ($R=\mathbb{Z}[X]/(X^n+1)$ with $n$ a power of two, $\mathrm{Dec}_{\mathrm{FV}}$), §3.2–3.5, Lemma 1 (Eq. (3)), Lemma 2 (Eq. (4), hypothesis $\gamma\varepsilon\ge k$), Theorem 1 (Eq. (5), stated with $\le$) and Algorithm 1 ($\mathrm{Dec}_{\mathrm{RNS}}$), proofs in Appendix A.1–A.3; authors' version.
 - Ahmad Al Badawi, Bharadwaj Veeravalli, Chan Fook Mun, Khin Mi Mi Aung, "High-Performance FV Somewhat Homomorphic Encryption on GPUs: An Implementation using CUDA", IACR Transactions on Cryptographic Hardware and Embedded Systems 2018(2), pp. 70–95, DOI [10.46586/tches.v2018.i2.70-95](https://doi.org/10.46586/tches.v2018.i2.70-95): §5.3, Algorithm 2 ($\mathrm{DecRNS}$).

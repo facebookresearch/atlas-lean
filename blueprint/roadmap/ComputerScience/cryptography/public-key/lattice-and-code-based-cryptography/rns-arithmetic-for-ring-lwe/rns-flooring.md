@@ -2,7 +2,7 @@
 
 In RNS BFV multiplication, the scaled tensor coefficient $\lfloor\tfrac{t}{q}c\rceil$ is produced directly in the auxiliary base: feed $a=t\,c$, subtract a fast conversion of $|a|_q$ and multiply by $q^{-1}$. The result is $\lfloor\tfrac tq c\rceil$ up to an additive error of absolute value at most $k$.
 
-Let $R=\mathbb{Z}[X]/(X^n+1)$ and let $t\ge 2$ be the plaintext modulus. Let $q=q_1\cdots q_k$ be an RNS base and $\mathcal{B}_{sk}$ an auxiliary RNS base, with all moduli of $q$ and $\mathcal{B}_{sk}$ pairwise coprime. For an integer $a$ whose residues modulo every $q_i$ and every $m\in\mathcal{B}_{sk}$ are known, define for each $m\in\mathcal{B}_{sk}$
+Let $n$ be a power of two, $R=\mathbb{Z}[X]/(X^n+1)$, and let $t\ge 2$ be the plaintext modulus. Let $q=q_1\cdots q_k$ be an RNS base and $\mathcal{B}_{sk}$ an auxiliary RNS base, with all moduli of $q$ and $\mathcal{B}_{sk}$ pairwise coprime. For an integer $a$ whose residues modulo every $q_i$ and every $m\in\mathcal{B}_{sk}$ are known, define for each $m\in\mathcal{B}_{sk}$
 
 $$
 \mathrm{fastRNSFloor}_q(a,m)=\bigl(a-\mathrm{FastBconv}(|a|_q,q,\{m\})\bigr)\cdot|q^{-1}|_m\bmod m .
@@ -20,6 +20,7 @@ with the same integer polynomial $b_j\in R$ for every $m\in\mathcal{B}_{sk}$. Be
 
 - [Fast base conversion is exact up to a small multiple of the source modulus](fast-base-conversion.md)
 - [BGV and BFV ring ciphertexts](../../homomorphic-encryption/leveled-packed-fhe-bgv-and-bfv/bgv-bfv-ciphertexts.md)
+- [Ciphertext multiplication by tensoring](../../homomorphic-encryption/leveled-packed-fhe-bgv-and-bfv/tensor-product-multiplication.md)
 
 ## Proof depends on
 
@@ -31,4 +32,4 @@ BEHZ Appendix A.6: coefficientwise, fast base conversion returns the residues of
 
 ## Sources
 
-- Jean-Claude Bajard, Julien Eynard, M. Anwar Hasan, Vincent Zucca, "A Full RNS Variant of FV Like Somewhat Homomorphic Encryption Schemes", Selected Areas in Cryptography (SAC 2016), LNCS 10532 (2017), pp. 423–442, DOI [10.1007/978-3-319-69453-5_23](https://doi.org/10.1007/978-3-319-69453-5_23): §4.2 (bases pairwise coprime), §4.3 (definition of $\mathrm{fastRNSFloor}_q$, Eq. (9) and Lemma 5, Eq. (10)), proof in Appendix A.6; authors' version.
+- Jean-Claude Bajard, Julien Eynard, M. Anwar Hasan, Vincent Zucca, "A Full RNS Variant of FV Like Somewhat Homomorphic Encryption Schemes", Selected Areas in Cryptography (SAC 2016), LNCS 10532 (2017), pp. 423–442, DOI [10.1007/978-3-319-69453-5_23](https://doi.org/10.1007/978-3-319-69453-5_23): §2 ($R=\mathbb{Z}[X]/(X^n+1)$ with $n$ a power of two, ciphertexts in $R[Y]$), §4.2 (bases pairwise coprime), §4.3 (definition of $\mathrm{fastRNSFloor}_q$, Eq. (9) and Lemma 5, Eq. (10)), proof in Appendix A.6; authors' version.

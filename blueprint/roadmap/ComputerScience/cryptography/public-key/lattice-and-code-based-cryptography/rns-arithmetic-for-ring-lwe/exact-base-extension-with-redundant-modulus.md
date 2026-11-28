@@ -20,7 +20,7 @@ $$
 S-\alpha_{sk,x}M=x
 $$
 
-holds. Consequently, for every modulus $p\ge 2$, reducing $S-\alpha_{sk,x}M$ modulo $p$, which is the procedure $\mathrm{FastBconvSK}(x,\mathcal{B}\cup\{m_{sk}\},\{p\})$, returns $x\bmod p$ exactly.
+holds. Consequently, for every modulus $p\ge 2$, reducing $S-\alpha_{sk,x}M$ modulo $p$ returns $x\bmod p$ exactly. When $p$ is coprime to $M$, an admissible target of fast base conversion, this reduction is the procedure $\mathrm{FastBconvSK}(x,\mathcal{B}\cup\{m_{sk}\},\{p\})=(\mathrm{FastBconv}(|x|_M,\mathcal{B},\{p\})-\alpha_{sk,x}M)\bmod p$ of BEHZ, Eq. (13), with fast base conversion applied to the residues of $x$ in $\mathcal{B}$, that is, to the canonical representative $|x|_M$.
 
 The classical Shenoy–Kumaresan extension is a different correction for nonnegative inputs: for $0\le x<M$ it uses the nonnegative residue $\alpha=|(S-x_{sk})M^{-1}|_{m_{sk}}$, and then $S-\alpha M=x$ whenever $m_{sk}>\ell$.
 
