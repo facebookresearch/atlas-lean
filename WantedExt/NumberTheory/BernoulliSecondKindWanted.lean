@@ -42,6 +42,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.RingTheory.PowerSeries.Log
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
+public import MathlibExt.NumberTheory.Bernoulli.BernoulliPolynomialFallingFactorial
 public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirling
 public import MathlibExt.NumberTheory.Bernoulli.BernoulliStirlingSum
 public import MathlibExt.NumberTheory.Bernoulli.StirlingInversion
@@ -54,22 +55,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.BernoulliSecondKindWanted
-
-/-- **Bernoulli polynomials in the falling-factorial basis.** Let $B_m$ be the Bernoulli numbers
-(with $B_1 = -1/2$), $B_n(X) = \sum_{i=0}^{n} \binom{n}{i} B_i X^{n-i}$ the Bernoulli
-polynomials over $\mathbb{Q}$, $S(m, j)$ the Stirling numbers of the second kind and
-$X^{\underline{k}} = X(X-1)\cdots(X-k+1)$ the falling factorial. For every natural number
-$n$, in $\mathbb{Q}[X]$,
-$$B_n(X) = B_n + \sum_{k=1}^{n} \frac{n}{k} \, S(n-1, k-1) \, X^{\underline{k}}.$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Theorem 1. -/
-theorem_wanted bernoulli_poly_eq (n : ℕ) :
-    Polynomial.bernoulli n =
-      Polynomial.C (bernoulli n) +
-        ∑ k ∈ Finset.Icc 1 n, Polynomial.C
-          ((n : ℚ) / k * (Nat.stirlingSecond (n - 1) (k - 1) : ℚ)) *
-          descPochhammer ℚ k
 
 /-- **Falling factorials in the Bernoulli polynomial basis.** Let $B_m^*$ be the Bernoulli
 numbers of the second kind, $B_k(X)$ the Bernoulli polynomials over $\mathbb{Q}$ (so that

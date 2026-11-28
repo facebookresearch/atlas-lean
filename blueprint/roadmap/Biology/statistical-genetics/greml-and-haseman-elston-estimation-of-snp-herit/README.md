@@ -91,3 +91,8 @@
 - [MINQUE variance components from summary statistics](minque-variance-components-from-summary-statistics.md)
 - [RHE-reg: randomized Haseman–Elston regression](rhe-reg-randomized-haseman-elston-regression.md)
 - [Local SNP heritability from summary statistics](local-snp-heritability-from-summary-statistics/README.md)
+- [LD-weighted genetic relationship matrix (LDAK)](ld-weighted-relationship-matrix-ldak.md)
+- [Thresholded-relatedness variance-component model for total and SNP heritability](../../quantitative-genetics/covariance-between-relatives/heritability-from-relatedness-classes/thresholded-relatedness-model-for-total-and-snp-heritability.md)
+- [Polygenicity bounds from regional heritability](polygenicity-bounds-from-regional-heritability/README.md)
+- [IBD variance components for expression heritability](ibd-variance-components-for-expression-heritability/README.md)
+- [Heritability from local ancestry](heritability-from-local-ancestry/README.md)

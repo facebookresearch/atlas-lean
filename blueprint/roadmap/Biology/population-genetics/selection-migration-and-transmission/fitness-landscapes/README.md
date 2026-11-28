@@ -18,3 +18,5 @@
 - [Two-step valley-crossing time and the tunneling threshold](two-step-valley-crossing-time-and-tunneling-threshold.md)
 - [Reciprocal sign epistasis lower bound on the number of fitness peaks](reciprocal-sign-epistasis-lower-bound-on-the-number-of-fitness-peaks.md)
 - [Partial fitness orders and genetic interactions](partial-fitness-orders-and-genetic-interactions/README.md)
+- [Connectedness fitness landscape model](connectedness-fitness-landscape-model.md)
+- [Global epistasis from widespread epistasis](global-epistasis-from-widespread-epistasis.md)
