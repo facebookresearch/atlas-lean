@@ -7,16 +7,17 @@ Let $p$ be a prime with $p\equiv 1\pmod{840}$, where $840=2^3\cdot3\cdot5\cdot7$
 1. $E$ has no endomorphism of degree $2$; equivalently, $E/H\not\cong E$ for every subgroup $H$ of order $2$;
 2. if $H\ne H'$ are subgroups of order $2$ of $E(\bar{\mathbb{F}}_p)$, then $E/H\not\cong E/H'$.
 
-Since $p\equiv 1\pmod{12}$, every supersingular curve also has automorphism group $\{\pm1\}$, so the supersingular $2$-isogeny graph, with one edge for each of the three subgroups of order $2$ of each curve, is undirected, $3$-regular and simple.
+Since $p\equiv 1\pmod{12}$, every supersingular curve also has automorphism group $\{\pm1\}$, so the [supersingular $2$-isogeny graph](../../../ComputerScience/cryptography/public-key/isogeny-and-lattice-foundations/supersingular-isogenies-and-quaternion-orders/supersingular-isogeny-graph.md), whose edges from a curve are its three subgroups of order $2$ (kernels, not neighbouring $j$-invariants), is undirected, $3$-regular and simple.
 
 ## Depends on
 
 - [Supersingular elliptic curves](../supersingular-elliptic-curves/is-supersingular.md)
 - [Every finite subgroup is the kernel of a separable isogeny](../isogenies-of-elliptic-curves/separable-isogeny-with-prescribed-kernel.md)
+- [Supersingular l-isogeny graphs](../../../ComputerScience/cryptography/public-key/isogeny-and-lattice-foundations/supersingular-isogenies-and-quaternion-orders/supersingular-isogeny-graph.md)
 
 ## Proof depends on
 
-- [Two different equal-length paths between supersingular curves give a non-scalar endomorphism](distinct-equal-length-paths-give-a-non-scalar-endomorphism.md)
+- [Two different equal-length paths without backtracking between supersingular curves give a non-scalar endomorphism](distinct-equal-length-paths-give-a-non-scalar-endomorphism.md)
 - [Counting subgroups of prime-power order in the torsion of an elliptic curve](number-of-cyclic-subgroups-of-prime-power-torsion.md)
 - [Supersingularity is an isogeny invariant](../isogenies-of-elliptic-curves/supersingularity-is-an-isogeny-invariant.md)
 - [Multiplication by m has degree m squared](../isogenies-of-elliptic-curves/degree-of-multiplication-by-m.md)

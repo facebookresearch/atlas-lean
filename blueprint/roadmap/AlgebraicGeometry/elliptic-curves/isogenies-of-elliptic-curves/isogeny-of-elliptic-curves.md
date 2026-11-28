@@ -18,15 +18,18 @@ Two facts the sources record with the definition, and which the other pages of t
 
 ## Depends on
 
-None.
+- [Separable extension](../../../FieldTheory/extensions-and-closure/separable-extension.md)
+- [Kernel of a homomorphism from a group](../../../GroupTheory/group-basics/group-homomorphism-kernel.md), in additive notation, for the kernel on geometric points
 
 ## Proof depends on
 
-None.
+- [The principal polarization of an elliptic curve](../principal-polarization-of-an-elliptic-curve.md), for the identification of $E(\bar k)$ with $\operatorname{Pic}^0(E_{\bar k})$
 
 ## Expansion
 
-A definition, but one stated in vocabulary that has no pages yet: morphisms of pointed elliptic curves, viewed as smooth projective curves (rather than Weierstrass coefficients and point maps), the injection of function fields $\varphi^*$ that a nonconstant morphism induces, and the finiteness and separability of that extension. The two recorded facts need their own proofs: surjectivity holds because a nonconstant morphism of smooth projective curves is surjective, and the homomorphism property comes from identifying $E(\bar k)$ with the degree-zero Picard group, on which $\varphi$ acts by push-forward of divisors. A good expansion adds pages for morphisms of curves and their function-field degree, for surjectivity of nonconstant morphisms, and for the homomorphism property.
+A definition, stated in vocabulary that does not yet have pages of its own: morphisms of pointed elliptic curves viewed as smooth projective curves (rather than Weierstrass coefficients and point maps), the injection of function fields $\varphi^*$ that a nonconstant morphism induces, and the finiteness of that extension. Separability of the extension is the notion of the linked page on separable extensions, and the kernel is the kernel of the induced map on geometric points, a group homomorphism written additively.
+
+The two recorded facts need proofs. Surjectivity holds because a nonconstant morphism of smooth projective curves is surjective. The homomorphism property comes from the identification of $E(\bar k)$ with $\operatorname{Pic}^0(E_{\bar k})$: the page on the principal polarization gives the bijection $P\mapsto$ class of $(-P)-(O)$, the negative of the bijection $P\mapsto[P]-[O]$ that Galbraith uses, and either identification transports the group law, since negation is an automorphism of the group; a nonzero isogeny then acts on divisor classes of degree zero by push-forward, which is additive. A good expansion adds pages for morphisms of curves and their function-field degree, for the surjectivity of nonconstant morphisms, and for the compatibility of push-forward of divisor classes with this identification.
 
 ## Sources
 

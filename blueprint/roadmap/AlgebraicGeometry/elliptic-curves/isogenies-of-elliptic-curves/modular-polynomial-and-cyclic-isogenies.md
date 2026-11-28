@@ -2,7 +2,7 @@
 
 Over an algebraically closed field whose characteristic does not divide $N$, the classical modular polynomial $\Phi_N$ vanishes at a pair of $j$-invariants exactly when the curves are related by a cyclic isogeny of degree $N$.
 
-Let $N>1$ be an integer and let $\Phi_N(X,Y)\in\mathbb{Z}[X,Y]$ be the classical modular polynomial of level $N$, the minimal polynomial of $j(N\tau)$ over $\mathbb{C}(j(\tau))$, which has integer coefficients and is symmetric, $\Phi_N(X,Y)=\Phi_N(Y,X)$. Let $k$ be an algebraically closed field whose characteristic does not divide $N$, and let $E_1$, $E_2$ be elliptic curves over $k$. Then
+Let $N>1$ be an integer and let $\Phi_N(X,Y)\in\mathbb{Z}[X,Y]$ be the classical modular polynomial of level $N$: the minimal polynomial of $j(N\tau)$ over $\mathbb{C}(j(\tau))$, where $j(\tau)$ is the analytic [modular $j$-function](../../../NumberTheory/not-yet-classified/level-nalgebra/j-function.md) $E_4^3/\Delta$ on the upper half-plane; it has integer coefficients and is symmetric, $\Phi_N(X,Y)=\Phi_N(Y,X)$. Below, $j(E)$ denotes the algebraic $j$-invariant of an elliptic curve $E$, into which $\Phi_N$ is substituted as a polynomial with integer coefficients. Let $k$ be an algebraically closed field whose characteristic does not divide $N$, and let $E_1$, $E_2$ be elliptic curves over $k$. Then
 
 $$
 \Phi_N\bigl(j(E_1),j(E_2)\bigr)=0
@@ -14,6 +14,7 @@ if and only if there is a [cyclic isogeny](../isogeny-chains-and-supersingular-g
 
 - [Isogeny of elliptic curves](isogeny-of-elliptic-curves.md)
 - [Cyclic isogeny](../isogeny-chains-and-supersingular-graphs/cyclic-isogeny.md)
+- [J Function](../../../NumberTheory/not-yet-classified/level-nalgebra/j-function.md)
 
 ## Proof depends on
 

@@ -9,5 +9,5 @@ Cyclic isogenies of prime-power degree and their factorization into chains witho
 - [Cyclic prime-power isogenies correspond to chains without backtracking](cyclic-isogenies-correspond-to-non-backtracking-chains.md)
 - [Counting subgroups of prime-power order in the torsion of an elliptic curve](number-of-cyclic-subgroups-of-prime-power-torsion.md)
 - [Number of chains of l-isogenies without backtracking](number-of-non-backtracking-isogeny-chains.md)
-- [Two different equal-length paths between supersingular curves give a non-scalar endomorphism](distinct-equal-length-paths-give-a-non-scalar-endomorphism.md)
+- [Two different equal-length paths without backtracking between supersingular curves give a non-scalar endomorphism](distinct-equal-length-paths-give-a-non-scalar-endomorphism.md)
 - [No loops or double edges in the supersingular 2-isogeny graph when p is 1 mod 840](no-loops-or-double-edges-in-the-supersingular-2-isogeny-graph.md)

@@ -1,6 +1,6 @@
-# Two different equal-length paths between supersingular curves give a non-scalar endomorphism
+# Two different equal-length paths without backtracking between supersingular curves give a non-scalar endomorphism
 
-For $p\equiv1\pmod{12}$, two different chains of $n$ isogenies of degree $\ell$ without backtracking, from one supersingular curve to isomorphic curves, give two isogenies of degree $\ell^n$ with different kernels and an endomorphism of degree $\ell^{2n}$ of the first curve that is not $\pm[\ell^n]$.
+For $p\equiv1\pmod{12}$, two different chains of $n$ isogenies of degree $\ell$, both without backtracking, from one supersingular curve to isomorphic curves, give two isogenies of degree $\ell^n$ with different kernels and an endomorphism of degree $\ell^{2n}$ of the first curve that is not $\pm[\ell^n]$.
 
 Let $p$ be a prime with $p\equiv1\pmod{12}$, $\ell\ne p$ a prime, $n\ge1$, and $\bar{\mathbb{F}}_p$ an algebraic closure of $\mathbb{F}_p$; all curves, isogenies and isomorphisms are over $\bar{\mathbb{F}}_p$. Let $E_1$ be a [supersingular](../supersingular-elliptic-curves/is-supersingular.md) elliptic curve and let $(\varphi_i)$ and $(\varphi'_i)$ be two chains of $\ell$-isogenies of length $n$ from $E_1$, both [without backtracking](isogeny-chain-without-backtracking.md), ending at curves isomorphic to a curve $E_2$, and not equivalent in the sense of the [correspondence with cyclic isogenies](cyclic-isogenies-correspond-to-non-backtracking-chains.md). Composing each chain with an isomorphism of its last curve onto $E_2$ gives isogenies $f_1,f_2\colon E_1\to E_2$. Then:
 

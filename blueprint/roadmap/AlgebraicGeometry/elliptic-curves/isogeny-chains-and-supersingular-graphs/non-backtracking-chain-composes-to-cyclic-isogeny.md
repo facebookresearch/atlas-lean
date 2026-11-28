@@ -2,7 +2,7 @@
 
 The composite of a chain of $m$ isogenies of prime degree $\ell$ without backtracking, with $\ell$ prime to the characteristic, is a cyclic isogeny of degree $\ell^m$.
 
-Let $k$ be an algebraically closed field, $\ell$ a prime different from $\operatorname{char}k$, and let $\varphi_i\colon E_{i-1}\to E_i$, $1\le i\le m$, be a chain of $\ell$-isogenies [without backtracking](isogeny-chain-without-backtracking.md). Then $\varphi_m\circ\cdots\circ\varphi_1\colon E_0\to E_m$ is a [cyclic](cyclic-isogeny.md) isogeny of degree $\ell^m$.
+Let $k$ be an algebraically closed field, $\ell$ a prime different from $\operatorname{char}k$, $m\ge1$, and let $\varphi_i\colon E_{i-1}\to E_i$, $1\le i\le m$, be a chain of $\ell$-isogenies [without backtracking](isogeny-chain-without-backtracking.md). Then $\varphi_m\circ\cdots\circ\varphi_1\colon E_0\to E_m$ is a [cyclic](cyclic-isogeny.md) isogeny of degree $\ell^m$.
 
 ## Depends on
 

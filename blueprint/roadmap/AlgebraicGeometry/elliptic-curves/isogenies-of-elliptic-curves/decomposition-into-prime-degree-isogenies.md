@@ -17,12 +17,13 @@ Here $r$ is the number of prime factors of $\deg\varphi$ counted with multiplici
 ## Proof depends on
 
 - [Every finite subgroup is the kernel of a separable isogeny](separable-isogeny-with-prescribed-kernel.md)
-- [An isogeny factors through a separable isogeny with smaller kernel](factorization-through-a-separable-isogeny.md)
+- [An isogeny factors through a separable isogeny with contained kernel](factorization-through-a-separable-isogeny.md)
 - [Degrees of isogenies multiply under composition](degree-is-multiplicative.md)
+- [First isomorphism theorem for groups](../../../GroupTheory/group-basics/first-isomorphism-groups.md)
 
 ## Expansion
 
-Induction on $\deg\varphi$. If $\deg\varphi=1$, $\varphi$ is separable with trivial kernel, hence an isomorphism. Otherwise $G=\ker\varphi$ is a nontrivial finite abelian group, of order $\deg\varphi$, and contains a subgroup $H$ of prime order. Take the separable isogeny $\varphi_1\colon E\to E_1$ with kernel $H$; since $H\subseteq G$, $\varphi=\varphi'\circ\varphi_1$ for an isogeny $\varphi'\colon E_1\to E'$, separable because $\varphi$ is, with kernel $\varphi_1(G)\cong G/H$ of smaller order; apply the induction hypothesis to $\varphi'$. The degree formula is multiplicativity. Sutherland states this as Corollary 5.12 (together with Frobenius factors for inseparable isogenies). Galbraith's Theorem 25.1.2 gives a version over the ground field, with factors defined over $k$ after a multiplication map is split off; it is not stated here.
+Induction on $\deg\varphi$. If $\deg\varphi=1$, $\varphi$ is separable with trivial kernel, hence an isomorphism. Otherwise $G=\ker\varphi$ is a nontrivial finite abelian group, of order $\deg\varphi$, and contains a subgroup $H$ of prime order. Take the separable isogeny $\varphi_1\colon E\to E_1$ with kernel $H$; since $H\subseteq G$, $\varphi=\varphi'\circ\varphi_1$ for an isogeny $\varphi'\colon E_1\to E'$, separable because $\varphi$ is, with kernel $\varphi_1(G)\cong G/H$ (the first isomorphism theorem for $\varphi_1|_G$, whose kernel is $H$) of smaller order; apply the induction hypothesis to $\varphi'$. The degree formula is multiplicativity. Sutherland states this as Corollary 5.12 (together with Frobenius factors for inseparable isogenies). Galbraith's Theorem 25.1.2 gives a version over the ground field, with factors defined over $k$ after a multiplication map is split off; it is not stated here.
 
 ## Sources
 

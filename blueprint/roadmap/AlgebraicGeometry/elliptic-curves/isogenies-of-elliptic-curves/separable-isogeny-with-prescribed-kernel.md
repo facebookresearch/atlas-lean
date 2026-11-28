@@ -8,15 +8,16 @@ Let $E$ be an elliptic curve over a field $k$ and let $G\subseteq E(\bar k)$ be 
 2. (Uniqueness.) If $\psi\colon E\to E''$ is another separable isogeny over $\bar k$ with $\ker\psi=G$, there is a unique isomorphism $\iota\colon E'\to E''$ over $\bar k$ with $\psi=\iota\circ\varphi$.
 3. (Descent.) If $k$ is perfect and $\sigma(G)=G$ for every $\sigma\in\operatorname{Gal}(\bar k/k)$, then $E'$ and $\varphi$ may be taken to be defined over $k$.
 
-The curve $E'$, well defined up to isomorphism, is written $E/G$. The isogeny $\varphi$ itself is not unique: $-\varphi=[-1]\circ\varphi$ has the same kernel, and more generally $\iota\circ\varphi$ does for every automorphism $\iota$ of $E'$.
+The curve $E'$, well defined up to isomorphism, is written $E/G$. The isogeny $\varphi$ itself is not unique: $-\varphi=[-1]\circ\varphi$ has the same kernel, and more generally $\iota\circ\varphi$ does for every [automorphism](../automorphism-group-of-an-elliptic-curve.md) $\iota$ of $E'$, that is, every isomorphism $E'\to E'$ fixing the origin.
 
 ## Depends on
 
 - [Isogeny of elliptic curves](isogeny-of-elliptic-curves.md)
+- [Automorphism groups of elliptic curves](../automorphism-group-of-an-elliptic-curve.md)
 
 ## Proof depends on
 
-- [The kernel of an isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
+- [The kernel of a nonzero isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
 
 ## Expansion
 
@@ -26,7 +27,7 @@ Item 2 follows Sutherland, Theorem 5.11, which states uniqueness up to an isomor
 
 ## Sources
 
-- Andrew V. Sutherland, *18.783 Elliptic Curves*, MIT lecture notes, Spring 2021, [Lecture 5: Isogeny kernels and division polynomials](https://math.mit.edu/classes/18.783/2021/LectureNotes5.pdf), Theorem 5.11 and its proof sketch (items 1–3).
+- Andrew V. Sutherland, *18.783 Elliptic Curves*, MIT lecture notes, Spring 2021, [Lecture 5: Isogeny kernels and division polynomials](https://math.mit.edu/classes/18.783/2021/LectureNotes5.pdf), Theorem 5.11 and its proof sketch, pp. 5–6 (for items 1–3 of this page).
 - Steven D. Galbraith, *Mathematics of Public Key Cryptography*, Cambridge University Press (2012); extended and corrected version 2.0 of Chapter 9, [author's copy](https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch9.pdf) (numbering of the extended version), Theorem 9.6.19 (existence) and Exercise 9.6.20.
 - Steven D. Galbraith, *Mathematics of Public Key Cryptography*, Cambridge University Press (2012); extended and corrected version 2.0 of Chapter 25, [author's copy](https://www.math.auckland.ac.nz/~sgal018/crypto-book/ch25.pdf) (numbering of the extended version), Section 25.1 and Corollary 25.1.7.
 - Luca De Feo, "Mathematics of Isogeny Based Cryptography", lecture notes, arXiv:1711.04062v1 (2017), Proposition 25.

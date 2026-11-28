@@ -20,7 +20,8 @@ Equivalently, up to post-composition with an isomorphism of the target, $E$ has 
 
 - [Dedekind psi function at prime powers](../../../NumberTheory/arithmetic-functions/divisor-totient-functions/part-01/dedekind-psi-function/dedekind-psi-prime-pow.md)
 - [Every finite subgroup is the kernel of a separable isogeny](../isogenies-of-elliptic-curves/separable-isogeny-with-prescribed-kernel.md)
-- [The kernel of an isogeny has order its separable degree](../isogenies-of-elliptic-curves/kernel-order-equals-separable-degree.md)
+- [The kernel of a nonzero isogeny has order its separable degree](../isogenies-of-elliptic-curves/kernel-order-equals-separable-degree.md)
+- [Invariant factor decomposition of finite abelian groups](../../../GroupTheory/abelian-groups/structure-of-finitely-generated-abelian-groups/equiv-direct-sum-invariant-factors-of-fi.md)
 
 ## Expansion
 

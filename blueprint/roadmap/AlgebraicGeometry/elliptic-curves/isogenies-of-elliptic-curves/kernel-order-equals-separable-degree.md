@@ -1,4 +1,4 @@
-# The kernel of an isogeny has order its separable degree
+# The kernel of a nonzero isogeny has order its separable degree
 
 The number of geometric points in the kernel of a nonzero isogeny is its separable degree. So a separable isogeny has as many kernel points as its degree, and a purely inseparable one has trivial kernel.
 
@@ -13,7 +13,7 @@ and every fibre $\alpha^{-1}(Q)$, $Q\in E_2(\bar k)$, has exactly $\deg_s\alpha$
 ## Depends on
 
 - [Isogeny of elliptic curves](isogeny-of-elliptic-curves.md)
-- [Every isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
+- [In positive characteristic, every nonzero isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
 
 ## Proof depends on
 

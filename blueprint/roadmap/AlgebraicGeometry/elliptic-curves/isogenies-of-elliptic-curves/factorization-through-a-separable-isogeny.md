@@ -1,6 +1,6 @@
-# An isogeny factors through a separable isogeny with smaller kernel
+# An isogeny factors through a separable isogeny with contained kernel
 
-If the kernel of a separable isogeny $\varphi$ is contained in the kernel of an isogeny $\psi$ with the same domain, then $\psi$ factors uniquely as an isogeny composed after $\varphi$.
+If the kernel of a nonzero separable isogeny $\varphi$ is contained in the kernel of an isogeny $\psi$ with the same domain (equality allowed), then $\psi$ factors uniquely as an isogeny composed after $\varphi$.
 
 Let $\varphi\colon E_1\to E_2$ be a nonzero separable [isogeny](isogeny-of-elliptic-curves.md) and $\psi\colon E_1\to E_3$ an isogeny of elliptic curves over a field $k$, with $\ker\varphi\subseteq\ker\psi$. Then there is a unique isogeny $\lambda\colon E_2\to E_3$ with
 

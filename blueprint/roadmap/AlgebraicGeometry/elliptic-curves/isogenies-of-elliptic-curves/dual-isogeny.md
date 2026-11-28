@@ -16,11 +16,11 @@ Moreover $\varphi\circ\hat\varphi=[m]_{E'}$, $\deg\hat\varphi=m$, and $\hat\varp
 
 ## Proof depends on
 
-- [Every isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
+- [In positive characteristic, every nonzero isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
 - [Degrees of isogenies multiply under composition](degree-is-multiplicative.md)
 - [Multiplication by m has degree m squared](degree-of-multiplication-by-m.md)
 - [A separable isogeny is a composite of prime-degree isogenies](decomposition-into-prime-degree-isogenies.md)
-- [An isogeny factors through a separable isogeny with smaller kernel](factorization-through-a-separable-isogeny.md)
+- [An isogeny factors through a separable isogeny with contained kernel](factorization-through-a-separable-isogeny.md)
 
 ## Expansion
 

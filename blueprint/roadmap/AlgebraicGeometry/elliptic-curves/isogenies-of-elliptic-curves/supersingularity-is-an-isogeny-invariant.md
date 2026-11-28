@@ -11,8 +11,8 @@ Let $p$ be a prime, $\bar{\mathbb{F}}_p$ an algebraic closure of $\mathbb{F}_p$,
 
 ## Proof depends on
 
-- [Every isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
-- [The kernel of an isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
+- [In positive characteristic, every nonzero isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
+- [The kernel of a nonzero isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
 - [Degrees of isogenies multiply under composition](degree-is-multiplicative.md)
 
 ## Expansion

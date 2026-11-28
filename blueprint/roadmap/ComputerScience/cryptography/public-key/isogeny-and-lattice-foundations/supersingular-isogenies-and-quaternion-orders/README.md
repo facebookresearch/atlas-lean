@@ -10,5 +10,5 @@
 - [Supersingular isogeny graphs are Ramanujan and random walks mix rapidly](isogeny-graph-ramanujan.md)
 - [The supersingular isogeny path and endomorphism ring problems](isogeny-path-and-endring-problems.md)
 - [Equivalence of the isogeny path and endomorphism ring problems](path-endring-equivalence.md)
-- [Collisions and preimages of the endpoint walk give isogenies between supersingular curves](cgl-endpoint-collisions-and-preimages-give-isogenies.md)
 - [The Charles–Goren–Lauter walk with endpoint output](cgl-endpoint-walk-hash.md)
+- [Collisions and preimages of the endpoint walk give isogenies between supersingular curves](cgl-endpoint-collisions-and-preimages-give-isogenies.md)

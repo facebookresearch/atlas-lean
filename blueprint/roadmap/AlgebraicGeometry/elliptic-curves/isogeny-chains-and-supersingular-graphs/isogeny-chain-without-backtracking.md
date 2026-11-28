@@ -10,7 +10,7 @@ $$
 
 where $\hat\varphi_i\colon E_i\to E_{i-1}$ is the [dual](../isogenies-of-elliptic-curves/dual-isogeny.md) of $\varphi_i$, itself separable of degree $\ell$. It is *without backtracking* if it backtracks at no step; a chain of length $1$ is without backtracking.
 
-Equivalently, the chain backtracks at step $i$ exactly when $\varphi_{i+1}=\iota\circ\hat\varphi_i$ for an isomorphism $\iota\colon E_{i-1}\to E_{i+1}$; when $E_{i+1}=E_{i-1}$ this reads $\varphi_{i+1}=\varepsilon\circ\hat\varphi_i$ with $\varepsilon\in\operatorname{Aut}(E_{i+1})$, the form in which Costache, Feigon, Lauter, Massierer and Puskás state the condition.
+Equivalently, the chain backtracks at step $i$ exactly when $\varphi_{i+1}=\iota\circ\hat\varphi_i$ for an isomorphism $\iota\colon E_{i-1}\to E_{i+1}$; when $E_{i+1}=E_{i-1}$ this reads $\varphi_{i+1}=\varepsilon\circ\hat\varphi_i$ with $\varepsilon\in\operatorname{Aut}(E_{i+1})$, an [automorphism](../automorphism-group-of-an-elliptic-curve.md) fixing the origin, the form in which Costache, Feigon, Lauter, Massierer and Puskás state the condition.
 
 From a fixed source curve, isogenies with different kernels are different edges, although several of them can end at the same vertex. A chain gives a walk in the $\ell$-isogeny graph of isomorphism classes. Reversing an edge can fail to be well defined on isogenies taken up to an isomorphism of the target when the target has automorphisms other than $\pm1$: if $\varphi'=\varepsilon\circ\varphi$ with $\varepsilon\in\operatorname{Aut}(E')$, then $\hat\varphi'=\hat\varphi\circ\hat\varepsilon=\hat\varphi\circ\varepsilon^{-1}$, whose kernel is $\varepsilon(\ker\hat\varphi)$, which differs from $\ker\hat\varphi$ when $\varepsilon$ moves it. When every curve on the chain has automorphism group $\{\pm1\}$, backtracking can be read off a walk that records its edges, that is, the kernel taken at each step, but not off the sequence of vertices alone: for $p=13$ and $\ell=2$ the supersingular $2$-isogeny graph has one vertex and three edges, and after a first step the dual edge and either other edge give the same vertex sequence, one backtracking and one not.
 
@@ -18,6 +18,7 @@ From a fixed source curve, isogenies with different kernels are different edges,
 
 - [Isogeny of elliptic curves](../isogenies-of-elliptic-curves/isogeny-of-elliptic-curves.md)
 - [Existence and uniqueness of the dual isogeny](../isogenies-of-elliptic-curves/dual-isogeny.md)
+- [Automorphism groups of elliptic curves](../automorphism-group-of-an-elliptic-curve.md)
 
 ## Proof depends on
 

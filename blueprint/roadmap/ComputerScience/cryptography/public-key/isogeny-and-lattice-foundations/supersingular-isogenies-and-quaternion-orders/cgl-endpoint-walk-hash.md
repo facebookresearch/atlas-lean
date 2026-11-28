@@ -32,7 +32,7 @@ For $\ell=2$ the input is a bit string of length $n$, as in Charles, Goren and L
 
 ## Proof depends on
 
-- [The kernel of an isogeny has order its separable degree](../../../../../AlgebraicGeometry/elliptic-curves/isogenies-of-elliptic-curves/kernel-order-equals-separable-degree.md)
+- [The kernel of a nonzero isogeny has order its separable degree](../../../../../AlgebraicGeometry/elliptic-curves/isogenies-of-elliptic-curves/kernel-order-equals-separable-degree.md)
 - [Composition, sum and double-dual rules for dual isogenies](../../../../../AlgebraicGeometry/elliptic-curves/isogenies-of-elliptic-curves/properties-of-the-dual-isogeny.md)
 
 ## Expansion

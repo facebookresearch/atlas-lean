@@ -17,7 +17,7 @@ equivalently if and only if their [Frobenius traces](../point-counts-and-frobeni
 
 ## Proof depends on
 
-- [The kernel of an isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
+- [The kernel of a nonzero isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
 - [Degrees of isogenies multiply under composition](degree-is-multiplicative.md)
 
 ## Expansion

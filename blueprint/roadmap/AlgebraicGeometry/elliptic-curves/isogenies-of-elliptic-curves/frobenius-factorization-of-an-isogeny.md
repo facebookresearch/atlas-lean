@@ -1,6 +1,6 @@
-# Every isogeny is a separable isogeny after a power of Frobenius
+# In positive characteristic, every nonzero isogeny is a separable isogeny after a power of Frobenius
 
-In characteristic $p>0$ a nonzero isogeny factors as a power of the $p$-power Frobenius followed by a separable isogeny. The exponent and the separable factor give its inseparable and separable degrees.
+In characteristic $p>0$, a nonzero isogeny factors as a power of the $p$-power Frobenius followed by a separable isogeny. The exponent and the separable factor give its inseparable and separable degrees.
 
 Let $k$ be a field of characteristic $p>0$ and let $\alpha\colon E_1\to E_2$ be a nonzero [isogeny](isogeny-of-elliptic-curves.md) of elliptic curves over $k$. For $n\ge 0$ let $E_1^{(p^n)}$ be the elliptic curve whose Weierstrass coefficients are those of $E_1$ raised to the power $p^n$, and let $\pi^n\colon E_1\to E_1^{(p^n)}$ be the morphism $(x:y:z)\mapsto(x^{p^n}:y^{p^n}:z^{p^n})$. Then there are an integer $n\ge 0$ and a separable isogeny $\alpha_{\mathrm{sep}}\colon E_1^{(p^n)}\to E_2$ with
 

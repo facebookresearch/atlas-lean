@@ -18,7 +18,7 @@ Rational version. Let $E_0$, $E$ and $\varphi$ be defined over a finite field $\
 ## Proof depends on
 
 - [Every finite subgroup is the kernel of a separable isogeny](../isogenies-of-elliptic-curves/separable-isogeny-with-prescribed-kernel.md)
-- [An isogeny factors through a separable isogeny with smaller kernel](../isogenies-of-elliptic-curves/factorization-through-a-separable-isogeny.md)
+- [An isogeny factors through a separable isogeny with contained kernel](../isogenies-of-elliptic-curves/factorization-through-a-separable-isogeny.md)
 - [Vélu's formulas for the quotient by a finite subgroup](../isogenies-of-elliptic-curves/velu-formulas.md)
 - [Degrees of isogenies multiply under composition](../isogenies-of-elliptic-curves/degree-is-multiplicative.md)
 - [Structure of the prime-power torsion of an elliptic curve](../isogenies-of-elliptic-curves/structure-of-prime-power-torsion.md)

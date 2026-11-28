@@ -20,11 +20,12 @@ Consequently, for every positive integer $n$ not divisible by $p$, $E[n]\cong\ma
 
 ## Proof depends on
 
-- [Every isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
-- [The kernel of an isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
+- [In positive characteristic, every nonzero isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
+- [The kernel of a nonzero isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
 - [Multiplication by m has degree m squared](degree-of-multiplication-by-m.md)
 - [Supersingular curves have trivial prime-power torsion](../supersingular-elliptic-curves/pow-torsion.md)
 - [Supersingularity from trivial prime-power torsion](../supersingular-elliptic-curves/of-pow-torsion.md)
+- [Invariant factor decomposition of finite abelian groups](../../../GroupTheory/abelian-groups/structure-of-finitely-generated-abelian-groups/equiv-direct-sum-invariant-factors-of-fi.md)
 
 ## Expansion
 

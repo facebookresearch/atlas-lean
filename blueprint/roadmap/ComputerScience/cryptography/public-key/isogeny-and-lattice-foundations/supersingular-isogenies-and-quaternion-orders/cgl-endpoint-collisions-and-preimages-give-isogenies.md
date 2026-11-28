@@ -1,10 +1,10 @@
 # Collisions and preimages of the endpoint walk give isogenies between supersingular curves
 
-Two digit strings with the same endpoint under the Charles–Goren–Lauter walk give two isogenies of degree $\ell^n$ with different kernels between two supersingular curves, and an endomorphism of the start curve of degree $\ell^{2n}$ other than $\pm[\ell^n]$. A string mapping to a given $j$-invariant gives an isogeny of degree $\ell^n$ to a curve with that $j$-invariant.
+Two distinct digit strings with the same endpoint under the Charles–Goren–Lauter walk give two isogenies of degree $\ell^n$ with different kernels between two supersingular curves, and an endomorphism of the start curve of degree $\ell^{2n}$ other than $\pm[\ell^n]$. A string mapping to a given $j$-invariant gives an isogeny of degree $\ell^n$ to a curve with that $j$-invariant.
 
 Let $h$ be the [Charles–Goren–Lauter walk with endpoint output](cgl-endpoint-walk-hash.md), with primes $p\equiv1\pmod{12}$ and $\ell\ne p$, length $n$, start curve $E_0=E_{j_0}$ and injective labelling as there. All isogenies are over $\bar{\mathbb{F}}_p$.
 
-1. **Collisions.** Let $d\ne d'$ in $\{0,\dots,\ell-1\}^n$ with $h(d)=h(d')=v$, and let $f,f'\colon E_0\to E_v$ be the composites $\varphi'_n\circ\cdots\circ\varphi'_1$ of the two walks, which end on the same fixed curve $E_v$. Then $f$ and $f'$ are cyclic isogenies of degree $\ell^n$ with $\ker f\ne\ker f'$, and
+1. **Collisions.** Let $d\ne d'$ in $\{0,\dots,\ell-1\}^n$ with $h(d)=h(d')=v$, and let $f=\varphi'_n\circ\cdots\circ\varphi'_1$ and $f'=\psi'_n\circ\cdots\circ\psi'_1$ be the composites of the steps of the walks of $d$ and of $d'$, both $E_0\to E_v$, ending on the same fixed curve $E_v$. Then $f$ and $f'$ are cyclic isogenies of degree $\ell^n$ with $\ker f\ne\ker f'$, and
 
 $$
 \alpha=\hat{f}'\circ f\in\operatorname{End}(E_0),\qquad \deg\alpha=\ell^{2n},\qquad \alpha\ne\pm[\ell^n] .
@@ -13,7 +13,7 @@ $$
    So a collision gives, for $E_1=E_0$ and $E_2=E_v$, a solution of Charles, Goren and Lauter's Problem 1 (two isogenies $E_1\to E_2$ of degree $\ell^n$ with different kernels) and of their Problem 2 (an endomorphism of $E_1$ of degree $\ell^{2n}$ that is not an automorphism composed with $[\ell^n]$), as geometric maps.
 2. **Preimages.** If $h(d)=y$, the walk of $d$ is a chain of $n$ isogenies of degree $\ell$ from $E_0$ to $E_y$, without backtracking, whose composite is an isogeny $E_0\to E_y$ of degree $\ell^n$ over $\bar{\mathbb{F}}_p$; composing with an isomorphism over $\bar{\mathbb{F}}_p$ gives one to any curve $E'$ with $j(E')=y$, the form of their Problem 3. Not every supersingular $j$-invariant need be an output for a given $n$.
 
-The maps are over $\bar{\mathbb{F}}_p$. For a model $E'$ over $\mathbb{F}_{p^2}$ with $j(E')=y$ the statement gives no isogeny defined over $\mathbb{F}_{p^2}$: for $p\equiv1\pmod{12}$ a supersingular curve over $\mathbb{F}_{p^2}$ has trace of Frobenius $\pm2p$ (Waterhouse's theorem), its quadratic twist has the same $j$-invariant and the opposite trace, so the two have different numbers of $\mathbb{F}_{p^2}$-points, and an $\mathbb{F}_{p^2}$-rational isogeny preserves that number; at most one of them is $\mathbb{F}_{p^2}$-isogenous to a given curve.
+The maps are over $\bar{\mathbb{F}}_p$. For a model $E'$ over $\mathbb{F}_{p^2}$ with $j(E')=y$ the statement does not guarantee an isogeny defined over $\mathbb{F}_{p^2}$: for $p\equiv1\pmod{12}$ a supersingular curve over $\mathbb{F}_{p^2}$ has trace of Frobenius $\pm2p$ (Waterhouse's theorem), its quadratic twist has the same $j$-invariant and the opposite trace, so the two have different numbers of $\mathbb{F}_{p^2}$-points, and an $\mathbb{F}_{p^2}$-rational isogeny preserves that number; at most one of them is $\mathbb{F}_{p^2}$-isogenous to a given curve.
 
 These are implications from a collision or preimage of $h$, a fixed-length map with endpoint output, to solutions of the isogeny problems; they assert nothing about how hard those problems are, and they do not cover the compressed output of the paper, inputs of different lengths, or a non-injective encoding of inputs.
 
@@ -25,7 +25,7 @@ These are implications from a collision or preimage of $h$, a fixed-length map w
 
 ## Proof depends on
 
-- [Two different equal-length paths between supersingular curves give a non-scalar endomorphism](../../../../../AlgebraicGeometry/elliptic-curves/isogeny-chains-and-supersingular-graphs/distinct-equal-length-paths-give-a-non-scalar-endomorphism.md)
+- [Two different equal-length paths without backtracking between supersingular curves give a non-scalar endomorphism](../../../../../AlgebraicGeometry/elliptic-curves/isogeny-chains-and-supersingular-graphs/distinct-equal-length-paths-give-a-non-scalar-endomorphism.md)
 - [Cyclic prime-power isogenies correspond to chains without backtracking](../../../../../AlgebraicGeometry/elliptic-curves/isogeny-chains-and-supersingular-graphs/cyclic-isogenies-correspond-to-non-backtracking-chains.md)
 - [A chain without backtracking composes to a cyclic isogeny](../../../../../AlgebraicGeometry/elliptic-curves/isogeny-chains-and-supersingular-graphs/non-backtracking-chain-composes-to-cyclic-isogeny.md)
 - [Degrees of isogenies multiply under composition](../../../../../AlgebraicGeometry/elliptic-curves/isogenies-of-elliptic-curves/degree-is-multiplicative.md)

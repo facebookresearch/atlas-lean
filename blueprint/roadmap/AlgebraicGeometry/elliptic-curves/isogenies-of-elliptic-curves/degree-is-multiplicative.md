@@ -13,11 +13,11 @@ If one factor is the zero isogeny, the composite is zero and the first formula h
 ## Depends on
 
 - [Isogeny of elliptic curves](isogeny-of-elliptic-curves.md)
-- [Every isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
+- [In positive characteristic, every nonzero isogeny is a separable isogeny after a power of Frobenius](frobenius-factorization-of-an-isogeny.md)
 
 ## Proof depends on
 
-- [The kernel of an isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
+- [The kernel of a nonzero isogeny has order its separable degree](kernel-order-equals-separable-degree.md)
 
 ## Expansion
 
