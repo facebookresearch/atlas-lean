@@ -295,6 +295,114 @@
     {"path": "MathlibExt/Algebra/VirtualQuandle.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "1eadb7957980ee882e690bf10a6b97d8d18510abbf83c52962f1394c84c6fa99", "rationale": "Moved VirtualRackIso, dihedralAffinePerm and dihedral_virtualRackIso_iff from WantedExt/Algebra/VirtualQuandleWanted.lean when the wanted statement was proved, preserving their names, statements and docstrings."},
     {"path": "MathlibExt/Algebra/VirtualRackConjugacy.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "76fde2d76571078fbcc91c992ef85d0595667b91b9a68b6507463fc42de605fc", "rationale": "Move VirtualRackIso unchanged from VirtualQuandleWanted and prove virtualRackIso_iff_isConj in the production library, preserving the theorem statement and docstring. Also: Reuse the VirtualRackIso definition already moved to MathlibExt/Algebra/VirtualQuandle.lean rather than defining it here."},
     {"path": "MathlibExt/Algebra/ZModPermutationPolynomial.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "00560bd17a5cc8e928111a7bdb3bc7575e3eb5a3aa90996961c59091cd3cb864", "rationale": "Move the prime-field permutation polynomial theorem from WantedExt/Algebra/PermutationPolynomialsWanted.lean when proved, preserving its name and statement. The moved docstring keeps ATLAS-side text from WantedExt/Algebra/PermutationPolynomialsWanted.lean that Formal-Math does not have yet (its backport is still owed)."},
-    {"path": "MathlibExt/Algebra/ZModPowerSum.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "8ab9c640eb8b9ccb22badb7a81afa45a66b5a03479faca3e753e343db8cc0124", "rationale": "Move the prime-field power sum lemma from WantedExt/Algebra/PermutationPolynomialsWanted.lean when proved, preserving its full name, statement and docstring."}
+    {"path": "MathlibExt/Algebra/ZModPowerSum.lean", "backport": "not-needed", "disposition": "diverged", "published_sha256": "8ab9c640eb8b9ccb22badb7a81afa45a66b5a03479faca3e753e343db8cc0124", "rationale": "Move the prime-field power sum lemma from WantedExt/Algebra/PermutationPolynomialsWanted.lean when proved, preserving its full name, statement and docstring."},
+    {
+      "path": "MathlibExt/Algebra/Homology/Embedding/RestrictionExtendAdjunction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d706d8ca2d423c6b0d0d94ba69ed72df0bfde12f874903d4f1858623c8c5c8c6",
+      "rationale": "Import the restriction/extension adjunction using native Mathlib 4.36 truncation projections, removing duplicate declarations and proving the original unit and retained-coordinate laws with native components. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged. Review6095452241 follow-up: Remove two redundant Epi registrations already supplied by pinned Mathlib; retain the adjunction, its unit/projection coordinates and all original hypotheses. Fresh Native verification of the edited source and new clients is pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e97d22b4256c055d0ca7a95ccb92b5ac0fe7c7577c04f7fff7c28eed699b2fc8"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Embedding/StupidTruncMap.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b296cab7fa29dc36142df65b529f8f474f4d7d9106382148600f7fe16ffcfbd9",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ed0dda208186f4eff20458067dc2f5dbfa2850eb4e556dcdaf279c276df45d40"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Embedding/TruncGETransition.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "bd3cb50396f59dc08a0878e748e70858bf251bcabbae0907ff0caddb61a11dc8",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged. Review6095452241 follow-up: Add the equal-cutoff identity law from the existing projection uniqueness statement; preserve every existing truncation, naturality and quasi-isomorphism clause. Fresh Native verification of the edited source and new clients is pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "dbb38facedc4f31755106853089ec30784578f2dbf900d947b15fc7dfcc6efd6"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Embedding/TruncGETransitionComposition.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5f2af925139e2dc4db08f4b356c7a2c254f19c7f9e5cf6fde9a75987a9b5c51a",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "9b800afa858529b529f09492833ba98382b55c35705a78a1de13454a329d688e"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/Embedding/UpNatToInt.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "eed6ba47090b612285f850cfde611bcb63c65b7a160f34ab8cebe843504ffec1",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged. Review6095452241 follow-up: Keep the three natural-to-integer comparison names as abbreviations of the general canonical embedding comparisons, with no duplicate construction. Fresh Native verification of the edited source and new clients is pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "af5ae350b93fd4fc39035408468c4bdca8a5cbe18ad0b5882324224503ec0357"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/ExactColimits.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "f4cb2b54ee669a3e24b2b9a777042f1608ab24e91f0e5ffd00bb9ced20e7c943",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged. Review6095452241 follow-up: Use the standard HasExactColimitsOfShape class, its explicit implication from the equivalent colim.PreservesHomology hypothesis, and native preservesColimitIso/injection laws instead of a separate comparison proof engine. Fresh Native verification of the edited source and new clients is pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6b08fc93c0888bcbad93e55a2835cbda91d4cfeb8ea6d4aeeb7f2fbadecfa0c2"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FiniteResolutionCochainShift.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c45e6762b22ede7d87caa962935c24efbb6a5a011634c7018a26c7fe5d5f4d90",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged. Review6095452241 follow-up: Register the six already-proved support and augmentation quasi-isomorphism facts as instances, use plain local have for Prop goals and retain all degrees, shift signs, public statements and proof settings. Fresh Native verification of the edited source and new clients is pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "11fac3519bd0bbfa11ef9a1e2a0a7dfb2f8f777ec8c70bc7e64bc11a4a7d71bf"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FiniteResolutionSourceChange.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "68b8a9dbd2fa6ddc11b8e1e7dc544e13b201587fbaa9b4cb52d94b5282e4a972",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged. Review6095452241 follow-up: Keep the support helper as an abbreviation of the transported resolution field; source complex, augmentation, bound and hypotheses are unchanged. Fresh Native verification of the edited source and new clients is pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "ed9a22f864ed4802455247dea139fc161ce918fdd554edc2cfa29b95ed92426b"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FiniteResolutionSourceCoherence.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "24b2ce58294b7938ee777457bbddb262daacd798244530bd38f32118ef423109",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "f3090487577a98f70b344c25338fd799173a47a9bf821af656a15f903f5c8294"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/FiniteResolutionTargetChange.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "d0b233597d7580b4419160a746b818ab3a98b937a0ddf784b04e7eeb3bfcfe57",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged. Review6095452241 follow-up: Keep the support helper as an abbreviation of the transported resolution field; target augmentation order, resolving complex, bound and hypotheses are unchanged. Fresh Native verification of the edited source and new clients is pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "b808e43528d9f4c81e727b3ebf99c273ee2d04b84b1cb0c180049ebd0f26f506"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomComplex/CocycleBoundary.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "8a9bcce5c97bb2eebb079260b8aa2e6dbd45faa6b4f66fb4b1967d2121284710",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged. Review6095452241 follow-up: Abbreviate native ShiftedHom.map and use native ShiftedHom.comp/map_comp for one generic cocycle-boundary proof; derive the homotopy-category case by specialization. Preserve degree q+1, shift order 1,q and the sign of the degree-one map. Consolidate mathematical documentation and rename the triangle-free transport law into ShiftedHom.comp_iso_transport. Fresh Native verification of the edited source and new clients is pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "aef8f9a7655773e249fece7fa1a81d99963fce301dfa4b4acdd79674db9b6a09"
+    },
+    {
+      "path": "MathlibExt/Algebra/Homology/HomComplexCoproducts.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "aa631e77cc7884220a912af8e17c5e33b993259990c91ed3a299fe34f4066b4f",
+      "rationale": "Import the reusable general homological algebra API with Atlas copyright and mathematical documentation, preserving its public hypotheses and eliminating source-campaign commentary. Expand declaration and module docstrings into self-contained mathematical statements with their exact hypotheses, objects, maps, signs and conventions; move implementation prose to ordinary comments. All noncomment Lean tokens, declaration names/privacy and proofs are unchanged.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "62eb1394c525d1d5952e12aa36786c9eba427cac0ee9bb6de0ed48fd5a5a3a40"
+    }
   ]
 }
