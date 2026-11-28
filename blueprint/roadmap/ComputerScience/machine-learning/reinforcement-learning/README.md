@@ -14,20 +14,14 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [Linear quadratic regulator](linear-quadratic-regulator/README.md)
 
 - [Multi-armed bandits](multi-armed-bandits/README.md)
-- [Structured function approximation](structured-function-approximation/README.md)
-- [Asynchronous stochastic approximation: convergence by box shrinking](asynchronous-stochastic-approximation-convergence-by-box-shr.md)
-- [Generative-model sample bound (restricted, non-minimax)](generative-model-sample-bound.md)
+- [Sample complexity and exploration](sample-complexity-and-exploration/README.md)
+- [Stochastic approximation and temporal-difference learning](temporal-difference-learning/README.md)
 - [Policy gradient theorem](policy-gradient-theorem.md)
-- [Tabular Q-learning and TD(0) converge](tabular-q-learning-and-td-converge.md)
-- [Boundedness of asynchronous stochastic-approximation iterates](boundedness-of-asynchronous-stochastic-approximation-iterate.md)
 
 - [Bellman values are expected discounted returns](bellman-values-are-expected-discounted-returns.md)
 - [Verification theorem for average-cost Markov decision processes](average-cost-optimality-inequality.md)
-- [Single-cue error-correction learning and zero-discount TD(0)](td0-with-zero-discount-is-error-correction-learning.md)
 - [AIXI is incomputable, and its optimal policies are arithmetically hard](aixi-is-incomputable-and-arithmetically-hard.md)
 
-
-- [PAC exploration and generative planning](pac-and-generative-planning/README.md)
 
 - [Preference and group-relative policy optimization](preference-and-group-relative-optimization/README.md)
 
