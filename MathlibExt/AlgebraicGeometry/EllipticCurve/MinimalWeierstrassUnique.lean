@@ -20,7 +20,9 @@ is unique up to a change of variables with coefficients in `R` and unit scaling 
 * `WeierstrassCurve.valuation_Δ_eq_of_isMinimal`: if `W` and `C • W` are both minimal, their
   discriminants have the same valuation (no ellipticity hypothesis needed).
 * `WeierstrassCurve.exists_unit_eq_u_of_isMinimal`: if moreover `W.IsElliptic`, the scaling
-  factor `C.u ∈ Kˣ` is the image of a unit of `R`.
+  factor `C.u ∈ Kˣ` is the image of a unit of `R` (with the transformation law `ω' = u ω` of the
+  invariant differential, this is the uniqueness of the invariant differential of a minimal
+  equation up to `R*`, Silverman VII.1.3(c)).
 * `WeierstrassCurve.exists_baseChange_eq_of_isMinimal`: if `W.IsElliptic` and `W`, `C • W` are
   both minimal, then `C = C'⁄K` for some change of variables `C'` over `R`
   (i.e. `u ∈ Rˣ` and `r, s, t ∈ R`).
@@ -28,9 +30,6 @@ is unique up to a change of variables with coefficients in `R` and unit scaling 
   takes a minimal equation to a minimal equation.
 * `WeierstrassCurve.isMinimal_smul_iff`: the two combined: for `W` minimal and elliptic,
   `C • W` is minimal if and only if `C` comes from a change of variables over `R`.
-* `WeierstrassCurve.span_u_eq_span_one_of_isMinimal`: the invariant differential of `C • W` is
-  `C.u` times that of `W` (the transformation law `ω' = u ω`, not formalized here); we state, in
-  this coordinate form, that the `R`-lines they span coincide: `R ∙ C.u = R ∙ 1` inside `K`.
 
 The ellipticity hypothesis cannot be dropped: for `W : y² = x³` (discriminant `0`) every integral
 equation `C • W` is minimal, including those with non-unit scaling factor.
@@ -41,9 +40,11 @@ the new input here is that the scaling factor of a change between minimal equati
 
 ## References
 
-* J. H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed., GTM 106, Chapter VII,
-  Proposition 1.3(d) (stated: a minimal Weierstrass equation is unique up to a change of
-  coordinates with `u ∈ R*`, `r, s, t ∈ R`).
+* J. H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed., GTM 106, Springer, 2009,
+  Chapter VII, Proposition 1.3, pp. 186–187: part (b) (a minimal Weierstrass equation is unique
+  up to a change of coordinates with `u ∈ R*`, `r, s, t ∈ R`) and part (c) (the invariant
+  differential of a minimal equation is unique up to `R*`). The parts are as read by the
+  reviewer of this file; the book itself was not read here.
 * B. Conrad, *Minimal models for elliptic curves* (21 November 2015), §2: Corollary 2.9
   (isomorphisms between planar integral Weierstrass models are given by `u ∈ R×`, `r, s, t ∈ R`),
   Corollary 2.10 and the paragraph after it on p. 6 (the `R`-line of invariant differentials and
@@ -57,7 +58,7 @@ namespace WeierstrassCurve
 
 open IsDedekindDomain.HeightOneSpectrum IsDiscreteValuationRing
 
-variable {R : Type*} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
+variable (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
   {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
 
 /-- If `W` is minimal and `C • W` is integral, then the valuation of the discriminant of `C • W`
@@ -80,16 +81,16 @@ discrete valuation ring `R`, then their discriminants have the same valuation. -
 theorem valuation_Δ_eq_of_isMinimal (W : WeierstrassCurve K) (C : VariableChange K)
     [IsMinimal R W] [IsMinimal R (C • W)] :
     valuation K (maximalIdeal R) (C • W).Δ = valuation K (maximalIdeal R) W.Δ := by
-  refine le_antisymm (valuation_Δ_le_of_isMinimal C) ?_
+  refine le_antisymm (valuation_Δ_le_of_isMinimal R C) ?_
   have : IsIntegral R (C⁻¹ • C • W) := by rw [inv_smul_smul]; infer_instance
-  simpa using valuation_Δ_le_of_isMinimal (R := R) (W := C • W) C⁻¹
+  simpa using valuation_Δ_le_of_isMinimal R (W := C • W) C⁻¹
 
 /-- If `W` is elliptic and `W`, `C • W` are both minimal, then the scaling factor `C.u` has
 valuation one. -/
 theorem valuation_u_eq_one_of_isMinimal (W : WeierstrassCurve K) [W.IsElliptic]
     (C : VariableChange K) [IsMinimal R W] [IsMinimal R (C • W)] :
     valuation K (maximalIdeal R) (C.u : K) = 1 := by
-  have h := valuation_Δ_eq_of_isMinimal (R := R) (W := W) C
+  have h := valuation_Δ_eq_of_isMinimal R W C
   rw [variableChange_Δ, map_mul, map_pow] at h
   have hΔ : valuation K (maximalIdeal R) W.Δ ≠ 0 := by
     simpa using W.isUnit_Δ.ne_zero
@@ -102,59 +103,33 @@ theorem valuation_u_eq_one_of_isMinimal (W : WeierstrassCurve K) [W.IsElliptic]
     · exact absurd h12 (one_lt_pow₀ h (by norm_num)).ne'
   simpa using h1
 
-private lemma isUnit_of_valuation_algebraMap_eq_one {a : R}
-    (ha : valuation K (maximalIdeal R) (algebraMap R K a) = 1) : IsUnit a := by
-  by_contra h
-  have hm : a ∈ IsLocalRing.maximalIdeal R := (IsLocalRing.mem_maximalIdeal a).mpr h
-  have := (valuation_lt_one_iff_mem (K := K) (maximalIdeal R) a).mpr hm
-  exact this.ne ha
-
-/-- Over the fraction field `K` of a discrete valuation ring `R`, a nonzero element of valuation
-one is the image of a unit of `R`. -/
-theorem exists_unit_of_valuation_eq_one {x : K}
-    (hx : valuation K (maximalIdeal R) x = 1) : ∃ a : Rˣ, algebraMap R K a = x := by
-  rcases ValuationRing.isInteger_or_isInteger R x with ⟨a, ha⟩ | ⟨a, ha⟩
-  · rw [← ha] at hx
-    exact ⟨(isUnit_of_valuation_algebraMap_eq_one hx).unit, ha⟩
-  · have hx' : valuation K (maximalIdeal R) (algebraMap R K a) = 1 := by
-      rw [ha, map_inv₀, hx, inv_one]
-    have hx0 : x ≠ 0 := by rintro rfl; simp at hx
-    set u := (isUnit_of_valuation_algebraMap_eq_one hx').unit with hu
-    have hua : (u : R) = a := IsUnit.unit_spec _
-    refine ⟨u⁻¹, ?_⟩
-    have h1 : algebraMap R K ↑u⁻¹ * algebraMap R K ↑u = 1 := by
-      rw [← map_mul, Units.inv_mul, map_one]
-    rw [hua, ha] at h1
-    exact (mul_inv_eq_one₀ hx0).mp h1
-
-/-- **Silverman VII.1.3(d), scaling factor.** If `W` is elliptic and `W`, `C • W` are both
+/-- **Silverman VII.1.3(b), scaling factor.** If `W` is elliptic and `W`, `C • W` are both
 minimal Weierstrass equations over the fraction field `K` of a discrete valuation ring `R`, then
-the scaling factor `C.u` of the change of variables is the image of a unit of `R`. -/
+the scaling factor `C.u` of the change of variables is the image of a unit of `R`. With the
+transformation law `ω' = u ω` of the invariant differential, this gives Silverman VII.1.3(c): the
+invariant differential of a minimal equation is unique up to multiplication by `R*`. -/
 theorem exists_unit_eq_u_of_isMinimal (W : WeierstrassCurve K) [W.IsElliptic]
     (C : VariableChange K) [IsMinimal R W] [IsMinimal R (C • W)] :
-    ∃ u : Rˣ, algebraMap R K u = C.u :=
-  exists_unit_of_valuation_eq_one (valuation_u_eq_one_of_isMinimal (W := W) C)
+    ∃ u : Rˣ, algebraMap R K u = C.u := by
+  obtain ⟨u, hu⟩ := IsDiscreteValuationRing.associated_of_valuation_eq (A := R) (1 : K) (C.u : K)
+    (by rw [map_one, valuation_u_eq_one_of_isMinimal R W C])
+  exact ⟨u, by rwa [Units.smul_def, Algebra.smul_def, mul_one] at hu⟩
 
-/-- **Uniqueness of minimal Weierstrass equations** (Silverman VII.1.3(d); Conrad, Corollary 2.9
+/-- **Uniqueness of minimal Weierstrass equations** (Silverman VII.1.3(b); Conrad, Corollary 2.9
 and p. 6). If `W` is an elliptic Weierstrass curve over the fraction field `K` of a discrete
 valuation ring `R`, and both `W` and `C • W` are minimal Weierstrass equations, then the change of
 variables `C` is the base change of a change of variables `C'` over `R`; that is, `C.u` is the
 image of a unit of `R` and `C.r`, `C.s`, `C.t` are images of elements of `R`.
 
-Deviation: the hypothesis `W.IsElliptic` (nonzero discriminant) is part of the setting of the
-source (elliptic curves) and is necessary; see the module docstring. -/
+The hypothesis `W.IsElliptic` (nonzero discriminant) is the setting of the source (elliptic
+curves) and is necessary; see the module docstring. -/
 theorem exists_baseChange_eq_of_isMinimal (W : WeierstrassCurve K) [W.IsElliptic]
     (C : VariableChange K) [IsMinimal R W] [IsMinimal R (C • W)] :
     ∃ C' : VariableChange R, C'.baseChange K = C := by
-  obtain ⟨u, hu⟩ := exists_unit_eq_u_of_isMinimal (R := R) (W := W) C
+  obtain ⟨u, hu⟩ := exists_unit_eq_u_of_isMinimal R W C
   exact variableChange_integral_of_u_integral (W := W) (W' := C • W) rfl hu
 
-/-- The same statement as `exists_baseChange_eq_of_isMinimal`, written with
-`VariableChange.map (algebraMap R K)`. -/
-theorem exists_map_eq_of_isMinimal (W : WeierstrassCurve K) [W.IsElliptic]
-    (C : VariableChange K) [IsMinimal R W] [IsMinimal R (C • W)] :
-    ∃ C' : VariableChange R, C'.map (algebraMap R K) = C :=
-  exists_baseChange_eq_of_isMinimal (W := W) C
+variable {R}
 
 omit [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K] in
 /-- A change of variables over `R` takes an integral Weierstrass equation over `K` to an integral
@@ -182,7 +157,7 @@ theorem isMinimal_of_valuation_Δ_eq_one {W : WeierstrassCurve K} [hW : IsIntegr
   rw [← Subtype.coe_le_coe, valuation_Δ_aux_eq_of_isIntegral R W, hΔ]
   exact (valuation_Δ_aux R (j • W)).2
 
-/-- **Converse direction of Silverman VII.1.3(d).** A change of variables with coefficients in
+/-- **Converse of Silverman VII.1.3(b).** A change of variables with coefficients in
 `R` (so with scaling factor a unit of `R`) takes a minimal Weierstrass equation over `K` to a
 minimal one. No ellipticity hypothesis is needed. -/
 theorem isMinimal_baseChange_smul {W : WeierstrassCurve K} [hW : IsMinimal R W]
@@ -191,36 +166,22 @@ theorem isMinimal_baseChange_smul {W : WeierstrassCurve K} [hW : IsMinimal R W]
   refine ⟨⟨by simpa using hint, fun j hj _ ↦ ?_⟩⟩
   have hj₁ : IsIntegral R (j • C.baseChange K • W) := hj
   have hj₂ : IsIntegral R ((j * C.baseChange K) • W) := by rwa [mul_smul]
-  have h := valuation_Δ_le_of_isMinimal (R := R) (W := W) (j * C.baseChange K)
+  have h := valuation_Δ_le_of_isMinimal R (W := W) (j * C.baseChange K)
   simp only [one_smul]
   rw [← Subtype.coe_le_coe, valuation_Δ_aux_eq_of_isIntegral, valuation_Δ_aux_eq_of_isIntegral,
     valuation_Δ_baseChange_smul, ← mul_smul]
   exact h
 
-/-- **Uniqueness of minimal Weierstrass equations, iff form** (Silverman VII.1.3(d)). For an
+/-- **Uniqueness of minimal Weierstrass equations, iff form** (Silverman VII.1.3(b)). For an
 elliptic minimal Weierstrass equation `W` over the fraction field `K` of a discrete valuation
 ring `R`, the equation `C • W` is minimal if and only if `C` is the base change of a change of
 variables over `R`. -/
-theorem isMinimal_smul_iff {W : WeierstrassCurve K} [W.IsElliptic] [IsMinimal R W]
+theorem isMinimal_smul_iff (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
+    [Algebra R K] [IsFractionRing R K] {W : WeierstrassCurve K} [W.IsElliptic] [IsMinimal R W]
     (C : VariableChange K) :
     IsMinimal R (C • W) ↔ ∃ C' : VariableChange R, C'.baseChange K = C := by
-  refine ⟨fun _ ↦ exists_baseChange_eq_of_isMinimal (W := W) C, ?_⟩
+  refine ⟨fun _ ↦ exists_baseChange_eq_of_isMinimal R W C, ?_⟩
   rintro ⟨C', rfl⟩
   exact isMinimal_baseChange_smul C'
-
-/-- **Invariant differentials of minimal equations** (Conrad, Corollary 2.10 and p. 6). Under a
-change of variables `C`, the invariant differential `ω = dx / (2y + a₁x + a₃)` of `W` and the
-invariant differential `ω'` of `C • W` satisfy `ω' = C.u • ω` (a direct computation from the
-formulas `variableChange_a₁`, `variableChange_a₃` and `x = u²x' + r`, `y = u³y' + su²x' + t`; it is
-not formalized here). In this coordinate form, we prove
-that for two minimal equations of an elliptic curve the `R`-lines `R ∙ ω'` and `R ∙ ω` coincide:
-the `R`-submodule of `K` spanned by `C.u` equals the one spanned by `1`. (The differential
-`ω` itself is not formalized here; only its transformation factor `C.u` enters.) -/
-theorem span_u_eq_span_one_of_isMinimal (W : WeierstrassCurve K) [W.IsElliptic]
-    (C : VariableChange K) [IsMinimal R W] [IsMinimal R (C • W)] :
-    Submodule.span R {(C.u : K)} = Submodule.span R {1} := by
-  obtain ⟨u, hu⟩ := exists_unit_eq_u_of_isMinimal (R := R) (W := W) C
-  rw [← hu, Algebra.algebraMap_eq_smul_one]
-  exact Submodule.span_singleton_smul_eq (Units.isUnit u) 1
 
 end WeierstrassCurve

@@ -31,16 +31,13 @@ namespace MinimalWeierstrassUniqueTest
 #check @WeierstrassCurve.valuation_Δ_le_of_isMinimal
 #check @WeierstrassCurve.valuation_Δ_eq_of_isMinimal
 #check @WeierstrassCurve.valuation_u_eq_one_of_isMinimal
-#check @WeierstrassCurve.exists_unit_of_valuation_eq_one
 #check @WeierstrassCurve.exists_unit_eq_u_of_isMinimal
 #check @WeierstrassCurve.exists_baseChange_eq_of_isMinimal
-#check @WeierstrassCurve.exists_map_eq_of_isMinimal
 #check @WeierstrassCurve.isIntegral_baseChange_smul
 #check @WeierstrassCurve.valuation_Δ_baseChange_smul
 #check @WeierstrassCurve.isMinimal_of_valuation_Δ_eq_one
 #check @WeierstrassCurve.isMinimal_baseChange_smul
 #check @WeierstrassCurve.isMinimal_smul_iff
-#check @WeierstrassCurve.span_u_eq_span_one_of_isMinimal
 
 /-- The integral equation `y² + y = x³ - x` over `ℤ_[2]`. -/
 noncomputable def E₀ : WeierstrassCurve ℤ_[2] := ⟨0, 0, 1, -1, 0⟩
@@ -79,15 +76,11 @@ instance : IsMinimal ℤ_[2] E := isMinimal_of_valuation_Δ_eq_one valuation_E_�
 /-- Any change of variables from `E` to a minimal equation is defined over `ℤ_[2]`. -/
 example (C : VariableChange ℚ_[2]) [IsMinimal ℤ_[2] (C • E)] :
     ∃ C' : VariableChange ℤ_[2], C'.baseChange ℚ_[2] = C :=
-  exists_baseChange_eq_of_isMinimal E C
+  exists_baseChange_eq_of_isMinimal ℤ_[2] E C
 
 example (C : VariableChange ℚ_[2]) [IsMinimal ℤ_[2] (C • E)] :
     ∃ u : ℤ_[2]ˣ, algebraMap ℤ_[2] ℚ_[2] u = C.u :=
-  exists_unit_eq_u_of_isMinimal E C
-
-example (C : VariableChange ℚ_[2]) [IsMinimal ℤ_[2] (C • E)] :
-    Submodule.span ℤ_[2] {(C.u : ℚ_[2])} = Submodule.span ℤ_[2] {1} :=
-  span_u_eq_span_one_of_isMinimal E C
+  exists_unit_eq_u_of_isMinimal ℤ_[2] E C
 
 /-- The change of variables `(u, r, s, t) = (-1, 1, 1, 0)` over `ℤ_[2]`. -/
 noncomputable def C₁ : VariableChange ℤ_[2] := ⟨-1, 1, 1, 0⟩
@@ -96,7 +89,7 @@ noncomputable def C₁ : VariableChange ℤ_[2] := ⟨-1, 1, 1, 0⟩
 example : IsMinimal ℤ_[2] (C₁.baseChange ℚ_[2] • E) := isMinimal_baseChange_smul C₁
 
 example : IsMinimal ℤ_[2] (C₁.baseChange ℚ_[2] • E) :=
-  (isMinimal_smul_iff (W := E) _).mpr ⟨C₁, rfl⟩
+  (isMinimal_smul_iff ℤ_[2] (W := E) _).mpr ⟨C₁, rfl⟩
 
 /-! ### Ellipticity is necessary -/
 
