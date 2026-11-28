@@ -108,25 +108,6 @@ public theorem_wanted isSelfSimilarCompactSet_layer_enum_tendsto_last {K : Set �
     {α : Ordinal.{0}} (hα : α < ω ^ ω) :
     Tendsto (fun n : ℕ => t (μ - 1) (ω * α + n)) atTop (𝓝 (t 0 α / ρ))
 
-/-- **Multiplying by the ratio raises the gauge index by the module (Proposition 6).** Let
-$K \subseteq \mathbb{R}$ be a quasi-arithmetical compact set of module $\mu$ and ratio $\rho$. For
-each natural number $j$ let $K^{(j)}$ be the $j$-th iterated derived set of $K$ and
-$T_j = K^{(j)} \setminus K^{(j+1)}$ its $j$-th layer. If $n, \ell, u, \ell', u'$ are natural
-numbers with $n / \rho^\ell \in T_u$ and $\rho n / \rho^{\ell'} \in T_{u'}$, then
-$\ell' \mu - u' = \ell \mu - u + \mu$ as integers.
-
-The stability gauge of Definition 3 is $\lVert m \rVert_K = \ell \mu + d - u$ whenever
-$m / \rho^\ell \in T_u$, with a displacement $d$ independent of $m$; so this is the identity
-$\lVert \rho n \rVert_K = \lVert n \rVert_K + \mu$.
-
-Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
-(2024), Article A21, Proposition 6. -/
-public theorem_wanted isQuasiArithmeticalCompactSet_gauge_ratio_mul {K : Set ℝ} {μ ρ : ℕ}
-    (hK : IsQuasiArithmeticalCompactSet K μ ρ) {n ℓ u ℓ' u' : ℕ}
-    (h : (n : ℝ) / (ρ : ℝ) ^ ℓ ∈ selfSimilarLayer K u)
-    (h' : ((ρ * n : ℕ) : ℝ) / (ρ : ℝ) ^ ℓ' ∈ selfSimilarLayer K u') :
-    (ℓ' * μ - u' : ℤ) = ℓ * μ - u + μ
-
 /-- **Derived sets of an arithmetical compact set are arithmetical (Proposition 7).** Let $K$ be
 an arithmetical compact set of module $\mu$ and ratio $\rho$. For every natural number $n$, the
 $n$-th derived set $K^{(n)}$ of $K$ (the set of accumulation points, iterated $n$ times, so that

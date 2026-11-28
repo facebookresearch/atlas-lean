@@ -30,6 +30,21 @@ example {K : Set ℝ} (hK : IsQuasiArithmeticalCompactSet K 3 3)
     hK (by simpa using h) (by simpa using hw)
   omega
 
+-- With both exponents zero, multiplying by the ratio lowers the layer by the module.
+example {K : Set ℝ} (hK : IsQuasiArithmeticalCompactSet K 3 3)
+    (h : 1 ∈ selfSimilarLayer K 5) {w : ℕ} (h' : 3 ∈ selfSimilarLayer K w) : w = 2 := by
+  have hindex := isQuasiArithmeticalCompactSet_gauge_ratio_mul (n := 1) (ℓ := 0) (ℓ' := 0)
+    hK (by simpa using h) (by simpa using h')
+  omega
+
+-- The two denominator exponents need not differ by one.
+example {K : Set ℝ} (hK : IsQuasiArithmeticalCompactSet K 3 3)
+    (h : (1 : ℝ) / 3 ∈ selfSimilarLayer K 2) {w : ℕ}
+    (h' : (3 : ℝ) / 3 ^ (3 : ℕ) ∈ selfSimilarLayer K w) : w = 5 := by
+  have hindex := isQuasiArithmeticalCompactSet_gauge_ratio_mul (n := 1) (ℓ := 1) (ℓ' := 3)
+    hK (by simpa using h) (by simpa using h')
+  omega
+
 -- The un-normalized gauge defaults to zero if the set has no points in any layer.
 example (μ ρ n : ℕ) : stabilityGaugeIndex ∅ μ ρ n = 0 := by
   have hder : derivedSet (∅ : Set ℝ) = ∅ :=

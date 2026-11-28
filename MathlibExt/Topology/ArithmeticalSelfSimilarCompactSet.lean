@@ -179,6 +179,33 @@ public theorem isQuasiArithmeticalCompactSet_layer_index {K : Set ℝ} {μ ρ : 
   have hz : (v : ℤ) + q * μ = w + p * μ := by exact_mod_cast heq
   omega
 
+open isQuasiArithmeticalCompactSet_layer_index in
+/-- **Multiplying by the ratio raises the gauge index by the module (Proposition 6).** Let
+$K \subseteq \mathbb{R}$ be a quasi-arithmetical compact set of module $\mu$ and ratio $\rho$. For
+each natural number $j$ let $K^{(j)}$ be the $j$-th iterated derived set of $K$ and
+$T_j = K^{(j)} \setminus K^{(j+1)}$ its $j$-th layer. If $n, \ell, u, \ell', u'$ are natural
+numbers with $n / \rho^\ell \in T_u$ and $\rho n / \rho^{\ell'} \in T_{u'}$, then
+$\ell' \mu - u' = \ell \mu - u + \mu$ as integers.
+
+The stability gauge of Definition 3 is $\lVert m \rVert_K = \ell \mu + d - u$ whenever
+$m / \rho^\ell \in T_u$, with a displacement $d$ independent of $m$; so this is the identity
+$\lVert \rho n \rVert_K = \lVert n \rVert_K + \mu$.
+
+Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
+(2024), Article A21, Proposition 6. -/
+public theorem isQuasiArithmeticalCompactSet_gauge_ratio_mul {K : Set ℝ} {μ ρ : ℕ}
+    (hK : IsQuasiArithmeticalCompactSet K μ ρ) {n ℓ u ℓ' u' : ℕ}
+    (h : (n : ℝ) / (ρ : ℝ) ^ ℓ ∈ selfSimilarLayer K u)
+    (h' : ((ρ * n : ℕ) : ℝ) / (ρ : ℝ) ^ ℓ' ∈ selfSimilarLayer K u') :
+    (ℓ' * μ - u' : ℤ) = ℓ * μ - u + μ := by
+  have hS := hK.isSelfSimilarCompactSet
+  have hρ : (ρ : ℝ) ≠ 0 := (zero_lt_one.trans hS.1).ne'
+  have hshift := mem_layer_div_pow hS h' 1
+  rw [pow_one, Nat.one_mul, Nat.cast_mul, mul_div_assoc, mul_div_cancel_left₀ _ hρ] at hshift
+  have hindex := isQuasiArithmeticalCompactSet_layer_index hK h hshift
+  push_cast at hindex
+  omega
+
 /-- **Un-normalized stability gauge.** Let $K \subseteq \mathbb{R}$, let $\mu$, $\rho$ and $n$ be
 natural numbers, and let $T_u$ denote the layer of $K$ of index $u$. Let $\ell$ be the least
 natural number such that $n / \rho^\ell$ lies in some layer $T_u$ (division by $0$ gives $0$), and
