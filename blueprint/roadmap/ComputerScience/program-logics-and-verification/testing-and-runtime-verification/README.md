@@ -33,3 +33,4 @@
 - [Length run Out](length-run-out.md)
 - [Conforms of passes](conforms-of-passes.md)
 - [M Complete iff forall in Fault Domain](m-complete-iff-forall-in-fault-domain.md)
+- [Supervisory control of discrete-event systems](supervisory-control-of-discrete-event-systems/README.md)
