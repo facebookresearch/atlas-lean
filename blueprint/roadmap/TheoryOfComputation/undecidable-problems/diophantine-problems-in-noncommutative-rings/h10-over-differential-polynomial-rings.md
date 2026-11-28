@@ -1,6 +1,6 @@
 # Hilbert's tenth problem over rings of differential polynomials is undecidable
 
-For every differential field $K$ with one derivation, no algorithm decides whether a polynomial equation with coefficients in $\mathbb{Q}[\partial]$ or $\mathbb{F}_p[\partial]$ has a solution in the ring $K[\partial]$ of differential operators.
+For every differential field $K$ with one derivation, no algorithm decides whether a finite system of polynomial equations with coefficients in $\mathbb{Q}[\partial]$ or $\mathbb{F}_p[\partial]$ has a solution in the ring $K[\partial]$ of differential operators.
 
 **Setting (Eggink).** A *derivation* on a commutative ring $R$ is an additive map $\frac{d}{dx} : R \to R$ with $\frac{d}{dx}(rs) = r \frac{d}{dx}(s) + s \frac{d}{dx}(r)$. A *differential field* is a field $K$ with pairwise commuting derivations $\frac{d}{dx_1}, \dots, \frac{d}{dx_k}$; its *field of constants* $C$ consists of the elements killed by all of them. The ring of *differential polynomials* $K[\partial_1, \dots, \partial_k]$ is the noncommutative ring of polynomials $\sum a_{\alpha} \partial^{\alpha}$ with coefficients in $K$, with the usual addition and the multiplication determined by $\partial_i \partial_j = \partial_j \partial_i$ and $\partial_i a = a \partial_i + \frac{d}{dx_i}(a)$ for $a \in K$. It satisfies the left Ore condition, and $K(\partial_1, \dots, \partial_k)$ is its left division ring of fractions. *Hilbert's tenth problem over $R$ with ring of coefficients $R_0$* asks for an algorithm that decides, given a finite system of polynomial equations in noncommuting variables with coefficients in a computable subring $R_0 \subseteq R$, whether it has a solution in $R$.
 
@@ -22,7 +22,7 @@ None.
 
 ## Expansion
 
-The map $\phi : C[t] \to K[\partial]$ with $\phi(t) = \partial$ is an injective ring homomorphism whose image is defined by equations, so Hilbert's tenth problem over $C[t]$ with a constant for $t$ reduces to that over $K[\partial]$; the former has a negative answer by Denef's theorems in characteristic $0$ and $p$. For the division rings, $\psi : C(t_1, \dots, t_k) \to K(\partial_1, \dots, \partial_k)$, $t_i \mapsto \partial_i$, is an effective Diophantine map, and Hilbert's tenth problem with constants for the variables has a negative answer over $\mathbb{R}(t)$ (Denef) and over $\mathbb{C}(t_1, t_2)$ (Kim and Roush), and hence over $C(t_1, \dots, t_k)$ in the stated cases. A complete expansion links pages for Denef's undecidability of the Diophantine problem over polynomial rings over integral domains and over $\mathbb{R}(t)$, and for the theorem of Kim and Roush on $\mathbb{C}(t_1, t_2)$, which have none on main.
+The map $\phi : C[t] \to K[\partial]$ with $\phi(t) = \partial$ is an injective ring homomorphism whose image is defined by equations, so Hilbert's tenth problem over $C[t]$ with a constant for $t$ reduces to that over $K[\partial]$; the former has a negative answer by Denef's theorems in characteristic $0$ and $p$. A good expansion adds and links a page for Denef's undecidability of the Diophantine problem over polynomial rings over integral domains.
 
 ## Sources
 
