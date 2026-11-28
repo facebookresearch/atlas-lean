@@ -10,3 +10,5 @@ Holomorphic functions on C^n: Hartogs extension and separate analyticity, Weiers
 - [Pseudoconvex domains](pseudoconvex-domains/README.md)
 - [Weierstrass preparation theorem](weierstrass-preparation.md)
 - [Strong Noetherian property of coherent analytic sheaves](strong-noetherian-property-of-coherent-analytic-sheaves.md)
+
+- [Symmetry of bounded semialgebraic sets with compact holomorphic quotient](semialgebraic-bounded-domains-with-compact-quotient.md)

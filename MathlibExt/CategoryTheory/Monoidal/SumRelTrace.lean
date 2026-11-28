@@ -185,7 +185,9 @@ private theorem flat_to_chunks (f : X ⊗ (U ⊗ V) ⟶ Y ⊗ (U ⊗ V))
       rw [reassoc_rel]
       simpa using h
 
-/-- Successively closing two summands equals closing their disjoint union. -/
+/-- Closing the hidden summand `U ⊗ V` at once equals closing `V` first and then `U`:
+reassociate `f` to `(α_ X U V).hom ≫ f ≫ (α_ Y U V).inv : (X ⊗ U) ⊗ V ⟶ (Y ⊗ U) ⊗ V`, take
+its feedback over `V`, and then the feedback of the result over `U`. -/
 theorem feedback_vanishing_tensor (f : X ⊗ (U ⊗ V) ⟶ Y ⊗ (U ⊗ V)) :
     feedback f = feedback (feedback ((α_ X U V).hom ≫ f ≫ (α_ Y U V).inv)) := by
   apply Hom.ext

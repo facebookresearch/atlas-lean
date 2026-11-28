@@ -19,5 +19,6 @@ General bounded operators: Douglas lemma, direct sums, strong and weak operator 
 - [Adjoint of a bounded operator between Hilbert spaces](hilbert-adjoint-operator.md)
 - [Open mapping theorem for Banach spaces](open-mapping-theorem-banach.md)
 - [The operator norm is submultiplicative](operator-norm-submultiplicative.md)
+- [A nonzero quasinilpotent operator with a transitive commutant](quasinilpotent-operator-with-transitive-commutant.md)
 - [Positive operator on a real or complex inner product space](positive-operator-hilbert.md)
 - [Bounded inverse theorem](bounded-inverse-theorem.md)

@@ -19,3 +19,12 @@ Banach algebras and C*- and von Neumann algebras: exponentials and product formu
 - [Boundary representation of an operator system S ⊆ C\*(S): an irreducible representation of C\*(S) whose restriction to S has a unique completely positive extension](boundary-representation.md)
 - [C*-algebra, not necessarily with an identity element](cstar-algebra.md)
 - [Spectral radius formula in a complex Banach algebra](spectral-radius-formula.md)
+
+- [Bounded recovery from modular spectral averages](bounded-recovery-modular-spectral-averages.md)
+- [Rational noninjectivity of a constructed coarse index map](ordinary-coarse-assembly-rational-noninjectivity.md)
+- [Traces, finiteness and regularity of C*-algebras](traces-finiteness-and-regularity/README.md)
+- [Proper and strong pure infiniteness](pure-infiniteness/README.md)
+- [Similarity, representations and norm embeddings](similarity-and-representation-problems/README.md)
+- [Generation and invariants of finite von Neumann algebras](finite-von-neumann-generation-and-invariants/README.md)
+- [Weighted shifts and invariant projections](weighted-shifts-and-invariant-projections/README.md)
+- [Norm estimates, stability and cohomology](norm-estimates-stability-and-cohomology/README.md)

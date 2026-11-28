@@ -5,17 +5,10 @@ $\dim Y \ge \mathrm{rank}(\rho)$. Then there is a unit vector $u \in X \otimes Y
 $u, v \in X \otimes Y$ are unit vectors with $\mathrm{Tr}_Y(uu^*) = \mathrm{Tr}_Y(vv^*)$, then $v = (I \otimes U)u$ for some unitary $U$ on
 $Y$. Here $\mathrm{Tr}_Y$ is the partial trace over the second factor.
 
-## Expansion
-
-This node states a precise result.
-
-A good expansion adds a page for each pending prerequisite below and links it under the dependency sections.
-
-- Statement prerequisite: Finite-dimensional quantum state (pure and mixed).
-
 ## Depends on
 
 - [Partial trace over the second factor](../../LinearAlgebra/linear-maps-and-duality/partial-trace/partial-trace-right.md)
+- [Density matrices, pure states and reduced states](../quantum-states-distances-and-entropy/density-matrices-and-fidelity/density-matrices-and-reduced-states.md)
 
 ## Proof depends on
 

@@ -6,6 +6,7 @@ Convexity and smoothness of norms (uniform convexity, Kadec–Klee, Birkhoff–J
 - [Auerbach bases](auerbach-bases/README.md)
 - [Birkhoff–James orthogonality](birkhoff-james-orthogonality/README.md)
 - [Extreme points of unit balls](extreme-points-of-unit-balls/README.md)
+- [Forest segment spaces](forest-segment-spaces/README.md)
 - [Injections of a unit sphere into the unit interval](injections-of-a-unit-sphere-into-the-unit-interv/README.md)
 - [Kadec–Klee property](kadec-klee-property/README.md)
 - [Metric characterization of Banach spaces](metric-characterization-of-banach-spaces/README.md)
@@ -22,3 +23,8 @@ Convexity and smoothness of norms (uniform convexity, Kadec–Klee, Birkhoff–J
 - [Grothendieck's inequality (real case)](grothendieck-inequality-real.md)
 - [Milman–Pettis theorem](milman-pettis.md)
 - [Banach–Saks theorem for uniformly convex spaces](banach-saks.md)
+
+- [Daugavet moduli and measure-precompact examples](daugavet-moduli-and-examples/README.md)
+- [Dimension bounds for Lp embeddings](lp-dimension-bounds/README.md)
+- [Convexity and smoothness moduli](convexity-and-smoothness-moduli/README.md)
+- [Metric and nonlinear geometry of Banach spaces](metric-and-nonlinear-geometry/README.md)

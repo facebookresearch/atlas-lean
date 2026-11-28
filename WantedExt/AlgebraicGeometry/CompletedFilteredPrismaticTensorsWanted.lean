@@ -10,6 +10,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensors
 public import MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensorsFiniteTensorTransition
+public import MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensorsCompletedFilteredInverse
 
 /-!
 # Completed filtered prismatic tensor construction requests
@@ -19,7 +20,9 @@ evaluation, coefficient transitions and all finite completion maps are
 fixed native operations. The derived limit resolves the actual finite
 tower before taking products. These endpoints, together with
 `finiteTensorTransition` (now proved in
-`MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensorsFiniteTensorTransition`),
+`MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensorsFiniteTensorTransition`)
+and `completedFilteredInverse` (now proved in
+`MathlibExt.AlgebraicGeometry.CompletedFilteredPrismaticTensorsCompletedFilteredInverse`),
 certify that finite tensor/evaluation recipe and its native projection
 comparisons.
 
@@ -59,21 +62,5 @@ public def_wanted finiteCompletionMaps
     (Z : ZeroReduction p A D) (T : TwistTower p A D Z)
     (R : FunctorialKInjective (PrismaticNygaardCohomology.Sheaves p A)) :
     CompletionMaps p A D Z T R
-
-/-- Completed filtered inverse: for a prime $p$, a quasisyntomic ring `A` with chosen initial prisms
-`D`, a zero reduction `Z`, a twist tower `T`, a functorial K-injective resolution `R` and commuting
-finite completion maps `C`: the completed evaluation map, from the derived limit (the Milnor limit
-of the resolved tower) of the finite tensor products $L_n^\vee \otimes L_n$ to the derived limit of
-the weight-zero tower, is an isomorphism in the derived category; it commutes with the projections
-to every finite level, where it is the resolved finite evaluation; and for every weight $i$, the
-comparison map from the completed twist of weight $i$ to the derived limit of its resolved finite
-tower commutes with the projections to every level and the finite completion maps. -/
-public theorem_wanted completedFilteredInverse
-    (p : ℕ) [Fact p.Prime] (A : QuasiSyntomicPrismSites.Ring p)
-    (D : ∀ B : Basis p A, InitialLift p (ring p B))
-    (Z : ZeroReduction p A D) (T : TwistTower p A D Z)
-    (R : FunctorialKInjective (PrismaticNygaardCohomology.Sheaves p A))
-    (C : CompletionMaps p A D Z T R) :
-    CompletedFilteredInverse p A D Z T R C
 
 end WantedExt.AlgebraicGeometry.CompletedFilteredPrismaticTensors

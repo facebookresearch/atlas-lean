@@ -4,6 +4,7 @@ Classical inequalities for sums, sequences, means and integrals of real or compl
 
 - [Carleman's inequality](carleman-s-inequality/README.md)
 - [Coefficient bounds for homogeneous polynomials](coefficient-bounds-for-homogeneous-polynomials/README.md)
+- [Constants of Pazuki's theta height comparison](constants-of-pazuki-s-theta-height-comparison/README.md)
 - [Elementary bounds for exponentials and logarithms](elementary-bounds-for-exponentials-and-logarithm/README.md)
 - [Hilbert's inequality](hilbert-s-inequality/README.md)
 - [Kantorovich, Bhatia–Davis and Popoviciu inequalities](kantorovich-bhatia-davis-and-popoviciu-inequalit/README.md)
@@ -11,6 +12,7 @@ Classical inequalities for sums, sequences, means and integrals of real or compl
 - [Turán's power sum method](tur-n-s-power-sum-method/README.md)
 - [Power sum inequalities for monotone sequences](power-sum-inequalities-for-monotone-sequences/README.md)
 - [A bound on a difference of reciprocals](one-div-one-add-sub-one-div-one-add-mul.md)
+- [An elementary inequality for $x \le u(v + \log x)$](le-two-mul-mul-log-add-of-le-mul-add-log.md)
 - [Hardy's inequality](hardy-inequality.md)
 - [Hermite–Hadamard inequality](hermite-hadamard.md)
 - [Inequality for square-summable complex sequences](conjecture-holds.md)
