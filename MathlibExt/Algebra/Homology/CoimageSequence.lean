@@ -15,6 +15,7 @@ module
 public import Mathlib.Algebra.Homology.HomologySequence
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.QuasiIso
+public import MathlibExt.Algebra.Homology.ShortComplex.ShortExactSequences
 
 /-!
 # The homology sequence of a coimage factorization
@@ -46,11 +47,10 @@ variable {K L : HomologicalComplex C c}
 /-- The kernel–source–coimage short complex.
 
 For f : K → L, form ker(f) → K → coim(f) using the kernel inclusion and canonical coimage
-projection. -/
-noncomputable def coimageSequence (f : K ⟶ L) :
+projection. This is the canonical cokernel sequence of the kernel inclusion. -/
+noncomputable abbrev coimageSequence (f : K ⟶ L) :
     ShortComplex (HomologicalComplex C c) :=
-  ShortComplex.mk (kernel.ι f) (Abelian.coimage.π f)
-    (cokernel.condition (kernel.ι f))
+  ShortComplex.cokernelSequence (kernel.ι f)
 
 /-- The first object of the coimage sequence.
 
@@ -96,15 +96,8 @@ theorem coimageSequence_g (f : K ⟶ L) :
 
 For every complex morphism f, ker(f) → K → coim(f) is short exact. -/
 theorem coimageSequence_shortExact (f : K ⟶ L) :
-    (coimageSequence f).ShortExact where
-  exact := ShortComplex.exact_of_g_is_cokernel _
-    (cokernelIsCokernel (kernel.ι f))
-  mono_f := by
-    change Mono (kernel.ι f)
-    infer_instance
-  epi_g := by
-    dsimp [coimageSequence]
-    infer_instance
+    (coimageSequence f).ShortExact :=
+  ShortComplex.shortExact_cokernelSequence (kernel.ι f)
 
 /-- The kernel inclusion is killed by the coimage projection.
 

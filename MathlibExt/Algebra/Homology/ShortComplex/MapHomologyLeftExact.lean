@@ -58,7 +58,8 @@ variable (S : ShortComplex C) [S.HasHomology] [(S.map F).HasHomology]
 morphisms and finite limits. Let S be a short complex with chosen
 homology, and assume S mapped by F also has its chosen homology.
 
-The canonical cycles comparison γ:Z(F(S)) → F(Z(S)), induced by the preserved kernel of the second differential of S. -/
+The canonical cycles comparison γ:Z(F(S)) → F(Z(S)), induced by the preserved kernel of the second
+differential of S. -/
 def leftExactCyclesComparison : (S.map F).cycles ⟶ F.obj S.cycles := by
   let c := KernelFork.ofι S.iCycles S.iCycles_g
   let h : IsLimit (c.map F) := KernelFork.mapIsLimit c S.cyclesIsKernel F
@@ -75,7 +76,8 @@ theorem leftExactCyclesComparison_i :
 morphisms and finite limits. Let S be a short complex with chosen
 homology, and assume S mapped by F also has its chosen homology.
 
-The canonical comparison γ:Z(F(S)) → F(Z(S)) is an isomorphism, since F preserves the cycles kernel. -/
+The canonical comparison γ:Z(F(S)) → F(Z(S)) is an isomorphism, since F preserves the cycles kernel.
+-/
 instance isIso_leftExactCyclesComparison : IsIso (leftExactCyclesComparison F S) := by
   let c := KernelFork.ofι S.iCycles S.iCycles_g
   let h : IsLimit (c.map F) := KernelFork.mapIsLimit c S.cyclesIsKernel F
@@ -91,7 +93,8 @@ instance isIso_leftExactCyclesComparison : IsIso (leftExactCyclesComparison F S)
 morphisms and finite limits. Let S be a short complex with chosen
 homology, and assume S mapped by F also has its chosen homology.
 
-The canonical cycles isomorphism Z(F(S)) ≅ F(Z(S)) whose forward map is the preserved-kernel comparison. -/
+The canonical cycles isomorphism Z(F(S)) ≅ F(Z(S)) whose forward map is the preserved-kernel
+comparison. -/
 def leftExactCyclesComparisonIso : (S.map F).cycles ≅ F.obj S.cycles :=
   asIso (leftExactCyclesComparison F S)
 
@@ -122,7 +125,8 @@ theorem leftExactHomologyEdge_kills_boundaries :
 morphisms and finite limits. Let S be a short complex with chosen
 homology, and assume S mapped by F also has its chosen homology.
 
-The homology edge ε:H(F(S)) → F(H(S)) induced by F(q_S)∘γ on cycles, where q_S:Z(S) → H(S) is the homology projection. -/
+The homology edge ε:H(F(S)) → F(H(S)) induced by F(q_S)∘γ on cycles, where q_S:Z(S) → H(S) is the
+homology projection. -/
 def leftExactHomologyEdge : (S.map F).homology ⟶ F.obj S.homology :=
   (S.map F).descHomology (leftExactCyclesComparison F S ≫ F.map S.homologyπ)
     (leftExactHomologyEdge_kills_boundaries F S)
@@ -131,7 +135,8 @@ def leftExactHomologyEdge : (S.map F).homology ⟶ F.obj S.homology :=
 morphisms and finite limits. Let S be a short complex with chosen
 homology, and assume S mapped by F also has its chosen homology.
 
-For γ:Z(F(S)) → F(Z(S)), q_S and q_{F(S)} the homology projections, the edge satisfies ε∘q_{F(S)}=F(q_S)∘γ. -/
+For γ:Z(F(S)) → F(Z(S)), q_S and q_{F(S)} the homology projections, the edge satisfies
+ε∘q_{F(S)}=F(q_S)∘γ. -/
 theorem leftExactHomologyEdge_characteristic :
     (S.map F).homologyπ ≫ leftExactHomologyEdge F S =
       leftExactCyclesComparison F S ≫ F.map S.homologyπ :=
@@ -204,7 +209,8 @@ theorem leftExactHomologyEdge_map_naturality :
         (Category.assoc _ _ _).symm
     _ = ((S.map F).homologyπ ≫ leftExactHomologyEdge F S) ≫
         F.map (ShortComplex.homologyMap φ) :=
-      congrArg (· ≫ F.map (ShortComplex.homologyMap φ)) (leftExactHomologyEdge_characteristic F S).symm
+      congrArg (· ≫ F.map (ShortComplex.homologyMap φ)) (leftExactHomologyEdge_characteristic F
+      S).symm
     _ = _ := Category.assoc _ _ _
 
 end ComplexMorphism
@@ -288,7 +294,8 @@ variable [F.PreservesHomology]
 morphisms and finite limits. Let S be a short complex with chosen
 homology, and assume S mapped by F also has its chosen homology.
 
-If F also preserves homology, its edge H(F(S)) → F(H(S)) equals the forward map of the canonical homology comparison isomorphism. -/
+If F also preserves homology, its edge H(F(S)) → F(H(S)) equals the forward map of the canonical
+homology comparison isomorphism. -/
 theorem leftExactHomologyEdge_eq_mapHomologyIso_hom :
     leftExactHomologyEdge F S = (S.mapHomologyIso F).hom := by
   let c := KernelFork.ofι S.iCycles S.iCycles_g
