@@ -48,6 +48,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Normed.Algebra.GelfandRadius
 public import Mathlib.MeasureTheory.Function.LpOrder
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import Domains.Biology.Epidemiology.NextGenerationOperator
 
 @[expose] public section
 
@@ -56,14 +57,6 @@ namespace WantedExt.Biology.Epidemiology.NextGenerationOperatorWanted
 open MeasureTheory Filter Topology
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-
-/-- **The basic reproduction ratio `R₀`.** The per-generation growth factor of a bounded real
-operator `K`, an alias for Mathlib's Gelfand radius `gelfandRadius K`: the limit of
-`‖K^m‖^(1/m)` (`tendsto_gelfandRadius`), which is also `inf_{m ≥ 1} ‖K^m‖^(1/m)` and equals the
-spectral radius of the complexification of `K`. It is the basic reproduction ratio `R₀ = r(K)` of
-Diekmann, Heesterbeek and Metz (1990, Eq. (2.2)). -/
-noncomputable abbrev generationGrowth (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ) : ℝ :=
-  gelfandRadius K
 
 /-- `K` maps nonnegative functions to nonnegative functions. -/
 def IsPositive (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ) : Prop :=
@@ -88,20 +81,5 @@ unbounded generation sizes `‖K^m φ‖`. -/
 theorem_wanted exists_nonneg_unbounded_of_one_lt (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ)
     (hpos : IsPositive K) (hK : 1 < generationGrowth K) :
     ∃ φ : Lp ℝ 1 μ, 0 ≤ φ ∧ ¬ BddAbove (Set.range fun m : ℕ => ‖(K ^ m) φ‖)
-
-/-- **`R₀` for a separable kernel** (Diekmann, Heesterbeek and Metz 1990, Section 3.1,
-Eqs. (3.1)–(3.3)). Let `a, b, S ≥ 0` be measurable with `b` essentially bounded and `S a`
-integrable, and let `K φ = S a ∫ b φ`, the next-generation operator of the kernel
-`k(ξ, η) = a(ξ) b(η)`. Then `R₀ = ∫ b S a`.
-
-Source: Diekmann, Heesterbeek and Metz (1990), Eq. (3.3). -/
-theorem_wanted generationGrowth_eq_integral_of_separable (a b S : Ω → ℝ)
-    (ha : Measurable a) (hb : Measurable b) (hS : Measurable S)
-    (ha0 : ∀ ξ, 0 ≤ a ξ) (hb0 : ∀ ξ, 0 ≤ b ξ) (hS0 : ∀ ξ, 0 ≤ S ξ)
-    (hbinf : MemLp b ⊤ μ) (hSa : Integrable (fun ξ => S ξ * a ξ) μ)
-    (K : Lp ℝ 1 μ →L[ℝ] Lp ℝ 1 μ)
-    (hK : ∀ φ : Lp ℝ 1 μ,
-      ((K φ : Lp ℝ 1 μ) : Ω → ℝ) =ᵐ[μ] fun ξ => S ξ * a ξ * ∫ η, b η * φ η ∂μ) :
-    generationGrowth K = ∫ ξ, b ξ * S ξ * a ξ ∂μ
 
 end WantedExt.Biology.Epidemiology.NextGenerationOperatorWanted
