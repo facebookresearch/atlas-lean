@@ -24,3 +24,4 @@ Combinatorial group theory: presentations, one-relator groups, HNN extensions an
 - [Universal theory of soluble groups](universal-theory-of-soluble-groups/README.md)
 - [A group of type F-infinity containing every finitely presented group](universal-type-f-infinity-group.md)
 - [Coefficient injectivity for a unimodular one-relator quotient](unimodular-relator-coefficient-injectivity.md)
+- [Isomorphism, recognition and search problems](isomorphism-recognition-and-search-problems/README.md)

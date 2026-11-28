@@ -20,3 +20,4 @@
 - [Completed By iff](completed-by-iff.md)
 - [Active iff](active-iff.md)
 - [Feasible iff](feasible-iff.md)
+- [Schedulability of timed automata with tasks is undecidable](schedulability-of-timed-automata-with-tasks.md)

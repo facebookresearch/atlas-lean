@@ -18,3 +18,7 @@ Linear and branching-time temporal logics interpreted over infinite words and tr
 
 - [Timed and infinite-state verification](timed-and-infinite-state-verification/README.md)
 - [Safety automata for the general safety fragment](safety-automaton-wanted.md)
+- [Counting temporal logics](counting-temporal-logics/README.md)
+- [Interval temporal logics](interval-temporal-logics/README.md)
+- [Module checking](module-checking/README.md)
+- [Quantitative temporal logics](quantitative-temporal-logics/README.md)

@@ -42,3 +42,5 @@ Relations between formal theories and their structures: first-order languages of
 - [Squarelike and discriminating groups](part-01/squarelike-and-discriminating-groups/README.md)
 - [Subsemigroup lattices of free groups](part-01/subsemigroup-lattices-of-free-groups/README.md)
 - [Elementary equivalence of wreath products](part-01/elementary-equivalence-of-wreath-products/README.md)
+- [Locality and preservation in the finite](locality-and-preservation-in-the-finite/README.md)
+- [Undecidable theories of geometries and fields](undecidable-theories-of-geometries/README.md)
