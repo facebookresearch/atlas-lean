@@ -278,7 +278,8 @@ Each ID it lists names one article. It stops with an error, naming the file
 and line or the page, when:
 
 - Autoform reads no annotations (the links folder is missing or a symbolic
-  link) or no articles (the roadmap holds a symbolic link), or the links folder
+  link) or no articles (the roadmap folder is missing, misnamed, holds a
+  symbolic link or has a folder that cannot be listed), or the links folder
   holds files or lines that Autoform and the sync read differently, as the sync
   checks it;
 - a listed page is no article Autoform reads, such as a hidden file or a page

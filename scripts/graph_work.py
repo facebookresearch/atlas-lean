@@ -87,12 +87,27 @@ def import_problem(own: dict, article_id: str) -> str | None:
     return None
 
 
+def roadmap_exists(roadmap: str) -> bool:
+    """Whether *roadmap* is the folder Autoform reads articles from (autoform_cli.graph._discover_nodes): an entry named
+    exactly `roadmap`, which a disk that ignores case would find as `Roadmap` too, that is a folder."""
+    try:
+        return os.path.basename(roadmap) in os.listdir(os.path.dirname(roadmap)) and os.path.isdir(roadmap)
+    except OSError:
+        return False
+
+
 def articles(roadmap: str) -> set[str]:
     """The articles Autoform finds below *roadmap*, as normalized paths: each Markdown file (`.md`) that is no hidden
     file and in no hidden folder, as autoform_cli.graph._discover_nodes walks the roadmap. That also reads every
-    article, which takes half a minute on the wiki; this walk reads none."""
+    article, which takes half a minute on the wiki; this walk reads none. ValueError, naming it, for a folder the walk
+    cannot list, which Autoform refuses: it could hide an article and its id."""
+
+    def unlistable(error: OSError) -> None:
+        where = os.path.relpath(error.filename, sync.wiki.ROOT) if error.filename else roadmap
+        raise ValueError(f"Autoform cannot list the roadmap folder {Path(where).as_posix()}: {error.strerror}")
+
     found: set[str] = set()
-    for directory, directories, files in os.walk(roadmap):
+    for directory, directories, files in os.walk(roadmap, onerror=unlistable):
         directories[:] = [name for name in directories if not name.startswith(".")]
         found.update(os.path.join(directory, name) for name in files
                      if name.endswith(".md") and not name.startswith("."))
@@ -107,7 +122,11 @@ def inventory() -> list[dict]:
     if not sync.reader().links_exist(sync.LINKS.parent) or sync.links_template() is None:
         raise ValueError(f"Autoform reads no annotations: {sync.LINKS.relative_to(sync.wiki.ROOT).as_posix()} is "
                          "missing, is a symbolic link, or has defaults it cannot use")
-    # Nor does it read any article of a roadmap that holds a symbolic link.
+    # Nor does it read any article without a roadmap folder beside it, or of one that holds a symbolic link.
+    roadmap = os.path.join(os.path.dirname(os.fspath(sync.LINKS)), "roadmap")
+    if not roadmap_exists(roadmap):
+        raise ValueError(f"Autoform reads no articles: {Path(roadmap).relative_to(sync.wiki.ROOT).as_posix()} is "
+                         "missing, misnamed or not a folder")
     if problems := graph.roadmap_symlink_issues(sync.LINKS.parent):
         more = f" (and {len(problems) - 1} more)" if problems[1:] else ""
         raise ValueError(f"Autoform reads no articles: {problems[0]}{more}")
@@ -116,7 +135,6 @@ def inventory() -> list[dict]:
     if problems := sync.links_problems():
         more = f" (and {len(problems) - 1} more)" if problems[1:] else ""
         raise ValueError(f"{problems[0]}{more}")
-    roadmap = os.path.join(os.path.dirname(os.fspath(sync.LINKS)), "roadmap")
     found = articles(roadmap)
     items: dict[str, dict] = {}
     listed: dict[str, str] = {}  # each listed path's page, as the keys of `annotations` name it

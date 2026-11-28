@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -167,6 +168,32 @@ class GraphWorkTests(unittest.TestCase):
         self.save(self.row("a.md"))
         os.mkfifo(self.roadmap / "draft.md")
         self.assertEqual([item["path"] for item in graph_work.inventory()], ["blueprint/roadmap/a.md"])
+
+    def test_a_roadmap_folder_autoform_cannot_list_fails(self):
+        self.save(self.row("a.md"))
+        (self.roadmap / "sub").mkdir()
+        blocked, real = os.fspath(self.roadmap / "sub"), os.scandir
+
+        def scandir(path="."):
+            if os.fspath(path) == blocked:
+                raise PermissionError(13, "Permission denied", blocked)
+            return real(path)
+
+        with patch.object(os, "scandir", scandir):
+            with self.assertRaisesRegex(ValueError, r"^Autoform cannot list the roadmap folder blueprint/roadmap/sub: "
+                                                    r"Permission denied$"):
+                graph_work.inventory()
+
+    def test_a_missing_or_misnamed_roadmap_fails(self):
+        self.save(self.row("a.md"))
+        self.roadmap.rename(self.root / "blueprint/Roadmap")
+        for step in ("misnamed", "missing"):
+            with self.subTest(step=step):
+                if step == "missing":
+                    shutil.rmtree(self.root / "blueprint/Roadmap")
+                with self.assertRaisesRegex(ValueError, r"^Autoform reads no articles: blueprint/roadmap is missing, "
+                                                        r"misnamed or not a folder$"):
+                    graph_work.inventory()
 
     def test_a_links_folder_autoform_does_not_read_fails(self):
         self.save(self.row("a.md"))
