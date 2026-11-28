@@ -33,9 +33,7 @@ example : negRFibonacci 2 x y 9 = (↑y⁻¹ : A) ^ 4 + 3 * (↑y⁻¹ : A) ^ 3 
   norm_num [Finset.sum_filter, Finset.sum_range_succ, Nat.choose]
 
 -- Order zero takes the zero branch at the first positive index.
-example : negRLucas 0 x y 1 = 0 := by
-  rw [negRLucas.eq_def]
-  simp
+example : negRLucas 0 (2 : ℤ) 1 1 = 0 := by decide +kernel
 
 -- At order one the recurrence at index two uses both initial values.
 example : negRLucas 1 x y 2 = (↑y⁻¹ : A) ^ 2 - 2 * ↑y⁻¹ * x := by
