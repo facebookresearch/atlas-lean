@@ -59,8 +59,7 @@ private def tensorCoordinate : T R →ₗ[R] R := (TensorProduct.lid R R).toLine
 
 private lemma tensor_action (g : G R) (z : T R) : (T R).ρ g z = z := by
   change TensorProduct.map ((A R).ρ g) ((A R).ρ g) z = z
-  rw [Rep.trivial_ρ, Rep.trivial_ρ, TensorProduct.map_id]
-  rfl
+  simp only [A, Rep.trivial_ρ, TensorProduct.map_id, LinearMap.id_apply]
 
 private def cross : cocycles₂ (T R) := cupCocycleOneOne (A R) (A R) (first R) (second R)
 
@@ -114,6 +113,17 @@ private def firstCochain : (inhomogeneousCochains (A R)).X 1 := fun g => (g 0).t
 private def secondCochain : (inhomogeneousCochains (A R)).X 1 := fun g => (g 0).toAdd.2
 private def orderedPair : Fin 2 → G R := Fin.cases (e₁ R) (fun _ => e₂ R)
 
+private lemma first_ordered :
+    firstCochain R (fun i => orderedPair R (Fin.castAdd 1 i)) = 1 := by
+  change (orderedPair R 0).toAdd.1 = 1
+  rfl
+
+private lemma second_ordered :
+    secondCochain R (fun i => orderedPair R (Fin.natAdd 1 i)) = 1 := by
+  change (orderedPair R ((0 : Fin 1).succ)).toAdd.2 = 1
+  rw [orderedPair, Fin.cases_succ]
+  rfl
+
 /-- The arbitrary-degree cup pairing retains the ordered positive-degree coordinate. -/
 example : tensorCoordinate R
     ((((inhomogeneousCupPairing (G R) R (A R) (A R)).pair 1 1).hom
@@ -121,8 +131,8 @@ example : tensorCoordinate R
   have h := inhomogeneousCupPairing_apply (G R) R (A R) (A R) 1 1
     (firstCochain R) (secondCochain R) (orderedPair R)
   have hc := congrArg (tensorCoordinate R) h
-  simpa [firstCochain, secondCochain, orderedPair, e₁, e₂, tensorCoordinate,
-    smul_eq_mul] using hc
+  rw [first_ordered, second_ordered] at hc
+  simpa [tensorCoordinate, smul_eq_mul] using hc
 
 end General
 
@@ -137,12 +147,36 @@ private def doubleFirst : G ℤ →* G ℤ where
 private def resIdentity : Rep.res doubleFirst (A ℤ) ⟶ A ℤ :=
   Rep.ofHom ⟨LinearMap.id, fun g => by rfl⟩
 
+private lemma pulledCross :
+    mapCocycles₂ doubleFirst (resIdentity ⊗ₘ resIdentity) (cross ℤ) =
+      cupCocycleOneOne (A ℤ) (A ℤ)
+        (mapCocycles₁ doubleFirst resIdentity (first ℤ))
+        (mapCocycles₁ doubleFirst resIdentity (second ℤ)) :=
+  mapCocycles₂_cupCocycleOneOne_of_hom doubleFirst resIdentity resIdentity
+    (first ℤ) (second ℤ)
+
+private lemma pulledFirst (g : G ℤ) :
+    mapCocycles₁ doubleFirst resIdentity (first ℤ) g = 2 * g.toAdd.1 := by
+  have h := congrFun (coe_mapCocycles₁ doubleFirst resIdentity (first ℤ)) g
+  change mapCocycles₁ doubleFirst resIdentity (first ℤ) g =
+    resIdentity.hom ((first ℤ) (doubleFirst g)) at h
+  exact h.trans (by rfl)
+
+private lemma pulledSecond (g : G ℤ) :
+    mapCocycles₁ doubleFirst resIdentity (second ℤ) g = g.toAdd.2 := by
+  have h := congrFun (coe_mapCocycles₁ doubleFirst resIdentity (second ℤ)) g
+  change mapCocycles₁ doubleFirst resIdentity (second ℤ) g =
+    resIdentity.hom ((second ℤ) (doubleFirst g)) at h
+  exact h.trans (by rfl)
+
 /-- An actual nonidentity group pullback doubles the detected ordered cup value. -/
 example : tensorCoordinate ℤ
     ((mapCocycles₂ doubleFirst (resIdentity ⊗ₘ resIdentity) (cross ℤ)) (e₁ ℤ, e₂ ℤ)) = 2 := by
-  rw [mapCocycles₂_cupCocycleOneOne_of_hom doubleFirst resIdentity resIdentity
-    (first ℤ) (second ℤ)]
-  change (TensorProduct.lid ℤ ℤ) ((2 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = 2
-  simp [smul_eq_mul]
+  have h := congrArg (fun z : cocycles₂ (T ℤ) => tensorCoordinate ℤ (z (e₁ ℤ, e₂ ℤ)))
+    pulledCross
+  simp only [cupCocycleOneOne_apply, Rep.trivial_ρ_apply, pulledFirst, pulledSecond] at h
+  exact h.trans (by
+    change (TensorProduct.lid ℤ ℤ) ((2 : ℤ) ⊗ₜ[ℤ] (1 : ℤ)) = 2
+    simp [smul_eq_mul])
 
 end CupOneOneNonzeroTests
