@@ -12,6 +12,7 @@ The ring $R$ is arbitrary and fixed; only the existential sentence is the input,
 
 - [Commutative ring with identity](../../../Algebra/rings-and-fields/commutative-ring-with-identity.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Polynomials in one variable over a semiring](../../../Algebra/polynomials/univariate-polynomial-arithmetic/polynomial-ring.md)
 
 ## Proof depends on
 

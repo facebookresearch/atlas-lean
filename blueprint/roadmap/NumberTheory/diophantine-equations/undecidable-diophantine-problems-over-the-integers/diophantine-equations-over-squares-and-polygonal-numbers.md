@@ -16,7 +16,7 @@ Conventions: equivalently, for squares, there is no algorithm deciding whether $
 
 ## Depends on
 
-- [Polygonal numbers](../../quadratic-forms-sums-of-squares/waring-figurate/polygonal-numbers/polygonal-number.md)
+- [Polygonal numbers](../../quadratic-forms-sums-of-squares/waring-figurate/polygonal-numbers/polygonal-number.md) (defined there for natural $n$; here the generalized values $p_s(x)$ at all integers $x$, as defined above)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on

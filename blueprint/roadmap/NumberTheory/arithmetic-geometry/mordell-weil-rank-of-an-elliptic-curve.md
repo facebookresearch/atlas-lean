@@ -2,22 +2,24 @@
 
 For an elliptic curve $E$ over a number field $K$, the group $E(K)$ of $K$-rational points is a finitely generated abelian group by the Mordell–Weil theorem; its rank $\operatorname{rk} E(K)$ is the number of infinite cyclic factors in a decomposition of $E(K)$.
 
-Let $K$ be a number field and let $E$ be an elliptic curve over $K$: a smooth projective curve of genus one over $K$ with a distinguished $K$-rational point $O$, for example the projective closure of a nonsingular Weierstrass equation with $O$ the point at infinity. The set $E(K)$ of points of $E$ with coordinates in $K$ is an abelian group, written additively, under the chord-and-tangent law with identity $O$. By the Mordell–Weil theorem it is finitely generated, so
+Let $K$ be a number field and let $E$ be an elliptic curve over $K$: a smooth projective curve of genus one over $K$ with a distinguished $K$-rational point $O$, for example the projective closure of a nonsingular Weierstrass equation with $O$ the point at infinity. The set $E(K)$ of points of $E$ with coordinates in $K$ is an abelian group, written additively, under the chord-and-tangent law with identity $O$. The *Mordell–Weil rank* of $E$ over $K$ is
+
+$$
+\operatorname{rk} E(K) = \dim_{\mathbb{Q}} \bigl( E(K) \otimes_{\mathbb{Z}} \mathbb{Q} \bigr) .
+$$
+
+By the Mordell–Weil theorem $E(K)$ is finitely generated, so
 
 $$
 E(K) \cong E(K)_{\mathrm{tors}} \oplus \mathbb{Z}^{r}
 $$
 
-with $E(K)_{\mathrm{tors}}$ the finite torsion subgroup and a unique integer $r \ge 0$. The *Mordell–Weil rank* of $E$ over $K$ is
-
-$$
-\operatorname{rk} E(K) = r = \dim_{\mathbb{Q}} \bigl( E(K) \otimes_{\mathbb{Z}} \mathbb{Q} \bigr) .
-$$
+with $E(K)_{\mathrm{tors}}$ the finite torsion subgroup and a unique integer $r \ge 0$, and $\operatorname{rk} E(K) = r$ is finite.
 
 Conventions:
 
-- The rank depends on the field: for a finite extension $K'/K$ the inclusion $E(K) \subseteq E(K')$ gives $\operatorname{rk} E(K) \le \operatorname{rk} E(K')$, and the inequality can be strict.
-- $\operatorname{rk} E(K) = 0$ exactly when $E(K)$ is finite, and $\operatorname{rk} E(K) \ge 1$ exactly when $E(K)$ contains a point of infinite order.
+- The rank depends on the field: for a finite extension $K'/K$ the inclusion $E(K) \subseteq E(K')$ gives $\operatorname{rk} E(K) \le \operatorname{rk} E(K')$.
+- $\operatorname{rk} E(K) = 0$ exactly when $E(K)$ is finite (using that $E(K)$ is finitely generated), and $\operatorname{rk} E(K) \ge 1$ exactly when $E(K)$ contains a point of infinite order.
 - For an elliptic curve $E$ over a subfield $F \subseteq K$, $\operatorname{rk} E(K)$ means the rank of the base change of $E$ to $K$.
 
 ## Depends on
@@ -30,7 +32,7 @@ Conventions:
 
 ## Expansion
 
-The decomposition is the structure theorem for finitely generated abelian groups applied to $E(K)$. The integer $r$ equals the dimension of $E(K) \otimes_{\mathbb{Z}} \mathbb{Q}$ because tensoring with $\mathbb{Q}$ kills the torsion subgroup and turns $\mathbb{Z}^r$ into $\mathbb{Q}^r$. Monotonicity in the field follows because a subgroup of a finitely generated abelian group has rank at most that of the group.
+The decomposition is the structure theorem for finitely generated abelian groups applied to $E(K)$. The integer $r$ equals the dimension of $E(K) \otimes_{\mathbb{Z}} \mathbb{Q}$ because tensoring with $\mathbb{Q}$ kills the torsion subgroup and turns $\mathbb{Z}^r$ into $\mathbb{Q}^r$. Monotonicity in the field follows because $\mathbb{Q}$ is flat over $\mathbb{Z}$, so $E(K) \otimes \mathbb{Q} \to E(K') \otimes \mathbb{Q}$ is injective. The decomposition and the finiteness of the rank rest on the Mordell–Weil theorem; a good expansion links a page for it.
 
 ## Sources
 

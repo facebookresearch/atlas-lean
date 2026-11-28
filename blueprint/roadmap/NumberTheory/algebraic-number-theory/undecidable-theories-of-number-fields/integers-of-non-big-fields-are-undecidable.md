@@ -12,6 +12,8 @@ equivalently, if for every positive integer $n$ the field $K$ contains a number 
 
 **Theorem (Mazur–Rubin–Shlapentokh).** Let $\mathcal{A}$ be the collection of all non-big fields of algebraic numbers. There is a uniform first-order definition of $\mathbb{Z}$, with quantifier prefix of the form $\forall \forall \exists \cdots \exists$, over the rings of integers $\mathcal{O}_K$ of all fields $K \in \mathcal{A}$. In particular, for every non-big field $K$ of algebraic numbers, the first-order theory of $\mathcal{O}_K$ is undecidable.
 
+The form of the definition is the one the source uses for definitions ((1.5) and Definition 1.6), through which Theorem 4.8 is stated; the explicit formula it displays (Definition 4.9 and Remark 4.16) also contains inequations and disjunctions.
+
 Conventions: every number field is non-big, so the theorem contains a uniform version of Julia Robinson's theorem for rings of integers of number fields.
 
 ## Depends on

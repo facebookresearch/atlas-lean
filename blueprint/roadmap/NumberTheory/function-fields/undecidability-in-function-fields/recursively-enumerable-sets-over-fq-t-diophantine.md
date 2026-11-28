@@ -19,6 +19,8 @@ The converse holds trivially, so the Diophantine sets over $\mathbb{F}_q[Z]$ are
 - [Commutative ring with identity](../../../Algebra/rings-and-fields/commutative-ring-with-identity.md)
 - [Diophantine subsets of a ring](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/is-diophantine-set.md)
 - [Recognizability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-recognizable.md)
+- [Polynomials in one variable over a semiring](../../../Algebra/polynomials/univariate-polynomial-arithmetic/polynomial-ring.md)
+- [Diophantine sets](../../../TheoryOfComputation/undecidable-problems/diophantine-sets-and-hilbert-s-tenth-problem/is-diophantine.md)
 
 ## Proof depends on
 

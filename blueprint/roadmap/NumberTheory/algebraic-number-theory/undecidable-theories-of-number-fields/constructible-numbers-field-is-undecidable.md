@@ -2,7 +2,7 @@
 
 The field of constructible numbers, the smallest subfield of the algebraic numbers closed under taking square roots of positive elements, has an undecidable first-order theory in the language of rings. This answers a question of Tarski from 1948.
 
-Let $\mathbb{K}$ be the *field of constructible numbers*: the smallest subfield of the field of algebraic numbers that is closed under taking a square root of each of its positive elements. Its elements are real numbers, the lengths constructible with straightedge and compass from a unit length. Work in the language of rings $\{+, \cdot, 0, 1\}$ with equality.
+Let $\mathbb{K}$ be the *field of constructible numbers*: the smallest subfield of the field of algebraic numbers that is closed under taking a square root of each of its positive elements. Its elements are the real numbers whose absolute value is a length constructible with straightedge and compass from a unit length. Work in the language of rings $\{+, \cdot, 0, 1\}$ with equality.
 
 **Theorem (Mazur–Rubin–Shlapentokh).** The first-order theory of the field $\mathbb{K}$ is undecidable.
 
