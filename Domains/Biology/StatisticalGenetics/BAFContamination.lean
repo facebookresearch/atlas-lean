@@ -11,33 +11,47 @@ module
 public import Domains.Biology.PopulationGenetics.HardyWeinberg
 public import CSLibExt.MachineLearning.Bayesian.Basic
 public import MathlibExt.Probability.Statistics.LinearModel.CoefficientT
+public import MathlibExt.Probability.FiniteProbability
 public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # B-allele-frequency regression estimator of contamination
 
 A genotyping array reports, at each biallelic marker with alleles labelled `A` and `B`, a called
-genotype and the B allele frequency (BAF), the normalized relative intensity `I_B / (I_A + I_B)`
-of the `B` probe. Jun et al. (2012) estimate the fraction `α` of a DNA sample that comes from an
+genotype and the B allele frequency (BAF), an estimate of the abundance of allele `B` computed
+from the normalized probe intensities, close to `0`, `1/2` and `1` for `AA`, `AB` and `BB` in a
+clean sample. Jun et al. (2012) estimate the fraction `α` of a DNA sample that comes from an
 unrelated contaminant from the BAF at markers called homozygous.
 
 **Convention.** As in the source, the genotype call at a marker is taken to be the target's
 genotype in the array's `A`/`B` labels: calls are assumed correct, and every conditional mean and
 posterior below conditions on the target's genotype itself. A call made from the intensities of a
 contaminated sample can differ from it (by `baf_eq`, an `AA` target with a `BB` contaminant at
-`α = 3/10` has BAF `3/10`), and the statements below say nothing about such calls.
+`α = 3/10` has modelled BAF `3/10`), and the statements below say nothing about such calls.
 
 Alleles are `Bool`, with `false` the allele `A` and `true` the allele `B`. A genotype is an
 ordered pair `g : Bool × Bool` of a maternal and a paternal allele, as in
 `MathlibExt.Biology.PopulationGenetics.HardyWeinberg`, whose two-allele lemmas use the opposite
-label (`true` is the allele `A` there). When intensity is linear in DNA input and
-a fraction `α` of the DNA comes from a contaminant of genotype `g₂`, a target of genotype `g₁` has
-BAF `(1 - α) n(g₁) / 2 + α n(g₂) / 2`, where `n(g)` is the number of copies of `B` in `g`
-(`baf_eq`).
+label (`true` is the allele `A` there).
+
+**Modelled BAF.** The module models the BAF without noise or calibration. When intensity is
+linear in DNA input and a fraction `α` of the DNA comes from a contaminant of genotype `g₂`,
+`baf α g₁ g₂` is the share `I_B / (I_A + I_B)` of the `B` probe in the intensities of a target of
+genotype `g₁`, which is `(1 - α) n(g₁) / 2 + α n(g₂) / 2`, where `n(g)` is the number of copies of
+`B` in `g` (`baf_eq`). The array's BAF is a calibrated estimate, not this share, and the
+regression below treats the observed BAF `y` as the modelled mean plus an error. The conditional
+means below are those of the modelled BAF.
+
+**Parameter ranges.** The contamination fraction `α` lies in `[0, 1]`, but the formulas hold for
+every real `α`; outside `[0, 1]`, `baf` is only the value of the formula: for an `AA` target and a
+`BB` contaminant it is `α`, so `2` at `α = 2`, which is no allele frequency. Likewise, in the
+minor-allele model `gamete G true` is the frequency of the allele coded `true` for every `G`, and
+is the minor allele frequency only when it is at most `1/2`; the statements hold for every `G`.
 
 **Conditional means.** If the contaminant's two alleles are drawn independently of the target's
-genotype, and of each other, from the population allele frequencies `p_A, p_B` (`markerLaw`), then
-whatever the law of the target's genotype
+genotype, and of each other, from the population allele frequencies `p_A, p_B` (`markerLaw`), then,
+whatever the law of the target's genotype, for each homozygous class to which that law assigns
+positive probability
 
 * `E[BAF | g = AA] = α p_B` (`integral_baf_cond_homA`) and
 * `E[BAF | g = BB] = 1 - α p_A` (`integral_baf_cond_homB`).
@@ -45,26 +59,25 @@ whatever the law of the target's genotype
 Both are the linear mean `γ + α p + τ 1(g = AA)` with `γ = 1`, `τ = -1` and the signed frequency
 `p = p_B` at `AA`, `p = -p_A` at `BB` (`integral_baf_cond_homozygous`).
 
-**Regression estimator.** Over `n` homozygous markers, Equation 4 of the source fits
-`BAF = γ + α p + τ 1(g = AA) + ε` by least squares. `contaminationEstimate` is the least-squares
-slope `α̂`, the `α` coordinate of the ordinary least-squares estimate for the design matrix with
-rows `(1, p, 1(g = AA))` (`designMatrix`), and `contaminationTStatistic` is the `t` statistic of
-`α = 0`, the coefficient `t` statistic of the slope. For a full-rank design, `α̂` recovers `α`
-from noiseless data (`contaminationEstimate_mulVec`), in particular from the conditional means
-above (`contaminationEstimate_integral_baf_cond`), and is unbiased under mean-zero errors
-(`integral_contaminationEstimate`). Under `α = 0` with i.i.d. Gaussian errors and `n > 3`, the
-`t` statistic has Student's `t` law with `n - 3` degrees of freedom
-(`hasLaw_contaminationTStatistic`), so the one-sided test that rejects `α = 0` in favour of
-`α > 0` when it exceeds `t₀` has level `P(t_{n-3} > t₀)`
-(`measureReal_lt_contaminationTStatistic`).
+**Regression estimator.** Over `n` homozygous markers, Equation 4 of the source fits the observed
+BAF as `y = γ + α p + τ 1(g = AA) + ε` by least squares. `contaminationEstimate` is the
+least-squares slope `α̂`, the `α` coordinate of the ordinary least-squares estimate for the design
+matrix with rows `(1, p, 1(g = AA))` (`designMatrix`), and `contaminationTStatistic` is the `t`
+statistic of `α = 0`, the coefficient `t` statistic of the slope. For a full-rank design, `α̂`
+recovers `α` from noiseless data (`contaminationEstimate_mulVec`), in particular from the
+conditional means above (`contaminationEstimate_integral_baf_cond`), and is unbiased under mean-zero
+errors (`integral_contaminationEstimate`). Under `α = 0` with i.i.d. Gaussian errors and `n > 3`,
+the `t` statistic has Student's `t` law with `n - 3` degrees of freedom
+(`hasLaw_contaminationTStatistic`), so the one-sided test that rejects `α = 0` in favour of `α > 0`
+when it exceeds `t₀` has level `P(t_{n-3} > t₀)` (`measureReal_lt_contaminationTStatistic`).
 
-**Minor-allele covariate.** When only the minor allele frequency `f` is known, suppose the label
-`B` sits on the minor allele with probability `1/2`, independently of the genotypes, and the
-target's genotype follows Hardy–Weinberg proportions. Alleles are then coded `true` for the minor
-allele and `false` for the major one, the population has genotype law `G` with minor allele
-frequency `f = gamete G true`, and the orientation `θ` (`true`: `B` is the minor allele) relabels
-them (`toAB`). Write `g` for the target's genotype in `A`/`B` labels. Then `g = AA` has
-probability `(1 - f)²` when `B` is the minor allele and `f²` otherwise
+**Minor-allele covariate.** When only the minor allele frequency `f` is known, suppose the label `B`
+sits on the minor allele with probability `1/2`, independently of the genotypes, and the target's
+genotype follows Hardy–Weinberg proportions. Alleles are then coded `true` for the minor allele and
+`false` for the major one, the population has genotype law `G` with minor allele frequency
+`f = gamete G true` (see Parameter ranges), and the orientation `θ` (`true`: `B` is the minor
+allele) relabels them (`toAB`). Write `g` for the target's genotype in `A`/`B` labels. Then
+`g = AA` has probability `(1 - f)²` when `B` is the minor allele and `f²` otherwise
 (`callLikelihood_true_homA`, `callLikelihood_false_homA`), so by Bayes' rule the posterior
 probability that `B` is the minor allele given `g = AA` is `(1 - f)² / ((1 - f)² + f²)`
 (`posterior_callLikelihood_homA`), and
@@ -73,7 +86,8 @@ probability that `B` is the minor allele given `g = AA` is `(1 - f)² / ((1 - f)
 
 ## Main definitions
 
-* `baf`: the BAF of a contaminated sample, from the probe intensities `intensityA`, `intensityB`.
+* `baf`: the modelled, noiseless BAF of a contaminated sample, from the probe intensities
+  `intensityA`, `intensityB`.
 * `markerLaw`: the joint law of the target's and the contaminant's genotypes, the contaminant's
   with independent alleles of law `p` (`iidGenotype` of
   `MathlibExt.Biology.PopulationGenetics.HardyWeinberg`).
@@ -94,6 +108,7 @@ open MeasureTheory ProbabilityTheory Matrix
 open MathlibExt.Biology.PopulationGenetics.HardyWeinberg
 open MathlibExt.Probability.Statistics.LinearModel
 open Cslib.MachineLearning.Bayesian
+open MathlibExt.Probability.FiniteProbability (sum_toReal_eq_one)
 open scoped ENNReal
 
 namespace Domains.Biology.StatisticalGenetics.BAFContamination
@@ -116,15 +131,18 @@ genotype carries `2 - n(g)` copies of `A`. -/
 def intensityA (α : ℝ) (g₁ g₂ : Bool × Bool) : ℝ :=
   (1 - α) * (2 - countB g₁ : ℝ) + α * (2 - countB g₂ : ℝ)
 
-/-- The B allele frequency (BAF) of a sample in which a fraction `α` of the DNA comes from a
-contaminant of genotype `g₂` and the rest from the target of genotype `g₁`: the normalized
-relative intensity `I_B / (I_A + I_B)` of the `B` probe, with intensities linear in DNA input. -/
+/-- The modelled, noiseless B allele frequency (BAF) of a sample in which a fraction `α` of the DNA
+comes from a contaminant of genotype `g₂` and the rest from the target of genotype `g₁`: the share
+`I_B / (I_A + I_B)` of the `B` probe in intensities linear in DNA input. The BAF an array reports
+is a calibrated estimate of the abundance of `B`, which the regression of Equation 4 treats as
+such a mean plus an error. The fraction `α` lies in `[0, 1]`; for other real `α` this is only the
+value of the formula. -/
 noncomputable def baf (α : ℝ) (g₁ g₂ : Bool × Bool) : ℝ :=
   intensityB α g₁ g₂ / (intensityA α g₁ g₂ + intensityB α g₁ g₂)
 
-/-- **The BAF of a contaminated sample** is the mixture `(1 - α) n(g₁) / 2 + α n(g₂) / 2` of the
-shares of allele `B` in the target's genotype `g₁` and the contaminant's genotype `g₂`; for a clean
-sample (`α = 0`) it is `0`, `1/2` and `1` for `AA`, a heterozygote and `BB`. -/
+/-- **The modelled BAF of a contaminated sample** is the mixture `(1 - α) n(g₁) / 2 + α n(g₂) / 2`
+of the shares of allele `B` in the target's genotype `g₁` and the contaminant's genotype `g₂`; for
+a clean sample (`α = 0`) it is `0`, `1/2` and `1` for `AA`, a heterozygote and `BB`. -/
 theorem baf_eq (α : ℝ) (g₁ g₂ : Bool × Bool) :
     baf α g₁ g₂ = (1 - α) * (countB g₁ / 2) + α * (countB g₂ / 2) := by
   have h : intensityA α g₁ g₂ + intensityB α g₁ g₂ = 2 := by
@@ -134,6 +152,20 @@ theorem baf_eq (α : ℝ) (g₁ g₂ : Bool × Bool) :
   ring
 
 /-! ### Conditional means at homozygous markers -/
+
+/-- The pair of a draw from `μ` and an independent draw from `ν` has mass `μ a * ν b` at
+`(a, b)`. -/
+private theorem bind_map_prodMk_apply {α β : Type*} (μ : PMF α) (ν : PMF β) (a : α) (b : β) :
+    (μ.bind fun x => ν.map (Prod.mk x)) (a, b) = μ a * ν b := by
+  classical
+  rw [PMF.bind_apply, tsum_eq_single a]
+  · rw [PMF.map_apply, tsum_eq_single b]
+    · simp
+    · intro c hc
+      simp [Ne.symm hc]
+  · intro c hc
+    rw [PMF.map_apply]
+    simp [Ne.symm hc]
 
 /-- The joint law of the target's genotype `g₁` and the contaminant's genotype `g₂` at a marker:
 `g₁` has law `T`, and the contaminant's two alleles are drawn independently of `g₁`, and of each
@@ -145,17 +177,8 @@ noncomputable def markerLaw (T : PMF (Bool × Bool)) (p : PMF Bool) :
 /-- Under `markerLaw T p` the two genotypes are independent with laws `T` and `iidGenotype p`. -/
 theorem markerLaw_apply (T : PMF (Bool × Bool)) (p : PMF Bool)
     (x : (Bool × Bool) × (Bool × Bool)) :
-    markerLaw T p x = T x.1 * iidGenotype p x.2 := by
-  classical
-  obtain ⟨g₁, g₂⟩ := x
-  rw [markerLaw, PMF.bind_apply, tsum_eq_single g₁]
-  · rw [PMF.map_apply, tsum_eq_single g₂]
-    · simp
-    · intro c hc
-      simp [Ne.symm hc]
-  · intro c hc
-    rw [PMF.map_apply]
-    simp [Ne.symm hc]
+    markerLaw T p x = T x.1 * iidGenotype p x.2 :=
+  bind_map_prodMk_apply T (iidGenotype p) x.1 x.2
 
 /-- The mean of `f` under a probability mass function on a finite type, conditioned on an
 event `s`: the `s`-part of the sum `∑ μ x f x`, divided by the mass of `s`. -/
@@ -190,16 +213,7 @@ private theorem integral_cond_toMeasure {Ω : Type*} [Fintype Ω] [MeasurableSpa
 /-- The two allele frequencies of a biallelic marker sum to one: `p_A + p_B = 1`. -/
 private theorem toReal_false_add_toReal_true (p : PMF Bool) :
     (p false).toReal + (p true).toReal = 1 := by
-  have h := p.tsum_coe
-  rw [tsum_fintype, Fintype.sum_bool] at h
-  rw [← ENNReal.toReal_add (p.apply_ne_top _) (p.apply_ne_top _), add_comm, h,
-    ENNReal.toReal_one]
-
-private theorem sum_iidGenotype_toReal (p : PMF Bool) :
-    ∑ g, (iidGenotype p g).toReal = 1 := by
-  have h := toReal_false_add_toReal_true p
-  simp only [Fintype.sum_prod_type, Fintype.sum_bool, iidGenotype_apply, ENNReal.toReal_mul]
-  linear_combination ((p false).toReal + (p true).toReal + 1) * h
+  simpa [Fintype.sum_bool, add_comm] using sum_toReal_eq_one p
 
 /-- The mean share of allele `B` in a genotype with independent alleles of law `p` is `p_B`. -/
 private theorem sum_iidGenotype_mul_countB (p : PMF Bool) :
@@ -228,13 +242,14 @@ private theorem integral_cond_markerLaw (T : PMF (Bool × Bool)) (p : PMF Bool)
     Fintype.sum_prod_type (α₁ := Bool × Bool) (α₂ := Bool × Bool), markerLaw_apply,
     ENNReal.toReal_mul]
   rw [hsum, hsum]
-  simp_rw [mul_assoc, ← Finset.mul_sum, sum_iidGenotype_toReal, mul_one]
+  simp_rw [mul_assoc, ← Finset.mul_sum, sum_toReal_eq_one (iidGenotype p), mul_one]
   rw [mul_div_cancel_left₀ _ hT]
 
-/-- **Conditional mean of the BAF at `AA` markers** (Jun et al. 2012): if the contaminant's two
-alleles are drawn independently of the target's genotype from the population allele frequencies
-`p`, then at a marker where the target is `AA`, `E[BAF | g = AA] = α p_B`, whatever the law `T`
-of the target's genotype (which must give `AA` positive probability). -/
+/-- **Conditional mean of the modelled BAF at `AA` markers** (Jun et al. 2012): if the
+contaminant's two alleles are drawn independently of the target's genotype from the population
+allele frequencies `p`, then at a marker where the target is `AA`, `E[BAF | g = AA] = α p_B` for
+the modelled BAF `baf`, whatever the law `T` of the target's genotype (which must give `AA`
+positive probability). -/
 theorem integral_baf_cond_homA (α : ℝ) (T : PMF (Bool × Bool)) (p : PMF Bool)
     (hT : T (false, false) ≠ 0) :
     ∫ x, baf α x.1 x.2 ∂((markerLaw T p).toMeasure[|Prod.fst ⁻¹' {(false, false)}]) =
@@ -249,10 +264,11 @@ theorem integral_baf_cond_homA (α : ℝ) (T : PMF (Bool × Bool)) (p : PMF Bool
     ring
   simp_rw [key, ← Finset.mul_sum, sum_iidGenotype_mul_countB]
 
-/-- **Conditional mean of the BAF at `BB` markers** (Jun et al. 2012): if the contaminant's two
-alleles are drawn independently of the target's genotype from the population allele frequencies
-`p`, then at a marker where the target is `BB`, `E[BAF | g = BB] = 1 - α p_A`, whatever the law
-`T` of the target's genotype (which must give `BB` positive probability). -/
+/-- **Conditional mean of the modelled BAF at `BB` markers** (Jun et al. 2012): if the
+contaminant's two alleles are drawn independently of the target's genotype from the population
+allele frequencies `p`, then at a marker where the target is `BB`, `E[BAF | g = BB] = 1 - α p_A`
+for the modelled BAF `baf`, whatever the law `T` of the target's genotype (which must give `BB`
+positive probability). -/
 theorem integral_baf_cond_homB (α : ℝ) (T : PMF (Bool × Bool)) (p : PMF Bool)
     (hT : T (true, true) ≠ 0) :
     ∫ x, baf α x.1 x.2 ∂((markerLaw T p).toMeasure[|Prod.fst ⁻¹' {(true, true)}]) =
@@ -266,7 +282,7 @@ theorem integral_baf_cond_homB (α : ℝ) (T : PMF (Bool × Bool)) (p : PMF Bool
     simp only [countB, Bool.toNat_true]
     push_cast
     ring
-  simp_rw [key, Finset.sum_add_distrib, ← Finset.mul_sum, sum_iidGenotype_toReal,
+  simp_rw [key, Finset.sum_add_distrib, ← Finset.mul_sum, sum_toReal_eq_one (iidGenotype p),
     sum_iidGenotype_mul_countB]
   linear_combination α * toReal_false_add_toReal_true p
 
@@ -286,7 +302,8 @@ frequency `signedFreq c pB`. -/
 def designRow (c : Bool) (pB : ℝ) : Fin 3 → ℝ := ![1, signedFreq c pB, indicatorAA c]
 
 /-- **The homozygous conditional means are linear in the signed frequency**: under `markerLaw T p`
-the conditional mean of the BAF at a marker where the target is homozygous for allele `c` is
+the conditional mean of the modelled BAF at a marker where the target is homozygous for allele `c`,
+for a target law `T` that assigns that homozygous class positive probability, is
 `γ + α p + τ 1(g = AA)` with `γ = 1`, `τ = -1` and the signed frequency `p` of `c`, so stacking
 the `AA` and `BB` markers gives the same slope `α` in both classes. -/
 theorem integral_baf_cond_homozygous (α : ℝ) (T : PMF (Bool × Bool)) (p : PMF Bool) (c : Bool)
@@ -311,13 +328,13 @@ def designMatrix (c : ι → Bool) (pB : ι → ℝ) : Matrix ι (Fin 3) ℝ :=
 
 /-- **The B-allele-frequency regression estimator of contamination** (Jun et al. 2012,
 Equation 4). Over homozygous markers `i : ι`, where the target is homozygous for allele `c i`
-(`false`: `AA`, `true`: `BB`), `B` has population frequency `pB i` and the observed BAF is
-`y i`, fit `BAF = γ + α p + τ 1(g = AA) + ε` by least squares, with `p = p_B` at `AA` and
-`p = -p_A` at `BB`. The estimate `α̂` of the contamination level is the least-squares slope, the
-coordinate of `α` in the ordinary least-squares estimate `(Xᵀ X)⁻¹ Xᵀ y` for the design matrix
-`X` with rows `(1, p_i, 1(g_i = AA))`. It is meaningful for a full-rank design (`Xᵀ X`
-invertible, which needs both homozygous classes and some spread of `p` within one of them); for a
-singular `Xᵀ X`, whose Mathlib inverse is `0`, it is `0`. -/
+(`false`: `AA`, `true`: `BB`), `B` has population frequency `pB i` and the observed BAF, the
+array's estimate, is `y i`, fit `y = γ + α p + τ 1(g = AA) + ε` by least squares, with
+`p = p_B` at `AA` and `p = -p_A` at `BB`. The estimate `α̂` of the contamination level is the
+least-squares slope, the coordinate of `α` in the ordinary least-squares estimate `(Xᵀ X)⁻¹ Xᵀ y`
+for the design matrix `X` with rows `(1, p_i, 1(g_i = AA))`. It is meaningful for a full-rank
+design (`Xᵀ X` invertible, which needs both homozygous classes and some spread of `p` within one
+of them); for a singular `Xᵀ X`, whose Mathlib inverse is `0`, it is `0`. -/
 noncomputable def contaminationEstimate (c : ι → Bool) (pB y : ι → ℝ) : ℝ :=
   olsEstimator (designMatrix c pB) y 1
 
@@ -341,10 +358,11 @@ theorem contaminationEstimate_mulVec (c : ι → Bool) (pB : ι → ℝ)
   rfl
 
 /-- **The regression of the conditional means recovers the contamination level**: if at each
-homozygous marker `i` the target's genotype has law `T i`, the contaminant's alleles are drawn
-from the allele frequencies `p i` (`markerLaw`) and the observed BAF is the conditional mean of the
-BAF given the target's genotype, then for a full-rank design the least-squares slope `α̂` of
-Equation 4 is exactly `α`. -/
+homozygous marker `i` the target's genotype has a law `T i` that assigns the marker's homozygous
+class positive probability, the contaminant's alleles are drawn from the allele frequencies `p i`
+(`markerLaw`), and the response at each marker is the conditional mean of the modelled BAF given
+the target's genotype, then for a full-rank design the least-squares slope `α̂` of Equation 4 is
+exactly `α`. -/
 theorem contaminationEstimate_integral_baf_cond (α : ℝ) (c : ι → Bool)
     (T : ι → PMF (Bool × Bool)) (p : ι → PMF Bool) (hT : ∀ i, T i (c i, c i) ≠ 0)
     (hX : IsUnit ((designMatrix c fun i => (p i true).toReal)ᵀ *
@@ -405,7 +423,8 @@ theorem measureReal_lt_contaminationTStatistic {Ω : Type*} [MeasurableSpace Ω]
 
 /-- The label of an allele under an orientation of the labels: alleles are coded `true` for the
 minor allele and `false` for the major one, and the orientation `θ` is `true` when the label `B`
-sits on the minor allele. `toAB θ x` is `true` when the allele `x` carries the label `B`. -/
+sits on the minor allele. `toAB θ x` is `true` when the allele `x` carries the label `B`. The
+definition only uses the coding: `true` is the minor allele when its frequency is at most `1/2`. -/
 def toAB (θ x : Bool) : Bool := if θ then x else !x
 
 /-- A genotype `g`, coded by minor (`true`) and major (`false`) alleles, in the array's `A`/`B`
@@ -415,7 +434,8 @@ def toABGenotype (θ : Bool) (g : Bool × Bool) : Bool × Bool := (toAB θ g.1, 
 /-- The minor-allele model of a marker, as a joint law of the orientation `θ` of the labels
 (`true`: `B` is the minor allele), the target's genotype `g₁` and the contaminant's genotype `g₂`,
 both coded by minor (`true`) and major (`false`) alleles. In a population with genotype law `G`,
-whose minor allele has frequency `gamete G true`:
+whose allele coded `true` has frequency `gamete G true` (the minor allele frequency when it is at
+most `1/2`):
 
 * the label `B` sits on the minor allele with probability `1/2`, independently of the genotypes
   (exchangeable labels);
@@ -429,27 +449,20 @@ noncomputable def minorAlleleLaw (G : PMF (Bool × Bool)) :
 private theorem minorAlleleLaw_apply (G : PMF (Bool × Bool))
     (x : Bool × (Bool × Bool) × (Bool × Bool)) :
     minorAlleleLaw G x = 2⁻¹ * markerLaw (offspring G) (gamete G) x.2 := by
-  classical
-  obtain ⟨θ, y⟩ := x
-  rw [minorAlleleLaw, PMF.bind_apply, tsum_eq_single θ]
-  · rw [PMF.map_apply, tsum_eq_single y]
-    · simp
-    · intro c hc
-      simp [Ne.symm hc]
-  · intro c hc
-    rw [PMF.map_apply]
-    simp [Ne.symm hc]
+  rw [minorAlleleLaw, bind_map_prodMk_apply]
+  simp
 
-/-- **Conditional mean of the BAF at `AA` markers with the minor-allele covariate** (Jun et al.
-2012): if the label `B` sits on the minor allele with probability `1/2` independently of the
+/-- **Conditional mean of the modelled BAF at `AA` markers with the minor-allele covariate** (Jun
+et al. 2012): if the label `B` sits on the minor allele with probability `1/2` independently of the
 genotypes, the target's genotype follows Hardy–Weinberg proportions and the contaminant's two
 alleles are drawn independently from the population allele frequencies (`minorAlleleLaw`), then at
 a marker where the target's genotype `g`, in `A`/`B` labels, is `AA`
 
-`E[BAF | g = AA] = α f (1 - f) / ((1 - f)² + f²)`,
+`E[BAF | g = AA] = α f (1 - f) / ((1 - f)² + f²)`
 
-where `f` is the minor allele frequency. The identity holds for every `f ∈ [0, 1]`: `f ≤ 1/2`,
-which makes the allele coded `true` the minor one, is not needed. -/
+for the modelled BAF `baf`, where `f = gamete G true` is the minor allele frequency. The identity
+holds for every `f ∈ [0, 1]`: `f ≤ 1/2`, which makes the allele coded `true` the minor one, is not
+needed. -/
 theorem integral_baf_cond_minorAllele (α : ℝ) (G : PMF (Bool × Bool)) :
     ∫ x, baf α (toABGenotype x.1 x.2.1) (toABGenotype x.1 x.2.2)
         ∂((minorAlleleLaw G).toMeasure[|{x | toABGenotype x.1 x.2.1 = (false, false)}]) =
@@ -493,7 +506,8 @@ instance (G : PMF (Bool × Bool)) : IsMarkovKernel (callLikelihood G) :=
 /-- **Probability that the target is `AA` when `B` is the minor allele**: if the target's
 genotype follows the Hardy–Weinberg proportions `offspring G`, then its genotype `g` in `A`/`B`
 labels satisfies `P(g = AA | B minor) = (1 - f)²`, the proportion of the major homozygote, where
-`1 - f = gamete G false` is the major allele frequency. -/
+`1 - f = gamete G false` is the major allele frequency (the frequency of the allele coded `false`
+for every `G`). -/
 theorem callLikelihood_true_homA (G : PMF (Bool × Bool)) :
     callLikelihood G true {(false, false)} = gamete G false ^ 2 := by
   change ((offspring G).map (toABGenotype true)).toMeasure {(false, false)} = _
@@ -503,7 +517,8 @@ theorem callLikelihood_true_homA (G : PMF (Bool × Bool)) :
 /-- **Probability that the target is `AA` when `A` is the minor allele**: if the target's
 genotype follows the Hardy–Weinberg proportions `offspring G`, then its genotype `g` in `A`/`B`
 labels satisfies `P(g = AA | A minor) = f²`, the proportion of the minor homozygote, where
-`f = gamete G true` is the minor allele frequency. -/
+`f = gamete G true` is the minor allele frequency (the frequency of the allele coded `true` for
+every `G`). -/
 theorem callLikelihood_false_homA (G : PMF (Bool × Bool)) :
     callLikelihood G false {(false, false)} = gamete G true ^ 2 := by
   change ((offspring G).map (toABGenotype false)).toMeasure {(false, false)} = _
@@ -514,8 +529,8 @@ theorem callLikelihood_false_homA (G : PMF (Bool × Bool)) :
 2012), by Bayes' rule: with the label `B` on the minor allele with prior probability `1/2` and the
 target's genotype in Hardy–Weinberg proportions, the posterior probability, under Mathlib's
 posterior kernel, that `B` is the minor allele given that the target's genotype `g`, in `A`/`B`
-labels, is `AA` is `P(B minor | g = AA) = (1 - f)² / ((1 - f)² + f²)`, where `f` is the minor
-allele frequency. -/
+labels, is `AA` is `P(B minor | g = AA) = (1 - f)² / ((1 - f)² + f²)`, where `f = gamete G true`
+is the minor allele frequency (the frequency of the allele coded `true` for every `G`). -/
 theorem posterior_callLikelihood_homA (G : PMF (Bool × Bool)) :
     (((callLikelihood G)†(PMF.uniformFintype Bool).toMeasure) (false, false)).real {true} =
       (1 - (gamete G true).toReal) ^ 2 /

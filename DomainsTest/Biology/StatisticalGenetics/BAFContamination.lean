@@ -14,7 +14,7 @@ import Mathlib.Tactic.NormNum
 /-!
 # Tests for the B-allele-frequency regression estimator of contamination
 
-* BAF values of clean and contaminated samples.
+* Modelled BAF values of clean and contaminated samples.
 * The conditional mean `α p_B` at `AA` markers for population frequency `p_B = 1/4`, and the
   page's remark: when `B` is always the minor allele, with `f = 1/4`, the conditional mean is
   `α / 4`, not the minor-allele value `3 α / 10`.
@@ -35,14 +35,14 @@ open scoped ENNReal NNReal
 
 namespace DomainsTest.Biology.StatisticalGenetics.BAFContamination
 
-/-! ### BAF values -/
+/-! ### Modelled BAF values -/
 
-/-- A clean heterozygous sample has BAF `1/2`, whatever the second genotype. -/
+/-- A clean heterozygous sample has modelled BAF `1/2`, whatever the second genotype. -/
 example (g₂ : Bool × Bool) : baf 0 (false, true) g₂ = 1 / 2 := by
   rw [baf_eq]
   simp [countB]
 
-/-- An `AA` target with 10% of its DNA from a `BB` contaminant has BAF `1/10`. -/
+/-- An `AA` target with 10% of its DNA from a `BB` contaminant has modelled BAF `1/10`. -/
 example : baf (1 / 10) (false, false) (true, true) = 1 / 10 := by
   rw [baf_eq]
   norm_num [countB]
@@ -150,7 +150,7 @@ theorem isUnit_gram_designMatrix_ex :
   simp
   norm_num
 
-/-- On this design the regression recovers the contamination level from noiseless BAF values on
+/-- On this design the regression recovers the contamination level from noiseless responses on
 the line `1 + α p - 1(g = AA)` of the conditional means. -/
 example (α : ℝ) :
     contaminationEstimate callsEx freqsEx (designMatrix callsEx freqsEx *ᵥ ![1, α, -1]) = α :=
