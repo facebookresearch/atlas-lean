@@ -9,5 +9,6 @@ Resolution-based calculi for quantified Boolean formulas, strategy extraction an
 - [Q-resolution and its long-distance and universal variants](q-resolution-calculi.md)
 - [QCDCL and Q-resolution are incomparable](qcdcl-and-q-resolution-incomparable.md)
 - [QCDCL proof systems](qcdcl-proof-systems.md)
+- [QCDCL without reduction polynomially simulates Q-resolution](qcdcl-without-reduction-p-simulates-q-resolution.md)
 - [Strategy extraction from Q-resolution refutations](strategy-extraction-from-q-resolution.md)
 - [Every QBF lower bound comes from circuits, resolution, or genuine QBF hardness](trichotomy-of-qbf-lower-bounds.md)

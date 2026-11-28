@@ -8,7 +8,7 @@ This improves the $O(n^4 |\pi|)$ bound of Pipatsrisawat and Darwiche (compare [c
 
 ## Expansion
 
-Process $\pi$ clause by clause. A clause $C$ is **unreliable** for the current clause database if some natural trail propagates a literal $\ell \in C$ while its set of decision literals is a subset of the negations of the other literals of $C$, that is, $\alpha \subseteq \overline{C} \setminus \{\overline{\ell}\}$; otherwise $C$ is **reliable**. Unreliability needs one such literal, whereas a clause absorbed in the sense of Pipatsrisawat and Darwiche has every literal propagated in this way. If the next clause of $\pi$ is already unreliable, nothing is done. Otherwise one decides the negations of its literals; since it is reliable, these decisions do not block each other, unit propagation runs into a conflict (using the unreliability of its two premises), and the learned asserting clause makes progress. After $O(n^3)$ trail steps the clause becomes unreliable, and one restarts. The empty clause can never become unreliable, so at the latest when $\pi$ reaches $\bot$ the CDCL run learns $\bot$. This is the case of the quantified simulation (Theorem 6.9 of the source, item 2 of the linked QCDCL page) in which every variable is existential: Q-resolution is then resolution, the decision condition imposes no extra restriction, universal reduction is vacuous, and the bound is $O(n^3 |\pi|)$. The constructive variant of Atserias, Fichte and Thurley shows that random decisions suffice when $\phi$ has a refutation of small width.
+Process $\pi$ clause by clause. A clause $C$ is **unreliable** for the current clause database if some natural trail propagates a literal $\ell \in C$ while its set of decision literals is a subset of the negations of the other literals of $C$, that is, $\alpha \subseteq \overline{C} \setminus \{\overline{\ell}\}$; otherwise $C$ is **reliable**. Unreliability needs one such literal, whereas a clause absorbed in the sense of Pipatsrisawat and Darwiche has every literal propagated in this way. If the next clause of $\pi$ is already unreliable, nothing is done. Otherwise one decides the negations of its literals; since it is reliable, these decisions do not block each other, unit propagation runs into a conflict (using the unreliability of its two premises), and the learned asserting clause makes progress. After $O(n^3)$ trail steps the clause becomes unreliable, and one restarts. The empty clause can never become unreliable, so at the latest when $\pi$ reaches $\bot$ the CDCL run learns $\bot$. This is the case of the quantified simulation (Theorem 6.9 of the source, stated on [QCDCL without reduction polynomially simulates Q-resolution](../qbf-proof-complexity/qcdcl-without-reduction-p-simulates-q-resolution.md)) in which every variable is existential: Q-resolution is then resolution, the decision condition imposes no extra restriction, universal reduction is vacuous, and the bound is $O(n^3 |\pi|)$. The constructive variant of Atserias, Fichte and Thurley shows that random decisions suffice when $\phi$ has a refutation of small width.
 
 ## Depends on
 
@@ -17,7 +17,7 @@ Process $\pi$ clause by clause. A clause $C$ is **unreliable** for the current c
 
 ## Proof depends on
 
-- [QCDCL and Q-resolution are incomparable](../qbf-proof-complexity/qcdcl-and-q-resolution-incomparable.md)
+- [QCDCL without reduction polynomially simulates Q-resolution](../qbf-proof-complexity/qcdcl-without-reduction-p-simulates-q-resolution.md)
 
 ## Sources
 

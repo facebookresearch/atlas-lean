@@ -16,7 +16,7 @@ Simulating CP by facelike SP is the standard simulation: each Chvátal-Gomory cu
 
 ## Proof depends on
 
-- [Stabbing planes simulate cutting planes and equal tree-like R(CP)](../../stabbing-planes-and-semi-algebraic-branching/sp-simulates-cutting-planes.md)
+None.
 
 ## Sources
 
