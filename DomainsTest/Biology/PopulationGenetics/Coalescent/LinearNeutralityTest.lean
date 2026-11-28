@@ -19,8 +19,9 @@ A witness with a genuinely random spectrum for three sequences (a `Po(2)` count 
 and one doubleton, the neutral means for `θ = 1 / 2` per base and length `L = 4`), on which the
 test of the weights `(1, -1)` is `(ξ₁ - 2) / √2`, centred and of variance `1`; the
 characterization of centred, unit-variance linear statistics on it; rescaled weights; the two
-forms of Fay and Wu's weights for four sequences; junk values; the cutoff example (the centred
-weights of `2 (1 - f) - c / f` change sign with `c`, the normalized ones do not depend on `c`);
+forms of Fay and Wu's weights for four sequences; junk values; the cutoff example (for four
+sequences, the centred weights of `2 (1 - f) - c / f` for the cutoffs `N = 100` and `N = 10⁴` are
+not multiples of each other, the normalized ones do not depend on `c`);
 and the `O(1 / n)` bounds for Fay and Wu's weight functions and for a weight function with a
 jump.
 -/
@@ -30,10 +31,10 @@ jump.
 open MeasureTheory ProbabilityTheory Finset
 open scoped NNReal
 
-namespace MathlibExtTest.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest
+namespace DomainsTest.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest
 
 open MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS
-open MathlibExt.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest
+open Domains.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest
 
 /-! ### A Poisson witness for three sequences -/
 
@@ -179,37 +180,40 @@ example (w' : ℝ → ℝ) (i : ℕ) :
 
 /-! ### The cutoff of a divergent weight function -/
 
-/-- For `n = 3`, the first centred weights of `2 (1 - f) - c / f` for `c = 1 / 4` and `c = 1`
-(`centredWeights_tajima_watterson_three_one`). -/
-example : centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 1 = 7 / 48 ∧
-    centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 1 = -5 / 12 := by
-  rw [centredWeights_tajima_watterson_three_one, centredWeights_tajima_watterson_three_one]
-  norm_num
-
-/-- The second centred weight is the negative of the first, as for any centred weights with
-`n = 3`. -/
+/-- For `n = 3` every centred weight vector is a multiple of `(1, -1)`: the second centred
+weight is the negative of the first. So three sequences are too few for the centred test to
+depend on the cutoff in more than its sign. -/
 example (c : ℝ) : centredWeights (fun f => 2 * (1 - f) - c / f) 3 2 =
     -centredWeights (fun f => 2 * (1 - f) - c / f) 3 1 := by
   have h := sum_centredWeights (fun f => 2 * (1 - f) - c / f) (n := 3) (by norm_num)
   rw [Ico_one_three, sum_pair (by norm_num)] at h
   linarith
 
-/-- So the weight vectors for `c = 1 / 4` and `c = 1` are related by no positive factor
-(`not_exists_centredWeights_three_eq_const_mul`), and in fact by the factor `-20 / 7`. -/
-example : (¬ ∃ a : ℝ, 0 < a ∧ ∀ i ∈ Ico 1 3,
-      centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 i =
-        a * centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 i) ∧
-    centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 1 =
-      -20 / 7 * centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 1 := by
-  refine ⟨not_exists_centredWeights_three_eq_const_mul, ?_⟩
-  rw [centredWeights_tajima_watterson_three_one, centredWeights_tajima_watterson_three_one]
+/-- For `n = 4`, the centred weights for `c = 0` (no Watterson term, Tajima's `θ_π` alone) and
+`c = 1 / 4` (`centredWeights_tajima_watterson_four`). -/
+example : centredWeights (fun f => 2 * (1 - f) - 0 / f) 4 1 = 1 / 2 ∧
+    centredWeights (fun f => 2 * (1 - f) - 0 / f) 4 2 = 0 ∧
+    centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 4 1 = 1 / 9 ∧
+    centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 4 3 = -2 / 9 := by
+  obtain ⟨h1, h2, -⟩ := centredWeights_tajima_watterson_four 0
+  obtain ⟨h1', -, h3'⟩ := centredWeights_tajima_watterson_four (1 / 4)
+  rw [h1, h2, h1', h3']
   norm_num
+
+/-- For `n = 4`, the cutoffs `N = 100` and `N = 10⁴`, well above the sample size, give centred
+weights that are not multiples of each other (`not_exists_centredWeights_four_eq_const_mul`). -/
+example : ¬ ∃ a : ℝ, ∀ i ∈ Ico 1 4,
+    centredWeights (fun f => 2 * (1 - f) - (Real.log 100)⁻¹ / f) 4 i =
+      a * centredWeights (fun f => 2 * (1 - f) - (Real.log 10000)⁻¹ / f) 4 i := by
+  refine not_exists_centredWeights_four_eq_const_mul (ne_of_gt ?_)
+  exact (inv_lt_inv₀ (Real.log_pos (by norm_num)) (Real.log_pos (by norm_num))).2
+    (Real.log_lt_log (by norm_num) (by norm_num))
 
 /-- The normalized weights do not depend on `c ≠ 0` (`normalizedWeights_const_mul`). -/
 example (c : ℝ) (hc : c ≠ 0) :
-    normalizedWeights (fun f => 2 * (1 - f)) (fun f => c * f⁻¹) 3 =
-      normalizedWeights (fun f => 2 * (1 - f)) (fun f => f⁻¹) 3 := by
-  simpa using normalizedWeights_const_mul (n := 3) (fun f => 2 * (1 - f)) (fun f => f⁻¹)
+    normalizedWeights (fun f => 2 * (1 - f)) (fun f => c * f⁻¹) 4 =
+      normalizedWeights (fun f => 2 * (1 - f)) (fun f => f⁻¹) 4 := by
+  simpa using normalizedWeights_const_mul (n := 4) (fun f => 2 * (1 - f)) (fun f => f⁻¹)
     one_ne_zero hc
 
 /-! ### The `O(1 / n)` bounds -/
@@ -271,4 +275,4 @@ example : ∃ C : ℝ, ∀ n : ℕ, 2 ≤ n → ∀ i : ℕ,
     unfold stepW
     split_ifs <;> norm_num) integral_stepW
 
-end MathlibExtTest.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest
+end DomainsTest.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest

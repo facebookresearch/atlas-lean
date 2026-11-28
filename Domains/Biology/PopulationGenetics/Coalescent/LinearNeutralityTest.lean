@@ -60,12 +60,12 @@ Ramos-Onsins, Marmorini, Achaz and Ferretti (2023, Sections 1, 2.1 and 2.2):
 * `exists_linearNeutralityTest_eq_iff`: a linear statistic of the spectrum has mean `0` and
   variance `1` exactly when it is a test `T_W` with `∑_i W_i = 0`.
 * `linearNeutralityTest_const_mul`: weights rescaled by a factor `c > 0` give the same test.
-* `integral_thetaWeighted_div`, `linearNeutralityTest_sub`: the test of `w - w'` is the
-  standardized difference of two unbiased estimators of `θ`.
+* `linearNeutralityTest_sub`: the test of `w - w'` is the standardized difference of two
+  estimators of `θ`, unbiased by `VariableSFS.integral_thetaWeighted`.
 * `sum_centredWeights`, `sum_normalizedWeights`: both forms of the weights sum to `0`.
 * `exists_abs_centredWeights_sub_le`, `exists_abs_mul_normalizedWeights_sub_le`,
   `exists_abs_mul_normalizedWeights_sub_centredWeights_le`: the `O(1 / n)` bounds.
-* `normalizedWeights_const_mul`, `not_exists_centredWeights_three_eq_const_mul`: the normalized
+* `normalizedWeights_const_mul`, `not_exists_centredWeights_four_eq_const_mul`: the normalized
   form ignores constant factors, such as the cutoff of a divergent weight function, and the
   centred form does not.
 * `linearNeutralityTest_fayWuH`: Fay and Wu's `H` in both forms.
@@ -84,9 +84,11 @@ with the centred weights, and multiplying the weights by `n` does not change the
 Watterson's weight function `1 / (f log N)` is not of bounded variation on `[0, 1]`. What is
 proved for it is the invariance `normalizedWeights_const_mul`, through which the cutoff `N`
 drops out of the normalized weights. The centred weights of `w - c w'` have no such invariance:
-for `n = 3`, `w(f) = 2 (1 - f)` (Tajima's `θ_π`) and `w'(f) = 1 / f` (Watterson's estimator), the
-first of them is `1 / 3 - 3 c / 4` (`centredWeights_tajima_watterson_three_one`), whose sign
-depends on `c` (`not_exists_centredWeights_three_eq_const_mul`).
+for `n = 4`, `w(f) = 2 (1 - f)` (Tajima's `θ_π`) and `w'(f) = 1 / f` (Watterson's estimator), two
+different values of `c` give centred weights that are not multiples of each other
+(`centredWeights_tajima_watterson_four`, `not_exists_centredWeights_four_eq_const_mul`). Three
+sequences are too few for such an example: every centred weight vector for `n = 3` is a multiple
+of `(1, -1)`.
 
 ## References
 
@@ -105,9 +107,12 @@ open MeasureTheory ProbabilityTheory Finset
 
 noncomputable section
 
-namespace MathlibExt.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest
+namespace Domains.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest
 
-open SiteFrequencySpectrum VariableSFS SFSCovariance
+open MathlibExt.Biology.PopulationGenetics.Coalescent
+open MathlibExt.Biology.PopulationGenetics.Coalescent.SiteFrequencySpectrum
+open MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS
+open MathlibExt.Biology.PopulationGenetics.Coalescent.SFSCovariance
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω}
 
@@ -262,20 +267,12 @@ theorem linearNeutralityTest_const_mul {c : ℝ} (hc : 0 < c) (W : ℕ → ℝ) 
   simp only [thetaWeighted, mul_sum]
   exact sum_congr rfl fun i _ => by ring
 
-/-- **Unbiased weighted estimators** (Achaz 2009; Ramos-Onsins et al. 2023, Eqs. (5)–(6)): if
-each `ξ i` is integrable with the neutral mean `E ξ_i = θ L / i` for `1 ≤ i ≤ n - 1` and
-`L ≠ 0`, the estimator `θ̂_w = L⁻¹ ∑_{i=1}^{n-1} i w_i ξ_i` with `∑_{i=1}^{n-1} w_i = 1` has mean
-`θ` (`VariableSFS.integral_thetaWeighted` for the rate `θ L` of the whole sequence). -/
-theorem integral_thetaWeighted_div (hξ_int : ∀ i, Integrable (ξ i) μ) {θ L : ℝ} (hL : L ≠ 0)
-    (hξ : ∀ i ∈ Ico 1 n, μ[ξ i] = θ * L / i) {w : ℕ → ℝ} (hw : ∑ i ∈ Ico 1 n, w i = 1) :
-    μ[fun ω => thetaWeighted n w ξ ω / L] = θ := by
-  rw [integral_div, integral_thetaWeighted hξ_int hξ hw, mul_div_cancel_right₀ _ hL]
-
 /-- **A test from two estimators** (Ramos-Onsins et al. 2023, Eq. (7)): for a sequence length
 `L > 0` and weights `w`, `w'`, the test with weights `W_i = w_i - w'_i` is the standardized
 difference `(θ̂_w - θ̂_w') / √Var_μ(θ̂_w - θ̂_w')` of the estimators
 `θ̂_w = L⁻¹ ∑_{i=1}^{n-1} i w_i ξ_i` and `θ̂_w'`. When `∑_i w_i = ∑_i w'_i = 1` these are unbiased
-estimators of `θ` under the neutral means (`integral_thetaWeighted_div`), and the weights
+estimators of `θ` under the neutral means `E ξ_i = θ L / i` (`VariableSFS.integral_thetaWeighted`
+applied to the rate `θ L` of the whole sequence gives `E[L θ̂_w] = θ L`), and the weights
 `w_i - w'_i` sum to `0`. -/
 theorem linearNeutralityTest_sub {L : ℝ} (hL : 0 < L) (w w' : ℕ → ℝ) :
     linearNeutralityTest μ n (fun i => w i - w' i) ξ =
@@ -338,32 +335,44 @@ theorem normalizedWeights_const_mul (w w' : ℝ → ℝ) {c c' : ℝ} (hc : c �
   funext i
   simp only [normalizedWeights, ← mul_sum, mul_div_mul_left _ _ hc, mul_div_mul_left _ _ hc']
 
-/-- For `n = 3`, the first centred weight of `2 (1 - f) - c / f`, Tajima's weight function
-`2 (1 - f)` (of `θ_π`) against Watterson's weight function `1 / f` scaled by `c`, is
-`1 / 3 - 3 c / 4`. With the cutoff at the inverse population size `1 / N`, Watterson's weight
-function is `1 / (f log N)`, so `c = 1 / log N`. -/
-theorem centredWeights_tajima_watterson_three_one (c : ℝ) :
-    centredWeights (fun f => 2 * (1 - f) - c / f) 3 1 = 1 / 3 - 3 * c / 4 := by
-  simp only [centredWeights, show (Ico 1 3 : Finset ℕ) = {1, 2} by decide]
-  rw [sum_pair (by norm_num)]
-  norm_num
-  ring
+/-- For `n = 4`, the centred weights of `2 (1 - f) - c / f`, Tajima's weight function
+`2 (1 - f)` (of `θ_π`) against Watterson's weight function `1 / f` scaled by `c`, are
+`(1 / 2 - 14 c / 9, 4 c / 9, -1 / 2 + 10 c / 9)`. With the cutoff at the inverse population
+size `1 / N`, Watterson's weight function is `1 / (f log N)`, so `c = 1 / log N`. -/
+theorem centredWeights_tajima_watterson_four (c : ℝ) :
+    centredWeights (fun f => 2 * (1 - f) - c / f) 4 1 = 1 / 2 - 14 * c / 9 ∧
+      centredWeights (fun f => 2 * (1 - f) - c / f) 4 2 = 4 * c / 9 ∧
+      centredWeights (fun f => 2 * (1 - f) - c / f) 4 3 = -1 / 2 + 10 * c / 9 := by
+  have hI : (Ico 1 4 : Finset ℕ) = {1, 2, 3} := by decide
+  refine ⟨?_, ?_, ?_⟩ <;>
+  · simp only [centredWeights, hI]
+    rw [sum_insert (by decide), sum_pair (by norm_num)]
+    norm_num
+    ring
 
-/-- **The centred weights depend on the cutoff** (Ramos-Onsins et al. 2023, Section 2.2.2):
-for `n = 3`, the centred weights of `2 (1 - f) - c / f` for `c = 1 / 4` and for `c = 1` are
-related by no positive factor, which would leave the test unchanged
-(`linearNeutralityTest_const_mul`): their first entries `7 / 48` and `-5 / 12` have opposite
-signs (`centredWeights_tajima_watterson_three_one`). The normalized weights of `2 (1 - f)` and
-`c / f` do not depend on `c ≠ 0` (`normalizedWeights_const_mul`), so of the two forms only the
-normalized one avoids the dependence on the cutoff `N` in `c = 1 / log N`. -/
-theorem not_exists_centredWeights_three_eq_const_mul :
-    ¬ ∃ a : ℝ, 0 < a ∧ ∀ i ∈ Ico 1 3,
-      centredWeights (fun f => 2 * (1 - f) - 1 / f) 3 i =
-        a * centredWeights (fun f => 2 * (1 - f) - (1 / 4) / f) 3 i := by
-  rintro ⟨a, ha, h⟩
-  have h1 := h 1 (by decide)
-  rw [centredWeights_tajima_watterson_three_one, centredWeights_tajima_watterson_three_one] at h1
-  nlinarith
+/-- **The centred weights depend on the cutoff** (Ramos-Onsins et al. 2023, Section 2.2.2): for
+`n = 4` and `c ≠ c'`, the centred weights of `2 (1 - f) - c / f` and of `2 (1 - f) - c' / f`
+are related by no factor (by `centredWeights_tajima_watterson_four`, the second entries give
+`c = a c'` for a factor `a`, and then the first entries give `a = 1`), in particular by no
+positive factor, which would leave the test unchanged (`linearNeutralityTest_const_mul`). So
+two different cutoffs `N` in `c = 1 / log N` give centred weights that are not positive
+multiples of each other, whereas the normalized weights of `2 (1 - f)` and `c / f` do not
+depend on `c ≠ 0` (`normalizedWeights_const_mul`): of the two forms, only the normalized one
+avoids the dependence on the cutoff. -/
+theorem not_exists_centredWeights_four_eq_const_mul {c c' : ℝ} (h : c ≠ c') :
+    ¬ ∃ a : ℝ, ∀ i ∈ Ico 1 4,
+      centredWeights (fun f => 2 * (1 - f) - c / f) 4 i =
+        a * centredWeights (fun f => 2 * (1 - f) - c' / f) 4 i := by
+  rintro ⟨a, ha⟩
+  obtain ⟨h1, h2, -⟩ := centredWeights_tajima_watterson_four c
+  obtain ⟨h1', h2', -⟩ := centredWeights_tajima_watterson_four c'
+  have e1 := ha 1 (by decide)
+  have e2 := ha 2 (by decide)
+  rw [h1, h1'] at e1
+  rw [h2, h2'] at e2
+  have hc : c = a * c' := by linear_combination (9 / 4) * e2
+  have ha1 : a = 1 := by linear_combination (-2) * e1 - (28 / 9) * hc
+  exact h (by rw [hc, ha1, one_mul])
 
 /-! ### The `O(1 / n)` bounds -/
 
@@ -610,4 +619,4 @@ theorem linearNeutralityTest_fayWuH (hn : 2 ≤ n) :
     simp only [centredWeights, hs3, hC, zero_div, sub_zero]
     field_simp
 
-end MathlibExt.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest
+end Domains.Biology.PopulationGenetics.Coalescent.LinearNeutralityTest
