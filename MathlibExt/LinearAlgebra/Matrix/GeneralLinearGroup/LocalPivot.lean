@@ -34,10 +34,10 @@ open Finset
 variable {n : Type*} [DecidableEq n] [Fintype n]
 variable {R : Type*} [CommRing R] [IsLocalRing R]
 
-/-- Every column of `GL n R` over a commutative local ring contains a unit entry.
-
-Uses `(j,j)` entry of `g⁻¹ * g = 1`, `Matrix.mul_apply`, `IsLocalRing.exists_of_isUnit_sum`
-and `IsUnit.mul_iff` via `isUnit_of_mul_isUnit_right`. -/
+/-- **A unit entry in every invertible column over a local ring.** Let R be a
+commutative local ring and n a finite nonempty index type with decidable equality.
+For g∈GL n R and j∈n, there exists i∈n such that the matrix entry gᵢⱼ is a unit
+of R. -/
 theorem exists_isUnit_entry_in_column [Nonempty n] (g : GL n R) (j : n) :
     ∃ i, IsUnit ((↑g : Matrix n n R) i j) := by
   classical
@@ -70,9 +70,11 @@ theorem exists_isUnit_entry_in_column [Nonempty n] (g : GL n R) (j : n) :
     (f := fun i => (↑g⁻¹ : Matrix n n R) j i * (↑g : Matrix n n R) i j) h_isUnit_univ
   exact ⟨i, isUnit_of_mul_isUnit_right hi⟩
 
-/-- Make the `(j,j)` entry unit by left-multiplying with an element of the
-elementary subgroup: if the diagonal is already a unit use `1`, otherwise add a
-row containing a unit entry with a single elementary matrix. -/
+/-- **An elementary diagonal pivot over a commutative local ring.** Let R be a
+commutative local ring and n a finite nonempty index type with decidable equality.
+For g∈GL n R and j∈n, there exists e in the elementary subgroup such that
+(e*g)ⱼⱼ is a unit. If gⱼⱼ is already a unit take e=1; otherwise one elementary
+transvection adds a row whose column-j entry is a unit to row j. -/
 theorem exists_elementary_mul_isUnit_entry [Nonempty n] (g : GL n R) (j : n) :
     ∃ e, e ∈ elementarySubgroup n R ∧
       IsUnit ((↑(e * g) : Matrix n n R) j j) := by

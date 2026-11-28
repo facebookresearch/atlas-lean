@@ -1,8 +1,8 @@
 # Contraction and left exterior multiplication
 
-- [Wedge Left](wedge-left.md)
-- [Wedge Left apply ιMulti](wedge-left-apply-multi.md)
-- [Wedge Left apply coe](wedge-left-apply-coe.md)
-- [Map comp wedge Left](map-comp-wedge-left.md)
-- [Contract Left comp wedge Left add wedge Left comp contract Left](contract-left-comp-wedge-left-add-wedge.md)
-- [Contract Left comp wedge Left zero](contract-left-comp-wedge-left-zero.md)
+- [Left exterior multiplication over a commutative ring](wedge-left.md)
+- [Wedge prepends a vector to a pure exterior product](wedge-left-apply-multi.md)
+- [Left wedge agrees with multiplication in the exterior algebra](wedge-left-apply-coe.md)
+- [Naturality of left exterior multiplication](map-comp-wedge-left.md)
+- [Cartan contraction identity over a commutative ring](contract-left-comp-wedge-left-add-wedge.md)
+- [Degree-zero contraction and wedge identity](contract-left-comp-wedge-left-zero.md)

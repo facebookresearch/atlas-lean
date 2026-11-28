@@ -1,3 +1,3 @@
 # Least Index
 
-Least element via `min' univ`.
+The least element of a nonempty finite linearly ordered index set.

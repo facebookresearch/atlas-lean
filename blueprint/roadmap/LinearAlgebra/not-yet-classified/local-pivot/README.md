@@ -1,4 +1,4 @@
 # Local Pivot
 
-- [Exists is Unit entry in column](exists-is-unit-entry-in-column.md)
-- [Exists elementary mul is Unit entry](exists-elementary-mul-is-unit-entry.md)
+- [A unit entry in every invertible column over a local ring](exists-is-unit-entry-in-column.md)
+- [An elementary diagonal pivot over a commutative local ring](exists-elementary-mul-is-unit-entry.md)

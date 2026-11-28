@@ -15,16 +15,18 @@ public import MathlibExt.LinearAlgebra.Matrix.GeneralLinearGroup.UpperElementary
 public import MathlibExt.LinearAlgebra.Matrix.GeneralLinearGroup.Map
 
 /-!
-# Canonical bottommost pivot and least column
+# Canonical pivots on finite ordered matrix indices
 
-Selection (Ring): `columnSupport`, `pivotRow = max'`, `IsGreatest`,
-vanishing, naturality under injective `f`.
+For an invertible matrix over a ring and a finite index set, `columnSupport`
+records the nonzero rows of a chosen column. Over a nontrivial ring, this
+support is nonempty; a linear order then supplies its greatest element,
+`pivotRow`. A nonempty finite linear order also has a least column,
+`leastIndex`, which is preserved by order isomorphisms.
 
-Least column: `leastIndex = min' univ`, `IsLeast`, order-iso.
-
-Division: `canonicalPivotClearedAt g c = pivotCleared M r c _`,
-column/row isolation, `canonicalPivotCleared` at `leastIndex`,
-naturality via `pivotCleared_map` and injectivity of division homs.
+Over a division ring, clearing about `pivotRow` isolates the chosen column.
+When that column is least, it also isolates the pivot row. Clearing commutes
+with division-ring homomorphisms. Column support commutes with injective
+ring homomorphisms, as does pivot selection between nontrivial rings.
 -/
 
 @[expose] public section
@@ -40,7 +42,9 @@ section ColumnSupport
 variable {ι : Type u} [DecidableEq ι] [Fintype ι]
 variable {R : Type v} [Ring R]
 
-/-- Rows with nonzero entry in column `c`. No `DecidableEq R`. -/
+/-- For an invertible matrix over a ring indexed by a finite set, the
+finite set of rows with a nonzero entry in column `c`. Coefficient equality
+is decided classically. -/
 noncomputable def columnSupport (g : GL ι R) (c : ι) : Finset ι :=
   haveI : DecidablePred (fun i : ι => (g : Matrix ι ι R) i c ≠ 0) :=
     Classical.decPred _
@@ -86,7 +90,8 @@ section PivotRow
 variable {ι : Type u} [DecidableEq ι] [Fintype ι] [LinearOrder ι]
 variable {R : Type v} [Ring R] [Nontrivial R]
 
-/-- Bottommost nonzero row in column `c`. -/
+/-- For an invertible matrix over a nontrivial ring indexed by a finite
+linear order, the greatest row with a nonzero entry in the chosen column `c`. -/
 noncomputable def pivotRow (g : GL ι R) (c : ι) : ι :=
   (columnSupport g c).max' (columnSupport_nonempty g c)
 
@@ -175,7 +180,7 @@ section LeastIndex
 
 variable {ι : Type u} [DecidableEq ι] [Fintype ι] [LinearOrder ι] [Nonempty ι]
 
-/-- Least element via `min' univ`. -/
+/-- The least element of a nonempty finite linearly ordered index set. -/
 noncomputable def leastIndex : ι :=
   Finset.univ.min' Finset.univ_nonempty
 
@@ -261,7 +266,9 @@ private theorem pivotCleared_congr' (M : Matrix ι ι K) {r1 r2 c : ι}
   cases h
   exact pivotCleared_congr_same M hp1 hp2
 
-/-- Clearing at column `c` using bottommost pivot. -/
+/-- For an invertible matrix over a division ring indexed by a finite
+linear order, clear column `c` about its greatest nonzero row. The column
+is isolated; the pivot row is also isolated when `c` is least. -/
 noncomputable def canonicalPivotClearedAt (g : GL ι K) (c : ι) :
     Matrix ι ι K :=
   pivotCleared (↑g : Matrix ι ι K) (pivotRow g c) c (pivotRow_ne_zero g c)
@@ -287,7 +294,9 @@ theorem canonicalPivotClearedAt_pivot (g : GL ι K) (c : ι) :
   exact pivotCleared_pivot _ _ _ _
 
 variable [Nonempty ι] in
-/-- Clearing at `leastIndex`. -/
+/-- For an invertible matrix over a division ring indexed by a nonempty
+finite linear order, clear at the least column, isolating that column and
+its greatest nonzero row. -/
 noncomputable def canonicalPivotCleared (g : GL ι K) : Matrix ι ι K :=
   canonicalPivotClearedAt (K := K) g (leastIndex (ι := ι))
 

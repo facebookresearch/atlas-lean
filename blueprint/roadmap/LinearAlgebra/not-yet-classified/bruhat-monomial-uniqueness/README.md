@@ -1,5 +1,15 @@
 # Bruhat Monomial Uniqueness
 
+For matrices over a field indexed by a finite linear order, two equal
+factorizations with upper-elementary left and right factors have the same
+monomial middle factor, including its permutation and unit weights.
+
+A preliminary algebraic rearrangement works for arbitrary invertible outer
+factors. In the uniqueness arguments, the upper-elementary condition supplies
+triangularity and diagonal entries equal to one. The earlier triangular
+matrix lemmas use a ring, and the bundled upper-unitriangular subgroup uses
+a commutative ring.
+
 ## Upper Triangular Ring
 
 - [Elementary is Upper Triangular](elementary-is-upper-triangular.md)

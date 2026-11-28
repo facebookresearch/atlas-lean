@@ -31,7 +31,9 @@ open Matrix.GeneralLinearGroup
 variable {ι : Type*} [DecidableEq ι] [Fintype ι]
 variable {F : Type*} [Field F]
 
-/-- Equivalence between `Fin 1 ⊕ Fin 1` and `{k // k = i ∨ k = j}` for distinct `i j`. -/
+/-- **Two marked indices as two singleton summands.** Let ι be an index type with
+decidable equality and i,j∈ι with i≠j. The union of these two indices is
+equivalent to Fin 1⊕Fin 1. No field or finiteness assumption is required. -/
 def twoEquiv {i j : ι} (hij : i ≠ j) :
     Fin 1 ⊕ Fin 1 ≃ {k : ι // k = i ∨ k = j} where
   toFun
@@ -54,8 +56,10 @@ def twoEquiv {i j : ι} (hij : i ≠ j) :
         · rfl
       subst hk'; simp [h]
 
-/-- The pair-plus-complement equivalence `(Fin 2 ⊕ {k // ¬(k = i ∨ k = j)}) ≃ ι`
-    using `Equiv.sumCompl`. -/
+/-- **Two marked indices and their complement exhaust the index type.** Let ι be
+an index type with decidable equality and i,j∈ι with i≠j. There is an equivalence
+Fin 2⊕{k∈ι | k≠i and k≠j}≃ι sending the two marked coordinates to i and j.
+No field or finiteness assumption is required. -/
 def pairComplEquiv {i j : ι} (hij : i ≠ j) :
     Fin 2 ⊕ {k : ι // ¬(k = i ∨ k = j)} ≃ ι :=
   let p : ι → Prop := fun k => k = i ∨ k = j
@@ -64,7 +68,9 @@ def pairComplEquiv {i j : ι} (hij : i ≠ j) :
   (Equiv.sumCongr ePair (Equiv.refl _)).trans (Equiv.sumCompl p)
 
 omit [Fintype ι] in
-/-- `pairComplEquiv` sends `i` to `inl 0`. -/
+/-- **The first marked index returns to the first coordinate.** Let ι have
+decidable equality and i,j∈ι satisfy i≠j. The inverse of pairComplEquiv maps
+i to the Fin 2 summand's coordinate zero. No finiteness hypothesis is required. -/
 @[simp]
 theorem pairComplEquiv_symm_apply_i {i j : ι} (hij : i ≠ j) :
     (pairComplEquiv hij).symm i = Sum.inl (0 : Fin 2) := by
@@ -75,7 +81,9 @@ theorem pairComplEquiv_symm_apply_i {i j : ι} (hij : i ≠ j) :
   simp [pairComplEquiv, twoEquiv, finSumFinEquiv]
 
 omit [Fintype ι] in
-/-- `pairComplEquiv` sends `j` to `inl 1`. -/
+/-- **The second marked index returns to the second coordinate.** Let ι have
+decidable equality and i,j∈ι satisfy i≠j. The inverse of pairComplEquiv maps
+j to the Fin 2 summand's coordinate one. No finiteness hypothesis is required. -/
 @[simp]
 theorem pairComplEquiv_symm_apply_j {i j : ι} (hij : i ≠ j) :
     (pairComplEquiv hij).symm j = Sum.inl (1 : Fin 2) := by
@@ -85,7 +93,10 @@ theorem pairComplEquiv_symm_apply_j {i j : ι} (hij : i ≠ j) :
     Equiv.sumCompl_symm_apply_of_pos hpj
   simp [pairComplEquiv, twoEquiv, finSumFinEquiv, hij.symm]
 
-/-- The field diagonal `diag2n` with entries `a` and `a⁻¹` lies in the elementary subgroup. -/
+/-- **A two-coordinate inverse diagonal is elementary over a field.** Let F be a
+field, ι a finite index type with decidable equality, i,j∈ι with i≠j, and a∈F
+with a≠0. The diagonal with entries a at i, a⁻¹ at j, and one elsewhere belongs
+to the elementary subgroup of GL ι F. -/
 theorem toGL_diag2n_mem_elementarySubgroup {i j : ι} (hij : i ≠ j)
     (a : F) (ha : a ≠ 0) :
     (toGL (diag2n hij a ha) : Matrix.GeneralLinearGroup ι F) ∈
@@ -201,7 +212,10 @@ theorem toGL_diag2n_mem_elementarySubgroup {i j : ι} (hij : i ≠ j)
         simp [he, hD, d]
   rw [h_eq]
 
-/-- `diag2n` equals the reindexed `blockDiagonalOne` of `diag2`. -/
+/-- **A marked inverse diagonal is an identity-block extension.** Let F be a field,
+ι a finite index type with decidable equality, i,j∈ι with i≠j, and u∈Fˣ.
+The diagonal u,u⁻¹ at i,j and one elsewhere is the Fin 2 diagonal diag2,
+adjoined to the identity on the complementary indices and reindexed by pairComplEquiv. -/
 theorem toGL_diag2n_eq_reindex_blockDiagonalOne_diag2 {i j : ι} (hij : i ≠ j)
     (u : Fˣ) :
     (toGL (diag2n hij (u : F) u.ne_zero) : Matrix.GeneralLinearGroup ι F) =
@@ -283,7 +297,9 @@ private lemma toGL_transvection_eq_elementary {i j : Fin 2} (hij : i ≠ j) (a :
   apply Units.ext
   simp [Matrix.SpecialLinearGroup.transvection_coe]
 
-/-- The standard two-coordinate diagonal is the usual six elementary factors. -/
+/-- **Six transvections factor a two-dimensional inverse diagonal.** Let F be a
+field and u∈Fˣ. Write Eᵢⱼ(a)=I+a eᵢⱼ. In GL (Fin 2) F,
+diag(u,u⁻¹)=E₀₁(u)E₁₀(−u⁻¹)E₀₁(u)E₀₁(−1)E₁₀(1)E₀₁(−1), in that order. -/
 theorem toGL_diag2_eq_six_elementary (u : Fˣ) :
     (toGL (diag2 (u : F) u.ne_zero) : Matrix.GeneralLinearGroup (Fin 2) F) =
       Matrix.GeneralLinearGroup.elementary 0 1 zero_ne_one (u : F) *
@@ -298,7 +314,10 @@ theorem toGL_diag2_eq_six_elementary (u : Fˣ) :
     (diag2_decompose (u : F) u.ne_zero)
   simpa only [map_mul, toGL_transvection_eq_elementary] using h
 
-/-- Arbitrary-index `diag2n` equals six elementary factors. -/
+/-- **Six transvections factor a marked inverse diagonal.** Let F be a field,
+ι a finite index type with decidable equality, i,j∈ι with i≠j, and u∈Fˣ.
+With Eᵢⱼ(a)=I+a eᵢⱼ, the diagonal u,u⁻¹ at i,j and one elsewhere equals
+Eᵢⱼ(u)Eⱼᵢ(−u⁻¹)Eᵢⱼ(u)Eᵢⱼ(−1)Eⱼᵢ(1)Eᵢⱼ(−1), in the displayed order. -/
 theorem toGL_diag2n_eq_six_elementary {i j : ι} (hij : i ≠ j) (u : Fˣ) :
     (toGL (diag2n hij (u : F) u.ne_zero) : Matrix.GeneralLinearGroup ι F) =
       Matrix.GeneralLinearGroup.elementary i j hij (u : F) *

@@ -12,7 +12,19 @@ Author: @toskua, Avocado
 module
 
 public import MathlibExt.GroupTheory.PermutationSchurCocycle
+/-!
+# Tits and Schur formulas on finite monomial groups
 
+Let `A` be an abelian multiplicative group, `B` an abelian additive group,
+and `b` a skew bicharacter from `A` to `B`. The raw Tits formula on
+`Aⁿ ⋊ Sₙ` is defined for every `eps : A`. Its normalization and cocycle
+theorems assume `eps * eps = 1`.
+
+Adding the permutation Schur cocycle uses a coefficient `z : B` with
+`2 • z = 0`. Under the same involution hypothesis on `eps`, both formulas
+give normalized central cocycles with coefficient group `Multiplicative B`
+and hence the central extensions constructed here.
+-/
 @[expose] public section
 
 open PermutationBilinearCocycle
@@ -24,10 +36,11 @@ namespace PermutationBilinearSchurTitsCocycle
 variable {n : Nat}
 variable {A B : Type*} [CommGroup A] [AddCommGroup B]
 
-/-- Tits monomial additive cocycle on `MonomialBase A (Fin n)`.
-
-Defined by `titsAlphaAdd` on the tuple part twisted by the
-permutation, plus `titsQAdd`. -/
+/-- The raw Tits additive formula on `Aⁿ ⋊ Sₙ`, for an abelian
+multiplicative group `A`, an abelian additive coefficient group `B`,
+and a skew bicharacter `b`. It combines the bilinear tuple correction
+with the permutation correction and is defined for any `eps : A`.
+When `eps * eps = 1`, it is a normalized additive two-cocycle. -/
 def titsMonomialAddCocycle (b : SkewBicharacter A B) (eps : A)
     (x y : MonomialBase A (Fin n)) : B :=
   titsAlphaAdd b eps x.left (permute x.right y.left) +
@@ -71,9 +84,11 @@ theorem titsMonomialAddCocycle_cocycle (b : SkewBicharacter A B)
   abel_nf at h ⊢
   exact h
 
-/-- Schur-corrected Tits monomial additive cocycle.
-
-Adds the permutation Schur cocycle with 2-torsion coefficient `z`. -/
+/-- For an abelian multiplicative group `A`, an abelian additive group
+`B` and a skew bicharacter `b`, add the permutation Schur cocycle with
+a coefficient `z : B` satisfying `2 • z = 0` to the raw Tits formula
+on `Aⁿ ⋊ Sₙ`. The formula is defined for any `eps : A`; when
+`eps * eps = 1`, it is a normalized additive two-cocycle. -/
 noncomputable def schurTitsMonomialAddCocycle
     (b : SkewBicharacter A B) (eps : A) (z : B) (hz : 2 • z = 0)
     (x y : MonomialBase A (Fin n)) : B :=
@@ -131,7 +146,10 @@ theorem schurTitsMonomialAddCocycle_cocycle
 
 section Normalized
 
-/-- The normalized Tits cocycle on the monomial base. -/
+/-- For abelian groups `A` and `B`, a skew bicharacter `b` and
+`eps : A` with `eps * eps = 1`, the Tits formula on `Aⁿ ⋊ Sₙ`
+gives a normalized central two-cocycle with coefficient group
+`Multiplicative B` and trivial action. -/
 noncomputable def titsMonomialNormalizedCocycle
     (b : SkewBicharacter A B) (eps : A) (heps : eps * eps = 1) :
     NormalizedCocycleExtension.NormalizedCocycle
@@ -147,7 +165,11 @@ noncomputable def titsMonomialNormalizedCocycle
     simpa only [← ofAdd_add, add_comm] using
       congrArg Multiplicative.ofAdd h
 
-/-- The normalized combined Schur and Tits cocycle on the monomial base. -/
+/-- For abelian groups `A` and `B`, a skew bicharacter `b`, an element
+`eps : A` with `eps * eps = 1` and a coefficient `z : B` with
+`2 • z = 0`, the combined Schur and Tits formula on `Aⁿ ⋊ Sₙ`
+gives a normalized central two-cocycle with coefficient group
+`Multiplicative B` and trivial action. -/
 noncomputable def schurTitsMonomialNormalizedCocycle
     (b : SkewBicharacter A B) (eps : A) (heps : eps * eps = 1)
     (z : B) (hz : 2 • z = 0) :

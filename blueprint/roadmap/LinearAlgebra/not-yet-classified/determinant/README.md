@@ -1,21 +1,21 @@
 # Determinant
 
-- [Det map Ring Hom](det-map-ring-hom.md)
+- [Determinant commutes with a ring homomorphism](det-map-ring-hom.md)
 
 ## Reindex
 
-- [Det reindex Mul Equiv](det-reindex-mul-equiv.md)
+- [Determinant is invariant under simultaneous reindexing](det-reindex-mul-equiv.md)
 
 ## Block Diagonal
 
-- [Det block Diagonal One](det-block-diagonal-one.md)
+- [An identity block preserves determinant](det-block-diagonal-one.md)
 
 ## Stabilization
 
-- [Det stabilization](det-stabilization.md)
+- [Successor stabilization preserves determinant](det-stabilization.md)
 
 ## Elementary Det
 
-- [Det elementary](det-elementary.md)
-- [Elementary Subgroup le ker det](elementary-subgroup-le-ker-det.md)
-- [Det of mem elementary Subgroup](det-of-mem-elementary-subgroup.md)
+- [An elementary transvection has determinant one](det-elementary.md)
+- [Elementary matrices lie in the determinant kernel](elementary-subgroup-le-ker-det.md)
+- [Elementary-subgroup elements have determinant one](det-of-mem-elementary-subgroup.md)

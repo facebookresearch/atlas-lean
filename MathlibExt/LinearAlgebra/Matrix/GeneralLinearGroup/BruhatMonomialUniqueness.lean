@@ -20,7 +20,19 @@ public import Mathlib.LinearAlgebra.Matrix.Block
 public import Mathlib.Data.Matrix.Block
 public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 public import Mathlib.GroupTheory.SemidirectProduct
+/-!
+# Uniqueness of monomial factors in Bruhat cells
 
+For matrices over a field indexed by a finite linear order, two equal
+factorizations with upper-elementary left and right factors have the same
+monomial middle factor, including its permutation and unit weights.
+
+A preliminary algebraic rearrangement works for arbitrary invertible outer
+factors. In the uniqueness arguments, the upper-elementary condition supplies
+triangularity and diagonal entries equal to one. The earlier triangular
+matrix lemmas use a ring, and the bundled upper-unitriangular subgroup uses
+a commutative ring.
+-/
 @[expose] public section
 
 open Matrix
@@ -351,8 +363,10 @@ variable {ι : Type*} [DecidableEq ι] [Fintype ι] [LinearOrder ι]
 variable {F : Type*} [Field F]
 
 omit [LinearOrder ι] in
-/-- Core rearrangement lemma: equality `L * M * R = L' * M' * R'`
-gives `T * M = M' * T'` with `T = L'⁻¹ L` and `T' = R' R⁻¹` unitriangular. -/
+/-- Over a field on a finite index set, for arbitrary invertible outer
+factors, equality `L * M * R = L' * M' * R'` of products with monomial
+factors yields `T * M = M' * T'`, where `T = L'⁻¹ * L` and
+`T' = R' * R⁻¹`. -/
 theorem bruhatCell_rearrange (L R L' R' : GL ι F)
     (w : ι → Fˣ) (σ : Equiv.Perm ι) (w' : ι → Fˣ) (σ' : Equiv.Perm ι)
     (h : L * monomialMatrixHom F ι ⟨w, σ⟩ * R =
@@ -379,7 +393,9 @@ theorem bruhatCell_rearrange (L R L' R' : GL ι F)
 
 section BruhatPermWeight
 
-/-- Square Bruhat-cell uniqueness of inverse permutations. -/
+/-- Over a field on a finite linearly ordered index set, two equal
+products with monomial middle factors and all four outer factors
+upper-elementary have the same inverse permutation in their middle factors. -/
 theorem bruhatCell_perm_inv_unique
     (L R L' R' : upperElementarySubgroup ι F)
     (w : ι → Fˣ) (σ : Equiv.Perm ι) (w' : ι → Fˣ) (σ' : Equiv.Perm ι)
@@ -478,7 +494,10 @@ theorem bruhatCell_perm_inv_unique
     exact le_antisymm (hLe1 i) (hLe2 i)
   exact hEqInv.symm
 
-/-- Weight uniqueness given permutation equality. -/
+/-- Over a field on a finite linearly ordered index set, suppose two
+products with monomial middle factors are equal and all four outer factors
+are upper-elementary. If their inverse permutations agree, then their unit
+weight functions agree. -/
 theorem bruhatCell_weight_unique
     (L R L' R' : upperElementarySubgroup ι F)
     (w : ι → Fˣ) (σ : Equiv.Perm ι) (w' : ι → Fˣ) (σ' : Equiv.Perm ι)
@@ -518,7 +537,9 @@ theorem bruhatCell_weight_unique
   rw [hT'_diag_i, mul_one] at hEq
   exact Units.ext hEq
 
-/-- Square Bruhat-cell uniqueness: monomial factors are equal. -/
+/-- Over a field on a finite linearly ordered index set, two equal
+products with upper-elementary left and right factors have equal monomial
+middle factors. -/
 theorem bruhatCell_monomial_unique
     (L R L' R' : upperElementarySubgroup ι F)
     (w : ι → Fˣ) (σ : Equiv.Perm ι) (w' : ι → Fˣ) (σ' : Equiv.Perm ι)
