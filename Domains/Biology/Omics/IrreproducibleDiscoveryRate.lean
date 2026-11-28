@@ -102,10 +102,11 @@ of irreproducible findings in the selected set at most `α`.
 * Q. Li, J. B. Brown, H. Huang and P. J. Bickel, "Measuring reproducibility of high-throughput
   experiments", Ann. Appl. Stat. 5 (2011), 1752–1779, <https://doi.org/10.1214/11-AOAS466>:
   Section 2.2.2 (the copula mixture model, (2.5a)–(2.5c) and (2.8)) and Section 2.3 (the local
-  idr (2.9), the IDR (2.10) and the selection procedure).
+  idr (2.9), the population IDR (2.10), and the selection procedure, whose running average of
+  local rates is the `IDR(S)` defined here).
 * K. Krismer, Y. Guo and D. K. Gifford, "IDR2D identifies reproducible genomic interactions",
   Nucleic Acids Res. 48 (2020), e31, <https://doi.org/10.1093/nar/gkaa030>: introduction (IDR as a
-  copula mixture with one reproducible and one irreproducible component).
+  copula mixture model with one reproducible and one irreproducible component).
 -/
 
 @[expose] public section
@@ -126,9 +127,11 @@ Under the model, finding `i` is reproducible (`K i = 1`) with probability `π₁
 `N((0, 0), I₂)` when `K i = 0`, with `μ > 0` and `0 < ρ ≤ 1`. The observed scores are the
 monotone transforms `x i r = F_r⁻¹(G(z i r))`, where `G(t) = π₀ Φ(t) + π₁ Φ((t - μ) / σ)` is the
 marginal distribution of each latent coordinate (`cdf_latent_coordinate`) and `F_r` the unknown
-marginal distribution of replicate `r`, so that the dependence between the replicates is a
-mixture of a Gaussian copula and the independence copula, and only the ranks of the scores
-matter. The parameters `(π₁, μ, σ, ρ)`, estimated from the ranks in practice, are inputs here.
+marginal distribution of replicate `r`. So the dependence between the replicates comes from a
+two-component latent mixture, with independent coordinates in one component and Gaussian
+dependence with correlation `ρ` in the other, each component with its own margins (a copula
+mixture model, not a mixture of the two copulas), and only the ranks of the scores matter. The
+parameters `(π₁, μ, σ, ρ)`, estimated from the ranks in practice, are inputs here.
 
 With `h₀ = multivariateGaussianPDFReal 0 1` and
 `h₁ = multivariateGaussianPDFReal !₂[μ, μ] !![σ ^ 2, ρ * σ ^ 2; ρ * σ ^ 2, σ ^ 2]` the densities of
@@ -511,7 +514,9 @@ distribution function
 
   `G(t) = π₀ Φ(t) + π₁ Φ((t - μ) / σ)`,
 
-where `π₀ = 1 - π₁` and `Φ` is the standard normal distribution function. -/
+where `π₀ = 1 - π₁` and `Φ` is the standard normal distribution function. The source's (2.5b)
+prints a factor `1 / σ` in front of `Φ((t - μ) / σ)`; that factor belongs to the density of `G`,
+not to its distribution function, which is the one stated here. -/
 theorem cdf_latent_coordinate (hπ₁ : π₁ ∈ Set.Icc 0 1) (hσ : 0 < σ) (hρ : |ρ| ≤ 1) (r : Fin 2)
     (t : ℝ) :
     cdf ((ENNReal.ofReal (1 - π₁) • multivariateGaussian 0 1 +

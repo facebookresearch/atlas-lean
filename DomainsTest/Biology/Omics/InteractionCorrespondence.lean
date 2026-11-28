@@ -40,7 +40,13 @@ those of the interaction of replicate 1:
 * the resolved partner exists and, the values being distinct, is unique;
 * the single pair `(0, 0)` is a resolved correspondence, and the empty set is not, as the
   interaction of replicate 1 has corresponding interactions and no competitor; a resolved
-  correspondence exists. -/
+  correspondence exists;
+* two interactions of replicate 1 compete for one partner: the first is the interaction above,
+  the second has anchors `[160, 260]` and `[5040, 5140]` and corresponds to interactions `0` and
+  `2` of replicate 2. Ranking the interactions of replicate 2 by their index, both have the
+  resolved partner `0`. Either one may keep it, the other staying unpaired: `{(0, 0)}` and
+  `{(1, 0)}` are resolved correspondences, while `{(0, 0), (1, 0)}`, which is not one-to-one, and
+  `∅` are not. -/
 
 open Domains.Biology.Omics.InteractionCorrespondence
 
@@ -132,5 +138,54 @@ example : ¬IsResolvedCorrespondence (-1) x₁ x₂ rankSum ∅ := by
 
 example : ∃ P, IsResolvedCorrespondence 50 x₁ x₂ rankSum P :=
   exists_isResolvedCorrespondence 50 x₁ x₂ rankSum
+
+/-! ### Two interactions competing for one partner -/
+
+/-- Two interactions of replicate 1: the one above, and one whose anchors overlap those of
+interactions `0` and `2` of replicate 2. -/
+def y₁ : Fin 2 → Anchor ℕ × Anchor ℕ :=
+  ![(⟨1, 100, 200, by norm_num⟩, ⟨1, 5000, 5100, by norm_num⟩),
+    (⟨1, 160, 260, by norm_num⟩, ⟨1, 5040, 5140, by norm_num⟩)]
+
+/-- The interactions of replicate 2 ranked by their index. -/
+def byIndex : Fin 2 → Fin 4 → ℝ := fun _ j => (j : ℕ)
+
+theorem corresponds_y_iff (i : Fin 2) (j : Fin 4) :
+    Corresponds (-1) (y₁ i) (x₂ j) ↔ j = 0 ∨ j = i.val + 1 := by
+  fin_cases i <;> fin_cases j <;> simp [Corresponds, Anchor.WithinGap, y₁, x₂]
+
+/-- Both interactions of replicate 1 have the resolved partner `0`. -/
+theorem isResolvedPartner_y (i : Fin 2) : IsResolvedPartner (-1) y₁ x₂ byIndex i 0 :=
+  ⟨(corresponds_y_iff i 0).2 (Or.inl rfl), fun j _ => by simp [byIndex]⟩
+
+/-- A one-pair correspondence: the other interaction of replicate 1, whose resolved partner is
+taken, stays unpaired. -/
+theorem isResolvedCorrespondence_y (k : Fin 2) :
+    IsResolvedCorrespondence (-1) y₁ x₂ byIndex {(k, 0)} := by
+  refine ⟨fun p hp => ?_, fun p hp q hq => ?_, fun i _ => ?_⟩
+  · rw [Set.mem_singleton_iff] at hp
+    subst hp
+    exact isResolvedPartner_y k
+  · rw [Set.mem_singleton_iff] at hp hq
+    subst hp hq
+    simp
+  · by_cases hik : i = k
+    · exact Or.inl ⟨0, by simp [hik]⟩
+    · exact Or.inr ⟨0, isResolvedPartner_y i, k, rfl⟩
+
+example : IsResolvedCorrespondence (-1) y₁ x₂ byIndex {(0, 0)} := isResolvedCorrespondence_y 0
+
+example : IsResolvedCorrespondence (-1) y₁ x₂ byIndex {(1, 0)} := isResolvedCorrespondence_y 1
+
+/-- Pairing both competitors with their common partner is not one-to-one. -/
+example : ¬IsResolvedCorrespondence (-1) y₁ x₂ byIndex {(0, 0), (1, 0)} := by
+  rintro ⟨-, h, -⟩
+  have := (h (0, 0) (by simp) (1, 0) (by simp)).2 rfl
+  simp at this
+
+example : ¬IsResolvedCorrespondence (-1) y₁ x₂ byIndex ∅ := by
+  rintro ⟨-, -, h⟩
+  rcases h 0 ⟨0, (corresponds_y_iff 0 0).2 (Or.inl rfl)⟩ with ⟨_, h⟩ | ⟨_, -, _, h⟩ <;>
+    simp at h
 
 end DomainsTest.Biology.Omics.InteractionCorrespondence
