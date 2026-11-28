@@ -21,3 +21,4 @@ The recurrence is verified by induction on the input length, using the exponenti
 ## Sources
 
 - M. Milakov and N. Gimelshein, "Online normalizer calculation for softmax", arXiv:1805.02867, 2018, Algorithm 3 and Theorem 1.
+- T. Dao et al., "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness", arXiv:2205.14135, 2022, §3.1 and Appendix C, proof of Theorem 1: the prefix maximum and normalizer invariant. For a singleton block the local maximum is $x_j$ and the local normalizer is $1$, giving the recurrence above.

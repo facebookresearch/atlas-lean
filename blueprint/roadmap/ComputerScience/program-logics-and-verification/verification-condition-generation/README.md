@@ -18,4 +18,3 @@
 - [Syntactic verification conditions](syntactic-verification-conditions.md)
 - [Syntactic verification conditions are sufficient](syntactic-verification-conditions-are-sufficient.md)
 - [Total-correctness verification conditions with variants](total-correctness-verification-conditions-with-variants.md)
-- [Total-correctness verification conditions are sufficient](total-correctness-verification-conditions-are-sufficient.md)

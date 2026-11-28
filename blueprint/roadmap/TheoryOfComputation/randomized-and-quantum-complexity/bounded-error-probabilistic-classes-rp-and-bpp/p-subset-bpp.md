@@ -16,13 +16,13 @@ A deterministic polynomial-time decider, used as a verifier that ignores its ran
 - [The complexity class P](../../complexity-classes/the-classes-p-np-and-conp/p.md)
 - [BPP](../../complexity-classes/time-and-space-complexity-classes/bpp.md)
 - [Polynomial-time computable functions](../../complexity-classes/the-classes-p-np-and-conp/is-poly-time.md)
+- [Polynomial-time functions are closed under composition](../../turing-machines/multi-tape-and-multi-stack/composition-of-multi-stack-machines/comp-2.md)
 
 ## Expansion
 
 This page becomes ready once:
 
-- Closure of polynomial-time functions under composition, to compose that projection with the deterministic decider (proof prerequisite; link a matching result or state it before readiness)
-- The projection of a pair of bitstrings to its first component is polynomial-time computable (proof prerequisite; not yet stated)
+- The projection of a pair of bitstrings to its first component is polynomial-time computable, so that composing it with the deterministic decider gives a verifier that ignores its random string (proof prerequisite; not yet stated)
 
 ## Sources
 

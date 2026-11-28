@@ -23,4 +23,4 @@ No further prerequisites: the proof uses only the two neighbouring relations and
 
 ## Sources
 
-- T. Steinke, "Composition of Differential Privacy & Privacy Amplification by Subsampling", arXiv:2210.00597v4 (2022), Section 6.2: a removal or addition can be simulated by replacing the record with a null value $\bot$, so DP with respect to replacement entails DP with respect to addition or removal with the same parameters, unless the semantics of the algorithm forbids null values.
+- T. Steinke, "Composition of Differential Privacy & Privacy Amplification by Subsampling", Chapter 3 of F. Fioretto and P. Van Hentenryck (eds.), *Differential Privacy in Artificial Intelligence: From Theory to Practice*, Emerald Publishing, 2025 (open access), Section 3.6.2 ("Addition or Removal versus Replacement for Neighboring Datasets"): a removal or addition can be simulated by replacing the record with a null value $\bot$, so DP with respect to replacement entails DP with respect to addition or removal with the same parameters, unless the semantics of the algorithm forbids null values. The same passage is Section 6.2 of the preprint, arXiv:2210.00597v4 (2022).

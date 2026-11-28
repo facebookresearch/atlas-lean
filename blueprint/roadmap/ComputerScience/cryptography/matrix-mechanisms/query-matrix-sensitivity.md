@@ -22,4 +22,5 @@ No further prerequisites: the proof uses only the definition of $\Delta_Q$ and o
 
 ## Sources
 
-- C. Li, M. Hay, V. Rastogi, G. Miklau and A. McGregor, "Optimizing Linear Counting Queries Under Differential Privacy", PODS 2010, arXiv:0912.4742v2, Definitions 2.1–2.3 and Proposition 1; journal version C. Li, G. Miklau, M. Hay, A. McGregor and V. Rastogi, "The matrix mechanism: optimizing linear counting queries under differential privacy", The VLDB Journal 24 (2015) 757–781.
+- C. Li, G. Miklau, M. Hay, A. McGregor and V. Rastogi, "The matrix mechanism: optimizing linear counting queries under differential privacy", The VLDB Journal 24 (2015) 757–781, Section 3: neighbouring instances differ in one record, so their data vectors differ in at most one component, by at most one; Proposition 2 ($L_1$ query matrix sensitivity, the maximum $L_1$ norm of a column).
+- C. Li, M. Hay, V. Rastogi, G. Miklau and A. McGregor, "Optimizing Linear Counting Queries Under Differential Privacy", PODS 2010, arXiv:0912.4742v2, Definitions 2.1–2.3 and Proposition 1 (the earlier version; its displayed column sum runs to $n$ where the column has $m$ entries).

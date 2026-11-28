@@ -1,6 +1,6 @@
 # Syntactic verification conditions
 
-Work with commands generated from assignments, sequencing, conditionals and while loops, and assertions of a first-order language with capture-avoiding substitution. A command is *properly annotated* if an assertion is inserted before each command $C_i$, $i > 1$, of a sequence $C_1; \dots; C_n$ that is not an assignment, and after the word $\mathtt{do}$ of every while loop (the loop invariant). For a properly annotated specification $\{P\}\, C\, \{Q\}$ the verification conditions are the assertions defined by recursion on $C$:
+Work with commands generated from assignments, sequencing, conditionals and while loops, and assertions of a first-order language with capture-avoiding substitution; [first-order arithmetic](../hoare-logic/first-order-arithmetic-as-an-assertion-language.md) is one example of such a language. A command is *properly annotated* if an assertion is inserted before each command $C_i$, $i > 1$, of a sequence $C_1; \dots; C_n$ that is not an assignment, and after the word $\mathtt{do}$ of every while loop (the loop invariant). For a properly annotated specification $\{P\}\, C\, \{Q\}$ the verification conditions are the assertions defined by recursion on $C$:
 
 - for $\{P\}\ V := E\ \{Q\}$: the single condition $P \Rightarrow Q[E/V]$, where $Q[E/V]$ is capture-avoiding substitution of $E$ for the free occurrences of $V$ in $Q$;
 - for $\{P\}\ \mathtt{if}\ S\ \mathtt{then}\ C_1\ \mathtt{else}\ C_2\ \{Q\}$: those of $\{P \wedge S\}\, C_1\, \{Q\}$ and of $\{P \wedge \neg S\}\, C_2\, \{Q\}$;
@@ -12,7 +12,7 @@ The conditions are formulas of the assertion language; no command occurs in them
 
 ## Depends on
 
-- [First-order arithmetic as an assertion language](../hoare-logic/first-order-arithmetic-as-an-assertion-language.md)
+No separate prerequisite pages: the commands, the annotations and the substitution used are given above. The arithmetic page linked above is an example, not a hypothesis.
 
 ## Proof depends on
 

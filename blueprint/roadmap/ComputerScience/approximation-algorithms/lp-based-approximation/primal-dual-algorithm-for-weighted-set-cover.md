@@ -10,11 +10,11 @@ The first inequality holds because every chosen set is tight and each element li
 
 ## Depends on
 
-No separate prerequisite pages: the weighted instance, its frequency and its primal and dual programs are defined above.
+- [Linear program](../../../Geometry/convex-geometry/linear-programming/linear-program.md)
 
 ## Proof depends on
 
-- [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md)
+- [Weak duality](../../../Analysis/convex-analysis-and-variations/lagrange-duality/dual-value-le-primal-value.md)
 
 ## Background
 
@@ -24,5 +24,5 @@ No separate prerequisite pages: the weighted instance, its frequency and its pri
 
 ## Sources
 
-- D. P. Williamson and D. B. Shmoys, *The Design of Approximation Algorithms*, Cambridge University Press, 2011, §1.5 (Algorithm 1.1, Theorem 1.9) and §7.1 (Algorithm 7.1, Theorem 7.1 and its proof).
+- D. P. Williamson and D. B. Shmoys, *The Design of Approximation Algorithms*, Cambridge University Press, 2011, §1.4 (weak duality), §1.5 (Algorithm 1.1, Theorem 1.9) and §7.1 (Algorithm 7.1, Theorem 7.1 and its proof).
 - R. Bar-Yehuda and S. Even, "A linear-time approximation algorithm for the weighted vertex cover problem", *Journal of Algorithms* 2 (1981), 198–203, the origin of the algorithm as attributed in the notes to Chapter 1 of Williamson and Shmoys.

@@ -21,11 +21,11 @@ The proof of the reverse simulation uses the single-tape model. Extending its hy
 Before this node becomes ready, add or link:
 
 - The function-computing machine models over a finite alphabet, with their input/output, time and space conventions: multi-tape in item 1 and the source's single-tape model in item 2 (statement prerequisites).
-- The unfolding algorithm for a heap and closure, with its time and space bounds and the constant-size Boolean-output specialization (Forster, Kunze and Roth, Lemma 22 and the proof of Theorem 2; proof prerequisite).
+- The unfolding algorithm for a heap and closure, with its time and space bounds and the constant-size Boolean-output specialization (Forster, Kunze and Roth, Lemma 4.2 and the proof of Theorem 1.2 in Section 6 of the published version; Lemma 22 and Theorem 2 of arXiv:1902.07515v1; proof prerequisite).
 
 The broader model-invariance target also needs a sourced transfer from the canonical multi-tape model to the source's single-tape model with polynomial time and linear space overhead. That is a separate model-scoping obligation, not a conclusion of this node.
 
 ## Sources
 
-- Yannick Forster, Fabian Kunze and Marc Roth, "The Weak Call-By-Value λ-Calculus is Reasonable for Both Time and Space", POPL 2020; arXiv:1902.07515: Theorem 2 and its proof in Section 6, using Theorems 20, 21 and 23 and Lemma 22.
-- Ugo Dal Lago and Beniamino Accattoli, "Encoding Turing Machines into the Deterministic Lambda-Calculus", arXiv:1711.10078, 2017: Section 5 and Theorem 5.5, for the single-tape model used in item 2.
+- Yannick Forster, Fabian Kunze and Marc Roth, "The Weak Call-by-Value λ-Calculus Is Reasonable for Both Time and Space", Proceedings of the ACM on Programming Languages 4 (POPL), Article 27, 2020: Theorem 1.2 and its proof in Section 6, using Theorem 4.3, Lemmas 4.1 and 4.2 and Theorem 5.1 (Theorem 2, Theorems 20, 21 and 23 and Lemma 22 of arXiv:1902.07515v1).
+- Ugo Dal Lago and Beniamino Accattoli, "Encoding Turing Machines into the Deterministic Lambda-Calculus", arXiv:1711.10078, 2017: Section 5 and Theorem 5.5, for the single-tape model used in item 2; the published form of this encoding is Accattoli and Dal Lago, RTA 2012, LIPIcs 15, Theorem 6.1, stated for head reduction.
