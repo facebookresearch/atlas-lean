@@ -87,21 +87,41 @@ def import_problem(own: dict, article_id: str) -> str | None:
     return None
 
 
+def articles(roadmap: str) -> set[str]:
+    """The articles Autoform finds below *roadmap*, as normalized paths: each Markdown file (`.md`) that is no hidden
+    file and in no hidden folder, as autoform_cli.graph._discover_nodes walks the roadmap. That also reads every
+    article, which takes half a minute on the wiki; this walk reads none."""
+    found: set[str] = set()
+    for directory, directories, files in os.walk(roadmap):
+        directories[:] = [name for name in directories if not name.startswith(".")]
+        found.update(os.path.join(directory, name) for name in files
+                     if name.endswith(".md") and not name.startswith("."))
+    return found
+
+
 def inventory() -> list[dict]:
+    from autoform_cli import graph
+
     # Autoform reads blueprint/links only as a folder of that name that is no symbolic link, and none of it when it
     # cannot use its defaults.
     if not sync.reader().links_exist(sync.LINKS.parent) or sync.links_template() is None:
         raise ValueError(f"Autoform reads no annotations: {sync.LINKS.relative_to(sync.wiki.ROOT).as_posix()} is "
                          "missing, is a symbolic link, or has defaults it cannot use")
+    # Nor does it read any article of a roadmap that holds a symbolic link.
+    if problems := graph.roadmap_symlink_issues(sync.LINKS.parent):
+        more = f" (and {len(problems) - 1} more)" if problems[1:] else ""
+        raise ValueError(f"Autoform reads no articles: {problems[0]}{more}")
     # The checks the sync makes of the folder: files and lines that Autoform and the sync would read differently, such
     # as an annotation file in a subfolder, or a line Autoform's reader leaves out (a key given twice, say).
     if problems := sync.links_problems():
         more = f" (and {len(problems) - 1} more)" if problems[1:] else ""
         raise ValueError(f"{problems[0]}{more}")
+    roadmap = os.path.join(os.path.dirname(os.fspath(sync.LINKS)), "roadmap")
+    found = articles(roadmap)
     items: dict[str, dict] = {}
     listed: dict[str, str] = {}  # each listed path's page, as the keys of `annotations` name it
     annotations: dict[str, int] = {}  # how many annotations are about each page
-    with_id: dict[str, list[tuple[Path | None, str, str | None]]] = {}  # the annotations that have each id
+    with_id: dict[str, list[tuple[Path | None, str, str | None]]] = {}  # the articles that have each id
     for where, row in annotation_lines():
         effective = sync.effective(row)
         if effective is None:
@@ -123,6 +143,13 @@ def inventory() -> list[dict]:
         if page.name == "README.md":
             continue
         path = page.relative_to(sync.wiki.ROOT).as_posix()
+        if key not in found:
+            raise ValueError(f"{path}: Autoform reads no article there, as it skips hidden files and folders")
+        # Autoform reads each article as UTF-8 and refuses the roadmap with one it cannot read.
+        try:
+            page.read_bytes().decode("utf-8")
+        except (OSError, UnicodeError) as error:
+            raise ValueError(f"{path}: Autoform cannot read this article: {error}") from None
         # The row's own id, as each annotation has one (docs/BLUEPRINT.md, What the tools own): an id the folder's
         # defaults would give is not stable, as `sync_wiki.py ids` gives a row without one its own. An imported page's
         # is the one its seed gives, which a fresh one would not be.
@@ -142,8 +169,21 @@ def inventory() -> list[dict]:
             "pending": pending,
         }
         listed[path] = key
+    # An article with no annotation takes its id, as its other facts, from its frontmatter, as the pinned Autoform
+    # reads it (until 0.8.0): another id that a listed one may not be. The wiki has no such article today.
+    for article in sorted(found - annotations.keys()):
+        # As Autoform, only a regular file is an article: reading a pipe could wait for ever.
+        if not os.path.isfile(article):
+            continue
+        try:
+            lines = Path(article).read_text(encoding="utf-8").splitlines()
+        except (OSError, UnicodeError):
+            continue  # an article Autoform cannot read, which `autoform check blueprint` refuses
+        metadata, _, _ = graph._parse_frontmatter(os.path.relpath(article, roadmap), lines)
+        if isinstance(article_id := metadata.get("article_id"), str):
+            with_id.setdefault(article_id, []).append((Path(article), "", None))
     # Each listed id names one article: Autoform keeps the first of a page's annotations' ids, and no other
-    # annotation, marked or not, may have it.
+    # article, annotated or not, marked or not, may have it.
     for path in sorted(items):
         if (count := annotations[listed[path]]) > 1:
             raise ValueError(f"{path}: expected one annotation of this page, found {count}; Autoform keeps the first "

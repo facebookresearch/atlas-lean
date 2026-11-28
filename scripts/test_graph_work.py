@@ -1,5 +1,7 @@
 import hashlib
 import json
+import os
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -130,6 +132,41 @@ class GraphWorkTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/a\.md: its article ID af_[0-9a-f]{24} is also "
                                                 r"the ID of blueprint/roadmap/b\.md$"):
             graph_work.inventory()
+
+    def test_an_id_in_the_frontmatter_of_an_unannotated_article_fails(self):
+        listed = self.row("a.md")
+        (self.roadmap / "plain.md").write_text(f"---\narticle_id: {listed['id']}\n---\n# Plain\n\nIts statement.\n")
+        self.save(listed)
+        with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/a\.md: its article ID af_[0-9a-f]{24} is also "
+                                                r"the ID of blueprint/roadmap/plain\.md$"):
+            graph_work.inventory()
+
+    def test_a_page_autoform_skips_as_hidden_fails(self):
+        for name in (".draft.md", ".drafts/topic.md"):
+            with self.subTest(name=name):
+                (self.roadmap / name).parent.mkdir(parents=True, exist_ok=True)
+                self.save(self.row(name))
+                with self.assertRaisesRegex(ValueError, rf"^blueprint/roadmap/{re.escape(name)}: Autoform reads no "
+                                                        r"article there"):
+                    graph_work.inventory()
+
+    def test_a_roadmap_with_a_symbolic_link_fails(self):
+        self.save(self.row("a.md"))
+        (self.roadmap / "b.md").symlink_to(self.roadmap / "a.md")
+        with self.assertRaisesRegex(ValueError, r"^Autoform reads no articles: roadmap contains a symbolic link: "
+                                                r"roadmap/b\.md"):
+            graph_work.inventory()
+
+    def test_a_listed_page_that_is_not_utf8_fails(self):
+        self.save(self.row("bad.md"))
+        (self.roadmap / "bad.md").write_bytes(b"# Bad\n\n\xff\n")
+        with self.assertRaisesRegex(ValueError, r"^blueprint/roadmap/bad\.md: Autoform cannot read this article: "):
+            graph_work.inventory()
+
+    def test_a_pipe_in_the_roadmap_is_not_read(self):
+        self.save(self.row("a.md"))
+        os.mkfifo(self.roadmap / "draft.md")
+        self.assertEqual([item["path"] for item in graph_work.inventory()], ["blueprint/roadmap/a.md"])
 
     def test_a_links_folder_autoform_does_not_read_fails(self):
         self.save(self.row("a.md"))

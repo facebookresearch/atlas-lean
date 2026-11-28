@@ -278,14 +278,18 @@ Each ID it lists names one article. It stops with an error, naming the file
 and line or the page, when:
 
 - Autoform reads no annotations (the links folder is missing or a symbolic
-  link), or the folder holds files or lines that Autoform and the sync read
-  differently, as the sync checks it;
+  link) or no articles (the roadmap holds a symbolic link), or the links folder
+  holds files or lines that Autoform and the sync read differently, as the sync
+  checks it;
+- a listed page is no article Autoform reads, such as a hidden file or a page
+  in a hidden folder, or is not UTF-8;
 - a listed row has no article ID of its own: one the folder's defaults would
   give is not stable, as `sync_wiki.py ids` gives such a row its own
   ([What the tools own](#what-the-tools-own)), and an imported page's is the
   one its seed gives;
-- a listed page has another annotation, or another annotation has its ID,
-  including one the folder's defaults give;
+- a listed page has another annotation, or another article has its ID: one
+  that another annotation gives, the folder's defaults included, or that an
+  article without an annotation gives in its frontmatter;
 - a listed page's pending prerequisites lack the record that the
   [importer](mathgraph-import.md#annotations) writes.
 
