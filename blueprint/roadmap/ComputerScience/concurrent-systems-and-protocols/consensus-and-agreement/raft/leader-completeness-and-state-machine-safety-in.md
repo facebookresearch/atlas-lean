@@ -1,6 +1,6 @@
 # Leader completeness and state machine safety in Raft
 
-In Raft, with the rule that a candidate receives a vote only if its log is at least as up to date as the voter's, and the commitment rule under which a leader considers an entry committed by counting replicas only for entries of its current term: (leader completeness) every entry committed in a term is present in the logs of the leaders of all higher terms; and (state machine safety) no two servers apply different commands at the same log index.
+In a Raft execution starting from the initial state (`State.init`), with the rule that a candidate receives a vote only if its log is at least as up to date as the voter's, and the commitment rule under which a leader considers an entry committed by counting replicas only for entries of its current term: (leader completeness) every entry committed in a term is present in the logs of the leaders of all higher terms; and (state machine safety) no two servers apply different commands at the same log index.
 
 ## Depends on
 

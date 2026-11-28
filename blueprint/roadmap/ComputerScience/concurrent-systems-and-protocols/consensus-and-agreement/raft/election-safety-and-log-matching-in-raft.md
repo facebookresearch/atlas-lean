@@ -1,6 +1,7 @@
 # Election safety and log matching in Raft
 
-Every execution of the Raft consensus protocol satisfies the following invariants.
+Every execution of the Raft consensus protocol starting from the initial state (`State.init`)
+satisfies the following invariants.
 
 - *Election safety*: at most one leader is elected in each term.
 - *Leader append-only*: a leader never overwrites or deletes entries in its log; it only appends new entries.
