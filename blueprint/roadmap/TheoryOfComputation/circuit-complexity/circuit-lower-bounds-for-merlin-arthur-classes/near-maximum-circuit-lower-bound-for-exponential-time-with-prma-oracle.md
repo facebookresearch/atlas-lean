@@ -27,4 +27,4 @@ Run the smart $\mathsf{FP}^{\mathsf{prMA}}/1$ range-avoidance algorithm on the t
 
 ## Sources
 
-- Hanlin Ren and Ryan Williams, "Near-Maximum Circuit Lower Bounds for Exponential Time with Merlin-Arthur Queries", *IEEE Symposium on Foundations of Computer Science (FOCS)*, 2026, arXiv:2607.09963v1 (Theorem 1.1, Theorem 4.5, Corollary 4.6, Theorem A.1).
+- Hanlin Ren and Ryan Williams, "Near-Maximum Circuit Lower Bounds for Exponential Time with Merlin-Arthur Queries", *IEEE Symposium on Foundations of Computer Science (FOCS)*, 2026, arXiv:2607.09963v1 (Theorems 1.1, 1.2, 4.3 and 4.5, Corollary 4.6, Theorem A.1).
