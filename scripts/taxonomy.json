@@ -14710,6 +14710,7 @@
   "MathlibExt/Probability/DiversityStatistics": {"to": "Combinatorics/integer-partitions/young-diagrams-statistics", "title": "Number of values of diversity indices"},
   "MathlibExt/Probability/Donsker": {"to": "Probability/central-limit-theorems", "title": "Donsker's invariance principle"},
   "MathlibExt/Probability/DoobLpInequality": {"to": "Probability/martingales", "title": "Doob's maximal inequalities"},
+  "MathlibExt/Probability/EcologicalInference": {"to": "Probability/distributions/distribution-functions", "title": "Joint laws with given margins"},
   "MathlibExt/Probability/EfronStein": {"to": "Probability/concentration-inequalities", "title": "Efron–Stein inequality"},
   "MathlibExt/Probability/ElementaryItoIntegral": {"to": "Probability/stochastic-calculus", "title": "Itô integral"},
   "MathlibExt/Probability/ErgodicMarkovChain": {"to": "Probability/markov-chains", "title": "Convergence theorem for finite Markov chains"},

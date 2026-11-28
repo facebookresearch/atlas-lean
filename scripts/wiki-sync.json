@@ -92609,6 +92609,7 @@
 "MetaMathlibExt.groupDiffBasisNumber_one_zmod_three": "53ab334f4b21db9c",
 "MetaMathlibExt.groupDiffBasisNumber_prod_self_le": "13e729897b0739e2",
 "MetaMathlibExt.groupDiffBasisNumber_zmod_le": "863bb982ed3f5a94",
+"MetaMathlibExt.group_margins_do_not_determine_individual_associations": "91629ed722ebbcc8",
 "MetaMathlibExt.groups_of_order_10_classification": "48b73ffe5950744e",
 "MetaMathlibExt.groups_of_order_10_classification_prod": "551b6bde42cc9986",
 "MetaMathlibExt.groups_of_order_10_classification_prod_xor": "47d84eed8a02db50",
