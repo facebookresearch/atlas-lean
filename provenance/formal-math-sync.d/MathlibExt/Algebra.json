@@ -1190,6 +1190,15 @@
       "upstream_sha256": "9d64459fa2a1c6601153fbe5f6486e2dfdbd000ffab7d484cdcafe4068432feb"
     },
     {
+      "path": "MathlibExt/Algebra/Homology/KoszulComplex/Semilinear.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6a75e8f533d05ab78ea3a364cb3b4fdb2664e3635f2fb76fd7e20e6ec9c44927",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give the remaining generic homology, quotient, scalar-normalization and graded/dyadic APIs precise mathematical docstrings and readable titles. Preserve every code/import/option/privacy/legal token; state actual signs, ring/ideal/projector hypotheses and independent universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "27cce813cde82465f9e99b6380326bb2ceac7e472113b0cf2a5d12a20f33ae19"
+    },
+    {
       "path": "MathlibExt/Algebra/Homology/KoszulComplexAnnihilation.lean",
       "backport": "pending",
       "disposition": "diverged",
