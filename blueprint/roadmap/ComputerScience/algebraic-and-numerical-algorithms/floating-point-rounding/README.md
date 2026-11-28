@@ -66,6 +66,7 @@
 - [Double rounding through an extended precision](double-rounding-through-an-extended-precision.md)
 - [Semantics preservation of floating-point compilation](semantics-preservation-of-floating-point-compilation.md)
 - [IEEE operations agree with rounding in the normal range](ieee-operations-agree-with-rounding-in-the-normal-range.md)
+- [Core floating-point operations in the normal range](core-float-model-in-the-normal-range/README.md)
 
 ## Veltkamp splitting in binary floating-point arithmetic
 

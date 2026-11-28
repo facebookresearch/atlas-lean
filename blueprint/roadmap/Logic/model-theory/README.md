@@ -23,3 +23,4 @@ Relations between formal theories and their structures: first-order languages of
 - [A CH obstruction at the countable Hanf threshold](ch-hanf-categoricity-threshold-obstruction.md)
 - [Locality and preservation in the finite](locality-and-preservation-in-the-finite/README.md)
 - [Undecidable theories of geometries and fields](undecidable-theories-of-geometries/README.md)
+- [Joint embedding for hereditary classes](joint-embedding-for-hereditary-classes/README.md)

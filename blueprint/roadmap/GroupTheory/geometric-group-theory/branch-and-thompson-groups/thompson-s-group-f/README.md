@@ -7,3 +7,4 @@
 - [Thompson’s group F has no invariant mean](thompson-f-invariant-mean-nonexistence.md)
 - [Groups of piecewise affine permutations meeting the continuous ones in a group F(r, Λ, A) with Λ ≠ {1} have hereditarily undecidable theory](thompson-type-groups-hereditarily-undecidable.md)
 - [The Diophantine problem in Thompson's groups F and T is undecidable](diophantine-problem-thompson-f-undecidable.md)
+- [Thompson's group F has a subgroup with undecidable conjugacy problem and decidable membership](thompson-f-subgroup-undecidable-conjugacy.md)

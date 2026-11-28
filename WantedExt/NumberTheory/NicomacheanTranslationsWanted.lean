@@ -17,6 +17,7 @@ public import MathlibExt.NumberTheory.NicomacheanAdjoinedProgression
 public import MathlibExt.NumberTheory.NicomacheanLargeTopGap
 public import MathlibExt.NumberTheory.NicomacheanTranslations
 public import MathlibExt.NumberTheory.NicomacheanTranslationsExistsGoldenRatioNicomacheanSequence
+public import MathlibExt.NumberTheory.NicomacheanTwoValuedLargeGap
 
 /-!
 # Translations and extensions of the Nicomachean identity
@@ -68,19 +69,6 @@ public theorem_wanted nicomachean_bagSquare_root_secondDifference_tendsto :
       Tendsto (fun m => s (m + 2) - 2 * s (m + 1) + s m) atTop
         (𝓝 ((3 - Real.sqrt 105) / 12)) ∧
       Tendsto (fun m => ρ (m + 2) - 2 * ρ (m + 1) + ρ m) atTop (𝓝 ((3 + Real.sqrt 105) / 12))
-
-/-- **Two-valued Nicomachean sequences with a large gap.** Write
-$\nu(a_1, \dots, a_n) = (a_1 + \dots + a_n)^2 - (a_1^3 + \dots + a_n^3)$ for the Nicomachean defect
-of a finite sequence. For every real $\varepsilon > 0$ there are integers $0 < a < b$ and a finite
-sequence $\sigma$ whose entries all equal $a$ or $b$, in which both $a$ and $b$ occur, such that
-$\nu(\sigma) = 0$ and $(b - a)/L > 1 - \varepsilon$, where $L$ is the length of $\sigma$.
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, *Translations and Extensions of the Nicomachean
-Identity*, Journal of Integer Sequences 27 (2024), Article 24.6.3, Proposition 4
-(`jis-2024-24.6.3-prop-4`). -/
-public theorem_wanted exists_two_valued_nicomachean_large_gap {ε : ℝ} (hε : 0 < ε) :
-    ∃ a b : ℤ, 0 < a ∧ a < b ∧ ∃ σ : List ℤ, (∀ x ∈ σ, x = a ∨ x = b) ∧ a ∈ σ ∧ b ∈ σ ∧
-      nicomacheanNu σ = 0 ∧ 1 - ε < ((b - a : ℤ) : ℝ) / σ.length
 
 /-- **Generating functions for run-and-repeat Nicomachean sequences.** For integers $j, m \ge 1$
 let $\sigma(j, m)$ be the integer sequence $(1, 2, \ldots, j + 1, m, \ldots, m)$ in which $m$ is

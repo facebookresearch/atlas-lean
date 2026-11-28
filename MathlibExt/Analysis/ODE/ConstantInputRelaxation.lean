@@ -139,14 +139,14 @@ theorem amount_antitone (hk : 0 < k) (h : steadyAmount k R ≤ A₀) : Antitone 
   rw [steadyAmount] at this
   linarith
 
-/-- Starting below the steady state, the amount never exceeds it. -/
+/-- For `k > 0`, starting below the steady state, the amount never exceeds it. -/
 theorem amount_le_steadyAmount (hk : 0 < k) (h : A₀ ≤ steadyAmount k R) (t : ℝ) :
     amount k R A₀ t ≤ steadyAmount k R := by
   rw [amount_eq_of_ne_zero hk.ne']
   rw [steadyAmount] at *
   nlinarith [exp_pos (-k * t)]
 
-/-- Starting above the steady state, the amount never falls below it. -/
+/-- For `k > 0`, starting above the steady state, the amount never falls below it. -/
 theorem steadyAmount_le_amount (hk : 0 < k) (h : steadyAmount k R ≤ A₀) (t : ℝ) :
     steadyAmount k R ≤ amount k R A₀ t := by
   rw [amount_eq_of_ne_zero hk.ne']

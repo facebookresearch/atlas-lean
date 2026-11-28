@@ -10,3 +10,4 @@ Closed-loop stability and classical design for single loops: Routh–Hurwitz con
 - [Closed-loop stability of placed state feedback, and hidden cancellations](closed-loop-stability-of-placed-state-feedback-and-hidden-cancellations.md)
 - [Nyquist's stability theorem](nyquist-s-stability-theorem.md)
 - [The large and small arcs of the Nyquist contour](the-large-and-small-arcs-of-the-nyquist-contour.md)
+- [Causal input–output operators](causal-input-output-operators/README.md)
