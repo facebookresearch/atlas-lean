@@ -23,7 +23,10 @@ by list recursion; `F⁽²⁾, F⁽³⁾, F⁽⁴⁾, F⁽⁵⁾` are the paper'
 numbers are MathlibExt's `pellNumber`, sums over
 `K(r, n)` (compositions of `n` into `r` nonnegative parts)
 are `compProdSum`, and ordinary generating functions are
-`fibStepGF m = ∑ₙ F⁽ᵐ⁾ₙ Xⁿ`. Two printed statements are
+`fibStepGF m = ∑ₙ F⁽ᵐ⁾ₙ Xⁿ`. `compProdSum` is defined, and
+`compProdSum_even` is proved, in
+`MathlibExt.Combinatorics.Enumerative.FibStepConvolutionCompProdSumEven`.
+Two printed statements are
 corrected, each found numerically and checked against the
 paper's own derivations: Theorem 8's inner coefficients
 are `m-1-k`, not `k` (its proof's penultimate display has
@@ -42,7 +45,10 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.FibStepConvolution
+public import MathlibExt.Combinatorics.Enumerative.FibStepConvolutionTribonacciTetranacci
 public import MathlibExt.NumberTheory.PellNumberSequence
+public import MathlibExt.Combinatorics.Enumerative.FibStepConvolutionTetranacciPentanacci
+public import MathlibExt.Combinatorics.Enumerative.FibStepConvolutionCompProdSumEven
 
 set_option autoImplicit false
 
@@ -56,14 +62,6 @@ def jacobsthalSeq : ℕ → ℤ
   | 0 => 0
   | 1 => 1
   | n + 2 => jacobsthalSeq (n + 1) + 2 * jacobsthalSeq n
-
-/-- **Sums over compositions.** Given integer sequences $a_0, \dots, a_{r-1}$ and a natural
-number $n$, the sum over the compositions $K(r, n)$ of $n$ into $r$ nonnegative parts is the
-sum, over all $(k_0, \dots, k_{r-1}) \in \mathbb{N}^r$ with $k_0 + \dots + k_{r-1} = n$, of
-$\prod_{i=0}^{r-1} a_i(k_i)$. -/
-def compProdSum {r : ℕ} (seqs : Fin r → ℕ → ℤ) (n : ℕ) : ℤ :=
-  ∑ k ∈ (Finset.univ : Finset (Fin r → Fin (n + 1))).filter
-      (fun k => ∑ i, (k i).val = n), ∏ i, seqs i (k i).val
 
 /-- **Truncated convolution of the $m$-step and $(m+1)$-step Fibonacci numbers.** Write
 $F^{(m)}_n$ for the Fibonacci $m$-step numbers ($F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$, and each later
@@ -79,34 +77,6 @@ theorem_wanted sum_fibStep_mul_succ (m n : ℕ) (hm : 1 ≤ m)
     ∑ j ∈ Finset.range (n - m + 1),
         fibStep m j * fibStep (m + 1) (n - m - j) =
       fibStep (m + 1) n - fibStep m n
-
-/-- **Convolution of the Fibonacci 3-step and 4-step numbers.** Let $T_j$ and $Q_j$ be the
-Fibonacci $3$-step and $4$-step numbers, where the Fibonacci $k$-step numbers start $0, 1$ and
-each later term is the sum of the $k$ terms before it (terms of negative index being $0$). For
-every natural number $n$,
-
-$$\sum_{j=0}^{n} T_j \, Q_{n-j} = Q_{n+3} - T_{n+3}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Corollary 2. -/
-theorem_wanted sum_trib_mul_tetra (n : ℕ) :
-    ∑ j ∈ Finset.range (n + 1), fibStep 3 j * fibStep 4 (n - j) =
-      fibStep 4 (n + 3) - fibStep 3 (n + 3)
-
-/-- **Convolution of the Fibonacci 4-step and 5-step numbers.** Let $Q_j$ and $P_j$ be the
-Fibonacci $4$-step and $5$-step numbers, where the Fibonacci $k$-step numbers start $0, 1$ and
-each later term is the sum of the $k$ terms before it (terms of negative index being $0$). For
-every natural number $n$,
-
-$$\sum_{j=0}^{n} Q_j \, P_{n-j} = P_{n+4} - Q_{n+4}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Corollary 2. -/
-theorem_wanted sum_tetra_mul_penta (n : ℕ) :
-    ∑ j ∈ Finset.range (n + 1), fibStep 4 j * fibStep 5 (n - j) =
-      fibStep 5 (n + 4) - fibStep 4 (n + 4)
 
 /-- **Iterated convolution of Fibonacci $m$-step and $(m+p)$-step numbers.** Let $F^{(k)}_j$ be
 the $j$-th Fibonacci $k$-step number: the sequence starts $F^{(k)}_0 = 0$, $F^{(k)}_1 = 1$, and each
@@ -468,22 +438,6 @@ theorem_wanted fibStepGF_triple_identity (m p q : ℕ)
         (1 - PowerSeries.X) ^ 2 *
           (fibStepGF (m + p) - fibStepGF m)
 
-/-- **A product identity for three consecutive Fibonacci step generating functions.** Let
-$m \ge 1$ be a natural number. For each $k$, let $F^{(k)} = \sum_{n \ge 0} F^{(k)}_n X^n$ in
-$\mathbb{Q}[[X]]$ be the ordinary generating function of the Fibonacci $k$-step numbers
-$F^{(k)}_n$. Then
-$$X^{2m+1} F^{(m)} F^{(m+1)} F^{(m+2)} = X^m F^{(m)} F^{(m+2)} - F^{(m+1)} + F^{(m)}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Theorem 24. -/
-theorem_wanted fibStepGF_triple_consecutive (m : ℕ)
-    (hm : 1 ≤ m) :
-    PowerSeries.X ^ (2 * m + 1) * fibStepGF m * fibStepGF (m + 1) *
-        fibStepGF (m + 2) =
-      PowerSeries.X ^ m * fibStepGF m * fibStepGF (m + 2) -
-        fibStepGF (m + 1) + fibStepGF m
-
 /-- **Generating-function form of the triple convolution with two consecutive step sequences.**
 For a natural number $s$ let $F^{(s)}(X) = \sum_{n \ge 0} F^{(s)}_n X^n$ be the ordinary
 generating function, with rational coefficients, of the Fibonacci $s$-step numbers
@@ -603,25 +557,6 @@ theorem_wanted two_mul_compProdSum_fib_trib_penta (n : ℕ)
       fibStep 5 n - fibStep 5 (n - 1) + fibStep 5 (n - 2) -
         fibStep 3 n - fibStep 3 (n - 2) + fibStep 2 (n - 1)
 
-/-- **A product identity for four consecutive Fibonacci step generating functions.** Let
-$m \ge 1$ be a natural number. For each $k$, let $F^{(k)} = \sum_{n \ge 0} F^{(k)}_n X^n$ in
-$\mathbb{Q}[[X]]$ be the ordinary generating function of the Fibonacci $k$-step numbers
-$F^{(k)}_n$. Then
-$$X^{2m+1} F^{(m)} F^{(m+1)} F^{(m+2)} F^{(m+3)} =
-X^m F^{(m)} F^{(m+2)} F^{(m+3)} - F^{(m+1)} F^{(m+3)} + F^{(m)} F^{(m+3)}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Theorem 31. -/
-theorem_wanted fibStepGF_quadruple_consecutive (m : ℕ)
-    (hm : 1 ≤ m) :
-    PowerSeries.X ^ (2 * m + 1) * fibStepGF m * fibStepGF (m + 1) *
-        fibStepGF (m + 2) * fibStepGF (m + 3) =
-      PowerSeries.X ^ m * fibStepGF m * fibStepGF (m + 2) *
-          fibStepGF (m + 3) -
-        fibStepGF (m + 1) * fibStepGF (m + 3) +
-        fibStepGF m * fibStepGF (m + 3)
-
 /-- **Four-fold convolution of the Fibonacci, tribonacci, tetranacci and pentanacci numbers.**
 Write $F_n$, $T_n$, $Q_n$ and $P_n$ for the Fibonacci $m$-step numbers $F^{(m)}_n$ with
 $m = 2, 3, 4, 5$ respectively. For every integer $n \ge 5$,
@@ -663,25 +598,6 @@ theorem_wanted compProdSum_four_consecutive (m n : ℕ)
       ∑ j ∈ Finset.range (n + 1),
         (fibStep (m + 3) j - fibStep (m + 2) j) *
           (fibStep (m + 1) (n - j) - fibStep m (n - j))
-
-/-- **Convolution of an even number of consecutive Fibonacci step sequences.** Write $F^{(s)}_k$
-for the Fibonacci $s$-step numbers, and write $\sum_{K(r,N)}$ for a sum over all
-$(k_1, \dots, k_r) \in \mathbb{N}^r$ with $k_1 + \dots + k_r = N$. For all natural numbers
-$\ell \ge 1$, $m \ge 1$ and $n \ge \ell(m + \ell - 1)$,
-$$
-\sum_{K(2\ell, n - \ell(m + \ell - 1))} \prod_{j=0}^{2\ell-1} F^{(m+j)}_{k_{j+1}} =
-\sum_{K(\ell, n)} \prod_{j=0}^{\ell-1} \left(F^{(m+2j+1)}_{k_{j+1}} - F^{(m+2j)}_{k_{j+1}}\right).
-$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Theorem 35. -/
-theorem_wanted compProdSum_even (l m n : ℕ) (hl : 1 ≤ l)
-    (hm : 1 ≤ m) (hn : l * (m + l - 1) ≤ n) :
-    @compProdSum (2 * l) (fun (j : Fin (2 * l)) k =>
-        fibStep (m + j.val) k) (n - l * (m + l - 1)) =
-      @compProdSum l (fun (j : Fin l) k =>
-        fibStep (m + 2 * j.val + 1) k - fibStep (m + 2 * j.val) k) n
 
 /-- **Convolution of an odd number of consecutive Fibonacci step sequences.** Write $F^{(s)}_k$
 for the Fibonacci $s$-step numbers, and write $\sum_{K(r,N)}$ for a sum over all

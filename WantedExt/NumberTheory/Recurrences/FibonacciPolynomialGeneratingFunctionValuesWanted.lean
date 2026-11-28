@@ -25,6 +25,8 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
+public import MathlibExt.NumberTheory.Recurrences.FibonacciGeneratingFunctionValues
+public import MathlibExt.NumberTheory.Recurrences.FibonacciGeneratingFunctionRadius
 public import MathlibExt.NumberTheory.Recurrences.LucasNumberGeneratingFunctionValues
 public import MathlibExt.NumberTheory.Recurrences.OddFibonacciLucasPell
 
@@ -83,23 +85,6 @@ public theorem_wanted lucasPolyGenFun_mem_intPoly_iff {a b : ℕ} (ha : 0 < a) (
           q = -ι (𝕃[a, b] (i + 1)) / ((b : RatFunc ℚ) * ι (𝕃[a, b] i))) ∨
         ∃ i : ℕ, 0 < i ∧ q = -ι (𝔽[a, b] (i + 1)) / ((b : RatFunc ℚ) * ι (𝔽[a, b] i))
 
-/-- **Integer values of the generalized Fibonacci generating function at rationals.** Let $a$ and
-$b$ be positive integers with $b \mid a$, and let $F_i(x) \in \mathbb{Z}[x]$ be the polynomials
-with $F_0 = 0$, $F_1 = 1$ and $F_{i+2} = ax\,F_{i+1} + b\,F_i$ for all $i \ge 0$. For a rational
-number $q$, the number $q / (1 - aq - bq^2)$ is an integer if and only if
-$q = F_i(1) / F_{i+1}(1)$ for some $i \in \mathbb{N}$ or $q = -F_{i+1}(1) / (b F_i(1))$ for some
-$i \ge 1$.
-
-Source: Yuji Tsuno, *Polynomial Values with Integer Coefficients for the Generating Functions of
-Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024), Article tsuno05142024, Theorem 1.4
-(`fq-2024-tsuno05142024-thm-1.4`). -/
-public theorem_wanted fibonacciGenFun_eval_isInt_iff {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
-    (hba : b ∣ a) (q : ℚ) :
-    (∃ n : ℤ, q / (1 - a * q - b * q ^ 2) = n) ↔
-      (∃ i : ℕ, q = (((𝔽[a, b] i).eval 1 : ℤ) : ℚ) / (((𝔽[a, b] (i + 1)).eval 1 : ℤ) : ℚ)) ∨
-        ∃ i : ℕ, 0 < i ∧
-          q = -(((𝔽[a, b] (i + 1)).eval 1 : ℤ) : ℚ) / (b * (((𝔽[a, b] i).eval 1 : ℤ) : ℚ))
-
 /-- **Integer values of the generalized Lucas generating function at rationals.** Let $a$ and $b$
 be positive integers with $b \mid a$, and let $F_i(x), L_i(x) \in \mathbb{Z}[x]$ be the
 polynomials with $F_0 = 0$, $F_1 = 1$, $L_0 = 2$, $L_1 = ax$ and
@@ -119,25 +104,6 @@ public theorem_wanted lucasGenFun_eval_isInt_iff {a b : ℕ} (ha : 0 < a) (hb : 
           q = -(((𝕃[a, b] (i + 1)).eval 1 : ℤ) : ℚ) / (b * (((𝕃[a, b] i).eval 1 : ℤ) : ℚ))) ∨
         ∃ i : ℕ, 0 < i ∧
           q = -(((𝔽[a, b] (i + 1)).eval 1 : ℤ) : ℚ) / (b * (((𝔽[a, b] i).eval 1 : ℤ) : ℚ))
-
-/-- **Integer values of the generalized Fibonacci generating function in its interval of
-convergence.** Let $a$ and $b$ be positive integers with $b \mid a$, and let
-$F_i(x) \in \mathbb{Z}[x]$ be the polynomials with $F_0 = 0$, $F_1 = 1$ and
-$F_{i+2} = ax\,F_{i+1} + b\,F_i$ for all $i \ge 0$. For a rational number $q$ with
-$|q| < 2 / (a + \sqrt{a^2 + 4b})$, the radius of convergence of the power series of
-$t / (1 - at - bt^2)$, the number $q / (1 - aq - bq^2)$ is an integer if and only if
-$q = F_{2i}(1) / F_{2i+1}(1)$ for some $i \in \mathbb{N}$.
-
-The source attributes this result (its Theorem 1.1) to Bulawa and Lee.
-
-Source: Yuji Tsuno, *Polynomial Values with Integer Coefficients for the Generating Functions of
-Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024), Article tsuno05142024, Corollary 1.6
-(`fq-2024-tsuno05142024-cor-1.6`) and Theorem 1.1 (`fq-2024-tsuno05142024-thm-1.1`). -/
-public theorem_wanted fibonacciGenFun_eval_isInt_iff_of_abs_lt_radius {a b : ℕ} (ha : 0 < a)
-    (hb : 0 < b) (hba : b ∣ a) {q : ℚ}
-    (hq : |(q : ℝ)| < 2 / (a + Real.sqrt (a ^ 2 + 4 * b))) :
-    (∃ n : ℤ, q / (1 - a * q - b * q ^ 2) = n) ↔
-      ∃ i : ℕ, q = (((𝔽[a, b] (2 * i)).eval 1 : ℤ) : ℚ) / (((𝔽[a, b] (2 * i + 1)).eval 1 : ℤ) : ℚ)
 
 /-- **Integer values of the generalized Lucas generating function in its interval of
 convergence.** Let $a$ and $b$ be positive integers with $a \ne 1$ and $b \mid a$, and let

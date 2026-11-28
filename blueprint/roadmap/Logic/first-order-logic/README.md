@@ -11,6 +11,10 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [Complete theory of a first-order structure](theory-of-structure.md)
 - [Background theories in typed first-order logic](background-theories-in-typed-first-order-logic.md)
 
-- [Kripke completeness of intuitionistic first-order logic](kripke-completeness-of-intuitionistic-first-order-logic.md)
+- [Intuitionistic first-order logic](intuitionistic-first-order-logic/README.md)
 
 - [Automated deduction](automated-deduction/README.md)
+- [Term rewriting](term-rewriting/README.md)
+- [Equational logic](equational-logic/README.md)
+- [Superposition](superposition/README.md)
+- [Herbrand's theorem](herbrand-s-theorem.md)

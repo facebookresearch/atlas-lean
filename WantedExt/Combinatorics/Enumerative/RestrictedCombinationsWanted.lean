@@ -14,6 +14,8 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.AssociatedStirlingEulerian
 public import MathlibExt.Combinatorics.Enumerative.FenceTiling
+public import MathlibExt.Combinatorics.Enumerative.RestrictedCombinations
+public import MathlibExt.Combinatorics.Enumerative.RestrictedPermutationsMultiples
 public import MathlibExt.Combinatorics.Enumerative.SubwordShiftSet
 public import MathlibExt.NumberTheory.Recurrences.HonsbergerFibonacciP
 
@@ -37,38 +39,6 @@ functional in both directions.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Restricted combinations.** For a finite set $Q$ of natural numbers and $n, k \ge 0$, the
-restricted combinations are the $k$-element subsets $s$ of $\{1, \dots, n\}$ such that
-$b - a \notin Q$ for all $a, b \in s$ with $a < b$. Since only distinct elements are compared,
-whether $0 \in Q$ makes no difference.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 1. -/
-public def restrictedCombinations (Q : Finset ℕ) (n k : ℕ) : Finset (Finset ℕ) :=
-  ((Finset.Icc 1 n).powersetCard k).filter fun s => ∀ a ∈ s, ∀ b ∈ s, a < b → b - a ∉ Q
-
-/-- **Number of restricted combinations.** For a finite set $Q$ of natural numbers and natural
-numbers $n$ and $k$, $S^Q_{n,k}$ is the number of $k$-subsets of $\{1, \dots, n\}$ in which no
-two distinct elements differ by an element of $Q$.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 1. -/
-public def restrictedCombinationCount (Q : Finset ℕ) (n k : ℕ) : ℕ :=
-  (restrictedCombinations Q n k).card
-
-/-- **Number of subsets avoiding a set of differences.** For a finite set $Q$ of natural numbers
-and $n \ge 0$, $S^Q_n$ is the number of subsets of $\{1, \dots, n\}$ in which no two distinct
-elements differ by an element of $Q$. That is, $S^Q_n = \sum_{k=0}^{n} S^Q_{n,k}$, where
-$S^Q_{n,k}$ is the number of such subsets with $k$ elements.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 1. -/
-public def restrictedCombinationTotal (Q : Finset ℕ) (n : ℕ) : ℕ :=
-  ∑ k ∈ Finset.range (n + 1), restrictedCombinationCount Q n k
 
 /-- **Restricted combinations with no forbidden differences.** For all natural numbers $n$ and
 $k$, the number $S^{\emptyset}_{n,k}$ of $k$-subsets of $\{1, \dots, n\}$ in which no two
@@ -121,46 +91,6 @@ public theorem_wanted restrictedCombinationCount_one_q_eq_card_windowedAdjacentS
         (∀ i₀ < n + 2 - q, ∀ i j : Fin (n + 1), i₀ ≤ (i : ℕ) → (i : ℕ) < i₀ + q →
           i₀ ≤ (j : ℕ) → (j : ℕ) < i₀ + q → (π i : ℕ) ≤ π j + q) ∧
         excedanceCount (n + 1) π = k}
-
-/-- **Generating function for subsets avoiding differences 1 and 4.** Let $S^{\{1,4\}}_n$ be the
-number of subsets of $\{1, \dots, n\}$ in which no two elements differ by $1$ or by $4$. Then,
-in the ring $\mathbb{Z}[[x]]$ of formal power series,
-$$\Bigl(\sum_{n \ge 0} S^{\{1,4\}}_n x^n\Bigr)(1 - x - x^3 + x^4 - 2x^5 + x^6 - x^7) =
-1 + x + x^2 + x^3 + 2x^4 + x^6.$$
-
-This is the paper's formula for $\sum_{n \ge 0} S^{\{1,4\}}_n x^n$ as a quotient of the two
-polynomials, with the denominator cleared.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Proposition 9. -/
-public theorem_wanted restrictedCombinationTotal_one_four_genFun :
-    PowerSeries.mk (fun n => (restrictedCombinationTotal {1, 4} n : ℤ)) *
-        (1 - PowerSeries.X - PowerSeries.X ^ 3 + PowerSeries.X ^ 4 - 2 * PowerSeries.X ^ 5 +
-          PowerSeries.X ^ 6 - PowerSeries.X ^ 7) =
-      1 + PowerSeries.X + PowerSeries.X ^ 2 + PowerSeries.X ^ 3 + 2 * PowerSeries.X ^ 4 +
-        PowerSeries.X ^ 6
-
-/-- **Generating function for subsets avoiding differences 1 and 5.** Let $S^{\{1,5\}}_n$ be the
-number of subsets of $\{1, \dots, n\}$ in which no two elements differ by $1$ or by $5$. Then,
-in the ring $\mathbb{Z}[[x]]$ of formal power series,
-$$\Bigl(\sum_{n \ge 0} S^{\{1,5\}}_n x^n\Bigr)
-(1 - x^2 - x^3 - x^4 + x^5 - x^6 - x^7 - x^8 - x^{10}) =
-1 + 2x + 2x^2 + 2x^3 + 2x^4 + 4x^5 + 3x^6 + 2x^7 + x^8 + x^9.$$
-
-This is the paper's formula for $\sum_{n \ge 0} S^{\{1,5\}}_n x^n$ as a quotient of the two
-polynomials, with the denominator cleared.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Proposition 10. -/
-public theorem_wanted restrictedCombinationTotal_one_five_genFun :
-    PowerSeries.mk (fun n => (restrictedCombinationTotal {1, 5} n : ℤ)) *
-        (1 - PowerSeries.X ^ 2 - PowerSeries.X ^ 3 - PowerSeries.X ^ 4 + PowerSeries.X ^ 5 -
-          PowerSeries.X ^ 6 - PowerSeries.X ^ 7 - PowerSeries.X ^ 8 - PowerSeries.X ^ 10) =
-      1 + 2 * PowerSeries.X + 2 * PowerSeries.X ^ 2 + 2 * PowerSeries.X ^ 3 +
-        2 * PowerSeries.X ^ 4 + 4 * PowerSeries.X ^ 5 + 3 * PowerSeries.X ^ 6 +
-        2 * PowerSeries.X ^ 7 + PowerSeries.X ^ 8 + PowerSeries.X ^ 9
 
 /-- **Generating function for subsets avoiding differences 1 and 6.** Let $S^{\{1,6\}}_n$ be the
 number of subsets of $\{1, \dots, n\}$ in which no two elements differ by $1$ or by $6$. Then,
@@ -260,26 +190,6 @@ public theorem oneTBonacciPolynomial_succ_of_lt (s n : ℕ) (h : n < s) :
   rw [oneTBonacciPolynomial]
   simp [show ¬ s ≤ n by omega]
 
-/-- **Counting strongly restricted permutations with displacements $-m$, $0$, $jm$.** Let
-$m, j, i, r$ be natural numbers with $j \ge 1$ and $r < m$, and let $F_j$ be the Fibonacci
-$j$-numbers: $F_j(0) = 0$, $F_j(n) = 1$ for $1 \le n \le j$, and
-$F_j(n) = F_j(n-1) + F_j(n-j-1)$ for $n > j$. Then the number of permutations $\pi$ of
-$\{0, 1, \dots, im + r - 1\}$ such that $\pi(x) - x \in \{-m, 0, jm\}$ for every $x$ equals
-$F_j(i+1)^{m-r} \, F_j(i+2)^r$.
-
-In the paper's notation this is
-$P^{\{-m,0,jm\}}_{im+r} = (f^{(j+1)}_i)^{m-r} (f^{(j+1)}_{i+1})^r$, where the
-$(1,t)$-bonacci numbers $f^{(t)}_n$ satisfy $f^{(j+1)}_n = F_j(n+1)$.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Corollary 14. -/
-public theorem_wanted card_strongPerms_multiples_eq_fibonacciP
-    (m j i r : ℕ) (hj : 1 ≤ j) (hr : r < m) :
-    Nat.card {π : Equiv.Perm (Fin (i * m + r)) //
-        ∀ x, ((π x : ℕ) : ℤ) - (x : ℕ) ∈ ({-(m : ℤ), 0, ((j * m : ℕ) : ℤ)} : Finset ℤ)} =
-      fibonacciP j (i + 1) ^ (m - r) * fibonacciP j (i + 2) ^ r
-
 /-- **Excedances of strongly restricted permutations with displacements $-m$, $0$, $jm$.** Let
 $m, j, i, r, k$ be natural numbers with $j \ge 1$ and $r < m$, and let $f_n(x)$ be the
 $(1, j+1)$-bonacci polynomials with natural-number coefficients: $f_0(x) = 1$, and
@@ -336,32 +246,6 @@ public theorem_wanted restrictedCombination_bivariate_genFun_of_isWellBased
           PowerSeries.X * PowerSeries.C Polynomial.X) =
       1 + ∑ qi ∈ Q, PowerSeries.X ^ qi * PowerSeries.C Polynomial.X
 
-/-- **Restricted-overlap tilings.** Let $Q$ be a finite set of natural numbers and let $q$ be its
-largest element ($q = 0$ if $Q$ is empty). The $Q$-comb is a piece of length $q + 1$ whose cell
-$0$ and cells $j \in Q$ are teeth and whose other cells are gaps. A restricted-overlap tiling of an
-$n$-board (cells $0, \dots, n - 1$) with squares and $k$ $Q$-combs is recorded by the set $P$ of
-the start cells of its combs, with squares filling the cells that no tooth covers. The
-restricted-overlap tilings are the $k$-element sets $P$ of natural numbers $s$ with $s + q < n$
-(each comb fits on the board) such that $s \ne s' + j$ for all $s, s' \in P$ and all nonzero
-$j \in Q$ (no comb's leftmost cell is covered by a non-leftmost tooth of another comb).
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 1. -/
-public def restrictedOverlapTilings (Q : Finset ℕ) (n k : ℕ) : Finset (Finset ℕ) :=
-  (((Finset.range n).filter fun s => s + Q.sup id < n).powersetCard k).filter
-    fun P => ∀ s ∈ P, ∀ s' ∈ P, ∀ j ∈ Q, j ≠ 0 → s ≠ s' + j
-
-/-- **Number of restricted-overlap tilings.** For a finite set $Q$ of natural numbers and natural
-numbers $n$ and $k$, $B^Q_{n,k}$ is the number of restricted-overlap tilings of an $n$-board with
-squares and $k$ $Q$-combs.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 1. -/
-public def restrictedOverlapTilingCount (Q : Finset ℕ) (n k : ℕ) : ℕ :=
-  (restrictedOverlapTilings Q n k).card
-
 /-- **Two dominoes on a 4-board.** For $Q = \{1\}$ the $Q$-comb is a domino, and the number
 $B^{\{1\}}_{4,2}$ of restricted-overlap tilings of a $4$-board with squares and two $Q$-combs is
 $1$.
@@ -385,46 +269,6 @@ Sequences 28 (2025), Article 25.3.7, Section 1. -/
 public theorem restrictedOverlapTilingCount_singleton_two_four_two :
     restrictedOverlapTilingCount {2} 4 2 = 1 := by
   decide
-
-/-- **Restricted combinations and restricted-overlap tilings.** Let $Q$ be a finite set of
-natural numbers and let $q$ be its largest element ($q = 0$ if $Q$ is empty). Write
-$S^Q_{n,k}$ for the number of $k$-subsets of $\{1, \dots, n\}$ in which no two distinct
-elements differ by an element of $Q$, $S^Q_n = \sum_{k=0}^{n} S^Q_{n,k}$, and $B^Q_{m,k}$ for
-the number of restricted-overlap tilings of an $m$-board with squares and $k$ $Q$-combs. Then
-for all natural numbers $n$ and $k$, $S^Q_{n,k} = B^Q_{n+q,k}$ and
-$S^Q_n = \sum_{j=0}^{n+q} B^Q_{n+q,j}$.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Theorem 1. -/
-public theorem_wanted restrictedCombinationCount_eq_restrictedOverlapTilingCount
-    (Q : Finset ℕ) (n k : ℕ) :
-    restrictedCombinationCount Q n k = restrictedOverlapTilingCount Q (n + Q.sup id) k ∧
-      restrictedCombinationTotal Q n = ∑ j ∈ Finset.range (n + Q.sup id + 1),
-        restrictedOverlapTilingCount Q (n + Q.sup id) j
-
-/-- **Generating functions of restricted combinations and restricted-overlap tilings.** Let $Q$
-be a finite set of natural numbers and let $q$ be its largest element ($q = 0$ if $Q$ is empty).
-Write $S^Q_{n,k}$ for the number of $k$-subsets of $\{1, \dots, n\}$ in which no two elements
-differ by an element of $Q$, and $B^Q_{n,k}$ for the number of restricted-overlap tilings of an
-$n$-board with squares and $k$ $Q$-combs. In the ring $\mathbb{Z}[y][[x]]$ of power series in
-$x$ with coefficients in $\mathbb{Z}[y]$, let
-$g^Q(x, y) = \sum_{n \ge 0} \sum_{k=0}^{n} S^Q_{n,k} x^n y^k$ and
-$G(x, y) = \sum_{n \ge 0} \sum_{k=0}^{n} B^Q_{n,k} x^n y^k$. Then
-$$x^q g^Q(x, y) = G(x, y) - \sum_{n=0}^{q-1} x^n.$$
-
-This is the paper's formula $g^Q = \bigl(G - (1 - x^q)/(1 - x)\bigr)/x^q$ with the denominators
-cleared.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Corollary 7. -/
-public theorem_wanted restrictedCombination_genFun_eq_tiling_genFun (Q : Finset ℕ) :
-    PowerSeries.X ^ Q.sup id * PowerSeries.mk (fun n => ∑ k ∈ Finset.range (n + 1),
-        (restrictedCombinationCount Q n k : Polynomial ℤ) * Polynomial.X ^ k) =
-      PowerSeries.mk (fun n => ∑ k ∈ Finset.range (n + 1),
-        (restrictedOverlapTilingCount Q n k : Polynomial ℤ) * Polynomial.X ^ k) -
-        ∑ n ∈ Finset.range (Q.sup id), PowerSeries.X ^ n
 
 /-- **Metatiles with at most two combs.** Let $Q$ be a finite set of natural numbers and $q$ its
 largest element ($q = 0$ for $Q = \emptyset$). The set $Q$ has metatiles with at most two combs

@@ -251,4 +251,131 @@ public theorem rascalZ_eq_rascalGenZ_one (n k : ℤ) :
     simpa only [rascalGenZ, ite_eq_left h, rascalGen] using hcount.symm
   · simp [rascalZ, rascalGenZ, h]
 
+-- Integer indices let the same partitions handle empty classes at the edges.
+private abbrev BinaryWords (p : List ℕ → Prop) (n k : ℤ) :=
+  {w : List ℕ // (w.length : ℤ) = n ∧ Binary w ∧ (w.count 1 : ℤ) = k ∧ p w}
+
+private theorem binary_cons_iff {p : List ℕ → Prop} {n k : ℤ} {w : List ℕ} {a : ℕ}
+    (ha : a = 0 ∨ a = 1) :
+    ((a :: w).length : ℤ) = n + 1 ∧ Binary (a :: w) ∧
+      ((a :: w).count 1 : ℤ) = k ∧ p (a :: w) ↔
+    (w.length : ℤ) = n ∧ Binary w ∧ (w.count 1 : ℤ) = k - a ∧ p (a :: w) := by
+  obtain rfl | rfl := ha <;> simp [Binary, Nat.cast_add, eq_sub_iff_add_eq]
+
+private noncomputable def prependBit (p : List ℕ → Prop) (n k : ℤ) (hn : 0 ≤ n) :
+    BinaryWords (fun w => p (0 :: w)) n k ⊕ BinaryWords (fun w => p (1 :: w)) n (k - 1) ≃
+      BinaryWords p (n + 1) k := by
+  let zero (w : BinaryWords (fun w => p (0 :: w)) n k) : BinaryWords p (n + 1) k :=
+    ⟨0 :: w.1, (binary_cons_iff (Or.inl rfl)).mpr (by simpa using w.2)⟩
+  let one (w : BinaryWords (fun w => p (1 :: w)) n (k - 1)) : BinaryWords p (n + 1) k :=
+    ⟨1 :: w.1, (binary_cons_iff (Or.inr rfl)).mpr w.2⟩
+  apply Equiv.ofBijective (Sum.elim zero one)
+  constructor
+  · intro a b h
+    have hval := congrArg Subtype.val h
+    rcases a with a | a <;> rcases b with b | b
+    · exact congrArg Sum.inl (Subtype.ext (List.cons.inj hval).2)
+    · cases hval
+    · cases hval
+    · exact congrArg Sum.inr (Subtype.ext (List.cons.inj hval).2)
+  · rintro ⟨w, hw⟩
+    cases w with
+    | nil =>
+      have hlen := hw.1
+      simp at hlen
+      omega
+    | cons a w =>
+      obtain rfl | rfl := hw.2.1 a (by simp)
+      · exact ⟨Sum.inl ⟨w, by simpa using (binary_cons_iff (Or.inl rfl)).mp hw⟩, rfl⟩
+      · exact ⟨Sum.inr ⟨w, (binary_cons_iff (Or.inr rfl)).mp hw⟩, rfl⟩
+
+private theorem binaryWords_finite (p : List ℕ → Prop) (n k : ℤ) :
+    Finite (BinaryWords p n k) := by
+  have hlen (w : BinaryWords p n k) : w.1.length = n.toNat := by
+    have := w.2.1
+    omega
+  let bits (w : BinaryWords p n k) (i : Fin n.toNat) : Fin 2 := by
+    have hi : i.val < w.1.length := by simpa only [hlen w] using i.isLt
+    exact ⟨w.1[i.val], by
+      have h := w.2.2.1 _ (getElem_mem hi)
+      omega⟩
+  apply Finite.of_injective bits
+  intro a b eq
+  apply Subtype.ext
+  apply List.ext_getElem ((hlen a).trans (hlen b).symm)
+  intro i hi _
+  exact congrArg Fin.val (congrFun eq ⟨i, by simpa only [hlen a] using hi⟩)
+
+private theorem card_binaryWords_cons (p : List ℕ → Prop) (n k : ℤ) (hn : 0 ≤ n) :
+    (Nat.card (BinaryWords p (n + 1) k) : ℤ) =
+      (Nat.card (BinaryWords (fun w => p (0 :: w)) n k) : ℤ) +
+      (Nat.card (BinaryWords (fun w => p (1 :: w)) n (k - 1)) : ℤ) := by
+  have := binaryWords_finite (fun w => p (0 :: w)) n k
+  have := binaryWords_finite (fun w => p (1 :: w)) n (k - 1)
+  rw [← Nat.card_congr (prependBit p n k hn), Nat.card_sum, Nat.cast_add]
+
+private theorem card_binaryWords_congr {p q : List ℕ → Prop} (n k : ℤ)
+    (h : ∀ w, Binary w → (p w ↔ q w)) :
+    Nat.card (BinaryWords p n k) = Nat.card (BinaryWords q n k) :=
+  Nat.card_congr (Equiv.subtypeEquivRight fun w =>
+    and_congr Iff.rfl (and_congr_right fun hw => and_congr Iff.rfl (h w hw)))
+
+private theorem card_binaryWords_ascents_in_range (j : ℕ) (n k : ℤ) (h : 0 ≤ k ∧ k ≤ n) :
+    (Nat.card (BinaryWords (wordAscents · ≤ j) n k) : ℤ) = rascalGenZ j n k := by
+  rw [rascalGenZ, ite_eq_left h, rascalGen]
+  congr 1
+  apply Nat.card_congr
+  apply Equiv.subtypeEquivRight
+  intro w
+  have hlen : (w.length : ℤ) = n ↔ w.length = n.toNat := by omega
+  have hcount : (w.count 1 : ℤ) = k ↔ w.count 1 = k.toNat := by omega
+  simp only [hlen, hcount]
+
+private theorem card_binaryWords_ascents (j : ℕ) (n k : ℤ) :
+    (Nat.card (BinaryWords (wordAscents · ≤ j) n k) : ℤ) = rascalGenZ j n k := by
+  by_cases h : 0 ≤ k ∧ k ≤ n
+  · exact card_binaryWords_ascents_in_range j n k h
+  · have : IsEmpty (BinaryWords (wordAscents · ≤ j) n k) := ⟨fun w => by
+      have hlen := w.2.1
+      have hcount := w.2.2.2.1
+      have hle : w.1.count 1 ≤ w.1.length := count_le_length
+      omega⟩
+    simp [rascalGenZ, h]
+
+/-- **Generalized Fleron recurrence.** Let $j \ge 1$ be a natural number and let $n$ and $k$ be
+integers with $n \ge 2$ and $0 \le k \le n$. Then
+$$R^{(j)}_{n,k} = R^{(j)}_{n-1,k} + R^{(j)}_{n-1,k-1} - R^{(j)}_{n-2,k-1} + R^{(j-1)}_{n-2,k-1},$$
+where $R^{(i)}_{a,b}$ is the generalized Rascal number for integer indices, taken to be $0$ unless
+$0 \le b \le a$.
+
+Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
+Interpretations of Rascal Numbers", Theorem 18. -/
+public theorem rascalGenZ_fleron (j : ℕ) (hj : 1 ≤ j)
+    (n k : ℤ) (hn : 2 ≤ n) (hk0 : 0 ≤ k) (hkn : k ≤ n) :
+    rascalGenZ j n k = rascalGenZ j (n - 1) k +
+      rascalGenZ j (n - 1) (k - 1) - rascalGenZ j (n - 2) (k - 1) +
+      rascalGenZ (j - 1) (n - 2) (k - 1) := by
+  let p (w : List ℕ) := wordAscents w ≤ j
+  have bare (m l : ℤ) : (Nat.card (BinaryWords p m l) : ℤ) = rascalGenZ j m l :=
+    card_binaryWords_ascents j m l
+  have one (m l : ℤ) : (Nat.card (BinaryWords (fun w => p (1 :: w)) m l) : ℤ) =
+      rascalGenZ j m l := by
+    rw [card_binaryWords_congr m l (q := p) (fun w hw => by simp [p, ascents_cons_one hw]), bare]
+  have zero_zero (m l : ℤ) : (Nat.card (BinaryWords (fun w => p (0 :: 0 :: w)) m l) : ℤ) =
+      Nat.card (BinaryWords (fun w => p (0 :: w)) m l) := by
+    rw [card_binaryWords_congr m l (q := fun w => p (0 :: w)) (fun w _ => by simp [p, wordAscents])]
+  have zero_one (m l : ℤ) : (Nat.card (BinaryWords (fun w => p (0 :: 1 :: w)) m l) : ℤ) =
+      rascalGenZ (j - 1) m l := by
+    rw [card_binaryWords_congr m l (q := (wordAscents · ≤ j - 1)) (fun w hw => by
+      simp only [p, wordAscents, zero_lt_one, ite_true, ascents_cons_one hw]
+      omega), card_binaryWords_ascents]
+  -- The 00 tails occur in both partitions. The 01 tails use one ascent.
+  have full := card_binaryWords_cons p (n - 1) k (by omega)
+  have tail := card_binaryWords_cons p (n - 2) k (by omega)
+  have zero := card_binaryWords_cons (fun w => p (0 :: w)) (n - 2) k (by omega)
+  rw [show n - 1 + 1 = n by omega, card_binaryWords_ascents_in_range j n k ⟨hk0, hkn⟩, one] at full
+  rw [show n - 2 + 1 = n - 1 by omega, bare, one] at tail
+  rw [show n - 2 + 1 = n - 1 by omega, zero_zero, zero_one] at zero
+  omega
+
 end MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted

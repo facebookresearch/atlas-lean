@@ -87,3 +87,16 @@ example : ¬ ({0, 1, 2} : Set ℕ).IsSidon ∧
 -- The partition also exists for the empty set, with no midpoint witnesses.
 example : ∃ B C : Set ℕ, B ∪ C = ∅ ∧ Disjoint B C ∧ B.IsSidon ∧ C.IsSidon :=
   exists_partition_isSidon_of_isWeakSidonSet (by simp [IsWeakSidonSet])
+
+-- A weak generator that is not itself Sidon still belongs to the Sidon ideal.
+example : ({0, 1, 2} : Set ℕ) ∈ sidonIdeal := by
+  rw [← generatedIdeal_isWeakSidonSet_eq_sidonIdeal]
+  apply mem_generatedIdeal
+  intro a ha b hb c hc d hd hab hcd heq
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha hb hc hd
+  omega
+
+-- The zero-generator cover survives the refinement as well.
+example : (∅ : Set ℕ) ∈ sidonIdeal := by
+  rw [← generatedIdeal_isWeakSidonSet_eq_sidonIdeal]
+  exact ⟨0, Fin.elim0, fun j => Fin.elim0 j, Set.empty_subset _⟩

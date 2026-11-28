@@ -6,6 +6,8 @@ $$R(A) \le \frac{r \sqrt{2 \log \lvert A \rvert}}{n}.$$
 
 The proof bounds $\exp(\lambda \cdot \text{average supremum})$ by Jensen's inequality, the maximum by the sum over $A$, and each exponential moment by $\prod_i \cosh(\lambda a_i) \le \exp(\lambda^2 \lVert a \rVert_2^2 / 2)$, then optimizes over $\lambda > 0$.
 
+The same bound in raw form, before dividing by $n$, says that the average over all $2^n$ sign vectors $\sigma$ of $\max_{a \in A} \sum_i \sigma_i a_i$ is at most $\sqrt{2 \log |A|}\, \max_{a \in A} \lVert a \rVert_2$; for $n = 0$ the raw sum is $0$.
+
 ## Informally uses
 
 - [Exponential moment of a Rademacher sum](average-exp-sign-corr-le.md): builds on.

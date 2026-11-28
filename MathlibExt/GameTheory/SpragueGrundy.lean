@@ -18,6 +18,20 @@ public import Mathlib.Order.WellFounded
 import Mathlib.Order.Lattice.Nat
 import Batteries.Data.Nat.Bitwise.Lemmas
 
+/-!
+# Sprague–Grundy theory for finite impartial games
+
+## References
+
+- Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+  INTEGERS 26 (2026), Article G4, pp. 1–40, Corollary 4 and Lemma 5.
+- R. P. Sprague, *Über mathematische Kampfspiele*, Tôhoku Mathematical Journal 41
+  (1935–1936), pp. 438–444.
+- P. M. Grundy, *Mathematics and games*, Eureka 2 (1939), pp. 6–8.
+- Tanya Khovanova and Joshua Xiong, *Nim Fractals*, Journal of Integer Sequences 17
+  (2014), Article 14.7.8, Section 1.
+-/
+
 @[expose] public section
 
 namespace MetaMathlibExt.SpragueGrundy
@@ -446,3 +460,57 @@ theorem sprague_grundy (G : ImpartialGame) :
   exact hG.trans hN.symm
 
 end MetaMathlibExt.SpragueGrundy
+
+namespace MetaMathlibExt
+
+open SpragueGrundy
+
+/-- **Equivalence of impartial games via their sum.** Two finite impartial games $G$ and $H$ are
+equivalent if and only if their sum $G + H$ is a P-position, that is, the position of $G + H$ in
+which both $G$ and $H$ are at their starting positions is a P-position.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Lemma 5 (`integers-2026-G4-lem-5`). -/
+theorem impartialGame_equiv_iff_isP_gameSum (G H : ImpartialGame) :
+    Equiv G H ↔ IsP (gameSum G H) ((G.start, H.start) : (gameSum G H).Pos) := by
+  constructor
+  · intro hEquiv
+    exact (hEquiv H).mpr ((isP_sum_iff H H _ _).mpr (Nat.xor_self _))
+  · intro hP
+    have hGH : grundy G G.start = grundy H H.start :=
+      Nat.xor_eq_zero_iff.mp ((isP_sum_iff G H _ _).mp hP)
+    intro K
+    rw [isP_sum_iff, isP_sum_iff, hGH]
+
+private theorem equiv_nimHeap_iff_grundy_eq (G : ImpartialGame) (n : ℕ) :
+    Equiv G (nimHeap n) ↔ grundy G G.start = n := by
+  have hnim : grundy (nimHeap n) (nimHeap n).start = n :=
+    nim_grundy n (nimHeap n).start
+  rw [impartialGame_equiv_iff_isP_gameSum, isP_sum_iff, hnim, Nat.xor_eq_zero_iff]
+
+/-- **Mex rule for Sprague–Grundy values.** Let $G$ be a finite impartial game and $n$ a natural
+number such that $G$ is equivalent to the Nim heap $*n$, that is, $G$ has Sprague–Grundy value
+$n$. For a move from the start position of $G$ to a position $q$, write $G_q$ for the game $G$
+started at $q$. Then no $G_q$ is equivalent to $*n$, and for every natural number $m < n$ some
+$G_q$ is equivalent to $*m$. That is, the Sprague–Grundy value of $G$ is the mex of the
+Sprague–Grundy values of the games $G_q$.
+
+Source: Zev Friedman, *Sprague-Grundy Values for 4-Pile Princess and the Roses*,
+INTEGERS 26 (2026), Article G4, Corollary 4 (`integers-2026-G4-cor-4`). -/
+theorem spragueGrundyValue_eq_mex_options (G : ImpartialGame) (n : ℕ)
+    (hG : Equiv G (nimHeap n)) :
+    (∀ q ∈ G.moves G.start, ¬ Equiv { G with start := q } (nimHeap n)) ∧
+      ∀ m < n, ∃ q ∈ G.moves G.start, Equiv { G with start := q } (nimHeap m) := by
+  have hstart := (equiv_nimHeap_iff_grundy_eq G n).mp hG
+  have hoption (q : G.Pos) (m : ℕ) :
+      Equiv { G with start := q } (nimHeap m) ↔ grundy G q = m :=
+    -- The recursion depends only on the move relation, so changing the start is definitional.
+    equiv_nimHeap_iff_grundy_eq { G with start := q } m
+  constructor
+  · intro q hq heq
+    exact grundy_ne_of_mem G hq ((hoption q n).mp heq |>.trans hstart.symm)
+  · intro m hm
+    obtain ⟨q, hq, hqm⟩ := exists_move_with_grundy G G.start (hstart.symm ▸ hm)
+    exact ⟨q, hq, (hoption q m).mpr hqm⟩
+
+end MetaMathlibExt
