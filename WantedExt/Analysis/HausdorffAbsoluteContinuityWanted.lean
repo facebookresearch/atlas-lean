@@ -38,8 +38,8 @@ Moments*. Knill, *Some fundamental theorems in mathematics*, §115.
 -/
 module
 
-public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.Analysis.HausdorffAbsoluteContinuity
 
 @[expose] public section
 
@@ -49,16 +49,13 @@ namespace Analysis.HausdorffAbsoluteContinuity
 /-!
 # Hausdorff moment problem: absolute-continuity criterion
 
-`hausdorff_absolute_continuity`: a positive probability measure `μ` on the unit
-cube is uniformly absolutely continuous with respect to Lebesgue measure iff its
-moment differences are dominated by those of Lebesgue measure. This is the third
-statement of §115 of the Knill survey (the moment realizability and positivity
-criteria are the companion lean-eval problems). The trusted helpers (`cube`,
-`monomial`, `momentOf`, `multiChoose`, `diff`, `UniformlyAbsolutelyContinuous`)
-are non-holes. Mathlib has `SignedMeasure`, finite measures, and set integrals
-but no moment-problem machinery.
+This module re-exports `hausdorff_absolute_continuity` and `UniformlyAbsolutelyContinuous`
+from `MathlibExt.Analysis.HausdorffAbsoluteContinuity`. The theorem is stated with the
+shared definitions from `MathlibExt.Analysis.HausdorffMoments`.
 
-Category-(b) candidate from §115 of the Knill survey (additional statement 2).
+The five definitions below (`cube`, `monomial`, `momentOf`, `multiChoose`, and `diff`) are
+the original lean-eval helpers. They duplicate the corresponding shared definitions and are
+not used by the re-exported theorem.
 -/
 
 open MeasureTheory
@@ -100,38 +97,6 @@ multi-index. -/
 noncomputable def diff {d : ℕ} (a : (Fin d → ℕ) → ℝ) (k n : Fin d → ℕ) : ℝ :=
   ∑ j ∈ Finset.Iic k,
     (-1 : ℝ) ^ (∑ i, (k i - j i)) * (multiChoose k j : ℝ) * a (n - j)
-
-/-- **Uniformly absolutely continuous measures.** A measure $\mu$ on $\mathbb{R}^d$ is uniformly
-absolutely continuous with respect to a measure $\nu$ on $\mathbb{R}^d$ if there is a real
-constant $C \ge 0$ with $\mu(S) \le C \, \nu(S)$ for every measurable set $S$.
-
-When $\nu$ is $\sigma$-finite, this says that $\mu$ has an essentially bounded Radon–Nikodym
-density with respect to $\nu$. -/
-def UniformlyAbsolutelyContinuous {d : ℕ}
-    (μ ν : Measure (EuclideanSpace ℝ (Fin d))) : Prop :=
-  ∃ C : ℝ≥0, μ ≤ C • ν
-
-/- **Absolute continuity criterion (Hausdorff moment problem).** A positive
-probability measure `μ` on the cube is uniformly absolutely continuous w.r.t.
-Lebesgue measure iff there is `C` with `(Δᵏμ)ₙ ≤ C·(Δᵏν)ₙ` for all `k ≤ n`. -/
-/-- **Hausdorff's absolute continuity criterion.** Let $\mu$ be a probability measure on
-$\mathbb{R}^d$ with $\mu(\mathbb{R}^d \setminus I^d) = 0$, where $I^d = [0,1]^d$ is the closed
-unit cube, and let $\lambda$ be Lebesgue measure restricted to $I^d$. For a measure $\rho$ write
-$m_\rho(n) = \int_{I^d} x^n \, d\rho(x)$ for its moments, indexed by multi-indices
-$n \in \mathbb{N}^d$. Then $\mu$ is uniformly absolutely continuous with respect to $\lambda$ if
-and only if there is a real constant $C$ such that
-$(\Delta^k m_\mu)_n \le C \, (\Delta^k m_\lambda)_n$ for all multi-indices $k \le n$
-(coordinatewise), where $\Delta^k$ is the iterated backward difference.
-
-Source: F. Hausdorff (1921–1923); see Shohat–Tamarkin, *The Problem of Moments*.
-Knill, *Some fundamental theorems in mathematics*, §115. Via leanprover/lean-eval@38361be, problem
-`hausdorff_absolute_continuity`. -/
-public theorem_wanted hausdorff_absolute_continuity {d : ℕ}
-    (μ : Measure (EuclideanSpace ℝ (Fin d)))
-    [IsProbabilityMeasure μ] (hμ : μ ((cube d)ᶜ) = 0) :
-    UniformlyAbsolutelyContinuous μ (volume.restrict (cube d)) ↔
-      ∃ C : ℝ, ∀ k n : Fin d → ℕ, k ≤ n →
-        diff (momentOf μ) k n ≤ C * diff (momentOf (volume.restrict (cube d))) k n
 
 end Analysis.HausdorffAbsoluteContinuity
 
