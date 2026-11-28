@@ -17,9 +17,9 @@ import Mathlib.Tactic.NormNum
 /-!
 # Tests for real matrix quadratics
 
-The identity is positive definite. The rank-one diagonal matrix with diagonal `(2, 0)`
-is singular positive semidefinite, with different behavior for right-hand sides `(4, 0)`
-and `(0, 1)`.
+The identity is positive definite. A nonsymmetric matrix checks the exact Jensen-gap identity.
+The rank-one diagonal matrix with diagonal `(2, 0)` checks the Jensen-gap equality criterion
+and has different minimizer behavior for right-hand sides `(4, 0)` and `(0, 1)`.
 -/
 
 namespace MathlibExtTest.StrictConvexQuadratic
@@ -33,8 +33,20 @@ example : StrictConvexOn ℝ Set.univ
 example (x y : Fin 2 → ℝ) (a b : ℝ) (hab : a + b = 1) :
     a * (x ⬝ᵥ x) + b * (y ⬝ᵥ y) - ((a • x + b • y) ⬝ᵥ (a • x + b • y)) =
       a * b * ((x - y) ⬝ᵥ (x - y)) := by
-  have hI : (1 : Matrix (Fin 2) (Fin 2) ℝ).IsHermitian := Matrix.isHermitian_one
-  simpa only [one_mulVec] using quadratic_jensen_gap hI.isSymm x y a b hab
+  simpa only [one_mulVec] using
+    quadratic_jensen_gap (1 : Matrix (Fin 2) (Fin 2) ℝ) x y a b hab
+
+-- For this nonsymmetric matrix, the midpoint has value 1 while both endpoints have value 0.
+example :
+    let N : Matrix (Fin 2) (Fin 2) ℝ := !![0, 4; 0, 0]
+    let x : Fin 2 → ℝ := ![1, 0]
+    let y : Fin 2 → ℝ := ![0, 1]
+    (1 / 2 : ℝ) * (x ⬝ᵥ (N *ᵥ x)) + (1 / 2 : ℝ) * (y ⬝ᵥ (N *ᵥ y)) -
+      (((1 / 2 : ℝ) • x + (1 / 2 : ℝ) • y) ⬝ᵥ
+        (N *ᵥ ((1 / 2 : ℝ) • x + (1 / 2 : ℝ) • y))) = -1 := by
+  intro N x y
+  rw [quadratic_jensen_gap N x y (1 / 2) (1 / 2) (by norm_num)]
+  norm_num [N, x, y, mulVec, dotProduct, Fin.sum_univ_two, Pi.sub_apply]
 
 example (x : Fin 2 → ℝ) :
     IsMinOn (fun y : Fin 2 → ℝ ↦ y ⬝ᵥ ((1 : Matrix (Fin 2) (Fin 2) ℝ) *ᵥ y) -
@@ -51,6 +63,21 @@ private lemma hA : A.PosSemidef := by
 
 private lemma hdet : A.det = 0 := by
   simp [A, Matrix.det_diagonal, Fin.prod_univ_two]
+
+-- Distinct points can have zero gap, but only if their first coordinates agree.
+example (x y : Fin 2 → ℝ) :
+    (1 / 2 : ℝ) * (x ⬝ᵥ (A *ᵥ x)) + (1 / 2 : ℝ) * (y ⬝ᵥ (A *ᵥ y)) -
+      (((1 / 2 : ℝ) • x + (1 / 2 : ℝ) • y) ⬝ᵥ
+        (A *ᵥ ((1 / 2 : ℝ) • x + (1 / 2 : ℝ) • y))) = 0 ↔ x 0 = y 0 := by
+  rw [quadratic_jensen_gap_eq_zero_iff hA x y (by norm_num) (by norm_num) (by norm_num)]
+  constructor
+  · intro h
+    have h₀ := congrFun h 0
+    norm_num [A, mulVec_diagonal, Pi.sub_apply] at h₀
+    linarith
+  · intro h
+    ext i
+    fin_cases i <;> norm_num [A, mulVec_diagonal, Pi.sub_apply, h]
 
 example : ConvexOn ℝ Set.univ (fun x ↦ x ⬝ᵥ (A *ᵥ x)) :=
   convexOn_quadratic_of_posSemidef hA
@@ -96,6 +123,6 @@ example : ¬ ∃ x,
 example : ∃ v : Fin 2 → ℝ, A *ᵥ v = 0 ∧ 0 < (![0, 1] : Fin 2 → ℝ) ⬝ᵥ v ∧
     Tendsto (fun t : ℝ ↦ (t • v) ⬝ᵥ (A *ᵥ (t • v)) -
       2 * ((![0, 1] : Fin 2 → ℝ) ⬝ᵥ (t • v))) atTop atBot :=
-  exists_tendsto_quadratic_sub_linear_atBot_of_not_mem_range hA.isHermitian.isSymm inconsistent
+  exists_tendsto_quadratic_sub_linear_atBot_of_notMem_range hA.isHermitian.isSymm inconsistent
 
 end MathlibExtTest.StrictConvexQuadratic
