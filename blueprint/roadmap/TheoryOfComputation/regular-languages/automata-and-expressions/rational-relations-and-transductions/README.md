@@ -22,4 +22,6 @@ step are in [sequential transducers, Mealy and Moore machines](../sequential-tra
 - [Two-way transducers and MSO-definable string transductions](two-way-transducers-and-mso-transductions.md)
 - [MSO-definable string transductions are exactly the deterministic two-way transductions](mso-transductions-are-two-way-transductions.md)
 - [Subsequentiality of a rational function is decidable](subsequentiality-of-a-rational-function-is-decidable.md)
+- [Lipschitz robustness of deterministic transducers is undecidable](lipschitz-robustness-of-transducers.md)
+- [Membership in the composition closure of synchronous subsequential relations is undecidable](membership-in-the-composition-closure-of-synchro.md)
 - [Origin transducers and resynchronizers](origin-transducers-and-resynchronizers/README.md)

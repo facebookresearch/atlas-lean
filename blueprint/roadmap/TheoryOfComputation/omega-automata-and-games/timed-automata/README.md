@@ -21,3 +21,6 @@ all Boolean operations. Emptiness is decided by the region construction, in
 - [Zones and difference-bound matrices](zones-and-difference-bound-matrices.md)
 - [Timed games](timed-games.md)
 - [Parameterized model checking of discrete timed networks with a controller is undecidable](parameterized-model-checking-of-discrete-timed-n.md)
+- [Recursive timed and hybrid automata](recursive-timed-and-hybrid-automata/README.md)
+- [Timed synthesis games](timed-synthesis-games/README.md)
+- [Weak detectability of labeled timed automata is undecidable](weak-detectability-of-labeled-timed-automata.md)

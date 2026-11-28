@@ -5,6 +5,7 @@
 - [Hybrid programs and differential dynamic logic semantics](hybrid-programs-and-differential-dynamic-logic-semantics.md)
 - [Soundness of differential dynamic logic including differential invariants](soundness-of-differential-dynamic-logic-including-differenti.md)
 - [Decidability frontier for hybrid automaton reachability](decidability-frontier-for-hybrid-automaton-reachability.md)
+- [Time-bounded reachability of rectangular hybrid automata is undecidable](time-bounded-reachability-of-rectangular-hybrid.md)
 - [Hybrid automata and their executions](hybrid-automata-and-their-executions.md)
 - [Rectangular and initialized rectangular automata](rectangular-and-initialized-rectangular-automata.md)
 - [Time-triggered controllers as hybrid automata](time-triggered-controllers-as-hybrid-automata.md)

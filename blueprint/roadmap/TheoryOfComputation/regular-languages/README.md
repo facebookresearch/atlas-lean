@@ -10,3 +10,8 @@ Deterministic, nondeterministic, two-way and ε-automata, transducers, regular e
 - [First-order definable word languages are exactly the star-free languages](first-order-definable-languages-are-star-free.md)
 
 - [MSO-definable languages are regular](mso-definable-languages-are-regular.md)
+- [History-constrained systems](history-constrained-systems/README.md)
+- [Operational state complexity](operational-state-complexity/README.md)
+- [Pomset automata](pomset-automata/README.md)
+- [Positive first-order definability](positive-first-order-definability/README.md)
+- [Two-dimensional automata](two-dimensional-automata/README.md)
