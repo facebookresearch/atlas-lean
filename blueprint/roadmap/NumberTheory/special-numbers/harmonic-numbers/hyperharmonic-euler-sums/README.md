@@ -38,3 +38,9 @@
 - [Odd harmonic central binomial sums with weight $\binom{n}{m}$ at shift $3/4$](choose-central-binom-odd-multiple-harmon-4.md)
 - [Central binomial odd harmonic sums over $\binom{n+m}{m}$ at the shift $1/4$](central-binom-odd-multiple-harmonic-div-4.md)
 - [Central binomial odd harmonic sums over $\binom{n+m}{m}$ at the shift $3/4$](central-binom-odd-multiple-harmonic-div-5.md)
+
+- [Half-integer zeta sum](half-shift-zeta-tsum.md)
+
+- [Generalized hyperharmonic numbers at order one half](generalized-hyperharmonic-half-eq.md)
+
+- [Half-integer reciprocal power sums](has-sum-one-div-nat-add-half-pow.md)

@@ -11,3 +11,4 @@ Topological dynamics studies continuous maps of topological spaces through orbit
 - [Topological entropy](topological-entropy/README.md)
 - [Topological multiple recurrence](topological-multiple-recurrence/README.md)
 - [Realizable span of a nondegenerate binary recurrence](binaryrec-realizable-subspace-dim.md)
+- [Decision problems for subshifts of finite type](decision-problems-for-subshifts-of-finite-type/README.md)
