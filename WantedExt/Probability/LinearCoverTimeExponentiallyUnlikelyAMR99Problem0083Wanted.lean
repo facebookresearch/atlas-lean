@@ -41,9 +41,11 @@ notes).
 -/
 
 open Classical in
-/-- The probability that simple random walk on `G` started at `v` visits every vertex within `m`
-steps: the sum, over vertex sequences `w 0 = v, w 1, …, w m` with consecutive vertices adjacent that
-visit every vertex, of `∏_{i < m} 1 / deg(w i)`. -/
+/-- The sum, over vertex sequences `w 0 = v, w 1, …, w m` of exactly `m` steps with consecutive
+vertices adjacent that visit every vertex, of `∏_{i < m} 1 / deg(w i)`. When `v` has positive
+degree it is the probability that simple random walk on `G` started at `v` visits every vertex
+within `m` steps; at an isolated `v` there is no such sequence for `m ≥ 1`, so the value is `0`,
+even when `v` is the only vertex. -/
 noncomputable def coverProb {n : ℕ} (G : SimpleGraph (Fin n)) (v : Fin n) (m : ℕ) : ℝ :=
   ∑ w : Fin (m + 1) → Fin n with
       w 0 = v ∧ (∀ i : Fin m, G.Adj (w i.castSucc) (w i.succ)) ∧ Function.Surjective w,
