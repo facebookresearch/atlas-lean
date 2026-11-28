@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
+import Mathlib.Topology.UniformSpace.Defs
 
 /-!
 # Complex examples of rapidly decreasing sequences
@@ -240,5 +241,30 @@ example (k : ℕ) :
   have h := hpoint.trans hmono
   norm_num only [exponential, RapidSequence.ofFunction_apply, exponential_norm] at h
   exact h
+
+section UniformityRegression
+
+open Filter
+
+example :
+    (inferInstance : UniformSpace (RapidSequence ℂ ℂ)).toTopologicalSpace =
+      (inferInstance : TopologicalSpace (RapidSequence ℂ ℂ)) := by
+  with_reducible_and_instances rfl
+
+example (s : Set (RapidSequence ℂ ℂ)) (x : RapidSequence ℂ ℂ) :
+    s ∈ 𝓝 x ↔
+      {p : RapidSequence ℂ ℂ × RapidSequence ℂ ℂ | p.1 = x → p.2 ∈ s} ∈
+        uniformity (RapidSequence ℂ ℂ) := by
+  with_reducible_and_instances
+    rw [mem_nhds_uniformity_iff_right]
+
+example (s : Set (RapidSequence ℂ ℂ)) :
+    s ∈ 𝓝 packet ↔
+      {p : RapidSequence ℂ ℂ × RapidSequence ℂ ℂ | p.1 = packet → p.2 ∈ s} ∈
+        uniformity (RapidSequence ℂ ℂ) := by
+  with_reducible_and_instances
+    simp only [mem_nhds_uniformity_iff_right]
+
+end UniformityRegression
 
 end MathlibExtTest.Analysis.SchwartzSpace.RapidSequenceTests

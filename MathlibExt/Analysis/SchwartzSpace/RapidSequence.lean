@@ -401,7 +401,7 @@ instance : ContinuousSMul 𝕜 (RapidSequence 𝕜 E) :=
   (SeminormFamily.moduleFilterBasis (seminorm (𝕜 := 𝕜) (E := E))).continuousSMul
 
 instance : UniformSpace (RapidSequence 𝕜 E) :=
-  (SeminormFamily.addGroupFilterBasis (seminorm (𝕜 := 𝕜) (E := E))).uniformSpace
+  fast_instance% (SeminormFamily.addGroupFilterBasis (seminorm (𝕜 := 𝕜) (E := E))).uniformSpace
 
 instance : IsUniformAddGroup (RapidSequence 𝕜 E) :=
   (SeminormFamily.addGroupFilterBasis (seminorm (𝕜 := 𝕜) (E := E))).isUniformAddGroup

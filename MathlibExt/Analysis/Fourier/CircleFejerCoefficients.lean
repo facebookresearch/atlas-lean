@@ -64,7 +64,7 @@ theorem circleDifferenceSum_row (N k i : ℕ) (hi : i < N + 1) (c : ℂ) :
 /-- **Multiplicity of a nonnegative difference frequency.**
 
 For N,k∈ℕ and c∈ℂ, the sum D_N(k,c)=∑_{0≤i,j≤N}(if k=i-j then c else 0) equals (N+1-k)•c,
-where natural subtraction gives zero for k>N+1.
+where natural subtraction gives zero for k>N.
 -/
 theorem circleDifferenceSum_nat (N k : ℕ) (c : ℂ) :
     circleDifferenceSum N (k : ℤ) c = (N + 1 - k : ℕ) • c := by

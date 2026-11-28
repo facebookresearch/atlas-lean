@@ -22,9 +22,11 @@ public import Mathlib.Analysis.Complex.Norm
 
 On `UnitAddCircle = ℝ / ℤ`, let `D_N(x) = ∑ n=0..N, fourier n x`. The continuous
 Fejér kernel is `K_N(x) = ‖D_N(x)‖² / (N + 1)`, viewed as a complex-valued function.
-It is real and nonnegative and has integral one for the Haar probability measure.
-All natural `N`, including `N = 0`, are included. Translations and inversion preserve
-its unit mass. The `L²` inner product of `D_N` with itself is `N + 1`.
+The coercion lemma `circleFejerKernel_coe` identifies this bundle with the existing
+`AddCircle.fejerKernel` at period one. Its real-valued positivity and unit Haar mass
+come from the general-period kernel lemmas; translations and inversion preserve that
+mass. All natural `N`, including `N = 0`, are included. This module proves that the `L²`
+self-inner product of `D_N` is `N + 1`.
 -/
 
 @[expose] public section
