@@ -13,16 +13,18 @@ Termination of general finite systems is [undecidable](../termination-of-term-re
 
 - [Term rewriting systems](../../automated-deduction/term-rewriting-systems.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Abstract reduction system](../abstract-reduction-system.md)
 
 ## Proof depends on
 
 - [The Post correspondence problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [Instances with nonempty words](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/nonempty-words.md)
 
 ## Expansion
 
-*Shallow systems.* For an instance $\langle u_1, v_1\rangle, \ldots, \langle u_n, v_n\rangle$ of the Post correspondence problem with nonempty words, a shallow system $R$ over unary symbols $U_{i,j}$, $V_{i,j}$, $P_{i,j}$ and symbols $f_1, f_2, f_3$ checks, in a loop $f_1 \to f_2 \to f_3 \to f_1$ at the root, that two arguments encode the same index sequence and the same word through the $u_i$ and the $v_i$. A solution $i_1 \cdots i_k$ gives an infinite derivation from a ground term $f_1(s_{uu}, s_{vv})$; conversely, since every rule preserves or decreases height, an infinite derivation has infinitely many root steps, and its arguments must encode a solution. Hence the instance has a solution iff $R$ is not terminating.
+*Shallow systems.* For an instance $\langle u_1, v_1\rangle, \ldots, \langle u_n, v_n\rangle$ of the Post correspondence problem with nonempty words, a shallow system $R$ over unary symbols $U_{i,j}$, $V_{i,j}$, $P_{i,j}$ and symbols $f_1, f_2, f_3$ checks, in a loop $f_1 \to f_2 \to f_3 \to f_1$ at the root, that two arguments encode the same index sequence and the same word through the $u_i$ and the $v_i$. A solution $i_1 \cdots i_k$ gives an infinite derivation from a ground term $f_1(s_{uu}, s_{vv})$; conversely, since every rule preserves or decreases height, if $R$ is not terminating one can choose an infinite derivation, from an initial term of minimal height, that has infinitely many root steps (an infinite derivation under a fixed context need not), and its arguments must encode a solution. Hence the instance has a solution iff $R$ is not terminating.
 
-*Flat systems.* Standard transformations, restricting the signature to one non-constant symbol and turning shallow terms into flat ones, preserve termination (Lemmas 3.2 and 3.3), which transfers the first part to flat systems.
+*Flat systems.* Standard transformations, restricting the signature to one non-constant symbol (Lemma 3.1) and turning shallow terms into flat ones (Lemmas 3.2 and 3.3), preserve termination, which transfers the first part to flat systems. The proof uses the undecidability of the Post correspondence problem restricted to instances with nonempty words; a good expansion links a page for it.
 
 ## Sources
 

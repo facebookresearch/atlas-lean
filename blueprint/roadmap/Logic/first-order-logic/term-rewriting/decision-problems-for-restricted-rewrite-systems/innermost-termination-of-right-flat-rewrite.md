@@ -10,6 +10,7 @@ For shallow, and hence flat, systems innermost termination is decidable, even mo
 
 - [Term rewriting systems](../../automated-deduction/term-rewriting-systems.md)
 - [Decidability by multi-stack machines](../../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
+- [Abstract reduction system](../abstract-reduction-system.md)
 
 ## Proof depends on
 

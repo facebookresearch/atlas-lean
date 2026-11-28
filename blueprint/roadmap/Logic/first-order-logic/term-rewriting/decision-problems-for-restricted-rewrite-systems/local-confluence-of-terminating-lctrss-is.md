@@ -15,7 +15,7 @@ Since a terminating relation is confluent iff it is locally confluent ([Newman's
 
 ## Proof depends on
 
-- [The Post correspondence problem is undecidable](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/exists-not-tm2-decidable-pcp.md)
+- [The Post correspondence problem is undecidable over the binary alphabet](../../../../TheoryOfComputation/undecidable-problems/post-correspondence-problem/not-tm2-decidable-pcp-bool.md)
 - [Newman's lemma](../newman-s-lemma.md)
 
 ## Expansion

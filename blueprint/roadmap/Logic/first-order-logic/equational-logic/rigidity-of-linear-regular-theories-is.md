@@ -1,6 +1,6 @@
 # Rigidity of finitely axiomatized linear-regular theories is undecidable
 
-Whether a finite set of linear-regular equations defines a rigid equational theory, one in which no term is provably equal to a nontrivial permutation of its own variables, is undecidable. Rigid theories correspond to polynomial monads, so this property cannot be decided from a finite presentation.
+Whether a finite set of linear-regular equations defines a rigid equational theory, one in which no linear-regular term is provably equal to a nontrivial permutation of its own variables, is undecidable. Rigid theories correspond to polynomial monads, so this property cannot be decided from a finite presentation.
 
 **Linear-regular and rigid theories.** An equational theory $T = (L, A)$ has a set $L$ of function symbols of given arities and a set $A$ of equations between terms in a context $x_1, \dots, x_n$; provability $A \vdash s = t$ is provability in equational logic. A term in context is *linear-regular* if every variable of the context occurs in it exactly once, and an equation is linear-regular if both its sides are. $T$ is *linear-regular* if all its consequences follow from its linear-regular consequences (in particular, if it has a linear-regular set of axioms). A linear-regular term $t(x_1, \dots, x_n)$ is *flabby* in $T$ if
 
@@ -25,7 +25,7 @@ For example, the theories of monoids and of monoids with an anti-involution are 
 
 ## Expansion
 
-The proof reduces the word problem for finitely presented monoids: for an instance $\bigwedge_i u_i = v_i \vdash u = v$ over a finite alphabet, one builds a finite linear-regular theory $T$ that is rigid iff the implication fails. It starts from the rigid theory $T_0$, which has three binary symbols $l, r, m$ and the single axiom $l(x_1, x_2) = r(x_2, x_1)$, and $T$ extends it. If the implication holds, an evident flabby term exists. Conversely, a linear-regular interpretation $I : T_0 \to T$ is conservative when the implication fails, and a map sending every term of $T$ to a "special" term in the image of $I$, preserving the order of variables and provable equality, transfers any flabby term of $T$ to a flabby term of $T_0$, which is impossible.
+The proof reduces the word problem for finitely presented monoids: for an instance $\bigwedge_i u_i = v_i \vdash u = v$ over a finite alphabet, one builds a finite linear-regular theory $T$ that is rigid iff the implication fails. It starts from the rigid theory $T_0$, which has three binary symbols $l, r, m$ and the single axiom $l(x_1, x_2) = r(x_2, x_1)$, and $T$ interprets it, sending $l$ and $r$ to composite terms of $T$ ((4)–(6) and Lemma 3.5 of the source). If the implication holds, an evident flabby term exists. Conversely, a linear-regular interpretation $I : T_0 \to T$ is conservative when the implication fails, and a map sending every term of $T$ to a "special" term in the image of $I$, preserving the order of variables and provable equality, transfers any flabby term of $T$ to a flabby term of $T_0$, which is impossible.
 
 ## Sources
 

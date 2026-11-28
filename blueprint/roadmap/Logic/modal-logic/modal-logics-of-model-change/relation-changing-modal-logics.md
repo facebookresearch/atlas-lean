@@ -2,7 +2,7 @@
 
 Relation-changing modal logics extend the basic modal language with dynamic diamonds that delete, add or reverse one edge of the accessibility relation, either next to the current point (local versions) or anywhere in the model (global versions), and then evaluate a formula in the changed model.
 
-**Syntax.** Formulas over a countable set of propositional symbols are
+**Syntax.** Formulas over a countably infinite set of propositional symbols are
 
 $$
 \varphi ::= \bot \mid p \mid \neg\varphi \mid \varphi \wedge \psi \mid \Diamond\varphi \mid \blacklozenge\varphi, \qquad \blacklozenge \in \{\langle sb\rangle, \langle br\rangle, \langle sw\rangle, \langle gsb\rangle, \langle gbr\rangle, \langle gsw\rangle\}.
@@ -10,7 +10,7 @@ $$
 
 $\mathcal{ML}(\blacklozenge)$ is the basic modal logic extended with the operator $\blacklozenge$; $\mathcal{ML}(\langle sb\rangle, \langle gsb\rangle)$, $\mathcal{ML}(\langle br\rangle, \langle gbr\rangle)$ and $\mathcal{ML}(\langle sw\rangle, \langle gsw\rangle)$ are *sabotage*, *bridge* and *swap logic*.
 
-**Semantics.** A model $\mathcal M = (W, R, V)$ has a nonempty set $W$, a relation $R \subseteq W \times W$ and a valuation $V$. For a set $S$ of pairs, $\mathcal M^-_S$ replaces $R$ by $R \setminus S$ (for $S \subseteq R$), $\mathcal M^+_S$ replaces $R$ by $R \cup S$ (for $S \cap R = \emptyset$), and $\mathcal M^*_S$ replaces $R$ by $(R \setminus S^{-1}) \cup S$ (for $S \subseteq R^{-1}$). Writing $wv$ for $\{(w, v)\}$, the basic modal clauses are the usual ones, and
+**Semantics.** A model $\mathcal M = (W, R, V)$ has a nonempty set $W$, a relation $R \subseteq W \times W$ and a valuation $V$. For a set $S$ of pairs, $\mathcal M^-_S$ replaces $R$ by $R \setminus S$ (for $S \subseteq R$), $\mathcal M^+_S$ replaces $R$ by $R \cup S$ (for $S \subseteq (W \times W) \setminus R$), and $\mathcal M^*_S$ replaces $R$ by $(R \setminus S^{-1}) \cup S$ (for $S \subseteq R^{-1}$). Writing $wv$ for $\{(w, v)\}$, the basic modal clauses are the usual ones, and
 
 - $\mathcal M, w \models \langle sb\rangle\varphi$ iff $\mathcal M^-_{wv}, v \models \varphi$ for some $v$ with $(w, v) \in R$;
 - $\mathcal M, w \models \langle br\rangle\varphi$ iff $\mathcal M^+_{wv}, v \models \varphi$ for some $v$ with $(w, v) \notin R$;
@@ -24,6 +24,7 @@ A formula is satisfiable if it is true at some point of some model.
 ## Depends on
 
 - [Kripke model](../kripke-semantics/kripke-model.md)
+- [Satisfaction in a Kripke model](../kripke-semantics/satisfies.md)
 
 ## Proof depends on
 
