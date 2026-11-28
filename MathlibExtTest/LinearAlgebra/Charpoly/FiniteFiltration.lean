@@ -44,10 +44,10 @@ theorem triangular_stable (j : Fin 3) : flag j.val ≤ (flag j.val).comap triang
     simp [flag, triangular_apply, hx1]
   · simp [flag]
 
-def stageEnd (j : Fin 3) : flag j.val →ₗ[ℚ] flag j.val :=
+abbrev stageEnd (j : Fin 3) : flag j.val →ₗ[ℚ] flag j.val :=
   triangular.restrict (triangular_stable j)
 
-def triangularStep (i : Fin 2) :
+abbrev triangularStep (i : Fin 2) :
     LinearMap.InvariantExtension (R := ℚ) (stageEnd i.castSucc) (stageEnd i.succ) where
   submodule := (flag i.val).comap (flag (i.val + 1)).subtype
   stable := by
@@ -81,14 +81,25 @@ theorem quotient_conj (i : Fin 2) :
       (gradedEigenvalue i • LinearMap.id : ℚ →ₗ[ℚ] ℚ) := by
   apply LinearMap.ext
   intro c
-  have h := quotient_coordinate_action i ((gradedEquiv i).symm (c : ℚ))
-  simpa [LinearEquiv.conj_apply, ← gradedEquiv_apply] using h
+  change gradedCoordinate i
+      ((triangularStep i).quotientMap ((gradedEquiv i).symm c)) = gradedEigenvalue i * c
+  rw [quotient_coordinate_action]
+  congr 1
+  exact (gradedEquiv_apply i _).symm.trans ((gradedEquiv i).apply_symm_apply c)
 
 theorem scalar_charpoly (c : ℚ) :
     (c • LinearMap.id : ℚ →ₗ[ℚ] ℚ).charpoly = X - C c := by
-  rw [← LinearMap.charpoly_toMatrix (c • LinearMap.id) (Module.Basis.singleton (Fin 1) ℚ),
-    Matrix.charpoly, Matrix.det_fin_one]
-  simp [LinearMap.toMatrix_apply]
+  let b : Module.Basis (Fin 1) ℚ ℚ := Module.Basis.singleton (Fin 1) ℚ
+  have hm : LinearMap.toMatrix b b (c • LinearMap.id) =
+      Matrix.diagonal (fun _ : Fin 1 => c) := by
+    ext i j
+    have hij : i = j := Subsingleton.elim _ _
+    subst j
+    rw [LinearMap.toMatrix_singleton, Matrix.diagonal_apply_eq]
+    change c * 1 = c
+    exact mul_one c
+  rw [← LinearMap.charpoly_toMatrix (c • LinearMap.id) b, hm, Matrix.charpoly_diagonal]
+  simp
 
 theorem quotient_charpoly (i : Fin 2) :
     (triangularStep i).quotientMap.charpoly = X - C (gradedEigenvalue i) := by
@@ -99,7 +110,7 @@ theorem quotient_charpoly (i : Fin 2) :
 
 theorem triangular_charpoly :
     triangular.charpoly = (X - C (3 : ℚ)) * (X - C (5 : ℚ)) := by
-  letI : Subsingleton (flag 0) := by
+  let _ : Subsingleton (flag (0 : Fin 3).val) := by
     change Subsingleton (⊥ : Submodule ℚ V)
     infer_instance
   let e : flag 2 ≃ₗ[ℚ] V := Submodule.topEquiv
@@ -117,20 +128,28 @@ theorem triangular_charpoly :
         stageEnd triangularStep (fun i => by
           change Module.Free ℚ (Graded i)
           infer_instance)
-    _ = _ := by simp [quotient_charpoly, gradedEigenvalue, Fin.prod_univ_two]
+    _ = _ := by
+      rw [Fin.prod_univ_two, quotient_charpoly (0 : Fin 2), quotient_charpoly (1 : Fin 2)]
+      norm_num [gradedEigenvalue]
 
 example :
     (triangularStep (1 : Fin 2)).quotientMap
         (Submodule.Quotient.mk (coordinateVector 1 1) : Graded (1 : Fin 2)) =
       (Submodule.Quotient.mk (coordinateVector 1 5) : Graded (1 : Fin 2)) := by
   apply (gradedEquiv 1).injective
-  simp [gradedEquiv_apply, quotient_coordinate_action, gradedEigenvalue,
-    gradedCoordinate, coordinate, coordinateVector]
+  change gradedCoordinate 1
+      ((triangularStep 1).quotientMap
+        (Submodule.Quotient.mk (coordinateVector 1 1) : Graded 1)) =
+    gradedCoordinate 1 (Submodule.Quotient.mk (coordinateVector 1 5))
+  rw [quotient_coordinate_action]
+  norm_num [gradedEigenvalue, gradedCoordinate, coordinate, coordinateVector]
 
 example : triangular.charpoly.coeff 0 = 15 := by
-  norm_num [triangular_charpoly, Polynomial.coeff_mul]
+  rw [triangular_charpoly, Polynomial.mul_coeff_zero]
+  norm_num
 example : triangular.charpoly.coeff 1 = -8 := by
-  norm_num [triangular_charpoly, Polynomial.coeff_mul]
+  rw [triangular_charpoly, Polynomial.mul_coeff_one]
+  norm_num
 
 example : (0 : (Fin 0 → ℚ) →ₗ[ℚ] (Fin 0 → ℚ)).charpoly = 1 :=
   LinearMap.charpoly_eq_one_of_subsingleton _

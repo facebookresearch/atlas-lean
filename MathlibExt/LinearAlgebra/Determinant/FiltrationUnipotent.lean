@@ -17,8 +17,8 @@ public import MathlibExt.LinearAlgebra.Determinant.FiniteFiltration
 
 Let R be a commutative ring and 0=F_0⊆⋯⊆F_n=M a finite filtration, with quotient bases b_i
 indexed by κ_i. If U(B_(i,a))-B_(i,a)∈F_i for each assembled grade-i basis vector, every stage
-is U-invariant and every graded quotient action is the identity. The κ_i may be infinite for
-these conclusions. If every κ_i is finite, det(U)=1. For finite κ_i, the stagewise condition
+is U-invariant. The κ_i may be infinite for stage stability. If every κ_i is finite,
+det(U)=1. For finite κ_i, the stagewise condition
 U x-x∈F_i for every x∈F_(i+1) also gives determinant one, without referring to chosen lifts.
 -/
 
