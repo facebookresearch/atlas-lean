@@ -14,8 +14,8 @@ This matches, up to constants, the locus-number versus sequence-length trade-off
 
 ## Depends on
 
-- [Jukes–Cantor distance](../../jukes-cantor-model/jc-distance.md)
-- [Species tree](../../../coalescent-theory/multispecies-coalescent/species-tree.md)
+- [Jukes–Cantor distance](../../../jukes-cantor-model/jc-distance.md)
+- [Species tree](../../../../coalescent-theory/multispecies-coalescent/species-tree.md)
 
 ## Expansion
 

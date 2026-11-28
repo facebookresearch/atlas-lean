@@ -5,9 +5,9 @@
 **Theorem.**
 
 1. The numbers of edges and vertices, the reticulation number and the level of a binary network are determined by its $X$-deck.
-2. Every phylogenetic tree with at least five leaves is leaf-reconstructible; its leaf-reconstruction number is $2$, unless it is a star, in which case it is $3$. Trees with four leaves are not leaf-reconstructible.
+2. Every phylogenetic tree with at least five leaves is leaf-reconstructible; its leaf-reconstruction number is $2$, unless it is a star, in which case it is $3$. Binary trees with four leaves are not leaf-reconstructible.
 3. Every decomposable phylogenetic network with at least five leaves is leaf-reconstructible, with leaf-reconstruction number at most $2$.
-4. Every simple binary level-$k$ network with $k\ge 2$ and at least $6k-5$ leaves is leaf-reconstructible; more generally a binary network $N=(V,E)$ on $X$ with $|X|\ge \max\{6(|E|-|V|)+1,5\}$ is leaf-reconstructible. The source's Corollary 4 prints $\min$ here; this page uses $\max$ because the source's proof needs both bounds (Theorem 2 and Lemma 1 need at least five leaves, Corollary 3 needs at least $6k-5$ leaves), and with $\min$ the clause would make 4-leaf trees leaf-reconstructible, contradicting item 2. For fixed $k$, almost all binary level-$k$ networks are leaf-reconstructible.
+4. Every simple binary level-$k$ network with $k\ge 2$ and at least $6k-5$ leaves is leaf-reconstructible; more generally a binary network $N=(V,E)$ on $X$ with $|X|\ge \max\{6(|E|-|V|)+1,5\}$ is leaf-reconstructible. The source's Corollary 4 prints $\min$ here; this page uses $\max$ because the source's proof needs both bounds (Theorem 2 and Lemma 1 need at least five leaves, Corollary 3 needs at least $6k-5$ leaves), and with $\min$ the clause would make 4-leaf binary trees leaf-reconstructible, contradicting item 2. For fixed $k$, almost all binary level-$k$ networks are leaf-reconstructible.
 5. Every binary level-$4$ network with at least five leaves has leaf-reconstruction number at most $2$.
 
 ## Expansion

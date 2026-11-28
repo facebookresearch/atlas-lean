@@ -16,11 +16,11 @@ $$
 
 and for irreducible line-sum-symmetric $A$ equality holds iff all $x_i$ coincide.
 
-**Theorem.** Assume (A1)–(A4), $(D_{ij})$ satisfies (A1), and $g_i(0) > 1$ for all $i$.
+**Theorem.** Items 1 and 2 assume (A1)–(A4), that $(D_{ij})$ satisfies (A1), and that $g_i(0) > 1$ for all $i$.
 
 1. If $(d_{ij})$ is ideal free and $(D_{ij})$ is not, then $(u^*, 0)$ is globally asymptotically stable among nonnegative, not identically zero initial data: the ideal free strategy excludes every other strategy, and cannot be invaded.
 2. If both are ideal free, the nonnegative equilibria are $(0,0)$ and the segment $\{(\alpha u^*, (1-\alpha) u^*) : 0 \le \alpha \le 1\}$; under a mild differentiability and monotonicity condition ($f_i' + s_i' - m_i' < 0$, plus a discrete-time analogue), the set $E$ of these equilibria other than $(0,0)$, i.e. this segment, is an attractor, and every solution starting in its basin of attraction converges to a single point of $E$.
-3. *(Sinks.)* If patches $1, \dots, k$ ($k < n$) are sources and the others sinks, with some $g_i(0) < 1$, $i > k$, set $u_i^* > 0$ with $g_i(u_i^*) = 1$ for $i \le k$ and $u_i^* = 0$ for $i > k$. A sedentary resident (no dispersal, $\Delta u_i = s_i f_i u_i - m_i u_i$ with total density as argument) competing against any species with dispersal matrix $(D_{ij})$ satisfying (A1) wins: $(u^*, 0)$ is globally asymptotically stable among positive initial data, because irreducible dispersal necessarily loses offspring to sinks. The corresponding statement for an ideal free resident is stated as a conjecture.
+3. *(Sinks.)* Assume instead (A2)–(A4), that $(D_{ij})$ satisfies (A1), and that for some $k < n$, $g_i(0) > 1$ if and only if $1 \le i \le k$, and $g_i(0) < 1$ for some $i > k$. Let $u_i^* > 0$ be the unique solution of $g_i(u_i^*) = 1$ for $i \le k$ and $u_i^* = 0$ for $i > k$. A sedentary resident (no dispersal, $\Delta u_i = s_i f_i u_i - m_i u_i$ with total density as argument) competing against any species with dispersal matrix $(D_{ij})$ satisfying (A1) wins: $(u^*, 0)$ is globally asymptotically stable among positive initial data, because irreducible dispersal necessarily loses offspring to sinks. The corresponding statement for an ideal free resident is stated as a conjecture.
 
 ## Depends on
 

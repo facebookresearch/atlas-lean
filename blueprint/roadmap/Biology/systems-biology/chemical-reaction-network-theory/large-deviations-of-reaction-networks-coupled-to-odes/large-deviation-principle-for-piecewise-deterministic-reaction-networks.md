@@ -4,7 +4,11 @@
 
 $$x(t)=N^{-1}X(0)+\sum_{\alpha\in\mathscr R}z_\alpha(t)\,\xi_\alpha ,$$
 
-where reaction $\alpha$ fires with intensity $N\lambda_\alpha\big(x(t),u(t)\big)$, $\lambda_\alpha$ continuous, bounded, and zero whenever firing would make a concentration negative. The continuous variables $u\in\mathbb R^m$ (for instance cytosolic calcium) follow an ODE $\dot u=A(u,x)$ driven by $x$, so $(z,x,u)$ is a piecewise-deterministic Markov process (PDMP).
+where reaction $\alpha$ fires with intensity $N\lambda_\alpha\big(x(t),u(t)\big)$, $\lambda_\alpha$ continuous, bounded, and zero whenever firing would make a concentration negative. The continuous variables $u\in\mathbb R^m$ (for instance cytosolic calcium) follow an ODE $\dot u=A(u,x)$ driven by $x$, with $A$ continuous, so $(z,x,u)$ is a piecewise-deterministic Markov process (PDMP). Assume, as the source does for Theorem 1.1:
+
+- non-random initial conditions $u(0)=\hat u^N_0$ and $x(0)=\hat x^N_0$ with $z(0)=0$, and limits $\hat u^N_0\to\hat u_0$ and $\hat x^N_0\to\hat x_0$ as $N\to\infty$ ((10)–(12));
+- growth bounds: for a constant $K>0$, all $u$, $x$ and all $\alpha\in\mathscr R$, $\lVert A(u,x)\rVert\le K(1+\lVert u\rVert+\lVert x\rVert)$ and $\lambda_\alpha(x,u)\le K$ ((13)–(14));
+- uniform Lipschitz bounds: for a constant $C$, $\lVert A(u,x)-A(\tilde u,\tilde x)\rVert\le C(\lVert u-\tilde u\rVert+\lVert x-\tilde x\rVert)$ and $\sup_{\alpha}\lvert\lambda_\alpha(x,u)-\lambda_\alpha(\tilde x,\tilde u)\rvert\le C(\lVert u-\tilde u\rVert+\lVert x-\tilde x\rVert)$ ((15)–(16)).
 
 **Theorem (large deviation principle).** Let $\mathcal O$ be open and $\mathcal A$ closed in the path space of $(z,x,u)$, and suppose the reaction rates stay bounded away from zero on $\mathcal A\cup\mathcal O$ over every finite time window. Then
 

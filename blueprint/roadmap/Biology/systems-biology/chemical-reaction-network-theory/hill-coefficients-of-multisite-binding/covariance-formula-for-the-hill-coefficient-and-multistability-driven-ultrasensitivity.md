@@ -16,7 +16,15 @@ $$\eta_H(v) = N\,\frac{\operatorname{Cov}_\pi\big(a(|n|/N),\,|n|/N\big)\,a(k^*/N
 
 Large Hill coefficients therefore require the fraction of bound sites to have non-vanishing variance at large $N$.
 
-**Theorem (multistability and ultrasensitivity).** Let the number of bound sites be a density-dependent birth–death process on $\{0,\dots,N\}$ with rates $Nb^{(N)}(k/N)$ and $Nd^{(N)}(k/N)$, $b^{(N)}$ linear in $v$, $b^{(N)} - d^{(N)} \to F$ and $\ln(d^{(N)}/b^{(N)}) \to \ln r$, so that $X_N = Y_N/N$ follows $\dot x = F(x)$ in the limit and its stationary law $\bar\pi_N$ (of the above form) satisfies a large deviation principle with rate $I(x) = \int_0^x \ln r(u)\,du - \min_{[0,1]}\int_0^{\cdot}\ln r$. Assume the equilibria of $\dot x = F(x)$ are finitely many nondegenerate zeros of $I'$, $\int_0^1|\ln r| < \infty$, and the rates have positive linear limits at the boundary. For continuous, bounded, strictly increasing $a$:
+**Theorem (multistability and ultrasensitivity).** Let the number of bound sites be a density-dependent birth–death process on $\{0,\dots,N\}$ with rates $Nb^{(N)}(k/N)$ and $Nd^{(N)}(k/N)$, $b^{(N)}$ linear in $v$, $b^{(N)} - d^{(N)} \to F$ and $\ln(d^{(N)}/b^{(N)}) \to \ln r$, so that $X_N = Y_N/N$ follows $\dot x = F(x)$ in the limit and its stationary law $\bar\pi_N$ (of the above form) satisfies a large deviation principle with rate $I(x) = \int_0^x \ln r(u)\,du - \min_{[0,1]}\int_0^{\cdot}\ln r$. Assume the source's Assumption 4 in full:
+
+- (4.1) $\dot x = F(x)$ has finitely many equilibria $x_1,\dots,x_m$, and $I(x_i)=0$, $I'(x_i)=0$ and $I''>0$ in a neighbourhood of each $x_i$;
+- (4.2) $\int_0^1|\ln r(u)|\,du < \infty$ (27);
+- (4.3) the limiting birth and death rates $b$, $d$ satisfy $b(x)/(1-x)\to\ell_{b,0}$ and $d(x)/x\to\ell_{d,0}$ as $x\to0^+$, and $b(x)/(1-x)\to\ell_{b,1}$ and $d(x)/x\to\ell_{d,1}$ as $x\to1^-$, with four positive constants $\ell_{b,0},\ell_{b,1},\ell_{d,0},\ell_{d,1}$;
+- (4.4) $r$ is left-continuous on $(0,1)$ and piecewise $C^2$: $r$, $r'$ and $r''$ have finitely many discontinuities in $(0,1)$;
+- (4.5) $M = \limsup_{N\to\infty} \max_{1\le j\le N}\bigl(\sum_{k=1}^{j}\ln\frac{d^{(N)}(k/N)}{b^{(N)}(k/N)} - \sum_{k=1}^{j}\ln r(k/N)\bigr)$ is finite (28).
+
+For continuous, bounded, strictly increasing $a$:
 
 1. if $I$ has a unique minimizer $x_1$ in the interior, then $\eta_H(v)/N \to 0$ (monostable systems are not ultrasensitive of order $N$);
 2. if at some critical concentration $v_c$ the function $I$ attains its minimum at two distinct points $x_1 \ne x_2$, then

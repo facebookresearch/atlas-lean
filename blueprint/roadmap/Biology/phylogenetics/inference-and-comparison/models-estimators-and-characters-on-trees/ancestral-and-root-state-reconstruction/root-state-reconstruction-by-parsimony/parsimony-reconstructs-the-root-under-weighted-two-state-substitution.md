@@ -1,6 +1,6 @@
 # Parsimony reconstructs the root state under heterogeneous two-state substitution
 
-**Setting.** Let $T$ be the infinite complete binary tree rooted at $\rho$, with edge weights $\theta_z \in [0,1]$ indexed by the lower endpoint $z$ of each edge. Under the **Cavender–Farris–Neyman model**, $\sigma_\rho$ is uniform on $\{0,1\}$ and, recursively, a child copies its parent's state with probability $\theta_z$ and is otherwise resampled uniformly, so the substitution probability on edge $z$ is $p_z = (1-\theta_z)/2$. A **cutset** $\pi$ is a minimal finite vertex set meeting every infinite path from $\rho$. Given the states on $\pi$, the [Fitch recursion](../../../small-parsimony-problem/fitch-set-eq.md) produces the maximum parsimony root estimate $\hat\sigma_\rho$ (uniform tie-breaking), and its **reconstruction accuracy** is $\mathrm{RA}^\pi = \mathbb P[\hat\sigma_\rho = \sigma_\rho]$. Parsimony is said to reconstruct the root if $\inf_\pi \mathrm{RA}^\pi > 1/2$.
+**Setting.** Let $T$ be the infinite complete binary tree rooted at $\rho$, with edge weights $\theta_z \in [0,1]$ indexed by the lower endpoint $z$ of each edge. Under the **Cavender–Farris–Neyman model**, $\sigma_\rho$ is uniform on $\{0,1\}$ and, recursively, a child copies its parent's state with probability $\theta_z$ and is otherwise resampled uniformly, so the substitution probability on edge $z$ is $p_z = (1-\theta_z)/2$. A **cutset** $\pi$ is a minimal finite vertex set meeting every infinite path from $\rho$. Given the states on $\pi$, the [Fitch recursion](../../../../small-parsimony-problem/fitch-set-eq.md) produces the maximum parsimony root estimate $\hat\sigma_\rho$ (uniform tie-breaking), and its **reconstruction accuracy** is $\mathrm{RA}^\pi = \mathbb P[\hat\sigma_\rho = \sigma_\rho]$. Parsimony is said to reconstruct the root if $\inf_\pi \mathrm{RA}^\pi > 1/2$.
 
 **Theorem (deterministic weights, Theorem 1).** Suppose $\theta_* := \inf_z \theta_z > 0$ and
 
@@ -12,7 +12,7 @@ Then $\inf_\pi \mathrm{RA}^\pi > 1/2$. In particular (Corollary 1), if $p_z \le 
 
 ## Depends on
 
-- [Fitch's root set is the set of optimal root states](../../../small-parsimony-problem/fitch-set-eq.md)
+- [Fitch's root set is the set of optimal root states](../../../../small-parsimony-problem/fitch-set-eq.md)
 
 ## Expansion
 

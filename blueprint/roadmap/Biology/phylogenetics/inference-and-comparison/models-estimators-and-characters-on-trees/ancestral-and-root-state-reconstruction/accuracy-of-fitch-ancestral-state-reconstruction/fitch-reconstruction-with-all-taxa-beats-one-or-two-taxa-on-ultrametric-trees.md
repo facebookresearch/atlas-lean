@@ -15,7 +15,7 @@ This settles, for $r = 3, 4$, the conjecture of Li, Steel and Zhang that on ultr
 
 ## Depends on
 
-- [Fitch's algorithm](../../../small-parsimony-problem/fitch.md)
+- [Fitch's algorithm](../../../../small-parsimony-problem/fitch.md)
 
 ## Expansion
 

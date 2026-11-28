@@ -12,9 +12,9 @@ $$\mathbb{P}\bigl(V_0(t+1) = y,\ I_0(t+1) = z \mid B(t)\bigr) = \binom{x_t}{y} \
 
 so that the newly vaccinated and newly infected counts are each binomial with success probabilities $P_V$ and $P_I$. Consequently, while all infectious individuals are still within their infectious period,
 
-$$\mathbb{E}[I(t) \mid B(0)] = I_0(0) + \sum_{k=1}^{t-1} \mathbb{E}\Bigl[ S(t-k-1)\Bigl(1 - \Bigl(1 - \frac{p\, I(t-k-1)}{n-1}\Bigr)^{N}\Bigr) \Bigm| B(0) \Bigr],$$
+$$\mathbb{E}[I(t) \mid B(0)] = I_0(0) + \sum_{k=0}^{t-1} \mathbb{E}\Bigl[ S(t-k-1)\Bigl(1 - \Bigl(1 - \frac{p\, I(t-k-1)}{n-1}\Bigr)^{N}\Bigr) \Bigm| B(0) \Bigr],$$
 
-and the expected number infected over one infectious period, evaluated at $t = T_2$, defines the basic reproduction number of the model implicitly.
+and the expected number infected over one infectious period, evaluated at $t = T_2$, defines the basic reproduction number of the model implicitly. The source's Theorem 6.1 prints this display, (6.8), with the sum starting at $k=1$; this page sums from $k=0$ because that display drops the newest cohort $\mathbb{E}[I_0(t)\mid B(0)] = \mathbb{E}[S(t-1)P_I(t)\mid B(0)]$, which the source's own decomposition $I(t)=I_0(t)+I_0(t-1)+\dots+I_0(0)$ (6.10) and its first line of (6.11) include, and which (6.12) evaluates with $k=0$ (for $t=1$ the sum from $k=1$ is empty and would give $\mathbb{E}[I(1)\mid B(0)]=I_0(0)$).
 
 **Poisson-contact variant.** If instead the number of contacts per step is Poisson with mean $\lambda$ and susceptibles are vaccinated independently at constant rate $\mu_v$, the same trinomial law holds with
 

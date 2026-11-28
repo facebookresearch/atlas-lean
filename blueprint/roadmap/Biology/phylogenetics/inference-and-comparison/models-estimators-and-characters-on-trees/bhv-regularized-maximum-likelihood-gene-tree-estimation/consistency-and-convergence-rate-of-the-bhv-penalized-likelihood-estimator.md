@@ -24,7 +24,7 @@ $$
 
 ## Proof depends on
 
-- [The space of phylogenetic trees is CAT(0)](../../../not-yet-classified/phylogenetic-tree-space/tree-space-is-cat0.md)
+- [The space of phylogenetic trees is CAT(0)](../../../../not-yet-classified/phylogenetic-tree-space/tree-space-is-cat0.md)
 
 ## Expansion
 

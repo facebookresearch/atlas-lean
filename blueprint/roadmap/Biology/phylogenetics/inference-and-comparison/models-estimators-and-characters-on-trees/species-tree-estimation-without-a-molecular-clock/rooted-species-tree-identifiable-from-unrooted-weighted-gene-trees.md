@@ -20,7 +20,7 @@ So the root-to-leaf differences are identifiable; adding those offsets turns the
 
 ## Depends on
 
-- [Species tree](../../../coalescent-theory/multispecies-coalescent/species-tree.md)
+- [Species tree](../../../../coalescent-theory/multispecies-coalescent/species-tree.md)
 
 ## Expansion
 
