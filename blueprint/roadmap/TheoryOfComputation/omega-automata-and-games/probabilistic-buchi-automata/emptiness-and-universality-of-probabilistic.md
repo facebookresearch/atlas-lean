@@ -1,4 +1,4 @@
-# Emptiness and universality of probabilistic limsup and liminf automata are undecidable
+# Undecidable emptiness and universality problems for probabilistic limsup and liminf automata
 
 For probabilistic weighted automata on infinite words that value a run by the limsup or liminf of its weights, quantitative emptiness is undecidable for limsup under positive semantics and for liminf under almost-sure semantics, and quantitative universality is undecidable for limsup under positive semantics.
 

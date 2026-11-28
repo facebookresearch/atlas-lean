@@ -1,16 +1,18 @@
 # Safety Minkowski games are undecidable
 
-In games where players move a point of $\mathbb R^d$ by choosing sets of vectors, the position being updated by Minkowski sums, no algorithm decides whether the first player can keep the point inside a given polytope forever, already with rational polytopes and a trivial opponent.
+In games where players move a point of $\mathbb R^d$ by choosing sets of vectors, the position being updated by Minkowski sums, no algorithm decides whether the first player can keep the point inside a given polytope forever, already with rational polytopes and an opponent whose only move is $\{0\}$, who still decides where each move of the first player lands.
 
-For $A,B\subseteq\mathbb R^d$ the *Minkowski sum* is $A+B=\{a+b: a\in A, b\in B\}$. In a *Minkowski game* player A has a finite set $\mathcal M_A$ of moves and player B a finite set $\mathcal M_B$, each move being a subset of $\mathbb R^d$. In each round, from position $a$, player A chooses a move $m_A\in\mathcal M_A$ and player B picks the next position $b\in a+m_A$; then player B chooses a move $m_B\in\mathcal M_B$ and player A picks the next position in $b+m_B$. Each player thus resolves the imprecision of the other's moves. A *safety Minkowski game* $\langle\mathcal M_A,\mathcal M_B,S,v_0\rangle$ is won by player A if the position stays in the safe set $S$ forever; it is *single-sided* when player B has only the trivial move $\{0\}$.
+For $A,B\subseteq\mathbb R^d$ the *Minkowski sum* is $A+B=\{a+b: a\in A, b\in B\}$. In a *Minkowski game* player A has a finite set $\mathcal M_A$ of moves and player B a finite set $\mathcal M_B$, each move being a subset of $\mathbb R^d$. In each round, from position $a$, player A chooses a move $m_A\in\mathcal M_A$ and player B picks the next position $b\in a+m_A$; then player B chooses a move $m_B\in\mathcal M_B$ and player A picks the next position in $b+m_B$. Each player thus resolves the imprecision of the other's moves. A *safety Minkowski game* $\langle\mathcal M_A,\mathcal M_B,S,v_0\rangle$ is won by player A if the position stays in the safe set $S$ forever; it is *single-sided* when player B has only the move $\{0\}$; player B still picks the position in $a+m_A$ after each move of player A, and the reduction relies on these choices.
 
-**Theorem.** There are a dimension $d$, a rational convex polytope $S$ and a finite family $\mathcal M_A$ of rational closed convex polytopes in $\mathbb R^d$ such that it is undecidable, given a rational initial vector $v_0$, whether player A has a winning strategy in the single-sided safety Minkowski game $\langle\mathcal M_A,S,v_0\rangle$ (Theorem 43 of the source).
+Following Section 2 of the source, a *rational convex polytope* is a bounded set $\{v\in\mathbb R^d: v\models\varphi_1,\dots,v\models\varphi_n\}$ cut out by finitely many rational linear constraints $\alpha\cdot v\sim c$ with $\sim\ \in\{<,\le,=,\ge,>\}$; strict constraints are allowed, so a polytope need not be closed. A closed rational polytope is the convex hull of finitely many rational points.
+
+**Theorem.** There are a dimension $d$, a rational convex polytope $S$, not necessarily closed, and a finite family $\mathcal M_A$ of rational closed convex polytopes in $\mathbb R^d$ such that it is undecidable, given a rational initial vector $v_0$, whether player A has a winning strategy in the single-sided safety Minkowski game $\langle\mathcal M_A,S,v_0\rangle$ (Theorem 43 of the source).
 
 In the setting of computable analysis, the source shows that it is semi-decidable whether player B wins a safety Minkowski game when player A's moves are overt sets, player B's moves compact sets and the safe set closed; it also studies boundedness and structural safety Minkowski games.
 
 ## Depends on
 
-- [Faces of a convex polytope](../../../Combinatorics/polytopes-simplicial-complexes/faces-of-convex-polytopes/faces.md)
+- [Faces of a convex polytope](../../../Combinatorics/polytopes-simplicial-complexes/faces-of-convex-polytopes/faces.md) (for the closed polytopes that are the moves)
 - [Decidability by multi-stack machines](../../computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
@@ -23,4 +25,4 @@ The reduction is from a two-counter machine for which existence of an infinite v
 
 ## Sources
 
-- Stéphane Le Roux, Arno Pauly and Jean-François Raskin, "Minkowski Games", *ACM Transactions on Computational Logic* 19(3), 2018, article 20, pp. 1–29, doi:[10.1145/3230741](https://doi.org/10.1145/3230741); read in arXiv:1609.07048v2 ([arXiv](https://arxiv.org/abs/1609.07048v2)), whose numbering is used: Section 2 (Minkowski sums, strategies, the definitions of boundedness, safety and structural safety Minkowski games, single-sided games) and Section 7 (Theorem 43, the undecidability of one-sided safety Minkowski games, with its reduction from two-counter machines through Theorem 46).
+- Stéphane Le Roux, Arno Pauly and Jean-François Raskin, "Minkowski Games", *ACM Transactions on Computational Logic* 19(3), 2018, article 20, pp. 1–29, doi:[10.1145/3230741](https://doi.org/10.1145/3230741); read in arXiv:1609.07048v2 ([arXiv](https://arxiv.org/abs/1609.07048v2)), whose numbering is used: Section 2 (polytopes defined by linear constraints, Minkowski sums, strategies, the definitions of boundedness, safety and structural safety Minkowski games, single-sided games) and Section 7 (Theorem 43, the undecidability of one-sided safety Minkowski games, with its reduction from two-counter machines through Theorem 46).

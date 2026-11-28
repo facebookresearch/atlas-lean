@@ -38,4 +38,4 @@ None.
 
 ## Sources
 
-- R. Condurache, C. Dima, M. Jitaru, Y. Oualhadj and N. Troquard, "Careful autonomous agents in environments with multiple common resources", in *Proceedings of the 13th International Symposium on Games, Automata, Logics and Formal Verification (GandALF 2022)*, Electronic Proceedings in Theoretical Computer Science 362, pp. 3–14, 2022, doi:10.4204/EPTCS.362.3; read in arXiv:2207.09707v1: Section 2 (multi-player arenas, plays and strategies, objectives and payoffs, LTL and multi-energy objectives, Nash equilibria, and the definition of careful cooperative rational synthesis).
+- R. Condurache, C. Dima, M. Jitaru, Y. Oualhadj and N. Troquard, "Careful autonomous agents in environments with multiple common resources", in *Proceedings of the Second Workshop on Agents and Robots for reliable Engineered Autonomy (AREA 2022)*, Electronic Proceedings in Theoretical Computer Science 362, pp. 3–14, 2022, doi:10.4204/EPTCS.362.3; read in arXiv:2207.09707v1: Section 2 (multi-player arenas, plays and strategies, objectives and payoffs, LTL and multi-energy objectives, Nash equilibria, and the definition of careful cooperative rational synthesis).

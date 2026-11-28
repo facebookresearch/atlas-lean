@@ -27,6 +27,8 @@ $0$. At a sign test the system claims the result and the environment may either 
 whose output, $v_i + 1$ or $m_i$, exceeds the budget $0$ exactly when the claim was false. Halting locations output $z = 0$. So the system
 wins with budget $0$ exactly when it can follow the run of $M$ honestly to a halting location, that is, when $M$ halts.
 
+A good expansion links the step from two-counter machines over $\mathbb N$ with zero tests to integer-valued machines with sign tests, whose halting problem is then undecidable as well.
+
 ## Sources
 
 - R. Alur and M. Raghothaman, "Decision problems for additive regular functions", in *Automata, Languages, and Programming (ICALP 2013), Part II*, Lecture Notes in Computer Science 7966, pp. 37–48, Springer, 2013, doi:10.1007/978-3-642-39212-2_7; read in arXiv:1304.7029v1: Theorem 7 with Definition 14 (the halting gadget) before it, and Theorems 5 and 6 (EXPTIME upper and lower bounds for $\mathrm{ACRA}(\mathbb{N})$ games), all in Section 5.
