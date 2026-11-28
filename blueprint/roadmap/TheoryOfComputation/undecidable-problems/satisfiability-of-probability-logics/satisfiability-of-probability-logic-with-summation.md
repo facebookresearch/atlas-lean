@@ -8,7 +8,7 @@ For the logics comparing polynomials in probabilities, with summation over value
 
 **Theorem (Ibeling, Icard and Mossé).** $\mathsf{SAT}_{\mathcal{L}_{\mathrm{prob}}}$ and $\mathsf{SAT}_{\mathcal{L}_{\mathrm{causal}}}$ are undecidable, both over $\mathcal{M}$ and over $\mathcal{M}_{\mathrm{fin}}$ (Theorem 2 of the source).
 
-Over $\mathcal{M}_{\mathrm{fin}}$ both problems are recursively enumerable (Theorem 4). When every variable has the same fixed number $N$ of values, satisfiability for $\mathcal{L}_{\mathrm{causal}}(N)$ is complete for the class succ$\exists\mathbb{R}$ (Theorem 3), so undecidability comes from leaving the ranges unbounded together with the universal reading of free range variables.
+Over $\mathcal{M}_{\mathrm{fin}}$, the class defined above (in each model every variable has a range of the same finite size $N$, the values being arbitrary positive integers, and $N$ varies between models), both problems are recursively enumerable (Theorem 4).
 
 ## Depends on
 
@@ -27,5 +27,5 @@ The proof encodes the conditional independence implication problem. A [condition
 
 ## Sources
 
-- D. Ibeling, T. Icard and M. Mossé, "On probabilistic and causal reasoning with summation operators", Journal of Logic and Computation 35 (2025), no. 8, article exae068, https://doi.org/10.1093/logcom/exae068; read in arXiv:2405.03069v2, whose numbering is used: Section 2 (syntax and semantics, Definitions 9, 10 and 11 for validity, the model classes and satisfiability), Theorem 1 and the discussion after it in Section 1, and Theorems 2, 3 and 4 at the start of Section 3.
+- D. Ibeling, T. Icard and M. Mossé, "On probabilistic and causal reasoning with summation operators", Journal of Logic and Computation 35 (2025), no. 8, article exae068, https://doi.org/10.1093/logcom/exae068; read in arXiv:2405.03069v2, whose numbering is used: Section 2 (syntax and semantics, Definitions 9, 10 and 11 for validity, the model classes and satisfiability), Theorem 1 and the discussion after it in Section 1, and Theorems 2 and 4 at the start of Section 3.
 - C. T. Li, "Undecidability of network coding, conditional information inequalities, and conditional independence implication", IEEE Transactions on Information Theory 69 (2023), no. 6, 3493–3510, https://doi.org/10.1109/TIT.2023.3247570; read in arXiv:2205.11461v3 (Theorem 3 and its footnote on discrete random variables).
