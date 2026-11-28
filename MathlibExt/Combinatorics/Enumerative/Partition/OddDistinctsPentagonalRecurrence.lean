@@ -448,19 +448,6 @@ private lemma Represents.pow {F : ℤ⟦X⟧} {f : ℂ → ℂ} (hf : Represents
   | zero => simpa using represents_const 1
   | succ n ih => simpa only [pow_succ] using ih.mul hf
 
-private lemma qEulerProduct_eq_expand (k : ℕ) (hk : k ≠ 0) :
-    qEulerProduct k = expand k hk (pentagonalSeries ℤ) := by
-  have cont : Continuous (expand k hk : ℤ⟦X⟧ → ℤ⟦X⟧) := by
-    rw [continuous_iff_continuousAt]
-    intro F
-    rw [ContinuousAt, WithPiTopology.tendsto_iff_coeff_tendsto]
-    intro n
-    by_cases hd : k ∣ n
-    · simpa [coeff_expand, hd] using (WithPiTopology.continuous_coeff ℤ (n / k)).tendsto F
-    · simp [coeff_expand, hd]
-  have prod := (WithPiTopology.hasProd_one_sub_X_pow ℤ).map (expand k hk) cont
-  simpa [qEulerProduct, Function.comp_def, pow_mul] using prod.tprod_eq
-
 private lemma represents_euler (k : ℕ) (hk : k ≠ 0) :
     Represents (qEulerProduct k) (fun q ↦ eulerFunction (q ^ k)) := by
   rw [qEulerProduct_eq_expand k hk]
