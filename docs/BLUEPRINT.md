@@ -71,6 +71,38 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   included), states its result precisely enough that a reader knows exactly
   which statement is meant, and cites the source it follows. It is reviewed
   against that source as a linked page is reviewed against its declaration.
+- **Rest on settled sources.** A planned page cites sources that settle its
+  statement, a result or a definition: a statement is settled when settling
+  sources support each of its clauses; one source need not support them all.
+  Refereed work, however recent, and a published book, monograph or accepted
+  thesis settle what they prove or define. A curated reference such as the
+  Stacks Project, cited at a fixed version, settles what it proves or presents
+  as established; a survey or lecture notes, published or not, settles what it
+  presents as established; neither settles a statement whose only proof or
+  definition is in other unrefereed work. A specification cited at a fixed
+  version settles what it specifies. Other unrefereed work (a preprint,
+  report, draft, manuscript, submission under review, online answer, blog post
+  or talk), an open wiki such as Wikipedia or nLab, and a problem list such as
+  the Kourovka Notebook settle nothing, at any version, though a page may cite
+  them beside a settling source; no other source settles a statement either.
+  One exception: a page that states a conjecture or open question as such is
+  settled by the source that poses it, a problem list included; a page that
+  states its resolution needs a source that settles the resolution. Leave a
+  new planned page whose statement is not settled out of the pull request
+  until it is; the pull request that later adds it cites the settling sources.
+  Any clause whose mathematics a pull request adds or changes on a planned
+  page rests on a settling source; leave out any that none supports. This rule
+  does not sweep pages already on `main`: a clause whose mathematics a pull
+  request leaves as it is stays, even if its wording is fixed, and so does the
+  restatement that the pull request needs in order to hold a declaration back
+  (State what the declaration states) or to unlink a page whose declaration
+  was removed with no successor ([Maintaining
+  articles](#maintaining-articles)). Any other clause that the pull request
+  adds or changes on a page already on `main` rests on a settling source. A
+  reviewer may open a page-problem issue for an unsettled clause in either.
+  The rule covers statement pages with no Lean link, held pages included;
+  folder pages are outside it, and a card's folder page follows
+  [cards.md](cards.md).
 - **Leave no gaps.** A planned page writes its own `## Depends on` and
   `## Proof depends on`: nothing else records its prerequisites, and they
   count toward its readiness. It links a
