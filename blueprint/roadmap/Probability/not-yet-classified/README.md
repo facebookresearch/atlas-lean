@@ -69,8 +69,6 @@ Topics added since this subject's fields were last revised.
 
 - [Identification](part-08/identification/README.md)
 - [Information Inequality Identification](part-08/information-inequality-identification/README.md)
-- [Item Information](part-08/item-information/README.md)
-- [Item Score](part-08/item-score/README.md)
 
 ## [Part 9 of 17](part-09/README.md)
 

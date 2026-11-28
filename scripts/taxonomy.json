@@ -15714,6 +15714,8 @@
   "MathlibExt/Probability/Statistics/Measurement/GaussianLatentMean": {"to": "Probability/linear-models-multivariate", "title": "Factor analysis and structural equation models"},
   "MathlibExt/Probability/Statistics/Measurement/ItemResponse": {"to": "Probability/statistical-estimation", "title": "Item response models"},
   "MathlibExt/Probability/Statistics/Measurement/Scales": {"to": "Probability/nonparametric-survival", "title": "Ordinal scales: ranks, order statistics and medians"},
+  "MathlibExt/Probability/Statistics/Measurement/ItemInformation": {"to": "Probability/statistical-estimation", "title": "Item response models"},
+  "MathlibExt/Probability/Statistics/Measurement/ItemScore": {"to": "Probability/statistical-estimation", "title": "Item response models"},
   "MathlibExt/Probability/Statistics/Measurement/ScoreScaleLinking": {"to": "Probability/statistical-estimation", "title": "Likelihood and maximum likelihood estimators"},
   "MathlibExt/Probability/Statistics/MetaAnalysis": {"to": "Probability/hypothesis-testing", "title": "Meta-analysis"},
   "MathlibExt/Probability/Statistics/MixedModelEquations": {"to": "Probability/linear-models-multivariate", "title": "Generalized least squares"},
