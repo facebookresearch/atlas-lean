@@ -45,3 +45,5 @@
 - [Finitely many dual solutions suffice](exists-finset-optimal-fba-dual.md)
 - [The FBA value is piecewise linear](exists-finset-is-least-fba-value.md)
 - [Shadow prices are derivatives when unique](has-fderiv-at-fba-value-of-unique.md)
+- [Conserved-moiety metabolic control](conserved-moiety-metabolic-control/README.md)
+- [Thermodynamic flux balance](thermodynamic-flux-balance/README.md)
