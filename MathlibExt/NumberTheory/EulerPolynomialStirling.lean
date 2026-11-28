@@ -26,9 +26,6 @@ For each `k`, `eulerAlpha k` is the coefficient of `z^k` in `(2 + 2z) / (2 + 2z 
 * Nouara Mokhtari, Rachid Boumahdi, and Farid Bencherif,
   *Generalizations of Several Explicit Formulas for Euler Polynomials*, INTEGERS 25 (2025),
   Article A65, pp. 1–15, Proposition 3.1 and Lemma 2.2.
-* The equation lemmas `eulerAlpha_zero`, `eulerAlpha_one`, `eulerAlpha_succ_succ`, and
-  `eulerAlpha_rec` were moved from
-  `MathlibExt.NumberTheory.EulerPolynomialFormulasEulerPolyHalfEqSum`.
 -/
 
 set_option autoImplicit false
@@ -73,16 +70,17 @@ theorem genStirlingPoly_eval (n k : ℕ) (x : ℚ) :
           ((Nat.choose k j : ℚ) * (-1) ^ (k - j)) * (x + j) ^ n := by
   simp [genStirlingPoly, eval_finsetSum, eval_smul, smul_eq_mul]
 
-/-- The constant coefficient of the Euler generating function is `1`. -/
+/-- The Taylor coefficient $\alpha_0$ of $(2 + 2z)/(2 + 2z + z^2)$ is $1$. -/
 theorem eulerAlpha_zero : eulerAlpha 0 = 1 := rfl
 
-/-- The linear coefficient of the Euler generating function is `0`. -/
+/-- The Taylor coefficient $\alpha_1$ of $(2 + 2z)/(2 + 2z + z^2)$ is $0$. -/
 theorem eulerAlpha_one : eulerAlpha 1 = 0 := rfl
 
 private theorem eulerAlpha_succ_succ (k : ℕ) :
     eulerAlpha (k + 2) = -eulerAlpha (k + 1) - eulerAlpha k / 2 := rfl
 
-/-- Consecutive Euler coefficients satisfy the recurrence from the quadratic denominator. -/
+/-- The Taylor coefficients $\alpha_k$ of $(2 + 2z)/(2 + 2z + z^2)$ satisfy
+$2\alpha_{k+2} + 2\alpha_{k+1} + \alpha_k = 0$ for every $k \ge 0$. -/
 theorem eulerAlpha_rec (k : ℕ) :
     2 * eulerAlpha (k + 2) + 2 * eulerAlpha (k + 1) + eulerAlpha k = 0 := by
   rw [eulerAlpha_succ_succ]
