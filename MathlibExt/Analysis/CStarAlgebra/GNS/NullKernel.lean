@@ -59,7 +59,6 @@ compatible partial order (`PartialOrder A`, `StarOrderedRing A`).
 Let `tau : A → ℂ` be a positive complex-linear functional, possibly zero.
 An element `a : A` belongs to the complex linear kernel of the actual GNS coefficient
 map exactly when `tau (star a * a) = 0`. -/
-@[simp]
 theorem mem_ker_toGNS (tau : A →ₚ[ℂ] ℂ) (a : A) :
     a ∈ tau.toGNS.ker ↔ tau (star a * a) = 0 :=
   toGNS_eq_zero_iff tau a

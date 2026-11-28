@@ -23,8 +23,9 @@ under ambient left multiplication. This construction uses the stock
 `ClosedSubmodule` carrier and includes the zero functional and zero or
 nonunital algebras without a normalization premise.
 
-The quadratic-null ideal construction appears in Murphy,
-C*-Algebras and Operator Theory, Section V.3.
+The quadratic-null set is a closed left ideal. For the GNS construction, see
+Gerard J. Murphy, *C*-Algebras and Operator Theory*, Chapter 3,
+"Ideals and Positive Functionals".
 -/
 
 @[expose] public section
