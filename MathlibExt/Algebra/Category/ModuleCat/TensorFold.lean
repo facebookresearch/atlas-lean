@@ -121,6 +121,7 @@ theorem isoAt_eq_bifunctorFold {n : ℕ} {P Q : ModuleCat.{max v w} R}
   | succ n ih =>
       simp only [isoAt, Functor.BifunctorFold.iso, ih]
       rw [tensorIso_eq.{u, v, w} R e (h 0)]
+      rfl
 
 /-- For a commutative ring `R`, let `f : P → P′`, `g : Q → Q′`,
 `e : P ≅ Q` and `e′ : P′ ≅ Q′` be module maps/isomorphisms at height
