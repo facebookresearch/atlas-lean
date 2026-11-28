@@ -6,6 +6,32 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`LeanEval/Analysis/Choquet.lean` (leanprover/lean-eval), at commit
+38361be884302c7edce1908c4aef8296eb2cb27e, for the statements of `choquet` and `bauer_unique`.
+Manifests: `manifests/problems/choquet_representation_theorem.toml` and
+`manifests/problems/bauer_extreme_point_uniqueness.toml`, both rev 1, status archived.
+Copyright 2026 Lean FRO, LLC.
+Authors: Kim Morrison (problem submitter)
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use these portions except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. lean-eval ships no `NOTICE` file.
+
+Modification notice (Apache License 2.0, Section 4). ATLAS converted the evaluation problems
+to Batteries wanted declarations, adapted their namespace and documentation, and made the
+`CompleteSpace` binder explicit. This module contains the statements moved from
+`WantedExt/Analysis/ChoquetWanted.lean` with their proofs.
+-/
 module
 
 public import Mathlib.Analysis.Convex.Extreme
@@ -24,6 +50,30 @@ import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
 import Mathlib.Topology.Bases
 import Mathlib.Topology.ContinuousMap.Bounded.Basic
 import Mathlib.Topology.ContinuousMap.CompactlySupported
+
+/-!
+# Choquet representation and Bauer uniqueness
+
+For any compact convex set in a real Banach space with its Borel σ-algebra, `choquet`
+represents each point as the Bochner barycenter of a probability measure whose mass outside
+the extreme points is zero. If the same ambient space is second countable,
+`choquet_representation_of_isCompact` gives a representation for every point of a compact
+set, even without convexity. For a compact convex set in a real Banach space with its Borel
+σ-algebra, `bauer_unique` shows that a probability measure carried by the set with an extreme
+point as its Bochner barycenter must be the Dirac measure at that point.
+
+`choquet` applies the second-countable construction in the separable closed real span of the
+compact convex set and pushes the measure forward along the inclusion. The same construction
+supplies `choquet_representation_of_isCompact`.
+
+## References
+
+* G. Choquet, *Existence et unicité des représentations intégrales au moyen des points extrémaux
+  dans les cônes convexes*, Séminaire Bourbaki 4 (1958), exposé 139, pp. 33–47, Theorem 1 (§6).
+* H. Bauer, *Minimalstellen von Funktionen und Extremalpunkte*, Archiv der Mathematik 9 (1958),
+  pp. 389–393.
+* O. Knill, *Some fundamental theorems in mathematics*, §88 (the Banach-space formulation).
+-/
 
 namespace MathlibExt.Analysis.Convex.ChoquetWanted
 
@@ -701,24 +751,12 @@ open MeasureTheory Set
 
 namespace MathlibExt.Analysis.Convex.ChoquetWanted
 
-/--
-**Choquet representation for compact sets.** Let $E$ be a second-countable real Banach space
-with its Borel σ-algebra and let $K \subseteq E$ be compact. For every $x \in K$ there is a
-probability measure $\mu$ on $E$ such that the set $\operatorname{ext} K$ of extreme points of
-$K$ has $\mu(\operatorname{ext} K) = 1$, the identity map $y \mapsto y$ is Bochner integrable
-for $\mu$, and $\int_E y \, d\mu(y) = x$.
-
-Neither convexity nor nonemptiness of $K$ is assumed; Choquet's theorem for nonempty compact
-convex sets is the special case.
--/
-public theorem choquet_representation_of_isCompact
+private theorem exists_choquet_measure_of_isCompact
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
     {K : Set E} (hKCompact : IsCompact K) {x : E} (hx : x ∈ K) :
-    ∃ (μ : ProbabilityMeasure E),
-      (μ : Measure E) (Set.extremePoints ℝ K) = 1 ∧
-        Integrable (fun y : E => y) (μ : Measure E) ∧
-          MeasureTheory.integral (μ : Measure E) (fun y : E => y) = x := by
+    ∃ μ : Measure E, IsProbabilityMeasure μ ∧ μ (K.extremePoints ℝ)ᶜ = 0 ∧
+      Integrable (fun y : E => y) μ ∧ (∫ y, y ∂μ) = x := by
   have : CompactSpace K := isCompact_iff_compactSpace.mp hKCompact
   have : Nonempty E := ⟨x⟩
   obtain ⟨φ, hφ, hsep⟩ := cq_exists_seq_strongDual_separating (E := E)
@@ -744,30 +782,34 @@ public theorem choquet_representation_of_isCompact
   have hKmeas : MeasurableSet K := hKCompact.isClosed.measurableSet
   have emb : MeasurableEmbedding ((↑) : K → E) :=
     MeasurableEmbedding.subtype_coe hKmeas
-  have hcompl : ((((↑) : K → E) ⁻¹' extremePoints ℝ K))ᶜ
-      = {y : K | (y : E) ∉ extremePoints ℝ K} := by
-    ext y
-    simp
-  refine ⟨⟨μK.map ((↑) : K → E), inferInstance⟩, ?_, ?_, ?_⟩
-  · rw [MeasureTheory.ProbabilityMeasure.coe_mk, emb.map_apply]
-    have h1 : μK univ = 1 := IsProbabilityMeasure.measure_univ
-    have hA : μK ((((↑) : K → E) ⁻¹' extremePoints ℝ K))ᶜ = 0 := by
-      rw [hcompl]
-      exact hnull
-    have hle1 : (1 : ENNReal) ≤ μK ((↑) ⁻¹' extremePoints ℝ K) := by
-      calc (1 : ENNReal) = μK univ := h1.symm
-        _ = μK (((↑) : K → E) ⁻¹' extremePoints ℝ K ∪
-            ((((↑) : K → E) ⁻¹' extremePoints ℝ K))ᶜ) := by
-          rw [Set.union_compl_self]
-        _ ≤ μK ((↑) ⁻¹' extremePoints ℝ K) +
-            μK ((((↑) : K → E) ⁻¹' extremePoints ℝ K))ᶜ :=
-          MeasureTheory.measure_union_le _ _
-        _ = μK ((↑) ⁻¹' extremePoints ℝ K) := by rw [hA, add_zero]
-    exact le_antisymm MeasureTheory.prob_le_one hle1
-  · rw [MeasureTheory.ProbabilityMeasure.coe_mk, emb.integrable_map_iff]
+  refine ⟨μK.map ((↑) : K → E), inferInstance, ?_, ?_, ?_⟩
+  · rw [emb.map_apply]
+    exact hnull
+  · rw [emb.integrable_map_iff]
     exact hvint
-  · rw [MeasureTheory.ProbabilityMeasure.coe_mk, emb.integral_map]
+  · rw [emb.integral_map]
     exact hbary
+
+/--
+**Choquet representation for compact sets.** Let $E$ be a second-countable real Banach space
+with its Borel σ-algebra and let $K \subseteq E$ be compact. For every $x \in K$ there is a
+probability measure $\mu$ on $E$ such that the set $\operatorname{ext} K$ of extreme points of
+$K$ has $\mu(\operatorname{ext} K) = 1$, the identity map $y \mapsto y$ is Bochner integrable
+for $\mu$, and $\int_E y \, d\mu(y) = x$.
+
+Neither convexity nor nonemptiness of $K$ is assumed; Choquet's theorem for nonempty compact
+convex sets is the special case.
+-/
+public theorem choquet_representation_of_isCompact
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E]
+    {K : Set E} (hKCompact : IsCompact K) {x : E} (hx : x ∈ K) :
+    ∃ (μ : ProbabilityMeasure E),
+      (μ : Measure E) (Set.extremePoints ℝ K) = 1 ∧
+        Integrable (fun y : E => y) (μ : Measure E) ∧
+          MeasureTheory.integral (μ : Measure E) (fun y : E => y) = x := by
+  obtain ⟨μ, hprob, hnull, hint, hbary⟩ := exists_choquet_measure_of_isCompact hKCompact hx
+  exact ⟨⟨μ, hprob⟩, (measure_of_measure_compl_eq_zero hnull).trans measure_univ, hint, hbary⟩
 
 /--
 **Choquet's theorem.** Let $E$ be a second-countable real Banach space with its Borel σ-algebra
@@ -802,13 +844,54 @@ namespace MathlibExt.Analysis.ChoquetWanted.Analysis
 
 variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
 
-/-
-The Bauer statement below comes from `LeanEval.Analysis.Choquet` at commit
-38361be884302c7edce1908c4aef8296eb2cb27e of leanprover/lean-eval, problem
-`bauer_extreme_point_uniqueness` (submitted by Kim Morrison).
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-ATLAS adapted the namespace and documentation and supplied the proof.
--/
+-- Preserve the existing public name, including its repeated `Analysis` component.
+set_option linter.dupNamespace false in
+/-- **Choquet's representation theorem in Banach spaces.** Let $X$ be a real Banach space with its
+Borel σ-algebra and let $K \subseteq X$ be compact and convex. For every $x \in K$ there is a
+probability measure $\mu$ on $X$ such that the complement of the set of extreme points of $K$ has
+$\mu$-measure $0$ and the barycenter $\int y \, d\mu(y)$ (a Bochner integral) equals $x$.
+
+Source: G. Choquet, *Existence et unicité des représentations intégrales au moyen des points
+extrémaux dans les cônes convexes*, Séminaire Bourbaki 4 (1958), exposé 139, Theorem 1 (§6).
+Knill, *Some fundamental theorems in mathematics*, §88. Via leanprover/lean-eval@38361be, problem
+`choquet_representation_theorem`. -/
+public theorem choquet [CompleteSpace X] [MeasurableSpace X] [BorelSpace X]
+    (K : Set X) (hK_cpt : IsCompact K) (hK_cvx : Convex ℝ K)
+    {x : X} (hx : x ∈ K) :
+    ∃ μ : Measure X, IsProbabilityMeasure μ ∧
+      μ (K.extremePoints ℝ)ᶜ = 0 ∧
+      x = ∫ y, y ∂μ := by
+  let L := (Submodule.span ℝ K).topologicalClosure
+  have hKL : K ⊆ (L : Set X) :=
+    Submodule.subset_span.trans (Submodule.le_topologicalClosure _)
+  have : TopologicalSpace.SeparableSpace L :=
+    (hK_cpt.isSeparable.span (R := ℝ)).closure.separableSpace
+  let ι : L →L[ℝ] X := L.subtypeL
+  have hι : Topology.IsClosedEmbedding ι :=
+    (Submodule.isClosed_topologicalClosure (Submodule.span ℝ K)).isClosedEmbedding_subtypeVal
+  have hmeas := hι.measurableEmbedding
+  let S : Set L := ι ⁻¹' K
+  have hS : IsCompact S := hι.isCompact_preimage hK_cpt
+  obtain ⟨ν, hprob, hnull, hint, hbary⟩ :=
+    Convex.ChoquetWanted.exists_choquet_measure_of_isCompact hS (x := ⟨x, hKL hx⟩) hx
+  refine ⟨ν.map ι, (Measure.isProbabilityMeasure_map_iff hmeas.measurable.aemeasurable).2 hprob,
+    ?_, ?_⟩
+  · rw [hmeas.map_apply]
+    refine measure_mono_null ?_ hnull
+    intro y hy hyext
+    apply hy
+    -- Removing an extreme point leaves a convex set, which stays convex under inclusion.
+    have hconv : Convex ℝ S := hK_cvx.linear_preimage ι.toLinearMap
+    have hy' := hconv.mem_extremePoints_iff_convex_sdiff.mp hyext
+    refine hK_cvx.mem_extremePoints_iff_convex_sdiff.mpr ⟨hy'.1, ?_⟩
+    have hsurj : K ⊆ range ι := fun z hz => ⟨⟨z, hKL hz⟩, rfl⟩
+    have himage : ι '' (S \ {y}) = K \ {ι y} := by
+      rw [image_sdiff hι.injective, image_singleton]
+      exact congrArg (· \ {ι y}) (image_preimage_eq_of_subset hsurj)
+    rw [← himage]
+    exact hy'.2.linear_image ι.toLinearMap
+  · rw [hmeas.integral_map]
+    exact ((ι.integral_comp_comm hint).trans (congrArg ι hbary)).symm
 
 /- **Bauer's uniqueness at extreme points.** If `x` is an extreme point of a
 compact convex set `K` and `μ` is a probability measure supported on `K`

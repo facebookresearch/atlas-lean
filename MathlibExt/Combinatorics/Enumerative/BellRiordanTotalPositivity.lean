@@ -8,14 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.LinearAlgebra.Matrix.LowerToeplitz
 public import MathlibExt.LinearAlgebra.Matrix.NonnegativeMinors
-import Mathlib.Analysis.Real.Sqrt
 import Mathlib.LinearAlgebra.ExteriorPower.Basis
 import Mathlib.LinearAlgebra.Matrix.ToLin
 import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
+import Mathlib.RingTheory.PowerSeries.WellKnown
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
@@ -24,16 +25,31 @@ import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
 # Total positivity of Riordan arrays
 
 A Riordan array has nonnegative minors if its coefficient matrix does. The proof factors
-successive leading truncations as in equation (2.1) of Xi Chen, Huyile Liang and Yi Wang,
-[*Total positivity of Riordan arrays*](https://arxiv.org/abs/1601.05637).
+successive leading truncations as in Chen, Liang and Wang, equation (2.1).
 
 A Bell-type Riordan array has nonnegative minors if the lower Toeplitz matrix
 of its A-sequence has nonnegative minors. Writing `Dₙ` and `Tₙ` for the leading
 square truncations of the Bell and Toeplitz matrices, the proof factors `Dₙ₊₁` as
 the block diagonal matrix with blocks `1` and `Dₙ` times `Tₙ₊₁`.
 
-For the Bell-type criterion of Mu, Xing and Zheng, the array factors as a product of two
-Bell arrays with Pólya frequency A-sequences.
+The proof of the Bell-type criterion (`bellRiordanArray_hasNonnegativeMinors_of_pf`) uses a
+product of two Bell arrays with Pólya frequency A-series. The parameter criterion
+(`riordanArray_hasNonnegativeMinors_of_params`) instead uses a product of two general Riordan
+arrays. The unit-constant-term condition on the denominators in the source is made explicit as
+`P(0) ≠ 0`, and the series identities are cross-multiplied.
+
+## References
+
+* Lili Mu, Yuanyuan Xing and Sai-Nan Zheng, *A New Criterion for the Total Positivity of
+  Riordan Arrays*, Journal of Integer Sequences 28 (2025), Article 25.7.5, pp. 1–10,
+  Proposition 1, Theorem 2 (equations (3)–(6)), Proposition 5 and Corollary 6.
+* Tian-Xiao He and Renzo Sprugnoli, *Sequence characterization of Riordan arrays*,
+  Discrete Mathematics 309 (2009), 3962–3974, Theorems 3.3 and 3.4 (the product formulas).
+* Xi Chen, Huyile Liang and Yi Wang, *Total positivity of Riordan arrays*, European Journal of
+  Combinatorics 46 (2015), 68–74, Theorem 2.1 and Proposition 2.6 (the coefficient matrix).
+* The parameter proof uses `BellRiordan.compose_bell_series` and `BellRiordan.truncation_mul`
+  from this module. It follows the coefficient extraction in `BellRiordan.bell_entries`, using
+  `riordan_array_sum_eq_coeff_subst` from `MathlibExt.Combinatorics.Enumerative.RiordanArraySum`.
 -/
 
 namespace MetaMathlibExt
@@ -68,10 +84,11 @@ private theorem totallyNonneg_mul {N : ℕ} {A B : Matrix (Fin N) (Fin N) ℝ}
       Matrix.vecMulLinear_apply, Matrix.single_one_vecMul]
     exact hB e.strictMono hc
 
-/-- For a matrix with first row $(1,0,\ldots)$, cofactor expansion reduces total
-nonnegativity to the minors omitting that row. -/
+/-- For a matrix whose first row is supported at column zero, with a nonnegative
+entry there, cofactor expansion reduces total nonnegativity to the minors omitting
+that row. -/
 private theorem totallyNonneg_of_firstRow {N : ℕ} (M : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
-    (h00 : M 0 0 = 1) (hrow : ∀ j ≠ 0, M 0 j = 0)
+    (h00 : 0 ≤ M 0 0) (hrow : ∀ j ≠ 0, M 0 j = 0)
     (below : ∀ {k : ℕ} {r c : Fin k → Fin (N + 1)}, StrictMono r → StrictMono c →
       (∀ i, r i ≠ 0) → 0 ≤ (M.submatrix r c).det) : M.IsTotallyNonneg := by
   intro k r c hr hc
@@ -84,9 +101,10 @@ private theorem totallyNonneg_of_firstRow {N : ℕ} (M : Matrix (Fin (N + 1)) (F
     by_cases hr0 : r 0 = 0
     · by_cases hc0 : c 0 = 0
       · rw [Matrix.det_succ_row_zero, Finset.sum_eq_single 0]
-        · simpa [hr0, hc0, h00, Matrix.submatrix_submatrix] using
-            below (hr.comp Fin.strictMono_succ) (hc.comp Fin.strictMono_succ)
-              (fun _ => pos hr (Fin.succ_ne_zero _))
+        · simp only [Fin.val_zero, pow_zero, one_mul, Matrix.submatrix_apply,
+            Matrix.submatrix_submatrix, Fin.succAbove_zero, hr0, hc0]
+          exact mul_nonneg h00 (below (hr.comp Fin.strictMono_succ) (hc.comp Fin.strictMono_succ)
+            (fun _ => pos hr (Fin.succ_ne_zero _)))
         · intro j _ hj
           simp [hr0, hrow _ (pos hc hj)]
         · simp
@@ -101,7 +119,7 @@ private theorem totallyNonneg_of_firstRow {N : ℕ} (M : Matrix (Fin (N + 1)) (F
 private theorem totallyNonneg_border {N : ℕ} (M : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ)
     (h00 : M 0 0 = 1) (hrow : ∀ j ≠ 0, M 0 j = 0) (hcol : ∀ i ≠ 0, M i 0 = 0)
     (hM : (M.submatrix Fin.succ Fin.succ).IsTotallyNonneg) : M.IsTotallyNonneg := by
-  apply totallyNonneg_of_firstRow M h00 hrow
+  apply totallyNonneg_of_firstRow M (by rw [h00]; exact zero_le_one) hrow
   intro k r c hr hc hr0
   by_cases hc0 : ∀ j, c j ≠ 0
   · simpa [Matrix.submatrix_submatrix, Function.comp_def] using
@@ -473,13 +491,12 @@ private theorem geometric_totallyNonneg (r : ℝ) (hr : 0 ≤ r) (N : ℕ) :
         simp [M, hz]
       · simp
 
-/-- The discriminant condition factors the quadratic numerator into two nonnegative
-linear factors. The third Toeplitz factor is the geometric series. -/
-private theorem exists_parameter_series {r s t : ℝ} (hr : 0 ≤ r) (hs : 0 ≤ s)
-    (ht : 0 ≤ t) (hst : 4 * t ≤ s ^ 2) :
-    ∃ B : PowerSeries ℝ, constantCoeff B = 1 ∧
-      B * (1 - C r * X) = 1 + C s * X + C t * X ^ 2 ∧
-      (Matrix.lowerToeplitz fun n => coeff n B).IsTotallyNonneg := by
+private theorem quadratic_factor {s t : ℝ} (hs : 0 ≤ s) (ht : 0 ≤ t) (hst : 4 * t ≤ s ^ 2) :
+    let u := (s + Real.sqrt (s ^ 2 - 4 * t)) / 2
+    let v := (s - Real.sqrt (s ^ 2 - 4 * t)) / 2
+    0 ≤ u ∧ 0 ≤ v ∧
+      (1 + C u * X) * (1 + C v * X) = (1 : PowerSeries ℝ) + C s * X + C t * X ^ 2 := by
+  dsimp only
   let u := (s + Real.sqrt (s ^ 2 - 4 * t)) / 2
   let v := (s - Real.sqrt (s ^ 2 - 4 * t)) / 2
   have hsq := Real.sq_sqrt (sub_nonneg.mpr hst)
@@ -490,17 +507,31 @@ private theorem exists_parameter_series {r s t : ℝ} (hr : 0 ≤ r) (hs : 0 ≤
     nlinarith [sq_nonneg (s - Real.sqrt (s ^ 2 - 4 * t))]
   have huv : u * v = t := by dsimp [u, v]; nlinarith
   have hsum : u + v = s := by dsimp [u, v]; ring
+  refine ⟨hu, hv, ?_⟩
+  change (1 + C u * X) * (1 + C v * X) = 1 + C s * X + C t * X ^ 2
+  rw [← hsum, ← huv, map_add, map_mul]
+  ring
+
+private theorem geometric_mul_one_sub (r : ℝ) :
+    (mk fun n => r ^ n) * (1 - C r * X) = 1 := by
+  simpa [rescale_mk, rescale_X] using
+    congrArg (rescale r) (mk_one_mul_one_sub_eq_one ℝ)
+
+/-- The discriminant condition factors the quadratic numerator into two nonnegative
+linear factors. The third Toeplitz factor is the geometric series. -/
+private theorem exists_parameter_series {r s t : ℝ} (hr : 0 ≤ r) (hs : 0 ≤ s)
+    (ht : 0 ≤ t) (hst : 4 * t ≤ s ^ 2) :
+    ∃ B : PowerSeries ℝ, constantCoeff B = 1 ∧
+      B * (1 - C r * X) = 1 + C s * X + C t * X ^ 2 ∧
+      (Matrix.lowerToeplitz fun n => coeff n B).IsTotallyNonneg := by
+  let u := (s + Real.sqrt (s ^ 2 - 4 * t)) / 2
+  let v := (s - Real.sqrt (s ^ 2 - 4 * t)) / 2
+  obtain ⟨hu, hv, hquad⟩ := quadratic_factor hs ht hst
   let G : PowerSeries ℝ := mk fun n => r ^ n
-  have hG : G * (1 - C r * X) = 1 := by
-    rw [mul_sub, mul_one, ← mul_assoc]
-    ext n
-    cases n with
-    | zero => simp [G]
-    | succ n => simp [G, coeff_succ_mul_X, coeff_mul_C, pow_succ]
   refine ⟨(1 + C u * X) * (1 + C v * X) * G, ?_, ?_, ?_⟩
   · simp [G]
-  · rw [mul_assoc, hG, mul_one, ← hsum, ← huv, map_add, map_mul]
-    ring
+  · rw [mul_assoc, show G * (1 - C r * X) = 1 from geometric_mul_one_sub r, mul_one]
+    exact hquad
   · apply (Matrix.hasNonnegativeMinors_iff_isTotallyNonneg _).mp
     apply nonnegativeMinors_of_truncations
     intro N
@@ -573,6 +604,18 @@ private theorem bell_entries (A g : PowerSeries ℝ) (hg : A.subst (X * g) = g)
         ring
       rw [pow_one, heq, coeff_succ_X_mul]
 
+/-- Substituting `X * g` in the second series of a Riordan pair. -/
+private theorem subst_X_mul_series (p g : PowerSeries ℝ) :
+    (X * p).subst (X * g) = X * (g * p.subst (X * g)) := by
+  have hg := HasSubst.of_constantCoeff_zero' (show constantCoeff (X * g) = 0 by simp)
+  rw [subst_mul hg, subst_X hg, mul_assoc]
+
+private theorem subst_of_bell (P p g : PowerSeries ℝ) (hp : P.subst (X * p) = p) :
+    P.subst (X * (g * p.subst (X * g))) = p.subst (X * g) := by
+  have hp' := HasSubst.of_constantCoeff_zero' (show constantCoeff (X * p) = 0 by simp)
+  have hg := HasSubst.of_constantCoeff_zero' (show constantCoeff (X * g) = 0 by simp)
+  rw [← subst_X_mul_series, ← subst_comp_subst_apply hp' hg, hp]
+
 /-- Composing the Bell arrays for `B` and `P` gives the Bell series for `A`. -/
 private theorem compose_bell_series (P A B p b : PowerSeries ℝ) (hP : constantCoeff P ≠ 0)
     {r s t : ℝ}
@@ -588,10 +631,7 @@ private theorem compose_bell_series (P A B p b : PowerSeries ℝ) (hP : constant
   have hy := HasSubst.of_constantCoeff_zero' hy0
   have hf0 : constantCoeff f = 0 := by simp [f]
   have hf := HasSubst.of_constantCoeff_zero' hf0
-  have hp0 := HasSubst.of_constantCoeff_zero' (show constantCoeff (X * p) = 0 by simp)
-  have hpy : (X * p).subst y = f := by rw [subst_mul hy, subst_X hy]; exact mul_assoc _ _ _
-  have hPf : P.subst f = D := by
-    rw [← hpy, ← subst_comp_subst_apply hp0 hy P, hp]
+  have hPf : P.subst f = D := subst_of_bell P p b hp
   have hD0 : constantCoeff D ≠ 0 := by
     rwa [subst_constant, ← hp, subst_constant]
   have hD : D ≠ 0 := fun he => hD0 (by simp [he])
@@ -661,10 +701,8 @@ public theorem bellRiordanArray_hasNonnegativeMinors_of_pf (P A : PowerSeries �
       (truncation N d (X * d)).IsTotallyNonneg := by
     apply truncation_totallyNonneg d (fun n => coeff n F) _ hF
     rwa [show (mk fun n => coeff n F) = F from PowerSeries.ext fun n => coeff_mk ..]
-  have hf : HasSubst (X * b) :=
-    HasSubst.of_constantCoeff_zero' (show constantCoeff (X * b) = 0 by simp)
   have factor := truncation_mul N b (X * b) p (X * p) (by simp)
-  rw [subst_mul hf, subst_X hf, mul_assoc] at factor
+  rw [subst_X_mul_series] at factor
   have hprod : (truncation N g (X * g)).IsTotallyNonneg :=
     factor ▸ totallyNonneg_mul (bell B b hb hBpf) (bell P p hp hT)
   have entries : truncation N g (X * g) =
@@ -673,5 +711,334 @@ public theorem bellRiordanArray_hasNonnegativeMinors_of_pf (P A : PowerSeries �
     exact (bell_entries A g hg hR n.val k.val).symm
   rw [entries, Matrix.isTotallyNonneg_smul_iff (hA0 ▸ hPpos : 0 < constantCoeff A)] at hprod
   exact hprod
+
+section ParameterCriterion
+
+local notation "J[" Z ", " A "]" =>
+  riordanCoeffMatrix (fun n => coeff n Z) (fun n => coeff n A)
+
+private theorem coeffMatrix_succ (Z A : PowerSeries ℝ) (i j : ℕ) :
+    J[Z, A] i (j + 1) = coeff i (A * X ^ j) := by
+  simp [riordanCoeffMatrix, coeff_mul_X_pow', Nat.succ_sub_succ_eq_sub]
+
+/-- Left multiplication by a lower Toeplitz matrix multiplies both series of a
+coefficient matrix by the Toeplitz series. -/
+private theorem coeffMatrix_mul_left (F Z A : PowerSeries ℝ) (N : ℕ) :
+    (J[F * Z, F * A]).submatrix (Fin.val (n := N)) Fin.val =
+      truncation N F X * (J[Z, A]).submatrix Fin.val Fin.val := by
+  ext i j
+  rw [Matrix.mul_apply]
+  by_cases hj : j.val = 0
+  · simp only [Matrix.submatrix_apply, hj, riordanCoeffMatrix, Matrix.of_apply, ↓reduceIte]
+    have h := congrFun (congrFun (truncation_mul N F X Z X (by simp)) i) j
+    simpa [Matrix.mul_apply, truncation, subst_X HasSubst.X', X_subst, hj] using h
+  · obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero hj
+    let k' : Fin N := ⟨k, by omega⟩
+    simp only [Matrix.submatrix_apply, hk, coeffMatrix_succ]
+    have h := congrFun (congrFun (truncation_mul N F X A X (by simp)) i) k'
+    simpa [Matrix.mul_apply, truncation, subst_X HasSubst.X', X_subst, k'] using h
+
+private theorem coeffMatrix_hasNonnegativeMinors_mul_left (F Z A : PowerSeries ℝ)
+    (hF : ∀ N, (truncation N F X).IsTotallyNonneg)
+    (hJ : Matrix.HasNonnegativeMinors (J[Z, A])) :
+    Matrix.HasNonnegativeMinors (J[F * Z, F * A]) := by
+  apply nonnegativeMinors_of_truncations
+  intro N
+  rw [coeffMatrix_mul_left]
+  exact totallyNonneg_mul (hF N)
+    (((Matrix.hasNonnegativeMinors_iff_isTotallyNonneg _).mp hJ).submatrix
+      Fin.val_strictMono Fin.val_strictMono)
+
+/-- A constant first column is supported at the top row; the other columns form a
+lower Toeplitz matrix with the column indices shifted by one. -/
+private theorem coeffMatrix_const (a : ℝ) (ha : 0 ≤ a) (A : PowerSeries ℝ)
+    (hA : ∀ N, (truncation N A X).IsTotallyNonneg) : Matrix.HasNonnegativeMinors (J[C a, A]) := by
+  have hT : (Matrix.lowerToeplitz fun n => coeff n A).IsTotallyNonneg := by
+    apply (Matrix.hasNonnegativeMinors_iff_isTotallyNonneg _).mp
+    exact nonnegativeMinors_of_truncations _ fun N => truncation_X N A ▸ hA N
+  have tail {k : ℕ} {rows cols : Fin k → ℕ} (hr : StrictMono rows) (hc : StrictMono cols)
+      (hc0 : ∀ j, cols j ≠ 0) : 0 ≤ ((J[C a, A]).submatrix rows cols).det := by
+    have hm : StrictMono fun j => cols j - 1 := by
+      intro i j hij
+      change cols i - 1 < cols j - 1
+      have := hc hij
+      have := hc0 i
+      omega
+    convert hT hr hm using 2
+    ext i j
+    obtain ⟨l, hl⟩ := Nat.exists_eq_succ_of_ne_zero (hc0 j)
+    simp [Matrix.submatrix_apply, hl, coeffMatrix_succ, coeff_mul_X_pow', Matrix.lowerToeplitz]
+  apply nonnegativeMinors_of_truncations
+  intro N
+  cases N with
+  | zero =>
+    convert (Matrix.IsTotallyNonneg.one : (1 : Matrix (Fin 0) (Fin 0) ℝ).IsTotallyNonneg) using 1
+    exact Subsingleton.elim _ _
+  | succ N =>
+    let M : Matrix (Fin (N + 1)) (Fin (N + 1)) ℝ := (J[C a, A]).submatrix Fin.val Fin.val
+    suffices hM : M.transpose.IsTotallyNonneg by simpa using hM.transpose
+    apply totallyNonneg_of_firstRow M.transpose
+    · simpa [M, riordanCoeffMatrix, coeff_zero_eq_constantCoeff] using ha
+    · intro j hj
+      have hj' : j.val ≠ 0 := fun h => hj (Fin.ext h)
+      simp [M, riordanCoeffMatrix, coeff_C, hj']
+    · intro k rows cols hr hc hr0
+      rw [← Matrix.det_transpose, Matrix.transpose_submatrix, Matrix.transpose_transpose]
+      exact tail (Fin.val_strictMono.comp hc) (Fin.val_strictMono.comp hr)
+        (fun i h => hr0 i (Fin.ext h))
+
+/-- Nonnegative linear combinations of two first columns preserve the minors
+when the other columns are fixed. -/
+private theorem coeffMatrix_firstCol_nonnegative (Z₀ Z₁ A : PowerSeries ℝ) (w₀ w₁ : ℝ)
+    (h₀ : 0 ≤ w₀) (h₁ : 0 ≤ w₁)
+    (hJ₀ : Matrix.HasNonnegativeMinors (J[Z₀, A]))
+    (hJ₁ : Matrix.HasNonnegativeMinors (J[Z₁, A])) :
+    Matrix.HasNonnegativeMinors (J[C w₀ * Z₀ + C w₁ * Z₁, A]) := by
+  intro k rows cols hr hc
+  by_cases hj : ∃ j, cols j = 0
+  · obtain ⟨j, hj⟩ := hj
+    let M₀ := (J[Z₀, A]).submatrix rows cols
+    let M₁ := (J[Z₁, A]).submatrix rows cols
+    have upd : M₀.updateCol j (M₁.col j) = M₁ := by
+      ext i l
+      by_cases hl : l = j
+      · simp [hl]
+      · have hcl : cols l ≠ 0 := fun h => hl (hc.injective (h.trans hj.symm))
+        simp [M₀, M₁, Matrix.updateCol_ne hl, riordanCoeffMatrix, hcl]
+    have he : (J[C w₀ * Z₀ + C w₁ * Z₁, A]).submatrix rows cols =
+        M₀.updateCol j (w₀ • M₀.col j + w₁ • M₁.col j) := by
+      ext i l
+      by_cases hl : l = j
+      · subst l
+        simp [M₀, M₁, hj, riordanCoeffMatrix, coeff_C_mul]
+      · have hcl : cols l ≠ 0 := fun h => hl (hc.injective (h.trans hj.symm))
+        simp [M₀, Matrix.updateCol_ne hl, riordanCoeffMatrix, hcl]
+    rw [he, Matrix.det_updateCol_add, Matrix.det_updateCol_smul, Matrix.det_updateCol_smul, upd]
+    rw [show M₀.col j = (fun i => M₀ i j) from rfl, Matrix.updateCol_eq_self]
+    exact add_nonneg (mul_nonneg h₀ (hJ₀ k rows cols hr hc))
+      (mul_nonneg h₁ (hJ₁ k rows cols hr hc))
+  · convert hJ₀ k rows cols hr hc using 2
+    ext i j
+    have hcl : cols j ≠ 0 := fun h => hj ⟨j, h⟩
+    simp [riordanCoeffMatrix, hcl]
+
+private theorem coeffMatrix_linear (a b u v : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (hu : 0 ≤ u) (hv : 0 ≤ v) (hbu : b ≤ a * u) :
+    Matrix.HasNonnegativeMinors (J[C a + C b * X, (1 + C u * X) * (1 + C v * X)]) := by
+  let U : PowerSeries ℝ := 1 + C u * X
+  let V : PowerSeries ℝ := 1 + C v * X
+  have hUV : ∀ N, (truncation N (U * V) X).IsTotallyNonneg := by
+    intro N
+    have h := truncation_mul N U X V X (by simp)
+    rw [X_subst, subst_X HasSubst.X'] at h
+    rw [h]
+    exact totallyNonneg_mul (linearFactor_totallyNonneg u hu N) (linearFactor_totallyNonneg v hv N)
+  have h0 := coeffMatrix_const a ha (U * V) hUV
+  by_cases hau : a * u = 0
+  · have h : b = 0 := le_antisymm (hau ▸ hbu) hb
+    simpa [h, U, V] using h0
+  let θ := b / (a * u)
+  have hpos : 0 < a * u := lt_of_le_of_ne (mul_nonneg ha hu) (Ne.symm hau)
+  have hθ₀ : 0 ≤ θ := div_nonneg hb hpos.le
+  have hθ₁ : θ ≤ 1 := (div_le_one hpos).2 hbu
+  have hθ : θ * (a * u) = b := div_mul_cancel₀ _ hau
+  have h1 := coeffMatrix_hasNonnegativeMinors_mul_left U (C a) V
+    (linearFactor_totallyNonneg u hu) (coeffMatrix_const a ha V (linearFactor_totallyNonneg v hv))
+  have ht := coeffMatrix_firstCol_nonnegative (C a) (U * C a) (U * V) (1 - θ) θ
+    (sub_nonneg.mpr hθ₁) hθ₀ h0 h1
+  have hcol : C (1 - θ) * C a + C θ * (U * C a) = C a + C b * X := by
+    rw [show b = θ * (a * u) from hθ.symm]
+    simp only [U, map_sub, map_one, map_mul]
+    ring
+  rwa [hcol] at ht
+
+/-- The two generating-function equations give the AZ recurrences for the
+coefficients of the columns `d * f ^ k`. -/
+private theorem isRiordanArrayAZ_of_series (A Z d g : PowerSeries ℝ)
+    (hg : A.subst (X * g) = g) (hd : d * (1 - X * Z.subst (X * g)) = 1) :
+    IsRiordanArrayAZ (fun n => coeff n A) (fun n => coeff n Z)
+      (fun n k => coeff n (d * (X * g) ^ k)) := by
+  let f := X * g
+  have hf0 : constantCoeff f = 0 := by simp [f]
+  have hd0 : constantCoeff d = 1 := by simpa using congrArg constantCoeff hd
+  refine ⟨by simpa [coeff_zero_eq_constantCoeff] using hd0, ?_, ?_, ?_⟩
+  · intro k
+    simp [coeff_zero_eq_constantCoeff, ← show f = X * g from rfl, hf0]
+  · intro n
+    have hd' : d = 1 + X * (d * Z.subst f) := by
+      change d * (1 - X * Z.subst f) = 1 at hd
+      linear_combination hd
+    calc
+      coeff (n + 1) (d * f ^ 0) = coeff n (d * Z.subst f) := by
+        rw [pow_zero, mul_one]
+        have h := congrArg (coeff (n + 1)) hd'
+        simpa [coeff_succ_X_mul] using h
+      _ = ∑ j ∈ Finset.range (n + 1), coeff j Z * coeff n (d * f ^ j) := by
+        rw [← riordan_array_sum_eq_coeff_subst d f Z hf0]
+        simp only [mul_comm (coeff _ Z)]
+  · intro n k
+    calc
+      coeff (n + 1) (d * f ^ (k + 1)) = coeff n (d * f ^ k * A.subst f) := by
+        change A.subst f = g at hg
+        rw [hg, pow_succ, show d * (f ^ k * f) = X * (d * f ^ k * g) by dsimp only [f]; ring,
+          coeff_succ_X_mul]
+      _ = ∑ j ∈ Finset.range (n + 1), coeff j A * coeff n (d * f ^ (k + j)) := by
+        rw [← riordan_array_sum_eq_coeff_subst (d * f ^ k) f A hf0]
+        simp only [pow_add, ← mul_assoc, mul_comm (coeff _ A)]
+
+private theorem riordanAZ_unique {a z : ℕ → ℝ} {R S : ℕ → ℕ → ℝ}
+    (hR : IsRiordanArrayAZ a z R) (hS : IsRiordanArrayAZ a z S) : R = S := by
+  funext n k
+  induction n generalizing k with
+  | zero => cases k with
+    | zero => rw [hR.1, hS.1]
+    | succ k => rw [hR.2.1, hS.2.1]
+  | succ n ih => cases k with
+    | zero => simp only [hR.2.2.1, hS.2.2.1, ih]
+    | succ k => simp only [hR.2.2.2, hS.2.2.2, ih]
+
+/-- The relation for the first column of a product of two Riordan arrays,
+using the cross-multiplied equation for its Z-series. -/
+private theorem compose_firstColumn (P Q Z B W p g d e : PowerSeries ℝ)
+    (hP : constantCoeff P ≠ 0) {a b r s t : ℝ}
+    (hZ : Z * (P ^ 2 - C r * X * P) =
+      (P ^ 2 + C s * X * P + C t * X ^ 2) * Q +
+        (C a * P + C b * X) * (P - X * Q))
+    (hB : B * (1 - C r * X) = 1 + C s * X + C t * X ^ 2)
+    (hW : W * (1 - C r * X) = C a + C b * X)
+    (hp : P.subst (X * p) = p) (hg : B.subst (X * g) = g)
+    (hd : d * (1 - X * W.subst (X * g)) = 1) (he : e * (1 - X * Q.subst (X * p)) = 1) :
+    let y := X * g
+    let f := X * (g * p.subst y)
+    (d * e.subst y) * (1 - X * Z.subst f) = 1 := by
+  dsimp only
+  let y := X * g
+  let D := p.subst y
+  let f := X * (g * D)
+  have hy0 : constantCoeff y = 0 := by simp [y]
+  have hy := HasSubst.of_constantCoeff_zero' hy0
+  have hf := HasSubst.of_constantCoeff_zero' (show constantCoeff f = 0 by simp [f])
+  have hp0 := HasSubst.of_constantCoeff_zero' (show constantCoeff (X * p) = 0 by simp)
+  have hpy : (X * p).subst y = f := subst_X_mul_series p g
+  have hPf : P.subst f = D := subst_of_bell P p g hp
+  have hD0 : constantCoeff D ≠ 0 := by
+    change constantCoeff (p.subst (X * g)) ≠ 0
+    rwa [subst_constant, ← hp, subst_constant]
+  have hD : D ≠ 0 := fun heq => hD0 (by simp [heq])
+  have hden : 1 - C r * y ≠ 0 := by
+    intro heq
+    simpa [hy0] using congrArg constantCoeff heq
+  have hBy := congrArg (substAlgHom hy) hB
+  have hWy := congrArg (substAlgHom hy) hW
+  have hZf := congrArg (substAlgHom hf) hZ
+  simp only [map_mul, map_sub, map_one, map_add, map_pow, coe_substAlgHom, subst_C,
+    ← C_apply, subst_X hy] at hBy hWy
+  simp only [map_mul, map_sub, map_add, map_pow, coe_substAlgHom, subst_C,
+    ← C_apply, subst_X hf, hPf] at hZf
+  change B.subst (X * g) * (1 - C r * y) = 1 + C s * y + C t * y ^ 2 at hBy
+  rw [hg] at hBy
+  have hfy : f = y * D := (mul_assoc _ _ _).symm
+  have hZ' : Z.subst f = g * Q.subst f + W.subst y * (1 - y * Q.subst f) := by
+    apply mul_right_cancel₀ (mul_ne_zero (pow_ne_zero 2 hD) hden)
+    rw [hfy] at hZf ⊢
+    linear_combination hZf - D ^ 2 * Q.subst (y * D) * hBy -
+      D ^ 2 * (1 - y * Q.subst (y * D)) * hWy
+  have hey := congrArg (substAlgHom hy) he
+  simp only [map_mul, map_sub, map_one, coe_substAlgHom, subst_X hy,
+    subst_comp_subst_apply hp0 hy, hpy] at hey
+  change (d * e.subst y) * (1 - X * Z.subst f) = 1
+  rw [hZ']
+  calc
+    _ = (d * (1 - X * W.subst y)) * (e.subst y * (1 - y * Q.subst f)) := by
+      dsimp only [y]
+      ring
+    _ = 1 := by rw [show d * (1 - X * W.subst y) = 1 from hd, hey, mul_one]
+
+/-- **A total positivity criterion for Riordan arrays.** Let $P, Q, A, Z$ be formal power series
+over $\mathbb{R}$ with $P(0) \ne 0$, write $[x^n]F$ for the coefficient of $x^n$ in a power
+series $F$, and let $a, b, r, s, t \ge 0$ be real numbers. Suppose that
+$$A(x)\,(P(x) - rx) = P(x)^2 + sxP(x) + tx^2$$
+and
+$$Z(x)\,(P(x)^2 - rxP(x)) =
+(P(x)^2 + sxP(x) + tx^2)\,Q(x) + (aP(x) + bx)(P(x) - xQ(x)),$$
+and let $R$ be the Riordan array whose $A$-sequence is $([x^n]A)_{n \ge 0}$ and whose
+$Z$-sequence is $([x^n]Z)_{n \ge 0}$. Let $J(Q(x), P(x))$ be the coefficient matrix whose row
+$n \ge 0$ reads $[x^n]Q, [x^n]P, [x^{n-1}]P, \dots, [x^0]P, 0, 0, \dots$. Call a matrix totally
+positive when every minor of it is nonnegative. If $J(Q(x), P(x))$ is totally positive,
+$s^2 \ge 4t$ and $as + a\sqrt{s^2 - 4t} \ge 2b$, then $R$ is totally positive.
+
+Since $P(0) \ne 0$, the series $P(x) - rx$ and $P(x)^2 - rxP(x)$ are invertible, so the two
+hypotheses say $A = (P^2 + sxP + tx^2)/(P - rx)$ and
+$Z = ((P^2 + sxP + tx^2)Q + (aP + bx)(P - xQ))/(P^2 - rxP)$.
+
+Source: Lili Mu, Yuanyuan Xing and Sai-Nan Zheng, *A New Criterion for the Total Positivity of
+Riordan Arrays*, Journal of Integer Sequences 28 (2025), Article 25.7.5, Theorem 2
+(`jis-2025-25.7.5-thm-2`). -/
+public theorem riordanArray_hasNonnegativeMinors_of_params (P Q A Z : PowerSeries ℝ)
+    (hP : PowerSeries.constantCoeff P ≠ 0) {a b r s t : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
+    (hr : 0 ≤ r) (hs : 0 ≤ s) (ht : 0 ≤ t)
+    (hA : A * (P - PowerSeries.C r * PowerSeries.X) =
+      P ^ 2 + PowerSeries.C s * PowerSeries.X * P + PowerSeries.C t * PowerSeries.X ^ 2)
+    (hZ : Z * (P ^ 2 - PowerSeries.C r * PowerSeries.X * P) =
+      (P ^ 2 + PowerSeries.C s * PowerSeries.X * P + PowerSeries.C t * PowerSeries.X ^ 2) * Q +
+        (PowerSeries.C a * P + PowerSeries.C b * PowerSeries.X) * (P - PowerSeries.X * Q))
+    {R : ℕ → ℕ → ℝ}
+    (hR : IsRiordanArrayAZ (fun n => PowerSeries.coeff n A) (fun n => PowerSeries.coeff n Z) R)
+    (hJ : Matrix.HasNonnegativeMinors
+      (riordanCoeffMatrix (fun n => PowerSeries.coeff n Q) (fun n => PowerSeries.coeff n P)))
+    (hst : 4 * t ≤ s ^ 2) (hab : 2 * b ≤ a * s + a * Real.sqrt (s ^ 2 - 4 * t)) :
+    Matrix.HasNonnegativeMinors (Matrix.of R) := by
+  let u := (s + Real.sqrt (s ^ 2 - 4 * t)) / 2
+  let v := (s - Real.sqrt (s ^ 2 - 4 * t)) / 2
+  obtain ⟨hu, hv, hquad⟩ := quadratic_factor hs ht hst
+  change 0 ≤ u at hu
+  change 0 ≤ v at hv
+  let U : PowerSeries ℝ := 1 + C u * X
+  let V : PowerSeries ℝ := 1 + C v * X
+  change U * V = 1 + C s * X + C t * X ^ 2 at hquad
+  let G : PowerSeries ℝ := mk fun n => r ^ n
+  let B := G * (U * V)
+  let W := G * (C a + C b * X)
+  have hG : G * (1 - C r * X) = 1 := geometric_mul_one_sub r
+  have hB0 : constantCoeff B = 1 := by simp [B, G, U, V]
+  have hB : B * (1 - C r * X) = 1 + C s * X + C t * X ^ 2 := by
+    dsimp only [B]
+    rw [mul_right_comm, hG, one_mul, hquad]
+  have hW : W * (1 - C r * X) = C a + C b * X := by
+    dsimp only [W]
+    rw [mul_right_comm, hG, one_mul]
+  have hbu : b ≤ a * u := by dsimp only [u]; linarith
+  have hJ₁ := coeffMatrix_hasNonnegativeMinors_mul_left G (C a + C b * X) (U * V)
+    (geometric_totallyNonneg r hr) (coeffMatrix_linear a b u v ha hb hu hv hbu)
+  obtain ⟨g, hg⟩ := exists_bell_series B (by simp [hB0])
+  obtain ⟨p, hp⟩ := exists_bell_series P hP
+  let y := X * g
+  let d := (1 - X * W.subst y)⁻¹
+  let e := (1 - X * Q.subst (X * p))⁻¹
+  let F := g * p.subst y
+  have hd : d * (1 - X * W.subst y) = 1 := PowerSeries.inv_mul_cancel _ (by simp)
+  have he : e * (1 - X * Q.subst (X * p)) = 1 := PowerSeries.inv_mul_cancel _ (by simp)
+  have h₁ := riordanArray_hasNonnegativeMinors_of_coeffMatrix
+    (isRiordanArrayAZ_of_series B W d g hg hd) hJ₁
+  have h₂ := riordanArray_hasNonnegativeMinors_of_coeffMatrix
+    (isRiordanArrayAZ_of_series P Q e p hp he) hJ
+  have hAf : A.subst (X * F) = F := compose_bell_series P A B p g hP hA hB hp hg
+  have hZf : (d * e.subst y) * (1 - X * Z.subst (X * F)) = 1 :=
+    compose_firstColumn P Q Z B W p g d e hP hZ hB hW hp hg hd he
+  rw [riordanAZ_unique hR (isRiordanArrayAZ_of_series A Z (d * e.subst y) F hAf hZf)]
+  apply nonnegativeMinors_of_truncations
+  intro N
+  change (truncation N (d * e.subst y) (X * F)).IsTotallyNonneg
+  have hprod := truncation_mul N d y e (X * p) (by simp [y])
+  have hseries : (X * p).subst y = X * F := subst_X_mul_series p g
+  rw [hseries] at hprod
+  rw [hprod]
+  exact totallyNonneg_mul
+    (((Matrix.hasNonnegativeMinors_iff_isTotallyNonneg _).mp h₁).submatrix
+      Fin.val_strictMono Fin.val_strictMono)
+    (((Matrix.hasNonnegativeMinors_iff_isTotallyNonneg _).mp h₂).submatrix
+      Fin.val_strictMono Fin.val_strictMono)
+
+end ParameterCriterion
 
 end MetaMathlibExt
