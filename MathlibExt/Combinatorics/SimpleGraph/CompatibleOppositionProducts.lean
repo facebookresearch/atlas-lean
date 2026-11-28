@@ -50,13 +50,19 @@ def IsCompatiblyAlmostOpposable (G : SimpleGraph V) : Prop :=
     ∃ α : G ≃g G, (∀ v, α (α v) = v) ∧
       ∃ f : G.induce Sᶜ ≃g G.induce Sᶜ, IsOpposition _ f ∧ ∀ x : ↥Sᶜ, α x = (f x : V)
 
-private theorem compatible_outside {G : SimpleGraph V} {S : Set V} {a : G ≃g G}
-    {f : G.induce Sᶜ ≃g G.induce Sᶜ} (hf : IsOpposition _ f)
-    (hcompat : ∀ x : ↥Sᶜ, a x = (f x : V)) {x : V} (hx : x ∉ S) :
-    a x ∉ S ∧ a x ≠ x ∧ ¬ G.Adj x (a x) := by
-  let x' : ↥Sᶜ := ⟨x, hx⟩
-  rw [hcompat x']
-  exact ⟨(f x').2, fun h => (hf x').2.1 (Subtype.ext h), (hf x').2.2⟩
+/-- **Compatible almost opposability via the ambient involution.** A graph $G$ is compatibly
+almost opposable if and only if there are a vertex $u$, a set $S$ with $u \in S \subseteq N_G[u]$,
+and an involutive automorphism $\alpha$ of $G$ such that for every $x \notin S$,
+$\alpha(x) \notin S$ and $x\alpha(x) \in E(\overline{G})$. -/
+theorem isCompatiblyAlmostOpposable_iff_exists_involution (G : SimpleGraph V) :
+    IsCompatiblyAlmostOpposable G ↔
+      ∃ (u : V) (S : Set V), u ∈ S ∧ S ⊆ insert u (G.neighborSet u) ∧
+        ∃ α : G ≃g G, Function.Involutive α ∧ ∀ x ∉ S, α x ∉ S ∧ Gᶜ.Adj x (α x) := by
+  constructor
+  · rintro ⟨u, S, hu, hS, α, hα, h⟩
+    exact ⟨u, S, hu, hS, α, hα, (exists_compatible_opposition_iff hα).mp h⟩
+  · rintro ⟨u, S, hu, hS, α, hα, h⟩
+    exact ⟨u, S, hu, hS, α, hα, (exists_compatible_opposition_iff hα).mpr h⟩
 
 /-- **Strong products of compatibly almost opposable graphs.** If $G$ and $H$ are compatibly
 almost opposable graphs, then their strong product $G \boxtimes H$ is compatibly almost
@@ -68,8 +74,10 @@ public theorem isCompatiblyAlmostOpposable_strongProd [DecidableEq V] [Decidable
     (G : SimpleGraph V) (H : SimpleGraph W) [DecidableRel G.Adj] [DecidableRel H.Adj]
     (hG : IsCompatiblyAlmostOpposable G) (hH : IsCompatiblyAlmostOpposable H) :
     IsCompatiblyAlmostOpposable (strongProd G H) := by
-  obtain ⟨u, S, hu, hS, a, ha, f, hf, hfa⟩ := hG
-  obtain ⟨v, T, hv, hT, b, hb, g, hg, hgb⟩ := hH
+  obtain ⟨u, S, hu, hS, a, ha, hleft⟩ :=
+    (isCompatiblyAlmostOpposable_iff_exists_involution G).mp hG
+  obtain ⟨v, T, hv, hT, b, hb, hright⟩ :=
+    (isCompatiblyAlmostOpposable_iff_exists_involution H).mp hH
   let α : strongProd G H ≃g strongProd G H :=
     ⟨a.toEquiv.prodCongr b.toEquiv, by
       intro x y
@@ -77,7 +85,8 @@ public theorem isCompatiblyAlmostOpposable_strongProd [DecidableEq V] [Decidable
       simp only [strongProd_adj, a.injective.eq_iff, b.injective.eq_iff,
         a.map_adj_iff, b.map_adj_iff]⟩
   have hinv : Function.Involutive α := fun x => Prod.ext (ha x.1) (hb x.2)
-  refine ⟨(u, v), S ×ˢ T, ⟨hu, hv⟩, ?_, α, hinv, ?_⟩
+  refine (isCompatiblyAlmostOpposable_iff_exists_involution _).mpr
+    ⟨(u, v), S ×ˢ T, ⟨hu, hv⟩, ?_, α, hinv, ?_⟩
   · intro x hx
     have hleft := Set.mem_insert_iff.mp (hS hx.1)
     have hright := Set.mem_insert_iff.mp (hT hx.2)
@@ -87,27 +96,16 @@ public theorem isCompatiblyAlmostOpposable_strongProd [DecidableEq V] [Decidable
       (G.Adj u x.1 ∧ v = x.2) ∨ (G.Adj u x.1 ∧ H.Adj v x.2)
     rw [eq_comm (a := u), eq_comm (a := v)]
     tauto
-  -- A surviving coordinate stays outside its deleted set and rules out both equality
-  -- and adjacency of the entire pair.
-  have houtside (x : ↥(S ×ˢ T)ᶜ) :
-      α x ∈ (S ×ˢ T)ᶜ ∧ α x ≠ x.val ∧ ¬ (strongProd G H).Adj x (α x) := by
-    have hx : ¬ (x.val.1 ∈ S ∧ x.val.2 ∈ T) := x.2
-    change (a x.val.1, b x.val.2) ∈ (S ×ˢ T)ᶜ ∧ (a x.val.1, b x.val.2) ≠ x.val ∧
-      ¬ (strongProd G H).Adj x.val (a x.val.1, b x.val.2)
-    simp only [Set.mem_compl_iff, Set.mem_prod, ne_eq, Prod.ext_iff, strongProd_adj]
-    rw [eq_comm (a := x.val.1), eq_comm (a := x.val.2)]
-    rcases not_and_or.mp hx with hx | hx
-    · obtain ⟨hmem, hne, hnadj⟩ := compatible_outside hf hfa hx
+  · rintro ⟨x, y⟩ hxy
+    change (a x, b y) ∉ S ×ˢ T ∧ (strongProd G H)ᶜ.Adj (x, y) (a x, b y)
+    simp only [Set.mem_prod, SimpleGraph.compl_adj, ne_eq, Prod.mk.injEq, strongProd_adj] at hxy ⊢
+    rcases not_and_or.mp hxy with hx | hy
+    · obtain ⟨hmem, hfar⟩ := hleft x hx
+      have ⟨hne, hnadj⟩ := (G.compl_adj _ _).mp hfar
       tauto
-    · obtain ⟨hmem, hne, hnadj⟩ := compatible_outside hg hgb hx
+    · obtain ⟨hmem, hfar⟩ := hright y hy
+      have ⟨hne, hnadj⟩ := (H.compl_adj _ _).mp hfar
       tauto
-  have hmaps : Set.MapsTo α (S ×ˢ T)ᶜ (S ×ˢ T)ᶜ := fun x hx => (houtside ⟨x, hx⟩).1
-  have hbij : Set.BijOn α (S ×ˢ T)ᶜ (S ×ˢ T)ᶜ :=
-    ⟨hmaps, α.injective.injOn, fun x hx => ⟨α x, hmaps hx, hinv x⟩⟩
-  refine ⟨α.induce hbij, ?_, fun _ => rfl⟩
-  intro x
-  obtain ⟨_, hne, hnadj⟩ := houtside x
-  exact ⟨Subtype.ext (hinv x), fun h => hne (congrArg Subtype.val h), hnadj⟩
 
 end
 

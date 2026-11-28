@@ -46,6 +46,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import Mathlib.Combinatorics.SimpleGraph.Prod
 public import Mathlib.Data.Fintype.Pi
+public import MathlibExt.Combinatorics.SimpleGraph.CartesianOppositionProducts
 public import MathlibExt.Combinatorics.SimpleGraph.CompatibleOppositionProducts
 public import MathlibExt.Combinatorics.SimpleGraph.RookGraph
 public import MathlibExt.Combinatorics.SimpleGraph.SnortOppositions
@@ -218,21 +219,6 @@ Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
 Related to SNORT*, INTEGERS 26 (2026), Article G2, Lemma 3. -/
 public theorem_wanted snortFirstPlayerWins_of_isAlmostOpposable [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (h : IsAlmostOpposable G) : SnortFirstPlayerWins G
-
-/-- **Cartesian products of compatibly almost opposable graphs.** Let $G$ and $H$ be compatibly
-almost opposable graphs. Suppose that for some vertex $u$ of $G$ there are an involutive
-automorphism $\alpha$ of $G$ and an opposition $f$ of the induced subgraph $G - u$ on the vertices
-other than $u$ such that $\alpha(x) = f(x)$ for every vertex $x \neq u$. Then the Cartesian product
-$G \square H$ is compatibly almost opposable.
-
-Source: Ashmore, Austin, Davies, Dyer, Kellough, *On Graph Automorphisms
-Related to SNORT*, INTEGERS 26 (2026), Article G2, Theorem 7. -/
-public theorem_wanted isCompatiblyAlmostOpposable_boxProd (G : SimpleGraph V)
-    (H : SimpleGraph W) (hG : IsCompatiblyAlmostOpposable G) (hH : IsCompatiblyAlmostOpposable H)
-    (hu : ∃ u : V, ∃ α : G ≃g G, (∀ v, α (α v) = v) ∧
-      ∃ f : G.induce ({u}ᶜ : Set V) ≃g G.induce ({u}ᶜ : Set V),
-        IsOpposition _ f ∧ ∀ x : ↥({u}ᶜ : Set V), α x = (f x : V)) :
-    IsCompatiblyAlmostOpposable (G □ H)
 
 /-- **Almost opposability of strong grids.** Let $k \ge 1$ and $n_1, \dots, n_k \ge 1$. Then the
 $k$-dimensional strong grid $P_{n_1} \boxtimes \cdots \boxtimes P_{n_k}$, the strong product of the

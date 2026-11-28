@@ -25,6 +25,9 @@ An opposition in the first factor also gives an opposition in six standard graph
   Sections 1, 2, and 4; in particular Theorem 2 for gluing block oppositions.
 - Keiko Kakihara, *Snort: A Combinatorial Game*, Master's thesis, California State University,
   San Bernardino, 2010, Section 3 (opposable graphs), cited by Ashmore et al.
+- `MathlibExt.Combinatorics.SimpleGraph.CompatibleOppositionProducts`: the proof of
+  `exists_compatible_opposition_iff` adapts the former `compatible_outside` helper and the
+  restriction argument in `isCompatiblyAlmostOpposable_strongProd`.
 -/
 
 namespace MetaMathlibExt
@@ -42,6 +45,28 @@ Related to SNORT*, INTEGERS 26 (2026), Article G2, Section 1 (after
 Kakihara). -/
 def IsOpposition (G : SimpleGraph V) (f : G ≃g G) : Prop :=
   ∀ v, f (f v) = v ∧ f v ≠ v ∧ ¬ G.Adj v (f v)
+
+/-- **Compatible opposition on an induced subgraph.** Let $G$ be a graph, $S$ a set of vertices,
+and $\alpha$ an involutive automorphism of $G$. There is an opposition $f$ of $G - S$ such that
+$f(x) = \alpha(x)$ for every $x \notin S$ if and only if every $x \notin S$ satisfies
+$\alpha(x) \notin S$ and $x\alpha(x) \in E(\overline{G})$. -/
+theorem exists_compatible_opposition_iff {G : SimpleGraph V} {S : Set V} {α : G ≃g G}
+    (hα : Function.Involutive α) :
+    (∃ f : G.induce Sᶜ ≃g G.induce Sᶜ, IsOpposition _ f ∧ ∀ x : ↥Sᶜ, α x = (f x : V)) ↔
+      ∀ x ∉ S, α x ∉ S ∧ Gᶜ.Adj x (α x) := by
+  constructor
+  · rintro ⟨f, hf, hagree⟩ x hx
+    let z : ↥Sᶜ := ⟨x, hx⟩
+    rw [hagree z]
+    exact ⟨(f z).property,
+      (G.compl_adj _ _).mpr ⟨fun h => (hf z).2.1 (Subtype.ext h.symm), (hf z).2.2⟩⟩
+  · intro h
+    have hmaps : Set.MapsTo α Sᶜ Sᶜ := fun x hx => (h x hx).1
+    have hinv : Set.InvOn α α Sᶜ Sᶜ := ⟨fun x _ => hα x, fun x _ => hα x⟩
+    let f := α.induce (hinv.bijOn hmaps hmaps)
+    refine ⟨f, fun x => ?_, fun _ => rfl⟩
+    obtain ⟨hne, hnadj⟩ := (G.compl_adj _ _).mp (h x x.property).2
+    exact ⟨Subtype.ext (hα x), fun he => hne (congrArg Subtype.val he.symm), hnadj⟩
 
 /-- **Opposable graphs.** A graph $G$ is opposable if it has an opposition: an automorphism $f$
 of $G$ such that for every vertex $v$, $f(f(v)) = v$, $f(v) \neq v$, and $f(v)$ is not adjacent
