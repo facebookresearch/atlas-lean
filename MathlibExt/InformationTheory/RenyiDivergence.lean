@@ -21,8 +21,9 @@ is `∫⁻ x, (∂μ/∂ν) x ^ α ∂ν` when `μ ≪ ν`, and the Rényi diver
 `(α - 1)⁻¹ * log (renyiMoment μ ν α)` in `EReal`, with the natural logarithm (Mironov, *Rényi
 Differential Privacy*, IEEE CSF 2017, arXiv:1702.07476v3, Definition 3, where the moment is
 `E_{x ∼ Q} (P(x) / Q(x)) ^ α`). Both are `⊤` when `μ` is not absolutely continuous with respect
-to `ν`, and at every order `α ≤ 1` (in Mironov, orders `α < 1` are set aside in Remark 2,
-and `α = 1` is defined after Definition 3 by continuity as the KL divergence).
+to `ν`. At every order `α ≤ 1` both are `⊤` too, a convention of this file rather than of the
+source: Mironov sets orders `α < 1` aside (Remark 2) and defines order `1` after Definition 3 by
+continuity as the KL divergence, so for a probability measure his `D₁(μ ‖ μ)` is `0`.
 
 Lean accepts arbitrary measures and uses Mathlib's total `μ.rnDeriv ν`. This function is zero
 if the pair has no Lebesgue decomposition; in that case it need not recover `μ` as a density
@@ -56,14 +57,17 @@ open scoped Classical in
 /-- **Rényi moment** of order `α` of `μ` with respect to `ν`: `∫⁻ x, (μ.rnDeriv ν x) ^ α ∂ν`
 when `μ ≪ ν` and `1 < α`, and `∞` otherwise. For absolutely continuous probability laws this
 is the moment in Mironov, arXiv:1702.07476v3, Definition 3. For arbitrary measures the formula
-uses Mathlib's total `rnDeriv`, which is zero without a Lebesgue decomposition. -/
+uses Mathlib's total `rnDeriv`, which is zero without a Lebesgue decomposition. The value `∞`
+at `α ≤ 1` is a convention of this file, not part of the cited definition. -/
 noncomputable def renyiMoment {Ω : Type*} [MeasurableSpace Ω] (μ ν : Measure Ω) (α : ℝ) :
     ℝ≥0∞ :=
   if μ ≪ ν ∧ 1 < α then ∫⁻ x, μ.rnDeriv ν x ^ α ∂ν else ∞
 
 /-- **Rényi divergence** of order `α` of `μ` from `ν`: `(α - 1)⁻¹ * log (renyiMoment μ ν α)`
-for `1 < α`, with `ENNReal.log`, so an infinite moment gives `⊤`; `⊤` for `α ≤ 1` (Mironov,
-arXiv:1702.07476v3, Definition 3). Meant for probability measures. -/
+for `1 < α` (Mironov, arXiv:1702.07476v3, Definition 3), with `ENNReal.log`, so an infinite
+moment gives `⊤`. At `α ≤ 1` it is `⊤`, a convention of this file: Mironov defines order `1`
+by continuity as the KL divergence, which is `0` between equal probability measures, and sets
+orders below `1` aside. Meant for probability measures. -/
 noncomputable def renyiDiv {Ω : Type*} [MeasurableSpace Ω] (μ ν : Measure Ω) (α : ℝ) : EReal :=
   if 1 < α then (((α - 1)⁻¹ : ℝ) : EReal) * ENNReal.log (renyiMoment μ ν α) else ⊤
 
@@ -76,13 +80,15 @@ theorem renyiMoment_of_ac {Ω : Type*} [MeasurableSpace Ω] {μ ν : Measure Ω}
   unfold renyiMoment
   exact ite_eq_left ⟨hμν, hα⟩
 
-/-- Without absolute continuity the moment is `∞`, at every order. -/
+/-- **Moment without absolute continuity.** Without absolute continuity the moment is `∞`, at
+every order; at `α ≤ 1` this is the convention of `renyiMoment`. -/
 theorem renyiMoment_of_not_ac {Ω : Type*} [MeasurableSpace Ω] {μ ν : Measure Ω} {α : ℝ}
     (hμν : ¬ μ ≪ ν) : renyiMoment μ ν α = ∞ := by
   unfold renyiMoment
   exact ite_eq_right fun h => hμν h.1
 
-/-- At orders `α ≤ 1` the moment is `∞`. -/
+/-- **Moment at orders up to one.** At orders `α ≤ 1` the moment is `∞`, a convention of this
+file; the cited definition covers only `α > 1`. -/
 theorem renyiMoment_of_le_one {Ω : Type*} [MeasurableSpace Ω] {μ ν : Measure Ω} {α : ℝ}
     (hα : α ≤ 1) : renyiMoment μ ν α = ∞ := by
   unfold renyiMoment
@@ -95,13 +101,15 @@ theorem renyiDiv_of_one_lt {Ω : Type*} [MeasurableSpace Ω] {μ ν : Measure Ω
   unfold renyiDiv
   exact ite_eq_left hα
 
-/-- At orders `α ≤ 1` the divergence is `⊤`. -/
+/-- **Divergence at orders up to one.** At orders `α ≤ 1` the divergence is `⊤`, a convention
+of this file; Mironov's order-`1` divergence is instead the KL divergence. -/
 theorem renyiDiv_of_le_one {Ω : Type*} [MeasurableSpace Ω] {μ ν : Measure Ω} {α : ℝ}
     (hα : α ≤ 1) : renyiDiv μ ν α = ⊤ := by
   unfold renyiDiv
   exact ite_eq_right (not_lt_of_ge hα)
 
-/-- Without absolute continuity the divergence is `⊤`, at every order. -/
+/-- **Divergence without absolute continuity.** Without absolute continuity the divergence is
+`⊤`, at every order; at `α ≤ 1` this is the convention of `renyiDiv`. -/
 theorem renyiDiv_of_not_ac {Ω : Type*} [MeasurableSpace Ω] {μ ν : Measure Ω} {α : ℝ}
     (hμν : ¬ μ ≪ ν) : renyiDiv μ ν α = ⊤ := by
   by_cases hα : 1 < α
@@ -132,8 +140,9 @@ theorem renyiDiv_self {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsPro
   rw [renyiDiv_of_one_lt hα, renyiMoment_self μ hα, measure_univ, ENNReal.log_one, mul_zero]
 
 /-- **The moment is at least one.** Above order `1`, the moment between probability measures is
-at least `1`, by Hölder's inequality with exponents `α` and `α / (α - 1)` applied to `∂μ/∂ν`
-and `1`. -/
+at least `1`: when `μ ≪ ν` by Hölder's inequality with exponents `α` and `α / (α - 1)` applied
+to `∂μ/∂ν` and `1`, and otherwise because the moment is then `∞`, the fallback of
+`renyiMoment`. -/
 theorem one_le_renyiMoment {Ω : Type*} [MeasurableSpace Ω] (μ ν : Measure Ω)
     [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] {α : ℝ} (hα : 1 < α) :
     1 ≤ renyiMoment μ ν α := by
@@ -153,8 +162,9 @@ theorem one_le_renyiMoment {Ω : Type*} [MeasurableSpace Ω] (μ ν : Measure Ω
     _ = ∫⁻ x, μ.rnDeriv ν x ^ α ∂ν := by
       rw [← ENNReal.rpow_mul, one_div, inv_mul_cancel₀ hα0.ne', ENNReal.rpow_one]
 
-/-- **Nonnegativity** (Mironov, arXiv:1702.07476v3, Proposition 8, for `1 < α`): the
-divergence between probability measures is nonnegative, at every order. -/
+/-- **Nonnegativity.** The divergence between probability measures is nonnegative, at every
+order: for `1 < α` this is Mironov, arXiv:1702.07476v3, Proposition 8, and at `α ≤ 1` the
+value is `⊤` by the convention of `renyiDiv`. -/
 theorem renyiDiv_nonneg {Ω : Type*} [MeasurableSpace Ω] (μ ν : Measure Ω)
     [IsProbabilityMeasure μ] [IsProbabilityMeasure ν] (α : ℝ) : 0 ≤ renyiDiv μ ν α := by
   by_cases hα : 1 < α
