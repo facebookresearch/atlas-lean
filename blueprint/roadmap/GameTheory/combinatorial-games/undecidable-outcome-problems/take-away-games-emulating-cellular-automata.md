@@ -11,7 +11,7 @@ Fix integers $\gamma, \Gamma \ge 0$ and a doubly infinite binary string $A = (a_
 1. remove $t$ tokens from the top of the tape-heap, where $\gamma(m-1) \le t \le \gamma m + m_p + \Gamma$; if fewer than $\gamma(m-1)$ tokens remain, all of them may be removed;
 2. remove $m$ matches with $1 \le m \le Y$; after the removal in part 1, the whole time-heap ($m = Y$) may be removed only if none of the top $Y$ remaining tokens is black.
 
-The new position is $(X - t, Y - m, m)$. Play is normal: a player who cannot move (no matches left) loses. These are [impartial games](../sprague-grundy-theorem/impartial-game.md): the moves depend only on the position, and every move removes at least one match. $\mathrm{G}(A, 1, 0)$ is the *rule 110 game*.
+The new position is $(X - t, Y - m, m)$. Play is normal: a player who cannot move loses. A position with no matches has no move, but a position with matches left can have none too: for $\gamma = \Gamma = 0$, the position with two black tokens, one match and $m_p = 1$ admits removing at most one token, after which a black token is on top, so the last match may not be taken. These are [impartial games](../sprague-grundy-theorem/impartial-game.md): the moves depend only on the position, and every move removes at least one match. $\mathrm{G}(A, 1, 0)$ is the *rule 110 game*.
 
 **Super-critical positions and periodic outcomes.** The tape-heap of $(X, Y, m_p)$ is *super-critical* if $X \ge (\Gamma + \gamma + 1) Y + m_p$. The family $\mathrm{G}(A, \gamma, \Gamma)$ has *two-dimensional eventually periodic outcomes* with period $(\delta', \rho')$ if, for every shift $\xi$ and every $m_p$, for all but finitely many $(X, Y)$, the positions $(X, Y, m_p)$ and $(X + \delta', Y + \rho', m_p)$, both with super-critical tape-heaps, are both [P-positions](../sprague-grundy-theorem/is-p.md) or both N-positions.
 
@@ -27,7 +27,7 @@ None.
 
 ## Expansion
 
-The defining fact of the family is Theorem 2 of the source: for the game with shift $0$ and $x \ge (\Gamma + 1) y + m_p$, the position $(x + \gamma y, y, m_p)$ is a P-position exactly when $a_x^y = \cdots = a_x^{y + m_p - 1} = 0$ and, if $y > 0$, $a_x^{y-1} = 1$. So the P-positions of super-critical positions encode the space-time diagram of $\mathrm{CA}(A, \gamma, \Gamma)$, and by Lemma 3 of the source the automaton's updates are two-dimensional eventually periodic exactly when the game outcomes are.
+The defining fact of the family is Theorem 2 of the source: for the game with shift $0$, $y \ge 1$ and $x \ge (\Gamma + 1) y + m_p$, the position $(x + \gamma y, y, m_p)$ is a P-position exactly when $a_x^y = \cdots = a_x^{y + m_p - 1} = 0$ and $a_x^{y-1} = 1$. The source states the theorem for $y \ge 0$ as well, but at $y = 0$ the correspondence fails on arbitrary starting triples: every position with no matches is a P-position, while for $\gamma = \Gamma = 0$, $A$ all ones, $x = m_p = 1$ and $y = 0$ the condition $a_1^0 = 0$ is false; so the case $y = 0$ is to be treated separately, as the trivial P-positions. So the P-positions of super-critical positions encode the space-time diagram of $\mathrm{CA}(A, \gamma, \Gamma)$, and by Lemma 3 of the source the automaton's updates are two-dimensional eventually periodic exactly when the game outcomes are.
 
 ## Sources
 

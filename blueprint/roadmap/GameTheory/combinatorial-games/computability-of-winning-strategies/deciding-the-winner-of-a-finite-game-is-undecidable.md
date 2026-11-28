@@ -9,6 +9,7 @@ Exactly one of the players has a winning strategy (Kalmár), so the question "wh
 ## Depends on
 
 - [Finite games with a computable winning function](finite-games-with-a-computable-winning-function.md)
+- [Player I wins a game](../../../SetTheory/determinacy/gale-stewart-games/iwins.md)
 - [Decidability by multi-stack machines](../../../TheoryOfComputation/computability/decidable-and-recognizable-predicates/tm2-decidable.md)
 
 ## Proof depends on
