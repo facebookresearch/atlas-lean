@@ -4,11 +4,11 @@ Let $N \ge 1$ and $k$ be integers. For a function $f$ on the upper half-plane
 $\mathfrak{H} = \{z \in \mathbb{C} : \operatorname{Im}(z) > 0\}$ and
 $\gamma = \begin{pmatrix} a & b \\ c & d \end{pmatrix} \in \mathrm{SL}_2(\mathbb{R})$, write
 $(f|_k\gamma)(z) = (cz + d)^{-k} f(\gamma z)$, where $\gamma z = (az + b)/(cz + d)$. A modular form of weight $k$ on
-[$\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma1.md) is a holomorphic function
+[$\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/congruence-subgroup-gamma1.md) is a holomorphic function
 $f$ on $\mathfrak{H}$ with $f|_k\gamma = f$ for every $\gamma \in \Gamma_1(N)$ and that is holomorphic at the cusps:
 for every $\sigma \in \mathrm{SL}_2(\mathbb{Z})$ the function $f|_k\sigma$ has an expansion in powers of $e^{2\pi i z/N}$
 with exponents $\ge 0$. It is a cusp form if, for every $\sigma$, these exponents are all $> 0$, that is, if $f$ is a
-[cusp form](../../../modular-forms-q-series/modular-forms/cusp-form.md) of weight $k$ for $\Gamma_1(N)$. Since
+[cusp form](../../../modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/cusp-form.md) of weight $k$ for $\Gamma_1(N)$. Since
 $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix} \in \Gamma_1(N)$, such an $f$ satisfies $f(z + 1) = f(z)$, and its
 $q$-expansion is its expansion $f = \sum_{n \ge 0} c_n q^n$ in powers of $q = e^{2\pi i z}$.
 
@@ -18,7 +18,7 @@ type $(k, \varepsilon)$ on $\Gamma_0(N)$ is a modular form $f$ of weight $k$ on 
 
 $$f\left(\frac{az+b}{cz+d}\right) = \varepsilon(d)\,(cz+d)^k f(z) \qquad \text{for all } \begin{pmatrix} a & b \\ c & d \end{pmatrix} \in \Gamma_0(N),$$
 
-where [$\Gamma_0(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md) is the group of the
+where [$\Gamma_0(N)$](../../../modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/congruence-subgroup-gamma0.md) is the group of the
 matrices of $\mathrm{SL}_2(\mathbb{Z})$ with $c \equiv 0 \pmod N$ and $\varepsilon(d)$ is the value of $\varepsilon$ at
 the class of $d$, which is prime to $N$. A cusp form of type $(k, \varepsilon)$ on $\Gamma_0(N)$ is a modular form of
 type $(k, \varepsilon)$ on $\Gamma_0(N)$ that is a cusp form. Without the condition $\varepsilon(-1) = (-1)^k$ the
@@ -40,9 +40,9 @@ their Théorème 4.1 and Proposition 5.1 are forms that are not identically zero
 
 ## Depends on
 
-- [Congruence subgroup $\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma1.md), for the group under which a modular form of weight $k$ is invariant
-- [Congruence subgroup $\Gamma_0(N)$](../../../modular-forms-q-series/modular-forms/congruence-subgroup-gamma0.md), for the transformation law with the character $\varepsilon$
-- [Cusp form](../../../modular-forms-q-series/modular-forms/cusp-form.md), for the cusp forms of weight $k$ for $\Gamma_1(N)$
+- [Congruence subgroup $\Gamma_1(N)$](../../../modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/congruence-subgroup-gamma1.md), for the group under which a modular form of weight $k$ is invariant
+- [Congruence subgroup $\Gamma_0(N)$](../../../modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/congruence-subgroup-gamma0.md), for the transformation law with the character $\varepsilon$
+- [Cusp form](../../../modular-forms-q-series/modular-forms/modular-curves-and-hecke-operators-of-level-n/cusp-form.md), for the cusp forms of weight $k$ for $\Gamma_1(N)$
 - [Eigenvector of a linear map](../../../../LinearAlgebra/eigenvalues-and-canonical-forms/eigenvalues-and-eigenspaces/eigenvalues-and-eigenvectors/has-eigenvector.md), for eigenvectors, which are nonzero
 
 ## Proof depends on
