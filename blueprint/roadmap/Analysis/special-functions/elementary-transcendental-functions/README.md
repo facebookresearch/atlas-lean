@@ -13,6 +13,7 @@ Exponential, logarithmic and trigonometric-type functions and their relatives: e
 - [Mittag-Leffler expansion of 1/(e^u − 1)](mittag-leffler-expansion-of-1-e-u-1/README.md)
 - [Modified Bessel functions of the first kind](modified-bessel-functions-of-the-first-kind/README.md)
 - [Shifted Jacobi and Gegenbauer polynomials](shifted-jacobi-and-gegenbauer-polynomials/README.md)
+- [Real powers](real-powers/README.md)
 - [Sine integral](sine-integral/README.md)
 - [The dilogarithm power series](the-dilogarithm-power-series/README.md)
 - [The principal logarithm of a product](the-principal-logarithm-of-a-product/README.md)
