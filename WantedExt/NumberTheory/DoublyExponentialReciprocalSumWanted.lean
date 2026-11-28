@@ -16,6 +16,7 @@ public import MathlibExt.NumberTheory.GeneralizedSylvester
 public import MathlibExt.NumberTheory.MillinSeries
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumExistsTailEqPseudoGreedyExpansion
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEventuallyPseudoGreedyGapEqZero
+public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEventuallySylvester
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumSylvester
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSumEqRoundInvRemainderAdd
 
@@ -74,25 +75,6 @@ public theorem_wanted pseudoGreedyExpansion_rational_structure {p q : ℕ} (hp :
         d (n + 1) = d n * a n) ∧
       (fun n => (c n : ℝ)) =O[atTop] (fun n => (∏ k ∈ Finset.range n, (a k : ℝ)) / a n) ∧
       (fun n => (c n : ℝ)) =O[atTop] (fun n => (1.5 : ℝ) ^ n)
-
-/-- **Erdős–Straus and Badea criterion for the Sylvester recurrence.** Let $(a_n)_{n \ge 0}$ be a
-sequence of positive integers with $a_n^2 / a_{n+1} \to 1$ such that $\sum_n 1 / a_n$ converges
-to a rational number. Suppose that
-$\liminf_n (a_0 \cdots a_{n-1} / a_n)(1 - a_n^2 / a_{n+1}) \ge 0$, that is, for every
-$\delta > 0$ this quantity is at least $-\delta$ for all sufficiently large $n$; or that
-$a_{n+1} \ge a_n^2 - a_n + 1$ for all sufficiently large $n$. Then
-$a_{n+1} = a_n^2 - a_n + 1$ for all sufficiently large $n$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Corollary 4 (`integers-2026-A28-cor-4`). -/
-public theorem_wanted eventually_sylvester_recurrence_of_rational_sum {a : ℕ → ℕ}
-    (hpos : ∀ n, 0 < a n)
-    (hratio : Tendsto (fun n => (a n : ℝ) ^ 2 / a (n + 1)) atTop (𝓝 1))
-    (hrat : ∃ q : ℚ, HasSum (fun n => 1 / (a n : ℝ)) q)
-    (h : (∀ δ : ℝ, 0 < δ → ∀ᶠ n in atTop,
-        -δ ≤ (∏ k ∈ Finset.range n, (a k : ℝ)) / a n * (1 - (a n : ℝ) ^ 2 / a (n + 1))) ∨
-      ∀ᶠ n in atTop, a n ^ 2 - a n + 1 ≤ a (n + 1)) :
-    ∀ᶠ n in atTop, a (n + 1) = a n ^ 2 - a n + 1
 
 /-- **Koizumi's conjecture is equivalent to the Erdős–Graham question.** The following are
 equivalent. (1) For every positive rational number $r$ whose pseudo-greedy gap sequence
