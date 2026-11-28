@@ -15548,6 +15548,7 @@
   "MathlibExt/Probability/OptimalStopping/Secretary": {"to": "Probability/martingales", "title": "Secretary problem"},
   "MathlibExt/Probability/OptimalStopping/SecretaryModel": {"to": "Probability/martingales", "title": "Secretary problem"},
   "MathlibExt/Probability/OptimalStopping/SecretaryOptimality": {"to": "Probability/martingales", "title": "Secretary problem"},
+  "MathlibExt/Probability/OptimalStopping/SingleThresholdProphet": {"to": "Probability/martingales", "title": "Prophet inequalities"},
   "MathlibExt/Probability/OptimalStopping/SnellEnvelope": {"to": "Probability/martingales", "title": "Optimal stopping and the Snell envelope"},
   "MathlibExt/Probability/OptionalStoppingUISubmartingale": {"to": "Probability/martingales", "title": "Optional stopping theorem"},
   "MathlibExt/Probability/OptionalStoppingUniformIntegrable": {"to": "Probability/martingales", "title": "Optional stopping theorem"},
