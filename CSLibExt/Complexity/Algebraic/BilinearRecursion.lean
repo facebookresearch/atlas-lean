@@ -89,6 +89,70 @@ noncomputable def recursiveCircuit {F : Type u} [Field F] {q : ℕ}
       (((recursiveCircuit terms k).parallel terms.length).subst
         (blockEncoder terms k))
 
+/-- Left encoded block matrix for one term: at `(a, c)`, the sum over the
+decomposition coordinates of the left coefficient times the matching `A` block
+entry. -/
+private noncomputable def encLeft {F : Type u} [Field F] {q : ℕ}
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q))) (k : ℕ)
+    (A : Matrix (Fin (q ^ (k + 1))) (Fin (q ^ (k + 1))) F)
+    (t : Fin terms.length) : Matrix (Fin (q ^ k)) (Fin (q ^ k)) F :=
+  Matrix.of fun a c => ∑ x : MatrixMultiplicationExponent.MatrixCoordinate q q,
+    (terms[t]).left x * A ((finPowSuccEquiv q k).symm (x.1, a))
+      ((finPowSuccEquiv q k).symm (x.2, c))
+
+/-- Right encoded block matrix for one term: at `(c, b)`, the sum over the
+decomposition coordinates of the middle coefficient times the matching `B`
+block entry. -/
+private noncomputable def encRight {F : Type u} [Field F] {q : ℕ}
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q))) (k : ℕ)
+    (B : Matrix (Fin (q ^ (k + 1))) (Fin (q ^ (k + 1))) F)
+    (t : Fin terms.length) : Matrix (Fin (q ^ k)) (Fin (q ^ k)) F :=
+  Matrix.of fun c b => ∑ y : MatrixMultiplicationExponent.MatrixCoordinate q q,
+    (terms[t]).middle y * B ((finPowSuccEquiv q k).symm (y.1, c))
+      ((finPowSuccEquiv q k).symm (y.2, b))
+
+/-- The `q`-by-`q` slice of `A` over block row `a` and block column `c`. -/
+private noncomputable def sliceLeft {F : Type u} {q k : ℕ}
+    (A : Matrix (Fin (q ^ (k + 1))) (Fin (q ^ (k + 1))) F)
+    (a c : Fin (q ^ k)) : Matrix (Fin q) (Fin q) F :=
+  Matrix.of fun p1 p2 => A ((finPowSuccEquiv q k).symm (p1, a))
+    ((finPowSuccEquiv q k).symm (p2, c))
+
+/-- The `q`-by-`q` slice of `B` over block row `c` and block column `b`. -/
+private noncomputable def sliceRight {F : Type u} {q k : ℕ}
+    (B : Matrix (Fin (q ^ (k + 1))) (Fin (q ^ (k + 1))) F)
+    (c b : Fin (q ^ k)) : Matrix (Fin q) (Fin q) F :=
+  Matrix.of fun p1 p2 => B ((finPowSuccEquiv q k).symm (p1, c))
+    ((finPowSuccEquiv q k).symm (p2, b))
+
+/-- The encoder's output at copy `t` is the matrix input of the two encoded
+block matrices. -/
+private theorem evaluate_blockEncoder {F : Type u} [Field F] {q : ℕ}
+    (terms : List (MatrixMultiplicationExponent.RankOneTrilinearTerm F
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q)
+      (MatrixMultiplicationExponent.MatrixCoordinate q q))) (k : ℕ)
+    (A B : Matrix (Fin (q ^ (k + 1))) (Fin (q ^ (k + 1))) F)
+    (t : Fin terms.length)
+    (p : (Fin (q ^ k) × Fin (q ^ k)) ⊕ (Fin (q ^ k) × Fin (q ^ k))) :
+    (blockEncoder terms k).evaluate (matrixInput A B) (t, p) =
+      matrixInput (encLeft terms k A t) (encRight terms k B t) p := by
+  cases p with
+  | inl q =>
+    obtain ⟨a, c⟩ := q
+    simp only [blockEncoder, ArithmeticCircuit.evaluate_linearCombination,
+      matrixInput, Sum.elim_inl, encLeft, Matrix.of_apply]
+  | inr q =>
+    obtain ⟨c, b⟩ := q
+    simp only [blockEncoder, ArithmeticCircuit.evaluate_linearCombination,
+      matrixInput, Sum.elim_inr, encRight, Matrix.of_apply]
+
 end
 
 end Cslib.Complexity.Algebraic
