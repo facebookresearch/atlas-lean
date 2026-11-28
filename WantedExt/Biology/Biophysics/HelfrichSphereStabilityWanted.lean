@@ -46,6 +46,7 @@ variation on the sphere and the critical pressure.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.Biophysics.HelfrichSphereStability
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Algebra.BigOperators.Fin
 
@@ -59,20 +60,11 @@ Gaussian curvature `K` and `∇²H = lapH`. -/
 def shapeLHS (p lam kc c₀ H K lapH : ℝ) : ℝ :=
   p - 2 * lam * H + kc * (2 * H + c₀) * (2 * H ^ 2 - c₀ * H - 2 * K) + 2 * kc * lapH
 
-/-- The **mode coefficient** `q_l(p) = (R/2)[l(l+1) - 2]{2k_c [l(l+1) - c₀R]/R³ - p}` of the second
-variation on the sphere of radius `R`. -/
-noncomputable def modeCoeff (kc c₀ R p : ℝ) (l : ℕ) : ℝ :=
-  R / 2 * ((l * (l + 1) : ℝ) - 2) * (2 * kc * ((l * (l + 1) : ℝ) - c₀ * R) / R ^ 3 - p)
-
 /-- The second variation `δ²F = ∑_{l < L} ∑_{|m| ≤ l} |a_{lm}|² q_l(p)` of the finite expansion
 with coefficients `a l m` (`m` ranging over `2l + 1` values). -/
 noncomputable def secondVariation (kc c₀ R p : ℝ) (L : ℕ) (a : (l : ℕ) → Fin (2 * l + 1) → ℂ) :
     ℝ :=
   ∑ l ∈ Finset.range L, ∑ m : Fin (2 * l + 1), ‖a l m‖ ^ 2 * modeCoeff kc c₀ R p l
-
-/-- The **critical pressure** `p_c = 2k_c(6 - c₀R)/R³`. -/
-noncomputable def criticalPressure (kc c₀ R : ℝ) : ℝ :=
-  2 * kc * (6 - c₀ * R) / R ^ 3
 
 /-- **The sphere condition** (Ou-Yang and Helfrich 1987; Tu and Ou-Yang 2008): for `R > 0`, the
 round sphere of radius `R` (`H = -1/R`, `K = 1/R²`, `∇²H = 0`) satisfies the shape equation iff
@@ -102,13 +94,5 @@ public theorem_wanted secondVariation_pos_iff (kc c₀ R p : ℝ) (hkc : 0 < kc)
     (∀ (L : ℕ) (a : (l : ℕ) → Fin (2 * l + 1) → ℂ), a 0 0 = 0 → (∀ m, a 1 m = 0) →
         (∃ l < L, ∃ m, a l m ≠ 0) → 0 < secondVariation kc c₀ R p L a) ↔
       p < criticalPressure kc c₀ R
-
-/-- **The `l = 0` mode** (Tu and Ou-Yang 2008, clarified): for `k_c > 0` and `R > 0`,
-`q_0(p) = R(p + 2k_c c₀/R²)`, and `q_0(p) ≥ 0` iff `p ≥ p_c - 12k_c/R³`.
-
-Source: Tu and Ou-Yang (2008), second variation on the sphere. -/
-public theorem_wanted modeCoeff_zero (kc c₀ R p : ℝ) (hkc : 0 < kc) (hR : 0 < R) :
-    modeCoeff kc c₀ R p 0 = R * (p + 2 * kc * c₀ / R ^ 2) ∧
-      (0 ≤ modeCoeff kc c₀ R p 0 ↔ criticalPressure kc c₀ R - 12 * kc / R ^ 3 ≤ p)
 
 end WantedExt.Biology.Biophysics.HelfrichSphereStabilityWanted
