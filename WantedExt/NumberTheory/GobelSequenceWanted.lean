@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.GobelSequence
+public import MathlibExt.NumberTheory.GobelSequenceAsymptoticExpansion
 public import MathlibExt.NumberTheory.GobelSequenceError
 public import MathlibExt.NumberTheory.GobelSequenceRootLimit
 public import MathlibExt.NumberTheory.GobelSequenceRoots
@@ -45,27 +46,6 @@ public theorem_wanted gobelSequence_integral_le_six_and_seven_iff :
         ∃ z : ℤ, gobelSequence k l n = z) ∧
       ∀ k l : ℕ, 2 ≤ k → 2 ≤ l →
         ((¬ ∃ z : ℤ, gobelSequence k l 7 = z) ↔ k % 6 = 2 ∧ l % 7 = 3)
-
-/-- **Asymptotic expansion of the $(k, l)$-Göbel sequence.** Let $k, l \ge 2$ be natural numbers
-and let $g_{k,l}$ be the $(k, l)$-Göbel sequence. There are a real number $C > 1$ and real numbers
-$a_1, a_2, \dots$ such that for every natural number $R$, as $n \to \infty$,
-
-$$g_{k,l}(n) - C^{k^n} n^{1/(k-1)} \Bigl(1 + \sum_{r=1}^{R} \frac{a_r}{n^r}\Bigr) =
-O\Bigl(\frac{C^{k^n} n^{1/(k-1)}}{n^{R+1}}\Bigr).$$
-
-In other words, $g_{k,l}(n) \sim C^{k^n} n^{1/(k-1)} \bigl(1 + \sum_{r \ge 1} a_r / n^r\bigr)$ as
-an asymptotic expansion, generalizing Zagier's asymptotic for Göbel's sequence.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Theorem 4 (`jis-2024-24.8.1-thm-4`). -/
-public theorem_wanted gobelSequence_asymptotic_expansion (k l : ℕ) (hk : 2 ≤ k) (hl : 2 ≤ l) :
-    ∃ C : ℝ, 1 < C ∧ ∃ a : ℕ → ℝ, ∀ R : ℕ,
-      (fun n : ℕ => (gobelSequence k l n : ℝ)
-          - C ^ (k ^ n) * (n : ℝ) ^ ((1 : ℝ) / (k - 1))
-            * (1 + ∑ r ∈ Finset.Icc 1 R, a r / (n : ℝ) ^ r))
-        =O[atTop]
-      (fun n : ℕ => C ^ (k ^ n) * (n : ℝ) ^ ((1 : ℝ) / (k - 1)) / (n : ℝ) ^ (R + 1))
 
 /-- **Key $p$-adic properties of the $(k, l)$-Göbel sequences.** Let $p$ be a prime, let $N \ge 1$
 be a natural number, let $r = \nu_p(N!)$, where $\nu_p$ is the $p$-adic valuation on $\mathbb{Q}$
