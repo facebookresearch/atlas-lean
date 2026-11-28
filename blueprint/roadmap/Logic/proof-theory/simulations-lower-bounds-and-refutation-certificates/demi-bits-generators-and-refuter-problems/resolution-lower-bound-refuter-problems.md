@@ -2,7 +2,7 @@
 
 The refuter problem of a resolution lower bound takes a purported resolution refutation that is shorter (or narrower) than the bound allows and asks for one invalid derivation step. It is a total search problem exactly when the lower bound is true, so its complexity measures how hard the lower bound is to prove.
 
-**Resolution refutations as inputs.** Let $F$ be an unsatisfiable CNF with $n$ variables and $m$ clauses, called axioms and indexed $C_{-m},\dots,C_{-1}$. A (purported) resolution refutation of $F$ is a sequence of nodes $C_0,\dots,C_{L-1}$, where node $C_i$ stores
+**Resolution refutations as inputs.** Let $F$ be an unsatisfiable CNF with $n$ variables and $m$ clauses, called axioms and indexed $C_{-m},\dots,C_{-1}$. A (purported) resolution refutation of $F$ is a nonempty sequence of nodes $C_0,\dots,C_{L-1}$ ($L\ge 1$), where node $C_i$ stores
 
 - a set of literals over $x_1,\dots,x_n$ (also read as the clause $C_i$),
 - a tag, "resolution" or "weakening",
