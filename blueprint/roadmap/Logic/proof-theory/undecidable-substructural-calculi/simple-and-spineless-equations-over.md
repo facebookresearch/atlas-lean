@@ -10,7 +10,7 @@ $$
 x_1 x_2 \cdots x_n \ \leq\ \bigvee_{d \in D} x_1^{d(1)} \cdots x_n^{d(n)} .
 $$
 
-Over $\mathsf{CRL}$ every $\{\vee,\cdot,1\}$-equation is equivalent to a finite set of *basic* equations $t_0 \leq t_1 \vee \cdots \vee t_l$ (monoid terms with the same variables on both sides), and each basic equation is equivalent to a simple one, its linearization. A one-variable basic equation is written $[n,P] : x^n \leq \bigvee_{p \in P} x^p$.
+Over $\mathsf{CRL}$ every $\{\vee,\cdot,1\}$-equation is equivalent to a finite set of *basic* equations $t_0 \leq t_1 \vee \cdots \vee t_l$ (monoid terms with the same variables on both sides), and each basic equation is equivalent to a simple one, its linearization. A one-variable basic equation is written $[n,P] : x^n \leq \bigvee_{p \in P} x^p$, with $n \geq 1$ and $P$ a finite subset of $\mathbb N$ other than $\{0\}$ ($x^0 = 1$); it is *trivial* if $n \in P$ (Section 5.2 of the source).
 
 **Spinal and spineless.** A basic equation $x_1^{f(1)} \cdots x_k^{f(k)} \leq (1 \vee)\, \bigvee_{i=1}^{k} x_1^{s_i(1)} \cdots x_i^{s_i(i)}$ is *spinal* if its left-hand exponent vector $f$ is not among the right-hand ones, and each nonzero right-hand vector $s_i$ has $s_i(i) \neq 0$ and $s_i(j) = 0$ for $j > i$ (an upper-triangular "spine"; the joinand $1$ may or may not occur). A simple equation is *prespinal* if some substitution of monoid terms for its variables maps it to a spinal equation, and *spineless* otherwise; a simple equation for $\mathsf{RL}$ is spineless if its commutative version is. A simple equation is *expansive* if it has a substitution instance $x^n \leq \bigvee_{j=1}^m x^{n + c_j}$ with $n, m \geq 1$ and all $c_j \geq 1$.
 

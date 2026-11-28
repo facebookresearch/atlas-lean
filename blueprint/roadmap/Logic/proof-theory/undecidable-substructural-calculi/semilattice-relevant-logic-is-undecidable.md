@@ -2,9 +2,9 @@
 
 The relevant logic $\mathsf{S}$ of all join-semilattice frames, introduced by Urquhart and widely expected to be decidable, is undecidable; consequently it lacks the finite model property.
 
-**Theorem (Knudstorp).** The set $\mathsf{S}$ of formulas in $\{\wedge, \vee, \to\}$ valid in all [semilattice frames](positive-relevant-logics-and-routley-meyer-frames.md) $(S, \sqcup, 0)$ is undecidable.
+**Theorem (Knudstorp).** The set $\mathsf{S}$ of formulas in $\{\wedge, \vee, \to\}$ valid in all [semilattice frames](positive-relevant-logics-and-routley-meyer-frames.md) $(S, \sqcup, 0)$ is undecidable (Theorem 6.2 of the source).
 
-**Corollary.** $\mathsf{S}$ does not have the finite model property: it differs from the set of formulas valid in all finite semilattice frames.
+**Corollary.** $\mathsf{S}$ does not have the finite model property: it differs from the set of formulas valid in all finite semilattice frames (Corollary 6.3).
 
 The corollary holds because $\mathsf{S}$ is recursively enumerable and the class of finite semilattices is recursively enumerable, so the finite model property would make $\mathsf{S}$ co-recursively enumerable as well, hence decidable.
 

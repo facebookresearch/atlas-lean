@@ -8,7 +8,7 @@ $$
 \mathsf{TWJ}^+ \subseteq \mathsf{L} \subseteq \mathrm{Log}(\mathcal{P}_{\mathrm{fin}}(\mathbb{N}), \cup, \varnothing).
 $$
 
-Then $\mathsf{L}$ is undecidable. No closure condition on $\mathsf{L}$ is required. In particular $\mathsf{TWJ}^+$, $\mathsf{C}^+$, $\mathsf{T}^+$, $\mathsf{E}^+$, $\mathsf{R}^+$ and $\mathsf{SetFr}$ are undecidable (Theorem 6.4 of the source).
+Then $\mathsf{L}$ is undecidable (Theorem 6.1 of the source, by a reduction from the tiling problem for $\mathbb{Z}^2$: a formula $\psi_W$ built from a finite tile set $W$ lies outside $\mathsf{L}$ iff $W$ tiles the plane). No closure condition on $\mathsf{L}$ is required. In particular $\mathsf{TWJ}^+$, $\mathsf{C}^+$, $\mathsf{T}^+$, $\mathsf{E}^+$, $\mathsf{R}^+$ and $\mathsf{SetFr}$ are undecidable (Theorem 6.4 of the source).
 
 The source notes that the upper bound may equally be taken to be the logic of the frame $(\mathbb{N}^2, \cdot, (0, 0))$. Since each of the named logics is recursively enumerable and so is its class of finite frames, none of them has the finite model property.
 
