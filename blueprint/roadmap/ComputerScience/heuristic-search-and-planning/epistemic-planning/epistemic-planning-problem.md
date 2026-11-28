@@ -12,7 +12,7 @@ Fix a finite set $Ag$ of agents and a countable set $AP$ of propositions.
 
 **Product.** If $S \models \mathit{pre}(e_0)$, then $S \otimes A = (W', (R'_a), V', (w_0, e_0))$ with $W' = \{(w, e) \in W \times E \mid (S, w) \models \mathit{pre}(e)\}$, $(w, e) R'_a (w', e')$ iff $w R_a w'$ and $e R_a e'$, and $V'((w, e)) = \{p \mid (S, w) \models \mathit{post}(e, p)\}$; otherwise the product is undefined.
 
-**Problem.** Input: a state $S$, a finite set $\mathcal{A}$ of actions and a formula $\varphi \in \mathcal{L}_{EL}$. Question: is there a sequence $A_1, \dots, A_m \in \mathcal{A}$ such that $S \otimes A_1 \otimes \cdots \otimes A_m$ is defined and satisfies $\varphi$?
+**Problem.** Input: a state $S$, a finite set $\mathcal{A}$ of actions and a formula $\varphi \in \mathcal{L}_{EL}$. A finite state is given by listing its worlds, the pairs of each $R_a$, the actual world and the valuation of the finitely many propositions that occur in the input, all other propositions being false everywhere; an action is given likewise, with its preconditions and postconditions as formulas. An infinite state can be an input only through a finite presentation, such as the automatic presentations of [epistemic planning over automatic models](epistemic-planning-over-automatic-models.md). Question: is there a sequence $A_1, \dots, A_m \in \mathcal{A}$ such that $S \otimes A_1 \otimes \cdots \otimes A_m$ is defined and satisfies $\varphi$?
 
 ## Depends on
 

@@ -2,7 +2,7 @@
 
 When the initial state may be an infinite S5 model given by an automatic presentation, epistemic planning is undecidable with two agents, two propositions, a single fixed public action and a fixed goal; with finite states public actions give decidability.
 
-**Theorem.** With $Ag = \{a, b\}$, there are a public action $F$ and a formula $\varphi$ of the form $\hat{C}_{Ag}\, \psi$ such that the following restriction of the [epistemic planning problem](epistemic-planning-problem.md) is undecidable. Input: an automatic presentation of a two-agent S5 state $S$ over two propositions. Question: is there $m \ge 0$ such that $S \otimes F \otimes \cdots \otimes F$ ($m$ times) satisfies $\varphi$?
+**Theorem.** With $Ag = \{a, b\}$, there are a public action $F$ and a formula $\varphi$ of the form $\hat{C}_{Ag}\, \psi$ such that the following restriction of the [epistemic planning problem](epistemic-planning-problem.md) is undecidable. Input: an automatic presentation of a two-agent S5 state $S$ over two propositions, that is, finite automata over a common finite alphabet recognizing a regular set of words that name the worlds, synchronous two-tape automata recognizing $R_a$ and $R_b$, automata recognizing the worlds where each proposition holds, and the word naming the actual world. Question: is there $m \ge 0$ such that $S \otimes F \otimes \cdots \otimes F$ ($m$ times) is defined and satisfies $\varphi$?
 
 ## Depends on
 

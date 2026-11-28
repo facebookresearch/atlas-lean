@@ -12,7 +12,7 @@ $$
 
 For $\epsilon > 0$, the *additive approximation problem* asks to compute an almost-sure winning strategy $\sigma$ with $\mathrm{val}(\sigma) \le \mathrm{optCost} + \epsilon$, and the *multiplicative approximation problem* one with $\mathrm{val}(\sigma) \le \mathrm{optCost} \cdot (1 + \epsilon)$.
 
-**Theorem (Chatterjee, Chmelík, Gupta and Kanodia).** The problem of approximating the optimal cost $\mathrm{optCost}$ in POMDPs with integer costs is undecidable for all $\epsilon > 0$, both for additive and for multiplicative approximation.
+**Theorem (Chatterjee, Chmelík, Gupta and Kanodia).** The problem of approximating the optimal cost $\mathrm{optCost}$ in POMDPs with integer costs is undecidable for all $\epsilon > 0$, both for additive and for multiplicative approximation. Instances are finite: the transition probabilities and the initial distribution are rational and the costs are integers; the reduction starts from the strict emptiness problem for probabilistic finite automata with threshold $\tfrac12$.
 
 The proof shows that, for POMDPs with integer costs (already with a single observation, costs depending only on the state and taking values in $\{-1, 0, 1\}$), no algorithm decides whether $\mathrm{optCost} = -\infty$ or $\mathrm{optCost} = 1$, given that one of the two holds. In contrast, for positive costs $c : S \times A \to \mathbb{N}$ both approximation problems are decidable (Theorem 2 of the copy read).
 
