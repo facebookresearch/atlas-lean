@@ -80,17 +80,17 @@ $\bowtie[X \cup Y, X \cup (U \setminus Y)]$. -/
 def MVD.toJD (U : Finset A) (m : MVD A) : JD A := ⟨[m.lhs ∪ m.rhs, m.lhs ∪ (U \ m.rhs)]⟩
 
 /-- A join dependency is **over** the schema `U` when the union of its schemes is `U`
-(Abiteboul–Hull–Vianu, Definition 8.3.1). Over the empty schema, the empty join dependency is
-over `U`; over a nonempty `U` it is not. -/
+(Abiteboul–Hull–Vianu, Definition 8.3.1). The join dependency with no schemes is over `U`
+exactly when `U` is empty. -/
 def JD.IsOver (j : JD A) (U : Finset A) : Prop :=
-  j.schemes.foldr (· ∪ ·) ∅ = U
+  schemaUnion j.schemes = U
 
 omit [Fintype A] in
 /-- The join dependency of a multivalued dependency with both sides in `U` is over `U`. -/
 theorem MVD.toJD_isOver {U : Finset A} {m : MVD A} (hl : m.lhs ⊆ U) (hr : m.rhs ⊆ U) :
     (m.toJD U).IsOver U := by
   obtain ⟨X, Y⟩ := m
-  unfold JD.IsOver MVD.toJD
+  unfold JD.IsOver MVD.toJD schemaUnion
   ext a
   simp only [List.foldr_cons, List.foldr_nil, Finset.union_empty, Finset.mem_union,
     Finset.mem_sdiff]
@@ -337,21 +337,25 @@ theorem MVD.holdsIn_compl {U X Y : Finset A} {r : Finset (Tuple A D)} (hY : Y �
 variable (D) in
 /-- **Implication of a functional dependency.** A finite set `F` of functional dependencies and a
 finite set `J` of join dependencies imply the functional dependency `f` over the schema `U`, for
-values in `D`, when `f` holds in every relation over `U` with values in `D` that satisfies `F` on
-`U` (through `SatisfiesOn`, as in `LosslessJoin`) and every join dependency of `J`. For `D = ℕ`
-this is the implication of Abiteboul–Hull–Vianu over their countably infinite domain
-(Section 3.1); if `D` has at most one value, every functional dependency holds everywhere. -/
+values in `D`, when every join dependency of `J` is over `U`, both sides of `f` lie in `U`, and
+`f` holds in every relation over `U` with values in `D` that satisfies `F` on `U` (through
+`SatisfiesOn`, as in `LosslessJoin`) and every join dependency of `J`. For `D = ℕ` this is the
+implication of Abiteboul–Hull–Vianu over their countably infinite domain (Section 3.1); if `D`
+has at most one value, every functional dependency holds everywhere. -/
 def ImpliesFD (U : Finset A) (F : Finset (FD A)) (J : Finset (JD A)) (f : FD A) : Prop :=
+  (∀ j ∈ J, j.IsOver U) ∧ f.lhs ⊆ U ∧ f.rhs ⊆ U ∧
   ∀ r : Finset (Tuple A D), IsOver U r → SatisfiesOn F U r →
     (∀ j ∈ J, j.HoldsIn r) → f.HoldsIn (↑r : Set (Tuple A D))
 
 variable (D) in
 /-- **Implication of a join dependency.** A finite set `F` of functional dependencies and a
 finite set `J` of join dependencies imply the join dependency `j` over the schema `U`, for
-values in `D`, when `j` holds in every relation over `U` with values in `D` that satisfies `F` on
-`U` (through `SatisfiesOn`) and every join dependency of `J`. For `D = ℕ` this is the implication
-of Abiteboul–Hull–Vianu over their countably infinite domain (Section 3.1). -/
+values in `D`, when every join dependency of `J` is over `U`, `j` is over `U`, and `j` holds in
+every relation over `U` with values in `D` that satisfies `F` on `U` (through `SatisfiesOn`)
+and every join dependency of `J`. For `D = ℕ` this is the implication of
+Abiteboul–Hull–Vianu over their countably infinite domain (Section 3.1). -/
 def ImpliesJD (U : Finset A) (F : Finset (FD A)) (J : Finset (JD A)) (j : JD A) : Prop :=
+  (∀ j' ∈ J, j'.IsOver U) ∧ j.IsOver U ∧
   ∀ r : Finset (Tuple A D), IsOver U r → SatisfiesOn F U r →
     (∀ j' ∈ J, j'.HoldsIn r) → j.HoldsIn r
 

@@ -196,11 +196,18 @@ ImpliesFD ℕ Finset.univ ∅ Jstudio ⟨X, Finset.univ⟩) ∧
   · intro X hX Y hY hYX hImp
     obtain ⟨a, haY, haX⟩ := Finset.not_subset.mp hYX
     exact False.elim
-      (cube_refutes haY haX (hImp cube cube_isOver cube_satisfiesOn cube_mvd_premise))
+      (cube_refutes haY haX (hImp.2.2.2 cube cube_isOver cube_satisfiesOn cube_mvd_premise))
   · intro h
-    have hFD := h.2.2 {0} (Finset.subset_univ _) {1} (Finset.subset_univ _) (by decide)
-      (by decide) (fun _ _ _ hJ => hJ _ (Finset.mem_singleton_self _)) ctb ctb_isOver
-      (by decide) (by decide)
+    have hcover : ∀ j' ∈ Jstudio, j'.IsOver Finset.univ := by
+      intro j' hj'
+      simp only [Jstudio, Finset.mem_singleton] at hj'
+      subst hj'
+      exact MVD.toJD_isOver (Finset.subset_univ _) (Finset.subset_univ _)
+    have hover : (MVD.toJD (Finset.univ : Finset (Fin 3)) ⟨{0}, {1}⟩).IsOver Finset.univ :=
+      MVD.toJD_isOver (Finset.subset_univ _) (Finset.subset_univ _)
+    have hFD := (h.2.2 {0} (Finset.subset_univ _) {1} (Finset.subset_univ _) (by decide)
+      (by decide) ⟨hcover, hover, fun _ _ _ hJ => hJ _ (Finset.mem_singleton_self _)⟩).2.2.2
+      ctb ctb_isOver (by decide) (by decide)
     revert hFD
     simp only [FD.HoldsIn, Finset.mem_coe]
     decide
@@ -229,9 +236,9 @@ example : IsPJNF ℕ (Finset.univ : Finset (Fin 3)) {⟨{0}, Finset.univ⟩} ∅
             exact subset_attrClosure _ _ h0X
           exact rhs_subset_attrClosure hg hlhs
         have hImp : ImpliesFD ℕ Finset.univ ({⟨{0}, Finset.univ⟩} : Finset (FD (Fin 3)))
-            ∅ ⟨X, Finset.univ⟩ := by
-          intro r' hr' hF' _
-          exact hF' X hX Finset.univ (Finset.subset_univ _) hDer
+            ∅ ⟨X, Finset.univ⟩ :=
+          ⟨fun j hj => absurd hj (Finset.notMem_empty j), hX, Finset.subset_univ _,
+            fun r' hr' hF' _ => hF' X hX Finset.univ (Finset.subset_univ _) hDer⟩
         have hKey := hkey X hX hImp
         simp only [FD.HoldsIn, Finset.mem_coe] at hKey ⊢
         intro t ht u hu hagree a ha
@@ -246,14 +253,18 @@ example : IsPJNF ℕ (Finset.univ : Finset (Fin 3)) {⟨{0}, Finset.univ⟩} ∅
         simp only [FD.HoldsIn, Finset.mem_coe]
         intro t ht u hu hagree a ha
         exact hagree a (hYX ha)
-    exact hjimp r hr hF (fun j' hj' => absurd hj' (Finset.notMem_empty j'))
+    exact hjimp.2.2 r hr hF (fun j' hj' => absurd hj' (Finset.notMem_empty j'))
 
 example : ¬ IsPJNF ℕ (Finset.univ : Finset (Fin 3)) ∅ Jstudio := by
   intro h
   have hcover : (MVD.toJD (Finset.univ : Finset (Fin 3)) ⟨{0}, {1}⟩).IsOver Finset.univ :=
     MVD.toJD_isOver (Finset.subset_univ _) (Finset.subset_univ _)
-  have hjimp : ImpliesJD ℕ Finset.univ ∅ Jstudio (MVD.toJD Finset.univ ⟨{0}, {1}⟩) :=
-    fun _ _ _ hJ => hJ _ (Finset.mem_singleton_self _)
+  have hjimp : ImpliesJD ℕ Finset.univ ∅ Jstudio (MVD.toJD Finset.univ ⟨{0}, {1}⟩) := by
+    refine ⟨?_, hcover, fun _ _ _ hJ => hJ _ (Finset.mem_singleton_self _)⟩
+    intro j' hj'
+    simp only [Jstudio, Finset.mem_singleton] at hj'
+    subst hj'
+    exact MVD.toJD_isOver (Finset.subset_univ _) (Finset.subset_univ _)
   have hkeys : ∀ X ⊆ Finset.univ,
       ImpliesFD ℕ Finset.univ ∅ Jstudio ⟨X, Finset.univ⟩ →
       FD.HoldsIn ⟨X, Finset.univ⟩ (↑ctb₂ : Set (Tuple (Fin 3) ℕ)) := by
@@ -269,7 +280,7 @@ example : ¬ IsPJNF ℕ (Finset.univ : Finset (Fin 3)) ∅ Jstudio := by
       obtain ⟨a, haX⟩ := hex
       exact False.elim
         (cube_refutes (Finset.mem_univ a) haX
-          (hK cube cube_isOver cube_satisfiesOn cube_mvd_premise))
+          (hK.2.2.2 cube cube_isOver cube_satisfiesOn cube_mvd_premise))
   have hM := h.2 _ hcover hjimp ctb₂ ctb₂_isOver hkeys
   have hno : ¬ MVD.HoldsIn Finset.univ ⟨{0}, {1}⟩ ctb₂ := by decide
   exact hno hM
@@ -324,8 +335,8 @@ example : IsFourthNF ℕ (Finset.univ : Finset (Fin 2)) {⟨{0}, {1}⟩} ∅ := 
             rw [Finset.mem_singleton.mp hb]
             exact subset_attrClosure _ _ h0X
           exact rhs_subset_attrClosure hg hlhs (Finset.mem_singleton_self 1)
-      intro r hr hF _
-      exact hF X hX Finset.univ (Finset.subset_univ _) hDer
+      exact ⟨fun j hj => absurd hj (Finset.notMem_empty j), hX, Finset.subset_univ _,
+        fun r hr hF _ => hF X hX Finset.univ (Finset.subset_univ _) hDer⟩
     · obtain ⟨a, haY, haX⟩ := Finset.not_subset.mp hYX
       exfalso
       have hXp : X ∈ (Finset.univ : Finset (Fin 2)).powerset := Finset.mem_powerset.mpr hX
@@ -333,13 +344,13 @@ example : IsFourthNF ℕ (Finset.univ : Finset (Fin 2)) {⟨{0}, {1}⟩} ∅ := 
       simp only [Finset.mem_insert, Finset.mem_singleton] at hXp
       rcases hXp with rfl | rfl | rfl | rfl
       · rcases fin2_cases a with rfl | rfl
-        · have hFD := hImp diag diag_isOver diag_sat
+        · have hFD := hImp.2.2.2 diag diag_isOver diag_sat
             (fun j hj => absurd hj (Finset.notMem_empty j))
           simp only [FD.HoldsIn, Finset.mem_coe] at hFD
           have hne : tup2 0 0 0 ≠ tup2 1 1 0 := by decide
           exact hne (hFD (tup2 0 0) (by decide) (tup2 1 1) (by decide)
             (fun b hb => absurd hb (Finset.notMem_empty b)) 0 haY)
-        · have hFD := hImp diag diag_isOver diag_sat
+        · have hFD := hImp.2.2.2 diag diag_isOver diag_sat
             (fun j hj => absurd hj (Finset.notMem_empty j))
           simp only [FD.HoldsIn, Finset.mem_coe] at hFD
           have hne : tup2 0 0 1 ≠ tup2 1 1 1 := by decide
@@ -347,7 +358,7 @@ example : IsFourthNF ℕ (Finset.univ : Finset (Fin 2)) {⟨{0}, {1}⟩} ∅ := 
             (fun b hb => absurd hb (Finset.notMem_empty b)) 1 haY)
       · exact h0X (by decide)
       · rcases fin2_cases a with rfl | rfl
-        · have hFD := hImp agree1 agree1_isOver agree1_sat
+        · have hFD := hImp.2.2.2 agree1 agree1_isOver agree1_sat
             (fun j hj => absurd hj (Finset.notMem_empty j))
           simp only [FD.HoldsIn, Finset.mem_coe] at hFD
           have hne : tup2 0 0 0 ≠ tup2 1 0 0 := by decide
@@ -362,7 +373,7 @@ example : IsFourthNF ℕ (Finset.univ : Finset (Fin 2)) {⟨{0}, {1}⟩} ∅ := 
     simp only [Finset.mem_insert, Finset.mem_singleton] at hXp hYp
     rcases hXp with rfl | rfl | rfl | rfl <;> rcases hYp with rfl | rfl | rfl | rfl
     all_goals exfalso
-    all_goals (first | exact hYX (by decide) | exact hne (by decide) | (have hM := hJD diag diag_isOver diag_sat (fun j hj => absurd hj (Finset.notMem_empty j)); revert hM; decide))
+    all_goals (first | exact hYX (by decide) | exact hne (by decide) | (have hM := hJD.2.2 diag diag_isOver diag_sat (fun j hj => absurd hj (Finset.notMem_empty j)); revert hM; decide))
 
 /-- The tuple with values `a`, `b`, `c` on `0`, `1`, `2` and no value on `3`. -/
 private def tup4 (a b c : ℕ) : Tuple (Fin 4) ℕ := ![some a, some b, some c, none]
@@ -382,13 +393,35 @@ example : ¬ IsFourthNF ℕ {0, 1, 2}
     ({⟨{0}, {1}⟩, ⟨{3}, {0, 1, 2}⟩} : Finset (FD (Fin 4))) ∅ := by
   intro h
   have hImp1 : ImpliesFD ℕ {0, 1, 2}
-      ({⟨{0}, {1}⟩, ⟨{3}, {0, 1, 2}⟩} : Finset (FD (Fin 4))) ∅ ⟨{0}, {1}⟩ := by
-    intro r hr hF _
-    exact hF {0} (by decide) {1} (by decide) (by decide)
+      ({⟨{0}, {1}⟩, ⟨{3}, {0, 1, 2}⟩} : Finset (FD (Fin 4))) ∅ ⟨{0}, {1}⟩ :=
+    ⟨fun j hj => absurd hj (Finset.notMem_empty j), by decide, by decide,
+      fun r hr hF _ => hF {0} (by decide) {1} (by decide) (by decide)⟩
   have hImpU := h.2.1 {0} (by decide) {1} (by decide) (by decide) hImp1
-  have hFD := hImpU reg reg_isOver reg_sat (fun j hj => absurd hj (Finset.notMem_empty j))
+  have hFD := hImpU.2.2.2 reg reg_isOver reg_sat (fun j hj => absurd hj (Finset.notMem_empty j))
   simp only [FD.HoldsIn, Finset.mem_coe] at hFD
   have hne : tup4 0 0 0 2 ≠ tup4 0 0 1 2 := by decide
   exact hne (hFD (tup4 0 0 0) (by decide) (tup4 0 0 1) (by decide) (by decide) 2 (by decide))
+
+-- A join dependency that does not cover the schema is rejected outright: attribute `2` is
+-- missing from `⋈[AB]`, so neither normal form holds, whatever the other clauses would say.
+example : ¬ IsFourthNF ℕ (Finset.univ : Finset (Fin 3)) ∅ {⟨[{0, 1}]⟩} := by
+  intro h
+  have hcov := h.1 _ (Finset.mem_singleton_self _)
+  simp only [JD.IsOver, schemaUnion] at hcov
+  exact absurd hcov (by decide)
+
+example : ¬ IsPJNF ℕ (Finset.univ : Finset (Fin 3)) ∅ {⟨[{0, 1}]⟩} := by
+  intro h
+  have hcov := h.1 _ (Finset.mem_singleton_self _)
+  simp only [JD.IsOver, schemaUnion] at hcov
+  exact absurd hcov (by decide)
+
+-- And the implication predicates themselves no longer go vacuous on a non-covering premise:
+-- even the empty join dependency as premise does not make the empty set a key.
+example : ¬ ImpliesFD ℕ (Finset.univ : Finset (Fin 3)) ∅ {⟨[]⟩} ⟨∅, Finset.univ⟩ := by
+  intro h
+  have hcov := h.1 _ (Finset.mem_singleton_self _)
+  simp only [JD.IsOver, schemaUnion] at hcov
+  exact absurd hcov (by decide)
 
 end Cslib.Databases.MultivaluedDependenciesTests
