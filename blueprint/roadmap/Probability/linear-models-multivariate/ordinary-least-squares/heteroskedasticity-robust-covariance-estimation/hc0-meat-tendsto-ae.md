@@ -1,0 +1,3 @@
+# Strong consistency of the meat matrix, entrywise
+
+Let $(x_i, u_i)_{i \ge 0}$ be mutually independent, identically distributed pairs of a random vector in $\mathbb{R}^k$ and a real random variable on a probability space, with $\mathbb{E}\|x_0\|^4 < \infty$ and $\mathbb{E}[\|x_0\|^2u_0^2] < \infty$, and let $\hat\beta_n$ be random vectors with $\hat\beta_n \to \beta$ almost surely. Write $\hat u_i^{(n)} = u_i - x_i^\top(\hat\beta_n - \beta)$ for the residuals and $\hat\Omega_n = \frac1n\sum_{i<n}(\hat u_i^{(n)})^2x_ix_i^\top$. Then for all $a, b$, almost surely $(\hat\Omega_n)_{ab} \to \mathbb{E}[u_0^2x_{0a}x_{0b}]$.
