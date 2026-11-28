@@ -13,6 +13,15 @@ public import Mathlib.CategoryTheory.Monoidal.Limits.Cokernels
 public import MathlibExt.Algebra.Homology.GradedPairing
 public import MathlibExt.Algebra.Homology.TensorHomologyDesc
 
+/-!
+# Homology pairings induced by signed cochain pairings
+
+In a monoidal preadditive category, a Koszul-signed pairing sends either incoming boundary to a
+boundary in the target. At degree zero the incoming map is zero. Under the specified
+tensor-cokernel preservation and relation-coproduct hypotheses, the cycle pairing descends
+to `Hᵖ(K₁) ⊗ H^q(K₂) → H^{p+q}(K₃)`, naturally in all three complexes.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -252,21 +261,6 @@ lemma tensor_homologyπ_comp_pairHomology
     K₂ ((ComplexShape.up ℕ).prev q) q rfl
     (P.pairCycles p q ≫ K₃.homologyπ (p + q))
     (P.boundaries_comp_homologyπ p q)
-
-lemma tensor_homologyπ_hom_ext {A : C} (p q : ℕ)
-    [K₁.HasHomology p] [K₂.HasHomology q]
-    [PreservesColimit
-      (parallelPair (K₂.toCycles ((ComplexShape.up ℕ).prev q) q) 0)
-      (tensorLeft (K₁.homology p))]
-    [PreservesColimit
-      (parallelPair (K₁.toCycles ((ComplexShape.up ℕ).prev p) p) 0)
-      (tensorRight (K₂.cycles q))]
-    {f g : K₁.homology p ⊗ K₂.homology q ⟶ A}
-    (h : (K₁.homologyπ p ⊗ₘ K₂.homologyπ q) ≫ f =
-      (K₁.homologyπ p ⊗ₘ K₂.homologyπ q) ≫ g) : f = g :=
-  HomologicalComplex.tensor_homologyπ_hom_ext
-    K₁ ((ComplexShape.up ℕ).prev p) p rfl
-    K₂ ((ComplexShape.up ℕ).prev q) q rfl h
 
 @[reassoc]
 lemma pairCycles_naturality

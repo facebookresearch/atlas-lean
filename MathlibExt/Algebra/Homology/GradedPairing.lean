@@ -12,6 +12,15 @@ module
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 public import Mathlib.CategoryTheory.Monoidal.Preadditive
 
+/-!
+# Signed pairings of nonnegative cochain complexes
+
+A pairing has components `K₁ᵖ ⊗ K₂^q → K₃^{p+q}` satisfying the Koszul Leibniz rule
+`d P(x,y) = P(dx,y) + (-1)^p P(x,dy)`. It transports contravariantly in the first two
+complexes and covariantly in the target. When tensoring is additive in both variables,
+restriction to cycles gives a pairing whenever the three homology objects exist.
+-/
+
 @[expose] public section
 
 noncomputable section
@@ -24,8 +33,13 @@ namespace HomologicalComplex
 
 variable {C : Type u} [Category.{v} C] [Preadditive C] [MonoidalCategory C]
 
+/-- A pairing of nonnegative cochain complexes in a preadditive monoidal category,
+with components `P_{p,q} : K₁.X p ⊗ K₂.X q → K₃.X (p+q)` and differential rule
+`d P(x,y) = P(dx,y) + (-1)^p P(x,dy)`, using the canonical degree identifications. -/
 structure CochainGradedPairing (K₁ K₂ K₃ : CochainComplex C ℕ) where
+  /-- The component pairing in degrees `p,q`, taking values in degree `p+q`. -/
   pair : ∀ p q, K₁.X p ⊗ K₂.X q ⟶ K₃.X (p + q)
+  /-- Compatibility with the two differentials, with sign `(-1)^p` on the second factor. -/
   leibniz : ∀ p q,
     pair p q ≫ K₃.d (p + q) (p + q + 1) =
       (K₁.d p (p + 1) ⊗ₘ 𝟙 (K₂.X q)) ≫ pair (p + 1) q ≫
@@ -109,6 +123,10 @@ lemma pairCycles_d (P : CochainGradedPairing K₁ K₂ K₃) (p q : ℕ)
   rw [h₁, h₂]
   simp
 
+/-- In a monoidal preadditive category, restrict a signed pairing to its two cycle objects.
+The Leibniz rule makes
+its image a cycle in degree `p+q`. Only existence of the three homology objects is
+needed; no tensor-cokernel preservation hypothesis is used here. -/
 noncomputable def pairCycles (P : CochainGradedPairing K₁ K₂ K₃) (p q : ℕ)
     [K₁.HasHomology p] [K₂.HasHomology q] [K₃.HasHomology (p + q)] :
     K₁.cycles p ⊗ K₂.cycles q ⟶ K₃.cycles (p + q) :=
