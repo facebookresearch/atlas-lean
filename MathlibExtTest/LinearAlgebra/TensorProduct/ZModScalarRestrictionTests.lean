@@ -101,7 +101,7 @@ private def targetDetector : L' ⊗[R] N' →ₗ[R] R :=
 
 private theorem top_coordinate : targetDetector (top (x ⊗ₜ[ℤ] y)) = 2 := by
   change (2 : R) * (3 * 3) = 2
-  norm_num [R]
+  decide
 
 example : targetDetector (bottom (x ⊗ₜ[ℤ] y)) = 2 := by
   rw [← naturality]
