@@ -2,7 +2,7 @@
 
 A canonical collection for $\mathbb Z$ is the digit-set collection of a mixed-radix number system whose digits at each place form a complete residue system containing $0$; it is complete when it is an additive system for the integers.
 
-Let $(b_i)_{i\ge0}$ be integers with $b_i>1$, and for each $i$ let $T_i\subseteq\mathbb Z$ be a complete residue system modulo $b_i$ containing $0$. The *canonical collection* defined by $(b_i)$ and $(T_i)$ is
+Let $(b_i)_{i\ge0}$ be integers with $b_i>1$, and for each $i$ let $T_i\subseteq\mathbb Z$ be a complete residue system modulo $b_i$ containing $0$, that is, a set containing exactly one integer [congruent](../../../GroupTheory/group-basics/congruence-modulo.md) to each integer modulo $b_i$. The *canonical collection* defined by $(b_i)$ and $(T_i)$ is
 
 $$
 \{T_0,\ b_0T_1,\ b_0b_1T_2,\ b_0b_1b_2T_3,\ \dots\},
@@ -15,6 +15,7 @@ For $T_i=\{0,1,\dots,b_i-1\}$ the collection is a mixed-radix number system for 
 ## Depends on
 
 - [Additive systems for a commutative monoid](additive-systems-for-a-commutative-monoid.md)
+- [Congruence modulo an element of an additive commutative monoid](../../../GroupTheory/group-basics/congruence-modulo.md)
 
 ## Proof depends on
 
@@ -26,4 +27,4 @@ Directness: if $n=a_0+a_1+\cdots$ with $a_i\in b_0\cdots b_{i-1}T_i$, then $a_0$
 
 ## Sources
 
-- Andrei Zabolotskii, "Additive systems for $\mathbb Z$ are undecidable", *Journal of Combinatorial Mathematics and Combinatorial Computing* 130:241–253, 2026, doi:[10.61091/jcmcc130-16](https://doi.org/10.61091/jcmcc130-16); read in arXiv:2508.17285v2, whose numbering is used here: Definition 4 and the facts after it (directness, and the negabinary and balanced ternary examples), Examples 4 and 5, Definition 5, Proposition 1 and Corollary 1.
+- Andrei Zabolotskii, "Additive systems for $\mathbb Z$ are undecidable", *Journal of Combinatorial Mathematics and Combinatorial Computing* 130:241–253, 2026, doi:[10.61091/jcmcc130-16](https://doi.org/10.61091/jcmcc130-16); read in arXiv:2508.17285v2, whose numbering is used here: Examples 4 and 5 (negabinary and balanced ternary), Definition 4 and Fact 1 after it (directness), Equation (2) and Definition 5 in Section 4, Proposition 1 and Corollary 1.
