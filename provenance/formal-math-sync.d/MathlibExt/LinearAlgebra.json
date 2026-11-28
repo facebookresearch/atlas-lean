@@ -211,6 +211,42 @@
       "upstream_sha256": "09941d9e14c54cd81ce10fb86e2d341486808db25691d5d6521330abefb68591"
     },
     {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/KernelBasisWords.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "506d1e4dbb099e3f37eafd800a66f5d0adb8ca23da795f48d1530867a70eb230",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "8f667fdbb66b5e213148bb4a299da7d2960bb70cee1a62da1ef386099d240d2f"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/LeadingCoefficient.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "cd8960ba59e9d2b4e780e9108efb56a9671389b9c66e77e8cdefe5c32f041b9b",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "c793a9cd2c6da40d9f6f070b15d6f62c42cfd42abf352f6e34f6ff92f4f37ea2"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/LeadingCoefficientSupport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "976510d85f0c88577502010f2fac98e38867c335bc35d35abd610050abfba906",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6e9bd7b04e44b8728a3162cd8509a16de669176c2887bd2cb752384c5ecb2794"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/NonzeroWedgeExact.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e3976f656c5fd1b208d417fafc170d8f34ec185dad13d2a52145f186c7f7f070",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "1f9755332b94308767966558f8f75307e08cfe2f641998a3e9533853eba086c1"
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/Product.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -229,6 +265,15 @@
       "upstream_sha256": "62807779224eb1dd42d41bfe19eea64c1fe389e2e246ea6beefb02506b7837da"
     },
     {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration/AssociatedGradedMap.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e146b564e2d06843238b8a0e25f91649065bd4097558f65251a5eb6cec58d28f",
+      "rationale": "Use canonical native exterior-degree and scalar-extension coordinates; remove the noncanonical local AddCommGroup instances without changing public maps or universes. Give precise mathematical coordinate/filtration docstrings, retaining all code tokens of that canonical implementation. Native verification pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "014ba040c2561d04c59335166ba68a51271e89ef2b29105dd984d8d8244d89d5"
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration/BaseMultiplication.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -238,6 +283,24 @@
       "upstream_sha256": "ba250a86ec5190a17f9a5074ec0e28cb9606bd5db136416846012a27db5e4dbd"
     },
     {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration/CoordinateTransport.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "69bb9741f2b3a38f9c5b34d589e4e0bcd365e5281102637d43a387f0f3540155",
+      "rationale": "Use canonical native exterior-degree and scalar-extension coordinates; remove the noncanonical local AddCommGroup instances without changing public maps or universes. Give precise mathematical coordinate/filtration docstrings, retaining all code tokens of that canonical implementation. Native verification pending.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "c60f7d66723e8537034a704b5709a6c5173c258f8ee46d57e75b567a13d3588b"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration/FirstSummandMap.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "500e4eee1fe161b730f407c3b8c4f8585de7662be0720f193f6d12abdf884b20",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e1e4dd2e0ae96892dd9a1d0c7f6a2a73055182bbeba518c701c22d6d8e929387"
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration/RelativeProjection.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -245,6 +308,15 @@
       "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "c0f6489c200043527fe9a10d9659b1b19f255c08abf9d3c7c4f0d6ff31bd417f"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductFiltration/Triangular.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4521fc1655ce453d8ae37adf3355a5d9cc3aec4c8954e1a835f0c3a536201b53",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "1d56a45ad0e7fb87a64d58606b2a3f1cbfe161b2f56bec0ef6c7a84107625912"
     },
     {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProductOne.lean",
@@ -274,6 +346,15 @@
       "upstream_sha256": "93794abbd1ad9e6770c788df951782f9f8e36d3da1c3e43ec69097f33c0d1a4f"
     },
     {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/ProjectiveTorsion.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4dab3bf363cd7b2404b5c97d28185eb73d7ba5088398828b92c16a66171db9e0",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "506f6b70acf1aec1f83dd0722b3a77191b2febdbac6693d018b87f9e41773b01"
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/RankOneSplitting.lean",
       "backport": "not-needed",
       "disposition": "diverged",
@@ -281,6 +362,15 @@
       "rationale": "Import the reusable MathlibExt API with Atlas copyright headers and mathematical module and declaration documentation, omitting source-campaign and textbook-consumer commentary.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "e835efc36430dd4782df2b03a5dd387d4f5389981d2e1292f0610c67cf5db349"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/Semilinear.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "6174daf958fb38a8f4b80e7acb740f4b3f0eabaabb4d4cc598481a003d2b7083",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "8f346122e7a39dce89e5c7ee02812196f16db205a5bd8599369db9a5b5d411a2"
     },
     {
       "path": "MathlibExt/LinearAlgebra/ExteriorPower/SurjectiveScalarCoefficients.lean",
@@ -299,6 +389,24 @@
       "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "6160b82a5e3df83bad8402138c9f045004fde808067e9e3b101564d849ae1c3c"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/UnshuffleCoordinates.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c5f73dce04a691403537da1db6f3acada57a336864f1f1597c45eaebec8fbea0",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "8807a395f6a0a0617d4be26f8779c17fe121be9d309f6ebefc5caf61fb9eb685"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/ExteriorPower/UnshuffleCoproduct.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "38c5c863cb7abebc2ff90c3bd464362de6f7b23d6f663d444704451077bca508",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Give exterior-algebra APIs self-contained mathematical docstrings with their actual graded interchange signs, regular-scalar torsion conditions, surjectivity/free/projective hypotheses, colimit coherence and coordinate formulas. Preserve all noncomment Lean tokens, names, imports, options and legal notices.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "6f55f96c96db13051432d2c9328bcae164435ea5f6bf67f54740b563f87e67ce"
     },
     {
       "path": "MathlibExt/LinearAlgebra/FiniteDyadicProjectorIntertwining.lean",
@@ -844,6 +952,24 @@
       "upstream_sha256": "b6b836c6923726bf631b5fc08d06cef482f31686bb08236e3fc805d34015adfd"
     },
     {
+      "path": "MathlibExt/LinearAlgebra/TensorPower/Insert.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "117d09449922dffb7f9a47b129779391a53f4c82132d5b689b6b9202bdd87560",
+      "rationale": "Import the general coefficient, permutation, multilinear, and Hochschild API with Atlas documentation; use native Lean 4.36 scalar coefficient formulas, implicit stability indices, identity-ring-hom multilinearity, tensor projectivity, and explicit typed semilinear data without changing public hypotheses or limits. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "e96c2c5e3c24d2fb98f557708cab0064a2698e9e40a236ac61fc1271aa59d57d"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/TensorPower/IntegralConvolutionOperators.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "76262414ba5a63bd8deba0961e17e20f9f12dab331f331fe056ee75b4e1918fa",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice. Wrap Lean continuations to 100 columns without changing source tokens, maps, hypotheses or universes.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "5408b9c19cdcf46176d428883422dbb9981f4ca57cf618cdb0b01be662215bab"
+    },
+    {
       "path": "MathlibExt/LinearAlgebra/TensorPower/PermutationOperators.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -851,6 +977,15 @@
       "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "62b66ec66adafb5305c8bc172ec1c17d1e22070daad6172da8920da07680388a"
+    },
+    {
+      "path": "MathlibExt/LinearAlgebra/TensorPower/PermutationRepresentation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "00dad05e356f12e12780c65794357bfffb58508f7d952a1801c235a5fe14a5ac",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague tensor/normalized Hochschild/ideal-cotangent descriptions with self-contained mathematical module/declaration docstrings and readable titles; preserve every noncomment Lean token, declaration, privacy, import, option and legal notice.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "a266b19b6b4ebfdf1b1d3c8d19c1116ab16a475dce6f482daf6890059c6c0227"
     },
     {
       "path": "MathlibExt/LinearAlgebra/TensorPower/Quotient.lean",
