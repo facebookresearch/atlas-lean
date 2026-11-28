@@ -16,3 +16,4 @@ Algorithms deciding questions about finite automata, regular expressions and con
 - [Satisfiability modulo theories](satisfiability-modulo-theories/README.md)
 - [Word equation algorithms](word-equation-algorithms/README.md)
 - [Word equations with length and regular constraints](word-equations-with-length/README.md)
+- [String program constraints](string-program-constraints/README.md)

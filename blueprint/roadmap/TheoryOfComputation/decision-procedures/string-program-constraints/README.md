@@ -1,0 +1,28 @@
+# String program constraints
+
+Decidability and complexity of satisfiability for string constraints from loop-free string-manipulating programs, combining concatenation, transducers, replaceAll, regex-dependent functions, length and string-number constraints under straight-line, acyclic and chain-free restrictions, together with negated containment, separability and scattered-subword constraints.
+
+- [String constraints with concatenation and transducers](string-constraints-with-concatenation-and-transducers.md)
+- [Diagonal transducer constraints are undecidable](diagonal-transducer-constraints-are-undecidable.md)
+- [One concatenation with erasing transducers is undecidable](one-concatenation-with-erasing-transducers-is-undecidable.md)
+- [Acyclic transducer constraints are PSPACE-complete](acyclic-transducer-constraints-are-pspace-complete.md)
+- [Straight-line string constraints](straight-line-string-constraints.md)
+- [Straight-line transducer constraints are EXPSPACE-complete](straight-line-transducer-constraints-are-expspace-complete.md)
+- [Straight-line constraints with length and character constraints](straight-line-constraints-with-length-and-character-constraints.md)
+- [Leftmost-longest replaceAll](leftmost-longest-replaceall.md)
+- [Straight-line replaceAll constraints](straight-line-replaceall-constraints.md)
+- [replaceAll with variable patterns is undecidable](replaceall-with-variable-patterns-is-undecidable.md)
+- [Straight-line replaceAll with regular patterns is in EXPSPACE](straight-line-replaceall-with-regular-patterns-is-in-expspace.md)
+- [PSPACE fragments of straight-line replaceAll](pspace-fragments-of-straight-line-replaceall.md)
+- [replaceAll with length constraints is undecidable](replaceall-with-length-constraints-is-undecidable.md)
+- [Backward propagation decides path feasibility](backward-propagation-decides-path-feasibility.md)
+- [Two-way transducers keep path feasibility decidable](two-way-transducers-keep-path-feasibility-decidable.md)
+- [EXPSPACE fragments with replaceAll, reverse and transducers](expspace-fragments-with-replaceall-reverse-and-transducers.md)
+- [Prioritized streaming string transducers](prioritized-streaming-string-transducers.md)
+- [Pre-images of regular languages under prioritized streaming string transducers](pre-images-under-prioritized-streaming-string-transducers.md)
+- [Chain-free string constraints](chain-free-string-constraints.md)
+- [Chain-free string constraints are decidable](chain-free-string-constraints-are-decidable.md)
+- [Negated string containment is decidable](negated-string-containment-is-decidable.md)
+- [Separability of straight-line string constraints](separability-of-straight-line-string-constraints.md)
+- [Acyclic subword constraints with transducers](acyclic-subword-constraints-with-transducers.md)
+- [Regular, length and string-to-number constraints over binary strings](regular-length-and-string-to-number-constraints.md)
