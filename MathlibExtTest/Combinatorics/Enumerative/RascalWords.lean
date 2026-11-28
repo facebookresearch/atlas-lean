@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.List.Sublists
 import MathlibExt.Combinatorics.Enumerative.RascalWords
 
 namespace MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
@@ -63,5 +64,37 @@ example : ¬ (wordAscents [0, 1, 0, 1, 0] ≤ 1) := by decide
 
 example : ∑ k ∈ Finset.range 6, (-1 : ℤ) ^ k * (rascalGen 1 k 5 : ℤ) = 0 := by
   simpa using sum_rascalGen_alternating_odd 1 2
+
+private def avoidsTriple : List ℕ → Bool
+  | [a, b, c] => decide (¬ (a = b ∧ b < c) ∧ ¬ (c < b ∧ b < a))
+  | _ => true
+
+private theorem avoids001210_of_all {w : List ℕ} (h : w.sublists.all avoidsTriple = true) :
+    Avoids001210 w := by
+  intro a b c habc
+  exact of_decide_eq_true (List.all_eq_true.mp h _ (List.mem_sublists.mpr habc))
+
+-- With k = 0 only the first branch can apply, including to the empty word.
+example (w : AscentSeqAvoid 0 0) : w.1 = [] := by
+  rcases ascentSeqAvoid_form 0 0 w with h | ⟨_, x, _, _, hx, _⟩
+  · exact h
+  · exact (Nat.not_lt_zero x hx).elim
+
+-- The increasing prefix can end in more than one copy of its largest letter and
+-- still be followed by a lower constant tail.
+example :
+    ∃ y x : ℕ, 1 ≤ y ∧ y < 6 - 2 ∧ x < 2 ∧
+      [0, 1, 2, 2, 1, 1] = List.range 2 ++ List.replicate y 2 ++
+        List.replicate (6 - 2 - y) x := by
+  have hseq : IsAscentSeq [0, 1, 2, 2, 1, 1] := by
+    refine ⟨fun _ => rfl, ?_⟩
+    intro i hi
+    change i < 6 at hi
+    have : i = 0 ∨ i = 1 ∨ i = 2 ∨ i = 3 ∨ i = 4 ∨ i = 5 := by omega
+    rcases this with rfl | rfl | rfl | rfl | rfl | rfl <;> exact of_decide_eq_true rfl
+  let w : AscentSeqAvoid 6 2 := ⟨[0, 1, 2, 2, 1, 1], rfl, hseq, avoids001210_of_all (by decide), rfl⟩
+  apply (ascentSeqAvoid_form 6 2 w).resolve_left
+  change [0, 1, 2, 2, 1, 1] ≠ List.range 2 ++ List.replicate (6 - 2) 2
+  decide
 
 end MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted

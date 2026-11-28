@@ -465,11 +465,25 @@
       "rationale": "Moved from WantedExt/Algebra/RationalFunctionFareyPathWanted.lean when the determinant-one statement was proved, preserving the definition, names, statements and docstrings. Also: The moved docstring keeps ATLAS-side text from WantedExt/Algebra/RationalFunctionFareyPathWanted.lean that Formal-Math does not have yet (its backport is still owed). Also: Moved `polyContFract_of_farey_path_det_neg_one_pow` from WantedExt/Algebra/RationalFunctionFareyPathWanted.lean when proved, with the same names and statements. Prove the convergent formula for Farey paths whose adjacent determinants alternate as (-1)^i, and name it in the module docstring."
     },
     {
+      "path": "MathlibExt/Algebra/CyclicHolomorph.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "5b8a70fa0a4ab88fbcefc9d9aec8a98599aa7ed1795f048571fa3a79c5bfd1c0",
+      "rationale": "Move the cyclic holomorph action, type, and multiplication law unchanged from WantedExt/Algebra/VirtualQuandleWanted.lean, and prove the existing conjugacy criterion."
+    },
+    {
       "path": "MathlibExt/Algebra/DeepPowerSumCongruences.lean",
       "backport": "pending",
       "disposition": "diverged",
       "published_sha256": "59f6109f178c9dead3969bcc8b8dfa72e5c51d152591ea53de874cb537fb8704",
       "rationale": "Holds pow_mem_prime_pow_padicValNat_factorial_iff (Proposition 3), padicValNat_sum_le_add_padicValNat_multinomial (Corollary 24) and padicValNat_multinomial_eq_sum_carries (Kummer's theorem for multinomial coefficients), moved from WantedExt/Algebra/DeepPowerSumCongruencesWanted.lean, which keeps its other wanted statements, when they were proved; same names and statements. The moved docstrings keep the Atlas wiki audit restatement recorded for that wanted file, still pending backport."
+    },
+    {
+      "path": "MathlibExt/Algebra/DeepPowerSumCongruences/ArtinHasse.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "b459679f88f4eba527e70599880b5f8728c373ebc6f6467e918c991b88b4324b",
+      "rationale": "Move and prove artinHasse_eq_prod_one_sub_pow (Proposition 27) from WantedExt/Algebra/DeepPowerSumCongruencesWanted.lean, preserving its public name, statement, and docstring."
     },
     {
       "path": "MathlibExt/Algebra/DeepPowerSumCongruences/DVRMaximalIdeal.lean",
@@ -2150,6 +2164,13 @@
       "disposition": "diverged",
       "published_sha256": "d4e9a3e3f95b87770f06200cc74bd2bb8bc3771dd0d921a71d563e516c3f759f",
       "rationale": "Moved from WantedExt/Algebra/LocallyIntegerPolynomialWanted.lean when the wanted statement was proved; same names and statements."
+    },
+    {
+      "path": "MathlibExt/Algebra/Polynomial/KasselReutenauerLaurentCoefficients.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "c5bb49d767ab16e95487000a26c1c7db4dcbf64fdd131cee255b541ab32be543",
+      "rationale": "Move kasselReutenauerPoly without changing its definition and prove kasselReutenauer_C_abs_coeff_sum with its original statement, citing the published Corollary 24. The moved declarations retain the pending backport from the wanted module."
     },
     {
       "path": "MathlibExt/Algebra/Polynomial/KasselReutenauerTopCoefficient.lean",
