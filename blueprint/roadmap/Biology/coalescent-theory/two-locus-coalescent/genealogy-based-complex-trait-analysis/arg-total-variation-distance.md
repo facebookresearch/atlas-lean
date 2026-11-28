@@ -1,10 +1,14 @@
 # ARG total variation distance
 
-An ARG on a set of sampled genomes assigns to each genomic position $s$ a marginal tree. Every branch of that tree subtends a set $S$ of sampled genomes, and a mutation placed on the branch is carried exactly by $S$. Sampling a mutation uniformly over the total branch length (area) of the ARG therefore induces a probability distribution $P_{\mathcal G}$ on pairs $(s, S)$, with mass at $(s, S)$ proportional to the total length of branches at $s$ subtending exactly $S$. For two ARGs $\mathcal G, \mathcal G'$ on the same samples and sequence, the **ARG total variation distance** is
+An ARG on a set $N$ of sampled genomes, over a sequence interval $[a, b)$, assigns to each genomic position $s$ a marginal tree. Every branch of that tree subtends a set $S$ of sampled genomes, and a mutation placed on the branch is carried exactly by $S$. Only **nontrivial** carrier sets count, those with $\emptyset \ne S \ne N$: a pattern carried by nobody or by every sample is not a segregating variant. Write $\mathcal S_N$ for these $2^{|N|} - 2$ patterns and $\ell_{\mathcal G}(s, S)$ for the total length of branches of the tree at $s$ subtending exactly $S$. Sampling a mutation uniformly over the area of the ARG carried by nontrivial-pattern branches therefore induces a probability distribution $P_{\mathcal G}$ on $[a, b) \times \mathcal S_N$ with density
 
-$$d_{\mathrm{TV}}(\mathcal G, \mathcal G') = \sup_{A}\bigl|P_{\mathcal G}(A) - P_{\mathcal G'}(A)\bigr| = \tfrac12\sum_{(s,S)}\bigl|P_{\mathcal G}(s,S) - P_{\mathcal G'}(s,S)\bigr|,$$
+$$P_{\mathcal G}(s, S) = \frac{\ell_{\mathcal G}(s, S)}{Z_{\mathcal G}}, \qquad Z_{\mathcal G} = \int_a^b \sum_{S \in \mathcal S_N}\ell_{\mathcal G}(s, S)\,ds,$$
 
-the second form holding with the sum read as an integral over positions. It lies in $[0,1]$, equals $0$ when the two ARGs generate the same mutation distribution, and equals $1$ when they share no mutation pattern. Unlike the Robinson–Foulds distance, which counts the bipartitions present in one tree but not the other, it weights each predicted mutation pattern by its branch length, so it measures accuracy in predicting unobserved variants. Polytomies need no random resolution: they simply concentrate mass on fewer carrier sets.
+the normalization running over nontrivial patterns only (assumed positive, i.e. the ARG carries at least one such branch). For two ARGs $\mathcal G, \mathcal G'$ on the same samples and sequence, the **ARG total variation distance** is
+
+$$d_{\mathrm{TV}}(\mathcal G, \mathcal G') = \sup_{A}\bigl|P_{\mathcal G}(A) - P_{\mathcal G'}(A)\bigr| = \frac12\int_a^b\sum_{S \in \mathcal S_N}\bigl|P_{\mathcal G}(s,S) - P_{\mathcal G'}(s,S)\bigr|\,ds = 1 - \int_a^b\sum_{S \in \mathcal S_N}\min\bigl(P_{\mathcal G}(s,S), P_{\mathcal G'}(s,S)\bigr)\,ds,$$
+
+the supremum running over measurable $A \subseteq [a, b) \times \mathcal S_N$. It lies in $[0,1]$, equals $0$ when the two ARGs generate the same mutation distribution, and equals $1$ when they share no mutation pattern. Unlike the Robinson–Foulds distance, which counts the bipartitions present in one tree but not the other, it weights each predicted mutation pattern by its branch length, so it measures accuracy in predicting unobserved variants. Polytomies need no random resolution: they simply concentrate mass on fewer carrier sets.
 
 ## Depends on
 
@@ -16,4 +20,4 @@ The carrier set of a mutation determines its genotype vector, so two ARGs that p
 
 ## Sources
 
-- B. C. Zhang, A. Biddanda, Á. F. Gunnarsson, F. Cooper, P. F. Palamara, "Biobank-scale inference of ancestral recombination graphs enables genealogical analysis of complex traits", Nature Genetics 55 (2023), Methods (ARG total variation distance) and Supplementary Note 2, <https://doi.org/10.1038/s41588-023-01379-x> (PMC10181934).
+- B. C. Zhang, A. Biddanda, Á. F. Gunnarsson, F. Cooper, P. F. Palamara, "Biobank-scale inference of ancestral recombination graphs enables genealogical analysis of complex traits", Nature Genetics 55 (2023), Methods (ARG total variation distance) and Supplementary Note 2 (nontrivial $N$-bitsets $\{0,1\}^N \setminus \{(0,\dots,0),(1,\dots,1)\}$, equations (3)–(8)), <https://doi.org/10.1038/s41588-023-01379-x> (PMC10181934).

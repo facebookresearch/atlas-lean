@@ -1,0 +1,7 @@
+# Unbiasedness of the observed main effect in a factorial design
+
+Let $U$ be a finite population of $N$ units. Factors $A$ and $B$ have levels $0$ and $1$, and cell $c \in \{0,1,2,3\}$ is the treatment combination $(a, b)$ with $c = 2a + b$, so the cells are $(0,0), (0,1), (1,0), (1,1)$. For cell means $m_{00}, m_{01}, m_{10}, m_{11}$ write $\mathrm{ME}_A = (m_{11} + m_{10} - m_{01} - m_{00})/2$, $\mathrm{ME}_B = (m_{11} + m_{01} - m_{10} - m_{00})/2$ and $\mathrm{INT}_{AB} = (m_{11} - m_{10} - m_{01} + m_{00})/2$. For cell sizes $n_0, \dots, n_3$, complete randomization over the four cells is the uniform measure on the assignments $f : U \to \{0,1,2,3\}$ with exactly $n_c$ units in cell $c$; it is the zero measure when no such assignment exists. Suppose $n_c > 0$ for every $c$ and $\sum_c n_c = N$, and let $y^{00}, y^{01}, y^{10}, y^{11} : U \to \mathbb{R}$ be the potential outcomes under the four combinations. Then $\mathrm{ME}_A$ of the observed cell means $\bar y^{00}_0, \bar y^{01}_1, \bar y^{10}_2, \bar y^{11}_3$ has expectation $\mathrm{ME}_A$ of the population means $\bar Y^{00}, \bar Y^{01}, \bar Y^{10}, \bar Y^{11}$. No additivity assumption is made, and cell sizes need not be equal.
+
+## Sources
+
+- T. Dasgupta, N. S. Pillai and D. B. Rubin, "Causal inference from $2^K$ factorial designs using the potential outcomes model", arXiv:1211.2481, Section 3.1, equations (1) and (2).

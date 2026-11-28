@@ -1,5 +1,6 @@
 # Exact binomial tests and the Clopper–Pearson interval
 
+- [Conditional binomial tests](conditional-binomial-tests/README.md)
 - [Upper tail of the binomial law](upper-tail-binomial.md)
 - [Exact binomial test of a one-sided null p ≤ p₀](is-valid-pvalue-upper-tail-pvalue-binomi.md)
 - [Lower tail of the binomial law](binomial-real-iic.md)
