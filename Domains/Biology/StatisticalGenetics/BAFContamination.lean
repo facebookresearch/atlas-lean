@@ -39,8 +39,9 @@ linear in DNA input and a fraction `α` of the DNA comes from a contaminant of g
 `baf α g₁ g₂` is the share `I_B / (I_A + I_B)` of the `B` probe in the intensities of a target of
 genotype `g₁`, which is `(1 - α) n(g₁) / 2 + α n(g₂) / 2`, where `n(g)` is the number of copies of
 `B` in `g` (`baf_eq`). The array's BAF is a calibrated estimate, not this share, and the
-regression below treats the observed BAF `y` as the modelled mean plus an error. The conditional
-means below are those of the modelled BAF.
+regression below treats the observed BAF `y` as a mean `γ + α p + τ 1(g = AA)`, with free
+intercept `γ` and offset `τ`, plus an error; the conditional means of the modelled BAF are this
+mean with `γ = 1` and `τ = -1` (`integral_baf_cond_homozygous`).
 
 **Parameter ranges.** The contamination fraction `α` lies in `[0, 1]`, but the formulas hold for
 every real `α`; outside `[0, 1]`, `baf` is only the value of the formula: for an `AA` target and a
@@ -134,8 +135,9 @@ def intensityA (α : ℝ) (g₁ g₂ : Bool × Bool) : ℝ :=
 /-- The modelled, noiseless B allele frequency (BAF) of a sample in which a fraction `α` of the DNA
 comes from a contaminant of genotype `g₂` and the rest from the target of genotype `g₁`: the share
 `I_B / (I_A + I_B)` of the `B` probe in intensities linear in DNA input. The BAF an array reports
-is a calibrated estimate of the abundance of `B`, which the regression of Equation 4 treats as
-such a mean plus an error. The fraction `α` lies in `[0, 1]`; for other real `α` this is only the
+is a calibrated estimate of the abundance of `B`, which the regression of Equation 4 fits as a
+mean linear in its covariates, with a free intercept and offset, plus an error
+(`contaminationEstimate`). The fraction `α` lies in `[0, 1]`; for other real `α` this is only the
 value of the formula. -/
 noncomputable def baf (α : ℝ) (g₁ g₂ : Bool × Bool) : ℝ :=
   intensityB α g₁ g₂ / (intensityA α g₁ g₂ + intensityB α g₁ g₂)
