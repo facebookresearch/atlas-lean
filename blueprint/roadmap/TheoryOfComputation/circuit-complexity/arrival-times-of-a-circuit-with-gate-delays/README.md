@@ -17,3 +17,4 @@
 - [Output arrival times are bounded by depth under nonnegative bounded delays](output-arrivals-le-add-mul-output-depths-2.md)
 - [Output arrival times are bounded by the circuit depth](output-arrivals-le-add-mul-depth.md)
 - [Exact arrival times under uniform gate delays](exact-arrival-times-under-uniform-gate-delays/README.md)
+- [Static mux hazard under transport delay](static-mux-hazard-under-transport-delay/README.md)
