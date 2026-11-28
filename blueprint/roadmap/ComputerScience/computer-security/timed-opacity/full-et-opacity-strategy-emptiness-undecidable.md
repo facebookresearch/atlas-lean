@@ -14,6 +14,7 @@ The proof applies whether or not strategies are required to be finitely varying,
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
@@ -21,4 +22,4 @@ The proof reduces from termination of two-counter Minsky machines started with b
 
 ## Sources
 
-- Étienne André, Marie Duflot, Laetitia Laversa and Engel Lefaucheux, "Execution-time opacity control for timed automata", *Software and Systems Modeling*, Springer, published online 2026 (volume and pages not yet assigned in the publisher record read), doi:[10.1007/s10270-026-01395-5](https://doi.org/10.1007/s10270-026-01395-5); this extended version adds the undecidability result to the conference paper of the same title in *Software Engineering and Formal Methods (SEFM 2024)*, Lecture Notes in Computer Science 15280, pp. 347–365, 2024, doi:[10.1007/978-3-031-77382-2_20](https://doi.org/10.1007/978-3-031-77382-2_20). Read in arXiv:2409.10336v3 ([arXiv](https://arxiv.org/abs/2409.10336v3)), the extended version that adds this result to the conference paper (the first arXiv version, which matches the conference paper, has no undecidability theorem); the journal article, cited as its refereed version, was not read. Numbering of arXiv:2409.10336v3: Theorem 1 with its proof in Section 4, Remark 1 (one clock) and Remark 2 (finitely varying strategies).
+- Étienne André, Marie Duflot, Laetitia Laversa and Engel Lefaucheux, "Execution-time opacity control for timed automata", *Software and Systems Modeling*, Springer, published online 2026 (no volume or pages in the publisher record read), doi:[10.1007/s10270-026-01395-5](https://doi.org/10.1007/s10270-026-01395-5); this extended version adds the undecidability result to the conference paper of the same title in *Software Engineering and Formal Methods (SEFM 2024)*, Lecture Notes in Computer Science 15280, pp. 347–365, 2024, doi:[10.1007/978-3-031-77382-2_20](https://doi.org/10.1007/978-3-031-77382-2_20). Read in arXiv:2409.10336v3 ([arXiv](https://arxiv.org/abs/2409.10336v3)), the extended version that adds this result to the conference paper (the first arXiv version, which matches the conference paper, has no undecidability theorem); the journal article, cited as its refereed version, was not read. Numbering of arXiv:2409.10336v3: Theorem 1 with its proof in Section 4, Remark 1 (one clock) and Remark 2 (finitely varying strategies).

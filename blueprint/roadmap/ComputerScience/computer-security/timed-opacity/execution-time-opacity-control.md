@@ -12,7 +12,7 @@ A timed automaton with a private location is fully execution-time opaque when th
 
 ## Depends on
 
-- [Timed opacity of parametric timed automata](timed-opacity-of-parametric-timed-automata.md)
+None.
 
 ## Proof depends on
 
@@ -24,4 +24,4 @@ Without control, full ET-opacity of a timed automaton is decidable. A meta-strat
 
 ## Sources
 
-- Étienne André, Marie Duflot, Laetitia Laversa and Engel Lefaucheux, "Execution-time opacity control for timed automata", *Software and Systems Modeling*, Springer, published online 2026 (volume and pages not yet assigned in the publisher record read), doi:[10.1007/s10270-026-01395-5](https://doi.org/10.1007/s10270-026-01395-5); extended version of the paper of the same title in *Software Engineering and Formal Methods (SEFM 2024)*, Lecture Notes in Computer Science 15280, pp. 347–365, 2024, doi:[10.1007/978-3-031-77382-2_20](https://doi.org/10.1007/978-3-031-77382-2_20). Read in arXiv:2409.10336v3 ([arXiv](https://arxiv.org/abs/2409.10336v3)), the extended version of the conference paper; the journal article was not read: Definitions 1 and 2 (timed automata and their semantics), Assumption 1, Definition 5 (full ET-opacity), Definition 6 (semantics of a controlled TA), Definition 7 (full ET-opacity with a strategy), Definition 8 (finitely varying strategies) and the strategy emptiness problem of Section 3, in the numbering of that version.
+- Étienne André, Marie Duflot, Laetitia Laversa and Engel Lefaucheux, "Execution-time opacity control for timed automata", *Software and Systems Modeling*, Springer, published online 2026 (no volume or pages in the publisher record read), doi:[10.1007/s10270-026-01395-5](https://doi.org/10.1007/s10270-026-01395-5); extended version of the paper of the same title in *Software Engineering and Formal Methods (SEFM 2024)*, Lecture Notes in Computer Science 15280, pp. 347–365, 2024, doi:[10.1007/978-3-031-77382-2_20](https://doi.org/10.1007/978-3-031-77382-2_20). Read in arXiv:2409.10336v3 ([arXiv](https://arxiv.org/abs/2409.10336v3)), the extended version of the conference paper; the journal article was not read: Definitions 1 and 2 (timed automata and their semantics), Assumption 1, Definition 5 (full ET-opacity), Definition 6 (semantics of a controlled TA), Definition 7 (full ET-opacity with a strategy), Definition 8 (finitely varying strategies) and the strategy emptiness problem of Section 3, in the numbering of that version.

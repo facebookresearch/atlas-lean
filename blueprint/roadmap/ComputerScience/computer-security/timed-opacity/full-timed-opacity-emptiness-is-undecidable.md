@@ -12,10 +12,11 @@ It is undecidable whether some parameter valuation makes a parametric timed auto
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The proof first shows that reachability emptiness in constant time is undecidable for PTAs with 4 clocks and 2 parameters (Lemma 4 of the source): it is undecidable whether some valuation lets a run reach a given location in exactly $T = 1$ time unit. This follows from the undecidability of reachability emptiness within bounded time for PTAs with 3 clocks and 2 parameters (André, Lime and Markey), by adding a new clock that is never reset and an exit edge guarded by $x = 1$. Full opacity is then reduced from it: a new urgent initial location leads into $\mathcal{A}$ and to a public location from which the final location $\ell'_f$ is reachable exactly at time $1$, and $\ell_f$ leads to $\ell'_f$ through the urgent private location. The automaton is fully opaque for a valuation iff $\ell_f$ is reached at time $1$ under it.
+The proof first shows that reachability emptiness in constant time is undecidable for PTAs with 4 clocks and 2 parameters (Lemma 4 of the source): it is undecidable whether some valuation lets a run reach a given location in exactly $T = 1$ time unit. This follows from the undecidability of reachability emptiness within bounded time for PTAs with 3 clocks and 2 parameters (André, Lime and Markey), by adding a new clock that is never reset and an exit edge guarded by $x = 1$. Full opacity is then reduced from it: a new urgent initial location leads into $\mathcal{A}$ and to a public location from which the final location $\ell'_f$ is reachable exactly at time $1$, and $\ell_f$ leads to $\ell'_f$ through the urgent private location. The automaton is fully opaque for a valuation iff $\ell_f$ is reached at time $1$ under it. A good expansion links pages for the undecidability of reachability emptiness within bounded time for PTAs with $3$ clocks and $2$ parameters (André, Lime and Markey) and for its constant-time variant (Lemma 4 of the source).
 
 ## Sources
 

@@ -15,10 +15,11 @@ The same paper proves the corresponding undecidability when the attacker observe
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The proof first shows that reachability of a location is undecidable for discrete guarded METAs with two energy variables and one clock that stays $0$, so the runs take zero time: the two energies hold the two counters of a deterministic two-counter machine, increments and decrements are energy updates on edges, and zero tests are guards $e = 0$ and $e > 0$. Each opacity variant is then shown to be at least as hard as reachability. For EN-opacity, from the initial location a fresh private location with self-loops incrementing each energy leads to a fresh final location, so every energy vector is a private final energy; from the target location a fresh location with self-loops incrementing and decrementing each energy leads to the same final location. If the target is reachable, public runs also realize every energy vector and all three opacity notions hold; otherwise there are no public runs and none holds.
+The proof first shows that reachability of a location is undecidable for discrete guarded METAs with two energy variables and one clock that stays $0$, so the runs take zero time: the two energies hold the two counters of a deterministic two-counter machine, increments and decrements are energy updates on edges, and zero tests are guards $e = 0$ and $e > 0$. Each opacity variant is then shown to be at least as hard as reachability. For EN-opacity, from the initial location a fresh private location with self-loops incrementing each energy leads to a fresh final location, so every energy vector is a private final energy; from the target location a fresh location with self-loops incrementing and decrementing each energy leads to the same final location. If the target is reachable, public runs also realize every energy vector and all three opacity notions hold; otherwise there are no public runs and none holds. A good expansion links a page for the undecidability of location reachability for discrete guarded METAs with two energy variables and one clock, the first step of the proof.
 
 ## Sources
 

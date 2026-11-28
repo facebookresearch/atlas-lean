@@ -12,10 +12,11 @@ It is undecidable whether some parameter valuation makes a parametric timed auto
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The proof reduces reachability emptiness for PTAs (is there a valuation for which some run reaches a given location $\ell_f$?), undecidable by Alur, Henzinger and Vardi and later refinements, all by encodings of two-counter machines. Given $\mathcal{A}$ and $\ell_f$, add a new urgent initial location with unguarded edges to $\ell_0$ and to a new location $\ell_{pub}$, a new urgent private location $\ell_{priv}$ entered from $\ell_f$ (made urgent), and a new final location $\ell'_f$ entered from $\ell_{priv}$ and from $\ell_{pub}$. Every duration is realized by a run avoiding $\ell_{priv}$, and $\ell_{priv}$ is reached on the way to $\ell'_f$ exactly at the durations at which $\ell_f$ is reachable in $\mathcal{A}$; so some valuation gives opacity for some execution time iff $\ell_f$ is reachable in $\mathcal{A}$ for some valuation. With the refinement of Beneš, Bezděk, Larsen and Srba, the result holds already for PTAs with three clocks and one parameter, as the source remarks.
+The proof reduces reachability emptiness for PTAs (is there a valuation for which some run reaches a given location $\ell_f$?), undecidable by Alur, Henzinger and Vardi and later refinements, all by encodings of two-counter machines. Given $\mathcal{A}$ and $\ell_f$, add a new urgent initial location with unguarded edges to $\ell_0$ and to a new location $\ell_{pub}$, a new urgent private location $\ell_{priv}$ entered from $\ell_f$ (made urgent), and a new final location $\ell'_f$ entered from $\ell_{priv}$ and from $\ell_{pub}$. Every duration is realized by a run avoiding $\ell_{priv}$, and $\ell_{priv}$ is reached on the way to $\ell'_f$ exactly at the durations at which $\ell_f$ is reachable in $\mathcal{A}$; so some valuation gives opacity for some execution time iff $\ell_f$ is reachable in $\mathcal{A}$ for some valuation. With the refinement of Beneš, Bezděk, Larsen and Srba, the result holds already for PTAs with three clocks and one parameter, as the source remarks. A good expansion links a page for the undecidability of reachability emptiness for PTAs (Alur, Henzinger and Vardi), the problem the reduction starts from.
 
 ## Sources
 

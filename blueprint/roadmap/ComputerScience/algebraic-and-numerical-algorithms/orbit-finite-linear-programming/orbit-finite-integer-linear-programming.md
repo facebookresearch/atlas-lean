@@ -14,10 +14,11 @@ By the inter-reducibility of the variants for a fixed ring (Theorem 17 of the ar
 ## Proof depends on
 
 - [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
+- [Halting is undecidable](../../../TheoryOfComputation/computability/halting-problem-and-rice-s-theorem/not-tm2-decidable-halts.md)
 
 ## Expansion
 
-The reduction is from reachability for $d$-counter machines with zero tests: each instruction assigns to every counter either an integer increment or a zero test, and the question is whether a run leads from a source configuration $c_0 \in \mathbb{N}^d$ to a target $c_f$. This is undecidable because such machines simulate Minsky machines. Nonnegativity is enforced by inequalities $x \ge 0$. Unknowns $e_{\alpha\beta} \le 1$ indexed by pairs of distinct atoms describe a directed graph on atoms, and degree constraints force a finitary solution to contain a path from a fixed atom $\iota$ to a fixed atom $\zeta$; further unknowns and inequalities attach instructions and counter values to the steps of this path and check that consecutive steps respect the instructions, including the zero tests, so that $M$ has a run from $c_0$ to $c_f$ if and only if the system has a finitary nonnegative integer solution.
+The reduction is from reachability for $d$-counter machines with zero tests: each instruction assigns to every counter either an integer increment or a zero test, and the question is whether a run leads from a source configuration $c_0 \in \mathbb{N}^d$ to a target $c_f$. This is undecidable because such machines simulate Minsky machines. Nonnegativity is enforced by inequalities $x \ge 0$. Unknowns $e_{\alpha\beta} \le 1$ indexed by pairs of distinct atoms describe a directed graph on atoms, and degree constraints force a finitary solution to contain a path from a fixed atom $\iota$ to a fixed atom $\zeta$; further unknowns and inequalities attach instructions and counter values to the steps of this path and check that consecutive steps respect the instructions, including the zero tests, so that $M$ has a run from $c_0$ to $c_f$ if and only if the system has a finitary nonnegative integer solution. A good expansion links a page for the undecidability of reachability between two given configurations of counter machines with zero tests, the problem the reduction starts from.
 
 ## Sources
 

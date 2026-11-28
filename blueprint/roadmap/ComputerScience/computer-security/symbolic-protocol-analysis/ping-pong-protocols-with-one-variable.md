@@ -25,7 +25,7 @@ None.
 
 ## Expansion
 
-The restrictions keep the secrecy problem decidable for this class with unboundedly many sessions, and the determinism condition makes trace equivalence of two $C_{pp}$ protocols decidable, by reduction to language equivalence of real-time generalized deterministic pushdown automata. Trace inclusion and trace equivalence of such protocols are defined on their own page.
+The restrictions keep the secrecy problem decidable for this class with unboundedly many sessions, and the determinism condition makes trace equivalence of two $C_{pp}$ protocols decidable, by reduction to language equivalence of real-time generalized deterministic pushdown automata.
 
 ## Sources
 
