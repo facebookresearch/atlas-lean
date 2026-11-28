@@ -2,7 +2,6 @@
 
 - [Weight of a path for a coefficient matrix](path-weight.md)
 - [Increasing paths between two nodes](increasing-paths.md)
-- [Increasing paths as images of subsets of all nodes](increasing-paths-eq-filter-univ.md)
 - [Directed paths of a strictly lower triangular matrix are increasing](mem-increasing-paths-of-is-chain.md)
 - [Increasing paths of nonzero weight are directed paths](is-chain-of-mem-increasing-paths.md)
 - [No increasing paths backwards](increasing-paths-empty-of-not-le.md)

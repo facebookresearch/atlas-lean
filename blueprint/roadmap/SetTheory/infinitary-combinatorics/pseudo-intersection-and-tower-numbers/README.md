@@ -6,4 +6,3 @@
 - [The tower number](tower-number.md)
 - [The pseudo-intersection cardinals p_κ](p-kappa.md)
 - [Tsaban Problem 11.4 (p_p equals t)](p-kappa-at-pequals-t.md)
-- [The cardinal p_p equals t](p-kappa-at-pequals-t-holds.md)
