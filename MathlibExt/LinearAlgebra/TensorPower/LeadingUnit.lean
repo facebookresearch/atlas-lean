@@ -12,6 +12,8 @@ Authors: @toskua, Avocado
 module
 
 public import Mathlib.LinearAlgebra.TensorPower.Basic
+public import Mathlib.LinearAlgebra.TensorProduct.Associator
+public import Mathlib.LinearAlgebra.TensorProduct.Map
 
 /-!
 # Native tensor powers and categorical leading-unit coherence

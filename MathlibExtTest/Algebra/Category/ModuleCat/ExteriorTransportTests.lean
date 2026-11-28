@@ -55,9 +55,7 @@ example :
       (ULift.up (2 : ℤ) : S) • exteriorPower.ιMulti S 1
         (M := (ModuleCat.extendScalars (algebraMap ℤ S)).obj M)
         (fun i => (1 : S) ⊗ₜ[ℤ, algebraMap ℤ S] vectors i) := by
-  change ((ModuleCat.exteriorPowerBaseChangeComponent.{0, 2, 1} ℤ S 1 M).hom).hom
-    _ = _
-  exact ModuleCat.exteriorPowerBaseChangeComponent_hom_tmul_ιMulti
+  exact ModuleCat.exteriorPowerBaseChangeComponent_hom_tmul_ιMulti.{0, 2, 1}
     ℤ S 1 M (ULift.up 2) vectors
 
 private abbrev e : ℤ ≃+* S := ULift.ringEquiv.symm
