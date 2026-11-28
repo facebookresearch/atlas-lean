@@ -43,9 +43,12 @@ strictly increasing sequence.
 
 open MeasureTheory
 
-/-- The log canonical threshold at the origin of the ideal `(f₁, …, f_r) ⊆ ℂ[x₁, …, xₙ]`, in its
-analytic form: the supremum of the `c ≥ 0` for which `(∑ |f_i|²)^{-c}` is integrable on some ball
-around the origin. -/
+/-- The real-valued analytic threshold at the origin of the ideal `(f₁, …, f_r) ⊆ ℂ[x₁, …, xₙ]`:
+the supremum in `ℝ` of the `c ≥ 0` for which `(∑ |f_i|²)^{-c}` is integrable on some ball around
+the origin, which is `0` when these `c` are unbounded (the convention of `sSup` on `ℝ`). It agrees
+with the log canonical threshold `lct₀` for nonzero ideals vanishing at the origin, but not for
+the unit ideal: for `n = r = 1` and `f₁ = 1` every `c ≥ 0` qualifies, so the value is `0`, while
+`lct₀` of the unit ideal is `+∞`. -/
 noncomputable def lctAtOrigin {n r : ℕ} (f : Fin r → MvPolynomial (Fin n) ℂ) : ℝ :=
   sSup {c : ℝ | 0 ≤ c ∧ ∃ ε > 0, IntegrableOn
     (fun z : Fin n → ℂ => (∑ i, ‖MvPolynomial.eval z (f i)‖ ^ 2) ^ (-c)) (Metric.ball 0 ε)}
