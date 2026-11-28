@@ -6,7 +6,6 @@
 - [Equal product laws have equal margins](has-law-of-has-law-tuple-pi-of-mem.md)
 - [Identification lifts to the i.i.d. sample model](of-n-sample.md)
 - [Two-point lower bound for randomized estimators](exists-measure-real-failure-ge-half-kern.md)
-- [Two-point lower bound for deterministic estimators via kernels](exists-measure-real-failure-ge-half-of-d.md)
 - [Observed data triple of a treatment study](obs-datum.md)
 - [Observational law of a treatment study](obs-law.md)
 - [Propensity read from an observational law](propensity-from-law.md)

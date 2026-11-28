@@ -30,7 +30,6 @@ Efron's bootstrap estimates the sampling distribution of a statistic by recomput
 - [Bootstrap of the maximum for atomless data](ae-bootstrap-prob-max-eq.md)
 - [Empirical distribution of the first n observations](empirical.md)
 - [The empirical distribution for a positive sample size](empirical-eq-empirical-law.md)
-- [The empirical distribution as an average of point masses](empirical-of-ne-zero.md)
 - [Every function is integrable for the empirical distribution](integrable-empirical.md)
 - [Integrals against the empirical distribution are sample averages](integral-empirical.md)
 - [Bootstrap world of a data sequence](world.md)

@@ -8,7 +8,6 @@
 - [The population criterion under correct specification](pop-crit-eq-integral.md)
 - [The gap of the population criterion is a Kullback–Leibler divergence](pop-crit-sub-pop-crit-eq-to-real-kl-div.md)
 - [Identifiability of the population criterion from identifiability of the law](is-identified-on-pop-crit-of-llr.md)
-- [Model of laws given by real densities](density-model.md)
 - [Log-likelihood of a density model](log-density.md)
 - [A model with positive density dominates its reference measure](absolutely-continuous-density-model.md)
 - [Log-likelihood ratio of two positive densities](llr-density-model-ae-eq-of-ae.md)
