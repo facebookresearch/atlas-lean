@@ -42,17 +42,6 @@ namespace WantedExt.Biology.StatisticalGenetics.CaseOnlyInteractionWanted
 
 open Filter Topology
 
-/-- **Case-only odds ratio under non-case independence** (Piegorsch, Weinberg and Taylor 1994;
-VanderWeele et al. 2010, Appendix A). Let the eight cell masses `a, b, c, d, e, f, g, h` be
-positive. If `G` and `E` are independent among the non-cases, `b h = d f`, then
-`SOR = a g / (c e)`.
-
-Source: VanderWeele et al. (2010), Appendix A, crediting Piegorsch et al. (1994). -/
-public theorem_wanted oddsRatioInteraction_eq_caseOnly {a b c d e f g h : ℝ} (ha : 0 < a)
-    (hb : 0 < b) (hc : 0 < c) (hd : 0 < d) (he : 0 < e) (hf : 0 < f) (hg : 0 < g) (hh : 0 < h)
-    (hind : b * h = d * f) :
-    oddsRatioInteraction a b c d e f g h = caseOnlyOddsRatio a c e g
-
 /-- **Case-only odds ratio under population independence** (VanderWeele et al. 2010,
 Background). Let the eight cell masses `a, b, c, d, e, f, g, h` be positive. If `G` and `E` are
 independent in the population, `(g + h)(a + b) = (c + d)(e + f)`, then `SRR = a g / (c e)`.

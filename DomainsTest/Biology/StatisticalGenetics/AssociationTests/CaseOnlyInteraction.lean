@@ -44,3 +44,25 @@ example :
       riskRatioInteraction a b c d e f g h = 1 ∧ oddsRatioInteraction a b c d e f g h = 1 ∧
       caseOnlyOddsRatio a c e g = 4 := by
   norm_num [riskRatioInteraction, oddsRatioInteraction, caseOnlyOddsRatio]
+
+-- Independently compute both ratios from their formulas on a normalized table with non-case
+-- independence but not population independence. The formula checks above connect them to the API.
+example :
+    let a : ℝ := 1 / 36
+    let b : ℝ := 2 / 36
+    let c : ℝ := 5 / 36
+    let d : ℝ := 3 / 36
+    let e : ℝ := 7 / 36
+    let f : ℝ := 4 / 36
+    let g : ℝ := 8 / 36
+    let h : ℝ := 6 / 36
+    0 < a ∧ 0 < b ∧ 0 < c ∧ 0 < d ∧ 0 < e ∧ 0 < f ∧ 0 < g ∧ 0 < h ∧
+      a + b + c + d + e + f + g + h = 1 ∧ b * h = d * f ∧
+      (g + h) * (a + b) ≠ (c + d) * (e + f) ∧
+      (b * g / (a * h)) / ((b * c / (a * d)) * (b * e / (a * f))) = 8 / 35 ∧
+      a * g / (c * e) = 8 / 35 := by
+  norm_num
+
+-- The same table as counts tests the public theorem without a normalization step.
+example : oddsRatioInteraction 1 2 5 3 7 4 8 6 = caseOnlyOddsRatio 1 5 7 8 := by
+  apply oddsRatioInteraction_eq_caseOnly <;> norm_num
