@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.ThreePrimeDCarmichael
 public import MathlibExt.NumberTheory.ThreePrimeDCarmichaelDivisibility
 import Mathlib.Tactic.NormNum.LegendreSymbol
+public import MathlibExt.NumberTheory.AbsoluteLucasPseudoprimesInfinitePrimaryCarmichaelOfPrimeKTuples
 
 namespace MetaMathlibExt
 
@@ -190,25 +191,6 @@ public theorem_wanted isDCarmichael_iff_korselt {D : ℤ} (hD : D % 4 = 0 ∨ D 
     (hodd : Odd n) (hn : 1 < n) (hnp : ¬ n.Prime) (hDn : IsCoprime D n) :
     IsDCarmichael D n ↔
       Squarefree n ∧ ∀ p ∈ n.primeFactors, ((p : ℤ) - jacobiSym D p) ∣ ((n : ℤ) - jacobiSym D n)
-
-/-- **Prime $k$-tuples give infinitely many primary Carmichael numbers (Wagstaff).** Suppose the
-prime $k$-tuples conjecture holds in the following form: for every finite list of integer pairs
-$(a_1, b_1), \dots, (a_k, b_k)$ with all $a_i \ge 1$ such that for every prime $\ell$ there is an
-integer $x$ with $\ell \nmid \prod_i (a_i x + b_i)$, there are infinitely many natural numbers $x$
-for which every $a_i x + b_i$ is a positive prime. Then there are infinitely many composite natural
-numbers $n > 1$ such that $a^{n-1} \equiv 1 \pmod n$ for every natural number $a$ coprime to $n$,
-$n$ has exactly three distinct prime factors, and for every prime $p \mid n$ the sum of the
-base-$p$ digits of $n$ equals $p$.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Theorem 2 (`integers-2026-A102-thm-2`). -/
-public theorem_wanted infinite_primary_carmichael_of_primeKTuples
-    (hk : ∀ l : List (ℤ × ℤ), (∀ ab ∈ l, 1 ≤ ab.1) →
-      (∀ ℓ : ℕ, ℓ.Prime → ∃ x : ℤ, ¬ (ℓ : ℤ) ∣ (l.map fun ab => ab.1 * x + ab.2).prod) →
-      {x : ℕ | ∀ ab ∈ l,
-        0 < ab.1 * (x : ℤ) + ab.2 ∧ (ab.1 * (x : ℤ) + ab.2).natAbs.Prime}.Infinite) :
-    {n : ℕ | 1 < n ∧ ¬ n.Prime ∧ (∀ a : ℕ, a.Coprime n → a ^ (n - 1) ≡ 1 [MOD n]) ∧
-      n.primeFactors.card = 3 ∧ ∀ p ∈ n.primeFactors, (Nat.digits p n).sum = p}.Infinite
 
 /-- **Korselt criterion for $\sigma$-Carmichael numbers.** Let
 $\sigma = (\varepsilon_1, \dots, \varepsilon_r)$ be a list of signs $\varepsilon_i \in \{1, -1\}$ of

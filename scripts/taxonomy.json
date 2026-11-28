@@ -13432,6 +13432,7 @@
   "MathlibExt/NumberTheory/AACarmichaelGcd": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Generalized Carmichael numbers"},
   "MathlibExt/NumberTheory/AbGeneralizedFibonacciSequence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "(a, b)-Fibonacci and (a, b)-Lucas numbers"},
   "MathlibExt/NumberTheory/AbsoluteLucasPseudoprimes": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Absolute Lucas pseudoprimes"},
+  "MathlibExt/NumberTheory/AbsoluteLucasPseudoprimesInfinitePrimaryCarmichaelOfPrimeKTuples": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Absolute Lucas pseudoprimes"},
   "MathlibExt/NumberTheory/AdmissibleFinsetSmallPrimes": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Hardy–Littlewood prime tuples conjecture"},
   "MathlibExt/NumberTheory/AlmostBeattyPartition": {"to": "NumberTheory/diophantine-approximation/uniform-distribution-metric", "title": "Beatty sequences"},
   "MathlibExt/NumberTheory/AlmostPrimeIndex": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Almost primes of almost prime index"},
