@@ -11,14 +11,13 @@ The weak arithmetic checkability axiom $\mathrm{ACT}$ is the statement $\mathsf{
 
 Basic facts:
 
-1. Every oracle consistent with the local checkability axiom $\mathsf{NP}=\mathsf{PF}\text{-}\mathsf{CHK}[\mathrm{poly},\log]$ is consistent with $\mathrm{ACT}$.
-2. For every oracle $A$ and every polynomial extension $\tilde A$, $\mathsf{P}^A\subseteq\mathsf{ALG}\text{-}\mathsf{PF}^{*\tilde A}$ and $\mathsf{NP}^A\subseteq\mathsf{ALG}\text{-}\mathsf{PF}^{\tilde A}$; every self-algebrizing set is consistent with $\mathrm{ACT}$ and $\mathrm{ACT}^*$.
-3. For every language $L$ there is a self-algebrizing $A$ with $A\in\mathsf{PSPACE}^L$ and $L\in\mathsf{P}^A$, so consistent oracles are arbitrarily powerful.
-4. For every $O$ consistent with $\mathrm{ACT}$, $\mathsf{PSPACE}^O=\mathsf{IP}^O$ and $\mathsf{MA}\text{-}\mathsf{EXP}^O\not\subset\mathsf{P}^O/\mathrm{poly}$; for every $O^*$ consistent with $\mathrm{ACT}^*$ and every $k$, $\mathsf{PP}^{O^*}\not\subset\mathrm{SIZE}^{O^*}(n^k)$, $\text{promise-}\mathsf{MA}^{O^*}\not\subset\mathrm{SIZE}^{O^*}(n^k)$ and $\mathsf{NEXP}^{O^*}[\mathrm{poly}]\subseteq\mathsf{MIP}^{O^*}$.
+1. For every oracle $A$ and every polynomial extension $\tilde A$, $\mathsf{P}^A\subseteq\mathsf{ALG}\text{-}\mathsf{PF}^{*\tilde A}$ and $\mathsf{NP}^A\subseteq\mathsf{ALG}\text{-}\mathsf{PF}^{\tilde A}$; every self-algebrizing set is consistent with $\mathrm{ACT}$ and $\mathrm{ACT}^*$.
+2. For every language $L$ there is a self-algebrizing $A$ with $A\in\mathsf{PSPACE}^L$ and $L\in\mathsf{P}^A$, so consistent oracles are arbitrarily powerful.
+3. For every $O$ consistent with $\mathrm{ACT}$, $\mathsf{PSPACE}^O=\mathsf{IP}^O$ and $\mathsf{MA}\text{-}\mathsf{EXP}^O\not\subset\mathsf{P}^O/\mathrm{poly}$; for every $O^*$ consistent with $\mathrm{ACT}^*$ and every $k$, $\mathsf{PP}^{O^*}\not\subset\mathrm{SIZE}^{O^*}(n^k)$, $\text{promise-}\mathsf{MA}^{O^*}\not\subset\mathrm{SIZE}^{O^*}(n^k)$ and $\mathsf{NEXP}^{O^*}[\mathrm{poly}]\subseteq\mathsf{MIP}^{O^*}$.
 
 ## Expansion
 
-Fact 2 writes the tableau of a deterministic oracle computation as the unique proof: local tableau conditions become decision-tree polynomials, and each oracle answer $b_i$ is checked by $1-(b_i-\tilde A(0,q_i))^2$. Fact 3 is Fortnow's construction, which adds to $A$ the signs and bits of the multilinear extension of each earlier slice, so that $A$ is downward self-reducible by a polynomial-space reduction. Fact 4 runs the standard sum-check protocol on the squared verifier polynomial supplied by the axiom.
+Fact 1 writes the tableau of a deterministic oracle computation as the unique proof: local tableau conditions become decision-tree polynomials, and each oracle answer $b_i$ is checked by $1-(b_i-\tilde A(0,q_i))^2$. Fact 2 is Fortnow's construction, which adds to $A$ the signs and bits of the multilinear extension of each earlier slice, so that $A$ is downward self-reducible by a polynomial-space reduction. Fact 3 runs the standard sum-check protocol on the squared verifier polynomial supplied by the axiom. The source also notes that every oracle consistent with the local checkability axiom $\mathsf{NP}=\mathsf{PF}\text{-}\mathsf{CHK}[\mathrm{poly},\log]$ is consistent with $\mathrm{ACT}$.
 
 ## Depends on
 

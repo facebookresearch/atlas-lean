@@ -21,6 +21,7 @@ Compression generalizes polynomial kernelization from parameterized complexity, 
 ## Depends on
 
 - [Parameterized problems](param-problem.md)
+- [Polynomial-time computable functions](../the-classes-p-np-and-conp/is-poly-time.md)
 
 ## Proof depends on
 

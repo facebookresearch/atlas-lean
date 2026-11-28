@@ -2,7 +2,7 @@
 
 Exponential time with smart queries to a promise-MA oracle and one bit of advice contains a function that requires circuits of size $2^n/n$, a near-maximum bound far beyond the half-exponential bounds known before for Merlin–Arthur-type classes.
 
-With $\mathsf{prMA}$ and smart oracle access as defined for the smart $\mathsf{prMA}$ range-avoidance algorithm, let $\mathsf{smart}\text{-}\mathsf{E}^{\mathsf{prMA}}/1$ be the class of languages decided in time $2^{O(n)}$ by a deterministic oracle machine with one advice bit that, under the correct advice, queries a $\mathsf{prMA}$ oracle only on strings satisfying its promise. Then:
+With $\mathsf{prMA}$ and smart oracle access as defined for the smart $\mathsf{prMA}$ range-avoidance algorithm, let $\mathsf{smart}\text{-}\mathsf{E}^{\mathsf{prMA}}/1$ be the class of languages decided in time $2^{O(n)}$ by a deterministic oracle machine with one advice bit that, under the correct advice, queries a $\mathsf{prMA}$ oracle only on strings satisfying its promise. A function $f:\mathbb{N}\to\mathbb{N}$ is *nice* if some deterministic algorithm computes $f(n)$ from $n$ in time $\mathrm{polylog}(n,f(n))$. Then:
 
 1. $\mathsf{smart}\text{-}\mathsf{E}^{\mathsf{prMA}}/1\not\subseteq\mathrm{SIZE}[2^n/n]$; in particular some function in $\mathsf{E}^{\mathsf{prMA}}/1$ requires circuits of size $\Omega(2^n/n)$.
 2. For constants $\delta_1,\delta_2>0$ with $\delta_1+2\delta_2<1$, some $L\in\mathsf{smart}\text{-}\mathsf{E}^{\mathsf{prMA}}/1$ cannot be $(1/2+2^{-\delta_2 n})$-approximated by circuits of size $2^{\delta_1 n}$.

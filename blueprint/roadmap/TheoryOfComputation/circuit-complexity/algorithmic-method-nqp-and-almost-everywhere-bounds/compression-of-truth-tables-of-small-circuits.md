@@ -16,6 +16,7 @@ Each item extracts structure from the random-restriction proof of the correspond
 
 - [Circuit complexity of a Boolean function and truth tables](../minimum-circuit-size-problem/circuit-complexity-of-a-boolean-function.md)
 - [The class $\mathsf{AC}^0$](../../complexity-classes/time-and-space-complexity-classes/ac0.md)
+- [Polynomial-time computable functions](../../complexity-classes/the-classes-p-np-and-conp/is-poly-time.md)
 
 ## Proof depends on
 

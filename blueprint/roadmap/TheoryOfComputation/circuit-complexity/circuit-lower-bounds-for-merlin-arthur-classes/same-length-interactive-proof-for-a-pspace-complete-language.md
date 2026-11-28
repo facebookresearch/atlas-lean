@@ -18,6 +18,7 @@ In the language of program checking, $L$ has a function-restricted interactive p
 
 - [Polynomial space for decision problems](../../complexity-classes/time-and-space-complexity-classes/pspace.md)
 - [The class IP](../../complexity-classes/time-and-space-complexity-classes/ip.md)
+- [Polynomial-time many-one reduction](../../np-completeness/cook-levin/binary-encoding-of-cnf-formulas/poly-many-one-red.md)
 
 ## Proof depends on
 
