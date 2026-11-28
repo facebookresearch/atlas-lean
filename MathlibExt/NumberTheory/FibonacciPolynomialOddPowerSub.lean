@@ -9,10 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
-import Mathlib.Algebra.QuadraticAlgebra.Basic
 import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.FibonacciPolynomialBinet
 
 /-!
 # Differences of odd powers of Fibonacci polynomials
@@ -27,6 +27,8 @@ no division by the root difference is needed.
   The Fibonacci Quarterly 62 (2024), no. 2, 147–156, Lemma 4.1.
 * Thomas Koshy, *Fibonacci and Lucas Numbers with Applications*, vol. 2,
   John Wiley & Sons, 2019, §31.1 (Binet formulas; see Lin and Zhou, §2).
+* `MathlibExt.NumberTheory.FibonacciPolynomialBinet` provides the quadratic-algebra Binet formulas
+  and root identities used here.
 -/
 
 namespace MetaMathlibExt
@@ -107,41 +109,7 @@ local notation "ι" => algebraMap ℤ[X] A
 local notation "α" => (QuadraticAlgebra.omega : A)
 local notation "β" => (ι X - α)
 
-private theorem root_sq : α ^ 2 = ι X * α + 1 := by
-  rw [sq, QuadraticAlgebra.omega_mul_omega_eq_algebraMap, map_one, add_comm]
-
-private theorem other_root_sq : β ^ 2 = ι X * β + 1 := by
-  linear_combination root_sq
-
-private theorem root_mul_other : α * β = -1 := by
-  linear_combination -root_sq
-
-private theorem root_diff_sq : (α - β) ^ 2 = ι (X ^ 2 + 4) := by
-  rw [map_add, map_pow, map_ofNat]
-  linear_combination 4 * root_sq
-
-private theorem root_power_rec (u : A) (hu : u ^ 2 = ι X * u + 1) (r : ℕ) :
-    u ^ (r + 2) = ι X * u ^ (r + 1) + u ^ r := by
-  rw [pow_add u r 2, pow_add u r 1, hu, pow_one]
-  ring
-
-private theorem fib_binet (r : ℕ) : (α - β) * ι (𝔣 r) = α ^ r - β ^ r := by
-  induction r using Nat.twoStepInduction with
-  | zero => simp
-  | one => simp
-  | more r h₀ h₁ =>
-    rw [generalizedFibonacciPolynomial_add_two, one_mul, map_add, map_mul,
-      root_power_rec α root_sq, root_power_rec β other_root_sq]
-    linear_combination h₀ + ι X * h₁
-
-private theorem lucas_binet (r : ℕ) : ι (𝔩 r) = α ^ r + β ^ r := by
-  induction r using Nat.twoStepInduction with
-  | zero => norm_num [map_ofNat]
-  | one => simp
-  | more r h₀ h₁ =>
-    rw [generalizedFibonacciPolynomial_add_two, one_mul, map_add, map_mul, h₀, h₁,
-      root_power_rec α root_sq, root_power_rec β other_root_sq]
-    ring
+open FibonacciPolynomialBinet
 
 -- The coefficient of the formal root in `(α - β) * ι p` is `2 * p`.
 private theorem cancel_root_diff {p q : ℤ[X]} (h : (α - β) * ι p = (α - β) * ι q) : p = q := by

@@ -16,7 +16,7 @@ import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.NumberTheory.BinetClosedForm
-import all MathlibExt.NumberTheory.FibonacciPolynomialOddPowerSub
+import MathlibExt.NumberTheory.FibonacciPolynomialBinet
 
 /-!
 # Even powers of Fibonacci and Lucas polynomials
@@ -33,13 +33,13 @@ zeroth powers agree) and `k = 0` (the indices agree and every summand has a fact
   The Fibonacci Quarterly 62 (2024), no. 2, 147–156, Lemmas 3.1 and 3.2.
 * Thomas Koshy, *Fibonacci and Lucas Numbers with Applications*, vol. 2,
   John Wiley & Sons, 2019 (Binet formulas, as cited by Lin and Zhou in §2).
-* `MathlibExt.NumberTheory.FibonacciPolynomialOddPowerSub` supplies `fib_binet`, `lucas_binet`,
+* `MathlibExt.NumberTheory.FibonacciPolynomialBinet` supplies `fib_binet`, `lucas_binet`,
   `root_mul_other` and `root_diff_sq` in the quadratic algebra over `ℤ[X]`.
 -/
 
 namespace MetaMathlibExt
 
-open Polynomial
+open Polynomial FibonacciPolynomialBinet
 
 local notation "𝔣" => generalizedFibonacciPolynomial 0 1 X 1
 local notation "𝔩" => generalizedFibonacciPolynomial 2 X X 1

@@ -8,9 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.NumberTheory.GibonacciPolynomialPowerSumsFibPolyPowEvenSub
+import Mathlib.Algebra.Polynomial.Eval.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.GibonacciPolynomialPowerSumsFibPolyPowEvenSub
 
 /-!
 # Tests for even powers of Fibonacci and Lucas polynomials
@@ -82,5 +83,14 @@ example : 𝔩 3 ^ 4 - 𝔩 1 ^ 4 = (X ^ 2 + 4) * (𝔣 4 * 𝔣 8 - 4 * 𝔣 2 
   congr 1
   norm_num [Finset.sum_range_succ]
   ring
+
+-- Evaluate the two polynomial differences at `X = 1` and check the values independently.
+example : eval 1 (𝔩 2 ^ 4 - 𝔩 0 ^ 4) = 65 := by
+  rw [lucasPoly_pow_even_sub (n := 1) (k := 1) (by decide) 2]
+  norm_num [Finset.sum_range_succ, generalizedFibonacciPolynomial]
+
+example : eval 1 (𝔩 3 ^ 4 - 𝔩 1 ^ 4) = 255 := by
+  rw [lucasPoly_pow_even_sub (n := 2) (k := 1) (by decide) 2]
+  norm_num [Finset.sum_range_succ, generalizedFibonacciPolynomial]
 
 end MathlibExtTest.NumberTheory.GibonacciPolynomialPowerSumsFibPolyPowEvenSub
