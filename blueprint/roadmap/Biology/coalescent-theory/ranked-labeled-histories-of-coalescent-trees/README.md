@@ -35,5 +35,6 @@
 ## Multifurcating trees
 
 - [Labeled histories and maximally probable topologies of multifurcating trees](labeled-histories-of-multifurcating-trees/README.md)
+- [Ranked tree spaces](ranked-tree-spaces/README.md)
 - [Cherries and pitchforks of ranked coalescent trees](cherries-and-pitchforks-of-ranked-coalescent-trees/README.md)
 - [Evolving Moran genealogy](evolving-moran-genealogy/README.md)
