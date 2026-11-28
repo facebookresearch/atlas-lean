@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import MathlibExt.NumberTheory.GeneralizedHarmonicGamma
+public import MathlibExt.NumberTheory.Harmonic.GeneralizedHarmonic
 import Mathlib.Analysis.PSeries
 import Mathlib.Data.Nat.Choose.Basic
 import MathlibExt.Analysis.Series.StolzCesaro

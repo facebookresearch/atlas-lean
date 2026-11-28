@@ -26,14 +26,14 @@ public import MathlibExt.NumberTheory.Harmonic.HyperharmonicAsymptotic
 # Sums over primes II (statements)
 
 Statement-only targets from Rusen Li, *Sums over Primes II*: the asymptotics of the `n`-th
-(squarefree) number with exactly `k` prime factors, two power-log summation asymptotics, the
-explicit formulas and asymptotics of the generalized (alternating) hyperharmonic numbers
-`H_n^{(p,r)}` and `H_n^{(p,r,i)}` (`i = 1, 2, 3`), and the asymptotics of sums over primes and over
-squarefree numbers with `k` prime factors weighted by powers of these numbers.
+(squarefree) number with exactly `k` prime factors, two power-log summation asymptotics,
+explicit formulas for the type I and III generalized alternating hyperharmonic numbers,
+asymptotics for the type I numbers, and weighted sums over primes and squarefree numbers with
+`k` prime factors.
 
-The asymptotic of the type III
-numbers `H_n^{(p,r,3)}`, `alternatingHyperharmonic_typeIII_isEquivalent`, is not a target here:
-it is proved in `MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree`.
+This module re-exports the asymptotics of `H_n^{(p,r)}` and `H_n^{(p,r,2)}` from
+`MathlibExt.NumberTheory.AlternatingHyperharmonic` and that of `H_n^{(p,r,3)}` from
+`MathlibExt.NumberTheory.AlternatingHyperharmonicTypeIIISquarefree`.
 -/
 
 namespace MetaMathlibExt
