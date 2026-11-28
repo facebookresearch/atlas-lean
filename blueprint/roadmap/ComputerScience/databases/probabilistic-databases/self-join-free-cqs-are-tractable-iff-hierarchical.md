@@ -19,7 +19,7 @@ not hierarchical, the problem is $\#P$-hard; a query without self-joins is its o
 ## Proof depends on
 
 - [Conjunctive queries whose minimal equivalent query is not hierarchical are #P-hard on probabilistic databases](non-hierarchical-conjunctive-queries-are-sharp-p-hard.md)
-- [CQ minimization (cores) and UCQ containment](../conjunctive-queries/cq-minimization-and-ucq-containment.md)
+- [Minimizations and cores of conjunctive queries](../conjunctive-queries/cores-and-minimization/minimizations-and-cores-of-conjunctive-queries.md)
 
 ## Sources
 

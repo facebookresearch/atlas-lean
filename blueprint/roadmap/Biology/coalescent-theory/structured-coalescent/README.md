@@ -51,3 +51,8 @@
 - [Semelparous age-structured coalescent](semelparous-age-structured-coalescent/README.md)
 - [Branch lengths of the seed-bank coalescent](branch-lengths-of-the-seed-bank-coalescent/README.md)
 - [Coalescing random walks on directed random graphs](coalescing-random-walks-on-directed-random-graphs/README.md)
+- [Structured coalescent for background selection with recombination](structured-coalescent-for-background-selection-with-recombination.md)
+- [Time-dependent isolation–migration model fitted to coalescence rates](time-dependent-isolation-migration-fit-to-coalescence-rates.md)
+- [IBD block sharing under spatial diffusion](ibd-block-sharing-under-spatial-diffusion/README.md)
+- [Coalescence time of coalescing random walks on graphs](coalescence-time-of-coalescing-random-walks-on-graphs/README.md)
+- [Coalescence time of reversible random walks](coalescence-time-of-reversible-random-walks/README.md)
