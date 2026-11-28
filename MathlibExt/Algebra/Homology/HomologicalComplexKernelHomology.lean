@@ -118,7 +118,7 @@ induces an isomorphism H⁰(kernel f) ≅ H⁰(K). The predecessor convention at
 def kernelHomologyZeroIso [(kernel f).HasHomology 0] [K.HasHomology 0]
     (h0 : f.f 0 = 0) : (kernel f).homology 0 ≅ K.homology 0 :=
   kernelHomologyIsoOfZeroComponents f 0 h0 (by
-    simpa only [CochainComplex.prev_nat_zero] using h0)
+    exact Eq.mpr (congrArg (fun j : ℕ => f.f j = 0) CochainComplex.prev_nat_zero) h0)
 
 /-- Let C have zero morphisms and finite limits, and let f : K ⟶ L be a map of cochain complexes
 indexed by ℕ. If kernel f and K have homology in degree 1 and f.f 1 = f.f 0 = 0, the kernel
@@ -126,7 +126,8 @@ inclusion induces an isomorphism H¹(kernel f) ≅ H¹(K). -/
 def kernelHomologyOneIso [(kernel f).HasHomology 1] [K.HasHomology 1]
     (h1 : f.f 1 = 0) (h0 : f.f 0 = 0) : (kernel f).homology 1 ≅ K.homology 1 :=
   kernelHomologyIsoOfZeroComponents f 1 h1 (by
-    simpa only [CochainComplex.prev_nat_succ] using h0)
+    exact Eq.mpr
+      (congrArg (fun j : ℕ => f.f j = 0) (CochainComplex.prev_nat_succ 0)) h0)
 
 end NonnegativeCochains
 

@@ -43,13 +43,14 @@ def K : ChainComplex (ModuleCat.{0} ℤ) ℕ where
 def raising : Homotopy (0 : K ⟶ K) 0 where
   hom i j := if i = 0 ∧ j = 1 then 𝟙 Z else 0
   zero i j h := by
+    dsimp only [K]
     split_ifs with hij
     · rcases hij with ⟨rfl, rfl⟩
       exact (h rfl).elim
-    · rfl
+    · simp only [if_neg hij]
   comm i := by
-    change (0 : Z ⟶ Z) = (0 : Z ⟶ Z) ≫ _ + _ ≫ (0 : Z ⟶ Z) + (0 : Z ⟶ Z)
-    simp
+    dsimp only [K, dNext, prevD, HomologicalComplex.zero_f_apply]
+    simp only [zero_comp, comp_zero, add_zero]
 
 lemma raisingSquare (n : ℕ) :
     raising.hom n (n + 1) ≫ raising.hom (n + 1) (n + 2) = 0 := by

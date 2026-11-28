@@ -32,6 +32,11 @@ namespace GradedScalarExamples
 
 private abbrev GF (_ : ℕ) := ℤ
 
+-- Select the native graded module action on the total direct sums.
+local instance : Module (DirectSum ℕ (fun _ : ℕ => ℤ))
+    (DirectSum ℕ (fun _ : ℕ => ℤ)) :=
+  DirectSum.Gmodule.module (fun _ : ℕ => ℤ) (fun _ : ℕ => ℤ)
+
 example : GradedAlgebra (DirectSum.algebraInternalGrade ℤ GF) := inferInstance
 
 example : SetLike.GradedSMul (DirectSum.algebraInternalGrade ℤ GF)
@@ -45,9 +50,11 @@ example :
   letI : SetLike.GradedSMul (DirectSum.algebraInternalGrade ℤ GF)
       (DirectSum.internalGrade ℤ ℕ GF) := inferInstance
   constructor
-  · exact SetLike.GradedSMul.smul_mem
-      ((DirectSum.mem_algebraInternalGrade_iff ℤ GF _ _).mpr ⟨3, rfl⟩)
-      ((DirectSum.mem_internalGrade_iff ℤ ℕ GF _ _).mpr ⟨2, rfl⟩)
+  · have hx : DirectSum.of GF 1 (3 : ℤ) ∈ DirectSum.algebraInternalGrade ℤ GF 1 :=
+      (DirectSum.mem_algebraInternalGrade_iff ℤ GF _ 1).mpr ⟨3, rfl⟩
+    have hy : DirectSum.of GF 2 (2 : ℤ) ∈ DirectSum.internalGrade ℤ ℕ GF 2 :=
+      (DirectSum.mem_internalGrade_iff ℤ ℕ GF _ 2).mpr ⟨2, rfl⟩
+    exact SetLike.GradedSMul.smul_mem hx hy
   · exact DirectSum.Gmodule.of_smul_of GF GF (i := 1) (j := 2) (3 : ℤ) (2 : ℤ)
 
 private abbrev LiftedZ := ULift.{1} ℤ
@@ -55,13 +62,20 @@ private abbrev LiftedZ := ULift.{1} ℤ
 example :
     (letI := Module.oppositeOfCommutingAction ℤ LiftedZ;
       (MulOpposite.op (3 : ℤ)) • (ULift.up 2 : LiftedZ)) = ULift.up 6 := by
-  rw [Module.oppositeOfCommutingAction_smul]
-  apply ULift.ext
-  change (3 : ℤ) • 2 = 6
-  norm_num
+  calc
+    (letI := Module.oppositeOfCommutingAction ℤ LiftedZ;
+      (MulOpposite.op (3 : ℤ)) • (ULift.up 2 : LiftedZ)) =
+        (3 : ℤ) • (ULift.up 2 : LiftedZ) :=
+      Module.oppositeOfCommutingAction_smul ℤ LiftedZ
+        (MulOpposite.op (3 : ℤ)) (ULift.up 2 : LiftedZ)
+    _ = ULift.up 6 := by
+      apply ULift.ext
+      change (3 : ℤ) • (2 : ℤ) = (6 : ℤ)
+      norm_num
 
-example : (Polynomial.ofFn 2 ![(2 : ℚ), 3]).coeff 1 = 3 :=
-  Polynomial.ofFn_coeff_eq_val_of_lt _ (by decide)
+example : (Polynomial.ofFn 2 ![(2 : ℚ), 3]).coeff 1 = 3 := by
+  simpa using (Polynomial.ofFn_coeff_eq_val_of_lt (n := 2) (i := 1)
+    ![(2 : ℚ), 3] (by decide))
 
 example : Polynomial.finitePowerCombination 2 ![(2 : ℚ), 3] 2 = 8 := by
   norm_num [Polynomial.finitePowerCombination,

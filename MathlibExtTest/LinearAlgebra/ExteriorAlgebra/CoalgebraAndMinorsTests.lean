@@ -48,6 +48,8 @@ lemma coordinate_ι (i : Fin 2) (v : V) :
 
 lemma coordinate_one (i : Fin 2) : coordinate i (1 : E) = 0 := by
   simp [coordinate, ExteriorAlgebra.ιInv]
+  rw [map_one]
+  rfl
 
 def crossCoordinate : E ⊗[ℤ] E →ₗ[ℤ] ℤ :=
   (TensorProduct.lid ℤ ℤ).toLinearMap.comp (TensorProduct.map (coordinate 1) (coordinate 0))
@@ -119,6 +121,9 @@ lemma minorOne : Matrix.minorIdeal 1 matrix = Ideal.span ({2} : Set ℤ) := by
   apply le_antisymm
   · rw [Matrix.minorIdeal, Ideal.span_le]
     rintro _ ⟨⟨sr, sc⟩, rfl⟩
+    change (matrix.submatrix
+      (Set.powersetCard.ofFinEmbEquiv.symm sr)
+      (Set.powersetCard.ofFinEmbEquiv.symm sc)).det ∈ Ideal.span ({2} : Set ℤ)
     rw [Matrix.det_fin_one]
     let j : Fin 2 := Set.powersetCard.ofFinEmbEquiv.symm sc 0
     have hr : Set.powersetCard.ofFinEmbEquiv.symm sr 0 = (0 : Fin 1) :=
@@ -142,6 +147,9 @@ lemma minorOne : Matrix.minorIdeal 1 matrix = Ideal.span ({2} : Set ℤ) := by
       exact Finset.mem_singleton.mp hm
     apply Ideal.subset_span
     refine ⟨(sr, sc), ?_⟩
+    change (matrix.submatrix
+      (Set.powersetCard.ofFinEmbEquiv.symm sr)
+      (Set.powersetCard.ofFinEmbEquiv.symm sc)).det = 2
     rw [Matrix.det_fin_one]
     change matrix (Set.powersetCard.ofFinEmbEquiv.symm sr 0)
       (Set.powersetCard.ofFinEmbEquiv.symm sc 0) = 2
@@ -173,6 +181,7 @@ lemma coefficientTwice : twice.coefficientIdeal = Ideal.span ({2} : Set ℤ) := 
       change φ ((2 : ℤ) • a) = 2 * φ a
       rw [map_smul]
       rfl
+    change φ (twice a) ∈ Ideal.span ({2} : Set ℤ)
     rw [h]
     exact (Ideal.span ({2} : Set ℤ)).mul_mem_right (φ a)
       (Ideal.subset_span (Set.mem_singleton 2))
