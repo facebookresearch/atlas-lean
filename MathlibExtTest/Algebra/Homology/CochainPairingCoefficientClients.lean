@@ -120,7 +120,8 @@ private lemma coefficient_pairing (a b : R) (i j : ℕ) :
     (pairing R A).pair i j ≫ (coefficient R A (a * b)).f (i + j) =
       ((coefficient R A a).f i ⊗ₘ (coefficient R A b).f j) ≫
         (pairing R A).pair i j := by
-  simp only [coefficient_f, MonoidalCategory.tensorHom_def,
+  rw [coefficient_f R A (a * b) (i + j), coefficient_f R A a i, coefficient_f R A b j]
+  simp only [MonoidalCategory.tensorHom_def,
     MonoidalLinear.smul_whiskerRight, MonoidalLinear.whiskerLeft_smul,
     MonoidalCategory.id_whiskerRight, MonoidalCategory.whiskerLeft_id,
     Linear.smul_comp, Linear.comp_smul, Category.id_comp, Category.comp_id, smul_smul]
