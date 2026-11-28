@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HittingSetWanted
+public import CSLibExt.Complexity.NPComplete.HittingSetSizeTwoDefs
 
 @[expose] public section
 
@@ -53,19 +51,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the instance is well-formed for HITTING SET, and every
-subset in `C` has at most two elements. -/
-def WellFormed (i : HittingSet.HittingSetInstance) : Prop :=
-  HittingSet.WellFormed i ∧ ∀ c ∈ i.2.1, c.length ≤ 2
-
-open Classical in
-/-- HITTING SET with subsets of size at most 2 as a decision problem over bitstrings. -/
-noncomputable def hittingSetSizeTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := HittingSet.HittingSetInstance) x with
-  | some i => decide (WellFormed i ∧ HittingSet.HittingSetFeasible i)
-  | none => false
 
 /-- **HITTING SET with subsets of size at most 2 is NP-complete.** Source: Garey and Johnson
 (1979), [SP8], comment; Karp (1972), VERTEX COVER. -/

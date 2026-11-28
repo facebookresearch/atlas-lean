@@ -20,11 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.Order.Field.Rat
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.GameTheory.SocialChoice.CondorcetCycle
-public import WantedExt.Complexity.NPComplete.CondorcetConstructiveControlByAddingVotersWanted
+public import CSLibExt.Complexity.NPComplete.CopelandConstructiveControlByAddingVotersDefs
 
 @[expose] public section
 
@@ -69,44 +65,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-open Classical in
-/-- The Copeland^α score of candidate `a` under profile `P`: one point for each other candidate
-`b` that a majority prefers `a` to, plus `α` points for each other candidate `b` tied with `a`
-(no majority either way). -/
-noncomputable def copelandScore (α : ℚ) {Alt Voter : Type} [Fintype Alt] [Fintype Voter]
-    (P : MathlibExt.GameTheory.SocialChoice.ArrowWanted.Profile Alt Voter) (a : Alt) : ℚ :=
-  ((Finset.univ.filter fun b => b ≠ a ∧ MajorityPrefers P a b).card : ℚ) +
-    α * ((Finset.univ.filter fun b =>
-      b ≠ a ∧ ¬ MajorityPrefers P a b ∧ ¬ MajorityPrefers P b a).card : ℚ)
-
-/-- Candidate `p` is the unique Copeland^α winner of the election `E` (a list of votes over
-`m` candidates): every other candidate has a smaller Copeland^α score. -/
-def IsUniqueCopelandWinner (α : ℚ) (m : ℕ) (E : List (List ℕ)) (p : ℕ) : Prop :=
-  ∀ a d : Fin m, (a : ℕ) = p → d ≠ a →
-    copelandScore α (profile m E) d < copelandScore α (profile m E) a
-
-/-- Well-formedness of an instance: every registered and unregistered vote is a strict ranking
-of all `m` candidates, and `p` is a candidate. -/
-def WellFormed (i : CondorcetConstructiveControlByAddingVotersInstance) : Prop :=
-  (∀ v ∈ i.2.1, v.Perm (List.range i.1)) ∧ (∀ v ∈ i.2.2.1, v.Perm (List.range i.1)) ∧
-    i.2.2.2.1 < i.1
-
-/-- At most `k` voters `Q ⊆ W` whose registration makes `p` the unique Copeland^α winner of
-`V ++ Q`. -/
-def CopelandConstructiveControlByAddingVotersFeasible (α : ℚ)
-    (i : CondorcetConstructiveControlByAddingVotersInstance) : Prop :=
-  ∃ Q : List (List ℕ), Q.Sublist i.2.2.1 ∧ Q.length ≤ i.2.2.2.2 ∧
-    IsUniqueCopelandWinner α i.1 (i.2.1 ++ Q) i.2.2.2.1
-
-open Classical in
-/-- COPELAND^α CONSTRUCTIVE CONTROL BY ADDING VOTERS as a decision problem over bitstrings. -/
-noncomputable def copelandConstructiveControlByAddingVotersDec (α : ℚ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CondorcetConstructiveControlByAddingVotersInstance) x with
-  | some i => decide (WellFormed i ∧ CopelandConstructiveControlByAddingVotersFeasible α i)
-  | none => false
 
 /-- **COPELAND^α CONSTRUCTIVE CONTROL BY ADDING VOTERS is NP-complete for every rational
 `0 ≤ α ≤ 1`.** Source: Faliszewski, Hemaspaandra, Hemaspaandra and Rothe (2009),

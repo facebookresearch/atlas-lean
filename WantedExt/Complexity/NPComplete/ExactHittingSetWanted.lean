@@ -10,8 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.ExactHittingSetDefs
 
 @[expose] public section
 
@@ -38,29 +37,6 @@ NP-completeness is stated in the same form as the proved results in
 `CSLibExt.Computability.Complexity.Karp`: membership in `MetaMathlibExt.ComplexityTheory.NP`, plus
 a polynomial-time many-one reduction from every language in `NP` (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- **An exact-hitting-set instance.** The number `r` of elements and a list of subsets of
-`0, …, r - 1`, each given as a list (Karp 1972, problem 15). -/
-abbrev ExactHittingSetInstance := ℕ × List (List ℕ)
-
-/-- **Well-formed exact-hitting-set instances.** Every listed subset has no repeated entry and only
-entries below `r`. -/
-def WellFormed (i : ExactHittingSetInstance) : Prop :=
-  ∀ s ∈ i.2, s.Nodup ∧ ∀ x ∈ s, x < i.1
-
-/-- **Feasible exact-hitting-set instances.** Some set `W` of elements below `r` meets every
-listed subset in exactly one element (Karp 1972, problem 15). -/
-def ExactHittingSetFeasible (i : ExactHittingSetInstance) : Prop :=
-  ∃ W : Finset ℕ, (∀ x ∈ W, x < i.1) ∧ ∀ s ∈ i.2, (s.filter (· ∈ W)).length = 1
-
-open Classical in
-/-- **The exact HITTING SET decision problem.** It accepts a bitstring exactly when it decodes to a
-well-formed, feasible exact-hitting-set instance. -/
-noncomputable def exactHittingSetDec : MetaMathlibExt.ComplexityTheory.DecisionProblem :=
-  fun x =>
-    match MetaMathlibExt.BitstringEncoding.bitDecode (α := ExactHittingSetInstance) x with
-    | some i => decide (WellFormed i ∧ ExactHittingSetFeasible i)
-    | none => false
 
 /-- **Karp's HITTING SET is NP-complete.** The exact hitting set decision problem lies in NP, and
 every problem in NP reduces to it by a polynomial-time many-one reduction (R. M. Karp,

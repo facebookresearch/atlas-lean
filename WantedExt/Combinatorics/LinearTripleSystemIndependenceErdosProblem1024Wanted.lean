@@ -17,6 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.Combinatorics.LinearTripleSystemIndependenceErdosProblem1024Defs
 
 @[expose] public section
 
@@ -32,13 +33,6 @@ independent set contains no edge. The estimate is stated as `f(n) ≍ (n log n)^
 (`Asymptotics.IsTheta`). Compared with the formal-conjectures statement `ErdosProblems/1024.lean`
 (equivalent; no code imported).
 -/
-
-/-- **Linear triple systems.** A finite family $H$ of subsets of $\{0, \dots, n-1\}$ is a linear
-triple system (a $3$-uniform linear hypergraph, or partial Steiner triple system) when every
-member of $H$ has exactly three elements and any two distinct members of $H$ share at most one
-element. -/
-def IsLinearTripleSystem {n : ℕ} (H : Finset (Finset (Fin n))) : Prop :=
-  (∀ e ∈ H, e.card = 3) ∧ ∀ e ∈ H, ∀ e' ∈ H, e ≠ e' → (e ∩ e').card ≤ 1
 
 /-- **Independence number of linear triple systems.** For $n \in \mathbb{N}$, $f(n)$ is the largest
 $m \in \mathbb{N}$ such that every linear triple system $H$ on the vertex set $\{0, \dots, n-1\}$

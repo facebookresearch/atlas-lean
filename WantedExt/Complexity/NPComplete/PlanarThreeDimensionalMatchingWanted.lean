@@ -23,10 +23,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import MathlibExt.Combinatorics.SimpleGraph.Planarity
-public import WantedExt.Complexity.NPComplete.ThreeDimensionalMatchingWanted
+public import CSLibExt.Complexity.NPComplete.PlanarThreeDimensionalMatchingDefs
 
 @[expose] public section
 
@@ -62,32 +59,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The element-triple incidence graph: vertex `3q + j` (the `j`-th triple `(w, x, y)`) is
-adjacent to the element vertices `w`, `q + x` and `2q + y`. -/
-def incidenceGraph (i : ThreeDimensionalMatchingInstance) :
-    SimpleGraph (Fin (3 * i.1 + i.2.length)) :=
-  SimpleGraph.fromRel fun u v => ∃ j < i.2.length, u.val = 3 * i.1 + j ∧
-    (v.val = (i.2.getD j (0, 0, 0)).1 ∨ v.val = i.1 + (i.2.getD j (0, 0, 0)).2.1 ∨
-      v.val = 2 * i.1 + (i.2.getD j (0, 0, 0)).2.2)
-
-/-- Well-formedness of an instance: a well-formed 3DM instance with distinct triples whose
-incidence graph is planar. -/
-def WellFormed (i : ThreeDimensionalMatchingInstance) : Prop :=
-  ThreeDimensionalMatching.WellFormed i ∧ i.2.Nodup ∧ (incidenceGraph i).IsPlanar
-
-/-- `M` contains a matching of size `q` (the 3DM question). -/
-def PlanarThreeDimensionalMatchingFeasible (i : ThreeDimensionalMatchingInstance) : Prop :=
-  ThreeDimensionalMatchingFeasible i
-
-open Classical in
-/-- PLANAR 3-DIMENSIONAL MATCHING as a decision problem over bitstrings. -/
-noncomputable def planarThreeDimensionalMatchingDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeDimensionalMatchingInstance) x with
-  | some i => decide (WellFormed i ∧ PlanarThreeDimensionalMatchingFeasible i)
-  | none => false
 
 /-- **PLANAR 3-DIMENSIONAL MATCHING is NP-complete.** Source: Dyer and Frieze (1986). -/
 public theorem_wanted planarThreeDimensionalMatching_npComplete :

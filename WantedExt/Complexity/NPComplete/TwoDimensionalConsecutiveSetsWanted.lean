@@ -20,8 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Complexity.NPComplete.TwoDimensionalConsecutiveSetsDefs
 
 @[expose] public section
 
@@ -53,30 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the alphabet size `s` (symbols `0, ..., s - 1`) and the subsets `Σⱼ` (each a
-list of symbols). -/
-abbrev TwoDimensionalConsecutiveSetsInstance := ℕ × List (List ℕ)
-
-/-- Well-formedness of an instance: every subset lists distinct symbols of the alphabet. -/
-def WellFormed (i : TwoDimensionalConsecutiveSetsInstance) : Prop :=
-  ∀ S ∈ i.2, S.Nodup ∧ ∀ x ∈ S, x < i.1
-
-/-- Some assignment `g` of the symbols to the sets `X_{g(x)}` of a partition puts the elements
-of each subset `Σⱼ` into distinct sets among `|Σⱼ|` consecutive ones `X_l, ..., X_{l+|Σⱼ|-1}`. -/
-def TwoDimensionalConsecutiveSetsFeasible (i : TwoDimensionalConsecutiveSetsInstance) :
-    Prop :=
-  ∃ g : ℕ → ℕ, ∀ S ∈ i.2, (∀ x ∈ S, ∀ y ∈ S, g x = g y → x = y) ∧
-    ∃ l : ℕ, ∀ x ∈ S, l ≤ g x ∧ g x < l + S.length
-
-open Classical in
-/-- 2-DIMENSIONAL CONSECUTIVE SETS as a decision problem over bitstrings. -/
-noncomputable def twoDimensionalConsecutiveSetsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := TwoDimensionalConsecutiveSetsInstance) x with
-  | some i => decide (WellFormed i ∧ TwoDimensionalConsecutiveSetsFeasible i)
-  | none => false
 
 /-- **2-DIMENSIONAL CONSECUTIVE SETS is NP-complete.** Source: Garey and Johnson (1979),
 [SR19]; Lipski (1977). -/

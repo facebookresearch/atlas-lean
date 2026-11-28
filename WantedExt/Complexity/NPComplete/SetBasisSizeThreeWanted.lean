@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SetBasisWanted
+public import CSLibExt.Complexity.NPComplete.SetBasisSizeThreeDefs
 
 @[expose] public section
 
@@ -59,21 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed SET BASIS instance (strictly
-increasing lists of elements of `S`, no member listed twice, `0 < K ≤ |C|`) and every member of
-`C` has at most three elements. -/
-def WellFormed (i : SetBasisInstance) : Prop :=
-  SetBasis.WellFormed i ∧ ∀ c ∈ i.2.1, c.length ≤ 3
-
-open Classical in
-/-- SET BASIS with sets of size at most 3 as a decision problem over bitstrings. -/
-noncomputable def setBasisSizeThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SetBasisInstance) x with
-  | some i => decide (WellFormed i ∧ SetBasisFeasible i)
-  | none => false
 
 /-- **SET BASIS with sets of size at most 3 is NP-complete.** Source: Garey and Johnson (1979),
 [SP7]; Stockmeyer (1975). -/

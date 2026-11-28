@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MetricKCenterWanted
+public import CSLibExt.Complexity.NPComplete.KFacilityDispersionDefs
 
 @[expose] public section
 
@@ -63,26 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: METRIC K-CENTER's (a metric distance matrix, `0 < k ≤ |V|`,
-`0 < K`) and `2 ≤ k`. -/
-def WellFormed (i : KCenterInstance) : Prop :=
-  MetricKCenter.WellFormed i ∧ 2 ≤ i.2.1
-
-/-- Some set `F` of exactly `k` vertices has `d(f₁, f₂) ≥ K` for all distinct `f₁, f₂ ∈ F`,
-i.e. the minimum distance between two facilities is at least `K`. -/
-def KFacilityDispersionFeasible (i : KCenterInstance) : Prop :=
-  ∃ F : Finset (Fin i.1.length), F.card = i.2.1 ∧
-    ∀ f₁ ∈ F, ∀ f₂ ∈ F, f₁ ≠ f₂ → i.2.2 ≤ distance i f₁ f₂
-
-open Classical in
-/-- K-FACILITY DISPERSION as a decision problem over bitstrings. -/
-noncomputable def kFacilityDispersionDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KCenterInstance) x with
-  | some i => decide (WellFormed i ∧ KFacilityDispersionFeasible i)
-  | none => false
 
 /-- **K-FACILITY DISPERSION is NP-complete.** Source: Crescenzi and Kann, MAXIMUM K-FACILITY
 DISPERSION; Ravi, Rosenkrantz, and Tayi (1994). -/

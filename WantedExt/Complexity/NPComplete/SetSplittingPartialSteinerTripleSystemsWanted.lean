@@ -19,10 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Combinatorics.LinearTripleSystemIndependenceErdosProblem1024Wanted
-public import WantedExt.Complexity.NPComplete.SetSplittingWanted
+public import CSLibExt.Complexity.NPComplete.SetSplittingPartialSteinerTripleSystemsDefs
 
 @[expose] public section
 
@@ -66,25 +63,6 @@ reduction from every language in `NP`
 
 open MathlibExt.Combinatorics.LinearTripleSystemIndependenceErdosProblem1024Wanted
   (IsLinearTripleSystem)
-
-/-- The members of `C` as a family of subsets of `Fin n`. -/
-def tripleFamily (i : SetSplitting.SetSplittingInstance) : Finset (Finset (Fin i.1)) :=
-  (i.2.map fun c => Finset.univ.filter fun v : Fin i.1 => (v : ℕ) ∈ c).toFinset
-
-/-- Well-formedness of an instance: it is a well-formed SET SPLITTING instance (every member is
-a duplicate-free list of elements of `V`), and the members form a partial Steiner triple system
-(`IsLinearTripleSystem`). -/
-def WellFormed (i : SetSplitting.SetSplittingInstance) : Prop :=
-  SetSplitting.WellFormed i ∧ IsLinearTripleSystem (tripleFamily i)
-
-open Classical in
-/-- SET SPLITTING for partial Steiner triple systems as a decision problem over bitstrings. -/
-noncomputable def setSplittingPartialSteinerTripleSystemsDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SetSplitting.SetSplittingInstance) x with
-  | some i => decide (WellFormed i ∧ SetSplitting.SetSplittingFeasible i)
-  | none => false
 
 /-- **SET SPLITTING is NP-complete for partial Steiner triple systems.** Source: Johnson (1982),
 recording Phelps; Garey and Johnson (1979), [SP4]. -/

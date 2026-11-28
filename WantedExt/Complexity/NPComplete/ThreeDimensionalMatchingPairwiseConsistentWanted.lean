@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ThreeDimensionalMatchingWanted
+public import CSLibExt.Complexity.NPComplete.ThreeDimensionalMatchingPairwiseConsistentDefs
 
 @[expose] public section
 
@@ -60,27 +58,6 @@ reduction from every language in `NP`
 -/
 
 open ThreeDimensionalMatching (ThreeDimensionalMatchingInstance)
-
-/-- Pairwise consistency of the triples: whenever `(a, b, w)`, `(a, x, c)` and `(y, b, c)` are
-triples, so is `(a, b, c)`. -/
-def PairwiseConsistent (M : List (ℕ × ℕ × ℕ)) : Prop :=
-  ∀ t₁ ∈ M, ∀ t₂ ∈ M, ∀ t₃ ∈ M, t₁.1 = t₂.1 → t₁.2.1 = t₃.2.1 → t₂.2.2 = t₃.2.2 →
-    (t₁.1, t₁.2.1, t₂.2.2) ∈ M
-
-/-- Well-formedness of an instance: a well-formed 3-DIMENSIONAL MATCHING instance whose triples
-are pairwise consistent. -/
-def WellFormed (i : ThreeDimensionalMatchingInstance) : Prop :=
-  ThreeDimensionalMatching.WellFormed i ∧ PairwiseConsistent i.2
-
-open Classical in
-/-- 3-DIMENSIONAL MATCHING for pairwise consistent triples as a decision problem over
-bitstrings. -/
-noncomputable def threeDimensionalMatchingPairwiseConsistentDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeDimensionalMatchingInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeDimensionalMatching.ThreeDimensionalMatchingFeasible i)
-  | none => false
 
 /-- **3-DIMENSIONAL MATCHING is NP-complete for pairwise consistent triples.** Source: Garey and
 Johnson (1979), [SP1], comment, and Section 3.1.2. -/

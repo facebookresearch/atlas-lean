@@ -19,12 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import Mathlib.Algebra.Order.Field.Rat
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.BordaManipulationTwoManipulatorsWanted
-public import WantedExt.Complexity.NPComplete.CondorcetConstructiveControlByAddingVotersWanted
-public import WantedExt.Complexity.NPComplete.CopelandConstructiveControlByAddingVotersWanted
+public import CSLibExt.Complexity.NPComplete.CopelandManipulationTwoManipulatorsDefs
 
 @[expose] public section
 
@@ -73,27 +68,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Candidate `p` is a Copeland^α winner of the election `E` (a list of votes over `m`
-candidates): no candidate has a higher Copeland^α score. -/
-def IsCopelandWinner (α : ℚ) (m : ℕ) (E : List (List ℕ)) (p : ℕ) : Prop :=
-  ∀ a d : Fin m, (a : ℕ) = p →
-    copelandScore α (profile m E) d ≤ copelandScore α (profile m E) a
-
-/-- Two manipulative votes `w₁, w₂` over the candidates make `p` a Copeland^α winner of the
-election with votes `V ++ [w₁, w₂]`. -/
-def CopelandManipulationFeasible (α : ℚ) (i : BordaManipulationInstance) : Prop :=
-  ∃ w₁ w₂ : List ℕ, IsVote i.1 w₁ ∧ IsVote i.1 w₂ ∧
-    IsCopelandWinner α i.1 (i.2.1 ++ [w₁, w₂]) i.2.2
-
-open Classical in
-/-- COPELAND^α MANIPULATION with two manipulators as a decision problem over bitstrings. -/
-noncomputable def copelandManipulationDec (α : ℚ) :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := BordaManipulationInstance) x with
-  | some i => decide (WellFormed i ∧ CopelandManipulationFeasible α i)
-  | none => false
 
 /-- **COPELAND^α MANIPULATION with two manipulators is NP-complete for every rational `α` with
 `0 < α < 1` and `α ≠ 1/2`.** Source: Faliszewski, Hemaspaandra and Schnoor (2008), Theorem 3.1

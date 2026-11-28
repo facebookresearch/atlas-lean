@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SetCoverWanted
+public import CSLibExt.Complexity.NPComplete.MinimumCoverSetSizeAtMostThreeDefs
 
 @[expose] public section
 
@@ -55,21 +53,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed SET COVER instance (every set is a
-duplicate-free list of elements of `S`), every set has at most three elements, and
-`0 < K ≤ |C|`. -/
-def WellFormed (i : SetCover.SetCoverInstance) : Prop :=
-  SetCover.WellFormed i ∧ (∀ c ∈ i.2.1, c.length ≤ 3) ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-open Classical in
-/-- MINIMUM COVER with sets of size at most 3 as a decision problem over bitstrings. -/
-noncomputable def minimumCoverSetSizeAtMostThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SetCover.SetCoverInstance) x with
-  | some i => decide (WellFormed i ∧ SetCover.SetCoverFeasible i)
-  | none => false
 
 /-- **MINIMUM COVER is NP-complete for sets of size at most 3.** Source: Garey and Johnson
 (1979), [SP5]; Karp (1972). -/

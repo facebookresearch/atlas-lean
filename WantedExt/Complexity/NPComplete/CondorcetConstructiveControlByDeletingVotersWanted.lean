@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CondorcetConstructiveControlByAddingVotersWanted
+public import CSLibExt.Complexity.NPComplete.CondorcetConstructiveControlByDeletingVotersDefs
 
 @[expose] public section
 
@@ -56,32 +54,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the number `m` of candidates, the votes `V`, the distinguished candidate `c`,
-and the bound `k`. -/
-abbrev CondorcetConstructiveControlByDeletingVotersInstance := ℕ × List (List ℕ) × ℕ × ℕ
-
-/-- Well-formedness of an instance: every vote is a strict ranking of all `m` candidates, `c` is
-a candidate, and `0 < k ≤ ‖V‖`. -/
-def WellFormed (i : CondorcetConstructiveControlByDeletingVotersInstance) : Prop :=
-  (∀ v ∈ i.2.1, v.Perm (List.range i.1)) ∧ i.2.2.1 < i.1 ∧ 0 < i.2.2.2 ∧
-    i.2.2.2 ≤ i.2.1.length
-
-/-- At most `k` voters of `V` whose deletion makes `c` the Condorcet winner of the remaining
-votes `V'`. -/
-def CondorcetConstructiveControlByDeletingVotersFeasible
-    (i : CondorcetConstructiveControlByDeletingVotersInstance) : Prop :=
-  ∃ V' : List (List ℕ), V'.Sublist i.2.1 ∧ i.2.1.length ≤ V'.length + i.2.2.2 ∧
-    CondorcetConstructiveControlByAddingVoters.IsCondorcetWinner i.1 V' i.2.2.1
-
-open Classical in
-/-- CONDORCET CONSTRUCTIVE CONTROL BY DELETING VOTERS as a decision problem over bitstrings. -/
-noncomputable def condorcetConstructiveControlByDeletingVotersDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CondorcetConstructiveControlByDeletingVotersInstance) x with
-  | some i => decide (WellFormed i ∧ CondorcetConstructiveControlByDeletingVotersFeasible i)
-  | none => false
 
 /-- **CONDORCET CONSTRUCTIVE CONTROL BY DELETING VOTERS is NP-complete.** Source: Bartholdi,
 Tovey, and Trick (1992). -/

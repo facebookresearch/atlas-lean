@@ -18,9 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.CoalitionalManipulationBordaWanted
+public import CSLibExt.Complexity.NPComplete.CoalitionalManipulationVetoDefs
 
 @[expose] public section
 
@@ -58,23 +56,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The veto scoring vector for three candidates, `(1, 1, 0)`. -/
-def vetoVector : List ℕ := [1, 1, 0]
-
-/-- The manipulators can make `p` the unique veto winner. -/
-def CoalitionalManipulationVetoFeasible (i : CoalitionalManipulationInstance) : Prop :=
-  ManipulationFeasible vetoVector i
-
-open Classical in
-/-- CONSTRUCTIVE COALITIONAL WEIGHTED MANIPULATION for veto with three candidates as a
-decision problem over bitstrings. -/
-noncomputable def coalitionalManipulationVetoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CoalitionalManipulationInstance) x with
-  | some i => decide (WellFormed i ∧ CoalitionalManipulationVetoFeasible i)
-  | none => false
 
 /-- **CONSTRUCTIVE COALITIONAL WEIGHTED MANIPULATION for veto with three candidates is
 NP-complete.** Source: Conitzer, Sandholm and Lang (2007), Corollary 1. -/

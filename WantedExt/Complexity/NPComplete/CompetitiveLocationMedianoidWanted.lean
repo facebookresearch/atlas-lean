@@ -19,11 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
+public import CSLibExt.Complexity.NPComplete.CompetitiveLocationMedianoidDefs
 
 @[expose] public section
 
@@ -61,65 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: vertex count `n`, edges as `(u, v, length)`, vertex weights (indexed by
-vertex), the existing facilities `X_p` (vertices), the number `r` of new facilities and the
-target `W`. -/
-abbrev CompetitiveLocationMedianoidInstance :=
-  ℕ × List (ℕ × ℕ × ℕ) × List ℕ × List ℕ × ℕ × ℕ
-
-/-- The endpoint pairs of the edge list. -/
-def endpoints (i : CompetitiveLocationMedianoidInstance) : List (ℕ × ℕ) :=
-  i.2.1.map fun e => (e.1, e.2.1)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : CompetitiveLocationMedianoidInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 (endpoints i)
-
-/-- The length of an edge (the length of the first list entry with these endpoints; in a
-well-formed instance there is exactly one). -/
-def edgeLength (i : CompetitiveLocationMedianoidInstance) (s : Sym2 (Fin i.1)) : ℕ :=
-  ((i.2.1.find? fun e => s.map Fin.val = s(e.1, e.2.1)).map fun e => e.2.2).getD 0
-
-/-- The length of a walk: the sum of the lengths of its edges. -/
-def walkLength (i : CompetitiveLocationMedianoidInstance) {u v : Fin i.1}
-    (p : (Graph i).Walk u v) : ℕ :=
-  (p.edges.map (edgeLength i)).sum
-
-/-- The weight of vertex `v`. -/
-def weight (i : CompetitiveLocationMedianoidInstance) (v : Fin i.1) : ℕ :=
-  i.2.2.1.getD v 0
-
-/-- Well-formedness of an instance: a simple edge list on `Fin n` (no loops, no repeated or
-reversed edges) with positive lengths, one weight per vertex, and existing facilities at
-vertices. -/
-def WellFormed (i : CompetitiveLocationMedianoidInstance) : Prop :=
-  ((endpoints i).Nodup ∧
-    ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧ (e.2.1, e.1) ∉ endpoints i ∧
-      0 < e.2.2) ∧
-    i.2.2.1.length = i.1 ∧ ∀ x ∈ i.2.2.2.1, x < i.1
-
-/-- The customer at `v` patronizes a new facility of `Y`: some walk from `v` to a vertex of
-`Y` is strictly shorter than every walk from `v` to an existing facility. -/
-def Captured (i : CompetitiveLocationMedianoidInstance) (Y : Finset (Fin i.1)) (v : Fin i.1) :
-    Prop :=
-  ∃ y ∈ Y, ∃ p : (Graph i).Walk v y,
-    ∀ x : Fin i.1, (x : ℕ) ∈ i.2.2.2.1 → ∀ q : (Graph i).Walk v x, walkLength i p < walkLength i q
-
-open Classical in
-/-- `r` new facilities at distinct vertices capture customers of total weight at least `W`. -/
-def CompetitiveLocationMedianoidFeasible (i : CompetitiveLocationMedianoidInstance) : Prop :=
-  ∃ Y : Finset (Fin i.1), Y.card = i.2.2.2.2.1 ∧
-    i.2.2.2.2.2 ≤ ∑ v ∈ Finset.univ.filter (Captured i Y), weight i v
-
-open Classical in
-/-- DISCRETE (r|X_p)-MEDIANOID as a decision problem over bitstrings. -/
-noncomputable def competitiveLocationMedianoidDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := CompetitiveLocationMedianoidInstance) x with
-  | some i => decide (WellFormed i ∧ CompetitiveLocationMedianoidFeasible i)
-  | none => false
 
 /-- **DISCRETE (r|X_p)-MEDIANOID is NP-complete.** Source: Hakimi (1983); Lazar and Tamir
 (2013). -/

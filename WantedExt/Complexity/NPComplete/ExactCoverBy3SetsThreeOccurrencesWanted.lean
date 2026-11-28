@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ExactCoverBy3SetsWanted
+public import CSLibExt.Complexity.NPComplete.ExactCoverBy3SetsThreeOccurrencesDefs
 
 @[expose] public section
 
@@ -65,23 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed X3C instance, every member of `C` is
-listed in increasing order, no member is listed twice, and every element of `X` occurs in at
-most three members of `C`. -/
-def WellFormed (i : ExactCoverBy3SetsInstance) : Prop :=
-  ExactCoverBy3Sets.WellFormed i ∧ (∀ s ∈ i.2, s.Pairwise (· < ·)) ∧ i.2.Nodup ∧
-    ∀ x < 3 * i.1, (i.2.filter fun s => x ∈ s).length ≤ 3
-
-open Classical in
-/-- EXACT COVER BY 3-SETS with at most three occurrences per element as a decision problem over
-bitstrings. -/
-noncomputable def exactCoverBy3SetsThreeOccurrencesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ExactCoverBy3SetsInstance) x with
-  | some i => decide (WellFormed i ∧ ExactCoverBy3SetsFeasible i)
-  | none => false
 
 /-- **EXACT COVER BY 3-SETS with at most three occurrences per element is NP-complete.**
 Source: Garey and Johnson (1979), [SP2]; Gonzalez (1985). -/

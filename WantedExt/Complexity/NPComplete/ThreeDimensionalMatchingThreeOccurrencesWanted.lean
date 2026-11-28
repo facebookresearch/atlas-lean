@@ -22,9 +22,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ThreeDimensionalMatchingWanted
+public import CSLibExt.Complexity.NPComplete.ThreeDimensionalMatchingThreeOccurrencesDefs
 
 @[expose] public section
 
@@ -63,33 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- An instance: the common size `q` of `W`, `X`, `Y` and the list of triples; this is the
-3-DIMENSIONAL MATCHING instance type. -/
-abbrev ThreeDimensionalMatchingThreeOccurrencesInstance := ThreeDimensionalMatchingInstance
-
-/-- Well-formedness of an instance: a well-formed 3-DIMENSIONAL MATCHING instance (every
-coordinate below `q`) whose triples are distinct, and in which every element of `W`, of `X`
-and of `Y` occurs in at most three triples. -/
-def WellFormed (i : ThreeDimensionalMatchingThreeOccurrencesInstance) : Prop :=
-  ThreeDimensionalMatching.WellFormed i ∧ i.2.Nodup ∧
-    ∀ a < i.1, (i.2.filter fun t => t.1 = a).length ≤ 3 ∧
-      (i.2.filter fun t => t.2.1 = a).length ≤ 3 ∧ (i.2.filter fun t => t.2.2 = a).length ≤ 3
-
-/-- A matching of `q` triples (the 3-DIMENSIONAL MATCHING question). -/
-def ThreeDimensionalMatchingThreeOccurrencesFeasible
-    (i : ThreeDimensionalMatchingThreeOccurrencesInstance) : Prop :=
-  ThreeDimensionalMatchingFeasible i
-
-open Classical in
-/-- 3-DIMENSIONAL MATCHING with at most three occurrences per element as a decision problem
-over bitstrings. -/
-noncomputable def threeDimensionalMatchingThreeOccurrencesDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ThreeDimensionalMatchingThreeOccurrencesInstance) x with
-  | some i => decide (WellFormed i ∧ ThreeDimensionalMatchingThreeOccurrencesFeasible i)
-  | none => false
 
 /-- **3-DIMENSIONAL MATCHING with at most three occurrences per element is NP-complete.**
 Source: Garey and Johnson (1979), [SP1], comment; Dyer and Frieze (1986). -/

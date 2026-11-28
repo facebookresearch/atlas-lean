@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.SetSplittingWanted
+public import CSLibExt.Complexity.NPComplete.SetSplittingSetSizeAtMostThreeDefs
 
 @[expose] public section
 
@@ -54,20 +52,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed SET SPLITTING instance (every set is a
-duplicate-free list of elements of `S`), and every set has at most three elements. -/
-def WellFormed (i : SetSplitting.SetSplittingInstance) : Prop :=
-  SetSplitting.WellFormed i ∧ ∀ c ∈ i.2, c.length ≤ 3
-
-open Classical in
-/-- SET SPLITTING with sets of size at most 3 as a decision problem over bitstrings. -/
-noncomputable def setSplittingSetSizeAtMostThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := SetSplitting.SetSplittingInstance) x with
-  | some i => decide (WellFormed i ∧ SetSplitting.SetSplittingFeasible i)
-  | none => false
 
 /-- **SET SPLITTING is NP-complete for sets of size at most 3.** Source: Garey and Johnson
 (1979), [SP4]; Lovász (1973). -/

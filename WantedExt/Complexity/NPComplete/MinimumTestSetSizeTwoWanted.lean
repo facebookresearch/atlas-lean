@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinimumTestSetWanted
+public import CSLibExt.Complexity.NPComplete.MinimumTestSetSizeTwoDefs
 
 @[expose] public section
 
@@ -66,22 +64,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: it is a well-formed MINIMUM TEST SET instance, every test is
-listed in increasing order and has at most two elements, no test is listed twice, and
-`0 < K ≤ |C|`. -/
-def WellFormed (i : MinimumTestSetInstance) : Prop :=
-  MinimumTestSet.WellFormed i ∧ (∀ c ∈ i.2.1, c.Pairwise (· < ·) ∧ c.length ≤ 2) ∧
-    i.2.1.Nodup ∧ 0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
-
-open Classical in
-/-- MINIMUM TEST SET with tests of size at most 2 as a decision problem over bitstrings. -/
-noncomputable def minimumTestSetSizeTwoDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinimumTestSetInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumTestSetFeasible i)
-  | none => false
 
 /-- **MINIMUM TEST SET with tests of size at most 2 is NP-complete.** Source: Garey and Johnson
 (1979), [SP6]; De Bontridder, Halldórsson, Halldórsson, Hurkens, Lenstra, Ravi and Stougie

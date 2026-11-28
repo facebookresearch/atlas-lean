@@ -21,9 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.MinMaxMulticenterWanted
+public import CSLibExt.Complexity.NPComplete.VertexMinMaxMulticenterDefs
 
 @[expose] public section
 
@@ -65,22 +63,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Some set `P` of at most `K` vertices has, for every vertex `v`, a center `p ∈ P` and a walk
-from `v` to `p` of total length `len` with `w(v) · len ≤ B`. -/
-def VertexMinMaxMulticenterFeasible (i : MinMaxMulticenterInstance) : Prop :=
-  ∃ P : Finset (Fin i.1), P.card ≤ i.2.2.2.1 ∧
-    ∀ v : Fin i.1, ∃ p ∈ P, ∃ W : (Graph i).Walk v p,
-      (weight i v : ℝ) * walkLength i W ≤ (i.2.2.2.2.1 : ℝ) / i.2.2.2.2.2
-
-open Classical in
-/-- VERTEX MIN-MAX MULTICENTER as a decision problem over bitstrings. -/
-noncomputable def vertexMinMaxMulticenterDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MinMaxMulticenterInstance) x with
-  | some i => decide (MinMaxMulticenter.WellFormed i ∧ VertexMinMaxMulticenterFeasible i)
-  | none => false
 
 /-- **VERTEX MIN-MAX MULTICENTER (centers at vertices) is NP-complete.** Source: Garey and
 Johnson (1979), [ND50], comment (Slater, 1976); Kariv and Hakimi (1979). -/

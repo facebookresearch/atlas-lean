@@ -20,9 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.IntersectionPatternWanted
+public import CSLibExt.Complexity.NPComplete.IntersectionPatternDiagonalThreeDefs
 
 @[expose] public section
 
@@ -63,19 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- Well-formedness of an instance: the matrix is square and every diagonal entry is `3`. -/
-def WellFormed (A : IntersectionPatternInstance) : Prop :=
-  IntersectionPattern.WellFormed A ∧ ∀ i : Fin A.length, (A.getD i []).getD i 0 = 3
-
-open Classical in
-/-- INTERSECTION PATTERN with all diagonal entries 3 as a decision problem over bitstrings. -/
-noncomputable def intersectionPatternDiagonalThreeDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := IntersectionPatternInstance) x with
-  | some A => decide (WellFormed A ∧ IntersectionPatternFeasible A)
-  | none => false
 
 /-- **INTERSECTION PATTERN with all diagonal entries 3 is NP-complete.** Source: Garey and
 Johnson (1979), [SP9]; Chvátal (1980). -/

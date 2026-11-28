@@ -19,9 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Defs
-public import MathlibExt.Computability.BinaryNatEncoding
-public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.KCenterWanted
+public import CSLibExt.Complexity.NPComplete.MetricKCenterDefs
 
 @[expose] public section
 
@@ -64,28 +62,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- The distance `d(u, v)`: entry `v` of row `u` of the matrix. -/
-def distance (i : KCenterInstance) (u v : ℕ) : ℕ := (i.1.getD u []).getD v 0
-
-/-- Well-formedness of an instance: the parent's condition, a square matrix that is a metric
-(zero exactly on the diagonal, symmetric, triangle inequality), `0 < k ≤ |V|`, and `0 < B`. -/
-def WellFormed (i : KCenterInstance) : Prop :=
-  KCenter.WellFormed i ∧ (∀ row ∈ i.1, row.length = i.1.length) ∧
-    (∀ u < i.1.length, ∀ v < i.1.length, distance i u v = 0 ↔ u = v) ∧
-    (∀ u < i.1.length, ∀ v < i.1.length, distance i u v = distance i v u) ∧
-    (∀ u < i.1.length, ∀ v < i.1.length, ∀ w < i.1.length,
-      distance i u w ≤ distance i u v + distance i v w) ∧
-    0 < i.2.1 ∧ i.2.1 ≤ i.1.length ∧ 0 < i.2.2
-
-open Classical in
-/-- METRIC K-CENTER as a decision problem over bitstrings. -/
-noncomputable def metricKCenterDec :
-    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
-  match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := KCenterInstance) x with
-  | some i => decide (WellFormed i ∧ KCenterFeasible i)
-  | none => false
 
 /-- **METRIC K-CENTER is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-CENTER; Kariv and
 Hakimi (1979). -/
