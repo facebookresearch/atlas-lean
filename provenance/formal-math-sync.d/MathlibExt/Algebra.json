@@ -562,6 +562,15 @@
       "upstream_sha256": "34384b830f4f6816f550c380aedc3cb53e00e66bebafa298fda5024e2cc2c1e0"
     },
     {
+      "path": "MathlibExt/Algebra/DirectSum/InternalGradeAlgebra.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "339271205f0d1f73a46cf419a103b506ebfd9d6b7ac2053e508fcfbe5106cebf",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "81d781b5688bbe70db6dc93110f8960b600e4ede06e8d429b2ea650a549cc0c4"
+    },
+    {
       "path": "MathlibExt/Algebra/Group/CodiagonalCommutativity.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -1838,6 +1847,24 @@
       "upstream_sha256": "7143bf0932bf19666f884de240f2698853967ace9b9866c6831d9128941ba45d"
     },
     {
+      "path": "MathlibExt/Algebra/Module/AlgHomAction.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "551e1f153d01d2777416f90e14d2766bd68a2b706c1416b5924a4b3c7950ab8d",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "cb490382f392dda886973e516bb5f815c30a60ab5ae3f894b8ca921371a00020"
+    },
+    {
+      "path": "MathlibExt/Algebra/Module/CommutingOpposite.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9e7daf4b00aefe22e1bdb64d6ed7805b43f2d55ed177c5b16ca7cab84c9b2115",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "07c3a331b72fec9591815aaabb910e6efb2e890abace12d16d70b335e03ac04b"
+    },
+    {
       "path": "MathlibExt/Algebra/Module/KaplanskyProjective.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -1858,6 +1885,15 @@
       "disposition": "identical",
       "published_sha256": "c7ee4273770818c449ec1a3b190ecf842c6569c9e5bab3e3f6cc8910c5228999",
       "upstream_sha256": "d9e1c088de350de1a7199f1384b636aa3d2217d849616e8f8ed0d51fb6b555bd"
+    },
+    {
+      "path": "MathlibExt/Algebra/MonoidAlgebra/FiniteFiber.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "9079da761220cdab7d69adb8bfb23662e1ff2bb3e238bbfd0d85b6afe30d9cdb",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "78032626d6b9669d95b2c608156c041b7babf2bacc028e4784e39bd5d7ddb977"
     },
     {
       "path": "MathlibExt/Algebra/MonoidAlgebra/InversionTwist.lean",
@@ -2126,6 +2162,24 @@
       "published_sha256": "4088d47b2533d2376633a88fd0e242cfd38aaf103028641f37c9ac93febfac20",
       "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #264)",
       "upstream_sha256": "02b9fb895678da41fe06aebd70d455dffdd214a8e90b4731a07f16dc3228f5f9"
+    },
+    {
+      "path": "MathlibExt/Algebra/Polynomial/NatInterpolation.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e5a83e217d95cdfd85978fecb69a6a867dae81a12d2f9d02ca1fcda796f04877",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "aa002ff1c2d7012bcf6b5c5cda218049730b4c29141827e3c48d7eb4f1076394"
+    },
+    {
+      "path": "MathlibExt/Algebra/Polynomial/NatPowerCoefficients.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "838ed161a6271c3b97b34338a67f4c7627e4476f0ec019b2084e8edc3bf81cd4",
+      "rationale": "Import the general coefficient, permutation, multilinear, and Hochschild API with Atlas documentation; use native Lean 4.36 scalar coefficient formulas, implicit stability indices, identity-ring-hom multilinearity, tensor projectivity, and explicit typed semilinear data without changing public hypotheses or limits. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "5407868560edf235509f6efda4f132bdb02a837866993b630ecdfd615dc95739"
     },
     {
       "path": "MathlibExt/Algebra/Polynomial/PerronIrreducibility.lean",

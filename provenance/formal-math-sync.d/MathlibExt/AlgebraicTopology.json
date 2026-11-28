@@ -345,6 +345,15 @@
       "upstream_sha256": "04c08afa7c7969948753d56c31f691f55eac7e1c0f580852d87c42520507fa1c"
     },
     {
+      "path": "MathlibExt/AlgebraicTopology/SemiSimplicialObject/SimplicialComparison.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "e263dade1db591a34e0c1a35c511844e3eeaaf644959e2a2139e1a7b6044be29",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "bb7dabdb87edc0e4372dc61ed20f1312945289ede461500c3981172ad11709b4"
+    },
+    {
       "path": "MathlibExt/AlgebraicTopology/SemiSimplicialObject/TruncatedAlternatingFaceMapComplex.lean",
       "backport": "pending",
       "disposition": "diverged",
@@ -352,6 +361,15 @@
       "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
       "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
       "upstream_sha256": "6b586d3bd0baa2c17c95a59a2b6d5b46b43164596a07e740b3f023cb41db6cc6"
+    },
+    {
+      "path": "MathlibExt/AlgebraicTopology/SimplexCategory/EdgePullback.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "84fac2512ccd9ae448ec3b8c8dd1e4bd18e6ebdf2ed62f535a19ac0c18787c26",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "0f0bece67f72014ad544aa83a304c46a80dbf62221ed47f13c427dd3025c2b67"
     },
     {
       "path": "MathlibExt/AlgebraicTopology/SimplexCategory/GeneratorsRelations/DeltaChain.lean",
@@ -816,6 +834,24 @@
       "disposition": "identical",
       "published_sha256": "ae1100212a2a8c85fc516306c553d7ec5994958697ba2cb9c6d7400873018a06",
       "upstream_sha256": "b4a8b4b3b3c7a9050561395aa03dd697b6ae31d0814d908753454c8c0aeea40d"
+    },
+    {
+      "path": "MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/ShuffleCoordinates.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "4a38d2b001f172bfe79eb572ec2ef0d8d040bd403cb1b9d5c63df09d8617dae0",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "d341b385c062cc8473245e6780e74196f7e9a2db288672a29874ae7ff2dafac8"
+    },
+    {
+      "path": "MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/ShuffleCoset.lean",
+      "backport": "pending",
+      "disposition": "diverged",
+      "published_sha256": "58402ee58af45618a4ba4e5fe9c8f4d92a06b890f1f5c99eebf1467f1fa10f93",
+      "rationale": "Import the general MathlibExt tensor, Hochschild, exterior, differential-form and Koszul APIs with Atlas copyright headers and mathematical documentation, preserving the original hypotheses, universe parameters and constructed maps while omitting source-campaign commentary. Replace vague prerequisite/polynomial Hochschild prose with self-contained mathematical docstrings and faithful signs, formulas, hypotheses and universes. Preserve all noncomment Lean tokens, names, privacy, imports, options and legal text; correct scoped-notation/local-instance doc attachment only.",
+      "upstream_commit": "9a495da20622876d4a72852b4de7e0921e976bc0",
+      "upstream_sha256": "40dfe0061b29a11dfe137c8f806cc3cfbf7093d9c0767a2ec7dbcf45a567be23"
     },
     {
       "path": "MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/ShuffleCrossing.lean",
