@@ -20,10 +20,11 @@ A formula built from propositional variables with these connectives is *valid* i
 ## Proof depends on
 
 - [Validity of first-order sentences is undecidable](../../../TheoryOfComputation/undecidable-problems/validity-of-first-order-sentences-is-undecidable.md)
+- [Downward Löwenheim–Skolem theorem](../../model-theory/downward-lowenheim-skolem-theorem.md)
 
 ## Expansion
 
-By Surányi's reduction theorem, every first-order formula can be effectively transformed into one of the form $\forall x\,\exists y\,\exists z\,M_1\vee\exists x\,\exists y\,\forall z\,M_2$ with $M_1$, $M_2$ quantifier-free and containing only unary and binary predicates, equivalent with respect to universal validity. A translation $h$ maps such a formula to a formula of $L$, sending unary and binary predicates to formulas built with $O$ and the copying operators and first-order quantifiers to the operators $\exists_x$, $\exists_y$, $\exists_z$. Using the Löwenheim–Skolem theorem to restrict to countable domains, whose elements are placed on the diagonal of $\mathbb N^3$, one shows that the reduction form is universally valid exactly when its translation is valid in $L$. A good expansion links pages for Surányi's reduction theorem (the Theorem of §2 of the source) and for the Löwenheim–Skolem theorem.
+By Surányi's reduction theorem, every first-order formula can be effectively transformed into one of the form $\forall x\,\exists y\,\exists z\,M_1\vee\exists x\,\exists y\,\forall z\,M_2$ with $M_1$, $M_2$ quantifier-free and containing only unary and binary predicates, equivalent with respect to universal validity. A translation $h$ maps such a formula to a formula of $L$, sending unary and binary predicates to formulas built with $O$ and the copying operators and first-order quantifiers to the operators $\exists_x$, $\exists_y$, $\exists_z$. Using the downward Löwenheim–Skolem theorem, linked above, to restrict to countable domains, whose elements are placed on the diagonal of $\mathbb N^3$, one shows that the reduction form is universally valid exactly when its translation is valid in $L$. A good expansion links a page for Surányi's reduction theorem (the Theorem of §2 of the source).
 
 ## Sources
 

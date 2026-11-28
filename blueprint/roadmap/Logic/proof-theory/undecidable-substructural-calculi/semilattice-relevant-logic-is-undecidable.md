@@ -20,7 +20,7 @@ The corollary holds because $\mathsf{S}$ is recursively enumerable and the class
 
 ## Expansion
 
-$(\mathcal{P}_{\mathrm{fin}}(\mathbb{N}), \cup, \varnothing)$ is a semilattice frame, and every semilattice frame validates the frame conditions of $\mathsf{TWJ}^+$, so $\mathsf{TWJ}^+ \subseteq \mathsf{S} \subseteq \mathrm{Log}(\mathcal{P}_{\mathrm{fin}}(\mathbb{N}), \cup, \varnothing)$ and the general theorem applies. Urquhart's coordinatization method, which settles $\mathsf{R}$, $\mathsf{E}$ and $\mathsf{T}$, does not reach $\mathsf{S}$.
+$(\mathcal{P}_{\mathrm{fin}}(\mathbb{N}), \cup, \varnothing)$ is a semilattice frame, and every semilattice frame validates the frame conditions of $\mathsf{TWJ}^+$, so $\mathsf{TWJ}^+ \subseteq \mathsf{S} \subseteq \mathrm{Log}(\mathcal{P}_{\mathrm{fin}}(\mathbb{N}), \cup, \varnothing)$ and the general theorem applies. Urquhart's coordinatization method, which settles $\mathsf{R}$, $\mathsf{E}$ and $\mathsf{T}$, does not reach $\mathsf{S}$. The recursive enumerability of $\mathsf{S}$ that the corollary uses comes from the axiomatizations of Fine and of Charlwood cited in Section 1 of the source, and a good expansion links pages for them.
 
 ## Sources
 

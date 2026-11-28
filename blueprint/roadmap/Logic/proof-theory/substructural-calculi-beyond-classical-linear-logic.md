@@ -16,7 +16,8 @@ multisets) and its rules, and has separate pages for: cut elimination for the La
 elimination for affine linear logic; phase spaces and the soundness and completeness for phase semantics of multiplicative-additive linear
 logic and, separately, of full linear logic with exponentials, as stated in a source fixed for that
 page; cut elimination for intuitionistic linear logic; and any decidability or complexity result, each
-with its own source. The logic of bunched implications is outside this node and needs its own sources. Results for classical linear logic do not transfer
+with its own source, reusing the undecidability pages for Lambek-style and relevant calculi in
+[undecidable substructural calculi](undecidable-substructural-calculi/README.md) rather than restating them. The logic of bunched implications is outside this node and needs its own sources. Results for classical linear logic do not transfer
 to these calculi without proof.
 
 ## Sources

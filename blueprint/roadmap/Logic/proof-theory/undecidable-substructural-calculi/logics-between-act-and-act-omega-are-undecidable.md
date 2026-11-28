@@ -4,7 +4,7 @@ Every set of sequents that contains all theorems of action logic and is containe
 
 **Theorem (Kuznetsov).** Let $\mathcal{L}$ be a set of sequents in the language of [action logic](action-logic-and-infinitary-action-logic.md) such that $\mathbf{ACT} \subseteq \mathcal{L} \subseteq \mathbf{ACT}_\omega$. Then membership in $\mathcal{L}$ is undecidable. In particular $\mathbf{ACT}$ itself is undecidable (Corollary 1 of the source).
 
-The source also proves the same for the fragments without $\vee$ and without $\wedge$ (Theorems 6 and 7) and for the extension with the distributive law (Theorem 9); these are separate statements. Without the Kleene star the logic, the multiplicative-additive Lambek calculus, is decidable and PSPACE-complete, and the logic of Kleene algebras (with $\cdot$, $\vee$ and ${}^*$ only) is PSPACE-complete; these boundaries are recalled in the source from other work.
+The source also proves the same for the fragments without $\wedge$ and without $\vee$ (Theorems 6 and 7) and for every logic between $\mathbf{ACT}$ and the distributive version of $\mathbf{ACT}_\omega$ (Theorem 9); these are separate statements. Without the Kleene star the logic, the multiplicative-additive Lambek calculus, is decidable and PSPACE-complete, and the logic of Kleene algebras (with $\cdot$, $\vee$ and ${}^*$ only) is PSPACE-complete; these boundaries are recalled in the source from other work.
 
 ## Depends on
 
@@ -17,7 +17,7 @@ None.
 
 ## Expansion
 
-The proof encodes deterministic Turing machines through the totality property of context-free grammars, following Buszkowski's $\Pi^0_1$-hardness proof for $\mathbf{ACT}_\omega$. For a machine $M$ and input $x$ it builds a sequent $S(M, x)$ such that: if $M$ gets stuck on $x$ in a fixed trivial cycle, $S(M, x)$ is derivable in $\mathbf{ACT}$ (circular behavior has a circular, hence finitary, proof using the fixed-point rule for the star); and if $M$ halts on $x$, $S(M, x)$ is not derivable in $\mathbf{ACT}_\omega$. The set $\mathcal{C}$ of pairs on which the machine trivially cycles and the set $\mathcal{H}$ of pairs on which it halts are recursively inseparable. Any $\mathcal{L}$ between the two logics separates $\{(M, x) : S(M, x) \in \mathcal{L}\}$, which contains $\mathcal{C}$ and is disjoint from $\mathcal{H}$, so it cannot be decidable.
+The proof encodes deterministic Turing machines through the totality property of context-free grammars, following Buszkowski's $\Pi^0_1$-hardness proof for $\mathbf{ACT}_\omega$. For a machine $M$ and input $x$ it builds a sequent $S(M, x)$ such that: if $M$ gets stuck on $x$ in a fixed trivial cycle, $S(M, x)$ is derivable in $\mathbf{ACT}$ (circular behavior has a circular, hence finitary, proof using the fixed-point rule for the star); and if $M$ halts on $x$, $S(M, x)$ is not derivable in $\mathbf{ACT}_\omega$. The set $\mathcal{C}$ of pairs on which the machine trivially cycles and the set $\mathcal{H}$ of pairs on which it halts are recursively inseparable. Any $\mathcal{L}$ between the two logics separates $\{(M, x) : S(M, x) \in \mathcal{L}\}$, which contains $\mathcal{C}$ and is disjoint from $\mathcal{H}$, so it cannot be decidable. A good expansion links pages for Buszkowski's encoding (Lemma 7 of the source: $S(M, x)$ is derivable in $\mathbf{ACT}_\omega$ iff $M$ does not halt on $x$) and for the recursive inseparability of $\mathcal C$ and $\mathcal H$ (Proposition 1).
 
 ## Sources
 

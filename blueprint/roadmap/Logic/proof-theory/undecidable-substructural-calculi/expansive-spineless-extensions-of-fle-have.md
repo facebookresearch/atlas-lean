@@ -17,7 +17,7 @@ Equivalently, theoremhood in the extension of $\mathsf{FL_e}$ by the correspondi
 
 ## Expansion
 
-An expansive equation makes $\mathsf{CRL} + \Gamma$ negatively $n$-potent for some $n$, and in commutative, negatively $n$-potent residuated lattices congruences are characterized well enough for a form of the deduction theorem: a quasiequation can be converted into an equation equivalent to it over the variety. Hence deciding the equational theory is at least as hard as acceptance of an and-branching counter machine (Corollary 5.8), and the word-problem encoding of the spineless case yields undecidability.
+An expansive equation makes $\mathsf{CRL} + \Gamma$ negatively $n$-potent for some $n$, and in commutative, negatively $n$-potent residuated lattices congruences are characterized well enough for a form of the deduction theorem: a quasiequation can be converted into an equation equivalent to it over the variety. Hence deciding the equational theory is at least as hard as acceptance of an and-branching counter machine (Corollary 5.8), and the word-problem encoding of the spineless case yields undecidability. A good expansion links a page for the description of congruences of commutative residuated lattices by convex normal submonoids (the source's reference [6], Galatos, Jipsen, Kowalski and Ono, *Residuated lattices*), which the proof of Lemma 5.6 uses.
 
 ## Sources
 
