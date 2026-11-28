@@ -10,6 +10,19 @@ module
 
 public import MathlibExt.Combinatorics.Enumerative.JacobiStirlingFirstKind
 
+/-!
+# First-kind Legendre–Stirling numbers
+
+These signed coefficients are the Jacobi–Stirling numbers at parameter `1`.
+
+## References
+
+* G. E. Andrews, W. Gawronski, and L. L. Littlejohn, *The Legendre-Stirling numbers*,
+  Discrete Mathematics 311 (2011), 1255–1272, Theorem 5.5.
+* Yoann Gelineau and Jiang Zeng, *Combinatorial interpretations of the Jacobi-Stirling numbers*,
+  The Electronic Journal of Combinatorics 17 (2010), Research Paper 70, equation (1.3).
+-/
+
 namespace MetaMathlibExt
 
 @[expose] public section
@@ -44,6 +57,10 @@ theorem legendreStirlingFirst_zero (k : ℕ) :
     legendreStirlingFirst 0 k = if k = 0 then 1 else 0 := by
   simpa [legendreStirlingFirst] using
     jacobiStirlingFirst_initial_row (R := ℤ) k (1 : ℤ)
+
+/-- In every positive row the first-kind Legendre–Stirling number in column zero vanishes. -/
+theorem legendreStirlingFirst_succ_zero (n : ℕ) : legendreStirlingFirst (n + 1) 0 = 0 := by
+  exact jacobiStirlingFirst_succ_zero n (1 : ℤ)
 
 /-- **Recurrence for the Legendre–Stirling numbers of the first kind.** For all natural numbers
 $n$ and $k$, the Legendre–Stirling numbers of the first kind satisfy
