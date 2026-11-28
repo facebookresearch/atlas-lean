@@ -14,3 +14,5 @@ Models of selection against introgressed ancestry, microbial growth under serial
 - [Reproductive isolation by mating preference and migration](reproductive-isolation-by-mating-preference-and-migration/README.md)
 - [SAS-CFF model with demography](sas-cff-model-with-demography/README.md)
 - [Speciation by mating preference](speciation-by-mating-preference/README.md)
+- [Recombination equation and the partitioning process](recombination-equation-and-partitioning-process/README.md)
+- [Selection–recombination equation](selection-recombination-equation/README.md)

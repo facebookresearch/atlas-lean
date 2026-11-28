@@ -16,9 +16,11 @@ and for fixed $s_N = s\in[0,1)$, $\Pr_{\rm diff}(T_i > Nt)\to e^{-t/(2-s)}$ whil
 
     With $\rho = 4N r_N$ this is the classical $(\rho+18)/(\rho^2+13\rho+18)$.
 
-2. $s_N = s$, $r_N = \tilde\rho/N$: the same formulas with $\tilde\rho$ replaced by $\tilde\rho(1-s)$ for $q_5, q_{11}$, while
+2. $s_N = s$, $r_N = \tilde\rho/N$: with $D_s = 8\tilde\rho^2(1-s)^2 + 26\tilde\rho(1-s) + 9$,
 
-    $$\operatorname{Corr}_{q_{12}} \to \frac{4\tilde\rho^2 s(1-s)^2 + 12\tilde\rho s(1-s) + 2\tilde\rho(1-s) + 9}{8\tilde\rho^2(1-s)^2 + 26\tilde\rho(1-s) + 9}.$$
+    $$\operatorname{Corr}_{q_5} \to \frac{2(1-s)}{D_s}, \qquad \operatorname{Corr}_{q_{11}} \to \frac{2\tilde\rho(1-s) + 9}{D_s}, \qquad \operatorname{Corr}_{q_{12}} \to \frac{4\tilde\rho^2 s(1-s)^2 + 12\tilde\rho s(1-s) + 2\tilde\rho(1-s) + 9}{D_s}.$$
+
+    So $\operatorname{Corr}_{q_{11}}$ is the scenario-1 formula with $\tilde\rho$ replaced by $\tilde\rho(1-s)$, while $\operatorname{Corr}_{q_5}$ carries an extra factor $1-s$. The preprint's Corollary 1(ii), Eq. (11), prints $\operatorname{Corr}_{q_5} \asymp \frac{2}{8\tilde\rho^2(1-s)^2+26\tilde\rho(1-s)+9}$. The page differs because that value does not follow from the paper's own results: Theorem 1(ii), Eq. (5), gives $\operatorname{Cov}_{q_5} \asymp 8(1-s)^2N^2/D_s$, and both pairs start in one individual, so by Lemma 1 each variance is $\operatorname{Var}_{\rm same}[T_i] \asymp 4(1-s)N^2$. The ratio is $2(1-s)/D_s$; for example $s = 1/2$, $\tilde\rho = 1$ gives $1/24$, not $1/12$. The corrected value also tends, as $\tilde\rho \to 0$, to the no-recombination value $2(1-s)/9$ of Corollary 2. The $q_{11}$ and $q_{12}$ entries of Corollary 1(ii) agree with Theorem 1(ii) and Lemma 1.
 
 3. $s_N = \tilde\sigma/N$, $r_N = r$: correlations vanish, $\operatorname{Corr}_{q_{11}}\sim \frac{R}{2r(2-r)}\frac1N$, $\operatorname{Corr}_{q_{12}}\sim\frac{R(2r\tilde\sigma - 2r - r^2\tilde\sigma + r^2 + 1)}{2r(2-r)}\frac1N$, $\operatorname{Corr}_{q_5} = O(N^{-2})$.
 4. $s_N = s$, $r_N = r$: $\operatorname{Corr}_{q_5}$ and $\operatorname{Corr}_{q_{11}}$ are $O(1/N)$ (explicit rational functions of $r,s$), but
