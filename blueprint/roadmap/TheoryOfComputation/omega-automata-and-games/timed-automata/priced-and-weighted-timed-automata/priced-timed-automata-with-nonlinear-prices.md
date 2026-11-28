@@ -6,7 +6,7 @@ Let $X$ be a finite set of clocks; a *valuation* is a map $\nu:X\to\mathbb R_{\g
 
 A *priced timed automaton* (PTA) $(L,X,E,I,\pi,\psi)$ adds a *price function* $\pi$ that gives the cost $\pi((\ell,\nu),t)\ge0$ of waiting $t\ge0$ time units from configuration $(\ell,\nu)$, and an edge price $\psi:E\to\mathbb Z_{\ge0}$. Configurations are triples $(\ell,\nu,u)$ with an accumulated price $u$. A *delay* $(\ell,\nu,u)\xrightarrow{t}(\ell,\nu+t,u+\pi((\ell,\nu),t))$ is allowed when $\nu+\delta$ satisfies $I(\ell)$ for all $0\le\delta\le t$; a *switch* along an edge $(\ell,g,Y,\ell')$ goes to $(\ell',\nu[Y:=0],u+\psi(\text{edge}))$ when $\nu$ satisfies $g$ and $I(\ell)$ and $\nu[Y:=0]$ satisfies $I(\ell')$. Runs alternate delays and switches strictly (consecutive delays cannot be merged, since $\pi$ need not be additive in $t$), and the cost $C(\rho)$ of a run is the sum of its delay and switch prices. The automaton is *linearly priced* when $\pi((\ell,\nu),t)=k_\ell t$.
 
-For locations $\ell,\ell'$, let $\mathrm{OptCost}(\ell,\ell')=\inf_\rho C(\rho)$ over runs from $\ell$ to $\ell'$, which is $+\infty$ when no run leads from $\ell$ to $\ell'$. The *cost-optimal reachability problem* asks, given a PTA, locations $\ell,\ell'$ and a budget $B$, whether $\mathrm{OptCost}(\ell,\ell')\le B$.
+For locations $\ell,\ell'$, let $\mathrm{OptCost}(\ell,\ell')=\inf_\rho C(\rho)$ over runs from $\ell$, with all clocks $0$, to $\ell'$ (the source fixes no initial configuration; the reduction of Section 3 starts with all clocks $0$), which is $+\infty$ when no run leads from $\ell$ to $\ell'$. The *cost-optimal reachability problem* asks, given a PTA, locations $\ell,\ell'$ and a budget $B$, whether $\mathrm{OptCost}(\ell,\ell')\le B$.
 
 ## Depends on
 
