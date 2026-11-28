@@ -36,7 +36,7 @@ In contrast, the joint spectral radius is approximable: an algorithm computes it
 
 For a max-plus automaton whose states are all initial and final, its value on a word is the largest entry of the product of the matrices of its letters, so it is
 nonnegative on every word exactly when the joint spectral radius of its transition matrices is nonnegative (by Fekete's subadditive lemma the infimum over products is a limit of normalized minima).
-The comparison problem for such automata is undecidable, which gives item 1; item 2 follows from item 1 by a further reduction.
+The comparison problem for such automata is undecidable, which gives item 1; item 2 follows from item 1 by a further reduction. The dimension bounds $554$ and $1109 = 2 \cdot 554 + 1$ inherit the state count of the [553-state comparison result](comparison-of-max-plus-automata-with-553-states.md), which is not settled: Lemma 6 of the source with its 268-state universal two-counter machine gives $2 \cdot 268 + 27 = 563$ states rather than 553, so the dimension-bounded clauses must be checked before this page becomes a task.
 
 ## Sources
 

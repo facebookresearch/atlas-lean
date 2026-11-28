@@ -24,7 +24,7 @@ By contrast, for one-counter energy games of energy dimension $1$ the winning se
 
 ## Expansion
 
-Both items reduce halting of deterministic two-counter machines. For pushdown games, player 1 proposes the infinite run of the machine by pushing its transitions on the stack, and the single energy dimension lets player 0 challenge a step that is not a valid continuation and win exactly when player 1 has cheated; so player 0 wins from every initial credit iff the machine halts, and if player 0 wins from some credit she wins from all. For one-counter games, energy games and simulation games between one-counter automata and vector addition systems are interreducible, and the undecidability of simulation between one-counter nets and two-dimensional vector addition systems, proved from two-counter machines, transfers to two-dimensional energy.
+Both results reduce halting of deterministic two-counter machines. For pushdown games, player 1 proposes the infinite run of the machine by pushing its transitions on the stack, and the single energy dimension lets player 0 challenge a step that is not a valid continuation and win exactly when player 1 has cheated; so player 0 wins from every initial credit iff the machine halts, and if player 0 wins from some credit she wins from all. For one-counter games, energy games and simulation games between one-counter automata and vector addition systems are interreducible, and the undecidability of simulation between one-counter nets and two-dimensional vector addition systems, proved from two-counter machines, transfers to two-dimensional energy.
 
 ## Sources
 

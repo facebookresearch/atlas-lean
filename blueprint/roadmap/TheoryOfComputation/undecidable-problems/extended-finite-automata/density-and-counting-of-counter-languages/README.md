@@ -5,6 +5,7 @@ Whether the prefixes, suffixes or infixes of a language exhaust all words, wheth
 - [Reversal-bounded counter machines](reversal-bounded-counter-machines.md)
 - [Prefix-dense, suffix-dense and infix-dense languages](prefix-suffix-and-infix-dense-languages.md)
 - [Counting-regular languages](counting-regular-and-slender-languages.md)
+- [Slender languages](slender-languages.md)
 - [Suffix-density is undecidable for reversal-bounded counter languages](suffix-density-of-counter-languages.md)
 - [Prefix-density is undecidable for one-counter one-reversal languages](prefix-density-of-ncm-1-1-languages.md)
 - [Density is undecidable for nondeterministic one-counter languages](infix-density-of-one-counter-languages.md)
@@ -16,4 +17,3 @@ Whether the prefixes, suffixes or infixes of a language exhaust all words, wheth
 - [Density is undecidable for two-way deterministic automata with two reversal-bounded counters](density-of-two-way-two-counter-machines.md)
 - [Density is undecidable for unary nondeterministic two-pushdown automata with one reversal each](density-is-undecidable-for-unary-nondeterministi.md)
 - [Density is undecidable for unary two-way automata with one counter](density-is-undecidable-for-unary-two-way-automat.md)
-- [Slender languages](slender-languages.md)
